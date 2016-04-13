@@ -1,0 +1,138 @@
+{
+  parserClass="com.sumologic.dohyo.plugin.schema.parser.SchemaParser"
+//  parserUtilClass="com.sumologic.dohyo.plugin.schema.parser.SchemaParserUtil"
+
+  elementTypeHolderClass="com.sumologic.dohyo.plugin.schema.lexer.SchemaElementTypes"
+  elementTypePrefix="S_"
+  elementTypeClass="com.sumologic.dohyo.plugin.schema.lexer.SchemaElementType"
+  tokenTypeClass="com.sumologic.dohyo.plugin.schema.lexer.SchemaElementType"
+
+  psiClassPrefix="Schema"
+  psiImplClassSuffix="Impl"
+  psiPackage="com.sumologic.dohyo.plugin.schema.psi"
+  psiImplPackage="com.sumologic.dohyo.plugin.schema.psi.impl"
+//  psiImplUtilClass="com.sumologic.dohyo.plugin.schema.psi.impl.SchemaPsiImplUtil"
+
+  generateTokenAccessors=true
+
+  tokens=[
+    NAMESPACE = 'namespace'
+    MAP = 'map'
+    DEFAULT = 'default'
+    LIST = 'list'
+    RECORD = 'record'
+    EXTENDS = 'extends'
+    UNION = 'union'
+    MULTI='multi'
+    ENUM='enum'
+
+    INTEGER='integer'
+    LONG='long'
+    DOUBLE='double'
+    BOOLEAN='boolean'
+    STRING='string'
+
+    COLON = ':'
+    DOT = '.'
+    COMMA = ','
+    EQ = '='
+    CURLY_LEFT = '{'
+    CURLY_RIGHT = '}'
+    BRACKET_LEFT = '['
+    BRACKET_RIGHT = ']'
+
+    space='regexp:\s+'
+    comment='regexp://.*'
+    block_comment='regexp:/\*((?<!\*/)(.|\n))*'
+    // todo: support unquoted strings spanning till EOL
+    string="regexp:('([^'\\]|\\.)*'|\"([^\"\\]|\\.)*\")"
+    typeName = 'regexp:(\p{Upper})\p{Alnum}*' // TODO unicode
+    id = 'regexp:(\p{Lower})\p{Alnum}*' // TODO unicode
+  ]
+
+  // pin(".*Decl") = 1
+
+}
+
+// consider separating fields/types/decl parts by either ',' or newlines,
+// otherwise stuff can get confusing, e.g.
+// record { fields { f1:t1 f2:t2 } }
+
+root ::= (namespaceDecl typeDefs)*
+
+//typeName ::= id // comment me out and enable typeName token
+
+namespaceDecl ::= 'namespace' namespaceName namespaceBody? {pin=1}
+namespaceName ::= id ('.' id)*
+private namespaceBody ::= '{' namespaceBodyPart* '}'
+private namespaceBodyPart ::= customParam // | ...
+
+typeDefs ::= typeDef*
+
+private typeDef ::= multiTypeDef | recordTypeDef | unionTypeDef | mapTypeDef | listTypeDef |
+            primitiveTypeDef | enumTypeDef
+
+typeRef ::= typeName | fqn | anonList | anonMap
+fqn ::= namespaceName '.' typeName
+
+anonList ::= 'list' '[' typeRef defaultOverride? ']' // TODO rename to `listType`? `concreteList`?
+anonMap ::= 'map' '[' typeRef ',' typeRef defaultOverride? ']' // TODO rename to `mapType`?
+
+extendsDecl ::= 'extends' typeRef (',' typeRef)*
+defaultOverride ::= 'default' id
+customParam ::= id '=' string  // TODO real data parsing
+
+multiTypeDef ::= 'multi' typeName extendsDecl? multiTypeBody?
+private multiTypeBody ::= '{' multiBodyPart* '}'
+memberDecl ::= 'default'? id ':' typeRef memberBody?
+private memberBody ::= '{' memberBodyPart* '}'
+private memberBodyPart ::= customParam
+private multiBodyPart ::= memberDecl | customParam
+
+recordTypeDef ::= 'record' typeName extendsDecl? recordTypeBody?
+private recordTypeBody ::= '{' recordBodyPart* '}'
+private recordBodyPart ::= fieldDecl | customParam
+fieldDecl ::= id ':' typeRef defaultOverride? fieldBody? {pin=2}
+private fieldBody ::= '{' fieldBodyPart* '}'
+private fieldBodyPart ::= customParam
+
+unionTypeDef ::= 'union' typeName extendsDecl? unionTypeBody? // TODO require body? TODO remove extends? "contravariant" extension? same for enums
+private unionTypeBody ::= '{' unionBodyPart* '}'
+private unionBodyPart ::= tagDecl | customParam
+tagDecl ::= id ':' typeRef defaultOverride? tagBody? {pin=2}
+private tagBody ::= '{' tagBodyPart* '}'
+private tagBodyPart ::= customParam
+
+
+//listTypeDef2 ::= 'list' typeName extendsDecl listTypeBody? // allows inheritance from lists w/o type params
+listTypeDef ::= anonList typeName extendsDecl? listTypeBody?
+private listTypeBody ::= '{' listTypeBodyPart* '}'
+private listTypeBodyPart ::= customParam
+
+mapTypeDef ::= anonMap typeName extendsDecl? mapTypeBody?
+private mapTypeBody ::= '{' mapTypeBodyPart* '}'
+private mapTypeBodyPart ::= customParam
+
+primitiveTypeDef ::= primitiveKind typeName extendsDecl? primitiveTypeBody?
+primitiveKind ::= 'string' | 'integer' | 'long' | 'double' | 'boolean'
+private primitiveTypeBody ::= '{' primitiveBodyPart* '}'
+private primitiveBodyPart ::= customParam // | ...
+
+enumTypeDef ::= 'enum' typeName enumTypeBody
+private enumTypeBody ::= '{' enumTypeBodyPart* '}'
+private enumTypeBodyPart ::= customParam | enumMember
+enumMember ::= string enumMemberBody?
+private enumMemberBody ::='{' enumMemberBodyPart* '}'
+private enumMemberBodyPart ::= customParam
+
+
+
+
+
+
+
+
+
+
+
+
