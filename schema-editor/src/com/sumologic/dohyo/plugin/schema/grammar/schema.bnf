@@ -26,11 +26,11 @@
     MULTI='multi'
     ENUM='enum'
 
-    INTEGER='integer'
-    LONG='long'
-    DOUBLE='double'
-    BOOLEAN='boolean'
-    STRING='string'
+    INTEGER_T='integer'
+    LONG_T='long'
+    DOUBLE_T='double'
+    BOOLEAN_T='boolean'
+    STRING_T='string'
 
     COLON = ':'
     DOT = '.'
@@ -44,13 +44,15 @@
     space='regexp:\s+'
     comment='regexp://.*'
     block_comment='regexp:/\*((?<!\*/)(.|\n))*'
-    // todo: support unquoted strings spanning till EOL
     string="regexp:('([^'\\]|\\.)*'|\"([^\"\\]|\\.)*\")"
-    typeName = 'regexp:(\p{Upper})\p{Alnum}*' // TODO unicode
-    id = 'regexp:(\p{Lower})\p{Alnum}*' // TODO unicode
+
+    // id = 'regexp:_?(\p{Lower})\p{Alnum}*'
+    id = 'regexp:_?\p{Alpha}\p{Alnum}*'
   ]
 
-  // pin(".*Decl") = 1
+  pin(".*Body") = 1
+  //recoverWhile(".*Body") = "bodyRecover"
+  recoverWhile(".*Part") = "partRecover"
 
 }
 
@@ -58,11 +60,14 @@
 // otherwise stuff can get confusing, e.g.
 // record { fields { f1:t1 f2:t2 } }
 
-root ::= (namespaceDecl typeDefs)*
+root ::= namespacedTypedefs*
 
-//typeName ::= id // comment me out and enable typeName token
+private namespacedTypedefs ::= namespaceDecl typeDefs
 
-namespaceDecl ::= 'namespace' namespaceName namespaceBody? {pin=1}
+namespaceDecl ::= 'namespace' namespaceName namespaceBody? {pin=1 recoverWhile="namespaceRecover"}
+private namespaceRecover ::= ! (id | 'namespace' | 'record' | 'union' | 'map' | 'list' | 'multi' |
+                               'enum' | primitiveKind)
+
 namespaceName ::= id ('.' id)*
 private namespaceBody ::= '{' namespaceBodyPart* '}'
 private namespaceBodyPart ::= customParam // | ...
@@ -72,7 +77,8 @@ typeDefs ::= typeDef*
 private typeDef ::= multiTypeDef | recordTypeDef | unionTypeDef | mapTypeDef | listTypeDef |
             primitiveTypeDef | enumTypeDef
 
-typeRef ::= typeName | fqn | anonList | anonMap
+private typeName ::= id
+typeRef ::= typeName | fqn | anonList | anonMap {name="type"}
 fqn ::= namespaceName '.' typeName
 
 anonList ::= 'list' '[' typeRef defaultOverride? ']' // TODO rename to `listType`? `concreteList`?
@@ -80,14 +86,14 @@ anonMap ::= 'map' '[' typeRef ',' typeRef defaultOverride? ']' // TODO rename to
 
 extendsDecl ::= 'extends' typeRef (',' typeRef)*
 defaultOverride ::= 'default' id
-customParam ::= id '=' string  // TODO real data parsing
+customParam ::= id '=' string  {pin = 1}// TODO real data parsing
 
 multiTypeDef ::= 'multi' typeName extendsDecl? multiTypeBody?
 private multiTypeBody ::= '{' multiBodyPart* '}'
-memberDecl ::= 'default'? id ':' typeRef memberBody?
+private multiBodyPart ::= memberDecl | customParam
+memberDecl ::= 'default'? id ':' typeRef memberBody? {pin = 3}
 private memberBody ::= '{' memberBodyPart* '}'
 private memberBodyPart ::= customParam
-private multiBodyPart ::= memberDecl | customParam
 
 recordTypeDef ::= 'record' typeName extendsDecl? recordTypeBody?
 private recordTypeBody ::= '{' recordBodyPart* '}'
@@ -102,7 +108,6 @@ private unionBodyPart ::= tagDecl | customParam
 tagDecl ::= id ':' typeRef defaultOverride? tagBody? {pin=2}
 private tagBody ::= '{' tagBodyPart* '}'
 private tagBodyPart ::= customParam
-
 
 //listTypeDef2 ::= 'list' typeName extendsDecl listTypeBody? // allows inheritance from lists w/o type params
 listTypeDef ::= anonList typeName extendsDecl? listTypeBody?
@@ -121,9 +126,12 @@ private primitiveBodyPart ::= customParam // | ...
 enumTypeDef ::= 'enum' typeName enumTypeBody
 private enumTypeBody ::= '{' enumTypeBodyPart* '}'
 private enumTypeBodyPart ::= customParam | enumMember
-enumMember ::= string enumMemberBody?
+enumMember ::= id enumMemberBody? {pin=1}
 private enumMemberBody ::='{' enumMemberBodyPart* '}'
 private enumMemberBodyPart ::= customParam
+
+//private bodyRecover ::= ! ( '}' )
+private partRecover ::= ! ('}' | id | 'default')
 
 
 

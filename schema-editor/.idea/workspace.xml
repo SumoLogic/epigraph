@@ -1,27 +1,73 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="8bf28e7f-e92e-40d3-b599-cc60f2355a84" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/out/production/schema-editor/com/sumologic/dohyo/plugin/schema/SchemaFileType.class" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/out/production/schema-editor/com/sumologic/dohyo/plugin/schema/SchemaFileTypeFactory.class" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/out/production/schema-editor/com/sumologic/dohyo/plugin/schema/SchemaLanguage.class" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/atlassian-ide-plugin.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/compiler.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/copyright/profiles_settings.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/dictionaries/konstantin.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/encodings.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/modules.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/out/production/schema-editor/META-INF/plugin.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/resources/META-INF/plugin.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/schema-editor.iml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/SchemaFileType.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/SchemaFileTypeFactory.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/SchemaLanguage.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/grammar/schema.bnf" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/lexer/SchemaElementType.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/lexer/SchemaTokenTypesOld.java" />
+    <list default="true" id="8bf28e7f-e92e-40d3-b599-cc60f2355a84" name="Default" comment="schema editor in the works.. first version of grammar stabilized">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lib/testng.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/testng.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/vcs.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/lexer/SchemaElementTypes.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/parser/SchemaParser.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/SchemaAnonList.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/SchemaAnonMap.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/SchemaCustomParam.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/SchemaDefaultOverride.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/SchemaEnumMember.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/SchemaEnumTypeDef.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/SchemaExtendsDecl.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/SchemaFieldDecl.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/SchemaFqn.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/SchemaListTypeDef.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/SchemaMapTypeDef.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/SchemaMemberDecl.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/SchemaMultiTypeDef.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/SchemaNamespaceDecl.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/SchemaNamespaceName.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/SchemaPrimitiveKind.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/SchemaPrimitiveTypeDef.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/SchemaRecordTypeDef.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/SchemaTagDecl.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/SchemaTypeDefs.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/SchemaTypeRef.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/SchemaUnionTypeDef.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/SchemaVisitor.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/impl/SchemaAnonListImpl.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/impl/SchemaAnonMapImpl.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/impl/SchemaCustomParamImpl.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/impl/SchemaDefaultOverrideImpl.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/impl/SchemaEnumMemberImpl.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/impl/SchemaEnumTypeDefImpl.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/impl/SchemaExtendsDeclImpl.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/impl/SchemaFieldDeclImpl.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/impl/SchemaFqnImpl.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/impl/SchemaListTypeDefImpl.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/impl/SchemaMapTypeDefImpl.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/impl/SchemaMemberDeclImpl.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/impl/SchemaMultiTypeDefImpl.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/impl/SchemaNamespaceDeclImpl.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/impl/SchemaNamespaceNameImpl.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/impl/SchemaPrimitiveKindImpl.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/impl/SchemaPrimitiveTypeDefImpl.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/impl/SchemaRecordTypeDefImpl.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/impl/SchemaTagDeclImpl.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/impl/SchemaTypeDefsImpl.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/impl/SchemaTypeRefImpl.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/impl/SchemaUnionTypeDefImpl.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/lexer/SchemaFlexAdapter.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/lexer/SchemaLexer.flex" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/lexer/SchemaLexer.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/parser/SchemaParserDefinition.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/psi/SchemaFile.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/stubs/SchemaFileStub.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/stubs/types/SchemaFileStubElementType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/test/com/sumologic/dohyo/plugin/schema/lexer/LexerTest.java" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/lexer/SchemaTokenTypesOld.java" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/schema-editor/com/sumologic/dohyo/plugin/schema/SchemaLanguage.class" afterPath="$PROJECT_DIR$/out/production/schema-editor/com/sumologic/dohyo/plugin/schema/SchemaLanguage.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/atlassian-ide-plugin.xml" afterPath="$PROJECT_DIR$/.idea/atlassian-ide-plugin.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/schema-editor/META-INF/plugin.xml" afterPath="$PROJECT_DIR$/out/production/schema-editor/META-INF/plugin.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/resources/META-INF/plugin.xml" afterPath="$PROJECT_DIR$/resources/META-INF/plugin.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/schema-editor.iml" afterPath="$PROJECT_DIR$/schema-editor.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/grammar/schema.bnf" afterPath="$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/grammar/schema.bnf" />
     </list>
     <ignored path="schema-editor.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -42,68 +88,108 @@
     <favorites_list name="schema-editor" />
   </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="SchemaFileTypeFactory.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/SchemaFileTypeFactory.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="180">
-              <caret line="11" column="13" selection-start-line="11" selection-start-column="13" selection-end-line="11" selection-end-column="13" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="SchemaLanguage.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/SchemaLanguage.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="380">
-              <caret line="21" column="12" selection-start-line="21" selection-start-column="12" selection-end-line="21" selection-end-column="12" />
-              <folding>
-                <element signature="e#532#533#0" expanded="true" />
-                <element signature="e#553#554#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="schema.bnf" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/grammar/schema.bnf">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2500">
-              <caret line="125" column="41" selection-start-line="125" selection-start-column="41" selection-end-line="125" selection-end-column="41" />
-              <folding>
-                <element signature="e#0#1513#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="SchemaFileType.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/SchemaFileType.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="280">
-              <caret line="20" column="20" selection-start-line="20" selection-start-column="20" selection-end-line="20" selection-end-column="20" />
-              <folding>
-                <element signature="e#592#593#0" expanded="true" />
-                <element signature="e#640#641#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="SchemaElementType.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/lexer/SchemaElementType.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="240">
-              <caret line="12" column="27" selection-start-line="12" selection-start-column="27" selection-end-line="12" selection-end-column="27" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
+    <splitter split-orientation="horizontal" split-proportion="0.59299064">
+      <split-first>
+        <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+          <file leaf-file-name="SchemaElementTypes.java" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/lexer/SchemaElementTypes.java">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="0">
+                  <caret line="8" column="17" selection-start-line="8" selection-start-column="17" selection-end-line="8" selection-end-column="17" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="SchemaParserDefinition.java" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/parser/SchemaParserDefinition.java">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="0">
+                  <caret line="5" column="0" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
+                  <folding>
+                    <element signature="e#1402#1403#0" expanded="true" />
+                    <element signature="e#1459#1460#0" expanded="true" />
+                    <element signature="e#1523#1524#0" expanded="true" />
+                    <element signature="e#1558#1559#0" expanded="true" />
+                    <element signature="e#1617#1618#0" expanded="true" />
+                    <element signature="e#1668#1669#0" expanded="true" />
+                    <element signature="e#1734#1735#0" expanded="true" />
+                    <element signature="e#1762#1763#0" expanded="true" />
+                    <element signature="e#1825#1826#0" expanded="true" />
+                    <element signature="e#1850#1851#0" expanded="true" />
+                    <element signature="e#1921#1922#0" expanded="true" />
+                    <element signature="e#1945#1946#0" expanded="true" />
+                    <element signature="e#2156#2157#0" expanded="true" />
+                    <element signature="e#2201#2202#0" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="schema.bnf" pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/grammar/schema.bnf">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="560">
+                  <caret line="28" column="22" selection-start-line="28" selection-start-column="22" selection-end-line="28" selection-end-column="22" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="SchemaFileType.java" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/SchemaFileType.java">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="0">
+                  <caret line="20" column="20" selection-start-line="20" selection-start-column="20" selection-end-line="20" selection-end-column="20" />
+                  <folding>
+                    <element signature="e#592#593#0" expanded="true" />
+                    <element signature="e#640#641#0" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="plugin.xml" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/resources/META-INF/plugin.xml">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="580">
+                  <caret line="29" column="131" selection-start-line="29" selection-start-column="131" selection-end-line="29" selection-end-column="131" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="SchemaFileStubElementType.java" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/stubs/types/SchemaFileStubElementType.java">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="380">
+                  <caret line="19" column="29" selection-start-line="19" selection-start-column="29" selection-end-line="19" selection-end-column="29" />
+                  <folding>
+                    <element signature="imports" expanded="true" />
+                    <element signature="e#582#583#0" expanded="true" />
+                    <element signature="e#630#631#0" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+        </leaf>
+      </split-first>
+      <split-second>
+        <leaf>
+          <file leaf-file-name="schema.bnf.preview" pinned="false" current-in-tab="true">
+            <entry file="mock:///schema.bnf.preview">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="100">
+                  <caret line="5" column="0" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+        </leaf>
+      </split-second>
+    </splitter>
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -116,14 +202,16 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/test/com/sumologic/dohyo/plugin/schema/lexer/LexerTest.java" root0="SKIP_INSPECTION" />
+    <setting file="mock:///schema.bnf.preview" root0="SKIP_HIGHLIGHTING" />
+  </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/SchemaFileTypeFactory.java" />
-        <option value="$PROJECT_DIR$/resources/META-INF/plugin.xml" />
         <option value="$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/SchemaFileType.java" />
         <option value="$PROJECT_DIR$/src/com/sumologic/dohyo/schema/lexer/schema.flex" />
-        <option value="$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/SchemaLanguage.java" />
         <option value="$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/test.s" />
         <option value="$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/lexer/schema2" />
         <option value="$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/lexer/ddd.yaml" />
@@ -134,15 +222,28 @@
         <option value="$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/lexer/SchemaElementTypeOld.java" />
         <option value="$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/lexer/SchemaTokenType.java" />
         <option value="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/lexer/SchemaElementTypes.java" />
-        <option value="$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/lexer/_SchemaLexer.flex" />
         <option value="$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/grammar/test.bnf" />
         <option value="$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/grammar/_TestLexer.flex" />
         <option value="/test.bnf.preview" />
         <option value="/test2.bnf.preview" />
         <option value="$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/grammar/test2.bnf" />
         <option value="$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/lexer/aaa.yaml" />
-        <option value="$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/grammar/_SchemaLexer.flex" />
         <option value="$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/lexer/schema.flex" />
+        <option value="$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/SchemaLanguage.java" />
+        <option value="$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/lexer/_SchemaLexer.flex" />
+        <option value="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/parser/SchemaParser.java" />
+        <option value="$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/grammar/SchemaLexer.flex" />
+        <option value="$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/lexer/SchemaLexer2.flex" />
+        <option value="$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/grammar/_SchemaLexer.flex" />
+        <option value="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/parser/SchemaParserDefinition.java" />
+        <option value="$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/lexer/SchemaLexer.flex" />
+        <option value="$PROJECT_DIR$/test/com/sumologic/dohyo/plugin/schema/lexer/LexerTest.java" />
+        <option value="$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/lexer/SchemaFlexAdapter.java" />
+        <option value="$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/stubs/SchemaFileStub.java" />
+        <option value="$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/stubs/types/SchemaFileStubElementType.java" />
+        <option value="$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/psi/SchemaFile.java" />
+        <option value="$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/parser/SchemaParserDefinition.java" />
+        <option value="$PROJECT_DIR$/resources/META-INF/plugin.xml" />
         <option value="$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/grammar/schema.bnf" />
         <option value="/schema.bnf.preview" />
       </list>
@@ -207,6 +308,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -235,79 +337,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="com" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="sumologic" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="dohyo" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="plugin" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="schema" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="schema-editor" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="schema-editor" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="com" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="sumologic" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="dohyo" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="plugin" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="schema" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="psi" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="schema-editor" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="schema-editor" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
+              <option name="myItemId" value="test" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
@@ -368,40 +398,118 @@
               <option name="myItemId" value="schema" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
+          </PATH>
+          <PATH>
             <PATH_ELEMENT>
-              <option name="myItemId" value="grammar" />
+              <option name="myItemId" value="schema-editor" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="schema-editor" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="resources" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="META-INF" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="schema-editor" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="schema-editor" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="gen" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="com" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="sumologic" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="dohyo" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="plugin" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="schema" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
         </subPane>
       </pane>
-      <pane id="PackagesPane" />
-      <pane id="Scratches" />
       <pane id="Scope" />
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
     <property name="settings.editor.splitter.proportion" value="0.2" />
-    <property name="project.structure.last.edited" value="Project" />
+    <property name="project.structure.last.edited" value="Libraries" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/grammar" />
+    <property name="last.edited.regexp" value="K" />
   </component>
   <component name="PsiViewer.ProjectComponent">
     <option name="HIGHLIGHT" value="false" />
     <option name="FILTER_WHITESPACE" value="true" />
-    <option name="SHOW_PROPERTIES" value="false" />
-    <option name="SPLIT_DIVIDER_POSITION" value="300" />
+    <option name="SHOW_PROPERTIES" value="true" />
+    <option name="SPLIT_DIVIDER_POSITION" value="423" />
     <option name="AUTOSCROLL_TO_SOURCE" value="true" />
     <option name="AUTOSCROLL_FROM_SOURCE" value="true" />
   </component>
   <component name="RecentsManager">
+    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="com.sumologic.dohyo.plugin.schema.parser" />
+    </key>
     <key name="CreateClassDialog.RecentsKey">
       <recent name="generated" />
     </key>
   </component>
   <component name="RunManager" selected="Plugin.Plugin">
+    <configuration default="false" name="LexerTest" type="TestNG" factoryName="TestNG" temporary="true" nameIsGenerated="true">
+      <module name="schema-editor" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="SUITE_NAME" />
+      <option name="PACKAGE_NAME" value="com.sumologic.dohyo.plugin.schema.lexer" />
+      <option name="MAIN_CLASS_NAME" value="com.sumologic.dohyo.plugin.schema.lexer.LexerTest" />
+      <option name="METHOD_NAME" />
+      <option name="GROUP_NAME" />
+      <option name="TEST_OBJECT" value="CLASS" />
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
+      <option name="OUTPUT_DIRECTORY" />
+      <option name="ANNOTATION_TYPE" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="singleModule" />
+      </option>
+      <option name="USE_DEFAULT_REPORTERS" value="false" />
+      <option name="PROPERTIES_FILE" />
+      <envs />
+      <properties />
+      <listeners />
+      <method />
+    </configuration>
     <configuration default="true" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType" factoryName="Plugin">
       <module name="schema-editor" />
       <option name="VM_PARAMETERS" value="-Xmx512m -Xms256m -XX:MaxPermSize=250m -ea" />
@@ -496,6 +604,60 @@
       <envs />
       <method />
     </configuration>
+    <configuration default="true" type="TestNG" factoryName="TestNG">
+      <module name="" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="SUITE_NAME" />
+      <option name="PACKAGE_NAME" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="METHOD_NAME" />
+      <option name="GROUP_NAME" />
+      <option name="TEST_OBJECT" value="CLASS" />
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
+      <option name="OUTPUT_DIRECTORY" />
+      <option name="ANNOTATION_TYPE" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="singleModule" />
+      </option>
+      <option name="USE_DEFAULT_REPORTERS" value="false" />
+      <option name="PROPERTIES_FILE" />
+      <envs />
+      <properties />
+      <listeners />
+      <method />
+    </configuration>
+    <configuration default="true" type="TestNGTestDiscovery" factoryName="TestNG Test Discovery" changeList="All">
+      <module name="" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="SUITE_NAME" />
+      <option name="PACKAGE_NAME" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="METHOD_NAME" />
+      <option name="GROUP_NAME" />
+      <option name="TEST_OBJECT" value="CLASS" />
+      <option name="VM_PARAMETERS" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" />
+      <option name="OUTPUT_DIRECTORY" />
+      <option name="ANNOTATION_TYPE" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="singleModule" />
+      </option>
+      <option name="USE_DEFAULT_REPORTERS" value="false" />
+      <option name="PROPERTIES_FILE" />
+      <envs />
+      <properties />
+      <listeners />
+      <method />
+    </configuration>
     <configuration default="true" type="uTestRunConfiguration" factoryName="utest">
       <module name="" />
       <setting name="path" value="" />
@@ -516,16 +678,16 @@
       <option name="PROGRAM_PARAMETERS" />
       <method />
     </configuration>
-    <list size="1">
+    <list size="2">
       <item index="0" class="java.lang.String" itemvalue="Plugin.Plugin" />
+      <item index="1" class="java.lang.String" itemvalue="TestNG.LexerTest" />
     </list>
+    <recent_temporary>
+      <list size="1">
+        <item index="0" class="java.lang.String" itemvalue="TestNG.LexerTest" />
+      </list>
+    </recent_temporary>
     <configuration name="&lt;template&gt;" type="JUnit" default="true" selected="false">
-      <option name="MAIN_CLASS_NAME" />
-      <option name="VM_PARAMETERS" value="-ea" />
-      <option name="PARAMETERS" />
-      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
-    </configuration>
-    <configuration name="&lt;template&gt;" type="TestNG" default="true" selected="false">
       <option name="MAIN_CLASS_NAME" />
       <option name="VM_PARAMETERS" value="-ea" />
       <option name="PARAMETERS" />
@@ -559,35 +721,99 @@
       <option name="presentableId" value="Default" />
       <updated>1460059802649</updated>
     </task>
+    <task id="LOCAL-00001" summary="schema editor in the works.. first version of grammar stabilized">
+      <created>1460507436359</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1460507436359</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
+  </component>
+  <component name="TestHistory">
+    <history-entry file="LexerTest - 2016.04.13 at 15h 18m 33s.xml">
+      <configuration name="LexerTest" configurationId="TestNG" />
+    </history-entry>
+    <history-entry file="LexerTest - 2016.04.13 at 15h 20m 03s.xml">
+      <configuration name="LexerTest" configurationId="TestNG" />
+    </history-entry>
+    <history-entry file="LexerTest - 2016.04.13 at 15h 20m 52s.xml">
+      <configuration name="LexerTest" configurationId="TestNG" />
+    </history-entry>
+    <history-entry file="LexerTest - 2016.04.13 at 15h 22m 01s.xml">
+      <configuration name="LexerTest" configurationId="TestNG" />
+    </history-entry>
+    <history-entry file="LexerTest - 2016.04.13 at 15h 26m 03s.xml">
+      <configuration name="LexerTest" configurationId="TestNG" />
+    </history-entry>
+    <history-entry file="LexerTest - 2016.04.13 at 15h 26m 13s.xml">
+      <configuration name="LexerTest" configurationId="TestNG" />
+    </history-entry>
+    <history-entry file="LexerTest - 2016.04.13 at 16h 28m 05s.xml">
+      <configuration name="LexerTest" configurationId="TestNG" />
+    </history-entry>
+    <history-entry file="LexerTest - 2016.04.13 at 20h 57m 12s.xml">
+      <configuration name="LexerTest" configurationId="TestNG" />
+    </history-entry>
+    <history-entry file="LexerTest - 2016.04.13 at 20h 58m 17s.xml">
+      <configuration name="LexerTest" configurationId="TestNG" />
+    </history-entry>
+    <history-entry file="LexerTest - 2016.04.13 at 21h 07m 55s.xml">
+      <configuration name="LexerTest" configurationId="TestNG" />
+    </history-entry>
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="2560" height="1413" extended-state="6" />
     <editor active="false" />
     <layout>
-      <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.16997617" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Atlassian " active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32972974" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="PsiViewer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.18077983" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="PsiViewer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.18030183" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32972974" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32972974" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.19150579" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32972974" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.15011914" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24980143" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Atlassian " active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.16481334" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32895753" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24980143" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32895753" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
     </layout>
+    <layout-to-restore>
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32972974" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
+      <window_info id="PsiViewer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.18077983" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32972974" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32895753" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32972974" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.16997617" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24980143" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Atlassian " active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32895753" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.16481334" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+    </layout-to-restore>
   </component>
   <component name="Vcs.Log.UiProperties">
     <option name="RECENTLY_FILTERED_USER_GROUPS">
@@ -600,8 +826,14 @@
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
   </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="schema editor in the works.. first version of grammar stabilized" />
+    <option name="LAST_COMMIT_MESSAGE" value="schema editor in the works.. first version of grammar stabilized" />
+  </component>
   <component name="XDebuggerManager">
-    <breakpoint-manager />
+    <breakpoint-manager>
+      <option name="time" value="1" />
+    </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="atlassian-ide-plugin-workspace-issues">
@@ -626,113 +858,55 @@
     </option>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/resources/META-INF/plugin.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="160">
-          <caret line="8" column="40" selection-start-line="8" selection-start-column="40" selection-end-line="8" selection-end-column="40" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$APPLICATION_HOME_DIR$/lib/openapi.jar!/com/intellij/openapi/fileTypes/LanguageFileType.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="240">
-          <caret line="18" column="12" selection-start-line="18" selection-start-column="12" selection-end-line="18" selection-end-column="12" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../idea/platform/platform-api/src/com/intellij/openapi/fileTypes/FileTypeConsumer.java" />
-    <entry file="file://$PROJECT_DIR$/../idea/platform/core-api/src/com/intellij/openapi/fileTypes/LanguageFileType.java" />
-    <entry file="file://$PROJECT_DIR$/../idea/java/java-psi-api/src/com/intellij/psi/tree/java/IJavaElementType.java" />
-    <entry file="file://$PROJECT_DIR$/../idea/json/src/com/intellij/json/JsonTokenType.java" />
-    <entry file="file://$PROJECT_DIR$/../idea/json/src/com/intellij/json/JsonFileTypeFactory.java" />
-    <entry file="file://$PROJECT_DIR$/../idea/json/src/com/intellij/json/JsonLanguage.java" />
-    <entry file="file://$PROJECT_DIR$/../idea/platform/core-api/src/com/intellij/lang/Language.java" />
-    <entry file="file://$PROJECT_DIR$/../idea/platform/core-api/src/com/intellij/psi/tree/IElementType.java" />
-    <entry file="file://$PROJECT_DIR$/../idea/json/src/com/intellij/json/JsonElementType.java" />
-    <entry file="file://$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/lexer/schema2" />
-    <entry file="file://$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/lexer/uber.yaml" />
-    <entry file="file://$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/lexer/ddd.yaml" />
-    <entry file="file://$PROJECT_DIR$/../idea/java/java-psi-impl/src/com/intellij/psi/impl/source/tree/JavaElementType.java" />
-    <entry file="file://$PROJECT_DIR$/../idea/plugins/yaml/src/org/jetbrains/yaml/lexer/yaml.flex" />
-    <entry file="file://$PROJECT_DIR$/../idea/tools/lexer/jflex-1.4/examples/java/java.flex" />
-    <entry file="file://$PROJECT_DIR$/../idea/java/java-psi-impl/src/com/intellij/lang/java/lexer/_JavaLexer.flex" />
-    <entry file="file://$PROJECT_DIR$/../idea/platform/core-api/src/com/intellij/lang/PsiBuilder.java" />
-    <entry file="file://$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/SchemaVisitor.java" />
-    <entry file="file://$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/lexer/_SchemaLexer.flex" />
-    <entry file="file://$PROJECT_DIR$/../idea/python/src/com/jetbrains/commandInterface/commandLine/CommandLineParserUtil.java" />
-    <entry file="file://$PROJECT_DIR$/../idea/python/src/com/jetbrains/commandInterface/commandLine/CommandLineParserDefinition.java" />
-    <entry file="file://$PROJECT_DIR$/../idea/python/src/com/jetbrains/commandInterface/commandLine/command_line.bnf" />
-    <entry file="file://$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/SchemaCustomNamespace.java" />
-    <entry file="file://$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/SchemaCustomNamespaces.java" />
-    <entry file="file://$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/lexer/_SchemaLexer.java" />
     <entry file="file://$PROJECT_DIR$/gen/generated/GeneratedParser.java" />
     <entry file="file://$PROJECT_DIR$/../idea/platform/lang-impl/src/com/intellij/lang/parser/GeneratedParserUtilBase.java" />
     <entry file="file://$PROJECT_DIR$/../idea/java/java-psi-impl/src/com/intellij/psi/impl/java/stubs/JavaStubElementTypes.java" />
     <entry file="file://$PROJECT_DIR$/gen/generated/GeneratedTypes.java" />
     <entry file="file://$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/grammar/_TestLexer.flex" />
     <entry file="file://$PROJECT_DIR$/gen/generated/TestParserUtil.java" />
-    <entry file="file://$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/lexer/SchemaElementTypes.java" />
     <entry file="file://$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/grammar/_TestLexer.java" />
-    <entry file="file://$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/parser/SchemaParser.java" />
-    <entry file="file://$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/lexer/aaa.yaml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="9" column="10" selection-start-line="9" selection-start-column="10" selection-end-line="9" selection-end-column="10" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/lexer/aaa.yaml" />
     <entry file="file://$PROJECT_DIR$/../idea/json/gen/com/intellij/json/JsonElementTypes.java" />
     <entry file="file://$PROJECT_DIR$/../idea/plugins/properties/src/com/intellij/lang/properties/parsing/Properties.flex" />
     <entry file="file://$PROJECT_DIR$/../idea/python/src/com/jetbrains/python/lexer/Python.flex" />
-    <entry file="file://$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/grammar/test.bnf">
+    <entry file="file://$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/grammar/test.bnf" />
+    <entry file="file://$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/test.s" />
+    <entry file="file://$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/grammar/test2.bnf" />
+    <entry file="file://$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/lexer/schema.flex" />
+    <entry file="file://$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/SchemaLanguage.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-137">
-          <caret line="4" column="0" selection-start-line="4" selection-start-column="0" selection-end-line="4" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/test.s">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="220">
-          <caret line="11" column="12" selection-start-line="11" selection-start-column="12" selection-end-line="11" selection-end-column="12" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/grammar/test2.bnf">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="80">
-          <caret line="4" column="4" selection-start-line="4" selection-start-column="4" selection-end-line="4" selection-end-column="4" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/grammar/_SchemaLexer.flex">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="140">
-          <caret line="19" column="0" selection-start-line="19" selection-start-column="0" selection-end-line="19" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/lexer/SchemaTokenTypesOld.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="200">
-          <caret line="10" column="17" selection-start-line="10" selection-start-column="17" selection-end-line="10" selection-end-column="17" />
+        <state relative-caret-position="400">
+          <caret line="24" column="0" selection-start-line="24" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
           <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="imports" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/SchemaFileType.java">
+    <entry file="file://$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/lexer/SchemaElementTypesOld.java" />
+    <entry file="file://$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/lexer/SchemaElementTypesOld.java" />
+    <entry file="file://$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/impl/SchemaListTypeDefImpl.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="280">
-          <caret line="20" column="20" selection-start-line="20" selection-start-column="20" selection-end-line="20" selection-end-column="20" />
+        <state relative-caret-position="160">
+          <caret line="8" column="41" selection-start-line="8" selection-start-column="41" selection-end-line="8" selection-end-column="41" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/grammar/SchemaLexer.flex">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="527">
+          <caret line="35" column="0" selection-start-line="35" selection-start-column="0" selection-end-line="35" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/lexer/SchemaElementType.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="240">
+          <caret line="12" column="27" selection-start-line="12" selection-start-column="27" selection-end-line="12" selection-end-column="27" />
           <folding>
-            <element signature="e#592#593#0" expanded="true" />
-            <element signature="e#640#641#0" expanded="true" />
+            <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -745,42 +919,295 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/SchemaLanguage.java">
+    <entry file="file://$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/grammar/_SchemaLexer.flex">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="560">
+          <caret line="28" column="5" selection-start-line="28" selection-start-column="5" selection-end-line="28" selection-end-column="5" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../../idea/plugins/properties/src/com/intellij/lang/properties/parsing/idea-skeleton">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../../idea/plugins/properties/src/com/intellij/lang/properties/parsing/Properties.flex">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="920">
+          <caret line="46" column="1" selection-start-line="46" selection-start-column="1" selection-end-line="46" selection-end-column="1" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../../idea/platform/core-api/src/com/intellij/psi/tree/IFileElementType.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="380">
-          <caret line="21" column="12" selection-start-line="21" selection-start-column="12" selection-end-line="21" selection-end-column="12" />
+          <caret line="24" column="13" selection-start-line="24" selection-start-column="13" selection-end-line="24" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/lexer/SchemaLexer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="10147">
+          <caret line="628" column="19" selection-start-line="628" selection-start-column="19" selection-end-line="628" selection-end-column="19" />
           <folding>
-            <element signature="e#532#533#0" expanded="true" />
-            <element signature="e#553#554#0" expanded="true" />
+            <element signature="imports" expanded="true" />
+            <element signature="e#14257#14258#0" expanded="true" />
+            <element signature="e#14293#14294#0" expanded="true" />
+            <element signature="e#14438#14439#0" expanded="true" />
+            <element signature="e#14466#14467#0" expanded="true" />
+            <element signature="e#15061#15062#0" expanded="true" />
+            <element signature="e#15089#15090#0" expanded="true" />
+            <element signature="e#15124#15125#0" expanded="true" />
+            <element signature="e#15169#15170#0" expanded="true" />
+            <element signature="e#15880#15881#0" expanded="true" />
+            <element signature="e#15911#15912#0" expanded="true" />
+            <element signature="e#16049#16050#0" expanded="true" />
+            <element signature="e#16084#16085#0" expanded="true" />
+            <element signature="e#16202#16203#0" expanded="true" />
+            <element signature="e#16265#16266#0" expanded="true" />
+            <element signature="e#16821#16822#0" expanded="true" />
+            <element signature="e#16861#16862#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../../idea/platform/core-api/src/com/intellij/lang/PsiBuilder.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="422">
+          <caret line="60" column="15" selection-start-line="60" selection-start-column="15" selection-end-line="60" selection-end-column="15" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../../idea/platform/lang-impl/src/com/intellij/lang/parser/GeneratedParserUtilBase.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="223" column="40" selection-start-line="223" selection-start-column="40" selection-end-line="223" selection-end-column="40" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../../idea/platform/core-api/src/com/intellij/lexer/FlexLexer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="27" column="6" selection-start-line="27" selection-start-column="6" selection-end-line="27" selection-end-column="6" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../../idea/platform/core-api/src/com/intellij/lexer/Lexer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="26" column="22" selection-start-line="26" selection-start-column="22" selection-end-line="26" selection-end-column="22" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../../idea/platform/editor-ui-api/src/com/intellij/openapi/fileTypes/SyntaxHighlighter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="48" column="5" selection-start-line="48" selection-start-column="5" selection-end-line="48" selection-end-column="5" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../../idea/platform/editor-ui-api/src/com/intellij/openapi/fileTypes/SyntaxHighlighterBase.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="380">
+          <caret line="26" column="60" selection-start-line="26" selection-start-column="60" selection-end-line="26" selection-end-column="60" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/parser/SchemaParser.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2533">
+          <caret line="290" column="15" selection-start-line="290" selection-start-column="15" selection-end-line="290" selection-end-column="15" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/com/sumologic/dohyo/plugin/schema/lexer/LexerTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="377">
+          <caret line="47" column="26" selection-start-line="47" selection-start-column="26" selection-end-line="47" selection-end-column="26" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../../idea/platform/core-api/src/com/intellij/psi/impl/ElementBase.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="238">
+          <caret line="85" column="14" selection-start-line="85" selection-start-column="14" selection-end-line="85" selection-end-column="14" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../../idea/platform/core-impl/src/com/intellij/psi/impl/source/PsiFileImpl.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="256">
+          <caret line="972" column="36" selection-start-line="972" selection-start-column="36" selection-end-line="972" selection-end-column="36" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../../idea/platform/core-impl/src/com/intellij/extapi/psi/PsiFileBase.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="51">
+          <caret line="33" column="48" selection-start-line="33" selection-start-column="48" selection-end-line="33" selection-end-column="48" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/stubs/SchemaFileStub.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="11" column="9" selection-start-line="11" selection-start-column="9" selection-end-line="11" selection-end-column="9" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#365#366#0" expanded="true" />
+            <element signature="e#386#387#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/psi/SchemaFile.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="18" column="7" selection-start-line="18" selection-start-column="7" selection-end-line="18" selection-end-column="7" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../../idea/platform/core-api/src/com/intellij/lang/ParserDefinition.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="127" column="20" selection-start-line="127" selection-start-column="20" selection-end-line="127" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/lexer/SchemaElementTypes.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="8" column="17" selection-start-line="8" selection-start-column="17" selection-end-line="8" selection-end-column="17" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/parser/SchemaParserDefinition.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="5" column="0" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
+          <folding>
+            <element signature="e#1402#1403#0" expanded="true" />
+            <element signature="e#1459#1460#0" expanded="true" />
+            <element signature="e#1523#1524#0" expanded="true" />
+            <element signature="e#1558#1559#0" expanded="true" />
+            <element signature="e#1617#1618#0" expanded="true" />
+            <element signature="e#1668#1669#0" expanded="true" />
+            <element signature="e#1734#1735#0" expanded="true" />
+            <element signature="e#1762#1763#0" expanded="true" />
+            <element signature="e#1825#1826#0" expanded="true" />
+            <element signature="e#1850#1851#0" expanded="true" />
+            <element signature="e#1921#1922#0" expanded="true" />
+            <element signature="e#1945#1946#0" expanded="true" />
+            <element signature="e#2156#2157#0" expanded="true" />
+            <element signature="e#2201#2202#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/schema-editor.iml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="11" column="19" selection-start-line="11" selection-start-column="19" selection-end-line="11" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/SchemaFileType.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="20" column="20" selection-start-line="20" selection-start-column="20" selection-end-line="20" selection-end-column="20" />
+          <folding>
+            <element signature="e#592#593#0" expanded="true" />
+            <element signature="e#640#641#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/lexer/SchemaFlexAdapter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="680">
+          <caret line="40" column="17" selection-start-line="40" selection-start-column="17" selection-end-line="40" selection-end-column="17" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/lexer/SchemaLexer.flex">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="679">
+          <caret line="57" column="29" selection-start-line="57" selection-start-column="29" selection-end-line="57" selection-end-column="29" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../../idea/platform/core-api/src/com/intellij/lexer/FlexAdapter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="220">
+          <caret line="42" column="101" selection-start-line="42" selection-start-column="101" selection-end-line="42" selection-end-column="101" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1011#1012#0" expanded="true" />
+            <element signature="e#1034#1035#0" expanded="true" />
+            <element signature="e#1066#1067#0" expanded="true" />
+            <element signature="e#1089#1090#0" expanded="true" />
+            <element signature="e#2016#2017#0" expanded="true" />
+            <element signature="e#2039#2040#0" expanded="true" />
+            <element signature="e#2082#2083#0" expanded="true" />
+            <element signature="e#2104#2105#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/stubs/types/SchemaFileStubElementType.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="380">
+          <caret line="19" column="29" selection-start-line="19" selection-start-column="29" selection-end-line="19" selection-end-column="29" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#582#583#0" expanded="true" />
+            <element signature="e#630#631#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/META-INF/plugin.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="580">
+          <caret line="29" column="131" selection-start-line="29" selection-start-column="131" selection-end-line="29" selection-end-column="131" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/grammar/schema.bnf">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2500">
-          <caret line="125" column="41" selection-start-line="125" selection-start-column="41" selection-end-line="125" selection-end-column="41" />
-          <folding>
-            <element signature="e#0#1513#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/lexer/schema.flex">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="580">
-          <caret line="29" column="8" selection-start-line="29" selection-start-column="8" selection-end-line="29" selection-end-column="8" />
+        <state relative-caret-position="560">
+          <caret line="28" column="22" selection-start-line="28" selection-start-column="22" selection-end-line="28" selection-end-column="22" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/lexer/SchemaElementType.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="240">
-          <caret line="12" column="27" selection-start-line="12" selection-start-column="27" selection-end-line="12" selection-end-column="27" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -862,6 +1289,7 @@
       </state>
       <state key="ProjectLibrariesConfigurable.UI">
         <settings>
+          <last-edited>testng</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>

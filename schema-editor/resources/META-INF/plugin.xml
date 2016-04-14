@@ -27,6 +27,7 @@
   <extensions defaultExtensionNs="com.intellij">
     <!-- Add your extensions here -->
     <fileTypeFactory implementation="com.sumologic.dohyo.plugin.schema.SchemaFileTypeFactory"/>
+    <lang.parserDefinition language="schema" implementationClass="com.sumologic.dohyo.plugin.schema.parser.SchemaParserDefinition"/>
   </extensions>
 
   <actions>

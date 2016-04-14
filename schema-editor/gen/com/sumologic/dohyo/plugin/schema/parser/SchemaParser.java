@@ -1,0 +1,1212 @@
+// This is a generated file. Not intended for manual editing.
+package com.sumologic.dohyo.plugin.schema.parser;
+
+import com.intellij.lang.PsiBuilder;
+import com.intellij.lang.PsiBuilder.Marker;
+import static com.sumologic.dohyo.plugin.schema.lexer.SchemaElementTypes.*;
+import static com.intellij.lang.parser.GeneratedParserUtilBase.*;
+import com.intellij.psi.tree.IElementType;
+import com.intellij.lang.ASTNode;
+import com.intellij.psi.tree.TokenSet;
+import com.intellij.lang.PsiParser;
+import com.intellij.lang.LightPsiParser;
+
+@SuppressWarnings({"SimplifiableIfStatement", "UnusedAssignment"})
+public class SchemaParser implements PsiParser, LightPsiParser {
+
+  public ASTNode parse(IElementType t, PsiBuilder b) {
+    parseLight(t, b);
+    return b.getTreeBuilt();
+  }
+
+  public void parseLight(IElementType t, PsiBuilder b) {
+    boolean r;
+    b = adapt_builder_(t, b, this, null);
+    Marker m = enter_section_(b, 0, _COLLAPSE_, null);
+    if (t == S_ANON_LIST) {
+      r = anonList(b, 0);
+    }
+    else if (t == S_ANON_MAP) {
+      r = anonMap(b, 0);
+    }
+    else if (t == S_CUSTOM_PARAM) {
+      r = customParam(b, 0);
+    }
+    else if (t == S_DEFAULT_OVERRIDE) {
+      r = defaultOverride(b, 0);
+    }
+    else if (t == S_ENUM_MEMBER) {
+      r = enumMember(b, 0);
+    }
+    else if (t == S_ENUM_TYPE_DEF) {
+      r = enumTypeDef(b, 0);
+    }
+    else if (t == S_EXTENDS_DECL) {
+      r = extendsDecl(b, 0);
+    }
+    else if (t == S_FIELD_DECL) {
+      r = fieldDecl(b, 0);
+    }
+    else if (t == S_FQN) {
+      r = fqn(b, 0);
+    }
+    else if (t == S_LIST_TYPE_DEF) {
+      r = listTypeDef(b, 0);
+    }
+    else if (t == S_MAP_TYPE_DEF) {
+      r = mapTypeDef(b, 0);
+    }
+    else if (t == S_MEMBER_DECL) {
+      r = memberDecl(b, 0);
+    }
+    else if (t == S_MULTI_TYPE_DEF) {
+      r = multiTypeDef(b, 0);
+    }
+    else if (t == S_NAMESPACE_DECL) {
+      r = namespaceDecl(b, 0);
+    }
+    else if (t == S_NAMESPACE_NAME) {
+      r = namespaceName(b, 0);
+    }
+    else if (t == S_PRIMITIVE_KIND) {
+      r = primitiveKind(b, 0);
+    }
+    else if (t == S_PRIMITIVE_TYPE_DEF) {
+      r = primitiveTypeDef(b, 0);
+    }
+    else if (t == S_RECORD_TYPE_DEF) {
+      r = recordTypeDef(b, 0);
+    }
+    else if (t == S_TAG_DECL) {
+      r = tagDecl(b, 0);
+    }
+    else if (t == S_TYPE_DEFS) {
+      r = typeDefs(b, 0);
+    }
+    else if (t == S_TYPE_REF) {
+      r = typeRef(b, 0);
+    }
+    else if (t == S_UNION_TYPE_DEF) {
+      r = unionTypeDef(b, 0);
+    }
+    else {
+      r = parse_root_(t, b, 0);
+    }
+    exit_section_(b, 0, m, t, r, true, TRUE_CONDITION);
+  }
+
+  protected boolean parse_root_(IElementType t, PsiBuilder b, int l) {
+    return root(b, l + 1);
+  }
+
+  /* ********************************************************** */
+  // 'list' '[' typeRef defaultOverride? ']'
+  public static boolean anonList(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "anonList")) return false;
+    if (!nextTokenIs(b, S_LIST)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, S_LIST);
+    r = r && consumeToken(b, S_BRACKET_LEFT);
+    r = r && typeRef(b, l + 1);
+    r = r && anonList_3(b, l + 1);
+    r = r && consumeToken(b, S_BRACKET_RIGHT);
+    exit_section_(b, m, S_ANON_LIST, r);
+    return r;
+  }
+
+  // defaultOverride?
+  private static boolean anonList_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "anonList_3")) return false;
+    defaultOverride(b, l + 1);
+    return true;
+  }
+
+  /* ********************************************************** */
+  // 'map' '[' typeRef ',' typeRef defaultOverride? ']'
+  public static boolean anonMap(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "anonMap")) return false;
+    if (!nextTokenIs(b, S_MAP)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, S_MAP);
+    r = r && consumeToken(b, S_BRACKET_LEFT);
+    r = r && typeRef(b, l + 1);
+    r = r && consumeToken(b, S_COMMA);
+    r = r && typeRef(b, l + 1);
+    r = r && anonMap_5(b, l + 1);
+    r = r && consumeToken(b, S_BRACKET_RIGHT);
+    exit_section_(b, m, S_ANON_MAP, r);
+    return r;
+  }
+
+  // defaultOverride?
+  private static boolean anonMap_5(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "anonMap_5")) return false;
+    defaultOverride(b, l + 1);
+    return true;
+  }
+
+  /* ********************************************************** */
+  // ! ( '}' )
+  static boolean bodyRecover(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "bodyRecover")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NOT_);
+    r = !bodyRecover_0(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // ( '}' )
+  private static boolean bodyRecover_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "bodyRecover_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, S_CURLY_RIGHT);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // id '=' string
+  public static boolean customParam(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "customParam")) return false;
+    if (!nextTokenIs(b, S_ID)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, S_CUSTOM_PARAM, null);
+    r = consumeToken(b, S_ID);
+    p = r; // pin = 1
+    r = r && report_error_(b, consumeToken(b, S_EQ));
+    r = p && consumeToken(b, S_STRING) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  /* ********************************************************** */
+  // 'default' id
+  public static boolean defaultOverride(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "defaultOverride")) return false;
+    if (!nextTokenIs(b, S_DEFAULT)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, S_DEFAULT);
+    r = r && consumeToken(b, S_ID);
+    exit_section_(b, m, S_DEFAULT_OVERRIDE, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // id enumMemberBody?
+  public static boolean enumMember(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "enumMember")) return false;
+    if (!nextTokenIs(b, S_ID)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, S_ENUM_MEMBER, null);
+    r = consumeToken(b, S_ID);
+    p = r; // pin = 1
+    r = r && enumMember_1(b, l + 1);
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // enumMemberBody?
+  private static boolean enumMember_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "enumMember_1")) return false;
+    enumMemberBody(b, l + 1);
+    return true;
+  }
+
+  /* ********************************************************** */
+  // '{' enumMemberBodyPart* '}'
+  static boolean enumMemberBody(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "enumMemberBody")) return false;
+    if (!nextTokenIs(b, S_CURLY_LEFT)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_);
+    r = consumeToken(b, S_CURLY_LEFT);
+    p = r; // pin = 1
+    r = r && report_error_(b, enumMemberBody_1(b, l + 1));
+    r = p && consumeToken(b, S_CURLY_RIGHT) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // enumMemberBodyPart*
+  private static boolean enumMemberBody_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "enumMemberBody_1")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!enumMemberBodyPart(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "enumMemberBody_1", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
+  /* ********************************************************** */
+  // customParam
+  static boolean enumMemberBodyPart(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "enumMemberBodyPart")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_);
+    r = customParam(b, l + 1);
+    exit_section_(b, l, m, r, false, partRecover_parser_);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // '{' enumTypeBodyPart* '}'
+  static boolean enumTypeBody(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "enumTypeBody")) return false;
+    if (!nextTokenIs(b, S_CURLY_LEFT)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_);
+    r = consumeToken(b, S_CURLY_LEFT);
+    p = r; // pin = 1
+    r = r && report_error_(b, enumTypeBody_1(b, l + 1));
+    r = p && consumeToken(b, S_CURLY_RIGHT) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // enumTypeBodyPart*
+  private static boolean enumTypeBody_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "enumTypeBody_1")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!enumTypeBodyPart(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "enumTypeBody_1", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
+  /* ********************************************************** */
+  // customParam | enumMember
+  static boolean enumTypeBodyPart(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "enumTypeBodyPart")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_);
+    r = customParam(b, l + 1);
+    if (!r) r = enumMember(b, l + 1);
+    exit_section_(b, l, m, r, false, partRecover_parser_);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // 'enum' typeName enumTypeBody
+  public static boolean enumTypeDef(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "enumTypeDef")) return false;
+    if (!nextTokenIs(b, S_ENUM)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, S_ENUM);
+    r = r && typeName(b, l + 1);
+    r = r && enumTypeBody(b, l + 1);
+    exit_section_(b, m, S_ENUM_TYPE_DEF, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // 'extends' typeRef (',' typeRef)*
+  public static boolean extendsDecl(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "extendsDecl")) return false;
+    if (!nextTokenIs(b, S_EXTENDS)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, S_EXTENDS);
+    r = r && typeRef(b, l + 1);
+    r = r && extendsDecl_2(b, l + 1);
+    exit_section_(b, m, S_EXTENDS_DECL, r);
+    return r;
+  }
+
+  // (',' typeRef)*
+  private static boolean extendsDecl_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "extendsDecl_2")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!extendsDecl_2_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "extendsDecl_2", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
+  // ',' typeRef
+  private static boolean extendsDecl_2_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "extendsDecl_2_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, S_COMMA);
+    r = r && typeRef(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // '{' fieldBodyPart* '}'
+  static boolean fieldBody(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "fieldBody")) return false;
+    if (!nextTokenIs(b, S_CURLY_LEFT)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_);
+    r = consumeToken(b, S_CURLY_LEFT);
+    p = r; // pin = 1
+    r = r && report_error_(b, fieldBody_1(b, l + 1));
+    r = p && consumeToken(b, S_CURLY_RIGHT) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // fieldBodyPart*
+  private static boolean fieldBody_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "fieldBody_1")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!fieldBodyPart(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "fieldBody_1", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
+  /* ********************************************************** */
+  // customParam
+  static boolean fieldBodyPart(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "fieldBodyPart")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_);
+    r = customParam(b, l + 1);
+    exit_section_(b, l, m, r, false, partRecover_parser_);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // id ':' typeRef defaultOverride? fieldBody?
+  public static boolean fieldDecl(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "fieldDecl")) return false;
+    if (!nextTokenIs(b, S_ID)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, S_FIELD_DECL, null);
+    r = consumeToken(b, S_ID);
+    r = r && consumeToken(b, S_COLON);
+    p = r; // pin = 2
+    r = r && report_error_(b, typeRef(b, l + 1));
+    r = p && report_error_(b, fieldDecl_3(b, l + 1)) && r;
+    r = p && fieldDecl_4(b, l + 1) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // defaultOverride?
+  private static boolean fieldDecl_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "fieldDecl_3")) return false;
+    defaultOverride(b, l + 1);
+    return true;
+  }
+
+  // fieldBody?
+  private static boolean fieldDecl_4(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "fieldDecl_4")) return false;
+    fieldBody(b, l + 1);
+    return true;
+  }
+
+  /* ********************************************************** */
+  // namespaceName '.' typeName
+  public static boolean fqn(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "fqn")) return false;
+    if (!nextTokenIs(b, S_ID)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = namespaceName(b, l + 1);
+    r = r && consumeToken(b, S_DOT);
+    r = r && typeName(b, l + 1);
+    exit_section_(b, m, S_FQN, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // '{' listTypeBodyPart* '}'
+  static boolean listTypeBody(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "listTypeBody")) return false;
+    if (!nextTokenIs(b, S_CURLY_LEFT)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_);
+    r = consumeToken(b, S_CURLY_LEFT);
+    p = r; // pin = 1
+    r = r && report_error_(b, listTypeBody_1(b, l + 1));
+    r = p && consumeToken(b, S_CURLY_RIGHT) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // listTypeBodyPart*
+  private static boolean listTypeBody_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "listTypeBody_1")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!listTypeBodyPart(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "listTypeBody_1", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
+  /* ********************************************************** */
+  // customParam
+  static boolean listTypeBodyPart(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "listTypeBodyPart")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_);
+    r = customParam(b, l + 1);
+    exit_section_(b, l, m, r, false, partRecover_parser_);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // anonList typeName extendsDecl? listTypeBody?
+  public static boolean listTypeDef(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "listTypeDef")) return false;
+    if (!nextTokenIs(b, S_LIST)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = anonList(b, l + 1);
+    r = r && typeName(b, l + 1);
+    r = r && listTypeDef_2(b, l + 1);
+    r = r && listTypeDef_3(b, l + 1);
+    exit_section_(b, m, S_LIST_TYPE_DEF, r);
+    return r;
+  }
+
+  // extendsDecl?
+  private static boolean listTypeDef_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "listTypeDef_2")) return false;
+    extendsDecl(b, l + 1);
+    return true;
+  }
+
+  // listTypeBody?
+  private static boolean listTypeDef_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "listTypeDef_3")) return false;
+    listTypeBody(b, l + 1);
+    return true;
+  }
+
+  /* ********************************************************** */
+  // '{' mapTypeBodyPart* '}'
+  static boolean mapTypeBody(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "mapTypeBody")) return false;
+    if (!nextTokenIs(b, S_CURLY_LEFT)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_);
+    r = consumeToken(b, S_CURLY_LEFT);
+    p = r; // pin = 1
+    r = r && report_error_(b, mapTypeBody_1(b, l + 1));
+    r = p && consumeToken(b, S_CURLY_RIGHT) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // mapTypeBodyPart*
+  private static boolean mapTypeBody_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "mapTypeBody_1")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!mapTypeBodyPart(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "mapTypeBody_1", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
+  /* ********************************************************** */
+  // customParam
+  static boolean mapTypeBodyPart(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "mapTypeBodyPart")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_);
+    r = customParam(b, l + 1);
+    exit_section_(b, l, m, r, false, partRecover_parser_);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // anonMap typeName extendsDecl? mapTypeBody?
+  public static boolean mapTypeDef(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "mapTypeDef")) return false;
+    if (!nextTokenIs(b, S_MAP)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = anonMap(b, l + 1);
+    r = r && typeName(b, l + 1);
+    r = r && mapTypeDef_2(b, l + 1);
+    r = r && mapTypeDef_3(b, l + 1);
+    exit_section_(b, m, S_MAP_TYPE_DEF, r);
+    return r;
+  }
+
+  // extendsDecl?
+  private static boolean mapTypeDef_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "mapTypeDef_2")) return false;
+    extendsDecl(b, l + 1);
+    return true;
+  }
+
+  // mapTypeBody?
+  private static boolean mapTypeDef_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "mapTypeDef_3")) return false;
+    mapTypeBody(b, l + 1);
+    return true;
+  }
+
+  /* ********************************************************** */
+  // '{' memberBodyPart* '}'
+  static boolean memberBody(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "memberBody")) return false;
+    if (!nextTokenIs(b, S_CURLY_LEFT)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_);
+    r = consumeToken(b, S_CURLY_LEFT);
+    p = r; // pin = 1
+    r = r && report_error_(b, memberBody_1(b, l + 1));
+    r = p && consumeToken(b, S_CURLY_RIGHT) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // memberBodyPart*
+  private static boolean memberBody_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "memberBody_1")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!memberBodyPart(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "memberBody_1", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
+  /* ********************************************************** */
+  // customParam
+  static boolean memberBodyPart(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "memberBodyPart")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_);
+    r = customParam(b, l + 1);
+    exit_section_(b, l, m, r, false, partRecover_parser_);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // 'default'? id ':' typeRef memberBody?
+  public static boolean memberDecl(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "memberDecl")) return false;
+    if (!nextTokenIs(b, "<member decl>", S_DEFAULT, S_ID)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, S_MEMBER_DECL, "<member decl>");
+    r = memberDecl_0(b, l + 1);
+    r = r && consumeToken(b, S_ID);
+    r = r && consumeToken(b, S_COLON);
+    p = r; // pin = 3
+    r = r && report_error_(b, typeRef(b, l + 1));
+    r = p && memberDecl_4(b, l + 1) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // 'default'?
+  private static boolean memberDecl_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "memberDecl_0")) return false;
+    consumeToken(b, S_DEFAULT);
+    return true;
+  }
+
+  // memberBody?
+  private static boolean memberDecl_4(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "memberDecl_4")) return false;
+    memberBody(b, l + 1);
+    return true;
+  }
+
+  /* ********************************************************** */
+  // memberDecl | customParam
+  static boolean multiBodyPart(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "multiBodyPart")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_);
+    r = memberDecl(b, l + 1);
+    if (!r) r = customParam(b, l + 1);
+    exit_section_(b, l, m, r, false, partRecover_parser_);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // '{' multiBodyPart* '}'
+  static boolean multiTypeBody(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "multiTypeBody")) return false;
+    if (!nextTokenIs(b, S_CURLY_LEFT)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_);
+    r = consumeToken(b, S_CURLY_LEFT);
+    p = r; // pin = 1
+    r = r && report_error_(b, multiTypeBody_1(b, l + 1));
+    r = p && consumeToken(b, S_CURLY_RIGHT) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // multiBodyPart*
+  private static boolean multiTypeBody_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "multiTypeBody_1")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!multiBodyPart(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "multiTypeBody_1", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
+  /* ********************************************************** */
+  // 'multi' typeName extendsDecl? multiTypeBody?
+  public static boolean multiTypeDef(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "multiTypeDef")) return false;
+    if (!nextTokenIs(b, S_MULTI)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, S_MULTI);
+    r = r && typeName(b, l + 1);
+    r = r && multiTypeDef_2(b, l + 1);
+    r = r && multiTypeDef_3(b, l + 1);
+    exit_section_(b, m, S_MULTI_TYPE_DEF, r);
+    return r;
+  }
+
+  // extendsDecl?
+  private static boolean multiTypeDef_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "multiTypeDef_2")) return false;
+    extendsDecl(b, l + 1);
+    return true;
+  }
+
+  // multiTypeBody?
+  private static boolean multiTypeDef_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "multiTypeDef_3")) return false;
+    multiTypeBody(b, l + 1);
+    return true;
+  }
+
+  /* ********************************************************** */
+  // '{' namespaceBodyPart* '}'
+  static boolean namespaceBody(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "namespaceBody")) return false;
+    if (!nextTokenIs(b, S_CURLY_LEFT)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_);
+    r = consumeToken(b, S_CURLY_LEFT);
+    p = r; // pin = 1
+    r = r && report_error_(b, namespaceBody_1(b, l + 1));
+    r = p && consumeToken(b, S_CURLY_RIGHT) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // namespaceBodyPart*
+  private static boolean namespaceBody_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "namespaceBody_1")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!namespaceBodyPart(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "namespaceBody_1", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
+  /* ********************************************************** */
+  // customParam
+  static boolean namespaceBodyPart(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "namespaceBodyPart")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_);
+    r = customParam(b, l + 1);
+    exit_section_(b, l, m, r, false, partRecover_parser_);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // 'namespace' namespaceName namespaceBody?
+  public static boolean namespaceDecl(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "namespaceDecl")) return false;
+    if (!nextTokenIs(b, S_NAMESPACE)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, S_NAMESPACE_DECL, null);
+    r = consumeToken(b, S_NAMESPACE);
+    p = r; // pin = 1
+    r = r && report_error_(b, namespaceName(b, l + 1));
+    r = p && namespaceDecl_2(b, l + 1) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // namespaceBody?
+  private static boolean namespaceDecl_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "namespaceDecl_2")) return false;
+    namespaceBody(b, l + 1);
+    return true;
+  }
+
+  /* ********************************************************** */
+  // id ('.' id)*
+  public static boolean namespaceName(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "namespaceName")) return false;
+    if (!nextTokenIs(b, S_ID)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, S_ID);
+    r = r && namespaceName_1(b, l + 1);
+    exit_section_(b, m, S_NAMESPACE_NAME, r);
+    return r;
+  }
+
+  // ('.' id)*
+  private static boolean namespaceName_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "namespaceName_1")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!namespaceName_1_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "namespaceName_1", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
+  // '.' id
+  private static boolean namespaceName_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "namespaceName_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, S_DOT);
+    r = r && consumeToken(b, S_ID);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // namespaceDecl typeDefs
+  static boolean namespacedTypedefs(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "namespacedTypedefs")) return false;
+    if (!nextTokenIs(b, S_NAMESPACE)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = namespaceDecl(b, l + 1);
+    r = r && typeDefs(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // ! ('namespace')
+  static boolean namespacedTypedefsRecover(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "namespacedTypedefsRecover")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NOT_);
+    r = !namespacedTypedefsRecover_0(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // ('namespace')
+  private static boolean namespacedTypedefsRecover_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "namespacedTypedefsRecover_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, S_NAMESPACE);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // ! ('}' | id | 'default')
+  static boolean partRecover(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "partRecover")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NOT_);
+    r = !partRecover_0(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // '}' | id | 'default'
+  private static boolean partRecover_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "partRecover_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, S_CURLY_RIGHT);
+    if (!r) r = consumeToken(b, S_ID);
+    if (!r) r = consumeToken(b, S_DEFAULT);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // customParam
+  static boolean primitiveBodyPart(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "primitiveBodyPart")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_);
+    r = customParam(b, l + 1);
+    exit_section_(b, l, m, r, false, partRecover_parser_);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // 'string' | 'integer' | 'long' | 'double' | 'boolean'
+  public static boolean primitiveKind(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "primitiveKind")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, S_PRIMITIVE_KIND, "<primitive kind>");
+    r = consumeToken(b, S_STRING_T);
+    if (!r) r = consumeToken(b, S_INTEGER_T);
+    if (!r) r = consumeToken(b, S_LONG_T);
+    if (!r) r = consumeToken(b, S_DOUBLE_T);
+    if (!r) r = consumeToken(b, S_BOOLEAN_T);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // '{' primitiveBodyPart* '}'
+  static boolean primitiveTypeBody(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "primitiveTypeBody")) return false;
+    if (!nextTokenIs(b, S_CURLY_LEFT)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_);
+    r = consumeToken(b, S_CURLY_LEFT);
+    p = r; // pin = 1
+    r = r && report_error_(b, primitiveTypeBody_1(b, l + 1));
+    r = p && consumeToken(b, S_CURLY_RIGHT) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // primitiveBodyPart*
+  private static boolean primitiveTypeBody_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "primitiveTypeBody_1")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!primitiveBodyPart(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "primitiveTypeBody_1", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
+  /* ********************************************************** */
+  // primitiveKind typeName extendsDecl? primitiveTypeBody?
+  public static boolean primitiveTypeDef(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "primitiveTypeDef")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, S_PRIMITIVE_TYPE_DEF, "<primitive type def>");
+    r = primitiveKind(b, l + 1);
+    r = r && typeName(b, l + 1);
+    r = r && primitiveTypeDef_2(b, l + 1);
+    r = r && primitiveTypeDef_3(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // extendsDecl?
+  private static boolean primitiveTypeDef_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "primitiveTypeDef_2")) return false;
+    extendsDecl(b, l + 1);
+    return true;
+  }
+
+  // primitiveTypeBody?
+  private static boolean primitiveTypeDef_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "primitiveTypeDef_3")) return false;
+    primitiveTypeBody(b, l + 1);
+    return true;
+  }
+
+  /* ********************************************************** */
+  // fieldDecl | customParam
+  static boolean recordBodyPart(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "recordBodyPart")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_);
+    r = fieldDecl(b, l + 1);
+    if (!r) r = customParam(b, l + 1);
+    exit_section_(b, l, m, r, false, partRecover_parser_);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // '{' recordBodyPart* '}'
+  static boolean recordTypeBody(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "recordTypeBody")) return false;
+    if (!nextTokenIs(b, S_CURLY_LEFT)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_);
+    r = consumeToken(b, S_CURLY_LEFT);
+    p = r; // pin = 1
+    r = r && report_error_(b, recordTypeBody_1(b, l + 1));
+    r = p && consumeToken(b, S_CURLY_RIGHT) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // recordBodyPart*
+  private static boolean recordTypeBody_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "recordTypeBody_1")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!recordBodyPart(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "recordTypeBody_1", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
+  /* ********************************************************** */
+  // 'record' typeName extendsDecl? recordTypeBody?
+  public static boolean recordTypeDef(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "recordTypeDef")) return false;
+    if (!nextTokenIs(b, S_RECORD)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, S_RECORD);
+    r = r && typeName(b, l + 1);
+    r = r && recordTypeDef_2(b, l + 1);
+    r = r && recordTypeDef_3(b, l + 1);
+    exit_section_(b, m, S_RECORD_TYPE_DEF, r);
+    return r;
+  }
+
+  // extendsDecl?
+  private static boolean recordTypeDef_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "recordTypeDef_2")) return false;
+    extendsDecl(b, l + 1);
+    return true;
+  }
+
+  // recordTypeBody?
+  private static boolean recordTypeDef_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "recordTypeDef_3")) return false;
+    recordTypeBody(b, l + 1);
+    return true;
+  }
+
+  /* ********************************************************** */
+  // namespacedTypedefs*
+  static boolean root(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "root")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!namespacedTypedefs(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "root", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
+  /* ********************************************************** */
+  // '{' tagBodyPart* '}'
+  static boolean tagBody(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "tagBody")) return false;
+    if (!nextTokenIs(b, S_CURLY_LEFT)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_);
+    r = consumeToken(b, S_CURLY_LEFT);
+    p = r; // pin = 1
+    r = r && report_error_(b, tagBody_1(b, l + 1));
+    r = p && consumeToken(b, S_CURLY_RIGHT) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // tagBodyPart*
+  private static boolean tagBody_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "tagBody_1")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!tagBodyPart(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "tagBody_1", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
+  /* ********************************************************** */
+  // customParam
+  static boolean tagBodyPart(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "tagBodyPart")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_);
+    r = customParam(b, l + 1);
+    exit_section_(b, l, m, r, false, partRecover_parser_);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // id ':' typeRef defaultOverride? tagBody?
+  public static boolean tagDecl(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "tagDecl")) return false;
+    if (!nextTokenIs(b, S_ID)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, S_TAG_DECL, null);
+    r = consumeToken(b, S_ID);
+    r = r && consumeToken(b, S_COLON);
+    p = r; // pin = 2
+    r = r && report_error_(b, typeRef(b, l + 1));
+    r = p && report_error_(b, tagDecl_3(b, l + 1)) && r;
+    r = p && tagDecl_4(b, l + 1) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // defaultOverride?
+  private static boolean tagDecl_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "tagDecl_3")) return false;
+    defaultOverride(b, l + 1);
+    return true;
+  }
+
+  // tagBody?
+  private static boolean tagDecl_4(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "tagDecl_4")) return false;
+    tagBody(b, l + 1);
+    return true;
+  }
+
+  /* ********************************************************** */
+  // multiTypeDef | recordTypeDef | unionTypeDef | mapTypeDef | listTypeDef |
+  //             primitiveTypeDef | enumTypeDef
+  static boolean typeDef(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "typeDef")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = multiTypeDef(b, l + 1);
+    if (!r) r = recordTypeDef(b, l + 1);
+    if (!r) r = unionTypeDef(b, l + 1);
+    if (!r) r = mapTypeDef(b, l + 1);
+    if (!r) r = listTypeDef(b, l + 1);
+    if (!r) r = primitiveTypeDef(b, l + 1);
+    if (!r) r = enumTypeDef(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // typeDef*
+  public static boolean typeDefs(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "typeDefs")) return false;
+    Marker m = enter_section_(b, l, _NONE_, S_TYPE_DEFS, "<type defs>");
+    int c = current_position_(b);
+    while (true) {
+      if (!typeDef(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "typeDefs", c)) break;
+      c = current_position_(b);
+    }
+    exit_section_(b, l, m, true, false, null);
+    return true;
+  }
+
+  /* ********************************************************** */
+  // id
+  static boolean typeName(PsiBuilder b, int l) {
+    return consumeToken(b, S_ID);
+  }
+
+  /* ********************************************************** */
+  // typeName | fqn | anonList | anonMap
+  public static boolean typeRef(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "typeRef")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, S_TYPE_REF, "<type ref>");
+    r = typeName(b, l + 1);
+    if (!r) r = fqn(b, l + 1);
+    if (!r) r = anonList(b, l + 1);
+    if (!r) r = anonMap(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // tagDecl | customParam
+  static boolean unionBodyPart(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "unionBodyPart")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_);
+    r = tagDecl(b, l + 1);
+    if (!r) r = customParam(b, l + 1);
+    exit_section_(b, l, m, r, false, partRecover_parser_);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // '{' unionBodyPart* '}'
+  static boolean unionTypeBody(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "unionTypeBody")) return false;
+    if (!nextTokenIs(b, S_CURLY_LEFT)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_);
+    r = consumeToken(b, S_CURLY_LEFT);
+    p = r; // pin = 1
+    r = r && report_error_(b, unionTypeBody_1(b, l + 1));
+    r = p && consumeToken(b, S_CURLY_RIGHT) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // unionBodyPart*
+  private static boolean unionTypeBody_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "unionTypeBody_1")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!unionBodyPart(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "unionTypeBody_1", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
+  /* ********************************************************** */
+  // 'union' typeName extendsDecl? unionTypeBody?
+  public static boolean unionTypeDef(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "unionTypeDef")) return false;
+    if (!nextTokenIs(b, S_UNION)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, S_UNION);
+    r = r && typeName(b, l + 1);
+    r = r && unionTypeDef_2(b, l + 1);
+    r = r && unionTypeDef_3(b, l + 1);
+    exit_section_(b, m, S_UNION_TYPE_DEF, r);
+    return r;
+  }
+
+  // extendsDecl?
+  private static boolean unionTypeDef_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "unionTypeDef_2")) return false;
+    extendsDecl(b, l + 1);
+    return true;
+  }
+
+  // unionTypeBody?
+  private static boolean unionTypeDef_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "unionTypeDef_3")) return false;
+    unionTypeBody(b, l + 1);
+    return true;
+  }
+
+  final static Parser partRecover_parser_ = new Parser() {
+    public boolean parse(PsiBuilder b, int l) {
+      return partRecover(b, l + 1);
+    }
+  };
+}
