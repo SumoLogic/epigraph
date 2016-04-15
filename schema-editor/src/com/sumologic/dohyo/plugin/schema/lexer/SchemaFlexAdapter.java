@@ -1,7 +1,6 @@
 package com.sumologic.dohyo.plugin.schema.lexer;
 
 import com.intellij.lexer.FlexAdapter;
-import com.intellij.lexer.FlexLexer;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -15,6 +14,10 @@ public class SchemaFlexAdapter extends FlexAdapter {
   public SchemaFlexAdapter(SchemaLexer flex) {
     super(flex);
     this.flex = flex;
+  }
+
+  public static SchemaFlexAdapter newInstance() {
+    return new SchemaFlexAdapter(new SchemaLexer());
   }
 
   @Override
@@ -37,6 +40,7 @@ public class SchemaFlexAdapter extends FlexAdapter {
   }
 
   private int adapterState(int yyState, int curlyCount) {
+    assert yyState >= 0;
     assert yyState < 255;
     return (curlyCount << 8) | yyState;
   }

@@ -8,10 +8,9 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static com.sumologic.dohyo.plugin.schema.lexer.SchemaElementTypes.*;
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.sumologic.dohyo.plugin.schema.psi.*;
 
-public class SchemaListTypeDefImpl extends ASTWrapperPsiElement implements SchemaListTypeDef {
+public class SchemaListTypeDefImpl extends SchemaTypeDefImpl implements SchemaListTypeDef {
 
   public SchemaListTypeDefImpl(ASTNode node) {
     super(node);
@@ -33,12 +32,6 @@ public class SchemaListTypeDefImpl extends ASTWrapperPsiElement implements Schem
   }
 
   @Override
-  @NotNull
-  public List<SchemaCustomParam> getCustomParamList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaCustomParam.class);
-  }
-
-  @Override
   @Nullable
   public SchemaExtendsDecl getExtendsDecl() {
     return findChildByClass(SchemaExtendsDecl.class);
@@ -46,14 +39,8 @@ public class SchemaListTypeDefImpl extends ASTWrapperPsiElement implements Schem
 
   @Override
   @Nullable
-  public PsiElement getCurlyLeft() {
-    return findChildByType(S_CURLY_LEFT);
-  }
-
-  @Override
-  @Nullable
-  public PsiElement getCurlyRight() {
-    return findChildByType(S_CURLY_RIGHT);
+  public SchemaListTypeBody getListTypeBody() {
+    return findChildByClass(SchemaListTypeBody.class);
   }
 
   @Override

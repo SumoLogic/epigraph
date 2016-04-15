@@ -44,10 +44,4 @@ public class SchemaTypeRefImpl extends ASTWrapperPsiElement implements SchemaTyp
     return findChildByClass(SchemaFqn.class);
   }
 
-  @Override
-  @Nullable
-  public PsiElement getId() {
-    return findChildByType(S_ID);
-  }
-
 }

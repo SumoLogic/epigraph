@@ -26,22 +26,4 @@ public class SchemaFqnImpl extends ASTWrapperPsiElement implements SchemaFqn {
     else super.accept(visitor);
   }
 
-  @Override
-  @NotNull
-  public SchemaNamespaceName getNamespaceName() {
-    return findNotNullChildByClass(SchemaNamespaceName.class);
-  }
-
-  @Override
-  @NotNull
-  public PsiElement getDot() {
-    return findNotNullChildByType(S_DOT);
-  }
-
-  @Override
-  @NotNull
-  public PsiElement getId() {
-    return findNotNullChildByType(S_ID);
-  }
-
 }

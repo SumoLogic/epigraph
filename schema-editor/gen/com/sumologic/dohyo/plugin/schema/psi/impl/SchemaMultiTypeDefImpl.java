@@ -8,10 +8,9 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static com.sumologic.dohyo.plugin.schema.lexer.SchemaElementTypes.*;
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.sumologic.dohyo.plugin.schema.psi.*;
 
-public class SchemaMultiTypeDefImpl extends ASTWrapperPsiElement implements SchemaMultiTypeDef {
+public class SchemaMultiTypeDefImpl extends SchemaTypeDefImpl implements SchemaMultiTypeDef {
 
   public SchemaMultiTypeDefImpl(ASTNode node) {
     super(node);
@@ -27,33 +26,15 @@ public class SchemaMultiTypeDefImpl extends ASTWrapperPsiElement implements Sche
   }
 
   @Override
-  @NotNull
-  public List<SchemaCustomParam> getCustomParamList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaCustomParam.class);
-  }
-
-  @Override
   @Nullable
   public SchemaExtendsDecl getExtendsDecl() {
     return findChildByClass(SchemaExtendsDecl.class);
   }
 
   @Override
-  @NotNull
-  public List<SchemaMemberDecl> getMemberDeclList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaMemberDecl.class);
-  }
-
-  @Override
   @Nullable
-  public PsiElement getCurlyLeft() {
-    return findChildByType(S_CURLY_LEFT);
-  }
-
-  @Override
-  @Nullable
-  public PsiElement getCurlyRight() {
-    return findChildByType(S_CURLY_RIGHT);
+  public SchemaMultiTypeBody getMultiTypeBody() {
+    return findChildByClass(SchemaMultiTypeBody.class);
   }
 
   @Override

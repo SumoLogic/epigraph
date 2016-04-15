@@ -30,6 +30,11 @@ public class LexerTest {
         S_RECORD, S_CURLY_LEFT, S_ID, S_CURLY_RIGHT, S_RECORD);
   }
 
+  public void testBlockComment() throws IOException {
+    testInput("id /* foo */ id", S_ID, S_BLOCK_COMMENT, S_ID);
+    testInput("/* foo ", S_BLOCK_COMMENT);
+  }
+
   public void testInput1() throws IOException {
     String input = "" +
         "namespace foo.bar\n" +

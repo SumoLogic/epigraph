@@ -5,22 +5,16 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface SchemaMapTypeDef extends PsiElement {
+public interface SchemaMapTypeDef extends SchemaTypeDef {
 
   @NotNull
   SchemaAnonMap getAnonMap();
-
-  @NotNull
-  List<SchemaCustomParam> getCustomParamList();
 
   @Nullable
   SchemaExtendsDecl getExtendsDecl();
 
   @Nullable
-  PsiElement getCurlyLeft();
-
-  @Nullable
-  PsiElement getCurlyRight();
+  SchemaMapTypeBody getMapTypeBody();
 
   @NotNull
   PsiElement getId();

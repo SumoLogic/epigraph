@@ -5,18 +5,12 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface SchemaListTypeDef extends SchemaTypeDef {
+public interface SchemaNamespacedTypedefs extends PsiElement {
 
   @NotNull
-  SchemaAnonList getAnonList();
-
-  @Nullable
-  SchemaExtendsDecl getExtendsDecl();
-
-  @Nullable
-  SchemaListTypeBody getListTypeBody();
+  SchemaNamespaceDecl getNamespaceDecl();
 
   @NotNull
-  PsiElement getId();
+  List<SchemaTypeDef> getTypeDefList();
 
 }

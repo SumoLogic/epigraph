@@ -27,7 +27,16 @@
   <extensions defaultExtensionNs="com.intellij">
     <!-- Add your extensions here -->
     <fileTypeFactory implementation="com.sumologic.dohyo.plugin.schema.SchemaFileTypeFactory"/>
-    <lang.parserDefinition language="schema" implementationClass="com.sumologic.dohyo.plugin.schema.parser.SchemaParserDefinition"/>
+    <lang.syntaxHighlighterFactory language="schema"
+                                   implementationClass="com.sumologic.dohyo.plugin.schema.highlighting.SchemaSyntaxHighlighterFactory"/>
+    <lang.parserDefinition language="schema"
+                           implementationClass="com.sumologic.dohyo.plugin.schema.parser.SchemaParserDefinition"/>
+
+
+    <lang.braceMatcher language="schema"
+                       implementationClass="com.sumologic.dohyo.plugin.schema.features.SchemaBraceMatcher"/>
+    <lang.foldingBuilder language="schema"
+                         implementationClass="com.sumologic.dohyo.plugin.schema.features.SchemaFoldingBuilder"/>
   </extensions>
 
   <actions>

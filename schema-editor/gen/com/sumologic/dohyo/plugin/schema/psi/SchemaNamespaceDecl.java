@@ -11,7 +11,7 @@ public interface SchemaNamespaceDecl extends PsiElement {
   List<SchemaCustomParam> getCustomParamList();
 
   @Nullable
-  SchemaNamespaceName getNamespaceName();
+  SchemaFqn getFqn();
 
   @Nullable
   PsiElement getCurlyLeft();

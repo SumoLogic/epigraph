@@ -16,7 +16,4 @@ public interface SchemaTypeRef extends PsiElement {
   @Nullable
   SchemaFqn getFqn();
 
-  @Nullable
-  PsiElement getId();
-
 }

@@ -7,13 +7,4 @@ import com.intellij.psi.PsiElement;
 
 public interface SchemaFqn extends PsiElement {
 
-  @NotNull
-  SchemaNamespaceName getNamespaceName();
-
-  @NotNull
-  PsiElement getDot();
-
-  @NotNull
-  PsiElement getId();
-
 }

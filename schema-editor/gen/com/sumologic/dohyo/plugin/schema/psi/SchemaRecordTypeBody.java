@@ -5,18 +5,18 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface SchemaListTypeDef extends SchemaTypeDef {
+public interface SchemaRecordTypeBody extends PsiElement {
 
   @NotNull
-  SchemaAnonList getAnonList();
-
-  @Nullable
-  SchemaExtendsDecl getExtendsDecl();
-
-  @Nullable
-  SchemaListTypeBody getListTypeBody();
+  List<SchemaCustomParam> getCustomParamList();
 
   @NotNull
-  PsiElement getId();
+  List<SchemaFieldDecl> getFieldDeclList();
+
+  @NotNull
+  PsiElement getCurlyLeft();
+
+  @Nullable
+  PsiElement getCurlyRight();
 
 }

@@ -5,15 +5,18 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface SchemaEnumTypeDef extends SchemaTypeDef {
+public interface SchemaMultiTypeBody extends PsiElement {
 
   @NotNull
-  SchemaEnumTypeBody getEnumTypeBody();
+  List<SchemaCustomParam> getCustomParamList();
 
   @NotNull
-  PsiElement getEnum();
+  List<SchemaMemberDecl> getMemberDeclList();
 
   @NotNull
-  PsiElement getId();
+  PsiElement getCurlyLeft();
+
+  @Nullable
+  PsiElement getCurlyRight();
 
 }

@@ -5,6 +5,15 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface SchemaNamespaceName extends PsiElement {
+public interface SchemaPrimitiveTypeBody extends PsiElement {
+
+  @NotNull
+  List<SchemaCustomParam> getCustomParamList();
+
+  @NotNull
+  PsiElement getCurlyLeft();
+
+  @Nullable
+  PsiElement getCurlyRight();
 
 }

@@ -5,22 +5,13 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface SchemaUnionTypeDef extends PsiElement {
-
-  @NotNull
-  List<SchemaCustomParam> getCustomParamList();
+public interface SchemaUnionTypeDef extends SchemaTypeDef {
 
   @Nullable
   SchemaExtendsDecl getExtendsDecl();
 
-  @NotNull
-  List<SchemaTagDecl> getTagDeclList();
-
   @Nullable
-  PsiElement getCurlyLeft();
-
-  @Nullable
-  PsiElement getCurlyRight();
+  SchemaUnionTypeBody getUnionTypeBody();
 
   @NotNull
   PsiElement getUnion();

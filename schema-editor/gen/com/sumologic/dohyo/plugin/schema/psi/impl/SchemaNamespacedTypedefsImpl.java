@@ -8,16 +8,17 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static com.sumologic.dohyo.plugin.schema.lexer.SchemaElementTypes.*;
+import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.sumologic.dohyo.plugin.schema.psi.*;
 
-public class SchemaUnionTypeDefImpl extends SchemaTypeDefImpl implements SchemaUnionTypeDef {
+public class SchemaNamespacedTypedefsImpl extends ASTWrapperPsiElement implements SchemaNamespacedTypedefs {
 
-  public SchemaUnionTypeDefImpl(ASTNode node) {
+  public SchemaNamespacedTypedefsImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull SchemaVisitor visitor) {
-    visitor.visitUnionTypeDef(this);
+    visitor.visitNamespacedTypedefs(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -26,27 +27,15 @@ public class SchemaUnionTypeDefImpl extends SchemaTypeDefImpl implements SchemaU
   }
 
   @Override
-  @Nullable
-  public SchemaExtendsDecl getExtendsDecl() {
-    return findChildByClass(SchemaExtendsDecl.class);
-  }
-
-  @Override
-  @Nullable
-  public SchemaUnionTypeBody getUnionTypeBody() {
-    return findChildByClass(SchemaUnionTypeBody.class);
+  @NotNull
+  public SchemaNamespaceDecl getNamespaceDecl() {
+    return findNotNullChildByClass(SchemaNamespaceDecl.class);
   }
 
   @Override
   @NotNull
-  public PsiElement getUnion() {
-    return findNotNullChildByType(S_UNION);
-  }
-
-  @Override
-  @NotNull
-  public PsiElement getId() {
-    return findNotNullChildByType(S_ID);
+  public List<SchemaTypeDef> getTypeDefList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaTypeDef.class);
   }
 
 }

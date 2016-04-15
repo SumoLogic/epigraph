@@ -8,10 +8,9 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static com.sumologic.dohyo.plugin.schema.lexer.SchemaElementTypes.*;
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.sumologic.dohyo.plugin.schema.psi.*;
 
-public class SchemaPrimitiveTypeDefImpl extends ASTWrapperPsiElement implements SchemaPrimitiveTypeDef {
+public class SchemaPrimitiveTypeDefImpl extends SchemaTypeDefImpl implements SchemaPrimitiveTypeDef {
 
   public SchemaPrimitiveTypeDefImpl(ASTNode node) {
     super(node);
@@ -24,12 +23,6 @@ public class SchemaPrimitiveTypeDefImpl extends ASTWrapperPsiElement implements 
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof SchemaVisitor) accept((SchemaVisitor)visitor);
     else super.accept(visitor);
-  }
-
-  @Override
-  @NotNull
-  public List<SchemaCustomParam> getCustomParamList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaCustomParam.class);
   }
 
   @Override
@@ -46,14 +39,8 @@ public class SchemaPrimitiveTypeDefImpl extends ASTWrapperPsiElement implements 
 
   @Override
   @Nullable
-  public PsiElement getCurlyLeft() {
-    return findChildByType(S_CURLY_LEFT);
-  }
-
-  @Override
-  @Nullable
-  public PsiElement getCurlyRight() {
-    return findChildByType(S_CURLY_RIGHT);
+  public SchemaPrimitiveTypeBody getPrimitiveTypeBody() {
+    return findChildByClass(SchemaPrimitiveTypeBody.class);
   }
 
   @Override

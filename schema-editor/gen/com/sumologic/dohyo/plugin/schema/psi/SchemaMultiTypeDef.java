@@ -5,22 +5,13 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface SchemaMultiTypeDef extends PsiElement {
-
-  @NotNull
-  List<SchemaCustomParam> getCustomParamList();
+public interface SchemaMultiTypeDef extends SchemaTypeDef {
 
   @Nullable
   SchemaExtendsDecl getExtendsDecl();
 
-  @NotNull
-  List<SchemaMemberDecl> getMemberDeclList();
-
   @Nullable
-  PsiElement getCurlyLeft();
-
-  @Nullable
-  PsiElement getCurlyRight();
+  SchemaMultiTypeBody getMultiTypeBody();
 
   @NotNull
   PsiElement getMulti();

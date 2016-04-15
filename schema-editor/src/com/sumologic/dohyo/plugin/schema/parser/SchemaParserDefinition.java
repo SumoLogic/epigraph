@@ -13,7 +13,6 @@ import com.intellij.psi.tree.IFileElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.sumologic.dohyo.plugin.schema.lexer.SchemaElementTypes;
 import com.sumologic.dohyo.plugin.schema.lexer.SchemaFlexAdapter;
-import com.sumologic.dohyo.plugin.schema.lexer.SchemaLexer;
 import com.sumologic.dohyo.plugin.schema.psi.SchemaFile;
 import com.sumologic.dohyo.plugin.schema.stubs.types.SchemaFileStubElementType;
 
@@ -34,7 +33,7 @@ public class SchemaParserDefinition implements ParserDefinition {
   @NotNull
   @Override
   public Lexer createLexer(Project project) {
-    return new SchemaFlexAdapter(new SchemaLexer());
+    return SchemaFlexAdapter.newInstance();
   }
 
   @Override

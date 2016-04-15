@@ -5,10 +5,7 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface SchemaPrimitiveTypeDef extends PsiElement {
-
-  @NotNull
-  List<SchemaCustomParam> getCustomParamList();
+public interface SchemaPrimitiveTypeDef extends SchemaTypeDef {
 
   @Nullable
   SchemaExtendsDecl getExtendsDecl();
@@ -17,10 +14,7 @@ public interface SchemaPrimitiveTypeDef extends PsiElement {
   SchemaPrimitiveKind getPrimitiveKind();
 
   @Nullable
-  PsiElement getCurlyLeft();
-
-  @Nullable
-  PsiElement getCurlyRight();
+  SchemaPrimitiveTypeBody getPrimitiveTypeBody();
 
   @NotNull
   PsiElement getId();

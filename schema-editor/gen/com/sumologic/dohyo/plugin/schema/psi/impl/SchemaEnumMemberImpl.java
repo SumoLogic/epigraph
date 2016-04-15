@@ -27,21 +27,9 @@ public class SchemaEnumMemberImpl extends ASTWrapperPsiElement implements Schema
   }
 
   @Override
-  @NotNull
-  public List<SchemaCustomParam> getCustomParamList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaCustomParam.class);
-  }
-
-  @Override
   @Nullable
-  public PsiElement getCurlyLeft() {
-    return findChildByType(S_CURLY_LEFT);
-  }
-
-  @Override
-  @Nullable
-  public PsiElement getCurlyRight() {
-    return findChildByType(S_CURLY_RIGHT);
+  public SchemaEnumMemberBody getEnumMemberBody() {
+    return findChildByClass(SchemaEnumMemberBody.class);
   }
 
   @Override

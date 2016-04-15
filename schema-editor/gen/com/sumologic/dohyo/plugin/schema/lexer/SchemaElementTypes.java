@@ -13,22 +13,30 @@ public interface SchemaElementTypes {
   IElementType S_CUSTOM_PARAM = new SchemaElementType("S_CUSTOM_PARAM");
   IElementType S_DEFAULT_OVERRIDE = new SchemaElementType("S_DEFAULT_OVERRIDE");
   IElementType S_ENUM_MEMBER = new SchemaElementType("S_ENUM_MEMBER");
+  IElementType S_ENUM_MEMBER_BODY = new SchemaElementType("S_ENUM_MEMBER_BODY");
+  IElementType S_ENUM_TYPE_BODY = new SchemaElementType("S_ENUM_TYPE_BODY");
   IElementType S_ENUM_TYPE_DEF = new SchemaElementType("S_ENUM_TYPE_DEF");
   IElementType S_EXTENDS_DECL = new SchemaElementType("S_EXTENDS_DECL");
   IElementType S_FIELD_DECL = new SchemaElementType("S_FIELD_DECL");
   IElementType S_FQN = new SchemaElementType("S_FQN");
+  IElementType S_LIST_TYPE_BODY = new SchemaElementType("S_LIST_TYPE_BODY");
   IElementType S_LIST_TYPE_DEF = new SchemaElementType("S_LIST_TYPE_DEF");
+  IElementType S_MAP_TYPE_BODY = new SchemaElementType("S_MAP_TYPE_BODY");
   IElementType S_MAP_TYPE_DEF = new SchemaElementType("S_MAP_TYPE_DEF");
   IElementType S_MEMBER_DECL = new SchemaElementType("S_MEMBER_DECL");
+  IElementType S_MULTI_TYPE_BODY = new SchemaElementType("S_MULTI_TYPE_BODY");
   IElementType S_MULTI_TYPE_DEF = new SchemaElementType("S_MULTI_TYPE_DEF");
+  IElementType S_NAMESPACED_TYPEDEFS = new SchemaElementType("S_NAMESPACED_TYPEDEFS");
   IElementType S_NAMESPACE_DECL = new SchemaElementType("S_NAMESPACE_DECL");
-  IElementType S_NAMESPACE_NAME = new SchemaElementType("S_NAMESPACE_NAME");
   IElementType S_PRIMITIVE_KIND = new SchemaElementType("S_PRIMITIVE_KIND");
+  IElementType S_PRIMITIVE_TYPE_BODY = new SchemaElementType("S_PRIMITIVE_TYPE_BODY");
   IElementType S_PRIMITIVE_TYPE_DEF = new SchemaElementType("S_PRIMITIVE_TYPE_DEF");
+  IElementType S_RECORD_TYPE_BODY = new SchemaElementType("S_RECORD_TYPE_BODY");
   IElementType S_RECORD_TYPE_DEF = new SchemaElementType("S_RECORD_TYPE_DEF");
   IElementType S_TAG_DECL = new SchemaElementType("S_TAG_DECL");
-  IElementType S_TYPE_DEFS = new SchemaElementType("S_TYPE_DEFS");
+  IElementType S_TYPE_DEF = new SchemaElementType("S_TYPE_DEF");
   IElementType S_TYPE_REF = new SchemaElementType("S_TYPE_REF");
+  IElementType S_UNION_TYPE_BODY = new SchemaElementType("S_UNION_TYPE_BODY");
   IElementType S_UNION_TYPE_DEF = new SchemaElementType("S_UNION_TYPE_DEF");
 
   IElementType S_BLOCK_COMMENT = new SchemaElementType("block_comment");
@@ -76,6 +84,12 @@ public interface SchemaElementTypes {
       else if (type == S_ENUM_MEMBER) {
         return new SchemaEnumMemberImpl(node);
       }
+      else if (type == S_ENUM_MEMBER_BODY) {
+        return new SchemaEnumMemberBodyImpl(node);
+      }
+      else if (type == S_ENUM_TYPE_BODY) {
+        return new SchemaEnumTypeBodyImpl(node);
+      }
       else if (type == S_ENUM_TYPE_DEF) {
         return new SchemaEnumTypeDefImpl(node);
       }
@@ -88,8 +102,14 @@ public interface SchemaElementTypes {
       else if (type == S_FQN) {
         return new SchemaFqnImpl(node);
       }
+      else if (type == S_LIST_TYPE_BODY) {
+        return new SchemaListTypeBodyImpl(node);
+      }
       else if (type == S_LIST_TYPE_DEF) {
         return new SchemaListTypeDefImpl(node);
+      }
+      else if (type == S_MAP_TYPE_BODY) {
+        return new SchemaMapTypeBodyImpl(node);
       }
       else if (type == S_MAP_TYPE_DEF) {
         return new SchemaMapTypeDefImpl(node);
@@ -97,20 +117,29 @@ public interface SchemaElementTypes {
       else if (type == S_MEMBER_DECL) {
         return new SchemaMemberDeclImpl(node);
       }
+      else if (type == S_MULTI_TYPE_BODY) {
+        return new SchemaMultiTypeBodyImpl(node);
+      }
       else if (type == S_MULTI_TYPE_DEF) {
         return new SchemaMultiTypeDefImpl(node);
+      }
+      else if (type == S_NAMESPACED_TYPEDEFS) {
+        return new SchemaNamespacedTypedefsImpl(node);
       }
       else if (type == S_NAMESPACE_DECL) {
         return new SchemaNamespaceDeclImpl(node);
       }
-      else if (type == S_NAMESPACE_NAME) {
-        return new SchemaNamespaceNameImpl(node);
-      }
       else if (type == S_PRIMITIVE_KIND) {
         return new SchemaPrimitiveKindImpl(node);
       }
+      else if (type == S_PRIMITIVE_TYPE_BODY) {
+        return new SchemaPrimitiveTypeBodyImpl(node);
+      }
       else if (type == S_PRIMITIVE_TYPE_DEF) {
         return new SchemaPrimitiveTypeDefImpl(node);
+      }
+      else if (type == S_RECORD_TYPE_BODY) {
+        return new SchemaRecordTypeBodyImpl(node);
       }
       else if (type == S_RECORD_TYPE_DEF) {
         return new SchemaRecordTypeDefImpl(node);
@@ -118,11 +147,14 @@ public interface SchemaElementTypes {
       else if (type == S_TAG_DECL) {
         return new SchemaTagDeclImpl(node);
       }
-      else if (type == S_TYPE_DEFS) {
-        return new SchemaTypeDefsImpl(node);
+      else if (type == S_TYPE_DEF) {
+        return new SchemaTypeDefImpl(node);
       }
       else if (type == S_TYPE_REF) {
         return new SchemaTypeRefImpl(node);
+      }
+      else if (type == S_UNION_TYPE_BODY) {
+        return new SchemaUnionTypeBodyImpl(node);
       }
       else if (type == S_UNION_TYPE_DEF) {
         return new SchemaUnionTypeDefImpl(node);

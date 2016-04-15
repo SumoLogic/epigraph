@@ -34,8 +34,8 @@ public class SchemaNamespaceDeclImpl extends ASTWrapperPsiElement implements Sch
 
   @Override
   @Nullable
-  public SchemaNamespaceName getNamespaceName() {
-    return findChildByClass(SchemaNamespaceName.class);
+  public SchemaFqn getFqn() {
+    return findChildByClass(SchemaFqn.class);
   }
 
   @Override

@@ -8,10 +8,9 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static com.sumologic.dohyo.plugin.schema.lexer.SchemaElementTypes.*;
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.sumologic.dohyo.plugin.schema.psi.*;
 
-public class SchemaRecordTypeDefImpl extends ASTWrapperPsiElement implements SchemaRecordTypeDef {
+public class SchemaRecordTypeDefImpl extends SchemaTypeDefImpl implements SchemaRecordTypeDef {
 
   public SchemaRecordTypeDefImpl(ASTNode node) {
     super(node);
@@ -27,33 +26,15 @@ public class SchemaRecordTypeDefImpl extends ASTWrapperPsiElement implements Sch
   }
 
   @Override
-  @NotNull
-  public List<SchemaCustomParam> getCustomParamList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaCustomParam.class);
-  }
-
-  @Override
   @Nullable
   public SchemaExtendsDecl getExtendsDecl() {
     return findChildByClass(SchemaExtendsDecl.class);
   }
 
   @Override
-  @NotNull
-  public List<SchemaFieldDecl> getFieldDeclList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaFieldDecl.class);
-  }
-
-  @Override
   @Nullable
-  public PsiElement getCurlyLeft() {
-    return findChildByType(S_CURLY_LEFT);
-  }
-
-  @Override
-  @Nullable
-  public PsiElement getCurlyRight() {
-    return findChildByType(S_CURLY_RIGHT);
+  public SchemaRecordTypeBody getRecordTypeBody() {
+    return findChildByClass(SchemaRecordTypeBody.class);
   }
 
   @Override

@@ -23,7 +23,7 @@
     RECORD = 'record'
     EXTENDS = 'extends'
     UNION = 'union'
-    MULTI='multi'
+    MULTI='multi' // TODO rename to 'poly'?
     ENUM='enum'
 
     INTEGER_T='integer'
@@ -54,6 +54,7 @@
   //recoverWhile(".*Body") = "bodyRecover"
   recoverWhile(".*Part") = "partRecover"
 
+  extends(".*.TypeDef") = "typeDef"
 }
 
 // consider separating fields/types/decl parts by either ',' or newlines,
@@ -62,24 +63,22 @@
 
 root ::= namespacedTypedefs*
 
-private namespacedTypedefs ::= namespaceDecl typeDefs
+namespacedTypedefs ::= namespaceDecl typeDefs
 
-namespaceDecl ::= 'namespace' namespaceName namespaceBody? {pin=1 recoverWhile="namespaceRecover"}
+namespaceDecl ::= 'namespace' fqn namespaceBody? {pin=1 recoverWhile="namespaceRecover"}
 private namespaceRecover ::= ! (id | 'namespace' | 'record' | 'union' | 'map' | 'list' | 'multi' |
                                'enum' | primitiveKind)
 
-namespaceName ::= id ('.' id)*
 private namespaceBody ::= '{' namespaceBodyPart* '}'
 private namespaceBodyPart ::= customParam // | ...
 
-typeDefs ::= typeDef*
-
-private typeDef ::= multiTypeDef | recordTypeDef | unionTypeDef | mapTypeDef | listTypeDef |
-            primitiveTypeDef | enumTypeDef
-
+fqn ::= id ('.' id)*
 private typeName ::= id
-typeRef ::= typeName | fqn | anonList | anonMap {name="type"}
-fqn ::= namespaceName '.' typeName
+typeRef ::= fqn | anonList | anonMap {name="type"}
+private typeDefs ::= typeDef*
+
+typeDef ::= multiTypeDef | recordTypeDef | unionTypeDef | mapTypeDef | listTypeDef |
+            primitiveTypeDef | enumTypeDef {name="type definition"}
 
 anonList ::= 'list' '[' typeRef defaultOverride? ']' // TODO rename to `listType`? `concreteList`?
 anonMap ::= 'map' '[' typeRef ',' typeRef defaultOverride? ']' // TODO rename to `mapType`?
@@ -89,21 +88,21 @@ defaultOverride ::= 'default' id
 customParam ::= id '=' string  {pin = 1}// TODO real data parsing
 
 multiTypeDef ::= 'multi' typeName extendsDecl? multiTypeBody?
-private multiTypeBody ::= '{' multiBodyPart* '}'
+multiTypeBody ::= '{' multiBodyPart* '}'
 private multiBodyPart ::= memberDecl | customParam
 memberDecl ::= 'default'? id ':' typeRef memberBody? {pin = 3}
 private memberBody ::= '{' memberBodyPart* '}'
 private memberBodyPart ::= customParam
 
 recordTypeDef ::= 'record' typeName extendsDecl? recordTypeBody?
-private recordTypeBody ::= '{' recordBodyPart* '}'
+recordTypeBody ::= '{' recordBodyPart* '}'
 private recordBodyPart ::= fieldDecl | customParam
 fieldDecl ::= id ':' typeRef defaultOverride? fieldBody? {pin=2}
 private fieldBody ::= '{' fieldBodyPart* '}'
 private fieldBodyPart ::= customParam
 
 unionTypeDef ::= 'union' typeName extendsDecl? unionTypeBody? // TODO require body? TODO remove extends? "contravariant" extension? same for enums
-private unionTypeBody ::= '{' unionBodyPart* '}'
+unionTypeBody ::= '{' unionBodyPart* '}'
 private unionBodyPart ::= tagDecl | customParam
 tagDecl ::= id ':' typeRef defaultOverride? tagBody? {pin=2}
 private tagBody ::= '{' tagBodyPart* '}'
@@ -111,36 +110,23 @@ private tagBodyPart ::= customParam
 
 //listTypeDef2 ::= 'list' typeName extendsDecl listTypeBody? // allows inheritance from lists w/o type params
 listTypeDef ::= anonList typeName extendsDecl? listTypeBody?
-private listTypeBody ::= '{' listTypeBodyPart* '}'
+listTypeBody ::= '{' listTypeBodyPart* '}'
 private listTypeBodyPart ::= customParam
 
 mapTypeDef ::= anonMap typeName extendsDecl? mapTypeBody?
-private mapTypeBody ::= '{' mapTypeBodyPart* '}'
+mapTypeBody ::= '{' mapTypeBodyPart* '}'
 private mapTypeBodyPart ::= customParam
 
 primitiveTypeDef ::= primitiveKind typeName extendsDecl? primitiveTypeBody?
 primitiveKind ::= 'string' | 'integer' | 'long' | 'double' | 'boolean'
-private primitiveTypeBody ::= '{' primitiveBodyPart* '}'
+primitiveTypeBody ::= '{' primitiveBodyPart* '}'
 private primitiveBodyPart ::= customParam // | ...
 
 enumTypeDef ::= 'enum' typeName enumTypeBody
-private enumTypeBody ::= '{' enumTypeBodyPart* '}'
+enumTypeBody ::= '{' enumTypeBodyPart* '}'
 private enumTypeBodyPart ::= customParam | enumMember
 enumMember ::= id enumMemberBody? {pin=1}
-private enumMemberBody ::='{' enumMemberBodyPart* '}'
+enumMemberBody ::='{' enumMemberBodyPart* '}'
 private enumMemberBodyPart ::= customParam
 
-//private bodyRecover ::= ! ( '}' )
 private partRecover ::= ! ('}' | id | 'default')
-
-
-
-
-
-
-
-
-
-
-
-

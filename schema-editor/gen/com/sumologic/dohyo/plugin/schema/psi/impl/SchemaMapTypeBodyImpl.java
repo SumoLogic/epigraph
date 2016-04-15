@@ -11,19 +11,37 @@ import static com.sumologic.dohyo.plugin.schema.lexer.SchemaElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.sumologic.dohyo.plugin.schema.psi.*;
 
-public class SchemaNamespaceNameImpl extends ASTWrapperPsiElement implements SchemaNamespaceName {
+public class SchemaMapTypeBodyImpl extends ASTWrapperPsiElement implements SchemaMapTypeBody {
 
-  public SchemaNamespaceNameImpl(ASTNode node) {
+  public SchemaMapTypeBodyImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull SchemaVisitor visitor) {
-    visitor.visitNamespaceName(this);
+    visitor.visitMapTypeBody(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof SchemaVisitor) accept((SchemaVisitor)visitor);
     else super.accept(visitor);
+  }
+
+  @Override
+  @NotNull
+  public List<SchemaCustomParam> getCustomParamList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaCustomParam.class);
+  }
+
+  @Override
+  @NotNull
+  public PsiElement getCurlyLeft() {
+    return findNotNullChildByType(S_CURLY_LEFT);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getCurlyRight() {
+    return findChildByType(S_CURLY_RIGHT);
   }
 
 }
