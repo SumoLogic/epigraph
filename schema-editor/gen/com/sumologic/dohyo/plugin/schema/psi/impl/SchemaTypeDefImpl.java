@@ -8,10 +8,9 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static com.sumologic.dohyo.plugin.schema.lexer.SchemaElementTypes.*;
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.sumologic.dohyo.plugin.schema.psi.*;
 
-public class SchemaTypeDefImpl extends ASTWrapperPsiElement implements SchemaTypeDef {
+public class SchemaTypeDefImpl extends SchemaElementWithIdImpl implements SchemaTypeDef {
 
   public SchemaTypeDefImpl(ASTNode node) {
     super(node);

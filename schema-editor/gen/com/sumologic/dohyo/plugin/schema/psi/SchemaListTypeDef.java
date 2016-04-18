@@ -16,7 +16,10 @@ public interface SchemaListTypeDef extends SchemaTypeDef {
   @Nullable
   SchemaListTypeBody getListTypeBody();
 
-  @NotNull
+  @Nullable
+  SchemaMetaDecl getMetaDecl();
+
+  @Nullable
   PsiElement getId();
 
 }

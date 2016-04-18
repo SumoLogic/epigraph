@@ -15,11 +15,19 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitCombinedFqns(@NotNull SchemaCombinedFqns o) {
+    visitPsiElement(o);
+  }
+
   public void visitCustomParam(@NotNull SchemaCustomParam o) {
     visitPsiElement(o);
   }
 
   public void visitDefaultOverride(@NotNull SchemaDefaultOverride o) {
+    visitPsiElement(o);
+  }
+
+  public void visitDefs(@NotNull SchemaDefs o) {
     visitPsiElement(o);
   }
 
@@ -51,6 +59,10 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitImportStatement(@NotNull SchemaImportStatement o) {
+    visitPsiElement(o);
+  }
+
   public void visitListTypeBody(@NotNull SchemaListTypeBody o) {
     visitPsiElement(o);
   }
@@ -71,6 +83,14 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitMetaDecl(@NotNull SchemaMetaDecl o) {
+    visitPsiElement(o);
+  }
+
+  public void visitMultiSupplementsDecl(@NotNull SchemaMultiSupplementsDecl o) {
+    visitPsiElement(o);
+  }
+
   public void visitMultiTypeBody(@NotNull SchemaMultiTypeBody o) {
     visitPsiElement(o);
   }
@@ -83,7 +103,7 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitNamespacedTypedefs(@NotNull SchemaNamespacedTypedefs o) {
+  public void visitNamespacedDefs(@NotNull SchemaNamespacedDefs o) {
     visitPsiElement(o);
   }
 
@@ -99,6 +119,10 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitTypeDef(o);
   }
 
+  public void visitRecordSupplementsDecl(@NotNull SchemaRecordSupplementsDecl o) {
+    visitPsiElement(o);
+  }
+
   public void visitRecordTypeBody(@NotNull SchemaRecordTypeBody o) {
     visitPsiElement(o);
   }
@@ -107,12 +131,16 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitTypeDef(o);
   }
 
+  public void visitSupplementDef(@NotNull SchemaSupplementDef o) {
+    visitPsiElement(o);
+  }
+
   public void visitTagDecl(@NotNull SchemaTagDecl o) {
     visitPsiElement(o);
   }
 
   public void visitTypeDef(@NotNull SchemaTypeDef o) {
-    visitPsiElement(o);
+    visitElementWithId(o);
   }
 
   public void visitTypeRef(@NotNull SchemaTypeRef o) {
@@ -125,6 +153,10 @@ public class SchemaVisitor extends PsiElementVisitor {
 
   public void visitUnionTypeDef(@NotNull SchemaUnionTypeDef o) {
     visitTypeDef(o);
+  }
+
+  public void visitElementWithId(@NotNull SchemaElementWithId o) {
+    visitPsiElement(o);
   }
 
   public void visitPsiElement(@NotNull PsiElement o) {

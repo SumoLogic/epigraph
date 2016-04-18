@@ -27,8 +27,8 @@ public class SchemaUnionTypeDefImpl extends SchemaTypeDefImpl implements SchemaU
 
   @Override
   @Nullable
-  public SchemaExtendsDecl getExtendsDecl() {
-    return findChildByClass(SchemaExtendsDecl.class);
+  public SchemaMetaDecl getMetaDecl() {
+    return findChildByClass(SchemaMetaDecl.class);
   }
 
   @Override
@@ -44,9 +44,9 @@ public class SchemaUnionTypeDefImpl extends SchemaTypeDefImpl implements SchemaU
   }
 
   @Override
-  @NotNull
+  @Nullable
   public PsiElement getId() {
-    return findNotNullChildByType(S_ID);
+    return findChildByType(S_ID);
   }
 
 }

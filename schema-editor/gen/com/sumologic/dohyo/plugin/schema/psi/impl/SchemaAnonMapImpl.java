@@ -39,21 +39,21 @@ public class SchemaAnonMapImpl extends ASTWrapperPsiElement implements SchemaAno
   }
 
   @Override
-  @NotNull
+  @Nullable
   public PsiElement getBracketLeft() {
-    return findNotNullChildByType(S_BRACKET_LEFT);
+    return findChildByType(S_BRACKET_LEFT);
   }
 
   @Override
-  @NotNull
+  @Nullable
   public PsiElement getBracketRight() {
-    return findNotNullChildByType(S_BRACKET_RIGHT);
+    return findChildByType(S_BRACKET_RIGHT);
   }
 
   @Override
-  @NotNull
+  @Nullable
   public PsiElement getComma() {
-    return findNotNullChildByType(S_COMMA);
+    return findChildByType(S_COMMA);
   }
 
   @Override

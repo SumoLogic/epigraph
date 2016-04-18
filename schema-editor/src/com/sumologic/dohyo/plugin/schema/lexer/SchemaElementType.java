@@ -14,9 +14,4 @@ public class SchemaElementType extends IElementType {
   public SchemaElementType(@NotNull @NonNls String debugName) {
     super(debugName, SchemaLanguage.INSTANCE);
   }
-
-//  @Override
-//  public String toString() {
-//    return "Schema:" + super.toString();
-//  }
 }

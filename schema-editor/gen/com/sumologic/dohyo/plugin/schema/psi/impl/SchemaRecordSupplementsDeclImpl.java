@@ -11,14 +11,14 @@ import static com.sumologic.dohyo.plugin.schema.lexer.SchemaElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.sumologic.dohyo.plugin.schema.psi.*;
 
-public class SchemaNamespacedTypedefsImpl extends ASTWrapperPsiElement implements SchemaNamespacedTypedefs {
+public class SchemaRecordSupplementsDeclImpl extends ASTWrapperPsiElement implements SchemaRecordSupplementsDecl {
 
-  public SchemaNamespacedTypedefsImpl(ASTNode node) {
+  public SchemaRecordSupplementsDeclImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull SchemaVisitor visitor) {
-    visitor.visitNamespacedTypedefs(this);
+    visitor.visitRecordSupplementsDecl(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -28,14 +28,14 @@ public class SchemaNamespacedTypedefsImpl extends ASTWrapperPsiElement implement
 
   @Override
   @NotNull
-  public SchemaNamespaceDecl getNamespaceDecl() {
-    return findNotNullChildByClass(SchemaNamespaceDecl.class);
+  public List<SchemaCombinedFqns> getCombinedFqnsList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaCombinedFqns.class);
   }
 
   @Override
   @NotNull
-  public List<SchemaTypeDef> getTypeDefList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaTypeDef.class);
+  public PsiElement getSupplements() {
+    return findNotNullChildByType(S_SUPPLEMENTS);
   }
 
 }

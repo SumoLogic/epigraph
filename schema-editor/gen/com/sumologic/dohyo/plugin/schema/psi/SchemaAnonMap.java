@@ -13,13 +13,13 @@ public interface SchemaAnonMap extends PsiElement {
   @NotNull
   List<SchemaTypeRef> getTypeRefList();
 
-  @NotNull
+  @Nullable
   PsiElement getBracketLeft();
 
-  @NotNull
+  @Nullable
   PsiElement getBracketRight();
 
-  @NotNull
+  @Nullable
   PsiElement getComma();
 
   @NotNull

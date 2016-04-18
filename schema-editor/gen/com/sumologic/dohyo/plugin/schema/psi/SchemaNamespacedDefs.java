@@ -5,18 +5,12 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface SchemaUnionTypeDef extends SchemaTypeDef {
-
-  @Nullable
-  SchemaMetaDecl getMetaDecl();
-
-  @Nullable
-  SchemaUnionTypeBody getUnionTypeBody();
+public interface SchemaNamespacedDefs extends PsiElement {
 
   @NotNull
-  PsiElement getUnion();
+  SchemaDefs getDefs();
 
-  @Nullable
-  PsiElement getId();
+  @NotNull
+  SchemaNamespaceDecl getNamespaceDecl();
 
 }

@@ -1,6 +1,7 @@
 package com.sumologic.dohyo.plugin.schema.lexer;
 
 import com.intellij.lexer.FlexAdapter;
+import com.intellij.openapi.diagnostic.Logger;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -9,9 +10,11 @@ import org.jetbrains.annotations.NotNull;
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
 public class SchemaFlexAdapter extends FlexAdapter {
+  public static final Logger LOG = Logger.getInstance(SchemaFlexAdapter.class);
+
   private final SchemaLexer flex;
 
-  public SchemaFlexAdapter(SchemaLexer flex) {
+  private SchemaFlexAdapter(SchemaLexer flex) {
     super(flex);
     this.flex = flex;
   }
@@ -36,7 +39,7 @@ public class SchemaFlexAdapter extends FlexAdapter {
   }
 
   private int curlyCount(int adapterState) {
-    return adapterState >> 8;
+    return (adapterState >> 8) & 0xff;
   }
 
   private int adapterState(int yyState, int curlyCount) {

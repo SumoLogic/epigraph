@@ -5,21 +5,18 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface SchemaMapTypeDef extends SchemaTypeDef {
+public interface SchemaSupplementDef extends PsiElement {
 
   @NotNull
-  SchemaAnonMap getAnonMap();
+  List<SchemaCombinedFqns> getCombinedFqnsList();
 
   @Nullable
-  SchemaExtendsDecl getExtendsDecl();
+  SchemaFqn getFqn();
+
+  @NotNull
+  PsiElement getSupplement();
 
   @Nullable
-  SchemaMapTypeBody getMapTypeBody();
-
-  @Nullable
-  SchemaMetaDecl getMetaDecl();
-
-  @Nullable
-  PsiElement getId();
+  PsiElement getWith();
 
 }

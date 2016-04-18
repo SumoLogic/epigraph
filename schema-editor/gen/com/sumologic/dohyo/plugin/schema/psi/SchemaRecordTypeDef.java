@@ -11,12 +11,18 @@ public interface SchemaRecordTypeDef extends SchemaTypeDef {
   SchemaExtendsDecl getExtendsDecl();
 
   @Nullable
+  SchemaMetaDecl getMetaDecl();
+
+  @Nullable
+  SchemaRecordSupplementsDecl getRecordSupplementsDecl();
+
+  @Nullable
   SchemaRecordTypeBody getRecordTypeBody();
 
   @NotNull
   PsiElement getRecord();
 
-  @NotNull
+  @Nullable
   PsiElement getId();
 
 }

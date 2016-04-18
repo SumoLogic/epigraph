@@ -44,9 +44,15 @@ public class SchemaMapTypeDefImpl extends SchemaTypeDefImpl implements SchemaMap
   }
 
   @Override
-  @NotNull
+  @Nullable
+  public SchemaMetaDecl getMetaDecl() {
+    return findChildByClass(SchemaMetaDecl.class);
+  }
+
+  @Override
+  @Nullable
   public PsiElement getId() {
-    return findNotNullChildByType(S_ID);
+    return findChildByType(S_ID);
   }
 
 }

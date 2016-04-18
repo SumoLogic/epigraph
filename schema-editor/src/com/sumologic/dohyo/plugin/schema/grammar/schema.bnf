@@ -17,6 +17,7 @@
 
   tokens=[
     NAMESPACE = 'namespace'
+    IMPORT = 'import'
     MAP = 'map'
     DEFAULT = 'default'
     LIST = 'list'
@@ -25,6 +26,10 @@
     UNION = 'union'
     MULTI='multi' // TODO rename to 'poly'?
     ENUM='enum'
+    META='meta'
+    SUPPLEMENT='supplement'
+    SUPPLEMENTS='supplements'
+    WITH='with'
 
     INTEGER_T='integer'
     LONG_T='long'
@@ -36,6 +41,7 @@
     DOT = '.'
     COMMA = ','
     EQ = '='
+    PLUS = '+'
     CURLY_LEFT = '{'
     CURLY_RIGHT = '}'
     BRACKET_LEFT = '['
@@ -51,6 +57,7 @@
   ]
 
   pin(".*Body") = 1
+  pin(".*TypeDef") = 1
   //recoverWhile(".*Body") = "bodyRecover"
   recoverWhile(".*Part") = "partRecover"
 
@@ -61,13 +68,13 @@
 // otherwise stuff can get confusing, e.g.
 // record { fields { f1:t1 f2:t2 } }
 
-root ::= namespacedTypedefs*
+root ::= importStatement* namespacedDefs*
 
-namespacedTypedefs ::= namespaceDecl typeDefs
+importStatement ::= 'import' fqn {pin=1 recoverWhile="declRecover"}
 
-namespaceDecl ::= 'namespace' fqn namespaceBody? {pin=1 recoverWhile="namespaceRecover"}
-private namespaceRecover ::= ! (id | 'namespace' | 'record' | 'union' | 'map' | 'list' | 'multi' |
-                               'enum' | primitiveKind)
+namespacedDefs ::= namespaceDecl defs
+
+namespaceDecl ::= 'namespace' fqn namespaceBody? {pin=1 recoverWhile="declRecover"}
 
 private namespaceBody ::= '{' namespaceBodyPart* '}'
 private namespaceBodyPart ::= customParam // | ...
@@ -75,33 +82,43 @@ private namespaceBodyPart ::= customParam // | ...
 fqn ::= id ('.' id)*
 private typeName ::= id
 typeRef ::= fqn | anonList | anonMap {name="type"}
-private typeDefs ::= typeDef*
+
+defs ::= def*
+private def ::= typeDef | supplementDef {recoverWhile="declRecover"}
 
 typeDef ::= multiTypeDef | recordTypeDef | unionTypeDef | mapTypeDef | listTypeDef |
-            primitiveTypeDef | enumTypeDef {name="type definition"}
+            primitiveTypeDef | enumTypeDef {
+            name="type definition"
+            implements="com.sumologic.dohyo.plugin.schema.psi.SchemaElementWithId"
+            extends="com.sumologic.dohyo.plugin.schema.psi.impl.SchemaElementWithIdImpl"
+            }
 
-anonList ::= 'list' '[' typeRef defaultOverride? ']' // TODO rename to `listType`? `concreteList`?
-anonMap ::= 'map' '[' typeRef ',' typeRef defaultOverride? ']' // TODO rename to `mapType`?
+anonList ::= 'list' '[' typeRef defaultOverride? ']' {pin=1}// TODO rename to `listType`? `concreteList`?
+anonMap ::= 'map' '[' typeRef ',' typeRef defaultOverride? ']' {pin=1} // TODO rename to `mapType`?
 
 extendsDecl ::= 'extends' typeRef (',' typeRef)*
 defaultOverride ::= 'default' id
-customParam ::= id '=' string  {pin = 1}// TODO real data parsing
+customParam ::= id '=' string  {pin = 2}// TODO real data parsing
 
-multiTypeDef ::= 'multi' typeName extendsDecl? multiTypeBody?
+metaDecl ::= 'meta' fqn // we don't allow anonList or anonMap as meta
+
+multiTypeDef ::= 'multi' typeName extendsDecl? multiSupplementsDecl? multiTypeBody?
+multiSupplementsDecl ::= 'supplements' fqn (',' fqn)*
 multiTypeBody ::= '{' multiBodyPart* '}'
 private multiBodyPart ::= memberDecl | customParam
 memberDecl ::= 'default'? id ':' typeRef memberBody? {pin = 3}
 private memberBody ::= '{' memberBodyPart* '}'
 private memberBodyPart ::= customParam
 
-recordTypeDef ::= 'record' typeName extendsDecl? recordTypeBody?
+recordTypeDef ::= 'record' typeName extendsDecl? metaDecl? recordSupplementsDecl? recordTypeBody?
+recordSupplementsDecl ::= 'supplements' combinedFqns (',' combinedFqns)*
 recordTypeBody ::= '{' recordBodyPart* '}'
 private recordBodyPart ::= fieldDecl | customParam
 fieldDecl ::= id ':' typeRef defaultOverride? fieldBody? {pin=2}
 private fieldBody ::= '{' fieldBodyPart* '}'
 private fieldBodyPart ::= customParam
 
-unionTypeDef ::= 'union' typeName extendsDecl? unionTypeBody? // TODO require body? TODO remove extends? "contravariant" extension? same for enums
+unionTypeDef ::= 'union' typeName metaDecl? unionTypeBody
 unionTypeBody ::= '{' unionBodyPart* '}'
 private unionBodyPart ::= tagDecl | customParam
 tagDecl ::= id ':' typeRef defaultOverride? tagBody? {pin=2}
@@ -109,24 +126,29 @@ private tagBody ::= '{' tagBodyPart* '}'
 private tagBodyPart ::= customParam
 
 //listTypeDef2 ::= 'list' typeName extendsDecl listTypeBody? // allows inheritance from lists w/o type params
-listTypeDef ::= anonList typeName extendsDecl? listTypeBody?
+listTypeDef ::= anonList typeName extendsDecl? metaDecl? listTypeBody?
 listTypeBody ::= '{' listTypeBodyPart* '}'
 private listTypeBodyPart ::= customParam
 
-mapTypeDef ::= anonMap typeName extendsDecl? mapTypeBody?
+mapTypeDef ::= anonMap typeName extendsDecl? metaDecl? mapTypeBody?
 mapTypeBody ::= '{' mapTypeBodyPart* '}'
 private mapTypeBodyPart ::= customParam
 
-primitiveTypeDef ::= primitiveKind typeName extendsDecl? primitiveTypeBody?
+primitiveTypeDef ::= primitiveKind typeName extendsDecl? metaDecl? primitiveTypeBody?
 primitiveKind ::= 'string' | 'integer' | 'long' | 'double' | 'boolean'
 primitiveTypeBody ::= '{' primitiveBodyPart* '}'
 private primitiveBodyPart ::= customParam // | ...
 
-enumTypeDef ::= 'enum' typeName enumTypeBody
+enumTypeDef ::= 'enum' typeName metaDecl? enumTypeBody // extends?
 enumTypeBody ::= '{' enumTypeBodyPart* '}'
 private enumTypeBodyPart ::= customParam | enumMember
 enumMember ::= id enumMemberBody? {pin=1}
 enumMemberBody ::='{' enumMemberBodyPart* '}'
 private enumMemberBodyPart ::= customParam
 
+supplementDef ::= 'supplement' combinedFqns (',' combinedFqns)* 'with' fqn {pin=1}
+
+combinedFqns ::= fqn ('+' fqn)*
+
+private declRecover ::= ! (id | 'import' | 'namespace' | 'record' | 'union' | 'map' | 'list' | 'multi' | 'enum' | 'supplement'| primitiveKind)
 private partRecover ::= ! ('}' | id | 'default')

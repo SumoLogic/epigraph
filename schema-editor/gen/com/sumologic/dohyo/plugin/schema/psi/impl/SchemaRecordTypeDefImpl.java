@@ -33,6 +33,18 @@ public class SchemaRecordTypeDefImpl extends SchemaTypeDefImpl implements Schema
 
   @Override
   @Nullable
+  public SchemaMetaDecl getMetaDecl() {
+    return findChildByClass(SchemaMetaDecl.class);
+  }
+
+  @Override
+  @Nullable
+  public SchemaRecordSupplementsDecl getRecordSupplementsDecl() {
+    return findChildByClass(SchemaRecordSupplementsDecl.class);
+  }
+
+  @Override
+  @Nullable
   public SchemaRecordTypeBody getRecordTypeBody() {
     return findChildByClass(SchemaRecordTypeBody.class);
   }
@@ -44,9 +56,9 @@ public class SchemaRecordTypeDefImpl extends SchemaTypeDefImpl implements Schema
   }
 
   @Override
-  @NotNull
+  @Nullable
   public PsiElement getId() {
-    return findNotNullChildByType(S_ID);
+    return findChildByType(S_ID);
   }
 
 }

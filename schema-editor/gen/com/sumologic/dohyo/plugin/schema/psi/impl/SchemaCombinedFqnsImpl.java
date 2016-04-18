@@ -8,16 +8,17 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static com.sumologic.dohyo.plugin.schema.lexer.SchemaElementTypes.*;
+import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.sumologic.dohyo.plugin.schema.psi.*;
 
-public class SchemaEnumTypeDefImpl extends SchemaTypeDefImpl implements SchemaEnumTypeDef {
+public class SchemaCombinedFqnsImpl extends ASTWrapperPsiElement implements SchemaCombinedFqns {
 
-  public SchemaEnumTypeDefImpl(ASTNode node) {
+  public SchemaCombinedFqnsImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull SchemaVisitor visitor) {
-    visitor.visitEnumTypeDef(this);
+    visitor.visitCombinedFqns(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -26,27 +27,9 @@ public class SchemaEnumTypeDefImpl extends SchemaTypeDefImpl implements SchemaEn
   }
 
   @Override
-  @Nullable
-  public SchemaEnumTypeBody getEnumTypeBody() {
-    return findChildByClass(SchemaEnumTypeBody.class);
-  }
-
-  @Override
-  @Nullable
-  public SchemaMetaDecl getMetaDecl() {
-    return findChildByClass(SchemaMetaDecl.class);
-  }
-
-  @Override
   @NotNull
-  public PsiElement getEnum() {
-    return findNotNullChildByType(S_ENUM);
-  }
-
-  @Override
-  @Nullable
-  public PsiElement getId() {
-    return findChildByType(S_ID);
+  public List<SchemaFqn> getFqnList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaFqn.class);
   }
 
 }

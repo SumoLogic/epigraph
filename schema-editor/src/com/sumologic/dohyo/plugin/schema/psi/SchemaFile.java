@@ -9,10 +9,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.List;
 
-import static com.sumologic.dohyo.plugin.schema.lexer.SchemaElementTypes.S_NAMESPACE;
-import static com.sumologic.dohyo.plugin.schema.lexer.SchemaElementTypes.S_NAMESPACED_TYPEDEFS;
+import static com.sumologic.dohyo.plugin.schema.lexer.SchemaElementTypes.*;
 
 /**
  * Todo add doc
@@ -37,14 +35,25 @@ public class SchemaFile extends PsiFileBase {
   }
 
   @NotNull
-  public SchemaNamespacedTypedefs[] getNamespacedTypedefs() {
+  public SchemaNamespacedDefs[] getNamespacesDefs() {
     // TODO figure out stubs & indexing
 //    StubElement stub = getStub();
 //    if (stub != null) {
 //      return stub.getChildrenByType(???
 //    }
 
-    return calcTreeElement().getChildrenAsPsiElements(S_NAMESPACED_TYPEDEFS, SchemaNamespacedTypedefs[]::new);
+    return calcTreeElement().getChildrenAsPsiElements(S_NAMESPACED_DEFS, SchemaNamespacedDefs[]::new);
+  }
+
+  @NotNull
+  public SchemaImportStatement[] getImportStatements() {
+    // TODO figure out stubs & indexing
+//    StubElement stub = getStub();
+//    if (stub != null) {
+//      return stub.getChildrenByType(???
+//    }
+
+    return calcTreeElement().getChildrenAsPsiElements(S_IMPORT_STATEMENT, SchemaImportStatement[]::new);
   }
 
   @Override

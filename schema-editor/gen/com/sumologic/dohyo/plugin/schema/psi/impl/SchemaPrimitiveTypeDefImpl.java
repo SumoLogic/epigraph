@@ -32,6 +32,12 @@ public class SchemaPrimitiveTypeDefImpl extends SchemaTypeDefImpl implements Sch
   }
 
   @Override
+  @Nullable
+  public SchemaMetaDecl getMetaDecl() {
+    return findChildByClass(SchemaMetaDecl.class);
+  }
+
+  @Override
   @NotNull
   public SchemaPrimitiveKind getPrimitiveKind() {
     return findNotNullChildByClass(SchemaPrimitiveKind.class);
@@ -44,9 +50,9 @@ public class SchemaPrimitiveTypeDefImpl extends SchemaTypeDefImpl implements Sch
   }
 
   @Override
-  @NotNull
+  @Nullable
   public PsiElement getId() {
-    return findNotNullChildByType(S_ID);
+    return findChildByType(S_ID);
   }
 
 }

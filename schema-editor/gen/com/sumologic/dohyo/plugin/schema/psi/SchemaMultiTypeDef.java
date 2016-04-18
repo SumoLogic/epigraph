@@ -11,12 +11,15 @@ public interface SchemaMultiTypeDef extends SchemaTypeDef {
   SchemaExtendsDecl getExtendsDecl();
 
   @Nullable
+  SchemaMultiSupplementsDecl getMultiSupplementsDecl();
+
+  @Nullable
   SchemaMultiTypeBody getMultiTypeBody();
 
   @NotNull
   PsiElement getMulti();
 
-  @NotNull
+  @Nullable
   PsiElement getId();
 
 }

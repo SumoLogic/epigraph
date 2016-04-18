@@ -5,12 +5,12 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface SchemaNamespacedTypedefs extends PsiElement {
+public interface SchemaRecordSupplementsDecl extends PsiElement {
 
   @NotNull
-  SchemaNamespaceDecl getNamespaceDecl();
+  List<SchemaCombinedFqns> getCombinedFqnsList();
 
   @NotNull
-  List<SchemaTypeDef> getTypeDefList();
+  PsiElement getSupplements();
 
 }

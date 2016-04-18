@@ -8,16 +8,17 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static com.sumologic.dohyo.plugin.schema.lexer.SchemaElementTypes.*;
+import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.sumologic.dohyo.plugin.schema.psi.*;
 
-public class SchemaListTypeDefImpl extends SchemaTypeDefImpl implements SchemaListTypeDef {
+public class SchemaSupplementDefImpl extends ASTWrapperPsiElement implements SchemaSupplementDef {
 
-  public SchemaListTypeDefImpl(ASTNode node) {
+  public SchemaSupplementDefImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull SchemaVisitor visitor) {
-    visitor.visitListTypeDef(this);
+    visitor.visitSupplementDef(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -27,32 +28,26 @@ public class SchemaListTypeDefImpl extends SchemaTypeDefImpl implements SchemaLi
 
   @Override
   @NotNull
-  public SchemaAnonList getAnonList() {
-    return findNotNullChildByClass(SchemaAnonList.class);
+  public List<SchemaCombinedFqns> getCombinedFqnsList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaCombinedFqns.class);
   }
 
   @Override
   @Nullable
-  public SchemaExtendsDecl getExtendsDecl() {
-    return findChildByClass(SchemaExtendsDecl.class);
+  public SchemaFqn getFqn() {
+    return findChildByClass(SchemaFqn.class);
+  }
+
+  @Override
+  @NotNull
+  public PsiElement getSupplement() {
+    return findNotNullChildByType(S_SUPPLEMENT);
   }
 
   @Override
   @Nullable
-  public SchemaListTypeBody getListTypeBody() {
-    return findChildByClass(SchemaListTypeBody.class);
-  }
-
-  @Override
-  @Nullable
-  public SchemaMetaDecl getMetaDecl() {
-    return findChildByClass(SchemaMetaDecl.class);
-  }
-
-  @Override
-  @Nullable
-  public PsiElement getId() {
-    return findChildByType(S_ID);
+  public PsiElement getWith() {
+    return findChildByType(S_WITH);
   }
 
 }

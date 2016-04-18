@@ -44,7 +44,7 @@ public class SchemaFoldingBuilder extends CustomFoldingBuilder implements DumbAw
     return "...";
   }
 
-  public TextRange getRangeToFold(PsiElement element) {
+  private TextRange getRangeToFold(PsiElement element) {
     if (element instanceof SyntheticElement) {
       return null;
     }
@@ -170,13 +170,12 @@ public class SchemaFoldingBuilder extends CustomFoldingBuilder implements DumbAw
 
     SchemaFile file = (SchemaFile) root;
 
-    for (SchemaNamespacedTypedefs namespacedTypedef : file.getNamespacedTypedefs()) {
-      // todo: fold namespaces?
-
-      for (SchemaTypeDef typeDef : namespacedTypedef.getTypeDefList()) {
+    for (SchemaNamespacedDefs namespacedDefs : file.getNamespacesDefs()) {
+      for (SchemaTypeDef typeDef : namespacedDefs.getDefs().getTypeDefList()) {
         addToFold(descriptors, typeDef, document, true);
       }
     }
+
 
     if (!quick) {
       final Set<PsiElement> seenComments = ContainerUtil.newHashSet();

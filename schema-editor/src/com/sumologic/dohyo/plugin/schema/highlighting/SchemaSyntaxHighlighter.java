@@ -22,33 +22,42 @@ import static com.sumologic.dohyo.plugin.schema.lexer.SchemaElementTypes.*;
 public class SchemaSyntaxHighlighter extends SyntaxHighlighterBase {
   // TODO provide customizable color scheme?
   // see also http://www.jetbrains.org/intellij/sdk/docs/reference_guide/color_scheme_management.html
+  // http://www.jetbrains.org/intellij/sdk/docs/reference_guide/custom_language_support/syntax_highlighting_and_error_highlighting.html (bottom)
 
   public static final TextAttributesKey ID = DefaultLanguageHighlighterColors.IDENTIFIER;
   public static final TextAttributesKey COMMA = DefaultLanguageHighlighterColors.COMMA;
+  public static final TextAttributesKey PLUS = DefaultLanguageHighlighterColors.OPERATION_SIGN; // ??
   public static final TextAttributesKey LINE_COMMENT = DefaultLanguageHighlighterColors.LINE_COMMENT;
   public static final TextAttributesKey BLOCK_COMMENT = DefaultLanguageHighlighterColors.BLOCK_COMMENT;
   public static final TextAttributesKey STRING = DefaultLanguageHighlighterColors.STRING;
-//  public static final TextAttributesKey CUSTOM_PARAM = DefaultLanguageHighlighterColors.METADATA; // PARAMETER?
-  // public static final TextAttributesKey MEMBER_NAME = DefaultLanguageHighlighterColors.INSTANCE_FIELD;
-  //  public static final TextAttributesKey COLON = DefaultLanguageHighlighterColors.
   public static final TextAttributesKey CURLY_BR = DefaultLanguageHighlighterColors.BRACES;
   public static final TextAttributesKey BRACKETS = DefaultLanguageHighlighterColors.BRACKETS;
   public static final TextAttributesKey KEYWORDS = DefaultLanguageHighlighterColors.KEYWORD;
+
+  public static final TextAttributesKey FIELD = DefaultLanguageHighlighterColors.INSTANCE_FIELD;
+  public static final TextAttributesKey TAG = DefaultLanguageHighlighterColors.INSTANCE_FIELD;
+  public static final TextAttributesKey MULTI_MEMBER = DefaultLanguageHighlighterColors.INSTANCE_FIELD;
+
+  public static final TextAttributesKey DECL_TYPE_NAME = DefaultLanguageHighlighterColors.CLASS_NAME;
+  public static final TextAttributesKey TYPE_REF = DefaultLanguageHighlighterColors.CLASS_REFERENCE;
+
+  public static final TextAttributesKey PARAM_NAME = DefaultLanguageHighlighterColors.METADATA;
 
   private static final Map<IElementType, TextAttributesKey> keys;
 
 
   static {
-    keys = new HashMap<IElementType, TextAttributesKey>();
+    keys = new HashMap<>();
     keys.put(S_ID, ID);
     keys.put(S_COMMA, COMMA);
+    keys.put(S_PLUS, PLUS);
     keys.put(S_COMMENT, LINE_COMMENT);
     keys.put(S_BLOCK_COMMENT, BLOCK_COMMENT);
     keys.put(S_STRING, STRING);
-//    keys.put(S_CUSTOM_PARAM, CUSTOM_PARAM); // no effect at lexer stage
     add(CURLY_BR, S_CURLY_LEFT, S_CURLY_RIGHT);
     add(BRACKETS, S_BRACKET_LEFT, S_BRACKET_RIGHT);
-    add(KEYWORDS, S_NAMESPACE, S_RECORD, S_UNION, S_MULTI, S_MAP, S_LIST, S_ENUM, S_DEFAULT, S_EXTENDS,
+    add(KEYWORDS, S_NAMESPACE, S_RECORD, S_UNION, S_MULTI, S_MAP, S_LIST, S_ENUM, S_DEFAULT,
+        S_EXTENDS, S_META, S_IMPORT, S_SUPPLEMENT, S_SUPPLEMENTS, S_WITH,
         S_INTEGER_T, S_STRING_T, S_BOOLEAN_T, S_DOUBLE_T, S_DOUBLE_T, S_LONG_T);
   }
 

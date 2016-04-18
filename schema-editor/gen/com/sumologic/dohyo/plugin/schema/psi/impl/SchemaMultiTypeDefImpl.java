@@ -33,6 +33,12 @@ public class SchemaMultiTypeDefImpl extends SchemaTypeDefImpl implements SchemaM
 
   @Override
   @Nullable
+  public SchemaMultiSupplementsDecl getMultiSupplementsDecl() {
+    return findChildByClass(SchemaMultiSupplementsDecl.class);
+  }
+
+  @Override
+  @Nullable
   public SchemaMultiTypeBody getMultiTypeBody() {
     return findChildByClass(SchemaMultiTypeBody.class);
   }
@@ -44,9 +50,9 @@ public class SchemaMultiTypeDefImpl extends SchemaTypeDefImpl implements SchemaM
   }
 
   @Override
-  @NotNull
+  @Nullable
   public PsiElement getId() {
-    return findNotNullChildByType(S_ID);
+    return findChildByType(S_ID);
   }
 
 }

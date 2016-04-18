@@ -29,11 +29,17 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     else if (t == S_ANON_MAP) {
       r = anonMap(b, 0);
     }
+    else if (t == S_COMBINED_FQNS) {
+      r = combinedFqns(b, 0);
+    }
     else if (t == S_CUSTOM_PARAM) {
       r = customParam(b, 0);
     }
     else if (t == S_DEFAULT_OVERRIDE) {
       r = defaultOverride(b, 0);
+    }
+    else if (t == S_DEFS) {
+      r = defs(b, 0);
     }
     else if (t == S_ENUM_MEMBER) {
       r = enumMember(b, 0);
@@ -56,6 +62,9 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     else if (t == S_FQN) {
       r = fqn(b, 0);
     }
+    else if (t == S_IMPORT_STATEMENT) {
+      r = importStatement(b, 0);
+    }
     else if (t == S_LIST_TYPE_BODY) {
       r = listTypeBody(b, 0);
     }
@@ -71,6 +80,12 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     else if (t == S_MEMBER_DECL) {
       r = memberDecl(b, 0);
     }
+    else if (t == S_META_DECL) {
+      r = metaDecl(b, 0);
+    }
+    else if (t == S_MULTI_SUPPLEMENTS_DECL) {
+      r = multiSupplementsDecl(b, 0);
+    }
     else if (t == S_MULTI_TYPE_BODY) {
       r = multiTypeBody(b, 0);
     }
@@ -80,8 +95,8 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     else if (t == S_NAMESPACE_DECL) {
       r = namespaceDecl(b, 0);
     }
-    else if (t == S_NAMESPACED_TYPEDEFS) {
-      r = namespacedTypedefs(b, 0);
+    else if (t == S_NAMESPACED_DEFS) {
+      r = namespacedDefs(b, 0);
     }
     else if (t == S_PRIMITIVE_KIND) {
       r = primitiveKind(b, 0);
@@ -92,11 +107,17 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     else if (t == S_PRIMITIVE_TYPE_DEF) {
       r = primitiveTypeDef(b, 0);
     }
+    else if (t == S_RECORD_SUPPLEMENTS_DECL) {
+      r = recordSupplementsDecl(b, 0);
+    }
     else if (t == S_RECORD_TYPE_BODY) {
       r = recordTypeBody(b, 0);
     }
     else if (t == S_RECORD_TYPE_DEF) {
       r = recordTypeDef(b, 0);
+    }
+    else if (t == S_SUPPLEMENT_DEF) {
+      r = supplementDef(b, 0);
     }
     else if (t == S_TAG_DECL) {
       r = tagDecl(b, 0);
@@ -133,15 +154,16 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   public static boolean anonList(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "anonList")) return false;
     if (!nextTokenIs(b, S_LIST)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, S_ANON_LIST, null);
     r = consumeToken(b, S_LIST);
-    r = r && consumeToken(b, S_BRACKET_LEFT);
-    r = r && typeRef(b, l + 1);
-    r = r && anonList_3(b, l + 1);
-    r = r && consumeToken(b, S_BRACKET_RIGHT);
-    exit_section_(b, m, S_ANON_LIST, r);
-    return r;
+    p = r; // pin = 1
+    r = r && report_error_(b, consumeToken(b, S_BRACKET_LEFT));
+    r = p && report_error_(b, typeRef(b, l + 1)) && r;
+    r = p && report_error_(b, anonList_3(b, l + 1)) && r;
+    r = p && consumeToken(b, S_BRACKET_RIGHT) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   // defaultOverride?
@@ -156,17 +178,18 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   public static boolean anonMap(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "anonMap")) return false;
     if (!nextTokenIs(b, S_MAP)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, S_ANON_MAP, null);
     r = consumeToken(b, S_MAP);
-    r = r && consumeToken(b, S_BRACKET_LEFT);
-    r = r && typeRef(b, l + 1);
-    r = r && consumeToken(b, S_COMMA);
-    r = r && typeRef(b, l + 1);
-    r = r && anonMap_5(b, l + 1);
-    r = r && consumeToken(b, S_BRACKET_RIGHT);
-    exit_section_(b, m, S_ANON_MAP, r);
-    return r;
+    p = r; // pin = 1
+    r = r && report_error_(b, consumeToken(b, S_BRACKET_LEFT));
+    r = p && report_error_(b, typeRef(b, l + 1)) && r;
+    r = p && report_error_(b, consumeToken(b, S_COMMA)) && r;
+    r = p && report_error_(b, typeRef(b, l + 1)) && r;
+    r = p && report_error_(b, anonMap_5(b, l + 1)) && r;
+    r = p && consumeToken(b, S_BRACKET_RIGHT) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   // defaultOverride?
@@ -174,6 +197,42 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(b, l, "anonMap_5")) return false;
     defaultOverride(b, l + 1);
     return true;
+  }
+
+  /* ********************************************************** */
+  // fqn ('+' fqn)*
+  public static boolean combinedFqns(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "combinedFqns")) return false;
+    if (!nextTokenIs(b, S_ID)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = fqn(b, l + 1);
+    r = r && combinedFqns_1(b, l + 1);
+    exit_section_(b, m, S_COMBINED_FQNS, r);
+    return r;
+  }
+
+  // ('+' fqn)*
+  private static boolean combinedFqns_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "combinedFqns_1")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!combinedFqns_1_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "combinedFqns_1", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
+  // '+' fqn
+  private static boolean combinedFqns_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "combinedFqns_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, S_PLUS);
+    r = r && fqn(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
   }
 
   /* ********************************************************** */
@@ -192,6 +251,49 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // ! (id | 'import' | 'namespace' | 'record' | 'union' | 'map' | 'list' | 'multi' | 'enum' | 'supplement'| primitiveKind)
+  static boolean declRecover(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "declRecover")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NOT_);
+    r = !declRecover_0(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // id | 'import' | 'namespace' | 'record' | 'union' | 'map' | 'list' | 'multi' | 'enum' | 'supplement'| primitiveKind
+  private static boolean declRecover_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "declRecover_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, S_ID);
+    if (!r) r = consumeToken(b, S_IMPORT);
+    if (!r) r = consumeToken(b, S_NAMESPACE);
+    if (!r) r = consumeToken(b, S_RECORD);
+    if (!r) r = consumeToken(b, S_UNION);
+    if (!r) r = consumeToken(b, S_MAP);
+    if (!r) r = consumeToken(b, S_LIST);
+    if (!r) r = consumeToken(b, S_MULTI);
+    if (!r) r = consumeToken(b, S_ENUM);
+    if (!r) r = consumeToken(b, S_SUPPLEMENT);
+    if (!r) r = primitiveKind(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // typeDef | supplementDef
+  static boolean def(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "def")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_);
+    r = typeDef(b, l + 1);
+    if (!r) r = supplementDef(b, l + 1);
+    exit_section_(b, l, m, r, false, declRecover_parser_);
+    return r;
+  }
+
+  /* ********************************************************** */
   // 'default' id
   public static boolean defaultOverride(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "defaultOverride")) return false;
@@ -202,6 +304,21 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     r = r && consumeToken(b, S_ID);
     exit_section_(b, m, S_DEFAULT_OVERRIDE, r);
     return r;
+  }
+
+  /* ********************************************************** */
+  // def*
+  public static boolean defs(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "defs")) return false;
+    Marker m = enter_section_(b, l, _NONE_, S_DEFS, "<defs>");
+    int c = current_position_(b);
+    while (true) {
+      if (!def(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "defs", c)) break;
+      c = current_position_(b);
+    }
+    exit_section_(b, l, m, true, false, null);
+    return true;
   }
 
   /* ********************************************************** */
@@ -303,17 +420,26 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'enum' typeName enumTypeBody
+  // 'enum' typeName metaDecl? enumTypeBody
   public static boolean enumTypeDef(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "enumTypeDef")) return false;
     if (!nextTokenIs(b, S_ENUM)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, S_ENUM_TYPE_DEF, null);
     r = consumeToken(b, S_ENUM);
-    r = r && typeName(b, l + 1);
-    r = r && enumTypeBody(b, l + 1);
-    exit_section_(b, m, S_ENUM_TYPE_DEF, r);
-    return r;
+    p = r; // pin = 1
+    r = r && report_error_(b, typeName(b, l + 1));
+    r = p && report_error_(b, enumTypeDef_2(b, l + 1)) && r;
+    r = p && enumTypeBody(b, l + 1) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // metaDecl?
+  private static boolean enumTypeDef_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "enumTypeDef_2")) return false;
+    metaDecl(b, l + 1);
+    return true;
   }
 
   /* ********************************************************** */
@@ -459,6 +585,19 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // 'import' fqn
+  public static boolean importStatement(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "importStatement")) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, S_IMPORT_STATEMENT, "<import statement>");
+    r = consumeToken(b, S_IMPORT);
+    p = r; // pin = 1
+    r = r && fqn(b, l + 1);
+    exit_section_(b, l, m, r, p, declRecover_parser_);
+    return r || p;
+  }
+
+  /* ********************************************************** */
   // '{' listTypeBodyPart* '}'
   public static boolean listTypeBody(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "listTypeBody")) return false;
@@ -497,18 +636,20 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // anonList typeName extendsDecl? listTypeBody?
+  // anonList typeName extendsDecl? metaDecl? listTypeBody?
   public static boolean listTypeDef(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "listTypeDef")) return false;
     if (!nextTokenIs(b, S_LIST)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, S_LIST_TYPE_DEF, null);
     r = anonList(b, l + 1);
-    r = r && typeName(b, l + 1);
-    r = r && listTypeDef_2(b, l + 1);
-    r = r && listTypeDef_3(b, l + 1);
-    exit_section_(b, m, S_LIST_TYPE_DEF, r);
-    return r;
+    p = r; // pin = 1
+    r = r && report_error_(b, typeName(b, l + 1));
+    r = p && report_error_(b, listTypeDef_2(b, l + 1)) && r;
+    r = p && report_error_(b, listTypeDef_3(b, l + 1)) && r;
+    r = p && listTypeDef_4(b, l + 1) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   // extendsDecl?
@@ -518,9 +659,16 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // listTypeBody?
+  // metaDecl?
   private static boolean listTypeDef_3(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "listTypeDef_3")) return false;
+    metaDecl(b, l + 1);
+    return true;
+  }
+
+  // listTypeBody?
+  private static boolean listTypeDef_4(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "listTypeDef_4")) return false;
     listTypeBody(b, l + 1);
     return true;
   }
@@ -564,18 +712,20 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // anonMap typeName extendsDecl? mapTypeBody?
+  // anonMap typeName extendsDecl? metaDecl? mapTypeBody?
   public static boolean mapTypeDef(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "mapTypeDef")) return false;
     if (!nextTokenIs(b, S_MAP)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, S_MAP_TYPE_DEF, null);
     r = anonMap(b, l + 1);
-    r = r && typeName(b, l + 1);
-    r = r && mapTypeDef_2(b, l + 1);
-    r = r && mapTypeDef_3(b, l + 1);
-    exit_section_(b, m, S_MAP_TYPE_DEF, r);
-    return r;
+    p = r; // pin = 1
+    r = r && report_error_(b, typeName(b, l + 1));
+    r = p && report_error_(b, mapTypeDef_2(b, l + 1)) && r;
+    r = p && report_error_(b, mapTypeDef_3(b, l + 1)) && r;
+    r = p && mapTypeDef_4(b, l + 1) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   // extendsDecl?
@@ -585,9 +735,16 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // mapTypeBody?
+  // metaDecl?
   private static boolean mapTypeDef_3(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "mapTypeDef_3")) return false;
+    metaDecl(b, l + 1);
+    return true;
+  }
+
+  // mapTypeBody?
+  private static boolean mapTypeDef_4(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "mapTypeDef_4")) return false;
     mapTypeBody(b, l + 1);
     return true;
   }
@@ -662,6 +819,19 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // 'meta' fqn
+  public static boolean metaDecl(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "metaDecl")) return false;
+    if (!nextTokenIs(b, S_META)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, S_META);
+    r = r && fqn(b, l + 1);
+    exit_section_(b, m, S_META_DECL, r);
+    return r;
+  }
+
+  /* ********************************************************** */
   // memberDecl | customParam
   static boolean multiBodyPart(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "multiBodyPart")) return false;
@@ -670,6 +840,43 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     r = memberDecl(b, l + 1);
     if (!r) r = customParam(b, l + 1);
     exit_section_(b, l, m, r, false, partRecover_parser_);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // 'supplements' fqn (',' fqn)*
+  public static boolean multiSupplementsDecl(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "multiSupplementsDecl")) return false;
+    if (!nextTokenIs(b, S_SUPPLEMENTS)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, S_SUPPLEMENTS);
+    r = r && fqn(b, l + 1);
+    r = r && multiSupplementsDecl_2(b, l + 1);
+    exit_section_(b, m, S_MULTI_SUPPLEMENTS_DECL, r);
+    return r;
+  }
+
+  // (',' fqn)*
+  private static boolean multiSupplementsDecl_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "multiSupplementsDecl_2")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!multiSupplementsDecl_2_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "multiSupplementsDecl_2", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
+  // ',' fqn
+  private static boolean multiSupplementsDecl_2_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "multiSupplementsDecl_2_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, S_COMMA);
+    r = r && fqn(b, l + 1);
+    exit_section_(b, m, null, r);
     return r;
   }
 
@@ -701,18 +908,20 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'multi' typeName extendsDecl? multiTypeBody?
+  // 'multi' typeName extendsDecl? multiSupplementsDecl? multiTypeBody?
   public static boolean multiTypeDef(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "multiTypeDef")) return false;
     if (!nextTokenIs(b, S_MULTI)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, S_MULTI_TYPE_DEF, null);
     r = consumeToken(b, S_MULTI);
-    r = r && typeName(b, l + 1);
-    r = r && multiTypeDef_2(b, l + 1);
-    r = r && multiTypeDef_3(b, l + 1);
-    exit_section_(b, m, S_MULTI_TYPE_DEF, r);
-    return r;
+    p = r; // pin = 1
+    r = r && report_error_(b, typeName(b, l + 1));
+    r = p && report_error_(b, multiTypeDef_2(b, l + 1)) && r;
+    r = p && report_error_(b, multiTypeDef_3(b, l + 1)) && r;
+    r = p && multiTypeDef_4(b, l + 1) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   // extendsDecl?
@@ -722,9 +931,16 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // multiTypeBody?
+  // multiSupplementsDecl?
   private static boolean multiTypeDef_3(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "multiTypeDef_3")) return false;
+    multiSupplementsDecl(b, l + 1);
+    return true;
+  }
+
+  // multiTypeBody?
+  private static boolean multiTypeDef_4(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "multiTypeDef_4")) return false;
     multiTypeBody(b, l + 1);
     return true;
   }
@@ -777,7 +993,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     p = r; // pin = 1
     r = r && report_error_(b, fqn(b, l + 1));
     r = p && namespaceDecl_2(b, l + 1) && r;
-    exit_section_(b, l, m, r, p, namespaceRecover_parser_);
+    exit_section_(b, l, m, r, p, declRecover_parser_);
     return r || p;
   }
 
@@ -789,46 +1005,15 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ! (id | 'namespace' | 'record' | 'union' | 'map' | 'list' | 'multi' |
-  //                                'enum' | primitiveKind)
-  static boolean namespaceRecover(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "namespaceRecover")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NOT_);
-    r = !namespaceRecover_0(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  // id | 'namespace' | 'record' | 'union' | 'map' | 'list' | 'multi' |
-  //                                'enum' | primitiveKind
-  private static boolean namespaceRecover_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "namespaceRecover_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, S_ID);
-    if (!r) r = consumeToken(b, S_NAMESPACE);
-    if (!r) r = consumeToken(b, S_RECORD);
-    if (!r) r = consumeToken(b, S_UNION);
-    if (!r) r = consumeToken(b, S_MAP);
-    if (!r) r = consumeToken(b, S_LIST);
-    if (!r) r = consumeToken(b, S_MULTI);
-    if (!r) r = consumeToken(b, S_ENUM);
-    if (!r) r = primitiveKind(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // namespaceDecl typeDefs
-  public static boolean namespacedTypedefs(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "namespacedTypedefs")) return false;
+  // namespaceDecl defs
+  public static boolean namespacedDefs(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "namespacedDefs")) return false;
     if (!nextTokenIs(b, S_NAMESPACE)) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = namespaceDecl(b, l + 1);
-    r = r && typeDefs(b, l + 1);
-    exit_section_(b, m, S_NAMESPACED_TYPEDEFS, r);
+    r = r && defs(b, l + 1);
+    exit_section_(b, m, S_NAMESPACED_DEFS, r);
     return r;
   }
 
@@ -909,17 +1094,19 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // primitiveKind typeName extendsDecl? primitiveTypeBody?
+  // primitiveKind typeName extendsDecl? metaDecl? primitiveTypeBody?
   public static boolean primitiveTypeDef(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "primitiveTypeDef")) return false;
-    boolean r;
+    boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, S_PRIMITIVE_TYPE_DEF, "<primitive type def>");
     r = primitiveKind(b, l + 1);
-    r = r && typeName(b, l + 1);
-    r = r && primitiveTypeDef_2(b, l + 1);
-    r = r && primitiveTypeDef_3(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
-    return r;
+    p = r; // pin = 1
+    r = r && report_error_(b, typeName(b, l + 1));
+    r = p && report_error_(b, primitiveTypeDef_2(b, l + 1)) && r;
+    r = p && report_error_(b, primitiveTypeDef_3(b, l + 1)) && r;
+    r = p && primitiveTypeDef_4(b, l + 1) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   // extendsDecl?
@@ -929,9 +1116,16 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // primitiveTypeBody?
+  // metaDecl?
   private static boolean primitiveTypeDef_3(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "primitiveTypeDef_3")) return false;
+    metaDecl(b, l + 1);
+    return true;
+  }
+
+  // primitiveTypeBody?
+  private static boolean primitiveTypeDef_4(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "primitiveTypeDef_4")) return false;
     primitiveTypeBody(b, l + 1);
     return true;
   }
@@ -945,6 +1139,43 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     r = fieldDecl(b, l + 1);
     if (!r) r = customParam(b, l + 1);
     exit_section_(b, l, m, r, false, partRecover_parser_);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // 'supplements' combinedFqns (',' combinedFqns)*
+  public static boolean recordSupplementsDecl(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "recordSupplementsDecl")) return false;
+    if (!nextTokenIs(b, S_SUPPLEMENTS)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, S_SUPPLEMENTS);
+    r = r && combinedFqns(b, l + 1);
+    r = r && recordSupplementsDecl_2(b, l + 1);
+    exit_section_(b, m, S_RECORD_SUPPLEMENTS_DECL, r);
+    return r;
+  }
+
+  // (',' combinedFqns)*
+  private static boolean recordSupplementsDecl_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "recordSupplementsDecl_2")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!recordSupplementsDecl_2_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "recordSupplementsDecl_2", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
+  // ',' combinedFqns
+  private static boolean recordSupplementsDecl_2_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "recordSupplementsDecl_2_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, S_COMMA);
+    r = r && combinedFqns(b, l + 1);
+    exit_section_(b, m, null, r);
     return r;
   }
 
@@ -976,18 +1207,21 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'record' typeName extendsDecl? recordTypeBody?
+  // 'record' typeName extendsDecl? metaDecl? recordSupplementsDecl? recordTypeBody?
   public static boolean recordTypeDef(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "recordTypeDef")) return false;
     if (!nextTokenIs(b, S_RECORD)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, S_RECORD_TYPE_DEF, null);
     r = consumeToken(b, S_RECORD);
-    r = r && typeName(b, l + 1);
-    r = r && recordTypeDef_2(b, l + 1);
-    r = r && recordTypeDef_3(b, l + 1);
-    exit_section_(b, m, S_RECORD_TYPE_DEF, r);
-    return r;
+    p = r; // pin = 1
+    r = r && report_error_(b, typeName(b, l + 1));
+    r = p && report_error_(b, recordTypeDef_2(b, l + 1)) && r;
+    r = p && report_error_(b, recordTypeDef_3(b, l + 1)) && r;
+    r = p && report_error_(b, recordTypeDef_4(b, l + 1)) && r;
+    r = p && recordTypeDef_5(b, l + 1) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   // extendsDecl?
@@ -997,24 +1231,101 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // recordTypeBody?
+  // metaDecl?
   private static boolean recordTypeDef_3(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "recordTypeDef_3")) return false;
+    metaDecl(b, l + 1);
+    return true;
+  }
+
+  // recordSupplementsDecl?
+  private static boolean recordTypeDef_4(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "recordTypeDef_4")) return false;
+    recordSupplementsDecl(b, l + 1);
+    return true;
+  }
+
+  // recordTypeBody?
+  private static boolean recordTypeDef_5(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "recordTypeDef_5")) return false;
     recordTypeBody(b, l + 1);
     return true;
   }
 
   /* ********************************************************** */
-  // namespacedTypedefs*
+  // importStatement* namespacedDefs*
   static boolean root(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "root")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = root_0(b, l + 1);
+    r = r && root_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // importStatement*
+  private static boolean root_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "root_0")) return false;
     int c = current_position_(b);
     while (true) {
-      if (!namespacedTypedefs(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "root", c)) break;
+      if (!importStatement(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "root_0", c)) break;
       c = current_position_(b);
     }
     return true;
+  }
+
+  // namespacedDefs*
+  private static boolean root_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "root_1")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!namespacedDefs(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "root_1", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
+  /* ********************************************************** */
+  // 'supplement' combinedFqns (',' combinedFqns)* 'with' fqn
+  public static boolean supplementDef(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "supplementDef")) return false;
+    if (!nextTokenIs(b, S_SUPPLEMENT)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, S_SUPPLEMENT_DEF, null);
+    r = consumeToken(b, S_SUPPLEMENT);
+    p = r; // pin = 1
+    r = r && report_error_(b, combinedFqns(b, l + 1));
+    r = p && report_error_(b, supplementDef_2(b, l + 1)) && r;
+    r = p && report_error_(b, consumeToken(b, S_WITH)) && r;
+    r = p && fqn(b, l + 1) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // (',' combinedFqns)*
+  private static boolean supplementDef_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "supplementDef_2")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!supplementDef_2_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "supplementDef_2", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
+  // ',' combinedFqns
+  private static boolean supplementDef_2_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "supplementDef_2_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, S_COMMA);
+    r = r && combinedFqns(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
   }
 
   /* ********************************************************** */
@@ -1105,19 +1416,6 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // typeDef*
-  static boolean typeDefs(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "typeDefs")) return false;
-    int c = current_position_(b);
-    while (true) {
-      if (!typeDef(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "typeDefs", c)) break;
-      c = current_position_(b);
-    }
-    return true;
-  }
-
-  /* ********************************************************** */
   // id
   static boolean typeName(PsiBuilder b, int l) {
     return consumeToken(b, S_ID);
@@ -1176,37 +1474,31 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'union' typeName extendsDecl? unionTypeBody?
+  // 'union' typeName metaDecl? unionTypeBody
   public static boolean unionTypeDef(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "unionTypeDef")) return false;
     if (!nextTokenIs(b, S_UNION)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, S_UNION_TYPE_DEF, null);
     r = consumeToken(b, S_UNION);
-    r = r && typeName(b, l + 1);
-    r = r && unionTypeDef_2(b, l + 1);
-    r = r && unionTypeDef_3(b, l + 1);
-    exit_section_(b, m, S_UNION_TYPE_DEF, r);
-    return r;
+    p = r; // pin = 1
+    r = r && report_error_(b, typeName(b, l + 1));
+    r = p && report_error_(b, unionTypeDef_2(b, l + 1)) && r;
+    r = p && unionTypeBody(b, l + 1) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
-  // extendsDecl?
+  // metaDecl?
   private static boolean unionTypeDef_2(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "unionTypeDef_2")) return false;
-    extendsDecl(b, l + 1);
+    metaDecl(b, l + 1);
     return true;
   }
 
-  // unionTypeBody?
-  private static boolean unionTypeDef_3(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "unionTypeDef_3")) return false;
-    unionTypeBody(b, l + 1);
-    return true;
-  }
-
-  final static Parser namespaceRecover_parser_ = new Parser() {
+  final static Parser declRecover_parser_ = new Parser() {
     public boolean parse(PsiBuilder b, int l) {
-      return namespaceRecover(b, l + 1);
+      return declRecover(b, l + 1);
     }
   };
   final static Parser partRecover_parser_ = new Parser() {

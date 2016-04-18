@@ -33,21 +33,21 @@ public class SchemaAnonListImpl extends ASTWrapperPsiElement implements SchemaAn
   }
 
   @Override
-  @NotNull
+  @Nullable
   public SchemaTypeRef getTypeRef() {
-    return findNotNullChildByClass(SchemaTypeRef.class);
+    return findChildByClass(SchemaTypeRef.class);
   }
 
   @Override
-  @NotNull
+  @Nullable
   public PsiElement getBracketLeft() {
-    return findNotNullChildByType(S_BRACKET_LEFT);
+    return findChildByType(S_BRACKET_LEFT);
   }
 
   @Override
-  @NotNull
+  @Nullable
   public PsiElement getBracketRight() {
-    return findNotNullChildByType(S_BRACKET_RIGHT);
+    return findChildByType(S_BRACKET_RIGHT);
   }
 
   @Override

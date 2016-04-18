@@ -10,13 +10,13 @@ public interface SchemaAnonList extends PsiElement {
   @Nullable
   SchemaDefaultOverride getDefaultOverride();
 
-  @NotNull
+  @Nullable
   SchemaTypeRef getTypeRef();
 
-  @NotNull
+  @Nullable
   PsiElement getBracketLeft();
 
-  @NotNull
+  @Nullable
   PsiElement getBracketRight();
 
   @NotNull

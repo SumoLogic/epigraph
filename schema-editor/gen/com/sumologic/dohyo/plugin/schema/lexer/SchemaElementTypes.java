@@ -10,8 +10,10 @@ public interface SchemaElementTypes {
 
   IElementType S_ANON_LIST = new SchemaElementType("S_ANON_LIST");
   IElementType S_ANON_MAP = new SchemaElementType("S_ANON_MAP");
+  IElementType S_COMBINED_FQNS = new SchemaElementType("S_COMBINED_FQNS");
   IElementType S_CUSTOM_PARAM = new SchemaElementType("S_CUSTOM_PARAM");
   IElementType S_DEFAULT_OVERRIDE = new SchemaElementType("S_DEFAULT_OVERRIDE");
+  IElementType S_DEFS = new SchemaElementType("S_DEFS");
   IElementType S_ENUM_MEMBER = new SchemaElementType("S_ENUM_MEMBER");
   IElementType S_ENUM_MEMBER_BODY = new SchemaElementType("S_ENUM_MEMBER_BODY");
   IElementType S_ENUM_TYPE_BODY = new SchemaElementType("S_ENUM_TYPE_BODY");
@@ -19,20 +21,25 @@ public interface SchemaElementTypes {
   IElementType S_EXTENDS_DECL = new SchemaElementType("S_EXTENDS_DECL");
   IElementType S_FIELD_DECL = new SchemaElementType("S_FIELD_DECL");
   IElementType S_FQN = new SchemaElementType("S_FQN");
+  IElementType S_IMPORT_STATEMENT = new SchemaElementType("S_IMPORT_STATEMENT");
   IElementType S_LIST_TYPE_BODY = new SchemaElementType("S_LIST_TYPE_BODY");
   IElementType S_LIST_TYPE_DEF = new SchemaElementType("S_LIST_TYPE_DEF");
   IElementType S_MAP_TYPE_BODY = new SchemaElementType("S_MAP_TYPE_BODY");
   IElementType S_MAP_TYPE_DEF = new SchemaElementType("S_MAP_TYPE_DEF");
   IElementType S_MEMBER_DECL = new SchemaElementType("S_MEMBER_DECL");
+  IElementType S_META_DECL = new SchemaElementType("S_META_DECL");
+  IElementType S_MULTI_SUPPLEMENTS_DECL = new SchemaElementType("S_MULTI_SUPPLEMENTS_DECL");
   IElementType S_MULTI_TYPE_BODY = new SchemaElementType("S_MULTI_TYPE_BODY");
   IElementType S_MULTI_TYPE_DEF = new SchemaElementType("S_MULTI_TYPE_DEF");
-  IElementType S_NAMESPACED_TYPEDEFS = new SchemaElementType("S_NAMESPACED_TYPEDEFS");
+  IElementType S_NAMESPACED_DEFS = new SchemaElementType("S_NAMESPACED_DEFS");
   IElementType S_NAMESPACE_DECL = new SchemaElementType("S_NAMESPACE_DECL");
   IElementType S_PRIMITIVE_KIND = new SchemaElementType("S_PRIMITIVE_KIND");
   IElementType S_PRIMITIVE_TYPE_BODY = new SchemaElementType("S_PRIMITIVE_TYPE_BODY");
   IElementType S_PRIMITIVE_TYPE_DEF = new SchemaElementType("S_PRIMITIVE_TYPE_DEF");
+  IElementType S_RECORD_SUPPLEMENTS_DECL = new SchemaElementType("S_RECORD_SUPPLEMENTS_DECL");
   IElementType S_RECORD_TYPE_BODY = new SchemaElementType("S_RECORD_TYPE_BODY");
   IElementType S_RECORD_TYPE_DEF = new SchemaElementType("S_RECORD_TYPE_DEF");
+  IElementType S_SUPPLEMENT_DEF = new SchemaElementType("S_SUPPLEMENT_DEF");
   IElementType S_TAG_DECL = new SchemaElementType("S_TAG_DECL");
   IElementType S_TYPE_DEF = new SchemaElementType("S_TYPE_DEF");
   IElementType S_TYPE_REF = new SchemaElementType("S_TYPE_REF");
@@ -55,16 +62,22 @@ public interface SchemaElementTypes {
   IElementType S_EQ = new SchemaElementType("=");
   IElementType S_EXTENDS = new SchemaElementType("extends");
   IElementType S_ID = new SchemaElementType("id");
+  IElementType S_IMPORT = new SchemaElementType("import");
   IElementType S_INTEGER_T = new SchemaElementType("integer");
   IElementType S_LIST = new SchemaElementType("list");
   IElementType S_LONG_T = new SchemaElementType("long");
   IElementType S_MAP = new SchemaElementType("map");
+  IElementType S_META = new SchemaElementType("meta");
   IElementType S_MULTI = new SchemaElementType("multi");
   IElementType S_NAMESPACE = new SchemaElementType("namespace");
+  IElementType S_PLUS = new SchemaElementType("+");
   IElementType S_RECORD = new SchemaElementType("record");
   IElementType S_STRING = new SchemaElementType("string");
   IElementType S_STRING_T = new SchemaElementType("string");
+  IElementType S_SUPPLEMENT = new SchemaElementType("supplement");
+  IElementType S_SUPPLEMENTS = new SchemaElementType("supplements");
   IElementType S_UNION = new SchemaElementType("union");
+  IElementType S_WITH = new SchemaElementType("with");
 
   class Factory {
     public static PsiElement createElement(ASTNode node) {
@@ -75,11 +88,17 @@ public interface SchemaElementTypes {
       else if (type == S_ANON_MAP) {
         return new SchemaAnonMapImpl(node);
       }
+      else if (type == S_COMBINED_FQNS) {
+        return new SchemaCombinedFqnsImpl(node);
+      }
       else if (type == S_CUSTOM_PARAM) {
         return new SchemaCustomParamImpl(node);
       }
       else if (type == S_DEFAULT_OVERRIDE) {
         return new SchemaDefaultOverrideImpl(node);
+      }
+      else if (type == S_DEFS) {
+        return new SchemaDefsImpl(node);
       }
       else if (type == S_ENUM_MEMBER) {
         return new SchemaEnumMemberImpl(node);
@@ -102,6 +121,9 @@ public interface SchemaElementTypes {
       else if (type == S_FQN) {
         return new SchemaFqnImpl(node);
       }
+      else if (type == S_IMPORT_STATEMENT) {
+        return new SchemaImportStatementImpl(node);
+      }
       else if (type == S_LIST_TYPE_BODY) {
         return new SchemaListTypeBodyImpl(node);
       }
@@ -117,14 +139,20 @@ public interface SchemaElementTypes {
       else if (type == S_MEMBER_DECL) {
         return new SchemaMemberDeclImpl(node);
       }
+      else if (type == S_META_DECL) {
+        return new SchemaMetaDeclImpl(node);
+      }
+      else if (type == S_MULTI_SUPPLEMENTS_DECL) {
+        return new SchemaMultiSupplementsDeclImpl(node);
+      }
       else if (type == S_MULTI_TYPE_BODY) {
         return new SchemaMultiTypeBodyImpl(node);
       }
       else if (type == S_MULTI_TYPE_DEF) {
         return new SchemaMultiTypeDefImpl(node);
       }
-      else if (type == S_NAMESPACED_TYPEDEFS) {
-        return new SchemaNamespacedTypedefsImpl(node);
+      else if (type == S_NAMESPACED_DEFS) {
+        return new SchemaNamespacedDefsImpl(node);
       }
       else if (type == S_NAMESPACE_DECL) {
         return new SchemaNamespaceDeclImpl(node);
@@ -138,11 +166,17 @@ public interface SchemaElementTypes {
       else if (type == S_PRIMITIVE_TYPE_DEF) {
         return new SchemaPrimitiveTypeDefImpl(node);
       }
+      else if (type == S_RECORD_SUPPLEMENTS_DECL) {
+        return new SchemaRecordSupplementsDeclImpl(node);
+      }
       else if (type == S_RECORD_TYPE_BODY) {
         return new SchemaRecordTypeBodyImpl(node);
       }
       else if (type == S_RECORD_TYPE_DEF) {
         return new SchemaRecordTypeDefImpl(node);
+      }
+      else if (type == S_SUPPLEMENT_DEF) {
+        return new SchemaSupplementDefImpl(node);
       }
       else if (type == S_TAG_DECL) {
         return new SchemaTagDeclImpl(node);

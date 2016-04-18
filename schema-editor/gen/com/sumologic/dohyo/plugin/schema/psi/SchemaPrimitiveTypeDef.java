@@ -10,13 +10,16 @@ public interface SchemaPrimitiveTypeDef extends SchemaTypeDef {
   @Nullable
   SchemaExtendsDecl getExtendsDecl();
 
+  @Nullable
+  SchemaMetaDecl getMetaDecl();
+
   @NotNull
   SchemaPrimitiveKind getPrimitiveKind();
 
   @Nullable
   SchemaPrimitiveTypeBody getPrimitiveTypeBody();
 
-  @NotNull
+  @Nullable
   PsiElement getId();
 
 }

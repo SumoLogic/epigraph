@@ -31,6 +31,8 @@
                                    implementationClass="com.sumologic.dohyo.plugin.schema.highlighting.SchemaSyntaxHighlighterFactory"/>
     <lang.parserDefinition language="schema"
                            implementationClass="com.sumologic.dohyo.plugin.schema.parser.SchemaParserDefinition"/>
+    <annotator language="schema"
+               implementationClass="com.sumologic.dohyo.plugin.schema.highlighting.SchemaAnnotator"/>
 
 
     <lang.braceMatcher language="schema"
