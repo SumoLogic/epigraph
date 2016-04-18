@@ -170,12 +170,12 @@ public class SchemaFoldingBuilder extends CustomFoldingBuilder implements DumbAw
 
     SchemaFile file = (SchemaFile) root;
 
-    for (SchemaNamespacedDefs namespacedDefs : file.getNamespacesDefs()) {
-      for (SchemaTypeDef typeDef : namespacedDefs.getDefs().getTypeDefList()) {
+    SchemaDefs defs = file.getDefs();
+    if (defs != null) {
+      for (SchemaTypeDef typeDef : defs.getTypeDefList()) {
         addToFold(descriptors, typeDef, document, true);
       }
     }
-
 
     if (!quick) {
       final Set<PsiElement> seenComments = ContainerUtil.newHashSet();

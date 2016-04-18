@@ -1,59 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="8bf28e7f-e92e-40d3-b599-cc60f2355a84" name="Default" comment="parsing recovery; matching braces; folding">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/SchemaCombinedFqns.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/SchemaDefs.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/SchemaImportStatement.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/SchemaMetaDecl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/SchemaMultiSupplementsDecl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/SchemaRecordSupplementsDecl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/SchemaSupplementDef.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/impl/SchemaCombinedFqnsImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/impl/SchemaImportStatementImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/impl/SchemaMetaDeclImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/impl/SchemaMultiSupplementsDeclImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/impl/SchemaNamespacedDefsImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/impl/SchemaRecordSupplementsDeclImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/impl/SchemaSupplementDefImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/NamingConventions.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/highlighting/SchemaAnnotator.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/psi/SchemaElementWithId.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/psi/impl/SchemaElementWithIdImpl.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/SchemaNamespacedTypedefs.java" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/SchemaNamespacedDefs.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/impl/SchemaNamespacedTypedefsImpl.java" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/impl/SchemaDefsImpl.java" />
+    <list default="true" id="8bf28e7f-e92e-40d3-b599-cc60f2355a84" name="Default" comment="">
+      <change type="MOVED" beforePath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/SchemaNamespacedDefs.java" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/SchemaImports.java" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/impl/SchemaNamespacedDefsImpl.java" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/impl/SchemaImportsImpl.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/atlassian-ide-plugin.xml" afterPath="$PROJECT_DIR$/.idea/atlassian-ide-plugin.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/lexer/SchemaElementTypes.java" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/lexer/SchemaElementTypes.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/parser/SchemaParser.java" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/parser/SchemaParser.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/SchemaAnonList.java" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/SchemaAnonList.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/SchemaAnonMap.java" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/SchemaAnonMap.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/SchemaEnumTypeDef.java" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/SchemaEnumTypeDef.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/SchemaListTypeDef.java" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/SchemaListTypeDef.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/SchemaMapTypeDef.java" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/SchemaMapTypeDef.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/SchemaMultiTypeDef.java" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/SchemaMultiTypeDef.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/SchemaPrimitiveTypeDef.java" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/SchemaPrimitiveTypeDef.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/SchemaRecordTypeDef.java" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/SchemaRecordTypeDef.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/SchemaTypeDef.java" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/SchemaTypeDef.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/SchemaUnionTypeDef.java" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/SchemaUnionTypeDef.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/SchemaCustomParam.java" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/SchemaCustomParam.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/SchemaVisitor.java" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/SchemaVisitor.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/impl/SchemaAnonListImpl.java" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/impl/SchemaAnonListImpl.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/impl/SchemaAnonMapImpl.java" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/impl/SchemaAnonMapImpl.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/impl/SchemaEnumTypeDefImpl.java" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/impl/SchemaEnumTypeDefImpl.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/impl/SchemaListTypeDefImpl.java" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/impl/SchemaListTypeDefImpl.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/impl/SchemaMapTypeDefImpl.java" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/impl/SchemaMapTypeDefImpl.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/impl/SchemaMultiTypeDefImpl.java" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/impl/SchemaMultiTypeDefImpl.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/impl/SchemaPrimitiveTypeDefImpl.java" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/impl/SchemaPrimitiveTypeDefImpl.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/impl/SchemaRecordTypeDefImpl.java" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/impl/SchemaRecordTypeDefImpl.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/impl/SchemaTypeDefImpl.java" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/impl/SchemaTypeDefImpl.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/impl/SchemaUnionTypeDefImpl.java" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/impl/SchemaUnionTypeDefImpl.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/schema-editor/META-INF/plugin.xml" afterPath="$PROJECT_DIR$/out/production/schema-editor/META-INF/plugin.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/resources/META-INF/plugin.xml" afterPath="$PROJECT_DIR$/resources/META-INF/plugin.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/impl/SchemaCustomParamImpl.java" afterPath="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/impl/SchemaCustomParamImpl.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/features/SchemaFoldingBuilder.java" afterPath="$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/features/SchemaFoldingBuilder.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/grammar/schema.bnf" afterPath="$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/grammar/schema.bnf" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/highlighting/SchemaSyntaxHighlighter.java" afterPath="$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/highlighting/SchemaSyntaxHighlighter.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/lexer/SchemaElementType.java" afterPath="$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/lexer/SchemaElementType.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/lexer/SchemaFlexAdapter.java" afterPath="$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/lexer/SchemaFlexAdapter.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/lexer/SchemaLexer.flex" afterPath="$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/lexer/SchemaLexer.flex" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/lexer/SchemaLexer.java" afterPath="$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/lexer/SchemaLexer.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/psi/SchemaFile.java" afterPath="$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/psi/SchemaFile.java" />
@@ -78,13 +37,36 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="schema.bnf" pinned="false" current-in-tab="true">
+      <file leaf-file-name="schema.bnf" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/grammar/schema.bnf">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2280">
-              <caret line="114" column="41" selection-start-line="114" selection-start-column="41" selection-end-line="114" selection-end-column="41" />
+            <state relative-caret-position="940">
+              <caret line="47" column="22" selection-start-line="47" selection-start-column="22" selection-end-line="47" selection-end-column="22" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="SchemaLanguage.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/SchemaLanguage.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="180">
+              <caret line="11" column="13" selection-start-line="11" selection-start-column="13" selection-end-line="11" selection-end-column="13" />
               <folding>
-                <element signature="e#0#1728#0" expanded="true" />
+                <element signature="e#532#533#0" expanded="true" />
+                <element signature="e#553#554#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="SchemaParserDefinition.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/parser/SchemaParserDefinition.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="160">
+              <caret line="29" column="75" selection-start-line="29" selection-start-column="75" selection-end-line="29" selection-end-column="75" />
+              <folding>
+                <element signature="imports" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -106,11 +88,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="SchemaSyntaxHighlighter.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/highlighting/SchemaSyntaxHighlighter.java">
+      <file leaf-file-name="SchemaFile.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/psi/SchemaFile.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="780">
-              <caret line="49" column="23" selection-start-line="49" selection-start-column="23" selection-end-line="49" selection-end-column="23" />
+            <state relative-caret-position="660">
+              <caret line="37" column="20" selection-start-line="37" selection-start-column="20" selection-end-line="37" selection-end-column="20" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -118,14 +100,12 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="SchemaFile.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/psi/SchemaFile.java">
+      <file leaf-file-name="CompositeElement.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/../../../idea/platform/core-impl/src/com/intellij/psi/impl/source/tree/CompositeElement.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="579">
-              <caret line="44" column="92" selection-start-line="44" selection-start-column="92" selection-end-line="44" selection-end-column="92" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
+            <state relative-caret-position="-198">
+              <caret line="196" column="20" selection-start-line="196" selection-start-column="20" selection-end-line="196" selection-end-column="20" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -133,8 +113,8 @@
       <file leaf-file-name="SchemaFoldingBuilder.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/features/SchemaFoldingBuilder.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="647">
-              <caret line="175" column="0" selection-start-line="175" selection-start-column="0" selection-end-line="175" selection-end-column="0" />
+            <state relative-caret-position="1087">
+              <caret line="153" column="17" selection-start-line="153" selection-start-column="17" selection-end-line="153" selection-end-column="17" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -142,31 +122,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="SchemaNamespacedDefs.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/SchemaNamespacedDefs.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="160">
-              <caret line="10" column="13" selection-start-line="10" selection-start-column="13" selection-end-line="10" selection-end-column="13" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="SchemaLexer.flex" pinned="false" current-in-tab="false">
+      <file leaf-file-name="SchemaLexer.flex" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/lexer/SchemaLexer.flex">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="359">
-              <caret line="49" column="73" selection-start-line="49" selection-start-column="73" selection-end-line="49" selection-end-column="73" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="FlexAdapter.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../../../idea/platform/core-api/src/com/intellij/lexer/FlexAdapter.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="680">
-              <caret line="42" column="14" selection-start-line="42" selection-start-column="14" selection-end-line="42" selection-end-column="14" />
+            <state relative-caret-position="-33">
+              <caret line="17" column="21" selection-start-line="17" selection-start-column="21" selection-end-line="17" selection-end-column="21" />
               <folding />
             </state>
           </provider>
@@ -180,16 +140,6 @@
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="PsiElement.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../../../idea/platform/core-api/src/com/intellij/psi/PsiElement.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="162">
-              <caret line="98" column="13" selection-start-line="98" selection-start-column="13" selection-end-line="98" selection-end-column="13" />
-              <folding />
             </state>
           </provider>
         </entry>
@@ -255,10 +205,11 @@
         <option value="$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/highlighting/SchemaSyntaxHighlighter.java" />
         <option value="$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/highlighting/SchemaAnnotator.java" />
         <option value="/schema.bnf.preview" />
-        <option value="$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/lexer/SchemaLexer.flex" />
         <option value="$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/psi/SchemaFile.java" />
         <option value="$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/features/SchemaFoldingBuilder.java" />
         <option value="$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/grammar/schema.bnf" />
+        <option value="$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/lexer/SchemaLexer.flex" />
+        <option value="$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/SchemaDefs.java" />
       </list>
     </option>
   </component>
@@ -332,140 +283,6 @@
               <option name="myItemId" value="schema-editor" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
             </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="External Libraries" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="&lt; IntelliJ IDEA Community Edition IC-145.597.3 &gt;" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.NamedLibraryElementNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="schema-editor" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="External Libraries" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="&lt; IntelliJ IDEA Community Edition IC-145.597.3 &gt;" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.NamedLibraryElementNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="openapi.jar" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="schema-editor" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="External Libraries" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="&lt; IntelliJ IDEA Community Edition IC-145.597.3 &gt;" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.NamedLibraryElementNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="openapi.jar" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="com" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="schema-editor" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="External Libraries" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="&lt; IntelliJ IDEA Community Edition IC-145.597.3 &gt;" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.NamedLibraryElementNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="openapi.jar" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="com" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="intellij" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="schema-editor" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="External Libraries" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="&lt; IntelliJ IDEA Community Edition IC-145.597.3 &gt;" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.NamedLibraryElementNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="openapi.jar" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="com" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="intellij" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="lexer" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="schema-editor" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="External Libraries" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="&lt; IntelliJ IDEA Community Edition IC-145.597.3 &gt;" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.NamedLibraryElementNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="openapi.jar" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="com" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="intellij" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="facet" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
           </PATH>
           <PATH>
             <PATH_ELEMENT>
@@ -545,49 +362,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="psi" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="schema-editor" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="schema-editor" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="com" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="sumologic" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="dohyo" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="plugin" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="schema" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="psi" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="impl" />
+              <option name="myItemId" value="parser" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -626,44 +401,6 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="lexer" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="schema-editor" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="schema-editor" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="com" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="sumologic" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="dohyo" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="plugin" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="schema" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="highlighting" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -702,158 +439,6 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="grammar" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="schema-editor" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="schema-editor" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="com" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="sumologic" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="dohyo" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="plugin" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="schema" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="features" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="schema-editor" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="schema-editor" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="gen" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="com" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="sumologic" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="dohyo" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="plugin" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="schema" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="psi" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="schema-editor" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="schema-editor" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="gen" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="com" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="sumologic" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="dohyo" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="plugin" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="schema" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="parser" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="schema-editor" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="schema-editor" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="gen" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="com" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="sumologic" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="dohyo" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="plugin" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="schema" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="lexer" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -1151,7 +736,14 @@
       <option name="project" value="LOCAL" />
       <updated>1460684013957</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="injections">
+      <created>1460999645940</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1460999645940</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -1253,7 +845,8 @@
     <MESSAGE value="schema editor in the works.. first version of grammar stabilized" />
     <MESSAGE value="parsing works" />
     <MESSAGE value="parsing recovery; matching braces; folding" />
-    <option name="LAST_COMMIT_MESSAGE" value="parsing recovery; matching braces; folding" />
+    <MESSAGE value="injections" />
+    <option name="LAST_COMMIT_MESSAGE" value="injections" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1283,40 +876,6 @@
     </option>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/../../../idea/java/java-psi-impl/src/com/intellij/psi/impl/java/stubs/JavaStubElementTypes.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="440">
-          <caret line="26" column="17" selection-start-line="26" selection-start-column="17" selection-end-line="26" selection-end-column="17" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/SchemaNamespacedTypedefs.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="220">
-          <caret line="13" column="17" selection-start-line="13" selection-start-column="17" selection-end-line="13" selection-end-column="17" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../../idea/platform/core-impl/src/com/intellij/psi/impl/source/SourceTreeToPsiMap.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="460">
-          <caret line="28" column="27" selection-start-line="28" selection-start-column="27" selection-end-line="28" selection-end-column="27" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../../idea/platform/core-impl/src/com/intellij/psi/impl/source/tree/CompositeElement.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="505">
-          <caret line="505" column="0" selection-start-line="505" selection-start-column="0" selection-end-line="505" selection-end-column="0" />
-          <folding>
-            <element signature="e#16944#16974#1" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/impl/SchemaNamespacedTypedefsImpl.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="500">
@@ -1667,14 +1226,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/lexer/SchemaLexer.flex">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="359">
-          <caret line="49" column="73" selection-start-line="49" selection-start-column="73" selection-end-line="49" selection-end-column="73" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/psi/impl/SchemaElementWithIdImpl.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="360">
@@ -1689,16 +1240,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/psi/SchemaFile.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="579">
-          <caret line="44" column="92" selection-start-line="44" selection-start-column="92" selection-end-line="44" selection-end-column="92" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/SchemaNamespacedDefs.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="160">
@@ -1707,10 +1248,39 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/features/SchemaFoldingBuilder.java">
+    <entry file="file://$PROJECT_DIR$/../../../idea/platform/core-impl/src/com/intellij/psi/impl/source/tree/CompositeElement.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="647">
-          <caret line="175" column="0" selection-start-line="175" selection-start-column="0" selection-end-line="175" selection-end-column="0" />
+        <state relative-caret-position="-198">
+          <caret line="196" column="20" selection-start-line="196" selection-start-column="20" selection-end-line="196" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/psi/SchemaFile.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="660">
+          <caret line="37" column="20" selection-start-line="37" selection-start-column="20" selection-end-line="37" selection-end-column="20" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/SchemaLanguage.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="11" column="13" selection-start-line="11" selection-start-column="13" selection-end-line="11" selection-end-column="13" />
+          <folding>
+            <element signature="e#532#533#0" expanded="true" />
+            <element signature="e#553#554#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/parser/SchemaParserDefinition.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="160">
+          <caret line="29" column="75" selection-start-line="29" selection-start-column="75" selection-end-line="29" selection-end-column="75" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
@@ -1719,11 +1289,35 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/grammar/schema.bnf">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2280">
-          <caret line="114" column="41" selection-start-line="114" selection-start-column="41" selection-end-line="114" selection-end-column="41" />
+        <state relative-caret-position="940">
+          <caret line="47" column="22" selection-start-line="47" selection-start-column="22" selection-end-line="47" selection-end-column="22" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gen/com/sumologic/dohyo/plugin/schema/psi/SchemaDefs.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="220">
+          <caret line="13" column="19" selection-start-line="13" selection-start-column="19" selection-end-line="13" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/features/SchemaFoldingBuilder.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1087">
+          <caret line="153" column="17" selection-start-line="153" selection-start-column="17" selection-end-line="153" selection-end-column="17" />
           <folding>
-            <element signature="e#0#1728#0" expanded="true" />
+            <element signature="imports" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/sumologic/dohyo/plugin/schema/lexer/SchemaLexer.flex">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-33">
+          <caret line="17" column="21" selection-start-line="17" selection-start-column="21" selection-end-line="17" selection-end-column="21" />
+          <folding />
         </state>
       </provider>
     </entry>

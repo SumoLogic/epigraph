@@ -21,6 +21,7 @@ public interface SchemaElementTypes {
   IElementType S_EXTENDS_DECL = new SchemaElementType("S_EXTENDS_DECL");
   IElementType S_FIELD_DECL = new SchemaElementType("S_FIELD_DECL");
   IElementType S_FQN = new SchemaElementType("S_FQN");
+  IElementType S_IMPORTS = new SchemaElementType("S_IMPORTS");
   IElementType S_IMPORT_STATEMENT = new SchemaElementType("S_IMPORT_STATEMENT");
   IElementType S_LIST_TYPE_BODY = new SchemaElementType("S_LIST_TYPE_BODY");
   IElementType S_LIST_TYPE_DEF = new SchemaElementType("S_LIST_TYPE_DEF");
@@ -31,7 +32,6 @@ public interface SchemaElementTypes {
   IElementType S_MULTI_SUPPLEMENTS_DECL = new SchemaElementType("S_MULTI_SUPPLEMENTS_DECL");
   IElementType S_MULTI_TYPE_BODY = new SchemaElementType("S_MULTI_TYPE_BODY");
   IElementType S_MULTI_TYPE_DEF = new SchemaElementType("S_MULTI_TYPE_DEF");
-  IElementType S_NAMESPACED_DEFS = new SchemaElementType("S_NAMESPACED_DEFS");
   IElementType S_NAMESPACE_DECL = new SchemaElementType("S_NAMESPACE_DECL");
   IElementType S_PRIMITIVE_KIND = new SchemaElementType("S_PRIMITIVE_KIND");
   IElementType S_PRIMITIVE_TYPE_BODY = new SchemaElementType("S_PRIMITIVE_TYPE_BODY");
@@ -121,6 +121,9 @@ public interface SchemaElementTypes {
       else if (type == S_FQN) {
         return new SchemaFqnImpl(node);
       }
+      else if (type == S_IMPORTS) {
+        return new SchemaImportsImpl(node);
+      }
       else if (type == S_IMPORT_STATEMENT) {
         return new SchemaImportStatementImpl(node);
       }
@@ -150,9 +153,6 @@ public interface SchemaElementTypes {
       }
       else if (type == S_MULTI_TYPE_DEF) {
         return new SchemaMultiTypeDefImpl(node);
-      }
-      else if (type == S_NAMESPACED_DEFS) {
-        return new SchemaNamespacedDefsImpl(node);
       }
       else if (type == S_NAMESPACE_DECL) {
         return new SchemaNamespaceDeclImpl(node);

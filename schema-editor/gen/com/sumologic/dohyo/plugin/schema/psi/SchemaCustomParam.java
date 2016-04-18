@@ -7,7 +7,7 @@ import com.intellij.psi.PsiElement;
 
 public interface SchemaCustomParam extends PsiElement {
 
-  @Nullable
+  @NotNull
   PsiElement getEq();
 
   @NotNull

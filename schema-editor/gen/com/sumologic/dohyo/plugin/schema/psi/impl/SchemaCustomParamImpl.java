@@ -27,9 +27,9 @@ public class SchemaCustomParamImpl extends ASTWrapperPsiElement implements Schem
   }
 
   @Override
-  @Nullable
+  @NotNull
   public PsiElement getEq() {
-    return findChildByType(S_EQ);
+    return findNotNullChildByType(S_EQ);
   }
 
   @Override

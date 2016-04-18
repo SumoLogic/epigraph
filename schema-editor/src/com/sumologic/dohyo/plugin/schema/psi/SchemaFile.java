@@ -34,15 +34,15 @@ public class SchemaFile extends PsiFileBase {
     return SchemaFileType.INSTANCE.getIcon();
   }
 
-  @NotNull
-  public SchemaNamespacedDefs[] getNamespacesDefs() {
+  @Nullable
+  public SchemaDefs getDefs() {
     // TODO figure out stubs & indexing
 //    StubElement stub = getStub();
 //    if (stub != null) {
 //      return stub.getChildrenByType(???
 //    }
 
-    return calcTreeElement().getChildrenAsPsiElements(S_NAMESPACED_DEFS, SchemaNamespacedDefs[]::new);
+    return (SchemaDefs) calcTreeElement().findPsiChildByType(S_DEFS);
   }
 
   @NotNull

@@ -41,7 +41,7 @@
     DOT = '.'
     COMMA = ','
     EQ = '='
-    PLUS = '+'
+    PLUS = '+' // change to '&' ?
     CURLY_LEFT = '{'
     CURLY_RIGHT = '}'
     BRACKET_LEFT = '['
@@ -53,7 +53,7 @@
     string="regexp:('([^'\\]|\\.)*'|\"([^\"\\]|\\.)*\")"
 
     // id = 'regexp:_?(\p{Lower})\p{Alnum}*'
-    id = 'regexp:_?\p{Alpha}\p{Alnum}*'
+    id = 'regexp:\p{Alpha}\p{Alnum}*'
   ]
 
   pin(".*Body") = 1
@@ -68,11 +68,10 @@
 // otherwise stuff can get confusing, e.g.
 // record { fields { f1:t1 f2:t2 } }
 
-root ::= importStatement* namespacedDefs*
+root ::= namespaceDecl imports defs
 
+imports ::= importStatement*
 importStatement ::= 'import' fqn {pin=1 recoverWhile="declRecover"}
-
-namespacedDefs ::= namespaceDecl defs
 
 namespaceDecl ::= 'namespace' fqn namespaceBody? {pin=1 recoverWhile="declRecover"}
 

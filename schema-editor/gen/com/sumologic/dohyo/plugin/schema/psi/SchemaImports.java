@@ -5,12 +5,9 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface SchemaNamespacedDefs extends PsiElement {
+public interface SchemaImports extends PsiElement {
 
   @NotNull
-  SchemaDefs getDefs();
-
-  @NotNull
-  SchemaNamespaceDecl getNamespaceDecl();
+  List<SchemaImportStatement> getImportStatementList();
 
 }

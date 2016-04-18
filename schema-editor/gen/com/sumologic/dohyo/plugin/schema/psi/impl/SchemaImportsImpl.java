@@ -11,14 +11,14 @@ import static com.sumologic.dohyo.plugin.schema.lexer.SchemaElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.sumologic.dohyo.plugin.schema.psi.*;
 
-public class SchemaNamespacedDefsImpl extends ASTWrapperPsiElement implements SchemaNamespacedDefs {
+public class SchemaImportsImpl extends ASTWrapperPsiElement implements SchemaImports {
 
-  public SchemaNamespacedDefsImpl(ASTNode node) {
+  public SchemaImportsImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull SchemaVisitor visitor) {
-    visitor.visitNamespacedDefs(this);
+    visitor.visitImports(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -28,14 +28,8 @@ public class SchemaNamespacedDefsImpl extends ASTWrapperPsiElement implements Sc
 
   @Override
   @NotNull
-  public SchemaDefs getDefs() {
-    return findNotNullChildByClass(SchemaDefs.class);
-  }
-
-  @Override
-  @NotNull
-  public SchemaNamespaceDecl getNamespaceDecl() {
-    return findNotNullChildByClass(SchemaNamespaceDecl.class);
+  public List<SchemaImportStatement> getImportStatementList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaImportStatement.class);
   }
 
 }

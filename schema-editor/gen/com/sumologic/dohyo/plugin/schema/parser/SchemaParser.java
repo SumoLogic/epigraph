@@ -65,6 +65,9 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     else if (t == S_IMPORT_STATEMENT) {
       r = importStatement(b, 0);
     }
+    else if (t == S_IMPORTS) {
+      r = imports(b, 0);
+    }
     else if (t == S_LIST_TYPE_BODY) {
       r = listTypeBody(b, 0);
     }
@@ -94,9 +97,6 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     }
     else if (t == S_NAMESPACE_DECL) {
       r = namespaceDecl(b, 0);
-    }
-    else if (t == S_NAMESPACED_DEFS) {
-      r = namespacedDefs(b, 0);
     }
     else if (t == S_PRIMITIVE_KIND) {
       r = primitiveKind(b, 0);
@@ -243,9 +243,9 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, S_CUSTOM_PARAM, null);
     r = consumeToken(b, S_ID);
-    p = r; // pin = 1
-    r = r && report_error_(b, consumeToken(b, S_EQ));
-    r = p && consumeToken(b, S_STRING) && r;
+    r = r && consumeToken(b, S_EQ);
+    p = r; // pin = 2
+    r = r && consumeToken(b, S_STRING);
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -595,6 +595,21 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     r = r && fqn(b, l + 1);
     exit_section_(b, l, m, r, p, declRecover_parser_);
     return r || p;
+  }
+
+  /* ********************************************************** */
+  // importStatement*
+  public static boolean imports(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "imports")) return false;
+    Marker m = enter_section_(b, l, _NONE_, S_IMPORTS, "<imports>");
+    int c = current_position_(b);
+    while (true) {
+      if (!importStatement(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "imports", c)) break;
+      c = current_position_(b);
+    }
+    exit_section_(b, l, m, true, false, null);
+    return true;
   }
 
   /* ********************************************************** */
@@ -1005,19 +1020,6 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // namespaceDecl defs
-  public static boolean namespacedDefs(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "namespacedDefs")) return false;
-    if (!nextTokenIs(b, S_NAMESPACE)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = namespaceDecl(b, l + 1);
-    r = r && defs(b, l + 1);
-    exit_section_(b, m, S_NAMESPACED_DEFS, r);
-    return r;
-  }
-
-  /* ********************************************************** */
   // ! ('}' | id | 'default')
   static boolean partRecover(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "partRecover")) return false;
@@ -1253,39 +1255,17 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // importStatement* namespacedDefs*
+  // namespaceDecl imports defs
   static boolean root(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "root")) return false;
+    if (!nextTokenIs(b, S_NAMESPACE)) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = root_0(b, l + 1);
-    r = r && root_1(b, l + 1);
+    r = namespaceDecl(b, l + 1);
+    r = r && imports(b, l + 1);
+    r = r && defs(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
-  }
-
-  // importStatement*
-  private static boolean root_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "root_0")) return false;
-    int c = current_position_(b);
-    while (true) {
-      if (!importStatement(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "root_0", c)) break;
-      c = current_position_(b);
-    }
-    return true;
-  }
-
-  // namespacedDefs*
-  private static boolean root_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "root_1")) return false;
-    int c = current_position_(b);
-    while (true) {
-      if (!namespacedDefs(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "root_1", c)) break;
-      c = current_position_(b);
-    }
-    return true;
   }
 
   /* ********************************************************** */

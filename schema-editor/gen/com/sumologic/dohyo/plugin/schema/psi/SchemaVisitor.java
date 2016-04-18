@@ -63,6 +63,10 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitImports(@NotNull SchemaImports o) {
+    visitPsiElement(o);
+  }
+
   public void visitListTypeBody(@NotNull SchemaListTypeBody o) {
     visitPsiElement(o);
   }
@@ -100,10 +104,6 @@ public class SchemaVisitor extends PsiElementVisitor {
   }
 
   public void visitNamespaceDecl(@NotNull SchemaNamespaceDecl o) {
-    visitPsiElement(o);
-  }
-
-  public void visitNamespacedDefs(@NotNull SchemaNamespacedDefs o) {
     visitPsiElement(o);
   }
 

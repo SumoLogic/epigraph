@@ -31,7 +31,7 @@ COMMENT_TAIL=([^"*"]*("*"+[^"*""/"])?)*("*"+"/")?
 LINE_COMMENT="/""/"[^\r\n]*
 
 STRING=('([^'\\]|\\.)*'|\"([^\"\\]|\\.)*\")
-ID=_?[:letter:]([:letter:]|[:digit:])*
+ID=[:letter:]([:letter:]|[:digit:])*
 
 %%
 <YYINITIAL> {
