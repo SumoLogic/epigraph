@@ -10,7 +10,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import static com.sumologic.dohyo.plugin.schema.lexer.SchemaElementTypes.*;
 import com.sumologic.dohyo.plugin.schema.psi.*;
 
-public class SchemaTypeDefImpl extends SchemaElementWithIdImpl implements SchemaTypeDef {
+public class SchemaTypeDefImpl extends TypeDefSchemaElementImpl implements SchemaTypeDef {
 
   public SchemaTypeDefImpl(ASTNode node) {
     super(node);

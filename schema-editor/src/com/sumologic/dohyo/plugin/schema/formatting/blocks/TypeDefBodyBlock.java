@@ -34,4 +34,10 @@ public class TypeDefBodyBlock extends SchemaBlock {
 
     return Indent.getNormalIndent();
   }
+
+  @Nullable
+  @Override
+  protected Indent getChildIndent() {
+    return Indent.getNormalIndent();
+  }
 }

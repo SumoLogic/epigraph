@@ -7,9 +7,7 @@ import com.intellij.formatting.Wrap;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.util.containers.ContainerUtil;
-import com.sumologic.dohyo.plugin.schema.formatting.blocks.TypeMemberDeclBlock;
-import com.sumologic.dohyo.plugin.schema.formatting.blocks.TypeDefBodyBlock;
-import com.sumologic.dohyo.plugin.schema.formatting.blocks.TypeDefBlock;
+import com.sumologic.dohyo.plugin.schema.formatting.blocks.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,7 +20,7 @@ import static com.sumologic.dohyo.plugin.schema.lexer.SchemaElementTypes.*;
  *
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public interface SchemaBlockFactory {
+interface SchemaBlockFactory {
   Map<IElementType, SchemaBlockFactory> factories =
       new ContainerUtil.ImmutableMapBuilder<IElementType, SchemaBlockFactory>()
           .put(S_RECORD_TYPE_DEF, TypeDefBlock::new)
@@ -39,6 +37,12 @@ public interface SchemaBlockFactory {
           .put(S_TAG_DECL, TypeMemberDeclBlock::new)
           .put(S_MULTI_MEMBER_DECL, TypeMemberDeclBlock::new)
           .put(S_ENUM_MEMBER_DECL, TypeMemberDeclBlock::new)
+
+          .put(S_EXTENDS_DECL, ExtendsBlock::new)
+          .put(S_META_DECL, MetaBlock::new)
+          .put(S_RECORD_SUPPLEMENTS_DECL, SupplementsBlock::new)
+          .put(S_MULTI_SUPPLEMENTS_DECL, SupplementsBlock::new)
+
           .build();
 
   SchemaBlock create(@NotNull ASTNode node, @Nullable Wrap wrap, @Nullable Alignment alignment, @Nullable Indent indent, SpacingBuilder spacingBuilder);

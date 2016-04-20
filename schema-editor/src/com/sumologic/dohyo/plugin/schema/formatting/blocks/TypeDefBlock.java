@@ -25,14 +25,19 @@ public class TypeDefBlock extends SchemaBlock {
   private static final TokenSet noIndentTokenSet =
       TokenSet.orSet(
           TokenSet.create(
-              S_ID, S_EXTENDS_DECL, S_META_DECL, S_RECORD_SUPPLEMENTS_DECL,
-              S_RECORD, S_UNION, S_MULTI, S_ENUM
+              S_ID, S_RECORD, S_UNION, S_MULTI, S_ENUM
           ), SchemaParserDefinition.CURLY_BRACES);
+
+  private static final TokenSet continuationTokenSet =
+      TokenSet.create(
+          S_EXTENDS_DECL, S_META_DECL, S_RECORD_SUPPLEMENTS_DECL
+      );
 
   public TypeDefBlock(@NotNull ASTNode node, @Nullable Wrap wrap, @Nullable Alignment alignment, @Nullable Indent indent, SpacingBuilder spacingBuilder) {
     super(node, wrap, alignment, indent, spacingBuilder);
   }
 
+  /*
   @NotNull
   @Override
   protected AlignmentStrategy getChildrenAlignmentStrategy() {
@@ -45,10 +50,10 @@ public class TypeDefBlock extends SchemaBlock {
 //            S_MULTI, S_MULTI_TYPE_BODY,
 //            S_ENUM, S_ENUM_TYPE_BODY
 //        ),
-        AlignmentStrategy.wrap( // align additional decls with type name
+        AlignmentStrategy.wrap( // align additional decls with type name? Alternatively use continuation..
             Alignment.createAlignment(),
             false,
-            S_ID, S_EXTENDS_DECL, S_META_DECL, S_RECORD_SUPPLEMENTS_DECL
+            S_NEW_TYPE_NAME, S_EXTENDS_DECL, S_META_DECL, S_RECORD_SUPPLEMENTS_DECL
         )
 //        ,
 //        AlignmentStrategy.wrap( // align members
@@ -62,6 +67,7 @@ public class TypeDefBlock extends SchemaBlock {
 //        )
     );
   }
+  */
 
   @Override
   protected Indent getChildIndent(ASTNode child) {
@@ -71,6 +77,16 @@ public class TypeDefBlock extends SchemaBlock {
       return Indent.getNoneIndent();
     }
 
+    if (continuationTokenSet.contains(childElementType)) {
+      return Indent.getContinuationIndent();
+    }
+
+    return Indent.getNormalIndent();
+  }
+
+  @Nullable
+  @Override
+  protected Indent getChildIndent() {
     return Indent.getNormalIndent();
   }
 }

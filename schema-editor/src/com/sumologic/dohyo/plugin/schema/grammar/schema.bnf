@@ -88,8 +88,8 @@ private def ::= typeDef | supplementDef {recoverWhile="declRecover"}
 typeDef ::= multiTypeDef | recordTypeDef | unionTypeDef | mapTypeDef | listTypeDef |
             primitiveTypeDef | enumTypeDef {
             name="type definition"
-            implements="com.sumologic.dohyo.plugin.schema.psi.SchemaElementWithId"
-            extends="com.sumologic.dohyo.plugin.schema.psi.impl.SchemaElementWithIdImpl"
+            implements="com.sumologic.dohyo.plugin.schema.psi.TypeDefSchemaElement"
+            extends="com.sumologic.dohyo.plugin.schema.psi.impl.TypeDefSchemaElementImpl"
             }
 
 anonList ::= 'list' '[' typeRef defaultOverride? ']' {pin=1}// TODO rename to `listType`? `concreteList`?

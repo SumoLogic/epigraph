@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public interface SchemaElementWithId extends PsiElement {
+public interface TypeDefSchemaElement extends PsiElement {
   @NotNull
   PsiElement getId();
 }

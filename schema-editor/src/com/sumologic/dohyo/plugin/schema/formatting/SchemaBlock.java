@@ -86,7 +86,7 @@ public class SchemaBlock extends AbstractBlock implements BlockEx {
   @Nullable
   @Override
   protected Indent getChildIndent() {
-    return super.getChildIndent();
+    return Indent.getNoneIndent();
   }
 
   @Override
@@ -97,7 +97,7 @@ public class SchemaBlock extends AbstractBlock implements BlockEx {
   @Nullable
   @Override
   public Spacing getSpacing(@Nullable Block child1, @NotNull Block child2) {
-    return null;
+    return spacingBuilder.getSpacing(this, child1, child2);
   }
 
   @Override
@@ -105,10 +105,10 @@ public class SchemaBlock extends AbstractBlock implements BlockEx {
     return myNode.getFirstChildNode() == null;
   }
 
-  @NotNull
-  @Override
-  public ChildAttributes getChildAttributes(int newChildIndex) {
-    return new ChildAttributes(Indent.getNoneIndent(), null);
-  }
+//  @NotNull
+//  @Override
+//  public ChildAttributes getChildAttributes(int newChildIndex) {
+//    return new ChildAttributes(Indent.getNoneIndent(), null);
+//  }
 
 }

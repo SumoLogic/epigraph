@@ -37,6 +37,11 @@
 
     <lang.formatter language="schema"
                     implementationClass="com.sumologic.dohyo.plugin.schema.formatting.SchemaFormattingModelBuilder"/>
+    <langCodeStyleSettingsProvider
+        implementation="com.sumologic.dohyo.plugin.schema.formatting.codeStyle.SchemaLanguageCodeStyleSettingsProvider"/>
+    <codeStyleSettingsProvider
+
+        implementation="com.sumologic.dohyo.plugin.schema.formatting.codeStyle.SchemaCodeStyleSettingsProvider"/>
     <lang.braceMatcher language="schema"
                        implementationClass="com.sumologic.dohyo.plugin.schema.features.SchemaBraceMatcher"/>
     <lang.foldingBuilder language="schema"

@@ -17,6 +17,12 @@ public class SchemaLanguage extends Language {
     // todo syntax highlighter
   }
 
+  @NotNull
+  @Override
+  public String getDisplayName() {
+    return "Sumo Schema"; // TODO
+  }
+
   @Override
   public boolean isCaseSensitive() {
     return true;

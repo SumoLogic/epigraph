@@ -140,7 +140,7 @@ public class SchemaVisitor extends PsiElementVisitor {
   }
 
   public void visitTypeDef(@NotNull SchemaTypeDef o) {
-    visitElementWithId(o);
+    visitTypeDefSchemaElement(o);
   }
 
   public void visitTypeRef(@NotNull SchemaTypeRef o) {
@@ -155,8 +155,8 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitTypeDef(o);
   }
 
-  public void visitElementWithId(@NotNull SchemaElementWithId o) {
-    visitPsiElement(o);
+  public void visitTypeDefSchemaElement(@NotNull TypeDefSchemaElement o) {
+    visitElement(o);
   }
 
   public void visitPsiElement(@NotNull PsiElement o) {

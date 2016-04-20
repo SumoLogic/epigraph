@@ -26,12 +26,18 @@ public class TypeMemberDeclBlock extends SchemaBlock {
   protected Indent getChildIndent(ASTNode child) {
     IElementType childElementType = child.getElementType();
 
-    if (childElementType == S_CUSTOM_PARAM) return Indent.getNormalIndent();
+    if (childElementType == S_CUSTOM_PARAM ) return Indent.getNormalIndent();
 
 //    if (SchemaParserDefinition.CURLY_BRACES.contains(childElementType)) {
       return Indent.getNoneIndent();
 //    }
 //
 //    return Indent.getNormalIndent();
+  }
+
+  @Nullable
+  @Override
+  protected Indent getChildIndent() {
+    return Indent.getNormalIndent();
   }
 }
