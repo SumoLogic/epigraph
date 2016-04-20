@@ -11,14 +11,14 @@ import static com.sumologic.dohyo.plugin.schema.lexer.SchemaElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.sumologic.dohyo.plugin.schema.psi.*;
 
-public class SchemaEnumMemberImpl extends ASTWrapperPsiElement implements SchemaEnumMember {
+public class SchemaEnumMemberDeclImpl extends ASTWrapperPsiElement implements SchemaEnumMemberDecl {
 
-  public SchemaEnumMemberImpl(ASTNode node) {
+  public SchemaEnumMemberDeclImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull SchemaVisitor visitor) {
-    visitor.visitEnumMember(this);
+    visitor.visitEnumMemberDecl(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {

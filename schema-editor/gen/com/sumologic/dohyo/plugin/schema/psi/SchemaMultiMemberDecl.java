@@ -5,7 +5,7 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface SchemaMemberDecl extends PsiElement {
+public interface SchemaMultiMemberDecl extends PsiElement {
 
   @NotNull
   List<SchemaCustomParam> getCustomParamList();

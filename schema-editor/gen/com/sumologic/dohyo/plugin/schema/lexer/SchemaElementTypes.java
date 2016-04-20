@@ -14,8 +14,8 @@ public interface SchemaElementTypes {
   IElementType S_CUSTOM_PARAM = new SchemaElementType("S_CUSTOM_PARAM");
   IElementType S_DEFAULT_OVERRIDE = new SchemaElementType("S_DEFAULT_OVERRIDE");
   IElementType S_DEFS = new SchemaElementType("S_DEFS");
-  IElementType S_ENUM_MEMBER = new SchemaElementType("S_ENUM_MEMBER");
   IElementType S_ENUM_MEMBER_BODY = new SchemaElementType("S_ENUM_MEMBER_BODY");
+  IElementType S_ENUM_MEMBER_DECL = new SchemaElementType("S_ENUM_MEMBER_DECL");
   IElementType S_ENUM_TYPE_BODY = new SchemaElementType("S_ENUM_TYPE_BODY");
   IElementType S_ENUM_TYPE_DEF = new SchemaElementType("S_ENUM_TYPE_DEF");
   IElementType S_EXTENDS_DECL = new SchemaElementType("S_EXTENDS_DECL");
@@ -27,8 +27,8 @@ public interface SchemaElementTypes {
   IElementType S_LIST_TYPE_DEF = new SchemaElementType("S_LIST_TYPE_DEF");
   IElementType S_MAP_TYPE_BODY = new SchemaElementType("S_MAP_TYPE_BODY");
   IElementType S_MAP_TYPE_DEF = new SchemaElementType("S_MAP_TYPE_DEF");
-  IElementType S_MEMBER_DECL = new SchemaElementType("S_MEMBER_DECL");
   IElementType S_META_DECL = new SchemaElementType("S_META_DECL");
+  IElementType S_MULTI_MEMBER_DECL = new SchemaElementType("S_MULTI_MEMBER_DECL");
   IElementType S_MULTI_SUPPLEMENTS_DECL = new SchemaElementType("S_MULTI_SUPPLEMENTS_DECL");
   IElementType S_MULTI_TYPE_BODY = new SchemaElementType("S_MULTI_TYPE_BODY");
   IElementType S_MULTI_TYPE_DEF = new SchemaElementType("S_MULTI_TYPE_DEF");
@@ -100,11 +100,11 @@ public interface SchemaElementTypes {
       else if (type == S_DEFS) {
         return new SchemaDefsImpl(node);
       }
-      else if (type == S_ENUM_MEMBER) {
-        return new SchemaEnumMemberImpl(node);
-      }
       else if (type == S_ENUM_MEMBER_BODY) {
         return new SchemaEnumMemberBodyImpl(node);
+      }
+      else if (type == S_ENUM_MEMBER_DECL) {
+        return new SchemaEnumMemberDeclImpl(node);
       }
       else if (type == S_ENUM_TYPE_BODY) {
         return new SchemaEnumTypeBodyImpl(node);
@@ -139,11 +139,11 @@ public interface SchemaElementTypes {
       else if (type == S_MAP_TYPE_DEF) {
         return new SchemaMapTypeDefImpl(node);
       }
-      else if (type == S_MEMBER_DECL) {
-        return new SchemaMemberDeclImpl(node);
-      }
       else if (type == S_META_DECL) {
         return new SchemaMetaDeclImpl(node);
+      }
+      else if (type == S_MULTI_MEMBER_DECL) {
+        return new SchemaMultiMemberDeclImpl(node);
       }
       else if (type == S_MULTI_SUPPLEMENTS_DECL) {
         return new SchemaMultiSupplementsDeclImpl(node);

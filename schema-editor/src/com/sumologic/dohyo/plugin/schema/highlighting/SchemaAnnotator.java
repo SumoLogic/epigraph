@@ -35,7 +35,7 @@ public class SchemaAnnotator implements Annotator {
       }
 
       @Override
-      public void visitMemberDecl(@NotNull SchemaMemberDecl memberDecl) {
+      public void visitMultiMemberDecl(@NotNull SchemaMultiMemberDecl memberDecl) {
         PsiElement id = memberDecl.getId();
         setHighlighting(id, holder, SchemaSyntaxHighlighter.MULTI_MEMBER);
 
@@ -44,7 +44,7 @@ public class SchemaAnnotator implements Annotator {
           holder.createErrorAnnotation(id, namingError);
         }
 
-        super.visitMemberDecl(memberDecl);
+        super.visitMultiMemberDecl(memberDecl);
       }
 
       @Override

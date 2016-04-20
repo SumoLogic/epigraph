@@ -11,14 +11,14 @@ import static com.sumologic.dohyo.plugin.schema.lexer.SchemaElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.sumologic.dohyo.plugin.schema.psi.*;
 
-public class SchemaMemberDeclImpl extends ASTWrapperPsiElement implements SchemaMemberDecl {
+public class SchemaMultiMemberDeclImpl extends ASTWrapperPsiElement implements SchemaMultiMemberDecl {
 
-  public SchemaMemberDeclImpl(ASTNode node) {
+  public SchemaMultiMemberDeclImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull SchemaVisitor visitor) {
-    visitor.visitMemberDecl(this);
+    visitor.visitMultiMemberDecl(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {

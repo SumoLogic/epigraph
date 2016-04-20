@@ -41,11 +41,11 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     else if (t == S_DEFS) {
       r = defs(b, 0);
     }
-    else if (t == S_ENUM_MEMBER) {
-      r = enumMember(b, 0);
-    }
     else if (t == S_ENUM_MEMBER_BODY) {
       r = enumMemberBody(b, 0);
+    }
+    else if (t == S_ENUM_MEMBER_DECL) {
+      r = enumMemberDecl(b, 0);
     }
     else if (t == S_ENUM_TYPE_BODY) {
       r = enumTypeBody(b, 0);
@@ -80,11 +80,11 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     else if (t == S_MAP_TYPE_DEF) {
       r = mapTypeDef(b, 0);
     }
-    else if (t == S_MEMBER_DECL) {
-      r = memberDecl(b, 0);
-    }
     else if (t == S_META_DECL) {
       r = metaDecl(b, 0);
+    }
+    else if (t == S_MULTI_MEMBER_DECL) {
+      r = multiMemberDecl(b, 0);
     }
     else if (t == S_MULTI_SUPPLEMENTS_DECL) {
       r = multiSupplementsDecl(b, 0);
@@ -251,7 +251,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ! (id | 'import' | 'namespace' | 'record' | 'union' | 'map' | 'list' | 'multi' | 'enum' | 'supplement'| primitiveKind)
+  // ! ('import' | 'namespace' | 'record' | 'union' | 'map' | 'list' | 'multi' | 'enum' | 'supplement'| primitiveKind)
   static boolean declRecover(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "declRecover")) return false;
     boolean r;
@@ -261,13 +261,12 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // id | 'import' | 'namespace' | 'record' | 'union' | 'map' | 'list' | 'multi' | 'enum' | 'supplement'| primitiveKind
+  // 'import' | 'namespace' | 'record' | 'union' | 'map' | 'list' | 'multi' | 'enum' | 'supplement'| primitiveKind
   private static boolean declRecover_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "declRecover_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeToken(b, S_ID);
-    if (!r) r = consumeToken(b, S_IMPORT);
+    r = consumeToken(b, S_IMPORT);
     if (!r) r = consumeToken(b, S_NAMESPACE);
     if (!r) r = consumeToken(b, S_RECORD);
     if (!r) r = consumeToken(b, S_UNION);
@@ -322,27 +321,6 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // id enumMemberBody?
-  public static boolean enumMember(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "enumMember")) return false;
-    if (!nextTokenIs(b, S_ID)) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, S_ENUM_MEMBER, null);
-    r = consumeToken(b, S_ID);
-    p = r; // pin = 1
-    r = r && enumMember_1(b, l + 1);
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
-  }
-
-  // enumMemberBody?
-  private static boolean enumMember_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "enumMember_1")) return false;
-    enumMemberBody(b, l + 1);
-    return true;
-  }
-
-  /* ********************************************************** */
   // '{' enumMemberBodyPart* '}'
   public static boolean enumMemberBody(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "enumMemberBody")) return false;
@@ -381,6 +359,27 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // id enumMemberBody?
+  public static boolean enumMemberDecl(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "enumMemberDecl")) return false;
+    if (!nextTokenIs(b, S_ID)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, S_ENUM_MEMBER_DECL, null);
+    r = consumeToken(b, S_ID);
+    p = r; // pin = 1
+    r = r && enumMemberDecl_1(b, l + 1);
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // enumMemberBody?
+  private static boolean enumMemberDecl_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "enumMemberDecl_1")) return false;
+    enumMemberBody(b, l + 1);
+    return true;
+  }
+
+  /* ********************************************************** */
   // '{' enumTypeBodyPart* '}'
   public static boolean enumTypeBody(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "enumTypeBody")) return false;
@@ -408,13 +407,13 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // customParam | enumMember
+  // customParam | enumMemberDecl
   static boolean enumTypeBodyPart(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "enumTypeBodyPart")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_);
     r = customParam(b, l + 1);
-    if (!r) r = enumMember(b, l + 1);
+    if (!r) r = enumMemberDecl(b, l + 1);
     exit_section_(b, l, m, r, false, partRecover_parser_);
     return r;
   }
@@ -803,37 +802,6 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'default'? id ':' typeRef memberBody?
-  public static boolean memberDecl(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "memberDecl")) return false;
-    if (!nextTokenIs(b, "<member decl>", S_DEFAULT, S_ID)) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, S_MEMBER_DECL, "<member decl>");
-    r = memberDecl_0(b, l + 1);
-    r = r && consumeToken(b, S_ID);
-    r = r && consumeToken(b, S_COLON);
-    p = r; // pin = 3
-    r = r && report_error_(b, typeRef(b, l + 1));
-    r = p && memberDecl_4(b, l + 1) && r;
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
-  }
-
-  // 'default'?
-  private static boolean memberDecl_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "memberDecl_0")) return false;
-    consumeToken(b, S_DEFAULT);
-    return true;
-  }
-
-  // memberBody?
-  private static boolean memberDecl_4(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "memberDecl_4")) return false;
-    memberBody(b, l + 1);
-    return true;
-  }
-
-  /* ********************************************************** */
   // 'meta' fqn
   public static boolean metaDecl(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "metaDecl")) return false;
@@ -847,15 +815,46 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // memberDecl | customParam
+  // multiMemberDecl | customParam
   static boolean multiBodyPart(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "multiBodyPart")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_);
-    r = memberDecl(b, l + 1);
+    r = multiMemberDecl(b, l + 1);
     if (!r) r = customParam(b, l + 1);
     exit_section_(b, l, m, r, false, partRecover_parser_);
     return r;
+  }
+
+  /* ********************************************************** */
+  // 'default'? id ':' typeRef memberBody?
+  public static boolean multiMemberDecl(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "multiMemberDecl")) return false;
+    if (!nextTokenIs(b, "<multi member decl>", S_DEFAULT, S_ID)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, S_MULTI_MEMBER_DECL, "<multi member decl>");
+    r = multiMemberDecl_0(b, l + 1);
+    r = r && consumeToken(b, S_ID);
+    r = r && consumeToken(b, S_COLON);
+    p = r; // pin = 3
+    r = r && report_error_(b, typeRef(b, l + 1));
+    r = p && multiMemberDecl_4(b, l + 1) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // 'default'?
+  private static boolean multiMemberDecl_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "multiMemberDecl_0")) return false;
+    consumeToken(b, S_DEFAULT);
+    return true;
+  }
+
+  // memberBody?
+  private static boolean multiMemberDecl_4(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "multiMemberDecl_4")) return false;
+    memberBody(b, l + 1);
+    return true;
   }
 
   /* ********************************************************** */

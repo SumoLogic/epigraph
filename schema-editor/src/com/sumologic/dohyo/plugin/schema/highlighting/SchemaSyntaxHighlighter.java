@@ -23,6 +23,7 @@ public class SchemaSyntaxHighlighter extends SyntaxHighlighterBase {
   // TODO provide customizable color scheme?
   // see also http://www.jetbrains.org/intellij/sdk/docs/reference_guide/color_scheme_management.html
   // http://www.jetbrains.org/intellij/sdk/docs/reference_guide/custom_language_support/syntax_highlighting_and_error_highlighting.html (bottom)
+  // http://www.jetbrains.org/intellij/sdk/docs/tutorials/custom_language_support/syntax_highlighter_and_color_settings_page.html
 
   public static final TextAttributesKey ID = DefaultLanguageHighlighterColors.IDENTIFIER;
   public static final TextAttributesKey COMMA = DefaultLanguageHighlighterColors.COMMA;

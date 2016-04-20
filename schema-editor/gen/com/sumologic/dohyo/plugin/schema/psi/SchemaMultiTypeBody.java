@@ -11,7 +11,7 @@ public interface SchemaMultiTypeBody extends PsiElement {
   List<SchemaCustomParam> getCustomParamList();
 
   @NotNull
-  List<SchemaMemberDecl> getMemberDeclList();
+  List<SchemaMultiMemberDecl> getMultiMemberDeclList();
 
   @NotNull
   PsiElement getCurlyLeft();

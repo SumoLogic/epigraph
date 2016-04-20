@@ -104,8 +104,8 @@ metaDecl ::= 'meta' fqn // we don't allow anonList or anonMap as meta
 multiTypeDef ::= 'multi' typeName extendsDecl? multiSupplementsDecl? multiTypeBody?
 multiSupplementsDecl ::= 'supplements' fqn (',' fqn)*
 multiTypeBody ::= '{' multiBodyPart* '}'
-private multiBodyPart ::= memberDecl | customParam
-memberDecl ::= 'default'? id ':' typeRef memberBody? {pin = 3}
+private multiBodyPart ::= multiMemberDecl | customParam
+multiMemberDecl ::= 'default'? id ':' typeRef memberBody? {pin = 3}
 private memberBody ::= '{' memberBodyPart* '}'
 private memberBodyPart ::= customParam
 
@@ -140,8 +140,8 @@ private primitiveBodyPart ::= customParam // | ...
 
 enumTypeDef ::= 'enum' typeName metaDecl? enumTypeBody // extends?
 enumTypeBody ::= '{' enumTypeBodyPart* '}'
-private enumTypeBodyPart ::= customParam | enumMember
-enumMember ::= id enumMemberBody? {pin=1}
+private enumTypeBodyPart ::= customParam | enumMemberDecl
+enumMemberDecl ::= id enumMemberBody? {pin=1}
 enumMemberBody ::='{' enumMemberBodyPart* '}'
 private enumMemberBodyPart ::= customParam
 
@@ -149,5 +149,5 @@ supplementDef ::= 'supplement' combinedFqns (',' combinedFqns)* 'with' fqn {pin=
 
 combinedFqns ::= fqn ('+' fqn)*
 
-private declRecover ::= ! (id | 'import' | 'namespace' | 'record' | 'union' | 'map' | 'list' | 'multi' | 'enum' | 'supplement'| primitiveKind)
+private declRecover ::= ! ('import' | 'namespace' | 'record' | 'union' | 'map' | 'list' | 'multi' | 'enum' | 'supplement'| primitiveKind)
 private partRecover ::= ! ('}' | id | 'default')

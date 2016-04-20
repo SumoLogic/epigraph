@@ -5,7 +5,7 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface SchemaEnumMember extends PsiElement {
+public interface SchemaEnumMemberDecl extends PsiElement {
 
   @Nullable
   SchemaEnumMemberBody getEnumMemberBody();

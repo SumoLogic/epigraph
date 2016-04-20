@@ -34,8 +34,8 @@ public class SchemaMultiTypeBodyImpl extends ASTWrapperPsiElement implements Sch
 
   @Override
   @NotNull
-  public List<SchemaMemberDecl> getMemberDeclList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaMemberDecl.class);
+  public List<SchemaMultiMemberDecl> getMultiMemberDeclList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaMultiMemberDecl.class);
   }
 
   @Override

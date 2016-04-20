@@ -34,8 +34,8 @@ public class SchemaEnumTypeBodyImpl extends ASTWrapperPsiElement implements Sche
 
   @Override
   @NotNull
-  public List<SchemaEnumMember> getEnumMemberList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaEnumMember.class);
+  public List<SchemaEnumMemberDecl> getEnumMemberDeclList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaEnumMemberDecl.class);
   }
 
   @Override

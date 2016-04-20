@@ -11,7 +11,7 @@ public interface SchemaEnumTypeBody extends PsiElement {
   List<SchemaCustomParam> getCustomParamList();
 
   @NotNull
-  List<SchemaEnumMember> getEnumMemberList();
+  List<SchemaEnumMemberDecl> getEnumMemberDeclList();
 
   @NotNull
   PsiElement getCurlyLeft();

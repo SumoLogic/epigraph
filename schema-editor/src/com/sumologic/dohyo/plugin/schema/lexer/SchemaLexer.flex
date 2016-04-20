@@ -25,9 +25,10 @@ LINE_WS=[\ \t\f]
 WHITE_SPACE=({LINE_WS}|{EOL})+
 
 SPACE=[ \t\n\x0B\f\r]+
-BLOCK_COMMENT=("/*"[^"*"]{COMMENT_TAIL})|"/*"
+//BLOCK_COMMENT=("/*"[^"*"]{COMMENT_TAIL})|"/*"
 // DOC_COMMENT="/*""*"+("/"|([^"/""*"]{COMMENT_TAIL}))?
-COMMENT_TAIL=([^"*"]*("*"+[^"*""/"])?)*("*"+"/")?
+//COMMENT_TAIL=([^"*"]*("*"+[^"*""/"])?)*("*"+"/")? // TODO disallow non-closed block comments
+BLOCK_COMMENT="/*" !([^]* "*/" [^]*) ("*/")?
 LINE_COMMENT="/""/"[^\r\n]*
 
 STRING=('([^'\\]|\\.)*'|\"([^\"\\]|\\.)*\")

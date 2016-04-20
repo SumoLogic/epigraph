@@ -31,11 +31,11 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitEnumMember(@NotNull SchemaEnumMember o) {
+  public void visitEnumMemberBody(@NotNull SchemaEnumMemberBody o) {
     visitPsiElement(o);
   }
 
-  public void visitEnumMemberBody(@NotNull SchemaEnumMemberBody o) {
+  public void visitEnumMemberDecl(@NotNull SchemaEnumMemberDecl o) {
     visitPsiElement(o);
   }
 
@@ -83,11 +83,11 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitTypeDef(o);
   }
 
-  public void visitMemberDecl(@NotNull SchemaMemberDecl o) {
+  public void visitMetaDecl(@NotNull SchemaMetaDecl o) {
     visitPsiElement(o);
   }
 
-  public void visitMetaDecl(@NotNull SchemaMetaDecl o) {
+  public void visitMultiMemberDecl(@NotNull SchemaMultiMemberDecl o) {
     visitPsiElement(o);
   }
 

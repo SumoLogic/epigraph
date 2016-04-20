@@ -29,6 +29,7 @@ public class SchemaParserDefinition implements ParserDefinition {
   public final static TokenSet WHITESPACES = TokenSet.create(TokenType.WHITE_SPACE);
   public final static TokenSet COMMENTS = TokenSet.create(S_COMMENT, S_BLOCK_COMMENT);
   public final static TokenSet STRINGS = TokenSet.create(S_STRING);
+  public final static TokenSet CURLY_BRACES = TokenSet.create(S_CURLY_LEFT, S_CURLY_RIGHT);
 
   @NotNull
   @Override
