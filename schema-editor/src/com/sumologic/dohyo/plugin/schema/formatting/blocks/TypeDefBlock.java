@@ -4,11 +4,9 @@ import com.intellij.formatting.Alignment;
 import com.intellij.formatting.Indent;
 import com.intellij.formatting.SpacingBuilder;
 import com.intellij.formatting.Wrap;
-import com.intellij.formatting.alignment.AlignmentStrategy;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
-import com.sumologic.dohyo.plugin.schema.formatting.CompositeAlignmentStrategy;
 import com.sumologic.dohyo.plugin.schema.formatting.SchemaBlock;
 import com.sumologic.dohyo.plugin.schema.parser.SchemaParserDefinition;
 import org.jetbrains.annotations.NotNull;
@@ -17,15 +15,14 @@ import org.jetbrains.annotations.Nullable;
 import static com.sumologic.dohyo.plugin.schema.lexer.SchemaElementTypes.*;
 
 /**
- * Todo add doc
- *
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
 public class TypeDefBlock extends SchemaBlock {
   private static final TokenSet noIndentTokenSet =
       TokenSet.orSet(
           TokenSet.create(
-              S_ID, S_RECORD, S_UNION, S_MULTI, S_ENUM
+              S_ID, S_RECORD, S_UNION, S_MULTI, S_ENUM,
+              S_PRIMITIVE_KIND
           ), SchemaParserDefinition.CURLY_BRACES);
 
   private static final TokenSet continuationTokenSet =

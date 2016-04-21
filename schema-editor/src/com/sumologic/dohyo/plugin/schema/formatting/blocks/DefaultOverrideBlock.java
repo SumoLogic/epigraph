@@ -12,8 +12,8 @@ import org.jetbrains.annotations.Nullable;
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public class SupplementsBlock extends SchemaBlock {
-  public SupplementsBlock(@NotNull ASTNode node, @Nullable Wrap wrap, @Nullable Alignment alignment, @Nullable Indent indent, SpacingBuilder spacingBuilder) {
+public class DefaultOverrideBlock extends SchemaBlock {
+  public DefaultOverrideBlock(@NotNull ASTNode node, @Nullable Wrap wrap, @Nullable Alignment alignment, @Nullable Indent indent, SpacingBuilder spacingBuilder) {
     super(node, wrap, alignment, indent, spacingBuilder);
   }
 

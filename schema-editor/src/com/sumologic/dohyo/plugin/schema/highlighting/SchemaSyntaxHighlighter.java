@@ -6,6 +6,7 @@ import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.fileTypes.SyntaxHighlighterBase;
 import com.intellij.psi.tree.IElementType;
 import com.sumologic.dohyo.plugin.schema.lexer.SchemaFlexAdapter;
+import com.sumologic.dohyo.plugin.schema.parser.SchemaParserDefinition;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -55,11 +56,9 @@ public class SchemaSyntaxHighlighter extends SyntaxHighlighterBase {
     keys.put(S_COMMENT, LINE_COMMENT);
     keys.put(S_BLOCK_COMMENT, BLOCK_COMMENT);
     keys.put(S_STRING, STRING);
-    add(CURLY_BR, S_CURLY_LEFT, S_CURLY_RIGHT);
     add(BRACKETS, S_BRACKET_LEFT, S_BRACKET_RIGHT);
-    add(KEYWORDS, S_NAMESPACE, S_RECORD, S_UNION, S_MULTI, S_MAP, S_LIST, S_ENUM, S_DEFAULT,
-        S_EXTENDS, S_META, S_IMPORT, S_SUPPLEMENT, S_SUPPLEMENTS, S_WITH,
-        S_INTEGER_T, S_STRING_T, S_BOOLEAN_T, S_DOUBLE_T, S_DOUBLE_T, S_LONG_T);
+    add(CURLY_BR, SchemaParserDefinition.CURLY_BRACES.getTypes());
+    add(KEYWORDS, SchemaParserDefinition.KEYWORDS.getTypes());
   }
 
   private static void add(TextAttributesKey key, IElementType... types) {

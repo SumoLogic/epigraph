@@ -13,8 +13,6 @@ import org.jetbrains.annotations.Nullable;
 
 import static com.sumologic.dohyo.plugin.schema.lexer.SchemaElementTypes.*;
 /**
- * Todo add doc
- *
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
 public class TypeMemberDeclBlock extends SchemaBlock {

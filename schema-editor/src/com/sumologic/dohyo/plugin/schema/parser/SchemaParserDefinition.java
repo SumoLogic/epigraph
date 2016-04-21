@@ -30,6 +30,27 @@ public class SchemaParserDefinition implements ParserDefinition {
   public final static TokenSet COMMENTS = TokenSet.create(S_COMMENT, S_BLOCK_COMMENT);
   public final static TokenSet STRINGS = TokenSet.create(S_STRING);
   public final static TokenSet CURLY_BRACES = TokenSet.create(S_CURLY_LEFT, S_CURLY_RIGHT);
+  public final static TokenSet KEYWORDS = TokenSet.create(
+      S_NAMESPACE,
+      S_IMPORT,
+      S_MAP,
+      S_DEFAULT,
+      S_LIST,
+      S_RECORD,
+      S_EXTENDS,
+      S_UNION,
+      S_MULTI,
+      S_ENUM,
+      S_META,
+      S_SUPPLEMENT,
+      S_SUPPLEMENTS,
+      S_WITH,
+      S_INTEGER_T,
+      S_LONG_T,
+      S_DOUBLE_T,
+      S_BOOLEAN_T,
+      S_STRING_T
+  );
 
   @NotNull
   @Override
