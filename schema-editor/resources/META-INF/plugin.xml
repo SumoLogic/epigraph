@@ -46,6 +46,9 @@
                        implementationClass="com.sumologic.dohyo.plugin.schema.features.SchemaBraceMatcher"/>
     <lang.foldingBuilder language="schema"
                          implementationClass="com.sumologic.dohyo.plugin.schema.features.SchemaFoldingBuilder"/>
+    <lang.commenter language="schema"
+                    implementationClass="com.sumologic.dohyo.plugin.schema.features.SchemaCommenter"/>
+    <!-- TODO com.intellij.codeInsight.editorActions.moveUpDown.StatementUpDownMover -->
   </extensions>
 
   <actions>
