@@ -25,6 +25,7 @@ public class TypeMemberDeclBlock extends SchemaBlock {
   protected Indent getChildIndent(ASTNode child) {
     IElementType type = child.getElementType();
 
+    if (child.getPsi().getPrevSibling() == null) return Indent.getNoneIndent();
     if (SchemaParserDefinition.CURLY_BRACES.contains(type)) return Indent.getNoneIndent();
     if (type == S_CUSTOM_PARAM) return Indent.getNormalIndent();
     return Indent.getContinuationIndent();

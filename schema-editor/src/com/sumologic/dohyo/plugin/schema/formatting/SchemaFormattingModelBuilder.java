@@ -39,7 +39,7 @@ public class SchemaFormattingModelBuilder implements FormattingModelBuilder {
 
     for (IElementType type : SchemaParserDefinition.KEYWORDS.getTypes()) {
       if (type != S_LIST && type != S_MAP)
-        spacingBuilder.before(type).spaces(1);
+        spacingBuilder.after(type).spaces(1);
     }
 
     // TODO this should be configurable
@@ -50,8 +50,23 @@ public class SchemaFormattingModelBuilder implements FormattingModelBuilder {
     spacingBuilder.after(S_COMMA).spaces(1);
     spacingBuilder.around(S_PLUS).spaces(1);
     spacingBuilder.after(S_BRACKET_RIGHT).spaces(1);
+    spacingBuilder.between(S_ANON_LIST, S_ID).spaces(1);
+    spacingBuilder.between(S_ANON_MAP, S_ID).spaces(1);
     spacingBuilder.after(S_DEFAULT).spaces(1);
     spacingBuilder.after(S_TYPE_REF).spaces(1);
+
+    spacingBuilder.before(S_EXTENDS_DECL).spaces(1);
+    spacingBuilder.before(S_META_DECL).spaces(1);
+    spacingBuilder.before(S_MULTI_SUPPLEMENTS_DECL).spaces(1);
+    spacingBuilder.before(S_RECORD_SUPPLEMENTS_DECL).spaces(1);
+
+    spacingBuilder.before(S_RECORD_TYPE_BODY).spaces(1);
+    spacingBuilder.before(S_UNION_TYPE_BODY).spaces(1);
+    spacingBuilder.before(S_MULTI_TYPE_BODY).spaces(1);
+    spacingBuilder.before(S_ENUM_TYPE_BODY).spaces(1);
+    spacingBuilder.before(S_MAP_TYPE_BODY).spaces(1);
+    spacingBuilder.before(S_LIST_TYPE_BODY).spaces(1);
+    spacingBuilder.before(S_PRIMITIVE_TYPE_BODY).spaces(1);
 
     return spacingBuilder;
   }

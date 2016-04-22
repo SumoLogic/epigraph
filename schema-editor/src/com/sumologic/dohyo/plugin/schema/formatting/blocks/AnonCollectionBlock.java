@@ -9,16 +9,22 @@ import com.sumologic.dohyo.plugin.schema.formatting.SchemaBlock;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static com.sumologic.dohyo.plugin.schema.lexer.SchemaElementTypes.S_LIST;
+import static com.sumologic.dohyo.plugin.schema.lexer.SchemaElementTypes.S_MAP;
+
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public class AnonCollectionBlock extends SchemaBlock{
+public class AnonCollectionBlock extends SchemaBlock {
   public AnonCollectionBlock(@NotNull ASTNode node, @Nullable Wrap wrap, @Nullable Alignment alignment, @Nullable Indent indent, SpacingBuilder spacingBuilder) {
     super(node, wrap, alignment, indent, spacingBuilder);
   }
 
   @Override
   protected Indent getChildIndent(ASTNode child) {
+    if (child.getElementType() == S_LIST || child.getElementType() == S_MAP)
+      return Indent.getNoneIndent();
+
     return Indent.getContinuationIndent();
   }
 

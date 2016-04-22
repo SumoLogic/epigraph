@@ -34,8 +34,8 @@ public class SchemaAnonMapImpl extends ASTWrapperPsiElement implements SchemaAno
 
   @Override
   @NotNull
-  public List<SchemaTypeRef> getTypeRefList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaTypeRef.class);
+  public List<SchemaFqn> getFqnList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaFqn.class);
   }
 
   @Override

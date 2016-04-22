@@ -9,6 +9,8 @@ import com.sumologic.dohyo.plugin.schema.formatting.SchemaBlock;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static com.sumologic.dohyo.plugin.schema.lexer.SchemaElementTypes.S_ID;
+
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
@@ -19,6 +21,7 @@ public class CustomParamBlock extends SchemaBlock {
 
   @Override
   protected Indent getChildIndent(ASTNode child) {
+    if (child.getElementType() == S_ID) return Indent.getNoneIndent();
     return Indent.getContinuationIndent();
   }
 

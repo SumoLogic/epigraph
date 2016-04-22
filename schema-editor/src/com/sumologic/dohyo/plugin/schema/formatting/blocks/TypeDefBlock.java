@@ -18,12 +18,14 @@ import static com.sumologic.dohyo.plugin.schema.lexer.SchemaElementTypes.*;
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
 public class TypeDefBlock extends SchemaBlock {
-  private static final TokenSet noIndentTokenSet =
-      TokenSet.orSet(
-          TokenSet.create(
-              S_ID, S_RECORD, S_UNION, S_MULTI, S_ENUM,
-              S_PRIMITIVE_KIND
-          ), SchemaParserDefinition.CURLY_BRACES);
+  private static final TokenSet noIndentTokenSet = TokenSet.create(
+      S_RECORD_TYPE_BODY, S_UNION_TYPE_BODY,
+      S_ENUM_TYPE_BODY, S_MULTI_TYPE_BODY,
+      S_PRIMITIVE_TYPE_BODY, S_MAP_TYPE_BODY, S_LIST_TYPE_BODY,
+
+      S_ID, S_RECORD, S_UNION, S_MULTI, S_ENUM,
+      S_PRIMITIVE_KIND, S_ANON_LIST, S_ANON_MAP
+  );
 
   private static final TokenSet continuationTokenSet =
       TokenSet.create(

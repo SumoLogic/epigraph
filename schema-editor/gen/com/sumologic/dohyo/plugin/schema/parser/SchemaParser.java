@@ -147,7 +147,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   };
 
   /* ********************************************************** */
-  // 'list' '[' typeRef defaultOverride? ']'
+  // 'list' '[' fqn defaultOverride? ']'
   public static boolean anonList(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "anonList")) return false;
     if (!nextTokenIs(b, S_LIST)) return false;
@@ -156,7 +156,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     r = consumeToken(b, S_LIST);
     p = r; // pin = 1
     r = r && report_error_(b, consumeToken(b, S_BRACKET_LEFT));
-    r = p && report_error_(b, typeRef(b, l + 1)) && r;
+    r = p && report_error_(b, fqn(b, l + 1)) && r;
     r = p && report_error_(b, anonList_3(b, l + 1)) && r;
     r = p && consumeToken(b, S_BRACKET_RIGHT) && r;
     exit_section_(b, l, m, r, p, null);
@@ -171,7 +171,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'map' '[' typeRef ',' typeRef defaultOverride? ']'
+  // 'map' '[' fqn ',' fqn defaultOverride? ']'
   public static boolean anonMap(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "anonMap")) return false;
     if (!nextTokenIs(b, S_MAP)) return false;
@@ -180,9 +180,9 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     r = consumeToken(b, S_MAP);
     p = r; // pin = 1
     r = r && report_error_(b, consumeToken(b, S_BRACKET_LEFT));
-    r = p && report_error_(b, typeRef(b, l + 1)) && r;
+    r = p && report_error_(b, fqn(b, l + 1)) && r;
     r = p && report_error_(b, consumeToken(b, S_COMMA)) && r;
-    r = p && report_error_(b, typeRef(b, l + 1)) && r;
+    r = p && report_error_(b, fqn(b, l + 1)) && r;
     r = p && report_error_(b, anonMap_5(b, l + 1)) && r;
     r = p && consumeToken(b, S_BRACKET_RIGHT) && r;
     exit_section_(b, l, m, r, p, null);

@@ -26,6 +26,8 @@ interface SchemaBlockFactory {
           .put(S_MULTI_TYPE_DEF, TypeDefBlock::new)
           .put(S_ENUM_TYPE_DEF, TypeDefBlock::new)
           .put(S_PRIMITIVE_TYPE_DEF, TypeDefBlock::new)
+          .put(S_LIST_TYPE_DEF, TypeDefBlock::new)
+          .put(S_MAP_TYPE_DEF, TypeDefBlock::new)
 
           .put(S_RECORD_TYPE_BODY, TypeDefBodyBlock::new)
           .put(S_UNION_TYPE_BODY, TypeDefBodyBlock::new)

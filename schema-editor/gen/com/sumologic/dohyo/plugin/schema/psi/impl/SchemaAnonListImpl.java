@@ -34,8 +34,8 @@ public class SchemaAnonListImpl extends ASTWrapperPsiElement implements SchemaAn
 
   @Override
   @Nullable
-  public SchemaTypeRef getTypeRef() {
-    return findChildByClass(SchemaTypeRef.class);
+  public SchemaFqn getFqn() {
+    return findChildByClass(SchemaFqn.class);
   }
 
   @Override

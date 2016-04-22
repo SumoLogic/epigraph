@@ -98,8 +98,8 @@ typeDef ::= multiTypeDef | recordTypeDef | unionTypeDef | mapTypeDef | listTypeD
             extends="com.sumologic.dohyo.plugin.schema.psi.impl.TypeDefSchemaElementImpl"
             }
 
-anonList ::= 'list' '[' typeRef defaultOverride? ']' {pin=1}// TODO rename to `listType`? `concreteList`?
-anonMap ::= 'map' '[' typeRef ',' typeRef defaultOverride? ']' {pin=1} // TODO rename to `mapType`?
+anonList ::= 'list' '[' fqn defaultOverride? ']' {pin=1}// TODO rename to `listType`? `concreteList`?
+anonMap ::= 'map' '[' fqn ',' fqn defaultOverride? ']' {pin=1} // TODO rename to `mapType`?
 
 extendsDecl ::= 'extends' typeRef (',' typeRef)*
 defaultOverride ::= 'default' id
