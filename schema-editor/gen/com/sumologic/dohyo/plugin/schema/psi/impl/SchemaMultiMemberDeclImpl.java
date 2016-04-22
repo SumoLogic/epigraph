@@ -8,10 +8,9 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static com.sumologic.dohyo.plugin.schema.lexer.SchemaElementTypes.*;
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.sumologic.dohyo.plugin.schema.psi.*;
 
-public class SchemaMultiMemberDeclImpl extends ASTWrapperPsiElement implements SchemaMultiMemberDecl {
+public class SchemaMultiMemberDeclImpl extends CustomParamHolderImpl implements SchemaMultiMemberDecl {
 
   public SchemaMultiMemberDeclImpl(ASTNode node) {
     super(node);

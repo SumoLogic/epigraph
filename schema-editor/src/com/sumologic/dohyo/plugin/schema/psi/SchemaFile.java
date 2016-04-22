@@ -56,6 +56,11 @@ public class SchemaFile extends PsiFileBase {
     return calcTreeElement().getChildrenAsPsiElements(S_IMPORT_STATEMENT, SchemaImportStatement[]::new);
   }
 
+  @Nullable
+  public SchemaNamespaceDecl getNamespaceDecl() {
+    return (SchemaNamespaceDecl) calcTreeElement().findPsiChildByType(S_NAMESPACE_DECL);
+  }
+
   @Override
   public String toString() {
     return "Schema file";

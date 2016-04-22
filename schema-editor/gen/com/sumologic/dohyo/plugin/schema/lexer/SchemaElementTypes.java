@@ -14,7 +14,6 @@ public interface SchemaElementTypes {
   IElementType S_CUSTOM_PARAM = new SchemaElementType("S_CUSTOM_PARAM");
   IElementType S_DEFAULT_OVERRIDE = new SchemaElementType("S_DEFAULT_OVERRIDE");
   IElementType S_DEFS = new SchemaElementType("S_DEFS");
-  IElementType S_ENUM_MEMBER_BODY = new SchemaElementType("S_ENUM_MEMBER_BODY");
   IElementType S_ENUM_MEMBER_DECL = new SchemaElementType("S_ENUM_MEMBER_DECL");
   IElementType S_ENUM_TYPE_BODY = new SchemaElementType("S_ENUM_TYPE_BODY");
   IElementType S_ENUM_TYPE_DEF = new SchemaElementType("S_ENUM_TYPE_DEF");
@@ -99,9 +98,6 @@ public interface SchemaElementTypes {
       }
       else if (type == S_DEFS) {
         return new SchemaDefsImpl(node);
-      }
-      else if (type == S_ENUM_MEMBER_BODY) {
-        return new SchemaEnumMemberBodyImpl(node);
       }
       else if (type == S_ENUM_MEMBER_DECL) {
         return new SchemaEnumMemberDeclImpl(node);

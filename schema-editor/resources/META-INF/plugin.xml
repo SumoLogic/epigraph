@@ -40,7 +40,6 @@
     <langCodeStyleSettingsProvider
         implementation="com.sumologic.dohyo.plugin.schema.formatting.codeStyle.SchemaLanguageCodeStyleSettingsProvider"/>
     <codeStyleSettingsProvider
-
         implementation="com.sumologic.dohyo.plugin.schema.formatting.codeStyle.SchemaCodeStyleSettingsProvider"/>
     <lang.braceMatcher language="schema"
                        implementationClass="com.sumologic.dohyo.plugin.schema.features.SchemaBraceMatcher"/>
@@ -49,6 +48,8 @@
     <lang.commenter language="schema"
                     implementationClass="com.sumologic.dohyo.plugin.schema.features.SchemaCommenter"/>
     <!-- TODO com.intellij.codeInsight.editorActions.moveUpDown.StatementUpDownMover -->
+    <lang.psiStructureViewFactory language="schema"
+                                  implementationClass="com.sumologic.dohyo.plugin.schema.structureView.SchemaStructureViewFactory"/>
   </extensions>
 
   <actions>

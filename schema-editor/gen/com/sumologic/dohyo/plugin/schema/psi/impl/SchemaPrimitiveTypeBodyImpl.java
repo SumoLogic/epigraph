@@ -8,10 +8,9 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static com.sumologic.dohyo.plugin.schema.lexer.SchemaElementTypes.*;
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.sumologic.dohyo.plugin.schema.psi.*;
 
-public class SchemaPrimitiveTypeBodyImpl extends ASTWrapperPsiElement implements SchemaPrimitiveTypeBody {
+public class SchemaPrimitiveTypeBodyImpl extends CustomParamHolderImpl implements SchemaPrimitiveTypeBody {
 
   public SchemaPrimitiveTypeBodyImpl(ASTNode node) {
     super(node);

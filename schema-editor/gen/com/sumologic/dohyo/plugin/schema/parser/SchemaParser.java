@@ -41,9 +41,6 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     else if (t == S_DEFS) {
       r = defs(b, 0);
     }
-    else if (t == S_ENUM_MEMBER_BODY) {
-      r = enumMemberBody(b, 0);
-    }
     else if (t == S_ENUM_MEMBER_DECL) {
       r = enumMemberDecl(b, 0);
     }
@@ -322,11 +319,11 @@ public class SchemaParser implements PsiParser, LightPsiParser {
 
   /* ********************************************************** */
   // '{' enumMemberBodyPart* '}'
-  public static boolean enumMemberBody(PsiBuilder b, int l) {
+  static boolean enumMemberBody(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "enumMemberBody")) return false;
     if (!nextTokenIs(b, S_CURLY_LEFT)) return false;
     boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, S_ENUM_MEMBER_BODY, null);
+    Marker m = enter_section_(b, l, _NONE_);
     r = consumeToken(b, S_CURLY_LEFT);
     p = r; // pin = 1
     r = r && report_error_(b, enumMemberBody_1(b, l + 1));

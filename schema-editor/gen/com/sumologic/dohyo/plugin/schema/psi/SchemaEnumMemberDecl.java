@@ -5,10 +5,16 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface SchemaEnumMemberDecl extends PsiElement {
+public interface SchemaEnumMemberDecl extends CustomParamsHolder {
+
+  @NotNull
+  List<SchemaCustomParam> getCustomParamList();
 
   @Nullable
-  SchemaEnumMemberBody getEnumMemberBody();
+  PsiElement getCurlyLeft();
+
+  @Nullable
+  PsiElement getCurlyRight();
 
   @NotNull
   PsiElement getId();

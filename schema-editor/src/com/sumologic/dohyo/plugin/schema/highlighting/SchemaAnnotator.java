@@ -5,6 +5,7 @@ import com.intellij.lang.annotation.Annotator;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.sumologic.dohyo.plugin.schema.NamingConventions;
 import com.sumologic.dohyo.plugin.schema.psi.*;
 import org.jetbrains.annotations.NotNull;
@@ -30,8 +31,6 @@ public class SchemaAnnotator implements Annotator {
         if (namingError != null) {
           holder.createErrorAnnotation(id, namingError);
         }
-
-        super.visitFieldDecl(fieldDecl);
       }
 
       @Override
@@ -39,12 +38,26 @@ public class SchemaAnnotator implements Annotator {
         PsiElement id = memberDecl.getId();
         setHighlighting(id, holder, SchemaSyntaxHighlighter.MULTI_MEMBER);
 
-        String namingError = NamingConventions.validateMultiMemberName(id.getText());
-        if (namingError != null) {
-          holder.createErrorAnnotation(id, namingError);
+        if (memberDecl.getDefault() != null &&
+            PsiTreeUtil.getPrevSiblingOfType(memberDecl, SchemaMultiMemberDecl.class) != null) {
+          holder.createWarningAnnotation(memberDecl, "Default alias should be the first one");
         }
 
-        super.visitMultiMemberDecl(memberDecl);
+        String namingError = NamingConventions.validateMultiMemberName(id.getText());
+        if (namingError != null)
+          holder.createErrorAnnotation(id, namingError);
+      }
+
+      @Override
+      public void visitUnionTypeDef(@NotNull SchemaUnionTypeDef unionTypeDef) {
+        SchemaUnionTypeBody unionTypeBody = unionTypeDef.getUnionTypeBody();
+        boolean noTags = unionTypeBody == null;
+        if (unionTypeBody != null) {
+          noTags = unionTypeBody.getTagDeclList().size() == 0;
+        }
+
+        if (noTags)
+          holder.createErrorAnnotation(unionTypeDef, "Union must declare at least one tag");
       }
 
       @Override
@@ -56,14 +69,11 @@ public class SchemaAnnotator implements Annotator {
         if (namingError != null) {
           holder.createErrorAnnotation(id, namingError);
         }
-
-        super.visitTagDecl(tagDecl);
       }
 
       @Override
       public void visitDefaultOverride(@NotNull SchemaDefaultOverride defaultOverride) {
         setHighlighting(defaultOverride.getId(), holder, SchemaSyntaxHighlighter.MULTI_MEMBER);
-        super.visitDefaultOverride(defaultOverride);
       }
 
       @Override
@@ -75,20 +85,16 @@ public class SchemaAnnotator implements Annotator {
         if (namingError != null) {
           holder.createErrorAnnotation(id, namingError);
         }
-
-        super.visitTypeDef(typeDef);
       }
 
       @Override
       public void visitCustomParam(@NotNull SchemaCustomParam customParam) {
         setHighlighting(customParam.getId(), holder, SchemaSyntaxHighlighter.PARAM_NAME);
-        super.visitCustomParam(customParam);
       }
 
       @Override
       public void visitTypeRef(@NotNull SchemaTypeRef typeRef) {
         highlightTyperef(typeRef, holder);
-        super.visitTypeRef(typeRef);
       }
 
       @Override
@@ -97,8 +103,6 @@ public class SchemaAnnotator implements Annotator {
         if (parent.getNode().getElementType() != S_IMPORT_STATEMENT) {
           highlightFqn(fqn, holder);
         }
-
-        super.visitFqn(fqn);
       }
     });
   }

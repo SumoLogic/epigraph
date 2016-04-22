@@ -62,6 +62,9 @@
   recoverWhile(".*Part") = "partRecover"
 
   extends(".*.TypeDef") = "typeDef"
+
+  implements(".*TypeBody") = "com.sumologic.dohyo.plugin.schema.psi.CustomParamsHolder"
+  extends(".*TypeBody") = "com.sumologic.dohyo.plugin.schema.psi.impl.CustomParamHolderImpl"
 }
 
 // consider separating fields/types/decl parts by either ',' or newlines,
@@ -78,7 +81,10 @@ namespaceDecl ::= 'namespace' fqn namespaceBody? {pin=1 recoverWhile="declRecove
 private namespaceBody ::= '{' namespaceBodyPart* '}'
 private namespaceBodyPart ::= customParam // | ...
 
-fqn ::= id ('.' id)*
+fqn ::= id ('.' id)* {
+  implements="com.sumologic.dohyo.plugin.schema.psi.Fqn"
+  extends="com.sumologic.dohyo.plugin.schema.psi.impl.FqnImpl"
+}
 private typeName ::= id
 typeRef ::= fqn | anonList | anonMap {name="type"}
 
@@ -105,7 +111,11 @@ multiTypeDef ::= 'multi' typeName extendsDecl? multiSupplementsDecl? multiTypeBo
 multiSupplementsDecl ::= 'supplements' fqn (',' fqn)*
 multiTypeBody ::= '{' multiBodyPart* '}'
 private multiBodyPart ::= multiMemberDecl | customParam
-multiMemberDecl ::= 'default'? id ':' typeRef memberBody? {pin = 3}
+multiMemberDecl ::= 'default'? id ':' typeRef memberBody? {
+  implements="com.sumologic.dohyo.plugin.schema.psi.CustomParamsHolder"
+  extends="com.sumologic.dohyo.plugin.schema.psi.impl.CustomParamHolderImpl"
+  pin = 3
+}
 private memberBody ::= '{' memberBodyPart* '}'
 private memberBodyPart ::= customParam
 
@@ -113,14 +123,22 @@ recordTypeDef ::= 'record' typeName extendsDecl? metaDecl? recordSupplementsDecl
 recordSupplementsDecl ::= 'supplements' combinedFqns (',' combinedFqns)*
 recordTypeBody ::= '{' recordBodyPart* '}'
 private recordBodyPart ::= fieldDecl | customParam
-fieldDecl ::= id ':' typeRef defaultOverride? fieldBody? {pin=2}
+fieldDecl ::= id ':' typeRef defaultOverride? fieldBody? {
+  implements="com.sumologic.dohyo.plugin.schema.psi.CustomParamsHolder"
+  extends="com.sumologic.dohyo.plugin.schema.psi.impl.CustomParamHolderImpl"
+  pin=2
+}
 private fieldBody ::= '{' fieldBodyPart* '}'
 private fieldBodyPart ::= customParam
 
 unionTypeDef ::= 'union' typeName metaDecl? unionTypeBody
 unionTypeBody ::= '{' unionBodyPart* '}'
 private unionBodyPart ::= tagDecl | customParam
-tagDecl ::= id ':' typeRef defaultOverride? tagBody? {pin=2}
+tagDecl ::= id ':' typeRef defaultOverride? tagBody? {
+  implements="com.sumologic.dohyo.plugin.schema.psi.CustomParamsHolder"
+  extends="com.sumologic.dohyo.plugin.schema.psi.impl.CustomParamHolderImpl"
+  pin=2
+}
 private tagBody ::= '{' tagBodyPart* '}'
 private tagBodyPart ::= customParam
 
@@ -141,8 +159,12 @@ private primitiveBodyPart ::= customParam // | ...
 enumTypeDef ::= 'enum' typeName metaDecl? enumTypeBody // extends?
 enumTypeBody ::= '{' enumTypeBodyPart* '}'
 private enumTypeBodyPart ::= customParam | enumMemberDecl
-enumMemberDecl ::= id enumMemberBody? {pin=1}
-enumMemberBody ::='{' enumMemberBodyPart* '}'
+enumMemberDecl ::= id enumMemberBody? {
+  implements="com.sumologic.dohyo.plugin.schema.psi.CustomParamsHolder"
+  extends="com.sumologic.dohyo.plugin.schema.psi.impl.CustomParamHolderImpl"
+  pin=1
+}
+private enumMemberBody ::='{' enumMemberBodyPart* '}'
 private enumMemberBodyPart ::= customParam
 
 supplementDef ::= 'supplement' combinedFqns (',' combinedFqns)* 'with' fqn {pin=1}

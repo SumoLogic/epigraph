@@ -5,7 +5,7 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface SchemaTagDecl extends PsiElement {
+public interface SchemaTagDecl extends CustomParamsHolder {
 
   @NotNull
   List<SchemaCustomParam> getCustomParamList();

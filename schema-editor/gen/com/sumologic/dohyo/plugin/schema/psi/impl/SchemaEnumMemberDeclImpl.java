@@ -8,10 +8,9 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static com.sumologic.dohyo.plugin.schema.lexer.SchemaElementTypes.*;
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.sumologic.dohyo.plugin.schema.psi.*;
 
-public class SchemaEnumMemberDeclImpl extends ASTWrapperPsiElement implements SchemaEnumMemberDecl {
+public class SchemaEnumMemberDeclImpl extends CustomParamHolderImpl implements SchemaEnumMemberDecl {
 
   public SchemaEnumMemberDeclImpl(ASTNode node) {
     super(node);
@@ -27,9 +26,21 @@ public class SchemaEnumMemberDeclImpl extends ASTWrapperPsiElement implements Sc
   }
 
   @Override
+  @NotNull
+  public List<SchemaCustomParam> getCustomParamList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaCustomParam.class);
+  }
+
+  @Override
   @Nullable
-  public SchemaEnumMemberBody getEnumMemberBody() {
-    return findChildByClass(SchemaEnumMemberBody.class);
+  public PsiElement getCurlyLeft() {
+    return findChildByType(S_CURLY_LEFT);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getCurlyRight() {
+    return findChildByType(S_CURLY_RIGHT);
   }
 
   @Override

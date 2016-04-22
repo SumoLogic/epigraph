@@ -31,16 +31,12 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitEnumMemberBody(@NotNull SchemaEnumMemberBody o) {
-    visitPsiElement(o);
-  }
-
   public void visitEnumMemberDecl(@NotNull SchemaEnumMemberDecl o) {
-    visitPsiElement(o);
+    visitCustomParamsHolder(o);
   }
 
   public void visitEnumTypeBody(@NotNull SchemaEnumTypeBody o) {
-    visitPsiElement(o);
+    visitCustomParamsHolder(o);
   }
 
   public void visitEnumTypeDef(@NotNull SchemaEnumTypeDef o) {
@@ -52,11 +48,11 @@ public class SchemaVisitor extends PsiElementVisitor {
   }
 
   public void visitFieldDecl(@NotNull SchemaFieldDecl o) {
-    visitPsiElement(o);
+    visitCustomParamsHolder(o);
   }
 
   public void visitFqn(@NotNull SchemaFqn o) {
-    visitPsiElement(o);
+    visitFqn(o);
   }
 
   public void visitImportStatement(@NotNull SchemaImportStatement o) {
@@ -68,7 +64,7 @@ public class SchemaVisitor extends PsiElementVisitor {
   }
 
   public void visitListTypeBody(@NotNull SchemaListTypeBody o) {
-    visitPsiElement(o);
+    visitCustomParamsHolder(o);
   }
 
   public void visitListTypeDef(@NotNull SchemaListTypeDef o) {
@@ -76,7 +72,7 @@ public class SchemaVisitor extends PsiElementVisitor {
   }
 
   public void visitMapTypeBody(@NotNull SchemaMapTypeBody o) {
-    visitPsiElement(o);
+    visitCustomParamsHolder(o);
   }
 
   public void visitMapTypeDef(@NotNull SchemaMapTypeDef o) {
@@ -88,7 +84,7 @@ public class SchemaVisitor extends PsiElementVisitor {
   }
 
   public void visitMultiMemberDecl(@NotNull SchemaMultiMemberDecl o) {
-    visitPsiElement(o);
+    visitCustomParamsHolder(o);
   }
 
   public void visitMultiSupplementsDecl(@NotNull SchemaMultiSupplementsDecl o) {
@@ -96,7 +92,7 @@ public class SchemaVisitor extends PsiElementVisitor {
   }
 
   public void visitMultiTypeBody(@NotNull SchemaMultiTypeBody o) {
-    visitPsiElement(o);
+    visitCustomParamsHolder(o);
   }
 
   public void visitMultiTypeDef(@NotNull SchemaMultiTypeDef o) {
@@ -112,7 +108,7 @@ public class SchemaVisitor extends PsiElementVisitor {
   }
 
   public void visitPrimitiveTypeBody(@NotNull SchemaPrimitiveTypeBody o) {
-    visitPsiElement(o);
+    visitCustomParamsHolder(o);
   }
 
   public void visitPrimitiveTypeDef(@NotNull SchemaPrimitiveTypeDef o) {
@@ -124,7 +120,7 @@ public class SchemaVisitor extends PsiElementVisitor {
   }
 
   public void visitRecordTypeBody(@NotNull SchemaRecordTypeBody o) {
-    visitPsiElement(o);
+    visitCustomParamsHolder(o);
   }
 
   public void visitRecordTypeDef(@NotNull SchemaRecordTypeDef o) {
@@ -136,7 +132,7 @@ public class SchemaVisitor extends PsiElementVisitor {
   }
 
   public void visitTagDecl(@NotNull SchemaTagDecl o) {
-    visitPsiElement(o);
+    visitCustomParamsHolder(o);
   }
 
   public void visitTypeDef(@NotNull SchemaTypeDef o) {
@@ -148,11 +144,15 @@ public class SchemaVisitor extends PsiElementVisitor {
   }
 
   public void visitUnionTypeBody(@NotNull SchemaUnionTypeBody o) {
-    visitPsiElement(o);
+    visitCustomParamsHolder(o);
   }
 
   public void visitUnionTypeDef(@NotNull SchemaUnionTypeDef o) {
     visitTypeDef(o);
+  }
+
+  public void visitCustomParamsHolder(@NotNull CustomParamsHolder o) {
+    visitElement(o);
   }
 
   public void visitTypeDefSchemaElement(@NotNull TypeDefSchemaElement o) {
