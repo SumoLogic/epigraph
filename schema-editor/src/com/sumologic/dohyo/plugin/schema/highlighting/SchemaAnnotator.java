@@ -38,10 +38,10 @@ public class SchemaAnnotator implements Annotator {
         PsiElement id = memberDecl.getId();
         setHighlighting(id, holder, SchemaSyntaxHighlighter.MULTI_MEMBER);
 
-        if (memberDecl.getDefault() != null &&
-            PsiTreeUtil.getPrevSiblingOfType(memberDecl, SchemaMultiMemberDecl.class) != null) {
-          holder.createWarningAnnotation(memberDecl, "Default alias should be the first one");
-        }
+//        if (memberDecl.getDefault() != null &&
+//            PsiTreeUtil.getPrevSiblingOfType(memberDecl, SchemaMultiMemberDecl.class) != null) {
+//          holder.createWarningAnnotation(memberDecl, "Default alias should be the first one");
+//        }
 
         String namingError = NamingConventions.validateMultiMemberName(id.getText());
         if (namingError != null)

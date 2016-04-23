@@ -55,7 +55,8 @@ public class SchemaStructureViewElement implements StructureViewTreeElement {
       if (schemaTypeDef instanceof SchemaMultiTypeDef) icon = PlatformIcons.INTERFACE_ICON;
       // TODO icons for union, map, list, primitive
 
-      return new StaticItemPresentation(schemaTypeDef.getId().getText(), null, icon);
+      PsiElement id = schemaTypeDef.getId();
+      return new StaticItemPresentation(id == null ? "" : id.getText(), null, icon);
     }
 
     if (element instanceof SchemaCustomParam) {
@@ -158,7 +159,7 @@ public class SchemaStructureViewElement implements StructureViewTreeElement {
   }
 
   boolean isAutoExpand() {
-    return element instanceof SchemaTypeDef;
+    return element instanceof SchemaFile;
   }
 
   @Override

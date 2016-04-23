@@ -34,6 +34,8 @@
     <annotator language="schema"
                implementationClass="com.sumologic.dohyo.plugin.schema.highlighting.SchemaAnnotator"/>
 
+    <completion.contributor language="schema"
+                            implementationClass="com.sumologic.dohyo.plugin.schema.codeInsight.SchemaCompletionContributor"/>
 
     <lang.formatter language="schema"
                     implementationClass="com.sumologic.dohyo.plugin.schema.formatting.SchemaFormattingModelBuilder"/>
