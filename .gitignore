@@ -1,0 +1,6 @@
+# IntelliJ IDEA .idea project directories (everywhere)
+.idea/
+# IntelliJ IDEA *.iml module files (everywhere)
+*.iml
+# Maven target directories (in the root subdirectories only, for now)
+/*/target/

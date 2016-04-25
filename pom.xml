@@ -1,0 +1,151 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.sumologic.epigraph</groupId>
+  <artifactId>epigraph</artifactId>
+  <version>0.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <!--name>epigraph-Parent</name-->
+  <description>epigraph project pom.xml file</description>
+
+  <url>https://github.com/SumoLogic/bean-counter</url>
+
+  <organization>
+    <name>Sumo Logic</name>
+    <url>https://www.sumologic.com/</url>
+  </organization>
+  <inceptionYear>2016</inceptionYear>
+
+  <scm>
+    <url>https://github.com/SumoLogic/sumo-platform</url>
+    <connection>git@github.com:SumoLogic/sumo-platform.git</connection>
+  </scm>
+
+  <modules>
+    <module>epi-core</module>
+  </modules>
+
+  <properties>
+    <scala.version.major>2</scala.version.major>
+    <scala.version.minor>11</scala.version.minor>
+    <scala.version.major.minor>${scala.version.major}.${scala.version.minor}</scala.version.major.minor>
+    <scala.version.patch>8</scala.version.patch>
+    <scala.version>${scala.version.major.minor}.${scala.version.patch}</scala.version>
+
+    <maven.compiler.source>1.7</maven.compiler.source>
+    <maven.compiler.target>1.7</maven.compiler.target>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <junit.version>4.10</junit.version>
+  </properties>
+
+  <developers>
+    <developer>
+      <id>konstantin</id>
+      <name>Konstantin Sobolev</name>
+      <email>konstantin@sumologic.com</email>
+    </developer>
+
+    <developer>
+      <id>yegor</id>
+      <name>Yegor Borovikov</name>
+      <email>yegor@sumologic.net</email>
+    </developer>
+  </developers>
+
+  <dependencies><!-- common dependencies (scala, scala-logging, scalatest) -->
+
+    <dependency>
+      <groupId>org.scala-lang</groupId>
+      <artifactId>scala-library</artifactId>
+      <version>${scala.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.typesafe.scala-logging</groupId>
+      <artifactId>scala-logging_${scala.version.major.minor}</artifactId>
+      <version>3.1.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>1.1.5</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.scalatest</groupId>
+      <artifactId>scalatest_${scala.version.major.minor}</artifactId>
+      <version>3.0.0-M15</version>
+      <scope>test</scope>
+    </dependency>
+
+  </dependencies>
+
+  <dependencyManagement><!-- sets version for shared child dependencies -->
+    <dependencies>
+
+    </dependencies>
+  </dependencyManagement>
+
+  <build>
+
+    <plugins>
+
+      <plugin>
+        <groupId>net.alchim31.maven</groupId>
+        <artifactId>scala-maven-plugin</artifactId>
+        <version>3.2.2</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>compile</goal>
+              <goal>testCompile</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <scalaVersion>${scala.version}</scalaVersion>
+          <scalaCompatVersion>${scala.version.major.minor}</scalaCompatVersion>
+          <failOnMultipleScalaVersions>true</failOnMultipleScalaVersions>
+          <args>
+            <arg>-target:jvm-1.7</arg>
+          </args>
+        </configuration>
+      </plugin>
+
+      <!-- disable surefire plugin tests-->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.19.1</version>
+        <configuration>
+          <skipTests>true</skipTests>
+        </configuration>
+      </plugin>
+
+      <!-- enable scalatest plugin -->
+      <plugin>
+        <groupId>org.scalatest</groupId>
+        <artifactId>scalatest-maven-plugin</artifactId>
+        <version>1.0</version>
+        <configuration>
+          <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
+          <junitxml>.</junitxml>
+          <filereports>WDF TestSuite.txt</filereports>
+        </configuration>
+        <executions>
+          <execution>
+            <id>test</id>
+            <goals>
+              <goal>test</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+    </plugins>
+
+  </build>
+
+</project>
