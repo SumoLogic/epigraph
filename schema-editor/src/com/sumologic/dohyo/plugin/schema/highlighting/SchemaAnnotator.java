@@ -5,7 +5,6 @@ import com.intellij.lang.annotation.Annotator;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.sumologic.dohyo.plugin.schema.NamingConventions;
 import com.sumologic.dohyo.plugin.schema.psi.*;
 import org.jetbrains.annotations.NotNull;
@@ -93,7 +92,7 @@ public class SchemaAnnotator implements Annotator {
       }
 
       @Override
-      public void visitTypeRef(@NotNull SchemaTypeRef typeRef) {
+      public void visitFqnTypeRef(@NotNull SchemaFqnTypeRef typeRef) {
         highlightTyperef(typeRef, holder);
       }
 
@@ -107,7 +106,7 @@ public class SchemaAnnotator implements Annotator {
     });
   }
 
-  private void highlightTyperef(@Nullable SchemaTypeRef typeRef, @NotNull AnnotationHolder holder) {
+  private void highlightTyperef(@Nullable SchemaFqnTypeRef typeRef, @NotNull AnnotationHolder holder) {
     if (typeRef != null) {
       highlightFqn(typeRef.getFqn(), holder);
     }

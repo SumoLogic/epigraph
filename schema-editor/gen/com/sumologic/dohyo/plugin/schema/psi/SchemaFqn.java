@@ -5,6 +5,12 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface SchemaFqn extends Fqn {
+public interface SchemaFqn extends PsiElement {
+
+  @NotNull
+  List<PsiElement> getSegments();
+
+  @NotNull
+  String getFqnString();
 
 }

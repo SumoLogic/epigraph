@@ -7,8 +7,6 @@ import com.sumologic.dohyo.plugin.schema.psi.TypeDefSchemaElement;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Todo add doc
- *
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
 abstract public class TypeDefSchemaElementImpl extends ASTWrapperPsiElement implements TypeDefSchemaElement {

@@ -4,6 +4,7 @@ package com.sumologic.dohyo.plugin.schema.psi;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiNamedElement;
 
 public class SchemaVisitor extends PsiElementVisitor {
 
@@ -52,7 +53,11 @@ public class SchemaVisitor extends PsiElementVisitor {
   }
 
   public void visitFqn(@NotNull SchemaFqn o) {
-    visitFqn(o);
+    visitPsiElement(o);
+  }
+
+  public void visitFqnTypeRef(@NotNull SchemaFqnTypeRef o) {
+    visitPsiNamedElement(o);
   }
 
   public void visitImportStatement(@NotNull SchemaImportStatement o) {
@@ -152,6 +157,10 @@ public class SchemaVisitor extends PsiElementVisitor {
   }
 
   public void visitCustomParamsHolder(@NotNull CustomParamsHolder o) {
+    visitElement(o);
+  }
+
+  public void visitPsiNamedElement(@NotNull PsiNamedElement o) {
     visitElement(o);
   }
 

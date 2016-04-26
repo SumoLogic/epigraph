@@ -59,6 +59,9 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     else if (t == S_FQN) {
       r = fqn(b, 0);
     }
+    else if (t == S_FQN_TYPE_REF) {
+      r = fqnTypeRef(b, 0);
+    }
     else if (t == S_IMPORT_STATEMENT) {
       r = importStatement(b, 0);
     }
@@ -545,19 +548,19 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // id ('.' id)*
+  // fqnSegment ('.' fqnSegment)*
   public static boolean fqn(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "fqn")) return false;
     if (!nextTokenIs(b, S_ID)) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeToken(b, S_ID);
+    r = fqnSegment(b, l + 1);
     r = r && fqn_1(b, l + 1);
     exit_section_(b, m, S_FQN, r);
     return r;
   }
 
-  // ('.' id)*
+  // ('.' fqnSegment)*
   private static boolean fqn_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "fqn_1")) return false;
     int c = current_position_(b);
@@ -569,14 +572,32 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // '.' id
+  // '.' fqnSegment
   private static boolean fqn_1_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "fqn_1_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, S_DOT);
-    r = r && consumeToken(b, S_ID);
+    r = r && fqnSegment(b, l + 1);
     exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // id
+  static boolean fqnSegment(PsiBuilder b, int l) {
+    return consumeToken(b, S_ID);
+  }
+
+  /* ********************************************************** */
+  // fqn
+  public static boolean fqnTypeRef(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "fqnTypeRef")) return false;
+    if (!nextTokenIs(b, S_ID)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = fqn(b, l + 1);
+    exit_section_(b, m, S_FQN_TYPE_REF, r);
     return r;
   }
 
@@ -1398,12 +1419,12 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // fqn | anonList | anonMap
+  // fqnTypeRef | anonList | anonMap
   public static boolean typeRef(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "typeRef")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, S_TYPE_REF, "<type>");
-    r = fqn(b, l + 1);
+    r = fqnTypeRef(b, l + 1);
     if (!r) r = anonList(b, l + 1);
     if (!r) r = anonMap(b, l + 1);
     exit_section_(b, l, m, r, false, null);

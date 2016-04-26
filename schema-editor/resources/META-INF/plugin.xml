@@ -36,6 +36,8 @@
 
     <completion.contributor language="schema"
                             implementationClass="com.sumologic.dohyo.plugin.schema.codeInsight.SchemaCompletionContributor"/>
+    <psi.referenceContributor language="schema"
+                              implementation="com.sumologic.dohyo.plugin.schema.psi.references.SchemaTypeReferenceContributor"/>
 
     <lang.formatter language="schema"
                     implementationClass="com.sumologic.dohyo.plugin.schema.formatting.SchemaFormattingModelBuilder"/>

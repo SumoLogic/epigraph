@@ -36,7 +36,7 @@ public class SchemaPsiUtil {
     return false;
   }
 
-  public static boolean hasNextLeaf(@NotNull PsiElement e, IElementType... elementTypes) {
+  public static boolean hasNextLeaf(@NotNull com.intellij.psi.PsiElement e, IElementType... elementTypes) {
     PsiElement leaf = PsiTreeUtil.nextLeaf(e);
     while (leaf != null) {
       for (IElementType elementType : elementTypes) {

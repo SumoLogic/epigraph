@@ -20,6 +20,7 @@ public interface SchemaElementTypes {
   IElementType S_EXTENDS_DECL = new SchemaElementType("S_EXTENDS_DECL");
   IElementType S_FIELD_DECL = new SchemaElementType("S_FIELD_DECL");
   IElementType S_FQN = new SchemaElementType("S_FQN");
+  IElementType S_FQN_TYPE_REF = new SchemaElementType("S_FQN_TYPE_REF");
   IElementType S_IMPORTS = new SchemaElementType("S_IMPORTS");
   IElementType S_IMPORT_STATEMENT = new SchemaElementType("S_IMPORT_STATEMENT");
   IElementType S_LIST_TYPE_BODY = new SchemaElementType("S_LIST_TYPE_BODY");
@@ -116,6 +117,9 @@ public interface SchemaElementTypes {
       }
       else if (type == S_FQN) {
         return new SchemaFqnImpl(node);
+      }
+      else if (type == S_FQN_TYPE_REF) {
+        return new SchemaFqnTypeRefImpl(node);
       }
       else if (type == S_IMPORTS) {
         return new SchemaImportsImpl(node);

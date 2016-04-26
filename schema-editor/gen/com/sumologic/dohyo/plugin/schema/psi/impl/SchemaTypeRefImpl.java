@@ -40,8 +40,8 @@ public class SchemaTypeRefImpl extends ASTWrapperPsiElement implements SchemaTyp
 
   @Override
   @Nullable
-  public SchemaFqn getFqn() {
-    return findChildByClass(SchemaFqn.class);
+  public SchemaFqnTypeRef getFqnTypeRef() {
+    return findChildByClass(SchemaFqnTypeRef.class);
   }
 
 }

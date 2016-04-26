@@ -11,7 +11,7 @@
   psiImplClassSuffix="Impl"
   psiPackage="com.sumologic.dohyo.plugin.schema.psi"
   psiImplPackage="com.sumologic.dohyo.plugin.schema.psi.impl"
-//  psiImplUtilClass="com.sumologic.dohyo.plugin.schema.psi.impl.SchemaPsiImplUtil"
+  psiImplUtilClass="com.sumologic.dohyo.plugin.schema.psi.impl.SchemaPsiImplUtil"
 
   generateTokenAccessors=true
 
@@ -81,21 +81,25 @@ namespaceDecl ::= 'namespace' fqn namespaceBody? {pin=1 recoverWhile="declRecove
 private namespaceBody ::= '{' namespaceBodyPart* '}'
 private namespaceBodyPart ::= customParam // | ...
 
-fqn ::= id ('.' id)* {
-  implements="com.sumologic.dohyo.plugin.schema.psi.Fqn"
-  extends="com.sumologic.dohyo.plugin.schema.psi.impl.FqnImpl"
-}
+private fqnSegment ::= id
+fqn ::= fqnSegment ('.' fqnSegment)* { methods=[getSegments getFqnString] }
+
 private typeName ::= id
-typeRef ::= fqn | anonList | anonMap {name="type"}
+typeRef ::= fqnTypeRef | anonList | anonMap {name="type"}
+fqnTypeRef ::= fqn {
+  implements="com.intellij.psi.PsiNamedElement"
+  methods = [getName setName]
+}
 
 defs ::= def*
 private def ::= typeDef | supplementDef {recoverWhile="declRecover"}
 
 typeDef ::= multiTypeDef | recordTypeDef | unionTypeDef | mapTypeDef | listTypeDef |
             primitiveTypeDef | enumTypeDef {
-            name="type definition"
-            implements="com.sumologic.dohyo.plugin.schema.psi.TypeDefSchemaElement"
-            extends="com.sumologic.dohyo.plugin.schema.psi.impl.TypeDefSchemaElementImpl"
+              name="type definition"
+              implements="com.sumologic.dohyo.plugin.schema.psi.TypeDefSchemaElement"
+              extends="com.sumologic.dohyo.plugin.schema.psi.impl.TypeDefSchemaElementImpl"
+              methods = [getName setName]
             }
 
 anonList ::= 'list' '[' fqn defaultOverride? ']' {pin=1}// TODO rename to `listType`? `concreteList`?
