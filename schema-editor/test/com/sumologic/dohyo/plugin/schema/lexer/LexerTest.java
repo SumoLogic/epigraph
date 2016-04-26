@@ -20,7 +20,7 @@ import static org.testng.Assert.assertEquals;
 public class LexerTest {
   public void testId() throws IOException {
     testInput("id", S_ID);
-    testInput("_record", S_ID);
+//    testInput("_record", S_ID);
     testInput("Foo", S_ID);
   }
 

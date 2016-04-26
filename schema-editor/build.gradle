@@ -1,0 +1,57 @@
+plugins {
+    id 'org.jetbrains.intellij' version "0.0.43"
+}
+
+repositories {
+    jcenter()
+}
+
+version = "${version}.buildNumber"
+
+apply plugin: 'java'
+sourceCompatibility = javaVersion
+targetCompatibility = javaVersion
+tasks.withType(JavaCompile) { options.encoding = 'UTF-8' }
+
+sourceSets {
+    main {
+        java.srcDirs 'src', 'gen'
+        resources.srcDirs 'resources'
+    }
+    test {
+        java.srcDir 'test'
+    }
+}
+
+dependencies {
+    testCompile 'org.testng:testng:6.9.10'
+}
+
+apply plugin: 'org.jetbrains.intellij'
+intellij {
+    version ideaVersion
+    pluginName 'Schema'
+    downloadSources Boolean.valueOf(sources)
+    sameSinceUntilBuild Boolean.valueOf(isEAP)
+    // alternativeIdeaPath localIdePath
+}
+
+apply plugin: 'idea'
+idea {
+    project {
+        jdkName = javaVersion
+        languageLevel = javaVersion
+    }
+    module {
+        generatedSourceDirs += file('gen')
+    }
+}
+
+test {
+    useTestNG ()
+    include '**/*'
+}
+
+//task printProps << {
+//    println javaVersion
+//}
