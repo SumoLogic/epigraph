@@ -4,7 +4,7 @@ package com.sumologic.epigraph.core
 
 trait Names {self: Nature =>
 
-  type Name >: Null <: AnyRef with NameApi // TODO LocalName?
+  type Name >: Null <: AnyRef with NameApi // TODO LocalName? ShortName?
 
   trait NameApi {this: Name =>
 
@@ -13,34 +13,38 @@ trait Names {self: Nature =>
   }
 
 
+  type LocalName >: Null <: Name with LocalNameApi
+
+
+  trait LocalNameApi extends NameApi {this: LocalName =>}
+
+
   type QualifiedName >: Null <: Name with QualifiedNameApi
 
 
   trait QualifiedNameApi extends NameApi {this: QualifiedName =>
 
-    def namespaceName: Option[Namespace]
+    def namespaceName: Option[QualifiedNamespaceName]
 
-    def localName: Name
-
-  }
-
-
-  type Namespace >: Null <: QualifiedName with NamespaceApi
-
-
-  trait NamespaceApi extends QualifiedNameApi {this: Namespace =>
-
-    def prefix: Option[Namespace]
-
-    override def localName: NamespaceName
+    def localName: LocalName
 
   }
 
 
-  type NamespaceName >: Null <: Name with NamespaceNameApi
+  type QualifiedNamespaceName >: Null <: QualifiedName with QualifiedNamespaceNameApi
 
 
-  trait NamespaceNameApi extends NameApi {this: NamespaceName =>}
+  trait QualifiedNamespaceNameApi extends QualifiedNameApi {this: QualifiedNamespaceName =>
+
+    override def localName: LocalNamespaceName
+
+  }
+
+
+  type LocalNamespaceName >: Null <: LocalName with LocalNamespaceNameApi
+
+
+  trait LocalNamespaceNameApi extends LocalNameApi {this: LocalNamespaceName =>}
 
 
   type QualifiedTypeName >: Null <: QualifiedName with QualifiedTypeNameApi
@@ -53,33 +57,33 @@ trait Names {self: Nature =>
   }
 
 
-  type TypeName >: Null <: Name with TypeNameApi
+  type TypeName >: Null <: LocalName with TypeNameApi
 
 
-  trait TypeNameApi extends NameApi {this: TypeName =>}
+  trait TypeNameApi extends LocalNameApi {this: TypeName =>}
 
 
-  type TypeMemberName >: Null <: Name with TypeMemberNameApi // TODO Var[Value]TypeMemberName?
+  type TypeMemberName >: Null <: LocalName with TypeMemberNameApi // TODO Var[Value]TypeMemberName?
 
-  trait TypeMemberNameApi extends NameApi {this: TypeMemberName =>}
-
-
-  type FieldName >: Null <: Name with FieldNameApi
+  trait TypeMemberNameApi extends LocalNameApi {this: TypeMemberName =>}
 
 
-  trait FieldNameApi extends NameApi {this: FieldName =>}
+  type FieldName >: Null <: LocalName with FieldNameApi
 
 
-  type TagName >: Null <: Name with TagNameApi
+  trait FieldNameApi extends LocalNameApi {this: FieldName =>}
 
 
-  trait TagNameApi extends NameApi {this: TagName =>}
+  type TagName >: Null <: LocalName with TagNameApi
 
 
-  type EnumMemberName >: Null <: Name with EnumMemberNameApi
+  trait TagNameApi extends LocalNameApi {this: TagName =>}
 
 
-  trait EnumMemberNameApi extends NameApi {this: EnumMemberName =>}
+  type EnumMemberName >: Null <: LocalName with EnumMemberNameApi
+
+
+  trait EnumMemberNameApi extends LocalNameApi {this: EnumMemberName =>}
 
 
 }

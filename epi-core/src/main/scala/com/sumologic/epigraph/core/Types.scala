@@ -101,7 +101,7 @@ trait Types {self: Nature =>
 
   trait UnionDataTypeApi extends DataTypeApi {this: UnionDataType =>
 
-    override def supertypes: Seq[UnionDataType]
+    override def supertypes: Seq[UnionDataType] // TODO forbid?
 
     def declaredTags: Map[TagName, Tag]
 
