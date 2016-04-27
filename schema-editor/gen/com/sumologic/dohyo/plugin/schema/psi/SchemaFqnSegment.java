@@ -4,16 +4,19 @@ package com.sumologic.dohyo.plugin.schema.psi;
 import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiReference;
 
-public interface SchemaFqn extends PsiElement {
+public interface SchemaFqnSegment extends PsiElement {
 
   @NotNull
-  List<SchemaFqnSegment> getFqnSegmentList();
+  PsiElement getId();
 
   @Nullable
-  String getFqnString();
+  SchemaFqnTypeRef getFqnTypeRef();
+
+  boolean isLast();
 
   @Nullable
-  SchemaFqnSegment getLastSegment();
+  PsiReference getReference();
 
 }

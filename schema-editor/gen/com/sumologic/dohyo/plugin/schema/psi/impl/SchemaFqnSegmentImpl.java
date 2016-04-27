@@ -10,15 +10,16 @@ import com.intellij.psi.util.PsiTreeUtil;
 import static com.sumologic.dohyo.plugin.schema.lexer.SchemaElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.sumologic.dohyo.plugin.schema.psi.*;
+import com.intellij.psi.PsiReference;
 
-public class SchemaFqnImpl extends ASTWrapperPsiElement implements SchemaFqn {
+public class SchemaFqnSegmentImpl extends ASTWrapperPsiElement implements SchemaFqnSegment {
 
-  public SchemaFqnImpl(ASTNode node) {
+  public SchemaFqnSegmentImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull SchemaVisitor visitor) {
-    visitor.visitFqn(this);
+    visitor.visitFqnSegment(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -28,18 +29,22 @@ public class SchemaFqnImpl extends ASTWrapperPsiElement implements SchemaFqn {
 
   @Override
   @NotNull
-  public List<SchemaFqnSegment> getFqnSegmentList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaFqnSegment.class);
+  public PsiElement getId() {
+    return findNotNullChildByType(S_ID);
   }
 
   @Nullable
-  public String getFqnString() {
-    return SchemaPsiImplUtil.getFqnString(this);
+  public SchemaFqnTypeRef getFqnTypeRef() {
+    return SchemaPsiImplUtil.getFqnTypeRef(this);
+  }
+
+  public boolean isLast() {
+    return SchemaPsiImplUtil.isLast(this);
   }
 
   @Nullable
-  public SchemaFqnSegment getLastSegment() {
-    return SchemaPsiImplUtil.getLastSegment(this);
+  public PsiReference getReference() {
+    return SchemaPsiImplUtil.getReference(this);
   }
 
 }

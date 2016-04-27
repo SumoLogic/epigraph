@@ -10,7 +10,6 @@ import com.intellij.util.indexing.FileBasedIndex;
 import com.sumologic.dohyo.plugin.schema.SchemaFileType;
 import com.sumologic.dohyo.plugin.schema.psi.SchemaDefs;
 import com.sumologic.dohyo.plugin.schema.psi.SchemaFile;
-import com.sumologic.dohyo.plugin.schema.psi.SchemaRecordTypeDef;
 import com.sumologic.dohyo.plugin.schema.psi.SchemaTypeDef;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,7 +38,7 @@ public class SchemaIndexUtil {
           result.addAll(defs.getTypeDefList().stream()
               .filter(typeDef -> kind == null || kind.isInstance(typeDef))
               .filter(typeDef -> name == null || name.equals(typeDef.getId().getText())) // TODO use getName
-              .map(typeDef -> (SchemaRecordTypeDef) typeDef).collect(Collectors.toList()));
+              .collect(Collectors.toList()));
         }
       }
     }

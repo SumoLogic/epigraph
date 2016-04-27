@@ -7,8 +7,12 @@ import com.intellij.psi.PsiElement;
 
 public interface SchemaTypeDef extends TypeDefSchemaElement {
 
+  @Nullable
   String getName();
 
+  @Nullable
   PsiElement setName(String name);
+
+  PsiElement getNameIdentifier();
 
 }
