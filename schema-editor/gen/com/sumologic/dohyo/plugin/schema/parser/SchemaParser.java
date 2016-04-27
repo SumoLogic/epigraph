@@ -59,6 +59,9 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     else if (t == S_FQN) {
       r = fqn(b, 0);
     }
+    else if (t == S_FQN_SEGMENT) {
+      r = fqnSegment(b, 0);
+    }
     else if (t == S_FQN_TYPE_REF) {
       r = fqnTypeRef(b, 0);
     }
@@ -585,8 +588,14 @@ public class SchemaParser implements PsiParser, LightPsiParser {
 
   /* ********************************************************** */
   // id
-  static boolean fqnSegment(PsiBuilder b, int l) {
-    return consumeToken(b, S_ID);
+  public static boolean fqnSegment(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "fqnSegment")) return false;
+    if (!nextTokenIs(b, S_ID)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, S_ID);
+    exit_section_(b, m, S_FQN_SEGMENT, r);
+    return r;
   }
 
   /* ********************************************************** */

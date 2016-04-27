@@ -26,14 +26,20 @@ public class SchemaFqnImpl extends ASTWrapperPsiElement implements SchemaFqn {
     else super.accept(visitor);
   }
 
+  @Override
   @NotNull
-  public List<PsiElement> getSegments() {
-    return SchemaPsiImplUtil.getSegments(this);
+  public List<SchemaFqnSegment> getFqnSegmentList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaFqnSegment.class);
   }
 
-  @NotNull
+  @Nullable
   public String getFqnString() {
     return SchemaPsiImplUtil.getFqnString(this);
+  }
+
+  @Nullable
+  public SchemaFqnSegment getLastSegment() {
+    return SchemaPsiImplUtil.getLastSegment(this);
   }
 
 }

@@ -56,6 +56,10 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitFqnSegment(@NotNull SchemaFqnSegment o) {
+    visitPsiElement(o);
+  }
+
   public void visitFqnTypeRef(@NotNull SchemaFqnTypeRef o) {
     visitPsiNamedElement(o);
   }

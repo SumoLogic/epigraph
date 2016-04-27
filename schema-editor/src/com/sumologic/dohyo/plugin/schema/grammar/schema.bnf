@@ -81,8 +81,8 @@ namespaceDecl ::= 'namespace' fqn namespaceBody? {pin=1 recoverWhile="declRecove
 private namespaceBody ::= '{' namespaceBodyPart* '}'
 private namespaceBodyPart ::= customParam // | ...
 
-private fqnSegment ::= id
-fqn ::= fqnSegment ('.' fqnSegment)* { methods=[getSegments getFqnString] }
+fqnSegment ::= id { methods=[getFqnTypeRef isLast getReference] }
+fqn ::= fqnSegment ('.' fqnSegment)* { methods=[getFqnString getLastSegment] }
 
 private typeName ::= id
 typeRef ::= fqnTypeRef | anonList | anonMap {name="type"}
@@ -99,7 +99,7 @@ typeDef ::= multiTypeDef | recordTypeDef | unionTypeDef | mapTypeDef | listTypeD
               name="type definition"
               implements="com.sumologic.dohyo.plugin.schema.psi.TypeDefSchemaElement"
               extends="com.sumologic.dohyo.plugin.schema.psi.impl.TypeDefSchemaElementImpl"
-              methods = [getName setName]
+              methods = [getName setName getNameIdentifier]
             }
 
 anonList ::= 'list' '[' fqn defaultOverride? ']' {pin=1}// TODO rename to `listType`? `concreteList`?

@@ -16,23 +16,32 @@ import javax.swing.*;
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public class SchemaTypeReference extends PsiReferenceBase<PsiNamedElement> implements PsiPolyVariantReference {
+public class SchemaTypeReference extends PsiReferenceBase<PsiElement> implements PsiPolyVariantReference {
   //  private
   private String typeName;
   private Class<? extends SchemaTypeDef> kind;
 
-  public SchemaTypeReference(PsiNamedElement element, TextRange rangeInElement, Class<? extends SchemaTypeDef> kind) {
-    super(element, rangeInElement);
+  public SchemaTypeReference(PsiElement element, String typeName, Class<? extends SchemaTypeDef> kind) {
+    super(element);
+
+    final int textOffset = element.getTextRange().getStartOffset();
+    final int nameTextOffset = element.getTextOffset();
+
+    setRangeInElement(new TextRange(
+        nameTextOffset - textOffset,
+        nameTextOffset + element.getTextLength() - textOffset
+    ));
+
     this.kind = kind;
-    typeName = element.getName();
+    this.typeName = typeName;
   }
 
   @NotNull
   @Override
   public ResolveResult[] multiResolve(boolean incompleteCode) {
     final Project project = myElement.getProject();
-    return SchemaIndexUtil.findTypeDefs(project, typeName, getElement().getClass()).stream()
-        .map(PsiElementResult::new)
+    return SchemaIndexUtil.findTypeDefs(project, typeName, null).stream() // TODO kind
+        .map(PsiElementResolveResult::new)
         .toArray(ResolveResult[]::new);
   }
 

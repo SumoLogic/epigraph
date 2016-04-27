@@ -8,9 +8,12 @@ import com.intellij.psi.PsiElement;
 public interface SchemaFqn extends PsiElement {
 
   @NotNull
-  List<PsiElement> getSegments();
+  List<SchemaFqnSegment> getFqnSegmentList();
 
-  @NotNull
+  @Nullable
   String getFqnString();
+
+  @Nullable
+  SchemaFqnSegment getLastSegment();
 
 }
