@@ -2,7 +2,7 @@
 
 package com.sumologic.epigraph.core
 
-trait Data {this: Nature =>
+trait Data {this: Types =>
 
   type Value >: Null <: AnyRef with ValueApi
 

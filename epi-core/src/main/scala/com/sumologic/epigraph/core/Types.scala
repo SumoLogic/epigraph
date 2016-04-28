@@ -2,7 +2,7 @@
 
 package com.sumologic.epigraph.core
 
-trait Types {self: Nature =>
+trait Types {self: Names =>
 
 
   trait Named {
