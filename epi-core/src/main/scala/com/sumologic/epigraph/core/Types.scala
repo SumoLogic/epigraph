@@ -2,58 +2,39 @@
 
 package com.sumologic.epigraph.core
 
-trait Types {self: Names =>
-
+trait Types {this: Names =>
 
   type Type >: Null <: AnyRef with TypeApi
 
 
   trait TypeApi extends Named {this: Type =>
 
-    def name: QualifiedTypeName
+    override def name: QualifiedTypeName
 
   }
 
 
-  /**
-   * @tparam D default member type
-   */
-  type VarValueType[D >: Null <: AnyRef] >: Null <: Type with VarValueTypeApi[D] // TODO not sure we need this type member, Api could be enough
+  type VarType >: Null <: Type with VarTypeApi
 
-  /**
-   * @tparam D default member type
-   */
-  trait VarValueTypeApi[D >: Null <: AnyRef] extends TypeApi {this: VarValueType[D] =>
 
-    def defaultMember: D
+  trait VarTypeApi extends TypeApi {this: VarType =>
 
-    def members: Map[TypeMemberName, TypeMember]
+    def defaultMember: Option[TypeMember]
+
+    def membersMap: Map[TypeMemberName, TypeMember]
 
   }
 
 
-  type TypeMember >: Null <: AnyRef with TypeMemberApi
-
+  type TypeMember >: Null <: AnyRef with TypeMemberApi // TODO rename to VarMember?
 
   trait TypeMemberApi extends Named {this: TypeMember =>
 
     def name: TypeMemberName // TODO Option[] or need to infer anonymous var type names?
 
-    def `type`: DataType
+    def dataType: DataType
 
   }
-
-
-  type VarType >: Null <: VarValueType[Option[TypeMember]] with VarTypeApi
-
-
-  trait VarTypeApi extends VarValueTypeApi[Option[TypeMember]] {this: VarType =>}
-
-
-  type ValueType >: Null <: VarValueType[TypeMember] with ValueTypeApi
-
-
-  trait ValueTypeApi extends VarValueTypeApi[TypeMember] {this: ValueType =>}
 
 
   type DataType >: Null <: Type with DataTypeApi
@@ -78,13 +59,13 @@ trait Types {self: Names =>
   }
 
 
-  type Field >: Null <: AnyRef with FieldApi // TODO common parent for Field, Tag? and Field, Tag, List, Map (re value type)??
+  type Field >: Null <: AnyRef with FieldApi // TODO common parent for Field, Tag? and Field, Tag, List, Map (re valueType)??
 
   trait FieldApi extends Named {this: Field =>
 
     def name: FieldName
 
-    def `type`: ValueType // TODO valueType?
+    def valueType: VarType
 
   }
 
@@ -94,7 +75,7 @@ trait Types {self: Names =>
 
   trait UnionDataTypeApi extends DataTypeApi {this: UnionDataType =>
 
-    override def supertypes: Seq[UnionDataType] // TODO forbid?
+    override val supertypes: Seq[UnionDataType] = Types.EmptySeq
 
     def declaredTags: Map[TagName, Tag]
 
@@ -107,7 +88,7 @@ trait Types {self: Names =>
 
     def name: TagName
 
-    def valueType: ValueType
+    def valueType: VarType
 
   }
 
@@ -121,7 +102,7 @@ trait Types {self: Names =>
 
     def keyType: DataType
 
-    def valueType: ValueType
+    def valueType: VarType
 
   }
 
@@ -133,7 +114,7 @@ trait Types {self: Names =>
 
     override def supertypes: Seq[ListDataType]
 
-    def valueType: ValueType
+    def valueType: VarType
 
   }
 
@@ -143,7 +124,7 @@ trait Types {self: Names =>
 
   trait EnumDataTypeApi extends DataTypeApi {this: EnumDataType =>
 
-    override val supertypes: Seq[EnumDataType] = Seq.empty
+    override val supertypes: Seq[EnumDataType] = Types.EmptySeq
 
     def members: Seq[EnumTypeMember] // TODO map?
 
@@ -181,5 +162,11 @@ trait Types {self: Names =>
 
   // TODO other primitive types
 
+}
+
+
+object Types {
+
+  val EmptySeq: Seq[Nothing] = Seq.empty
 
 }

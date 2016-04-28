@@ -9,7 +9,7 @@ trait Data {this: Types =>
 
   trait ValueApi {this: Value =>
 
-    def `type`: ValueType
+    def `type`: VarType
 
     def data: Map[TypeMember, Datum]
 

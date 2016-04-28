@@ -8,25 +8,25 @@ trait Names extends core.Names {
 
   override type Name = NameApi // TODO remove such type members? probably not - these allow to provide enhanced common features
 
-  override type LocalName = RawLocalName
+  override type LocalName = this.RawLocalName // TODO replace member types with same-named classes?
 
-  override type QualifiedName = RawQualifiedName[LocalName]
+  override type QualifiedName = this.RawQualifiedName[LocalName]
 
-  override type LocalNamespaceName = RawLocalNamespaceName
+  override type LocalNamespaceName = this.RawLocalNamespaceName
 
-  override type QualifiedNamespaceName = RawQualifiedNamespaceName
+  override type QualifiedNamespaceName = this.RawQualifiedNamespaceName
 
-  override type LocalTypeName = RawLocalTypeName
+  override type LocalTypeName = this.RawLocalTypeName
 
-  override type QualifiedTypeName = RawQualifiedTypeName
+  override type QualifiedTypeName = this.RawQualifiedTypeName
 
-  override type TypeMemberName = RawTypeMemberName
+  override type TypeMemberName = this.RawTypeMemberName
 
-  override type FieldName = RawFieldName
+  override type FieldName = this.RawFieldName
 
-  override type TagName = RawTagName
+  override type TagName = this.RawTagName
 
-  override type EnumMemberName = RawEnumMemberName
+  override type EnumMemberName = this.RawEnumMemberName
 
 // TODO add NamingConvention for validation, pass it to abstract constructors
 
