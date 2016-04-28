@@ -4,7 +4,8 @@ package com.sumologic.epigraph.core
 
 trait Names {self: Nature =>
 
-  type Name >: Null <: AnyRef with NameApi // TODO LocalName? ShortName?
+  type Name >: Null <: AnyRef with NameApi
+
 
   trait NameApi {this: Name =>
 
