@@ -5,13 +5,6 @@ package com.sumologic.epigraph.core
 trait Types {self: Names =>
 
 
-  trait Named {
-
-    def name: Name
-
-  }
-
-
   type Type >: Null <: AnyRef with TypeApi
 
 

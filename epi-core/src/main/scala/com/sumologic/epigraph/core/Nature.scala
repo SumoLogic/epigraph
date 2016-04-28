@@ -2,7 +2,7 @@
 
 package com.sumologic.epigraph.core
 
-trait Nature extends
+trait Nature extends // TODO do we need this at all?
     Names with
     Types with
     Data {

@@ -2,14 +2,21 @@
 
 package com.sumologic.epigraph.core
 
-trait Names {self: Nature =>
+trait Names { // TODO use raw.Names implementation and drop member types all together?
 
   type Name >: Null <: AnyRef with NameApi
 
 
   trait NameApi {this: Name =>
 
-    def toString: String // TODO asString? string?
+    def string: String // TODO asString? string?
+
+  }
+
+
+  trait Named {
+
+    def name: Name
 
   }
 
@@ -32,6 +39,12 @@ trait Names {self: Nature =>
   }
 
 
+  type LocalNamespaceName >: Null <: LocalName with LocalNamespaceNameApi
+
+
+  trait LocalNamespaceNameApi extends LocalNameApi {this: LocalNamespaceName =>}
+
+
   type QualifiedNamespaceName >: Null <: QualifiedName with QualifiedNamespaceNameApi
 
 
@@ -42,29 +55,23 @@ trait Names {self: Nature =>
   }
 
 
-  type LocalNamespaceName >: Null <: LocalName with LocalNamespaceNameApi
-
-
-  trait LocalNamespaceNameApi extends LocalNameApi {this: LocalNamespaceName =>}
-
-
   type QualifiedTypeName >: Null <: QualifiedName with QualifiedTypeNameApi
 
 
   trait QualifiedTypeNameApi extends QualifiedNameApi {this: QualifiedTypeName =>
 
-    override def localName: TypeName
+    override def localName: LocalTypeName
 
   }
 
 
-  type TypeName >: Null <: LocalName with TypeNameApi
+  type LocalTypeName >: Null <: LocalName with LocalTypeNameApi
 
 
-  trait TypeNameApi extends LocalNameApi {this: TypeName =>}
+  trait LocalTypeNameApi extends LocalNameApi {this: LocalTypeName =>}
 
 
-  type TypeMemberName >: Null <: LocalName with TypeMemberNameApi // TODO Var[Value]TypeMemberName?
+  type TypeMemberName >: Null <: LocalName with TypeMemberNameApi // TODO rename to Var[Value]TypeMemberName??
 
   trait TypeMemberNameApi extends LocalNameApi {this: TypeMemberName =>}
 
