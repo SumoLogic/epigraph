@@ -69,7 +69,7 @@
 
 // consider separating fields/types/decl parts by either ',' or newlines,
 // otherwise stuff can get confusing, e.g.
-// record { fields { f1:t1 f2:t2 } }
+// record { f1:t1 f2:t2 }
 
 root ::= namespaceDecl imports defs
 
@@ -81,15 +81,15 @@ namespaceDecl ::= 'namespace' fqn namespaceBody? {pin=1 recoverWhile="declRecove
 private namespaceBody ::= '{' namespaceBodyPart* '}'
 private namespaceBodyPart ::= customParam // | ...
 
-fqnSegment ::= id { methods=[getFqnTypeRef isLast getReference] }
+fqnSegment ::= id {
+  implements="com.intellij.psi.PsiNameIdentifierOwner"
+  methods=[getName setName getNameIdentifier getFqnTypeRef isLast getReference]
+}
 fqn ::= fqnSegment ('.' fqnSegment)* { methods=[getFqnString getLastSegment] }
 
 private typeName ::= id
 typeRef ::= fqnTypeRef | anonList | anonMap {name="type"}
-fqnTypeRef ::= fqn {
-  implements="com.intellij.psi.PsiNamedElement"
-  methods = [getName setName]
-}
+fqnTypeRef ::= fqn
 
 defs ::= def*
 private def ::= typeDef | supplementDef {recoverWhile="declRecover"}
@@ -102,17 +102,17 @@ typeDef ::= multiTypeDef | recordTypeDef | unionTypeDef | mapTypeDef | listTypeD
               methods = [getName setName getNameIdentifier]
             }
 
-anonList ::= 'list' '[' fqn defaultOverride? ']' {pin=1}// TODO rename to `listType`? `concreteList`?
-anonMap ::= 'map' '[' fqn ',' fqn defaultOverride? ']' {pin=1} // TODO rename to `mapType`?
+anonList ::= 'list' '[' fqnTypeRef defaultOverride? ']' {pin=1}// TODO rename to `listType`? `concreteList`?
+anonMap ::= 'map' '[' fqnTypeRef ',' fqnTypeRef defaultOverride? ']' {pin=1} // TODO rename to `mapType`?
 
 extendsDecl ::= 'extends' typeRef (',' typeRef)*
 defaultOverride ::= 'default' id
 customParam ::= id '=' string  {pin = 2}// TODO real data parsing
 
-metaDecl ::= 'meta' fqn // we don't allow anonList or anonMap as meta
+metaDecl ::= 'meta' fqnTypeRef // we don't allow anonList or anonMap as meta
 
 multiTypeDef ::= 'multi' typeName extendsDecl? multiSupplementsDecl? multiTypeBody?
-multiSupplementsDecl ::= 'supplements' fqn (',' fqn)*
+multiSupplementsDecl ::= 'supplements' fqnTypeRef (',' fqnTypeRef)*
 multiTypeBody ::= '{' multiBodyPart* '}'
 private multiBodyPart ::= multiMemberDecl | customParam
 multiMemberDecl ::= 'default'? id ':' typeRef memberBody? {
@@ -171,9 +171,9 @@ enumMemberDecl ::= id enumMemberBody? {
 private enumMemberBody ::='{' enumMemberBodyPart* '}'
 private enumMemberBodyPart ::= customParam
 
-supplementDef ::= 'supplement' combinedFqns (',' combinedFqns)* 'with' fqn {pin=1}
+supplementDef ::= 'supplement' combinedFqns (',' combinedFqns)* 'with' fqnTypeRef {pin=1}
 
-combinedFqns ::= fqn ('+' fqn)*
+combinedFqns ::= fqnTypeRef ('+' fqnTypeRef)*
 
 private declRecover ::= ! ('import' | 'namespace' | 'record' | 'union' | 'map' | 'list' | 'multi' | 'enum' | 'supplement'| primitiveKind)
 private partRecover ::= ! ('}' | id | 'default')

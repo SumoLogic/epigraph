@@ -13,6 +13,7 @@ public interface SchemaTypeDef extends TypeDefSchemaElement {
   @Nullable
   PsiElement setName(String name);
 
+  @Nullable
   PsiElement getNameIdentifier();
 
 }

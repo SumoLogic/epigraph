@@ -8,6 +8,6 @@ import com.intellij.psi.PsiElement;
 public interface SchemaCombinedFqns extends PsiElement {
 
   @NotNull
-  List<SchemaFqn> getFqnList();
+  List<SchemaFqnTypeRef> getFqnTypeRefList();
 
 }

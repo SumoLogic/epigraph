@@ -91,8 +91,11 @@ public class SchemaStructureViewElement implements StructureViewTreeElement {
 
     if (element instanceof SchemaSupplementDef) {
       SchemaSupplementDef schemaSupplementDef = (SchemaSupplementDef) element;
-      SchemaFqn fqn = schemaSupplementDef.getFqn();
-      String name = fqn == null ? "???" : fqn.getFqnString();
+      String name = "???";
+
+      SchemaFqnTypeRef fqnTypeRef =schemaSupplementDef.getFqnTypeRef();
+      if (fqnTypeRef != null) name = fqnTypeRef.getFqn().getFqnString();
+
       return new StaticItemPresentation(name, null, PlatformIcons.ASPECT_ICON); // TODO icon
     }
 

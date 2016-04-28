@@ -11,7 +11,7 @@ public interface SchemaSupplementDef extends PsiElement {
   List<SchemaCombinedFqns> getCombinedFqnsList();
 
   @Nullable
-  SchemaFqn getFqn();
+  SchemaFqnTypeRef getFqnTypeRef();
 
   @NotNull
   PsiElement getSupplement();

@@ -32,7 +32,7 @@ public class SchemaFqnImpl extends ASTWrapperPsiElement implements SchemaFqn {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaFqnSegment.class);
   }
 
-  @Nullable
+  @NotNull
   public String getFqnString() {
     return SchemaPsiImplUtil.getFqnString(this);
   }

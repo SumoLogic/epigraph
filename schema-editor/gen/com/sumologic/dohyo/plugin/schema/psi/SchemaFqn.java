@@ -10,7 +10,7 @@ public interface SchemaFqn extends PsiElement {
   @NotNull
   List<SchemaFqnSegment> getFqnSegmentList();
 
-  @Nullable
+  @NotNull
   String getFqnString();
 
   @Nullable

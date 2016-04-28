@@ -28,8 +28,8 @@ public class SchemaCombinedFqnsImpl extends ASTWrapperPsiElement implements Sche
 
   @Override
   @NotNull
-  public List<SchemaFqn> getFqnList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaFqn.class);
+  public List<SchemaFqnTypeRef> getFqnTypeRefList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaFqnTypeRef.class);
   }
 
 }

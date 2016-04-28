@@ -32,12 +32,4 @@ public class SchemaFqnTypeRefImpl extends ASTWrapperPsiElement implements Schema
     return findNotNullChildByClass(SchemaFqn.class);
   }
 
-  public String getName() {
-    return SchemaPsiImplUtil.getName(this);
-  }
-
-  public PsiElement setName(String name) {
-    return SchemaPsiImplUtil.setName(this, name);
-  }
-
 }

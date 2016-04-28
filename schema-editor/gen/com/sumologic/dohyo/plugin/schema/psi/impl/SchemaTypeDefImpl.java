@@ -35,6 +35,7 @@ public class SchemaTypeDefImpl extends TypeDefSchemaElementImpl implements Schem
     return SchemaPsiImplUtil.setName(this, name);
   }
 
+  @Nullable
   public PsiElement getNameIdentifier() {
     return SchemaPsiImplUtil.getNameIdentifier(this);
   }

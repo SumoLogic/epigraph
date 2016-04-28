@@ -28,8 +28,8 @@ public class SchemaMetaDeclImpl extends ASTWrapperPsiElement implements SchemaMe
 
   @Override
   @NotNull
-  public SchemaFqn getFqn() {
-    return findNotNullChildByClass(SchemaFqn.class);
+  public SchemaFqnTypeRef getFqnTypeRef() {
+    return findNotNullChildByClass(SchemaFqnTypeRef.class);
   }
 
   @Override

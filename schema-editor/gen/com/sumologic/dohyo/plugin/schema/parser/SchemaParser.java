@@ -153,7 +153,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   };
 
   /* ********************************************************** */
-  // 'list' '[' fqn defaultOverride? ']'
+  // 'list' '[' fqnTypeRef defaultOverride? ']'
   public static boolean anonList(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "anonList")) return false;
     if (!nextTokenIs(b, S_LIST)) return false;
@@ -162,7 +162,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     r = consumeToken(b, S_LIST);
     p = r; // pin = 1
     r = r && report_error_(b, consumeToken(b, S_BRACKET_LEFT));
-    r = p && report_error_(b, fqn(b, l + 1)) && r;
+    r = p && report_error_(b, fqnTypeRef(b, l + 1)) && r;
     r = p && report_error_(b, anonList_3(b, l + 1)) && r;
     r = p && consumeToken(b, S_BRACKET_RIGHT) && r;
     exit_section_(b, l, m, r, p, null);
@@ -177,7 +177,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'map' '[' fqn ',' fqn defaultOverride? ']'
+  // 'map' '[' fqnTypeRef ',' fqnTypeRef defaultOverride? ']'
   public static boolean anonMap(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "anonMap")) return false;
     if (!nextTokenIs(b, S_MAP)) return false;
@@ -186,9 +186,9 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     r = consumeToken(b, S_MAP);
     p = r; // pin = 1
     r = r && report_error_(b, consumeToken(b, S_BRACKET_LEFT));
-    r = p && report_error_(b, fqn(b, l + 1)) && r;
+    r = p && report_error_(b, fqnTypeRef(b, l + 1)) && r;
     r = p && report_error_(b, consumeToken(b, S_COMMA)) && r;
-    r = p && report_error_(b, fqn(b, l + 1)) && r;
+    r = p && report_error_(b, fqnTypeRef(b, l + 1)) && r;
     r = p && report_error_(b, anonMap_5(b, l + 1)) && r;
     r = p && consumeToken(b, S_BRACKET_RIGHT) && r;
     exit_section_(b, l, m, r, p, null);
@@ -203,19 +203,19 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // fqn ('+' fqn)*
+  // fqnTypeRef ('+' fqnTypeRef)*
   public static boolean combinedFqns(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "combinedFqns")) return false;
     if (!nextTokenIs(b, S_ID)) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = fqn(b, l + 1);
+    r = fqnTypeRef(b, l + 1);
     r = r && combinedFqns_1(b, l + 1);
     exit_section_(b, m, S_COMBINED_FQNS, r);
     return r;
   }
 
-  // ('+' fqn)*
+  // ('+' fqnTypeRef)*
   private static boolean combinedFqns_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "combinedFqns_1")) return false;
     int c = current_position_(b);
@@ -227,13 +227,13 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // '+' fqn
+  // '+' fqnTypeRef
   private static boolean combinedFqns_1_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "combinedFqns_1_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, S_PLUS);
-    r = r && fqn(b, l + 1);
+    r = r && fqnTypeRef(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -829,14 +829,14 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'meta' fqn
+  // 'meta' fqnTypeRef
   public static boolean metaDecl(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "metaDecl")) return false;
     if (!nextTokenIs(b, S_META)) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, S_META);
-    r = r && fqn(b, l + 1);
+    r = r && fqnTypeRef(b, l + 1);
     exit_section_(b, m, S_META_DECL, r);
     return r;
   }
@@ -885,20 +885,20 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'supplements' fqn (',' fqn)*
+  // 'supplements' fqnTypeRef (',' fqnTypeRef)*
   public static boolean multiSupplementsDecl(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "multiSupplementsDecl")) return false;
     if (!nextTokenIs(b, S_SUPPLEMENTS)) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, S_SUPPLEMENTS);
-    r = r && fqn(b, l + 1);
+    r = r && fqnTypeRef(b, l + 1);
     r = r && multiSupplementsDecl_2(b, l + 1);
     exit_section_(b, m, S_MULTI_SUPPLEMENTS_DECL, r);
     return r;
   }
 
-  // (',' fqn)*
+  // (',' fqnTypeRef)*
   private static boolean multiSupplementsDecl_2(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "multiSupplementsDecl_2")) return false;
     int c = current_position_(b);
@@ -910,13 +910,13 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // ',' fqn
+  // ',' fqnTypeRef
   private static boolean multiSupplementsDecl_2_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "multiSupplementsDecl_2_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, S_COMMA);
-    r = r && fqn(b, l + 1);
+    r = r && fqnTypeRef(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -1295,7 +1295,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'supplement' combinedFqns (',' combinedFqns)* 'with' fqn
+  // 'supplement' combinedFqns (',' combinedFqns)* 'with' fqnTypeRef
   public static boolean supplementDef(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "supplementDef")) return false;
     if (!nextTokenIs(b, S_SUPPLEMENT)) return false;
@@ -1306,7 +1306,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     r = r && report_error_(b, combinedFqns(b, l + 1));
     r = p && report_error_(b, supplementDef_2(b, l + 1)) && r;
     r = p && report_error_(b, consumeToken(b, S_WITH)) && r;
-    r = p && fqn(b, l + 1) && r;
+    r = p && fqnTypeRef(b, l + 1) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }

@@ -34,8 +34,8 @@ public class SchemaSupplementDefImpl extends ASTWrapperPsiElement implements Sch
 
   @Override
   @Nullable
-  public SchemaFqn getFqn() {
-    return findChildByClass(SchemaFqn.class);
+  public SchemaFqnTypeRef getFqnTypeRef() {
+    return findChildByClass(SchemaFqnTypeRef.class);
   }
 
   @Override

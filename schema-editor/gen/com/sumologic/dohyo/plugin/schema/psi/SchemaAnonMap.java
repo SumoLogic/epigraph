@@ -11,7 +11,7 @@ public interface SchemaAnonMap extends PsiElement {
   SchemaDefaultOverride getDefaultOverride();
 
   @NotNull
-  List<SchemaFqn> getFqnList();
+  List<SchemaFqnTypeRef> getFqnTypeRefList();
 
   @Nullable
   PsiElement getBracketLeft();

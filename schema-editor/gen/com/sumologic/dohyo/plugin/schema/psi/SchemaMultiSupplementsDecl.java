@@ -8,7 +8,7 @@ import com.intellij.psi.PsiElement;
 public interface SchemaMultiSupplementsDecl extends PsiElement {
 
   @NotNull
-  List<SchemaFqn> getFqnList();
+  List<SchemaFqnTypeRef> getFqnTypeRefList();
 
   @NotNull
   PsiElement getSupplements();
