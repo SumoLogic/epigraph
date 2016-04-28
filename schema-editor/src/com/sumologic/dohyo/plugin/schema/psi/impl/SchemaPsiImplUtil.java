@@ -68,6 +68,11 @@ public class SchemaPsiImplUtil {
     return schemaTypeDef.getId();
   }
 
+  public static int getTextOffset(@NotNull SchemaTypeDef schemaTypeDef) {
+    PsiElement nameIdentifier = schemaTypeDef.getNameIdentifier();
+    return nameIdentifier == null ? 0 : nameIdentifier.getTextOffset();
+  }
+
 //  @Nullable
 //  public static String getFullName(@NotNull SchemaTypeDef schemaTypeDef) {
 //    String shortName = getName(schemaTypeDef);

@@ -40,4 +40,8 @@ public class SchemaTypeDefImpl extends TypeDefSchemaElementImpl implements Schem
     return SchemaPsiImplUtil.getNameIdentifier(this);
   }
 
+  public int getTextOffset() {
+    return SchemaPsiImplUtil.getTextOffset(this);
+  }
+
 }

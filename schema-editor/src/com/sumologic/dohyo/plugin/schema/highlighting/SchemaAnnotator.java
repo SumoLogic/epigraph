@@ -77,12 +77,14 @@ public class SchemaAnnotator implements Annotator {
 
       @Override
       public void visitTypeDef(@NotNull SchemaTypeDef typeDef) {
-        PsiElement id = typeDef.getId();
-        setHighlighting(id, holder, SchemaSyntaxHighlighter.DECL_TYPE_NAME);
+        PsiElement id = typeDef.getNameIdentifier();
+        if (id != null) {
+          setHighlighting(id, holder, SchemaSyntaxHighlighter.DECL_TYPE_NAME);
 
-        String namingError = NamingConventions.validateTypeName(id.getText());
-        if (namingError != null) {
-          holder.createErrorAnnotation(id, namingError);
+          String namingError = NamingConventions.validateTypeName(id.getText());
+          if (namingError != null) {
+            holder.createErrorAnnotation(id, namingError);
+          }
         }
       }
 

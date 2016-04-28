@@ -55,7 +55,7 @@ public class SchemaStructureViewElement implements StructureViewTreeElement {
       if (schemaTypeDef instanceof SchemaMultiTypeDef) icon = PlatformIcons.INTERFACE_ICON;
       // TODO icons for union, map, list, primitive
 
-      PsiElement id = schemaTypeDef.getId();
+      PsiElement id = schemaTypeDef.getNameIdentifier();
       return new StaticItemPresentation(id == null ? "" : id.getText(), null, icon);
     }
 

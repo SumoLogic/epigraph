@@ -99,7 +99,7 @@ typeDef ::= multiTypeDef | recordTypeDef | unionTypeDef | mapTypeDef | listTypeD
               name="type definition"
               implements="com.sumologic.dohyo.plugin.schema.psi.TypeDefSchemaElement"
               extends="com.sumologic.dohyo.plugin.schema.psi.impl.TypeDefSchemaElementImpl"
-              methods = [getName setName getNameIdentifier]
+              methods = [getName setName getNameIdentifier getTextOffset]
             }
 
 anonList ::= 'list' '[' fqnTypeRef defaultOverride? ']' {pin=1}// TODO rename to `listType`? `concreteList`?

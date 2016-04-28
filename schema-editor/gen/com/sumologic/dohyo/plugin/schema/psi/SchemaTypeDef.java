@@ -16,4 +16,6 @@ public interface SchemaTypeDef extends TypeDefSchemaElement {
   @Nullable
   PsiElement getNameIdentifier();
 
+  int getTextOffset();
+
 }
