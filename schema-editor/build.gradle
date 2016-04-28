@@ -18,11 +18,11 @@ tasks.withType(JavaCompile) { options.encoding = 'UTF-8' }
 
 sourceSets {
     main {
-        java.srcDirs 'src', 'gen'
-        resources.srcDirs 'resources'
+        java.srcDir 'src/main/java.generated'
+        resources.srcDirs 'src/main/resources'
     }
     test {
-        java.srcDir 'test'
+        java.srcDir 'src/test/java'
     }
 }
 
