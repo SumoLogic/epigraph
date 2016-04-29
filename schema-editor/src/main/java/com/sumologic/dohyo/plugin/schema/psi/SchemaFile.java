@@ -10,6 +10,9 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
+import java.util.Collections;
+import java.util.List;
+
 import static com.sumologic.dohyo.plugin.schema.lexer.SchemaElementTypes.*;
 
 /**
@@ -45,15 +48,23 @@ public class SchemaFile extends PsiFileBase {
     return (SchemaDefs) calcTreeElement().findPsiChildByType(S_DEFS);
   }
 
-  @NotNull
-  public SchemaImportStatement[] getImportStatements() {
+  @Nullable
+  public SchemaImports getImportsStatement() {
     // TODO figure out stubs & indexing
 //    StubElement stub = getStub();
 //    if (stub != null) {
 //      return stub.getChildrenByType(???
 //    }
 
-    return calcTreeElement().getChildrenAsPsiElements(S_IMPORT_STATEMENT, SchemaImportStatement[]::new);
+    return (SchemaImports) calcTreeElement().findPsiChildByType(S_IMPORTS);
+  }
+
+  @NotNull
+  public List<SchemaImportStatement> getImportStatements() {
+    SchemaImports importsStatement = getImportsStatement();
+    if (importsStatement == null) return Collections.emptyList();
+
+    return importsStatement.getImportStatementList();
   }
 
   @Nullable

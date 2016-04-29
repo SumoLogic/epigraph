@@ -73,39 +73,6 @@ public class SchemaPsiImplUtil {
     return nameIdentifier == null ? 0 : nameIdentifier.getTextOffset();
   }
 
-//  @Nullable
-//  public static String getFullName(@NotNull SchemaTypeDef schemaTypeDef) {
-//    String shortName = getName(schemaTypeDef);
-//    if (shortName == null) return null;
-//
-//    SchemaFile file = PsiTreeUtil.getParentOfType(schemaTypeDef, SchemaFile.class);
-//    if (file == null) return null;
-//
-//    SchemaNamespaceDecl namespaceDecl = file.getNamespaceDecl();
-//    if (namespaceDecl == null) return null; // or short name? or anon/root namespace?
-//
-//    SchemaFqn fqn = namespaceDecl.getFqn();
-//    if (fqn == null) return null;
-//
-//    String namespace = getFqnString(fqn);
-//
-//    return namespace.length() == 0 ? null : namespace + '.' + shortName;
-//  }
-//
-//  public static String getName(SchemaFqnTypeRef fqnTypeRef) {
-//    // TODO return full dotted notation as name
-//    SchemaFqn fqn = fqnTypeRef.getFqn();
-//    List<SchemaFqnSegment> segments = fqn.getFqnSegmentList();
-//    return segments.isEmpty() ? null : getLast(segments).getText();
-//  }
-//
-//  public static PsiElement setName(SchemaFqnTypeRef fqnTypeRef, String name) {
-//    SchemaFqn oldFqn = fqnTypeRef.getFqn();
-//    SchemaFqn newFqn = SchemaElementFactory.createFqn(fqnTypeRef.getProject(), name);
-//    oldFqn.replace(newFqn);
-//    return oldFqn;
-//  }
-
   public static PsiElement setName(SchemaFqnTypeRef fqnTypeRef, String name) {
     SchemaFqn oldFqn = fqnTypeRef.getFqn();
     SchemaFqn newFqn = SchemaElementFactory.createFqn(fqnTypeRef.getProject(), name);
@@ -162,10 +129,8 @@ public class SchemaPsiImplUtil {
     if (fqnTypeRef == null) return null;
 
     SchemaFqn fqn = fqnTypeRef.getFqn();
-    SchemaFqnSegment lastSegment = getLastSegment(fqn);
-    if (lastSegment == null) return null;
 
-    String shortName = lastSegment.getId().getText();
+    String shortName = segment.getId().getText();
 
     Collection<String> namespacesToSearch;
     boolean isFullyQualified = fqn.getFqnSegmentList().size() > 1;
@@ -192,7 +157,7 @@ public class SchemaPsiImplUtil {
       res.add(getFqnString(namespaceDeclFqn));
     }
 
-    SchemaImportStatement[] importStatements = schemaFile.getImportStatements();
+    List<SchemaImportStatement> importStatements = schemaFile.getImportStatements();
     for (SchemaImportStatement importStatement : importStatements) {
       SchemaFqn importFqn = importStatement.getFqn();
       if (importFqn != null)
