@@ -1,5 +1,5 @@
 <idea-plugin version="2">
-  <id>com.sumologic.epigraph.ideaPlugin.schema</id>
+  <id>com.sumologic.epigraph.ideaplugin.schema</id>
   <name>Schema Editor Plugin</name>
   <version>1.0</version>
   <vendor email="support@yourcompany.com" url="http://www.yourcompany.com">YourCompany</vendor>
@@ -26,34 +26,34 @@
 
   <extensions defaultExtensionNs="com.intellij">
     <!-- Add your extensions here -->
-    <fileTypeFactory implementation="com.sumologic.epigraph.ideaPlugin.schema.SchemaFileTypeFactory"/>
+    <fileTypeFactory implementation="com.sumologic.epigraph.ideaplugin.schema.SchemaFileTypeFactory"/>
     <lang.syntaxHighlighterFactory language="epi_schema"
-                                   implementationClass="com.sumologic.epigraph.ideaPlugin.schema.highlighting.SchemaSyntaxHighlighterFactory"/>
+                                   implementationClass="com.sumologic.epigraph.ideaplugin.schema.highlighting.SchemaSyntaxHighlighterFactory"/>
     <lang.parserDefinition language="epi_schema"
-                           implementationClass="com.sumologic.epigraph.ideaPlugin.schema.parser.SchemaParserDefinition"/>
+                           implementationClass="com.sumologic.epigraph.ideaplugin.schema.parser.SchemaParserDefinition"/>
     <annotator language="epi_schema"
-               implementationClass="com.sumologic.epigraph.ideaPlugin.schema.highlighting.SchemaAnnotator"/>
+               implementationClass="com.sumologic.epigraph.ideaplugin.schema.highlighting.SchemaAnnotator"/>
 
     <completion.contributor language="epi_schema"
-                            implementationClass="com.sumologic.epigraph.ideaPlugin.schema.codeInsight.SchemaCompletionContributor"/>
+                            implementationClass="com.sumologic.epigraph.ideaplugin.schema.codeInsight.SchemaCompletionContributor"/>
     <!--<psi.referenceContributor language="epi_schema"-->
                               <!--implementation="com.sumologic.dohyo.plugin.schema.psi.references.SchemaTypeReferenceContributor"/>-->
 
     <lang.formatter language="epi_schema"
-                    implementationClass="com.sumologic.epigraph.ideaPlugin.schema.formatting.SchemaFormattingModelBuilder"/>
+                    implementationClass="com.sumologic.epigraph.ideaplugin.schema.formatting.SchemaFormattingModelBuilder"/>
     <langCodeStyleSettingsProvider
-        implementation="com.sumologic.epigraph.ideaPlugin.schema.formatting.codeStyle.SchemaLanguageCodeStyleSettingsProvider"/>
+        implementation="com.sumologic.epigraph.ideaplugin.schema.formatting.codeStyle.SchemaLanguageCodeStyleSettingsProvider"/>
     <codeStyleSettingsProvider
-        implementation="com.sumologic.epigraph.ideaPlugin.schema.formatting.codeStyle.SchemaCodeStyleSettingsProvider"/>
+        implementation="com.sumologic.epigraph.ideaplugin.schema.formatting.codeStyle.SchemaCodeStyleSettingsProvider"/>
     <lang.braceMatcher language="epi_schema"
-                       implementationClass="com.sumologic.epigraph.ideaPlugin.schema.features.SchemaBraceMatcher"/>
+                       implementationClass="com.sumologic.epigraph.ideaplugin.schema.features.SchemaBraceMatcher"/>
     <lang.foldingBuilder language="epi_schema"
-                         implementationClass="com.sumologic.epigraph.ideaPlugin.schema.features.SchemaFoldingBuilder"/>
+                         implementationClass="com.sumologic.epigraph.ideaplugin.schema.features.SchemaFoldingBuilder"/>
     <lang.commenter language="epi_schema"
-                    implementationClass="com.sumologic.epigraph.ideaPlugin.schema.features.SchemaCommenter"/>
+                    implementationClass="com.sumologic.epigraph.ideaplugin.schema.features.SchemaCommenter"/>
     <!-- TODO com.intellij.codeInsight.editorActions.moveUpDown.StatementUpDownMover -->
     <lang.psiStructureViewFactory language="epi_schema"
-                                  implementationClass="com.sumologic.epigraph.ideaPlugin.schema.structureView.SchemaStructureViewFactory"/>
+                                  implementationClass="com.sumologic.epigraph.ideaplugin.schema.structureView.SchemaStructureViewFactory"/>
   </extensions>
 
   <actions>

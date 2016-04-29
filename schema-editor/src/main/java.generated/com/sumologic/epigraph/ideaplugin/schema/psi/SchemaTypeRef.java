@@ -1,0 +1,18 @@
+// This is a generated file. Not intended for manual editing.
+package com.sumologic.epigraph.ideaplugin.schema.psi;
+
+import org.jetbrains.annotations.*;
+import com.intellij.psi.PsiElement;
+
+public interface SchemaTypeRef extends PsiElement {
+
+  @Nullable
+  SchemaAnonList getAnonList();
+
+  @Nullable
+  SchemaAnonMap getAnonMap();
+
+  @Nullable
+  SchemaFqnTypeRef getFqnTypeRef();
+
+}
