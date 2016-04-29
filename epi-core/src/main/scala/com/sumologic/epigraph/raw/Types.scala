@@ -6,43 +6,15 @@ import com.sumologic.epigraph.core
 
 trait Types extends core.Types {this: core.Names =>
 
-  override type Type = RawType
 
-  override type VarType = RawVarType
-
-  override type TypeMember = RawTypeMember
-
-  override type DataType = RawDataType
-
-  override type RecordDataType = RawRecordDataType
-
-  override type Field = RawField
-
-  override type UnionDataType = RawUnionDataType
-
-  override type Tag = RawTag
-
-  override type MapDataType = RawMapDataType
-
-  override type ListDataType = RawListDataType
-
-  override type EnumDataType = RawEnumDataType
-
-  override type EnumTypeMember = RawEnumTypeMember
-
-  override type PrimitiveDataType = RawPrimitiveDataType
-
-  override type StringDataType = RawStringDataType
-
-
-  abstract class RawType(private val tname: QualifiedTypeName) extends TypeApi {
+  abstract class Type(private val tname: QualifiedTypeName) extends TypeApi {
 
     override def name: QualifiedTypeName = tname
 
   }
 
 
-  class RawVarType(
+  class VarType(
       name: QualifiedTypeName,
       override val defaultMember: Option[TypeMember],
       membersSeq: Seq[TypeMember] // TODO add method
@@ -54,47 +26,47 @@ trait Types extends core.Types {this: core.Names =>
   }
 
 
-  class RawTypeMember(private val mname: TypeMemberName, override val dataType: DataType) extends TypeMemberApi {
+  class TypeMember(private val mname: TypeMemberName, override val dataType: DataType) extends TypeMemberApi {
 
     override def name: TypeMemberName = mname
 
   }
 
 
-  abstract class RawDataType(name: QualifiedTypeName, override val supertypes: Seq[DataType]) extends Type(
+  abstract class DataType(name: QualifiedTypeName, override val supertypes: Seq[DataType]) extends Type(
     name
   ) with DataTypeApi
 
 
-  class RawRecordDataType(
+  class RecordDataType(
       name: QualifiedTypeName,
       override val supertypes: Seq[RecordDataType],
       override val declaredFields: Map[FieldName, Field]
   ) extends DataType(name, supertypes) with RecordDataTypeApi
 
 
-  class RawField(private val fname: FieldName, override val valueType: VarType) extends FieldApi {
+  class Field(private val fname: FieldName, override val valueType: VarType) extends FieldApi {
 
     override def name: FieldName = fname
 
   }
 
 
-  class RawUnionDataType(
+  class UnionDataType(
       name: QualifiedTypeName,
       supertypes: Seq[UnionDataType],
       override val declaredTags: Map[TagName, Tag]
   ) extends DataType(name, supertypes) with UnionDataTypeApi
 
 
-  class RawTag(private val tname: TagName, override val valueType: VarType) extends TagApi {
+  class Tag(private val tname: TagName, override val valueType: VarType) extends TagApi {
 
     override def name: TagName = tname
 
   }
 
 
-  class RawMapDataType(
+  class MapDataType(
       name: QualifiedTypeName,
       override val supertypes: Seq[MapDataType],
       override val keyType: DataType,
@@ -102,33 +74,33 @@ trait Types extends core.Types {this: core.Names =>
   ) extends DataType(name, supertypes) with MapDataTypeApi
 
 
-  class RawListDataType(
+  class ListDataType(
       name: QualifiedTypeName,
       override val supertypes: Seq[ListDataType],
       override val valueType: VarType
   ) extends DataType(name, supertypes) with ListDataTypeApi
 
 
-  class RawEnumDataType(
+  class EnumDataType(
       name: QualifiedTypeName,
       override val members: Seq[EnumTypeMember]
   ) extends DataType(name, core.Types.EmptySeq) with EnumDataTypeApi
 
 
-  class RawEnumTypeMember(private val ename: EnumMemberName) extends EnumTypeMemberApi {
+  class EnumTypeMember(private val ename: EnumMemberName) extends EnumTypeMemberApi {
 
     override def name: EnumMemberName = ename
 
   }
 
 
-  class RawPrimitiveDataType(
+  class PrimitiveDataType(
       name: QualifiedTypeName,
       override val supertypes: Seq[PrimitiveDataType]
   ) extends DataType(name, supertypes) with PrimitiveDataTypeApi
 
 
-  class RawStringDataType(
+  class StringDataType(
       name: QualifiedTypeName,
       override val supertypes: Seq[StringDataType]
   ) extends PrimitiveDataType(name, supertypes) with StringDataTypeApi
