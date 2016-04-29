@@ -6,12 +6,25 @@ trait Names { // TODO use raw.Names implementation and drop member types all tog
 
   type Name >: Null <: AnyRef with NameApi
 
+  type LocalName >: Null <: Name with LocalNameApi
 
-  trait NameApi {this: Name =>
+  type QualifiedName >: Null <: Name with QualifiedNameApi
 
-    def string: String // TODO asString? string?
+  type LocalNamespaceName >: Null <: LocalName with LocalNamespaceNameApi
 
-  }
+  type QualifiedNamespaceName >: Null <: QualifiedName with QualifiedNamespaceNameApi
+
+  type QualifiedTypeName >: Null <: QualifiedName with QualifiedTypeNameApi
+
+  type LocalTypeName >: Null <: LocalName with LocalTypeNameApi
+
+  type TypeMemberName >: Null <: LocalName with TypeMemberNameApi // TODO rename to VarMemberName (along with TypeMember)??
+
+  type FieldName >: Null <: LocalName with FieldNameApi
+
+  type TagName >: Null <: LocalName with TagNameApi
+
+  type EnumMemberName >: Null <: LocalName with EnumMemberNameApi
 
 
   trait Named {
@@ -21,74 +34,52 @@ trait Names { // TODO use raw.Names implementation and drop member types all tog
   }
 
 
-  type LocalName >: Null <: Name with LocalNameApi
+  trait NameApi {this: Name =>
+
+    def string: String // TODO asString? string?
+
+  }
 
 
   trait LocalNameApi extends NameApi {this: LocalName =>}
 
 
-  type QualifiedName >: Null <: Name with QualifiedNameApi
-
-
   trait QualifiedNameApi extends NameApi {this: QualifiedName =>
 
-    def namespaceName: Option[QualifiedNamespaceName]
+    def namespace: Option[QualifiedNamespaceName]
 
-    def localName: LocalName
+    def local: LocalName
 
   }
-
-
-  type LocalNamespaceName >: Null <: LocalName with LocalNamespaceNameApi
 
 
   trait LocalNamespaceNameApi extends LocalNameApi {this: LocalNamespaceName =>}
 
 
-  type QualifiedNamespaceName >: Null <: QualifiedName with QualifiedNamespaceNameApi
-
-
   trait QualifiedNamespaceNameApi extends QualifiedNameApi {this: QualifiedNamespaceName =>
 
-    override def localName: LocalNamespaceName
+    override def local: LocalNamespaceName
 
   }
-
-
-  type QualifiedTypeName >: Null <: QualifiedName with QualifiedTypeNameApi
 
 
   trait QualifiedTypeNameApi extends QualifiedNameApi {this: QualifiedTypeName =>
 
-    override def localName: LocalTypeName
+    override def local: LocalTypeName
 
   }
-
-
-  type LocalTypeName >: Null <: LocalName with LocalTypeNameApi
 
 
   trait LocalTypeNameApi extends LocalNameApi {this: LocalTypeName =>}
 
 
-  type TypeMemberName >: Null <: LocalName with TypeMemberNameApi // TODO rename to Var[Value]TypeMemberName??
-
   trait TypeMemberNameApi extends LocalNameApi {this: TypeMemberName =>}
-
-
-  type FieldName >: Null <: LocalName with FieldNameApi
 
 
   trait FieldNameApi extends LocalNameApi {this: FieldName =>}
 
 
-  type TagName >: Null <: LocalName with TagNameApi
-
-
   trait TagNameApi extends LocalNameApi {this: TagName =>}
-
-
-  type EnumMemberName >: Null <: LocalName with EnumMemberNameApi
 
 
   trait EnumMemberNameApi extends LocalNameApi {this: EnumMemberName =>}

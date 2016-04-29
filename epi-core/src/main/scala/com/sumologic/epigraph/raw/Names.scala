@@ -8,60 +8,42 @@ trait Names extends core.Names {
 
   override type Name = NameApi // TODO remove such type members? probably not - these allow to provide enhanced common features
 
-//  override type LocalName = this.RawLocalName // TODO replace member types with same-named classes?
-
-  override type QualifiedName = this.RawQualifiedName[LocalName]
-
-//  override type LocalNamespaceName = this.RawLocalNamespaceName
-//
-//  override type QualifiedNamespaceName = this.RawQualifiedNamespaceName
-//
-//  override type LocalTypeName = this.RawLocalTypeName
-//
-//  override type QualifiedTypeName = this.RawQualifiedTypeName
-//
-//  override type TypeMemberName = this.RawTypeMemberName
-//
-//  override type FieldName = this.RawFieldName
-//
-//  override type TagName = this.RawTagName
-//
-//  override type EnumMemberName = this.RawEnumMemberName
+  override type QualifiedName = QualifiedNameApi
 
 // TODO add NamingConvention for validation, pass it to abstract constructors
 
   abstract class LocalName(override val string: String) extends Name with LocalNameApi
 
 
-  protected abstract class RawQualifiedName[+LN >: Null <: LocalName](
-      override val namespaceName: Option[QualifiedNamespaceName],
-      override val localName: LN
+  protected abstract class QualifiedNameBase[+LN >: Null <: LocalName](
+      override val namespace: Option[QualifiedNamespaceName],
+      override val local: LN
   ) extends Name with QualifiedNameApi {
 
-    override val string: String = namespaceName match {
-      case Some(nn) => nn.string + '.' + localName.string
-      case None => localName.string
+    override val string: String = namespace match {
+      case Some(nn) => nn.string + '.' + local.string
+      case None => local.string
     }
 
   }
 
 
-  class LocalNamespaceName(override val string: String) extends LocalName(string) with LocalNamespaceNameApi
+  class LocalNamespaceName(string: String) extends LocalName(string) with LocalNamespaceNameApi
 
 
   class QualifiedNamespaceName(
-      namespaceName: Option[QualifiedNamespaceName],
+      namespace: Option[QualifiedNamespaceName],
       local: LocalNamespaceName
-  ) extends RawQualifiedName[LocalNamespaceName](namespaceName, local) with QualifiedNamespaceNameApi
+  ) extends QualifiedNameBase[LocalNamespaceName](namespace, local) with QualifiedNamespaceNameApi
 
 
   class LocalTypeName(string: String) extends LocalName(string) with LocalTypeNameApi
 
 
   class QualifiedTypeName(
-      namespaceName: Option[QualifiedNamespaceName],
+      namespace: Option[QualifiedNamespaceName],
       local: LocalTypeName
-  ) extends RawQualifiedName[LocalTypeName](namespaceName, local) with QualifiedTypeNameApi
+  ) extends QualifiedNameBase[LocalTypeName](namespace, local) with QualifiedTypeNameApi
 
 
   class TypeMemberName(string: String) extends LocalName(string) with TypeMemberNameApi
