@@ -33,7 +33,7 @@ dependencies {
 apply plugin: 'org.jetbrains.intellij'
 intellij {
     version ideaVersion
-    pluginName 'Schema'
+    pluginName 'Epigraph'
     downloadSources Boolean.valueOf(sources)
     sameSinceUntilBuild Boolean.valueOf(isEAP)
     // alternativeIdeaPath localIdePath
@@ -46,7 +46,7 @@ idea {
         languageLevel = javaVersion
     }
     module {
-        generatedSourceDirs += file('gen')
+        generatedSourceDirs += file('srm/main/java.generated')
     }
 }
 

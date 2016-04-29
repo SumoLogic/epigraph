@@ -1,5 +1,5 @@
 <idea-plugin version="2">
-  <id>com.sumologic.dohyo.plugin.schema</id>
+  <id>com.sumologic.epigraph.ideaPlugin.schema</id>
   <name>Schema Editor Plugin</name>
   <version>1.0</version>
   <vendor email="support@yourcompany.com" url="http://www.yourcompany.com">YourCompany</vendor>
@@ -26,34 +26,34 @@
 
   <extensions defaultExtensionNs="com.intellij">
     <!-- Add your extensions here -->
-    <fileTypeFactory implementation="com.sumologic.dohyo.plugin.schema.SchemaFileTypeFactory"/>
-    <lang.syntaxHighlighterFactory language="schema"
-                                   implementationClass="com.sumologic.dohyo.plugin.schema.highlighting.SchemaSyntaxHighlighterFactory"/>
-    <lang.parserDefinition language="schema"
-                           implementationClass="com.sumologic.dohyo.plugin.schema.parser.SchemaParserDefinition"/>
-    <annotator language="schema"
-               implementationClass="com.sumologic.dohyo.plugin.schema.highlighting.SchemaAnnotator"/>
+    <fileTypeFactory implementation="com.sumologic.epigraph.ideaPlugin.schema.SchemaFileTypeFactory"/>
+    <lang.syntaxHighlighterFactory language="epi_schema"
+                                   implementationClass="com.sumologic.epigraph.ideaPlugin.schema.highlighting.SchemaSyntaxHighlighterFactory"/>
+    <lang.parserDefinition language="epi_schema"
+                           implementationClass="com.sumologic.epigraph.ideaPlugin.schema.parser.SchemaParserDefinition"/>
+    <annotator language="epi_schema"
+               implementationClass="com.sumologic.epigraph.ideaPlugin.schema.highlighting.SchemaAnnotator"/>
 
-    <completion.contributor language="schema"
-                            implementationClass="com.sumologic.dohyo.plugin.schema.codeInsight.SchemaCompletionContributor"/>
-    <!--<psi.referenceContributor language="schema"-->
+    <completion.contributor language="epi_schema"
+                            implementationClass="com.sumologic.epigraph.ideaPlugin.schema.codeInsight.SchemaCompletionContributor"/>
+    <!--<psi.referenceContributor language="epi_schema"-->
                               <!--implementation="com.sumologic.dohyo.plugin.schema.psi.references.SchemaTypeReferenceContributor"/>-->
 
-    <lang.formatter language="schema"
-                    implementationClass="com.sumologic.dohyo.plugin.schema.formatting.SchemaFormattingModelBuilder"/>
+    <lang.formatter language="epi_schema"
+                    implementationClass="com.sumologic.epigraph.ideaPlugin.schema.formatting.SchemaFormattingModelBuilder"/>
     <langCodeStyleSettingsProvider
-        implementation="com.sumologic.dohyo.plugin.schema.formatting.codeStyle.SchemaLanguageCodeStyleSettingsProvider"/>
+        implementation="com.sumologic.epigraph.ideaPlugin.schema.formatting.codeStyle.SchemaLanguageCodeStyleSettingsProvider"/>
     <codeStyleSettingsProvider
-        implementation="com.sumologic.dohyo.plugin.schema.formatting.codeStyle.SchemaCodeStyleSettingsProvider"/>
-    <lang.braceMatcher language="schema"
-                       implementationClass="com.sumologic.dohyo.plugin.schema.features.SchemaBraceMatcher"/>
-    <lang.foldingBuilder language="schema"
-                         implementationClass="com.sumologic.dohyo.plugin.schema.features.SchemaFoldingBuilder"/>
-    <lang.commenter language="schema"
-                    implementationClass="com.sumologic.dohyo.plugin.schema.features.SchemaCommenter"/>
+        implementation="com.sumologic.epigraph.ideaPlugin.schema.formatting.codeStyle.SchemaCodeStyleSettingsProvider"/>
+    <lang.braceMatcher language="epi_schema"
+                       implementationClass="com.sumologic.epigraph.ideaPlugin.schema.features.SchemaBraceMatcher"/>
+    <lang.foldingBuilder language="epi_schema"
+                         implementationClass="com.sumologic.epigraph.ideaPlugin.schema.features.SchemaFoldingBuilder"/>
+    <lang.commenter language="epi_schema"
+                    implementationClass="com.sumologic.epigraph.ideaPlugin.schema.features.SchemaCommenter"/>
     <!-- TODO com.intellij.codeInsight.editorActions.moveUpDown.StatementUpDownMover -->
-    <lang.psiStructureViewFactory language="schema"
-                                  implementationClass="com.sumologic.dohyo.plugin.schema.structureView.SchemaStructureViewFactory"/>
+    <lang.psiStructureViewFactory language="epi_schema"
+                                  implementationClass="com.sumologic.epigraph.ideaPlugin.schema.structureView.SchemaStructureViewFactory"/>
   </extensions>
 
   <actions>
