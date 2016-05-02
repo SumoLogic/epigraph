@@ -3,6 +3,7 @@
 package com.sumologic.epigraph.raw
 
 import com.sumologic.epigraph.core
+import com.sumologic.epigraph.core.NamingConvention
 
 trait Names extends core.Names {
 
@@ -12,7 +13,11 @@ trait Names extends core.Names {
 
 // TODO add NamingConvention for validation, pass it to abstract constructors
 
-  abstract class LocalName(override val string: String) extends Name with LocalNameApi
+  abstract class LocalName(override val string: String, convention: NamingConvention) extends Name with LocalNameApi {
+
+    if (!convention.isValidName(string)) throw new IllegalArgumentException(string)
+
+  }
 
 
   protected abstract class QualifiedNameBase[+LN >: Null <: LocalName](
@@ -28,7 +33,9 @@ trait Names extends core.Names {
   }
 
 
-  class LocalNamespaceName(string: String) extends LocalName(string) with LocalNamespaceNameApi
+  class LocalNamespaceName(string: String) extends LocalName(
+    string, NamingConvention.LowerCamelCase
+  ) with LocalNamespaceNameApi
 
 
   class QualifiedNamespaceName(
@@ -37,7 +44,7 @@ trait Names extends core.Names {
   ) extends QualifiedNameBase[LocalNamespaceName](namespace, local) with QualifiedNamespaceNameApi
 
 
-  class LocalTypeName(string: String) extends LocalName(string) with LocalTypeNameApi
+  class LocalTypeName(string: String) extends LocalName(string, NamingConvention.UpperCamelCase) with LocalTypeNameApi
 
 
   class QualifiedTypeName(
@@ -46,16 +53,20 @@ trait Names extends core.Names {
   ) extends QualifiedNameBase[LocalTypeName](namespace, local) with QualifiedTypeNameApi
 
 
-  class TypeMemberName(string: String) extends LocalName(string) with TypeMemberNameApi
+  class TypeMemberName(string: String) extends LocalName(
+    string, NamingConvention.LowerCamelCase
+  ) with TypeMemberNameApi
 
 
-  class FieldName(string: String) extends LocalName(string) with FieldNameApi
+  class FieldName(string: String) extends LocalName(string, NamingConvention.LowerCamelCase) with FieldNameApi
 
 
-  class TagName(string: String) extends LocalName(string) with TagNameApi
+  class TagName(string: String) extends LocalName(string, NamingConvention.LowerCamelCase) with TagNameApi
 
 
-  class EnumMemberName(string: String) extends LocalName(string) with EnumMemberNameApi
+  class EnumMemberName(string: String) extends LocalName(
+    string, NamingConvention.LowerCamelCase // TODO UpperCamelCase?
+  ) with EnumMemberNameApi
 
 
 }
