@@ -25,10 +25,8 @@ import java.util.stream.Stream;
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
 public class SchemaIndexUtil {
-  // eliminate duplicated code by using higher-order functions?
-
   @NotNull
-  public static List<SchemaTypeDef> findTypeDefs(Project project, @NotNull Collection<String> namespaces, @NotNull String shortName) {
+  public static List<SchemaTypeDef> findTypeDefs(Project project, @NotNull Collection<String> namespaces, @Nullable String shortName) {
     List<SchemaTypeDef> result = new ArrayList<>();
 
     Collection<VirtualFile> virtualFiles =
@@ -52,7 +50,7 @@ public class SchemaIndexUtil {
       if (defs != null) {
         Stream<SchemaTypeDef> typeDefStream = defs.getTypeDefList().stream();
         result.addAll(typeDefStream
-            .filter(typeDef -> shortName.equals(typeDef.getName()))
+            .filter(typeDef -> shortName == null || shortName.equals(typeDef.getName()))
             .collect(Collectors.toList()));
       }
     }
