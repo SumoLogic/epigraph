@@ -61,18 +61,18 @@ trait TypesSchema {this: raw.Types with raw.Names with Builtin with NamesSchema 
 
   object TypeType extends {
 
-    val NameField = new Field(new FieldName("name"), FieldNameType)
+    val Name = Field("name", FieldNameType)
 
-  } with RecordDataType(SchemaNamespaceName("Type"), Seq(), Seq(NameField))
+  } with RecordDataType(SchemaNamespaceName("Type"), Seq(), Seq(Name))
 
 
   object VarTypeType extends {
 
-    val DefaultField = Field("default", TypeMemberNameType)
+    val Default = Field("default", TypeMemberNameType)
 
-    val MembersField = Field("members", TypeMemberNameType) // FIXME list[TypeMember]
+    val Members = Field("members", TypeMemberNameType) // FIXME list[TypeMember]
 
-  } with RecordDataType(SchemaNamespaceName("VarType"), TypeType, Seq(DefaultField, MembersField))
+  } with RecordDataType(SchemaNamespaceName("VarType"), TypeType, Seq(Default, Members))
 
 
 }
