@@ -5,11 +5,9 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
 import com.intellij.util.PlatformIcons;
+import com.sumologic.epigraph.ideaplugin.schema.brains.NamespaceManager;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
 import com.sumologic.epigraph.ideaplugin.schema.brains.Fqn;
-import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaFile;
-import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaFqn;
-import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaNamespaceDecl;
 import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaTypeDef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -73,7 +71,6 @@ public class SchemaTypeReference extends PsiReferenceBase<PsiElement> implements
   @Override
   public Object[] getVariants() {
     final Project project = myElement.getProject();
-//    return SchemaIndexUtil.findTypeDefs(project, namespacesToSearch, shortName).stream()
     return SchemaIndexUtil.findTypeDefs(project, namespacesToSearch, null).stream()
         .filter(typeDef -> typeDef.getName() != null)
         .map(typeDef -> LookupElementBuilder.create(typeDef)
@@ -83,20 +80,8 @@ public class SchemaTypeReference extends PsiReferenceBase<PsiElement> implements
   }
 
   private String getTypeDefNamespace(@NotNull SchemaTypeDef typeDef) {
-    PsiFile schemaFile = typeDef.getContainingFile();
-    if (schemaFile instanceof SchemaFile) {
-      SchemaFile file = (SchemaFile) schemaFile;
-
-      SchemaNamespaceDecl namespaceDecl = file.getNamespaceDecl();
-      if (namespaceDecl != null) {
-        SchemaFqn fqn = namespaceDecl.getFqn();
-        if (fqn != null) {
-          return fqn.getFqn().toString();
-        }
-      }
-    }
-
-    return schemaFile.getName();
+    String namespace = NamespaceManager.getNamespace(typeDef);
+    return namespace == null ? typeDef.getContainingFile().getName() : namespace;
   }
 
   private Icon getTypeDefPresentationIcon() {

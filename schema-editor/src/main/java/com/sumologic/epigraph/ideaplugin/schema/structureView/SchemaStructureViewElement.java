@@ -7,6 +7,7 @@ import com.intellij.psi.NavigatablePsiElement;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.IconUtil;
 import com.intellij.util.PlatformIcons;
+import com.sumologic.epigraph.ideaplugin.schema.brains.NamespaceManager;
 import com.sumologic.epigraph.ideaplugin.schema.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -36,12 +37,7 @@ public class SchemaStructureViewElement implements StructureViewTreeElement {
     if (element instanceof SchemaFile) {
       SchemaFile schemaFile = (SchemaFile) element;
 
-      String fqn = null;
-      SchemaNamespaceDecl namespaceDecl = schemaFile.getNamespaceDecl();
-      if (namespaceDecl != null) {
-        SchemaFqn schemaFqn = namespaceDecl.getFqn();
-        if (schemaFqn != null) fqn = schemaFqn.getFqn().toString();
-      }
+      String fqn = NamespaceManager.getNamespace(schemaFile);
 
       return new StaticItemPresentation("Epigraph Schema", fqn, null);
     }

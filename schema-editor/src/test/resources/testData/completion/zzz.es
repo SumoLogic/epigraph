@@ -1,0 +1,3 @@
+namespace zzz
+
+long ZZLong

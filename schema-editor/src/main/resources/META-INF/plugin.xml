@@ -45,6 +45,14 @@
         implementation="com.sumologic.epigraph.ideaplugin.schema.formatting.codeStyle.SchemaLanguageCodeStyleSettingsProvider"/>
     <codeStyleSettingsProvider
         implementation="com.sumologic.epigraph.ideaplugin.schema.formatting.codeStyle.SchemaCodeStyleSettingsProvider"/>
+
+    <lang.findUsagesProvider language="epi_schema"
+                             implementationClass="com.sumologic.epigraph.ideaplugin.schema.features.search.SchemaFindUsagesProvider"/>
+    <elementDescriptionProvider
+        implementation="com.sumologic.epigraph.ideaplugin.schema.features.search.SchemaElementDescriptionProvider"/>
+    <usageTypeProvider
+        implementation="com.sumologic.epigraph.ideaplugin.schema.features.search.SchemaUsageTypeProvider"/>
+
     <lang.braceMatcher language="epi_schema"
                        implementationClass="com.sumologic.epigraph.ideaplugin.schema.features.SchemaBraceMatcher"/>
     <lang.foldingBuilder language="epi_schema"

@@ -32,14 +32,14 @@ public class ReferenceFactory {
     if (isSingleSegment) {
       namespacesToSearch = getStarNamespaces(fqnTypeRef);
 
-      namespacesToSearch.addAll(getPrefixNamespacesWithLastSegmentRemoved(fqnTypeRef, first));
+      namespacesToSearch.addAll(getPrefixNamespacesWithLastSegmentRemoved(fqnTypeRef, null /*first*/));
 
-      String currentNamespace = getCurrentNamespace(fqnTypeRef);
+      String currentNamespace = getNamespace(fqnTypeRef);
       if (currentNamespace != null) namespacesToSearch.add(new Fqn(currentNamespace));
 
       Collections.addAll(namespacesToSearch, NamespaceManager.DEFAULT_NAMESPACES);
     } else {
-      namespacesToSearch = getPrefixNamespacesWithLastSegmentRemoved(fqnTypeRef, first);
+      namespacesToSearch = getPrefixNamespacesWithLastSegmentRemoved(fqnTypeRef, null /*first*/);
     }
 
     return new SchemaTypeReference(segment, namespacesToSearch, fqn);

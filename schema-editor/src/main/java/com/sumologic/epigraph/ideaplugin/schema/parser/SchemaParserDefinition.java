@@ -27,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class SchemaParserDefinition implements ParserDefinition {
   public final static TokenSet WHITESPACES = TokenSet.create(TokenType.WHITE_SPACE);
+  public final static TokenSet IDENTIFIERS = TokenSet.create(S_ID);
   public final static TokenSet COMMENTS = TokenSet.create(S_COMMENT, S_BLOCK_COMMENT);
   public final static TokenSet STRINGS = TokenSet.create(S_STRING);
   public final static TokenSet CURLY_BRACES = TokenSet.create(S_CURLY_LEFT, S_CURLY_RIGHT);
@@ -51,6 +52,7 @@ public class SchemaParserDefinition implements ParserDefinition {
       S_BOOLEAN_T,
       S_STRING_T
   );
+  public final static TokenSet LITERALS = TokenSet.create(S_STRING);
 
   @NotNull
   @Override

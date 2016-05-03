@@ -8,6 +8,7 @@ import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.indexing.FileBasedIndex;
 import com.sumologic.epigraph.ideaplugin.schema.SchemaFileType;
+import com.sumologic.epigraph.ideaplugin.schema.brains.NamespaceManager;
 import com.sumologic.epigraph.ideaplugin.schema.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -37,21 +38,16 @@ public class SchemaIndexUtil {
       SchemaFile schemaFile = (SchemaFile) PsiManager.getInstance(project).findFile(virtualFile);
       if (schemaFile == null) continue;
 
-      SchemaNamespaceDecl namespaceDecl = schemaFile.getNamespaceDecl();
-      if (namespaceDecl == null) continue;
-
-      SchemaFqn namespaceDeclFqn = namespaceDecl.getFqn();
-      if (namespaceDeclFqn == null) continue;
-
-      String namespaceFqnString = namespaceDeclFqn.getFqn().toString();
-      if (!namespaces.contains(namespaceFqnString)) continue;
-
       SchemaDefs defs = schemaFile.getDefs();
+
       if (defs != null) {
-        Stream<SchemaTypeDef> typeDefStream = defs.getTypeDefList().stream();
-        result.addAll(typeDefStream
-            .filter(typeDef -> shortName == null || shortName.equals(typeDef.getName()))
-            .collect(Collectors.toList()));
+        String namespaceFqnString = NamespaceManager.getNamespace(defs);
+        if (namespaces.contains(namespaceFqnString)) {
+          Stream<SchemaTypeDef> typeDefStream = defs.getTypeDefList().stream();
+          result.addAll(typeDefStream
+              .filter(typeDef -> shortName == null || shortName.equals(typeDef.getName()))
+              .collect(Collectors.toList()));
+        }
       }
     }
 
@@ -69,24 +65,18 @@ public class SchemaIndexUtil {
       if (!(file instanceof SchemaFile)) continue;
       SchemaFile schemaFile = (SchemaFile) file;
 
-      SchemaNamespaceDecl namespaceDecl = schemaFile.getNamespaceDecl();
-      if (namespaceDecl == null) continue;
-
-      SchemaFqn namespaceDeclFqn = namespaceDecl.getFqn();
-      if (namespaceDeclFqn == null) continue;
-
-      String namespaceFqnString = namespaceDeclFqn.getFqn().toString();
-      if (!namespaces.contains(namespaceFqnString)) continue;
-
       SchemaDefs defs = schemaFile.getDefs();
 
       if (defs != null) {
-        Stream<SchemaTypeDef> typeDefStream = defs.getTypeDefList().stream();
-        Optional<SchemaTypeDef> first = typeDefStream
-            .filter(typeDef -> shortName.equals(typeDef.getName()))
-            .findFirst();
+        String namespaceFqnString = NamespaceManager.getNamespace(defs);
+        if (namespaces.contains(namespaceFqnString)) {
+          Stream<SchemaTypeDef> typeDefStream = defs.getTypeDefList().stream();
+          Optional<SchemaTypeDef> first = typeDefStream
+              .filter(typeDef -> shortName.equals(typeDef.getName()))
+              .findFirst();
 
-        if (first.isPresent()) return first.get();
+          if (first.isPresent()) return first.get();
+        }
       }
     }
 

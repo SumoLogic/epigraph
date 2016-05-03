@@ -38,8 +38,10 @@ public class NamespaceManager {
   }
 
   @Nullable
-  public static String getCurrentNamespace(@NotNull PsiElement element) {
-    SchemaFile schemaFile = PsiTreeUtil.getParentOfType(element, SchemaFile.class);
+  public static String getNamespace(@NotNull PsiElement element) {
+    SchemaFile schemaFile = element instanceof SchemaFile ? (SchemaFile) element :
+        PsiTreeUtil.getParentOfType(element, SchemaFile.class);
+
     if (schemaFile == null) return null;
 
     SchemaNamespaceDecl namespaceDecl = schemaFile.getNamespaceDecl();
@@ -56,7 +58,7 @@ public class NamespaceManager {
    * removed, i.e. `a.b.c`
    */
   @NotNull
-  public static Set<Fqn> getPrefixNamespacesWithLastSegmentRemoved(@NotNull PsiElement element, @NotNull String lastSegment) {
+  public static Set<Fqn> getPrefixNamespacesWithLastSegmentRemoved(@NotNull PsiElement element, @Nullable String lastSegment) {
     SchemaFile schemaFile = PsiTreeUtil.getParentOfType(element, SchemaFile.class);
     if (schemaFile == null) return Collections.emptySet();
 
@@ -67,7 +69,7 @@ public class NamespaceManager {
       SchemaFqn importFqn = importStatement.getFqn();
       if (importFqn != null && importStatement.getStarImportSuffix() == null) {
         Fqn fqn = importFqn.getFqn();
-        if (lastSegment.equals(fqn.getLast())) {
+        if (lastSegment == null || lastSegment.equals(fqn.getLast())) {
           Fqn prefix = fqn.getPrefix();
           if (prefix != null)
             res.add(prefix);
