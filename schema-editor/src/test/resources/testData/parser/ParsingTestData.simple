@@ -1,0 +1,5 @@
+namespace foo
+
+import bar.*
+
+record Baz

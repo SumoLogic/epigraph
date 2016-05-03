@@ -1,0 +1,3 @@
+namespace target
+
+long ZZLong

@@ -2,39 +2,42 @@ package com.sumologic.epigraph.ideaplugin.schema.lexer;
 
 import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;
-import org.testng.annotations.Test;
+import org.junit.Assert;
+import org.junit.Test;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.sumologic.epigraph.ideaplugin.schema.lexer.SchemaElementTypes.*;
-import static org.testng.Assert.assertEquals;
 
 /**
  * Todo add doc
  *
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-@Test
 public class LexerTest {
+  @Test
   public void testId() throws IOException {
     testInput("id", S_ID);
 //    testInput("_record", S_ID);
     testInput("Foo", S_ID);
   }
 
+  @Test
   public void testKeywords() throws IOException {
     testInput("record", S_RECORD);
     testInput("record { record } record",
         S_RECORD, S_CURLY_LEFT, S_ID, S_CURLY_RIGHT, S_RECORD);
   }
 
+  @Test
   public void testBlockComment() throws IOException {
     testInput("id /* foo */ id", S_ID, S_BLOCK_COMMENT, S_ID);
     testInput("/* foo ", S_BLOCK_COMMENT);
   }
 
+  @Test
   public void testInput1() throws IOException {
     String input = "" +
         "namespace foo.bar\n" +
@@ -76,6 +79,6 @@ public class LexerTest {
       e = lex.advance();
     }
 
-    assertEquals(actual.toArray(), expected, debug.toString());
+    Assert.assertArrayEquals(debug.toString(), actual.toArray(), expected);
   }
 }

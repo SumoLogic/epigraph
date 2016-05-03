@@ -19,15 +19,16 @@ tasks.withType(JavaCompile) { options.encoding = 'UTF-8' }
 sourceSets {
     main {
         java.srcDir 'src/main/java.generated'
-        resources.srcDirs 'src/main/resources'
+        resources.srcDir 'src/main/resources'
     }
     test {
         java.srcDir 'src/test/java'
+        resources.srcDir 'src/test/resources'
     }
 }
 
 dependencies {
-    testCompile 'org.testng:testng:6.9.10'
+    testCompile 'junit:junit:4.12'
 }
 
 apply plugin: 'org.jetbrains.intellij'
@@ -50,10 +51,10 @@ idea {
     }
 }
 
-test {
-    useTestNG ()
-    include '**/*'
-}
+//test {
+//    useTestNG ()
+//    include '**/*'
+//}
 
 //task printProps << {
 //    println javaVersion

@@ -26,17 +26,19 @@ public class ReferenceFactory {
     Collection<Fqn> namespacesToSearch;
     boolean isSingleSegment = fqn.size() == 1;
 
+    String first = fqn.getFirst();
+    assert first != null;
+
     if (isSingleSegment) {
       namespacesToSearch = getStarNamespaces(fqnTypeRef);
+
+      namespacesToSearch.addAll(getPrefixNamespacesWithLastSegmentRemoved(fqnTypeRef, first));
 
       String currentNamespace = getCurrentNamespace(fqnTypeRef);
       if (currentNamespace != null) namespacesToSearch.add(new Fqn(currentNamespace));
 
       Collections.addAll(namespacesToSearch, NamespaceManager.DEFAULT_NAMESPACES);
     } else {
-      String first = fqn.getFirst();
-      assert first != null;
-
       namespacesToSearch = getPrefixNamespacesWithLastSegmentRemoved(fqnTypeRef, first);
     }
 
