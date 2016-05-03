@@ -2,9 +2,37 @@
 
 package com.sumologic.epigraph.core
 
+import scala.language.implicitConversions
+
 trait Types {this: Names =>
 
   type Type >: Null <: AnyRef with TypeApi
+
+  type VarType >: Null <: Type with VarTypeApi
+
+  type TypeMember >: Null <: AnyRef with TypeMemberApi // TODO rename to VarMember?
+
+  type DataType >: Null <: Type with DataTypeApi
+
+  type RecordDataType >: Null <: DataType with RecordDataTypeApi
+
+  type Field >: Null <: AnyRef with FieldApi // TODO common parent for Field, Tag? and Field, Tag, List, Map (re valueType)??
+
+  type UnionDataType >: Null <: DataType with UnionDataTypeApi
+
+  type Tag >: Null <: AnyRef with TagApi // TODO common parent for Field, Tag? and Field, Tag, List, Map (re value type)??
+
+  type MapDataType >: Null <: DataType with MapDataTypeApi
+
+  type ListDataType >: Null <: DataType with ListDataTypeApi
+
+  type EnumDataType >: Null <: DataType with EnumDataTypeApi
+
+  type EnumTypeMember >: Null <: AnyRef with EnumTypeMemberApi
+
+  type PrimitiveDataType >: Null <: DataType with PrimitiveDataTypeApi
+
+  type StringDataType >: Null <: PrimitiveDataType with StringDataTypeApi
 
 
   trait TypeApi extends Named {this: Type =>
@@ -14,19 +42,21 @@ trait Types {this: Names =>
   }
 
 
-  type VarType >: Null <: Type with VarTypeApi
-
-
   trait VarTypeApi extends TypeApi {this: VarType =>
 
     def defaultMember: Option[TypeMember]
 
-    def membersMap: Map[TypeMemberName, TypeMember]
+    def members: Seq[TypeMember]
 
   }
 
 
-  type TypeMember >: Null <: AnyRef with TypeMemberApi // TODO rename to VarMember?
+  object VarTypeApi {
+
+    implicit def dataTypeToVarType(dataType: DataType): VarType = dataType.varType
+
+  }
+
 
   trait TypeMemberApi extends Named {this: TypeMember =>
 
@@ -37,29 +67,23 @@ trait Types {this: Names =>
   }
 
 
-  type DataType >: Null <: Type with DataTypeApi
-
-
   trait DataTypeApi extends TypeApi {this: DataType =>
 
     def supertypes: Seq[DataType]
 
+    def varType: VarType
+
   }
-
-
-  type RecordDataType >: Null <: DataType with RecordDataTypeApi
 
 
   trait RecordDataTypeApi extends DataTypeApi {this: RecordDataType =>
 
     override def supertypes: Seq[RecordDataType]
 
-    def declaredFields: Map[FieldName, Field]
+    def declaredFields: Seq[Field]
 
   }
 
-
-  type Field >: Null <: AnyRef with FieldApi // TODO common parent for Field, Tag? and Field, Tag, List, Map (re valueType)??
 
   trait FieldApi extends Named {this: Field =>
 
@@ -70,19 +94,14 @@ trait Types {this: Names =>
   }
 
 
-  type UnionDataType >: Null <: DataType with UnionDataTypeApi
-
-
   trait UnionDataTypeApi extends DataTypeApi {this: UnionDataType =>
 
     override val supertypes: Seq[UnionDataType] = Types.EmptySeq
 
-    def declaredTags: Map[TagName, Tag]
+    def declaredTags: Seq[Tag]
 
   }
 
-
-  type Tag >: Null <: AnyRef with TagApi // TODO common parent for Field, Tag? and Field, Tag, List, Map (re value type)??
 
   trait TagApi extends Named {this: Tag =>
 
@@ -91,9 +110,6 @@ trait Types {this: Names =>
     def valueType: VarType
 
   }
-
-
-  type MapDataType >: Null <: DataType with MapDataTypeApi
 
 
   trait MapDataTypeApi extends DataTypeApi {this: MapDataType =>
@@ -107,9 +123,6 @@ trait Types {this: Names =>
   }
 
 
-  type ListDataType >: Null <: DataType with ListDataTypeApi
-
-
   trait ListDataTypeApi extends DataTypeApi {this: ListDataType =>
 
     override def supertypes: Seq[ListDataType]
@@ -117,9 +130,6 @@ trait Types {this: Names =>
     def valueType: VarType
 
   }
-
-
-  type EnumDataType >: Null <: DataType with EnumDataTypeApi
 
 
   trait EnumDataTypeApi extends DataTypeApi {this: EnumDataType =>
@@ -131,9 +141,6 @@ trait Types {this: Names =>
   }
 
 
-  type EnumTypeMember >: Null <: AnyRef with EnumTypeMemberApi
-
-
   trait EnumTypeMemberApi extends Named {this: EnumTypeMember =>
 
     def name: EnumMemberName
@@ -141,17 +148,11 @@ trait Types {this: Names =>
   }
 
 
-  type PrimitiveDataType >: Null <: DataType with PrimitiveDataTypeApi
-
-
   trait PrimitiveDataTypeApi extends DataTypeApi {this: PrimitiveDataType =>
 
     override def supertypes: Seq[PrimitiveDataType]
 
   }
-
-
-  type StringDataType >: Null <: PrimitiveDataType with StringDataTypeApi
 
 
   trait StringDataTypeApi extends PrimitiveDataTypeApi {this: StringDataType =>
@@ -167,6 +168,6 @@ trait Types {this: Names =>
 
 object Types {
 
-  val EmptySeq: Seq[Nothing] = Seq.empty
+  val EmptySeq: Seq[Nothing] = Seq.empty // TODO move to util or smth.
 
 }

@@ -4,6 +4,8 @@ package com.sumologic.epigraph.raw
 
 import com.sumologic.epigraph.core
 
+import scala.language.implicitConversions
+
 trait Types extends core.Types {this: core.Names =>
 
 
@@ -21,10 +23,15 @@ trait Types extends core.Types {this: core.Names =>
   ) extends Type(name) with VarTypeApi {
 
     // TODO parameterized method to return any supported view of this?
-    override def membersMap: Map[TypeMemberName, TypeMember] = ???
+    override def members: Seq[TypeMember] = membersSeq
 
   }
 
+//  object VarType {
+//
+//    implicit def dataTypeToVarType(dataType: DataType): VarType = dataType.varType
+//
+//  }
 
   class TypeMember(private val mname: TypeMemberName, override val dataType: DataType) extends TypeMemberApi {
 
@@ -35,14 +42,32 @@ trait Types extends core.Types {this: core.Names =>
 
   abstract class DataType(name: QualifiedTypeName, override val supertypes: Seq[DataType]) extends Type(
     name
-  ) with DataTypeApi
+  ) with DataTypeApi {
+
+    override lazy val varType: VarType = {
+      val member = new TypeMember(TypeMemberName.default, this)
+      new VarType(name, Some(member), Seq(member))
+    }
+
+  }
+
+
+  object DataType {
+
+    implicit def dataTypeToSeq[DT >: Null <: DataType](dataType: DT): Seq[DT] = Seq[DT](dataType)
+
+//    implicit def dataTypeToVarType(dataType: DataType): VarType = dataType.varType
+
+  }
 
 
   class RecordDataType(
       name: QualifiedTypeName,
       override val supertypes: Seq[RecordDataType],
-      override val declaredFields: Map[FieldName, Field]
-  ) extends DataType(name, supertypes) with RecordDataTypeApi
+      override val declaredFields: Seq[Field]
+  ) extends DataType(name, supertypes) with RecordDataTypeApi {
+
+  }
 
 
   class Field(private val fname: FieldName, override val valueType: VarType) extends FieldApi {
@@ -51,11 +76,17 @@ trait Types extends core.Types {this: core.Names =>
 
   }
 
+  object Field {
+
+    def apply(name: FieldName, valueType: VarType): Field = new Field(name, valueType)
+
+  }
+
 
   class UnionDataType(
       name: QualifiedTypeName,
       supertypes: Seq[UnionDataType],
-      override val declaredTags: Map[TagName, Tag]
+      override val declaredTags: Seq[Tag]
   ) extends DataType(name, supertypes) with UnionDataTypeApi
 
 
@@ -94,7 +125,7 @@ trait Types extends core.Types {this: core.Names =>
   }
 
 
-  class PrimitiveDataType(
+  abstract class PrimitiveDataType(
       name: QualifiedTypeName,
       override val supertypes: Seq[PrimitiveDataType]
   ) extends DataType(name, supertypes) with PrimitiveDataTypeApi
@@ -104,6 +135,13 @@ trait Types extends core.Types {this: core.Names =>
       name: QualifiedTypeName,
       override val supertypes: Seq[StringDataType]
   ) extends PrimitiveDataType(name, supertypes) with StringDataTypeApi
+
+
+  object StringDataType {
+
+    implicit def stringDataTypeToSeq(stringDataType: StringDataType): Seq[StringDataType] = Seq(stringDataType)
+
+  }
 
 
 }

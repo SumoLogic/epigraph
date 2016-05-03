@@ -5,6 +5,8 @@ package com.sumologic.epigraph.raw
 import com.sumologic.epigraph.core
 import com.sumologic.epigraph.core.NamingConvention
 
+import scala.language.implicitConversions
+
 trait Names extends core.Names {
 
   override type Name = NameApi // TODO remove such type members? probably not - these allow to provide enhanced common features
@@ -38,13 +40,44 @@ trait Names extends core.Names {
   ) with LocalNamespaceNameApi
 
 
+  object LocalNamespaceName {
+
+    implicit def apply(string: String): LocalNamespaceName = new LocalNamespaceName(string)
+
+  }
+
+
   class QualifiedNamespaceName(
       namespace: Option[QualifiedNamespaceName],
       local: LocalNamespaceName
-  ) extends QualifiedNameBase[LocalNamespaceName](namespace, local) with QualifiedNamespaceNameApi
+  ) extends QualifiedNameBase[LocalNamespaceName](namespace, local) with QualifiedNamespaceNameApi {
+
+    def apply(local: LocalTypeName): QualifiedTypeName = QualifiedTypeName(this, local)
+
+    def apply(local: LocalNamespaceName): QualifiedNamespaceName = QualifiedNamespaceName(this, local)
+
+  }
+
+
+  object QualifiedNamespaceName {
+
+    implicit def apply(namespace: Option[QualifiedNamespaceName], local: LocalNamespaceName): QualifiedNamespaceName =
+      new QualifiedNamespaceName(namespace, local)
+
+    implicit def apply(namespace: QualifiedNamespaceName, local: LocalNamespaceName): QualifiedNamespaceName =
+      new QualifiedNamespaceName(Some(namespace), local)
+
+  }
 
 
   class LocalTypeName(string: String) extends LocalName(string, NamingConvention.UpperCamelCase) with LocalTypeNameApi
+
+
+  object LocalTypeName {
+
+    implicit def apply(string: String): LocalTypeName = new LocalTypeName(string)
+
+  }
 
 
   class QualifiedTypeName(
@@ -53,19 +86,50 @@ trait Names extends core.Names {
   ) extends QualifiedNameBase[LocalTypeName](namespace, local) with QualifiedTypeNameApi
 
 
+  object QualifiedTypeName {
+
+    implicit def apply(namespace: Option[QualifiedNamespaceName], local: LocalTypeName): QualifiedTypeName =
+      new QualifiedTypeName(namespace, local)
+
+    implicit def apply(namespace: QualifiedNamespaceName, local: LocalTypeName): QualifiedTypeName =
+      new QualifiedTypeName(Some(namespace), local)
+
+    implicit def apply(namespace: Option[QualifiedNamespaceName], local: String): QualifiedTypeName =
+      new QualifiedTypeName(namespace, LocalTypeName(local))
+
+    implicit def apply(namespace: QualifiedNamespaceName, local: String): QualifiedTypeName =
+      new QualifiedTypeName(Some(namespace), LocalTypeName(local))
+
+  }
+
+
   class TypeMemberName(string: String) extends LocalName(
     string, NamingConvention.LowerCamelCase
   ) with TypeMemberNameApi
 
 
+  object TypeMemberName extends TypeMemberNameStaticApi {
+
+    override val default: TypeMemberName = new TypeMemberName("default")
+
+  }
+
+
   class FieldName(string: String) extends LocalName(string, NamingConvention.LowerCamelCase) with FieldNameApi
+
+
+  object FieldName {
+
+    implicit def apply(string: String): FieldName = new FieldName(string)
+
+  }
 
 
   class TagName(string: String) extends LocalName(string, NamingConvention.LowerCamelCase) with TagNameApi
 
 
   class EnumMemberName(string: String) extends LocalName(
-    string, NamingConvention.LowerCamelCase // TODO UpperCamelCase?
+    string, NamingConvention.LowerCamelCase
   ) with EnumMemberNameApi
 
 

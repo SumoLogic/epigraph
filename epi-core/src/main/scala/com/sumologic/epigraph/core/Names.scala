@@ -14,11 +14,13 @@ trait Names { // TODO use raw.Names implementation and drop member types all tog
 
   type QualifiedNamespaceName >: Null <: QualifiedName with QualifiedNamespaceNameApi
 
-  type QualifiedTypeName >: Null <: QualifiedName with QualifiedTypeNameApi
-
   type LocalTypeName >: Null <: LocalName with LocalTypeNameApi
 
+  type QualifiedTypeName >: Null <: QualifiedName with QualifiedTypeNameApi
+
   type TypeMemberName >: Null <: LocalName with TypeMemberNameApi // TODO rename to VarMemberName (along with TypeMember)??
+
+  val TypeMemberName: TypeMemberNameStaticApi
 
   type FieldName >: Null <: LocalName with FieldNameApi
 
@@ -74,6 +76,13 @@ trait Names { // TODO use raw.Names implementation and drop member types all tog
 
 
   trait TypeMemberNameApi extends LocalNameApi {this: TypeMemberName =>}
+
+
+  trait TypeMemberNameStaticApi {
+
+    def default: TypeMemberName
+
+  }
 
 
   trait FieldNameApi extends LocalNameApi {this: FieldName =>}
