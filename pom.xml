@@ -62,6 +62,14 @@
       <version>${scala.version}</version>
     </dependency>
 
+<!--
+    <dependency>
+      <groupId>org.scala-lang</groupId>
+      <artifactId>scala-compiler</artifactId>
+      <version>${scala.version}</version>
+    </dependency>
+-->
+
     <dependency>
       <groupId>com.typesafe.scala-logging</groupId>
       <artifactId>scala-logging_${scala.version.major.minor}</artifactId>

@@ -48,6 +48,8 @@ trait Types {this: Names =>
 
     def members: Seq[TypeMember]
 
+    def listOf: ListDataType // TODO move to TypeApi?
+
   }
 
 
@@ -72,6 +74,8 @@ trait Types {this: Names =>
     def supertypes: Seq[DataType]
 
     def varType: VarType
+
+    //def listOf: ListDataType
 
   }
 

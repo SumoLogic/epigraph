@@ -25,6 +25,12 @@ trait Types extends core.Types {this: core.Names =>
     // TODO parameterized method to return any supported view of this?
     override def members: Seq[TypeMember] = membersSeq
 
+    override lazy val listOf: ListDataType = new ListDataType(
+      name.listOf,
+      Seq(),
+      this
+    )
+
   }
 
 //  object VarType {
@@ -65,9 +71,7 @@ trait Types extends core.Types {this: core.Names =>
       name: QualifiedTypeName,
       override val supertypes: Seq[RecordDataType],
       override val declaredFields: Seq[Field]
-  ) extends DataType(name, supertypes) with RecordDataTypeApi {
-
-  }
+  ) extends DataType(name, supertypes) with RecordDataTypeApi
 
 
   class Field(private val fname: FieldName, override val valueType: VarType) extends FieldApi {
@@ -75,6 +79,7 @@ trait Types extends core.Types {this: core.Names =>
     override def name: FieldName = fname
 
   }
+
 
   object Field {
 

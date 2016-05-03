@@ -69,6 +69,11 @@ trait Names { // TODO use raw.Names implementation and drop member types all tog
 
     override def local: LocalTypeName
 
+    /**
+     * @return [[QualifiedTypeName]] of list type with this element type name
+     */
+    def listOf: QualifiedTypeName
+
   }
 
 

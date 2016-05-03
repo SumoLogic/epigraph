@@ -83,7 +83,14 @@ trait Names extends core.Names {
   class QualifiedTypeName(
       namespace: Option[QualifiedNamespaceName],
       local: LocalTypeName
-  ) extends QualifiedNameBase[LocalTypeName](namespace, local) with QualifiedTypeNameApi
+  ) extends QualifiedNameBase[LocalTypeName](namespace, local) with QualifiedTypeNameApi {
+
+    /**
+     * @return [[QualifiedTypeName]] of list type with this element type name
+     */
+    override def listOf: QualifiedTypeName = ??? // TODO "listOf.foo.bar.Baz"? "list[foo.bar.Baz]"? special type for anonymous lists?
+
+  }
 
 
   object QualifiedTypeName {
