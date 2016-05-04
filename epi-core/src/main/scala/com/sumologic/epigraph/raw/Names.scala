@@ -143,9 +143,7 @@ trait Names extends core.Names {
   class TagName(string: String) extends LocalName(string, NamingConvention.LowerCamelCase) with TagNameApi
 
 
-  class EnumMemberName(string: String) extends LocalName(
-    string, NamingConvention.LowerCamelCase
-  ) with EnumMemberNameApi
+  class EnumMemberName(string: String) extends LocalName(string, NamingConvention.LowerCamelCase) with EnumMemberNameApi
 
 
 }

@@ -2,7 +2,7 @@
 
 package com.sumologic.epigraph.core
 
-trait Data {this: Types =>
+trait Data {this: Types => // TODO rename to ReadableData?
 
   type Value >: Null <: AnyRef with ValueApi
 
@@ -20,11 +20,11 @@ trait Data {this: Types =>
 
   type PrimitiveDatum >: Null <: Datum with PrimitiveDatumApi
 
-  type PrimitiveNativeValue >: Null <: AnyRef // AnyVal is not allowed; reconsider?
+  type NativePrimitive >: Null <: AnyRef // AnyVal is not allowed; reconsider?
 
   type StringDatum >: Null <: PrimitiveDatum with StringDatumApi
 
-  type StringNativeValue >: Null <: PrimitiveNativeValue
+  type NativeString >: Null <: NativePrimitive // TODO move Native* to orthogonal trait?
 
   // TODO other primitive data
 
@@ -93,7 +93,7 @@ trait Data {this: Types =>
 
     override def dataType: PrimitiveDataType
 
-    def nativeValue: PrimitiveNativeValue
+    def native: NativePrimitive
 
   }
 
@@ -102,7 +102,7 @@ trait Data {this: Types =>
 
     override def dataType: StringDataType
 
-    override def nativeValue: StringNativeValue
+    override def native: NativeString
 
   }
 
