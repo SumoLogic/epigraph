@@ -6,113 +6,105 @@ trait Data {this: Types =>
 
   type Value >: Null <: AnyRef with ValueApi
 
+  type Datum >: Null <: AnyRef with DatumApi
+
+  type RecordDatum >: Null <: Datum with RecordDatumApi
+
+  type UnionDatum >: Null <: Datum with UnionDatumApi
+
+  type MapDatum >: Null <: Datum with MapDatumApi
+
+  type ListDatum >: Null <: Datum with ListDatumApi
+
+  type EnumDatum >: Null <: Datum with EnumDatumApi
+
+  type PrimitiveDatum >: Null <: Datum with PrimitiveDatumApi
+
+  type PrimitiveNativeValue >: Null <: AnyRef // AnyVal is not allowed; reconsider?
+
+  type StringDatum >: Null <: PrimitiveDatum with StringDatumApi
+
+  type StringNativeValue >: Null <: PrimitiveNativeValue
+
+  // TODO other primitive data
 
   trait ValueApi {this: Value =>
 
-    def `type`: VarType
+    def valueType: VarType
 
     def data: Map[TypeMember, Datum]
 
   }
 
 
-  type Datum >: Null <: AnyRef with DatumApi
-
-
   trait DatumApi {this: Datum =>
 
-    def `type`: DataType
+    def dataType: DataType
 
   }
 
 
-  type RecordDatum >: Null <: Datum with RecordDatumApi
-
-
   trait RecordDatumApi extends DatumApi {this: RecordDatum =>
 
-    override def `type`: RecordDataType
+    override def dataType: RecordDataType
 
     def fieldValues: Map[Field, Value]
 
   }
 
 
-  type UnionDatum >: Null <: Datum with UnionDatumApi
-
-
   trait UnionDatumApi extends DatumApi {this: UnionDatum =>
 
-    override def `type`: UnionDataType
+    override def dataType: UnionDataType
 
     def tagValues: Map[Tag, Value]
 
   }
 
 
-  type MapDatum >: Null <: Datum with MapDatumApi
-
-
   trait MapDatumApi extends DatumApi {this: MapDatum =>
 
-    override def `type`: MapDataType
+    override def dataType: MapDataType
 
     def entries: Map[Datum, Value]
 
   }
 
 
-  type ListDatum >: Null <: Datum with ListDatumApi
-
-
   trait ListDatumApi extends DatumApi {this: ListDatum =>
 
-    override def `type`: ListDataType
+    override def dataType: ListDataType
 
     def elements: Seq[Value]
 
   }
 
 
-  type EnumDatum >: Null <: Datum with EnumDatumApi
-
-
   trait EnumDatumApi extends DatumApi {this: EnumDatum =>
 
-    override def `type`: EnumDataType
+    override def dataType: EnumDataType
 
     def value: EnumTypeMember
 
   }
 
 
-  type PrimitiveDatum >: Null <: Datum with PrimitiveDatumApi
-
-
   trait PrimitiveDatumApi extends DatumApi {this: PrimitiveDatum =>
 
-    override def `type`: PrimitiveDataType
+    override def dataType: PrimitiveDataType
 
     def nativeValue: PrimitiveNativeValue
 
   }
 
 
-  type PrimitiveNativeValue >: Null <: AnyRef // AnyVal is not allowed - reconsider?
-
-  type StringDatum >: Null <: PrimitiveDatum with StringDatumApi
-
-
   trait StringDatumApi extends PrimitiveDatumApi {this: StringDatum =>
 
-    override def `type`: StringDataType
+    override def dataType: StringDataType
 
     override def nativeValue: StringNativeValue
 
   }
-
-
-  type StringNativeValue >: Null <: PrimitiveNativeValue
 
   // TODO other primitive data
 
