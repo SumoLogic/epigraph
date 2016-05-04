@@ -2,7 +2,7 @@
 
 package com.sumologic.epigraph.core
 
-import scala.language.implicitConversions
+//import scala.language.implicitConversions
 
 trait Types {this: Names =>
 
@@ -53,11 +53,11 @@ trait Types {this: Names =>
   }
 
 
-  object VarTypeApi {
-
-    implicit def dataTypeToVarType(dataType: DataType): VarType = dataType.varType
-
-  }
+//  object VarTypeApi {
+//
+//    implicit def dataTypeToVarType(dataType: DataType): VarType = dataType.varType
+//
+//  }
 
 
   trait TypeMemberApi extends Named {this: TypeMember =>
@@ -100,7 +100,7 @@ trait Types {this: Names =>
 
   trait UnionDataTypeApi extends DataTypeApi {this: UnionDataType =>
 
-    override val supertypes: Seq[UnionDataType] = Types.EmptySeq
+    override val supertypes: Seq[UnionDataType] = Nil
 
     def declaredTags: Seq[Tag]
 
@@ -138,7 +138,7 @@ trait Types {this: Names =>
 
   trait EnumDataTypeApi extends DataTypeApi {this: EnumDataType =>
 
-    override val supertypes: Seq[EnumDataType] = Types.EmptySeq
+    override val supertypes: Seq[EnumDataType] = Nil
 
     def members: Seq[EnumTypeMember] // TODO map?
 
@@ -166,12 +166,5 @@ trait Types {this: Names =>
   }
 
   // TODO other primitive types
-
-}
-
-
-object Types {
-
-  val EmptySeq: Seq[Nothing] = Seq.empty // TODO move to util or smth.
 
 }

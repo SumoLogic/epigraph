@@ -13,7 +13,6 @@ trait Names extends core.Names {
 
   override type QualifiedName = QualifiedNameApi
 
-// TODO add NamingConvention for validation, pass it to abstract constructors
 
   abstract class LocalName(override val string: String, convention: NamingConvention) extends Name with LocalNameApi {
 
@@ -52,9 +51,9 @@ trait Names extends core.Names {
       local: LocalNamespaceName
   ) extends QualifiedNameBase[LocalNamespaceName](namespace, local) with QualifiedNamespaceNameApi {
 
-    def apply(local: LocalTypeName): QualifiedTypeName = QualifiedTypeName(this, local)
+    def \(local: LocalTypeName): QualifiedTypeName = QualifiedTypeName(this, local)
 
-    def apply(local: LocalNamespaceName): QualifiedNamespaceName = QualifiedNamespaceName(this, local)
+    def /(local: LocalNamespaceName): QualifiedNamespaceName = QualifiedNamespaceName(this, local)
 
   }
 
@@ -119,6 +118,8 @@ trait Names extends core.Names {
 
     override val default: TypeMemberName = new TypeMemberName("default")
 
+    implicit def apply(string: String): TypeMemberName = new TypeMemberName(string)
+
   }
 
 
@@ -128,6 +129,13 @@ trait Names extends core.Names {
   object FieldName {
 
     implicit def apply(string: String): FieldName = new FieldName(string)
+
+  }
+
+
+  object TagName {
+
+    implicit def apply(string: String): TagName = new TagName(string)
 
   }
 
