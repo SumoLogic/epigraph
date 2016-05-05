@@ -3,11 +3,10 @@ package com.sumologic.epigraph.ideaplugin.schema.psi.impl;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFileFactory;
-import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.sumologic.epigraph.ideaplugin.schema.SchemaLanguage;
-import com.sumologic.epigraph.ideaplugin.schema.lexer.SchemaElementTypes;
 import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaFile;
 import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaFqn;
+import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaFqnSegment;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -19,9 +18,11 @@ public class SchemaElementFactory {
     return (SchemaFile) PsiFileFactory.getInstance(project).createFileFromText("a.s", SchemaLanguage.INSTANCE, text);
   }
 
-  public static PsiElement createId(String text) {
-    // TODO validate this is correct
-    return new LeafPsiElement(SchemaElementTypes.S_ID, text).getNextSibling();
+  @NotNull
+  public static PsiElement createId(Project project, String text) {
+    final SchemaFile file = createFileFromText(project, "namespace " + text);
+    //noinspection ConstantConditions
+    return ((SchemaFqnSegment) file.getNamespaceDecl().getFqn().getLastChild()).getId();
   }
 
   public static SchemaFqn createFqn(Project project, String text) {

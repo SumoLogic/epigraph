@@ -25,7 +25,6 @@
   -->
 
   <extensions defaultExtensionNs="com.intellij">
-    <!-- Add your extensions here -->
     <fileTypeFactory implementation="com.sumologic.epigraph.ideaplugin.schema.SchemaFileTypeFactory"/>
     <lang.syntaxHighlighterFactory language="epi_schema"
                                    implementationClass="com.sumologic.epigraph.ideaplugin.schema.highlighting.SchemaSyntaxHighlighterFactory"/>
@@ -52,6 +51,11 @@
         implementation="com.sumologic.epigraph.ideaplugin.schema.features.search.SchemaElementDescriptionProvider"/>
     <usageTypeProvider
         implementation="com.sumologic.epigraph.ideaplugin.schema.features.search.SchemaUsageTypeProvider"/>
+
+    <lang.refactoringSupport language="epi_schema"
+                             implementationClass="com.sumologic.epigraph.ideaplugin.schema.features.SchemaRefactoringSupportProvider"/>
+    <lang.namesValidator language="epi_schema"
+                         implementationClass="com.sumologic.epigraph.ideaplugin.schema.features.SchemaNamesValidator"/>
 
     <lang.braceMatcher language="epi_schema"
                        implementationClass="com.sumologic.epigraph.ideaplugin.schema.features.SchemaBraceMatcher"/>

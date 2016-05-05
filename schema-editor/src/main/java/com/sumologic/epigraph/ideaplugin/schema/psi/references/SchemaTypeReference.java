@@ -4,10 +4,12 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
+import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.PlatformIcons;
 import com.sumologic.epigraph.ideaplugin.schema.brains.NamespaceManager;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
 import com.sumologic.epigraph.ideaplugin.schema.brains.Fqn;
+import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaFqnSegment;
 import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaTypeDef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -19,23 +21,23 @@ import java.util.stream.Collectors;
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public class SchemaTypeReference extends PsiReferenceBase<PsiElement> implements PsiPolyVariantReference {
+public class SchemaTypeReference extends PsiReferenceBase<SchemaFqnSegment> implements PsiPolyVariantReference {
 
   private final Collection<String> namespacesToSearch;
   private final String shortName;
 
-  public SchemaTypeReference(PsiElement element, Collection<Fqn> namespacesToSearch, Fqn suffix) {
-    super(element);
+  public SchemaTypeReference(SchemaFqnSegment segment, Collection<Fqn> namespacesToSearch, Fqn suffix) {
+    super(segment);
 
-    final int textOffset = element.getTextRange().getStartOffset();
-    final int nameTextOffset = element.getTextOffset();
+    final int textOffset = segment.getTextRange().getStartOffset();
+    final int nameTextOffset = segment.getTextOffset();
 
     setRangeInElement(new TextRange(
         nameTextOffset - textOffset,
-        nameTextOffset + element.getTextLength() - textOffset
+        nameTextOffset + segment.getTextLength() - textOffset
     ));
 
-    if (suffix.isEmpty()) throw new IllegalArgumentException("Empty suffix for " + element);
+    if (suffix.isEmpty()) throw new IllegalArgumentException("Empty suffix for " + segment);
 
     if (suffix.size() == 1) {
       this.namespacesToSearch = namespacesToSearch.stream().map(Fqn::toString).collect(Collectors.toSet());
@@ -65,6 +67,11 @@ public class SchemaTypeReference extends PsiReferenceBase<PsiElement> implements
   public PsiElement resolve() {
     final Project project = myElement.getProject();
     return SchemaIndexUtil.findTypeDef(project, namespacesToSearch, shortName);
+  }
+
+  @Override
+  public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
+    return getElement().setName(newElementName);
   }
 
   @NotNull

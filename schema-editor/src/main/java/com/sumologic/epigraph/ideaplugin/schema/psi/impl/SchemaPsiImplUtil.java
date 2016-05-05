@@ -42,7 +42,7 @@ public class SchemaPsiImplUtil {
     PsiElement id = schemaTypeDef.getId();
     if (id == null) return null;
     else {
-      PsiElement newId = SchemaElementFactory.createId(name);
+      PsiElement newId = SchemaElementFactory.createId(schemaTypeDef.getProject(), name);
       id.replace(newId);
       return id;
     }
@@ -85,7 +85,7 @@ public class SchemaPsiImplUtil {
 
   public static PsiElement setName(SchemaFqnSegment segment, String name) {
     PsiElement oldId = segment.getId();
-    PsiElement newId = SchemaElementFactory.createId(name);
+    PsiElement newId = SchemaElementFactory.createId(segment.getProject(), name);
     return oldId.replace(newId);
   }
 
