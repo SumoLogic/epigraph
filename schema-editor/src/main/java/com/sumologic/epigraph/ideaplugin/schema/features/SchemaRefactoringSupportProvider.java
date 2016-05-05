@@ -14,4 +14,9 @@ public class SchemaRefactoringSupportProvider extends RefactoringSupportProvider
   public boolean isMemberInplaceRenameAvailable(@NotNull PsiElement element, @Nullable PsiElement context) {
     return element instanceof SchemaTypeDef;
   }
+
+  @Override
+  public boolean isSafeDeleteAvailable(@NotNull PsiElement element) {
+    return element instanceof SchemaTypeDef;
+  }
 }

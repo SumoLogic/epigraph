@@ -1,7 +1,10 @@
 package com.sumologic.epigraph.ideaplugin.schema.psi.impl;
 
+import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
+import com.intellij.psi.TokenType;
+import com.intellij.util.IncorrectOperationException;
 import com.sumologic.epigraph.ideaplugin.schema.brains.Fqn;
 import com.sumologic.epigraph.ideaplugin.schema.brains.ReferenceFactory;
 import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaFqn;
@@ -56,6 +59,20 @@ public class SchemaPsiImplUtil {
   public static int getTextOffset(@NotNull SchemaTypeDef schemaTypeDef) {
     PsiElement nameIdentifier = schemaTypeDef.getNameIdentifier();
     return nameIdentifier == null ? 0 : nameIdentifier.getTextOffset();
+  }
+
+  public static void delete(@NotNull SchemaTypeDef schemaTypeDef) throws IncorrectOperationException {
+    final ASTNode parentNode = schemaTypeDef.getParent().getNode();
+    assert parentNode != null;
+
+    ASTNode node = schemaTypeDef.getNode();
+    ASTNode prev = node.getTreePrev();
+    ASTNode next = node.getTreeNext();
+    parentNode.removeChild(node);
+    if ((prev == null || prev.getElementType() == TokenType.WHITE_SPACE) && next != null &&
+        next.getElementType() == TokenType.WHITE_SPACE) {
+      parentNode.removeChild(next);
+    }
   }
 
 //  public static PsiElement setName(SchemaFqnTypeRef fqnTypeRef, String name) {
