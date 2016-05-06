@@ -4,8 +4,9 @@ package com.sumologic.epigraph.ideaplugin.schema.psi;
 import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiNamedElement;
 
-public interface SchemaMultiMemberDecl extends CustomParamsHolder {
+public interface SchemaMultiMemberDecl extends CustomParamsHolder, PsiNamedElement {
 
   @NotNull
   List<SchemaCustomParam> getCustomParamList();
@@ -27,5 +28,13 @@ public interface SchemaMultiMemberDecl extends CustomParamsHolder {
 
   @NotNull
   PsiElement getId();
+
+  @Nullable
+  String getName();
+
+  PsiElement setName(String name);
+
+  @NotNull
+  PsiElement getNameIdentifier();
 
 }

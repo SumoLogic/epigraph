@@ -110,7 +110,12 @@ anonMap ::= 'map' '[' fqnTypeRef ',' fqnTypeRef defaultOverride? ']' {pin=1} // 
 
 extendsDecl ::= 'extends' typeRef (',' typeRef)*
 defaultOverride ::= 'default' id
-customParam ::= id '=' string  {pin = 2}// TODO real data parsing
+customParam ::= id '=' string  {
+  name="custom attribute"
+  implements="com.intellij.psi.PsiNamedElement"
+  methods = [getName setName getNameIdentifier]
+  pin = 2
+}// TODO real data parsing
 
 metaDecl ::= 'meta' fqnTypeRef // we don't allow anonList or anonMap as meta
 
@@ -119,8 +124,9 @@ multiSupplementsDecl ::= 'supplements' fqnTypeRef (',' fqnTypeRef)*
 multiTypeBody ::= '{' multiBodyPart* '}'
 private multiBodyPart ::= multiMemberDecl | customParam
 multiMemberDecl ::= 'default'? id ':' typeRef memberBody? {
-  implements="com.sumologic.epigraph.ideaplugin.schema.psi.CustomParamsHolder"
+  implements=["com.sumologic.epigraph.ideaplugin.schema.psi.CustomParamsHolder" "com.intellij.psi.PsiNamedElement"]
   extends="com.sumologic.epigraph.ideaplugin.schema.psi.impl.CustomParamHolderImpl"
+  methods=[getName setName getNameIdentifier]
   pin = 3
 }
 private memberBody ::= '{' memberBodyPart* '}'
@@ -131,8 +137,9 @@ recordSupplementsDecl ::= 'supplements' combinedFqns (',' combinedFqns)*
 recordTypeBody ::= '{' recordBodyPart* '}'
 private recordBodyPart ::= fieldDecl | customParam
 fieldDecl ::= id ':' typeRef defaultOverride? fieldBody? {
-  implements="com.sumologic.epigraph.ideaplugin.schema.psi.CustomParamsHolder"
+  implements=["com.sumologic.epigraph.ideaplugin.schema.psi.CustomParamsHolder" "com.intellij.psi.PsiNamedElement"]
   extends="com.sumologic.epigraph.ideaplugin.schema.psi.impl.CustomParamHolderImpl"
+  methods=[getName setName getNameIdentifier]
   pin=2
 }
 private fieldBody ::= '{' fieldBodyPart* '}'
@@ -142,8 +149,9 @@ unionTypeDef ::= 'union' typeName metaDecl? unionTypeBody
 unionTypeBody ::= '{' unionBodyPart* '}'
 private unionBodyPart ::= tagDecl | customParam
 tagDecl ::= id ':' typeRef defaultOverride? tagBody? {
-  implements="com.sumologic.epigraph.ideaplugin.schema.psi.CustomParamsHolder"
+  implements=["com.sumologic.epigraph.ideaplugin.schema.psi.CustomParamsHolder" "com.intellij.psi.PsiNamedElement"]
   extends="com.sumologic.epigraph.ideaplugin.schema.psi.impl.CustomParamHolderImpl"
+  methods=[getName setName getNameIdentifier]
   pin=2
 }
 private tagBody ::= '{' tagBodyPart* '}'
@@ -167,8 +175,9 @@ enumTypeDef ::= 'enum' typeName metaDecl? enumTypeBody // extends?
 enumTypeBody ::= '{' enumTypeBodyPart* '}'
 private enumTypeBodyPart ::= customParam | enumMemberDecl
 enumMemberDecl ::= id enumMemberBody? {
-  implements="com.sumologic.epigraph.ideaplugin.schema.psi.CustomParamsHolder"
+  implements=["com.sumologic.epigraph.ideaplugin.schema.psi.CustomParamsHolder" "com.intellij.psi.PsiNamedElement"]
   extends="com.sumologic.epigraph.ideaplugin.schema.psi.impl.CustomParamHolderImpl"
+  methods=[getName setName getNameIdentifier]
   pin=1
 }
 private enumMemberBody ::='{' enumMemberBodyPart* '}'

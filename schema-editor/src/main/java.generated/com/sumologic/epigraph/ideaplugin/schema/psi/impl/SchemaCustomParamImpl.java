@@ -44,4 +44,18 @@ public class SchemaCustomParamImpl extends ASTWrapperPsiElement implements Schem
     return findChildByType(S_STRING);
   }
 
+  @Nullable
+  public String getName() {
+    return SchemaPsiImplUtil.getName(this);
+  }
+
+  public PsiElement setName(String name) {
+    return SchemaPsiImplUtil.setName(this, name);
+  }
+
+  @NotNull
+  public PsiElement getNameIdentifier() {
+    return SchemaPsiImplUtil.getNameIdentifier(this);
+  }
+
 }

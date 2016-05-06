@@ -4,6 +4,7 @@ package com.sumologic.epigraph.ideaplugin.schema.psi;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.PsiNameIdentifierOwner;
 
 public class SchemaVisitor extends PsiElementVisitor {
@@ -21,7 +22,7 @@ public class SchemaVisitor extends PsiElementVisitor {
   }
 
   public void visitCustomParam(@NotNull SchemaCustomParam o) {
-    visitPsiElement(o);
+    visitPsiNamedElement(o);
   }
 
   public void visitDefaultOverride(@NotNull SchemaDefaultOverride o) {
@@ -34,6 +35,7 @@ public class SchemaVisitor extends PsiElementVisitor {
 
   public void visitEnumMemberDecl(@NotNull SchemaEnumMemberDecl o) {
     visitCustomParamsHolder(o);
+    // visitPsiNamedElement(o);
   }
 
   public void visitEnumTypeBody(@NotNull SchemaEnumTypeBody o) {
@@ -50,6 +52,7 @@ public class SchemaVisitor extends PsiElementVisitor {
 
   public void visitFieldDecl(@NotNull SchemaFieldDecl o) {
     visitCustomParamsHolder(o);
+    // visitPsiNamedElement(o);
   }
 
   public void visitFqn(@NotNull SchemaFqn o) {
@@ -94,6 +97,7 @@ public class SchemaVisitor extends PsiElementVisitor {
 
   public void visitMultiMemberDecl(@NotNull SchemaMultiMemberDecl o) {
     visitCustomParamsHolder(o);
+    // visitPsiNamedElement(o);
   }
 
   public void visitMultiSupplementsDecl(@NotNull SchemaMultiSupplementsDecl o) {
@@ -146,6 +150,7 @@ public class SchemaVisitor extends PsiElementVisitor {
 
   public void visitTagDecl(@NotNull SchemaTagDecl o) {
     visitCustomParamsHolder(o);
+    // visitPsiNamedElement(o);
   }
 
   public void visitTypeDef(@NotNull SchemaTypeDef o) {
@@ -169,6 +174,10 @@ public class SchemaVisitor extends PsiElementVisitor {
   }
 
   public void visitPsiNameIdentifierOwner(@NotNull PsiNameIdentifierOwner o) {
+    visitElement(o);
+  }
+
+  public void visitPsiNamedElement(@NotNull PsiNamedElement o) {
     visitElement(o);
   }
 

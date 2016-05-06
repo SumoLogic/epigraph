@@ -7,10 +7,7 @@ import com.intellij.psi.TokenType;
 import com.intellij.util.IncorrectOperationException;
 import com.sumologic.epigraph.ideaplugin.schema.brains.Fqn;
 import com.sumologic.epigraph.ideaplugin.schema.brains.ReferenceFactory;
-import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaFqn;
-import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaFqnSegment;
-import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaFqnTypeRef;
-import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaTypeDef;
+import com.sumologic.epigraph.ideaplugin.schema.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -106,7 +103,7 @@ public class SchemaPsiImplUtil {
     return oldId.replace(newId);
   }
 
-  @Nullable
+  @NotNull
   public static PsiElement getNameIdentifier(SchemaFqnSegment segment) {
     return segment.getId();
   }
@@ -130,6 +127,98 @@ public class SchemaPsiImplUtil {
 
     return ReferenceFactory.getReference(segment, fqnTypeRef);
   }
+
+  // field decl
+
+  @Nullable
+  public static String getName(SchemaFieldDecl fieldDecl) {
+    return getNameIdentifier(fieldDecl).getText();
+  }
+
+  public static PsiElement setName(SchemaFieldDecl fieldDecl, String name) {
+    PsiElement oldId = fieldDecl.getId();
+    PsiElement newId = SchemaElementFactory.createId(fieldDecl.getProject(), name);
+    return oldId.replace(newId);
+  }
+
+  @NotNull
+  public static PsiElement getNameIdentifier(SchemaFieldDecl fieldDecl) {
+    return fieldDecl.getId();
+  }
+
+  // tag decl
+
+  @Nullable
+  public static String getName(SchemaTagDecl tagDecl) {
+    return getNameIdentifier(tagDecl).getText();
+  }
+
+  public static PsiElement setName(SchemaTagDecl tagDecl, String name) {
+    PsiElement oldId = tagDecl.getId();
+    PsiElement newId = SchemaElementFactory.createId(tagDecl.getProject(), name);
+    return oldId.replace(newId);
+  }
+
+  @NotNull
+  public static PsiElement getNameIdentifier(SchemaTagDecl tagDecl) {
+    return tagDecl.getId();
+  }
+
+  // multiMember decl
+
+  @Nullable
+  public static String getName(SchemaMultiMemberDecl multiMemberDecl) {
+    return getNameIdentifier(multiMemberDecl).getText();
+  }
+
+  public static PsiElement setName(SchemaMultiMemberDecl multiMemberDecl, String name) {
+    PsiElement oldId = multiMemberDecl.getId();
+    PsiElement newId = SchemaElementFactory.createId(multiMemberDecl.getProject(), name);
+    return oldId.replace(newId);
+  }
+
+  @NotNull
+  public static PsiElement getNameIdentifier(SchemaMultiMemberDecl multiMemberDecl) {
+    return multiMemberDecl.getId();
+  }
+
+  // enumMember decl
+
+  @Nullable
+  public static String getName(SchemaEnumMemberDecl enumMemberDecl) {
+    return getNameIdentifier(enumMemberDecl).getText();
+  }
+
+  public static PsiElement setName(SchemaEnumMemberDecl enumMemberDecl, String name) {
+    PsiElement oldId = enumMemberDecl.getId();
+    PsiElement newId = SchemaElementFactory.createId(enumMemberDecl.getProject(), name);
+    return oldId.replace(newId);
+  }
+
+  @NotNull
+  public static PsiElement getNameIdentifier(SchemaEnumMemberDecl enumMemberDecl) {
+    return enumMemberDecl.getId();
+  }
+
+  // custom param
+
+  @Nullable
+  public static String getName(SchemaCustomParam customParam) {
+    return getNameIdentifier(customParam).getText();
+  }
+
+  public static PsiElement setName(SchemaCustomParam customParam, String name) {
+    PsiElement oldId = customParam.getId();
+    PsiElement newId = SchemaElementFactory.createId(customParam.getProject(), name);
+    return oldId.replace(newId);
+  }
+
+  @NotNull
+  public static PsiElement getNameIdentifier(SchemaCustomParam customParam) {
+    return customParam.getId();
+  }
+
+  /////////////
 
   private static <T> T getLast(List<T> list) {
     if (list == null || list.isEmpty()) return null;

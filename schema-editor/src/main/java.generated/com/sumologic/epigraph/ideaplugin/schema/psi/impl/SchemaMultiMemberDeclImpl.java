@@ -67,4 +67,18 @@ public class SchemaMultiMemberDeclImpl extends CustomParamHolderImpl implements 
     return findNotNullChildByType(S_ID);
   }
 
+  @Nullable
+  public String getName() {
+    return SchemaPsiImplUtil.getName(this);
+  }
+
+  public PsiElement setName(String name) {
+    return SchemaPsiImplUtil.setName(this, name);
+  }
+
+  @NotNull
+  public PsiElement getNameIdentifier() {
+    return SchemaPsiImplUtil.getNameIdentifier(this);
+  }
+
 }

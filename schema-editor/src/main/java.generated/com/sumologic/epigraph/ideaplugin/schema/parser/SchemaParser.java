@@ -247,7 +247,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(b, l, "customParam")) return false;
     if (!nextTokenIs(b, S_ID)) return false;
     boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, S_CUSTOM_PARAM, null);
+    Marker m = enter_section_(b, l, _NONE_, S_CUSTOM_PARAM, "<custom attribute>");
     r = consumeToken(b, S_ID);
     r = r && consumeToken(b, S_EQ);
     p = r; // pin = 2

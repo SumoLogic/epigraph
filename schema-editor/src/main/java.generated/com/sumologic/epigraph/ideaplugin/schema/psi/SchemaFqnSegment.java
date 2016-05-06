@@ -17,7 +17,7 @@ public interface SchemaFqnSegment extends PsiNameIdentifierOwner {
 
   PsiElement setName(String name);
 
-  @Nullable
+  @NotNull
   PsiElement getNameIdentifier();
 
   @Nullable

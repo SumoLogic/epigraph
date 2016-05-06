@@ -1,6 +1,7 @@
 package com.sumologic.epigraph.ideaplugin.schema.psi;
 
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -70,5 +71,14 @@ public class SchemaPsiUtil {
   public static boolean hasChildOfType(@NotNull PsiElement e, IElementType... elementTypes) {
     PsiElement firstChild = e.getFirstChild();
     return firstChild != null && hasNextSibling(firstChild, elementTypes);
+  }
+
+  @Nullable
+  public static <T extends PsiElement> T getElementOrParentOfType(@Nullable final T element,
+                                                         @NotNull final Class<? extends T>... classes) {
+
+    if (element == null) return null;
+    if (PsiTreeUtil.instanceOf(element, classes)) return element;
+    return PsiTreeUtil.getParentOfType(element, classes);
   }
 }

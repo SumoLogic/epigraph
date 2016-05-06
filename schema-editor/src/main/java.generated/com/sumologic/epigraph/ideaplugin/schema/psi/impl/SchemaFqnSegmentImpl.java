@@ -42,7 +42,7 @@ public class SchemaFqnSegmentImpl extends ASTWrapperPsiElement implements Schema
     return SchemaPsiImplUtil.setName(this, name);
   }
 
-  @Nullable
+  @NotNull
   public PsiElement getNameIdentifier() {
     return SchemaPsiImplUtil.getNameIdentifier(this);
   }
