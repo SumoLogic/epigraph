@@ -82,4 +82,33 @@ public class SchemaIndexUtil {
 
     return null;
   }
+
+  @NotNull
+  public static List<SchemaNamespaceDecl> findNamespaces(@NotNull Project project, @Nullable String namePrefix) {
+    List<SchemaNamespaceDecl> result = new ArrayList<>();
+
+    Collection<VirtualFile> virtualFiles =
+        FileBasedIndex.getInstance().getContainingFiles(FileTypeIndex.NAME, SchemaFileType.INSTANCE, GlobalSearchScope.allScope(project));
+
+    for (VirtualFile virtualFile : virtualFiles) {
+
+      SchemaFile schemaFile = (SchemaFile) PsiManager.getInstance(project).findFile(virtualFile);
+      if (schemaFile == null) continue;
+
+      SchemaNamespaceDecl namespaceDecl = schemaFile.getNamespaceDecl();
+      if (namespaceDecl == null) continue;
+
+      SchemaFqn fqn = namespaceDecl.getFqn();
+      if (fqn == null) continue;
+
+      if (namePrefix != null) {
+        String fqnText = fqn.getFqn().toString();
+        if (!fqnText.startsWith(namePrefix)) continue;
+      }
+
+      result.add(namespaceDecl);
+    }
+
+    return result;
+  }
 }

@@ -1,0 +1,3 @@
+namespace foo
+
+long Foo

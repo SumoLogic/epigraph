@@ -52,10 +52,16 @@ public class Fqn {
   @NotNull
   public Fqn removeFirstSegment() {
     if (isEmpty()) throw new IllegalArgumentException("Can't remove first segment from an empty Fqn");
-    if (size() == 1) return EMPTY;
+    return removeHeadSegments(1);
+  }
 
-    String[] f = new String[size() - 1];
-    System.arraycopy(segments, 0, f, 0, size() - 1);
+  @NotNull
+  public Fqn removeHeadSegments(int n) {
+    if (size() < n) throw new IllegalArgumentException("Can't remove " + n + " segments from '" + toString() + "'");
+    if (size() == n) return EMPTY;
+
+    String[] f = new String[size() - n];
+    System.arraycopy(segments, n, f, 0, size() - n);
     return new Fqn(f);
   }
 

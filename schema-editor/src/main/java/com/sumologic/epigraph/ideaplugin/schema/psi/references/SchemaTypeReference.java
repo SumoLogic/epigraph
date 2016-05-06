@@ -4,11 +4,13 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.PlatformIcons;
 import com.sumologic.epigraph.ideaplugin.schema.brains.NamespaceManager;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
 import com.sumologic.epigraph.ideaplugin.schema.brains.Fqn;
+import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaFqn;
 import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaFqnSegment;
 import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaTypeDef;
 import org.jetbrains.annotations.NotNull;
@@ -78,12 +80,20 @@ public class SchemaTypeReference extends PsiReferenceBase<SchemaFqnSegment> impl
   @Override
   public Object[] getVariants() {
     final Project project = myElement.getProject();
-    return SchemaIndexUtil.findTypeDefs(project, namespacesToSearch, null).stream()
+    Object[] typeRefVariants = SchemaIndexUtil.findTypeDefs(project, namespacesToSearch, null).stream()
         .filter(typeDef -> typeDef.getName() != null)
         .map(typeDef -> LookupElementBuilder.create(typeDef)
             .withIcon(getTypeDefPresentationIcon())
             .withTypeText(getTypeDefNamespace(typeDef)))
         .toArray();
+
+    SchemaFqnSegment fqnSegment = getElement();
+    SchemaFqn schemaFqn = (SchemaFqn) fqnSegment.getParent();
+    Fqn fqn = schemaFqn.getFqn();
+    String prefix = fqn.removeLastSegment().toString();
+    Object[] namespaceVariants = NamespaceManager.getNamespaceSegmentsWithPrefix(project, prefix).toArray();
+
+    return ArrayUtil.mergeArrays(typeRefVariants, namespaceVariants);
   }
 
   private String getTypeDefNamespace(@NotNull SchemaTypeDef typeDef) {

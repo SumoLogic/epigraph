@@ -1,7 +1,9 @@
 package com.sumologic.epigraph.ideaplugin.schema.brains;
 
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.sumologic.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
 import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaFile;
 import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaFqn;
 import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaImportStatement;
@@ -78,5 +80,34 @@ public class NamespaceManager {
     }
 
     return res;
+  }
+
+  /**
+   * Finds all namespaces such that their fqn matches prefix and returns their segments following prefix.
+   * For instance if prefix is 'a.b' and namespace is 'a.b.c.d' then 'c' will be collected.
+   */
+  @NotNull
+  public static Set<String> getNamespaceSegmentsWithPrefix(@NotNull Project project, @NotNull String prefix) {
+    String prefixWithDot = prefix.isEmpty() ? prefix : prefix + '.';
+    List<SchemaNamespaceDecl> namespaces = SchemaIndexUtil.findNamespaces(project, prefixWithDot);
+    if (namespaces.isEmpty()) return Collections.emptySet();
+
+    int segmentsToRemove = prefix.isEmpty() ? 0 : prefix.length() - prefix.replace(".", "").length() + 1;
+
+    Set<String> result = new HashSet<>();
+
+    for (SchemaNamespaceDecl namespace : namespaces) {
+      SchemaFqn schemaFqn = namespace.getFqn();
+      assert schemaFqn != null;
+
+      Fqn fqn = schemaFqn.getFqn();
+      Fqn tail = fqn.removeHeadSegments(segmentsToRemove);
+
+      if (!tail.isEmpty()) {
+        result.add(tail.getFirst());
+      }
+    }
+
+    return result;
   }
 }
