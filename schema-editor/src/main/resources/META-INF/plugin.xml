@@ -34,7 +34,7 @@
                implementationClass="com.sumologic.epigraph.ideaplugin.schema.highlighting.SchemaAnnotator"/>
 
     <completion.contributor language="epi_schema"
-                            implementationClass="com.sumologic.epigraph.ideaplugin.schema.codeInsight.SchemaCompletionContributor"/>
+                            implementationClass="com.sumologic.epigraph.ideaplugin.schema.completion.SchemaCompletionContributor"/>
     <!--<psi.referenceContributor language="epi_schema"-->
                               <!--implementation="com.sumologic.dohyo.plugin.schema.psi.references.SchemaTypeReferenceContributor"/>-->
 

@@ -86,7 +86,7 @@ private namespaceBodyPart ::= customParam // | ...
 
 fqnSegment ::= id {
   implements="com.intellij.psi.PsiNameIdentifierOwner"
-  methods=[getName setName getNameIdentifier getFqnTypeRef isLast getReference]
+  methods=[getName setName getNameIdentifier getSchemaFqn getSchemaFqnTypeRef isLast getReference getFqn]
 }
 fqn ::= fqnSegment ('.' fqnSegment)* { methods=[getFqn] }
 
@@ -118,6 +118,9 @@ customParam ::= id '=' string  {
 }// TODO real data parsing
 
 metaDecl ::= 'meta' fqnTypeRef // we don't allow anonList or anonMap as meta
+
+// TODO: extends for: record, map, list, primitive
+// supplements for the above, A+B+C for record only
 
 multiTypeDef ::= 'multi' typeName extendsDecl? multiSupplementsDecl? multiTypeBody?
 multiSupplementsDecl ::= 'supplements' fqnTypeRef (',' fqnTypeRef)*
@@ -184,6 +187,11 @@ private enumMemberBody ::='{' enumMemberBodyPart* '}'
 private enumMemberBodyPart ::= customParam
 
 supplementDef ::= 'supplement' combinedFqns (',' combinedFqns)* 'with' fqnTypeRef {pin=1}
+// TODO for multi:
+// supplement User,Company with {
+//    mySuperAnnotation = "sdf"; ??
+//    foo : MyType { sdf = "sdf" }
+// }
 
 combinedFqns ::= fqnTypeRef ('+' fqnTypeRef)*
 

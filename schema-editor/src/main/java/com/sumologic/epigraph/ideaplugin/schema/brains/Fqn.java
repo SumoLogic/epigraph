@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
+import java.util.Collection;
 
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
@@ -18,6 +19,10 @@ public class Fqn {
 
   public Fqn(@NotNull String... segments) {
     this.segments = segments;
+  }
+
+  public Fqn(@NotNull Collection<String> segments) {
+    this(segments.toArray(new String[segments.size()]));
   }
 
   public int size() {

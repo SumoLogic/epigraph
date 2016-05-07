@@ -11,6 +11,7 @@ import static com.sumologic.epigraph.ideaplugin.schema.lexer.SchemaElementTypes.
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.sumologic.epigraph.ideaplugin.schema.psi.*;
 import com.intellij.psi.PsiReference;
+import com.sumologic.epigraph.ideaplugin.schema.brains.Fqn;
 
 public class SchemaFqnSegmentImpl extends ASTWrapperPsiElement implements SchemaFqnSegment {
 
@@ -48,8 +49,13 @@ public class SchemaFqnSegmentImpl extends ASTWrapperPsiElement implements Schema
   }
 
   @Nullable
-  public SchemaFqnTypeRef getFqnTypeRef() {
-    return SchemaPsiImplUtil.getFqnTypeRef(this);
+  public SchemaFqn getSchemaFqn() {
+    return SchemaPsiImplUtil.getSchemaFqn(this);
+  }
+
+  @Nullable
+  public SchemaFqnTypeRef getSchemaFqnTypeRef() {
+    return SchemaPsiImplUtil.getSchemaFqnTypeRef(this);
   }
 
   public boolean isLast() {
@@ -59,6 +65,11 @@ public class SchemaFqnSegmentImpl extends ASTWrapperPsiElement implements Schema
   @Nullable
   public PsiReference getReference() {
     return SchemaPsiImplUtil.getReference(this);
+  }
+
+  @NotNull
+  public Fqn getFqn() {
+    return SchemaPsiImplUtil.getFqn(this);
   }
 
 }

@@ -6,6 +6,7 @@ import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNameIdentifierOwner;
 import com.intellij.psi.PsiReference;
+import com.sumologic.epigraph.ideaplugin.schema.brains.Fqn;
 
 public interface SchemaFqnSegment extends PsiNameIdentifierOwner {
 
@@ -21,11 +22,17 @@ public interface SchemaFqnSegment extends PsiNameIdentifierOwner {
   PsiElement getNameIdentifier();
 
   @Nullable
-  SchemaFqnTypeRef getFqnTypeRef();
+  SchemaFqn getSchemaFqn();
+
+  @Nullable
+  SchemaFqnTypeRef getSchemaFqnTypeRef();
 
   boolean isLast();
 
   @Nullable
   PsiReference getReference();
+
+  @NotNull
+  Fqn getFqn();
 
 }

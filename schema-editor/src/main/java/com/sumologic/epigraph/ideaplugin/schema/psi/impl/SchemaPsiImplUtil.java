@@ -11,6 +11,7 @@ import com.sumologic.epigraph.ideaplugin.schema.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -26,6 +27,22 @@ public class SchemaPsiImplUtil {
 
     for (SchemaFqnSegment segment : fqnSegmentList) {
       segments[idx++] = segment.getName();
+    }
+
+    return new Fqn(segments);
+  }
+
+  @NotNull
+  public static Fqn getFqn(SchemaFqnSegment e) {
+    SchemaFqn schemaFqn = (SchemaFqn) e.getParent();
+    assert schemaFqn != null;
+
+    List<SchemaFqnSegment> fqnSegmentList = schemaFqn.getFqnSegmentList();
+    List<String> segments = new ArrayList<>(fqnSegmentList.size());
+
+    for (SchemaFqnSegment segment : fqnSegmentList) {
+      segments.add(segment.getName());
+      if (segment == e) break;
     }
 
     return new Fqn(segments);
@@ -80,7 +97,17 @@ public class SchemaPsiImplUtil {
 //  }
 
   @Nullable
-  public static SchemaFqnTypeRef getFqnTypeRef(SchemaFqnSegment segment) {
+  public static SchemaFqn getSchemaFqn(SchemaFqnSegment segment) {
+    PsiElement fqn = segment.getParent();
+    if (fqn instanceof SchemaFqn) {
+      return (SchemaFqn) fqn;
+    }
+
+    return null;
+  }
+
+  @Nullable
+  public static SchemaFqnTypeRef getSchemaFqnTypeRef(SchemaFqnSegment segment) {
     PsiElement fqn = segment.getParent();
     if (fqn instanceof SchemaFqn) {
       PsiElement fqnParent = fqn.getParent();
@@ -120,12 +147,7 @@ public class SchemaPsiImplUtil {
 
   @Nullable
   public static PsiReference getReference(SchemaFqnSegment segment) {
-    if (!isLast(segment)) return null; // build reference to schema file(s)?
-
-    SchemaFqnTypeRef fqnTypeRef = getFqnTypeRef(segment);
-    if (fqnTypeRef == null) return null;
-
-    return ReferenceFactory.getReference(segment, fqnTypeRef);
+    return ReferenceFactory.getReference(segment);
   }
 
   // field decl

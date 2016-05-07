@@ -5,13 +5,15 @@ import com.intellij.lang.annotation.Annotator;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiPolyVariantReference;
 import com.intellij.psi.PsiReference;
+import com.intellij.psi.ResolveResult;
 import com.sumologic.epigraph.ideaplugin.schema.brains.NamingConventions;
 import com.sumologic.epigraph.ideaplugin.schema.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.sumologic.epigraph.ideaplugin.schema.lexer.SchemaElementTypes.S_IMPORT_STATEMENT;
+import static com.sumologic.epigraph.ideaplugin.schema.lexer.SchemaElementTypes.S_TYPE_REF;
 
 /**
  * Todo add doc
@@ -102,7 +104,7 @@ public class SchemaAnnotator implements Annotator {
       @Override
       public void visitFqn(@NotNull SchemaFqn fqn) {
         PsiElement parent = fqn.getParent();
-        if (parent.getNode().getElementType() != S_IMPORT_STATEMENT) {
+        if (parent.getNode().getElementType() != S_TYPE_REF) {
           highlightFqn(fqn, holder);
         }
       }
@@ -115,16 +117,35 @@ public class SchemaAnnotator implements Annotator {
       highlightFqn(fqn, holder);
       PsiReference reference = fqn.getLastChild().getReference();
       if (reference != null) {
-        if (reference.resolve() == null) {
+        PsiElement resolve = reference.resolve();
+        if (!(resolve instanceof SchemaTypeDef)) {
           holder.createErrorAnnotation(typeRef.getNode(), "Unresolved reference");
         }
       }
     }
   }
 
-  private void highlightFqn(@Nullable SchemaFqn fqn, @NotNull AnnotationHolder holder) {
-    if (fqn != null) {
-      setHighlighting(fqn.getLastChild(), holder, SchemaSyntaxHighlighter.TYPE_REF);
+  private void highlightFqn(@Nullable SchemaFqn schemaFqn, @NotNull AnnotationHolder holder) {
+    if (schemaFqn != null) {
+//      setHighlighting(schemaFqn.getLastChild(), holder, SchemaSyntaxHighlighter.TYPE_REF);
+
+      PsiPolyVariantReference reference = (PsiPolyVariantReference) schemaFqn.getLastChild().getReference();
+      assert reference != null;
+
+      if (reference.resolve() == null) {
+        ResolveResult[] resolveResults = reference.multiResolve(false);
+        int numTypeRefs = 0;
+        for (ResolveResult resolveResult : resolveResults) {
+          if (resolveResult.getElement() instanceof SchemaTypeDef)
+            numTypeRefs++;
+        }
+
+        if (resolveResults.length == 0) {
+          holder.createErrorAnnotation(schemaFqn.getNode(), "Unresolved reference");
+        } else if (numTypeRefs > 1) {
+          holder.createErrorAnnotation(schemaFqn.getNode(), "Ambiguous type reference");
+        } // else we have import prefix matching multiple namespaces, OK
+      }
     }
   }
 

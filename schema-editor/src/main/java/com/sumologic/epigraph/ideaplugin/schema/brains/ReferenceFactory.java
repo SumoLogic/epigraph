@@ -2,8 +2,6 @@ package com.sumologic.epigraph.ideaplugin.schema.brains;
 
 import com.intellij.psi.PsiReference;
 import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaFqnSegment;
-import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaFqnTypeRef;
-import com.sumologic.epigraph.ideaplugin.schema.psi.references.SchemaTypeReference;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,9 +16,8 @@ import static com.sumologic.epigraph.ideaplugin.schema.brains.NamespaceManager.*
 public class ReferenceFactory {
 
   @Nullable
-  public static PsiReference getReference(@NotNull SchemaFqnSegment segment, @NotNull SchemaFqnTypeRef fqnTypeRef) {
-
-    Fqn fqn = fqnTypeRef.getFqn().getFqn();
+  public static PsiReference getReference(@NotNull SchemaFqnSegment segment) {
+    Fqn fqn = segment.getFqn();
     if (fqn.isEmpty()) return null;
 
     Collection<Fqn> namespacesToSearch;
@@ -30,18 +27,18 @@ public class ReferenceFactory {
     assert first != null;
 
     if (isSingleSegment) {
-      namespacesToSearch = getStarNamespaces(fqnTypeRef);
+      namespacesToSearch = getStarNamespaces(segment);
 
-      namespacesToSearch.addAll(getPrefixNamespacesWithLastSegmentRemoved(fqnTypeRef, null /*first*/));
+      namespacesToSearch.addAll(getPrefixNamespacesWithLastSegmentRemoved(segment, null /*first*/));
 
-      String currentNamespace = getNamespace(fqnTypeRef);
+      String currentNamespace = getNamespace(segment);
       if (currentNamespace != null) namespacesToSearch.add(new Fqn(currentNamespace));
 
       Collections.addAll(namespacesToSearch, NamespaceManager.DEFAULT_NAMESPACES);
     } else {
-      namespacesToSearch = getPrefixNamespacesWithLastSegmentRemoved(fqnTypeRef, null /*first*/);
+      namespacesToSearch = getPrefixNamespacesWithLastSegmentRemoved(segment, null /*first*/);
     }
 
-    return new SchemaTypeReference(segment, namespacesToSearch, fqn);
+    return new SchemaFqnReference(segment, namespacesToSearch, fqn);
   }
 }
