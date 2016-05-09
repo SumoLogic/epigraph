@@ -10,8 +10,11 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.ResolveResult;
 import com.sumologic.epigraph.ideaplugin.schema.brains.NamingConventions;
 import com.sumologic.epigraph.ideaplugin.schema.psi.*;
+import com.sumologic.epigraph.ideaplugin.schema.psi.impl.SchemaPsiImplUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 import static com.sumologic.epigraph.ideaplugin.schema.lexer.SchemaElementTypes.S_TYPE_REF;
 
@@ -39,11 +42,6 @@ public class SchemaAnnotator implements Annotator {
       public void visitMultiMemberDecl(@NotNull SchemaMultiMemberDecl memberDecl) {
         PsiElement id = memberDecl.getId();
         setHighlighting(id, holder, SchemaSyntaxHighlighter.MULTI_MEMBER);
-
-//        if (memberDecl.getDefault() != null &&
-//            PsiTreeUtil.getPrevSiblingOfType(memberDecl, SchemaMultiMemberDecl.class) != null) {
-//          holder.createWarningAnnotation(memberDecl, "Default alias should be the first one");
-//        }
 
         String namingError = NamingConventions.validateMultiMemberName(id.getText());
         if (namingError != null)
@@ -92,6 +90,42 @@ public class SchemaAnnotator implements Annotator {
       }
 
       @Override
+      public void visitExtendsDecl(@NotNull SchemaExtendsDecl schemaExtendsDecl) {
+        SchemaTypeDef typeDef = (SchemaTypeDef) schemaExtendsDecl.getParent();
+        if (typeDef == null) return;
+
+        List<SchemaTypeRef> typeRefList = schemaExtendsDecl.getTypeRefList();
+        for (SchemaTypeRef typeRef : typeRefList) {
+          boolean wrongKind = false;
+
+          if (typeRef.getAnonList() != null) {
+            if (typeDef.getKind() != TypeKind.LIST) wrongKind = true;
+            testExtendsList(typeDef, typeRef.getAnonList());
+          }
+
+          if (typeRef.getAnonMap() != null) {
+            if (typeDef.getKind() != TypeKind.MAP) wrongKind = true;
+            testExtendsMap(typeDef, typeRef.getAnonMap());
+          }
+
+          SchemaFqnTypeRef fqnTypeRef = typeRef.getFqnTypeRef();
+          if (fqnTypeRef != null) {
+            PsiReference reference = SchemaPsiImplUtil.getReference(fqnTypeRef);
+            if (reference != null) {
+              SchemaTypeDef parent = (SchemaTypeDef) reference.resolve();
+              if (parent != null) {
+                if (typeDef.getKind() != parent.getKind()) wrongKind = true;
+              }
+            }
+          }
+
+          if (wrongKind) holder.createErrorAnnotation(typeRef, "Wrong parent type kind");
+        }
+      }
+
+      // TODO check supplements too
+
+      @Override
       public void visitCustomParam(@NotNull SchemaCustomParam customParam) {
         setHighlighting(customParam.getId(), holder, SchemaSyntaxHighlighter.PARAM_NAME);
       }
@@ -109,6 +143,18 @@ public class SchemaAnnotator implements Annotator {
         }
       }
     });
+  }
+
+  private void testExtendsList(@NotNull SchemaTypeDef typeDef, @NotNull SchemaAnonList anonList) {
+    // TODO
+  }
+
+  private void testExtendsMap(@NotNull SchemaTypeDef typeDef, @NotNull SchemaAnonMap anonMap) {
+    // TODO
+  }
+
+  private void testExtends(@NotNull SchemaTypeDef typeDef, @NotNull SchemaTypeDef parent) {
+    // TODO
   }
 
   private void highlightTyperef(@Nullable SchemaFqnTypeRef typeRef, @NotNull AnnotationHolder holder) {

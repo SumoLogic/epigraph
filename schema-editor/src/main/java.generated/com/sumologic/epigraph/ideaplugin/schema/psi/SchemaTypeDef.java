@@ -20,4 +20,7 @@ public interface SchemaTypeDef extends TypeDefSchemaElement {
 
   void delete();
 
+  @NotNull
+  TypeKind getKind();
+
 }

@@ -32,21 +32,7 @@ public class SchemaPsiImplUtil {
     return new Fqn(segments);
   }
 
-  @NotNull
-  public static Fqn getFqn(SchemaFqnSegment e) {
-    SchemaFqn schemaFqn = (SchemaFqn) e.getParent();
-    assert schemaFqn != null;
-
-    List<SchemaFqnSegment> fqnSegmentList = schemaFqn.getFqnSegmentList();
-    List<String> segments = new ArrayList<>(fqnSegmentList.size());
-
-    for (SchemaFqnSegment segment : fqnSegmentList) {
-      segments.add(segment.getName());
-      if (segment == e) break;
-    }
-
-    return new Fqn(segments);
-  }
+  // typedef --------------------------------------------
 
   @Nullable
   public static String getName(SchemaTypeDef schemaTypeDef) {
@@ -89,12 +75,57 @@ public class SchemaPsiImplUtil {
     }
   }
 
+  @NotNull
+  public static TypeKind getKind(@NotNull SchemaTypeDef schemaTypeDef) {
+    if (schemaTypeDef instanceof SchemaMultiTypeDef) return TypeKind.MULTI;
+    if (schemaTypeDef instanceof SchemaRecordTypeDef) return TypeKind.RECORD;
+    if (schemaTypeDef instanceof SchemaUnionTypeDef) return TypeKind.UNION;
+    if (schemaTypeDef instanceof SchemaMapTypeDef) return TypeKind.MAP;
+    if (schemaTypeDef instanceof SchemaListTypeDef) return TypeKind.LIST;
+    if (schemaTypeDef instanceof SchemaEnumTypeDef) return TypeKind.ENUM;
+    if (schemaTypeDef instanceof SchemaPrimitiveTypeDef) return TypeKind.PRIMITIVE;
+
+    throw new IllegalArgumentException("Unknown type def: " + schemaTypeDef);
+  }
+
+  // fqn type ref --------------------------------------------
+
+  // not exposed through PSI
+  @Nullable
+  public static PsiReference getReference(@NotNull SchemaFqnTypeRef typeRef) {
+    List<SchemaFqnSegment> fqnSegmentList = typeRef.getFqn().getFqnSegmentList();
+    if (fqnSegmentList.isEmpty()) return null;
+    return fqnSegmentList.get(fqnSegmentList.size() - 1).getReference();
+  }
+
 //  public static PsiElement setName(SchemaFqnTypeRef fqnTypeRef, String name) {
 //    SchemaFqn oldFqn = fqnTypeRef.getFqn();
 //    SchemaFqn newFqn = SchemaElementFactory.createFqn(fqnTypeRef.getProject(), name);
 //    oldFqn.replace(newFqn);
 //    return oldFqn;
 //  }
+
+  // segment --------------------------------------------
+
+  /**
+   * @return FQN of this segment. If it's a part of a larger FQN, then all segments up to
+   * (including) this one are returned.
+   */
+  @NotNull
+  public static Fqn getFqn(SchemaFqnSegment e) {
+    SchemaFqn schemaFqn = (SchemaFqn) e.getParent();
+    assert schemaFqn != null;
+
+    List<SchemaFqnSegment> fqnSegmentList = schemaFqn.getFqnSegmentList();
+    List<String> segments = new ArrayList<>(fqnSegmentList.size());
+
+    for (SchemaFqnSegment segment : fqnSegmentList) {
+      segments.add(segment.getName());
+      if (segment == e) break;
+    }
+
+    return new Fqn(segments);
+  }
 
   @Nullable
   public static SchemaFqn getSchemaFqn(SchemaFqnSegment segment) {
@@ -150,6 +181,7 @@ public class SchemaPsiImplUtil {
     return ReferenceFactory.getReference(segment);
   }
 
+  // member decls --------------------------------------------
   // field decl
 
   @Nullable

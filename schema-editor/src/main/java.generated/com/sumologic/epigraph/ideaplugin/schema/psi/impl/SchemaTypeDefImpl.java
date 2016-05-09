@@ -48,4 +48,9 @@ public class SchemaTypeDefImpl extends TypeDefSchemaElementImpl implements Schem
     SchemaPsiImplUtil.delete(this);
   }
 
+  @NotNull
+  public TypeKind getKind() {
+    return SchemaPsiImplUtil.getKind(this);
+  }
+
 }

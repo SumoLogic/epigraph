@@ -11,8 +11,8 @@ public class AnnotatorTest extends LightCodeInsightFixtureTestCase {
     return "src/test/resources/testData/annotator";
   }
 
-  public void testInvalidRef() {
-    myFixture.configureByFile("InvalidRef.es");
+  public void testInvalid1() {
+    myFixture.configureByFile("Invalid1.es");
     myFixture.checkHighlighting(false, false, true);
   }
 }

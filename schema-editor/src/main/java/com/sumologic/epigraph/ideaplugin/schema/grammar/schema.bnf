@@ -102,7 +102,7 @@ typeDef ::= multiTypeDef | recordTypeDef | unionTypeDef | mapTypeDef | listTypeD
               name="type definition"
               implements="com.sumologic.epigraph.ideaplugin.schema.psi.TypeDefSchemaElement"
               extends="com.sumologic.epigraph.ideaplugin.schema.psi.impl.TypeDefSchemaElementImpl"
-              methods = [getName setName getNameIdentifier getTextOffset delete]
+              methods = [getName setName getNameIdentifier getTextOffset delete getKind]
             }
 
 anonList ::= 'list' '[' fqnTypeRef defaultOverride? ']' {pin=1}// TODO rename to `listType`? `concreteList`?
