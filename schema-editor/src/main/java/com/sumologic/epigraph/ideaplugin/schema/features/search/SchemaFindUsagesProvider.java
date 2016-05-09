@@ -32,6 +32,12 @@ public class SchemaFindUsagesProvider implements FindUsagesProvider {
       SchemaTypeDef element = (SchemaTypeDef) psiElement;
       return element.getName() != null;
     }
+
+    if (psiElement instanceof SchemaFqnSegment) {
+      SchemaFqnSegment fqnSegment = (SchemaFqnSegment) psiElement;
+      return fqnSegment.getName() != null;
+    }
+
     return false;
   }
 
@@ -51,28 +57,46 @@ public class SchemaFindUsagesProvider implements FindUsagesProvider {
     if (element instanceof SchemaMultiTypeDef) return "Multi type";
     if (element instanceof SchemaRecordTypeDef) return "Record type";
     if (element instanceof SchemaMapTypeDef) return "Map type";
+    if (element instanceof SchemaFqnSegment) return "Namespace";
 
-    return "Schema type";
+    return "Unknown element: " + element;
   }
 
   @NotNull
   @Override
   public String getDescriptiveName(@NotNull PsiElement element) {
-    SchemaTypeDef typeDef = (SchemaTypeDef) element;
-    String shortName = typeDef.getName();
-    assert shortName != null;
+    if (element instanceof SchemaTypeDef) {
+      SchemaTypeDef typeDef = (SchemaTypeDef) element;
+      String shortName = typeDef.getName();
+      assert shortName != null;
 
-    String ns = NamespaceManager.getNamespace(typeDef);
+      String ns = NamespaceManager.getNamespace(typeDef);
 
-    return ns == null ? shortName : ns + "." + shortName;
+      return ns == null ? shortName : ns + "." + shortName;
+    }
+
+    if (element instanceof SchemaFqnSegment) {
+      SchemaFqnSegment fqnSegment = (SchemaFqnSegment) element;
+      return fqnSegment.getFqn().toString();
+    }
+
+    return "Unknown element: " + element;
   }
 
   @NotNull
   @Override
   public String getNodeText(@NotNull PsiElement element, boolean useFullName) {
+    if (useFullName) return getDescriptiveName(element);
+
     if (element instanceof SchemaTypeDef) {
       SchemaTypeDef schemaTypeDef = (SchemaTypeDef) element;
       String name = schemaTypeDef.getName();
+      if (name != null) return name;
+    }
+
+    if (element instanceof SchemaFqnSegment) {
+      SchemaFqnSegment fqnSegment = (SchemaFqnSegment) element;
+      String name = fqnSegment.getName();
       if (name != null) return name;
     }
 

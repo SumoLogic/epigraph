@@ -36,7 +36,7 @@ public class ReferenceTest extends LightCodeInsightFixtureTestCase {
     myFixture.configureByFile("NamespaceSegmentInTypeRef.es");
     PsiElement element = myFixture.getFile().findElementAt(myFixture.getCaretOffset());
     //noinspection ConstantConditions
-    assertEquals("namespace foo", element.getParent().getReference().resolve().getText());
+    assertEquals("foo", element.getParent().getReference().resolve().getText());
   }
 
   @SuppressWarnings("ConstantConditions")
@@ -47,7 +47,7 @@ public class ReferenceTest extends LightCodeInsightFixtureTestCase {
     assertEquals(null, reference.resolve());
 
     List<String> variants = Arrays.asList(reference.multiResolve(true)).stream()
-        .map(e -> e.getElement().getText())
+        .map(e -> e.getElement().getParent().getParent().getText())
         .collect(Collectors.toList());
 
     assertEquals(2, variants.size());
