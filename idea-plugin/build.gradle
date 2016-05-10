@@ -16,16 +16,8 @@ sourceCompatibility = javaVersion
 targetCompatibility = javaVersion
 tasks.withType(JavaCompile) { options.encoding = 'UTF-8' }
 
-sourceSets {
-    main {
-        java.srcDir 'src/main/java.generated'
-        resources.srcDir 'src/main/resources'
-    }
-    test {
-        java.srcDir 'src/test/java'
-        resources.srcDir 'src/test/resources'
-    }
-}
+sourceSets.main.java.srcDirs += file('src/main/java.generated')
+idea.module.generatedSourceDirs += file('src/main/java.generated')
 
 dependencies {
     testCompile 'junit:junit:4.12'
@@ -39,5 +31,3 @@ intellij {
     sameSinceUntilBuild Boolean.valueOf(isEAP)
     // alternativeIdeaPath localIdePath
 }
-
-idea.module.generatedSourceDirs += file('srm/main/java.generated')
