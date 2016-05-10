@@ -1,0 +1,13 @@
+allprojects {
+
+  apply plugin: 'idea'
+/*
+  idea {
+    project {
+      jdkName = javaVersion
+      languageLevel = javaVersion
+      vcs = 'Git'
+     }
+  }
+*/
+}

@@ -1,7 +1,13 @@
 # IntelliJ IDEA .idea project directories (everywhere)
 .idea/
+# IntelliJ IDEA project files (everywhere)
+*.ipr
+*.iws
 # IntelliJ IDEA *.iml module files (everywhere)
 *.iml
 # Maven target directories (in the root and its immediate subdirectories only, for now)
 /target/
 /*/target/
+# Gradle directories
+.gradle
+build/

@@ -40,22 +40,4 @@ intellij {
     // alternativeIdeaPath localIdePath
 }
 
-apply plugin: 'idea'
-idea {
-    project {
-        jdkName = javaVersion
-        languageLevel = javaVersion
-    }
-    module {
-        generatedSourceDirs += file('srm/main/java.generated')
-    }
-}
-
-//test {
-//    useTestNG ()
-//    include '**/*'
-//}
-
-//task printProps << {
-//    println javaVersion
-//}
+idea.module.generatedSourceDirs += file('srm/main/java.generated')
