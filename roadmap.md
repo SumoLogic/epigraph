@@ -63,9 +63,21 @@
     * Semantic checks
 
 ### 4. Schema compiler
+  * Maven plugin
+  * IDEA plugin?
 
 ### 5. Code generation
+  * Maven plugin
+  * IDEA plugin
 
 ### 6. Scala bindings
+  * Types
+  * Immutable data
+  * Mutable data
+  * Data builders
 
 ### 7. HTTP Service container
+  * Asynchronous
+  * Wire protocols:
+    * JSON(s)
+    * Binary
