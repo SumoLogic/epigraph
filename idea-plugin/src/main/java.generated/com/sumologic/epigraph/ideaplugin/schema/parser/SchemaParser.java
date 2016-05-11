@@ -89,18 +89,6 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     else if (t == S_META_DECL) {
       r = metaDecl(b, 0);
     }
-    else if (t == S_MULTI_MEMBER_DECL) {
-      r = multiMemberDecl(b, 0);
-    }
-    else if (t == S_MULTI_SUPPLEMENTS_DECL) {
-      r = multiSupplementsDecl(b, 0);
-    }
-    else if (t == S_MULTI_TYPE_BODY) {
-      r = multiTypeBody(b, 0);
-    }
-    else if (t == S_MULTI_TYPE_DEF) {
-      r = multiTypeDef(b, 0);
-    }
     else if (t == S_NAMESPACE_DECL) {
       r = namespaceDecl(b, 0);
     }
@@ -146,6 +134,18 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     else if (t == S_UNION_TYPE_DEF) {
       r = unionTypeDef(b, 0);
     }
+    else if (t == S_VAR_TYPE_BODY) {
+      r = varTypeBody(b, 0);
+    }
+    else if (t == S_VAR_TYPE_DEF) {
+      r = varTypeDef(b, 0);
+    }
+    else if (t == S_VAR_TYPE_MEMBER_DECL) {
+      r = varTypeMemberDecl(b, 0);
+    }
+    else if (t == S_VAR_TYPE_SUPPLEMENTS_DECL) {
+      r = varTypeSupplementsDecl(b, 0);
+    }
     else {
       r = parse_root_(t, b, 0);
     }
@@ -157,8 +157,8 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   public static final TokenSet[] EXTENDS_SETS_ = new TokenSet[] {
-    create_token_set_(S_ENUM_TYPE_DEF, S_LIST_TYPE_DEF, S_MAP_TYPE_DEF, S_MULTI_TYPE_DEF,
-      S_PRIMITIVE_TYPE_DEF, S_RECORD_TYPE_DEF, S_TYPE_DEF, S_UNION_TYPE_DEF),
+    create_token_set_(S_ENUM_TYPE_DEF, S_LIST_TYPE_DEF, S_MAP_TYPE_DEF, S_PRIMITIVE_TYPE_DEF,
+      S_RECORD_TYPE_DEF, S_TYPE_DEF, S_UNION_TYPE_DEF, S_VAR_TYPE_DEF),
   };
 
   /* ********************************************************** */
@@ -308,7 +308,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     if (!r) r = consumeToken(b, S_UNION);
     if (!r) r = consumeToken(b, S_MAP);
     if (!r) r = consumeToken(b, S_LIST);
-    if (!r) r = consumeToken(b, S_MULTI);
+    if (!r) r = consumeToken(b, "multi");
     if (!r) r = consumeToken(b, S_ENUM);
     if (!r) r = consumeToken(b, S_SUPPLEMENT);
     if (!r) r = primitiveKind(b, l + 1);
@@ -883,151 +883,6 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // multiMemberDecl | customParam
-  static boolean multiBodyPart(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "multiBodyPart")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NONE_);
-    r = multiMemberDecl(b, l + 1);
-    if (!r) r = customParam(b, l + 1);
-    exit_section_(b, l, m, r, false, partRecover_parser_);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // 'default'? id ':' typeRef memberBody?
-  public static boolean multiMemberDecl(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "multiMemberDecl")) return false;
-    if (!nextTokenIs(b, "<multi member decl>", S_DEFAULT, S_ID)) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, S_MULTI_MEMBER_DECL, "<multi member decl>");
-    r = multiMemberDecl_0(b, l + 1);
-    r = r && consumeToken(b, S_ID);
-    r = r && consumeToken(b, S_COLON);
-    p = r; // pin = 3
-    r = r && report_error_(b, typeRef(b, l + 1));
-    r = p && multiMemberDecl_4(b, l + 1) && r;
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
-  }
-
-  // 'default'?
-  private static boolean multiMemberDecl_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "multiMemberDecl_0")) return false;
-    consumeToken(b, S_DEFAULT);
-    return true;
-  }
-
-  // memberBody?
-  private static boolean multiMemberDecl_4(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "multiMemberDecl_4")) return false;
-    memberBody(b, l + 1);
-    return true;
-  }
-
-  /* ********************************************************** */
-  // 'supplements' fqnTypeRef (',' fqnTypeRef)*
-  public static boolean multiSupplementsDecl(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "multiSupplementsDecl")) return false;
-    if (!nextTokenIs(b, S_SUPPLEMENTS)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, S_SUPPLEMENTS);
-    r = r && fqnTypeRef(b, l + 1);
-    r = r && multiSupplementsDecl_2(b, l + 1);
-    exit_section_(b, m, S_MULTI_SUPPLEMENTS_DECL, r);
-    return r;
-  }
-
-  // (',' fqnTypeRef)*
-  private static boolean multiSupplementsDecl_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "multiSupplementsDecl_2")) return false;
-    int c = current_position_(b);
-    while (true) {
-      if (!multiSupplementsDecl_2_0(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "multiSupplementsDecl_2", c)) break;
-      c = current_position_(b);
-    }
-    return true;
-  }
-
-  // ',' fqnTypeRef
-  private static boolean multiSupplementsDecl_2_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "multiSupplementsDecl_2_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, S_COMMA);
-    r = r && fqnTypeRef(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // '{' multiBodyPart* '}'
-  public static boolean multiTypeBody(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "multiTypeBody")) return false;
-    if (!nextTokenIs(b, S_CURLY_LEFT)) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, S_MULTI_TYPE_BODY, null);
-    r = consumeToken(b, S_CURLY_LEFT);
-    p = r; // pin = 1
-    r = r && report_error_(b, multiTypeBody_1(b, l + 1));
-    r = p && consumeToken(b, S_CURLY_RIGHT) && r;
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
-  }
-
-  // multiBodyPart*
-  private static boolean multiTypeBody_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "multiTypeBody_1")) return false;
-    int c = current_position_(b);
-    while (true) {
-      if (!multiBodyPart(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "multiTypeBody_1", c)) break;
-      c = current_position_(b);
-    }
-    return true;
-  }
-
-  /* ********************************************************** */
-  // 'multi' typeName extendsDecl? multiSupplementsDecl? multiTypeBody?
-  public static boolean multiTypeDef(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "multiTypeDef")) return false;
-    if (!nextTokenIs(b, S_MULTI)) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, S_MULTI_TYPE_DEF, null);
-    r = consumeToken(b, S_MULTI);
-    p = r; // pin = 1
-    r = r && report_error_(b, typeName(b, l + 1));
-    r = p && report_error_(b, multiTypeDef_2(b, l + 1)) && r;
-    r = p && report_error_(b, multiTypeDef_3(b, l + 1)) && r;
-    r = p && multiTypeDef_4(b, l + 1) && r;
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
-  }
-
-  // extendsDecl?
-  private static boolean multiTypeDef_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "multiTypeDef_2")) return false;
-    extendsDecl(b, l + 1);
-    return true;
-  }
-
-  // multiSupplementsDecl?
-  private static boolean multiTypeDef_3(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "multiTypeDef_3")) return false;
-    multiSupplementsDecl(b, l + 1);
-    return true;
-  }
-
-  // multiTypeBody?
-  private static boolean multiTypeDef_4(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "multiTypeDef_4")) return false;
-    multiTypeBody(b, l + 1);
-    return true;
-  }
-
-  /* ********************************************************** */
   // '{' namespaceBodyPart* '}'
   static boolean namespaceBody(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "namespaceBody")) return false;
@@ -1480,13 +1335,13 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // multiTypeDef | recordTypeDef | unionTypeDef | mapTypeDef | listTypeDef |
+  // varTypeDef | recordTypeDef | unionTypeDef | mapTypeDef | listTypeDef |
   //             primitiveTypeDef | enumTypeDef
   public static boolean typeDef(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "typeDef")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _COLLAPSE_, S_TYPE_DEF, "<type definition>");
-    r = multiTypeDef(b, l + 1);
+    r = varTypeDef(b, l + 1);
     if (!r) r = recordTypeDef(b, l + 1);
     if (!r) r = unionTypeDef(b, l + 1);
     if (!r) r = mapTypeDef(b, l + 1);
@@ -1585,6 +1440,151 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(b, l, "unionTypeDef_3")) return false;
     metaDecl(b, l + 1);
     return true;
+  }
+
+  /* ********************************************************** */
+  // '{' varTypeBodyPart* '}'
+  public static boolean varTypeBody(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "varTypeBody")) return false;
+    if (!nextTokenIs(b, S_CURLY_LEFT)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, S_VAR_TYPE_BODY, null);
+    r = consumeToken(b, S_CURLY_LEFT);
+    p = r; // pin = 1
+    r = r && report_error_(b, varTypeBody_1(b, l + 1));
+    r = p && consumeToken(b, S_CURLY_RIGHT) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // varTypeBodyPart*
+  private static boolean varTypeBody_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "varTypeBody_1")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!varTypeBodyPart(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "varTypeBody_1", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
+  /* ********************************************************** */
+  // varTypeMemberDecl | customParam
+  static boolean varTypeBodyPart(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "varTypeBodyPart")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_);
+    r = varTypeMemberDecl(b, l + 1);
+    if (!r) r = customParam(b, l + 1);
+    exit_section_(b, l, m, r, false, partRecover_parser_);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // 'vartype' typeName extendsDecl? varTypeSupplementsDecl? varTypeBody?
+  public static boolean varTypeDef(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "varTypeDef")) return false;
+    if (!nextTokenIs(b, S_VARTYPE)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, S_VAR_TYPE_DEF, null);
+    r = consumeToken(b, S_VARTYPE);
+    p = r; // pin = 1
+    r = r && report_error_(b, typeName(b, l + 1));
+    r = p && report_error_(b, varTypeDef_2(b, l + 1)) && r;
+    r = p && report_error_(b, varTypeDef_3(b, l + 1)) && r;
+    r = p && varTypeDef_4(b, l + 1) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // extendsDecl?
+  private static boolean varTypeDef_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "varTypeDef_2")) return false;
+    extendsDecl(b, l + 1);
+    return true;
+  }
+
+  // varTypeSupplementsDecl?
+  private static boolean varTypeDef_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "varTypeDef_3")) return false;
+    varTypeSupplementsDecl(b, l + 1);
+    return true;
+  }
+
+  // varTypeBody?
+  private static boolean varTypeDef_4(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "varTypeDef_4")) return false;
+    varTypeBody(b, l + 1);
+    return true;
+  }
+
+  /* ********************************************************** */
+  // 'default'? id ':' typeRef memberBody?
+  public static boolean varTypeMemberDecl(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "varTypeMemberDecl")) return false;
+    if (!nextTokenIs(b, "<var type member decl>", S_DEFAULT, S_ID)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, S_VAR_TYPE_MEMBER_DECL, "<var type member decl>");
+    r = varTypeMemberDecl_0(b, l + 1);
+    r = r && consumeToken(b, S_ID);
+    r = r && consumeToken(b, S_COLON);
+    p = r; // pin = 3
+    r = r && report_error_(b, typeRef(b, l + 1));
+    r = p && varTypeMemberDecl_4(b, l + 1) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // 'default'?
+  private static boolean varTypeMemberDecl_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "varTypeMemberDecl_0")) return false;
+    consumeToken(b, S_DEFAULT);
+    return true;
+  }
+
+  // memberBody?
+  private static boolean varTypeMemberDecl_4(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "varTypeMemberDecl_4")) return false;
+    memberBody(b, l + 1);
+    return true;
+  }
+
+  /* ********************************************************** */
+  // 'supplements' fqnTypeRef (',' fqnTypeRef)*
+  public static boolean varTypeSupplementsDecl(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "varTypeSupplementsDecl")) return false;
+    if (!nextTokenIs(b, S_SUPPLEMENTS)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, S_SUPPLEMENTS);
+    r = r && fqnTypeRef(b, l + 1);
+    r = r && varTypeSupplementsDecl_2(b, l + 1);
+    exit_section_(b, m, S_VAR_TYPE_SUPPLEMENTS_DECL, r);
+    return r;
+  }
+
+  // (',' fqnTypeRef)*
+  private static boolean varTypeSupplementsDecl_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "varTypeSupplementsDecl_2")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!varTypeSupplementsDecl_2_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "varTypeSupplementsDecl_2", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
+  // ',' fqnTypeRef
+  private static boolean varTypeSupplementsDecl_2_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "varTypeSupplementsDecl_2_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, S_COMMA);
+    r = r && fqnTypeRef(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
   }
 
   final static Parser declRecover_parser_ = new Parser() {

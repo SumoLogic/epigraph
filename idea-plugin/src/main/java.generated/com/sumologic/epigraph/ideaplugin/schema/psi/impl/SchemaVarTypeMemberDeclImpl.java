@@ -10,14 +10,14 @@ import com.intellij.psi.util.PsiTreeUtil;
 import static com.sumologic.epigraph.ideaplugin.schema.lexer.SchemaElementTypes.*;
 import com.sumologic.epigraph.ideaplugin.schema.psi.*;
 
-public class SchemaMultiTypeBodyImpl extends CustomParamHolderImpl implements SchemaMultiTypeBody {
+public class SchemaVarTypeMemberDeclImpl extends CustomParamHolderImpl implements SchemaVarTypeMemberDecl {
 
-  public SchemaMultiTypeBodyImpl(ASTNode node) {
+  public SchemaVarTypeMemberDeclImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull SchemaVisitor visitor) {
-    visitor.visitMultiTypeBody(this);
+    visitor.visitVarTypeMemberDecl(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -32,21 +32,53 @@ public class SchemaMultiTypeBodyImpl extends CustomParamHolderImpl implements Sc
   }
 
   @Override
-  @NotNull
-  public List<SchemaMultiMemberDecl> getMultiMemberDeclList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaMultiMemberDecl.class);
+  @Nullable
+  public SchemaTypeRef getTypeRef() {
+    return findChildByClass(SchemaTypeRef.class);
   }
 
   @Override
   @NotNull
+  public PsiElement getColon() {
+    return findNotNullChildByType(S_COLON);
+  }
+
+  @Override
+  @Nullable
   public PsiElement getCurlyLeft() {
-    return findNotNullChildByType(S_CURLY_LEFT);
+    return findChildByType(S_CURLY_LEFT);
   }
 
   @Override
   @Nullable
   public PsiElement getCurlyRight() {
     return findChildByType(S_CURLY_RIGHT);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getDefault() {
+    return findChildByType(S_DEFAULT);
+  }
+
+  @Override
+  @NotNull
+  public PsiElement getId() {
+    return findNotNullChildByType(S_ID);
+  }
+
+  @Nullable
+  public String getName() {
+    return SchemaPsiImplUtil.getName(this);
+  }
+
+  public PsiElement setName(String name) {
+    return SchemaPsiImplUtil.setName(this, name);
+  }
+
+  @NotNull
+  public PsiElement getNameIdentifier() {
+    return SchemaPsiImplUtil.getNameIdentifier(this);
   }
 
 }

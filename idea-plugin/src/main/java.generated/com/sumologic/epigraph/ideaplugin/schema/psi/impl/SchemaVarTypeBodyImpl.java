@@ -8,17 +8,16 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static com.sumologic.epigraph.ideaplugin.schema.lexer.SchemaElementTypes.*;
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.sumologic.epigraph.ideaplugin.schema.psi.*;
 
-public class SchemaMultiSupplementsDeclImpl extends ASTWrapperPsiElement implements SchemaMultiSupplementsDecl {
+public class SchemaVarTypeBodyImpl extends CustomParamHolderImpl implements SchemaVarTypeBody {
 
-  public SchemaMultiSupplementsDeclImpl(ASTNode node) {
+  public SchemaVarTypeBodyImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull SchemaVisitor visitor) {
-    visitor.visitMultiSupplementsDecl(this);
+    visitor.visitVarTypeBody(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -28,14 +27,26 @@ public class SchemaMultiSupplementsDeclImpl extends ASTWrapperPsiElement impleme
 
   @Override
   @NotNull
-  public List<SchemaFqnTypeRef> getFqnTypeRefList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaFqnTypeRef.class);
+  public List<SchemaCustomParam> getCustomParamList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaCustomParam.class);
   }
 
   @Override
   @NotNull
-  public PsiElement getSupplements() {
-    return findNotNullChildByType(S_SUPPLEMENTS);
+  public List<SchemaVarTypeMemberDecl> getVarTypeMemberDeclList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaVarTypeMemberDecl.class);
+  }
+
+  @Override
+  @NotNull
+  public PsiElement getCurlyLeft() {
+    return findNotNullChildByType(S_CURLY_LEFT);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getCurlyRight() {
+    return findChildByType(S_CURLY_RIGHT);
   }
 
 }

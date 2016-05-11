@@ -48,7 +48,7 @@ public class SchemaStructureViewElement implements StructureViewTreeElement {
       Icon icon = null;
       if (schemaTypeDef instanceof SchemaRecordTypeDef) icon = PlatformIcons.CLASS_ICON;
       if (schemaTypeDef instanceof SchemaEnumTypeDef) icon = PlatformIcons.ENUM_ICON;
-      if (schemaTypeDef instanceof SchemaMultiTypeDef) icon = PlatformIcons.INTERFACE_ICON;
+      if (schemaTypeDef instanceof SchemaVarTypeDef) icon = PlatformIcons.INTERFACE_ICON;
       // TODO icons for union, map, list, primitive
 
       PsiElement id = schemaTypeDef.getNameIdentifier();
@@ -70,14 +70,14 @@ public class SchemaStructureViewElement implements StructureViewTreeElement {
       return new StaticItemPresentation(schemaTagDecl.getId().getText(), null, PlatformIcons.FIELD_ICON);
     }
 
-    if (element instanceof SchemaMultiMemberDecl) {
-      SchemaMultiMemberDecl schemaMultiMemberDecl = (SchemaMultiMemberDecl) element;
+    if (element instanceof SchemaVarTypeMemberDecl) {
+      SchemaVarTypeMemberDecl varTypeMemberDecl = (SchemaVarTypeMemberDecl) element;
       Icon icon = PlatformIcons.FUNCTION_ICON;
-      if (schemaMultiMemberDecl.getDefault() != null) {
+      if (varTypeMemberDecl.getDefault() != null) {
         icon = IconUtil.addText(icon, "D"); // TODO separate icon for default member
       }
 
-      return new StaticItemPresentation(schemaMultiMemberDecl.getId().getText(), null, icon);
+      return new StaticItemPresentation(varTypeMemberDecl.getId().getText(), null, icon);
     }
 
     if (element instanceof SchemaEnumMemberDecl) {
@@ -125,11 +125,11 @@ public class SchemaStructureViewElement implements StructureViewTreeElement {
         children.addAll(unionTypeBody.getCustomParamList());
         children.addAll(unionTypeBody.getTagDeclList()); // SchemaTagDecl
       }
-    } else if (element instanceof SchemaMultiTypeDef) {
-      SchemaMultiTypeBody multiTypeBody = ((SchemaMultiTypeDef) element).getMultiTypeBody();
-      if (multiTypeBody != null) {
-        children.addAll(multiTypeBody.getCustomParamList());
-        children.addAll(multiTypeBody.getMultiMemberDeclList()); // SchemaMultiMemberDecl
+    } else if (element instanceof SchemaVarTypeDef) {
+      SchemaVarTypeBody varTypeBody = ((SchemaVarTypeDef) element).getVarTypeBody();
+      if (varTypeBody != null) {
+        children.addAll(varTypeBody.getCustomParamList());
+        children.addAll(varTypeBody.getVarTypeMemberDeclList()); // SchemaVarTypeMemberDecl
       }
     } else if (element instanceof SchemaEnumTypeDef) {
       SchemaEnumTypeBody enumTypeBody = ((SchemaEnumTypeDef) element).getEnumTypeBody();

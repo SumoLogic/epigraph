@@ -30,8 +30,8 @@ public class NamingConventions {
   }
 
   @Nullable
-  public static String validateMultiMemberName(@NotNull String multiMemberName) {
-    return validateMemberName(multiMemberName, "Multi type alias");
+  public static String validateVarTypeMemberName(@NotNull String varTypeMemberName) {
+    return validateMemberName(varTypeMemberName, "VarType type alias");
   }
 
   @Nullable

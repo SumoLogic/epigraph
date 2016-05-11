@@ -37,7 +37,7 @@ public class SchemaSyntaxHighlighter extends SyntaxHighlighterBase {
 
   public static final TextAttributesKey FIELD = DefaultLanguageHighlighterColors.INSTANCE_FIELD;
   public static final TextAttributesKey TAG = DefaultLanguageHighlighterColors.INSTANCE_FIELD;
-  public static final TextAttributesKey MULTI_MEMBER = DefaultLanguageHighlighterColors.INSTANCE_FIELD;
+  public static final TextAttributesKey VAR_MEMBER = DefaultLanguageHighlighterColors.INSTANCE_FIELD;
 
   public static final TextAttributesKey DECL_TYPE_NAME = DefaultLanguageHighlighterColors.CLASS_NAME;
   public static final TextAttributesKey TYPE_REF = DefaultLanguageHighlighterColors.CLASS_REFERENCE;

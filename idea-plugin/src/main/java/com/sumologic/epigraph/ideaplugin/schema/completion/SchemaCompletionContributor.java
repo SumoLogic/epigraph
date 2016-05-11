@@ -18,7 +18,7 @@ import static com.sumologic.epigraph.ideaplugin.schema.lexer.SchemaElementTypes.
  */
 public class SchemaCompletionContributor extends CompletionContributor {
   private static final String[] TOP_LEVEL_KEYWORDS = new String[]{
-      "record", "union", "map", "list", "multi", "enum",
+      "record", "union", "map", "list", "vartype", "enum",
       "integer", "long", "double", "boolean", "string",
       "supplement"
   };
@@ -106,9 +106,9 @@ public class SchemaCompletionContributor extends CompletionContributor {
         if (prevParentSibling instanceof SchemaRecordTypeDef) {
           SchemaRecordTypeDef recordTypeDef = (SchemaRecordTypeDef) prevParentSibling;
           if (recordTypeDef.getExtendsDecl() != null) return;
-        } else if (prevParentSibling instanceof SchemaMultiTypeDef) {
-          SchemaMultiTypeDef multiTypeDef = (SchemaMultiTypeDef) prevParentSibling;
-          if (multiTypeDef.getExtendsDecl() != null) return;
+        } else if (prevParentSibling instanceof SchemaVarTypeDef) {
+          SchemaVarTypeDef varTypeDef = (SchemaVarTypeDef) prevParentSibling;
+          if (varTypeDef.getExtendsDecl() != null) return;
         } else return;
 
         PsiElement nextParentSibling = SchemaPsiUtil.nextNonWhitespaceSibling(parent);

@@ -46,7 +46,7 @@ public class LexerTest {
         "  prop = this is some data;\n" +
         "  field: Integer\n" +
         "}\n" +
-        "multi MyType3 {\n" +
+        "vartype MyType3 {\n" +
         "  record: MyType2\n" +
         "}";
 
@@ -57,7 +57,7 @@ public class LexerTest {
         S_ID, S_EQ, S_DATA_VALUE, S_SEMI_COLON,
         S_ID, S_COLON, S_ID,
         S_CURLY_RIGHT,
-        S_MULTI, S_ID, S_CURLY_LEFT,
+        S_VARTYPE, S_ID, S_CURLY_LEFT,
         S_ID, S_COLON, S_ID,
         S_CURLY_RIGHT
     };

@@ -28,7 +28,7 @@ public class SchemaStructureViewBuilder extends TreeBasedStructureViewBuilder {
             SchemaSupplementDef.class,
             SchemaFieldDecl.class,
             SchemaTagDecl.class,
-            SchemaMultiMemberDecl.class,
+            SchemaVarTypeMemberDecl.class,
             SchemaEnumMemberDecl.class,
             SchemaCustomParam.class
         );

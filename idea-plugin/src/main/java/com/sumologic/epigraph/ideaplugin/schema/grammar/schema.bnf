@@ -23,7 +23,7 @@
     RECORD = 'record'
     EXTENDS = 'extends'
     UNION = 'union'
-    MULTI='multi' // TODO rename to 'poly'?
+    VARTYPE='vartype'
     ENUM='enum'
     META='meta'
     SUPPLEMENT='supplement'
@@ -100,7 +100,7 @@ fqnTypeRef ::= fqn
 defs ::= def*
 private def ::= typeDef | supplementDef {recoverWhile="declRecover"}
 
-typeDef ::= multiTypeDef | recordTypeDef | unionTypeDef | mapTypeDef | listTypeDef |
+typeDef ::= varTypeDef | recordTypeDef | unionTypeDef | mapTypeDef | listTypeDef |
             primitiveTypeDef | enumTypeDef {
               name="type definition"
               implements="com.sumologic.epigraph.ideaplugin.schema.psi.TypeDefSchemaElement"
@@ -127,11 +127,11 @@ metaDecl ::= 'meta' fqnTypeRef // we don't allow anonList or anonMap as meta
 // TODO: extends for: record, map, list, primitive
 // supplements for the above, A+B+C for record only
 
-multiTypeDef ::= 'multi' typeName extendsDecl? multiSupplementsDecl? multiTypeBody?
-multiSupplementsDecl ::= 'supplements' fqnTypeRef (',' fqnTypeRef)*
-multiTypeBody ::= '{' multiBodyPart* '}'
-private multiBodyPart ::= multiMemberDecl | customParam
-multiMemberDecl ::= 'default'? id ':' typeRef memberBody? {
+varTypeDef ::= 'vartype' typeName extendsDecl? varTypeSupplementsDecl? varTypeBody?
+varTypeSupplementsDecl ::= 'supplements' fqnTypeRef (',' fqnTypeRef)*
+varTypeBody ::= '{' varTypeBodyPart* '}'
+private varTypeBodyPart ::= varTypeMemberDecl | customParam
+varTypeMemberDecl ::= 'default'? id ':' typeRef memberBody? {
   implements=["com.sumologic.epigraph.ideaplugin.schema.psi.CustomParamsHolder" "com.intellij.psi.PsiNamedElement"]
   extends="com.sumologic.epigraph.ideaplugin.schema.psi.impl.CustomParamHolderImpl"
   methods=[getName setName getNameIdentifier]

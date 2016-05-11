@@ -54,7 +54,7 @@ public class SchemaFindUsagesProvider implements FindUsagesProvider {
     if (element instanceof SchemaPrimitiveTypeDef) return "Primitive type";
     if (element instanceof SchemaEnumTypeDef) return "Enum type";
     if (element instanceof SchemaUnionTypeDef) return "Union type";
-    if (element instanceof SchemaMultiTypeDef) return "Multi type";
+    if (element instanceof SchemaVarTypeDef) return "Var type";
     if (element instanceof SchemaRecordTypeDef) return "Record type";
     if (element instanceof SchemaMapTypeDef) return "Map type";
     if (element instanceof SchemaFqnSegment) return "Namespace";

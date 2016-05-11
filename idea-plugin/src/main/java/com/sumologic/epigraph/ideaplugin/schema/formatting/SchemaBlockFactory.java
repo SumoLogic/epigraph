@@ -23,7 +23,7 @@ interface SchemaBlockFactory {
       new ContainerUtil.ImmutableMapBuilder<IElementType, SchemaBlockFactory>()
           .put(S_RECORD_TYPE_DEF, TypeDefBlock::new)
           .put(S_UNION_TYPE_DEF, TypeDefBlock::new)
-          .put(S_MULTI_TYPE_DEF, TypeDefBlock::new)
+          .put(S_VAR_TYPE_DEF, TypeDefBlock::new)
           .put(S_ENUM_TYPE_DEF, TypeDefBlock::new)
           .put(S_PRIMITIVE_TYPE_DEF, TypeDefBlock::new)
           .put(S_LIST_TYPE_DEF, TypeDefBlock::new)
@@ -31,18 +31,18 @@ interface SchemaBlockFactory {
 
           .put(S_RECORD_TYPE_BODY, TypeDefBodyBlock::new)
           .put(S_UNION_TYPE_BODY, TypeDefBodyBlock::new)
-          .put(S_MULTI_TYPE_BODY, TypeDefBodyBlock::new)
+          .put(S_VAR_TYPE_BODY, TypeDefBodyBlock::new)
           .put(S_PRIMITIVE_TYPE_BODY, TypeDefBodyBlock::new)
 
           .put(S_FIELD_DECL, TypeMemberDeclBlock::new)
           .put(S_TAG_DECL, TypeMemberDeclBlock::new)
-          .put(S_MULTI_MEMBER_DECL, TypeMemberDeclBlock::new)
+          .put(S_VAR_TYPE_MEMBER_DECL, TypeMemberDeclBlock::new)
           .put(S_ENUM_MEMBER_DECL, TypeMemberDeclBlock::new)
 
           .put(S_EXTENDS_DECL, ExtendsBlock::new)
           .put(S_META_DECL, MetaBlock::new)
           .put(S_RECORD_SUPPLEMENTS_DECL, SupplementsBlock::new)
-          .put(S_MULTI_SUPPLEMENTS_DECL, SupplementsBlock::new)
+          .put(S_VAR_TYPE_SUPPLEMENTS_DECL, SupplementsBlock::new)
 
           .put(S_DEFAULT_OVERRIDE, DefaultOverrideBlock::new)
 

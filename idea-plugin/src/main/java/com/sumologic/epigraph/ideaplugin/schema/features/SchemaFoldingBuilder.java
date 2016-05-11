@@ -54,8 +54,8 @@ public class SchemaFoldingBuilder extends CustomFoldingBuilder implements DumbAw
       PsiElement body = null;
 
       // TODO add a mixin with getBody?
-      if (element instanceof SchemaMultiTypeDef) {
-        body = ((SchemaMultiTypeDef) element).getMultiTypeBody();
+      if (element instanceof SchemaVarTypeDef) {
+        body = ((SchemaVarTypeDef) element).getVarTypeBody();
       } else if (element instanceof SchemaRecordTypeDef) {
         body = ((SchemaRecordTypeDef) element).getRecordTypeBody();
       } else if (element instanceof SchemaPrimitiveTypeDef) {

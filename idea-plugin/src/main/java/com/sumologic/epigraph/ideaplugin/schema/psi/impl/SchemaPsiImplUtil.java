@@ -77,7 +77,7 @@ public class SchemaPsiImplUtil {
 
   @NotNull
   public static TypeKind getKind(@NotNull SchemaTypeDef schemaTypeDef) {
-    if (schemaTypeDef instanceof SchemaMultiTypeDef) return TypeKind.MULTI;
+    if (schemaTypeDef instanceof SchemaVarTypeDef) return TypeKind.VAR;
     if (schemaTypeDef instanceof SchemaRecordTypeDef) return TypeKind.RECORD;
     if (schemaTypeDef instanceof SchemaUnionTypeDef) return TypeKind.UNION;
     if (schemaTypeDef instanceof SchemaMapTypeDef) return TypeKind.MAP;
@@ -218,22 +218,22 @@ public class SchemaPsiImplUtil {
     return tagDecl.getId();
   }
 
-  // multiMember decl
+  // varTypeMember decl
 
   @Nullable
-  public static String getName(SchemaMultiMemberDecl multiMemberDecl) {
-    return getNameIdentifier(multiMemberDecl).getText();
+  public static String getName(SchemaVarTypeMemberDecl varTypeMemberDecl) {
+    return getNameIdentifier(varTypeMemberDecl).getText();
   }
 
-  public static PsiElement setName(SchemaMultiMemberDecl multiMemberDecl, String name) {
-    PsiElement oldId = multiMemberDecl.getId();
-    PsiElement newId = SchemaElementFactory.createId(multiMemberDecl.getProject(), name);
+  public static PsiElement setName(SchemaVarTypeMemberDecl varTypeMemberDecl, String name) {
+    PsiElement oldId = varTypeMemberDecl.getId();
+    PsiElement newId = SchemaElementFactory.createId(varTypeMemberDecl.getProject(), name);
     return oldId.replace(newId);
   }
 
   @NotNull
-  public static PsiElement getNameIdentifier(SchemaMultiMemberDecl multiMemberDecl) {
-    return multiMemberDecl.getId();
+  public static PsiElement getNameIdentifier(SchemaVarTypeMemberDecl varTypeMemberDecl) {
+    return varTypeMemberDecl.getId();
   }
 
   // enumMember decl

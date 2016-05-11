@@ -39,7 +39,7 @@ public class SchemaParserDefinition implements ParserDefinition {
       S_RECORD,
       S_EXTENDS,
       S_UNION,
-      S_MULTI,
+      S_VARTYPE,
       S_ENUM,
       S_META,
       S_SUPPLEMENT,

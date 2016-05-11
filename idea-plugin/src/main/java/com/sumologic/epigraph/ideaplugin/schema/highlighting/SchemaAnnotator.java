@@ -39,11 +39,11 @@ public class SchemaAnnotator implements Annotator {
       }
 
       @Override
-      public void visitMultiMemberDecl(@NotNull SchemaMultiMemberDecl memberDecl) {
+      public void visitVarTypeMemberDecl(@NotNull SchemaVarTypeMemberDecl memberDecl) {
         PsiElement id = memberDecl.getId();
-        setHighlighting(id, holder, SchemaSyntaxHighlighter.MULTI_MEMBER);
+        setHighlighting(id, holder, SchemaSyntaxHighlighter.VAR_MEMBER);
 
-        String namingError = NamingConventions.validateMultiMemberName(id.getText());
+        String namingError = NamingConventions.validateVarTypeMemberName(id.getText());
         if (namingError != null)
           holder.createErrorAnnotation(id, namingError);
       }
@@ -73,7 +73,7 @@ public class SchemaAnnotator implements Annotator {
 
       @Override
       public void visitDefaultOverride(@NotNull SchemaDefaultOverride defaultOverride) {
-        setHighlighting(defaultOverride.getId(), holder, SchemaSyntaxHighlighter.MULTI_MEMBER);
+        setHighlighting(defaultOverride.getId(), holder, SchemaSyntaxHighlighter.VAR_MEMBER);
       }
 
       @Override
@@ -190,7 +190,7 @@ public class SchemaAnnotator implements Annotator {
           holder.createErrorAnnotation(schemaFqn.getNode(), "Unresolved reference");
         } else if (numTypeRefs > 1) {
           holder.createErrorAnnotation(schemaFqn.getNode(), "Ambiguous type reference");
-        } // else we have import prefix matching multiple namespaces, OK
+        } // else we have import prefix matching varTypeple namespaces, OK
       }
     }
   }

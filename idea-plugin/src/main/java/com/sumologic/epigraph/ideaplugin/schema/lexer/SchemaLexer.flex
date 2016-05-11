@@ -54,7 +54,7 @@ ID=[:letter:]([:letter:]|[:digit:])*
   "supplements"        { return curlyCount == 0 ? S_SUPPLEMENTS : S_ID; }
   "with"               { return curlyCount == 0 ? S_WITH : S_ID; }
   "union"              { return curlyCount == 0 ? S_UNION : S_ID; }
-  "multi"              { return curlyCount == 0 ? S_MULTI : S_ID; }
+  "vartype"            { return curlyCount == 0 ? S_VARTYPE : S_ID; }
   "enum"               { return curlyCount == 0 ? S_ENUM : S_ID; }
   "integer"            { return curlyCount == 0 ? S_INTEGER_T : S_ID; }
   "long"               { return curlyCount == 0 ? S_LONG_T : S_ID; }

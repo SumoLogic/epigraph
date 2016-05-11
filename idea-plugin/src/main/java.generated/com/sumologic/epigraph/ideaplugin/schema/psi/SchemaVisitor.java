@@ -99,23 +99,6 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitMultiMemberDecl(@NotNull SchemaMultiMemberDecl o) {
-    visitCustomParamsHolder(o);
-    // visitPsiNamedElement(o);
-  }
-
-  public void visitMultiSupplementsDecl(@NotNull SchemaMultiSupplementsDecl o) {
-    visitPsiElement(o);
-  }
-
-  public void visitMultiTypeBody(@NotNull SchemaMultiTypeBody o) {
-    visitCustomParamsHolder(o);
-  }
-
-  public void visitMultiTypeDef(@NotNull SchemaMultiTypeDef o) {
-    visitTypeDef(o);
-  }
-
   public void visitNamespaceDecl(@NotNull SchemaNamespaceDecl o) {
     visitPsiElement(o);
   }
@@ -175,6 +158,23 @@ public class SchemaVisitor extends PsiElementVisitor {
 
   public void visitUnionTypeDef(@NotNull SchemaUnionTypeDef o) {
     visitTypeDef(o);
+  }
+
+  public void visitVarTypeBody(@NotNull SchemaVarTypeBody o) {
+    visitCustomParamsHolder(o);
+  }
+
+  public void visitVarTypeDef(@NotNull SchemaVarTypeDef o) {
+    visitTypeDef(o);
+  }
+
+  public void visitVarTypeMemberDecl(@NotNull SchemaVarTypeMemberDecl o) {
+    visitCustomParamsHolder(o);
+    // visitPsiNamedElement(o);
+  }
+
+  public void visitVarTypeSupplementsDecl(@NotNull SchemaVarTypeSupplementsDecl o) {
+    visitPsiElement(o);
   }
 
   public void visitCustomParamsHolder(@NotNull CustomParamsHolder o) {

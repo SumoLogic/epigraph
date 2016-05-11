@@ -8,16 +8,17 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static com.sumologic.epigraph.ideaplugin.schema.lexer.SchemaElementTypes.*;
+import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.sumologic.epigraph.ideaplugin.schema.psi.*;
 
-public class SchemaMultiTypeDefImpl extends SchemaTypeDefImpl implements SchemaMultiTypeDef {
+public class SchemaVarTypeSupplementsDeclImpl extends ASTWrapperPsiElement implements SchemaVarTypeSupplementsDecl {
 
-  public SchemaMultiTypeDefImpl(ASTNode node) {
+  public SchemaVarTypeSupplementsDeclImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull SchemaVisitor visitor) {
-    visitor.visitMultiTypeDef(this);
+    visitor.visitVarTypeSupplementsDecl(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -26,33 +27,15 @@ public class SchemaMultiTypeDefImpl extends SchemaTypeDefImpl implements SchemaM
   }
 
   @Override
-  @Nullable
-  public SchemaExtendsDecl getExtendsDecl() {
-    return findChildByClass(SchemaExtendsDecl.class);
-  }
-
-  @Override
-  @Nullable
-  public SchemaMultiSupplementsDecl getMultiSupplementsDecl() {
-    return findChildByClass(SchemaMultiSupplementsDecl.class);
-  }
-
-  @Override
-  @Nullable
-  public SchemaMultiTypeBody getMultiTypeBody() {
-    return findChildByClass(SchemaMultiTypeBody.class);
+  @NotNull
+  public List<SchemaFqnTypeRef> getFqnTypeRefList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaFqnTypeRef.class);
   }
 
   @Override
   @NotNull
-  public PsiElement getMulti() {
-    return findNotNullChildByType(S_MULTI);
-  }
-
-  @Override
-  @Nullable
-  public PsiElement getId() {
-    return findChildByType(S_ID);
+  public PsiElement getSupplements() {
+    return findNotNullChildByType(S_SUPPLEMENTS);
   }
 
 }

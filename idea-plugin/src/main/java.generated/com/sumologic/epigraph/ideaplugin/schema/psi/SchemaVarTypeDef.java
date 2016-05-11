@@ -5,19 +5,19 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface SchemaMultiTypeDef extends SchemaTypeDef {
+public interface SchemaVarTypeDef extends SchemaTypeDef {
 
   @Nullable
   SchemaExtendsDecl getExtendsDecl();
 
   @Nullable
-  SchemaMultiSupplementsDecl getMultiSupplementsDecl();
+  SchemaVarTypeBody getVarTypeBody();
 
   @Nullable
-  SchemaMultiTypeBody getMultiTypeBody();
+  SchemaVarTypeSupplementsDecl getVarTypeSupplementsDecl();
 
   @NotNull
-  PsiElement getMulti();
+  PsiElement getVartype();
 
   @Nullable
   PsiElement getId();

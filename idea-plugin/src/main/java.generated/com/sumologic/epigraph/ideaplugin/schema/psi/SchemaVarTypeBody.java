@@ -5,13 +5,13 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface SchemaMultiTypeBody extends CustomParamsHolder {
+public interface SchemaVarTypeBody extends CustomParamsHolder {
 
   @NotNull
   List<SchemaCustomParam> getCustomParamList();
 
   @NotNull
-  List<SchemaMultiMemberDecl> getMultiMemberDeclList();
+  List<SchemaVarTypeMemberDecl> getVarTypeMemberDeclList();
 
   @NotNull
   PsiElement getCurlyLeft();
