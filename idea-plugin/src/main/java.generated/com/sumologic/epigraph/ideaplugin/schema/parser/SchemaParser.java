@@ -242,7 +242,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // id '=' string
+  // id '=' data_value ';'
   public static boolean customParam(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "customParam")) return false;
     if (!nextTokenIs(b, S_ID)) return false;
@@ -251,7 +251,8 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     r = consumeToken(b, S_ID);
     r = r && consumeToken(b, S_EQ);
     p = r; // pin = 2
-    r = r && consumeToken(b, S_STRING);
+    r = r && report_error_(b, consumeToken(b, S_DATA_VALUE));
+    r = p && consumeToken(b, S_SEMI_COLON) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -1054,6 +1055,27 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(b, l, "namespaceDecl_2")) return false;
     namespaceBody(b, l + 1);
     return true;
+  }
+
+  /* ********************************************************** */
+  // ! (';')
+  static boolean paramRecover(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "paramRecover")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NOT_);
+    r = !paramRecover_0(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // (';')
+  private static boolean paramRecover_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "paramRecover_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, S_SEMI_COLON);
+    exit_section_(b, m, null, r);
+    return r;
   }
 
   /* ********************************************************** */

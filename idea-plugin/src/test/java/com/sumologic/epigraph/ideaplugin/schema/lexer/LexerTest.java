@@ -43,6 +43,7 @@ public class LexerTest {
         "namespace foo.bar\n" +
         "integer Ыва\n" +
         "record MyType2 extends foo.Type {\n" +
+        "  prop = this is some data;\n" +
         "  field: Integer\n" +
         "}\n" +
         "multi MyType3 {\n" +
@@ -53,6 +54,7 @@ public class LexerTest {
         S_NAMESPACE, S_ID, S_DOT, S_ID,
         S_INTEGER_T, S_ID,
         S_RECORD, S_ID, S_EXTENDS, S_ID, S_DOT, S_ID, S_CURLY_LEFT,
+        S_ID, S_EQ, S_DATA_VALUE, S_SEMI_COLON,
         S_ID, S_COLON, S_ID,
         S_CURLY_RIGHT,
         S_MULTI, S_ID, S_CURLY_LEFT,
@@ -73,6 +75,7 @@ public class LexerTest {
     IElementType e = lex.advance();
     while (e != null) {
       if (e != TokenType.WHITE_SPACE) {
+        Assert.assertTrue("Got zero-length token '" + e + "' at " + lex.getTokenEnd(), lex.yylength() > 0);
         debug.append(e).append("\n");
         actual.add(e);
       }

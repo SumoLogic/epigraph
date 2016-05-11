@@ -2,4 +2,7 @@ namespace foo
 
 import bar.*
 
-record Baz
+record Baz {
+  param = value;
+  field: SomeType
+}

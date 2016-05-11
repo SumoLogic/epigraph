@@ -57,6 +57,7 @@ public interface SchemaElementTypes {
   IElementType S_COMMENT = new SchemaElementType("comment");
   IElementType S_CURLY_LEFT = new SchemaElementType("{");
   IElementType S_CURLY_RIGHT = new SchemaElementType("}");
+  IElementType S_DATA_VALUE = new SchemaElementType("data_value");
   IElementType S_DEFAULT = new SchemaElementType("default");
   IElementType S_DOT = new SchemaElementType(".");
   IElementType S_DOUBLE_T = new SchemaElementType("double");
@@ -74,8 +75,8 @@ public interface SchemaElementTypes {
   IElementType S_NAMESPACE = new SchemaElementType("namespace");
   IElementType S_PLUS = new SchemaElementType("+");
   IElementType S_RECORD = new SchemaElementType("record");
+  IElementType S_SEMI_COLON = new SchemaElementType(";");
   IElementType S_STAR = new SchemaElementType("*");
-  IElementType S_STRING = new SchemaElementType("string");
   IElementType S_STRING_T = new SchemaElementType("string");
   IElementType S_SUPPLEMENT = new SchemaElementType("supplement");
   IElementType S_SUPPLEMENTS = new SchemaElementType("supplements");

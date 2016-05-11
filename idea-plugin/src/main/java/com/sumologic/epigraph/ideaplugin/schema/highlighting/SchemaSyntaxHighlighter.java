@@ -31,7 +31,6 @@ public class SchemaSyntaxHighlighter extends SyntaxHighlighterBase {
   public static final TextAttributesKey PLUS = DefaultLanguageHighlighterColors.OPERATION_SIGN; // ??
   public static final TextAttributesKey LINE_COMMENT = DefaultLanguageHighlighterColors.LINE_COMMENT;
   public static final TextAttributesKey BLOCK_COMMENT = DefaultLanguageHighlighterColors.BLOCK_COMMENT;
-  public static final TextAttributesKey STRING = DefaultLanguageHighlighterColors.STRING;
   public static final TextAttributesKey CURLY_BR = DefaultLanguageHighlighterColors.BRACES;
   public static final TextAttributesKey BRACKETS = DefaultLanguageHighlighterColors.BRACKETS;
   public static final TextAttributesKey KEYWORDS = DefaultLanguageHighlighterColors.KEYWORD;
@@ -55,7 +54,6 @@ public class SchemaSyntaxHighlighter extends SyntaxHighlighterBase {
     keys.put(S_PLUS, PLUS);
     keys.put(S_COMMENT, LINE_COMMENT);
     keys.put(S_BLOCK_COMMENT, BLOCK_COMMENT);
-    keys.put(S_STRING, STRING);
     add(BRACKETS, S_BRACKET_LEFT, S_BRACKET_RIGHT);
     add(CURLY_BR, SchemaParserDefinition.CURLY_BRACES.getTypes());
     add(KEYWORDS, SchemaParserDefinition.KEYWORDS.getTypes());

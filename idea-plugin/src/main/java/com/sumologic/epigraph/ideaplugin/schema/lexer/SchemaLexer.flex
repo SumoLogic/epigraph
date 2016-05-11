@@ -20,6 +20,8 @@ import static com.sumologic.epigraph.ideaplugin.schema.lexer.SchemaElementTypes.
 %type IElementType
 %unicode
 
+%states DATA_VALUE
+
 EOL="\r"|"\n"|"\r\n"
 LINE_WS=[\ \t\f]
 WHITE_SPACE=({LINE_WS}|{EOL})+
@@ -31,7 +33,8 @@ SPACE=[ \t\n\x0B\f\r]+
 BLOCK_COMMENT="/*" !([^]* "*/" [^]*) ("*/")?
 LINE_COMMENT="/""/"[^\r\n]*
 
-STRING=('([^'\\]|\\.)*'|\"([^\"\\]|\\.)*\")
+//STRING=('([^'\\]|\\.)*'|\"([^\"\\]|\\.)*\")
+DATA_VALUE=[^;]*
 ID=[:letter:]([:letter:]|[:digit:])*
 
 %%
@@ -59,10 +62,11 @@ ID=[:letter:]([:letter:]|[:digit:])*
   "boolean"            { return curlyCount == 0 ? S_BOOLEAN_T : S_ID; }
   "string"             { return curlyCount == 0 ? S_STRING_T : S_ID; }
   ":"                  { return S_COLON; }
+  ";"                  { return S_SEMI_COLON; }
   "*"                  { return S_STAR; }
   "."                  { return S_DOT; }
   ","                  { return S_COMMA; }
-  "="                  { return S_EQ; }
+  "="                  { yybegin(DATA_VALUE); return S_EQ; }
   "+"                  { return S_PLUS; }
   "{"                  { curlyCount++; return S_CURLY_LEFT; }
   "}"                  { curlyCount = (curlyCount == 0 ? 0 : curlyCount - 1) ; return S_CURLY_RIGHT; }
@@ -71,8 +75,14 @@ ID=[:letter:]([:letter:]|[:digit:])*
 
   {LINE_COMMENT}       { return S_COMMENT; }
   {BLOCK_COMMENT}      { return S_BLOCK_COMMENT; }
-  {STRING}             { return S_STRING; }
+//  {STRING}             { return S_STRING; }
   {ID}                 { return S_ID; }
 
-  [^] { return com.intellij.psi.TokenType.BAD_CHARACTER; }
+  [^]                  { return com.intellij.psi.TokenType.BAD_CHARACTER; }
+}
+
+<DATA_VALUE> {
+  // TODO find a way to implement escaping for ';' inside data
+  {DATA_VALUE}         { return S_DATA_VALUE; }
+  ";"                  { yybegin(YYINITIAL); return S_SEMI_COLON; }
 }

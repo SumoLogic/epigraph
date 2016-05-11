@@ -33,15 +33,21 @@ public class SchemaCustomParamImpl extends ASTWrapperPsiElement implements Schem
   }
 
   @Override
-  @NotNull
-  public PsiElement getId() {
-    return findNotNullChildByType(S_ID);
+  @Nullable
+  public PsiElement getSemiColon() {
+    return findChildByType(S_SEMI_COLON);
   }
 
   @Override
   @Nullable
-  public PsiElement getString() {
-    return findChildByType(S_STRING);
+  public PsiElement getDataValue() {
+    return findChildByType(S_DATA_VALUE);
+  }
+
+  @Override
+  @NotNull
+  public PsiElement getId() {
+    return findNotNullChildByType(S_ID);
   }
 
   @Nullable

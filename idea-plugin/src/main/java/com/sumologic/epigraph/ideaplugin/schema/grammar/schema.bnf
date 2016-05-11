@@ -37,6 +37,7 @@
     STRING_T='string'
 
     COLON = ':'
+    SEMI_COLON = ';'
     DOT = '.'
     COMMA = ','
     EQ = '='
@@ -50,7 +51,9 @@
     space='regexp:\s+'
     comment='regexp://.*'
     block_comment='regexp:/\*((?<!\*/)(.|\n))*'
-    string="regexp:('([^'\\]|\\.)*'|\"([^\"\\]|\\.)*\")"
+    //string="regexp:('([^'\\]|\\.)*'|\"([^\"\\]|\\.)*\")"
+
+    data_value='regexp:\|' // DUMMY, real implementation in SchemaLexer.flex
 
     // id = 'regexp:_?(\p{Lower})\p{Alnum}*'
     id = 'regexp:\p{Alpha}\p{Alnum}*'
@@ -110,11 +113,12 @@ anonMap ::= 'map' '[' fqnTypeRef ',' fqnTypeRef defaultOverride? ']' {pin=1} // 
 
 extendsDecl ::= 'extends' typeRef (',' typeRef)*
 defaultOverride ::= 'default' id
-customParam ::= id '=' string  {
+customParam ::= id '=' data_value ';' {
   name="custom attribute"
   implements="com.intellij.psi.PsiNamedElement"
   methods = [getName setName getNameIdentifier]
   pin = 2
+  // recoverWhile = paramRecover
 }// TODO real data parsing
 
 metaDecl ::= 'meta' fqnTypeRef // we don't allow anonList or anonMap as meta
@@ -196,4 +200,5 @@ supplementDef ::= 'supplement' combinedFqns (',' combinedFqns)* 'with' fqnTypeRe
 combinedFqns ::= fqnTypeRef ('+' fqnTypeRef)*
 
 private declRecover ::= ! ('import' | 'namespace' | 'record' | 'union' | 'map' | 'list' | 'multi' | 'enum' | 'supplement'| primitiveKind)
-private partRecover ::= ! ('}' | id | 'default')
+private partRecover ::= ! ('}' | id | 'default' )
+// private paramRecover ::= ! (';')
