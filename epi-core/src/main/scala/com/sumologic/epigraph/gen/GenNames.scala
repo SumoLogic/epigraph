@@ -1,8 +1,8 @@
 /* Created by yegor on 4/26/16. */
 
-package com.sumologic.epigraph.core
+package com.sumologic.epigraph.gen
 
-trait Names { // TODO use raw.Names implementation and drop member types all together?
+trait GenNames { // TODO use RawNames implementation and drop member types all together?
 
   type Name >: Null <: AnyRef with NameApi
 
@@ -29,9 +29,9 @@ trait Names { // TODO use raw.Names implementation and drop member types all tog
   type EnumMemberName >: Null <: LocalName with EnumMemberNameApi
 
 
-  trait Named {
+  trait Named[N <: Name] {
 
-    def name: Name
+    def name: N
 
   }
 

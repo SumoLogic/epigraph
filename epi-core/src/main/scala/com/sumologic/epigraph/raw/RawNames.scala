@@ -2,12 +2,11 @@
 
 package com.sumologic.epigraph.raw
 
-import com.sumologic.epigraph.core
-import com.sumologic.epigraph.core.NamingConvention
+import com.sumologic.epigraph.gen.{GenNames, NamingConvention}
 
 import scala.language.implicitConversions
 
-trait Names extends core.Names {
+trait RawNames extends GenNames {
 
   override type Name = NameApi // TODO remove such type members? probably not - these allow to provide enhanced common features
 

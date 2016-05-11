@@ -1,6 +1,6 @@
 /* Created by yegor on 4/29/16. */
 
-package com.sumologic.epigraph.core
+package com.sumologic.epigraph.gen
 
 import scala.util.matching.Regex
 
