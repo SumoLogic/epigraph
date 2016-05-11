@@ -11,14 +11,14 @@ import static com.sumologic.epigraph.ideaplugin.schema.lexer.SchemaElementTypes.
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.sumologic.epigraph.ideaplugin.schema.psi.*;
 
-public class SchemaAnonMapImpl extends ASTWrapperPsiElement implements SchemaAnonMap {
+public class SchemaAnonUnionImpl extends ASTWrapperPsiElement implements SchemaAnonUnion {
 
-  public SchemaAnonMapImpl(ASTNode node) {
+  public SchemaAnonUnionImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull SchemaVisitor visitor) {
-    visitor.visitAnonMap(this);
+    visitor.visitAnonUnion(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -34,32 +34,26 @@ public class SchemaAnonMapImpl extends ASTWrapperPsiElement implements SchemaAno
 
   @Override
   @NotNull
-  public List<SchemaTypeRef> getTypeRefList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaTypeRef.class);
-  }
-
-  @Override
-  @Nullable
-  public PsiElement getBracketLeft() {
-    return findChildByType(S_BRACKET_LEFT);
-  }
-
-  @Override
-  @Nullable
-  public PsiElement getBracketRight() {
-    return findChildByType(S_BRACKET_RIGHT);
-  }
-
-  @Override
-  @Nullable
-  public PsiElement getComma() {
-    return findChildByType(S_COMMA);
+  public SchemaTypeRef getTypeRef() {
+    return findNotNullChildByClass(SchemaTypeRef.class);
   }
 
   @Override
   @NotNull
-  public PsiElement getMap() {
-    return findNotNullChildByType(S_MAP);
+  public PsiElement getBracketLeft() {
+    return findNotNullChildByType(S_BRACKET_LEFT);
+  }
+
+  @Override
+  @NotNull
+  public PsiElement getBracketRight() {
+    return findNotNullChildByType(S_BRACKET_RIGHT);
+  }
+
+  @Override
+  @NotNull
+  public PsiElement getUnion() {
+    return findNotNullChildByType(S_UNION);
   }
 
 }

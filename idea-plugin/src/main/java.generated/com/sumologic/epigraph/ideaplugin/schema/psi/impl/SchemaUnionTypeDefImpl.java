@@ -33,6 +33,12 @@ public class SchemaUnionTypeDefImpl extends SchemaTypeDefImpl implements SchemaU
 
   @Override
   @Nullable
+  public SchemaTagCommonType getTagCommonType() {
+    return findChildByClass(SchemaTagCommonType.class);
+  }
+
+  @Override
+  @Nullable
   public SchemaUnionTypeBody getUnionTypeBody() {
     return findChildByClass(SchemaUnionTypeBody.class);
   }

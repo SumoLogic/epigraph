@@ -29,6 +29,9 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     else if (t == S_ANON_MAP) {
       r = anonMap(b, 0);
     }
+    else if (t == S_ANON_UNION) {
+      r = anonUnion(b, 0);
+    }
     else if (t == S_COMBINED_FQNS) {
       r = combinedFqns(b, 0);
     }
@@ -125,6 +128,9 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     else if (t == S_SUPPLEMENT_DEF) {
       r = supplementDef(b, 0);
     }
+    else if (t == S_TAG_COMMON_TYPE) {
+      r = tagCommonType(b, 0);
+    }
     else if (t == S_TAG_DECL) {
       r = tagDecl(b, 0);
     }
@@ -156,7 +162,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   };
 
   /* ********************************************************** */
-  // 'list' '[' fqnTypeRef defaultOverride? ']'
+  // 'list' '[' typeRef defaultOverride? ']'
   public static boolean anonList(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "anonList")) return false;
     if (!nextTokenIs(b, S_LIST)) return false;
@@ -165,7 +171,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     r = consumeToken(b, S_LIST);
     p = r; // pin = 1
     r = r && report_error_(b, consumeToken(b, S_BRACKET_LEFT));
-    r = p && report_error_(b, fqnTypeRef(b, l + 1)) && r;
+    r = p && report_error_(b, typeRef(b, l + 1)) && r;
     r = p && report_error_(b, anonList_3(b, l + 1)) && r;
     r = p && consumeToken(b, S_BRACKET_RIGHT) && r;
     exit_section_(b, l, m, r, p, null);
@@ -180,7 +186,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'map' '[' fqnTypeRef ',' fqnTypeRef defaultOverride? ']'
+  // 'map' '[' typeRef ',' typeRef defaultOverride? ']'
   public static boolean anonMap(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "anonMap")) return false;
     if (!nextTokenIs(b, S_MAP)) return false;
@@ -189,9 +195,9 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     r = consumeToken(b, S_MAP);
     p = r; // pin = 1
     r = r && report_error_(b, consumeToken(b, S_BRACKET_LEFT));
-    r = p && report_error_(b, fqnTypeRef(b, l + 1)) && r;
+    r = p && report_error_(b, typeRef(b, l + 1)) && r;
     r = p && report_error_(b, consumeToken(b, S_COMMA)) && r;
-    r = p && report_error_(b, fqnTypeRef(b, l + 1)) && r;
+    r = p && report_error_(b, typeRef(b, l + 1)) && r;
     r = p && report_error_(b, anonMap_5(b, l + 1)) && r;
     r = p && consumeToken(b, S_BRACKET_RIGHT) && r;
     exit_section_(b, l, m, r, p, null);
@@ -201,6 +207,29 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   // defaultOverride?
   private static boolean anonMap_5(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "anonMap_5")) return false;
+    defaultOverride(b, l + 1);
+    return true;
+  }
+
+  /* ********************************************************** */
+  // 'union' '[' typeRef defaultOverride? ']'
+  public static boolean anonUnion(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "anonUnion")) return false;
+    if (!nextTokenIs(b, S_UNION)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, S_UNION);
+    r = r && consumeToken(b, S_BRACKET_LEFT);
+    r = r && typeRef(b, l + 1);
+    r = r && anonUnion_3(b, l + 1);
+    r = r && consumeToken(b, S_BRACKET_RIGHT);
+    exit_section_(b, m, S_ANON_UNION, r);
+    return r;
+  }
+
+  // defaultOverride?
+  private static boolean anonUnion_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "anonUnion_3")) return false;
     defaultOverride(b, l + 1);
     return true;
   }
@@ -1058,28 +1087,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ! (';')
-  static boolean paramRecover(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "paramRecover")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NOT_);
-    r = !paramRecover_0(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  // (';')
-  private static boolean paramRecover_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "paramRecover_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, S_SEMI_COLON);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // ! ('}' | id | 'default')
+  // ! ('}' | id | 'default' )
   static boolean partRecover(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "partRecover")) return false;
     boolean r;
@@ -1419,6 +1427,28 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // '[' fqnTypeRef defaultOverride? ']'
+  public static boolean tagCommonType(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "tagCommonType")) return false;
+    if (!nextTokenIs(b, S_BRACKET_LEFT)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, S_BRACKET_LEFT);
+    r = r && fqnTypeRef(b, l + 1);
+    r = r && tagCommonType_2(b, l + 1);
+    r = r && consumeToken(b, S_BRACKET_RIGHT);
+    exit_section_(b, m, S_TAG_COMMON_TYPE, r);
+    return r;
+  }
+
+  // defaultOverride?
+  private static boolean tagCommonType_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "tagCommonType_2")) return false;
+    defaultOverride(b, l + 1);
+    return true;
+  }
+
+  /* ********************************************************** */
   // id ':' typeRef defaultOverride? tagBody?
   public static boolean tagDecl(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "tagDecl")) return false;
@@ -1474,7 +1504,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // fqnTypeRef | anonList | anonMap
+  // fqnTypeRef | anonList | anonMap | anonUnion
   public static boolean typeRef(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "typeRef")) return false;
     boolean r;
@@ -1482,6 +1512,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     r = fqnTypeRef(b, l + 1);
     if (!r) r = anonList(b, l + 1);
     if (!r) r = anonMap(b, l + 1);
+    if (!r) r = anonUnion(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
@@ -1526,7 +1557,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'union' typeName metaDecl? unionTypeBody
+  // 'union' tagCommonType? typeName metaDecl? unionTypeBody
   public static boolean unionTypeDef(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "unionTypeDef")) return false;
     if (!nextTokenIs(b, S_UNION)) return false;
@@ -1534,16 +1565,24 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b, l, _NONE_, S_UNION_TYPE_DEF, null);
     r = consumeToken(b, S_UNION);
     p = r; // pin = 1
-    r = r && report_error_(b, typeName(b, l + 1));
-    r = p && report_error_(b, unionTypeDef_2(b, l + 1)) && r;
+    r = r && report_error_(b, unionTypeDef_1(b, l + 1));
+    r = p && report_error_(b, typeName(b, l + 1)) && r;
+    r = p && report_error_(b, unionTypeDef_3(b, l + 1)) && r;
     r = p && unionTypeBody(b, l + 1) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
 
+  // tagCommonType?
+  private static boolean unionTypeDef_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "unionTypeDef_1")) return false;
+    tagCommonType(b, l + 1);
+    return true;
+  }
+
   // metaDecl?
-  private static boolean unionTypeDef_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "unionTypeDef_2")) return false;
+  private static boolean unionTypeDef_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "unionTypeDef_3")) return false;
     metaDecl(b, l + 1);
     return true;
   }

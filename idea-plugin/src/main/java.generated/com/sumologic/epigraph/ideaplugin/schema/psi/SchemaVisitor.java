@@ -17,6 +17,10 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitAnonUnion(@NotNull SchemaAnonUnion o) {
+    visitPsiElement(o);
+  }
+
   public void visitCombinedFqns(@NotNull SchemaCombinedFqns o) {
     visitPsiElement(o);
   }
@@ -145,6 +149,10 @@ public class SchemaVisitor extends PsiElementVisitor {
   }
 
   public void visitSupplementDef(@NotNull SchemaSupplementDef o) {
+    visitPsiElement(o);
+  }
+
+  public void visitTagCommonType(@NotNull SchemaTagCommonType o) {
     visitPsiElement(o);
   }
 

@@ -10,6 +10,7 @@ public interface SchemaElementTypes {
 
   IElementType S_ANON_LIST = new SchemaElementType("S_ANON_LIST");
   IElementType S_ANON_MAP = new SchemaElementType("S_ANON_MAP");
+  IElementType S_ANON_UNION = new SchemaElementType("S_ANON_UNION");
   IElementType S_COMBINED_FQNS = new SchemaElementType("S_COMBINED_FQNS");
   IElementType S_CUSTOM_PARAM = new SchemaElementType("S_CUSTOM_PARAM");
   IElementType S_DEFAULT_OVERRIDE = new SchemaElementType("S_DEFAULT_OVERRIDE");
@@ -42,6 +43,7 @@ public interface SchemaElementTypes {
   IElementType S_RECORD_TYPE_DEF = new SchemaElementType("S_RECORD_TYPE_DEF");
   IElementType S_STAR_IMPORT_SUFFIX = new SchemaElementType("S_STAR_IMPORT_SUFFIX");
   IElementType S_SUPPLEMENT_DEF = new SchemaElementType("S_SUPPLEMENT_DEF");
+  IElementType S_TAG_COMMON_TYPE = new SchemaElementType("S_TAG_COMMON_TYPE");
   IElementType S_TAG_DECL = new SchemaElementType("S_TAG_DECL");
   IElementType S_TYPE_DEF = new SchemaElementType("S_TYPE_DEF");
   IElementType S_TYPE_REF = new SchemaElementType("S_TYPE_REF");
@@ -91,6 +93,9 @@ public interface SchemaElementTypes {
       }
       else if (type == S_ANON_MAP) {
         return new SchemaAnonMapImpl(node);
+      }
+      else if (type == S_ANON_UNION) {
+        return new SchemaAnonUnionImpl(node);
       }
       else if (type == S_COMBINED_FQNS) {
         return new SchemaCombinedFqnsImpl(node);
@@ -187,6 +192,9 @@ public interface SchemaElementTypes {
       }
       else if (type == S_SUPPLEMENT_DEF) {
         return new SchemaSupplementDefImpl(node);
+      }
+      else if (type == S_TAG_COMMON_TYPE) {
+        return new SchemaTagCommonTypeImpl(node);
       }
       else if (type == S_TAG_DECL) {
         return new SchemaTagDeclImpl(node);

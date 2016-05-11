@@ -94,7 +94,7 @@ fqnSegment ::= id {
 fqn ::= fqnSegment ('.' fqnSegment)* { methods=[getFqn] }
 
 private typeName ::= id
-typeRef ::= fqnTypeRef | anonList | anonMap {name="type"}
+typeRef ::= fqnTypeRef | anonList | anonMap | anonUnion {name="type"}
 fqnTypeRef ::= fqn
 
 defs ::= def*
@@ -108,12 +108,13 @@ typeDef ::= multiTypeDef | recordTypeDef | unionTypeDef | mapTypeDef | listTypeD
               methods = [getName setName getNameIdentifier getTextOffset delete getKind]
             }
 
-anonList ::= 'list' '[' fqnTypeRef defaultOverride? ']' {pin=1}// TODO rename to `listType`? `concreteList`?
-anonMap ::= 'map' '[' fqnTypeRef ',' fqnTypeRef defaultOverride? ']' {pin=1} // TODO rename to `mapType`?
+anonList ::= 'list' '[' typeRef defaultOverride? ']' {pin=1}// TODO rename to `listType`? `concreteList`?
+anonMap ::= 'map' '[' typeRef ',' typeRef defaultOverride? ']' {pin=1} // TODO rename to `mapType`?
+anonUnion ::= 'union' '[' typeRef defaultOverride? ']'
 
 extendsDecl ::= 'extends' typeRef (',' typeRef)*
 defaultOverride ::= 'default' id
-customParam ::= id '=' data_value ';' {
+customParam ::= id '=' data_value ';' { // TODO make editor auto-insert ';' after typing '=' ?
   name="custom attribute"
   implements="com.intellij.psi.PsiNamedElement"
   methods = [getName setName getNameIdentifier]
@@ -152,7 +153,8 @@ fieldDecl ::= id ':' typeRef defaultOverride? fieldBody? {
 private fieldBody ::= '{' fieldBodyPart* '}'
 private fieldBodyPart ::= customParam
 
-unionTypeDef ::= 'union' typeName metaDecl? unionTypeBody
+unionTypeDef ::= 'union' tagCommonType? typeName metaDecl? unionTypeBody
+tagCommonType ::= '[' fqnTypeRef defaultOverride? ']'
 unionTypeBody ::= '{' unionBodyPart* '}'
 private unionBodyPart ::= tagDecl | customParam
 tagDecl ::= id ':' typeRef defaultOverride? tagBody? {

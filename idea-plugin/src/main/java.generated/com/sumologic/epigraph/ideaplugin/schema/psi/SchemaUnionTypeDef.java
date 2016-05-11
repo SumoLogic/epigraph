@@ -11,6 +11,9 @@ public interface SchemaUnionTypeDef extends SchemaTypeDef {
   SchemaMetaDecl getMetaDecl();
 
   @Nullable
+  SchemaTagCommonType getTagCommonType();
+
+  @Nullable
   SchemaUnionTypeBody getUnionTypeBody();
 
   @NotNull

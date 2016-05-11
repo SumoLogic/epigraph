@@ -40,6 +40,12 @@ public class SchemaTypeRefImpl extends ASTWrapperPsiElement implements SchemaTyp
 
   @Override
   @Nullable
+  public SchemaAnonUnion getAnonUnion() {
+    return findChildByClass(SchemaAnonUnion.class);
+  }
+
+  @Override
+  @Nullable
   public SchemaFqnTypeRef getFqnTypeRef() {
     return findChildByClass(SchemaFqnTypeRef.class);
   }

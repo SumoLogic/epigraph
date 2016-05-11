@@ -5,21 +5,18 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface SchemaAnonList extends PsiElement {
+public interface SchemaTagCommonType extends PsiElement {
 
   @Nullable
   SchemaDefaultOverride getDefaultOverride();
 
-  @Nullable
-  SchemaTypeRef getTypeRef();
-
-  @Nullable
-  PsiElement getBracketLeft();
-
-  @Nullable
-  PsiElement getBracketRight();
+  @NotNull
+  SchemaFqnTypeRef getFqnTypeRef();
 
   @NotNull
-  PsiElement getList();
+  PsiElement getBracketLeft();
+
+  @NotNull
+  PsiElement getBracketRight();
 
 }
