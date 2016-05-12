@@ -35,6 +35,7 @@ public class SchemaParserDefinition implements ParserDefinition {
       S_IMPORT,
       S_MAP,
       S_DEFAULT,
+      S_NODEFAULT,
       S_LIST,
       S_RECORD,
       S_EXTENDS,

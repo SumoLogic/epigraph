@@ -32,9 +32,9 @@ public class SchemaVarTypeMemberDeclImpl extends CustomParamHolderImpl implement
   }
 
   @Override
-  @Nullable
+  @NotNull
   public SchemaTypeRef getTypeRef() {
-    return findChildByClass(SchemaTypeRef.class);
+    return findNotNullChildByClass(SchemaTypeRef.class);
   }
 
   @Override
@@ -53,12 +53,6 @@ public class SchemaVarTypeMemberDeclImpl extends CustomParamHolderImpl implement
   @Nullable
   public PsiElement getCurlyRight() {
     return findChildByType(S_CURLY_RIGHT);
-  }
-
-  @Override
-  @Nullable
-  public PsiElement getDefault() {
-    return findChildByType(S_DEFAULT);
   }
 
   @Override

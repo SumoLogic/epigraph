@@ -27,15 +27,21 @@ public class SchemaDefaultOverrideImpl extends ASTWrapperPsiElement implements S
   }
 
   @Override
-  @NotNull
+  @Nullable
   public PsiElement getDefault() {
-    return findNotNullChildByType(S_DEFAULT);
+    return findChildByType(S_DEFAULT);
   }
 
   @Override
-  @NotNull
+  @Nullable
+  public PsiElement getNodefault() {
+    return findChildByType(S_NODEFAULT);
+  }
+
+  @Override
+  @Nullable
   public PsiElement getId() {
-    return findNotNullChildByType(S_ID);
+    return findChildByType(S_ID);
   }
 
 }

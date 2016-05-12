@@ -19,6 +19,7 @@
     IMPORT = 'import'
     MAP = 'map'
     DEFAULT = 'default'
+    NODEFAULT = 'nodefault'
     LIST = 'list'
     RECORD = 'record'
     EXTENDS = 'extends'
@@ -113,7 +114,7 @@ anonMap ::= 'map' '[' typeRef ',' typeRef defaultOverride? ']' {pin=1} // TODO r
 anonUnion ::= 'union' '[' typeRef defaultOverride? ']'
 
 extendsDecl ::= 'extends' typeRef (',' typeRef)*
-defaultOverride ::= 'default' id
+defaultOverride ::= 'nodefault' | 'default' id
 customParam ::= id '=' data_value ';' { // TODO make editor auto-insert ';' after typing '=' ?
   name="custom attribute"
   implements="com.intellij.psi.PsiNamedElement"
@@ -127,11 +128,11 @@ metaDecl ::= 'meta' fqnTypeRef // we don't allow anonList or anonMap as meta
 // TODO: extends for: record, map, list, primitive
 // supplements for the above, A+B+C for record only
 
-varTypeDef ::= 'vartype' typeName extendsDecl? varTypeSupplementsDecl? varTypeBody?
+varTypeDef ::= 'vartype' typeName extendsDecl? varTypeSupplementsDecl? defaultOverride? varTypeBody?
 varTypeSupplementsDecl ::= 'supplements' fqnTypeRef (',' fqnTypeRef)*
 varTypeBody ::= '{' varTypeBodyPart* '}'
 private varTypeBodyPart ::= varTypeMemberDecl | customParam
-varTypeMemberDecl ::= 'default'? id ':' typeRef memberBody? {
+varTypeMemberDecl ::= id ':' typeRef memberBody? {
   implements=["com.sumologic.epigraph.ideaplugin.schema.psi.CustomParamsHolder" "com.intellij.psi.PsiNamedElement"]
   extends="com.sumologic.epigraph.ideaplugin.schema.psi.impl.CustomParamHolderImpl"
   methods=[getName setName getNameIdentifier]

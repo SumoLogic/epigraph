@@ -11,7 +11,7 @@ public interface SchemaVarTypeMemberDecl extends CustomParamsHolder, PsiNamedEle
   @NotNull
   List<SchemaCustomParam> getCustomParamList();
 
-  @Nullable
+  @NotNull
   SchemaTypeRef getTypeRef();
 
   @NotNull
@@ -22,9 +22,6 @@ public interface SchemaVarTypeMemberDecl extends CustomParamsHolder, PsiNamedEle
 
   @Nullable
   PsiElement getCurlyRight();
-
-  @Nullable
-  PsiElement getDefault();
 
   @NotNull
   PsiElement getId();

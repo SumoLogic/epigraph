@@ -44,7 +44,8 @@ ID=[:letter:]([:letter:]|[:digit:])*
 
   "import"             { return curlyCount == 0 ? S_IMPORT : S_ID; }
   "namespace"          { return curlyCount == 0 ? S_NAMESPACE : S_ID; }
-  "default"            { return curlyCount < 2 ? S_DEFAULT : S_ID; }
+  "default"            { return curlyCount == 0 ? S_DEFAULT : S_ID; }
+  "nodefault"          { return curlyCount == 0 ? S_NODEFAULT : S_ID; }
   "map"                { return curlyCount < 2 ? S_MAP : S_ID; }
   "list"               { return curlyCount < 2 ? S_LIST : S_ID; }
   "record"             { return curlyCount == 0 ? S_RECORD : S_ID; }

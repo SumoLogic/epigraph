@@ -73,9 +73,9 @@ public class SchemaStructureViewElement implements StructureViewTreeElement {
     if (element instanceof SchemaVarTypeMemberDecl) {
       SchemaVarTypeMemberDecl varTypeMemberDecl = (SchemaVarTypeMemberDecl) element;
       Icon icon = PlatformIcons.FUNCTION_ICON;
-      if (varTypeMemberDecl.getDefault() != null) {
-        icon = IconUtil.addText(icon, "D"); // TODO separate icon for default member
-      }
+//      if (varTypeMemberDecl.getDefault() != null) {
+//        icon = IconUtil.addText(icon, "D"); // TODO separate icon for default member
+//      }
 
       return new StaticItemPresentation(varTypeMemberDecl.getId().getText(), null, icon);
     }

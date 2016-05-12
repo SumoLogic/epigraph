@@ -27,6 +27,12 @@ public class SchemaVarTypeDefImpl extends SchemaTypeDefImpl implements SchemaVar
 
   @Override
   @Nullable
+  public SchemaDefaultOverride getDefaultOverride() {
+    return findChildByClass(SchemaDefaultOverride.class);
+  }
+
+  @Override
+  @Nullable
   public SchemaExtendsDecl getExtendsDecl() {
     return findChildByClass(SchemaExtendsDecl.class);
   }

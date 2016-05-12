@@ -7,6 +7,6 @@ record Baz {
   field: SomeType
 }
 
-vartype Var {
-  default baz: Baz
+vartype Var default baz {
+  baz: Baz
 }

@@ -7,10 +7,13 @@ import com.intellij.psi.PsiElement;
 
 public interface SchemaDefaultOverride extends PsiElement {
 
-  @NotNull
+  @Nullable
   PsiElement getDefault();
 
-  @NotNull
+  @Nullable
+  PsiElement getNodefault();
+
+  @Nullable
   PsiElement getId();
 
 }

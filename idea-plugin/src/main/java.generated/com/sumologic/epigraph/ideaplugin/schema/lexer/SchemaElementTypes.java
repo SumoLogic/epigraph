@@ -74,6 +74,7 @@ public interface SchemaElementTypes {
   IElementType S_MAP = new SchemaElementType("map");
   IElementType S_META = new SchemaElementType("meta");
   IElementType S_NAMESPACE = new SchemaElementType("namespace");
+  IElementType S_NODEFAULT = new SchemaElementType("nodefault");
   IElementType S_PLUS = new SchemaElementType("+");
   IElementType S_RECORD = new SchemaElementType("record");
   IElementType S_SEMI_COLON = new SchemaElementType(";");

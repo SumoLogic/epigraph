@@ -329,15 +329,26 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'default' id
+  // 'nodefault' | 'default' id
   public static boolean defaultOverride(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "defaultOverride")) return false;
-    if (!nextTokenIs(b, S_DEFAULT)) return false;
+    if (!nextTokenIs(b, "<default override>", S_DEFAULT, S_NODEFAULT)) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, S_DEFAULT_OVERRIDE, "<default override>");
+    r = consumeToken(b, S_NODEFAULT);
+    if (!r) r = defaultOverride_1(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // 'default' id
+  private static boolean defaultOverride_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "defaultOverride_1")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, S_DEFAULT);
     r = r && consumeToken(b, S_ID);
-    exit_section_(b, m, S_DEFAULT_OVERRIDE, r);
+    exit_section_(b, m, null, r);
     return r;
   }
 
@@ -1482,7 +1493,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'vartype' typeName extendsDecl? varTypeSupplementsDecl? varTypeBody?
+  // 'vartype' typeName extendsDecl? varTypeSupplementsDecl? defaultOverride? varTypeBody?
   public static boolean varTypeDef(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "varTypeDef")) return false;
     if (!nextTokenIs(b, S_VARTYPE)) return false;
@@ -1493,7 +1504,8 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     r = r && report_error_(b, typeName(b, l + 1));
     r = p && report_error_(b, varTypeDef_2(b, l + 1)) && r;
     r = p && report_error_(b, varTypeDef_3(b, l + 1)) && r;
-    r = p && varTypeDef_4(b, l + 1) && r;
+    r = p && report_error_(b, varTypeDef_4(b, l + 1)) && r;
+    r = p && varTypeDef_5(b, l + 1) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -1512,40 +1524,39 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // varTypeBody?
+  // defaultOverride?
   private static boolean varTypeDef_4(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "varTypeDef_4")) return false;
+    defaultOverride(b, l + 1);
+    return true;
+  }
+
+  // varTypeBody?
+  private static boolean varTypeDef_5(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "varTypeDef_5")) return false;
     varTypeBody(b, l + 1);
     return true;
   }
 
   /* ********************************************************** */
-  // 'default'? id ':' typeRef memberBody?
+  // id ':' typeRef memberBody?
   public static boolean varTypeMemberDecl(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "varTypeMemberDecl")) return false;
-    if (!nextTokenIs(b, "<var type member decl>", S_DEFAULT, S_ID)) return false;
+    if (!nextTokenIs(b, S_ID)) return false;
     boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, S_VAR_TYPE_MEMBER_DECL, "<var type member decl>");
-    r = varTypeMemberDecl_0(b, l + 1);
-    r = r && consumeToken(b, S_ID);
+    Marker m = enter_section_(b, l, _NONE_, S_VAR_TYPE_MEMBER_DECL, null);
+    r = consumeToken(b, S_ID);
     r = r && consumeToken(b, S_COLON);
+    r = r && typeRef(b, l + 1);
     p = r; // pin = 3
-    r = r && report_error_(b, typeRef(b, l + 1));
-    r = p && varTypeMemberDecl_4(b, l + 1) && r;
+    r = r && varTypeMemberDecl_3(b, l + 1);
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
 
-  // 'default'?
-  private static boolean varTypeMemberDecl_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "varTypeMemberDecl_0")) return false;
-    consumeToken(b, S_DEFAULT);
-    return true;
-  }
-
   // memberBody?
-  private static boolean varTypeMemberDecl_4(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "varTypeMemberDecl_4")) return false;
+  private static boolean varTypeMemberDecl_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "varTypeMemberDecl_3")) return false;
     memberBody(b, l + 1);
     return true;
   }

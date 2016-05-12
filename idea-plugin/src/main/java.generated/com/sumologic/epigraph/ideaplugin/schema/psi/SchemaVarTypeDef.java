@@ -8,6 +8,9 @@ import com.intellij.psi.PsiElement;
 public interface SchemaVarTypeDef extends SchemaTypeDef {
 
   @Nullable
+  SchemaDefaultOverride getDefaultOverride();
+
+  @Nullable
   SchemaExtendsDecl getExtendsDecl();
 
   @Nullable
