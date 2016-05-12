@@ -44,7 +44,7 @@ public class LexerTest {
         "integer Ыва\n" +
         "record MyType2 extends foo.Type {\n" +
         "  prop = this is some data;\n" +
-        "  field: Integer\n" +
+        "  `field`: Integer\n" +
         "}\n" +
         "vartype MyType3 {\n" +
         "  record: MyType2\n" +
@@ -55,7 +55,7 @@ public class LexerTest {
         S_INTEGER_T, S_ID,
         S_RECORD, S_ID, S_EXTENDS, S_ID, S_DOT, S_ID, S_CURLY_LEFT,
         S_ID, S_EQ, S_DATA_VALUE, S_SEMI_COLON,
-        S_ID, S_COLON, S_ID,
+        S_BACKTICK, S_ID, S_BACKTICK, S_COLON, S_ID,
         S_CURLY_RIGHT,
         S_VARTYPE, S_ID, S_CURLY_LEFT,
         S_ID, S_COLON, S_ID,

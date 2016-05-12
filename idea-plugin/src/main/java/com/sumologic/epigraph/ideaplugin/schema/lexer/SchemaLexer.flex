@@ -20,7 +20,7 @@ import static com.sumologic.epigraph.ideaplugin.schema.lexer.SchemaElementTypes.
 %type IElementType
 %unicode
 
-%states DATA_VALUE
+%states BACKTICK, DATA_VALUE
 
 EOL="\r"|"\n"|"\r\n"
 LINE_WS=[\ \t\f]
@@ -33,7 +33,6 @@ SPACE=[ \t\n\x0B\f\r]+
 BLOCK_COMMENT="/*" !([^]* "*/" [^]*) ("*/")?
 LINE_COMMENT="/""/"[^\r\n]*
 
-//STRING=('([^'\\]|\\.)*'|\"([^\"\\]|\\.)*\")
 DATA_VALUE=[^;]*
 ID=[:letter:]([:letter:]|[:digit:])*
 
@@ -42,10 +41,12 @@ ID=[:letter:]([:letter:]|[:digit:])*
   {WHITE_SPACE}        { return com.intellij.psi.TokenType.WHITE_SPACE; }
   {SPACE}              { return com.intellij.psi.TokenType.WHITE_SPACE; }
 
+   "`"                  { yybegin(BACKTICK); return S_BACKTICK; }
+
   "import"             { return curlyCount == 0 ? S_IMPORT : S_ID; }
   "namespace"          { return curlyCount == 0 ? S_NAMESPACE : S_ID; }
-  "default"            { return curlyCount == 0 ? S_DEFAULT : S_ID; }
-  "nodefault"          { return curlyCount == 0 ? S_NODEFAULT : S_ID; }
+  "default"            { return curlyCount < 2 ? S_DEFAULT : S_ID; }
+  "nodefault"          { return curlyCount < 2 ? S_NODEFAULT : S_ID; }
   "map"                { return curlyCount < 2 ? S_MAP : S_ID; }
   "list"               { return curlyCount < 2 ? S_LIST : S_ID; }
   "record"             { return curlyCount == 0 ? S_RECORD : S_ID; }
@@ -76,9 +77,14 @@ ID=[:letter:]([:letter:]|[:digit:])*
 
   {LINE_COMMENT}       { return S_COMMENT; }
   {BLOCK_COMMENT}      { return S_BLOCK_COMMENT; }
-//  {STRING}             { return S_STRING; }
   {ID}                 { return S_ID; }
 
+  [^]                  { return com.intellij.psi.TokenType.BAD_CHARACTER; }
+}
+
+<BACKTICK> {
+  {ID}                 { return S_ID; }
+  "`"                  { yybegin(YYINITIAL); return S_BACKTICK; }
   [^]                  { return com.intellij.psi.TokenType.BAD_CHARACTER; }
 }
 
@@ -86,4 +92,5 @@ ID=[:letter:]([:letter:]|[:digit:])*
   // TODO find a way to implement escaping for ';' inside data
   {DATA_VALUE}         { return S_DATA_VALUE; }
   ";"                  { yybegin(YYINITIAL); return S_SEMI_COLON; }
+  [^]                  { return com.intellij.psi.TokenType.BAD_CHARACTER; }
 }

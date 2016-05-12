@@ -238,12 +238,12 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   // fqnTypeRef ('+' fqnTypeRef)*
   public static boolean combinedFqns(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "combinedFqns")) return false;
-    if (!nextTokenIs(b, S_ID)) return false;
+    if (!nextTokenIs(b, "<combined fqns>", S_BACKTICK, S_ID)) return false;
     boolean r;
-    Marker m = enter_section_(b);
+    Marker m = enter_section_(b, l, _NONE_, S_COMBINED_FQNS, "<combined fqns>");
     r = fqnTypeRef(b, l + 1);
     r = r && combinedFqns_1(b, l + 1);
-    exit_section_(b, m, S_COMBINED_FQNS, r);
+    exit_section_(b, l, m, r, false, null);
     return r;
   }
 
@@ -271,13 +271,13 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // id '=' data_value ';'
+  // qid '=' data_value ';'
   public static boolean customParam(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "customParam")) return false;
-    if (!nextTokenIs(b, S_ID)) return false;
+    if (!nextTokenIs(b, "<custom attribute>", S_BACKTICK, S_ID)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, S_CUSTOM_PARAM, "<custom attribute>");
-    r = consumeToken(b, S_ID);
+    r = qid(b, l + 1);
     r = r && consumeToken(b, S_EQ);
     p = r; // pin = 2
     r = r && report_error_(b, consumeToken(b, S_DATA_VALUE));
@@ -329,7 +329,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'nodefault' | 'default' id
+  // 'nodefault' | 'default' qid
   public static boolean defaultOverride(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "defaultOverride")) return false;
     if (!nextTokenIs(b, "<default override>", S_DEFAULT, S_NODEFAULT)) return false;
@@ -341,13 +341,13 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // 'default' id
+  // 'default' qid
   private static boolean defaultOverride_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "defaultOverride_1")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, S_DEFAULT);
-    r = r && consumeToken(b, S_ID);
+    r = r && qid(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -406,13 +406,13 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // id enumMemberBody?
+  // qid enumMemberBody?
   public static boolean enumMemberDecl(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "enumMemberDecl")) return false;
-    if (!nextTokenIs(b, S_ID)) return false;
+    if (!nextTokenIs(b, "<enum member decl>", S_BACKTICK, S_ID)) return false;
     boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, S_ENUM_MEMBER_DECL, null);
-    r = consumeToken(b, S_ID);
+    Marker m = enter_section_(b, l, _NONE_, S_ENUM_MEMBER_DECL, "<enum member decl>");
+    r = qid(b, l + 1);
     p = r; // pin = 1
     r = r && enumMemberDecl_1(b, l + 1);
     exit_section_(b, l, m, r, p, null);
@@ -564,13 +564,13 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // id ':' typeRef defaultOverride? fieldBody?
+  // qid ':' typeRef defaultOverride? fieldBody?
   public static boolean fieldDecl(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "fieldDecl")) return false;
-    if (!nextTokenIs(b, S_ID)) return false;
+    if (!nextTokenIs(b, "<field decl>", S_BACKTICK, S_ID)) return false;
     boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, S_FIELD_DECL, null);
-    r = consumeToken(b, S_ID);
+    Marker m = enter_section_(b, l, _NONE_, S_FIELD_DECL, "<field decl>");
+    r = qid(b, l + 1);
     r = r && consumeToken(b, S_COLON);
     p = r; // pin = 2
     r = r && report_error_(b, typeRef(b, l + 1));
@@ -598,12 +598,12 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   // fqnSegment ('.' fqnSegment)*
   public static boolean fqn(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "fqn")) return false;
-    if (!nextTokenIs(b, S_ID)) return false;
+    if (!nextTokenIs(b, "<fqn>", S_BACKTICK, S_ID)) return false;
     boolean r;
-    Marker m = enter_section_(b);
+    Marker m = enter_section_(b, l, _NONE_, S_FQN, "<fqn>");
     r = fqnSegment(b, l + 1);
     r = r && fqn_1(b, l + 1);
-    exit_section_(b, m, S_FQN, r);
+    exit_section_(b, l, m, r, false, null);
     return r;
   }
 
@@ -631,14 +631,14 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // id
+  // qid
   public static boolean fqnSegment(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "fqnSegment")) return false;
-    if (!nextTokenIs(b, S_ID)) return false;
+    if (!nextTokenIs(b, "<fqn segment>", S_BACKTICK, S_ID)) return false;
     boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, S_ID);
-    exit_section_(b, m, S_FQN_SEGMENT, r);
+    Marker m = enter_section_(b, l, _NONE_, S_FQN_SEGMENT, "<fqn segment>");
+    r = qid(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
     return r;
   }
 
@@ -646,11 +646,11 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   // fqn
   public static boolean fqnTypeRef(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "fqnTypeRef")) return false;
-    if (!nextTokenIs(b, S_ID)) return false;
+    if (!nextTokenIs(b, "<fqn type ref>", S_BACKTICK, S_ID)) return false;
     boolean r;
-    Marker m = enter_section_(b);
+    Marker m = enter_section_(b, l, _NONE_, S_FQN_TYPE_REF, "<fqn type ref>");
     r = fqn(b, l + 1);
-    exit_section_(b, m, S_FQN_TYPE_REF, r);
+    exit_section_(b, l, m, r, false, null);
     return r;
   }
 
@@ -953,7 +953,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ! ('}' | id | 'default' )
+  // ! ('}' | qid | 'default' )
   static boolean partRecover(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "partRecover")) return false;
     boolean r;
@@ -963,13 +963,13 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // '}' | id | 'default'
+  // '}' | qid | 'default'
   private static boolean partRecover_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "partRecover_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, S_CURLY_RIGHT);
-    if (!r) r = consumeToken(b, S_ID);
+    if (!r) r = qid(b, l + 1);
     if (!r) r = consumeToken(b, S_DEFAULT);
     exit_section_(b, m, null, r);
     return r;
@@ -1063,6 +1063,31 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(b, l, "primitiveTypeDef_4")) return false;
     primitiveTypeBody(b, l + 1);
     return true;
+  }
+
+  /* ********************************************************** */
+  // '`' id '`' | id
+  static boolean qid(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "qid")) return false;
+    if (!nextTokenIs(b, "", S_BACKTICK, S_ID)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = qid_0(b, l + 1);
+    if (!r) r = consumeToken(b, S_ID);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // '`' id '`'
+  private static boolean qid_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "qid_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, S_BACKTICK);
+    r = r && consumeToken(b, S_ID);
+    r = r && consumeToken(b, S_BACKTICK);
+    exit_section_(b, m, null, r);
+    return r;
   }
 
   /* ********************************************************** */
@@ -1315,13 +1340,13 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // id ':' typeRef defaultOverride? tagBody?
+  // qid ':' typeRef defaultOverride? tagBody?
   public static boolean tagDecl(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "tagDecl")) return false;
-    if (!nextTokenIs(b, S_ID)) return false;
+    if (!nextTokenIs(b, "<tag decl>", S_BACKTICK, S_ID)) return false;
     boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, S_TAG_DECL, null);
-    r = consumeToken(b, S_ID);
+    Marker m = enter_section_(b, l, _NONE_, S_TAG_DECL, "<tag decl>");
+    r = qid(b, l + 1);
     r = r && consumeToken(b, S_COLON);
     p = r; // pin = 2
     r = r && report_error_(b, typeRef(b, l + 1));
@@ -1364,9 +1389,9 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // id
+  // qid
   static boolean typeName(PsiBuilder b, int l) {
-    return consumeToken(b, S_ID);
+    return qid(b, l + 1);
   }
 
   /* ********************************************************** */
@@ -1539,13 +1564,13 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // id ':' typeRef memberBody?
+  // qid ':' typeRef memberBody?
   public static boolean varTypeMemberDecl(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "varTypeMemberDecl")) return false;
-    if (!nextTokenIs(b, S_ID)) return false;
+    if (!nextTokenIs(b, "<var type member decl>", S_BACKTICK, S_ID)) return false;
     boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, S_VAR_TYPE_MEMBER_DECL, null);
-    r = consumeToken(b, S_ID);
+    Marker m = enter_section_(b, l, _NONE_, S_VAR_TYPE_MEMBER_DECL, "<var type member decl>");
+    r = qid(b, l + 1);
     r = r && consumeToken(b, S_COLON);
     r = r && typeRef(b, l + 1);
     p = r; // pin = 3

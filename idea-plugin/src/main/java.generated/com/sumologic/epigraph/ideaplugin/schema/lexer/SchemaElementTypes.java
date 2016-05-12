@@ -50,6 +50,7 @@ public interface SchemaElementTypes {
   IElementType S_VAR_TYPE_MEMBER_DECL = new SchemaElementType("S_VAR_TYPE_MEMBER_DECL");
   IElementType S_VAR_TYPE_SUPPLEMENTS_DECL = new SchemaElementType("S_VAR_TYPE_SUPPLEMENTS_DECL");
 
+  IElementType S_BACKTICK = new SchemaElementType("`");
   IElementType S_BLOCK_COMMENT = new SchemaElementType("block_comment");
   IElementType S_BOOLEAN_T = new SchemaElementType("boolean");
   IElementType S_BRACKET_LEFT = new SchemaElementType("[");

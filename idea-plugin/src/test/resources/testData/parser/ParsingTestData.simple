@@ -8,5 +8,5 @@ record Baz {
 }
 
 vartype Var default baz {
-  baz: Baz
+  `map`: Baz
 }

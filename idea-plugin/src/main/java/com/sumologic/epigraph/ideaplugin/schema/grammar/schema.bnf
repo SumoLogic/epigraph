@@ -37,6 +37,7 @@
     BOOLEAN_T='boolean'
     STRING_T='string'
 
+    BACKTICK = '`'
     COLON = ':'
     SEMI_COLON = ';'
     DOT = '.'
@@ -77,6 +78,9 @@
 
 root ::= namespaceDecl imports defs
 
+// either quoted or unquoted id
+private qid ::= '`' id '`' | id
+
 // TODO differentiate between package and single type imports. Will need custom parsing?
 // TODO references from package import to all imported elements
 imports ::= importStatement*
@@ -88,13 +92,13 @@ namespaceDecl ::= 'namespace' fqn namespaceBody? {pin=1 recoverWhile="declRecove
 private namespaceBody ::= '{' namespaceBodyPart* '}'
 private namespaceBodyPart ::= customParam // | ...
 
-fqnSegment ::= id {
+fqnSegment ::= qid {
   implements="com.intellij.psi.PsiNameIdentifierOwner"
   methods=[getName setName getNameIdentifier getSchemaFqn getSchemaFqnTypeRef isLast getReference getFqn]
 }
 fqn ::= fqnSegment ('.' fqnSegment)* { methods=[getFqn] }
 
-private typeName ::= id
+private typeName ::= qid
 typeRef ::= fqnTypeRef | anonList | anonMap | anonUnion {name="type"}
 fqnTypeRef ::= fqn
 
@@ -114,8 +118,8 @@ anonMap ::= 'map' '[' typeRef ',' typeRef defaultOverride? ']' {pin=1} // TODO r
 anonUnion ::= 'union' '[' typeRef defaultOverride? ']'
 
 extendsDecl ::= 'extends' typeRef (',' typeRef)*
-defaultOverride ::= 'nodefault' | 'default' id
-customParam ::= id '=' data_value ';' { // TODO make editor auto-insert ';' after typing '=' ?
+defaultOverride ::= 'nodefault' | 'default' qid
+customParam ::= qid '=' data_value ';' { // TODO make editor auto-insert ';' after typing '=' ?
   name="custom attribute"
   implements="com.intellij.psi.PsiNamedElement"
   methods = [getName setName getNameIdentifier]
@@ -132,7 +136,7 @@ varTypeDef ::= 'vartype' typeName extendsDecl? varTypeSupplementsDecl? defaultOv
 varTypeSupplementsDecl ::= 'supplements' fqnTypeRef (',' fqnTypeRef)*
 varTypeBody ::= '{' varTypeBodyPart* '}'
 private varTypeBodyPart ::= varTypeMemberDecl | customParam
-varTypeMemberDecl ::= id ':' typeRef memberBody? {
+varTypeMemberDecl ::= qid ':' typeRef memberBody? {
   implements=["com.sumologic.epigraph.ideaplugin.schema.psi.CustomParamsHolder" "com.intellij.psi.PsiNamedElement"]
   extends="com.sumologic.epigraph.ideaplugin.schema.psi.impl.CustomParamHolderImpl"
   methods=[getName setName getNameIdentifier]
@@ -145,7 +149,7 @@ recordTypeDef ::= 'record' typeName extendsDecl? metaDecl? recordSupplementsDecl
 recordSupplementsDecl ::= 'supplements' combinedFqns (',' combinedFqns)*
 recordTypeBody ::= '{' recordBodyPart* '}'
 private recordBodyPart ::= fieldDecl | customParam
-fieldDecl ::= id ':' typeRef defaultOverride? fieldBody? {
+fieldDecl ::= qid ':' typeRef defaultOverride? fieldBody? {
   implements=["com.sumologic.epigraph.ideaplugin.schema.psi.CustomParamsHolder" "com.intellij.psi.PsiNamedElement"]
   extends="com.sumologic.epigraph.ideaplugin.schema.psi.impl.CustomParamHolderImpl"
   methods=[getName setName getNameIdentifier]
@@ -158,7 +162,7 @@ unionTypeDef ::= 'union' tagCommonType? typeName metaDecl? unionTypeBody
 tagCommonType ::= '[' fqnTypeRef defaultOverride? ']'
 unionTypeBody ::= '{' unionBodyPart* '}'
 private unionBodyPart ::= tagDecl | customParam
-tagDecl ::= id ':' typeRef defaultOverride? tagBody? {
+tagDecl ::= qid ':' typeRef defaultOverride? tagBody? {
   implements=["com.sumologic.epigraph.ideaplugin.schema.psi.CustomParamsHolder" "com.intellij.psi.PsiNamedElement"]
   extends="com.sumologic.epigraph.ideaplugin.schema.psi.impl.CustomParamHolderImpl"
   methods=[getName setName getNameIdentifier]
@@ -184,7 +188,7 @@ private primitiveBodyPart ::= customParam // | ...
 enumTypeDef ::= 'enum' typeName metaDecl? enumTypeBody // extends?
 enumTypeBody ::= '{' enumTypeBodyPart* '}'
 private enumTypeBodyPart ::= customParam | enumMemberDecl
-enumMemberDecl ::= id enumMemberBody? {
+enumMemberDecl ::= qid enumMemberBody? {
   implements=["com.sumologic.epigraph.ideaplugin.schema.psi.CustomParamsHolder" "com.intellij.psi.PsiNamedElement"]
   extends="com.sumologic.epigraph.ideaplugin.schema.psi.impl.CustomParamHolderImpl"
   methods=[getName setName getNameIdentifier]
@@ -203,5 +207,5 @@ supplementDef ::= 'supplement' combinedFqns (',' combinedFqns)* 'with' fqnTypeRe
 combinedFqns ::= fqnTypeRef ('+' fqnTypeRef)*
 
 private declRecover ::= ! ('import' | 'namespace' | 'record' | 'union' | 'map' | 'list' | 'vartype' | 'enum' | 'supplement'| primitiveKind)
-private partRecover ::= ! ('}' | id | 'default' )
+private partRecover ::= ! ('}' | qid | 'default' )
 // private paramRecover ::= ! (';')
