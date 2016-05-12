@@ -6,3 +6,7 @@ record Baz {
   param = value;
   field: SomeType
 }
+
+vartype Var {
+  default baz: Baz
+}

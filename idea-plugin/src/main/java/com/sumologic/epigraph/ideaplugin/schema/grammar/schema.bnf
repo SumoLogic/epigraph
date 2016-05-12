@@ -201,6 +201,6 @@ supplementDef ::= 'supplement' combinedFqns (',' combinedFqns)* 'with' fqnTypeRe
 
 combinedFqns ::= fqnTypeRef ('+' fqnTypeRef)*
 
-private declRecover ::= ! ('import' | 'namespace' | 'record' | 'union' | 'map' | 'list' | 'multi' | 'enum' | 'supplement'| primitiveKind)
+private declRecover ::= ! ('import' | 'namespace' | 'record' | 'union' | 'map' | 'list' | 'vartype' | 'enum' | 'supplement'| primitiveKind)
 private partRecover ::= ! ('}' | id | 'default' )
 // private paramRecover ::= ! (';')

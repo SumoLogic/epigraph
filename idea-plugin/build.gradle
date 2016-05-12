@@ -9,7 +9,7 @@ repositories {
     jcenter()
 }
 
-version = "${version}.buildNumber"
+version = "${version}.${buildNumber}"
 
 apply plugin: 'java'
 sourceCompatibility = javaVersion

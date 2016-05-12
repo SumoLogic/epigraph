@@ -287,7 +287,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ! ('import' | 'namespace' | 'record' | 'union' | 'map' | 'list' | 'multi' | 'enum' | 'supplement'| primitiveKind)
+  // ! ('import' | 'namespace' | 'record' | 'union' | 'map' | 'list' | 'vartype' | 'enum' | 'supplement'| primitiveKind)
   static boolean declRecover(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "declRecover")) return false;
     boolean r;
@@ -297,7 +297,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // 'import' | 'namespace' | 'record' | 'union' | 'map' | 'list' | 'multi' | 'enum' | 'supplement'| primitiveKind
+  // 'import' | 'namespace' | 'record' | 'union' | 'map' | 'list' | 'vartype' | 'enum' | 'supplement'| primitiveKind
   private static boolean declRecover_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "declRecover_0")) return false;
     boolean r;
@@ -308,7 +308,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     if (!r) r = consumeToken(b, S_UNION);
     if (!r) r = consumeToken(b, S_MAP);
     if (!r) r = consumeToken(b, S_LIST);
-    if (!r) r = consumeToken(b, "multi");
+    if (!r) r = consumeToken(b, S_VARTYPE);
     if (!r) r = consumeToken(b, S_ENUM);
     if (!r) r = consumeToken(b, S_SUPPLEMENT);
     if (!r) r = primitiveKind(b, l + 1);

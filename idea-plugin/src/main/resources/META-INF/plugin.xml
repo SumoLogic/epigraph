@@ -2,7 +2,7 @@
   <id>com.sumologic.epigraph.ideaplugin.schema</id>
   <name>Schema Editor Plugin</name>
   <version>1.0</version>
-  <vendor email="support@yourcompany.com" url="http://www.yourcompany.com">YourCompany</vendor>
+  <vendor email="support@sumologic.com" url="http://www.sumologic.com">Sumo Logic</vendor>
 
   <description><![CDATA[
       Enter short description for your plugin here.<br>

@@ -38,18 +38,26 @@ public class SchemaFormattingModelBuilder implements FormattingModelBuilder {
     SpacingBuilder spacingBuilder = new SpacingBuilder(settings, SchemaLanguage.INSTANCE);
 
     for (IElementType type : SchemaParserDefinition.KEYWORDS.getTypes()) {
-      if (type != S_LIST && type != S_MAP)
+      if (type != S_LIST && type != S_MAP && type != S_UNION)
         spacingBuilder.after(type).spaces(1);
     }
 
     // TODO this should be configurable
+
+    spacingBuilder.between(S_TAG_COMMON_TYPE, S_ID).spaces(1);
+    spacingBuilder.between(S_UNION, S_ID).spaces(1);
+    spacingBuilder.after(S_UNION).spaces(0);
+
     spacingBuilder.between(S_ID, S_CURLY_LEFT).spaces(1);
     spacingBuilder.before(S_COLON).spaces(0);
     spacingBuilder.after(S_COLON).spaces(1);
-    spacingBuilder.around(S_EQ).spaces(1);
+    spacingBuilder.before(S_EQ).spaces(1);
+    spacingBuilder.before(S_COMMA).spaces(0);
     spacingBuilder.after(S_COMMA).spaces(1);
     spacingBuilder.around(S_PLUS).spaces(1);
-    spacingBuilder.after(S_BRACKET_RIGHT).spaces(1);
+//    spacingBuilder.after(S_BRACKET_RIGHT).spaces(1);
+    spacingBuilder.around(S_BRACKET_LEFT).spaces(0);
+    spacingBuilder.before(S_BRACKET_RIGHT).spaces(0);
     spacingBuilder.between(S_ANON_LIST, S_ID).spaces(1);
     spacingBuilder.between(S_ANON_MAP, S_ID).spaces(1);
     spacingBuilder.after(S_DEFAULT).spaces(1);
