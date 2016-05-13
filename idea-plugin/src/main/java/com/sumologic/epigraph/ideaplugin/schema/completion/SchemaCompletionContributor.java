@@ -6,10 +6,15 @@ import com.intellij.lang.parser.GeneratedParserUtilBase;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
 import com.sumologic.epigraph.ideaplugin.schema.SchemaLanguage;
 import com.sumologic.epigraph.ideaplugin.schema.psi.*;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import static com.sumologic.epigraph.ideaplugin.schema.lexer.SchemaElementTypes.*;
 
@@ -17,11 +22,22 @@ import static com.sumologic.epigraph.ideaplugin.schema.lexer.SchemaElementTypes.
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
 public class SchemaCompletionContributor extends CompletionContributor {
-  private static final String[] TOP_LEVEL_KEYWORDS = new String[]{
-      "record", "union", "map", "list", "vartype", "enum",
-      "integer", "long", "double", "boolean", "string",
-      "supplement"
+  private static final String[] TOP_LEVEL_COMPLETIONS = new String[]{
+      "polymorphic ", "abstract ",
+      "record ", "map", "list", "vartype ", "enum ",
+      "integer ", "long ", "double ", "boolean ", "string ",
+      "supplement "
   };
+
+  // items from TOP_LEVEL_COMPLETIONS that can't follow 'polymorphic' keyword
+  private static final Set<String> TOP_LEVEL_CANT_FOLLOW_POLY = new HashSet<>(Arrays.asList(
+      "polymorphic ", "vartype ", "enum ", "supplement "
+  ));
+
+  // items from TOP_LEVEL_COMPLETIONS that can't follow 'abstract' keyword
+  private static final Set<String> TOP_LEVEL_CANT_FOLLOW_ABSTRACT = new HashSet<>(Arrays.asList(
+      "polymorphic ", "abstract ", "vartype ", "enum ", "supplement "
+  ));
 
   public SchemaCompletionContributor() {
     extend(
@@ -53,6 +69,8 @@ public class SchemaCompletionContributor extends CompletionContributor {
       boolean completeTypeDef = false;
       boolean completeImport = false;
       boolean completeNamespace = false;
+      boolean afterPolymorphic = SchemaPsiUtil.hasPrevSibling(parent, S_POLYMORPHIC);
+      boolean afterAbstract = SchemaPsiUtil.hasPrevSibling(parent, S_ABSTRACT);
 
       if (grandParent != null) {
         IElementType grandParentElementType = grandParent.getNode().getElementType();
@@ -66,7 +84,10 @@ public class SchemaCompletionContributor extends CompletionContributor {
           }
           completeImport = true;
         } else if (grandParentElementType == S_NAMESPACE_DECL) {
-          if (!SchemaPsiUtil.hasNextSibling(grandParent, S_IMPORTS)) {
+          // check if we're between 'namespace' and 'import'
+          SchemaImports schemaImports = PsiTreeUtil.getNextSiblingOfType(grandParent, SchemaImports.class);
+          if (schemaImports == null || schemaImports.getFirstChild() == null) {
+            // we're after 'namespace' not followed by 'import'
             completeTypeDef = true;
           }
           completeImport = true;
@@ -76,8 +97,10 @@ public class SchemaCompletionContributor extends CompletionContributor {
       }
 
       if (completeTypeDef) {
-        for (String topLevelKeyword : TOP_LEVEL_KEYWORDS) {
-          result.addElement(LookupElementBuilder.create(topLevelKeyword + " "));
+        for (String topLevelKeyword : TOP_LEVEL_COMPLETIONS) {
+          if (afterPolymorphic && TOP_LEVEL_CANT_FOLLOW_POLY.contains(topLevelKeyword)) continue;
+          if (afterAbstract && TOP_LEVEL_CANT_FOLLOW_ABSTRACT.contains(topLevelKeyword)) continue;
+          result.addElement(LookupElementBuilder.create(topLevelKeyword));
         }
       }
 

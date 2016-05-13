@@ -1,7 +1,6 @@
 package com.sumologic.epigraph.ideaplugin.schema.psi;
 
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -27,10 +26,20 @@ public class SchemaPsiUtil {
 //    });
 //  }
 
-  public static boolean hasNextSibling(@NotNull PsiElement e, IElementType... elementTypes) {
-    for (PsiElement nextSibling = e.getNextSibling(); nextSibling != null; nextSibling = nextSibling.getNextSibling()) {
+  public static boolean hasPrevSibling(@NotNull PsiElement e, IElementType... elementTypes) {
+    for (PsiElement sibling = e.getPrevSibling(); sibling != null; sibling = sibling.getPrevSibling()) {
       for (IElementType elementType : elementTypes) {
-        if (nextSibling.getNode().getElementType().equals(elementType)) return true;
+        if (sibling.getNode().getElementType().equals(elementType)) return true;
+      }
+    }
+
+    return false;
+  }
+
+  public static boolean hasNextSibling(@NotNull PsiElement e, IElementType... elementTypes) {
+    for (PsiElement sibling = e.getNextSibling(); sibling != null; sibling = sibling.getNextSibling()) {
+      for (IElementType elementType : elementTypes) {
+        if (sibling.getNode().getElementType().equals(elementType)) return true;
       }
     }
 
@@ -75,7 +84,7 @@ public class SchemaPsiUtil {
 
   @Nullable
   public static <T extends PsiElement> T getElementOrParentOfType(@Nullable final T element,
-                                                         @NotNull final Class<? extends T>... classes) {
+                                                                  @NotNull final Class<? extends T>... classes) {
 
     if (element == null) return null;
     if (PsiTreeUtil.instanceOf(element, classes)) return element;
