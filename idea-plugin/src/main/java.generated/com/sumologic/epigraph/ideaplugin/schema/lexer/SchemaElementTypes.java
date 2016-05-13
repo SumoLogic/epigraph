@@ -10,7 +10,6 @@ public interface SchemaElementTypes {
 
   IElementType S_ANON_LIST = new SchemaElementType("S_ANON_LIST");
   IElementType S_ANON_MAP = new SchemaElementType("S_ANON_MAP");
-  IElementType S_ANON_UNION = new SchemaElementType("S_ANON_UNION");
   IElementType S_COMBINED_FQNS = new SchemaElementType("S_COMBINED_FQNS");
   IElementType S_CUSTOM_PARAM = new SchemaElementType("S_CUSTOM_PARAM");
   IElementType S_DEFAULT_OVERRIDE = new SchemaElementType("S_DEFAULT_OVERRIDE");
@@ -39,17 +38,14 @@ public interface SchemaElementTypes {
   IElementType S_RECORD_TYPE_DEF = new SchemaElementType("S_RECORD_TYPE_DEF");
   IElementType S_STAR_IMPORT_SUFFIX = new SchemaElementType("S_STAR_IMPORT_SUFFIX");
   IElementType S_SUPPLEMENT_DEF = new SchemaElementType("S_SUPPLEMENT_DEF");
-  IElementType S_TAG_COMMON_TYPE = new SchemaElementType("S_TAG_COMMON_TYPE");
-  IElementType S_TAG_DECL = new SchemaElementType("S_TAG_DECL");
   IElementType S_TYPE_DEF = new SchemaElementType("S_TYPE_DEF");
   IElementType S_TYPE_REF = new SchemaElementType("S_TYPE_REF");
-  IElementType S_UNION_TYPE_BODY = new SchemaElementType("S_UNION_TYPE_BODY");
-  IElementType S_UNION_TYPE_DEF = new SchemaElementType("S_UNION_TYPE_DEF");
   IElementType S_VAR_TYPE_BODY = new SchemaElementType("S_VAR_TYPE_BODY");
   IElementType S_VAR_TYPE_DEF = new SchemaElementType("S_VAR_TYPE_DEF");
   IElementType S_VAR_TYPE_MEMBER_DECL = new SchemaElementType("S_VAR_TYPE_MEMBER_DECL");
   IElementType S_VAR_TYPE_SUPPLEMENTS_DECL = new SchemaElementType("S_VAR_TYPE_SUPPLEMENTS_DECL");
 
+  IElementType S_ABSTRACT = new SchemaElementType("abstract");
   IElementType S_BACKTICK = new SchemaElementType("`");
   IElementType S_BLOCK_COMMENT = new SchemaElementType("block_comment");
   IElementType S_BOOLEAN_T = new SchemaElementType("boolean");
@@ -76,14 +72,15 @@ public interface SchemaElementTypes {
   IElementType S_META = new SchemaElementType("meta");
   IElementType S_NAMESPACE = new SchemaElementType("namespace");
   IElementType S_NODEFAULT = new SchemaElementType("nodefault");
+  IElementType S_OVERRIDE = new SchemaElementType("override");
   IElementType S_PLUS = new SchemaElementType("+");
+  IElementType S_POLYMORPHIC = new SchemaElementType("polymorphic");
   IElementType S_RECORD = new SchemaElementType("record");
   IElementType S_SEMI_COLON = new SchemaElementType(";");
   IElementType S_STAR = new SchemaElementType("*");
   IElementType S_STRING_T = new SchemaElementType("string");
   IElementType S_SUPPLEMENT = new SchemaElementType("supplement");
   IElementType S_SUPPLEMENTS = new SchemaElementType("supplements");
-  IElementType S_UNION = new SchemaElementType("union");
   IElementType S_VARTYPE = new SchemaElementType("vartype");
   IElementType S_WITH = new SchemaElementType("with");
 
@@ -95,9 +92,6 @@ public interface SchemaElementTypes {
       }
       else if (type == S_ANON_MAP) {
         return new SchemaAnonMapImpl(node);
-      }
-      else if (type == S_ANON_UNION) {
-        return new SchemaAnonUnionImpl(node);
       }
       else if (type == S_COMBINED_FQNS) {
         return new SchemaCombinedFqnsImpl(node);
@@ -183,23 +177,11 @@ public interface SchemaElementTypes {
       else if (type == S_SUPPLEMENT_DEF) {
         return new SchemaSupplementDefImpl(node);
       }
-      else if (type == S_TAG_COMMON_TYPE) {
-        return new SchemaTagCommonTypeImpl(node);
-      }
-      else if (type == S_TAG_DECL) {
-        return new SchemaTagDeclImpl(node);
-      }
       else if (type == S_TYPE_DEF) {
         return new SchemaTypeDefImpl(node);
       }
       else if (type == S_TYPE_REF) {
         return new SchemaTypeRefImpl(node);
-      }
-      else if (type == S_UNION_TYPE_BODY) {
-        return new SchemaUnionTypeBodyImpl(node);
-      }
-      else if (type == S_UNION_TYPE_DEF) {
-        return new SchemaUnionTypeDefImpl(node);
       }
       else if (type == S_VAR_TYPE_BODY) {
         return new SchemaVarTypeBodyImpl(node);

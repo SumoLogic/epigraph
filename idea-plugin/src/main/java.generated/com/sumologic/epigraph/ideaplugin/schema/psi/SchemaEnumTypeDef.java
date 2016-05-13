@@ -7,7 +7,7 @@ import com.intellij.psi.PsiElement;
 
 public interface SchemaEnumTypeDef extends SchemaTypeDef {
 
-  @Nullable
+  @NotNull
   SchemaEnumTypeBody getEnumTypeBody();
 
   @Nullable
@@ -16,7 +16,7 @@ public interface SchemaEnumTypeDef extends SchemaTypeDef {
   @NotNull
   PsiElement getEnum();
 
-  @Nullable
+  @NotNull
   PsiElement getId();
 
 }

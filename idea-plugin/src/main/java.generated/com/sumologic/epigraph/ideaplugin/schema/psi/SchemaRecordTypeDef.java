@@ -19,6 +19,12 @@ public interface SchemaRecordTypeDef extends SchemaTypeDef {
   @Nullable
   SchemaRecordTypeBody getRecordTypeBody();
 
+  @Nullable
+  PsiElement getAbstract();
+
+  @Nullable
+  PsiElement getPolymorphic();
+
   @NotNull
   PsiElement getRecord();
 

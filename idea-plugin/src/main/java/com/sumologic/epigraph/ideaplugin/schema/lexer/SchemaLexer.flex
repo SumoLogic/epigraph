@@ -55,8 +55,10 @@ ID=[:letter:]([:letter:]|[:digit:])*
   "supplement"         { return curlyCount == 0 ? S_SUPPLEMENT : S_ID; }
   "supplements"        { return curlyCount == 0 ? S_SUPPLEMENTS : S_ID; }
   "with"               { return curlyCount == 0 ? S_WITH : S_ID; }
-  "union"              { return curlyCount == 0 ? S_UNION : S_ID; }
   "vartype"            { return curlyCount == 0 ? S_VARTYPE : S_ID; }
+  "polymorphic"        { return curlyCount == 0 ? S_POLYMORPHIC : S_ID; }
+  "abstract"           { return curlyCount < 2 ? S_ABSTRACT : S_ID; }
+  "override"           { return curlyCount == 1 ? S_OVERRIDE : S_ID; }
   "enum"               { return curlyCount == 0 ? S_ENUM : S_ID; }
   "integer"            { return curlyCount == 0 ? S_INTEGER_T : S_ID; }
   "long"               { return curlyCount == 0 ? S_LONG_T : S_ID; }
@@ -78,19 +80,17 @@ ID=[:letter:]([:letter:]|[:digit:])*
   {LINE_COMMENT}       { return S_COMMENT; }
   {BLOCK_COMMENT}      { return S_BLOCK_COMMENT; }
   {ID}                 { return S_ID; }
-
-  [^]                  { return com.intellij.psi.TokenType.BAD_CHARACTER; }
 }
 
 <BACKTICK> {
   {ID}                 { return S_ID; }
   "`"                  { yybegin(YYINITIAL); return S_BACKTICK; }
-  [^]                  { return com.intellij.psi.TokenType.BAD_CHARACTER; }
 }
 
 <DATA_VALUE> {
   // TODO find a way to implement escaping for ';' inside data
   {DATA_VALUE}         { return S_DATA_VALUE; }
   ";"                  { yybegin(YYINITIAL); return S_SEMI_COLON; }
-  [^]                  { return com.intellij.psi.TokenType.BAD_CHARACTER; }
 }
+
+[^]                  { return com.intellij.psi.TokenType.BAD_CHARACTER; }

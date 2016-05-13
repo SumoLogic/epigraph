@@ -38,15 +38,11 @@ public class SchemaFormattingModelBuilder implements FormattingModelBuilder {
     SpacingBuilder spacingBuilder = new SpacingBuilder(settings, SchemaLanguage.INSTANCE);
 
     for (IElementType type : SchemaParserDefinition.KEYWORDS.getTypes()) {
-      if (type != S_LIST && type != S_MAP && type != S_UNION)
+      if (type != S_LIST && type != S_MAP)
         spacingBuilder.after(type).spaces(1);
     }
 
     // TODO this should be configurable
-
-    spacingBuilder.between(S_TAG_COMMON_TYPE, S_ID).spaces(1);
-    spacingBuilder.between(S_UNION, S_ID).spaces(1);
-    spacingBuilder.after(S_UNION).spaces(0);
 
     spacingBuilder.between(S_ID, S_CURLY_LEFT).spaces(1);
     spacingBuilder.before(S_COLON).spaces(0);
@@ -69,7 +65,6 @@ public class SchemaFormattingModelBuilder implements FormattingModelBuilder {
     spacingBuilder.before(S_RECORD_SUPPLEMENTS_DECL).spaces(1);
 
     spacingBuilder.before(S_RECORD_TYPE_BODY).spaces(1);
-    spacingBuilder.before(S_UNION_TYPE_BODY).spaces(1);
     spacingBuilder.before(S_VAR_TYPE_BODY).spaces(1);
     spacingBuilder.before(S_ENUM_TYPE_BODY).spaces(1);
     spacingBuilder.before(S_MAP_TYPE_BODY).spaces(1);

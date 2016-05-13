@@ -26,9 +26,9 @@ public class SchemaEnumTypeDefImpl extends SchemaTypeDefImpl implements SchemaEn
   }
 
   @Override
-  @Nullable
+  @NotNull
   public SchemaEnumTypeBody getEnumTypeBody() {
-    return findChildByClass(SchemaEnumTypeBody.class);
+    return findNotNullChildByClass(SchemaEnumTypeBody.class);
   }
 
   @Override
@@ -44,9 +44,9 @@ public class SchemaEnumTypeDefImpl extends SchemaTypeDefImpl implements SchemaEn
   }
 
   @Override
-  @Nullable
+  @NotNull
   public PsiElement getId() {
-    return findChildByType(S_ID);
+    return findNotNullChildByType(S_ID);
   }
 
 }

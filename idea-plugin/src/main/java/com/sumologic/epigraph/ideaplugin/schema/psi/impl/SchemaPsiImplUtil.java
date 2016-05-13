@@ -79,7 +79,6 @@ public class SchemaPsiImplUtil {
   public static TypeKind getKind(@NotNull SchemaTypeDef schemaTypeDef) {
     if (schemaTypeDef instanceof SchemaVarTypeDef) return TypeKind.VAR;
     if (schemaTypeDef instanceof SchemaRecordTypeDef) return TypeKind.RECORD;
-    if (schemaTypeDef instanceof SchemaUnionTypeDef) return TypeKind.UNION;
     if (schemaTypeDef instanceof SchemaMapTypeDef) return TypeKind.MAP;
     if (schemaTypeDef instanceof SchemaListTypeDef) return TypeKind.LIST;
     if (schemaTypeDef instanceof SchemaEnumTypeDef) return TypeKind.ENUM;
@@ -198,24 +197,6 @@ public class SchemaPsiImplUtil {
   @NotNull
   public static PsiElement getNameIdentifier(SchemaFieldDecl fieldDecl) {
     return fieldDecl.getId();
-  }
-
-  // tag decl
-
-  @Nullable
-  public static String getName(SchemaTagDecl tagDecl) {
-    return getNameIdentifier(tagDecl).getText();
-  }
-
-  public static PsiElement setName(SchemaTagDecl tagDecl, String name) {
-    PsiElement oldId = tagDecl.getId();
-    PsiElement newId = SchemaElementFactory.createId(tagDecl.getProject(), name);
-    return oldId.replace(newId);
-  }
-
-  @NotNull
-  public static PsiElement getNameIdentifier(SchemaTagDecl tagDecl) {
-    return tagDecl.getId();
   }
 
   // varTypeMember decl

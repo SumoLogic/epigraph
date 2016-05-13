@@ -60,8 +60,6 @@ public class SchemaFoldingBuilder extends CustomFoldingBuilder implements DumbAw
         body = ((SchemaRecordTypeDef) element).getRecordTypeBody();
       } else if (element instanceof SchemaPrimitiveTypeDef) {
         body = ((SchemaPrimitiveTypeDef) element).getPrimitiveTypeBody();
-      } else if (element instanceof SchemaUnionTypeDef) {
-        body = ((SchemaUnionTypeDef) element).getUnionTypeBody();
       } else if (element instanceof SchemaListTypeDef) {
         body = ((SchemaListTypeDef) element).getListTypeBody();
       } else if (element instanceof SchemaMapTypeDef) {

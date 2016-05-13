@@ -66,6 +66,7 @@
     <lang.psiStructureViewFactory language="epi_schema"
                                   implementationClass="com.sumologic.epigraph.ideaplugin.schema.structureView.SchemaStructureViewFactory"/>
     <statementUpDownMover implementation="com.sumologic.epigraph.ideaplugin.schema.features.SchemaLineMover"/>
+    <quoteHandler fileType="epi_schema" className="com.sumologic.epigraph.ideaplugin.schema.features.SchemaQuoteHandler"/>
   </extensions>
 
   <actions>

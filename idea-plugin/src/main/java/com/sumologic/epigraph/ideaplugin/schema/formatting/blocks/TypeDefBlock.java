@@ -18,11 +18,11 @@ import static com.sumologic.epigraph.ideaplugin.schema.lexer.SchemaElementTypes.
  */
 public class TypeDefBlock extends SchemaBlock {
   private static final TokenSet noIndentTokenSet = TokenSet.create(
-      S_RECORD_TYPE_BODY, S_UNION_TYPE_BODY,
+      S_RECORD_TYPE_BODY,
       S_ENUM_TYPE_BODY, S_VAR_TYPE_BODY,
       S_PRIMITIVE_TYPE_BODY, S_MAP_TYPE_BODY, S_LIST_TYPE_BODY,
 
-      S_ID, S_RECORD, S_UNION, S_VARTYPE, S_ENUM,
+      S_ID, S_RECORD, S_VARTYPE, S_ENUM,
       S_PRIMITIVE_KIND, S_ANON_LIST, S_ANON_MAP
   );
 

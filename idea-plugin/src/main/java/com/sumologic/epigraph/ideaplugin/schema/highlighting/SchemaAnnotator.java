@@ -49,31 +49,10 @@ public class SchemaAnnotator implements Annotator {
       }
 
       @Override
-      public void visitUnionTypeDef(@NotNull SchemaUnionTypeDef unionTypeDef) {
-        SchemaUnionTypeBody unionTypeBody = unionTypeDef.getUnionTypeBody();
-        boolean noTags = unionTypeBody == null;
-        if (unionTypeBody != null) {
-          noTags = unionTypeBody.getTagDeclList().size() == 0;
-        }
-
-        if (noTags)
-          holder.createErrorAnnotation(unionTypeDef, "Union must declare at least one tag");
-      }
-
-      @Override
-      public void visitTagDecl(@NotNull SchemaTagDecl tagDecl) {
-        PsiElement id = tagDecl.getId();
-        setHighlighting(id, holder, SchemaSyntaxHighlighter.TAG);
-
-        String namingError = NamingConventions.validateTagName(id.getText());
-        if (namingError != null) {
-          holder.createErrorAnnotation(id, namingError);
-        }
-      }
-
-      @Override
       public void visitDefaultOverride(@NotNull SchemaDefaultOverride defaultOverride) {
-        setHighlighting(defaultOverride.getId(), holder, SchemaSyntaxHighlighter.VAR_MEMBER);
+        PsiElement id = defaultOverride.getId();
+        if (id != null)
+          setHighlighting(id, holder, SchemaSyntaxHighlighter.VAR_MEMBER);
       }
 
       @Override

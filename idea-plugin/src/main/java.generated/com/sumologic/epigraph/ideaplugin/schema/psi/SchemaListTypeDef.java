@@ -20,6 +20,12 @@ public interface SchemaListTypeDef extends SchemaTypeDef {
   SchemaMetaDecl getMetaDecl();
 
   @Nullable
+  PsiElement getAbstract();
+
+  @Nullable
+  PsiElement getPolymorphic();
+
+  @Nullable
   PsiElement getId();
 
 }

@@ -5,7 +5,6 @@ import com.intellij.ide.util.treeView.smartTree.TreeElement;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.psi.NavigatablePsiElement;
 import com.intellij.psi.PsiElement;
-import com.intellij.util.IconUtil;
 import com.intellij.util.PlatformIcons;
 import com.sumologic.epigraph.ideaplugin.schema.brains.NamespaceManager;
 import com.sumologic.epigraph.ideaplugin.schema.psi.*;
@@ -65,11 +64,6 @@ public class SchemaStructureViewElement implements StructureViewTreeElement {
       return new StaticItemPresentation(schemaFieldDecl.getId().getText(), null, PlatformIcons.FIELD_ICON);
     }
 
-    if (element instanceof SchemaTagDecl) {
-      SchemaTagDecl schemaTagDecl = (SchemaTagDecl) element;
-      return new StaticItemPresentation(schemaTagDecl.getId().getText(), null, PlatformIcons.FIELD_ICON);
-    }
-
     if (element instanceof SchemaVarTypeMemberDecl) {
       SchemaVarTypeMemberDecl varTypeMemberDecl = (SchemaVarTypeMemberDecl) element;
       Icon icon = PlatformIcons.FUNCTION_ICON;
@@ -119,12 +113,6 @@ public class SchemaStructureViewElement implements StructureViewTreeElement {
         children.addAll(recordTypeBody.getCustomParamList()); // SchemaCustomParam
         children.addAll(recordTypeBody.getFieldDeclList()); // SchemaFieldDecl
       }
-    } else if (element instanceof SchemaUnionTypeDef) {
-      SchemaUnionTypeBody unionTypeBody = ((SchemaUnionTypeDef) element).getUnionTypeBody();
-      if (unionTypeBody != null) {
-        children.addAll(unionTypeBody.getCustomParamList());
-        children.addAll(unionTypeBody.getTagDeclList()); // SchemaTagDecl
-      }
     } else if (element instanceof SchemaVarTypeDef) {
       SchemaVarTypeBody varTypeBody = ((SchemaVarTypeDef) element).getVarTypeBody();
       if (varTypeBody != null) {
@@ -133,10 +121,8 @@ public class SchemaStructureViewElement implements StructureViewTreeElement {
       }
     } else if (element instanceof SchemaEnumTypeDef) {
       SchemaEnumTypeBody enumTypeBody = ((SchemaEnumTypeDef) element).getEnumTypeBody();
-      if (enumTypeBody != null) {
-        children.addAll(enumTypeBody.getCustomParamList());
-        children.addAll(enumTypeBody.getEnumMemberDeclList()); // SchemaEnumMemberDecl
-      }
+      children.addAll(enumTypeBody.getCustomParamList());
+      children.addAll(enumTypeBody.getEnumMemberDeclList()); // SchemaEnumMemberDecl
     } else if (element instanceof SchemaMapTypeDef) {
       SchemaMapTypeBody mapTypeBody = ((SchemaMapTypeDef) element).getMapTypeBody();
       if (mapTypeBody != null) children.addAll(mapTypeBody.getCustomParamList());

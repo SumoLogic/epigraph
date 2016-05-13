@@ -51,6 +51,18 @@ public class SchemaListTypeDefImpl extends SchemaTypeDefImpl implements SchemaLi
 
   @Override
   @Nullable
+  public PsiElement getAbstract() {
+    return findChildByType(S_ABSTRACT);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getPolymorphic() {
+    return findChildByType(S_POLYMORPHIC);
+  }
+
+  @Override
+  @Nullable
   public PsiElement getId() {
     return findChildByType(S_ID);
   }

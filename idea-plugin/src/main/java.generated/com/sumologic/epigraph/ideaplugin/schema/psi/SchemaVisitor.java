@@ -17,10 +17,6 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitAnonUnion(@NotNull SchemaAnonUnion o) {
-    visitPsiElement(o);
-  }
-
   public void visitCombinedFqns(@NotNull SchemaCombinedFqns o) {
     visitPsiElement(o);
   }
@@ -135,29 +131,12 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitTagCommonType(@NotNull SchemaTagCommonType o) {
-    visitPsiElement(o);
-  }
-
-  public void visitTagDecl(@NotNull SchemaTagDecl o) {
-    visitCustomParamsHolder(o);
-    // visitPsiNamedElement(o);
-  }
-
   public void visitTypeDef(@NotNull SchemaTypeDef o) {
     visitTypeDefSchemaElement(o);
   }
 
   public void visitTypeRef(@NotNull SchemaTypeRef o) {
     visitPsiElement(o);
-  }
-
-  public void visitUnionTypeBody(@NotNull SchemaUnionTypeBody o) {
-    visitCustomParamsHolder(o);
-  }
-
-  public void visitUnionTypeDef(@NotNull SchemaUnionTypeDef o) {
-    visitTypeDef(o);
   }
 
   public void visitVarTypeBody(@NotNull SchemaVarTypeBody o) {

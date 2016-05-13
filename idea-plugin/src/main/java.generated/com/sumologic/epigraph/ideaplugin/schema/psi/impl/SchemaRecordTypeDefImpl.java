@@ -50,6 +50,18 @@ public class SchemaRecordTypeDefImpl extends SchemaTypeDefImpl implements Schema
   }
 
   @Override
+  @Nullable
+  public PsiElement getAbstract() {
+    return findChildByType(S_ABSTRACT);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getPolymorphic() {
+    return findChildByType(S_POLYMORPHIC);
+  }
+
+  @Override
   @NotNull
   public PsiElement getRecord() {
     return findNotNullChildByType(S_RECORD);

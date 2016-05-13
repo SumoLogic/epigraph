@@ -56,9 +56,9 @@ public class SchemaVarTypeDefImpl extends SchemaTypeDefImpl implements SchemaVar
   }
 
   @Override
-  @Nullable
+  @NotNull
   public PsiElement getId() {
-    return findChildByType(S_ID);
+    return findNotNullChildByType(S_ID);
   }
 
 }

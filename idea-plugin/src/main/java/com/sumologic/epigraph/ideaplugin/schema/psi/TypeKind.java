@@ -6,7 +6,6 @@ package com.sumologic.epigraph.ideaplugin.schema.psi;
 public enum TypeKind {
   VAR,
   RECORD,
-  UNION,
   MAP,
   LIST,
   ENUM,

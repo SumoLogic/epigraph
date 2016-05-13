@@ -22,7 +22,7 @@ public interface SchemaVarTypeDef extends SchemaTypeDef {
   @NotNull
   PsiElement getVartype();
 
-  @Nullable
+  @NotNull
   PsiElement getId();
 
 }

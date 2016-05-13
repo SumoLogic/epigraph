@@ -44,6 +44,12 @@ public class SchemaFieldDeclImpl extends CustomParamHolderImpl implements Schema
   }
 
   @Override
+  @Nullable
+  public PsiElement getAbstract() {
+    return findChildByType(S_ABSTRACT);
+  }
+
+  @Override
   @NotNull
   public PsiElement getColon() {
     return findNotNullChildByType(S_COLON);

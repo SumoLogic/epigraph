@@ -14,9 +14,6 @@ public interface SchemaTypeRef extends PsiElement {
   SchemaAnonMap getAnonMap();
 
   @Nullable
-  SchemaAnonUnion getAnonUnion();
-
-  @Nullable
   SchemaFqnTypeRef getFqnTypeRef();
 
 }

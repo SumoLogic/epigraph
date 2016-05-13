@@ -10,7 +10,3 @@ f:map[Q,list [ W ]]
   }
 
   list[  list [  Bar ]   ]bars
-
-union [ union [ Foo ] ] foos
-
-union  U

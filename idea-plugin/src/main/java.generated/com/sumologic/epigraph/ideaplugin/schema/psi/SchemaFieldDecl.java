@@ -17,6 +17,9 @@ public interface SchemaFieldDecl extends CustomParamsHolder, PsiNamedElement {
   @Nullable
   SchemaTypeRef getTypeRef();
 
+  @Nullable
+  PsiElement getAbstract();
+
   @NotNull
   PsiElement getColon();
 

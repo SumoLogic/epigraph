@@ -20,6 +20,12 @@ public interface SchemaPrimitiveTypeDef extends SchemaTypeDef {
   SchemaPrimitiveTypeBody getPrimitiveTypeBody();
 
   @Nullable
+  PsiElement getAbstract();
+
+  @Nullable
+  PsiElement getPolymorphic();
+
+  @Nullable
   PsiElement getId();
 
 }
