@@ -29,6 +29,9 @@ public interface SchemaFieldDecl extends CustomParamsHolder, PsiNamedElement {
   @Nullable
   PsiElement getCurlyRight();
 
+  @Nullable
+  PsiElement getOverride();
+
   @NotNull
   PsiElement getId();
 

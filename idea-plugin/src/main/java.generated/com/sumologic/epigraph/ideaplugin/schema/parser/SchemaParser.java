@@ -528,18 +528,19 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'abstract'? qid ':' typeRef defaultOverride? fieldBody?
+  // 'abstract'? 'override'? qid ':' typeRef defaultOverride? fieldBody?
   public static boolean fieldDecl(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "fieldDecl")) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, S_FIELD_DECL, "<field decl>");
     r = fieldDecl_0(b, l + 1);
+    r = r && fieldDecl_1(b, l + 1);
     r = r && qid(b, l + 1);
     r = r && consumeToken(b, S_COLON);
-    p = r; // pin = 3
+    p = r; // pin = 4
     r = r && report_error_(b, typeRef(b, l + 1));
-    r = p && report_error_(b, fieldDecl_4(b, l + 1)) && r;
-    r = p && fieldDecl_5(b, l + 1) && r;
+    r = p && report_error_(b, fieldDecl_5(b, l + 1)) && r;
+    r = p && fieldDecl_6(b, l + 1) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -551,16 +552,23 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     return true;
   }
 
+  // 'override'?
+  private static boolean fieldDecl_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "fieldDecl_1")) return false;
+    consumeToken(b, S_OVERRIDE);
+    return true;
+  }
+
   // defaultOverride?
-  private static boolean fieldDecl_4(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "fieldDecl_4")) return false;
+  private static boolean fieldDecl_5(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "fieldDecl_5")) return false;
     defaultOverride(b, l + 1);
     return true;
   }
 
   // fieldBody?
-  private static boolean fieldDecl_5(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "fieldDecl_5")) return false;
+  private static boolean fieldDecl_6(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "fieldDecl_6")) return false;
     fieldBody(b, l + 1);
     return true;
   }
@@ -954,7 +962,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ! ('}' | qid | 'abstract' )
+  // ! ('}' | qid | 'abstract' | 'override' )
   static boolean partRecover(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "partRecover")) return false;
     boolean r;
@@ -964,7 +972,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // '}' | qid | 'abstract'
+  // '}' | qid | 'abstract' | 'override'
   private static boolean partRecover_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "partRecover_0")) return false;
     boolean r;
@@ -972,6 +980,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     r = consumeToken(b, S_CURLY_RIGHT);
     if (!r) r = qid(b, l + 1);
     if (!r) r = consumeToken(b, S_ABSTRACT);
+    if (!r) r = consumeToken(b, S_OVERRIDE);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -1432,24 +1441,31 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // qid ':' typeRef memberBody?
+  // 'override'? qid ':' typeRef memberBody?
   public static boolean varTypeMemberDecl(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "varTypeMemberDecl")) return false;
-    if (!nextTokenIs(b, "<var type member decl>", S_BACKTICK, S_ID)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, S_VAR_TYPE_MEMBER_DECL, "<var type member decl>");
-    r = qid(b, l + 1);
+    r = varTypeMemberDecl_0(b, l + 1);
+    r = r && qid(b, l + 1);
     r = r && consumeToken(b, S_COLON);
-    r = r && typeRef(b, l + 1);
     p = r; // pin = 3
-    r = r && varTypeMemberDecl_3(b, l + 1);
+    r = r && report_error_(b, typeRef(b, l + 1));
+    r = p && varTypeMemberDecl_4(b, l + 1) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
 
+  // 'override'?
+  private static boolean varTypeMemberDecl_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "varTypeMemberDecl_0")) return false;
+    consumeToken(b, S_OVERRIDE);
+    return true;
+  }
+
   // memberBody?
-  private static boolean varTypeMemberDecl_3(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "varTypeMemberDecl_3")) return false;
+  private static boolean varTypeMemberDecl_4(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "varTypeMemberDecl_4")) return false;
     memberBody(b, l + 1);
     return true;
   }

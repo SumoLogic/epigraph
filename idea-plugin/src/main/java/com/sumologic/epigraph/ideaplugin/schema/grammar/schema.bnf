@@ -134,7 +134,7 @@ varTypeDef ::= 'vartype' typeName extendsDecl? varTypeSupplementsDecl? defaultOv
 varTypeSupplementsDecl ::= 'supplements' fqnTypeRef (',' fqnTypeRef)*
 varTypeBody ::= '{' varTypeBodyPart* '}'
 private varTypeBodyPart ::= varTypeMemberDecl | customParam
-varTypeMemberDecl ::= qid ':' typeRef memberBody? {
+varTypeMemberDecl ::= 'override'? qid ':' typeRef memberBody? {
   implements=["com.sumologic.epigraph.ideaplugin.schema.psi.CustomParamsHolder" "com.intellij.psi.PsiNamedElement"]
   extends="com.sumologic.epigraph.ideaplugin.schema.psi.impl.CustomParamHolderImpl"
   methods=[getName setName getNameIdentifier]
@@ -147,11 +147,11 @@ recordTypeDef ::= 'polymorphic'? 'abstract'? 'record' typeName extendsDecl? meta
 recordSupplementsDecl ::= 'supplements' combinedFqns (',' combinedFqns)*
 recordTypeBody ::= '{' recordBodyPart* '}'
 private recordBodyPart ::= fieldDecl | customParam
-fieldDecl ::= 'abstract'? qid ':' typeRef defaultOverride? fieldBody? {
+fieldDecl ::= 'abstract'? 'override'? qid ':' typeRef defaultOverride? fieldBody? {
   implements=["com.sumologic.epigraph.ideaplugin.schema.psi.CustomParamsHolder" "com.intellij.psi.PsiNamedElement"]
   extends="com.sumologic.epigraph.ideaplugin.schema.psi.impl.CustomParamHolderImpl"
   methods=[getName setName getNameIdentifier]
-  pin=3
+  pin=4
 }
 private fieldBody ::= '{' fieldBodyPart* '}'
 private fieldBodyPart ::= customParam
@@ -193,5 +193,5 @@ combinedFqns ::= fqnTypeRef ('+' fqnTypeRef)*
 
 private declRecover ::= ! ('import' | 'namespace' | 'polymorphic' | 'abstract' | 'record' |
                            'map' | 'list' | 'vartype' | 'enum' | 'supplement'| primitiveKind)
-private partRecover ::= ! ('}' | qid | 'abstract' )
+private partRecover ::= ! ('}' | qid | 'abstract' | 'override' )
 // private paramRecover ::= ! (';')
