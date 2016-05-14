@@ -30,13 +30,13 @@ public class CompletionTest extends LightCodeInsightFixtureTestCase {
 
   public void testCompletionAfterPolymorphic() {
     myFixture.configureByFile("CompletionAfterPolymorphic.es");
-    checkCompletionVariants("abstract ", "record ", "map", "list",
+    checkCompletionVariants("record ", "map", "list",
         "string ", "double ", "integer ", "long ", "boolean ");
   }
 
   public void testCompletionAfterAbstract() {
     myFixture.configureByFile("CompletionAfterAbstract.es");
-    checkCompletionVariants("record ", "map", "list", "string ", "double ", "integer ", "long ", "boolean ");
+    checkCompletionVariants("polymorphic ", "record ", "map", "list", "string ", "double ", "integer ", "long ", "boolean ");
   }
 
   private void checkCompletionVariants(String... variants) {

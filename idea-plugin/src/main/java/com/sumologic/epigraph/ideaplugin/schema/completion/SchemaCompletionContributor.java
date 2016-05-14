@@ -31,12 +31,12 @@ public class SchemaCompletionContributor extends CompletionContributor {
 
   // items from TOP_LEVEL_COMPLETIONS that can't follow 'polymorphic' keyword
   private static final Set<String> TOP_LEVEL_CANT_FOLLOW_POLY = new HashSet<>(Arrays.asList(
-      "polymorphic ", "vartype ", "enum ", "supplement "
+      "polymorphic ", "abstract ", "vartype ", "enum ", "supplement "
   ));
 
   // items from TOP_LEVEL_COMPLETIONS that can't follow 'abstract' keyword
   private static final Set<String> TOP_LEVEL_CANT_FOLLOW_ABSTRACT = new HashSet<>(Arrays.asList(
-      "polymorphic ", "abstract ", "vartype ", "enum ", "supplement "
+      "abstract ", "vartype ", "enum ", "supplement "
   ));
 
   public SchemaCompletionContributor() {

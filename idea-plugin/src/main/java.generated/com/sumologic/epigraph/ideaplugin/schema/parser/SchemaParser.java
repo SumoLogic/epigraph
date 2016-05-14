@@ -708,7 +708,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'polymorphic'? 'abstract'? anonList typeName extendsDecl? metaDecl? listTypeBody?
+  // 'abstract'? 'polymorphic'? anonList typeName extendsDecl? metaDecl? listTypeBody?
   public static boolean listTypeDef(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "listTypeDef")) return false;
     boolean r, p;
@@ -725,17 +725,17 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     return r || p;
   }
 
-  // 'polymorphic'?
+  // 'abstract'?
   private static boolean listTypeDef_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "listTypeDef_0")) return false;
-    consumeToken(b, S_POLYMORPHIC);
+    consumeToken(b, S_ABSTRACT);
     return true;
   }
 
-  // 'abstract'?
+  // 'polymorphic'?
   private static boolean listTypeDef_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "listTypeDef_1")) return false;
-    consumeToken(b, S_ABSTRACT);
+    consumeToken(b, S_POLYMORPHIC);
     return true;
   }
 
@@ -799,7 +799,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'polymorphic'? 'abstract'? anonMap typeName extendsDecl? metaDecl? mapTypeBody?
+  // 'abstract'? 'polymorphic'? anonMap typeName extendsDecl? metaDecl? mapTypeBody?
   public static boolean mapTypeDef(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "mapTypeDef")) return false;
     boolean r, p;
@@ -816,17 +816,17 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     return r || p;
   }
 
-  // 'polymorphic'?
+  // 'abstract'?
   private static boolean mapTypeDef_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "mapTypeDef_0")) return false;
-    consumeToken(b, S_POLYMORPHIC);
+    consumeToken(b, S_ABSTRACT);
     return true;
   }
 
-  // 'abstract'?
+  // 'polymorphic'?
   private static boolean mapTypeDef_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "mapTypeDef_1")) return false;
-    consumeToken(b, S_ABSTRACT);
+    consumeToken(b, S_POLYMORPHIC);
     return true;
   }
 
@@ -1039,7 +1039,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'polymorphic'? 'abstract'? primitiveKind typeName extendsDecl? metaDecl? primitiveTypeBody?
+  // 'abstract'? 'polymorphic'? primitiveKind typeName extendsDecl? metaDecl? primitiveTypeBody?
   public static boolean primitiveTypeDef(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "primitiveTypeDef")) return false;
     boolean r, p;
@@ -1056,17 +1056,17 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     return r || p;
   }
 
-  // 'polymorphic'?
+  // 'abstract'?
   private static boolean primitiveTypeDef_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "primitiveTypeDef_0")) return false;
-    consumeToken(b, S_POLYMORPHIC);
+    consumeToken(b, S_ABSTRACT);
     return true;
   }
 
-  // 'abstract'?
+  // 'polymorphic'?
   private static boolean primitiveTypeDef_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "primitiveTypeDef_1")) return false;
-    consumeToken(b, S_ABSTRACT);
+    consumeToken(b, S_POLYMORPHIC);
     return true;
   }
 
@@ -1193,7 +1193,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'polymorphic'? 'abstract'? 'record' typeName extendsDecl? metaDecl? recordSupplementsDecl? recordTypeBody?
+  // 'abstract'? 'polymorphic'? 'record' typeName extendsDecl? metaDecl? recordSupplementsDecl? recordTypeBody?
   public static boolean recordTypeDef(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "recordTypeDef")) return false;
     boolean r, p;
@@ -1211,17 +1211,17 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     return r || p;
   }
 
-  // 'polymorphic'?
+  // 'abstract'?
   private static boolean recordTypeDef_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "recordTypeDef_0")) return false;
-    consumeToken(b, S_POLYMORPHIC);
+    consumeToken(b, S_ABSTRACT);
     return true;
   }
 
-  // 'abstract'?
+  // 'polymorphic'?
   private static boolean recordTypeDef_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "recordTypeDef_1")) return false;
-    consumeToken(b, S_ABSTRACT);
+    consumeToken(b, S_POLYMORPHIC);
     return true;
   }
 

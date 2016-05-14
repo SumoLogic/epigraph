@@ -143,7 +143,7 @@ varTypeMemberDecl ::= 'override'? qid ':' typeRef memberBody? {
 private memberBody ::= '{' memberBodyPart* '}'
 private memberBodyPart ::= customParam
 
-recordTypeDef ::= 'polymorphic'? 'abstract'? 'record' typeName extendsDecl? metaDecl? recordSupplementsDecl? recordTypeBody? {pin=3}
+recordTypeDef ::= 'abstract'? 'polymorphic'? 'record' typeName extendsDecl? metaDecl? recordSupplementsDecl? recordTypeBody? {pin=3}
 recordSupplementsDecl ::= 'supplements' combinedFqns (',' combinedFqns)*
 recordTypeBody ::= '{' recordBodyPart* '}'
 private recordBodyPart ::= fieldDecl | customParam
@@ -157,15 +157,15 @@ private fieldBody ::= '{' fieldBodyPart* '}'
 private fieldBodyPart ::= customParam
 
 //listTypeDef2 ::= 'list' typeName extendsDecl listTypeBody? // allows inheritance from lists w/o type params
-listTypeDef ::= 'polymorphic'? 'abstract'? anonList typeName extendsDecl? metaDecl? listTypeBody? {pin=3}
+listTypeDef ::= 'abstract'? 'polymorphic'? anonList typeName extendsDecl? metaDecl? listTypeBody? {pin=3}
 listTypeBody ::= '{' listTypeBodyPart* '}'
 private listTypeBodyPart ::= customParam
 
-mapTypeDef ::= 'polymorphic'? 'abstract'? anonMap typeName extendsDecl? metaDecl? mapTypeBody? {pin=3}
+mapTypeDef ::= 'abstract'? 'polymorphic'? anonMap typeName extendsDecl? metaDecl? mapTypeBody? {pin=3}
 mapTypeBody ::= '{' mapTypeBodyPart* '}'
 private mapTypeBodyPart ::= customParam
 
-primitiveTypeDef ::= 'polymorphic'? 'abstract'? primitiveKind typeName extendsDecl? metaDecl? primitiveTypeBody? {pin=3}
+primitiveTypeDef ::= 'abstract'? 'polymorphic'? primitiveKind typeName extendsDecl? metaDecl? primitiveTypeBody? {pin=3}
 primitiveKind ::= 'string' | 'integer' | 'long' | 'double' | 'boolean'
 primitiveTypeBody ::= '{' primitiveBodyPart* '}'
 private primitiveBodyPart ::= customParam // | ...
