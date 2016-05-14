@@ -54,13 +54,13 @@
     + [ ] Data well-formedness (for attributes of unknown types)
   * Data type modifiers:
     + [ ] `polymorphic` (actual data type of the datum will be available at runtime)
-    + [ ] `abstract`? (the data type should not be instantiatable on its own)
+    + [ ] `abstract` (the data type is intended for extension and should not be instantiatable on its own)
   * Field modifiers:
-    + [ ] `abstract`? (non-abstract subtypes must provide their own declaration of the field)
-    + [ ] `override` (the field must be declared in the supertype(s))
+    + [ ] `abstract` (non-abstract subtypes must provide their own (refined) declaration of the field)
+    + [ ] `override` (the field must be already declared in the supertype(s))
   * Var type member modifiers:
-    + [ ] `abstract`? (subtypes must provide their own declaration of the member)
-    + [ ] `override` (var type member must be declared in the supertype(s))
+    + [ ] `abstract`? (subtypes must provide their own (refined) declaration of the member)
+    + [ ] `override` (var type member must be already known in the supertype(s))
   * [ ] Naming conventions for:
     * [ ] Namespaces
     * [ ] Types
