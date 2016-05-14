@@ -10,3 +10,5 @@ f:map[Q,list [ W ]]
   }
 
   list[  list [  Bar ]   ]bars
+
+ abstract  polymorphic  record  E

@@ -2,7 +2,6 @@ package com.sumologic.epigraph.ideaplugin.schema.completion;
 
 import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
-import com.intellij.lang.parser.GeneratedParserUtilBase;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
@@ -39,6 +38,21 @@ public class SchemaCompletionContributor extends CompletionContributor {
       "abstract ", "vartype ", "enum ", "supplement "
   ));
 
+  // which types can have 'extends' clause
+  private static final Set<IElementType> DEFS_SUPPORTING_EXTENDS = new HashSet<>(Arrays.asList(
+      S_VAR_TYPE_DEF, S_RECORD_TYPE_DEF, S_LIST_TYPE_DEF, S_MAP_TYPE_DEF, S_PRIMITIVE_TYPE_DEF
+  ));
+
+  // which types can have 'meta' clause
+  private static final Set<IElementType> DEFS_SUPPORTING_META = new HashSet<>(Arrays.asList(
+      S_VAR_TYPE_DEF, S_RECORD_TYPE_DEF, S_LIST_TYPE_DEF, S_MAP_TYPE_DEF, S_ENUM_TYPE_DEF, S_PRIMITIVE_TYPE_DEF
+  ));
+
+  // which types can have 'supplements' clause
+  private static final Set<IElementType> DEFS_SUPPORTING_SUPPLEMENTS = new HashSet<>(Arrays.asList(
+      S_VAR_TYPE_DEF, S_RECORD_TYPE_DEF
+  ));
+
   public SchemaCompletionContributor() {
     extend(
         CompletionType.BASIC,
@@ -49,6 +63,8 @@ public class SchemaCompletionContributor extends CompletionContributor {
             PsiElement position = parameters.getPosition();
             completeTopLevelKeywords(position, result);
             completeExtendsKeyword(position, result);
+            completeMetaKeyword(position, result);
+            completeSupplementsKeyword(position, result);
           }
         }
     );
@@ -114,37 +130,78 @@ public class SchemaCompletionContributor extends CompletionContributor {
     }
   }
 
-  // TODO logic for meta/supplements is very similar.. reuse?
   private void completeExtendsKeyword(@NotNull PsiElement position, @NotNull CompletionResultSet result) {
-    PsiElement parent = position.getParent();
-    if (parent != null) {
-      boolean doComplete = false;
-
-      PsiElement grandParent = parent.getParent();
-
-      if (grandParent != null && grandParent.getNode().getElementType() == S_DEFS) {
-
-        // only care about record or multi type def
-        PsiElement prevParentSibling = SchemaPsiUtil.prevNonWhitespaceSibling(parent);
-        if (prevParentSibling instanceof SchemaRecordTypeDef) {
-          SchemaRecordTypeDef recordTypeDef = (SchemaRecordTypeDef) prevParentSibling;
-          if (recordTypeDef.getExtendsDecl() != null) return;
-        } else if (prevParentSibling instanceof SchemaVarTypeDef) {
-          SchemaVarTypeDef varTypeDef = (SchemaVarTypeDef) prevParentSibling;
-          if (varTypeDef.getExtendsDecl() != null) return;
-        } else return;
-
-        PsiElement nextParentSibling = SchemaPsiUtil.nextNonWhitespaceSibling(parent);
-        if (nextParentSibling == null) doComplete = true;
-        else if (nextParentSibling instanceof SchemaTypeDef) doComplete = true;
-        else if (nextParentSibling.getNode().getElementType().equals(GeneratedParserUtilBase.DUMMY_BLOCK)) {
-          doComplete = !SchemaPsiUtil.hasChildOfType(nextParentSibling, S_EXTENDS);
-        }
-
+    SchemaPsiUtil.ElementQualifier extendsPresent = element -> {
+      if (element instanceof SchemaTypeDef) {
+        SchemaTypeDef schemaTypeDef = (SchemaTypeDef) element;
+        return schemaTypeDef.getExtendsDecl() != null;
       }
+      return false;
+    };
 
-      if (doComplete)
-        result.addElement(LookupElementBuilder.create("extends "));
-    }
+    completeInnerTypedefKeyword(
+        position,
+        new SchemaPsiUtil.ElementTypeQualifier(DEFS_SUPPORTING_EXTENDS),
+        extendsPresent,
+        "extends ",
+        result);
+  }
+
+  private void completeMetaKeyword(@NotNull PsiElement position, @NotNull CompletionResultSet result) {
+    SchemaPsiUtil.ElementQualifier metaOrExtendsPresent = element -> {
+      if (element instanceof SchemaTypeDef) {
+        SchemaTypeDef schemaTypeDef = (SchemaTypeDef) element;
+        return schemaTypeDef.getMetaDecl() != null || schemaTypeDef.getExtendsDecl() != null;
+      }
+      return false;
+    };
+
+    completeInnerTypedefKeyword(
+        position,
+        new SchemaPsiUtil.ElementTypeQualifier(DEFS_SUPPORTING_META),
+        metaOrExtendsPresent,
+        "meta ",
+        result);
+  }
+
+  private void completeSupplementsKeyword(@NotNull PsiElement position, @NotNull CompletionResultSet result) {
+    SchemaPsiUtil.ElementQualifier metaOrExtendsOrSupplementsPresent = element -> {
+      if (element instanceof SchemaTypeDef) {
+        SchemaTypeDef schemaTypeDef = (SchemaTypeDef) element;
+        if (schemaTypeDef.getMetaDecl() != null || schemaTypeDef.getExtendsDecl() != null) return true;
+        if (schemaTypeDef instanceof SchemaRecordTypeDef) {
+          return ((SchemaRecordTypeDef) schemaTypeDef).getRecordSupplementsDecl() != null;
+        }
+        if (schemaTypeDef instanceof SchemaVarTypeDef) {
+          return ((SchemaVarTypeDef) schemaTypeDef).getVarTypeSupplementsDecl() != null;
+        }
+      }
+      return false;
+    };
+
+    completeInnerTypedefKeyword(
+        position,
+        new SchemaPsiUtil.ElementTypeQualifier(DEFS_SUPPORTING_SUPPLEMENTS),
+        metaOrExtendsOrSupplementsPresent,
+        "supplements ",
+        result);
+  }
+
+  private void completeInnerTypedefKeyword(@NotNull PsiElement position,
+                                           @NotNull SchemaPsiUtil.ElementQualifier canHaveQualifier,
+                                           @NotNull SchemaPsiUtil.ElementQualifier negativeBeforeQualifier,
+                                           @NotNull String completion,
+                                           @NotNull CompletionResultSet result) {
+
+    PsiElement parent = position.getParent();
+    if (parent == null) return;
+
+    // this should be the actual type def
+    PsiElement prevParentSibling = SchemaPsiUtil.prevNonWhitespaceSibling(parent);
+
+    if (!canHaveQualifier.qualifies(prevParentSibling)) return;
+    if (negativeBeforeQualifier.qualifies(prevParentSibling)) return;
+
+    result.addElement(LookupElementBuilder.create(completion));
   }
 }

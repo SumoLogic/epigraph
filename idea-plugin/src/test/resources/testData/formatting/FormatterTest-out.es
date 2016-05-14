@@ -10,3 +10,5 @@ record R {
 }
 
 list[list[Bar]] bars
+
+abstract polymorphic record E

@@ -8,6 +8,11 @@ import java.util.*;
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
 public class CompletionTest extends LightCodeInsightFixtureTestCase {
+  private final List<String> TOP_LEVEL = Arrays.asList(
+      "polymorphic ", "abstract ", "vartype ", "record ", "map", "list", "enum ",
+      "string ", "double ", "integer ", "long ", "boolean ", "supplement "
+  );
+
   @Override
   protected String getTestDataPath() {
     return "src/test/resources/testData/completion";
@@ -24,8 +29,7 @@ public class CompletionTest extends LightCodeInsightFixtureTestCase {
 
   public void testNamespaceOnlyTopLevelCompletion() {
     myFixture.configureByFile("NamespaceOnlyTopLevelCompletion.es");
-    checkCompletionVariants("import ", "polymorphic ", "abstract ", "vartype ", "record ", "map", "list", "enum ",
-        "string ", "double ", "integer ", "long ", "boolean ", "supplement ");
+    checkCompletionVariants(TOP_LEVEL, "import ");
   }
 
   public void testCompletionAfterPolymorphic() {
@@ -39,6 +43,21 @@ public class CompletionTest extends LightCodeInsightFixtureTestCase {
     checkCompletionVariants("polymorphic ", "record ", "map", "list", "string ", "double ", "integer ", "long ", "boolean ");
   }
 
+  public void testCompletionAfterRecordName() {
+    myFixture.configureByFile("CompletionAfterRecordName.es");
+    checkCompletionVariants(TOP_LEVEL, "extends ", "meta ", "supplements ");
+  }
+
+  public void testCompletionAfterRecordNameBeforeBlock() {
+    myFixture.configureByFile("CompletionAfterRecordNameBeforeBlock.es");
+    checkCompletionVariants(TOP_LEVEL, "extends ", "meta ", "supplements ");
+  }
+
+  public void testCompletionAfterListName() {
+    myFixture.configureByFile("CompletionAfterListName.es");
+    checkCompletionVariants(TOP_LEVEL, "extends ", "meta ");
+  }
+
   private void checkCompletionVariants(String... variants) {
     myFixture.completeBasic();
     List<String> actual = myFixture.getLookupElementStrings();
@@ -47,5 +66,11 @@ public class CompletionTest extends LightCodeInsightFixtureTestCase {
     Collections.sort(actual);
     Collections.sort(expected);
     assertEquals(expected, actual);
+  }
+
+  private void checkCompletionVariants(List<String> variants, String... moreVariants) {
+    List<String> allVariants = new ArrayList<>(variants);
+    allVariants.addAll(Arrays.asList(moreVariants));
+    checkCompletionVariants(allVariants.toArray(new String[allVariants.size()]));
   }
 }

@@ -528,7 +528,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'abstract'? 'override'? qid ':' typeRef defaultOverride? fieldBody?
+  // 'override'? 'abstract'? qid ':' typeRef defaultOverride? fieldBody?
   public static boolean fieldDecl(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "fieldDecl")) return false;
     boolean r, p;
@@ -545,17 +545,17 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     return r || p;
   }
 
-  // 'abstract'?
+  // 'override'?
   private static boolean fieldDecl_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "fieldDecl_0")) return false;
-    consumeToken(b, S_ABSTRACT);
+    consumeToken(b, S_OVERRIDE);
     return true;
   }
 
-  // 'override'?
+  // 'abstract'?
   private static boolean fieldDecl_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "fieldDecl_1")) return false;
-    consumeToken(b, S_OVERRIDE);
+    consumeToken(b, S_ABSTRACT);
     return true;
   }
 

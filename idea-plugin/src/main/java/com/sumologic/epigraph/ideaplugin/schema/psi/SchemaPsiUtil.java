@@ -7,6 +7,10 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
@@ -37,10 +41,12 @@ public class SchemaPsiUtil {
   }
 
   public static boolean hasNextSibling(@NotNull PsiElement e, IElementType... elementTypes) {
+    return hasNextSibling(e, new ElementTypeQualifier(elementTypes));
+  }
+
+  public static boolean hasNextSibling(@NotNull PsiElement e, @NotNull ElementQualifier qualifier) {
     for (PsiElement sibling = e.getNextSibling(); sibling != null; sibling = sibling.getNextSibling()) {
-      for (IElementType elementType : elementTypes) {
-        if (sibling.getNode().getElementType().equals(elementType)) return true;
-      }
+      if (qualifier.qualifies(sibling)) return true;
     }
 
     return false;
@@ -78,8 +84,12 @@ public class SchemaPsiUtil {
   }
 
   public static boolean hasChildOfType(@NotNull PsiElement e, IElementType... elementTypes) {
+    return hasChildMatching(e, new ElementTypeQualifier(elementTypes));
+  }
+
+  public static boolean hasChildMatching(@NotNull PsiElement e, @NotNull ElementQualifier qualifier) {
     PsiElement firstChild = e.getFirstChild();
-    return firstChild != null && hasNextSibling(firstChild, elementTypes);
+    return firstChild != null && hasNextSibling(firstChild, qualifier);
   }
 
   @Nullable
@@ -89,5 +99,26 @@ public class SchemaPsiUtil {
     if (element == null) return null;
     if (PsiTreeUtil.instanceOf(element, classes)) return element;
     return PsiTreeUtil.getParentOfType(element, classes);
+  }
+
+  public interface ElementQualifier {
+    boolean qualifies(PsiElement element);
+  }
+
+  public static class ElementTypeQualifier implements ElementQualifier {
+    private final Set<IElementType> elementTypes;
+
+    public ElementTypeQualifier(Set<IElementType> types) {
+      elementTypes = types;
+    }
+
+    public ElementTypeQualifier(IElementType... types) {
+      this(new HashSet<>(Arrays.asList(types)));
+    }
+
+    @Override
+    public boolean qualifies(PsiElement element) {
+      return element != null && element.getNode() != null && elementTypes.contains(element.getNode().getElementType());
+    }
   }
 }
