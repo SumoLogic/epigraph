@@ -73,6 +73,9 @@
   extends(".*TypeBody") = "com.sumologic.epigraph.ideaplugin.schema.psi.impl.CustomParamHolderImpl"
 }
 
+// TODO stub index support
+// http://www.jetbrains.org/intellij/sdk/docs/basics/indexing_and_psi_stubs/stub_indexes.html
+
 // consider separating fields/types/decl parts by either ',' or newlines,
 // otherwise stuff can get confusing, e.g.
 // record { f1:t1 f2:t2 }

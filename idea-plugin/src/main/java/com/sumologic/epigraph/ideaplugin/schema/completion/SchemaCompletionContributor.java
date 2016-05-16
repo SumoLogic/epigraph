@@ -78,7 +78,7 @@ public class SchemaCompletionContributor extends CompletionContributor {
 
     PsiElement parent = position.getParent();
     if (parent != null) {
-      if (parent instanceof SchemaTypeDef) return;
+      if (parent instanceof SchemaTypeDef || parent instanceof SchemaSupplementDef) return;
 
       PsiElement grandParent = parent.getParent();
 
@@ -93,7 +93,8 @@ public class SchemaCompletionContributor extends CompletionContributor {
 
         if (grandParentElementType == S_DEFS) {
           PsiElement nextParentSibling = SchemaPsiUtil.nextNonWhitespaceSibling(parent);
-          completeTypeDef = nextParentSibling == null || nextParentSibling instanceof SchemaTypeDef;
+          // don't initiate new type completion if we're followed by anything but a new def, e.g. when we're followed by a {..} dummy block
+          completeTypeDef = nextParentSibling == null || nextParentSibling instanceof SchemaTypeDef || nextParentSibling instanceof SchemaSupplementDef;
         } else if (grandParentElementType == S_IMPORT_STATEMENT) {
           if (!SchemaPsiUtil.hasNextSibling(grandParent, S_IMPORT_STATEMENT)) {
             completeTypeDef = true;

@@ -50,7 +50,7 @@ public class CompletionTest extends LightCodeInsightFixtureTestCase {
 
   public void testCompletionAfterRecordNameBeforeBlock() {
     myFixture.configureByFile("CompletionAfterRecordNameBeforeBlock.es");
-    checkCompletionVariants(TOP_LEVEL, "extends ", "meta ", "supplements ");
+    checkCompletionVariants("extends ", "meta ", "supplements ");
   }
 
   public void testCompletionAfterListName() {
