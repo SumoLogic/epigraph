@@ -19,6 +19,7 @@
 #### 1.2. Var types
   * [ ] Explicitly defined var types
   * [ ] Implicit default var types (for declared or inferred data types)
+  * [ ] Default var type members
 
 #### 1.3. Polymorphic types
   Normally data contract is defined by declared data type of the type member of the var holding
