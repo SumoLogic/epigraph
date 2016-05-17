@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static com.sumologic.epigraph.ideaplugin.schema.lexer.SchemaElementTypes.*;
 import com.sumologic.epigraph.ideaplugin.schema.psi.*;
+import javax.swing.Icon;
 
 public class SchemaTypeDefImpl extends TypeDefSchemaElementImpl implements SchemaTypeDef {
 
@@ -51,6 +52,10 @@ public class SchemaTypeDefImpl extends TypeDefSchemaElementImpl implements Schem
   @NotNull
   public TypeKind getKind() {
     return SchemaPsiImplUtil.getKind(this);
+  }
+
+  public Icon getIcon(int flags) {
+    return SchemaPsiImplUtil.getIcon(this, flags);
   }
 
 }

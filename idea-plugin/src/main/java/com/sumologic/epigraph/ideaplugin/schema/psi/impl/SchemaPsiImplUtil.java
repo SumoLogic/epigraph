@@ -1,6 +1,8 @@
 package com.sumologic.epigraph.ideaplugin.schema.psi.impl;
 
+import com.intellij.icons.AllIcons;
 import com.intellij.lang.ASTNode;
+import com.intellij.openapi.util.Iconable;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.TokenType;
@@ -11,6 +13,7 @@ import com.sumologic.epigraph.ideaplugin.schema.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +36,10 @@ public class SchemaPsiImplUtil {
   }
 
   // typedef --------------------------------------------
+
+  public static Icon getIcon(SchemaTypeDef schemaTypeDef, @Iconable.IconFlags int flags) {
+    return AllIcons.Nodes.Class; // TODO our own icon
+  }
 
   @Nullable
   public static String getName(SchemaTypeDef schemaTypeDef) {

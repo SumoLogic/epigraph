@@ -1,12 +1,12 @@
-package com.sumologic.epigraph.ideaplugin.schema.features.search;
+package com.sumologic.epigraph.ideaplugin.schema.features.usages;
 
 import com.intellij.lang.cacheBuilder.DefaultWordsScanner;
 import com.intellij.lang.cacheBuilder.WordsScanner;
 import com.intellij.lang.findUsages.FindUsagesProvider;
 import com.intellij.psi.PsiElement;
-import com.sumologic.epigraph.ideaplugin.schema.brains.NamespaceManager;
 import com.sumologic.epigraph.ideaplugin.schema.lexer.SchemaFlexAdapter;
 import com.sumologic.epigraph.ideaplugin.schema.parser.SchemaParserDefinition;
+import com.sumologic.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
 import com.sumologic.epigraph.ideaplugin.schema.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -66,12 +66,7 @@ public class SchemaFindUsagesProvider implements FindUsagesProvider {
   public String getDescriptiveName(@NotNull PsiElement element) {
     if (element instanceof SchemaTypeDef) {
       SchemaTypeDef typeDef = (SchemaTypeDef) element;
-      String shortName = typeDef.getName();
-      assert shortName != null;
-
-      String ns = NamespaceManager.getNamespace(typeDef);
-
-      return ns == null ? shortName : ns + "." + shortName;
+      return SchemaPresentationUtil.getName(typeDef, true);
     }
 
     if (element instanceof SchemaFqnSegment) {

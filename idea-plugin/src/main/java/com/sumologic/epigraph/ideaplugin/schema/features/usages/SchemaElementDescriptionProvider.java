@@ -1,10 +1,10 @@
-package com.sumologic.epigraph.ideaplugin.schema.features.search;
+package com.sumologic.epigraph.ideaplugin.schema.features.usages;
 
 import com.intellij.psi.ElementDescriptionLocation;
 import com.intellij.psi.ElementDescriptionProvider;
 import com.intellij.psi.PsiElement;
 import com.intellij.usageView.UsageViewLongNameLocation;
-import com.sumologic.epigraph.ideaplugin.schema.brains.NamespaceManager;
+import com.sumologic.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
 import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaFqnSegment;
 import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaTypeDef;
 import org.jetbrains.annotations.NotNull;
@@ -22,12 +22,7 @@ public class SchemaElementDescriptionProvider implements ElementDescriptionProvi
 
       if (element instanceof SchemaTypeDef) {
         SchemaTypeDef schemaTypeDef = (SchemaTypeDef) element;
-
-        String shortName = schemaTypeDef.getName();
-        String ns = NamespaceManager.getNamespace(schemaTypeDef);
-
-        if (shortName == null) return null;
-        return ns == null ? shortName : ns + "." + shortName;
+        return SchemaPresentationUtil.getName(schemaTypeDef, true);
       }
 
       if (element instanceof SchemaFqnSegment) {

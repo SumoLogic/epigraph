@@ -1,4 +1,4 @@
-package com.sumologic.epigraph.ideaplugin.schema.features.search;
+package com.sumologic.epigraph.ideaplugin.schema.features.usages;
 
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import com.intellij.usageView.UsageInfo;
@@ -11,7 +11,7 @@ import java.util.Collection;
 public class FindUsagesTest extends LightCodeInsightFixtureTestCase {
   @Override
   protected String getTestDataPath() {
-    return "src/test/resources/testData/search";
+    return "src/test/resources/testData/features/search";
   }
 
   public void testFindUsages() {

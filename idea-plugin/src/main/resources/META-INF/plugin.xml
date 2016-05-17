@@ -44,11 +44,11 @@
         implementation="com.sumologic.epigraph.ideaplugin.schema.formatting.codeStyle.SchemaCodeStyleSettingsProvider"/>
 
     <lang.findUsagesProvider language="epi_schema"
-                             implementationClass="com.sumologic.epigraph.ideaplugin.schema.features.search.SchemaFindUsagesProvider"/>
+                             implementationClass="com.sumologic.epigraph.ideaplugin.schema.features.usages.SchemaFindUsagesProvider"/>
     <elementDescriptionProvider
-        implementation="com.sumologic.epigraph.ideaplugin.schema.features.search.SchemaElementDescriptionProvider"/>
+        implementation="com.sumologic.epigraph.ideaplugin.schema.features.usages.SchemaElementDescriptionProvider"/>
     <usageTypeProvider
-        implementation="com.sumologic.epigraph.ideaplugin.schema.features.search.SchemaUsageTypeProvider"/>
+        implementation="com.sumologic.epigraph.ideaplugin.schema.features.usages.SchemaUsageTypeProvider"/>
 
     <lang.refactoringSupport language="epi_schema"
                              implementationClass="com.sumologic.epigraph.ideaplugin.schema.features.SchemaRefactoringSupportProvider"/>
@@ -65,6 +65,11 @@
                                   implementationClass="com.sumologic.epigraph.ideaplugin.schema.structureView.SchemaStructureViewFactory"/>
     <statementUpDownMover implementation="com.sumologic.epigraph.ideaplugin.schema.features.SchemaLineMover"/>
     <quoteHandler fileType="epi_schema" className="com.sumologic.epigraph.ideaplugin.schema.features.SchemaQuoteHandler"/>
+
+    <typeHierarchyProvider language="epi_schema"
+                           implementationClass="com.sumologic.epigraph.ideaplugin.schema.features.hierarchy.SchemaHierarchyProvider"/>
+    <!-- todo gutter icons -->
+
   </extensions>
 
   <actions>

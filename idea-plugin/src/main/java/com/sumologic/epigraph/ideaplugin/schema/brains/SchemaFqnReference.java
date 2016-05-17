@@ -4,6 +4,7 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
+import com.intellij.psi.impl.source.resolve.ResolveCache;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
@@ -22,6 +23,10 @@ public class SchemaFqnReference extends PsiReferenceBase<SchemaFqnSegment> imple
 
   private final Collection<String> namespacesToSearch;
   private final String shortName;
+
+  private final ResolveCache.Resolver resolver = (psiReference, incompleteCode) -> resolveImpl();
+  private final ResolveCache.PolyVariantResolver<SchemaFqnReference> polyVariantResolver =
+      (schemaFqnReference, incompleteCode) -> multiResolveImpl();
 
   public SchemaFqnReference(SchemaFqnSegment segment, Collection<Fqn> namespacesToSearch, Fqn suffix) {
     super(segment);
@@ -51,8 +56,12 @@ public class SchemaFqnReference extends PsiReferenceBase<SchemaFqnSegment> imple
   }
 
   @Nullable
-  @Override
-  public PsiElement resolve() {
+  public final PsiElement resolve() {
+    return ResolveCache.getInstance(myElement.getProject()).resolveWithCaching(this, resolver, false, false);
+  }
+
+  @Nullable
+  private PsiElement resolveImpl() {
     final Project project = myElement.getProject();
     PsiElement typeDef = SchemaIndexUtil.findTypeDef(project, namespacesToSearch, shortName);
     if (typeDef != null) return typeDef;
@@ -66,10 +75,15 @@ public class SchemaFqnReference extends PsiReferenceBase<SchemaFqnSegment> imple
 
     return null;
   }
-
   @NotNull
   @Override
   public ResolveResult[] multiResolve(boolean incompleteCode) {
+    return ResolveCache.getInstance(myElement.getProject())
+        .resolveWithCaching(this, polyVariantResolver, false, incompleteCode);
+  }
+
+  @NotNull
+  private ResolveResult[] multiResolveImpl() {
     final Project project = myElement.getProject();
     ResolveResult[] typeDefs = SchemaIndexUtil.findTypeDefs(project, namespacesToSearch, shortName).stream()
         .map(PsiElementResolveResult::new)

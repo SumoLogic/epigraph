@@ -27,7 +27,7 @@ import java.util.stream.Stream;
  */
 public class SchemaIndexUtil {
   @NotNull
-  public static List<SchemaTypeDef> findTypeDefs(Project project, @NotNull Collection<String> namespaces, @Nullable String shortName) {
+  public static List<SchemaTypeDef> findTypeDefs(Project project, @Nullable Collection<String> namespaces, @Nullable String shortName) {
     List<SchemaTypeDef> result = new ArrayList<>();
 
     Collection<VirtualFile> virtualFiles =
@@ -42,7 +42,7 @@ public class SchemaIndexUtil {
 
       if (defs != null) {
         String namespaceFqnString = NamespaceManager.getNamespace(defs);
-        if (namespaces.contains(namespaceFqnString)) {
+        if (namespaces == null || namespaces.contains(namespaceFqnString)) {
           Stream<SchemaTypeDef> typeDefStream = defs.getTypeDefList().stream();
           result.addAll(typeDefStream
               .filter(typeDef -> shortName == null || shortName.equals(typeDef.getName()))

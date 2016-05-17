@@ -1,4 +1,4 @@
-package com.sumologic.epigraph.ideaplugin.schema.features.search;
+package com.sumologic.epigraph.ideaplugin.schema.features.usages;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;

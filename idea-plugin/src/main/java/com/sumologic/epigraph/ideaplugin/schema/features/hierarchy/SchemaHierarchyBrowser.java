@@ -1,0 +1,136 @@
+package com.sumologic.epigraph.ideaplugin.schema.features.hierarchy;
+
+import com.intellij.ide.hierarchy.HierarchyBrowserManager;
+import com.intellij.ide.hierarchy.HierarchyNodeDescriptor;
+import com.intellij.ide.hierarchy.HierarchyTreeStructure;
+import com.intellij.ide.hierarchy.TypeHierarchyBrowserBase;
+import com.intellij.ide.util.treeView.NodeDescriptor;
+import com.intellij.openapi.actionSystem.IdeActions;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiNamedElement;
+import com.sumologic.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
+import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaTypeDef;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+import java.util.Comparator;
+import java.util.Map;
+
+/**
+ * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
+ */
+public class SchemaHierarchyBrowser extends TypeHierarchyBrowserBase {
+  public SchemaHierarchyBrowser(Project project, PsiElement element) {
+    super(project, element);
+  }
+
+  @Override
+  protected boolean isInterface(PsiElement psiElement) {
+    return false;
+  }
+
+  @Override
+  protected boolean canBeDeleted(PsiElement psiElement) {
+    return false;
+  }
+
+  @Override
+  protected String getQualifiedName(PsiElement psiElement) {
+    if (psiElement instanceof PsiNamedElement) {
+      PsiNamedElement namedElement = (PsiNamedElement) psiElement;
+      return SchemaPresentationUtil.getName(namedElement, true);
+    } else return null;
+  }
+
+  @Nullable
+  @Override
+  protected PsiElement getElementFromDescriptor(@NotNull HierarchyNodeDescriptor descriptor) {
+    return descriptor.getPsiElement();
+  }
+
+  @Override
+  protected void createTrees(@NotNull Map<String, JTree> trees) {
+    createTreeAndSetupCommonActions(trees, IdeActions.GROUP_TYPE_HIERARCHY_POPUP);
+  }
+
+  @Nullable
+  @Override
+  protected JPanel createLegendPanel() {
+    return null;
+  }
+
+  @Override
+  protected boolean isApplicableElement(@NotNull PsiElement element) {
+    return element instanceof SchemaTypeDef;
+  }
+
+  @Nullable
+  @Override
+  protected HierarchyTreeStructure createHierarchyTreeStructure(@NotNull String type, @NotNull PsiElement psiElement) {
+    // TODO different views
+    return new SchemaSubtypesHierarchyTreeStructure(myProject, (SchemaTypeDef) psiElement);
+  }
+
+  @Nullable
+  @Override
+  protected Comparator<NodeDescriptor> getComparator() {
+    //noinspection ConstantConditions
+    if (HierarchyBrowserManager.getInstance(myProject).getState().SORT_ALPHABETICALLY) {
+      return AlphaComparator.INSTANCE;
+    } else {
+      return SourceComparator.INSTANCE;
+    }
+  }
+
+  private static class AlphaComparator implements Comparator<NodeDescriptor> {
+    public static final AlphaComparator INSTANCE = new AlphaComparator();
+
+    @Override
+    public int compare(NodeDescriptor nodeDescriptor1, NodeDescriptor nodeDescriptor2) {
+      int weight1 = nodeDescriptor1.getWeight();
+      int weight2 = nodeDescriptor2.getWeight();
+      if (weight1 != weight2) {
+        return weight1 - weight2;
+      }
+      String s1 = nodeDescriptor1.toString();
+      String s2 = nodeDescriptor2.toString();
+      if (s1 == null) return s2 == null ? 0 : -1;
+      if (s2 == null) return +1;
+      return StringUtil.naturalCompare(s1, s2);
+    }
+  }
+
+  private static class SourceComparator implements Comparator<NodeDescriptor> {
+    public static final SourceComparator INSTANCE = new SourceComparator();
+
+    @Override
+    public int compare(NodeDescriptor nodeDescriptor1, NodeDescriptor nodeDescriptor2) {
+      /*
+      int weight1 = getWeight(nodeDescriptor1);
+      int weight2 = getWeight(nodeDescriptor2);
+      if (weight1 != weight2) {
+        return weight1 - weight2;
+      }
+      if (!(nodeDescriptor1.getParentDescriptor() instanceof ProjectViewProjectNode)){
+        if (nodeDescriptor1 instanceof PsiDirectoryNode || nodeDescriptor1 instanceof PsiFileNode){
+          return nodeDescriptor1.toString().compareToIgnoreCase(nodeDescriptor2.toString());
+        }
+        // TODO this (below)?
+        if (nodeDescriptor1 instanceof ClassTreeNode && nodeDescriptor2 instanceof ClassTreeNode){
+          if (((ClassTreeNode)nodeDescriptor1).isTopLevel()){
+            return nodeDescriptor1.toString().compareToIgnoreCase(nodeDescriptor2.toString());
+          }
+        }
+      }
+      */
+      int index1 = nodeDescriptor1.getIndex();
+      int index2 = nodeDescriptor2.getIndex();
+      if (index1 == index2) return 0;
+      return index1 < index2 ? -1 : +1;
+    }
+  }
+
+}

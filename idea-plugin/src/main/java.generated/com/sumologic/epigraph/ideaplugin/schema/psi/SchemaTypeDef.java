@@ -4,6 +4,7 @@ package com.sumologic.epigraph.ideaplugin.schema.psi;
 import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
+import javax.swing.Icon;
 
 public interface SchemaTypeDef extends TypeDefSchemaElement {
 
@@ -22,5 +23,7 @@ public interface SchemaTypeDef extends TypeDefSchemaElement {
 
   @NotNull
   TypeKind getKind();
+
+  Icon getIcon(int flags);
 
 }
