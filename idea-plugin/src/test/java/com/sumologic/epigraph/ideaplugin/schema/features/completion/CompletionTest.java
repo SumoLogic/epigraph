@@ -1,4 +1,4 @@
-package com.sumologic.epigraph.ideaplugin.schema.brains;
+package com.sumologic.epigraph.ideaplugin.schema.features.completion;
 
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 
@@ -15,7 +15,7 @@ public class CompletionTest extends LightCodeInsightFixtureTestCase {
 
   @Override
   protected String getTestDataPath() {
-    return "src/test/resources/testData/completion";
+    return "src/test/resources/testData/features/completion";
   }
 
   public void testStaticImportCompletion() {

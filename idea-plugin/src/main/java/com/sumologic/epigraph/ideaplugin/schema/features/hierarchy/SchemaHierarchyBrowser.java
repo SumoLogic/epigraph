@@ -6,6 +6,7 @@ import com.intellij.ide.hierarchy.HierarchyTreeStructure;
 import com.intellij.ide.hierarchy.TypeHierarchyBrowserBase;
 import com.intellij.ide.util.treeView.NodeDescriptor;
 import com.intellij.openapi.actionSystem.IdeActions;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
@@ -23,13 +24,15 @@ import java.util.Map;
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
 public class SchemaHierarchyBrowser extends TypeHierarchyBrowserBase {
+  private static final Logger LOG = Logger.getInstance(SchemaHierarchyBrowser.class);
+
   public SchemaHierarchyBrowser(Project project, PsiElement element) {
     super(project, element);
   }
 
   @Override
   protected boolean isInterface(PsiElement psiElement) {
-    return false;
+    return true; // this disables "type hierarchy" and only leaves subtypes and supertypes hierarchies
   }
 
   @Override
@@ -70,8 +73,14 @@ public class SchemaHierarchyBrowser extends TypeHierarchyBrowserBase {
   @Nullable
   @Override
   protected HierarchyTreeStructure createHierarchyTreeStructure(@NotNull String type, @NotNull PsiElement psiElement) {
-    // TODO different views
-    return new SchemaSubtypesHierarchyTreeStructure(myProject, (SchemaTypeDef) psiElement);
+    if (SUPERTYPES_HIERARCHY_TYPE.equals(type)) {
+      return new SchemaSupertypesHierarchyTreeStructure(myProject, (SchemaTypeDef) psiElement);
+    } else if (SUBTYPES_HIERARCHY_TYPE.equals(type)) {
+      return new SchemaSubtypesHierarchyTreeStructure(myProject, (SchemaTypeDef) psiElement);
+    } else {
+      LOG.error("unexpected type: " + type);
+      return null;
+    }
   }
 
   @Nullable

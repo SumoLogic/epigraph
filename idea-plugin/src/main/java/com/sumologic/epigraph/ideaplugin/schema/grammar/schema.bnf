@@ -112,7 +112,7 @@ typeDef ::= varTypeDef | recordTypeDef | mapTypeDef | listTypeDef |
               name="type definition"
               implements="com.sumologic.epigraph.ideaplugin.schema.psi.TypeDefSchemaElement"
               extends="com.sumologic.epigraph.ideaplugin.schema.psi.impl.TypeDefSchemaElementImpl"
-              methods = [getName setName getNameIdentifier getTextOffset delete getKind getIcon]
+              methods = [getName setName getNameIdentifier getTextOffset delete getKind getIcon parents]
             }
 
 anonList ::= 'list' '[' typeRef defaultOverride? ']' {pin=1}// TODO rename to `listType`? `concreteList`?
@@ -186,11 +186,18 @@ private enumMemberBody ::='{' enumMemberBodyPart* '}'
 private enumMemberBodyPart ::= customParam
 
 supplementDef ::= 'supplement' combinedFqns (',' combinedFqns)* 'with' fqnTypeRef {pin=1}
-// TODO for multi:
+
+// todo? for multi:  // not too good, no name for artificial vartype hence no common interface
 // supplement User,Company with {
 //    mySuperAnnotation = "sdf"; ??
 //    foo : MyType { sdf = "sdf" }
 // }
+
+/*
+supplement FooRec, BarRec with record { // not good since supplemented records won't have common interface for new field(s)
+    newField: SomeType
+}
+*/
 
 combinedFqns ::= fqnTypeRef ('+' fqnTypeRef)*
 

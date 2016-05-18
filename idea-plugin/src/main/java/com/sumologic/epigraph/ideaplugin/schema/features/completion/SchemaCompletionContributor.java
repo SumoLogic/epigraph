@@ -1,4 +1,4 @@
-package com.sumologic.epigraph.ideaplugin.schema.completion;
+package com.sumologic.epigraph.ideaplugin.schema.features.completion;
 
 import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;

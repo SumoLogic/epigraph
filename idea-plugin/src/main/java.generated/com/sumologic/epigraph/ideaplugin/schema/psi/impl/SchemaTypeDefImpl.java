@@ -58,4 +58,9 @@ public class SchemaTypeDefImpl extends TypeDefSchemaElementImpl implements Schem
     return SchemaPsiImplUtil.getIcon(this, flags);
   }
 
+  @NotNull
+  public List<SchemaTypeDef> parents() {
+    return SchemaPsiImplUtil.parents(this);
+  }
+
 }

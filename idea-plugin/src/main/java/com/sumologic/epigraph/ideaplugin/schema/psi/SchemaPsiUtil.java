@@ -92,11 +92,13 @@ public class SchemaPsiUtil {
     return firstChild != null && hasNextSibling(firstChild, qualifier);
   }
 
+  @SafeVarargs
   @Nullable
   public static <T extends PsiElement> T getElementOrParentOfType(@Nullable final T element,
                                                                   @NotNull final Class<? extends T>... classes) {
 
     if (element == null) return null;
+    //noinspection ConfusingArgumentToVarargsMethod
     if (PsiTreeUtil.instanceOf(element, classes)) return element;
     return PsiTreeUtil.getParentOfType(element, classes);
   }

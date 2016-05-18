@@ -32,7 +32,7 @@
                implementationClass="com.sumologic.epigraph.ideaplugin.schema.highlighting.SchemaAnnotator"/>
 
     <completion.contributor language="epi_schema"
-                            implementationClass="com.sumologic.epigraph.ideaplugin.schema.completion.SchemaCompletionContributor"/>
+                            implementationClass="com.sumologic.epigraph.ideaplugin.schema.features.completion.SchemaCompletionContributor"/>
     <!--<psi.referenceContributor language="epi_schema"-->
                               <!--implementation="com.sumologic.dohyo.plugin.schema.psi.references.SchemaTypeReferenceContributor"/>-->
 

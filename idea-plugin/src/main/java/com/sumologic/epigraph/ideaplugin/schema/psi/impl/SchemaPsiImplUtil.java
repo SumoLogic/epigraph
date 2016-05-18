@@ -10,18 +10,22 @@ import com.intellij.util.IncorrectOperationException;
 import com.sumologic.epigraph.ideaplugin.schema.brains.Fqn;
 import com.sumologic.epigraph.ideaplugin.schema.brains.ReferenceFactory;
 import com.sumologic.epigraph.ideaplugin.schema.psi.*;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
 public class SchemaPsiImplUtil {
+//  private static final SchemaTypeDef[] EMPTY_TYPE_DEFS = new SchemaTypeDef[0];
 
+  @Contract(pure = true)
   @NotNull
   public static Fqn getFqn(SchemaFqn e) {
     List<SchemaFqnSegment> fqnSegmentList = e.getFqnSegmentList();
@@ -37,10 +41,12 @@ public class SchemaPsiImplUtil {
 
   // typedef --------------------------------------------
 
+  @Contract(pure = true)
   public static Icon getIcon(SchemaTypeDef schemaTypeDef, @Iconable.IconFlags int flags) {
     return AllIcons.Nodes.Class; // TODO our own icon
   }
 
+  @Contract(pure = true)
   @Nullable
   public static String getName(SchemaTypeDef schemaTypeDef) {
     PsiElement id = schemaTypeDef.getId();
@@ -58,11 +64,13 @@ public class SchemaPsiImplUtil {
     }
   }
 
+  @Contract(pure = true)
   @Nullable
   public static PsiElement getNameIdentifier(@NotNull SchemaTypeDef schemaTypeDef) {
     return schemaTypeDef.getId();
   }
 
+  @Contract(pure = true)
   public static int getTextOffset(@NotNull SchemaTypeDef schemaTypeDef) {
     PsiElement nameIdentifier = schemaTypeDef.getNameIdentifier();
     return nameIdentifier == null ? 0 : nameIdentifier.getTextOffset();
@@ -82,6 +90,7 @@ public class SchemaPsiImplUtil {
     }
   }
 
+  @Contract(pure = true)
   @NotNull
   public static TypeKind getKind(@NotNull SchemaTypeDef schemaTypeDef) {
     if (schemaTypeDef instanceof SchemaVarTypeDef) return TypeKind.VAR;
@@ -94,9 +103,41 @@ public class SchemaPsiImplUtil {
     throw new IllegalArgumentException("Unknown type def: " + schemaTypeDef);
   }
 
+  @NotNull
+  @Contract(pure = true)
+  public static List<SchemaTypeDef> parents(@NotNull SchemaTypeDef typeDef) {
+    SchemaExtendsDecl extendsDecl = typeDef.getExtendsDecl();
+    if (extendsDecl == null) return Collections.emptyList();
+    List<SchemaTypeRef> typeRefList = extendsDecl.getTypeRefList();
+    if (typeRefList.isEmpty()) return Collections.emptyList();
+
+    List<SchemaTypeDef> result = new ArrayList<>(typeRefList.size());
+    for (SchemaTypeRef typeRef : typeRefList) {
+      SchemaFqnTypeRef fqnTypeRef = typeRef.getFqnTypeRef();
+      if (fqnTypeRef != null) {
+        PsiReference reference = SchemaPsiImplUtil.getReference(fqnTypeRef);
+        if (reference != null) {
+          PsiElement resolved = reference.resolve();
+          if (resolved instanceof SchemaTypeDef) {
+            result.add((SchemaTypeDef) resolved);
+          }
+        }
+      }
+    }
+    return result;
+  }
+
+  // supplement --------------------------------------------
+
+//  @Nullable
+//  public static String getName(@NotNull SchemaSupplementDef schemaSupplementDef) {
+//
+//  }
+
   // fqn type ref --------------------------------------------
 
   // not exposed through PSI
+  @Contract(pure = true)
   @Nullable
   public static PsiReference getReference(@NotNull SchemaFqnTypeRef typeRef) {
     List<SchemaFqnSegment> fqnSegmentList = typeRef.getFqn().getFqnSegmentList();
@@ -117,6 +158,7 @@ public class SchemaPsiImplUtil {
    * @return FQN of this segment. If it's a part of a larger FQN, then all segments up to
    * (including) this one are returned.
    */
+  @Contract(pure = true)
   @NotNull
   public static Fqn getFqn(SchemaFqnSegment e) {
     SchemaFqn schemaFqn = (SchemaFqn) e.getParent();
@@ -133,6 +175,7 @@ public class SchemaPsiImplUtil {
     return new Fqn(segments);
   }
 
+  @Contract(pure = true)
   @Nullable
   public static SchemaFqn getSchemaFqn(SchemaFqnSegment segment) {
     PsiElement fqn = segment.getParent();
@@ -143,6 +186,7 @@ public class SchemaPsiImplUtil {
     return null;
   }
 
+  @Contract(pure = true)
   @Nullable
   public static SchemaFqnTypeRef getSchemaFqnTypeRef(SchemaFqnSegment segment) {
     PsiElement fqn = segment.getParent();
@@ -156,6 +200,7 @@ public class SchemaPsiImplUtil {
     return null;
   }
 
+  @Contract(pure = true)
   @Nullable
   public static String getName(SchemaFqnSegment segment) {
     return getNameIdentifier(segment).getText();
@@ -167,11 +212,13 @@ public class SchemaPsiImplUtil {
     return oldId.replace(newId);
   }
 
+  @Contract(pure = true)
   @NotNull
   public static PsiElement getNameIdentifier(SchemaFqnSegment segment) {
     return segment.getId();
   }
 
+  @Contract(pure = true)
   public static boolean isLast(SchemaFqnSegment segment) {
     PsiElement parent = segment.getParent();
     if (parent instanceof SchemaFqn) {
@@ -182,6 +229,7 @@ public class SchemaPsiImplUtil {
     return false;
   }
 
+  @Contract(pure = true)
   @Nullable
   public static PsiReference getReference(SchemaFqnSegment segment) {
     return ReferenceFactory.getReference(segment);
@@ -190,6 +238,7 @@ public class SchemaPsiImplUtil {
   // member decls --------------------------------------------
   // field decl
 
+  @Contract(pure = true)
   @Nullable
   public static String getName(SchemaFieldDecl fieldDecl) {
     return getNameIdentifier(fieldDecl).getText();
@@ -201,6 +250,7 @@ public class SchemaPsiImplUtil {
     return oldId.replace(newId);
   }
 
+  @Contract(pure = true)
   @NotNull
   public static PsiElement getNameIdentifier(SchemaFieldDecl fieldDecl) {
     return fieldDecl.getId();
@@ -208,6 +258,7 @@ public class SchemaPsiImplUtil {
 
   // varTypeMember decl
 
+  @Contract(pure = true)
   @Nullable
   public static String getName(SchemaVarTypeMemberDecl varTypeMemberDecl) {
     return getNameIdentifier(varTypeMemberDecl).getText();
@@ -219,6 +270,7 @@ public class SchemaPsiImplUtil {
     return oldId.replace(newId);
   }
 
+  @Contract(pure = true)
   @NotNull
   public static PsiElement getNameIdentifier(SchemaVarTypeMemberDecl varTypeMemberDecl) {
     return varTypeMemberDecl.getId();
@@ -226,6 +278,7 @@ public class SchemaPsiImplUtil {
 
   // enumMember decl
 
+  @Contract(pure = true)
   @Nullable
   public static String getName(SchemaEnumMemberDecl enumMemberDecl) {
     return getNameIdentifier(enumMemberDecl).getText();
@@ -237,6 +290,7 @@ public class SchemaPsiImplUtil {
     return oldId.replace(newId);
   }
 
+  @Contract(pure = true)
   @NotNull
   public static PsiElement getNameIdentifier(SchemaEnumMemberDecl enumMemberDecl) {
     return enumMemberDecl.getId();
@@ -244,6 +298,7 @@ public class SchemaPsiImplUtil {
 
   // custom param
 
+  @Contract(pure = true)
   @Nullable
   public static String getName(SchemaCustomParam customParam) {
     return getNameIdentifier(customParam).getText();
@@ -255,6 +310,7 @@ public class SchemaPsiImplUtil {
     return oldId.replace(newId);
   }
 
+  @Contract(pure = true)
   @NotNull
   public static PsiElement getNameIdentifier(SchemaCustomParam customParam) {
     return customParam.getId();
@@ -262,6 +318,7 @@ public class SchemaPsiImplUtil {
 
   /////////////
 
+  @Contract(value = "null -> null", pure = true)
   private static <T> T getLast(List<T> list) {
     if (list == null || list.isEmpty()) return null;
     return list.get(list.size() - 1);

@@ -26,4 +26,7 @@ public interface SchemaTypeDef extends TypeDefSchemaElement {
 
   Icon getIcon(int flags);
 
+  @NotNull
+  List<SchemaTypeDef> parents();
+
 }

@@ -13,12 +13,8 @@ import java.util.List;
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public class SchemaSubtypesHierarchyTreeStructure extends HierarchyTreeStructure {
-  protected SchemaSubtypesHierarchyTreeStructure(@NotNull Project project, HierarchyNodeDescriptor baseDescriptor) {
-    super(project, baseDescriptor);
-  }
-
-  public SchemaSubtypesHierarchyTreeStructure(Project project, SchemaTypeDef typeDef) {
+class SchemaSubtypesHierarchyTreeStructure extends HierarchyTreeStructure {
+  SchemaSubtypesHierarchyTreeStructure(Project project, SchemaTypeDef typeDef) {
     super(project, new SchemaHierarchyNodeDescriptor(project, null, typeDef, true));
   }
 
