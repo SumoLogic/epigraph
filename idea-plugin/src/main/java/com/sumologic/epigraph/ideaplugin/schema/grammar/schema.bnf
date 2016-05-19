@@ -120,13 +120,12 @@ anonMap ::= 'map' '[' typeRef ',' typeRef defaultOverride? ']' {pin=1} // TODO r
 
 extendsDecl ::= 'extends' typeRef (',' typeRef)*
 defaultOverride ::= 'nodefault' | 'default' qid
-customParam ::= qid '=' data_value ';' { // TODO make editor auto-insert ';' after typing '=' ?
+customParam ::= qid '=' data_value ';' { // TODO embed data language instead
   name="custom attribute"
   implements="com.intellij.psi.PsiNamedElement"
   methods = [getName setName getNameIdentifier]
   pin = 2
-  // recoverWhile = paramRecover
-}// TODO real data parsing
+}
 
 metaDecl ::= 'meta' fqnTypeRef // we don't allow anonList or anonMap as meta
 
@@ -204,4 +203,3 @@ combinedFqns ::= fqnTypeRef ('+' fqnTypeRef)*
 private declRecover ::= ! ('import' | 'namespace' | 'polymorphic' | 'abstract' | 'record' |
                            'map' | 'list' | 'vartype' | 'enum' | 'supplement'| primitiveKind)
 private partRecover ::= ! ('}' | qid | 'abstract' | 'override' )
-// private paramRecover ::= ! (';')

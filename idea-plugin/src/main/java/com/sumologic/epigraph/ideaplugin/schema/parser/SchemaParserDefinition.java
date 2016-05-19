@@ -14,7 +14,7 @@ import com.intellij.psi.tree.TokenSet;
 import com.sumologic.epigraph.ideaplugin.schema.lexer.SchemaElementTypes;
 import com.sumologic.epigraph.ideaplugin.schema.lexer.SchemaFlexAdapter;
 import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaFile;
-import com.sumologic.epigraph.ideaplugin.schema.stubs.types.SchemaFileStubElementType;
+import com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaStubElementTypes;
 
 import static com.sumologic.epigraph.ideaplugin.schema.lexer.SchemaElementTypes.*;
 
@@ -69,7 +69,7 @@ public class SchemaParserDefinition implements ParserDefinition {
 
   @Override
   public IFileElementType getFileNodeType() {
-    return SchemaFileStubElementType.INSTANCE;
+    return SchemaStubElementTypes.SCHEMA_FILE;
   }
 
   @NotNull

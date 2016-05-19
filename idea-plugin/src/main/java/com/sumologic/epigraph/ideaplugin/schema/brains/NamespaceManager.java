@@ -24,7 +24,7 @@ public class NamespaceManager {
 
   @NotNull
   public static Set<Fqn> getStarNamespaces(@NotNull PsiElement element) {
-    SchemaFile schemaFile = PsiTreeUtil.getParentOfType(element, SchemaFile.class);
+    SchemaFile schemaFile = getSchemaFile(element);
     if (schemaFile == null) return Collections.emptySet();
 
     Set<Fqn> res = new HashSet<>();
@@ -41,8 +41,7 @@ public class NamespaceManager {
 
   @Nullable
   public static String getNamespace(@NotNull PsiElement element) {
-    SchemaFile schemaFile = element instanceof SchemaFile ? (SchemaFile) element :
-        PsiTreeUtil.getParentOfType(element, SchemaFile.class);
+    SchemaFile schemaFile = getSchemaFile(element);
 
     if (schemaFile == null) return null;
 
@@ -61,7 +60,7 @@ public class NamespaceManager {
    */
   @NotNull
   public static Set<Fqn> getPrefixNamespacesWithLastSegmentRemoved(@NotNull PsiElement element, @Nullable String lastSegment) {
-    SchemaFile schemaFile = PsiTreeUtil.getParentOfType(element, SchemaFile.class);
+    SchemaFile schemaFile = getSchemaFile(element);
     if (schemaFile == null) return Collections.emptySet();
 
     Set<Fqn> res = new HashSet<>();
@@ -81,6 +80,7 @@ public class NamespaceManager {
 
     return res;
   }
+
 
   /**
    * Finds all namespaces such that their fqn matches prefix and returns their segments following prefix.
@@ -109,5 +109,11 @@ public class NamespaceManager {
     }
 
     return result;
+  }
+
+  @Nullable
+  private static SchemaFile getSchemaFile(@NotNull PsiElement element) {
+    return element instanceof SchemaFile ? (SchemaFile) element :
+        PsiTreeUtil.getParentOfType(element, SchemaFile.class);
   }
 }
