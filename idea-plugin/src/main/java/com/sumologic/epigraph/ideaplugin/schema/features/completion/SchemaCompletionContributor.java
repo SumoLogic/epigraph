@@ -168,7 +168,7 @@ public class SchemaCompletionContributor extends CompletionContributor {
   private void completeSupplementsKeyword(@NotNull PsiElement position, @NotNull CompletionResultSet result) {
     SchemaPsiUtil.ElementQualifier metaOrExtendsOrSupplementsPresent = element -> {
       if (element instanceof SchemaTypeDef) {
-        SchemaTypeDef schemaTypeDef = (SchemaTypeDef) element;
+        SchemaTypeDefElement schemaTypeDef = ((SchemaTypeDef) element).element();
         if (schemaTypeDef.getMetaDecl() != null || schemaTypeDef.getExtendsDecl() != null) return true;
         if (schemaTypeDef instanceof SchemaRecordTypeDef) {
           return ((SchemaRecordTypeDef) schemaTypeDef).getRecordSupplementsDecl() != null;
@@ -200,9 +200,14 @@ public class SchemaCompletionContributor extends CompletionContributor {
     // this should be the actual type def
     PsiElement prevParentSibling = SchemaPsiUtil.prevNonWhitespaceSibling(parent);
 
-    if (!canHaveQualifier.qualifies(prevParentSibling)) return;
-    if (negativeBeforeQualifier.qualifies(prevParentSibling)) return;
+    if (prevParentSibling instanceof SchemaTypeDef) {
+      SchemaTypeDef typeDef = (SchemaTypeDef) prevParentSibling;
+      SchemaTypeDefElement element = typeDef.element();
 
-    result.addElement(LookupElementBuilder.create(completion));
+      if (!canHaveQualifier.qualifies(element)) return;
+      if (negativeBeforeQualifier.qualifies(element)) return;
+
+      result.addElement(LookupElementBuilder.create(completion));
+    }
   }
 }

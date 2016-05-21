@@ -4,8 +4,10 @@ package com.sumologic.epigraph.ideaplugin.schema.psi;
 import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.StubBasedPsiElement;
+import com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaVarTypeDefStub;
 
-public interface SchemaVarTypeDef extends SchemaTypeDef {
+public interface SchemaVarTypeDef extends SchemaTypeDefElement, StubBasedPsiElement<SchemaVarTypeDefStub> {
 
   @Nullable
   SchemaDefaultOverride getDefaultOverride();
@@ -22,7 +24,7 @@ public interface SchemaVarTypeDef extends SchemaTypeDef {
   @NotNull
   PsiElement getVartype();
 
-  @NotNull
+  @Nullable
   PsiElement getId();
 
 }

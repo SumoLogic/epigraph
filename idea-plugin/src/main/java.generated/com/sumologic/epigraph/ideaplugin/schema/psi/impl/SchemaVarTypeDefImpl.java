@@ -9,11 +9,16 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static com.sumologic.epigraph.ideaplugin.schema.lexer.SchemaElementTypes.*;
 import com.sumologic.epigraph.ideaplugin.schema.psi.*;
+import com.intellij.psi.stubs.IStubElementType;
 
-public class SchemaVarTypeDefImpl extends SchemaTypeDefImpl implements SchemaVarTypeDef {
+public class SchemaVarTypeDefImpl extends SchemaVarTypeDefElementImplBase implements SchemaVarTypeDef {
 
   public SchemaVarTypeDefImpl(ASTNode node) {
     super(node);
+  }
+
+  public SchemaVarTypeDefImpl(com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaVarTypeDefStub stub, IStubElementType nodeType) {
+    super(stub, nodeType);
   }
 
   public void accept(@NotNull SchemaVisitor visitor) {
@@ -56,9 +61,9 @@ public class SchemaVarTypeDefImpl extends SchemaTypeDefImpl implements SchemaVar
   }
 
   @Override
-  @NotNull
+  @Nullable
   public PsiElement getId() {
-    return findNotNullChildByType(S_ID);
+    return findChildByType(S_ID);
   }
 
 }

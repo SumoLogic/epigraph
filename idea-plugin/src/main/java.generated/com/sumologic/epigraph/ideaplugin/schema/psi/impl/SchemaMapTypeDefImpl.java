@@ -9,11 +9,16 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static com.sumologic.epigraph.ideaplugin.schema.lexer.SchemaElementTypes.*;
 import com.sumologic.epigraph.ideaplugin.schema.psi.*;
+import com.intellij.psi.stubs.IStubElementType;
 
-public class SchemaMapTypeDefImpl extends SchemaTypeDefImpl implements SchemaMapTypeDef {
+public class SchemaMapTypeDefImpl extends SchemaMapTypeDefElementImplBase implements SchemaMapTypeDef {
 
   public SchemaMapTypeDefImpl(ASTNode node) {
     super(node);
+  }
+
+  public SchemaMapTypeDefImpl(com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaMapTypeDefStub stub, IStubElementType nodeType) {
+    super(stub, nodeType);
   }
 
   public void accept(@NotNull SchemaVisitor visitor) {

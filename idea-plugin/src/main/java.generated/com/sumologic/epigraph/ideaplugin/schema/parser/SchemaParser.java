@@ -21,7 +21,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
 
   public void parseLight(IElementType t, PsiBuilder b) {
     boolean r;
-    b = adapt_builder_(t, b, this, EXTENDS_SETS_);
+    b = adapt_builder_(t, b, this, null);
     Marker m = enter_section_(b, 0, _COLLAPSE_, null);
     if (t == S_ANON_LIST) {
       r = anonList(b, 0);
@@ -140,11 +140,6 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   protected boolean parse_root_(IElementType t, PsiBuilder b, int l) {
     return root(b, l + 1);
   }
-
-  public static final TokenSet[] EXTENDS_SETS_ = new TokenSet[] {
-    create_token_set_(S_ENUM_TYPE_DEF, S_LIST_TYPE_DEF, S_MAP_TYPE_DEF, S_PRIMITIVE_TYPE_DEF,
-      S_RECORD_TYPE_DEF, S_TYPE_DEF, S_VAR_TYPE_DEF),
-  };
 
   /* ********************************************************** */
   // 'list' '[' typeRef defaultOverride? ']'
@@ -435,14 +430,15 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   public static boolean enumTypeDef(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "enumTypeDef")) return false;
     if (!nextTokenIs(b, S_ENUM)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, S_ENUM_TYPE_DEF, null);
     r = consumeToken(b, S_ENUM);
-    r = r && typeName(b, l + 1);
-    r = r && enumTypeDef_2(b, l + 1);
-    r = r && enumTypeBody(b, l + 1);
-    exit_section_(b, m, S_ENUM_TYPE_DEF, r);
-    return r;
+    p = r; // pin = 1
+    r = r && report_error_(b, typeName(b, l + 1));
+    r = p && report_error_(b, enumTypeDef_2(b, l + 1)) && r;
+    r = p && enumTypeBody(b, l + 1) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   // metaDecl?
@@ -1326,7 +1322,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   public static boolean typeDef(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "typeDef")) return false;
     boolean r;
-    Marker m = enter_section_(b, l, _COLLAPSE_, S_TYPE_DEF, "<type definition>");
+    Marker m = enter_section_(b, l, _NONE_, S_TYPE_DEF, "<type definition>");
     r = varTypeDef(b, l + 1);
     if (!r) r = recordTypeDef(b, l + 1);
     if (!r) r = mapTypeDef(b, l + 1);
@@ -1400,16 +1396,17 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   public static boolean varTypeDef(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "varTypeDef")) return false;
     if (!nextTokenIs(b, S_VARTYPE)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, S_VAR_TYPE_DEF, null);
     r = consumeToken(b, S_VARTYPE);
-    r = r && typeName(b, l + 1);
-    r = r && varTypeDef_2(b, l + 1);
-    r = r && varTypeDef_3(b, l + 1);
-    r = r && varTypeDef_4(b, l + 1);
-    r = r && varTypeDef_5(b, l + 1);
-    exit_section_(b, m, S_VAR_TYPE_DEF, r);
-    return r;
+    p = r; // pin = 1
+    r = r && report_error_(b, typeName(b, l + 1));
+    r = p && report_error_(b, varTypeDef_2(b, l + 1)) && r;
+    r = p && report_error_(b, varTypeDef_3(b, l + 1)) && r;
+    r = p && report_error_(b, varTypeDef_4(b, l + 1)) && r;
+    r = p && varTypeDef_5(b, l + 1) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   // extendsDecl?

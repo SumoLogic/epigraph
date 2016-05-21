@@ -56,5 +56,5 @@ public class SchemaFileElementType extends IStubFileElementType<SchemaFileStub> 
     return new SchemaFileStubImpl(null, namespace);
   }
 
-  // TODO indexStub by namespace?
+  // indexStub by namespace?
 }

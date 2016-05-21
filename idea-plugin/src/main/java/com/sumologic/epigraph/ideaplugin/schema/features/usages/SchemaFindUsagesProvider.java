@@ -28,8 +28,8 @@ public class SchemaFindUsagesProvider implements FindUsagesProvider {
   public boolean canFindUsagesFor(@NotNull PsiElement psiElement) {
     // TODO Support multi aliases, and later fields used by projections
 
-    if (psiElement instanceof SchemaTypeDef) {
-      SchemaTypeDef element = (SchemaTypeDef) psiElement;
+    if (psiElement instanceof SchemaTypeDefElement) {
+      SchemaTypeDefElement element = (SchemaTypeDefElement) psiElement;
       return element.getName() != null;
     }
 
@@ -64,9 +64,10 @@ public class SchemaFindUsagesProvider implements FindUsagesProvider {
   @NotNull
   @Override
   public String getDescriptiveName(@NotNull PsiElement element) {
-    if (element instanceof SchemaTypeDef) {
-      SchemaTypeDef typeDef = (SchemaTypeDef) element;
-      return SchemaPresentationUtil.getName(typeDef, true);
+    if (element instanceof SchemaTypeDefElement) {
+      SchemaTypeDefElement typeDef = (SchemaTypeDefElement) element;
+      String name = SchemaPresentationUtil.getName(typeDef, true);
+      return name == null ? "" : name;
     }
 
     if (element instanceof SchemaFqnSegment) {
@@ -82,8 +83,8 @@ public class SchemaFindUsagesProvider implements FindUsagesProvider {
   public String getNodeText(@NotNull PsiElement element, boolean useFullName) {
     if (useFullName) return getDescriptiveName(element);
 
-    if (element instanceof SchemaTypeDef) {
-      SchemaTypeDef schemaTypeDef = (SchemaTypeDef) element;
+    if (element instanceof SchemaTypeDefElement) {
+      SchemaTypeDefElement schemaTypeDef = (SchemaTypeDefElement) element;
       String name = schemaTypeDef.getName();
       if (name != null) return name;
     }

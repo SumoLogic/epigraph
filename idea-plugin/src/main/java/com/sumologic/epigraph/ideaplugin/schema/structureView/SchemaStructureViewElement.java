@@ -41,8 +41,8 @@ public class SchemaStructureViewElement implements StructureViewTreeElement {
       return new StaticItemPresentation("Epigraph Schema", fqn, null);
     }
 
-    if (element instanceof SchemaTypeDef) {
-      SchemaTypeDef schemaTypeDef = (SchemaTypeDef) element;
+    if (element instanceof SchemaTypeDefElement) {
+      SchemaTypeDefElement schemaTypeDef = (SchemaTypeDefElement) element;
 
       Icon icon = null;
       if (schemaTypeDef instanceof SchemaRecordTypeDef) icon = PlatformIcons.CLASS_ICON;

@@ -6,7 +6,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.usageView.UsageViewLongNameLocation;
 import com.sumologic.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
 import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaFqnSegment;
-import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaTypeDef;
+import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaTypeDefElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,8 +20,8 @@ public class SchemaElementDescriptionProvider implements ElementDescriptionProvi
     // https://intellij-support.jetbrains.com/hc/en-us/community/posts/206765785-Custom-name-for-Find-Usages-of-symbol
     if (location instanceof UsageViewLongNameLocation) {
 
-      if (element instanceof SchemaTypeDef) {
-        SchemaTypeDef schemaTypeDef = (SchemaTypeDef) element;
+      if (element instanceof SchemaTypeDefElement) {
+        SchemaTypeDefElement schemaTypeDef = (SchemaTypeDefElement) element;
         return SchemaPresentationUtil.getName(schemaTypeDef, true);
       }
 

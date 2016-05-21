@@ -43,7 +43,7 @@ public class SchemaVisitor extends PsiElementVisitor {
   }
 
   public void visitEnumTypeDef(@NotNull SchemaEnumTypeDef o) {
-    visitTypeDef(o);
+    visitTypeDefElement(o);
   }
 
   public void visitExtendsDecl(@NotNull SchemaExtendsDecl o) {
@@ -80,7 +80,7 @@ public class SchemaVisitor extends PsiElementVisitor {
   }
 
   public void visitListTypeDef(@NotNull SchemaListTypeDef o) {
-    visitTypeDef(o);
+    visitTypeDefElement(o);
   }
 
   public void visitMapTypeBody(@NotNull SchemaMapTypeBody o) {
@@ -88,7 +88,7 @@ public class SchemaVisitor extends PsiElementVisitor {
   }
 
   public void visitMapTypeDef(@NotNull SchemaMapTypeDef o) {
-    visitTypeDef(o);
+    visitTypeDefElement(o);
   }
 
   public void visitMetaDecl(@NotNull SchemaMetaDecl o) {
@@ -108,7 +108,7 @@ public class SchemaVisitor extends PsiElementVisitor {
   }
 
   public void visitPrimitiveTypeDef(@NotNull SchemaPrimitiveTypeDef o) {
-    visitTypeDef(o);
+    visitTypeDefElement(o);
   }
 
   public void visitRecordSupplementsDecl(@NotNull SchemaRecordSupplementsDecl o) {
@@ -120,7 +120,7 @@ public class SchemaVisitor extends PsiElementVisitor {
   }
 
   public void visitRecordTypeDef(@NotNull SchemaRecordTypeDef o) {
-    visitTypeDef(o);
+    visitTypeDefElement(o);
   }
 
   public void visitStarImportSuffix(@NotNull SchemaStarImportSuffix o) {
@@ -132,7 +132,7 @@ public class SchemaVisitor extends PsiElementVisitor {
   }
 
   public void visitTypeDef(@NotNull SchemaTypeDef o) {
-    visitTypeDefSchemaElement(o);
+    visitTypeDefElement(o);
   }
 
   public void visitTypeRef(@NotNull SchemaTypeRef o) {
@@ -144,7 +144,7 @@ public class SchemaVisitor extends PsiElementVisitor {
   }
 
   public void visitVarTypeDef(@NotNull SchemaVarTypeDef o) {
-    visitTypeDef(o);
+    visitTypeDefElement(o);
   }
 
   public void visitVarTypeMemberDecl(@NotNull SchemaVarTypeMemberDecl o) {
@@ -168,8 +168,8 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitElement(o);
   }
 
-  public void visitTypeDefSchemaElement(@NotNull TypeDefSchemaElement o) {
-    visitElement(o);
+  public void visitTypeDefElement(@NotNull SchemaTypeDefElement o) {
+    visitPsiElement(o);
   }
 
   public void visitPsiElement(@NotNull PsiElement o) {

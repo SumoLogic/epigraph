@@ -9,11 +9,16 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static com.sumologic.epigraph.ideaplugin.schema.lexer.SchemaElementTypes.*;
 import com.sumologic.epigraph.ideaplugin.schema.psi.*;
+import com.intellij.psi.stubs.IStubElementType;
 
-public class SchemaEnumTypeDefImpl extends SchemaTypeDefImpl implements SchemaEnumTypeDef {
+public class SchemaEnumTypeDefImpl extends SchemaEnumTypeDefElementImplBase implements SchemaEnumTypeDef {
 
   public SchemaEnumTypeDefImpl(ASTNode node) {
     super(node);
+  }
+
+  public SchemaEnumTypeDefImpl(com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaEnumTypeDefStub stub, IStubElementType nodeType) {
+    super(stub, nodeType);
   }
 
   public void accept(@NotNull SchemaVisitor visitor) {
@@ -26,9 +31,9 @@ public class SchemaEnumTypeDefImpl extends SchemaTypeDefImpl implements SchemaEn
   }
 
   @Override
-  @NotNull
+  @Nullable
   public SchemaEnumTypeBody getEnumTypeBody() {
-    return findNotNullChildByClass(SchemaEnumTypeBody.class);
+    return findChildByClass(SchemaEnumTypeBody.class);
   }
 
   @Override
@@ -44,9 +49,9 @@ public class SchemaEnumTypeDefImpl extends SchemaTypeDefImpl implements SchemaEn
   }
 
   @Override
-  @NotNull
+  @Nullable
   public PsiElement getId() {
-    return findNotNullChildByType(S_ID);
+    return findChildByType(S_ID);
   }
 
 }

@@ -16,7 +16,6 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -42,6 +41,36 @@ public class SchemaPsiImplUtil {
   // typedef --------------------------------------------
 
   @Contract(pure = true)
+  @Nullable
+  public static SchemaMetaDecl getMetaDecl(SchemaTypeDef schemaTypeDef) {
+    return element(schemaTypeDef).getMetaDecl();
+  }
+
+  @Contract(pure = true)
+  @Nullable
+  public static PsiElement getAbstract(SchemaTypeDef schemaTypeDef) {
+    return element(schemaTypeDef).getAbstract();
+  }
+
+  @Contract(pure = true)
+  @Nullable
+  public static SchemaExtendsDecl getExtendsDecl(SchemaTypeDef schemaTypeDef) {
+    return element(schemaTypeDef).getExtendsDecl();
+  }
+
+  @Contract(pure = true)
+  @Nullable
+  public static PsiElement getId(SchemaTypeDef schemaTypeDef) {
+    return element(schemaTypeDef).getId();
+  }
+
+  @Contract(pure = true)
+  @Nullable
+  public static PsiElement getPolymorphic(SchemaTypeDef schemaTypeDef) {
+    return element(schemaTypeDef).getPolymorphic();
+  }
+
+  @Contract(pure = true)
   public static Icon getIcon(SchemaTypeDef schemaTypeDef, @Iconable.IconFlags int flags) {
     return AllIcons.Nodes.Class; // TODO our own icon
   }
@@ -49,31 +78,23 @@ public class SchemaPsiImplUtil {
   @Contract(pure = true)
   @Nullable
   public static String getName(SchemaTypeDef schemaTypeDef) {
-    PsiElement id = schemaTypeDef.getId();
-    return id == null ? null : id.getText();
+    return element(schemaTypeDef).getName();
   }
 
   @Nullable
   public static PsiElement setName(SchemaTypeDef schemaTypeDef, String name) {
-    PsiElement id = schemaTypeDef.getId();
-    if (id == null) return null;
-    else {
-      PsiElement newId = SchemaElementFactory.createId(schemaTypeDef.getProject(), name);
-      id.replace(newId);
-      return id;
-    }
+    return element(schemaTypeDef).setName(name);
   }
 
   @Contract(pure = true)
   @Nullable
   public static PsiElement getNameIdentifier(@NotNull SchemaTypeDef schemaTypeDef) {
-    return schemaTypeDef.getId();
+    return element(schemaTypeDef).getNameIdentifier();
   }
 
   @Contract(pure = true)
   public static int getTextOffset(@NotNull SchemaTypeDef schemaTypeDef) {
-    PsiElement nameIdentifier = schemaTypeDef.getNameIdentifier();
-    return nameIdentifier == null ? 0 : nameIdentifier.getTextOffset();
+    return element(schemaTypeDef).getTextOffset();
   }
 
   public static void delete(@NotNull SchemaTypeDef schemaTypeDef) throws IncorrectOperationException {
@@ -93,38 +114,38 @@ public class SchemaPsiImplUtil {
   @Contract(pure = true)
   @NotNull
   public static TypeKind getKind(@NotNull SchemaTypeDef schemaTypeDef) {
-    if (schemaTypeDef instanceof SchemaVarTypeDef) return TypeKind.VAR;
-    if (schemaTypeDef instanceof SchemaRecordTypeDef) return TypeKind.RECORD;
-    if (schemaTypeDef instanceof SchemaMapTypeDef) return TypeKind.MAP;
-    if (schemaTypeDef instanceof SchemaListTypeDef) return TypeKind.LIST;
-    if (schemaTypeDef instanceof SchemaEnumTypeDef) return TypeKind.ENUM;
-    if (schemaTypeDef instanceof SchemaPrimitiveTypeDef) return TypeKind.PRIMITIVE;
-
-    throw new IllegalArgumentException("Unknown type def: " + schemaTypeDef);
+    return element(schemaTypeDef).getKind();
   }
 
   @NotNull
   @Contract(pure = true)
   public static List<SchemaTypeDef> parents(@NotNull SchemaTypeDef typeDef) {
-    SchemaExtendsDecl extendsDecl = typeDef.getExtendsDecl();
-    if (extendsDecl == null) return Collections.emptyList();
-    List<SchemaTypeRef> typeRefList = extendsDecl.getTypeRefList();
-    if (typeRefList.isEmpty()) return Collections.emptyList();
+    return element(typeDef).parents();
+  }
 
-    List<SchemaTypeDef> result = new ArrayList<>(typeRefList.size());
-    for (SchemaTypeRef typeRef : typeRefList) {
-      SchemaFqnTypeRef fqnTypeRef = typeRef.getFqnTypeRef();
-      if (fqnTypeRef != null) {
-        PsiReference reference = SchemaPsiImplUtil.getReference(fqnTypeRef);
-        if (reference != null) {
-          PsiElement resolved = reference.resolve();
-          if (resolved instanceof SchemaTypeDef) {
-            result.add((SchemaTypeDef) resolved);
-          }
-        }
-      }
-    }
-    return result;
+  @Contract(pure = true)
+  @NotNull
+  public static SchemaTypeDefElement element(SchemaTypeDef typeDef) {
+    SchemaTypeDefElement e = typeDef.getVarTypeDef();
+    if (e != null) return e;
+    e = typeDef.getRecordTypeDef();
+    if (e != null) return e;
+    e = typeDef.getMapTypeDef();
+    if (e != null) return e;
+    e = typeDef.getListTypeDef();
+    if (e != null) return e;
+    e = typeDef.getEnumTypeDef();
+    if (e != null) return e;
+    e = typeDef.getPrimitiveTypeDef();
+    if (e != null) return e;
+
+    throw new IllegalStateException("Unknown type def: " + typeDef);
+  }
+
+  @Contract(pure = true)
+  @NotNull
+  public static String toString(SchemaTypeDef typeDef) {
+    return typeDef.getClass().getSimpleName() + "(" + typeDef.getNode().getElementType().toString() + ")";
   }
 
   // supplement --------------------------------------------

@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement />
+  <nodes>
+    <node x="256.5" y="240.0">com.sumologic.epigraph.ideaplugin.schema.psi.impl.SchemaTypeDefImpl</node>
+    <node x="0.0" y="710.0">com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaRecordTypeDefStubElementType</node>
+    <node x="377.875" y="-117.0">com.intellij.psi.PsiNameIdentifierOwner</node>
+    <node x="111.05000000000001" y="475.0">com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaRecordTypeDefStubImpl</node>
+    <node x="377.375" y="-38.0">com.sumologic.epigraph.ideaplugin.schema.psi.SchemaTypeDefElement</node>
+    <node x="149.25" y="630.0">com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaTypeDefStubElementTypeBase</node>
+    <node x="0.0" y="160.0">com.sumologic.epigraph.ideaplugin.schema.psi.impl.SchemaTypeDefImplBase</node>
+    <node x="84.125" y="-112.0">com.intellij.extapi.psi.StubBasedPsiElementBase</node>
+    <node x="463.0" y="395.0">com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaTypeDefStub</node>
+    <node x="389.0" y="472.0">com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaTypeDefStubImpl</node>
+    <node x="305.0" y="710.0">com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaTypeDefStubElementType</node>
+    <node x="238.0" y="395.0">com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaRecordTypeDefStub</node>
+    <node x="643.0" y="80.0">com.intellij.psi.StubBasedPsiElement</node>
+    <node x="513.0" y="160.0">com.sumologic.epigraph.ideaplugin.schema.psi.SchemaTypeDef</node>
+    <node x="245.5" y="315.0">com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaTypeDefStubBase</node>
+    <node x="211.25" y="550.0">com.intellij.psi.stubs.IStubElementType</node>
+    <node x="470.375" y="240.0">com.sumologic.epigraph.ideaplugin.schema.psi.impl.SchemaRecordTypeDefImpl</node>
+    <node x="58.0" y="5.0">com.sumologic.epigraph.ideaplugin.schema.psi.impl.SchemaTypeDefElementImplBase</node>
+    <node x="0.0" y="395.0">com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaTypeDefStubBaseImpl</node>
+    <node x="210.0" y="160.0">com.sumologic.epigraph.ideaplugin.schema.psi.impl.SchemaRecordTypeDefElementImplBase</node>
+    <node x="686.375" y="160.0">com.sumologic.epigraph.ideaplugin.schema.psi.SchemaRecordTypeDef</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="com.sumologic.epigraph.ideaplugin.schema.psi.impl.SchemaTypeDefImplBase" target="com.sumologic.epigraph.ideaplugin.schema.psi.impl.SchemaTypeDefElementImplBase">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="com.sumologic.epigraph.ideaplugin.schema.psi.SchemaRecordTypeDef" target="com.intellij.psi.StubBasedPsiElement">
+      <point x="44.25" y="-15.0" />
+      <point x="804.125" y="146.0" />
+      <point x="788.5" y="133.0" />
+      <point x="41.5" y="15.0" />
+    </edge>
+    <edge source="com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaTypeDefStubElementType" target="com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaTypeDefStubElementTypeBase">
+      <point x="0.0" y="-15.0" />
+      <point x="404.0" y="698.0" />
+      <point x="373.75" y="678.0" />
+      <point x="67.5" y="15.0" />
+    </edge>
+    <edge source="com.sumologic.epigraph.ideaplugin.schema.psi.impl.SchemaRecordTypeDefElementImplBase" target="com.sumologic.epigraph.ideaplugin.schema.psi.impl.SchemaTypeDefElementImplBase">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="com.sumologic.epigraph.ideaplugin.schema.psi.SchemaRecordTypeDef" target="com.sumologic.epigraph.ideaplugin.schema.psi.SchemaTypeDefElement">
+      <point x="-44.25" y="-15.0" />
+      <point x="700.625" y="144.0" />
+      <point x="616.375" y="123.0" />
+      <point x="69.0" y="15.0" />
+    </edge>
+    <edge source="com.sumologic.epigraph.ideaplugin.schema.psi.impl.SchemaTypeDefImpl" target="com.sumologic.epigraph.ideaplugin.schema.psi.impl.SchemaTypeDefImplBase">
+      <point x="-40.5" y="-15.0" />
+      <point x="238.0" y="229.0" />
+      <point x="150.0" y="209.0" />
+      <point x="0.0" y="15.0" />
+    </edge>
+    <edge source="com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaRecordTypeDefStubElementType" target="com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaTypeDefStubElementTypeBase">
+      <point x="0.0" y="-15.0" />
+      <point x="171.5" y="691.0" />
+      <point x="191.75" y="680.0" />
+      <point x="-67.5" y="15.0" />
+    </edge>
+    <edge source="com.sumologic.epigraph.ideaplugin.schema.psi.impl.SchemaRecordTypeDefImpl" target="com.sumologic.epigraph.ideaplugin.schema.psi.SchemaRecordTypeDef">
+      <point x="51.25" y="-15.0" />
+      <point x="677.125" y="222.0" />
+      <point x="701.875" y="213.0" />
+      <point x="0.0" y="15.0" />
+    </edge>
+    <edge source="com.sumologic.epigraph.ideaplugin.schema.psi.impl.SchemaTypeDefImpl" target="com.sumologic.epigraph.ideaplugin.schema.psi.SchemaTypeDef">
+      <point x="40.5" y="-15.0" />
+      <point x="441.0" y="229.0" />
+      <point x="506.0" y="212.0" />
+      <point x="0.0" y="15.0" />
+    </edge>
+    <edge source="com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaTypeDefStub" target="com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaTypeDefStubBase">
+      <point x="0.0" y="-15.0" />
+      <point x="544.0" y="370.0" />
+      <point x="403.83333333333337" y="370.0" />
+      <point x="63.33333333333337" y="15.0" />
+    </edge>
+    <edge source="com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaTypeDefStubImpl" target="com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaTypeDefStub">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaRecordTypeDefStubImpl" target="com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaRecordTypeDefStub">
+      <point x="58.25" y="-15.0" />
+      <point x="307.8" y="460.0" />
+      <point x="325.5" y="447.0" />
+      <point x="0.0" y="15.0" />
+    </edge>
+    <edge source="com.sumologic.epigraph.ideaplugin.schema.psi.impl.SchemaRecordTypeDefImpl" target="com.sumologic.epigraph.ideaplugin.schema.psi.impl.SchemaRecordTypeDefElementImplBase">
+      <point x="-51.25" y="-15.0" />
+      <point x="477.625" y="224.0" />
+      <point x="416.5" y="207.0" />
+      <point x="0.0" y="15.0" />
+    </edge>
+    <edge source="com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaTypeDefStubElementTypeBase" target="com.intellij.psi.stubs.IStubElementType">
+      <point x="0.0" y="-15.0" />
+      <point x="0.0" y="15.0" />
+    </edge>
+    <edge source="com.sumologic.epigraph.ideaplugin.schema.psi.SchemaTypeDef" target="com.intellij.psi.StubBasedPsiElement">
+      <point x="33.5" y="-15.0" />
+      <point x="641.5" y="141.0" />
+      <point x="650.5" y="134.0" />
+      <point x="-41.5" y="15.0" />
+    </edge>
+    <edge source="com.sumologic.epigraph.ideaplugin.schema.psi.SchemaTypeDef" target="com.sumologic.epigraph.ideaplugin.schema.psi.SchemaTypeDefElement">
+      <point x="-33.5" y="-15.0" />
+      <point x="532.5" y="148.0" />
+      <point x="522.375" y="137.0" />
+      <point x="23.0" y="15.0" />
+    </edge>
+    <edge source="com.sumologic.epigraph.ideaplugin.schema.psi.impl.SchemaTypeDefElementImplBase" target="com.intellij.extapi.psi.StubBasedPsiElementBase">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaTypeDefStubImpl" target="com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaTypeDefStubBaseImpl">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaTypeDefStubBaseImpl" target="com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaTypeDefStubBase">
+      <point x="0.0" y="-15.0" />
+      <point x="109.0" y="370.0" />
+      <point x="277.1666666666667" y="370.0" />
+      <point x="-63.333333333333314" y="15.0" />
+    </edge>
+    <edge source="com.sumologic.epigraph.ideaplugin.schema.psi.SchemaTypeDefElement" target="com.intellij.psi.PsiNameIdentifierOwner">
+      <point x="0.0" y="-15.0" />
+      <point x="0.0" y="15.0" />
+    </edge>
+    <edge source="com.sumologic.epigraph.ideaplugin.schema.psi.impl.SchemaTypeDefImplBase" target="com.sumologic.epigraph.ideaplugin.schema.psi.SchemaTypeDefElement">
+      <point x="47.5" y="-15.0" />
+      <point x="206.5" y="148.0" />
+      <point x="277.375" y="107.0" />
+      <point x="-69.0" y="15.0" />
+    </edge>
+    <edge source="com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaRecordTypeDefStub" target="com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaTypeDefStubBase">
+      <point x="0.0" y="-15.0" />
+      <point x="0.0" y="15.0" />
+    </edge>
+    <edge source="com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaRecordTypeDefStubImpl" target="com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaTypeDefStubBaseImpl">
+      <point x="-58.25" y="-15.0" />
+      <point x="148.3" y="462.0" />
+      <point x="127.0" y="444.0" />
+      <point x="0.0" y="15.0" />
+    </edge>
+    <edge source="com.sumologic.epigraph.ideaplugin.schema.psi.impl.SchemaRecordTypeDefElementImplBase" target="com.sumologic.epigraph.ideaplugin.schema.psi.SchemaTypeDefElement">
+      <point x="70.75" y="-15.0" />
+      <point x="436.25" y="141.0" />
+      <point x="446.375" y="127.0" />
+      <point x="-23.0" y="15.0" />
+    </edge>
+    <edge source="com.sumologic.epigraph.ideaplugin.schema.psi.impl.SchemaTypeDefElementImplBase" target="com.sumologic.epigraph.ideaplugin.schema.psi.SchemaTypeDefElement">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="1.0" x="761.0" y="370.0" />
+  <SelectedNodes />
+  <Categories />
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+

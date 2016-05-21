@@ -4,10 +4,12 @@ package com.sumologic.epigraph.ideaplugin.schema.psi;
 import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.StubBasedPsiElement;
+import com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaEnumTypeDefStub;
 
-public interface SchemaEnumTypeDef extends SchemaTypeDef {
+public interface SchemaEnumTypeDef extends SchemaTypeDefElement, StubBasedPsiElement<SchemaEnumTypeDefStub> {
 
-  @NotNull
+  @Nullable
   SchemaEnumTypeBody getEnumTypeBody();
 
   @Nullable
@@ -16,7 +18,7 @@ public interface SchemaEnumTypeDef extends SchemaTypeDef {
   @NotNull
   PsiElement getEnum();
 
-  @NotNull
+  @Nullable
   PsiElement getId();
 
 }

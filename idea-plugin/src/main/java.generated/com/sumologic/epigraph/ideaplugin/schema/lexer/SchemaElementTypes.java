@@ -4,6 +4,13 @@ package com.sumologic.epigraph.ideaplugin.schema.lexer;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.PsiElement;
 import com.intellij.lang.ASTNode;
+import com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaEnumTypeDefStubElementType;
+import com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaListTypeDefStubElementType;
+import com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaMapTypeDefStubElementType;
+import com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaPrimitiveTypeDefStubElementType;
+import com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaRecordTypeDefStubElementType;
+import com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaTypeDefStubElementType;
+import com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaVarTypeDefStubElementType;
 import com.sumologic.epigraph.ideaplugin.schema.psi.impl.*;
 
 public interface SchemaElementTypes {
@@ -16,7 +23,7 @@ public interface SchemaElementTypes {
   IElementType S_DEFS = new SchemaElementType("S_DEFS");
   IElementType S_ENUM_MEMBER_DECL = new SchemaElementType("S_ENUM_MEMBER_DECL");
   IElementType S_ENUM_TYPE_BODY = new SchemaElementType("S_ENUM_TYPE_BODY");
-  IElementType S_ENUM_TYPE_DEF = new SchemaElementType("S_ENUM_TYPE_DEF");
+  IElementType S_ENUM_TYPE_DEF = new SchemaEnumTypeDefStubElementType("S_ENUM_TYPE_DEF");
   IElementType S_EXTENDS_DECL = new SchemaElementType("S_EXTENDS_DECL");
   IElementType S_FIELD_DECL = new SchemaElementType("S_FIELD_DECL");
   IElementType S_FQN = new SchemaElementType("S_FQN");
@@ -25,23 +32,23 @@ public interface SchemaElementTypes {
   IElementType S_IMPORTS = new SchemaElementType("S_IMPORTS");
   IElementType S_IMPORT_STATEMENT = new SchemaElementType("S_IMPORT_STATEMENT");
   IElementType S_LIST_TYPE_BODY = new SchemaElementType("S_LIST_TYPE_BODY");
-  IElementType S_LIST_TYPE_DEF = new SchemaElementType("S_LIST_TYPE_DEF");
+  IElementType S_LIST_TYPE_DEF = new SchemaListTypeDefStubElementType("S_LIST_TYPE_DEF");
   IElementType S_MAP_TYPE_BODY = new SchemaElementType("S_MAP_TYPE_BODY");
-  IElementType S_MAP_TYPE_DEF = new SchemaElementType("S_MAP_TYPE_DEF");
+  IElementType S_MAP_TYPE_DEF = new SchemaMapTypeDefStubElementType("S_MAP_TYPE_DEF");
   IElementType S_META_DECL = new SchemaElementType("S_META_DECL");
   IElementType S_NAMESPACE_DECL = new SchemaElementType("S_NAMESPACE_DECL");
   IElementType S_PRIMITIVE_KIND = new SchemaElementType("S_PRIMITIVE_KIND");
   IElementType S_PRIMITIVE_TYPE_BODY = new SchemaElementType("S_PRIMITIVE_TYPE_BODY");
-  IElementType S_PRIMITIVE_TYPE_DEF = new SchemaElementType("S_PRIMITIVE_TYPE_DEF");
+  IElementType S_PRIMITIVE_TYPE_DEF = new SchemaPrimitiveTypeDefStubElementType("S_PRIMITIVE_TYPE_DEF");
   IElementType S_RECORD_SUPPLEMENTS_DECL = new SchemaElementType("S_RECORD_SUPPLEMENTS_DECL");
   IElementType S_RECORD_TYPE_BODY = new SchemaElementType("S_RECORD_TYPE_BODY");
-  IElementType S_RECORD_TYPE_DEF = new SchemaElementType("S_RECORD_TYPE_DEF");
+  IElementType S_RECORD_TYPE_DEF = new SchemaRecordTypeDefStubElementType("S_RECORD_TYPE_DEF");
   IElementType S_STAR_IMPORT_SUFFIX = new SchemaElementType("S_STAR_IMPORT_SUFFIX");
   IElementType S_SUPPLEMENT_DEF = new SchemaElementType("S_SUPPLEMENT_DEF");
-  IElementType S_TYPE_DEF = new SchemaElementType("S_TYPE_DEF");
+  IElementType S_TYPE_DEF = new SchemaTypeDefStubElementType("S_TYPE_DEF");
   IElementType S_TYPE_REF = new SchemaElementType("S_TYPE_REF");
   IElementType S_VAR_TYPE_BODY = new SchemaElementType("S_VAR_TYPE_BODY");
-  IElementType S_VAR_TYPE_DEF = new SchemaElementType("S_VAR_TYPE_DEF");
+  IElementType S_VAR_TYPE_DEF = new SchemaVarTypeDefStubElementType("S_VAR_TYPE_DEF");
   IElementType S_VAR_TYPE_MEMBER_DECL = new SchemaElementType("S_VAR_TYPE_MEMBER_DECL");
   IElementType S_VAR_TYPE_SUPPLEMENTS_DECL = new SchemaElementType("S_VAR_TYPE_SUPPLEMENTS_DECL");
 

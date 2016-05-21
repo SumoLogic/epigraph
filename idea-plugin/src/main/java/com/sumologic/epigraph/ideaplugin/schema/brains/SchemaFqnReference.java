@@ -60,6 +60,19 @@ public class SchemaFqnReference extends PsiReferenceBase<SchemaFqnSegment> imple
     return ResolveCache.getInstance(myElement.getProject()).resolveWithCaching(this, resolver, false, false);
   }
 
+  @Override
+  public boolean isReferenceTo(PsiElement element) {
+    if (element instanceof SchemaTypeDefElement) {
+      SchemaTypeDefElement typeDefElement = (SchemaTypeDefElement) element;
+      // we build references to type defs (not specific type def elements), but "find usages" wants them
+      // to point to specific elements, so we have to accommodate for it here
+      // TODO any way to avoid this?
+      if (super.isReferenceTo(typeDefElement.getParent())) return true;
+    }
+
+    return super.isReferenceTo(element);
+  }
+
   @Nullable
   private PsiElement resolveImpl() {
     final Project project = myElement.getProject();

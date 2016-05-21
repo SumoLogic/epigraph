@@ -45,7 +45,7 @@ public class SchemaIndexUtil {
         if (namespaces == null || namespaces.contains(namespaceFqnString)) {
           Stream<SchemaTypeDef> typeDefStream = defs.getTypeDefList().stream();
           result.addAll(typeDefStream
-              .filter(typeDef -> shortName == null || shortName.equals(typeDef.getName()))
+              .filter(typeDef -> shortName == null || shortName.equals(typeDef.element().getName()))
               .collect(Collectors.toList()));
         }
       }
@@ -72,7 +72,7 @@ public class SchemaIndexUtil {
         if (namespaces.contains(namespaceFqnString)) {
           Stream<SchemaTypeDef> typeDefStream = defs.getTypeDefList().stream();
           Optional<SchemaTypeDef> first = typeDefStream
-              .filter(typeDef -> shortName.equals(typeDef.getName()))
+              .filter(typeDef -> shortName.equals(typeDef.element().getName()))
               .findFirst();
 
           if (first.isPresent()) return first.get();

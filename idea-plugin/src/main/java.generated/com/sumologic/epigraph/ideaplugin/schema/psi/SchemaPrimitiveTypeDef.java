@@ -4,8 +4,10 @@ package com.sumologic.epigraph.ideaplugin.schema.psi;
 import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.StubBasedPsiElement;
+import com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaPrimitiveTypeDefStub;
 
-public interface SchemaPrimitiveTypeDef extends SchemaTypeDef {
+public interface SchemaPrimitiveTypeDef extends SchemaTypeDefElement, StubBasedPsiElement<SchemaPrimitiveTypeDefStub> {
 
   @Nullable
   SchemaExtendsDecl getExtendsDecl();
