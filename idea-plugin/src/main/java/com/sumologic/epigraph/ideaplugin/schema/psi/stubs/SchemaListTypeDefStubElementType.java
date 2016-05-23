@@ -24,12 +24,12 @@ public class SchemaListTypeDefStubElementType extends SchemaTypeDefStubElementTy
 
   @Override
   public SchemaListTypeDefStub createStub(@NotNull SchemaListTypeDef typeDef, StubElement parentStub) {
-    return new SchemaListTypeDefStubImpl(parentStub, getName(typeDef));
+    return new SchemaListTypeDefStubImpl(parentStub, typeDef.getName(), typeDef.getNamespace());
   }
 
   @NotNull
   @Override
-  protected SchemaListTypeDefStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub, String name) throws IOException {
-    return new SchemaListTypeDefStubImpl(parentStub, name);
+  protected SchemaListTypeDefStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub, String name, String namespace) throws IOException {
+    return new SchemaListTypeDefStubImpl(parentStub, name, namespace);
   }
 }

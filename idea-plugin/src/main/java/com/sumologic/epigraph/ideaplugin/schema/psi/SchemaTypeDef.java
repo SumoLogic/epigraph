@@ -26,6 +26,9 @@ public interface SchemaTypeDef extends PsiNameIdentifierOwner {
   @Nullable
   PsiElement getNameIdentifier();
 
+  @Nullable
+  String getNamespace();
+
   int getTextOffset();
 
   @Nullable

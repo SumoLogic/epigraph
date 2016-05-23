@@ -24,12 +24,12 @@ public class SchemaEnumTypeDefStubElementType extends SchemaTypeDefStubElementTy
 
   @Override
   public SchemaEnumTypeDefStub createStub(@NotNull SchemaEnumTypeDef typeDef, StubElement parentStub) {
-    return new SchemaEnumTypeDefStubImpl(parentStub, getName(typeDef));
+    return new SchemaEnumTypeDefStubImpl(parentStub, typeDef.getName(), typeDef.getNamespace());
   }
 
   @NotNull
   @Override
-  protected SchemaEnumTypeDefStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub, String name) throws IOException {
-    return new SchemaEnumTypeDefStubImpl(parentStub, name);
+  protected SchemaEnumTypeDefStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub, String name, String namespace) throws IOException {
+    return new SchemaEnumTypeDefStubImpl(parentStub, name, namespace);
   }
 }

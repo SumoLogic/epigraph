@@ -1,5 +1,6 @@
 package com.sumologic.epigraph.ideaplugin.schema.psi.stubs;
 
+import com.intellij.lang.ASTNode;
 import com.intellij.psi.stubs.*;
 import com.sumologic.epigraph.ideaplugin.schema.SchemaLanguage;
 import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaTypeDefWrapper;
@@ -15,6 +16,11 @@ import java.io.IOException;
 public class SchemaTypeDefWrapperStubElementType extends IStubElementType<SchemaTypeDefWrapperStub, SchemaTypeDefWrapper> {
   public SchemaTypeDefWrapperStubElementType(@NotNull @NonNls String debugName) {
     super(debugName, SchemaLanguage.INSTANCE);
+  }
+
+  @Override
+  public boolean shouldCreateStub(ASTNode node) {
+    return false;
   }
 
   @Override

@@ -24,12 +24,12 @@ public class SchemaMapTypeDefStubElementType extends SchemaTypeDefStubElementTyp
 
   @Override
   public SchemaMapTypeDefStub createStub(@NotNull SchemaMapTypeDef typeDef, StubElement parentStub) {
-    return new SchemaMapTypeDefStubImpl(parentStub, getName(typeDef));
+    return new SchemaMapTypeDefStubImpl(parentStub, typeDef.getName(), typeDef.getNamespace());
   }
 
   @NotNull
   @Override
-  protected SchemaMapTypeDefStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub, String name) throws IOException {
-    return new SchemaMapTypeDefStubImpl(parentStub, name);
+  protected SchemaMapTypeDefStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub, String name, String namespace) throws IOException {
+    return new SchemaMapTypeDefStubImpl(parentStub, name, namespace);
   }
 }

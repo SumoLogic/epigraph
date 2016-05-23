@@ -161,7 +161,7 @@ public class SchemaFqnReference extends PsiReferenceBase<SchemaFqnSegment> imple
   }
 
   private String getTypeDefNamespace(@NotNull SchemaTypeDef typeDef) {
-    String namespace = NamespaceManager.getNamespace(typeDef);
+    String namespace = typeDef.getNamespace();
     return namespace == null ? typeDef.getContainingFile().getName() : namespace;
   }
 

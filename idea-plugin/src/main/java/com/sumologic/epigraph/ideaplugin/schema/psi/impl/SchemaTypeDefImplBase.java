@@ -7,6 +7,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.util.IncorrectOperationException;
+import com.sumologic.epigraph.ideaplugin.schema.brains.NamespaceManager;
 import com.sumologic.epigraph.ideaplugin.schema.psi.*;
 import com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaTypeDefStubBase;
 import org.jetbrains.annotations.NotNull;
@@ -66,6 +67,11 @@ public abstract class SchemaTypeDefImplBase<S extends SchemaTypeDefStubBase<T>, 
 
   @Nullable
   public String getName() {
+    S stub = getStub();
+    if (stub != null) {
+      return stub.getName();
+    }
+
     PsiElement id = getId();
     return id == null ? null : id.getText();
   }
@@ -84,6 +90,17 @@ public abstract class SchemaTypeDefImplBase<S extends SchemaTypeDefStubBase<T>, 
   @Nullable
   public PsiElement getNameIdentifier() {
     return getId();
+  }
+
+  @Nullable
+  @Override
+  public String getNamespace() {
+    S stub = getStub();
+    if (stub != null) {
+      return stub.getNamespace();
+    }
+
+    return NamespaceManager.getNamespace(this);
   }
 
   public int getTextOffset() {

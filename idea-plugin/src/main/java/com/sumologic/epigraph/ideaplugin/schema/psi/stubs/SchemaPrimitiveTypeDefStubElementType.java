@@ -24,12 +24,12 @@ public class SchemaPrimitiveTypeDefStubElementType extends SchemaTypeDefStubElem
 
   @Override
   public SchemaPrimitiveTypeDefStub createStub(@NotNull SchemaPrimitiveTypeDef typeDef, StubElement parentStub) {
-    return new SchemaPrimitiveTypeDefStubImpl(parentStub, getName(typeDef));
+    return new SchemaPrimitiveTypeDefStubImpl(parentStub, typeDef.getName(), typeDef.getNamespace());
   }
 
   @NotNull
   @Override
-  protected SchemaPrimitiveTypeDefStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub, String name) throws IOException {
-    return new SchemaPrimitiveTypeDefStubImpl(parentStub, name);
+  protected SchemaPrimitiveTypeDefStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub, String name, String namespace) throws IOException {
+    return new SchemaPrimitiveTypeDefStubImpl(parentStub, name, namespace);
   }
 }

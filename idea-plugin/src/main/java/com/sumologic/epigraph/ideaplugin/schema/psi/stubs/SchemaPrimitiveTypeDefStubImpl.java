@@ -9,7 +9,7 @@ import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaPrimitiveTypeDef;
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
 public class SchemaPrimitiveTypeDefStubImpl extends SchemaTypeDefStubBaseImpl<SchemaPrimitiveTypeDef> implements SchemaPrimitiveTypeDefStub {
-  SchemaPrimitiveTypeDefStubImpl(StubElement parent, String name) {
-    super(parent, name, (IStubElementType) SchemaElementTypes.S_PRIMITIVE_TYPE_DEF);
+  SchemaPrimitiveTypeDefStubImpl(StubElement parent, String name, String namespace) {
+    super(parent, (IStubElementType) SchemaElementTypes.S_PRIMITIVE_TYPE_DEF, name, namespace);
   }
 }

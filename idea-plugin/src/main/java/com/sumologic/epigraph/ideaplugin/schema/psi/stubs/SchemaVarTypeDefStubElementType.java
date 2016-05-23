@@ -24,12 +24,12 @@ public class SchemaVarTypeDefStubElementType extends SchemaTypeDefStubElementTyp
 
   @Override
   public SchemaVarTypeDefStub createStub(@NotNull SchemaVarTypeDef typeDef, StubElement parentStub) {
-    return new SchemaVarTypeDefStubImpl(parentStub, getName(typeDef));
+    return new SchemaVarTypeDefStubImpl(parentStub, typeDef.getName(), typeDef.getNamespace());
   }
 
   @NotNull
   @Override
-  protected SchemaVarTypeDefStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub, String name) throws IOException {
-    return new SchemaVarTypeDefStubImpl(parentStub, name);
+  protected SchemaVarTypeDefStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub, String name, String namespace) throws IOException {
+    return new SchemaVarTypeDefStubImpl(parentStub, name, namespace);
   }
 }
