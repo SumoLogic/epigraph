@@ -25,7 +25,7 @@ public class SchemaUsageTypeProvider implements UsageTypeProvider {
       if (PsiTreeUtil.getParentOfType(element, SchemaImportStatement.class) != null) {
         return IMPORT_USAGE_TYPE;
       }
-      return TYPE_REF_USAGE_TYPE; // be more precise: extends, list element type etc ?
+      return TYPE_REF_USAGE_TYPE; // be more precise: extends, list getElement type etc ?
     }
 
     return null;

@@ -2,6 +2,7 @@ package com.sumologic.epigraph.ideaplugin.schema.psi;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNameIdentifierOwner;
+import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,7 +14,7 @@ import java.util.List;
  *
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public interface SchemaTypeDefElement extends PsiNameIdentifierOwner {
+public interface SchemaTypeDef extends PsiNameIdentifierOwner {
   PsiElement getId();
 
   @Nullable
@@ -46,4 +47,7 @@ public interface SchemaTypeDefElement extends PsiNameIdentifierOwner {
 
   @NotNull
   List<SchemaTypeDef> parents();
+
+  @Override
+  void delete() throws IncorrectOperationException;
 }

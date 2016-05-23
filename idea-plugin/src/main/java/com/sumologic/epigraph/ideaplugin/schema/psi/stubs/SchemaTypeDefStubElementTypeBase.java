@@ -4,7 +4,7 @@ import com.intellij.psi.stubs.*;
 import com.intellij.util.io.StringRef;
 import com.sumologic.epigraph.ideaplugin.schema.SchemaLanguage;
 import com.sumologic.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
-import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaTypeDefElement;
+import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaTypeDef;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -13,7 +13,7 @@ import java.io.IOException;
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public abstract class SchemaTypeDefStubElementTypeBase<S extends SchemaTypeDefStubBase<T>, T extends SchemaTypeDefElement>
+public abstract class SchemaTypeDefStubElementTypeBase<S extends SchemaTypeDefStubBase<T>, T extends SchemaTypeDef>
     extends IStubElementType<S, T> {
 
   private final String externalId;
@@ -34,7 +34,7 @@ public abstract class SchemaTypeDefStubElementTypeBase<S extends SchemaTypeDefSt
     dataStream.writeName(stub.getName());
   }
 
-  protected static String getName(SchemaTypeDefElement typeDef) {
+  protected static String getName(SchemaTypeDef typeDef) {
     return SchemaPresentationUtil.getName(typeDef, true);
   }
 

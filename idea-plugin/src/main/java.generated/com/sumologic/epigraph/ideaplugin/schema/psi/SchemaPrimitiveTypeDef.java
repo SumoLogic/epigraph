@@ -7,7 +7,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.StubBasedPsiElement;
 import com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaPrimitiveTypeDefStub;
 
-public interface SchemaPrimitiveTypeDef extends SchemaTypeDefElement, StubBasedPsiElement<SchemaPrimitiveTypeDefStub> {
+public interface SchemaPrimitiveTypeDef extends SchemaTypeDef, StubBasedPsiElement<SchemaPrimitiveTypeDefStub> {
 
   @Nullable
   SchemaExtendsDecl getExtendsDecl();

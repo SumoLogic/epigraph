@@ -57,7 +57,7 @@ public class SchemaAnnotator implements Annotator {
 
       @Override
       public void visitTypeDef(@NotNull SchemaTypeDef typeDef) {
-        PsiElement id = typeDef.element().getNameIdentifier();
+        PsiElement id = typeDef.getNameIdentifier();
         if (id != null) {
           setHighlighting(id, holder, SchemaSyntaxHighlighter.DECL_TYPE_NAME);
 
@@ -70,7 +70,7 @@ public class SchemaAnnotator implements Annotator {
 
       @Override
       public void visitExtendsDecl(@NotNull SchemaExtendsDecl schemaExtendsDecl) {
-        SchemaTypeDefElement typeDef = (SchemaTypeDefElement) schemaExtendsDecl.getParent();
+        SchemaTypeDef typeDef = (SchemaTypeDef) schemaExtendsDecl.getParent();
         if (typeDef == null) return;
 
         List<SchemaTypeRef> typeRefList = schemaExtendsDecl.getTypeRefList();
@@ -124,11 +124,11 @@ public class SchemaAnnotator implements Annotator {
     });
   }
 
-  private void testExtendsList(@NotNull SchemaTypeDefElement typeDef, @NotNull SchemaAnonList anonList) {
+  private void testExtendsList(@NotNull SchemaTypeDef typeDef, @NotNull SchemaAnonList anonList) {
     // TODO
   }
 
-  private void testExtendsMap(@NotNull SchemaTypeDefElement typeDef, @NotNull SchemaAnonMap anonMap) {
+  private void testExtendsMap(@NotNull SchemaTypeDef typeDef, @NotNull SchemaAnonMap anonMap) {
     // TODO
   }
 

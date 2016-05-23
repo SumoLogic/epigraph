@@ -7,7 +7,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.StubBasedPsiElement;
 import com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaEnumTypeDefStub;
 
-public interface SchemaEnumTypeDef extends SchemaTypeDefElement, StubBasedPsiElement<SchemaEnumTypeDefStub> {
+public interface SchemaEnumTypeDef extends SchemaTypeDef, StubBasedPsiElement<SchemaEnumTypeDefStub> {
 
   @Nullable
   SchemaEnumTypeBody getEnumTypeBody();

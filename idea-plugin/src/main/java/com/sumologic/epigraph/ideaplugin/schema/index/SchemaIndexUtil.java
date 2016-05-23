@@ -43,9 +43,10 @@ public class SchemaIndexUtil {
       if (defs != null) {
         String namespaceFqnString = NamespaceManager.getNamespace(defs);
         if (namespaces == null || namespaces.contains(namespaceFqnString)) {
-          Stream<SchemaTypeDef> typeDefStream = defs.getTypeDefList().stream();
-          result.addAll(typeDefStream
-              .filter(typeDef -> shortName == null || shortName.equals(typeDef.element().getName()))
+          Stream<SchemaTypeDefWrapper> typeDefWrappers = defs.getTypeDefWrapperList().stream();
+          result.addAll(typeDefWrappers
+              .map(SchemaTypeDefWrapper::getElement)
+              .filter(typeDef -> shortName == null || shortName.equals(typeDef.getName()))
               .collect(Collectors.toList()));
         }
       }
@@ -70,12 +71,12 @@ public class SchemaIndexUtil {
       if (defs != null) {
         String namespaceFqnString = NamespaceManager.getNamespace(defs);
         if (namespaces.contains(namespaceFqnString)) {
-          Stream<SchemaTypeDef> typeDefStream = defs.getTypeDefList().stream();
-          Optional<SchemaTypeDef> first = typeDefStream
-              .filter(typeDef -> shortName.equals(typeDef.element().getName()))
+          Stream<SchemaTypeDefWrapper> typeDefWrappers = defs.getTypeDefWrapperList().stream();
+          Optional<SchemaTypeDefWrapper> first = typeDefWrappers
+              .filter(typeDef -> shortName.equals(typeDef.getElement().getName()))
               .findFirst();
 
-          if (first.isPresent()) return first.get();
+          if (first.isPresent()) return first.get().getElement();
         }
       }
     }

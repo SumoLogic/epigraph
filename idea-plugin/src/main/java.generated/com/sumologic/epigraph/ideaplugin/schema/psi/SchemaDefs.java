@@ -11,6 +11,6 @@ public interface SchemaDefs extends PsiElement {
   List<SchemaSupplementDef> getSupplementDefList();
 
   @NotNull
-  List<SchemaTypeDef> getTypeDefList();
+  List<SchemaTypeDefWrapper> getTypeDefWrapperList();
 
 }

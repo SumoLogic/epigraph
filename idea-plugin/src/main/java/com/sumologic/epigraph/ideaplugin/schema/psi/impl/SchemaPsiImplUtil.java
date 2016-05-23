@@ -1,8 +1,6 @@
 package com.sumologic.epigraph.ideaplugin.schema.psi.impl;
 
-import com.intellij.icons.AllIcons;
 import com.intellij.lang.ASTNode;
-import com.intellij.openapi.util.Iconable;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.TokenType;
@@ -14,7 +12,6 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,66 +35,9 @@ public class SchemaPsiImplUtil {
     return new Fqn(segments);
   }
 
-  // typedef --------------------------------------------
+  // typedef wrapper --------------------------------------------
 
-  @Contract(pure = true)
-  @Nullable
-  public static SchemaMetaDecl getMetaDecl(SchemaTypeDef schemaTypeDef) {
-    return element(schemaTypeDef).getMetaDecl();
-  }
-
-  @Contract(pure = true)
-  @Nullable
-  public static PsiElement getAbstract(SchemaTypeDef schemaTypeDef) {
-    return element(schemaTypeDef).getAbstract();
-  }
-
-  @Contract(pure = true)
-  @Nullable
-  public static SchemaExtendsDecl getExtendsDecl(SchemaTypeDef schemaTypeDef) {
-    return element(schemaTypeDef).getExtendsDecl();
-  }
-
-  @Contract(pure = true)
-  @Nullable
-  public static PsiElement getId(SchemaTypeDef schemaTypeDef) {
-    return element(schemaTypeDef).getId();
-  }
-
-  @Contract(pure = true)
-  @Nullable
-  public static PsiElement getPolymorphic(SchemaTypeDef schemaTypeDef) {
-    return element(schemaTypeDef).getPolymorphic();
-  }
-
-  @Contract(pure = true)
-  public static Icon getIcon(SchemaTypeDef schemaTypeDef, @Iconable.IconFlags int flags) {
-    return AllIcons.Nodes.Class; // TODO our own icon
-  }
-
-  @Contract(pure = true)
-  @Nullable
-  public static String getName(SchemaTypeDef schemaTypeDef) {
-    return element(schemaTypeDef).getName();
-  }
-
-  @Nullable
-  public static PsiElement setName(SchemaTypeDef schemaTypeDef, String name) {
-    return element(schemaTypeDef).setName(name);
-  }
-
-  @Contract(pure = true)
-  @Nullable
-  public static PsiElement getNameIdentifier(@NotNull SchemaTypeDef schemaTypeDef) {
-    return element(schemaTypeDef).getNameIdentifier();
-  }
-
-  @Contract(pure = true)
-  public static int getTextOffset(@NotNull SchemaTypeDef schemaTypeDef) {
-    return element(schemaTypeDef).getTextOffset();
-  }
-
-  public static void delete(@NotNull SchemaTypeDef schemaTypeDef) throws IncorrectOperationException {
+  public static void delete(@NotNull SchemaTypeDefWrapper schemaTypeDef) throws IncorrectOperationException {
     final ASTNode parentNode = schemaTypeDef.getParent().getNode();
     assert parentNode != null;
 
@@ -113,20 +53,8 @@ public class SchemaPsiImplUtil {
 
   @Contract(pure = true)
   @NotNull
-  public static TypeKind getKind(@NotNull SchemaTypeDef schemaTypeDef) {
-    return element(schemaTypeDef).getKind();
-  }
-
-  @NotNull
-  @Contract(pure = true)
-  public static List<SchemaTypeDef> parents(@NotNull SchemaTypeDef typeDef) {
-    return element(typeDef).parents();
-  }
-
-  @Contract(pure = true)
-  @NotNull
-  public static SchemaTypeDefElement element(SchemaTypeDef typeDef) {
-    SchemaTypeDefElement e = typeDef.getVarTypeDef();
+  public static SchemaTypeDef getElement(SchemaTypeDefWrapper typeDef) {
+    SchemaTypeDef e = typeDef.getVarTypeDef();
     if (e != null) return e;
     e = typeDef.getRecordTypeDef();
     if (e != null) return e;
@@ -144,7 +72,7 @@ public class SchemaPsiImplUtil {
 
   @Contract(pure = true)
   @NotNull
-  public static String toString(SchemaTypeDef typeDef) {
+  public static String toString(SchemaTypeDefWrapper typeDef) {
     return typeDef.getClass().getSimpleName() + "(" + typeDef.getNode().getElementType().toString() + ")";
   }
 

@@ -168,7 +168,7 @@ public class SchemaCompletionContributor extends CompletionContributor {
   private void completeSupplementsKeyword(@NotNull PsiElement position, @NotNull CompletionResultSet result) {
     SchemaPsiUtil.ElementQualifier metaOrExtendsOrSupplementsPresent = element -> {
       if (element instanceof SchemaTypeDef) {
-        SchemaTypeDefElement schemaTypeDef = ((SchemaTypeDef) element).element();
+        SchemaTypeDef schemaTypeDef = (SchemaTypeDef) element;
         if (schemaTypeDef.getMetaDecl() != null || schemaTypeDef.getExtendsDecl() != null) return true;
         if (schemaTypeDef instanceof SchemaRecordTypeDef) {
           return ((SchemaRecordTypeDef) schemaTypeDef).getRecordSupplementsDecl() != null;
@@ -197,15 +197,15 @@ public class SchemaCompletionContributor extends CompletionContributor {
     PsiElement parent = position.getParent();
     if (parent == null) return;
 
-    // this should be the actual type def
+    // this should be the actual type def wrapper
     PsiElement prevParentSibling = SchemaPsiUtil.prevNonWhitespaceSibling(parent);
 
-    if (prevParentSibling instanceof SchemaTypeDef) {
-      SchemaTypeDef typeDef = (SchemaTypeDef) prevParentSibling;
-      SchemaTypeDefElement element = typeDef.element();
+    if (prevParentSibling instanceof SchemaTypeDefWrapper) {
+      SchemaTypeDefWrapper typeDefWrapper = (SchemaTypeDefWrapper) prevParentSibling;
+      SchemaTypeDef typeDef = typeDefWrapper.getElement();
 
-      if (!canHaveQualifier.qualifies(element)) return;
-      if (negativeBeforeQualifier.qualifies(element)) return;
+      if (!canHaveQualifier.qualifies(typeDef)) return;
+      if (negativeBeforeQualifier.qualifies(typeDef)) return;
 
       result.addElement(LookupElementBuilder.create(completion));
     }

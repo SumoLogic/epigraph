@@ -6,6 +6,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.stubs.IStubElementType;
+import com.intellij.util.IncorrectOperationException;
 import com.sumologic.epigraph.ideaplugin.schema.psi.*;
 import com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaTypeDefStubBase;
 import org.jetbrains.annotations.NotNull;
@@ -24,14 +25,14 @@ import static com.sumologic.epigraph.ideaplugin.schema.lexer.SchemaElementTypes.
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public abstract class SchemaTypeDefElementImplBase<S extends SchemaTypeDefStubBase<T>, T extends SchemaTypeDefElement>
-    extends StubBasedPsiElementBase<S> implements SchemaTypeDefElement {
+public abstract class SchemaTypeDefImplBase<S extends SchemaTypeDefStubBase<T>, T extends SchemaTypeDef>
+    extends StubBasedPsiElementBase<S> implements SchemaTypeDef {
 
-  public SchemaTypeDefElementImplBase(@NotNull ASTNode node) {
+  public SchemaTypeDefImplBase(@NotNull ASTNode node) {
     super(node);
   }
 
-  public SchemaTypeDefElementImplBase(@NotNull S stub, @NotNull IStubElementType nodeType) {
+  public SchemaTypeDefImplBase(@NotNull S stub, @NotNull IStubElementType nodeType) {
     super(stub, nodeType);
   }
 
@@ -95,6 +96,11 @@ public abstract class SchemaTypeDefElementImplBase<S extends SchemaTypeDefStubBa
 
   public Icon getIcon(int flags) {
     return AllIcons.Nodes.Class; // TODO our own icon
+  }
+
+  @Override
+  public void delete() throws IncorrectOperationException {
+    getParent().delete();
   }
 
   @NotNull

@@ -11,7 +11,7 @@ import static com.sumologic.epigraph.ideaplugin.schema.lexer.SchemaElementTypes.
 import com.sumologic.epigraph.ideaplugin.schema.psi.*;
 import com.intellij.psi.stubs.IStubElementType;
 
-public class SchemaEnumTypeDefImpl extends SchemaEnumTypeDefElementImplBase implements SchemaEnumTypeDef {
+public class SchemaEnumTypeDefImpl extends SchemaEnumTypeDefImplBase implements SchemaEnumTypeDef {
 
   public SchemaEnumTypeDefImpl(ASTNode node) {
     super(node);

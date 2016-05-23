@@ -14,15 +14,16 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public class SchemaStructureViewElement implements StructureViewTreeElement {
+class SchemaStructureViewElement implements StructureViewTreeElement {
   private final NavigatablePsiElement element;
 
-  public SchemaStructureViewElement(PsiElement element) {
-    this.element = (NavigatablePsiElement) element; // TODO
+  SchemaStructureViewElement(PsiElement element) {
+    this.element = (NavigatablePsiElement) element;
   }
 
   @Override
@@ -41,8 +42,8 @@ public class SchemaStructureViewElement implements StructureViewTreeElement {
       return new StaticItemPresentation("Epigraph Schema", fqn, null);
     }
 
-    if (element instanceof SchemaTypeDefElement) {
-      SchemaTypeDefElement schemaTypeDef = (SchemaTypeDefElement) element;
+    if (element instanceof SchemaTypeDef) {
+      SchemaTypeDef schemaTypeDef = (SchemaTypeDef) element;
 
       Icon icon = null;
       if (schemaTypeDef instanceof SchemaRecordTypeDef) icon = PlatformIcons.CLASS_ICON;
@@ -83,13 +84,13 @@ public class SchemaStructureViewElement implements StructureViewTreeElement {
       SchemaSupplementDef schemaSupplementDef = (SchemaSupplementDef) element;
       String name = "???";
 
-      SchemaFqnTypeRef fqnTypeRef =schemaSupplementDef.getFqnTypeRef();
+      SchemaFqnTypeRef fqnTypeRef = schemaSupplementDef.getFqnTypeRef();
       if (fqnTypeRef != null) name = fqnTypeRef.getFqn().getFqn().toString();
 
       return new StaticItemPresentation(name, null, PlatformIcons.ASPECT_ICON); // TODO icon
     }
 
-    return new StaticItemPresentation("Unknown element: " + element.getClass(), null, null);
+    return new StaticItemPresentation("Unknown getElement: " + element.getClass(), null, null);
   }
 
   @NotNull
@@ -104,7 +105,7 @@ public class SchemaStructureViewElement implements StructureViewTreeElement {
     if (element instanceof SchemaFile) {
       SchemaDefs defs = ((SchemaFile) element).getDefs();
       if (defs != null) {
-        children.addAll(defs.getTypeDefList());
+        children.addAll(defs.getTypeDefWrapperList().stream().map(SchemaTypeDefWrapper::getElement).collect(Collectors.toList()));
         children.addAll(defs.getSupplementDefList()); // SchemaSupplementDef
       }
     } else if (element instanceof SchemaRecordTypeDef) {
@@ -121,8 +122,10 @@ public class SchemaStructureViewElement implements StructureViewTreeElement {
       }
     } else if (element instanceof SchemaEnumTypeDef) {
       SchemaEnumTypeBody enumTypeBody = ((SchemaEnumTypeDef) element).getEnumTypeBody();
-      children.addAll(enumTypeBody.getCustomParamList());
-      children.addAll(enumTypeBody.getEnumMemberDeclList()); // SchemaEnumMemberDecl
+      if (enumTypeBody != null) {
+        children.addAll(enumTypeBody.getCustomParamList());
+        children.addAll(enumTypeBody.getEnumMemberDeclList()); // SchemaEnumMemberDecl
+      }
     } else if (element instanceof SchemaMapTypeDef) {
       SchemaMapTypeBody mapTypeBody = ((SchemaMapTypeDef) element).getMapTypeBody();
       if (mapTypeBody != null) children.addAll(mapTypeBody.getCustomParamList());

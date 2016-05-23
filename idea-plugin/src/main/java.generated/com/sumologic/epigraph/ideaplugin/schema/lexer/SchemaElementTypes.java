@@ -9,7 +9,7 @@ import com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaListTypeDefStubE
 import com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaMapTypeDefStubElementType;
 import com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaPrimitiveTypeDefStubElementType;
 import com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaRecordTypeDefStubElementType;
-import com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaTypeDefStubElementType;
+import com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaTypeDefWrapperStubElementType;
 import com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaVarTypeDefStubElementType;
 import com.sumologic.epigraph.ideaplugin.schema.psi.impl.*;
 
@@ -45,7 +45,7 @@ public interface SchemaElementTypes {
   IElementType S_RECORD_TYPE_DEF = new SchemaRecordTypeDefStubElementType("S_RECORD_TYPE_DEF");
   IElementType S_STAR_IMPORT_SUFFIX = new SchemaElementType("S_STAR_IMPORT_SUFFIX");
   IElementType S_SUPPLEMENT_DEF = new SchemaElementType("S_SUPPLEMENT_DEF");
-  IElementType S_TYPE_DEF = new SchemaTypeDefStubElementType("S_TYPE_DEF");
+  IElementType S_TYPE_DEF_WRAPPER = new SchemaTypeDefWrapperStubElementType("S_TYPE_DEF_WRAPPER");
   IElementType S_TYPE_REF = new SchemaElementType("S_TYPE_REF");
   IElementType S_VAR_TYPE_BODY = new SchemaElementType("S_VAR_TYPE_BODY");
   IElementType S_VAR_TYPE_DEF = new SchemaVarTypeDefStubElementType("S_VAR_TYPE_DEF");
@@ -184,8 +184,8 @@ public interface SchemaElementTypes {
       else if (type == S_SUPPLEMENT_DEF) {
         return new SchemaSupplementDefImpl(node);
       }
-      else if (type == S_TYPE_DEF) {
-        return new SchemaTypeDefImpl(node);
+      else if (type == S_TYPE_DEF_WRAPPER) {
+        return new SchemaTypeDefWrapperImpl(node);
       }
       else if (type == S_TYPE_REF) {
         return new SchemaTypeRefImpl(node);

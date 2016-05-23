@@ -7,7 +7,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.StubBasedPsiElement;
 import com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaVarTypeDefStub;
 
-public interface SchemaVarTypeDef extends SchemaTypeDefElement, StubBasedPsiElement<SchemaVarTypeDefStub> {
+public interface SchemaVarTypeDef extends SchemaTypeDef, StubBasedPsiElement<SchemaVarTypeDefStub> {
 
   @Nullable
   SchemaDefaultOverride getDefaultOverride();

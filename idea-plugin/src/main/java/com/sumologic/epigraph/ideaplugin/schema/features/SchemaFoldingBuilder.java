@@ -87,7 +87,7 @@ public class SchemaFoldingBuilder extends CustomFoldingBuilder implements DumbAw
     if (range.equals(fileRange)) return false;
 
 //    LOG.assertTrue(range.getStartOffset() >= 0 && range.getEndOffset() <= fileRange.getEndOffset());
-    // PSI element text ranges may be invalid because of reparse exception (see, for example, IDEA-10617)
+    // PSI getElement text ranges may be invalid because of reparse exception (see, for example, IDEA-10617)
     if (range.getStartOffset() < 0 || range.getEndOffset() > fileRange.getEndOffset()) {
       return false;
     }
@@ -122,7 +122,7 @@ public class SchemaFoldingBuilder extends CustomFoldingBuilder implements DumbAw
    * @param processedComments set that contains already processed elements. It is necessary because we process all elements of
    *                          the PSI tree, hence, this method may be called for both comments from the example above. However,
    *                          we want to create fold region during the first comment processing, put second comment to it and
-   *                          skip processing when current method is called for the second element
+   *                          skip processing when current method is called for the second getElement
    * @param foldElements      fold descriptors holder to store newly created descriptor (if any)
    */
   private static void addCommentFolds(@NotNull PsiComment comment, @NotNull Set<PsiElement> processedComments,
@@ -170,8 +170,8 @@ public class SchemaFoldingBuilder extends CustomFoldingBuilder implements DumbAw
 
     SchemaDefs defs = file.getDefs();
     if (defs != null) {
-      for (SchemaTypeDef typeDef : defs.getTypeDefList()) {
-        addToFold(descriptors, typeDef, document, true);
+      for (SchemaTypeDefWrapper typeDefWrapper : defs.getTypeDefWrapperList()) {
+        addToFold(descriptors, typeDefWrapper.getElement(), document, true);
       }
     }
 

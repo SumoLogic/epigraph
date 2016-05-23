@@ -11,7 +11,7 @@ import static com.sumologic.epigraph.ideaplugin.schema.lexer.SchemaElementTypes.
 import com.sumologic.epigraph.ideaplugin.schema.psi.*;
 import com.intellij.psi.stubs.IStubElementType;
 
-public class SchemaRecordTypeDefImpl extends SchemaRecordTypeDefElementImplBase implements SchemaRecordTypeDef {
+public class SchemaRecordTypeDefImpl extends SchemaRecordTypeDefImplBase implements SchemaRecordTypeDef {
 
   public SchemaRecordTypeDefImpl(ASTNode node) {
     super(node);

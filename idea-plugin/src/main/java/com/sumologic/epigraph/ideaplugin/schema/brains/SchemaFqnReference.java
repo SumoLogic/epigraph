@@ -62,21 +62,14 @@ public class SchemaFqnReference extends PsiReferenceBase<SchemaFqnSegment> imple
 
   @Override
   public boolean isReferenceTo(PsiElement element) {
-    if (element instanceof SchemaTypeDefElement) {
-      SchemaTypeDefElement typeDefElement = (SchemaTypeDefElement) element;
-      // we build references to type defs (not specific type def elements), but "find usages" wants them
-      // to point to specific elements, so we have to accommodate for it here
-      // TODO any way to avoid this?
-      if (super.isReferenceTo(typeDefElement.getParent())) return true;
-    }
-
+    assert !(element instanceof SchemaTypeDefWrapper);
     return super.isReferenceTo(element);
   }
 
   @Nullable
   private PsiElement resolveImpl() {
     final Project project = myElement.getProject();
-    PsiElement typeDef = SchemaIndexUtil.findTypeDef(project, namespacesToSearch, shortName);
+    SchemaTypeDef typeDef = SchemaIndexUtil.findTypeDef(project, namespacesToSearch, shortName);
     if (typeDef != null) return typeDef;
 
     Fqn prefix = getElement().getFqn();
@@ -88,6 +81,7 @@ public class SchemaFqnReference extends PsiReferenceBase<SchemaFqnSegment> imple
 
     return null;
   }
+
   @NotNull
   @Override
   public ResolveResult[] multiResolve(boolean incompleteCode) {
@@ -124,7 +118,7 @@ public class SchemaFqnReference extends PsiReferenceBase<SchemaFqnSegment> imple
             .withTypeText(getTypeDefNamespace(typeDef)))
         .collect(Collectors.toSet());
 
-    String prefix = getElement().getFqn().removeLastSegment().toString(); // last segment is an error element
+    String prefix = getElement().getFqn().removeLastSegment().toString(); // last segment is an error getElement
     Set<String> namespaceVariants = NamespaceManager.getNamespaceSegmentsWithPrefix(project, prefix);
 
     @SuppressWarnings("UnnecessaryLocalVariable")

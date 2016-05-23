@@ -11,7 +11,7 @@ import static com.sumologic.epigraph.ideaplugin.schema.lexer.SchemaElementTypes.
 import com.sumologic.epigraph.ideaplugin.schema.psi.*;
 import com.intellij.psi.stubs.IStubElementType;
 
-public class SchemaVarTypeDefImpl extends SchemaVarTypeDefElementImplBase implements SchemaVarTypeDef {
+public class SchemaVarTypeDefImpl extends SchemaVarTypeDefImplBase implements SchemaVarTypeDef {
 
   public SchemaVarTypeDefImpl(ASTNode node) {
     super(node);

@@ -13,7 +13,6 @@ import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaTypeDef;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
@@ -24,28 +23,41 @@ public class SchemaDirectTypeInheritorsSearcher implements QueryExecutor<SchemaT
     // TODO use stub indices
     // TODO take supplements into account
 
-    final SchemaTypeDef parent = queryParameters.schemaTypeDef;
-    final Project project = PsiUtilCore.getProjectInReadAction(parent);
+    final SchemaTypeDef target = queryParameters.schemaTypeDef;
+    final Project project = PsiUtilCore.getProjectInReadAction(target);
 
 
     List<SchemaTypeDef> typeDefs = ApplicationManager.getApplication().runReadAction(
         (Computable<List<SchemaTypeDef>>) () -> SchemaIndexUtil.findTypeDefs(project, null, null)
     );
 
-    for (SchemaTypeDef typeDef : typeDefs) {
+    for (SchemaTypeDef candidate : typeDefs) {
       ProgressManager.checkCanceled();
 
-      List<SchemaTypeDef> inheritors = ApplicationManager.getApplication().runReadAction(
-          (Computable<List<SchemaTypeDef>>) () -> {
-            List<SchemaTypeDef> parents = typeDef.parents();
-            if (parents.isEmpty()) return null;
-            return parents.stream().filter(parent::equals).map(p -> typeDef).collect(Collectors.toList());
+      final SchemaTypeDef[] child = {null};
+      ApplicationManager.getApplication().runReadAction(() -> {
+        List<SchemaTypeDef> candidateParents = candidate.parents();
+        for (SchemaTypeDef candidateParent : candidateParents) {
+          if (target.equals(candidateParent)) {
+            child[0] = candidate;
+            break;
           }
-      );
+        }
+      });
 
-      if (inheritors != null)
-        for (SchemaTypeDef inheritor : inheritors)
-          if (!consumer.process(inheritor)) return false;
+      if (child[0] != null) consumer.process(child[0]);
+
+//      List<SchemaTypeDef> inheritors = ApplicationManager.getApplication().runReadAction(
+//          (Computable<List<SchemaTypeDef>>) () -> {
+//            List<SchemaTypeDef> parents = candidate.parents();
+//            if (parents.isEmpty()) return null;
+//            return parents.stream().filter(target::equals).map(p -> candidate).collect(Collectors.toList());
+//          }
+//      );
+//
+//      if (inheritors != null)
+//        for (SchemaTypeDef inheritor : inheritors)
+//          if (!consumer.process(inheritor)) return false;
     }
 
     return false;

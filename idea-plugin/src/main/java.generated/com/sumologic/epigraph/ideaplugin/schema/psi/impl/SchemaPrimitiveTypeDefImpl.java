@@ -11,7 +11,7 @@ import static com.sumologic.epigraph.ideaplugin.schema.lexer.SchemaElementTypes.
 import com.sumologic.epigraph.ideaplugin.schema.psi.*;
 import com.intellij.psi.stubs.IStubElementType;
 
-public class SchemaPrimitiveTypeDefImpl extends SchemaPrimitiveTypeDefElementImplBase implements SchemaPrimitiveTypeDef {
+public class SchemaPrimitiveTypeDefImpl extends SchemaPrimitiveTypeDefImplBase implements SchemaPrimitiveTypeDef {
 
   public SchemaPrimitiveTypeDefImpl(ASTNode node) {
     super(node);

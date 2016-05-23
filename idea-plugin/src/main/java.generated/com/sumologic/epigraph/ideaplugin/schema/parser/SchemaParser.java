@@ -113,8 +113,8 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     else if (t == S_SUPPLEMENT_DEF) {
       r = supplementDef(b, 0);
     }
-    else if (t == S_TYPE_DEF) {
-      r = typeDef(b, 0);
+    else if (t == S_TYPE_DEF_WRAPPER) {
+      r = typeDefWrapper(b, 0);
     }
     else if (t == S_TYPE_REF) {
       r = typeRef(b, 0);
@@ -277,12 +277,12 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // typeDef | supplementDef
+  // typeDefWrapper | supplementDef
   static boolean def(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "def")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_);
-    r = typeDef(b, l + 1);
+    r = typeDefWrapper(b, l + 1);
     if (!r) r = supplementDef(b, l + 1);
     exit_section_(b, l, m, r, false, declRecover_parser_);
     return r;
@@ -1317,12 +1317,11 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // varTypeDef | recordTypeDef | mapTypeDef | listTypeDef |
-  //             primitiveTypeDef | enumTypeDef
-  public static boolean typeDef(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "typeDef")) return false;
+  // varTypeDef | recordTypeDef | mapTypeDef | listTypeDef | primitiveTypeDef | enumTypeDef
+  public static boolean typeDefWrapper(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "typeDefWrapper")) return false;
     boolean r;
-    Marker m = enter_section_(b, l, _NONE_, S_TYPE_DEF, "<type definition>");
+    Marker m = enter_section_(b, l, _NONE_, S_TYPE_DEF_WRAPPER, "<type definition>");
     r = varTypeDef(b, l + 1);
     if (!r) r = recordTypeDef(b, l + 1);
     if (!r) r = mapTypeDef(b, l + 1);

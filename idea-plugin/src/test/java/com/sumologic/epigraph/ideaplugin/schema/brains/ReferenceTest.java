@@ -1,9 +1,10 @@
 package com.sumologic.epigraph.ideaplugin.schema.brains;
 
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.PsiPolyVariantReference;
+import com.intellij.psi.PsiReference;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
-import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaTypeDef;
 
 import java.util.Arrays;
 import java.util.List;
@@ -22,21 +23,30 @@ public class ReferenceTest extends LightCodeInsightFixtureTestCase {
     myFixture.configureByFile("SameNsTypeRef.es");
     PsiElement element = myFixture.getFile().findElementAt(myFixture.getCaretOffset());
     //noinspection ConstantConditions
-    assertEquals("Bar", ((SchemaTypeDef) element.getParent().getReference().resolve()).getName());
+    checkReference(element.getParent().getReference(), "Bar");
   }
 
   public void testFqnImportRef() {
     myFixture.configureByFiles("FqnImportTypeRef.es", "TargetNs.es");
     PsiElement element = myFixture.getFile().findElementAt(myFixture.getCaretOffset());
     //noinspection ConstantConditions
-    assertEquals("ZZLong", ((SchemaTypeDef) element.getParent().getReference().resolve()).getName());
+    checkReference(element.getParent().getReference(), "ZZLong");
   }
 
   public void testNsSegmentInTypeRef() {
     myFixture.configureByFile("NamespaceSegmentInTypeRef.es");
     PsiElement element = myFixture.getFile().findElementAt(myFixture.getCaretOffset());
     //noinspection ConstantConditions
-    assertEquals("foo", element.getParent().getReference().resolve().getText());
+    checkReference(element.getParent().getReference(), "foo");
+  }
+
+  private void checkReference(PsiReference reference, String text) {
+    assertNotNull(reference);
+    PsiElement target = reference.resolve();
+    assertNotNull(target);
+    String actualText = target instanceof PsiNamedElement ? ((PsiNamedElement) target).getName() : target.getText();
+    assertEquals(text, actualText);
+    assertTrue(reference.isReferenceTo(target));
   }
 
   @SuppressWarnings("ConstantConditions")

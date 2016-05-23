@@ -9,23 +9,22 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static com.sumologic.epigraph.ideaplugin.schema.lexer.SchemaElementTypes.*;
 import com.intellij.extapi.psi.StubBasedPsiElementBase;
-import com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaTypeDefStub;
+import com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaTypeDefWrapperStub;
 import com.sumologic.epigraph.ideaplugin.schema.psi.*;
-import javax.swing.Icon;
 import com.intellij.psi.stubs.IStubElementType;
 
-public class SchemaTypeDefImpl extends StubBasedPsiElementBase<SchemaTypeDefStub> implements SchemaTypeDef {
+public class SchemaTypeDefWrapperImpl extends StubBasedPsiElementBase<SchemaTypeDefWrapperStub> implements SchemaTypeDefWrapper {
 
-  public SchemaTypeDefImpl(ASTNode node) {
+  public SchemaTypeDefWrapperImpl(ASTNode node) {
     super(node);
   }
 
-  public SchemaTypeDefImpl(SchemaTypeDefStub stub, IStubElementType nodeType) {
+  public SchemaTypeDefWrapperImpl(SchemaTypeDefWrapperStub stub, IStubElementType nodeType) {
     super(stub, nodeType);
   }
 
   public void accept(@NotNull SchemaVisitor visitor) {
-    visitor.visitTypeDef(this);
+    visitor.visitTypeDefWrapper(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -70,57 +69,8 @@ public class SchemaTypeDefImpl extends StubBasedPsiElementBase<SchemaTypeDefStub
   }
 
   @NotNull
-  public SchemaTypeDefElement element() {
-    return SchemaPsiImplUtil.element(this);
-  }
-
-  @Nullable
-  public SchemaMetaDecl getMetaDecl() {
-    return SchemaPsiImplUtil.getMetaDecl(this);
-  }
-
-  @Nullable
-  public PsiElement getAbstract() {
-    return SchemaPsiImplUtil.getAbstract(this);
-  }
-
-  @Nullable
-  public PsiElement getPolymorphic() {
-    return SchemaPsiImplUtil.getPolymorphic(this);
-  }
-
-  @Nullable
-  public SchemaExtendsDecl getExtendsDecl() {
-    return SchemaPsiImplUtil.getExtendsDecl(this);
-  }
-
-  @Nullable
-  public PsiElement getId() {
-    return SchemaPsiImplUtil.getId(this);
-  }
-
-  @NotNull
-  public String toString() {
-    return SchemaPsiImplUtil.toString(this);
-  }
-
-  @Nullable
-  public String getName() {
-    return SchemaPsiImplUtil.getName(this);
-  }
-
-  @Nullable
-  public PsiElement setName(String name) {
-    return SchemaPsiImplUtil.setName(this, name);
-  }
-
-  @Nullable
-  public PsiElement getNameIdentifier() {
-    return SchemaPsiImplUtil.getNameIdentifier(this);
-  }
-
-  public int getTextOffset() {
-    return SchemaPsiImplUtil.getTextOffset(this);
+  public SchemaTypeDef getElement() {
+    return SchemaPsiImplUtil.getElement(this);
   }
 
   public void delete() {
@@ -128,17 +78,8 @@ public class SchemaTypeDefImpl extends StubBasedPsiElementBase<SchemaTypeDefStub
   }
 
   @NotNull
-  public TypeKind getKind() {
-    return SchemaPsiImplUtil.getKind(this);
-  }
-
-  public Icon getIcon(int flags) {
-    return SchemaPsiImplUtil.getIcon(this, flags);
-  }
-
-  @NotNull
-  public List<SchemaTypeDef> parents() {
-    return SchemaPsiImplUtil.parents(this);
+  public String toString() {
+    return SchemaPsiImplUtil.toString(this);
   }
 
 }

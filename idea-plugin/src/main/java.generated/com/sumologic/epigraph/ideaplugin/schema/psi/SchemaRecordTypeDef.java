@@ -7,7 +7,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.StubBasedPsiElement;
 import com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaRecordTypeDefStub;
 
-public interface SchemaRecordTypeDef extends SchemaTypeDefElement, StubBasedPsiElement<SchemaRecordTypeDefStub> {
+public interface SchemaRecordTypeDef extends SchemaTypeDef, StubBasedPsiElement<SchemaRecordTypeDefStub> {
 
   @Nullable
   SchemaExtendsDecl getExtendsDecl();
