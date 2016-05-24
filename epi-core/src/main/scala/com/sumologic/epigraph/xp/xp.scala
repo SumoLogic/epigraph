@@ -2,7 +2,7 @@
 
 package com.sumologic.epigraph.xp
 
-import com.sumologic.epigraph.std
+import com.sumologic.epigraph.std.{EnumValueName, FieldName, QualifiedTypeName, TypeMemberName}
 
 trait Var[+M <: Var[M]] {
 
@@ -17,11 +17,6 @@ trait MonoVar[+T <: Datum[T]] extends Var[T] {
 
 }
 
-//trait StaticVar[+M <: StaticVar[M]] extends Var {
-//
-//  def getEntry[T <: Datum](tag: StaticVarTag[_ >: M, T]): Option[VarEntry[T]]
-//
-//}
 
 trait VarEntry[M <: Var[M], T <: Datum[T]] { // TODO variance?
 
@@ -36,7 +31,7 @@ trait VarEntry[M <: Var[M], T <: Datum[T]] { // TODO variance?
 }
 
 
-class VarTag[M <: Var[M], T <: Datum[T]](val name: std.TypeMemberName, val dataType: DataType[T])
+class VarTag[M <: Var[M], T <: Datum[T]](val name: TypeMemberName, val dataType: DataType[T])
 
 
 trait Datum[+D <: Datum[D]] extends MonoVar[D] {
@@ -60,38 +55,28 @@ trait RecordDatum[+D <: RecordDatum[D]] extends Datum[D] {
 
 }
 
-//trait MapDatum[K <: Datum[K], +M <: Var[M]] extends Datum {
-//
-//  override type DatumType <: MapType[K, _ <: M]
-//
-//  def get[T <: Datum](key: K, tag: VarTag[_ >: M, T]): Option[T] = ??? //getVar(key).flatMap(_.getEntry(tag))
-//
-//  def getOrElse[T <: Datum](key: K, tag: VarTag[_ >: M, _ <: T], default: => T): T
-//
-//  def getVar(key: K): Option[M]
-//
-//  //def getVarEntry[T <: Datum](key: K, varTag: VarTag[_ <: T]): Option[StaticVarEntry[_ >: M, T]]
-//
-//}
 
-//trait StaticMapDatum[+D <: StaticMapDatum[D, K, M], K <: Datum, +M <: Var[M]] extends MapDatum[K, M] with Datum[D] {
-//
-//  override type DatumType <: StaticMapType[_ <: D, K, _ <: M]
-//
-//  def getOrElse[T <: Datum](key: K, tag: VarTag[_ >: M, _ <: T], default: => T): T
-//
-//  def getVar(key: K): Option[M]
-//
-//  //def getVarEntry[T <: Datum](key: K, varTag: StaticVarTag[_ >: M, _ <: T]): Option[StaticVarEntry[_ >: M, T]]
-//
-//}
+trait MapDatum[K <: Datum[K], +M <: Var[M]] extends Datum[MapDatum[K, M]] {
 
-//trait StaticTaggedMapDatum[+D <: StaticMapDatum[D, K, M], K <: Datum[K], M <: Var[M], V <: Datum]
-//    extends StaticMapDatum[D, K, M] {
-//
-//  def tag: VarTag[_ >: M, V]
-//
-//}
+  override type DatumType <: MapType[K, _ <: M]
+
+  def get[T <: Datum[T]](key: K, tag: VarTag[_ >: M, T]): Option[T] = ??? //getVar(key).flatMap(_.getEntry(tag))
+
+  def getOrElse[T <: Datum[T]](key: K, tag: VarTag[_ >: M, _ <: T], default: => T): T
+
+  def getVar(key: K): Option[M]
+
+  //def getVarEntry[T <: Datum](key: K, varTag: VarTag[_ <: T]): Option[StaticVarEntry[_ >: M, T]]
+
+}
+
+
+trait TaggedMapDatum[K <: Datum[K], /*+*/ M <: Var[M], V <: Datum[V]] extends MapDatum[K, M] {
+
+  def tag: VarTag[_ >: M, V]
+
+}
+
 
 trait ListDatum[+M <: Var[M]] extends Datum[ListDatum[M]] {
 
@@ -100,8 +85,7 @@ trait ListDatum[+M <: Var[M]] extends Datum[ListDatum[M]] {
 }
 
 
-trait TaggedListDatum[M <: Var[M], V <: Datum[V]]
-    extends ListDatum[M] {
+trait TaggedListDatum[/*+*/ M <: Var[M], V <: Datum[V]] extends ListDatum[M] {
 
   def tag: VarTag[_ >: M, V]
 
@@ -112,7 +96,7 @@ trait EnumDatum[D <: EnumDatum[D]] extends Datum[D] {
 
   override type DatumType <: EnumType[D]
 
-  def name: std.EnumValueName
+  def name: EnumValueName
 
 }
 
@@ -165,7 +149,7 @@ trait Type {
 
   type Super <: Type
 
-  def name: std.QualifiedTypeName
+  def name: QualifiedTypeName
 
   def declaredSupertypes: Seq[Super]
 
@@ -194,13 +178,13 @@ trait MultiType[M <: Var[M]] extends Type {
 
 
 abstract class MultiVarType[M <: Var[M]](
-    override final val name: std.QualifiedTypeName,
+    override final val name: QualifiedTypeName,
     override final val declaredSupertypes: Seq[MultiType[_ >: M]] = Nil
 ) extends MultiType[M] {
 
   final override type Super = MultiType[_ >: M]
 
-  def declareTag[T <: Datum[T]](name: std.TypeMemberName, dataType: DataType[T]): VarTag[M, T] = new VarTag[M, T](
+  def declareTag[T <: Datum[T]](name: TypeMemberName, dataType: DataType[T]): VarTag[M, T] = new VarTag[M, T](
     name, dataType
   )
 
@@ -209,7 +193,7 @@ abstract class MultiVarType[M <: Var[M]](
 
 trait DefaultMultiType[D <: Datum[D]] extends MultiType[D] {this: DataType[D] =>
 
-  val default: VarTag[D, D] = new VarTag[D, D](std.TypeMemberName.default, this)
+  val default: VarTag[D, D] = new VarTag[D, D](TypeMemberName.default, this)
 
   override def declaredVarTags: Seq[VarTag[D, D]] = Seq[VarTag[D, D]](default)
 
@@ -231,7 +215,7 @@ trait DataType[D <: Datum[D]] extends Type with DefaultMultiType[D] {
 
 
 abstract class RecordType[D <: RecordDatum[D]](
-    override final val name: std.QualifiedTypeName,
+    override final val name: QualifiedTypeName,
     override final val declaredSupertypes: Seq[RecordType[_ >: D]] = Nil,
     override final val isPolymorphic: Boolean = false
 ) extends DataType[D] {
@@ -241,16 +225,16 @@ abstract class RecordType[D <: RecordDatum[D]](
   def declaredFields: Seq[Field[D, _]]
 
   protected def declareField[T <: Datum[T]](
-      name: std.FieldName,
+      name: FieldName,
       valueType: DataType[T]
   ): TaggedField[D, T, T] = new TaggedField[D, T, T](name, valueType, valueType.default)
 
-  protected def declareField[M <: Var[M]](name: std.FieldName, valueType: MultiType[M]): Field[D, M] = new Field[D, M](
+  protected def declareField[M <: Var[M]](name: FieldName, valueType: MultiType[M]): Field[D, M] = new Field[D, M](
     name, valueType
   )
 
   protected def declareField[M <: Var[M], T <: Datum[T]](
-      name: std.FieldName,
+      name: FieldName,
       valueType: MultiType[M],
       tag: VarTag[_ >: M, T]
   ): TaggedField[D, M, T] = new TaggedField[D, M, T](name, valueType, tag)
@@ -258,7 +242,7 @@ abstract class RecordType[D <: RecordDatum[D]](
 }
 
 
-class Field[D <: RecordDatum[D], M <: Var[M]](val name: std.FieldName, val valueType: MultiType[M]) {
+class Field[D <: RecordDatum[D], M <: Var[M]](val name: FieldName, val valueType: MultiType[M]) {
 
   def as[T <: Datum[T]](varTag: VarTag[_ >: M, T]): TaggedField[D, M, T] = new TaggedField[D, M, T](
     name, valueType, varTag
@@ -268,27 +252,27 @@ class Field[D <: RecordDatum[D], M <: Var[M]](val name: std.FieldName, val value
 
 
 class TaggedField[D <: RecordDatum[D], M <: Var[M], T <: Datum[T]](
-    override val name: std.FieldName,
+    override val name: FieldName,
     override val valueType: MultiType[M],
     val tag: VarTag[_ >: M, T]
 ) extends Field[D, M](name, valueType)
 
-//trait MapType[K <: Datum, M <: Var[M]] extends DataType[MapDatum[K, M]] {
-//
-//  override type Super = MapType[K, _ >: M]
-//
-//  def keyType: DataType[K]
-//
-//  def valueType: MultiType[M]
-//
-//}
-//
-//
-//// TODO class
-//trait StaticMapType[D <: StaticMapDatum[D, K, M], K <: Datum, M <: Var[M]] extends MapType[K, M]// with StaticDataType[D]
+
+class MapType[K <: Datum[K], M <: Var[M]](
+    override final val name: QualifiedTypeName,
+    final val keyType: DataType[K],
+    final val valueType: MultiType[M],
+    override final val declaredSupertypes: Seq[MapType[K, _ >: M]] = Nil,
+    override final val isPolymorphic: Boolean = false
+) extends DataType[MapDatum[K, M]] {
+
+  override type Super = MapType[K, _ >: M]
+
+}
+
 
 class ListType[M <: Var[M]](
-    override final val name: std.QualifiedTypeName,
+    override final val name: QualifiedTypeName,
     final val valueType: MultiType[M],
     override final val declaredSupertypes: Seq[ListType[_ >: M]] = Nil,
     override final val isPolymorphic: Boolean = false
@@ -322,7 +306,7 @@ trait PrimitiveType[D <: PrimitiveDatum[D]] extends DataType[D] {
 
 
 abstract class StringType[D <: StringDatum[D]](
-    override val name: std.QualifiedTypeName,
+    override val name: QualifiedTypeName,
     override val declaredSupertypes: Seq[StringType[_ >: D]] = Nil,
     override val isPolymorphic: Boolean = false
 ) extends PrimitiveType[D] {
@@ -335,7 +319,7 @@ abstract class StringType[D <: StringDatum[D]](
 
 
 class IntegerType[D <: IntegerDatum[D]](
-    override val name: std.QualifiedTypeName,
+    override val name: QualifiedTypeName,
     override val declaredSupertypes: Seq[IntegerType[_ >: D]] = Nil,
     override val isPolymorphic: Boolean = false
 ) extends PrimitiveType[D] {
@@ -348,7 +332,7 @@ class IntegerType[D <: IntegerDatum[D]](
 
 
 class LongType[D <: LongDatum[D]](
-    override val name: std.QualifiedTypeName,
+    override val name: QualifiedTypeName,
     override val declaredSupertypes: Seq[LongType[_ >: D]] = Nil,
     override val isPolymorphic: Boolean = false
 ) extends PrimitiveType[D] {
@@ -361,7 +345,7 @@ class LongType[D <: LongDatum[D]](
 
 
 class DoubleType[D <: DoubleDatum[D]](
-    override val name: std.QualifiedTypeName,
+    override val name: QualifiedTypeName,
     override val declaredSupertypes: Seq[DoubleType[_ >: D]] = Nil,
     override val isPolymorphic: Boolean = false
 ) extends PrimitiveType[D] {
@@ -374,7 +358,7 @@ class DoubleType[D <: DoubleDatum[D]](
 
 
 class BooleanType[D <: BooleanDatum[D]](
-    override val name: std.QualifiedTypeName,
+    override val name: QualifiedTypeName,
     override val declaredSupertypes: Seq[BooleanType[_ >: D]] = Nil,
     override val isPolymorphic: Boolean = false
 ) extends PrimitiveType[D] {

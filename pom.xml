@@ -24,6 +24,8 @@
 
   <modules>
     <module>epi-core</module>
+    <module>epi-builtin-types</module>
+    <module>epi-schema</module>
     <!--<module>schema-editor</module>-->
   </modules>
 

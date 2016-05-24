@@ -6,7 +6,7 @@ import com.sumologic.epigraph.gen.NamingConvention
 
 import scala.language.implicitConversions
 
-trait Named[N <: NameApi] {
+trait Named[+N <: NameApi] {
 
   def name: N
 
