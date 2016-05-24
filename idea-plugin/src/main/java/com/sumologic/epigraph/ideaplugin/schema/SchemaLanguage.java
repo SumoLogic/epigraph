@@ -4,8 +4,6 @@ import com.intellij.lang.Language;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Todo add doc
- *
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
 public class SchemaLanguage extends Language {
@@ -13,13 +11,12 @@ public class SchemaLanguage extends Language {
 
   private SchemaLanguage() {
     super("epi_schema", "text/epi_schema");
-    // todo syntax highlighter
   }
 
   @NotNull
   @Override
   public String getDisplayName() {
-    return "Epigraph Schema"; // TODO
+    return "Epigraph Schema";
   }
 
   @Override

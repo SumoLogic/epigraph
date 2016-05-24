@@ -1,17 +1,16 @@
 package com.sumologic.epigraph.ideaplugin.schema.index;
 
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiManager;
-import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.util.indexing.FileBasedIndex;
-import com.sumologic.epigraph.ideaplugin.schema.SchemaFileType;
-import com.sumologic.epigraph.ideaplugin.schema.psi.*;
+import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaNamespaceDecl;
+import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaTypeDef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
@@ -38,7 +37,7 @@ public class SchemaIndexUtil {
         for (String namespace : namespaces) {
           String fqn = namespace + '.' + shortName;
           Collection<SchemaTypeDef> typeDefs = index.get(fqn, project, scope);
-          if (!processor.addMore(typeDefs)) break;
+          if (!processor.process(typeDefs)) break;
         }
       } else {
         SchemaTypesByNamespaceIndex index = SchemaTypesByNamespaceIndex.EP_NAME.findExtension(SchemaTypesByNamespaceIndex.class);
@@ -46,7 +45,7 @@ public class SchemaIndexUtil {
 
         for (String namespace : namespaces) {
           Collection<SchemaTypeDef> typeDefs = index.get(namespace, project, scope);
-          if (!processor.addMore(typeDefs)) break;
+          if (!processor.process(typeDefs)) break;
         }
       }
     } else {
@@ -63,7 +62,7 @@ public class SchemaIndexUtil {
 
       for (String name : shortNames) {
         Collection<SchemaTypeDef> typeDefs = index.get(name, project, scope);
-        if (!processor.addMore(typeDefs)) break;
+        if (!processor.process(typeDefs)) break;
       }
     }
 
@@ -72,37 +71,24 @@ public class SchemaIndexUtil {
 
   @NotNull
   public static List<SchemaNamespaceDecl> findNamespaces(@NotNull Project project, @Nullable String namePrefix) {
-    // TODO index
+    GlobalSearchScope scope = GlobalSearchScope.allScope(project);
 
-    List<SchemaNamespaceDecl> result = new ArrayList<>();
+    SchemaNamespaceByNameIndex index = SchemaNamespaceByNameIndex.EP_NAME.findExtension(SchemaNamespaceByNameIndex.class);
 
-    Collection<VirtualFile> virtualFiles =
-        FileBasedIndex.getInstance().getContainingFiles(FileTypeIndex.NAME, SchemaFileType.INSTANCE, GlobalSearchScope.allScope(project));
+    final List<SchemaNamespaceDecl> result = new ArrayList<>();
 
-    for (VirtualFile virtualFile : virtualFiles) {
-
-      SchemaFile schemaFile = (SchemaFile) PsiManager.getInstance(project).findFile(virtualFile);
-      if (schemaFile == null) continue;
-
-      SchemaNamespaceDecl namespaceDecl = schemaFile.getNamespaceDecl();
-      if (namespaceDecl == null) continue;
-
-      SchemaFqn fqn = namespaceDecl.getFqn();
-      if (fqn == null) continue;
-
-      if (namePrefix != null) {
-        String fqnText = fqn.getFqn().toString();
-        if (!fqnText.startsWith(namePrefix)) continue;
+    index.processAllKeys(project, namespaceFqn -> {
+      if (namePrefix == null || namespaceFqn.startsWith(namePrefix)) {
+        result.addAll(index.get(namespaceFqn, project, scope));
       }
-
-      result.add(namespaceDecl);
-    }
+      return true;
+    });
 
     return result;
   }
 
   private interface Processor<T, R> {
-    boolean addMore(Collection<T> items);
+    boolean process(Collection<T> items);
 
     R result();
   }
@@ -111,7 +97,7 @@ public class SchemaIndexUtil {
     private final ArrayList<T> result = new ArrayList<>();
 
     @Override
-    public boolean addMore(Collection<T> items) {
+    public boolean process(Collection<T> items) {
       result.addAll(items);
       return true;
     }
@@ -127,7 +113,7 @@ public class SchemaIndexUtil {
 
 
     @Override
-    public boolean addMore(Collection<T> items) {
+    public boolean process(Collection<T> items) {
       if (items.isEmpty()) return true;
       result = items.iterator().next();
       return false;

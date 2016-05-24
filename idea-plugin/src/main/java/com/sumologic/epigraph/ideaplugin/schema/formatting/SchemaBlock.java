@@ -17,8 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Todo add doc
- *
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
 public class SchemaBlock extends AbstractBlock implements BlockEx {

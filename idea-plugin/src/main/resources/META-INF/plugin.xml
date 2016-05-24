@@ -25,9 +25,12 @@
   <extensions defaultExtensionNs="com.intellij">
     <fileTypeFactory implementation="com.sumologic.epigraph.ideaplugin.schema.SchemaFileTypeFactory"/>
     <stubElementTypeHolder class="com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaStubElementTypes"/>
+
     <stubIndex implementation="com.sumologic.epigraph.ideaplugin.schema.index.SchemaShortTypeNameIndex"/>
     <stubIndex implementation="com.sumologic.epigraph.ideaplugin.schema.index.SchemaFullTypeNameIndex"/>
     <stubIndex implementation="com.sumologic.epigraph.ideaplugin.schema.index.SchemaTypesByNamespaceIndex"/>
+    <stubIndex implementation="com.sumologic.epigraph.ideaplugin.schema.index.SchemaNamespaceByNameIndex"/>
+
     <lang.syntaxHighlighterFactory language="epi_schema"
                                    implementationClass="com.sumologic.epigraph.ideaplugin.schema.highlighting.SchemaSyntaxHighlighterFactory"/>
     <lang.parserDefinition language="epi_schema"

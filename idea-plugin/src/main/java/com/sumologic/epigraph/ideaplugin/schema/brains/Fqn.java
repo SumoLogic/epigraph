@@ -25,6 +25,11 @@ public class Fqn {
     this(segments.toArray(new String[segments.size()]));
   }
 
+  @NotNull
+  public static Fqn fromDotSeparated(@NotNull String fqn) {
+    return new Fqn(fqn.split("\\."));
+  }
+
   public int size() {
     return segments.length;
   }

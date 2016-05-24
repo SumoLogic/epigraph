@@ -23,8 +23,6 @@ import static com.sumologic.epigraph.ideaplugin.schema.lexer.SchemaElementTypes.
 import static com.sumologic.epigraph.ideaplugin.schema.lexer.SchemaElementTypes.S_COMMENT;
 
 /**
- * Todo add doc
- *
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
 public class SchemaFoldingBuilder extends CustomFoldingBuilder implements DumbAware {

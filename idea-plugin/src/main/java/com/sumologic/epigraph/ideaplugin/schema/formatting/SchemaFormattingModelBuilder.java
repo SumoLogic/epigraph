@@ -15,8 +15,6 @@ import org.jetbrains.annotations.Nullable;
 import static com.sumologic.epigraph.ideaplugin.schema.lexer.SchemaElementTypes.*;
 
 /**
- * Todo add doc
- *
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
 public class SchemaFormattingModelBuilder implements FormattingModelBuilder {

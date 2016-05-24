@@ -8,6 +8,7 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.util.IncorrectOperationException;
 import com.sumologic.epigraph.ideaplugin.schema.brains.NamespaceManager;
+import com.sumologic.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
 import com.sumologic.epigraph.ideaplugin.schema.psi.*;
 import com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaTypeDefStubBase;
 import org.jetbrains.annotations.NotNull;
@@ -145,6 +146,6 @@ public abstract class SchemaTypeDefImplBase<S extends SchemaTypeDefStubBase<T>, 
 
   @Override
   public String toString() {
-    return getClass().getSimpleName() + "(" + getNode().getElementType().toString() + ")";
+    return SchemaPresentationUtil.psiToString(this);
   }
 }

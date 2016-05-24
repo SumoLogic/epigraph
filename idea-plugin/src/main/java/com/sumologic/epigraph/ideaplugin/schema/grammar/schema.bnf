@@ -87,7 +87,13 @@ imports ::= importStatement*
 importStatement ::= 'import' fqn starImportSuffix? {pin=1 recoverWhile="declRecover"}
 starImportSuffix ::= '.' '*'
 
-namespaceDecl ::= 'namespace' fqn namespaceBody? {pin=1 recoverWhile="declRecover"}
+namespaceDecl ::= 'namespace' fqn namespaceBody? {
+  methods=[getFqn2 toString]
+  stubClass="com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaNamespaceDeclStub"
+  elementTypeClass="com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaNamespaceDeclStubElementType"
+  pin=1
+  recoverWhile="declRecover"
+}
 
 private namespaceBody ::= '{' namespaceBodyPart* '}'
 private namespaceBodyPart ::= customParam // | ...

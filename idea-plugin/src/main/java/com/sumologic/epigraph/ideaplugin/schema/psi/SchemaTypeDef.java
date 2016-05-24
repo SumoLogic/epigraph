@@ -10,8 +10,6 @@ import javax.swing.*;
 import java.util.List;
 
 /**
- * Todo add doc
- *
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
 public interface SchemaTypeDef extends PsiNameIdentifierOwner {

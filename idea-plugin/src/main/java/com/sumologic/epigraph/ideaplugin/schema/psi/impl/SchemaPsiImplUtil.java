@@ -7,7 +7,9 @@ import com.intellij.psi.TokenType;
 import com.intellij.util.IncorrectOperationException;
 import com.sumologic.epigraph.ideaplugin.schema.brains.Fqn;
 import com.sumologic.epigraph.ideaplugin.schema.brains.ReferenceFactory;
+import com.sumologic.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
 import com.sumologic.epigraph.ideaplugin.schema.psi.*;
+import com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaNamespaceDeclStub;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -20,6 +22,26 @@ import java.util.List;
  */
 public class SchemaPsiImplUtil {
 //  private static final SchemaTypeDef[] EMPTY_TYPE_DEFS = new SchemaTypeDef[0];
+
+  // namespace --------------------------------------------
+
+  @Contract(pure = true)
+  @Nullable
+  public static Fqn getFqn2(SchemaNamespaceDecl namespaceDecl) {
+    SchemaNamespaceDeclStub stub = namespaceDecl.getStub();
+    if (stub != null) return stub.getFqn();
+
+    SchemaFqn schemaFqn = namespaceDecl.getFqn();
+    return schemaFqn == null ? null : getFqn(schemaFqn);
+  }
+
+  @Contract(pure = true)
+  @NotNull
+  public static String toString(SchemaNamespaceDecl namespaceDecl) {
+    return SchemaPresentationUtil.psiToString(namespaceDecl);
+  }
+
+  // fqn --------------------------------------------
 
   @Contract(pure = true)
   @NotNull
@@ -73,7 +95,7 @@ public class SchemaPsiImplUtil {
   @Contract(pure = true)
   @NotNull
   public static String toString(SchemaTypeDefWrapper typeDef) {
-    return typeDef.getClass().getSimpleName() + "(" + typeDef.getNode().getElementType().toString() + ")";
+    return SchemaPresentationUtil.psiToString(typeDef);
   }
 
   // supplement --------------------------------------------

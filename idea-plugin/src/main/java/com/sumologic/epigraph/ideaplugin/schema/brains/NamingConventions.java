@@ -4,8 +4,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Todo add doc
- *
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
 public class NamingConventions {
@@ -13,7 +11,7 @@ public class NamingConventions {
 
   @Nullable
   public static String validateTypeName(@NotNull String typeName) {
-    if (!Character.isUpperCase(typeName.charAt(0))) // TODO account for _
+    if (!Character.isUpperCase(typeName.charAt(0)))
       return "Type name must start with an upper case letter";
 
     return null;
