@@ -137,7 +137,7 @@ trait GenTypes {this: GenNames =>
   }
 
 
-  trait EnumTypeMemberApi extends Named[EnumMemberName] {this: GenEnumTypeMember =>}
+  trait EnumTypeMemberApi extends Named[EnumValueName] {this: GenEnumTypeMember =>}
 
 
   trait PrimitiveDataTypeApi extends DataTypeApi {this: GenPrimitiveType =>

@@ -29,7 +29,17 @@ trait MultiType[M <: MultiVar[M]] extends Type {
 
   private lazy val cachedVarTags: Seq[VarTag[_ >: M, _]] = (declaredVarTags ++ supertypes.flatMap(_.varTags)).distinct
 
-  def /*lazy val*/ listOf: ListType[Null, M] // = new ListType[Null, M](name.listOf, supertypes.map(_.listOf), this)
+  def /*lazy val*/ listOf: ListType[Null, M] = ??? //TODO = new ListType[Null, M](name.listOf, supertypes.map(_.listOf), this)
+
+}
+
+
+abstract class MultiVarType[M <: MultiVar[M]](
+    override final val name: QualifiedTypeName,
+    override final val declaredSupertypes: Seq[MultiType[_ >: M]] = Nil
+) extends MultiType[M] {
+
+  final override type Super = MultiType[_ >: M]
 
 }
 
@@ -65,7 +75,11 @@ trait DataType[D <: Datum[D]] extends Type with DefaultMultiType[D] {
 }
 
 
-trait RecordType[D <: RecordDatum[D]] extends DataType[D] {
+abstract class RecordType[D <: RecordDatum[D]](
+    override final val name: QualifiedTypeName,
+    override final val declaredSupertypes: Seq[RecordType[_ >: D]] = Nil,
+    override final val isPolymorphic: Boolean = false
+) extends DataType[D] {
 
   final override type Super = RecordType[_ >: D]
 
@@ -74,9 +88,26 @@ trait RecordType[D <: RecordDatum[D]] extends DataType[D] {
 }
 
 
+trait Field[D <: RecordDatum[D], M <: MultiVar[M]] {
+
+  def valueType: MultiType[M]
+
+  def as[T <: Datum[T]](varTag: VarTag[_ >: M, T]): TaggedField[D, M, varTag.type, T]
+
+}
+
+
+trait TaggedField[D <: RecordDatum[D], M <: MultiVar[M], Tag <: VarTag[_ >: M, T], T <: Datum[T]] extends Field[D, M]
+    /*with Tagged[Tag, M, T]*/ {
+
+  def tag: Tag
+
+}
+
+
 trait MapType[D <: MapDatum[D, K, M], K <: Datum[K], M <: MultiVar[M]] extends DataType[D] {
 
-  override type Super = MapType[_ >: D, K, _ >: M]
+  final override type Super = MapType[_ >: D, K, _ >: M]
 
   def keyType: DataType[K]
 
@@ -87,7 +118,7 @@ trait MapType[D <: MapDatum[D, K, M], K <: Datum[K], M <: MultiVar[M]] extends D
 
 trait ListType[D <: ListDatum[D, M], M <: MultiVar[M]] extends DataType[D] {
 
-  override type Super = ListType[_ >: D, _ >: M]
+  final override type Super = ListType[_ >: D, _ >: M]
 
   def valueType: MultiType[M]
 
@@ -96,7 +127,7 @@ trait ListType[D <: ListDatum[D, M], M <: MultiVar[M]] extends DataType[D] {
 
 trait EnumType[D <: EnumDatum[D]] extends DataType[D] {
 
-  override type Super = EnumType[D]
+  final override type Super = EnumType[D]
 
   def values: Seq[D]
 
@@ -116,45 +147,65 @@ trait PrimitiveType[D <: PrimitiveDatum[D]] extends DataType[D] {
 }
 
 
-trait StringType[D <: StringDatum[D]] extends PrimitiveType[D] {
+class StringType[D <: StringDatum[D]](
+    override val name: QualifiedTypeName,
+    override val declaredSupertypes: Seq[StringType[_ >: D]] = Nil,
+    override val isPolymorphic: Boolean = false
+) extends PrimitiveType[D] {
 
-  override type Super = StringType[_ >: D]
+  final override type Super = StringType[_ >: D]
 
   final override type Native = String
 
 }
 
 
-trait IntegerType[D <: IntegerDatum[D]] extends PrimitiveType[D] {
+class IntegerType[D <: IntegerDatum[D]](
+    override val name: QualifiedTypeName,
+    override val declaredSupertypes: Seq[IntegerType[_ >: D]] = Nil,
+    override val isPolymorphic: Boolean = false
+) extends PrimitiveType[D] {
 
-  override type Super = IntegerType[_ >: D]
+  final override type Super = IntegerType[_ >: D]
 
   final override type Native = Int
 
 }
 
 
-trait LongType[D <: LongDatum[D]] extends PrimitiveType[D] {
+class LongType[D <: LongDatum[D]](
+    override val name: QualifiedTypeName,
+    override val declaredSupertypes: Seq[LongType[_ >: D]] = Nil,
+    override val isPolymorphic: Boolean = false
+) extends PrimitiveType[D] {
 
-  override type Super = LongType[_ >: D]
+  final override type Super = LongType[_ >: D]
 
   final override type Native = Long
 
 }
 
 
-trait DoubleType[D <: DoubleDatum[D]] extends PrimitiveType[D] {
+class DoubleType[D <: DoubleDatum[D]](
+    override val name: QualifiedTypeName,
+    override val declaredSupertypes: Seq[DoubleType[_ >: D]] = Nil,
+    override val isPolymorphic: Boolean = false
+) extends PrimitiveType[D] {
 
-  override type Super = DoubleType[_ >: D]
+  final override type Super = DoubleType[_ >: D]
 
   final override type Native = Double
 
 }
 
 
-trait BooleanType[D <: BooleanDatum[D]] extends PrimitiveType[D] {
+class BooleanType[D <: BooleanDatum[D]](
+    override val name: QualifiedTypeName,
+    override val declaredSupertypes: Seq[BooleanType[_ >: D]] = Nil,
+    override val isPolymorphic: Boolean = false
+) extends PrimitiveType[D] {
 
-  override type Super = BooleanType[_ >: D]
+  final override type Super = BooleanType[_ >: D]
 
   final override type Native = Boolean
 

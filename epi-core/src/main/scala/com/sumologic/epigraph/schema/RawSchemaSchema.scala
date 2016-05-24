@@ -50,7 +50,7 @@ trait RawSchemaNamesSchema {this: RawNames with RawTypes with RawBuiltins =>
   object TagNameType extends GenStringType(SchemaNamespaceName \ "TagName", LocalNameType)
 
 
-  object EnumMemberNameType extends GenStringType(SchemaNamespaceName \ "EnumMemberName", LocalNameType)
+  object EnumValueNameType extends GenStringType(SchemaNamespaceName \ "EnumValueName", LocalNameType)
 
 
 }
@@ -194,16 +194,16 @@ trait RawSchemaTypesSchema {this: RawNames with RawTypes with RawBuiltins with R
 
   object EnumDataTypeType extends {
 
-    val Members = Field("members", EnumTypeMemberType)
+    val Values = Field("values", EnumValueType)
 
-  } with GenRecordType(SchemaNamespaceName \ "EnumDataType", DataTypeType, Seq(Members))
+  } with GenRecordType(SchemaNamespaceName \ "EnumDataType", DataTypeType, Seq(Values))
 
 
-  object EnumTypeMemberType extends {
+  object EnumValueType extends {
 
-    val Name = Field("name", EnumMemberNameType)
+    val Name = Field("name", EnumValueNameType)
 
-  } with GenRecordType(SchemaNamespaceName \ "EnumTypeMember", Nil, Seq(Name))
+  } with GenRecordType(SchemaNamespaceName \ "EnumValue", Nil, Seq(Name))
 
 
   object PrimitiveDataTypeType extends GenRecordType(SchemaNamespaceName \ "PrimitiveDataType", DataTypeType, Nil)

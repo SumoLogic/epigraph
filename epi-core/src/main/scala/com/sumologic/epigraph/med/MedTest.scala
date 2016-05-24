@@ -26,7 +26,7 @@ object MedTest extends RawNames with MedTypes with MedData {
   trait UserRecord extends PersonRecord with RecordDatum[UserRecord]
 
 
-  object UserRecord extends StaticRecordType[UserRecord](ns \ "PersonRecord", Seq(PersonRecord)) {
+  object UserRecord extends StaticRecordType[UserRecord](ns \ "UserRecord", Seq(PersonRecord)) {
 
     val id: StaticField[UserRecord, User] = field("id", User)
 

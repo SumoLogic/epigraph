@@ -8,13 +8,7 @@ object StdTest {
   trait PersonRecord extends RecordDatum[PersonRecord]
 
 
-  object PersonRecord extends RecordType[PersonRecord] {
-
-    override val name: QualifiedTypeName = ???
-
-    val isPolymorphic: Boolean = false
-
-    override val declaredSupertypes: Seq[RecordType[_ >: PersonRecord]] = Nil
+  object PersonRecord extends RecordType[PersonRecord](???) {
 
     val firstName: TaggedField[PersonRecord, FirstName, FirstName.default.type, FirstName] =
       new TaggedField[PersonRecord, FirstName, FirstName.default.type, FirstName] {
@@ -35,27 +29,13 @@ object StdTest {
   trait FirstName extends StringDatum[FirstName]
 
 
-  object FirstName extends StringType[FirstName] {
-
-    override val isPolymorphic: Boolean = false
-
-    override val declaredSupertypes: Seq[StringType[_ >: FirstName]] = Nil
-
-    override val name: QualifiedTypeName = ???
-
-  }
+  object FirstName extends StringType[FirstName](name = ???)
 
 
   trait UserRecord extends PersonRecord with RecordDatum[UserRecord]
 
 
-  object UserRecord extends RecordType[UserRecord] {
-
-    override val isPolymorphic: Boolean = false
-
-    override val declaredSupertypes: Seq[RecordType[_ >: UserRecord]] = Seq(PersonRecord)
-
-    override val name: QualifiedTypeName = ???
+  object UserRecord extends RecordType[UserRecord](???, Seq(PersonRecord)) {
 
     val id: TaggedField[UserRecord, UserId, UserId.default.type, UserId] =
       new TaggedField[UserRecord, UserId, UserId.default.type, UserId] {
@@ -68,22 +48,15 @@ object StdTest {
 
       }
 
-    override val declaredFields: Seq[Field[UserRecord, _]] = Nil
+    override val declaredFields: Seq[Field[UserRecord, _]] = Seq(id)
+
   }
 
 
   trait UserId extends LongDatum[UserId]
 
 
-  object UserId extends LongType[UserId] {
-
-    override val isPolymorphic: Boolean = false
-
-    override val name: QualifiedTypeName = ???
-
-    override val declaredSupertypes: Seq[Super] = Nil
-
-  }
+  object UserId extends LongType[UserId](name = ???)
 
 
   trait User extends MultiVar[User]

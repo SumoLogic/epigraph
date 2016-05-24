@@ -63,22 +63,6 @@ trait RecordDatum[+D <: RecordDatum[D]] extends Datum[D] {
 }
 
 
-trait Field[D <: RecordDatum[D], M <: MultiVar[M]] {
-
-  def valueType: MultiType[M]
-
-  def as[T <: Datum[T]](varTag: VarTag[_ >: M, T]): TaggedField[D, M, varTag.type, T]
-
-}
-
-
-trait TaggedField[D <: RecordDatum[D], M <: MultiVar[M], Tag <: VarTag[_ >: M, T], T <: Datum[T]] extends Field[D, M]
-    /*with Tagged[Tag, M, T]*/ {
-
-  def tag: Tag
-
-}
-
 
 trait MapDatum[+D <: MapDatum[D, K, M], K <: Datum[K], +M <: MultiVar[M]] extends Datum[D] {
 
@@ -106,6 +90,8 @@ trait ListDatum[+D <: ListDatum[D, M], +M <: MultiVar[M]] extends Datum[D] {
   override type DatumType <: ListType[_ <: D, _ <: M]
 
 }
+
+trait AnonListDatum[+M <: MultiVar[M]] extends ListDatum[Null, M]
 
 
 trait TaggedListDatum[+D <: ListDatum[D, M], M <: MultiVar[M], Tag <: VarTag[_ >: M, V], V <: Datum[V]]

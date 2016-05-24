@@ -163,9 +163,9 @@ trait RawTypes extends GenTypes {this: GenNames =>
   ) extends DataType(name, Nil) with EnumDataTypeApi
 
 
-  class EnumTypeMember(private val ename: EnumMemberName) extends EnumTypeMemberApi {
+  class EnumTypeMember(private val ename: EnumValueName) extends EnumTypeMemberApi {
 
-    override def name: EnumMemberName = ename
+    override def name: EnumValueName = ename
 
   }
 

@@ -26,7 +26,7 @@ trait GenNames { // TODO use RawNames implementation and drop member types all t
 
   type TagName >: Null <: LocalName with TagNameApi
 
-  type EnumMemberName >: Null <: LocalName with EnumMemberNameApi
+  type EnumValueName >: Null <: LocalName with EnumValueNameApi
 
 
   trait Named[N <: Name] {
@@ -96,7 +96,7 @@ trait GenNames { // TODO use RawNames implementation and drop member types all t
   trait TagNameApi extends LocalNameApi {this: TagName =>}
 
 
-  trait EnumMemberNameApi extends LocalNameApi {this: EnumMemberName =>}
+  trait EnumValueNameApi extends LocalNameApi {this: EnumValueName =>}
 
 
 }

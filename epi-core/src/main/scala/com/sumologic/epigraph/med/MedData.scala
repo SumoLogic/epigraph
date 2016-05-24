@@ -38,6 +38,13 @@ trait MedData extends GenData {this: GenNames with MedTypes =>
   }
 
 
+  trait VarWithDefault[+V <: VarWithDefault[V, D], +D <: Datum[D]] extends Var[V] {
+
+    def default: D // TODO some derivative of D (e.g. Option[D], Future[D], etc.)
+
+  }
+
+
   trait Datum[+D <: Datum[D]] extends Var[D] with DatumApi {this: D =>}
 
 

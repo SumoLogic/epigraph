@@ -142,7 +142,7 @@ trait RawNames extends GenNames {
   class TagName(string: String) extends LocalName(string, NamingConvention.LowerCamelCase) with TagNameApi
 
 
-  class EnumMemberName(string: String) extends LocalName(string, NamingConvention.LowerCamelCase) with EnumMemberNameApi
+  class EnumValueName(string: String) extends LocalName(string, NamingConvention.LowerCamelCase) with EnumValueNameApi
 
 
 }
