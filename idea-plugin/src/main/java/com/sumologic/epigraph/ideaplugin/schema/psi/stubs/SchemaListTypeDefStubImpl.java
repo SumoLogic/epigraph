@@ -9,7 +9,7 @@ import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaListTypeDef;
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
 public class SchemaListTypeDefStubImpl extends SchemaTypeDefStubBaseImpl<SchemaListTypeDef> implements SchemaListTypeDefStub {
-  SchemaListTypeDefStubImpl(StubElement parent, String name) {
-    super(parent, name, (IStubElementType) SchemaElementTypes.S_LIST_TYPE_DEF);
+  SchemaListTypeDefStubImpl(StubElement parent, String name, String namespace) {
+    super(parent, (IStubElementType) SchemaElementTypes.S_LIST_TYPE_DEF, name, namespace);
   }
 }

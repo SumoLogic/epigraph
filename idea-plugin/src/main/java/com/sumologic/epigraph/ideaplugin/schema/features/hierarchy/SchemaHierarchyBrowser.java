@@ -117,24 +117,6 @@ public class SchemaHierarchyBrowser extends TypeHierarchyBrowserBase {
 
     @Override
     public int compare(NodeDescriptor nodeDescriptor1, NodeDescriptor nodeDescriptor2) {
-      /*
-      int weight1 = getWeight(nodeDescriptor1);
-      int weight2 = getWeight(nodeDescriptor2);
-      if (weight1 != weight2) {
-        return weight1 - weight2;
-      }
-      if (!(nodeDescriptor1.getParentDescriptor() instanceof ProjectViewProjectNode)){
-        if (nodeDescriptor1 instanceof PsiDirectoryNode || nodeDescriptor1 instanceof PsiFileNode){
-          return nodeDescriptor1.toString().compareToIgnoreCase(nodeDescriptor2.toString());
-        }
-        // TODO this (below)?
-        if (nodeDescriptor1 instanceof ClassTreeNode && nodeDescriptor2 instanceof ClassTreeNode){
-          if (((ClassTreeNode)nodeDescriptor1).isTopLevel()){
-            return nodeDescriptor1.toString().compareToIgnoreCase(nodeDescriptor2.toString());
-          }
-        }
-      }
-      */
       int index1 = nodeDescriptor1.getIndex();
       int index2 = nodeDescriptor2.getIndex();
       if (index1 == index2) return 0;

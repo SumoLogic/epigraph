@@ -16,8 +16,6 @@ import java.util.List;
 import static com.sumologic.epigraph.ideaplugin.schema.lexer.SchemaElementTypes.*;
 
 /**
- * Todo add doc
- *
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
 public class SchemaFile extends PsiFileBase {
@@ -39,23 +37,11 @@ public class SchemaFile extends PsiFileBase {
 
   @Nullable
   public SchemaDefs getDefs() {
-    // TODO figure out stubs & indexing
-//    StubElement stub = getStub();
-//    if (stub != null) {
-//      return stub.getChildrenByType(???
-//    }
-
     return (SchemaDefs) calcTreeElement().findPsiChildByType(S_DEFS);
   }
 
   @Nullable
   public SchemaImports getImportsStatement() {
-    // TODO figure out stubs & indexing
-//    StubElement stub = getStub();
-//    if (stub != null) {
-//      return stub.getChildrenByType(???
-//    }
-
     return (SchemaImports) calcTreeElement().findPsiChildByType(S_IMPORTS);
   }
 

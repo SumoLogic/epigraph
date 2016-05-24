@@ -9,20 +9,14 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 
 /**
- * Todo add doc
- *
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
 public class SchemaFileType extends LanguageFileType {
   public static final SchemaFileType INSTANCE = new SchemaFileType();
-  public static final String DEFAULT_EXTENSION = "es";
+  public static final String DEFAULT_EXTENSION = "es"; // TODO change to something less widely used
 
   protected SchemaFileType() {
-    super(SchemaLanguage.INSTANCE); // TODO
-  }
-
-  protected SchemaFileType(@NotNull Language language) {
-    super(language);
+    super(SchemaLanguage.INSTANCE);
   }
 
   @NotNull

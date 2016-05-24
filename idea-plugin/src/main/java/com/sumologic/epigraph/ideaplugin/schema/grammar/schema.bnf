@@ -74,9 +74,6 @@
   extends(".*TypeBody") = "com.sumologic.epigraph.ideaplugin.schema.psi.impl.CustomParamHolderImpl"
 }
 
-// TODO stub index support
-// http://www.jetbrains.org/intellij/sdk/docs/basics/indexing_and_psi_stubs/stub_indexes.html
-
 // consider separating fields/types/decl parts by either ',' or newlines,
 // otherwise stuff can get confusing, e.g.
 // record { f1:t1 f2:t2 }
@@ -90,7 +87,13 @@ imports ::= importStatement*
 importStatement ::= 'import' fqn starImportSuffix? {pin=1 recoverWhile="declRecover"}
 starImportSuffix ::= '.' '*'
 
-namespaceDecl ::= 'namespace' fqn namespaceBody? {pin=1 recoverWhile="declRecover"}
+namespaceDecl ::= 'namespace' fqn namespaceBody? {
+  methods=[getFqn2 toString]
+  stubClass="com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaNamespaceDeclStub"
+  elementTypeClass="com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaNamespaceDeclStubElementType"
+  pin=1
+  recoverWhile="declRecover"
+}
 
 private namespaceBody ::= '{' namespaceBodyPart* '}'
 private namespaceBodyPart ::= customParam // | ...
@@ -128,9 +131,6 @@ customParam ::= qid '=' data_value ';' { // TODO embed data language instead
 }
 
 metaDecl ::= 'meta' fqnTypeRef // we don't allow anonList or anonMap as meta
-
-// TODO: extends for: record, map, list, primitive
-// supplements for the above, A+B+C for record only
 
 varTypeDef ::= 'vartype' typeName extendsDecl? varTypeSupplementsDecl? defaultOverride? varTypeBody? {
   extends="com.sumologic.epigraph.ideaplugin.schema.psi.impl.SchemaVarTypeDefImplBase"

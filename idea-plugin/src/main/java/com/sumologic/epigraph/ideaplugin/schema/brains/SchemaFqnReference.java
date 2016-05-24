@@ -139,7 +139,7 @@ public class SchemaFqnReference extends PsiReferenceBase<SchemaFqnSegment> imple
     // try to find a namespace which is exactly our prefix
     for (SchemaNamespaceDecl namespace : namespaces) {
       //noinspection ConstantConditions
-      if (namespace.getFqn().getFqn().equals(prefix))
+      if (namespace.getFqn2().equals(prefix))
         return Collections.singletonList(namespace);
     }
 
@@ -161,7 +161,7 @@ public class SchemaFqnReference extends PsiReferenceBase<SchemaFqnSegment> imple
   }
 
   private String getTypeDefNamespace(@NotNull SchemaTypeDef typeDef) {
-    String namespace = NamespaceManager.getNamespace(typeDef);
+    String namespace = typeDef.getNamespace();
     return namespace == null ? typeDef.getContainingFile().getName() : namespace;
   }
 

@@ -7,6 +7,7 @@ import com.intellij.lang.ASTNode;
 import com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaEnumTypeDefStubElementType;
 import com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaListTypeDefStubElementType;
 import com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaMapTypeDefStubElementType;
+import com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaNamespaceDeclStubElementType;
 import com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaPrimitiveTypeDefStubElementType;
 import com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaRecordTypeDefStubElementType;
 import com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaTypeDefWrapperStubElementType;
@@ -36,7 +37,7 @@ public interface SchemaElementTypes {
   IElementType S_MAP_TYPE_BODY = new SchemaElementType("S_MAP_TYPE_BODY");
   IElementType S_MAP_TYPE_DEF = new SchemaMapTypeDefStubElementType("S_MAP_TYPE_DEF");
   IElementType S_META_DECL = new SchemaElementType("S_META_DECL");
-  IElementType S_NAMESPACE_DECL = new SchemaElementType("S_NAMESPACE_DECL");
+  IElementType S_NAMESPACE_DECL = new SchemaNamespaceDeclStubElementType("S_NAMESPACE_DECL");
   IElementType S_PRIMITIVE_KIND = new SchemaElementType("S_PRIMITIVE_KIND");
   IElementType S_PRIMITIVE_TYPE_BODY = new SchemaElementType("S_PRIMITIVE_TYPE_BODY");
   IElementType S_PRIMITIVE_TYPE_DEF = new SchemaPrimitiveTypeDefStubElementType("S_PRIMITIVE_TYPE_DEF");

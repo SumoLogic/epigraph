@@ -10,15 +10,23 @@ import org.jetbrains.annotations.Nullable;
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
 class SchemaTypeDefStubBaseImpl<T extends SchemaTypeDef> extends StubBase<T> implements SchemaTypeDefStubBase<T> {
-  private final String name;  // TODO rename to fullName
+  private final String name;
+  private final String namespace;
 
-  SchemaTypeDefStubBaseImpl(StubElement parent, final String name, final IStubElementType elementType) {
+  SchemaTypeDefStubBaseImpl(StubElement parent, final IStubElementType elementType, final String name, final String namespace) {
     super(parent, elementType);
     this.name = name;
+    this.namespace = namespace;
   }
 
   @Nullable
   public String getName() {
     return name;
+  }
+
+  @Nullable
+  @Override
+  public String getNamespace() {
+    return namespace;
   }
 }

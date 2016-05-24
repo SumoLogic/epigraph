@@ -9,7 +9,7 @@ import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaVarTypeDef;
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
 public class SchemaVarTypeDefStubImpl extends SchemaTypeDefStubBaseImpl<SchemaVarTypeDef> implements SchemaVarTypeDefStub {
-  SchemaVarTypeDefStubImpl(StubElement parent, String name) {
-    super(parent, name, (IStubElementType) SchemaElementTypes.S_VAR_TYPE_DEF);
+  SchemaVarTypeDefStubImpl(StubElement parent, String name, String namespace) {
+    super(parent, (IStubElementType) SchemaElementTypes.S_VAR_TYPE_DEF, name, namespace);
   }
 }

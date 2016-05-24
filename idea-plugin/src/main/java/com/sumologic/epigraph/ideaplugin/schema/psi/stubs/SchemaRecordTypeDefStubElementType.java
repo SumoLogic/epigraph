@@ -24,12 +24,12 @@ public class SchemaRecordTypeDefStubElementType extends SchemaTypeDefStubElement
 
   @Override
   public SchemaRecordTypeDefStub createStub(@NotNull SchemaRecordTypeDef typeDef, StubElement parentStub) {
-    return new SchemaRecordTypeDefStubImpl(parentStub, getName(typeDef));
+    return new SchemaRecordTypeDefStubImpl(parentStub, typeDef.getName(), typeDef.getNamespace());
   }
 
   @NotNull
   @Override
-  protected SchemaRecordTypeDefStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub, String name) throws IOException {
-    return new SchemaRecordTypeDefStubImpl(parentStub, name);
+  protected SchemaRecordTypeDefStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub, String name, String namespace) throws IOException {
+    return new SchemaRecordTypeDefStubImpl(parentStub, name, namespace);
   }
 }

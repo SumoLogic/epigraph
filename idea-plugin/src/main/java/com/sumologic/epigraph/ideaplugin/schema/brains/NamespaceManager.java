@@ -97,10 +97,8 @@ public class NamespaceManager {
     Set<String> result = new HashSet<>();
 
     for (SchemaNamespaceDecl namespace : namespaces) {
-      SchemaFqn schemaFqn = namespace.getFqn();
-      assert schemaFqn != null;
-
-      Fqn fqn = schemaFqn.getFqn();
+      Fqn fqn = namespace.getFqn2();
+      assert fqn != null;
       Fqn tail = fqn.removeHeadSegments(segmentsToRemove);
 
       if (!tail.isEmpty()) {
