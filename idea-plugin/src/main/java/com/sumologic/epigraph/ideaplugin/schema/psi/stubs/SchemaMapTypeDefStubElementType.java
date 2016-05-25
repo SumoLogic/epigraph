@@ -6,8 +6,10 @@ import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaMapTypeDef;
 import com.sumologic.epigraph.ideaplugin.schema.psi.impl.SchemaMapTypeDefImpl;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
@@ -24,12 +26,20 @@ public class SchemaMapTypeDefStubElementType extends SchemaTypeDefStubElementTyp
 
   @Override
   public SchemaMapTypeDefStub createStub(@NotNull SchemaMapTypeDef typeDef, StubElement parentStub) {
-    return new SchemaMapTypeDefStubImpl(parentStub, typeDef.getName(), typeDef.getNamespace());
+    return new SchemaMapTypeDefStubImpl(
+        parentStub,
+        typeDef.getName(),
+        typeDef.getNamespace(),
+        getSerializedExtendsTypeRefs(typeDef));
   }
 
   @NotNull
   @Override
-  protected SchemaMapTypeDefStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub, String name, String namespace) throws IOException {
-    return new SchemaMapTypeDefStubImpl(parentStub, name, namespace);
+  protected SchemaMapTypeDefStub deserialize(
+      @NotNull StubInputStream dataStream,
+      StubElement parentStub,
+      String name, String namespace,
+      @Nullable final List<SerializedFqnTypeRef> extendsTypeRefs) throws IOException {
+    return new SchemaMapTypeDefStubImpl(parentStub, name, namespace, extendsTypeRefs);
   }
 }

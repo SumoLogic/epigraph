@@ -4,11 +4,17 @@ import com.intellij.psi.stubs.*;
 import com.intellij.util.io.StringRef;
 import com.sumologic.epigraph.ideaplugin.schema.SchemaLanguage;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaStubIndexKeys;
+import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaExtendsDecl;
 import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaTypeDef;
+import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaTypeRef;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
@@ -29,20 +35,52 @@ public abstract class SchemaTypeDefStubElementTypeBase<S extends SchemaTypeDefSt
     return externalId;
   }
 
+  @Nullable
+  protected static List<SerializedFqnTypeRef> getSerializedExtendsTypeRefs(@NotNull SchemaTypeDef typeDef) {
+    SchemaExtendsDecl extendsDecl = typeDef.getExtendsDecl();
+    if (extendsDecl == null) return null;
+    List<SchemaTypeRef> typeRefList = extendsDecl.getTypeRefList();
+    if (typeRefList.isEmpty()) return Collections.emptyList();
+
+    return getSerializedFqnTypeRefs(typeRefList);
+  }
+
+  @NotNull
+  protected static List<SerializedFqnTypeRef> getSerializedFqnTypeRefs(@NotNull List<SchemaTypeRef> typeRefs) {
+    return typeRefs.stream()
+        .map(SchemaTypeRef::getFqnTypeRef)
+        .map(SerializedFqnTypeRef::fromFqnTypeRef)
+        .filter(i -> i != null) // filter out non-fqn or badly broken type refs
+        .collect(Collectors.toList());
+  }
+
+
   @Override
   public void serialize(@NotNull S stub, @NotNull StubOutputStream dataStream) throws IOException {
     dataStream.writeName(stub.getName());
     dataStream.writeName(stub.getNamespace());
+
+    List<SerializedFqnTypeRef> extendsTypeRefs = stub.getExtendsTypeRefs();
+    StubSerializerUtil.serializeCollection(extendsTypeRefs, SerializedFqnTypeRef::serialize, dataStream);
   }
 
   @NotNull
   @Override
   public S deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
-    return deserialize(dataStream, parentStub, deserializeName(dataStream), deserializeName(dataStream));
+    String name = deserializeName(dataStream);
+    String namespace = deserializeName(dataStream);
+
+    List<SerializedFqnTypeRef> extendsTypeRefs =
+        StubSerializerUtil.deserializeList(SerializedFqnTypeRef::deserialize, dataStream);
+
+    return deserialize(dataStream, parentStub, name, namespace, extendsTypeRefs);
   }
 
   @NotNull
-  protected abstract S deserialize(@NotNull StubInputStream dataStream, StubElement parentStub, String name, String namespace) throws IOException;
+  protected abstract S deserialize(@NotNull StubInputStream dataStream,
+                                   StubElement parentStub,
+                                   String name, String namespace,
+                                   @Nullable final List<SerializedFqnTypeRef> extendsTypeRefs) throws IOException;
 
   private String deserializeName(@NotNull StubInputStream dataStream) throws IOException {
     return StringRef.toString(dataStream.readName());

@@ -6,8 +6,10 @@ import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaEnumTypeDef;
 import com.sumologic.epigraph.ideaplugin.schema.psi.impl.SchemaEnumTypeDefImpl;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
@@ -24,12 +26,21 @@ public class SchemaEnumTypeDefStubElementType extends SchemaTypeDefStubElementTy
 
   @Override
   public SchemaEnumTypeDefStub createStub(@NotNull SchemaEnumTypeDef typeDef, StubElement parentStub) {
-    return new SchemaEnumTypeDefStubImpl(parentStub, typeDef.getName(), typeDef.getNamespace());
+    return new SchemaEnumTypeDefStubImpl(
+        parentStub,
+        typeDef.getName(),
+        typeDef.getNamespace(),
+        getSerializedExtendsTypeRefs(typeDef)
+    );
   }
 
   @NotNull
   @Override
-  protected SchemaEnumTypeDefStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub, String name, String namespace) throws IOException {
-    return new SchemaEnumTypeDefStubImpl(parentStub, name, namespace);
+  protected SchemaEnumTypeDefStub deserialize(@NotNull StubInputStream dataStream,
+                                              StubElement parentStub,
+                                              String name,
+                                              String namespace,
+                                              @Nullable final List<SerializedFqnTypeRef> extendsTypeRefs) throws IOException {
+    return new SchemaEnumTypeDefStubImpl(parentStub, name, namespace, extendsTypeRefs);
   }
 }

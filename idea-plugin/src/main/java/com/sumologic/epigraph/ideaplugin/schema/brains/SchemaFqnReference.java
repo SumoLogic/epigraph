@@ -6,30 +6,31 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.resolve.ResolveCache;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
-import com.sumologic.epigraph.ideaplugin.schema.psi.*;
+import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaFqnSegment;
+import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaImportStatement;
+import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaTypeDef;
+import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaTypeDefWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
 public class SchemaFqnReference extends PsiReferenceBase<SchemaFqnSegment> implements PsiPolyVariantReference {
+  private final SchemaFqnReferenceResolver resolver;
 
-  private final Collection<String> namespacesToSearch;
-  private final String shortName;
-
-  private final ResolveCache.Resolver resolver = (psiReference, incompleteCode) -> resolveImpl();
+  private final ResolveCache.Resolver cachedResolver = (psiReference, incompleteCode) -> resolveImpl();
   private final ResolveCache.PolyVariantResolver<SchemaFqnReference> polyVariantResolver =
       (schemaFqnReference, incompleteCode) -> multiResolveImpl();
 
-  public SchemaFqnReference(SchemaFqnSegment segment, Collection<Fqn> namespacesToSearch, Fqn suffix) {
+  public SchemaFqnReference(SchemaFqnSegment segment, SchemaFqnReferenceResolver resolver) {
     super(segment);
+    this.resolver = resolver;
 
     final int textOffset = segment.getTextRange().getStartOffset();
     final int nameTextOffset = segment.getTextOffset();
@@ -39,25 +40,16 @@ public class SchemaFqnReference extends PsiReferenceBase<SchemaFqnSegment> imple
         nameTextOffset + segment.getTextLength() - textOffset
     ));
 
-    if (suffix.isEmpty()) throw new IllegalArgumentException("Empty suffix for " + segment);
+  }
 
-    if (suffix.size() == 1) {
-      this.namespacesToSearch = namespacesToSearch.stream().map(Fqn::toString).collect(Collectors.toSet());
-      this.shortName = suffix.toString();
-    } else {
-      final Fqn suffixPrefix = suffix.getPrefix();
-      assert suffixPrefix != null;
-
-      this.namespacesToSearch = namespacesToSearch.stream()
-          .map(fqn -> fqn.append(suffixPrefix).toString()).collect(Collectors.toSet());
-      this.namespacesToSearch.add(suffixPrefix.toString());
-      this.shortName = suffix.getLast();
-    }
+  @NotNull
+  public SchemaFqnReferenceResolver getResolver() {
+    return resolver;
   }
 
   @Nullable
   public final PsiElement resolve() {
-    return ResolveCache.getInstance(myElement.getProject()).resolveWithCaching(this, resolver, false, false);
+    return ResolveCache.getInstance(myElement.getProject()).resolveWithCaching(this, cachedResolver, false, false);
   }
 
   @Override
@@ -68,18 +60,7 @@ public class SchemaFqnReference extends PsiReferenceBase<SchemaFqnSegment> imple
 
   @Nullable
   private PsiElement resolveImpl() {
-    final Project project = myElement.getProject();
-    SchemaTypeDef typeDef = SchemaIndexUtil.findTypeDef(project, namespacesToSearch, shortName);
-    if (typeDef != null) return typeDef;
-
-    Fqn prefix = getElement().getFqn();
-    List<SchemaNamespaceDecl> namespaces = resolveNamespaces(prefix);
-    if (namespaces.size() == 1) {
-      SchemaNamespaceDecl namespaceDecl = namespaces.get(0);
-      return getTargetSegment(namespaceDecl, prefix.size());
-    }
-
-    return null;
+    return resolver.resolve(myElement.getProject());
   }
 
   @NotNull
@@ -91,68 +72,48 @@ public class SchemaFqnReference extends PsiReferenceBase<SchemaFqnSegment> imple
 
   @NotNull
   private ResolveResult[] multiResolveImpl() {
-    final Project project = myElement.getProject();
-    ResolveResult[] typeDefs = SchemaIndexUtil.findTypeDefs(project, namespacesToSearch, shortName).stream()
-        .map(PsiElementResolveResult::new)
-        .toArray(ResolveResult[]::new);
-
-    Fqn prefix = getElement().getFqn();
-    int prefixLength = prefix.size();
-    List<SchemaNamespaceDecl> namespaceDecls = resolveNamespaces(prefix);
-
-    ResolveResult[] namespaces = namespaceDecls.stream()
-        .map(ns -> new PsiElementResolveResult(getTargetSegment(ns, prefixLength)))
-        .toArray(ResolveResult[]::new);
-
-    return ArrayUtil.mergeArrays(typeDefs, namespaces);
+    return resolver.multiResolve(myElement.getProject());
   }
 
   @NotNull
   @Override
   public Object[] getVariants() {
+
+    // TODO: namespace references in imports should see all namespaces
+    // in all other places: only current+imported namespaces
+
+    final boolean isImport = isImport();
     final Project project = myElement.getProject();
-    Set<Object> typeRefVariants = SchemaIndexUtil.findTypeDefs(project, namespacesToSearch, null).stream()
-        .filter(typeDef -> typeDef.getName() != null)
-        .map(typeDef -> LookupElementBuilder.create(typeDef)
-//            .withIcon(getTypeDefPresentationIcon())
-            .withTypeText(getTypeDefNamespace(typeDef)))
+    final String currentNamespace = NamespaceManager.getNamespace(getElement());
+
+    Set<Object> typeRefVariants = SchemaIndexUtil.findTypeDefs(project, resolver.getNamespacesToSearchStr(), null).stream()
+        .filter(typeDef ->
+            // don't suggest to import types from the same namespace
+            typeDef.getName() != null && (!isImport || currentNamespace == null || !currentNamespace.equals(NamespaceManager.getNamespace(typeDef)))
+        ).map(typeDef ->
+            LookupElementBuilder.create(typeDef) // TODO use presentation utils
+//              .withIcon(getTypeDefPresentationIcon())
+                .withTypeText(getTypeDefNamespace(typeDef)))
         .collect(Collectors.toSet());
 
-    String prefix = getElement().getFqn().removeLastSegment().toString(); // last segment is an error getElement
-    Set<String> namespaceVariants = NamespaceManager.getNamespaceSegmentsWithPrefix(project, prefix);
+    String prefix = getElement().getFqn().removeLastSegment().toString(); // last segment is an error getElement, so we have to remove it
+    Set<Fqn> namespaces = isImport
+        ? NamespaceManager.getNamespacesByPrefix(project, prefix)
+        : NamespaceManager.getVisibleNamespaces(getElement(), false);
+
+    Set<String> namespaceVariants = Fqn.getMatchingWithPrefixRemoved(namespaces, prefix)
+        .stream().map(Fqn::toString).collect(Collectors.toSet());
 
     @SuppressWarnings("UnnecessaryLocalVariable")
     Set<Object> res = typeRefVariants;
     res.addAll(namespaceVariants);
-    if (isImport()) res.add("*");
 
-    return res.toArray();
-  }
-
-  /**
-   * @return either a list with a single namespace declaration which is exactly our prefix, or a list
-   * of namespaces that start with prefix
-   */
-  @NotNull
-  private List<SchemaNamespaceDecl> resolveNamespaces(@NotNull Fqn prefix) {
-    List<SchemaNamespaceDecl> namespaces = SchemaIndexUtil.findNamespaces(getElement().getProject(), prefix.toString());
-    // try to find a namespace which is exactly our prefix
-    for (SchemaNamespaceDecl namespace : namespaces) {
-      //noinspection ConstantConditions
-      if (namespace.getFqn2().equals(prefix))
-        return Collections.singletonList(namespace);
+    if (isImport) {
+      String namespace = NamespaceManager.getNamespace(getElement());
+      if (!prefix.equals(namespace)) res.add("*"); // don't star-import current namespace
     }
 
-    return namespaces;
-  }
-
-  private SchemaFqnSegment getTargetSegment(@NotNull SchemaNamespaceDecl namespaceDecl, int prefixLength) {
-    SchemaFqn fqn = namespaceDecl.getFqn();
-    assert fqn != null;
-    SchemaFqnSegment fqnSegment = fqn.getFqnSegmentList().get(prefixLength - 1);
-    //noinspection ConstantConditions
-    assert fqnSegment.getName().equals(getElement().getName());
-    return fqnSegment;
+    return res.toArray();
   }
 
   @Override
@@ -168,8 +129,4 @@ public class SchemaFqnReference extends PsiReferenceBase<SchemaFqnSegment> imple
   private boolean isImport() {
     return PsiTreeUtil.getParentOfType(getElement(), SchemaImportStatement.class) != null;
   }
-
-//  private javax.swing.Icon getTypeDefPresentationIcon() {
-//    return PlatformIcons.CLASS_ICON;
-//  }
 }

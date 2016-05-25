@@ -8,27 +8,29 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.util.IncorrectOperationException;
 import com.sumologic.epigraph.ideaplugin.schema.brains.NamespaceManager;
+import com.sumologic.epigraph.ideaplugin.schema.brains.SchemaFqnReferenceResolver;
 import com.sumologic.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
 import com.sumologic.epigraph.ideaplugin.schema.psi.*;
 import com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaTypeDefStubBase;
+import com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SerializedFqnTypeRef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
-import static com.sumologic.epigraph.ideaplugin.schema.lexer.SchemaElementTypes.S_ABSTRACT;
-import static com.sumologic.epigraph.ideaplugin.schema.lexer.SchemaElementTypes.S_ID;
-import static com.sumologic.epigraph.ideaplugin.schema.lexer.SchemaElementTypes.S_POLYMORPHIC;
+import static com.sumologic.epigraph.ideaplugin.schema.lexer.SchemaElementTypes.*;
 
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
 public abstract class SchemaTypeDefImplBase<S extends SchemaTypeDefStubBase<T>, T extends SchemaTypeDef>
     extends StubBasedPsiElementBase<S> implements SchemaTypeDef {
+
+//  private final static Logger LOG = Logger.getInstance(SchemaTypeDefImplBase.class);
 
   public SchemaTypeDefImplBase(@NotNull ASTNode node) {
     super(node);
@@ -113,7 +115,7 @@ public abstract class SchemaTypeDefImplBase<S extends SchemaTypeDefStubBase<T>, 
   public abstract TypeKind getKind();
 
   public Icon getIcon(int flags) {
-    return AllIcons.Nodes.Class; // TODO our own icon
+    return AllIcons.Nodes.Class; // TODO use presentation utils
   }
 
   @Override
@@ -123,6 +125,21 @@ public abstract class SchemaTypeDefImplBase<S extends SchemaTypeDefStubBase<T>, 
 
   @NotNull
   public List<SchemaTypeDef> parents() {
+    S stub = getStub();
+
+    if (stub != null) {
+      List<SerializedFqnTypeRef> extendsTypeRefs = stub.getExtendsTypeRefs();
+      if (extendsTypeRefs != null) {
+        return extendsTypeRefs.stream().map(tr -> {
+          SchemaFqnReferenceResolver resolver = new SchemaFqnReferenceResolver(tr.getNamespacesToSearch(), tr.getShortName());
+          PsiElement element = resolver.resolve(getProject());
+          if (element instanceof SchemaTypeDef)
+            return (SchemaTypeDef) element;
+          else return null;
+        }).filter(i -> i != null).collect(Collectors.toList());
+      }
+    }
+
     SchemaExtendsDecl extendsDecl = getExtendsDecl();
     if (extendsDecl == null) return Collections.emptyList();
     List<SchemaTypeRef> typeRefList = extendsDecl.getTypeRefList();

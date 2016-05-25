@@ -35,12 +35,6 @@ public class SchemaPsiImplUtil {
     return schemaFqn == null ? null : getFqn(schemaFqn);
   }
 
-  @Contract(pure = true)
-  @NotNull
-  public static String toString(SchemaNamespaceDecl namespaceDecl) {
-    return SchemaPresentationUtil.psiToString(namespaceDecl);
-  }
-
   // fqn --------------------------------------------
 
   @Contract(pure = true)
@@ -90,12 +84,6 @@ public class SchemaPsiImplUtil {
     if (e != null) return e;
 
     throw new IllegalStateException("Unknown type def: " + typeDef);
-  }
-
-  @Contract(pure = true)
-  @NotNull
-  public static String toString(SchemaTypeDefWrapper typeDef) {
-    return SchemaPresentationUtil.psiToString(typeDef);
   }
 
   // supplement --------------------------------------------
@@ -206,6 +194,7 @@ public class SchemaPsiImplUtil {
     return ReferenceFactory.getReference(segment);
   }
 
+
   // member decls --------------------------------------------
   // field decl
 
@@ -285,6 +274,14 @@ public class SchemaPsiImplUtil {
   @NotNull
   public static PsiElement getNameIdentifier(SchemaCustomParam customParam) {
     return customParam.getId();
+  }
+
+  // common toString for all stub-based elements --------------------------------------------
+
+  @Contract(pure = true)
+  @NotNull
+  public static String toString(PsiElement element) {
+    return SchemaPresentationUtil.psiToString(element);
   }
 
   /////////////

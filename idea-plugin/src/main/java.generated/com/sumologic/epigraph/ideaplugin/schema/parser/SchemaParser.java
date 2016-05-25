@@ -453,13 +453,14 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   public static boolean extendsDecl(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "extendsDecl")) return false;
     if (!nextTokenIs(b, S_EXTENDS)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, S_EXTENDS_DECL, null);
     r = consumeToken(b, S_EXTENDS);
-    r = r && typeRef(b, l + 1);
-    r = r && extendsDecl_2(b, l + 1);
-    exit_section_(b, m, S_EXTENDS_DECL, r);
-    return r;
+    p = r; // pin = 1
+    r = r && report_error_(b, typeRef(b, l + 1));
+    r = p && extendsDecl_2(b, l + 1) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   // (',' typeRef)*
@@ -890,12 +891,13 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   public static boolean metaDecl(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "metaDecl")) return false;
     if (!nextTokenIs(b, S_META)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, S_META_DECL, null);
     r = consumeToken(b, S_META);
+    p = r; // pin = 1
     r = r && fqnTypeRef(b, l + 1);
-    exit_section_(b, m, S_META_DECL, r);
-    return r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   /* ********************************************************** */
@@ -1471,13 +1473,14 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   public static boolean varTypeSupplementsDecl(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "varTypeSupplementsDecl")) return false;
     if (!nextTokenIs(b, S_SUPPLEMENTS)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, S_VAR_TYPE_SUPPLEMENTS_DECL, null);
     r = consumeToken(b, S_SUPPLEMENTS);
-    r = r && fqnTypeRef(b, l + 1);
-    r = r && varTypeSupplementsDecl_2(b, l + 1);
-    exit_section_(b, m, S_VAR_TYPE_SUPPLEMENTS_DECL, r);
-    return r;
+    p = r; // pin = 1
+    r = r && report_error_(b, fqnTypeRef(b, l + 1));
+    r = p && varTypeSupplementsDecl_2(b, l + 1) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   // (',' fqnTypeRef)*

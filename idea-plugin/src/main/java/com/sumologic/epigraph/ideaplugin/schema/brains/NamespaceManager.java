@@ -12,15 +12,27 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
 public class NamespaceManager {
   public static Fqn[] DEFAULT_NAMESPACES = new Fqn[]{
-      new Fqn("epigraph", "types"),
-      new Fqn("epigraph", "schema")
+      new Fqn("epigraph")
+//      new Fqn("epigraph", "types"),
+//      new Fqn("epigraph", "schema")
   };
+
+  public static boolean isDefaultNamespace(@NotNull String namespace) {
+    // NB: keep in sync with the above
+    return "epigraph".equals(namespace);
+
+//    for (Fqn defaultNamespace : DEFAULT_NAMESPACES) {
+//      if (defaultNamespace.toString().equals(namespace)) return true;
+//    }
+//    return false;
+  }
 
   @NotNull
   public static Set<Fqn> getStarNamespaces(@NotNull PsiElement element) {
@@ -54,12 +66,7 @@ public class NamespaceManager {
     return namespaceDeclFqn.getFqn().toString();
   }
 
-  /**
-   * Finds all imports of the form `a.b.c.lastSegment` and returns them with last segment
-   * removed, i.e. `a.b.c`
-   */
-  @NotNull
-  public static Set<Fqn> getPrefixNamespacesWithLastSegmentRemoved(@NotNull PsiElement element, @Nullable String lastSegment) {
+  public static Set<Fqn> getVisibleNamespaces(@NotNull PsiElement element, boolean includeStarImports) {
     SchemaFile schemaFile = getSchemaFile(element);
     if (schemaFile == null) return Collections.emptySet();
 
@@ -68,45 +75,28 @@ public class NamespaceManager {
     List<SchemaImportStatement> importStatements = schemaFile.getImportStatements();
     for (SchemaImportStatement importStatement : importStatements) {
       SchemaFqn importFqn = importStatement.getFqn();
-      if (importFqn != null && importStatement.getStarImportSuffix() == null) {
-        Fqn fqn = importFqn.getFqn();
-        if (lastSegment == null || lastSegment.equals(fqn.getLast())) {
-          Fqn prefix = fqn.getPrefix();
-          if (prefix != null)
-            res.add(prefix);
-        }
+      if (importFqn != null) {
+        boolean isStarImport = importStatement.getStarImportSuffix() != null;
+        if (!isStarImport || includeStarImports) res.add(importFqn.getFqn());
       }
+    }
+
+    SchemaNamespaceDecl namespaceDecl = schemaFile.getNamespaceDecl();
+    if (namespaceDecl != null) {
+      SchemaFqn namespaceDeclFqn = namespaceDecl.getFqn();
+      if (namespaceDeclFqn != null) res.add(namespaceDeclFqn.getFqn());
     }
 
     return res;
   }
 
-
-  /**
-   * Finds all namespaces such that their fqn matches prefix and returns their segments following prefix.
-   * For instance if prefix is 'a.b' and namespace is 'a.b.c.d' then 'c' will be collected.
-   */
   @NotNull
-  public static Set<String> getNamespaceSegmentsWithPrefix(@NotNull Project project, @NotNull String prefix) {
-    String prefixWithDot = prefix.isEmpty() ? prefix : prefix + '.';
+  public static Set<Fqn> getNamespacesByPrefix(@NotNull Project project, @Nullable String prefix) {
+    String prefixWithDot = prefix == null ? null : prefix.isEmpty() ? prefix : prefix + '.';
     List<SchemaNamespaceDecl> namespaces = SchemaIndexUtil.findNamespaces(project, prefixWithDot);
     if (namespaces.isEmpty()) return Collections.emptySet();
 
-    int segmentsToRemove = prefix.isEmpty() ? 0 : prefix.length() - prefix.replace(".", "").length() + 1;
-
-    Set<String> result = new HashSet<>();
-
-    for (SchemaNamespaceDecl namespace : namespaces) {
-      Fqn fqn = namespace.getFqn2();
-      assert fqn != null;
-      Fqn tail = fqn.removeHeadSegments(segmentsToRemove);
-
-      if (!tail.isEmpty()) {
-        result.add(tail.getFirst());
-      }
-    }
-
-    return result;
+    return namespaces.stream().map(SchemaNamespaceDecl::getFqn2).collect(Collectors.toSet());
   }
 
   @Nullable

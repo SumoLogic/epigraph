@@ -20,18 +20,16 @@ import java.util.List;
 public class SchemaDirectTypeInheritorsSearcher implements QueryExecutor<SchemaTypeDef, SearchParameters> {
   @Override
   public boolean execute(@NotNull SearchParameters queryParameters, @NotNull Processor<SchemaTypeDef> consumer) {
-    // TODO use stub indices
     // TODO take supplements into account
 
     final SchemaTypeDef target = queryParameters.schemaTypeDef;
     final Project project = PsiUtilCore.getProjectInReadAction(target);
 
-
-    List<SchemaTypeDef> typeDefs = ApplicationManager.getApplication().runReadAction(
+    List<SchemaTypeDef> candidates = ApplicationManager.getApplication().runReadAction(
         (Computable<List<SchemaTypeDef>>) () -> SchemaIndexUtil.findTypeDefs(project, null, null)
     );
 
-    for (SchemaTypeDef candidate : typeDefs) {
+    for (SchemaTypeDef candidate : candidates) {
       ProgressManager.checkCanceled();
 
       final SchemaTypeDef[] child = {null};
@@ -46,18 +44,6 @@ public class SchemaDirectTypeInheritorsSearcher implements QueryExecutor<SchemaT
       });
 
       if (child[0] != null) consumer.process(child[0]);
-
-//      List<SchemaTypeDef> inheritors = ApplicationManager.getApplication().runReadAction(
-//          (Computable<List<SchemaTypeDef>>) () -> {
-//            List<SchemaTypeDef> parents = candidate.parents();
-//            if (parents.isEmpty()) return null;
-//            return parents.stream().filter(target::equals).map(p -> candidate).collect(Collectors.toList());
-//          }
-//      );
-//
-//      if (inheritors != null)
-//        for (SchemaTypeDef inheritor : inheritors)
-//          if (!consumer.process(inheritor)) return false;
     }
 
     return false;

@@ -24,7 +24,18 @@ public class CompletionTest extends LightCodeInsightFixtureTestCase {
 
   public void testTypeRefCompletion() {
     myFixture.configureByFiles("TypeRefCompletion.es", "foo.es", "foobar.es");
+    checkCompletionVariants("Foo"); // foo.bar has not been imported
+
+    myFixture.configureByFiles("TypeRefCompletion2.es", "foo.es", "foobar.es");
     checkCompletionVariants("bar", "Foo");
+  }
+
+  public void testImportCompletion() {
+//    myFixture.configureByFiles("ImportCompletion.es", "foo.es", "foobar.es");
+//    checkCompletionVariants("Foo", "bar", "*");
+
+    myFixture.configureByFiles("ImportCompletion2.es", "foo.es", "foobar.es");
+    checkCompletionVariants("bar"); // but not "*" or "Foo", same namespace
   }
 
   public void testNamespaceOnlyTopLevelCompletion() {

@@ -6,6 +6,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
@@ -120,5 +122,28 @@ public class Fqn {
   @Override
   public int hashCode() {
     return Arrays.hashCode(segments);
+  }
+
+  /**
+   * Find all FQNs with last segment being `lastSegment` (or just all if it's null) and remove last segment from them
+   */
+  public static Set<Fqn> getMatchingWithSuffixRemoved(@NotNull Collection<Fqn> fqns, @Nullable String lastSegment) {
+    return fqns.stream()
+        .filter(fqn -> lastSegment == null || lastSegment.equals(fqn.getLast()))
+        .map(Fqn::getPrefix)
+        .filter(fqn -> fqn != null)
+        .collect(Collectors.toSet());
+  }
+
+  /**
+   * Find all FQNs starting with `prefix` (which may have dots) and remove prefix from them
+   */
+  public static Set<Fqn> getMatchingWithPrefixRemoved(@NotNull Collection<Fqn> fqns, @NotNull String prefix) {
+    int segmentsToRemove = prefix.isEmpty() ? 0 : prefix.length() - prefix.replace(".", "").length() + 1;
+
+    return fqns.stream()
+        .map(fqn -> fqn.removeHeadSegments(segmentsToRemove))
+        .filter(fqn -> !fqn.isEmpty())
+        .collect(Collectors.toSet());
   }
 }

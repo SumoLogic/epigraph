@@ -121,7 +121,7 @@ typeDefWrapper ::= varTypeDef | recordTypeDef | mapTypeDef | listTypeDef | primi
 anonList ::= 'list' '[' typeRef defaultOverride? ']' {pin=1}// TODO rename to `listType`? `concreteList`?
 anonMap ::= 'map' '[' typeRef ',' typeRef defaultOverride? ']' {pin=1} // TODO rename to `mapType`?
 
-extendsDecl ::= 'extends' typeRef (',' typeRef)*
+extendsDecl ::= 'extends' typeRef (',' typeRef)* {pin=1}
 defaultOverride ::= 'nodefault' | 'default' qid
 customParam ::= qid '=' data_value ';' { // TODO embed data language instead
   name="custom attribute"
@@ -130,7 +130,7 @@ customParam ::= qid '=' data_value ';' { // TODO embed data language instead
   pin = 2
 }
 
-metaDecl ::= 'meta' fqnTypeRef // we don't allow anonList or anonMap as meta
+metaDecl ::= 'meta' fqnTypeRef { pin=1 } // we don't allow anonList or anonMap as meta
 
 varTypeDef ::= 'vartype' typeName extendsDecl? varTypeSupplementsDecl? defaultOverride? varTypeBody? {
   extends="com.sumologic.epigraph.ideaplugin.schema.psi.impl.SchemaVarTypeDefImplBase"
@@ -138,7 +138,7 @@ varTypeDef ::= 'vartype' typeName extendsDecl? varTypeSupplementsDecl? defaultOv
   elementTypeClass="com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaVarTypeDefStubElementType"
   pin=1
 }
-varTypeSupplementsDecl ::= 'supplements' fqnTypeRef (',' fqnTypeRef)*
+varTypeSupplementsDecl ::= 'supplements' fqnTypeRef (',' fqnTypeRef)* { pin=1 }
 varTypeBody ::= '{' varTypeBodyPart* '}'
 private varTypeBodyPart ::= varTypeMemberDecl | customParam
 varTypeMemberDecl ::= 'override'? qid ':' typeRef memberBody? {
