@@ -69,6 +69,22 @@ public class CompletionTest extends LightCodeInsightFixtureTestCase {
     checkCompletionVariants(TOP_LEVEL, "extends ", "meta ");
   }
 
+  public void testUndefinedTypeNameCompletion() {
+    myFixture.configureByFile("UndefinedTypeNameCompletion.es");
+    checkCompletionVariants("Bar", "Baz");
+  }
+
+  // TODO(low) add later, too advanced for now
+//  public void testUndefinedTypeNameCompletion2() {
+//    myFixture.configureByFile("UndefinedTypeNameCompletion2.es");
+//    checkCompletionVariants("Bar", "Baz"); // but not Baq, incomplete kinds
+//  }
+
+  public void testUndefinedTypeNameCompletion3() {
+    myFixture.configureByFile("UndefinedTypeNameCompletion2.es");
+    checkCompletionVariants("Bar", "Baz", "Baq");
+  }
+
   private void checkCompletionVariants(String... variants) {
     myFixture.completeBasic();
     List<String> actual = myFixture.getLookupElementStrings();

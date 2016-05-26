@@ -15,9 +15,6 @@ public interface SchemaPrimitiveTypeDef extends SchemaTypeDef, StubBasedPsiEleme
   @Nullable
   SchemaMetaDecl getMetaDecl();
 
-  @NotNull
-  SchemaPrimitiveKind getPrimitiveKind();
-
   @Nullable
   SchemaPrimitiveTypeBody getPrimitiveTypeBody();
 
@@ -25,7 +22,22 @@ public interface SchemaPrimitiveTypeDef extends SchemaTypeDef, StubBasedPsiEleme
   PsiElement getAbstract();
 
   @Nullable
+  PsiElement getBooleanT();
+
+  @Nullable
+  PsiElement getDoubleT();
+
+  @Nullable
+  PsiElement getIntegerT();
+
+  @Nullable
+  PsiElement getLongT();
+
+  @Nullable
   PsiElement getPolymorphic();
+
+  @Nullable
+  PsiElement getStringT();
 
   @Nullable
   PsiElement getId();

@@ -210,7 +210,7 @@ primitiveTypeDef ::= 'abstract'? 'polymorphic'? primitiveKind typeName extendsDe
   elementTypeClass="com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaPrimitiveTypeDefStubElementType"
   pin=3
 }
-primitiveKind ::= 'string' | 'integer' | 'long' | 'double' | 'boolean'
+private primitiveKind ::= 'string' | 'integer' | 'long' | 'double' | 'boolean'
 primitiveTypeBody ::= '{' primitiveBodyPart* '}'
 private primitiveBodyPart ::= customParam // | ...
 
@@ -231,5 +231,6 @@ supplement FooRec, BarRec with record { // not good since supplemented records w
 combinedFqns ::= fqnTypeRef ('+' fqnTypeRef)*
 
 private declRecover ::= ! ('import' | 'namespace' | 'polymorphic' | 'abstract' | 'record' |
-                           'map' | 'list' | 'vartype' | 'enum' | 'supplement'| primitiveKind)
+                           'map' | 'list' | 'vartype' | 'enum' | 'supplement'|
+                           'string' | 'integer' | 'long' | 'double' | 'boolean')
 private partRecover ::= ! ('}' | qid | 'abstract' | 'override' )

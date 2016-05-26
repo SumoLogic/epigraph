@@ -38,7 +38,6 @@ public interface SchemaElementTypes {
   IElementType S_MAP_TYPE_DEF = new SchemaMapTypeDefStubElementType("S_MAP_TYPE_DEF");
   IElementType S_META_DECL = new SchemaElementType("S_META_DECL");
   IElementType S_NAMESPACE_DECL = new SchemaNamespaceDeclStubElementType("S_NAMESPACE_DECL");
-  IElementType S_PRIMITIVE_KIND = new SchemaElementType("S_PRIMITIVE_KIND");
   IElementType S_PRIMITIVE_TYPE_BODY = new SchemaElementType("S_PRIMITIVE_TYPE_BODY");
   IElementType S_PRIMITIVE_TYPE_DEF = new SchemaPrimitiveTypeDefStubElementType("S_PRIMITIVE_TYPE_DEF");
   IElementType S_RECORD_SUPPLEMENTS_DECL = new SchemaElementType("S_RECORD_SUPPLEMENTS_DECL");
@@ -160,9 +159,6 @@ public interface SchemaElementTypes {
       }
       else if (type == S_NAMESPACE_DECL) {
         return new SchemaNamespaceDeclImpl(node);
-      }
-      else if (type == S_PRIMITIVE_KIND) {
-        return new SchemaPrimitiveKindImpl(node);
       }
       else if (type == S_PRIMITIVE_TYPE_BODY) {
         return new SchemaPrimitiveTypeBodyImpl(node);

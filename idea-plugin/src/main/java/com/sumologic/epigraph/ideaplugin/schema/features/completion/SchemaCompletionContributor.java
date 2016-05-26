@@ -4,11 +4,16 @@ import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiRecursiveElementVisitor;
+import com.intellij.psi.PsiReference;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
 import com.sumologic.epigraph.ideaplugin.schema.SchemaLanguage;
+import com.sumologic.epigraph.ideaplugin.schema.brains.Fqn;
+import com.sumologic.epigraph.ideaplugin.schema.parser.SchemaParserDefinition;
 import com.sumologic.epigraph.ideaplugin.schema.psi.*;
+import com.sumologic.epigraph.ideaplugin.schema.psi.impl.SchemaPsiImplUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -65,6 +70,7 @@ public class SchemaCompletionContributor extends CompletionContributor {
             completeExtendsKeyword(position, result);
             completeMetaKeyword(position, result);
             completeSupplementsKeyword(position, result);
+            completeNewTypeName(position, result);
           }
         }
     );
@@ -209,5 +215,52 @@ public class SchemaCompletionContributor extends CompletionContributor {
 
       result.addElement(LookupElementBuilder.create(completion));
     }
+  }
+
+  private void completeNewTypeName(@NotNull PsiElement position, @NotNull final CompletionResultSet result) {
+    // complete things like "record <caret>"
+    // use all unresolved type references as candidates. In the future: be more intelligent and filter them by kind,
+    // see commented out CompletionTest::testUndefinedTypeNameCompletion2
+
+    // first check we're in the correct position
+    PsiElement parent = position.getParent();
+    if (!(parent instanceof SchemaTypeDef)) return;
+
+    PsiElement prevSibling = SchemaPsiUtil.prevNonWhitespaceSibling(position);
+    if (prevSibling == null) return;
+
+    IElementType prevSiblingElementType = prevSibling.getNode().getElementType();
+    if (!SchemaParserDefinition.TYPE_KINDS.contains(prevSiblingElementType)) return;
+
+    PsiElement defs = PsiTreeUtil.getParentOfType(parent, SchemaDefs.class);
+    assert defs != null;
+
+    // now collect all candidates
+
+    defs.accept(new PsiRecursiveElementVisitor() {
+      @Override
+      public void visitElement(PsiElement element) {
+        super.visitElement(element);
+
+        if (element instanceof SchemaFqnTypeRef) {
+          SchemaFqnTypeRef typeRef = (SchemaFqnTypeRef) element;
+
+          Fqn fqn = typeRef.getFqn().getFqn();
+          // only bother if it's single-segment
+          if (fqn.size() != 1) return;
+
+          PsiReference reference = SchemaPsiImplUtil.getReference(typeRef);
+          if (reference == null) return;
+
+          if (reference.resolve() != null) return;
+
+          // now here is the place to look around and be more intelligent
+
+          result.addElement(LookupElementBuilder.create(fqn.toString()));
+        }
+
+      }
+    });
+
   }
 }

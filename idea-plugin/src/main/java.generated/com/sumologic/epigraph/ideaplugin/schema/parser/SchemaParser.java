@@ -89,9 +89,6 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     else if (t == S_NAMESPACE_DECL) {
       r = namespaceDecl(b, 0);
     }
-    else if (t == S_PRIMITIVE_KIND) {
-      r = primitiveKind(b, 0);
-    }
     else if (t == S_PRIMITIVE_TYPE_BODY) {
       r = primitiveTypeBody(b, 0);
     }
@@ -996,16 +993,16 @@ public class SchemaParser implements PsiParser, LightPsiParser {
 
   /* ********************************************************** */
   // 'string' | 'integer' | 'long' | 'double' | 'boolean'
-  public static boolean primitiveKind(PsiBuilder b, int l) {
+  static boolean primitiveKind(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "primitiveKind")) return false;
     boolean r;
-    Marker m = enter_section_(b, l, _NONE_, S_PRIMITIVE_KIND, "<primitive kind>");
+    Marker m = enter_section_(b);
     r = consumeToken(b, S_STRING_T);
     if (!r) r = consumeToken(b, S_INTEGER_T);
     if (!r) r = consumeToken(b, S_LONG_T);
     if (!r) r = consumeToken(b, S_DOUBLE_T);
     if (!r) r = consumeToken(b, S_BOOLEAN_T);
-    exit_section_(b, l, m, r, false, null);
+    exit_section_(b, m, null, r);
     return r;
   }
 

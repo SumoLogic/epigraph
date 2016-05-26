@@ -43,12 +43,6 @@ public class SchemaPrimitiveTypeDefImpl extends SchemaPrimitiveTypeDefImplBase i
   }
 
   @Override
-  @NotNull
-  public SchemaPrimitiveKind getPrimitiveKind() {
-    return findNotNullChildByClass(SchemaPrimitiveKind.class);
-  }
-
-  @Override
   @Nullable
   public SchemaPrimitiveTypeBody getPrimitiveTypeBody() {
     return findChildByClass(SchemaPrimitiveTypeBody.class);
@@ -62,8 +56,38 @@ public class SchemaPrimitiveTypeDefImpl extends SchemaPrimitiveTypeDefImplBase i
 
   @Override
   @Nullable
+  public PsiElement getBooleanT() {
+    return findChildByType(S_BOOLEAN_T);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getDoubleT() {
+    return findChildByType(S_DOUBLE_T);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getIntegerT() {
+    return findChildByType(S_INTEGER_T);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getLongT() {
+    return findChildByType(S_LONG_T);
+  }
+
+  @Override
+  @Nullable
   public PsiElement getPolymorphic() {
     return findChildByType(S_POLYMORPHIC);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getStringT() {
+    return findChildByType(S_STRING_T);
   }
 
   @Override

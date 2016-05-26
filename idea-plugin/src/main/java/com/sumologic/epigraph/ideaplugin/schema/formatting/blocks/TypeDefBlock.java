@@ -24,7 +24,8 @@ public class TypeDefBlock extends SchemaBlock {
 
       S_ABSTRACT, S_POLYMORPHIC,
       S_ID, S_RECORD, S_VARTYPE, S_ENUM,
-      S_PRIMITIVE_KIND, S_ANON_LIST, S_ANON_MAP
+      S_ANON_LIST, S_ANON_MAP,
+      S_STRING_T, S_INTEGER_T, S_LONG_T, S_DOUBLE_T, S_BOOLEAN_T
   );
 
   private static final TokenSet continuationTokenSet =

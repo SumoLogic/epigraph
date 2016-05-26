@@ -99,10 +99,6 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitPrimitiveKind(@NotNull SchemaPrimitiveKind o) {
-    visitPsiElement(o);
-  }
-
   public void visitPrimitiveTypeBody(@NotNull SchemaPrimitiveTypeBody o) {
     visitCustomParamsHolder(o);
   }
