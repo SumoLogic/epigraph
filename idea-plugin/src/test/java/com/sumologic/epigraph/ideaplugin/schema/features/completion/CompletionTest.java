@@ -38,6 +38,11 @@ public class CompletionTest extends LightCodeInsightFixtureTestCase {
     checkCompletionVariants("bar"); // but not "*" or "Foo", same namespace
   }
 
+  public void testTopLevelCompletion() {
+    myFixture.configureByFile("TopLevelCompletion.es");
+    checkCompletionVariants(TOP_LEVEL);
+  }
+
   public void testNamespaceOnlyTopLevelCompletion() {
     myFixture.configureByFile("NamespaceOnlyTopLevelCompletion.es");
     checkCompletionVariants(TOP_LEVEL, "import ");

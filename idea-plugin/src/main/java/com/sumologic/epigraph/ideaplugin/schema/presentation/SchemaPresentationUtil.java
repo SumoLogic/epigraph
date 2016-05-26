@@ -3,6 +3,7 @@ package com.sumologic.epigraph.ideaplugin.schema.presentation;
 import com.intellij.icons.AllIcons;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiInvalidElementAccessException;
 import com.intellij.psi.PsiNamedElement;
 import com.sumologic.epigraph.ideaplugin.schema.brains.NamespaceManager;
 import com.sumologic.epigraph.ideaplugin.schema.psi.*;
@@ -120,7 +121,13 @@ public class SchemaPresentationUtil {
       namespace = NamespaceManager.getNamespace(element);
     }
 
-    return namespace == null ? element.getContainingFile().getName() : namespace;
+    if (namespace != null) return namespace;
+
+    try {
+      return element.getContainingFile().getName();
+    } catch (PsiInvalidElementAccessException e) {
+      return "[invalid]"; // file not available
+    }
 
   }
 
