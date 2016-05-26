@@ -2,6 +2,7 @@
 
 package epigraph.schema
 
+import com.sumologic.epigraph.std
 import com.sumologic.epigraph.xp._
 
 trait Name extends StringDatum[Name]
@@ -76,9 +77,8 @@ trait Named extends RecordDatum[Named] {
 object Named extends RecordType[Named](ns \ "Named") {
 
   // TODO move outside of object constructor; duplicate all inherited fields?
-  val _name: TaggedField[Named, Name, Name] = declareField("name", Name)
+  val _name: DatumField[Name] = field[Name]("name", Name)
 
   override def declaredFields: Seq[Field[Named, _]] = Seq(_name)
 
 }
-

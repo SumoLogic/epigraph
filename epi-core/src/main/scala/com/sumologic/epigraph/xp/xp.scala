@@ -6,7 +6,7 @@ import com.sumologic.epigraph.std.{EnumValueName, FieldName, QualifiedTypeName, 
 
 trait Var[+M <: Var[M]] {
 
-  def getEntry[T <: Datum[T]](tag: VarTag[_ >: M, T]): Option[VarEntry[_ <: M, T]]
+  def getEntry[N <: TypeMemberName, T <: Datum[T]](tag: VarTag[_ >: M, N, T]): Option[VarEntry[_ <: M, N, T]]
 
 }
 
@@ -18,9 +18,9 @@ trait MonoVar[+T <: Datum[T]] extends Var[T] {
 }
 
 
-trait VarEntry[M <: Var[M], T <: Datum[T]] { // TODO variance?
+trait VarEntry[M <: Var[M], N <: TypeMemberName, T <: Datum[T]] { // TODO variance?
 
-  def tag: VarTag[M, T]
+  def tag: VarTag[M, N, T]
 
   def dataType: DataType[T]
 
@@ -31,7 +31,7 @@ trait VarEntry[M <: Var[M], T <: Datum[T]] { // TODO variance?
 }
 
 
-class VarTag[M <: Var[M], T <: Datum[T]](val name: TypeMemberName, val dataType: DataType[T])
+class VarTag[M <: Var[M], N <: TypeMemberName, T <: Datum[T]](val name: N, val dataType: DataType[T])
 
 
 trait Datum[+D <: Datum[D]] extends MonoVar[D] {
@@ -47,11 +47,11 @@ trait RecordDatum[+D <: RecordDatum[D]] extends Datum[D] {
 
   override type DatumType <: RecordType[_ <: D]
 
-  def get[M <: Var[M], T <: Datum[T]](field: TaggedField[_ >: D, M, T]): T = {
-    get[M, T](field, field.tag)
+  def get[M <: Var[M], N <: TypeMemberName, T <: Datum[T]](field: TaggedField[_ >: D, M, N, T]): T = {
+    get[M, N, T](field, field.tag)
   }
 
-  def get[M <: Var[M], T <: Datum[T]](field: Field[_ >: D, M], varTag: VarTag[_ >: M, T]): T
+  def get[M <: Var[M], N <: TypeMemberName, T <: Datum[T]](field: Field[_ >: D, M], varTag: VarTag[_ >: M, N, T]): T
 
 }
 
@@ -60,9 +60,12 @@ trait MapDatum[K <: Datum[K], +M <: Var[M]] extends Datum[MapDatum[K, M]] {
 
   override type DatumType <: MapType[K, _ <: M]
 
-  def get[T <: Datum[T]](key: K, tag: VarTag[_ >: M, T]): Option[T] = ??? //getVar(key).flatMap(_.getEntry(tag))
+  def get[N <: TypeMemberName, T <: Datum[T]](
+      key: K,
+      tag: VarTag[_ >: M, N, T]
+  ): Option[T] = ??? //getVar(key).flatMap(_.getEntry(tag))
 
-  def getOrElse[T <: Datum[T]](key: K, tag: VarTag[_ >: M, _ <: T], default: => T): T
+  def getOrElse[N <: TypeMemberName, T <: Datum[T]](key: K, tag: VarTag[_ >: M, N, _ <: T], default: => T): T
 
   def getVar(key: K): Option[M]
 
@@ -71,9 +74,9 @@ trait MapDatum[K <: Datum[K], +M <: Var[M]] extends Datum[MapDatum[K, M]] {
 }
 
 
-trait TaggedMapDatum[K <: Datum[K], /*+*/ M <: Var[M], V <: Datum[V]] extends MapDatum[K, M] {
+trait TaggedMapDatum[K <: Datum[K], /*+*/ M <: Var[M], N <: TypeMemberName, T <: Datum[T]] extends MapDatum[K, M] {
 
-  def tag: VarTag[_ >: M, V]
+  def tag: VarTag[_ >: M, N, T]
 
 }
 
@@ -82,12 +85,16 @@ trait ListDatum[+M <: Var[M]] extends Datum[ListDatum[M]] {
 
   override type DatumType <: ListType[_ <: M]
 
+  def head[N <: TypeMemberName, T <: Datum[T]](tag: VarTag[_ >: M, N, T]): T // TODO Option[T] etc.?
+
 }
 
 
-trait TaggedListDatum[/*+*/ M <: Var[M], V <: Datum[V]] extends ListDatum[M] {
+trait TaggedListDatum[+M <: Var[M], N <: TypeMemberName, +V <: Datum[V]] extends ListDatum[M] {
 
-  def tag: VarTag[_ >: M, V]
+  def tag: VarTag[_ <: M, N, _ <: V] // FIXME `_ <: M` is not good...
+
+  def head: V = head(tag.asInstanceOf) // FIXME this .asInstanceOf is fishy - need to provide justification why it's ok
 
 }
 
@@ -166,11 +173,23 @@ trait MultiType[M <: Var[M]] extends Type {
 
   override type Super <: MultiType[_ >: M]
 
-  def declaredVarTags: Seq[VarTag[M, _]]
+  final type DeclaredTags = Seq[VarTag[M, _, _]]
 
-  def varTags: Seq[VarTag[_ >: M, _]] = cachedVarTags
 
-  private lazy val cachedVarTags: Seq[VarTag[_ >: M, _]] = (declaredVarTags ++ supertypes.flatMap(_.varTags)).distinct
+  protected object DeclaredTags {
+
+    def apply(elems: VarTag[M, _, _]*): DeclaredTags = Seq[VarTag[M, _, _]](elems: _*)
+
+  }
+
+
+  def declaredVarTags: DeclaredTags
+
+  def varTags: Seq[VarTag[_ >: M, _, _]] = cachedVarTags
+
+  private lazy val cachedVarTags: Seq[VarTag[_ >: M, _, _]] = (declaredVarTags ++ supertypes.flatMap(
+    _.varTags
+  )).distinct
 
   lazy val listOf: ListType[M] = new ListType[M](name.listOf, this, supertypes.map(_.listOf), false /* todo? */)
 
@@ -184,7 +203,9 @@ abstract class MultiVarType[M <: Var[M]](
 
   final override type Super = MultiType[_ >: M]
 
-  def declareTag[T <: Datum[T]](name: TypeMemberName, dataType: DataType[T]): VarTag[M, T] = new VarTag[M, T](
+  final type Tag[N <: TypeMemberName, T <: Datum[T]] = VarTag[M, N, T]
+
+  def tag[N <: TypeMemberName, T <: Datum[T]](name: N, dataType: DataType[T]): Tag[N, T] = new VarTag[M, N, T](
     name, dataType
   )
 
@@ -193,9 +214,11 @@ abstract class MultiVarType[M <: Var[M]](
 
 trait DefaultMultiType[D <: Datum[D]] extends MultiType[D] {this: DataType[D] =>
 
-  val default: VarTag[D, D] = new VarTag[D, D](TypeMemberName.default, this)
+  val default: VarTag[D, TypeMemberName.default.type, D] = new VarTag[D, TypeMemberName.default.type, D](
+    TypeMemberName.default, this
+  )
 
-  override def declaredVarTags: Seq[VarTag[D, D]] = Seq[VarTag[D, D]](default)
+  override def declaredVarTags: Seq[VarTag[D, _, _]] = Seq[VarTag[D, _, _]](default)
 
 }
 
@@ -222,39 +245,52 @@ abstract class RecordType[D <: RecordDatum[D]](
 
   final override type Super = RecordType[_ >: D]
 
-  def declaredFields: Seq[Field[D, _]]
+  final type DeclaredFields = Seq[Field[D, _]]
 
-  protected def declareField[T <: Datum[T]](
-      name: FieldName,
-      valueType: DataType[T]
-  ): TaggedField[D, T, T] = new TaggedField[D, T, T](name, valueType, valueType.default)
+  def declaredFields: DeclaredFields
 
-  protected def declareField[M <: Var[M]](name: FieldName, valueType: MultiType[M]): Field[D, M] = new Field[D, M](
-    name, valueType
-  )
 
-  protected def declareField[M <: Var[M], T <: Datum[T]](
+  protected object DeclaredFields {
+
+    def apply(elems: Field[D, _]*): DeclaredFields = Seq[Field[D, _]](elems: _*)
+
+  }
+
+
+  final type DatumField[T <: Datum[T]] = TaggedField[D, T, TypeMemberName.default.type, T]
+
+  protected def field[T <: Datum[T]](name: FieldName, valueType: DataType[T]): DatumField[T] =
+    new TaggedField[D, T, TypeMemberName.default.type, T](name, valueType, valueType.default)
+
+  final type VarField[M <: Var[M]] = Field[D, M]
+
+  protected def field[M <: Var[M]](name: FieldName, valueType: MultiType[M]): VarField[M] =
+    new Field[D, M](name, valueType)
+
+  final type VarTagField[M <: Var[M], N <: TypeMemberName, T <: Datum[T]] = TaggedField[D, M, N, T]
+
+  protected def field[M <: Var[M], N <: TypeMemberName, T <: Datum[T]](
       name: FieldName,
       valueType: MultiType[M],
-      tag: VarTag[_ >: M, T]
-  ): TaggedField[D, M, T] = new TaggedField[D, M, T](name, valueType, tag)
+      tag: VarTag[_ >: M, N, T]
+  ): VarTagField[M, N, T] = new TaggedField[D, M, N, T](name, valueType, tag)
 
 }
 
 
 class Field[D <: RecordDatum[D], M <: Var[M]](val name: FieldName, val valueType: MultiType[M]) {
 
-  def as[T <: Datum[T]](varTag: VarTag[_ >: M, T]): TaggedField[D, M, T] = new TaggedField[D, M, T](
+  def as[N <: TypeMemberName, T <: Datum[T]](varTag: VarTag[_ >: M, N, T]): TaggedField[D, M, N, T] = new TaggedField[D, M, N, T](
     name, valueType, varTag
   )
 
 }
 
 
-class TaggedField[D <: RecordDatum[D], M <: Var[M], T <: Datum[T]](
+class TaggedField[D <: RecordDatum[D], M <: Var[M], N <: TypeMemberName, T <: Datum[T]](
     override val name: FieldName,
     override val valueType: MultiType[M],
-    val tag: VarTag[_ >: M, T]
+    val tag: VarTag[_ >: M, N, T]
 ) extends Field[D, M](name, valueType)
 
 
@@ -272,15 +308,24 @@ class MapType[K <: Datum[K], M <: Var[M]](
 
 
 class ListType[M <: Var[M]](
-    override final val name: QualifiedTypeName,
-    final val valueType: MultiType[M],
-    override final val declaredSupertypes: Seq[ListType[_ >: M]] = Nil,
-    override final val isPolymorphic: Boolean = false
+    override val name: QualifiedTypeName,
+    val valueType: MultiType[M],
+    override val declaredSupertypes: Seq[ListType[_ >: M]] = Nil,
+    override val isPolymorphic: Boolean = false
 ) extends DataType[ListDatum[M]] {
 
   final override type Super = ListType[_ >: M]
 
 }
+
+
+class TaggedListType[M <: Var[M], N <: TypeMemberName, T <: Datum[T]](
+    override final val name: QualifiedTypeName,
+    override final val valueType: MultiType[M],
+    final val tag: VarTag[M, N, T],
+    override final val declaredSupertypes: Seq[ListType[_ >: M]] = Nil,
+    override final val isPolymorphic: Boolean = false
+) extends ListType[M](name, valueType, declaredSupertypes, isPolymorphic)
 
 
 trait EnumType[D <: EnumDatum[D]] extends DataType[D] {
