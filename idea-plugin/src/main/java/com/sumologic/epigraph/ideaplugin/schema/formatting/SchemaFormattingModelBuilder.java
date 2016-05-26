@@ -69,6 +69,9 @@ public class SchemaFormattingModelBuilder implements FormattingModelBuilder {
     spacingBuilder.before(S_LIST_TYPE_BODY).spaces(1);
     spacingBuilder.before(S_PRIMITIVE_TYPE_BODY).spaces(1);
 
+    // same for fields/vartype members ?
+    spacingBuilder.between(S_ENUM_MEMBER_DECL, S_ENUM_MEMBER_DECL).spaces(1);
+
     return spacingBuilder;
   }
 

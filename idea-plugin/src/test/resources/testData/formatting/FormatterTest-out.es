@@ -12,3 +12,8 @@ record R {
 list[list[Bar]] bars
 
 abstract polymorphic record E
+
+enum E {
+  A B
+  C
+}
