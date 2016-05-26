@@ -5,13 +5,10 @@ import com.intellij.ide.util.treeView.smartTree.TreeElement;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.psi.NavigatablePsiElement;
 import com.intellij.psi.PsiElement;
-import com.intellij.util.PlatformIcons;
-import com.sumologic.epigraph.ideaplugin.schema.brains.NamespaceManager;
+import com.sumologic.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
 import com.sumologic.epigraph.ideaplugin.schema.psi.*;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -34,63 +31,7 @@ class SchemaStructureViewElement implements StructureViewTreeElement {
   @NotNull
   @Override
   public ItemPresentation getPresentation() {
-    if (element instanceof SchemaFile) {
-      SchemaFile schemaFile = (SchemaFile) element;
-
-      String fqn = NamespaceManager.getNamespace(schemaFile);
-
-      return new StaticItemPresentation("Epigraph Schema", fqn, null);
-    }
-
-    if (element instanceof SchemaTypeDef) {
-      SchemaTypeDef schemaTypeDef = (SchemaTypeDef) element;
-
-      Icon icon = null;
-      if (schemaTypeDef instanceof SchemaRecordTypeDef) icon = PlatformIcons.CLASS_ICON;
-      if (schemaTypeDef instanceof SchemaEnumTypeDef) icon = PlatformIcons.ENUM_ICON;
-      if (schemaTypeDef instanceof SchemaVarTypeDef) icon = PlatformIcons.INTERFACE_ICON;
-      // TODO icons for union, map, list, primitive
-
-      PsiElement id = schemaTypeDef.getNameIdentifier();
-      return new StaticItemPresentation(id == null ? "" : id.getText(), null, icon);
-    }
-
-    if (element instanceof SchemaCustomParam) {
-      SchemaCustomParam schemaCustomParam = (SchemaCustomParam) element;
-      return new StaticItemPresentation(schemaCustomParam.getId().getText(), null, PlatformIcons.ANNOTATION_TYPE_ICON);
-    }
-
-    if (element instanceof SchemaFieldDecl) {
-      SchemaFieldDecl schemaFieldDecl = (SchemaFieldDecl) element;
-      return new StaticItemPresentation(schemaFieldDecl.getId().getText(), null, PlatformIcons.FIELD_ICON);
-    }
-
-    if (element instanceof SchemaVarTypeMemberDecl) {
-      SchemaVarTypeMemberDecl varTypeMemberDecl = (SchemaVarTypeMemberDecl) element;
-      Icon icon = PlatformIcons.FUNCTION_ICON;
-//      if (varTypeMemberDecl.getDefault() != null) {
-//        icon = IconUtil.addText(icon, "D"); // TODO separate icon for default member
-//      }
-
-      return new StaticItemPresentation(varTypeMemberDecl.getId().getText(), null, icon);
-    }
-
-    if (element instanceof SchemaEnumMemberDecl) {
-      SchemaEnumMemberDecl schemaEnumMemberDecl = (SchemaEnumMemberDecl) element;
-      return new StaticItemPresentation(schemaEnumMemberDecl.getId().getText(), null, PlatformIcons.FIELD_ICON);
-    }
-
-    if (element instanceof SchemaSupplementDef) {
-      SchemaSupplementDef schemaSupplementDef = (SchemaSupplementDef) element;
-      String name = "???";
-
-      SchemaFqnTypeRef fqnTypeRef = schemaSupplementDef.getFqnTypeRef();
-      if (fqnTypeRef != null) name = fqnTypeRef.getFqn().getFqn().toString();
-
-      return new StaticItemPresentation(name, null, PlatformIcons.ASPECT_ICON); // TODO icon
-    }
-
-    return new StaticItemPresentation("Unknown getElement: " + element.getClass(), null, null);
+    return SchemaPresentationUtil.getPresentation(element);
   }
 
   @NotNull
@@ -165,37 +106,5 @@ class SchemaStructureViewElement implements StructureViewTreeElement {
     return element.canNavigateToSource();
   }
 
-  private static class StaticItemPresentation implements ItemPresentation {
-    @Nullable
-    private final String presentableText;
-    @Nullable
-    private final String locationString;
-    @Nullable
-    private final Icon icon;
-
-    StaticItemPresentation(@Nullable String presentableText, @Nullable String locationString, @Nullable Icon icon) {
-      this.presentableText = presentableText;
-      this.locationString = locationString;
-      this.icon = icon;
-    }
-
-    @Nullable
-    @Override
-    public String getPresentableText() {
-      return presentableText;
-    }
-
-    @Nullable
-    @Override
-    public String getLocationString() {
-      return locationString;
-    }
-
-    @Nullable
-    @Override
-    public Icon getIcon(boolean unused) {
-      return icon;
-    }
-  }
 
 }

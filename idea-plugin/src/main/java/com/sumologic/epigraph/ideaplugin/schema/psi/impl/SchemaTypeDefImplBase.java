@@ -1,7 +1,6 @@
 package com.sumologic.epigraph.ideaplugin.schema.psi.impl;
 
 import com.intellij.extapi.psi.StubBasedPsiElementBase;
-import com.intellij.icons.AllIcons;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
@@ -115,7 +114,7 @@ public abstract class SchemaTypeDefImplBase<S extends SchemaTypeDefStubBase<T>, 
   public abstract TypeKind getKind();
 
   public Icon getIcon(int flags) {
-    return AllIcons.Nodes.Class; // TODO use presentation utils
+    return SchemaPresentationUtil.getIcon(this);
   }
 
   @Override

@@ -3,14 +3,17 @@ package com.sumologic.epigraph.ideaplugin.schema.brains;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiPolyVariantReference;
+import com.intellij.psi.PsiReferenceBase;
+import com.intellij.psi.ResolveResult;
 import com.intellij.psi.impl.source.resolve.ResolveCache;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
+import com.sumologic.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
 import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaFqnSegment;
 import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaImportStatement;
-import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaTypeDef;
 import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaTypeDefWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -92,8 +95,8 @@ public class SchemaFqnReference extends PsiReferenceBase<SchemaFqnSegment> imple
             typeDef.getName() != null && (!isImport || currentNamespace == null || !currentNamespace.equals(NamespaceManager.getNamespace(typeDef)))
         ).map(typeDef ->
             LookupElementBuilder.create(typeDef) // TODO use presentation utils
-//              .withIcon(getTypeDefPresentationIcon())
-                .withTypeText(getTypeDefNamespace(typeDef)))
+              .withIcon(SchemaPresentationUtil.getIcon(typeDef))
+              .withTypeText(SchemaPresentationUtil.getNamespaceString(typeDef)))
         .collect(Collectors.toSet());
 
     String prefix = getElement().getFqn().removeLastSegment().toString(); // last segment is an error getElement, so we have to remove it
@@ -119,11 +122,6 @@ public class SchemaFqnReference extends PsiReferenceBase<SchemaFqnSegment> imple
   @Override
   public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
     return getElement().setName(newElementName);
-  }
-
-  private String getTypeDefNamespace(@NotNull SchemaTypeDef typeDef) {
-    String namespace = typeDef.getNamespace();
-    return namespace == null ? typeDef.getContainingFile().getName() : namespace;
   }
 
   private boolean isImport() {

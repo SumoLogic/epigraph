@@ -1,8 +1,7 @@
 package com.sumologic.epigraph.ideaplugin.schema;
 
-import com.intellij.icons.AllIcons;
-import com.intellij.lang.Language;
 import com.intellij.openapi.fileTypes.LanguageFileType;
+import com.sumologic.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -40,6 +39,6 @@ public class SchemaFileType extends LanguageFileType {
   @Nullable
   @Override
   public Icon getIcon() {
-    return AllIcons.FileTypes.Properties;
+    return SchemaPresentationUtil.getSchemaFileIcon();
   }
 }
