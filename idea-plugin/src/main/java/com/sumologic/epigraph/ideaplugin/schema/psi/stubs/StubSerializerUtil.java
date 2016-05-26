@@ -20,7 +20,7 @@ public class StubSerializerUtil {
   }
 
   interface Deserializer<T> {
-    @NotNull
+    @Nullable
     T deserialize(@NotNull StubInputStream stream) throws IOException;
   }
 
@@ -36,7 +36,8 @@ public class StubSerializerUtil {
 
   @NotNull
   public static <T> Set<T> deserializeSet(@NotNull Deserializer<T> itemDeserializer,
-                                          @NotNull StubInputStream stream) throws IOException {
+                                          @NotNull StubInputStream stream,
+                                          boolean skipNulls) throws IOException {
     short numItems = stream.readShort();
 
     // can't do this, we may want to add more elements to it later on
@@ -45,7 +46,8 @@ public class StubSerializerUtil {
     Set<T> result = ContainerUtil.newTroveSet();
     for (int i = 0; i < numItems; i++) {
       T item = itemDeserializer.deserialize(stream);
-      result.add(item);
+      if (item != null || skipNulls)
+        result.add(item);
     }
 
     return result;
@@ -53,7 +55,8 @@ public class StubSerializerUtil {
 
   @NotNull
   public static <T> List<T> deserializeList(@NotNull Deserializer<T> itemDeserializer,
-                                           @NotNull StubInputStream stream) throws IOException {
+                                            @NotNull StubInputStream stream,
+                                            boolean skipNulls) throws IOException {
     short numItems = stream.readShort();
 
     // can't do this, we may want to add more elements to it later on
@@ -62,7 +65,8 @@ public class StubSerializerUtil {
     List<T> result = ContainerUtil.newSmartList(); // our lists often contain only one element
     for (int i = 0; i < numItems; i++) {
       T item = itemDeserializer.deserialize(stream);
-      result.add(item);
+      if (item != null || skipNulls)
+        result.add(item);
     }
 
     return result;

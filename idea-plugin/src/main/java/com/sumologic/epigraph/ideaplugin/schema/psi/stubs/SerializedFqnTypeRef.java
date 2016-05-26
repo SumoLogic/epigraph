@@ -32,7 +32,7 @@ public final class SerializedFqnTypeRef {
   }
 
   @Nullable
-  public static SerializedFqnTypeRef fromFqnTypeRef (@Nullable SchemaFqnTypeRef fqnTypeRef) {
+  public static SerializedFqnTypeRef fromFqnTypeRef(@Nullable SchemaFqnTypeRef fqnTypeRef) {
     if (fqnTypeRef == null) return null;
     SchemaFqnReference ref = (SchemaFqnReference) SchemaPsiImplUtil.getReference(fqnTypeRef);
     if (ref == null) return null;
@@ -85,9 +85,9 @@ public final class SerializedFqnTypeRef {
 
       namespacesToSearch = StubSerializerUtil.deserializeSet(s -> {
         StringRef namespaceRef = s.readName();
-        assert namespaceRef != null;
-        return Fqn.fromDotSeparated(namespaceRef.getString());
-      }, stream);
+        String namespace = StringRef.toString(namespaceRef);
+        return namespace == null ? null : Fqn.fromDotSeparated(namespace);
+      }, stream, true);
 
       Collections.addAll(namespacesToSearch, NamespaceManager.DEFAULT_NAMESPACES);
     }

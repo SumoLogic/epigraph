@@ -71,7 +71,7 @@ public abstract class SchemaTypeDefStubElementTypeBase<S extends SchemaTypeDefSt
     String namespace = deserializeName(dataStream);
 
     List<SerializedFqnTypeRef> extendsTypeRefs =
-        StubSerializerUtil.deserializeList(SerializedFqnTypeRef::deserialize, dataStream);
+        StubSerializerUtil.deserializeList(SerializedFqnTypeRef::deserialize, dataStream, true);
 
     return deserialize(dataStream, parentStub, name, namespace, extendsTypeRefs);
   }

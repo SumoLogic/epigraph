@@ -6,8 +6,6 @@ import com.intellij.psi.PsiElementResolveResult;
 import com.intellij.psi.ResolveResult;
 import com.intellij.util.ArrayUtil;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
-import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaFqn;
-import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaFqnSegment;
 import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaNamespaceDecl;
 import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaTypeDef;
 import org.jetbrains.annotations.NotNull;
@@ -130,12 +128,17 @@ public class SchemaFqnReferenceResolver {
     return namespaces;
   }
 
-  private SchemaFqnSegment getTargetSegment(@NotNull SchemaNamespaceDecl namespaceDecl, int prefixLength) {
-    SchemaFqn fqn = namespaceDecl.getFqn();
-    assert fqn != null;
-    //noinspection ConstantConditions
-//    assert fqnSegment.getName().equals(getElement().getName());
-    return fqn.getFqnSegmentList().get(prefixLength - 1);
+  private PsiElement getTargetSegment(@NotNull SchemaNamespaceDecl namespaceDecl, int prefixLength) {
+    // This forces PSI tree reparse. Addint stubs for SchemaFqn and SchemaFqnSegment is one option.
+    // Just pointing to the namespace decl is another
+
+//    SchemaFqn fqn = namespaceDecl.getFqn();
+//    assert fqn != null;
+//    //noinspection ConstantConditions
+////    assert fqnSegment.getName().equals(getElement().getName());
+//    return fqn.getFqnSegmentList().get(prefixLength - 1);
+
+    return namespaceDecl;
   }
 
 }

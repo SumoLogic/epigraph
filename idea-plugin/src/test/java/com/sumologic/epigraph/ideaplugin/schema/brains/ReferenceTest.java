@@ -1,9 +1,6 @@
 package com.sumologic.epigraph.ideaplugin.schema.brains;
 
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiNamedElement;
-import com.intellij.psi.PsiPolyVariantReference;
-import com.intellij.psi.PsiReference;
+import com.intellij.psi.*;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 
 import java.util.Arrays;
@@ -36,8 +33,9 @@ public class ReferenceTest extends LightCodeInsightFixtureTestCase {
   public void testNsSegmentInTypeRef() {
     myFixture.configureByFile("NamespaceSegmentInTypeRef.es");
     PsiElement element = myFixture.getFile().findElementAt(myFixture.getCaretOffset());
+//    checkReference(element.getParent().getReference(), "foo");
     //noinspection ConstantConditions
-    checkReference(element.getParent().getReference(), "foo");
+    checkReference(element.getParent().getReference(), "namespace foo");
   }
 
   private void checkReference(PsiReference reference, String text) {
@@ -56,8 +54,10 @@ public class ReferenceTest extends LightCodeInsightFixtureTestCase {
     PsiPolyVariantReference reference = (PsiPolyVariantReference) element.getParent().getReference();
     assertEquals(null, reference.resolve());
 
-    List<String> variants = Arrays.asList(reference.multiResolve(true)).stream()
-        .map(e -> e.getElement().getParent().getParent().getText())
+    List<ResolveResult> resolveResults = Arrays.asList(reference.multiResolve(true));
+    List<String> variants = resolveResults.stream()
+        .map(e -> e.getElement().getParent().getText())
+//        .map(e -> e.getElement().getParent().getParent().getText())
         .collect(Collectors.toList());
 
     assertEquals(2, variants.size());
