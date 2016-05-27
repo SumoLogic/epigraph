@@ -120,7 +120,7 @@
           <scalaCompatVersion>${scala.version.major.minor}</scalaCompatVersion>
           <failOnMultipleScalaVersions>true</failOnMultipleScalaVersions>
           <args>
-            <arg>-target:jvm-1.7</arg>
+            <arg>-target:jvm-${maven.compiler.target}</arg>
           </args>
         </configuration>
       </plugin>

@@ -42,14 +42,27 @@ trait QualifiedNamespaceNameApi extends QualifiedNameApi {this: QualifiedNamespa
 }
 
 
-trait QualifiedTypeNameApi extends QualifiedNameApi {this: QualifiedTypeName =>
-
-  override def local: LocalTypeName
+trait TypeNameApi extends NameApi {
 
   /**
-   * @return [[QualifiedTypeName]] of list type with this element type name
+   * @return [[ListTypeName]] of list type with this element type name
    */
-  def listOf: QualifiedTypeName
+  def listOf: ListTypeName = new ListTypeName(this)
+
+  def mapBy(keyType: TypeNameApi): MapTypeName = new MapTypeName(keyType, this)
+
+}
+
+
+trait ListTypeNameApi extends TypeNameApi
+
+
+trait MapTypeNameApi extends TypeNameApi
+
+
+trait QualifiedTypeNameApi extends QualifiedNameApi with TypeNameApi with ListTypeNameApi with MapTypeNameApi {this: QualifiedTypeName =>
+
+  override def local: LocalTypeName
 
 }
 
@@ -144,14 +157,7 @@ object LocalTypeName {
 class QualifiedTypeName(
     namespace: Option[QualifiedNamespaceName],
     local: LocalTypeName
-) extends QualifiedNameBase[LocalTypeName](namespace, local) with QualifiedTypeNameApi {
-
-  /**
-   * @return [[QualifiedTypeName]] of list type with this element type name
-   */
-  override def listOf: QualifiedTypeName = ??? // TODO "listOf.foo.bar.Baz"? "list[foo.bar.Baz]"? special type for anonymous lists?
-
-}
+) extends QualifiedNameBase[LocalTypeName](namespace, local) with QualifiedTypeNameApi
 
 
 object QualifiedTypeName {
@@ -168,6 +174,19 @@ object QualifiedTypeName {
   implicit def apply(namespace: QualifiedNamespaceName, local: String): QualifiedTypeName =
     new QualifiedTypeName(Some(namespace), LocalTypeName(local))
 
+}
+
+
+class ListTypeName(val valueType: TypeNameApi) extends ListTypeNameApi {
+
+  override def string: String = "list[" + valueType.string + "]"
+
+}
+
+
+class MapTypeName(val keyType: TypeNameApi, val valueType: TypeNameApi) extends MapTypeNameApi {
+
+  override def string: String = "map[" + keyType.string + "," + valueType.string + "]"
 }
 
 

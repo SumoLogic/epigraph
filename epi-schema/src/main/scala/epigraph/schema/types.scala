@@ -23,7 +23,7 @@ object ByNameRef extends MultiVarType[ByNameRef](ns \ "ByNameRef") {
 
   val _name: Tag[`"name"`.type, Name] = tag(`"name"`, Name)
 
-  override def declaredVarTags: DeclaredTags = DeclaredTags(_name)
+  override lazy val declaredVarTags: DeclaredTags = declareTags(_name)
 
 }
 
@@ -71,7 +71,7 @@ object TypeRef extends MultiVarType[TypeRef](ns \ "TypeRef", Seq(ByNameRef)) {
 
   val _type: Tag[`"type"`.type, TypeData] = tag(`"type"`, TypeData)
 
-  override def declaredVarTags: DeclaredTags = DeclaredTags(_name, _type)
+  override lazy val declaredVarTags: DeclaredTags = declareTags(_name, _type)
 
 }
 
@@ -125,7 +125,7 @@ object VarTypeRef extends MultiVarType[VarTypeRef](ns \ "VarTypeRef", Seq(TypeRe
 
   val _type: Tag[TypeRef.`"type"`.type, VarTypeData] = tag(TypeRef.`"type"`, VarTypeData)
 
-  override def declaredVarTags: DeclaredTags = DeclaredTags(_type)
+  override lazy val declaredVarTags: DeclaredTags = declareTags(_type)
 
 }
 
@@ -176,7 +176,7 @@ object TypeMemberRef extends MultiVarType[TypeMemberRef](ns \ "TypeMemberRef", S
 
   val _member: Tag[`"member"`.type, TypeMemberData] = tag(`"member"`, TypeMemberData)
 
-  override def declaredVarTags: DeclaredTags = DeclaredTags(_name, _member)
+  override lazy val declaredVarTags: DeclaredTags = declareTags(_name, _member)
 
 }
 
@@ -226,7 +226,7 @@ object DataTypeRef extends MultiVarType[DataTypeRef](ns \ "DataTypeRef", Seq(Typ
 
   val _type: Tag[`"type"`.type, DataTypeData] = tag(`"type"`, DataTypeData)
 
-  override def declaredVarTags: DeclaredTags = DeclaredTags(_type)
+  override lazy val declaredVarTags: DeclaredTags = declareTags(_type)
 
 }
 
@@ -267,7 +267,7 @@ object RecordTypeRef extends MultiVarType[RecordTypeRef](ns \ "RecordTypeRef", S
 
   val _type: Tag[TypeRef.`"type"`.type, RecordTypeData] = tag(TypeRef.`"type"`, RecordTypeData)
 
-  override lazy val declaredVarTags: DeclaredTags = DeclaredTags(_type)
+  override lazy val declaredVarTags: DeclaredTags = declareTags(_type)
 
 }
 
@@ -338,7 +338,7 @@ object MapTypeRef extends MultiVarType[MapTypeRef](ns \ "MapTypeRef", Seq(DataTy
 
   val _type: Tag[TypeRef.`"type"`.type, MapTypeData] = tag(TypeRef.`"type"`, MapTypeData)
 
-  override lazy val declaredVarTags: DeclaredTags = DeclaredTags(_type)
+  override lazy val declaredVarTags: DeclaredTags = declareTags(_type)
 
 }
 
@@ -378,7 +378,7 @@ object ListTypeRef extends MultiVarType[ListTypeRef](ns \ "ListTypeRef", Seq(Dat
 
   val _type: Tag[TypeRef.`"type"`.type, ListTypeData] = tag(TypeRef.`"type"`, ListTypeData)
 
-  override lazy val declaredVarTags: DeclaredTags = DeclaredTags(_type)
+  override lazy val declaredVarTags: DeclaredTags = declareTags(_type)
 
 }
 
@@ -418,7 +418,7 @@ object EnumTypeRef extends MultiVarType[EnumTypeRef](ns \ "EnumTypeRef", Seq(Dat
 
   val _type: Tag[TypeRef.`"type"`.type, EnumTypeData] = tag(TypeRef.`"type"`, EnumTypeData)
 
-  override lazy val declaredVarTags: DeclaredTags = DeclaredTags(_type)
+  override lazy val declaredVarTags: DeclaredTags = declareTags(_type)
 
 }
 
@@ -469,7 +469,7 @@ object PrimitiveTypeRef extends MultiVarType[PrimitiveTypeRef](ns \ "PrimitiveTy
 
   val _type: Tag[TypeRef.`"type"`.type, PrimitiveTypeData] = tag(TypeRef.`"type"`, PrimitiveTypeData)
 
-  override lazy val declaredVarTags: DeclaredTags = DeclaredTags(_type)
+  override lazy val declaredVarTags: DeclaredTags = declareTags(_type)
 
 }
 
@@ -503,7 +503,7 @@ object StringTypeRef extends MultiVarType[StringTypeRef](ns \ "StringTypeRef", S
 
   val _type: Tag[TypeRef.`"type"`.type, StringTypeData] = tag(TypeRef.`"type"`, StringTypeData)
 
-  override lazy val declaredVarTags: DeclaredTags = DeclaredTags(_type)
+  override lazy val declaredVarTags: DeclaredTags = declareTags(_type)
 
 }
 
@@ -537,7 +537,7 @@ object IntegerTypeRef extends MultiVarType[IntegerTypeRef](ns \ "IntegerTypeRef"
 
   val _type: Tag[TypeRef.`"type"`.type, IntegerTypeData] = tag(TypeRef.`"type"`, IntegerTypeData)
 
-  override lazy val declaredVarTags: DeclaredTags = DeclaredTags(_type)
+  override lazy val declaredVarTags: DeclaredTags = declareTags(_type)
 
 }
 
@@ -571,7 +571,7 @@ object LongTypeRef extends MultiVarType[LongTypeRef](ns \ "LongTypeRef", Seq(Dat
 
   val _type: Tag[TypeRef.`"type"`.type, LongTypeData] = tag(TypeRef.`"type"`, LongTypeData)
 
-  override lazy val declaredVarTags: DeclaredTags = DeclaredTags(_type)
+  override lazy val declaredVarTags: DeclaredTags = declareTags(_type)
 
 }
 
@@ -605,7 +605,7 @@ object DoubleTypeRef extends MultiVarType[DoubleTypeRef](ns \ "DoubleTypeRef", S
 
   val _type: Tag[TypeRef.`"type"`.type, DoubleTypeData] = tag(TypeRef.`"type"`, DoubleTypeData)
 
-  override lazy val declaredVarTags: DeclaredTags = DeclaredTags(_type)
+  override lazy val declaredVarTags: DeclaredTags = declareTags(_type)
 
 }
 
@@ -639,7 +639,7 @@ object BooleanTypeRef extends MultiVarType[BooleanTypeRef](ns \ "BooleanTypeRef"
 
   val _type: Tag[TypeRef.`"type"`.type, BooleanTypeData] = tag(TypeRef.`"type"`, BooleanTypeData)
 
-  override lazy val declaredVarTags: DeclaredTags = DeclaredTags(_type)
+  override lazy val declaredVarTags: DeclaredTags = declareTags(_type)
 
 }
 

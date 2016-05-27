@@ -2,7 +2,9 @@
 
 package com.sumologic.epigraph.xp
 
-import com.sumologic.epigraph.std.{EnumValueName, FieldName, QualifiedTypeName, TypeMemberName}
+import java.util.concurrent.ConcurrentHashMap
+
+import com.sumologic.epigraph.std._
 
 trait Var[+M <: Var[M]] {
 
@@ -154,34 +156,32 @@ trait BooleanDatum[+D <: BooleanDatum[D]] extends PrimitiveDatum[D] {
 
 trait Type {
 
-  type Super <: Type
+  type Super >: Null <: Type
 
-  def name: QualifiedTypeName
+  def name: TypeNameApi
 
   def declaredSupertypes: Seq[Super]
 
   def supertypes: Seq[Super] = cachedSupertypes
 
-  private lazy val cachedSupertypes: Seq[Super] = declaredSupertypes.flatMap(_.supertypes.asInstanceOf).distinct
+  private lazy val cachedSupertypes: Seq[Super] = declaredSupertypes.flatMap { st: Super =>
+    st +: st.supertypes.asInstanceOf[Seq[Super]] // TODO explain why cast is ok
+  }.distinct
 
   def isAssignableFrom(sub: Type): Boolean = sub == this || sub.supertypes.contains(this)
+
+  override def toString: String = "«" + name.string + "»(" + super.toString + ")"
 
 }
 
 
 trait MultiType[M <: Var[M]] extends Type {
 
-  override type Super <: MultiType[_ >: M]
+  override type Super >: Null <: MultiType[_ >: M]
 
   final type DeclaredTags = Seq[VarTag[M, _, _]]
 
-
-  protected object DeclaredTags {
-
-    def apply(elems: VarTag[M, _, _]*): DeclaredTags = Seq[VarTag[M, _, _]](elems: _*)
-
-  }
-
+  final protected def declareTags(elems: VarTag[M, _, _]*): DeclaredTags = Seq[VarTag[M, _, _]](elems: _*)
 
   def declaredVarTags: DeclaredTags
 
@@ -189,9 +189,39 @@ trait MultiType[M <: Var[M]] extends Type {
 
   private lazy val cachedVarTags: Seq[VarTag[_ >: M, _, _]] = (declaredVarTags ++ supertypes.flatMap(
     _.varTags
-  )).distinct
+  )).distinct // TODO correctly exclude overridden vartags?
 
-  lazy val listOf: ListType[M] = new ListType[M](name.listOf, this, supertypes.map(_.listOf), false /* todo? */)
+  lazy val listOf: ListType[M] = new ListType[M](name.listOf, this, declaredSupertypes.map(_.listOf()), false)
+
+  lazy val polymorphicListOf: ListType[M] = new ListType[M](
+    name.listOf, this, declaredSupertypes.map(_.listOf()), true
+  )
+
+  def listOf(polymorphic: Boolean = false): ListType[M] = if (polymorphic) polymorphicListOf else listOf
+
+  private lazy val maps = new ConcurrentHashMap[(DataType[_], Boolean), MapType[_, M]]
+
+  def mapBy[K <: Datum[K]](keyType: DataType[K], polymorphic: Boolean = false): MapType[K, M] = {
+    maps.computeIfAbsent((keyType, polymorphic), MapTypeFunction).asInstanceOf[MapType[K, M]]
+  }
+
+
+  object MapTypeFunction extends java.util.function.Function[(DataType[_], Boolean), MapType[_, M]] {
+
+    override def apply(kp: (DataType[_], Boolean)): MapType[_, M] = mapOfType[Null](
+      kp._1.asInstanceOf[DataType[Null]], kp._2
+    )
+
+    private def mapOfType[K <: Datum[K]](keyType: DataType[K], polymorphic: Boolean): MapType[K, M] = new MapType[K, M](
+      name.mapBy(keyType.name),
+      keyType,
+      MultiType.this,
+      declaredSupertypes.map(_.mapBy(keyType)),
+      polymorphic
+    )
+
+  }
+
 
 }
 
@@ -218,14 +248,14 @@ trait DefaultMultiType[D <: Datum[D]] extends MultiType[D] {this: DataType[D] =>
     TypeMemberName.default, this
   )
 
-  override def declaredVarTags: Seq[VarTag[D, _, _]] = Seq[VarTag[D, _, _]](default)
+  override lazy val declaredVarTags: DeclaredTags = declareTags(default)
 
 }
 
 
 trait DataType[D <: Datum[D]] extends Type with DefaultMultiType[D] {
 
-  override type Super <: DataType[_ >: D]
+  override type Super >: Null <: DataType[_ >: D]
 
   def isPolymorphic: Boolean
 
@@ -295,7 +325,7 @@ class TaggedField[D <: RecordDatum[D], M <: Var[M], N <: TypeMemberName, T <: Da
 
 
 class MapType[K <: Datum[K], M <: Var[M]](
-    override final val name: QualifiedTypeName,
+    override final val name: MapTypeNameApi,
     final val keyType: DataType[K],
     final val valueType: MultiType[M],
     override final val declaredSupertypes: Seq[MapType[K, _ >: M]] = Nil,
@@ -308,7 +338,7 @@ class MapType[K <: Datum[K], M <: Var[M]](
 
 
 class ListType[M <: Var[M]](
-    override val name: QualifiedTypeName,
+    override val name: ListTypeNameApi,
     val valueType: MultiType[M],
     override val declaredSupertypes: Seq[ListType[_ >: M]] = Nil,
     override val isPolymorphic: Boolean = false
@@ -343,7 +373,7 @@ trait EnumType[D <: EnumDatum[D]] extends DataType[D] {
 
 trait PrimitiveType[D <: PrimitiveDatum[D]] extends DataType[D] {
 
-  override type Super <: PrimitiveType[_ >: D]
+  override type Super >: Null <: PrimitiveType[_ >: D]
 
   type Native
 
