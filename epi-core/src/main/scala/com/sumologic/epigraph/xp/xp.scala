@@ -202,11 +202,11 @@ trait MultiType[M <: Var[M]] extends Type {
   private lazy val maps = new ConcurrentHashMap[(DataType[_], Boolean), MapType[_, M]]
 
   def mapBy[K <: Datum[K]](keyType: DataType[K], polymorphic: Boolean = false): MapType[K, M] = {
-    maps.computeIfAbsent((keyType, polymorphic), MapTypeFunction).asInstanceOf[MapType[K, M]]
+    maps.computeIfAbsent((keyType, polymorphic), new MapTypeFunction).asInstanceOf[MapType[K, M]]
   }
 
 
-  object MapTypeFunction extends java.util.function.Function[(DataType[_], Boolean), MapType[_, M]] {
+  private class MapTypeFunction extends java.util.function.Function[(DataType[_], Boolean), MapType[_, M]] {
 
     override def apply(kp: (DataType[_], Boolean)): MapType[_, M] = mapOfType[Null](
       kp._1.asInstanceOf[DataType[Null]], kp._2
