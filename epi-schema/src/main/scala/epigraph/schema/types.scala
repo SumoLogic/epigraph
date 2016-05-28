@@ -2,8 +2,10 @@
 
 package epigraph.schema
 
-import com.sumologic.epigraph.std
+import com.sumologic.epigraph.names
 import com.sumologic.epigraph.xp._
+import com.sumologic.epigraph.xp.data.{ListDatum, RecordDatum, Var}
+import com.sumologic.epigraph.xp.types.{MultiVarType, RecordType}
 import epigraph._
 
 /**
@@ -19,7 +21,7 @@ trait ByNameRef extends Var[ByNameRef]
 
 object ByNameRef extends MultiVarType[ByNameRef](ns \ "ByNameRef") {
 
-  val `"name"`: std.TypeMemberName = "name"
+  val `"name"`: names.TypeMemberName = "name"
 
   val _name: Tag[`"name"`.type, Name] = tag(`"name"`, Name)
 
@@ -67,7 +69,7 @@ object TypeRef extends MultiVarType[TypeRef](ns \ "TypeRef", Seq(ByNameRef)) {
 
   val _name: Tag[ByNameRef.`"name"`.type, QualifiedTypeName] = tag(ByNameRef.`"name"`, QualifiedTypeName)
 
-  val `"type"`: std.TypeMemberName = "type"
+  val `"type"`: names.TypeMemberName = "type"
 
   val _type: Tag[`"type"`.type, TypeData] = tag(`"type"`, TypeData)
 
@@ -172,7 +174,7 @@ object TypeMemberRef extends MultiVarType[TypeMemberRef](ns \ "TypeMemberRef", S
 
   val _name: Tag[`"name"`.type, TypeMemberName] = tag(`"name"`, TypeMemberName)
 
-  val `"member"`: std.TypeMemberName = "member"
+  val `"member"`: names.TypeMemberName = "member"
 
   val _member: Tag[`"member"`.type, TypeMemberData] = tag(`"member"`, TypeMemberData)
 

@@ -1,6 +1,6 @@
 /* Created by yegor on 5/12/16. */
 
-package com.sumologic.epigraph.std
+package com.sumologic.epigraph.names
 
 import com.sumologic.epigraph.gen.NamingConvention
 

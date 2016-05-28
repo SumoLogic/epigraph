@@ -3,6 +3,8 @@
 package epigraph
 
 import com.sumologic.epigraph.xp._
+import com.sumologic.epigraph.xp.data.{BooleanDatum, DoubleDatum, IntegerDatum, LongDatum, StringDatum}
+import com.sumologic.epigraph.xp.types.{BooleanType, DoubleType, IntegerType, LongType, StringType}
 
 trait StringPrimitive extends StringDatum[StringPrimitive]
 

@@ -2,10 +2,10 @@
 
 package epigraph
 
-import com.sumologic.epigraph.std
+import com.sumologic.epigraph.names
 
 package object schema {
 
-  val ns: std.QualifiedNamespaceName = epigraph.ns / "schema"
+  val ns: names.QualifiedNamespaceName = epigraph.ns / "schema"
 
 }
