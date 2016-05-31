@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.util.List;
 
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
@@ -90,12 +91,16 @@ public class SchemaPresentationUtil {
 
     if (element instanceof SchemaSupplementDef) {
       SchemaSupplementDef schemaSupplementDef = (SchemaSupplementDef) element;
-      String name = "???";
 
-      SchemaFqnTypeRef fqnTypeRef = schemaSupplementDef.getFqnTypeRef();
-      if (fqnTypeRef != null) name = fqnTypeRef.getFqn().getFqn().toString();
+      StringBuilder name = new StringBuilder();
 
-      return name;
+      List<SchemaFqnTypeRef> fqnTypeRef = schemaSupplementDef.getFqnTypeRefList();
+      for (SchemaFqnTypeRef typeRef : fqnTypeRef) {
+        if (name.length() > 0) name.append(", ");
+        name.append(typeRef.getFqn().getFqn().toString());
+      }
+
+      return "Supplement " + name;
     }
 
     return "Unknown getElement: " + element.getClass();

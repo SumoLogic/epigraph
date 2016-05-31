@@ -8,7 +8,7 @@ import com.intellij.psi.PsiElement;
 public interface SchemaRecordSupplementsDecl extends PsiElement {
 
   @NotNull
-  List<SchemaCombinedFqns> getCombinedFqnsList();
+  List<SchemaFqnTypeRef> getFqnTypeRefList();
 
   @NotNull
   PsiElement getSupplements();

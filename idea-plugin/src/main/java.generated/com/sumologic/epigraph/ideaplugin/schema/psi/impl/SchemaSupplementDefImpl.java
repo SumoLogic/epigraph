@@ -28,14 +28,8 @@ public class SchemaSupplementDefImpl extends ASTWrapperPsiElement implements Sch
 
   @Override
   @NotNull
-  public List<SchemaCombinedFqns> getCombinedFqnsList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaCombinedFqns.class);
-  }
-
-  @Override
-  @Nullable
-  public SchemaFqnTypeRef getFqnTypeRef() {
-    return findChildByClass(SchemaFqnTypeRef.class);
+  public List<SchemaFqnTypeRef> getFqnTypeRefList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaFqnTypeRef.class);
   }
 
   @Override

@@ -49,7 +49,6 @@ public class SchemaSyntaxHighlighter extends SyntaxHighlighterBase {
     keys = new HashMap<>();
     keys.put(S_ID, ID);
     keys.put(S_COMMA, COMMA);
-    keys.put(S_PLUS, PLUS);
     keys.put(S_COMMENT, LINE_COMMENT);
     keys.put(S_BLOCK_COMMENT, BLOCK_COMMENT);
     add(BRACKETS, S_BRACKET_LEFT, S_BRACKET_RIGHT);

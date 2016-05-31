@@ -48,7 +48,6 @@ public class SchemaFormattingModelBuilder implements FormattingModelBuilder {
     spacingBuilder.before(S_EQ).spaces(1);
     spacingBuilder.before(S_COMMA).spaces(0);
     spacingBuilder.after(S_COMMA).spaces(1);
-    spacingBuilder.around(S_PLUS).spaces(1);
 //    spacingBuilder.after(S_BRACKET_RIGHT).spaces(1);
     spacingBuilder.around(S_BRACKET_LEFT).spaces(0);
     spacingBuilder.before(S_BRACKET_RIGHT).spaces(0);

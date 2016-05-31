@@ -17,10 +17,6 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitCombinedFqns(@NotNull SchemaCombinedFqns o) {
-    visitPsiElement(o);
-  }
-
   public void visitCustomParam(@NotNull SchemaCustomParam o) {
     visitPsiNamedElement(o);
   }

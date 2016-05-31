@@ -18,7 +18,6 @@ public interface SchemaElementTypes {
 
   IElementType S_ANON_LIST = new SchemaElementType("S_ANON_LIST");
   IElementType S_ANON_MAP = new SchemaElementType("S_ANON_MAP");
-  IElementType S_COMBINED_FQNS = new SchemaElementType("S_COMBINED_FQNS");
   IElementType S_CUSTOM_PARAM = new SchemaElementType("S_CUSTOM_PARAM");
   IElementType S_DEFAULT_OVERRIDE = new SchemaElementType("S_DEFAULT_OVERRIDE");
   IElementType S_DEFS = new SchemaElementType("S_DEFS");
@@ -80,7 +79,6 @@ public interface SchemaElementTypes {
   IElementType S_NAMESPACE = new SchemaElementType("namespace");
   IElementType S_NODEFAULT = new SchemaElementType("nodefault");
   IElementType S_OVERRIDE = new SchemaElementType("override");
-  IElementType S_PLUS = new SchemaElementType("+");
   IElementType S_POLYMORPHIC = new SchemaElementType("polymorphic");
   IElementType S_RECORD = new SchemaElementType("record");
   IElementType S_SEMI_COLON = new SchemaElementType(";");
@@ -99,9 +97,6 @@ public interface SchemaElementTypes {
       }
       else if (type == S_ANON_MAP) {
         return new SchemaAnonMapImpl(node);
-      }
-      else if (type == S_COMBINED_FQNS) {
-        return new SchemaCombinedFqnsImpl(node);
       }
       else if (type == S_CUSTOM_PARAM) {
         return new SchemaCustomParamImpl(node);

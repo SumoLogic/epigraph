@@ -45,7 +45,6 @@
     DOT = '.'
     COMMA = ','
     EQ = '='
-    PLUS = '+' // change to '&' ?
     CURLY_LEFT = '{'
     CURLY_RIGHT = '}'
     BRACKET_LEFT = '['
@@ -156,7 +155,7 @@ recordTypeDef ::= 'abstract'? 'polymorphic'? 'record' typeName extendsDecl? meta
   elementTypeClass="com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaRecordTypeDefStubElementType"
   pin=3
 }
-recordSupplementsDecl ::= 'supplements' combinedFqns (',' combinedFqns)*
+recordSupplementsDecl ::= 'supplements' fqnTypeRef (',' fqnTypeRef)*
 recordTypeBody ::= '{' recordBodyPart* '}'
 private recordBodyPart ::= fieldDecl | customParam
 fieldDecl ::= 'override'? 'abstract'? qid ':' typeRef defaultOverride? fieldBody? {
@@ -214,7 +213,7 @@ private primitiveKind ::= 'string' | 'integer' | 'long' | 'double' | 'boolean'
 primitiveTypeBody ::= '{' primitiveBodyPart* '}'
 private primitiveBodyPart ::= customParam // | ...
 
-supplementDef ::= 'supplement' combinedFqns (',' combinedFqns)* 'with' fqnTypeRef {pin=1}
+supplementDef ::= 'supplement' fqnTypeRef (',' fqnTypeRef)* 'with' fqnTypeRef {pin=1}
 
 // todo? for multi:  // not too good, no name for artificial vartype hence no common interface
 // supplement User,Company with {
@@ -228,7 +227,7 @@ supplement FooRec, BarRec with record { // not good since supplemented records w
 }
 */
 
-combinedFqns ::= fqnTypeRef ('+' fqnTypeRef)*
+//combinedFqns ::= fqnTypeRef ('+' fqnTypeRef)*
 
 private declRecover ::= ! ('import' | 'namespace' | 'polymorphic' | 'abstract' | 'record' |
                            'map' | 'list' | 'vartype' | 'enum' | 'supplement'|

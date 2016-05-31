@@ -28,8 +28,8 @@ public class SchemaRecordSupplementsDeclImpl extends ASTWrapperPsiElement implem
 
   @Override
   @NotNull
-  public List<SchemaCombinedFqns> getCombinedFqnsList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaCombinedFqns.class);
+  public List<SchemaFqnTypeRef> getFqnTypeRefList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaFqnTypeRef.class);
   }
 
   @Override

@@ -71,7 +71,6 @@ ID=[:letter:]([:letter:]|[:digit:])*
   "."                  { return S_DOT; }
   ","                  { return S_COMMA; }
   "="                  { yybegin(DATA_VALUE); return S_EQ; }
-  "+"                  { return S_PLUS; }
   "{"                  { curlyCount++; return S_CURLY_LEFT; }
   "}"                  { curlyCount = (curlyCount == 0 ? 0 : curlyCount - 1) ; return S_CURLY_RIGHT; }
   "["                  { return S_BRACKET_LEFT; }
