@@ -37,7 +37,7 @@ public class SchemaBraceMatcher implements PairedBraceMatcher {
     if (element == null || element instanceof PsiFile) return openingBraceOffset;
 
     PsiElement parent = element.getParent();
-    if (parent == null) return openingBraceOffset;
+    if (parent == null || !parent.isValid()) return openingBraceOffset;
     TextRange range = DeclarationRangeUtil.getDeclarationRange(parent);
     return range.getStartOffset();
   }

@@ -216,7 +216,7 @@ primitiveTypeBody ::= '{' primitiveBodyPart* '}'
 private primitiveBodyPart ::= customParam // | ...
 
 supplementDef ::= 'supplement' fqnTypeRef (',' fqnTypeRef)* 'with' fqnTypeRef {
-  methods=[sourceRef supplementedRefs source supplemented toString]
+  methods=[sourceRef supplementedRefs source supplemented getPresentation toString]
   stubClass="com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaSupplementDefStub"
   elementTypeClass="com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaSupplementDefStubElementType"
   pin=1

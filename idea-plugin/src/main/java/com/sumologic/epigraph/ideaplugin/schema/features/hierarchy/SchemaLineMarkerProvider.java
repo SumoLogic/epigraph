@@ -4,11 +4,14 @@ import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerProvider;
 import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
+import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.HierarchyCache;
 import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.InheritedMembers;
-import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.SchemaDirectTypeParentsSearch;
+import com.sumologic.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
 import com.sumologic.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
 import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaFieldDecl;
+import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaSupplementDef;
 import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaTypeDef;
 import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaVarTypeMemberDecl;
 import org.jetbrains.annotations.NotNull;
@@ -31,7 +34,7 @@ public class SchemaLineMarkerProvider extends RelatedItemLineMarkerProvider {
 
   @Override
   protected void collectNavigationMarkers(@NotNull PsiElement element, Collection<? super RelatedItemLineMarkerInfo> result) {
-
+    Project project = element.getProject();
     if (element.getNode().getElementType() != S_ID) return;
 
     PsiElement parent = element.getParent();
@@ -39,21 +42,42 @@ public class SchemaLineMarkerProvider extends RelatedItemLineMarkerProvider {
     if (parent instanceof SchemaTypeDef) {
       SchemaTypeDef typeDef = (SchemaTypeDef) parent;
 
-      Collection<SchemaTypeDef> supplementedBy = SchemaDirectTypeParentsSearch.search(
-          new SchemaDirectTypeParentsSearch.SearchParameters(
-              typeDef, false, true, true
-          )
-      ).findAll();
+      List<SchemaSupplementDef> supplements = SchemaIndexUtil.findSupplementsBySupplemented(project, typeDef);
 
-      if (!supplementedBy.isEmpty()) {
+      if (!supplements.isEmpty()) {
         NavigationGutterIconBuilder<PsiElement> builder =
-            NavigationGutterIconBuilder.create(SchemaPresentationUtil.supplementedGutterIcon())
-                .setTargets(supplementedBy)
-                .setAlignment(GutterIconRenderer.Alignment.LEFT)
+            NavigationGutterIconBuilder.create(SchemaPresentationUtil.SUPPLEMENTS_GUTTER_ICON)
+                .setTargets(supplements)
+                .setAlignment(GutterIconRenderer.Alignment.CENTER)
                 .setTooltipText("Navigate to supplement");
 
         result.add(builder.createLineMarkerInfo(element));
       }
+
+      HierarchyCache hierarchyCache = HierarchyCache.getHierarchyCache(project);
+
+      Collection<SchemaTypeDef> parents = hierarchyCache.getDirectTypeParents(typeDef);
+      if (!parents.isEmpty()) {
+        NavigationGutterIconBuilder<PsiElement> builder =
+            NavigationGutterIconBuilder.create(SchemaPresentationUtil.PARENT_TYPES_GUTTER_ICON)
+                .setTargets(parents)
+                .setAlignment(GutterIconRenderer.Alignment.LEFT)
+                .setTooltipText("Navigate to parent");
+
+        result.add(builder.createLineMarkerInfo(element));
+      }
+
+      Collection<SchemaTypeDef> children = hierarchyCache.getDirectTypeInheritors(typeDef);
+      if (!children.isEmpty()) {
+        NavigationGutterIconBuilder<PsiElement> builder =
+            NavigationGutterIconBuilder.create(SchemaPresentationUtil.CHILD_TYPES_GUTTER_ICON)
+                .setTargets(children)
+                .setAlignment(GutterIconRenderer.Alignment.RIGHT)
+                .setTooltipText("Navigate to child");
+
+        result.add(builder.createLineMarkerInfo(element));
+      }
+
     }
 
     if (parent instanceof SchemaFieldDecl) {
@@ -62,7 +86,7 @@ public class SchemaLineMarkerProvider extends RelatedItemLineMarkerProvider {
       List<SchemaFieldDecl> overridenFields = InheritedMembers.getOverridenFields(fieldDecl);
       if (!overridenFields.isEmpty()) {
         NavigationGutterIconBuilder<PsiElement> builder =
-            NavigationGutterIconBuilder.create(SchemaPresentationUtil.overridingFieldGutterIcon())
+            NavigationGutterIconBuilder.create(SchemaPresentationUtil.OVERRIDING_FIELD_GUTTER_ICON)
                 .setTargets(overridenFields)
                 .setAlignment(GutterIconRenderer.Alignment.LEFT)
                 .setTooltipText("Navigate to parent field");
@@ -73,7 +97,7 @@ public class SchemaLineMarkerProvider extends RelatedItemLineMarkerProvider {
       List<SchemaFieldDecl> overridingFields = InheritedMembers.getOverridingFields(fieldDecl);
       if (!overridingFields.isEmpty()) {
         NavigationGutterIconBuilder<PsiElement> builder =
-            NavigationGutterIconBuilder.create(SchemaPresentationUtil.overriddenFieldGutterIcon())
+            NavigationGutterIconBuilder.create(SchemaPresentationUtil.OVERRIDEN_FIELD_GUTTER_ICON)
                 .setTargets(overridingFields)
                 .setAlignment(GutterIconRenderer.Alignment.RIGHT)
                 .setTooltipText("Navigate to overriding field");
@@ -88,7 +112,7 @@ public class SchemaLineMarkerProvider extends RelatedItemLineMarkerProvider {
       List<SchemaVarTypeMemberDecl> overridenVarTypeMembers = InheritedMembers.getOverridenTags(varTypeMemberDecl);
       if (!overridenVarTypeMembers.isEmpty()) {
         NavigationGutterIconBuilder<PsiElement> builder =
-            NavigationGutterIconBuilder.create(SchemaPresentationUtil.overridingTagGutterIcon())
+            NavigationGutterIconBuilder.create(SchemaPresentationUtil.OVERRIDING_TAG_GUTTER_ICON)
                 .setTargets(overridenVarTypeMembers)
                 .setAlignment(GutterIconRenderer.Alignment.LEFT)
                 .setTooltipText("Navigate to parent tag");
@@ -99,7 +123,7 @@ public class SchemaLineMarkerProvider extends RelatedItemLineMarkerProvider {
       List<SchemaVarTypeMemberDecl> overridingVarTypeMembers = InheritedMembers.getOverridingTags(varTypeMemberDecl);
       if (!overridingVarTypeMembers.isEmpty()) {
         NavigationGutterIconBuilder<PsiElement> builder =
-            NavigationGutterIconBuilder.create(SchemaPresentationUtil.overriddenTagGutterIcon())
+            NavigationGutterIconBuilder.create(SchemaPresentationUtil.OVERRIDEN_TAG_GUTTER_ICON)
                 .setTargets(overridingVarTypeMembers)
                 .setAlignment(GutterIconRenderer.Alignment.RIGHT)
                 .setTooltipText("Navigate to overriding tag");

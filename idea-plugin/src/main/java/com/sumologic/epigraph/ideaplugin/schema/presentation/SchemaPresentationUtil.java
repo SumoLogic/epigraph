@@ -18,6 +18,18 @@ import java.util.List;
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
 public class SchemaPresentationUtil {
+  // TODO own icons!
+  public static final Icon SCHEMA_FILE_ICON = AllIcons.FileTypes.Properties;
+
+  public static final Icon PARENT_TYPES_GUTTER_ICON = AllIcons.Gutter.OverridingMethod;
+  public static final Icon CHILD_TYPES_GUTTER_ICON = AllIcons.Gutter.OverridenMethod;
+  public static final Icon SUPPLEMENTS_GUTTER_ICON = AllIcons.Gutter.ExtAnnotation;
+
+  public static final Icon OVERRIDEN_FIELD_GUTTER_ICON = AllIcons.Gutter.OverridenMethod;
+  public static final Icon OVERRIDING_FIELD_GUTTER_ICON = AllIcons.Gutter.OverridingMethod;
+  public static final Icon OVERRIDEN_TAG_GUTTER_ICON = AllIcons.Gutter.ImplementedMethod;
+  public static final Icon OVERRIDING_TAG_GUTTER_ICON = AllIcons.Gutter.ImplementingMethod;
+
   @Nullable
   public static String getName(@NotNull PsiNamedElement element, boolean qualified) {
     String shortName = element.getName();
@@ -31,33 +43,9 @@ public class SchemaPresentationUtil {
     } else return shortName;
   }
 
-  public static Icon schemaFileIcon() {
-    return AllIcons.FileTypes.Properties; // TODO our own!
-  }
-
-  public static Icon supplementedGutterIcon() {
-    return AllIcons.Gutter.ExtAnnotation; // TODO
-  }
-
-  public static Icon overriddenFieldGutterIcon() {
-    return AllIcons.Gutter.OverridenMethod; // TODO
-  }
-
-  public static Icon overridingFieldGutterIcon() {
-    return AllIcons.Gutter.OverridingMethod; // TODO
-  }
-
-  public static Icon overriddenTagGutterIcon() {
-    return AllIcons.Gutter.ImplementedMethod; // TODO
-  }
-
-  public static Icon overridingTagGutterIcon() {
-    return AllIcons.Gutter.ImplementingMethod; // TODO
-  }
-
   @Nullable
   public static Icon getIcon(@NotNull PsiElement element) {
-    if (element instanceof SchemaFile) return schemaFileIcon();
+    if (element instanceof SchemaFile) return SCHEMA_FILE_ICON;
 
     if (element instanceof SchemaRecordTypeDef) return AllIcons.Nodes.Class;
     if (element instanceof SchemaEnumTypeDef) return AllIcons.Nodes.Enum;
@@ -78,7 +66,7 @@ public class SchemaPresentationUtil {
   }
 
   @NotNull
-  static String getPresentableText(@NotNull PsiElement element) {
+  static String getPresentableText(@NotNull PsiElement element, boolean structureView) {
     if (element instanceof SchemaFile) {
       return ((SchemaFile) element).getName();
     }
@@ -96,21 +84,29 @@ public class SchemaPresentationUtil {
     }
 
     if (element instanceof SchemaFieldDecl) {
+      SchemaFieldDecl schemaFieldDecl = (SchemaFieldDecl) element;
+      String name = schemaFieldDecl.getId().getText();
+
+      if (structureView) return name;
+
       SchemaRecordTypeDef recordTypeDef = PsiTreeUtil.getParentOfType(element, SchemaRecordTypeDef.class);
       String typeName = recordTypeDef == null ? null : recordTypeDef.getName();
       typeName = typeName == null ? "???" : typeName;
 
-      SchemaFieldDecl schemaFieldDecl = (SchemaFieldDecl) element;
-      return typeName + '.' + schemaFieldDecl.getId().getText();
+      return typeName + '.' + name;
     }
 
     if (element instanceof SchemaVarTypeMemberDecl) {
+      SchemaVarTypeMemberDecl varTypeMemberDecl = (SchemaVarTypeMemberDecl) element;
+      String name = varTypeMemberDecl.getId().getText();
+
+      if (structureView) return name;
+
       SchemaVarTypeDef varTypeDef = PsiTreeUtil.getParentOfType(element, SchemaVarTypeDef.class);
       String varTypeName = varTypeDef == null ? null : varTypeDef.getName();
       varTypeName = varTypeName == null ? "???" : varTypeName;
 
-      SchemaVarTypeMemberDecl varTypeMemberDecl = (SchemaVarTypeMemberDecl) element;
-      return varTypeName + '.' + varTypeMemberDecl.getId().getText();
+      return varTypeName + '.' + name;
     }
 
     if (element instanceof SchemaEnumMemberDecl) {
@@ -123,21 +119,24 @@ public class SchemaPresentationUtil {
 
       StringBuilder name = new StringBuilder();
 
-      List<SchemaFqnTypeRef> fqnTypeRef = schemaSupplementDef.getFqnTypeRefList();
+      List<SchemaFqnTypeRef> fqnTypeRef = schemaSupplementDef.supplementedRefs();
       for (SchemaFqnTypeRef typeRef : fqnTypeRef) {
         if (name.length() > 0) name.append(", ");
         name.append(typeRef.getFqn().getFqn().toString());
       }
+      name.append(" with ");
+      SchemaTypeDef source = schemaSupplementDef.source();
+      name.append(source == null ? "???" : source.getName());
 
-      return "Supplement " + name;
+      return "supplement " + name;
     }
 
     return "Unknown getElement: " + element.getClass();
   }
 
   @NotNull
-  public static ItemPresentation getPresentation(@NotNull PsiElement element) {
-    final String presentableTest = getPresentableText(element);
+  public static ItemPresentation getPresentation(@NotNull PsiElement element, boolean structureView) {
+    final String presentableTest = getPresentableText(element, structureView);
     final String location = getNamespaceString(element);
     final Icon icon = getIcon(element);
 

@@ -39,7 +39,7 @@ public abstract class SchemaTypeDefImplBase<S extends SchemaTypeDefStubBase<T>, 
   }
 
   public ItemPresentation getPresentation() {
-    return SchemaPresentationUtil.getPresentation(this);
+    return SchemaPresentationUtil.getPresentation(this, false);
   }
 
   @Override

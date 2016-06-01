@@ -39,6 +39,6 @@ public class SchemaFileType extends LanguageFileType {
   @Nullable
   @Override
   public Icon getIcon() {
-    return SchemaPresentationUtil.schemaFileIcon();
+    return SchemaPresentationUtil.SCHEMA_FILE_ICON;
   }
 }

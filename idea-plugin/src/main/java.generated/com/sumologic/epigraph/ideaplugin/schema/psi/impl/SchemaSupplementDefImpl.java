@@ -11,6 +11,7 @@ import static com.sumologic.epigraph.ideaplugin.schema.lexer.SchemaElementTypes.
 import com.intellij.extapi.psi.StubBasedPsiElementBase;
 import com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaSupplementDefStub;
 import com.sumologic.epigraph.ideaplugin.schema.psi.*;
+import com.intellij.navigation.ItemPresentation;
 import com.intellij.psi.stubs.IStubElementType;
 
 public class SchemaSupplementDefImpl extends StubBasedPsiElementBase<SchemaSupplementDefStub> implements SchemaSupplementDef {
@@ -68,6 +69,11 @@ public class SchemaSupplementDefImpl extends StubBasedPsiElementBase<SchemaSuppl
   @NotNull
   public List<SchemaTypeDef> supplemented() {
     return SchemaPsiImplUtil.supplemented(this);
+  }
+
+  @NotNull
+  public ItemPresentation getPresentation() {
+    return SchemaPsiImplUtil.getPresentation(this);
   }
 
   @NotNull

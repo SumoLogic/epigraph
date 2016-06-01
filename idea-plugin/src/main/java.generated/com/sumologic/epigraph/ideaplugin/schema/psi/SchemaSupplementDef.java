@@ -6,6 +6,7 @@ import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.StubBasedPsiElement;
 import com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaSupplementDefStub;
+import com.intellij.navigation.ItemPresentation;
 
 public interface SchemaSupplementDef extends PsiElement, StubBasedPsiElement<SchemaSupplementDefStub> {
 
@@ -29,6 +30,9 @@ public interface SchemaSupplementDef extends PsiElement, StubBasedPsiElement<Sch
 
   @NotNull
   List<SchemaTypeDef> supplemented();
+
+  @NotNull
+  ItemPresentation getPresentation();
 
   @NotNull
   String toString();

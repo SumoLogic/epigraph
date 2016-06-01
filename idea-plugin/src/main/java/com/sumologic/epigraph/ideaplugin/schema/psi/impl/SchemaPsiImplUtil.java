@@ -207,6 +207,11 @@ public class SchemaPsiImplUtil {
     return resolveTypeRefs(supplementedRefs(supplementDef));
   }
 
+  @Contract(pure = true)
+  @NotNull
+  public static ItemPresentation getPresentation(@NotNull SchemaSupplementDef supplementDef) {
+    return SchemaPresentationUtil.getPresentation(supplementDef, false);
+  }
 
 //  public static PsiElement setName(SchemaFqnTypeRef fqnTypeRef, String name) {
 //    SchemaFqn oldFqn = fqnTypeRef.getFqn();
@@ -323,7 +328,7 @@ public class SchemaPsiImplUtil {
   @Contract(pure = true)
   @NotNull
   public static ItemPresentation getPresentation(@NotNull SchemaFieldDecl fieldDecl) {
-    return SchemaPresentationUtil.getPresentation(fieldDecl);
+    return SchemaPresentationUtil.getPresentation(fieldDecl, false);
   }
 
   // varTypeMember decl
@@ -349,7 +354,7 @@ public class SchemaPsiImplUtil {
   @Contract(pure = true)
   @NotNull
   public static ItemPresentation getPresentation(@NotNull SchemaVarTypeMemberDecl varTypeMemberDecl) {
-    return SchemaPresentationUtil.getPresentation(varTypeMemberDecl);
+    return SchemaPresentationUtil.getPresentation(varTypeMemberDecl, false);
   }
 
   // enumMember decl

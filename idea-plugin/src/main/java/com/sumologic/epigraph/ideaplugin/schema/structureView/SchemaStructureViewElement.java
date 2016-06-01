@@ -31,7 +31,7 @@ class SchemaStructureViewElement implements StructureViewTreeElement {
   @NotNull
   @Override
   public ItemPresentation getPresentation() {
-    ItemPresentation presentation = SchemaPresentationUtil.getPresentation(element);
+    ItemPresentation presentation = SchemaPresentationUtil.getPresentation(element, true);
     // remove location
     return new SchemaPresentationUtil.StaticItemPresentation(
         presentation.getPresentableText(),
