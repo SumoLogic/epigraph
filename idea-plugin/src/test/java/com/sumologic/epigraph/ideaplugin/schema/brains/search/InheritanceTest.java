@@ -10,14 +10,14 @@ import java.util.stream.Collectors;
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public class InheritorsSearchTest extends LightCodeInsightFixtureTestCase {
+public class InheritanceTest extends LightCodeInsightFixtureTestCase {
   @Override
   protected String getTestDataPath() {
     return "src/test/resources/testData/brains/search";
   }
 
   public void testDirectInheritors() {
-    myFixture.configureByFile("InheritorsSearch.es");
+    myFixture.configureByFile("InheritanceSearch.es");
     SchemaTypeDef typeDef = findTypeDef("R1");
     Collection<SchemaTypeDef> directInheritors = SchemaDirectTypeInheritorsSearch.search(typeDef).findAll();
     assertEquals(1, directInheritors.size());
@@ -26,17 +26,17 @@ public class InheritorsSearchTest extends LightCodeInsightFixtureTestCase {
   }
 
   public void testInheritors() {
-    myFixture.configureByFile("InheritorsSearch.es");
+    myFixture.configureByFile("InheritanceSearch.es");
     SchemaTypeDef typeDef = findTypeDef("R1");
     Collection<SchemaTypeDef> inheritors = SchemaTypeInheritorsSearch.search(typeDef).findAll();
-    checkResults(inheritors, "R2", "R3");
+    checkResults(inheritors, "R2", "R3", "R4");
   }
 
   public void testSupplements() {
-    myFixture.configureByFile("InheritorsSearch2.es");
+    myFixture.configureByFile("InheritanceSearch2.es");
     SchemaTypeDef r4 = findTypeDef("R4");
     Collection<SchemaTypeDef> inheritors = SchemaTypeInheritorsSearch.search(r4).findAll();
-    checkResults(inheritors, "R1", "R2", "R3");
+    checkUnorderedResults(inheritors, "R3", "R2", "R1"); // Do we need ordering for transitive inheritors?
 
     SchemaTypeDef r1 = findTypeDef("R1");
     Collection<SchemaTypeDef> parents = SchemaDirectTypeParentsSearch.search(r1).findAll();
@@ -44,12 +44,33 @@ public class InheritorsSearchTest extends LightCodeInsightFixtureTestCase {
   }
 
   public void testDirectParents() {
-    myFixture.configureByFile("InheritorsSearch.es");
+    myFixture.configureByFile("InheritanceSearch.es");
     SchemaTypeDef typeDef = findTypeDef("R2");
     Collection<SchemaTypeDef> directInheritors = SchemaDirectTypeParentsSearch.search(typeDef).findAll();
     assertEquals(1, directInheritors.size());
     SchemaTypeDef r2 = directInheritors.iterator().next();
     assertEquals("R1", r2.getName());
+  }
+
+  public void testParents() {
+    myFixture.configureByFile("InheritanceSearch.es");
+    SchemaTypeDef r3 = findTypeDef("R4");
+    Collection<SchemaTypeDef> parents = SchemaTypeParentsSearch.search(r3).findAll();
+    checkResults(parents, "R3", "R2", "R1");
+  }
+
+  public void testCircularInheritors() {
+    myFixture.configureByFile("Circular.es");
+    SchemaTypeDef typeDef = findTypeDef("R1");
+    Collection<SchemaTypeDef> inheritors = SchemaTypeInheritorsSearch.search(typeDef).findAll();
+    checkResults(inheritors, "R2", "R3", "R1");
+  }
+
+  public void testCircularParents() {
+    myFixture.configureByFile("Circular.es");
+    SchemaTypeDef typeDef = findTypeDef("R1");
+    Collection<SchemaTypeDef> inheritors = SchemaTypeParentsSearch.search(typeDef).findAll();
+    checkResults(inheritors, "R3", "R2", "R1");
   }
 
   private SchemaTypeDef findTypeDef(String name) {
@@ -59,6 +80,12 @@ public class InheritorsSearchTest extends LightCodeInsightFixtureTestCase {
   }
 
   private void checkResults(Collection<SchemaTypeDef> result, String... expected) {
+    List<String> names = result.stream().map(SchemaTypeDef::getName).collect(Collectors.toList());
+    List<String> expectedNames = Arrays.asList(expected);
+    assertEquals(expectedNames, names);
+  }
+
+  private void checkUnorderedResults(Collection<SchemaTypeDef> result, String... expected) {
     Set<String> names = result.stream().map(SchemaTypeDef::getName).collect(Collectors.toSet());
     Set<String> expectedNames = new HashSet<>(Arrays.asList(expected));
     assertEquals(expectedNames, names);
