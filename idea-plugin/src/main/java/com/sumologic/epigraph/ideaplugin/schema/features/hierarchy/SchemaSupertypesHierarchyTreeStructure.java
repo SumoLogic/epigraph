@@ -5,7 +5,7 @@ import com.intellij.ide.hierarchy.HierarchyTreeStructure;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.ArrayUtil;
-import com.sumologic.epigraph.ideaplugin.schema.brains.search.SchemaDirectTypeParentsSearch;
+import com.sumologic.epigraph.ideaplugin.schema.brains.cache.HierarchyCache;
 import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaTypeDef;
 import org.jetbrains.annotations.NotNull;
 
@@ -25,7 +25,8 @@ public class SchemaSupertypesHierarchyTreeStructure extends HierarchyTreeStructu
     final PsiElement element = descriptor.getPsiElement();
     if (element instanceof SchemaTypeDef) {
       SchemaTypeDef typeDef = (SchemaTypeDef) element;
-      Collection<SchemaTypeDef> parents = SchemaDirectTypeParentsSearch.search(typeDef).findAll();
+//      Collection<SchemaTypeDef> parents = SchemaDirectTypeParentsSearch.search(typeDef).findAll();
+      Collection<SchemaTypeDef> parents = HierarchyCache.getHierarchyCache(myProject).getDirectTypeParents(typeDef);
       if (parents.isEmpty()) return ArrayUtil.EMPTY_OBJECT_ARRAY;
 
       return parents.stream()

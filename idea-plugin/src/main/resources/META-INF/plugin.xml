@@ -87,7 +87,7 @@
 
   <project-components>
     <component>
-      <implementation-class>com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.HierarchyCache</implementation-class>
+      <implementation-class>com.sumologic.epigraph.ideaplugin.schema.brains.cache.HierarchyCache</implementation-class>
     </component>
   </project-components>
 
