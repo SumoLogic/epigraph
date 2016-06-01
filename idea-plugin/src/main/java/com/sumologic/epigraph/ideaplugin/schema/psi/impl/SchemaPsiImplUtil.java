@@ -1,21 +1,25 @@
 package com.sumologic.epigraph.ideaplugin.schema.psi.impl;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.TokenType;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.sumologic.epigraph.ideaplugin.schema.brains.Fqn;
 import com.sumologic.epigraph.ideaplugin.schema.brains.ReferenceFactory;
 import com.sumologic.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
 import com.sumologic.epigraph.ideaplugin.schema.psi.*;
-import com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaNamespaceDeclStub;
+import com.sumologic.epigraph.ideaplugin.schema.psi.stubs.*;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
@@ -86,7 +90,37 @@ public class SchemaPsiImplUtil {
     throw new IllegalStateException("Unknown type def: " + typeDef);
   }
 
-  // supplement --------------------------------------------
+  // record --------------------------------------------
+
+  @Contract(pure = true)
+  @NotNull
+  public static List<SchemaTypeDef> supplemented(@NotNull SchemaRecordTypeDef recordTypeDef) {
+    SchemaRecordTypeDefStub stub = recordTypeDef.getStub();
+    if (stub != null) {
+      List<SerializedFqnTypeRef> supplementedTypeRefs = stub.getSupplementedTypeRefs();
+      return resolveSerializedTypeRefs(supplementedTypeRefs, recordTypeDef.getProject());
+    }
+
+    SchemaSupplementsDecl supplementsDecl = recordTypeDef.getSupplementsDecl();
+    if (supplementsDecl == null) return Collections.emptyList();
+    return resolveTypeRefs(supplementsDecl.getFqnTypeRefList());
+  }
+  
+  // var --------------------------------------------
+
+  @Contract(pure = true)
+  @NotNull
+  public static List<SchemaTypeDef> supplemented(@NotNull SchemaVarTypeDef varTypeDef) {
+    SchemaVarTypeDefStub stub = varTypeDef.getStub();
+    if (stub != null) {
+      List<SerializedFqnTypeRef> supplementedTypeRefs = stub.getSupplementedTypeRefs();
+      return resolveSerializedTypeRefs(supplementedTypeRefs, varTypeDef.getProject());
+    }
+
+    SchemaSupplementsDecl supplementsDecl = varTypeDef.getSupplementsDecl();
+    if (supplementsDecl == null) return Collections.emptyList();
+    return resolveTypeRefs(supplementsDecl.getFqnTypeRefList());
+  }
 
 //  @Nullable
 //  public static String getName(@NotNull SchemaSupplementDef schemaSupplementDef) {
@@ -103,6 +137,75 @@ public class SchemaPsiImplUtil {
     if (fqnSegmentList.isEmpty()) return null;
     return fqnSegmentList.get(fqnSegmentList.size() - 1).getReference();
   }
+
+  @Contract(pure = true)
+  @Nullable
+  public static SchemaTypeDef resolve(@NotNull SchemaFqnTypeRef typeRef) {
+    PsiReference reference = getReference(typeRef);
+    if (reference == null) return null;
+    PsiElement element = reference.resolve();
+    if (element instanceof SchemaTypeDef) return (SchemaTypeDef) element;
+    return null;
+  }
+
+
+  // supplement --------------------------------------------
+
+  // can't use SchemaSupplementDef::getFqnTypeRefList as it will include both source and all supplemented
+
+  @Contract(pure = true)
+  @Nullable
+  public static SchemaFqnTypeRef sourceRef(@NotNull SchemaSupplementDef supplementDef) {
+    PsiElement with = supplementDef.getWith();
+    if (with == null) return null;
+    return PsiTreeUtil.getNextSiblingOfType(with, SchemaFqnTypeRef.class);
+  }
+
+  @Contract(pure = true)
+  @NotNull
+  public static List<SchemaFqnTypeRef> supplementedRefs(@NotNull SchemaSupplementDef supplementDef) {
+    PsiElement with = supplementDef.getWith();
+    if (with == null) return Collections.emptyList();
+
+    SchemaFqnTypeRef ref = PsiTreeUtil.getPrevSiblingOfType(with, SchemaFqnTypeRef.class);
+    if (ref == null) return Collections.emptyList();
+
+    List<SchemaFqnTypeRef> result = new ArrayList<>();
+    while (ref != null) {
+      result.add(ref);
+      ref = PsiTreeUtil.getPrevSiblingOfType(ref, SchemaFqnTypeRef.class);
+    }
+
+    return result;
+  }
+
+  @Contract(pure = true)
+  @Nullable
+  public static SchemaTypeDef source(@NotNull SchemaSupplementDef supplementDef) {
+    SchemaSupplementDefStub stub = supplementDef.getStub();
+    if (stub != null) {
+      SerializedFqnTypeRef sourceTypeRef = stub.getSourceTypeRef();
+      if (sourceTypeRef == null) return null;
+      return sourceTypeRef.resolveTypeDef(supplementDef.getProject());
+    }
+
+    SchemaFqnTypeRef ref = sourceRef(supplementDef);
+    if (ref == null) return null;
+    return ref.resolve();
+  }
+
+  @Contract(pure = true)
+  @NotNull
+  public static List<SchemaTypeDef> supplemented(@NotNull SchemaSupplementDef supplementDef) {
+    SchemaSupplementDefStub stub = supplementDef.getStub();
+    if (stub != null) {
+      List<SerializedFqnTypeRef> supplementedTypeRefs = stub.getSupplementedTypeRefs();
+      return resolveSerializedTypeRefs(supplementedTypeRefs, supplementDef.getProject());
+    }
+
+    return resolveTypeRefs(supplementedRefs(supplementDef));
+  }
+
 
 //  public static PsiElement setName(SchemaFqnTypeRef fqnTypeRef, String name) {
 //    SchemaFqn oldFqn = fqnTypeRef.getFqn();
@@ -285,6 +388,21 @@ public class SchemaPsiImplUtil {
   }
 
   /////////////
+
+  private static List<SchemaTypeDef> resolveTypeRefs(List<SchemaFqnTypeRef> refs) {
+    return refs.stream()
+        .map(SchemaFqnTypeRef::resolve)
+        .filter(e -> e != null)
+        .collect(Collectors.toList());
+  }
+
+  private static List<SchemaTypeDef> resolveSerializedTypeRefs(List<SerializedFqnTypeRef> refs, Project project) {
+    if (refs == null) return Collections.emptyList();
+    return refs.stream()
+        .map(tr -> tr.resolveTypeDef(project))
+        .filter(e -> e != null)
+        .collect(Collectors.toList());
+  }
 
   @Contract(value = "null -> null", pure = true)
   private static <T> T getLast(List<T> list) {

@@ -11,14 +11,14 @@ import static com.sumologic.epigraph.ideaplugin.schema.lexer.SchemaElementTypes.
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.sumologic.epigraph.ideaplugin.schema.psi.*;
 
-public class SchemaRecordSupplementsDeclImpl extends ASTWrapperPsiElement implements SchemaRecordSupplementsDecl {
+public class SchemaSupplementsDeclImpl extends ASTWrapperPsiElement implements SchemaSupplementsDecl {
 
-  public SchemaRecordSupplementsDeclImpl(ASTNode node) {
+  public SchemaSupplementsDeclImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull SchemaVisitor visitor) {
-    visitor.visitRecordSupplementsDecl(this);
+    visitor.visitSupplementsDecl(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {

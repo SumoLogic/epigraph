@@ -180,10 +180,10 @@ public class SchemaCompletionContributor extends CompletionContributor {
         SchemaTypeDef schemaTypeDef = (SchemaTypeDef) element;
         if (schemaTypeDef.getMetaDecl() != null || schemaTypeDef.getExtendsDecl() != null) return true;
         if (schemaTypeDef instanceof SchemaRecordTypeDef) {
-          return ((SchemaRecordTypeDef) schemaTypeDef).getRecordSupplementsDecl() != null;
+          return ((SchemaRecordTypeDef) schemaTypeDef).getSupplementsDecl() != null;
         }
         if (schemaTypeDef instanceof SchemaVarTypeDef) {
-          return ((SchemaVarTypeDef) schemaTypeDef).getVarTypeSupplementsDecl() != null;
+          return ((SchemaVarTypeDef) schemaTypeDef).getSupplementsDecl() != null;
         }
       }
       return false;

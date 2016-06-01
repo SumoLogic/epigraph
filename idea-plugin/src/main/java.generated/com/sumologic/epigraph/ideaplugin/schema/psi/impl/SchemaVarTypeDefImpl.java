@@ -44,14 +44,14 @@ public class SchemaVarTypeDefImpl extends SchemaVarTypeDefImplBase implements Sc
 
   @Override
   @Nullable
-  public SchemaVarTypeBody getVarTypeBody() {
-    return findChildByClass(SchemaVarTypeBody.class);
+  public SchemaSupplementsDecl getSupplementsDecl() {
+    return findChildByClass(SchemaSupplementsDecl.class);
   }
 
   @Override
   @Nullable
-  public SchemaVarTypeSupplementsDecl getVarTypeSupplementsDecl() {
-    return findChildByClass(SchemaVarTypeSupplementsDecl.class);
+  public SchemaVarTypeBody getVarTypeBody() {
+    return findChildByClass(SchemaVarTypeBody.class);
   }
 
   @Override
@@ -64,6 +64,11 @@ public class SchemaVarTypeDefImpl extends SchemaVarTypeDefImplBase implements Sc
   @Nullable
   public PsiElement getId() {
     return findChildByType(S_ID);
+  }
+
+  @NotNull
+  public List<SchemaTypeDef> supplemented() {
+    return SchemaPsiImplUtil.supplemented(this);
   }
 
 }

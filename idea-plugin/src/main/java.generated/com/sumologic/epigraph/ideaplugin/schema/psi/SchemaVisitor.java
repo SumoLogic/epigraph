@@ -103,10 +103,6 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitTypeDef(o);
   }
 
-  public void visitRecordSupplementsDecl(@NotNull SchemaRecordSupplementsDecl o) {
-    visitPsiElement(o);
-  }
-
   public void visitRecordTypeBody(@NotNull SchemaRecordTypeBody o) {
     visitCustomParamsHolder(o);
   }
@@ -120,6 +116,10 @@ public class SchemaVisitor extends PsiElementVisitor {
   }
 
   public void visitSupplementDef(@NotNull SchemaSupplementDef o) {
+    visitPsiElement(o);
+  }
+
+  public void visitSupplementsDecl(@NotNull SchemaSupplementsDecl o) {
     visitPsiElement(o);
   }
 
@@ -142,10 +142,6 @@ public class SchemaVisitor extends PsiElementVisitor {
   public void visitVarTypeMemberDecl(@NotNull SchemaVarTypeMemberDecl o) {
     visitCustomParamsHolder(o);
     // visitPsiNamedElement(o);
-  }
-
-  public void visitVarTypeSupplementsDecl(@NotNull SchemaVarTypeSupplementsDecl o) {
-    visitPsiElement(o);
   }
 
   public void visitCustomParamsHolder(@NotNull CustomParamsHolder o) {

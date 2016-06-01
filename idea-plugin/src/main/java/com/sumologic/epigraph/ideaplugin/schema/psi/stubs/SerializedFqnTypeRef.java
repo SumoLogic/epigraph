@@ -1,5 +1,7 @@
 package com.sumologic.epigraph.ideaplugin.schema.psi.stubs;
 
+import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.stubs.StubInputStream;
 import com.intellij.psi.stubs.StubOutputStream;
 import com.intellij.util.io.StringRef;
@@ -8,6 +10,7 @@ import com.sumologic.epigraph.ideaplugin.schema.brains.NamespaceManager;
 import com.sumologic.epigraph.ideaplugin.schema.brains.SchemaFqnReference;
 import com.sumologic.epigraph.ideaplugin.schema.brains.SchemaFqnReferenceResolver;
 import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaFqnTypeRef;
+import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaTypeDef;
 import com.sumologic.epigraph.ideaplugin.schema.psi.impl.SchemaPsiImplUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -48,6 +51,31 @@ public final class SerializedFqnTypeRef {
   @Nullable
   public Set<Fqn> getNamespacesToSearch() {
     return namespacesToSearch;
+  }
+
+  @Nullable
+  public PsiElement resolve(@NotNull Project project) {
+    SchemaFqnReferenceResolver resolver = new SchemaFqnReferenceResolver(getNamespacesToSearch(), getShortName());
+    return resolver.resolve(project);
+  }
+
+  @Nullable
+  public SchemaTypeDef resolveTypeDef(@NotNull Project project) {
+    PsiElement element = resolve(project);
+    if (element instanceof SchemaTypeDef) return (SchemaTypeDef) element;
+    return null;
+  }
+
+  public static void serializeNullable(@Nullable SerializedFqnTypeRef ref, @NotNull StubOutputStream stream) throws IOException {
+    stream.writeBoolean(ref != null);
+    if (ref != null) ref.serialize(stream);
+  }
+
+  @Nullable
+  public static SerializedFqnTypeRef deserializeNullable(@NotNull StubInputStream stream) throws IOException {
+    boolean b = stream.readBoolean();
+    if (!b) return null;
+    return deserialize(stream);
   }
 
   public void serialize(@NotNull StubOutputStream stream) throws IOException {

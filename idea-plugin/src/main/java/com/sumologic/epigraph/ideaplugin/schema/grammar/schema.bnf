@@ -105,7 +105,7 @@ fqn ::= fqnSegment ('.' fqnSegment)* { methods=[getFqn] }
 
 private typeName ::= qid
 typeRef ::= fqnTypeRef | anonList | anonMap {name="type"}
-fqnTypeRef ::= fqn
+fqnTypeRef ::= fqn { methods=[resolve] }
 
 defs ::= def*
 private def ::= typeDefWrapper | supplementDef {recoverWhile="declRecover"}
@@ -121,6 +121,8 @@ anonList ::= 'list' '[' typeRef defaultOverride? ']' {pin=1}// TODO rename to `l
 anonMap ::= 'map' '[' typeRef ',' typeRef defaultOverride? ']' {pin=1} // TODO rename to `mapType`?
 
 extendsDecl ::= 'extends' typeRef (',' typeRef)* {pin=1}
+supplementsDecl ::= 'supplements' fqnTypeRef (',' fqnTypeRef)* {pin=1}
+
 defaultOverride ::= 'nodefault' | 'default' qid
 customParam ::= qid '=' data_value ';' { // TODO embed data language instead
   name="custom attribute"
@@ -131,13 +133,13 @@ customParam ::= qid '=' data_value ';' { // TODO embed data language instead
 
 metaDecl ::= 'meta' fqnTypeRef { pin=1 } // we don't allow anonList or anonMap as meta
 
-varTypeDef ::= 'vartype' typeName extendsDecl? varTypeSupplementsDecl? defaultOverride? varTypeBody? {
+varTypeDef ::= 'vartype' typeName extendsDecl? supplementsDecl? defaultOverride? varTypeBody? {
+  methods=[supplemented]
   extends="com.sumologic.epigraph.ideaplugin.schema.psi.impl.SchemaVarTypeDefImplBase"
   stubClass="com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaVarTypeDefStub"
   elementTypeClass="com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaVarTypeDefStubElementType"
   pin=1
 }
-varTypeSupplementsDecl ::= 'supplements' fqnTypeRef (',' fqnTypeRef)* { pin=1 }
 varTypeBody ::= '{' varTypeBodyPart* '}'
 private varTypeBodyPart ::= varTypeMemberDecl | customParam
 varTypeMemberDecl ::= 'override'? qid ':' typeRef memberBody? {
@@ -149,13 +151,13 @@ varTypeMemberDecl ::= 'override'? qid ':' typeRef memberBody? {
 private memberBody ::= '{' memberBodyPart* '}'
 private memberBodyPart ::= customParam
 
-recordTypeDef ::= 'abstract'? 'polymorphic'? 'record' typeName extendsDecl? metaDecl? recordSupplementsDecl? recordTypeBody? {
+recordTypeDef ::= 'abstract'? 'polymorphic'? 'record' typeName extendsDecl? metaDecl? supplementsDecl? recordTypeBody? {
+  methods=[supplemented]
   extends="com.sumologic.epigraph.ideaplugin.schema.psi.impl.SchemaRecordTypeDefImplBase"
   stubClass="com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaRecordTypeDefStub"
   elementTypeClass="com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaRecordTypeDefStubElementType"
   pin=3
 }
-recordSupplementsDecl ::= 'supplements' fqnTypeRef (',' fqnTypeRef)*
 recordTypeBody ::= '{' recordBodyPart* '}'
 private recordBodyPart ::= fieldDecl | customParam
 fieldDecl ::= 'override'? 'abstract'? qid ':' typeRef defaultOverride? fieldBody? {
@@ -213,7 +215,12 @@ private primitiveKind ::= 'string' | 'integer' | 'long' | 'double' | 'boolean'
 primitiveTypeBody ::= '{' primitiveBodyPart* '}'
 private primitiveBodyPart ::= customParam // | ...
 
-supplementDef ::= 'supplement' fqnTypeRef (',' fqnTypeRef)* 'with' fqnTypeRef {pin=1}
+supplementDef ::= 'supplement' fqnTypeRef (',' fqnTypeRef)* 'with' fqnTypeRef {
+  methods=[sourceRef supplementedRefs source supplemented toString]
+  stubClass="com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaSupplementDefStub"
+  elementTypeClass="com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaSupplementDefStubElementType"
+  pin=1
+}
 
 // todo? for multi:  // not too good, no name for artificial vartype hence no common interface
 // supplement User,Company with {

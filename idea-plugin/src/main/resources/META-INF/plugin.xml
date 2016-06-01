@@ -17,7 +17,7 @@
   <idea-version since-build="141.0"/>
 
   <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
-       on how to target different products -->
+       on how to source different products -->
   <!-- uncomment to enable plugin in all products
   <depends>com.intellij.modules.lang</depends>
   -->
@@ -30,6 +30,8 @@
     <stubIndex implementation="com.sumologic.epigraph.ideaplugin.schema.index.SchemaFullTypeNameIndex"/>
     <stubIndex implementation="com.sumologic.epigraph.ideaplugin.schema.index.SchemaTypesByNamespaceIndex"/>
     <stubIndex implementation="com.sumologic.epigraph.ideaplugin.schema.index.SchemaNamespaceByNameIndex"/>
+    <stubIndex implementation="com.sumologic.epigraph.ideaplugin.schema.index.SchemaSupplementBySourceIndex"/>
+    <stubIndex implementation="com.sumologic.epigraph.ideaplugin.schema.index.SchemaSupplementBySupplementedIndex"/>
 
     <lang.syntaxHighlighterFactory language="epi_schema"
                                    implementationClass="com.sumologic.epigraph.ideaplugin.schema.highlighting.SchemaSyntaxHighlighterFactory"/>
@@ -82,5 +84,11 @@
   <actions>
     <!-- Add your actions here -->
   </actions>
+
+  <project-components>
+    <component>
+      <implementation-class>com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.HierarchyCache</implementation-class>
+    </component>
+  </project-components>
 
 </idea-plugin>

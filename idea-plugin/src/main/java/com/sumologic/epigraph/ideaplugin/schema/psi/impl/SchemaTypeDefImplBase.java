@@ -3,11 +3,9 @@ package com.sumologic.epigraph.ideaplugin.schema.psi.impl;
 import com.intellij.extapi.psi.StubBasedPsiElementBase;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiReference;
 import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.util.IncorrectOperationException;
 import com.sumologic.epigraph.ideaplugin.schema.brains.NamespaceManager;
-import com.sumologic.epigraph.ideaplugin.schema.brains.SchemaFqnReferenceResolver;
 import com.sumologic.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
 import com.sumologic.epigraph.ideaplugin.schema.psi.*;
 import com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaTypeDefStubBase;
@@ -123,19 +121,16 @@ public abstract class SchemaTypeDefImplBase<S extends SchemaTypeDefStubBase<T>, 
   }
 
   @NotNull
-  public List<SchemaTypeDef> parents() {
+  public List<SchemaTypeDef> extendsParents() {
     S stub = getStub();
 
     if (stub != null) {
       List<SerializedFqnTypeRef> extendsTypeRefs = stub.getExtendsTypeRefs();
       if (extendsTypeRefs != null) {
-        return extendsTypeRefs.stream().map(tr -> {
-          SchemaFqnReferenceResolver resolver = new SchemaFqnReferenceResolver(tr.getNamespacesToSearch(), tr.getShortName());
-          PsiElement element = resolver.resolve(getProject());
-          if (element instanceof SchemaTypeDef)
-            return (SchemaTypeDef) element;
-          else return null;
-        }).filter(i -> i != null).collect(Collectors.toList());
+        return extendsTypeRefs.stream()
+            .map(tr -> tr.resolveTypeDef(getProject()))
+            .filter(i -> i != null)
+            .collect(Collectors.toList());
       }
     }
 
@@ -148,13 +143,8 @@ public abstract class SchemaTypeDefImplBase<S extends SchemaTypeDefStubBase<T>, 
     for (SchemaTypeRef typeRef : typeRefList) {
       SchemaFqnTypeRef fqnTypeRef = typeRef.getFqnTypeRef();
       if (fqnTypeRef != null) {
-        PsiReference reference = SchemaPsiImplUtil.getReference(fqnTypeRef);
-        if (reference != null) {
-          PsiElement resolved = reference.resolve();
-          if (resolved instanceof SchemaTypeDef) {
-            result.add((SchemaTypeDef) resolved);
-          }
-        }
+        SchemaTypeDef resolved = fqnTypeRef.resolve();
+        if (resolved != null) result.add(resolved);
       }
     }
     return result;

@@ -5,7 +5,7 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface SchemaRecordSupplementsDecl extends PsiElement {
+public interface SchemaSupplementsDecl extends PsiElement {
 
   @NotNull
   List<SchemaFqnTypeRef> getFqnTypeRefList();

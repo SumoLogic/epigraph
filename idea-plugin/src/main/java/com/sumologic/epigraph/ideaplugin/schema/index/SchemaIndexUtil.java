@@ -1,8 +1,10 @@
 package com.sumologic.epigraph.ideaplugin.schema.index;
 
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaNamespaceDecl;
+import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaSupplementDef;
 import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaTypeDef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -80,6 +82,62 @@ public class SchemaIndexUtil {
     index.processAllKeys(project, namespaceFqn -> {
       if (namePrefix == null || namespaceFqn.startsWith(namePrefix)) {
         result.addAll(index.get(namespaceFqn, project, scope));
+      }
+      return true;
+    });
+
+    return result;
+  }
+
+  @NotNull
+  public static List<SchemaSupplementDef> findSupplementsBySource(@NotNull Project project, @NotNull SchemaTypeDef source) {
+    GlobalSearchScope scope = GlobalSearchScope.allScope(project);
+
+    String name = source.getName();
+    if (name == null) return Collections.emptyList();
+
+    SchemaSupplementBySourceIndex index = SchemaSupplementBySourceIndex.EP_NAME.findExtension(SchemaSupplementBySourceIndex.class);
+
+    final List<SchemaSupplementDef> result = new ArrayList<>();
+
+    index.processAllKeys(project, sourceShortName -> {
+      Collection<SchemaSupplementDef> schemaSupplementDefs = index.get(sourceShortName, project, scope);
+      for (SchemaSupplementDef schemaSupplementDef : schemaSupplementDefs) {
+        ProgressManager.checkCanceled();
+        SchemaTypeDef s = schemaSupplementDef.source();
+        if (source == s) result.add(schemaSupplementDef);
+      }
+      return true;
+    });
+
+    return result;
+  }
+
+  @NotNull
+  public static List<SchemaSupplementDef> findSupplementsBySupplemented(@NotNull Project project, @NotNull SchemaTypeDef supplemented) {
+    GlobalSearchScope scope = GlobalSearchScope.allScope(project);
+
+    String name = supplemented.getName();
+    if (name == null) return Collections.emptyList();
+
+    SchemaSupplementBySupplementedIndex index = SchemaSupplementBySupplementedIndex.EP_NAME.findExtension(SchemaSupplementBySupplementedIndex.class);
+
+    final List<SchemaSupplementDef> result = new ArrayList<>();
+
+    index.processAllKeys(project, sourceShortName -> {
+      Collection<SchemaSupplementDef> schemaSupplementDefs = index.get(sourceShortName, project, scope);
+      // check all supplement defs
+      for (SchemaSupplementDef schemaSupplementDef : schemaSupplementDefs) {
+        ProgressManager.checkCanceled();
+        // check their supplemented lists
+        List<SchemaTypeDef> ss = schemaSupplementDef.supplemented();
+        for (SchemaTypeDef s : ss) {
+          // try to find `supplemented` among them
+          if (supplemented == s) {
+            result.add(schemaSupplementDef);
+            break;
+          }
+        }
       }
       return true;
     });

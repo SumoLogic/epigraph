@@ -79,7 +79,8 @@ public class SchemaTypeInheritorsSearcher extends QueryExecutorBase<SchemaTypeDe
       if (typeDef == null) continue;
 
       currentBase.set(typeDef);
-      if (!SchemaDirectTypeInheritorsSearch.search(typeDef).forEach(processor)) return;
+      if (!SchemaDirectTypeInheritorsSearch.search(typeDef).forEach(processor))
+        return;
     }
   }
 }

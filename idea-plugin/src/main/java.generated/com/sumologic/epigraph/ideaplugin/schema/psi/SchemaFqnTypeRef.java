@@ -10,4 +10,7 @@ public interface SchemaFqnTypeRef extends PsiElement {
   @NotNull
   SchemaFqn getFqn();
 
+  @Nullable
+  SchemaTypeDef resolve();
+
 }

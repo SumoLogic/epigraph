@@ -39,8 +39,7 @@ interface SchemaBlockFactory {
 
           .put(S_EXTENDS_DECL, ExtendsBlock::new)
           .put(S_META_DECL, MetaBlock::new)
-          .put(S_RECORD_SUPPLEMENTS_DECL, SupplementsBlock::new)
-          .put(S_VAR_TYPE_SUPPLEMENTS_DECL, SupplementsBlock::new)
+          .put(S_SUPPLEMENTS_DECL, SupplementsBlock::new)
 
           .put(S_DEFAULT_OVERRIDE, DefaultOverrideBlock::new)
 

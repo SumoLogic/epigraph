@@ -4,8 +4,10 @@ package com.sumologic.epigraph.ideaplugin.schema.psi;
 import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.StubBasedPsiElement;
+import com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaSupplementDefStub;
 
-public interface SchemaSupplementDef extends PsiElement {
+public interface SchemaSupplementDef extends PsiElement, StubBasedPsiElement<SchemaSupplementDefStub> {
 
   @NotNull
   List<SchemaFqnTypeRef> getFqnTypeRefList();
@@ -15,5 +17,20 @@ public interface SchemaSupplementDef extends PsiElement {
 
   @Nullable
   PsiElement getWith();
+
+  @Nullable
+  SchemaFqnTypeRef sourceRef();
+
+  @NotNull
+  List<SchemaFqnTypeRef> supplementedRefs();
+
+  @Nullable
+  SchemaTypeDef source();
+
+  @NotNull
+  List<SchemaTypeDef> supplemented();
+
+  @NotNull
+  String toString();
 
 }

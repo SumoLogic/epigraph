@@ -8,13 +8,19 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static com.sumologic.epigraph.ideaplugin.schema.lexer.SchemaElementTypes.*;
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
+import com.intellij.extapi.psi.StubBasedPsiElementBase;
+import com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaSupplementDefStub;
 import com.sumologic.epigraph.ideaplugin.schema.psi.*;
+import com.intellij.psi.stubs.IStubElementType;
 
-public class SchemaSupplementDefImpl extends ASTWrapperPsiElement implements SchemaSupplementDef {
+public class SchemaSupplementDefImpl extends StubBasedPsiElementBase<SchemaSupplementDefStub> implements SchemaSupplementDef {
 
   public SchemaSupplementDefImpl(ASTNode node) {
     super(node);
+  }
+
+  public SchemaSupplementDefImpl(SchemaSupplementDefStub stub, IStubElementType nodeType) {
+    super(stub, nodeType);
   }
 
   public void accept(@NotNull SchemaVisitor visitor) {
@@ -42,6 +48,31 @@ public class SchemaSupplementDefImpl extends ASTWrapperPsiElement implements Sch
   @Nullable
   public PsiElement getWith() {
     return findChildByType(S_WITH);
+  }
+
+  @Nullable
+  public SchemaFqnTypeRef sourceRef() {
+    return SchemaPsiImplUtil.sourceRef(this);
+  }
+
+  @NotNull
+  public List<SchemaFqnTypeRef> supplementedRefs() {
+    return SchemaPsiImplUtil.supplementedRefs(this);
+  }
+
+  @Nullable
+  public SchemaTypeDef source() {
+    return SchemaPsiImplUtil.source(this);
+  }
+
+  @NotNull
+  public List<SchemaTypeDef> supplemented() {
+    return SchemaPsiImplUtil.supplemented(this);
+  }
+
+  @NotNull
+  public String toString() {
+    return SchemaPsiImplUtil.toString(this);
   }
 
 }

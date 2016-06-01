@@ -44,14 +44,14 @@ public class SchemaRecordTypeDefImpl extends SchemaRecordTypeDefImplBase impleme
 
   @Override
   @Nullable
-  public SchemaRecordSupplementsDecl getRecordSupplementsDecl() {
-    return findChildByClass(SchemaRecordSupplementsDecl.class);
+  public SchemaRecordTypeBody getRecordTypeBody() {
+    return findChildByClass(SchemaRecordTypeBody.class);
   }
 
   @Override
   @Nullable
-  public SchemaRecordTypeBody getRecordTypeBody() {
-    return findChildByClass(SchemaRecordTypeBody.class);
+  public SchemaSupplementsDecl getSupplementsDecl() {
+    return findChildByClass(SchemaSupplementsDecl.class);
   }
 
   @Override
@@ -76,6 +76,11 @@ public class SchemaRecordTypeDefImpl extends SchemaRecordTypeDefImplBase impleme
   @Nullable
   public PsiElement getId() {
     return findChildByType(S_ID);
+  }
+
+  @NotNull
+  public List<SchemaTypeDef> supplemented() {
+    return SchemaPsiImplUtil.supplemented(this);
   }
 
 }

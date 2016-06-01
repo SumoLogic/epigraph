@@ -10,6 +10,7 @@ import com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaMapTypeDefStubEl
 import com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaNamespaceDeclStubElementType;
 import com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaPrimitiveTypeDefStubElementType;
 import com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaRecordTypeDefStubElementType;
+import com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaSupplementDefStubElementType;
 import com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaTypeDefWrapperStubElementType;
 import com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaVarTypeDefStubElementType;
 import com.sumologic.epigraph.ideaplugin.schema.psi.impl.*;
@@ -39,17 +40,16 @@ public interface SchemaElementTypes {
   IElementType S_NAMESPACE_DECL = new SchemaNamespaceDeclStubElementType("S_NAMESPACE_DECL");
   IElementType S_PRIMITIVE_TYPE_BODY = new SchemaElementType("S_PRIMITIVE_TYPE_BODY");
   IElementType S_PRIMITIVE_TYPE_DEF = new SchemaPrimitiveTypeDefStubElementType("S_PRIMITIVE_TYPE_DEF");
-  IElementType S_RECORD_SUPPLEMENTS_DECL = new SchemaElementType("S_RECORD_SUPPLEMENTS_DECL");
   IElementType S_RECORD_TYPE_BODY = new SchemaElementType("S_RECORD_TYPE_BODY");
   IElementType S_RECORD_TYPE_DEF = new SchemaRecordTypeDefStubElementType("S_RECORD_TYPE_DEF");
   IElementType S_STAR_IMPORT_SUFFIX = new SchemaElementType("S_STAR_IMPORT_SUFFIX");
-  IElementType S_SUPPLEMENT_DEF = new SchemaElementType("S_SUPPLEMENT_DEF");
+  IElementType S_SUPPLEMENTS_DECL = new SchemaElementType("S_SUPPLEMENTS_DECL");
+  IElementType S_SUPPLEMENT_DEF = new SchemaSupplementDefStubElementType("S_SUPPLEMENT_DEF");
   IElementType S_TYPE_DEF_WRAPPER = new SchemaTypeDefWrapperStubElementType("S_TYPE_DEF_WRAPPER");
   IElementType S_TYPE_REF = new SchemaElementType("S_TYPE_REF");
   IElementType S_VAR_TYPE_BODY = new SchemaElementType("S_VAR_TYPE_BODY");
   IElementType S_VAR_TYPE_DEF = new SchemaVarTypeDefStubElementType("S_VAR_TYPE_DEF");
   IElementType S_VAR_TYPE_MEMBER_DECL = new SchemaElementType("S_VAR_TYPE_MEMBER_DECL");
-  IElementType S_VAR_TYPE_SUPPLEMENTS_DECL = new SchemaElementType("S_VAR_TYPE_SUPPLEMENTS_DECL");
 
   IElementType S_ABSTRACT = new SchemaElementType("abstract");
   IElementType S_BACKTICK = new SchemaElementType("`");
@@ -161,9 +161,6 @@ public interface SchemaElementTypes {
       else if (type == S_PRIMITIVE_TYPE_DEF) {
         return new SchemaPrimitiveTypeDefImpl(node);
       }
-      else if (type == S_RECORD_SUPPLEMENTS_DECL) {
-        return new SchemaRecordSupplementsDeclImpl(node);
-      }
       else if (type == S_RECORD_TYPE_BODY) {
         return new SchemaRecordTypeBodyImpl(node);
       }
@@ -172,6 +169,9 @@ public interface SchemaElementTypes {
       }
       else if (type == S_STAR_IMPORT_SUFFIX) {
         return new SchemaStarImportSuffixImpl(node);
+      }
+      else if (type == S_SUPPLEMENTS_DECL) {
+        return new SchemaSupplementsDeclImpl(node);
       }
       else if (type == S_SUPPLEMENT_DEF) {
         return new SchemaSupplementDefImpl(node);
@@ -190,9 +190,6 @@ public interface SchemaElementTypes {
       }
       else if (type == S_VAR_TYPE_MEMBER_DECL) {
         return new SchemaVarTypeMemberDeclImpl(node);
-      }
-      else if (type == S_VAR_TYPE_SUPPLEMENTS_DECL) {
-        return new SchemaVarTypeSupplementsDeclImpl(node);
       }
       throw new AssertionError("Unknown element type: " + type);
     }

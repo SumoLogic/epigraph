@@ -30,7 +30,7 @@ public class TypeDefBlock extends SchemaBlock {
 
   private static final TokenSet continuationTokenSet =
       TokenSet.create(
-          S_EXTENDS_DECL, S_META_DECL, S_RECORD_SUPPLEMENTS_DECL
+          S_EXTENDS_DECL, S_META_DECL, S_SUPPLEMENTS_DECL
       );
 
   public TypeDefBlock(@NotNull ASTNode node, @Nullable Wrap wrap, @Nullable Alignment alignment, @Nullable Indent indent, SpacingBuilder spacingBuilder) {

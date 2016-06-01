@@ -59,7 +59,7 @@ public class SchemaFormattingModelBuilder implements FormattingModelBuilder {
     spacingBuilder.before(S_EXTENDS_DECL).spaces(1);
     spacingBuilder.before(S_META_DECL).spaces(1);
     spacingBuilder.before(S_VAR_TYPE_MEMBER_DECL).spaces(1);
-    spacingBuilder.before(S_RECORD_SUPPLEMENTS_DECL).spaces(1);
+    spacingBuilder.before(S_SUPPLEMENTS_DECL).spaces(1);
 
     spacingBuilder.before(S_RECORD_TYPE_BODY).spaces(1);
     spacingBuilder.before(S_VAR_TYPE_BODY).spaces(1);

@@ -6,11 +6,9 @@ import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiPolyVariantReference;
-import com.intellij.psi.PsiReference;
 import com.intellij.psi.ResolveResult;
 import com.sumologic.epigraph.ideaplugin.schema.brains.NamingConventions;
 import com.sumologic.epigraph.ideaplugin.schema.psi.*;
-import com.sumologic.epigraph.ideaplugin.schema.psi.impl.SchemaPsiImplUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -87,12 +85,9 @@ public class SchemaAnnotator implements Annotator {
 
           SchemaFqnTypeRef fqnTypeRef = typeRef.getFqnTypeRef();
           if (fqnTypeRef != null) {
-            PsiReference reference = SchemaPsiImplUtil.getReference(fqnTypeRef);
-            if (reference != null) {
-              SchemaTypeDef parent = (SchemaTypeDef) reference.resolve();
-              if (parent != null) {
-                if (typeDef.getKind() != parent.getKind()) wrongKind = true;
-              }
+            SchemaTypeDef parent = fqnTypeRef.resolve();
+            if (parent != null) {
+              if (typeDef.getKind() != parent.getKind()) wrongKind = true;
             }
           }
 
@@ -138,12 +133,9 @@ public class SchemaAnnotator implements Annotator {
     if (typeRef != null) {
       SchemaFqn fqn = typeRef.getFqn();
       highlightFqn(fqn, holder);
-      PsiReference reference = fqn.getLastChild().getReference();
-      if (reference != null) {
-        PsiElement resolve = reference.resolve();
-        if (!(resolve instanceof SchemaTypeDef)) {
-          holder.createErrorAnnotation(typeRef.getNode(), "Unresolved reference");
-        }
+
+      if (typeRef.resolve() == null) {
+        holder.createErrorAnnotation(typeRef.getNode(), "Unresolved reference");
       }
     }
   }

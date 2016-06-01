@@ -80,7 +80,7 @@ public class SchemaFqnReferenceResolver {
     // we can't find a typedef by this reference, lets check if it points to a namespace declaration
 
     // type name suffix (which we tried to append to different namespacesToSearchStr) now becomes
-    // target namespace's prefix
+    // source namespace's prefix
 
     Fqn prefix = suffix;
     List<SchemaNamespaceDecl> namespaces = resolveNamespaces(project, prefix);

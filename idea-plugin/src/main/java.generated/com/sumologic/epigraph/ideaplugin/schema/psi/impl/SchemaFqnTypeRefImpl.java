@@ -32,4 +32,9 @@ public class SchemaFqnTypeRefImpl extends ASTWrapperPsiElement implements Schema
     return findNotNullChildByClass(SchemaFqn.class);
   }
 
+  @Nullable
+  public SchemaTypeDef resolve() {
+    return SchemaPsiImplUtil.resolve(this);
+  }
+
 }

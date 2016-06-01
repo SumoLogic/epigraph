@@ -93,7 +93,7 @@ public class SchemaLineMover extends LineMover {
           return true;
         }
         if (target == moved) return true;
-//        if (target.getParent() != movedParent) return false;
+//        if (source.getParent() != movedParent) return false;
 
         info.toMove2 = new LineRange(target);
       }

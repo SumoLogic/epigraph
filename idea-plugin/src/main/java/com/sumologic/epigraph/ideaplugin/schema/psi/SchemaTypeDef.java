@@ -47,7 +47,7 @@ public interface SchemaTypeDef extends PsiNameIdentifierOwner {
   Icon getIcon(int flags);
 
   @NotNull
-  List<SchemaTypeDef> parents();
+  List<SchemaTypeDef> extendsParents();
 
   @Override
   void delete() throws IncorrectOperationException;
