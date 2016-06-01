@@ -7,3 +7,6 @@ import <error descr="Unresolved reference">bar</error>.*
 record R extends <error descr="Unresolved reference">Q</error>
 
 long L extends <error descr="Wrong parent type kind">R</error>
+
+record <error descr="Circular inheritance">R1</error> extends R2
+record <error descr="Circular inheritance">R2</error> extends R1

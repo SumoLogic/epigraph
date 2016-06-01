@@ -8,6 +8,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiPolyVariantReference;
 import com.intellij.psi.ResolveResult;
 import com.sumologic.epigraph.ideaplugin.schema.brains.NamingConventions;
+import com.sumologic.epigraph.ideaplugin.schema.brains.cache.HierarchyCache;
 import com.sumologic.epigraph.ideaplugin.schema.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -61,6 +62,12 @@ public class SchemaAnnotator implements Annotator {
           if (namingError != null) {
             holder.createErrorAnnotation(id, namingError);
           }
+
+          HierarchyCache hierarchyCache = HierarchyCache.getHierarchyCache(element.getProject());
+          List<SchemaTypeDef> typeParents = hierarchyCache.getTypeParents(typeDef);
+          if (typeParents.contains(typeDef)) {
+            holder.createErrorAnnotation(id, "Circular inheritance");
+          }
         }
       }
 
@@ -95,7 +102,15 @@ public class SchemaAnnotator implements Annotator {
         }
       }
 
-      // TODO check supplements too
+      @Override
+      public void visitSupplementsDecl(@NotNull SchemaSupplementsDecl o) {
+        // TODO similar to the above
+      }
+
+      @Override
+      public void visitSupplementDef(@NotNull SchemaSupplementDef supplementDef) {
+        // TODO check types compatibility (and circular inheritance?)
+      }
 
       @Override
       public void visitCustomParam(@NotNull SchemaCustomParam customParam) {
@@ -118,11 +133,11 @@ public class SchemaAnnotator implements Annotator {
   }
 
   private void testExtendsList(@NotNull SchemaTypeDef typeDef, @NotNull SchemaAnonList anonList) {
-    // TODO
+    // TODO check types compatibility, lists are covariant?
   }
 
   private void testExtendsMap(@NotNull SchemaTypeDef typeDef, @NotNull SchemaAnonMap anonMap) {
-    // TODO
+    // TODO check types compatibility, maps are covariant?
   }
 
 //  private void testExtends(@NotNull SchemaTypeDefElement typeDef, @NotNull SchemaTypeDef parent) {

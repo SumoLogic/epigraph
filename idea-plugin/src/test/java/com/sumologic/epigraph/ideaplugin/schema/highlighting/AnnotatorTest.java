@@ -8,7 +8,7 @@ import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 public class AnnotatorTest extends LightCodeInsightFixtureTestCase {
   @Override
   protected String getTestDataPath() {
-    return "src/test/resources/testData/annotator";
+    return "src/test/resources/testData/highlighting";
   }
 
   public void testInvalid1() {
