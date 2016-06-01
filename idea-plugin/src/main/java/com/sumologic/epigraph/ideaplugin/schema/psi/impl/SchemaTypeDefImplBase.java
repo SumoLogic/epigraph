@@ -2,6 +2,7 @@ package com.sumologic.epigraph.ideaplugin.schema.psi.impl;
 
 import com.intellij.extapi.psi.StubBasedPsiElementBase;
 import com.intellij.lang.ASTNode;
+import com.intellij.navigation.ItemPresentation;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.util.IncorrectOperationException;
@@ -35,6 +36,10 @@ public abstract class SchemaTypeDefImplBase<S extends SchemaTypeDefStubBase<T>, 
 
   public SchemaTypeDefImplBase(@NotNull S stub, @NotNull IStubElementType nodeType) {
     super(stub, nodeType);
+  }
+
+  public ItemPresentation getPresentation() {
+    return SchemaPresentationUtil.getPresentation(this);
   }
 
   @Override

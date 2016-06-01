@@ -43,7 +43,7 @@
     <completion.contributor language="epi_schema"
                             implementationClass="com.sumologic.epigraph.ideaplugin.schema.features.completion.SchemaCompletionContributor"/>
     <!--<psi.referenceContributor language="epi_schema"-->
-                              <!--implementation="com.sumologic.dohyo.plugin.schema.psi.references.SchemaTypeReferenceContributor"/>-->
+    <!--implementation="com.sumologic.dohyo.plugin.schema.psi.references.SchemaTypeReferenceContributor"/>-->
 
     <lang.formatter language="epi_schema"
                     implementationClass="com.sumologic.epigraph.ideaplugin.schema.formatting.SchemaFormattingModelBuilder"/>
@@ -73,7 +73,10 @@
     <lang.psiStructureViewFactory language="epi_schema"
                                   implementationClass="com.sumologic.epigraph.ideaplugin.schema.structureView.SchemaStructureViewFactory"/>
     <statementUpDownMover implementation="com.sumologic.epigraph.ideaplugin.schema.features.SchemaLineMover"/>
-    <quoteHandler fileType="epi_schema" className="com.sumologic.epigraph.ideaplugin.schema.features.SchemaQuoteHandler"/>
+    <quoteHandler fileType="epi_schema"
+                  className="com.sumologic.epigraph.ideaplugin.schema.features.SchemaQuoteHandler"/>
+    <gotoClassContributor
+        implementation="com.sumologic.epigraph.ideaplugin.schema.features.navigation.GotoTypeContributor"/>
 
     <typeHierarchyProvider language="epi_schema"
                            implementationClass="com.sumologic.epigraph.ideaplugin.schema.features.hierarchy.SchemaHierarchyProvider"/>

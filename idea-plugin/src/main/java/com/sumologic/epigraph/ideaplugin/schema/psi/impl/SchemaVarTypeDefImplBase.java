@@ -2,8 +2,8 @@ package com.sumologic.epigraph.ideaplugin.schema.psi.impl;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.stubs.IStubElementType;
-import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaVarTypeDef;
 import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaTypeDef;
+import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaVarTypeDef;
 import com.sumologic.epigraph.ideaplugin.schema.psi.TypeKind;
 import com.sumologic.epigraph.ideaplugin.schema.psi.stubs.SchemaVarTypeDefStub;
 import org.jetbrains.annotations.NotNull;

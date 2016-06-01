@@ -141,7 +141,7 @@ public class SchemaPresentationUtil {
     return element.getClass().getSimpleName() + "(" + element.getNode().getElementType().toString() + ")";
   }
 
-  private static class StaticItemPresentation implements ItemPresentation {
+  public static class StaticItemPresentation implements ItemPresentation {
     @Nullable
     private final String presentableText;
     @Nullable
@@ -149,7 +149,7 @@ public class SchemaPresentationUtil {
     @Nullable
     private final Icon icon;
 
-    StaticItemPresentation(@Nullable String presentableText, @Nullable String locationString, @Nullable Icon icon) {
+    public StaticItemPresentation(@Nullable String presentableText, @Nullable String locationString, @Nullable Icon icon) {
       this.presentableText = presentableText;
       this.locationString = locationString;
       this.icon = icon;
