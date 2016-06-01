@@ -3,6 +3,7 @@ package com.sumologic.epigraph.ideaplugin.schema.features.hierarchy;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerProvider;
 import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder;
+import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.psi.PsiElement;
 import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.InheritedMembers;
 import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.SchemaDirectTypeParentsSearch;
@@ -48,6 +49,7 @@ public class SchemaLineMarkerProvider extends RelatedItemLineMarkerProvider {
         NavigationGutterIconBuilder<PsiElement> builder =
             NavigationGutterIconBuilder.create(SchemaPresentationUtil.supplementedGutterIcon())
                 .setTargets(supplementedBy)
+                .setAlignment(GutterIconRenderer.Alignment.LEFT)
                 .setTooltipText("Navigate to supplement");
 
         result.add(builder.createLineMarkerInfo(element));
@@ -62,7 +64,8 @@ public class SchemaLineMarkerProvider extends RelatedItemLineMarkerProvider {
         NavigationGutterIconBuilder<PsiElement> builder =
             NavigationGutterIconBuilder.create(SchemaPresentationUtil.overridingFieldGutterIcon())
                 .setTargets(overridenFields)
-                .setTooltipText("Navigate to overriden field");
+                .setAlignment(GutterIconRenderer.Alignment.LEFT)
+                .setTooltipText("Navigate to parent field");
 
         result.add(builder.createLineMarkerInfo(element));
       }
@@ -72,6 +75,7 @@ public class SchemaLineMarkerProvider extends RelatedItemLineMarkerProvider {
         NavigationGutterIconBuilder<PsiElement> builder =
             NavigationGutterIconBuilder.create(SchemaPresentationUtil.overriddenFieldGutterIcon())
                 .setTargets(overridingFields)
+                .setAlignment(GutterIconRenderer.Alignment.RIGHT)
                 .setTooltipText("Navigate to overriding field");
 
         result.add(builder.createLineMarkerInfo(element));
@@ -86,7 +90,8 @@ public class SchemaLineMarkerProvider extends RelatedItemLineMarkerProvider {
         NavigationGutterIconBuilder<PsiElement> builder =
             NavigationGutterIconBuilder.create(SchemaPresentationUtil.overridingTagGutterIcon())
                 .setTargets(overridenVarTypeMembers)
-                .setTooltipText("Navigate to overriden varTypeMember");
+                .setAlignment(GutterIconRenderer.Alignment.LEFT)
+                .setTooltipText("Navigate to parent tag");
 
         result.add(builder.createLineMarkerInfo(element));
       }
@@ -96,7 +101,8 @@ public class SchemaLineMarkerProvider extends RelatedItemLineMarkerProvider {
         NavigationGutterIconBuilder<PsiElement> builder =
             NavigationGutterIconBuilder.create(SchemaPresentationUtil.overriddenTagGutterIcon())
                 .setTargets(overridingVarTypeMembers)
-                .setTooltipText("Navigate to overriding varTypeMember");
+                .setAlignment(GutterIconRenderer.Alignment.RIGHT)
+                .setTooltipText("Navigate to overriding tag");
 
         result.add(builder.createLineMarkerInfo(element));
       }
