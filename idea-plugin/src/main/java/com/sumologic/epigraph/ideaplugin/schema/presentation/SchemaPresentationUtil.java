@@ -39,7 +39,7 @@ public class SchemaPresentationUtil {
     return AllIcons.Gutter.ExtAnnotation; // TODO
   }
 
-  public static Icon overridenFieldGutterIcon() {
+  public static Icon overriddenFieldGutterIcon() {
     return AllIcons.Gutter.OverridenMethod; // TODO
   }
 
@@ -47,7 +47,7 @@ public class SchemaPresentationUtil {
     return AllIcons.Gutter.OverridingMethod; // TODO
   }
 
-  public static Icon overridenTagGutterIcon() {
+  public static Icon overriddenTagGutterIcon() {
     return AllIcons.Gutter.ImplementedMethod; // TODO
   }
 

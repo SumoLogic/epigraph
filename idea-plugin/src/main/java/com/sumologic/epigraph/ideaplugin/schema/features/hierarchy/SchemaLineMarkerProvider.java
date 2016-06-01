@@ -60,7 +60,7 @@ public class SchemaLineMarkerProvider extends RelatedItemLineMarkerProvider {
       List<SchemaFieldDecl> overridenFields = InheritedMembers.getOverridenFields(fieldDecl);
       if (!overridenFields.isEmpty()) {
         NavigationGutterIconBuilder<PsiElement> builder =
-            NavigationGutterIconBuilder.create(SchemaPresentationUtil.overridenFieldGutterIcon())
+            NavigationGutterIconBuilder.create(SchemaPresentationUtil.overridingFieldGutterIcon())
                 .setTargets(overridenFields)
                 .setTooltipText("Navigate to overriden field");
 
@@ -70,7 +70,7 @@ public class SchemaLineMarkerProvider extends RelatedItemLineMarkerProvider {
       List<SchemaFieldDecl> overridingFields = InheritedMembers.getOverridingFields(fieldDecl);
       if (!overridingFields.isEmpty()) {
         NavigationGutterIconBuilder<PsiElement> builder =
-            NavigationGutterIconBuilder.create(SchemaPresentationUtil.overridingFieldGutterIcon())
+            NavigationGutterIconBuilder.create(SchemaPresentationUtil.overriddenFieldGutterIcon())
                 .setTargets(overridingFields)
                 .setTooltipText("Navigate to overriding field");
 
@@ -84,7 +84,7 @@ public class SchemaLineMarkerProvider extends RelatedItemLineMarkerProvider {
       List<SchemaVarTypeMemberDecl> overridenVarTypeMembers = InheritedMembers.getOverridenTags(varTypeMemberDecl);
       if (!overridenVarTypeMembers.isEmpty()) {
         NavigationGutterIconBuilder<PsiElement> builder =
-            NavigationGutterIconBuilder.create(SchemaPresentationUtil.overridenTagGutterIcon())
+            NavigationGutterIconBuilder.create(SchemaPresentationUtil.overridingTagGutterIcon())
                 .setTargets(overridenVarTypeMembers)
                 .setTooltipText("Navigate to overriden varTypeMember");
 
@@ -94,7 +94,7 @@ public class SchemaLineMarkerProvider extends RelatedItemLineMarkerProvider {
       List<SchemaVarTypeMemberDecl> overridingVarTypeMembers = InheritedMembers.getOverridingTags(varTypeMemberDecl);
       if (!overridingVarTypeMembers.isEmpty()) {
         NavigationGutterIconBuilder<PsiElement> builder =
-            NavigationGutterIconBuilder.create(SchemaPresentationUtil.overridingTagGutterIcon())
+            NavigationGutterIconBuilder.create(SchemaPresentationUtil.overriddenTagGutterIcon())
                 .setTargets(overridingVarTypeMembers)
                 .setTooltipText("Navigate to overriding varTypeMember");
 
