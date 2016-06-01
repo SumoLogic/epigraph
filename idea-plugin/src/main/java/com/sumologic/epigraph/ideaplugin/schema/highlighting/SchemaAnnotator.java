@@ -8,7 +8,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiPolyVariantReference;
 import com.intellij.psi.ResolveResult;
 import com.sumologic.epigraph.ideaplugin.schema.brains.NamingConventions;
-import com.sumologic.epigraph.ideaplugin.schema.brains.cache.HierarchyCache;
+import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.HierarchyCache;
+import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.InheritedMembers;
 import com.sumologic.epigraph.ideaplugin.schema.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -33,6 +34,11 @@ public class SchemaAnnotator implements Annotator {
         if (namingError != null) {
           holder.createErrorAnnotation(id, namingError);
         }
+
+        PsiElement override = fieldDecl.getOverride();
+        if (override != null && InheritedMembers.getOverridenFields(fieldDecl).isEmpty()) {
+          holder.createErrorAnnotation(override, "field overrides nothing");
+        }
       }
 
       @Override
@@ -43,6 +49,11 @@ public class SchemaAnnotator implements Annotator {
         String namingError = NamingConventions.validateVarTypeMemberName(id.getText());
         if (namingError != null)
           holder.createErrorAnnotation(id, namingError);
+
+        PsiElement override = memberDecl.getOverride();
+        if (override != null && InheritedMembers.getOverridenTags(memberDecl).isEmpty()) {
+          holder.createErrorAnnotation(override, "tag overrides nothing");
+        }
       }
 
       @Override
@@ -69,6 +80,12 @@ public class SchemaAnnotator implements Annotator {
             holder.createErrorAnnotation(id, "Circular inheritance");
           }
         }
+      }
+
+      @Override
+      public void visitRecordTypeDef(@NotNull SchemaRecordTypeDef recordTypeDef) {
+        visitTypeDef(recordTypeDef);
+        // TODO check that non-abstract record type def has no (+inherited) abstract fields
       }
 
       @Override

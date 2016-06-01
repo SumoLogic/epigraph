@@ -5,6 +5,7 @@ import com.intellij.navigation.ItemPresentation;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiInvalidElementAccessException;
 import com.intellij.psi.PsiNamedElement;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.sumologic.epigraph.ideaplugin.schema.brains.NamespaceManager;
 import com.sumologic.epigraph.ideaplugin.schema.psi.*;
 import org.jetbrains.annotations.NotNull;
@@ -30,13 +31,33 @@ public class SchemaPresentationUtil {
     } else return shortName;
   }
 
-  public static Icon getSchemaFileIcon() {
+  public static Icon schemaFileIcon() {
     return AllIcons.FileTypes.Properties; // TODO our own!
+  }
+
+  public static Icon supplementedGutterIcon() {
+    return AllIcons.Gutter.ExtAnnotation; // TODO
+  }
+
+  public static Icon overridenFieldGutterIcon() {
+    return AllIcons.Gutter.OverridenMethod; // TODO
+  }
+
+  public static Icon overridingFieldGutterIcon() {
+    return AllIcons.Gutter.OverridingMethod; // TODO
+  }
+
+  public static Icon overridenTagGutterIcon() {
+    return AllIcons.Gutter.ImplementedMethod; // TODO
+  }
+
+  public static Icon overridingTagGutterIcon() {
+    return AllIcons.Gutter.ImplementingMethod; // TODO
   }
 
   @Nullable
   public static Icon getIcon(@NotNull PsiElement element) {
-    if (element instanceof SchemaFile) return getSchemaFileIcon();
+    if (element instanceof SchemaFile) return schemaFileIcon();
 
     if (element instanceof SchemaRecordTypeDef) return AllIcons.Nodes.Class;
     if (element instanceof SchemaEnumTypeDef) return AllIcons.Nodes.Enum;
@@ -75,13 +96,21 @@ public class SchemaPresentationUtil {
     }
 
     if (element instanceof SchemaFieldDecl) {
+      SchemaRecordTypeDef recordTypeDef = PsiTreeUtil.getParentOfType(element, SchemaRecordTypeDef.class);
+      String typeName = recordTypeDef == null ? null : recordTypeDef.getName();
+      typeName = typeName == null ? "???" : typeName;
+
       SchemaFieldDecl schemaFieldDecl = (SchemaFieldDecl) element;
-      return schemaFieldDecl.getId().getText();
+      return typeName + '.' + schemaFieldDecl.getId().getText();
     }
 
     if (element instanceof SchemaVarTypeMemberDecl) {
+      SchemaVarTypeDef varTypeDef = PsiTreeUtil.getParentOfType(element, SchemaVarTypeDef.class);
+      String varTypeName = varTypeDef == null ? null : varTypeDef.getName();
+      varTypeName = varTypeName == null ? "???" : varTypeName;
+
       SchemaVarTypeMemberDecl varTypeMemberDecl = (SchemaVarTypeMemberDecl) element;
-      return varTypeMemberDecl.getId().getText();
+      return varTypeName + '.' + varTypeMemberDecl.getId().getText();
     }
 
     if (element instanceof SchemaEnumMemberDecl) {

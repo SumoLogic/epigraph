@@ -1,4 +1,4 @@
-package com.sumologic.epigraph.ideaplugin.schema.brains.search;
+package com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy;
 
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 public class InheritanceTest extends LightCodeInsightFixtureTestCase {
   @Override
   protected String getTestDataPath() {
-    return "src/test/resources/testData/brains/search";
+    return "src/test/resources/testData/brains/hierarchy";
   }
 
   public void testDirectInheritors() {
@@ -41,6 +41,13 @@ public class InheritanceTest extends LightCodeInsightFixtureTestCase {
     SchemaTypeDef r1 = findTypeDef("R1");
     Collection<SchemaTypeDef> parents = SchemaDirectTypeParentsSearch.search(r1).findAll();
     checkResults(parents, "R3");
+
+    SchemaTypeDef r3 = findTypeDef("R3");
+    parents = SchemaDirectTypeParentsSearch.search(r3).findAll();
+    checkResults(parents, "R4");
+
+    inheritors = SchemaDirectTypeInheritorsSearch.search(r4).findAll();
+    checkResults(inheritors, "R3");
   }
 
   public void testDirectParents() {

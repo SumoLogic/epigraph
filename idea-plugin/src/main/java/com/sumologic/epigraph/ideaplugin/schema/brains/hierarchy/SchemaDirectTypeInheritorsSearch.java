@@ -1,4 +1,4 @@
-package com.sumologic.epigraph.ideaplugin.schema.brains.search;
+package com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy;
 
 import com.intellij.util.Query;
 import com.intellij.util.QueryFactory;

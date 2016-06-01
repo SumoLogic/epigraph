@@ -145,7 +145,7 @@ private varTypeBodyPart ::= varTypeMemberDecl | customParam
 varTypeMemberDecl ::= 'override'? qid ':' typeRef memberBody? {
   implements=["com.sumologic.epigraph.ideaplugin.schema.psi.CustomParamsHolder" "com.intellij.psi.PsiNamedElement"]
   extends="com.sumologic.epigraph.ideaplugin.schema.psi.impl.CustomParamHolderImpl"
-  methods=[getName setName getNameIdentifier]
+  methods=[getName setName getNameIdentifier getPresentation]
   pin=3
 }
 private memberBody ::= '{' memberBodyPart* '}'
@@ -163,7 +163,7 @@ private recordBodyPart ::= fieldDecl | customParam
 fieldDecl ::= 'override'? 'abstract'? qid ':' typeRef defaultOverride? fieldBody? {
   implements=["com.sumologic.epigraph.ideaplugin.schema.psi.CustomParamsHolder" "com.intellij.psi.PsiNamedElement"]
   extends="com.sumologic.epigraph.ideaplugin.schema.psi.impl.CustomParamHolderImpl"
-  methods=[getName setName getNameIdentifier]
+  methods=[getName setName getNameIdentifier getPresentation]
   pin=4
 }
 private fieldBody ::= '{' fieldBodyPart* '}'

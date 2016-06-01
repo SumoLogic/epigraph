@@ -1,4 +1,4 @@
-package com.sumologic.epigraph.ideaplugin.schema.brains.search;
+package com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.QueryExecutorBase;
@@ -11,7 +11,7 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiAnchor;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.Queue;
+import com.intellij.util.containers.Stack;
 import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaTypeDef;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,9 +20,9 @@ import java.util.Set;
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public class SchemaTypeParentsSearcher extends QueryExecutorBase<SchemaTypeDef, SchemaTypeParentsSearch.SearchParameters> {
+public class SchemaTypeInheritorsSearcher extends QueryExecutorBase<SchemaTypeDef, SchemaTypeInheritorsSearch.SearchParameters> {
   @Override
-  public void processQuery(@NotNull SchemaTypeParentsSearch.SearchParameters parameters, @NotNull Processor<SchemaTypeDef> consumer) {
+  public void processQuery(@NotNull SchemaTypeInheritorsSearch.SearchParameters parameters, @NotNull Processor<SchemaTypeDef> consumer) {
     SchemaTypeDef baseType = parameters.schemaTypeDef;
 
     ProgressIndicator progress = ProgressIndicatorProvider.getGlobalProgressIndicator();
@@ -31,44 +31,46 @@ public class SchemaTypeParentsSearcher extends QueryExecutorBase<SchemaTypeDef, 
 
       String typeName = ApplicationManager.getApplication().runReadAction((Computable<String>) baseType::getName);
       progress.setText(typeName == null ?
-          "Searching for parents" : "Searching for parents of " + typeName
+          "Searching for inheritors" : "Searching for inheritors of " + typeName
       );
     }
 
     try {
-      processParents(consumer, baseType, parameters);
+      processInheritors(consumer, baseType, parameters);
     } finally {
       if (progress != null) progress.popState();
     }
   }
 
-  private static void processParents(@NotNull Processor<SchemaTypeDef> consumer,
-                                     @NotNull SchemaTypeDef baseType,
-                                     @NotNull SchemaTypeParentsSearch.SearchParameters parameters) {
+  private static void processInheritors(@NotNull Processor<SchemaTypeDef> consumer,
+                                        @NotNull SchemaTypeDef baseType,
+                                        @NotNull SchemaTypeInheritorsSearch.SearchParameters parameters) {
 
+    // see JavaClassInheritorsSearcher
+
+//    final Project project = PsiUtilCore.getProjectInReadAction(baseType);
     final Ref<SchemaTypeDef> currentBase = Ref.create();
-    final Queue<PsiAnchor> queue = new Queue<>(10);
+    final Stack<PsiAnchor> stack = new Stack<>();
     final Set<PsiAnchor> processed = ContainerUtil.newTroveSet();
 
     final Processor<SchemaTypeDef> processor = new ReadActionProcessor<SchemaTypeDef>() {
       @Override
       public boolean processInReadAction(SchemaTypeDef inheritor) {
         if (!consumer.process(inheritor)) return false;
-        queue.addLast(PsiAnchor.create(inheritor));
+        stack.push(PsiAnchor.create(inheritor));
         return true;
       }
     };
 
-    // seed
     ApplicationManager.getApplication().runReadAction(() -> {
-      queue.addLast(PsiAnchor.create(baseType));
+      stack.push(PsiAnchor.create(baseType));
     });
 
-    // BFS
-    while (!queue.isEmpty()) {
+    // DFS
+    while (!stack.isEmpty()) {
       ProgressManager.checkCanceled();
 
-      final PsiAnchor anchor = queue.pullFirst();
+      final PsiAnchor anchor = stack.pop();
       if (!processed.add(anchor)) continue;
 
       SchemaTypeDef typeDef = ApplicationManager.getApplication().runReadAction(
@@ -77,7 +79,7 @@ public class SchemaTypeParentsSearcher extends QueryExecutorBase<SchemaTypeDef, 
       if (typeDef == null) continue;
 
       currentBase.set(typeDef);
-      if (!SchemaDirectTypeParentsSearch.search(typeDef).forEach(processor))
+      if (!SchemaDirectTypeInheritorsSearch.search(typeDef).forEach(processor))
         return;
     }
   }

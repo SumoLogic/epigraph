@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static com.sumologic.epigraph.ideaplugin.schema.lexer.SchemaElementTypes.*;
 import com.sumologic.epigraph.ideaplugin.schema.psi.*;
+import com.intellij.navigation.ItemPresentation;
 
 public class SchemaFieldDeclImpl extends CustomParamHolderImpl implements SchemaFieldDecl {
 
@@ -91,6 +92,11 @@ public class SchemaFieldDeclImpl extends CustomParamHolderImpl implements Schema
   @NotNull
   public PsiElement getNameIdentifier() {
     return SchemaPsiImplUtil.getNameIdentifier(this);
+  }
+
+  @NotNull
+  public ItemPresentation getPresentation() {
+    return SchemaPsiImplUtil.getPresentation(this);
   }
 
 }

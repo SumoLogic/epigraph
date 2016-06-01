@@ -77,6 +77,9 @@
                   className="com.sumologic.epigraph.ideaplugin.schema.features.SchemaQuoteHandler"/>
     <gotoClassContributor
         implementation="com.sumologic.epigraph.ideaplugin.schema.features.navigation.GotoTypeContributor"/>
+    <codeInsight.lineMarkerProvider
+        language="epi_schema"
+        implementationClass="com.sumologic.epigraph.ideaplugin.schema.features.hierarchy.SchemaLineMarkerProvider"/>
 
     <typeHierarchyProvider language="epi_schema"
                            implementationClass="com.sumologic.epigraph.ideaplugin.schema.features.hierarchy.SchemaHierarchyProvider"/>
@@ -90,7 +93,7 @@
 
   <project-components>
     <component>
-      <implementation-class>com.sumologic.epigraph.ideaplugin.schema.brains.cache.HierarchyCache</implementation-class>
+      <implementation-class>com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.HierarchyCache</implementation-class>
     </component>
   </project-components>
 

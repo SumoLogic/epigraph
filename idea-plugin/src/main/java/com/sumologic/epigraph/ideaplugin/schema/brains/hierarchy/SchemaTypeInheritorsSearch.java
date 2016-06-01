@@ -1,4 +1,4 @@
-package com.sumologic.epigraph.ideaplugin.schema.brains.search;
+package com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.Computable;
@@ -13,8 +13,8 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public class SchemaTypeParentsSearch extends QueryFactory<SchemaTypeDef, SchemaTypeParentsSearch.SearchParameters> {
-  public static final SchemaTypeParentsSearch INSTANCE = new SchemaTypeParentsSearch();
+public class SchemaTypeInheritorsSearch extends QueryFactory<SchemaTypeDef, SchemaTypeInheritorsSearch.SearchParameters> {
+  public static final SchemaTypeInheritorsSearch INSTANCE = new SchemaTypeInheritorsSearch();
 
   public static class SearchParameters {
     public final SchemaTypeDef schemaTypeDef;
@@ -24,8 +24,8 @@ public class SchemaTypeParentsSearch extends QueryFactory<SchemaTypeDef, SchemaT
     }
   }
 
-  private SchemaTypeParentsSearch() {
-    registerExecutor(new SchemaTypeParentsSearcher());
+  private SchemaTypeInheritorsSearch() {
+    registerExecutor(new SchemaTypeInheritorsSearcher());
   }
 
   public static Query<SchemaTypeDef> search(@NotNull final SchemaTypeDef schemaTypeDef) {

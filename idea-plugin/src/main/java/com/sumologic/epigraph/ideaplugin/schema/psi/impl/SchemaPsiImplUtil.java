@@ -1,6 +1,7 @@
 package com.sumologic.epigraph.ideaplugin.schema.psi.impl;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
@@ -319,6 +320,12 @@ public class SchemaPsiImplUtil {
     return fieldDecl.getId();
   }
 
+  @Contract(pure = true)
+  @NotNull
+  public static ItemPresentation getPresentation(@NotNull SchemaFieldDecl fieldDecl) {
+    return SchemaPresentationUtil.getPresentation(fieldDecl);
+  }
+
   // varTypeMember decl
 
   @Contract(pure = true)
@@ -337,6 +344,12 @@ public class SchemaPsiImplUtil {
   @NotNull
   public static PsiElement getNameIdentifier(SchemaVarTypeMemberDecl varTypeMemberDecl) {
     return varTypeMemberDecl.getId();
+  }
+
+  @Contract(pure = true)
+  @NotNull
+  public static ItemPresentation getPresentation(@NotNull SchemaVarTypeMemberDecl varTypeMemberDecl) {
+    return SchemaPresentationUtil.getPresentation(varTypeMemberDecl);
   }
 
   // enumMember decl

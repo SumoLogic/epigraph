@@ -3,7 +3,7 @@ package com.sumologic.epigraph.ideaplugin.schema.features.hierarchy;
 import com.intellij.ide.hierarchy.HierarchyNodeDescriptor;
 import com.intellij.ide.hierarchy.HierarchyTreeStructure;
 import com.intellij.openapi.project.Project;
-import com.sumologic.epigraph.ideaplugin.schema.brains.cache.HierarchyCache;
+import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.HierarchyCache;
 import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaTypeDef;
 import org.jetbrains.annotations.NotNull;
 

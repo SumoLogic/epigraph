@@ -1,4 +1,4 @@
-package com.sumologic.epigraph.ideaplugin.schema.brains.search;
+package com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy;
 
 import com.intellij.util.Query;
 import com.intellij.util.QueryFactory;
@@ -13,9 +13,22 @@ public class SchemaDirectTypeParentsSearch extends QueryFactory<SchemaTypeDef, S
 
   public static class SearchParameters {
     public final SchemaTypeDef schemaTypeDef;
+    public final boolean includeExtends;
+    public final boolean includeSupplements;
+    public final boolean includeStandaloneSupplements;
+
+    public SearchParameters(SchemaTypeDef schemaTypeDef,
+                            boolean includeExtends,
+                            boolean includeSupplements,
+                            boolean includeStandaloneSupplements) {
+      this.schemaTypeDef = schemaTypeDef;
+      this.includeExtends = includeExtends;
+      this.includeSupplements = includeSupplements;
+      this.includeStandaloneSupplements = includeStandaloneSupplements;
+    }
 
     public SearchParameters(SchemaTypeDef schemaTypeDef) {
-      this.schemaTypeDef = schemaTypeDef;
+      this(schemaTypeDef, true, true, true);
     }
   }
 

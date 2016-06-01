@@ -1,14 +1,10 @@
-package com.sumologic.epigraph.ideaplugin.schema.brains.cache;
+package com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.ModificationTracker;
 import com.intellij.psi.*;
 import com.intellij.psi.util.*;
-import com.sumologic.epigraph.ideaplugin.schema.brains.search.SchemaDirectTypeInheritorsSearch;
-import com.sumologic.epigraph.ideaplugin.schema.brains.search.SchemaDirectTypeParentsSearch;
-import com.sumologic.epigraph.ideaplugin.schema.brains.search.SchemaTypeInheritorsSearch;
-import com.sumologic.epigraph.ideaplugin.schema.brains.search.SchemaTypeParentsSearch;
 import com.sumologic.epigraph.ideaplugin.schema.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

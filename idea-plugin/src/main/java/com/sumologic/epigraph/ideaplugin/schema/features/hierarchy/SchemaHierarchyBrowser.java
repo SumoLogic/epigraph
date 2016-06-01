@@ -24,6 +24,7 @@ import java.util.Map;
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
 public class SchemaHierarchyBrowser extends TypeHierarchyBrowserBase {
+  // TODO buttons to show inherited fields?
   private static final Logger LOG = Logger.getInstance(SchemaHierarchyBrowser.class);
 
   public SchemaHierarchyBrowser(Project project, PsiElement element) {
