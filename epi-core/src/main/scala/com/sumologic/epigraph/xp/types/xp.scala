@@ -21,6 +21,7 @@ trait Type {
     st +: st.supertypes.asInstanceOf[Seq[Super]] // TODO explain why cast is ok
   }.distinct
 
+  /** @return `true` if `sub` is a subtype of this [[Type]]*/
   def isAssignableFrom(sub: Type): Boolean = sub == this || sub.supertypes.contains(this)
 
   override def toString: String = "«" + name.string + "»(" + super.toString + ")"

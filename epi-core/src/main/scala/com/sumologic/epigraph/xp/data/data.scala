@@ -5,6 +5,8 @@ package com.sumologic.epigraph.xp.data
 import com.sumologic.epigraph.names.{EnumValueName, TypeMemberName}
 import com.sumologic.epigraph.xp.types._
 
+import scala.util.Try
+
 trait Var[+M <: Var[M]] {
 
   def getEntry[N <: TypeMemberName, T <: Datum[T]](tag: VarTag[_ >: M, N, T]): Option[VarEntry[_ <: M, N, T]]
@@ -12,29 +14,19 @@ trait Var[+M <: Var[M]] {
 }
 
 
-trait MonoVar[+T <: Datum[T]] extends Var[T] {
-
-  //def getEntry[VT >: T <: Datum](tag: VarTag[VT]): Option[VarEntry[VT]]
-
-}
+trait MonoVar[+T <: Datum[T]] extends Var[T]
 
 
-trait VarEntry[M <: Var[M], N <: TypeMemberName, T <: Datum[T]] { // TODO variance?
+abstract class VarEntry[M <: Var[M], N <: TypeMemberName, T <: Datum[T]](val tag: VarTag[M, N, T]) { // TODO variance?
 
-  def tag: VarTag[M, N, T]
-
-  def dataType: DataType[T]
-
-  def data: T // TODO Option[T]? some other derivative?
-
-  def error: Exception // TODO Throwable?
+  def value: Try[T]
 
 }
 
 
 trait Datum[+D <: Datum[D]] extends MonoVar[D] {
 
-  type DatumType <: DataType[_]
+  type DatumType <: DataType[_ <: D]
 
   def dataType: DatumType
 
@@ -45,11 +37,28 @@ trait RecordDatum[+D <: RecordDatum[D]] extends Datum[D] {
 
   override type DatumType <: RecordType[_ <: D]
 
-  def get[M <: Var[M], N <: TypeMemberName, T <: Datum[T]](field: TaggedField[_ >: D, M, N, T]): T = {
-    get[M, N, T](field, field.tag)
-  }
+  def getData[M <: Var[M], N <: TypeMemberName, T <: Datum[T]](
+      field: TaggedField[_ >: D, M, N, T]
+  ): Option[T] = getData[M, N, T](field, field.tag)
 
-  def get[M <: Var[M], N <: TypeMemberName, T <: Datum[T]](field: Field[_ >: D, M], varTag: VarTag[_ >: M, N, T]): T
+  def getData[M <: Var[M], N <: TypeMemberName, T <: Datum[T]](
+      field: Field[_ >: D, M],
+      varTag: VarTag[_ >: M, N, T]
+  ): Option[T] = getValue[M, N, T](field, varTag).flatMap(_.toOption)
+
+  // TODO getError([tagged]field[, tag])
+
+  def getValue[M <: Var[M], N <: TypeMemberName, T <: Datum[T]](
+      field: Field[_ >: D, M],
+      varTag: VarTag[_ >: M, N, T]
+  ): Option[Try[T]] = getVarEntry[M, N, T](field, varTag).map(_.value)
+
+  def getVarEntry[M <: Var[M], N <: TypeMemberName, T <: Datum[T]](
+      field: Field[_ >: D, M],
+      varTag: VarTag[_ >: M, N, T]
+  ): Option[VarEntry[_ <: M, N, T]] = getVar(field).flatMap(_.getEntry(varTag))
+
+  def getVar[M <: Var[M]](field: Field[_ >: D, M]): Option[Var[M]]
 
 }
 
