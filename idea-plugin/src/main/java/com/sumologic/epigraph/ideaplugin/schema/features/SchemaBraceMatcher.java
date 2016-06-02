@@ -7,6 +7,9 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IElementType;
+import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaFieldDecl;
+import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaTypeDef;
+import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaVarTypeMemberDecl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -37,8 +40,21 @@ public class SchemaBraceMatcher implements PairedBraceMatcher {
     if (element == null || element instanceof PsiFile) return openingBraceOffset;
 
     PsiElement parent = element.getParent();
-    if (parent == null || !parent.isValid()) return openingBraceOffset;
-    TextRange range = DeclarationRangeUtil.getDeclarationRange(parent);
-    return range.getStartOffset();
+    if (parent == null) return openingBraceOffset;
+
+    if (parent instanceof SchemaVarTypeMemberDecl || parent instanceof SchemaFieldDecl) {
+      TextRange range = DeclarationRangeUtil.getDeclarationRange(parent);
+      return range.getStartOffset();
+    }
+
+    PsiElement parent2 = parent.getParent();
+    if (parent2 == null) return openingBraceOffset;
+
+    if (parent2 instanceof SchemaTypeDef) {
+      TextRange range = DeclarationRangeUtil.getDeclarationRange(parent2);
+      return range.getStartOffset();
+    }
+
+    return openingBraceOffset;
   }
 }
