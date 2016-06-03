@@ -173,6 +173,8 @@ public class SchemaFoldingBuilder extends CustomFoldingBuilder implements DumbAw
       }
     }
 
+    // TODO(low) fold {} around custom params
+
     if (!quick) {
       final Set<PsiElement> seenComments = ContainerUtil.newHashSet();
 

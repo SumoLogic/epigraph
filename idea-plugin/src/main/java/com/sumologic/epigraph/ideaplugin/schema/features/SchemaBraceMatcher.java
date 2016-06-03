@@ -43,8 +43,13 @@ public class SchemaBraceMatcher implements PairedBraceMatcher {
     if (parent == null) return openingBraceOffset;
 
     if (parent instanceof SchemaVarTypeMemberDecl || parent instanceof SchemaFieldDecl) {
-      TextRange range = DeclarationRangeUtil.getDeclarationRange(parent);
-      return range.getStartOffset();
+      try {
+        TextRange range = DeclarationRangeUtil.getDeclarationRange(parent);
+        return range.getStartOffset();
+      } catch (AssertionError e) {
+        // TODO temporary hack, see https://intellij-support.jetbrains.com/hc/en-us/community/posts/206846629--AssertionError-Declaration-range-is-invalid-from-DeclarationRangeUtil
+        return openingBraceOffset;
+      }
     }
 
     PsiElement parent2 = parent.getParent();

@@ -14,5 +14,7 @@
 
 # Gradle directories
 /.gradle/
+/*/.gradle/
 /out/
+/build/
 /*/build/
