@@ -3,46 +3,46 @@ namespace epigraph.schema
 import epigraph.*
 
 /*abstract */vartype ByNameRef default name {
-  doc = "Common interface for vartypes representing by-name references";
+  doc = "Common interface for vartypes representing by-name references"
 
-  name: Name
+  /*abstract*/ name: Name
 
 }
 
 abstract record TypeData extends Named {
-  doc = "Common interface for data type and vartype records";
+  doc = "Common interface for data type and vartype records"
 
   override name: QualifiedTypeName
 
   abstract supertypes: list[TypeRef]
 
-  `abstract`: Boolean { doc = "Abstract types cannot be instantiated (?)"; }
+  `abstract`: Boolean { doc = "Abstract types cannot be instantiated (?)" }
 
 }
 
 /*abstract */vartype TypeRef extends ByNameRef {
-  doc = "Common interface for by-name references to (data or var-) types";
+  doc = "Common interface for by-name references to (data or var-) types"
 
   override name: QualifiedTypeName
 
-  /*abstract */ type: TypeData
+  /*abstract*/ type: TypeData
 
 }
 
 
 record VarTypeData extends TypeData {
-  doc = "Vartype declaration";
+  doc = "Vartype declaration"
 
   override supertypes: list[VarTypeRef]
 
-  `default`: TypeMemberRef { doc = "Optional type member reference to be used as default one"; }
+  `default`: TypeMemberRef { doc = "Optional type member reference to be used as default one" }
 
   members: list[TypeMemberData] // TODO rename to `tags`?
 
 }
 
 vartype VarTypeRef extends TypeRef {
-  doc = "By-name reference to a vartype";
+  doc = "By-name reference to a vartype"
 
   override type: VarTypeData
 
@@ -50,20 +50,20 @@ vartype VarTypeRef extends TypeRef {
 
 
 record TypeMemberData extends Named {
-  doc = "Vartype member declaration";
+  doc = "Vartype member declaration"
 
   override name: TypeMemberName
 
   dataType: DataTypeRef
 
   `abstract`: Boolean {
-    doc = "Abstract type member's data type may be overridden (with compatible data type) in concrete sub-vartypes";
+    doc = "Abstract type member's data type may be overridden (with compatible data type) in concrete sub-vartypes"
   }
 
 }
 
 vartype TypeMemberRef extends ByNameRef {
-  doc = "By-name reference to vartype member";
+  doc = "By-name reference to vartype member"
 
   override name: TypeMemberName
 
@@ -72,7 +72,7 @@ vartype TypeMemberRef extends ByNameRef {
 }
 
 
-polymorphic record DataTypeData extends TypeData {
+polymorphic record DataTypeData extends TypeData { // TODO extends VarTypeData?
 
   override supertypes: list[DataTypeRef]
 
@@ -83,7 +83,7 @@ polymorphic record DataTypeData extends TypeData {
 }
 
 /*abstract */vartype DataTypeRef extends TypeRef {
-  doc = "By-name reference to data type";
+  doc = "By-name reference to data type"
 
   override /*abstract */type: DataTypeData
 
@@ -110,7 +110,7 @@ record FieldData extends Named {
 
   `abstract`: Boolean {
     doc = "Abstract fields must be overridden in concrete (non-abstract) subtypes
-     and don't show-up in mutable interface inherited by subtypes";
+     and don't show-up in mutable interface inherited by subtypes"
   }
 
   valueType: VarTypeRef
@@ -178,7 +178,7 @@ record EnumValueData extends Named {
 
 
 abstract polymorphic record PrimitiveTypeData extends DataTypeData { override abstract supertypes: list[PrimitiveTypeRef] }
-vartype PrimitiveTypeRef extends DataTypeRef { override type: PrimitiveTypeData }
+vartype PrimitiveTypeRef extends DataTypeRef { override /*abstract */type: PrimitiveTypeData }
 
 
 record StringTypeData extends PrimitiveTypeData { override supertypes: list[StringTypeRef] }
