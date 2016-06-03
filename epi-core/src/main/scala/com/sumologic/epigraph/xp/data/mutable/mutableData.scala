@@ -12,23 +12,23 @@ import scala.util.{Failure, Try}
 
 trait MuVar[M <: Var[M]] extends Var[M] {
 
-  override def getEntry[N <: TypeMemberName, TT <: Datum[TT]](tag: VarTag[_ >: M, N, TT]): Option[MuVarEntry[_ <: M, N, TT]]
+  override def getEntry[TT <: Datum[TT]](tag: VarTag[_ >: M, _, TT]): Option[MuVarEntry[TT]]
 
-  def getOrCreateEntry[N <: TypeMemberName, TT <: Datum[TT]](tag: VarTag[_ >: M, N, TT]): MuVarEntry[_ <: M, N, TT]
+  def getOrCreateEntry[TT <: Datum[TT]](tag: VarTag[_ >: M, _, TT]): MuVarEntry[TT]
 
-  final def setData[N <: TypeMemberName, TT <: Datum[TT]](
-      tag: VarTag[_ >: M, N, TT],
+  final def setData[TT <: Datum[TT]](
+      tag: VarTag[_ >: M, _, TT],
       data: => TT
   ): this.type = setValue(tag, Try(data))
 
-  final def setError[N <: TypeMemberName, TT <: Datum[TT]](
-      tag: VarTag[_ >: M, N, TT],
+  final def setError[TT <: Datum[TT]](
+      tag: VarTag[_ >: M, _, TT],
       error: => Throwable
   ): this.type = setValue(tag, Failure(error))
 
   @throws[RuntimeException]("If super tag data type is wider than overridden tag")
-  def setValue[N <: TypeMemberName, TT <: Datum[TT]](
-      tag: VarTag[_ >: M, N, TT],
+  def setValue[TT <: Datum[TT]](
+      tag: VarTag[_ >: M, _, TT],
       value: => Try[TT]
   ): this.type
 
@@ -37,41 +37,39 @@ trait MuVar[M <: Var[M]] extends Var[M] {
 
 trait MuMonoVar[T <: Datum[T]] extends MonoVar[T] with MuVar[T] {this: MuDatum[T] =>
 
-  val entry: MuVarEntry[T, TypeMemberName.default.type, T] = new MuVarEntry[T, TypeMemberName.default.type, T](
-    dataType.default
-  )
+  val entry: MuVarEntry[T] = new MuVarEntry[T](dataType.default)
 
   private lazy val someEntry = Some(entry)
 
-  override def getEntry[N <: TypeMemberName, TT <: Datum[TT]](
-      tag: VarTag[_ >: T, N, TT]
-  ): Option[MuVarEntry[_ <: T, N, TT]] = {
+  override def getEntry[TT <: Datum[TT]](
+      tag: VarTag[_ >: T, _, TT]
+  ): Option[MuVarEntry[TT]] = {
     checkReadTag(tag)
-    someEntry.asInstanceOf[Option[MuVarEntry[T, N, TT]]] // TODO explain why cast is ok
+    someEntry.asInstanceOf[Option[MuVarEntry[TT]]] // TODO explain why cast is ok
   }
 
-  override def getOrCreateEntry[N <: TypeMemberName, TT <: Datum[TT]](
-      tag: VarTag[_ >: T, N, TT]
-  ): MuVarEntry[_ <: T, N, TT] = getEntry(tag).get
+  override def getOrCreateEntry[TT <: Datum[TT]](
+      tag: VarTag[_ >: T, _, TT]
+  ): MuVarEntry[TT] = getEntry(tag).get
 
-  override def setValue[N <: TypeMemberName, TT <: Datum[TT]](
-      tag: VarTag[_ >: T, N, TT],
+  override def setValue[TT <: Datum[TT]](
+      tag: VarTag[_ >: T, _, TT],
       value: => Try[TT]
-  ): MuMonoVar.this.type = {
+  ): this.type = {
     checkWriteTag(tag)
     entry.value = value.asInstanceOf[Try[T]] // checkWriteTag assures that `TT` is a subtype of `T`
     this
   }
 
   @throws[RuntimeException]("TODO cause")
-  private def checkReadTag[N <: TypeMemberName, TT <: Datum[TT]](tag: VarTag[_ >: T, N, TT]): Unit = {
+  private def checkReadTag[TT <: Datum[TT]](tag: VarTag[_ >: T, _, TT]): Unit = {
     if (!(tag.name == dataType.default.name && tag.dataType.isAssignableFrom(dataType))) {
       throw new RuntimeException // FIXME proper exception
     }
   }
 
   @throws[RuntimeException]("If super tag data type is wider than overridden tag")
-  private def checkWriteTag[N <: TypeMemberName, TT <: Datum[TT]](tag: VarTag[_ >: T, N, TT]): Unit = {
+  private def checkWriteTag[TT <: Datum[TT]](tag: VarTag[_ >: T, _, TT]): Unit = {
     if (!(tag.name == dataType.default.name && dataType.isAssignableFrom(tag.dataType))) {
       throw new RuntimeException // FIXME proper exception
     }
@@ -82,33 +80,33 @@ trait MuMonoVar[T <: Datum[T]] extends MonoVar[T] with MuVar[T] {this: MuDatum[T
 
 class MuMultiVar[M <: Var[M]] extends MuVar[M] {
 
-  private val entries = new ConcurrentHashMap[TypeMemberName, MuVarEntry[_ <: M, _, _]]
+  private val entries = new ConcurrentHashMap[TypeMemberName, MuVarEntry[_]]
 
-  override def getEntry[N <: TypeMemberName, TT <: Datum[TT]](
-      tag: VarTag[_ >: M, N, TT]
-  ): Option[MuVarEntry[_ <: M, N, TT]] = Option[MuVarEntry[_ <: M, N, TT]](entries.get(tag.name).asInstanceOf[MuVarEntry[_ <: M, N, TT]])
+  override def getEntry[TT <: Datum[TT]](
+      tag: VarTag[_ >: M, _, TT]
+  ): Option[MuVarEntry[TT]] = Option[MuVarEntry[TT]](entries.get(tag.name).asInstanceOf[MuVarEntry[TT]]) // TODO explain cast
 
-  override def getOrCreateEntry[N <: TypeMemberName, TT <: Datum[TT]](
-      tag: VarTag[_ >: M, N, TT]
-  ): MuVarEntry[_ <: M, N, TT] = ???
+  override def getOrCreateEntry[TT <: Datum[TT]](
+      tag: VarTag[_ >: M, _, TT]
+  ): MuVarEntry[TT] = ???
 
   @throws[RuntimeException]("If super tag data type is wider than overridden tag")
-  override def setValue[N <: TypeMemberName, TT <: Datum[TT]](
-      tag: VarTag[_ >: M, N, TT],
+  override def setValue[TT <: Datum[TT]](
+      tag: VarTag[_ >: M, _, TT],
       value: => Try[TT]
-  ): MuMultiVar.this.type = ???
+  ): this.type = ???
 
 }
 
 
-class MuVarEntry[M <: Var[M], N <: TypeMemberName, T <: Datum[T]](
-    override val tag: VarTag[M, N, T],
+class MuVarEntry[T <: Datum[T]](
+    override val tag: VarTag[_, _, T],
     var value: Try[T] = MuVarEntry.Uninitialized
-) extends VarEntry[M, N, T](tag) {
+) extends VarEntry[T](tag) {
 
-  def this(tag: VarTag[M, N, T], data: => T) = this(tag, Try(data))
+  def this(tag: VarTag[_, _, T], data: => T) = this(tag, Try(data))
 
-  def this(tag: VarTag[M, N, T], error: Throwable) = this(tag, Failure(error))
+  def this(tag: VarTag[_, _, T], error: Throwable) = this(tag, Failure(error))
 
   def setData(data: => T): this.type = {
     value = Try(data)
@@ -172,7 +170,7 @@ trait MuRecordDatum[D <: MuRecordDatum[D]] extends RecordDatum[D] with MuDatum[D
   def getOrCreateVarEntry[M <: Var[M], N <: TypeMemberName, T <: Datum[T]](
       field: Field[_ >: D, M],
       tag: VarTag[_ >: M, N, T]
-  ): MuVarEntry[M, N, T]
+  ): MuVarEntry[T]
 
   def getOrCreateVar[M <: Var[M]](
       field: Field[_ >: D, M]

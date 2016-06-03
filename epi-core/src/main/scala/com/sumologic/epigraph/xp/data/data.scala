@@ -9,7 +9,7 @@ import scala.util.Try
 
 trait Var[+M <: Var[M]] {
 
-  def getEntry[N <: TypeMemberName, T <: Datum[T]](tag: VarTag[_ >: M, N, T]): Option[VarEntry[_ <: M, N, T]]
+  def getEntry[T <: Datum[T]](tag: VarTag[_ >: M, _, T]): Option[VarEntry[T]]
 
 }
 
@@ -17,7 +17,7 @@ trait Var[+M <: Var[M]] {
 trait MonoVar[+T <: Datum[T]] extends Var[T]
 
 
-abstract class VarEntry[M <: Var[M], N <: TypeMemberName, T <: Datum[T]](val tag: VarTag[M, N, T]) { // TODO variance?
+abstract class VarEntry[T <: Datum[T]](val tag: VarTag[_, _, T]) { // TODO variance?
 
   def value: Try[T]
 
@@ -56,7 +56,7 @@ trait RecordDatum[+D <: RecordDatum[D]] extends Datum[D] {
   def getVarEntry[M <: Var[M], N <: TypeMemberName, T <: Datum[T]](
       field: Field[_ >: D, M],
       varTag: VarTag[_ >: M, N, T]
-  ): Option[VarEntry[_ <: M, N, T]] = getVar(field).flatMap(_.getEntry(varTag))
+  ): Option[VarEntry[T]] = getVar(field).flatMap(_.getEntry(varTag))
 
   def getVar[M <: Var[M]](field: Field[_ >: D, M]): Option[Var[M]]
 
