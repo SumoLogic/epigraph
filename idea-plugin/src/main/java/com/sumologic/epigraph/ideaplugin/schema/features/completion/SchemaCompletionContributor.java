@@ -26,6 +26,8 @@ import static com.sumologic.epigraph.ideaplugin.schema.lexer.SchemaElementTypes.
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
 public class SchemaCompletionContributor extends CompletionContributor {
+  // TODO default` doesn't show up in auto-complete/suggestions after `vartype Foo `
+
   private static final String[] TOP_LEVEL_COMPLETIONS = new String[]{
       "polymorphic ", "abstract ",
       "record ", "map", "list", "vartype ", "enum ",

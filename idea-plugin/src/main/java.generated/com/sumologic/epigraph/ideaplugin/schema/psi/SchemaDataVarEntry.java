@@ -4,25 +4,25 @@ package com.sumologic.epigraph.ideaplugin.schema.psi;
 import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiNamedElement;
 
-public interface SchemaCustomParam extends PsiNamedElement {
+public interface SchemaDataVarEntry extends PsiElement {
 
   @Nullable
   SchemaDataValue getDataValue();
 
   @NotNull
-  PsiElement getEq();
+  List<SchemaFqnTypeRef> getFqnTypeRefList();
+
+  @NotNull
+  PsiElement getColon();
+
+  @Nullable
+  PsiElement getComma();
+
+  @Nullable
+  PsiElement getNull();
 
   @NotNull
   PsiElement getId();
-
-  @Nullable
-  String getName();
-
-  PsiElement setName(String name);
-
-  @NotNull
-  PsiElement getNameIdentifier();
 
 }

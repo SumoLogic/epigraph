@@ -43,7 +43,8 @@ public class LexerTest {
         "namespace foo.bar\n" +
         "integer Ыва\n" +
         "record MyType2 extends foo.Type {\n" +
-        "  prop = this is some data;\n" +
+        "  prop = ( \"str1\" : 11.22, \"str\\\"2\" : null )\n" +
+        "  prop2 = ( a.b/c:d )\n" +
         "  `field`: Integer\n" +
         "}\n" +
         "vartype MyType3 {\n" +
@@ -54,7 +55,8 @@ public class LexerTest {
         S_NAMESPACE, S_ID, S_DOT, S_ID,
         S_INTEGER_T, S_ID,
         S_RECORD, S_ID, S_EXTENDS, S_ID, S_DOT, S_ID, S_CURLY_LEFT,
-        S_ID, S_EQ, S_DATA_VALUE, S_SEMI_COLON,
+        S_ID, S_EQ, S_PAREN_LEFT, S_STRING, S_COLON, S_NUMBER, S_COMMA, S_STRING, S_COLON, S_NULL, S_PAREN_RIGHT,
+        S_ID, S_EQ, S_PAREN_LEFT, S_ID, S_DOT, S_ID, S_SLASH, S_ID, S_COLON, S_ID, S_PAREN_RIGHT,
         S_BACKTICK, S_ID, S_BACKTICK, S_COLON, S_ID,
         S_CURLY_RIGHT,
         S_VARTYPE, S_ID, S_CURLY_LEFT,

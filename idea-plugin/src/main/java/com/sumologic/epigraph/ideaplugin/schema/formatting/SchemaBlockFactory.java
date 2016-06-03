@@ -46,7 +46,7 @@ interface SchemaBlockFactory {
           .put(S_ANON_LIST, AnonCollectionBlock::new)
           .put(S_ANON_MAP, AnonCollectionBlock::new)
 
-          .put(S_CUSTOM_PARAM, CustomParamBlock::new)
+//          .put(S_CUSTOM_PARAM, CustomParamBlock::new)
 
           .put(S_COMMENT, LineCommentBlock::new)
 

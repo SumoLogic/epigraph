@@ -41,7 +41,6 @@
 
     BACKTICK = '`'
     COLON = ':'
-    SEMI_COLON = ';'
     DOT = '.'
     COMMA = ','
     EQ = '='
@@ -54,11 +53,18 @@
     space='regexp:\s+'
     comment='regexp://.*'
     block_comment='regexp:/\*((?<!\*/)(.|\n))*'
-    //string="regexp:('([^'\\]|\\.)*'|\"([^\"\\]|\\.)*\")"
-
-    data_value='regexp:\|' // DUMMY, real implementation in SchemaLexer.flex
 
     id = 'regexp:\p{Alpha}\p{Alnum}*'
+
+    // for data lang
+    NULL = 'null'
+    SLASH = '/'
+    PAREN_LEFT = '('
+    PAREN_RIGHT = ')'
+    ANGLE_LEFT = '<'
+    ANGLE_RIGHT = '>'
+    number="regexp:([0-9])+"
+    string="regexp:('([^'\\]|\\.)*'|\"([^\"\\]|\\.)*\")"
   ]
 
   pin(".*Body") = 1
@@ -124,7 +130,7 @@ extendsDecl ::= 'extends' typeRef (',' typeRef)* {pin=1}
 supplementsDecl ::= 'supplements' fqnTypeRef (',' fqnTypeRef)* {pin=1}
 
 defaultOverride ::= 'nodefault' | 'default' qid
-customParam ::= qid '=' data_value ';' { // TODO embed data language instead
+customParam ::= qid '=' dataValue { // TODO embed data language instead
   name="custom attribute"
   implements="com.intellij.psi.PsiNamedElement"
   methods = [getName setName getNameIdentifier]
@@ -240,3 +246,30 @@ private declRecover ::= ! ('import' | 'namespace' | 'polymorphic' | 'abstract' |
                            'map' | 'list' | 'vartype' | 'enum' | 'supplement'|
                            'string' | 'integer' | 'long' | 'double' | 'boolean')
 private partRecover ::= ! ('}' | qid | 'abstract' | 'override' )
+
+// ------------- data language -------------
+
+//dataValue ::= dataTypeSpec? (dataVar | dataVarValue)
+//private dataVarValue ::= dataRecord | dataMap | dataList | dataEnum | dataPrimitiveValue | 'null'
+//private dataTypeSpec ::= ( fqnTypeRef '/' )*
+dataValue ::= dataTypeSpec? (dataVar | varValue)
+private dataVarValue ::= dataTypeSpec? varValue   // because we want (foo/bar:baz) ?
+private varValue ::= dataRecord | dataMap | dataList | dataEnum | dataPrimitiveValue | 'null'
+private dataTypeSpec ::= ( fqnTypeRef '/' )*
+
+dataVar ::= '<' dataVarEntry* '>' {pin=1 extends=dataValue}
+dataVarEntry ::= qid ':' dataVarValue ','? {pin=2 recoverWhile=dataValueRecover}
+
+dataRecord ::= '{' dataRecordEntry* '}' {pin=1 extends=dataValue}
+dataRecordEntry ::= qid ':' dataValue ','? {pin=2 recoverWhile=dataValueRecover}
+
+dataMap ::= '(' dataMapEntry* ')' {pin=1 extends=dataValue}
+dataMapEntry ::= dataVarValue ':' dataValue ','? {pin=2 recoverWhile=dataValueRecover}
+
+dataList ::= '[' (dataValue ','?)* ']' {pin=1 extends=dataValue}
+
+dataEnum ::= qid {extends=dataValue}
+
+dataPrimitiveValue ::= string | number {extends=dataValue}
+
+private dataValueRecover ::= ! ( qid | dataPrimitiveValue | '}' | ')' | '>' | ']' | 'abstract' | 'override')

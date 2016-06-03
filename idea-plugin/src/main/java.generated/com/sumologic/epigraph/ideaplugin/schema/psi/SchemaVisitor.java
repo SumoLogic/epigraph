@@ -21,6 +21,46 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitPsiNamedElement(o);
   }
 
+  public void visitDataEnum(@NotNull SchemaDataEnum o) {
+    visitDataValue(o);
+  }
+
+  public void visitDataList(@NotNull SchemaDataList o) {
+    visitDataValue(o);
+  }
+
+  public void visitDataMap(@NotNull SchemaDataMap o) {
+    visitDataValue(o);
+  }
+
+  public void visitDataMapEntry(@NotNull SchemaDataMapEntry o) {
+    visitPsiElement(o);
+  }
+
+  public void visitDataPrimitiveValue(@NotNull SchemaDataPrimitiveValue o) {
+    visitDataValue(o);
+  }
+
+  public void visitDataRecord(@NotNull SchemaDataRecord o) {
+    visitDataValue(o);
+  }
+
+  public void visitDataRecordEntry(@NotNull SchemaDataRecordEntry o) {
+    visitPsiElement(o);
+  }
+
+  public void visitDataValue(@NotNull SchemaDataValue o) {
+    visitPsiElement(o);
+  }
+
+  public void visitDataVar(@NotNull SchemaDataVar o) {
+    visitDataValue(o);
+  }
+
+  public void visitDataVarEntry(@NotNull SchemaDataVarEntry o) {
+    visitPsiElement(o);
+  }
+
   public void visitDefaultOverride(@NotNull SchemaDefaultOverride o) {
     visitPsiElement(o);
   }

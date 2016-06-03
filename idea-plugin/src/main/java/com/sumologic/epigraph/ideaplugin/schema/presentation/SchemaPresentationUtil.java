@@ -3,6 +3,7 @@ package com.sumologic.epigraph.ideaplugin.schema.presentation;
 import com.intellij.icons.AllIcons;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiInvalidElementAccessException;
 import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -157,7 +158,9 @@ public class SchemaPresentationUtil {
     if (namespace != null) return namespace;
 
     try {
-      return element.getContainingFile().getName();
+      PsiFile containingFile = element.getContainingFile();
+      if (containingFile == null) return "[invalid]";
+      return containingFile.getName();
     } catch (PsiInvalidElementAccessException e) {
       return "[invalid]"; // file not available
     }

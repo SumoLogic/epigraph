@@ -20,7 +20,7 @@ import static com.sumologic.epigraph.ideaplugin.schema.lexer.SchemaElementTypes.
 %type IElementType
 %unicode
 
-%states BACKTICK, DATA_VALUE
+%states BACKTICK
 
 EOL="\r"|"\n"|"\r\n"
 LINE_WS=[\ \t\f]
@@ -29,11 +29,13 @@ WHITE_SPACE=({LINE_WS}|{EOL})+
 SPACE=[ \t\n\x0B\f\r]+
 //BLOCK_COMMENT=("/*"[^"*"]{COMMENT_TAIL})|"/*"
 // DOC_COMMENT="/*""*"+("/"|([^"/""*"]{COMMENT_TAIL}))?
-//COMMENT_TAIL=([^"*"]*("*"+[^"*""/"])?)*("*"+"/")? // TODO disallow non-closed block comments
+//COMMENT_TAIL=([^"*"]*("*"+[^"*""/"])?)*("*"+"/")? // TODO disallow non-closed block comments?
 BLOCK_COMMENT="/*" !([^]* "*/" [^]*) ("*/")?
 LINE_COMMENT="/""/"[^\r\n]*
 
-DATA_VALUE=[^;]*
+STRING=\" ( [^\"\\] | \\ ( [\"\\/bfnrt] | u[0-9]{4} ) )* \"
+NUMBER=([:digit:])+(\.([:digit:])+)?
+
 ID=[:letter:]([:letter:]|[:digit:])*
 
 %%
@@ -66,15 +68,23 @@ ID=[:letter:]([:letter:]|[:digit:])*
   "boolean"            { return curlyCount == 0 ? S_BOOLEAN_T : S_ID; }
   "string"             { return curlyCount == 0 ? S_STRING_T : S_ID; }
   ":"                  { return S_COLON; }
-  ";"                  { return S_SEMI_COLON; }
   "*"                  { return S_STAR; }
   "."                  { return S_DOT; }
   ","                  { return S_COMMA; }
-  "="                  { yybegin(DATA_VALUE); return S_EQ; }
+  "="                  { return S_EQ; }
   "{"                  { curlyCount++; return S_CURLY_LEFT; }
   "}"                  { curlyCount = (curlyCount == 0 ? 0 : curlyCount - 1) ; return S_CURLY_RIGHT; }
   "["                  { return S_BRACKET_LEFT; }
   "]"                  { return S_BRACKET_RIGHT; }
+  "("                  { return S_PAREN_LEFT; }
+  ")"                  { return S_PAREN_RIGHT; }
+  "<"                  { return S_ANGLE_LEFT; }
+  ">"                  { return S_ANGLE_RIGHT; }
+  "/"                  { return S_SLASH; }
+
+  {STRING}             { return S_STRING; }
+  {NUMBER}             { return S_NUMBER; }
+  "null"               { return S_NULL; }
 
   {LINE_COMMENT}       { return S_COMMENT; }
   {BLOCK_COMMENT}      { return S_BLOCK_COMMENT; }
@@ -84,12 +94,6 @@ ID=[:letter:]([:letter:]|[:digit:])*
 <BACKTICK> {
   {ID}                 { return S_ID; }
   "`"                  { yybegin(YYINITIAL); return S_BACKTICK; }
-}
-
-<DATA_VALUE> {
-  // TODO find a way to implement escaping for ';' inside data
-  {DATA_VALUE}         { return S_DATA_VALUE; }
-  ";"                  { yybegin(YYINITIAL); return S_SEMI_COLON; }
 }
 
 [^]                  { return com.intellij.psi.TokenType.BAD_CHARACTER; }

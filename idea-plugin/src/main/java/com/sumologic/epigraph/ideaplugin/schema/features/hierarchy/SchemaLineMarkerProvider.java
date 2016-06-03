@@ -42,7 +42,7 @@ public class SchemaLineMarkerProvider extends RelatedItemLineMarkerProvider {
     if (parent instanceof SchemaTypeDef) {
       SchemaTypeDef typeDef = (SchemaTypeDef) parent;
 
-      List<SchemaSupplementDef> supplements = SchemaIndexUtil.findSupplementsBySupplemented(project, typeDef);
+      List<SchemaSupplementDef> supplements = HierarchyCache.getHierarchyCache(project).getSupplementsBySupplemented(typeDef);
 
       if (!supplements.isEmpty()) {
         NavigationGutterIconBuilder<PsiElement> builder =

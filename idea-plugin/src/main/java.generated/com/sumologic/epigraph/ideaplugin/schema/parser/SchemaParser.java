@@ -21,7 +21,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
 
   public void parseLight(IElementType t, PsiBuilder b) {
     boolean r;
-    b = adapt_builder_(t, b, this, null);
+    b = adapt_builder_(t, b, this, EXTENDS_SETS_);
     Marker m = enter_section_(b, 0, _COLLAPSE_, null);
     if (t == S_ANON_LIST) {
       r = anonList(b, 0);
@@ -31,6 +31,36 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     }
     else if (t == S_CUSTOM_PARAM) {
       r = customParam(b, 0);
+    }
+    else if (t == S_DATA_ENUM) {
+      r = dataEnum(b, 0);
+    }
+    else if (t == S_DATA_LIST) {
+      r = dataList(b, 0);
+    }
+    else if (t == S_DATA_MAP) {
+      r = dataMap(b, 0);
+    }
+    else if (t == S_DATA_MAP_ENTRY) {
+      r = dataMapEntry(b, 0);
+    }
+    else if (t == S_DATA_PRIMITIVE_VALUE) {
+      r = dataPrimitiveValue(b, 0);
+    }
+    else if (t == S_DATA_RECORD) {
+      r = dataRecord(b, 0);
+    }
+    else if (t == S_DATA_RECORD_ENTRY) {
+      r = dataRecordEntry(b, 0);
+    }
+    else if (t == S_DATA_VALUE) {
+      r = dataValue(b, 0);
+    }
+    else if (t == S_DATA_VAR) {
+      r = dataVar(b, 0);
+    }
+    else if (t == S_DATA_VAR_ENTRY) {
+      r = dataVarEntry(b, 0);
     }
     else if (t == S_DEFAULT_OVERRIDE) {
       r = defaultOverride(b, 0);
@@ -132,6 +162,11 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     return root(b, l + 1);
   }
 
+  public static final TokenSet[] EXTENDS_SETS_ = new TokenSet[] {
+    create_token_set_(S_DATA_ENUM, S_DATA_LIST, S_DATA_MAP, S_DATA_PRIMITIVE_VALUE,
+      S_DATA_RECORD, S_DATA_VALUE, S_DATA_VAR),
+  };
+
   /* ********************************************************** */
   // 'list' '[' typeRef defaultOverride? ']'
   public static boolean anonList(PsiBuilder b, int l) {
@@ -183,7 +218,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // qid '=' data_value ';'
+  // qid '=' dataValue
   public static boolean customParam(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "customParam")) return false;
     if (!nextTokenIs(b, "<custom attribute>", S_BACKTICK, S_ID)) return false;
@@ -192,10 +227,327 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     r = qid(b, l + 1);
     r = r && consumeToken(b, S_EQ);
     p = r; // pin = 2
-    r = r && report_error_(b, consumeToken(b, S_DATA_VALUE));
-    r = p && consumeToken(b, S_SEMI_COLON) && r;
+    r = r && dataValue(b, l + 1);
     exit_section_(b, l, m, r, p, null);
     return r || p;
+  }
+
+  /* ********************************************************** */
+  // qid
+  public static boolean dataEnum(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "dataEnum")) return false;
+    if (!nextTokenIs(b, "<data enum>", S_BACKTICK, S_ID)) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, S_DATA_ENUM, "<data enum>");
+    r = qid(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // '[' (dataValue ','?)* ']'
+  public static boolean dataList(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "dataList")) return false;
+    if (!nextTokenIs(b, S_BRACKET_LEFT)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, S_DATA_LIST, null);
+    r = consumeToken(b, S_BRACKET_LEFT);
+    p = r; // pin = 1
+    r = r && report_error_(b, dataList_1(b, l + 1));
+    r = p && consumeToken(b, S_BRACKET_RIGHT) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // (dataValue ','?)*
+  private static boolean dataList_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "dataList_1")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!dataList_1_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "dataList_1", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
+  // dataValue ','?
+  private static boolean dataList_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "dataList_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = dataValue(b, l + 1);
+    r = r && dataList_1_0_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // ','?
+  private static boolean dataList_1_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "dataList_1_0_1")) return false;
+    consumeToken(b, S_COMMA);
+    return true;
+  }
+
+  /* ********************************************************** */
+  // '(' dataMapEntry* ')'
+  public static boolean dataMap(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "dataMap")) return false;
+    if (!nextTokenIs(b, S_PAREN_LEFT)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, S_DATA_MAP, null);
+    r = consumeToken(b, S_PAREN_LEFT);
+    p = r; // pin = 1
+    r = r && report_error_(b, dataMap_1(b, l + 1));
+    r = p && consumeToken(b, S_PAREN_RIGHT) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // dataMapEntry*
+  private static boolean dataMap_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "dataMap_1")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!dataMapEntry(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "dataMap_1", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
+  /* ********************************************************** */
+  // dataVarValue ':' dataValue ','?
+  public static boolean dataMapEntry(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "dataMapEntry")) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, S_DATA_MAP_ENTRY, "<data map entry>");
+    r = dataVarValue(b, l + 1);
+    r = r && consumeToken(b, S_COLON);
+    p = r; // pin = 2
+    r = r && report_error_(b, dataValue(b, l + 1));
+    r = p && dataMapEntry_3(b, l + 1) && r;
+    exit_section_(b, l, m, r, p, dataValueRecover_parser_);
+    return r || p;
+  }
+
+  // ','?
+  private static boolean dataMapEntry_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "dataMapEntry_3")) return false;
+    consumeToken(b, S_COMMA);
+    return true;
+  }
+
+  /* ********************************************************** */
+  // string | number
+  public static boolean dataPrimitiveValue(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "dataPrimitiveValue")) return false;
+    if (!nextTokenIs(b, "<data primitive value>", S_NUMBER, S_STRING)) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, S_DATA_PRIMITIVE_VALUE, "<data primitive value>");
+    r = consumeToken(b, S_STRING);
+    if (!r) r = consumeToken(b, S_NUMBER);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // '{' dataRecordEntry* '}'
+  public static boolean dataRecord(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "dataRecord")) return false;
+    if (!nextTokenIs(b, S_CURLY_LEFT)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, S_DATA_RECORD, null);
+    r = consumeToken(b, S_CURLY_LEFT);
+    p = r; // pin = 1
+    r = r && report_error_(b, dataRecord_1(b, l + 1));
+    r = p && consumeToken(b, S_CURLY_RIGHT) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // dataRecordEntry*
+  private static boolean dataRecord_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "dataRecord_1")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!dataRecordEntry(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "dataRecord_1", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
+  /* ********************************************************** */
+  // qid ':' dataValue ','?
+  public static boolean dataRecordEntry(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "dataRecordEntry")) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, S_DATA_RECORD_ENTRY, "<data record entry>");
+    r = qid(b, l + 1);
+    r = r && consumeToken(b, S_COLON);
+    p = r; // pin = 2
+    r = r && report_error_(b, dataValue(b, l + 1));
+    r = p && dataRecordEntry_3(b, l + 1) && r;
+    exit_section_(b, l, m, r, p, dataValueRecover_parser_);
+    return r || p;
+  }
+
+  // ','?
+  private static boolean dataRecordEntry_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "dataRecordEntry_3")) return false;
+    consumeToken(b, S_COMMA);
+    return true;
+  }
+
+  /* ********************************************************** */
+  // ( fqnTypeRef '/' )*
+  static boolean dataTypeSpec(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "dataTypeSpec")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!dataTypeSpec_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "dataTypeSpec", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
+  // fqnTypeRef '/'
+  private static boolean dataTypeSpec_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "dataTypeSpec_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = fqnTypeRef(b, l + 1);
+    r = r && consumeToken(b, S_SLASH);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // dataTypeSpec? (dataVar | varValue)
+  public static boolean dataValue(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "dataValue")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _COLLAPSE_, S_DATA_VALUE, "<data value>");
+    r = dataValue_0(b, l + 1);
+    r = r && dataValue_1(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // dataTypeSpec?
+  private static boolean dataValue_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "dataValue_0")) return false;
+    dataTypeSpec(b, l + 1);
+    return true;
+  }
+
+  // dataVar | varValue
+  private static boolean dataValue_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "dataValue_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = dataVar(b, l + 1);
+    if (!r) r = varValue(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // ! ( qid | dataPrimitiveValue | '}' | ')' | '>' | ']' | 'abstract' | 'override')
+  static boolean dataValueRecover(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "dataValueRecover")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NOT_);
+    r = !dataValueRecover_0(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // qid | dataPrimitiveValue | '}' | ')' | '>' | ']' | 'abstract' | 'override'
+  private static boolean dataValueRecover_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "dataValueRecover_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = qid(b, l + 1);
+    if (!r) r = dataPrimitiveValue(b, l + 1);
+    if (!r) r = consumeToken(b, S_CURLY_RIGHT);
+    if (!r) r = consumeToken(b, S_PAREN_RIGHT);
+    if (!r) r = consumeToken(b, S_ANGLE_RIGHT);
+    if (!r) r = consumeToken(b, S_BRACKET_RIGHT);
+    if (!r) r = consumeToken(b, S_ABSTRACT);
+    if (!r) r = consumeToken(b, S_OVERRIDE);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // '<' dataVarEntry* '>'
+  public static boolean dataVar(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "dataVar")) return false;
+    if (!nextTokenIs(b, S_ANGLE_LEFT)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, S_DATA_VAR, null);
+    r = consumeToken(b, S_ANGLE_LEFT);
+    p = r; // pin = 1
+    r = r && report_error_(b, dataVar_1(b, l + 1));
+    r = p && consumeToken(b, S_ANGLE_RIGHT) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // dataVarEntry*
+  private static boolean dataVar_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "dataVar_1")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!dataVarEntry(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "dataVar_1", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
+  /* ********************************************************** */
+  // qid ':' dataVarValue ','?
+  public static boolean dataVarEntry(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "dataVarEntry")) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, S_DATA_VAR_ENTRY, "<data var entry>");
+    r = qid(b, l + 1);
+    r = r && consumeToken(b, S_COLON);
+    p = r; // pin = 2
+    r = r && report_error_(b, dataVarValue(b, l + 1));
+    r = p && dataVarEntry_3(b, l + 1) && r;
+    exit_section_(b, l, m, r, p, dataValueRecover_parser_);
+    return r || p;
+  }
+
+  // ','?
+  private static boolean dataVarEntry_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "dataVarEntry_3")) return false;
+    consumeToken(b, S_COMMA);
+    return true;
+  }
+
+  /* ********************************************************** */
+  // dataTypeSpec? varValue
+  static boolean dataVarValue(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "dataVarValue")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = dataVarValue_0(b, l + 1);
+    r = r && varValue(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // dataTypeSpec?
+  private static boolean dataVarValue_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "dataVarValue_0")) return false;
+    dataTypeSpec(b, l + 1);
+    return true;
   }
 
   /* ********************************************************** */
@@ -1430,6 +1782,27 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     return true;
   }
 
+  /* ********************************************************** */
+  // dataRecord | dataMap | dataList | dataEnum | dataPrimitiveValue | 'null'
+  static boolean varValue(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "varValue")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = dataRecord(b, l + 1);
+    if (!r) r = dataMap(b, l + 1);
+    if (!r) r = dataList(b, l + 1);
+    if (!r) r = dataEnum(b, l + 1);
+    if (!r) r = dataPrimitiveValue(b, l + 1);
+    if (!r) r = consumeToken(b, S_NULL);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  final static Parser dataValueRecover_parser_ = new Parser() {
+    public boolean parse(PsiBuilder b, int l) {
+      return dataValueRecover(b, l + 1);
+    }
+  };
   final static Parser declRecover_parser_ = new Parser() {
     public boolean parse(PsiBuilder b, int l) {
       return declRecover(b, l + 1);

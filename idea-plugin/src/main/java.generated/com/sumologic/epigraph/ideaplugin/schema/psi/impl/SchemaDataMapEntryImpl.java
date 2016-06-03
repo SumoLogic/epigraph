@@ -11,14 +11,14 @@ import static com.sumologic.epigraph.ideaplugin.schema.lexer.SchemaElementTypes.
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.sumologic.epigraph.ideaplugin.schema.psi.*;
 
-public class SchemaCustomParamImpl extends ASTWrapperPsiElement implements SchemaCustomParam {
+public class SchemaDataMapEntryImpl extends ASTWrapperPsiElement implements SchemaDataMapEntry {
 
-  public SchemaCustomParamImpl(ASTNode node) {
+  public SchemaDataMapEntryImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull SchemaVisitor visitor) {
-    visitor.visitCustomParam(this);
+    visitor.visitDataMapEntry(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -27,35 +27,33 @@ public class SchemaCustomParamImpl extends ASTWrapperPsiElement implements Schem
   }
 
   @Override
-  @Nullable
-  public SchemaDataValue getDataValue() {
-    return findChildByClass(SchemaDataValue.class);
+  @NotNull
+  public List<SchemaDataValue> getDataValueList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaDataValue.class);
   }
 
   @Override
   @NotNull
-  public PsiElement getEq() {
-    return findNotNullChildByType(S_EQ);
+  public List<SchemaFqnTypeRef> getFqnTypeRefList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaFqnTypeRef.class);
   }
 
   @Override
   @NotNull
-  public PsiElement getId() {
-    return findNotNullChildByType(S_ID);
+  public PsiElement getColon() {
+    return findNotNullChildByType(S_COLON);
   }
 
+  @Override
   @Nullable
-  public String getName() {
-    return SchemaPsiImplUtil.getName(this);
+  public PsiElement getComma() {
+    return findChildByType(S_COMMA);
   }
 
-  public PsiElement setName(String name) {
-    return SchemaPsiImplUtil.setName(this, name);
-  }
-
-  @NotNull
-  public PsiElement getNameIdentifier() {
-    return SchemaPsiImplUtil.getNameIdentifier(this);
+  @Override
+  @Nullable
+  public PsiElement getNull() {
+    return findChildByType(S_NULL);
   }
 
 }

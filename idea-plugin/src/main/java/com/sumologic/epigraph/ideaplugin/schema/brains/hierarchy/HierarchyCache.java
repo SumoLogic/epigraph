@@ -5,6 +5,7 @@ import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.ModificationTracker;
 import com.intellij.psi.*;
 import com.intellij.psi.util.*;
+import com.sumologic.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
 import com.sumologic.epigraph.ideaplugin.schema.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -21,6 +22,7 @@ public class HierarchyCache {
   private final Key<ParameterizedCachedValue<List<SchemaTypeDef>, SchemaTypeDef>> DIRECT_TYPE_PARENTS_KEY = Key.create("DIRECT_TYPE_PARENTS");
   private final Key<ParameterizedCachedValue<List<SchemaTypeDef>, SchemaTypeDef>> TYPE_INHERITORS_KEY = Key.create("TYPE_INHERITORS");
   private final Key<ParameterizedCachedValue<List<SchemaTypeDef>, SchemaTypeDef>> DIRECT_TYPE_INHERITORS_KEY = Key.create("DIRECT_TYPE_INHERITORS");
+  private final Key<ParameterizedCachedValue<List<SchemaSupplementDef>, SchemaTypeDef>> SUPPLEMENTS_BY_SUPPLEMENTED_KEY = Key.create("SUPPLEMENTS_BY_SUPPLEMENTED");
 
   private final Project project;
   private final HierarchyModificationTracker hierarchyModificationTracker = new HierarchyModificationTracker();
@@ -32,77 +34,7 @@ public class HierarchyCache {
 
   public HierarchyCache(@NotNull Project project) {
     this.project = project;
-    PsiManager.getInstance(project).addPsiTreeChangeListener(new PsiTreeChangeAdapter() {
-
-      @Override
-      public void childAdded(@NotNull PsiTreeChangeEvent event) {
-        handle(event);
-      }
-
-      @Override
-      public void childMoved(@NotNull PsiTreeChangeEvent event) {
-        handle(event);
-      }
-
-      @Override
-      public void childRemoved(@NotNull PsiTreeChangeEvent event) {
-        handle(event);
-      }
-
-      @Override
-      public void childrenChanged(@NotNull PsiTreeChangeEvent event) {
-        handle(event);
-      }
-
-      @Override
-      public void childReplaced(@NotNull PsiTreeChangeEvent event) {
-        handle(event);
-      }
-
-      @Override
-      public void propertyChanged(@NotNull PsiTreeChangeEvent event) {
-        handle(event);
-      }
-
-      private void handle(@NotNull PsiTreeChangeEvent event) {
-        boolean invalidate = false;
-
-        final PsiElement element = event.getElement();
-        final PsiElement child = event.getChild();
-        final PsiElement parent = child == null ? null : child.getParent();
-
-        if (child instanceof PsiWhiteSpace) return;
-
-        // imports changed
-        if (PsiTreeUtil.getParentOfType(child, SchemaImports.class) != null) {
-          invalidate = true;
-        }
-
-        // types added/removed/replaced
-        if (child instanceof SchemaTypeDefWrapper || parent instanceof SchemaDefs) {
-          invalidate = true;
-        }
-
-        // supplements added/removed/replaced
-        if (child instanceof SchemaSupplementDef || parent instanceof SchemaDefs) {
-          invalidate = true;
-        }
-
-        // "extends" clause changed
-        if ((element instanceof SchemaExtendsDecl) || PsiTreeUtil.getParentOfType(child, SchemaExtendsDecl.class) != null) {
-          invalidate = true;
-        }
-
-        // "supplements" clause changed
-        if ((element instanceof SchemaSupplementDef) || PsiTreeUtil.getParentOfType(child, SchemaSupplementDef.class) != null) {
-          invalidate = true;
-        }
-
-        if (invalidate)
-          hierarchyModificationTracker.tick();
-
-      }
-    }, project);
+    PsiManager.getInstance(project).addPsiTreeChangeListener(new InvalidationListener(), project);
   }
 
   /**
@@ -139,6 +71,18 @@ public class HierarchyCache {
         typeDef,
         TYPE_INHERITORS_KEY,
         new TypeInheritorsProvider(),
+        false,
+        typeDef
+    );
+  }
+
+  @NotNull
+  public List<SchemaSupplementDef> getSupplementsBySupplemented(@NotNull SchemaTypeDef typeDef) {
+    CachedValuesManager cachedValuesManager = CachedValuesManager.getManager(project);
+    return cachedValuesManager.getParameterizedCachedValue(
+        typeDef,
+        SUPPLEMENTS_BY_SUPPLEMENTED_KEY,
+        new SupplementsBySupplementedProvider(),
         false,
         typeDef
     );
@@ -201,6 +145,88 @@ public class HierarchyCache {
           new ArrayList<>(inheritors),
           hierarchyModificationTracker
       );
+    }
+  }
+
+  private class SupplementsBySupplementedProvider implements ParameterizedCachedValueProvider<List<SchemaSupplementDef>, SchemaTypeDef> {
+    @Nullable
+    @Override
+    public CachedValueProvider.Result<List<SchemaSupplementDef>> compute(SchemaTypeDef typeDef) {
+      List<SchemaSupplementDef> supplements = SchemaIndexUtil.findSupplementsBySupplemented(project, typeDef);
+      return new CachedValueProvider.Result<>(
+          supplements,
+          hierarchyModificationTracker
+      );
+    }
+  }
+
+  private class InvalidationListener extends PsiTreeChangeAdapter {
+    @Override
+    public void childAdded(@NotNull PsiTreeChangeEvent event) {
+      handle(event);
+    }
+
+    @Override
+    public void childMoved(@NotNull PsiTreeChangeEvent event) {
+      handle(event);
+    }
+
+    @Override
+    public void childRemoved(@NotNull PsiTreeChangeEvent event) {
+      handle(event);
+    }
+
+    @Override
+    public void childrenChanged(@NotNull PsiTreeChangeEvent event) {
+      handle(event);
+    }
+
+    @Override
+    public void childReplaced(@NotNull PsiTreeChangeEvent event) {
+      handle(event);
+    }
+
+    @Override
+    public void propertyChanged(@NotNull PsiTreeChangeEvent event) {
+      handle(event);
+    }
+
+    private void handle(@NotNull PsiTreeChangeEvent event) {
+      boolean invalidate = false;
+
+      final PsiElement element = event.getElement();
+      final PsiElement child = event.getChild();
+      final PsiElement parent = child == null ? null : child.getParent();
+
+      if (child instanceof PsiWhiteSpace) return;
+
+      // imports changed
+      if (PsiTreeUtil.getParentOfType(child, SchemaImports.class) != null) {
+        invalidate = true;
+      }
+
+      // types added/removed/replaced
+      if (child instanceof SchemaTypeDefWrapper || parent instanceof SchemaDefs) {
+        invalidate = true;
+      }
+
+      // supplements added/removed/replaced
+      if (child instanceof SchemaSupplementDef || parent instanceof SchemaDefs) {
+        invalidate = true;
+      }
+
+      // "extends" clause changed
+      if ((element instanceof SchemaExtendsDecl) || PsiTreeUtil.getParentOfType(child, SchemaExtendsDecl.class) != null) {
+        invalidate = true;
+      }
+
+      // "supplements" clause changed
+      if ((element instanceof SchemaSupplementDef) || PsiTreeUtil.getParentOfType(child, SchemaSupplementDef.class) != null) {
+        invalidate = true;
+      }
+
+      if (invalidate)
+        hierarchyModificationTracker.tick();
     }
   }
 

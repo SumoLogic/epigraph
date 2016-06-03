@@ -8,17 +8,16 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static com.sumologic.epigraph.ideaplugin.schema.lexer.SchemaElementTypes.*;
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.sumologic.epigraph.ideaplugin.schema.psi.*;
 
-public class SchemaCustomParamImpl extends ASTWrapperPsiElement implements SchemaCustomParam {
+public class SchemaDataVarImpl extends SchemaDataValueImpl implements SchemaDataVar {
 
-  public SchemaCustomParamImpl(ASTNode node) {
+  public SchemaDataVarImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull SchemaVisitor visitor) {
-    visitor.visitCustomParam(this);
+    visitor.visitDataVar(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -27,35 +26,21 @@ public class SchemaCustomParamImpl extends ASTWrapperPsiElement implements Schem
   }
 
   @Override
-  @Nullable
-  public SchemaDataValue getDataValue() {
-    return findChildByClass(SchemaDataValue.class);
+  @NotNull
+  public List<SchemaDataVarEntry> getDataVarEntryList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaDataVarEntry.class);
   }
 
   @Override
   @NotNull
-  public PsiElement getEq() {
-    return findNotNullChildByType(S_EQ);
+  public PsiElement getAngleLeft() {
+    return findNotNullChildByType(S_ANGLE_LEFT);
   }
 
   @Override
-  @NotNull
-  public PsiElement getId() {
-    return findNotNullChildByType(S_ID);
-  }
-
   @Nullable
-  public String getName() {
-    return SchemaPsiImplUtil.getName(this);
-  }
-
-  public PsiElement setName(String name) {
-    return SchemaPsiImplUtil.setName(this, name);
-  }
-
-  @NotNull
-  public PsiElement getNameIdentifier() {
-    return SchemaPsiImplUtil.getNameIdentifier(this);
+  public PsiElement getAngleRight() {
+    return findChildByType(S_ANGLE_RIGHT);
   }
 
 }
