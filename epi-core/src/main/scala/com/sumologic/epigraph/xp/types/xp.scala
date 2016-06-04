@@ -21,7 +21,7 @@ trait Type {
     st +: st.supertypes.asInstanceOf[Seq[Super]] // TODO explain why cast is ok
   }.distinct
 
-  /** @return `true` if `sub` is a subtype of this [[Type]]*/
+  /** @return `true` if `sub` is a subtype of this [[Type]] */
   def isAssignableFrom(sub: Type): Boolean = sub == this || sub.supertypes.contains(this)
 
   override def toString: String = "«" + name.string + "»(" + super.toString + ")"
@@ -33,15 +33,15 @@ trait MultiType[M <: Var[M]] extends Type {
 
   override type Super >: Null <: MultiType[_ >: M]
 
-  final type DeclaredTags = Seq[VarTag[M, _, _]]
+  final type DeclaredTags = Seq[Tag[M, _, _]]
 
-  final protected def declareTags(elems: VarTag[M, _, _]*): DeclaredTags = Seq[VarTag[M, _, _]](elems: _*)
+  final protected def declareTags(elems: Tag[M, _, _]*): DeclaredTags = Seq[Tag[M, _, _]](elems: _*)
 
   def declaredVarTags: DeclaredTags
 
-  def varTags: Seq[VarTag[_ >: M, _, _]] = cachedVarTags
+  def varTags: Seq[Tag[_ >: M, _, _]] = cachedVarTags
 
-  private lazy val cachedVarTags: Seq[VarTag[_ >: M, _, _]] = (declaredVarTags ++ supertypes.flatMap(
+  private lazy val cachedVarTags: Seq[Tag[_ >: M, _, _]] = (declaredVarTags ++ supertypes.flatMap(
     _.varTags
   )).distinct // TODO correctly exclude overridden vartags?
 
@@ -80,7 +80,13 @@ trait MultiType[M <: Var[M]] extends Type {
 }
 
 
-class VarTag[M <: Var[M], N <: TypeMemberName, T <: Datum[T]](val name: N, val dataType: DataType[T])
+class Tag[M <: Var[M], N <: TypeMemberName, T <: Datum[T]](val name: N, val dataType: DataType[T])
+
+
+class FinalTag[M <: Var[M], N <: TypeMemberName, T <: Datum[T]](
+    override val name: N,
+    override val dataType: DataType[T]
+) extends Tag[M, N, T](name, dataType)
 
 
 abstract class MultiVarType[M <: Var[M]](
@@ -90,10 +96,16 @@ abstract class MultiVarType[M <: Var[M]](
 
   final override type Super = MultiType[_ >: M]
 
-  final type Tag[N <: TypeMemberName, T <: Datum[T]] = VarTag[M, N, T]
+  final type AbsTag[N <: TypeMemberName, T <: Datum[T]] = Tag[M, N, T]
 
-  def tag[N <: TypeMemberName, T <: Datum[T]](name: N, ype: DataType[T]): Tag[N, T] = new VarTag[M, N, T](
-    name, ype
+  def absTag[N <: TypeMemberName, T <: Datum[T]](name: N, dataType: DataType[T]): AbsTag[N, T] = new Tag[M, N, T](
+    name, dataType
+  )
+
+  final type FinTag[N <: TypeMemberName, T <: Datum[T]] = FinalTag[M, N, T]
+
+  def finTag[N <: TypeMemberName, T <: Datum[T]](name: N, dataType: DataType[T]): FinTag[N, T] = new FinalTag[M, N, T](
+    name, dataType
   )
 
 }
@@ -101,7 +113,7 @@ abstract class MultiVarType[M <: Var[M]](
 
 trait DefaultMultiType[D <: Datum[D]] extends MultiType[D] {this: DataType[D] =>
 
-  val default: VarTag[D, TypeMemberName.default.type, D] = new VarTag[D, TypeMemberName.default.type, D](
+  val default: Tag[D, TypeMemberName.default.type, D] = new Tag[D, TypeMemberName.default.type, D](
     TypeMemberName.default, this
   )
 
@@ -159,7 +171,7 @@ abstract class RecordType[D <: RecordDatum[D]](
   protected def field[M <: Var[M], N <: TypeMemberName, T <: Datum[T]](
       name: FieldName,
       valueType: MultiType[M],
-      tag: VarTag[_ >: M, N, T]
+      tag: Tag[_ >: M, N, T]
   ): VarTagField[M, N, T] = new TaggedField[D, M, N, T](name, valueType, tag)
 
 }
@@ -167,7 +179,7 @@ abstract class RecordType[D <: RecordDatum[D]](
 
 class Field[D <: RecordDatum[D], M <: Var[M]](val name: FieldName, val valueType: MultiType[M]) {
 
-  def as[N <: TypeMemberName, T <: Datum[T]](varTag: VarTag[_ >: M, N, T]): TaggedField[D, M, N, T] = new TaggedField[D, M, N, T](
+  def as[N <: TypeMemberName, T <: Datum[T]](varTag: Tag[_ >: M, N, T]): TaggedField[D, M, N, T] = new TaggedField[D, M, N, T](
     name, valueType, varTag
   )
 
@@ -177,7 +189,7 @@ class Field[D <: RecordDatum[D], M <: Var[M]](val name: FieldName, val valueType
 class TaggedField[D <: RecordDatum[D], M <: Var[M], N <: TypeMemberName, T <: Datum[T]](
     override val name: FieldName,
     override val valueType: MultiType[M],
-    val tag: VarTag[_ >: M, N, T]
+    val tag: Tag[_ >: M, N, T]
 ) extends Field[D, M](name, valueType)
 
 
@@ -209,7 +221,7 @@ class ListType[M <: Var[M]](
 class TaggedListType[M <: Var[M], N <: TypeMemberName, T <: Datum[T]](
     override final val name: QualifiedTypeName,
     override final val valueType: MultiType[M],
-    final val tag: VarTag[M, N, T],
+    final val tag: Tag[M, N, T],
     override final val declaredSupertypes: Seq[ListType[_ >: M]] = Nil,
     override final val isPolymorphic: Boolean = false
 ) extends ListType[M](name, valueType, declaredSupertypes, isPolymorphic)
@@ -234,6 +246,8 @@ trait PrimitiveType[D <: PrimitiveDatum[D]] extends DataType[D] {
 
   type Native
 
+  def createImmutable(native: Native): D // TODO this should be defined for concrete (non-abstract) data types only
+
 }
 
 
@@ -250,7 +264,7 @@ abstract class StringType[D <: StringDatum[D]](
 }
 
 
-class IntegerType[D <: IntegerDatum[D]](
+abstract class IntegerType[D <: IntegerDatum[D]](
     override val name: QualifiedTypeName,
     override val declaredSupertypes: Seq[IntegerType[_ >: D]] = Nil,
     override val isPolymorphic: Boolean = false
@@ -263,7 +277,7 @@ class IntegerType[D <: IntegerDatum[D]](
 }
 
 
-class LongType[D <: LongDatum[D]](
+abstract class LongType[D <: LongDatum[D]](
     override val name: QualifiedTypeName,
     override val declaredSupertypes: Seq[LongType[_ >: D]] = Nil,
     override val isPolymorphic: Boolean = false
@@ -276,7 +290,7 @@ class LongType[D <: LongDatum[D]](
 }
 
 
-class DoubleType[D <: DoubleDatum[D]](
+abstract class DoubleType[D <: DoubleDatum[D]](
     override val name: QualifiedTypeName,
     override val declaredSupertypes: Seq[DoubleType[_ >: D]] = Nil,
     override val isPolymorphic: Boolean = false
@@ -289,7 +303,7 @@ class DoubleType[D <: DoubleDatum[D]](
 }
 
 
-class BooleanType[D <: BooleanDatum[D]](
+abstract class BooleanType[D <: BooleanDatum[D]](
     override val name: QualifiedTypeName,
     override val declaredSupertypes: Seq[BooleanType[_ >: D]] = Nil,
     override val isPolymorphic: Boolean = false
