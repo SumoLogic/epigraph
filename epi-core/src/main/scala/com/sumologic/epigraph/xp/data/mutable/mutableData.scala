@@ -6,9 +6,10 @@ import java.util.concurrent.ConcurrentHashMap
 
 import com.sumologic.epigraph.names.{FieldName, TypeMemberName}
 import com.sumologic.epigraph.xp.data._
+import com.sumologic.epigraph.xp.data.immutable.ImmVarEntry
 import com.sumologic.epigraph.xp.types._
 
-import scala.util.{Failure, Try}
+import scala.util.{Failure, Success, Try}
 
 trait MutVar[M <: Var[M]] extends Var[M] { // TODO take/require vartype?
 
@@ -135,14 +136,21 @@ object MutVarEntry {
 }
 
 
-trait MutDatum[+D <: Datum[D]] extends Datum[D] {
+trait MutDatum[+D <: Datum[D]] extends Datum[D] {this: D =>
 
-  //override type DatumType <: DataType[D]
+  val entry: VarEntry[D] = new ImmVarEntry[D](Success(this)) // TODO make sure it's ok to keep it immutable
+
+  private lazy val someEntry: Some[VarEntry[D]] = Some(entry)
+
+  override def getEntry[T <: Datum[T]](tag: Tag[_ >: D, _, T]): Option[VarEntry[T]] = {
+    // FIXME check tag is ours or compatible with (i.e. supertype's)
+    someEntry.asInstanceOf[Option[VarEntry[T]]] // TODO check this cast!
+  }
 
 }
 
 
-trait MutRecordDatum[+D <: RecordDatum[D]] extends RecordDatum[D] with MutDatum[D] {
+trait MutRecordDatum[+D <: RecordDatum[D]] extends RecordDatum[D] with MutDatum[D] {this: D =>
 
   //override type DatumType = RecordType[D]
 
@@ -226,46 +234,54 @@ trait MutTaggedListDatum[M <: Var[M], N <: TypeMemberName, V <: Datum[V]] extend
 //
 //}
 
-trait MutPrimitiveDatum[+D <: PrimitiveDatum[D]] extends PrimitiveDatum[D] with MutDatum[D] {
-
-  //override type DatumType <: PrimitiveType[D]
-
-  //def set(native: D##::#Native) // TODO better type
-
-}
+trait MutPrimitiveDatum[+D <: PrimitiveDatum[D]] extends MutDatum[D] with PrimitiveDatum[D] {this: D =>}
 
 
-trait MutStringDatum[+D <: StringDatum[D]] extends StringDatum[D] with MutPrimitiveDatum[D] {
-
-  //override type DatumType = StringType[D]
-  def native_=(x: StringType[D]#Native)
-
-}
+abstract class MutPrimitiveDatumImpl[+D <: PrimitiveDatum[D]](
+    override val dataType: PrimitiveType[_ <: D]
+) extends MutDatum[D] with PrimitiveDatum[D] {this: D =>}
 
 
-trait MutIntegerDatum[+D <: IntegerDatum[D]] extends IntegerDatum[D] with MutPrimitiveDatum[D] {
-
-  //override type DatumType = IntegerType[D]
-
-}
+trait MutStringDatum[+D <: StringDatum[D]] extends MutPrimitiveDatum[D] with StringDatum[D] {this: D =>}
 
 
-trait MutLongDatum[+D <: LongDatum[D]] extends LongDatum[D] with MutPrimitiveDatum[D] {
-
-  //override type DatumType = LongType[D]
-
-}
-
-
-trait MutDoubleDatum[+D <: DoubleDatum[D]] extends DoubleDatum[D] with MutPrimitiveDatum[D] {
-
-  //override type DatumType = DoubleType[D]
-
-}
+abstract class MutStringDatumImpl[+D <: StringDatum[D]](
+    override val dataType: StringType[_ <: D],
+    var native: String
+) extends MutPrimitiveDatumImpl[D](dataType) with MutStringDatum[D] {this: D =>}
 
 
-trait MutBooleanDatum[+D <: BooleanDatum[D]] extends BooleanDatum[D] with MutPrimitiveDatum[D] {
+trait MutIntegerDatum[+D <: IntegerDatum[D]] extends MutPrimitiveDatum[D] with IntegerDatum[D] {this: D =>}
 
-  //override type DatumType = BooleanType[D]
 
-}
+abstract class MutIntegerDatumImpl[+D <: IntegerDatum[D]](
+    override val dataType: IntegerType[_ <: D],
+    var native: Integer
+) extends MutPrimitiveDatumImpl[D](dataType) with MutIntegerDatum[D] {this: D =>}
+
+
+trait MutLongDatum[+D <: LongDatum[D]] extends MutPrimitiveDatum[D] with LongDatum[D] {this: D =>}
+
+
+abstract class MutLongDatumImpl[+D <: LongDatum[D]](
+    override val dataType: LongType[_ <: D],
+    var native: Long
+) extends MutPrimitiveDatumImpl[D](dataType) with MutLongDatum[D] {this: D =>}
+
+
+trait MutDoubleDatum[+D <: DoubleDatum[D]] extends MutPrimitiveDatum[D] with DoubleDatum[D] {this: D =>}
+
+
+abstract class MutDoubleDatumImpl[+D <: DoubleDatum[D]](
+    override val dataType: DoubleType[_ <: D],
+    var native: Double
+) extends MutPrimitiveDatumImpl[D](dataType) with MutDoubleDatum[D] {this: D =>}
+
+
+trait MutBooleanDatum[+D <: BooleanDatum[D]] extends MutPrimitiveDatum[D] with BooleanDatum[D] {this: D =>}
+
+
+abstract class MutBooleanDatumImpl[+D <: BooleanDatum[D]](
+    override val dataType: BooleanType[_ <: D],
+    var native: Boolean
+) extends MutPrimitiveDatumImpl[D](dataType) with MutBooleanDatum[D] {this: D =>}

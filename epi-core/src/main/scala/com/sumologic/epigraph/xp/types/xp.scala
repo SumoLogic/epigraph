@@ -6,6 +6,8 @@ import java.util.concurrent.ConcurrentHashMap
 
 import com.sumologic.epigraph.names._
 import com.sumologic.epigraph.xp.data._
+import com.sumologic.epigraph.xp.data.immutable.ImmDatum
+import com.sumologic.epigraph.xp.data.mutable.MutDatum
 
 trait Type {
 
@@ -21,7 +23,7 @@ trait Type {
     st +: st.supertypes.asInstanceOf[Seq[Super]] // TODO explain why cast is ok
   }.distinct
 
-  /** @return `true` if `sub` is a subtype of this [[Type]] */
+  /** @return `true` if `sub` is a subtype of this [[Type]]*/
   def isAssignableFrom(sub: Type): Boolean = sub == this || sub.supertypes.contains(this)
 
   override def toString: String = "«" + name.string + "»(" + super.toString + ")"
@@ -246,7 +248,11 @@ trait PrimitiveType[D <: PrimitiveDatum[D]] extends DataType[D] {
 
   type Native
 
-  def createImmutable(native: Native): D // TODO this should be defined for concrete (non-abstract) data types only
+  // TODO add default (initial) native value?
+
+  def createImmutable(native: Native): D with ImmDatum[D]// TODO this should be defined for concrete (non-abstract) data types only
+
+  def createMutable(native: Native): D with MutDatum[D]// TODO this should be defined for concrete (non-abstract) data types only
 
 }
 
