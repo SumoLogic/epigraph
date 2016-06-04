@@ -42,13 +42,13 @@ public class Fqn {
   }
 
   @Nullable
-  public String getFirst() {
+  public String getFirst() { // TODO rename to first
     if (isEmpty()) return null;
     return segments[0];
   }
 
   @Nullable
-  public String getLast() {
+  public String getLast() { // TODO rename to last
     if (isEmpty()) return null;
     return segments[size() - 1];
   }
@@ -79,7 +79,7 @@ public class Fqn {
   }
 
   @Nullable
-  public Fqn getPrefix() {
+  public Fqn getPrefix() { // todo rename to prefix, add javadoc
     if (isEmpty()) return null;
     if (size() == 1) return EMPTY;
 

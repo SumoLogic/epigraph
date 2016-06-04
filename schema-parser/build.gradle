@@ -1,0 +1,27 @@
+// If IDEA shows assignability warnings on this file: disable the inspection. See
+// https://youtrack.jetbrains.com/issue/IDEA-142683
+
+repositories {
+    jcenter()
+}
+
+version = "${version}.${buildNumber}"
+
+apply plugin: 'java'
+sourceCompatibility = javaVersion
+targetCompatibility = javaVersion
+tasks.withType(JavaCompile) { options.encoding = 'UTF-8' }
+
+sourceSets.main.java.srcDirs += file('../schema-parser-common/src/main/java')
+sourceSets.main.java.srcDirs += file('../schema-parser-common/src/main/java.generated')
+
+idea.module.sourceDirs += file('../schema-parser-common/src/main/java')
+idea.module.generatedSourceDirs += file('../schema-parser-common/src/main/java.generated')
+
+dependencies {
+    compile 'org.jetbrains:annotations:+@jar'
+    compile 'net.jcip:jcip-annotations:+@jar'
+//    compile 'com.intellij:openapi:+@jar'
+    compile fileTree(dir: 'lib', include: ['*.jar'])
+    testCompile 'junit:junit:4.12'
+}

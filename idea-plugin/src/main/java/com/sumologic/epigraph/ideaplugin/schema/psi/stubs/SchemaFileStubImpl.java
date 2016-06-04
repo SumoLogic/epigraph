@@ -23,6 +23,6 @@ public class SchemaFileStubImpl extends PsiFileStubImpl<SchemaFile> implements S
 
   @Override
   public IStubFileElementType getType() {
-    return SchemaStubElementTypes.SCHEMA_FILE;
+    return (IStubFileElementType) SchemaStubElementTypes.SCHEMA_FILE;
   }
 }
