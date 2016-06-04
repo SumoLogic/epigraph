@@ -32,8 +32,8 @@
   <properties>
     <scala.version.major>2</scala.version.major>
     <scala.version.minor>11</scala.version.minor>
-    <scala.version.major.minor>${scala.version.major}.${scala.version.minor}</scala.version.major.minor>
     <scala.version.patch>8</scala.version.patch>
+    <scala.version.major.minor>${scala.version.major}.${scala.version.minor}</scala.version.major.minor>
     <scala.version>${scala.version.major.minor}.${scala.version.patch}</scala.version>
 
     <maven.compiler.source>1.8</maven.compiler.source>
@@ -59,18 +59,10 @@
   <dependencies><!-- common dependencies (scala, scala-logging, scalatest) -->
 
     <dependency>
-      <groupId>org.scala-lang</groupId>
-      <artifactId>scala-library</artifactId>
-      <version>${scala.version}</version>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>1.1.5</version>
     </dependency>
-
-<!--
-    <dependency>
-      <groupId>org.scala-lang</groupId>
-      <artifactId>scala-compiler</artifactId>
-      <version>${scala.version}</version>
-    </dependency>
--->
 
     <dependency>
       <groupId>com.typesafe.scala-logging</groupId>
@@ -79,10 +71,23 @@
     </dependency>
 
     <dependency>
-      <groupId>ch.qos.logback</groupId>
-      <artifactId>logback-classic</artifactId>
-      <version>1.1.5</version>
+      <groupId>org.jetbrains</groupId>
+      <artifactId>annotations</artifactId>
+      <version>15.0</version>
     </dependency>
+
+    <dependency>
+      <groupId>org.scala-lang</groupId>
+      <artifactId>scala-library</artifactId>
+      <version>${scala.version}</version>
+    </dependency>
+    <!--
+        <dependency>
+          <groupId>org.scala-lang</groupId>
+          <artifactId>scala-compiler</artifactId>
+          <version>${scala.version}</version>
+        </dependency>
+    -->
 
     <dependency>
       <groupId>org.scalatest</groupId>
@@ -123,6 +128,27 @@
             <arg>-target:jvm-${maven.compiler.target}</arg>
           </args>
         </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>1.4.1</version>
+        <executions>
+          <execution>
+            <id>enforce-java</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <requireJavaVersion>
+                  <version>[${maven.compiler.source},)</version>
+                </requireJavaVersion>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
 
       <!-- disable surefire plugin tests-->
