@@ -2,7 +2,7 @@ package com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy;
 
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
-import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaTypeDef;
+import com.sumologic.epigraph.schema.parser.psi.SchemaTypeDef;
 
 import java.util.*;
 import java.util.stream.Collectors;

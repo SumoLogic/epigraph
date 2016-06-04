@@ -5,8 +5,9 @@ import com.intellij.ide.util.treeView.smartTree.TreeElement;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.psi.NavigatablePsiElement;
 import com.intellij.psi.PsiElement;
+import com.sumologic.epigraph.schema.parser.psi.*;
 import com.sumologic.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
-import com.sumologic.epigraph.ideaplugin.schema.psi.*;
+import com.sumologic.epigraph.ideaplugin.schema.presentation.StaticItemPresentation;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -33,7 +34,7 @@ class SchemaStructureViewElement implements StructureViewTreeElement {
   public ItemPresentation getPresentation() {
     ItemPresentation presentation = SchemaPresentationUtil.getPresentation(element, true);
     // remove location
-    return new SchemaPresentationUtil.StaticItemPresentation(
+    return new StaticItemPresentation(
         presentation.getPresentableText(),
         null,
         presentation.getIcon(false)

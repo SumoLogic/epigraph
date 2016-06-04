@@ -9,8 +9,8 @@ import com.sumologic.epigraph.ideaplugin.schema.formatting.SchemaBlock;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.sumologic.epigraph.ideaplugin.schema.lexer.SchemaElementTypes.S_LIST;
-import static com.sumologic.epigraph.ideaplugin.schema.lexer.SchemaElementTypes.S_MAP;
+import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.S_LIST;
+import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.S_MAP;
 
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>

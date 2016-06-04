@@ -8,19 +8,18 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.HierarchyCache;
 import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.InheritedMembers;
-import com.sumologic.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
 import com.sumologic.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
-import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaFieldDecl;
-import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaSupplementDef;
-import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaTypeDef;
-import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaVarTypeMemberDecl;
+import com.sumologic.epigraph.schema.parser.psi.SchemaFieldDecl;
+import com.sumologic.epigraph.schema.parser.psi.SchemaSupplementDef;
+import com.sumologic.epigraph.schema.parser.psi.SchemaTypeDef;
+import com.sumologic.epigraph.schema.parser.psi.SchemaVarTypeMemberDecl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.List;
 
-import static com.sumologic.epigraph.ideaplugin.schema.lexer.SchemaElementTypes.S_ID;
+import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.S_ID;
 
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>

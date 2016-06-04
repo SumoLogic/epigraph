@@ -2,8 +2,8 @@ package com.sumologic.epigraph.ideaplugin.schema.features;
 
 import com.intellij.lang.refactoring.NamesValidator;
 import com.intellij.openapi.project.Project;
-import com.sumologic.epigraph.ideaplugin.schema.lexer.SchemaFlexAdapter;
-import com.sumologic.epigraph.ideaplugin.schema.parser.SchemaParserDefinition;
+import com.sumologic.epigraph.schema.parser.lexer.SchemaFlexAdapter;
+import com.sumologic.epigraph.schema.parser.SchemaParserDefinition;
 import org.jetbrains.annotations.NotNull;
 
 /**

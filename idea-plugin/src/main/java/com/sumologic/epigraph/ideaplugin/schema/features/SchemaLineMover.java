@@ -9,9 +9,9 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.UnfairTextRange;
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaFile;
+import com.sumologic.epigraph.schema.parser.psi.SchemaFile;
 import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaPsiUtil;
-import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaTypeDef;
+import com.sumologic.epigraph.schema.parser.psi.SchemaTypeDef;
 import org.jetbrains.annotations.NotNull;
 
 /**

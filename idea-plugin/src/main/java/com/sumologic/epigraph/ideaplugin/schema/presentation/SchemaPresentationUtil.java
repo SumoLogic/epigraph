@@ -7,8 +7,8 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiInvalidElementAccessException;
 import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.sumologic.epigraph.schema.parser.psi.*;
 import com.sumologic.epigraph.ideaplugin.schema.brains.NamespaceManager;
-import com.sumologic.epigraph.ideaplugin.schema.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,6 +19,7 @@ import java.util.List;
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
 public class SchemaPresentationUtil {
+  // TODO move to schema/presentation?
   // TODO own icons!
   public static final Icon SCHEMA_FILE_ICON = AllIcons.FileTypes.Properties;
 
@@ -120,7 +121,7 @@ public class SchemaPresentationUtil {
 
       StringBuilder name = new StringBuilder();
 
-      List<SchemaFqnTypeRef> fqnTypeRef = schemaSupplementDef.supplementedRefs();
+      List <SchemaFqnTypeRef> fqnTypeRef = schemaSupplementDef.supplementedRefs();
       for (SchemaFqnTypeRef typeRef : fqnTypeRef) {
         if (name.length() > 0) name.append(", ");
         name.append(typeRef.getFqn().getFqn().toString());
@@ -172,36 +173,4 @@ public class SchemaPresentationUtil {
     return element.getClass().getSimpleName() + "(" + element.getNode().getElementType().toString() + ")";
   }
 
-  public static class StaticItemPresentation implements ItemPresentation {
-    @Nullable
-    private final String presentableText;
-    @Nullable
-    private final String locationString;
-    @Nullable
-    private final Icon icon;
-
-    public StaticItemPresentation(@Nullable String presentableText, @Nullable String locationString, @Nullable Icon icon) {
-      this.presentableText = presentableText;
-      this.locationString = locationString;
-      this.icon = icon;
-    }
-
-    @Nullable
-    @Override
-    public String getPresentableText() {
-      return presentableText;
-    }
-
-    @Nullable
-    @Override
-    public String getLocationString() {
-      return locationString;
-    }
-
-    @Nullable
-    @Override
-    public Icon getIcon(boolean unused) {
-      return icon;
-    }
-  }
 }

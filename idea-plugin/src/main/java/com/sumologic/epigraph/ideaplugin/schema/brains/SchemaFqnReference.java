@@ -12,9 +12,10 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
 import com.sumologic.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
-import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaFqnSegment;
-import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaImportStatement;
-import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaTypeDefWrapper;
+import com.sumologic.epigraph.schema.parser.Fqn;
+import com.sumologic.epigraph.schema.parser.psi.SchemaFqnSegment;
+import com.sumologic.epigraph.schema.parser.psi.SchemaImportStatement;
+import com.sumologic.epigraph.schema.parser.psi.SchemaTypeDefWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

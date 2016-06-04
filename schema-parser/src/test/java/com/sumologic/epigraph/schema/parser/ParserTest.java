@@ -2,7 +2,6 @@ package com.sumologic.epigraph.schema.parser;
 
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.DebugUtil;
-import com.sumologic.epigraph.ideaplugin.schema.parser.SchemaParserDefinition;
 import org.intellij.grammar.LightPsi;
 import org.junit.Assert;
 import org.junit.Test;

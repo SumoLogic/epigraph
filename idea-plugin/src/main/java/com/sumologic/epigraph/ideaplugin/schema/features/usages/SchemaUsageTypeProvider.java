@@ -5,9 +5,9 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.usages.impl.rules.UsageType;
 import com.intellij.usages.impl.rules.UsageTypeProvider;
-import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaFile;
-import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaFqnSegment;
-import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaImportStatement;
+import com.sumologic.epigraph.schema.parser.psi.SchemaFile;
+import com.sumologic.epigraph.schema.parser.psi.SchemaFqnSegment;
+import com.sumologic.epigraph.schema.parser.psi.SchemaImportStatement;
 import org.jetbrains.annotations.Nullable;
 
 /**

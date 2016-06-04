@@ -9,18 +9,19 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
-import com.sumologic.epigraph.ideaplugin.schema.SchemaLanguage;
-import com.sumologic.epigraph.ideaplugin.schema.brains.Fqn;
-import com.sumologic.epigraph.ideaplugin.schema.parser.SchemaParserDefinition;
+import com.sumologic.epigraph.schema.parser.Fqn;
+import com.sumologic.epigraph.schema.parser.SchemaLanguage;
+import com.sumologic.epigraph.schema.parser.psi.*;
+import com.sumologic.epigraph.schema.parser.SchemaParserDefinition;
 import com.sumologic.epigraph.ideaplugin.schema.psi.*;
-import com.sumologic.epigraph.ideaplugin.schema.psi.impl.SchemaPsiImplUtil;
+import com.sumologic.epigraph.schema.parser.psi.impl.SchemaPsiImplUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import static com.sumologic.epigraph.ideaplugin.schema.lexer.SchemaElementTypes.*;
+import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.*;
 
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>

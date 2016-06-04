@@ -3,9 +3,9 @@ package com.sumologic.epigraph.ideaplugin.schema.index;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaNamespaceDecl;
-import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaSupplementDef;
-import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaTypeDef;
+import com.sumologic.epigraph.schema.parser.psi.SchemaNamespaceDecl;
+import com.sumologic.epigraph.schema.parser.psi.SchemaSupplementDef;
+import com.sumologic.epigraph.schema.parser.psi.SchemaTypeDef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

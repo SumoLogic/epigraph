@@ -2,7 +2,7 @@ package com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy;
 
 import com.intellij.util.Query;
 import com.intellij.util.QueryFactory;
-import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaTypeDef;
+import com.sumologic.epigraph.schema.parser.psi.SchemaTypeDef;
 import org.jetbrains.annotations.NotNull;
 
 /**

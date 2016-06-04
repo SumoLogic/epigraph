@@ -7,13 +7,13 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IElementType;
-import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaFieldDecl;
-import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaTypeDef;
-import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaVarTypeMemberDecl;
+import com.sumologic.epigraph.schema.parser.psi.SchemaFieldDecl;
+import com.sumologic.epigraph.schema.parser.psi.SchemaTypeDef;
+import com.sumologic.epigraph.schema.parser.psi.SchemaVarTypeMemberDecl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.sumologic.epigraph.ideaplugin.schema.lexer.SchemaElementTypes.*;
+import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.*;
 
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>

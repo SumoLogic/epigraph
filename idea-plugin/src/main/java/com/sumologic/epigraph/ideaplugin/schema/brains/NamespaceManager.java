@@ -4,10 +4,11 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
-import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaFile;
-import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaFqn;
-import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaImportStatement;
-import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaNamespaceDecl;
+import com.sumologic.epigraph.schema.parser.Fqn;
+import com.sumologic.epigraph.schema.parser.psi.SchemaFile;
+import com.sumologic.epigraph.schema.parser.psi.SchemaFqn;
+import com.sumologic.epigraph.schema.parser.psi.SchemaImportStatement;
+import com.sumologic.epigraph.schema.parser.psi.SchemaNamespaceDecl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

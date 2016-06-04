@@ -2,7 +2,7 @@ package com.sumologic.epigraph.ideaplugin.schema.features;
 
 import com.intellij.codeInsight.editorActions.SimpleTokenSetQuoteHandler;
 
-import static com.sumologic.epigraph.ideaplugin.schema.lexer.SchemaElementTypes.*;
+import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.*;
 
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>

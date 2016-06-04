@@ -4,10 +4,10 @@ import com.intellij.lang.cacheBuilder.DefaultWordsScanner;
 import com.intellij.lang.cacheBuilder.WordsScanner;
 import com.intellij.lang.findUsages.FindUsagesProvider;
 import com.intellij.psi.PsiElement;
-import com.sumologic.epigraph.ideaplugin.schema.lexer.SchemaFlexAdapter;
-import com.sumologic.epigraph.ideaplugin.schema.parser.SchemaParserDefinition;
+import com.sumologic.epigraph.schema.parser.lexer.SchemaFlexAdapter;
+import com.sumologic.epigraph.schema.parser.SchemaParserDefinition;
+import com.sumologic.epigraph.schema.parser.psi.*;
 import com.sumologic.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
-import com.sumologic.epigraph.ideaplugin.schema.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

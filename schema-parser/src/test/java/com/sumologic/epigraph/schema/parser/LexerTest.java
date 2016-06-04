@@ -2,7 +2,7 @@ package com.sumologic.epigraph.schema.parser;
 
 import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;
-import com.sumologic.epigraph.ideaplugin.schema.lexer.SchemaLexer;
+import com.sumologic.epigraph.schema.parser.lexer.SchemaLexer;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.sumologic.epigraph.ideaplugin.schema.lexer.SchemaElementTypes.*;
+import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.*;
 
 /**
  * Todo add doc
