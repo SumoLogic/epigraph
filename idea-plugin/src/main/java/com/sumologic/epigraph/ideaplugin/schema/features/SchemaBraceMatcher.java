@@ -21,7 +21,9 @@ import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.*;
 public class SchemaBraceMatcher implements PairedBraceMatcher {
   private static final BracePair[] pairs = new BracePair[]{
       new BracePair(S_CURLY_LEFT, S_CURLY_RIGHT, true),
-      new BracePair(S_BRACKET_LEFT, S_BRACKET_RIGHT, false)
+      new BracePair(S_BRACKET_LEFT, S_BRACKET_RIGHT, false),
+      new BracePair(S_ANGLE_LEFT, S_ANGLE_RIGHT, false),
+      new BracePair(S_PAREN_LEFT, S_PAREN_RIGHT, false)
   };
 
   @Override
@@ -36,6 +38,9 @@ public class SchemaBraceMatcher implements PairedBraceMatcher {
 
   @Override
   public int getCodeConstructStart(PsiFile file, int openingBraceOffset) {
+    // TODO implement DeclarationRangeHandler's
+
+    /*
     PsiElement element = file.findElementAt(openingBraceOffset);
     if (element == null || element instanceof PsiFile) return openingBraceOffset;
 
@@ -43,13 +48,8 @@ public class SchemaBraceMatcher implements PairedBraceMatcher {
     if (parent == null) return openingBraceOffset;
 
     if (parent instanceof SchemaVarTypeMemberDecl || parent instanceof SchemaFieldDecl) {
-      try {
-        TextRange range = DeclarationRangeUtil.getDeclarationRange(parent);
-        return range.getStartOffset();
-      } catch (AssertionError e) {
-        // TODO temporary hack, see https://intellij-support.jetbrains.com/hc/en-us/community/posts/206846629--AssertionError-Declaration-range-is-invalid-from-DeclarationRangeUtil
-        return openingBraceOffset;
-      }
+      TextRange range = DeclarationRangeUtil.getDeclarationRange(parent);
+      return range.getStartOffset();
     }
 
     PsiElement parent2 = parent.getParent();
@@ -59,7 +59,7 @@ public class SchemaBraceMatcher implements PairedBraceMatcher {
       TextRange range = DeclarationRangeUtil.getDeclarationRange(parent2);
       return range.getStartOffset();
     }
-
+    */
     return openingBraceOffset;
   }
 }

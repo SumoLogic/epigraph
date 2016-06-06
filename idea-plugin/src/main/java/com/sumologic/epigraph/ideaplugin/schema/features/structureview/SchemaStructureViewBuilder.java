@@ -1,4 +1,4 @@
-package com.sumologic.epigraph.ideaplugin.schema.structureView;
+package com.sumologic.epigraph.ideaplugin.schema.features.structureview;
 
 import com.intellij.ide.structureView.*;
 import com.intellij.ide.util.treeView.smartTree.Sorter;

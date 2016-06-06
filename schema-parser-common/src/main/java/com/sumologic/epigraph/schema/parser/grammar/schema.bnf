@@ -124,6 +124,9 @@ typeDefWrapper ::= varTypeDef | recordTypeDef | mapTypeDef | listTypeDef | primi
   elementTypeClass="com.sumologic.epigraph.schema.parser.psi.stubs.SchemaTypeDefWrapperStubElementType"
 }
 
+private typeDefModifiers ::= 'abstract'? 'polymorphic'?
+private typeMemberModifiers ::= 'override'? 'abstract'?
+
 anonList ::= 'list' '[' typeRef defaultOverride? ']' {pin=1}// TODO rename to `listType`? `concreteList`?
 anonMap ::= 'map' '[' typeRef ',' typeRef defaultOverride? ']' {pin=1} // TODO rename to `mapType`?
 
@@ -140,16 +143,16 @@ customParam ::= qid '=' dataValue { // TODO embed data language instead
 
 metaDecl ::= 'meta' fqnTypeRef { pin=1 } // we don't allow anonList or anonMap as meta
 
-varTypeDef ::= 'vartype' typeName extendsDecl? supplementsDecl? defaultOverride? varTypeBody? {
+varTypeDef ::= typeDefModifiers 'vartype' typeName extendsDecl? supplementsDecl? defaultOverride? varTypeBody? {
   methods=[supplemented]
   extends="com.sumologic.epigraph.schema.parser.psi.impl.SchemaVarTypeDefImplBase"
   stubClass="com.sumologic.epigraph.schema.parser.psi.stubs.SchemaVarTypeDefStub"
   elementTypeClass="com.sumologic.epigraph.schema.parser.psi.stubs.SchemaVarTypeDefStubElementType"
-  pin=1
+  pin=2
 }
 varTypeBody ::= '{' varTypeBodyPart* '}'
 private varTypeBodyPart ::= varTypeMemberDecl | customParam
-varTypeMemberDecl ::= 'override'? qid ':' typeRef memberBody? {
+varTypeMemberDecl ::= typeMemberModifiers qid ':' typeRef memberBody? {
   implements=["com.sumologic.epigraph.schema.parser.psi.CustomParamsHolder" "com.intellij.psi.PsiNamedElement"]
   extends="com.sumologic.epigraph.schema.parser.psi.impl.CustomParamHolderImpl"
   methods=[getName setName getNameIdentifier getPresentation]
@@ -158,43 +161,44 @@ varTypeMemberDecl ::= 'override'? qid ':' typeRef memberBody? {
 private memberBody ::= '{' memberBodyPart* '}'
 private memberBodyPart ::= customParam
 
-recordTypeDef ::= 'abstract'? 'polymorphic'? 'record' typeName extendsDecl? metaDecl? supplementsDecl? recordTypeBody? {
+recordTypeDef ::= typeDefModifiers 'record' typeName extendsDecl? metaDecl? supplementsDecl? recordTypeBody? {
   methods=[supplemented]
   extends="com.sumologic.epigraph.schema.parser.psi.impl.SchemaRecordTypeDefImplBase"
   stubClass="com.sumologic.epigraph.schema.parser.psi.stubs.SchemaRecordTypeDefStub"
   elementTypeClass="com.sumologic.epigraph.schema.parser.psi.stubs.SchemaRecordTypeDefStubElementType"
-  pin=3
+  pin=2
 }
 recordTypeBody ::= '{' recordBodyPart* '}'
 private recordBodyPart ::= fieldDecl | customParam
-fieldDecl ::= 'override'? 'abstract'? qid ':' typeRef defaultOverride? fieldBody? {
+fieldDecl ::= typeMemberModifiers qid ':' typeRef defaultOverride? fieldBody? {
   implements=["com.sumologic.epigraph.schema.parser.psi.CustomParamsHolder" "com.intellij.psi.PsiNamedElement"]
   extends="com.sumologic.epigraph.schema.parser.psi.impl.CustomParamHolderImpl"
   methods=[getName setName getNameIdentifier getPresentation]
-  pin=4
+  pin=3
 }
 private fieldBody ::= '{' fieldBodyPart* '}'
 private fieldBodyPart ::= customParam
 
 //listTypeDef2 ::= 'list' typeName extendsDecl listTypeBody? // allows inheritance from lists w/o type params
-listTypeDef ::= 'abstract'? 'polymorphic'? anonList typeName extendsDecl? metaDecl? listTypeBody? {
+listTypeDef ::= typeDefModifiers anonList typeName extendsDecl? metaDecl? listTypeBody? {
   extends="com.sumologic.epigraph.schema.parser.psi.impl.SchemaListTypeDefImplBase"
   stubClass="com.sumologic.epigraph.schema.parser.psi.stubs.SchemaListTypeDefStub"
   elementTypeClass="com.sumologic.epigraph.schema.parser.psi.stubs.SchemaListTypeDefStubElementType"
-  pin=3
+  pin=2
 }
 listTypeBody ::= '{' listTypeBodyPart* '}'
 private listTypeBodyPart ::= customParam
 
-mapTypeDef ::= 'abstract'? 'polymorphic'? anonMap typeName extendsDecl? metaDecl? mapTypeBody? {
+mapTypeDef ::= typeDefModifiers anonMap typeName extendsDecl? metaDecl? mapTypeBody? {
   extends="com.sumologic.epigraph.schema.parser.psi.impl.SchemaMapTypeDefImplBase"
   stubClass="com.sumologic.epigraph.schema.parser.psi.stubs.SchemaMapTypeDefStub"
   elementTypeClass="com.sumologic.epigraph.schema.parser.psi.stubs.SchemaMapTypeDefStubElementType"
-  pin=3
+  pin=2
 }
 mapTypeBody ::= '{' mapTypeBodyPart* '}'
 private mapTypeBodyPart ::= customParam
 
+// abstract? polymorphic?
 enumTypeDef ::= 'enum' typeName metaDecl? enumTypeBody { // extends?
   extends="com.sumologic.epigraph.schema.parser.psi.impl.SchemaEnumTypeDefImplBase"
   stubClass="com.sumologic.epigraph.schema.parser.psi.stubs.SchemaEnumTypeDefStub"
@@ -212,11 +216,11 @@ enumMemberDecl ::= qid enumMemberBody? {
 private enumMemberBody ::='{' enumMemberBodyPart* '}'
 private enumMemberBodyPart ::= customParam
 
-primitiveTypeDef ::= 'abstract'? 'polymorphic'? primitiveKind typeName extendsDecl? metaDecl? primitiveTypeBody? {
+primitiveTypeDef ::= typeDefModifiers primitiveKind typeName extendsDecl? metaDecl? primitiveTypeBody? {
   extends="com.sumologic.epigraph.schema.parser.psi.impl.SchemaPrimitiveTypeDefImplBase"
   stubClass="com.sumologic.epigraph.schema.parser.psi.stubs.SchemaPrimitiveTypeDefStub"
   elementTypeClass="com.sumologic.epigraph.schema.parser.psi.stubs.SchemaPrimitiveTypeDefStubElementType"
-  pin=3
+  pin=2
 }
 private primitiveKind ::= 'string' | 'integer' | 'long' | 'double' | 'boolean'
 primitiveTypeBody ::= '{' primitiveBodyPart* '}'

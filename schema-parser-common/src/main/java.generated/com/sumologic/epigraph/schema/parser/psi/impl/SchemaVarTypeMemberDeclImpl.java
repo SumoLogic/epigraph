@@ -39,6 +39,12 @@ public class SchemaVarTypeMemberDeclImpl extends CustomParamHolderImpl implement
   }
 
   @Override
+  @Nullable
+  public PsiElement getAbstract() {
+    return findChildByType(S_ABSTRACT);
+  }
+
+  @Override
   @NotNull
   public PsiElement getColon() {
     return notNullChild(findChildByType(S_COLON));

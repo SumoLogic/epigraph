@@ -55,6 +55,18 @@ public class SchemaVarTypeDefImpl extends SchemaVarTypeDefImplBase implements Sc
   }
 
   @Override
+  @Nullable
+  public PsiElement getAbstract() {
+    return findChildByType(S_ABSTRACT);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getPolymorphic() {
+    return findChildByType(S_POLYMORPHIC);
+  }
+
+  @Override
   @NotNull
   public PsiElement getVartype() {
     return notNullChild(findChildByType(S_VARTYPE));
