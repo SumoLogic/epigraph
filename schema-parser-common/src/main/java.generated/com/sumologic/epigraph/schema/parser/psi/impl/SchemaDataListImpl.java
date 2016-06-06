@@ -6,7 +6,7 @@ import org.jetbrains.annotations.*;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.util.PsiTreeUtil;
+import com.sumologic.epigraph.schema.parser.psi.util.SchemaPsiTreeUtil;
 import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.*;
 import com.sumologic.epigraph.schema.parser.psi.*;
 
@@ -28,13 +28,13 @@ public class SchemaDataListImpl extends SchemaDataValueImpl implements SchemaDat
   @Override
   @NotNull
   public List<SchemaDataValue> getDataValueList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaDataValue.class);
+    return SchemaPsiTreeUtil.getChildrenOfTypeAsList(this, SchemaDataValue.class);
   }
 
   @Override
   @NotNull
   public PsiElement getBracketLeft() {
-    return findNotNullChildByType(S_BRACKET_LEFT);
+    return notNullChild(findChildByType(S_BRACKET_LEFT));
   }
 
   @Override

@@ -11,6 +11,7 @@
   psiPackage="com.sumologic.epigraph.schema.parser.psi"
   psiImplPackage="com.sumologic.epigraph.schema.parser.psi.impl"
   psiImplUtilClass="com.sumologic.epigraph.schema.parser.psi.impl.SchemaPsiImplUtil"
+  psiTreeUtilClass="com.sumologic.epigraph.schema.parser.psi.util.SchemaPsiTreeUtil"
 
   generateTokenAccessors=true
 

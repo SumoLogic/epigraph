@@ -6,7 +6,7 @@ import org.jetbrains.annotations.*;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.util.PsiTreeUtil;
+import com.sumologic.epigraph.schema.parser.psi.util.SchemaPsiTreeUtil;
 import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.*;
 import com.sumologic.epigraph.schema.parser.psi.*;
 
@@ -28,19 +28,19 @@ public class SchemaEnumTypeBodyImpl extends CustomParamHolderImpl implements Sch
   @Override
   @NotNull
   public List<SchemaCustomParam> getCustomParamList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaCustomParam.class);
+    return SchemaPsiTreeUtil.getChildrenOfTypeAsList(this, SchemaCustomParam.class);
   }
 
   @Override
   @NotNull
   public List<SchemaEnumMemberDecl> getEnumMemberDeclList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaEnumMemberDecl.class);
+    return SchemaPsiTreeUtil.getChildrenOfTypeAsList(this, SchemaEnumMemberDecl.class);
   }
 
   @Override
   @NotNull
   public PsiElement getCurlyLeft() {
-    return findNotNullChildByType(S_CURLY_LEFT);
+    return notNullChild(findChildByType(S_CURLY_LEFT));
   }
 
   @Override

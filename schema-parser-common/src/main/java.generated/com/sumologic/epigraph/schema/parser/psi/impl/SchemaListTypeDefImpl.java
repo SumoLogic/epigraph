@@ -6,7 +6,7 @@ import org.jetbrains.annotations.*;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.util.PsiTreeUtil;
+import com.sumologic.epigraph.schema.parser.psi.util.SchemaPsiTreeUtil;
 import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.*;
 import com.sumologic.epigraph.schema.parser.psi.*;
 import com.intellij.psi.stubs.IStubElementType;
@@ -33,25 +33,25 @@ public class SchemaListTypeDefImpl extends SchemaListTypeDefImplBase implements 
   @Override
   @NotNull
   public SchemaAnonList getAnonList() {
-    return findNotNullChildByClass(SchemaAnonList.class);
+    return notNullChild(SchemaPsiTreeUtil.getChildOfType(this, SchemaAnonList.class));
   }
 
   @Override
   @Nullable
   public SchemaExtendsDecl getExtendsDecl() {
-    return findChildByClass(SchemaExtendsDecl.class);
+    return SchemaPsiTreeUtil.getChildOfType(this, SchemaExtendsDecl.class);
   }
 
   @Override
   @Nullable
   public SchemaListTypeBody getListTypeBody() {
-    return findChildByClass(SchemaListTypeBody.class);
+    return SchemaPsiTreeUtil.getChildOfType(this, SchemaListTypeBody.class);
   }
 
   @Override
   @Nullable
   public SchemaMetaDecl getMetaDecl() {
-    return findChildByClass(SchemaMetaDecl.class);
+    return SchemaPsiTreeUtil.getChildOfType(this, SchemaMetaDecl.class);
   }
 
   @Override

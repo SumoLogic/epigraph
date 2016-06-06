@@ -6,7 +6,7 @@ import org.jetbrains.annotations.*;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.util.PsiTreeUtil;
+import com.sumologic.epigraph.schema.parser.psi.util.SchemaPsiTreeUtil;
 import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.sumologic.epigraph.schema.parser.psi.*;
@@ -29,13 +29,13 @@ public class SchemaAnonMapImpl extends ASTWrapperPsiElement implements SchemaAno
   @Override
   @Nullable
   public SchemaDefaultOverride getDefaultOverride() {
-    return findChildByClass(SchemaDefaultOverride.class);
+    return SchemaPsiTreeUtil.getChildOfType(this, SchemaDefaultOverride.class);
   }
 
   @Override
   @NotNull
   public List<SchemaTypeRef> getTypeRefList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaTypeRef.class);
+    return SchemaPsiTreeUtil.getChildrenOfTypeAsList(this, SchemaTypeRef.class);
   }
 
   @Override
@@ -59,7 +59,7 @@ public class SchemaAnonMapImpl extends ASTWrapperPsiElement implements SchemaAno
   @Override
   @NotNull
   public PsiElement getMap() {
-    return findNotNullChildByType(S_MAP);
+    return notNullChild(findChildByType(S_MAP));
   }
 
 }

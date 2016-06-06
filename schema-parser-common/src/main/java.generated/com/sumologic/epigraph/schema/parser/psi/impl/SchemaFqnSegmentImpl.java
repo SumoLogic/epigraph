@@ -6,7 +6,7 @@ import org.jetbrains.annotations.*;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.util.PsiTreeUtil;
+import com.sumologic.epigraph.schema.parser.psi.util.SchemaPsiTreeUtil;
 import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.sumologic.epigraph.schema.parser.psi.*;
@@ -31,7 +31,7 @@ public class SchemaFqnSegmentImpl extends ASTWrapperPsiElement implements Schema
   @Override
   @NotNull
   public PsiElement getId() {
-    return findNotNullChildByType(S_ID);
+    return notNullChild(findChildByType(S_ID));
   }
 
   @Nullable

@@ -6,7 +6,7 @@ import org.jetbrains.annotations.*;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.util.PsiTreeUtil;
+import com.sumologic.epigraph.schema.parser.psi.util.SchemaPsiTreeUtil;
 import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.*;
 import com.sumologic.epigraph.schema.parser.psi.*;
 import com.intellij.psi.stubs.IStubElementType;
@@ -33,25 +33,25 @@ public class SchemaMapTypeDefImpl extends SchemaMapTypeDefImplBase implements Sc
   @Override
   @NotNull
   public SchemaAnonMap getAnonMap() {
-    return findNotNullChildByClass(SchemaAnonMap.class);
+    return notNullChild(SchemaPsiTreeUtil.getChildOfType(this, SchemaAnonMap.class));
   }
 
   @Override
   @Nullable
   public SchemaExtendsDecl getExtendsDecl() {
-    return findChildByClass(SchemaExtendsDecl.class);
+    return SchemaPsiTreeUtil.getChildOfType(this, SchemaExtendsDecl.class);
   }
 
   @Override
   @Nullable
   public SchemaMapTypeBody getMapTypeBody() {
-    return findChildByClass(SchemaMapTypeBody.class);
+    return SchemaPsiTreeUtil.getChildOfType(this, SchemaMapTypeBody.class);
   }
 
   @Override
   @Nullable
   public SchemaMetaDecl getMetaDecl() {
-    return findChildByClass(SchemaMetaDecl.class);
+    return SchemaPsiTreeUtil.getChildOfType(this, SchemaMetaDecl.class);
   }
 
   @Override

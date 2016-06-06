@@ -6,7 +6,7 @@ import org.jetbrains.annotations.*;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.util.PsiTreeUtil;
+import com.sumologic.epigraph.schema.parser.psi.util.SchemaPsiTreeUtil;
 import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.sumologic.epigraph.schema.parser.psi.*;
@@ -29,13 +29,13 @@ public class SchemaStarImportSuffixImpl extends ASTWrapperPsiElement implements 
   @Override
   @NotNull
   public PsiElement getDot() {
-    return findNotNullChildByType(S_DOT);
+    return notNullChild(findChildByType(S_DOT));
   }
 
   @Override
   @NotNull
   public PsiElement getStar() {
-    return findNotNullChildByType(S_STAR);
+    return notNullChild(findChildByType(S_STAR));
   }
 
 }

@@ -6,7 +6,7 @@ import org.jetbrains.annotations.*;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.util.PsiTreeUtil;
+import com.sumologic.epigraph.schema.parser.psi.util.SchemaPsiTreeUtil;
 import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.sumologic.epigraph.schema.parser.psi.*;
@@ -29,19 +29,19 @@ public class SchemaImportStatementImpl extends ASTWrapperPsiElement implements S
   @Override
   @Nullable
   public SchemaFqn getFqn() {
-    return findChildByClass(SchemaFqn.class);
+    return SchemaPsiTreeUtil.getChildOfType(this, SchemaFqn.class);
   }
 
   @Override
   @Nullable
   public SchemaStarImportSuffix getStarImportSuffix() {
-    return findChildByClass(SchemaStarImportSuffix.class);
+    return SchemaPsiTreeUtil.getChildOfType(this, SchemaStarImportSuffix.class);
   }
 
   @Override
   @NotNull
   public PsiElement getImport() {
-    return findNotNullChildByType(S_IMPORT);
+    return notNullChild(findChildByType(S_IMPORT));
   }
 
 }

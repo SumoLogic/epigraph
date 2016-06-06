@@ -6,7 +6,7 @@ import org.jetbrains.annotations.*;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.util.PsiTreeUtil;
+import com.sumologic.epigraph.schema.parser.psi.util.SchemaPsiTreeUtil;
 import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.*;
 import com.sumologic.epigraph.schema.parser.psi.*;
 import com.intellij.psi.stubs.IStubElementType;
@@ -33,19 +33,19 @@ public class SchemaPrimitiveTypeDefImpl extends SchemaPrimitiveTypeDefImplBase i
   @Override
   @Nullable
   public SchemaExtendsDecl getExtendsDecl() {
-    return findChildByClass(SchemaExtendsDecl.class);
+    return SchemaPsiTreeUtil.getChildOfType(this, SchemaExtendsDecl.class);
   }
 
   @Override
   @Nullable
   public SchemaMetaDecl getMetaDecl() {
-    return findChildByClass(SchemaMetaDecl.class);
+    return SchemaPsiTreeUtil.getChildOfType(this, SchemaMetaDecl.class);
   }
 
   @Override
   @Nullable
   public SchemaPrimitiveTypeBody getPrimitiveTypeBody() {
-    return findChildByClass(SchemaPrimitiveTypeBody.class);
+    return SchemaPsiTreeUtil.getChildOfType(this, SchemaPrimitiveTypeBody.class);
   }
 
   @Override

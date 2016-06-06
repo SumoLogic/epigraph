@@ -6,7 +6,7 @@ import org.jetbrains.annotations.*;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.util.PsiTreeUtil;
+import com.sumologic.epigraph.schema.parser.psi.util.SchemaPsiTreeUtil;
 import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.*;
 import com.sumologic.epigraph.schema.parser.psi.*;
 import com.intellij.navigation.ItemPresentation;
@@ -29,19 +29,19 @@ public class SchemaFieldDeclImpl extends CustomParamHolderImpl implements Schema
   @Override
   @NotNull
   public List<SchemaCustomParam> getCustomParamList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaCustomParam.class);
+    return SchemaPsiTreeUtil.getChildrenOfTypeAsList(this, SchemaCustomParam.class);
   }
 
   @Override
   @Nullable
   public SchemaDefaultOverride getDefaultOverride() {
-    return findChildByClass(SchemaDefaultOverride.class);
+    return SchemaPsiTreeUtil.getChildOfType(this, SchemaDefaultOverride.class);
   }
 
   @Override
   @Nullable
   public SchemaTypeRef getTypeRef() {
-    return findChildByClass(SchemaTypeRef.class);
+    return SchemaPsiTreeUtil.getChildOfType(this, SchemaTypeRef.class);
   }
 
   @Override
@@ -53,7 +53,7 @@ public class SchemaFieldDeclImpl extends CustomParamHolderImpl implements Schema
   @Override
   @NotNull
   public PsiElement getColon() {
-    return findNotNullChildByType(S_COLON);
+    return notNullChild(findChildByType(S_COLON));
   }
 
   @Override
@@ -77,7 +77,7 @@ public class SchemaFieldDeclImpl extends CustomParamHolderImpl implements Schema
   @Override
   @NotNull
   public PsiElement getId() {
-    return findNotNullChildByType(S_ID);
+    return notNullChild(findChildByType(S_ID));
   }
 
   @Nullable

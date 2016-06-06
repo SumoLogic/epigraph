@@ -6,7 +6,7 @@ import org.jetbrains.annotations.*;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.util.PsiTreeUtil;
+import com.sumologic.epigraph.schema.parser.psi.util.SchemaPsiTreeUtil;
 import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.*;
 import com.intellij.extapi.psi.StubBasedPsiElementBase;
 import com.sumologic.epigraph.schema.parser.psi.stubs.SchemaSupplementDefStub;
@@ -36,13 +36,13 @@ public class SchemaSupplementDefImpl extends StubBasedPsiElementBase<SchemaSuppl
   @Override
   @NotNull
   public List<SchemaFqnTypeRef> getFqnTypeRefList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaFqnTypeRef.class);
+    return SchemaPsiTreeUtil.getChildrenOfTypeAsList(this, SchemaFqnTypeRef.class);
   }
 
   @Override
   @NotNull
   public PsiElement getSupplement() {
-    return findNotNullChildByType(S_SUPPLEMENT);
+    return notNullChild(findChildByType(S_SUPPLEMENT));
   }
 
   @Override

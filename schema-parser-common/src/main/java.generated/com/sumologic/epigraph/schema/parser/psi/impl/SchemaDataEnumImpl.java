@@ -6,7 +6,7 @@ import org.jetbrains.annotations.*;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.util.PsiTreeUtil;
+import com.sumologic.epigraph.schema.parser.psi.util.SchemaPsiTreeUtil;
 import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.*;
 import com.sumologic.epigraph.schema.parser.psi.*;
 
@@ -28,7 +28,7 @@ public class SchemaDataEnumImpl extends SchemaDataValueImpl implements SchemaDat
   @Override
   @NotNull
   public PsiElement getId() {
-    return findNotNullChildByType(S_ID);
+    return notNullChild(findChildByType(S_ID));
   }
 
 }

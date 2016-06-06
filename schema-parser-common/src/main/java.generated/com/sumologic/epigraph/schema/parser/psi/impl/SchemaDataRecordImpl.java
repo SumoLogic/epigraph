@@ -6,7 +6,7 @@ import org.jetbrains.annotations.*;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.util.PsiTreeUtil;
+import com.sumologic.epigraph.schema.parser.psi.util.SchemaPsiTreeUtil;
 import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.*;
 import com.sumologic.epigraph.schema.parser.psi.*;
 
@@ -28,13 +28,13 @@ public class SchemaDataRecordImpl extends SchemaDataValueImpl implements SchemaD
   @Override
   @NotNull
   public List<SchemaDataRecordEntry> getDataRecordEntryList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaDataRecordEntry.class);
+    return SchemaPsiTreeUtil.getChildrenOfTypeAsList(this, SchemaDataRecordEntry.class);
   }
 
   @Override
   @NotNull
   public PsiElement getCurlyLeft() {
-    return findNotNullChildByType(S_CURLY_LEFT);
+    return notNullChild(findChildByType(S_CURLY_LEFT));
   }
 
   @Override

@@ -6,7 +6,7 @@ import org.jetbrains.annotations.*;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.util.PsiTreeUtil;
+import com.sumologic.epigraph.schema.parser.psi.util.SchemaPsiTreeUtil;
 import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.sumologic.epigraph.schema.parser.psi.*;
@@ -29,13 +29,13 @@ public class SchemaDefsImpl extends ASTWrapperPsiElement implements SchemaDefs {
   @Override
   @NotNull
   public List<SchemaSupplementDef> getSupplementDefList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaSupplementDef.class);
+    return SchemaPsiTreeUtil.getChildrenOfTypeAsList(this, SchemaSupplementDef.class);
   }
 
   @Override
   @NotNull
   public List<SchemaTypeDefWrapper> getTypeDefWrapperList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaTypeDefWrapper.class);
+    return SchemaPsiTreeUtil.getChildrenOfTypeAsList(this, SchemaTypeDefWrapper.class);
   }
 
 }

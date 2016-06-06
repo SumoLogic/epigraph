@@ -6,7 +6,7 @@ import org.jetbrains.annotations.*;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.util.PsiTreeUtil;
+import com.sumologic.epigraph.schema.parser.psi.util.SchemaPsiTreeUtil;
 import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.*;
 import com.sumologic.epigraph.schema.parser.psi.*;
 import com.intellij.psi.stubs.IStubElementType;
@@ -33,25 +33,25 @@ public class SchemaRecordTypeDefImpl extends SchemaRecordTypeDefImplBase impleme
   @Override
   @Nullable
   public SchemaExtendsDecl getExtendsDecl() {
-    return findChildByClass(SchemaExtendsDecl.class);
+    return SchemaPsiTreeUtil.getChildOfType(this, SchemaExtendsDecl.class);
   }
 
   @Override
   @Nullable
   public SchemaMetaDecl getMetaDecl() {
-    return findChildByClass(SchemaMetaDecl.class);
+    return SchemaPsiTreeUtil.getChildOfType(this, SchemaMetaDecl.class);
   }
 
   @Override
   @Nullable
   public SchemaRecordTypeBody getRecordTypeBody() {
-    return findChildByClass(SchemaRecordTypeBody.class);
+    return SchemaPsiTreeUtil.getChildOfType(this, SchemaRecordTypeBody.class);
   }
 
   @Override
   @Nullable
   public SchemaSupplementsDecl getSupplementsDecl() {
-    return findChildByClass(SchemaSupplementsDecl.class);
+    return SchemaPsiTreeUtil.getChildOfType(this, SchemaSupplementsDecl.class);
   }
 
   @Override
@@ -69,7 +69,7 @@ public class SchemaRecordTypeDefImpl extends SchemaRecordTypeDefImplBase impleme
   @Override
   @NotNull
   public PsiElement getRecord() {
-    return findNotNullChildByType(S_RECORD);
+    return notNullChild(findChildByType(S_RECORD));
   }
 
   @Override

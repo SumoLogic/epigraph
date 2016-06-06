@@ -6,7 +6,7 @@ import org.jetbrains.annotations.*;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.util.PsiTreeUtil;
+import com.sumologic.epigraph.schema.parser.psi.util.SchemaPsiTreeUtil;
 import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.*;
 import com.sumologic.epigraph.schema.parser.psi.*;
 
@@ -28,13 +28,13 @@ public class SchemaDataVarImpl extends SchemaDataValueImpl implements SchemaData
   @Override
   @NotNull
   public List<SchemaDataVarEntry> getDataVarEntryList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaDataVarEntry.class);
+    return SchemaPsiTreeUtil.getChildrenOfTypeAsList(this, SchemaDataVarEntry.class);
   }
 
   @Override
   @NotNull
   public PsiElement getAngleLeft() {
-    return findNotNullChildByType(S_ANGLE_LEFT);
+    return notNullChild(findChildByType(S_ANGLE_LEFT));
   }
 
   @Override

@@ -6,7 +6,7 @@ import org.jetbrains.annotations.*;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.util.PsiTreeUtil;
+import com.sumologic.epigraph.schema.parser.psi.util.SchemaPsiTreeUtil;
 import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.sumologic.epigraph.schema.parser.psi.*;
@@ -29,13 +29,13 @@ public class SchemaSupplementsDeclImpl extends ASTWrapperPsiElement implements S
   @Override
   @NotNull
   public List<SchemaFqnTypeRef> getFqnTypeRefList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaFqnTypeRef.class);
+    return SchemaPsiTreeUtil.getChildrenOfTypeAsList(this, SchemaFqnTypeRef.class);
   }
 
   @Override
   @NotNull
   public PsiElement getSupplements() {
-    return findNotNullChildByType(S_SUPPLEMENTS);
+    return notNullChild(findChildByType(S_SUPPLEMENTS));
   }
 
 }
