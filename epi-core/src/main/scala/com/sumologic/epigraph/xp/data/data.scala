@@ -2,10 +2,10 @@
 
 package com.sumologic.epigraph.xp.data
 
-import com.sumologic.epigraph.names.{EnumValueName, TypeMemberName}
+import com.sumologic.epigraph.names.{EnumValueName, FieldName, TypeMemberName}
 import com.sumologic.epigraph.xp.types._
 
-import scala.util.Try
+import scala.util.{Failure, Try}
 
 trait Var[+M <: Var[M]] {
 
@@ -25,6 +25,13 @@ trait VarEntry[+T <: Datum[T]] { // TODO variance?
 }
 
 
+object VarEntry {
+
+  val Uninitialized: Failure[Nothing] = Failure(UninitializedFieldError("Uninitialized var"))
+
+}
+
+
 trait Datum[+D <: Datum[D]] extends MonoVar[D] {
 
   //type DatumType <: DataType[_ <: D]
@@ -34,7 +41,7 @@ trait Datum[+D <: Datum[D]] extends MonoVar[D] {
 }
 
 
-trait RecordDatum[+D <: RecordDatum[D]] extends Datum[D] {
+trait RecordDatum[+D <: RecordDatum[D]] extends Datum[D] with Iterable[(FieldName, Var[_])] {
 
   //override type DatumType <: RecordType[_ <: D]
   override def dataType: RecordType[_ <: D]
@@ -61,6 +68,12 @@ trait RecordDatum[+D <: RecordDatum[D]] extends Datum[D] {
   ): Option[VarEntry[T]] = getVar(field).flatMap(_.getEntry(varTag))
 
   def getVar[M <: Var[M]](field: Field[_ >: D, M]): Option[Var[M]]
+
+  override def toString: String = {
+    val sb = new StringBuilder(dataType.toString)
+    sb.append(mkString("{", ",", "}"))
+    sb.toString
+  }
 
 }
 
@@ -127,6 +140,8 @@ trait PrimitiveDatum[+D <: PrimitiveDatum[D]] extends Datum[D] {
 
   def native: Any
 
+  override def toString: String = dataType.toString + "(" + native + ")"
+
 }
 
 
@@ -136,6 +151,8 @@ trait StringDatum[+D <: StringDatum[D]] extends PrimitiveDatum[D] {
   override def dataType: StringType[_ <: D]
 
   def native: StringType[D]#Native
+
+  override def toString: String = dataType.toString + "(\"" + native + "\")"
 
 }
 

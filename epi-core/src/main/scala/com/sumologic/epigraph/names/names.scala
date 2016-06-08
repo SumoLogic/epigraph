@@ -93,6 +93,7 @@ abstract class LocalName(override val string: String, convention: NamingConventi
 
   if (!convention.isValidName(string)) throw new IllegalArgumentException(string)
 
+  override def toString: String = string
 }
 
 

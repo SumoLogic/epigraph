@@ -25,8 +25,7 @@ object StringPrimitive extends StringType[StringPrimitive](ns \ "String") {
       extends ImmStringDatumImpl[StringPrimitive](this, native) with ImmStringPrimitive
 
 
-  override def createMutable(native: String): StringPrimitive with MutDatum[StringPrimitive] =
-    new MutStringPrimitiveImpl(native)
+  override def createMutable(native: String): MutStringPrimitive = new MutStringPrimitiveImpl(native)
 
 
   private class MutStringPrimitiveImpl(native: String)
@@ -50,16 +49,13 @@ object IntegerPrimitive extends IntegerType[IntegerPrimitive](ns \ "Integer") {
   override def createImmutable(native: Int): ImmIntegerPrimitive = new ImmIntegerPrimitiveImpl(native)
 
 
-  private class ImmIntegerPrimitiveImpl(native: Int)
-      extends ImmIntegerDatumImpl[IntegerPrimitive](this, native) with ImmIntegerPrimitive
+  private class ImmIntegerPrimitiveImpl(native: Int) extends ImmIntegerDatumImpl(native) with ImmIntegerPrimitive
 
 
-  override def createMutable(native: Int): IntegerPrimitive with MutDatum[IntegerPrimitive] =
-    new MutIntegerPrimitiveImpl(native)
+  override def createMutable(native: Int): MutIntegerPrimitive = new MutIntegerPrimitiveImpl(native)
 
 
-  private class MutIntegerPrimitiveImpl(native: Int)
-      extends MutIntegerDatumImpl[IntegerPrimitive](this, native) with MutIntegerPrimitive
+  private class MutIntegerPrimitiveImpl(native: Int) extends MutIntegerDatumImpl(native) with MutIntegerPrimitive
 
 
 }
@@ -83,8 +79,7 @@ object LongPrimitive extends LongType[LongPrimitive](ns \ "Long") {
       extends ImmLongDatumImpl[LongPrimitive](this, native) with ImmLongPrimitive
 
 
-  override def createMutable(native: Long): LongPrimitive with MutDatum[LongPrimitive] =
-    new MutLongPrimitiveImpl(native)
+  override def createMutable(native: Long): MutLongPrimitive = new MutLongPrimitiveImpl(native)
 
 
   private class MutLongPrimitiveImpl(native: Long)
@@ -112,8 +107,7 @@ object DoublePrimitive extends DoubleType[DoublePrimitive](ns \ "Double") {
       extends ImmDoubleDatumImpl[DoublePrimitive](this, native) with ImmDoublePrimitive
 
 
-  override def createMutable(native: Double): DoublePrimitive with MutDatum[DoublePrimitive] =
-    new MutDoublePrimitiveImpl(native)
+  override def createMutable(native: Double): MutDoublePrimitive = new MutDoublePrimitiveImpl(native)
 
 
   private class MutDoublePrimitiveImpl(native: Double)
@@ -141,8 +135,7 @@ object BooleanPrimitive extends BooleanType[BooleanPrimitive](ns \ "Boolean") {
       extends ImmBooleanDatumImpl[BooleanPrimitive](this, native) with ImmBooleanPrimitive
 
 
-  override def createMutable(native: Boolean): BooleanPrimitive with MutDatum[BooleanPrimitive] =
-    new MutBooleanPrimitiveImpl(native)
+  override def createMutable(native: Boolean): MutBooleanPrimitive = new MutBooleanPrimitiveImpl(native)
 
 
   private class MutBooleanPrimitiveImpl(native: Boolean)

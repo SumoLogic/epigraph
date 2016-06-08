@@ -6,8 +6,9 @@ import java.util.concurrent.ConcurrentHashMap
 
 import com.sumologic.epigraph.names._
 import com.sumologic.epigraph.xp.data._
-import com.sumologic.epigraph.xp.data.immutable.ImmDatum
-import com.sumologic.epigraph.xp.data.mutable.MutDatum
+import com.sumologic.epigraph.xp.data.builders._
+import com.sumologic.epigraph.xp.data.immutable._
+import com.sumologic.epigraph.xp.data.mutable._
 
 trait Type {
 
@@ -26,7 +27,7 @@ trait Type {
   /** @return `true` if `sub` is a subtype of this [[Type]]*/
   def isAssignableFrom(sub: Type): Boolean = sub == this || sub.supertypes.contains(this)
 
-  override def toString: String = "«" + name.string + "»(" + super.toString + ")"
+  override def toString: String = "«" + name.string + "»" //+ "(" + super.toString + ")"
 
 }
 
@@ -110,6 +111,16 @@ abstract class MultiVarType[M <: Var[M]](
     name, dataType
   )
 
+  def createMutableVar: MutVar[M] = new MutMultiVar[M]
+
+
+  object MutVarConstructor extends java.util.function.Function[FieldName, MutVar[M]] {
+
+    override def apply(t: FieldName): MutVar[M] = createMutableVar
+
+  }
+
+
 }
 
 
@@ -135,6 +146,8 @@ trait DataType[D <: Datum[D]] extends Type with DefaultMultiType[D] {
     case _ => None
   }
 
+  def createBuilder: D with DatumBuilder[D] = ??? // FIXME provide implementations in "generated" record types
+
 }
 
 
@@ -158,15 +171,15 @@ abstract class RecordType[D <: RecordDatum[D]](
   }
 
 
-  final type DatumField[T <: Datum[T]] = TaggedField[D, T, TypeMemberName.default.type, T]
+  final type DatumField[T <: Datum[T]] = TaggedFinalField[D, T, TypeMemberName.default.type, T]
 
   protected def field[T <: Datum[T]](name: FieldName, valueType: DataType[T]): DatumField[T] =
-    new TaggedField[D, T, TypeMemberName.default.type, T](name, valueType, valueType.default)
+    new TaggedFinalField[D, T, TypeMemberName.default.type, T](name, valueType, valueType.default)
 
   final type VarField[M <: Var[M]] = Field[D, M]
 
   protected def field[M <: Var[M]](name: FieldName, valueType: MultiType[M]): VarField[M] =
-    new Field[D, M](name, valueType)
+    new AbstractField[D, M](name, valueType)
 
   final type VarTagField[M <: Var[M], N <: TypeMemberName, T <: Datum[T]] = TaggedField[D, M, N, T]
 
@@ -176,10 +189,18 @@ abstract class RecordType[D <: RecordDatum[D]](
       tag: Tag[_ >: M, N, T]
   ): VarTagField[M, N, T] = new TaggedField[D, M, N, T](name, valueType, tag)
 
+  def createMutable: D with MutRecordDatum[D] = ??? // FIXME provide implementations in "generated" record types
+
+  override def createBuilder: D with RecordDatumBuilder[D] = ??? // FIXME provide implementations in "generated" record types
+
 }
 
 
-class Field[D <: RecordDatum[D], M <: Var[M]](val name: FieldName, val valueType: MultiType[M]) {
+trait Field[D <: RecordDatum[D], M <: Var[M]] {
+
+  val name: FieldName
+
+  val valueType: MultiType[M]
 
   def as[N <: TypeMemberName, T <: Datum[T]](varTag: Tag[_ >: M, N, T]): TaggedField[D, M, N, T] = new TaggedField[D, M, N, T](
     name, valueType, varTag
@@ -188,11 +209,40 @@ class Field[D <: RecordDatum[D], M <: Var[M]](val name: FieldName, val valueType
 }
 
 
+class AbstractField[D <: RecordDatum[D], M <: Var[M]](
+    override val name: FieldName,
+    override val valueType: MultiType[M]
+) extends Field[D, M]
+
+
+trait FinalField[D <: RecordDatum[D], M <: Var[M]] extends Field[D, M]
+
+
 class TaggedField[D <: RecordDatum[D], M <: Var[M], N <: TypeMemberName, T <: Datum[T]](
     override val name: FieldName,
     override val valueType: MultiType[M],
     val tag: Tag[_ >: M, N, T]
-) extends Field[D, M](name, valueType)
+) extends Field[D, M]
+
+
+class FinalFieldImpl[D <: RecordDatum[D], M <: Var[M]](
+    override val name: FieldName,
+    override val valueType: MultiType[M]
+) extends FinalField[D, M]
+
+
+class TaggedFinalField[D <: RecordDatum[D], M <: Var[M], N <: TypeMemberName, T <: Datum[T]](
+    name: FieldName,
+    valueType: MultiType[M],
+    tag: Tag[_ >: M, N, T]
+) extends TaggedField[D, M, N, T](name, valueType, tag) with FinalField[D, M]
+
+
+class FinTaggedFinalField[D <: RecordDatum[D], M <: Var[M], N <: TypeMemberName, T <: Datum[T]](
+    name: FieldName,
+    valueType: MultiType[M],
+    override val tag: FinalTag[_ >: M, N, T]
+) extends TaggedFinalField[D, M, N, T](name, valueType, tag)
 
 
 class MapType[K <: Datum[K], M <: Var[M]](
@@ -248,11 +298,17 @@ trait PrimitiveType[D <: PrimitiveDatum[D]] extends DataType[D] {
 
   type Native
 
+  val NativeDefault: Native
+
   // TODO add default (initial) native value?
 
   def createImmutable(native: Native): D with ImmDatum[D]// TODO this should be defined for concrete (non-abstract) data types only
 
-  def createMutable(native: Native): D with MutDatum[D]// TODO this should be defined for concrete (non-abstract) data types only
+  def createMutable(native: Native): D with MutPrimitiveDatum[D]// TODO this should be defined for concrete (non-abstract) data types only
+
+  override def createBuilder: D with PrimitiveDatumBuilder[D] = ??? // TODO this should be defined for concrete (non-abstract) data types only
+
+  def createBuilder(native: Native): D with PrimitiveDatumBuilder[D] = ??? // TODO this should be defined for concrete (non-abstract) data types only
 
 }
 
@@ -267,6 +323,8 @@ abstract class StringType[D <: StringDatum[D]](
 
   final override type Native = String
 
+  final override val NativeDefault: String = ""
+
 }
 
 
@@ -279,6 +337,40 @@ abstract class IntegerType[D <: IntegerDatum[D]](
   final override type Super = IntegerType[_ >: D]
 
   final override type Native = Int
+
+  final override val NativeDefault: Int = 0
+
+  import com.sumologic.epigraph.xp.data.immutable.ImmIntegerDatum
+  import com.sumologic.epigraph.xp.data.mutable.MutIntegerDatum
+
+  protected abstract class ImmIntegerDatumImpl(override val native: Int) extends ImmIntegerDatum[D] {this: D =>
+
+    override def dataType: IntegerType[D] = IntegerType.this
+
+  }
+
+
+  protected abstract class MutIntegerDatumImpl(override val native: Int) extends MutIntegerDatum[D] {this: D =>
+
+    override def dataType: IntegerType[D] = IntegerType.this
+
+  }
+
+
+  override def createBuilder: D with IntegerDatumBuilder[D] = ??? // TODO this should be defined for concrete (non-abstract) data types only
+
+  override def createBuilder(native: Int): D with IntegerDatumBuilder[D] = ???
+
+
+  // TODO this should be defined for concrete (non-abstract) data types only
+  protected abstract class IntegerDatumBuilderImpl(
+      override val native: Int = NativeDefault
+  ) extends IntegerDatumBuilder[D] {this: D =>
+
+    override def dataType: IntegerType[D] = IntegerType.this
+
+  }
+
 
 }
 
@@ -293,6 +385,8 @@ abstract class LongType[D <: LongDatum[D]](
 
   final override type Native = Long
 
+  final override val NativeDefault: Long = 0L
+
 }
 
 
@@ -306,6 +400,8 @@ abstract class DoubleType[D <: DoubleDatum[D]](
 
   final override type Native = Double
 
+  final override val NativeDefault: Double = 0.0D
+
 }
 
 
@@ -318,5 +414,7 @@ abstract class BooleanType[D <: BooleanDatum[D]](
   final override type Super = BooleanType[_ >: D]
 
   final override type Native = Boolean
+
+  final override val NativeDefault: Boolean = false
 
 }

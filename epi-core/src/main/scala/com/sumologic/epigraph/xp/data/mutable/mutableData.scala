@@ -9,6 +9,8 @@ import com.sumologic.epigraph.xp.data._
 import com.sumologic.epigraph.xp.data.immutable.ImmVarEntry
 import com.sumologic.epigraph.xp.types._
 
+import scala.collection.JavaConversions
+import scala.language.existentials
 import scala.util.{Failure, Success, Try}
 
 trait MutVar[M <: Var[M]] extends Var[M] { // TODO take/require vartype?
@@ -73,7 +75,7 @@ trait MutVar[M <: Var[M]] extends Var[M] { // TODO take/require vartype?
 
 class MutMultiVar[M <: Var[M]] extends MutVar[M] {
 
-  private val entries = new ConcurrentHashMap[TypeMemberName, MutVarEntry[_]]
+  private val entries = new ConcurrentHashMap[TypeMemberName, VarEntry[_]]
 
   override def getEntry[TT <: Datum[TT]](tag: Tag[_ >: M, _, TT]): Option[VarEntry[TT]] = Option[VarEntry[TT]](
     entries.get(tag.name).asInstanceOf[VarEntry[TT]] // TODO explain cast
@@ -109,7 +111,7 @@ class MutMultiVar[M <: Var[M]] extends MutVar[M] {
 
 class MutVarEntry[T <: Datum[T]](
     /*override val tag: VarTag[_, _, T],*/
-    var value: Try[T] = MutVarEntry.Uninitialized
+    var value: Try[T] = VarEntry.Uninitialized
 ) extends VarEntry[T] {
 
   def this(/*tag: FinalTag[_, _, T], */ data: => T) = this(/*tag, */ Try(data))
@@ -125,13 +127,6 @@ class MutVarEntry[T <: Datum[T]](
     value = Failure(error)
     this
   }
-
-}
-
-
-object MutVarEntry {
-
-  val Uninitialized: Failure[Nothing] = Failure(UninitializedFieldError("Uninitialized var"))
 
 }
 
@@ -154,19 +149,31 @@ trait MutRecordDatum[+D <: RecordDatum[D]] extends RecordDatum[D] with MutDatum[
 
   //override type DatumType = RecordType[D]
 
-  private val vars = new ConcurrentHashMap[FieldName, MutVar[_]]
+  private val vars = new ConcurrentHashMap[FieldName, Var[M] forSome { type M <: Var[M]}]
 
-  override def getVar[M <: Var[M]](field: Field[_ >: D, M]): Option[MutVar[M]] = {
-    Option(vars.get(field.name).asInstanceOf[MutVar[M]]) // TODO explain why ok
+  override def iterator: Iterator[(FieldName, Var[_])] = {
+    JavaConversions.asScalaIterator(vars.entrySet().iterator()).map(e => (e.getKey, e.getValue))
+  }
+
+  override def getVar[M <: Var[M]](field: Field[_ >: D, M]): Option[Var[M]] = {
+    Option(vars.get(field.name).asInstanceOf[Var[M]]) // TODO explain why ok
   }
 
   def setData[M <: Var[M], N <: TypeMemberName, T <: Datum[T]](
-      field: TaggedField[_ >: D, M, N, T], // TODO FinTaggedField?
+      field: FinTaggedFinalField[_ >: D, M, N, T],
       data: => T
-  ): this.type = ??? // setData[M, N, T](field, field.tag, data)
+  ): this.type = setData[M, N, T](field, field.tag, data)
+
+  def setData[N <: TypeMemberName, T <: Datum[T]](
+      field: TaggedFinalField[_ >: D, T, N, T],
+      data: => T
+  ): this.type = {
+    vars.put(field.name, data)
+    this
+  }
 
   def setData[M <: Var[M], N <: TypeMemberName, T <: Datum[T]](
-      field: Field[_ >: D, M],
+      field: FinalField[_ >: D, M],
       tag: FinalTag[_ >: M, N, T],
       data: => T
   ): this.type = setValue[M, N, T](field, tag, Try(data))
@@ -174,7 +181,7 @@ trait MutRecordDatum[+D <: RecordDatum[D]] extends RecordDatum[D] with MutDatum[
   // TODO getError([tagged]field[, tag])
 
   def setValue[M <: Var[M], N <: TypeMemberName, T <: Datum[T]](
-      field: Field[_ >: D, M],
+      field: FinalField[_ >: D, M],
       tag: FinalTag[_ >: M, N, T],
       value: Try[T]
   ): this.type = {
@@ -183,11 +190,11 @@ trait MutRecordDatum[+D <: RecordDatum[D]] extends RecordDatum[D] with MutDatum[
   }
 
   def getOrCreateVarEntry[M <: Var[M], N <: TypeMemberName, T <: Datum[T]](
-      field: Field[_ >: D, M],
+      field: FinalField[_ >: D, M],
       tag: FinalTag[_ >: M, N, T]
   ): MutVarEntry[T] = getOrCreateVar(field).getOrCreateEntry(tag)
 
-  def getOrCreateVar[M <: Var[M]](field: Field[_ >: D, M]): MutVar[M] = {
+  def getOrCreateVar[M <: Var[M]](field: FinalField[_ >: D, M]): MutVar[M] = {
     vars.computeIfAbsent(field.name, new MuVarConstructor/*(field)*/).asInstanceOf[MutVar[M]]
   }
 
@@ -242,7 +249,11 @@ abstract class MutPrimitiveDatumImpl[+D <: PrimitiveDatum[D]](
 ) extends MutDatum[D] with PrimitiveDatum[D] {this: D =>}
 
 
-trait MutStringDatum[+D <: StringDatum[D]] extends MutPrimitiveDatum[D] with StringDatum[D] {this: D =>}
+trait MutStringDatum[+D <: StringDatum[D]] extends MutPrimitiveDatum[D] with StringDatum[D] {this: D =>
+
+  def native_=(native: StringType[D]#Native): Unit
+
+}
 
 
 abstract class MutStringDatumImpl[+D <: StringDatum[D]](
