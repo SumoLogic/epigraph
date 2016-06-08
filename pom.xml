@@ -26,6 +26,7 @@
     <module>epi-core</module>
     <module>epi-builtin-types</module>
     <module>epi-schema</module>
+    <module>epi-schema-compiler</module>
     <module>schema-parser</module>
     <!--<module>schema-editor</module>-->
   </modules>
