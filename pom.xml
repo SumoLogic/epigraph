@@ -26,6 +26,7 @@
     <module>epi-core</module>
     <module>epi-builtin-types</module>
     <module>epi-schema</module>
+    <module>schema-parser</module>
     <!--<module>schema-editor</module>-->
   </modules>
 
@@ -39,7 +40,6 @@
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <junit.version>4.10</junit.version>
   </properties>
 
   <developers>
@@ -58,48 +58,61 @@
 
   <dependencies><!-- common dependencies (scala, scala-logging, scalatest) -->
 
-    <dependency>
-      <groupId>ch.qos.logback</groupId>
-      <artifactId>logback-classic</artifactId>
-      <version>1.1.5</version>
-    </dependency>
-
-    <dependency>
-      <groupId>com.typesafe.scala-logging</groupId>
-      <artifactId>scala-logging_${scala.version.major.minor}</artifactId>
-      <version>3.1.0</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.jetbrains</groupId>
-      <artifactId>annotations</artifactId>
-      <version>15.0</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.scala-lang</groupId>
-      <artifactId>scala-library</artifactId>
-      <version>${scala.version}</version>
-    </dependency>
-    <!--
-        <dependency>
-          <groupId>org.scala-lang</groupId>
-          <artifactId>scala-compiler</artifactId>
-          <version>${scala.version}</version>
-        </dependency>
-    -->
-
-    <dependency>
-      <groupId>org.scalatest</groupId>
-      <artifactId>scalatest_${scala.version.major.minor}</artifactId>
-      <version>3.0.0-M15</version>
-      <scope>test</scope>
-    </dependency>
-
   </dependencies>
 
   <dependencyManagement><!-- sets version for shared child dependencies -->
     <dependencies>
+
+      <dependency>
+        <groupId>ch.qos.logback</groupId>
+        <artifactId>logback-classic</artifactId>
+        <version>1.1.5</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.typesafe.scala-logging</groupId>
+        <artifactId>scala-logging_${scala.version.major.minor}</artifactId>
+        <version>3.1.0</version>
+      </dependency>
+
+
+      <dependency>
+        <groupId>net.jcip</groupId>
+        <artifactId>jcip-annotations</artifactId>
+        <version>1.0</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.jetbrains</groupId>
+        <artifactId>annotations</artifactId>
+        <version>15.0</version>
+      </dependency>
+
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>4.12</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.scala-lang</groupId>
+        <artifactId>scala-library</artifactId>
+        <version>${scala.version}</version>
+      </dependency>
+      <!--
+      <dependency>
+        <groupId>org.scala-lang</groupId>
+        <artifactId>scala-compiler</artifactId>
+        <version>${scala.version}</version>
+      </dependency>
+      -->
+
+      <dependency>
+        <groupId>org.scalatest</groupId>
+        <artifactId>scalatest_${scala.version.major.minor}</artifactId>
+        <version>3.0.0-M15</version>
+        <scope>test</scope>
+      </dependency>
 
     </dependencies>
   </dependencyManagement>
@@ -111,7 +124,6 @@
       <plugin>
         <groupId>net.alchim31.maven</groupId>
         <artifactId>scala-maven-plugin</artifactId>
-        <version>3.2.2</version>
         <executions>
           <execution>
             <goals>
@@ -133,7 +145,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
-        <version>1.4.1</version>
         <executions>
           <execution>
             <id>enforce-java</id>
@@ -152,36 +163,69 @@
       </plugin>
 
       <!-- disable surefire plugin tests-->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.19.1</version>
-        <configuration>
-          <skipTests>true</skipTests>
-        </configuration>
-      </plugin>
+      <!--<plugin>-->
+        <!--<groupId>org.apache.maven.plugins</groupId>-->
+        <!--<artifactId>maven-surefire-plugin</artifactId>-->
+        <!--<configuration>-->
+          <!--<skipTests>true</skipTests>-->
+        <!--</configuration>-->
+      <!--</plugin>-->
 
       <!-- enable scalatest plugin -->
-      <plugin>
-        <groupId>org.scalatest</groupId>
-        <artifactId>scalatest-maven-plugin</artifactId>
-        <version>1.0</version>
-        <configuration>
-          <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
-          <junitxml>.</junitxml>
-          <filereports>WDF TestSuite.txt</filereports>
-        </configuration>
-        <executions>
-          <execution>
-            <id>test</id>
-            <goals>
-              <goal>test</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
+      <!--<plugin>-->
+        <!--<groupId>org.scalatest</groupId>-->
+        <!--<artifactId>scalatest-maven-plugin</artifactId>-->
+        <!--<configuration>-->
+          <!--<reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>-->
+          <!--<junitxml>.</junitxml>-->
+          <!--<filereports>WDF TestSuite.txt</filereports>-->
+        <!--</configuration>-->
+        <!--<executions>-->
+          <!--<execution>-->
+            <!--<id>test</id>-->
+            <!--<goals>-->
+              <!--<goal>test</goal>-->
+            <!--</goals>-->
+          <!--</execution>-->
+        <!--</executions>-->
+      <!--</plugin>-->
 
     </plugins>
+
+    <pluginManagement>
+      <plugins>
+
+        <plugin>
+          <groupId>net.alchim31.maven</groupId>
+          <artifactId>scala-maven-plugin</artifactId>
+          <version>3.2.2</version>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-enforcer-plugin</artifactId>
+          <version>1.4.1</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>2.19.1</version>
+        </plugin>
+
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>build-helper-maven-plugin</artifactId>
+          <version>1.9.1</version>
+        </plugin>
+
+        <plugin>
+          <groupId>org.scalatest</groupId>
+          <artifactId>scalatest-maven-plugin</artifactId>
+          <version>1.0</version>
+        </plugin>
+
+      </plugins>
+    </pluginManagement>
 
   </build>
 

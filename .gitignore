@@ -18,3 +18,6 @@
 /out/
 /build/
 /*/build/
+
+# Mac OS X laundry
+.DS_Store
