@@ -128,9 +128,6 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     else if (t == S_RECORD_TYPE_DEF) {
       r = recordTypeDef(b, 0);
     }
-    else if (t == S_STAR_IMPORT_SUFFIX) {
-      r = starImportSuffix(b, 0);
-    }
     else if (t == S_SUPPLEMENT_DEF) {
       r = supplementDef(b, 0);
     }
@@ -641,7 +638,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '{' enumMemberBodyPart* '}'
+  // '{' (enumMemberBodyPart ','?)* '}'
   static boolean enumMemberBody(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "enumMemberBody")) return false;
     if (!nextTokenIs(b, S_CURLY_LEFT)) return false;
@@ -655,15 +652,33 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     return r || p;
   }
 
-  // enumMemberBodyPart*
+  // (enumMemberBodyPart ','?)*
   private static boolean enumMemberBody_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "enumMemberBody_1")) return false;
     int c = current_position_(b);
     while (true) {
-      if (!enumMemberBodyPart(b, l + 1)) break;
+      if (!enumMemberBody_1_0(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "enumMemberBody_1", c)) break;
       c = current_position_(b);
     }
+    return true;
+  }
+
+  // enumMemberBodyPart ','?
+  private static boolean enumMemberBody_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "enumMemberBody_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = enumMemberBodyPart(b, l + 1);
+    r = r && enumMemberBody_1_0_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // ','?
+  private static boolean enumMemberBody_1_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "enumMemberBody_1_0_1")) return false;
+    consumeToken(b, S_COMMA);
     return true;
   }
 
@@ -700,7 +715,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '{' enumTypeBodyPart* '}'
+  // '{' (enumTypeBodyPart ','?)* '}'
   public static boolean enumTypeBody(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "enumTypeBody")) return false;
     if (!nextTokenIs(b, S_CURLY_LEFT)) return false;
@@ -714,15 +729,33 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     return r || p;
   }
 
-  // enumTypeBodyPart*
+  // (enumTypeBodyPart ','?)*
   private static boolean enumTypeBody_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "enumTypeBody_1")) return false;
     int c = current_position_(b);
     while (true) {
-      if (!enumTypeBodyPart(b, l + 1)) break;
+      if (!enumTypeBody_1_0(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "enumTypeBody_1", c)) break;
       c = current_position_(b);
     }
+    return true;
+  }
+
+  // enumTypeBodyPart ','?
+  private static boolean enumTypeBody_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "enumTypeBody_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = enumTypeBodyPart(b, l + 1);
+    r = r && enumTypeBody_1_0_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // ','?
+  private static boolean enumTypeBody_1_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "enumTypeBody_1_0_1")) return false;
+    consumeToken(b, S_COMMA);
     return true;
   }
 
@@ -800,7 +833,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '{' fieldBodyPart* '}'
+  // '{' (fieldBodyPart ','?)* '}'
   static boolean fieldBody(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "fieldBody")) return false;
     if (!nextTokenIs(b, S_CURLY_LEFT)) return false;
@@ -814,15 +847,33 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     return r || p;
   }
 
-  // fieldBodyPart*
+  // (fieldBodyPart ','?)*
   private static boolean fieldBody_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "fieldBody_1")) return false;
     int c = current_position_(b);
     while (true) {
-      if (!fieldBodyPart(b, l + 1)) break;
+      if (!fieldBody_1_0(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "fieldBody_1", c)) break;
       c = current_position_(b);
     }
+    return true;
+  }
+
+  // fieldBodyPart ','?
+  private static boolean fieldBody_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "fieldBody_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = fieldBodyPart(b, l + 1);
+    r = r && fieldBody_1_0_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // ','?
+  private static boolean fieldBody_1_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "fieldBody_1_0_1")) return false;
+    consumeToken(b, S_COMMA);
     return true;
   }
 
@@ -929,24 +980,16 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'import' fqn starImportSuffix?
+  // 'import' fqn
   public static boolean importStatement(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "importStatement")) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, S_IMPORT_STATEMENT, "<import statement>");
     r = consumeToken(b, S_IMPORT);
     p = r; // pin = 1
-    r = r && report_error_(b, fqn(b, l + 1));
-    r = p && importStatement_2(b, l + 1) && r;
+    r = r && fqn(b, l + 1);
     exit_section_(b, l, m, r, p, declRecover_parser_);
     return r || p;
-  }
-
-  // starImportSuffix?
-  private static boolean importStatement_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "importStatement_2")) return false;
-    starImportSuffix(b, l + 1);
-    return true;
   }
 
   /* ********************************************************** */
@@ -965,7 +1008,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '{' listTypeBodyPart* '}'
+  // '{' (listTypeBodyPart ','?)* '}'
   public static boolean listTypeBody(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "listTypeBody")) return false;
     if (!nextTokenIs(b, S_CURLY_LEFT)) return false;
@@ -979,15 +1022,33 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     return r || p;
   }
 
-  // listTypeBodyPart*
+  // (listTypeBodyPart ','?)*
   private static boolean listTypeBody_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "listTypeBody_1")) return false;
     int c = current_position_(b);
     while (true) {
-      if (!listTypeBodyPart(b, l + 1)) break;
+      if (!listTypeBody_1_0(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "listTypeBody_1", c)) break;
       c = current_position_(b);
     }
+    return true;
+  }
+
+  // listTypeBodyPart ','?
+  private static boolean listTypeBody_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "listTypeBody_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = listTypeBodyPart(b, l + 1);
+    r = r && listTypeBody_1_0_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // ','?
+  private static boolean listTypeBody_1_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "listTypeBody_1_0_1")) return false;
+    consumeToken(b, S_COMMA);
     return true;
   }
 
@@ -1041,7 +1102,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '{' mapTypeBodyPart* '}'
+  // '{' (mapTypeBodyPart ','?)* '}'
   public static boolean mapTypeBody(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "mapTypeBody")) return false;
     if (!nextTokenIs(b, S_CURLY_LEFT)) return false;
@@ -1055,15 +1116,33 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     return r || p;
   }
 
-  // mapTypeBodyPart*
+  // (mapTypeBodyPart ','?)*
   private static boolean mapTypeBody_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "mapTypeBody_1")) return false;
     int c = current_position_(b);
     while (true) {
-      if (!mapTypeBodyPart(b, l + 1)) break;
+      if (!mapTypeBody_1_0(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "mapTypeBody_1", c)) break;
       c = current_position_(b);
     }
+    return true;
+  }
+
+  // mapTypeBodyPart ','?
+  private static boolean mapTypeBody_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "mapTypeBody_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = mapTypeBodyPart(b, l + 1);
+    r = r && mapTypeBody_1_0_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // ','?
+  private static boolean mapTypeBody_1_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "mapTypeBody_1_0_1")) return false;
+    consumeToken(b, S_COMMA);
     return true;
   }
 
@@ -1114,44 +1193,6 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(b, l, "mapTypeDef_5")) return false;
     mapTypeBody(b, l + 1);
     return true;
-  }
-
-  /* ********************************************************** */
-  // '{' memberBodyPart* '}'
-  static boolean memberBody(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "memberBody")) return false;
-    if (!nextTokenIs(b, S_CURLY_LEFT)) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_);
-    r = consumeToken(b, S_CURLY_LEFT);
-    p = r; // pin = 1
-    r = r && report_error_(b, memberBody_1(b, l + 1));
-    r = p && consumeToken(b, S_CURLY_RIGHT) && r;
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
-  }
-
-  // memberBodyPart*
-  private static boolean memberBody_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "memberBody_1")) return false;
-    int c = current_position_(b);
-    while (true) {
-      if (!memberBodyPart(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "memberBody_1", c)) break;
-      c = current_position_(b);
-    }
-    return true;
-  }
-
-  /* ********************************************************** */
-  // customParam
-  static boolean memberBodyPart(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "memberBodyPart")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NONE_);
-    r = customParam(b, l + 1);
-    exit_section_(b, l, m, r, false, partRecover_parser_);
-    return r;
   }
 
   /* ********************************************************** */
@@ -1278,7 +1319,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '{' primitiveBodyPart* '}'
+  // '{' (primitiveBodyPart ','?)* '}'
   public static boolean primitiveTypeBody(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "primitiveTypeBody")) return false;
     if (!nextTokenIs(b, S_CURLY_LEFT)) return false;
@@ -1292,15 +1333,33 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     return r || p;
   }
 
-  // primitiveBodyPart*
+  // (primitiveBodyPart ','?)*
   private static boolean primitiveTypeBody_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "primitiveTypeBody_1")) return false;
     int c = current_position_(b);
     while (true) {
-      if (!primitiveBodyPart(b, l + 1)) break;
+      if (!primitiveTypeBody_1_0(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "primitiveTypeBody_1", c)) break;
       c = current_position_(b);
     }
+    return true;
+  }
+
+  // primitiveBodyPart ','?
+  private static boolean primitiveTypeBody_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "primitiveTypeBody_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = primitiveBodyPart(b, l + 1);
+    r = r && primitiveTypeBody_1_0_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // ','?
+  private static boolean primitiveTypeBody_1_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "primitiveTypeBody_1_0_1")) return false;
+    consumeToken(b, S_COMMA);
     return true;
   }
 
@@ -1380,7 +1439,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '{' recordBodyPart* '}'
+  // '{' (recordBodyPart ','?)* '}'
   public static boolean recordTypeBody(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "recordTypeBody")) return false;
     if (!nextTokenIs(b, S_CURLY_LEFT)) return false;
@@ -1394,15 +1453,33 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     return r || p;
   }
 
-  // recordBodyPart*
+  // (recordBodyPart ','?)*
   private static boolean recordTypeBody_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "recordTypeBody_1")) return false;
     int c = current_position_(b);
     while (true) {
-      if (!recordBodyPart(b, l + 1)) break;
+      if (!recordTypeBody_1_0(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "recordTypeBody_1", c)) break;
       c = current_position_(b);
     }
+    return true;
+  }
+
+  // recordBodyPart ','?
+  private static boolean recordTypeBody_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "recordTypeBody_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = recordBodyPart(b, l + 1);
+    r = r && recordTypeBody_1_0_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // ','?
+  private static boolean recordTypeBody_1_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "recordTypeBody_1_0_1")) return false;
+    consumeToken(b, S_COMMA);
     return true;
   }
 
@@ -1463,19 +1540,6 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     r = r && imports(b, l + 1);
     r = r && defs(b, l + 1);
     exit_section_(b, m, null, r);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // '.' '*'
-  public static boolean starImportSuffix(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "starImportSuffix")) return false;
-    if (!nextTokenIs(b, S_DOT)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, S_DOT);
-    r = r && consumeToken(b, S_STAR);
-    exit_section_(b, m, S_STAR_IMPORT_SUFFIX, r);
     return r;
   }
 
@@ -1645,7 +1709,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '{' varTypeBodyPart* '}'
+  // '{' (varTypeBodyPart ','?)* '}'
   public static boolean varTypeBody(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "varTypeBody")) return false;
     if (!nextTokenIs(b, S_CURLY_LEFT)) return false;
@@ -1659,15 +1723,33 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     return r || p;
   }
 
-  // varTypeBodyPart*
+  // (varTypeBodyPart ','?)*
   private static boolean varTypeBody_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "varTypeBody_1")) return false;
     int c = current_position_(b);
     while (true) {
-      if (!varTypeBodyPart(b, l + 1)) break;
+      if (!varTypeBody_1_0(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "varTypeBody_1", c)) break;
       c = current_position_(b);
     }
+    return true;
+  }
+
+  // varTypeBodyPart ','?
+  private static boolean varTypeBody_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "varTypeBody_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = varTypeBodyPart(b, l + 1);
+    r = r && varTypeBody_1_0_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // ','?
+  private static boolean varTypeBody_1_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "varTypeBody_1_0_1")) return false;
+    consumeToken(b, S_COMMA);
     return true;
   }
 
@@ -1730,7 +1812,63 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // typeMemberModifiers qid ':' typeRef memberBody?
+  // '{' (varTypeMemberBodyPart ','?)* '}'
+  static boolean varTypeMemberBody(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "varTypeMemberBody")) return false;
+    if (!nextTokenIs(b, S_CURLY_LEFT)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_);
+    r = consumeToken(b, S_CURLY_LEFT);
+    p = r; // pin = 1
+    r = r && report_error_(b, varTypeMemberBody_1(b, l + 1));
+    r = p && consumeToken(b, S_CURLY_RIGHT) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // (varTypeMemberBodyPart ','?)*
+  private static boolean varTypeMemberBody_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "varTypeMemberBody_1")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!varTypeMemberBody_1_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "varTypeMemberBody_1", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
+  // varTypeMemberBodyPart ','?
+  private static boolean varTypeMemberBody_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "varTypeMemberBody_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = varTypeMemberBodyPart(b, l + 1);
+    r = r && varTypeMemberBody_1_0_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // ','?
+  private static boolean varTypeMemberBody_1_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "varTypeMemberBody_1_0_1")) return false;
+    consumeToken(b, S_COMMA);
+    return true;
+  }
+
+  /* ********************************************************** */
+  // customParam
+  static boolean varTypeMemberBodyPart(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "varTypeMemberBodyPart")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_);
+    r = customParam(b, l + 1);
+    exit_section_(b, l, m, r, false, partRecover_parser_);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // typeMemberModifiers qid ':' typeRef varTypeMemberBody?
   public static boolean varTypeMemberDecl(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "varTypeMemberDecl")) return false;
     boolean r, p;
@@ -1745,10 +1883,10 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     return r || p;
   }
 
-  // memberBody?
+  // varTypeMemberBody?
   private static boolean varTypeMemberDecl_4(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "varTypeMemberDecl_4")) return false;
-    memberBody(b, l + 1);
+    varTypeMemberBody(b, l + 1);
     return true;
   }
 

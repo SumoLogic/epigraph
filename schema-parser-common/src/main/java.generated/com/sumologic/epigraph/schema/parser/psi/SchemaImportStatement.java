@@ -10,9 +10,6 @@ public interface SchemaImportStatement extends PsiElement {
   @Nullable
   SchemaFqn getFqn();
 
-  @Nullable
-  SchemaStarImportSuffix getStarImportSuffix();
-
   @NotNull
   PsiElement getImport();
 

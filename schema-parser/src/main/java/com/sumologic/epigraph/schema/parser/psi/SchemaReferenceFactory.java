@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public class ReferenceFactory {
+public class SchemaReferenceFactory {
 
   @Nullable
   public static PsiReference getReference(@NotNull SchemaFqnSegment segment) {

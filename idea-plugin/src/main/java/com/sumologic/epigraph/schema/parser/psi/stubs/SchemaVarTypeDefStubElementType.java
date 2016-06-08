@@ -3,6 +3,7 @@ package com.sumologic.epigraph.schema.parser.psi.stubs;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.stubs.StubInputStream;
 import com.intellij.psi.stubs.StubOutputStream;
+import com.sumologic.epigraph.schema.parser.Fqn;
 import com.sumologic.epigraph.schema.parser.psi.SchemaSupplementsDecl;
 import com.sumologic.epigraph.schema.parser.psi.SchemaVarTypeDef;
 import com.sumologic.epigraph.schema.parser.psi.impl.SchemaVarTypeDefImpl;
@@ -38,7 +39,7 @@ public class SchemaVarTypeDefStubElementType extends SchemaTypeDefStubElementTyp
     return new SchemaVarTypeDefStubImpl(
         parentStub,
         typeDef.getName(),
-        typeDef.getNamespace(),
+        Fqn.toNullableString(typeDef.getNamespace()),
         getSerializedExtendsTypeRefs(typeDef),
         supplementedRefs);
   }

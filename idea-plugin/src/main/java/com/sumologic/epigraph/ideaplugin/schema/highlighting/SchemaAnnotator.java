@@ -22,6 +22,8 @@ import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.S_TY
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
 public class SchemaAnnotator implements Annotator {
+  // TODO highlight clashing imports, e.g import foo.bar, import baz.bar
+
   @Override
   public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
     element.accept(new SchemaVisitor() {

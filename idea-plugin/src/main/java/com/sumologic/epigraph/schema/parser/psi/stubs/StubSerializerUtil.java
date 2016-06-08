@@ -34,6 +34,16 @@ public class StubSerializerUtil {
     }
   }
 
+  public static <T> void serializeCollection(@Nullable T[] collection,
+                                             @NotNull Serializer<T> itemSerializer,
+                                             @NotNull StubOutputStream stream) throws IOException {
+    if (collection == null) stream.writeShort(0);
+    else {
+      stream.writeShort(collection.length);
+      for (T item : collection) itemSerializer.serialize(item, stream);
+    }
+  }
+
   @NotNull
   public static <T> Set<T> deserializeSet(@NotNull Deserializer<T> itemDeserializer,
                                           @NotNull StubInputStream stream,

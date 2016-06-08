@@ -10,6 +10,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
+ * Fqn is a collection of string segments
+ *
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
 @Immutable
@@ -32,6 +34,11 @@ public class Fqn {
     return new Fqn(fqn.split("\\."));
   }
 
+  @Nullable
+  public static Fqn fromNullableDotSeparated(@Nullable String fqn) {
+    return fqn == null ? null : fromDotSeparated(fqn);
+  }
+
   public int size() {
     return segments.length;
   }
@@ -41,29 +48,24 @@ public class Fqn {
   }
 
   @Nullable
-  public String getFirst() { // TODO rename to first
+  public String first() {
     if (isEmpty()) return null;
     return segments[0];
   }
 
   @Nullable
-  public String getLast() { // TODO rename to last
+  public String last() {
     if (isEmpty()) return null;
     return segments[size() - 1];
   }
 
   @NotNull
   public Fqn removeLastSegment() {
-    if (isEmpty()) throw new IllegalArgumentException("Can't remove last segment from an empty Fqn");
-    if (size() == 1) return EMPTY;
-    String[] f = new String[size() - 1];
-    System.arraycopy(segments, 0, f, 0, size() - 1);
-    return new Fqn(f);
+    return removeTailSegments(1);
   }
 
   @NotNull
   public Fqn removeFirstSegment() {
-    if (isEmpty()) throw new IllegalArgumentException("Can't remove first segment from an empty Fqn");
     return removeHeadSegments(1);
   }
 
@@ -77,13 +79,13 @@ public class Fqn {
     return new Fqn(f);
   }
 
-  @Nullable
-  public Fqn getPrefix() { // todo rename to prefix, add javadoc
-    if (isEmpty()) return null;
-    if (size() == 1) return EMPTY;
+  @NotNull
+  private Fqn removeTailSegments(int n) {
+    if (size() < n) throw new IllegalArgumentException("Can't remove " + n + " segments from '" + toString() + "'");
+    if (size() == n) return EMPTY;
 
-    String[] f = new String[size() - 1];
-    System.arraycopy(segments, 0, f, 0, size() - 1);
+    String[] f = new String[size() - n];
+    System.arraycopy(segments, 0, f, 0, size() - n);
     return new Fqn(f);
   }
 
@@ -96,6 +98,25 @@ public class Fqn {
     System.arraycopy(segments, 0, f, 0, size());
     System.arraycopy(suffix.segments, 0, f, size(), suffix.size());
     return new Fqn(f);
+  }
+
+  @NotNull
+  public Fqn append(@NotNull String segment) {
+    String[] f = new String[size() + 1];
+    System.arraycopy(segments, 0, f, 0, size());
+    f[size()] = segment;
+    return new Fqn(f);
+  }
+
+  public boolean startsWith(@NotNull Fqn prefix) {
+    if (prefix.isEmpty()) return true;
+    if (size() < prefix.size()) return false;
+
+    for (int i = 0; i < prefix.size(); i++) {
+      if (!segments[i].equals(prefix.segments[i])) return false;
+    }
+
+    return true;
   }
 
   public String toString() {
@@ -116,7 +137,6 @@ public class Fqn {
     Fqn fqn = (Fqn) o;
 
     return Arrays.equals(segments, fqn.segments);
-
   }
 
   @Override
@@ -124,26 +144,19 @@ public class Fqn {
     return Arrays.hashCode(segments);
   }
 
-  /**
-   * Find all FQNs with last segment being `lastSegment` (or just all if it's null) and remove last segment from them
-   */
-  public static Set<Fqn> getMatchingWithSuffixRemoved(@NotNull Collection<Fqn> fqns, @Nullable String lastSegment) {
-    return fqns.stream()
-        .filter(fqn -> lastSegment == null || lastSegment.equals(fqn.getLast()))
-        .map(Fqn::getPrefix)
-        .filter(fqn -> fqn != null)
-        .collect(Collectors.toSet());
+  @Nullable
+  public static String toNullableString(@Nullable Fqn fqn) {
+    return fqn == null ? null : fqn.toString();
   }
 
   /**
-   * Find all FQNs starting with `prefix` (which may have dots) and remove prefix from them
+   * Find all FQNs starting with {@code prefix} and remove prefix from them
    */
-  public static Set<Fqn> getMatchingWithPrefixRemoved(@NotNull Collection<Fqn> fqns, @NotNull String prefix) {
-    int segmentsToRemove = prefix.isEmpty() ? 0 : prefix.length() - prefix.replace(".", "").length() + 1;
-
+  public static Set<Fqn> getMatchingWithPrefixRemoved(@NotNull Collection<Fqn> fqns, @NotNull Fqn prefix) {
     return fqns.stream()
-        .map(fqn -> fqn.removeHeadSegments(segmentsToRemove))
-        .filter(fqn -> !fqn.isEmpty())
+        .filter(fqn -> fqn.startsWith(prefix))
+        .map(fqn -> fqn.removeHeadSegments(prefix.size()))
+//        .filter(fqn -> !fqn.isEmpty())
         .collect(Collectors.toSet());
   }
 }

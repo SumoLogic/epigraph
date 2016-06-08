@@ -265,7 +265,7 @@ public class SchemaPsiImplUtil {
   @Contract(pure = true)
   @Nullable
   public static PsiReference getReference(SchemaFqnSegment segment) {
-    return ReferenceFactory.getReference(segment);
+    return SchemaReferenceFactory.getReference(segment);
   }
 
 
@@ -362,7 +362,7 @@ public class SchemaPsiImplUtil {
     return customParam.getId();
   }
 
-  // common toString for all stub-based elements --------------------------------------------
+  // common toNullableString for all stub-based elements --------------------------------------------
 
   @Contract(pure = true)
   @NotNull

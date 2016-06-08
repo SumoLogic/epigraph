@@ -5,6 +5,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.util.IncorrectOperationException;
+import com.sumologic.epigraph.schema.parser.Fqn;
 import com.sumologic.epigraph.schema.parser.psi.*;
 import com.sumologic.epigraph.schema.parser.psi.stubs.SchemaTypeDefStubBase;
 import org.jetbrains.annotations.NotNull;
@@ -87,7 +88,7 @@ public abstract class SchemaTypeDefImplBase<S extends SchemaTypeDefStubBase<T>, 
 
   @Nullable
   @Override
-  public String getNamespace() {
+  public Fqn getNamespace() {
     throw new UnsupportedOperationException();
   }
 

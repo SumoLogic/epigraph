@@ -3,6 +3,7 @@ package com.sumologic.epigraph.ideaplugin.schema.index;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.sumologic.epigraph.schema.parser.Fqn;
 import com.sumologic.epigraph.schema.parser.psi.SchemaNamespaceDecl;
 import com.sumologic.epigraph.schema.parser.psi.SchemaSupplementDef;
 import com.sumologic.epigraph.schema.parser.psi.SchemaTypeDef;
@@ -20,6 +21,7 @@ import java.util.List;
 public class SchemaIndexUtil {
   @NotNull
   public static List<SchemaTypeDef> findTypeDefs(Project project, @Nullable Collection<String> namespaces, @Nullable String shortName) {
+    // todo unused, remove?
     return findTypeDefs(project, namespaces, shortName, new AddAllProcessor<>());
   }
 
@@ -72,7 +74,33 @@ public class SchemaIndexUtil {
   }
 
   @NotNull
+  public static List<SchemaTypeDef> findTypeDefs(Project project, @NotNull Fqn[] fqns) {
+    return findTypeDefs(project, fqns, new AddAllProcessor<>());
+  }
+
+  @Nullable
+  public static SchemaTypeDef findTypeDef(Project project, @NotNull Fqn[] fqns) {
+    return findTypeDefs(project, fqns, new TakeFirstProcessor<>());
+  }
+
+  private static <R> R findTypeDefs(Project project, @NotNull Fqn[] fqns, @NotNull Processor<SchemaTypeDef, R> processor) {
+    GlobalSearchScope scope = GlobalSearchScope.allScope(project);
+
+    SchemaFullTypeNameIndex index = SchemaFullTypeNameIndex.EP_NAME.findExtension(SchemaFullTypeNameIndex.class);
+    assert index != null;
+
+    for (Fqn fqn : fqns) {
+      Collection<SchemaTypeDef> typeDefs = index.get(fqn.toString(), project, scope);
+      if (!processor.process(typeDefs)) break;
+    }
+
+    return processor.result();
+  }
+
+  @NotNull
   public static List<SchemaNamespaceDecl> findNamespaces(@NotNull Project project, @Nullable String namePrefix) {
+    // TODO cache all namespaces (if prefix is null)
+
     GlobalSearchScope scope = GlobalSearchScope.allScope(project);
 
     SchemaNamespaceByNameIndex index = SchemaNamespaceByNameIndex.EP_NAME.findExtension(SchemaNamespaceByNameIndex.class);

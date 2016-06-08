@@ -52,7 +52,6 @@ public interface SchemaElementTypes {
   IElementType S_PRIMITIVE_TYPE_DEF = new SchemaPrimitiveTypeDefStubElementType("S_PRIMITIVE_TYPE_DEF");
   IElementType S_RECORD_TYPE_BODY = new SchemaElementType("S_RECORD_TYPE_BODY");
   IElementType S_RECORD_TYPE_DEF = new SchemaRecordTypeDefStubElementType("S_RECORD_TYPE_DEF");
-  IElementType S_STAR_IMPORT_SUFFIX = new SchemaElementType("S_STAR_IMPORT_SUFFIX");
   IElementType S_SUPPLEMENTS_DECL = new SchemaElementType("S_SUPPLEMENTS_DECL");
   IElementType S_SUPPLEMENT_DEF = new SchemaSupplementDefStubElementType("S_SUPPLEMENT_DEF");
   IElementType S_TYPE_DEF_WRAPPER = new SchemaTypeDefWrapperStubElementType("S_TYPE_DEF_WRAPPER");
@@ -97,7 +96,6 @@ public interface SchemaElementTypes {
   IElementType S_POLYMORPHIC = new SchemaElementType("polymorphic");
   IElementType S_RECORD = new SchemaElementType("record");
   IElementType S_SLASH = new SchemaElementType("/");
-  IElementType S_STAR = new SchemaElementType("*");
   IElementType S_STRING = new SchemaElementType("string");
   IElementType S_STRING_T = new SchemaElementType("string");
   IElementType S_SUPPLEMENT = new SchemaElementType("supplement");
@@ -212,9 +210,6 @@ public interface SchemaElementTypes {
       }
       else if (type == S_RECORD_TYPE_DEF) {
         return new SchemaRecordTypeDefImpl(node);
-      }
-      else if (type == S_STAR_IMPORT_SUFFIX) {
-        return new SchemaStarImportSuffixImpl(node);
       }
       else if (type == S_SUPPLEMENTS_DECL) {
         return new SchemaSupplementsDeclImpl(node);

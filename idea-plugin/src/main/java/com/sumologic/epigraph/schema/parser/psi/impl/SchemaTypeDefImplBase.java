@@ -8,6 +8,7 @@ import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.util.IncorrectOperationException;
 import com.sumologic.epigraph.ideaplugin.schema.brains.NamespaceManager;
 import com.sumologic.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
+import com.sumologic.epigraph.schema.parser.Fqn;
 import com.sumologic.epigraph.schema.parser.psi.*;
 import com.sumologic.epigraph.schema.parser.psi.stubs.SchemaTypeDefStubBase;
 import com.sumologic.epigraph.schema.parser.psi.stubs.SerializedFqnTypeRef;
@@ -101,10 +102,10 @@ public abstract class SchemaTypeDefImplBase<S extends SchemaTypeDefStubBase<T>, 
 
   @Nullable
   @Override
-  public String getNamespace() {
+  public Fqn getNamespace() {
     S stub = getStub();
     if (stub != null) {
-      return stub.getNamespace();
+      return Fqn.fromNullableDotSeparated(stub.getNamespace());
     }
 
     return NamespaceManager.getNamespace(this);

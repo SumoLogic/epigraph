@@ -3,6 +3,7 @@ package com.sumologic.epigraph.schema.parser.psi.stubs;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.stubs.StubInputStream;
 import com.intellij.psi.stubs.StubOutputStream;
+import com.sumologic.epigraph.schema.parser.Fqn;
 import com.sumologic.epigraph.schema.parser.psi.SchemaRecordTypeDef;
 import com.sumologic.epigraph.schema.parser.psi.SchemaSupplementsDecl;
 import com.sumologic.epigraph.schema.parser.psi.impl.SchemaRecordTypeDefImpl;
@@ -38,7 +39,7 @@ public class SchemaRecordTypeDefStubElementType extends SchemaTypeDefStubElement
     return new SchemaRecordTypeDefStubImpl(
         parentStub,
         typeDef.getName(),
-        typeDef.getNamespace(),
+        Fqn.toNullableString(typeDef.getNamespace()),
         getSerializedExtendsTypeRefs(typeDef),
         supplementedRefs);
   }

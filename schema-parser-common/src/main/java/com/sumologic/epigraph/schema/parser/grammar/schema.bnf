@@ -49,7 +49,6 @@
     CURLY_RIGHT = '}'
     BRACKET_LEFT = '['
     BRACKET_RIGHT = ']'
-    STAR = '*'
 
     space='regexp:\s+'
     comment='regexp://.*'
@@ -80,18 +79,13 @@
   extends(".*TypeBody") = "com.sumologic.epigraph.schema.parser.psi.impl.CustomParamHolderImpl"
 }
 
-// consider separating fields/types/decl parts by either ',' or newlines,
-// otherwise stuff can get confusing, e.g.
-// record { f1:t1 f2:t2 }
-
 root ::= namespaceDecl imports defs
 
 // either quoted or unquoted id
 private qid ::= '`' id '`' | id
 
 imports ::= importStatement*
-importStatement ::= 'import' fqn starImportSuffix? {pin=1 recoverWhile="declRecover"}
-starImportSuffix ::= '.' '*'
+importStatement ::= 'import' fqn {pin=1 recoverWhile="declRecover"}
 
 namespaceDecl ::= 'namespace' fqn namespaceBody? {
   methods=[getFqn2 toString]
@@ -134,7 +128,7 @@ extendsDecl ::= 'extends' typeRef (',' typeRef)* {pin=1}
 supplementsDecl ::= 'supplements' fqnTypeRef (',' fqnTypeRef)* {pin=1}
 
 defaultOverride ::= 'nodefault' | 'default' qid
-customParam ::= qid '=' dataValue { // TODO embed data language instead
+customParam ::= qid '=' dataValue {
   name="custom attribute"
   implements="com.intellij.psi.PsiNamedElement"
   methods = [getName setName getNameIdentifier]
@@ -150,16 +144,16 @@ varTypeDef ::= typeDefModifiers 'vartype' typeName extendsDecl? supplementsDecl?
   elementTypeClass="com.sumologic.epigraph.schema.parser.psi.stubs.SchemaVarTypeDefStubElementType"
   pin=2
 }
-varTypeBody ::= '{' varTypeBodyPart* '}'
+varTypeBody ::= '{' (varTypeBodyPart ','?)* '}'
 private varTypeBodyPart ::= varTypeMemberDecl | customParam
-varTypeMemberDecl ::= typeMemberModifiers qid ':' typeRef memberBody? {
+varTypeMemberDecl ::= typeMemberModifiers qid ':' typeRef varTypeMemberBody? {
   implements=["com.sumologic.epigraph.schema.parser.psi.CustomParamsHolder" "com.intellij.psi.PsiNamedElement"]
   extends="com.sumologic.epigraph.schema.parser.psi.impl.CustomParamHolderImpl"
   methods=[getName setName getNameIdentifier getPresentation]
   pin=3
 }
-private memberBody ::= '{' memberBodyPart* '}'
-private memberBodyPart ::= customParam
+private varTypeMemberBody ::= '{' (varTypeMemberBodyPart ','?)* '}'
+private varTypeMemberBodyPart ::= customParam
 
 recordTypeDef ::= typeDefModifiers 'record' typeName extendsDecl? metaDecl? supplementsDecl? recordTypeBody? {
   methods=[supplemented]
@@ -168,7 +162,7 @@ recordTypeDef ::= typeDefModifiers 'record' typeName extendsDecl? metaDecl? supp
   elementTypeClass="com.sumologic.epigraph.schema.parser.psi.stubs.SchemaRecordTypeDefStubElementType"
   pin=2
 }
-recordTypeBody ::= '{' recordBodyPart* '}'
+recordTypeBody ::= '{' (recordBodyPart ','?)* '}'
 private recordBodyPart ::= fieldDecl | customParam
 fieldDecl ::= typeMemberModifiers qid ':' typeRef defaultOverride? fieldBody? {
   implements=["com.sumologic.epigraph.schema.parser.psi.CustomParamsHolder" "com.intellij.psi.PsiNamedElement"]
@@ -176,7 +170,7 @@ fieldDecl ::= typeMemberModifiers qid ':' typeRef defaultOverride? fieldBody? {
   methods=[getName setName getNameIdentifier getPresentation]
   pin=3
 }
-private fieldBody ::= '{' fieldBodyPart* '}'
+private fieldBody ::= '{' (fieldBodyPart ','?)* '}'
 private fieldBodyPart ::= customParam
 
 //listTypeDef2 ::= 'list' typeName extendsDecl listTypeBody? // allows inheritance from lists w/o type params
@@ -186,7 +180,7 @@ listTypeDef ::= typeDefModifiers anonList typeName extendsDecl? metaDecl? listTy
   elementTypeClass="com.sumologic.epigraph.schema.parser.psi.stubs.SchemaListTypeDefStubElementType"
   pin=2
 }
-listTypeBody ::= '{' listTypeBodyPart* '}'
+listTypeBody ::= '{' (listTypeBodyPart ','?)* '}'
 private listTypeBodyPart ::= customParam
 
 mapTypeDef ::= typeDefModifiers anonMap typeName extendsDecl? metaDecl? mapTypeBody? {
@@ -195,7 +189,7 @@ mapTypeDef ::= typeDefModifiers anonMap typeName extendsDecl? metaDecl? mapTypeB
   elementTypeClass="com.sumologic.epigraph.schema.parser.psi.stubs.SchemaMapTypeDefStubElementType"
   pin=2
 }
-mapTypeBody ::= '{' mapTypeBodyPart* '}'
+mapTypeBody ::= '{' (mapTypeBodyPart ','?)* '}'
 private mapTypeBodyPart ::= customParam
 
 // abstract? polymorphic?
@@ -205,7 +199,7 @@ enumTypeDef ::= 'enum' typeName metaDecl? enumTypeBody { // extends?
   elementTypeClass="com.sumologic.epigraph.schema.parser.psi.stubs.SchemaEnumTypeDefStubElementType"
   pin=1
 }
-enumTypeBody ::= '{' enumTypeBodyPart* '}'
+enumTypeBody ::= '{' (enumTypeBodyPart ','?)* '}'
 private enumTypeBodyPart ::= customParam | enumMemberDecl
 enumMemberDecl ::= qid enumMemberBody? {
   implements=["com.sumologic.epigraph.schema.parser.psi.CustomParamsHolder" "com.intellij.psi.PsiNamedElement"]
@@ -213,7 +207,7 @@ enumMemberDecl ::= qid enumMemberBody? {
   methods=[getName setName getNameIdentifier]
   pin=1
 }
-private enumMemberBody ::='{' enumMemberBodyPart* '}'
+private enumMemberBody ::='{' (enumMemberBodyPart ','?)* '}'
 private enumMemberBodyPart ::= customParam
 
 primitiveTypeDef ::= typeDefModifiers primitiveKind typeName extendsDecl? metaDecl? primitiveTypeBody? {
@@ -223,8 +217,8 @@ primitiveTypeDef ::= typeDefModifiers primitiveKind typeName extendsDecl? metaDe
   pin=2
 }
 private primitiveKind ::= 'string' | 'integer' | 'long' | 'double' | 'boolean'
-primitiveTypeBody ::= '{' primitiveBodyPart* '}'
-private primitiveBodyPart ::= customParam // | ...
+primitiveTypeBody ::= '{' (primitiveBodyPart ','?)* '}'
+private primitiveBodyPart ::= customParam
 
 supplementDef ::= 'supplement' fqnTypeRef (',' fqnTypeRef)* 'with' fqnTypeRef {
   methods=[sourceRef supplementedRefs source supplemented getPresentation toString]

@@ -25,7 +25,8 @@ public class ParserTest {
     File input = new File(dir, inputFile);
 
     PsiFile psi = LightPsi.parseFile(input, new SchemaParserDefinition());
-    String psiDump = DebugUtil.psiToString(psi, false, true).trim();
+    String psiDump = DebugUtil.psiToString(psi, false, false).trim();
+    System.out.println("psiDump = " + psiDump);
 
     String expectedPsiDump = new String(Files.readAllBytes(Paths.get(dir.getAbsolutePath(), expectedOutputFile)));
 

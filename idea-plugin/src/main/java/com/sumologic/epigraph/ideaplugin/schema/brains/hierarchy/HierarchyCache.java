@@ -2,9 +2,9 @@ package com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
-import com.intellij.openapi.util.ModificationTracker;
 import com.intellij.psi.*;
 import com.intellij.psi.util.*;
+import com.sumologic.epigraph.ideaplugin.schema.brains.ModificationTrackerImpl;
 import com.sumologic.epigraph.schema.parser.psi.*;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
 import org.jetbrains.annotations.NotNull;
@@ -25,7 +25,7 @@ public class HierarchyCache {
   private final Key<ParameterizedCachedValue<List<SchemaSupplementDef>, SchemaTypeDef>> SUPPLEMENTS_BY_SUPPLEMENTED_KEY = Key.create("SUPPLEMENTS_BY_SUPPLEMENTED");
 
   private final Project project;
-  private final HierarchyModificationTracker hierarchyModificationTracker = new HierarchyModificationTracker();
+  private final ModificationTrackerImpl hierarchyModificationTracker = new ModificationTrackerImpl();
 
   @NotNull
   public static HierarchyCache getHierarchyCache(@NotNull Project project) {
@@ -229,18 +229,4 @@ public class HierarchyCache {
         hierarchyModificationTracker.tick();
     }
   }
-
-  private static class HierarchyModificationTracker implements ModificationTracker {
-    private int modificationCount;
-
-    void tick() {
-      modificationCount++;
-    }
-
-    @Override
-    public long getModificationCount() {
-      return modificationCount;
-    }
-  }
-
 }

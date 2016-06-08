@@ -33,12 +33,6 @@ public class SchemaImportStatementImpl extends ASTWrapperPsiElement implements S
   }
 
   @Override
-  @Nullable
-  public SchemaStarImportSuffix getStarImportSuffix() {
-    return SchemaPsiTreeUtil.getChildOfType(this, SchemaStarImportSuffix.class);
-  }
-
-  @Override
   @NotNull
   public PsiElement getImport() {
     return notNullChild(findChildByType(S_IMPORT));

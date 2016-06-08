@@ -1,6 +1,6 @@
 namespace foo
 
-import bar.*
+import bar.Qux
 
 record Baz {
   param = { `null` : null, map : ( "str\"ing" : 1 , pi : 3.14 ) list : [ <k:v> <k2:v2> ] }

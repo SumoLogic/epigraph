@@ -5,7 +5,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.stubs.StubInputStream;
 import com.intellij.psi.stubs.StubOutputStream;
 import com.intellij.util.io.StringRef;
-import com.sumologic.epigraph.ideaplugin.schema.brains.NamespaceManager;
 import com.sumologic.epigraph.ideaplugin.schema.brains.SchemaFqnReference;
 import com.sumologic.epigraph.ideaplugin.schema.brains.SchemaFqnReferenceResolver;
 import com.sumologic.epigraph.schema.parser.Fqn;
@@ -16,46 +15,44 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.List;
 
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
 public final class SerializedFqnTypeRef {
   @Nullable
-  private Fqn shortName;
+  private final Fqn ref;
   @Nullable
-  private Set<Fqn> namespacesToSearch;
+  private final Fqn[] fqns;
 
-  public SerializedFqnTypeRef(@Nullable Fqn shortName, @Nullable Set<Fqn> namespacesToSearch) {
-    this.namespacesToSearch = namespacesToSearch;
-    this.shortName = shortName;
+  public SerializedFqnTypeRef(@Nullable Fqn ref, @Nullable Fqn[] fqns) {
+    this.ref = ref;
+    this.fqns = fqns;
+  }
+
+  @Nullable
+  public Fqn getRef() {
+    return ref;
+  }
+
+  @Nullable
+  public Fqn[] getFqns() {
+    return fqns;
   }
 
   @Nullable
   public static SerializedFqnTypeRef fromFqnTypeRef(@Nullable SchemaFqnTypeRef fqnTypeRef) {
     if (fqnTypeRef == null) return null;
-    SchemaFqnReference ref = (SchemaFqnReference) SchemaPsiImplUtil.getReference(fqnTypeRef);
-    if (ref == null) return null;
-    SchemaFqnReferenceResolver resolver = ref.getResolver();
-    return new SerializedFqnTypeRef(resolver.getShortName(), resolver.getNamespacesToSearch());
-  }
-
-  @Nullable
-  public Fqn getShortName() {
-    return shortName;
-  }
-
-  @Nullable
-  public Set<Fqn> getNamespacesToSearch() {
-    return namespacesToSearch;
+    SchemaFqnReference reference = (SchemaFqnReference) SchemaPsiImplUtil.getReference(fqnTypeRef);
+    if (reference == null) return null;
+    SchemaFqnReferenceResolver resolver = reference.getResolver();
+    return new SerializedFqnTypeRef(resolver.getSourceFqn(), resolver.getFqns());
   }
 
   @Nullable
   public PsiElement resolve(@NotNull Project project) {
-    SchemaFqnReferenceResolver resolver = new SchemaFqnReferenceResolver(getNamespacesToSearch(), getShortName());
+    SchemaFqnReferenceResolver resolver = new SchemaFqnReferenceResolver(ref, fqns);
     return resolver.resolve(project);
   }
 
@@ -79,47 +76,33 @@ public final class SerializedFqnTypeRef {
   }
 
   public void serialize(@NotNull StubOutputStream stream) throws IOException {
-    stream.writeName(shortName == null ? null : shortName.toString());
-    if (shortName != null) {
-      if (namespacesToSearch == null) stream.writeShort(0);
+    stream.writeName(ref == null ? null : ref.toString());
+    if (ref != null) {
+      if (fqns == null) stream.writeShort(0);
       else {
-
-        // filter out default namespaces
-        Set<String> namespaces = namespacesToSearch.stream()
-            .map(Fqn::toString)
-            .filter(n -> !NamespaceManager.isDefaultNamespace(n))
-            .collect(Collectors.toSet());
-
-
-        // NB we're writing all namespaces to search for every type ref, but it won't take much space
-        // thanks to names de-duplication done by IDEA. However this can be optimized further.
-        // TODO(low) remove star imports from this list, write them at the file level
-        // Estimated overhead is a few KBs per file at most.
-
-        StubSerializerUtil.serializeCollection(namespaces, (item, s) -> s.writeName(item), stream);
+        StubSerializerUtil.serializeCollection(fqns, (item, s) -> s.writeName(item.toString()), stream);
       }
     }
   }
 
   @NotNull
   public static SerializedFqnTypeRef deserialize(@NotNull StubInputStream stream) throws IOException {
-    String shortNameStr = StringRef.toString(stream.readName());
+    String refStr = StringRef.toString(stream.readName());
 
-    Fqn shortName = null;
-    Set<Fqn> namespacesToSearch = null;
+    Fqn ref = null;
+    List<Fqn> fqns = null;
 
-    if (shortNameStr != null) {
-      shortName = Fqn.fromDotSeparated(shortNameStr);
+    if (refStr != null) {
+      ref = Fqn.fromDotSeparated(refStr);
 
-      namespacesToSearch = StubSerializerUtil.deserializeSet(s -> {
+      fqns = StubSerializerUtil.deserializeList(s -> {
         StringRef namespaceRef = s.readName();
         String namespace = StringRef.toString(namespaceRef);
         return namespace == null ? null : Fqn.fromDotSeparated(namespace);
       }, stream, true);
 
-      Collections.addAll(namespacesToSearch, NamespaceManager.DEFAULT_NAMESPACES);
     }
 
-    return new SerializedFqnTypeRef(shortName, namespacesToSearch);
+    return new SerializedFqnTypeRef(ref, fqns == null ? null : fqns.toArray(new Fqn[0]));
   }
 }

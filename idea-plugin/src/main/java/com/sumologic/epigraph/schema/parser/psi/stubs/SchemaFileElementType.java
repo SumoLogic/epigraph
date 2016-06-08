@@ -9,6 +9,7 @@ import com.intellij.psi.stubs.StubOutputStream;
 import com.intellij.psi.tree.IStubFileElementType;
 import com.intellij.util.io.StringRef;
 import com.sumologic.epigraph.ideaplugin.schema.brains.NamespaceManager;
+import com.sumologic.epigraph.schema.parser.Fqn;
 import com.sumologic.epigraph.schema.parser.SchemaLanguage;
 import com.sumologic.epigraph.schema.parser.psi.SchemaFile;
 import org.jetbrains.annotations.NotNull;
@@ -30,6 +31,11 @@ public class SchemaFileElementType extends IStubFileElementType<SchemaFileStub> 
   }
 
   @Override
+  public int getStubVersion() {
+    return 1; // advance every time indexes or serialized stubs change
+  }
+
+  @Override
   public StubBuilder getBuilder() {
     return new DefaultStubBuilder() {
       @NotNull
@@ -37,8 +43,8 @@ public class SchemaFileElementType extends IStubFileElementType<SchemaFileStub> 
       protected StubElement createStubForFile(@NotNull PsiFile file) {
         if (file instanceof SchemaFile) {
           SchemaFile schemaFile = (SchemaFile) file;
-          String namespace = NamespaceManager.getNamespace(schemaFile);
-          return new SchemaFileStubImpl(schemaFile, StringRef.fromNullableString(namespace));
+          Fqn namespace = NamespaceManager.getNamespace(schemaFile);
+          return new SchemaFileStubImpl(schemaFile, StringRef.fromNullableString(namespace == null ? null : namespace.toString()));
         } else return super.createStubForFile(file);
       }
     };

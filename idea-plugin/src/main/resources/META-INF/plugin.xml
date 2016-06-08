@@ -93,7 +93,14 @@
 
   <project-components>
     <component>
-      <implementation-class>com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.HierarchyCache</implementation-class>
+      <implementation-class>
+        com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.HierarchyCache
+      </implementation-class>
+    </component>
+    <component>
+      <implementation-class>
+        com.sumologic.epigraph.ideaplugin.schema.brains.NamespaceManager
+      </implementation-class>
     </component>
   </project-components>
 

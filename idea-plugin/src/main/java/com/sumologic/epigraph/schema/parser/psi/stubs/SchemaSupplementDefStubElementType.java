@@ -63,18 +63,20 @@ public class SchemaSupplementDefStubElementType extends IStubElementType<SchemaS
   public void indexStub(@NotNull SchemaSupplementDefStub stub, @NotNull IndexSink sink) {
     SerializedFqnTypeRef sourceTypeRef = stub.getSourceTypeRef();
     if (sourceTypeRef != null) {
-      Fqn shortName = sourceTypeRef.getShortName();
-      if (shortName != null && shortName.getLast() != null) {
-        sink.occurrence(SchemaStubIndexKeys.SUPPLEMENTS_BY_SOURCE, shortName.getLast());
+      Fqn ref = sourceTypeRef.getRef();
+      if (ref != null && ref.last() != null) {
+        //noinspection ConstantConditions
+        sink.occurrence(SchemaStubIndexKeys.SUPPLEMENTS_BY_SOURCE, ref.last());
       }
     }
 
     List<SerializedFqnTypeRef> supplementedTypeRefs = stub.getSupplementedTypeRefs();
     if (supplementedTypeRefs != null) {
       for (SerializedFqnTypeRef supplementedTypeRef : supplementedTypeRefs) {
-        Fqn shortName = supplementedTypeRef.getShortName();
-        if (shortName != null && shortName.getLast() != null) {
-          sink.occurrence(SchemaStubIndexKeys.SUPPLEMENTS_BY_SUPPLEMENTED, shortName.getLast());
+        Fqn ref = supplementedTypeRef.getRef();
+        if (ref != null && ref.last() != null) {
+          //noinspection ConstantConditions
+          sink.occurrence(SchemaStubIndexKeys.SUPPLEMENTS_BY_SUPPLEMENTED, ref.last());
         }
       }
     }

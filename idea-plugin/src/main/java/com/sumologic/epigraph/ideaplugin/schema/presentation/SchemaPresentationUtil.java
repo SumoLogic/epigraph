@@ -7,6 +7,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiInvalidElementAccessException;
 import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.sumologic.epigraph.schema.parser.Fqn;
 import com.sumologic.epigraph.schema.parser.psi.*;
 import com.sumologic.epigraph.ideaplugin.schema.brains.NamespaceManager;
 import org.jetbrains.annotations.NotNull;
@@ -35,13 +36,15 @@ public class SchemaPresentationUtil {
   @Nullable
   public static String getName(@NotNull PsiNamedElement element, boolean qualified) {
     String shortName = element.getName();
+    if (shortName == null) return null;
+
     if (qualified) {
-      String namespace;
+      Fqn namespace;
       if (element instanceof SchemaTypeDef) {
         SchemaTypeDef typeDef = (SchemaTypeDef) element;
         namespace = typeDef.getNamespace();
       } else namespace = NamespaceManager.getNamespace(element);
-      return namespace == null ? shortName : namespace + '.' + shortName;
+      return namespace == null ? shortName : namespace.append(shortName).toString();
     } else return shortName;
   }
 
@@ -147,7 +150,7 @@ public class SchemaPresentationUtil {
 
   @NotNull
   public static String getNamespaceString(@NotNull PsiElement element) {
-    String namespace;
+    Fqn namespace;
 
     if (element instanceof SchemaTypeDef) {
       SchemaTypeDef typeDef = (SchemaTypeDef) element;
@@ -156,7 +159,7 @@ public class SchemaPresentationUtil {
       namespace = NamespaceManager.getNamespace(element);
     }
 
-    if (namespace != null) return namespace;
+    if (namespace != null) return namespace.toString();
 
     try {
       PsiFile containingFile = element.getContainingFile();

@@ -151,10 +151,6 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitTypeDef(o);
   }
 
-  public void visitStarImportSuffix(@NotNull SchemaStarImportSuffix o) {
-    visitPsiElement(o);
-  }
-
   public void visitSupplementDef(@NotNull SchemaSupplementDef o) {
     visitPsiElement(o);
   }

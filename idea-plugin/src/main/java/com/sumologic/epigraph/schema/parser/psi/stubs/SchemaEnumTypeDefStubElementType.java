@@ -2,6 +2,7 @@ package com.sumologic.epigraph.schema.parser.psi.stubs;
 
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.stubs.StubInputStream;
+import com.sumologic.epigraph.schema.parser.Fqn;
 import com.sumologic.epigraph.schema.parser.psi.SchemaEnumTypeDef;
 import com.sumologic.epigraph.schema.parser.psi.impl.SchemaEnumTypeDefImpl;
 import org.jetbrains.annotations.NonNls;
@@ -29,7 +30,7 @@ public class SchemaEnumTypeDefStubElementType extends SchemaTypeDefStubElementTy
     return new SchemaEnumTypeDefStubImpl(
         parentStub,
         typeDef.getName(),
-        typeDef.getNamespace(),
+        Fqn.toNullableString(typeDef.getNamespace()),
         getSerializedExtendsTypeRefs(typeDef)
     );
   }

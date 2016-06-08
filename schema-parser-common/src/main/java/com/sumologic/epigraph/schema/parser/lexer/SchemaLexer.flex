@@ -68,7 +68,6 @@ ID=[:letter:]([:letter:]|[:digit:])*
   "boolean"            { return curlyCount == 0 ? S_BOOLEAN_T : S_ID; }
   "string"             { return curlyCount == 0 ? S_STRING_T : S_ID; }
   ":"                  { return S_COLON; }
-  "*"                  { return S_STAR; }
   "."                  { return S_DOT; }
   ","                  { return S_COMMA; }
   "="                  { return S_EQ; }

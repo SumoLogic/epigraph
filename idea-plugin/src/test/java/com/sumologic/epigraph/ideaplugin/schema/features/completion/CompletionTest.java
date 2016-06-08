@@ -48,6 +48,10 @@ public class CompletionTest extends LightCodeInsightFixtureTestCase {
     checkCompletionVariants(TOP_LEVEL, "import ");
   }
 
+  public void testBuiltinTypeCompletion() {
+    myFixture.testCompletion("BuiltinTypeCompletion.es", "BuiltinTypeCompletion-after.es", "builtin.es");
+  }
+
   public void testCompletionAfterPolymorphic() {
     myFixture.configureByFile("CompletionAfterPolymorphic.es");
     checkCompletionVariants("record ", "map", "list",
