@@ -6,7 +6,7 @@ import org.jetbrains.annotations.*;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.sumologic.epigraph.schema.parser.psi.util.SchemaPsiTreeUtil;
+import com.intellij.psi.util.PsiTreeUtil;
 import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.*;
 import com.sumologic.epigraph.schema.parser.psi.*;
 import com.intellij.navigation.ItemPresentation;
@@ -29,19 +29,19 @@ public class SchemaFieldDeclImpl extends CustomParamHolderImpl implements Schema
   @Override
   @NotNull
   public List<SchemaCustomParam> getCustomParamList() {
-    return SchemaPsiTreeUtil.getChildrenOfTypeAsList(this, SchemaCustomParam.class);
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaCustomParam.class);
   }
 
   @Override
   @Nullable
   public SchemaDefaultOverride getDefaultOverride() {
-    return SchemaPsiTreeUtil.getChildOfType(this, SchemaDefaultOverride.class);
+    return PsiTreeUtil.getChildOfType(this, SchemaDefaultOverride.class);
   }
 
   @Override
   @Nullable
   public SchemaTypeRef getTypeRef() {
-    return SchemaPsiTreeUtil.getChildOfType(this, SchemaTypeRef.class);
+    return PsiTreeUtil.getChildOfType(this, SchemaTypeRef.class);
   }
 
   @Override

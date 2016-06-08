@@ -6,7 +6,7 @@ import org.jetbrains.annotations.*;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.sumologic.epigraph.schema.parser.psi.util.SchemaPsiTreeUtil;
+import com.intellij.psi.util.PsiTreeUtil;
 import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.sumologic.epigraph.schema.parser.psi.*;
@@ -29,19 +29,19 @@ public class SchemaTypeRefImpl extends ASTWrapperPsiElement implements SchemaTyp
   @Override
   @Nullable
   public SchemaAnonList getAnonList() {
-    return SchemaPsiTreeUtil.getChildOfType(this, SchemaAnonList.class);
+    return PsiTreeUtil.getChildOfType(this, SchemaAnonList.class);
   }
 
   @Override
   @Nullable
   public SchemaAnonMap getAnonMap() {
-    return SchemaPsiTreeUtil.getChildOfType(this, SchemaAnonMap.class);
+    return PsiTreeUtil.getChildOfType(this, SchemaAnonMap.class);
   }
 
   @Override
   @Nullable
   public SchemaFqnTypeRef getFqnTypeRef() {
-    return SchemaPsiTreeUtil.getChildOfType(this, SchemaFqnTypeRef.class);
+    return PsiTreeUtil.getChildOfType(this, SchemaFqnTypeRef.class);
   }
 
 }

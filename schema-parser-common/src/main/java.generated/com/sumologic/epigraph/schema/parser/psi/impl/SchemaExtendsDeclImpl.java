@@ -6,7 +6,7 @@ import org.jetbrains.annotations.*;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.sumologic.epigraph.schema.parser.psi.util.SchemaPsiTreeUtil;
+import com.intellij.psi.util.PsiTreeUtil;
 import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.sumologic.epigraph.schema.parser.psi.*;
@@ -29,7 +29,7 @@ public class SchemaExtendsDeclImpl extends ASTWrapperPsiElement implements Schem
   @Override
   @NotNull
   public List<SchemaTypeRef> getTypeRefList() {
-    return SchemaPsiTreeUtil.getChildrenOfTypeAsList(this, SchemaTypeRef.class);
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaTypeRef.class);
   }
 
   @Override

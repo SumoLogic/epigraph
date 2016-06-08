@@ -6,7 +6,7 @@ import org.jetbrains.annotations.*;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.sumologic.epigraph.schema.parser.psi.util.SchemaPsiTreeUtil;
+import com.intellij.psi.util.PsiTreeUtil;
 import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.*;
 import com.sumologic.epigraph.schema.parser.psi.*;
 
@@ -28,13 +28,13 @@ public class SchemaVarTypeBodyImpl extends CustomParamHolderImpl implements Sche
   @Override
   @NotNull
   public List<SchemaCustomParam> getCustomParamList() {
-    return SchemaPsiTreeUtil.getChildrenOfTypeAsList(this, SchemaCustomParam.class);
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaCustomParam.class);
   }
 
   @Override
   @NotNull
   public List<SchemaVarTypeMemberDecl> getVarTypeMemberDeclList() {
-    return SchemaPsiTreeUtil.getChildrenOfTypeAsList(this, SchemaVarTypeMemberDecl.class);
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaVarTypeMemberDecl.class);
   }
 
   @Override

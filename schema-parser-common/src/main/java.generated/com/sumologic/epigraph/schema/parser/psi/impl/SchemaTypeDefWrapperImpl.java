@@ -6,7 +6,7 @@ import org.jetbrains.annotations.*;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.sumologic.epigraph.schema.parser.psi.util.SchemaPsiTreeUtil;
+import com.intellij.psi.util.PsiTreeUtil;
 import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.*;
 import com.intellij.extapi.psi.StubBasedPsiElementBase;
 import com.sumologic.epigraph.schema.parser.psi.stubs.SchemaTypeDefWrapperStub;
@@ -35,37 +35,37 @@ public class SchemaTypeDefWrapperImpl extends StubBasedPsiElementBase<SchemaType
   @Override
   @Nullable
   public SchemaEnumTypeDef getEnumTypeDef() {
-    return SchemaPsiTreeUtil.getStubChildOfType(this, SchemaEnumTypeDef.class);
+    return PsiTreeUtil.getStubChildOfType(this, SchemaEnumTypeDef.class);
   }
 
   @Override
   @Nullable
   public SchemaListTypeDef getListTypeDef() {
-    return SchemaPsiTreeUtil.getStubChildOfType(this, SchemaListTypeDef.class);
+    return PsiTreeUtil.getStubChildOfType(this, SchemaListTypeDef.class);
   }
 
   @Override
   @Nullable
   public SchemaMapTypeDef getMapTypeDef() {
-    return SchemaPsiTreeUtil.getStubChildOfType(this, SchemaMapTypeDef.class);
+    return PsiTreeUtil.getStubChildOfType(this, SchemaMapTypeDef.class);
   }
 
   @Override
   @Nullable
   public SchemaPrimitiveTypeDef getPrimitiveTypeDef() {
-    return SchemaPsiTreeUtil.getStubChildOfType(this, SchemaPrimitiveTypeDef.class);
+    return PsiTreeUtil.getStubChildOfType(this, SchemaPrimitiveTypeDef.class);
   }
 
   @Override
   @Nullable
   public SchemaRecordTypeDef getRecordTypeDef() {
-    return SchemaPsiTreeUtil.getStubChildOfType(this, SchemaRecordTypeDef.class);
+    return PsiTreeUtil.getStubChildOfType(this, SchemaRecordTypeDef.class);
   }
 
   @Override
   @Nullable
   public SchemaVarTypeDef getVarTypeDef() {
-    return SchemaPsiTreeUtil.getStubChildOfType(this, SchemaVarTypeDef.class);
+    return PsiTreeUtil.getStubChildOfType(this, SchemaVarTypeDef.class);
   }
 
   @NotNull

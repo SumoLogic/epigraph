@@ -6,7 +6,7 @@ import org.jetbrains.annotations.*;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.sumologic.epigraph.schema.parser.psi.util.SchemaPsiTreeUtil;
+import com.intellij.psi.util.PsiTreeUtil;
 import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.*;
 import com.sumologic.epigraph.schema.parser.psi.*;
 import com.intellij.psi.stubs.IStubElementType;
@@ -33,25 +33,25 @@ public class SchemaRecordTypeDefImpl extends SchemaRecordTypeDefImplBase impleme
   @Override
   @Nullable
   public SchemaExtendsDecl getExtendsDecl() {
-    return SchemaPsiTreeUtil.getChildOfType(this, SchemaExtendsDecl.class);
+    return PsiTreeUtil.getChildOfType(this, SchemaExtendsDecl.class);
   }
 
   @Override
   @Nullable
   public SchemaMetaDecl getMetaDecl() {
-    return SchemaPsiTreeUtil.getChildOfType(this, SchemaMetaDecl.class);
+    return PsiTreeUtil.getChildOfType(this, SchemaMetaDecl.class);
   }
 
   @Override
   @Nullable
   public SchemaRecordTypeBody getRecordTypeBody() {
-    return SchemaPsiTreeUtil.getChildOfType(this, SchemaRecordTypeBody.class);
+    return PsiTreeUtil.getChildOfType(this, SchemaRecordTypeBody.class);
   }
 
   @Override
   @Nullable
   public SchemaSupplementsDecl getSupplementsDecl() {
-    return SchemaPsiTreeUtil.getChildOfType(this, SchemaSupplementsDecl.class);
+    return PsiTreeUtil.getChildOfType(this, SchemaSupplementsDecl.class);
   }
 
   @Override
