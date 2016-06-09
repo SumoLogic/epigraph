@@ -14,11 +14,11 @@ abstract record QualifiedNameStruct {
 
 }
 
-/*abstract */vartype QualifiedNameVar default `string` {
+abstract vartype QualifiedNameVar default `string` {
 
-  /*abstract*/ string: QualifiedName
+  abstract string: QualifiedName
 
-  /*abstract*/ struct: QualifiedNameStruct
+  abstract struct: QualifiedNameStruct
 
 }
 

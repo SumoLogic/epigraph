@@ -1,11 +1,10 @@
 namespace epigraph.schema
 
-import epigraph.*
 
-/*abstract */vartype ByNameRef default name {
+abstract vartype ByNameRef default name {
   doc = "Common interface for vartypes representing by-name references"
 
-  /*abstract*/ name: Name
+  abstract name: Name
 
 }
 
@@ -20,12 +19,12 @@ abstract record TypeData extends Named {
 
 }
 
-/*abstract */vartype TypeRef extends ByNameRef {
+abstract vartype TypeRef extends ByNameRef {
   doc = "Common interface for by-name references to (data or var-) types"
 
   override name: QualifiedTypeName
 
-  /*abstract*/ type: TypeData
+  abstract type: TypeData
 
 }
 
@@ -82,10 +81,10 @@ polymorphic record DataTypeData extends TypeData { // TODO extends VarTypeData?
 
 }
 
-/*abstract */vartype DataTypeRef extends TypeRef {
+abstract vartype DataTypeRef extends TypeRef {
   doc = "By-name reference to data type"
 
-  override /*abstract */type: DataTypeData
+  override abstract type: DataTypeData
 
 }
 
@@ -177,8 +176,17 @@ record EnumValueData extends Named {
 }
 
 
-abstract polymorphic record PrimitiveTypeData extends DataTypeData { override abstract supertypes: list[PrimitiveTypeRef] }
-vartype PrimitiveTypeRef extends DataTypeRef { override /*abstract */type: PrimitiveTypeData }
+abstract polymorphic record PrimitiveTypeData extends DataTypeData {
+
+  override abstract supertypes: list[PrimitiveTypeRef]
+
+}
+
+vartype PrimitiveTypeRef extends DataTypeRef {
+
+  override abstract type: PrimitiveTypeData
+
+}
 
 
 record StringTypeData extends PrimitiveTypeData { override supertypes: list[StringTypeRef] }
