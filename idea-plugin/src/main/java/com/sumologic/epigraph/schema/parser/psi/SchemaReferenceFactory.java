@@ -6,6 +6,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.sumologic.epigraph.ideaplugin.schema.brains.NamespaceManager;
 import com.sumologic.epigraph.ideaplugin.schema.brains.SchemaFqnReference;
 import com.sumologic.epigraph.ideaplugin.schema.brains.SchemaFqnReferenceResolver;
+import com.sumologic.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
 import com.sumologic.epigraph.schema.parser.Fqn;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -55,6 +56,20 @@ public class SchemaReferenceFactory {
       Collections.addAll(allNamespaces, NamespaceManager.DEFAULT_NAMESPACES);
 
       visibleFqns = new ArrayList<>(allNamespaces);
+
+      // add all types from the current namespace
+      if (!isImport) {
+        Fqn currentNamespace = getNamespace(segment);
+        if (currentNamespace != null) {
+          // TODO(high) cache on the namespace
+          List<SchemaTypeDef> sameNamespaceTypes = SchemaIndexUtil.findTypeDefs(project, Collections.singletonList(currentNamespace.toString()), null);
+          for (SchemaTypeDef sameNamespaceType : sameNamespaceTypes) {
+            String name = sameNamespaceType.getName();
+            if (name != null)
+              visibleFqns.add(currentNamespace.append(name));
+          }
+        }
+      }
     } else {
       List<Fqn> allNamespaces = isImport
           ? getAllNamespaces(project)
@@ -62,7 +77,7 @@ public class SchemaReferenceFactory {
 
       visibleFqns = allNamespaces.stream().map(Fqn::removeLastSegment).collect(Collectors.toList());
     }
-    
+
     return visibleFqns;
   }
 
@@ -90,6 +105,7 @@ public class SchemaReferenceFactory {
       }
     }
 
+    /*
     if (isSingleSegment) {
       // add current file's namespace + single segment
       Fqn currentNamespace = getNamespace(segment);
@@ -97,6 +113,7 @@ public class SchemaReferenceFactory {
         resultingFqns.add(currentNamespace.append(first));
       }
     }
+    */
 
     if (resultingFqns.size() == 0) {
       // no visibles found, so maybe we've got a full name from the start?

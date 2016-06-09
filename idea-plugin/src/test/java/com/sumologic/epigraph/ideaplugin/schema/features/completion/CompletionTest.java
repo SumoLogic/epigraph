@@ -94,6 +94,11 @@ public class CompletionTest extends LightCodeInsightFixtureTestCase {
     checkCompletionVariants("Bar", "Baz", "Baq");
   }
 
+  public void testFieldTypeCompletion() {
+    myFixture.configureByFile("FieldTypeCompletion.es");
+    checkCompletionVariants("Bar", "Baz");
+  }
+
   private void checkCompletionVariants(String... variants) {
     myFixture.completeBasic();
     List<String> actual = myFixture.getLookupElementStrings();
