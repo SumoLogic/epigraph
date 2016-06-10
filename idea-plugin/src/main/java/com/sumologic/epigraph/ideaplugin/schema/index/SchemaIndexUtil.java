@@ -83,6 +83,11 @@ public class SchemaIndexUtil {
     return findTypeDefs(project, fqns, new TakeFirstProcessor<>());
   }
 
+  @Nullable
+  public static SchemaTypeDef findTypeDef(Project project, @NotNull Fqn fqn) {
+    return findTypeDefs(project, new Fqn[] {fqn}, new TakeFirstProcessor<>());
+  }
+
   private static <R> R findTypeDefs(Project project, @NotNull Fqn[] fqns, @NotNull Processor<SchemaTypeDef, R> processor) {
     GlobalSearchScope scope = GlobalSearchScope.allScope(project);
 

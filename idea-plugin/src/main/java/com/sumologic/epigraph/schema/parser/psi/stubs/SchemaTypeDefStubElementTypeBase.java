@@ -49,7 +49,7 @@ public abstract class SchemaTypeDefStubElementTypeBase<S extends SchemaTypeDefSt
   protected static List<SerializedFqnTypeRef> getSerializedFqnTypeRefs(@NotNull List<SchemaTypeRef> typeRefs) {
     return typeRefs.stream()
         .map(SchemaTypeRef::getFqnTypeRef)
-        .map(SerializedFqnTypeRef::fromFqnTypeRef)
+        .map(SerializedFqnTypeRef::new)
         .filter(i -> i != null) // filter out non-fqn or badly broken type refs
         .collect(Collectors.toList());
   }

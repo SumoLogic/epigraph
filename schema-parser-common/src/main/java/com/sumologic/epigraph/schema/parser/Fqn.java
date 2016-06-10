@@ -6,7 +6,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -152,7 +151,8 @@ public class Fqn {
   /**
    * Find all FQNs starting with {@code prefix} and remove prefix from them
    */
-  public static Set<Fqn> getMatchingWithPrefixRemoved(@NotNull Collection<Fqn> fqns, @NotNull Fqn prefix) {
+  public static Collection<Fqn> getMatchingWithPrefixRemoved(@NotNull Collection<Fqn> fqns, @NotNull Fqn prefix) {
+    if (prefix.isEmpty()) return fqns;
     return fqns.stream()
         .filter(fqn -> fqn.startsWith(prefix))
         .map(fqn -> fqn.removeHeadSegments(prefix.size()))

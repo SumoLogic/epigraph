@@ -29,9 +29,9 @@ public class SchemaSupplementDefStubElementType extends IStubElementType<SchemaS
   @Override
   public SchemaSupplementDefStub createStub(@NotNull SchemaSupplementDef supplementDef, StubElement parentStub) {
     return new SchemaSupplementDefStubImpl(parentStub,
-        SerializedFqnTypeRef.fromFqnTypeRef(supplementDef.sourceRef()),
+        new SerializedFqnTypeRef(supplementDef.sourceRef()),
         supplementDef.supplementedRefs().stream()
-            .map(SerializedFqnTypeRef::fromFqnTypeRef)
+            .map(SerializedFqnTypeRef::new)
             .filter(i -> i != null) // filter out non-fqn or badly broken type refs
             .collect(Collectors.toList())
     );
@@ -63,7 +63,7 @@ public class SchemaSupplementDefStubElementType extends IStubElementType<SchemaS
   public void indexStub(@NotNull SchemaSupplementDefStub stub, @NotNull IndexSink sink) {
     SerializedFqnTypeRef sourceTypeRef = stub.getSourceTypeRef();
     if (sourceTypeRef != null) {
-      Fqn ref = sourceTypeRef.getRef();
+      Fqn ref = sourceTypeRef.getShortName();
       if (ref != null && ref.last() != null) {
         //noinspection ConstantConditions
         sink.occurrence(SchemaStubIndexKeys.SUPPLEMENTS_BY_SOURCE, ref.last());
@@ -73,7 +73,7 @@ public class SchemaSupplementDefStubElementType extends IStubElementType<SchemaS
     List<SerializedFqnTypeRef> supplementedTypeRefs = stub.getSupplementedTypeRefs();
     if (supplementedTypeRefs != null) {
       for (SerializedFqnTypeRef supplementedTypeRef : supplementedTypeRefs) {
-        Fqn ref = supplementedTypeRef.getRef();
+        Fqn ref = supplementedTypeRef.getShortName();
         if (ref != null && ref.last() != null) {
           //noinspection ConstantConditions
           sink.occurrence(SchemaStubIndexKeys.SUPPLEMENTS_BY_SUPPLEMENTED, ref.last());

@@ -33,7 +33,7 @@ public class SchemaRecordTypeDefStubElementType extends SchemaTypeDefStubElement
     SchemaSupplementsDecl supplementsDecl = typeDef.getSupplementsDecl();
     List<SerializedFqnTypeRef> supplementedRefs = supplementsDecl == null ? null :
         supplementsDecl.getFqnTypeRefList().stream()
-            .map(SerializedFqnTypeRef::fromFqnTypeRef)
+            .map(SerializedFqnTypeRef::new)
             .collect(Collectors.toList());
 
     return new SchemaRecordTypeDefStubImpl(

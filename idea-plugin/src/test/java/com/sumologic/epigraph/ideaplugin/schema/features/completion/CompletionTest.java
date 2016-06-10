@@ -22,20 +22,22 @@ public class CompletionTest extends LightCodeInsightFixtureTestCase {
     myFixture.testCompletion("CompletionWithStaticImport.es", "CompletionWithStaticImport-after.es", "zzz.es");
   }
 
-  public void testTypeRefCompletion() {
-    myFixture.configureByFiles("TypeRefCompletion.es", "foo.es", "foobar.es");
-    checkCompletionVariants("Foo"); // foo.bar has not been imported
-
-    myFixture.configureByFiles("TypeRefCompletion2.es", "foo.es", "foobar.es");
-    checkCompletionVariants("bar", "Foo");
-  }
-
   public void testImportCompletion() {
-//    myFixture.configureByFiles("ImportCompletion.es", "foo.es", "foobar.es");
-//    checkCompletionVariants("Foo", "bar", "*");
+    myFixture.configureByFiles("ImportCompletion.es", "foo.es", "foobar.es");
+    checkCompletionVariants("Foo", "bar");
 
     myFixture.configureByFiles("ImportCompletion2.es", "foo.es", "foobar.es");
     checkCompletionVariants("bar"); // but not "*" or "Foo", same namespace
+
+    myFixture.configureByFiles("ImportCompletion3.es", "foo.es", "foobar.es", "zzz.es", "builtin.es");
+    checkCompletionVariants("foo", "zzz", "epigraph"); // but not "foo.bar" or "some" or "epigraph.Boolean"
+  }
+
+  public void testTypeRefCompletion() {
+    myFixture.configureByFiles("TypeRefCompletion.es", "foo.es", "foobar.es");
+    checkCompletionVariants("bar", "Foo"); // foo.bar has not been imported but foo.bar.Baz still makes a valid reference
+
+    myFixture.testCompletion("TypeRefCompletion2.es", "TypeRefCompletion2-after.es", "foo.es", "foobar.es");
   }
 
   public void testTopLevelCompletion() {

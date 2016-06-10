@@ -1,5 +1,3 @@
 namespace some
 
-import foo.bar
-
-record R extends foo.<caret>
+record R extends foo.bar.B<caret>

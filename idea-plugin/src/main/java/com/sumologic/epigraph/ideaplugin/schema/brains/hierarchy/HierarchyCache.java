@@ -225,6 +225,11 @@ public class HierarchyCache {
         invalidate = true;
       }
 
+      // file added/removed
+      if (child instanceof SchemaFile) {
+        invalidate = true;
+      }
+
       if (invalidate)
         hierarchyModificationTracker.tick();
     }

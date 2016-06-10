@@ -19,14 +19,18 @@ import java.util.stream.Collectors;
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
 public class NamespaceManager {
-  public static Fqn[] DEFAULT_NAMESPACES = new Fqn[]{
-      new Fqn("epigraph", "String"),
-      new Fqn("epigraph", "Integer"),
-      new Fqn("epigraph", "Long"),
-      new Fqn("epigraph", "Double"),
-      new Fqn("epigraph", "Boolean"),
-  };
 
+//  public static Fqn[] DEFAULT_IMPORTS = new Fqn[]{
+//      new Fqn("epigraph", "String"),
+//      new Fqn("epigraph", "Integer"),
+//      new Fqn("epigraph", "Long"),
+//      new Fqn("epigraph", "Double"),
+//      new Fqn("epigraph", "Boolean"),
+//  };
+//
+//  public static List<Fqn> DEFAULT_IMPORTS_LIST = Collections.unmodifiableList(Arrays.asList(DEFAULT_IMPORTS));
+
+  public static Fqn[] DEFAULT_NAMESPACES = new Fqn[]{new Fqn("epigraph")};
   public static List<Fqn> DEFAULT_NAMESPACES_LIST = Collections.unmodifiableList(Arrays.asList(DEFAULT_NAMESPACES));
 
   private final Project project;
@@ -81,7 +85,7 @@ public class NamespaceManager {
     }
 
 //    // 2. default namespaces
-//    res.addAll(DEFAULT_NAMESPACES_LIST);
+//    res.addAll(DEFAULT_IMPORTS_LIST);
 //
 //    // 3. current namespace
 //    SchemaNamespaceDecl namespaceDecl = schemaFile.getNamespaceDecl();
@@ -171,14 +175,19 @@ public class NamespaceManager {
     private void handle(@NotNull PsiTreeChangeEvent event) {
       boolean invalidate = false;
 
-      final PsiElement element = event.getElement();
+//      final PsiElement element = event.getElement();
       final PsiElement child = event.getChild();
-      final PsiElement parent = child == null ? null : child.getParent();
+//      final PsiElement parent = child == null ? null : child.getParent();
 
       if (child instanceof PsiWhiteSpace) return;
 
       // namespace changed
       if (PsiTreeUtil.getParentOfType(child, SchemaNamespaceDecl.class) != null) {
+        invalidate = true;
+      }
+
+      // file added/removed
+      if (child instanceof SchemaFile) {
         invalidate = true;
       }
 
