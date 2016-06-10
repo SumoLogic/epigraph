@@ -43,8 +43,8 @@ public final class SerializedFqnTypeRef {
       SchemaFqnReference ref = (SchemaFqnReference) SchemaPsiImplUtil.getReference(typeRef);
       if (ref != null) {
         SchemaFqnReferenceResolver resolver = ref.getResolver();
-        shortName = resolver.getShortName();
-        namespacesToSearch = resolver.getNamespacesToSearch();
+        shortName = resolver.getSuffix();
+        namespacesToSearch = resolver.getPrefixes();
       }
 
       typeRef = null;

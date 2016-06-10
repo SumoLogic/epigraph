@@ -33,7 +33,6 @@ public class ReferenceTest extends LightCodeInsightFixtureTestCase {
   public void testNsSegmentInTypeRef() {
     myFixture.configureByFile("NamespaceSegmentInTypeRef.es");
     PsiElement element = myFixture.getFile().findElementAt(myFixture.getCaretOffset());
-//    checkReference(element.getParent().getReference(), "foo");
     //noinspection ConstantConditions
     checkReference(element.getParent().getReference(), "namespace foo");
   }

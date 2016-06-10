@@ -32,7 +32,7 @@ public class SchemaFileElementType extends IStubFileElementType<SchemaFileStub> 
 
   @Override
   public int getStubVersion() {
-    return 2; // advance every time indexes or serialized stubs change
+    return 3; // advance every time indexes or serialized stubs change
   }
 
   @Override

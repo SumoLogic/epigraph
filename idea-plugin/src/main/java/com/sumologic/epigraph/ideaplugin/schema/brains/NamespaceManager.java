@@ -12,7 +12,10 @@ import com.sumologic.epigraph.schema.parser.psi.SchemaNamespaceDecl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -20,18 +23,18 @@ import java.util.stream.Collectors;
  */
 public class NamespaceManager {
 
-//  public static Fqn[] DEFAULT_IMPORTS = new Fqn[]{
-//      new Fqn("epigraph", "String"),
-//      new Fqn("epigraph", "Integer"),
-//      new Fqn("epigraph", "Long"),
-//      new Fqn("epigraph", "Double"),
-//      new Fqn("epigraph", "Boolean"),
-//  };
-//
+  public static Fqn[] DEFAULT_IMPORTS = new Fqn[]{
+      new Fqn("epigraph", "String"),
+      new Fqn("epigraph", "Integer"),
+      new Fqn("epigraph", "Long"),
+      new Fqn("epigraph", "Double"),
+      new Fqn("epigraph", "Boolean"),
+  };
+
 //  public static List<Fqn> DEFAULT_IMPORTS_LIST = Collections.unmodifiableList(Arrays.asList(DEFAULT_IMPORTS));
 
   public static Fqn[] DEFAULT_NAMESPACES = new Fqn[]{new Fqn("epigraph")};
-  public static List<Fqn> DEFAULT_NAMESPACES_LIST = Collections.unmodifiableList(Arrays.asList(DEFAULT_NAMESPACES));
+//  public static List<Fqn> DEFAULT_NAMESPACES_LIST = Collections.unmodifiableList(Arrays.asList(DEFAULT_NAMESPACES));
 
   private final Project project;
   private Collection<SchemaNamespaceDecl> allNamespaces;

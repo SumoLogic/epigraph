@@ -13,21 +13,19 @@ import com.intellij.util.IncorrectOperationException;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
 import com.sumologic.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
 import com.sumologic.epigraph.schema.parser.Fqn;
-import com.sumologic.epigraph.schema.parser.psi.SchemaFqnSegment;
-import com.sumologic.epigraph.schema.parser.psi.SchemaImportStatement;
-import com.sumologic.epigraph.schema.parser.psi.SchemaNamespaceDecl;
-import com.sumologic.epigraph.schema.parser.psi.SchemaTypeDefWrapper;
+import com.sumologic.epigraph.schema.parser.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
+ * @see <a href="https://github.com/SumoLogic/sumo-platform/wiki/References%20implementation#reference-resolution-algorithm">Reference resolution algorithm</a>
  */
 public class SchemaFqnReference extends PsiReferenceBase<SchemaFqnSegment> implements PsiPolyVariantReference {
   private final SchemaFqnReferenceResolver resolver;
@@ -90,46 +88,74 @@ public class SchemaFqnReference extends PsiReferenceBase<SchemaFqnSegment> imple
     final Project project = myElement.getProject();
     final Fqn currentNamespace = NamespaceManager.getNamespace(getElement());
 
-    Set<String> namespacesToSearchStr = new HashSet<>(resolver.getNamespacesToSearchStr());
-    // add input's prefix, may be it's a full FQN?
-    Fqn inputPrefix = resolver.getInput().removeLastSegment();
+    final Fqn input = resolver.getInput();
+    final Fqn inputPrefix = input.removeLastSegment();
 
-    if (!inputPrefix.isEmpty()) {
-      namespacesToSearchStr.add(inputPrefix.toString());
+    Set<SchemaTypeDef> typeDefVariants;
+    Collection<SchemaNamespaceDecl> namespaceVariants;
+
+    if (input.size() > 1) {
+      Fqn suffixPrefix = resolver.getSuffix().removeLastSegment();
+
+      List<Fqn> namespacesToSearchForTypes = resolver.getPrefixes().stream().map(fqn -> fqn.append(suffixPrefix)).collect(Collectors.toList());
+      typeDefVariants = SchemaIndexUtil.findTypeDefs(project, namespacesToSearchForTypes, null).stream()
+          .filter(typeDef ->
+              // don't suggest to import types from the same namespace
+              typeDef.getName() != null && (!isImport || currentNamespace == null || !currentNamespace.equals(NamespaceManager.getNamespace(typeDef))))
+          .collect(Collectors.toSet());
+
+      // complete namespaces
+      namespaceVariants = NamespaceManager.getNamespacesByPrefix(project, inputPrefix, false);
+    } else {
+      List<Fqn> namespacesToSearchForTypes = NamespaceManager.getImportedNamespaces(myElement);
+
+      if (!isImport) {
+        typeDefVariants = SchemaIndexUtil
+            .findTypeDefs(project, namespacesToSearchForTypes.toArray(new Fqn[namespacesToSearchForTypes.size()]))
+            .stream()
+            .filter(typeDef -> typeDef.getName() != null)
+            .collect(Collectors.toSet());
+
+        // all types in current NS
+        typeDefVariants.addAll(SchemaIndexUtil.findTypeDefs(project, Collections.singletonList(currentNamespace), null).stream()
+            .filter(typeDef -> typeDef.getName() != null)
+            .collect(Collectors.toSet()));
+
+        // add standard imports
+        typeDefVariants.addAll(SchemaIndexUtil.findTypeDefs(project, NamespaceManager.DEFAULT_IMPORTS).stream()
+            .filter(typeDef -> typeDef.getName() != null)
+            .collect(Collectors.toSet()));
+
+      } else {
+        // don't suggest imported types in another imports
+        typeDefVariants = Collections.emptySet();
+      }
+
+      // complete namespaces
+      namespaceVariants = NamespaceManager.getNamespaceManager(project).getAllNamespaces();
     }
 
-    Set<Object> typeRefVariants = SchemaIndexUtil.findTypeDefs(project, namespacesToSearchStr, null).stream()
-        .filter(typeDef ->
-            // don't suggest to import types from the same namespace
-            typeDef.getName() != null && (!isImport || currentNamespace == null || !currentNamespace.equals(NamespaceManager.getNamespace(typeDef)))
-        ).map(typeDef ->
-            LookupElementBuilder.create(typeDef) // TODO use presentation utils
+    Set<Object> typeDefElements = typeDefVariants.stream()
+        .map(typeDef ->
+            LookupElementBuilder.create(typeDef)
                 .withIcon(SchemaPresentationUtil.getIcon(typeDef))
                 .withTypeText(SchemaPresentationUtil.getNamespaceString(typeDef)))
         .collect(Collectors.toSet());
 
-    // complete namespaces
-    Collection<SchemaNamespaceDecl> namespaces;
-    if (inputPrefix.isEmpty()) {
-      namespaces = NamespaceManager.getNamespaceManager(project).getAllNamespaces();
-    } else {
-      namespaces = NamespaceManager.getNamespacesByPrefix(project, inputPrefix, false);
-    }
-
-    List<Fqn> namespaceFqns = namespaces.stream()
+    List<Fqn> namespaceFqns = namespaceVariants.stream()
         .map(SchemaNamespaceDecl::getFqn2)
         .filter(fqn -> !fqn.equals(currentNamespace)) // not interested in current namespace
         .collect(Collectors.toList());
 
-    Set<String> namespaceVariants = Fqn.getMatchingWithPrefixRemoved(namespaceFqns, inputPrefix)
+    Set<String> namespaceElements = Fqn.getMatchingWithPrefixRemoved(namespaceFqns, inputPrefix)
         .stream()
         .map(Fqn::first) // only leave next segment after removing matching prefix
         .filter(s -> s != null && s.length() > 0)
         .collect(Collectors.toSet());
 
     @SuppressWarnings("UnnecessaryLocalVariable")
-    Set<Object> res = typeRefVariants;
-    res.addAll(namespaceVariants);
+    Set<Object> res = typeDefElements;
+    res.addAll(namespaceElements);
 
     return res.toArray();
   }

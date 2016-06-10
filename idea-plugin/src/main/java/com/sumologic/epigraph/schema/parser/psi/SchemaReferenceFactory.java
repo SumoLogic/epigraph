@@ -1,6 +1,5 @@
 package com.sumologic.epigraph.schema.parser.psi;
 
-import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.sumologic.epigraph.ideaplugin.schema.brains.NamespaceManager;
@@ -17,58 +16,60 @@ import static com.sumologic.epigraph.ideaplugin.schema.brains.NamespaceManager.g
 
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
+ * @see <a href="https://github.com/SumoLogic/sumo-platform/wiki/References%20implementation#reference-resolution-algorithm">Reference resolution algorithm</a>
  */
 public class SchemaReferenceFactory {
   @Nullable
-  public static PsiReference getReference(@NotNull SchemaFqnSegment segment) {
-    SchemaFqnReferenceResolver resolver = getReferenceResolver(segment);
+  public static PsiReference getFqnReference(@NotNull SchemaFqnSegment segment) {
+    SchemaFqnReferenceResolver resolver = getFqnReferenceResolver(segment);
 
     return resolver == null ? null : new SchemaFqnReference(segment, resolver);
   }
 
   @Nullable
-  public static SchemaFqnReferenceResolver getReferenceResolver(@NotNull SchemaFqnSegment segment) {
+  public static SchemaFqnReferenceResolver getFqnReferenceResolver(@NotNull SchemaFqnSegment segment) {
     Fqn fqn = segment.getFqn();
     if (fqn.isEmpty()) return null;
 
-    final List<Fqn> namespacesToSearch = new ArrayList<>();
+    final List<Fqn> prefixes = new ArrayList<>();
     boolean isSingleSegment = fqn.size() == 1;
 
     final String first = fqn.first();
     assert first != null;
 
-    final Project project = segment.getProject();
     final boolean isImport = PsiTreeUtil.getParentOfType(segment, SchemaImportStatement.class) != null;
 
     if (!isImport) {
-      namespacesToSearch.addAll(
-          // add all imports with their last segment removed (because import foo.bar + ref to bar.Baz => search for bar.Baz in foo)
-          NamespaceManager.getImportedNamespaces(segment).stream().map(Fqn::removeLastSegment).collect(Collectors.toList())
+      prefixes.addAll(
+          // imports ending with our first segment, with last segment removed
+          NamespaceManager.getImportedNamespaces(segment).stream()
+              .filter(f -> first.equals(f.last()))
+              .map(Fqn::removeLastSegment)
+              .collect(Collectors.toList())
       );
     }
 
     if (isSingleSegment) {
-      // add current file's namespace
-      Fqn currentNamespace = getNamespace(segment);
-      if (currentNamespace != null) namespacesToSearch.add(currentNamespace);
-
       if (!isImport) {
         // add all default namespaces
-        Collections.addAll(namespacesToSearch, NamespaceManager.DEFAULT_NAMESPACES);
+        Collections.addAll(prefixes, NamespaceManager.DEFAULT_NAMESPACES);
       }
+
+      // current namespace
+      Fqn currentNamespace = getNamespace(segment);
+      if (currentNamespace != null) {
+        prefixes.add(currentNamespace);
+      }
+
+    } else {
+      prefixes.add(Fqn.EMPTY);
     }
 
     // deduplicate
-    Set<Fqn> dedupNs = new LinkedHashSet<>(namespacesToSearch);
-    namespacesToSearch.clear();
-    namespacesToSearch.addAll(dedupNs);
+    Set<Fqn> dedupPrefixes = new LinkedHashSet<>(prefixes);
+    prefixes.clear();
+    prefixes.addAll(dedupPrefixes);
 
-    return new SchemaFqnReferenceResolver(namespacesToSearch, fqn);
+    return new SchemaFqnReferenceResolver(prefixes, fqn);
   }
-
-//  private static List<Fqn> getAllNamespaces(@NotNull Project project) {
-//    return NamespaceManager.getNamespaceManager(project).getAllNamespaces().stream()
-//        .map(SchemaNamespaceDecl::getFqn2)
-//        .collect(Collectors.toList());
-//  }
 }

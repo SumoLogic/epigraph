@@ -14,42 +14,26 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
+ * @see <a href="https://github.com/SumoLogic/sumo-platform/wiki/References%20implementation#reference-resolution-algorithm">Reference resolution algorithm</a>
  */
 public class SchemaFqnReferenceResolver {
-  private final List<Fqn> namespacesToSearch;
-  @Nullable
-  private Set<String> namespacesToSearchStr = null;
-
-  private final Fqn shortName;
-  @Nullable
-  private String shortNameStr = null;
-
+  @NotNull
+  private final List<Fqn> prefixes;
+  @NotNull
+  private final Fqn suffix;
   @NotNull
   private final Fqn input;
 
-  public SchemaFqnReferenceResolver(List<Fqn> namespacesToSearch, @NotNull Fqn input) {
-    this.input = input;
-
+  public SchemaFqnReferenceResolver(@NotNull List<Fqn> prefixes, @NotNull Fqn input) {
     if (input.isEmpty()) throw new IllegalArgumentException("Empty input");
 
-    if (input.size() == 1) {
-      this.namespacesToSearch = namespacesToSearch;
-      this.shortName = input;
-    } else {
-      final String firstSegment = input.first();
-      assert firstSegment != null;
-      final Fqn suffixPrefix = input.removeLastSegment();
-
-      this.namespacesToSearch = namespacesToSearch.stream()
-          .filter(fqn -> firstSegment.equals(fqn.last()))
-          .map(fqn -> fqn.removeLastSegment().append(suffixPrefix)).collect(Collectors.toList());
-      this.shortName = new Fqn(input.last());
-    }
+    this.input = input;
+    this.prefixes = prefixes;
+    this.suffix = input;
   }
 
   @NotNull
@@ -58,41 +42,23 @@ public class SchemaFqnReferenceResolver {
   }
 
   @NotNull
-  public Fqn getShortName() {
-    return shortName;
+  public Fqn getSuffix() {
+    return suffix;
   }
 
   @NotNull
-  private String getShortNameStr() {
-    if (shortNameStr == null) shortNameStr = shortName.toString();
-    return shortNameStr;
-  }
-
-  @NotNull
-  public List<Fqn> getNamespacesToSearch() {
-    return namespacesToSearch;
-  }
-
-  @NotNull
-  Set<String> getNamespacesToSearchStr() {
-    if (namespacesToSearchStr == null)
-      namespacesToSearchStr = namespacesToSearch.stream().map(Fqn::toString).collect(Collectors.toSet());
-
-    return namespacesToSearchStr;
+  public List<Fqn> getPrefixes() {
+    return prefixes;
   }
 
   @Nullable
   public PsiElement resolve(@NotNull Project project) {
-    // may be input is a real, full FQN?
-    SchemaTypeDef typeDef = SchemaIndexUtil.findTypeDef(project, input);
-    if (typeDef != null) return typeDef;
-
-    typeDef = SchemaIndexUtil.findTypeDef(project, getNamespacesToSearchStr(), getShortNameStr());
+    SchemaTypeDef typeDef = SchemaIndexUtil.findTypeDef(project, prefixes, suffix);
     if (typeDef != null) return typeDef;
 
     // we can't find a typedef by this reference, lets check if it points to a namespace declaration
 
-    // type name input (which we tried to append to different namespacesToSearchStr) now becomes
+    // type name input (which we tried to append to different prefixes) now becomes
     // source namespace's prefix
 
     Fqn prefix = input;
@@ -107,16 +73,13 @@ public class SchemaFqnReferenceResolver {
 
   @NotNull
   public ResolveResult[] multiResolve(@NotNull Project project) {
-    // may be input is a real, full FQN?
-    SchemaTypeDef typeDef = SchemaIndexUtil.findTypeDef(project, input);
-
-    List<ResolveResult> typeDefs = SchemaIndexUtil.findTypeDefs(project, namespacesToSearchStr, shortNameStr).stream()
+    List<ResolveResult> typeDefs =
+        SchemaIndexUtil.findTypeDefs(project, prefixes, suffix).stream()
+        .filter(td -> td != null)
         .map(PsiElementResolveResult::new)
         .collect(Collectors.toList());
 
-    if (typeDef != null) typeDefs.add(new PsiElementResolveResult(typeDef));
-
-    // see comment in `resolve` above
+    // see comment in `resolve` above re. namespace declaration reference
 
     Fqn prefix = input;
     int prefixLength = prefix.size();

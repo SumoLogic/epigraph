@@ -4,6 +4,7 @@ import com.intellij.navigation.ChooseByNameContributor;
 import com.intellij.navigation.NavigationItem;
 import com.intellij.openapi.project.Project;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
+import com.sumologic.epigraph.schema.parser.Fqn;
 import com.sumologic.epigraph.schema.parser.psi.SchemaTypeDef;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,6 +23,6 @@ public class GotoTypeContributor implements ChooseByNameContributor {
   @Override
   public NavigationItem[] getItemsByName(String name, String pattern, Project project, boolean includeNonProjectItems) {
     // TODO take scope into account
-    return SchemaIndexUtil.findTypeDefs(project, null, name).stream().toArray(NavigationItem[]::new);
+    return SchemaIndexUtil.findTypeDefs(project, null, Fqn.fromDotSeparated(name)).stream().toArray(NavigationItem[]::new);
   }
 }

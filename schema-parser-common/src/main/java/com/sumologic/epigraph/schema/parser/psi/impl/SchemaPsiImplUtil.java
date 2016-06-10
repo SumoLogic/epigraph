@@ -265,7 +265,7 @@ public class SchemaPsiImplUtil {
   @Contract(pure = true)
   @Nullable
   public static PsiReference getReference(SchemaFqnSegment segment) {
-    return SchemaReferenceFactory.getReference(segment);
+    return SchemaReferenceFactory.getFqnReference(segment);
   }
 
 

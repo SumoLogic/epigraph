@@ -20,26 +20,26 @@ import java.util.List;
  */
 public class SchemaIndexUtil {
   @NotNull
-  public static List<SchemaTypeDef> findTypeDefs(Project project, @Nullable Collection<String> namespaces, @Nullable String shortName) {
+  public static List<SchemaTypeDef> findTypeDefs(Project project, @Nullable Collection<Fqn> namespaces, @Nullable Fqn suffix) {
     // todo unused, remove?
-    return findTypeDefs(project, namespaces, shortName, new AddAllProcessor<>());
+    return findTypeDefs(project, namespaces, suffix, new AddAllProcessor<>());
   }
 
   @Nullable
-  public static SchemaTypeDef findTypeDef(Project project, @NotNull Collection<String> namespaces, @NotNull String shortName) {
-    return findTypeDefs(project, namespaces, shortName, new TakeFirstProcessor<>());
+  public static SchemaTypeDef findTypeDef(Project project, @NotNull Collection<Fqn> namespaces, @NotNull Fqn suffix) {
+    return findTypeDefs(project, namespaces, suffix, new TakeFirstProcessor<>());
   }
 
-  private static <R> R findTypeDefs(Project project, @Nullable Collection<String> namespaces, @Nullable String shortName, @NotNull Processor<SchemaTypeDef, R> processor) {
+  private static <R> R findTypeDefs(Project project, @Nullable Collection<Fqn> namespaces, @Nullable Fqn suffix, @NotNull Processor<SchemaTypeDef, R> processor) {
     GlobalSearchScope scope = GlobalSearchScope.allScope(project);
 
     if (namespaces != null) {
-      if (shortName != null) {
+      if (suffix != null) {
         SchemaFullTypeNameIndex index = SchemaFullTypeNameIndex.EP_NAME.findExtension(SchemaFullTypeNameIndex.class);
         assert index != null;
 
-        for (String namespace : namespaces) {
-          String fqn = namespace + '.' + shortName;
+        for (Fqn namespace : namespaces) {
+          String fqn = namespace.append(suffix).toString();
           Collection<SchemaTypeDef> typeDefs = index.get(fqn, project, scope);
           if (!processor.process(typeDefs)) break;
         }
@@ -47,8 +47,8 @@ public class SchemaIndexUtil {
         SchemaTypesByNamespaceIndex index = SchemaTypesByNamespaceIndex.EP_NAME.findExtension(SchemaTypesByNamespaceIndex.class);
         assert index != null;
 
-        for (String namespace : namespaces) {
-          Collection<SchemaTypeDef> typeDefs = index.get(namespace, project, scope);
+        for (Fqn namespace : namespaces) {
+          Collection<SchemaTypeDef> typeDefs = index.get(namespace.toString(), project, scope);
           if (!processor.process(typeDefs)) break;
         }
       }
@@ -58,8 +58,8 @@ public class SchemaIndexUtil {
 
       Collection<String> shortNames;
 
-      if (shortName != null) {
-        shortNames = Collections.singleton(shortName);
+      if (suffix != null) {
+        shortNames = Collections.singleton(suffix.toString());
       } else {
         shortNames = index.getAllKeys(project);
       }
@@ -85,7 +85,7 @@ public class SchemaIndexUtil {
 
   @Nullable
   public static SchemaTypeDef findTypeDef(Project project, @NotNull Fqn fqn) {
-    return findTypeDefs(project, new Fqn[] {fqn}, new TakeFirstProcessor<>());
+    return findTypeDefs(project, new Fqn[]{fqn}, new TakeFirstProcessor<>());
   }
 
   private static <R> R findTypeDefs(Project project, @NotNull Fqn[] fqns, @NotNull Processor<SchemaTypeDef, R> processor) {

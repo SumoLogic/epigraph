@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 public class SchemaReferenceFactory {
 
   @Nullable
-  public static PsiReference getReference(@NotNull SchemaFqnSegment segment) {
+  public static PsiReference getFqnReference(@NotNull SchemaFqnSegment segment) {
     return null;
   }
 }
