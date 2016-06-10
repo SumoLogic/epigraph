@@ -6,7 +6,7 @@ import java.io.File
 
 import com.intellij.psi.impl.DebugUtil
 import com.sumologic.epigraph.schema.parser.{Fqn, SchemaParserDefinition}
-import com.sumologic.epigraph.schema.parser.psi.{SchemaFile, SchemaTypeDef, SchemaVarTypeDef}
+import com.sumologic.epigraph.schema.parser.psi.{SchemaFile, SchemaMapTypeDef, SchemaRecordTypeDef, SchemaTypeDef, SchemaVarTypeDef}
 import org.intellij.grammar.LightPsi
 
 import scala.collection.JavaConversions._
@@ -22,9 +22,11 @@ object SchemaCompilerMain {
 
   val spd: SchemaParserDefinition = new SchemaParserDefinition
 
+  implicit val ctx: CContext = new CContext
+
   val supplements = mutable.LinearSeq()
 
-  val types = mutable.Map[CTypeName, CType]()
+//  val types = mutable.Map[CTypeName, CType]()
 
 
   def main(args: Array[String]) {
@@ -36,23 +38,15 @@ object SchemaCompilerMain {
       }
     }
     schemaFiles foreach { sf =>
-      println(sf.getName + ":")
-      println(DebugUtil.psiToString(sf, true, true).trim())
+      print(sf.getName + ": ")
+      //println(DebugUtil.psiToString(sf, true, true).trim())
 
-      val ns = sf.getNamespaceDecl.getFqn2.toString // TODO handle null (fail the file)
+      val csf: CSchemaFile = new CSchemaFile(sf)
+      println(csf.types.mkString("{\n  ", ",\n  ", "\n}"))
 
-      sf.getDefs/*TODO nullable*/ .getTypeDefWrapperList foreach { stdw =>
-        val std: SchemaTypeDef = stdw.getElement
-        val typeQfn = CTypeFqn(ns, std)
-        val ctype = std match {
-          case vt: SchemaVarTypeDef => new CVarType(typeQfn)
-          case _ => null
-        }
-        if (ctype != null) types.put(typeQfn, ctype)
-      }
     }
 
-    println(types.mkString("{\n  ", ",\n  ", "\n}"))
+//    println(types.mkString("{\n  ", ",\n  ", "\n}"))
 
 
 
