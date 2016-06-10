@@ -6,9 +6,10 @@ import java.io.File
 
 import com.intellij.psi.impl.DebugUtil
 import com.sumologic.epigraph.schema.parser.{Fqn, SchemaParserDefinition}
-import com.sumologic.epigraph.schema.parser.psi.SchemaFile
+import com.sumologic.epigraph.schema.parser.psi.{SchemaFile, SchemaTypeDef, SchemaVarTypeDef}
 import org.intellij.grammar.LightPsi
 
+import scala.collection.JavaConversions._
 import scala.collection.mutable
 
 object SchemaCompilerMain {
@@ -23,7 +24,7 @@ object SchemaCompilerMain {
 
   val supplements = mutable.LinearSeq()
 
-  val types = mutable.Map[Fqn, Nothing]()
+  val types = mutable.Map[CTypeName, CType]()
 
 
   def main(args: Array[String]) {
@@ -37,8 +38,23 @@ object SchemaCompilerMain {
     schemaFiles foreach { sf =>
       println(sf.getName + ":")
       println(DebugUtil.psiToString(sf, true, true).trim())
-      sf.getNamespaceDecl
+
+      val ns = sf.getNamespaceDecl.getFqn2.toString // TODO handle null (fail the file)
+
+      sf.getDefs/*TODO nullable*/ .getTypeDefWrapperList foreach { stdw =>
+        val std: SchemaTypeDef = stdw.getElement
+        val typeQfn = CTypeFqn(ns, std)
+        val ctype = std match {
+          case vt: SchemaVarTypeDef => new CVarType(typeQfn)
+          case _ => null
+        }
+        if (ctype != null) types.put(typeQfn, ctype)
+      }
     }
+
+    println(types.mkString("{\n  ", ",\n  ", "\n}"))
+
+
 
   }
 
