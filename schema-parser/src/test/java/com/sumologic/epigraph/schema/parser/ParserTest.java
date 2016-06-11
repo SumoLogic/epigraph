@@ -1,9 +1,6 @@
 package com.sumologic.epigraph.schema.parser;
 
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiRecursiveElementWalkingVisitor;
 import com.intellij.psi.impl.DebugUtil;
 import org.intellij.grammar.LightPsi;
 import org.junit.Assert;
@@ -31,28 +28,9 @@ public class ParserTest {
     String psiDump = DebugUtil.psiToString(psi, false, false).trim();
 //    System.out.println("psiDump = " + psiDump);
 
-    printErrors(psi);
-
     String expectedPsiDump = new String(Files.readAllBytes(Paths.get(dir.getAbsolutePath(), expectedOutputFile)));
 
     Assert.assertEquals(expectedPsiDump, psiDump);
   }
 
-  private void printErrors(PsiFile pf) {
-    PsiRecursiveElementWalkingVisitor visitor = new PsiRecursiveElementWalkingVisitor() {
-      @Override
-      public void visitErrorElement(PsiErrorElement element) {
-        PsiFile containingFile = element.getContainingFile();
-        String fileText = containingFile.getText();
-        int startOffset = element.getTextRange().getStartOffset();
-        int line = StringUtil.countNewLines(fileText.substring(0, startOffset)) + 1;
-        int column = startOffset - StringUtil.lastIndexOf(fileText, '\n', 0, startOffset); // TODO different newlines?
-
-        System.out.println(element.getErrorDescription() + " at " + containingFile.getName() + ":" + line + ":" + column);
-      }
-    };
-
-    pf.accept(visitor);
-
-  }
 }

@@ -1,2 +1,3 @@
 rootProject.name = 'epigraph'
-include 'epi-core', 'epi-builtin-types', 'epi-schema', 'idea-plugin', 'schema-parser'
+include 'epi-core', 'epi-builtin-types', 'epi-schema', 'idea-plugin', 'schema-parser',
+        'epi-schema-compiler'
