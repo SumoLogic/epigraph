@@ -11,5 +11,5 @@ dependencies {
 
   compile "org.scala-lang:scala-library:$scalaVersion"
 
-  testCompile "org.scalatest:scalatest_2.11:3.0.0-M15"
+  testCompile "org.scalatest:scalatest_$scalaVersionMajorMinor:3.0.0-M15"
 }
