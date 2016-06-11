@@ -240,10 +240,10 @@ supplement FooRec, BarRec with record { // not good since supplemented records w
 
 //combinedFqns ::= fqnTypeRef ('+' fqnTypeRef)*
 
-private declRecover ::= ! ('import' | 'namespace' | 'polymorphic' | 'abstract' | 'record' |
+private declRecover ::= ! ('import' | 'namespace' | 'polymorphic' | 'abstract' | 'record' | ',' |
                            'map' | 'list' | 'vartype' | 'enum' | 'supplement'|
                            'string' | 'integer' | 'long' | 'double' | 'boolean')
-private partRecover ::= ! ('}' | qid | 'abstract' | 'override' )
+private partRecover ::= ! ('}' | qid | 'abstract' | 'override' | ',' )
 
 // ------------- data language -------------
 
@@ -270,4 +270,4 @@ dataEnum ::= qid {extends=dataValue}
 
 dataPrimitiveValue ::= string | number {extends=dataValue}
 
-private dataValueRecover ::= ! ( qid | dataPrimitiveValue | '}' | ')' | '>' | ']' | 'abstract' | 'override')
+private dataValueRecover ::= ! ( qid | dataPrimitiveValue | '}' | ')' | '>' | ']' | 'abstract' | 'override' | ',' )
