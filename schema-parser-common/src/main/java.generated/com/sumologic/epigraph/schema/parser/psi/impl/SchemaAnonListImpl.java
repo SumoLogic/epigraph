@@ -8,10 +8,9 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.*;
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.sumologic.epigraph.schema.parser.psi.*;
 
-public class SchemaAnonListImpl extends ASTWrapperPsiElement implements SchemaAnonList {
+public class SchemaAnonListImpl extends SchemaTypeRefImpl implements SchemaAnonList {
 
   public SchemaAnonListImpl(ASTNode node) {
     super(node);

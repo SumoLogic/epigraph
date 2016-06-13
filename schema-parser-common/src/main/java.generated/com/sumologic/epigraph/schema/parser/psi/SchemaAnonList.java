@@ -5,7 +5,7 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface SchemaAnonList extends PsiElement {
+public interface SchemaAnonList extends SchemaTypeRef {
 
   @Nullable
   SchemaDefaultOverride getDefaultOverride();

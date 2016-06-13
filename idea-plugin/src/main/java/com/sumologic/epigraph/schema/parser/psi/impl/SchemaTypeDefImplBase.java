@@ -155,8 +155,8 @@ public abstract class SchemaTypeDefImplBase<S extends SchemaTypeDefStubBase<T>, 
 
     List<SchemaTypeDef> result = new ArrayList<>(typeRefList.size());
     for (SchemaTypeRef typeRef : typeRefList) {
-      SchemaFqnTypeRef fqnTypeRef = typeRef.getFqnTypeRef();
-      if (fqnTypeRef != null) {
+      if (typeRef instanceof SchemaFqnTypeRef) {
+        SchemaFqnTypeRef fqnTypeRef = (SchemaFqnTypeRef) typeRef;
         SchemaTypeDef resolved = fqnTypeRef.resolve();
         if (resolved != null) result.add(resolved);
       }

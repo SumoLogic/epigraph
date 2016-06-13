@@ -10,11 +10,11 @@ import com.intellij.psi.PsiNameIdentifierOwner;
 public class SchemaVisitor extends PsiElementVisitor {
 
   public void visitAnonList(@NotNull SchemaAnonList o) {
-    visitPsiElement(o);
+    visitTypeRef(o);
   }
 
   public void visitAnonMap(@NotNull SchemaAnonMap o) {
-    visitPsiElement(o);
+    visitTypeRef(o);
   }
 
   public void visitCustomParam(@NotNull SchemaCustomParam o) {
@@ -100,7 +100,7 @@ public class SchemaVisitor extends PsiElementVisitor {
   }
 
   public void visitFqnTypeRef(@NotNull SchemaFqnTypeRef o) {
-    visitPsiElement(o);
+    visitTypeRef(o);
   }
 
   public void visitImportStatement(@NotNull SchemaImportStatement o) {

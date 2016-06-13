@@ -99,18 +99,21 @@ public class SchemaAnnotator implements Annotator {
         for (SchemaTypeRef typeRef : typeRefList) {
           boolean wrongKind = false;
 
-          if (typeRef.getAnonList() != null) {
+          if (typeRef instanceof SchemaAnonList) {
+            SchemaAnonList anonList = (SchemaAnonList) typeRef;
             if (typeDef.getKind() != TypeKind.LIST) wrongKind = true;
-            testExtendsList(typeDef, typeRef.getAnonList());
+            testExtendsList(typeDef, anonList);
           }
 
-          if (typeRef.getAnonMap() != null) {
+          if (typeRef instanceof SchemaAnonMap) {
+            SchemaAnonMap anonMap = (SchemaAnonMap) typeRef;
             if (typeDef.getKind() != TypeKind.MAP) wrongKind = true;
-            testExtendsMap(typeDef, typeRef.getAnonMap());
+            testExtendsMap(typeDef, anonMap);
           }
 
-          SchemaFqnTypeRef fqnTypeRef = typeRef.getFqnTypeRef();
-          if (fqnTypeRef != null) {
+          if (typeRef instanceof SchemaFqnTypeRef) {
+            SchemaFqnTypeRef fqnTypeRef = (SchemaFqnTypeRef) typeRef;
+
             SchemaTypeDef parent = fqnTypeRef.resolve();
             if (parent != null) {
               if (typeDef.getKind() != parent.getKind()) wrongKind = true;

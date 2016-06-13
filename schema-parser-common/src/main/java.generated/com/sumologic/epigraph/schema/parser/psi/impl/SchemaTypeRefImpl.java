@@ -26,22 +26,4 @@ public class SchemaTypeRefImpl extends ASTWrapperPsiElement implements SchemaTyp
     else super.accept(visitor);
   }
 
-  @Override
-  @Nullable
-  public SchemaAnonList getAnonList() {
-    return PsiTreeUtil.getChildOfType(this, SchemaAnonList.class);
-  }
-
-  @Override
-  @Nullable
-  public SchemaAnonMap getAnonMap() {
-    return PsiTreeUtil.getChildOfType(this, SchemaAnonMap.class);
-  }
-
-  @Override
-  @Nullable
-  public SchemaFqnTypeRef getFqnTypeRef() {
-    return PsiTreeUtil.getChildOfType(this, SchemaFqnTypeRef.class);
-  }
-
 }

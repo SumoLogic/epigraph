@@ -7,13 +7,4 @@ import com.intellij.psi.PsiElement;
 
 public interface SchemaTypeRef extends PsiElement {
 
-  @Nullable
-  SchemaAnonList getAnonList();
-
-  @Nullable
-  SchemaAnonMap getAnonMap();
-
-  @Nullable
-  SchemaFqnTypeRef getFqnTypeRef();
-
 }

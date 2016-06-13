@@ -160,6 +160,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   public static final TokenSet[] EXTENDS_SETS_ = new TokenSet[] {
+    create_token_set_(S_ANON_LIST, S_ANON_MAP, S_FQN_TYPE_REF, S_TYPE_REF),
     create_token_set_(S_DATA_ENUM, S_DATA_LIST, S_DATA_MAP, S_DATA_PRIMITIVE_VALUE,
       S_DATA_RECORD, S_DATA_VALUE, S_DATA_VAR),
   };
@@ -1727,7 +1728,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   public static boolean typeRef(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "typeRef")) return false;
     boolean r;
-    Marker m = enter_section_(b, l, _NONE_, S_TYPE_REF, "<type>");
+    Marker m = enter_section_(b, l, _COLLAPSE_, S_TYPE_REF, "<type>");
     r = fqnTypeRef(b, l + 1);
     if (!r) r = anonList(b, l + 1);
     if (!r) r = anonMap(b, l + 1);

@@ -105,7 +105,7 @@ fqn ::= fqnSegment ('.' fqnSegment)* { methods=[getFqn] }
 
 private typeName ::= qid
 typeRef ::= fqnTypeRef | anonList | anonMap {name="type"}
-fqnTypeRef ::= fqn { methods=[resolve] }
+fqnTypeRef ::= fqn { methods=[resolve] extends="typeRef" }
 
 defs ::= def*
 private def ::= typeDefWrapper | supplementDef {recoverWhile="declRecover"}
@@ -120,8 +120,8 @@ typeDefWrapper ::= varTypeDef | recordTypeDef | mapTypeDef | listTypeDef | primi
 private typeDefModifiers ::= 'abstract'? 'polymorphic'?
 private typeMemberModifiers ::= 'override'? 'abstract'?
 
-anonList ::= 'list' '[' typeRef defaultOverride? ']' {pin=1}// TODO rename to `listType`? `concreteList`?
-anonMap ::= 'map' '[' typeRef ',' typeRef defaultOverride? ']' {pin=1} // TODO rename to `mapType`?
+anonList ::= 'list' '[' typeRef defaultOverride? ']' {pin=1 extends="typeRef" }
+anonMap ::= 'map' '[' typeRef ',' typeRef defaultOverride? ']' {pin=1 extends="typeRef" }
 
 extendsDecl ::= 'extends' typeRef (',' typeRef)* {pin=1}
 supplementsDecl ::= 'supplements' fqnTypeRef (',' fqnTypeRef)* {pin=1}
