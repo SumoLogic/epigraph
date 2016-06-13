@@ -67,8 +67,8 @@
   ]
 
   pin(".*Body") = 1
-  //pin(".*TypeDef") = 1
-  //recoverWhile(".*Body") = "bodyRecover"
+//  recoverWhile(".*Body") = "declBodyRecover"
+
   recoverWhile(".*Part") = "partRecover"
 
   // extends(".*.TypeDef") = "typeDef" // types hierarchy doesn't work with stubs
@@ -173,7 +173,7 @@ private fieldBody ::= '{' (fieldBodyPart ','?)* '}'
 private fieldBodyPart ::= customParam
 
 //listTypeDef2 ::= 'list' typeName extendsDecl listTypeBody? // allows inheritance from lists w/o type params
-listTypeDef ::= typeDefModifiers anonList typeName extendsDecl? metaDecl? listTypeBody? {
+listTypeDef ::= typeDefModifiers anonList typeName extendsDecl? metaDecl? supplementsDecl? listTypeBody? {
   extends="com.sumologic.epigraph.schema.parser.psi.impl.SchemaListTypeDefImplBase"
   stubClass="com.sumologic.epigraph.schema.parser.psi.stubs.SchemaListTypeDefStub"
   elementTypeClass="com.sumologic.epigraph.schema.parser.psi.stubs.SchemaListTypeDefStubElementType"
@@ -182,7 +182,7 @@ listTypeDef ::= typeDefModifiers anonList typeName extendsDecl? metaDecl? listTy
 listTypeBody ::= '{' (listTypeBodyPart ','?)* '}'
 private listTypeBodyPart ::= customParam
 
-mapTypeDef ::= typeDefModifiers anonMap typeName extendsDecl? metaDecl? mapTypeBody? {
+mapTypeDef ::= typeDefModifiers anonMap typeName extendsDecl? metaDecl? supplementsDecl? mapTypeBody? {
   extends="com.sumologic.epigraph.schema.parser.psi.impl.SchemaMapTypeDefImplBase"
   stubClass="com.sumologic.epigraph.schema.parser.psi.stubs.SchemaMapTypeDefStub"
   elementTypeClass="com.sumologic.epigraph.schema.parser.psi.stubs.SchemaMapTypeDefStubElementType"
@@ -209,7 +209,7 @@ enumMemberDecl ::= qid enumMemberBody? {
 private enumMemberBody ::='{' (enumMemberBodyPart ','?)* '}'
 private enumMemberBodyPart ::= customParam
 
-primitiveTypeDef ::= typeDefModifiers primitiveKind typeName extendsDecl? metaDecl? primitiveTypeBody? {
+primitiveTypeDef ::= typeDefModifiers primitiveKind typeName extendsDecl? metaDecl? supplementsDecl? primitiveTypeBody? {
   extends="com.sumologic.epigraph.schema.parser.psi.impl.SchemaPrimitiveTypeDefImplBase"
   stubClass="com.sumologic.epigraph.schema.parser.psi.stubs.SchemaPrimitiveTypeDefStub"
   elementTypeClass="com.sumologic.epigraph.schema.parser.psi.stubs.SchemaPrimitiveTypeDefStubElementType"

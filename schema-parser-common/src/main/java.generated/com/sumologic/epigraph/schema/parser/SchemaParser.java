@@ -452,7 +452,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ! ( qid | dataPrimitiveValue | '}' | ')' | '>' | ']' | 'abstract' | 'override')
+  // ! ( qid | dataPrimitiveValue | '}' | ')' | '>' | ']' | 'abstract' | 'override' | ',' )
   static boolean dataValueRecover(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "dataValueRecover")) return false;
     boolean r;
@@ -462,7 +462,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // qid | dataPrimitiveValue | '}' | ')' | '>' | ']' | 'abstract' | 'override'
+  // qid | dataPrimitiveValue | '}' | ')' | '>' | ']' | 'abstract' | 'override' | ','
   private static boolean dataValueRecover_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "dataValueRecover_0")) return false;
     boolean r;
@@ -475,6 +475,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     if (!r) r = consumeToken(b, S_BRACKET_RIGHT);
     if (!r) r = consumeToken(b, S_ABSTRACT);
     if (!r) r = consumeToken(b, S_OVERRIDE);
+    if (!r) r = consumeToken(b, S_COMMA);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -548,7 +549,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ! ('import' | 'namespace' | 'polymorphic' | 'abstract' | 'record' |
+  // ! ('import' | 'namespace' | 'polymorphic' | 'abstract' | 'record' | ',' |
   //                            'map' | 'list' | 'vartype' | 'enum' | 'supplement'|
   //                            'string' | 'integer' | 'long' | 'double' | 'boolean')
   static boolean declRecover(PsiBuilder b, int l) {
@@ -560,7 +561,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // 'import' | 'namespace' | 'polymorphic' | 'abstract' | 'record' |
+  // 'import' | 'namespace' | 'polymorphic' | 'abstract' | 'record' | ',' |
   //                            'map' | 'list' | 'vartype' | 'enum' | 'supplement'|
   //                            'string' | 'integer' | 'long' | 'double' | 'boolean'
   private static boolean declRecover_0(PsiBuilder b, int l) {
@@ -572,6 +573,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     if (!r) r = consumeToken(b, S_POLYMORPHIC);
     if (!r) r = consumeToken(b, S_ABSTRACT);
     if (!r) r = consumeToken(b, S_RECORD);
+    if (!r) r = consumeToken(b, S_COMMA);
     if (!r) r = consumeToken(b, S_MAP);
     if (!r) r = consumeToken(b, S_LIST);
     if (!r) r = consumeToken(b, S_VARTYPE);
@@ -1064,7 +1066,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // typeDefModifiers anonList typeName extendsDecl? metaDecl? listTypeBody?
+  // typeDefModifiers anonList typeName extendsDecl? metaDecl? supplementsDecl? listTypeBody?
   public static boolean listTypeDef(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "listTypeDef")) return false;
     boolean r, p;
@@ -1075,7 +1077,8 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     r = r && report_error_(b, typeName(b, l + 1));
     r = p && report_error_(b, listTypeDef_3(b, l + 1)) && r;
     r = p && report_error_(b, listTypeDef_4(b, l + 1)) && r;
-    r = p && listTypeDef_5(b, l + 1) && r;
+    r = p && report_error_(b, listTypeDef_5(b, l + 1)) && r;
+    r = p && listTypeDef_6(b, l + 1) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -1094,9 +1097,16 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // listTypeBody?
+  // supplementsDecl?
   private static boolean listTypeDef_5(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "listTypeDef_5")) return false;
+    supplementsDecl(b, l + 1);
+    return true;
+  }
+
+  // listTypeBody?
+  private static boolean listTypeDef_6(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "listTypeDef_6")) return false;
     listTypeBody(b, l + 1);
     return true;
   }
@@ -1158,7 +1168,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // typeDefModifiers anonMap typeName extendsDecl? metaDecl? mapTypeBody?
+  // typeDefModifiers anonMap typeName extendsDecl? metaDecl? supplementsDecl? mapTypeBody?
   public static boolean mapTypeDef(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "mapTypeDef")) return false;
     boolean r, p;
@@ -1169,7 +1179,8 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     r = r && report_error_(b, typeName(b, l + 1));
     r = p && report_error_(b, mapTypeDef_3(b, l + 1)) && r;
     r = p && report_error_(b, mapTypeDef_4(b, l + 1)) && r;
-    r = p && mapTypeDef_5(b, l + 1) && r;
+    r = p && report_error_(b, mapTypeDef_5(b, l + 1)) && r;
+    r = p && mapTypeDef_6(b, l + 1) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -1188,9 +1199,16 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // mapTypeBody?
+  // supplementsDecl?
   private static boolean mapTypeDef_5(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "mapTypeDef_5")) return false;
+    supplementsDecl(b, l + 1);
+    return true;
+  }
+
+  // mapTypeBody?
+  private static boolean mapTypeDef_6(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "mapTypeDef_6")) return false;
     mapTypeBody(b, l + 1);
     return true;
   }
@@ -1269,7 +1287,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ! ('}' | qid | 'abstract' | 'override' )
+  // ! ('}' | qid | 'abstract' | 'override' | ',' )
   static boolean partRecover(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "partRecover")) return false;
     boolean r;
@@ -1279,7 +1297,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // '}' | qid | 'abstract' | 'override'
+  // '}' | qid | 'abstract' | 'override' | ','
   private static boolean partRecover_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "partRecover_0")) return false;
     boolean r;
@@ -1288,6 +1306,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     if (!r) r = qid(b, l + 1);
     if (!r) r = consumeToken(b, S_ABSTRACT);
     if (!r) r = consumeToken(b, S_OVERRIDE);
+    if (!r) r = consumeToken(b, S_COMMA);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -1364,7 +1383,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // typeDefModifiers primitiveKind typeName extendsDecl? metaDecl? primitiveTypeBody?
+  // typeDefModifiers primitiveKind typeName extendsDecl? metaDecl? supplementsDecl? primitiveTypeBody?
   public static boolean primitiveTypeDef(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "primitiveTypeDef")) return false;
     boolean r, p;
@@ -1375,7 +1394,8 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     r = r && report_error_(b, typeName(b, l + 1));
     r = p && report_error_(b, primitiveTypeDef_3(b, l + 1)) && r;
     r = p && report_error_(b, primitiveTypeDef_4(b, l + 1)) && r;
-    r = p && primitiveTypeDef_5(b, l + 1) && r;
+    r = p && report_error_(b, primitiveTypeDef_5(b, l + 1)) && r;
+    r = p && primitiveTypeDef_6(b, l + 1) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -1394,9 +1414,16 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // primitiveTypeBody?
+  // supplementsDecl?
   private static boolean primitiveTypeDef_5(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "primitiveTypeDef_5")) return false;
+    supplementsDecl(b, l + 1);
+    return true;
+  }
+
+  // primitiveTypeBody?
+  private static boolean primitiveTypeDef_6(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "primitiveTypeDef_6")) return false;
     primitiveTypeBody(b, l + 1);
     return true;
   }

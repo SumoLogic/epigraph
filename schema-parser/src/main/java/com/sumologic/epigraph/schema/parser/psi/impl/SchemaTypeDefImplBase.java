@@ -44,6 +44,12 @@ public abstract class SchemaTypeDefImplBase<S extends SchemaTypeDefStubBase<T>, 
 
   @Override
   @Nullable
+  public SchemaSupplementsDecl getSupplementsDecl() {
+    return findChildByClass(SchemaSupplementsDecl.class);
+  }
+
+  @Override
+  @Nullable
   public SchemaMetaDecl getMetaDecl() {
     return findChildByClass(SchemaMetaDecl.class);
   }

@@ -40,6 +40,9 @@ public interface SchemaTypeDef extends PsiNameIdentifierOwner {
   SchemaExtendsDecl getExtendsDecl();
 
   @Nullable
+  SchemaSupplementsDecl getSupplementsDecl();
+
+  @Nullable
   SchemaMetaDecl getMetaDecl();
 
   @NotNull

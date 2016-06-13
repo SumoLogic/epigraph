@@ -35,6 +35,11 @@ public class SchemaPresentationUtil {
 
   @Nullable
   public static String getName(@NotNull PsiNamedElement element, boolean qualified) {
+    if (element instanceof SchemaFqnSegment) {
+      SchemaFqnSegment fqnSegment = (SchemaFqnSegment) element;
+      return fqnSegment.getFqn().toString();
+    }
+
     String shortName = element.getName();
     if (shortName == null) return null;
 
@@ -169,6 +174,19 @@ public class SchemaPresentationUtil {
     } catch (PsiInvalidElementAccessException e) {
       return "[invalid]"; // file not available
     }
+  }
+
+  @NotNull
+  public static String getType(@NotNull PsiElement element) {
+    if (element instanceof SchemaListTypeDef) return "List type";
+    if (element instanceof SchemaPrimitiveTypeDef) return "Primitive type";
+    if (element instanceof SchemaEnumTypeDef) return "Enum type";
+    if (element instanceof SchemaVarTypeDef) return "Var type";
+    if (element instanceof SchemaRecordTypeDef) return "Record type";
+    if (element instanceof SchemaMapTypeDef) return "Map type";
+    if (element instanceof SchemaFqnSegment) return "Namespace";
+
+    return "Unknown getElement: " + element;
   }
 
   @NotNull

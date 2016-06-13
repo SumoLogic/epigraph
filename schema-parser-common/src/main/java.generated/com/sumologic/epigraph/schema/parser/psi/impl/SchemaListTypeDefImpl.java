@@ -56,6 +56,12 @@ public class SchemaListTypeDefImpl extends SchemaListTypeDefImplBase implements 
 
   @Override
   @Nullable
+  public SchemaSupplementsDecl getSupplementsDecl() {
+    return PsiTreeUtil.getChildOfType(this, SchemaSupplementsDecl.class);
+  }
+
+  @Override
+  @Nullable
   public PsiElement getAbstract() {
     return findChildByType(S_ABSTRACT);
   }

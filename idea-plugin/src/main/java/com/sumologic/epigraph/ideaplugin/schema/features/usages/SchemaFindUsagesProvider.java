@@ -4,6 +4,7 @@ import com.intellij.lang.cacheBuilder.DefaultWordsScanner;
 import com.intellij.lang.cacheBuilder.WordsScanner;
 import com.intellij.lang.findUsages.FindUsagesProvider;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiNamedElement;
 import com.sumologic.epigraph.schema.parser.lexer.SchemaFlexAdapter;
 import com.sumologic.epigraph.schema.parser.SchemaParserDefinition;
 import com.sumologic.epigraph.schema.parser.psi.*;
@@ -50,29 +51,16 @@ public class SchemaFindUsagesProvider implements FindUsagesProvider {
   @NotNull
   @Override
   public String getType(@NotNull PsiElement element) {
-    if (element instanceof SchemaListTypeDef) return "List type";
-    if (element instanceof SchemaPrimitiveTypeDef) return "Primitive type";
-    if (element instanceof SchemaEnumTypeDef) return "Enum type";
-    if (element instanceof SchemaVarTypeDef) return "Var type";
-    if (element instanceof SchemaRecordTypeDef) return "Record type";
-    if (element instanceof SchemaMapTypeDef) return "Map type";
-    if (element instanceof SchemaFqnSegment) return "Namespace";
-
-    return "Unknown getElement: " + element;
+    return SchemaPresentationUtil.getType(element);
   }
 
   @NotNull
   @Override
   public String getDescriptiveName(@NotNull PsiElement element) {
-    if (element instanceof SchemaTypeDef) {
-      SchemaTypeDef typeDef = (SchemaTypeDef) element;
-      String name = SchemaPresentationUtil.getName(typeDef, true);
-      return name == null ? "" : name;
-    }
-
-    if (element instanceof SchemaFqnSegment) {
-      SchemaFqnSegment fqnSegment = (SchemaFqnSegment) element;
-      return fqnSegment.getFqn().toString();
+    if (element instanceof PsiNamedElement) {
+      PsiNamedElement namedElement = (PsiNamedElement) element;
+      String name = SchemaPresentationUtil.getName(namedElement, false);
+      if (name != null) return name;
     }
 
     return "Unknown getElement: " + element;
@@ -81,20 +69,12 @@ public class SchemaFindUsagesProvider implements FindUsagesProvider {
   @NotNull
   @Override
   public String getNodeText(@NotNull PsiElement element, boolean useFullName) {
-    if (useFullName) return getDescriptiveName(element);
-
-    if (element instanceof SchemaTypeDef) {
-      SchemaTypeDef schemaTypeDef = (SchemaTypeDef) element;
-      String name = schemaTypeDef.getName();
+    if (element instanceof PsiNamedElement) {
+      PsiNamedElement namedElement = (PsiNamedElement) element;
+      String name = SchemaPresentationUtil.getName(namedElement, useFullName);
       if (name != null) return name;
     }
-
-    if (element instanceof SchemaFqnSegment) {
-      SchemaFqnSegment fqnSegment = (SchemaFqnSegment) element;
-      String name = fqnSegment.getName();
-      if (name != null) return name;
-    }
-
+   
     return "";
   }
 }

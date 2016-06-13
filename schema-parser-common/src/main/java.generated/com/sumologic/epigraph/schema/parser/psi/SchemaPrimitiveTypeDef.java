@@ -19,6 +19,9 @@ public interface SchemaPrimitiveTypeDef extends SchemaTypeDef, StubBasedPsiEleme
   SchemaPrimitiveTypeBody getPrimitiveTypeBody();
 
   @Nullable
+  SchemaSupplementsDecl getSupplementsDecl();
+
+  @Nullable
   PsiElement getAbstract();
 
   @Nullable

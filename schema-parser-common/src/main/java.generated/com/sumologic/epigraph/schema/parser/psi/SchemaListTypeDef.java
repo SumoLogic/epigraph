@@ -22,6 +22,9 @@ public interface SchemaListTypeDef extends SchemaTypeDef, StubBasedPsiElement<Sc
   SchemaMetaDecl getMetaDecl();
 
   @Nullable
+  SchemaSupplementsDecl getSupplementsDecl();
+
+  @Nullable
   PsiElement getAbstract();
 
   @Nullable
