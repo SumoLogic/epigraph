@@ -71,6 +71,12 @@
       </dependency>
 
       <dependency>
+        <groupId>com.lihaoyi</groupId>
+        <artifactId>pprint_${scala.version.major.minor}</artifactId>
+        <version>0.4.1</version>
+      </dependency>
+
+      <dependency>
         <groupId>com.typesafe.scala-logging</groupId>
         <artifactId>scala-logging_${scala.version.major.minor}</artifactId>
         <version>3.1.0</version>

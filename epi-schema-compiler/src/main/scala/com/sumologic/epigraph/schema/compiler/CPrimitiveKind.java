@@ -15,7 +15,7 @@ public enum CPrimitiveKind {
 
   private static final Map<String, CPrimitiveKind> map = new HashMap<>();
 
-  final String keyword;
+  public final String keyword;
 
   CPrimitiveKind(String keyword) {
     this.keyword = keyword;

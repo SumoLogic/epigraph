@@ -4,12 +4,10 @@ package com.sumologic.epigraph.schema.compiler
 
 import java.io.File
 
-import com.intellij.psi.impl.DebugUtil
-import com.sumologic.epigraph.schema.parser.{Fqn, SchemaParserDefinition}
-import com.sumologic.epigraph.schema.parser.psi.{SchemaFile, SchemaMapTypeDef, SchemaRecordTypeDef, SchemaTypeDef, SchemaVarTypeDef}
+import com.sumologic.epigraph.schema.parser.SchemaParserDefinition
+import com.sumologic.epigraph.schema.parser.psi.SchemaFile
 import org.intellij.grammar.LightPsi
 
-import scala.collection.JavaConversions._
 import scala.collection.mutable
 
 object SchemaCompilerMain {
@@ -17,7 +15,9 @@ object SchemaCompilerMain {
   val paths: Seq[String] = Seq(
     "epi-builtin-types/src/main/schema/epigraph/builtinTypes.es",
     "epi-schema/src/main/schema/epigraph/schema/names.es",
-    "epi-schema/src/main/schema/epigraph/schema/types.es"
+    "epi-schema/src/main/schema/epigraph/schema/types.es",
+    "epi-schema/src/main/scala/epigraph/schema/Documented.es",
+    "epi-schema-compiler/src/test/schema/example/compilerExamples.es"
   )
 
   val spd: SchemaParserDefinition = new SchemaParserDefinition
@@ -26,7 +26,7 @@ object SchemaCompilerMain {
 
   val supplements = mutable.LinearSeq()
 
-//  val types = mutable.Map[CTypeName, CType]()
+  val types = mutable.Map[CTypeName, CType]()
 
 
   def main(args: Array[String]) {
@@ -38,16 +38,23 @@ object SchemaCompilerMain {
       }
     }
     schemaFiles foreach { sf =>
+      ParseErrorsDumper.printParseErrors(sf)
       print(sf.getName + ": ")
       //println(DebugUtil.psiToString(sf, true, true).trim())
 
       val csf: CSchemaFile = new CSchemaFile(sf)
-      println(csf.types.mkString("{\n  ", ",\n  ", "\n}"))
+      import pprint.Config.Colors._
+//      implicit val PPConfig = pprint.Config(colors = pprint.Colors(fansi.Color.Green, fansi.Color.Blue))
+      pprint.pprintln(csf.types)
+      csf.types.foreach {
+//        case rt: CRecordType => pprint.pprintln(rt)
+        case mt: CMapType => pprint.pprintln(mt)
+        case _ =>
+      }
 
     }
 
 //    println(types.mkString("{\n  ", ",\n  ", "\n}"))
-
 
 
   }

@@ -8,4 +8,8 @@ class CContext {
 
   //val types: mutable.Map[CTypeName, CType] = mutable.Map()
 
+  val errors: mutable.Seq[CError] = mutable.Seq()
+
 }
+
+class CError

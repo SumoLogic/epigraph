@@ -12,7 +12,6 @@
   <artifactId>epi-schema-compiler</artifactId>
 
 
-
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
@@ -29,11 +28,18 @@
       <artifactId>schema-parser</artifactId>
       <version>${project.version}</version>
     </dependency>
+
     <dependency>
       <groupId>org.scalatest</groupId>
-      <artifactId>scalatest_2.11</artifactId>
-      <version>3.0.0-M15</version>
+      <artifactId>scalatest_${scala.version.major.minor}</artifactId>
     </dependency>
+
+    <dependency>
+      <groupId>com.lihaoyi</groupId>
+      <artifactId>pprint_${scala.version.major.minor}</artifactId>
+      <scope>compile</scope><!-- TODO - use in test scope only? -->
+    </dependency>
+
   </dependencies>
 
 </project>

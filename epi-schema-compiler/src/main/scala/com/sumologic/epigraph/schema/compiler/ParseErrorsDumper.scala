@@ -22,5 +22,6 @@ object ParseErrorsDumper {
         println(element.getErrorDescription + " at " + fileName + ':' + line + ':' + column)
       }
     }
+    file.accept(visitor)
   }
 }
