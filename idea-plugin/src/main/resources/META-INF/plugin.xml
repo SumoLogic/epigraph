@@ -22,8 +22,16 @@
   <depends>com.intellij.modules.lang</depends>
   -->
 
+  <actions>
+    <action class="com.sumologic.epigraph.ideaplugin.schema.actions.CreateSchemaFileAction" id="Epigraph.NewSchemaFile"
+            text="Epigraph Schema" description="Create new Epigraph schema file">
+      <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFile"/>
+    </action>
+  </actions>
+
   <extensions defaultExtensionNs="com.intellij">
     <fileTypeFactory implementation="com.sumologic.epigraph.ideaplugin.schema.SchemaFileTypeFactory"/>
+    <internalFileTemplate name="Epigraph Schema"/>
     <stubElementTypeHolder class="com.sumologic.epigraph.schema.parser.psi.stubs.SchemaStubElementTypes"/>
 
     <stubIndex implementation="com.sumologic.epigraph.ideaplugin.schema.index.SchemaShortTypeNameIndex"/>
@@ -83,7 +91,8 @@
 
     <typeHierarchyProvider language="epi_schema"
                            implementationClass="com.sumologic.epigraph.ideaplugin.schema.features.hierarchy.SchemaHierarchyProvider"/>
-    <!-- todo gutter icons -->
+
+    <!-- todo import optimizer -->
 
   </extensions>
 

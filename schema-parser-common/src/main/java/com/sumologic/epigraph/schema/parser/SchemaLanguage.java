@@ -16,7 +16,7 @@ public class SchemaLanguage extends Language {
   @NotNull
   @Override
   public String getDisplayName() {
-    return "Epigraph Schema";
+    return Common.DESCRIPTION;
   }
 
   @Override

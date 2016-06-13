@@ -12,8 +12,8 @@ public class RenameTest extends LightCodeInsightFixtureTestCase {
   }
 
   public void testTypeRename() {
-    myFixture.configureByFile("TypeRename.es");
+    myFixture.configureByFile("TypeRename.epi_schema");
     myFixture.renameElementAtCaret("GGG");
-    myFixture.checkResultByFile("TypeRename-after.es", false);
+    myFixture.checkResultByFile("TypeRename-after.epi_schema", false);
   }
 }

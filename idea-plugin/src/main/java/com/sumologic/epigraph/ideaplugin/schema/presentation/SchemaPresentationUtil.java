@@ -7,6 +7,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiInvalidElementAccessException;
 import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.sumologic.epigraph.schema.parser.Common;
 import com.sumologic.epigraph.schema.parser.Fqn;
 import com.sumologic.epigraph.schema.parser.psi.*;
 import com.sumologic.epigraph.ideaplugin.schema.brains.NamespaceManager;
@@ -20,9 +21,8 @@ import java.util.List;
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
 public class SchemaPresentationUtil {
-  // TODO move to schema/presentation?
   // TODO own icons!
-  public static final Icon SCHEMA_FILE_ICON = AllIcons.FileTypes.Properties;
+  public static final Icon SCHEMA_FILE_ICON = AllIcons.FileTypes.Custom;
 
   public static final Icon PARENT_TYPES_GUTTER_ICON = AllIcons.Gutter.OverridingMethod;
   public static final Icon CHILD_TYPES_GUTTER_ICON = AllIcons.Gutter.OverridenMethod;
@@ -73,7 +73,8 @@ public class SchemaPresentationUtil {
   @NotNull
   static String getPresentableText(@NotNull PsiElement element, boolean structureView) {
     if (element instanceof SchemaFile) {
-      return ((SchemaFile) element).getName();
+      String name = ((SchemaFile) element).getName();
+      return name.substring(name.length() - Common.FILE_EXTENSION.length());
     }
 
     if (element instanceof SchemaTypeDef) {
@@ -124,7 +125,7 @@ public class SchemaPresentationUtil {
 
       StringBuilder name = new StringBuilder();
 
-      List <SchemaFqnTypeRef> fqnTypeRef = schemaSupplementDef.supplementedRefs();
+      List<SchemaFqnTypeRef> fqnTypeRef = schemaSupplementDef.supplementedRefs();
       for (SchemaFqnTypeRef typeRef : fqnTypeRef) {
         if (name.length() > 0) name.append(", ");
         name.append(typeRef.getFqn().getFqn().toString());
@@ -168,7 +169,6 @@ public class SchemaPresentationUtil {
     } catch (PsiInvalidElementAccessException e) {
       return "[invalid]"; // file not available
     }
-
   }
 
   @NotNull

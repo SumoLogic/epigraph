@@ -12,7 +12,7 @@ public class AnnotatorTest extends LightCodeInsightFixtureTestCase {
   }
 
   public void testInvalid1() {
-    myFixture.configureByFile("Invalid1.es");
+    myFixture.configureByFile("Invalid1.epi_schema");
     myFixture.checkHighlighting(false, false, true);
   }
 }

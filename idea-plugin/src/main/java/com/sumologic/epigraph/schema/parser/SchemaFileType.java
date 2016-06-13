@@ -12,7 +12,7 @@ import javax.swing.*;
  */
 public class SchemaFileType extends LanguageFileType {
   public static final SchemaFileType INSTANCE = new SchemaFileType();
-  public static final String DEFAULT_EXTENSION = "es"; // TODO change to something less widely used
+  public static final String DEFAULT_EXTENSION = Common.FILE_EXTENSION;
 
   protected SchemaFileType() {
     super(SchemaLanguage.INSTANCE);
@@ -27,7 +27,7 @@ public class SchemaFileType extends LanguageFileType {
   @NotNull
   @Override
   public String getDescription() {
-    return "Epigraph Schema";
+    return Common.DESCRIPTION;
   }
 
   @NotNull
