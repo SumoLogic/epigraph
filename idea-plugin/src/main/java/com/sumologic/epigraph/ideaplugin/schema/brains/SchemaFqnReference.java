@@ -98,7 +98,7 @@ public class SchemaFqnReference extends PsiReferenceBase<SchemaFqnSegment> imple
       Fqn suffixPrefix = resolver.getSuffix().removeLastSegment();
 
       List<Fqn> namespacesToSearchForTypes = resolver.getPrefixes().stream().map(fqn -> fqn.append(suffixPrefix)).collect(Collectors.toList());
-      typeDefVariants = SchemaIndexUtil.findTypeDefs(project, namespacesToSearchForTypes, null).stream()
+      typeDefVariants = SchemaIndexUtil.findTypeDefs(project, namespacesToSearchForTypes, null, null).stream()
           .filter(typeDef ->
               // don't suggest to import types from the same namespace
               typeDef.getName() != null && (!isImport || currentNamespace == null || !currentNamespace.equals(NamespaceManager.getNamespace(typeDef))))
@@ -117,7 +117,7 @@ public class SchemaFqnReference extends PsiReferenceBase<SchemaFqnSegment> imple
             .collect(Collectors.toSet());
 
         // all types in current NS
-        typeDefVariants.addAll(SchemaIndexUtil.findTypeDefs(project, Collections.singletonList(currentNamespace), null).stream()
+        typeDefVariants.addAll(SchemaIndexUtil.findTypeDefs(project, Collections.singletonList(currentNamespace), null, null).stream()
             .filter(typeDef -> typeDef.getName() != null)
             .collect(Collectors.toSet()));
 

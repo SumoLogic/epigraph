@@ -32,7 +32,7 @@ public class SchemaDirectTypeInheritorsSearcher implements QueryExecutor<SchemaT
     Application application = ApplicationManager.getApplication();
 
     List<SchemaTypeDef> candidates = application.runReadAction(
-        (Computable<List<SchemaTypeDef>>) () -> SchemaIndexUtil.findTypeDefs(project, null, null)
+        (Computable<List<SchemaTypeDef>>) () -> SchemaIndexUtil.findTypeDefs(project, null, null, null)
     );
 
     final List<SchemaTypeDef> children = new ArrayList<>();

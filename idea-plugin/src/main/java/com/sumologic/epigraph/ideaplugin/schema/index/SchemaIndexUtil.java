@@ -20,18 +20,28 @@ import java.util.List;
  */
 public class SchemaIndexUtil {
   @NotNull
-  public static List<SchemaTypeDef> findTypeDefs(Project project, @Nullable Collection<Fqn> namespaces, @Nullable Fqn suffix) {
-    // todo unused, remove?
-    return findTypeDefs(project, namespaces, suffix, new AddAllProcessor<>());
+  public static List<SchemaTypeDef> findTypeDefs(@NotNull Project project,
+                                                 @Nullable Collection<Fqn> namespaces,
+                                                 @Nullable Fqn suffix,
+                                                 @Nullable GlobalSearchScope scope) {
+    return findTypeDefs(project, namespaces, suffix, scope, new AddAllProcessor<>());
   }
 
   @Nullable
-  public static SchemaTypeDef findTypeDef(Project project, @NotNull Collection<Fqn> namespaces, @NotNull Fqn suffix) {
-    return findTypeDefs(project, namespaces, suffix, new TakeFirstProcessor<>());
+  public static SchemaTypeDef findTypeDef(@NotNull Project project,
+                                          @NotNull Collection<Fqn> namespaces,
+                                          @NotNull Fqn suffix,
+                                          @Nullable GlobalSearchScope scope) {
+    return findTypeDefs(project, namespaces, suffix, scope, new TakeFirstProcessor<>());
   }
 
-  private static <R> R findTypeDefs(Project project, @Nullable Collection<Fqn> namespaces, @Nullable Fqn suffix, @NotNull Processor<SchemaTypeDef, R> processor) {
-    GlobalSearchScope scope = GlobalSearchScope.allScope(project);
+  private static <R> R findTypeDefs(@NotNull Project project,
+                                    @Nullable Collection<Fqn> namespaces,
+                                    @Nullable Fqn suffix,
+                                    @Nullable GlobalSearchScope scope,
+                                    @NotNull Processor<SchemaTypeDef, R> processor) {
+
+    if (scope == null) scope = GlobalSearchScope.allScope(project);
 
     if (namespaces != null) {
       if (suffix != null) {

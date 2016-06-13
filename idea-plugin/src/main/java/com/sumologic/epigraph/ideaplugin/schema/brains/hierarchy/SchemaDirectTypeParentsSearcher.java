@@ -44,7 +44,7 @@ public class SchemaDirectTypeParentsSearcher implements QueryExecutor<SchemaType
     if (queryParameters.includeSupplements) {
 
       List<SchemaTypeDef> candidates = application.runReadAction(
-          (Computable<List<SchemaTypeDef>>) () -> SchemaIndexUtil.findTypeDefs(project, null, null)
+          (Computable<List<SchemaTypeDef>>) () -> SchemaIndexUtil.findTypeDefs(project, null, null, null)
       );
 
       for (SchemaTypeDef candidate : candidates) {

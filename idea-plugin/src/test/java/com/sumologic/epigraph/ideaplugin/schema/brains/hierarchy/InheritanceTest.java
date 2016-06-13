@@ -82,7 +82,11 @@ public class InheritanceTest extends LightCodeInsightFixtureTestCase {
   }
 
   private SchemaTypeDef findTypeDef(String name) {
-    SchemaTypeDef typeDef = SchemaIndexUtil.findTypeDef(myFixture.getProject(), Collections.singleton(new Fqn("x")), new Fqn(name));
+    SchemaTypeDef typeDef = SchemaIndexUtil.findTypeDef(
+        myFixture.getProject(),
+        Collections.singleton(new Fqn("x")),
+        new Fqn(name),
+        null);
     assertNotNull(typeDef);
     return typeDef;
   }

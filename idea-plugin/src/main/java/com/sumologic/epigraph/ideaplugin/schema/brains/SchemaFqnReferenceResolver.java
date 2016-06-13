@@ -53,7 +53,7 @@ public class SchemaFqnReferenceResolver {
 
   @Nullable
   public PsiElement resolve(@NotNull Project project) {
-    SchemaTypeDef typeDef = SchemaIndexUtil.findTypeDef(project, prefixes, suffix);
+    SchemaTypeDef typeDef = SchemaIndexUtil.findTypeDef(project, prefixes, suffix, null);
     if (typeDef != null) return typeDef;
 
     // we can't find a typedef by this reference, lets check if it points to a namespace declaration
@@ -74,7 +74,7 @@ public class SchemaFqnReferenceResolver {
   @NotNull
   public ResolveResult[] multiResolve(@NotNull Project project) {
     List<ResolveResult> typeDefs =
-        SchemaIndexUtil.findTypeDefs(project, prefixes, suffix).stream()
+        SchemaIndexUtil.findTypeDefs(project, prefixes, suffix, null).stream()
         .filter(td -> td != null)
         .map(PsiElementResolveResult::new)
         .collect(Collectors.toList());
