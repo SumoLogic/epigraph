@@ -11,7 +11,7 @@ public interface SchemaVarTypeBody extends CustomParamsHolder {
   List<SchemaCustomParam> getCustomParamList();
 
   @NotNull
-  List<SchemaVarTypeMemberDecl> getVarTypeMemberDeclList();
+  List<SchemaVarTagDecl> getVarTagDeclList();
 
   @NotNull
   PsiElement getCurlyLeft();

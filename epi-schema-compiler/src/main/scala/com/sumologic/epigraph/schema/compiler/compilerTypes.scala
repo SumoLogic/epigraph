@@ -129,12 +129,12 @@ class CVarType(csf: CSchemaFile, override val psi: SchemaVarTypeDef)(implicit ct
 
   val declaredTags: Seq[CTag] = {
     @Nullable val body = psi.getVarTypeBody
-    if (body == null) Nil else body.getVarTypeMemberDeclList.map(new CTag(csf, _)).toList
+    if (body == null) Nil else body.getVarTagDeclList.map(new CTag(csf, _)).toList
   }
 
 }
 
-class CTag(val csf: CSchemaFile, val psi: SchemaVarTypeMemberDecl)(implicit val ctx: CContext) {
+class CTag(val csf: CSchemaFile, val psi: SchemaVarTagDecl)(implicit val ctx: CContext) {
 
   val name: String = psi.getName
 

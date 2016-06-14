@@ -300,26 +300,26 @@ public class SchemaPsiImplUtil {
 
   @Contract(pure = true)
   @Nullable
-  public static String getName(SchemaVarTypeMemberDecl varTypeMemberDecl) {
-    return getNameIdentifier(varTypeMemberDecl).getText();
+  public static String getName(SchemaVarTagDecl varTagDecl) {
+    return getNameIdentifier(varTagDecl).getText();
   }
 
-  public static PsiElement setName(SchemaVarTypeMemberDecl varTypeMemberDecl, String name) {
-    PsiElement oldId = varTypeMemberDecl.getId();
-    PsiElement newId = SchemaElementFactory.createId(varTypeMemberDecl.getProject(), name);
+  public static PsiElement setName(SchemaVarTagDecl varTagDecl, String name) {
+    PsiElement oldId = varTagDecl.getId();
+    PsiElement newId = SchemaElementFactory.createId(varTagDecl.getProject(), name);
     return oldId.replace(newId);
   }
 
   @Contract(pure = true)
   @NotNull
-  public static PsiElement getNameIdentifier(SchemaVarTypeMemberDecl varTypeMemberDecl) {
-    return varTypeMemberDecl.getId();
+  public static PsiElement getNameIdentifier(SchemaVarTagDecl varTagDecl) {
+    return varTagDecl.getId();
   }
 
   @Contract(pure = true)
   @NotNull
-  public static ItemPresentation getPresentation(@NotNull SchemaVarTypeMemberDecl varTypeMemberDecl) {
-    return SchemaPsiImplUtilExt.getPresentation(varTypeMemberDecl);
+  public static ItemPresentation getPresentation(@NotNull SchemaVarTagDecl varTagDecl) {
+    return SchemaPsiImplUtilExt.getPresentation(varTagDecl);
   }
 
   // enumMember decl

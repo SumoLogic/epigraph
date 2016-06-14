@@ -101,8 +101,8 @@ class SchemaPsiImplUtilExt {
 
   @Contract(pure = true)
   @NotNull
-  public static ItemPresentation getPresentation(@NotNull SchemaVarTypeMemberDecl varTypeMemberDecl) {
-    return SchemaPresentationUtil.getPresentation(varTypeMemberDecl, false);
+  public static ItemPresentation getPresentation(@NotNull SchemaVarTagDecl varTagDecl) {
+    return SchemaPresentationUtil.getPresentation(varTagDecl, false);
   }
 
 //  /////////////

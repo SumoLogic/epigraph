@@ -68,7 +68,7 @@ public class SchemaPresentationUtil {
     if (element instanceof SchemaCustomParam) return AllIcons.Nodes.Annotationtype;
     if (element instanceof SchemaFieldDecl) return AllIcons.Nodes.Field;
     if (element instanceof SchemaEnumMemberDecl) return AllIcons.Nodes.Property;
-    if (element instanceof SchemaVarTypeMemberDecl)
+    if (element instanceof SchemaVarTagDecl)
       return AllIcons.Nodes.Function; // IconUtil.addText(icon, "D") for default member?
 
     // TODO icons for all!
@@ -107,9 +107,9 @@ public class SchemaPresentationUtil {
       return typeName + '.' + name;
     }
 
-    if (element instanceof SchemaVarTypeMemberDecl) {
-      SchemaVarTypeMemberDecl varTypeMemberDecl = (SchemaVarTypeMemberDecl) element;
-      String name = varTypeMemberDecl.getId().getText();
+    if (element instanceof SchemaVarTagDecl) {
+      SchemaVarTagDecl varTagDecl = (SchemaVarTagDecl) element;
+      String name = varTagDecl.getId().getText();
 
       if (structureView) return name;
 

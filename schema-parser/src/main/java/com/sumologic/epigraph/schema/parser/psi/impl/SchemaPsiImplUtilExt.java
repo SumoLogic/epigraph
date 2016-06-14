@@ -92,7 +92,7 @@ public class SchemaPsiImplUtilExt {
 
   @Contract(pure = true)
   @NotNull
-  public static ItemPresentation getPresentation(@NotNull SchemaVarTypeMemberDecl varTypeMemberDecl) {
+  public static ItemPresentation getPresentation(@NotNull SchemaVarTagDecl varTagDecl) {
     throw new UnsupportedOperationException();
   }
 

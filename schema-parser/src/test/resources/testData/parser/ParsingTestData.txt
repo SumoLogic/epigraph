@@ -131,7 +131,7 @@ Schema file
         SchemaVarTypeBodyImpl(S_VAR_TYPE_BODY)
           PsiElement({)('{')
           PsiWhiteSpace('\n  ')
-          SchemaVarTypeMemberDeclImpl(S_VAR_TYPE_MEMBER_DECL)
+          SchemaVarTagDeclImpl(S_VAR_TAG_DECL)
             PsiElement(`)('`')
             PsiElement(id)('map')
             PsiElement(`)('`')

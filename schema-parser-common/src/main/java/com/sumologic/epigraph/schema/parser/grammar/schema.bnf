@@ -144,8 +144,8 @@ varTypeDef ::= typeDefModifiers 'vartype' typeName extendsDecl? supplementsDecl?
   pin=2
 }
 varTypeBody ::= '{' (varTypeBodyPart ','?)* '}'
-private varTypeBodyPart ::= varTypeMemberDecl | customParam
-varTypeMemberDecl ::= typeMemberModifiers qid ':' typeRef varTypeMemberBody? {
+private varTypeBodyPart ::= varTagDecl | customParam
+varTagDecl ::= typeMemberModifiers qid ':' typeRef varTypeMemberBody? { // TODO rename to varTag
   implements=["com.sumologic.epigraph.schema.parser.psi.CustomParamsHolder" "com.intellij.psi.PsiNamedElement"]
   extends="com.sumologic.epigraph.schema.parser.psi.impl.CustomParamHolderImpl"
   methods=[getName setName getNameIdentifier getPresentation]

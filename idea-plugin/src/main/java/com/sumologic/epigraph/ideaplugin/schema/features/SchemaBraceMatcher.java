@@ -9,7 +9,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IElementType;
 import com.sumologic.epigraph.schema.parser.psi.SchemaFieldDecl;
 import com.sumologic.epigraph.schema.parser.psi.SchemaTypeDef;
-import com.sumologic.epigraph.schema.parser.psi.SchemaVarTypeMemberDecl;
+import com.sumologic.epigraph.schema.parser.psi.SchemaVarTagDecl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -47,7 +47,7 @@ public class SchemaBraceMatcher implements PairedBraceMatcher {
     PsiElement parent = element.getParent();
     if (parent == null) return openingBraceOffset;
 
-    if (parent instanceof SchemaVarTypeMemberDecl || parent instanceof SchemaFieldDecl) {
+    if (parent instanceof SchemaVarTagDecl || parent instanceof SchemaFieldDecl) {
       TextRange range = DeclarationRangeUtil.getDeclarationRange(parent);
       return range.getStartOffset();
     }

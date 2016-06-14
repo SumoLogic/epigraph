@@ -11,14 +11,14 @@ import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.*;
 import com.sumologic.epigraph.schema.parser.psi.*;
 import com.intellij.navigation.ItemPresentation;
 
-public class SchemaVarTypeMemberDeclImpl extends CustomParamHolderImpl implements SchemaVarTypeMemberDecl {
+public class SchemaVarTagDeclImpl extends CustomParamHolderImpl implements SchemaVarTagDecl {
 
-  public SchemaVarTypeMemberDeclImpl(ASTNode node) {
+  public SchemaVarTagDeclImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull SchemaVisitor visitor) {
-    visitor.visitVarTypeMemberDecl(this);
+    visitor.visitVarTagDecl(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {

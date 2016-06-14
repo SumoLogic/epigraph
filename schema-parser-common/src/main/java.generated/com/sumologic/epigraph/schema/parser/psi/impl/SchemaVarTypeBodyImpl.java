@@ -33,8 +33,8 @@ public class SchemaVarTypeBodyImpl extends CustomParamHolderImpl implements Sche
 
   @Override
   @NotNull
-  public List<SchemaVarTypeMemberDecl> getVarTypeMemberDeclList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaVarTypeMemberDecl.class);
+  public List<SchemaVarTagDecl> getVarTagDeclList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaVarTagDecl.class);
   }
 
   @Override

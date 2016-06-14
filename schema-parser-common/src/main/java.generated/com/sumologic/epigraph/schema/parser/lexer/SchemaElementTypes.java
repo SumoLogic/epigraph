@@ -56,9 +56,9 @@ public interface SchemaElementTypes {
   IElementType S_SUPPLEMENT_DEF = new SchemaSupplementDefStubElementType("S_SUPPLEMENT_DEF");
   IElementType S_TYPE_DEF_WRAPPER = new SchemaTypeDefWrapperStubElementType("S_TYPE_DEF_WRAPPER");
   IElementType S_TYPE_REF = new SchemaElementType("S_TYPE_REF");
+  IElementType S_VAR_TAG_DECL = new SchemaElementType("S_VAR_TAG_DECL");
   IElementType S_VAR_TYPE_BODY = new SchemaElementType("S_VAR_TYPE_BODY");
   IElementType S_VAR_TYPE_DEF = new SchemaVarTypeDefStubElementType("S_VAR_TYPE_DEF");
-  IElementType S_VAR_TYPE_MEMBER_DECL = new SchemaElementType("S_VAR_TYPE_MEMBER_DECL");
 
   IElementType S_ABSTRACT = new SchemaElementType("abstract");
   IElementType S_ANGLE_LEFT = new SchemaElementType("<");
@@ -223,14 +223,14 @@ public interface SchemaElementTypes {
       else if (type == S_TYPE_REF) {
         return new SchemaTypeRefImpl(node);
       }
+      else if (type == S_VAR_TAG_DECL) {
+        return new SchemaVarTagDeclImpl(node);
+      }
       else if (type == S_VAR_TYPE_BODY) {
         return new SchemaVarTypeBodyImpl(node);
       }
       else if (type == S_VAR_TYPE_DEF) {
         return new SchemaVarTypeDefImpl(node);
-      }
-      else if (type == S_VAR_TYPE_MEMBER_DECL) {
-        return new SchemaVarTypeMemberDeclImpl(node);
       }
       throw new AssertionError("Unknown element type: " + type);
     }

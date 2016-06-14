@@ -7,12 +7,12 @@ import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.HierarchyCache;
-import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.InheritedMembers;
+import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.TypeMembers;
 import com.sumologic.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
 import com.sumologic.epigraph.schema.parser.psi.SchemaFieldDecl;
 import com.sumologic.epigraph.schema.parser.psi.SchemaSupplementDef;
 import com.sumologic.epigraph.schema.parser.psi.SchemaTypeDef;
-import com.sumologic.epigraph.schema.parser.psi.SchemaVarTypeMemberDecl;
+import com.sumologic.epigraph.schema.parser.psi.SchemaVarTagDecl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -82,7 +82,7 @@ public class SchemaLineMarkerProvider extends RelatedItemLineMarkerProvider {
     if (parent instanceof SchemaFieldDecl) {
       SchemaFieldDecl fieldDecl = (SchemaFieldDecl) parent;
 
-      List<SchemaFieldDecl> overridenFields = InheritedMembers.getOverridenFields(fieldDecl);
+      List<SchemaFieldDecl> overridenFields = TypeMembers.getOverridenFields(fieldDecl);
       if (!overridenFields.isEmpty()) {
         NavigationGutterIconBuilder<PsiElement> builder =
             NavigationGutterIconBuilder.create(SchemaPresentationUtil.OVERRIDING_FIELD_GUTTER_ICON)
@@ -93,7 +93,7 @@ public class SchemaLineMarkerProvider extends RelatedItemLineMarkerProvider {
         result.add(builder.createLineMarkerInfo(element));
       }
 
-      List<SchemaFieldDecl> overridingFields = InheritedMembers.getOverridingFields(fieldDecl);
+      List<SchemaFieldDecl> overridingFields = TypeMembers.getOverridingFields(fieldDecl);
       if (!overridingFields.isEmpty()) {
         NavigationGutterIconBuilder<PsiElement> builder =
             NavigationGutterIconBuilder.create(SchemaPresentationUtil.OVERRIDEN_FIELD_GUTTER_ICON)
@@ -105,10 +105,10 @@ public class SchemaLineMarkerProvider extends RelatedItemLineMarkerProvider {
       }
     }
 
-    if (parent instanceof SchemaVarTypeMemberDecl) {
-      SchemaVarTypeMemberDecl varTypeMemberDecl = (SchemaVarTypeMemberDecl) parent;
+    if (parent instanceof SchemaVarTagDecl) {
+      SchemaVarTagDecl varTagDecl = (SchemaVarTagDecl) parent;
 
-      List<SchemaVarTypeMemberDecl> overridenVarTypeMembers = InheritedMembers.getOverridenTags(varTypeMemberDecl);
+      List<SchemaVarTagDecl> overridenVarTypeMembers = TypeMembers.getOverridenTags(varTagDecl);
       if (!overridenVarTypeMembers.isEmpty()) {
         NavigationGutterIconBuilder<PsiElement> builder =
             NavigationGutterIconBuilder.create(SchemaPresentationUtil.OVERRIDING_TAG_GUTTER_ICON)
@@ -119,7 +119,7 @@ public class SchemaLineMarkerProvider extends RelatedItemLineMarkerProvider {
         result.add(builder.createLineMarkerInfo(element));
       }
 
-      List<SchemaVarTypeMemberDecl> overridingVarTypeMembers = InheritedMembers.getOverridingTags(varTypeMemberDecl);
+      List<SchemaVarTagDecl> overridingVarTypeMembers = TypeMembers.getOverridingTags(varTagDecl);
       if (!overridingVarTypeMembers.isEmpty()) {
         NavigationGutterIconBuilder<PsiElement> builder =
             NavigationGutterIconBuilder.create(SchemaPresentationUtil.OVERRIDEN_TAG_GUTTER_ICON)

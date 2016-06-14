@@ -140,14 +140,14 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     else if (t == S_TYPE_REF) {
       r = typeRef(b, 0);
     }
+    else if (t == S_VAR_TAG_DECL) {
+      r = varTagDecl(b, 0);
+    }
     else if (t == S_VAR_TYPE_BODY) {
       r = varTypeBody(b, 0);
     }
     else if (t == S_VAR_TYPE_DEF) {
       r = varTypeDef(b, 0);
-    }
-    else if (t == S_VAR_TYPE_MEMBER_DECL) {
-      r = varTypeMemberDecl(b, 0);
     }
     else {
       r = parse_root_(t, b, 0);
@@ -1737,6 +1737,29 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // typeMemberModifiers qid ':' typeRef varTypeMemberBody?
+  public static boolean varTagDecl(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "varTagDecl")) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, S_VAR_TAG_DECL, "<var tag decl>");
+    r = typeMemberModifiers(b, l + 1);
+    r = r && qid(b, l + 1);
+    r = r && consumeToken(b, S_COLON);
+    p = r; // pin = 3
+    r = r && report_error_(b, typeRef(b, l + 1));
+    r = p && varTagDecl_4(b, l + 1) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // varTypeMemberBody?
+  private static boolean varTagDecl_4(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "varTagDecl_4")) return false;
+    varTypeMemberBody(b, l + 1);
+    return true;
+  }
+
+  /* ********************************************************** */
   // '{' (varTypeBodyPart ','?)* '}'
   public static boolean varTypeBody(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "varTypeBody")) return false;
@@ -1782,12 +1805,12 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // varTypeMemberDecl | customParam
+  // varTagDecl | customParam
   static boolean varTypeBodyPart(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "varTypeBodyPart")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_);
-    r = varTypeMemberDecl(b, l + 1);
+    r = varTagDecl(b, l + 1);
     if (!r) r = customParam(b, l + 1);
     exit_section_(b, l, m, r, false, partRecover_parser_);
     return r;
@@ -1893,29 +1916,6 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     r = customParam(b, l + 1);
     exit_section_(b, l, m, r, false, partRecover_parser_);
     return r;
-  }
-
-  /* ********************************************************** */
-  // typeMemberModifiers qid ':' typeRef varTypeMemberBody?
-  public static boolean varTypeMemberDecl(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "varTypeMemberDecl")) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, S_VAR_TYPE_MEMBER_DECL, "<var type member decl>");
-    r = typeMemberModifiers(b, l + 1);
-    r = r && qid(b, l + 1);
-    r = r && consumeToken(b, S_COLON);
-    p = r; // pin = 3
-    r = r && report_error_(b, typeRef(b, l + 1));
-    r = p && varTypeMemberDecl_4(b, l + 1) && r;
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
-  }
-
-  // varTypeMemberBody?
-  private static boolean varTypeMemberDecl_4(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "varTypeMemberDecl_4")) return false;
-    varTypeMemberBody(b, l + 1);
-    return true;
   }
 
   /* ********************************************************** */

@@ -66,7 +66,7 @@ class SchemaStructureViewElement implements StructureViewTreeElement {
       SchemaVarTypeBody varTypeBody = ((SchemaVarTypeDef) element).getVarTypeBody();
       if (varTypeBody != null) {
         children.addAll(varTypeBody.getCustomParamList());
-        children.addAll(varTypeBody.getVarTypeMemberDeclList()); // SchemaVarTypeMemberDecl
+        children.addAll(varTypeBody.getVarTagDeclList()); // SchemaVarTagDecl
       }
     } else if (element instanceof SchemaEnumTypeDef) {
       SchemaEnumTypeBody enumTypeBody = ((SchemaEnumTypeDef) element).getEnumTypeBody();

@@ -34,7 +34,7 @@ interface SchemaBlockFactory {
           .put(S_PRIMITIVE_TYPE_BODY, TypeDefBodyBlock::new)
 
           .put(S_FIELD_DECL, TypeMemberDeclBlock::new)
-          .put(S_VAR_TYPE_MEMBER_DECL, TypeMemberDeclBlock::new)
+          .put(S_VAR_TAG_DECL, TypeMemberDeclBlock::new)
           .put(S_ENUM_MEMBER_DECL, TypeMemberDeclBlock::new)
 
           .put(S_EXTENDS_DECL, ExtendsBlock::new)

@@ -7,7 +7,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
 import com.intellij.navigation.ItemPresentation;
 
-public interface SchemaVarTypeMemberDecl extends CustomParamsHolder, PsiNamedElement {
+public interface SchemaVarTagDecl extends CustomParamsHolder, PsiNamedElement {
 
   @NotNull
   List<SchemaCustomParam> getCustomParamList();

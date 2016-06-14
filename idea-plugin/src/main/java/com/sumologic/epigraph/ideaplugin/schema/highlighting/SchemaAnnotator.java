@@ -10,7 +10,7 @@ import com.intellij.psi.ResolveResult;
 import com.sumologic.epigraph.schema.parser.psi.*;
 import com.sumologic.epigraph.ideaplugin.schema.brains.NamingConventions;
 import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.HierarchyCache;
-import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.InheritedMembers;
+import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.TypeMembers;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,13 +38,13 @@ public class SchemaAnnotator implements Annotator {
         }
 
         PsiElement override = fieldDecl.getOverride();
-        if (override != null && InheritedMembers.getOverridenFields(fieldDecl).isEmpty()) {
+        if (override != null && TypeMembers.getOverridenFields(fieldDecl).isEmpty()) {
           holder.createErrorAnnotation(override, "field overrides nothing");
         }
       }
 
       @Override
-      public void visitVarTypeMemberDecl(@NotNull SchemaVarTypeMemberDecl memberDecl) {
+      public void visitVarTagDecl(@NotNull SchemaVarTagDecl memberDecl) {
         PsiElement id = memberDecl.getId();
         setHighlighting(id, holder, SchemaSyntaxHighlighter.VAR_MEMBER);
 
@@ -53,7 +53,7 @@ public class SchemaAnnotator implements Annotator {
           holder.createErrorAnnotation(id, namingError);
 
         PsiElement override = memberDecl.getOverride();
-        if (override != null && InheritedMembers.getOverridenTags(memberDecl).isEmpty()) {
+        if (override != null && TypeMembers.getOverridenTags(memberDecl).isEmpty()) {
           holder.createErrorAnnotation(override, "tag overrides nothing");
         }
       }

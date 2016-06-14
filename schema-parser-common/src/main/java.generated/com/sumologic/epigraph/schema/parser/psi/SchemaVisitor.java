@@ -167,17 +167,17 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitVarTagDecl(@NotNull SchemaVarTagDecl o) {
+    visitCustomParamsHolder(o);
+    // visitPsiNamedElement(o);
+  }
+
   public void visitVarTypeBody(@NotNull SchemaVarTypeBody o) {
     visitCustomParamsHolder(o);
   }
 
   public void visitVarTypeDef(@NotNull SchemaVarTypeDef o) {
     visitTypeDef(o);
-  }
-
-  public void visitVarTypeMemberDecl(@NotNull SchemaVarTypeMemberDecl o) {
-    visitCustomParamsHolder(o);
-    // visitPsiNamedElement(o);
   }
 
   public void visitCustomParamsHolder(@NotNull CustomParamsHolder o) {
