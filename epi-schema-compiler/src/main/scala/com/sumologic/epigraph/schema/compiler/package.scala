@@ -92,7 +92,7 @@ package object compiler {
 
     override def render0(t: CField, c: Config): Iterator[String] = {
       pprint.Internals.handleChunks(
-        "" + t.name + ": «" + t.typeRef.name.name + "»", c, (c: Config) => Iterator(
+        "" + t.name + ": " + CTypeRefPrinter.render(t.typeRef, c).mkString, c, (c: Config) => Iterator(
           // TODO field attributes etc.
         )
       )
@@ -108,8 +108,8 @@ package object compiler {
     override def render0(@NotNull t: CMapType, c: Config): Iterator[String] = {
       pprint.Internals.handleChunks(
         "map " + t.name.name, c, (c: Config) => CTypePrinter.typeParts(t, c) ++ Iterator(
-          Iterator("keyType", t.keyTypeRef.name.name),
-          Iterator("valueType", t.valueTypeRef.name.name)
+          Iterator("keyType: ") ++ CTypeRefPrinter.render(t.keyTypeRef, c),
+          Iterator("valueType: ") ++ CTypeRefPrinter.render(t.valueTypeRef, c)
         )
       )
     }

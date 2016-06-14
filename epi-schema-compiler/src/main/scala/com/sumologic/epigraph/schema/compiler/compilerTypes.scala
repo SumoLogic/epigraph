@@ -79,11 +79,11 @@ class CMapTypeName(csf: CSchemaFile, val psi: SchemaAnonMap)(implicit ctx: CCont
   "map[" + keyTypeRef.name.name + "," + valueTypeRef.name.name + "]"
 ) {
 
-  if (keyTypeRef.name.name == "epigraph.String") {
-    val lnu = new LineNumberUtil(csf.psi.getText, 4)
-    val off = psi.getTextRange.getStartOffset
-    println("Error: " + lnu.line(off) + ":" + lnu.column(off))
-  } else println("KOOL")
+//  if (keyTypeRef.name.name == "epigraph.String") {
+//    val lnu = new LineNumberUtil(csf.psi.getText, 4)
+//    val off = psi.getTextRange.getStartOffset
+//    println("Error: " + lnu.line(off) + ":" + lnu.column(off))
+//  } else println("KOOL")
 
 }
 
