@@ -18,8 +18,8 @@
   <inceptionYear>2016</inceptionYear>
 
   <scm>
-    <url>https://github.com/SumoLogic/sumo-platform</url>
-    <connection>git@github.com:SumoLogic/sumo-platform.git</connection>
+    <url>https://github.com/SumoLogic/epigraph</url>
+    <connection>git@github.com:SumoLogic/epigraph.git</connection>
   </scm>
 
   <modules>

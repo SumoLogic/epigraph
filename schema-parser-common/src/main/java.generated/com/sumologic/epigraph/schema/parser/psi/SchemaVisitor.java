@@ -172,6 +172,10 @@ public class SchemaVisitor extends PsiElementVisitor {
     // visitPsiNamedElement(o);
   }
 
+  public void visitVarTagRef(@NotNull SchemaVarTagRef o) {
+    visitPsiNameIdentifierOwner(o);
+  }
+
   public void visitVarTypeBody(@NotNull SchemaVarTypeBody o) {
     visitCustomParamsHolder(o);
   }

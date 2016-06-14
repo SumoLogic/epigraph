@@ -13,4 +13,9 @@ public class SchemaReferenceFactory {
   public static PsiReference getFqnReference(@NotNull SchemaFqnSegment segment) {
     return null;
   }
+
+  @Nullable
+  public static PsiReference getVarTagReference(@NotNull SchemaVarTagRef varTagRef) {
+    return null;
+  }
 }

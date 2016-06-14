@@ -106,6 +106,10 @@ fqn ::= fqnSegment ('.' fqnSegment)* { methods=[getFqn] }
 private typeName ::= qid
 typeRef ::= fqnTypeRef | anonList | anonMap {name="type"}
 fqnTypeRef ::= fqn { methods=[resolve] extends="typeRef" }
+varTagRef ::= qid {
+  implements="com.intellij.psi.PsiNameIdentifierOwner"
+  methods=[setName getNameIdentifier getReference]
+}
 
 defs ::= def*
 private def ::= typeDefWrapper | supplementDef {recoverWhile="declRecover"}
@@ -126,7 +130,7 @@ anonMap ::= 'map' '[' typeRef ',' typeRef defaultOverride? ']' {pin=1 extends="t
 extendsDecl ::= 'extends' typeRef (',' typeRef)* {pin=1}
 supplementsDecl ::= 'supplements' fqnTypeRef (',' fqnTypeRef)* {pin=1}
 
-defaultOverride ::= 'nodefault' | 'default' qid
+defaultOverride ::= 'nodefault' | 'default' varTagRef
 customParam ::= qid '=' dataValue {
   name="custom attribute"
   implements="com.intellij.psi.PsiNamedElement"
@@ -148,7 +152,7 @@ private varTypeBodyPart ::= varTagDecl | customParam
 varTagDecl ::= typeMemberModifiers qid ':' typeRef varTypeMemberBody? { // TODO rename to varTag
   implements=["com.sumologic.epigraph.schema.parser.psi.CustomParamsHolder" "com.intellij.psi.PsiNamedElement"]
   extends="com.sumologic.epigraph.schema.parser.psi.impl.CustomParamHolderImpl"
-  methods=[getName setName getNameIdentifier getPresentation]
+  methods=[getName setName getNameIdentifier getPresentation getVarTypeDef]
   pin=3
 }
 private varTypeMemberBody ::= '{' (varTypeMemberBodyPart ','?)* '}'
@@ -166,7 +170,7 @@ private recordBodyPart ::= fieldDecl | customParam
 fieldDecl ::= typeMemberModifiers qid ':' typeRef defaultOverride? fieldBody? {
   implements=["com.sumologic.epigraph.schema.parser.psi.CustomParamsHolder" "com.intellij.psi.PsiNamedElement"]
   extends="com.sumologic.epigraph.schema.parser.psi.impl.CustomParamHolderImpl"
-  methods=[getName setName getNameIdentifier getPresentation]
+  methods=[getName setName getNameIdentifier getPresentation getRecordTypeDef]
   pin=3
 }
 private fieldBody ::= '{' (fieldBodyPart ','?)* '}'

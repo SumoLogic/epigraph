@@ -37,15 +37,6 @@ public class ReferenceTest extends LightCodeInsightFixtureTestCase {
     checkReference(element.getParent().getReference(), "namespace foo");
   }
 
-  private void checkReference(PsiReference reference, String text) {
-    assertNotNull(reference);
-    PsiElement target = reference.resolve();
-    assertNotNull(target);
-    String actualText = target instanceof PsiNamedElement ? ((PsiNamedElement) target).getName() : target.getText();
-    assertEquals(text, actualText);
-    assertTrue(reference.isReferenceTo(target));
-  }
-
   @SuppressWarnings("ConstantConditions")
   public void testMultiNsRef() {
     myFixture.configureByFiles("MultiNamespaceRef.epi_schema", "foobar.epi_schema", "foobaz.epi_schema");
@@ -62,5 +53,24 @@ public class ReferenceTest extends LightCodeInsightFixtureTestCase {
     assertEquals(2, variants.size());
     assertTrue(variants.contains("namespace foo.bar"));
     assertTrue(variants.contains("namespace foo.baz"));
+  }
+
+  public void testVarTagRef() {
+    PsiReference reference = myFixture.getReferenceAtCaretPosition("VarTagRef.epi_schema");
+    checkReference(reference, "tag1");
+
+    reference = myFixture.getReferenceAtCaretPosition("VarTagRef2.epi_schema");
+    checkReference(reference, "tag1");
+  }
+
+  ////////////////////////////////
+
+  private void checkReference(PsiReference reference, String text) {
+    assertNotNull(reference);
+    PsiElement target = reference.resolve();
+    assertNotNull(target);
+    String actualText = target instanceof PsiNamedElement ? ((PsiNamedElement) target).getName() : target.getText();
+    assertEquals(text, actualText);
+    assertTrue(reference.isReferenceTo(target));
   }
 }

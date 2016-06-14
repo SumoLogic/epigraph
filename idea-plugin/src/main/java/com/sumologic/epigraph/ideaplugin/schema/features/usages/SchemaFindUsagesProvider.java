@@ -27,7 +27,7 @@ public class SchemaFindUsagesProvider implements FindUsagesProvider {
 
   @Override
   public boolean canFindUsagesFor(@NotNull PsiElement psiElement) {
-    // TODO Support multi aliases, and later fields used by projections
+    // TODO Support vartype tags, and later fields used by projections
 
     if (psiElement instanceof SchemaTypeDef) {
       SchemaTypeDef element = (SchemaTypeDef) psiElement;
@@ -37,6 +37,11 @@ public class SchemaFindUsagesProvider implements FindUsagesProvider {
     if (psiElement instanceof SchemaFqnSegment) {
       SchemaFqnSegment fqnSegment = (SchemaFqnSegment) psiElement;
       return fqnSegment.getName() != null;
+    }
+
+    if (psiElement instanceof SchemaVarTagDecl) {
+      SchemaVarTagDecl varTagDecl = (SchemaVarTagDecl) psiElement;
+      return varTagDecl.getName() != null;
     }
 
     return false;

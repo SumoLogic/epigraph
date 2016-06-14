@@ -10,15 +10,16 @@ import com.intellij.psi.util.PsiTreeUtil;
 import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.sumologic.epigraph.schema.parser.psi.*;
+import com.intellij.psi.PsiReference;
 
-public class SchemaDefaultOverrideImpl extends ASTWrapperPsiElement implements SchemaDefaultOverride {
+public class SchemaVarTagRefImpl extends ASTWrapperPsiElement implements SchemaVarTagRef {
 
-  public SchemaDefaultOverrideImpl(ASTNode node) {
+  public SchemaVarTagRefImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull SchemaVisitor visitor) {
-    visitor.visitDefaultOverride(this);
+    visitor.visitVarTagRef(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -27,21 +28,23 @@ public class SchemaDefaultOverrideImpl extends ASTWrapperPsiElement implements S
   }
 
   @Override
-  @Nullable
-  public SchemaVarTagRef getVarTagRef() {
-    return PsiTreeUtil.getChildOfType(this, SchemaVarTagRef.class);
+  @NotNull
+  public PsiElement getId() {
+    return notNullChild(findChildByType(S_ID));
   }
 
-  @Override
-  @Nullable
-  public PsiElement getDefault() {
-    return findChildByType(S_DEFAULT);
+  public PsiElement setName(String name) {
+    return SchemaPsiImplUtil.setName(this, name);
   }
 
-  @Override
   @Nullable
-  public PsiElement getNodefault() {
-    return findChildByType(S_NODEFAULT);
+  public PsiElement getNameIdentifier() {
+    return SchemaPsiImplUtil.getNameIdentifier(this);
+  }
+
+  @Nullable
+  public PsiReference getReference() {
+    return SchemaPsiImplUtil.getReference(this);
   }
 
 }

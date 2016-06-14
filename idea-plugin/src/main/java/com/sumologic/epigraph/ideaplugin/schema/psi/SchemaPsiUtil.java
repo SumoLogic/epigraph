@@ -1,6 +1,5 @@
 package com.sumologic.epigraph.ideaplugin.schema.psi;
 
-import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;
@@ -102,14 +101,6 @@ public class SchemaPsiUtil {
     //noinspection ConfusingArgumentToVarargsMethod
     if (PsiTreeUtil.instanceOf(element, classes)) return element;
     return PsiTreeUtil.getParentOfType(element, classes);
-  }
-
-  @Nullable
-  public static TextRange getQidTextRange(PsiElement qid) {
-    String text = qid.getText();
-    if (text.startsWith("`") && text.endsWith("`"))
-      return new TextRange(1, text.length() - 2);
-    else return null;
   }
 
   public interface ElementQualifier {

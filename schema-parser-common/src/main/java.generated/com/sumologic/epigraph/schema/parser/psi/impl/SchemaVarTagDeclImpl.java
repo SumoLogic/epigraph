@@ -93,4 +93,9 @@ public class SchemaVarTagDeclImpl extends CustomParamHolderImpl implements Schem
     return SchemaPsiImplUtil.getPresentation(this);
   }
 
+  @NotNull
+  public SchemaVarTypeDef getVarTypeDef() {
+    return SchemaPsiImplUtil.getVarTypeDef(this);
+  }
+
 }

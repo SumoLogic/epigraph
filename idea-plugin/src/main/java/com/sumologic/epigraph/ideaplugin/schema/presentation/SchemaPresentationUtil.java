@@ -142,7 +142,7 @@ public class SchemaPresentationUtil {
       return "supplement " + name;
     }
 
-    return "Unknown getElement: " + element.getClass();
+    return "(getPresentableText) Unknown element: " + element.getClass();
   }
 
   @NotNull
@@ -185,8 +185,10 @@ public class SchemaPresentationUtil {
     if (element instanceof SchemaRecordTypeDef) return "Record type";
     if (element instanceof SchemaMapTypeDef) return "Map type";
     if (element instanceof SchemaFqnSegment) return "Namespace";
+    if (element instanceof SchemaVarTagDecl) return "Var tag";
+    if (element instanceof SchemaFieldDecl) return "Record field";
 
-    return "Unknown getElement: " + element;
+    return "(getType) Unknown element: " + element;
   }
 
   @NotNull

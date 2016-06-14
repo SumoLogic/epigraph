@@ -296,6 +296,13 @@ public class SchemaPsiImplUtil {
     return SchemaPsiImplUtilExt.getPresentation(fieldDecl);
   }
 
+  @NotNull
+  public static SchemaRecordTypeDef getRecordTypeDef(@NotNull SchemaFieldDecl fieldDecl) {
+    SchemaRecordTypeDef recordTypeDef = PsiTreeUtil.getParentOfType(fieldDecl, SchemaRecordTypeDef.class);
+    assert recordTypeDef != null;
+    return recordTypeDef;
+  }
+
   // varTypeMember decl
 
   @Contract(pure = true)
@@ -320,6 +327,33 @@ public class SchemaPsiImplUtil {
   @NotNull
   public static ItemPresentation getPresentation(@NotNull SchemaVarTagDecl varTagDecl) {
     return SchemaPsiImplUtilExt.getPresentation(varTagDecl);
+  }
+
+  @NotNull
+  public static SchemaVarTypeDef getVarTypeDef(@NotNull SchemaVarTagDecl varTagDecl) {
+    SchemaVarTypeDef varTypeDef = PsiTreeUtil.getParentOfType(varTagDecl, SchemaVarTypeDef.class);
+    assert varTypeDef != null;
+    return varTypeDef;
+  }
+
+  // vartype default ref
+
+  @Contract(pure = true)
+  @Nullable
+  public static PsiReference getReference(@NotNull SchemaVarTagRef varTagRef) {
+    return SchemaReferenceFactory.getVarTagReference(varTagRef);
+  }
+
+  @Contract(pure = true)
+  @Nullable
+  public static PsiElement getNameIdentifier(@NotNull SchemaVarTagRef varTagRef) {
+    return varTagRef.getId();
+  }
+
+  public static PsiElement setName(SchemaVarTagRef varTagRef, String name) {
+    PsiElement oldId = varTagRef.getId();
+    PsiElement newId = SchemaElementFactory.createId(varTagRef.getProject(), name);
+    return oldId.replace(newId);
   }
 
   // enumMember decl

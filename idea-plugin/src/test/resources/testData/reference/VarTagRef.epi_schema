@@ -1,0 +1,8 @@
+namespace some
+
+record X
+
+vartype V1 default tag<caret>1 {
+  tag1: X
+}
+

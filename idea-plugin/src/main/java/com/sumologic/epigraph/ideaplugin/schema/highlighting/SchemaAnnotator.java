@@ -6,6 +6,7 @@ import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiPolyVariantReference;
+import com.intellij.psi.PsiReference;
 import com.intellij.psi.ResolveResult;
 import com.sumologic.epigraph.schema.parser.psi.*;
 import com.sumologic.epigraph.ideaplugin.schema.brains.NamingConventions;
@@ -60,9 +61,11 @@ public class SchemaAnnotator implements Annotator {
 
       @Override
       public void visitDefaultOverride(@NotNull SchemaDefaultOverride defaultOverride) {
-        PsiElement id = defaultOverride.getId();
-        if (id != null)
+        SchemaVarTagRef varTagRef = defaultOverride.getVarTagRef();
+        if (varTagRef != null) {
+          PsiElement id = varTagRef.getId();
           setHighlighting(id, holder, SchemaSyntaxHighlighter.VAR_MEMBER);
+        }
       }
 
       @Override
@@ -141,7 +144,12 @@ public class SchemaAnnotator implements Annotator {
 
       @Override
       public void visitFqnTypeRef(@NotNull SchemaFqnTypeRef typeRef) {
-        highlightTyperef(typeRef, holder);
+        SchemaFqn fqn = typeRef.getFqn();
+        highlightFqn(fqn, holder);
+
+        if (typeRef.resolve() == null) {
+          holder.createErrorAnnotation(typeRef.getNode(), "Unresolved reference");
+        }
       }
 
       @Override
@@ -149,6 +157,14 @@ public class SchemaAnnotator implements Annotator {
         PsiElement parent = fqn.getParent();
         if (parent.getNode().getElementType() != S_TYPE_REF) {
           highlightFqn(fqn, holder);
+        }
+      }
+
+      @Override
+      public void visitVarTagRef(@NotNull SchemaVarTagRef tagRef) {
+        PsiReference reference = tagRef.getReference();
+        if (reference == null || reference.resolve() == null) {
+          holder.createErrorAnnotation(tagRef.getNode(), "Unresolved reference");
         }
       }
     });
@@ -165,17 +181,6 @@ public class SchemaAnnotator implements Annotator {
 //  private void testExtends(@NotNull SchemaTypeDefElement typeDef, @NotNull SchemaTypeDef parent) {
 //    // TODO
 //  }
-
-  private void highlightTyperef(@Nullable SchemaFqnTypeRef typeRef, @NotNull AnnotationHolder holder) {
-    if (typeRef != null) {
-      SchemaFqn fqn = typeRef.getFqn();
-      highlightFqn(fqn, holder);
-
-      if (typeRef.resolve() == null) {
-        holder.createErrorAnnotation(typeRef.getNode(), "Unresolved reference");
-      }
-    }
-  }
 
   private void highlightFqn(@Nullable SchemaFqn schemaFqn, @NotNull AnnotationHolder holder) {
     if (schemaFqn != null) {

@@ -99,4 +99,9 @@ public class SchemaFieldDeclImpl extends CustomParamHolderImpl implements Schema
     return SchemaPsiImplUtil.getPresentation(this);
   }
 
+  @NotNull
+  public SchemaRecordTypeDef getRecordTypeDef() {
+    return SchemaPsiImplUtil.getRecordTypeDef(this);
+  }
+
 }

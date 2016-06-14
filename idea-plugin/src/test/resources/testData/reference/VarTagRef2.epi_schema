@@ -1,0 +1,11 @@
+namespace some
+
+record X
+
+vartype V1 nodefault {
+  tag1: X
+}
+
+vartype V2 extends V1 default tag<caret>1 {
+  tag2: X
+}

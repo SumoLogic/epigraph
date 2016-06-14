@@ -8,6 +8,7 @@ import com.intellij.usages.impl.rules.UsageTypeProvider;
 import com.sumologic.epigraph.schema.parser.psi.SchemaFile;
 import com.sumologic.epigraph.schema.parser.psi.SchemaFqnSegment;
 import com.sumologic.epigraph.schema.parser.psi.SchemaImportStatement;
+import com.sumologic.epigraph.schema.parser.psi.SchemaVarTagRef;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -28,9 +29,13 @@ public class SchemaUsageTypeProvider implements UsageTypeProvider {
       return TYPE_REF_USAGE_TYPE; // be more precise: extends, list getElement type etc ?
     }
 
+    if (PsiTreeUtil.getParentOfType(element, SchemaVarTagRef.class) != null)
+      return VAR_TAG_USAGE_TYPE;
+
     return null;
   }
 
   private static final UsageType TYPE_REF_USAGE_TYPE = new UsageType("Type reference");
   private static final UsageType IMPORT_USAGE_TYPE = new UsageType("Import statement");
+  private static final UsageType VAR_TAG_USAGE_TYPE = new UsageType("Default override");
 }

@@ -50,8 +50,6 @@
 
     <completion.contributor language="epi_schema"
                             implementationClass="com.sumologic.epigraph.ideaplugin.schema.features.completion.SchemaCompletionContributor"/>
-    <!--<psi.referenceContributor language="epi_schema"-->
-    <!--implementation="com.sumologic.dohyo.plugin.schema.psi.references.SchemaTypeReferenceContributor"/>-->
 
     <lang.formatter language="epi_schema"
                     implementationClass="com.sumologic.epigraph.ideaplugin.schema.formatting.SchemaFormattingModelBuilder"/>

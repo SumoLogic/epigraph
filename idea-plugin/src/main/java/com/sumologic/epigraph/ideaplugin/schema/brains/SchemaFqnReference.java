@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
- * @see <a href="https://github.com/SumoLogic/sumo-platform/wiki/References%20implementation#reference-resolution-algorithm">Reference resolution algorithm</a>
+ * @see <a href="https://github.com/SumoLogic/epigraph/wiki/References%20implementation#reference-resolution-algorithm">Reference resolution algorithm</a>
  */
 public class SchemaFqnReference extends PsiReferenceBase<SchemaFqnSegment> implements PsiPolyVariantReference {
   private final SchemaFqnReferenceResolver resolver;

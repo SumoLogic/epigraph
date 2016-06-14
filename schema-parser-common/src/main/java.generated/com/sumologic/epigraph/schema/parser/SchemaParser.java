@@ -143,6 +143,9 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     else if (t == S_VAR_TAG_DECL) {
       r = varTagDecl(b, 0);
     }
+    else if (t == S_VAR_TAG_REF) {
+      r = varTagRef(b, 0);
+    }
     else if (t == S_VAR_TYPE_BODY) {
       r = varTypeBody(b, 0);
     }
@@ -602,7 +605,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'nodefault' | 'default' qid
+  // 'nodefault' | 'default' varTagRef
   public static boolean defaultOverride(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "defaultOverride")) return false;
     if (!nextTokenIs(b, "<default override>", S_DEFAULT, S_NODEFAULT)) return false;
@@ -614,13 +617,13 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // 'default' qid
+  // 'default' varTagRef
   private static boolean defaultOverride_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "defaultOverride_1")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, S_DEFAULT);
-    r = r && qid(b, l + 1);
+    r = r && varTagRef(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -1757,6 +1760,18 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(b, l, "varTagDecl_4")) return false;
     varTypeMemberBody(b, l + 1);
     return true;
+  }
+
+  /* ********************************************************** */
+  // qid
+  public static boolean varTagRef(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "varTagRef")) return false;
+    if (!nextTokenIs(b, "<var tag ref>", S_BACKTICK, S_ID)) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, S_VAR_TAG_REF, "<var tag ref>");
+    r = qid(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
   }
 
   /* ********************************************************** */

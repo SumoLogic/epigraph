@@ -47,4 +47,7 @@ public interface SchemaFieldDecl extends CustomParamsHolder, PsiNamedElement {
   @NotNull
   ItemPresentation getPresentation();
 
+  @NotNull
+  SchemaRecordTypeDef getRecordTypeDef();
+
 }

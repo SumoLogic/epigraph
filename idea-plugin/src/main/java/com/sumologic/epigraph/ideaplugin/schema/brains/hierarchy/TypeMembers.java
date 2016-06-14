@@ -4,10 +4,11 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.sumologic.epigraph.schema.parser.psi.*;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -18,42 +19,50 @@ public class TypeMembers {
   @NotNull
   public static List<SchemaFieldDecl> getOverridenFields(@NotNull SchemaFieldDecl fieldDecl) {
     Project project = fieldDecl.getProject();
-    return getSameNameFields(fieldDecl, typeDef -> HierarchyCache.getHierarchyCache(project).getTypeParents(typeDef));
+    return getSameNameFields(fieldDecl, HierarchyCache.getHierarchyCache(project).getTypeParents(fieldDecl.getRecordTypeDef()));
   }
 
   @NotNull
   public static List<SchemaFieldDecl> getOverridingFields(@NotNull SchemaFieldDecl fieldDecl) {
     final HierarchyCache hierarchyCache = HierarchyCache.getHierarchyCache(fieldDecl.getProject());
-    return getSameNameFields(fieldDecl, hierarchyCache::getTypeInheritors);
+    return getSameNameFields(fieldDecl, hierarchyCache.getTypeInheritors(fieldDecl.getRecordTypeDef()));
   }
 
   @NotNull
   public static List<SchemaVarTagDecl> getOverridenTags(@NotNull SchemaVarTagDecl varTagDecl) {
     final HierarchyCache hierarchyCache = HierarchyCache.getHierarchyCache(varTagDecl.getProject());
-    return getSameNameTags(varTagDecl, hierarchyCache::getTypeParents);
+    return getSameNameTags(varTagDecl, hierarchyCache.getTypeParents(varTagDecl.getVarTypeDef()));
   }
 
   @NotNull
   public static List<SchemaVarTagDecl> getOverridingTags(@NotNull SchemaVarTagDecl varTagDecl) {
     Project project = varTagDecl.getProject();
-    return getSameNameTags(varTagDecl, typeDef -> HierarchyCache.getHierarchyCache(project).getTypeInheritors(typeDef));
+    return getSameNameTags(varTagDecl, HierarchyCache.getHierarchyCache(project).getTypeInheritors(varTagDecl.getVarTypeDef()));
   }
 
   @NotNull
-  public static List<SchemaFieldDecl> getFieldDecls(@NotNull SchemaTypeDef hostType, @NotNull String fieldName) {
-    final HierarchyCache hierarchyCache = HierarchyCache.getHierarchyCache(hostType.getProject());
-    return getFieldDecls(hostType, fieldName, hierarchyCache::getTypeParents);
+  public static List<SchemaFieldDecl> getFieldDecls(@NotNull SchemaTypeDef hostType, @Nullable String fieldName) {
+    return getFieldDecls(hostType, fieldName, getTypeAndParents(hostType));
   }
 
   @NotNull
-  public static List<SchemaVarTagDecl> getVarTagDecls(@NotNull SchemaTypeDef hostType, @NotNull String tagName) {
-    final HierarchyCache hierarchyCache = HierarchyCache.getHierarchyCache(hostType.getProject());
-    return getVarTagDecls(hostType, tagName, hierarchyCache::getTypeParents);
+  public static List<SchemaVarTagDecl> getVarTagDecls(@NotNull SchemaTypeDef hostType, @Nullable String tagName) {
+    return getVarTagDecls(hostType, tagName, getTypeAndParents(hostType));
+  }
+
+  private static List<SchemaTypeDef> getTypeAndParents(@NotNull SchemaTypeDef typeDef) {
+    final HierarchyCache hierarchyCache = HierarchyCache.getHierarchyCache(typeDef.getProject());
+    List<SchemaTypeDef> parents = hierarchyCache.getTypeParents(typeDef);
+    if (parents.isEmpty()) return Collections.singletonList(typeDef);
+    final ArrayList<SchemaTypeDef> res = new ArrayList<>(parents.size() + 1);
+    res.add(typeDef);
+    res.addAll(parents);
+    return res;
   }
 
   @NotNull
   private static List<SchemaFieldDecl> getSameNameFields(@NotNull SchemaFieldDecl fieldDecl,
-                                                         @NotNull Function<SchemaTypeDef, List<SchemaTypeDef>> typesProvider) {
+                                                         @NotNull List<SchemaTypeDef> types) {
     final String fieldName = fieldDecl.getName();
     if (fieldName == null) return Collections.emptyList();
 
@@ -63,22 +72,21 @@ public class TypeMembers {
     SchemaTypeDef typeDef = (SchemaTypeDef) body.getParent();
     if (typeDef == null) return Collections.emptyList();
 
-    return getFieldDecls(typeDef, fieldName, typesProvider);
+    return getFieldDecls(typeDef, fieldName, types);
   }
 
   private static List<SchemaFieldDecl> getFieldDecls(@NotNull SchemaTypeDef typeDef,
-                                                     @NotNull String fieldName,
-                                                     @NotNull Function<SchemaTypeDef, List<SchemaTypeDef>> typesProvider) {
-    List<SchemaTypeDef> parents = typesProvider.apply(typeDef);
-    if (parents.isEmpty()) return Collections.emptyList();
+                                                     @Nullable String fieldName,
+                                                     @NotNull List<SchemaTypeDef> types) {
+    if (types.isEmpty()) return Collections.emptyList();
 
-    return parents.stream()
-        .filter(parent -> parent instanceof SchemaRecordTypeDef)
-        .flatMap(parent -> {
-          SchemaRecordTypeDef recordTypeDef = (SchemaRecordTypeDef) parent;
+    return types.stream()
+        .filter(type -> type instanceof SchemaRecordTypeDef)
+        .flatMap(type -> {
+          SchemaRecordTypeDef recordTypeDef = (SchemaRecordTypeDef) type;
           SchemaRecordTypeBody recordTypeBody = recordTypeDef.getRecordTypeBody();
           if (recordTypeBody != null) {
-            return recordTypeBody.getFieldDeclList().stream().filter(f -> fieldName.equals(f.getName()));
+            return recordTypeBody.getFieldDeclList().stream().filter(f -> fieldName == null || fieldName.equals(f.getName()));
           } else {
             return Stream.empty();
           }
@@ -88,7 +96,7 @@ public class TypeMembers {
 
   @NotNull
   private static List<SchemaVarTagDecl> getSameNameTags(@NotNull SchemaVarTagDecl varTagDecl,
-                                                               @NotNull Function<SchemaTypeDef, List<SchemaTypeDef>> typesProvider) {
+                                                        @NotNull List<SchemaTypeDef> types) {
     final String varTypeMemberName = varTagDecl.getName();
     if (varTypeMemberName == null) return Collections.emptyList();
 
@@ -98,22 +106,21 @@ public class TypeMembers {
     SchemaTypeDef typeDef = (SchemaTypeDef) body.getParent();
     if (typeDef == null) return Collections.emptyList();
 
-    return getVarTagDecls(typeDef, varTypeMemberName, typesProvider);
+    return getVarTagDecls(typeDef, varTypeMemberName, types);
   }
 
   private static List<SchemaVarTagDecl> getVarTagDecls(@NotNull SchemaTypeDef typeDef,
-                                                                     @NotNull String varTypeMemberName,
-                                                                     @NotNull Function<SchemaTypeDef, List<SchemaTypeDef>> typesProvider) {
-    List<SchemaTypeDef> parents = typesProvider.apply(typeDef);
-    if (parents.isEmpty()) return Collections.emptyList();
+                                                       @Nullable String varTagName,
+                                                       @NotNull List<SchemaTypeDef> types) {
+    if (types.isEmpty()) return Collections.emptyList();
 
-    return parents.stream()
-        .filter(parent -> parent instanceof SchemaVarTypeDef)
-        .flatMap(parent -> {
-          SchemaVarTypeDef varTypeDef = (SchemaVarTypeDef) parent;
+    return types.stream()
+        .filter(type -> type instanceof SchemaVarTypeDef)
+        .flatMap(type -> {
+          SchemaVarTypeDef varTypeDef = (SchemaVarTypeDef) type;
           SchemaVarTypeBody varTypeBody = varTypeDef.getVarTypeBody();
           if (varTypeBody != null) {
-            return varTypeBody.getVarTagDeclList().stream().filter(f -> varTypeMemberName.equals(f.getName()));
+            return varTypeBody.getVarTagDeclList().stream().filter(f -> varTagName == null || varTagName.equals(f.getName()));
           } else {
             return Stream.empty();
           }

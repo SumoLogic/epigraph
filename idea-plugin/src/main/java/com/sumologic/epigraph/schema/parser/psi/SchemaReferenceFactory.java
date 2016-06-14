@@ -5,6 +5,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.sumologic.epigraph.ideaplugin.schema.brains.NamespaceManager;
 import com.sumologic.epigraph.ideaplugin.schema.brains.SchemaFqnReference;
 import com.sumologic.epigraph.ideaplugin.schema.brains.SchemaFqnReferenceResolver;
+import com.sumologic.epigraph.ideaplugin.schema.brains.SchemaVarTagReference;
 import com.sumologic.epigraph.schema.parser.Fqn;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -16,7 +17,7 @@ import static com.sumologic.epigraph.ideaplugin.schema.brains.NamespaceManager.g
 
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
- * @see <a href="https://github.com/SumoLogic/sumo-platform/wiki/References%20implementation#reference-resolution-algorithm">Reference resolution algorithm</a>
+ * @see <a href="https://github.com/SumoLogic/epigraph/wiki/References%20implementation#reference-resolution-algorithm">Reference resolution algorithm</a>
  */
 public class SchemaReferenceFactory {
   @Nullable
@@ -65,11 +66,17 @@ public class SchemaReferenceFactory {
       prefixes.add(Fqn.EMPTY);
     }
 
-    // deduplicate
+    // deduplicate, preserving order
     Set<Fqn> dedupPrefixes = new LinkedHashSet<>(prefixes);
     prefixes.clear();
     prefixes.addAll(dedupPrefixes);
 
     return new SchemaFqnReferenceResolver(prefixes, fqn);
+  }
+
+  @Nullable
+  public static PsiReference getVarTagReference(@NotNull SchemaVarTagRef varTagRef) {
+    SchemaVarTypeDef varTypeDef = PsiTreeUtil.getParentOfType(varTagRef, SchemaVarTypeDef.class);
+    return varTypeDef == null ? null : new SchemaVarTagReference(varTypeDef, varTagRef.getId());
   }
 }
