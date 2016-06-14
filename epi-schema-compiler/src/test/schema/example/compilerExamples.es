@@ -9,3 +9,10 @@ import epigraph.Boolean
 map[String, Integer] StringToIntegerMap {
 
 }
+
+record Foo123 {
+
+  `map`: map[String, Long]
+  `list`: list[map[list[Integer],list[String]]]
+
+}

@@ -70,13 +70,22 @@ class CListTypeName(csf: CSchemaFile, psi: SchemaAnonList)(implicit ctx: CContex
 
 class CMapTypeName(csf: CSchemaFile, val psi: SchemaAnonMap)(implicit ctx: CContext) extends {
 
+
   val keyTypeRef: CTypeRef = new CTypeRef(csf, psi.getTypeRefList.head)
 
   val valueTypeRef: CTypeRef = new CTypeRef(csf, psi.getTypeRefList.last)
 
 } with CTypeName(
   "map[" + keyTypeRef.name.name + "," + valueTypeRef.name.name + "]"
-)
+) {
+
+  if (keyTypeRef.name.name == "epigraph.String") {
+    val lnu = new LineNumberUtil(csf.psi.getText, 4)
+    val off = psi.getTextRange.getStartOffset
+    println("Error: " + lnu.line(off) + ":" + lnu.column(off))
+  } else println("KOOL")
+
+}
 
 
 class CType(val csf: CSchemaFile, val psi: SchemaTypeDef)
@@ -198,3 +207,10 @@ class CPrimitiveType(csf: CSchemaFile, override val psi: SchemaPrimitiveTypeDef)
 
 }
 
+class CSupplement(csf: CSchemaFile, val psi: SchemaSupplementDef)(implicit val ctx: CContext) {
+
+  val source: CTypeRef = new CTypeRef(csf, psi.sourceRef())
+
+  val targets: Seq[CTypeRef] = psi.supplementedRefs().map(new CTypeRef(csf, _))
+
+}

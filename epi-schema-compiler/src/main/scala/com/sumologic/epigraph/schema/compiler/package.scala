@@ -9,7 +9,7 @@ package object compiler {
 
   implicit object CTypeRefPrinter extends PPrinter[CTypeRef] {
 
-    override def render0(t: CTypeRef, c: Config): Iterator[String] = Iterator(t.name.name)
+    override def render0(t: CTypeRef, c: Config): Iterator[String] = Iterator("«", t.name.name, "»")
 
   }
 
@@ -30,14 +30,14 @@ package object compiler {
       }
     }
 
-    def typeParts(@NotNull t: CType, cfg: Config): Iterator[Iterator[String]] = Iterator(
+    def typeParts(@NotNull t: CType, c: Config): Iterator[Iterator[String]] = Iterator(
       pprint.Internals.handleChunks(
-        "extends: ", cfg,
-        (c0: Config) => t.declaredSupertypeRefs.toIterator.map(implicitly[PPrint[CTypeRef]].pprinter.render(_, c0))
+        "extends", c,
+        (c: Config) => t.declaredSupertypeRefs.toIterator.map(implicitly[PPrint[CTypeRef]].pprinter.render(_, c))
       ),
       pprint.Internals.handleChunks(
-        "supplements: ", cfg,
-        (c0: Config) => t.declaredSupplementees.toIterator.map(implicitly[PPrint[CTypeRef]].pprinter.render(_, c0))
+        "supplements", c,
+        (c: Config) => t.declaredSupplementees.toIterator.map(implicitly[PPrint[CTypeRef]].pprinter.render(_, c))
       )
     )
 
@@ -46,9 +46,9 @@ package object compiler {
   implicit object CVarTypePrinter extends PPrinter[CVarType] {
 
     override def render0(@NotNull t: CVarType, c: Config): Iterator[String] = {
-      def body = (cfg: Config) => CTypePrinter.typeParts(t, cfg) ++ Iterator(
+      def body = (c: Config) => CTypePrinter.typeParts(t, c) ++ Iterator(
         pprint.Internals.handleChunks(
-          "tags: ", cfg, (c0: Config) => t.declaredTags.toIterator.map(CTagPrinter.render(_, c0))
+          "tags", c, (c: Config) => t.declaredTags.toIterator.map(CTagPrinter.render(_, c))
         )
       )
       pprint.Internals.handleChunks("var " + t.name.name, c, body)
@@ -62,7 +62,7 @@ package object compiler {
 
     override def render0(t: CTag, c: Config): Iterator[String] = {
       pprint.Internals.handleChunks(
-        t.name + ": " + t.typeRef.name.name, c, (c: Config) => Iterator(
+        t.name + ": " + CTypeRefPrint.render(t.typeRef, c).mkString, c, (c: Config) => Iterator(
           // TODO tag attributes etc.
         )
       )
@@ -76,9 +76,9 @@ package object compiler {
   implicit object CRecordTypePrinter extends PPrinter[CRecordType] {
 
     override def render0(@NotNull t: CRecordType, c: Config): Iterator[String] = {
-      def body = (cfg: Config) => CTypePrinter.typeParts(t, cfg) ++ Iterator(
+      def body = (c: Config) => CTypePrinter.typeParts(t, c) ++ Iterator(
         pprint.Internals.handleChunks(
-          "fields: ", cfg, (c0: Config) => t.declaredFields.toIterator.map(CFieldPrint.pprinter.render(_, c0))
+          "fields", c, (c: Config) => t.declaredFields.toIterator.map(CFieldPrint.pprinter.render(_, c))
         )
       )
       pprint.Internals.handleChunks("record " + t.name.name, c, body)
@@ -92,7 +92,7 @@ package object compiler {
 
     override def render0(t: CField, c: Config): Iterator[String] = {
       pprint.Internals.handleChunks(
-        t.name + ": " + t.typeRef.name.name, c, (c: Config) => Iterator(
+        "" + t.name + ": «" + t.typeRef.name.name + "»", c, (c: Config) => Iterator(
           // TODO field attributes etc.
         )
       )
@@ -108,8 +108,8 @@ package object compiler {
     override def render0(@NotNull t: CMapType, c: Config): Iterator[String] = {
       pprint.Internals.handleChunks(
         "map " + t.name.name, c, (c: Config) => CTypePrinter.typeParts(t, c) ++ Iterator(
-          Iterator("keyType: ", t.keyTypeRef.name.name),
-          Iterator("valueType: ", t.valueTypeRef.name.name)
+          Iterator("keyType", t.keyTypeRef.name.name),
+          Iterator("valueType", t.valueTypeRef.name.name)
         )
       )
     }
@@ -123,7 +123,7 @@ package object compiler {
     override def render0(@NotNull t: CListType, c: Config): Iterator[String] = {
       pprint.Internals.handleChunks(
         "list " + t.name.name, c, (c: Config) => CTypePrinter.typeParts(t, c) ++ Iterator(
-          Iterator("valueType: ", t.elementTypeRef.name.name)
+          Iterator("valueType", t.elementTypeRef.name.name)
         )
       )
     }
@@ -135,9 +135,9 @@ package object compiler {
   implicit object CEnumTypePrinter extends PPrinter[CEnumType] {
 
     override def render0(@NotNull t: CEnumType, c: Config): Iterator[String] = {
-      def body = (cfg: Config) => CTypePrinter.typeParts(t, cfg) ++ Iterator(
+      def body = (c: Config) => CTypePrinter.typeParts(t, c) ++ Iterator(
         pprint.Internals.handleChunks(
-          "values: ", cfg, (c0: Config) => t.values.toIterator.map(CEnumValuePrint.pprinter.render(_, c0))
+          "values", c, (c: Config) => t.values.toIterator.map(CEnumValuePrint.pprinter.render(_, c))
         )
       )
       pprint.Internals.handleChunks("enum " + t.name.name, c, body)

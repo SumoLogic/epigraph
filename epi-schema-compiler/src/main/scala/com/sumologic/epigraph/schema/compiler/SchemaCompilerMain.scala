@@ -43,12 +43,12 @@ object SchemaCompilerMain {
       //println(DebugUtil.psiToString(sf, true, true).trim())
 
       val csf: CSchemaFile = new CSchemaFile(sf)
-      import pprint.Config.Colors._
-//      implicit val PPConfig = pprint.Config(colors = pprint.Colors(fansi.Color.Green, fansi.Color.Blue))
+//      import pprint.Config.Colors._
+      implicit val PPConfig = pprint.Config(width = 120, colors = pprint.Colors(fansi.Color.Green, fansi.Color.LightBlue))
       pprint.pprintln(csf.types)
       csf.types.foreach {
 //        case rt: CRecordType => pprint.pprintln(rt)
-        case mt: CMapType => pprint.pprintln(mt)
+        //case mt: CMapType => pprint.pprintln(mt)
         case _ =>
       }
 

@@ -21,6 +21,8 @@ class CSchemaFile(val psi: SchemaFile)(implicit val ctx: CContext) {
 
   val types: Seq[CType] = if (defs == null) Nil else defs.getTypeDefWrapperList.map(CType.apply(this, _))
 
+  val supplements: Seq[CSupplement] = if (defs == null) Nil else defs.getSupplementDefList.map(new CSupplement(this, _))
+
   def resolveLocalTypeRef(sftr: SchemaFqnTypeRef): CTypeFqn = {
     val fqn = sftr.getFqn.getFqn
     val alias = fqn.first
