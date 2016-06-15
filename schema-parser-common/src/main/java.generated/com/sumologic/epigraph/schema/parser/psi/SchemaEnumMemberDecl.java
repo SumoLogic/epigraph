@@ -11,14 +11,14 @@ public interface SchemaEnumMemberDecl extends CustomParamsHolder, PsiNamedElemen
   @NotNull
   List<SchemaCustomParam> getCustomParamList();
 
+  @NotNull
+  SchemaQid getQid();
+
   @Nullable
   PsiElement getCurlyLeft();
 
   @Nullable
   PsiElement getCurlyRight();
-
-  @NotNull
-  PsiElement getId();
 
   @Nullable
   String getName();

@@ -77,6 +77,6 @@ public class SchemaReferenceFactory {
   @Nullable
   public static PsiReference getVarTagReference(@NotNull SchemaVarTagRef varTagRef) {
     SchemaVarTypeDef varTypeDef = PsiTreeUtil.getParentOfType(varTagRef, SchemaVarTypeDef.class);
-    return varTypeDef == null ? null : new SchemaVarTagReference(varTypeDef, varTagRef.getId());
+    return varTypeDef == null ? null : new SchemaVarTagReference(varTypeDef, varTagRef.getQid());
   }
 }

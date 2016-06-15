@@ -56,6 +56,12 @@ public class SchemaMapTypeDefImpl extends SchemaMapTypeDefImplBase implements Sc
 
   @Override
   @Nullable
+  public SchemaQid getQid() {
+    return PsiTreeUtil.getChildOfType(this, SchemaQid.class);
+  }
+
+  @Override
+  @Nullable
   public SchemaSupplementsDecl getSupplementsDecl() {
     return PsiTreeUtil.getChildOfType(this, SchemaSupplementsDecl.class);
   }
@@ -70,12 +76,6 @@ public class SchemaMapTypeDefImpl extends SchemaMapTypeDefImplBase implements Sc
   @Nullable
   public PsiElement getPolymorphic() {
     return findChildByType(S_POLYMORPHIC);
-  }
-
-  @Override
-  @Nullable
-  public PsiElement getId() {
-    return findChildByType(S_ID);
   }
 
 }

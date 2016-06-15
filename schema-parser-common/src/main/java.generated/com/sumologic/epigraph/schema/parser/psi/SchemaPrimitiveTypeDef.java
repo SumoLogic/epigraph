@@ -19,6 +19,9 @@ public interface SchemaPrimitiveTypeDef extends SchemaTypeDef, StubBasedPsiEleme
   SchemaPrimitiveTypeBody getPrimitiveTypeBody();
 
   @Nullable
+  SchemaQid getQid();
+
+  @Nullable
   SchemaSupplementsDecl getSupplementsDecl();
 
   @Nullable
@@ -41,8 +44,5 @@ public interface SchemaPrimitiveTypeDef extends SchemaTypeDef, StubBasedPsiEleme
 
   @Nullable
   PsiElement getStringT();
-
-  @Nullable
-  PsiElement getId();
 
 }

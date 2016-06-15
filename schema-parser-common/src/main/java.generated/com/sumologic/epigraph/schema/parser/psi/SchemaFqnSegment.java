@@ -11,11 +11,12 @@ import com.sumologic.epigraph.schema.parser.Fqn;
 public interface SchemaFqnSegment extends PsiNameIdentifierOwner {
 
   @NotNull
-  PsiElement getId();
+  SchemaQid getQid();
 
   @Nullable
   String getName();
 
+  @NotNull
   PsiElement setName(String name);
 
   @NotNull

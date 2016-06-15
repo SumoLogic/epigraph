@@ -43,15 +43,15 @@ public class SchemaEnumTypeDefImpl extends SchemaEnumTypeDefImplBase implements 
   }
 
   @Override
-  @NotNull
-  public PsiElement getEnum() {
-    return notNullChild(findChildByType(S_ENUM));
+  @Nullable
+  public SchemaQid getQid() {
+    return PsiTreeUtil.getChildOfType(this, SchemaQid.class);
   }
 
   @Override
-  @Nullable
-  public PsiElement getId() {
-    return findChildByType(S_ID);
+  @NotNull
+  public PsiElement getEnum() {
+    return notNullChild(findChildByType(S_ENUM));
   }
 
 }

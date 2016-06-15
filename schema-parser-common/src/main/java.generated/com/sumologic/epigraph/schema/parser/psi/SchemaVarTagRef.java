@@ -10,7 +10,7 @@ import com.intellij.psi.PsiReference;
 public interface SchemaVarTagRef extends PsiNameIdentifierOwner {
 
   @NotNull
-  PsiElement getId();
+  SchemaQid getQid();
 
   PsiElement setName(String name);
 

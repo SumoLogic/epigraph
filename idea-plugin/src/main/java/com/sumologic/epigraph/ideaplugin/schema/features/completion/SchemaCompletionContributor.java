@@ -9,6 +9,7 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
+import com.intellij.vcs.log.graph.PrintElement;
 import com.sumologic.epigraph.schema.parser.Fqn;
 import com.sumologic.epigraph.schema.parser.SchemaLanguage;
 import com.sumologic.epigraph.schema.parser.psi.*;
@@ -229,10 +230,12 @@ public class SchemaCompletionContributor extends CompletionContributor {
     // see commented out CompletionTest::testUndefinedTypeNameCompletion2
 
     // first check we're in the correct position
-    PsiElement parent = position.getParent();
+    PsiElement qid = position.getParent();
+    if (!(qid instanceof SchemaQid)) return;
+    PsiElement parent = qid.getParent();
     if (!(parent instanceof SchemaTypeDef)) return;
 
-    PsiElement prevSibling = SchemaPsiUtil.prevNonWhitespaceSibling(position);
+    PsiElement prevSibling = SchemaPsiUtil.prevNonWhitespaceSibling(qid);
     if (prevSibling == null) return;
 
     IElementType prevSiblingElementType = prevSibling.getNode().getElementType();

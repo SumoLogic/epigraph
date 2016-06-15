@@ -143,6 +143,10 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitTypeDef(o);
   }
 
+  public void visitQid(@NotNull SchemaQid o) {
+    visitPsiElement(o);
+  }
+
   public void visitRecordTypeBody(@NotNull SchemaRecordTypeBody o) {
     visitCustomParamsHolder(o);
   }

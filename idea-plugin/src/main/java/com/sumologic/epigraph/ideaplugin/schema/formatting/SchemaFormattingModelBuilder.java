@@ -42,7 +42,7 @@ public class SchemaFormattingModelBuilder implements FormattingModelBuilder {
 
     // TODO this should be configurable
 
-    spacingBuilder.between(S_ID, S_CURLY_LEFT).spaces(1);
+    spacingBuilder.between(S_QID, S_CURLY_LEFT).spaces(1);
 
     spacingBuilder.before(S_COLON).spaces(0);
     spacingBuilder.after(S_COLON).spaces(1);
@@ -64,8 +64,8 @@ public class SchemaFormattingModelBuilder implements FormattingModelBuilder {
     spacingBuilder.around(S_ANGLE_LEFT).spaces(0);
     spacingBuilder.before(S_ANGLE_RIGHT).spaces(0);
 
-    spacingBuilder.between(S_ANON_LIST, S_ID).spaces(1);
-    spacingBuilder.between(S_ANON_MAP, S_ID).spaces(1);
+    spacingBuilder.between(S_ANON_LIST, S_QID).spaces(1);
+    spacingBuilder.between(S_ANON_MAP, S_QID).spaces(1);
 
     spacingBuilder.after(S_DEFAULT).spaces(1);
     spacingBuilder.after(S_TYPE_REF).spaces(1);

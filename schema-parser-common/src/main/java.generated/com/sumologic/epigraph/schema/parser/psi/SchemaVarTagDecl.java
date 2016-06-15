@@ -12,6 +12,9 @@ public interface SchemaVarTagDecl extends CustomParamsHolder, PsiNamedElement {
   @NotNull
   List<SchemaCustomParam> getCustomParamList();
 
+  @NotNull
+  SchemaQid getQid();
+
   @Nullable
   SchemaTypeRef getTypeRef();
 
@@ -29,9 +32,6 @@ public interface SchemaVarTagDecl extends CustomParamsHolder, PsiNamedElement {
 
   @Nullable
   PsiElement getOverride();
-
-  @NotNull
-  PsiElement getId();
 
   @Nullable
   String getName();

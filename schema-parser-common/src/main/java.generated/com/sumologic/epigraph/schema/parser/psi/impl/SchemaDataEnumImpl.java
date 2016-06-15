@@ -27,8 +27,8 @@ public class SchemaDataEnumImpl extends SchemaDataValueImpl implements SchemaDat
 
   @Override
   @NotNull
-  public PsiElement getId() {
-    return notNullChild(findChildByType(S_ID));
+  public SchemaQid getQid() {
+    return notNullChild(PsiTreeUtil.getChildOfType(this, SchemaQid.class));
   }
 
 }

@@ -16,9 +16,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.S_ABSTRACT;
-import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.S_ID;
-import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.S_POLYMORPHIC;
+import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.*;
 
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
@@ -66,19 +64,19 @@ public abstract class SchemaTypeDefImplBase<S extends SchemaTypeDefStubBase<T>, 
 
   @Override
   @Nullable
-  public PsiElement getId() {
-    return findChildByType(S_ID);
+  public SchemaQid getQid() {
+    return findChildByType(S_QID);
   }
 
   @Nullable
   public String getName() {
-    PsiElement id = getId();
+    PsiElement id = getQid();
     return id == null ? null : id.getText();
   }
 
   @Nullable
   public PsiElement setName(@NotNull String name) {
-    PsiElement id = getId();
+    PsiElement id = getQid();
     if (id == null) return null;
     else {
       PsiElement newId = SchemaElementFactory.createId(getProject(), name);
@@ -89,7 +87,7 @@ public abstract class SchemaTypeDefImplBase<S extends SchemaTypeDefStubBase<T>, 
 
   @Nullable
   public PsiElement getNameIdentifier() {
-    return getId();
+    return getQid();
   }
 
   @Nullable

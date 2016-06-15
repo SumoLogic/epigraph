@@ -32,6 +32,12 @@ public class SchemaEnumMemberDeclImpl extends CustomParamHolderImpl implements S
   }
 
   @Override
+  @NotNull
+  public SchemaQid getQid() {
+    return notNullChild(PsiTreeUtil.getChildOfType(this, SchemaQid.class));
+  }
+
+  @Override
   @Nullable
   public PsiElement getCurlyLeft() {
     return findChildByType(S_CURLY_LEFT);
@@ -41,12 +47,6 @@ public class SchemaEnumMemberDeclImpl extends CustomParamHolderImpl implements S
   @Nullable
   public PsiElement getCurlyRight() {
     return findChildByType(S_CURLY_RIGHT);
-  }
-
-  @Override
-  @NotNull
-  public PsiElement getId() {
-    return notNullChild(findChildByType(S_ID));
   }
 
   @Nullable

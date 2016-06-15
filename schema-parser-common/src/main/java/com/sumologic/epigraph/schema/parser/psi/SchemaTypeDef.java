@@ -14,7 +14,7 @@ import java.util.List;
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
 public interface SchemaTypeDef extends PsiNameIdentifierOwner {
-  PsiElement getId();
+  SchemaQid getQid();
 
   @Nullable
   String getName();

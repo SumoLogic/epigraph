@@ -50,6 +50,12 @@ public class SchemaPrimitiveTypeDefImpl extends SchemaPrimitiveTypeDefImplBase i
 
   @Override
   @Nullable
+  public SchemaQid getQid() {
+    return PsiTreeUtil.getChildOfType(this, SchemaQid.class);
+  }
+
+  @Override
+  @Nullable
   public SchemaSupplementsDecl getSupplementsDecl() {
     return PsiTreeUtil.getChildOfType(this, SchemaSupplementsDecl.class);
   }
@@ -94,12 +100,6 @@ public class SchemaPrimitiveTypeDefImpl extends SchemaPrimitiveTypeDefImplBase i
   @Nullable
   public PsiElement getStringT() {
     return findChildByType(S_STRING_T);
-  }
-
-  @Override
-  @Nullable
-  public PsiElement getId() {
-    return findChildByType(S_ID);
   }
 
 }

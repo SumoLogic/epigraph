@@ -20,28 +20,28 @@ public class ReferenceTest extends LightCodeInsightFixtureTestCase {
     myFixture.configureByFile("SameNsTypeRef.epi_schema");
     PsiElement element = myFixture.getFile().findElementAt(myFixture.getCaretOffset());
     //noinspection ConstantConditions
-    checkReference(element.getParent().getReference(), "Bar");
+    checkReference(element.getParent().getParent().getReference(), "Bar");
   }
 
   public void testFqnImportRef() {
     myFixture.configureByFiles("FqnImportTypeRef.epi_schema", "TargetNs.epi_schema");
     PsiElement element = myFixture.getFile().findElementAt(myFixture.getCaretOffset());
     //noinspection ConstantConditions
-    checkReference(element.getParent().getReference(), "ZZLong");
+    checkReference(element.getParent().getParent().getReference(), "ZZLong");
   }
 
   public void testNsSegmentInTypeRef() {
     myFixture.configureByFile("NamespaceSegmentInTypeRef.epi_schema");
     PsiElement element = myFixture.getFile().findElementAt(myFixture.getCaretOffset());
     //noinspection ConstantConditions
-    checkReference(element.getParent().getReference(), "namespace foo");
+    checkReference(element.getParent().getParent().getReference(), "namespace foo");
   }
 
   @SuppressWarnings("ConstantConditions")
   public void testMultiNsRef() {
     myFixture.configureByFiles("MultiNamespaceRef.epi_schema", "foobar.epi_schema", "foobaz.epi_schema");
     PsiElement element = myFixture.getFile().findElementAt(myFixture.getCaretOffset());
-    PsiPolyVariantReference reference = (PsiPolyVariantReference) element.getParent().getReference();
+    PsiPolyVariantReference reference = (PsiPolyVariantReference) element.getParent().getParent().getReference();
     assertEquals(null, reference.resolve());
 
     List<ResolveResult> resolveResults = Arrays.asList(reference.multiResolve(true));

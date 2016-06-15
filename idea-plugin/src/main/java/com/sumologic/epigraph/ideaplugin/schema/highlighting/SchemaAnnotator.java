@@ -9,7 +9,7 @@ import com.intellij.psi.PsiPolyVariantReference;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.ResolveResult;
 import com.sumologic.epigraph.schema.parser.psi.*;
-import com.sumologic.epigraph.ideaplugin.schema.brains.NamingConventions;
+import com.sumologic.epigraph.schema.parser.NamingConventions;
 import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.HierarchyCache;
 import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.TypeMembers;
 import org.jetbrains.annotations.NotNull;
@@ -30,7 +30,7 @@ public class SchemaAnnotator implements Annotator {
     element.accept(new SchemaVisitor() {
       @Override
       public void visitFieldDecl(@NotNull SchemaFieldDecl fieldDecl) {
-        PsiElement id = fieldDecl.getId();
+        PsiElement id = fieldDecl.getQid();
         setHighlighting(id, holder, SchemaSyntaxHighlighter.FIELD);
 
         String namingError = NamingConventions.validateFieldName(id.getText());
@@ -46,7 +46,7 @@ public class SchemaAnnotator implements Annotator {
 
       @Override
       public void visitVarTagDecl(@NotNull SchemaVarTagDecl memberDecl) {
-        PsiElement id = memberDecl.getId();
+        PsiElement id = memberDecl.getQid();
         setHighlighting(id, holder, SchemaSyntaxHighlighter.VAR_MEMBER);
 
         String namingError = NamingConventions.validateVarTypeMemberName(id.getText());
@@ -63,7 +63,7 @@ public class SchemaAnnotator implements Annotator {
       public void visitDefaultOverride(@NotNull SchemaDefaultOverride defaultOverride) {
         SchemaVarTagRef varTagRef = defaultOverride.getVarTagRef();
         if (varTagRef != null) {
-          PsiElement id = varTagRef.getId();
+          PsiElement id = varTagRef.getQid();
           setHighlighting(id, holder, SchemaSyntaxHighlighter.VAR_MEMBER);
         }
       }
@@ -139,7 +139,7 @@ public class SchemaAnnotator implements Annotator {
 
       @Override
       public void visitCustomParam(@NotNull SchemaCustomParam customParam) {
-        setHighlighting(customParam.getId(), holder, SchemaSyntaxHighlighter.PARAM_NAME);
+        setHighlighting(customParam.getQid(), holder, SchemaSyntaxHighlighter.PARAM_NAME);
       }
 
       @Override

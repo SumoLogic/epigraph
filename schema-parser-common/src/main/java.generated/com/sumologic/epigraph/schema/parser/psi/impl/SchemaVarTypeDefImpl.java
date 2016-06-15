@@ -44,6 +44,12 @@ public class SchemaVarTypeDefImpl extends SchemaVarTypeDefImplBase implements Sc
 
   @Override
   @Nullable
+  public SchemaQid getQid() {
+    return PsiTreeUtil.getChildOfType(this, SchemaQid.class);
+  }
+
+  @Override
+  @Nullable
   public SchemaSupplementsDecl getSupplementsDecl() {
     return PsiTreeUtil.getChildOfType(this, SchemaSupplementsDecl.class);
   }
@@ -70,12 +76,6 @@ public class SchemaVarTypeDefImpl extends SchemaVarTypeDefImplBase implements Sc
   @NotNull
   public PsiElement getVartype() {
     return notNullChild(findChildByType(S_VARTYPE));
-  }
-
-  @Override
-  @Nullable
-  public PsiElement getId() {
-    return findChildByType(S_ID);
   }
 
   @NotNull

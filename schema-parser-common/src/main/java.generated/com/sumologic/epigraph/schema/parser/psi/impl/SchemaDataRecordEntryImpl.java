@@ -34,6 +34,12 @@ public class SchemaDataRecordEntryImpl extends ASTWrapperPsiElement implements S
 
   @Override
   @NotNull
+  public SchemaQid getQid() {
+    return notNullChild(PsiTreeUtil.getChildOfType(this, SchemaQid.class));
+  }
+
+  @Override
+  @NotNull
   public PsiElement getColon() {
     return notNullChild(findChildByType(S_COLON));
   }
@@ -42,12 +48,6 @@ public class SchemaDataRecordEntryImpl extends ASTWrapperPsiElement implements S
   @Nullable
   public PsiElement getComma() {
     return findChildByType(S_COMMA);
-  }
-
-  @Override
-  @NotNull
-  public PsiElement getId() {
-    return notNullChild(findChildByType(S_ID));
   }
 
 }

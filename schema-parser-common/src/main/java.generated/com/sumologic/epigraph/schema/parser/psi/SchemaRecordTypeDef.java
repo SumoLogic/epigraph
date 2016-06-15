@@ -16,6 +16,9 @@ public interface SchemaRecordTypeDef extends SchemaTypeDef, StubBasedPsiElement<
   SchemaMetaDecl getMetaDecl();
 
   @Nullable
+  SchemaQid getQid();
+
+  @Nullable
   SchemaRecordTypeBody getRecordTypeBody();
 
   @Nullable
@@ -29,9 +32,6 @@ public interface SchemaRecordTypeDef extends SchemaTypeDef, StubBasedPsiElement<
 
   @NotNull
   PsiElement getRecord();
-
-  @Nullable
-  PsiElement getId();
 
   @NotNull
   List<SchemaTypeDef> supplemented();

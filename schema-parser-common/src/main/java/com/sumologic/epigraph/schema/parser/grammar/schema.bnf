@@ -81,7 +81,10 @@
 root ::= namespaceDecl imports defs
 
 // either quoted or unquoted id
-private qid ::= '`' id '`' | id
+qid ::= '`' id '`' | id {
+  // implements="com.intellij.psi.PsiNameIdentifierOwner" // breaks findUsages
+  methods=[getName setName getNameIdentifier]
+}
 
 imports ::= importStatement*
 importStatement ::= 'import' fqn {pin=1 recoverWhile="declRecover"}

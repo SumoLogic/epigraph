@@ -30,8 +30,8 @@ public class SchemaFqnSegmentImpl extends ASTWrapperPsiElement implements Schema
 
   @Override
   @NotNull
-  public PsiElement getId() {
-    return notNullChild(findChildByType(S_ID));
+  public SchemaQid getQid() {
+    return notNullChild(PsiTreeUtil.getChildOfType(this, SchemaQid.class));
   }
 
   @Nullable
@@ -39,6 +39,7 @@ public class SchemaFqnSegmentImpl extends ASTWrapperPsiElement implements Schema
     return SchemaPsiImplUtil.getName(this);
   }
 
+  @NotNull
   public PsiElement setName(String name) {
     return SchemaPsiImplUtil.setName(this, name);
   }

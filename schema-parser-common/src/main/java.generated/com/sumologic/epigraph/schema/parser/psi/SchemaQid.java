@@ -5,18 +5,18 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface SchemaDataRecordEntry extends PsiElement {
-
-  @Nullable
-  SchemaDataValue getDataValue();
+public interface SchemaQid extends PsiElement {
 
   @NotNull
-  SchemaQid getQid();
+  PsiElement getId();
 
   @NotNull
-  PsiElement getColon();
+  String getName();
 
-  @Nullable
-  PsiElement getComma();
+  @NotNull
+  PsiElement setName(String name);
+
+  @NotNull
+  PsiElement getNameIdentifier();
 
 }

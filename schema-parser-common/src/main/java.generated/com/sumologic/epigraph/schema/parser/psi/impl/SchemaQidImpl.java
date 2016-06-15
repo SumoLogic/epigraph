@@ -11,14 +11,14 @@ import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.sumologic.epigraph.schema.parser.psi.*;
 
-public class SchemaCustomParamImpl extends ASTWrapperPsiElement implements SchemaCustomParam {
+public class SchemaQidImpl extends ASTWrapperPsiElement implements SchemaQid {
 
-  public SchemaCustomParamImpl(ASTNode node) {
+  public SchemaQidImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull SchemaVisitor visitor) {
-    visitor.visitCustomParam(this);
+    visitor.visitQid(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -27,28 +27,17 @@ public class SchemaCustomParamImpl extends ASTWrapperPsiElement implements Schem
   }
 
   @Override
-  @Nullable
-  public SchemaDataValue getDataValue() {
-    return PsiTreeUtil.getChildOfType(this, SchemaDataValue.class);
-  }
-
-  @Override
   @NotNull
-  public SchemaQid getQid() {
-    return notNullChild(PsiTreeUtil.getChildOfType(this, SchemaQid.class));
+  public PsiElement getId() {
+    return notNullChild(findChildByType(S_ID));
   }
 
-  @Override
   @NotNull
-  public PsiElement getEq() {
-    return notNullChild(findChildByType(S_EQ));
-  }
-
-  @Nullable
   public String getName() {
     return SchemaPsiImplUtil.getName(this);
   }
 
+  @NotNull
   public PsiElement setName(String name) {
     return SchemaPsiImplUtil.setName(this, name);
   }

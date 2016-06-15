@@ -27,7 +27,7 @@ public class SchemaFindUsagesProvider implements FindUsagesProvider {
 
   @Override
   public boolean canFindUsagesFor(@NotNull PsiElement psiElement) {
-    // TODO Support vartype tags, and later fields used by projections
+    // TODO Support fields used by projections
 
     if (psiElement instanceof SchemaTypeDef) {
       SchemaTypeDef element = (SchemaTypeDef) psiElement;

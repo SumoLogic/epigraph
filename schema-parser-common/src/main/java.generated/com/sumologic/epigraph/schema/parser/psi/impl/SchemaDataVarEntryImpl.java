@@ -40,6 +40,12 @@ public class SchemaDataVarEntryImpl extends ASTWrapperPsiElement implements Sche
 
   @Override
   @NotNull
+  public SchemaQid getQid() {
+    return notNullChild(PsiTreeUtil.getChildOfType(this, SchemaQid.class));
+  }
+
+  @Override
+  @NotNull
   public PsiElement getColon() {
     return notNullChild(findChildByType(S_COLON));
   }
@@ -54,12 +60,6 @@ public class SchemaDataVarEntryImpl extends ASTWrapperPsiElement implements Sche
   @Nullable
   public PsiElement getNull() {
     return findChildByType(S_NULL);
-  }
-
-  @Override
-  @NotNull
-  public PsiElement getId() {
-    return notNullChild(findChildByType(S_ID));
   }
 
 }

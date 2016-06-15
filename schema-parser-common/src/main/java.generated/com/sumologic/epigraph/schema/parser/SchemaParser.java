@@ -122,6 +122,9 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     else if (t == S_PRIMITIVE_TYPE_DEF) {
       r = primitiveTypeDef(b, 0);
     }
+    else if (t == S_QID) {
+      r = qid(b, 0);
+    }
     else if (t == S_RECORD_TYPE_BODY) {
       r = recordTypeBody(b, 0);
     }
@@ -1434,14 +1437,14 @@ public class SchemaParser implements PsiParser, LightPsiParser {
 
   /* ********************************************************** */
   // '`' id '`' | id
-  static boolean qid(PsiBuilder b, int l) {
+  public static boolean qid(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "qid")) return false;
-    if (!nextTokenIs(b, "", S_BACKTICK, S_ID)) return false;
+    if (!nextTokenIs(b, "<qid>", S_BACKTICK, S_ID)) return false;
     boolean r;
-    Marker m = enter_section_(b);
+    Marker m = enter_section_(b, l, _NONE_, S_QID, "<qid>");
     r = qid_0(b, l + 1);
     if (!r) r = consumeToken(b, S_ID);
-    exit_section_(b, m, null, r);
+    exit_section_(b, l, m, r, false, null);
     return r;
   }
 

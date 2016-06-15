@@ -14,6 +14,9 @@ public interface SchemaDataVarEntry extends PsiElement {
   List<SchemaFqnTypeRef> getFqnTypeRefList();
 
   @NotNull
+  SchemaQid getQid();
+
+  @NotNull
   PsiElement getColon();
 
   @Nullable
@@ -21,8 +24,5 @@ public interface SchemaDataVarEntry extends PsiElement {
 
   @Nullable
   PsiElement getNull();
-
-  @NotNull
-  PsiElement getId();
 
 }

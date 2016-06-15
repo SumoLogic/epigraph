@@ -8,6 +8,6 @@ import com.intellij.psi.PsiElement;
 public interface SchemaDataEnum extends SchemaDataValue {
 
   @NotNull
-  PsiElement getId();
+  SchemaQid getQid();
 
 }

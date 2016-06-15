@@ -91,12 +91,12 @@ public class SchemaPresentationUtil {
 
     if (element instanceof SchemaCustomParam) {
       SchemaCustomParam schemaCustomParam = (SchemaCustomParam) element;
-      return schemaCustomParam.getId().getText();
+      return schemaCustomParam.getQid().getName();
     }
 
     if (element instanceof SchemaFieldDecl) {
       SchemaFieldDecl schemaFieldDecl = (SchemaFieldDecl) element;
-      String name = schemaFieldDecl.getId().getText();
+      String name = schemaFieldDecl.getQid().getName();
 
       if (structureView) return name;
 
@@ -109,7 +109,7 @@ public class SchemaPresentationUtil {
 
     if (element instanceof SchemaVarTagDecl) {
       SchemaVarTagDecl varTagDecl = (SchemaVarTagDecl) element;
-      String name = varTagDecl.getId().getText();
+      String name = varTagDecl.getQid().getName();
 
       if (structureView) return name;
 
@@ -122,7 +122,7 @@ public class SchemaPresentationUtil {
 
     if (element instanceof SchemaEnumMemberDecl) {
       SchemaEnumMemberDecl schemaEnumMemberDecl = (SchemaEnumMemberDecl) element;
-      return schemaEnumMemberDecl.getId().getText();
+      return schemaEnumMemberDecl.getQid().getName();
     }
 
     if (element instanceof SchemaSupplementDef) {

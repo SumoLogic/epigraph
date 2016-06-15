@@ -22,7 +22,14 @@ public class SchemaElementFactory {
   public static PsiElement createId(Project project, String text) {
     final SchemaFile file = createFileFromText(project, "namespace " + text);
     //noinspection ConstantConditions
-    return ((SchemaFqnSegment) file.getNamespaceDecl().getFqn().getLastChild()).getId();
+    return ((SchemaFqnSegment) file.getNamespaceDecl().getFqn().getLastChild()).getQid().getId();
+  }
+
+  @NotNull
+  public static PsiElement createBackTick(Project project) {
+    final SchemaFile file = createFileFromText(project, "namespace some\n long `LL`");
+    //noinspection ConstantConditions
+    return file.getDefs().getTypeDefWrapperList().get(0).getPrimitiveTypeDef().getQid().getFirstChild();
   }
 
   public static SchemaFqn createFqn(Project project, String text) {

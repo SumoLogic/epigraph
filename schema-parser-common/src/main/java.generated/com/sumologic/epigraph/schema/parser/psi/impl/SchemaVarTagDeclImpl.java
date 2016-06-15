@@ -33,6 +33,12 @@ public class SchemaVarTagDeclImpl extends CustomParamHolderImpl implements Schem
   }
 
   @Override
+  @NotNull
+  public SchemaQid getQid() {
+    return notNullChild(PsiTreeUtil.getChildOfType(this, SchemaQid.class));
+  }
+
+  @Override
   @Nullable
   public SchemaTypeRef getTypeRef() {
     return PsiTreeUtil.getChildOfType(this, SchemaTypeRef.class);
@@ -66,12 +72,6 @@ public class SchemaVarTagDeclImpl extends CustomParamHolderImpl implements Schem
   @Nullable
   public PsiElement getOverride() {
     return findChildByType(S_OVERRIDE);
-  }
-
-  @Override
-  @NotNull
-  public PsiElement getId() {
-    return notNullChild(findChildByType(S_ID));
   }
 
   @Nullable

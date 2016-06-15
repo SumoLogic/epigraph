@@ -50,6 +50,7 @@ public interface SchemaElementTypes {
   IElementType S_NAMESPACE_DECL = new SchemaNamespaceDeclStubElementType("S_NAMESPACE_DECL");
   IElementType S_PRIMITIVE_TYPE_BODY = new SchemaElementType("S_PRIMITIVE_TYPE_BODY");
   IElementType S_PRIMITIVE_TYPE_DEF = new SchemaPrimitiveTypeDefStubElementType("S_PRIMITIVE_TYPE_DEF");
+  IElementType S_QID = new SchemaElementType("S_QID");
   IElementType S_RECORD_TYPE_BODY = new SchemaElementType("S_RECORD_TYPE_BODY");
   IElementType S_RECORD_TYPE_DEF = new SchemaRecordTypeDefStubElementType("S_RECORD_TYPE_DEF");
   IElementType S_SUPPLEMENTS_DECL = new SchemaElementType("S_SUPPLEMENTS_DECL");
@@ -205,6 +206,9 @@ public interface SchemaElementTypes {
       }
       else if (type == S_PRIMITIVE_TYPE_DEF) {
         return new SchemaPrimitiveTypeDefImpl(node);
+      }
+      else if (type == S_QID) {
+        return new SchemaQidImpl(node);
       }
       else if (type == S_RECORD_TYPE_BODY) {
         return new SchemaRecordTypeBodyImpl(node);

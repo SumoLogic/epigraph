@@ -29,8 +29,8 @@ public class SchemaVarTagRefImpl extends ASTWrapperPsiElement implements SchemaV
 
   @Override
   @NotNull
-  public PsiElement getId() {
-    return notNullChild(findChildByType(S_ID));
+  public SchemaQid getQid() {
+    return notNullChild(PsiTreeUtil.getChildOfType(this, SchemaQid.class));
   }
 
   public PsiElement setName(String name) {

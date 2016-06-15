@@ -15,10 +15,10 @@ public interface SchemaEnumTypeDef extends SchemaTypeDef, StubBasedPsiElement<Sc
   @Nullable
   SchemaMetaDecl getMetaDecl();
 
+  @Nullable
+  SchemaQid getQid();
+
   @NotNull
   PsiElement getEnum();
-
-  @Nullable
-  PsiElement getId();
 
 }

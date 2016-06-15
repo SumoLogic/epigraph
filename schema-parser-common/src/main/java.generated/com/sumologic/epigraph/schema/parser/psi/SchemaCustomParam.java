@@ -12,10 +12,10 @@ public interface SchemaCustomParam extends PsiNamedElement {
   SchemaDataValue getDataValue();
 
   @NotNull
-  PsiElement getEq();
+  SchemaQid getQid();
 
   @NotNull
-  PsiElement getId();
+  PsiElement getEq();
 
   @Nullable
   String getName();

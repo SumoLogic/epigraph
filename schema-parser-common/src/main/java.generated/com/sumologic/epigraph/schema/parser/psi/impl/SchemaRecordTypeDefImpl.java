@@ -44,6 +44,12 @@ public class SchemaRecordTypeDefImpl extends SchemaRecordTypeDefImplBase impleme
 
   @Override
   @Nullable
+  public SchemaQid getQid() {
+    return PsiTreeUtil.getChildOfType(this, SchemaQid.class);
+  }
+
+  @Override
+  @Nullable
   public SchemaRecordTypeBody getRecordTypeBody() {
     return PsiTreeUtil.getChildOfType(this, SchemaRecordTypeBody.class);
   }
@@ -70,12 +76,6 @@ public class SchemaRecordTypeDefImpl extends SchemaRecordTypeDefImplBase impleme
   @NotNull
   public PsiElement getRecord() {
     return notNullChild(findChildByType(S_RECORD));
-  }
-
-  @Override
-  @Nullable
-  public PsiElement getId() {
-    return findChildByType(S_ID);
   }
 
   @NotNull
