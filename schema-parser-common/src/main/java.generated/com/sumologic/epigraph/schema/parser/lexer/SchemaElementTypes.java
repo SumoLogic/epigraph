@@ -65,7 +65,6 @@ public interface SchemaElementTypes {
   IElementType S_ABSTRACT = new SchemaElementType("abstract");
   IElementType S_ANGLE_LEFT = new SchemaElementType("<");
   IElementType S_ANGLE_RIGHT = new SchemaElementType(">");
-  IElementType S_BACKTICK = new SchemaElementType("`");
   IElementType S_BLOCK_COMMENT = new SchemaElementType("block_comment");
   IElementType S_BOOLEAN_T = new SchemaElementType("boolean");
   IElementType S_BRACKET_LEFT = new SchemaElementType("[");

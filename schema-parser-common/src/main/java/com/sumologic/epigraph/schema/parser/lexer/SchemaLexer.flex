@@ -20,7 +20,7 @@ import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.*;
 %type IElementType
 %unicode
 
-%states BACKTICK
+// %states BACKTICK
 
 EOL="\r"|"\n"|"\r\n"
 LINE_WS=[\ \t\f]
@@ -36,14 +36,12 @@ LINE_COMMENT="/""/"[^\r\n]*
 STRING=\" ( [^\"\\] | \\ ( [\"\\/bfnrt] | u[0-9]{4} ) )* \"
 NUMBER=([:digit:])+(\.([:digit:])+)?
 
-ID=[:letter:]([:letter:]|[:digit:])*
+ID=([:letter:]([:letter:]|[:digit:])*)|(`[^`]*`)
 
 %%
 <YYINITIAL> {
   {WHITE_SPACE}        { return com.intellij.psi.TokenType.WHITE_SPACE; }
   {SPACE}              { return com.intellij.psi.TokenType.WHITE_SPACE; }
-
-   "`"                  { yybegin(BACKTICK); return S_BACKTICK; }
 
   "import"             { return curlyCount == 0 ? S_IMPORT : S_ID; }
   "namespace"          { return curlyCount == 0 ? S_NAMESPACE : S_ID; }
@@ -88,11 +86,6 @@ ID=[:letter:]([:letter:]|[:digit:])*
   {LINE_COMMENT}       { return S_COMMENT; }
   {BLOCK_COMMENT}      { return S_BLOCK_COMMENT; }
   {ID}                 { return S_ID; }
-}
-
-<BACKTICK> {
-  {ID}                 { return S_ID; }
-  "`"                  { yybegin(YYINITIAL); return S_BACKTICK; }
 }
 
 [^]                  { return com.intellij.psi.TokenType.BAD_CHARACTER; }

@@ -225,7 +225,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   // qid '=' dataValue
   public static boolean customParam(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "customParam")) return false;
-    if (!nextTokenIs(b, "<custom attribute>", S_BACKTICK, S_ID)) return false;
+    if (!nextTokenIs(b, S_ID)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, S_CUSTOM_PARAM, "<custom attribute>");
     r = qid(b, l + 1);
@@ -240,11 +240,11 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   // qid
   public static boolean dataEnum(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "dataEnum")) return false;
-    if (!nextTokenIs(b, "<data enum>", S_BACKTICK, S_ID)) return false;
+    if (!nextTokenIs(b, S_ID)) return false;
     boolean r;
-    Marker m = enter_section_(b, l, _NONE_, S_DATA_ENUM, "<data enum>");
+    Marker m = enter_section_(b);
     r = qid(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
+    exit_section_(b, m, S_DATA_ENUM, r);
     return r;
   }
 
@@ -706,9 +706,9 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   // qid enumMemberBody?
   public static boolean enumMemberDecl(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "enumMemberDecl")) return false;
-    if (!nextTokenIs(b, "<enum member decl>", S_BACKTICK, S_ID)) return false;
+    if (!nextTokenIs(b, S_ID)) return false;
     boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, S_ENUM_MEMBER_DECL, "<enum member decl>");
+    Marker m = enter_section_(b, l, _NONE_, S_ENUM_MEMBER_DECL, null);
     r = qid(b, l + 1);
     p = r; // pin = 1
     r = r && enumMemberDecl_1(b, l + 1);
@@ -932,12 +932,12 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   // fqnSegment ('.' fqnSegment)*
   public static boolean fqn(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "fqn")) return false;
-    if (!nextTokenIs(b, "<fqn>", S_BACKTICK, S_ID)) return false;
+    if (!nextTokenIs(b, S_ID)) return false;
     boolean r;
-    Marker m = enter_section_(b, l, _NONE_, S_FQN, "<fqn>");
+    Marker m = enter_section_(b);
     r = fqnSegment(b, l + 1);
     r = r && fqn_1(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
+    exit_section_(b, m, S_FQN, r);
     return r;
   }
 
@@ -968,11 +968,11 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   // qid
   public static boolean fqnSegment(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "fqnSegment")) return false;
-    if (!nextTokenIs(b, "<fqn segment>", S_BACKTICK, S_ID)) return false;
+    if (!nextTokenIs(b, S_ID)) return false;
     boolean r;
-    Marker m = enter_section_(b, l, _NONE_, S_FQN_SEGMENT, "<fqn segment>");
+    Marker m = enter_section_(b);
     r = qid(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
+    exit_section_(b, m, S_FQN_SEGMENT, r);
     return r;
   }
 
@@ -980,11 +980,11 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   // fqn
   public static boolean fqnTypeRef(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "fqnTypeRef")) return false;
-    if (!nextTokenIs(b, "<fqn type ref>", S_BACKTICK, S_ID)) return false;
+    if (!nextTokenIs(b, S_ID)) return false;
     boolean r;
-    Marker m = enter_section_(b, l, _NONE_, S_FQN_TYPE_REF, "<fqn type ref>");
+    Marker m = enter_section_(b);
     r = fqn(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
+    exit_section_(b, m, S_FQN_TYPE_REF, r);
     return r;
   }
 
@@ -1436,27 +1436,14 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '`' id '`' | id
+  // id
   public static boolean qid(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "qid")) return false;
-    if (!nextTokenIs(b, "<qid>", S_BACKTICK, S_ID)) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NONE_, S_QID, "<qid>");
-    r = qid_0(b, l + 1);
-    if (!r) r = consumeToken(b, S_ID);
-    exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  // '`' id '`'
-  private static boolean qid_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "qid_0")) return false;
+    if (!nextTokenIs(b, S_ID)) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeToken(b, S_BACKTICK);
-    r = r && consumeToken(b, S_ID);
-    r = r && consumeToken(b, S_BACKTICK);
-    exit_section_(b, m, null, r);
+    r = consumeToken(b, S_ID);
+    exit_section_(b, m, S_QID, r);
     return r;
   }
 
@@ -1769,11 +1756,11 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   // qid
   public static boolean varTagRef(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "varTagRef")) return false;
-    if (!nextTokenIs(b, "<var tag ref>", S_BACKTICK, S_ID)) return false;
+    if (!nextTokenIs(b, S_ID)) return false;
     boolean r;
-    Marker m = enter_section_(b, l, _NONE_, S_VAR_TAG_REF, "<var tag ref>");
+    Marker m = enter_section_(b);
     r = qid(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
+    exit_section_(b, m, S_VAR_TAG_REF, r);
     return r;
   }
 

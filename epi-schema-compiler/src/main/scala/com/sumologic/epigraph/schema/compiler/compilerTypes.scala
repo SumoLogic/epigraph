@@ -65,7 +65,7 @@ class CTypeFqn private(csf: CSchemaFile, fqn: Fqn, psi: PsiElement)(implicit ctx
   )
 
   def this(csf: CSchemaFile, parentNs: Fqn, typeDef: SchemaTypeDef)(implicit ctx: CContext) = this(
-    csf, parentNs.append(typeDef.getQid.getText), typeDef.getQid.getId: PsiElement
+    csf, parentNs.append(typeDef.getQid.getCanonicalName), typeDef.getQid.getId: PsiElement
   )
 
 }

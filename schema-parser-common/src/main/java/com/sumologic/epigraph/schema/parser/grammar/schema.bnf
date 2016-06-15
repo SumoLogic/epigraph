@@ -39,7 +39,6 @@
     BOOLEAN_T='boolean'
     STRING_T='string'
 
-    BACKTICK = '`'
     COLON = ':'
     DOT = '.'
     COMMA = ','
@@ -53,7 +52,7 @@
     comment='regexp://.*'
     block_comment='regexp:/\*((?<!\*/)(.|\n))*'
 
-    id = 'regexp:\p{Alpha}\p{Alnum}*'
+    id = 'regexp:(\p{Alpha}\p{Alnum}*)|(`([^`]*)`)'
 
     // for data lang
     NULL = 'null'
@@ -81,9 +80,8 @@
 root ::= namespaceDecl imports defs
 
 // either quoted or unquoted id
-qid ::= '`' id '`' | id {
-  // implements="com.intellij.psi.PsiNameIdentifierOwner" // breaks findUsages
-  methods=[getName setName getNameIdentifier]
+qid ::= id {
+  methods=[getName setName getCanonicalName]
 }
 
 imports ::= importStatement*
@@ -152,7 +150,7 @@ varTypeDef ::= typeDefModifiers 'vartype' typeName extendsDecl? supplementsDecl?
 }
 varTypeBody ::= '{' (varTypeBodyPart ','?)* '}'
 private varTypeBodyPart ::= varTagDecl | customParam
-varTagDecl ::= typeMemberModifiers qid ':' typeRef varTypeMemberBody? { // TODO rename to varTag
+varTagDecl ::= typeMemberModifiers qid ':' typeRef varTypeMemberBody? {
   implements=["com.sumologic.epigraph.schema.parser.psi.CustomParamsHolder" "com.intellij.psi.PsiNamedElement"]
   extends="com.sumologic.epigraph.schema.parser.psi.impl.CustomParamHolderImpl"
   methods=[getName setName getNameIdentifier getPresentation getVarTypeDef]

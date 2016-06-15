@@ -43,8 +43,8 @@ public class SchemaQidImpl extends ASTWrapperPsiElement implements SchemaQid {
   }
 
   @NotNull
-  public PsiElement getNameIdentifier() {
-    return SchemaPsiImplUtil.getNameIdentifier(this);
+  public String getCanonicalName() {
+    return SchemaPsiImplUtil.getCanonicalName(this);
   }
 
 }

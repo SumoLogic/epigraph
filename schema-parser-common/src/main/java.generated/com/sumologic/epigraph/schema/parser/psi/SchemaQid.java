@@ -17,6 +17,6 @@ public interface SchemaQid extends PsiElement {
   PsiElement setName(String name);
 
   @NotNull
-  PsiElement getNameIdentifier();
+  String getCanonicalName();
 
 }

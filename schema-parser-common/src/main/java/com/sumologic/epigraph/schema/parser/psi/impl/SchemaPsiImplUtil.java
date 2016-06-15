@@ -2,13 +2,13 @@ package com.sumologic.epigraph.schema.parser.psi.impl;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
-import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.sumologic.epigraph.schema.parser.Fqn;
+import com.sumologic.epigraph.schema.parser.NamingConventions;
 import com.sumologic.epigraph.schema.parser.psi.*;
 import com.sumologic.epigraph.schema.parser.psi.stubs.SchemaNamespaceDeclStub;
 import org.jetbrains.annotations.Contract;
@@ -18,8 +18,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.S_BACKTICK;
 
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
@@ -44,21 +42,6 @@ public class SchemaPsiImplUtil {
   @Contract(pure = true)
   @NotNull
   public static PsiElement setName(SchemaQid qid, String name) {
-    boolean needQuotes = false;
-
-//    // check if this is a type name. Alternatively, make typeName non-private in the grammar and move this logic there
-//    boolean isTypeName = qid.getParent() instanceof SchemaTypeDef;
-//    if (isTypeName && NamingConventions.validateTypeName(name) != null) needQuotes = true;
-
-    // if it's already quoted: remove quotes from name, add them to psi
-    if (name.startsWith("`") && name.endsWith("`") && name.length() > 1) {
-      name = name.substring(1, name.length() - 2);
-      needQuotes = true;
-    } else if (name.contains("`")) throw new IllegalArgumentException("Wrong name: {" + name + '}');
-
-    if (needQuotes) addQuotes(qid);
-    else removeQuotes(qid);
-
     PsiElement oldId = qid.getId();
     PsiElement newId = SchemaElementFactory.createId(qid.getProject(), name);
     return oldId.replace(newId);
@@ -72,29 +55,9 @@ public class SchemaPsiImplUtil {
 
   @Contract(pure = true)
   @NotNull
-  public static PsiElement getNameIdentifier(SchemaQid qid) {
-    return qid.getId();
-  }
-
-  // expose?
-  private static void addQuotes(SchemaQid qid) {
-    Project project = qid.getProject();
-
-    PsiElement id = qid.getId();
-    PsiElement quote = id.getPrevSibling();
-    if (quote == null || quote.getNode().getElementType() != S_BACKTICK)
-      qid.addBefore(SchemaElementFactory.createBackTick(project), id);
-    quote = id.getNextSibling();
-    if (quote == null || quote.getNode().getElementType() != S_BACKTICK)
-      qid.addAfter(SchemaElementFactory.createBackTick(project), id);
-  }
-
-  private static void removeQuotes(SchemaQid qid) {
-    PsiElement id = qid.getId();
-    PsiElement quote = id.getPrevSibling();
-    if (quote != null && quote.getNode().getElementType() == S_BACKTICK) quote.delete();
-    quote = id.getNextSibling();
-    if (quote != null && quote.getNode().getElementType() == S_BACKTICK) quote.delete();
+  public static String getCanonicalName(SchemaQid qid) {
+    String name = getName(qid);
+    return NamingConventions.unquote(name);
   }
 
   // fqn --------------------------------------------
@@ -309,7 +272,7 @@ public class SchemaPsiImplUtil {
   @Contract(pure = true)
   @NotNull
   public static PsiElement getNameIdentifier(SchemaFqnSegment segment) {
-    return segment.getQid().getNameIdentifier();
+    return segment.getQid().getId();
   }
 
   @Contract(pure = true)
@@ -347,7 +310,7 @@ public class SchemaPsiImplUtil {
   @Contract(pure = true)
   @NotNull
   public static PsiElement getNameIdentifier(SchemaFieldDecl fieldDecl) {
-    return fieldDecl.getQid().getNameIdentifier();
+    return fieldDecl.getQid().getId();
   }
 
   @Contract(pure = true)
@@ -379,7 +342,7 @@ public class SchemaPsiImplUtil {
   @Contract(pure = true)
   @NotNull
   public static PsiElement getNameIdentifier(SchemaVarTagDecl varTagDecl) {
-    return varTagDecl.getQid().getNameIdentifier();
+    return varTagDecl.getQid().getId();
   }
 
   @Contract(pure = true)
@@ -406,7 +369,7 @@ public class SchemaPsiImplUtil {
   @Contract(pure = true)
   @Nullable
   public static PsiElement getNameIdentifier(@NotNull SchemaVarTagRef varTagRef) {
-    return varTagRef.getQid().getNameIdentifier();
+    return varTagRef.getQid().getId();
   }
 
   public static PsiElement setName(SchemaVarTagRef varTagRef, String name) {
@@ -429,7 +392,7 @@ public class SchemaPsiImplUtil {
   @Contract(pure = true)
   @NotNull
   public static PsiElement getNameIdentifier(SchemaEnumMemberDecl enumMemberDecl) {
-    return enumMemberDecl.getQid().getNameIdentifier();
+    return enumMemberDecl.getQid().getId();
   }
 
   // custom param
@@ -447,7 +410,7 @@ public class SchemaPsiImplUtil {
   @Contract(pure = true)
   @NotNull
   public static PsiElement getNameIdentifier(SchemaCustomParam customParam) {
-    return customParam.getQid().getNameIdentifier();
+    return customParam.getQid().getId();
   }
 
   // common toNullableString for all stub-based elements --------------------------------------------

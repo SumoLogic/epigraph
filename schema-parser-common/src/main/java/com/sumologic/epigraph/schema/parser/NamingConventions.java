@@ -1,5 +1,6 @@
 package com.sumologic.epigraph.schema.parser;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -50,12 +51,21 @@ public class NamingConventions {
     return null;
   }
 
+  @Contract(pure = true)
   private static boolean isProperlyQuoted(@NotNull String name) {
     return name.length() > 1 && name.startsWith("`") && name.endsWith("`");
   }
 
+  @Contract(pure = true)
   @NotNull
   public static String enquote(@NotNull String name) {
     return "`" + name + "`";
+  }
+
+  @Contract(pure = true)
+  @NotNull
+  public static String unquote(@NotNull String name) {
+    if (isProperlyQuoted(name)) return name.substring(1, name.length() - 2);
+    return name;
   }
 }
