@@ -70,7 +70,7 @@ public class SchemaPsiImplUtil {
     int idx = 0;
 
     for (SchemaFqnSegment segment : fqnSegmentList) {
-      segments[idx++] = segment.getName();
+      segments[idx++] = segment.getQid().getCanonicalName();
     }
 
     return new Fqn(segments);

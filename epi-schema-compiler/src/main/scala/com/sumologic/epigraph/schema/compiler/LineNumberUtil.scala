@@ -25,7 +25,7 @@ class LineNumberUtil(text: String, tabWidth: Int = 2) {
         line = new StringBuilder
         lineNumber += 1
       } else {
-        line.append(ch)
+        line.append(ch) // FIXME expand \t to appropriate number of spaces (depending on \t position)
       }
 
       offset += 1
@@ -61,9 +61,9 @@ class LineNumberUtil(text: String, tabWidth: Int = 2) {
   def column(line: Line, offset: Int): Int = {
     val offsetInLine = offset - line.startOffset
     val linePrefix = line.text.substring(0, offsetInLine)
-    val numCrs = linePrefix.count(_ == '\r')
-    val numTabs = linePrefix.count(_ == '\t')
-    1 + linePrefix.length - numCrs - numTabs + numTabs * tabWidth
+    val numCrs = linePrefix.count(_ == '\r') // FIXME deal (escape? remove?) with other control characters here (or in constructor)?
+    val numTabs = linePrefix.count(_ == '\t') // FIXME constructor should expand tabs to spaces hence no tabs here
+    1 + linePrefix.length - numCrs - numTabs + numTabs * tabWidth // FIXME real tab width depends on tab position
   }
 
   def lineText(offset: Int): Option[String] = lines.find(_.endOffset >= offset).map(_.text)

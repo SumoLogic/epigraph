@@ -7,6 +7,7 @@ import java.io.File
 import com.sumologic.epigraph.schema.parser.SchemaParserDefinition
 import com.sumologic.epigraph.schema.parser.psi.SchemaFile
 import org.intellij.grammar.LightPsi
+import org.jetbrains.annotations.Nullable
 
 import scala.collection.JavaConversions._
 
@@ -51,7 +52,7 @@ object SchemaCompilerMain {
     val cSchemaFiles: Seq[CSchemaFile] = schemaFiles.map(new CSchemaFile(_))
 
     cSchemaFiles foreach { csf =>
-      print(csf.filename + ": ")
+      print("...(" + csf.filename + ":0): ")
       //      import pprint.Config.Colors._
       implicit val PPConfig = pprint.Config(
         width = 120, colors = pprint.Colors(fansi.Color.Green, fansi.Color.LightBlue)
@@ -72,10 +73,31 @@ object SchemaCompilerMain {
       }
     }
 
+    //pprint.pprintln(ctx.types.keys.toSeq)
+
+    cSchemaFiles.par foreach { csf =>
+      csf.typerefs foreach { ctr =>
+        @Nullable val refType = ctx.types.get(ctr.name)
+        if (refType == null) {
+          ctx.errors.add(
+            new CError(
+              csf.filename,
+              csf.lnu.pos(ctr.psi.getTextRange.getStartOffset),
+              s"Not found: type '${ctr.name.name}'"
+            )
+          )
+        } else {
+          ctr.resolveTo(refType)
+        }
+
+      }
+    }
+
     if (ctx.errors.nonEmpty) {
       renderErrors(ctx)
       System.exit(1)
     }
+
   }
 
   def renderErrors(ctx: CContext): Unit = {

@@ -59,13 +59,13 @@ public class NamingConventions {
   @Contract(pure = true)
   @NotNull
   public static String enquote(@NotNull String name) {
-    return "`" + name + "`";
+    return '`' + name + '`';
   }
 
   @Contract(pure = true)
   @NotNull
   public static String unquote(@NotNull String name) {
-    if (isProperlyQuoted(name)) return name.substring(1, name.length() - 2);
+    if (isProperlyQuoted(name)) return name.substring(1, name.length() - 1);
     return name;
   }
 }

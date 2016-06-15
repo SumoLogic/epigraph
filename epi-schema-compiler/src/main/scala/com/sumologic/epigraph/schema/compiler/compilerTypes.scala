@@ -4,8 +4,8 @@ package com.sumologic.epigraph.schema.compiler
 
 import com.intellij.psi.PsiElement
 import com.sumologic.epigraph.schema.parser.Fqn
-import com.sumologic.epigraph.schema.parser.psi.{SchemaEnumTypeDef, SchemaListTypeDef, SchemaMapTypeDef, SchemaPrimitiveTypeDef, SchemaRecordTypeDef, SchemaTypeDef, _}
-import org.jetbrains.annotations.{NotNull, Nullable}
+import com.sumologic.epigraph.schema.parser.psi._
+import org.jetbrains.annotations.Nullable
 
 import scala.collection.JavaConversions._
 import scala.collection.mutable
@@ -20,6 +20,8 @@ class CTypeRef(val csf: CSchemaFile, val psi: SchemaTypeRef)(implicit val ctx: C
   }
 
   private var typeOpt: Option[CType] = None
+
+  csf.typerefs.add(this)
 
   def getTypeOpt: Option[CType] = typeOpt
 
@@ -39,7 +41,7 @@ class CTypeRef(val csf: CSchemaFile, val psi: SchemaTypeRef)(implicit val ctx: C
 }
 
 
-class CTypeName protected(val csf: CSchemaFile, val name: String, val psi: PsiElement)(implicit val ctx: CContext) {
+abstract class CTypeName protected(val csf: CSchemaFile, val name: String, val psi: PsiElement)(implicit val ctx: CContext) {
 
   def canEqual(other: Any): Boolean = other.isInstanceOf[CTypeName]
 
@@ -144,7 +146,7 @@ class CVarType(csf: CSchemaFile, override val psi: SchemaVarTypeDef)(implicit ct
 
 class CTag(val csf: CSchemaFile, val psi: SchemaVarTagDecl)(implicit val ctx: CContext) {
 
-  val name: String = psi.getName
+  val name: String = psi.getQid.getCanonicalName
 
   val typeRef: CTypeRef = new CTypeRef(csf, psi.getTypeRef)
 
@@ -164,7 +166,7 @@ class CRecordType(csf: CSchemaFile, override val psi: SchemaRecordTypeDef)(impli
 
 class CField(val csf: CSchemaFile, val psi: SchemaFieldDecl)(implicit val ctx: CContext) {
 
-  val name: String = psi.getName
+  val name: String = psi.getQid.getCanonicalName
 
   val typeRef: CTypeRef = new CTypeRef(csf, psi.getTypeRef)
 
@@ -200,7 +202,7 @@ class CEnumType(csf: CSchemaFile, psi: SchemaEnumTypeDef)(implicit ctx: CContext
 
 class CEnumValue(csf: CSchemaFile, psi: SchemaEnumMemberDecl)(implicit val ctx: CContext) {
 
-  val name: String = psi.getName
+  val name: String = psi.getQid.getCanonicalName
 
 }
 
