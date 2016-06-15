@@ -27,7 +27,11 @@ public class ReferenceTest extends LightCodeInsightFixtureTestCase {
     myFixture.configureByFiles("FqnImportTypeRef.epi_schema", "TargetNs.epi_schema");
     PsiElement element = myFixture.getFile().findElementAt(myFixture.getCaretOffset());
     //noinspection ConstantConditions
-    checkReference(element.getParent().getParent().getReference(), "ZZLong");
+    PsiReference reference = element.getParent().getParent().getReference();
+    assertNotNull(reference);
+    checkReference(reference, "ZZLong");
+    Object[] variants = reference.getVariants();
+    assertEquals(3, variants.length); // "ZZLong", "R", "target"
   }
 
   public void testNsSegmentInTypeRef() {

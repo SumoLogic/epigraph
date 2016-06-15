@@ -1,3 +1,4 @@
 namespace target
 
 long ZZLong
+double ZZDouble
