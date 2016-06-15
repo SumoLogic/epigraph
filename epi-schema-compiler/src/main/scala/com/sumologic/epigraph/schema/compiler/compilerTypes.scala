@@ -2,8 +2,10 @@
 
 package com.sumologic.epigraph.schema.compiler
 
-import com.sumologic.epigraph.schema.parser.psi.{SchemaEnumTypeDef, SchemaListTypeDef, SchemaMapTypeDef, SchemaPrimitiveTypeDef, SchemaRecordTypeDef, _}
-import org.jetbrains.annotations.Nullable
+import com.intellij.psi.PsiElement
+import com.sumologic.epigraph.schema.parser.Fqn
+import com.sumologic.epigraph.schema.parser.psi.{SchemaEnumTypeDef, SchemaListTypeDef, SchemaMapTypeDef, SchemaPrimitiveTypeDef, SchemaRecordTypeDef, SchemaTypeDef, _}
+import org.jetbrains.annotations.{NotNull, Nullable}
 
 import scala.collection.JavaConversions._
 import scala.collection.mutable
@@ -37,7 +39,7 @@ class CTypeRef(val csf: CSchemaFile, val psi: SchemaTypeRef)(implicit val ctx: C
 }
 
 
-class CTypeName protected(val name: String)(implicit val ctx: CContext) {
+class CTypeName protected(val csf: CSchemaFile, val name: String, val psi: PsiElement)(implicit val ctx: CContext) {
 
   def canEqual(other: Any): Boolean = other.isInstanceOf[CTypeName]
 
@@ -54,30 +56,36 @@ class CTypeName protected(val name: String)(implicit val ctx: CContext) {
 }
 
 
-class CTypeFqn(fqn: String)(implicit ctx: CContext) extends CTypeName(fqn) {
+class CTypeFqn private(csf: CSchemaFile, fqn: Fqn, psi: PsiElement)(implicit ctx: CContext) extends CTypeName(
+  csf, fqn.toString, psi
+) {
 
-  def this(ns: String, ln: String)(implicit ctx: CContext) = this(ns + "." + ln)
+  def this(csf: CSchemaFile, parentNs: Fqn, lqn: SchemaFqnTypeRef)(implicit ctx: CContext) = this(
+    csf, parentNs.append(lqn.getFqn.getFqn), lqn: PsiElement
+  )
+
+  def this(csf: CSchemaFile, parentNs: Fqn, typeDef: SchemaTypeDef)(implicit ctx: CContext) = this(
+    csf, parentNs.append(typeDef.getId.getText), typeDef.getId: PsiElement
+  )
 
 }
 
-class CListTypeName(csf: CSchemaFile, psi: SchemaAnonList)(implicit ctx: CContext) extends {
+class CListTypeName(csf: CSchemaFile, override val psi: SchemaAnonList)(implicit ctx: CContext) extends {
 
   val elementTypeRef: CTypeRef = new CTypeRef(csf, psi.getTypeRef)
 
-} with CTypeName("list[" + elementTypeRef.name.name + "]") {
+} with CTypeName(csf, "list[" + elementTypeRef.name.name + "]", psi) {
 
 }
 
-class CMapTypeName(csf: CSchemaFile, val psi: SchemaAnonMap)(implicit ctx: CContext) extends {
+class CMapTypeName(csf: CSchemaFile, override val psi: SchemaAnonMap)(implicit ctx: CContext) extends {
 
 
   val keyTypeRef: CTypeRef = new CTypeRef(csf, psi.getTypeRefList.head)
 
   val valueTypeRef: CTypeRef = new CTypeRef(csf, psi.getTypeRefList.last)
 
-} with CTypeName(
-  "map[" + keyTypeRef.name.name + "," + valueTypeRef.name.name + "]"
-) {
+} with CTypeName(csf, "map[" + keyTypeRef.name.name + "," + valueTypeRef.name.name + "]", psi) {
 
 //  if (keyTypeRef.name.name == "epigraph.String") {
 //    val lnu = new LineNumberUtil(csf.psi.getText, 4)
@@ -91,7 +99,7 @@ class CMapTypeName(csf: CSchemaFile, val psi: SchemaAnonMap)(implicit ctx: CCont
 class CType(val csf: CSchemaFile, val psi: SchemaTypeDef)
     (implicit val ctx: CContext) { // TODO hierarchy/constructors for anon list/map
 
-  val name: CTypeFqn = new CTypeFqn(csf.namespace.fqn, psi.getId.getText)
+  val name: CTypeFqn = new CTypeFqn(csf, csf.namespace.fqn, psi)
 
   val declaredSupertypeRefs: Seq[CTypeRef] = {
     @Nullable val sed: SchemaExtendsDecl = psi.getExtendsDecl

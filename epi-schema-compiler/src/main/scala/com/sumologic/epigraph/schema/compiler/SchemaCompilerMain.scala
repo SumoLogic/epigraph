@@ -8,7 +8,8 @@ import com.sumologic.epigraph.schema.parser.SchemaParserDefinition
 import com.sumologic.epigraph.schema.parser.psi.SchemaFile
 import org.intellij.grammar.LightPsi
 
-import scala.collection.mutable
+import scala.collection.JavaConversions._
+
 
 object SchemaCompilerMain {
 
@@ -24,39 +25,63 @@ object SchemaCompilerMain {
 
   implicit val ctx: CContext = new CContext
 
-  val supplements = mutable.LinearSeq()
-
-  val types = mutable.Map[CTypeName, CType]()
-
 
   def main(args: Array[String]) {
+
     val files: Seq[File] = paths.map(new File(_))
-    val schemaFiles: Seq[SchemaFile] = files.map { file =>
+
+    val schemaFiles: Seq[SchemaFile] = files.par.flatMap { file =>
       LightPsi.parseFile(file, spd) match {
-        case sf: SchemaFile => sf
-        case _ => throw new RuntimeException(file.getPath)
-      }
-    }
-    schemaFiles foreach { sf =>
-      ParseErrorsDumper.printParseErrors(sf)
-      print(sf.getName + ": ")
-      //println(DebugUtil.psiToString(sf, true, true).trim())
-
-      val csf: CSchemaFile = new CSchemaFile(sf)
-//      import pprint.Config.Colors._
-      implicit val PPConfig = pprint.Config(width = 120, colors = pprint.Colors(fansi.Color.Green, fansi.Color.LightBlue))
-      pprint.pprintln(csf.types)
-      csf.types.foreach {
-//        case rt: CRecordType => pprint.pprintln(rt)
-        //case mt: CMapType => pprint.pprintln(mt)
+        case sf: SchemaFile =>
+          //println(DebugUtil.psiToString(sf, true, true).trim())
+          Seq(sf)
         case _ =>
+          ctx.errors.add(new CError(file.getCanonicalPath, CErrorPosition.NA, "Couldn't parse"))
+          Nil
       }
+    }.seq
 
+    schemaFiles.foreach { sf => ctx.errors.addAll(ParseErrorsDumper.collectParseErrors(sf)) }
+
+    if (ctx.errors.nonEmpty) {
+      renderErrors(ctx)
+      System.exit(1)
     }
 
-//    println(types.mkString("{\n  ", ",\n  ", "\n}"))
+    val cSchemaFiles: Seq[CSchemaFile] = schemaFiles.map(new CSchemaFile(_))
 
+    cSchemaFiles foreach { csf =>
+      print(csf.filename + ": ")
+      //      import pprint.Config.Colors._
+      implicit val PPConfig = pprint.Config(
+        width = 120, colors = pprint.Colors(fansi.Color.Green, fansi.Color.LightBlue)
+      )
+      pprint.pprintln(csf.types)
+    }
 
+    cSchemaFiles.par foreach { csf =>
+      csf.types foreach { ct =>
+        val old: CType = ctx.types.putIfAbsent(ct.name, ct)
+        if (old != null) ctx.errors.add(
+          new CError(
+            csf.filename,
+            csf.lnu.pos(ct.name.psi.getTextRange.getStartOffset),
+            s"Type '${ct.name.name}' already defined in '${old.csf.filename}'"
+          )
+        )
+      }
+    }
+
+    if (ctx.errors.nonEmpty) {
+      renderErrors(ctx)
+      System.exit(1)
+    }
+  }
+
+  def renderErrors(ctx: CContext): Unit = {
+    ctx.errors foreach { cerr =>
+      pprint.pprintln(cerr)
+    }
   }
 
 }

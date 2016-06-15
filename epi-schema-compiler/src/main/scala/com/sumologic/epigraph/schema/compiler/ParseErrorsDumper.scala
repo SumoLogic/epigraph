@@ -3,6 +3,8 @@ package com.sumologic.epigraph.schema.compiler
 import com.intellij.psi.{PsiErrorElement, PsiRecursiveElementWalkingVisitor}
 import com.sumologic.epigraph.schema.parser.psi.SchemaFile
 
+import scala.collection.mutable
+
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
@@ -24,4 +26,23 @@ object ParseErrorsDumper {
     }
     file.accept(visitor)
   }
+
+  def collectParseErrors(sf: SchemaFile, tabWidth: Int = 2): Seq[CError] = {
+    val errors = mutable.Buffer[CError]()
+    val fileName = sf.getName
+    lazy val lineNumberUtil = new LineNumberUtil(sf.getText, tabWidth)
+
+    val visitor = new PsiRecursiveElementWalkingVisitor() {
+      override def visitErrorElement(element: PsiErrorElement): Unit = {
+        val errorOffset = element.getTextRange.getStartOffset
+        val line = lineNumberUtil.line(errorOffset)
+        val column = lineNumberUtil.column(errorOffset)
+
+        errors += new CError(fileName, lineNumberUtil.pos(errorOffset), element.getErrorDescription)
+      }
+    }
+    sf.accept(visitor)
+    errors
+  }
+
 }

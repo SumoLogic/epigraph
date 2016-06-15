@@ -18,13 +18,14 @@ class LineNumberUtil(text: String, tabWidth: Int = 2) {
     var lineNumber = 1
     while (offset < text.length) {
       val ch = text.charAt(offset)
-      line.append(ch)
 
       if (ch == '\n') {
         lines += Line(lineNumber, lineStartOffset, offset, line.toString)
         lineStartOffset = offset + 1
         line = new StringBuilder
         lineNumber += 1
+      } else {
+        line.append(ch)
       }
 
       offset += 1
@@ -34,6 +35,14 @@ class LineNumberUtil(text: String, tabWidth: Int = 2) {
       lines += Line(lineNumber, lineStartOffset, offset, line.toString)
   }
 
+  def pos(offset: Int): CErrorPosition = {
+    lines.find(_.endOffset >= offset) match {
+      case Some(line) => CErrorPosition(line.number, column(line, offset), Some(line.text))
+      case None => CErrorPosition.NA
+    }
+  }
+
+  @Deprecated
   def line(offset: Int): Int = {
     lines.find(_.endOffset >= offset) match {
       case None => -1
@@ -41,16 +50,22 @@ class LineNumberUtil(text: String, tabWidth: Int = 2) {
     }
   }
 
+  @Deprecated
   def column(offset: Int): Int = {
     lines.find(_.endOffset >= offset) match {
       case None => 0
-      case Some(line) =>
-        val offsetInLine = offset - line.startOffset
-        val linePrefix = line.text.substring(0, offsetInLine)
-        val numCrs = linePrefix.count(_ == '\r')
-        val numTabs = linePrefix.count(_ == '\t')
-        1 + linePrefix.length - numCrs - numTabs + numTabs * tabWidth
+      case Some(line) => column(line, offset)
     }
   }
+
+  def column(line: Line, offset: Int): Int = {
+    val offsetInLine = offset - line.startOffset
+    val linePrefix = line.text.substring(0, offsetInLine)
+    val numCrs = linePrefix.count(_ == '\r')
+    val numTabs = linePrefix.count(_ == '\t')
+    1 + linePrefix.length - numCrs - numTabs + numTabs * tabWidth
+  }
+
+  def lineText(offset: Int): Option[String] = lines.find(_.endOffset >= offset).map(_.text)
 
 }

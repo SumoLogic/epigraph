@@ -10,6 +10,10 @@ import scala.collection.JavaConversions._
 
 class CSchemaFile(val psi: SchemaFile)(implicit val ctx: CContext) {
 
+  val filename: String = psi.getName // TODO capture full path/name in SchemaFile
+
+  val lnu: LineNumberUtil = new LineNumberUtil(psi.getText, ctx.tabWidth)
+
   val namespace: CNamespace = new CNamespace(psi.getNamespaceDecl)
 
   val imports: Map[String, CImport] = psi.getImportStatements.map(new CImport(_)).map { ci =>
@@ -24,17 +28,17 @@ class CSchemaFile(val psi: SchemaFile)(implicit val ctx: CContext) {
   val supplements: Seq[CSupplement] = if (defs == null) Nil else defs.getSupplementDefList.map(new CSupplement(this, _))
 
   def resolveLocalTypeRef(sftr: SchemaFqnTypeRef): CTypeFqn = {
-    val fqn = sftr.getFqn.getFqn
-    val alias = fqn.first
-    val resolved = imports.get(alias).map(_.fqn.removeLastSegment().append(fqn).toString).getOrElse(
-      namespace.fqn + "." + fqn.toString
-    )
-    new CTypeFqn(resolved)
+    val alias = sftr.getFqn.getFqn.first
+    val parentNamespace = imports.get(alias) match {
+      case Some(ci) => ci.fqn.removeLastSegment()
+      case None => Fqn.EMPTY
+    }
+    new CTypeFqn(this, parentNamespace, sftr)
   }
 
   class CNamespace(val psi: SchemaNamespaceDecl)(implicit val ctx: CContext) {
 
-    val fqn: String = psi.getFqn2.toString
+    val fqn: Fqn = psi.getFqn2
     // TODO expose custom attributes
 
   }

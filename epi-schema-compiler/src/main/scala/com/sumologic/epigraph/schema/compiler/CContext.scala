@@ -2,14 +2,29 @@
 
 package com.sumologic.epigraph.schema.compiler
 
-import scala.collection.mutable
+import java.util.concurrent.{ConcurrentHashMap, ConcurrentLinkedQueue}
 
-class CContext {
+import net.jcip.annotations.ThreadSafe
 
-  //val types: mutable.Map[CTypeName, CType] = mutable.Map()
 
-  val errors: mutable.Seq[CError] = mutable.Seq()
+class CContext(val tabWidth: Int = 2) {
+
+  @ThreadSafe
+  val errors: ConcurrentLinkedQueue[CError] = new java.util.concurrent.ConcurrentLinkedQueue[CError]
+
+  @ThreadSafe
+  val types: ConcurrentHashMap[CTypeName, CType] = new java.util.concurrent.ConcurrentHashMap[CTypeName, CType]
 
 }
 
-class CError
+case class CError(filename: String, position: CErrorPosition, message: String) {
+
+}
+
+case class CErrorPosition(line: Int, column: Int, lineText: Option[String])
+
+object CErrorPosition {
+
+  val NA: CErrorPosition = CErrorPosition(0, 0, None)
+
+}

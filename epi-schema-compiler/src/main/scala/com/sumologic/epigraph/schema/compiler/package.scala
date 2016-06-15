@@ -7,6 +7,18 @@ import pprint.{Config, PPrint, PPrinter}
 
 package object compiler {
 
+
+  implicit object CErrorPrinter extends PPrinter[CError] {
+
+    override def render0(t: CError, c: Config): Iterator[String] = Iterator(
+      t.filename, ":", t.position.line.toString, ":", t.position.column.toString, " Error: ", t.message, "\n"
+    ) ++ t.position.lineText.iterator ++ Iterator("\n", " " * (t.position.column - 1), "^")
+
+  }
+
+  implicit val CErrorPrint: PPrint[CError] = PPrint(CErrorPrinter)
+
+
   implicit object CTypeRefPrinter extends PPrinter[CTypeRef] {
 
     override def render0(t: CTypeRef, c: Config): Iterator[String] = Iterator("«", t.name.name, "»")
