@@ -29,6 +29,10 @@ object SchemaCompilerMain {
 
   implicit val ctx: CContext = new CContext
 
+  //      import pprint.Config.Colors._
+  implicit private val PPConfig = pprint.Config(
+    width = 120, colors = pprint.Colors(fansi.Color.Green, fansi.Color.LightBlue)
+  )
 
   def main(args: Array[String]) {
 
@@ -56,10 +60,6 @@ object SchemaCompilerMain {
 
     cSchemaFiles foreach { csf =>
       print(csf.filename + ": ")
-      //      import pprint.Config.Colors._
-      implicit val PPConfig = pprint.Config(
-        width = 120, colors = pprint.Colors(fansi.Color.Green, fansi.Color.LightBlue)
-      )
       pprint.pprintln(csf.types)
     }
 
@@ -125,6 +125,8 @@ object SchemaCompilerMain {
         }
       }
     }
+
+    pprint.pprintln(ctx.types.toMap)
 
     if (ctx.errors.nonEmpty) {
       renderErrors(ctx)

@@ -2,6 +2,8 @@
 
 package com.sumologic.epigraph.schema
 
+import java.io.File
+
 import org.jetbrains.annotations.NotNull
 import pprint.{Config, PPrint, PPrinter}
 
@@ -10,9 +12,14 @@ package object compiler {
 
   implicit object CErrorPrinter extends PPrinter[CError] {
 
-    override def render0(t: CError, c: Config): Iterator[String] = Iterator( // TODO add " (filename.ext:linenum)"?
-      t.filename, ":", t.position.line.toString, ":", t.position.column.toString, "\nError: ", t.message, "\n"
+    override def render0(t: CError, c: Config): Iterator[String] = Iterator(
+      t.filename, ":", t.position.line.toString, ":", t.position.column.toString, " ", intellijLink(t),
+      "\nError: ", t.message, "\n"
     ) ++ t.position.lineText.iterator ++ Iterator("\n", " " * (t.position.column - 1), "^")
+
+    private def intellijLink(t: CError): String = { // relies on '.' already rendered (as part of canonical path
+      "(" + new File(t.filename).getName + ":" + t.position.line + ")"
+    }
 
   }
 
@@ -35,7 +42,7 @@ package object compiler {
 
   implicit object CTypeRefPrinter extends PPrinter[CTypeRef] {
 
-    override def render0(t: CTypeRef, c: Config): Iterator[String] = CTypeNamePrinter.render(t.name, c)
+    override def render0(t: CTypeRef, c: Config): Iterator[String] = Iterator("«", t.name.name, "»")
 
   }
 
@@ -44,20 +51,22 @@ package object compiler {
 
   implicit object CTypeNamePrinter extends PPrinter[CTypeName] {
 
-    override def render0(t: CTypeName, c: Config): Iterator[String] = Iterator("«", t.name, "»")
+    override def render0(t: CTypeName, c: Config): Iterator[String] = Iterator(t.name)
 
   }
 
   implicit val CTypeNamePrint: PPrint[CTypeName] = PPrint(CTypeNamePrinter)
 
 
-  implicit object CTypePrinter extends PPrinter[CTypeDef] {
+  implicit object CTypePrinter extends PPrinter[CType] {
 
-    override def render0(t: CTypeDef, c: Config): Iterator[String] = {
+    override def render0(t: CType, c: Config): Iterator[String] = {
       t match {
         case vt: CVarTypeDef => CVarTypePrinter.render(vt, c)
         case rt: CRecordTypeDef => CRecordTypePrinter.render(rt, c)
+        case amt: CAnonMapType => CAnonMapTypePrinter.render(amt, c)
         case mt: CMapTypeDef => CMapTypePrinter.render(mt, c)
+        case alt: CAnonListType => CAnonListTypePrinter.render(alt, c)
         case lt: CListTypeDef => CListTypePrinter.render(lt, c)
         case et: CEnumTypeDef => CEnumTypePrinter.render(et, c)
         case pt: CPrimitiveTypeDef => CPrimitiveTypePrinter.render(pt, c)
@@ -65,7 +74,7 @@ package object compiler {
       }
     }
 
-    def typeParts(@NotNull t: CTypeDef, c: Config): Iterator[Iterator[String]] = Iterator(
+    def typeDefParts(@NotNull t: CTypeDef, c: Config): Iterator[Iterator[String]] = Iterator(
       pprint.Internals.handleChunks(
         "extends", c,
         (c: Config) => t.declaredSupertypeRefs.toIterator.map(implicitly[PPrint[CTypeRef]].pprinter.render(_, c))
@@ -78,10 +87,13 @@ package object compiler {
 
   }
 
+  implicit val CTypePrint: PPrint[CType] = PPrint(CTypePrinter)
+
+
   implicit object CVarTypePrinter extends PPrinter[CVarTypeDef] {
 
     override def render0(@NotNull t: CVarTypeDef, c: Config): Iterator[String] = {
-      def body = (c: Config) => CTypePrinter.typeParts(t, c) ++ Iterator(
+      def body = (c: Config) => CTypePrinter.typeDefParts(t, c) ++ Iterator(
         pprint.Internals.handleChunks(
           "tags", c, (c: Config) => t.declaredTags.toIterator.map(CTagPrinter.render(_, c))
         )
@@ -111,7 +123,7 @@ package object compiler {
   implicit object CRecordTypePrinter extends PPrinter[CRecordTypeDef] {
 
     override def render0(@NotNull t: CRecordTypeDef, c: Config): Iterator[String] = {
-      def body = (c: Config) => CTypePrinter.typeParts(t, c) ++ Iterator(
+      def body = (c: Config) => CTypePrinter.typeDefParts(t, c) ++ Iterator(
         pprint.Internals.handleChunks(
           "fields", c, (c: Config) => t.declaredFields.toIterator.map(CFieldPrint.pprinter.render(_, c))
         )
@@ -138,11 +150,26 @@ package object compiler {
   implicit val CFieldPrint: PPrint[CField] = PPrint(CFieldPrinter)
 
 
+  implicit object CAnonMapTypePrinter extends PPrinter[CAnonMapType] {
+
+    override def render0(@NotNull t: CAnonMapType, c: Config): Iterator[String] = {
+      pprint.Internals.handleChunks(
+        t.name.name, c, (c: Config) => Iterator(
+          Iterator("keyType: ") ++ CTypeRefPrinter.render(t.keyTypeRef, c),
+          Iterator("valueType: ") ++ CTypeRefPrinter.render(t.valueTypeRef, c)
+        )
+      )
+    }
+  }
+
+  implicit val CAnonMapTypePrint: PPrint[CAnonMapType] = PPrint(CAnonMapTypePrinter)
+
   implicit object CMapTypePrinter extends PPrinter[CMapTypeDef] {
 
     override def render0(@NotNull t: CMapTypeDef, c: Config): Iterator[String] = {
       pprint.Internals.handleChunks(
-        "map " + t.name.name, c, (c: Config) => CTypePrinter.typeParts(t, c) ++ Iterator(
+        "map " + CTypeNamePrinter.render(t.name, c).mkString, c,
+        (c: Config) => CTypePrinter.typeDefParts(t, c) ++ Iterator(
           Iterator("keyType: ") ++ CTypeRefPrinter.render(t.keyTypeRef, c),
           Iterator("valueType: ") ++ CTypeRefPrinter.render(t.valueTypeRef, c)
         )
@@ -153,11 +180,25 @@ package object compiler {
   implicit val CMapTypePrint: PPrint[CMapTypeDef] = PPrint(CMapTypePrinter)
 
 
+  implicit object CAnonListTypePrinter extends PPrinter[CAnonListType] {
+
+    override def render0(@NotNull t: CAnonListType, c: Config): Iterator[String] = {
+      pprint.Internals.handleChunks(
+        t.name.name, c, (c: Config) => Iterator(
+          Iterator("elementType: ") ++ CTypeRefPrinter.render(t.elementTypeRef, c)
+        )
+      )
+    }
+  }
+
+  implicit val CAnonListTypePrint: PPrint[CAnonListType] = PPrint(CAnonListTypePrinter)
+
+
   implicit object CListTypePrinter extends PPrinter[CListTypeDef] {
 
     override def render0(@NotNull t: CListTypeDef, c: Config): Iterator[String] = {
       pprint.Internals.handleChunks(
-        "list " + t.name.name, c, (c: Config) => CTypePrinter.typeParts(t, c) ++ Iterator(
+        "list " + t.name.name, c, (c: Config) => CTypePrinter.typeDefParts(t, c) ++ Iterator(
           Iterator("valueType", t.elementTypeRef.name.name)
         )
       )
@@ -170,7 +211,7 @@ package object compiler {
   implicit object CEnumTypePrinter extends PPrinter[CEnumTypeDef] {
 
     override def render0(@NotNull t: CEnumTypeDef, c: Config): Iterator[String] = {
-      def body = (c: Config) => CTypePrinter.typeParts(t, c) ++ Iterator(
+      def body = (c: Config) => CTypePrinter.typeDefParts(t, c) ++ Iterator(
         pprint.Internals.handleChunks(
           "values", c, (c: Config) => t.values.toIterator.map(CEnumValuePrint.pprinter.render(_, c))
         )
@@ -197,7 +238,7 @@ package object compiler {
 
     override def render0(@NotNull t: CPrimitiveTypeDef, c: Config): Iterator[String] = {
       pprint.Internals.handleChunks(
-        t.kind.keyword + " " + t.name.name, c, (c: Config) => CTypePrinter.typeParts(t, c) ++ Iterator(
+        t.kind.keyword + " " + t.name.name, c, (c: Config) => CTypePrinter.typeDefParts(t, c) ++ Iterator(
           // TODO enum attributes
         )
       )

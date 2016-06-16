@@ -5,7 +5,7 @@ record Documented supplements TypeData, TypeMemberData, FieldData, EnumValueData
   doc: String { doc = "Documentation snippet" }
 }
 
-//record VarTypeData
-//enum VarTypeRef {
-//}
-//string QualifiedName
+record VarTypeData
+enum VarTypeRef {
+}
+string QualifiedName
