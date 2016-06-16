@@ -7,6 +7,8 @@ import java.io.File
 import org.jetbrains.annotations.NotNull
 import pprint.{Config, PPrint, PPrinter}
 
+import scala.collection.JavaConversions._
+
 package object compiler {
 
 
@@ -78,6 +80,10 @@ package object compiler {
       pprint.Internals.handleChunks(
         "extends", c,
         (c: Config) => t.declaredSupertypeRefs.toIterator.map(implicitly[PPrint[CTypeRef]].pprinter.render(_, c))
+      ),
+      pprint.Internals.handleChunks(
+        "injectedSupertypes", c,
+        (c: Config) => t.injectedSupertypes.toIterator.map(implicitly[PPrint[CTypeDef]].pprinter.render(_, c))
       ),
       pprint.Internals.handleChunks(
         "supplements", c,

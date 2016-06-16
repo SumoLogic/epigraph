@@ -9,3 +9,5 @@ record Documented supplements TypeData, TypeMemberData, FieldData, EnumValueData
 //enum VarTypeRef {
 //}
 //string QualifiedName
+
+supplement TypeData with Documented

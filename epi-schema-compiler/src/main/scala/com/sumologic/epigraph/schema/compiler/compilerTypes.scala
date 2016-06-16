@@ -2,6 +2,8 @@
 
 package com.sumologic.epigraph.schema.compiler
 
+import java.util.concurrent.ConcurrentLinkedQueue
+
 import com.intellij.psi.PsiElement
 import com.sumologic.epigraph.schema.parser.Fqn
 import com.sumologic.epigraph.schema.parser.psi._
@@ -12,25 +14,28 @@ import scala.collection.mutable
 
 class CTypeRef(val csf: CSchemaFile, val psi: SchemaTypeRef)(implicit val ctx: CContext) {
 
-  val name: CTypeName = psi match {
+  val name: CTypeName = psi match { // TODO hierarchy for typedefrefs vs anontyperefs?
     case sftr: SchemaFqnTypeRef => csf.resolveLocalTypeRef(sftr)
     case sal: SchemaAnonList => new CAnonListTypeName(csf, sal)
     case sam: SchemaAnonMap => new CAnonMapTypeName(csf, sam)
     case _ => throw new RuntimeException // TODO exception
   }
 
-  private var typeOpt: Option[CType] = None
+  private var typeOptVar: Option[CType] = None
 
   csf.typerefs.add(this)
 
-  def getTypeOpt: Option[CType] = typeOpt
+  def getTypeOpt: Option[CType] = typeOptVar
+
+  @throws[java.util.NoSuchElementException]
+  def resolved: CType = typeOptVar.get
 
   def resolveTo(ctype: CType): this.type = {
-    typeOpt match {
+    typeOptVar match {
       case Some(ct) if !(ct eq ctype) => throw new RuntimeException // TODO proper exception
       case None =>
         if (ctype.name == name) {
-          typeOpt = Some(ctype)
+          typeOptVar = Some(ctype)
         } else {
           throw new RuntimeException // TODO proper exception
         }
@@ -117,7 +122,7 @@ class CTypeDef(val csf: CSchemaFile, val psi: SchemaTypeDef)(implicit val ctx: C
     if (ssd == null) Nil else ssd.getFqnTypeRefList.map(new CTypeRef(csf, _))
   }
 
-  val injectedSupertypeRefs: mutable.Set[CTypeRef] = mutable.Set()
+  val injectedSupertypes: ConcurrentLinkedQueue[CTypeDef] = new ConcurrentLinkedQueue
 
 }
 

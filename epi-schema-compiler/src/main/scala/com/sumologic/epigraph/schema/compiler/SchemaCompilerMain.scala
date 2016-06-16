@@ -12,6 +12,7 @@ import com.sumologic.epigraph.schema.parser.psi.SchemaFile
 import org.intellij.grammar.LightPsi
 import org.jetbrains.annotations.Nullable
 
+import scala.collection.GenTraversableOnce
 import scala.collection.JavaConversions._
 
 
@@ -36,7 +37,26 @@ object SchemaCompilerMain {
 
   def main(args: Array[String]) {
 
-    val files: Seq[File] = paths.map(new File(_))
+    val schemaFiles: Seq[SchemaFile] = parseSourceFiles(paths.map(new File(_)))
+    handleErrors()
+
+    val cSchemaFiles: Seq[CSchemaFile] = schemaFiles.map(new CSchemaFile(_))
+    printSchemaFiles(cSchemaFiles)
+
+    registerDefinedTypes(cSchemaFiles)
+    //pprint.pprintln(ctx.types.keys.toSeq)
+
+    resolveTypeRefs(cSchemaFiles)
+    pprint.pprintln(ctx.types.toMap)
+    handleErrors()
+
+    applySupplementingTypeDefs()
+    applySupplements(cSchemaFiles) // FIXME track injecting `supplement`s
+    printSchemaFiles(cSchemaFiles)
+
+  }
+
+  def parseSourceFiles(files: Seq[File]): Seq[SchemaFile] = {
 
     val schemaFiles: Seq[SchemaFile] = files.par.flatMap { file =>
       parseFile(file, spd) match {
@@ -51,18 +71,10 @@ object SchemaCompilerMain {
 
     schemaFiles.foreach { sf => ctx.errors.addAll(ParseErrorsDumper.collectParseErrors(sf)) }
 
-    if (ctx.errors.nonEmpty) {
-      renderErrors(ctx)
-      System.exit(1)
-    }
+    schemaFiles
+  }
 
-    val cSchemaFiles: Seq[CSchemaFile] = schemaFiles.map(new CSchemaFile(_))
-
-    cSchemaFiles foreach { csf =>
-      print(csf.filename + ": ")
-      pprint.pprintln(csf.types)
-    }
-
+  def registerDefinedTypes(cSchemaFiles: Seq[CSchemaFile]): Unit = {
     cSchemaFiles foreach { csf =>
       csf.types foreach { ct =>
         val old: CTypeDef = ctx.types.putIfAbsent(ct.name, ct).asInstanceOf[CTypeDef] //FIXME (make types smart object?)
@@ -75,9 +87,9 @@ object SchemaCompilerMain {
         )
       }
     }
+  }
 
-    //pprint.pprintln(ctx.types.keys.toSeq)
-
+  def resolveTypeRefs(cSchemaFiles: Seq[CSchemaFile]): Unit = {
     cSchemaFiles.par foreach { csf =>
       csf.typerefs foreach { ctr =>
         ctr.name match { // TODO clean-up
@@ -125,19 +137,53 @@ object SchemaCompilerMain {
         }
       }
     }
+  }
 
-    pprint.pprintln(ctx.types.toMap)
+  def applySupplementingTypeDefs(): Unit = {
+    ctx.types.elements foreach {
+      case ctd: CTypeDef =>
+        ctd.declaredSupplementees foreach { ctr =>
+          ctr.resolved match {
+            case typeDef: CTypeDef => typeDef.injectedSupertypes.add(ctd) // TODO capture injector source?
+            case _ => throw new RuntimeException // TODO exception
+          }
+        }
+      case _ => // ignore anon lists/maps
+    }
+  }
 
+  def applySupplements(cSchemaFiles: Seq[CSchemaFile]): Unit = {
+    cSchemaFiles foreach { csf =>
+      csf.supplements foreach { cs =>
+        val sourceTypeDef = cs.source.resolved match {
+          case ctd: CTypeDef => ctd
+          case _ => ???
+        }
+        cs.targets.map(_.resolved) foreach {
+          case typeDef: CTypeDef => typeDef.injectedSupertypes.add(sourceTypeDef)
+          case _ => ???
+        }
+      }
+    }
+  }
+
+  def handleErrors(): Unit = { // FIXME it should not exit but return error code
     if (ctx.errors.nonEmpty) {
       renderErrors(ctx)
       System.exit(1)
     }
-
   }
 
   def renderErrors(ctx: CContext): Unit = {
     ctx.errors foreach { cerr =>
       pprint.pprintln(cerr)
+    }
+  }
+
+  def printSchemaFiles(schemaFiles: GenTraversableOnce[CSchemaFile]): Unit = {
+    schemaFiles foreach { csf =>
+      print(csf.filename + ": ")
+      pprint.pprintln(csf.types)
     }
   }
 
