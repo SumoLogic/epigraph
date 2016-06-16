@@ -10,8 +10,8 @@ package object compiler {
 
   implicit object CErrorPrinter extends PPrinter[CError] {
 
-    override def render0(t: CError, c: Config): Iterator[String] = Iterator(
-      t.filename, ":", t.position.line.toString, ":", t.position.column.toString, " Error: ", t.message, "\n"
+    override def render0(t: CError, c: Config): Iterator[String] = Iterator( // TODO add " (filename.ext:linenum)"?
+      t.filename, ":", t.position.line.toString, ":", t.position.column.toString, "\nError: ", t.message, "\n"
     ) ++ t.position.lineText.iterator ++ Iterator("\n", " " * (t.position.column - 1), "^")
 
   }
@@ -51,21 +51,21 @@ package object compiler {
   implicit val CTypeNamePrint: PPrint[CTypeName] = PPrint(CTypeNamePrinter)
 
 
-  implicit object CTypePrinter extends PPrinter[CType] {
+  implicit object CTypePrinter extends PPrinter[CTypeDef] {
 
-    override def render0(t: CType, c: Config): Iterator[String] = {
+    override def render0(t: CTypeDef, c: Config): Iterator[String] = {
       t match {
-        case vt: CVarType => CVarTypePrinter.render(vt, c)
-        case rt: CRecordType => CRecordTypePrinter.render(rt, c)
-        case mt: CMapType => CMapTypePrinter.render(mt, c)
-        case lt: CListType => CListTypePrinter.render(lt, c)
-        case et: CEnumType => CEnumTypePrinter.render(et, c)
-        case pt: CPrimitiveType => CPrimitiveTypePrinter.render(pt, c)
+        case vt: CVarTypeDef => CVarTypePrinter.render(vt, c)
+        case rt: CRecordTypeDef => CRecordTypePrinter.render(rt, c)
+        case mt: CMapTypeDef => CMapTypePrinter.render(mt, c)
+        case lt: CListTypeDef => CListTypePrinter.render(lt, c)
+        case et: CEnumTypeDef => CEnumTypePrinter.render(et, c)
+        case pt: CPrimitiveTypeDef => CPrimitiveTypePrinter.render(pt, c)
         case _ => Iterator("UNKNOWN ", t.name.name)
       }
     }
 
-    def typeParts(@NotNull t: CType, c: Config): Iterator[Iterator[String]] = Iterator(
+    def typeParts(@NotNull t: CTypeDef, c: Config): Iterator[Iterator[String]] = Iterator(
       pprint.Internals.handleChunks(
         "extends", c,
         (c: Config) => t.declaredSupertypeRefs.toIterator.map(implicitly[PPrint[CTypeRef]].pprinter.render(_, c))
@@ -78,9 +78,9 @@ package object compiler {
 
   }
 
-  implicit object CVarTypePrinter extends PPrinter[CVarType] {
+  implicit object CVarTypePrinter extends PPrinter[CVarTypeDef] {
 
-    override def render0(@NotNull t: CVarType, c: Config): Iterator[String] = {
+    override def render0(@NotNull t: CVarTypeDef, c: Config): Iterator[String] = {
       def body = (c: Config) => CTypePrinter.typeParts(t, c) ++ Iterator(
         pprint.Internals.handleChunks(
           "tags", c, (c: Config) => t.declaredTags.toIterator.map(CTagPrinter.render(_, c))
@@ -91,7 +91,7 @@ package object compiler {
 
   }
 
-  implicit val CVarTypePrint: PPrint[CVarType] = PPrint(CVarTypePrinter)
+  implicit val CVarTypePrint: PPrint[CVarTypeDef] = PPrint(CVarTypePrinter)
 
   implicit object CTagPrinter extends PPrinter[CTag] {
 
@@ -108,9 +108,9 @@ package object compiler {
   implicit val CTagPrint: PPrint[CTag] = PPrint(CTagPrinter)
 
 
-  implicit object CRecordTypePrinter extends PPrinter[CRecordType] {
+  implicit object CRecordTypePrinter extends PPrinter[CRecordTypeDef] {
 
-    override def render0(@NotNull t: CRecordType, c: Config): Iterator[String] = {
+    override def render0(@NotNull t: CRecordTypeDef, c: Config): Iterator[String] = {
       def body = (c: Config) => CTypePrinter.typeParts(t, c) ++ Iterator(
         pprint.Internals.handleChunks(
           "fields", c, (c: Config) => t.declaredFields.toIterator.map(CFieldPrint.pprinter.render(_, c))
@@ -121,7 +121,7 @@ package object compiler {
 
   }
 
-  implicit val CRecordTypePrint: PPrint[CRecordType] = PPrint(CRecordTypePrinter)
+  implicit val CRecordTypePrint: PPrint[CRecordTypeDef] = PPrint(CRecordTypePrinter)
 
   implicit object CFieldPrinter extends PPrinter[CField] {
 
@@ -138,9 +138,9 @@ package object compiler {
   implicit val CFieldPrint: PPrint[CField] = PPrint(CFieldPrinter)
 
 
-  implicit object CMapTypePrinter extends PPrinter[CMapType] {
+  implicit object CMapTypePrinter extends PPrinter[CMapTypeDef] {
 
-    override def render0(@NotNull t: CMapType, c: Config): Iterator[String] = {
+    override def render0(@NotNull t: CMapTypeDef, c: Config): Iterator[String] = {
       pprint.Internals.handleChunks(
         "map " + t.name.name, c, (c: Config) => CTypePrinter.typeParts(t, c) ++ Iterator(
           Iterator("keyType: ") ++ CTypeRefPrinter.render(t.keyTypeRef, c),
@@ -150,12 +150,12 @@ package object compiler {
     }
   }
 
-  implicit val CMapTypePrint: PPrint[CMapType] = PPrint(CMapTypePrinter)
+  implicit val CMapTypePrint: PPrint[CMapTypeDef] = PPrint(CMapTypePrinter)
 
 
-  implicit object CListTypePrinter extends PPrinter[CListType] {
+  implicit object CListTypePrinter extends PPrinter[CListTypeDef] {
 
-    override def render0(@NotNull t: CListType, c: Config): Iterator[String] = {
+    override def render0(@NotNull t: CListTypeDef, c: Config): Iterator[String] = {
       pprint.Internals.handleChunks(
         "list " + t.name.name, c, (c: Config) => CTypePrinter.typeParts(t, c) ++ Iterator(
           Iterator("valueType", t.elementTypeRef.name.name)
@@ -164,12 +164,12 @@ package object compiler {
     }
   }
 
-  implicit val CListTypePrint: PPrint[CListType] = PPrint(CListTypePrinter)
+  implicit val CListTypePrint: PPrint[CListTypeDef] = PPrint(CListTypePrinter)
 
 
-  implicit object CEnumTypePrinter extends PPrinter[CEnumType] {
+  implicit object CEnumTypePrinter extends PPrinter[CEnumTypeDef] {
 
-    override def render0(@NotNull t: CEnumType, c: Config): Iterator[String] = {
+    override def render0(@NotNull t: CEnumTypeDef, c: Config): Iterator[String] = {
       def body = (c: Config) => CTypePrinter.typeParts(t, c) ++ Iterator(
         pprint.Internals.handleChunks(
           "values", c, (c: Config) => t.values.toIterator.map(CEnumValuePrint.pprinter.render(_, c))
@@ -180,7 +180,7 @@ package object compiler {
 
   }
 
-  implicit val CEnumTypePrint: PPrint[CEnumType] = PPrint(CEnumTypePrinter)
+  implicit val CEnumTypePrint: PPrint[CEnumTypeDef] = PPrint(CEnumTypePrinter)
 
   implicit object CEnumValuePrinter extends PPrinter[CEnumValue] {
 
@@ -193,9 +193,9 @@ package object compiler {
   implicit val CEnumValuePrint: PPrint[CEnumValue] = PPrint(CEnumValuePrinter)
 
 
-  implicit object CPrimitiveTypePrinter extends PPrinter[CPrimitiveType] {
+  implicit object CPrimitiveTypePrinter extends PPrinter[CPrimitiveTypeDef] {
 
-    override def render0(@NotNull t: CPrimitiveType, c: Config): Iterator[String] = {
+    override def render0(@NotNull t: CPrimitiveTypeDef, c: Config): Iterator[String] = {
       pprint.Internals.handleChunks(
         t.kind.keyword + " " + t.name.name, c, (c: Config) => CTypePrinter.typeParts(t, c) ++ Iterator(
           // TODO enum attributes
@@ -204,6 +204,6 @@ package object compiler {
     }
   }
 
-  implicit val CPrimitiveTypePrint: PPrint[CPrimitiveType] = PPrint(CPrimitiveTypePrinter)
+  implicit val CPrimitiveTypePrint: PPrint[CPrimitiveTypeDef] = PPrint(CPrimitiveTypePrinter)
 
 }

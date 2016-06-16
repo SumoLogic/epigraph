@@ -11,10 +11,10 @@ import net.jcip.annotations.ThreadSafe
 class CContext(val tabWidth: Int = 2) {
 
   @ThreadSafe
-  val errors: ConcurrentLinkedQueue[CError] = new java.util.concurrent.ConcurrentLinkedQueue[CError]
+  val errors: ConcurrentLinkedQueue[CError] = new java.util.concurrent.ConcurrentLinkedQueue
 
   @ThreadSafe
-  val types: ConcurrentHashMap[CTypeName, CType] = new java.util.concurrent.ConcurrentHashMap[CTypeName, CType]
+  val types: ConcurrentHashMap[CTypeName, CType] = new java.util.concurrent.ConcurrentHashMap
 
   val implicitImports: Map[String, Fqn] = Seq(
     "epigraph.String",

@@ -34,11 +34,7 @@ object ParseErrorsDumper {
 
     val visitor = new PsiRecursiveElementWalkingVisitor() {
       override def visitErrorElement(element: PsiErrorElement): Unit = {
-        val errorOffset = element.getTextRange.getStartOffset
-        val line = lineNumberUtil.line(errorOffset)
-        val column = lineNumberUtil.column(errorOffset)
-
-        errors += new CError(fileName, lineNumberUtil.pos(errorOffset), element.getErrorDescription)
+        errors += new CError(fileName, lineNumberUtil.pos(element), element.getErrorDescription)
       }
     }
     sf.accept(visitor)

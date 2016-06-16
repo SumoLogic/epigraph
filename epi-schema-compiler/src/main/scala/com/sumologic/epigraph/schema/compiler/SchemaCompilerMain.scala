@@ -2,8 +2,11 @@
 
 package com.sumologic.epigraph.schema.compiler
 
-import java.io.File
+import java.io.{File, IOException}
 
+import com.intellij.lang.ParserDefinition
+import com.intellij.openapi.util.io.FileUtil
+import com.intellij.psi.PsiFile
 import com.sumologic.epigraph.schema.parser.SchemaParserDefinition
 import com.sumologic.epigraph.schema.parser.psi.SchemaFile
 import org.intellij.grammar.LightPsi
@@ -32,7 +35,7 @@ object SchemaCompilerMain {
     val files: Seq[File] = paths.map(new File(_))
 
     val schemaFiles: Seq[SchemaFile] = files.par.flatMap { file =>
-      LightPsi.parseFile(file, spd) match {
+      parseFile(file, spd) match {
         case sf: SchemaFile =>
           //println(DebugUtil.psiToString(sf, true, true).trim())
           Seq(sf)
@@ -52,7 +55,7 @@ object SchemaCompilerMain {
     val cSchemaFiles: Seq[CSchemaFile] = schemaFiles.map(new CSchemaFile(_))
 
     cSchemaFiles foreach { csf =>
-      print("...(" + csf.filename + ":0): ")
+      print(csf.filename + ": ")
       //      import pprint.Config.Colors._
       implicit val PPConfig = pprint.Config(
         width = 120, colors = pprint.Colors(fansi.Color.Green, fansi.Color.LightBlue)
@@ -60,14 +63,14 @@ object SchemaCompilerMain {
       pprint.pprintln(csf.types)
     }
 
-    cSchemaFiles.par foreach { csf =>
+    cSchemaFiles foreach { csf =>
       csf.types foreach { ct =>
-        val old: CType = ctx.types.putIfAbsent(ct.name, ct)
+        val old: CTypeDef = ctx.types.putIfAbsent(ct.name, ct).asInstanceOf[CTypeDef] //FIXME (make types smart object?)
         if (old != null) ctx.errors.add(
           new CError(
             csf.filename,
-            csf.lnu.pos(ct.name.psi.getTextRange.getStartOffset),
-            s"Type '${ct.name.name}' already defined in '${old.csf.filename}'"
+            csf.lnu.pos(ct.name.psi),
+            s"Type '${ct.name.name}' already defined at '${old.csf.location(old.psi.getQid)}'"
           )
         )
       }
@@ -77,19 +80,49 @@ object SchemaCompilerMain {
 
     cSchemaFiles.par foreach { csf =>
       csf.typerefs foreach { ctr =>
-        @Nullable val refType = ctx.types.get(ctr.name)
-        if (refType == null) {
-          ctx.errors.add(
-            new CError(
-              csf.filename,
-              csf.lnu.pos(ctr.psi.getTextRange.getStartOffset),
-              s"Not found: type '${ctr.name.name}'"
-            )
-          )
-        } else {
-          ctr.resolveTo(refType)
-        }
+        ctr.name match { // TODO clean-up
 
+          case fqn: CTypeFqn =>
+            @Nullable val refType = ctx.types.get(ctr.name)
+            if (refType == null) {
+              ctx.errors.add(
+                new CError(
+                  csf.filename,
+                  csf.lnu.pos(ctr.psi),
+                  s"Not found: type '${ctr.name.name}'"
+                )
+              )
+            } else {
+              ctr.resolveTo(refType)
+            }
+
+          case altn: CAnonListTypeName =>
+            val alt = ctx.types.computeIfAbsent(
+              altn, new java.util.function.Function[CTypeName, CAnonListType] {
+                override def apply(t: CTypeName): CAnonListType = {
+                  t match {
+                    case altn: CAnonListTypeName => new CAnonListType(altn)
+                    case _ => throw new RuntimeException // TODO
+                  }
+                }
+              }
+            )
+            ctr.resolveTo(alt)
+
+          case amtn: CAnonMapTypeName =>
+            val amt = ctx.types.computeIfAbsent(
+              amtn, new java.util.function.Function[CTypeName, CAnonMapType] {
+                override def apply(t: CTypeName): CAnonMapType = {
+                  t match {
+                    case amtn: CAnonMapTypeName => new CAnonMapType(amtn)
+                    case _ => throw new RuntimeException // TODO
+                  }
+                }
+              }
+            )
+            ctr.resolveTo(amt)
+
+        }
       }
     }
 
@@ -104,6 +137,13 @@ object SchemaCompilerMain {
     ctx.errors foreach { cerr =>
       pprint.pprintln(cerr)
     }
+  }
+
+  @throws[IOException]
+  def parseFile(file: File, parserDefinition: ParserDefinition): PsiFile = {
+    val name: String = file.getCanonicalPath
+    val text: String = FileUtil.loadFile(file)
+    LightPsi.parseFile(name, text, parserDefinition)
   }
 
 }

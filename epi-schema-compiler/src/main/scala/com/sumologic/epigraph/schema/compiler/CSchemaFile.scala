@@ -4,6 +4,7 @@ package com.sumologic.epigraph.schema.compiler
 
 import java.util.concurrent.ConcurrentLinkedQueue
 
+import com.intellij.psi.PsiElement
 import com.sumologic.epigraph.schema.parser.Fqn
 import com.sumologic.epigraph.schema.parser.psi._
 import net.jcip.annotations.ThreadSafe
@@ -31,7 +32,7 @@ class CSchemaFile(val psi: SchemaFile)(implicit val ctx: CContext) {
   @Nullable
   private val defs: SchemaDefs = psi.getDefs
 
-  val types: Seq[CType] = if (defs == null) Nil else defs.getTypeDefWrapperList.map(CType.apply(this, _))
+  val types: Seq[CTypeDef] = if (defs == null) Nil else defs.getTypeDefWrapperList.map(CTypeDef.apply(this, _))
 
   val supplements: Seq[CSupplement] = if (defs == null) Nil else defs.getSupplementDefList.map(new CSupplement(this, _))
 
@@ -45,6 +46,16 @@ class CSchemaFile(val psi: SchemaFile)(implicit val ctx: CContext) {
       }
     }
     new CTypeFqn(this, parentNamespace, sftr)
+  }
+
+  def position(psi: PsiElement): CErrorPosition = {
+    // TODO check element is ours?
+    lnu.pos(psi)
+  }
+
+  def location(psi: PsiElement): String = {
+    val cep = position(psi)
+    filename + ":" + cep.line + ":" + cep.column
   }
 
   class CNamespace(val psi: SchemaNamespaceDecl)(implicit val ctx: CContext) {

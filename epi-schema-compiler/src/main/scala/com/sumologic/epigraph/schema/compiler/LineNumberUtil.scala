@@ -1,5 +1,7 @@
 package com.sumologic.epigraph.schema.compiler
 
+import com.intellij.psi.PsiElement
+
 import scala.collection.mutable
 
 /**
@@ -34,6 +36,8 @@ class LineNumberUtil(text: String, tabWidth: Int = 2) {
     if (line.nonEmpty)
       lines += Line(lineNumber, lineStartOffset, offset, line.toString)
   }
+
+  def pos(psi: PsiElement): CErrorPosition = pos(psi.getTextRange.getStartOffset)
 
   def pos(offset: Int): CErrorPosition = {
     lines.find(_.endOffset >= offset) match {

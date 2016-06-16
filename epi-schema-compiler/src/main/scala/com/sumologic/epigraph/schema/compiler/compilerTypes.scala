@@ -14,8 +14,8 @@ class CTypeRef(val csf: CSchemaFile, val psi: SchemaTypeRef)(implicit val ctx: C
 
   val name: CTypeName = psi match {
     case sftr: SchemaFqnTypeRef => csf.resolveLocalTypeRef(sftr)
-    case sal: SchemaAnonList => new CListTypeName(csf, sal)
-    case sam: SchemaAnonMap => new CMapTypeName(csf, sam)
+    case sal: SchemaAnonList => new CAnonListTypeName(csf, sal)
+    case sam: SchemaAnonMap => new CAnonMapTypeName(csf, sam)
     case _ => throw new RuntimeException // TODO exception
   }
 
@@ -41,7 +41,8 @@ class CTypeRef(val csf: CSchemaFile, val psi: SchemaTypeRef)(implicit val ctx: C
 }
 
 
-abstract class CTypeName protected(val csf: CSchemaFile, val name: String, val psi: PsiElement)(implicit val ctx: CContext) {
+abstract class CTypeName protected(val csf: CSchemaFile, val name: String, val psi: PsiElement)
+    (implicit val ctx: CContext) {
 
   def canEqual(other: Any): Boolean = other.isInstanceOf[CTypeName]
 
@@ -72,7 +73,7 @@ class CTypeFqn private(csf: CSchemaFile, fqn: Fqn, psi: PsiElement)(implicit ctx
 
 }
 
-class CListTypeName(csf: CSchemaFile, override val psi: SchemaAnonList)(implicit ctx: CContext) extends {
+class CAnonListTypeName(csf: CSchemaFile, override val psi: SchemaAnonList)(implicit ctx: CContext) extends {
 
   val elementTypeRef: CTypeRef = new CTypeRef(csf, psi.getTypeRef)
 
@@ -80,7 +81,7 @@ class CListTypeName(csf: CSchemaFile, override val psi: SchemaAnonList)(implicit
 
 }
 
-class CMapTypeName(csf: CSchemaFile, override val psi: SchemaAnonMap)(implicit ctx: CContext) extends {
+class CAnonMapTypeName(csf: CSchemaFile, override val psi: SchemaAnonMap)(implicit ctx: CContext) extends {
 
 
   val keyTypeRef: CTypeRef = new CTypeRef(csf, psi.getTypeRefList.head)
@@ -97,9 +98,12 @@ class CMapTypeName(csf: CSchemaFile, override val psi: SchemaAnonMap)(implicit c
 
 }
 
+trait CType {
 
-class CType(val csf: CSchemaFile, val psi: SchemaTypeDef)
-    (implicit val ctx: CContext) { // TODO hierarchy/constructors for anon list/map
+  val name: CTypeName
+}
+
+class CTypeDef(val csf: CSchemaFile, val psi: SchemaTypeDef)(implicit val ctx: CContext) extends CType {
 
   val name: CTypeFqn = new CTypeFqn(csf, csf.namespace.fqn, psi)
 
@@ -117,17 +121,17 @@ class CType(val csf: CSchemaFile, val psi: SchemaTypeDef)
 
 }
 
-object CType {
+object CTypeDef {
 
-  def apply(csf: CSchemaFile, stdw: SchemaTypeDefWrapper)(implicit ctx: CContext): CType = {
+  def apply(csf: CSchemaFile, stdw: SchemaTypeDefWrapper)(implicit ctx: CContext): CTypeDef = {
     val std: SchemaTypeDef = stdw.getElement
     val ctype = std match {
-      case vt: SchemaVarTypeDef => new CVarType(csf, vt)
-      case rt: SchemaRecordTypeDef => new CRecordType(csf, rt)
-      case mt: SchemaMapTypeDef => new CMapType(csf, mt)
-      case lt: SchemaListTypeDef => new CListType(csf, lt)
-      case et: SchemaEnumTypeDef => new CEnumType(csf, et)
-      case pt: SchemaPrimitiveTypeDef => new CPrimitiveType(csf, pt)
+      case vt: SchemaVarTypeDef => new CVarTypeDef(csf, vt)
+      case rt: SchemaRecordTypeDef => new CRecordTypeDef(csf, rt)
+      case mt: SchemaMapTypeDef => new CMapTypeDef(csf, mt)
+      case lt: SchemaListTypeDef => new CListTypeDef(csf, lt)
+      case et: SchemaEnumTypeDef => new CEnumTypeDef(csf, et)
+      case pt: SchemaPrimitiveTypeDef => new CPrimitiveTypeDef(csf, pt)
       case _ => null
     }
     ctype
@@ -135,7 +139,9 @@ object CType {
 
 }
 
-class CVarType(csf: CSchemaFile, override val psi: SchemaVarTypeDef)(implicit ctx: CContext) extends CType(csf, psi) {
+class CVarTypeDef(csf: CSchemaFile, override val psi: SchemaVarTypeDef)(implicit ctx: CContext) extends CTypeDef(
+  csf, psi
+) {
 
   val declaredTags: Seq[CTag] = {
     @Nullable val body = psi.getVarTypeBody
@@ -153,7 +159,7 @@ class CTag(val csf: CSchemaFile, val psi: SchemaVarTagDecl)(implicit val ctx: CC
 }
 
 
-class CRecordType(csf: CSchemaFile, override val psi: SchemaRecordTypeDef)(implicit ctx: CContext) extends CType(
+class CRecordTypeDef(csf: CSchemaFile, override val psi: SchemaRecordTypeDef)(implicit ctx: CContext) extends CTypeDef(
   csf, psi
 ) {
 
@@ -172,26 +178,61 @@ class CField(val csf: CSchemaFile, val psi: SchemaFieldDecl)(implicit val ctx: C
 
 }
 
+trait CMapType extends CType {
 
-class CMapType(csf: CSchemaFile, override val psi: SchemaMapTypeDef)(implicit ctx: CContext) extends CType(csf, psi) {
+  val name: CTypeName
 
-  val keyTypeRef: CTypeRef = new CTypeRef(csf, psi.getAnonMap.getTypeRefList.head)
+  val keyTypeRef: CTypeRef
 
-  val valueTypeRef: CTypeRef = new CTypeRef(csf, psi.getAnonMap.getTypeRefList.last)
+  val valueTypeRef: CTypeRef
+
+}
+
+class CAnonMapType(override val name: CAnonMapTypeName) extends CMapType {
+
+  override val keyTypeRef: CTypeRef = name.keyTypeRef
+
+  override val valueTypeRef: CTypeRef = name.valueTypeRef
 
 }
 
 
-class CListType(csf: CSchemaFile, override val psi: SchemaListTypeDef)(implicit ctx: CContext) extends {
+class CMapTypeDef(csf: CSchemaFile, override val psi: SchemaMapTypeDef)(implicit ctx: CContext) extends CTypeDef(
+  csf, psi
+) with CMapType {
 
-} with CType(csf, psi) {
+  override val keyTypeRef: CTypeRef = new CTypeRef(csf, psi.getAnonMap.getTypeRefList.head)
 
-  val elementTypeRef: CTypeRef = new CTypeRef(csf, psi.getAnonList.getTypeRef)
+  override val valueTypeRef: CTypeRef = new CTypeRef(csf, psi.getAnonMap.getTypeRefList.last)
+
+}
+
+trait CListType extends CType {
+
+  val name: CTypeName
+
+  val elementTypeRef: CTypeRef
 
 }
 
 
-class CEnumType(csf: CSchemaFile, psi: SchemaEnumTypeDef)(implicit ctx: CContext) extends CType(csf, psi) {
+class CAnonListType(override val name: CAnonListTypeName) extends CListType {
+
+  override val elementTypeRef: CTypeRef = name.elementTypeRef
+
+}
+
+
+class CListTypeDef(csf: CSchemaFile, override val psi: SchemaListTypeDef)(implicit ctx: CContext) extends CTypeDef(
+  csf, psi
+) with CListType {
+
+  override val elementTypeRef: CTypeRef = new CTypeRef(csf, psi.getAnonList.getTypeRef)
+
+}
+
+
+class CEnumTypeDef(csf: CSchemaFile, psi: SchemaEnumTypeDef)(implicit ctx: CContext) extends CTypeDef(csf, psi) {
 
   val values: Seq[CEnumValue] = {
     @Nullable val body = psi.getEnumTypeBody
@@ -207,7 +248,8 @@ class CEnumValue(csf: CSchemaFile, psi: SchemaEnumMemberDecl)(implicit val ctx: 
 }
 
 
-class CPrimitiveType(csf: CSchemaFile, override val psi: SchemaPrimitiveTypeDef)(implicit ctx: CContext) extends CType(
+class CPrimitiveTypeDef(csf: CSchemaFile, override val psi: SchemaPrimitiveTypeDef)
+    (implicit ctx: CContext) extends CTypeDef(
   csf, psi
 ) {
 
