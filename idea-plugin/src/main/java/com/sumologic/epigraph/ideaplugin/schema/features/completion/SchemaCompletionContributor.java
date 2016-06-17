@@ -73,6 +73,7 @@ public class SchemaCompletionContributor extends CompletionContributor {
             completeExtendsKeyword(position, result);
             completeMetaKeyword(position, result);
             completeSupplementsKeyword(position, result);
+            completeWith(position, result);
             completeNewTypeName(position, result);
           }
         }
@@ -105,7 +106,7 @@ public class SchemaCompletionContributor extends CompletionContributor {
           // don't initiate new type completion if we're followed by anything but a new def, e.g. when we're followed by a {..} dummy block
           completeTypeDef = nextParentSibling == null
               || nextParentSibling instanceof SchemaTypeDefWrapper
-              ||nextParentSibling instanceof SchemaSupplementDef;
+              || nextParentSibling instanceof SchemaSupplementDef;
 
         } else if (grandParentElementType == S_IMPORT_STATEMENT) {
           if (!SchemaPsiUtil.hasNextSibling(grandParent, S_IMPORT_STATEMENT)) {
@@ -221,6 +222,19 @@ public class SchemaCompletionContributor extends CompletionContributor {
 
       result.addElement(LookupElementBuilder.create(completion));
     }
+  }
+
+  private void completeWith(@NotNull PsiElement position, @NotNull final CompletionResultSet result) {
+    PsiElement qid = position.getParent();
+    if (!(qid instanceof SchemaQid)) return;
+
+    if (PsiTreeUtil.getParentOfType(qid, SchemaSupplementDef.class) != null) {
+      SchemaFqnTypeRef fqnTypeRef = PsiTreeUtil.getParentOfType(qid, SchemaFqnTypeRef.class);
+      if (fqnTypeRef != null && !SchemaPsiUtil.hasPrevSibling(fqnTypeRef, S_WITH)) {
+        result.addElement(LookupElementBuilder.create("with "));
+      }
+    }
+
   }
 
   private void completeNewTypeName(@NotNull PsiElement position, @NotNull final CompletionResultSet result) {

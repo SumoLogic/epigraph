@@ -101,6 +101,10 @@ public class CompletionTest extends LightCodeInsightFixtureTestCase {
     checkCompletionVariants("Bar", "Baz");
   }
 
+  public void testWithCompletion() {
+    myFixture.testCompletion("CompleteWith.epi_schema", "CompleteWith-after.epi_schema");
+  }
+
   private void checkCompletionVariants(String... variants) {
     myFixture.completeBasic();
     List<String> actual = myFixture.getLookupElementStrings();

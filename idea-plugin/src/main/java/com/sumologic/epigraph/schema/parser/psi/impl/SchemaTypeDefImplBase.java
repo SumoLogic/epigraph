@@ -84,8 +84,8 @@ public abstract class SchemaTypeDefImplBase<S extends SchemaTypeDefStubBase<T>, 
       return stub.getName();
     }
 
-    PsiElement id = getQid();
-    return id == null ? null : id.getText();
+    SchemaQid id = getQid();
+    return id == null ? null : id.getCanonicalName();
   }
 
   @Nullable

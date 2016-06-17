@@ -11,6 +11,8 @@ import com.intellij.psi.PsiPolyVariantReference;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.ResolveResult;
 import com.sumologic.epigraph.ideaplugin.schema.actions.ImportTypeIntentionFix;
+import com.sumologic.epigraph.ideaplugin.schema.brains.SchemaFqnReferenceResolver;
+import com.sumologic.epigraph.schema.parser.Fqn;
 import com.sumologic.epigraph.schema.parser.psi.*;
 import com.sumologic.epigraph.schema.parser.NamingConventions;
 import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.HierarchyCache;
@@ -80,6 +82,12 @@ public class SchemaAnnotator implements Annotator {
           String namingError = NamingConventions.validateTypeName(id.getText());
           if (namingError != null) {
             holder.createErrorAnnotation(id, namingError);
+          }
+
+          SchemaFqnReferenceResolver referenceResolver = SchemaReferenceFactory
+              .getFqnReferenceResolver((SchemaFile) typeDef.getContainingFile(), new Fqn(typeDef.getName()), false);
+          if (referenceResolver != null && referenceResolver.multiResolve(typeDef.getProject()).length > 1) {
+            holder.createErrorAnnotation(id, "Type \"" + typeDef.getName() + "\" is already defined");
           }
 
           HierarchyCache hierarchyCache = HierarchyCache.getHierarchyCache(element.getProject());

@@ -58,6 +58,6 @@ public class ImportsManager {
   }
 
   private static PsiElement newline2(Project project) {
-    return SchemaElementFactory.createWhitespaces(project, "\n\n");
+    return SchemaElementFactory.createWhitespaces(project, "\n\n"); // TODO(low) rely on reformat instead of this
   }
 }

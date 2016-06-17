@@ -29,7 +29,14 @@ public class SchemaReferenceFactory {
 
   @Nullable
   public static SchemaFqnReferenceResolver getFqnReferenceResolver(@NotNull SchemaFqnSegment segment) {
-    Fqn fqn = segment.getFqn();
+    final SchemaFile file = (SchemaFile) segment.getContainingFile();
+    final boolean isImport = PsiTreeUtil.getParentOfType(segment, SchemaImportStatement.class) != null;
+
+    return getFqnReferenceResolver(file, segment.getFqn(), isImport);
+  }
+
+  @Nullable
+  public static SchemaFqnReferenceResolver getFqnReferenceResolver(@NotNull SchemaFile file, @NotNull Fqn fqn, boolean isImport) {
     if (fqn.isEmpty()) return null;
 
     final List<Fqn> prefixes = new ArrayList<>();
@@ -38,12 +45,11 @@ public class SchemaReferenceFactory {
     final String first = fqn.first();
     assert first != null;
 
-    final boolean isImport = PsiTreeUtil.getParentOfType(segment, SchemaImportStatement.class) != null;
 
     if (!isImport) {
       prefixes.addAll(
           // imports ending with our first segment, with last segment removed
-          NamespaceManager.getImportedNamespaces(segment).stream()
+          NamespaceManager.getImportedNamespaces(file).stream()
               .filter(f -> first.equals(f.last()))
               .map(Fqn::removeLastSegment)
               .collect(Collectors.toList())
@@ -57,7 +63,7 @@ public class SchemaReferenceFactory {
       }
 
       // current namespace
-      Fqn currentNamespace = getNamespace(segment);
+      Fqn currentNamespace = getNamespace(file);
       if (currentNamespace != null) {
         prefixes.add(currentNamespace);
       }

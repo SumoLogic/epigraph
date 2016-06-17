@@ -37,7 +37,9 @@ public class SchemaTypeParentsSearch extends QueryFactory<SchemaTypeDef, SchemaT
   public static Query<SchemaTypeDef> search(@NotNull final SearchParameters parameters) {
     final Project project = parameters.schemaTypeDef.getProject();
     return INSTANCE.createUniqueResultsQuery(parameters, ContainerUtil.canonicalStrategy(),
-        schemaTypeDef -> ApplicationManager.getApplication().runReadAction(
+        schemaTypeDef ->
+            schemaTypeDef == null ? null :
+            ApplicationManager.getApplication().runReadAction(
             (Computable<SmartPsiElementPointer<SchemaTypeDef>>) () ->
                 SmartPointerManager.getInstance(project).createSmartPsiElementPointer(schemaTypeDef)
         )

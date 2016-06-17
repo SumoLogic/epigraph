@@ -54,6 +54,7 @@ public class SchemaTypeParentsSearcher extends QueryExecutorBase<SchemaTypeDef, 
       @Override
       public boolean processInReadAction(SchemaTypeDef inheritor) {
         if (!consumer.process(inheritor)) return false;
+        if (inheritor == null) return false;
         queue.addLast(PsiAnchor.create(inheritor));
         return true;
       }
