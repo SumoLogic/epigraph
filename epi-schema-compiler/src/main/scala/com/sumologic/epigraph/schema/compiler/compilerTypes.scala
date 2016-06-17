@@ -15,7 +15,7 @@ import scala.collection.mutable
 class CTypeRef(val csf: CSchemaFile, val psi: SchemaTypeRef)(implicit val ctx: CContext) {
 
   val name: CTypeName = psi match { // TODO hierarchy for typedefrefs vs anontyperefs?
-    case sftr: SchemaFqnTypeRef => csf.resolveLocalTypeRef(sftr)
+    case sftr: SchemaFqnTypeRef => csf.qualifyLocalTypeRef(sftr)
     case sal: SchemaAnonList => new CAnonListTypeName(csf, sal)
     case sam: SchemaAnonMap => new CAnonMapTypeName(csf, sam)
     case _ => throw new RuntimeException // TODO exception
@@ -27,7 +27,7 @@ class CTypeRef(val csf: CSchemaFile, val psi: SchemaTypeRef)(implicit val ctx: C
 
   def getTypeOpt: Option[CType] = typeOptVar
 
-  @throws[java.util.NoSuchElementException]
+  @throws[java.util.NoSuchElementException]("If typeref hasn't been resolved")
   def resolved: CType = typeOptVar.get
 
   def resolveTo(ctype: CType): this.type = {
@@ -131,27 +131,25 @@ class CTypeDef(val csf: CSchemaFile, val psi: SchemaTypeDef)(implicit val ctx: C
 
   def computeSupertypes(visited: mutable.Stack[CTypeDef]): Unit = {
     if (computedSupertypes.isEmpty) {
+      val parents = declaredSupertypeRefs.map(_.resolved./*FIXME*/ asInstanceOf[CTypeDef]) ++ injectedSupertypes
       val thisIdx = visited.indexOf(this)
       visited.push(this)
       if (thisIdx == -1) {
-        val parents = declaredSupertypeRefs.map(_.resolved./*FIXME*/ asInstanceOf[CTypeDef]) ++ injectedSupertypes
         parents foreach {
           _.computeSupertypes(visited)
         }
-        computedSupertypes = Some(parents.flatMap { st => st +: st.supertypes }.distinct)
       } else {
         ctx.errors.add(
           new CError(
-            csf.filename, csf.position(psi),
-            s"Cyclic inheritance involving type '${name.name}': ${
-              visited.view(0, thisIdx + 2).reverseIterator.map(
-                "'" + _.name.name + "'"
-              ).mkString(" extends ")
+            csf.filename, csf.position(psi.getQid),
+            s"Cyclic inheritance involving type ${name.name}: ${
+              visited.view(0, thisIdx + 2).reverseIterator.map(_.name.name).mkString(" < ")
             }"
           )
         )
       }
       visited.pop()
+      computedSupertypes = Some(parents.flatMap { st => st +: st.supertypes }.distinct)
     }
   }
 

@@ -14,7 +14,14 @@ class CContext(val tabWidth: Int = 2) {
   val errors: ConcurrentLinkedQueue[CError] = new java.util.concurrent.ConcurrentLinkedQueue
 
   @ThreadSafe
-  val types: ConcurrentHashMap[CTypeName, CType] = new java.util.concurrent.ConcurrentHashMap
+  val typeDefs: ConcurrentHashMap[CTypeName, CTypeDef] = new java.util.concurrent.ConcurrentHashMap
+
+  @ThreadSafe
+  val anonListTypes: ConcurrentHashMap[CAnonListTypeName, CAnonListType] = new java.util.concurrent.ConcurrentHashMap
+
+  @ThreadSafe
+  val anonMapTypes: ConcurrentHashMap[CAnonMapTypeName, CAnonMapType] = new java.util.concurrent.ConcurrentHashMap
+
 
   val implicitImports: Map[String, Fqn] = Seq(
     "epigraph.String",

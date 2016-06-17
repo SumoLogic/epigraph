@@ -42,13 +42,14 @@ object SchemaCompilerMain {
     handleErrors(1)
 
     val cSchemaFiles: Seq[CSchemaFile] = schemaFiles.map(new CSchemaFile(_))
-    //printSchemaFiles(cSchemaFiles) // FIXME supertypes is lazy and gets frozen once rendered prematurely
+    //printSchemaFiles(cSchemaFiles)
 
     registerDefinedTypes(cSchemaFiles)
     //pprint.pprintln(ctx.types.keys.toSeq)
 
     resolveTypeRefs(cSchemaFiles)
-    //pprint.pprintln(ctx.types.toMap)
+    //pprint.pprintln(ctx.anonListTypes.toMap)
+    //pprint.pprintln(ctx.anonMapTypes.toMap)
     handleErrors(2)
 
     applySupplementingTypeDefs()
@@ -65,7 +66,6 @@ object SchemaCompilerMain {
       try {
         parseFile(file, spd) match {
           case sf: SchemaFile =>
-            //println(DebugUtil.psiToString(sf, true, true).trim())
             Seq(sf)
           case _ =>
             ctx.errors.add(new CError(file.getCanonicalPath, CErrorPosition.NA, "Couldn't parse"))
@@ -84,9 +84,9 @@ object SchemaCompilerMain {
   }
 
   def registerDefinedTypes(cSchemaFiles: Seq[CSchemaFile]): Unit = {
-    cSchemaFiles foreach { csf =>
+    cSchemaFiles.par foreach { csf =>
       csf.types foreach { ct =>
-        val old: CTypeDef = ctx.types.putIfAbsent(ct.name, ct).asInstanceOf[CTypeDef] //FIXME (make types smart object?)
+        val old: CTypeDef = ctx.typeDefs.putIfAbsent(ct.name, ct)
         if (old != null) ctx.errors.add(
           new CError(
             csf.filename,
@@ -98,58 +98,37 @@ object SchemaCompilerMain {
     }
   }
 
+  private val AnonListTypeConstructor = JavaFunction[CAnonListTypeName, CAnonListType](new CAnonListType(_))
+
+  private val AnonMapTypeConstructor = JavaFunction[CAnonMapTypeName, CAnonMapType](new CAnonMapType(_))
+
   def resolveTypeRefs(cSchemaFiles: Seq[CSchemaFile]): Unit = {
     cSchemaFiles.par foreach { csf =>
       csf.typerefs foreach { ctr =>
-        ctr.name match { // TODO clean-up
+        ctr.name match {
 
           case fqn: CTypeFqn =>
-            @Nullable val refType = ctx.types.get(ctr.name)
+            @Nullable val refType = ctx.typeDefs.get(ctr.name)
             if (refType == null) {
-              ctx.errors.add(
-                new CError(
-                  csf.filename,
-                  csf.position(ctr.psi),
-                  s"Not found: type '${ctr.name.name}'"
-                )
-              )
+              ctx.errors.add(new CError(csf.filename, csf.position(ctr.psi), s"Not found: type '${ctr.name.name}'"))
             } else {
               ctr.resolveTo(refType)
             }
 
           case altn: CAnonListTypeName =>
-            val alt = ctx.types.computeIfAbsent(
-              altn, new java.util.function.Function[CTypeName, CAnonListType] {
-                override def apply(t: CTypeName): CAnonListType = {
-                  t match {
-                    case altn: CAnonListTypeName => new CAnonListType(altn)
-                    case _ => throw new RuntimeException // TODO
-                  }
-                }
-              }
-            )
-            ctr.resolveTo(alt)
+            ctr.resolveTo(ctx.anonListTypes.computeIfAbsent(altn, AnonListTypeConstructor))
 
           case amtn: CAnonMapTypeName =>
-            val amt = ctx.types.computeIfAbsent(
-              amtn, new java.util.function.Function[CTypeName, CAnonMapType] {
-                override def apply(t: CTypeName): CAnonMapType = {
-                  t match {
-                    case amtn: CAnonMapTypeName => new CAnonMapType(amtn)
-                    case _ => throw new RuntimeException // TODO
-                  }
-                }
-              }
-            )
-            ctr.resolveTo(amt)
+            ctr.resolveTo(ctx.anonMapTypes.computeIfAbsent(amtn, AnonMapTypeConstructor))
 
         }
       }
     }
+
   }
 
   def applySupplementingTypeDefs(): Unit = {
-    ctx.types.elements foreach {
+    ctx.typeDefs.elements foreach {
       case ctd: CTypeDef =>
         ctd.declaredSupplementees foreach { ctr =>
           ctr.resolved match {
@@ -178,14 +157,15 @@ object SchemaCompilerMain {
 
   def computeSupertypes(): Unit = {
     val visited = mutable.Stack[CTypeDef]()
-    ctx.types.elements foreach {
+    ctx.typeDefs.elements foreach {
       case typeDef: CTypeDef => typeDef.computeSupertypes(visited)
       case _ =>  // ignore anon lists/maps
     }
+    assert(visited.isEmpty)
   }
 
 
-  def handleErrors(exitCode: Int): Unit = { // FIXME it should not exit but return error code
+  def handleErrors(exitCode: Int): Unit = { // FIXME it should not exit but return some error code
     if (ctx.errors.nonEmpty) {
       renderErrors(ctx)
       System.exit(exitCode)
@@ -193,16 +173,11 @@ object SchemaCompilerMain {
   }
 
   def renderErrors(ctx: CContext): Unit = {
-    ctx.errors foreach { cerr =>
-      pprint.pprintln(cerr)
-    }
+    ctx.errors foreach pprint.pprintln
   }
 
   def printSchemaFiles(schemaFiles: GenTraversableOnce[CSchemaFile]): Unit = {
-    schemaFiles foreach { csf =>
-      print(csf.filename + ": ")
-      pprint.pprintln(csf.types)
-    }
+    schemaFiles foreach pprint.pprintln
   }
 
   @throws[IOException]

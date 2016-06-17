@@ -29,3 +29,9 @@ string S2 extends S1
 string S3a extends S2 supplements S1
 
 string S3b extends S2 supplements S1
+
+boolean B0 extends B0 supplements B0
+supplement B0 with B0
+
+boolean B1 extends B2
+boolean B2 extends B1

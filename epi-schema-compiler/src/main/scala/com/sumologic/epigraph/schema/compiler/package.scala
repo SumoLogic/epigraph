@@ -28,18 +28,28 @@ package object compiler {
   implicit val CErrorPrint: PPrint[CError] = PPrint(CErrorPrinter)
 
 
-//  implicit object CSchemaFilePrinter extends PPrinter[CSchemaFile] {
-//
-//    override def render0(t: CSchemaFile, c: Config): Iterator[String] = {
-//      def body = (c: Config) => CTypePrinter.typeParts(t, c) ++ Iterator(
-//        pprint.Internals.handleChunks(
-//          "tags", c, (c: Config) => t.declaredTags.toIterator.map(CTagPrinter.render(_, c))
-//        )
-//      )
-//      pprint.Internals.handleChunks("var " + t.name.name, c, body)
-//
-//    }
-//  }
+  implicit object CSchemaFilePrinter extends PPrinter[CSchemaFile] {
+
+    override def render0(t: CSchemaFile, c: Config): Iterator[String] = {
+      pprint.Internals.handleChunks(
+        t.filename, c, (c: Config) => Iterator( // TODO PPrint[CNamespace]
+          implicitly[PPrint[CNamespace]].pprinter.render(t.namespace, c),
+          pprint.Internals.handleChunks( // TODO PPrint[CImport]
+            "imports", c, (c: Config) => t.imports.valuesIterator.map(implicitly[PPrint[CImport]].pprinter.render(_, c))
+          ),
+          pprint.Internals.handleChunks(
+            "typedefs", c, (c: Config) => t.types.toIterator.map(implicitly[PPrint[CType]].pprinter.render(_, c))
+          ),
+          pprint.Internals.handleChunks(
+            "supplements", c,
+            (c: Config) => t.supplements.toIterator.map(implicitly[PPrint[CSupplement]].pprinter.render(_, c))
+          )
+        )
+      )
+    }
+  }
+
+  implicit val CSchemaFilePrint: PPrint[CSchemaFile] = PPrint(CSchemaFilePrinter)
 
 
   implicit object CTypeRefPrinter extends PPrinter[CTypeRef] {
