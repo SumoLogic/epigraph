@@ -126,6 +126,18 @@ public class Fqn {
     return true;
   }
 
+  public boolean endsWith(@NotNull Fqn suffix) {
+    if (suffix.isEmpty()) return true;
+    int diff = size() - suffix.size();
+    if (diff < 0) return false;
+
+    for (int i = 0; i < suffix.size(); i++) {
+      if (!segments[i + diff].equals(suffix.segments[i])) return false;
+    }
+
+    return true;
+  }
+
   public String toString() {
     StringBuilder r = new StringBuilder();
     for (String segment : segments) {

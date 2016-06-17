@@ -2,14 +2,17 @@ package com.sumologic.epigraph.ideaplugin.schema.brains;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
+import com.sumologic.epigraph.schema.parser.Fqn;
 import com.sumologic.epigraph.schema.parser.psi.SchemaFile;
+import com.sumologic.epigraph.schema.parser.psi.SchemaFqn;
 import com.sumologic.epigraph.schema.parser.psi.SchemaImportStatement;
 import com.sumologic.epigraph.schema.parser.psi.SchemaImports;
-import com.sumologic.epigraph.schema.parser.psi.SchemaNamespaceDecl;
 import com.sumologic.epigraph.schema.parser.psi.impl.SchemaElementFactory;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
@@ -36,7 +39,8 @@ public class ImportsManager {
       }
 
       file.addAfter(newline2(project), schemaImports);
-    } else*/ {
+    } else*/
+    {
       SchemaImportStatement importStatement = SchemaElementFactory.createImport(project, importToAdd);
       List<SchemaImportStatement> importStatementList = schemaImports.getImportStatementList();
 
@@ -59,5 +63,21 @@ public class ImportsManager {
 
   private static PsiElement newline2(Project project) {
     return SchemaElementFactory.createWhitespaces(project, "\n\n"); // TODO(low) rely on reformat instead of this
+  }
+
+  public static List<SchemaImportStatement> findImportsBySuffix(@NotNull SchemaFile file, @NotNull Fqn suffix) {
+    SchemaImports schemaImports = file.getImportsStatement();
+    if (schemaImports == null) return Collections.emptyList();
+
+    List<SchemaImportStatement> importStatements = schemaImports.getImportStatementList();
+    if (importStatements.isEmpty()) return Collections.emptyList();
+
+    return importStatements.stream()
+        .filter(st -> {
+          SchemaFqn sfqn = st.getFqn();
+          Fqn fqn = sfqn == null ? null : sfqn.getFqn();
+          return fqn != null && fqn.endsWith(suffix);
+        })
+        .collect(Collectors.toList());
   }
 }

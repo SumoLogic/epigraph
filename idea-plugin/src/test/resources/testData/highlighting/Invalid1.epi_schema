@@ -15,6 +15,6 @@ record Q1 {
   <error descr="Field overrides nothing">override</error> f: R
 }
 
-vartype V1 {
+vartype <warning descr="Type \"EE\" shadows import bar.EE">EE</warning> {
   <error descr="Tag overrides nothing">override</error> t: R
 }

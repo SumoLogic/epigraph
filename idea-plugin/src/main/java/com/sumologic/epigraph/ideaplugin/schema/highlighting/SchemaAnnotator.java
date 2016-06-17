@@ -11,6 +11,7 @@ import com.intellij.psi.PsiPolyVariantReference;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.ResolveResult;
 import com.sumologic.epigraph.ideaplugin.schema.actions.ImportTypeIntentionFix;
+import com.sumologic.epigraph.ideaplugin.schema.brains.ImportsManager;
 import com.sumologic.epigraph.ideaplugin.schema.brains.SchemaFqnReferenceResolver;
 import com.sumologic.epigraph.schema.parser.Fqn;
 import com.sumologic.epigraph.schema.parser.psi.*;
@@ -80,30 +81,48 @@ public class SchemaAnnotator implements Annotator {
         if (id != null) {
           setHighlighting(id, holder, SchemaSyntaxHighlighter.DECL_TYPE_NAME);
 
-          String namingError = NamingConventions.validateTypeName(id.getText());
-          if (namingError != null) {
-            holder.createErrorAnnotation(id, namingError);
-          }
+          String typeName = typeDef.getName();
+          if (typeName != null) {
+            Fqn typeNameFqn = new Fqn(typeName);
 
-          SchemaFqnReferenceResolver referenceResolver = SchemaReferenceFactory
-              .getFqnReferenceResolver((SchemaFile) typeDef.getContainingFile(), new Fqn(typeDef.getName()), false);
-          if (referenceResolver != null && referenceResolver.multiResolve(typeDef.getProject()).length > 1) {
-            holder.createErrorAnnotation(id, "Type \"" + typeDef.getName() + "\" is already defined");
-          }
+            String namingError = NamingConventions.validateTypeName(typeName);
+            if (namingError != null) {
+              holder.createErrorAnnotation(id, namingError);
+            }
 
-          HierarchyCache hierarchyCache = HierarchyCache.getHierarchyCache(element.getProject());
-          List<SchemaTypeDef> typeParents = hierarchyCache.getTypeParents(typeDef);
-          if (typeParents.contains(typeDef)) {
-            holder.createErrorAnnotation(id, "Circular inheritance");
+            // check if it hides an import
+            List<SchemaImportStatement> importsBySuffix = ImportsManager.findImportsBySuffix((SchemaFile) typeDef.getContainingFile(), typeNameFqn);
+            if (!importsBySuffix.isEmpty()) {
+              holder.createWarningAnnotation(id, "Type \"" + typeName + "\" shadows " + importsBySuffix.iterator().next().getText());
+            }
+
+            // check if's already defined
+            SchemaFqnReferenceResolver referenceResolver = SchemaReferenceFactory
+                .getFqnReferenceResolver((SchemaFile) typeDef.getContainingFile(), typeNameFqn, false);
+            if (referenceResolver != null && referenceResolver.multiResolve(typeDef.getProject()).length > 1) {
+              holder.createErrorAnnotation(id, "Type \"" + typeName + "\" is already defined");
+            }
+
+            // check for circular inheritance
+            HierarchyCache hierarchyCache = HierarchyCache.getHierarchyCache(element.getProject());
+            List<SchemaTypeDef> typeParents = hierarchyCache.getTypeParents(typeDef);
+            if (typeParents.contains(typeDef)) {
+              holder.createErrorAnnotation(id, "Circular inheritance");
+            }
           }
         }
       }
 
-      @Override
-      public void visitRecordTypeDef(@NotNull SchemaRecordTypeDef recordTypeDef) {
-        visitTypeDef(recordTypeDef);
-        // TODO check that non-abstract record type def has no (+inherited) abstract fields
-      }
+//      @Override
+//      public void visitVarTypeDef(@NotNull SchemaVarTypeDef varTypeDef) {
+//        visitTypeDef(varTypeDef);
+//      }
+//
+//      @Override
+//      public void visitRecordTypeDef(@NotNull SchemaRecordTypeDef recordTypeDef) {
+//        visitTypeDef(recordTypeDef);
+//        // TODO check that non-abstract record type def has no (+inherited) abstract fields
+//      }
 
       @Override
       public void visitExtendsDecl(@NotNull SchemaExtendsDecl schemaExtendsDecl) {

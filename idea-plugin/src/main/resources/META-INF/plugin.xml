@@ -96,6 +96,10 @@
         instance="com.sumologic.epigraph.ideaplugin.schema.options.SchemaAutoImportOptionsProvider"/>
 
     <applicationService serviceImplementation="com.sumologic.epigraph.ideaplugin.schema.options.SchemaSettings"/>
+
+    <!-- highlight errors in parents even if there are errors in children -->
+    <highlightRangeExtension
+        implementation="com.sumologic.epigraph.ideaplugin.schema.highlighting.SchemaHighlightRangeExtension"/>
   </extensions>
 
   <actions>
