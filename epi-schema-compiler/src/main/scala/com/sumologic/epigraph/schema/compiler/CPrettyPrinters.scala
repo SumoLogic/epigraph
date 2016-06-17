@@ -1,6 +1,6 @@
-/* Created by yegor on 6/10/16. */
+/* Created by yegor on 6/17/16. */
 
-package com.sumologic.epigraph.schema
+package com.sumologic.epigraph.schema.compiler
 
 import java.io.File
 
@@ -9,8 +9,7 @@ import pprint.{Config, PPrint, PPrinter}
 
 import scala.collection.JavaConversions._
 
-package object compiler {
-
+object CPrettyPrinters {
 
   implicit object CErrorPrinter extends PPrinter[CError] {
 

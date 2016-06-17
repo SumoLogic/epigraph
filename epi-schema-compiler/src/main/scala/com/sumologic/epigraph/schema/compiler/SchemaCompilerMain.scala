@@ -7,14 +7,14 @@ import java.io.{File, IOException}
 import com.intellij.lang.ParserDefinition
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiFile
+import com.sumologic.epigraph.schema.compiler.CPrettyPrinters._
 import com.sumologic.epigraph.schema.parser.SchemaParserDefinition
 import com.sumologic.epigraph.schema.parser.psi.SchemaFile
 import org.intellij.grammar.LightPsi
 import org.jetbrains.annotations.Nullable
 
-import scala.collection.{GenTraversableOnce, mutable}
 import scala.collection.JavaConversions._
-
+import scala.collection.{GenTraversableOnce, mutable}
 
 object SchemaCompilerMain {
 
