@@ -29,6 +29,7 @@ import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.S_FQ
  */
 public class SchemaAnnotator implements Annotator {
   // TODO highlight clashing imports, e.g import foo.bar, import baz.bar
+  // TODO unnecessary backticks (with quickfix?)
 
   @Override
   public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
@@ -146,6 +147,7 @@ public class SchemaAnnotator implements Annotator {
       @Override
       public void visitFqn(@NotNull SchemaFqn fqn) {
         PsiElement parent = fqn.getParent();
+        // TODO don't check ref in the namespace decl?
         if (parent.getNode().getElementType() != S_FQN_TYPE_REF) {
           highlightFqn(fqn, holder, null);
         }

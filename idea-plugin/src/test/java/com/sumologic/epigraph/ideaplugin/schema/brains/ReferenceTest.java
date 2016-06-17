@@ -59,6 +59,27 @@ public class ReferenceTest extends LightCodeInsightFixtureTestCase {
     assertTrue(variants.contains("namespace foo.baz"));
   }
 
+  public void testQuotedRef() {
+    myFixture.configureByFile("QuotedRefTest.epi_schema");
+    PsiElement element = myFixture.getFile().findElementAt(myFixture.getCaretOffset());
+    //noinspection ConstantConditions
+    checkReference(element.getParent().getParent().getReference(), "Bar");
+  }
+
+  public void testQuotedTargetRef() {
+    myFixture.configureByFile("QuotedTargetRefTest.epi_schema");
+    PsiElement element = myFixture.getFile().findElementAt(myFixture.getCaretOffset());
+    //noinspection ConstantConditions
+    checkReference(element.getParent().getParent().getReference(), "Bar");
+  }
+
+  public void testQuotedSourceRef() {
+    myFixture.configureByFile("QuotedSourceRefTest.epi_schema");
+    PsiElement element = myFixture.getFile().findElementAt(myFixture.getCaretOffset());
+    //noinspection ConstantConditions
+    checkReference(element.getParent().getParent().getReference(), "Bar");
+  }
+
   public void testVarTagRef() {
     PsiReference reference = myFixture.getReferenceAtCaretPosition("VarTagRef.epi_schema");
     checkReference(reference, "tag1");

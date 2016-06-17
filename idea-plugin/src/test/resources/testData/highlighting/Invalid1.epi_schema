@@ -1,4 +1,4 @@
-namespace some
+namespace `some`
 
 import <error descr="Unresolved reference">some.other</error>
 import <error descr="Unresolved reference">foo</error>

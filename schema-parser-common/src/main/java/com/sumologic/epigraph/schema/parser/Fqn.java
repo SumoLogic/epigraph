@@ -21,7 +21,14 @@ public class Fqn {
   public final String[] segments;
 
   public Fqn(@NotNull String... segments) {
-    this.segments = segments;
+    this.segments = new String[segments.length];
+    System.arraycopy(segments, 0, this.segments, 0, segments.length);
+
+    // auto-canonicalize
+    for (int i = 0; i < segments.length; i++) {
+      this.segments[i] = NamingConventions.unquote(this.segments[i]);
+
+    }
   }
 
   public Fqn(@NotNull Collection<String> segments) {
@@ -30,6 +37,7 @@ public class Fqn {
 
   @NotNull
   public static Fqn fromDotSeparated(@NotNull String fqn) {
+    // will break if dot is inside backticks..
     return new Fqn(fqn.split("\\."));
   }
 
@@ -103,7 +111,7 @@ public class Fqn {
   public Fqn append(@NotNull String segment) {
     String[] f = new String[size() + 1];
     System.arraycopy(segments, 0, f, 0, size());
-    f[size()] = segment;
+    f[size()] = NamingConventions.unquote(segment);
     return new Fqn(f);
   }
 

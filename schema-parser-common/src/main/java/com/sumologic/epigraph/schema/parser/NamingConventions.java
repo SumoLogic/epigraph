@@ -52,7 +52,7 @@ public class NamingConventions {
   }
 
   @Contract(pure = true)
-  private static boolean isProperlyQuoted(@NotNull String name) {
+  public static boolean isProperlyQuoted(@NotNull String name) {
     return name.length() > 1 && name.startsWith("`") && name.endsWith("`");
   }
 

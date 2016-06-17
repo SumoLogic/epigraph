@@ -1,0 +1,4 @@
+namespace some
+
+record `Bar`
+record Qux extends`B<caret>ar`
