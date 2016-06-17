@@ -63,21 +63,34 @@ public class SchemaIndexUtil {
         }
       }
     } else {
-      SchemaShortTypeNameIndex index = SchemaShortTypeNameIndex.EP_NAME.findExtension(SchemaShortTypeNameIndex.class);
-      assert index != null;
+      if (suffix == null || suffix.size() == 1) {
+        SchemaShortTypeNameIndex index = SchemaShortTypeNameIndex.EP_NAME.findExtension(SchemaShortTypeNameIndex.class);
+        assert index != null;
 
-      Collection<String> shortNames;
+        Collection<String> shortNames;
 
-      if (suffix != null) {
-        shortNames = Collections.singleton(suffix.toString());
+        if (suffix != null) {
+          shortNames = Collections.singleton(suffix.toString());
+        } else {
+          shortNames = index.getAllKeys(project);
+        }
+
+        for (String name : shortNames) {
+          Collection<SchemaTypeDef> typeDefs = index.get(name, project, scope);
+          if (!processor.process(typeDefs)) break;
+        }
       } else {
-        shortNames = index.getAllKeys(project);
+        SchemaFullTypeNameIndex index = SchemaFullTypeNameIndex.EP_NAME.findExtension(SchemaFullTypeNameIndex.class);
+        assert index != null;
+        String suffixStr = "." + suffix.toString();
+
+        Collection<String> fullNames = index.getAllKeys(project);
+        for (String fullName : fullNames) {
+          if (fullName.endsWith(suffixStr))
+            if (!processor.process(index.get(fullName, project, scope))) break;
+        }
       }
 
-      for (String name : shortNames) {
-        Collection<SchemaTypeDef> typeDefs = index.get(name, project, scope);
-        if (!processor.process(typeDefs)) break;
-      }
     }
 
     return processor.result();

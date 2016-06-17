@@ -79,7 +79,7 @@ public class Fqn {
   }
 
   @NotNull
-  private Fqn removeTailSegments(int n) {
+  public Fqn removeTailSegments(int n) {
     if (size() < n) throw new IllegalArgumentException("Can't remove " + n + " segments from '" + toString() + "'");
     if (size() == n) return EMPTY;
 

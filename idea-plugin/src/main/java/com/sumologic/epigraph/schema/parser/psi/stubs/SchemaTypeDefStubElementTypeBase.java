@@ -7,7 +7,6 @@ import com.sumologic.epigraph.schema.parser.SchemaLanguage;
 import com.sumologic.epigraph.schema.parser.psi.SchemaExtendsDecl;
 import com.sumologic.epigraph.schema.parser.psi.SchemaFqnTypeRef;
 import com.sumologic.epigraph.schema.parser.psi.SchemaTypeDef;
-import com.sumologic.epigraph.schema.parser.psi.SchemaTypeRef;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -40,17 +39,15 @@ public abstract class SchemaTypeDefStubElementTypeBase<S extends SchemaTypeDefSt
   protected static List<SerializedFqnTypeRef> getSerializedExtendsTypeRefs(@NotNull SchemaTypeDef typeDef) {
     SchemaExtendsDecl extendsDecl = typeDef.getExtendsDecl();
     if (extendsDecl == null) return null;
-    List<SchemaTypeRef> typeRefList = extendsDecl.getTypeRefList();
+    List<SchemaFqnTypeRef> typeRefList = extendsDecl.getFqnTypeRefList();
     if (typeRefList.isEmpty()) return Collections.emptyList();
 
     return getSerializedFqnTypeRefs(typeRefList);
   }
 
   @NotNull
-  protected static List<SerializedFqnTypeRef> getSerializedFqnTypeRefs(@NotNull List<SchemaTypeRef> typeRefs) {
+  protected static List<SerializedFqnTypeRef> getSerializedFqnTypeRefs(@NotNull List<SchemaFqnTypeRef> typeRefs) {
     return typeRefs.stream()
-        .map(tr -> (tr instanceof SchemaFqnTypeRef) ? ((SchemaFqnTypeRef) tr) : null)
-        .filter(ftr -> ftr != null)
         .map(SerializedFqnTypeRef::new)
         .filter(i -> i != null) // filter out non-fqn or badly broken type refs
         .collect(Collectors.toList());

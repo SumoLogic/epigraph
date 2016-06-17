@@ -92,6 +92,10 @@
 
     <!-- todo import optimizer -->
 
+    <autoImportOptionsProvider
+        instance="com.sumologic.epigraph.ideaplugin.schema.options.SchemaAutoImportOptionsProvider"/>
+
+    <applicationService serviceImplementation="com.sumologic.epigraph.ideaplugin.schema.options.SchemaSettings"/>
   </extensions>
 
   <actions>

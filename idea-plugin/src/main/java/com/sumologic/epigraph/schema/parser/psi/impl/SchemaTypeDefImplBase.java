@@ -116,6 +116,16 @@ public abstract class SchemaTypeDefImplBase<S extends SchemaTypeDefStubBase<T>, 
     return NamespaceManager.getNamespace(this);
   }
 
+  @Nullable
+  @Override
+  public Fqn getFqn() {
+    String name = getName();
+    if (name == null) return null;
+    Fqn namespace = getNamespace();
+    if (namespace == null) return new Fqn(name);
+    return namespace.append(name);
+  }
+
   public int getTextOffset() {
     PsiElement nameIdentifier = getNameIdentifier();
     return nameIdentifier == null ? 0 : nameIdentifier.getTextOffset();
@@ -149,16 +159,13 @@ public abstract class SchemaTypeDefImplBase<S extends SchemaTypeDefStubBase<T>, 
 
     SchemaExtendsDecl extendsDecl = getExtendsDecl();
     if (extendsDecl == null) return Collections.emptyList();
-    List<SchemaTypeRef> typeRefList = extendsDecl.getTypeRefList();
+    List<SchemaFqnTypeRef> typeRefList = extendsDecl.getFqnTypeRefList();
     if (typeRefList.isEmpty()) return Collections.emptyList();
 
     List<SchemaTypeDef> result = new ArrayList<>(typeRefList.size());
-    for (SchemaTypeRef typeRef : typeRefList) {
-      if (typeRef instanceof SchemaFqnTypeRef) {
-        SchemaFqnTypeRef fqnTypeRef = (SchemaFqnTypeRef) typeRef;
-        SchemaTypeDef resolved = fqnTypeRef.resolve();
-        if (resolved != null) result.add(resolved);
-      }
+    for (SchemaFqnTypeRef typeRef : typeRefList) {
+      SchemaTypeDef resolved = typeRef.resolve();
+      if (resolved != null) result.add(resolved);
     }
     return result;
   }

@@ -1,6 +1,7 @@
 package com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy;
 
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
 import com.intellij.psi.SmartPointerManager;
 import com.intellij.psi.SmartPsiElementPointer;
@@ -17,9 +18,10 @@ public class SchemaTypeParentsSearch extends QueryFactory<SchemaTypeDef, SchemaT
   public static final SchemaTypeParentsSearch INSTANCE = new SchemaTypeParentsSearch();
 
   public static class SearchParameters {
+    @NotNull
     public final SchemaTypeDef schemaTypeDef;
 
-    public SearchParameters(SchemaTypeDef schemaTypeDef) {
+    public SearchParameters(@NotNull SchemaTypeDef schemaTypeDef) {
       this.schemaTypeDef = schemaTypeDef;
     }
   }
@@ -33,10 +35,11 @@ public class SchemaTypeParentsSearch extends QueryFactory<SchemaTypeDef, SchemaT
   }
 
   public static Query<SchemaTypeDef> search(@NotNull final SearchParameters parameters) {
+    final Project project = parameters.schemaTypeDef.getProject();
     return INSTANCE.createUniqueResultsQuery(parameters, ContainerUtil.canonicalStrategy(),
         schemaTypeDef -> ApplicationManager.getApplication().runReadAction(
             (Computable<SmartPsiElementPointer<SchemaTypeDef>>) () ->
-                SmartPointerManager.getInstance(schemaTypeDef.getProject()).createSmartPsiElementPointer(schemaTypeDef)
+                SmartPointerManager.getInstance(project).createSmartPsiElementPointer(schemaTypeDef)
         )
     );
   }

@@ -1,5 +1,7 @@
 package com.sumologic.epigraph.ideaplugin.schema.highlighting;
 
+import com.intellij.codeInsight.intention.IntentionAction;
+import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
@@ -8,6 +10,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiPolyVariantReference;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.ResolveResult;
+import com.sumologic.epigraph.ideaplugin.schema.actions.ImportTypeIntentionFix;
 import com.sumologic.epigraph.schema.parser.psi.*;
 import com.sumologic.epigraph.schema.parser.NamingConventions;
 import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.HierarchyCache;
@@ -17,7 +20,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.S_TYPE_REF;
+import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.S_FQN_TYPE_REF;
 
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
@@ -40,7 +43,7 @@ public class SchemaAnnotator implements Annotator {
 
         PsiElement override = fieldDecl.getOverride();
         if (override != null && TypeMembers.getOverridenFields(fieldDecl).isEmpty()) {
-          holder.createErrorAnnotation(override, "field overrides nothing");
+          holder.createErrorAnnotation(override, "Field overrides nothing");
         }
       }
 
@@ -55,7 +58,7 @@ public class SchemaAnnotator implements Annotator {
 
         PsiElement override = memberDecl.getOverride();
         if (override != null && TypeMembers.getOverridenTags(memberDecl).isEmpty()) {
-          holder.createErrorAnnotation(override, "tag overrides nothing");
+          holder.createErrorAnnotation(override, "Tag overrides nothing");
         }
       }
 
@@ -98,32 +101,16 @@ public class SchemaAnnotator implements Annotator {
         SchemaTypeDef typeDef = (SchemaTypeDef) schemaExtendsDecl.getParent();
         if (typeDef == null) return;
 
-        List<SchemaTypeRef> typeRefList = schemaExtendsDecl.getTypeRefList();
-        for (SchemaTypeRef typeRef : typeRefList) {
+        List<SchemaFqnTypeRef> typeRefList = schemaExtendsDecl.getFqnTypeRefList();
+        for (SchemaFqnTypeRef fqnTypeRef : typeRefList) {
           boolean wrongKind = false;
 
-          if (typeRef instanceof SchemaAnonList) {
-            SchemaAnonList anonList = (SchemaAnonList) typeRef;
-            if (typeDef.getKind() != TypeKind.LIST) wrongKind = true;
-            testExtendsList(typeDef, anonList);
+          SchemaTypeDef parent = fqnTypeRef.resolve();
+          if (parent != null) {
+            if (typeDef.getKind() != parent.getKind()) wrongKind = true;
           }
 
-          if (typeRef instanceof SchemaAnonMap) {
-            SchemaAnonMap anonMap = (SchemaAnonMap) typeRef;
-            if (typeDef.getKind() != TypeKind.MAP) wrongKind = true;
-            testExtendsMap(typeDef, anonMap);
-          }
-
-          if (typeRef instanceof SchemaFqnTypeRef) {
-            SchemaFqnTypeRef fqnTypeRef = (SchemaFqnTypeRef) typeRef;
-
-            SchemaTypeDef parent = fqnTypeRef.resolve();
-            if (parent != null) {
-              if (typeDef.getKind() != parent.getKind()) wrongKind = true;
-            }
-          }
-
-          if (wrongKind) holder.createErrorAnnotation(typeRef, "Wrong parent type kind");
+          if (wrongKind) holder.createErrorAnnotation(fqnTypeRef, "Wrong parent type kind");
         }
       }
 
@@ -145,18 +132,14 @@ public class SchemaAnnotator implements Annotator {
       @Override
       public void visitFqnTypeRef(@NotNull SchemaFqnTypeRef typeRef) {
         SchemaFqn fqn = typeRef.getFqn();
-        highlightFqn(fqn, holder);
-
-        if (typeRef.resolve() == null) {
-          holder.createErrorAnnotation(typeRef.getNode(), "Unresolved reference");
-        }
+        highlightFqn(fqn, holder, new ImportTypeIntentionFix(typeRef));
       }
 
       @Override
       public void visitFqn(@NotNull SchemaFqn fqn) {
         PsiElement parent = fqn.getParent();
-        if (parent.getNode().getElementType() != S_TYPE_REF) {
-          highlightFqn(fqn, holder);
+        if (parent.getNode().getElementType() != S_FQN_TYPE_REF) {
+          highlightFqn(fqn, holder, null);
         }
       }
 
@@ -182,7 +165,8 @@ public class SchemaAnnotator implements Annotator {
 //    // TODO
 //  }
 
-  private void highlightFqn(@Nullable SchemaFqn schemaFqn, @NotNull AnnotationHolder holder) {
+  private void highlightFqn(@Nullable SchemaFqn schemaFqn, @NotNull AnnotationHolder holder,
+                            @Nullable IntentionAction unresolvedTypeRefFix) {
     if (schemaFqn != null) {
 //      setHighlighting(schemaFqn.getLastChild(), holder, SchemaSyntaxHighlighter.TYPE_REF);
 
@@ -198,7 +182,9 @@ public class SchemaAnnotator implements Annotator {
         }
 
         if (resolveResults.length == 0) {
-          holder.createErrorAnnotation(schemaFqn.getNode(), "Unresolved reference");
+          Annotation annotation = holder.createErrorAnnotation(schemaFqn.getNode(), "Unresolved reference");
+          if (unresolvedTypeRefFix != null)
+            annotation.registerFix(unresolvedTypeRefFix);
         } else if (numTypeRefs > 1) {
           holder.createErrorAnnotation(schemaFqn.getNode(), "Ambiguous type reference");
         } // else we have import prefix matching varTypeple namespaces, OK

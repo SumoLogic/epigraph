@@ -28,6 +28,9 @@ public interface SchemaTypeDef extends PsiNameIdentifierOwner {
   @Nullable
   Fqn getNamespace();
 
+  @Nullable
+  Fqn getFqn();
+
   int getTextOffset();
 
   @Nullable

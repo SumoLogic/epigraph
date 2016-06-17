@@ -804,7 +804,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'extends' typeRef (',' typeRef)*
+  // 'extends' fqnTypeRef (',' fqnTypeRef)*
   public static boolean extendsDecl(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "extendsDecl")) return false;
     if (!nextTokenIs(b, S_EXTENDS)) return false;
@@ -812,13 +812,13 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b, l, _NONE_, S_EXTENDS_DECL, null);
     r = consumeToken(b, S_EXTENDS);
     p = r; // pin = 1
-    r = r && report_error_(b, typeRef(b, l + 1));
+    r = r && report_error_(b, fqnTypeRef(b, l + 1));
     r = p && extendsDecl_2(b, l + 1) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
 
-  // (',' typeRef)*
+  // (',' fqnTypeRef)*
   private static boolean extendsDecl_2(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "extendsDecl_2")) return false;
     int c = current_position_(b);
@@ -830,13 +830,13 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // ',' typeRef
+  // ',' fqnTypeRef
   private static boolean extendsDecl_2_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "extendsDecl_2_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, S_COMMA);
-    r = r && typeRef(b, l + 1);
+    r = r && fqnTypeRef(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }

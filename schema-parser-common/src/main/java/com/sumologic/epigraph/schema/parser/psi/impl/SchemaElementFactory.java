@@ -3,10 +3,8 @@ package com.sumologic.epigraph.schema.parser.psi.impl;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFileFactory;
-import com.sumologic.epigraph.schema.parser.psi.SchemaFile;
+import com.sumologic.epigraph.schema.parser.psi.*;
 import com.sumologic.epigraph.schema.parser.SchemaLanguage;
-import com.sumologic.epigraph.schema.parser.psi.SchemaFqn;
-import com.sumologic.epigraph.schema.parser.psi.SchemaFqnSegment;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -36,5 +34,20 @@ public class SchemaElementFactory {
     final SchemaFile file = createFileFromText(project, "namespace " + text);
     //noinspection ConstantConditions
     return file.getNamespaceDecl().getFqn();
+  }
+
+  public static SchemaImports createImports(Project project, String importToAdd) {
+    final SchemaFile file = createFileFromText(project, "namespace some\n import " + importToAdd);
+    return file.getImportsStatement();
+  }
+
+  public static SchemaImportStatement createImport(Project project, String importToAdd) {
+    final SchemaFile file = createFileFromText(project, "namespace some\n import " + importToAdd);
+    return file.getImportStatements().get(0);
+  }
+
+  public static PsiElement createWhitespaces(Project project, String text) {
+    final SchemaFile file = createFileFromText(project, text+"namespace some");
+    return file.getChildren()[0];
   }
 }

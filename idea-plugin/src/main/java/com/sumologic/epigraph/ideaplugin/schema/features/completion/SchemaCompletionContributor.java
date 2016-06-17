@@ -9,7 +9,6 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
-import com.intellij.vcs.log.graph.PrintElement;
 import com.sumologic.epigraph.schema.parser.Fqn;
 import com.sumologic.epigraph.schema.parser.SchemaLanguage;
 import com.sumologic.epigraph.schema.parser.psi.*;
@@ -184,10 +183,10 @@ public class SchemaCompletionContributor extends CompletionContributor {
         SchemaTypeDef schemaTypeDef = (SchemaTypeDef) element;
         if (schemaTypeDef.getMetaDecl() != null || schemaTypeDef.getExtendsDecl() != null) return true;
         if (schemaTypeDef instanceof SchemaRecordTypeDef) {
-          return ((SchemaRecordTypeDef) schemaTypeDef).getSupplementsDecl() != null;
+          return schemaTypeDef.getSupplementsDecl() != null;
         }
         if (schemaTypeDef instanceof SchemaVarTypeDef) {
-          return ((SchemaVarTypeDef) schemaTypeDef).getSupplementsDecl() != null;
+          return schemaTypeDef.getSupplementsDecl() != null;
         }
       }
       return false;

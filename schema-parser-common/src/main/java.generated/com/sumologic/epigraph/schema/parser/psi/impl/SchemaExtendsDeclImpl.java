@@ -28,8 +28,8 @@ public class SchemaExtendsDeclImpl extends ASTWrapperPsiElement implements Schem
 
   @Override
   @NotNull
-  public List<SchemaTypeRef> getTypeRefList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaTypeRef.class);
+  public List<SchemaFqnTypeRef> getFqnTypeRefList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaFqnTypeRef.class);
   }
 
   @Override
