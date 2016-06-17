@@ -19,11 +19,11 @@ import scala.collection.JavaConversions._
 object SchemaCompilerMain {
 
   val paths: Seq[String] = Seq(
-    "epi-builtin-types/src/main/schema/epigraph/builtinTypes.es",
-    "epi-schema/src/main/schema/epigraph/schema/names.es",
-    "epi-schema/src/main/schema/epigraph/schema/types.es",
-    "epi-schema/src/main/scala/epigraph/schema/Documented.es",
-    "epi-schema-compiler/src/test/schema/example/compilerExamples.es"
+    "epi-builtin-types/src/main/schema/epigraph/builtinTypes.epi_schema",
+    "epi-schema/src/main/schema/epigraph/schema/names.epi_schema",
+    "epi-schema/src/main/schema/epigraph/schema/types.epi_schema",
+    "epi-schema/src/main/scala/epigraph/schema/Documented.epi_schema",
+    "epi-schema-compiler/src/test/schema/example/compilerExamples.epi_schema"
     //"blah"
   )
 

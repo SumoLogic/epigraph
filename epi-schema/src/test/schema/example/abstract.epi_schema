@@ -1,0 +1,56 @@
+namespace example
+
+record Foo {
+  bar: Bar
+}
+
+abstract record Bar { // cannot be instantiated
+  abstract x: Id // cannot be written to
+  y: Id
+}
+
+record Baz extends Bar {
+  x: PersonId
+  z: Person
+}
+
+integer Id
+
+integer PersonId extends Id
+
+integer UserId extends PersonId
+
+vartype Person {
+  /*abstract*/ id: PersonId // cannot be written to
+  rec: PersonRec
+}
+
+record PersonRec {
+  id: PersonId
+  name: String
+}
+
+vartype User extends Person {
+  id: UserId
+}
+
+record UserRec extends PersonRec {
+  doc = { firstName: "vasya", lastName: "bob" }
+}
+
+// NB: self-vartype is not mutable!
+
+/*
+
+val bar: Bar
+
+bar.set(Bar.x, Id(1)) // should error (Bar.x is abstract)
+bar.set(Bar.y, Id(1))
+
+val baz: Baz
+baz.set(Bar.x, PersonId(1)) // should error (Bar.x is abstract)
+baz.set(Baz.x, Id(1)) // should error (x is PersonId)
+baz.set(Baz.x, PersonId(1))
+
+
+*/

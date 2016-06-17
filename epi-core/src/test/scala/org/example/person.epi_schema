@@ -1,0 +1,32 @@
+namespace foo.bar
+
+import epigraph.*
+
+record PersonRec {
+  id: PersonId
+  firstName: String
+  lastName: String
+  bestFriend: Person
+}
+
+vartype Person default id {
+  id: PersonId
+  rec: PersonRec
+}
+
+integer PersonId
+
+record UserRec extends PersonRec {
+  override id: UserId
+}
+
+integer UserId extends PersonId
+
+
+// another module/source/company/...
+record Documented supplements Person {
+  doc: String
+}
+
+// another scope
+supplement Person with Documented
