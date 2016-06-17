@@ -125,28 +125,33 @@ class CTypeDef(val csf: CSchemaFile, val psi: SchemaTypeDef)(implicit val ctx: C
 
   val injectedSupertypes: ConcurrentLinkedQueue[CTypeDef] = new ConcurrentLinkedQueue
 
-  private var cachedSupertypes: Option[Seq[CTypeDef]] = None
+  private var computedSupertypes: Option[Seq[CTypeDef]] = None
 
-  def supertypes: Seq[CTypeDef] = cachedSupertypes.getOrElse(Nil)
+  def supertypes: Seq[CTypeDef] = computedSupertypes.getOrElse(Nil)
 
   def computeSupertypes(visited: mutable.Stack[CTypeDef]): Unit = {
-    if (cachedSupertypes.isEmpty) {
-      if (visited.contains(this)) {
-        ctx.errors.add(
-          new CError(
-            csf.filename, csf.position(psi),
-            s"Cyclic inheritance involving type '${name.name}': ${visited.map(_.name.name).mkString("->")}"
-          )
-        )
-      } else {
-        visited.push(this)
+    if (computedSupertypes.isEmpty) {
+      val thisIdx = visited.indexOf(this)
+      visited.push(this)
+      if (thisIdx == -1) {
         val parents = declaredSupertypeRefs.map(_.resolved./*FIXME*/ asInstanceOf[CTypeDef]) ++ injectedSupertypes
         parents foreach {
           _.computeSupertypes(visited)
         }
-        cachedSupertypes = Some(parents.flatMap { st => st +: st.supertypes }.distinct)
-        visited.pop()
+        computedSupertypes = Some(parents.flatMap { st => st +: st.supertypes }.distinct)
+      } else {
+        ctx.errors.add(
+          new CError(
+            csf.filename, csf.position(psi),
+            s"Cyclic inheritance involving type '${name.name}': ${
+              visited.view(0, thisIdx + 2).reverseIterator.map(
+                "'" + _.name.name + "'"
+              ).mkString(" extends ")
+            }"
+          )
+        )
       }
+      visited.pop()
     }
   }
 

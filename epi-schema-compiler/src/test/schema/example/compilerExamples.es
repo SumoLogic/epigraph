@@ -21,3 +21,11 @@ vartype Bar234 extends epigraph.schema.ByNameRef {
   `id`: Integer
   `record`: Foo123
 }
+
+string S1
+
+string S2 extends S1
+
+string S3a extends S2 supplements S1
+
+string S3b extends S2 supplements S1
