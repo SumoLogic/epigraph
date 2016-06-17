@@ -16,6 +16,7 @@ class CSchemaFile(val psi: SchemaFile)(implicit val ctx: CContext) {
 
   val filename: String = psi.getName // TODO capture full path/name in SchemaFile
 
+  @deprecated("Use .position()")
   val lnu: LineNumberUtil = new LineNumberUtil(psi.getText, ctx.tabWidth)
 
   @ThreadSafe

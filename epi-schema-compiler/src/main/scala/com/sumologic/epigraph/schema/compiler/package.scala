@@ -16,7 +16,7 @@ package object compiler {
 
     override def render0(t: CError, c: Config): Iterator[String] = Iterator(
       t.filename, ":", t.position.line.toString, ":", t.position.column.toString, " ", intellijLink(t),
-      "\nError: ", t.message, "\n"
+      "\nError: ", t.message, "\n" // TODO skip :line:colon, line text, and ^ if NA
     ) ++ t.position.lineText.iterator ++ Iterator("\n", " " * (t.position.column - 1), "^")
 
     private def intellijLink(t: CError): String = { // relies on '.' already rendered (as part of canonical path
@@ -78,16 +78,22 @@ package object compiler {
 
     def typeDefParts(@NotNull t: CTypeDef, c: Config): Iterator[Iterator[String]] = Iterator(
       pprint.Internals.handleChunks(
-        "extends", c,
+        "declaredSupertypes", c,
         (c: Config) => t.declaredSupertypeRefs.toIterator.map(implicitly[PPrint[CTypeRef]].pprinter.render(_, c))
       ),
       pprint.Internals.handleChunks(
         "injectedSupertypes", c,
-        (c: Config) => t.injectedSupertypes.toIterator.map(implicitly[PPrint[CTypeDef]].pprinter.render(_, c))
+        (c: Config) => t.injectedSupertypes.toIterator map { ctd =>
+          implicitly[PPrint[CTypeName]].pprinter.render(ctd.name, c)
+        }
       ),
       pprint.Internals.handleChunks(
         "supplements", c,
         (c: Config) => t.declaredSupplementees.toIterator.map(implicitly[PPrint[CTypeRef]].pprinter.render(_, c))
+      ),
+      pprint.Internals.handleChunks(
+        "supertypes", c,
+        (c: Config) => t.supertypes.toIterator.map { ctd => implicitly[PPrint[CTypeName]].pprinter.render(ctd.name, c) }
       )
     )
 

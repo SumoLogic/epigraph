@@ -8,7 +8,7 @@ abstract vartype ByNameRef default name {
 
 }
 
-abstract record TypeData extends Named {
+abstract record TypeData extends Named /*supplements Documented*/ {
   doc = "Common interface for data type and vartype records"
 
   override name: QualifiedTypeName
