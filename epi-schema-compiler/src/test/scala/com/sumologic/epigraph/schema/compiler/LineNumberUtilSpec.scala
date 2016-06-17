@@ -61,4 +61,9 @@ class LineNumberUtilSpec extends FlatSpec with Matchers {
     u.line(12) should be(3)
     u.column(12) should be(3)
   }
+
+  it should "correctly expand tabs" in {
+    val u = new LineNumberUtil("a\tb", 8)
+    u.lineText(1, expandTabs = true) should be (Some("a       b"))
+  }
 }

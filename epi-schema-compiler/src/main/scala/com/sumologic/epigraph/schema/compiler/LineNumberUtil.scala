@@ -27,7 +27,7 @@ class LineNumberUtil(text: String, tabWidth: Int = 2) {
         line = new StringBuilder
         lineNumber += 1
       } else {
-        line.append(ch) // FIXME expand \t to appropriate number of spaces (depending on \t position)
+        line.append(ch)
       }
 
       offset += 1
@@ -64,12 +64,40 @@ class LineNumberUtil(text: String, tabWidth: Int = 2) {
 
   def column(line: Line, offset: Int): Int = {
     val offsetInLine = offset - line.startOffset
-    val linePrefix = line.text.substring(0, offsetInLine)
+    val linePrefix = expandTabs(line.text.substring(0, offsetInLine))
     val numCrs = linePrefix.count(_ == '\r') // FIXME deal (escape? remove?) with other control characters here (or in constructor)?
-    val numTabs = linePrefix.count(_ == '\t') // FIXME constructor should expand tabs to spaces hence no tabs here
-    1 + linePrefix.length - numCrs - numTabs + numTabs * tabWidth // FIXME real tab width depends on tab position
+    1 + linePrefix.length - numCrs
   }
 
-  def lineText(offset: Int): Option[String] = lines.find(_.endOffset >= offset).map(_.text)
+  def lineText(offset: Int, expandTabs: Boolean = true): Option[String] = {
+    val text = lines.find(_.endOffset >= offset).map(_.text)
+    if (expandTabs) text.map(this.expandTabs) else text
+  }
+
+  def expandTabs(text: String): String =
+    if (!text.contains('\t')) text
+    else {
+      val line = new StringBuilder
+      var columnNumber = 1
+      var offset = 0
+
+      while (offset < text.length) {
+        val ch = text.charAt(offset)
+
+        if (ch == '\t') {
+          val nextTabStop: Int = (columnNumber / tabWidth) * tabWidth + tabWidth + 1
+          val numSpaces = nextTabStop - columnNumber
+          line.append(" " * numSpaces)
+          columnNumber = nextTabStop
+        } else {
+          line.append(ch)
+          columnNumber += 1
+        }
+
+        offset += 1
+      }
+
+      line.toString()
+    }
 
 }
