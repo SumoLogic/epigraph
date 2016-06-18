@@ -1,0 +1,4 @@
+namespace some
+
+long Long
+long LL extends Lon<caret>g

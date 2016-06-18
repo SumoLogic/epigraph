@@ -5,3 +5,5 @@ import target.ZZLong
 record R {
   fld: ZZ<caret>Long
 }
+
+long ZZLong

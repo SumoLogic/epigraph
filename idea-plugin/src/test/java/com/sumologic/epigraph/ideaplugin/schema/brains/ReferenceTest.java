@@ -20,7 +20,14 @@ public class ReferenceTest extends LightCodeInsightFixtureTestCase {
     myFixture.configureByFile("SameNsTypeRef.epi_schema");
     PsiElement element = myFixture.getFile().findElementAt(myFixture.getCaretOffset());
     //noinspection ConstantConditions
-    checkReference(element.getParent().getParent().getReference(), "Bar");
+    checkReference(element.getParent().getParent().getReference(), "Bar", "SameNsTypeRef.epi_schema");
+  }
+
+  public void testBuiltinRef() {
+    myFixture.configureByFiles("BuiltinImport.epi_schema", "builtin.epi_schema");
+    PsiElement element = myFixture.getFile().findElementAt(myFixture.getCaretOffset());
+    //noinspection ConstantConditions
+    checkReference(element.getParent().getParent().getReference(), "Long", "builtin.epi_schema");
   }
 
   public void testFqnImportRef() {
@@ -29,16 +36,16 @@ public class ReferenceTest extends LightCodeInsightFixtureTestCase {
     //noinspection ConstantConditions
     PsiReference reference = element.getParent().getParent().getReference();
     assertNotNull(reference);
-    checkReference(reference, "ZZLong");
+    checkReference(reference, "ZZLong", "TargetNs.epi_schema"); // not same file!
     Object[] variants = reference.getVariants();
-    assertEquals(3, variants.length); // "ZZLong", "R", "target"
+    assertEquals(Arrays.toString(variants), 4, variants.length); // "ZZLong", "ZZLong", "R", "target"
   }
 
   public void testNsSegmentInTypeRef() {
     myFixture.configureByFile("NamespaceSegmentInTypeRef.epi_schema");
     PsiElement element = myFixture.getFile().findElementAt(myFixture.getCaretOffset());
     //noinspection ConstantConditions
-    checkReference(element.getParent().getParent().getReference(), "namespace foo");
+    checkReference(element.getParent().getParent().getReference(), "namespace foo", "NamespaceSegmentInTypeRef.epi_schema");
   }
 
   @SuppressWarnings("ConstantConditions")
@@ -63,37 +70,39 @@ public class ReferenceTest extends LightCodeInsightFixtureTestCase {
     myFixture.configureByFile("QuotedRefTest.epi_schema");
     PsiElement element = myFixture.getFile().findElementAt(myFixture.getCaretOffset());
     //noinspection ConstantConditions
-    checkReference(element.getParent().getParent().getReference(), "Bar");
+    checkReference(element.getParent().getParent().getReference(), "Bar", "QuotedRefTest.epi_schema");
   }
 
   public void testQuotedTargetRef() {
     myFixture.configureByFile("QuotedTargetRefTest.epi_schema");
     PsiElement element = myFixture.getFile().findElementAt(myFixture.getCaretOffset());
     //noinspection ConstantConditions
-    checkReference(element.getParent().getParent().getReference(), "Bar");
+    checkReference(element.getParent().getParent().getReference(), "Bar", "QuotedTargetRefTest.epi_schema");
   }
 
   public void testQuotedSourceRef() {
     myFixture.configureByFile("QuotedSourceRefTest.epi_schema");
     PsiElement element = myFixture.getFile().findElementAt(myFixture.getCaretOffset());
     //noinspection ConstantConditions
-    checkReference(element.getParent().getParent().getReference(), "Bar");
+    checkReference(element.getParent().getParent().getReference(), "Bar", "QuotedSourceRefTest.epi_schema");
   }
 
   public void testVarTagRef() {
     PsiReference reference = myFixture.getReferenceAtCaretPosition("VarTagRef.epi_schema");
-    checkReference(reference, "tag1");
+    checkReference(reference, "tag1", "VarTagRef.epi_schema");
 
     reference = myFixture.getReferenceAtCaretPosition("VarTagRef2.epi_schema");
-    checkReference(reference, "tag1");
+    checkReference(reference, "tag1", "VarTagRef2.epi_schema");
   }
 
   ////////////////////////////////
 
-  private void checkReference(PsiReference reference, String text) {
+  private void checkReference(PsiReference reference, String text, String targetFileName) {
     assertNotNull(reference);
     PsiElement target = reference.resolve();
     assertNotNull(target);
+    String fileName = target.getContainingFile().getName();
+    assertEquals(targetFileName, fileName);
     String actualText = target instanceof PsiNamedElement ? ((PsiNamedElement) target).getName() : target.getText();
     assertEquals(text, actualText);
     assertTrue(reference.isReferenceTo(target));
