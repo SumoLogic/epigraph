@@ -1,13 +1,10 @@
-allprojects {
+apply plugin: 'idea'
 
-  apply plugin: 'idea'
-/*
-  idea {
-    project {
-      jdkName = javaVersion
-      languageLevel = javaVersion
-      vcs = 'Git'
-     }
+// importing gradle project from IDEA is preferred to using 'gradle idea'
+idea {
+  project {
+    jdkName = javaVersion
+    languageLevel = javaVersion
+    vcs = 'Git'
   }
-*/
 }
