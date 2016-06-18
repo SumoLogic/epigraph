@@ -12,12 +12,12 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.ResolveResult;
 import com.sumologic.epigraph.ideaplugin.schema.actions.ImportTypeIntentionFix;
 import com.sumologic.epigraph.ideaplugin.schema.brains.ImportsManager;
-import com.sumologic.epigraph.ideaplugin.schema.brains.SchemaFqnReferenceResolver;
-import com.sumologic.epigraph.schema.parser.Fqn;
-import com.sumologic.epigraph.schema.parser.psi.*;
-import com.sumologic.epigraph.schema.parser.NamingConventions;
 import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.HierarchyCache;
 import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.TypeMembers;
+import com.sumologic.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
+import com.sumologic.epigraph.schema.parser.Fqn;
+import com.sumologic.epigraph.schema.parser.NamingConventions;
+import com.sumologic.epigraph.schema.parser.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -83,7 +83,8 @@ public class SchemaAnnotator implements Annotator {
 
           String typeName = typeDef.getName();
           if (typeName != null) {
-            Fqn typeNameFqn = new Fqn(typeName);
+            Fqn shortTypeNameFqn = new Fqn(typeName);
+            Fqn fullTypeNameFqn = typeDef.getFqn();
 
             String namingError = NamingConventions.validateTypeName(typeName);
             if (namingError != null) {
@@ -91,16 +92,17 @@ public class SchemaAnnotator implements Annotator {
             }
 
             // check if it hides an import
-            List<SchemaImportStatement> importsBySuffix = ImportsManager.findImportsBySuffix((SchemaFile) typeDef.getContainingFile(), typeNameFqn);
+            List<Fqn> importsBySuffix = ImportsManager.findImportsBySuffix((SchemaFile) typeDef.getContainingFile(), shortTypeNameFqn);
             if (!importsBySuffix.isEmpty()) {
-              holder.createWarningAnnotation(id, "Type \"" + typeName + "\" shadows " + importsBySuffix.iterator().next().getText());
+              Fqn importFqn = importsBySuffix.iterator().next();
+              boolean isImplicit = ImportsManager.DEFAULT_IMPORTS_LIST.contains(importFqn);
+              holder.createWarningAnnotation(id, "Type \"" + typeName + "\" is shadowed by " + (isImplicit ? "implicit " : "") + "import " + importFqn);
             }
 
             // check if's already defined
-            SchemaFqnReferenceResolver referenceResolver = SchemaReferenceFactory
-                .getFqnReferenceResolver((SchemaFile) typeDef.getContainingFile(), typeNameFqn, false);
-            if (referenceResolver != null && referenceResolver.multiResolve(typeDef.getProject()).length > 1) {
-              holder.createErrorAnnotation(id, "Type \"" + typeName + "\" is already defined");
+            List<SchemaTypeDef> typeDefs = SchemaIndexUtil.findTypeDefs(element.getProject(), new Fqn[]{fullTypeNameFqn});
+            if (typeDefs.size() > 1) {
+              holder.createErrorAnnotation(id, "Type \"" + fullTypeNameFqn + "\" is already defined");
             }
 
             // check for circular inheritance

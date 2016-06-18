@@ -22,17 +22,6 @@ import java.util.stream.Collectors;
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
 public class NamespaceManager {
-
-  public static Fqn[] DEFAULT_IMPORTS = new Fqn[]{
-      new Fqn("epigraph", "String"),
-      new Fqn("epigraph", "Integer"),
-      new Fqn("epigraph", "Long"),
-      new Fqn("epigraph", "Double"),
-      new Fqn("epigraph", "Boolean"),
-  };
-
-//  public static List<Fqn> DEFAULT_IMPORTS_LIST = Collections.unmodifiableList(Arrays.asList(DEFAULT_IMPORTS));
-
   public static Fqn[] DEFAULT_NAMESPACES = new Fqn[]{new Fqn("epigraph")};
 //  public static List<Fqn> DEFAULT_NAMESPACES_LIST = Collections.unmodifiableList(Arrays.asList(DEFAULT_NAMESPACES));
 

@@ -3,8 +3,10 @@ namespace `some`
 import <error descr="Unresolved reference">some.other</error>
 import <error descr="Unresolved reference">foo</error>
 import <error descr="Unresolved reference">bar.EE</error>
+import other.OtherRecord
 
-record R extends <error descr="Unresolved reference">Q</error>
+record <error descr="Type \"some.R\" is already defined">R</error> extends <error descr="Unresolved reference">Q</error>
+record <error descr="Type \"some.R\" is already defined">R</error>
 
 long L extends <error descr="Wrong parent type kind">R</error>
 
@@ -15,6 +17,10 @@ record Q1 {
   <error descr="Field overrides nothing">override</error> f: R
 }
 
-vartype <warning descr="Type \"EE\" shadows import bar.EE">EE</warning> {
+vartype <warning descr="Type \"EE\" is shadowed by import bar.EE">EE</warning> {
   <error descr="Tag overrides nothing">override</error> t: R
 }
+
+record <warning descr="Type \"OtherRecord\" is shadowed by import other.OtherRecord">OtherRecord</warning>
+
+long <warning descr="Type \"Long\" is shadowed by implicit import epigraph.Long">Long</warning>

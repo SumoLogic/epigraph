@@ -10,14 +10,26 @@ import com.sumologic.epigraph.schema.parser.psi.SchemaImports;
 import com.sumologic.epigraph.schema.parser.psi.impl.SchemaElementFactory;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
 public class ImportsManager {
+  public static Fqn[] DEFAULT_IMPORTS = new Fqn[]{
+      new Fqn("epigraph", "String"),
+      new Fqn("epigraph", "Integer"),
+      new Fqn("epigraph", "Long"),
+      new Fqn("epigraph", "Double"),
+      new Fqn("epigraph", "Boolean"),
+  };
+
+  public static List<Fqn> DEFAULT_IMPORTS_LIST = Collections.unmodifiableList(Arrays.asList(DEFAULT_IMPORTS));
+
   public static void addImport(@NotNull SchemaFile file, @NotNull String importToAdd) {
     // TODO this should return false if this would be a clashing import
 
@@ -45,7 +57,7 @@ public class ImportsManager {
       List<SchemaImportStatement> importStatementList = schemaImports.getImportStatementList();
 
       if (importStatementList.isEmpty()) {
-        PsiElement e = schemaImports.add(importStatement);
+        schemaImports.add(importStatement);
         file.addAfter(newline2(project), schemaImports);
       } else {
         PsiElement e = schemaImports.addAfter(newline(project), importStatementList.get(importStatementList.size() - 1));
@@ -65,19 +77,25 @@ public class ImportsManager {
     return SchemaElementFactory.createWhitespaces(project, "\n\n"); // TODO(low) rely on reformat instead of this
   }
 
-  public static List<SchemaImportStatement> findImportsBySuffix(@NotNull SchemaFile file, @NotNull Fqn suffix) {
+  public static List<Fqn> findImportsBySuffix(@NotNull SchemaFile file, @NotNull Fqn suffix) {
     SchemaImports schemaImports = file.getImportsStatement();
     if (schemaImports == null) return Collections.emptyList();
 
     List<SchemaImportStatement> importStatements = schemaImports.getImportStatementList();
     if (importStatements.isEmpty()) return Collections.emptyList();
 
-    return importStatements.stream()
+    //noinspection ConstantConditions
+    Stream<Fqn> explicitImports = importStatements.stream()
         .filter(st -> {
           SchemaFqn sfqn = st.getFqn();
           Fqn fqn = sfqn == null ? null : sfqn.getFqn();
           return fqn != null && fqn.endsWith(suffix);
         })
-        .collect(Collectors.toList());
+        .map(st -> st.getFqn().getFqn());
+
+    Stream<Fqn> implicitImports = DEFAULT_IMPORTS_LIST.stream()
+        .filter(fqn -> fqn.endsWith(suffix));
+
+    return Stream.concat(explicitImports, implicitImports).collect(Collectors.toList());
   }
 }
