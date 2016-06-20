@@ -113,6 +113,10 @@ class CTypeDef(val csf: CSchemaFile, val psi: SchemaTypeDef)(implicit val ctx: C
 
   val name: CTypeFqn = new CTypeFqn(csf, csf.namespace.fqn, psi)
 
+  val isAbstract: Boolean = psi.getAbstract != null
+
+  val isPolymorphic: Boolean = psi.getPolymorphic != null
+
   val declaredSupertypeRefs: Seq[CTypeRef] = {
     @Nullable val sed: SchemaExtendsDecl = psi.getExtendsDecl
     if (sed == null) Nil else sed.getFqnTypeRefList.map(new CTypeRef(csf, _))
