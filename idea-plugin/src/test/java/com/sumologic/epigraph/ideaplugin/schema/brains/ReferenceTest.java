@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 public class ReferenceTest extends LightCodeInsightFixtureTestCase {
   @Override
   protected String getTestDataPath() {
-    return "src/test/resources/testData/reference";
+    return "src/test/resources/testData/brains/reference";
   }
 
   public void testSameNamespaceRef() {

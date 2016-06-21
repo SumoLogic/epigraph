@@ -53,7 +53,7 @@ public class SchemaFqnReferenceResolver {
 
   @Nullable
   public PsiElement resolve(@NotNull Project project) {
-    SchemaTypeDef typeDef = SchemaIndexUtil.findTypeDef(project, prefixes, suffix, null);
+    SchemaTypeDef typeDef = resolveTypeDef(project);
     if (typeDef != null) return typeDef;
 
     // we can't find a typedef by this reference, lets check if it points to a namespace declaration
@@ -69,6 +69,18 @@ public class SchemaFqnReferenceResolver {
     }
 
     return null;
+  }
+
+  @Nullable
+  public Fqn getTargetTypeDefFqn(@NotNull Project project) {
+    SchemaTypeDef typeDef = resolveTypeDef(project);
+    if (typeDef != null) return typeDef.getFqn();
+    return null;
+  }
+
+  @Nullable
+  private SchemaTypeDef resolveTypeDef(@NotNull Project project) {
+    return SchemaIndexUtil.findTypeDef(project, prefixes, suffix, null);
   }
 
   @NotNull

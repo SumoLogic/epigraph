@@ -12,7 +12,8 @@ public class AnnotatorTest extends LightCodeInsightFixtureTestCase {
   }
 
   public void testInvalid1() {
-    myFixture.configureByFiles("Invalid1.epi_schema", "other.epi_schema", "builtin.epi_schema");
+    myFixture.configureByFiles("Invalid1.epi_schema", "other.epi_schema", "builtin.epi_schema",
+        "foo.epi_schema", "bar.epi_schema");
     myFixture.checkHighlighting(true, false, true);
   }
 }

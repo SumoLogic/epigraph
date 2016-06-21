@@ -1,5 +1,6 @@
 package com.sumologic.epigraph.ideaplugin.schema.highlighting;
 
+import com.intellij.codeInsight.daemon.impl.HighlightInfoType;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationHolder;
@@ -10,6 +11,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiPolyVariantReference;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.ResolveResult;
+import com.intellij.util.containers.MultiMap;
 import com.sumologic.epigraph.ideaplugin.schema.actions.ImportTypeIntentionFix;
 import com.sumologic.epigraph.ideaplugin.schema.brains.ImportsManager;
 import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.HierarchyCache;
@@ -21,7 +23,10 @@ import com.sumologic.epigraph.schema.parser.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.S_FQN_TYPE_REF;
 
@@ -29,12 +34,18 @@ import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.S_FQ
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
 public class SchemaAnnotator implements Annotator {
-  // TODO highlight clashing imports, e.g import foo.bar, import baz.bar
+  // TODO change most of annotations to inspections? See http://www.jetbrains.org/intellij/sdk/docs/reference_guide/custom_language_support/code_inspections_and_intentions.html
   // TODO unnecessary backticks (with quickfix?)
 
   @Override
   public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
     element.accept(new SchemaVisitor() {
+      @Override
+      public void visitImports(@NotNull SchemaImports schemaImports) {
+        List<SchemaImportStatement> importStatements = schemaImports.getImportStatementList();
+        validateImports((SchemaFile) schemaImports.getContainingFile(), importStatements, holder);
+      }
+
       @Override
       public void visitFieldDecl(@NotNull SchemaFieldDecl fieldDecl) {
         PsiElement id = fieldDecl.getQid();
@@ -184,15 +195,15 @@ public class SchemaAnnotator implements Annotator {
     });
   }
 
-  private void testExtendsList(@NotNull SchemaTypeDef typeDef, @NotNull SchemaAnonList anonList) {
+  private void validateExtendsList(@NotNull SchemaTypeDef typeDef, @NotNull SchemaAnonList anonList) {
     // TODO check types compatibility, lists are covariant?
   }
 
-  private void testExtendsMap(@NotNull SchemaTypeDef typeDef, @NotNull SchemaAnonMap anonMap) {
+  private void validateExtendsMap(@NotNull SchemaTypeDef typeDef, @NotNull SchemaAnonMap anonMap) {
     // TODO check types compatibility, maps are covariant?
   }
 
-//  private void testExtends(@NotNull SchemaTypeDefElement typeDef, @NotNull SchemaTypeDef parent) {
+//  private void validateExtends(@NotNull SchemaTypeDefElement typeDef, @NotNull SchemaTypeDef parent) {
 //    // TODO
 //  }
 
@@ -219,6 +230,64 @@ public class SchemaAnnotator implements Annotator {
         } else if (numTypeRefs > 1) {
           holder.createErrorAnnotation(schemaFqn.getNode(), "Ambiguous type reference");
         } // else we have import prefix matching varTypeple namespaces, OK
+      }
+    }
+  }
+
+  private static void validateImports(@NotNull SchemaFile file,
+                                      @NotNull List<SchemaImportStatement> imports,
+                                      @NotNull AnnotationHolder holder) {
+
+    // duplicating imports
+    MultiMap<Fqn, SchemaImportStatement> importsByFqn = ImportsManager.getImportsByFqn(imports);
+
+    for (Map.Entry<Fqn, Collection<SchemaImportStatement>> entry : importsByFqn.entrySet()) {
+      Collection<SchemaImportStatement> importStatements = entry.getValue();
+      for (SchemaImportStatement importStatement : importStatements) {
+        if (importStatements.size() > 1) {
+          holder.createWarningAnnotation(importStatement, "Duplicate import");
+          // TODO quickfix to optimize imports
+        }
+
+        // unnecessary import of epigraph.*
+        Fqn fqn = entry.getKey();
+        if (ImportsManager.DEFAULT_IMPORTS_LIST.contains(fqn)) {
+          holder.createWarningAnnotation(importStatement, "Unnecessary import");
+          setHighlighting(importStatement, holder, HighlightInfoType.UNUSED_SYMBOL.getAttributesKey());
+          // TODO quickfix to optimize imports
+        }
+      }
+    }
+
+    // unused imports
+    List<SchemaImportStatement> unusedImports = ImportsManager.findUnusedImports(file);
+    for (SchemaImportStatement unusedImport : unusedImports) {
+      setHighlighting(unusedImport, holder, HighlightInfoType.UNUSED_SYMBOL.getAttributesKey());
+      // TODO quickfix to optimize imports
+    }
+
+    // conflicting imports
+    MultiMap<String, SchemaImportStatement> importsByLastSegment = new MultiMap<>(importsByFqn.size(), 0.75f);
+    for (Map.Entry<Fqn, Collection<SchemaImportStatement>> entry : importsByFqn.entrySet()) {
+      String lastSegment = entry.getKey().last();
+      assert lastSegment != null;
+      importsByLastSegment.putValue(lastSegment, entry.getValue().iterator().next()); // take only first one so we don't report duplicate imports as conflicts
+    }
+
+    for (Map.Entry<String, Collection<SchemaImportStatement>> entry : importsByLastSegment.entrySet()) {
+      Collection<SchemaImportStatement> conflictingImports = entry.getValue();
+      if (conflictingImports.size() > 1) {
+        for (SchemaImportStatement conflictingImport : conflictingImports) {
+          Collection<String> conflictingImportsStrings = conflictingImports.stream()
+              .filter(i -> i != conflictingImport)
+              .map(i -> "\"" + i.getText() + "\"")
+              .collect(Collectors.toList());
+
+          holder.createErrorAnnotation(conflictingImport,
+              String.format("\"%s\" conflicts with %s",
+                  conflictingImport.getText(),
+                  String.join(", ", conflictingImportsStrings)));
+        }
       }
     }
   }

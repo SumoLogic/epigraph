@@ -2,17 +2,15 @@ package com.sumologic.epigraph.ideaplugin.schema.brains;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiReference;
+import com.intellij.util.containers.MultiMap;
 import com.sumologic.epigraph.schema.parser.Fqn;
-import com.sumologic.epigraph.schema.parser.psi.SchemaFile;
-import com.sumologic.epigraph.schema.parser.psi.SchemaFqn;
-import com.sumologic.epigraph.schema.parser.psi.SchemaImportStatement;
-import com.sumologic.epigraph.schema.parser.psi.SchemaImports;
+import com.sumologic.epigraph.schema.parser.psi.*;
 import com.sumologic.epigraph.schema.parser.psi.impl.SchemaElementFactory;
+import com.sumologic.epigraph.schema.parser.psi.impl.SchemaPsiImplUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -98,4 +96,70 @@ public class ImportsManager {
 
     return Stream.concat(explicitImports, implicitImports).collect(Collectors.toList());
   }
+
+  public static List<SchemaImportStatement> findUnusedImports(@NotNull SchemaFile file) {
+    // TODO unit test
+    SchemaImports schemaImports = file.getImportsStatement();
+    if (schemaImports == null) return Collections.emptyList();
+
+    List<SchemaImportStatement> importStatements = schemaImports.getImportStatementList();
+    if (importStatements.isEmpty()) return Collections.emptyList();
+
+    MultiMap<Fqn, SchemaImportStatement> importsByFqn = getImportsByFqn(importStatements);
+    for (Fqn defaultImport : DEFAULT_IMPORTS) importsByFqn.remove(defaultImport);
+
+    // first add all imports, then remove those actually used
+    final List<SchemaImportStatement> res = new ArrayList<>(importsByFqn.values());
+
+    SchemaVisitor visitor = new SchemaVisitor() {
+      @Override
+      public void visitElement(PsiElement element) {
+        super.visitElement(element);
+        element.acceptChildren(this);
+      }
+
+      @Override
+      public void visitFqnTypeRef(@NotNull SchemaFqnTypeRef typeRef) {
+        super.visitFqnTypeRef(typeRef);
+        PsiReference reference = SchemaPsiImplUtil.getReference(typeRef);
+        if (reference instanceof SchemaFqnReference) {
+          SchemaFqnReference schemaFqnReference = (SchemaFqnReference) reference;
+          SchemaFqnReferenceResolver resolver = schemaFqnReference.getResolver();
+          Fqn targetFqn = resolver.getTargetTypeDefFqn(typeRef.getProject());
+
+          if (targetFqn != null) {
+            Fqn input = resolver.getInput();
+            if (!input.equals(targetFqn)) {
+              String inputFirstSegment = input.first();
+              assert inputFirstSegment != null;
+
+              for (Map.Entry<Fqn, Collection<SchemaImportStatement>> entry : importsByFqn.entrySet()) {
+                if (inputFirstSegment.equals(entry.getKey().last())) {
+                  res.removeAll(entry.getValue());
+                }
+              }
+            }
+          }
+        }
+      }
+    };
+
+    file.accept(visitor);
+
+    return res;
+  }
+
+  @NotNull
+  public static MultiMap<Fqn, SchemaImportStatement> getImportsByFqn(List<SchemaImportStatement> importStatements) {
+    MultiMap<Fqn, SchemaImportStatement> importsByFqn = new MultiMap<>();
+    for (SchemaImportStatement importStatement : importStatements) {
+      SchemaFqn schemaFqn = importStatement.getFqn();
+      if (schemaFqn != null) {
+        Fqn fqn = schemaFqn.getFqn();
+        importsByFqn.putValue(fqn, importStatement);
+      }
+    }
+    return importsByFqn;
+  }
+
 }

@@ -1,9 +1,13 @@
 namespace `some`
 
 import <error descr="Unresolved reference">some.other</error>
-import <error descr="Unresolved reference">foo</error>
 import <error descr="Unresolved reference">bar.EE</error>
-import other.OtherRecord
+<warning descr="Duplicate import">import other.OtherRecord</warning>
+<warning descr="Duplicate import">import other.OtherRecord</warning>
+<warning descr="Unnecessary import">import epigraph.String</warning>
+<error descr="\"import foo.X\" conflicts with \"import bar.X\"">import foo.X</error>
+<error descr="\"import bar.X\" conflicts with \"import foo.X\"">import bar.X</error>
+import foo.Y
 
 record <error descr="Type \"some.R\" is already defined">R</error> extends <error descr="Unresolved reference">Q</error>
 record <error descr="Type \"some.R\" is already defined">R</error>

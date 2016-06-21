@@ -1,0 +1,10 @@
+namespace some
+
+import foo.X
+import foo.Y
+import foo
+import foo.bar
+
+record Z extends X
+record Q extends foo.Y
+record E extends bar.Baz
