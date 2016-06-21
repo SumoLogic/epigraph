@@ -145,6 +145,16 @@ public class SchemaIndexUtil {
     return result;
   }
 
+  @Nullable
+  public static SchemaNamespaceDecl findNamespace(@NotNull Project project, @NotNull Fqn namespace) {
+    GlobalSearchScope scope = GlobalSearchScope.allScope(project);
+
+    SchemaNamespaceByNameIndex index = SchemaNamespaceByNameIndex.EP_NAME.findExtension(SchemaNamespaceByNameIndex.class);
+
+    Collection<SchemaNamespaceDecl> namespaceDecls = index.get(namespace.toString(), project, scope);
+    return namespaceDecls.isEmpty() ? null : namespaceDecls.iterator().next();
+  }
+
   @NotNull
   public static List<SchemaSupplementDef> findSupplementsBySource(@NotNull Project project, @NotNull SchemaTypeDef source) {
     GlobalSearchScope scope = GlobalSearchScope.allScope(project);

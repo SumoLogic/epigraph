@@ -16,6 +16,7 @@ import com.sumologic.epigraph.ideaplugin.schema.actions.ImportTypeIntentionFix;
 import com.sumologic.epigraph.ideaplugin.schema.brains.ImportsManager;
 import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.HierarchyCache;
 import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.TypeMembers;
+import com.sumologic.epigraph.ideaplugin.schema.features.imports.OptimizeImportsQuickFix;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
 import com.sumologic.epigraph.schema.parser.Fqn;
 import com.sumologic.epigraph.schema.parser.NamingConventions;
@@ -26,6 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.S_FQN_TYPE_REF;
@@ -234,6 +236,7 @@ public class SchemaAnnotator implements Annotator {
     }
   }
 
+  // TODO use inspections for this. See http://www.jetbrains.org/intellij/sdk/docs/reference_guide/custom_language_support/code_inspections_and_intentions.html
   private static void validateImports(@NotNull SchemaFile file,
                                       @NotNull List<SchemaImportStatement> imports,
                                       @NotNull AnnotationHolder holder) {
@@ -245,25 +248,25 @@ public class SchemaAnnotator implements Annotator {
       Collection<SchemaImportStatement> importStatements = entry.getValue();
       for (SchemaImportStatement importStatement : importStatements) {
         if (importStatements.size() > 1) {
-          holder.createWarningAnnotation(importStatement, "Duplicate import");
-          // TODO quickfix to optimize imports
+          Annotation annotation = holder.createWarningAnnotation(importStatement, "Duplicate import");
+          registerOptimizeImportsFix(annotation);
         }
 
         // unnecessary import of epigraph.*
         Fqn fqn = entry.getKey();
         if (ImportsManager.DEFAULT_IMPORTS_LIST.contains(fqn)) {
-          holder.createWarningAnnotation(importStatement, "Unnecessary import");
+          Annotation annotation = holder.createWarningAnnotation(importStatement, "Unnecessary import");
           setHighlighting(importStatement, holder, HighlightInfoType.UNUSED_SYMBOL.getAttributesKey());
-          // TODO quickfix to optimize imports
+          registerOptimizeImportsFix(annotation);
         }
       }
     }
 
     // unused imports
-    List<SchemaImportStatement> unusedImports = ImportsManager.findUnusedImports(file);
+    Set<SchemaImportStatement> unusedImports = ImportsManager.findUnusedImports(file);
     for (SchemaImportStatement unusedImport : unusedImports) {
-      setHighlighting(unusedImport, holder, HighlightInfoType.UNUSED_SYMBOL.getAttributesKey());
-      // TODO quickfix to optimize imports
+      Annotation annotation = setHighlighting(unusedImport, holder, HighlightInfoType.UNUSED_SYMBOL.getAttributesKey());
+      registerOptimizeImportsFix(annotation);
     }
 
     // conflicting imports
@@ -292,9 +295,14 @@ public class SchemaAnnotator implements Annotator {
     }
   }
 
-  private static void setHighlighting(@NotNull PsiElement element, @NotNull AnnotationHolder holder,
-                                      @NotNull TextAttributesKey key) {
-    holder.createInfoAnnotation(element, null).setEnforcedTextAttributes(
-        EditorColorsManager.getInstance().getGlobalScheme().getAttributes(key));
+  private static void registerOptimizeImportsFix(@NotNull Annotation annotation) {
+    annotation.registerFix(new OptimizeImportsQuickFix());
+  }
+
+  private static Annotation setHighlighting(@NotNull PsiElement element, @NotNull AnnotationHolder holder,
+                                            @NotNull TextAttributesKey key) {
+    Annotation annotation = holder.createInfoAnnotation(element, null);
+    annotation.setEnforcedTextAttributes(EditorColorsManager.getInstance().getGlobalScheme().getAttributes(key));
+    return annotation;
   }
 }

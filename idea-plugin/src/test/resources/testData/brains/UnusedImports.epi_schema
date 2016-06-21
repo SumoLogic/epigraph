@@ -4,7 +4,9 @@ import foo.X
 import foo.Y
 import foo
 import foo.bar
+import foo.Z
 
 record Z extends X
 record Q extends foo.Y
 record E extends bar.Baz
+record R extends Z

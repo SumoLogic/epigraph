@@ -97,13 +97,17 @@
     <typeHierarchyProvider language="epi_schema"
                            implementationClass="com.sumologic.epigraph.ideaplugin.schema.features.hierarchy.SchemaHierarchyProvider"/>
 
-    <!-- todo import optimizer -->
-
     <autoImportOptionsProvider
         instance="com.sumologic.epigraph.ideaplugin.schema.options.SchemaAutoImportOptionsProvider"/>
+    <lang.importOptimizer language="epi_schema"
+                          implementationClass="com.sumologic.epigraph.ideaplugin.schema.features.imports.SchemaImportOptimizer"/>
 
     <applicationService serviceImplementation="com.sumologic.epigraph.ideaplugin.schema.options.SchemaSettings"/>
 
+    <!-- we only make it available as quick fix for 'import' problems -->
+    <!--<intentionAction>-->
+    <!--<className>com.sumologic.epigraph.ideaplugin.schema.features.imports.OptimizeImportsQuickFix</className>-->
+    <!--</intentionAction>-->
   </extensions>
 
   <actions>

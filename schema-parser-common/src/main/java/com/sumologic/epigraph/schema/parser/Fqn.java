@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
 @Immutable
-public class Fqn {
+public class Fqn implements Comparable<Fqn> {
   public static final Fqn EMPTY = new Fqn();
 
   @NotNull
@@ -166,6 +166,11 @@ public class Fqn {
   @Nullable
   public static String toNullableString(@Nullable Fqn fqn) {
     return fqn == null ? null : fqn.toString();
+  }
+
+  @Override
+  public int compareTo(@NotNull Fqn fqn) {
+    return toString().compareTo(fqn.toString());
   }
 
   /**

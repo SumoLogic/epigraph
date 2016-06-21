@@ -4,6 +4,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.util.containers.MultiMap;
+import com.sumologic.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
 import com.sumologic.epigraph.schema.parser.Fqn;
 import com.sumologic.epigraph.schema.parser.psi.*;
 import com.sumologic.epigraph.schema.parser.psi.impl.SchemaElementFactory;
@@ -97,19 +98,18 @@ public class ImportsManager {
     return Stream.concat(explicitImports, implicitImports).collect(Collectors.toList());
   }
 
-  public static List<SchemaImportStatement> findUnusedImports(@NotNull SchemaFile file) {
-    // TODO unit test
+  public static Set<SchemaImportStatement> findUnusedImports(@NotNull SchemaFile file) {
     SchemaImports schemaImports = file.getImportsStatement();
-    if (schemaImports == null) return Collections.emptyList();
+    if (schemaImports == null) return Collections.emptySet();
 
     List<SchemaImportStatement> importStatements = schemaImports.getImportStatementList();
-    if (importStatements.isEmpty()) return Collections.emptyList();
+    if (importStatements.isEmpty()) return Collections.emptySet();
 
     MultiMap<Fqn, SchemaImportStatement> importsByFqn = getImportsByFqn(importStatements);
     for (Fqn defaultImport : DEFAULT_IMPORTS) importsByFqn.remove(defaultImport);
 
     // first add all imports, then remove those actually used
-    final List<SchemaImportStatement> res = new ArrayList<>(importsByFqn.values());
+    final Set<SchemaImportStatement> res = new HashSet<>(importsByFqn.values());
 
     SchemaVisitor visitor = new SchemaVisitor() {
       @Override
@@ -133,11 +133,9 @@ public class ImportsManager {
               String inputFirstSegment = input.first();
               assert inputFirstSegment != null;
 
-              for (Map.Entry<Fqn, Collection<SchemaImportStatement>> entry : importsByFqn.entrySet()) {
-                if (inputFirstSegment.equals(entry.getKey().last())) {
-                  res.removeAll(entry.getValue());
-                }
-              }
+              importsByFqn.entrySet().stream()
+                  .filter(entry -> inputFirstSegment.equals(entry.getKey().last()))
+                  .forEach(entry -> res.removeAll(entry.getValue()));
             }
           }
         }
@@ -145,6 +143,46 @@ public class ImportsManager {
     };
 
     file.accept(visitor);
+
+    // add all unresolved imports (unresolved => unused)
+    final Project project = file.getProject();
+    for (Map.Entry<Fqn, Collection<SchemaImportStatement>> entry : importsByFqn.entrySet()) {
+      SchemaTypeDef typeDef = SchemaIndexUtil.findTypeDef(project, entry.getKey());
+      if (typeDef == null && SchemaIndexUtil.findNamespace(project, entry.getKey()) == null) {
+        res.addAll(entry.getValue());
+      }
+    }
+
+    return res;
+  }
+
+  public static Runnable buildImportOptimizer(@NotNull final SchemaFile file) {
+    final List<Fqn> optimizedImports = getOptimizedImports(file);
+
+    return () -> {
+      List<SchemaImportStatement> importStatements = file.getImportStatements();
+      importStatements.forEach(PsiElement::delete);
+
+      for (Fqn fqn : optimizedImports)
+        addImport(file, fqn.toString());
+    };
+  }
+
+  static List<Fqn> getOptimizedImports(@NotNull SchemaFile file) {
+    // de-duplicated imports without implicits
+    Set<Fqn> fqns = file.getImportStatements().stream()
+        .map(SchemaImportStatement::getFqn)
+        .filter(sfqn -> sfqn != null)
+        .map(SchemaFqn::getFqn)
+        .filter(fqn -> !DEFAULT_IMPORTS_LIST.contains(fqn))
+        .collect(Collectors.toSet());
+
+    //noinspection ConstantConditions
+    findUnusedImports(file).forEach(is -> fqns.remove(is.getFqn().getFqn()));
+
+    final List<Fqn> res = new ArrayList<>(fqns.size());
+    res.addAll(fqns);
+    Collections.sort(res);
 
     return res;
   }
