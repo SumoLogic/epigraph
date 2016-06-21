@@ -41,12 +41,19 @@
     <stubIndex implementation="com.sumologic.epigraph.ideaplugin.schema.index.SchemaSupplementBySourceIndex"/>
     <stubIndex implementation="com.sumologic.epigraph.ideaplugin.schema.index.SchemaSupplementBySupplementedIndex"/>
 
+    <!-- remove file extension in editor tabs -->
+    <editorTabTitleProvider
+        implementation="com.sumologic.epigraph.ideaplugin.schema.presentation.SchemaEditorTabTitleProvider"/>
+
     <lang.syntaxHighlighterFactory language="epi_schema"
                                    implementationClass="com.sumologic.epigraph.ideaplugin.schema.highlighting.SchemaSyntaxHighlighterFactory"/>
     <lang.parserDefinition language="epi_schema"
                            implementationClass="com.sumologic.epigraph.schema.parser.SchemaParserDefinition"/>
     <annotator language="epi_schema"
                implementationClass="com.sumologic.epigraph.ideaplugin.schema.highlighting.SchemaAnnotator"/>
+    <!-- highlight errors in parents even if there are errors in children -->
+    <highlightRangeExtension
+        implementation="com.sumologic.epigraph.ideaplugin.schema.highlighting.SchemaHighlightRangeExtension"/>
 
     <completion.contributor language="epi_schema"
                             implementationClass="com.sumologic.epigraph.ideaplugin.schema.features.completion.SchemaCompletionContributor"/>
@@ -97,9 +104,6 @@
 
     <applicationService serviceImplementation="com.sumologic.epigraph.ideaplugin.schema.options.SchemaSettings"/>
 
-    <!-- highlight errors in parents even if there are errors in children -->
-    <highlightRangeExtension
-        implementation="com.sumologic.epigraph.ideaplugin.schema.highlighting.SchemaHighlightRangeExtension"/>
   </extensions>
 
   <actions>

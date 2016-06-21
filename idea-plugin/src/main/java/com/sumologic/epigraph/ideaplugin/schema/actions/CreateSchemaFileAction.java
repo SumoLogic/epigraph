@@ -10,6 +10,7 @@ import com.intellij.openapi.ui.InputValidator;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import com.sumologic.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
+import com.sumologic.epigraph.schema.parser.Common;
 
 import java.util.Map;
 
@@ -26,7 +27,7 @@ public class CreateSchemaFileAction extends CreateFileFromTemplateAction impleme
   @Override
   protected void buildDialog(Project project, PsiDirectory directory, CreateFileFromTemplateDialog.Builder builder) {
     builder.setTitle(NEW_SCHEMA_FILE)
-        .addKind("Empty schema", SchemaPresentationUtil.SCHEMA_FILE_ICON, "Epigraph Schema.epi_schema")
+        .addKind("Empty schema", SchemaPresentationUtil.SCHEMA_FILE_ICON, "Epigraph Schema." + Common.FILE_EXTENSION)
         .setValidator(new InputValidator() {
           @Override
           public boolean checkInput(String inputString) {
