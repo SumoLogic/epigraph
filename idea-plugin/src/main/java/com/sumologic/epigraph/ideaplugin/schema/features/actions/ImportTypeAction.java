@@ -1,4 +1,4 @@
-package com.sumologic.epigraph.ideaplugin.schema.actions;
+package com.sumologic.epigraph.ideaplugin.schema.features.actions;
 
 import com.intellij.codeInsight.hint.QuestionAction;
 import com.intellij.openapi.command.WriteCommandAction;
@@ -65,7 +65,7 @@ public class ImportTypeAction implements QuestionAction {
     return true;
   }
 
-  static void addImport(@NotNull SchemaFile file, @NotNull String namespace) {
+  public static void addImport(@NotNull SchemaFile file, @NotNull String namespace) {
     // TODO: try to insert an import, fallback to adding a prefix to the FQN in case of a clash
     // see ImportNSAction for a full example
 

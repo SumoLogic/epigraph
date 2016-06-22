@@ -1,6 +1,5 @@
 package com.sumologic.epigraph.ideaplugin.schema.highlighting;
 
-import com.intellij.codeInsight.daemon.impl.HighlightInfoType;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationHolder;
@@ -11,12 +10,10 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiPolyVariantReference;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.ResolveResult;
-import com.intellij.util.containers.MultiMap;
-import com.sumologic.epigraph.ideaplugin.schema.actions.ImportTypeIntentionFix;
 import com.sumologic.epigraph.ideaplugin.schema.brains.ImportsManager;
 import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.HierarchyCache;
 import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.TypeMembers;
-import com.sumologic.epigraph.ideaplugin.schema.features.imports.OptimizeImportsQuickFix;
+import com.sumologic.epigraph.ideaplugin.schema.features.actions.fixes.ImportTypeIntentionFix;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
 import com.sumologic.epigraph.schema.parser.Fqn;
 import com.sumologic.epigraph.schema.parser.NamingConventions;
@@ -24,11 +21,7 @@ import com.sumologic.epigraph.schema.parser.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.S_FQN_TYPE_REF;
 
@@ -42,11 +35,6 @@ public class SchemaAnnotator implements Annotator {
   @Override
   public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
     element.accept(new SchemaVisitor() {
-      @Override
-      public void visitImports(@NotNull SchemaImports schemaImports) {
-        List<SchemaImportStatement> importStatements = schemaImports.getImportStatementList();
-        validateImports((SchemaFile) schemaImports.getContainingFile(), importStatements, holder);
-      }
 
       @Override
       public void visitFieldDecl(@NotNull SchemaFieldDecl fieldDecl) {
@@ -234,69 +222,6 @@ public class SchemaAnnotator implements Annotator {
         } // else we have import prefix matching varTypeple namespaces, OK
       }
     }
-  }
-
-  // TODO use inspections for this. See http://www.jetbrains.org/intellij/sdk/docs/reference_guide/custom_language_support/code_inspections_and_intentions.html
-  private static void validateImports(@NotNull SchemaFile file,
-                                      @NotNull List<SchemaImportStatement> imports,
-                                      @NotNull AnnotationHolder holder) {
-
-    // duplicating imports
-    MultiMap<Fqn, SchemaImportStatement> importsByFqn = ImportsManager.getImportsByFqn(imports);
-
-    for (Map.Entry<Fqn, Collection<SchemaImportStatement>> entry : importsByFqn.entrySet()) {
-      Collection<SchemaImportStatement> importStatements = entry.getValue();
-      for (SchemaImportStatement importStatement : importStatements) {
-        if (importStatements.size() > 1) {
-          Annotation annotation = holder.createWarningAnnotation(importStatement, "Duplicate import");
-          registerOptimizeImportsFix(annotation);
-        }
-
-        // unnecessary import of epigraph.*
-        Fqn fqn = entry.getKey();
-        if (ImportsManager.DEFAULT_IMPORTS_LIST.contains(fqn)) {
-          Annotation annotation = holder.createWarningAnnotation(importStatement, "Unnecessary import");
-          setHighlighting(importStatement, holder, HighlightInfoType.UNUSED_SYMBOL.getAttributesKey());
-          registerOptimizeImportsFix(annotation);
-        }
-      }
-    }
-
-    // unused imports
-    Set<SchemaImportStatement> unusedImports = ImportsManager.findUnusedImports(file);
-    for (SchemaImportStatement unusedImport : unusedImports) {
-      Annotation annotation = setHighlighting(unusedImport, holder, HighlightInfoType.UNUSED_SYMBOL.getAttributesKey());
-      registerOptimizeImportsFix(annotation);
-    }
-
-    // conflicting imports
-    MultiMap<String, SchemaImportStatement> importsByLastSegment = new MultiMap<>(importsByFqn.size(), 0.75f);
-    for (Map.Entry<Fqn, Collection<SchemaImportStatement>> entry : importsByFqn.entrySet()) {
-      String lastSegment = entry.getKey().last();
-      assert lastSegment != null;
-      importsByLastSegment.putValue(lastSegment, entry.getValue().iterator().next()); // take only first one so we don't report duplicate imports as conflicts
-    }
-
-    for (Map.Entry<String, Collection<SchemaImportStatement>> entry : importsByLastSegment.entrySet()) {
-      Collection<SchemaImportStatement> conflictingImports = entry.getValue();
-      if (conflictingImports.size() > 1) {
-        for (SchemaImportStatement conflictingImport : conflictingImports) {
-          Collection<String> conflictingImportsStrings = conflictingImports.stream()
-              .filter(i -> i != conflictingImport)
-              .map(i -> "\"" + i.getText() + "\"")
-              .collect(Collectors.toList());
-
-          holder.createErrorAnnotation(conflictingImport,
-              String.format("\"%s\" conflicts with %s",
-                  conflictingImport.getText(),
-                  String.join(", ", conflictingImportsStrings)));
-        }
-      }
-    }
-  }
-
-  private static void registerOptimizeImportsFix(@NotNull Annotation annotation) {
-    annotation.registerFix(new OptimizeImportsQuickFix());
   }
 
   private static Annotation setHighlighting(@NotNull PsiElement element, @NotNull AnnotationHolder holder,

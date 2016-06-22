@@ -1,4 +1,4 @@
-package com.sumologic.epigraph.ideaplugin.schema.actions;
+package com.sumologic.epigraph.ideaplugin.schema.features.actions;
 
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.editor.colors.EditorColorsManager;

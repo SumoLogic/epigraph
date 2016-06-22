@@ -1,4 +1,4 @@
-package com.sumologic.epigraph.ideaplugin.schema.actions;
+package com.sumologic.epigraph.ideaplugin.schema.features.actions.fixes;
 
 import com.intellij.codeInsight.FileModificationService;
 import com.intellij.codeInsight.daemon.impl.ShowAutoImportPass;
@@ -13,6 +13,8 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.ui.components.JBList;
 import com.intellij.util.IncorrectOperationException;
+import com.sumologic.epigraph.ideaplugin.schema.features.actions.ImportTypeAction;
+import com.sumologic.epigraph.ideaplugin.schema.features.actions.SchemaNamespaceRenderer;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
 import com.sumologic.epigraph.ideaplugin.schema.options.SchemaSettings;
 import com.sumologic.epigraph.schema.parser.Fqn;

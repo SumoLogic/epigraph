@@ -23,7 +23,7 @@
   -->
 
   <actions>
-    <action class="com.sumologic.epigraph.ideaplugin.schema.actions.CreateSchemaFileAction" id="Epigraph.NewSchemaFile"
+    <action class="com.sumologic.epigraph.ideaplugin.schema.features.actions.CreateSchemaFileAction" id="Epigraph.NewSchemaFile"
             text="Epigraph Schema" description="Create new Epigraph schema file">
       <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFile"/>
     </action>
@@ -34,6 +34,7 @@
     <internalFileTemplate name="Epigraph Schema"/>
     <stubElementTypeHolder class="com.sumologic.epigraph.schema.parser.psi.stubs.SchemaStubElementTypes"/>
 
+    <!-- indices -->
     <stubIndex implementation="com.sumologic.epigraph.ideaplugin.schema.index.SchemaShortTypeNameIndex"/>
     <stubIndex implementation="com.sumologic.epigraph.ideaplugin.schema.index.SchemaFullTypeNameIndex"/>
     <stubIndex implementation="com.sumologic.epigraph.ideaplugin.schema.index.SchemaTypesByNamespaceIndex"/>
@@ -49,11 +50,6 @@
                                    implementationClass="com.sumologic.epigraph.ideaplugin.schema.highlighting.SchemaSyntaxHighlighterFactory"/>
     <lang.parserDefinition language="epi_schema"
                            implementationClass="com.sumologic.epigraph.schema.parser.SchemaParserDefinition"/>
-    <annotator language="epi_schema"
-               implementationClass="com.sumologic.epigraph.ideaplugin.schema.highlighting.SchemaAnnotator"/>
-    <!-- highlight errors in parents even if there are errors in children -->
-    <highlightRangeExtension
-        implementation="com.sumologic.epigraph.ideaplugin.schema.highlighting.SchemaHighlightRangeExtension"/>
 
     <completion.contributor language="epi_schema"
                             implementationClass="com.sumologic.epigraph.ideaplugin.schema.features.completion.SchemaCompletionContributor"/>
@@ -102,12 +98,49 @@
     <lang.importOptimizer language="epi_schema"
                           implementationClass="com.sumologic.epigraph.ideaplugin.schema.features.imports.SchemaImportOptimizer"/>
 
-    <applicationService serviceImplementation="com.sumologic.epigraph.ideaplugin.schema.options.SchemaSettings"/>
+    <!-- annotator -->
+    <annotator language="epi_schema"
+               implementationClass="com.sumologic.epigraph.ideaplugin.schema.highlighting.SchemaAnnotator"/>
+    <!-- highlight errors in parents even if there are errors in children -->
+    <highlightRangeExtension
+        implementation="com.sumologic.epigraph.ideaplugin.schema.highlighting.SchemaHighlightRangeExtension"/>
 
-    <!-- we only make it available as quick fix for 'import' problems -->
-    <!--<intentionAction>-->
-    <!--<className>com.sumologic.epigraph.ideaplugin.schema.features.imports.OptimizeImportsQuickFix</className>-->
-    <!--</intentionAction>-->
+    <!-- inspections -->
+    <localInspection
+        language="epi_schema" shortName="SchemaDuplicateImport"
+        displayName="Duplicate imports"
+        groupName="Epigraph Schema"
+        enabledByDefault="true"
+        level="WARNING"
+        hasStaticDescription="true"
+        implementationClass="com.sumologic.epigraph.ideaplugin.schema.features.inspections.DuplicateImportInspection"/>
+    <localInspection
+        language="epi_schema" shortName="SchemaUnnecessaryImport"
+        displayName="Unnecessary imports"
+        groupName="Epigraph Schema"
+        enabledByDefault="true"
+        level="WARNING"
+        hasStaticDescription="true"
+        implementationClass="com.sumologic.epigraph.ideaplugin.schema.features.inspections.UnnecessaryImportInspection"/>
+    <localInspection
+        language="epi_schema" shortName="SchemaUnusedImport"
+        displayName="Unused imports"
+        groupName="Epigraph Schema"
+        enabledByDefault="true"
+        level="WARNING"
+        hasStaticDescription="true"
+        implementationClass="com.sumologic.epigraph.ideaplugin.schema.features.inspections.UnusedImportInspection"/>
+    <localInspection
+        language="epi_schema" shortName="SchemaConflictingImport"
+        displayName="Conflicting imports"
+        groupName="Epigraph Schema"
+        enabledByDefault="true"
+        level="ERROR"
+        hasStaticDescription="true"
+        implementationClass="com.sumologic.epigraph.ideaplugin.schema.features.inspections.ConflictingImportInspection"/>
+
+    <!-- services -->
+    <applicationService serviceImplementation="com.sumologic.epigraph.ideaplugin.schema.options.SchemaSettings"/>
   </extensions>
 
   <actions>

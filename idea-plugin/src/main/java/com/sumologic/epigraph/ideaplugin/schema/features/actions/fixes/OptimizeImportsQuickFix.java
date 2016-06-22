@@ -1,4 +1,4 @@
-package com.sumologic.epigraph.ideaplugin.schema.features.imports;
+package com.sumologic.epigraph.ideaplugin.schema.features.actions.fixes;
 
 import com.intellij.codeInsight.intention.HighPriorityAction;
 import com.intellij.codeInsight.intention.IntentionAction;
@@ -11,6 +11,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
+import com.sumologic.epigraph.ideaplugin.schema.features.imports.SchemaImportOptimizer;
 import com.sumologic.epigraph.schema.parser.psi.SchemaFile;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
@@ -19,6 +20,8 @@ import org.jetbrains.annotations.NotNull;
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
 public class OptimizeImportsQuickFix implements LocalQuickFix, IntentionAction, HighPriorityAction {
+  public static final OptimizeImportsQuickFix INSTANCE = new OptimizeImportsQuickFix();
+
   @Nls
   @NotNull
   @Override
