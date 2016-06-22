@@ -58,7 +58,7 @@ public class SchemaAnnotator implements Annotator {
         PsiElement id = memberDecl.getQid();
         setHighlighting(id, holder, SchemaSyntaxHighlighter.VAR_MEMBER);
 
-        String namingError = NamingConventions.validateVarTypeMemberName(id.getText());
+        String namingError = NamingConventions.validateVarTypeTagName(id.getText());
         if (namingError != null)
           holder.createErrorAnnotation(id, namingError);
 

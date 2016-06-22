@@ -29,17 +29,10 @@ public class NamingConventions {
   }
 
   @Nullable
-  public static String validateTagName(@NotNull String tagName) {
-    if (isProperlyQuoted(tagName)) return null;
-
-    return validateMemberName(tagName, "Tag name");
-  }
-
-  @Nullable
-  public static String validateVarTypeMemberName(@NotNull String varTagName) {
+  public static String validateVarTypeTagName(@NotNull String varTagName) {
     if (isProperlyQuoted(varTagName)) return null;
 
-    return validateMemberName(varTagName, "VarType type alias");
+    return validateMemberName(varTagName, "VarType tag");
   }
 
   @Nullable
