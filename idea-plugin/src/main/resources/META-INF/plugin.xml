@@ -106,37 +106,42 @@
         implementation="com.sumologic.epigraph.ideaplugin.schema.highlighting.SchemaHighlightRangeExtension"/>
 
     <!-- inspections -->
+    <!-- imports -->
     <localInspection
-        language="epi_schema" shortName="SchemaDuplicateImport"
+        language="epi_schema"
+        shortName="DuplicateImport"
         displayName="Duplicate imports"
-        groupName="Epigraph Schema"
+        groupPath="Epigraph, Schema"
+        groupName="Imports"
         enabledByDefault="true"
         level="WARNING"
-        hasStaticDescription="true"
         implementationClass="com.sumologic.epigraph.ideaplugin.schema.features.inspections.DuplicateImportInspection"/>
     <localInspection
-        language="epi_schema" shortName="SchemaUnnecessaryImport"
+        language="epi_schema"
+        shortName="UnnecessaryImport"
         displayName="Unnecessary imports"
-        groupName="Epigraph Schema"
+        groupPath="Epigraph, Schema"
+        groupName="Imports"
         enabledByDefault="true"
         level="WARNING"
-        hasStaticDescription="true"
         implementationClass="com.sumologic.epigraph.ideaplugin.schema.features.inspections.UnnecessaryImportInspection"/>
     <localInspection
-        language="epi_schema" shortName="SchemaUnusedImport"
+        language="epi_schema"
+        shortName="UnusedImport"
         displayName="Unused imports"
-        groupName="Epigraph Schema"
+        groupPath="Epigraph, Schema"
+        groupName="Imports"
         enabledByDefault="true"
         level="WARNING"
-        hasStaticDescription="true"
         implementationClass="com.sumologic.epigraph.ideaplugin.schema.features.inspections.UnusedImportInspection"/>
     <localInspection
-        language="epi_schema" shortName="SchemaConflictingImport"
+        language="epi_schema"
+        shortName="ConflictingImport"
         displayName="Conflicting imports"
-        groupName="Epigraph Schema"
+        groupPath="Epigraph, Schema"
+        groupName="Imports"
         enabledByDefault="true"
         level="ERROR"
-        hasStaticDescription="true"
         implementationClass="com.sumologic.epigraph.ideaplugin.schema.features.inspections.ConflictingImportInspection"/>
 
     <!-- services -->

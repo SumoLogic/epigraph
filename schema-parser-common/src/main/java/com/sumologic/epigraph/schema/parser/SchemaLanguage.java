@@ -10,7 +10,7 @@ public class SchemaLanguage extends Language {
   public static final SchemaLanguage INSTANCE = new SchemaLanguage();
 
   private SchemaLanguage() {
-    super("epi_schema", "text/epi_schema");
+    super("epi_schema");
   }
 
   @NotNull

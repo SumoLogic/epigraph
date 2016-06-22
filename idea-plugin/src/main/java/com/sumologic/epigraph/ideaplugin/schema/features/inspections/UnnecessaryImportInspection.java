@@ -11,9 +11,7 @@ import com.sumologic.epigraph.schema.parser.Fqn;
 import com.sumologic.epigraph.schema.parser.psi.SchemaImportStatement;
 import com.sumologic.epigraph.schema.parser.psi.SchemaImports;
 import com.sumologic.epigraph.schema.parser.psi.SchemaVisitor;
-import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.List;
@@ -23,18 +21,6 @@ import java.util.Map;
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
 public class UnnecessaryImportInspection extends LocalInspectionTool {
-  @Nls
-  @NotNull
-  @Override
-  public String getDisplayName() {
-    return "Unnecessary imports";
-  }
-  @Nullable
-  @Override
-  public String getStaticDescription() {
-    return "Explicit imports of types from the (always implicitly imported) 'epigraph' namespace";
-  }
-
   @NotNull
   @Override
   public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly) {
@@ -49,7 +35,10 @@ public class UnnecessaryImportInspection extends LocalInspectionTool {
         for (Map.Entry<Fqn, Collection<SchemaImportStatement>> entry : importsByFqn.entrySet()) {
           entry.getValue().stream()
               .filter(is -> ImportsManager.DEFAULT_IMPORTS_LIST.contains(entry.getKey()))
-              .forEach(is -> holder.registerProblem(is, "Unnecessary import", ProblemHighlightType.LIKE_UNUSED_SYMBOL, OptimizeImportsQuickFix.INSTANCE));
+              .forEach(is -> holder.registerProblem(is,
+                  InspectionBundle.message("import.unnecessary.problem.descriptor"),
+                  ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                  OptimizeImportsQuickFix.INSTANCE));
         }
       }
     };

@@ -1,16 +1,16 @@
 namespace `some`
 
-import <error descr="Unresolved reference">some.other</error>
-import <error descr="Unresolved reference">bar.EE</error>
-<warning descr="Duplicate import">import other.OtherRecord</warning>
-<warning descr="Duplicate import">import other.OtherRecord</warning>
+<warning descr="Unused import">import <error descr="Unresolved reference">some.other</error></warning>
+<warning descr="Unused import">import <error descr="Unresolved reference">bar.EE</error></warning>
+<warning descr="Duplicate import"><warning descr="Unused import">import other.OtherRecord</warning></warning>
+<warning descr="Duplicate import"><warning descr="Unused import">import other.OtherRecord</warning></warning>
 <warning descr="Unnecessary import">import epigraph.String</warning>
-<error descr="\"import foo.X\" conflicts with \"import bar.X\"">import foo.X</error>
-<error descr="\"import bar.X\" conflicts with \"import foo.X\"">import bar.X</error>
-import foo.Y
+<error descr="'import foo.X' conflicts with 'import bar.X'">import foo.X</error>
+<error descr="'import bar.X' conflicts with 'import foo.X'">import bar.X</error>
+<warning descr="Unused import">import foo.Y</warning>
 
-record <error descr="Type \"some.R\" is already defined">R</error> extends <error descr="Unresolved reference">Q</error>
-record <error descr="Type \"some.R\" is already defined">R</error>
+record <error descr="Type 'some.R' is already defined">R</error> extends <error descr="Unresolved reference">Q</error>
+record <error descr="Type 'some.R' is already defined">R</error>
 
 long L extends <error descr="Wrong parent type kind">R</error>
 
@@ -21,10 +21,10 @@ record Q1 {
   <error descr="Field overrides nothing">override</error> f: R
 }
 
-vartype <warning descr="Type \"EE\" is shadowed by import bar.EE">EE</warning> {
+vartype <warning descr="Type 'EE' is shadowed by 'import bar.EE'">EE</warning> {
   <error descr="Tag overrides nothing">override</error> t: R
 }
 
-record <warning descr="Type \"OtherRecord\" is shadowed by import other.OtherRecord">OtherRecord</warning>
+record <warning descr="Type 'OtherRecord' is shadowed by 'import other.OtherRecord'">OtherRecord</warning>
 
-long <warning descr="Type \"Long\" is shadowed by implicit import epigraph.Long">Long</warning>
+long <warning descr="Type 'Long' is shadowed by implicit 'import epigraph.Long'">Long</warning>

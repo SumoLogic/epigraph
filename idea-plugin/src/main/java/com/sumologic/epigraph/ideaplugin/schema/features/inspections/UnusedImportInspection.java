@@ -10,9 +10,7 @@ import com.sumologic.epigraph.schema.parser.psi.SchemaFile;
 import com.sumologic.epigraph.schema.parser.psi.SchemaImportStatement;
 import com.sumologic.epigraph.schema.parser.psi.SchemaImports;
 import com.sumologic.epigraph.schema.parser.psi.SchemaVisitor;
-import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 
@@ -20,18 +18,6 @@ import java.util.Set;
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
 public class UnusedImportInspection extends LocalInspectionTool {
-  @Nls
-  @NotNull
-  @Override
-  public String getDisplayName() {
-    return "Unused imports";
-  }
-  @Nullable
-  @Override
-  public String getStaticDescription() {
-    return "Unused import statement";
-  }
-
   @NotNull
   @Override
   public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly) {
@@ -42,7 +28,10 @@ public class UnusedImportInspection extends LocalInspectionTool {
 
         Set<SchemaImportStatement> unusedImports = ImportsManager.findUnusedImports((SchemaFile) schemaImports.getContainingFile());
         for (SchemaImportStatement unusedImport : unusedImports) {
-          holder.registerProblem(unusedImport, "Unused import", ProblemHighlightType.LIKE_UNUSED_SYMBOL, OptimizeImportsQuickFix.INSTANCE);
+          holder.registerProblem(unusedImport,
+              InspectionBundle.message("import.unused.problem.descriptor"),
+              ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+              OptimizeImportsQuickFix.INSTANCE);
         }
       }
     };

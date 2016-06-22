@@ -91,6 +91,8 @@ public class ReferenceTest extends LightCodeInsightFixtureTestCase {
     PsiReference reference = myFixture.getReferenceAtCaretPosition("VarTagRef.epi_schema");
     checkReference(reference, "tag1", "VarTagRef.epi_schema");
 
+    // saw this test failing once.. ref was using tag1 from VarTagRef.epi_schema
+    // could not reproduce
     reference = myFixture.getReferenceAtCaretPosition("VarTagRef2.epi_schema");
     checkReference(reference, "tag1", "VarTagRef2.epi_schema");
   }

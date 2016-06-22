@@ -1,6 +1,5 @@
 package com.sumologic.epigraph.ideaplugin.schema.features.inspections;
 
-import com.intellij.codeHighlighting.HighlightDisplayLevel;
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElementVisitor;
@@ -11,9 +10,7 @@ import com.sumologic.epigraph.schema.parser.Fqn;
 import com.sumologic.epigraph.schema.parser.psi.SchemaImportStatement;
 import com.sumologic.epigraph.schema.parser.psi.SchemaImports;
 import com.sumologic.epigraph.schema.parser.psi.SchemaVisitor;
-import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.List;
@@ -24,25 +21,6 @@ import java.util.stream.Collectors;
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
 public class ConflictingImportInspection extends LocalInspectionTool {
-  @Nls
-  @NotNull
-  @Override
-  public String getDisplayName() {
-    return "Conflicting imports";
-  }
-
-  @Nullable
-  @Override
-  public String getStaticDescription() {
-    return "Import statements should not have clashing suffixes, for instance 'import foo.bar' and 'import baz.bar'";
-  }
-
-  @NotNull
-  @Override
-  public HighlightDisplayLevel getDefaultLevel() {
-    return HighlightDisplayLevel.ERROR;
-  }
-
   @NotNull
   @Override
   public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly) {
@@ -65,15 +43,15 @@ public class ConflictingImportInspection extends LocalInspectionTool {
           Collection<SchemaImportStatement> conflictingImports = entry.getValue();
           if (conflictingImports.size() > 1) {
             for (SchemaImportStatement conflictingImport : conflictingImports) {
-              Collection<String> conflictingImportsStrings = conflictingImports.stream()
+              String conflictingImportsString = conflictingImports.stream()
                   .filter(i -> i != conflictingImport)
-                  .map(i -> "\"" + i.getText() + "\"")
-                  .collect(Collectors.toList());
+                  .map(i -> "'" + i.getText() + "'")
+                  .collect(Collectors.joining(", "));
 
               holder.registerProblem(conflictingImport,
-                  String.format("\"%s\" conflicts with %s",
+                  InspectionBundle.message("import.conflicting.problem.descriptor",
                       conflictingImport.getText(),
-                      String.join(", ", conflictingImportsStrings)),
+                      conflictingImportsString),
                   OptimizeImportsQuickFix.INSTANCE
               );
             }

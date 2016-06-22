@@ -10,6 +10,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiPolyVariantReference;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.ResolveResult;
+import com.sumologic.epigraph.ideaplugin.schema.SchemaBundle;
 import com.sumologic.epigraph.ideaplugin.schema.brains.ImportsManager;
 import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.HierarchyCache;
 import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.TypeMembers;
@@ -48,7 +49,7 @@ public class SchemaAnnotator implements Annotator {
 
         PsiElement override = fieldDecl.getOverride();
         if (override != null && TypeMembers.getOverridenFields(fieldDecl).isEmpty()) {
-          holder.createErrorAnnotation(override, "Field overrides nothing");
+          holder.createErrorAnnotation(override, SchemaBundle.message("annotator.field.overrides.nothing"));
         }
       }
 
@@ -63,7 +64,7 @@ public class SchemaAnnotator implements Annotator {
 
         PsiElement override = memberDecl.getOverride();
         if (override != null && TypeMembers.getOverridenTags(memberDecl).isEmpty()) {
-          holder.createErrorAnnotation(override, "Tag overrides nothing");
+          holder.createErrorAnnotation(override, SchemaBundle.message("annotator.tag.overrides.nothing"));
         }
       }
 
@@ -97,20 +98,24 @@ public class SchemaAnnotator implements Annotator {
             if (!importsBySuffix.isEmpty()) {
               Fqn importFqn = importsBySuffix.iterator().next();
               boolean isImplicit = ImportsManager.DEFAULT_IMPORTS_LIST.contains(importFqn);
-              holder.createWarningAnnotation(id, "Type \"" + typeName + "\" is shadowed by " + (isImplicit ? "implicit " : "") + "import " + importFqn);
+              holder.createWarningAnnotation(id,
+                  SchemaBundle.message(isImplicit ?
+                          "annotator.type.shadowed.by.implicit.import" :
+                          "annotator.type.shadowed.by.import",
+                      typeName, importFqn));
             }
 
             // check if's already defined
             List<SchemaTypeDef> typeDefs = SchemaIndexUtil.findTypeDefs(element.getProject(), new Fqn[]{fullTypeNameFqn});
             if (typeDefs.size() > 1) {
-              holder.createErrorAnnotation(id, "Type \"" + fullTypeNameFqn + "\" is already defined");
+              holder.createErrorAnnotation(id, SchemaBundle.message("annotator.type.already.defined", fullTypeNameFqn));
             }
 
             // check for circular inheritance
             HierarchyCache hierarchyCache = HierarchyCache.getHierarchyCache(element.getProject());
             List<SchemaTypeDef> typeParents = hierarchyCache.getTypeParents(typeDef);
             if (typeParents.contains(typeDef)) {
-              holder.createErrorAnnotation(id, "Circular inheritance");
+              holder.createErrorAnnotation(id, SchemaBundle.message("annotator.circular.inheritance"));
             }
           }
         }
@@ -141,7 +146,8 @@ public class SchemaAnnotator implements Annotator {
             if (typeDef.getKind() != parent.getKind()) wrongKind = true;
           }
 
-          if (wrongKind) holder.createErrorAnnotation(fqnTypeRef, "Wrong parent type kind");
+          if (wrongKind)
+            holder.createErrorAnnotation(fqnTypeRef, SchemaBundle.message("annotator.wrong.parent.type.kind"));
         }
       }
 
@@ -179,7 +185,7 @@ public class SchemaAnnotator implements Annotator {
       public void visitVarTagRef(@NotNull SchemaVarTagRef tagRef) {
         PsiReference reference = tagRef.getReference();
         if (reference == null || reference.resolve() == null) {
-          holder.createErrorAnnotation(tagRef.getNode(), "Unresolved reference");
+          holder.createErrorAnnotation(tagRef.getNode(), SchemaBundle.message("annotator.unresolved.reference"));
         }
       }
     });
@@ -214,11 +220,13 @@ public class SchemaAnnotator implements Annotator {
         }
 
         if (resolveResults.length == 0) {
-          Annotation annotation = holder.createErrorAnnotation(schemaFqn.getNode(), "Unresolved reference");
+          Annotation annotation = holder.createErrorAnnotation(schemaFqn.getNode(),
+              SchemaBundle.message("annotator.unresolved.reference"));
+
           if (unresolvedTypeRefFix != null)
             annotation.registerFix(unresolvedTypeRefFix);
         } else if (numTypeRefs > 1) {
-          holder.createErrorAnnotation(schemaFqn.getNode(), "Ambiguous type reference");
+          holder.createErrorAnnotation(schemaFqn.getNode(), SchemaBundle.message("annotator.ambiguous.type.reference"));
         } // else we have import prefix matching varTypeple namespaces, OK
       }
     }

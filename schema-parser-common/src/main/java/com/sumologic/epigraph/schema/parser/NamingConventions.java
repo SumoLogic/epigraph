@@ -8,10 +8,11 @@ import org.jetbrains.annotations.Nullable;
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
 public class NamingConventions {
-  // TODO this should belong elsewhere
+  // TODO validation logic should be common with epi-core?
 
   @Nullable
   public static String validateTypeName(@NotNull String typeName) {
+    if (typeName.length() == 0) return null;
     if (isProperlyQuoted(typeName)) return null;
 
     if (!Character.isUpperCase(typeName.charAt(0)))
@@ -42,10 +43,11 @@ public class NamingConventions {
   }
 
   @Nullable
-  private static String validateMemberName(@NotNull String fieldName, @NotNull String memberKind) {
-    if (isProperlyQuoted(fieldName)) return null;
+  private static String validateMemberName(@NotNull String memberName, @NotNull String memberKind) {
+    if (memberName.length() == 0) return null;
+    if (isProperlyQuoted(memberName)) return null;
 
-    if (!Character.isLowerCase(fieldName.charAt(0)))
+    if (!Character.isLowerCase(memberName.charAt(0)))
       return memberKind + " must start with a lower case letter";
 
     return null;

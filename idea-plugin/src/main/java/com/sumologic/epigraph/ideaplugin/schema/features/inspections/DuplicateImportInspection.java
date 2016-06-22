@@ -10,9 +10,7 @@ import com.sumologic.epigraph.schema.parser.Fqn;
 import com.sumologic.epigraph.schema.parser.psi.SchemaImportStatement;
 import com.sumologic.epigraph.schema.parser.psi.SchemaImports;
 import com.sumologic.epigraph.schema.parser.psi.SchemaVisitor;
-import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.List;
@@ -22,18 +20,6 @@ import java.util.Map;
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
 public class DuplicateImportInspection extends LocalInspectionTool {
-  @Nls
-  @NotNull
-  @Override
-  public String getDisplayName() {
-    return "Duplicate imports";
-  }
-  @Nullable
-  @Override
-  public String getStaticDescription() {
-    return "Duplicating imports of the same namespace or type";
-  }
-
   @NotNull
   @Override
   public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly) {
@@ -49,7 +35,9 @@ public class DuplicateImportInspection extends LocalInspectionTool {
         for (Map.Entry<Fqn, Collection<SchemaImportStatement>> entry : importsByFqn.entrySet()) {
           entry.getValue().stream()
               .filter(is -> entry.getValue().size() > 1)
-              .forEach(is -> holder.registerProblem(is, "Duplicate import", OptimizeImportsQuickFix.INSTANCE));
+              .forEach(is -> holder.registerProblem(is,
+                  InspectionBundle.message("import.duplicate.problem.descriptor"),
+                  OptimizeImportsQuickFix.INSTANCE));
         }
       }
     };
