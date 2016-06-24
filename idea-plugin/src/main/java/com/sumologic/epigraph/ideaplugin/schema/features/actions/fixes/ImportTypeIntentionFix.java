@@ -13,6 +13,7 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.ui.components.JBList;
 import com.intellij.util.IncorrectOperationException;
+import com.sumologic.epigraph.ideaplugin.schema.SchemaBundle;
 import com.sumologic.epigraph.ideaplugin.schema.features.actions.ImportTypeAction;
 import com.sumologic.epigraph.ideaplugin.schema.features.actions.SchemaNamespaceRenderer;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
@@ -61,7 +62,7 @@ public class ImportTypeIntentionFix implements HintAction {
   @NotNull
   @Override
   public String getText() {
-    return "Import epigraph namespace";
+    return SchemaBundle.message("actions.import.namespace");
   }
 
   @Nls
@@ -73,7 +74,7 @@ public class ImportTypeIntentionFix implements HintAction {
 
   @Override
   public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
-    return typeRef != null && typeRef.isValid() && typeRef.resolve() == null;
+    return typeRef != null && typeRef.isValid() && typeRef.resolve() == null; // TODO and there are any options to import
   }
 
   @Override
@@ -105,7 +106,7 @@ public class ImportTypeIntentionFix implements HintAction {
       };
 
       new PopupChooserBuilder(list).
-          setTitle("Select namespace to import").
+          setTitle(SchemaBundle.message("actions.select.namespace.to.import")).
           setItemChoosenCallback(runnable).
           createPopup().
           showInBestPositionFor(editor);

@@ -2,6 +2,7 @@ package com.sumologic.epigraph.ideaplugin.schema.brains;
 
 import com.intellij.psi.*;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
+import com.sumologic.epigraph.schema.parser.psi.SchemaFile;
 
 import java.util.Arrays;
 import java.util.List;
@@ -95,6 +96,24 @@ public class ReferenceTest extends LightCodeInsightFixtureTestCase {
     // could not reproduce
     reference = myFixture.getReferenceAtCaretPosition("VarTagRef2.epi_schema");
     checkReference(reference, "tag1", "VarTagRef2.epi_schema");
+  }
+
+  @SuppressWarnings("ConstantConditions")
+  public void testReferenceAfterRename() {
+    myFixture.configureByFile("SameNsTypeRef.epi_schema");
+    PsiElement element = myFixture.getFile().findElementAt(myFixture.getCaretOffset());
+    PsiElement parent = element.getParent().getParent();
+
+    checkReference(parent.getReference(), "Bar", "SameNsTypeRef.epi_schema");
+
+    myFixture.renameElementAtCaret("Baz");
+    // first check that it actually got renamed
+    assertEquals(
+        "Baz",
+        ((SchemaFile) (myFixture.getFile())).getDefs().getTypeDefWrapperList().get(0).getRecordTypeDef().getName()
+    );
+
+    checkReference(parent.getReference(), "Baz", "SameNsTypeRef.epi_schema");
   }
 
   ////////////////////////////////

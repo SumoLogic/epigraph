@@ -90,12 +90,11 @@ public abstract class SchemaTypeDefImplBase<S extends SchemaTypeDefStubBase<T>, 
 
   @Nullable
   public PsiElement setName(@NotNull String name) {
-    PsiElement id = getQid();
+    SchemaQid id = getQid();
     if (id == null) return null;
     else {
-      PsiElement newId = SchemaElementFactory.createId(getProject(), name);
-      id.replace(newId);
-      return id;
+      id.setName(name);
+      return this;
     }
   }
 

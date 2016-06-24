@@ -1,5 +1,5 @@
 ### High
-- [ ] `record A; record B extends A` rename A -- get a broken ref in `extends`
+- [x] `record A; record B extends A` rename A -- get a broken ref in `extends`
 
 ### Medium
 - [ ] Ambiguous ref not highlighted:

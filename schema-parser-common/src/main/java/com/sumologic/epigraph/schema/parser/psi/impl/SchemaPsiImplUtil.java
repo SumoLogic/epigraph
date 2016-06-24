@@ -44,7 +44,8 @@ public class SchemaPsiImplUtil {
   public static PsiElement setName(SchemaQid qid, String name) {
     PsiElement oldId = qid.getId();
     PsiElement newId = SchemaElementFactory.createId(qid.getProject(), name);
-    return oldId.replace(newId);
+    oldId.replace(newId);
+    return qid;
   }
 
   @Contract(pure = true)
@@ -206,7 +207,7 @@ public class SchemaPsiImplUtil {
 //    SchemaFqn oldFqn = fqnTypeRef.getFqn();
 //    SchemaFqn newFqn = SchemaElementFactory.createFqn(fqnTypeRef.getProject(), name);
 //    oldFqn.replace(newFqn);
-//    return oldFqn;
+//    return fqnTypeRef;
 //  }
 
   // segment --------------------------------------------
@@ -266,7 +267,8 @@ public class SchemaPsiImplUtil {
   @Contract(pure = true)
   @NotNull
   public static PsiElement setName(SchemaFqnSegment segment, String name) {
-    return segment.getQid().setName(name);
+    segment.getQid().setName(name);
+    return segment;
   }
 
   @Contract(pure = true)
@@ -304,7 +306,8 @@ public class SchemaPsiImplUtil {
 
   public static PsiElement setName(SchemaFieldDecl fieldDecl, String name) {
 //    if (NamingConventions.validateFieldName(name) != null) name = NamingConventions.enquote(name);
-    return fieldDecl.getQid().setName(name);
+    fieldDecl.getQid().setName(name);
+    return fieldDecl;
   }
 
   @Contract(pure = true)
@@ -336,7 +339,8 @@ public class SchemaPsiImplUtil {
 
   public static PsiElement setName(SchemaVarTagDecl varTagDecl, String name) {
 //    if (NamingConventions.validateTagName(name) != null) name = NamingConventions.enquote(name);
-    return varTagDecl.getQid().setName(name);
+    varTagDecl.getQid().setName(name);
+    return varTagDecl;
   }
 
   @Contract(pure = true)
@@ -374,7 +378,8 @@ public class SchemaPsiImplUtil {
 
   public static PsiElement setName(SchemaVarTagRef varTagRef, String name) {
 //    if (NamingConventions.validateTagName(name) != null) name = NamingConventions.enquote(name);
-    return varTagRef.getQid().setName(name);
+    varTagRef.getQid().setName(name);
+    return varTagRef;
   }
 
   // enumMember decl
@@ -386,7 +391,8 @@ public class SchemaPsiImplUtil {
   }
 
   public static PsiElement setName(SchemaEnumMemberDecl enumMemberDecl, String name) {
-    return enumMemberDecl.getQid().setName(name);
+    enumMemberDecl.getQid().setName(name);
+    return enumMemberDecl;
   }
 
   @Contract(pure = true)
@@ -404,7 +410,8 @@ public class SchemaPsiImplUtil {
   }
 
   public static PsiElement setName(SchemaCustomParam customParam, String name) {
-    return customParam.getQid().setName(name);
+    customParam.getQid().setName(name);
+    return customParam;
   }
 
   @Contract(pure = true)
