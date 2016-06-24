@@ -22,13 +22,6 @@
   <depends>com.intellij.modules.lang</depends>
   -->
 
-  <actions>
-    <action class="com.sumologic.epigraph.ideaplugin.schema.features.actions.CreateSchemaFileAction" id="Epigraph.NewSchemaFile"
-            text="Epigraph Schema" description="Create new Epigraph schema file">
-      <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFile"/>
-    </action>
-  </actions>
-
   <extensions defaultExtensionNs="com.intellij">
     <fileTypeFactory implementation="com.sumologic.epigraph.ideaplugin.schema.SchemaFileTypeFactory"/>
     <internalFileTemplate name="Epigraph Schema"/>
@@ -68,8 +61,6 @@
     <usageTypeProvider
         implementation="com.sumologic.epigraph.ideaplugin.schema.features.usages.SchemaUsageTypeProvider"/>
 
-    <lang.refactoringSupport language="epi_schema"
-                             implementationClass="com.sumologic.epigraph.ideaplugin.schema.features.SchemaRefactoringSupportProvider"/>
     <lang.namesValidator language="epi_schema"
                          implementationClass="com.sumologic.epigraph.ideaplugin.schema.features.SchemaNamesValidator"/>
 
@@ -93,10 +84,6 @@
     <typeHierarchyProvider language="epi_schema"
                            implementationClass="com.sumologic.epigraph.ideaplugin.schema.features.hierarchy.SchemaHierarchyProvider"/>
 
-    <autoImportOptionsProvider
-        instance="com.sumologic.epigraph.ideaplugin.schema.options.SchemaAutoImportOptionsProvider"/>
-    <lang.importOptimizer language="epi_schema"
-                          implementationClass="com.sumologic.epigraph.ideaplugin.schema.features.imports.SchemaImportOptimizer"/>
 
     <!-- annotator -->
     <annotator language="epi_schema"
@@ -104,6 +91,18 @@
     <!-- highlight errors in parents even if there are errors in children -->
     <highlightRangeExtension
         implementation="com.sumologic.epigraph.ideaplugin.schema.highlighting.SchemaHighlightRangeExtension"/>
+
+    <!-- refactoring -->
+    <lang.refactoringSupport language="epi_schema"
+                             implementationClass="com.sumologic.epigraph.ideaplugin.schema.features.SchemaRefactoringSupportProvider"/>
+    <renamePsiElementProcessor
+        implementation="com.sumologic.epigraph.ideaplugin.schema.features.rename.RenameSchemaFieldProcessor"/>
+
+    <!-- imports optimizer -->
+    <autoImportOptionsProvider
+        instance="com.sumologic.epigraph.ideaplugin.schema.options.SchemaAutoImportOptionsProvider"/>
+    <lang.importOptimizer language="epi_schema"
+                          implementationClass="com.sumologic.epigraph.ideaplugin.schema.features.imports.SchemaImportOptimizer"/>
 
     <!-- inspections -->
     <!-- imports -->
@@ -149,7 +148,11 @@
   </extensions>
 
   <actions>
-    <!-- Add your actions here -->
+    <action class="com.sumologic.epigraph.ideaplugin.schema.features.actions.CreateSchemaFileAction"
+            id="Epigraph.NewSchemaFile"
+            text="Epigraph Schema" description="Create new Epigraph schema file">
+      <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFile"/>
+    </action>
   </actions>
 
   <project-components>

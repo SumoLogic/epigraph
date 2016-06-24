@@ -46,8 +46,14 @@ public class SchemaElementFactory {
     return file.getImportStatements().get(0);
   }
 
+  public static SchemaRecordTypeDef createRecordTypeDef(Project project, String name) {
+    final SchemaFile file = createFileFromText(project, "namespace some\nrecord " + name);
+    //noinspection ConstantConditions
+    return file.getDefs().getTypeDefWrapperList().get(0).getRecordTypeDef();
+  }
+
   public static PsiElement createWhitespaces(Project project, String text) {
-    final SchemaFile file = createFileFromText(project, text+"namespace some");
+    final SchemaFile file = createFileFromText(project, text + "namespace some");
     return file.getChildren()[0];
   }
 }
