@@ -55,8 +55,7 @@ public class SchemaFqnReference extends PsiReferenceBase<SchemaFqnSegment> imple
 
   @Nullable
   public final PsiElement resolve() {
-    //return ResolveCache.getInstance(myElement.getProject()).resolveWithCaching(this, cachedResolver, false, false);
-    return resolveImpl();
+    return ResolveCache.getInstance(myElement.getProject()).resolveWithCaching(this, cachedResolver, false, false);
   }
 
   @Override
