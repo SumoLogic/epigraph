@@ -137,10 +137,11 @@ abstract class CTypeDef protected(val csf: CSchemaFile, val psi: SchemaTypeDef, 
         parents foreach { p =>
           p.computeSupertypes(visited)
           if (p.kind != kind) {
+            val pSource = if (injectedSupertypes.contains(p)) "injected" else "declared"
             ctx.errors.add(
               new CError(
-                csf.filename, csf.position(psi.getQid),
-                s"Type ${name.name} of '${kind.keyword}' kind is not compatible with its supertype ${p.name.name} kind '${p.kind.keyword}'"
+                csf.filename, csf.position(psi.getQid), // TODO use injection source/position for injection failures
+                s"Type ${name.name} (of '${kind.keyword}' kind) is not compatible with $pSource supertype ${p.name.name} (of '${p.kind.keyword}' kind)"
               )
             )
           }

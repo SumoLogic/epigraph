@@ -37,3 +37,5 @@ boolean B1 extends B2
 boolean B2 extends B1
 
 vartype BadSupertypeKind extends Foo123
+
+supplement Foo123 with Bar234
