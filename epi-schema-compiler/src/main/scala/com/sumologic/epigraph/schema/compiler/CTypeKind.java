@@ -5,32 +5,37 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
-public enum CPrimitiveKind {
+public enum CTypeKind {
 
+  VARTYPE("vartype"),
+  RECORD("record"),
+  MAP("map"),
+  LIST("list"),
+  ENUM("enum"),
   STRING("string"),
   INTEGER("integer"),
   LONG("long"),
   DOUBLE("double"),
   BOOLEAN("boolean");
 
-  private static final Map<String, CPrimitiveKind> map = new HashMap<>();
+  private static final Map<String, CTypeKind> map = new HashMap<>();
 
   public final String keyword;
 
-  CPrimitiveKind(String keyword) {
+  CTypeKind(String keyword) {
     this.keyword = keyword;
   }
 
   static {
-    for (CPrimitiveKind value : values()) map.put(value.keyword, value);
+    for (CTypeKind value : values()) map.put(value.keyword, value);
   }
 
   /**
    * @param keyword
    * @throws IllegalArgumentException
    */
-  public static CPrimitiveKind forKeyword(@NotNull String keyword) throws IllegalArgumentException {
-    CPrimitiveKind value = map.get(keyword);
+  public static CTypeKind forKeyword(@NotNull String keyword) throws IllegalArgumentException {
+    CTypeKind value = map.get(keyword);
     if (value == null) throw new IllegalArgumentException(keyword);
     return value;
   }

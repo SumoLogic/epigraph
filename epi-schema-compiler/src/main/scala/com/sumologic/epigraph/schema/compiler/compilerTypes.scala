@@ -12,6 +12,7 @@ import org.jetbrains.annotations.Nullable
 import scala.collection.JavaConversions._
 import scala.collection.mutable
 
+
 class CTypeRef(val csf: CSchemaFile, val psi: SchemaTypeRef)(implicit val ctx: CContext) {
 
   val name: CTypeName = psi match { // TODO hierarchy for typedefrefs vs anontyperefs?
@@ -82,34 +83,28 @@ class CAnonListTypeName(csf: CSchemaFile, override val psi: SchemaAnonList)(impl
 
   val elementTypeRef: CTypeRef = new CTypeRef(csf, psi.getTypeRef)
 
-} with CTypeName(csf, "list[" + elementTypeRef.name.name + "]", psi) {
-
-}
+} with CTypeName(csf, "list[" + elementTypeRef.name.name + "]", psi)
 
 class CAnonMapTypeName(csf: CSchemaFile, override val psi: SchemaAnonMap)(implicit ctx: CContext) extends {
-
 
   val keyTypeRef: CTypeRef = new CTypeRef(csf, psi.getTypeRefList.head)
 
   val valueTypeRef: CTypeRef = new CTypeRef(csf, psi.getTypeRefList.last)
 
-} with CTypeName(csf, "map[" + keyTypeRef.name.name + "," + valueTypeRef.name.name + "]", psi) {
+} with CTypeName(csf, "map[" + keyTypeRef.name.name + "," + valueTypeRef.name.name + "]", psi)
 
-//  if (keyTypeRef.name.name == "epigraph.String") {
-//    val lnu = new LineNumberUtil(csf.psi.getText, 4)
-//    val off = psi.getTextRange.getStartOffset
-//    println("Error: " + lnu.line(off) + ":" + lnu.column(off))
-//  } else println("KOOL")
-
-}
 
 trait CType {
 
   val name: CTypeName
 
+  val kind: CTypeKind
+
 }
 
-class CTypeDef(val csf: CSchemaFile, val psi: SchemaTypeDef)(implicit val ctx: CContext) extends CType {
+
+abstract class CTypeDef protected(val csf: CSchemaFile, val psi: SchemaTypeDef, override val kind: CTypeKind)
+    (implicit val ctx: CContext) extends CType {
 
   val name: CTypeFqn = new CTypeFqn(csf, csf.namespace.fqn, psi)
 
@@ -139,8 +134,16 @@ class CTypeDef(val csf: CSchemaFile, val psi: SchemaTypeDef)(implicit val ctx: C
       val thisIdx = visited.indexOf(this)
       visited.push(this)
       if (thisIdx == -1) {
-        parents foreach {
-          _.computeSupertypes(visited)
+        parents foreach { p =>
+          p.computeSupertypes(visited)
+          if (p.kind != kind) {
+            ctx.errors.add(
+              new CError(
+                csf.filename, csf.position(psi.getQid),
+                s"Type ${name.name} of '${kind.keyword}' kind is not compatible with its supertype ${p.name.name} kind '${p.kind.keyword}'"
+              )
+            )
+          }
         }
       } else {
         ctx.errors.add(
@@ -177,8 +180,9 @@ object CTypeDef {
 
 }
 
+
 class CVarTypeDef(csf: CSchemaFile, override val psi: SchemaVarTypeDef)(implicit ctx: CContext) extends CTypeDef(
-  csf, psi
+  csf, psi, CTypeKind.VARTYPE
 ) {
 
   val declaredTags: Seq[CTag] = {
@@ -198,7 +202,7 @@ class CTag(val csf: CSchemaFile, val psi: SchemaVarTagDecl)(implicit val ctx: CC
 
 
 class CRecordTypeDef(csf: CSchemaFile, override val psi: SchemaRecordTypeDef)(implicit ctx: CContext) extends CTypeDef(
-  csf, psi
+  csf, psi, CTypeKind.RECORD
 ) {
 
   val declaredFields: Seq[CField] = {
@@ -214,7 +218,25 @@ class CField(val csf: CSchemaFile, val psi: SchemaFieldDecl)(implicit val ctx: C
 
   val typeRef: CTypeRef = new CTypeRef(csf, psi.getTypeRef)
 
+//  lazy val defaultTag: Option[CTag] = {
+//    val sdo = psi.getDefaultOverride
+//    if (sdo == null || sdo.getNodefault != null) {
+//      None
+//    } else {
+//      val tagName = sdo.getVarTagRef.getQid.getCanonicalName
+//      typeRef.getTypeOpt match {
+//        case Some(ctype) =>
+//          ctype match {
+//            case cvt: CVarTypeDef => cvt.allTags... // FIXME get all tags, find referenced, error if not found
+//            case _ => //TODO error
+//          }
+//        case None => None
+//      }
+//    }
+//  }
+
 }
+
 
 trait CMapType extends CType {
 
@@ -223,6 +245,8 @@ trait CMapType extends CType {
   val keyTypeRef: CTypeRef
 
   val valueTypeRef: CTypeRef
+
+  override val kind: CTypeKind = CTypeKind.MAP
 
 }
 
@@ -234,9 +258,8 @@ class CAnonMapType(override val name: CAnonMapTypeName) extends CMapType {
 
 }
 
-
 class CMapTypeDef(csf: CSchemaFile, override val psi: SchemaMapTypeDef)(implicit ctx: CContext) extends CTypeDef(
-  csf, psi
+  csf, psi, CTypeKind.MAP
 ) with CMapType {
 
   override val keyTypeRef: CTypeRef = new CTypeRef(csf, psi.getAnonMap.getTypeRefList.head)
@@ -245,14 +268,16 @@ class CMapTypeDef(csf: CSchemaFile, override val psi: SchemaMapTypeDef)(implicit
 
 }
 
+
 trait CListType extends CType {
 
   val name: CTypeName
 
   val elementTypeRef: CTypeRef
 
-}
+  override val kind: CTypeKind = CTypeKind.LIST
 
+}
 
 class CAnonListType(override val name: CAnonListTypeName) extends CListType {
 
@@ -260,9 +285,8 @@ class CAnonListType(override val name: CAnonListTypeName) extends CListType {
 
 }
 
-
 class CListTypeDef(csf: CSchemaFile, override val psi: SchemaListTypeDef)(implicit ctx: CContext) extends CTypeDef(
-  csf, psi
+  csf, psi, CTypeKind.LIST
 ) with CListType {
 
   override val elementTypeRef: CTypeRef = new CTypeRef(csf, psi.getAnonList.getTypeRef)
@@ -270,7 +294,9 @@ class CListTypeDef(csf: CSchemaFile, override val psi: SchemaListTypeDef)(implic
 }
 
 
-class CEnumTypeDef(csf: CSchemaFile, psi: SchemaEnumTypeDef)(implicit ctx: CContext) extends CTypeDef(csf, psi) {
+class CEnumTypeDef(csf: CSchemaFile, psi: SchemaEnumTypeDef)(implicit ctx: CContext) extends CTypeDef(
+  csf, psi, CTypeKind.ENUM
+) {
 
   val values: Seq[CEnumValue] = {
     @Nullable val body = psi.getEnumTypeBody
@@ -286,16 +312,13 @@ class CEnumValue(csf: CSchemaFile, psi: SchemaEnumMemberDecl)(implicit val ctx: 
 }
 
 
-class CPrimitiveTypeDef(csf: CSchemaFile, override val psi: SchemaPrimitiveTypeDef)
-    (implicit ctx: CContext) extends CTypeDef(
-  csf, psi
-) {
+class CPrimitiveTypeDef(csf: CSchemaFile, override val psi: SchemaPrimitiveTypeDef)(implicit ctx: CContext)
+    extends CTypeDef(
+      csf, psi, CTypeKind.forKeyword( // TODO deal with all nulls?
+        Seq(psi.getStringT, psi.getIntegerT, psi.getLongT, psi.getDoubleT, psi.getBooleanT).find(_ != null).get.getText
+      )
+    )
 
-  val kind: CPrimitiveKind = CPrimitiveKind.forKeyword( // TODO deal with all nulls?
-    Seq(psi.getStringT, psi.getIntegerT, psi.getLongT, psi.getDoubleT, psi.getBooleanT).find(_ != null).get.getText
-  )
-
-}
 
 class CSupplement(csf: CSchemaFile, val psi: SchemaSupplementDef)(implicit val ctx: CContext) {
 
