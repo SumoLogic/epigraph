@@ -14,6 +14,7 @@ import com.intellij.psi.tree.TokenSet;
 import com.sumologic.epigraph.schema.parser.psi.SchemaFile;
 import com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes;
 import com.sumologic.epigraph.schema.parser.lexer.SchemaFlexAdapter;
+
 import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.*;
 
 import com.sumologic.epigraph.schema.parser.psi.stubs.SchemaStubElementTypes;
@@ -52,7 +53,8 @@ public class SchemaParserDefinition implements ParserDefinition {
       S_STRING_T,
       S_NULL // or is ti a LITERAL?
   );
-  public final static TokenSet LITERALS = TokenSet.create(S_STRING, S_NUMBER);
+  public final static TokenSet STRING_LITERALS = TokenSet.create(S_STRING);
+  public final static TokenSet LITERALS = TokenSet.andSet(STRING_LITERALS, TokenSet.create(S_NUMBER));
   public final static TokenSet TYPE_KINDS = TokenSet.create(S_VARTYPE, S_RECORD, S_MAP, S_LIST, S_ENUM,
       S_STRING_T, S_INTEGER_T, S_LONG_T, S_DOUBLE_T, S_BOOLEAN_T);
 
@@ -87,7 +89,7 @@ public class SchemaParserDefinition implements ParserDefinition {
   @NotNull
   @Override
   public TokenSet getStringLiteralElements() {
-    return LITERALS;
+    return STRING_LITERALS;
   }
 
   @NotNull

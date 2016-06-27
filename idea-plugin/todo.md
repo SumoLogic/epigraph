@@ -1,5 +1,7 @@
 ### High
-- [ ] Data language must be injected after all. Otherwise we will have at least two different instances of it (for schema attributes and for stencil parameters) and will have to support them separately in the plugin: references, refactorings etc
+- [x] Data language must be injected after all. Otherwise we will have at least two different instances of it (for schema attributes and for stencil parameters) and will have to support them separately in the plugin: references, refactorings etc.
+
+    See [forum thread](https://intellij-support.jetbrains.com/hc/en-us/community/posts/207645985-language-composition-with-Grammar-Kit-), decided to go with (4)
 
 ### Medium
 - [ ] Type ref completion should respect kinds (e.g. `record Foo extends <caret>` should only suggests records, with current one and all the parents removed)

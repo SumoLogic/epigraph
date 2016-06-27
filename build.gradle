@@ -1,5 +1,13 @@
 apply plugin: 'idea'
 
+subprojects {
+  repositories {
+    mavenCentral()
+    jcenter()
+    flatDir(dirs: "$rootDir/schema-parser/lib") // epi-schema-compiler must see it too
+  }
+}
+
 // importing gradle project from IDEA is preferred to using 'gradle idea'
 idea {
   project {

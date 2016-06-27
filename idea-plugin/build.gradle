@@ -2,11 +2,7 @@
 // https://youtrack.jetbrains.com/issue/IDEA-142683
 
 plugins {
-    id 'org.jetbrains.intellij' version "0.1.8"
-}
-
-repositories {
-    jcenter()
+  id 'org.jetbrains.intellij' version "0.1.8"
 }
 
 version = "${version}.${buildNumber}"
@@ -23,14 +19,14 @@ idea.module.sourceDirs += file('../schema-parser-common/src/main/java')
 idea.module.generatedSourceDirs += file('../schema-parser-common/src/main/java.generated')
 
 dependencies {
-    testCompile 'junit:junit:4.12'
+  testCompile 'junit:junit:4.12'
 }
 
 apply plugin: 'org.jetbrains.intellij'
 intellij {
-    version ideaVersion
-    pluginName 'Epigraph'
-    downloadSources Boolean.valueOf(sources)
-    sameSinceUntilBuild Boolean.valueOf(isEAP)
-    // alternativeIdeaPath localIdePath
+  version ideaVersion
+  pluginName 'Epigraph'
+  downloadSources Boolean.valueOf(sources)
+  sameSinceUntilBuild Boolean.valueOf(isEAP)
+  // alternativeIdeaPath localIdePath
 }

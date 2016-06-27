@@ -1,9 +1,5 @@
 apply plugin: 'scala'
 
-repositories {
-  mavenCentral()
-}
-
 dependencies {
   compile "org.scala-lang:scala-library:$scalaVersion"
 }
