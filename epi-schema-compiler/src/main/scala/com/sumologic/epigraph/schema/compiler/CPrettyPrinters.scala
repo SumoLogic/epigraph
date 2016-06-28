@@ -97,12 +97,12 @@ object CPrettyPrinters {
         }
       ),
       pprint.Internals.handleChunks(
-        "supplements", c,
-        (c: Config) => t.declaredSupplementees.toIterator.map(implicitly[PPrint[CTypeRef]].pprinter.render(_, c))
+        "effectiveSupertypes", c,
+        (c: Config) => t.supertypes.toIterator.map { ctd => implicitly[PPrint[CTypeName]].pprinter.render(ctd.name, c) ++ Iterator("#" + ctd.depth) }
       ),
       pprint.Internals.handleChunks(
-        "supertypes", c,
-        (c: Config) => t.supertypes.toIterator.map { ctd => implicitly[PPrint[CTypeName]].pprinter.render(ctd.name, c) }
+        "supplementedSubtypes", c,
+        (c: Config) => t.declaredSupplementees.toIterator.map(implicitly[PPrint[CTypeRef]].pprinter.render(_, c))
       )
     )
 

@@ -38,8 +38,14 @@ object SchemaCompilerMain {
 
   def main(args: Array[String]) {
 
+    import CPhase._
+
+    ctx.phase(PARSE)
+
     val schemaFiles: Seq[SchemaFile] = parseSourceFiles(paths.map(new File(_)))
+
     handleErrors(1)
+    ctx.phase(RESOLVE_TYPEREFS)
 
     val cSchemaFiles: Seq[CSchemaFile] = schemaFiles.map(new CSchemaFile(_))
     //printSchemaFiles(cSchemaFiles)
@@ -50,14 +56,19 @@ object SchemaCompilerMain {
     resolveTypeRefs(cSchemaFiles)
     //pprint.pprintln(ctx.anonListTypes.toMap)
     //pprint.pprintln(ctx.anonMapTypes.toMap)
+
     handleErrors(2)
+    ctx.phase(COMPUTE_SUPERTYPES)
 
     applySupplementingTypeDefs()
     applySupplements(cSchemaFiles) // FIXME track injecting `supplement`s
     computeSupertypes()
     printSchemaFiles(cSchemaFiles)
-    handleErrors(3)
 
+    handleErrors(3)
+    ctx.phase(INHERIT_FROM_SUPERTYPES)
+
+//    printSchemaFiles(cSchemaFiles)
   }
 
   def parseSourceFiles(files: Seq[File]): Seq[SchemaFile] = {

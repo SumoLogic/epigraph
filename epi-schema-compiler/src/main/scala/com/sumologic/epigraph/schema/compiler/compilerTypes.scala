@@ -126,7 +126,9 @@ abstract class CTypeDef protected(val csf: CSchemaFile, val psi: SchemaTypeDef, 
 
   private var computedSupertypes: Option[Seq[CTypeDef]] = None
 
-  def supertypes: Seq[CTypeDef] = computedSupertypes.getOrElse(Nil)
+  def supertypes: Seq[CTypeDef] = ctx.phased(
+    CPhase.INHERIT_FROM_SUPERTYPES, computedSupertypes.getOrElse(Nil), sortedSupertypes
+  )
 
   def computeSupertypes(visited: mutable.Stack[CTypeDef]): Unit = {
     if (computedSupertypes.isEmpty) {
@@ -157,9 +159,17 @@ abstract class CTypeDef protected(val csf: CSchemaFile, val psi: SchemaTypeDef, 
         )
       }
       visited.pop()
-      computedSupertypes = Some(parents.flatMap { st => st +: st.supertypes }.distinct)
+      computedSupertypes = Some(parents.flatMap { st => st.supertypes :+ st }.distinct)
     }
   }
+
+  def depth: Int = ctx.phased(CPhase.INHERIT_FROM_SUPERTYPES, -1, cachedDepth)
+
+  private lazy val cachedDepth: Int = if (supertypes.isEmpty) 0 else supertypes.map(_.depth).max + 1
+
+  def sortedSupertypes: Seq[this.type] = ctx.phased(CPhase.INHERIT_FROM_SUPERTYPES, Nil, cachedSortedSupertypes)
+
+  private lazy val cachedSortedSupertypes = computedSupertypes.get.sortBy(_.depth).asInstanceOf[Seq[this.type]]
 
 }
 
@@ -190,6 +200,12 @@ class CVarTypeDef(csf: CSchemaFile, override val psi: SchemaVarTypeDef)(implicit
     @Nullable val body = psi.getVarTypeBody
     if (body == null) Nil else body.getVarTagDeclList.map(new CTag(csf, _)).toList
   }
+
+//  val tags: Map[String, CTag] = {
+//    sortedSupertypes flatMap { st => st.tags }
+//    // merge parent tags
+//    // merge declared tags
+//  }
 
 }
 

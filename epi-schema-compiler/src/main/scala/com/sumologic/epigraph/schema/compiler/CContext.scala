@@ -10,6 +10,8 @@ import net.jcip.annotations.ThreadSafe
 
 class CContext(val tabWidth: Int = 2) {
 
+  var phase: CPhase = CPhase.PARSE
+
   @ThreadSafe
   val errors: ConcurrentLinkedQueue[CError] = new java.util.concurrent.ConcurrentLinkedQueue
 
@@ -30,6 +32,15 @@ class CContext(val tabWidth: Int = 2) {
     "epigraph.Double",
     "epigraph.Boolean"
   ).map(Fqn.fromDotSeparated).map { fqn => (fqn.last, fqn) }.toMap
+
+  def phased[A](minPhase: CPhase, default: A, f: => A): A = if (phase.ordinal < minPhase.ordinal) default else f
+
+  def phase(next: CPhase): this.type = if (phase.ordinal == next.ordinal || next.ordinal == phase.ordinal + 1) {
+    phase = next
+    this
+  } else {
+    throw new RuntimeException(phase.name)
+  }
 
 }
 
