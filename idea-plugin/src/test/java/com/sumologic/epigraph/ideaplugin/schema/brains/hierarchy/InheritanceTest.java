@@ -18,7 +18,7 @@ public class InheritanceTest extends LightCodeInsightFixtureTestCase {
   }
 
   public void testDirectInheritors() {
-    myFixture.configureByFile("InheritanceSearch.epi_schema");
+    myFixture.configureByFile("InheritanceSearch.esc");
     SchemaTypeDef typeDef = findTypeDef("R1");
     Collection<SchemaTypeDef> directInheritors = SchemaDirectTypeInheritorsSearch.search(typeDef).findAll();
     assertEquals(1, directInheritors.size());
@@ -27,14 +27,14 @@ public class InheritanceTest extends LightCodeInsightFixtureTestCase {
   }
 
   public void testInheritors() {
-    myFixture.configureByFile("InheritanceSearch.epi_schema");
+    myFixture.configureByFile("InheritanceSearch.esc");
     SchemaTypeDef typeDef = findTypeDef("R1");
     Collection<SchemaTypeDef> inheritors = SchemaTypeInheritorsSearch.search(typeDef).findAll();
     checkResults(inheritors, "R2", "R3", "R4");
   }
 
   public void testSupplements() {
-    myFixture.configureByFile("InheritanceSearch2.epi_schema");
+    myFixture.configureByFile("InheritanceSearch2.esc");
     SchemaTypeDef r4 = findTypeDef("R4");
     Collection<SchemaTypeDef> inheritors = SchemaTypeInheritorsSearch.search(r4).findAll();
     checkUnorderedResults(inheritors, "R3", "R2", "R1"); // Do we need ordering for transitive inheritors?
@@ -52,7 +52,7 @@ public class InheritanceTest extends LightCodeInsightFixtureTestCase {
   }
 
   public void testDirectParents() {
-    myFixture.configureByFile("InheritanceSearch.epi_schema");
+    myFixture.configureByFile("InheritanceSearch.esc");
     SchemaTypeDef typeDef = findTypeDef("R2");
     Collection<SchemaTypeDef> directInheritors = SchemaDirectTypeParentsSearch.search(typeDef).findAll();
     assertEquals(1, directInheritors.size());
@@ -61,21 +61,21 @@ public class InheritanceTest extends LightCodeInsightFixtureTestCase {
   }
 
   public void testParents() {
-    myFixture.configureByFile("InheritanceSearch.epi_schema");
+    myFixture.configureByFile("InheritanceSearch.esc");
     SchemaTypeDef r3 = findTypeDef("R4");
     Collection<SchemaTypeDef> parents = SchemaTypeParentsSearch.search(r3).findAll();
     checkResults(parents, "R3", "R2", "R1");
   }
 
   public void testCircularInheritors() {
-    myFixture.configureByFile("Circular.epi_schema");
+    myFixture.configureByFile("Circular.esc");
     SchemaTypeDef typeDef = findTypeDef("R1");
     Collection<SchemaTypeDef> inheritors = SchemaTypeInheritorsSearch.search(typeDef).findAll();
     checkResults(inheritors, "R2", "R3", "R1");
   }
 
   public void testCircularParents() {
-    myFixture.configureByFile("Circular.epi_schema");
+    myFixture.configureByFile("Circular.esc");
     SchemaTypeDef typeDef = findTypeDef("R1");
     Collection<SchemaTypeDef> inheritors = SchemaTypeParentsSearch.search(typeDef).findAll();
     checkResults(inheritors, "R3", "R2", "R1");

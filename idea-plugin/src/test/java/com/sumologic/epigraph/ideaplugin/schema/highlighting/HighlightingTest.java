@@ -16,8 +16,8 @@ public class HighlightingTest extends LightCodeInsightFixtureTestCase {
   }
 
   public void testInvalid1() {
-    myFixture.configureByFiles("Invalid1.epi_schema", "other.epi_schema", "builtin.epi_schema",
-        "foo.epi_schema", "bar.epi_schema");
+    myFixture.configureByFiles("Invalid1.esc", "other.esc", "builtin.esc",
+        "foo.esc", "bar.esc");
     myFixture.enableInspections(new DuplicateImportInspection());
     myFixture.enableInspections(new UnnecessaryImportInspection());
     myFixture.enableInspections(new UnusedImportInspection());

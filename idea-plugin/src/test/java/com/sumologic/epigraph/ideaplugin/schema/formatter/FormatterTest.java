@@ -14,7 +14,7 @@ public class FormatterTest extends LightCodeInsightFixtureTestCase {
   }
 
   public void testFormatter() {
-    myFixture.configureByFile("FormatterTest.epi_schema");
+    myFixture.configureByFile("FormatterTest.esc");
     new WriteCommandAction.Simple<Void>(getProject()) {
       @Override
       protected void run() throws Throwable {
@@ -22,6 +22,6 @@ public class FormatterTest extends LightCodeInsightFixtureTestCase {
       }
     }.execute();
 
-    myFixture.checkResultByFile("FormatterTest-out.epi_schema");
+    myFixture.checkResultByFile("FormatterTest-out.esc");
   }
 }

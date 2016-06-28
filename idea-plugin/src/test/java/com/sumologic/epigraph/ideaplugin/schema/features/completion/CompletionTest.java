@@ -19,90 +19,90 @@ public class CompletionTest extends LightCodeInsightFixtureTestCase {
   }
 
   public void testStaticImportCompletion() {
-    myFixture.testCompletion("CompletionWithStaticImport.epi_schema", "CompletionWithStaticImport-after.epi_schema", "zzz.epi_schema");
+    myFixture.testCompletion("CompletionWithStaticImport.esc", "CompletionWithStaticImport-after.esc", "zzz.esc");
   }
 
   public void testImportCompletion() {
-    myFixture.configureByFiles("ImportCompletion.epi_schema", "foo.epi_schema", "foobar.epi_schema");
+    myFixture.configureByFiles("ImportCompletion.esc", "foo.esc", "foobar.esc");
     checkCompletionVariants("Foo", "bar");
 
-    myFixture.configureByFiles("ImportCompletion2.epi_schema", "foo.epi_schema", "foobar.epi_schema");
+    myFixture.configureByFiles("ImportCompletion2.esc", "foo.esc", "foobar.esc");
     checkCompletionVariants("bar"); // but not "*" or "Foo", same namespace
 
-    myFixture.configureByFiles("ImportCompletion3.epi_schema", "foo.epi_schema", "foobar.epi_schema", "zzz.epi_schema", "builtin.epi_schema");
+    myFixture.configureByFiles("ImportCompletion3.esc", "foo.esc", "foobar.esc", "zzz.esc", "builtin.esc");
     checkCompletionVariants("foo", "zzz", "epigraph"); // but not "foo.bar" or "some" or "epigraph.Boolean"
   }
 
   public void testTypeRefCompletion() {
-    myFixture.configureByFiles("TypeRefCompletion.epi_schema", "foo.epi_schema", "foobar.epi_schema");
+    myFixture.configureByFiles("TypeRefCompletion.esc", "foo.esc", "foobar.esc");
     checkCompletionVariants("bar", "Foo"); // foo.bar has not been imported but foo.bar.Baz still makes a valid reference
 
-    myFixture.testCompletion("TypeRefCompletion2.epi_schema", "TypeRefCompletion2-after.epi_schema", "foo.epi_schema", "foobar.epi_schema");
+    myFixture.testCompletion("TypeRefCompletion2.esc", "TypeRefCompletion2-after.esc", "foo.esc", "foobar.esc");
   }
 
   public void testTopLevelCompletion() {
-    myFixture.configureByFile("TopLevelCompletion.epi_schema");
+    myFixture.configureByFile("TopLevelCompletion.esc");
     checkCompletionVariants(TOP_LEVEL);
   }
 
   public void testNamespaceOnlyTopLevelCompletion() {
-    myFixture.configureByFile("NamespaceOnlyTopLevelCompletion.epi_schema");
+    myFixture.configureByFile("NamespaceOnlyTopLevelCompletion.esc");
     checkCompletionVariants(TOP_LEVEL, "import ");
   }
 
   public void testBuiltinTypeCompletion() {
-    myFixture.testCompletion("BuiltinTypeCompletion.epi_schema", "BuiltinTypeCompletion-after.epi_schema", "builtin.epi_schema");
+    myFixture.testCompletion("BuiltinTypeCompletion.esc", "BuiltinTypeCompletion-after.esc", "builtin.esc");
   }
 
   public void testCompletionAfterPolymorphic() {
-    myFixture.configureByFile("CompletionAfterPolymorphic.epi_schema");
+    myFixture.configureByFile("CompletionAfterPolymorphic.esc");
     checkCompletionVariants("record ", "map", "list",
         "string ", "double ", "integer ", "long ", "boolean ");
   }
 
   public void testCompletionAfterAbstract() {
-    myFixture.configureByFile("CompletionAfterAbstract.epi_schema");
+    myFixture.configureByFile("CompletionAfterAbstract.esc");
     checkCompletionVariants("polymorphic ", "record ", "map", "list", "string ", "double ", "integer ", "long ", "boolean ");
   }
 
   public void testCompletionAfterRecordName() {
-    myFixture.configureByFile("CompletionAfterRecordName.epi_schema");
+    myFixture.configureByFile("CompletionAfterRecordName.esc");
     checkCompletionVariants(TOP_LEVEL, "extends ", "meta ", "supplements ");
   }
 
   public void testCompletionAfterRecordNameBeforeBlock() {
-    myFixture.configureByFile("CompletionAfterRecordNameBeforeBlock.epi_schema");
+    myFixture.configureByFile("CompletionAfterRecordNameBeforeBlock.esc");
     checkCompletionVariants("extends ", "meta ", "supplements ");
   }
 
   public void testCompletionAfterListName() {
-    myFixture.configureByFile("CompletionAfterListName.epi_schema");
+    myFixture.configureByFile("CompletionAfterListName.esc");
     checkCompletionVariants(TOP_LEVEL, "extends ", "meta ");
   }
 
   public void testUndefinedTypeNameCompletion() {
-    myFixture.configureByFile("UndefinedTypeNameCompletion.epi_schema");
+    myFixture.configureByFile("UndefinedTypeNameCompletion.esc");
     checkCompletionVariants("Bar", "Baz");
   }
 
   // TODO(low) add later, too advanced for now
 //  public void testUndefinedTypeNameCompletion2() {
-//    myFixture.configureByFile("UndefinedTypeNameCompletion2.epi_schema");
+//    myFixture.configureByFile("UndefinedTypeNameCompletion2.esc");
 //    checkCompletionVariants("Bar", "Baz"); // but not Baq, incomplete kinds
 //  }
 
   public void testUndefinedTypeNameCompletion3() {
-    myFixture.configureByFile("UndefinedTypeNameCompletion2.epi_schema");
+    myFixture.configureByFile("UndefinedTypeNameCompletion2.esc");
     checkCompletionVariants("Bar", "Baz", "Baq");
   }
 
   public void testFieldTypeCompletion() {
-    myFixture.configureByFile("FieldTypeCompletion.epi_schema");
+    myFixture.configureByFile("FieldTypeCompletion.esc");
     checkCompletionVariants("Bar", "Baz");
   }
 
   public void testWithCompletion() {
-    myFixture.testCompletion("CompleteWith.epi_schema", "CompleteWith-after.epi_schema");
+    myFixture.testCompletion("CompleteWith.esc", "CompleteWith-after.esc");
   }
 
   private void checkCompletionVariants(String... variants) {

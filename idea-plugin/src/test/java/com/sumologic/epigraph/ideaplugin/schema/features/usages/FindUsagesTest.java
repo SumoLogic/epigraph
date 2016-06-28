@@ -15,7 +15,7 @@ public class FindUsagesTest extends LightCodeInsightFixtureTestCase {
   }
 
   public void testFindUsages() {
-    Collection<UsageInfo> usageInfos = myFixture.testFindUsages("FindUsagesTestData.epi_schema");
+    Collection<UsageInfo> usageInfos = myFixture.testFindUsages("FindUsagesTestData.esc");
     assertEquals(2, usageInfos.size());
   }
   // todo Test find usages on var tag ref (default override)

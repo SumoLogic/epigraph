@@ -18,7 +18,7 @@ public class ImportsManagerTest extends LightCodeInsightFixtureTestCase {
   }
 
   public void testFindUnusedImports() {
-    myFixture.configureByFiles("UnusedImports.epi_schema", "foo.epi_schema", "foobar.epi_schema");
+    myFixture.configureByFiles("UnusedImports.esc", "foo.esc", "foobar.esc");
     Set<SchemaImportStatement> unusedImports = ImportsManager.findUnusedImports((SchemaFile) myFixture.getFile());
 
     Set<String> strings = unusedImports.stream().map(SchemaImportStatement::getText).collect(Collectors.toSet());
@@ -26,7 +26,7 @@ public class ImportsManagerTest extends LightCodeInsightFixtureTestCase {
   }
 
   public void testOptimizeImports() {
-    myFixture.configureByFiles("UnusedImports.epi_schema", "foo.epi_schema", "foobar.epi_schema");
+    myFixture.configureByFiles("UnusedImports.esc", "foo.esc", "foobar.esc");
     List<Fqn> optimizedImports = ImportsManager.getOptimizedImports((SchemaFile) myFixture.getFile());
 
     assertEquals(Arrays.asList(

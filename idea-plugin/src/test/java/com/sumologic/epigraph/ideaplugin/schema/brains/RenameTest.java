@@ -13,9 +13,9 @@ public class RenameTest extends LightCodeInsightFixtureTestCase {
   }
 
   public void testTypeRename() {
-    myFixture.configureByFile("TypeRename.epi_schema");
+    myFixture.configureByFile("TypeRename.esc");
     myFixture.renameElementAtCaret("GGG");
-    myFixture.checkResultByFile("TypeRename-after.epi_schema", false);
+    myFixture.checkResultByFile("TypeRename-after.esc", false);
     // also check manually
     //noinspection ConstantConditions
     assertEquals("GGG", ((SchemaFile) (myFixture.getFile())).getDefs().getTypeDefWrapperList().get(0).getRecordTypeDef().getName());

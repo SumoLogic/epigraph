@@ -18,40 +18,40 @@ public class ReferenceTest extends LightCodeInsightFixtureTestCase {
   }
 
   public void testSameNamespaceRef() {
-    myFixture.configureByFile("SameNsTypeRef.epi_schema");
+    myFixture.configureByFile("SameNsTypeRef.esc");
     PsiElement element = myFixture.getFile().findElementAt(myFixture.getCaretOffset());
     //noinspection ConstantConditions
-    checkReference(element.getParent().getParent().getReference(), "Bar", "SameNsTypeRef.epi_schema");
+    checkReference(element.getParent().getParent().getReference(), "Bar", "SameNsTypeRef.esc");
   }
 
   public void testBuiltinRef() {
-    myFixture.configureByFiles("BuiltinImport.epi_schema", "builtin.epi_schema");
+    myFixture.configureByFiles("BuiltinImport.esc", "builtin.esc");
     PsiElement element = myFixture.getFile().findElementAt(myFixture.getCaretOffset());
     //noinspection ConstantConditions
-    checkReference(element.getParent().getParent().getReference(), "Long", "builtin.epi_schema");
+    checkReference(element.getParent().getParent().getReference(), "Long", "builtin.esc");
   }
 
   public void testFqnImportRef() {
-    myFixture.configureByFiles("FqnImportTypeRef.epi_schema", "TargetNs.epi_schema");
+    myFixture.configureByFiles("FqnImportTypeRef.esc", "TargetNs.esc");
     PsiElement element = myFixture.getFile().findElementAt(myFixture.getCaretOffset());
     //noinspection ConstantConditions
     PsiReference reference = element.getParent().getParent().getReference();
     assertNotNull(reference);
-    checkReference(reference, "ZZLong", "TargetNs.epi_schema"); // not same file!
+    checkReference(reference, "ZZLong", "TargetNs.esc"); // not same file!
     Object[] variants = reference.getVariants();
     assertEquals(Arrays.toString(variants), 4, variants.length); // "ZZLong", "ZZLong", "R", "target"
   }
 
   public void testNsSegmentInTypeRef() {
-    myFixture.configureByFile("NamespaceSegmentInTypeRef.epi_schema");
+    myFixture.configureByFile("NamespaceSegmentInTypeRef.esc");
     PsiElement element = myFixture.getFile().findElementAt(myFixture.getCaretOffset());
     //noinspection ConstantConditions
-    checkReference(element.getParent().getParent().getReference(), "namespace foo", "NamespaceSegmentInTypeRef.epi_schema");
+    checkReference(element.getParent().getParent().getReference(), "namespace foo", "NamespaceSegmentInTypeRef.esc");
   }
 
   @SuppressWarnings("ConstantConditions")
   public void testMultiNsRef() {
-    myFixture.configureByFiles("MultiNamespaceRef.epi_schema", "foobar.epi_schema", "foobaz.epi_schema");
+    myFixture.configureByFiles("MultiNamespaceRef.esc", "foobar.esc", "foobaz.esc");
     PsiElement element = myFixture.getFile().findElementAt(myFixture.getCaretOffset());
     PsiPolyVariantReference reference = (PsiPolyVariantReference) element.getParent().getParent().getReference();
     assertEquals(null, reference.resolve());
@@ -68,41 +68,41 @@ public class ReferenceTest extends LightCodeInsightFixtureTestCase {
   }
 
   public void testQuotedRef() {
-    myFixture.configureByFile("QuotedRefTest.epi_schema");
+    myFixture.configureByFile("QuotedRefTest.esc");
     PsiElement element = myFixture.getFile().findElementAt(myFixture.getCaretOffset());
     //noinspection ConstantConditions
-    checkReference(element.getParent().getParent().getReference(), "Bar", "QuotedRefTest.epi_schema");
+    checkReference(element.getParent().getParent().getReference(), "Bar", "QuotedRefTest.esc");
   }
 
   public void testQuotedTargetRef() {
-    myFixture.configureByFile("QuotedTargetRefTest.epi_schema");
+    myFixture.configureByFile("QuotedTargetRefTest.esc");
     PsiElement element = myFixture.getFile().findElementAt(myFixture.getCaretOffset());
     //noinspection ConstantConditions
-    checkReference(element.getParent().getParent().getReference(), "Bar", "QuotedTargetRefTest.epi_schema");
+    checkReference(element.getParent().getParent().getReference(), "Bar", "QuotedTargetRefTest.esc");
   }
 
   public void testQuotedSourceRef() {
-    myFixture.configureByFile("QuotedSourceRefTest.epi_schema");
+    myFixture.configureByFile("QuotedSourceRefTest.esc");
     PsiElement element = myFixture.getFile().findElementAt(myFixture.getCaretOffset());
     //noinspection ConstantConditions
-    checkReference(element.getParent().getParent().getReference(), "Bar", "QuotedSourceRefTest.epi_schema");
+    checkReference(element.getParent().getParent().getReference(), "Bar", "QuotedSourceRefTest.esc");
   }
 
   public void testVarTagRef() {
-    PsiReference reference = myFixture.getReferenceAtCaretPosition("VarTagRef.epi_schema");
-    checkReference(reference, "tag1", "VarTagRef.epi_schema");
+    PsiReference reference = myFixture.getReferenceAtCaretPosition("VarTagRef.esc");
+    checkReference(reference, "tag1", "VarTagRef.esc");
 
-    reference = myFixture.getReferenceAtCaretPosition("VarTagRef2.epi_schema");
-    checkReference(reference, "tag1", "VarTagRef2.epi_schema");
+    reference = myFixture.getReferenceAtCaretPosition("VarTagRef2.esc");
+    checkReference(reference, "tag1", "VarTagRef2.esc");
   }
 
   @SuppressWarnings("ConstantConditions")
   public void testReferenceAfterRename() {
-    myFixture.configureByFile("SameNsTypeRef.epi_schema");
+    myFixture.configureByFile("SameNsTypeRef.esc");
     PsiElement element = myFixture.getFile().findElementAt(myFixture.getCaretOffset());
     PsiElement parent = element.getParent().getParent();
 
-    checkReference(parent.getReference(), "Bar", "SameNsTypeRef.epi_schema");
+    checkReference(parent.getReference(), "Bar", "SameNsTypeRef.esc");
 
     myFixture.renameElementAtCaret("Baz");
     // first check that it actually got renamed
@@ -111,7 +111,7 @@ public class ReferenceTest extends LightCodeInsightFixtureTestCase {
         ((SchemaFile) (myFixture.getFile())).getDefs().getTypeDefWrapperList().get(0).getRecordTypeDef().getName()
     );
 
-    checkReference(parent.getReference(), "Baz", "SameNsTypeRef.epi_schema");
+    checkReference(parent.getReference(), "Baz", "SameNsTypeRef.esc");
   }
 
   ////////////////////////////////
