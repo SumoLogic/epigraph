@@ -139,7 +139,7 @@ public class SchemaFqnReference extends PsiReferenceBase<SchemaFqnSegment> imple
         .map(typeDef ->
             LookupElementBuilder.create(typeDef)
                 .withIcon(SchemaPresentationUtil.getIcon(typeDef))
-                .withTypeText(SchemaPresentationUtil.getNamespaceString(typeDef)))
+                .withTypeText(SchemaPresentationUtil.getNamespaceString(typeDef, true)))
         .collect(Collectors.toSet());
 
     List<Fqn> namespaceFqns = namespaceVariants.stream()

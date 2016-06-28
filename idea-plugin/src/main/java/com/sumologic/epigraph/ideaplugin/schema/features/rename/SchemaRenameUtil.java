@@ -129,7 +129,7 @@ public class SchemaRenameUtil {
       protected String getContainerText(SchemaTypeDef t, String name) {
         if (t == renameAllMarkerObject || t == typeAndMaxSuperTypes.get(typeAndMaxSuperTypes.size() - 1) || onlyOneSuperType)
           return null;
-        return "(" + SchemaPresentationUtil.getNamespaceString(t) + ")";
+        return SchemaPresentationUtil.getNamespaceString(t, true);
       }
 
       @Override

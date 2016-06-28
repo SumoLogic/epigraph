@@ -14,5 +14,5 @@
 - [ ] Type ref completion should respect kinds, e.g. `record Foo extends <caret>` should only suggests records, with current one and all the parents removed
 
 ### Low
-- [ ] Goto type: namespaces in the drop-down list should be in the parens
+- [x] Goto type: namespaces in the drop-down list should be in the parens
 - [ ] Wrong parent type not checked in `supplement`

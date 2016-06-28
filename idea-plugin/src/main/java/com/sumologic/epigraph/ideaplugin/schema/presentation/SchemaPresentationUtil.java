@@ -146,14 +146,14 @@ public class SchemaPresentationUtil {
   @NotNull
   public static ItemPresentation getPresentation(@NotNull PsiElement element, boolean structureView) {
     final String presentableTest = getPresentableText(element, structureView);
-    final String location = getNamespaceString(element);
+    final String location = getNamespaceString(element, true);
     final Icon icon = getIcon(element);
 
     return new StaticItemPresentation(presentableTest, location, icon);
   }
 
   @NotNull
-  public static String getNamespaceString(@NotNull PsiElement element) {
+  public static String getNamespaceString(@NotNull PsiElement element, boolean inParens) {
     Fqn namespace;
 
     if (element instanceof SchemaTypeDef) {
@@ -163,12 +163,12 @@ public class SchemaPresentationUtil {
       namespace = NamespaceManager.getNamespace(element);
     }
 
-    if (namespace != null) return namespace.toString();
+    if (namespace != null) return inParens ? "(" + namespace.toString() + ')' : namespace.toString();
 
     try {
       PsiFile containingFile = element.getContainingFile();
       if (containingFile == null) return "[invalid]";
-      return containingFile.getName();
+      return inParens ? "(" + containingFile.getName() + ')' : containingFile.getName();
     } catch (PsiInvalidElementAccessException e) {
       return "[invalid]"; // file not available
     }
