@@ -13,10 +13,11 @@ public class SchemaEditorTabTitleProvider implements EditorTabTitleProvider {
   @Nullable
   @Override
   public String getEditorTabTitle(Project project, VirtualFile file) {
-    if (file.getName().endsWith("." + Common.FILE_EXTENSION)) {
-      return file.getNameWithoutExtension();
-    }
+//    if (file.getName().endsWith("." + Common.FILE_EXTENSION)) {
+//      return file.getNameWithoutExtension();
+//    }
+    return file.getPresentableName();
 
-    return null;
+//    return null;
   }
 }
