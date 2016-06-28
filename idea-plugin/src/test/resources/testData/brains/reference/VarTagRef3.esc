@@ -1,0 +1,8 @@
+namespace some
+
+record X
+
+vartype V1 default `st<caret>ring` {
+  string: X
+}
+

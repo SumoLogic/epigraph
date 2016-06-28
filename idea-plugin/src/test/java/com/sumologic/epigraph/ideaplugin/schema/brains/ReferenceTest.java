@@ -96,6 +96,11 @@ public class ReferenceTest extends LightCodeInsightFixtureTestCase {
     checkReference(reference, "tag1", "VarTagRef2.esc");
   }
 
+  public void testQuotedVarTag() {
+    PsiReference reference = myFixture.getReferenceAtCaretPosition("VarTagRef3.esc");
+    checkReference(reference, "string", "VarTagRef3.esc");
+  }
+
   @SuppressWarnings("ConstantConditions")
   public void testReferenceAfterRename() {
     myFixture.configureByFile("SameNsTypeRef.esc");
@@ -119,7 +124,7 @@ public class ReferenceTest extends LightCodeInsightFixtureTestCase {
   private void checkReference(PsiReference reference, String text, String targetFileName) {
     assertNotNull(reference);
     PsiElement target = reference.resolve();
-    assertNotNull(target);
+    assertNotNull("reference didn't resolve", target);
     String fileName = target.getContainingFile().getName();
     assertEquals(targetFileName, fileName);
     String actualText = target instanceof PsiNamedElement ? ((PsiNamedElement) target).getName() : target.getText();

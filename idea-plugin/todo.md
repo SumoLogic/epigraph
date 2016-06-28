@@ -4,7 +4,6 @@
     See [forum thread](https://intellij-support.jetbrains.com/hc/en-us/community/posts/207645985-language-composition-with-Grammar-Kit-), decided to go with (4)
 
 ### Medium
-- [ ] Type ref completion should respect kinds (e.g. `record Foo extends <caret>` should only suggests records, with current one and all the parents removed)
 - [ ] Structure popup (ctrl-f12)
 - [ ] Rename on fields (**In progress**)
 - [ ] Rename on vartype tags

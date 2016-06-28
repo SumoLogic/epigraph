@@ -6,12 +6,12 @@
 
         // file1: namespace some; string String
         // file2: namespace some; string Foo extends String   <-- either epigraph.String or some.String
-
-- [ ] Enquoted var tag refs not recognized:
+- [x] Enquoted var tag refs not recognized:
 
         vartype Foo default `string` {
           string: String
         }
+- [ ] Type ref completion should respect kinds, e.g. `record Foo extends <caret>` should only suggests records, with current one and all the parents removed
 
 ### Low
 - [ ] Goto type: namespaces in the drop-down list should be in the parens

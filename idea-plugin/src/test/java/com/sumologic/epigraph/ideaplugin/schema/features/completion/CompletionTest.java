@@ -88,7 +88,7 @@ public class CompletionTest extends LightCodeInsightFixtureTestCase {
   // TODO(low) add later, too advanced for now
 //  public void testUndefinedTypeNameCompletion2() {
 //    myFixture.configureByFile("UndefinedTypeNameCompletion2.esc");
-//    checkCompletionVariants("Bar", "Baz"); // but not Baq, incomplete kinds
+//    checkCompletionVariants("Bar", "Baz"); // but not Baq, incompatible kinds
 //  }
 
   public void testUndefinedTypeNameCompletion3() {
@@ -103,6 +103,11 @@ public class CompletionTest extends LightCodeInsightFixtureTestCase {
 
   public void testWithCompletion() {
     myFixture.testCompletion("CompleteWith.esc", "CompleteWith-after.esc");
+  }
+
+  public void testVarTagCompletion() {
+    myFixture.configureByFile("VarTagCompletion.esc");
+    checkCompletionVariants("`string`", "foo");
   }
 
   private void checkCompletionVariants(String... variants) {

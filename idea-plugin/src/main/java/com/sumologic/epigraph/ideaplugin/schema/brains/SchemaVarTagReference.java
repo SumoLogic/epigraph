@@ -8,6 +8,9 @@ import com.intellij.psi.impl.source.resolve.ResolveCache;
 import com.intellij.util.IncorrectOperationException;
 import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.TypeMembers;
 import com.sumologic.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
+import com.sumologic.epigraph.schema.parser.NamingConventions;
+import com.sumologic.epigraph.schema.parser.SchemaParserDefinition;
+import com.sumologic.epigraph.schema.parser.psi.SchemaQid;
 import com.sumologic.epigraph.schema.parser.psi.SchemaVarTagDecl;
 import com.sumologic.epigraph.schema.parser.psi.SchemaVarTypeDef;
 import com.sumologic.epigraph.schema.parser.psi.impl.SchemaElementFactory;
@@ -33,7 +36,7 @@ public class SchemaVarTagReference extends PsiReferenceBase<PsiElement> implemen
   private final ResolveCache.PolyVariantResolver<SchemaVarTagReference> polyVariantResolver =
       (reference, incompleteCode) -> multiResolveImpl();
 
-  public SchemaVarTagReference(@NotNull SchemaVarTypeDef typeDef, @NotNull PsiElement id) {
+  public SchemaVarTagReference(@NotNull SchemaVarTypeDef typeDef, @NotNull SchemaQid id) {
     super(id);
     this.typeDef = typeDef;
 
@@ -44,7 +47,7 @@ public class SchemaVarTagReference extends PsiReferenceBase<PsiElement> implemen
 //      setRangeInElement(range);
 //      this.tagName = range.substring(id.getText());
 //    }
-    this.tagName = id.getText();
+    this.tagName = id.getCanonicalName();
     setRangeInElement(new TextRange(0, tagName.length()));
   }
 
@@ -84,11 +87,17 @@ public class SchemaVarTagReference extends PsiReferenceBase<PsiElement> implemen
     List<SchemaVarTagDecl> tagDecls = TypeMembers.getVarTagDecls(typeDef, null);
     return tagDecls.stream()
         .map(varTagDecl ->
-            LookupElementBuilder.create(varTagDecl)
+            LookupElementBuilder.create(getCompletionName(varTagDecl))
                 .withIcon(SchemaPresentationUtil.getIcon(varTagDecl))
                 .withTypeText(SchemaPresentationUtil.getName(varTagDecl.getVarTypeDef(), true))
         )
         .toArray();
+  }
+
+  private String getCompletionName(@NotNull SchemaVarTagDecl varTagDecl) {
+    String name = varTagDecl.getQid().getCanonicalName();
+    return SchemaParserDefinition.isKeyword(name) ?
+        NamingConventions.enquote(name) : name;
   }
 
   @Override

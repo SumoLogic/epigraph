@@ -1,0 +1,6 @@
+namespace some
+
+vartype Some default <caret> {
+  string: X
+  foo: X
+}
