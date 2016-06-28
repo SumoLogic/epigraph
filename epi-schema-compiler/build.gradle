@@ -11,8 +11,8 @@ dependencies {
 
   compile "org.scala-lang:scala-library:$scalaVersion"
   compile "org.scala-lang:scala-reflect:$scalaVersion"
-  compile "com.lihaoyi:pprint_$scalaVersionMajorMinor:+"
+  compile "com.lihaoyi:pprint_$scalaVersionMajorMinor"
 
-  testCompile "org.scalatest:scalatest_$scalaVersionMajorMinor:+"
-  testRuntime "org.pegdown:pegdown:1.1.0" // https://github.com/maiflai/gradle-scalatest/issues/16 don't try to use newer versions
+  testCompile "org.scalatest:scalatest_$scalaVersionMajorMinor"
+  testRuntime "org.pegdown:pegdown"
 }

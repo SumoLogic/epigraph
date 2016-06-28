@@ -1,12 +1,41 @@
-apply plugin: 'idea'
+plugins {
+  id "io.spring.dependency-management" version "0.5.7.RELEASE"
+}
 
 subprojects {
+  apply plugin: "io.spring.dependency-management"
+
   repositories {
     mavenCentral()
     jcenter()
     flatDir(dirs: "$rootDir/schema-parser/lib") // epi-schema-compiler must see it too
   }
+
+  dependencyManagement {
+    dependencies {
+      dependency 'org.jetbrains:annotations:15.0'
+      dependency 'net.jcip:jcip-annotations:1.0'
+      dependency "org.scalatest:scalatest_$scalaVersionMajorMinor:3.0.0-RC3"
+      dependency "org.pegdown:pegdown:1.1.0" // https://github.com/maiflai/gradle-scalatest/issues/16 don't try to use newer versions
+      dependency "com.lihaoyi:pprint_$scalaVersionMajorMinor:0.4.1"
+      dependency 'junit:junit:4.12'
+
+      // configuration for scala libraries doesn't (and won't) work
+      // https://github.com/spring-gradle-plugins/dependency-management-plugin/issues/97
+
+      // switch to nebula-recommender once this is one fixed?
+      // https://github.com/nebula-plugins/nebula-dependency-recommender-plugin/issues/16
+    }
+  }
+
+  tasks.withType(JavaCompile) {
+    sourceCompatibility = javaVersion
+    targetCompatibility = javaVersion
+    options.encoding = 'UTF-8'
+  }
 }
+
+apply plugin: 'idea'
 
 // importing gradle project from IDEA is preferred to using 'gradle idea'
 idea {

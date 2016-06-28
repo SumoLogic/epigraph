@@ -1,16 +1,8 @@
-// If IDEA shows assignability warnings on this file: disable the inspection. See
-// https://youtrack.jetbrains.com/issue/IDEA-142683
-
 plugins {
-  id 'org.jetbrains.intellij' version "0.1.8"
+  id 'org.jetbrains.intellij' version "0.1.9"
 }
 
-version = "${version}.${buildNumber}"
-
 apply plugin: 'java'
-sourceCompatibility = javaVersion
-targetCompatibility = javaVersion
-tasks.withType(JavaCompile) { options.encoding = 'UTF-8' }
 
 sourceSets.main.java.srcDirs += file('../schema-parser-common/src/main/java')
 sourceSets.main.java.srcDirs += file('../schema-parser-common/src/main/java.generated')
@@ -18,8 +10,13 @@ sourceSets.main.java.srcDirs += file('../schema-parser-common/src/main/java.gene
 idea.module.sourceDirs += file('../schema-parser-common/src/main/java')
 idea.module.generatedSourceDirs += file('../schema-parser-common/src/main/java.generated')
 
+// https://github.com/spring-gradle-plugins/dependency-management-plugin/issues/93
+dependencyManagement {
+  applyMavenExclusions false
+}
+
 dependencies {
-  testCompile 'junit:junit:4.12'
+  testCompile 'junit:junit'
 }
 
 apply plugin: 'org.jetbrains.intellij'
