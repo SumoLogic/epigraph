@@ -40,15 +40,8 @@ public class SchemaVarTagReference extends PsiReferenceBase<PsiElement> implemen
     super(id);
     this.typeDef = typeDef;
 
-//    TextRange range = SchemaPsiUtil.getQidTextRange(id);
-//    if (range == null) {
-//      this.tagName = id.getText();
-//    } else {
-//      setRangeInElement(range);
-//      this.tagName = range.substring(id.getText());
-//    }
     this.tagName = id.getCanonicalName();
-    setRangeInElement(new TextRange(0, tagName.length()));
+    setRangeInElement(new TextRange(0, id.getName().length()));
   }
 
   @Nullable
