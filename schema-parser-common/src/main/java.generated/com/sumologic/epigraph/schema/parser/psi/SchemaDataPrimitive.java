@@ -5,7 +5,10 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface SchemaDataPrimitiveValue extends SchemaDataValue {
+public interface SchemaDataPrimitive extends PsiElement {
+
+  @Nullable
+  PsiElement getBoolean();
 
   @Nullable
   PsiElement getNumber();

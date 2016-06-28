@@ -8,21 +8,28 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.*;
+import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.sumologic.epigraph.schema.parser.psi.*;
 
-public class SchemaDataPrimitiveValueImpl extends SchemaDataValueImpl implements SchemaDataPrimitiveValue {
+public class SchemaDataPrimitiveImpl extends ASTWrapperPsiElement implements SchemaDataPrimitive {
 
-  public SchemaDataPrimitiveValueImpl(ASTNode node) {
+  public SchemaDataPrimitiveImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull SchemaVisitor visitor) {
-    visitor.visitDataPrimitiveValue(this);
+    visitor.visitDataPrimitive(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof SchemaVisitor) accept((SchemaVisitor)visitor);
     else super.accept(visitor);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getBoolean() {
+    return findChildByType(S_BOOLEAN);
   }
 
   @Override

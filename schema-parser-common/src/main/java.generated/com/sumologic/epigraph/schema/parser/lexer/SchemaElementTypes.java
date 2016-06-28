@@ -24,7 +24,7 @@ public interface SchemaElementTypes {
   IElementType S_DATA_LIST = new SchemaElementType("S_DATA_LIST");
   IElementType S_DATA_MAP = new SchemaElementType("S_DATA_MAP");
   IElementType S_DATA_MAP_ENTRY = new SchemaElementType("S_DATA_MAP_ENTRY");
-  IElementType S_DATA_PRIMITIVE_VALUE = new SchemaElementType("S_DATA_PRIMITIVE_VALUE");
+  IElementType S_DATA_PRIMITIVE = new SchemaElementType("S_DATA_PRIMITIVE");
   IElementType S_DATA_RECORD = new SchemaElementType("S_DATA_RECORD");
   IElementType S_DATA_RECORD_ENTRY = new SchemaElementType("S_DATA_RECORD_ENTRY");
   IElementType S_DATA_VALUE = new SchemaElementType("S_DATA_VALUE");
@@ -66,6 +66,7 @@ public interface SchemaElementTypes {
   IElementType S_ANGLE_LEFT = new SchemaElementType("<");
   IElementType S_ANGLE_RIGHT = new SchemaElementType(">");
   IElementType S_BLOCK_COMMENT = new SchemaElementType("block_comment");
+  IElementType S_BOOLEAN = new SchemaElementType("boolean");
   IElementType S_BOOLEAN_T = new SchemaElementType("boolean");
   IElementType S_BRACKET_LEFT = new SchemaElementType("[");
   IElementType S_BRACKET_RIGHT = new SchemaElementType("]");
@@ -128,8 +129,8 @@ public interface SchemaElementTypes {
       else if (type == S_DATA_MAP_ENTRY) {
         return new SchemaDataMapEntryImpl(node);
       }
-      else if (type == S_DATA_PRIMITIVE_VALUE) {
-        return new SchemaDataPrimitiveValueImpl(node);
+      else if (type == S_DATA_PRIMITIVE) {
+        return new SchemaDataPrimitiveImpl(node);
       }
       else if (type == S_DATA_RECORD) {
         return new SchemaDataRecordImpl(node);

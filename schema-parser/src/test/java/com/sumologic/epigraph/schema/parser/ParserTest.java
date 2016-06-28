@@ -17,7 +17,7 @@ import java.nio.file.Paths;
 public class ParserTest {
   @Test
   public void testParserSimple() throws IOException {
-    testParse("ParsingTestData.simple", "ParsingTestData.txt");
+    testParse("ParsingTestData.esc", "ParsingTestData.txt");
   }
 
   private void testParse(String inputFile, String expectedOutputFile) throws IOException {
@@ -25,7 +25,7 @@ public class ParserTest {
     File input = new File(dir, inputFile);
 
     PsiFile psi = LightPsi.parseFile(input, new SchemaParserDefinition());
-    String psiDump = DebugUtil.psiToString(psi, false, false).trim();
+    String psiDump = DebugUtil.psiToString(psi, true, false).trim();
 //    System.out.println("psiDump = " + psiDump);
 
     String expectedPsiDump = new String(Files.readAllBytes(Paths.get(dir.getAbsolutePath(), expectedOutputFile)));

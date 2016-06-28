@@ -27,6 +27,12 @@ public class SchemaDataMapEntryImpl extends ASTWrapperPsiElement implements Sche
   }
 
   @Override
+  @Nullable
+  public SchemaDataPrimitive getDataPrimitive() {
+    return PsiTreeUtil.getChildOfType(this, SchemaDataPrimitive.class);
+  }
+
+  @Override
   @NotNull
   public List<SchemaDataValue> getDataValueList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaDataValue.class);

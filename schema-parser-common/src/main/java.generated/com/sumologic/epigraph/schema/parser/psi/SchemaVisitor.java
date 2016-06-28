@@ -37,8 +37,8 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitDataPrimitiveValue(@NotNull SchemaDataPrimitiveValue o) {
-    visitDataValue(o);
+  public void visitDataPrimitive(@NotNull SchemaDataPrimitive o) {
+    visitPsiElement(o);
   }
 
   public void visitDataRecord(@NotNull SchemaDataRecord o) {

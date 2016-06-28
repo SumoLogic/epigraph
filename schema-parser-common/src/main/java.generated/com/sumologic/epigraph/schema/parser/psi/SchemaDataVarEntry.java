@@ -8,6 +8,9 @@ import com.intellij.psi.PsiElement;
 public interface SchemaDataVarEntry extends PsiElement {
 
   @Nullable
+  SchemaDataPrimitive getDataPrimitive();
+
+  @Nullable
   SchemaDataValue getDataValue();
 
   @NotNull

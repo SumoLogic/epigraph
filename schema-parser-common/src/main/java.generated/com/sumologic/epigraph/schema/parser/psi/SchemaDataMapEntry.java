@@ -7,6 +7,9 @@ import com.intellij.psi.PsiElement;
 
 public interface SchemaDataMapEntry extends PsiElement {
 
+  @Nullable
+  SchemaDataPrimitive getDataPrimitive();
+
   @NotNull
   List<SchemaDataValue> getDataValueList();
 

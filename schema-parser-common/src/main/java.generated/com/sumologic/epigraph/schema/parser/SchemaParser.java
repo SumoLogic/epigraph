@@ -44,8 +44,8 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     else if (t == S_DATA_MAP_ENTRY) {
       r = dataMapEntry(b, 0);
     }
-    else if (t == S_DATA_PRIMITIVE_VALUE) {
-      r = dataPrimitiveValue(b, 0);
+    else if (t == S_DATA_PRIMITIVE) {
+      r = dataPrimitive(b, 0);
     }
     else if (t == S_DATA_RECORD) {
       r = dataRecord(b, 0);
@@ -167,8 +167,8 @@ public class SchemaParser implements PsiParser, LightPsiParser {
 
   public static final TokenSet[] EXTENDS_SETS_ = new TokenSet[] {
     create_token_set_(S_ANON_LIST, S_ANON_MAP, S_FQN_TYPE_REF, S_TYPE_REF),
-    create_token_set_(S_DATA_ENUM, S_DATA_LIST, S_DATA_MAP, S_DATA_PRIMITIVE_VALUE,
-      S_DATA_RECORD, S_DATA_VALUE, S_DATA_VAR),
+    create_token_set_(S_DATA_ENUM, S_DATA_LIST, S_DATA_MAP, S_DATA_RECORD,
+      S_DATA_VALUE, S_DATA_VAR),
   };
 
   /* ********************************************************** */
@@ -343,14 +343,14 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // string | number
-  public static boolean dataPrimitiveValue(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "dataPrimitiveValue")) return false;
-    if (!nextTokenIs(b, "<data primitive value>", S_NUMBER, S_STRING)) return false;
+  // string | number | boolean
+  public static boolean dataPrimitive(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "dataPrimitive")) return false;
     boolean r;
-    Marker m = enter_section_(b, l, _NONE_, S_DATA_PRIMITIVE_VALUE, "<data primitive value>");
+    Marker m = enter_section_(b, l, _NONE_, S_DATA_PRIMITIVE, "<data primitive>");
     r = consumeToken(b, S_STRING);
     if (!r) r = consumeToken(b, S_NUMBER);
+    if (!r) r = consumeToken(b, S_BOOLEAN);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
@@ -459,7 +459,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ! ( qid | dataPrimitiveValue | '}' | ')' | '>' | ']' | 'abstract' | 'override' | ',' )
+  // ! ( qid | dataPrimitive | '}' | ')' | '>' | ']' | 'abstract' | 'override' | ',' )
   static boolean dataValueRecover(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "dataValueRecover")) return false;
     boolean r;
@@ -469,13 +469,13 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // qid | dataPrimitiveValue | '}' | ')' | '>' | ']' | 'abstract' | 'override' | ','
+  // qid | dataPrimitive | '}' | ')' | '>' | ']' | 'abstract' | 'override' | ','
   private static boolean dataValueRecover_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "dataValueRecover_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = qid(b, l + 1);
-    if (!r) r = dataPrimitiveValue(b, l + 1);
+    if (!r) r = dataPrimitive(b, l + 1);
     if (!r) r = consumeToken(b, S_CURLY_RIGHT);
     if (!r) r = consumeToken(b, S_PAREN_RIGHT);
     if (!r) r = consumeToken(b, S_ANGLE_RIGHT);
@@ -1924,7 +1924,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // dataRecord | dataMap | dataList | dataEnum | dataPrimitiveValue | 'null'
+  // dataRecord | dataMap | dataList | dataEnum | dataPrimitive | 'null'
   static boolean varValue(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "varValue")) return false;
     boolean r;
@@ -1933,7 +1933,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     if (!r) r = dataMap(b, l + 1);
     if (!r) r = dataList(b, l + 1);
     if (!r) r = dataEnum(b, l + 1);
-    if (!r) r = dataPrimitiveValue(b, l + 1);
+    if (!r) r = dataPrimitive(b, l + 1);
     if (!r) r = consumeToken(b, S_NULL);
     exit_section_(b, m, null, r);
     return r;

@@ -63,6 +63,7 @@
     ANGLE_RIGHT = '>'
     number="regexp:([0-9])+"
     string="regexp:('([^'\\]|\\.)*'|\"([^\"\\]|\\.)*\")"
+    boolean="regexp:true|false"
   ]
 
   pin(".*Body") = 1
@@ -257,7 +258,7 @@ private partRecover ::= ! ('}' | qid | 'abstract' | 'override' | ',' )
 //private dataTypeSpec ::= ( fqnTypeRef '/' )*
 dataValue ::= dataTypeSpec? (dataVar | varValue)
 private dataVarValue ::= dataTypeSpec? varValue   // because we want (foo/bar:baz) ?
-private varValue ::= dataRecord | dataMap | dataList | dataEnum | dataPrimitiveValue | 'null'
+private varValue ::= dataRecord | dataMap | dataList | dataEnum | dataPrimitive | 'null'
 private dataTypeSpec ::= ( fqnTypeRef '/' )*
 
 dataVar ::= '<' dataVarEntry* '>' {pin=1 extends=dataValue}
@@ -273,6 +274,6 @@ dataList ::= '[' (dataValue ','?)* ']' {pin=1 extends=dataValue}
 
 dataEnum ::= qid {extends=dataValue}
 
-dataPrimitiveValue ::= string | number {extends=dataValue}
+dataPrimitive ::= string | number | boolean
 
-private dataValueRecover ::= ! ( qid | dataPrimitiveValue | '}' | ')' | '>' | ']' | 'abstract' | 'override' | ',' )
+private dataValueRecover ::= ! ( qid | dataPrimitive | '}' | ')' | '>' | ']' | 'abstract' | 'override' | ',' )

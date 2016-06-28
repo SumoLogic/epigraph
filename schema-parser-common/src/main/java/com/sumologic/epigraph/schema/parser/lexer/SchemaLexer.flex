@@ -81,6 +81,8 @@ ID=([:letter:]([:letter:]|[:digit:])*)|(`[^`]*`)
 
   {STRING}             { return S_STRING; }
   {NUMBER}             { return S_NUMBER; }
+  "true"               { return S_BOOLEAN; }
+  "false"              { return S_BOOLEAN; }
   "null"               { return S_NULL; }
 
   {LINE_COMMENT}       { return S_COMMENT; }

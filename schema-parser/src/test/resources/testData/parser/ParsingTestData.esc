@@ -3,7 +3,7 @@ namespace foo
 import bar.Qux
 
 record Baz {
-  param = { `null` : null, map : ( "str\"ing" : 1 , pi : 3.14 ) list : [ <k:v> <k2:v2> ] }
+  param = { `null` : null, map : ( "str\"ing" : 1 , pi : 3.14, true : false ) list : [ <k:v> <k2:v2> ] }
   field: SomeType
 }
 
