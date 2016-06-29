@@ -19,7 +19,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 import java.util.List;
 
-import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.S_ID;
+import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.S_QID;
 
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
@@ -34,7 +34,7 @@ public class SchemaLineMarkerProvider extends RelatedItemLineMarkerProvider {
   @Override
   protected void collectNavigationMarkers(@NotNull PsiElement element, Collection<? super RelatedItemLineMarkerInfo> result) {
     Project project = element.getProject();
-    if (element.getNode().getElementType() != S_ID) return;
+    if (element.getNode().getElementType() != S_QID) return;
 
     PsiElement parent = element.getParent();
 

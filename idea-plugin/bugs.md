@@ -1,5 +1,4 @@
 ### High
-- Gutter icons are broken
 
 ### Medium
 - Ambiguous ref not highlighted:
@@ -14,6 +13,7 @@
 ----
 ## Done
 ### High
+- Gutter icons are broken
 - `record A; record B extends A` rename A -- get a broken ref in `extends`
 
 ### Medium
