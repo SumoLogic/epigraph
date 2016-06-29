@@ -316,6 +316,11 @@ public class SchemaPsiImplUtil {
     return fieldDecl.getQid().getId();
   }
 
+  public static int getTextOffset(@NotNull SchemaFieldDecl fieldDecl) {
+    PsiElement nameIdentifier = fieldDecl.getNameIdentifier();
+    return nameIdentifier.getTextOffset();
+  }
+
   @Contract(pure = true)
   @NotNull
   public static ItemPresentation getPresentation(@NotNull SchemaFieldDecl fieldDecl) {
@@ -347,6 +352,11 @@ public class SchemaPsiImplUtil {
   @NotNull
   public static PsiElement getNameIdentifier(SchemaVarTagDecl varTagDecl) {
     return varTagDecl.getQid().getId();
+  }
+
+  public static int getTextOffset(@NotNull SchemaVarTagDecl varTagDecl) {
+    PsiElement nameIdentifier = varTagDecl.getNameIdentifier();
+    return nameIdentifier.getTextOffset();
   }
 
   @Contract(pure = true)

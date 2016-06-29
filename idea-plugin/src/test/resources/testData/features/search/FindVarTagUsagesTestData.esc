@@ -1,0 +1,6 @@
+namespace foo
+
+vartype T default `foo` {
+  abstract fo<caret>o: T
+}
+

@@ -1,7 +1,7 @@
 ### High
+- Gutter icons are broken
 
 ### Medium
-- `Find Usages` doesn't work on var tags
 - Ambiguous ref not highlighted:
 
         // file1: namespace some; string String
@@ -17,6 +17,7 @@
 - `record A; record B extends A` rename A -- get a broken ref in `extends`
 
 ### Medium
+- `Find Usages` doesn't work on var tags (with `abstract` modifier)
 - Enquoted var tags get improperly highlighted
 - Enquoted var tag refs not recognized:
 

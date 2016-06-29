@@ -113,6 +113,8 @@ varTagRef ::= qid {
   methods=[setName getNameIdentifier getReference]
 }
 
+/// defs
+
 defs ::= def*
 private def ::= typeDefWrapper | supplementDef {recoverWhile="declRecover"}
 
@@ -142,6 +144,8 @@ customParam ::= qid '=' dataValue {
 
 metaDecl ::= 'meta' fqnTypeRef { pin=1 } // we don't allow anonList or anonMap as meta
 
+/// vartype
+
 varTypeDef ::= typeDefModifiers 'vartype' typeName extendsDecl? supplementsDecl? defaultOverride? varTypeBody? {
   methods=[supplemented]
   extends="com.sumologic.epigraph.schema.parser.psi.impl.SchemaVarTypeDefImplBase"
@@ -154,11 +158,13 @@ private varTypeBodyPart ::= varTagDecl | customParam
 varTagDecl ::= typeMemberModifiers qid ':' typeRef varTypeMemberBody? {
   implements=["com.sumologic.epigraph.schema.parser.psi.CustomParamsHolder" "com.intellij.psi.PsiNamedElement"]
   extends="com.sumologic.epigraph.schema.parser.psi.impl.CustomParamHolderImpl"
-  methods=[getName setName getNameIdentifier getPresentation getVarTypeDef]
+  methods=[getName setName getNameIdentifier getTextOffset getPresentation getVarTypeDef]
   pin=3
 }
 private varTypeMemberBody ::= '{' (varTypeMemberBodyPart ','?)* '}'
 private varTypeMemberBodyPart ::= customParam
+
+/// record
 
 recordTypeDef ::= typeDefModifiers 'record' typeName extendsDecl? metaDecl? supplementsDecl? recordTypeBody? {
   methods=[supplemented]
@@ -172,11 +178,13 @@ private recordBodyPart ::= fieldDecl | customParam
 fieldDecl ::= typeMemberModifiers qid ':' typeRef defaultOverride? fieldBody? {
   implements=["com.sumologic.epigraph.schema.parser.psi.CustomParamsHolder" "com.intellij.psi.PsiNamedElement"]
   extends="com.sumologic.epigraph.schema.parser.psi.impl.CustomParamHolderImpl"
-  methods=[getName setName getNameIdentifier getPresentation getRecordTypeDef]
+  methods=[getName setName getNameIdentifier getTextOffset getPresentation getRecordTypeDef]
   pin=3
 }
 private fieldBody ::= '{' (fieldBodyPart ','?)* '}'
 private fieldBodyPart ::= customParam
+
+/// list
 
 //listTypeDef2 ::= 'list' typeName extendsDecl listTypeBody? // allows inheritance from lists w/o type params
 listTypeDef ::= typeDefModifiers anonList typeName extendsDecl? metaDecl? supplementsDecl? listTypeBody? {
@@ -188,6 +196,8 @@ listTypeDef ::= typeDefModifiers anonList typeName extendsDecl? metaDecl? supple
 listTypeBody ::= '{' (listTypeBodyPart ','?)* '}'
 private listTypeBodyPart ::= customParam
 
+/// map
+
 mapTypeDef ::= typeDefModifiers anonMap typeName extendsDecl? metaDecl? supplementsDecl? mapTypeBody? {
   extends="com.sumologic.epigraph.schema.parser.psi.impl.SchemaMapTypeDefImplBase"
   stubClass="com.sumologic.epigraph.schema.parser.psi.stubs.SchemaMapTypeDefStub"
@@ -196,6 +206,8 @@ mapTypeDef ::= typeDefModifiers anonMap typeName extendsDecl? metaDecl? suppleme
 }
 mapTypeBody ::= '{' (mapTypeBodyPart ','?)* '}'
 private mapTypeBodyPart ::= customParam
+
+/// enum
 
 // abstract? polymorphic?
 enumTypeDef ::= 'enum' typeName metaDecl? enumTypeBody { // extends?
@@ -214,6 +226,8 @@ enumMemberDecl ::= qid enumMemberBody? {
 }
 private enumMemberBody ::='{' (enumMemberBodyPart ','?)* '}'
 private enumMemberBodyPart ::= customParam
+
+/// primitive
 
 primitiveTypeDef ::= typeDefModifiers primitiveKind typeName extendsDecl? metaDecl? supplementsDecl? primitiveTypeBody? {
   extends="com.sumologic.epigraph.schema.parser.psi.impl.SchemaPrimitiveTypeDefImplBase"

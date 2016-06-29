@@ -94,6 +94,10 @@ public class SchemaFieldDeclImpl extends CustomParamHolderImpl implements Schema
     return SchemaPsiImplUtil.getNameIdentifier(this);
   }
 
+  public int getTextOffset() {
+    return SchemaPsiImplUtil.getTextOffset(this);
+  }
+
   @NotNull
   public ItemPresentation getPresentation() {
     return SchemaPsiImplUtil.getPresentation(this);

@@ -41,6 +41,8 @@ public interface SchemaVarTagDecl extends CustomParamsHolder, PsiNamedElement {
   @NotNull
   PsiElement getNameIdentifier();
 
+  int getTextOffset();
+
   @NotNull
   ItemPresentation getPresentation();
 

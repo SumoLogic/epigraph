@@ -88,6 +88,10 @@ public class SchemaVarTagDeclImpl extends CustomParamHolderImpl implements Schem
     return SchemaPsiImplUtil.getNameIdentifier(this);
   }
 
+  public int getTextOffset() {
+    return SchemaPsiImplUtil.getTextOffset(this);
+  }
+
   @NotNull
   public ItemPresentation getPresentation() {
     return SchemaPsiImplUtil.getPresentation(this);
