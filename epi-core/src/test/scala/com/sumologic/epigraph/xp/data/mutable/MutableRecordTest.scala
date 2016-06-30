@@ -84,8 +84,28 @@ object MutableRecordTest {
   }
 
 
+  trait BarRecord extends FooRecord with RecordDatum[BarRecord]
+
+  trait MutBarRecord extends MutFooRecord with BarRecord with MutRecordDatum[BarRecord]
+
+
+  object BarRecord extends RecordType[BarRecord](ns \ "BarRecord") {
+
+    override def declaredFields: com.sumologic.epigraph.xp.data.mutable.MutableRecordTest.BarRecord.DeclaredFields =
+      DeclaredFields()
+
+    override def createMutable: MutBarRecord = new MutBarRecord {
+      override def dataType: BarRecord.type = BarRecord
+    }
+  }
+
+
   def main(args: Array[String]) {
-    val fr = FooRecord.createMutable
+    implicit val PPConfig = pprint.Config(
+      width = 120, colors = pprint.Colors(fansi.Color.Green, fansi.Color.LightBlue)
+    )
+
+    val fr = BarRecord.createMutable
     val fid = FooId.createMutable(1)
     fr.setData(FooRecord._id, fid)
     val frid = fr.getData(FooRecord._id)
@@ -93,6 +113,13 @@ object MutableRecordTest {
     println(frid)
     fr.setData(FooRecord._id, BarId.createMutable(2))
     println(fr.getData(FooRecord._id))
+
+    println("--------------")
+    import DataPrettyPrinters._
+    pprint.pprintln(fr)
+    pprint.pprintln(fr: Var[BarRecord])
+    pprint.pprintln(fr: MutFooRecord)
+    pprint.pprintln(fr: Var[FooRecord])
   }
 
 }

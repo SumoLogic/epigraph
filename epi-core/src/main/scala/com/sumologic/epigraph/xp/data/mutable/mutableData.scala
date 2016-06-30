@@ -2,6 +2,7 @@
 
 package com.sumologic.epigraph.xp.data.mutable
 
+import java.util.Map.Entry
 import java.util.concurrent.ConcurrentHashMap
 
 import com.sumologic.epigraph.names.{FieldName, TypeMemberName}
@@ -75,7 +76,7 @@ trait MutVar[M <: Var[M]] extends Var[M] { // TODO take/require vartype?
 
 class MutMultiVar[M <: Var[M]] extends MutVar[M] {
 
-  private val entries = new ConcurrentHashMap[TypeMemberName, VarEntry[_]]
+  private val entries = new ConcurrentHashMap[TypeMemberName, VarEntry[_ <: Datum[_]]]
 
   override def getEntry[TT <: Datum[TT]](tag: Tag[_ >: M, _, TT]): Option[VarEntry[TT]] = Option[VarEntry[TT]](
     entries.get(tag.name).asInstanceOf[VarEntry[TT]] // TODO explain cast
@@ -106,6 +107,11 @@ class MutMultiVar[M <: Var[M]] extends MutVar[M] {
       value: => Try[TT]
   ): this.type = ???
 
+
+  override def varEntriesIterator: Iterator[(TypeMemberName, VarEntry[_ <: Datum[_]])] =
+    JavaConversions.asScalaIterator(entries.entrySet().iterator()).map { e =>
+      Tuple2[TypeMemberName, VarEntry[_ <: Datum[_]]](e.getKey, e.getValue) // TODO WTF case class constructor doesn't work
+    }
 }
 
 
@@ -141,6 +147,9 @@ trait MutDatum[+D <: Datum[D]] extends Datum[D] {this: D =>
     // FIXME check tag is ours or compatible with (i.e. supertype's)
     someEntry.asInstanceOf[Option[VarEntry[T]]] // TODO check this cast!
   }
+
+  override def varEntriesIterator: Iterator[(TypeMemberName, VarEntry[_ <: Datum[_]])] =
+    Iterator((TypeMemberName.default, entry))
 
 }
 

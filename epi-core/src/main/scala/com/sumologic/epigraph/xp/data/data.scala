@@ -5,17 +5,22 @@ package com.sumologic.epigraph.xp.data
 import com.sumologic.epigraph.names.{EnumValueName, FieldName, TypeMemberName}
 import com.sumologic.epigraph.xp.types._
 
+import scala.language.existentials
 import scala.util.{Failure, Try}
 
 trait Var[+M <: Var[M]] {
 
   def getEntry[TT <: Datum[TT]](tag: Tag[_ >: M, _, TT]): Option[VarEntry[TT]]
 
+  def varEntriesIterator: Iterator[(TypeMemberName, VarEntry[_ <: Datum[_]])]
+
 }
 
 
 // TODO rename to SelfVarType? SamoVar?
-trait MonoVar[+T <: Datum[T]] extends Var[T]
+trait MonoVar[+T <: Datum[T]] extends Var[T] {
+  override def getEntry[TT <: Datum[TT]](tag: Tag[_ >: T, _, TT]): Option[VarEntry[TT]] = ???
+}
 
 
 trait VarEntry[+T <: Datum[T]] { // TODO variance?
@@ -38,6 +43,10 @@ trait Datum[+D <: Datum[D]] extends MonoVar[D] {
 
   def dataType: DataType[_ <: D]//DatumType
 
+  def getEntry: VarEntry[D] = getEntry(dataType.default.asInstanceOf).get  // TODO asInstanceOf
+
+  override def varEntriesIterator: Iterator[(TypeMemberName, VarEntry[_ <: Datum[_]])] =
+    Iterator((dataType.default.name, getEntry))
 }
 
 

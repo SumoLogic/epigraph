@@ -2,4 +2,8 @@ apply plugin: 'scala'
 
 dependencies {
   compile "org.scala-lang:scala-library:$scalaVersion"
+  compile "com.lihaoyi:pprint_$scalaVersionMajorMinor"
+
+  testCompile "org.scalatest:scalatest_$scalaVersionMajorMinor"
+  testRuntime "org.pegdown:pegdown"
 }

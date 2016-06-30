@@ -58,6 +58,11 @@ class MultiVarBuilder[M <: Var[M]] extends VarBuilder[M] {
       value: => Try[TT]
   ): this.type = ???
 
+  override def varEntriesIterator: Iterator[(TypeMemberName, VarEntry[_ <: Datum[_]])] =
+    JavaConversions.asScalaIterator(entries.entrySet().iterator()).map { e =>
+      Tuple2[TypeMemberName, VarEntry[_ <: Datum[_]]](e.getKey, e.getValue.asInstanceOf) // TODO WTF case class constructor doesn't work? Why do we still need asInstanceOf?
+    }
+
 }
 
 
