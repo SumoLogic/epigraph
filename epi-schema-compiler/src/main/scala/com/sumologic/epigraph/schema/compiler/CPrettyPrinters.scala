@@ -7,6 +7,7 @@ import java.io.File
 import org.jetbrains.annotations.NotNull
 import pprint.{Config, PPrint, PPrinter}
 
+import scala.collection.GenTraversableOnce
 import scala.collection.JavaConversions._
 
 object CPrettyPrinters {
@@ -33,16 +34,9 @@ object CPrettyPrinters {
       pprint.Internals.handleChunks(
         t.filename, c, (c: Config) => Iterator( // TODO PPrint[CNamespace]
           implicitly[PPrint[CNamespace]].pprinter.render(t.namespace, c),
-          pprint.Internals.handleChunks( // TODO PPrint[CImport]
-            "imports", c, (c: Config) => t.imports.valuesIterator.map(implicitly[PPrint[CImport]].pprinter.render(_, c))
-          ),
-          pprint.Internals.handleChunks(
-            "typedefs", c, (c: Config) => t.types.toIterator.map(implicitly[PPrint[CType]].pprinter.render(_, c))
-          ),
-          pprint.Internals.handleChunks(
-            "supplements", c,
-            (c: Config) => t.supplements.toIterator.map(implicitly[PPrint[CSupplement]].pprinter.render(_, c))
-          )
+          compound("imports", t.imports, c), // TODO PPrint[CImport]
+          compound("typedefs", t.types, c),
+          compound("supplements", t.supplements, c) // TODO PPrint[CSupplement]
         )
       )
     }
@@ -73,51 +67,75 @@ object CPrettyPrinters {
 
     override def render0(t: CType, c: Config): Iterator[String] = {
       t match {
-        case vt: CVarTypeDef => CVarTypePrinter.render(vt, c)
-        case rt: CRecordTypeDef => CRecordTypePrinter.render(rt, c)
+        case td: CTypeDef => CTypeDefPrinter.render(td, c)
         case amt: CAnonMapType => CAnonMapTypePrinter.render(amt, c)
-        case mt: CMapTypeDef => CMapTypePrinter.render(mt, c)
         case alt: CAnonListType => CAnonListTypePrinter.render(alt, c)
-        case lt: CListTypeDef => CListTypePrinter.render(lt, c)
-        case et: CEnumTypeDef => CEnumTypePrinter.render(et, c)
-        case pt: CPrimitiveTypeDef => CPrimitiveTypePrinter.render(pt, c)
         case _ => Iterator("UNKNOWN ", t.name.name)
       }
     }
-
-    def typeDefParts(@NotNull t: CTypeDef, c: Config): Iterator[Iterator[String]] = Iterator(
-      pprint.Internals.handleChunks(
-        "declaredSupertypes", c,
-        (c: Config) => t.declaredSupertypeRefs.toIterator.map(implicitly[PPrint[CTypeRef]].pprinter.render(_, c))
-      ),
-      pprint.Internals.handleChunks(
-        "injectedSupertypes", c,
-        (c: Config) => t.injectedSupertypes.toIterator map { ctd =>
-          implicitly[PPrint[CTypeName]].pprinter.render(ctd.name, c)
-        }
-      ),
-      pprint.Internals.handleChunks(
-        "effectiveSupertypes", c,
-        (c: Config) => t.supertypes.toIterator.map { ctd => implicitly[PPrint[CTypeName]].pprinter.render(ctd.name, c) ++ Iterator("#" + ctd.depth) }
-      ),
-      pprint.Internals.handleChunks(
-        "supplementedSubtypes", c,
-        (c: Config) => t.declaredSupplementees.toIterator.map(implicitly[PPrint[CTypeRef]].pprinter.render(_, c))
-      )
-    )
 
   }
 
   implicit val CTypePrint: PPrint[CType] = PPrint(CTypePrinter)
 
 
+  implicit object CTypeDefPrinter extends PPrinter[CTypeDef] {
+
+    override def render0(td: CTypeDef, c: Config): Iterator[String] = {
+      td match {
+        case vt: CVarTypeDef => CVarTypePrinter.render(vt, c)
+        case rt: CRecordTypeDef => CRecordTypePrinter.render(rt, c)
+        case mt: CMapTypeDef => CMapTypePrinter.render(mt, c)
+        case lt: CListTypeDef => CListTypePrinter.render(lt, c)
+        case et: CEnumTypeDef => CEnumTypePrinter.render(et, c)
+        case pt: CPrimitiveTypeDef => CPrimitiveTypePrinter.render(pt, c)
+        case _ => Iterator("UNKNOWN ", td.name.name)
+      }
+    }
+
+    def typeDefParts(@NotNull t: CTypeDef, c: Config): Iterator[Iterator[String]] = Iterator(
+      compound("declaredSupertypes", t.declaredSupertypeRefs, c),
+      compound("injectedSupertypes", t.injectedSupertypes, (x: CTypeDef) => x.name, c),
+      compound("parents", t.parents, (x: CTypeDef) => x.name, c),
+      compound("linearizedParents", t.linearizedParents, (x: CTypeDef) => x.name, c),
+      compound("linearization", t.linearized, (x: CTypeDef) => x.name, c),
+      compound("effectiveSupertypes", t.supertypes, (x: CTypeDef) => x.name, c),
+      compound("supplementedSubtypes", t.declaredSupplementees, c)
+    )
+
+  }
+
+  implicit val CTypeDefPrint: PPrint[CTypeDef] = PPrint(CTypeDefPrinter)
+
+
+  private def compound[A: PPrint](name: String, source: GenTraversableOnce[A], c: Config): Iterator[String] =
+    compound(name, source, identity[A], c)
+
+  private def compound[A, B: PPrint](
+      name: String,
+      source: GenTraversableOnce[A],
+      trans: A => B,
+      c: Config
+  ): Iterator[String] = if (source == null) {
+    pprint.Internals.handleChunks(name, c, (c: Config) => Iterator(Iterator("?")))
+  } else {
+    pprint.Internals.handleChunks(
+      name, c, (c: Config) => source.toIterator.map { a: A => implicitly[PPrint[B]].pprinter.render(trans(a), c) }
+    )
+  }
+
+
   implicit object CVarTypePrinter extends PPrinter[CVarTypeDef] {
 
     override def render0(@NotNull t: CVarTypeDef, c: Config): Iterator[String] = {
-      def body = (c: Config) => CTypePrinter.typeDefParts(t, c) ++ Iterator(
+      def body = (c: Config) => CTypeDefPrinter.typeDefParts(t, c) ++ Iterator(
+        compound("tags", t.declaredTags, c),
         pprint.Internals.handleChunks(
-          "tags", c, (c: Config) => t.declaredTags.toIterator.map(CTagPrinter.render(_, c))
-        )
+          "alltags", c, (c: Config) => t.allTags.toIterator.map { case (n, vts) => (n, vts.map(_.name)) }.map(
+            implicitly[PPrint[(String, Seq[CTypeFqn])]].render(_, c)
+          )
+        ),
+        compound("tagsToMerge", t.supertagsToOverride, (e: (String, Seq[CTag])) => (e._1, e._2.map(_.name)), c)
       )
       pprint.Internals.handleChunks("var " + t.name.name, c, body)
     }
@@ -144,10 +162,8 @@ object CPrettyPrinters {
   implicit object CRecordTypePrinter extends PPrinter[CRecordTypeDef] {
 
     override def render0(@NotNull t: CRecordTypeDef, c: Config): Iterator[String] = {
-      def body = (c: Config) => CTypePrinter.typeDefParts(t, c) ++ Iterator(
-        pprint.Internals.handleChunks(
-          "fields", c, (c: Config) => t.declaredFields.toIterator.map(CFieldPrint.pprinter.render(_, c))
-        )
+      def body = (c: Config) => CTypeDefPrinter.typeDefParts(t, c) ++ Iterator(
+        compound("declaredFields", t.declaredFields, c)
       )
       pprint.Internals.handleChunks("record " + t.name.name, c, body)
     }
@@ -160,7 +176,7 @@ object CPrettyPrinters {
 
     override def render0(t: CField, c: Config): Iterator[String] = {
       pprint.Internals.handleChunks(
-        "" + t.name + ": " + CTypeRefPrinter.render(t.typeRef, c).mkString, c, (c: Config) => Iterator(
+        t.name + ": " + CTypeRefPrinter.render(t.typeRef, c).mkString, c, (c: Config) => Iterator(
           // TODO field attributes etc.
         )
       )
@@ -190,7 +206,7 @@ object CPrettyPrinters {
     override def render0(@NotNull t: CMapTypeDef, c: Config): Iterator[String] = {
       pprint.Internals.handleChunks(
         "map " + CTypeNamePrinter.render(t.name, c).mkString, c,
-        (c: Config) => CTypePrinter.typeDefParts(t, c) ++ Iterator(
+        (c: Config) => CTypeDefPrinter.typeDefParts(t, c) ++ Iterator(
           Iterator("keyType: ") ++ CTypeRefPrinter.render(t.keyTypeRef, c),
           Iterator("valueType: ") ++ CTypeRefPrinter.render(t.valueTypeRef, c)
         )
@@ -219,7 +235,7 @@ object CPrettyPrinters {
 
     override def render0(@NotNull t: CListTypeDef, c: Config): Iterator[String] = {
       pprint.Internals.handleChunks(
-        "list " + t.name.name, c, (c: Config) => CTypePrinter.typeDefParts(t, c) ++ Iterator(
+        "list " + t.name.name, c, (c: Config) => CTypeDefPrinter.typeDefParts(t, c) ++ Iterator(
           Iterator("valueType", t.elementTypeRef.name.name)
         )
       )
@@ -232,10 +248,8 @@ object CPrettyPrinters {
   implicit object CEnumTypePrinter extends PPrinter[CEnumTypeDef] {
 
     override def render0(@NotNull t: CEnumTypeDef, c: Config): Iterator[String] = {
-      def body = (c: Config) => CTypePrinter.typeDefParts(t, c) ++ Iterator(
-        pprint.Internals.handleChunks(
-          "values", c, (c: Config) => t.values.toIterator.map(CEnumValuePrint.pprinter.render(_, c))
-        )
+      def body = (c: Config) => CTypeDefPrinter.typeDefParts(t, c) ++ Iterator(
+        compound("values", t.values, c)
       )
       pprint.Internals.handleChunks("enum " + t.name.name, c, body)
     }
@@ -259,7 +273,7 @@ object CPrettyPrinters {
 
     override def render0(@NotNull t: CPrimitiveTypeDef, c: Config): Iterator[String] = {
       pprint.Internals.handleChunks(
-        t.kind.keyword + " " + t.name.name, c, (c: Config) => CTypePrinter.typeDefParts(t, c) ++ Iterator(
+        t.kind.keyword + " " + t.name.name, c, (c: Config) => CTypeDefPrinter.typeDefParts(t, c) ++ Iterator(
           // TODO enum attributes
         )
       )

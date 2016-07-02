@@ -4,7 +4,7 @@ public enum CPhase {
 
   PARSE,
   RESOLVE_TYPEREFS,
-  COMPUTE_SUPERTYPES,
+  COMPUTE_SUPERTYPES, // TODO rename to validate supertypes?
   INHERIT_FROM_SUPERTYPES;
 
 //  public final int order;

@@ -35,6 +35,8 @@ class CContext(val tabWidth: Int = 2) {
 
   def phased[A](minPhase: CPhase, default: A, f: => A): A = if (phase.ordinal < minPhase.ordinal) default else f
 
+  def after[A](prevPhase: CPhase, default: A, f: => A): A = if (phase.ordinal <= prevPhase.ordinal) default else f
+
   def phase(next: CPhase): this.type = if (phase.ordinal == next.ordinal || next.ordinal == phase.ordinal + 1) {
     phase = next
     this
@@ -55,3 +57,9 @@ object CErrorPosition {
   val NA: CErrorPosition = CErrorPosition(0, 0, None)
 
 }
+
+//class Phased[A](val after: CPhase, default: A)(val f: () => A) {
+//
+//  private lazy val a: A =
+//
+//}

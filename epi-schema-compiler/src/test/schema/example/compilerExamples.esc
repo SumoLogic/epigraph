@@ -22,20 +22,36 @@ vartype Bar234 extends epigraph.schema.ByNameRef {
   `record`: Foo123
 }
 
-string S1
+//string S1
+//
+//string S2 extends S1
+//
+//string S3a extends S2 supplements S1
+//
+//string S3b extends S2 supplements S1
+//
+//boolean B0 extends B0 supplements B0
+//supplement B0 with B0
+//
+//boolean B1 extends B2
+//boolean B2 extends B1
+//
+//vartype BadSupertypeKind extends Foo123
+//
+//supplement Foo123 with Bar234
 
-string S2 extends S1
+integer CompanyId
+integer SelfEmployedId extends CompanyId, PersonId
 
-string S3a extends S2 supplements S1
+vartype VT0 { foo: Integer }
+vartype VT1 extends VT0 { foo: PersonId }
+vartype VT2 extends VT0 { foo: CompanyId }
+vartype VT3 extends VT1, VT2
+vartype VT4 extends VT1, VT2, VT3
 
-string S3b extends S2 supplements S1
-
-boolean B0 extends B0 supplements B0
-supplement B0 with B0
-
-boolean B1 extends B2
-boolean B2 extends B1
-
-vartype BadSupertypeKind extends Foo123
-
-supplement Foo123 with Bar234
+record A { foo: String, bar: String }
+record B extends A { foo: String }
+record C extends A { bar: String }
+record D extends A { bar: String }
+record E extends B, C
+record F extends C, D, E

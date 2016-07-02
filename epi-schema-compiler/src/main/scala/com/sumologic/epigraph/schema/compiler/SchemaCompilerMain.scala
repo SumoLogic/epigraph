@@ -23,7 +23,8 @@ object SchemaCompilerMain {
     "epi-schema/src/main/schema/epigraph/schema/names.esc",
     "epi-schema/src/main/schema/epigraph/schema/types.esc",
     "epi-schema/src/main/scala/epigraph/schema/Documented.esc",
-    "epi-schema-compiler/src/test/schema/example/compilerExamples.esc"
+    "epi-schema/src/test/schema/example/abstract.esc"
+    , "epi-schema-compiler/src/test/schema/example/compilerExamples.esc"
     //"blah"
   )
 
@@ -63,12 +64,12 @@ object SchemaCompilerMain {
     applySupplementingTypeDefs()
     applySupplements(cSchemaFiles) // FIXME track injecting `supplement`s
     computeSupertypes()
-    printSchemaFiles(cSchemaFiles)
+    //printSchemaFiles(cSchemaFiles)
 
     handleErrors(3)
     ctx.phase(INHERIT_FROM_SUPERTYPES)
 
-//    printSchemaFiles(cSchemaFiles)
+    printSchemaFiles(cSchemaFiles)
   }
 
   def parseSourceFiles(files: Seq[File]): Seq[SchemaFile] = {
@@ -94,6 +95,13 @@ object SchemaCompilerMain {
     schemaFiles
   }
 
+  @throws[IOException]
+  def parseFile(file: File, parserDefinition: ParserDefinition): PsiFile = {
+    val name: String = file.getCanonicalPath
+    val text: String = FileUtil.loadFile(file)
+    LightPsi.parseFile(name, text, parserDefinition)
+  }
+
   def registerDefinedTypes(cSchemaFiles: Seq[CSchemaFile]): Unit = {
     cSchemaFiles.par foreach { csf =>
       csf.types foreach { ct =>
@@ -113,68 +121,41 @@ object SchemaCompilerMain {
 
   private val AnonMapTypeConstructor = JavaFunction[CAnonMapTypeName, CAnonMapType](new CAnonMapType(_))
 
-  def resolveTypeRefs(cSchemaFiles: Seq[CSchemaFile]): Unit = {
-    cSchemaFiles.par foreach { csf =>
-      csf.typerefs foreach { ctr =>
-        ctr.name match {
-
-          case fqn: CTypeFqn =>
-            @Nullable val refType = ctx.typeDefs.get(ctr.name)
-            if (refType == null) {
-              ctx.errors.add(new CError(csf.filename, csf.position(ctr.psi), s"Not found: type '${ctr.name.name}'"))
-            } else {
-              ctr.resolveTo(refType)
-            }
-
-          case altn: CAnonListTypeName =>
-            ctr.resolveTo(ctx.anonListTypes.computeIfAbsent(altn, AnonListTypeConstructor))
-
-          case amtn: CAnonMapTypeName =>
-            ctr.resolveTo(ctx.anonMapTypes.computeIfAbsent(amtn, AnonMapTypeConstructor))
-
+  def resolveTypeRefs(cSchemaFiles: Seq[CSchemaFile]): Unit = cSchemaFiles.par foreach { csf =>
+    csf.typerefs foreach {
+      case ctr: CTypeDefRef =>
+        @Nullable val refType = ctx.typeDefs.get(ctr.name)
+        if (refType == null) {
+          ctx.errors.add(new CError(csf.filename, csf.position(ctr.psi), s"Not found: type '${ctr.name.name}'"))
+        } else {
+          ctr.resolveTo(refType)
         }
-      }
-    }
-
-  }
-
-  def applySupplementingTypeDefs(): Unit = {
-    ctx.typeDefs.elements foreach {
-      case ctd: CTypeDef =>
-        ctd.declaredSupplementees foreach { ctr =>
-          ctr.resolved match {
-            case typeDef: CTypeDef => typeDef.injectedSupertypes.add(ctd) // TODO capture injector source?
-            case _ => throw new RuntimeException // TODO exception
-          }
-        }
-      case _ => // ignore anon lists/maps
+      case ctr: CAnonListTypeRef =>
+        ctr.resolveTo(ctx.anonListTypes.computeIfAbsent(ctr.name, AnonListTypeConstructor))
+      case ctr: CAnonMapTypeRef =>
+        ctr.resolveTo(ctx.anonMapTypes.computeIfAbsent(ctr.name, AnonMapTypeConstructor))
     }
   }
 
-  def applySupplements(cSchemaFiles: Seq[CSchemaFile]): Unit = {
-    cSchemaFiles foreach { csf =>
-      csf.supplements foreach { cs =>
-        val sourceTypeDef = cs.source.resolved match {
-          case ctd: CTypeDef => ctd
-          case _ => ???
-        }
-        cs.targets.map(_.resolved) foreach {
-          case typeDef: CTypeDef => typeDef.injectedSupertypes.add(sourceTypeDef)
-          case _ => ???
-        }
-      }
+  def applySupplementingTypeDefs(): Unit = ctx.typeDefs.elements foreach { typeDef =>
+    typeDef.declaredSupplementees foreach { subRef =>
+      subRef.resolved.injectedSupertypes.add(typeDef) // TODO capture injector source?
+    }
+  }
+
+  def applySupplements(cSchemaFiles: Seq[CSchemaFile]): Unit = cSchemaFiles foreach { csf =>
+    csf.supplements foreach { supplement =>
+      val sup = supplement.sourceRef.resolved
+      supplement.targetRefs foreach (_.resolved.injectedSupertypes.add(sup))
     }
   }
 
   def computeSupertypes(): Unit = {
     val visited = mutable.Stack[CTypeDef]()
-    ctx.typeDefs.elements foreach {
-      case typeDef: CTypeDef => typeDef.computeSupertypes(visited)
-      case _ =>  // ignore anon lists/maps
+    ctx.typeDefs.elements foreach { typeDef =>
+      typeDef.computeSupertypes(visited); assert(visited.isEmpty)
     }
-    assert(visited.isEmpty)
   }
-
 
   def handleErrors(exitCode: Int): Unit = { // FIXME it should not exit but return some error code
     if (ctx.errors.nonEmpty) {
@@ -189,13 +170,6 @@ object SchemaCompilerMain {
 
   def printSchemaFiles(schemaFiles: GenTraversableOnce[CSchemaFile]): Unit = {
     schemaFiles foreach pprint.pprintln
-  }
-
-  @throws[IOException]
-  def parseFile(file: File, parserDefinition: ParserDefinition): PsiFile = {
-    val name: String = file.getCanonicalPath
-    val text: String = FileUtil.loadFile(file)
-    LightPsi.parseFile(name, text, parserDefinition)
   }
 
 }

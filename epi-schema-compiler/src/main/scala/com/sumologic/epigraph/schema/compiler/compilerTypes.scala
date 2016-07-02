@@ -4,8 +4,6 @@ package com.sumologic.epigraph.schema.compiler
 
 import java.util.concurrent.ConcurrentLinkedQueue
 
-import com.intellij.psi.PsiElement
-import com.sumologic.epigraph.schema.parser.Fqn
 import com.sumologic.epigraph.schema.parser.psi._
 import org.jetbrains.annotations.Nullable
 
@@ -13,88 +11,9 @@ import scala.collection.JavaConversions._
 import scala.collection.mutable
 
 
-class CTypeRef(val csf: CSchemaFile, val psi: SchemaTypeRef)(implicit val ctx: CContext) {
-
-  val name: CTypeName = psi match { // TODO hierarchy for typedefrefs vs anontyperefs?
-    case sftr: SchemaFqnTypeRef => csf.qualifyLocalTypeRef(sftr)
-    case sal: SchemaAnonList => new CAnonListTypeName(csf, sal)
-    case sam: SchemaAnonMap => new CAnonMapTypeName(csf, sam)
-    case _ => throw new RuntimeException // TODO exception
-  }
-
-  private var typeOptVar: Option[CType] = None
-
-  csf.typerefs.add(this)
-
-  def getTypeOpt: Option[CType] = typeOptVar
-
-  @throws[java.util.NoSuchElementException]("If typeref hasn't been resolved")
-  def resolved: CType = typeOptVar.get
-
-  def resolveTo(ctype: CType): this.type = {
-    typeOptVar match {
-      case Some(ct) if !(ct eq ctype) => throw new RuntimeException // TODO proper exception
-      case None =>
-        if (ctype.name == name) {
-          typeOptVar = Some(ctype)
-        } else {
-          throw new RuntimeException // TODO proper exception
-        }
-    }
-    this
-  }
-
-}
-
-
-abstract class CTypeName protected(val csf: CSchemaFile, val name: String, val psi: PsiElement)
-    (implicit val ctx: CContext) {
-
-  def canEqual(other: Any): Boolean = other.isInstanceOf[CTypeName]
-
-  override def equals(other: Any): Boolean = other match {
-    case that: CTypeName => that.canEqual(this) && name == that.name
-    case _ => false
-  }
-
-  override def hashCode(): Int = {
-    val state = Seq(name)
-    state.map(_.hashCode()).foldLeft(0)((a, b) => 31 * a + b)
-  }
-
-}
-
-
-class CTypeFqn private(csf: CSchemaFile, fqn: Fqn, psi: PsiElement)(implicit ctx: CContext) extends CTypeName(
-  csf, fqn.toString, psi
-) {
-
-  def this(csf: CSchemaFile, parentNs: Fqn, lqn: SchemaFqnTypeRef)(implicit ctx: CContext) = this(
-    csf, parentNs.append(lqn.getFqn.getFqn), lqn: PsiElement
-  )
-
-  def this(csf: CSchemaFile, parentNs: Fqn, typeDef: SchemaTypeDef)(implicit ctx: CContext) = this(
-    csf, parentNs.append(typeDef.getQid.getCanonicalName), typeDef.getQid.getId: PsiElement
-  )
-
-}
-
-class CAnonListTypeName(csf: CSchemaFile, override val psi: SchemaAnonList)(implicit ctx: CContext) extends {
-
-  val elementTypeRef: CTypeRef = new CTypeRef(csf, psi.getTypeRef)
-
-} with CTypeName(csf, "list[" + elementTypeRef.name.name + "]", psi)
-
-class CAnonMapTypeName(csf: CSchemaFile, override val psi: SchemaAnonMap)(implicit ctx: CContext) extends {
-
-  val keyTypeRef: CTypeRef = new CTypeRef(csf, psi.getTypeRefList.head)
-
-  val valueTypeRef: CTypeRef = new CTypeRef(csf, psi.getTypeRefList.last)
-
-} with CTypeName(csf, "map[" + keyTypeRef.name.name + "," + valueTypeRef.name.name + "]", psi)
-
-
 trait CType {
+
+  //type Same >: this.type <: CType { type Same <: this.Same}
 
   val name: CTypeName
 
@@ -103,8 +22,37 @@ trait CType {
 }
 
 
+trait CSupertyped[+T <: CSupertyped[T]] {this: T =>
+
+  def ctx: CContext
+
+  /** declared and injected parents */
+  def parents: Seq[T]
+
+  def supertypes: Seq[T]
+
+  def linearizedParents: Seq[T] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, cachedLinearizedParents)
+
+  private lazy val cachedLinearizedParents: Seq[T] = parents.foldLeft[Seq[T]](Nil) { (acc, p) =>
+    if (acc.contains(p) || parents.exists(_.supertypes.contains(p))) acc else p +: acc
+  }
+
+  def linearizedSupertypes: Seq[T]= ctx.after(CPhase.COMPUTE_SUPERTYPES, null, _linearizedSupertypes)
+
+  private lazy val _linearizedSupertypes: Seq[T] = parents.foldLeft[Seq[T]](Nil) { (acc, p) =>
+    p.linearized.filterNot(acc.contains) ++ acc
+  }
+
+  def linearized: Seq[T] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, _linearized)
+
+  private lazy val _linearized: Seq[T] = this +: linearizedSupertypes
+
+}
+
 abstract class CTypeDef protected(val csf: CSchemaFile, val psi: SchemaTypeDef, override val kind: CTypeKind)
-    (implicit val ctx: CContext) extends CType {
+    (implicit val ctx: CContext) extends CType with CSupertyped[CTypeDef] {
+
+  type Same >: this.type <: CTypeDef
 
   val name: CTypeFqn = new CTypeFqn(csf, csf.namespace.fqn, psi)
 
@@ -112,31 +60,38 @@ abstract class CTypeDef protected(val csf: CSchemaFile, val psi: SchemaTypeDef, 
 
   val isPolymorphic: Boolean = psi.getPolymorphic != null
 
-  val declaredSupertypeRefs: Seq[CTypeRef] = {
+  val declaredSupertypeRefs: Seq[CTypeDefRef] = {
     @Nullable val sed: SchemaExtendsDecl = psi.getExtendsDecl
-    if (sed == null) Nil else sed.getFqnTypeRefList.map(new CTypeRef(csf, _))
+    if (sed == null) Nil else sed.getFqnTypeRefList.map(CTypeRef(csf, _))
   }
 
-  val declaredSupplementees: Seq[CTypeRef] = {
+  def declaredParents: Seq[CTypeDef] = ctx.after(CPhase.RESOLVE_TYPEREFS, null, cachedDeclaredParents)
+
+  private lazy val cachedDeclaredParents: Seq[CTypeDef] = declaredSupertypeRefs.map(_.resolved)
+
+  val declaredSupplementees: Seq[CTypeDefRef] = {
     @Nullable val ssd: SchemaSupplementsDecl = psi.getSupplementsDecl
-    if (ssd == null) Nil else ssd.getFqnTypeRefList.map(new CTypeRef(csf, _))
+    if (ssd == null) Nil else ssd.getFqnTypeRefList.map(CTypeRef(csf, _))
   }
 
   val injectedSupertypes: ConcurrentLinkedQueue[CTypeDef] = new ConcurrentLinkedQueue
 
-  private var computedSupertypes: Option[Seq[CTypeDef]] = None
-
-  def supertypes: Seq[CTypeDef] = ctx.phased(
-    CPhase.INHERIT_FROM_SUPERTYPES, computedSupertypes.getOrElse(Nil), sortedSupertypes
+  def declaredAndInjectedParents: Seq[CTypeDef] = ctx.after(
+    CPhase.RESOLVE_TYPEREFS, null, cachedDeclaredAndInjectedParents
   )
+
+  private lazy val cachedDeclaredAndInjectedParents: Seq[CTypeDef] = declaredParents ++ injectedSupertypes
+
+  def supertypes: Seq[Same] = ctx.after(CPhase.RESOLVE_TYPEREFS, null, computedSupertypes.getOrElse(Nil))
+
+  private var computedSupertypes: Option[Seq[Same]] = None
 
   def computeSupertypes(visited: mutable.Stack[CTypeDef]): Unit = {
     if (computedSupertypes.isEmpty) {
-      val parents = declaredSupertypeRefs.map(_.resolved./*FIXME*/ asInstanceOf[CTypeDef]) ++ injectedSupertypes
       val thisIdx = visited.indexOf(this)
       visited.push(this)
       if (thisIdx == -1) {
-        parents foreach { p =>
+        declaredAndInjectedParents foreach { p =>
           p.computeSupertypes(visited)
           if (p.kind != kind) {
             val pSource = if (injectedSupertypes.contains(p)) "injected" else "declared"
@@ -148,28 +103,41 @@ abstract class CTypeDef protected(val csf: CSchemaFile, val psi: SchemaTypeDef, 
             )
           }
         }
+        computedSupertypes = Some(
+          declaredAndInjectedParents.flatMap { st => st.supertypes :+ st }.distinct.asInstanceOf[Seq[Same]]
+        )
       } else {
         ctx.errors.add(
           new CError(
             csf.filename, csf.position(psi.getQid),
-            s"Cyclic inheritance involving type ${name.name}: ${
-              visited.view(0, thisIdx + 2).reverseIterator.map(_.name.name).mkString(" < ")
-            }"
+            s"Cyclic inheritance: type ${visited.view(0, thisIdx + 2).reverseIterator.map(_.name.name).mkString(" < ")}"
           )
         )
+        computedSupertypes = Some(Nil)
       }
       visited.pop()
-      computedSupertypes = Some(parents.flatMap { st => st.supertypes :+ st }.distinct)
     }
   }
 
-  def depth: Int = ctx.phased(CPhase.INHERIT_FROM_SUPERTYPES, -1, cachedDepth)
+  def parents: Seq[Same] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, cachedParents)
 
-  private lazy val cachedDepth: Int = if (supertypes.isEmpty) 0 else supertypes.map(_.depth).max + 1
+  private lazy val cachedParents: Seq[Same] = (declaredSupertypeRefs.map(_.resolved) ++ injectedSupertypes)
+      .asInstanceOf[Seq[Same]]
 
-  def sortedSupertypes: Seq[this.type] = ctx.phased(CPhase.INHERIT_FROM_SUPERTYPES, Nil, cachedSortedSupertypes)
-
-  private lazy val cachedSortedSupertypes = computedSupertypes.get.sortBy(_.depth).asInstanceOf[Seq[this.type]]
+//  def depth: Int = ctx.phased(CPhase.INHERIT_FROM_SUPERTYPES, -1, cachedDepth)
+//
+//  private lazy val cachedDepth: Int = if (supertypes.isEmpty) 0 else supertypes.map(_.depth).max + 1
+//
+//  def depthSortedSupertypes: Seq[Same] = ctx.phased(CPhase.INHERIT_FROM_SUPERTYPES, Nil, cachedDepthSortedSupertypes)
+//
+//  private lazy val cachedDepthSortedSupertypes = computedSupertypes.get.sortBy(_.depth).asInstanceOf[Seq[Same]]
+//
+//  def declaredAndInjectedParents: Seq[Same] =
+//    (declaredSupertypeRefs.map(_.resolved) ++ injectedSupertypes).asInstanceOf[Seq[Same]]
+//
+//  def linearize: Seq[Same] = this.asInstanceOf[Same] +: declaredAndInjectedParents.foldLeft[Seq[Same]](Nil) { (acc, p) =>
+//     p.linearize.filterNot(acc.contains).asInstanceOf[Seq[Same]] ++ acc
+//  }
 
 }
 
@@ -194,18 +162,58 @@ object CTypeDef {
 
 class CVarTypeDef(csf: CSchemaFile, override val psi: SchemaVarTypeDef)(implicit ctx: CContext) extends CTypeDef(
   csf, psi, CTypeKind.VARTYPE
-) {
+) with CSupertyped[CVarTypeDef] {
+
+  override type Same = CVarTypeDef
 
   val declaredTags: Seq[CTag] = {
     @Nullable val body = psi.getVarTypeBody
     if (body == null) Nil else body.getVarTagDeclList.map(new CTag(csf, _)).toList
   }
 
-//  val tags: Map[String, CTag] = {
-//    sortedSupertypes flatMap { st => st.tags }
-//    // merge parent tags
-//    // merge declared tags
-//  }
+  // TODO check for dupes
+  private val declaredTagsMap: Map[String, CTag] = declaredTags.map { ct => (ct.name, ct) }(collection.breakOut)
+
+  def supertagsMap: Map[String, Seq[CTag]] = {
+    for {vt <- linearizedSupertypes; nt <- vt.declaredTagsMap} yield nt
+  } groupBy { case (n, _t) =>
+    n
+  } map { case (n, seq) =>
+    (n, seq.map { case (_n, t) => t })
+  } filter { case (n, seq) =>
+    seq.tail.nonEmpty
+  }
+
+  def effectiveTag(declaredTagOpt: Option[CTag], supertags: Seq[CTag]): CTag = {
+    declaredTagOpt match {
+      case Some(dt) =>
+        supertags foreach { st => /* check dt compat with st */}
+        ???
+      case None =>
+        ???
+    }
+  }
+
+  /** supertags with different origins that might need to be overridden (if they are not compatible with each other) */
+  def supertagsToOverride: Map[String, Seq[CTag]] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, _supertagsToOverride)
+
+  private lazy val _supertagsToOverride: Map[String, Seq[CTag]] = {
+    for {vt <- parents; nt <- vt.declaredTagsMap} yield nt
+  } groupBy { case (n, _t) =>
+    n
+  } map { case (n, seq) =>
+    (n, seq.map { case (_n, t) => t })
+  } filter { case (n, seq) =>
+    seq.tail.nonEmpty
+  }
+
+  def allTags: Map[String, Seq[CVarTypeDef]] = ctx.phased(CPhase.INHERIT_FROM_SUPERTYPES, Map.empty, cachedAllTags)
+
+  private def cachedAllTags: Map[String, Seq[CVarTypeDef]] = linearized flatMap { vt =>
+    vt.declaredTags map { dt =>
+      (dt.name, vt)
+    }
+  } groupBy { case (dtn, _vt) => dtn } map { case (dtn, seq) => (dtn, seq.map { case (_dtn, vt) => vt }) }
 
 }
 
@@ -213,7 +221,9 @@ class CTag(val csf: CSchemaFile, val psi: SchemaVarTagDecl)(implicit val ctx: CC
 
   val name: String = psi.getQid.getCanonicalName
 
-  val typeRef: CTypeRef = new CTypeRef(csf, psi.getTypeRef)
+  val typeRef: CTypeRef = CTypeRef(csf, psi.getTypeRef)
+
+  val overriddenTags: Seq[CTag] = Nil // FIXME
 
 }
 
@@ -221,6 +231,8 @@ class CTag(val csf: CSchemaFile, val psi: SchemaVarTagDecl)(implicit val ctx: CC
 class CRecordTypeDef(csf: CSchemaFile, override val psi: SchemaRecordTypeDef)(implicit ctx: CContext) extends CTypeDef(
   csf, psi, CTypeKind.RECORD
 ) {
+
+  override type Same = CRecordTypeDef
 
   val declaredFields: Seq[CField] = {
     @Nullable val body = psi.getRecordTypeBody
@@ -233,7 +245,7 @@ class CField(val csf: CSchemaFile, val psi: SchemaFieldDecl)(implicit val ctx: C
 
   val name: String = psi.getQid.getCanonicalName
 
-  val typeRef: CTypeRef = new CTypeRef(csf, psi.getTypeRef)
+  val typeRef: CTypeRef = CTypeRef(csf, psi.getTypeRef)
 
 //  lazy val defaultTag: Option[CTag] = {
 //    val sdo = psi.getDefaultOverride
@@ -257,6 +269,8 @@ class CField(val csf: CSchemaFile, val psi: SchemaFieldDecl)(implicit val ctx: C
 
 trait CMapType extends CType {
 
+  //override type Same >: this.type <: CMapType
+
   val name: CTypeName
 
   val keyTypeRef: CTypeRef
@@ -279,14 +293,18 @@ class CMapTypeDef(csf: CSchemaFile, override val psi: SchemaMapTypeDef)(implicit
   csf, psi, CTypeKind.MAP
 ) with CMapType {
 
-  override val keyTypeRef: CTypeRef = new CTypeRef(csf, psi.getAnonMap.getTypeRefList.head)
+  override type Same = CMapTypeDef
 
-  override val valueTypeRef: CTypeRef = new CTypeRef(csf, psi.getAnonMap.getTypeRefList.last)
+  override val keyTypeRef: CTypeRef = CTypeRef(csf, psi.getAnonMap.getTypeRefList.head)
+
+  override val valueTypeRef: CTypeRef = CTypeRef(csf, psi.getAnonMap.getTypeRefList.last)
 
 }
 
 
 trait CListType extends CType {
+
+  //override type Same >: this.type <: CListType
 
   val name: CTypeName
 
@@ -306,7 +324,9 @@ class CListTypeDef(csf: CSchemaFile, override val psi: SchemaListTypeDef)(implic
   csf, psi, CTypeKind.LIST
 ) with CListType {
 
-  override val elementTypeRef: CTypeRef = new CTypeRef(csf, psi.getAnonList.getTypeRef)
+  override type Same = CListTypeDef
+
+  override val elementTypeRef: CTypeRef = CTypeRef(csf, psi.getAnonList.getTypeRef)
 
 }
 
@@ -314,6 +334,8 @@ class CListTypeDef(csf: CSchemaFile, override val psi: SchemaListTypeDef)(implic
 class CEnumTypeDef(csf: CSchemaFile, psi: SchemaEnumTypeDef)(implicit ctx: CContext) extends CTypeDef(
   csf, psi, CTypeKind.ENUM
 ) {
+
+  override type Same = CEnumTypeDef
 
   val values: Seq[CEnumValue] = {
     @Nullable val body = psi.getEnumTypeBody
@@ -334,13 +356,17 @@ class CPrimitiveTypeDef(csf: CSchemaFile, override val psi: SchemaPrimitiveTypeD
       csf, psi, CTypeKind.forKeyword( // TODO deal with all nulls?
         Seq(psi.getStringT, psi.getIntegerT, psi.getLongT, psi.getDoubleT, psi.getBooleanT).find(_ != null).get.getText
       )
-    )
+    ) {
+
+  override type Same = CPrimitiveTypeDef
+
+}
 
 
 class CSupplement(csf: CSchemaFile, val psi: SchemaSupplementDef)(implicit val ctx: CContext) {
 
-  val source: CTypeRef = new CTypeRef(csf, psi.sourceRef())
+  val sourceRef: CTypeDefRef = CTypeRef(csf, psi.sourceRef)
 
-  val targets: Seq[CTypeRef] = psi.supplementedRefs().map(new CTypeRef(csf, _))
+  val targetRefs: Seq[CTypeDefRef] = psi.supplementedRefs().map(CTypeRef(csf, _))
 
 }
