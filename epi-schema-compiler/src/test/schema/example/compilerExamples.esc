@@ -40,14 +40,15 @@ vartype Bar234 extends epigraph.schema.ByNameRef {
 //
 //supplement Foo123 with Bar234
 
-integer CompanyId
+integer CompanyId extends Integer
 integer SelfEmployedId extends CompanyId, PersonId
+supplement PersonId with Integer
 
 vartype VT0 { foo: Integer }
 vartype VT1 extends VT0 { foo: PersonId }
 vartype VT2 extends VT0 { foo: CompanyId }
-vartype VT3 extends VT1, VT2
-vartype VT4 extends VT1, VT2, VT3
+vartype VT3 extends VT1, VT2 { foo: SelfEmployedId }
+vartype VT4 extends VT1, VT3, VT2, VT3
 
 record A { foo: String, bar: String }
 record B extends A { foo: String }

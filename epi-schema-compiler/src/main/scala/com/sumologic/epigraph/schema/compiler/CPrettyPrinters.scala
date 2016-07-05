@@ -47,7 +47,12 @@ object CPrettyPrinters {
 
   implicit object CTypeRefPrinter extends PPrinter[CTypeRef] {
 
-    override def render0(t: CTypeRef, c: Config): Iterator[String] = Iterator("«", t.name.name, "»")
+    override def render0(t: CTypeRef, c: Config): Iterator[String] =
+      if (t.isResolved) {
+        Iterator(t.name.name)
+      } else {
+        Iterator("«", t.name.name, "»")
+      }
 
   }
 
@@ -78,6 +83,8 @@ object CPrettyPrinters {
 
   implicit val CTypePrint: PPrint[CType] = PPrint(CTypePrinter)
 
+  implicit def cTypePrint[T <: CType]: PPrint[T] = CTypePrint.asInstanceOf[PPrint[T]]
+
 
   implicit object CTypeDefPrinter extends PPrinter[CTypeDef] {
 
@@ -105,7 +112,7 @@ object CPrettyPrinters {
 
   }
 
-  implicit val CTypeDefPrint: PPrint[CTypeDef] = PPrint(CTypeDefPrinter)
+  //implicit val CTypeDefPrint: PPrint[CTypeDef] = PPrint(CTypeDefPrinter)
 
 
   private def compound[A: PPrint](name: String, source: GenTraversableOnce[A], c: Config): Iterator[String] =
@@ -129,13 +136,13 @@ object CPrettyPrinters {
 
     override def render0(@NotNull t: CVarTypeDef, c: Config): Iterator[String] = {
       def body = (c: Config) => CTypeDefPrinter.typeDefParts(t, c) ++ Iterator(
-        compound("tags", t.declaredTags, c),
-        pprint.Internals.handleChunks(
-          "alltags", c, (c: Config) => t.allTags.toIterator.map { case (n, vts) => (n, vts.map(_.name)) }.map(
-            implicitly[PPrint[(String, Seq[CTypeFqn])]].render(_, c)
-          )
-        ),
-        compound("tagsToMerge", t.supertagsToOverride, (e: (String, Seq[CTag])) => (e._1, e._2.map(_.name)), c)
+        compound("declaredTags", t.declaredTags, c),
+//        pprint.Internals.handleChunks(
+//          "alltags", c, (c: Config) => t.allTags.toIterator.map { case (n, vts) => (n, vts.map(_.name)) }.map(
+//            implicitly[PPrint[(String, Seq[CTypeFqn])]].render(_, c)
+//          )
+//        ),
+        compound("effectiveTags", t.effectiveTagsMap, (e: (String, CTag)) => e._2, c)
       )
       pprint.Internals.handleChunks("var " + t.name.name, c, body)
     }

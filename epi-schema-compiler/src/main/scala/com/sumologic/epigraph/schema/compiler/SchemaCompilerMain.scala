@@ -70,6 +70,7 @@ object SchemaCompilerMain {
     ctx.phase(INHERIT_FROM_SUPERTYPES)
 
     printSchemaFiles(cSchemaFiles)
+    handleErrors(4)
   }
 
   def parseSourceFiles(files: Seq[File]): Seq[SchemaFile] = {

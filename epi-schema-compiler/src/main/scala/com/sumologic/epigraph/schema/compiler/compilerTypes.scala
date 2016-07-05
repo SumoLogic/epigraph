@@ -19,6 +19,8 @@ trait CType {
 
   val kind: CTypeKind
 
+  def isAssignableFrom(subtype: CType): Boolean
+
 }
 
 
@@ -37,7 +39,7 @@ trait CSupertyped[+T <: CSupertyped[T]] {this: T =>
     if (acc.contains(p) || parents.exists(_.supertypes.contains(p))) acc else p +: acc
   }
 
-  def linearizedSupertypes: Seq[T]= ctx.after(CPhase.COMPUTE_SUPERTYPES, null, _linearizedSupertypes)
+  def linearizedSupertypes: Seq[T] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, _linearizedSupertypes)
 
   private lazy val _linearizedSupertypes: Seq[T] = parents.foldLeft[Seq[T]](Nil) { (acc, p) =>
     p.linearized.filterNot(acc.contains) ++ acc
@@ -124,7 +126,7 @@ abstract class CTypeDef protected(val csf: CSchemaFile, val psi: SchemaTypeDef, 
   private lazy val cachedParents: Seq[Same] = (declaredSupertypeRefs.map(_.resolved) ++ injectedSupertypes)
       .asInstanceOf[Seq[Same]]
 
-//  def depth: Int = ctx.phased(CPhase.INHERIT_FROM_SUPERTYPES, -1, cachedDepth)
+  //  def depth: Int = ctx.phased(CPhase.INHERIT_FROM_SUPERTYPES, -1, cachedDepth)
 //
 //  private lazy val cachedDepth: Int = if (supertypes.isEmpty) 0 else supertypes.map(_.depth).max + 1
 //
@@ -138,6 +140,11 @@ abstract class CTypeDef protected(val csf: CSchemaFile, val psi: SchemaTypeDef, 
 //  def linearize: Seq[Same] = this.asInstanceOf[Same] +: declaredAndInjectedParents.foldLeft[Seq[Same]](Nil) { (acc, p) =>
 //     p.linearize.filterNot(acc.contains).asInstanceOf[Seq[Same]] ++ acc
 //  }
+
+  override def isAssignableFrom(subtype: CType): Boolean = subtype match {
+    case subDef: CTypeDef => kind == subtype.kind && subDef.linearized.contains(this)
+    case _ => false
+  }
 
 }
 
@@ -174,28 +181,53 @@ class CVarTypeDef(csf: CSchemaFile, override val psi: SchemaVarTypeDef)(implicit
   // TODO check for dupes
   private val declaredTagsMap: Map[String, CTag] = declaredTags.map { ct => (ct.name, ct) }(collection.breakOut)
 
-  def supertagsMap: Map[String, Seq[CTag]] = {
-    for {vt <- linearizedSupertypes; nt <- vt.declaredTagsMap} yield nt
+  def effectiveTagsMap: Map[String, CTag] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, _effectiveTagsMap)
+
+  private lazy val _effectiveTagsMap = {
+    (for {vt <- linearizedParents; nt <- vt.effectiveTagsMap} yield nt) ++ declaredTagsMap
   } groupBy { case (n, _t) =>
     n
   } map { case (n, seq) =>
     (n, seq.map { case (_n, t) => t })
-  } filter { case (n, seq) =>
-    seq.tail.nonEmpty
+  } map { case (n, seq) =>
+    (n, effectiveTag(declaredTagsMap.get(n), seq))
   }
 
   def effectiveTag(declaredTagOpt: Option[CTag], supertags: Seq[CTag]): CTag = {
     declaredTagOpt match {
       case Some(dt) =>
-        supertags foreach { st => /* check dt compat with st */}
-        ???
+        supertags foreach { st =>
+          if (!dt.compatibleWith(st)) {
+            ctx.errors.add(
+              new CError(
+                csf.filename, csf.position(dt.psi),
+                s"Type `${
+                  dt.typeRef.resolved.name.name
+                }` of tag `${dt.name}` is not a subtype of its parent tag type `${
+                  st.typeRef.resolved.name.name
+                }`"
+              )
+            )
+          }
+        }
+        dt
       case None =>
-        ???
+        supertags.find(st => supertags.forall(_.typeRef.resolved.isAssignableFrom(st.typeRef.resolved))) match {
+          case Some(narrowest) =>
+            narrowest
+          case None =>
+            ctx.errors.add(
+              new CError(
+                csf.filename, csf.position(psi), s"Parent tags `${supertags.head.name}` of types ${
+                  supertags.map(_.typeRef.resolved.name.name).mkString("`", "`, `", "`")
+                } must be overridden with common subtype"
+              )
+            )
+            supertags.head // there must be at least one
+        }
+
     }
   }
-
-  /** supertags with different origins that might need to be overridden (if they are not compatible with each other) */
-  def supertagsToOverride: Map[String, Seq[CTag]] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, _supertagsToOverride)
 
   private lazy val _supertagsToOverride: Map[String, Seq[CTag]] = {
     for {vt <- parents; nt <- vt.declaredTagsMap} yield nt
@@ -207,13 +239,13 @@ class CVarTypeDef(csf: CSchemaFile, override val psi: SchemaVarTypeDef)(implicit
     seq.tail.nonEmpty
   }
 
-  def allTags: Map[String, Seq[CVarTypeDef]] = ctx.phased(CPhase.INHERIT_FROM_SUPERTYPES, Map.empty, cachedAllTags)
+//  def allTags: Map[String, Seq[CVarTypeDef]] = ctx.phased(CPhase.INHERIT_FROM_SUPERTYPES, Map.empty, cachedAllTags)
 
-  private def cachedAllTags: Map[String, Seq[CVarTypeDef]] = linearized flatMap { vt =>
-    vt.declaredTags map { dt =>
-      (dt.name, vt)
-    }
-  } groupBy { case (dtn, _vt) => dtn } map { case (dtn, seq) => (dtn, seq.map { case (_dtn, vt) => vt }) }
+//  private def cachedAllTags: Map[String, Seq[CVarTypeDef]] = linearized flatMap { vt =>
+//    vt.declaredTags map { dt =>
+//      (dt.name, vt)
+//    }
+//  } groupBy { case (dtn, _vt) => dtn } map { case (dtn, seq) => (dtn, seq.map { case (_dtn, vt) => vt }) }
 
 }
 
@@ -224,6 +256,8 @@ class CTag(val csf: CSchemaFile, val psi: SchemaVarTagDecl)(implicit val ctx: CC
   val typeRef: CTypeRef = CTypeRef(csf, psi.getTypeRef)
 
   val overriddenTags: Seq[CTag] = Nil // FIXME
+
+  def compatibleWith(st: CTag): Boolean = st.typeRef.resolved.isAssignableFrom(typeRef.resolved)
 
 }
 
@@ -279,6 +313,8 @@ trait CMapType extends CType {
 
   override val kind: CTypeKind = CTypeKind.MAP
 
+  protected def cast(ctype: CType): CMapType = ctype.asInstanceOf[CMapType]
+
 }
 
 class CAnonMapType(override val name: CAnonMapTypeName) extends CMapType {
@@ -286,6 +322,11 @@ class CAnonMapType(override val name: CAnonMapTypeName) extends CMapType {
   override val keyTypeRef: CTypeRef = name.keyTypeRef
 
   override val valueTypeRef: CTypeRef = name.valueTypeRef
+
+  override def isAssignableFrom(subtype: CType): Boolean =
+    subtype.kind == kind &&
+        keyTypeRef.resolved == subtype.asInstanceOf[CMapType].keyTypeRef.resolved &&
+        valueTypeRef.resolved.isAssignableFrom(cast(subtype).valueTypeRef.resolved)
 
 }
 
@@ -312,11 +353,17 @@ trait CListType extends CType {
 
   override val kind: CTypeKind = CTypeKind.LIST
 
+  protected def cast(ctype: CType): CListType = ctype.asInstanceOf[CListType]
+
 }
 
 class CAnonListType(override val name: CAnonListTypeName) extends CListType {
 
   override val elementTypeRef: CTypeRef = name.elementTypeRef
+
+  override def isAssignableFrom(subtype: CType): Boolean =
+    subtype.kind == kind &&
+        elementTypeRef.resolved.isAssignableFrom(cast(subtype).elementTypeRef.resolved)
 
 }
 

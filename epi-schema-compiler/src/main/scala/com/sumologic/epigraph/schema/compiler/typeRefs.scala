@@ -36,6 +36,8 @@ abstract class CTypeRef protected(val csf: CSchemaFile, val psi: SchemaTypeRef)(
   @throws[java.util.NoSuchElementException]("If typeref hasn't been resolved")
   def resolved: Type = typeOptVar.get
 
+  def isResolved: Boolean = typeOptVar.nonEmpty
+
   private var typeOptVar: Option[Type] = None
 
   csf.typerefs.add(this)
