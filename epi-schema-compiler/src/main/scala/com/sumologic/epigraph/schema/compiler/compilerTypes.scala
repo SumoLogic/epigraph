@@ -52,9 +52,9 @@ trait CSupertyped[+T <: CSupertyped[T]] {this: T =>
 }
 
 abstract class CTypeDef protected(val csf: CSchemaFile, val psi: SchemaTypeDef, override val kind: CTypeKind)
-    (implicit val ctx: CContext) extends CType with CSupertyped[CTypeDef] {
+    (implicit val ctx: CContext) extends CType with CSupertyped[CTypeDef] {self =>
 
-  type Same >: this.type <: CTypeDef
+  type Same <: CTypeDef {type Same <: self.Same}
 
   val name: CTypeFqn = new CTypeFqn(csf, csf.namespace.fqn, psi)
 
@@ -126,7 +126,7 @@ abstract class CTypeDef protected(val csf: CSchemaFile, val psi: SchemaTypeDef, 
   private lazy val cachedParents: Seq[Same] = (declaredSupertypeRefs.map(_.resolved) ++ injectedSupertypes)
       .asInstanceOf[Seq[Same]]
 
-  //  def depth: Int = ctx.phased(CPhase.INHERIT_FROM_SUPERTYPES, -1, cachedDepth)
+//  def depth: Int = ctx.phased(CPhase.INHERIT_FROM_SUPERTYPES, -1, cachedDepth)
 //
 //  private lazy val cachedDepth: Int = if (supertypes.isEmpty) 0 else supertypes.map(_.depth).max + 1
 //
@@ -150,18 +150,14 @@ abstract class CTypeDef protected(val csf: CSchemaFile, val psi: SchemaTypeDef, 
 
 object CTypeDef {
 
-  def apply(csf: CSchemaFile, stdw: SchemaTypeDefWrapper)(implicit ctx: CContext): CTypeDef = {
-    val std: SchemaTypeDef = stdw.getElement
-    val ctype = std match {
-      case vt: SchemaVarTypeDef => new CVarTypeDef(csf, vt)
-      case rt: SchemaRecordTypeDef => new CRecordTypeDef(csf, rt)
-      case mt: SchemaMapTypeDef => new CMapTypeDef(csf, mt)
-      case lt: SchemaListTypeDef => new CListTypeDef(csf, lt)
-      case et: SchemaEnumTypeDef => new CEnumTypeDef(csf, et)
-      case pt: SchemaPrimitiveTypeDef => new CPrimitiveTypeDef(csf, pt)
-      case _ => null
-    }
-    ctype
+  def apply(csf: CSchemaFile, stdw: SchemaTypeDefWrapper)(implicit ctx: CContext): CTypeDef = stdw.getElement match {
+    case typeDef: SchemaVarTypeDef => new CVarTypeDef(csf, typeDef)
+    case typeDef: SchemaRecordTypeDef => new CRecordTypeDef(csf, typeDef)
+    case typeDef: SchemaMapTypeDef => new CMapTypeDef(csf, typeDef)
+    case typeDef: SchemaListTypeDef => new CListTypeDef(csf, typeDef)
+    case typeDef: SchemaEnumTypeDef => new CEnumTypeDef(csf, typeDef)
+    case typeDef: SchemaPrimitiveTypeDef => new CPrimitiveTypeDef(csf, typeDef)
+    case unknown => throw new UnsupportedOperationException(unknown.toString)
   }
 
 }
@@ -193,9 +189,9 @@ class CVarTypeDef(csf: CSchemaFile, override val psi: SchemaVarTypeDef)(implicit
     (n, effectiveTag(declaredTagsMap.get(n), seq))
   }
 
-  def effectiveTag(declaredTagOpt: Option[CTag], supertags: Seq[CTag]): CTag = {
+  private def effectiveTag(declaredTagOpt: Option[CTag], supertags: Seq[CTag]): CTag = {
     declaredTagOpt match {
-      case Some(dt) =>
+      case Some(dt) => // check if declared tag is compatible with all (if any) overridden ones
         supertags foreach { st =>
           if (!dt.compatibleWith(st)) {
             ctx.errors.add(
@@ -211,7 +207,7 @@ class CVarTypeDef(csf: CSchemaFile, override val psi: SchemaVarTypeDef)(implicit
           }
         }
         dt
-      case None =>
+      case None => // find the most narrow tag among inherited ones
         supertags.find(st => supertags.forall(_.typeRef.resolved.isAssignableFrom(st.typeRef.resolved))) match {
           case Some(narrowest) =>
             narrowest
@@ -225,27 +221,8 @@ class CVarTypeDef(csf: CSchemaFile, override val psi: SchemaVarTypeDef)(implicit
             )
             supertags.head // there must be at least one
         }
-
     }
   }
-
-  private lazy val _supertagsToOverride: Map[String, Seq[CTag]] = {
-    for {vt <- parents; nt <- vt.declaredTagsMap} yield nt
-  } groupBy { case (n, _t) =>
-    n
-  } map { case (n, seq) =>
-    (n, seq.map { case (_n, t) => t })
-  } filter { case (n, seq) =>
-    seq.tail.nonEmpty
-  }
-
-//  def allTags: Map[String, Seq[CVarTypeDef]] = ctx.phased(CPhase.INHERIT_FROM_SUPERTYPES, Map.empty, cachedAllTags)
-
-//  private def cachedAllTags: Map[String, Seq[CVarTypeDef]] = linearized flatMap { vt =>
-//    vt.declaredTags map { dt =>
-//      (dt.name, vt)
-//    }
-//  } groupBy { case (dtn, _vt) => dtn } map { case (dtn, seq) => (dtn, seq.map { case (_dtn, vt) => vt }) }
 
 }
 
@@ -264,13 +241,63 @@ class CTag(val csf: CSchemaFile, val psi: SchemaVarTagDecl)(implicit val ctx: CC
 
 class CRecordTypeDef(csf: CSchemaFile, override val psi: SchemaRecordTypeDef)(implicit ctx: CContext) extends CTypeDef(
   csf, psi, CTypeKind.RECORD
-) {
+) with CSupertyped[CRecordTypeDef] {
 
   override type Same = CRecordTypeDef
 
   val declaredFields: Seq[CField] = {
     @Nullable val body = psi.getRecordTypeBody
     if (body == null) Nil else body.getFieldDeclList.map(new CField(csf, _)).toList
+  }
+
+  // TODO check for dupes
+  private val declaredFieldsMap: Map[String, CField] = declaredFields.map { ct => (ct.name, ct) }(collection.breakOut)
+
+  def effectiveFieldsMap: Map[String, CField] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, _effectiveFieldsMap)
+
+  private lazy val _effectiveFieldsMap = {
+    (for {vt <- linearizedParents; nt <- vt.effectiveFieldsMap} yield nt) ++ declaredFieldsMap
+  } groupBy { case (n, _t) =>
+    n
+  } map { case (n, seq) =>
+    (n, seq.map { case (_n, t) => t })
+  } map { case (n, seq) =>
+    (n, effectiveField(declaredFieldsMap.get(n), seq))
+  }
+
+  private def effectiveField(declaredFieldOpt: Option[CField], superfields: Seq[CField]): CField = {
+    declaredFieldOpt match {
+      case Some(df) => // check if declared field is compatible with all (if any) overridden ones
+        superfields foreach { st =>
+          if (!df.compatibleWith(st)) {
+            ctx.errors.add(
+              new CError(
+                csf.filename, csf.position(df.psi),
+                s"Type `${
+                  df.typeRef.resolved.name.name
+                }` of field `${df.name}` is not a subtype of its parent field type `${
+                  st.typeRef.resolved.name.name
+                }`"
+              )
+            )
+          }
+        }
+        df
+      case None => // find the most narrow field among inherited ones
+        superfields.find(st => superfields.forall(_.typeRef.resolved.isAssignableFrom(st.typeRef.resolved))) match {
+          case Some(narrowest) =>
+            narrowest
+          case None =>
+            ctx.errors.add(
+              new CError(
+                csf.filename, csf.position(psi), s"Parent fields `${superfields.head.name}` of types ${
+                  superfields.map(_.typeRef.resolved.name.name).mkString("`", "`, `", "`")
+                } must be overridden with common subtype"
+              )
+            )
+            superfields.head // there must be at least one
+        }
+    }
   }
 
 }
@@ -280,6 +307,8 @@ class CField(val csf: CSchemaFile, val psi: SchemaFieldDecl)(implicit val ctx: C
   val name: String = psi.getQid.getCanonicalName
 
   val typeRef: CTypeRef = CTypeRef(csf, psi.getTypeRef)
+
+  def compatibleWith(sf: CField): Boolean = sf.typeRef.resolved.isAssignableFrom(typeRef.resolved)
 
 //  lazy val defaultTag: Option[CTag] = {
 //    val sdo = psi.getDefaultOverride
@@ -357,6 +386,7 @@ trait CListType extends CType {
 
 }
 
+
 class CAnonListType(override val name: CAnonListTypeName) extends CListType {
 
   override val elementTypeRef: CTypeRef = name.elementTypeRef
@@ -366,6 +396,7 @@ class CAnonListType(override val name: CAnonListTypeName) extends CListType {
         elementTypeRef.resolved.isAssignableFrom(cast(subtype).elementTypeRef.resolved)
 
 }
+
 
 class CListTypeDef(csf: CSchemaFile, override val psi: SchemaListTypeDef)(implicit ctx: CContext) extends CTypeDef(
   csf, psi, CTypeKind.LIST

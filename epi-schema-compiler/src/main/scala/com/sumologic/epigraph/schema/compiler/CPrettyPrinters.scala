@@ -9,6 +9,7 @@ import pprint.{Config, PPrint, PPrinter}
 
 import scala.collection.GenTraversableOnce
 import scala.collection.JavaConversions._
+import scala.language.higherKinds
 
 object CPrettyPrinters {
 
@@ -34,9 +35,9 @@ object CPrettyPrinters {
       pprint.Internals.handleChunks(
         t.filename, c, (c: Config) => Iterator( // TODO PPrint[CNamespace]
           implicitly[PPrint[CNamespace]].pprinter.render(t.namespace, c),
-          compound("imports", t.imports, c), // TODO PPrint[CImport]
-          compound("typedefs", t.types, c),
-          compound("supplements", t.supplements, c) // TODO PPrint[CSupplement]
+          collection("imports", t.imports, c), // TODO PPrint[CImport]
+          collection("typedefs", t.types, c),
+          collection("supplements", t.supplements, c) // TODO PPrint[CSupplement]
         )
       )
     }
@@ -88,46 +89,59 @@ object CPrettyPrinters {
 
   implicit object CTypeDefPrinter extends PPrinter[CTypeDef] {
 
-    override def render0(td: CTypeDef, c: Config): Iterator[String] = {
-      td match {
-        case vt: CVarTypeDef => CVarTypePrinter.render(vt, c)
-        case rt: CRecordTypeDef => CRecordTypePrinter.render(rt, c)
-        case mt: CMapTypeDef => CMapTypePrinter.render(mt, c)
-        case lt: CListTypeDef => CListTypePrinter.render(lt, c)
-        case et: CEnumTypeDef => CEnumTypePrinter.render(et, c)
-        case pt: CPrimitiveTypeDef => CPrimitiveTypePrinter.render(pt, c)
-        case _ => Iterator("UNKNOWN ", td.name.name)
-      }
+    override def render0(td: CTypeDef, c: Config): Iterator[String] = td match {
+      case typeDef: CVarTypeDef => CVarTypePrinter.render(typeDef, c)
+      case typeDef: CRecordTypeDef => CRecordTypePrinter.render(typeDef, c)
+      case typeDef: CMapTypeDef => CMapTypePrinter.render(typeDef, c)
+      case typeDef: CListTypeDef => CListTypePrinter.render(typeDef, c)
+      case typeDef: CEnumTypeDef => CEnumTypePrinter.render(typeDef, c)
+      case typeDef: CPrimitiveTypeDef => CPrimitiveTypePrinter.render(typeDef, c)
+      case _ => Iterator("UNKNOWN ", td.name.name)
     }
 
     def typeDefParts(@NotNull t: CTypeDef, c: Config): Iterator[Iterator[String]] = Iterator(
-      compound("declaredSupertypes", t.declaredSupertypeRefs, c),
-      compound("injectedSupertypes", t.injectedSupertypes, (x: CTypeDef) => x.name, c),
-      compound("parents", t.parents, (x: CTypeDef) => x.name, c),
-      compound("linearizedParents", t.linearizedParents, (x: CTypeDef) => x.name, c),
-      compound("linearization", t.linearized, (x: CTypeDef) => x.name, c),
-      compound("effectiveSupertypes", t.supertypes, (x: CTypeDef) => x.name, c),
-      compound("supplementedSubtypes", t.declaredSupplementees, c)
+      collection("declaredParents", t.declaredSupertypeRefs, c),
+      collection("injectedParents", t.injectedSupertypes, c, (x: CTypeDef) => x.name),
+      collection("resolvedParents", t.parents, c, (x: CTypeDef) => x.name),
+      collection("linearizedParents", t.linearizedParents, c, { x: CTypeDef => x.name }),
+      collection("linearization", t.linearized, c, (x: CTypeDef) => x.name),
+      collection("effectiveSupertypes", t.supertypes, c, (x: CTypeDef) => x.name),
+      collection("supplementedSubtypes", t.declaredSupplementees, c)
     )
 
   }
 
   //implicit val CTypeDefPrint: PPrint[CTypeDef] = PPrint(CTypeDefPrinter)
 
-
-  private def compound[A: PPrint](name: String, source: GenTraversableOnce[A], c: Config): Iterator[String] =
-    compound(name, source, identity[A], c)
-
-  private def compound[A, B: PPrint](
+  private def collection[M[A, B] <: scala.collection.GenMap[A, B], K: PPrint, V: PPrint](
       name: String,
-      source: GenTraversableOnce[A],
-      trans: A => B,
+      source: M[K, V],
       c: Config
   ): Iterator[String] = if (source == null) {
     pprint.Internals.handleChunks(name, c, (c: Config) => Iterator(Iterator("?")))
   } else {
     pprint.Internals.handleChunks(
-      name, c, (c: Config) => source.toIterator.map { a: A => implicitly[PPrint[B]].pprinter.render(trans(a), c) }
+      name, c, { c =>
+        source.iterator.map { case (k, v) =>
+          implicitly[PPrint[K]].pprinter.render(k, c) ++ Iterator(": ") ++ implicitly[PPrint[V]].pprinter.render(v, c)
+        }
+      }
+    )
+  }
+
+  private def collection[A: PPrint](name: String, source: GenTraversableOnce[A], c: Config): Iterator[String] =
+    collection(name, source, c, identity[A])
+
+  private def collection[A, B: PPrint](
+      name: String,
+      source: GenTraversableOnce[A],
+      c: Config,
+      trans: (A) => B
+  ): Iterator[String] = if (source == null) {
+    pprint.Internals.handleChunks(name, c, (c: Config) => Iterator(Iterator("?")))
+  } else {
+    pprint.Internals.handleChunks(
+      name, c, { c => source.toIterator.map { a: A => implicitly[PPrint[B]].pprinter.render(trans(a), c) } }
     )
   }
 
@@ -136,13 +150,8 @@ object CPrettyPrinters {
 
     override def render0(@NotNull t: CVarTypeDef, c: Config): Iterator[String] = {
       def body = (c: Config) => CTypeDefPrinter.typeDefParts(t, c) ++ Iterator(
-        compound("declaredTags", t.declaredTags, c),
-//        pprint.Internals.handleChunks(
-//          "alltags", c, (c: Config) => t.allTags.toIterator.map { case (n, vts) => (n, vts.map(_.name)) }.map(
-//            implicitly[PPrint[(String, Seq[CTypeFqn])]].render(_, c)
-//          )
-//        ),
-        compound("effectiveTags", t.effectiveTagsMap, (e: (String, CTag)) => e._2, c)
+        collection("declaredTags", t.declaredTags, c),
+        collection("effectiveTags", t.effectiveTagsMap, c, (e: (String, CTag)) => e._2)
       )
       pprint.Internals.handleChunks("var " + t.name.name, c, body)
     }
@@ -170,7 +179,8 @@ object CPrettyPrinters {
 
     override def render0(@NotNull t: CRecordTypeDef, c: Config): Iterator[String] = {
       def body = (c: Config) => CTypeDefPrinter.typeDefParts(t, c) ++ Iterator(
-        compound("declaredFields", t.declaredFields, c)
+        collection("declaredFields", t.declaredFields, c),
+        collection("effectiveFields", t.effectiveFieldsMap, c, (e: (String, CField)) => e._2)
       )
       pprint.Internals.handleChunks("record " + t.name.name, c, body)
     }
@@ -256,7 +266,7 @@ object CPrettyPrinters {
 
     override def render0(@NotNull t: CEnumTypeDef, c: Config): Iterator[String] = {
       def body = (c: Config) => CTypeDefPrinter.typeDefParts(t, c) ++ Iterator(
-        compound("values", t.values, c)
+        collection("values", t.values, c)
       )
       pprint.Internals.handleChunks("enum " + t.name.name, c, body)
     }
