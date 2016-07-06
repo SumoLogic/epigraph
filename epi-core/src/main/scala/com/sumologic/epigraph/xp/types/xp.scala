@@ -10,31 +10,33 @@ import com.sumologic.epigraph.xp.data.builders._
 import com.sumologic.epigraph.xp.data.immutable._
 import com.sumologic.epigraph.xp.data.mutable._
 
-trait Type {self =>
+import scala.language.higherKinds
 
-  type Super >: this.type <: Type {type Super <: self.Super}
+trait Type[T] {self =>
+
+  type This[X] <: Type[_ >: T] {type This[_] <: self.This[_ >: X]}
 
   def name: TypeNameApi
 
-  def declaredSupertypes: Seq[Super]
+  def declaredSupertypes: Seq[This[_ >: T]]
 
-  def supertypes: Seq[Super] = cachedSupertypes
+  def supertypes: Seq[This[_ >: T]] = cachedSupertypes
 
-  private lazy val cachedSupertypes: Seq[Super] = declaredSupertypes.flatMap { st: Super =>
+  private lazy val cachedSupertypes: Seq[This[_ >: T]] = declaredSupertypes.flatMap { st =>
     st +: st.supertypes
   }.distinct
 
   /** @return `true` if `sub` is a subtype of this [[Type]] */
-  def isAssignableFrom(sub: Type): Boolean = sub == this || sub.supertypes.contains(this)
+  def isAssignableFrom(sub: Type[_]): Boolean = sub == this || sub.supertypes.exists(_ == this) // TODO use Set?
 
   override def toString: String = "«" + name.string + "»" //+ "(" + super.toString + ")"
 
 }
 
 
-trait VarType[M <: Var[M]] extends Type {self =>
+trait VarType[M <: Var[M]] extends Type[M] {self =>
 
-  override type Super >: this.type <: VarType[_ >: M] {type Super <: self.Super}
+  override type This[X] <: VarType[_ >: M] {type This[_] <: self.This[_ >: X]}
 
   final type DeclaredTags = Seq[Tag[M, _, _]]
 
@@ -44,9 +46,8 @@ trait VarType[M <: Var[M]] extends Type {self =>
 
   def varTags: Seq[Tag[_ >: M, _, _]] = cachedVarTags
 
-  private lazy val cachedVarTags: Seq[Tag[_ >: M, _, _]] = (declaredVarTags ++ supertypes.flatMap(
-    _.varTags
-  )).distinct // TODO correctly exclude overridden vartags?
+  // TODO correctly exclude overridden vartags?
+  private lazy val cachedVarTags: Seq[Tag[_ >: M, _, _]] = (declaredVarTags ++ supertypes.flatMap(_.varTags)).distinct
 
   lazy val listOf: ListType[M] = new ListType[M](name.listOf, this, declaredSupertypes.map(_.listOf()), false)
 
@@ -97,7 +98,7 @@ abstract class MultiVarType[M <: Var[M]](
     override final val declaredSupertypes: Seq[VarType[_ >: M]] = Nil
 ) extends VarType[M] {
 
-  final override type Super = VarType[_ >: M]
+  final override type This[_] = VarType[_ >: M]
 
   final type AbsTag[N <: TypeMemberName, T <: Datum[T]] = Tag[M, N, T]
 
@@ -135,9 +136,9 @@ trait DefaultVarType[D <: Datum[D]] extends VarType[D] {this: DataType[D] =>
 }
 
 
-trait DataType[D <: Datum[D]] extends Type with DefaultVarType[D] {self =>
+trait DataType[D <: Datum[D]] extends Type[D] with DefaultVarType[D] {self =>
 
-  override type Super >: this.type <: DataType[_ >: D] {type Super <: self.Super}
+  override type This[X] <: DataType[_ >: D] {type This[_] <: self.This[_ >: X]}
 
   def isPolymorphic: Boolean
 
@@ -157,7 +158,7 @@ abstract class RecordType[D <: RecordDatum[D]](
     override final val isPolymorphic: Boolean = false
 ) extends DataType[D] {
 
-  final override type Super = RecordType[_ >: D]
+  final override type This[_] = RecordType[_ >: D]
 
   final type DeclaredFields = Seq[Field[D, _]]
 
@@ -253,7 +254,7 @@ class MapType[K <: Datum[K], M <: Var[M]](
     override final val isPolymorphic: Boolean = false
 ) extends DataType[MapDatum[K, M]] {
 
-  override type Super = MapType[K, _ >: M]
+  override type This[_] = MapType[K, _ >: M]
 
 }
 
@@ -265,7 +266,7 @@ class ListType[M <: Var[M]](
     override val isPolymorphic: Boolean = false
 ) extends DataType[ListDatum[M]] {
 
-  final override type Super = ListType[_ >: M]
+  final override type This[_] = ListType[_ >: M]
 
 }
 
@@ -281,7 +282,7 @@ class TaggedListType[M <: Var[M], N <: TypeMemberName, T <: Datum[T]](
 
 trait EnumType[D <: EnumDatum[D]] extends DataType[D] {
 
-  final override type Super = EnumType[D]
+  final override type This[_] = EnumType[D]
 
   def values: Seq[D]
 
@@ -294,7 +295,7 @@ trait EnumType[D <: EnumDatum[D]] extends DataType[D] {
 
 trait PrimitiveType[D <: PrimitiveDatum[D]] extends DataType[D] {self =>
 
-  override type Super >: this.type <: PrimitiveType[_ >: D] {type Super <: self.Super}
+  override type This[X] <: PrimitiveType[_ >: D] {type This[_] <: self.This[_ >: X]}
 
   type Native
 
@@ -319,7 +320,7 @@ abstract class StringType[D <: StringDatum[D]](
     override val isPolymorphic: Boolean = false
 ) extends PrimitiveType[D] {
 
-  final override type Super = StringType[_ >: D]
+  final override type This[_] = StringType[_ >: D]
 
   final override type Native = String
 
@@ -334,7 +335,7 @@ abstract class IntegerType[D <: IntegerDatum[D]](
     override val isPolymorphic: Boolean = false
 ) extends PrimitiveType[D] {
 
-  final override type Super = IntegerType[_ >: D]
+  final override type This[_] = IntegerType[_ >: D]
 
   final override type Native = Int
 
@@ -381,7 +382,7 @@ abstract class LongType[D <: LongDatum[D]](
     override val isPolymorphic: Boolean = false
 ) extends PrimitiveType[D] {
 
-  final override type Super = LongType[_ >: D]
+  final override type This[_] = LongType[_ >: D]
 
   final override type Native = Long
 
@@ -396,7 +397,7 @@ abstract class DoubleType[D <: DoubleDatum[D]](
     override val isPolymorphic: Boolean = false
 ) extends PrimitiveType[D] {
 
-  final override type Super = DoubleType[_ >: D]
+  final override type This[_] = DoubleType[_ >: D]
 
   final override type Native = Double
 
@@ -411,7 +412,7 @@ abstract class BooleanType[D <: BooleanDatum[D]](
     override val isPolymorphic: Boolean = false
 ) extends PrimitiveType[D] {
 
-  final override type Super = BooleanType[_ >: D]
+  final override type This[_] = BooleanType[_ >: D]
 
   final override type Native = Boolean
 
