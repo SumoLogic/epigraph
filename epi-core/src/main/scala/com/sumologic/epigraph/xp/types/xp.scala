@@ -10,9 +10,9 @@ import com.sumologic.epigraph.xp.data.builders._
 import com.sumologic.epigraph.xp.data.immutable._
 import com.sumologic.epigraph.xp.data.mutable._
 
-trait Type {
+trait Type {self =>
 
-  type Super >: Null <: Type
+  type Super >: this.type <: Type {type Super <: self.Super}
 
   def name: TypeNameApi
 
@@ -21,10 +21,10 @@ trait Type {
   def supertypes: Seq[Super] = cachedSupertypes
 
   private lazy val cachedSupertypes: Seq[Super] = declaredSupertypes.flatMap { st: Super =>
-    st +: st.supertypes.asInstanceOf[Seq[Super]] // TODO explain why cast is ok
+    st +: st.supertypes
   }.distinct
 
-  /** @return `true` if `sub` is a subtype of this [[Type]]*/
+  /** @return `true` if `sub` is a subtype of this [[Type]] */
   def isAssignableFrom(sub: Type): Boolean = sub == this || sub.supertypes.contains(this)
 
   override def toString: String = "«" + name.string + "»" //+ "(" + super.toString + ")"
@@ -32,9 +32,9 @@ trait Type {
 }
 
 
-trait MultiType[M <: Var[M]] extends Type {
+trait VarType[M <: Var[M]] extends Type {self =>
 
-  override type Super >: Null <: MultiType[_ >: M]
+  override type Super >: this.type <: VarType[_ >: M] {type Super <: self.Super}
 
   final type DeclaredTags = Seq[Tag[M, _, _]]
 
@@ -72,7 +72,7 @@ trait MultiType[M <: Var[M]] extends Type {
     private def mapOfType[K <: Datum[K]](keyType: DataType[K], polymorphic: Boolean): MapType[K, M] = new MapType[K, M](
       name.mapBy(keyType.name),
       keyType,
-      MultiType.this,
+      VarType.this,
       declaredSupertypes.map(_.mapBy(keyType)),
       polymorphic
     )
@@ -94,10 +94,10 @@ class FinalTag[M <: Var[M], N <: TypeMemberName, T <: Datum[T]](
 
 abstract class MultiVarType[M <: Var[M]](
     override final val name: QualifiedTypeName,
-    override final val declaredSupertypes: Seq[MultiType[_ >: M]] = Nil
-) extends MultiType[M] {
+    override final val declaredSupertypes: Seq[VarType[_ >: M]] = Nil
+) extends VarType[M] {
 
-  final override type Super = MultiType[_ >: M]
+  final override type Super = VarType[_ >: M]
 
   final type AbsTag[N <: TypeMemberName, T <: Datum[T]] = Tag[M, N, T]
 
@@ -124,7 +124,7 @@ abstract class MultiVarType[M <: Var[M]](
 }
 
 
-trait DefaultMultiType[D <: Datum[D]] extends MultiType[D] {this: DataType[D] =>
+trait DefaultVarType[D <: Datum[D]] extends VarType[D] {this: DataType[D] =>
 
   val default: Tag[D, TypeMemberName.default.type, D] = new Tag[D, TypeMemberName.default.type, D](
     TypeMemberName.default, this
@@ -135,9 +135,9 @@ trait DefaultMultiType[D <: Datum[D]] extends MultiType[D] {this: DataType[D] =>
 }
 
 
-trait DataType[D <: Datum[D]] extends Type with DefaultMultiType[D] {
+trait DataType[D <: Datum[D]] extends Type with DefaultVarType[D] {self =>
 
-  override type Super >: Null <: DataType[_ >: D]
+  override type Super >: this.type <: DataType[_ >: D] {type Super <: self.Super}
 
   def isPolymorphic: Boolean
 
@@ -178,14 +178,14 @@ abstract class RecordType[D <: RecordDatum[D]](
 
   final type VarField[M <: Var[M]] = Field[D, M]
 
-  protected def field[M <: Var[M]](name: FieldName, valueType: MultiType[M]): VarField[M] =
+  protected def field[M <: Var[M]](name: FieldName, valueType: VarType[M]): VarField[M] =
     new AbstractField[D, M](name, valueType)
 
   final type VarTagField[M <: Var[M], N <: TypeMemberName, T <: Datum[T]] = TaggedField[D, M, N, T]
 
   protected def field[M <: Var[M], N <: TypeMemberName, T <: Datum[T]](
       name: FieldName,
-      valueType: MultiType[M],
+      valueType: VarType[M],
       tag: Tag[_ >: M, N, T]
   ): VarTagField[M, N, T] = new TaggedField[D, M, N, T](name, valueType, tag)
 
@@ -200,7 +200,7 @@ trait Field[D <: RecordDatum[D], M <: Var[M]] {
 
   val name: FieldName
 
-  val valueType: MultiType[M]
+  val valueType: VarType[M]
 
   def as[N <: TypeMemberName, T <: Datum[T]](varTag: Tag[_ >: M, N, T]): TaggedField[D, M, N, T] = new TaggedField[D, M, N, T](
     name, valueType, varTag
@@ -211,7 +211,7 @@ trait Field[D <: RecordDatum[D], M <: Var[M]] {
 
 class AbstractField[D <: RecordDatum[D], M <: Var[M]](
     override val name: FieldName,
-    override val valueType: MultiType[M]
+    override val valueType: VarType[M]
 ) extends Field[D, M]
 
 
@@ -220,27 +220,27 @@ trait FinalField[D <: RecordDatum[D], M <: Var[M]] extends Field[D, M]
 
 class TaggedField[D <: RecordDatum[D], M <: Var[M], N <: TypeMemberName, T <: Datum[T]](
     override val name: FieldName,
-    override val valueType: MultiType[M],
+    override val valueType: VarType[M],
     val tag: Tag[_ >: M, N, T]
 ) extends Field[D, M]
 
 
 class FinalFieldImpl[D <: RecordDatum[D], M <: Var[M]](
     override val name: FieldName,
-    override val valueType: MultiType[M]
+    override val valueType: VarType[M]
 ) extends FinalField[D, M]
 
 
 class TaggedFinalField[D <: RecordDatum[D], M <: Var[M], N <: TypeMemberName, T <: Datum[T]](
     name: FieldName,
-    valueType: MultiType[M],
+    valueType: VarType[M],
     tag: Tag[_ >: M, N, T]
 ) extends TaggedField[D, M, N, T](name, valueType, tag) with FinalField[D, M]
 
 
 class FinTaggedFinalField[D <: RecordDatum[D], M <: Var[M], N <: TypeMemberName, T <: Datum[T]](
     name: FieldName,
-    valueType: MultiType[M],
+    valueType: VarType[M],
     override val tag: FinalTag[_ >: M, N, T]
 ) extends TaggedFinalField[D, M, N, T](name, valueType, tag)
 
@@ -248,7 +248,7 @@ class FinTaggedFinalField[D <: RecordDatum[D], M <: Var[M], N <: TypeMemberName,
 class MapType[K <: Datum[K], M <: Var[M]](
     override final val name: MapTypeNameApi,
     final val keyType: DataType[K],
-    final val valueType: MultiType[M],
+    final val valueType: VarType[M],
     override final val declaredSupertypes: Seq[MapType[K, _ >: M]] = Nil,
     override final val isPolymorphic: Boolean = false
 ) extends DataType[MapDatum[K, M]] {
@@ -260,7 +260,7 @@ class MapType[K <: Datum[K], M <: Var[M]](
 
 class ListType[M <: Var[M]](
     override val name: ListTypeNameApi,
-    val valueType: MultiType[M],
+    val valueType: VarType[M],
     override val declaredSupertypes: Seq[ListType[_ >: M]] = Nil,
     override val isPolymorphic: Boolean = false
 ) extends DataType[ListDatum[M]] {
@@ -272,7 +272,7 @@ class ListType[M <: Var[M]](
 
 class TaggedListType[M <: Var[M], N <: TypeMemberName, T <: Datum[T]](
     override final val name: QualifiedTypeName,
-    override final val valueType: MultiType[M],
+    override final val valueType: VarType[M],
     final val tag: Tag[M, N, T],
     override final val declaredSupertypes: Seq[ListType[_ >: M]] = Nil,
     override final val isPolymorphic: Boolean = false
@@ -292,9 +292,9 @@ trait EnumType[D <: EnumDatum[D]] extends DataType[D] {
 }
 
 
-trait PrimitiveType[D <: PrimitiveDatum[D]] extends DataType[D] {
+trait PrimitiveType[D <: PrimitiveDatum[D]] extends DataType[D] {self =>
 
-  override type Super >: Null <: PrimitiveType[_ >: D]
+  override type Super >: this.type <: PrimitiveType[_ >: D] {type Super <: self.Super}
 
   type Native
 

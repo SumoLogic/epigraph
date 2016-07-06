@@ -1,6 +1,6 @@
 /* Created by yegor on 6/17/16. */
 
-package com.sumologic.epigraph.schema.compiler
+package com.sumologic.epigraph.util
 
 private class JavaFunction[T, R](sf: T => R) extends java.util.function.Function[T, R] {
 
