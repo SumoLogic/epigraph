@@ -13,8 +13,6 @@ import scala.collection.mutable
 
 trait CType {
 
-  //type Same >: this.type <: CType { type Same <: this.Same}
-
   val name: CTypeName
 
   val kind: CTypeKind
@@ -24,37 +22,10 @@ trait CType {
 }
 
 
-trait CSupertyped[+T <: CSupertyped[T]] {this: T =>
-
-  def ctx: CContext
-
-  /** declared and injected parents */
-  def parents: Seq[T]
-
-  def supertypes: Seq[T]
-
-  def linearizedParents: Seq[T] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, cachedLinearizedParents)
-
-  private lazy val cachedLinearizedParents: Seq[T] = parents.foldLeft[Seq[T]](Nil) { (acc, p) =>
-    if (acc.contains(p) || parents.exists(_.supertypes.contains(p))) acc else p +: acc
-  }
-
-  def linearizedSupertypes: Seq[T] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, _linearizedSupertypes)
-
-  private lazy val _linearizedSupertypes: Seq[T] = parents.foldLeft[Seq[T]](Nil) { (acc, p) =>
-    p.linearized.filterNot(acc.contains) ++ acc
-  }
-
-  def linearized: Seq[T] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, _linearized)
-
-  private lazy val _linearized: Seq[T] = this +: linearizedSupertypes
-
-}
-
 abstract class CTypeDef protected(val csf: CSchemaFile, val psi: SchemaTypeDef, override val kind: CTypeKind)
-    (implicit val ctx: CContext) extends CType with CSupertyped[CTypeDef] {self =>
+    (implicit val ctx: CContext) extends CType {self =>
 
-  type Same <: CTypeDef {type Same <: self.Same}
+  type Same >: this.type <: CTypeDef {type Same <: self.Same}
 
   val name: CTypeFqn = new CTypeFqn(csf, csf.namespace.fqn, psi)
 
@@ -100,7 +71,7 @@ abstract class CTypeDef protected(val csf: CSchemaFile, val psi: SchemaTypeDef, 
             ctx.errors.add(
               new CError(
                 csf.filename, csf.position(psi.getQid), // TODO use injection source/position for injection failures
-                s"Type ${name.name} (of '${kind.keyword}' kind) is not compatible with $pSource supertype ${p.name.name} (of '${p.kind.keyword}' kind)"
+                s"Type ${name.name} (of '${kind.keyword}' kind) is not compatible with $pSource supertype ${p.name.name} (of `${p.kind.keyword}` kind)"
               )
             )
           }
@@ -141,6 +112,22 @@ abstract class CTypeDef protected(val csf: CSchemaFile, val psi: SchemaTypeDef, 
 //     p.linearize.filterNot(acc.contains).asInstanceOf[Seq[Same]] ++ acc
 //  }
 
+  def linearizedParents: Seq[Same] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, cachedLinearizedParents)
+
+  private lazy val cachedLinearizedParents: Seq[Same] = parents.foldLeft[Seq[Same]](Nil) { (acc, p) =>
+    if (acc.contains(p) || parents.exists(_.supertypes.contains(p))) acc else p +: acc
+  }
+
+  def linearizedSupertypes: Seq[Same] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, _linearizedSupertypes)
+
+  private lazy val _linearizedSupertypes: Seq[Same] = parents.foldLeft[Seq[Same]](Nil) { (acc, p) =>
+    p.linearized.filterNot(acc.contains) ++ acc
+  }
+
+  def linearized: Seq[Same] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, _linearized)
+
+  private lazy val _linearized: Seq[Same] = this.asInstanceOf[this.type] +: linearizedSupertypes
+
   override def isAssignableFrom(subtype: CType): Boolean = subtype match {
     case subDef: CTypeDef => kind == subtype.kind && subDef.linearized.contains(this)
     case _ => false
@@ -165,7 +152,7 @@ object CTypeDef {
 
 class CVarTypeDef(csf: CSchemaFile, override val psi: SchemaVarTypeDef)(implicit ctx: CContext) extends CTypeDef(
   csf, psi, CTypeKind.VARTYPE
-) with CSupertyped[CVarTypeDef] {
+) {
 
   override type Same = CVarTypeDef
 
@@ -214,7 +201,7 @@ class CVarTypeDef(csf: CSchemaFile, override val psi: SchemaVarTypeDef)(implicit
           case None =>
             ctx.errors.add(
               new CError(
-                csf.filename, csf.position(psi), s"Parent tags `${supertags.head.name}` of types ${
+                csf.filename, csf.position(psi.getQid), s"Multiple inherited tags `${supertags.head.name}` of types ${
                   supertags.map(_.typeRef.resolved.name.name).mkString("`", "`, `", "`")
                 } must be overridden with common subtype"
               )
@@ -241,7 +228,7 @@ class CTag(val csf: CSchemaFile, val psi: SchemaVarTagDecl)(implicit val ctx: CC
 
 class CRecordTypeDef(csf: CSchemaFile, override val psi: SchemaRecordTypeDef)(implicit ctx: CContext) extends CTypeDef(
   csf, psi, CTypeKind.RECORD
-) with CSupertyped[CRecordTypeDef] {
+) {
 
   override type Same = CRecordTypeDef
 
@@ -290,7 +277,7 @@ class CRecordTypeDef(csf: CSchemaFile, override val psi: SchemaRecordTypeDef)(im
           case None =>
             ctx.errors.add(
               new CError(
-                csf.filename, csf.position(psi), s"Parent fields `${superfields.head.name}` of types ${
+                csf.filename, csf.position(psi.getQid), s"Multiple inherited `${superfields.head.name}` fields of types ${
                   superfields.map(_.typeRef.resolved.name.name).mkString("`", "`, `", "`")
                 } must be overridden with common subtype"
               )
@@ -332,8 +319,6 @@ class CField(val csf: CSchemaFile, val psi: SchemaFieldDecl)(implicit val ctx: C
 
 trait CMapType extends CType {
 
-  //override type Same >: this.type <: CMapType
-
   val name: CTypeName
 
   val keyTypeRef: CTypeRef
@@ -373,8 +358,6 @@ class CMapTypeDef(csf: CSchemaFile, override val psi: SchemaMapTypeDef)(implicit
 
 
 trait CListType extends CType {
-
-  //override type Same >: this.type <: CListType
 
   val name: CTypeName
 
