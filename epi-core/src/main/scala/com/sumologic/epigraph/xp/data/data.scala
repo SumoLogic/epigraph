@@ -5,7 +5,6 @@ package com.sumologic.epigraph.xp.data
 import com.sumologic.epigraph.names.{EnumValueName, FieldName, TypeMemberName}
 import com.sumologic.epigraph.xp.types._
 
-import scala.language.existentials
 import scala.util.{Failure, Try}
 
 trait Var[+M <: Var[M]] {

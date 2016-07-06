@@ -126,7 +126,7 @@ abstract class CTypeDef protected(val csf: CSchemaFile, val psi: SchemaTypeDef, 
 
   def linearized: Seq[Same] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, _linearized)
 
-  private lazy val _linearized: Seq[Same] = this.asInstanceOf[this.type] +: linearizedSupertypes
+  private lazy val _linearized: Seq[Same] = this.asInstanceOf/*scalac bug*/ [this.type] +: linearizedSupertypes
 
   override def isAssignableFrom(subtype: CType): Boolean = subtype match {
     case subDef: CTypeDef => kind == subtype.kind && subDef.linearized.contains(this)
