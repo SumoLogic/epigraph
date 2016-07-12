@@ -37,7 +37,7 @@
 
     <dependency>
       <groupId>org.scalameta</groupId>
-      <artifactId>scalameta_${scala.version.major.minor}</artifactId>
+      <artifactId>trees_${scala.version.major.minor}</artifactId>
     </dependency>
 
     <dependency>

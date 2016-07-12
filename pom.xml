@@ -150,6 +150,11 @@
         <artifactId>scalameta_${scala.version.major.minor}</artifactId>
         <version>1.0.0</version>
       </dependency>
+      <dependency>
+        <groupId>org.scalameta</groupId>
+        <artifactId>trees_${scala.version.major.minor}</artifactId>
+        <version>1.0.0</version>
+      </dependency>
 
       <dependency>
         <groupId>org.scalatest</groupId>
