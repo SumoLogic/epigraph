@@ -7,8 +7,6 @@ import org.jetbrains.annotations.Nullable
 
 import scala.language.implicitConversions
 
-import ScalaGenUtils._
-
 object NamespaceGen extends ScalaGen {
 
   final override type From = CNamespace

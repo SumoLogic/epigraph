@@ -3,7 +3,6 @@
 package com.sumologic.epigraph.scala
 
 import com.sumologic.epigraph.schema.compiler._
-import ScalaGenUtils._
 
 object RecordGen extends ScalaGen {
 
