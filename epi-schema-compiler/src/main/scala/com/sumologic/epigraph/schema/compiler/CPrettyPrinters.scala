@@ -36,7 +36,7 @@ object CPrettyPrinters {
         t.filename, c, (c: Config) => Iterator( // TODO PPrint[CNamespace]
           implicitly[PPrint[CNamespace]].pprinter.render(t.namespace, c),
           collection("imports", t.imports, c), // TODO PPrint[CImport]
-          collection("typedefs", t.types, c),
+          collection("typedefs", t.typeDefs, c),
           collection("supplements", t.supplements, c) // TODO PPrint[CSupplement]
         )
       )

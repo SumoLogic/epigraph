@@ -27,6 +27,7 @@ abstract class CTypeDef protected(val csf: CSchemaFile, val psi: SchemaTypeDef, 
 
   type This >: this.type <: CTypeDef {type This <: self.This}
 
+  @scala.beans.BeanProperty
   val name: CTypeFqn = new CTypeFqn(csf, csf.namespace.fqn, psi)
 
   val isAbstract: Boolean = psi.getAbstract != null
@@ -112,11 +113,13 @@ abstract class CTypeDef protected(val csf: CSchemaFile, val psi: SchemaTypeDef, 
 //     p.linearize.filterNot(acc.contains).asInstanceOf[Seq[This]] ++ acc
 //  }
 
-  def linearizedParents: Seq[This] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, cachedLinearizedParents)
+  def linearizedParents: Seq[This] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, _linearizedParents)
 
-  private lazy val cachedLinearizedParents: Seq[This] = parents.foldLeft[Seq[This]](Nil) { (acc, p) =>
+  private lazy val _linearizedParents: Seq[This] = parents.foldLeft[Seq[This]](Nil) { (acc, p) =>
     if (acc.contains(p) || parents.exists(_.supertypes.contains(p))) acc else p +: acc
   }
+
+  def getLinearizedParentsReversed: java.lang.Iterable[This] = linearizedParents.reverse
 
   def linearizedSupertypes: Seq[This] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, _linearizedSupertypes)
 

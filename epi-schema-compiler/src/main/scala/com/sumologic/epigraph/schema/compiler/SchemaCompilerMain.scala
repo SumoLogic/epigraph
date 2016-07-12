@@ -70,7 +70,7 @@ object SchemaCompilerMain {
     handleErrors(3)
     ctx.phase(INHERIT_FROM_SUPERTYPES)
 
-    printSchemaFiles(cSchemaFiles)
+    //printSchemaFiles(cSchemaFiles)
     handleErrors(4)
   }
 
@@ -106,7 +106,7 @@ object SchemaCompilerMain {
 
   def registerDefinedTypes(cSchemaFiles: Seq[CSchemaFile]): Unit = {
     cSchemaFiles.par foreach { csf =>
-      csf.types foreach { ct =>
+      csf.typeDefs foreach { ct =>
         val old: CTypeDef = ctx.typeDefs.putIfAbsent(ct.name, ct)
         if (old != null) ctx.errors.add(
           new CError(

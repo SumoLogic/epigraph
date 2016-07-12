@@ -3,6 +3,7 @@
 package com.sumologic.epigraph.schema.compiler
 
 import java.util.concurrent.ConcurrentLinkedQueue
+import java.util.function.BiFunction
 
 import com.intellij.psi.PsiElement
 import com.sumologic.epigraph.schema.parser.Fqn
@@ -32,9 +33,11 @@ class CSchemaFile(val psi: SchemaFile)(implicit val ctx: CContext) {
   @Nullable
   private val defs: SchemaDefs = psi.getDefs
 
-  val types: Seq[CTypeDef] = if (defs == null) Nil else defs.getTypeDefWrapperList.map(CTypeDef.apply(this, _))
+  val typeDefs: Seq[CTypeDef] = if (defs == null) Nil else defs.getTypeDefWrapperList.map(CTypeDef.apply(this, _))
 
   val supplements: Seq[CSupplement] = if (defs == null) Nil else defs.getSupplementDefList.map(new CSupplement(this, _))
+
+  ctx.schemaFiles.put(filename, this)
 
   def qualifyLocalTypeRef(sftr: SchemaFqnTypeRef): CTypeFqn = {
     val alias = sftr.getFqn.getFqn.first
@@ -62,8 +65,29 @@ class CSchemaFile(val psi: SchemaFile)(implicit val ctx: CContext) {
 
 class CNamespace(val psi: SchemaNamespaceDecl)(implicit val ctx: CContext) {
 
+  @scala.beans.BeanProperty
   val fqn: Fqn = psi.getFqn2
+
+  @scala.beans.BeanProperty
+  val local: String = fqn.last()
+
+  @scala.beans.BeanProperty
+  @Nullable
+  val parent: String = if (fqn.size == 1) null else fqn.removeLastSegment().toString
+
   // TODO expose custom attributes
+
+  ctx.namespaces.merge(fqn.toString, this, CNamespace.MergeFunction)
+
+}
+
+object CNamespace {
+
+  val MergeFunction: BiFunction[CNamespace, CNamespace, CNamespace] =
+    new BiFunction[CNamespace, CNamespace, CNamespace] {
+      // TODO merge custom attrs etc. properly
+      override def apply(oldNs: CNamespace, newNs: CNamespace): CNamespace = newNs
+    }
 
 }
 
@@ -74,4 +98,3 @@ class CImport(@Nullable val psi: SchemaImportStatement)(implicit val ctx: CConte
   val alias: String = fqn.last
 
 }
-

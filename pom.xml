@@ -23,10 +23,12 @@
   </scm>
 
   <modules>
-    <module>epi-core</module>
     <module>epi-builtin-types</module>
+    <module>epi-core</module>
+    <module>epi-scala-codegen</module>
     <module>epi-schema</module>
     <module>epi-schema-compiler</module>
+    <!--<module>epigraph-maven-plugin</module>-->
     <module>schema-parser</module>
     <!--<module>schema-editor</module>-->
   </modules>
@@ -40,6 +42,7 @@
 
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
+    <maven.version>2.2.1</maven.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
@@ -62,7 +65,7 @@
   </dependencies>
 
   <dependencyManagement><!-- sets version for shared child dependencies -->
-    <dependencies>
+    <dependencies><!-- maintain alphabetical order; blank line between different group ids -->
 
       <dependency>
         <groupId>ch.qos.logback</groupId>
@@ -82,6 +85,11 @@
         <version>3.1.0</version>
       </dependency>
 
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>4.12</version>
+      </dependency>
 
       <dependency>
         <groupId>net.jcip</groupId>
@@ -90,15 +98,38 @@
       </dependency>
 
       <dependency>
-        <groupId>org.jetbrains</groupId>
-        <artifactId>annotations</artifactId>
-        <version>15.0</version>
+        <groupId>org.antlr</groupId>
+        <artifactId>ST4</artifactId>
+        <version>4.0.8</version>
       </dependency>
 
       <dependency>
-        <groupId>junit</groupId>
-        <artifactId>junit</artifactId>
-        <version>4.12</version>
+        <groupId>org.apache.maven</groupId>
+        <artifactId>maven-plugin-api</artifactId>
+        <version>${maven.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.maven</groupId>
+        <artifactId>maven-project</artifactId>
+        <version>${maven.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.maven.shared</groupId>
+        <artifactId>file-management</artifactId>
+        <version>1.2.1</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.velocity</groupId>
+        <artifactId>velocity</artifactId>
+        <version>1.7</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.jetbrains</groupId>
+        <artifactId>annotations</artifactId>
+        <version>15.0</version>
       </dependency>
 
       <dependency>
@@ -113,6 +144,12 @@
         <version>${scala.version}</version>
       </dependency>
       -->
+
+      <dependency>
+        <groupId>org.scalameta</groupId>
+        <artifactId>scalameta_${scala.version.major.minor}</artifactId>
+        <version>1.0.0</version>
+      </dependency>
 
       <dependency>
         <groupId>org.scalatest</groupId>
@@ -222,9 +259,9 @@
           <artifactId>scalatest-maven-plugin</artifactId>
           <version>1.0</version>
           <!--<configuration>-->
-            <!--<reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>-->
-            <!--<junitxml>.</junitxml>-->
-            <!--<filereports>WDF TestSuite.txt</filereports>-->
+          <!--<reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>-->
+          <!--<junitxml>.</junitxml>-->
+          <!--<filereports>WDF TestSuite.txt</filereports>-->
           <!--</configuration>-->
           <executions>
             <execution>

@@ -5,6 +5,7 @@ package com.sumologic.epigraph.schema.compiler
 import com.intellij.psi.PsiElement
 import com.sumologic.epigraph.schema.parser.Fqn
 import com.sumologic.epigraph.schema.parser.psi.{SchemaAnonList, SchemaAnonMap, SchemaFqnTypeRef, SchemaTypeDef}
+import org.jetbrains.annotations.Nullable
 
 import scala.collection.JavaConversions._
 
@@ -27,9 +28,16 @@ abstract class CTypeName protected(val csf: CSchemaFile, val name: String, val p
 }
 
 
-class CTypeFqn private(csf: CSchemaFile, fqn: Fqn, psi: PsiElement)(implicit ctx: CContext) extends CTypeName(
+class CTypeFqn private(csf: CSchemaFile, val fqn: Fqn, psi: PsiElement)(implicit ctx: CContext) extends CTypeName(
   csf, fqn.toString, psi
 ) {
+
+  @scala.beans.BeanProperty
+  val local: String = fqn.last()
+
+  @scala.beans.BeanProperty
+  @Nullable
+  val namespace: String = if (fqn.size == 1) null else fqn.removeLastSegment().toString
 
   def this(csf: CSchemaFile, parentNs: Fqn, lqn: SchemaFqnTypeRef)(implicit ctx: CContext) = this(
     csf, parentNs.append(lqn.getFqn.getFqn), lqn: PsiElement
