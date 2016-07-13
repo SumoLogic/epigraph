@@ -4,12 +4,9 @@ package com.sumologic.epigraph.scala
 
 import com.sumologic.epigraph.schema.compiler.{CPrimitiveTypeDef, CTypeKind}
 
-object PrimitiveGen extends ScalaGen {
+class PrimitiveGen(from: CPrimitiveTypeDef) extends TypeScalaGen[CPrimitiveTypeDef](from) {
 
-  override type From = CPrimitiveTypeDef
-
-  override def generate(t: CPrimitiveTypeDef): String =
-    s"""
+  protected override def generate: String = s"""
 /*
  * Standard header
  */
@@ -29,10 +26,7 @@ trait ${mutName(t)} extends${withParents(t, mutName)} ${baseName(t)} with Mut${K
 
 trait ${bldName(t)} extends ${baseName(t)} with ${Kind(t)}DatumBuilder[${baseName(t)}]
 
-object ${objName(t)} extends ${Kind(t)}Type[${baseName(t)}](
-  namespace \\ "${baseName(t)}",
-  Seq(${parentNames(t, objName)})
-) {
+object ${objName(t)} extends ${Kind(t)}Type[${baseName(t)}](namespace \\ "${baseName(t)}", Seq(${parentNames(t, objName)})) {
 
   override def createMutable: ${mutName(t)} = new ${mutImplName(t)}
 
@@ -47,11 +41,16 @@ object ${objName(t)} extends ${Kind(t)}Type[${baseName(t)}](
   }
 
 }
-  """.trim
+""".trim
 
-  def Kind(t: CPrimitiveTypeDef): String = Kinds.getOrElse(t.kind, throw new UnsupportedOperationException(t.kind.name))
+  private def Kind(t: CPrimitiveTypeDef): String =
+    PrimitiveGen.Kinds.getOrElse(t.kind, throw new UnsupportedOperationException(t.kind.name))
 
-  val Kinds: Map[CTypeKind, String] = Map(
+}
+
+object PrimitiveGen {
+
+  private val Kinds: Map[CTypeKind, String] = Map(
     CTypeKind.STRING -> "String",
     CTypeKind.INTEGER -> "Integer",
     CTypeKind.LONG -> "Long",

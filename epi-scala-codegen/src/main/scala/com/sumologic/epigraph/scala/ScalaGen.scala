@@ -2,6 +2,8 @@
 
 package com.sumologic.epigraph.scala
 
+import java.nio.file.Path
+
 import com.sumologic.epigraph.schema.compiler._
 import com.sumologic.epigraph.schema.parser.Fqn
 
@@ -9,12 +11,17 @@ import scala.collection.GenTraversableOnce
 import scala.collection.JavaConversions._
 import scala.meta.Term
 
-trait ScalaGen {
+abstract class ScalaGen[From >: Null <: AnyRef](protected val from: From) {
 
-  type From >: Null <: AnyRef
+  protected def relativeFilePath: Path
 
-  def generate(from: From): String
+  protected def generate: String
 
+  def writeUnder(sourcesRoot: Path): Unit = {
+    GenUtils.writeFile(sourcesRoot, relativeFilePath, generate)
+  }
+
+  // TODO protected access for the rest:
   def scalaName(name: String): String = Term.Name(name).toString
 
   def scalaFqn(fqn: Fqn): String = fqn.segments.map(scalaName).mkString(".")

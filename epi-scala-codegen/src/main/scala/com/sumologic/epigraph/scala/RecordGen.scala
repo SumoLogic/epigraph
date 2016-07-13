@@ -4,12 +4,9 @@ package com.sumologic.epigraph.scala
 
 import com.sumologic.epigraph.schema.compiler._
 
-object RecordGen extends ScalaGen {
+class RecordGen(from: CRecordTypeDef) extends TypeScalaGen[CRecordTypeDef](from) {
 
-  final override type From = CRecordTypeDef
-
-  def generate(t: CRecordTypeDef): String =
-    s"""
+  protected def generate: String = s"""
 /*
  * Standard header
  */
@@ -34,12 +31,10 @@ object ${objName(t)} extends RecordType[${baseName(t)}](
   Seq(${parentNames(t, objName)})
 ) {
   ${
-      t.effectiveFieldsMap.values.map { f =>
-        s"""
-  val ${fieldName(f)}: ${fieldType(f, t)} = ${fieldDef(f, t)}
-"""
-      }.mkString("")
-    }
+    t.effectiveFieldsMap.values.map { f => s"""
+  val ${fieldName(f)}: ${fieldType(f, t)} = ${fieldDef(f, t)}\n"""
+    }.mkString
+  }
   override def declaredFields: DeclaredFields = DeclaredFields(${t.declaredFields.map(fieldName).mkString(", ")})
 
   override def createMutable: ${mutName(t)} = new ${mutImplName(t)}
@@ -59,10 +54,13 @@ object ${objName(t)} extends RecordType[${baseName(t)}](
 
   private def fieldName(f: CField): String = scalaName(f.name)
 
-  private def fieldType(f: CField, ht: CTypeDef): String = s"DatumField[${ft(f, ht)}]" // TODO val _id: DatumField[FooId] = field("id", FooId)
+  // TODO val _id: DatumField[FooId] = field("id", FooId)
+  private def fieldType(f: CField, ht: CTypeDef): String = s"DatumField[${ft(f, ht)}]"
 
-  private def fieldDef(f: CField, ht: CTypeDef): String = s"""field("${f.name}", ${ft(f, ht)})""" // TODO val _id: DatumField[FooId] = field("id", FooId)
+  // TODO val _id: DatumField[FooId] = field("id", FooId)
+  private def fieldDef(f: CField, ht: CTypeDef): String = s"""field("${f.name}", ${ft(f, ht)})"""
 
-  private def ft(f: CField, ht: CTypeDef): String = s"${f.typeRef.resolved.name.name}" // TODO val _id: DatumField[FooId] = field("id", FooId)
+  // TODO val _id: DatumField[FooId] = field("id", FooId)
+  private def ft(f: CField, ht: CTypeDef): String = s"${f.typeRef.resolved.name.name}"
 
 }

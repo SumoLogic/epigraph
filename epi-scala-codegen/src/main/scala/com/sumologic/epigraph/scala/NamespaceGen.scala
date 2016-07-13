@@ -2,45 +2,40 @@
 
 package com.sumologic.epigraph.scala
 
+import java.nio.file.Path
+
 import com.sumologic.epigraph.schema.compiler.CNamespace
 import org.jetbrains.annotations.Nullable
 
 import scala.language.implicitConversions
 
-object NamespaceGen extends ScalaGen {
+class NamespaceGen(from: CNamespace) extends ScalaGen[CNamespace](from) {
 
-  final override type From = CNamespace
+  // TODO respect annotations changing namespace names for scala
 
-  def generate(ns: CNamespace): String =
-    s"""
+  protected override def relativeFilePath: Path =
+    GenUtils.fqnToPath(from.fqn).resolve("package.scala")
+
+  protected def generate: String = s"""
 /*
  * Standard header
  */
-${if (ns.parent ne null) s"package ${scalaFqn(ns.fqn.removeLastSegment())}\n" else ""}
+${if (from.parent ne null) s"package ${scalaFqn(from.fqn.removeLastSegment())}\n" else ""}
 import com.sumologic.epigraph.names
 
 /**
- * Package object for `${ns.fqn}` namespace.
+ * Package object for `${from.fqn}` namespace.
  * TODO: doc annotation here
  */
-package object ${scalaName(ns.local)} {
+package object ${scalaName(from.local)} {
 
   val namespace: names.QualifiedNamespaceName = new names.QualifiedNamespaceName(
-    ${nsOpt(ns.parent)}, names.LocalNamespaceName("${ns.local}")
-  )
-  val namespace: names.QualifiedNamespaceName = new names.QualifiedNamespaceName(
-    ${
-      ?(
-        ns.parent,
-        s"Some(${scalaFqn(ns.fqn.removeLastSegment())}.namespace)",
-        "None"
-      )
-    }, names.LocalNamespaceName("${ns.local}")
+    ${nsOpt(from.parent)}, names.LocalNamespaceName("${from.local}")
   )
 
 }
 """.trim
 
-  def nsOpt(@Nullable ns: String): String = if (ns == null) "None" else s"Some($ns.namespace)"
+  private def nsOpt(@Nullable ns: String): String = if (ns == null) "None" else s"Some($ns.namespace)"
 
 }

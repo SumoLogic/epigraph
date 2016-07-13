@@ -4,12 +4,9 @@ package com.sumologic.epigraph.scala
 
 import com.sumologic.epigraph.schema.compiler.CListTypeDef
 
-object ListGen extends ScalaGen {
+class ListGen(from: CListTypeDef) extends TypeScalaGen[CListTypeDef](from) {
 
-  override type From = CListTypeDef
-
-  override def generate(t: CListTypeDef): String =
-    s"""
+  protected override def generate: String = s"""
 /*
  * Standard header
  */
@@ -47,6 +44,6 @@ object ${objName(t)} extends ListType[${baseName(t)}](
   }
 
 }
-  """.trim
+""".trim
 
 }
