@@ -24,6 +24,11 @@ trait ImmDatum[+D <: Datum[D]] extends Datum[D] {this: D =>
 }
 
 
+trait ImmRecordDatum[+D <: RecordDatum[D]] extends RecordDatum[D] {this: D =>
+
+}
+
+
 trait ImmPrimitiveDatum[+D <: PrimitiveDatum[D]] extends ImmDatum[D] with PrimitiveDatum[D] {this: D =>}
 
 

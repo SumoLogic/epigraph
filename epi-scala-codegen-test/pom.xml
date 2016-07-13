@@ -9,14 +9,25 @@
     <version>0.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>epi-builtin-types</artifactId>
+  <artifactId>epi-scala-codegen-test</artifactId>
 
   <dependencies>
 
     <dependency>
       <groupId>${project.groupId}</groupId>
+      <artifactId>epi-builtin-types</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
       <artifactId>epi-core</artifactId>
       <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.scala-lang</groupId>
+      <artifactId>scala-reflect</artifactId>
+      <version>${scala.version}</version>
     </dependency>
 
   </dependencies>

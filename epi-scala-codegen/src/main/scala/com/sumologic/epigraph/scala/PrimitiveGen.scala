@@ -14,6 +14,7 @@ class PrimitiveGen(from: CPrimitiveTypeDef) extends TypeScalaGen[CPrimitiveTypeD
 package ${scalaFqn(t.name.fqn.removeLastSegment())}
 
 import com.sumologic.epigraph.xp.data._
+import com.sumologic.epigraph.xp.data.builders._
 import com.sumologic.epigraph.xp.data.immutable._
 import com.sumologic.epigraph.xp.data.mutable._
 import com.sumologic.epigraph.xp.types._

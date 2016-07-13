@@ -6,7 +6,6 @@ import com.sumologic.epigraph.schema.compiler.*;
 import scala.collection.JavaConversions;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -14,7 +13,7 @@ public class ScalaSchemaGenerator {
 
   private String[] args;
 
-  private final Path outputRoot = Paths.get("target", "generated-sources", "epigraph");
+  private final Path outputRoot = Paths.get("epi-scala-codegen-test/src/test/epigraph-scala");
 
   private ScalaSchemaGenerator(String... args) {
     this.args = args;
@@ -25,7 +24,7 @@ public class ScalaSchemaGenerator {
 
     CContext ctx = SchemaCompilerMain.ctx();
 
-    Path tmpRoot = GenUtils.rmrf(outputRoot.resolveSibling(outputRoot.getFileName().toString() + "~tmp"));
+    Path tmpRoot = GenUtils.rmrf(outputRoot.resolveSibling(outputRoot.getFileName().toString() + "~tmp"), outputRoot.getParent());
 
     for (CNamespace namespace : ctx.namespaces().values()) {
       new NamespaceGen(namespace).writeUnder(tmpRoot);
@@ -37,11 +36,11 @@ public class ScalaSchemaGenerator {
         switch (typeDef.kind()) {
 
           case VARTYPE:
+            //new VarTypeGen((CVarTypeDef) typeDef).writeUnder(tmpRoot);
             break;
 
           case RECORD:
             new RecordGen((CRecordTypeDef) typeDef).writeUnder(tmpRoot);
-
             break;
 
           case MAP:
@@ -68,7 +67,7 @@ public class ScalaSchemaGenerator {
       }
     }
 
-    GenUtils.move(tmpRoot, outputRoot); // move new root to final location
+    GenUtils.move(tmpRoot, outputRoot, outputRoot.getParent()); // move new root to final location
 
   }
 

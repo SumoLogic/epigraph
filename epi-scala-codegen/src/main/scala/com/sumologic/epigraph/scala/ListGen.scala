@@ -26,10 +26,7 @@ trait ${mutName(t)} extends${withParents(t, mutName)} ${baseName(t)} with MutLis
 
 trait ${bldName(t)} extends ${baseName(t)} with ListDatumBuilder[${baseName(t)}]
 
-object ${objName(t)} extends ListType[${baseName(t)}](
-  namespace \\ "${baseName(t)}",
-  Seq(${parentNames(t, objName)})
-) {
+object ${objName(t)} extends ListType[${baseName(t)}](namespace \\ "${baseName(t)}", Seq(${parentNames(t, objName)})) { // TODO add anonymous list to parents?
 
   override def createMutable: ${mutName(t)} = new ${mutImplName(t)}
 

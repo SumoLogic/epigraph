@@ -4,6 +4,7 @@
 [ -z "$IDEA_HOME" ] && IDEA_HOME="/Applications/IntelliJ IDEA CE.app/Contents"
 [ ! -d "$IDEA_HOME" ] && IDEA_HOME="/Applications/IntelliJ IDEA.app/Contents"
 [ ! -d "$IDEA_HOME" ] && IDEA_HOME="$HOME/idea"
+[ ! -d "$IDEA_HOME" ] && IDEA_HOME="$HOME/Applications/IntelliJ IDEA CE.app/Contents"
 
 [ ! -d "$IDEA_HOME" ] && echo "Can't detect IDEA location, pease set IDEA_HOME" && exit 1
 

@@ -10,12 +10,8 @@
   </parent>
 
   <artifactId>epi-core</artifactId>
-  <dependencies>
 
-    <dependency>
-      <groupId>org.scalatest</groupId>
-      <artifactId>scalatest_${scala.version.major.minor}</artifactId>
-    </dependency>
+  <dependencies>
 
     <dependency>
       <groupId>com.lihaoyi</groupId>
@@ -24,5 +20,18 @@
     </dependency>
 
   </dependencies>
+
+  <build>
+
+    <plugins>
+
+      <plugin>
+        <groupId>net.alchim31.maven</groupId>
+        <artifactId>scala-maven-plugin</artifactId>
+      </plugin>
+
+    </plugins>
+
+  </build>
 
 </project>

@@ -11,9 +11,8 @@
 
   <artifactId>epi-schema</artifactId>
 
-
-
   <dependencies>
+
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>epi-core</artifactId>
@@ -24,6 +23,20 @@
       <artifactId>epi-builtin-types</artifactId>
       <version>${project.version}</version>
     </dependency>
+
   </dependencies>
+
+  <build>
+
+    <plugins>
+
+      <plugin>
+        <groupId>net.alchim31.maven</groupId>
+        <artifactId>scala-maven-plugin</artifactId>
+      </plugin>
+
+    </plugins>
+
+  </build>
 
 </project>

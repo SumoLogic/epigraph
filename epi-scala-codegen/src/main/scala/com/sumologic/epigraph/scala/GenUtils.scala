@@ -38,23 +38,32 @@ object GenUtils {
     }
   }
 
-  def rmrf(path: Path): Path = {
+  def rmrf(path: Path, top: Path): Path = {
     //println(s"Removing $path")
-    if (!path.startsWith("target")) throw new IllegalArgumentException("too scary")
-    if (Files.isDirectory(path)) {
-      val stream = Files.newDirectoryStream(path)
-      try stream.foreach(rmrf) finally stream.close()
+    if (Files.exists(path)) {
+      checkBounds(path, top)
+      if (Files.isDirectory(path)) {
+        val stream = Files.newDirectoryStream(path)
+        try stream.foreach(rmrf(_, top)) finally stream.close()
+      }
+      Files.delete/*IfExists*/ (path)
     }
-    Files.deleteIfExists(path)
     path
   }
 
-  def move(source: Path, target: Path): Unit = {
+  def checkBounds(path: Path, top: Path): Unit = {
+    val rpath = path.toRealPath()
+    val rtop = top.toRealPath()
+    if (!(rpath.startsWith(rtop) && rpath.getNameCount > rtop.getNameCount))
+      throw new IllegalArgumentException(s"out of bounds! $path, $top")
+  }
+
+  def move(source: Path, target: Path, top: Path): Unit = {
     if (Files.exists(target)) {
-      val tmp = rmrf(target.resolveSibling(target.getFileName.toString + "~old"))
+      val tmp = rmrf(target.resolveSibling(target.getFileName.toString + "~old"), top)
       Files.move(target, tmp)
       Files.move(source, target)
-      rmrf(tmp)
+      rmrf(tmp, top)
     } else {
       Files.move(source, target)
     }

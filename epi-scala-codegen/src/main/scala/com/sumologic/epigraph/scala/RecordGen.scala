@@ -14,6 +14,7 @@ class RecordGen(from: CRecordTypeDef) extends TypeScalaGen[CRecordTypeDef](from)
 package ${scalaFqn(t.name.fqn.removeLastSegment())}
 
 import com.sumologic.epigraph.xp.data._
+import com.sumologic.epigraph.xp.data.builders._
 import com.sumologic.epigraph.xp.data.immutable._
 import com.sumologic.epigraph.xp.data.mutable._
 import com.sumologic.epigraph.xp.types._
@@ -26,10 +27,7 @@ trait ${mutName(t)} extends${withParents(t, mutName)} ${baseName(t)} with MutRec
 
 trait ${bldName(t)} extends ${baseName(t)} with RecordDatumBuilder[${baseName(t)}]
 
-object ${objName(t)} extends RecordType[${baseName(t)}](
-  namespace \\ "${baseName(t)}",
-  Seq(${parentNames(t, objName)})
-) {
+object ${objName(t)} extends RecordType[${baseName(t)}](namespace \\ "${baseName(t)}", Seq(${parentNames(t, objName)})) {
   ${
     t.effectiveFieldsMap.values.map { f => s"""
   val ${fieldName(f)}: ${fieldType(f, t)} = ${fieldDef(f, t)}\n"""
