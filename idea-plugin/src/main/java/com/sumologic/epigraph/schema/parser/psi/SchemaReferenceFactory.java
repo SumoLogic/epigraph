@@ -30,6 +30,8 @@ public class SchemaReferenceFactory {
   @Nullable
   public static SchemaFqnReferenceResolver getFqnReferenceResolver(@NotNull SchemaFqnSegment segment) {
     final SchemaFile file = (SchemaFile) segment.getContainingFile();
+    if (file == null) return null;
+
     final boolean isImport = PsiTreeUtil.getParentOfType(segment, SchemaImportStatement.class) != null;
 
     return getFqnReferenceResolver(file, segment.getFqn(), isImport);
