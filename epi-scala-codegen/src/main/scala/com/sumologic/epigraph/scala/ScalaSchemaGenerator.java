@@ -20,6 +20,7 @@ public class ScalaSchemaGenerator {
   }
 
   public void generate() throws IOException {
+
     SchemaCompilerMain.main(args);
 
     CContext ctx = SchemaCompilerMain.ctx();

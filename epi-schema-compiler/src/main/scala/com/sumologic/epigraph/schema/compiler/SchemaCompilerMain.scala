@@ -20,12 +20,12 @@ import scala.collection.{GenTraversableOnce, mutable}
 object SchemaCompilerMain {
 
   val paths: Seq[String] = Seq(
-    "epi-builtin-types/src/main/schema/epigraph/builtinTypes.esc",
-    "epi-schema/src/main/schema/epigraph/schema/names.esc",
-    "epi-schema/src/main/schema/epigraph/schema/types.esc",
-    "epi-schema/src/main/scala/epigraph/schema/Documented.esc",
-    "epi-schema/src/test/schema/example/abstract.esc"
-    , "epi-schema-compiler/src/test/schema/example/compilerExamples.esc"
+    "epi-builtin-types/src/main/epigraph/epigraph/builtinTypes.esc",
+    "epi-schema/src/main/epigraph/epigraph/schema/names.esc",
+    "epi-schema/src/main/epigraph/epigraph/schema/types.esc",
+    "epi-schema/src/main/epigraph/epigraph/schema/Documented.esc",
+    "epi-schema/src/test/epigraph/example/abstract.esc",
+    "epi-schema-compiler/src/test/epigraph/example/compilerExamples.esc"
     //"blah"
   )
 
