@@ -13,13 +13,10 @@
 
   <dependencies>
 
-    <dependency><!-- TODO move to local repository? -->
-      <groupId>local-jar</groupId>
+    <dependency>
+      <groupId>com.sumologic.epigraph.3rd-party</groupId>
       <artifactId>light-psi-all</artifactId>
-      <version>0.0</version>
-      <scope>system</scope>
-      <systemPath>${pom.basedir}/lib/light-psi-all.jar</systemPath>
-      <type>jar</type>
+      <version>0.0-SNAPSHOT</version>
     </dependency>
 
     <dependency>
@@ -43,6 +40,52 @@
   <build>
 
     <plugins>
+
+      <!-- doesn't work here, maybe in parent/dependency -->
+      <!-- for now run `schema-parser/lib/install-to-local-repo.sh` (once new light-psi-all.jar is produced) -->
+      <!--
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-install-plugin</artifactId>
+        <version>2.5.2</version>
+        <executions>
+          <execution>
+            <phase>initialize</phase>
+            <goals>
+              <goal>install-file</goal>
+            </goals>
+            <configuration>
+              <groupId>com.sumologic.epigraph.3rd-party</groupId>
+              <artifactId>light-psi-all</artifactId>
+              <version>0.0-SNAPSHOT</version>
+              <packaging>jar</packaging>
+              <file>${project.basedir}/lib/light-psi-all.jar</file>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      -->
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <artifactSet>
+                <includes>
+                  <include>com.sumologic.epigraph.3rd-party:light-psi-all</include>
+                </includes>
+              </artifactSet>
+              <createDependencyReducedPom>false</createDependencyReducedPom>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
 
       <plugin>
         <groupId>org.codehaus.mojo</groupId>

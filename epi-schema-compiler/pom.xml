@@ -27,6 +27,17 @@
       <groupId>${project.groupId}</groupId>
       <artifactId>schema-parser</artifactId>
       <version>${project.version}</version>
+      <exclusions>
+        <exclusion><!-- packaged with schema-parser artifact -->
+          <groupId>{project.groupId}.3rd-party</groupId>
+          <artifactId>light-psi-all</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>org.scala-lang</groupId>
+      <artifactId>scala-reflect</artifactId>
     </dependency>
 
     <dependency>

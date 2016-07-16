@@ -24,12 +24,6 @@
       <version>${project.version}</version>
     </dependency>
 
-    <dependency>
-      <groupId>org.scala-lang</groupId>
-      <artifactId>scala-reflect</artifactId>
-      <version>${scala.version}</version>
-    </dependency>
-
   </dependencies>
 
   <build>
@@ -39,6 +33,12 @@
       <plugin>
         <groupId>net.alchim31.maven</groupId>
         <artifactId>scala-maven-plugin</artifactId>
+      </plugin>
+
+      <plugin>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>epigraph-maven-plugin</artifactId>
+        <version>${project.version}</version>
       </plugin>
 
     </plugins>

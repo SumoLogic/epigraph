@@ -21,9 +21,7 @@ public class ScalaSchemaGenerator {
 
   public void generate() throws IOException {
 
-    SchemaCompilerMain.main(args);
-
-    CContext ctx = SchemaCompilerMain.ctx();
+    CContext ctx = SchemaCompiler.testcompile();
 
     Path tmpRoot = GenUtils.rmrf(outputRoot.resolveSibling(outputRoot.getFileName().toString() + "~tmp"), outputRoot.getParent());
 
