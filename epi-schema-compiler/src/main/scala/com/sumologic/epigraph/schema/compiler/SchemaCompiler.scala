@@ -23,6 +23,9 @@ class SchemaCompiler(
     private val dependencies: util.Collection[Source] = Collections.emptyList()
 ) {
 
+  sources.seq.foreach(s => println(s.name)) // FIXME remove
+  dependencies.seq.foreach(s => println(s.name)) // FIXME remove
+
   private val spd: SchemaParserDefinition = new SchemaParserDefinition
 
   implicit val ctx: CContext = new CContext
@@ -32,13 +35,14 @@ class SchemaCompiler(
     width = 120, colors = pprint.Colors(fansi.Color.Green, fansi.Color.LightBlue)
   )
 
+  @throws[SchemaCompilerException]("if compilation failed")
   def compile(): CContext = {
 
     import CPhase._
 
     ctx.phase(PARSE)
 
-    val schemaFiles: Seq[SchemaFile] = parseSourceFiles(sources)
+    val schemaFiles: Seq[SchemaFile] = parseSourceFiles(sources ++ dependencies)
 
     handleErrors(1)
     ctx.phase(RESOLVE_TYPEREFS)

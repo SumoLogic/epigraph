@@ -13,11 +13,11 @@
 
   <dependencies>
 
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>epi-builtin-types</artifactId>
-      <version>${project.version}</version>
-    </dependency>
+    <!--<dependency>-->
+      <!--<groupId>${project.groupId}</groupId>-->
+      <!--<artifactId>epi-builtin-types</artifactId>-->
+      <!--<version>${project.version}</version>-->
+    <!--</dependency>-->
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>epi-core</artifactId>
@@ -28,14 +28,20 @@
       <artifactId>schema-parser</artifactId>
       <version>${project.version}</version>
       <exclusions>
-        <exclusion><!-- packaged with schema-parser artifact -->
-          <groupId>{project.groupId}.3rd-party</groupId>
-          <artifactId>light-psi-all</artifactId>
-        </exclusion>
+        <!--<exclusion>&lt;!&ndash; packaged within schema-parser artifact &ndash;&gt;-->
+          <!--<groupId>com.sumologic.epigraph.3rd-party</groupId>-->
+          <!--<artifactId>light-psi-all</artifactId>-->
+        <!--</exclusion>-->
       </exclusions>
     </dependency>
 
     <dependency>
+      <groupId>com.lihaoyi</groupId>
+      <artifactId>pprint_${scala.version.major.minor}</artifactId>
+      <scope>compile</scope><!-- TODO - use in test scope only? -->
+    </dependency>
+
+    <dependency><!-- required by com.lihaoyi:pprint_* -->
       <groupId>org.scala-lang</groupId>
       <artifactId>scala-reflect</artifactId>
     </dependency>
@@ -43,12 +49,6 @@
     <dependency>
       <groupId>org.scalatest</groupId>
       <artifactId>scalatest_${scala.version.major.minor}</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>com.lihaoyi</groupId>
-      <artifactId>pprint_${scala.version.major.minor}</artifactId>
-      <scope>compile</scope><!-- TODO - use in test scope only? -->
     </dependency>
 
   </dependencies>

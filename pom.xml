@@ -6,10 +6,9 @@
   <artifactId>epigraph</artifactId>
   <version>0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <!--name>epigraph-Parent</name-->
   <description>epigraph project pom.xml file</description>
 
-  <url>https://github.com/SumoLogic/bean-counter</url>
+  <url>https://github.com/SumoLogic/epigraph</url>
 
   <organization>
     <name>Sumo Logic</name>
@@ -22,6 +21,20 @@
     <connection>git@github.com:SumoLogic/epigraph.git</connection>
   </scm>
 
+  <developers>
+    <developer>
+      <id>konstantin</id>
+      <name>Konstantin Sobolev</name>
+      <email>konstantin@sumologic.com</email>
+    </developer>
+
+    <developer>
+      <id>yegor</id>
+      <name>Yegor Borovikov</name>
+      <email>yegor@sumologic.com</email>
+    </developer>
+  </developers>
+
   <modules>
     <module>epi-builtin-types</module>
     <module>epi-core</module>
@@ -29,7 +42,7 @@
     <module>epi-scala-codegen-test</module>
     <module>epi-schema</module>
     <module>epi-schema-compiler</module>
-    <!--<module>epigraph-maven-plugin</module>-->
+    <module>epigraph-maven-plugin</module>
     <module>schema-parser</module>
   </modules>
 
@@ -45,20 +58,6 @@
     <maven.version>2.2.1</maven.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
-
-  <developers>
-    <developer>
-      <id>konstantin</id>
-      <name>Konstantin Sobolev</name>
-      <email>konstantin@sumologic.com</email>
-    </developer>
-
-    <developer>
-      <id>yegor</id>
-      <name>Yegor Borovikov</name>
-      <email>yegor@sumologic.com</email>
-    </developer>
-  </developers>
 
   <dependencies><!-- common dependencies for all modules -->
 
@@ -210,6 +209,13 @@
       <plugins>
 
         <plugin>
+          <groupId>com.sumologic.epigraph</groupId>
+          <artifactId>epigraph-maven-plugin</artifactId>
+          <version>${project.version}</version>
+          <extensions>true</extensions>
+        </plugin>
+
+        <plugin>
           <groupId>net.alchim31.maven</groupId>
           <artifactId>scala-maven-plugin</artifactId>
           <version>3.2.2</version>
@@ -252,14 +258,14 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-plugin-plugin</artifactId>
           <version>3.3</version>
-          <executions>
-            <execution>
-              <id>generated-helpmojo</id>
-              <goals>
-                <goal>helpmojo</goal>
-              </goals>
-            </execution>
-          </executions>
+          <!--<executions>-->
+            <!--<execution>-->
+              <!--<id>generated-helpmojo</id>-->
+              <!--<goals>-->
+                <!--<goal>helpmojo</goal>-->
+              <!--</goals>-->
+            <!--</execution>-->
+          <!--</executions>-->
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>

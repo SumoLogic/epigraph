@@ -1,0 +1,14 @@
+namespace com.example.users
+
+vartype User default id {
+  id: UserId
+  record: UserRecord
+}
+
+integer UserId
+
+record UserRecord {
+  id: UserId
+  firstName: String
+  lastName: String
+}

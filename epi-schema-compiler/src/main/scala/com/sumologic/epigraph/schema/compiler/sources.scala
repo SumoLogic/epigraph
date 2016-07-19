@@ -33,7 +33,7 @@ trait Source {
 
 class PathSource(private val path: Path) extends Source {
 
-  println(s"PathSource: $path")
+//  println(s"PathSource: $path")
 
   override def name: String = path.normalize.toString
 
@@ -43,7 +43,7 @@ class PathSource(private val path: Path) extends Source {
 
 class FileSource(private val file: File) extends Source {
 
-  println(s"FileSource: $file")
+//  println(s"FileSource: $file")
 
   override def name: String = file.getCanonicalPath
 
@@ -53,9 +53,9 @@ class FileSource(private val file: File) extends Source {
 
 class JarSource(private val jarFile: JarFile, private val jarEntry: JarEntry) extends Source {
 
-  println(s"JarSource: $jarFile")
-
   override val name: String = jarFile.getName + '/' + jarEntry.getName // TODO refine
+
+//  println(s"JarSource: $name")
 
   @throws[IOException]
   override def text: String = inputStreamToString(jarFile.getInputStream(jarEntry))
