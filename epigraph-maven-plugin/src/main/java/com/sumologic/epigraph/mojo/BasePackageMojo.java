@@ -1,4 +1,6 @@
-package com.sumologic.epigraph.mojo;/* Created by yegor on 7/18/16. */
+/* Created by yegor on 7/18/16. */
+
+package com.sumologic.epigraph.mojo;
 
 import org.apache.maven.archiver.MavenArchiveConfiguration;
 import org.apache.maven.archiver.MavenArchiver;

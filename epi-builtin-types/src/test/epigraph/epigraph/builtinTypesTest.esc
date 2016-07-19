@@ -1,0 +1,43 @@
+namespace epigraph
+
+record BuiltinTypesFullyQualifiedTest {
+  `string`: epigraph.String {
+    doc = "epigraph.String type should be defined"
+  }
+  `integer`: epigraph.Integer {
+    doc = "epigraph.Integer type should be defined"
+  }
+  `long`: epigraph.Long {
+    doc = "epigraph.Long type should be defined"
+  }
+  `double`: epigraph.Double {
+    doc = "epigraph.Double type should be defined"
+  }
+  `boolean`: epigraph.Boolean {
+    doc = "epigraph.Boolean type should be defined"
+  }
+}
+
+record BuiltinTypesImplicitImportTest {
+  `string`: String {
+    doc = "String type should be implicitly imported"
+  }
+  `integer`: Integer {
+    doc = "Integer type should be implicitly imported"
+  }
+  `long`: Long {
+    doc = "Long type should be implicitly imported"
+  }
+  `double`: Double {
+    doc = "Double type should be implicitly imported"
+  }
+  `boolean`: Boolean {
+    doc = "Boolean type should be implicitly imported"
+  }
+}
+
+string StringTest extends String
+integer IntegerTest extends Integer
+long LongTest extends Long
+double DoubleTest extends Double
+boolean BooleanTest extends Boolean

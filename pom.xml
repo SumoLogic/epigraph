@@ -258,14 +258,18 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-plugin-plugin</artifactId>
           <version>3.3</version>
-          <!--<executions>-->
+          <executions>
             <!--<execution>-->
-              <!--<id>generated-helpmojo</id>-->
-              <!--<goals>-->
-                <!--<goal>helpmojo</goal>-->
-              <!--</goals>-->
+              <!--<id>default-descriptor</id>-->
+              <!--<phase>process-classes</phase>-->
             <!--</execution>-->
-          <!--</executions>-->
+            <execution>
+              <id>generated-helpmojo</id>
+              <goals>
+                <goal>helpmojo</goal>
+              </goals>
+            </execution>
+          </executions>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
