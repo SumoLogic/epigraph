@@ -59,12 +59,17 @@ public abstract class BaseCompileMojo extends AbstractMojo {
   public void execute() throws MojoExecutionException, MojoFailureException {
     Collection<Source> sources = getSources(getSourceDirectory());
     Collection<Source> dependencySources = getDependencySources();
+//    addImpliedDependencies(dependencySources);
+
     compileFiles(outputDirectory, sources, dependencySources);
     // TODO? project.addCompileSourceRoot(outputDirectory.getAbsolutePath());
     // TODO? project.addTestCompileSourceRoot(testOutputDirectory.getAbsolutePath());
-    //  Collection<Source> testDependencies = merge(mainSources, mainDependencySources, testDependencySources);
-
   }
+
+//  private void addImpliedDependencies(Collection<Source> dependencySources) {
+//    Source builtinTypes = new ResourceSource("epigraph/builtinTypes.esc");
+//    dependencySources.add(builtinTypes);
+//  }
 
   private Collection<Source> getSources(File sourceDirectory) {
     return getDirectorySources(sourceDirectory);

@@ -9,6 +9,9 @@
 
 ### Low
 - Wrong parent type not checked in `supplement`
+- namespace on new file not inferred from directory structure (when under src/main|test/epigraph/...)
+- namespace auto-completion not working (when under src/main|test/epigraph/...)
+- would be nice to teach idea to understand src/main|test/epigraph as sources|testsources root
 
 ----
 ## Done

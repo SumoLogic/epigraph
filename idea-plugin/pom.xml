@@ -3,13 +3,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
+  <artifactId><!--epigraph- -->idea-plugin</artifactId>
+
   <parent>
     <groupId>com.sumologic.epigraph</groupId>
     <artifactId>epigraph</artifactId>
     <version>0.0-SNAPSHOT</version>
   </parent>
-
-  <artifactId>schema-editor</artifactId>
 
   <properties>
 
