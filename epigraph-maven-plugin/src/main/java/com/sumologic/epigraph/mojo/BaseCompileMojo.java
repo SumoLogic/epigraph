@@ -15,10 +15,8 @@ import scala.Option;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.net.URL;
+import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.stream.Stream;
@@ -59,17 +57,19 @@ public abstract class BaseCompileMojo extends AbstractMojo {
   public void execute() throws MojoExecutionException, MojoFailureException {
     Collection<Source> sources = getSources(getSourceDirectory());
     Collection<Source> dependencySources = getDependencySources();
-//    addImpliedDependencies(dependencySources);
+    addImpliedDependencies(dependencySources);
 
     compileFiles(outputDirectory, sources, dependencySources);
     // TODO? project.addCompileSourceRoot(outputDirectory.getAbsolutePath());
     // TODO? project.addTestCompileSourceRoot(testOutputDirectory.getAbsolutePath());
   }
 
-//  private void addImpliedDependencies(Collection<Source> dependencySources) {
-//    Source builtinTypes = new ResourceSource("epigraph/builtinTypes.esc");
-//    dependencySources.add(builtinTypes);
-//  }
+  private void addImpliedDependencies(Collection<Source> dependencySources){
+    if (getClass().getResource("/epigraph/builtinTypes.esc") != null) {
+      Source builtinTypes = new ResourceSource("/epigraph/builtinTypes.esc"); // TODO use url.openStream?
+      dependencySources.add(builtinTypes);
+    }
+  }
 
   private Collection<Source> getSources(File sourceDirectory) {
     return getDirectorySources(sourceDirectory);

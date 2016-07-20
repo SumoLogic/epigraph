@@ -9,7 +9,7 @@
       <configuration>
         <extension>jar</extension>
         <type>epigraph-schema</type>
-        <language>epigraph</language>
+        <language><!--epigraph-->java</language>
         <addedToClasspath>true</addedToClasspath>
       </configuration>
     </component>
@@ -24,7 +24,7 @@
         <extension>jar</extension>
         <type>epigraph-test-schema</type>
         <packaging>epigraph-schema</packaging>
-        <language>epigraph</language>
+        <language><!--epigraph-->java</language>
         <addedToClasspath>true</addedToClasspath>
       </configuration>
     </component>

@@ -73,6 +73,6 @@ class ResourceSource(private val resourcePath: String) extends Source {
   println(getClass.getSimpleName + ": '" + name + "'")
 
   @throws[IOException]
-  override def text: String = inputStreamToString(getClass.getResourceAsStream(resourcePath))
+  override def text: String = inputStreamToString(getClass.getResourceAsStream(resourcePath)) // FIXME NPE
 
 }
