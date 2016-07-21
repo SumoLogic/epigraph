@@ -7,6 +7,8 @@ import java.nio.file.Path
 import com.sumologic.epigraph.schema.compiler.CNamespace
 import org.jetbrains.annotations.Nullable
 
+import NewlineStringInterpolator.NewlineHelper
+
 import scala.language.implicitConversions
 
 class NamespaceGen(from: CNamespace) extends ScalaGen[CNamespace](from) {
@@ -16,11 +18,11 @@ class NamespaceGen(from: CNamespace) extends ScalaGen[CNamespace](from) {
   protected override def relativeFilePath: Path =
     GenUtils.fqnToPath(from.fqn).resolve("package.scala")
 
-  protected def generate: String = s"""
+  protected def generate: String = sn"""\
 /*
  * Standard header
  */
-${if (from.parent ne null) s"package ${scalaFqn(from.fqn.removeLastSegment())}\n" else ""}
+${if (from.parent ne null) s"\npackage ${scalaFqn(from.fqn.removeLastSegment())}\n" else ""}
 import com.sumologic.epigraph.names
 
 /**
@@ -34,7 +36,7 @@ package object ${scalaName(from.local)} {
   )
 
 }
-""".trim
+"""
 
   private def nsOpt(@Nullable ns: String): String = if (ns == null) "None" else s"Some($ns.namespace)"
 
