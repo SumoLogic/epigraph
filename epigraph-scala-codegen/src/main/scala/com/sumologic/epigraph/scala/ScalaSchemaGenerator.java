@@ -5,23 +5,27 @@ package com.sumologic.epigraph.scala;
 import com.sumologic.epigraph.schema.compiler.*;
 import scala.collection.JavaConversions;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class ScalaSchemaGenerator {
 
-  private String[] args;
+  private final CContext ctx;
 
-  private final Path outputRoot = Paths.get("epigraph-scala-codegen-test/src/test/epigraph-scala");
+  private final Path outputRoot;
 
-  private ScalaSchemaGenerator(String... args) {
-    this.args = args;
+  public ScalaSchemaGenerator(CContext ctx, Path outputRoot) {
+    this.ctx = ctx;
+    this.outputRoot = outputRoot;
+  }
+
+  public ScalaSchemaGenerator(CContext ctx, File outputRoot) {
+    this(ctx, outputRoot.toPath());
   }
 
   public void generate() throws IOException {
-
-    CContext ctx = SchemaCompiler.testcompile();
 
     Path tmpRoot = GenUtils.rmrf(outputRoot.resolveSibling(outputRoot.getFileName().toString() + "~tmp"), outputRoot.getParent());
 
@@ -71,7 +75,10 @@ public class ScalaSchemaGenerator {
   }
 
   public static void main(String... args) throws IOException {
-    new ScalaSchemaGenerator(args).generate();
+    new ScalaSchemaGenerator(
+        SchemaCompiler.testcompile(),
+        Paths.get("epigraph-scala-codegen-test/src/test/epigraph-scala")
+    ).generate();
   }
 
 
