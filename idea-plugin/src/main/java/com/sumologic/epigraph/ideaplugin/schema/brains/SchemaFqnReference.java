@@ -144,7 +144,7 @@ public class SchemaFqnReference extends PsiReferenceBase<SchemaFqnSegment> imple
 
     List<Fqn> namespaceFqns = namespaceVariants.stream()
         .map(SchemaNamespaceDecl::getFqn2)
-        .filter(fqn -> !fqn.equals(currentNamespace)) // not interested in current namespace
+        .filter(fqn -> fqn != null && !fqn.equals(currentNamespace)) // not interested in current namespace
         .collect(Collectors.toList());
 
     Set<String> namespaceElements = Fqn.getMatchingWithPrefixRemoved(namespaceFqns, inputPrefix)
