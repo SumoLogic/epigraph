@@ -113,12 +113,14 @@ abstract class CTypeDef protected(val csf: CSchemaFile, val psi: SchemaTypeDef, 
 //     p.linearize.filterNot(acc.contains).asInstanceOf[Seq[This]] ++ acc
 //  }
 
+  /** Immediate parents of this type in order of decreasing priority */
   def linearizedParents: Seq[This] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, _linearizedParents)
 
   private lazy val _linearizedParents: Seq[This] = parents.foldLeft[Seq[This]](Nil) { (acc, p) =>
     if (acc.contains(p) || parents.exists(_.supertypes.contains(p))) acc else p +: acc
   }
 
+  /** Immediate parents of this type in order of increasing priority */
   def getLinearizedParentsReversed: java.lang.Iterable[This] = linearizedParents.reverse
 
   def linearizedSupertypes: Seq[This] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, _linearizedSupertypes)
