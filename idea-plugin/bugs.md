@@ -26,6 +26,7 @@
         vartype Foo default `string` {
           string: String
         }
+- Auto-completion (ctrl-space) after a namespace that didn't do anything marks file as dirty
 
 ### Low
 - Goto type: namespaces in the drop-down list should be in the parens
