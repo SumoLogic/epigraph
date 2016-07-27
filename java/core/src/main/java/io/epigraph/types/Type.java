@@ -2,6 +2,8 @@
 
 package io.epigraph.types;
 
+import io.epigraph.data.builders.DataBuilder;
+import io.epigraph.data.builders.DataBuilder.ValueBuilder;
 import io.epigraph.data.mutable.MutData;
 import io.epigraph.data.mutable.MutData.MutValue;
 import io.epigraph.names.TypeName;
@@ -30,16 +32,12 @@ public abstract class Type {
       throw new IllegalArgumentException();
   }
 
-  public TypeName name() {
-    return name;
-  }
+  public @NotNull TypeName name() { return name; }
 
   /**
    * @return immediate (i.e. not transitive) supertypes of this type, in the order of increasing priority
    */
-  public List<? extends Type> immediateSupertypes() {
-    return immediateSupertypes;
-  }
+  public @NotNull List<? extends Type> immediateSupertypes() { return immediateSupertypes; }
 
   private @Nullable Collection<? extends Type> supertypes = null;
 
@@ -60,19 +58,13 @@ public abstract class Type {
     return supertypes;
   }
 
-  public boolean doesExtend(Type type) {
-    return this.equals(type) || supertypes().contains(type);
-  }
+  public boolean doesExtend(Type type) { return this.equals(type) || supertypes().contains(type); }
 
-  public boolean isAssignableFrom(Type type) {
-    return type.doesExtend(this);
-  }
+  public boolean isAssignableFrom(Type type) { return type.doesExtend(this); }
 
   private final LazyInitializer<AnonListType> listOf = new LazyInitializer<>(() -> new AnonListType(false, this));
 
-  public AnonListType listOf() {
-    return listOf.get();
-  }
+  public AnonListType listOf() { return listOf.get(); }
 
   @NotNull
   public abstract List<Tag> immediateTags();
@@ -80,9 +72,9 @@ public abstract class Type {
   @NotNull
   public abstract List<Tag> tags(); // FIXME do we need this method?
 
-  public @NotNull MutData createMutableData() {
-    return new MutData(this);
-  }
+  public @NotNull MutData createMutableData() { return new MutData(this); }
+
+  public @NotNull DataBuilder createDataBuilder() { return new DataBuilder(this); }
 
   public static class Tag {
 
@@ -95,16 +87,16 @@ public abstract class Type {
       this.type = type;
     }
 
-    public @NotNull MutValue createMutable() {
-      return new MutValue(this.type);
-    }
+    public @NotNull MutValue createMutable() { return new MutValue(this.type); } // TODO createMutValue()? createMutableValue()?
+
+    public @NotNull ValueBuilder createBuilder() { return new ValueBuilder(this.type); } // TODO createValueBuilder()?
 
   }
 
-  public static interface Tagged {
-
-    public Tag tag();
-
-  }
+//  public static interface Tagged { // TODO remove?
+//
+//    public Tag tag();
+//
+//  }
 
 }

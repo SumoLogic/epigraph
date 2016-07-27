@@ -2,7 +2,6 @@
 
 package io.epigraph.util;
 
-import io.epigraph.data.Data;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -43,12 +42,10 @@ public interface Unmodifiable {
   }
 
   @NotNull
-  public static <K, V> Supplier<HashMap<K, V>> hashMap(int size) {
+  public static <K, V> Supplier<HashMap<K, V>> hashMap(int size) { // TODO hashMapSupplier?
     return () -> new HashMap<>(hashMapCapacity(size), 0.75f);
   }
 
-  public static int hashMapCapacity(int size) {
-    return (size * 4 + 2) / 3;
-  }
+  public static int hashMapCapacity(int size) { return (size * 4 + 2) / 3; }
 
 }

@@ -11,7 +11,7 @@ import java.util.List;
 
 public abstract class DatumType extends Type {
 
-  public final @NotNull Tag self = new Tag("self", this);
+  public final @NotNull Tag self = new Tag("self", this); // TODO rename to tag?
 
   public final boolean polymorphic;
 

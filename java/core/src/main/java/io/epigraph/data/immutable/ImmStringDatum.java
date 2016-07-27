@@ -6,20 +6,32 @@ import io.epigraph.data.StringDatum;
 import io.epigraph.types.StringType;
 import org.jetbrains.annotations.NotNull;
 
-public class ImmStringDatum extends ImmPrimitiveDatum implements StringDatum {
+public interface ImmStringDatum extends ImmPrimitiveDatum, StringDatum {
 
-  protected ImmStringDatum(StringType type) {
-    super(type);
-  }
+  public static class Impl extends ImmPrimitiveDatum.Impl implements ImmStringDatum {
 
-  @Override
-  public @NotNull StringType type() {
-    return (StringType) super.type();
-  }
+    private final @NotNull String val;
 
-  @Override
-  public @NotNull ImmStringDatum toImmutable() {
-    return this;
+    public Impl(StringType type, @NotNull String val) {
+      super(type);
+      this.val = val;
+    }
+
+    @Override
+    public @NotNull StringType type() {
+      return (StringType) super.type();
+    }
+
+    @Override
+    public @NotNull String getVal() {
+      return val;
+    }
+
+    @Override
+    public @NotNull ImmStringDatum toImmutable() {
+      return this;
+    }
+
   }
 
 }

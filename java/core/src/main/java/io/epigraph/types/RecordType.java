@@ -2,6 +2,8 @@
 
 package io.epigraph.types;
 
+import io.epigraph.data.builders.RecordDatumBuilder;
+import io.epigraph.data.mutable.MutRecordDatum;
 import io.epigraph.names.QualifiedTypeName;
 import io.epigraph.util.Unmodifiable;
 import org.jetbrains.annotations.NotNull;
@@ -14,31 +16,27 @@ import java.util.List;
 
 public abstract class RecordType extends DatumType {
 
+  @Nullable
+  private Collection<? extends Field> fields = null;
+
   public RecordType(QualifiedTypeName name, List<RecordType> immediateSupertypes, boolean polymorphic) {
     super(name, immediateSupertypes, polymorphic);
   }
 
   @Override
-  public QualifiedTypeName name() {
-    return (QualifiedTypeName) super.name();
+  public @NotNull QualifiedTypeName name() { return (QualifiedTypeName) super.name(); }
+
+  @Override
+  @SuppressWarnings("unchecked")
+  public @NotNull List<? extends RecordType> immediateSupertypes() {
+    return (List<? extends RecordType>) super.immediateSupertypes();
   }
 
   @Override
   @SuppressWarnings("unchecked")
-  public @NotNull List<RecordType> immediateSupertypes() {
-    return (List<RecordType>) super.immediateSupertypes();
-  }
+  public @NotNull Collection<RecordType> supertypes() { return (Collection<RecordType>) super.supertypes(); }
 
-  @Override
-  @SuppressWarnings("unchecked")
-  public @NotNull Collection<RecordType> supertypes() {
-    return (Collection<RecordType>) super.supertypes();
-  }
-
-  public abstract List<Field> immediateFields();
-
-  @Nullable
-  private Collection<? extends Field> fields = null;
+  public abstract @NotNull List<@NotNull Field> immediateFields(); // TODO could be protected but used by pretty-printer
 
   public Collection<? extends Field> fields() {
     // TODO produce better ordering of the fields (i.e. supertypes first, in the order of supertypes and their fields declaration)
@@ -54,6 +52,12 @@ public abstract class RecordType extends DatumType {
     }
     return fields;
   }
+
+  // TODO public abstract @NotNull ImmRecordDatum immutable(@NotNull RecordDatum)?
+
+  public abstract @NotNull RecordDatumBuilder builder(); // TODO createBuilder()?
+
+  public abstract @NotNull MutRecordDatum mutable(); // TODO createMutable()?
 
 
   public static class Field {

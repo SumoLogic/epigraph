@@ -7,8 +7,7 @@ import org.jetbrains.annotations.NotNull;
 
 public interface PrimitiveDatum extends Datum {
 
-  @NotNull
   @Override
-  public PrimitiveType type();
+  public @NotNull PrimitiveType type();
 
 }

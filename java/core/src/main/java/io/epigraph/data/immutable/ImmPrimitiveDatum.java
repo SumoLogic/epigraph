@@ -6,17 +6,21 @@ import io.epigraph.data.PrimitiveDatum;
 import io.epigraph.types.PrimitiveType;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class ImmPrimitiveDatum extends ImmDatum implements PrimitiveDatum {
+public interface ImmPrimitiveDatum extends ImmDatum, PrimitiveDatum {
 
-  protected ImmPrimitiveDatum(PrimitiveType type) {
-    super(type);
+  public static abstract class Impl extends ImmDatum.Impl implements ImmPrimitiveDatum {
+
+    protected Impl(PrimitiveType type) {
+      super(type);
+    }
+
+    @Override
+    public @NotNull PrimitiveType type() {
+      return (PrimitiveType) super.type();
+    }
+
+    @Override
+    public abstract @NotNull ImmPrimitiveDatum toImmutable();
   }
 
-  @Override
-  public @NotNull PrimitiveType type() {
-    return (PrimitiveType) super.type();
-  }
-
-  @Override
-  public abstract @NotNull ImmPrimitiveDatum toImmutable();
 }

@@ -4,6 +4,7 @@ package io.epigraph.data.mutable;
 
 import io.epigraph.data.Data;
 import io.epigraph.data.Datum;
+import io.epigraph.data.builders.DataBuilder;
 import io.epigraph.data.immutable.ImmData;
 import io.epigraph.data.immutable.ImmData.ImmValue;
 import io.epigraph.errors.Error;
@@ -52,11 +53,7 @@ public class MutData implements Data { // TODO MutValues?
     return values.get(tag.name);
   }
 
-//  public @Nullable MutValue getMutValue(Type.Tag tag) {
-//    return Value.toMutable(getValue(tag));
-//  }
-
-  // TODO require MutValue? auto-convert? convert on write?
+  // TODO accept Value and auto-convert? convert on write (NO - someone might hold the reference already)?
   public MutData setValue(Type.Tag tag, @Nullable MutValue value) {
     // TODO check tag compatibility with this.type
     if (value == null) {
@@ -141,12 +138,20 @@ public class MutData implements Data { // TODO MutValues?
       return ImmValue.from(this);
     }
 
+    // TODO take different type as parameter?
+    public static @NotNull MutValue from(@NotNull Value value) {
+      if (value instanceof MutValue) return (MutValue) value;
+      MutValue mutValue = new MutValue(value.type());
+      Error error = value.getError();
+      // TODO private constructor with relaxed datum checks?
+      return error == null ? mutValue.setDatum(value.getDatum()) : mutValue.setError(error);
+    }
+
+  }
+
 //    @Override
 //    public @NotNull MutValue toMutable() {
 //      return this;
 //    }
-
-  }
-
 
 }

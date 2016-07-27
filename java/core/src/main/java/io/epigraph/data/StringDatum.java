@@ -8,9 +8,10 @@ import org.jetbrains.annotations.NotNull;
 
 public interface StringDatum extends PrimitiveDatum {
 
-  @NotNull
   @Override
-  StringType type();
+  public @NotNull StringType type();
+
+  public @NotNull String getVal();
 
   @Override
   public @NotNull ImmStringDatum toImmutable();

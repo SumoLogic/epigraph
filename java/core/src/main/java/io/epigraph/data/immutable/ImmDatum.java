@@ -6,17 +6,21 @@ import io.epigraph.data.Datum;
 import io.epigraph.types.DatumType;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class ImmDatum implements Datum {
+public interface ImmDatum extends Datum {
 
-  private final DatumType type;
+  public static abstract class Impl implements ImmDatum {
 
-  protected ImmDatum(DatumType type) {
-    this.type = type;
-  }
+    private final DatumType type;
 
-  @Override
-  public @NotNull DatumType type() {
-    return type;
+    protected Impl(DatumType type) {
+      this.type = type;
+    }
+
+    @Override
+    public @NotNull DatumType type() {
+      return type;
+    }
+
   }
 
 }

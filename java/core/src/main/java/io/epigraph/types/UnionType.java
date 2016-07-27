@@ -11,18 +11,20 @@ import java.util.List;
 
 public abstract class UnionType extends Type {
 
-  public UnionType(QualifiedTypeName name, List<UnionType> immediateSupertypes) {
+  public UnionType(@NotNull QualifiedTypeName name, @NotNull List<UnionType> immediateSupertypes) {
     super(name, immediateSupertypes);
   }
 
   @Override
-  public List<UnionType> immediateSupertypes() {
-    return (List<UnionType>) super.immediateSupertypes();
+  @SuppressWarnings("unchecked")
+  public @NotNull List<? extends UnionType> immediateSupertypes() {
+    return (List<? extends UnionType>) super.immediateSupertypes();
   }
 
   @Override
-  public Collection<UnionType> supertypes() {
-    return (Collection<UnionType>) super.supertypes();
+  @SuppressWarnings("unchecked")
+  public @NotNull Collection<? extends UnionType> supertypes() {
+    return (Collection<? extends UnionType>) super.supertypes();
   }
 
 

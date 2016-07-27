@@ -3,6 +3,7 @@
 package io.epigraph.types;
 
 import io.epigraph.names.QualifiedTypeName;
+import io.epigraph.names.TypeName;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -17,6 +18,9 @@ public class PrimitiveType extends DatumType {
   ) {
     super(name, immediateSupertypes, polymorphic);
   }
+
+  @Override
+  public @NotNull QualifiedTypeName name() { return (QualifiedTypeName) super.name(); }
 
   @Override
   @SuppressWarnings("unchecked")

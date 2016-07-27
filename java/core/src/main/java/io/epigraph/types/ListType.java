@@ -57,14 +57,14 @@ public abstract class ListType extends DatumType {
 
   @Override
   @SuppressWarnings("unchecked")
-  public @NotNull List<@NotNull ListType> immediateSupertypes() {
-    return (List<ListType>) super.immediateSupertypes();
+  public @NotNull List<@NotNull ? extends ListType> immediateSupertypes() {
+    return (List<? extends ListType>) super.immediateSupertypes();
   }
 
   @Override
   @SuppressWarnings("unchecked")
-  public @NotNull Collection<@NotNull ListType> supertypes() {
-    return (Collection<ListType>) super.supertypes();
+  public @NotNull Collection<@NotNull ? extends ListType> supertypes() {
+    return (Collection<? extends ListType>) super.supertypes();
   }
 
 }

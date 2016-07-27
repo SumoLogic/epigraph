@@ -11,8 +11,8 @@ import java.util.List;
 public class StringType extends PrimitiveType {
 
   protected StringType(
-      QualifiedTypeName name,
-      List<? extends StringType> immediateSupertypes,
+      @NotNull QualifiedTypeName name,
+      @NotNull List<? extends StringType> immediateSupertypes,
       boolean polymorphic
   ) {
     super(name, immediateSupertypes, polymorphic);
@@ -20,14 +20,14 @@ public class StringType extends PrimitiveType {
 
   @Override
   @SuppressWarnings("unchecked")
-  public @NotNull List<StringType> immediateSupertypes() {
-    return (List<StringType>) super.immediateSupertypes();
+  public @NotNull List<? extends StringType> immediateSupertypes() {
+    return (List<? extends StringType>) super.immediateSupertypes();
   }
 
   @Override
   @SuppressWarnings("unchecked")
-  public @NotNull Collection<StringType> supertypes() {
-    return (Collection<StringType>) super.supertypes();
+  public @NotNull Collection<? extends StringType> supertypes() {
+    return (Collection<? extends StringType>) super.supertypes();
   }
 
 }
