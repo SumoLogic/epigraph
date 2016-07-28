@@ -3,39 +3,13 @@
 package io.epigraph.data.builders;
 
 import io.epigraph.data.StringDatum;
-import io.epigraph.data.immutable.ImmStringDatum;
+import io.epigraph.data.base.ModifiableStringDatumBase;
 import io.epigraph.types.StringType;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-public class StringDatumBuilder extends PrimitiveDatumBuilder implements StringDatum {
+public abstract class StringDatumBuilder extends ModifiableStringDatumBase<StringDatumBuilder>
+    implements PrimitiveDatumBuilder, StringDatum {
 
-  private @Nullable String val = null;
-
-  public StringDatumBuilder(@NotNull StringType type) {
-    super(type);
-  }
-
-  @Override
-  public @NotNull StringType type() {
-    return (StringType) super.type();
-  }
-
-  @Override
-  public @NotNull String getVal() throws IllegalStateException {
-    if (val == null) throw new IllegalStateException();
-    return val;
-  }
-
-  public StringDatumBuilder set(@Nullable String val) {
-    this.val = val; // TODO validate via type()?
-    return this;
-  }
-
-  @Override
-  public @NotNull ImmStringDatum toImmutable() {
-    if (val == null) throw new IllegalStateException();
-    return new ImmStringDatum.Impl(type(), val);
-  }
+  public StringDatumBuilder(@NotNull StringType type) { super(type); }
 
 }

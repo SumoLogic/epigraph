@@ -1,33 +1,25 @@
 /* Created by yegor on 7/27/16. */
 
-package io.epigraph.data.shared;
+package io.epigraph.data.base;
 
 import io.epigraph.data.Datum;
-import io.epigraph.data.Value;
-import io.epigraph.data.immutable.ImmValue;
-import io.epigraph.data.mutable.MutValue;
 import io.epigraph.errors.Error;
 import io.epigraph.types.DatumType;
 import io.epigraph.util.Self;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class ValueBase<Me extends ValueBase<Me>> implements Value, Self<Me> {
-
-  private final @NotNull DatumType type;
+public abstract class ModifiableValueBase<Me extends ModifiableValueBase<Me>> extends ValueBase implements Self<Me> {
 
   private @Nullable Datum datum;
 
   private @Nullable Error error;
 
-  public ValueBase(@NotNull DatumType type) {
-    this.type = type;
+  public ModifiableValueBase(@NotNull DatumType type) {
+    super(type);
     this.datum = null;
     this.error = null;
   }
-
-  @Override
-  public @NotNull DatumType type() { return type; }
 
   @Override
   public @Nullable Datum getDatum() { return datum; }
@@ -47,11 +39,5 @@ public class ValueBase<Me extends ValueBase<Me>> implements Value, Self<Me> {
     this.error = error;
     return self();
   }
-
-  @Override
-  public @NotNull ImmValue toImmutable() { return ImmValue.from(this); }
-
-  //@Override
-  public @NotNull MutValue toMutable() { return MutValue.from(this); }
 
 }

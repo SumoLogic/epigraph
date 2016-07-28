@@ -1,6 +1,6 @@
 /* Created by yegor on 7/27/16. */
 
-package io.epigraph.data.shared;
+package io.epigraph.data.base;
 
 import io.epigraph.data.Data;
 import io.epigraph.data.Datum;
@@ -15,8 +15,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class DataBase<Me extends DataBase<Me, MyValue>, MyValue extends ValueBase<MyValue>> implements Data,
-    Self<Me> {
+public abstract class ModifiableDataBase<Me extends ModifiableDataBase<Me, MyValue>, MyValue extends ModifiableValueBase<MyValue>>
+    implements Data, Self<Me> {
 
   private final @NotNull Type type;
 
@@ -24,7 +24,7 @@ public abstract class DataBase<Me extends DataBase<Me, MyValue>, MyValue extends
 
   private @Nullable Map<String, @NotNull ? extends MyValue> unmodifiableViewOfValues = null;
 
-  public DataBase(@NotNull Type type) { this.type = type; }
+  public ModifiableDataBase(@NotNull Type type) { this.type = type; }
 
   @Override
   public @NotNull Type type() { return type; }
@@ -54,24 +54,24 @@ public abstract class DataBase<Me extends DataBase<Me, MyValue>, MyValue extends
   }
 
   public @NotNull Me setDatum(@NotNull Type.Tag tag, @Nullable Datum datum) {
-    getOrCreateMyEntry(tag).setDatum(datum);
+    getOrCreateTagValue(tag).setDatum(datum);
     return self();
   }
 
   public @NotNull Me setError(@NotNull Type.Tag tag, @NotNull Error error) {
-    getOrCreateMyEntry(tag).setError(error);
+    getOrCreateTagValue(tag).setError(error);
     return self();
   }
 
-  public @NotNull MyValue getOrCreateMyEntry(Type.Tag tag) {
+  public @NotNull MyValue getOrCreateTagValue(Type.Tag tag) {
     // TODO check tag compatibility with this.type
     MyValue myValue = getValue(tag);
     // TODO this (as many other places) is not thread-safe - use ConcurrentHashMap?
-    if (myValue == null) values.put(tag.name, myValue = createValue(tag));
+    if (myValue == null) values.put(tag.name, myValue = createTagValue(tag));
     return myValue;
   }
 
-  protected abstract MyValue createValue(Type.Tag tag);
+  protected abstract MyValue createTagValue(Type.Tag tag);
 
   @Override
   public @NotNull ImmData toImmutable() { return ImmData.from(this); }

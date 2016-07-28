@@ -5,7 +5,7 @@ package io.epigraph.util;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-public interface Self<Self> {
+public interface Self<Self> { // TODO This?
 
   // This can, of course, be intentionally broken (`class Foo implements Self<Bar>`); good job then.
   @Contract(pure = true)

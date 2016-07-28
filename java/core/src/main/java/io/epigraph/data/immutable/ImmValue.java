@@ -4,18 +4,15 @@ package io.epigraph.data.immutable;
 
 import io.epigraph.data.Datum;
 import io.epigraph.data.Value;
+import io.epigraph.data.base.ValueBase;
 import io.epigraph.errors.Error;
 import io.epigraph.types.DatumType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class ImmValue implements Value {
+public abstract class ImmValue extends ValueBase {
 
-  private final @NotNull DatumType type;
-
-  private ImmValue(@NotNull DatumType type) {
-    this.type = type;
-  }
+  private ImmValue(@NotNull DatumType type) { super(type); }
 
   public static @NotNull ImmValue from(@NotNull Value value) {
     if (value instanceof ImmValue) {
@@ -30,11 +27,6 @@ public abstract class ImmValue implements Value {
         return new ErrorImmValue(value.type(), error);
       }
     }
-  }
-
-  @Override
-  public @NotNull DatumType type() {
-    return type;
   }
 
   @Override
@@ -61,7 +53,7 @@ public abstract class ImmValue implements Value {
     private final @NotNull Datum datum;
 
     public DatumImmValue(@NotNull DatumType type, @NotNull Datum datum) {
-      // TODO derive type from datum? or do we allow subtyped datum?
+      // TODO derive type from datum? or do we want to take sub-typed datum?
       super(type);
       this.datum = Datum.toImmutable(datum);
     }

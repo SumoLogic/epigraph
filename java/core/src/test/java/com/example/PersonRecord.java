@@ -21,7 +21,7 @@ public interface PersonRecord extends RecordDatum {
 
   public static final @NotNull PersonRecord.Type type = new PersonRecord.Type();
 
-  public static final @NotNull Field bestFriend = new Field("bestFriend", PersonRecord.type);
+  public static final @NotNull Field bestFriend = new Field("bestFriend", PersonRecord.type, true);
 
   public default @Nullable PersonRecord getBestFriend() {
     return (PersonRecord) getDatum(bestFriend, PersonRecord.type.self);
@@ -74,11 +74,11 @@ public interface PersonRecord extends RecordDatum {
 
   public static interface Mut extends PersonRecord, MutRecordDatum {
 
-    // TODO bestFriend field in PersonRecord should be marked as abstract to allow overriding itself
+    // TODO bestFriend field in PersonRecord is marked as abstract to allow overriding itself
     // TODO in such case this method shouldn't be generated (but should be for PersonRecord.Builder)
-    default @NotNull PersonRecord.Mut setBestFriend(@Nullable PersonRecord datum) {
-      return (PersonRecord.Mut) setDatum(PersonRecord.bestFriend, PersonRecord.type.self, datum);
-    }
+    //default @NotNull PersonRecord.Mut setBestFriend(@Nullable PersonRecord datum) {
+    //  return (PersonRecord.Mut) setDatum(PersonRecord.bestFriend, PersonRecord.type.self, datum);
+    //}
 
   }
 

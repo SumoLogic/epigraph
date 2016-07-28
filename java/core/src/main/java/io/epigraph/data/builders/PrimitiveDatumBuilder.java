@@ -3,19 +3,7 @@
 package io.epigraph.data.builders;
 
 import io.epigraph.data.PrimitiveDatum;
-import io.epigraph.types.PrimitiveType;
-import org.jetbrains.annotations.NotNull;
 
 // TODO parameterize with native type (one of String, Integer, Long, Double, Boolean)?
-public abstract class PrimitiveDatumBuilder extends DatumBuilder implements PrimitiveDatum {
-
-  public PrimitiveDatumBuilder(@NotNull PrimitiveType type) {
-    super(type);
-  }
-
-  @Override
-  public @NotNull PrimitiveType type() {
-    return (PrimitiveType) super.type();
-  }
-
-}
+// TODO remove this interface at all?
+public interface PrimitiveDatumBuilder extends DatumBuilder, PrimitiveDatum {}

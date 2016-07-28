@@ -20,7 +20,7 @@ public interface UserRecord extends PersonRecord, RecordDatum {
 
   @NotNull UserRecord.Type type = new UserRecord.Type(); // TODO potential clash with user-defined "type" field
 
-  @NotNull Field bestFriend = new RecordType.Field("bestFriend", UserRecord.type);
+  @NotNull Field bestFriend = new RecordType.Field("bestFriend", UserRecord.type, false);
 
   public default @Nullable UserRecord getBestFriend() {
     return (UserRecord) getDatum(bestFriend, PersonRecord.type.self);

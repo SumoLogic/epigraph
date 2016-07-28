@@ -3,12 +3,13 @@
 package io.epigraph.data.immutable;
 
 import io.epigraph.data.StringDatum;
+import io.epigraph.data.base.StringDatumBase;
 import io.epigraph.types.StringType;
 import org.jetbrains.annotations.NotNull;
 
 public interface ImmStringDatum extends ImmPrimitiveDatum, StringDatum {
 
-  public static class Impl extends ImmPrimitiveDatum.Impl implements ImmStringDatum {
+  public static abstract class Impl extends StringDatumBase implements ImmStringDatum {
 
     private final @NotNull String val;
 
@@ -18,19 +19,7 @@ public interface ImmStringDatum extends ImmPrimitiveDatum, StringDatum {
     }
 
     @Override
-    public @NotNull StringType type() {
-      return (StringType) super.type();
-    }
-
-    @Override
-    public @NotNull String getVal() {
-      return val;
-    }
-
-    @Override
-    public @NotNull ImmStringDatum toImmutable() {
-      return this;
-    }
+    public @NotNull String getVal() { return val; }
 
   }
 

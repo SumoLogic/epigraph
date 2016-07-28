@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 public interface MutDatum extends Datum {
 
+  @Deprecated
   public static abstract class Impl implements MutDatum {
 
     private final @NotNull DatumType type;

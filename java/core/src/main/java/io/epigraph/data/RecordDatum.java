@@ -17,29 +17,18 @@ public interface RecordDatum extends Datum {
   @Override
   public @NotNull RecordType type();
 
+  /**
+   * @return Unmodifiable mapping of field names to their data. The data could be modifiable.
+   */
   public @NotNull Map<String, ? extends Data> fieldsData();
 
+  public @Nullable Data getData(@NotNull Field field);
+
+  public @Nullable Datum getDatum(Field field, Tag tag);
+
+  public @Nullable Error getError(Field field, Tag tag);
+
   @Override
-  public default @NotNull ImmRecordDatum toImmutable() { return ImmRecordDatum.Impl.from(this); }
-
-  public @Nullable Data getData(Field field);
-
-  public default @Nullable Datum getDatum(Field field, Tag tag) {
-    Data data = getData(field);
-    return data == null ? null : data.getDatum(tag);
-  }
-
-  public default @Nullable Error getError(Field field, Tag tag) {
-    Data data = getData(field);
-    return data == null ? null : data.getError(tag);
-  }
-
-//  @Nullable
-//  public default <F extends Field & Tagged> Datum getDatum(F taggedField) { // TODO remove - this is not needed for "framework" code (so far)
-//    return getDatum(taggedField, taggedField.tag());
-//  }
-
-//  @Nullable
-//  public Datum getDatum2(Field field); // TODO Tag[ged]Field? (NO - unless needed for projections etc.)
+  public @NotNull ImmRecordDatum toImmutable();
 
 }
