@@ -7,6 +7,7 @@ import io.epigraph.data.Datum;
 import io.epigraph.data.immutable.ImmData;
 import io.epigraph.errors.Error;
 import io.epigraph.types.Type;
+import io.epigraph.util.Self;
 import io.epigraph.util.Unmodifiable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -14,7 +15,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class DataBase<Me extends DataBase<Me, MyValue>, MyValue extends ValueBase<MyValue>> implements Data {
+public abstract class DataBase<Me extends DataBase<Me, MyValue>, MyValue extends ValueBase<MyValue>> implements Data,
+    Self<Me> {
 
   private final @NotNull Type type;
 
@@ -38,9 +40,6 @@ public abstract class DataBase<Me extends DataBase<Me, MyValue>, MyValue extends
     // TODO check tag compatibility with this.type
     return values.get(tag.name);
   }
-
-  @SuppressWarnings("unchecked")
-  private Me self() { return (Me) this; }
 
   // TODO accept Value and auto-convert? convert on write (NO - someone might hold the reference already)?
   public Me setValue(Type.Tag tag, @Nullable MyValue value) {

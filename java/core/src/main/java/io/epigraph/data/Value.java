@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 
 public interface Value {
 
-  public @NotNull DatumType type();
+  public @NotNull DatumType type(); // TODO do we need this method at all? (yes, in modifiable values - for type checking in setData())
 
   public @Nullable Datum getDatum();
 
