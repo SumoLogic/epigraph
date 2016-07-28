@@ -21,9 +21,11 @@ public interface PersonRecord extends RecordDatum {
 
   public static final @NotNull PersonRecord.Type type = new PersonRecord.Type();
 
-  public static final @NotNull Field bestFriend = new Field("bestFriend", type);
+  public static final @NotNull Field bestFriend = new Field("bestFriend", PersonRecord.type);
 
-  public default @Nullable PersonRecord getBestFriend() { return (PersonRecord) getDatum(bestFriend, type.self); }
+  public default @Nullable PersonRecord getBestFriend() {
+    return (PersonRecord) getDatum(bestFriend, PersonRecord.type.self);
+  }
 
 
   public static class Type extends RecordType {
@@ -72,8 +74,10 @@ public interface PersonRecord extends RecordDatum {
 
   public static interface Mut extends PersonRecord, MutRecordDatum {
 
-    default @NotNull PersonRecord.Mut setBestFriend(PersonRecord datum) {
-      return (PersonRecord.Mut) setDatum(bestFriend, PersonRecord.type.self, datum);
+    // TODO bestFriend field in PersonRecord should be marked as abstract to allow overriding itself
+    // TODO in such case this method shouldn't be generated (but should be for PersonRecord.Builder)
+    default @NotNull PersonRecord.Mut setBestFriend(@Nullable PersonRecord datum) {
+      return (PersonRecord.Mut) setDatum(PersonRecord.bestFriend, PersonRecord.type.self, datum);
     }
 
   }
@@ -83,8 +87,8 @@ public interface PersonRecord extends RecordDatum {
 
     public Builder() { super(PersonRecord.type); }
 
-    public @NotNull PersonRecord.Builder setBestFriend(PersonRecord datum) {
-      return (PersonRecord.Builder) setDatum(bestFriend, PersonRecord.type.self, datum);
+    public @NotNull PersonRecord.Builder setBestFriend(@Nullable PersonRecord datum) {
+      return (PersonRecord.Builder) setDatum(PersonRecord.bestFriend, PersonRecord.type.self, datum);
     }
 
   }
