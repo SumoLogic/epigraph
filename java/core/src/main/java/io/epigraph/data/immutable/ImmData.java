@@ -3,9 +3,7 @@
 package io.epigraph.data.immutable;
 
 import io.epigraph.data.Data;
-import io.epigraph.data.Datum;
-import io.epigraph.errors.Error;
-import io.epigraph.types.DatumType;
+import io.epigraph.data.Value;
 import io.epigraph.types.Type;
 import io.epigraph.util.Unmodifiable;
 import org.jetbrains.annotations.NotNull;
@@ -72,62 +70,9 @@ public class ImmData implements Data {
 
   @Override
   @Nullable
-  public Data.Value getValue(Type.Tag tag) {
+  public Value getValue(Type.Tag tag) {
     return null;
   }
 
-
-  public static class ImmValue implements Value {
-
-    private final @NotNull DatumType type;
-
-    private final @Nullable Datum datum;
-
-    private final @Nullable Error error;
-
-    public ImmValue(@NotNull DatumType type, @Nullable Datum datum) {
-      this.type = type;
-      this.datum = Datum.toImmutable(datum);
-      this.error = null;
-    }
-
-    public ImmValue(@NotNull DatumType type, @NotNull Error error) {
-      this.type = type;
-      this.datum = null;
-      this.error = error;
-    }
-
-    public static @NotNull ImmValue from(@NotNull Data.Value value) {
-      if (value instanceof ImmValue) {
-        return (ImmValue) value;
-      } else {
-        Error error = value.getError();
-        return error == null
-            ? new ImmValue(value.type(), value.getDatum())
-            : new ImmValue(value.type(), error);
-      }
-    }
-
-    @Override
-    public @NotNull DatumType type() {
-      return type;
-    }
-
-    @Override
-    public @Nullable Datum getDatum() {
-      return datum;
-    }
-
-    @Override
-    public @Nullable Error getError() {
-      return error;
-    }
-
-    @Override
-    public @NotNull ImmValue toImmutable() {
-      return this;
-    }
-
-  }
 
 }

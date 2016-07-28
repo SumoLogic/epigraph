@@ -4,7 +4,7 @@ package io.epigraph.errors;
 
 import org.jetbrains.annotations.Nullable;
 
-public class Error {
+public class Error { // TODO rename to DatumError (to avoid clash with java.lang.Error)?
 
   private final Integer statusCode;
 

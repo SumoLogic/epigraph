@@ -4,6 +4,7 @@ package io.epigraph.data;
 
 import io.epigraph.data.immutable.ImmDatum;
 import io.epigraph.types.DatumType;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,6 +14,7 @@ public interface Datum {
 
   public @NotNull ImmDatum toImmutable();
 
+  @Contract("null -> null; !null -> !null")
   public static @Nullable ImmDatum toImmutable(@Nullable Datum datum) {
     return datum == null ? null : datum.toImmutable();
   }

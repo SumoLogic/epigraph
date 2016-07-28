@@ -3,9 +3,9 @@
 package io.epigraph.types;
 
 import io.epigraph.data.builders.DataBuilder;
-import io.epigraph.data.builders.DataBuilder.ValueBuilder;
+import io.epigraph.data.builders.ValueBuilder;
 import io.epigraph.data.mutable.MutData;
-import io.epigraph.data.mutable.MutData.MutValue;
+import io.epigraph.data.mutable.MutValue;
 import io.epigraph.names.TypeName;
 import io.epigraph.util.LazyInitializer;
 import io.epigraph.util.Unmodifiable;
