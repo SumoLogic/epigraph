@@ -17,6 +17,12 @@
       <groupId>com.lihaoyi</groupId>
       <artifactId>pprint_${scala.version.major.minor}</artifactId>
       <scope>compile</scope><!-- TODO - use in test scope only? -->
+      <exclusions>
+        <exclusion><!-- depends on outdated version... -->
+          <groupId>org.scala-lang</groupId>
+          <artifactId>scala-library</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
