@@ -1,7 +1,5 @@
-apply plugin: 'scala'
+//apply plugin: 'epigraph-schema'
 
 dependencies {
-  compile project(":epigraph-core")
-  compile project(":epigraph-builtin-types")
-  compile "org.scala-lang:scala-library"
+  //compile project(":epigraph-builtin-types")
 }
