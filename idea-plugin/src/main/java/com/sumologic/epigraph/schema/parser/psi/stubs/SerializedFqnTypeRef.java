@@ -66,7 +66,10 @@ public final class SerializedFqnTypeRef {
   @Nullable
   public PsiElement resolve(@NotNull Project project) {
     initFromTypeRef();
-    SchemaFqnReferenceResolver resolver = new SchemaFqnReferenceResolver(getNamespacesToSearch(), getShortName());
+    List<Fqn> namespacesToSearch = getNamespacesToSearch();
+    Fqn shortName = getShortName();
+    if (namespacesToSearch == null || shortName == null) return null;
+    SchemaFqnReferenceResolver resolver = new SchemaFqnReferenceResolver(namespacesToSearch, shortName);
     return resolver.resolve(project);
   }
 
