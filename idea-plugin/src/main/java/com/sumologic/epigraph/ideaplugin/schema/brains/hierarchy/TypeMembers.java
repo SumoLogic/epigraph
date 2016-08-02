@@ -86,7 +86,7 @@ public class TypeMembers {
           SchemaRecordTypeDef recordTypeDef = (SchemaRecordTypeDef) type;
           SchemaRecordTypeBody recordTypeBody = recordTypeDef.getRecordTypeBody();
           if (recordTypeBody != null) {
-            return recordTypeBody.getFieldDeclList().stream().filter(f -> fieldName == null || fieldName.equals(f.getName()));
+            return recordTypeBody.getFieldDeclList().stream().filter(f -> fieldName == null || fieldName.equals(f.getQid().getCanonicalName()));
           } else {
             return Stream.empty();
           }
@@ -120,7 +120,7 @@ public class TypeMembers {
           SchemaVarTypeDef varTypeDef = (SchemaVarTypeDef) type;
           SchemaVarTypeBody varTypeBody = varTypeDef.getVarTypeBody();
           if (varTypeBody != null) {
-            return varTypeBody.getVarTagDeclList().stream().filter(f -> varTagName == null || varTagName.equals(f.getName()));
+            return varTypeBody.getVarTagDeclList().stream().filter(f -> varTagName == null || varTagName.equals(f.getQid().getCanonicalName()));
           } else {
             return Stream.empty();
           }

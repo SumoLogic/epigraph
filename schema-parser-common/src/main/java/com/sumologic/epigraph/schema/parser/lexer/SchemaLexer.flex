@@ -6,8 +6,6 @@ import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.*;
 %%
 
 %{
-  int curlyCount = 0;
-
   public SchemaLexer() {
     this((java.io.Reader)null);
   }
@@ -43,34 +41,34 @@ ID=([:letter:]([:letter:]|[:digit:])*)|(`[^`]*`)
   {WHITE_SPACE}        { return com.intellij.psi.TokenType.WHITE_SPACE; }
   {SPACE}              { return com.intellij.psi.TokenType.WHITE_SPACE; }
 
-  "import"             { return curlyCount == 0 ? S_IMPORT : S_ID; }
-  "namespace"          { return curlyCount == 0 ? S_NAMESPACE : S_ID; }
-  "default"            { return curlyCount < 2 ? S_DEFAULT : S_ID; }
-  "nodefault"          { return curlyCount < 2 ? S_NODEFAULT : S_ID; }
-  "map"                { return curlyCount < 2 ? S_MAP : S_ID; }
-  "list"               { return curlyCount < 2 ? S_LIST : S_ID; }
-  "record"             { return curlyCount == 0 ? S_RECORD : S_ID; }
-  "extends"            { return curlyCount == 0 ? S_EXTENDS : S_ID; }
-  "meta"               { return curlyCount == 0 ? S_META : S_ID; }
-  "supplement"         { return curlyCount == 0 ? S_SUPPLEMENT : S_ID; }
-  "supplements"        { return curlyCount == 0 ? S_SUPPLEMENTS : S_ID; }
-  "with"               { return curlyCount == 0 ? S_WITH : S_ID; }
-  "vartype"            { return curlyCount == 0 ? S_VARTYPE : S_ID; }
-  "polymorphic"        { return curlyCount == 0 ? S_POLYMORPHIC : S_ID; }
-  "abstract"           { return curlyCount < 2 ? S_ABSTRACT : S_ID; }
-  "override"           { return curlyCount == 1 ? S_OVERRIDE : S_ID; }
-  "enum"               { return curlyCount == 0 ? S_ENUM : S_ID; }
-  "integer"            { return curlyCount == 0 ? S_INTEGER_T : S_ID; }
-  "long"               { return curlyCount == 0 ? S_LONG_T : S_ID; }
-  "double"             { return curlyCount == 0 ? S_DOUBLE_T : S_ID; }
-  "boolean"            { return curlyCount == 0 ? S_BOOLEAN_T : S_ID; }
-  "string"             { return curlyCount == 0 ? S_STRING_T : S_ID; }
+  "import"             { return S_IMPORT; }
+  "namespace"          { return S_NAMESPACE; }
+  "default"            { return S_DEFAULT; }
+  "nodefault"          { return S_NODEFAULT; }
+  "map"                { return S_MAP; }
+  "list"               { return S_LIST; }
+  "record"             { return S_RECORD; }
+  "extends"            { return S_EXTENDS; }
+  "meta"               { return S_META; }
+  "supplement"         { return S_SUPPLEMENT; }
+  "supplements"        { return S_SUPPLEMENTS; }
+  "with"               { return S_WITH; }
+  "vartype"            { return S_VARTYPE; }
+  "polymorphic"        { return S_POLYMORPHIC; }
+  "abstract"           { return S_ABSTRACT; }
+  "override"           { return S_OVERRIDE; }
+  "enum"               { return S_ENUM; }
+  "integer"            { return S_INTEGER_T; }
+  "long"               { return S_LONG_T; }
+  "double"             { return S_DOUBLE_T; }
+  "boolean"            { return S_BOOLEAN_T; }
+  "string"             { return S_STRING_T; }
   ":"                  { return S_COLON; }
   "."                  { return S_DOT; }
   ","                  { return S_COMMA; }
   "="                  { return S_EQ; }
-  "{"                  { curlyCount++; return S_CURLY_LEFT; }
-  "}"                  { curlyCount = (curlyCount == 0 ? 0 : curlyCount - 1) ; return S_CURLY_RIGHT; }
+  "{"                  { return S_CURLY_LEFT; }
+  "}"                  { return S_CURLY_RIGHT; }
   "["                  { return S_BRACKET_LEFT; }
   "]"                  { return S_BRACKET_RIGHT; }
   "("                  { return S_PAREN_LEFT; }

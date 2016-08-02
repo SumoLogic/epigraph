@@ -98,7 +98,7 @@ public class ReferenceTest extends LightCodeInsightFixtureTestCase {
 
   public void testQuotedVarTag() {
     PsiReference reference = myFixture.getReferenceAtCaretPosition("VarTagRef3.esc");
-    checkReference(reference, "string", "VarTagRef3.esc");
+    checkReference(reference, "`string`", "VarTagRef3.esc");
   }
 
   @SuppressWarnings("ConstantConditions")

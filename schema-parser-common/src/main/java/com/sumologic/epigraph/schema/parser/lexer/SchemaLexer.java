@@ -477,8 +477,6 @@ public class SchemaLexer implements FlexLexer {
   private boolean zzEOFDone;
 
   /* user code: */
-  int curlyCount = 0;
-
   public SchemaLexer() {
     this((java.io.Reader)null);
   }
@@ -765,11 +763,11 @@ public class SchemaLexer implements FlexLexer {
             }
           case 53: break;
           case 10: 
-            { curlyCount++; return S_CURLY_LEFT;
+            { return S_CURLY_LEFT;
             }
           case 54: break;
           case 11: 
-            { curlyCount = (curlyCount == 0 ? 0 : curlyCount - 1) ; return S_CURLY_RIGHT;
+            { return S_CURLY_RIGHT;
             }
           case 55: break;
           case 12: 
@@ -809,11 +807,11 @@ public class SchemaLexer implements FlexLexer {
             }
           case 64: break;
           case 21: 
-            { return curlyCount < 2 ? S_MAP : S_ID;
+            { return S_MAP;
             }
           case 65: break;
           case 22: 
-            { return curlyCount == 0 ? S_META : S_ID;
+            { return S_META;
             }
           case 66: break;
           case 23: 
@@ -825,83 +823,83 @@ public class SchemaLexer implements FlexLexer {
             }
           case 68: break;
           case 25: 
-            { return curlyCount == 0 ? S_ENUM : S_ID;
+            { return S_ENUM;
             }
           case 69: break;
           case 26: 
-            { return curlyCount < 2 ? S_LIST : S_ID;
+            { return S_LIST;
             }
           case 70: break;
           case 27: 
-            { return curlyCount == 0 ? S_LONG_T : S_ID;
+            { return S_LONG_T;
             }
           case 71: break;
           case 28: 
-            { return curlyCount == 0 ? S_WITH : S_ID;
+            { return S_WITH;
             }
           case 72: break;
           case 29: 
-            { return curlyCount == 0 ? S_IMPORT : S_ID;
+            { return S_IMPORT;
             }
           case 73: break;
           case 30: 
-            { return curlyCount == 0 ? S_RECORD : S_ID;
+            { return S_RECORD;
             }
           case 74: break;
           case 31: 
-            { return curlyCount == 0 ? S_STRING_T : S_ID;
+            { return S_STRING_T;
             }
           case 75: break;
           case 32: 
-            { return curlyCount == 0 ? S_DOUBLE_T : S_ID;
+            { return S_DOUBLE_T;
             }
           case 76: break;
           case 33: 
-            { return curlyCount == 0 ? S_BOOLEAN_T : S_ID;
+            { return S_BOOLEAN_T;
             }
           case 77: break;
           case 34: 
-            { return curlyCount == 0 ? S_INTEGER_T : S_ID;
+            { return S_INTEGER_T;
             }
           case 78: break;
           case 35: 
-            { return curlyCount == 0 ? S_EXTENDS : S_ID;
+            { return S_EXTENDS;
             }
           case 79: break;
           case 36: 
-            { return curlyCount < 2 ? S_DEFAULT : S_ID;
+            { return S_DEFAULT;
             }
           case 80: break;
           case 37: 
-            { return curlyCount == 0 ? S_VARTYPE : S_ID;
+            { return S_VARTYPE;
             }
           case 81: break;
           case 38: 
-            { return curlyCount == 1 ? S_OVERRIDE : S_ID;
+            { return S_OVERRIDE;
             }
           case 82: break;
           case 39: 
-            { return curlyCount < 2 ? S_ABSTRACT : S_ID;
+            { return S_ABSTRACT;
             }
           case 83: break;
           case 40: 
-            { return curlyCount < 2 ? S_NODEFAULT : S_ID;
+            { return S_NODEFAULT;
             }
           case 84: break;
           case 41: 
-            { return curlyCount == 0 ? S_NAMESPACE : S_ID;
+            { return S_NAMESPACE;
             }
           case 85: break;
           case 42: 
-            { return curlyCount == 0 ? S_SUPPLEMENT : S_ID;
+            { return S_SUPPLEMENT;
             }
           case 86: break;
           case 43: 
-            { return curlyCount == 0 ? S_POLYMORPHIC : S_ID;
+            { return S_POLYMORPHIC;
             }
           case 87: break;
           case 44: 
-            { return curlyCount == 0 ? S_SUPPLEMENTS : S_ID;
+            { return S_SUPPLEMENTS;
             }
           case 88: break;
           default:

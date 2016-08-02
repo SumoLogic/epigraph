@@ -29,7 +29,7 @@ public class LexerTest {
   public void testKeywords() throws IOException {
     testInput("record", S_RECORD);
     testInput("record { record } record",
-        S_RECORD, S_CURLY_LEFT, S_ID, S_CURLY_RIGHT, S_RECORD);
+        S_RECORD, S_CURLY_LEFT, S_RECORD, S_CURLY_RIGHT, S_RECORD);
   }
 
   @Test
@@ -49,7 +49,7 @@ public class LexerTest {
         "  `field`: Integer\n" +
         "}\n" +
         "vartype MyType3 {\n" +
-        "  record: MyType2\n" +
+        "  `record`: MyType2\n" +
         "}";
 
     IElementType[] expected = {
