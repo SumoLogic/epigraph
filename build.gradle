@@ -1,36 +1,20 @@
 plugins {
-  id "io.spring.dependency-management" version "0.5.7.RELEASE"
+  id "nebula.dependency-recommender" version "3.6.3"
+}
+
+allprojects {
+  apply plugin: "nebula.dependency-recommender"
+
+  dependencyRecommendations {
+    mavenBom file: file("$rootDir/pom.xml")
+  }
 }
 
 subprojects {
-  apply plugin: "io.spring.dependency-management"
-
   repositories {
     mavenCentral()
     jcenter()
     flatDir(dirs: "$rootDir/schema-parser/lib") // epigraph-schema-compiler must see it too
-  }
-
-  dependencyManagement {
-    dependencies {
-      dependency "com.lihaoyi:pprint_$scalaVersionMajorMinor:0.4.1"
-      dependency 'junit:junit:4.12'
-      dependency 'net.jcip:jcip-annotations:1.0'
-      dependency 'org.antlr:ST4:4.0.8'
-      dependency 'org.apache.velocity:velocity:1.7'
-      dependency 'org.apache.maven:maven-plugin-api:2.2.1'
-      dependency 'org.apache.maven:maven-project:2.2.1'
-      dependency 'org.apache.maven.shared:file-management:1.2.1'
-      dependency 'org.jetbrains:annotations:15.0'
-      dependency "org.pegdown:pegdown:1.1.0" // https://github.com/maiflai/gradle-scalatest/issues/16 don't try to use newer versions
-      dependency "org.scalatest:scalatest_$scalaVersionMajorMinor:3.0.0-RC3"
-
-      // configuration for scala libraries doesn't (and won't) work
-      // https://github.com/spring-gradle-plugins/dependency-management-plugin/issues/97
-
-      // switch to nebula-recommender once this is one fixed?
-      // https://github.com/nebula-plugins/nebula-dependency-recommender-plugin/issues/16
-    }
   }
 
   tasks.withType(JavaCompile) {

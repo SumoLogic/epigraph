@@ -10,11 +10,6 @@ sourceSets.main.java.srcDirs += file('../schema-parser-common/src/main/java.gene
 idea.module.sourceDirs += file('../schema-parser-common/src/main/java')
 idea.module.generatedSourceDirs += file('../schema-parser-common/src/main/java.generated')
 
-// https://github.com/spring-gradle-plugins/dependency-management-plugin/issues/93
-dependencyManagement {
-  applyMavenExclusions false
-}
-
 dependencies {
   testCompile 'junit:junit'
 }

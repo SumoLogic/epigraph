@@ -132,6 +132,13 @@
       </dependency>
 
       <dependency>
+        <groupId>org.pegdown</groupId>
+        <artifactId>pegdown</artifactId>
+        <!-- https://github.com/maiflai/gradle-scalatest/issues/16 don't try to use newer versions -->
+        <version>1.1.0</version>
+      </dependency>
+
+      <dependency>
         <groupId>org.scala-lang</groupId>
         <artifactId>scala-library</artifactId>
         <version>${scala.version}</version>

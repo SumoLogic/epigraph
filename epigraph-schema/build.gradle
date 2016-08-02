@@ -3,5 +3,5 @@ apply plugin: 'scala'
 dependencies {
   compile project(":epigraph-core")
   compile project(":epigraph-builtin-types")
-  compile "org.scala-lang:scala-library:$scalaVersion"
+  compile "org.scala-lang:scala-library"
 }

@@ -9,8 +9,8 @@ dependencies {
   compile project(":epigraph-builtin-types")
   compile project(":schema-parser")
 
-  compile "org.scala-lang:scala-library:$scalaVersion"
-  compile "org.scala-lang:scala-reflect:$scalaVersion"
+  compile "org.scala-lang:scala-library"
+  compile "org.scala-lang:scala-reflect"
   compile "com.lihaoyi:pprint_$scalaVersionMajorMinor"
 
   testCompile "org.scalatest:scalatest_$scalaVersionMajorMinor"
