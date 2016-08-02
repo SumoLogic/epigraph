@@ -15,18 +15,7 @@
 ----
 ## Done
 ### High
-- Gutter icons are broken
-- `record A; record B extends A` rename A -- get a broken ref in `extends`
 
 ### Medium
-- `Find Usages` doesn't work on var tags (with `abstract` modifier)
-- Enquoted var tags get improperly highlighted
-- Enquoted var tag refs not recognized:
-
-        vartype Foo default `string` {
-          string: String
-        }
-- Auto-completion (ctrl-space) after a namespace that didn't do anything marks file as dirty
 
 ### Low
-- Goto type: namespaces in the drop-down list should be in the parens
