@@ -57,22 +57,4 @@ public class CreateSchemaFileAction extends CreateFileFromTemplateAction impleme
     }
   }
 
-
-  //  private static String calculateNamespace(@NotNull PsiDirectory directory) {
-//    List<String> segments = new ArrayList<>();
-//    VirtualFile dir = directory.getVirtualFile();
-//
-//    Project project = directory.getProject();
-//    ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
-//    VirtualFile sourceRoot = fileIndex.getSourceRootForFile(dir);
-//    if (sourceRoot == null) return "";
-//
-//    while (dir != null && !dir.equals(sourceRoot)) {
-//      segments.add(dir.getName());
-//      dir = dir.getParent();
-//    }
-//
-//    Collections.reverse(segments);
-//    return new Fqn(segments).toString();
-//  }
 }

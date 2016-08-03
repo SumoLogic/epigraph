@@ -1,8 +1,6 @@
 ### High
 
 ### Medium
-- Schema files must only be fully parsed if under (test) source root
-- Module dependencies must be respected when resolving references. Tricky for injections: only modules that depend on the current one must be checked
 - Structure popup (ctrl-f12)
 - Rename on fields (**In progress**)
 - Rename on vartype tags
@@ -19,5 +17,7 @@
 - Remove context-aware lexing, a set of keywords must not change depending on the context
 
 ### Medium
+- Schema files must only be fully parsed if under (test) source root
+- Module dependencies must be respected when resolving references. Tricky for injections: only modules that depend on the current one must be checked
 
 ### Low

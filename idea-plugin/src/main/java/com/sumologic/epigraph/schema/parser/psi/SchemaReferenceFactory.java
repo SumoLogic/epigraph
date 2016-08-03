@@ -6,6 +6,7 @@ import com.sumologic.epigraph.ideaplugin.schema.brains.NamespaceManager;
 import com.sumologic.epigraph.ideaplugin.schema.brains.SchemaFqnReference;
 import com.sumologic.epigraph.ideaplugin.schema.brains.SchemaFqnReferenceResolver;
 import com.sumologic.epigraph.ideaplugin.schema.brains.SchemaVarTagReference;
+import com.sumologic.epigraph.ideaplugin.schema.index.SchemaSearchScopeUtil;
 import com.sumologic.epigraph.schema.parser.Fqn;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -79,7 +80,7 @@ public class SchemaReferenceFactory {
     prefixes.clear();
     prefixes.addAll(dedupPrefixes);
 
-    return new SchemaFqnReferenceResolver(prefixes, fqn);
+    return new SchemaFqnReferenceResolver(prefixes, fqn, SchemaSearchScopeUtil.getSearchScope(file));
   }
 
   @Nullable

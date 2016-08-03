@@ -4,6 +4,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementResolveResult;
 import com.intellij.psi.ResolveResult;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.ArrayUtil;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
 import com.sumologic.epigraph.schema.parser.Fqn;
@@ -14,6 +15,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -27,8 +29,11 @@ public class SchemaFqnReferenceResolver {
   private final Fqn suffix;
   @NotNull
   private final Fqn input;
+  @NotNull
+  private final GlobalSearchScope searchScope;
 
-  public SchemaFqnReferenceResolver(@NotNull List<Fqn> prefixes, @NotNull Fqn input) {
+  public SchemaFqnReferenceResolver(@NotNull List<Fqn> prefixes, @NotNull Fqn input, @NotNull GlobalSearchScope searchScope) {
+    this.searchScope = searchScope;
     if (input.isEmpty()) throw new IllegalArgumentException("Empty input");
 
     this.input = input;
@@ -80,14 +85,14 @@ public class SchemaFqnReferenceResolver {
 
   @Nullable
   private SchemaTypeDef resolveTypeDef(@NotNull Project project) {
-    return SchemaIndexUtil.findTypeDef(project, prefixes, suffix, null);
+    return SchemaIndexUtil.findTypeDef(project, prefixes, suffix, searchScope);
   }
 
   @NotNull
   public ResolveResult[] multiResolve(@NotNull Project project) {
     List<ResolveResult> typeDefs =
-        SchemaIndexUtil.findTypeDefs(project, prefixes, suffix, null).stream()
-        .filter(td -> td != null)
+        SchemaIndexUtil.findTypeDefs(project, prefixes, suffix, searchScope).stream()
+        .filter(Objects::nonNull)
         .map(PsiElementResolveResult::new)
         .collect(Collectors.toList());
 
@@ -110,7 +115,7 @@ public class SchemaFqnReferenceResolver {
    */
   @NotNull
   private List<SchemaNamespaceDecl> resolveNamespaces(@NotNull Project project, @NotNull Fqn prefix) {
-    List<SchemaNamespaceDecl> namespaces = SchemaIndexUtil.findNamespaces(project, prefix.toString());
+    List<SchemaNamespaceDecl> namespaces = SchemaIndexUtil.findNamespaces(project, prefix.toString(), searchScope);
     // try to find a namespace which is exactly our prefix
     for (SchemaNamespaceDecl namespace : namespaces) {
       //noinspection ConstantConditions
@@ -121,7 +126,7 @@ public class SchemaFqnReferenceResolver {
     return namespaces;
   }
 
-  private PsiElement getTargetSegment(@NotNull SchemaNamespaceDecl namespaceDecl, int prefixLength) {
+  private PsiElement getTargetSegment(@NotNull SchemaNamespaceDecl namespaceDecl, @SuppressWarnings("UnusedParameters") int prefixLength) {
     // This forces PSI tree reparse. Addint stubs for SchemaFqn and SchemaFqnSegment is one option.
     // Just pointing to the namespace decl is another
 

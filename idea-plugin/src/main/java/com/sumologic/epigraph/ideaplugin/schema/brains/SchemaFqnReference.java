@@ -8,9 +8,11 @@ import com.intellij.psi.PsiPolyVariantReference;
 import com.intellij.psi.PsiReferenceBase;
 import com.intellij.psi.ResolveResult;
 import com.intellij.psi.impl.source.resolve.ResolveCache;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
+import com.sumologic.epigraph.ideaplugin.schema.index.SchemaSearchScopeUtil;
 import com.sumologic.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
 import com.sumologic.epigraph.schema.parser.Fqn;
 import com.sumologic.epigraph.schema.parser.psi.*;
@@ -86,6 +88,7 @@ public class SchemaFqnReference extends PsiReferenceBase<SchemaFqnSegment> imple
   public Object[] getVariants() {
     final boolean isImport = isImport();
     final Project project = myElement.getProject();
+    final GlobalSearchScope searchScope = SchemaSearchScopeUtil.getSearchScope(myElement);
     final Fqn currentNamespace = NamespaceManager.getNamespace(getElement());
 
     final Fqn input = resolver.getInput();
@@ -98,31 +101,31 @@ public class SchemaFqnReference extends PsiReferenceBase<SchemaFqnSegment> imple
       Fqn suffixPrefix = resolver.getSuffix().removeLastSegment();
 
       List<Fqn> namespacesToSearchForTypes = resolver.getPrefixes().stream().map(fqn -> fqn.append(suffixPrefix)).collect(Collectors.toList());
-      typeDefVariants = SchemaIndexUtil.findTypeDefs(project, namespacesToSearchForTypes, null, null).stream()
+      typeDefVariants = SchemaIndexUtil.findTypeDefs(project, namespacesToSearchForTypes, null, searchScope).stream()
           .filter(typeDef ->
               // don't suggest to import types from the same namespace
               typeDef.getName() != null && (!isImport || currentNamespace == null || !currentNamespace.equals(NamespaceManager.getNamespace(typeDef))))
           .collect(Collectors.toSet());
 
       // complete namespaces
-      namespaceVariants = NamespaceManager.getNamespacesByPrefix(project, inputPrefix, false);
+      namespaceVariants = NamespaceManager.getNamespacesByPrefix(project, inputPrefix, false, searchScope);
     } else {
       List<Fqn> namespacesToSearchForTypes = NamespaceManager.getImportedNamespaces(myElement);
 
       if (!isImport) {
         typeDefVariants = SchemaIndexUtil
-            .findTypeDefs(project, namespacesToSearchForTypes.toArray(new Fqn[namespacesToSearchForTypes.size()]))
+            .findTypeDefs(project, namespacesToSearchForTypes.toArray(new Fqn[namespacesToSearchForTypes.size()]), searchScope)
             .stream()
             .filter(typeDef -> typeDef.getName() != null)
             .collect(Collectors.toSet());
 
         // all types in current NS
-        typeDefVariants.addAll(SchemaIndexUtil.findTypeDefs(project, Collections.singletonList(currentNamespace), null, null).stream()
+        typeDefVariants.addAll(SchemaIndexUtil.findTypeDefs(project, Collections.singletonList(currentNamespace), null, searchScope).stream()
             .filter(typeDef -> typeDef.getName() != null)
             .collect(Collectors.toSet()));
 
         // add standard imports
-        typeDefVariants.addAll(SchemaIndexUtil.findTypeDefs(project, ImportsManager.DEFAULT_IMPORTS).stream()
+        typeDefVariants.addAll(SchemaIndexUtil.findTypeDefs(project, ImportsManager.DEFAULT_IMPORTS, searchScope).stream()
             .filter(typeDef -> typeDef.getName() != null)
             .collect(Collectors.toSet()));
 
@@ -132,7 +135,7 @@ public class SchemaFqnReference extends PsiReferenceBase<SchemaFqnSegment> imple
       }
 
       // complete namespaces
-      namespaceVariants = NamespaceManager.getNamespaceManager(project).getAllNamespaces();
+      namespaceVariants = NamespaceManager.getNamespaceManager(project).getAllNamespaces(searchScope);
     }
 
     Set<Object> typeDefElements = typeDefVariants.stream()

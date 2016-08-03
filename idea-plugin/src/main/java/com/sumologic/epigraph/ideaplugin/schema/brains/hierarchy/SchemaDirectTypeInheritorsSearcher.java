@@ -10,6 +10,7 @@ import com.intellij.util.Processor;
 import com.intellij.util.QueryExecutor;
 import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.SchemaDirectTypeInheritorsSearch.SearchParameters;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
+import com.sumologic.epigraph.ideaplugin.schema.index.SchemaSearchScopeUtil;
 import com.sumologic.epigraph.schema.parser.psi.SchemaRecordTypeDef;
 import com.sumologic.epigraph.schema.parser.psi.SchemaSupplementDef;
 import com.sumologic.epigraph.schema.parser.psi.SchemaTypeDef;
@@ -32,7 +33,7 @@ public class SchemaDirectTypeInheritorsSearcher implements QueryExecutor<SchemaT
     Application application = ApplicationManager.getApplication();
 
     List<SchemaTypeDef> candidates = application.runReadAction(
-        (Computable<List<SchemaTypeDef>>) () -> SchemaIndexUtil.findTypeDefs(project, null, null, null)
+        (Computable<List<SchemaTypeDef>>) () -> SchemaIndexUtil.findTypeDefs(project, null, null, SchemaSearchScopeUtil.getSearchScope(target))
     );
 
     final List<SchemaTypeDef> children = new ArrayList<>();

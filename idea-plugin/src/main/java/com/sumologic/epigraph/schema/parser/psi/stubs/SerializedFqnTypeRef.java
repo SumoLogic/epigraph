@@ -2,6 +2,7 @@ package com.sumologic.epigraph.schema.parser.psi.stubs;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.StubInputStream;
 import com.intellij.psi.stubs.StubOutputStream;
 import com.intellij.util.io.StringRef;
@@ -64,18 +65,18 @@ public final class SerializedFqnTypeRef {
   }
 
   @Nullable
-  public PsiElement resolve(@NotNull Project project) {
+  private PsiElement resolve(@NotNull Project project, @NotNull GlobalSearchScope searchScope) {
     initFromTypeRef();
     List<Fqn> namespacesToSearch = getNamespacesToSearch();
     Fqn shortName = getShortName();
     if (namespacesToSearch == null || shortName == null) return null;
-    SchemaFqnReferenceResolver resolver = new SchemaFqnReferenceResolver(namespacesToSearch, shortName);
+    SchemaFqnReferenceResolver resolver = new SchemaFqnReferenceResolver(namespacesToSearch, shortName, searchScope);
     return resolver.resolve(project);
   }
 
   @Nullable
-  public SchemaTypeDef resolveTypeDef(@NotNull Project project) {
-    PsiElement element = resolve(project);
+  public SchemaTypeDef resolveTypeDef(@NotNull Project project, @NotNull GlobalSearchScope searchScope) {
+    PsiElement element = resolve(project, searchScope);
     if (element instanceof SchemaTypeDef) return (SchemaTypeDef) element;
     return null;
   }

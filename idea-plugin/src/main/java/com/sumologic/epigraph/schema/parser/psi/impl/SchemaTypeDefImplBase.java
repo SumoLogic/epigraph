@@ -7,6 +7,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.util.IncorrectOperationException;
 import com.sumologic.epigraph.ideaplugin.schema.brains.NamespaceManager;
+import com.sumologic.epigraph.ideaplugin.schema.index.SchemaSearchScopeUtil;
 import com.sumologic.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
 import com.sumologic.epigraph.schema.parser.Fqn;
 import com.sumologic.epigraph.schema.parser.psi.*;
@@ -19,6 +20,7 @@ import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.*;
@@ -150,8 +152,8 @@ public abstract class SchemaTypeDefImplBase<S extends SchemaTypeDefStubBase<T>, 
       List<SerializedFqnTypeRef> extendsTypeRefs = stub.getExtendsTypeRefs();
       if (extendsTypeRefs != null) {
         return extendsTypeRefs.stream()
-            .map(tr -> tr.resolveTypeDef(getProject()))
-            .filter(i -> i != null)
+            .map(tr -> tr.resolveTypeDef(getProject(), SchemaSearchScopeUtil.getSearchScope(getContainingFile())))
+            .filter(Objects::nonNull)
             .collect(Collectors.toList());
       }
     }

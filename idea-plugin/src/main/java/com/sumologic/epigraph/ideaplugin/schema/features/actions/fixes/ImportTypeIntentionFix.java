@@ -17,6 +17,7 @@ import com.sumologic.epigraph.ideaplugin.schema.SchemaBundle;
 import com.sumologic.epigraph.ideaplugin.schema.features.actions.ImportTypeAction;
 import com.sumologic.epigraph.ideaplugin.schema.features.actions.SchemaNamespaceRenderer;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
+import com.sumologic.epigraph.ideaplugin.schema.index.SchemaSearchScopeUtil;
 import com.sumologic.epigraph.ideaplugin.schema.options.SchemaSettings;
 import com.sumologic.epigraph.schema.parser.Fqn;
 import com.sumologic.epigraph.schema.parser.psi.SchemaFile;
@@ -27,6 +28,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -97,9 +99,7 @@ public class ImportTypeIntentionFix implements HintAction {
 
         CommandProcessor.getInstance().executeCommand(project, () ->
                 ApplicationManager.getApplication().runWriteAction(() ->
-                    {
-                      ImportTypeAction.addImport((SchemaFile) file, importOptions.get(index));
-                    }
+                    ImportTypeAction.addImport((SchemaFile) file, importOptions.get(index))
                 ),
             getText(), getFamilyName()
         );
@@ -126,9 +126,9 @@ public class ImportTypeIntentionFix implements HintAction {
     final Fqn typeRefFqn = typeRef.getFqn().getFqn();
     final int tailSegmentsToRemove = typeRefFqn.size() == 1 ? 0 : typeRefFqn.size() - 1;
 
-    return SchemaIndexUtil.findTypeDefs(typeRef.getProject(), null, typeRefFqn, null).stream()
+    return SchemaIndexUtil.findTypeDefs(typeRef.getProject(), null, typeRefFqn, SchemaSearchScopeUtil.getSearchScope(typeRef)).stream()
         .map(SchemaTypeDef::getFqn)
-        .filter(fqn -> fqn != null)
+        .filter(Objects::nonNull)
         .map(fqn -> fqn.removeTailSegments(tailSegmentsToRemove).toString())
         .sorted()
         .distinct()

@@ -81,6 +81,7 @@
                   className="com.sumologic.epigraph.ideaplugin.schema.features.SchemaQuoteHandler"/>
     <gotoClassContributor
         implementation="com.sumologic.epigraph.ideaplugin.schema.features.navigation.GotoTypeContributor"/>
+    <!--TODO <gotoSymbolContributor implementation=""-->
     <codeInsight.lineMarkerProvider
         language="epi_schema"
         implementationClass="com.sumologic.epigraph.ideaplugin.schema.features.hierarchy.SchemaLineMarkerProvider"/>

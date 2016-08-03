@@ -8,6 +8,7 @@ import com.intellij.psi.PsiInvalidElementAccessException;
 import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.sumologic.epigraph.ideaplugin.schema.brains.NamespaceManager;
+import com.sumologic.epigraph.ideaplugin.schema.brains.VirtualFileUtil;
 import com.sumologic.epigraph.schema.parser.Fqn;
 import com.sumologic.epigraph.schema.parser.psi.*;
 import org.jetbrains.annotations.NotNull;
@@ -76,9 +77,9 @@ public class SchemaPresentationUtil {
   }
 
   @NotNull
-  static String getPresentableText(@NotNull PsiElement element, boolean structureView) {
+  private static String getPresentableText(@NotNull PsiElement element, boolean structureView) {
     if (element instanceof SchemaFile) {
-      return ((SchemaFile) element).getVirtualFile().getPresentableName();
+      return VirtualFileUtil.getOriginalVirtualFile((SchemaFile) element).getPresentableName();
     }
 
     if (element instanceof SchemaTypeDef) {

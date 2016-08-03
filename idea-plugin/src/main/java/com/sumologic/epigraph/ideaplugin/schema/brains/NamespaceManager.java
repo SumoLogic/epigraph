@@ -2,6 +2,7 @@ package com.sumologic.epigraph.ideaplugin.schema.brains;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
 import com.sumologic.epigraph.schema.parser.Fqn;
@@ -38,11 +39,11 @@ public class NamespaceManager {
   }
 
   @NotNull
-  public Collection<SchemaNamespaceDecl> getAllNamespaces() {
+  public Collection<SchemaNamespaceDecl> getAllNamespaces(@NotNull GlobalSearchScope searchScope) {
     Collection<SchemaNamespaceDecl> res = allNamespaces;
     if (res != null) return res;
 
-    res = getNamespacesByPrefix(project, null, false);
+    res = getNamespacesByPrefix(project, null, false, searchScope);
     allNamespaces = res;
     return res;
   }
@@ -102,11 +103,12 @@ public class NamespaceManager {
   @NotNull
   public static List<SchemaNamespaceDecl> getNamespacesByPrefix(@NotNull Project project,
                                                                 @Nullable Fqn prefix,
-                                                                boolean returnSingleExactMatch) {
+                                                                boolean returnSingleExactMatch,
+                                                                @NotNull GlobalSearchScope searchScope) {
     String prefixStr = prefix == null ? null : prefix.toString();
     if (returnSingleExactMatch && prefix != null) {
       assert prefixStr != null;
-      List<SchemaNamespaceDecl> namespaces = SchemaIndexUtil.findNamespaces(project, prefixStr);
+      List<SchemaNamespaceDecl> namespaces = SchemaIndexUtil.findNamespaces(project, prefixStr, searchScope);
       // try to find a namespace which is exactly our prefix
       for (SchemaNamespaceDecl namespace : namespaces) {
         //noinspection ConstantConditions
@@ -121,7 +123,7 @@ public class NamespaceManager {
       return namespaces.stream().filter(ns -> ns.getFqn2().startsWith(prefix)).collect(Collectors.toList());
     } else {
       String prefixWithDot = prefix == null ? null : prefix.isEmpty() ? prefix.toString() : prefix.toString() + '.';
-      return SchemaIndexUtil.findNamespaces(project, prefixWithDot);
+      return SchemaIndexUtil.findNamespaces(project, prefixWithDot, searchScope);
     }
   }
 

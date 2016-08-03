@@ -3,6 +3,7 @@ package com.sumologic.epigraph.ideaplugin.schema.highlighting;
 import com.intellij.codeInsight.daemon.ProblemHighlightFilter;
 import com.intellij.ide.scratch.ScratchFileType;
 import com.intellij.psi.PsiFile;
+import com.sumologic.epigraph.ideaplugin.schema.brains.VirtualFileUtil;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaFileIndexUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -12,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 public class SchemaProblemHighlightFilter extends ProblemHighlightFilter {
   @Override
   public boolean shouldHighlight(@NotNull PsiFile psiFile) {
-    return SchemaFileIndexUtil.isSchemaSourceFile(psiFile.getProject(), psiFile.getVirtualFile()) ||
+    return SchemaFileIndexUtil.isSchemaSourceFile(psiFile.getProject(), VirtualFileUtil.getOriginalVirtualFile(psiFile)) ||
         (psiFile.getViewProvider().getFileType() == ScratchFileType.INSTANCE);
   }
 

@@ -16,6 +16,7 @@ import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.HierarchyCache;
 import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.TypeMembers;
 import com.sumologic.epigraph.ideaplugin.schema.features.actions.fixes.ImportTypeIntentionFix;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
+import com.sumologic.epigraph.ideaplugin.schema.index.SchemaSearchScopeUtil;
 import com.sumologic.epigraph.schema.parser.Fqn;
 import com.sumologic.epigraph.schema.parser.NamingConventions;
 import com.sumologic.epigraph.schema.parser.psi.*;
@@ -106,7 +107,7 @@ public class SchemaAnnotator implements Annotator {
             }
 
             // check if's already defined
-            List<SchemaTypeDef> typeDefs = SchemaIndexUtil.findTypeDefs(element.getProject(), new Fqn[]{fullTypeNameFqn});
+            List<SchemaTypeDef> typeDefs = SchemaIndexUtil.findTypeDefs(element.getProject(), new Fqn[]{fullTypeNameFqn}, SchemaSearchScopeUtil.getSearchScope(typeDef));
             if (typeDefs.size() > 1) {
               holder.createErrorAnnotation(id, SchemaBundle.message("annotator.type.already.defined", fullTypeNameFqn));
             }

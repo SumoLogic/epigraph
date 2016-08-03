@@ -1,5 +1,6 @@
 package com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy;
 
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
 import com.sumologic.epigraph.schema.parser.Fqn;
@@ -86,7 +87,7 @@ public class InheritanceTest extends LightCodeInsightFixtureTestCase {
         myFixture.getProject(),
         Collections.singleton(new Fqn("x")),
         new Fqn(name),
-        null);
+        GlobalSearchScope.allScope(myFixture.getProject()));
     assertNotNull(typeDef);
     return typeDef;
   }

@@ -3,8 +3,10 @@ package com.sumologic.epigraph.ideaplugin.schema.brains;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.containers.MultiMap;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
+import com.sumologic.epigraph.ideaplugin.schema.index.SchemaSearchScopeUtil;
 import com.sumologic.epigraph.schema.parser.Fqn;
 import com.sumologic.epigraph.schema.parser.psi.*;
 import com.sumologic.epigraph.schema.parser.psi.impl.SchemaElementFactory;
@@ -110,6 +112,7 @@ public class ImportsManager {
 
     // first add all imports, then remove those actually used
     final Set<SchemaImportStatement> res = new HashSet<>(importsByFqn.values());
+    final GlobalSearchScope searchScope = SchemaSearchScopeUtil.getSearchScope(file);
 
     SchemaVisitor visitor = new SchemaVisitor() {
       @Override
@@ -147,8 +150,8 @@ public class ImportsManager {
     // add all unresolved imports (unresolved => unused)
     final Project project = file.getProject();
     for (Map.Entry<Fqn, Collection<SchemaImportStatement>> entry : importsByFqn.entrySet()) {
-      SchemaTypeDef typeDef = SchemaIndexUtil.findTypeDef(project, entry.getKey());
-      if (typeDef == null && SchemaIndexUtil.findNamespace(project, entry.getKey()) == null) {
+      SchemaTypeDef typeDef = SchemaIndexUtil.findTypeDef(project, entry.getKey(), searchScope);
+      if (typeDef == null && SchemaIndexUtil.findNamespace(project, entry.getKey(), searchScope) == null) {
         res.addAll(entry.getValue());
       }
     }

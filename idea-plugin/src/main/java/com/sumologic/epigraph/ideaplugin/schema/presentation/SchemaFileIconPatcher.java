@@ -21,6 +21,7 @@ import javax.swing.*;
  */
 public class SchemaFileIconPatcher implements FileIconPatcher {
   // TODO only icon in the editor tab but not in the project view gets patched
+  // https://intellij-support.jetbrains.com/hc/en-us/community/posts/207277349-handling-custom-language-file-outside-of-source-root
 
   @Override
   public Icon patchIcon(Icon baseIcon, VirtualFile file, @Iconable.IconFlags int flags, @Nullable Project project) {

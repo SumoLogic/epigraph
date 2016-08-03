@@ -14,6 +14,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -49,7 +50,7 @@ public abstract class SchemaTypeDefStubElementTypeBase<S extends SchemaTypeDefSt
   protected static List<SerializedFqnTypeRef> getSerializedFqnTypeRefs(@NotNull List<SchemaFqnTypeRef> typeRefs) {
     return typeRefs.stream()
         .map(SerializedFqnTypeRef::new)
-        .filter(i -> i != null) // filter out non-fqn or badly broken type refs
+        .filter(Objects::nonNull) // filter out non-fqn or badly broken type refs
         .collect(Collectors.toList());
   }
 

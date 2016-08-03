@@ -23,7 +23,7 @@ public class SchemaIndexUtil {
   public static List<SchemaTypeDef> findTypeDefs(@NotNull Project project,
                                                  @Nullable Collection<Fqn> namespaces,
                                                  @Nullable Fqn suffix,
-                                                 @Nullable GlobalSearchScope scope) {
+                                                 @NotNull GlobalSearchScope scope) {
     return findTypeDefs(project, namespaces, suffix, scope, new AddAllProcessor<>());
   }
 
@@ -31,17 +31,15 @@ public class SchemaIndexUtil {
   public static SchemaTypeDef findTypeDef(@NotNull Project project,
                                           @NotNull Collection<Fqn> namespaces,
                                           @NotNull Fqn suffix,
-                                          @Nullable GlobalSearchScope scope) {
+                                          @NotNull GlobalSearchScope scope) {
     return findTypeDefs(project, namespaces, suffix, scope, new TakeFirstProcessor<>());
   }
 
   private static <R> R findTypeDefs(@NotNull Project project,
                                     @Nullable Collection<Fqn> namespaces,
                                     @Nullable Fqn suffix,
-                                    @Nullable GlobalSearchScope scope,
+                                    @NotNull GlobalSearchScope searchScope,
                                     @NotNull Processor<SchemaTypeDef, R> processor) {
-
-    if (scope == null) scope = GlobalSearchScope.allScope(project);
 
     if (namespaces != null) {
       if (suffix != null) {
@@ -50,7 +48,7 @@ public class SchemaIndexUtil {
 
         for (Fqn namespace : namespaces) {
           String fqn = namespace.append(suffix).toString();
-          Collection<SchemaTypeDef> typeDefs = index.get(fqn, project, scope);
+          Collection<SchemaTypeDef> typeDefs = index.get(fqn, project, searchScope);
           if (!processor.process(typeDefs)) break;
         }
       } else {
@@ -58,7 +56,7 @@ public class SchemaIndexUtil {
         assert index != null;
 
         for (Fqn namespace : namespaces) {
-          Collection<SchemaTypeDef> typeDefs = index.get(namespace.toString(), project, scope);
+          Collection<SchemaTypeDef> typeDefs = index.get(namespace.toString(), project, searchScope);
           if (!processor.process(typeDefs)) break;
         }
       }
@@ -76,7 +74,7 @@ public class SchemaIndexUtil {
         }
 
         for (String name : shortNames) {
-          Collection<SchemaTypeDef> typeDefs = index.get(name, project, scope);
+          Collection<SchemaTypeDef> typeDefs = index.get(name, project, searchScope);
           if (!processor.process(typeDefs)) break;
         }
       } else {
@@ -87,7 +85,7 @@ public class SchemaIndexUtil {
         Collection<String> fullNames = index.getAllKeys(project);
         for (String fullName : fullNames) {
           if (fullName.endsWith(suffixStr))
-            if (!processor.process(index.get(fullName, project, scope))) break;
+            if (!processor.process(index.get(fullName, project, searchScope))) break;
         }
       }
 
@@ -97,28 +95,30 @@ public class SchemaIndexUtil {
   }
 
   @NotNull
-  public static List<SchemaTypeDef> findTypeDefs(Project project, @NotNull Fqn[] fqns) {
-    return findTypeDefs(project, fqns, new AddAllProcessor<>());
+  public static List<SchemaTypeDef> findTypeDefs(@NotNull Project project, @NotNull Fqn[] fqns, @NotNull GlobalSearchScope searchScope) {
+    return findTypeDefs(project, fqns, new AddAllProcessor<>(), searchScope);
   }
 
   @Nullable
-  public static SchemaTypeDef findTypeDef(Project project, @NotNull Fqn[] fqns) {
-    return findTypeDefs(project, fqns, new TakeFirstProcessor<>());
+  public static SchemaTypeDef findTypeDef(Project project, @NotNull Fqn[] fqns, @NotNull GlobalSearchScope searchScope) {
+    return findTypeDefs(project, fqns, new TakeFirstProcessor<>(), searchScope);
   }
 
   @Nullable
-  public static SchemaTypeDef findTypeDef(Project project, @NotNull Fqn fqn) {
-    return findTypeDefs(project, new Fqn[]{fqn}, new TakeFirstProcessor<>());
+  public static SchemaTypeDef findTypeDef(Project project, @NotNull Fqn fqn, @NotNull GlobalSearchScope searchScope) {
+    return findTypeDefs(project, new Fqn[]{fqn}, new TakeFirstProcessor<>(), searchScope);
   }
 
-  private static <R> R findTypeDefs(Project project, @NotNull Fqn[] fqns, @NotNull Processor<SchemaTypeDef, R> processor) {
-    GlobalSearchScope scope = GlobalSearchScope.allScope(project);
+  private static <R> R findTypeDefs(@NotNull Project project,
+                                    @NotNull Fqn[] fqns,
+                                    @NotNull Processor<SchemaTypeDef, R> processor,
+                                    @NotNull GlobalSearchScope searchScope) {
 
     SchemaFullTypeNameIndex index = SchemaFullTypeNameIndex.EP_NAME.findExtension(SchemaFullTypeNameIndex.class);
     assert index != null;
 
     for (Fqn fqn : fqns) {
-      Collection<SchemaTypeDef> typeDefs = index.get(fqn.toString(), project, scope);
+      Collection<SchemaTypeDef> typeDefs = index.get(fqn.toString(), project, searchScope);
       if (!processor.process(typeDefs)) break;
     }
 
@@ -126,10 +126,8 @@ public class SchemaIndexUtil {
   }
 
   @NotNull
-  public static List<SchemaNamespaceDecl> findNamespaces(@NotNull Project project, @Nullable String namePrefix) {
+  public static List<SchemaNamespaceDecl> findNamespaces(@NotNull Project project, @Nullable String namePrefix, @NotNull GlobalSearchScope searchScope) {
     // TODO cache all namespaces (if prefix is null)
-
-    GlobalSearchScope scope = GlobalSearchScope.allScope(project);
 
     SchemaNamespaceByNameIndex index = SchemaNamespaceByNameIndex.EP_NAME.findExtension(SchemaNamespaceByNameIndex.class);
 
@@ -137,7 +135,7 @@ public class SchemaIndexUtil {
 
     index.processAllKeys(project, namespaceFqn -> {
       if (namePrefix == null || namespaceFqn.startsWith(namePrefix)) {
-        result.addAll(index.get(namespaceFqn, project, scope));
+        result.addAll(index.get(namespaceFqn, project, searchScope));
       }
       return true;
     });
@@ -146,18 +144,16 @@ public class SchemaIndexUtil {
   }
 
   @Nullable
-  public static SchemaNamespaceDecl findNamespace(@NotNull Project project, @NotNull Fqn namespace) {
-    GlobalSearchScope scope = GlobalSearchScope.allScope(project);
-
+  public static SchemaNamespaceDecl findNamespace(@NotNull Project project, @NotNull Fqn namespace, @NotNull GlobalSearchScope searchScope) {
     SchemaNamespaceByNameIndex index = SchemaNamespaceByNameIndex.EP_NAME.findExtension(SchemaNamespaceByNameIndex.class);
 
-    Collection<SchemaNamespaceDecl> namespaceDecls = index.get(namespace.toString(), project, scope);
+    Collection<SchemaNamespaceDecl> namespaceDecls = index.get(namespace.toString(), project, searchScope);
     return namespaceDecls.isEmpty() ? null : namespaceDecls.iterator().next();
   }
 
   @NotNull
   public static List<SchemaSupplementDef> findSupplementsBySource(@NotNull Project project, @NotNull SchemaTypeDef source) {
-    GlobalSearchScope scope = GlobalSearchScope.allScope(project);
+    GlobalSearchScope allScope = GlobalSearchScope.allScope(project);
 
     String name = source.getName();
     if (name == null) return Collections.emptyList();
@@ -167,11 +163,12 @@ public class SchemaIndexUtil {
     final List<SchemaSupplementDef> result = new ArrayList<>();
 
     index.processAllKeys(project, sourceShortName -> {
-      Collection<SchemaSupplementDef> schemaSupplementDefs = index.get(sourceShortName, project, scope);
+      Collection<SchemaSupplementDef> schemaSupplementDefs = index.get(sourceShortName, project, allScope);
       for (SchemaSupplementDef schemaSupplementDef : schemaSupplementDefs) {
         ProgressManager.checkCanceled();
         SchemaTypeDef s = schemaSupplementDef.source();
-        if (source == s) result.add(schemaSupplementDef);
+        GlobalSearchScope supplementScope = SchemaSearchScopeUtil.getSearchScope(schemaSupplementDef);
+        if (source == s && SchemaSearchScopeUtil.isInScope(supplementScope, source)) result.add(schemaSupplementDef);
       }
       return true;
     });
@@ -181,7 +178,7 @@ public class SchemaIndexUtil {
 
   @NotNull
   public static List<SchemaSupplementDef> findSupplementsBySupplemented(@NotNull Project project, @NotNull SchemaTypeDef supplemented) {
-    GlobalSearchScope scope = GlobalSearchScope.allScope(project);
+    GlobalSearchScope allScope = GlobalSearchScope.allScope(project);
 
     String name = supplemented.getName();
     if (name == null) return Collections.emptyList();
@@ -191,17 +188,21 @@ public class SchemaIndexUtil {
     final List<SchemaSupplementDef> result = new ArrayList<>();
 
     index.processAllKeys(project, sourceShortName -> {
-      Collection<SchemaSupplementDef> schemaSupplementDefs = index.get(sourceShortName, project, scope);
+      Collection<SchemaSupplementDef> schemaSupplementDefs = index.get(sourceShortName, project, allScope);
       // check all supplement defs
       for (SchemaSupplementDef schemaSupplementDef : schemaSupplementDefs) {
         ProgressManager.checkCanceled();
-        // check their supplemented lists
-        List<SchemaTypeDef> ss = schemaSupplementDef.supplemented();
-        for (SchemaTypeDef s : ss) {
-          // try to find `supplemented` among them
-          if (supplemented == s) {
-            result.add(schemaSupplementDef);
-            break;
+        // supplemented must be visible by supplement
+        GlobalSearchScope supplementScope = SchemaSearchScopeUtil.getSearchScope(schemaSupplementDef);
+        if (SchemaSearchScopeUtil.isInScope(supplementScope, supplemented)) {
+          // check their supplemented lists
+          List<SchemaTypeDef> ss = schemaSupplementDef.supplemented();
+          for (SchemaTypeDef s : ss) {
+            // try to find `supplemented` among them
+            if (supplemented == s) {
+              result.add(schemaSupplementDef);
+              break;
+            }
           }
         }
       }

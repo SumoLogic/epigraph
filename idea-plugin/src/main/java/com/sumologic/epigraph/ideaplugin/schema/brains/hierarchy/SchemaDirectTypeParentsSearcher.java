@@ -5,11 +5,15 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.util.Processor;
 import com.intellij.util.QueryExecutor;
+import com.sumologic.epigraph.ideaplugin.schema.brains.VirtualFileUtil;
 import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.SchemaDirectTypeParentsSearch.SearchParameters;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
+import com.sumologic.epigraph.ideaplugin.schema.index.SchemaSearchScopeUtil;
 import com.sumologic.epigraph.schema.parser.psi.SchemaRecordTypeDef;
 import com.sumologic.epigraph.schema.parser.psi.SchemaSupplementDef;
 import com.sumologic.epigraph.schema.parser.psi.SchemaTypeDef;
@@ -18,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -29,7 +34,10 @@ public class SchemaDirectTypeParentsSearcher implements QueryExecutor<SchemaType
 
     final SchemaTypeDef target = queryParameters.schemaTypeDef;
     final Project project = PsiUtilCore.getProjectInReadAction(target);
-    Application application = ApplicationManager.getApplication();
+    final VirtualFile targetVirtualFile = VirtualFileUtil.getOriginalVirtualFile(target.getContainingFile());
+    if (targetVirtualFile == null) return true;
+
+    final Application application = ApplicationManager.getApplication();
 
     final List<SchemaTypeDef> parents = new ArrayList<>();
 
@@ -44,7 +52,7 @@ public class SchemaDirectTypeParentsSearcher implements QueryExecutor<SchemaType
     if (queryParameters.includeSupplements) {
 
       List<SchemaTypeDef> candidates = application.runReadAction(
-          (Computable<List<SchemaTypeDef>>) () -> SchemaIndexUtil.findTypeDefs(project, null, null, null)
+          (Computable<List<SchemaTypeDef>>) () -> SchemaIndexUtil.findTypeDefs(project, null, null, GlobalSearchScope.allScope(project))
       );
 
       for (SchemaTypeDef candidate : candidates) {
@@ -52,21 +60,27 @@ public class SchemaDirectTypeParentsSearcher implements QueryExecutor<SchemaType
 
         application.runReadAction(() -> {
 
-          List<SchemaTypeDef> supplementedList = null;
-          if (candidate instanceof SchemaRecordTypeDef) {
-            SchemaRecordTypeDef recordTypeDef = (SchemaRecordTypeDef) candidate;
-            supplementedList = recordTypeDef.supplemented();
-          } else if (candidate instanceof SchemaVarTypeDef) {
-            SchemaVarTypeDef varTypeDef = (SchemaVarTypeDef) candidate;
-            supplementedList = varTypeDef.supplemented();
-          }
+          // supplemented type must be in the candidate's search scope
+          final GlobalSearchScope candidateScope = SchemaSearchScopeUtil.getSearchScope(candidate);
+          if (candidateScope.contains(targetVirtualFile)) {
 
-          if (supplementedList != null) {
-            parents.addAll(
-                supplementedList.stream()
-                    .filter(target::equals)
-                    .map(candidateChild -> candidate)
-                    .collect(Collectors.toList()));
+            List<SchemaTypeDef> supplementedList = null;
+            if (candidate instanceof SchemaRecordTypeDef) {
+              SchemaRecordTypeDef recordTypeDef = (SchemaRecordTypeDef) candidate;
+              supplementedList = recordTypeDef.supplemented();
+            } else if (candidate instanceof SchemaVarTypeDef) {
+              SchemaVarTypeDef varTypeDef = (SchemaVarTypeDef) candidate;
+              supplementedList = varTypeDef.supplemented();
+            }
+
+            if (supplementedList != null && supplementedList.stream().anyMatch(target::equals))
+              parents.add(candidate);
+
+//            parents.addAll(
+//                supplementedList.stream()
+//                    .filter(target::equals)
+//                    .map(candidateChild -> candidate)
+//                    .collect(Collectors.toList()));
           }
         });
       }
@@ -77,7 +91,10 @@ public class SchemaDirectTypeParentsSearcher implements QueryExecutor<SchemaType
     if (queryParameters.includeStandaloneSupplements) {
       application.runReadAction(() -> {
         List<SchemaSupplementDef> supplements = SchemaIndexUtil.findSupplementsBySupplemented(project, target);
-        parents.addAll(supplements.stream().map(SchemaSupplementDef::source).collect(Collectors.toList()));
+        parents.addAll(supplements.stream()
+            .map(SchemaSupplementDef::source)
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList()));
       });
     }
 

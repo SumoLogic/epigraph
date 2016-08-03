@@ -2,6 +2,8 @@ package com.sumologic.epigraph.schema.parser.psi.impl;
 
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.search.GlobalSearchScope;
+import com.sumologic.epigraph.ideaplugin.schema.index.SchemaSearchScopeUtil;
 import com.sumologic.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
 import com.sumologic.epigraph.schema.parser.psi.stubs.*;
 import com.sumologic.epigraph.schema.parser.psi.*;
@@ -11,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static com.sumologic.epigraph.schema.parser.psi.impl.SchemaPsiImplUtil.sourceRef;
@@ -29,7 +32,7 @@ class SchemaPsiImplUtilExt {
     SchemaRecordTypeDefStub stub = recordTypeDef.getStub();
     if (stub != null) {
       List<SerializedFqnTypeRef> supplementedTypeRefs = stub.getSupplementedTypeRefs();
-      return resolveSerializedTypeRefs(supplementedTypeRefs, recordTypeDef.getProject());
+      return resolveSerializedTypeRefs(supplementedTypeRefs, recordTypeDef.getProject(), SchemaSearchScopeUtil.getSearchScope(recordTypeDef));
     }
 
     SchemaSupplementsDecl supplementsDecl = recordTypeDef.getSupplementsDecl();
@@ -45,7 +48,7 @@ class SchemaPsiImplUtilExt {
     SchemaVarTypeDefStub stub = varTypeDef.getStub();
     if (stub != null) {
       List<SerializedFqnTypeRef> supplementedTypeRefs = stub.getSupplementedTypeRefs();
-      return resolveSerializedTypeRefs(supplementedTypeRefs, varTypeDef.getProject());
+      return resolveSerializedTypeRefs(supplementedTypeRefs, varTypeDef.getProject(), SchemaSearchScopeUtil.getSearchScope(varTypeDef));
     }
 
     SchemaSupplementsDecl supplementsDecl = varTypeDef.getSupplementsDecl();
@@ -62,7 +65,7 @@ class SchemaPsiImplUtilExt {
     if (stub != null) {
       SerializedFqnTypeRef sourceTypeRef = stub.getSourceTypeRef();
       if (sourceTypeRef == null) return null;
-      return sourceTypeRef.resolveTypeDef(supplementDef.getProject());
+      return sourceTypeRef.resolveTypeDef(supplementDef.getProject(), SchemaSearchScopeUtil.getSearchScope(supplementDef));
     }
 
     SchemaFqnTypeRef ref = sourceRef(supplementDef);
@@ -76,7 +79,7 @@ class SchemaPsiImplUtilExt {
     SchemaSupplementDefStub stub = supplementDef.getStub();
     if (stub != null) {
       List<SerializedFqnTypeRef> supplementedTypeRefs = stub.getSupplementedTypeRefs();
-      return resolveSerializedTypeRefs(supplementedTypeRefs, supplementDef.getProject());
+      return resolveSerializedTypeRefs(supplementedTypeRefs, supplementDef.getProject(), SchemaSearchScopeUtil.getSearchScope(supplementDef));
     }
 
     return resolveTypeRefs(supplementedRefs(supplementDef));
@@ -110,15 +113,17 @@ class SchemaPsiImplUtilExt {
   private static List<SchemaTypeDef> resolveTypeRefs(List<SchemaFqnTypeRef> refs) {
     return refs.stream()
         .map(SchemaFqnTypeRef::resolve)
-        .filter(e -> e != null)
+        .filter(Objects::nonNull)
         .collect(Collectors.toList());
   }
 
-  private static List<SchemaTypeDef> resolveSerializedTypeRefs(List<SerializedFqnTypeRef> refs, Project project) {
+  private static List<SchemaTypeDef> resolveSerializedTypeRefs(@Nullable List<SerializedFqnTypeRef> refs,
+                                                               @NotNull Project project,
+                                                               @NotNull GlobalSearchScope searchScope) {
     if (refs == null) return Collections.emptyList();
     return refs.stream()
-        .map(tr -> tr.resolveTypeDef(project))
-        .filter(e -> e != null)
+        .map(tr -> tr.resolveTypeDef(project, searchScope))
+        .filter(Objects::nonNull)
         .collect(Collectors.toList());
   }
 
