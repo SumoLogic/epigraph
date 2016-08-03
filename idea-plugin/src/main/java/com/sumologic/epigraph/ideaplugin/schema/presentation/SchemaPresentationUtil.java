@@ -22,6 +22,7 @@ import java.util.List;
 public class SchemaPresentationUtil {
   // TODO own icons!
   public static final Icon SCHEMA_FILE_ICON = AllIcons.FileTypes.Custom;
+  public static final Icon SCHEMA_OUTSIDE_SOURCE_FILE_ICON = AllIcons.FileTypes.Unknown;
 
   public static final Icon PARENT_TYPES_GUTTER_ICON = AllIcons.Gutter.OverridingMethod;
   public static final Icon CHILD_TYPES_GUTTER_ICON = AllIcons.Gutter.OverridenMethod;

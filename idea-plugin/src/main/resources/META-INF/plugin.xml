@@ -40,6 +40,9 @@
     <editorTabTitleProvider
         implementation="com.sumologic.epigraph.ideaplugin.schema.presentation.SchemaEditorTabTitleProvider"/>
 
+    <!-- change icon if schema file is not under the source root -->
+    <fileIconPatcher implementation="com.sumologic.epigraph.ideaplugin.schema.presentation.SchemaFileIconPatcher"/>
+
     <lang.syntaxHighlighterFactory language="epi_schema"
                                    implementationClass="com.sumologic.epigraph.ideaplugin.schema.highlighting.SchemaSyntaxHighlighterFactory"/>
     <lang.parserDefinition language="epi_schema"
@@ -92,6 +95,12 @@
     <!-- highlight errors in parents even if there are errors in children -->
     <highlightRangeExtension
         implementation="com.sumologic.epigraph.ideaplugin.schema.highlighting.SchemaHighlightRangeExtension"/>
+
+    <!-- highlighting filters -->
+    <problemFileHighlightFilter
+        implementation="com.sumologic.epigraph.ideaplugin.schema.highlighting.SchemaProblemFileHighlightFilter"/>
+    <problemHighlightFilter
+        implementation="com.sumologic.epigraph.ideaplugin.schema.highlighting.SchemaProblemHighlightFilter"/>
 
     <!-- refactoring -->
     <lang.refactoringSupport language="epi_schema"
