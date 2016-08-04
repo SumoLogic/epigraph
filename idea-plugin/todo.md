@@ -1,9 +1,11 @@
 ### High
 
 ### Medium
+- add SourceRootFinder to detect src/main/epigraph, test/epigraph etc
 - Structure popup (ctrl-f12)
 - Rename on fields (**In progress**)
 - Rename on vartype tags
+- On project import: detect `epigraph` as source folders
 
 ### Low
 - Rename projects to `epigraph-idea-plugin` and `epigraph-schema-parser(-common)` ?
