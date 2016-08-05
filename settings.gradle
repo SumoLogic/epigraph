@@ -1,6 +1,15 @@
+pluginRepositories {
+  maven {
+    url "file://" + System.getProperty("user.home") + "/.m2/repository"
+  }
+  gradlePluginPortal()
+}
+
 rootProject.name = 'epigraph'
+
 include 'epigraph-builtin-types',
         'epigraph-core',
+        'epigraph-gradle-plugin',
         'epigraph-schema',
         'epigraph-schema-compiler',
         'idea-plugin',

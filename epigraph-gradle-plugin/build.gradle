@@ -1,0 +1,39 @@
+plugins {
+  id 'java-gradle-plugin'
+  id 'maven-publish'
+}
+
+group = 'io.epigraph'
+version = '0.0' // snapshot versions not supported in local repo
+description = """
+Epigraph gradle plugin
+
+todo
+"""
+
+apply plugin: 'groovy'
+
+//sourceCompatibility = 1.7
+//targetCompatibility = 1.7
+//plugins.withType(JavaPlugin) {
+//  project.tasks.withType(GroovyCompile) { task ->
+//    task.sourceCompatibility = project.sourceCompatibility
+//    task.targetCompatibility = project.targetCompatibility
+//  }
+//}
+
+dependencies {
+  compile gradleApi()
+  compile localGroovy()
+}
+
+gradlePlugin {
+  plugins {
+    epigraph {
+      id = "io.epigraph"
+      implementationClass = "io.epigraph.gradle.EpigraphPlugin"
+    }
+  }
+}
+
+
