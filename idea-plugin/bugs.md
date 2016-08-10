@@ -7,6 +7,7 @@
         // file1: namespace some; string String
         // file2: namespace some; string Foo extends String   <-- either epigraph.String or some.String
 - Type ref completion should respect kinds, e.g. `record Foo extends <caret>` should only suggests records, with current one and all the parents removed
+- `java.lang.AssertionError: Stub list in names.esc has more elements than PSI`, not reproducible so far
 - `quoted` field/tag names not recognized as overriding same fields/tags (quoted or not) from parent type
 
 ### Low

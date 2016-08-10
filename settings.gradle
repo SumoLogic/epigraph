@@ -1,15 +1,19 @@
 pluginRepositories {
+  // pick up gradle plugin from local maven repo
   maven {
     url "file://" + System.getProperty("user.home") + "/.m2/repository"
   }
   gradlePluginPortal()
 }
 
-rootProject.name = 'epigraph'
+rootProject.name = theName
 
 include 'epigraph-builtin-types',
         'epigraph-core',
         'epigraph-gradle-plugin',
+        'epigraph-maven-plugin',
+        'epigraph-scala-codegen',
+        'epigraph-scala-maven-plugin',
         'epigraph-schema',
         'epigraph-schema-compiler',
         'idea-plugin',

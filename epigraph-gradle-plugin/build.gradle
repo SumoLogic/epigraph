@@ -5,6 +5,7 @@ plugins {
 
 group = 'io.epigraph'
 version = '0.0' // snapshot versions not supported in local repo
+
 description = """
 Epigraph gradle plugin
 
@@ -13,18 +14,18 @@ todo
 
 apply plugin: 'groovy'
 
-//sourceCompatibility = 1.7
-//targetCompatibility = 1.7
-//plugins.withType(JavaPlugin) {
-//  project.tasks.withType(GroovyCompile) { task ->
-//    task.sourceCompatibility = project.sourceCompatibility
-//    task.targetCompatibility = project.targetCompatibility
-//  }
-//}
-
 dependencies {
+  compile project(":epigraph-schema-compiler")
+
   compile gradleApi()
   compile localGroovy()
+}
+
+plugins.withType(JavaPlugin) {
+  project.tasks.withType(GroovyCompile) { task ->
+    task.sourceCompatibility = 1.7
+    task.targetCompatibility = 1.7
+  }
 }
 
 gradlePlugin {

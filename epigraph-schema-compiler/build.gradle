@@ -1,18 +1,18 @@
 plugins {
-  id "com.github.maiflai.scalatest" version "0.12"
+  id 'com.github.maiflai.scalatest' version '0.12'
 }
 
 apply plugin: 'scala'
 
 dependencies {
-  compile project(":epigraph-core")
-  compile project(":epigraph-builtin-types")
-  compile project(":schema-parser")
+  compile project(':epigraph-core')
+  compile project(':epigraph-builtin-types')
+  compile project(':schema-parser')
 
-  compile "org.scala-lang:scala-library"
-  compile "org.scala-lang:scala-reflect"
+  compile 'org.scala-lang:scala-library'
+  compile 'org.scala-lang:scala-reflect'
   compile "com.lihaoyi:pprint_$scalaVersionMajorMinor"
 
   testCompile "org.scalatest:scalatest_$scalaVersionMajorMinor"
-  testRuntime "org.pegdown:pegdown"
+  testRuntime 'org.pegdown:pegdown'
 }

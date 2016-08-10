@@ -1,9 +1,16 @@
 plugins {
-  id "nebula.dependency-recommender" version "3.6.3"
+  id 'nebula.dependency-recommender' version '3.6.3'
+  id 'nebula.maven-publish' version '4.4.4'
 }
 
 allprojects {
-  apply plugin: "nebula.dependency-recommender"
+  apply plugin: 'idea'
+  apply plugin: 'nebula.dependency-recommender'
+  // https://github.com/nebula-plugins/nebula-dependency-recommender-plugin/issues/9
+  apply plugin: 'nebula.maven-publish'
+
+  group = theGroup
+  version = theVersion
 
   dependencyRecommendations {
     mavenBom file: file("$rootDir/pom.xml")
@@ -14,7 +21,6 @@ subprojects {
   repositories {
     mavenCentral()
     jcenter()
-    flatDir(dirs: "$rootDir/schema-parser/lib") // epigraph-schema-compiler must see it too
   }
 
   tasks.withType(JavaCompile) {
@@ -23,8 +29,6 @@ subprojects {
     options.encoding = 'UTF-8'
   }
 }
-
-apply plugin: 'idea'
 
 // importing gradle project from IDEA is preferred to using 'gradle idea'
 idea {

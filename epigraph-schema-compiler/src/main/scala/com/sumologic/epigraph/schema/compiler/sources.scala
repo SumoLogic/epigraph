@@ -5,7 +5,9 @@ package com.sumologic.epigraph.schema.compiler
 import java.io.{ByteArrayOutputStream, File, IOException, InputStream}
 import java.nio.charset.{Charset, StandardCharsets}
 import java.nio.file.{Files, Path}
+import java.util
 import java.util.jar.{JarEntry, JarFile}
+import java.util.regex.Pattern
 
 trait Source {
 
@@ -63,7 +65,18 @@ class JarSource(private val jarFile: JarFile, private val jarEntry: JarEntry) ex
 
   @throws[IOException]
   override def text: String = inputStreamToString(jarFile.getInputStream(jarEntry))
+}
 
+object JarSource {
+
+  import scala.collection.JavaConversions._
+  import scala.collection.JavaConverters.asJavaIteratorConverter
+
+  def allFiles(jarFile: JarFile, filenamePattern: Pattern, charset: Charset): util.Iterator[JarSource] =
+    jarFile.entries()
+    .filter(e => filenamePattern.matcher(e.getName).matches() && !e.isDirectory)
+    .map(e => new JarSource(jarFile, e))
+    .asJava
 }
 
 class ResourceSource(private val resourcePath: String) extends Source {

@@ -1,0 +1,9 @@
+apply plugin: 'scala'
+
+dependencies {
+  compile project(":epigraph-core")
+  compile project(":epigraph-schema-compiler")
+
+  compile "org.scalameta:trees_$scalaVersionMajorMinor"
+  compile "com.lihaoyi:pprint_$scalaVersionMajorMinor"
+}

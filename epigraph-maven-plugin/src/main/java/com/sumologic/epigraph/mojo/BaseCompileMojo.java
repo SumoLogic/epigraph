@@ -16,15 +16,18 @@ import scala.Option;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 /**
  * Base for Epigraph Compiler Mojos.
  */
 public abstract class BaseCompileMojo extends AbstractMojo {
+  private static final Pattern SCHEMA_FILENAME_PATTERN = Pattern.compile(".+\\.esc");
 
   /**
    * The source directory of Epigraph schema files. This directory is added to the
@@ -126,19 +129,8 @@ public abstract class BaseCompileMojo extends AbstractMojo {
 
   private void addSourcesFromJar(File file, Collection<Source> sources) throws IOException {
     final JarFile jarFile = new JarFile(file);
-    try (final Stream<JarEntry> jarEntries = jarFile.stream()) {
-      jarEntries.filter(
-          jarEntry -> jarEntry.getName().endsWith(".esc") && !jarEntry.isDirectory()
-      ).map(
-          // TODO? source encoding like: compiler.setOutputCharacterEncoding(project.getProperties().getProperty("project.build.sourceEncoding"));
-          jarEntry -> new JarSource(jarFile, jarEntry)
-      ).forEach(sources::add);
-//      jarEntries.forEach(jarEntry -> {
-//        if (jarEntry.getName().endsWith(".esc") && !jarEntry.isDirectory()) {
-//          sources.add(new JarSource(jarFile, jarEntry));
-//        }
-//      });
-    }
+    // TODO? source encoding like: compiler.setOutputCharacterEncoding(project.getProperties().getProperty("project.build.sourceEncoding"));
+    JarSource.allFiles(jarFile, SCHEMA_FILENAME_PATTERN, StandardCharsets.UTF_8).forEachRemaining(sources::add);
   }
 
   private String[] getIncludedFiles(String absPath, String[] excludes, String[] includes) {
