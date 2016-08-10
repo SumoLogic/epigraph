@@ -2,8 +2,9 @@
 
 package io.epigraph.types;
 
-import io.epigraph.data.builders.RecordDatumBuilder;
-import io.epigraph.data.mutable.MutRecordDatum;
+import io.epigraph.datum.Data;
+import io.epigraph.datum.RecordDatum;
+import io.epigraph.datum.Val;
 import io.epigraph.names.QualifiedTypeName;
 import io.epigraph.util.Unmodifiable;
 import org.jetbrains.annotations.NotNull;
@@ -14,6 +15,8 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+
 
 public abstract class RecordType extends DatumType {
 
@@ -21,7 +24,7 @@ public abstract class RecordType extends DatumType {
 
   private @Nullable Map<String, ? extends Field> fieldsMap = null;
 
-  public RecordType(QualifiedTypeName name, List<RecordType> immediateSupertypes, boolean polymorphic) {
+  public RecordType(QualifiedTypeName name, List<? extends RecordType> immediateSupertypes, boolean polymorphic) {
     super(name, immediateSupertypes, polymorphic);
   }
 
@@ -45,7 +48,7 @@ public abstract class RecordType extends DatumType {
     if (fields == null) { // TODO move initialization to constructor (if possible?)
       LinkedList<Field> acc = new LinkedList<>(immediateFields());
       for (RecordType st : supertypes()) {
-        st.fields().stream().filter(sf -> // TODO check that fields overridden (subtyped) are marked as abstract
+        st.fields().stream().filter(sf ->
             acc.stream().noneMatch(af -> af.name.equals(sf.name))
         ).forEachOrdered(acc::add);
       }
@@ -62,9 +65,10 @@ public abstract class RecordType extends DatumType {
 
   // TODO public abstract @NotNull ImmRecordDatum immutable(@NotNull RecordDatum)?
 
-  public abstract @NotNull RecordDatumBuilder builder(); // TODO createBuilder()?
+  // TODO above and below need to be introduced in raw and static types separately?
 
-  public abstract @NotNull MutRecordDatum mutable(); // TODO createMutable()?
+  //  @Override
+  //  public abstract @NotNull MutRecordDatum mutable();
 
   public @NotNull Field assertReadable(@NotNull Field field) throws IllegalArgumentException {
     Field knownField = fieldsMap().get(field.name);
@@ -96,7 +100,7 @@ public abstract class RecordType extends DatumType {
   }
 
 
-  public static class Field {
+  public static class Field { // TODO move out
 
     public final String name;
 
@@ -110,26 +114,45 @@ public abstract class RecordType extends DatumType {
       this.isAbstract = isAbstract;
     }
 
+    public String name() { return name; }
+
   }
 
 
-//  public static class Dynamic extends RecordType { // TODO this should be a type builder
-//
-//    private final List<Field> immediateFields = new ArrayList<>();
-//
-//    public Dynamic(
-//        QualifiedTypeName name,
-//        List<RecordType> immediateSupertypes,
-//        boolean polymorphic
-//    ) {
-//      super(name, immediateSupertypes, polymorphic);
-//    }
-//
-//    @Override
-//    public List<Field> immediateFields() {
-//      return immediateFields;
-//    }
-//
-//  }
+  public static abstract class Static< // TODO MyType extends Type.Static<MyType>?
+      MyImmDatum extends RecordDatum.Imm.Static,
+      MyMutDatum extends RecordDatum.Mut.Static<MyImmDatum>,
+      MyImmVal extends Val.Imm.Static,
+      MyMutVal extends Val.Mut.Static<MyImmVal, MyMutDatum>,
+      MyImmData extends Data.Imm.Static,
+      MyMutData extends Data.Mut.Static<MyImmData>
+      > extends RecordType implements DatumType.Static<
+      RecordType.Static<MyImmDatum, MyMutDatum, MyImmVal, MyMutVal, MyImmData, MyMutData>
+      > {
+
+    private final @NotNull Function<Val.Mut.Raw, MyMutVal> mutValConstructor;
+
+    private final @NotNull Function<Data.Mut.Raw, MyMutData> mutDataConstructor;
+
+    protected Static(
+        @NotNull QualifiedTypeName name,
+        @NotNull List<? extends RecordType> immediateSupertypes,
+        boolean polymorphic,
+        @NotNull Function<Val.Mut.Raw, MyMutVal> mutValConstructor,
+        @NotNull Function<Data.Mut.Raw, MyMutData> mutDataConstructor
+    ) {
+      super(name, immediateSupertypes, polymorphic);
+      this.mutValConstructor = mutValConstructor;
+      this.mutDataConstructor = mutDataConstructor;
+    }
+
+    @Override
+    public final @NotNull MyMutVal createMutableValue() { return mutValConstructor.apply(new Val.Mut.Raw(this)); }
+
+    @Override
+    public @NotNull MyMutData createMutableData() { return mutDataConstructor.apply(new Data.Mut.Raw(this)); }
+
+  }
+
 
 }

@@ -6,7 +6,7 @@ import io.epigraph.names.QualifiedTypeName;
 
 import java.util.List;
 
-public class NamedListType extends ListType {
+public abstract class NamedListType extends ListType {
 
   public NamedListType(
       QualifiedTypeName name,

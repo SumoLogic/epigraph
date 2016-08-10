@@ -2,7 +2,7 @@ namespace com.example.users
 
 vartype UserTest extends User {
   id: UserIdTest
-  record: UserRecordTest
+  `record`: UserRecordTest
 }
 
 integer UserIdTest extends UserId

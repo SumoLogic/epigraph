@@ -13,20 +13,18 @@ public class LazyInitializer<T> {
 
   private final AtomicReference<T> reference = new AtomicReference<>(null);
 
-  @Nullable
-  private Supplier<T> supplier;
+  private @Nullable Supplier<T> supplier;
 
-  public LazyInitializer(@NotNull Supplier<T> supplier) {
-    this.supplier = supplier;
-  }
+  public LazyInitializer(@NotNull Supplier<T> supplier) { this.supplier = supplier; }
 
   public T get() {
-    T value = reference.get();
-    if (supplier != null) {
+    @Nullable T value = reference.get();
+    Supplier<T> localSupplier = supplier;
+    if (localSupplier != null) {
       if (value == null) {
-        value = Objects.requireNonNull(supplier.get());
+        value = Objects.requireNonNull(localSupplier.get());
         if (reference.compareAndSet(null, value)) {
-          supplier = null;
+          supplier = null; // release reference to supplier (so it can be garbage-collected)
         } else {
           value = reference.get();
         }

@@ -14,8 +14,7 @@ import java.util.stream.Stream;
 
 public abstract class ListType extends DatumType {
 
-  @NotNull
-  public final Type elementType;
+  public final @NotNull Type elementType;
 
   private ListType(
       @NotNull TypeName name,

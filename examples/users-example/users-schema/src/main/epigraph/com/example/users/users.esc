@@ -2,7 +2,7 @@ namespace com.example.users
 
 vartype User default id {
   id: UserId
-  record: UserRecord
+  `record`: UserRecord
 }
 
 integer UserId

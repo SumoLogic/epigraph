@@ -44,15 +44,32 @@ public interface Unmodifiable {
   }
 
   @Contract(pure = true)
+  public static @NotNull <O, E> List<? extends E> list(
+      @NotNull Collection<O> collection,
+      @NotNull Function<? super O, ? extends E> elementMapper
+  ) {
+    List<E> list = new ArrayList<>(collection.size());
+    for (O element : collection) list.add(elementMapper.apply(element));
+    return Unmodifiable.list(list);
+    // return Unmodifiable.list(collection.stream().map(elementMapper).collect(Collectors.toList())); // doesn't start with empty list of required size
+  }
+
+  @Contract(pure = true)
+  public static @NotNull <E> Supplier<ArrayList<E>> arrayList(int size) { // TODO arrayListSupplier?
+    return () -> new ArrayList<E>(size);
+  }
+
+  @Contract(pure = true)
   public static @NotNull <K, V> Map<K, ? extends V> map(@NotNull Map<K, ? extends V> map) {
     for (Class<?> unmodifiableMapClass : UnmodifiableMapClasses) if (unmodifiableMapClass.isInstance(map)) return map;
     return Collections.unmodifiableMap(map);
   }
 
-  public static @NotNull <T, K, V> Map<K, ? extends V> map(
-      @NotNull Collection<T> collection,
-      @NotNull Function<? super T, ? extends K> keyMapper,
-      @NotNull Function<? super T, ? extends V> valueMapper
+  @Contract(pure = true)
+  public static @NotNull <O, K, V> Map<K, ? extends V> map(
+      @NotNull Collection<? extends O> collection,
+      @NotNull Function<? super O, ? extends K> keyMapper,
+      @NotNull Function<? super O, ? extends V> valueMapper
   ) {
     return Unmodifiable.map(collection.stream().collect(
         Collectors.toMap(keyMapper, valueMapper, Unmodifiable.throwingMerger(), Unmodifiable.hashMap(collection.size()))

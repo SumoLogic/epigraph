@@ -2,6 +2,7 @@
 
 package io.epigraph.types;
 
+import io.epigraph.datum.Val;
 import io.epigraph.names.TypeName;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,6 +15,8 @@ public abstract class DatumType extends Type {
   public final @NotNull Tag self = new Tag("self", this); // TODO rename to tag?
 
   public final boolean polymorphic;
+
+  private final @NotNull List<@NotNull Tag> immediateTags = Collections.singletonList(self);
 
   protected DatumType(
       @NotNull TypeName name,
@@ -37,13 +40,20 @@ public abstract class DatumType extends Type {
   }
 
   @Override
-  public @NotNull List<@NotNull Tag> immediateTags() {
-    return Collections.singletonList(self); // TODO cache collection itself
-  }
+  public @NotNull List<@NotNull Tag> immediateTags() { return immediateTags; }
 
   @Override
-  public final @NotNull List<@NotNull Tag> tags() {
-    return immediateTags();
-  }
+  public final @NotNull List<@NotNull Tag> tags() { return immediateTags(); }
+
+  public abstract @NotNull Val.Mut createMutableValue(); // { return new Val.Mut(this); } // FIXME
+
+//  public abstract @NotNull MutDatum mutable();
+
+
+  public interface Raw extends Type.Raw {}
+
+
+  public interface Static<MyType extends DatumType & DatumType.Static<MyType>> extends Type.Static<MyType> {}
+
 
 }

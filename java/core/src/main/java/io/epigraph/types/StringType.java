@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.List;
 
-public class StringType extends PrimitiveType {
+public abstract class StringType extends PrimitiveType {
 
   protected StringType(
       @NotNull QualifiedTypeName name,

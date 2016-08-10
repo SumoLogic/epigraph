@@ -3,13 +3,12 @@
 package io.epigraph.types;
 
 import io.epigraph.names.QualifiedTypeName;
-import io.epigraph.names.TypeName;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.List;
 
-public class PrimitiveType extends DatumType {
+public abstract class PrimitiveType extends DatumType {
 
   protected PrimitiveType(
       QualifiedTypeName name,
@@ -33,5 +32,8 @@ public class PrimitiveType extends DatumType {
   public @NotNull Collection<? extends PrimitiveType> supertypes() {
     return (Collection<? extends PrimitiveType>) super.supertypes();
   }
+
+
+  public interface Raw extends DatumType.Raw {}
 
 }

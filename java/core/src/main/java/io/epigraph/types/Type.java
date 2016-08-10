@@ -2,10 +2,8 @@
 
 package io.epigraph.types;
 
-import io.epigraph.data.builders.DataBuilder;
-import io.epigraph.data.builders.ValueBuilder;
-import io.epigraph.data.mutable.MutData;
-import io.epigraph.data.mutable.MutValue;
+import io.epigraph.datum.Data;
+import io.epigraph.datum.Val;
 import io.epigraph.names.TypeName;
 import io.epigraph.util.LazyInitializer;
 import io.epigraph.util.Unmodifiable;
@@ -16,8 +14,10 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Supplier;
 
-public abstract class Type {
+
+public abstract class Type { // TODO split into interface and impl
 
   private final TypeName name;
 
@@ -30,6 +30,8 @@ public abstract class Type {
     // assert none of the immediate supertypes is a supertype of another one
     if (immediateSupertypes.stream().anyMatch(is -> is.supertypes().stream().anyMatch(immediateSupertypes::contains)))
       throw new IllegalArgumentException();
+
+
   }
 
   public @NotNull TypeName name() { return name; }
@@ -62,9 +64,11 @@ public abstract class Type {
 
   public boolean isAssignableFrom(Type type) { return type.doesExtend(this); }
 
-  private final LazyInitializer<AnonListType> listOf = new LazyInitializer<>(() -> new AnonListType(false, this));
+  private final LazyInitializer<ListType> listOf = new LazyInitializer<>(listOfTypeSupplier()); // FIXME race?
 
-  public AnonListType listOf() { return listOf.get(); }
+  protected abstract @NotNull Supplier<ListType> listOfTypeSupplier(); // e.g. () -> new AnonListType(false, this)
+
+  public ListType listOf() { return listOf.get(); }
 
   @NotNull
   public abstract List<Tag> immediateTags();
@@ -72,9 +76,13 @@ public abstract class Type {
   @NotNull
   public abstract List<Tag> tags(); // FIXME do we need this method?
 
-  public @NotNull MutData createMutableData() { return new MutData(this); }
+  public abstract @NotNull Data.Mut createMutableData(); // { return new Data.Mut(this); }
 
-  public @NotNull DataBuilder createDataBuilder() { return new DataBuilder(this); }
+
+  public interface Raw {}
+
+
+  public interface Static<MyType extends Type & Type.Static<MyType>> {}
 
 
   public static class Tag {
@@ -88,9 +96,7 @@ public abstract class Type {
       this.type = type;
     }
 
-    public @NotNull MutValue createMutable() { return new MutValue(this.type); } // TODO createMutValue()? createMutableValue()?
-
-    public @NotNull ValueBuilder createBuilder() { return new ValueBuilder(this.type); } // TODO createValueBuilder()?
+    public @NotNull Val.Mut createMutableValue() { return this.type.createMutableValue(); }
 
   }
 

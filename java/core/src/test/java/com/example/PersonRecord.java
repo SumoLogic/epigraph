@@ -2,12 +2,15 @@
 
 package com.example;
 
-import io.epigraph.data.RecordDatum;
-import io.epigraph.data.builders.RecordDatumBuilder;
-import io.epigraph.data.immutable.ImmRecordDatum;
-import io.epigraph.data.mutable.MutRecordDatum;
+import io.epigraph.datum.ListDatum;
+import io.epigraph.datum.RecordDatum;
+import io.epigraph.datum.Val;
+import io.epigraph.errors.ErrorValue;
+import io.epigraph.names.AnonListTypeName;
 import io.epigraph.names.NamespaceName;
 import io.epigraph.names.QualifiedTypeName;
+import io.epigraph.types.AnonListType;
+import io.epigraph.types.ListType;
 import io.epigraph.types.RecordType;
 import io.epigraph.types.RecordType.Field;
 import org.jetbrains.annotations.NotNull;
@@ -15,53 +18,157 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
-public interface PersonRecord extends RecordDatum {
+public interface PersonRecord extends RecordDatum.Static {
 
-  public static final @NotNull PersonRecord.Type type = new PersonRecord.Type();
+  @NotNull PersonRecord.Type type = new PersonRecord.Type();
 
-  public static final @NotNull Field bestFriend = new Field("bestFriend", PersonRecord.type, true);
+  @NotNull Field bestFriend = new Field("bestFriend", PersonRecord.type, true);
 
-  public default @Nullable PersonRecord getBestFriend() {
-    return (PersonRecord) getDatum(bestFriend, PersonRecord.type.self);
+  @NotNull Field friends = new Field("friends", PersonRecord.List.type, false);
+
+  @Nullable PersonRecord getBestFriend();
+
+  @Nullable PersonRecord.Value getBestFriend_value();
+
+  @Nullable PersonRecord.List getFriends();
+
+  @Nullable PersonRecord.List.Value getFriends_value();
+
+
+  interface Value extends Val.Static {
+
+    @Override
+    @Nullable PersonRecord getDatum();
+
+    @Override
+    @NotNull PersonRecord.Imm.Value toImmutable();
+
   }
 
 
-  public static class Type extends RecordType {
+  interface Data extends io.epigraph.datum.Data.Static {
+
+    @Override
+    @NotNull PersonRecord.Imm.Data toImmutable();
+
+    @Nullable PersonRecord.Value get(); // default tag
+
+  }
+
+
+  class Type extends RecordType.Static<
+      PersonRecord.Imm,
+      PersonRecord.Mut,
+      PersonRecord.Imm.Value,
+      PersonRecord.Mut.Value,
+      PersonRecord.Imm.Data,
+      PersonRecord.Mut.Data
+      > {
 
     private Type() {
       super(
           new QualifiedTypeName(new NamespaceName(new NamespaceName(null, "com"), "example"), "PersonRecord"),
           Collections.emptyList(),
-          false
+          false,
+          PersonRecord.Mut.Value::new,
+          PersonRecord.Mut.Data::new
       );
     }
 
     @Override
-    public @NotNull List<@NotNull Field> immediateFields() {
-      return Arrays.asList(
-          PersonRecord.bestFriend
-      );
-    }
-
-    @Override
-    public @NotNull PersonRecord.Builder builder() { return new Builder(); }
-
-    @Override
-    public @NotNull PersonRecord.Mut mutable() { return new MutImpl(); }
-
-
-    private static class ImmImpl extends ImmRecordDatum.Impl implements PersonRecord.Imm {
-
-      protected ImmImpl(@NotNull PersonRecord recordDatum) { super(recordDatum); }
-
+    public @NotNull java.util.List<@NotNull Field> immediateFields() {
+      return Arrays.asList(PersonRecord.bestFriend);
     }
 
 
-    private static class MutImpl extends MutRecordDatum.Impl implements PersonRecord.Mut {
+    @Override
+    protected @NotNull Supplier<ListType> listOfTypeSupplier() { return () -> PersonRecord.List.type; }
 
-      protected MutImpl() { super(PersonRecord.type); }
+  }
+
+
+  interface Imm extends PersonRecord, RecordDatum.Imm.Static {
+
+    @Override
+    @Nullable PersonRecord.Imm getBestFriend();
+
+    @Override
+    @Nullable PersonRecord.Imm.Value getBestFriend_value();
+
+    @Override
+    @Nullable PersonRecord.List.Imm getFriends();
+
+    @Override
+    @Nullable PersonRecord.List.Imm.Value getFriends_value();
+
+
+    interface Value extends PersonRecord.Value, Val.Imm.Static {
+
+      @Override
+      @Nullable PersonRecord.Imm getDatum();
+
+
+      final class Impl extends Val.Imm.Static.Impl<PersonRecord.Imm.Value, PersonRecord.Imm>
+          implements PersonRecord.Imm.Value {
+
+        public Impl(@NotNull Val.Imm.Raw raw) { super(PersonRecord.type, raw); }
+
+      }
+
+
+    }
+
+
+    interface Data extends PersonRecord.Data, io.epigraph.datum.Data.Imm.Static {
+
+      @Override
+      @Nullable PersonRecord.Imm.Value get();
+
+
+      final class Impl extends io.epigraph.datum.Data.Imm.Static.Impl<PersonRecord.Imm.Data>
+          implements PersonRecord.Imm.Data {
+
+        protected Impl(@NotNull io.epigraph.datum.Data.Imm.Raw raw) { super(PersonRecord.type, raw); }
+
+        @Override
+        public @Nullable PersonRecord.Imm.Value get() {
+          return (PersonRecord.Imm.Value) _raw()._getValue(PersonRecord.type.self);
+        }
+
+      }
+
+
+    }
+
+
+    final class Impl extends RecordDatum.Imm.Static.Impl<PersonRecord.Imm> implements PersonRecord.Imm {
+
+      private Impl(RecordDatum.Imm.Raw raw) { super(PersonRecord.type, raw); }
+
+      @Override
+      public @Nullable PersonRecord.Imm.Value getBestFriend_value() {
+        return (PersonRecord.Imm.Value) _raw()._get(bestFriend, PersonRecord.type.self);
+      }
+
+      @Override
+      public @Nullable PersonRecord.Imm getBestFriend() {
+        PersonRecord.Imm.Value value = getBestFriend_value();
+        return value == null ? null : value.getDatum();
+      }
+
+      @Override
+      public @Nullable PersonRecord.List.Imm.Value getFriends_value() {
+        return (PersonRecord.List.Imm.Value) _raw()._get(PersonRecord.friends, PersonRecord.List.type.self);
+      }
+
+      @Override
+      public @Nullable PersonRecord.List.Imm getFriends() {
+        PersonRecord.List.Imm.Value value = getFriends_value();
+        return value == null ? null : value.getDatum();
+      }
 
     }
 
@@ -69,27 +176,270 @@ public interface PersonRecord extends RecordDatum {
   }
 
 
-  public static interface Imm extends PersonRecord, ImmRecordDatum {}
+  final class Mut extends RecordDatum.Mut.Static<PersonRecord.Imm> implements PersonRecord {
+
+    private Mut(@NotNull RecordDatum.Mut.Raw raw) { super(PersonRecord.type, raw, PersonRecord.Imm.Impl::new); }
+
+    @Override
+    public @Nullable PersonRecord.Mut.Value getBestFriend_value() {
+      return (PersonRecord.Mut.Value) _raw()._get(bestFriend, PersonRecord.type.self);
+    }
+
+    @Override
+    public @Nullable PersonRecord.Mut getBestFriend() {
+      PersonRecord.Mut.Value value = getBestFriend_value();
+      return value == null ? null : value.getDatum();
+    }
+
+    @Override
+    public @Nullable PersonRecord.List.Mut.Value getFriends_value() {
+      return (PersonRecord.List.Mut.Value) _raw()._get(PersonRecord.friends, PersonRecord.List.type.self);
+    }
+
+    @Override
+    public @Nullable PersonRecord.List.Mut getFriends() {
+      PersonRecord.List.Mut.Value value = getFriends_value();
+      return value == null ? null : value.getDatum();
+    }
+
+    // TODO field setters
 
 
-  public static interface Mut extends PersonRecord, MutRecordDatum {
+    final static class Value extends Val.Mut.Static<PersonRecord.Imm.Value, PersonRecord.Mut>
+        implements PersonRecord.Value {
 
-    // TODO bestFriend field in PersonRecord is marked as abstract to allow overriding itself
-    // TODO in such case this method shouldn't be generated (but should be for PersonRecord.Builder)
-    //default @NotNull PersonRecord.Mut setBestFriend(@Nullable PersonRecord datum) {
-    //  return (PersonRecord.Mut) setDatum(PersonRecord.bestFriend, PersonRecord.type.self, datum);
-    //}
+      public Value(@NotNull Val.Mut.Raw raw) { super(raw, PersonRecord.Imm.Value.Impl::new); }
+
+    }
+
+
+    final static class Data extends io.epigraph.datum.Data.Mut.Static<PersonRecord.Imm.Data>
+        implements PersonRecord.Data {
+
+      protected Data(@NotNull io.epigraph.datum.Data.Mut.Raw raw) {
+        super(PersonRecord.type, raw, PersonRecord.Imm.Data.Impl::new);
+      }
+
+      @Override
+      public @Nullable PersonRecord.Mut.Value get() {
+        return (PersonRecord.Mut.Value) _raw()._getValue(PersonRecord.type.self);
+      }
+
+      public void set(@Nullable PersonRecord.Mut.Value value) {
+        _raw()._setValue(PersonRecord.type.self, value);
+      } //default tag
+
+    }
+
 
   }
 
 
-  public static class Builder extends RecordDatumBuilder implements PersonRecord {
+  interface List extends ListDatum.Static {
 
-    public Builder() { super(PersonRecord.type); }
+    PersonRecord.List.Type type = new PersonRecord.List.Type();
 
-    public @NotNull PersonRecord.Builder setBestFriend(@Nullable PersonRecord datum) {
-      return (PersonRecord.Builder) setDatum(PersonRecord.bestFriend, PersonRecord.type.self, datum);
+    java.util.List<@Nullable ? extends PersonRecord.Value> values();
+
+    java.util.List<@Nullable ? extends PersonRecord> datums();
+
+    java.util.List<@Nullable ? extends ErrorValue> errors();
+
+
+    interface Value extends Val.Static {
+
+      @Override
+      @Nullable PersonRecord.List getDatum();
+
+
+      @Override
+      @NotNull PersonRecord.List.Imm.Value toImmutable();
+
     }
+
+
+    interface Data extends io.epigraph.datum.Data.Static {
+
+      @Override
+      @NotNull PersonRecord.List.Imm.Data toImmutable();
+
+      @Nullable PersonRecord.List.Value get(); // default tag
+
+    }
+
+
+    interface Imm extends PersonRecord.List, ListDatum.Imm.Static {
+
+      java.util.List<@Nullable ? extends PersonRecord.Imm.Value> values();
+
+      java.util.List<@Nullable ? extends PersonRecord.Imm> datums();
+
+      java.util.List<@Nullable ? extends ErrorValue> errors();
+
+
+      interface Value extends PersonRecord.List.Value, Val.Imm.Static {
+
+        @Override
+        @Nullable PersonRecord.List.Imm getDatum();
+
+        final class Impl extends Val.Imm.Static.Impl<PersonRecord.List.Imm.Value, PersonRecord.List.Imm>
+            implements PersonRecord.List.Imm.Value {
+
+          public Impl(@NotNull Val.Imm.Raw raw) { super(PersonRecord.List.type, raw); }
+
+        }
+
+
+      }
+
+
+      interface Data extends PersonRecord.List.Data, io.epigraph.datum.Data.Imm.Static {
+
+        @Override
+        @Nullable PersonRecord.List.Imm.Value get();
+
+
+        final class Impl extends io.epigraph.datum.Data.Imm.Static.Impl<PersonRecord.List.Imm.Data>
+            implements PersonRecord.List.Imm.Data {
+
+          protected Impl(@NotNull io.epigraph.datum.Data.Imm.Raw raw) { super(PersonRecord.List.type, raw); }
+
+          @Override
+          public @Nullable PersonRecord.List.Imm.Value get() {
+            return (PersonRecord.List.Imm.Value) _raw()._getValue(PersonRecord.List.type.self);
+          }
+
+        }
+
+
+      }
+
+
+      final class Impl extends ListDatum.Imm.Static.Impl<PersonRecord.List.Imm> implements PersonRecord.List.Imm {
+
+        private Impl(@NotNull ListDatum.Imm.Raw raw) { super(PersonRecord.List.type, raw); }
+
+        @Override
+        public java.util.List<@Nullable ? extends PersonRecord.Imm.Value> values() {
+          return _raw()._elements().stream().map(data ->
+              (PersonRecord.Imm.Value) data._raw()._getValue(PersonRecord.type.self) // TODO revise cast
+          ).collect(Collectors.toList());
+        }
+
+        @Override
+        public java.util.List<@Nullable ? extends PersonRecord.Imm> datums() {
+          return _raw()._elements().stream().map(data ->
+              (PersonRecord.Imm) data._raw()._getValue(PersonRecord.type.self).getDatum() // TODO revise nulls
+          ).collect(Collectors.toList());
+        }
+
+        @Override
+        public java.util.List<@Nullable ? extends ErrorValue> errors() {
+          return _raw()._elements().stream().map(data ->
+              data._raw()._getValue(PersonRecord.type.self).getError() // TODO revise nulls
+          ).collect(Collectors.toList());
+        }
+
+      }
+
+
+    }
+
+
+    final class Mut extends ListDatum.Mut.Static<PersonRecord.List.Imm> implements PersonRecord.List {
+
+      protected Mut(@NotNull ListDatum.Mut.Raw raw) {
+        super(
+            PersonRecord.List.type,
+            raw,
+            PersonRecord.List.Imm.Impl::new
+        );
+      }
+
+      @Override
+      public java.util.List<PersonRecord.Mut.Value> values() {
+        return _raw()._elements().stream().map(data ->
+            (PersonRecord.Mut.Value) data._raw()._getValue(PersonRecord.type.self) // TODO revise cast
+        ).collect(Collectors.toList());
+      }
+
+      @Override
+      public java.util.List<PersonRecord.@Nullable Mut> datums() {
+        return _raw()._elements().stream().map(data ->
+                (PersonRecord.Mut) data._raw()._getValue(PersonRecord.type.self).getDatum()
+            // TODO revise nulls (define Data._getDatum(Tag))
+        ).collect(Collectors.toList());
+      }
+
+      @Override
+      public java.util.List<@Nullable ErrorValue> errors() {
+        return _raw()._elements().stream().map(data ->
+            data._raw()._getValue(PersonRecord.type.self).getError() // TODO revise nulls (define Data._getError(Tag))
+        ).collect(Collectors.toList());
+      }
+
+
+      static final class Value extends Val.Mut.Static<PersonRecord.List.Imm.Value, PersonRecord.List.Mut>
+          implements PersonRecord.List.Value {
+
+        public Value(@NotNull Val.Mut.Raw raw) { super(raw, PersonRecord.List.Imm.Value.Impl::new); }
+
+      }
+
+
+      final static class Data extends io.epigraph.datum.Data.Mut.Static<PersonRecord.List.Imm.Data>
+          implements PersonRecord.List.Data {
+
+        protected Data(@NotNull io.epigraph.datum.Data.Mut.Raw raw) {
+          super(PersonRecord.List.type, raw, PersonRecord.List.Imm.Data.Impl::new);
+        }
+
+        // default tag value getter
+        @Override
+        public @Nullable PersonRecord.List.Mut.Value get() {
+          return (PersonRecord.List.Mut.Value) _raw()._getValue(PersonRecord.List.type.self);
+        }
+
+        // default tag value setter
+        public void set(@Nullable PersonRecord.List.Mut.Value value) {
+          _raw()._setValue(PersonRecord.List.type.self, value);
+        }
+
+      }
+
+
+    }
+
+
+    final class Type extends AnonListType.Static<
+        PersonRecord.List.Imm,
+        PersonRecord.List.Mut,
+        PersonRecord.List.Imm.Value,
+        PersonRecord.List.Mut.Value,
+        PersonRecord.List.Imm.Data,
+        PersonRecord.List.Mut.Data
+        > {
+
+      private Type() {
+        super(
+            false,
+            PersonRecord.type,
+            PersonRecord.List.Mut.Value::new,
+            PersonRecord.List.Mut.Data::new
+        );
+      }
+
+      @Override
+      protected @NotNull Supplier<ListType> listOfTypeSupplier() {
+        return () -> { // TODO or construct raw list type (make this default behavior and override in static types)?
+          throw new IllegalStateException(
+              "'" + AnonListTypeName.of(false, PersonRecord.List.type.name()) + "' not used anywhere in the schema"
+          );
+        };
+      }
+
+    }
+
 
   }
 
