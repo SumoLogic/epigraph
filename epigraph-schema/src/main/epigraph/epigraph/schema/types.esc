@@ -75,7 +75,7 @@ polymorphic record DataTypeData extends TypeData { // TODO extends VarTypeData?
 
   override supertypes: list[DataTypeRef]
 
-  polymorphic: Boolean
+  `polymorphic`: Boolean
 
   metaType: DataTypeRef
 

@@ -8,7 +8,7 @@ abstract string QualifiedName extends Name
 
 abstract record QualifiedNameStruct {
 
-  namespace: QualifiedNamespaceNameVar
+  `namespace`: QualifiedNamespaceNameVar
 
   abstract local: LocalName
 
@@ -16,7 +16,7 @@ abstract record QualifiedNameStruct {
 
 abstract vartype QualifiedNameVar default `string` {
 
-  abstract string: QualifiedName
+  abstract `string`: QualifiedName
 
   abstract struct: QualifiedNameStruct
 
@@ -34,7 +34,7 @@ record QualifiedNamespaceNameStruct extends QualifiedNameStruct {
 
 vartype QualifiedNamespaceNameVar extends QualifiedNameVar {
 
-  override string: QualifiedNamespaceName
+  override `string`: QualifiedNamespaceName
 
   override struct: QualifiedNamespaceNameStruct
 
@@ -52,7 +52,7 @@ record QualifiedTypeNameStruct extends QualifiedNameStruct {
 
 vartype QualifiedTypeNameVar extends QualifiedNameVar {
 
-  override string: QualifiedTypeName
+  override `string`: QualifiedTypeName
 
   override struct: QualifiedTypeNameStruct
 
