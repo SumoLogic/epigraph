@@ -35,6 +35,8 @@ public abstract class IntegerType extends PrimitiveType {
     return (Collection<? extends IntegerType>) super.supertypes();
   }
 
+  public abstract @NotNull IntegerDatum.Mut createMutableDatum(@NotNull Integer val);
+
 
   public static final class Raw extends IntegerType implements PrimitiveType.Raw {
 
@@ -47,10 +49,15 @@ public abstract class IntegerType extends PrimitiveType {
     }
 
     @Override
-    public @NotNull Val.Mut.Raw createMutableValue() { return new Val.Mut.Raw(this); }
+    public @NotNull IntegerDatum.Mut.Raw createMutableDatum(@NotNull Integer val) {
+      return new IntegerDatum.Mut.Raw(this, val);
+    }
 
     @Override
     protected @NotNull Supplier<ListType> listOfTypeSupplier() { return () -> new AnonListType.Raw(false, this); }
+
+    @Override
+    public @NotNull Val.Mut.Raw createMutableValue() { return new Val.Mut.Raw(this); }
 
     @Override
     public @NotNull Data.Mut.Raw createMutableData() { return new Data.Mut.Raw(this); }
@@ -69,6 +76,8 @@ public abstract class IntegerType extends PrimitiveType {
       IntegerType.Static<MyImmDatum, MyMutDatum, MyImmVal, MyMutVal, MyImmData, MyMutData>
       > {
 
+    private final @NotNull Function<IntegerDatum.Mut.Raw, MyMutDatum> mutDatumConstructor;
+
     private final @NotNull Function<Val.Mut.Raw, MyMutVal> mutValConstructor;
 
     private final @NotNull Function<Data.Mut.Raw, MyMutData> mutDataConstructor;
@@ -77,19 +86,26 @@ public abstract class IntegerType extends PrimitiveType {
         @NotNull QualifiedTypeName name,
         @NotNull List<? extends IntegerType> immediateSupertypes,
         boolean polymorphic,
+        @NotNull Function<IntegerDatum.Mut.Raw, MyMutDatum> mutDatumConstructor,
         @NotNull Function<Val.Mut.Raw, MyMutVal> mutValConstructor,
         @NotNull Function<Data.Mut.Raw, MyMutData> mutDataConstructor
     ) {
       super(name, immediateSupertypes, polymorphic);
+      this.mutDatumConstructor = mutDatumConstructor;
       this.mutValConstructor = mutValConstructor;
       this.mutDataConstructor = mutDataConstructor;
+    }
+
+    @Override
+    public final @NotNull MyMutDatum createMutableDatum(@NotNull Integer val) {
+      return mutDatumConstructor.apply(new IntegerDatum.Mut.Raw(this, val));
     }
 
     @Override
     public final @NotNull MyMutVal createMutableValue() { return mutValConstructor.apply(new Val.Mut.Raw(this)); }
 
     @Override
-    public @NotNull MyMutData createMutableData() { return mutDataConstructor.apply(new Data.Mut.Raw(this)); }
+    public final @NotNull MyMutData createMutableData() { return mutDataConstructor.apply(new Data.Mut.Raw(this)); }
 
   }
 

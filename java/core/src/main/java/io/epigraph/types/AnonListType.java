@@ -13,7 +13,7 @@ import java.util.function.Supplier;
 
 public abstract class AnonListType extends ListType {
 
-  public AnonListType(boolean polymorphic, @NotNull Type elementType) {
+  protected AnonListType(boolean polymorphic, @NotNull Type elementType) {
     super(AnonListTypeName.of(polymorphic, elementType.name()), polymorphic, elementType);
   }
 
@@ -26,10 +26,13 @@ public abstract class AnonListType extends ListType {
     public Raw(boolean polymorphic, @NotNull Type elementType) { super(polymorphic, elementType); }
 
     @Override
-    public @NotNull Val.Mut createMutableValue() { return new Val.Mut.Raw(this); }
+    protected @NotNull Supplier<ListType> listOfTypeSupplier() { return () -> new AnonListType.Raw(false, this); }
 
     @Override
-    protected @NotNull Supplier<ListType> listOfTypeSupplier() { return () -> new AnonListType.Raw(false, this); }
+    public @NotNull ListDatum.Mut createMutableDatum() { return new ListDatum.Mut.Raw(this); }
+
+    @Override
+    public @NotNull Val.Mut createMutableValue() { return new Val.Mut.Raw(this); }
 
     @Override
     public @NotNull Data.Mut createMutableData() { return new Data.Mut.Raw(this); }
@@ -46,6 +49,8 @@ public abstract class AnonListType extends ListType {
       MyMutData extends Data.Mut.Static<MyImmData>
       > extends AnonListType {
 
+    private final @NotNull Function<ListDatum.Mut.Raw, MyMutDatum> mutDatumConstructor;
+
     private final @NotNull Function<Val.Mut.Raw, MyMutVal> mutValConstructor;
 
     private final @NotNull Function<Data.Mut.Raw, MyMutData> mutDataConstructor;
@@ -53,12 +58,19 @@ public abstract class AnonListType extends ListType {
     protected Static(
         boolean polymorphic,
         @NotNull Type elementType,
+        @NotNull Function<ListDatum.Mut.Raw, MyMutDatum> mutDatumConstructor,
         @NotNull Function<Val.Mut.Raw, MyMutVal> mutValConstructor,
         @NotNull Function<Data.Mut.Raw, MyMutData> mutDataConstructor
     ) {
       super(polymorphic, elementType);
+      this.mutDatumConstructor = mutDatumConstructor;
       this.mutValConstructor = mutValConstructor;
       this.mutDataConstructor = mutDataConstructor;
+    }
+
+    @Override
+    public final @NotNull MyMutDatum createMutableDatum() {
+      return mutDatumConstructor.apply(new ListDatum.Mut.Raw(this));
     }
 
     @Override

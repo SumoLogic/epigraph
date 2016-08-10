@@ -73,6 +73,7 @@ public interface PersonRecord extends RecordDatum.Static {
           new QualifiedTypeName(new NamespaceName(new NamespaceName(null, "com"), "example"), "PersonRecord"),
           Collections.emptyList(),
           false,
+          PersonRecord.Mut::new,
           PersonRecord.Mut.Value::new,
           PersonRecord.Mut.Data::new
       );
@@ -202,7 +203,15 @@ public interface PersonRecord extends RecordDatum.Static {
       return value == null ? null : value.getDatum();
     }
 
-    // TODO field setters
+    public void setBestFriend(@Nullable PersonRecord.Mut bestFriend) {
+      _raw().getOrCreateFieldData(PersonRecord.bestFriend)._raw()._setDatum(PersonRecord.type.self, bestFriend);
+    }
+
+    // TODO full set of field setters
+
+    public void setFriends(@Nullable PersonRecord.List.Mut friends) {
+      _raw().getOrCreateFieldData(PersonRecord.friends)._raw()._setDatum(PersonRecord.List.type.self, friends);
+    }
 
 
     final static class Value extends Val.Mut.Static<PersonRecord.Imm.Value, PersonRecord.Mut>
@@ -424,6 +433,7 @@ public interface PersonRecord extends RecordDatum.Static {
         super(
             false,
             PersonRecord.type,
+            PersonRecord.List.Mut::new,
             PersonRecord.List.Mut.Value::new,
             PersonRecord.List.Mut.Data::new
         );

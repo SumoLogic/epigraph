@@ -132,6 +132,7 @@ public interface UserId extends PersonId {
           new QualifiedTypeName(new NamespaceName(new NamespaceName(null, "com"), "example"), "UserId"),
           Arrays.asList(PersonId.type),
           false,
+          UserId.Mut::new,
           UserId.Mut.Value::new,
           UserId.Mut.Data::new
       );
@@ -320,7 +321,9 @@ public interface UserId extends PersonId {
         UserId.List.Mut.Data
         > {
 
-      private Type() { super(false, UserId.type, UserId.List.Mut.Value::new, UserId.List.Mut.Data::new); }
+      private Type() {
+        super(false, UserId.type, UserId.List.Mut::new, UserId.List.Mut.Value::new, UserId.List.Mut.Data::new);
+      }
 
       @Override
       protected @NotNull Supplier<ListType> listOfTypeSupplier() {

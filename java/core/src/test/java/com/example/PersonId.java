@@ -12,9 +12,11 @@ import io.epigraph.names.QualifiedTypeName;
 import io.epigraph.types.AnonListType;
 import io.epigraph.types.IntegerType;
 import io.epigraph.types.ListType;
+import io.epigraph.util.CollectionView;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -132,6 +134,7 @@ public interface PersonId extends IntegerDatum.Static {
           new QualifiedTypeName(new NamespaceName(new NamespaceName(null, "com"), "example"), "PersonId"),
           Collections.emptyList(),
           false,
+          PersonId.Mut::new,
           PersonId.Mut.Value::new,
           PersonId.Mut.Data::new
       );
@@ -139,6 +142,7 @@ public interface PersonId extends IntegerDatum.Static {
 
     @Override // TODO pass as super constructor argument
     protected @NotNull Supplier<ListType> listOfTypeSupplier() { return () -> PersonId.List.type; }
+
 
   }
 
@@ -234,6 +238,11 @@ public interface PersonId extends IntegerDatum.Static {
           ).collect(Collectors.toList());
         }
 
+// TODO use CollectionView instead:
+//        public @NotNull Collection<@Nullable ? extends PersonId.Imm.Value> values2() {
+//          return new CollectionView<PersonId.Data, PersonId.Imm.Value>(_raw()._elements(), data -> data.get());
+//        }
+
         @Override
         public java.util.List<@Nullable ? extends PersonId.Imm> datums() {
           return _raw()._elements().stream().map(data ->
@@ -320,7 +329,9 @@ public interface PersonId extends IntegerDatum.Static {
         PersonId.List.Mut.Data
         > {
 
-      private Type() { super(false, PersonId.type, PersonId.List.Mut.Value::new, PersonId.List.Mut.Data::new); }
+      private Type() {
+        super(false, PersonId.type, PersonId.List.Mut::new, PersonId.List.Mut.Value::new, PersonId.List.Mut.Data::new);
+      }
 
       @Override
       protected @NotNull Supplier<ListType> listOfTypeSupplier() {

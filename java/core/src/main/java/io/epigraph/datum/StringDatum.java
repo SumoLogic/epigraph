@@ -53,7 +53,7 @@ public interface StringDatum extends Datum {
 
       private final @NotNull String val;
 
-      public Raw(StringType type, StringDatum prototype) {
+      public Raw(@NotNull StringType type, @NotNull StringDatum prototype) {
         super(type);
         this.val = prototype.getVal();
       }
@@ -79,11 +79,12 @@ public interface StringDatum extends Datum {
       @NotNull StringDatum.Imm.Raw _raw();
 
 
+      // TODO parameterize with MyImmDatum
       abstract class Impl extends StringDatum.Impl implements StringDatum.Imm.Static {
 
-        private final StringDatum.Imm.Raw raw;
+        private final @NotNull StringDatum.Imm.Raw raw;
 
-        protected Impl(StringType type, StringDatum.Imm.Raw raw) {
+        protected Impl(@NotNull StringType type, @NotNull StringDatum.Imm.Raw raw) {
           super(type); // TODO take static type separately?
           this.raw = raw; // TODO validate raw is kosher?
         }
@@ -144,16 +145,14 @@ public interface StringDatum extends Datum {
     }
 
 
-    public static abstract class Static< // TODO MyType extends Type.Static<MyType>?
-        MyDatum extends StringDatum.Static,
-        MyImm extends StringDatum.Imm.Static,
-        MyMut extends StringDatum.Mut.Static<MyDatum, MyImm, MyMut>
-        > extends StringDatum.Mut implements StringDatum.Static, Datum.Mut.Static {
+    public static abstract class Static<MyImm extends StringDatum.Imm.Static> extends StringDatum.Mut
+        implements StringDatum.Static, Datum.Mut.Static {
 
-      private final StringDatum.Mut.Raw raw;
+      private final @NotNull StringDatum.Mut.Raw raw;
 
       protected Static(@NotNull StringDatum.Mut.Raw raw) {
-        super(raw.type()); // TODO take static type separately?
+        super(raw.type()); // TODO take static type separately
+        // TODO check types are equal
         this.raw = raw; // TODO validate raw data is kosher?
       }
 

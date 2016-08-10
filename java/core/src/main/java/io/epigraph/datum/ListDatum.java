@@ -102,10 +102,11 @@ public interface ListDatum extends Datum {
       abstract class Impl<MyImmDatum extends ListDatum.Imm.Static> extends ListDatum.Impl
           implements ListDatum.Imm.Static {
 
-        private final ListDatum.Imm.Raw raw;
+        private final @NotNull ListDatum.Imm.Raw raw;
 
         protected Impl(@NotNull ListType type, @NotNull ListDatum.Imm.Raw raw) {
-          super(type); // TODO check types are compatible
+          super(type);
+          // TODO check types are compatible
           this.raw = raw; // TODO validate raw internals is kosher?
         }
 
@@ -162,9 +163,8 @@ public interface ListDatum extends Datum {
     }
 
 
-    public static abstract class Static< // TODO MyType extends Type.Static<MyType>?
-        MyImm extends ListDatum.Imm.Static
-        > extends ListDatum.Mut implements ListDatum.Static, Datum.Mut.Static {
+    public static abstract class Static<MyImm extends ListDatum.Imm.Static> extends ListDatum.Mut
+        implements ListDatum.Static, Datum.Mut.Static {
 
       private final @NotNull ListDatum.Mut.Raw raw;
 
@@ -176,9 +176,9 @@ public interface ListDatum extends Datum {
           @NotNull Function<ListDatum.Imm.Raw, MyImm> immutableConstructor
       ) {
         super(type); // TODO take static type separately?
-        if (raw.type() != type)
+        if (raw.type() != type) // TODO shared assertEqual(Type, Type): Type method
           throw new IllegalArgumentException( // TODO move mut and imm checks to shared static methods
-              "Incompatible raw and static types (TODO details"
+              "Incompatible raw and static types (TODO details)"
           );
         this.raw = raw; // TODO validate raw data is kosher?
         this.immutableConstructor = immutableConstructor;

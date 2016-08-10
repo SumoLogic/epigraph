@@ -43,6 +43,9 @@ public abstract class RecordType extends DatumType {
 
   public abstract @NotNull List<@NotNull Field> immediateFields(); // TODO could be protected but used by pretty-printer
 
+  public abstract @NotNull RecordDatum.Mut createMutableDatum();
+
+
   public final @NotNull Collection<? extends Field> fields() {
     // TODO produce better ordering of the fields (i.e. supertypes first, in the order of supertypes and their fields declaration)
     if (fields == null) { // TODO move initialization to constructor (if possible?)
@@ -119,6 +122,9 @@ public abstract class RecordType extends DatumType {
   }
 
 
+  // TODO .Raw (final type builder?)
+
+
   public static abstract class Static< // TODO MyType extends Type.Static<MyType>?
       MyImmDatum extends RecordDatum.Imm.Static,
       MyMutDatum extends RecordDatum.Mut.Static<MyImmDatum>,
@@ -130,6 +136,8 @@ public abstract class RecordType extends DatumType {
       RecordType.Static<MyImmDatum, MyMutDatum, MyImmVal, MyMutVal, MyImmData, MyMutData>
       > {
 
+    private final @NotNull Function<RecordDatum.Mut.Raw, MyMutDatum> mutDatumConstructor;
+
     private final @NotNull Function<Val.Mut.Raw, MyMutVal> mutValConstructor;
 
     private final @NotNull Function<Data.Mut.Raw, MyMutData> mutDataConstructor;
@@ -138,19 +146,26 @@ public abstract class RecordType extends DatumType {
         @NotNull QualifiedTypeName name,
         @NotNull List<? extends RecordType> immediateSupertypes,
         boolean polymorphic,
+        @NotNull Function<RecordDatum.Mut.Raw, MyMutDatum> mutDatumConstructor,
         @NotNull Function<Val.Mut.Raw, MyMutVal> mutValConstructor,
         @NotNull Function<Data.Mut.Raw, MyMutData> mutDataConstructor
     ) {
       super(name, immediateSupertypes, polymorphic);
+      this.mutDatumConstructor = mutDatumConstructor;
       this.mutValConstructor = mutValConstructor;
       this.mutDataConstructor = mutDataConstructor;
+    }
+
+    @Override
+    public final @NotNull MyMutDatum createMutableDatum() {
+      return mutDatumConstructor.apply(new RecordDatum.Mut.Raw(this));
     }
 
     @Override
     public final @NotNull MyMutVal createMutableValue() { return mutValConstructor.apply(new Val.Mut.Raw(this)); }
 
     @Override
-    public @NotNull MyMutData createMutableData() { return mutDataConstructor.apply(new Data.Mut.Raw(this)); }
+    public final @NotNull MyMutData createMutableData() { return mutDataConstructor.apply(new Data.Mut.Raw(this)); }
 
   }
 

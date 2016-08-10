@@ -55,8 +55,9 @@ public interface IntegerDatum extends Datum {
 
       private final @NotNull Integer val;
 
-      public Raw(IntegerType type, IntegerDatum prototype) {
+      public Raw(@NotNull IntegerType type, @NotNull IntegerDatum prototype) {
         super(type);
+        // TODO check types are compatible
         this.val = prototype.getVal();
       }
 
@@ -81,10 +82,10 @@ public interface IntegerDatum extends Datum {
       @NotNull IntegerDatum.Imm.Raw _raw();
 
 
-      abstract class Impl extends IntegerDatum.Impl
-          implements IntegerDatum.Imm.Static { // TODO parameterize with MyImmDatum
+      // TODO parameterize with MyImmDatum
+      abstract class Impl extends IntegerDatum.Impl implements IntegerDatum.Imm.Static {
 
-        private final IntegerDatum.Imm.Raw raw;
+        private final @NotNull IntegerDatum.Imm.Raw raw;
 
         protected Impl(IntegerType type, IntegerDatum.Imm.Raw raw) {
           super(type); // TODO take static type separately?
@@ -150,7 +151,7 @@ public interface IntegerDatum extends Datum {
     public static abstract class Static<MyImmDatum extends IntegerDatum.Imm.Static> extends IntegerDatum.Mut
         implements IntegerDatum.Static, Datum.Mut.Static {
 
-      private final IntegerDatum.Mut.Raw raw;
+      private final @NotNull IntegerDatum.Mut.Raw raw;
 
       private final @NotNull Function<IntegerDatum.Imm.Raw, MyImmDatum> immDatumConstructor;
 

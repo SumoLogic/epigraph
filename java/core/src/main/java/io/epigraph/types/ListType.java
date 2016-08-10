@@ -2,6 +2,7 @@
 
 package io.epigraph.types;
 
+import io.epigraph.datum.ListDatum;
 import io.epigraph.names.AnonListTypeName;
 import io.epigraph.names.QualifiedTypeName;
 import io.epigraph.names.TypeName;
@@ -65,5 +66,7 @@ public abstract class ListType extends DatumType {
   public @NotNull Collection<@NotNull ? extends ListType> supertypes() {
     return (Collection<? extends ListType>) super.supertypes();
   }
+
+  public abstract @NotNull ListDatum.Mut createMutableDatum();
 
 }

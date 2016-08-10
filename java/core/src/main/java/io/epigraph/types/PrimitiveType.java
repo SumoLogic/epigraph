@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.List;
 
-public abstract class PrimitiveType extends DatumType {
+public abstract class PrimitiveType extends DatumType { // TODO parameterize with native type?
 
   protected PrimitiveType(
       QualifiedTypeName name,

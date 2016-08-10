@@ -2,6 +2,7 @@
 
 package io.epigraph.types;
 
+import io.epigraph.datum.Datum;
 import io.epigraph.datum.Val;
 import io.epigraph.names.TypeName;
 import org.jetbrains.annotations.NotNull;
@@ -46,8 +47,6 @@ public abstract class DatumType extends Type {
   public final @NotNull List<@NotNull Tag> tags() { return immediateTags(); }
 
   public abstract @NotNull Val.Mut createMutableValue(); // { return new Val.Mut(this); } // FIXME
-
-//  public abstract @NotNull MutDatum mutable();
 
 
   public interface Raw extends Type.Raw {}
