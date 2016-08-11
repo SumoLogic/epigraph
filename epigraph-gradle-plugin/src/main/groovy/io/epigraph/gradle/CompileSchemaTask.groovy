@@ -3,9 +3,9 @@ package io.epigraph.gradle
 import com.sumologic.epigraph.schema.compiler.*
 import org.gradle.api.GradleException
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.internal.TaskOutputsInternal
 import org.gradle.api.tasks.SourceTask
 import org.gradle.api.tasks.TaskAction
-import scala.Option
 
 import java.nio.charset.StandardCharsets
 import java.util.jar.JarFile
@@ -13,6 +13,10 @@ import java.util.regex.Pattern
 
 class CompileSchemaTask extends SourceTask {
   private static final Pattern SCHEMA_FILENAME_PATTERN = Pattern.compile(".+\\.esc");
+
+  CompileSchemaTask() {
+    setGroup('Epigraph')
+  }
 
   @TaskAction
   public void run() {
@@ -23,6 +27,11 @@ class CompileSchemaTask extends SourceTask {
     dependencySources.addAll(getImpliedDependencies())
 
     compileFiles(sources, dependencySources)
+  }
+
+  @Override
+  TaskOutputsInternal getOutputs() {
+    return super.getOutputs()
   }
 
   private Collection<Source> getSources() {
@@ -55,22 +64,11 @@ class CompileSchemaTask extends SourceTask {
     return Collections.emptyList();
   }
 
-  private void compileFiles(Collection<Source> sources, Collection<Source> dependencySources) {
+  private static void compileFiles(Collection<Source> sources, Collection<Source> dependencySources) {
     try {
       SchemaCompiler compiler = new SchemaCompiler(sources, dependencySources)
       compiler.compile()
     } catch (SchemaCompilerException ignored) {
-      for (CError err : compiler.ctx().errors()) {
-        final CErrorPosition pos = err.position(); // TODO skip :line:colon, line text, and ^ if NA
-        sb.append(err.filename()).append(':').append(pos.line()).append(':').append(pos.column()).append('\n');
-        sb.append("Error: ").append(err.message()).append('\n');
-        final Option<String> errText = pos.lineText();
-        if (errText.nonEmpty()) {
-          sb.append(errText.get()).append('\n');
-          sb.append(String.format("%" + (pos.column()) + "s", "^").replace(" ", ".")).append('\n');
-        }
-      }
-      getLogger().error(sb.toString())
       throw new GradleException("Epigraph schema compilation failed");
     }
   }
