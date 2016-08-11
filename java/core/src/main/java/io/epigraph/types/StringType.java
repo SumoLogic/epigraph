@@ -35,7 +35,7 @@ public abstract class StringType extends PrimitiveType {
     return (Collection<? extends StringType>) super.supertypes();
   }
 
-  public abstract @NotNull StringDatum.Mut createMutableDatum(@NotNull String val);
+  public abstract @NotNull StringDatum.Mut createBuilder(@NotNull String val);
 
 
   public static final class Raw extends StringType implements PrimitiveType.Raw {
@@ -47,12 +47,12 @@ public abstract class StringType extends PrimitiveType {
     ) { super(name, immediateSupertypes, polymorphic); }
 
     @Override
-    public @NotNull StringDatum.Mut.Raw createMutableDatum(@NotNull String val) {
+    public @NotNull StringDatum.Mut.Raw createBuilder(@NotNull String val) {
       return new StringDatum.Mut.Raw(this, val);
     }
 
     @Override
-    protected @NotNull Supplier<@NotNull ListType> listOfTypeSupplier() {
+    protected @NotNull Supplier<@NotNull ListType> listTypeSupplier() {
       return () -> new AnonListType.Raw(false, this);
     }
 
@@ -97,7 +97,7 @@ public abstract class StringType extends PrimitiveType {
     }
 
     @Override
-    public final @NotNull MyMutDatum createMutableDatum(@NotNull String val) {
+    public final @NotNull MyMutDatum createBuilder(@NotNull String val) {
       return mutDatumConstructor.apply(new StringDatum.Mut.Raw(this, val));
     }
 

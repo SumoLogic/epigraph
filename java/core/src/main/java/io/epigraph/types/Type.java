@@ -69,9 +69,9 @@ public abstract class Type { // TODO split into interface and impl
 
   public boolean isAssignableFrom(@NotNull Type type) { return type.doesExtend(this); }
 
-  private final LazyInitializer<ListType> listOf = new LazyInitializer<>(listOfTypeSupplier()); // FIXME race?
+  private final LazyInitializer<ListType> listOf = new LazyInitializer<>(listTypeSupplier()); // FIXME race?
 
-  protected abstract @NotNull Supplier<ListType> listOfTypeSupplier(); // e.g. () -> new AnonListType(false, this)
+  protected abstract @NotNull Supplier<ListType> listTypeSupplier(); // e.g. () -> new AnonListType(false, this)
 
   public ListType listOf() { return listOf.get(); }
 

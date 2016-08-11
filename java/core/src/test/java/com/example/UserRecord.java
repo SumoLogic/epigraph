@@ -61,11 +61,11 @@ public interface UserRecord extends PersonRecord {
 
   class Type extends RecordType.Static<
       UserRecord.Imm,
-      UserRecord.Mut,
+      Builder,
       UserRecord.Imm.Value,
-      UserRecord.Mut.Value,
+      Builder.Value,
       UserRecord.Imm.Data,
-      UserRecord.Mut.Data
+      Builder.Data
       > {
 
     private Type() {
@@ -73,9 +73,9 @@ public interface UserRecord extends PersonRecord {
           new QualifiedTypeName(new NamespaceName(new NamespaceName(null, "com"), "example"), "UserRecord"),
           Collections.emptyList(),
           false,
-          UserRecord.Mut::new,
-          UserRecord.Mut.Value::new,
-          UserRecord.Mut.Data::new
+          UserRecord.Builder::new,
+          UserRecord.Builder.Value::new,
+          UserRecord.Builder.Data::new
       );
     }
 
@@ -86,7 +86,7 @@ public interface UserRecord extends PersonRecord {
 
 
     @Override
-    protected @NotNull Supplier<ListType> listOfTypeSupplier() { return () -> UserRecord.List.type; }
+    protected @NotNull Supplier<ListType> listTypeSupplier() { return () -> UserRecord.List.type; }
 
   }
 
@@ -183,46 +183,46 @@ public interface UserRecord extends PersonRecord {
   }
 
 
-  final class Mut extends RecordDatum.Mut.Static<UserRecord.Imm> implements UserRecord {
+  final class Builder extends RecordDatum.Mut.Static<UserRecord.Imm> implements UserRecord {
 
-    private Mut(@NotNull RecordDatum.Mut.Raw raw) { super(UserRecord.type, raw, UserRecord.Imm.Impl::new); }
+    private Builder(@NotNull RecordDatum.Mut.Raw raw) { super(UserRecord.type, raw, UserRecord.Imm.Impl::new); }
 
     @Override
-    public @Nullable PersonId.Mut getId() {
-      PersonId.Mut.Value value = (PersonId.Mut.Value) _raw()._getValue(PersonRecord.id, PersonId.type.self);
+    public @Nullable PersonId.Builder getId() {
+      PersonId.Builder.Value value = (PersonId.Builder.Value) _raw()._getValue(PersonRecord.id, PersonId.type.self);
       return value == null ? null : value.getDatum();
     }
 
     @Override
-    public @Nullable UserRecord.Mut.Value getBestFriend_value() {
-      return (UserRecord.Mut.Value) _raw()._getValue(bestFriend, UserRecord.type.self);
+    public @Nullable UserRecord.Builder.Value getBestFriend_value() {
+      return (UserRecord.Builder.Value) _raw()._getValue(bestFriend, UserRecord.type.self);
     }
 
     @Override
-    public @Nullable UserRecord.Mut getBestFriend() {
-      UserRecord.Mut.Value value = getBestFriend_value();
+    public @Nullable UserRecord.Builder getBestFriend() {
+      UserRecord.Builder.Value value = getBestFriend_value();
       return value == null ? null : value.getDatum();
     }
 
     @Override
-    public @Nullable UserRecord.List.Mut.Value getFriends_value() {
-      return (UserRecord.List.Mut.Value) _raw()._getValue(UserRecord.friends, UserRecord.List.type.self);
+    public @Nullable UserRecord.List.Builder.Value getFriends_value() {
+      return (UserRecord.List.Builder.Value) _raw()._getValue(UserRecord.friends, UserRecord.List.type.self);
     }
 
     @Override
-    public @Nullable UserRecord.List.Mut getFriends() {
-      UserRecord.List.Mut.Value value = getFriends_value();
+    public @Nullable UserRecord.List.Builder getFriends() {
+      UserRecord.List.Builder.Value value = getFriends_value();
       return value == null ? null : value.getDatum();
     }
 
-    public void setBestFriend(@Nullable UserRecord.Mut bestFriend) {
+    public void setBestFriend(@Nullable UserRecord.Builder bestFriend) {
       _raw().getOrCreateFieldData(UserRecord.bestFriend)._raw()._setDatum(UserRecord.type.self, bestFriend);
     }
 
     // TODO full set of field setters
 
 
-    final static class Value extends Val.Mut.Static<UserRecord.Imm.Value, UserRecord.Mut>
+    final static class Value extends Val.Mut.Static<UserRecord.Imm.Value, UserRecord.Builder>
         implements UserRecord.Value {
 
       public Value(@NotNull Val.Mut.Raw raw) { super(raw, UserRecord.Imm.Value.Impl::new); }
@@ -238,11 +238,11 @@ public interface UserRecord extends PersonRecord {
       }
 
       @Override
-      public @Nullable UserRecord.Mut.Value get() {
-        return (UserRecord.Mut.Value) _raw()._getValue(UserRecord.type.self);
+      public @Nullable UserRecord.Builder.Value get() {
+        return (UserRecord.Builder.Value) _raw()._getValue(UserRecord.type.self);
       }
 
-      public void set(@Nullable UserRecord.Mut.Value value) {
+      public void set(@Nullable UserRecord.Builder.Value value) {
         _raw()._setValue(UserRecord.type.self, value);
       } //default tag
 
@@ -363,9 +363,9 @@ public interface UserRecord extends PersonRecord {
     }
 
 
-    final class Mut extends ListDatum.Mut.Static<UserRecord.List.Imm> implements UserRecord.List {
+    final class Builder extends ListDatum.Mut.Static<UserRecord.List.Imm> implements UserRecord.List {
 
-      protected Mut(@NotNull ListDatum.Mut.Raw raw) {
+      protected Builder(@NotNull ListDatum.Mut.Raw raw) {
         super(
             UserRecord.List.type,
             raw,
@@ -374,16 +374,16 @@ public interface UserRecord extends PersonRecord {
       }
 
       @Override
-      public java.util.List<UserRecord.Mut.Value> values() {
+      public java.util.List<UserRecord.Builder.Value> values() {
         return _raw()._elements().stream().map(data ->
-            (UserRecord.Mut.Value) data._raw()._getValue(UserRecord.type.self) // TODO revise cast
+            (UserRecord.Builder.Value) data._raw()._getValue(UserRecord.type.self) // TODO revise cast
         ).collect(Collectors.toList());
       }
 
       @Override
-      public java.util.List<UserRecord.@Nullable Mut> datums() {
+      public java.util.List<UserRecord.Builder> datums() {
         return _raw()._elements().stream().map(data ->
-                (UserRecord.Mut) data._raw()._getValue(UserRecord.type.self).getDatum()
+                (UserRecord.Builder) data._raw()._getValue(UserRecord.type.self).getDatum()
             // TODO revise nulls (define Data._getDatum(Tag))
         ).collect(Collectors.toList());
       }
@@ -396,7 +396,7 @@ public interface UserRecord extends PersonRecord {
       }
 
 
-      static final class Value extends Val.Mut.Static<UserRecord.List.Imm.Value, UserRecord.List.Mut>
+      static final class Value extends Val.Mut.Static<UserRecord.List.Imm.Value, UserRecord.List.Builder>
           implements UserRecord.List.Value {
 
         public Value(@NotNull Val.Mut.Raw raw) { super(raw, UserRecord.List.Imm.Value.Impl::new); }
@@ -413,12 +413,12 @@ public interface UserRecord extends PersonRecord {
 
         // default tag value getter
         @Override
-        public @Nullable UserRecord.List.Mut.Value get() {
-          return (UserRecord.List.Mut.Value) _raw()._getValue(UserRecord.List.type.self);
+        public @Nullable UserRecord.List.Builder.Value get() {
+          return (UserRecord.List.Builder.Value) _raw()._getValue(UserRecord.List.type.self);
         }
 
         // default tag value setter
-        public void set(@Nullable UserRecord.List.Mut.Value value) {
+        public void set(@Nullable UserRecord.List.Builder.Value value) {
           _raw()._setValue(UserRecord.List.type.self, value);
         }
 
@@ -430,25 +430,25 @@ public interface UserRecord extends PersonRecord {
 
     final class Type extends AnonListType.Static<
         UserRecord.List.Imm,
-        UserRecord.List.Mut,
+        UserRecord.List.Builder,
         UserRecord.List.Imm.Value,
-        UserRecord.List.Mut.Value,
+        UserRecord.List.Builder.Value,
         UserRecord.List.Imm.Data,
-        UserRecord.List.Mut.Data
+        UserRecord.List.Builder.Data
         > {
 
       private Type() {
         super(
             false,
             UserRecord.type,
-            UserRecord.List.Mut::new,
-            UserRecord.List.Mut.Value::new,
-            UserRecord.List.Mut.Data::new
+            UserRecord.List.Builder::new,
+            UserRecord.List.Builder.Value::new,
+            UserRecord.List.Builder.Data::new
         );
       }
 
       @Override
-      protected @NotNull Supplier<ListType> listOfTypeSupplier() {
+      protected @NotNull Supplier<ListType> listTypeSupplier() {
         return () -> { // TODO or construct raw list type (make this default behavior and override in static types)?
           throw new IllegalStateException(
               "'" + AnonListTypeName.of(false, UserRecord.List.type.name()) + "' not used anywhere in the schema"

@@ -14,20 +14,20 @@ public class ExampleTest {
 //    new RecordTypePrinter().println(System.out, PersonRecord.type);
 //    new RecordTypePrinter().println(System.out, UserRecord.type);
 
-    PersonRecord.@NotNull Mut pr = PersonRecord.type.createMutableDatum();
-    pr.setId(PersonId.type.createMutableDatum(123));
+    PersonRecord.@NotNull Builder pr = PersonRecord.type.createBuilder();
+    pr.setId(PersonId.type.createBuilder(123));
     System.out.println(pr.getId().getVal());
 
-    PersonRecord.type.createMutableDatum().setBestFriend((PersonRecord.Mut) null);
-    PersonRecord.type.createMutableDatum().setBestFriend((PersonRecord.Mut) null);
+    PersonRecord.type.createBuilder().setBestFriend((PersonRecord.Builder) null);
+    PersonRecord.type.createBuilder().setBestFriend((PersonRecord.Builder) null);
 
-    UserRecord.type.createMutableDatum().setBestFriend((UserRecord.Mut) null);
+    UserRecord.type.createBuilder().setBestFriend((UserRecord.Builder) null);
 
-    //UserRecord.type.mutable().setBestFriend((PersonRecord.Mut) null); // should fail at compile-time
+    //UserRecord.type.mutable().setBestFriend((PersonRecord.Builder) null); // should fail at compile-time
 
-    UserRecord.Mut userRecord = UserRecord.type.createMutableDatum();
-    userRecord.setBestFriend((UserRecord.Mut) null);
-    UserRecord.Mut bestFriend = userRecord.getBestFriend();
+    UserRecord.Builder userRecord = UserRecord.type.createBuilder();
+    userRecord.setBestFriend((UserRecord.Builder) null);
+    UserRecord.Builder bestFriend = userRecord.getBestFriend();
   }
 
 }

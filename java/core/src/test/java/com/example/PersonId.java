@@ -96,12 +96,12 @@ public interface PersonId extends IntegerDatum.Static {
   }
 
 
-  final class Mut extends IntegerDatum.Mut.Static<PersonId.Imm> implements PersonId {
+  final class Builder extends IntegerDatum.Mut.Static<PersonId.Imm> implements PersonId {
 
-    private Mut(@NotNull IntegerDatum.Mut.Raw raw) { super(PersonId.type, raw, PersonId.Imm.Impl::new); }
+    private Builder(@NotNull IntegerDatum.Mut.Raw raw) { super(PersonId.type, raw, PersonId.Imm.Impl::new); }
 
 
-    final static class Value extends Val.Mut.Static<PersonId.Imm.Value, PersonId.Mut> implements PersonId.Value {
+    final static class Value extends Val.Mut.Static<PersonId.Imm.Value, PersonId.Builder> implements PersonId.Value {
 
       public Value(@NotNull Val.Mut.Raw raw) { super(raw, PersonId.Imm.Value.Impl::new); }
 
@@ -115,9 +115,12 @@ public interface PersonId extends IntegerDatum.Static {
       }
 
       @Override
-      public @Nullable PersonId.Mut.Value get() { return (PersonId.Mut.Value) _raw()._getValue(PersonId.type.self); }
+      public @Nullable PersonId.Builder.Value get() {
+        return (PersonId.Builder.Value) _raw()._getValue(PersonId.type.self);
+      }
 
-      public void set(@Nullable PersonId.Mut.Value value) { _raw()._setValue(PersonId.type.self, value); } //default tag
+      // default tag
+      public void set(@Nullable PersonId.Builder.Value value) { _raw()._setValue(PersonId.type.self, value); }
 
     }
 
@@ -126,7 +129,7 @@ public interface PersonId extends IntegerDatum.Static {
 
 
   final class Type extends IntegerType.Static<
-      PersonId.Imm, PersonId.Mut, PersonId.Imm.Value, PersonId.Mut.Value, PersonId.Imm.Data, PersonId.Mut.Data
+      PersonId.Imm, PersonId.Builder, PersonId.Imm.Value, PersonId.Builder.Value, PersonId.Imm.Data, PersonId.Builder.Data
       > {
 
     protected Type() {
@@ -134,14 +137,14 @@ public interface PersonId extends IntegerDatum.Static {
           new QualifiedTypeName(new NamespaceName(new NamespaceName(null, "com"), "example"), "PersonId"),
           Collections.emptyList(),
           false,
-          PersonId.Mut::new,
-          PersonId.Mut.Value::new,
-          PersonId.Mut.Data::new
+          PersonId.Builder::new,
+          PersonId.Builder.Value::new,
+          PersonId.Builder.Data::new
       );
     }
 
-    @Override // TODO pass as super constructor argument
-    protected @NotNull Supplier<ListType> listOfTypeSupplier() { return () -> PersonId.List.type; }
+    @Override
+    protected @NotNull Supplier<ListType> listTypeSupplier() { return () -> PersonId.List.type; }
 
 
   }
@@ -266,21 +269,21 @@ public interface PersonId extends IntegerDatum.Static {
     }
 
 
-    final class Mut extends ListDatum.Mut.Static<PersonId.List.Imm> implements PersonId.List {
+    final class Builder extends ListDatum.Mut.Static<PersonId.List.Imm> implements PersonId.List {
 
-      protected Mut(@NotNull ListDatum.Mut.Raw raw) { super(PersonId.List.type, raw, PersonId.List.Imm.Impl::new); }
+      protected Builder(@NotNull ListDatum.Mut.Raw raw) { super(PersonId.List.type, raw, PersonId.List.Imm.Impl::new); }
 
       @Override
-      public java.util.List<PersonId.Mut.Value> values() {
+      public java.util.List<PersonId.Builder.Value> values() {
         return _raw()._elements().stream().map(data ->
-            (PersonId.Mut.Value) data._raw()._getValue(PersonId.type.self) // TODO revise cast
+            (PersonId.Builder.Value) data._raw()._getValue(PersonId.type.self) // TODO revise cast
         ).collect(Collectors.toList());
       }
 
       @Override
-      public java.util.List<PersonId.@Nullable Mut> datums() {
+      public java.util.List<PersonId.@Nullable Builder> datums() {
         return _raw()._elements().stream().map(data ->
-                (PersonId.Mut) data._raw()._getValue(PersonId.type.self).getDatum()
+                (PersonId.Builder) data._raw()._getValue(PersonId.type.self).getDatum()
             // TODO revise nulls (define Data._getDatum(Tag))
         ).collect(Collectors.toList());
       }
@@ -293,7 +296,7 @@ public interface PersonId extends IntegerDatum.Static {
       }
 
 
-      static final class Value extends Val.Mut.Static<PersonId.List.Imm.Value, PersonId.List.Mut>
+      static final class Value extends Val.Mut.Static<PersonId.List.Imm.Value, PersonId.List.Builder>
           implements PersonId.List.Value {
 
         public Value(@NotNull Val.Mut.Raw raw) { super(raw, PersonId.List.Imm.Value.Impl::new); }
@@ -310,12 +313,14 @@ public interface PersonId extends IntegerDatum.Static {
 
         // default tag value getter
         @Override
-        public @Nullable PersonId.List.Mut.Value get() {
-          return (PersonId.List.Mut.Value) _raw()._getValue(PersonId.List.type.self);
+        public @Nullable PersonId.List.Builder.Value get() {
+          return (PersonId.List.Builder.Value) _raw()._getValue(PersonId.List.type.self);
         }
 
         // default tag value setter
-        public void set(@Nullable PersonId.List.Mut.Value value) { _raw()._setValue(PersonId.List.type.self, value); }
+        public void set(@Nullable PersonId.List.Builder.Value value) {
+          _raw()._setValue(PersonId.List.type.self, value);
+        }
 
       }
 
@@ -325,19 +330,25 @@ public interface PersonId extends IntegerDatum.Static {
 
     final class Type extends AnonListType.Static<
         PersonId.List.Imm,
-        PersonId.List.Mut,
+        PersonId.List.Builder,
         PersonId.List.Imm.Value,
-        PersonId.List.Mut.Value,
+        PersonId.List.Builder.Value,
         PersonId.List.Imm.Data,
-        PersonId.List.Mut.Data
+        PersonId.List.Builder.Data
         > {
 
       private Type() {
-        super(false, PersonId.type, PersonId.List.Mut::new, PersonId.List.Mut.Value::new, PersonId.List.Mut.Data::new);
+        super(
+            false,
+            PersonId.type,
+            PersonId.List.Builder::new,
+            PersonId.List.Builder.Value::new,
+            PersonId.List.Builder.Data::new
+        );
       }
 
       @Override
-      protected @NotNull Supplier<ListType> listOfTypeSupplier() {
+      protected @NotNull Supplier<ListType> listTypeSupplier() {
         return () -> { // TODO or construct raw list type (make this default behavior and override in static types)?
           throw new IllegalStateException(
               "'" + AnonListTypeName.of(false, PersonId.List.type.name()) + "' not used anywhere in the schema"

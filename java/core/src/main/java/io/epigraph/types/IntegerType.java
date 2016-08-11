@@ -35,7 +35,7 @@ public abstract class IntegerType extends PrimitiveType {
     return (Collection<? extends IntegerType>) super.supertypes();
   }
 
-  public abstract @NotNull IntegerDatum.Mut createMutableDatum(@NotNull Integer val);
+  public abstract @NotNull IntegerDatum.Mut createBuilder(@NotNull Integer val);
 
 
   public static final class Raw extends IntegerType implements PrimitiveType.Raw {
@@ -49,12 +49,12 @@ public abstract class IntegerType extends PrimitiveType {
     }
 
     @Override
-    public @NotNull IntegerDatum.Mut.Raw createMutableDatum(@NotNull Integer val) {
+    public @NotNull IntegerDatum.Mut.Raw createBuilder(@NotNull Integer val) {
       return new IntegerDatum.Mut.Raw(this, val);
     }
 
     @Override
-    protected @NotNull Supplier<@NotNull ListType> listOfTypeSupplier() { return () -> new AnonListType.Raw(false, this); }
+    protected @NotNull Supplier<@NotNull ListType> listTypeSupplier() { return () -> new AnonListType.Raw(false, this); }
 
     @Override
     public @NotNull Val.Mut.Raw createMutableValue() { return new Val.Mut.Raw(this); }
@@ -97,7 +97,7 @@ public abstract class IntegerType extends PrimitiveType {
     }
 
     @Override
-    public final @NotNull MyMutDatum createMutableDatum(@NotNull Integer val) {
+    public final @NotNull MyMutDatum createBuilder(@NotNull Integer val) {
       return mutDatumConstructor.apply(new IntegerDatum.Mut.Raw(this, val));
     }
 

@@ -70,6 +70,6 @@ public abstract class ListType extends DatumType {
     return (Collection<? extends ListType>) super.supertypes();
   }
 
-  public abstract @NotNull ListDatum.Mut createMutableDatum();
+  public abstract @NotNull ListDatum.Mut createBuilder();
 
 }

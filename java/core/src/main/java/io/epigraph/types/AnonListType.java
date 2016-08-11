@@ -26,10 +26,10 @@ public abstract class AnonListType extends ListType {
     public Raw(boolean polymorphic, @NotNull Type elementType) { super(polymorphic, elementType); }
 
     @Override
-    protected @NotNull Supplier<ListType> listOfTypeSupplier() { return () -> new AnonListType.Raw(false, this); }
+    protected @NotNull Supplier<ListType> listTypeSupplier() { return () -> new AnonListType.Raw(false, this); }
 
     @Override
-    public @NotNull ListDatum.Mut createMutableDatum() { return new ListDatum.Mut.Raw(this); }
+    public @NotNull ListDatum.Mut createBuilder() { return new ListDatum.Mut.Raw(this); }
 
     @Override
     public @NotNull Val.Mut createMutableValue() { return new Val.Mut.Raw(this); }
@@ -69,7 +69,7 @@ public abstract class AnonListType extends ListType {
     }
 
     @Override
-    public final @NotNull MyMutDatum createMutableDatum() {
+    public final @NotNull MyMutDatum createBuilder() {
       return mutDatumConstructor.apply(new ListDatum.Mut.Raw(this));
     }
 

@@ -47,7 +47,7 @@ public abstract class RecordType extends DatumType {
 
   public abstract @NotNull List<@NotNull Field> immediateFields(); // TODO could be protected but used by pretty-printer
 
-  public abstract @NotNull RecordDatum.Mut createMutableDatum();
+  public abstract @NotNull RecordDatum.Mut createBuilder();
 
 
   public final @NotNull Collection<@NotNull ? extends Field> fields() {
@@ -165,7 +165,7 @@ public abstract class RecordType extends DatumType {
     }
 
     @Override
-    public final @NotNull MyMutDatum createMutableDatum() {
+    public final @NotNull MyMutDatum createBuilder() {
       return mutDatumConstructor.apply(new RecordDatum.Mut.Raw(this));
     }
 

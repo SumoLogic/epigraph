@@ -65,11 +65,11 @@ public interface PersonRecord extends RecordDatum.Static {
 
   class Type extends RecordType.Static<
       PersonRecord.Imm,
-      PersonRecord.Mut,
+      PersonRecord.Builder,
       PersonRecord.Imm.Value,
-      PersonRecord.Mut.Value,
+      PersonRecord.Builder.Value,
       PersonRecord.Imm.Data,
-      PersonRecord.Mut.Data
+      PersonRecord.Builder.Data
       > {
 
     private Type() {
@@ -77,9 +77,9 @@ public interface PersonRecord extends RecordDatum.Static {
           new QualifiedTypeName(new NamespaceName(new NamespaceName(null, "com"), "example"), "PersonRecord"),
           Collections.emptyList(),
           false,
-          PersonRecord.Mut::new,
-          PersonRecord.Mut.Value::new,
-          PersonRecord.Mut.Data::new
+          PersonRecord.Builder::new,
+          PersonRecord.Builder.Value::new,
+          PersonRecord.Builder.Data::new
       );
     }
 
@@ -90,7 +90,7 @@ public interface PersonRecord extends RecordDatum.Static {
 
 
     @Override
-    protected @NotNull Supplier<ListType> listOfTypeSupplier() { return () -> PersonRecord.List.type; }
+    protected @NotNull Supplier<ListType> listTypeSupplier() { return () -> PersonRecord.List.type; }
 
   }
 
@@ -190,53 +190,53 @@ public interface PersonRecord extends RecordDatum.Static {
   }
 
 
-  final class Mut extends RecordDatum.Mut.Static<PersonRecord.Imm> implements PersonRecord {
+  final class Builder extends RecordDatum.Mut.Static<PersonRecord.Imm> implements PersonRecord {
 
-    private Mut(@NotNull RecordDatum.Mut.Raw raw) { super(PersonRecord.type, raw, PersonRecord.Imm.Impl::new); }
+    private Builder(@NotNull RecordDatum.Mut.Raw raw) { super(PersonRecord.type, raw, PersonRecord.Imm.Impl::new); }
 
     @Override
-    public @Nullable PersonId.Mut getId() {
-      return (PersonId.Mut) _raw()._getDatum(PersonRecord.id, PersonId.type.self);
+    public @Nullable PersonId.Builder getId() {
+      return (PersonId.Builder) _raw()._getDatum(PersonRecord.id, PersonId.type.self);
     }
 
     @Override
-    public @Nullable PersonRecord.Mut.Value getBestFriend_value() {
-      return (PersonRecord.Mut.Value) _raw()._getValue(bestFriend, PersonRecord.type.self);
+    public @Nullable PersonRecord.Builder.Value getBestFriend_value() {
+      return (Builder.Value) _raw()._getValue(bestFriend, PersonRecord.type.self);
     }
 
     @Override
-    public @Nullable PersonRecord.Mut getBestFriend() {
-      PersonRecord.Mut.Value value = getBestFriend_value();
+    public @Nullable PersonRecord.Builder getBestFriend() {
+      Builder.Value value = getBestFriend_value();
       return value == null ? null : value.getDatum();
     }
 
     @Override
-    public @Nullable PersonRecord.List.Mut.Value getFriends_value() {
-      return (PersonRecord.List.Mut.Value) _raw()._getValue(PersonRecord.friends, PersonRecord.List.type.self);
+    public @Nullable PersonRecord.List.Builder.Value getFriends_value() {
+      return (List.Builder.Value) _raw()._getValue(PersonRecord.friends, PersonRecord.List.type.self);
     }
 
     @Override
-    public @Nullable PersonRecord.List.Mut getFriends() {
-      PersonRecord.List.Mut.Value value = getFriends_value();
+    public @Nullable PersonRecord.List.Builder getFriends() {
+      List.Builder.Value value = getFriends_value();
       return value == null ? null : value.getDatum();
     }
 
-    public void setId(@Nullable PersonId.Mut id) {
+    public void setId(@Nullable PersonId.Builder id) {
       _raw().getOrCreateFieldData(PersonRecord.id)._raw()._setDatum(PersonId.type.self, id);
     }
 
-    public void setBestFriend(@Nullable PersonRecord.Mut bestFriend) {
+    public void setBestFriend(@Nullable PersonRecord.Builder bestFriend) {
       _raw().getOrCreateFieldData(PersonRecord.bestFriend)._raw()._setDatum(PersonRecord.type.self, bestFriend);
     }
 
     // TODO full set of field setters
 
-    public void setFriends(@Nullable PersonRecord.List.Mut friends) {
+    public void setFriends(@Nullable PersonRecord.List.Builder friends) {
       _raw().getOrCreateFieldData(PersonRecord.friends)._raw()._setDatum(PersonRecord.List.type.self, friends);
     }
 
 
-    final static class Value extends Val.Mut.Static<PersonRecord.Imm.Value, PersonRecord.Mut>
+    final static class Value extends Val.Mut.Static<PersonRecord.Imm.Value, Builder>
         implements PersonRecord.Value {
 
       public Value(@NotNull Val.Mut.Raw raw) { super(raw, PersonRecord.Imm.Value.Impl::new); }
@@ -252,11 +252,11 @@ public interface PersonRecord extends RecordDatum.Static {
       }
 
       @Override
-      public @Nullable PersonRecord.Mut.Value get() {
-        return (PersonRecord.Mut.Value) _raw()._getValue(PersonRecord.type.self);
+      public @Nullable PersonRecord.Builder.Value get() {
+        return (Builder.Value) _raw()._getValue(PersonRecord.type.self);
       }
 
-      public void set(@Nullable PersonRecord.Mut.Value value) {
+      public void set(@Nullable PersonRecord.Builder.Value value) {
         _raw()._setValue(PersonRecord.type.self, value);
       } //default tag
 
@@ -377,9 +377,9 @@ public interface PersonRecord extends RecordDatum.Static {
     }
 
 
-    final class Mut extends ListDatum.Mut.Static<PersonRecord.List.Imm> implements PersonRecord.List {
+    final class Builder extends ListDatum.Mut.Static<PersonRecord.List.Imm> implements PersonRecord.List {
 
-      protected Mut(@NotNull ListDatum.Mut.Raw raw) {
+      protected Builder(@NotNull ListDatum.Mut.Raw raw) {
         super(
             PersonRecord.List.type,
             raw,
@@ -388,16 +388,16 @@ public interface PersonRecord extends RecordDatum.Static {
       }
 
       @Override
-      public java.util.List<PersonRecord.Mut.Value> values() {
+      public java.util.List<PersonRecord.Builder.Value> values() {
         return _raw()._elements().stream().map(data ->
-            (PersonRecord.Mut.Value) data._raw()._getValue(PersonRecord.type.self) // TODO revise cast
+            (PersonRecord.Builder.Value) data._raw()._getValue(PersonRecord.type.self) // TODO revise cast
         ).collect(Collectors.toList());
       }
 
       @Override
-      public java.util.List<PersonRecord.@Nullable Mut> datums() {
+      public java.util.List<PersonRecord.Builder> datums() {
         return _raw()._elements().stream().map(data ->
-                (PersonRecord.Mut) data._raw()._getValue(PersonRecord.type.self).getDatum()
+                (PersonRecord.Builder) data._raw()._getValue(PersonRecord.type.self).getDatum()
             // TODO revise nulls (define Data._getDatum(Tag))
         ).collect(Collectors.toList());
       }
@@ -410,7 +410,7 @@ public interface PersonRecord extends RecordDatum.Static {
       }
 
 
-      static final class Value extends Val.Mut.Static<PersonRecord.List.Imm.Value, PersonRecord.List.Mut>
+      static final class Value extends Val.Mut.Static<PersonRecord.List.Imm.Value, PersonRecord.List.Builder>
           implements PersonRecord.List.Value {
 
         public Value(@NotNull Val.Mut.Raw raw) { super(raw, PersonRecord.List.Imm.Value.Impl::new); }
@@ -427,12 +427,12 @@ public interface PersonRecord extends RecordDatum.Static {
 
         // default tag value getter
         @Override
-        public @Nullable PersonRecord.List.Mut.Value get() {
-          return (PersonRecord.List.Mut.Value) _raw()._getValue(PersonRecord.List.type.self);
+        public @Nullable PersonRecord.List.Builder.Value get() {
+          return (PersonRecord.List.Builder.Value) _raw()._getValue(PersonRecord.List.type.self);
         }
 
         // default tag value setter
-        public void set(@Nullable PersonRecord.List.Mut.Value value) {
+        public void set(@Nullable PersonRecord.List.Builder.Value value) {
           _raw()._setValue(PersonRecord.List.type.self, value);
         }
 
@@ -444,25 +444,25 @@ public interface PersonRecord extends RecordDatum.Static {
 
     final class Type extends AnonListType.Static<
         PersonRecord.List.Imm,
-        PersonRecord.List.Mut,
+        PersonRecord.List.Builder,
         PersonRecord.List.Imm.Value,
-        PersonRecord.List.Mut.Value,
+        PersonRecord.List.Builder.Value,
         PersonRecord.List.Imm.Data,
-        PersonRecord.List.Mut.Data
+        PersonRecord.List.Builder.Data
         > {
 
       private Type() {
         super(
             false,
             PersonRecord.type,
-            PersonRecord.List.Mut::new,
-            PersonRecord.List.Mut.Value::new,
-            PersonRecord.List.Mut.Data::new
+            PersonRecord.List.Builder::new,
+            PersonRecord.List.Builder.Value::new,
+            PersonRecord.List.Builder.Data::new
         );
       }
 
       @Override
-      protected @NotNull Supplier<ListType> listOfTypeSupplier() {
+      protected @NotNull Supplier<ListType> listTypeSupplier() {
         return () -> { // TODO or construct raw list type (make this default behavior and override in static types)?
           throw new IllegalStateException(
               "'" + AnonListTypeName.of(false, PersonRecord.List.type.name()) + "' not used anywhere in the schema"
