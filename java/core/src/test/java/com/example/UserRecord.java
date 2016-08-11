@@ -150,8 +150,14 @@ public interface UserRecord extends PersonRecord {
       private Impl(RecordDatum.Imm.Raw raw) { super(UserRecord.type, raw); }
 
       @Override
+      public @Nullable PersonId.Imm getId() {
+        PersonId.Imm.Value value = (PersonId.Imm.Value) _raw()._getValue(PersonRecord.id, PersonId.type.self);
+        return value == null ? null : value.getDatum();
+      }
+
+      @Override
       public @Nullable UserRecord.Imm.Value getBestFriend_value() {
-        return (UserRecord.Imm.Value) _raw()._get(UserRecord.bestFriend, UserRecord.type.self);
+        return (UserRecord.Imm.Value) _raw()._getValue(UserRecord.bestFriend, UserRecord.type.self);
       }
 
       @Override
@@ -162,7 +168,7 @@ public interface UserRecord extends PersonRecord {
 
       @Override
       public @Nullable UserRecord.List.Imm.Value getFriends_value() {
-        return (UserRecord.List.Imm.Value) _raw()._get(UserRecord.friends, UserRecord.List.type.self);
+        return (UserRecord.List.Imm.Value) _raw()._getValue(UserRecord.friends, UserRecord.List.type.self);
       }
 
       @Override
@@ -182,8 +188,14 @@ public interface UserRecord extends PersonRecord {
     private Mut(@NotNull RecordDatum.Mut.Raw raw) { super(UserRecord.type, raw, UserRecord.Imm.Impl::new); }
 
     @Override
+    public @Nullable PersonId.Mut getId() {
+      PersonId.Mut.Value value = (PersonId.Mut.Value) _raw()._getValue(PersonRecord.id, PersonId.type.self);
+      return value == null ? null : value.getDatum();
+    }
+
+    @Override
     public @Nullable UserRecord.Mut.Value getBestFriend_value() {
-      return (UserRecord.Mut.Value) _raw()._get(bestFriend, UserRecord.type.self);
+      return (UserRecord.Mut.Value) _raw()._getValue(bestFriend, UserRecord.type.self);
     }
 
     @Override
@@ -194,7 +206,7 @@ public interface UserRecord extends PersonRecord {
 
     @Override
     public @Nullable UserRecord.List.Mut.Value getFriends_value() {
-      return (UserRecord.List.Mut.Value) _raw()._get(UserRecord.friends, UserRecord.List.type.self);
+      return (UserRecord.List.Mut.Value) _raw()._getValue(UserRecord.friends, UserRecord.List.type.self);
     }
 
     @Override

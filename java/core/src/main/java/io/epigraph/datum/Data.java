@@ -43,7 +43,9 @@ public interface Data { // TODO Var? Union? Values?
 
     @Nullable Val _getValue(@NotNull Type.Tag tag);
 
-    // TODO _getData(Tag), _getError(Tag)
+    @Nullable Datum _getDatum(@NotNull Type.Tag tag);
+
+    @Nullable ErrorValue _getError(@NotNull Type.Tag tag);
 
   }
 
@@ -86,6 +88,18 @@ public interface Data { // TODO Var? Union? Values?
       public @Nullable Val.Imm _getValue(@NotNull Type.Tag tag) {
         // TODO check tag compatibility with this.type
         return tagValues.get(tag.name);
+      }
+
+      @Override
+      public @Nullable Datum.Imm _getDatum(@NotNull Type.Tag tag) {
+        Val.Imm value = _getValue(tag);
+        return value == null ? null : value.getDatum();
+      }
+
+      @Override
+      public @Nullable ErrorValue _getError(@NotNull Type.Tag tag) {
+        Val.Imm value = _getValue(tag);
+        return value == null ? null : value.getError();
       }
 
     }
@@ -155,6 +169,18 @@ public interface Data { // TODO Var? Union? Values?
         return tagValues.get(tag.name);
       }
 
+      @Override
+      public @Nullable Datum _getDatum(@NotNull Type.Tag tag) {
+        Val.Mut value = _getValue(tag);
+        return value == null ? null : value.getDatum();
+      }
+
+      @Override
+      public @Nullable ErrorValue _getError(@NotNull Type.Tag tag) {
+        Val.Mut value = _getValue(tag);
+        return value == null ? null : value.getError();
+      }
+
       // TODO accept Value and auto-convert? convert on write (NO - someone might hold the reference already)?
       public void _setValue(@NotNull Type.Tag tag, @Nullable Val.Mut value) {
         // TODO check tag compatibility with this.type
@@ -171,7 +197,7 @@ public interface Data { // TODO Var? Union? Values?
         _getOrCreateTagValue(tag)._raw().setDatum(datum);
       }
 
-      public void setError(@NotNull Type.Tag tag, @NotNull ErrorValue error) {
+      public void _setError(@NotNull Type.Tag tag, @NotNull ErrorValue error) {
         _getOrCreateTagValue(tag).setError(error);
       }
 

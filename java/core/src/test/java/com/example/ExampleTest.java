@@ -3,6 +3,7 @@
 package com.example;
 
 //import io.epigraph.printers.RecordTypePrinter;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class ExampleTest {
@@ -12,6 +13,10 @@ public class ExampleTest {
     System.out.println(PersonRecord.type);
 //    new RecordTypePrinter().println(System.out, PersonRecord.type);
 //    new RecordTypePrinter().println(System.out, UserRecord.type);
+
+    PersonRecord.@NotNull Mut pr = PersonRecord.type.createMutableDatum();
+    pr.setId(PersonId.type.createMutableDatum(123));
+    System.out.println(pr.getId().getVal());
 
     PersonRecord.type.createMutableDatum().setBestFriend((PersonRecord.Mut) null);
     PersonRecord.type.createMutableDatum().setBestFriend((PersonRecord.Mut) null);

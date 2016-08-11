@@ -25,9 +25,13 @@ public interface PersonRecord extends RecordDatum.Static {
 
   @NotNull PersonRecord.Type type = new PersonRecord.Type();
 
-  @NotNull Field bestFriend = new Field("bestFriend", PersonRecord.type, true);
+  @NotNull Field id = new Field("id", PersonId.type, false);
+
+  @NotNull Field bestFriend = new Field("bestFriend", PersonRecord.type, false);
 
   @NotNull Field friends = new Field("friends", PersonRecord.List.type, false);
+
+  @Nullable PersonId getId();
 
   @Nullable PersonRecord getBestFriend();
 
@@ -81,7 +85,7 @@ public interface PersonRecord extends RecordDatum.Static {
 
     @Override
     public @NotNull java.util.List<@NotNull Field> immediateFields() {
-      return Arrays.asList(PersonRecord.bestFriend);
+      return Arrays.asList(PersonRecord.id, PersonRecord.bestFriend, PersonRecord.friends);
     }
 
 
@@ -92,6 +96,9 @@ public interface PersonRecord extends RecordDatum.Static {
 
 
   interface Imm extends PersonRecord, RecordDatum.Imm.Static {
+
+    @Override
+    @Nullable PersonId.Imm getId();
 
     @Override
     @Nullable PersonRecord.Imm getBestFriend();
@@ -150,8 +157,14 @@ public interface PersonRecord extends RecordDatum.Static {
       private Impl(RecordDatum.Imm.Raw raw) { super(PersonRecord.type, raw); }
 
       @Override
+      public @Nullable PersonId.Imm getId() {
+        PersonId.Imm.Value value = (PersonId.Imm.Value) _raw()._getValue(PersonRecord.id, PersonId.type.self);
+        return value == null ? null : value.getDatum();
+      }
+
+      @Override
       public @Nullable PersonRecord.Imm.Value getBestFriend_value() {
-        return (PersonRecord.Imm.Value) _raw()._get(bestFriend, PersonRecord.type.self);
+        return (PersonRecord.Imm.Value) _raw()._getValue(bestFriend, PersonRecord.type.self);
       }
 
       @Override
@@ -162,7 +175,7 @@ public interface PersonRecord extends RecordDatum.Static {
 
       @Override
       public @Nullable PersonRecord.List.Imm.Value getFriends_value() {
-        return (PersonRecord.List.Imm.Value) _raw()._get(PersonRecord.friends, PersonRecord.List.type.self);
+        return (PersonRecord.List.Imm.Value) _raw()._getValue(PersonRecord.friends, PersonRecord.List.type.self);
       }
 
       @Override
@@ -182,8 +195,13 @@ public interface PersonRecord extends RecordDatum.Static {
     private Mut(@NotNull RecordDatum.Mut.Raw raw) { super(PersonRecord.type, raw, PersonRecord.Imm.Impl::new); }
 
     @Override
+    public @Nullable PersonId.Mut getId() {
+      return (PersonId.Mut) _raw()._getDatum(PersonRecord.id, PersonId.type.self);
+    }
+
+    @Override
     public @Nullable PersonRecord.Mut.Value getBestFriend_value() {
-      return (PersonRecord.Mut.Value) _raw()._get(bestFriend, PersonRecord.type.self);
+      return (PersonRecord.Mut.Value) _raw()._getValue(bestFriend, PersonRecord.type.self);
     }
 
     @Override
@@ -194,13 +212,17 @@ public interface PersonRecord extends RecordDatum.Static {
 
     @Override
     public @Nullable PersonRecord.List.Mut.Value getFriends_value() {
-      return (PersonRecord.List.Mut.Value) _raw()._get(PersonRecord.friends, PersonRecord.List.type.self);
+      return (PersonRecord.List.Mut.Value) _raw()._getValue(PersonRecord.friends, PersonRecord.List.type.self);
     }
 
     @Override
     public @Nullable PersonRecord.List.Mut getFriends() {
       PersonRecord.List.Mut.Value value = getFriends_value();
       return value == null ? null : value.getDatum();
+    }
+
+    public void setId(@Nullable PersonId.Mut id) {
+      _raw().getOrCreateFieldData(PersonRecord.id)._raw()._setDatum(PersonId.type.self, id);
     }
 
     public void setBestFriend(@Nullable PersonRecord.Mut bestFriend) {

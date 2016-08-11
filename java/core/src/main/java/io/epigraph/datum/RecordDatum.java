@@ -2,6 +2,7 @@
 
 package io.epigraph.datum;
 
+import io.epigraph.errors.ErrorValue;
 import io.epigraph.types.RecordType;
 import io.epigraph.types.RecordType.Field;
 import io.epigraph.types.Type.Tag;
@@ -35,11 +36,16 @@ public interface RecordDatum extends Datum {
     @Override
     @NotNull RecordDatum.Imm.Raw toImmutable();
 
-    Map<String, ? extends Data> _fieldsData();
+    /** @return Unmodifiable mapping of field names to their data. The data could be modifiable. */
+    @NotNull Map<String, ? extends Data> _fieldsData();
 
-    Data _get(Field field);
+    @Nullable Data _getData(@NotNull Field field);
 
-    Val _get(Field field, Tag tag);
+    @Nullable Val _getValue(@NotNull Field field, @NotNull Tag tag);
+
+    @Nullable Datum _getDatum(@NotNull Field field, @NotNull Tag tag);
+
+    @Nullable ErrorValue _getError(@NotNull Field field, @NotNull Tag tag);
 
     // TODO @Nullable Datum _getDatum(Field, Tag)
     // TODO @Nullable ErrorValue _getError(Field, Tag)
@@ -81,15 +87,29 @@ public interface RecordDatum extends Datum {
       public @NotNull RecordDatum.Imm.Raw _raw() { return this; }
 
       @Override
-      public Map<String, ? extends Data.Imm> _fieldsData() { return fieldsData; }
+      public @NotNull Map<String, ? extends Data.Imm> _fieldsData() { return fieldsData; }
 
       @Override
-      public Data.Imm _get(Field field) { return _fieldsData().get(type().assertReadable(field).name()); }
+      public @Nullable Data.Imm _getData(@NotNull Field field) {
+        return _fieldsData().get(type().assertReadable(field).name());
+      }
 
       @Override
-      public Val.Imm _get(Field field, Tag tag) {
-        Data.Imm data = _get(field);
+      public @Nullable Val.Imm _getValue(@NotNull Field field, @NotNull Tag tag) {
+        Data.Imm data = _getData(field);
         return data == null ? null : data._raw()._getValue(tag);
+      }
+
+      @Override
+      public @Nullable Datum _getDatum(@NotNull Field field, @NotNull Tag tag) {
+        Data.Imm data = _getData(field);
+        return data == null ? null : data._raw()._getDatum(tag);
+      }
+
+      @Override
+      public @Nullable ErrorValue _getError(@NotNull Field field, @NotNull Tag tag) {
+        Data.Imm data = _getData(field);
+        return data == null ? null : data._raw()._getError(tag);
       }
 
     }
@@ -114,7 +134,7 @@ public interface RecordDatum extends Datum {
         }
 
         @Override
-        public @NotNull MyImm toImmutable() { return (MyImm) this; } // TODO this could be violated - make abstract?...
+        public @NotNull MyImm toImmutable() { return (MyImm) this; } // TODO this could be violated - make abstract?..
 
         @Override
         public @NotNull RecordDatum.Imm.Raw _raw() { return raw; }
@@ -152,17 +172,29 @@ public interface RecordDatum extends Datum {
       public @NotNull Map<String, ? extends Data.Mut> _fieldsData() { return fieldsData; }
 
       @Override
-      public Data.Mut _get(Field field) {
+      public @Nullable Data.Mut _getData(@NotNull Field field) {
         return _fieldsData().get(type().assertReadable(field).name());
       }
 
       @Override
-      public Val.Mut _get(Field field, Tag tag) {
-        Data.Mut data = _get(field);
+      public @Nullable Val.Mut _getValue(@NotNull Field field, @NotNull Tag tag) {
+        Data.Mut data = _getData(field);
         return data == null ? null : data._raw()._getValue(tag);
       }
 
-      public void _set(@NotNull Field field, @NotNull Tag tag, Val value) {
+      @Override
+      public @Nullable Datum _getDatum(@NotNull Field field, @NotNull Tag tag) {
+        Data.Mut data = _getData(field);
+        return data == null ? null : data._raw()._getDatum(tag);
+      }
+
+      @Override
+      public @Nullable ErrorValue _getError(@NotNull Field field, @NotNull Tag tag) {
+        Data.Mut data = _getData(field);
+        return data == null ? null : data._raw()._getError(tag);
+      }
+
+      public void _set(@NotNull Field field, @NotNull Tag tag, @Nullable Val value) {
         // FIXME
       }
 
@@ -180,7 +212,7 @@ public interface RecordDatum extends Datum {
       }
 
       public @NotNull Data.Mut getOrCreateFieldData(@NotNull Field field) {
-        Data.Mut data = _get(field);
+        Data.Mut data = _getData(field);
         if (data == null) _setData(field, data = field.type.createMutableData());
         return data;
       }

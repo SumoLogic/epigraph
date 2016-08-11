@@ -187,7 +187,7 @@ public interface Val {
 
     protected Mut(@NotNull DatumType type) { super(type); }
 
-    public abstract void setError(@NotNull ErrorValue error); // TODO _setError()?
+    public abstract void setError(@NotNull ErrorValue error);
 
     @Override
     public abstract @NotNull Val.Mut.Raw _raw();
