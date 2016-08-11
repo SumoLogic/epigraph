@@ -5,25 +5,28 @@ package io.epigraph.types;
 import io.epigraph.names.QualifiedTypeName;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 public abstract class UnionType extends Type {
 
-  public UnionType(@NotNull QualifiedTypeName name, @NotNull List<UnionType> immediateSupertypes) {
-    super(name, immediateSupertypes);
+  public UnionType(
+      @NotNull QualifiedTypeName name,
+      @NotNull List<@NotNull UnionType> immediateSupertypes,
+      boolean polymorphic
+  ) {
+    super(name, immediateSupertypes, polymorphic);
   }
 
   @Override
   @SuppressWarnings("unchecked")
-  public @NotNull List<? extends UnionType> immediateSupertypes() {
+  public @NotNull List<@NotNull ? extends UnionType> immediateSupertypes() {
     return (List<? extends UnionType>) super.immediateSupertypes();
   }
 
   @Override
   @SuppressWarnings("unchecked")
-  public @NotNull Collection<? extends UnionType> supertypes() {
+  public @NotNull Collection<@NotNull ? extends UnionType> supertypes() {
     return (Collection<? extends UnionType>) super.supertypes();
   }
 

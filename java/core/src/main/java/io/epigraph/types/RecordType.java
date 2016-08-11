@@ -20,11 +20,15 @@ import java.util.function.Function;
 
 public abstract class RecordType extends DatumType {
 
-  private @Nullable Collection<? extends Field> fields = null;
+  private @Nullable Collection<@NotNull ? extends Field> fields = null;
 
-  private @Nullable Map<String, ? extends Field> fieldsMap = null;
+  private @Nullable Map<@NotNull String, @NotNull ? extends Field> fieldsMap = null;
 
-  public RecordType(QualifiedTypeName name, List<? extends RecordType> immediateSupertypes, boolean polymorphic) {
+  public RecordType(
+      @NotNull QualifiedTypeName name,
+      @NotNull List<@NotNull ? extends RecordType> immediateSupertypes,
+      boolean polymorphic
+  ) {
     super(name, immediateSupertypes, polymorphic);
   }
 
@@ -33,20 +37,20 @@ public abstract class RecordType extends DatumType {
 
   @Override
   @SuppressWarnings("unchecked")
-  public @NotNull List<? extends RecordType> immediateSupertypes() {
+  public @NotNull List<@NotNull ? extends RecordType> immediateSupertypes() {
     return (List<? extends RecordType>) super.immediateSupertypes();
   }
 
   @Override
   @SuppressWarnings("unchecked")
-  public @NotNull Collection<RecordType> supertypes() { return (Collection<RecordType>) super.supertypes(); }
+  public @NotNull Collection<@NotNull RecordType> supertypes() { return (Collection<RecordType>) super.supertypes(); }
 
   public abstract @NotNull List<@NotNull Field> immediateFields(); // TODO could be protected but used by pretty-printer
 
   public abstract @NotNull RecordDatum.Mut createMutableDatum();
 
 
-  public final @NotNull Collection<? extends Field> fields() {
+  public final @NotNull Collection<@NotNull ? extends Field> fields() {
     // TODO produce better ordering of the fields (i.e. supertypes first, in the order of supertypes and their fields declaration)
     if (fields == null) { // TODO move initialization to constructor (if possible?)
       LinkedList<Field> acc = new LinkedList<>(immediateFields());
@@ -61,7 +65,7 @@ public abstract class RecordType extends DatumType {
     return fields;
   }
 
-  public final @NotNull Map<String, ? extends Field> fieldsMap() {
+  public final @NotNull Map<@NotNull String, @NotNull ? extends Field> fieldsMap() {
     if (fieldsMap == null) fieldsMap = Unmodifiable.map(fields(), f -> f.name, f -> f);
     return fieldsMap;
   }
@@ -105,19 +109,23 @@ public abstract class RecordType extends DatumType {
 
   public static class Field { // TODO move out
 
-    public final String name;
+    public final @NotNull String name;
 
-    public final Type type;
+    public final @NotNull Type type;
 
     public final boolean isAbstract;
 
-    public Field(String name, Type type, boolean isAbstract) { // TODO capture overridden super-fields?
+    public Field(
+        @NotNull String name,
+        @NotNull Type type,
+        boolean isAbstract
+    ) { // TODO capture overridden super-fields?
       this.name = name;
       this.type = type;
       this.isAbstract = isAbstract;
     }
 
-    public String name() { return name; }
+    public @NotNull String name() { return name; }
 
   }
 
@@ -136,19 +144,19 @@ public abstract class RecordType extends DatumType {
       RecordType.Static<MyImmDatum, MyMutDatum, MyImmVal, MyMutVal, MyImmData, MyMutData>
       > {
 
-    private final @NotNull Function<RecordDatum.Mut.Raw, MyMutDatum> mutDatumConstructor;
+    private final @NotNull Function<RecordDatum.Mut.@NotNull Raw, @NotNull MyMutDatum> mutDatumConstructor;
 
-    private final @NotNull Function<Val.Mut.Raw, MyMutVal> mutValConstructor;
+    private final @NotNull Function<Val.Mut.@NotNull Raw, @NotNull MyMutVal> mutValConstructor;
 
-    private final @NotNull Function<Data.Mut.Raw, MyMutData> mutDataConstructor;
+    private final @NotNull Function<Data.Mut.@NotNull Raw, @NotNull MyMutData> mutDataConstructor;
 
     protected Static(
         @NotNull QualifiedTypeName name,
-        @NotNull List<? extends RecordType> immediateSupertypes,
+        @NotNull List<@NotNull ? extends RecordType> immediateSupertypes,
         boolean polymorphic,
-        @NotNull Function<RecordDatum.Mut.Raw, MyMutDatum> mutDatumConstructor,
-        @NotNull Function<Val.Mut.Raw, MyMutVal> mutValConstructor,
-        @NotNull Function<Data.Mut.Raw, MyMutData> mutDataConstructor
+        @NotNull Function<RecordDatum.Mut.@NotNull Raw, @NotNull MyMutDatum> mutDatumConstructor,
+        @NotNull Function<Val.Mut.@NotNull Raw, @NotNull MyMutVal> mutValConstructor,
+        @NotNull Function<Data.Mut.@NotNull Raw, @NotNull MyMutData> mutDataConstructor
     ) {
       super(name, immediateSupertypes, polymorphic);
       this.mutDatumConstructor = mutDatumConstructor;

@@ -19,19 +19,24 @@ import java.util.function.Supplier;
 
 public abstract class Type { // TODO split into interface and impl
 
-  private final TypeName name;
+  private final @NotNull TypeName name;
 
-  private final List<? extends Type> immediateSupertypes;
+  private final @NotNull List<@NotNull ? extends Type> immediateSupertypes;
 
-  protected Type(TypeName name, List<? extends Type> immediateSupertypes) {
+  public final boolean polymorphic;
+
+  protected Type(
+      @NotNull TypeName name,
+      @NotNull List<@NotNull ? extends Type> immediateSupertypes,
+      boolean polymorphic
+  ) {
     this.name = name;
     this.immediateSupertypes = Unmodifiable.list(immediateSupertypes);
+    this.polymorphic = polymorphic;
 
     // assert none of the immediate supertypes is a supertype of another one
     if (immediateSupertypes.stream().anyMatch(is -> is.supertypes().stream().anyMatch(immediateSupertypes::contains)))
       throw new IllegalArgumentException();
-
-
   }
 
   public @NotNull TypeName name() { return name; }
@@ -39,14 +44,14 @@ public abstract class Type { // TODO split into interface and impl
   /**
    * @return immediate (i.e. not transitive) supertypes of this type, in the order of increasing priority
    */
-  public @NotNull List<? extends Type> immediateSupertypes() { return immediateSupertypes; }
+  public @NotNull List<@NotNull ? extends Type> immediateSupertypes() { return immediateSupertypes; }
 
   private @Nullable Collection<? extends Type> supertypes = null;
 
   /**
    * @return linearized supertypes of this type, in order of decreasing priority
    */
-  public Collection<? extends Type> supertypes() {
+  public @NotNull Collection<@NotNull ? extends Type> supertypes() {
     if (supertypes == null) { // TODO move initialization to constructor?
       LinkedList<Type> acc = new LinkedList<>();
       for (Type is : immediateSupertypes) {
@@ -60,9 +65,9 @@ public abstract class Type { // TODO split into interface and impl
     return supertypes;
   }
 
-  public boolean doesExtend(Type type) { return this.equals(type) || supertypes().contains(type); }
+  public boolean doesExtend(@NotNull Type type) { return this.equals(type) || supertypes().contains(type); }
 
-  public boolean isAssignableFrom(Type type) { return type.doesExtend(this); }
+  public boolean isAssignableFrom(@NotNull Type type) { return type.doesExtend(this); }
 
   private final LazyInitializer<ListType> listOf = new LazyInitializer<>(listOfTypeSupplier()); // FIXME race?
 
@@ -70,11 +75,9 @@ public abstract class Type { // TODO split into interface and impl
 
   public ListType listOf() { return listOf.get(); }
 
-  @NotNull
-  public abstract List<Tag> immediateTags();
+  public abstract @NotNull List<Tag> immediateTags();
 
-  @NotNull
-  public abstract List<Tag> tags(); // FIXME do we need this method?
+  public abstract @NotNull List<Tag> tags(); // FIXME do we need this method?
 
   public abstract @NotNull Data.Mut createMutableData(); // { return new Data.Mut(this); }
 
@@ -87,11 +90,11 @@ public abstract class Type { // TODO split into interface and impl
 
   public static class Tag {
 
-    public final String name;
+    public final @NotNull String name;
 
-    public final DatumType type;
+    public final @NotNull DatumType type;
 
-    public Tag(String name, DatumType type) {
+    public Tag(@NotNull String name, @NotNull DatumType type) {
       this.name = name;
       this.type = type;
     }

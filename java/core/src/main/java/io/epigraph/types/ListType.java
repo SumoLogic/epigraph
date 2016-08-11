@@ -45,7 +45,10 @@ public abstract class ListType extends DatumType {
     this(name, addAnonSupertypes(immediateNamedSupertypes, elementType), polymorphic, elementType);
   }
 
-  private static @NotNull List<ListType> addAnonSupertypes(List<NamedListType> namedSupertypes, Type elementType) {
+  private static @NotNull List<@NotNull ListType> addAnonSupertypes(
+      @NotNull List<@NotNull ? extends NamedListType> namedSupertypes,
+      @NotNull Type elementType
+  ) {
     Stream<? extends Type> missingElementSupertypes = elementType.immediateSupertypes().stream().filter(est ->
         namedSupertypes.stream().anyMatch(nst -> !nst.elementType.doesExtend(est))
     );

@@ -5,6 +5,8 @@ package io.epigraph.data;
 import io.epigraph.types.StringType;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.function.Function;
+
 
 public interface StringDatum extends Datum {
 
@@ -55,6 +57,7 @@ public interface StringDatum extends Datum {
 
       public Raw(@NotNull StringType type, @NotNull StringDatum prototype) {
         super(type);
+        // TODO check types are compatible
         this.val = prototype.getVal();
       }
 
@@ -84,7 +87,7 @@ public interface StringDatum extends Datum {
 
         private final @NotNull StringDatum.Imm.Raw raw;
 
-        protected Impl(@NotNull StringType type, @NotNull StringDatum.Imm.Raw raw) {
+        protected Impl(StringType type, StringDatum.Imm.Raw raw) {
           super(type); // TODO take static type separately?
           this.raw = raw; // TODO validate raw is kosher?
         }
@@ -145,28 +148,35 @@ public interface StringDatum extends Datum {
     }
 
 
-    public static abstract class Static<MyImm extends StringDatum.Imm.Static> extends StringDatum.Mut
+    public static abstract class Static<MyImmDatum extends StringDatum.Imm.Static> extends StringDatum.Mut
         implements StringDatum.Static, Datum.Mut.Static {
 
       private final @NotNull StringDatum.Mut.Raw raw;
 
-      protected Static(@NotNull StringDatum.Mut.Raw raw) {
-        super(raw.type()); // TODO take static type separately
-        // TODO check types are equal
-        this.raw = raw; // TODO validate raw data is kosher?
+      private final @NotNull Function<StringDatum.Imm.Raw, MyImmDatum> immDatumConstructor;
+
+      protected Static(
+          @NotNull StringType.Static<MyImmDatum, ?, ?, ?, ?, ?> type,
+          @NotNull StringDatum.Mut.Raw raw,
+          @NotNull Function<StringDatum.Imm.Raw, MyImmDatum> immDatumConstructor
+      ) {
+        super(type);
+        // TODO check type equality
+        this.raw = raw;
+        this.immDatumConstructor = immDatumConstructor;
       }
 
       @Override
-      public @NotNull String getVal() { return raw.getVal(); }
+      public final @NotNull String getVal() { return raw.getVal(); }
 
       @Override
-      public void setVal(@NotNull String val) { raw.setVal(val); }
+      public final void setVal(@NotNull String val) { raw.setVal(val); }
 
       @Override
-      public abstract @NotNull MyImm toImmutable(); // TODO either delegate to static type or leave abstract to be implemented by concrete subclass
+      public final @NotNull MyImmDatum toImmutable() { return immDatumConstructor.apply(_raw().toImmutable()); }
 
       @Override
-      public @NotNull StringDatum.Mut.Raw _raw() { return raw; }
+      public final @NotNull StringDatum.Mut.Raw _raw() { return raw; }
 
     }
 

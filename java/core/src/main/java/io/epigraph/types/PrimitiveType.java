@@ -11,8 +11,8 @@ import java.util.List;
 public abstract class PrimitiveType extends DatumType { // TODO parameterize with native type?
 
   protected PrimitiveType(
-      QualifiedTypeName name,
-      List<? extends PrimitiveType> immediateSupertypes,
+      @NotNull QualifiedTypeName name,
+      @NotNull List<@NotNull ? extends PrimitiveType> immediateSupertypes,
       boolean polymorphic
   ) {
     super(name, immediateSupertypes, polymorphic);
@@ -23,13 +23,13 @@ public abstract class PrimitiveType extends DatumType { // TODO parameterize wit
 
   @Override
   @SuppressWarnings("unchecked")
-  public @NotNull List<? extends PrimitiveType> immediateSupertypes() {
+  public @NotNull List<@NotNull ? extends PrimitiveType> immediateSupertypes() {
     return (List<? extends PrimitiveType>) super.immediateSupertypes();
   }
 
   @Override
   @SuppressWarnings("unchecked")
-  public @NotNull Collection<? extends PrimitiveType> supertypes() {
+  public @NotNull Collection<@NotNull ? extends PrimitiveType> supertypes() {
     return (Collection<? extends PrimitiveType>) super.supertypes();
   }
 

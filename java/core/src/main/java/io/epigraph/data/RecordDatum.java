@@ -36,7 +36,9 @@ public interface RecordDatum extends Datum {
     @Override
     @NotNull RecordDatum.Imm.Raw toImmutable();
 
-    /** @return Unmodifiable mapping of field names to their data. The data could be modifiable. */
+    /**
+     * @return Unmodifiable mapping of field names to their data. The data could be modifiable.
+     */
     @NotNull Map<String, ? extends Data> _fieldsData();
 
     @Nullable Data _getData(@NotNull Field field);
@@ -120,7 +122,7 @@ public interface RecordDatum extends Datum {
 
 
       // base for generated immutable record impl classes
-      abstract class Impl<MyImm extends RecordDatum.Imm.Static> extends RecordDatum.Impl
+      abstract class Impl<MyImmDatum extends RecordDatum.Imm.Static> extends RecordDatum.Impl
           implements RecordDatum.Imm.Static {
 
         private final RecordDatum.Imm.Raw raw;
@@ -134,7 +136,7 @@ public interface RecordDatum extends Datum {
         }
 
         @Override
-        public @NotNull MyImm toImmutable() { return (MyImm) this; } // TODO this could be violated - make abstract?..
+        public @NotNull MyImmDatum toImmutable() { return (MyImmDatum) this; } // TODO this could be violated - make abstract?..
 
         @Override
         public @NotNull RecordDatum.Imm.Raw _raw() { return raw; }

@@ -17,7 +17,7 @@ public abstract class IntegerType extends PrimitiveType {
 
   protected IntegerType(
       @NotNull QualifiedTypeName name,
-      @NotNull List<? extends IntegerType> immediateSupertypes,
+      @NotNull List<@NotNull ? extends IntegerType> immediateSupertypes,
       boolean polymorphic
   ) {
     super(name, immediateSupertypes, polymorphic);
@@ -25,13 +25,13 @@ public abstract class IntegerType extends PrimitiveType {
 
   @Override
   @SuppressWarnings("unchecked")
-  public @NotNull List<? extends IntegerType> immediateSupertypes() {
+  public @NotNull List<@NotNull ? extends IntegerType> immediateSupertypes() {
     return (List<? extends IntegerType>) super.immediateSupertypes();
   }
 
   @Override
   @SuppressWarnings("unchecked")
-  public @NotNull Collection<? extends IntegerType> supertypes() {
+  public @NotNull Collection<@NotNull ? extends IntegerType> supertypes() {
     return (Collection<? extends IntegerType>) super.supertypes();
   }
 
@@ -42,7 +42,7 @@ public abstract class IntegerType extends PrimitiveType {
 
     protected Raw(
         @NotNull QualifiedTypeName name,
-        @NotNull List<? extends IntegerType> immediateSupertypes,
+        @NotNull List<@NotNull ? extends IntegerType> immediateSupertypes,
         boolean polymorphic
     ) {
       super(name, immediateSupertypes, polymorphic);
@@ -54,7 +54,7 @@ public abstract class IntegerType extends PrimitiveType {
     }
 
     @Override
-    protected @NotNull Supplier<ListType> listOfTypeSupplier() { return () -> new AnonListType.Raw(false, this); }
+    protected @NotNull Supplier<@NotNull ListType> listOfTypeSupplier() { return () -> new AnonListType.Raw(false, this); }
 
     @Override
     public @NotNull Val.Mut.Raw createMutableValue() { return new Val.Mut.Raw(this); }
@@ -76,19 +76,19 @@ public abstract class IntegerType extends PrimitiveType {
       IntegerType.Static<MyImmDatum, MyMutDatum, MyImmVal, MyMutVal, MyImmData, MyMutData>
       > {
 
-    private final @NotNull Function<IntegerDatum.Mut.Raw, MyMutDatum> mutDatumConstructor;
+    private final @NotNull Function<IntegerDatum.Mut.@NotNull Raw, @NotNull MyMutDatum> mutDatumConstructor;
 
-    private final @NotNull Function<Val.Mut.Raw, MyMutVal> mutValConstructor;
+    private final @NotNull Function<Val.Mut.@NotNull Raw, @NotNull MyMutVal> mutValConstructor;
 
-    private final @NotNull Function<Data.Mut.Raw, MyMutData> mutDataConstructor;
+    private final @NotNull Function<Data.Mut.@NotNull Raw, @NotNull MyMutData> mutDataConstructor;
 
     protected Static(
         @NotNull QualifiedTypeName name,
         @NotNull List<? extends IntegerType> immediateSupertypes,
         boolean polymorphic,
-        @NotNull Function<IntegerDatum.Mut.Raw, MyMutDatum> mutDatumConstructor,
-        @NotNull Function<Val.Mut.Raw, MyMutVal> mutValConstructor,
-        @NotNull Function<Data.Mut.Raw, MyMutData> mutDataConstructor
+        @NotNull Function<IntegerDatum.Mut.@NotNull Raw, @NotNull MyMutDatum> mutDatumConstructor,
+        @NotNull Function<Val.Mut.@NotNull Raw, @NotNull MyMutVal> mutValConstructor,
+        @NotNull Function<Data.Mut.@NotNull Raw, @NotNull MyMutData> mutDataConstructor
     ) {
       super(name, immediateSupertypes, polymorphic);
       this.mutDatumConstructor = mutDatumConstructor;

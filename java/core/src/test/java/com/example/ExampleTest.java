@@ -3,8 +3,8 @@
 package com.example;
 
 //import io.epigraph.printers.RecordTypePrinter;
+
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class ExampleTest {
 
@@ -27,7 +27,7 @@ public class ExampleTest {
 
     UserRecord.Mut userRecord = UserRecord.type.createMutableDatum();
     userRecord.setBestFriend((UserRecord.Mut) null);
-    @Nullable UserRecord bestFriend = userRecord.getBestFriend();
+    UserRecord.Mut bestFriend = userRecord.getBestFriend();
   }
 
 }

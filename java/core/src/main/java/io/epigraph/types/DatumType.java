@@ -14,8 +14,6 @@ public abstract class DatumType extends Type {
 
   public final @NotNull Tag self = new Tag("self", this); // TODO rename to tag?
 
-  public final boolean polymorphic;
-
   private final @NotNull List<@NotNull Tag> immediateTags = Collections.singletonList(self);
 
   protected DatumType(
@@ -23,8 +21,7 @@ public abstract class DatumType extends Type {
       @NotNull List<@NotNull ? extends DatumType> immediateSupertypes,
       boolean polymorphic
   ) {
-    super(name, immediateSupertypes);
-    this.polymorphic = polymorphic;
+    super(name, immediateSupertypes, polymorphic);
   }
 
   @Override
@@ -45,7 +42,7 @@ public abstract class DatumType extends Type {
   @Override
   public final @NotNull List<@NotNull Tag> tags() { return immediateTags(); }
 
-  public abstract @NotNull Val.Mut createMutableValue(); // { return new Val.Mut(this); } // FIXME
+  public abstract @NotNull Val.Mut createMutableValue();
 
 
   public interface Raw extends Type.Raw {}

@@ -12,9 +12,11 @@ import io.epigraph.names.QualifiedTypeName;
 import io.epigraph.types.AnonListType;
 import io.epigraph.types.IntegerType;
 import io.epigraph.types.ListType;
+import io.epigraph.util.CollectionView;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -236,10 +238,13 @@ public interface PersonId extends IntegerDatum.Static {
           ).collect(Collectors.toList());
         }
 
-// TODO use CollectionView instead:
-//        public @NotNull Collection<@Nullable ? extends PersonId.Imm.Value> values2() {
-//          return new CollectionView<PersonId.Data, PersonId.Imm.Value>(_raw()._elements(), data -> data.get());
-//        }
+        // TODO use CollectionView instead:
+        public @NotNull Collection<@Nullable ? extends PersonId.Imm.Value> values2() {
+          return new CollectionView<PersonId.Data.Imm, PersonId.Imm.Value>(
+              _raw()._elements(),
+              data -> (PersonId.Imm.Value) data._raw()._getValue(PersonId.type.self)
+          );
+        }
 
         @Override
         public java.util.List<@Nullable ? extends PersonId.Imm> datums() {
