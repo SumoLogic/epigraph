@@ -2,9 +2,9 @@
 
 package com.example;
 
-import io.epigraph.datum.IntegerDatum;
-import io.epigraph.datum.ListDatum;
-import io.epigraph.datum.Val;
+import io.epigraph.data.IntegerDatum;
+import io.epigraph.data.ListDatum;
+import io.epigraph.data.Val;
 import io.epigraph.errors.ErrorValue;
 import io.epigraph.names.AnonListTypeName;
 import io.epigraph.names.NamespaceName;
@@ -78,9 +78,9 @@ public interface UserId extends PersonId {
       @Nullable UserId.Imm.Value get();
 
 
-      final class Impl extends io.epigraph.datum.Data.Imm.Static.Impl<UserId.Imm.Data> implements UserId.Imm.Data {
+      final class Impl extends io.epigraph.data.Data.Imm.Static.Impl<UserId.Imm.Data> implements UserId.Imm.Data {
 
-        protected Impl(@NotNull io.epigraph.datum.Data.Imm.Raw raw) { super(UserId.type, raw); }
+        protected Impl(@NotNull io.epigraph.data.Data.Imm.Raw raw) { super(UserId.type, raw); }
 
         @Override
         public @Nullable UserId.Imm.Value get() { return (UserId.Imm.Value) _raw()._getValue(UserId.type.self); }
@@ -106,9 +106,9 @@ public interface UserId extends PersonId {
     }
 
 
-    final static class Data extends io.epigraph.datum.Data.Mut.Static<UserId.Imm.Data> implements UserId.Data {
+    final static class Data extends io.epigraph.data.Data.Mut.Static<UserId.Imm.Data> implements UserId.Data {
 
-      protected Data(@NotNull io.epigraph.datum.Data.Mut.Raw raw) {
+      protected Data(@NotNull io.epigraph.data.Data.Mut.Raw raw) {
         super(UserId.type, raw, UserId.Imm.Data.Impl::new);
       }
 
@@ -208,10 +208,10 @@ public interface UserId extends PersonId {
         @Nullable UserId.List.Imm.Value get();
 
 
-        final class Impl extends io.epigraph.datum.Data.Imm.Static.Impl<UserId.List.Imm.Data>
+        final class Impl extends io.epigraph.data.Data.Imm.Static.Impl<UserId.List.Imm.Data>
             implements UserId.List.Imm.Data {
 
-          protected Impl(@NotNull io.epigraph.datum.Data.Imm.Raw raw) { super(UserId.List.type, raw); }
+          protected Impl(@NotNull io.epigraph.data.Data.Imm.Raw raw) { super(UserId.List.type, raw); }
 
           @Override
           public @Nullable UserId.List.Imm.Value get() {
@@ -290,10 +290,10 @@ public interface UserId extends PersonId {
       }
 
 
-      final static class Data extends io.epigraph.datum.Data.Mut.Static<UserId.List.Imm.Data>
+      final static class Data extends io.epigraph.data.Data.Mut.Static<UserId.List.Imm.Data>
           implements UserId.List.Data {
 
-        protected Data(@NotNull io.epigraph.datum.Data.Mut.Raw raw) {
+        protected Data(@NotNull io.epigraph.data.Data.Mut.Raw raw) {
           super(UserId.List.type, raw, UserId.List.Imm.Data.Impl::new);
         }
 

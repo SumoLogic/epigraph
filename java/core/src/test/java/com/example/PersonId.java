@@ -2,9 +2,9 @@
 
 package com.example;
 
-import io.epigraph.datum.IntegerDatum;
-import io.epigraph.datum.ListDatum;
-import io.epigraph.datum.Val;
+import io.epigraph.data.IntegerDatum;
+import io.epigraph.data.ListDatum;
+import io.epigraph.data.Val;
 import io.epigraph.errors.ErrorValue;
 import io.epigraph.names.AnonListTypeName;
 import io.epigraph.names.NamespaceName;
@@ -12,11 +12,9 @@ import io.epigraph.names.QualifiedTypeName;
 import io.epigraph.types.AnonListType;
 import io.epigraph.types.IntegerType;
 import io.epigraph.types.ListType;
-import io.epigraph.util.CollectionView;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -38,7 +36,7 @@ public interface PersonId extends IntegerDatum.Static {
   }
 
 
-  interface Data extends io.epigraph.datum.Data.Static {
+  interface Data extends io.epigraph.data.Data.Static {
 
     @Override
     @NotNull PersonId.Imm.Data toImmutable();
@@ -74,15 +72,15 @@ public interface PersonId extends IntegerDatum.Static {
     }
 
 
-    interface Data extends PersonId.Data, io.epigraph.datum.Data.Imm.Static {
+    interface Data extends PersonId.Data, io.epigraph.data.Data.Imm.Static {
 
       @Override
       @Nullable PersonId.Imm.Value get();
 
 
-      final class Impl extends io.epigraph.datum.Data.Imm.Static.Impl<PersonId.Imm.Data> implements PersonId.Imm.Data {
+      final class Impl extends io.epigraph.data.Data.Imm.Static.Impl<PersonId.Imm.Data> implements PersonId.Imm.Data {
 
-        protected Impl(@NotNull io.epigraph.datum.Data.Imm.Raw raw) { super(PersonId.type, raw); }
+        protected Impl(@NotNull io.epigraph.data.Data.Imm.Raw raw) { super(PersonId.type, raw); }
 
         @Override
         public @Nullable PersonId.Imm.Value get() { return (PersonId.Imm.Value) _raw()._getValue(PersonId.type.self); }
@@ -108,9 +106,9 @@ public interface PersonId extends IntegerDatum.Static {
     }
 
 
-    final static class Data extends io.epigraph.datum.Data.Mut.Static<PersonId.Imm.Data> implements PersonId.Data {
+    final static class Data extends io.epigraph.data.Data.Mut.Static<PersonId.Imm.Data> implements PersonId.Data {
 
-      protected Data(@NotNull io.epigraph.datum.Data.Mut.Raw raw) {
+      protected Data(@NotNull io.epigraph.data.Data.Mut.Raw raw) {
         super(PersonId.type, raw, PersonId.Imm.Data.Impl::new);
       }
 
@@ -170,7 +168,7 @@ public interface PersonId extends IntegerDatum.Static {
     }
 
 
-    interface Data extends io.epigraph.datum.Data.Static {
+    interface Data extends io.epigraph.data.Data.Static {
 
       @Override
       @NotNull PersonId.List.Imm.Data toImmutable();
@@ -205,16 +203,16 @@ public interface PersonId extends IntegerDatum.Static {
       }
 
 
-      interface Data extends PersonId.List.Data, io.epigraph.datum.Data.Imm.Static {
+      interface Data extends PersonId.List.Data, io.epigraph.data.Data.Imm.Static {
 
         @Override
         @Nullable PersonId.List.Imm.Value get();
 
 
-        final class Impl extends io.epigraph.datum.Data.Imm.Static.Impl<PersonId.List.Imm.Data>
+        final class Impl extends io.epigraph.data.Data.Imm.Static.Impl<PersonId.List.Imm.Data>
             implements PersonId.List.Imm.Data {
 
-          protected Impl(@NotNull io.epigraph.datum.Data.Imm.Raw raw) { super(PersonId.List.type, raw); }
+          protected Impl(@NotNull io.epigraph.data.Data.Imm.Raw raw) { super(PersonId.List.type, raw); }
 
           @Override
           public @Nullable PersonId.List.Imm.Value get() {
@@ -298,10 +296,10 @@ public interface PersonId extends IntegerDatum.Static {
       }
 
 
-      final static class Data extends io.epigraph.datum.Data.Mut.Static<PersonId.List.Imm.Data>
+      final static class Data extends io.epigraph.data.Data.Mut.Static<PersonId.List.Imm.Data>
           implements PersonId.List.Data {
 
-        protected Data(@NotNull io.epigraph.datum.Data.Mut.Raw raw) {
+        protected Data(@NotNull io.epigraph.data.Data.Mut.Raw raw) {
           super(PersonId.List.type, raw, PersonId.List.Imm.Data.Impl::new);
         }
 

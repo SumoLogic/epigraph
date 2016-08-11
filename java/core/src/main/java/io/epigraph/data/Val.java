@@ -1,6 +1,6 @@
 /* Created by yegor on 8/5/16. */
 
-package io.epigraph.datum;
+package io.epigraph.data;
 
 import io.epigraph.errors.ErrorValue;
 import io.epigraph.types.DatumType;

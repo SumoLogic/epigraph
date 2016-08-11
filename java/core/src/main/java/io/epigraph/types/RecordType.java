@@ -2,9 +2,9 @@
 
 package io.epigraph.types;
 
-import io.epigraph.datum.Data;
-import io.epigraph.datum.RecordDatum;
-import io.epigraph.datum.Val;
+import io.epigraph.data.Data;
+import io.epigraph.data.RecordDatum;
+import io.epigraph.data.Val;
 import io.epigraph.names.QualifiedTypeName;
 import io.epigraph.util.Unmodifiable;
 import org.jetbrains.annotations.NotNull;

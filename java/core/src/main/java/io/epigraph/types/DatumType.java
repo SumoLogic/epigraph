@@ -2,8 +2,7 @@
 
 package io.epigraph.types;
 
-import io.epigraph.datum.Datum;
-import io.epigraph.datum.Val;
+import io.epigraph.data.Val;
 import io.epigraph.names.TypeName;
 import org.jetbrains.annotations.NotNull;
 

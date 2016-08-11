@@ -2,7 +2,7 @@
 
 package io.epigraph.types;
 
-import io.epigraph.datum.ListDatum;
+import io.epigraph.data.ListDatum;
 import io.epigraph.names.AnonListTypeName;
 import io.epigraph.names.QualifiedTypeName;
 import io.epigraph.names.TypeName;

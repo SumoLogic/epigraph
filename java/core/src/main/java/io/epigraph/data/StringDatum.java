@@ -1,6 +1,6 @@
 /* Created by yegor on 8/4/16. */
 
-package io.epigraph.datum;
+package io.epigraph.data;
 
 import io.epigraph.types.StringType;
 import org.jetbrains.annotations.NotNull;

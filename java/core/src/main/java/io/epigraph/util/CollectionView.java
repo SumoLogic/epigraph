@@ -3,6 +3,7 @@
 package io.epigraph.util;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.AbstractCollection;
 import java.util.Collection;
@@ -17,11 +18,11 @@ import java.util.function.Function;
  */
 public class CollectionView<O, V> extends AbstractCollection<V> {
 
-  private final Collection<? extends O> original;
+  private final @NotNull Collection<? extends O> original;
 
-  private final Function<O, V> view;
+  private final @NotNull Function<O, V> view;
 
-  public CollectionView(@NotNull Collection<? extends O> original, Function<O, V> view) {
+  public CollectionView(@NotNull Collection<? extends O> original, @NotNull Function<O, V> view) {
     this.original = original;
     this.view = view;
   }
@@ -35,11 +36,11 @@ public class CollectionView<O, V> extends AbstractCollection<V> {
 
   private static class MappedIterator<O, V> implements Iterator<V> {
 
-    private final Iterator<? extends O> iterator;
+    private final @NotNull Iterator<? extends O> iterator;
 
-    private final Function<? super O, V> view;
+    private final @NotNull Function<? super O, @Nullable V> view;
 
-    public MappedIterator(Iterator<? extends O> iterator, Function<? super O, V> view) {
+    public MappedIterator(@NotNull Iterator<? extends O> iterator, @NotNull Function<? super O, V> view) {
       this.iterator = iterator;
       this.view = view;
     }
@@ -48,7 +49,7 @@ public class CollectionView<O, V> extends AbstractCollection<V> {
     public boolean hasNext() { return iterator.hasNext(); }
 
     @Override
-    public V next() { return view.apply(iterator.next()); }
+    public @Nullable V next() { return view.apply(iterator.next()); }
 
   }
 

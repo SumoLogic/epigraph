@@ -2,10 +2,12 @@
 
 package io.epigraph.util;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Iterator;
 
 public interface StringIterable {
 
-  public Iterator<String> toStrings();
+  @NotNull Iterator<String> toStrings();
 
 }
