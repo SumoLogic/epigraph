@@ -4,6 +4,7 @@ import com.sumologic.epigraph.schema.compiler.*
 import org.gradle.api.GradleException
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.internal.TaskOutputsInternal
+import org.gradle.api.tasks.ParallelizableTask
 import org.gradle.api.tasks.SourceTask
 import org.gradle.api.tasks.TaskAction
 
@@ -11,6 +12,7 @@ import java.nio.charset.StandardCharsets
 import java.util.jar.JarFile
 import java.util.regex.Pattern
 
+@ParallelizableTask
 class CompileSchemaTask extends SourceTask {
   private static final Pattern SCHEMA_FILENAME_PATTERN = Pattern.compile(".+\\.esc");
 
@@ -40,13 +42,12 @@ class CompileSchemaTask extends SourceTask {
 
   private Collection<Source> getDependencySources() {
     Configuration epigraphConfiguration = project.getConfigurations().getByName('epigraph')
+    getLogger().debug("Getting dependencies from $epigraphConfiguration")
     if (epigraphConfiguration == null) return Collections.emptyList()
 
     Collection<Source> dependencySources = new ArrayList<>()
 
     epigraphConfiguration.files.each {
-      getLogger().info("Adding dependency sources from " + it.getAbsolutePath())
-
       // TODO take charset from build props
       JarSource.allFiles(new JarFile(it), SCHEMA_FILENAME_PATTERN, StandardCharsets.UTF_8).each {
         dependencySources.add(it)

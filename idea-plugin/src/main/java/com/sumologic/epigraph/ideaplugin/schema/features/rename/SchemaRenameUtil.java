@@ -80,7 +80,9 @@ public class SchemaRenameUtil {
 
     final PsiElementProcessor<SchemaTypeDef> processor = typeDef -> {
       if (typeDef == renameAllMarkerObject) {
-        action.execute(typesToMembers.get(typeDef));
+        PsiNamedElement element = typesToMembers.get(typeDef);
+        // TODO element is actually null
+        action.execute(element);
       } else {
         PsiNamedElement mainOne = typesToMembers.get(typeAndMaxSuperTypes.iterator().next());
         superMembersToRename.clear();
