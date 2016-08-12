@@ -152,7 +152,7 @@ public abstract class RecordType extends DatumType {
 
     protected Static(
         @NotNull QualifiedTypeName name,
-        @NotNull List<@NotNull ? extends RecordType> immediateSupertypes,
+        @NotNull List<@NotNull ? extends RecordType.Static> immediateSupertypes,
         boolean polymorphic,
         @NotNull Function<RecordDatum.Mut.@NotNull Raw, @NotNull MyMutDatum> mutDatumConstructor,
         @NotNull Function<Val.Mut.@NotNull Raw, @NotNull MyMutVal> mutValConstructor,

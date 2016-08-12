@@ -1,0 +1,14 @@
+namespace com.example
+
+vartype User extends Person default id {
+  override id: UserId
+  override `record`: UserRecord
+}
+
+integer UserId extends PersonId
+
+record UserRecord extends PersonRecord {
+  id: UserId
+  bestFriend: UserRecord
+  friends: list[UserRecord]
+}

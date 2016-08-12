@@ -1,0 +1,14 @@
+namespace com.example
+
+vartype Person default id {
+  id: PersonId
+  `record`: PersonRecord
+}
+
+integer PersonId
+
+record PersonRecord {
+  id: PersonId
+  bestFriend: PersonRecord
+  friends: list[PersonRecord]
+}

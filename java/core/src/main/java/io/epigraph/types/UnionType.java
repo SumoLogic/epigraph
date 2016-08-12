@@ -2,17 +2,19 @@
 
 package io.epigraph.types;
 
+import io.epigraph.data.Data;
 import io.epigraph.names.QualifiedTypeName;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Function;
 
 public abstract class UnionType extends Type {
 
-  public UnionType(
+  protected UnionType(
       @NotNull QualifiedTypeName name,
-      @NotNull List<@NotNull UnionType> immediateSupertypes,
+      @NotNull List<@NotNull ? extends UnionType> immediateSupertypes,
       boolean polymorphic
   ) {
     super(name, immediateSupertypes, polymorphic);
@@ -30,33 +32,27 @@ public abstract class UnionType extends Type {
     return (Collection<? extends UnionType>) super.supertypes();
   }
 
+  // TODO .Raw
 
-//  public static class Dynamic extends UnionType { // TODO introduce builder instead
-//
-//    private final List<Tag> immediateTags = new ArrayList<>();
-//
-//    public Dynamic(QualifiedTypeName name, List<UnionType> immediateSupertypes) {
-//      super(name, immediateSupertypes);
-//    }
-//
-//    @Override
-//    @NotNull
-//    public List<Tag> immediateTags() {
-//      return immediateTags;
-//    }
-//
-//    @Override
-//    public @NotNull List<Tag> tags() {
-//      return null; // TODO track mods (parent mods, too?), re-compute for every mod? don't cache? remove the method?
-//    }
-//
-//    public UnionType.Dynamic addImmediateTag(Tag tag) {
-//      immediateTags.add(tag); // TODO check duplicates etc.
-//      return this;
-//    }
-//
-//    // TODO seal()?
-//
-//  }
+  public static abstract class Static<MyImmData extends Data.Imm.Static, MyMutData extends Data.Mut.Static<MyImmData>>
+      extends UnionType implements Type.Static<UnionType.Static<MyImmData, MyMutData>> {
+
+    private final @NotNull Function<Data.Mut.@NotNull Raw, @NotNull MyMutData> mutDataConstructor;
+
+    protected Static(
+        @NotNull QualifiedTypeName name,
+        @NotNull List<@NotNull ? extends UnionType.Static> immediateSupertypes,
+        boolean polymorphic,
+        @NotNull Function<Data.Mut.@NotNull Raw, @NotNull MyMutData> mutDataConstructor
+    ) {
+      super(name, immediateSupertypes, polymorphic);
+      this.mutDataConstructor = mutDataConstructor;
+    }
+
+    @Override
+    public final @NotNull MyMutData createMutableData() { return mutDataConstructor.apply(new Data.Mut.Raw(this)); }
+
+  }
+
 
 }
