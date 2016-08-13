@@ -5,7 +5,6 @@ package com.example;
 import io.epigraph.data.IntegerDatum;
 import io.epigraph.data.ListDatum;
 import io.epigraph.data.Val;
-import io.epigraph.errors.ErrorValue;
 import io.epigraph.names.AnonListTypeName;
 import io.epigraph.names.NamespaceName;
 import io.epigraph.names.QualifiedTypeName;
@@ -20,7 +19,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 
 public interface PersonId extends IntegerDatum.Static {
@@ -137,12 +135,12 @@ public interface PersonId extends IntegerDatum.Static {
         return Util.apply(PersonId.Builder.Value::getDatum, get_value());
       }
 
-      // default tag value
+      // implied default tag value
       public void set_value(@Nullable PersonId.Builder.Value value) { _raw()._setValue(PersonId.type.self, value); }
 
-      // default tag datum
+      // implied default tag datum
       public void set(@Nullable PersonId.Builder datum) {
-        // FIXME getOrCreateValue...
+        _raw()._getOrCreateTagValue(PersonId.type.self)._raw().setDatum(datum);
       }
 
     }
