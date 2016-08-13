@@ -14,7 +14,7 @@ public abstract class DatumType extends Type {
 
   public final @NotNull Tag self = new Tag("self", this); // TODO rename to tag?
 
-  private final @NotNull List<@NotNull Tag> immediateTags = Collections.singletonList(self);
+  private final @NotNull Collection<@NotNull ? extends Tag> immediateTags = Collections.singleton(self);
 
   protected DatumType(
       @NotNull TypeName name,
@@ -37,10 +37,10 @@ public abstract class DatumType extends Type {
   }
 
   @Override
-  public @NotNull List<@NotNull Tag> immediateTags() { return immediateTags; }
+  public @NotNull Collection<@NotNull ? extends Tag> immediateTags() { return immediateTags; }
 
-  @Override
-  public final @NotNull List<@NotNull Tag> tags() { return immediateTags(); }
+//  @Override
+//  public final @NotNull Collection<@NotNull ? extends Tag> tags() { return immediateTags(); }
 
   public abstract @NotNull Val.Mut createMutableValue();
 

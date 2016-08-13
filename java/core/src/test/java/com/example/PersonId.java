@@ -12,11 +12,12 @@ import io.epigraph.names.QualifiedTypeName;
 import io.epigraph.types.AnonListType;
 import io.epigraph.types.IntegerType;
 import io.epigraph.types.ListType;
-import io.epigraph.util.CollectionView;
+import io.epigraph.util.ListView;
+import io.epigraph.util.Unmodifiable;
+import io.epigraph.util.Util;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -43,7 +44,9 @@ public interface PersonId extends IntegerDatum.Static {
     @Override
     @NotNull PersonId.Imm.Data toImmutable();
 
-    @Nullable PersonId.Value get(); // default tag
+    @Nullable PersonId.Value get_value(); // default tag value
+
+    @Nullable PersonId get(); // default tag datum
 
   }
 
@@ -77,15 +80,25 @@ public interface PersonId extends IntegerDatum.Static {
     interface Data extends PersonId.Data, io.epigraph.data.Data.Imm.Static {
 
       @Override
-      @Nullable PersonId.Imm.Value get();
+      @Nullable PersonId.Imm.Value get_value(); // implied default self-tag value
 
+      @Override
+      @Nullable PersonId.Imm get(); // implied default self-tag datum
 
       final class Impl extends io.epigraph.data.Data.Imm.Static.Impl<PersonId.Imm.Data> implements PersonId.Imm.Data {
 
         protected Impl(@NotNull io.epigraph.data.Data.Imm.Raw raw) { super(PersonId.type, raw); }
 
         @Override
-        public @Nullable PersonId.Imm.Value get() { return (PersonId.Imm.Value) _raw()._getValue(PersonId.type.self); }
+        public @Nullable PersonId.Imm.Value get_value() {
+          return (PersonId.Imm.Value) _raw()._getValue(PersonId.type.self);
+        }
+
+        @Override
+        public @Nullable PersonId.Imm get() {
+          PersonId.Imm.Value value = get_value();
+          return value == null ? null : value.getDatum();
+        }
 
       }
 
@@ -115,12 +128,22 @@ public interface PersonId extends IntegerDatum.Static {
       }
 
       @Override
-      public @Nullable PersonId.Builder.Value get() {
+      public @Nullable PersonId.Builder.Value get_value() {
         return (PersonId.Builder.Value) _raw()._getValue(PersonId.type.self);
       }
 
-      // default tag
-      public void set(@Nullable PersonId.Builder.Value value) { _raw()._setValue(PersonId.type.self, value); }
+      @Override
+      public @Nullable PersonId.Builder get() {
+        return Util.apply(PersonId.Builder.Value::getDatum, get_value());
+      }
+
+      // default tag value
+      public void set_value(@Nullable PersonId.Builder.Value value) { _raw()._setValue(PersonId.type.self, value); }
+
+      // default tag datum
+      public void set(@Nullable PersonId.Builder datum) {
+        // FIXME getOrCreateValue...
+      }
 
     }
 
@@ -158,8 +181,6 @@ public interface PersonId extends IntegerDatum.Static {
 
     java.util.List<@Nullable ? extends PersonId> datums();
 
-    java.util.List<@Nullable ? extends ErrorValue> errors();
-
 
     interface Value extends Val.Static {
 
@@ -185,11 +206,11 @@ public interface PersonId extends IntegerDatum.Static {
 
     interface Imm extends PersonId.List, ListDatum.Imm.Static {
 
+      @Override
       java.util.List<@Nullable ? extends PersonId.Imm.Value> values();
 
+      @Override
       java.util.List<@Nullable ? extends PersonId.Imm> datums();
-
-      java.util.List<@Nullable ? extends ErrorValue> errors();
 
 
       interface Value extends PersonId.List.Value, Val.Imm.Static {
@@ -234,33 +255,22 @@ public interface PersonId extends IntegerDatum.Static {
 
         private Impl(@NotNull ListDatum.Imm.Raw raw) { super(PersonId.List.type, raw); }
 
-        @Override
-        public java.util.List<@Nullable ? extends PersonId.Imm.Value> values() {
-          return _raw()._elements().stream().map(data ->
-              (PersonId.Imm.Value) data._raw()._getValue(PersonId.type.self) // TODO revise cast
-          ).collect(Collectors.toList());
+        // method is private to not expose datas() for non-union types (so simple type can be replaced with union type without breaking backwards-compatibility)
+        private java.util.List<@NotNull ? extends PersonId.Imm.Data> datas() {
+          return (java.util.List<? extends PersonId.Imm.Data>) _raw()._elements();
         }
 
-        // TODO use CollectionView instead:
-        public @NotNull Collection<@Nullable ? extends PersonId.Imm.Value> values2() {
-          return new CollectionView<PersonId.Data.Imm, PersonId.Imm.Value>(
-              _raw()._elements(),
-              data -> (PersonId.Imm.Value) data._raw()._getValue(PersonId.type.self)
+        @Override // implied default tag values
+        public java.util.List<@Nullable ? extends PersonId.Imm.Value> values() {
+          return new Unmodifiable.ListView<PersonId.Imm.Data, PersonId.Imm.Value>(
+              datas(),
+              PersonId.Imm.Data::get_value
           );
         }
 
-        @Override
+        @Override // implied default tag datums
         public java.util.List<@Nullable ? extends PersonId.Imm> datums() {
-          return _raw()._elements().stream().map(data ->
-              (PersonId.Imm) data._raw()._getValue(PersonId.type.self).getDatum() // TODO revise nulls
-          ).collect(Collectors.toList());
-        }
-
-        @Override
-        public java.util.List<@Nullable ? extends ErrorValue> errors() {
-          return _raw()._elements().stream().map(data ->
-              data._raw()._getValue(PersonId.type.self).getError() // TODO revise nulls
-          ).collect(Collectors.toList());
+          return new Unmodifiable.ListView<PersonId.Imm.Data, PersonId.Imm>(datas(), PersonId.Imm.Data::get);
         }
 
       }
@@ -273,26 +283,29 @@ public interface PersonId extends IntegerDatum.Static {
 
       protected Builder(@NotNull ListDatum.Mut.Raw raw) { super(PersonId.List.type, raw, PersonId.List.Imm.Impl::new); }
 
+      // method is private to not expose datas() for non-union types (so simple type can be replaced with union type without breaking backwards-compatibility)
+      private java.util.List<PersonId.Builder.@NotNull Data> datas() {
+        return (java.util.List<PersonId.Builder.Data>) _raw()._elements();
+      }
+
       @Override
       public java.util.List<PersonId.Builder.Value> values() {
-        return _raw()._elements().stream().map(data ->
-            (PersonId.Builder.Value) data._raw()._getValue(PersonId.type.self) // TODO revise cast
-        ).collect(Collectors.toList());
+        return new ListView<>(
+            datas(),
+            PersonId.Builder.Data::get_value,
+            PersonId.Builder.Data::set_value,
+            PersonId.type::createMutableData
+        );
       }
 
       @Override
       public java.util.List<PersonId.@Nullable Builder> datums() {
-        return _raw()._elements().stream().map(data ->
-                (PersonId.Builder) data._raw()._getValue(PersonId.type.self).getDatum()
-            // TODO revise nulls (define Data._getDatum(Tag))
-        ).collect(Collectors.toList());
-      }
-
-      @Override
-      public java.util.List<@Nullable ErrorValue> errors() {
-        return _raw()._elements().stream().map(data ->
-            data._raw()._getValue(PersonId.type.self).getError() // TODO revise nulls (define Data._getError(Tag))
-        ).collect(Collectors.toList());
+        return new ListView<>(
+            datas(),
+            PersonId.Builder.Data::get,
+            PersonId.Builder.Data::set,
+            PersonId.type::createMutableData
+        );
       }
 
 

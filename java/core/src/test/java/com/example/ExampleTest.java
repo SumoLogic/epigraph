@@ -28,6 +28,19 @@ public class ExampleTest {
     UserRecord.Builder userRecord = UserRecord.type.createBuilder();
     userRecord.setBestFriend((UserRecord.Builder) null);
     UserRecord.Builder bestFriend = userRecord.getBestFriend();
+
+    PersonId.List.Builder pids = PersonId.List.type.createBuilder();
+    for (int i = 0; i < 10; ++i) {
+//      pids.datums().add(PersonId.type.createBuilder(i));
+      PersonId.Builder.Value valueBuilder = PersonId.type.createMutableValue();
+      valueBuilder.setDatum(PersonId.type.createBuilder(i));
+      pids.values().add(valueBuilder);
+    }
+    for (PersonId.Builder pid : pids.datums()) {
+      System.out.println(pid.getVal());
+    }
+
+
   }
 
 }

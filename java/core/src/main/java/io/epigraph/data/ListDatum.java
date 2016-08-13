@@ -39,7 +39,7 @@ public interface ListDatum extends Datum {
     @Override
     @NotNull ListDatum.Imm.Raw toImmutable();
 
-    @NotNull Collection<? extends Data> _elements(); // TODO or Iterable? or List? data()?
+    @NotNull List<@NotNull ? extends Data> _elements(); // TODO or Iterable? or Collection? rename to data()?
 
   }
 
@@ -60,7 +60,7 @@ public interface ListDatum extends Datum {
 
     final class Raw extends ListDatum.Impl implements ListDatum.Imm, ListDatum.Raw, Datum.Imm.Raw {
 
-      private final Collection<? extends Data.Imm> elements;
+      private final List<? extends Data.Imm> elements;
 
       public Raw(
           @NotNull ListType type,
@@ -78,7 +78,7 @@ public interface ListDatum extends Datum {
       public int size() { return elements.size(); }
 
       @Override
-      public @NotNull Collection<? extends Data.Imm> _elements() { return elements; }
+      public @NotNull List<@NotNull ? extends Data.Imm> _elements() { return elements; }
 
       @Override
       public @NotNull ListDatum.Imm.Raw toImmutable() { return this; }
@@ -144,8 +144,8 @@ public interface ListDatum extends Datum {
       public Raw(ListType type) { super(type); }
 
       @Override
-      public @NotNull Collection<@NotNull ? extends Data.Mut> _elements() { // TODO implement modifiable view of elements?
-        if (unmodifiableViewOfElements == null) unmodifiableViewOfElements = Unmodifiable.list(elements);
+      public @NotNull List<@NotNull ? extends Data.Mut> _elements() { // TODO implement modifiable view of elements (YES!)?
+        if (unmodifiableViewOfElements == null) unmodifiableViewOfElements = /*Unmodifiable.list(*/elements/*)*/;
         return unmodifiableViewOfElements;
       }
 

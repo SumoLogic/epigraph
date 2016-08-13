@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
 
 
@@ -24,6 +25,10 @@ public abstract class Type { // TODO split into interface and impl
   private final @NotNull List<@NotNull ? extends Type> immediateSupertypes;
 
   public final boolean polymorphic;
+
+  private @Nullable Collection<@NotNull ? extends Tag> tags = null;
+
+  private @Nullable Map<@NotNull String, @NotNull ? extends Tag> tagsMap = null;
 
   protected Type(
       @NotNull TypeName name,
@@ -75,11 +80,29 @@ public abstract class Type { // TODO split into interface and impl
 
   public ListType listOf() { return listOf.get(); }
 
-  public abstract @NotNull List<Tag> immediateTags();
+  public abstract @NotNull Collection<@NotNull ? extends Tag> immediateTags();
 
-  public abstract @NotNull List<Tag> tags(); // FIXME do we need this method?
+  public abstract @NotNull Data.Mut createMutableData();
 
-  public abstract @NotNull Data.Mut createMutableData(); // { return new Data.Mut(this); }
+  public final @NotNull Collection<@NotNull ? extends Tag> tags() {
+    // TODO produce better ordering of the tags (i.e. supertypes first, in the order of supertypes and their tags declaration)
+    if (tags == null) { // TODO move initialization to constructor (if possible?)
+      LinkedList<Tag> acc = new LinkedList<>(immediateTags());
+      for (Type st : supertypes()) {
+        st.tags().stream().filter(sf ->
+            acc.stream().noneMatch(af -> af.name.equals(sf.name))
+        ).forEachOrdered(acc::add);
+      }
+      tags = Unmodifiable.collection(new LinkedHashSet<>(acc));
+      assert tags.size() == acc.size(); // assert there was no duplicates in the acc
+    }
+    return tags;
+  }
+
+  public final @NotNull Map<@NotNull String, @NotNull ? extends Tag> tagsMap() {
+    if (tagsMap == null) tagsMap = Unmodifiable.map(tags(), f -> f.name, f -> f);
+    return tagsMap;
+  }
 
 
   public interface Raw {}

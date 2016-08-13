@@ -49,7 +49,7 @@ public abstract class UnionType extends Type {
       this.mutDataConstructor = mutDataConstructor;
     }
 
-    @Override
+    @Override // TODO rename to createDataBuilder()?
     public final @NotNull MyMutData createMutableData() { return mutDataConstructor.apply(new Data.Mut.Raw(this)); }
 
   }

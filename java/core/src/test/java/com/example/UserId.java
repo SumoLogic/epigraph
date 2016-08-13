@@ -12,6 +12,7 @@ import io.epigraph.names.QualifiedTypeName;
 import io.epigraph.types.AnonListType;
 import io.epigraph.types.IntegerType;
 import io.epigraph.types.ListType;
+import io.epigraph.util.Util;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -41,7 +42,7 @@ public interface UserId extends PersonId {
     @Override
     @NotNull UserId.Imm.Data toImmutable();
 
-    @Nullable UserId.Value get(); // default tag
+    @Nullable UserId.Value get_value(); // default tag
 
   }
 
@@ -75,7 +76,7 @@ public interface UserId extends PersonId {
     interface Data extends UserId.Data, PersonId.Imm.Data {
 
       @Override
-      @Nullable UserId.Imm.Value get();
+      @Nullable UserId.Imm.Value get_value();
 
 
       final class Impl extends io.epigraph.data.Data.Imm.Static.Impl<UserId.Imm.Data> implements UserId.Imm.Data {
@@ -83,7 +84,12 @@ public interface UserId extends PersonId {
         protected Impl(@NotNull io.epigraph.data.Data.Imm.Raw raw) { super(UserId.type, raw); }
 
         @Override
-        public @Nullable UserId.Imm.Value get() { return (UserId.Imm.Value) _raw()._getValue(UserId.type.self); }
+        public @Nullable UserId.Imm.Value get_value() { return (UserId.Imm.Value) _raw()._getValue(UserId.type.self); }
+
+        @Override
+        public @Nullable UserId.Imm get() {
+          return Util.apply(UserId.Imm.Value::getDatum, get_value());
+        }
 
       }
 
@@ -113,9 +119,16 @@ public interface UserId extends PersonId {
       }
 
       @Override
-      public @Nullable UserId.Builder.Value get() { return (UserId.Builder.Value) _raw()._getValue(UserId.type.self); }
+      public @Nullable UserId.Builder.Value get_value() {
+        return (UserId.Builder.Value) _raw()._getValue(UserId.type.self);
+      }
 
       public void set(@Nullable UserId.Builder.Value value) { _raw()._setValue(UserId.type.self, value); } //default tag
+
+      @Override
+      public @Nullable UserId.Builder get() {
+        return Util.apply(UserId.Builder.Value::getDatum, get_value());
+      }
 
     }
 
