@@ -24,7 +24,7 @@ public abstract class Type { // TODO split into interface and impl
 
   private final @NotNull List<@NotNull ? extends Type> immediateSupertypes;
 
-  public final boolean polymorphic;
+  public final boolean polymorphic; // TODO polymorphic builders have to have separate interface for their immediate children to implement (so children can be accepted in contravariant positions)
 
   private @Nullable Collection<@NotNull ? extends Tag> tags = null;
 
