@@ -35,6 +35,18 @@ public class SchemaIndexUtil {
     return findTypeDefs(project, namespaces, suffix, scope, new TakeFirstProcessor<>());
   }
 
+  /**
+   * Tries to find a single matching typedef. Returns {@code null} if there's none or
+   * more than one matching.
+   */
+  @Nullable
+  public static SchemaTypeDef findSingleTypeDef(@NotNull Project project,
+                                                @NotNull Collection<Fqn> namespaces,
+                                                @NotNull Fqn suffix,
+                                                @NotNull GlobalSearchScope scope) {
+    return findTypeDefs(project, namespaces, suffix, scope, new TakeSingleProcessor<>());
+  }
+
   private static <R> R findTypeDefs(@NotNull Project project,
                                     @Nullable Collection<Fqn> namespaces,
                                     @Nullable Fqn suffix,
@@ -242,6 +254,29 @@ public class SchemaIndexUtil {
       if (items.isEmpty()) return true;
       result = items.iterator().next();
       return false;
+    }
+
+    @Override
+    public T result() {
+      return result;
+    }
+  }
+
+  private static class TakeSingleProcessor<T> implements Processor<T, T> {
+    private T result = null;
+
+
+    @Override
+    public boolean process(Collection<T> items) {
+      if (items.isEmpty()) return true;
+
+      if (result != null || items.size() > 1) {
+        result = null;
+        return false;
+      }
+
+      result = items.iterator().next();
+      return true;
     }
 
     @Override

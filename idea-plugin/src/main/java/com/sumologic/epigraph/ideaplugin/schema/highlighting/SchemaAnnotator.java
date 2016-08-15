@@ -6,10 +6,7 @@ import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiPolyVariantReference;
-import com.intellij.psi.PsiReference;
-import com.intellij.psi.ResolveResult;
+import com.intellij.psi.*;
 import com.sumologic.epigraph.ideaplugin.schema.SchemaBundle;
 import com.sumologic.epigraph.ideaplugin.schema.brains.ImportsManager;
 import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.HierarchyCache;
@@ -17,12 +14,14 @@ import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.TypeMembers;
 import com.sumologic.epigraph.ideaplugin.schema.features.actions.fixes.ImportTypeIntentionFix;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaSearchScopeUtil;
+import com.sumologic.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
 import com.sumologic.epigraph.schema.parser.Fqn;
 import com.sumologic.epigraph.schema.parser.NamingConventions;
 import com.sumologic.epigraph.schema.parser.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.S_FQN_TYPE_REF;
@@ -214,10 +213,10 @@ public class SchemaAnnotator implements Annotator {
 
       if (reference.resolve() == null) {
         ResolveResult[] resolveResults = reference.multiResolve(false);
-        int numTypeRefs = 0;
+        List<String> typeDefFqns = new ArrayList<>();
         for (ResolveResult resolveResult : resolveResults) {
           if (resolveResult.getElement() instanceof SchemaTypeDef)
-            numTypeRefs++;
+            typeDefFqns.add(SchemaPresentationUtil.getName((PsiNamedElement) resolveResult.getElement(), true));
         }
 
         if (resolveResults.length == 0) {
@@ -226,8 +225,14 @@ public class SchemaAnnotator implements Annotator {
 
           if (unresolvedTypeRefFix != null)
             annotation.registerFix(unresolvedTypeRefFix);
-        } else if (numTypeRefs > 1) {
-          holder.createErrorAnnotation(schemaFqn.getNode(), SchemaBundle.message("annotator.ambiguous.type.reference"));
+        } else if (typeDefFqns.size() > 1) {
+          Annotation annotation = holder.createErrorAnnotation(schemaFqn.getNode(), SchemaBundle.message("annotator.ambiguous.type.reference"));
+          StringBuilder tooltipText = new StringBuilder(SchemaBundle.message("annotator.ambiguous.type.reference.candidates"));
+          for (String typeDefFqn : typeDefFqns) {
+            tooltipText.append('\n');
+            tooltipText.append("''").append(typeDefFqn).append("''");
+          }
+          annotation.setTooltip(tooltipText.toString());
         } // else we have import prefix matching varTypeple namespaces, OK
       }
     }

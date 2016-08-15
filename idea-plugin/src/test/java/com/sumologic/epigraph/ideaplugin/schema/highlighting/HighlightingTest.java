@@ -16,12 +16,16 @@ public class HighlightingTest extends LightCodeInsightFixtureTestCase {
   }
 
   public void testInvalid1() {
-    myFixture.configureByFiles("Invalid1.esc", "other.esc", "builtin.esc",
-        "foo.esc", "bar.esc");
+    myFixture.configureByFiles("Invalid1.esc", "other.esc", "builtin.esc", "foo.esc", "bar.esc");
     myFixture.enableInspections(new DuplicateImportInspection());
     myFixture.enableInspections(new UnnecessaryImportInspection());
     myFixture.enableInspections(new UnusedImportInspection());
     myFixture.enableInspections(new ConflictingImportInspection());
+    myFixture.checkHighlighting(true, false, true);
+  }
+
+  public void testAmbiguousReference() {
+    myFixture.configureByFiles("stringfoo.esc", "builtin.esc", "string.esc");
     myFixture.checkHighlighting(true, false, true);
   }
 }
