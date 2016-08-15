@@ -63,8 +63,7 @@ public class TypeMembers {
   @NotNull
   private static List<SchemaFieldDecl> getSameNameFields(@NotNull SchemaFieldDecl fieldDecl,
                                                          @NotNull List<SchemaTypeDef> types) {
-    final String fieldName = fieldDecl.getName();
-    if (fieldName == null) return Collections.emptyList();
+    final String fieldName = fieldDecl.getQid().getCanonicalName();
 
     PsiElement body = fieldDecl.getParent();
     if (body == null) return Collections.emptyList();
@@ -97,8 +96,7 @@ public class TypeMembers {
   @NotNull
   private static List<SchemaVarTagDecl> getSameNameTags(@NotNull SchemaVarTagDecl varTagDecl,
                                                         @NotNull List<SchemaTypeDef> types) {
-    final String varTypeMemberName = varTagDecl.getName();
-    if (varTypeMemberName == null) return Collections.emptyList();
+    final String varTypeMemberName = varTagDecl.getQid().getCanonicalName();
 
     PsiElement body = varTagDecl.getParent();
     if (body == null) return Collections.emptyList();

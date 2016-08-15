@@ -1,0 +1,12 @@
+namespace testData.brains.hierarchy2
+
+string Q
+string W
+
+record Foo {
+  `string`: Q
+}
+
+record Bar extends Foo {
+  `str<caret>ing`: W
+}

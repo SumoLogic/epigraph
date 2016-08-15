@@ -1,0 +1,12 @@
+namespace testData.brains.hierarchy
+
+string S
+string R
+
+vartype Foo {
+  `string`: S
+}
+
+vartype Bar extends Foo {
+  `str<caret>ing`: R
+}

@@ -11,3 +11,11 @@ long Long
 double Double
 
 boolean Boolean
+
+vartype Foo {
+  `string`: Long
+}
+
+vartype Bar extends Foo {
+  override `string`: Double
+}
