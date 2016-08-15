@@ -110,6 +110,11 @@ public class CompletionTest extends LightCodeInsightFixtureTestCase {
     checkCompletionVariants("`string`", "foo");
   }
 
+  public void testNamespaceCompletionDoesntIncludeTypes() {
+    myFixture.configureByFiles("NamespaceCompletion.esc", "foo.esc", "foobar.esc");
+    checkCompletionVariants("bar");
+  }
+
   private void checkCompletionVariants(String... variants) {
     myFixture.completeBasic();
     List<String> actual = myFixture.getLookupElementStrings();

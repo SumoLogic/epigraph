@@ -87,6 +87,7 @@ public class SchemaFqnReference extends PsiReferenceBase<SchemaFqnSegment> imple
   @Override
   public Object[] getVariants() {
     final boolean isImport = isImport();
+    final boolean isNamespaceDecl = isNamespaceDecl();
     final Project project = myElement.getProject();
     final GlobalSearchScope searchScope = SchemaSearchScopeUtil.getSearchScope(myElement);
     final Fqn currentNamespace = NamespaceManager.getNamespace(getElement());
@@ -98,21 +99,29 @@ public class SchemaFqnReference extends PsiReferenceBase<SchemaFqnSegment> imple
     Collection<SchemaNamespaceDecl> namespaceVariants;
 
     if (input.size() > 1) {
+      // we already have multiple segments in the FQN
+
       Fqn suffixPrefix = resolver.getSuffix().removeLastSegment();
 
-      List<Fqn> namespacesToSearchForTypes = resolver.getPrefixes().stream().map(fqn -> fqn.append(suffixPrefix)).collect(Collectors.toList());
-      typeDefVariants = SchemaIndexUtil.findTypeDefs(project, namespacesToSearchForTypes, null, searchScope).stream()
-          .filter(typeDef ->
-              // don't suggest to import types from the same namespace
-              typeDef.getName() != null && (!isImport || currentNamespace == null || !currentNamespace.equals(NamespaceManager.getNamespace(typeDef))))
-          .collect(Collectors.toSet());
+      if (isNamespaceDecl) {
+        typeDefVariants = Collections.emptySet();
+      } else {
+        List<Fqn> namespacesToSearchForTypes = resolver.getPrefixes().stream().map(fqn -> fqn.append(suffixPrefix)).collect(Collectors.toList());
+        typeDefVariants = SchemaIndexUtil.findTypeDefs(project, namespacesToSearchForTypes, null, searchScope).stream()
+            .filter(typeDef ->
+                // don't suggest to import types from the same namespace
+                typeDef.getName() != null && (!isImport || currentNamespace == null || !currentNamespace.equals(NamespaceManager.getNamespace(typeDef))))
+            .collect(Collectors.toSet());
+      }
 
       // complete namespaces
       namespaceVariants = NamespaceManager.getNamespacesByPrefix(project, inputPrefix, false, searchScope);
     } else {
+      // we have only one segment in the FQN
+
       List<Fqn> namespacesToSearchForTypes = NamespaceManager.getImportedNamespaces(myElement);
 
-      if (!isImport) {
+      if (!isImport && !isNamespaceDecl) {
         typeDefVariants = SchemaIndexUtil
             .findTypeDefs(project, namespacesToSearchForTypes.toArray(new Fqn[namespacesToSearchForTypes.size()]), searchScope)
             .stream()
@@ -170,5 +179,9 @@ public class SchemaFqnReference extends PsiReferenceBase<SchemaFqnSegment> imple
 
   private boolean isImport() {
     return PsiTreeUtil.getParentOfType(getElement(), SchemaImportStatement.class) != null;
+  }
+
+  private boolean isNamespaceDecl() {
+    return PsiTreeUtil.getParentOfType(getElement(), SchemaNamespaceDecl.class) != null;
   }
 }

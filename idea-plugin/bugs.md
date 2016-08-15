@@ -1,7 +1,6 @@
 ### High
 
 ### Medium
-- namespace auto-completion suggests TypeNames in addition to package names
 - Ambiguous ref not highlighted:
 
         // file1: namespace some; string String
@@ -23,6 +22,7 @@
 ### High
 
 ### Medium
+- namespace auto-completion suggests TypeNames in addition to package names
 - `quoted` field/tag names not recognized as overriding same fields/tags (quoted or not) from parent type
 
 ### Low
