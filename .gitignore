@@ -17,7 +17,7 @@
 /*/.gradle/
 /out/
 /build/
-/*/build/
+/**/build/
 
 # Mac OS X laundry
 .DS_Store
