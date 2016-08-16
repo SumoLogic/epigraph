@@ -1,0 +1,7 @@
+namespace testData.features.completion
+
+record LL1
+record LL2
+long LL3
+
+record R supplements LL<caret>

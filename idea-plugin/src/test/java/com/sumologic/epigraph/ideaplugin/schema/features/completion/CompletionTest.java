@@ -134,7 +134,6 @@ public class CompletionTest extends LightCodeInsightFixtureTestCase {
 
   // ------------- supplements
 
-  /*
   public void testProperKindCompletionSups1() {
     myFixture.configureByFile("TypeRefKindCompletionSups1.esc");
     checkCompletionVariants("LL1", "LL2"); // but not LL3
@@ -145,11 +144,10 @@ public class CompletionTest extends LightCodeInsightFixtureTestCase {
     checkCompletionVariants("LL1", "LL4");
   }
 
-//  public void testProperKindCompletionSups3() {
-//    myFixture.configureByFile("TypeRefKindCompletionSups3.esc");
-//    checkCompletionVariants("S1", "S2");
-//  }
-*/
+  public void testProperKindCompletionSups3() {
+    myFixture.configureByFile("TypeRefKindCompletionSups3.esc");
+    checkCompletionVariants("S1", "S2");
+  }
 
   private void checkCompletionVariants(String... variants) {
     myFixture.completeBasic();

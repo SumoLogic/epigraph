@@ -1,0 +1,8 @@
+namespace testData.features.completion3
+
+long LL
+double DD
+string S1
+string S2
+
+string SS supplements <caret>
