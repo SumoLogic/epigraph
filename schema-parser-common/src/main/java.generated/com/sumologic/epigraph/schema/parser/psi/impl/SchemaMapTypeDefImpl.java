@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.*;
 import com.sumologic.epigraph.schema.parser.psi.*;
+import com.sumologic.epigraph.schema.parser.psi.stubs.SchemaMapTypeDefStub;
 import com.intellij.psi.stubs.IStubElementType;
 
 public class SchemaMapTypeDefImpl extends SchemaMapTypeDefImplBase implements SchemaMapTypeDef {
@@ -17,7 +18,7 @@ public class SchemaMapTypeDefImpl extends SchemaMapTypeDefImplBase implements Sc
     super(node);
   }
 
-  public SchemaMapTypeDefImpl(com.sumologic.epigraph.schema.parser.psi.stubs.SchemaMapTypeDefStub stub, IStubElementType nodeType) {
+  public SchemaMapTypeDefImpl(SchemaMapTypeDefStub stub, IStubElementType nodeType) {
     super(stub, nodeType);
   }
 

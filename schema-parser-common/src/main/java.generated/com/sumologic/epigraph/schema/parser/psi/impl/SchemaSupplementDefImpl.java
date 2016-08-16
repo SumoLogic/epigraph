@@ -12,16 +12,19 @@ import com.intellij.extapi.psi.StubBasedPsiElementBase;
 import com.sumologic.epigraph.schema.parser.psi.stubs.SchemaSupplementDefStub;
 import com.sumologic.epigraph.schema.parser.psi.*;
 import com.intellij.navigation.ItemPresentation;
-import com.intellij.psi.stubs.IStubElementType;
 
 public class SchemaSupplementDefImpl extends StubBasedPsiElementBase<SchemaSupplementDefStub> implements SchemaSupplementDef {
+
+  public SchemaSupplementDefImpl(SchemaSupplementDefStub stub, com.intellij.psi.stubs.IStubElementType nodeType) {
+    super(stub, nodeType);
+  }
 
   public SchemaSupplementDefImpl(ASTNode node) {
     super(node);
   }
 
-  public SchemaSupplementDefImpl(SchemaSupplementDefStub stub, IStubElementType nodeType) {
-    super(stub, nodeType);
+  public SchemaSupplementDefImpl(SchemaSupplementDefStub stub, com.intellij.psi.tree.IElementType nodeType, ASTNode node) {
+    super(stub, nodeType, node);
   }
 
   public void accept(@NotNull SchemaVisitor visitor) {

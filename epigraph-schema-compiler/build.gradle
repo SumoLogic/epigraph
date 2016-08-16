@@ -12,6 +12,8 @@ dependencies {
   compile 'org.scala-lang:scala-reflect'
   compile "com.lihaoyi:pprint_$scalaVersionMajorMinor"
 
+  compileOnly files("$rootDir/schema-parser/lib/light-psi-all.jar") // to make IDEA happy
+
   testCompile "org.scalatest:scalatest_$scalaVersionMajorMinor"
   testRuntime 'org.pegdown:pegdown'
 }

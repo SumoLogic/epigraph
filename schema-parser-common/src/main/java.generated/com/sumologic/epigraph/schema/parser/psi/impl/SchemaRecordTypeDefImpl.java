@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.*;
 import com.sumologic.epigraph.schema.parser.psi.*;
+import com.sumologic.epigraph.schema.parser.psi.stubs.SchemaRecordTypeDefStub;
 import com.intellij.psi.stubs.IStubElementType;
 
 public class SchemaRecordTypeDefImpl extends SchemaRecordTypeDefImplBase implements SchemaRecordTypeDef {
@@ -17,7 +18,7 @@ public class SchemaRecordTypeDefImpl extends SchemaRecordTypeDefImplBase impleme
     super(node);
   }
 
-  public SchemaRecordTypeDefImpl(com.sumologic.epigraph.schema.parser.psi.stubs.SchemaRecordTypeDefStub stub, IStubElementType nodeType) {
+  public SchemaRecordTypeDefImpl(SchemaRecordTypeDefStub stub, IStubElementType nodeType) {
     super(stub, nodeType);
   }
 

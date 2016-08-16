@@ -231,6 +231,7 @@ private enumMemberBodyPart ::= customParam
 
 primitiveTypeDef ::= typeDefModifiers primitiveKind typeName extendsDecl? metaDecl? supplementsDecl? primitiveTypeBody? {
   extends="com.sumologic.epigraph.schema.parser.psi.impl.SchemaPrimitiveTypeDefImplBase"
+  methods=[getPrimitiveTypeKind]
   stubClass="com.sumologic.epigraph.schema.parser.psi.stubs.SchemaPrimitiveTypeDefStub"
   elementTypeClass="com.sumologic.epigraph.schema.parser.psi.stubs.SchemaPrimitiveTypeDefStubElementType"
   pin=2

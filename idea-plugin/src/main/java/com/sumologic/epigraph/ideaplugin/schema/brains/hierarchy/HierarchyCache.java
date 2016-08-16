@@ -100,6 +100,10 @@ public class HierarchyCache {
     );
   }
 
+  public boolean isParent(@NotNull SchemaTypeDef parent, @NotNull SchemaTypeDef child) {
+    return getTypeParents(child).contains(parent);
+  }
+
   private class TypeParentsProvider implements ParameterizedCachedValueProvider<List<SchemaTypeDef>, SchemaTypeDef> {
     @Nullable
     @Override

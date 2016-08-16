@@ -12,16 +12,19 @@ import com.intellij.extapi.psi.StubBasedPsiElementBase;
 import com.sumologic.epigraph.schema.parser.psi.stubs.SchemaNamespaceDeclStub;
 import com.sumologic.epigraph.schema.parser.psi.*;
 import com.sumologic.epigraph.schema.parser.Fqn;
-import com.intellij.psi.stubs.IStubElementType;
 
 public class SchemaNamespaceDeclImpl extends StubBasedPsiElementBase<SchemaNamespaceDeclStub> implements SchemaNamespaceDecl {
+
+  public SchemaNamespaceDeclImpl(SchemaNamespaceDeclStub stub, com.intellij.psi.stubs.IStubElementType nodeType) {
+    super(stub, nodeType);
+  }
 
   public SchemaNamespaceDeclImpl(ASTNode node) {
     super(node);
   }
 
-  public SchemaNamespaceDeclImpl(SchemaNamespaceDeclStub stub, IStubElementType nodeType) {
-    super(stub, nodeType);
+  public SchemaNamespaceDeclImpl(SchemaNamespaceDeclStub stub, com.intellij.psi.tree.IElementType nodeType, ASTNode node) {
+    super(stub, nodeType, node);
   }
 
   public void accept(@NotNull SchemaVisitor visitor) {

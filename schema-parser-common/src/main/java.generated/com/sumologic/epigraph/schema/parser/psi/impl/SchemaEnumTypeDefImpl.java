@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.*;
 import com.sumologic.epigraph.schema.parser.psi.*;
+import com.sumologic.epigraph.schema.parser.psi.stubs.SchemaEnumTypeDefStub;
 import com.intellij.psi.stubs.IStubElementType;
 
 public class SchemaEnumTypeDefImpl extends SchemaEnumTypeDefImplBase implements SchemaEnumTypeDef {
@@ -17,7 +18,7 @@ public class SchemaEnumTypeDefImpl extends SchemaEnumTypeDefImplBase implements 
     super(node);
   }
 
-  public SchemaEnumTypeDefImpl(com.sumologic.epigraph.schema.parser.psi.stubs.SchemaEnumTypeDefStub stub, IStubElementType nodeType) {
+  public SchemaEnumTypeDefImpl(SchemaEnumTypeDefStub stub, IStubElementType nodeType) {
     super(stub, nodeType);
   }
 

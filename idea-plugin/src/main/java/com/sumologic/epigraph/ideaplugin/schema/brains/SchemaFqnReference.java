@@ -11,6 +11,7 @@ import com.intellij.psi.impl.source.resolve.ResolveCache;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
+import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.CompletionTypeFilter;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaSearchScopeUtil;
 import com.sumologic.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
@@ -148,6 +149,7 @@ public class SchemaFqnReference extends PsiReferenceBase<SchemaFqnSegment> imple
     }
 
     Set<Object> typeDefElements = typeDefVariants.stream()
+        .filter(CompletionTypeFilter.combined(getElement()))
         .map(typeDef ->
             LookupElementBuilder.create(typeDef)
                 .withIcon(SchemaPresentationUtil.getIcon(typeDef))

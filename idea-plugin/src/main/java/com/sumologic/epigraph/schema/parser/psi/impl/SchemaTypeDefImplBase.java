@@ -172,6 +172,48 @@ public abstract class SchemaTypeDefImplBase<S extends SchemaTypeDefStubBase<T>, 
   }
 
   @Override
+  public boolean equals(Object obj) {
+    if (this == obj) return true;
+
+    if (obj instanceof SchemaTypeDef) {
+      SchemaTypeDef other = (SchemaTypeDef) obj;
+
+      Fqn thisNamespace = getNamespace();
+      Fqn otherNamespace = other.getNamespace();
+
+      String thisName = getName();
+      String otherName = other.getName();
+
+      if (thisNamespace == null && otherNamespace == null && thisName == null && otherName == null) return false;
+
+      if (thisNamespace == null) {
+        if (otherNamespace != null) return false;
+      } else if (!thisNamespace.equals(otherNamespace)) return false;
+
+
+      if (thisName == null) {
+        if (otherName != null) return false;
+      } else if (!thisName.equals(otherName)) return false;
+
+      return true;
+    }
+
+    return false;
+  }
+
+  @Override
+  public int hashCode() {
+    Fqn namespace = getNamespace();
+    String name = getName();
+
+    if (namespace == null && name == null) return super.hashCode();
+
+    int hash = 31 + (namespace == null ? 0 : namespace.hashCode());
+    hash = 31 * hash + (name == null ? 0 : name.hashCode());
+    return hash;
+  }
+
+  @Override
   public String toString() {
     return SchemaPresentationUtil.psiToString(this);
   }

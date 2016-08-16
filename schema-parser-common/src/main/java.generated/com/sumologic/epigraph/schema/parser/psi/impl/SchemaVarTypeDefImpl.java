@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.*;
 import com.sumologic.epigraph.schema.parser.psi.*;
+import com.sumologic.epigraph.schema.parser.psi.stubs.SchemaVarTypeDefStub;
 import com.intellij.psi.stubs.IStubElementType;
 
 public class SchemaVarTypeDefImpl extends SchemaVarTypeDefImplBase implements SchemaVarTypeDef {
@@ -17,7 +18,7 @@ public class SchemaVarTypeDefImpl extends SchemaVarTypeDefImplBase implements Sc
     super(node);
   }
 
-  public SchemaVarTypeDefImpl(com.sumologic.epigraph.schema.parser.psi.stubs.SchemaVarTypeDefStub stub, IStubElementType nodeType) {
+  public SchemaVarTypeDefImpl(SchemaVarTypeDefStub stub, IStubElementType nodeType) {
     super(stub, nodeType);
   }
 

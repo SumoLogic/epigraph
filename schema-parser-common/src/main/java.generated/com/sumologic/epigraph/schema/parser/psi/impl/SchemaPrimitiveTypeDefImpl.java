@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.*;
 import com.sumologic.epigraph.schema.parser.psi.*;
+import com.sumologic.epigraph.schema.parser.psi.stubs.SchemaPrimitiveTypeDefStub;
 import com.intellij.psi.stubs.IStubElementType;
 
 public class SchemaPrimitiveTypeDefImpl extends SchemaPrimitiveTypeDefImplBase implements SchemaPrimitiveTypeDef {
@@ -17,7 +18,7 @@ public class SchemaPrimitiveTypeDefImpl extends SchemaPrimitiveTypeDefImplBase i
     super(node);
   }
 
-  public SchemaPrimitiveTypeDefImpl(com.sumologic.epigraph.schema.parser.psi.stubs.SchemaPrimitiveTypeDefStub stub, IStubElementType nodeType) {
+  public SchemaPrimitiveTypeDefImpl(SchemaPrimitiveTypeDefStub stub, IStubElementType nodeType) {
     super(stub, nodeType);
   }
 
@@ -100,6 +101,11 @@ public class SchemaPrimitiveTypeDefImpl extends SchemaPrimitiveTypeDefImplBase i
   @Nullable
   public PsiElement getStringT() {
     return findChildByType(S_STRING_T);
+  }
+
+  @NotNull
+  public PrimitiveTypeKind getPrimitiveTypeKind() {
+    return SchemaPsiImplUtil.getPrimitiveTypeKind(this);
   }
 
 }

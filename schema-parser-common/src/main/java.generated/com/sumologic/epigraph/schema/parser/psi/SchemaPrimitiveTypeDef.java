@@ -45,4 +45,7 @@ public interface SchemaPrimitiveTypeDef extends SchemaTypeDef, StubBasedPsiEleme
   @Nullable
   PsiElement getStringT();
 
+  @NotNull
+  PrimitiveTypeKind getPrimitiveTypeKind();
+
 }

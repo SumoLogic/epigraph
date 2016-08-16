@@ -115,6 +115,21 @@ public class CompletionTest extends LightCodeInsightFixtureTestCase {
     checkCompletionVariants("bar");
   }
 
+  public void testProperKindCompletion1() {
+    myFixture.configureByFile("TypeRefKindCompletion1.esc");
+    checkCompletionVariants("LL1", "LL2"); // but not LL3
+  }
+
+  public void testProperKindCompletion2() {
+    myFixture.configureByFile("TypeRefKindCompletion2.esc");
+    checkCompletionVariants("LL1", "LL4");
+  }
+
+  public void testProperKindCompletion3() {
+    myFixture.configureByFile("TypeRefKindCompletion3.esc");
+    checkCompletionVariants("S1", "S2");
+  }
+
   private void checkCompletionVariants(String... variants) {
     myFixture.completeBasic();
     List<String> actual = myFixture.getLookupElementStrings();

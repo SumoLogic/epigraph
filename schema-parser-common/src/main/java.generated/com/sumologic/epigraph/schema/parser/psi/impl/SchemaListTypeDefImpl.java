@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.*;
 import com.sumologic.epigraph.schema.parser.psi.*;
+import com.sumologic.epigraph.schema.parser.psi.stubs.SchemaListTypeDefStub;
 import com.intellij.psi.stubs.IStubElementType;
 
 public class SchemaListTypeDefImpl extends SchemaListTypeDefImplBase implements SchemaListTypeDef {
@@ -17,7 +18,7 @@ public class SchemaListTypeDefImpl extends SchemaListTypeDefImplBase implements 
     super(node);
   }
 
-  public SchemaListTypeDefImpl(com.sumologic.epigraph.schema.parser.psi.stubs.SchemaListTypeDefStub stub, IStubElementType nodeType) {
+  public SchemaListTypeDefImpl(SchemaListTypeDefStub stub, IStubElementType nodeType) {
     super(stub, nodeType);
   }
 

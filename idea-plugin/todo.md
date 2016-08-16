@@ -1,4 +1,5 @@
 ### High
+- Make light-psi a separate module
 
 ### Medium
 - add SourceRootFinder to detect src/main/epigraph, test/epigraph etc

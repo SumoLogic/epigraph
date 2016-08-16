@@ -419,9 +419,7 @@ class CEnumValue(csf: CSchemaFile, psi: SchemaEnumMemberDecl)(implicit val ctx: 
 
 class CPrimitiveTypeDef(csf: CSchemaFile, override val psi: SchemaPrimitiveTypeDef)(implicit ctx: CContext)
     extends CTypeDef(
-      csf, psi, CTypeKind.forKeyword( // TODO deal with all nulls?
-        Seq(psi.getStringT, psi.getIntegerT, psi.getLongT, psi.getDoubleT, psi.getBooleanT).find(_ != null).get.getText
-      )
+      csf, psi, CTypeKind.forKeyword(psi.getPrimitiveTypeKind.name)
     ) {
 
   override type This = CPrimitiveTypeDef

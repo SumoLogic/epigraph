@@ -120,6 +120,19 @@ public class SchemaPsiImplUtil {
     return SchemaPsiImplUtilExt.supplemented(recordTypeDef);
   }
 
+  // primitive --------------------------------------------
+  @Contract(pure = true)
+  @NotNull
+  public static PrimitiveTypeKind getPrimitiveTypeKind(@NotNull SchemaPrimitiveTypeDef primitiveTypeDef) {
+    if (primitiveTypeDef.getStringT() != null) return PrimitiveTypeKind.STRING;
+    if (primitiveTypeDef.getLongT() != null) return PrimitiveTypeKind.LONG;
+    if (primitiveTypeDef.getIntegerT() != null) return PrimitiveTypeKind.INTEGER;
+    if (primitiveTypeDef.getBooleanT() != null) return PrimitiveTypeKind.BOOLEAN;
+    if (primitiveTypeDef.getDoubleT() != null) return PrimitiveTypeKind.DOUBLE;
+
+    throw new IllegalStateException("Primitive type kind not found: " + primitiveTypeDef);
+  }
+
   // var --------------------------------------------
 
   @Contract(pure = true)
