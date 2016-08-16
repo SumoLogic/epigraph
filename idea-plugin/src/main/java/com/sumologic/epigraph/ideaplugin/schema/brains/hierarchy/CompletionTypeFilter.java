@@ -82,7 +82,7 @@ public abstract class CompletionTypeFilter {
       for (SchemaFqnTypeRef fqnTypeRef : extendsDecl.getFqnTypeRefList()) {
         SchemaTypeDef parent = fqnTypeRef.resolve();
         if (parent != null) {
-          if (parent.equals(typeDef) || hierarchyCache.isParent(parent, typeDef)) return false;
+          if (parent.equals(typeDef) || hierarchyCache.getTypeParents(parent).contains(typeDef)) return false;
         }
       }
 

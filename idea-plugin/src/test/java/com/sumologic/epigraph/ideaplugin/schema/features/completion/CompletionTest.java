@@ -115,20 +115,41 @@ public class CompletionTest extends LightCodeInsightFixtureTestCase {
     checkCompletionVariants("bar");
   }
 
-  public void testProperKindCompletion1() {
-    myFixture.configureByFile("TypeRefKindCompletion1.esc");
+  // ------------- extends
+
+  public void testProperKindCompletionExt1() {
+    myFixture.configureByFile("TypeRefKindCompletionExt1.esc");
     checkCompletionVariants("LL1", "LL2"); // but not LL3
   }
 
-  public void testProperKindCompletion2() {
-    myFixture.configureByFile("TypeRefKindCompletion2.esc");
+  public void testProperKindCompletionExt2() {
+    myFixture.configureByFile("TypeRefKindCompletionExt2.esc");
+    checkCompletionVariants("LL3", "LL4");
+  }
+
+  public void testProperKindCompletionExt3() {
+    myFixture.configureByFile("TypeRefKindCompletionExt3.esc");
+    checkCompletionVariants("S1", "S2");
+  }
+
+  // ------------- supplements
+
+  /*
+  public void testProperKindCompletionSups1() {
+    myFixture.configureByFile("TypeRefKindCompletionSups1.esc");
+    checkCompletionVariants("LL1", "LL2"); // but not LL3
+  }
+
+  public void testProperKindCompletionSups2() {
+    myFixture.configureByFile("TypeRefKindCompletionSups2.esc");
     checkCompletionVariants("LL1", "LL4");
   }
 
-  public void testProperKindCompletion3() {
-    myFixture.configureByFile("TypeRefKindCompletion3.esc");
-    checkCompletionVariants("S1", "S2");
-  }
+//  public void testProperKindCompletionSups3() {
+//    myFixture.configureByFile("TypeRefKindCompletionSups3.esc");
+//    checkCompletionVariants("S1", "S2");
+//  }
+*/
 
   private void checkCompletionVariants(String... variants) {
     myFixture.completeBasic();
