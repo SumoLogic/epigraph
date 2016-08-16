@@ -188,11 +188,13 @@ object SchemaCompiler {
 
   val testPaths: Seq[String] = Seq(
     "epigraph-builtin-types/src/main/epigraph/epigraph/builtinTypes.esc",
-    "epigraph-schema/src/main/epigraph/epigraph/schema/names.esc",
-    "epigraph-schema/src/main/epigraph/epigraph/schema/types.esc",
-    "epigraph-schema/src/main/epigraph/epigraph/schema/Documented.esc",
-    "epigraph-schema/src/test/epigraph/example/abstract.esc",
-    "epigraph-schema-compiler/src/test/epigraph/example/compilerExamples.esc"
+    "java/core/src/test/epigraph/com/example/person.esc",
+    "java/core/src/test/epigraph/com/example/user.esc"
+//    "epigraph-schema/src/main/epigraph/epigraph/schema/names.esc",
+//    "epigraph-schema/src/main/epigraph/epigraph/schema/types.esc",
+//    "epigraph-schema/src/main/epigraph/epigraph/schema/Documented.esc",
+//    "epigraph-schema/src/test/epigraph/example/abstract.esc",
+//    "epigraph-schema-compiler/src/test/epigraph/example/compilerExamples.esc"
     //"blah"
   )
 

@@ -5,7 +5,8 @@ package com.sumologic.epigraph.schema.compiler
 import java.util.concurrent.{ConcurrentHashMap, ConcurrentLinkedQueue}
 
 import com.sumologic.epigraph.schema.parser.Fqn
-import net.jcip.annotations.ThreadSafe
+
+import scala.collection.JavaConversions._
 
 
 class CContext(val tabWidth: Int = 2) {
@@ -32,6 +33,20 @@ class CContext(val tabWidth: Int = 2) {
     "epigraph.Double",
     "epigraph.Boolean"
   ).map(Fqn.fromDotSeparated).map { fqn => (fqn.last, fqn) }.toMap
+
+  def hasAnonListOf(elementType: CType): Boolean =
+    anonListTypes.keySet().exists(_.elementTypeRef.resolved == elementType)
+
+  def getAnonListOf(elementType: CType): Option[CAnonListType] =
+    anonListTypes.entrySet().find(_.getKey.elementTypeRef.resolved == elementType).map(_.getValue)
+
+  def hasAnonMapOf(elementType: CType): Boolean =
+    anonMapTypes.keySet().exists(_.valueTypeRef.resolved == elementType)
+
+  def getAnonMapsOf(elementType: CType): Seq[CAnonMapType] =
+    anonMapTypes.entrySet().filter(_.getKey.valueTypeRef.resolved == elementType).map(_.getValue)(collection.breakOut)
+
+  def hasCollectionsOf(elementType: CType): Boolean = hasAnonListOf(elementType) || hasAnonMapOf(elementType)
 
   def after[A](prevPhase: CPhase, default: A, f: => A): A = if (phase.ordinal <= prevPhase.ordinal) default else f
 

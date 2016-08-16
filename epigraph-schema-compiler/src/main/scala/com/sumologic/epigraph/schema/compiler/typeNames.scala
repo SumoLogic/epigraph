@@ -54,7 +54,13 @@ class CAnonListTypeName(csf: CSchemaFile, override val psi: SchemaAnonList)(impl
 
   val elementTypeRef: CTypeRef = CTypeRef(csf, psi.getTypeRef)
 
-} with CTypeName(csf, "list[" + elementTypeRef.name.name + "]", psi)
+} with CTypeName(csf, CAnonListTypeName.anonListTypeName(elementTypeRef.name.name), psi)
+
+object CAnonListTypeName {
+
+  def anonListTypeName(elementTypeName: String): String = "list[" + elementTypeName + "]"
+
+}
 
 
 class CAnonMapTypeName(csf: CSchemaFile, override val psi: SchemaAnonMap)(implicit ctx: CContext) extends {

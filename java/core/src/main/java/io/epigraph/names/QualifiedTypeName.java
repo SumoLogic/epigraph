@@ -2,12 +2,17 @@
 
 package io.epigraph.names;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class QualifiedTypeName extends QualifiedName implements TypeName {
 
-  public QualifiedTypeName(@Nullable NamespaceName namespaceName, String localName) {
+  public QualifiedTypeName(@Nullable NamespaceName namespaceName, @NotNull String localName) {
     super(namespaceName, localName);
+  }
+
+  public QualifiedTypeName(@NotNull String localName, @NotNull String... namespaceNames) {
+    this(NamespaceName.from(namespaceNames), localName);
   }
 
 }
