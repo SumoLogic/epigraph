@@ -12,17 +12,17 @@ namespace `some`
 record <error descr="Type 'some.R' is already defined">R</error> extends <error descr="Unresolved reference">Q</error>
 record <error descr="Type 'some.R' is already defined">R</error>
 
-long L extends <error descr="Wrong parent type kind">R</error>
+long L extends <error descr="Ambiguous type reference"><error descr="Wrong parent type kind">R</error></error>
 
 record <error descr="Circular inheritance">R1</error> extends R2
 record <error descr="Circular inheritance">R2</error> extends R1
 
 record Q1 {
-  <error descr="Field overrides nothing">override</error> f: R
+  <error descr="Field overrides nothing">override</error> f: <error descr="Ambiguous type reference">R</error>
 }
 
 vartype <warning descr="Type 'EE' is shadowed by 'import bar.EE'">EE</warning> {
-  <error descr="Tag overrides nothing">override</error> t: R
+  <error descr="Tag overrides nothing">override</error> t: <error descr="Ambiguous type reference">R</error>
 }
 
 record <warning descr="Type 'OtherRecord' is shadowed by 'import other.OtherRecord'">OtherRecord</warning>

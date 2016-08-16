@@ -85,7 +85,8 @@ public class SchemaFqnReferenceResolver {
 
   @Nullable
   private SchemaTypeDef resolveTypeDef(@NotNull Project project) {
-    return SchemaIndexUtil.findSingleTypeDef(project, prefixes, suffix, searchScope);
+    return SchemaIndexUtil.findTypeDef(project, prefixes, suffix, searchScope);
+//    return SchemaIndexUtil.findSingleTypeDef(project, prefixes, suffix, searchScope);
   }
 
   @NotNull

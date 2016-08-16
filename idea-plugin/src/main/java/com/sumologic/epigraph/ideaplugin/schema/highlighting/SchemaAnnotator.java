@@ -211,7 +211,7 @@ public class SchemaAnnotator implements Annotator {
       PsiPolyVariantReference reference = (PsiPolyVariantReference) schemaFqn.getLastChild().getReference();
       assert reference != null;
 
-      if (reference.resolve() == null) {
+//      if (reference.resolve() == null) {
         ResolveResult[] resolveResults = reference.multiResolve(false);
         List<String> typeDefFqns = new ArrayList<>();
         for (ResolveResult resolveResult : resolveResults) {
@@ -234,7 +234,7 @@ public class SchemaAnnotator implements Annotator {
           }
           annotation.setTooltip(tooltipText.toString());
         } // else we have import prefix matching varTypeple namespaces, OK
-      }
+//      }
     }
   }
 
