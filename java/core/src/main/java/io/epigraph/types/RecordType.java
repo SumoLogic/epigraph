@@ -16,6 +16,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 
 public abstract class RecordType extends DatumType {
@@ -174,6 +175,10 @@ public abstract class RecordType extends DatumType {
 
     @Override
     public final @NotNull MyMutData createMutableData() { return mutDataConstructor.apply(new Data.Mut.Raw(this)); }
+
+    // should be overridden in (generated) static types that have lists of themselves declared in the schema
+    @Override
+    protected @NotNull Supplier<ListType> listTypeSupplier() { return throwingListTypeSupplier; }
 
   }
 

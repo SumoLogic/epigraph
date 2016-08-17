@@ -4,6 +4,7 @@ package io.epigraph.types;
 
 import io.epigraph.data.Data;
 import io.epigraph.data.Val;
+import io.epigraph.names.AnonListTypeName;
 import io.epigraph.names.TypeName;
 import io.epigraph.util.LazyInitializer;
 import io.epigraph.util.Unmodifiable;
@@ -77,6 +78,13 @@ public abstract class Type { // TODO split into interface and impl
   private final LazyInitializer<ListType> listOf = new LazyInitializer<>(listTypeSupplier()); // FIXME race?
 
   protected abstract @NotNull Supplier<ListType> listTypeSupplier(); // e.g. () -> new AnonListType(false, this)
+
+  protected @NotNull Supplier<ListType> throwingListTypeSupplier = () -> { // TODO or construct raw list type?
+    throw new IllegalStateException(
+        "'" + AnonListTypeName.of(false, this.name()) + "' not used anywhere in the schema"
+    );
+  };
+
 
   public ListType listOf() { return listOf.get(); }
 

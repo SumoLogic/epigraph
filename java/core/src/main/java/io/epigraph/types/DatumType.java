@@ -48,7 +48,11 @@ public abstract class DatumType extends Type {
   public interface Raw extends Type.Raw {}
 
 
-  public interface Static<MyType extends DatumType & DatumType.Static<MyType>> extends Type.Static<MyType> {}
+  public interface Static<MyType extends DatumType & DatumType.Static<MyType>> extends Type.Static<MyType> {
+
+
+
+  }
 
 
 }

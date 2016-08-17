@@ -107,6 +107,10 @@ public abstract class IntegerType extends PrimitiveType {
     @Override
     public final @NotNull MyMutData createMutableData() { return mutDataConstructor.apply(new Data.Mut.Raw(this)); }
 
+    // should be overridden in (generated) static types that have lists of themselves declared in the schema
+    @Override
+    protected @NotNull Supplier<ListType> listTypeSupplier() { return throwingListTypeSupplier; }
+
   }
 
 

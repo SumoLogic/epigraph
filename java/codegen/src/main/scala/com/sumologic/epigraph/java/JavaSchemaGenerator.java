@@ -29,9 +29,9 @@ public class JavaSchemaGenerator {
 
     Path tmpRoot = GenUtils.rmrf(outputRoot.resolveSibling(outputRoot.getFileName().toString() + "~tmp"), outputRoot.getParent());
 
-    for (CNamespace namespace : ctx.namespaces().values()) {
-      new NamespaceGen(namespace, ctx).writeUnder(tmpRoot);
-    }
+//    for (CNamespace namespace : ctx.namespaces().values()) {
+//      new NamespaceGen(namespace, ctx).writeUnder(tmpRoot);
+//    }
 
     for (CSchemaFile schemaFile : ctx.schemaFiles().values()) {
       for (CTypeDef typeDef : JavaConversions.asJavaIterable(schemaFile.typeDefs())) {
@@ -68,6 +68,15 @@ public class JavaSchemaGenerator {
             throw new UnsupportedOperationException(typeDef.kind().toString());
         }
       }
+    }
+    
+    for (CAnonListType alt : ctx.anonListTypes().values()) {
+      //System.out.println(alt.name().name());
+      new AnonListGen(alt, ctx).writeUnder(tmpRoot);
+    }
+
+    for (CAnonMapType amt : ctx.anonMapTypes().values()) {
+      // TODO new AnonMapGen(amt, ctx).writeUnder(tmpRoot);
     }
 
     GenUtils.move(tmpRoot, outputRoot, outputRoot.getParent()); // move new root to final location

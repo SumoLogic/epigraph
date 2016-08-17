@@ -47,7 +47,9 @@ public abstract class AnonListType extends ListType {
       MyMutVal extends Val.Mut.Static<MyImmVal, MyMutDatum>,
       MyImmData extends Data.Imm.Static,
       MyMutData extends Data.Mut.Static<MyImmData>
-      > extends AnonListType {
+      > extends AnonListType implements ListType.Static<
+      AnonListType.Static<MyImmDatum, MyMutDatum, MyImmVal, MyMutVal, MyImmData, MyMutData>
+      > {
 
     private final @NotNull Function<ListDatum.Mut.Raw, MyMutDatum> mutDatumConstructor;
 
@@ -69,15 +71,17 @@ public abstract class AnonListType extends ListType {
     }
 
     @Override
-    public final @NotNull MyMutDatum createBuilder() {
-      return mutDatumConstructor.apply(new ListDatum.Mut.Raw(this));
-    }
+    public final @NotNull MyMutDatum createBuilder() { return mutDatumConstructor.apply(new ListDatum.Mut.Raw(this)); }
 
     @Override
     public final @NotNull MyMutVal createMutableValue() { return mutValConstructor.apply(new Val.Mut.Raw(this)); }
 
     @Override
     public final @NotNull MyMutData createMutableData() { return mutDataConstructor.apply(new Data.Mut.Raw(this)); }
+
+    // should be overridden in (generated) static types that have lists of themselves declared in the schema
+    @Override
+    protected @NotNull Supplier<ListType> listTypeSupplier() { return throwingListTypeSupplier; }
 
   }
 

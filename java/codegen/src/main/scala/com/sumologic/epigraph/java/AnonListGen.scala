@@ -5,256 +5,262 @@ package com.sumologic.epigraph.java
 import java.nio.file.Path
 
 import com.sumologic.epigraph.java.NewlineStringInterpolator.NewlineHelper
-import com.sumologic.epigraph.schema.compiler.{CAnonListType, CContext, CType}
+import com.sumologic.epigraph.schema.compiler.{CAnonListType, CAnonMapType, CContext, CType, CTypeDef}
 
 class AnonListGen(from: CAnonListType, ctx: CContext) extends JavaTypeGen[CAnonListType](from, ctx) {
 
   private val e = t.elementTypeRef.resolved
 
-  override protected def relativeFilePath: Path = ???
+  // TODO respect annotations changing namespace/type names for scala
+  protected override def relativeFilePath: Path =
+    GenUtils.fqnToPath(getNamedTypeComponent(t).name.fqn.removeLastSegment()).resolve(ln(t) + ".java")
 
   override def generate: String = sn"""\
+package ${javaFqn(getNamedTypeComponent(t).name.fqn.removeLastSegment())};
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+/**
+ * Base interface for `${t.name.name}` datum.
+ */
+public interface ${baseName(t)} extends io.epigraph.data.ListDatum.Static {
+
+  ${baseName(t)}.Type type = new ${baseName(t)}.Type();
+
+  // default tag values // TODO - if declared
+  java.util.List<@Nullable ? extends ${baseQName(e, t)}.Value> values();
+
+  // default tag datums // TODO - if declared
+  java.util.List<@Nullable ? extends ${baseQName(e, t)}> datums();
 
   /**
-   * Base interface for `${t.name.name}` datum.
+   * Class for `${t.name.name}` datum type.
    */
-  interface List extends ${withCollections(t)}ListDatum.Static {
+  final class Type extends io.epigraph.types.AnonListType.Static<
+      ${baseName(t)}.Imm,
+      ${baseName(t)}.Builder,
+      ${baseName(t)}.Imm.Value,
+      ${baseName(t)}.Builder.Value,
+      ${baseName(t)}.Imm.Data,
+      ${baseName(t)}.Builder.Data
+  > {
 
-    ${elementName(e)}.List.Type type = new ${elementName(e)}.List.Type();
+    Type() {
+      super(
+          false,
+          ${baseQName(e, t)}.type,
+          ${baseName(t)}.Builder::new,
+          ${baseName(t)}.Builder.Value::new,
+          ${baseName(t)}.Builder.Data::new
+      );
+    }
+${ctx.getAnonListOf(t).map { tl => sn"""\
 
-    // default tag values
-    java.util.List<@Nullable ? extends ${elementName(e)}.Value> values();
-
-    // default tag datums
-    java.util.List<@Nullable ? extends ${elementName(e)}> datums();
-
-    /**
-     * Class for `${t.name.name}` datum type.
-     */
-    final class Type extends AnonListType.Static<
-        ${elementName(e)}.List.Imm,
-        ${elementName(e)}.List.Builder,
-        ${elementName(e)}.List.Imm.Value,
-        ${elementName(e)}.List.Builder.Value,
-        ${elementName(e)}.List.Imm.Data,
-        ${elementName(e)}.List.Builder.Data
-    > {
-
-      Type() {
-        super(
-            false,
-            ${elementName(e)}.type,
-            ${elementName(e)}.List.Builder::new,
-            ${elementName(e)}.List.Builder.Value::new,
-            ${elementName(e)}.List.Builder.Data::new
-        );
-      }
-${if (ctx.hasAnonListOf(t)) { sn"""\
-
-      @Override
-      protected @NotNull Supplier<ListType> listTypeSupplier() { return () -> ${elementName(t)}.List.type; }
-""" } else ""
+    @Override
+    protected @NotNull java.util.function.Supplier<io.epigraph.types.ListType> listTypeSupplier() { return () -> ${baseName(tl)}.type; }
+""" }.getOrElse("")
   }\
 
-    }
+  }
 
-    /**
-     * Base interface for `${t.name.name}` value (holding a datum or an error).
-     */
-    interface Value extends Val.Static {
+  /**
+   * Base interface for `${t.name.name}` value (holding a datum or an error).
+   */
+  interface Value extends io.epigraph.data.Val.Static {
 
-      @Override
-      @NotNull ${elementName(e)}.List.Imm.Value toImmutable();
+    @Override
+    @NotNull ${baseName(t)}.Imm.Value toImmutable();
 
-      @Override
-      @Nullable ${elementName(e)}.List getDatum();
+    @Override
+    @Nullable ${baseName(t)} getDatum();
 
-    }
+  }
 
-    /**
-     * Base interface for `${t.name.name}` data (holding single default representation of the type).
-     */
-    interface Data extends io.epigraph.data.Data.Static {
+  /**
+   * Base interface for `${t.name.name}` data (holding single default representation of the type).
+   */
+  interface Data extends io.epigraph.data.Data.Static {
 
-      @Override
-      @NotNull ${elementName(e)}.List.Imm.Data toImmutable();
+    @Override
+    @NotNull ${baseName(t)}.Imm.Data toImmutable();
 
-      @Nullable ${elementName(e)}.List.Value get_value(); // default tag value (TODO: if defined)
+    @Nullable ${baseName(t)}.Value get_value(); // default tag value (TODO: if defined)
 
-      @Nullable ${elementName(e)}.List get(); // default tag datum (TODO: if defined)
+    @Nullable ${baseName(t)} get(); // default tag datum (TODO: if defined)
 
-    }
+  }
 
-    /**
-     * Immutable interface for `${t.name.name}` datum.
-     */
-    interface Imm extends ${elementName(e)}.List, ListDatum.Imm.Static {
+  /**
+   * Immutable interface for `${t.name.name}` datum.
+   */
+  interface Imm extends ${baseName(t)}, io.epigraph.data.ListDatum.Imm.Static {
 
-      // default tag values
-      @Override
-      java.util.List<@Nullable ? extends ${elementName(e)}.Imm.Value> values();
+    // default tag values
+    @Override
+    java.util.List<@Nullable ? extends ${baseQName(e, t)}.Imm.Value> values();
 
-      // default tag datums
-      @Override
-      java.util.List<@Nullable ? extends ${elementName(e)}.Imm> datums();
+    // default tag datums
+    @Override
+    java.util.List<@Nullable ? extends ${baseQName(e, t)}.Imm> datums();
 
-      /** Private implementation of `${elementName(e)}.Imm` interface. */
-      final class Impl extends ListDatum.Imm.Static.Impl<${elementName(e)}.List.Imm> implements ${elementName(e)}.List.Imm {
+    /** Private implementation of `${baseQName(e, t)}.Imm` interface. */
+    final class Impl extends io.epigraph.data.ListDatum.Imm.Static.Impl<${baseName(t)}.Imm> implements ${baseName(t)}.Imm {
 
-        Impl(@NotNull ListDatum.Imm.Raw raw) { super(${elementName(e)}.List.type, raw); }
-
-        // method is private to not expose datas() for non-union types (so simple type can be replaced with union type without breaking backwards-compatibility)
-        private java.util.List<@NotNull ? extends ${elementName(e)}.Imm.Data> datas() {
-          return (java.util.List<? extends ${elementName(e)}.Imm.Data>) _raw()._elements();
-        }
-
-        @Override // implied default tag values
-        public java.util.List<@Nullable ? extends ${elementName(e)}.Imm.Value> values() {
-          return new Unmodifiable.ListView<${elementName(e)}.Imm.Data, ${elementName(e)}.Imm.Value>(
-              datas(),
-              ${elementName(e)}.Imm.Data::get_value
-          );
-        }
-
-        @Override // implied default tag datums
-        public java.util.List<@Nullable ? extends ${elementName(e)}.Imm> datums() {
-          return new Unmodifiable.ListView<${elementName(e)}.Imm.Data, ${elementName(e)}.Imm>(datas(), ${elementName(e)}.Imm.Data::get);
-        }
-
-      }
-
-      /**
-       * Immutable interface for `${t.name.name}` value (holding an immutable datum or an error).
-       */
-      interface Value extends ${elementName(e)}.List.Value, Val.Imm.Static {
-
-        @Override
-        @Nullable ${elementName(e)}.List.Imm getDatum();
-
-        /** Private implementation of `${elementName(e)}.Imm.Value` interface. */
-        final class Impl extends Val.Imm.Static.Impl<${elementName(e)}.List.Imm.Value, ${elementName(e)}.List.Imm>
-            implements ${elementName(e)}.List.Imm.Value {
-
-          Impl(@NotNull Val.Imm.Raw raw) { super(${elementName(e)}.List.type, raw); }
-
-        }
-
-      }
-
-      /**
-       * Immutable interface for `${t.name.name}` data (holding single default representation of the type).
-       */
-      interface Data extends ${elementName(e)}.List.Data, io.epigraph.data.Data.Imm.Static {
-
-        @Override
-        @Nullable ${elementName(e)}.List.Imm.Value get_value(); // TODO if default is defined
-
-        @Override
-        @Nullable ${elementName(e)}.List.Imm get(); // TODO if default is defined
-
-        /** Private implementation of `${elementName(e)}.Imm.Data` interface. */
-        final class Impl extends io.epigraph.data.Data.Imm.Static.Impl<${elementName(e)}.List.Imm.Data>
-            implements ${elementName(e)}.List.Imm.Data {
-
-          Impl(@NotNull io.epigraph.data.Data.Imm.Raw raw) { super(${elementName(e)}.List.type, raw); }
-
-          @Override
-          public @Nullable ${elementName(e)}.List.Imm.Value get_value() {
-            return (${elementName(e)}.List.Imm.Value) _raw()._getValue(${elementName(e)}.List.type.self);
-          }
-
-          @Override
-          public @Nullable ${elementName(e)}.List.Imm get() {
-            return Util.apply(${elementName(e)}.List.Imm.Value::getDatum, get_value());
-          }
-
-        }
-
-      }
-
-    }
-
-    /**
-     * Builder for `${t.name.name}` datum.
-     */
-    final class Builder extends ListDatum.Mut.Static<${elementName(e)}.List.Imm> implements ${elementName(e)}.List {
-
-      Builder(@NotNull ListDatum.Mut.Raw raw) { super(${elementName(e)}.List.type, raw, ${elementName(e)}.List.Imm.Impl::new); }
+      Impl(@NotNull io.epigraph.data.ListDatum.Imm.Raw raw) { super(${baseName(t)}.type, raw); }
 
       // method is private to not expose datas() for non-union types (so simple type can be replaced with union type without breaking backwards-compatibility)
-      private java.util.List<${elementName(e)}.Builder.@NotNull Data> datas() {
-        return (java.util.List<${elementName(e)}.Builder.Data>) _raw()._elements();
+      private java.util.List<@NotNull ? extends ${baseQName(e, t)}.Imm.Data> datas() {
+        return (java.util.List<? extends ${baseQName(e, t)}.Imm.Data>) _raw()._elements();
       }
 
-      @Override
-      public java.util.List<${elementName(e)}.Builder.Value> values() {
-        return new ListView<>(
+      @Override // implied default tag values
+      public java.util.List<@Nullable ? extends ${baseQName(e, t)}.Imm.Value> values() {
+        return new io.epigraph.util.Unmodifiable.ListView<${baseQName(e, t)}.Imm.Data, ${baseQName(e, t)}.Imm.Value>(
             datas(),
-            ${elementName(e)}.Builder.Data::get_value,
-            ${elementName(e)}.Builder.Data::set_value,
-            ${elementName(e)}.type::createMutableData
+            ${baseQName(e, t)}.Imm.Data::get_value
         );
       }
 
+      @Override // implied default tag datums
+      public java.util.List<@Nullable ? extends ${baseQName(e, t)}.Imm> datums() {
+        return new io.epigraph.util.Unmodifiable.ListView<${baseQName(e, t)}.Imm.Data, ${baseQName(e, t)}.Imm>(datas(), ${baseQName(e, t)}.Imm.Data::get);
+      }
+
+    }
+
+    /**
+     * Immutable interface for `${t.name.name}` value (holding an immutable datum or an error).
+     */
+    interface Value extends ${baseName(t)}.Value, io.epigraph.data.Val.Imm.Static {
+
       @Override
-      public java.util.List<${elementName(e)}.@Nullable Builder> datums() {
-        return new ListView<>(
-            datas(),
-            ${elementName(e)}.Builder.Data::get,
-            ${elementName(e)}.Builder.Data::set,
-            ${elementName(e)}.type::createMutableData
-        );
-      }
+      @Nullable ${baseName(t)}.Imm getDatum();
 
-      /**
-       * Builder for `${t.name.name}` value (holding a builder or an error).
-       */
-      public static final class Value extends Val.Mut.Static<${elementName(e)}.List.Imm.Value, ${elementName(e)}.List.Builder>
-          implements ${elementName(e)}.List.Value {
+      /** Private implementation of `${baseQName(e, t)}.Imm.Value` interface. */
+      final class Impl extends io.epigraph.data.Val.Imm.Static.Impl<${baseName(t)}.Imm.Value, ${baseName(t)}.Imm>
+          implements ${baseName(t)}.Imm.Value {
 
-        Value(@NotNull Val.Mut.Raw raw) { super(raw, ${elementName(e)}.List.Imm.Value.Impl::new); }
+        Impl(@NotNull io.epigraph.data.Val.Imm.Raw raw) { super(${baseName(t)}.type, raw); }
 
       }
 
-      /**
-       * Builder for `${t.name.name}` data (holding single default representation of the type).
-       */
-      public static final class Data extends io.epigraph.data.Data.Mut.Static<${elementName(e)}.List.Imm.Data>
-          implements ${elementName(e)}.List.Data {
+    }
 
-        Data(@NotNull io.epigraph.data.Data.Mut.Raw raw) {
-          super(${elementName(e)}.List.type, raw, ${elementName(e)}.List.Imm.Data.Impl::new);
-        }
+    /**
+     * Immutable interface for `${t.name.name}` data (holding single default representation of the type).
+     */
+    interface Data extends ${baseName(t)}.Data, io.epigraph.data.Data.Imm.Static {
 
-        // default tag value getter
+      @Override
+      @Nullable ${baseName(t)}.Imm.Value get_value(); // TODO if default is defined
+
+      @Override
+      @Nullable ${baseName(t)}.Imm get(); // TODO if default is defined
+
+      /** Private implementation of `${baseQName(e, t)}.Imm.Data` interface. */
+      final class Impl extends io.epigraph.data.Data.Imm.Static.Impl<${baseName(t)}.Imm.Data>
+          implements ${baseName(t)}.Imm.Data {
+
+        Impl(@NotNull io.epigraph.data.Data.Imm.Raw raw) { super(${baseName(t)}.type, raw); }
+
         @Override
-        public @Nullable ${elementName(e)}.List.Builder.Value get_value() {
-          return (${elementName(e)}.List.Builder.Value) _raw()._getValue(${elementName(e)}.List.type.self);
+        public @Nullable ${baseName(t)}.Imm.Value get_value() {
+          return (${baseName(t)}.Imm.Value) _raw()._getValue(${baseName(t)}.type.self);
         }
 
-        // default tag datum getter
         @Override
-        public @Nullable ${elementName(e)}.List.Builder get() {
-          return Util.apply(${elementName(e)}.List.Builder.Value::getDatum, get_value());
-        }
-
-
-        // default tag value setter
-        public void set_value(@Nullable ${elementName(e)}.List.Builder.Value value) {
-          _raw()._setValue(${elementName(e)}.List.type.self, value);
-        }
-
-        // default tag datum setter (TODO: if defined)
-        public void set(@Nullable ${elementName(e)}.List.Builder datum) {
-          _raw()._getOrCreateTagValue(${elementName(e)}.List.type.self)._raw().setDatum(datum);
+        public @Nullable ${baseName(t)}.Imm get() {
+          return io.epigraph.util.Util.apply(${baseName(t)}.Imm.Value::getDatum, get_value());
         }
 
       }
-
 
     }
 
   }
+
+  /**
+   * Builder for `${t.name.name}` datum.
+   */
+  final class Builder extends io.epigraph.data.ListDatum.Mut.Static<${baseName(t)}.Imm> implements ${baseName(t)} {
+
+    Builder(@NotNull io.epigraph.data.ListDatum.Mut.Raw raw) { super(${baseName(t)}.type, raw, ${baseName(t)}.Imm.Impl::new); }
+
+    // method is private to not expose datas() for non-union types (so simple type can be replaced with union type without breaking backwards-compatibility)
+    private java.util.List<${baseQName(e, t)}.Builder.@NotNull Data> datas() {
+      return (java.util.List<${baseQName(e, t)}.Builder.Data>) _raw()._elements();
+    }
+
+    @Override
+    public java.util.List<${baseQName(e, t)}.Builder.Value> values() {
+      return new io.epigraph.util.ListView<>(
+          datas(),
+          ${baseQName(e, t)}.Builder.Data::get_value,
+          ${baseQName(e, t)}.Builder.Data::set_value,
+          ${baseQName(e, t)}.type::createMutableData
+      );
+    }
+
+    @Override
+    public java.util.List<${baseQName(e, t)}.@Nullable Builder> datums() {
+      return new io.epigraph.util.ListView<>(
+          datas(),
+          ${baseQName(e, t)}.Builder.Data::get,
+          ${baseQName(e, t)}.Builder.Data::set,
+          ${baseQName(e, t)}.type::createMutableData
+      );
+    }
+
+    /**
+     * Builder for `${t.name.name}` value (holding a builder or an error).
+     */
+    public static final class Value extends io.epigraph.data.Val.Mut.Static<${baseName(t)}.Imm.Value, ${baseName(t)}.Builder>
+        implements ${baseName(t)}.Value {
+
+      Value(@NotNull io.epigraph.data.Val.Mut.Raw raw) { super(raw, ${baseName(t)}.Imm.Value.Impl::new); }
+
+    }
+
+    /**
+     * Builder for `${t.name.name}` data (holding single default representation of the type).
+     */
+    public static final class Data extends io.epigraph.data.Data.Mut.Static<${baseName(t)}.Imm.Data>
+        implements ${baseName(t)}.Data {
+
+      Data(@NotNull io.epigraph.data.Data.Mut.Raw raw) {
+        super(${baseName(t)}.type, raw, ${baseName(t)}.Imm.Data.Impl::new);
+      }
+
+      // default tag value getter
+      @Override
+      public @Nullable ${baseName(t)}.Builder.Value get_value() {
+        return (${baseName(t)}.Builder.Value) _raw()._getValue(${baseName(t)}.type.self);
+      }
+
+      // default tag datum getter
+      @Override
+      public @Nullable ${baseName(t)}.Builder get() {
+        return io.epigraph.util.Util.apply(${baseName(t)}.Builder.Value::getDatum, get_value());
+      }
+
+
+      // default tag value setter
+      public void set_value(@Nullable ${baseName(t)}.Builder.Value value) {
+        _raw()._setValue(${baseName(t)}.type.self, value);
+      }
+
+      // default tag datum setter (TODO: if defined)
+      public void set(@Nullable ${baseName(t)}.Builder datum) {
+        _raw()._getOrCreateTagValue(${baseName(t)}.type.self)._raw().setDatum(datum);
+      }
+
+    }
+
+
+  }
+
+}
 """
 
 }

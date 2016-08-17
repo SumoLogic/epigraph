@@ -11,4 +11,6 @@ record UserRecord extends PersonRecord {
   id: UserId
   bestFriend: UserRecord
   friends: list[UserRecord]
+  ids: list[UserId]
+  idss: list[list[UserId]]
 }

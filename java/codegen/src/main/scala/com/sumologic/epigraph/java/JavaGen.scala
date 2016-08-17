@@ -31,9 +31,20 @@ abstract class JavaGen[From >: Null <: AnyRef](protected val from: From, protect
     if (ns == localNs) new Fqn(transLocal) else ns.append(transLocal)
   }
 
-  def ln(t: CTypeDef): String = t.name.local
+  def ln(t: CType): String = t match {
+    case t: CTypeDef => t.name.local
+    case t: CAnonListType => ln(t.elementTypeRef.resolved) + "_List"
+    case t: CAnonMapType => ln(t.valueTypeRef.resolved) + "_Map"
+  }
 
-  def javaLocalName(t: CTypeDef, trans: (String) => String): String = javaName(trans(ln(t)))
+  protected def getNamedTypeComponent(t: CType): CTypeDef = t match {
+    case td: CTypeDef => td
+    case alt: CAnonListType => getNamedTypeComponent(alt.elementTypeRef.resolved)
+    case amt: CAnonMapType => getNamedTypeComponent(amt.valueTypeRef.resolved)
+    case unknown => throw new UnsupportedOperationException(unknown.toString)
+  }
+
+  def javaLocalName(t: CType, trans: (String) => String = identity): String = javaName(trans(ln(t)))
 
   def objName(s: String): String = s
 
@@ -41,7 +52,15 @@ abstract class JavaGen[From >: Null <: AnyRef](protected val from: From, protect
 
   def baseName(s: String): String = s
 
-  def baseName(t: CTypeDef): String = javaLocalName(t, baseName)
+  def baseName(t: CType): String = javaLocalName(t, baseName)
+
+  def baseValueName(s: String): String = s + ".Value"
+
+  def baseValueName(t: CTypeDef): String = javaLocalName(t, baseValueName)
+
+  def baseDataName(s: String): String = s + ".Data"
+
+  def baseDataName(t: CTypeDef): String = javaLocalName(t, baseDataName)
 
   def elementName(t: CType): String = t match {
     case alt: CAnonListType =>
@@ -54,7 +73,7 @@ abstract class JavaGen[From >: Null <: AnyRef](protected val from: From, protect
   }
 
   def withCollections(t: CType): String =
-    if (ctx.hasCollectionsOf(t)) collectionsInterface(t) + ", " else ""
+    if (ctx.hasCollectionsOf(t)) " " + collectionsInterface(t) + "," else ""
 
   def collectionsInterface(t: CType): String = typeComponents(t).mkString("_") + "_Collections"
 
@@ -89,10 +108,10 @@ abstract class JavaGen[From >: Null <: AnyRef](protected val from: From, protect
 
   def bldImplName(t: CTypeDef): String = javaLocalName(t, bldImplName)
 
-  def javaQName(t: CTypeDef, ht: CTypeDef, trans: (String) => String = identity): String =
-    javaFqn(localQName(t.name.fqn, ht.name.fqn.removeLastSegment(), trans))
+  def javaQName(t: CType, ht: CType, trans: (String) => String = identity): String =
+    javaFqn(localQName(getNamedTypeComponent(t).name.fqn, getNamedTypeComponent(ht).name.fqn.removeLastSegment(), trans))
 
-  def baseQName(t: CTypeDef, ht: CTypeDef): String = javaQName(t, ht, baseName)
+  def baseQName(t: CType, ht: CType): String = javaQName(t, ht, baseName)
 
   def immQName(t: CTypeDef, ht: CTypeDef): String = javaQName(t, ht, immName)
 

@@ -14,34 +14,20 @@ class PrimitiveGen(from: CPrimitiveTypeDef, ctx: CContext) extends JavaTypeDefGe
 
 package ${javaFqn(t.name.fqn.removeLastSegment())};
 
-import io.epigraph.data.${Kind(t)}Datum;
-import io.epigraph.data.ListDatum;
-import io.epigraph.data.Val;
-import io.epigraph.names.AnonListTypeName;
-import io.epigraph.names.QualifiedTypeName;
-import io.epigraph.types.AnonListType;
-import io.epigraph.types.${Kind(t)}Type;
-import io.epigraph.types.ListType;
-import io.epigraph.util.ListView;
-import io.epigraph.util.Unmodifiable;
-import io.epigraph.util.Util;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Arrays;
-import java.util.function.Supplier;
 
 /**
  * Base interface for `${t.name.name}` datum.
  */
-public interface ${baseName(t)} extends${withParents(t, baseName)} ${withCollections(t)}${Kind(t)}Datum.Static {
+public interface ${baseName(t)} extends${withParents(t, baseName)} io.epigraph.data.${Kind(t)}Datum.Static {
 
   @NotNull ${baseName(t)}.Type type = new ${baseName(t)}.Type();
 
   /**
    * Class for `${t.name.name}` datum type.
    */
-  final class Type extends ${Kind(t)}Type.Static<
+  final class Type extends io.epigraph.types.${Kind(t)}Type.Static<
       ${baseName(t)}.Imm,
       ${baseName(t)}.Builder,
       ${baseName(t)}.Imm.Value,
@@ -52,19 +38,21 @@ public interface ${baseName(t)} extends${withParents(t, baseName)} ${withCollect
 
     Type() {
       super(
-          new QualifiedTypeName(${qnameArgs(t.name.fqn).map(javaName).mkString("\"", "\", \"", "\"")}),
-          Arrays.asList(${t.linearizedParents.map(javaQName(_, t) + ".type").mkString(", ")}),
+          new io.epigraph.names.QualifiedTypeName(${qnameArgs(t.name.fqn).map(javaName).mkString("\"", "\", \"", "\"")}),
+          java.util.Arrays.asList(${t.linearizedParents.map(javaQName(_, t) + ".type").mkString(", ")}),
           ${t.isPolymorphic},
           ${baseName(t)}.Builder::new,
           ${baseName(t)}.Builder.Value::new,
           ${baseName(t)}.Builder.Data::new
       );
     }
-${if (ctx.hasAnonListOf(t)) { sn"""\
+${ctx.getAnonListOf(t).map { alt => sn"""\
 
     @Override
-    protected @NotNull Supplier<ListType> listTypeSupplier() { return () -> ${baseName(t)}.List.type; }
-""" } else ""
+    protected @NotNull java.util.function.Supplier<io.epigraph.types.ListType> listTypeSupplier() {
+      return () -> ${baseName(alt)}.type;
+    }
+""" }.getOrElse("")
 }\
 
   }
@@ -72,7 +60,7 @@ ${if (ctx.hasAnonListOf(t)) { sn"""\
   /**
    * Base interface for `${t.name.name}` value (holding a datum or an error).
    */
-  interface Value extends Val.Static {
+  interface Value extends${withParents(t, _ + ".Value")} io.epigraph.data.Val.Static {
 
     @Override
     @Nullable ${baseName(t)} getDatum();
@@ -85,7 +73,7 @@ ${if (ctx.hasAnonListOf(t)) { sn"""\
   /**
    * Base interface for `${t.name.name}` data (holding single default representation of the type).
    */
-  interface Data extends io.epigraph.data.Data.Static {
+  interface Data extends${withParents(t, _ + ".Data")} io.epigraph.data.Data.Static {
 
     @Override
     @NotNull ${baseName(t)}.Imm.Data toImmutable();
@@ -99,27 +87,28 @@ ${if (ctx.hasAnonListOf(t)) { sn"""\
   /**
    * Immutable interface for `${t.name.name}` datum.
    */
-  interface Imm extends ${baseName(t)}, ${Kind(t)}Datum.Imm.Static {
+  interface Imm extends ${baseName(t)},${withParents(t, _ + ".Imm")} io.epigraph.data.${Kind(t)}Datum.Imm.Static {
 
     /** Private implementation of `${baseName(t)}.Imm` interface. */
-    final class Impl extends ${Kind(t)}Datum.Imm.Static.Impl implements ${baseName(t)}.Imm {
+    final class Impl extends io.epigraph.data.${Kind(t)}Datum.Imm.Static.Impl implements ${baseName(t)}.Imm {
 
-      Impl(@NotNull ${Kind(t)}Datum.Imm.Raw raw) { super(${baseName(t)}.type, raw); }
+      Impl(@NotNull io.epigraph.data.${Kind(t)}Datum.Imm.Raw raw) { super(${baseName(t)}.type, raw); }
 
     }
 
     /**
      * Immutable interface for `${t.name.name}` value (holding an immutable datum or an error).
      */
-    interface Value extends ${baseName(t)}.Value, Val.Imm.Static {
+    interface Value extends ${baseName(t)}.Value,${withParents(t, _ + ".Imm.Value")} io.epigraph.data.Val.Imm.Static {
 
       @Override
       @Nullable ${baseName(t)}.Imm getDatum();
 
       /** Private implementation of `${baseName(t)}.Imm.Value` interface. */
-      final class Impl extends Val.Imm.Static.Impl<${baseName(t)}.Imm.Value, ${baseName(t)}.Imm> implements ${baseName(t)}.Imm.Value {
+      final class Impl extends io.epigraph.data.Val.Imm.Static.Impl<${baseName(t)}.Imm.Value, ${baseName(t)}.Imm>
+          implements ${baseName(t)}.Imm.Value {
 
-        Impl(@NotNull Val.Imm.Raw raw) { super(${baseName(t)}.type, raw); }
+        Impl(@NotNull io.epigraph.data.Val.Imm.Raw raw) { super(${baseName(t)}.type, raw); }
 
       }
 
@@ -128,7 +117,7 @@ ${if (ctx.hasAnonListOf(t)) { sn"""\
     /**
      * Immutable interface for `${t.name.name}` data (holding single default representation of the type).
      */
-    interface Data extends ${baseName(t)}.Data, io.epigraph.data.Data.Imm.Static {
+    interface Data extends ${baseName(t)}.Data,${withParents(t, _ + ".Imm.Data")} io.epigraph.data.Data.Imm.Static {
 
       @Override
       @Nullable ${baseName(t)}.Imm.Value get_value(); // implied default self-tag value
@@ -161,16 +150,16 @@ ${if (ctx.hasAnonListOf(t)) { sn"""\
   /**
    * Builder for `${t.name.name}` datum.
    */
-  final class Builder extends ${Kind(t)}Datum.Mut.Static<${baseName(t)}.Imm> implements ${baseName(t)} {
+  final class Builder extends io.epigraph.data.${Kind(t)}Datum.Mut.Static<${baseName(t)}.Imm> implements ${baseName(t)} {
 
-    Builder(@NotNull ${Kind(t)}Datum.Mut.Raw raw) { super(${baseName(t)}.type, raw, ${baseName(t)}.Imm.Impl::new); }
+    Builder(@NotNull io.epigraph.data.${Kind(t)}Datum.Mut.Raw raw) { super(${baseName(t)}.type, raw, ${baseName(t)}.Imm.Impl::new); }
 
     /**
      * Builder for `${t.name.name}` value (holding a builder or an error).
      */
-    public static final class Value extends Val.Mut.Static<${baseName(t)}.Imm.Value, ${baseName(t)}.Builder> implements ${baseName(t)}.Value {
+    public static final class Value extends io.epigraph.data.Val.Mut.Static<${baseName(t)}.Imm.Value, ${baseName(t)}.Builder> implements ${baseName(t)}.Value {
 
-      Value(@NotNull Val.Mut.Raw raw) { super(raw, ${baseName(t)}.Imm.Value.Impl::new); }
+      Value(@NotNull io.epigraph.data.Val.Mut.Raw raw) { super(raw, ${baseName(t)}.Imm.Value.Impl::new); }
 
     }
 
@@ -190,7 +179,7 @@ ${if (ctx.hasAnonListOf(t)) { sn"""\
 
       @Override
       public @Nullable ${baseName(t)}.Builder get() {
-        return Util.apply(${baseName(t)}.Builder.Value::getDatum, get_value());
+        return io.epigraph.util.Util.apply(${baseName(t)}.Builder.Value::getDatum, get_value());
       }
 
       // implied default tag value
@@ -206,7 +195,6 @@ ${if (ctx.hasAnonListOf(t)) { sn"""\
   }
 
 }
-${generateCollections(t)}\
 """
 
   private def Kind(t: CPrimitiveTypeDef): String =
