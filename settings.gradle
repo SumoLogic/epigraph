@@ -18,6 +18,8 @@ include 'epigraph-builtin-types',
         'epigraph-schema-compiler',
         'examples/users-example/users-schema',
         'idea-plugin',
+        'java/core',
+        'java/codegen',
         'schema-parser'
 
 // without dependency on epigraph gradle plugin
