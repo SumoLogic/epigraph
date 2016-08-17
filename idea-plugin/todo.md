@@ -7,6 +7,16 @@
 - Rename on fields (**In progress**)
 - Rename on vartype tags
 - On project import: detect `epigraph` as source folders
+- Errors highlighter must detect all cases of wrong/useless inheritance:
+  - `extends`, `supplements`, `supplement` target and source
+    - [x] Circular inheritance
+    - [ ] Useless inheritance (type already extended)
+    - [ ] Extending type of the wrong kind: e.g a record can't extend a primitive
+    - [ ] Extending primitive type of the wrong kind: e.g a long can't extend a string
+    - [ ] Extending collection with incompatible element kind: e.g. `List[Foo]` can extend `List[Bar]` only if `Foo` extends `Bar`
+  - `supplement` source
+    - [ ] Don't warn if at least one of the targets is not a child of source
+    
 
 ### Low
 - Rename projects to `epigraph-idea-plugin` and `epigraph-schema-parser(-common)` ?

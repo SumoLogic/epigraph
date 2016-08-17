@@ -1,0 +1,7 @@
+namespace testData.features.completion10
+
+record R1
+record R2
+record R3 extends R2
+
+supplement R1, R3 with <caret>

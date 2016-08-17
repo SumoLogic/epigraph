@@ -16,6 +16,8 @@ import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.S_WI
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
 public abstract class CompletionTypeFilters {
+  // TODO check for correct collection types, e.g. List[Foo] can't extend List[Bar] unless Foo extends Bar
+
   private static final List<CompletionTypeFilter> FILTERS = Arrays.asList(
       new SameTypeExtendsFilter(),
       new SameKindExtendsFilter(),
@@ -29,8 +31,13 @@ public abstract class CompletionTypeFilters {
 
       new SameTypeSupplementTargetFilter(),
       new SameKindSupplementTargetFilter(),
-      new TypeAlreadySupplemented2Filter(),
-      new WrongPrimitiveKindSupplementTargetFilter()
+      new TypeAlreadySupplementedTargetFilter(),
+      new WrongPrimitiveKindSupplementTargetFilter(),
+
+      new SameTypeSupplementSourceFilter(),
+      new SameKindSupplementSourceFilter(),
+      new TypeAlreadySupplementedSourceFilter(),
+      new WrongPrimitiveKindSupplementSourceFilter()
   );
 
   @NotNull
@@ -87,7 +94,7 @@ public abstract class CompletionTypeFilters {
     default boolean include(@NotNull SchemaTypeDef typeDef, @NotNull PsiElement element) {
       SchemaSupplementDef host = PsiTreeUtil.getParentOfType(element, SchemaSupplementDef.class);
       if (host == null) return true;
-      if (SchemaPsiUtil.hasPrevSibling(element, S_WITH)) return true; // we're completing source
+      if (SchemaPsiUtil.hasPrevSibling(element.getParent().getParent(), S_WITH)) return true; // we're completing source
 
       return includeInTarget(typeDef, host);
     }
@@ -100,7 +107,8 @@ public abstract class CompletionTypeFilters {
     default boolean include(@NotNull SchemaTypeDef typeDef, @NotNull PsiElement element) {
       SchemaSupplementDef host = PsiTreeUtil.getParentOfType(element, SchemaSupplementDef.class);
       if (host == null) return true;
-      if (!SchemaPsiUtil.hasPrevSibling(element, S_WITH)) return true; // we're completing target
+      if (!SchemaPsiUtil.hasPrevSibling(element.getParent().getParent(), S_WITH))
+        return true; // we're completing target
 
       return includeInSource(typeDef, host);
     }
@@ -123,13 +131,23 @@ public abstract class CompletionTypeFilters {
       return notSameType(typeDef, host);
     }
 
-    public boolean includeInTarget(@NotNull SchemaTypeDef typeDef, @NotNull SchemaSupplementDef host) {
+    private boolean includeInSupplement(@NotNull SchemaTypeDef typeDef, @NotNull SchemaSupplementDef host, boolean checkSource) {
+      if (checkSource && typeDef.equals(host.source())) return false;
+
       for (SchemaFqnTypeRef targetRef : host.supplementedRefs()) {
         SchemaTypeDef target = targetRef.resolve();
         if (target != null && typeDef.equals(target)) return false;
       }
 
       return true;
+    }
+
+    public boolean includeInTarget(@NotNull SchemaTypeDef typeDef, @NotNull SchemaSupplementDef host) {
+      return includeInSupplement(typeDef, host, true);
+    }
+
+    public boolean includeInSource(@NotNull SchemaTypeDef typeDef, @NotNull SchemaSupplementDef host) {
+      return includeInSupplement(typeDef, host, false);
     }
   }
 
@@ -146,13 +164,26 @@ public abstract class CompletionTypeFilters {
       return typeDef.getKind() == host.getKind();
     }
 
-    public boolean includeInTarget(@NotNull SchemaTypeDef typeDef, @NotNull SchemaSupplementDef host) {
+    private boolean includeInSupplement(@NotNull SchemaTypeDef typeDef, @NotNull SchemaSupplementDef host, boolean checkSource) {
+      if (checkSource) {
+        SchemaTypeDef source = host.source();
+        if (source != null && typeDef.getKind() != source.getKind()) return false;
+      }
+
       for (SchemaFqnTypeRef targetRef : host.supplementedRefs()) {
         SchemaTypeDef target = targetRef.resolve();
         if (target != null && typeDef.getKind() != target.getKind()) return false;
       }
 
       return true;
+    }
+
+    public boolean includeInTarget(@NotNull SchemaTypeDef typeDef, @NotNull SchemaSupplementDef host) {
+      return includeInSupplement(typeDef, host, true);
+    }
+
+    public boolean includeInSource(@NotNull SchemaTypeDef typeDef, @NotNull SchemaSupplementDef host) {
+      return includeInSupplement(typeDef, host, false);
     }
   }
 
@@ -173,9 +204,17 @@ public abstract class CompletionTypeFilters {
           ((SchemaPrimitiveTypeDef) typeDef).getPrimitiveTypeKind();
     }
 
-    public boolean includeInTarget(@NotNull SchemaTypeDef typeDef, @NotNull SchemaSupplementDef host) {
+    private boolean includeInSupplement(@NotNull SchemaTypeDef typeDef, @NotNull SchemaSupplementDef host, boolean checkSource) {
       if (typeDef.getKind() != TypeKind.PRIMITIVE) return true;
       PrimitiveTypeKind primitiveTypeKind = ((SchemaPrimitiveTypeDef) typeDef).getPrimitiveTypeKind();
+
+      if (checkSource) {
+        SchemaTypeDef source = host.source();
+        if (source != null) {
+          if (source.getKind() != TypeKind.PRIMITIVE) return false;
+          if (((SchemaPrimitiveTypeDef) source).getPrimitiveTypeKind() != primitiveTypeKind) return false;
+        }
+      }
 
       for (SchemaFqnTypeRef targetRef : host.supplementedRefs()) {
         SchemaTypeDef target = targetRef.resolve();
@@ -186,6 +225,14 @@ public abstract class CompletionTypeFilters {
       }
 
       return true;
+    }
+
+    public boolean includeInTarget(@NotNull SchemaTypeDef typeDef, @NotNull SchemaSupplementDef host) {
+      return includeInSupplement(typeDef, host, true);
+    }
+
+    public boolean includeInSource(@NotNull SchemaTypeDef typeDef, @NotNull SchemaSupplementDef host) {
+      return includeInSupplement(typeDef, host, false);
     }
   }
 
@@ -247,11 +294,19 @@ public abstract class CompletionTypeFilters {
 
   private static class WrongPrimitiveKindSupplementTargetFilter extends WrongPrimitiveKindFilterBase implements SupplementTargetCompletionFilter {}
 
-  private static class TypeAlreadySupplemented2Filter implements SupplementTargetCompletionFilter {
+  private static class TypeAlreadySupplementedTargetFilter implements SupplementTargetCompletionFilter {
     @Override
     public boolean includeInTarget(@NotNull SchemaTypeDef typeDef, @NotNull SchemaSupplementDef host) {
       HierarchyCache hierarchyCache = HierarchyCache.getHierarchyCache(host.getProject());
+
+      SchemaTypeDef source = host.source();
+      // if candidate is a parent of source then we have a circular inheritance
+      if (source != null && hierarchyCache.getTypeParents(source).contains(typeDef)) return false;
+
       List<SchemaTypeDef> typeParents = hierarchyCache.getTypeParents(typeDef);
+
+      // if candidate is a child if source then it's a useless supplement
+      if (source != null && typeParents.contains(source)) return false;
 
       for (SchemaFqnTypeRef supplementedTypeRef : host.supplementedRefs()) {
         SchemaTypeDef supplemented = supplementedTypeRef.resolve();
@@ -263,4 +318,32 @@ public abstract class CompletionTypeFilters {
   }
 
   // ---------------------- supplement source
+  
+  private static class SameTypeSupplementSourceFilter extends SameTypeFilterBase implements SupplementSourceCompletionFilter {}
+
+  private static class SameKindSupplementSourceFilter extends SameKindFilterBase implements SupplementSourceCompletionFilter {}
+
+  private static class WrongPrimitiveKindSupplementSourceFilter extends WrongPrimitiveKindFilterBase implements SupplementSourceCompletionFilter {}
+
+  private static class TypeAlreadySupplementedSourceFilter implements SupplementSourceCompletionFilter {
+    @Override
+    public boolean includeInSource(@NotNull SchemaTypeDef typeDef, @NotNull SchemaSupplementDef host) {
+      List<SchemaTypeDef> supplementedList = host.supplemented();
+      if (supplementedList.isEmpty()) return true;
+
+      HierarchyCache hierarchyCache = HierarchyCache.getHierarchyCache(host.getProject());
+      List<SchemaTypeDef> typeParents = hierarchyCache.getTypeParents(typeDef);
+
+      boolean allTargetsExtendSource = true;
+      for (SchemaTypeDef supplemented : supplementedList) {
+        if (supplemented != null) {
+          if (supplemented.equals(typeDef)) return false; // don't supplement self
+          if (typeParents.contains(supplemented)) return false; // circular inheritance
+          if (!hierarchyCache.getTypeParents(supplemented).contains(typeDef)) allTargetsExtendSource = false;
+        }
+      }
+
+      return !allTargetsExtendSource;
+    }
+  }
 }

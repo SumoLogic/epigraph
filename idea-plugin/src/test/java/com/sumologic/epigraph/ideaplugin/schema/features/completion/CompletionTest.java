@@ -167,7 +167,6 @@ public class CompletionTest extends LightCodeInsightFixtureTestCase {
     myFixture.configureByFile("TypeRefKindCompletionSupT3.esc");
     checkCompletionVariants("S2", "S3");
   }
-  /*
 
   // target, with `with`
 
@@ -202,7 +201,16 @@ public class CompletionTest extends LightCodeInsightFixtureTestCase {
     myFixture.configureByFile("TypeRefKindCompletionSupS3.esc");
     checkCompletionVariants("S2", "S3");
   }
-  */
+
+  public void testProperKindCompletionSupS4() {
+    myFixture.configureByFile("TypeRefKindCompletionSupS4.esc");
+    checkCompletionVariants("R2"); // R3 extends R2, but R1 doesn't
+  }
+
+  public void testProperKindCompletionSupS5() {
+    myFixture.configureByFile("TypeRefKindCompletionSupS5.esc");
+    checkCompletionVariants();
+  }
 
   // ----------------------------------
 

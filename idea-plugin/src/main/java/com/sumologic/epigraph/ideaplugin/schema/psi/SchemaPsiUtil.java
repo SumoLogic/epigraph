@@ -4,6 +4,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,7 +31,9 @@ public class SchemaPsiUtil {
 //    });
 //  }
 
-  public static boolean hasPrevSibling(@NotNull PsiElement e, IElementType... elementTypes) {
+  @Contract("null, _ -> false")
+  public static boolean hasPrevSibling(@Nullable PsiElement e, IElementType... elementTypes) {
+    if (e == null) return false;
     for (PsiElement sibling = e.getPrevSibling(); sibling != null; sibling = sibling.getPrevSibling()) {
       for (IElementType elementType : elementTypes) {
         if (sibling.getNode().getElementType().equals(elementType)) return true;
