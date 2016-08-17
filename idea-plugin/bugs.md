@@ -1,6 +1,7 @@
 ### High
 
 ### Medium
+- Schema files under `resources` should be excluded from analysis
 - `java.lang.AssertionError: Stub list in names.esc has more elements than PSI`, not reproducible so far
 - renaming a tag should suggest to rename base/sub tags (like renaming a field does)
 - renaming a field/tag with `override` modifier should rename base members too (and sub-members with `override`) 
