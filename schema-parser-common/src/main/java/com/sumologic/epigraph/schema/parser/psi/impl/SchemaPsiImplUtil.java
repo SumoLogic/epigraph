@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.S_WITH;
+
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
@@ -183,6 +185,7 @@ public class SchemaPsiImplUtil {
   @Contract(pure = true)
   @NotNull
   public static List<SchemaFqnTypeRef> supplementedRefs(@NotNull SchemaSupplementDef supplementDef) {
+    /*
     PsiElement with = supplementDef.getWith();
     if (with == null) return Collections.emptyList();
 
@@ -193,6 +196,18 @@ public class SchemaPsiImplUtil {
     while (ref != null) {
       result.add(ref);
       ref = PsiTreeUtil.getPrevSiblingOfType(ref, SchemaFqnTypeRef.class);
+    }
+
+    return result;
+    */
+
+    List<SchemaFqnTypeRef> result = new ArrayList<>();
+
+    for (PsiElement element = supplementDef.getSupplement();
+         element != null && element.getNode().getElementType() != S_WITH;
+         element = element.getNextSibling()) {
+
+      if (element instanceof SchemaFqnTypeRef) result.add((SchemaFqnTypeRef) element);
     }
 
     return result;

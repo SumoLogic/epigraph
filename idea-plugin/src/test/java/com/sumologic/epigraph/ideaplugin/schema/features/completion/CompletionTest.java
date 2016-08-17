@@ -134,20 +134,77 @@ public class CompletionTest extends LightCodeInsightFixtureTestCase {
 
   // ------------- supplements
 
-  public void testProperKindCompletionSups1() {
-    myFixture.configureByFile("TypeRefKindCompletionSups1.esc");
+  public void testProperKindCompletionSup1() {
+    myFixture.configureByFile("TypeRefKindCompletionSup1.esc");
     checkCompletionVariants("LL1", "LL2"); // but not LL3
   }
 
-  public void testProperKindCompletionSups2() {
-    myFixture.configureByFile("TypeRefKindCompletionSups2.esc");
+  public void testProperKindCompletionSup2() {
+    myFixture.configureByFile("TypeRefKindCompletionSup2.esc");
     checkCompletionVariants("LL1", "LL4");
   }
 
-  public void testProperKindCompletionSups3() {
-    myFixture.configureByFile("TypeRefKindCompletionSups3.esc");
+  public void testProperKindCompletionSup3() {
+    myFixture.configureByFile("TypeRefKindCompletionSup3.esc");
     checkCompletionVariants("S1", "S2");
+
   }
+  // ------------- supplement target
+
+  // target, no `with`
+
+  public void testProperKindCompletionSupT1() {
+    myFixture.configureByFile("TypeRefKindCompletionSupT1.esc");
+    checkCompletionVariants("LL2", "LL3");
+  }
+
+  public void testProperKindCompletionSupT2() {
+    myFixture.configureByFile("TypeRefKindCompletionSupT2.esc");
+    checkCompletionVariants("LL1", "LL4");
+  }
+
+  public void testProperKindCompletionSupT3() {
+    myFixture.configureByFile("TypeRefKindCompletionSupT3.esc");
+    checkCompletionVariants("S2", "S3");
+  }
+  /*
+
+  // target, with `with`
+
+  public void testProperKindCompletionSupT4() {
+    myFixture.configureByFile("TypeRefKindCompletionSupT4.esc");
+    checkCompletionVariants("LL1", "LL2");
+  }
+
+  public void testProperKindCompletionSupT5() {
+    myFixture.configureByFile("TypeRefKindCompletionSupT5.esc");
+    checkCompletionVariants("LL4", "LL5"); // LL1 would create circular ref, L2 already there, L3 extends L2
+  }
+
+  public void testProperKindCompletionSupT6() {
+    myFixture.configureByFile("TypeRefKindCompletionSupT6.esc");
+    checkCompletionVariants("S2", "S3");
+  }
+
+  // source
+
+  public void testProperKindCompletionSupS1() {
+    myFixture.configureByFile("TypeRefKindCompletionSupS1.esc");
+    checkCompletionVariants("LL1", "LL2");
+  }
+
+  public void testProperKindCompletionSupS2() {
+    myFixture.configureByFile("TypeRefKindCompletionSupS2.esc");
+    checkCompletionVariants("LL4", "LL5"); // LL1 would create circular ref, L2 already there, L3 extends L2
+  }
+
+  public void testProperKindCompletionSupS3() {
+    myFixture.configureByFile("TypeRefKindCompletionSupS3.esc");
+    checkCompletionVariants("S2", "S3");
+  }
+  */
+
+  // ----------------------------------
 
   private void checkCompletionVariants(String... variants) {
     myFixture.completeBasic();

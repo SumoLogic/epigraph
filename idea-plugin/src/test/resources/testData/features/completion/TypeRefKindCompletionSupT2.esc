@@ -1,0 +1,8 @@
+namespace testData.features.completion4
+
+record LL1
+record LL2 extends LL1
+record LL3 extends LL2
+record LL4
+
+supplement LL2, LL<caret>

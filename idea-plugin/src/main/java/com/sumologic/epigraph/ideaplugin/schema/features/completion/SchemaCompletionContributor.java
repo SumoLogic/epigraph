@@ -230,8 +230,12 @@ public class SchemaCompletionContributor extends CompletionContributor {
 
     if (PsiTreeUtil.getParentOfType(qid, SchemaSupplementDef.class) != null) {
       SchemaFqnTypeRef fqnTypeRef = PsiTreeUtil.getParentOfType(qid, SchemaFqnTypeRef.class);
-      if (fqnTypeRef != null && !SchemaPsiUtil.hasPrevSibling(fqnTypeRef, S_WITH)) {
-        result.addElement(LookupElementBuilder.create("with "));
+      if (fqnTypeRef != null) {
+        PsiElement prevSibling = SchemaPsiUtil.prevNonWhitespaceSibling(fqnTypeRef);
+        if (prevSibling != null && prevSibling.getNode().getElementType() != S_COMMA &&
+            !SchemaPsiUtil.hasPrevSibling(fqnTypeRef, S_WITH)) {
+          result.addElement(LookupElementBuilder.create("with "));
+        }
       }
     }
 
