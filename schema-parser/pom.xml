@@ -96,7 +96,7 @@
               <goal>copy-resources</goal>
             </goals>
             <configuration>
-              <outputDirectory>target/generated-sources/schema-parser-common.java</outputDirectory>
+              <outputDirectory>${project.build.directory}/generated-sources/schema-parser-common.java</outputDirectory>
               <resources>
                 <resource>
                   <directory>../schema-parser-common/src/main/java</directory>
