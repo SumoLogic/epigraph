@@ -68,6 +68,30 @@
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.build.directory}/generated-sources/schema-parser-common.java</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>../schema-parser-common/src/main/java</directory>
+                </resource>
+                <resource>
+                  <directory>../schema-parser-common/src/main/java.generated</directory>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
         <executions>
           <execution>
@@ -87,24 +111,18 @@
       </plugin>
 
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-resources-plugin</artifactId>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
         <executions>
           <execution>
-            <phase>generate-sources</phase>
+            <phase>process-sources</phase>
             <goals>
-              <goal>copy-resources</goal>
+              <goal>add-source</goal>
             </goals>
             <configuration>
-              <outputDirectory>${project.build.directory}/generated-sources/schema-parser-common.java</outputDirectory>
-              <resources>
-                <resource>
-                  <directory>../schema-parser-common/src/main/java</directory>
-                </resource>
-                <resource>
-                  <directory>../schema-parser-common/src/main/java.generated</directory>
-                </resource>
-              </resources>
+              <sources>
+                <source>${project.build.directory}/generated-sources/schema-parser-common.java</source>
+              </sources>
             </configuration>
           </execution>
         </executions>
