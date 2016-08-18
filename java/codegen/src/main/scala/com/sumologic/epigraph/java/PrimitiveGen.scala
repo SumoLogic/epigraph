@@ -20,7 +20,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Base interface for `${t.name.name}` datum.
  */
-public interface ${baseName(t)} extends${withParents(t, baseName)} io.epigraph.data.${Kind(t)}Datum.Static {
+public interface ${baseName(t)} extends${withParents(t)} io.epigraph.data.${Kind(t)}Datum.Static {
 
   @NotNull ${baseName(t)}.Type type = new ${baseName(t)}.Type();
 
@@ -46,11 +46,11 @@ public interface ${baseName(t)} extends${withParents(t, baseName)} io.epigraph.d
           ${baseName(t)}.Builder.Data::new
       );
     }
-${ctx.getAnonListOf(t).map { alt => sn"""\
+${ctx.getAnonListOf(t).map { lt => sn"""\
 
     @Override
     protected @NotNull java.util.function.Supplier<io.epigraph.types.ListType> listTypeSupplier() {
-      return () -> ${baseName(alt)}.type;
+      return () -> ${lqn(lt, t)}.type;
     }
 """ }.getOrElse("")
 }\

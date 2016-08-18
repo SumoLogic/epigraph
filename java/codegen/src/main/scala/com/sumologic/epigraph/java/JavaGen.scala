@@ -25,12 +25,7 @@ abstract class JavaGen[From >: Null <: AnyRef](protected val from: From, protect
 
   def javaFqn(fqn: Fqn): String = fqn.segments.map(javaName).mkString(".")
 
-  def localQName(typeFqn: Fqn, localNs: Fqn, trans: (String) => String = identity): Fqn = {
-    val transLocal = trans(typeFqn.last())
-    val ns = typeFqn.removeLastSegment()
-    if (ns == localNs) new Fqn(transLocal) else ns.append(transLocal)
-  }
-
+  /** local (short) java name for given type */
   def ln(t: CType): String = t match {
     case t: CTypeDef => t.name.local
     case t: CAnonListType => ln(t.elementTypeRef.resolved) + "_List"
@@ -108,9 +103,27 @@ abstract class JavaGen[From >: Null <: AnyRef](protected val from: From, protect
 
   def bldImplName(t: CTypeDef): String = javaLocalName(t, bldImplName)
 
-  def javaQName(t: CType, ht: CType, trans: (String) => String = identity): String =
-    javaFqn(localQName(getNamedTypeComponent(t).name.fqn, getNamedTypeComponent(ht).name.fqn.removeLastSegment(), trans))
+  /** java type name for given type as seen from the context of the other type namespace */
+  def lqn(t: CType, lt: CType, lnTrans: (String) => String = identity): String = {
+    val tpn = pn(t)
+    if (tpn == pn(lt)) lnTrans(ln(t)) else tpn + "." + ln(t)
+  }
 
+  /** java package name for given type */
+  def pn(t: CType): String = getNamedTypeComponent(t).name.fqn.removeLastSegment().segments.map(javaName).mkString(".")
+
+  @Deprecated
+  def javaQName(t: CType, ht: CType, trans: (String) => String = identity): String = javaFqn(
+    localQName(getNamedTypeComponent(t).name.fqn, getNamedTypeComponent(ht).name.fqn.removeLastSegment(), trans)
+  )
+
+  def localQName(typeFqn: Fqn, localNs: Fqn, trans: (String) => String = identity): Fqn = {
+    val transLocal = trans(typeFqn.last()) // FIXME use ln(t) here
+    val ns = typeFqn.removeLastSegment()
+    if (ns == localNs) new Fqn(transLocal) else ns.append(transLocal)
+  }
+
+  @Deprecated
   def baseQName(t: CType, ht: CType): String = javaQName(t, ht, baseName)
 
   def immQName(t: CTypeDef, ht: CTypeDef): String = javaQName(t, ht, immName)
@@ -122,10 +135,13 @@ abstract class JavaGen[From >: Null <: AnyRef](protected val from: From, protect
 
   def qnameArgs(fqn: Fqn): Seq[String] = fqn.last() +: fqn.removeLastSegment().segments.toSeq
 
-  def withParents(t: CTypeDef, trans: (String) => String = identity): String =
-    t.getLinearizedParentsReversed.map(" " + javaQName(_, t, trans) + ",").mkString
+  def withParents(t: CType, trans: (String) => String = identity): String = {
+    print(t.name.name + " => ")
+    println(t.getLinearizedParentsReversed.map(_.name.name))
+    t.getLinearizedParentsReversed.map(" " + lqn(_, t, trans) + ",").mkString
+  }
 
-  def parentNames(t: CTypeDef, trans: (String) => String = identity): String =
+  def parentNames(t: CType, trans: (String) => String = identity): String =
     t.getLinearizedParentsReversed.map(javaQName(_, t, trans)).mkString(", ")
 
   def ?(arg: AnyRef, ifNotNull: => String, ifNull: => String): String = if (arg ne null) ifNotNull else ifNull

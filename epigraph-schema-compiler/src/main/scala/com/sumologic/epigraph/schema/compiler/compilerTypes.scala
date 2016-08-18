@@ -11,7 +11,9 @@ import scala.collection.JavaConversions._
 import scala.collection.mutable
 
 
-trait CType {
+trait CType {self =>
+
+  type This >: this.type <: CType {type This <: self.This}
 
   val name: CTypeName
 
@@ -19,13 +21,18 @@ trait CType {
 
   def isAssignableFrom(subtype: CType): Boolean
 
+  def linearizedParents: Seq[This]
+
+  /** Immediate parents of this type in order of increasing priority */
+  def getLinearizedParentsReversed: java.lang.Iterable[This] = linearizedParents.reverse // TODO phase guard?
+
 }
 
 
 abstract class CTypeDef protected(val csf: CSchemaFile, val psi: SchemaTypeDef, override val kind: CTypeKind)
     (implicit val ctx: CContext) extends CType {self =>
 
-  type This >: this.type <: CTypeDef {type This <: self.This}
+  override type This >: this.type <: CTypeDef {type This <: self.This}
 
   @scala.beans.BeanProperty
   val name: CTypeFqn = new CTypeFqn(csf, csf.namespace.fqn, psi)
@@ -98,30 +105,12 @@ abstract class CTypeDef protected(val csf: CSchemaFile, val psi: SchemaTypeDef, 
   private lazy val cachedParents: Seq[This] = (declaredSupertypeRefs.map(_.resolved) ++ injectedSupertypes)
       .asInstanceOf[Seq[This]]
 
-//  def depth: Int = ctx.phased(CPhase.INHERIT_FROM_SUPERTYPES, -1, cachedDepth)
-//
-//  private lazy val cachedDepth: Int = if (supertypes.isEmpty) 0 else supertypes.map(_.depth).max + 1
-//
-//  def depthSortedSupertypes: Seq[This] = ctx.phased(CPhase.INHERIT_FROM_SUPERTYPES, Nil, cachedDepthSortedSupertypes)
-//
-//  private lazy val cachedDepthSortedSupertypes = computedSupertypes.get.sortBy(_.depth).asInstanceOf[Seq[This]]
-//
-//  def declaredAndInjectedParents: Seq[This] =
-//    (declaredSupertypeRefs.map(_.resolved) ++ injectedSupertypes).asInstanceOf[Seq[This]]
-//
-//  def linearize: Seq[This] = this.asInstanceOf[This] +: declaredAndInjectedParents.foldLeft[Seq[This]](Nil) { (acc, p) =>
-//     p.linearize.filterNot(acc.contains).asInstanceOf[Seq[This]] ++ acc
-//  }
-
   /** Immediate parents of this type in order of decreasing priority */
   def linearizedParents: Seq[This] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, _linearizedParents)
 
   private lazy val _linearizedParents: Seq[This] = parents.foldLeft[Seq[This]](Nil) { (acc, p) =>
     if (acc.contains(p) || parents.exists(_.supertypes.contains(p))) acc else p +: acc
   }
-
-  /** Immediate parents of this type in order of increasing priority */
-  def getLinearizedParentsReversed: java.lang.Iterable[This] = linearizedParents.reverse
 
   def linearizedSupertypes: Seq[This] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, _linearizedSupertypes)
 
@@ -322,7 +311,9 @@ class CField(val csf: CSchemaFile, val psi: SchemaFieldDecl)(implicit val ctx: C
 }
 
 
-trait CMapType extends CType {
+trait CMapType extends CType {self =>
+
+  override type This >: this.type <: CMapType {type This <: self.This}
 
   val name: CTypeName
 
@@ -336,7 +327,9 @@ trait CMapType extends CType {
 
 }
 
-class CAnonMapType(override val name: CAnonMapTypeName) extends CMapType {
+class CAnonMapType(override val name: CAnonMapTypeName)(implicit val ctx: CContext) extends CMapType {
+
+  override type This = CAnonMapType
 
   override val keyTypeRef: CTypeRef = name.keyTypeRef
 
@@ -346,6 +339,13 @@ class CAnonMapType(override val name: CAnonMapTypeName) extends CMapType {
     subtype.kind == kind &&
         keyTypeRef.resolved == subtype.asInstanceOf[CMapType].keyTypeRef.resolved &&
         valueTypeRef.resolved.isAssignableFrom(cast(subtype).valueTypeRef.resolved)
+
+  /** Immediate parents of this type in order of decreasing priority */
+  def linearizedParents: Seq[CAnonMapType] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, _linearizedParents)
+
+  private lazy val _linearizedParents: Seq[CAnonMapType] = valueTypeRef.resolved.linearizedParents.map { vp =>
+    ctx.getAnonMapOf(keyTypeRef.resolved, vp).get // FIXME map[K, Super] might not have been referenced in the schema?
+  }
 
 }
 
@@ -362,7 +362,9 @@ class CMapTypeDef(csf: CSchemaFile, override val psi: SchemaMapTypeDef)(implicit
 }
 
 
-trait CListType extends CType {
+trait CListType extends CType {self =>
+
+  override type This >: this.type <: CListType {type This <: self.This}
 
   val name: CTypeName
 
@@ -375,13 +377,22 @@ trait CListType extends CType {
 }
 
 
-class CAnonListType(override val name: CAnonListTypeName) extends CListType {
+class CAnonListType(override val name: CAnonListTypeName)(implicit val ctx: CContext) extends CListType {
+
+  override type This = CAnonListType
 
   override val elementTypeRef: CTypeRef = name.elementTypeRef
 
   override def isAssignableFrom(subtype: CType): Boolean =
     subtype.kind == kind &&
         elementTypeRef.resolved.isAssignableFrom(cast(subtype).elementTypeRef.resolved)
+
+  /** Immediate parents of this type in order of decreasing priority */
+  def linearizedParents: Seq[CAnonListType] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, _linearizedParents)
+
+  private lazy val _linearizedParents: Seq[CAnonListType] = elementTypeRef.resolved.linearizedParents.map { ep =>
+    ctx.getAnonListOf(ep).get // FIXME list[Super] might not exist - autocreate
+  }
 
 }
 
