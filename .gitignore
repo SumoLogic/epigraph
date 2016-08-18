@@ -14,10 +14,14 @@
 
 # Gradle directories
 /.gradle/
-/*/.gradle/
+/**/.gradle/
 /out/
 /build/
 /**/build/
+
+# Copied sources
+/**/java.copied/*
+!/**/java.copied/readme.md
 
 # Mac OS X laundry
 .DS_Store

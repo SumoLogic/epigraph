@@ -97,9 +97,34 @@
             </goals>
             <configuration>
               <sources>
-                <source>../schema-parser-common/src/main/java</source>
-                <source>../schema-parser-common/src/main/java.generated</source>
+                <source>src/main/java.copied</source>
               </sources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <!--<version>3.0.1</version>-->
+        <executions>
+          <execution>
+            <!--<id>copy-resources</id>-->
+            <!-- here the phase you need -->
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>src/main/java.copied</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>../schema-parser-common/src/main/java</directory>
+                </resource>
+                <resource>
+                  <directory>../schema-parser-common/src/main/java.generated</directory>
+                </resource>
+              </resources>
             </configuration>
           </execution>
         </executions>
