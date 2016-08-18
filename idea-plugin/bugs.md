@@ -1,4 +1,5 @@
 ### High
+- Var tag references not resolving in `default` overrides on fields/list elements etc
 
 ### Medium
 - Schema files under `resources` should be excluded from analysis

@@ -2,6 +2,10 @@
 - Make light-psi a separate module
 
 ### Medium
+- Smart completion for `default <tag>`, `nodefault` on fields, list elements etc
+  - [ ] Don't allow either on datum types (non-vartypes)
+  - [ ] Changing default on vartypes is allowed. Defaults on fields (even implicit) must be compatible with parent fields:
+  Default on a field = field default > field type default > parent field default > parent field type default 
 - add SourceRootFinder to detect src/main/epigraph, test/epigraph etc
 - Structure popup (ctrl-f12)
 - Rename on fields (**In progress**)
