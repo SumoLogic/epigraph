@@ -87,36 +87,16 @@
       </plugin>
 
       <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>generate-sources</phase>
-            <goals>
-              <goal>add-source</goal>
-            </goals>
-            <configuration>
-              <sources>
-                <source>src/main/java.copied</source>
-              </sources>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
-        <!--<version>3.0.1</version>-->
         <executions>
           <execution>
-            <!--<id>copy-resources</id>-->
-            <!-- here the phase you need -->
             <phase>generate-sources</phase>
             <goals>
               <goal>copy-resources</goal>
             </goals>
             <configuration>
-              <outputDirectory>src/main/java.copied</outputDirectory>
+              <outputDirectory>target/generated-sources/schema-parser-common.java</outputDirectory>
               <resources>
                 <resource>
                   <directory>../schema-parser-common/src/main/java</directory>
