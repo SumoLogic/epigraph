@@ -1,7 +1,7 @@
 apply plugin: 'java'
 
-sourceSets.main.java.srcDirs += file('src/main/java.copied')
-idea.module.generatedSourceDirs += file('src/main/java.copied')
+sourceSets.main.java.srcDirs += file('target/generated-sources/schema-parser-common.java')
+idea.module.generatedSourceDirs += file('target/generated-sources/schema-parser-common.java')
 
 // TODO extract into separate module
 project.ext.set('lightPsiJar', "$rootDir/schema-parser/lib/light-psi-all.jar")
@@ -27,7 +27,7 @@ test {
 task copySources(type: Copy) {
   from '../schema-parser-common/src/main/java'
   from '../schema-parser-common/src/main/java.generated'
-  into 'src/main/java.copied'
+  into 'target/generated-sources/schema-parser-common.java'
 }
 
 build.dependsOn copySources
