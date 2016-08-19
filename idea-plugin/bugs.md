@@ -1,5 +1,6 @@
 ### High
 - Var tag references not resolving in `default` overrides on fields/list elements etc
+- Field/Tag completion after `default` in records/vartypes: currently suggests `namespace`.. should suggest all the super fields/tags
 
 ### Medium
 - Schema files under `resources` should be excluded from analysis

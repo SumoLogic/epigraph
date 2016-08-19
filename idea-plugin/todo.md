@@ -2,6 +2,7 @@
 - Make light-psi a separate module
 
 ### Medium
+- Smart type completion: suggest out of scope types (+add import)
 - Smart completion for `default <tag>`, `nodefault` on fields, list elements etc
   - [ ] Don't allow either on datum types (non-vartypes)
   - [ ] Changing default on vartypes is allowed. Defaults on fields (even implicit) must be compatible with parent fields:
@@ -20,13 +21,20 @@
     - [ ] Extending collection with incompatible element kind: e.g. `List[Foo]` can extend `List[Bar]` only if `Foo` extends `Bar`
   - `supplement` source
     - [ ] Don't warn if at least one of the targets is not a child of source
-    
+- Namespace declaration completion: take folder structure into account
+- Diagrams support. Bonus: show field types
 
 ### Low
+- Option to auto optimize imports on code formatting
+- Structure view: option to show inherited members
+- Auto insert matching quotes/backticks/parens/<> in parameters and data
+- Namespace declaration: inspection to warn about namespaces not matching folder structure
 - Rename projects to `epigraph-idea-plugin` and `epigraph-schema-parser(-common)` ?
 - Type ref completion should suggest types from non-imported namespaces, automatically adding imports as needed
 - Custom attributes must reference fields in meta-schema (and respect renames, find usages etc)
 - Custom attribute values must be based (and validated against) meta-schema. Find usages/refactorings/completion must take it into account
+- File drag&drop: treat as move refactoring (fix namespaces)
+- Auto insert imports on paste?
 
 ---
 ## Done
