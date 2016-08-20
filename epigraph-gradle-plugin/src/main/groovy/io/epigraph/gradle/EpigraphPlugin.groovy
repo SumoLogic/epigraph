@@ -42,46 +42,10 @@ class EpigraphPlugin implements Plugin<ProjectInternal> {
     EpigraphPluginConvention epigraphConvention = new EpigraphPluginConvention(project, instantiator)
     project.getConvention().getPlugins().put('epigraph', epigraphConvention)
 
-    project.configurations {
-      epigraph
-//      'default'.extendsFrom epigraph
-    }
-
-    project.configurations.default.extendsFrom(project.configurations.epigraph)
-
-//    configureSourceSets(project)
-
-    project.afterEvaluate {
-      configureSourceSets(project)
-      configurePublishing(project)
-    }
-
+    configureSourceSets(project)
+    configurePublishing(project)
     configureIdeaScopes(project)
   }
-
-  private static void configureIdeaScopes(Project project) {
-    // see https://youtrack.jetbrains.com/issue/IDEA-137763
-    // TODO still doesn't work, IDEA doesn't see dependencies between epigraph modules
-
-    if (project.hasProperty('idea')) {
-      def scopes = project.idea.module.scopes
-
-      if (scopes.COMPILE == null) addScope('COMPILE', scopes)
-      if (scopes.TEST == null) addScope('TEST', scopes)
-
-      scopes.COMPILE.plus += [project.configurations.epigraph]
-      scopes.TEST.plus += [project.configurations.epigraph]
-
-    }
-  }
-
-  private static void addScope(String name, LinkedHashMap<String, Map<String, Collection<Configuration>>> scopes) {
-    LinkedHashMap<String, Collection<Configuration>> scope = new LinkedHashMap<>()
-    scope.put("plus", new ArrayList<Configuration>())
-    scope.put("minus", new ArrayList<Configuration>())
-    scopes.put(name, scope)
-  }
-
 
   private void configureSourceSets(Project project) {
     SourceSetContainer sourceSets = project.sourceSets
@@ -107,9 +71,10 @@ class EpigraphPlugin implements Plugin<ProjectInternal> {
       sourceSet.getAllSource().source(epigraphDirectorySet)
 
       // create compile schema task for this source set
-      String taskName = sourceSet.getTaskName('compile', 'EpigraphSchema')
-      CompileSchemaTask compileSchemaTask = tasks.create(taskName, CompileSchemaTask.class)
+      String compileTaskName = sourceSet.getCompileTaskName('EpigraphSchema')
+      CompileSchemaTask compileSchemaTask = tasks.create(compileTaskName, CompileSchemaTask.class)
       compileSchemaTask.setDescription("Process $sourceSet.name Epigraph schemas.")
+      compileSchemaTask.setGroup(BasePlugin.BUILD_GROUP)
       compileSchemaTask.setSource(epigraphDirectorySet)
       compileSchemaTask.outputs.dir srcDir // TODO better way to make it incremental? It won't unless output dir is defined
 
@@ -119,14 +84,18 @@ class EpigraphPlugin implements Plugin<ProjectInternal> {
         nonTestDirectorySets.add(epigraphDirectorySet)
       }
 
-      configureIdeaModule(project, sourceSet, srcDir)
-
-      // configure assemble task dependency
+      // create compile configuration
+      def compileConfiguration = createCompileConfiguration(project, sourceSet)
       if (isMainSourceSet(sourceSet)) {
-        tasks.getByName('assemble') dependsOn compileSchemaTask
+        project.configurations.default.extendsFrom(compileConfiguration)
       }
 
-      createJarTask(project, sourceSet, compileSchemaTask)
+      compileSchemaTask.setConfiguration(compileConfiguration)
+      compileSchemaTask.dependsOn compileConfiguration
+
+      configureIdeaModule(project, sourceSet, srcDir)
+
+      createJarTask(project, sourceSet, compileConfiguration, compileSchemaTask)
     }
 
     // add non-test schemas to tests
@@ -135,6 +104,25 @@ class EpigraphPlugin implements Plugin<ProjectInternal> {
       sources.add(it.getSource())
       it.setSource(sources)
     }
+  }
+
+  private static void addDefaultSourceSets(Project project, SourceSetContainer sourceSets) {
+    EpigraphPluginConvention epigraphConvention = project.getConvention().getPlugin(EpigraphPluginConvention.class)
+
+    // only create if src/main and src/test folders exist?
+    SourceSet main = epigraphConvention.getSourceSets().create(SourceSet.MAIN_SOURCE_SET_NAME)
+    SourceSet test = epigraphConvention.getSourceSets().create(SourceSet.TEST_SOURCE_SET_NAME)
+
+    sourceSets.add(main)
+    sourceSets.add(test)
+  }
+
+  private static Configuration createCompileConfiguration(Project project, SourceSet sourceSet) {
+    return createConfiguration(project, sourceSet.getCompileConfigurationName())
+  }
+
+  private static Configuration createConfiguration(Project project, String name) {
+    return project.configurations.maybeCreate(name);
   }
 
   private static void configureIdeaModule(Project project, SourceSet sourceSet, String srcDir) {
@@ -149,18 +137,28 @@ class EpigraphPlugin implements Plugin<ProjectInternal> {
     }
   }
 
-  private static void addDefaultSourceSets(Project project, SourceSetContainer sourceSets) {
-    EpigraphPluginConvention epigraphConvention = project.getConvention().getPlugin(EpigraphPluginConvention.class)
+  private static void configureIdeaScopes(Project project) {
+    if (project.hasProperty('idea')) {
+      def scopes = project.idea.module.scopes
 
-    SourceSet main = epigraphConvention.getSourceSets().create(SourceSet.MAIN_SOURCE_SET_NAME)
-    SourceSet test = epigraphConvention.getSourceSets().create(SourceSet.TEST_SOURCE_SET_NAME)
+      if (scopes.COMPILE == null) addScope('COMPILE', scopes)
+      if (scopes.TEST == null) addScope('TEST', scopes)
 
-    sourceSets.add(main)
-    sourceSets.add(test)
+      scopes.COMPILE.plus += [project.configurations.compile]
+      scopes.TEST.plus += [project.configurations.testCompile]
 
+    }
   }
 
-  private static void createJarTask(Project project, SourceSet sourceSet, CompileSchemaTask compileSchemaTask) {
+  private static void addScope(String name, LinkedHashMap<String, Map<String, Collection<Configuration>>> scopes) {
+    LinkedHashMap<String, Collection<Configuration>> scope = new LinkedHashMap<>()
+    scope.put('plus', new ArrayList<Configuration>())
+    scope.put('minus', new ArrayList<Configuration>())
+    scopes.put(name, scope)
+  }
+
+  private
+  static void createJarTask(Project project, SourceSet sourceSet, Configuration configuration, CompileSchemaTask compileSchemaTask) {
     TaskContainer tasks = project.getTasks()
     String jarTaskName = sourceSet.getJarTaskName()
 
@@ -178,10 +176,7 @@ class EpigraphPlugin implements Plugin<ProjectInternal> {
       })
 
       if (isMainSourceSet(sourceSet)) {
-        tasks.getByName('assemble') dependsOn jarTask
-        project.artifacts {
-          epigraph jarTask
-        }
+        project.artifacts.add(configuration.getName(), jarTask)
       }
     }
   }
@@ -189,16 +184,18 @@ class EpigraphPlugin implements Plugin<ProjectInternal> {
   private static void configurePublishing(Project project) {
     // TODO only change <packaging> for epigraph jars ?
 
-    project.publishing {
-      publications {
-        withType(MavenPublication) {
-          pom.withXml { XmlProvider xml ->
-            def node = xml.asNode()
-            def packaging = node.packaging
-            if (packaging.isEmpty()) {
-              node.appendNode('packaging', EPIGRAPH_PACKAGING_TYPE)
-            } else {
-              packaging*.setValue(EPIGRAPH_PACKAGING_TYPE)
+    if (project.hasProperty('publishing')) {
+      project.publishing {
+        publications {
+          withType(MavenPublication) {
+            pom.withXml { XmlProvider xml ->
+              def node = xml.asNode()
+              def packaging = node.packaging
+              if (packaging.isEmpty()) {
+                node.appendNode('packaging', EPIGRAPH_PACKAGING_TYPE)
+              } else {
+                packaging*.setValue(EPIGRAPH_PACKAGING_TYPE)
+              }
             }
           }
         }

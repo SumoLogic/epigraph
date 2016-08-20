@@ -15,9 +15,9 @@ import java.util.regex.Pattern
 @ParallelizableTask
 class CompileSchemaTask extends SourceTask {
   private static final Pattern SCHEMA_FILENAME_PATTERN = Pattern.compile(".+\\.esc");
+  private Configuration configuration;
 
   CompileSchemaTask() {
-    setGroup('Epigraph')
   }
 
   @TaskAction
@@ -31,6 +31,10 @@ class CompileSchemaTask extends SourceTask {
     compileFiles(sources, dependencySources)
   }
 
+  void setConfiguration(Configuration configuration) {
+    this.configuration = configuration
+  }
+
   @Override
   TaskOutputsInternal getOutputs() {
     return super.getOutputs()
@@ -41,13 +45,12 @@ class CompileSchemaTask extends SourceTask {
   }
 
   private Collection<Source> getDependencySources() {
-    Configuration epigraphConfiguration = project.getConfigurations().getByName('epigraph')
-    getLogger().debug("Getting dependencies from $epigraphConfiguration")
-    if (epigraphConfiguration == null) return Collections.emptyList()
+    getLogger().debug("Getting dependencies from ${configuration}")
+    if (configuration == null) return Collections.emptyList()
 
     Collection<Source> dependencySources = new ArrayList<>()
 
-    epigraphConfiguration.files.each {
+    configuration.files.each {
       // TODO take charset from build props
       JarSource.allFiles(new JarFile(it), SCHEMA_FILENAME_PATTERN, StandardCharsets.UTF_8).each {
         dependencySources.add(it)

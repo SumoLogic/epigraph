@@ -3,5 +3,5 @@ plugins {
 }
 
 dependencies {
-  epigraph project(':epigraph-builtin-types')
+  compile project(':epigraph-builtin-types')
 }
