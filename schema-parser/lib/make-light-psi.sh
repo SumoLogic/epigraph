@@ -1,23 +1,24 @@
 #!/bin/sh
 
+# THIS FILE IS OBSOLETE, USE GRADLE TASKS IN epigraph-light-psi
+
 # Try to detect IDEA home
 [ -z "$IDEA_HOME" ] && IDEA_HOME="/Applications/IntelliJ IDEA CE.app/Contents"
 [ ! -d "$IDEA_HOME" ] && IDEA_HOME="/Applications/IntelliJ IDEA.app/Contents"
 [ ! -d "$IDEA_HOME" ] && IDEA_HOME="$HOME/idea"
 [ ! -d "$IDEA_HOME" ] && IDEA_HOME="$HOME/Applications/IntelliJ IDEA CE.app/Contents"
 
-[ ! -d "$IDEA_HOME" ] && echo "Can't detect IDEA location, pease set IDEA_HOME" && exit 1
+[ ! -d "$IDEA_HOME" ] && echo "Can't detect IDEA location, please set IDEA_HOME" && exit 1
 
 if [ -z "$GKIT_JAR" ]; then
   # Try to detect plugins location
-  [ -z "$GKIT_JAR" ] && GKIT_JAR="$HOME/Library/Application Support/IdeaIC2016.1/GrammarKit/lib/grammar-kit.jar"
-  [ ! -f "$GKIT_JAR" ] && GKIT_JAR="$HOME/Library/Application Support/IdeaIC2016.1/GrammarKit/lib/grammar-kit.jar"
-  [ ! -f "$GKIT_JAR" ] && GKIT_JAR="$HOME/Library/Application Support/IntelliJIdea2016.1/GrammarKit/lib/grammar-kit.jar"
-  [ ! -f "$GKIT_JAR" ] && GKIT_JAR="$HOME/.IdeaIC2016.1/GrammarKit/lib/grammar-kit.jar"
-  [ ! -f "$GKIT_JAR" ] && GKIT_JAR="$HOME/.IntelliJIdea2016.1/GrammarKit/lib/grammar-kit.jar"
+  [ -z "$GKIT_JAR" ] && GKIT_JAR="$HOME/Library/Application Support/IdeaIC2016.2/GrammarKit/lib/grammar-kit.jar"
+  [ ! -f "$GKIT_JAR" ] && GKIT_JAR="$HOME/Library/Application Support/IntelliJIdea2016.2/GrammarKit/lib/grammar-kit.jar"
+  [ ! -f "$GKIT_JAR" ] && GKIT_JAR="$HOME/.IdeaIC2016.2/GrammarKit/lib/grammar-kit.jar"
+  [ ! -f "$GKIT_JAR" ] && GKIT_JAR="$HOME/.IntelliJIdea2016.2/GrammarKit/lib/grammar-kit.jar"
 fi
 
-[ ! -f "$GKIT_JAR" ] && echo "Can't detect grammar-kit.jar location, pease install it or set GKIT_JAR" && exit 1
+[ ! -f "$GKIT_JAR" ] && echo "Can't detect grammar-kit.jar location, please install it or set GKIT_JAR" && exit 1
 
 mv light-psi-all.jar light-psi-all_old.jar 2>/dev/null
 

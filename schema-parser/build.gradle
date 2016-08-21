@@ -1,28 +1,33 @@
 apply plugin: 'java'
+apply plugin: 'application'
+
+mainClassName = 'com.sumologic.epigraph.schema.parser.Main'
 
 sourceSets.main.java.srcDirs += file("$buildDir/generated-sources/schema-parser-common.java")
 idea.module.generatedSourceDirs += file("$buildDir/generated-sources/schema-parser-common.java")
 
-// TODO extract into separate module
-project.ext.set('lightPsiJar', "$rootDir/schema-parser/lib/light-psi-all.jar")
+// keeping it around for now for light-psi jar regeneration
+//project.ext.set('lightPsiJar', "$rootDir/schema-parser/lib/light-psi-all.jar")
 
 dependencies {
+  compile project(':epigraph-light-psi')
+//  compileOnly files(project.lightPsiJar)
+//  testCompileOnly files(project.lightPsiJar)
+
   compile 'org.jetbrains:annotations'
   compile 'net.jcip:jcip-annotations'
 
-  compileOnly files(project.lightPsiJar)
-  testCompileOnly files(project.lightPsiJar)
 
   testCompile 'junit:junit'
 }
 
-jar {
-  from zipTree(project.lightPsiJar)
-}
+//jar {
+//  from zipTree(project.lightPsiJar)
+//}
 
-test {
-  classpath += files(project.lightPsiJar)
-}
+//test {
+//  classpath += files(project.lightPsiJar)
+//}
 
 task copySources(type: Copy) {
   from '../schema-parser-common/src/main/java'
@@ -30,4 +35,4 @@ task copySources(type: Copy) {
   into "$buildDir/generated-sources/schema-parser-common.java"
 }
 
-build.dependsOn copySources
+compileJava.dependsOn copySources

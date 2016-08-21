@@ -1,0 +1,172 @@
+//plugins {
+//  id 'com.github.johnrengelman.shadow' version '1.2.3'
+//}
+
+apply plugin: 'base'
+
+/*
+configurations {
+  lightPsiTmp
+}
+
+dependencies {
+  lightPsiTmp files("$buildDir/tmp/light-psi-tmp.jar")
+}
+*/
+
+ext.isFolder = { String path ->
+  if (path == null) return false
+  def file = new File(path)
+  return file.exists() && file.isDirectory()
+}
+
+ext.isFile = { String path ->
+  if (path == null) return false
+  def file = new File(path)
+  return file.exists() && file.isFile()
+}
+
+task locateIdeaHome << {
+  def locations = [
+      System.getenv('IDEA_HOME'),
+      System.getProperty('IDEA_HOME'),
+      '/Applications/IntelliJ IDEA CE.app/Contents',
+      '/Applications/IntelliJ IDEA.app/Contents',
+      "${System.getProperty('user.home')}/idea",
+      "${System.getProperty('user.home')}/Applications/IntelliJ IDEA CE.app/Contents",
+      "${System.getProperty('user.home')}/Applications/IntelliJ IDEA.app/Contents"
+  ]
+
+  def ideaHome = locations.find { isFolder(it) }
+  if (ideaHome == null) throw new GradleException('Can\'t detect IDEA location, please set IDEA_HOME')
+
+  project.ext.ideaHome = ideaHome
+}
+
+task locateGrammarKit << {
+  def ideaVersion = '2016.2'
+  def locations = [
+      System.getenv('GKIT_JAR'),
+      System.getProperty('GKIT_JAR'),
+      "${System.getProperty('user.home')}/Library/Application Support/IdeaIC$ideaVersion/GrammarKit/lib/grammar-kit.jar",
+      "${System.getProperty('user.home')}/Library/Application Support/IntelliJIdea$ideaVersion/GrammarKit/lib/grammar-kit.jar",
+      "${System.getProperty('user.home')}/.IdeaIC$ideaVersion/GrammarKit/lib/grammar-kit.jar",
+      "${System.getProperty('user.home')}/.IntelliJIdea$ideaVersion/GrammarKit/lib/grammar-kit.jar"
+  ]
+
+  def grammarKit = locations.find { isFile(it) }
+  if (grammarKit == null) throw new GradleException('Can\'t detect grammar-kit.jar location, please set GKIT_JAR')
+
+  logger.info("grammar kit found at $grammarKit")
+  project.ext.grammarKit = grammarKit
+}
+
+task updateFileList(dependsOn: [locateIdeaHome, locateGrammarKit]) << {
+  // Assemble schema-parser standalone runnable
+  // Patch launcher script to use real IDEA installation and Grammar-Kit instead of our light-psi jar
+  // Run it capturing the list of loaded classes to resources/light-psi-filelist.txt
+
+  def fileList = "$projectDir/resources/light-psi-filelist.txt"
+  def fileListFile = new File(fileList)
+  fileListFile.parentFile.mkdirs()
+
+  // TODO patch template must be updated to remove our new light-psi jar from classpath
+  // prepare wrapper patch
+  def patch = new File('resources/schema-parser.patch.src').text
+  patch = patch.replaceAll('@IDEALIB', "$project.ext.ideaHome/lib")
+  patch = patch.replaceAll('@GKITJAR', project.ext.grammarKit)
+
+  def patchTarget = "$buildDir/schema-parser.patch"
+  def patchTargetFile = new File(patchTarget)
+  patchTargetFile.parentFile.mkdirs()
+  patchTargetFile.write(patch)
+
+  // TODO rewrite it in groovy? still has to invoke external JVM process
+  exec {
+    commandLine 'sh', 'resources/update-filelist.sh', fileListFile.canonicalPath
+  }
+
+  // resource files
+  fileListFile.append('misc/registry.properties\n')
+}
+
+import java.util.jar.*
+
+task packageLightPsi(dependsOn: [locateIdeaHome, locateGrammarKit]) << {
+  // repackage resources/light-psi-prebuilt.jar using real IDEA/GrammarKit
+  // classes and resources listed in resources/light-psi-filelist.txt
+
+  def sources = [project.ext.grammarKit]
+  sources.addAll(new File("${project.ext.ideaHome}/lib").listFiles(new FilenameFilter() {
+    @Override
+    boolean accept(File dir, String name) {
+      name.endsWith('.jar')
+    }
+  }).collect { it.getCanonicalPath() })
+
+  def fileListLocation = "$projectDir/resources/light-psi-filelist.txt"
+  def fileSet = new File(fileListLocation).readLines() as Set
+
+  // take as an argument ?
+  def targetLocation = 'resources/light-psi-prebuilt.jar'
+//  def targetLocation = "$buildDir/tmp/light-psi-tmp.jar"
+  new File(targetLocation).parentFile.mkdirs()
+
+  def manifest = new Manifest()
+  manifest.getMainAttributes().put(Attributes.Name.MANIFEST_VERSION, '1.0')
+
+  def target = new JarOutputStream(new FileOutputStream(targetLocation), manifest)
+
+  def buffer = new byte[4096]
+
+  sources.each { String sourceLocation ->
+    logger.debug("Checking $sourceLocation")
+    def sourceFile = new File(sourceLocation)
+    def source = new JarInputStream(new FileInputStream(sourceLocation))
+
+    for (JarEntry entry = source.getNextJarEntry(); entry != null; entry = source.getNextJarEntry()) {
+      if (fileSet.contains(entry.name)) {
+        logger.debug("Adding $sourceLocation!${entry.name}")
+        target.putNextEntry(entry)
+
+        int length
+        while ((length = source.read(buffer)) != -1) {
+          target.write(buffer, 0, length)
+        }
+
+        fileSet.remove(entry.name)
+      }
+    }
+  }
+
+  if (!fileSet.isEmpty()) {
+    throw new GradleException("Missing files: $fileSet")
+  }
+
+  target.close()
+}
+
+// todo add dependencies on other tasks
+// todo enable once this is resolved: https://github.com/johnrengelman/shadow/issues/240
+//task jar2(type: com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar) << {
+//  configurations = [project.configurations.lightPsiTmp]
+//}
+
+task copyPrebuilt(type: Copy) {
+  from('resources') {
+    include 'light-psi-prebuilt.jar'
+    rename 'light-psi-prebuilt', "$archivesBaseName-$version"
+  }
+  into distsDir
+}
+
+artifacts {
+  // should be 'archives'
+  // http://stackoverflow.com/questions/39068090/gradle-archives-artifacts-not-populated-to-default-configuration
+  'default' (file("$distsDir/$archivesBaseName-${version}.jar")) {
+    name archivesBaseName
+    type 'jar'
+    builtBy copyPrebuilt
+  }
+}
+

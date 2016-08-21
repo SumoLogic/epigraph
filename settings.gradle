@@ -11,6 +11,7 @@ rootProject.name = theName
 include 'epigraph-builtin-types',
         'epigraph-core',
         'epigraph-gradle-plugin',
+        'epigraph-light-psi',
         'epigraph-maven-plugin',
         'epigraph-scala-codegen',
         'epigraph-scala-maven-plugin',
