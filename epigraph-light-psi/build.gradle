@@ -1,18 +1,22 @@
-//plugins {
-//  id 'com.github.johnrengelman.shadow' version '1.2.3'
-//}
+plugins {
+  id 'com.github.johnrengelman.shadow' version '1.2.3'
+}
 
 apply plugin: 'base'
 
-/*
+// `updateFileList` updates resources/light-psi-filelist.txt
+// `packageLightPsi` rebuilds jar in build/tmp/light-psi-tmp.jar using the file list
+// `relocate` adds licenses and relocates packages, puts it into resources/light-psi-prebuilt.jar (which is checked in into git)
+//
+// on every build `copyPrebuilt` copies resouces/light-psi-prebuilt.jar to build/distributions with appropriate name -- this is `default` configuration artefact
+
 configurations {
   lightPsiTmp
 }
 
 dependencies {
-  lightPsiTmp files("$buildDir/tmp/light-psi-tmp.jar")
+  lightPsiTmp files("$buildDir/tmp/light-psi-tmp.jar") // this is where packageLightPsi puts it
 }
-*/
 
 ext.isFolder = { String path ->
   if (path == null) return false
@@ -62,8 +66,9 @@ task locateGrammarKit << {
 }
 
 task updateFileList(dependsOn: [locateIdeaHome, locateGrammarKit]) << {
+  // steps:
   // Assemble schema-parser standalone runnable
-  // Patch launcher script to use real IDEA installation and Grammar-Kit instead of our light-psi jar
+  // Patch it's launcher script to use real IDEA installation and Grammar-Kit instead of our light-psi jar
   // Run it capturing the list of loaded classes to resources/light-psi-filelist.txt
 
   def fileList = "$projectDir/resources/light-psi-filelist.txt"
@@ -86,14 +91,14 @@ task updateFileList(dependsOn: [locateIdeaHome, locateGrammarKit]) << {
     commandLine 'sh', 'resources/update-filelist.sh', fileListFile.canonicalPath
   }
 
-  // resource files
+  // add resource files
   fileListFile.append('misc/registry.properties\n')
 }
 
 import java.util.jar.*
 
 task packageLightPsi(dependsOn: [locateIdeaHome, locateGrammarKit]) << {
-  // repackage resources/light-psi-prebuilt.jar using real IDEA/GrammarKit
+  // repackage light-psi-tmp.jar using real IDEA/GrammarKit
   // classes and resources listed in resources/light-psi-filelist.txt
 
   def sources = [project.ext.grammarKit]
@@ -108,8 +113,8 @@ task packageLightPsi(dependsOn: [locateIdeaHome, locateGrammarKit]) << {
   def fileSet = new File(fileListLocation).readLines() as Set
 
   // take as an argument ?
-  def targetLocation = 'resources/light-psi-prebuilt.jar'
-//  def targetLocation = "$buildDir/tmp/light-psi-tmp.jar"
+//  def targetLocation = 'resources/light-psi-prebuilt.jar'
+  def targetLocation = "$buildDir/tmp/light-psi-tmp.jar"
   new File(targetLocation).parentFile.mkdirs()
 
   def manifest = new Manifest()
@@ -146,11 +151,17 @@ task packageLightPsi(dependsOn: [locateIdeaHome, locateGrammarKit]) << {
   target.close()
 }
 
-// todo add dependencies on other tasks
-// todo enable once this is resolved: https://github.com/johnrengelman/shadow/issues/240
-//task jar2(type: com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar) << {
-//  configurations = [project.configurations.lightPsiTmp]
-//}
+task relocate(type: com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar) {
+  destinationDir = file("$projectDir/resources")
+  archiveName = 'light-psi-prebuilt.jar'
+
+  configurations = [project.configurations.lightPsiTmp]
+  from ("$projectDir/resources") { include 'licenses/*' }
+
+  relocate 'com.google', 'epigraph.com.google'
+  relocate 'gnu', 'epigraph.gnu'
+  relocate 'org.picocontainer', 'epigraph.org.picocontainer'
+}
 
 task copyPrebuilt(type: Copy) {
   from('resources') {
