@@ -1,0 +1,17 @@
+namespace epigraph.projections.req
+
+import epigraph.data.Datum
+
+record ReqKeysProjection {
+  required: Boolean
+  keys: list[ReqKey]
+}
+
+record ReqKey {
+  value: Datum { doc = "of appropriate (enclosing map key) type"}
+  projection: ReqKeyProjection
+}
+
+record ReqKeyProjection {
+  params: list[ReqParam] // TODO move up into ReqKey directly?
+}
