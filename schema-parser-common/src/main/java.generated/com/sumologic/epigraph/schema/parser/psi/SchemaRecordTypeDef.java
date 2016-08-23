@@ -27,9 +27,6 @@ public interface SchemaRecordTypeDef extends SchemaTypeDef, StubBasedPsiElement<
   @Nullable
   PsiElement getAbstract();
 
-  @Nullable
-  PsiElement getPolymorphic();
-
   @NotNull
   PsiElement getRecord();
 

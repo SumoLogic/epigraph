@@ -68,12 +68,6 @@ public class SchemaRecordTypeDefImpl extends SchemaRecordTypeDefImplBase impleme
   }
 
   @Override
-  @Nullable
-  public PsiElement getPolymorphic() {
-    return findChildByType(S_POLYMORPHIC);
-  }
-
-  @Override
   @NotNull
   public PsiElement getRecord() {
     return notNullChild(findChildByType(S_RECORD));

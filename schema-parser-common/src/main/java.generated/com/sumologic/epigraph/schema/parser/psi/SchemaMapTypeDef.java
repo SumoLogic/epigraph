@@ -30,7 +30,4 @@ public interface SchemaMapTypeDef extends SchemaTypeDef, StubBasedPsiElement<Sch
   @Nullable
   PsiElement getAbstract();
 
-  @Nullable
-  PsiElement getPolymorphic();
-
 }

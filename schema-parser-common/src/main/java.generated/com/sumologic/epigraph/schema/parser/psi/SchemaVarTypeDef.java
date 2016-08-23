@@ -27,9 +27,6 @@ public interface SchemaVarTypeDef extends SchemaTypeDef, StubBasedPsiElement<Sch
   @Nullable
   PsiElement getAbstract();
 
-  @Nullable
-  PsiElement getPolymorphic();
-
   @NotNull
   PsiElement getVartype();
 

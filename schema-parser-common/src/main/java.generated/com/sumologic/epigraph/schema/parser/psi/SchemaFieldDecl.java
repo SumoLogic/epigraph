@@ -12,14 +12,11 @@ public interface SchemaFieldDecl extends CustomParamsHolder, PsiNamedElement {
   @NotNull
   List<SchemaCustomParam> getCustomParamList();
 
-  @Nullable
-  SchemaDefaultOverride getDefaultOverride();
-
   @NotNull
   SchemaQid getQid();
 
   @Nullable
-  SchemaTypeRef getTypeRef();
+  SchemaValueTypeRef getValueTypeRef();
 
   @Nullable
   PsiElement getAbstract();

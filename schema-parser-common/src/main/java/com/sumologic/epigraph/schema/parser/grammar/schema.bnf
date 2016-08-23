@@ -118,6 +118,7 @@ varTagRef ::= qid {
 defs ::= def*
 private def ::= typeDefWrapper | supplementDef {recoverWhile="declRecover"}
 
+// need a wrapper because inheritance doesn't play nicely with PSI stubs
 typeDefWrapper ::= varTypeDef | recordTypeDef | mapTypeDef | listTypeDef | primitiveTypeDef | enumTypeDef {
   name="type definition"
   methods=[getElement delete toString]
@@ -125,11 +126,13 @@ typeDefWrapper ::= varTypeDef | recordTypeDef | mapTypeDef | listTypeDef | primi
   elementTypeClass="com.sumologic.epigraph.schema.parser.psi.stubs.SchemaTypeDefWrapperStubElementType"
 }
 
-private typeDefModifiers ::= 'abstract'? 'polymorphic'?
+private typeDefModifiers ::= 'abstract'?
 private typeMemberModifiers ::= 'override'? 'abstract'?
 
-anonList ::= 'list' '[' typeRef defaultOverride? ']' {pin=1 extends="typeRef" }
-anonMap ::= 'map' '[' typeRef ',' typeRef defaultOverride? ']' {pin=1 extends="typeRef" }
+valueTypeRef ::= 'polymorphic'? typeRef defaultOverride?
+
+anonList ::= 'list' '[' valueTypeRef ']' {pin=1 extends="typeRef" }
+anonMap ::= 'map' '[' typeRef ',' valueTypeRef ']' {pin=1 extends="typeRef" }
 
 extendsDecl ::= 'extends' fqnTypeRef (',' fqnTypeRef)* {pin=1}
 supplementsDecl ::= 'supplements' fqnTypeRef (',' fqnTypeRef)* {pin=1}
@@ -175,7 +178,7 @@ recordTypeDef ::= typeDefModifiers 'record' typeName extendsDecl? metaDecl? supp
 }
 recordTypeBody ::= '{' (recordBodyPart ','?)* '}'
 private recordBodyPart ::= fieldDecl | customParam
-fieldDecl ::= typeMemberModifiers qid ':' typeRef defaultOverride? fieldBody? {
+fieldDecl ::= typeMemberModifiers qid ':' valueTypeRef fieldBody? {
   implements=["com.sumologic.epigraph.schema.parser.psi.CustomParamsHolder" "com.intellij.psi.PsiNamedElement"]
   extends="com.sumologic.epigraph.schema.parser.psi.impl.CustomParamHolderImpl"
   methods=[getName setName getNameIdentifier getTextOffset getPresentation getRecordTypeDef]
@@ -246,20 +249,6 @@ supplementDef ::= 'supplement' fqnTypeRef (',' fqnTypeRef)* 'with' fqnTypeRef {
   elementTypeClass="com.sumologic.epigraph.schema.parser.psi.stubs.SchemaSupplementDefStubElementType"
   pin=1
 }
-
-// todo? for multi:  // not too good, no name for artificial vartype hence no common interface
-// supplement User,Company with {
-//    mySuperAnnotation = "sdf"; ??
-//    foo : MyType { sdf = "sdf" }
-// }
-
-/*
-supplement FooRec, BarRec with record { // not good since supplemented records won't have common interface for new field(s)
-    newField: SomeType
-}
-*/
-
-//combinedFqns ::= fqnTypeRef ('+' fqnTypeRef)*
 
 private declRecover ::= ! ('import' | 'namespace' | 'polymorphic' | 'abstract' | 'record' | ',' |
                            'map' | 'list' | 'vartype' | 'enum' | 'supplement'|

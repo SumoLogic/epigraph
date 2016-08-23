@@ -73,10 +73,4 @@ public class SchemaMapTypeDefImpl extends SchemaMapTypeDefImplBase implements Sc
     return findChildByType(S_ABSTRACT);
   }
 
-  @Override
-  @Nullable
-  public PsiElement getPolymorphic() {
-    return findChildByType(S_POLYMORPHIC);
-  }
-
 }

@@ -33,12 +33,6 @@ public class SchemaFieldDeclImpl extends CustomParamHolderImpl implements Schema
   }
 
   @Override
-  @Nullable
-  public SchemaDefaultOverride getDefaultOverride() {
-    return PsiTreeUtil.getChildOfType(this, SchemaDefaultOverride.class);
-  }
-
-  @Override
   @NotNull
   public SchemaQid getQid() {
     return notNullChild(PsiTreeUtil.getChildOfType(this, SchemaQid.class));
@@ -46,8 +40,8 @@ public class SchemaFieldDeclImpl extends CustomParamHolderImpl implements Schema
 
   @Override
   @Nullable
-  public SchemaTypeRef getTypeRef() {
-    return PsiTreeUtil.getChildOfType(this, SchemaTypeRef.class);
+  public SchemaValueTypeRef getValueTypeRef() {
+    return PsiTreeUtil.getChildOfType(this, SchemaValueTypeRef.class);
   }
 
   @Override

@@ -27,14 +27,14 @@ public class SchemaAnonMapImpl extends SchemaTypeRefImpl implements SchemaAnonMa
 
   @Override
   @Nullable
-  public SchemaDefaultOverride getDefaultOverride() {
-    return PsiTreeUtil.getChildOfType(this, SchemaDefaultOverride.class);
+  public SchemaTypeRef getTypeRef() {
+    return PsiTreeUtil.getChildOfType(this, SchemaTypeRef.class);
   }
 
   @Override
-  @NotNull
-  public List<SchemaTypeRef> getTypeRefList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaTypeRef.class);
+  @Nullable
+  public SchemaValueTypeRef getValueTypeRef() {
+    return PsiTreeUtil.getChildOfType(this, SchemaValueTypeRef.class);
   }
 
   @Override

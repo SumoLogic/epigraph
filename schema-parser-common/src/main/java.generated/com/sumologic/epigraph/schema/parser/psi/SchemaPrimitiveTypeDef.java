@@ -40,9 +40,6 @@ public interface SchemaPrimitiveTypeDef extends SchemaTypeDef, StubBasedPsiEleme
   PsiElement getLongT();
 
   @Nullable
-  PsiElement getPolymorphic();
-
-  @Nullable
   PsiElement getStringT();
 
   @NotNull

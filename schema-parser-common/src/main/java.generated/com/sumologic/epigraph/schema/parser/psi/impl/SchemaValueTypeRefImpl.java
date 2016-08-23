@@ -8,16 +8,17 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.*;
+import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.sumologic.epigraph.schema.parser.psi.*;
 
-public class SchemaAnonListImpl extends SchemaTypeRefImpl implements SchemaAnonList {
+public class SchemaValueTypeRefImpl extends ASTWrapperPsiElement implements SchemaValueTypeRef {
 
-  public SchemaAnonListImpl(ASTNode node) {
+  public SchemaValueTypeRefImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull SchemaVisitor visitor) {
-    visitor.visitAnonList(this);
+    visitor.visitValueTypeRef(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -27,26 +28,20 @@ public class SchemaAnonListImpl extends SchemaTypeRefImpl implements SchemaAnonL
 
   @Override
   @Nullable
-  public SchemaValueTypeRef getValueTypeRef() {
-    return PsiTreeUtil.getChildOfType(this, SchemaValueTypeRef.class);
-  }
-
-  @Override
-  @Nullable
-  public PsiElement getBracketLeft() {
-    return findChildByType(S_BRACKET_LEFT);
-  }
-
-  @Override
-  @Nullable
-  public PsiElement getBracketRight() {
-    return findChildByType(S_BRACKET_RIGHT);
+  public SchemaDefaultOverride getDefaultOverride() {
+    return PsiTreeUtil.getChildOfType(this, SchemaDefaultOverride.class);
   }
 
   @Override
   @NotNull
-  public PsiElement getList() {
-    return notNullChild(findChildByType(S_LIST));
+  public SchemaTypeRef getTypeRef() {
+    return notNullChild(PsiTreeUtil.getChildOfType(this, SchemaTypeRef.class));
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getPolymorphic() {
+    return findChildByType(S_POLYMORPHIC);
   }
 
 }

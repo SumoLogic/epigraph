@@ -8,10 +8,10 @@ import com.intellij.psi.PsiElement;
 public interface SchemaAnonMap extends SchemaTypeRef {
 
   @Nullable
-  SchemaDefaultOverride getDefaultOverride();
+  SchemaTypeRef getTypeRef();
 
-  @NotNull
-  List<SchemaTypeRef> getTypeRefList();
+  @Nullable
+  SchemaValueTypeRef getValueTypeRef();
 
   @Nullable
   PsiElement getBracketLeft();

@@ -93,12 +93,6 @@ public class SchemaPrimitiveTypeDefImpl extends SchemaPrimitiveTypeDefImplBase i
 
   @Override
   @Nullable
-  public PsiElement getPolymorphic() {
-    return findChildByType(S_POLYMORPHIC);
-  }
-
-  @Override
-  @Nullable
   public PsiElement getStringT() {
     return findChildByType(S_STRING_T);
   }

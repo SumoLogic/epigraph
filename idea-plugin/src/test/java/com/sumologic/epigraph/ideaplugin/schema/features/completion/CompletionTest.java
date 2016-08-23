@@ -55,12 +55,6 @@ public class CompletionTest extends LightCodeInsightFixtureTestCase {
     myFixture.testCompletion("BuiltinTypeCompletion.esc", "BuiltinTypeCompletion-after.esc", "builtin.esc");
   }
 
-  public void testCompletionAfterPolymorphic() {
-    myFixture.configureByFile("CompletionAfterPolymorphic.esc");
-    checkCompletionVariants("record ", "map", "list",
-        "string ", "double ", "integer ", "long ", "boolean ");
-  }
-
   public void testCompletionAfterAbstract() {
     myFixture.configureByFile("CompletionAfterAbstract.esc");
     checkCompletionVariants("polymorphic ", "record ", "map", "list", "string ", "double ", "integer ", "long ", "boolean ");
