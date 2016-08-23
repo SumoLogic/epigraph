@@ -1,5 +1,4 @@
 ### High
-- Make light-psi a separate module
 
 ### Medium
 - Smart type completion: suggest out of scope types (+add import)
@@ -9,7 +8,7 @@
   Default on a field = field default > field type default > parent field default > parent field type default 
 - add SourceRootFinder to detect src/main/epigraph, test/epigraph etc
 - Structure popup (ctrl-f12)
-- Rename on fields (**In progress**)
+- Rename on fields (**Incomplete**)
 - Rename on vartype tags
 - On project import: detect `epigraph` as source folders
 - Errors highlighter must detect all cases of wrong/useless inheritance:
@@ -22,6 +21,7 @@
   - `supplement` source
     - [ ] Don't warn if at least one of the targets is not a child of source
 - Namespace declaration completion: take folder structure into account
+- Rename folders on namespace renaming
 - Diagrams support. Bonus: show field types
 
 ### Low
@@ -39,10 +39,8 @@
 ---
 ## Done
 ### High
-- Remove context-aware lexing, a set of keywords must not change depending on the context
+- Make light-psi a separate module
 
 ### Medium
-- Schema files must only be fully parsed if under (test) source root
-- Module dependencies must be respected when resolving references. Tricky for injections: only modules that depend on the current one must be checked
 
 ### Low

@@ -1,6 +1,5 @@
 ### High
 - Var tag references not resolving in `default` overrides on fields/list elements etc
-- Field/Tag completion after `default` in records/vartypes: currently suggests `namespace`.. should suggest all the super fields/tags
 
 ### Medium
 - Schema files under `resources` should be excluded from analysis
@@ -19,14 +18,8 @@
 ----
 ## Done
 ### High
+- Field/Tag completion after `default` in records/vartypes: currently suggests `namespace`.. should suggest all the super fields/tags
 
 ### Medium
-- Ambiguous ref not highlighted:
-
-        // file1: namespace some; string String
-        // file2: namespace some; string Foo extends String   <-- either epigraph.String or some.String
-- namespace auto-completion suggests TypeNames in addition to package names
-- `quoted` field/tag names not recognized as overriding same fields/tags (quoted or not) from parent type
-- Type ref completion should respect kinds, e.g. `record Foo extends <caret>` should only suggests records, with current one and all the parents removed
 
 ### Low
