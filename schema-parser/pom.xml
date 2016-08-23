@@ -59,9 +59,6 @@
                 <resource>
                   <directory>../schema-parser-common/src/main/java.generated</directory>
                 </resource>
-                <resource>
-                  <directory>../epigraph-light-psi/target/classes</directory>
-                </resource>
               </resources>
             </configuration>
           </execution>
