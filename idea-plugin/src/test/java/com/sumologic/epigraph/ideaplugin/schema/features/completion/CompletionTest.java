@@ -237,6 +237,9 @@ public class CompletionTest extends LightCodeInsightFixtureTestCase {
 
     myFixture.configureByText(SchemaFileType.INSTANCE, "namespace foo record Bar { bar: Bar } record Baz extends Bar { override bar override <caret> }");
     checkCompletionVariants();
+
+    myFixture.configureByText(SchemaFileType.INSTANCE, "namespace foo record Bar { bar: Bar } record Baz extends Bar { override <caret> foo : Bar { doc = \"xx\" } }");
+    checkCompletionVariants("bar");
   }
 
   // --------------- vartype tags
@@ -254,7 +257,7 @@ public class CompletionTest extends LightCodeInsightFixtureTestCase {
     checkCompletionVariants("override ");
   }
 
-  public void testOverrideFieldCompletionInVartype() {
+  public void testOverrideTagCompletionInVartype() {
     myFixture.configureByText(SchemaFileType.INSTANCE, "namespace foo vartype Bar { } vartype Baz extends Bar { override <caret> }");
     checkCompletionVariants();
 
@@ -263,6 +266,9 @@ public class CompletionTest extends LightCodeInsightFixtureTestCase {
 
     myFixture.configureByText(SchemaFileType.INSTANCE, "namespace foo vartype Bar { bar: Bar } vartype Baz extends Bar { override bar override <caret> }");
     checkCompletionVariants();
+
+    myFixture.configureByText(SchemaFileType.INSTANCE, "namespace foo vartype Bar { bar: Bar } vartype Baz extends Bar { override <caret> foo : Bar { doc = \"xx\" } }");
+    checkCompletionVariants("bar");
   }
 
   // ----------------------------------

@@ -330,8 +330,17 @@ public class SchemaCompletionContributor extends CompletionContributor {
     SchemaRecordTypeDef recordTypeDef = null;
     SchemaVarTypeDef varTypeDef = null;
 
+    // try to position element to 'override'
     PsiElement element = SchemaPsiUtil.prevNonWhitespaceSibling(position);
-    if (element == null || element.getNode().getElementType() != S_OVERRIDE) return;
+    if (element == null || element.getNode().getElementType() != S_OVERRIDE) {
+      element = position.getParent();
+      if (element == null) return;
+      element = SchemaPsiUtil.prevNonWhitespaceSibling(element);
+      if (element == null || element.getNode().getElementType() != S_OVERRIDE) {
+        return; // give up
+      }
+    }
+
     element = SchemaPsiUtil.prevNonWhitespaceSibling(element);
 
     if (element instanceof SchemaTypeDefWrapper && element.getFirstChild() instanceof SchemaRecordTypeDef) {
