@@ -1,6 +1,7 @@
 package com.sumologic.epigraph.ideaplugin.schema.features.completion;
 
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
+import com.sumologic.epigraph.schema.parser.SchemaFileType;
 
 import java.util.*;
 
@@ -209,6 +210,58 @@ public class CompletionTest extends LightCodeInsightFixtureTestCase {
 
   public void testProperKindCompletionSupS5() {
     myFixture.configureByFile("TypeRefKindCompletionSupS5.esc");
+    checkCompletionVariants();
+  }
+
+  // --------------- record fields
+
+  public void testNoCompletionInEmptyRecord() {
+    myFixture.configureByText(SchemaFileType.INSTANCE, "namespace foo record Bar { <caret> }");
+    checkCompletionVariants();
+  }
+
+  public void testOverrideCompletionInRecord() {
+    myFixture.configureByText(SchemaFileType.INSTANCE, "namespace foo record Bar { bar: Bar } record Baz extends Bar { <caret> }");
+    checkCompletionVariants("override ");
+
+    myFixture.configureByText(SchemaFileType.INSTANCE, "namespace foo record Bar { bar: Bar } record Baz extends Bar { qux: Baz <caret> }");
+    checkCompletionVariants("override ");
+  }
+
+  public void testOverrideFieldCompletionInRecord() {
+    myFixture.configureByText(SchemaFileType.INSTANCE, "namespace foo record Bar { } record Baz extends Bar { override <caret> }");
+    checkCompletionVariants();
+
+    myFixture.configureByText(SchemaFileType.INSTANCE, "namespace foo record Bar { `bar`: Bar } record Baz extends Bar { override <caret> }");
+    checkCompletionVariants("`bar`");
+
+    myFixture.configureByText(SchemaFileType.INSTANCE, "namespace foo record Bar { bar: Bar } record Baz extends Bar { override bar override <caret> }");
+    checkCompletionVariants();
+  }
+
+  // --------------- vartype tags
+
+  public void testNoCompletionInEmptyVartype() {
+    myFixture.configureByText(SchemaFileType.INSTANCE, "namespace foo vartype Bar { <caret> }");
+    checkCompletionVariants();
+  }
+
+  public void testOverrideCompletionInVartype() {
+    myFixture.configureByText(SchemaFileType.INSTANCE, "namespace foo vartype Bar { bar: Bar } vartype Baz extends Bar { <caret> }");
+    checkCompletionVariants("override ");
+
+    myFixture.configureByText(SchemaFileType.INSTANCE, "namespace foo vartype Bar { bar: Bar } vartype Baz extends Bar { qux: Baz <caret> }");
+    checkCompletionVariants("override ");
+  }
+
+  public void testOverrideFieldCompletionInVartype() {
+    myFixture.configureByText(SchemaFileType.INSTANCE, "namespace foo vartype Bar { } vartype Baz extends Bar { override <caret> }");
+    checkCompletionVariants();
+
+    myFixture.configureByText(SchemaFileType.INSTANCE, "namespace foo vartype Bar { `bar`: Bar } vartype Baz extends Bar { override <caret> }");
+    checkCompletionVariants("`bar`");
+
+    myFixture.configureByText(SchemaFileType.INSTANCE, "namespace foo vartype Bar { bar: Bar } vartype Baz extends Bar { override bar override <caret> }");
     checkCompletionVariants();
   }
 

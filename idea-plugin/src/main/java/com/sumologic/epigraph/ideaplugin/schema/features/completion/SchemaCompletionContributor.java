@@ -9,17 +9,16 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
+import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.TypeMembers;
+import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaPsiUtil;
 import com.sumologic.epigraph.schema.parser.Fqn;
 import com.sumologic.epigraph.schema.parser.SchemaLanguage;
-import com.sumologic.epigraph.schema.parser.psi.*;
 import com.sumologic.epigraph.schema.parser.SchemaParserDefinition;
-import com.sumologic.epigraph.ideaplugin.schema.psi.*;
+import com.sumologic.epigraph.schema.parser.psi.*;
 import com.sumologic.epigraph.schema.parser.psi.impl.SchemaPsiImplUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.*;
 
@@ -75,6 +74,8 @@ public class SchemaCompletionContributor extends CompletionContributor {
             completeSupplementsKeyword(position, result);
             completeWith(position, result);
             completeNewTypeName(position, result);
+            completeOverride(position, result);
+            completeOverrideMember(position, result);
           }
         }
     );
@@ -88,6 +89,7 @@ public class SchemaCompletionContributor extends CompletionContributor {
 
     PsiElement parent = position.getParent();
     if (parent != null) {
+      IElementType parentElementType = parent.getNode().getElementType();
       if (parent instanceof SchemaTypeDef || parent instanceof SchemaSupplementDef) return;
 
       PsiElement grandParent = parent.getParent();
@@ -122,7 +124,7 @@ public class SchemaCompletionContributor extends CompletionContributor {
           }
           completeImport = true;
         } else if (grandParent instanceof SchemaFile /* && !SchemaPsiUtil.hasNextSibling(grandParent, S_NAMESPACE_DECL) */) {
-          completeNamespace = true;
+          completeNamespace = !SchemaPsiUtil.hasPrevSibling(position, S_TYPE_DEF_WRAPPER);
         }
       }
 
@@ -290,5 +292,88 @@ public class SchemaCompletionContributor extends CompletionContributor {
       }
     });
 
+  }
+
+  private void completeOverride(@NotNull PsiElement position, @NotNull final CompletionResultSet result) {
+    boolean addOverride = false;
+
+//    PsiElement parent = position.getParent();
+
+    SchemaRecordTypeDef recordTypeDef = null;
+    SchemaVarTypeDef varTypeDef = null;
+
+    PsiElement element = SchemaPsiUtil.prevNonWhitespaceSibling(position);
+
+    if (element instanceof SchemaTypeDefWrapper && element.getFirstChild() instanceof SchemaRecordTypeDef) {
+      recordTypeDef = (SchemaRecordTypeDef) element.getFirstChild();
+    }
+
+    if (element instanceof SchemaTypeDefWrapper && element.getFirstChild() instanceof SchemaVarTypeDef) {
+      varTypeDef = (SchemaVarTypeDef) element.getFirstChild();
+    }
+
+    if (recordTypeDef != null) {
+      List<SchemaFieldDecl> fieldDecls = TypeMembers.getFieldDecls(recordTypeDef, null);
+      if (!fieldDecls.isEmpty()) addOverride = true;
+    }
+
+    if (varTypeDef != null) {
+      if (!TypeMembers.getVarTagDecls(varTypeDef, null).isEmpty()) addOverride = true;
+    }
+
+    if (addOverride)
+      result.addElement(LookupElementBuilder.create("override "));
+  }
+
+
+  private void completeOverrideMember(@NotNull PsiElement position, @NotNull final CompletionResultSet result) {
+    SchemaRecordTypeDef recordTypeDef = null;
+    SchemaVarTypeDef varTypeDef = null;
+
+    PsiElement element = SchemaPsiUtil.prevNonWhitespaceSibling(position);
+    if (element == null || element.getNode().getElementType() != S_OVERRIDE) return;
+    element = SchemaPsiUtil.prevNonWhitespaceSibling(element);
+
+    if (element instanceof SchemaTypeDefWrapper && element.getFirstChild() instanceof SchemaRecordTypeDef) {
+      recordTypeDef = (SchemaRecordTypeDef) element.getFirstChild();
+    }
+
+    if (element instanceof SchemaTypeDefWrapper && element.getFirstChild() instanceof SchemaVarTypeDef) {
+      varTypeDef = (SchemaVarTypeDef) element.getFirstChild();
+    }
+
+    if (recordTypeDef != null) {
+      Set<SchemaFieldDecl> alreadyDeclaredFields;
+
+      SchemaRecordTypeBody body = recordTypeDef.getRecordTypeBody();
+      if (body == null) {
+        alreadyDeclaredFields = Collections.emptySet();
+      } else {
+        alreadyDeclaredFields = new HashSet<>(body.getFieldDeclList());
+      }
+
+      List<SchemaFieldDecl> fieldDecls = TypeMembers.getFieldDecls(recordTypeDef, null);
+      for (SchemaFieldDecl fieldDecl : fieldDecls) {
+        if (!alreadyDeclaredFields.contains(fieldDecl))
+          result.addElement(LookupElementBuilder.create(fieldDecl));
+      }
+    }
+
+    if (varTypeDef != null) {
+      Set<SchemaVarTagDecl> alreadyDeclaredTags;
+
+      SchemaVarTypeBody body = varTypeDef.getVarTypeBody();
+      if (body == null) {
+        alreadyDeclaredTags = Collections.emptySet();
+      } else {
+        alreadyDeclaredTags = new HashSet<>(body.getVarTagDeclList());
+      }
+
+      List<SchemaVarTagDecl> varTagDecls = TypeMembers.getVarTagDecls(varTypeDef, null);
+      for (SchemaVarTagDecl varTagDecl : varTagDecls) {
+        if (!alreadyDeclaredTags.contains(varTagDecl))
+          result.addElement(LookupElementBuilder.create(varTagDecl));
+      }
+    }
   }
 }

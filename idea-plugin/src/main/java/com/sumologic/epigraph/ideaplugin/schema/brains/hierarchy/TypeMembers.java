@@ -42,12 +42,12 @@ public class TypeMembers {
 
   @NotNull
   public static List<SchemaFieldDecl> getFieldDecls(@NotNull SchemaTypeDef hostType, @Nullable String fieldName) {
-    return getFieldDecls(hostType, fieldName, getTypeAndParents(hostType));
+    return getFieldDecls(fieldName, getTypeAndParents(hostType));
   }
 
   @NotNull
   public static List<SchemaVarTagDecl> getVarTagDecls(@NotNull SchemaTypeDef hostType, @Nullable String tagName) {
-    return getVarTagDecls(hostType, tagName, getTypeAndParents(hostType));
+    return getVarTagDecls(tagName, getTypeAndParents(hostType));
   }
 
   private static List<SchemaTypeDef> getTypeAndParents(@NotNull SchemaTypeDef typeDef) {
@@ -71,15 +71,14 @@ public class TypeMembers {
     SchemaTypeDef typeDef = (SchemaTypeDef) body.getParent();
     if (typeDef == null) return Collections.emptyList();
 
-    return getFieldDecls(typeDef, fieldName, types);
+    return getFieldDecls(fieldName, types);
   }
 
-  private static List<SchemaFieldDecl> getFieldDecls(@NotNull SchemaTypeDef typeDef,
-                                                     @Nullable String fieldName,
-                                                     @NotNull List<SchemaTypeDef> types) {
-    if (types.isEmpty()) return Collections.emptyList();
+  private static List<SchemaFieldDecl> getFieldDecls(@Nullable String fieldName,
+                                                     @NotNull List<SchemaTypeDef> typeAndParents) {
+    if (typeAndParents.isEmpty()) return Collections.emptyList();
 
-    return types.stream()
+    return typeAndParents.stream()
         .filter(type -> type instanceof SchemaRecordTypeDef)
         .flatMap(type -> {
           SchemaRecordTypeDef recordTypeDef = (SchemaRecordTypeDef) type;
@@ -104,15 +103,14 @@ public class TypeMembers {
     SchemaTypeDef typeDef = (SchemaTypeDef) body.getParent();
     if (typeDef == null) return Collections.emptyList();
 
-    return getVarTagDecls(typeDef, varTypeMemberName, types);
+    return getVarTagDecls(varTypeMemberName, types);
   }
 
-  private static List<SchemaVarTagDecl> getVarTagDecls(@NotNull SchemaTypeDef typeDef,
-                                                       @Nullable String varTagName,
-                                                       @NotNull List<SchemaTypeDef> types) {
-    if (types.isEmpty()) return Collections.emptyList();
+  private static List<SchemaVarTagDecl> getVarTagDecls(@Nullable String varTagName,
+                                                       @NotNull List<SchemaTypeDef> typeAndParents) {
+    if (typeAndParents.isEmpty()) return Collections.emptyList();
 
-    return types.stream()
+    return typeAndParents.stream()
         .filter(type -> type instanceof SchemaVarTypeDef)
         .flatMap(type -> {
           SchemaVarTypeDef varTypeDef = (SchemaVarTypeDef) type;
