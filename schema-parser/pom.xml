@@ -14,8 +14,8 @@
   <dependencies>
 
     <dependency>
-      <groupId>com.sumologic.epigraph.3rd-party</groupId>
-      <artifactId>light-psi-all</artifactId>
+      <groupId>com.sumologic.epigraph</groupId>
+      <artifactId>epigraph-light-psi</artifactId>
       <version>0.0-SNAPSHOT</version>
     </dependency>
 
@@ -41,31 +41,6 @@
 
     <plugins>
 
-      <!-- doesn't work here, maybe in parent/dependency -->
-      <!-- for now run `schema-parser/lib/install-to-local-repo.sh` (once new light-psi-all.jar is produced) -->
-      <!--
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-install-plugin</artifactId>
-        <version>2.5.2</version>
-        <executions>
-          <execution>
-            <phase>initialize</phase>
-            <goals>
-              <goal>install-file</goal>
-            </goals>
-            <configuration>
-              <groupId>com.sumologic.epigraph.3rd-party</groupId>
-              <artifactId>light-psi-all</artifactId>
-              <version>0.0-SNAPSHOT</version>
-              <packaging>jar</packaging>
-              <file>${project.basedir}/lib/light-psi-all.jar</file>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      -->
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
@@ -84,27 +59,10 @@
                 <resource>
                   <directory>../schema-parser-common/src/main/java.generated</directory>
                 </resource>
+                <resource>
+                  <directory>../epigraph-light-psi/target/classes</directory>
+                </resource>
               </resources>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-shade-plugin</artifactId>
-        <executions>
-          <execution>
-            <goals>
-              <goal>shade</goal>
-            </goals>
-            <configuration>
-              <artifactSet>
-                <includes>
-                  <include>com.sumologic.epigraph.3rd-party:light-psi-all</include>
-                </includes>
-              </artifactSet>
-              <createDependencyReducedPom>false</createDependencyReducedPom>
             </configuration>
           </execution>
         </executions>

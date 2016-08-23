@@ -1,0 +1,34 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <artifactId>epigraph-light-psi</artifactId>
+  <version>0.0-SNAPSHOT</version>
+  <packaging>mavenized-jar</packaging>
+
+  <parent>
+    <groupId>com.sumologic.epigraph</groupId>
+    <artifactId>epigraph</artifactId>
+    <version>0.0-SNAPSHOT</version>
+  </parent>
+
+  <build>
+
+    <plugins>
+
+      <plugin>
+        <groupId>com.sumologic.epigraph</groupId>
+        <artifactId>jar-mavenizer-plugin</artifactId>
+        <version>0.0-SNAPSHOT</version>
+        <extensions>true</extensions>
+        <configuration>
+          <sourceJar>${project.basedir}/resources/light-psi-prebuilt.jar</sourceJar>
+        </configuration>
+      </plugin>
+
+    </plugins>
+
+  </build>
+
+</project>
