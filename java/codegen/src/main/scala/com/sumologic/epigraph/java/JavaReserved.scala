@@ -5,12 +5,11 @@ package com.sumologic.epigraph.java
 object JavaReserved {
 
   /**
-   * Java keywords (https://docs.oracle.com/javase/specs/jls/se8/html/jls-3.html#jls-3.9),
-   * null (https://docs.oracle.com/javase/specs/jls/se8/html/jls-3.html#jls-3.10.7),
-   * and boolean literals (https://docs.oracle.com/javase/specs/jls/se8/html/jls-3.html#jls-3.10.3)
-   * that are not allowed as legal identifiers (https://docs.oracle.com/javase/specs/jls/se8/html/jls-3.html#jls-3.8).
+   * Strings that are not allowed as legal Java identifiers.
+   * (https://docs.oracle.com/javase/specs/jls/se8/html/jls-3.html#jls-3.8)
    */
-  val reserved = Set[String](
+  val reserved: Set[String] = Set(
+    // keywords (https://docs.oracle.com/javase/specs/jls/se8/html/jls-3.html#jls-3.9)
     "abstract",
     "continue",
     "for",
@@ -61,7 +60,9 @@ object JavaReserved {
     "native",
     "super",
     "while",
+    // null literal (https://docs.oracle.com/javase/specs/jls/se8/html/jls-3.html#jls-3.10.7)
     "null",
+    // boolean literals (https://docs.oracle.com/javase/specs/jls/se8/html/jls-3.html#jls-3.10.3)
     "true",
     "false"
   )

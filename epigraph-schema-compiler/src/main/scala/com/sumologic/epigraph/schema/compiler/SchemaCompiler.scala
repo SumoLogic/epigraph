@@ -153,10 +153,10 @@ class SchemaCompiler(
 
   def computeSupertypes(): Unit = {
     val visited = mutable.Stack[CTypeDef]()
-    ctx.typeDefs.elements foreach { typeDef =>
-      typeDef.computeSupertypes(visited); assert(visited.isEmpty)
-    }
+    ctx.typeDefs.elements foreach { typeDef => typeDef.computeSupertypes(visited); assert(visited.isEmpty) }
   }
+
+  def resolveTagRefs() = ???
 
   @throws[SchemaCompilerException]
   def handleErrors(exitCode: Int): Unit = { // FIXME it should not exit but return some error code

@@ -21,9 +21,11 @@ abstract class JavaGen[From >: Null <: AnyRef](protected val from: From, protect
   }
 
   // TODO protected access for the rest:
-  def javaName(name: String): String = if (JavaReserved.reserved.contains(name)) name + '_' else name
 
-  def javaFqn(fqn: Fqn): String = fqn.segments.map(javaName).mkString(".")
+  /** java identifier name (https://docs.oracle.com/javase/specs/jls/se8/html/jls-3.html#jls-3.8) */
+  def jn(name: String): String = if (JavaReserved.reserved.contains(name)) name + '_' else name
+
+  def javaFqn(fqn: Fqn): String = fqn.segments.map(jn).mkString(".")
 
   /** local (short) java name for given type */
   def ln(t: CType): String = t match {
@@ -39,7 +41,7 @@ abstract class JavaGen[From >: Null <: AnyRef](protected val from: From, protect
     case unknown => throw new UnsupportedOperationException(unknown.toString)
   }
 
-  def javaLocalName(t: CType, trans: (String) => String = identity): String = javaName(trans(ln(t)))
+  def javaLocalName(t: CType, trans: (String) => String = identity): String = jn(trans(ln(t)))
 
   def objName(s: String): String = s
 
@@ -97,7 +99,7 @@ abstract class JavaGen[From >: Null <: AnyRef](protected val from: From, protect
 
   def bldName(s: String): String = s + ".Builder"
 
-  def bldName(t: CTypeDef): String = javaName(bldName(ln(t)))
+  def bldName(t: CTypeDef): String = jn(bldName(ln(t)))
 
   def bldImplName(s: String): String = bldName(s)// + ".Impl"
 
@@ -109,8 +111,11 @@ abstract class JavaGen[From >: Null <: AnyRef](protected val from: From, protect
     if (tpn == pn(lt)) lnTrans(ln(t)) else tpn + "." + ln(t)
   }
 
+  /** java type name for given typeref as seen from the context of the other type namespace */
+  def lqrn(tr: CTypeRef, lt: CType, lnTrans: (String) => String = identity): String = lqn(tr.resolved, lt, lnTrans)
+
   /** java package name for given type */
-  def pn(t: CType): String = getNamedTypeComponent(t).name.fqn.removeLastSegment().segments.map(javaName).mkString(".")
+  def pn(t: CType): String = getNamedTypeComponent(t).name.fqn.removeLastSegment().segments.map(jn).mkString(".")
 
   @Deprecated
   def javaQName(t: CType, ht: CType, trans: (String) => String = identity): String = javaFqn(
@@ -136,8 +141,6 @@ abstract class JavaGen[From >: Null <: AnyRef](protected val from: From, protect
   def qnameArgs(fqn: Fqn): Seq[String] = fqn.last() +: fqn.removeLastSegment().segments.toSeq
 
   def withParents(t: CType, trans: (String) => String = identity): String = {
-    print(t.name.name + " => ")
-    println(t.getLinearizedParentsReversed.map(_.name.name))
     t.getLinearizedParentsReversed.map(" " + lqn(_, t, trans) + ",").mkString
   }
 

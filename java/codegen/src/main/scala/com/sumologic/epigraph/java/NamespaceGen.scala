@@ -28,7 +28,7 @@ import com.sumologic.epigraph.names
  * Package object for `${from.fqn}` namespace.
  * TODO: doc annotation here
  */
-package object ${javaName(from.local)} {
+package object ${jn(from.local)} {
 
   val namespace: names.QualifiedNamespaceName = new names.QualifiedNamespaceName(
     ${nsOpt(from.parent)}, names.LocalNamespaceName("${from.local}")

@@ -55,12 +55,7 @@ public interface ${baseName(t)} extends${withParents(t)} io.epigraph.data.ListDa
           ${baseName(t)}.Builder.Data::new
       );
     }
-${ctx.getAnonListOf(t).map { lt => sn"""\
-
-    @Override
-    protected @NotNull java.util.function.Supplier<io.epigraph.types.ListType> listTypeSupplier() { return () -> ${lqn(lt, t)}.type; }
-""" }.getOrElse("")
-  }\
+$listSupplier\
 
   }
 

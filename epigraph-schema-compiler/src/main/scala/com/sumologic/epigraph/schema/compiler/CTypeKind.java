@@ -22,13 +22,9 @@ public enum CTypeKind {
 
   public final String keyword;
 
-  CTypeKind(String keyword) {
-    this.keyword = keyword;
-  }
+  CTypeKind(String keyword) { this.keyword = keyword; }
 
-  static {
-    for (CTypeKind value : values()) map.put(value.keyword, value);
-  }
+  static { for (CTypeKind value : values()) map.put(value.keyword, value); }
 
   /**
    * @param keyword

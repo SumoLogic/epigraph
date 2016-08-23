@@ -49,7 +49,7 @@ object ${objName(t)} extends VarType[${baseName(t)}](namespace \\ "${baseName(t)
 }
 """.trim
 
-  private def tagName(f: CTag): String = javaName(f.name)
+  private def tagName(f: CTag): String = jn(f.name)
 
   // TODO val _id: DatumField[FooId] = field("id", FooId)
   private def tagType(f: CTag, ht: CTypeDef): String = s"Tag[${ft(f, ht)}]"

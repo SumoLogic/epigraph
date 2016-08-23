@@ -12,7 +12,7 @@ class PrimitiveGen(from: CPrimitiveTypeDef, ctx: CContext) extends JavaTypeDefGe
  * Standard header
  */
 
-package ${javaFqn(t.name.fqn.removeLastSegment())};
+package ${pn(t)};
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -38,7 +38,7 @@ public interface ${baseName(t)} extends${withParents(t)} io.epigraph.data.${Kind
 
     Type() {
       super(
-          new io.epigraph.names.QualifiedTypeName(${qnameArgs(t.name.fqn).map(javaName).mkString("\"", "\", \"", "\"")}),
+          new io.epigraph.names.QualifiedTypeName(${qnameArgs(t.name.fqn).mkString("\"", "\", \"", "\"")}),
           java.util.Arrays.asList(${t.linearizedParents.map(javaQName(_, t) + ".type").mkString(", ")}),
           ${t.isPolymorphic},
           ${baseName(t)}.Builder::new,
@@ -46,14 +46,7 @@ public interface ${baseName(t)} extends${withParents(t)} io.epigraph.data.${Kind
           ${baseName(t)}.Builder.Data::new
       );
     }
-${ctx.getAnonListOf(t).map { lt => sn"""\
-
-    @Override
-    protected @NotNull java.util.function.Supplier<io.epigraph.types.ListType> listTypeSupplier() {
-      return () -> ${lqn(lt, t)}.type;
-    }
-""" }.getOrElse("")
-}\
+$listSupplier\
 
   }
 

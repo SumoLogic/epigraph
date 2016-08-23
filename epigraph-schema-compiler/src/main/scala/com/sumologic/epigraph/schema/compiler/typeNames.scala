@@ -52,21 +52,25 @@ class CTypeFqn private(csf: CSchemaFile, val fqn: Fqn, psi: PsiElement)(implicit
 
 class CAnonListTypeName(csf: CSchemaFile, override val psi: SchemaAnonList)(implicit ctx: CContext) extends {
 
-  val elementTypeRef: CTypeRef = CTypeRef(csf, psi.getTypeRef)
+  val elementValueType: CValueType = new CValueType(csf, psi.getValueTypeRef)
+
+  val elementTypeRef: CTypeRef = elementValueType.typeRef
 
 } with CTypeName(csf, CAnonListTypeName.anonListTypeName(elementTypeRef.name.name), psi)
 
 object CAnonListTypeName {
 
-  def anonListTypeName(elementTypeName: String): String = "list[" + elementTypeName + "]"
+  def anonListTypeName(elementTypeName: String): String = "list[" + elementTypeName + "]" // FIXME poly and default
 
 }
 
 
 class CAnonMapTypeName(csf: CSchemaFile, override val psi: SchemaAnonMap)(implicit ctx: CContext) extends {
 
-  val keyTypeRef: CTypeRef = CTypeRef(csf, psi.getTypeRefList.head)
+  val keyTypeRef: CTypeRef = CTypeRef(csf, psi.getTypeRef)
 
-  val valueTypeRef: CTypeRef = CTypeRef(csf, psi.getTypeRefList.last)
+  val valueValueType: CValueType = new CValueType(csf, psi.getValueTypeRef)
+
+  val valueTypeRef: CTypeRef = valueValueType.typeRef
 
 } with CTypeName(csf, "map[" + keyTypeRef.name.name + "," + valueTypeRef.name.name + "]", psi)

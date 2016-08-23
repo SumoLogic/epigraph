@@ -19,6 +19,9 @@ trait CType {self =>
 
   val kind: CTypeKind
 
+  // `None` - no declaration, `Some(None)` - declared nodefault, `Some(Some(String))` - declared default
+  val declaredDefaultTagName: Option[Option[String]]
+
   def isAssignableFrom(subtype: CType): Boolean
 
   def linearizedParents: Seq[This]
@@ -77,7 +80,7 @@ abstract class CTypeDef protected(val csf: CSchemaFile, val psi: SchemaTypeDef, 
           if (p.kind != kind) {
             val pSource = if (injectedSupertypes.contains(p)) "injected" else "declared"
             ctx.errors.add(
-              new CError(
+              CError(
                 csf.filename, csf.position(psi.getQid), // TODO use injection source/position for injection failures
                 s"Type ${name.name} (of '${kind.keyword}' kind) is not compatible with $pSource supertype ${p.name.name} (of `${p.kind.keyword}` kind)"
               )
@@ -89,7 +92,7 @@ abstract class CTypeDef protected(val csf: CSchemaFile, val psi: SchemaTypeDef, 
         )
       } else {
         ctx.errors.add(
-          new CError(
+          CError(
             csf.filename, csf.position(psi.getQid),
             s"Cyclic inheritance: type ${visited.view(0, thisIdx + 2).reverseIterator.map(_.name.name).mkString(" < ")}"
           )
@@ -141,6 +144,20 @@ object CTypeDef {
     case unknown => throw new UnsupportedOperationException(unknown.toString)
   }
 
+  def declaredDefaultTagName(@Nullable sdo: SchemaDefaultOverride): Option[Option[String]] = {
+    if (sdo == null) {
+      None
+    } else {
+      @Nullable val vtr = sdo.getVarTagRef
+      if (vtr == null) {
+        assert(sdo.getNodefault ne null)
+        Some(None)
+      } else {
+        Some(Some(vtr.getQid.getCanonicalName))
+      }
+    }
+  }
+
 }
 
 
@@ -149,6 +166,9 @@ class CVarTypeDef(csf: CSchemaFile, override val psi: SchemaVarTypeDef)(implicit
 ) {
 
   override type This = CVarTypeDef
+
+  // `None` - no declaration, `Some(None)` - declared nodefault, `Some(Some(String))` - declared default
+  override val declaredDefaultTagName: Option[Option[String]] = CTypeDef.declaredDefaultTagName(psi.getDefaultOverride)
 
   val declaredTags: Seq[CTag] = {
     @Nullable val body = psi.getVarTypeBody
@@ -176,7 +196,7 @@ class CVarTypeDef(csf: CSchemaFile, override val psi: SchemaVarTypeDef)(implicit
         supertags foreach { st =>
           if (!dt.compatibleWith(st)) {
             ctx.errors.add(
-              new CError(
+              CError(
                 csf.filename, csf.position(dt.psi),
                 s"Type `${
                   dt.typeRef.resolved.name.name
@@ -194,7 +214,7 @@ class CVarTypeDef(csf: CSchemaFile, override val psi: SchemaVarTypeDef)(implicit
             narrowest
           case None =>
             ctx.errors.add(
-              new CError(
+              CError(
                 csf.filename, csf.position(psi.getQid), s"Multiple inherited tags `${supertags.head.name}` of types ${
                   supertags.map(_.typeRef.resolved.name.name).mkString("`", "`, `", "`")
                 } must be overridden with common subtype"
@@ -219,16 +239,25 @@ class CTag(val csf: CSchemaFile, val psi: SchemaVarTagDecl)(implicit val ctx: CC
 
 }
 
+trait CDatumType extends CType {
+
+  val ImpliedDefaultTagName: String = ""
+
+  // `None` - no declaration, `Some(None)` - declared nodefault, `Some(Some(String))` - declared default
+  override val declaredDefaultTagName: Some[Some[String]] = Some(Some(ImpliedDefaultTagName))
+
+}
+
 
 class CRecordTypeDef(csf: CSchemaFile, override val psi: SchemaRecordTypeDef)(implicit ctx: CContext) extends CTypeDef(
   csf, psi, CTypeKind.RECORD
-) {
+) with CDatumType {
 
   override type This = CRecordTypeDef
 
   val declaredFields: Seq[CField] = {
     @Nullable val body = psi.getRecordTypeBody
-    if (body == null) Nil else body.getFieldDeclList.map(new CField(csf, _)).toList
+    if (body == null) Nil else body.getFieldDeclList.map(new CField(csf, _, this)).toList
   }
 
   // TODO check for dupes
@@ -249,14 +278,15 @@ class CRecordTypeDef(csf: CSchemaFile, override val psi: SchemaRecordTypeDef)(im
   private def effectiveField(declaredFieldOpt: Option[CField], superfields: Seq[CField]): CField = {
     declaredFieldOpt match {
       case Some(df) => // check if declared field is compatible with all (if any) overridden ones
+        df.superfields = superfields
         superfields foreach { st =>
           if (!df.compatibleWith(st)) {
             ctx.errors.add(
-              new CError(
+              CError(
                 csf.filename, csf.position(df.psi),
                 s"Type `${
                   df.typeRef.resolved.name.name
-                }` of field `${df.name}` is not a subtype of its parent field type `${
+                }` of field `${df.name}` is not a subtype of its parent field type or declares incompatible default tag`${
                   st.typeRef.resolved.name.name
                 }`"
               )
@@ -267,10 +297,10 @@ class CRecordTypeDef(csf: CSchemaFile, override val psi: SchemaRecordTypeDef)(im
       case None => // find the most narrow field among inherited ones
         superfields.find(st => superfields.forall(_.typeRef.resolved.isAssignableFrom(st.typeRef.resolved))) match {
           case Some(narrowest) =>
-            narrowest
+            narrowest // TODO check the narrowest field is default-tag-compatible with the rest
           case None =>
             ctx.errors.add(
-              new CError(
+              CError(
                 csf.filename, csf.position(psi.getQid), s"Multiple inherited `${superfields.head.name}` fields of types ${
                   superfields.map(_.typeRef.resolved.name.name).mkString("`", "`, `", "`")
                 } must be overridden with common subtype"
@@ -283,35 +313,46 @@ class CRecordTypeDef(csf: CSchemaFile, override val psi: SchemaRecordTypeDef)(im
 
 }
 
-class CField(val csf: CSchemaFile, val psi: SchemaFieldDecl)(implicit val ctx: CContext) {
+class CField(val csf: CSchemaFile, val psi: SchemaFieldDecl, val host: CRecordTypeDef)(implicit val ctx: CContext) {
 
   val name: String = psi.getQid.getCanonicalName
 
-  val typeRef: CTypeRef = CTypeRef(csf, psi.getTypeRef)
+  val isAbstract: Boolean = psi.getAbstract ne null
 
-  def compatibleWith(sf: CField): Boolean = sf.typeRef.resolved.isAssignableFrom(typeRef.resolved)
+  val valueType: CValueType = new CValueType(csf, psi.getValueTypeRef)
 
-//  lazy val defaultTag: Option[CTag] = {
-//    val sdo = psi.getDefaultOverride
-//    if (sdo == null || sdo.getNodefault != null) {
-//      None
-//    } else {
-//      val tagName = sdo.getVarTagRef.getQid.getCanonicalName
-//      typeRef.getTypeOpt match {
-//        case Some(ctype) =>
-//          ctype match {
-//            case cvt: CVarTypeDef => cvt.allTags... // FIXME get all tags, find referenced, error if not found
-//            case _ => //TODO error
-//          }
-//        case None => None
-//      }
-//    }
-//  }
+  val typeRef: CTypeRef = valueType.typeRef
+
+  var superfields: Seq[CField] = Seq()
+
+  def compatibleWith(superField: CField): Boolean = superField.typeRef.resolved.isAssignableFrom(typeRef.resolved) && (
+      valueType.declaredDefaultTagName match {
+        case None => true // no default override
+        case Some(superField.effectiveDefaultTagName) => true // same as super
+        case Some(Some(x)) => superField.effectiveDefaultTagName.isEmpty // different from super but it has no default
+      }
+      )
+
+  // `None` - no default tag, `Some(String)` - effective default tag name
+  val effectiveDefaultTagName: Option[String] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, _effectiveDefaultTagName)
+
+  // explicit no/default on the field > no/default from super field(s) > default on type > default on type super type(s)
+  private lazy val _effectiveDefaultTagName: Option[String] = {
+    valueType.declaredDefaultTagName match {
+      case Some(defaultTagNameOpt) => defaultTagNameOpt
+      case None => // get default tags from superfields, assert they are the same (ignore Nones), return
+        superfields.flatMap(_.effectiveDefaultTagName).distinct match {
+          case Seq(theone) => Some(theone)
+          case Seq() => ??? //typeRef.resolved.declaredDefaultTagName
+        }
+
+    }
+  }
 
 }
 
 
-trait CMapType extends CType {self =>
+trait CMapType extends CType with CDatumType {self =>
 
   override type This >: this.type <: CMapType {type This <: self.This}
 
@@ -319,7 +360,9 @@ trait CMapType extends CType {self =>
 
   val keyTypeRef: CTypeRef
 
-  val valueTypeRef: CTypeRef
+  val valueValueType: CValueType
+
+  final val valueTypeRef: CTypeRef = valueValueType.typeRef
 
   override val kind: CTypeKind = CTypeKind.MAP
 
@@ -333,7 +376,7 @@ class CAnonMapType(override val name: CAnonMapTypeName)(implicit val ctx: CConte
 
   override val keyTypeRef: CTypeRef = name.keyTypeRef
 
-  override val valueTypeRef: CTypeRef = name.valueTypeRef
+  override val valueValueType: CValueType = name.valueValueType // TODO early init
 
   override def isAssignableFrom(subtype: CType): Boolean =
     subtype.kind == kind &&
@@ -355,20 +398,22 @@ class CMapTypeDef(csf: CSchemaFile, override val psi: SchemaMapTypeDef)(implicit
 
   override type This = CMapTypeDef
 
-  override val keyTypeRef: CTypeRef = CTypeRef(csf, psi.getAnonMap.getTypeRefList.head)
+  override val keyTypeRef: CTypeRef = CTypeRef(csf, psi.getAnonMap.getTypeRef) // TODO check it's not a vartype?
 
-  override val valueTypeRef: CTypeRef = CTypeRef(csf, psi.getAnonMap.getTypeRefList.last)
+  val valueValueType: CValueType = new CValueType(csf, psi.getAnonMap.getValueTypeRef) // TODO early init
 
 }
 
 
-trait CListType extends CType {self =>
+trait CListType extends CType with CDatumType {self =>
 
   override type This >: this.type <: CListType {type This <: self.This}
 
   val name: CTypeName
 
-  val elementTypeRef: CTypeRef
+  val elementValueType: CValueType
+
+  final val elementTypeRef: CTypeRef = elementValueType.typeRef
 
   override val kind: CTypeKind = CTypeKind.LIST
 
@@ -377,22 +422,23 @@ trait CListType extends CType {self =>
 }
 
 
-class CAnonListType(override val name: CAnonListTypeName)(implicit val ctx: CContext) extends CListType {
+class CAnonListType(override val name: CAnonListTypeName)(implicit val ctx: CContext) extends {
+
+  override val elementValueType: CValueType = name.elementValueType
+
+} with CListType {
 
   override type This = CAnonListType
 
-  override val elementTypeRef: CTypeRef = name.elementTypeRef
-
   override def isAssignableFrom(subtype: CType): Boolean =
-    subtype.kind == kind &&
-        elementTypeRef.resolved.isAssignableFrom(cast(subtype).elementTypeRef.resolved)
+    subtype.kind == kind && elementTypeRef.resolved.isAssignableFrom(cast(subtype).elementTypeRef.resolved)
 
   /** Immediate parents of this type in order of decreasing priority */
   def linearizedParents: Seq[CAnonListType] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, _linearizedParents)
 
-  private lazy val _linearizedParents: Seq[CAnonListType] = elementTypeRef.resolved.linearizedParents.map { ep =>
-    ctx.getAnonListOf(ep).get // FIXME list[Super] might not exist - autocreate
-  }
+  private lazy val _linearizedParents: Seq[CAnonListType] = elementTypeRef.resolved.linearizedParents.flatMap(
+    ctx.getAnonListOf // FIXME list[Super] might not exist - autocreate
+  )
 
 }
 
@@ -403,14 +449,14 @@ class CListTypeDef(csf: CSchemaFile, override val psi: SchemaListTypeDef)(implic
 
   override type This = CListTypeDef
 
-  override val elementTypeRef: CTypeRef = CTypeRef(csf, psi.getAnonList.getTypeRef)
+  override val elementValueType: CValueType = new CValueType(csf, psi.getAnonList.getValueTypeRef) // TODO early init
 
 }
 
 
 class CEnumTypeDef(csf: CSchemaFile, psi: SchemaEnumTypeDef)(implicit ctx: CContext) extends CTypeDef(
   csf, psi, CTypeKind.ENUM
-) {
+) with CDatumType {
 
   override type This = CEnumTypeDef
 
@@ -431,7 +477,7 @@ class CEnumValue(csf: CSchemaFile, psi: SchemaEnumMemberDecl)(implicit val ctx: 
 class CPrimitiveTypeDef(csf: CSchemaFile, override val psi: SchemaPrimitiveTypeDef)(implicit ctx: CContext)
     extends CTypeDef(
       csf, psi, CTypeKind.forKeyword(psi.getPrimitiveTypeKind.name)
-    ) {
+    ) with CDatumType {
 
   override type This = CPrimitiveTypeDef
 

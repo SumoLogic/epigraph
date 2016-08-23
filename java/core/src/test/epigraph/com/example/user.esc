@@ -11,6 +11,7 @@ record UserRecord extends PersonRecord {
   id: UserId
   bestFriend: UserRecord
   friends: list[UserRecord]
+  users: list[User default id]
   override ids: list[UserId]
   idss: list[list[UserId]]
 }
