@@ -1,0 +1,87 @@
+namespace epigraph.projections.req
+
+/**
+ * Request-time projections specifying desired output structure of invoked operation response.
+ */
+
+// field(default tag projection)
+// field:someTag(someTag projection)
+// field:(tag1(tag1 projection), tag2(tag2 projection))
+
+// /folders/123/items:list:(id, record:(id, name):(com.box.FolderRecord(...), com.box.FileRecord(...):(c.b.ImageFileRecord(size, ...))))
+
+// /folders/123/items:list:(id, record:(id, name, :com.box.FolderRecord(...), :com.box.FileRecord(...)))
+// /folders/123/items:list:(id, record:(id, name, :(com.box.FolderRecord(...), com.box.FileRecord(...))))
+// /folders/123/items:list:(id, record:(id, name, com.box.FolderRecord:(...), com.box.FileRecord:(...)))
+// /folders/123/items:map[123,234]:(id, record)
+// /folders/123/items(id, name, ...)
+// /folders/123/items::record(id, name, ...)
+
+import epigraph.schema.DataTypeRef
+import epigraph.schema.FieldRef
+import epigraph.schema.ListTypeRef
+import epigraph.schema.MapTypeRef
+import epigraph.schema.RecordTypeRef
+import epigraph.schema.TypeMemberRef
+import epigraph.schema.TypeRef
+import epigraph.schema.EnumTypeRef
+import epigraph.schema.PrimitiveTypeRef
+import epigraph.schema.FieldName
+
+record ReqOutputVarProjection {
+  type: TypeRef
+  tagProjections: list[ReqOutputTagProjection]
+}
+
+record ReqOutputTagProjection {
+  tag: TypeMemberRef
+  tagProjection: ReqOutputModelProjection
+}
+
+abstract record ReqOutputModelProjection {
+  model: DataTypeRef
+  required: Boolean
+  params: list[ReqParam]
+  polymorphicTail: list[ReqOutputModelProjection]
+}
+
+record ReqOutputRecordModelProjection extends ReqOutputModelProjection {
+  override model: RecordTypeRef
+  fieldProjections: list[ReqOutputFieldProjection]
+  fieldProjectiAlt: map[FieldName, ReqOutputVarProjection] // TODO this or above (or both?)
+  override polymorphicTail: list[ReqOutputRecordModelProjection]
+}
+
+record ReqOutputFieldProjection {
+  field: FieldRef
+  params: list[ReqParam]
+  varProjection: ReqOutputVarProjection
+}
+
+record ReqOutputListModelProjection extends ReqOutputModelProjection {
+  override model: ListTypeRef
+  varProjection: ReqOutputVarProjection
+  override polymorphicTail: list[ReqOutputListModelProjection]
+}
+
+record ReqOutputMapModelProjection extends ReqOutputModelProjection {
+  override model: MapTypeRef
+  keyProjection: ReqOutputKeyProjection { doc = "if `null` - keys are not accepted" }
+  varProjection: ReqOutputVarProjection
+  override polymorphicTail: list[ReqOutputMapModelProjection] // TODO figure out what to do with keys in poly tail
+}
+
+record ReqOutputKeyProjection {
+  required: Boolean
+  params: list[ReqParam]
+}
+
+record ReqOutputEnumModelProjection extends ReqOutputModelProjection {
+  override model: EnumTypeRef
+  override polymorphicTail: list[ReqOutputEnumModelProjection] // always empty since no enum inheritance - introduce an interface for those that have inheritance?
+}
+
+record ReqOutputPrimitiveModelProjection extends ReqOutputModelProjection {
+  override model: PrimitiveTypeRef
+  override polymorphicTail: list[ReqOutputPrimitiveModelProjection]
+}

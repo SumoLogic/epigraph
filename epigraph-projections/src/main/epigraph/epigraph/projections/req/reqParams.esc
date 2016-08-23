@@ -1,0 +1,9 @@
+namespace epigraph.projections.req
+
+import epigraph.projections.op.OpParamRef
+import epigraph.data.Datum
+
+record ReqParam {
+  opParam: OpParamRef
+  value: Datum
+}

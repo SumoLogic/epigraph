@@ -103,6 +103,11 @@ vartype RecordTypeRef extends DataTypeRef {
 
 }
 
+vartype FieldRef extends ByNameRef {
+  override name: FieldName
+  field: FieldData
+}
+
 record FieldData extends Named {
 
   override name: FieldName

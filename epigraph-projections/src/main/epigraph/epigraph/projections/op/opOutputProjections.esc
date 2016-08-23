@@ -1,0 +1,72 @@
+namespace epigraph.projections.op
+
+import epigraph.schema.DataTypeRef
+import epigraph.schema.FieldRef
+import epigraph.schema.ListTypeRef
+import epigraph.schema.MapTypeRef
+import epigraph.schema.RecordTypeRef
+import epigraph.schema.TypeMemberRef
+import epigraph.schema.TypeRef
+import epigraph.schema.EnumTypeRef
+import epigraph.schema.PrimitiveTypeRef
+import epigraph.schema.FieldName
+
+// TODO specify default projections here (via `includeInDefaultProjection` boolean property on tags and fields?)
+
+record OpOutputVarProjection {
+  type: TypeRef
+  tagProjections: list[OpOutputTagProjection]
+}
+
+record OpOutputTagProjection {
+  tag: TypeMemberRef
+  tagProjection: OpOutputModelProjection
+}
+
+abstract record OpOutputModelProjection {
+  model: DataTypeRef
+  required: Boolean
+  params: list[OpParamProjection]
+  polymorphicTail: list[OpOutputModelProjection]
+}
+
+record OpOutputRecordModelProjection extends OpOutputModelProjection {
+  override model: RecordTypeRef
+  fieldProjections: list[OpOutputFieldProjection]
+  fieldProjectiAlt: map[FieldName, OpOutputVarProjection] // TODO this or above (or both?)
+  override polymorphicTail: list[OpOutputRecordModelProjection]
+}
+
+record OpOutputFieldProjection {
+  field: FieldRef
+  params: list[OpParamProjection]
+  varProjection: OpOutputVarProjection
+}
+
+record OpOutputListModelProjection extends OpOutputModelProjection {
+  override model: ListTypeRef
+  varProjection: OpOutputVarProjection
+  override polymorphicTail: list[OpOutputListModelProjection]
+}
+
+record OpOutputMapModelProjection extends OpOutputModelProjection {
+  override model: MapTypeRef
+  keyProjection: OpOutputKeyProjection { doc = "if `null` - keys are not accepted" }
+  varProjection: OpOutputVarProjection
+  override polymorphicTail: list[OpOutputMapModelProjection] // TODO figure out what to do with keys in poly tail
+}
+
+record OpOutputKeyProjection {
+  required: Boolean
+  params: list[OpParamProjection]
+}
+
+record OpOutputEnumModelProjection extends OpOutputModelProjection {
+  override model: EnumTypeRef
+  override polymorphicTail: list[OpOutputEnumModelProjection] // always empty since no enum inheritance - introduce an interface for those that have inheritance?
+}
+
+record OpOutputPrimitiveModelProjection extends OpOutputModelProjection {
+  override model: PrimitiveTypeRef
+  override polymorphicTail: list[OpOutputPrimitiveModelProjection]
+}

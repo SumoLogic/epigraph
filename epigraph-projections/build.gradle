@@ -1,0 +1,9 @@
+plugins {
+  id "io.epigraph" version "0.0"
+}
+
+dependencies {
+  compile project(':epigraph-builtin-types')
+  compile project(':epigraph-schema')
+  compile project(':epigraph-data')
+}

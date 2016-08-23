@@ -1,0 +1,88 @@
+namespace epigraph.data
+
+import epigraph.schema.TypeData
+import epigraph.schema.VarTypeData
+import epigraph.schema.DataTypeData
+import epigraph.schema.RecordTypeData
+import epigraph.schema.MapTypeData
+import epigraph.schema.ListTypeData
+import epigraph.schema.EnumTypeData
+import epigraph.schema.PrimitiveTypeData
+import epigraph.schema.StringTypeData
+import epigraph.schema.IntegerTypeData
+import epigraph.schema.LongTypeData
+import epigraph.schema.DoubleTypeData
+import epigraph.schema.BooleanTypeData
+
+record Error {
+  statusCode: Integer
+  exception: String // should be Exception
+}
+
+record Value {
+  data: Datum
+  error: Error
+  // meta?
+}
+
+abstract record Data {
+  abstract type: TypeData
+}
+
+record VarData extends Data {
+  override type: VarTypeData
+  tags: map[String, Data]
+}
+
+abstract record Datum extends Data {
+  override type: DataTypeData
+}
+
+record RecordDatum extends Datum {
+  override type: RecordTypeData
+  fields: map[String, Value]
+}
+
+record MapDatum extends Datum {
+  override type: MapTypeData
+  entries: map[Data, Value]
+}
+
+record ListDatum extends Datum {
+  override type: ListTypeData
+  entries: list[Value]
+}
+
+record EnumDatum extends Datum {
+  override type: EnumTypeData
+  value: String // TODO how do we mode this?
+}
+
+abstract record PrimitiveDatum extends Datum {
+  override type: PrimitiveTypeData
+}
+
+record StringDatum extends PrimitiveDatum {
+  override type: StringTypeData
+  value: String
+}
+
+record IntegerDatum extends PrimitiveDatum {
+  override type: IntegerTypeData
+  value: Integer
+}
+
+record LongDatum extends PrimitiveDatum {
+  override type: LongTypeData
+  value: Long
+}
+
+record DoubleDatum extends PrimitiveDatum {
+  override type: DoubleTypeData
+  value: Double
+}
+
+record BooleanDatum extends PrimitiveDatum {
+  override type: BooleanTypeData
+  value: Boolean
+}
