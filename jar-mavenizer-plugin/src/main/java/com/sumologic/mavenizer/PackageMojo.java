@@ -1,4 +1,4 @@
-/* Created by yegor on 7/18/16. */
+/* Created by yegor on 8/22/16. */
 
 package com.sumologic.mavenizer;
 
@@ -29,13 +29,13 @@ public class PackageMojo extends AbstractMojo {
   private File sourceJar;
 
   /**
-   *
+   * Directory where source jar will be unpacked for further repackaging.
    */
   @Parameter(defaultValue = "${project.build.outputDirectory}", required = true)
   private File classesDirectory;
 
   /**
-   * Directory containing the generated JAR.
+   * Directory where generated JAR artifact will be stored.
    */
   @Parameter(defaultValue = "${project.build.directory}", required = true, readonly = true)
   private File outputDirectory;
@@ -47,7 +47,7 @@ public class PackageMojo extends AbstractMojo {
   private String finalName;
 
   /**
-   * Classifier to add to the artifact generated. If given, the artifact will be attached as a supplemental artifact.
+   * Classifier to add to the generated artifact. If given, the artifact will be attached as a supplemental artifact.
    * If not given this will create the main artifact which is the default behavior.
    * If you try to do that a second time without using a classifier the build will fail.
    */
@@ -57,7 +57,7 @@ public class PackageMojo extends AbstractMojo {
   @Component
   protected ArchiverManager archiverManager;
 
-  @Component(role = UnArchiver.class, hint = "jar")
+  @Component(role = UnArchiver.class, hint = "jar") // TODO get it from archive manager instead?
   private ZipUnArchiver jarUnArchiver;
 
   /**
@@ -96,19 +96,20 @@ public class PackageMojo extends AbstractMojo {
     jarUnArchiver.setSourceFile(sourceJar);
     jarUnArchiver.setDestDirectory(classesDirectory);
     classesDirectory.mkdirs(); // TODO check it returns `true`?
-    getLog().info("Unpacking '"+ sourceJar.getAbsolutePath() + "' to '" + classesDirectory.getAbsolutePath() + "'");
+    getLog().info("Unpacking '" + sourceJar.getAbsolutePath() + "' to '" + classesDirectory.getAbsolutePath() + "'");
     jarUnArchiver.extract();
 
-    File jarFile = createArchive();
+    File artifactJar = createArchive();
 
     if (hasClassifier()) {
-      projectHelper.attachArtifact(project, getType(), getClassifier(), jarFile);
+      projectHelper.attachArtifact(project, getType(), getClassifier(), artifactJar);
     } else {
       if (projectHasAlreadySetAnArtifact()) {
-        throw new MojoExecutionException("You have to use a classifier "
-            + "to attach supplemental artifacts to the project instead of replacing them.");
+        throw new MojoExecutionException(
+            "You have to use a classifier to attach supplemental artifacts to the project instead of replacing them."
+        );
       }
-      project.getArtifact().setFile(jarFile);
+      project.getArtifact().setFile(artifactJar);
     }
 
   }
@@ -127,20 +128,20 @@ public class PackageMojo extends AbstractMojo {
   }
 
   /**
-   * Generates the JAR.
+   * Generates the artifact JAR.
    *
    * @return The instance of File for the created archive file.
    * @throws MojoExecutionException in case of an error.
    */
   private File createArchive()
       throws MojoExecutionException {
-    File jarFile = getJarFile(outputDirectory, finalName, getClassifier());
+    File jarArtifactFile = getJarArtifactFile(outputDirectory, finalName, getClassifier());
 
     MavenArchiver archiver = new MavenArchiver();
 
     archiver.setArchiver(jarArchiver);
 
-    archiver.setOutputFile(jarFile);
+    archiver.setOutputFile(jarArtifactFile);
 
     try {
       File contentDirectory = classesDirectory;
@@ -152,7 +153,7 @@ public class PackageMojo extends AbstractMojo {
 
       archiver.createArchive(session, project, archive);
 
-      return jarFile;
+      return jarArtifactFile;
     } catch (Exception e) {
       // TODO: improve error handling
       throw new MojoExecutionException("Error assembling JAR", e);
@@ -166,14 +167,16 @@ public class PackageMojo extends AbstractMojo {
    */
   private String getClassifier() {
     return classifier;
-  };
+  }
+
+  ;
 
   /**
    * Overload this to produce a test-jar, for example.
    *
    * @return return the type.
    */
-  protected String getType() {
+  private String getType() {
     return "jar";
   }
 
@@ -181,11 +184,11 @@ public class PackageMojo extends AbstractMojo {
    * Returns the Jar file to generate, based on an optional classifier.
    *
    * @param basedir         the output directory
-   * @param resultFinalName the name of the ear file
+   * @param resultFinalName the name of the jar artifact file (with -version but without -classifier or .extension)
    * @param classifier      an optional classifier
    * @return the file to generate
    */
-  private File getJarFile(File basedir, String resultFinalName, String classifier) {
+  private File getJarArtifactFile(File basedir, String resultFinalName, String classifier) {
     if (basedir == null) {
       throw new IllegalArgumentException("basedir is not allowed to be null");
     }
