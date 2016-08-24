@@ -15,7 +15,7 @@ todo
 apply plugin: 'groovy'
 
 dependencies {
-  compile project(":epigraph-schema-compiler")
+  compile project(":schema-compiler")
 
   compile gradleApi()
   compile localGroovy()

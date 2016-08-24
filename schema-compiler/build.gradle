@@ -5,7 +5,7 @@ plugins {
 apply plugin: 'scala'
 
 dependencies {
-  compile project(':epigraph-core')
+  compile project(':core')
   compile project(':schema-parser')
 
   compile 'org.scala-lang:scala-library'
