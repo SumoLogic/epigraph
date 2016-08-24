@@ -3,11 +3,11 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>epigraph-java-codegen</artifactId>
+  <artifactId>epigraph-scala-codegen</artifactId>
 
   <parent>
     <groupId>com.sumologic.epigraph</groupId>
-    <artifactId>epigraph-java</artifactId>
+    <artifactId>epigraph</artifactId>
     <version>0.0-SNAPSHOT</version>
   </parent>
 
@@ -31,8 +31,8 @@
     </dependency>
 
     <dependency>
-      <groupId>org.scala-lang</groupId>
-      <artifactId>scala-library</artifactId>
+      <groupId>org.scalameta</groupId>
+      <artifactId>trees_${scala.version.major.minor}</artifactId>
     </dependency>
 
     <dependency>

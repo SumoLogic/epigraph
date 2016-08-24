@@ -36,13 +36,13 @@
   </developers>
 
   <modules>
-    <module>epigraph-builtin-types</module>
-    <module>epigraph-core</module>
-    <!--<module>epigraph-maven-plugin</module>-->
-    <module>epigraph-scala-codegen</module>
-    <module>epigraph-scala-codegen-test</module>
-    <module>epigraph-schema</module>
-    <module>epigraph-schema-compiler</module>
+    <module>builtin-types-schema</module>
+    <module>core</module>
+    <!--<module>maven-plugin</module>-->
+    <module>scala-codegen</module>
+    <module>scala-codegen-test</module>
+    <module>schema-schema</module>
+    <module>schema-compiler</module>
     <!--<module>idea-plugin</module>-->
     <module>schema-parser</module>
   </modules>

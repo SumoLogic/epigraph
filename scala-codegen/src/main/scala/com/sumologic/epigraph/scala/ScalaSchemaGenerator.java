@@ -1,6 +1,6 @@
 /* Created by yegor on 7/6/16. */
 
-package com.sumologic.epigraph.java;
+package com.sumologic.epigraph.scala;
 
 import com.sumologic.epigraph.schema.compiler.*;
 import scala.collection.JavaConversions;
@@ -10,18 +10,18 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class JavaSchemaGenerator {
+public class ScalaSchemaGenerator {
 
   private final CContext ctx;
 
   private final Path outputRoot;
 
-  public JavaSchemaGenerator(CContext ctx, Path outputRoot) {
+  public ScalaSchemaGenerator(CContext ctx, Path outputRoot) {
     this.ctx = ctx;
     this.outputRoot = outputRoot;
   }
 
-  public JavaSchemaGenerator(CContext ctx, File outputRoot) {
+  public ScalaSchemaGenerator(CContext ctx, File outputRoot) {
     this(ctx, outputRoot.toPath());
   }
 
@@ -29,9 +29,9 @@ public class JavaSchemaGenerator {
 
     Path tmpRoot = GenUtils.rmrf(outputRoot.resolveSibling(outputRoot.getFileName().toString() + "~tmp"), outputRoot.getParent());
 
-//    for (CNamespace namespace : ctx.namespaces().values()) {
-//      new NamespaceGen(namespace, ctx).writeUnder(tmpRoot);
-//    }
+    for (CNamespace namespace : ctx.namespaces().values()) {
+      new NamespaceGen(namespace).writeUnder(tmpRoot);
+    }
 
     for (CSchemaFile schemaFile : ctx.schemaFiles().values()) {
       for (CTypeDef typeDef : JavaConversions.asJavaIterable(schemaFile.typeDefs())) {
@@ -39,18 +39,18 @@ public class JavaSchemaGenerator {
         switch (typeDef.kind()) {
 
           case VARTYPE:
-            //new VarTypeGen((CVarTypeDef) typeDef, ctx).writeUnder(tmpRoot);
+            //new VarTypeGen((CVarTypeDef) typeDef).writeUnder(tmpRoot);
             break;
 
           case RECORD:
-            new RecordGen((CRecordTypeDef) typeDef, ctx).writeUnder(tmpRoot);
+            new RecordGen((CRecordTypeDef) typeDef).writeUnder(tmpRoot);
             break;
 
           case MAP:
             break;
 
           case LIST:
-            new ListGen((CListTypeDef) typeDef, ctx).writeUnder(tmpRoot);
+            new ListGen((CListTypeDef) typeDef).writeUnder(tmpRoot);
             break;
 
           case ENUM:
@@ -61,7 +61,7 @@ public class JavaSchemaGenerator {
           case LONG:
           case DOUBLE:
           case BOOLEAN:
-            new PrimitiveGen((CPrimitiveTypeDef) typeDef, ctx).writeUnder(tmpRoot);
+            new PrimitiveGen((CPrimitiveTypeDef) typeDef).writeUnder(tmpRoot);
             break;
 
           default:
@@ -69,24 +69,15 @@ public class JavaSchemaGenerator {
         }
       }
     }
-    
-    for (CAnonListType alt : ctx.anonListTypes().values()) {
-      //System.out.println(alt.name().name());
-      new AnonListGen(alt, ctx).writeUnder(tmpRoot);
-    }
-
-    for (CAnonMapType amt : ctx.anonMapTypes().values()) {
-      // TODO new AnonMapGen(amt, ctx).writeUnder(tmpRoot);
-    }
 
     GenUtils.move(tmpRoot, outputRoot, outputRoot.getParent()); // move new root to final location
 
   }
 
   public static void main(String... args) throws IOException {
-    new JavaSchemaGenerator(
+    new ScalaSchemaGenerator(
         SchemaCompiler.testcompile(),
-        Paths.get("java-codegen-test/src/test/epigraph-java")
+        Paths.get("scala-codegen-test/src/test/epigraph-scala")
     ).generate();
   }
 
