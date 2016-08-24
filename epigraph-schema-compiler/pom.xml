@@ -22,12 +22,6 @@
       <groupId>${project.groupId}</groupId>
       <artifactId>schema-parser</artifactId>
       <version>${project.version}</version>
-      <exclusions>
-        <!--<exclusion>&lt;!&ndash; packaged within schema-parser artifact &ndash;&gt;-->
-          <!--<groupId>com.sumologic.epigraph.3rd-party</groupId>-->
-          <!--<artifactId>light-psi-all</artifactId>-->
-        <!--</exclusion>-->
-      </exclusions>
     </dependency>
 
     <dependency>

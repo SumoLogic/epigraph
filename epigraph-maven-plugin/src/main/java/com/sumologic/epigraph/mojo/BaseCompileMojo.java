@@ -15,19 +15,20 @@ import scala.Option;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
-import java.util.jar.JarEntry;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 import java.util.jar.JarFile;
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
 
 /**
  * Base for Epigraph Compiler Mojos.
  */
 public abstract class BaseCompileMojo extends AbstractMojo {
-  private static final Pattern SCHEMA_FILENAME_PATTERN = Pattern.compile(".+\\.esc");
+
+  private static final Pattern SCHEMA_FILENAME_PATTERN = Pattern.compile(".+\\.esc"); // TODO use Predicate?
 
   /**
    * The source directory of Epigraph schema files. This directory is added to the
@@ -67,7 +68,7 @@ public abstract class BaseCompileMojo extends AbstractMojo {
     // TODO? project.addTestCompileSourceRoot(testOutputDirectory.getAbsolutePath());
   }
 
-  private void addImpliedDependencies(Collection<Source> dependencySources){
+  private void addImpliedDependencies(Collection<Source> dependencySources) {
     if (getClass().getResource("/epigraph/builtinTypes.esc") != null) {
       Source builtinTypes = new ResourceSource("/epigraph/builtinTypes.esc"); // TODO use url.openStream?
       dependencySources.add(builtinTypes);
@@ -143,7 +144,8 @@ public abstract class BaseCompileMojo extends AbstractMojo {
     return fileSetManager.getIncludedFiles(fs);
   }
 
-  private void compileFiles(File outputDirectory, Collection<Source> sources, Collection<Source> dependencySources) throws MojoExecutionException, MojoFailureException {
+  private void compileFiles(File outputDirectory, Collection<Source> sources, Collection<Source> dependencySources)
+      throws MojoExecutionException, MojoFailureException {
     try {
       doCompile(outputDirectory, sources, dependencySources);
     } catch (IOException e) {
