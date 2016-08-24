@@ -1,5 +1,6 @@
 ### High
 - Var tag references not resolving in `default` overrides on fields/list elements etc
+- `//` and `/*... */` comments should be ignored in string literals (seems to be fixed already?)
 
 ### Medium
 - Schema files under `resources` should be excluded from analysis
@@ -8,6 +9,7 @@
 - renaming a field/tag with `override` modifier should rename base members too (and sub-members with `override`) 
 
 ### Low
+- String text should be highlihted as specified in "Preferences > Editor > Colors & Fonts > Language Defaults > String > String Text"
 - Detect useless `extends` e.g. `record Foo extends Bar, Bar`. Take hierarchy into account
 - Ctrl-space marks file as dirty
 - Icon is not substituted for schema files outside of source root, in the files view. See https://intellij-support.jetbrains.com/hc/en-us/community/posts/207277349-handling-custom-language-file-outside-of-source-root

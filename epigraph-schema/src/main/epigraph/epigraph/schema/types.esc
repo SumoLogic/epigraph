@@ -56,6 +56,7 @@ record TypeMemberData extends Named {
   dataType: DataTypeRef
 
   `abstract`: Boolean {
+    deprecated = "No longer needed? Or keep it for documenting intent?"
     doc = "Abstract type member's data type may be overridden (with compatible data type) in concrete sub-vartypes"
   }
 
@@ -71,7 +72,7 @@ vartype TypeMemberRef extends ByNameRef {
 }
 
 
-polymorphic record DataTypeData extends TypeData { // TODO extends VarTypeData?
+record DataTypeData extends TypeData { // TODO extends VarTypeData?
 
   override supertypes: list[DataTypeRef]
 
@@ -113,6 +114,7 @@ record FieldData extends Named {
   override name: FieldName
 
   `abstract`: Boolean {
+    deprecated = "No longer needed? Or keep it for documenting intent (enforce overrides then)?"
     doc = "Abstract fields must be overridden in concrete (non-abstract) subtypes
      and don't show-up in mutable interface inherited by subtypes"
   }
@@ -181,7 +183,7 @@ record EnumValueData extends Named {
 }
 
 
-abstract polymorphic record PrimitiveTypeData extends DataTypeData {
+abstract record PrimitiveTypeData extends DataTypeData {
 
   override abstract supertypes: list[PrimitiveTypeRef]
 
