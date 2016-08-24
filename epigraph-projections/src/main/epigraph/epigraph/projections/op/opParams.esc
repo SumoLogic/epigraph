@@ -6,7 +6,7 @@ import epigraph.schema.Named
 import epigraph.schema.LocalName
 import epigraph.schema.ByNameRef
 
-record OpParamProjection {
+record OpParamProjection { // TODO merge with OpParam if op params are not shared between operations
   param: OpParam
   modelProjection: OpInputModelProjection
 }
@@ -14,7 +14,7 @@ record OpParamProjection {
 record OpParam extends Named, Documented {
   override name: ParamName
   model: DataTypeRef
-  modelProjection: OpInputModelProjection
+//  modelProjection: OpInputModelProjection
 }
 
 string ParamName extends LocalName

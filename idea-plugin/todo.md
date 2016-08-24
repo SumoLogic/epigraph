@@ -9,6 +9,7 @@
     - [ ] elementTypePrefx -> 'E_'
     - [ ] PsiClassPrefix -> 'Epigraph'? Or make it different for Schema/Data/Projection classes?
   - [ ] `Schema*` classes to `Epigraph*`, except for `SchemaParser`
+  - [ ] *.esc -> *.epigraph? *.epigraph_schema?
 - Smart type completion: suggest out of scope types (+add import)
 - Smart completion for `default <tag>`, `nodefault` on fields, list elements etc
   - [ ] Don't allow either on datum types (non-vartypes)
