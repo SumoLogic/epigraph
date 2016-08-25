@@ -3,7 +3,7 @@ package com.sumologic.epigraph.ideaplugin.schema.features.structureview;
 import com.intellij.ide.structureView.StructureViewBuilder;
 import com.intellij.lang.PsiStructureViewFactory;
 import com.intellij.psi.PsiFile;
-import com.sumologic.epigraph.schema.parser.psi.SchemaFile;
+import io.epigraph.lang.schema.parser.psi.SchemaFile;
 import org.jetbrains.annotations.Nullable;
 
 /**

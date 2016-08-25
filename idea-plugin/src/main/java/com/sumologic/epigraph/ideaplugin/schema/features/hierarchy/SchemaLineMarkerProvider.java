@@ -9,10 +9,10 @@ import com.intellij.psi.PsiElement;
 import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.HierarchyCache;
 import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.TypeMembers;
 import com.sumologic.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
-import com.sumologic.epigraph.schema.parser.psi.SchemaFieldDecl;
-import com.sumologic.epigraph.schema.parser.psi.SchemaSupplementDef;
-import com.sumologic.epigraph.schema.parser.psi.SchemaTypeDef;
-import com.sumologic.epigraph.schema.parser.psi.SchemaVarTagDecl;
+import io.epigraph.lang.schema.parser.psi.SchemaFieldDecl;
+import io.epigraph.lang.schema.parser.psi.SchemaSupplementDef;
+import io.epigraph.lang.schema.parser.psi.SchemaTypeDef;
+import io.epigraph.lang.schema.parser.psi.SchemaVarTagDecl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

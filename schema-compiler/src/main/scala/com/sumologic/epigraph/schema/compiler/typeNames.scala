@@ -3,8 +3,8 @@
 package com.sumologic.epigraph.schema.compiler
 
 import com.intellij.psi.PsiElement
-import com.sumologic.epigraph.schema.parser.Fqn
-import com.sumologic.epigraph.schema.parser.psi.{SchemaAnonList, SchemaAnonMap, SchemaFqnTypeRef, SchemaTypeDef}
+import io.epigraph.lang.schema.parser.Fqn
+import io.epigraph.lang.schema.parser.psi.{SchemaAnonList, SchemaAnonMap, SchemaFqnTypeRef, SchemaTypeDef}
 import org.jetbrains.annotations.Nullable
 
 import scala.collection.JavaConversions._

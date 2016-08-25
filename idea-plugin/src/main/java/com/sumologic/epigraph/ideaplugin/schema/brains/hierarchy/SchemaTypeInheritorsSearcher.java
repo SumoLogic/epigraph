@@ -12,7 +12,7 @@ import com.intellij.psi.PsiAnchor;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.Stack;
-import com.sumologic.epigraph.schema.parser.psi.SchemaTypeDef;
+import io.epigraph.lang.schema.parser.psi.SchemaTypeDef;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;

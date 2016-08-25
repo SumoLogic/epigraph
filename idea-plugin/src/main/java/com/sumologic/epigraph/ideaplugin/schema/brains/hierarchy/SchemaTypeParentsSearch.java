@@ -8,7 +8,7 @@ import com.intellij.psi.SmartPsiElementPointer;
 import com.intellij.util.Query;
 import com.intellij.util.QueryFactory;
 import com.intellij.util.containers.ContainerUtil;
-import com.sumologic.epigraph.schema.parser.psi.SchemaTypeDef;
+import io.epigraph.lang.schema.parser.psi.SchemaTypeDef;
 import org.jetbrains.annotations.NotNull;
 
 /**

@@ -5,7 +5,7 @@ import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.fileTypes.SyntaxHighlighterBase;
 import com.intellij.psi.tree.IElementType;
-import com.sumologic.epigraph.schema.parser.SchemaParserDefinition;
+import io.epigraph.lang.schema.parser.SchemaParserDefinition;
 import io.epigraph.lang.lexer.EpigraphFlexAdapter;
 import org.jetbrains.annotations.NotNull;
 

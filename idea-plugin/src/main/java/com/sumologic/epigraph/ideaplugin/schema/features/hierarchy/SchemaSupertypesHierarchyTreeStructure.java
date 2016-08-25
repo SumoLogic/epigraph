@@ -6,7 +6,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.ArrayUtil;
 import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.HierarchyCache;
-import com.sumologic.epigraph.schema.parser.psi.SchemaTypeDef;
+import io.epigraph.lang.schema.parser.psi.SchemaTypeDef;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;

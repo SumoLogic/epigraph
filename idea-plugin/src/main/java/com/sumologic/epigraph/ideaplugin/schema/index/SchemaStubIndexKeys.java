@@ -1,9 +1,9 @@
 package com.sumologic.epigraph.ideaplugin.schema.index;
 
 import com.intellij.psi.stubs.StubIndexKey;
-import com.sumologic.epigraph.schema.parser.psi.SchemaNamespaceDecl;
-import com.sumologic.epigraph.schema.parser.psi.SchemaSupplementDef;
-import com.sumologic.epigraph.schema.parser.psi.SchemaTypeDef;
+import io.epigraph.lang.schema.parser.psi.SchemaNamespaceDecl;
+import io.epigraph.lang.schema.parser.psi.SchemaSupplementDef;
+import io.epigraph.lang.schema.parser.psi.SchemaTypeDef;
 
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>

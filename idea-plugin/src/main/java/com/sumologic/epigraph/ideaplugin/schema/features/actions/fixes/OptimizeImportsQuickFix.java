@@ -12,7 +12,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
 import com.sumologic.epigraph.ideaplugin.schema.features.imports.SchemaImportOptimizer;
-import com.sumologic.epigraph.schema.parser.psi.SchemaFile;
+import io.epigraph.lang.schema.parser.psi.SchemaFile;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 

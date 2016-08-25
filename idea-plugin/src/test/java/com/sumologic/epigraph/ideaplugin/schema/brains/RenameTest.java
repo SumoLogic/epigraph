@@ -1,7 +1,7 @@
 package com.sumologic.epigraph.ideaplugin.schema.brains;
 
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
-import com.sumologic.epigraph.schema.parser.psi.SchemaFile;
+import io.epigraph.lang.schema.parser.psi.SchemaFile;
 
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>

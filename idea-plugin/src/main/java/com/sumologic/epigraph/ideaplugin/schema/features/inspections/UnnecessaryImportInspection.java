@@ -7,10 +7,10 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.util.containers.MultiMap;
 import com.sumologic.epigraph.ideaplugin.schema.brains.ImportsManager;
 import com.sumologic.epigraph.ideaplugin.schema.features.actions.fixes.OptimizeImportsQuickFix;
-import com.sumologic.epigraph.schema.parser.Fqn;
-import com.sumologic.epigraph.schema.parser.psi.SchemaImportStatement;
-import com.sumologic.epigraph.schema.parser.psi.SchemaImports;
-import com.sumologic.epigraph.schema.parser.psi.SchemaVisitor;
+import io.epigraph.lang.schema.parser.Fqn;
+import io.epigraph.lang.schema.parser.psi.SchemaImportStatement;
+import io.epigraph.lang.schema.parser.psi.SchemaImports;
+import io.epigraph.lang.schema.parser.psi.SchemaVisitor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;

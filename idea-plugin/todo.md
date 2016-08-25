@@ -1,13 +1,16 @@
 ### High
 
 ### Medium
+- Multi-language support:
+  - [ ] Figure out `schema/parser/Common`
+  - [ ] Figure out `lang/EpigraphLanguage` (shouldn't reference `Common`?)
 - Rename things:
   - [x] schema-parser-common -> lang-parser-common
   - [x] schema-parser -> lang-parser (with artifact name = epigraph-lang-parser)
-  - [ ] com.sumologic.epigraph.schema -> io.epigraph.lang
+  - [x] com.sumologic.epigraph.schema -> io.epigraph.lang
   - [ ] schema.bnf -> lang.bnf
-    - [x] elementTypePrefx -> 'E_'
-    - [ ] PsiClassPrefix -> 'Epigraph'? Or make it different for Schema/Data/Projection classes?
+    - [x] elementTypePrefx -> `E_`
+    - [x] PsiClassPrefix -> 'Epigraph'? Or make it different for Schema/Data/Projection classes?
   - [ ] `Schema*` classes to `Epigraph*`, except for `SchemaParser`
   - [ ] *.esc -> *.epigraph? *.epigraph_schema?
 - Smart type completion: suggest out of scope types (+add import)

@@ -1,4 +1,4 @@
-package com.sumologic.epigraph.schema.parser;
+package io.epigraph.lang.schema.parser;
 
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.DebugUtil;

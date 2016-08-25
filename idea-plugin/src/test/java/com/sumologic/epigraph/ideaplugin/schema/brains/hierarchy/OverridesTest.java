@@ -3,8 +3,8 @@ package com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
-import com.sumologic.epigraph.schema.parser.psi.SchemaFieldDecl;
-import com.sumologic.epigraph.schema.parser.psi.SchemaVarTagDecl;
+import io.epigraph.lang.schema.parser.psi.SchemaFieldDecl;
+import io.epigraph.lang.schema.parser.psi.SchemaVarTagDecl;
 
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>

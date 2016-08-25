@@ -2,7 +2,7 @@
 
 package com.sumologic.epigraph.schema.compiler
 
-import com.sumologic.epigraph.schema.parser.psi.{SchemaAnonList, SchemaAnonMap, SchemaFqnTypeRef, SchemaTypeRef}
+import io.epigraph.lang.schema.parser.psi.{SchemaAnonList, SchemaAnonMap, SchemaFqnTypeRef, SchemaTypeRef}
 
 
 object CTypeRef {

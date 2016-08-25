@@ -15,9 +15,9 @@ import com.sumologic.epigraph.ideaplugin.schema.features.actions.fixes.ImportTyp
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaSearchScopeUtil;
 import com.sumologic.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
-import com.sumologic.epigraph.schema.parser.Fqn;
-import com.sumologic.epigraph.schema.parser.NamingConventions;
-import com.sumologic.epigraph.schema.parser.psi.*;
+import io.epigraph.lang.schema.parser.Fqn;
+import io.epigraph.lang.schema.parser.NamingConventions;
+import io.epigraph.lang.schema.parser.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

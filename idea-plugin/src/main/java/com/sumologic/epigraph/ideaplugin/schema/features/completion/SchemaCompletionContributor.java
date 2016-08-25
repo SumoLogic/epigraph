@@ -11,11 +11,11 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
 import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.TypeMembers;
 import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaPsiUtil;
-import com.sumologic.epigraph.schema.parser.Fqn;
+import io.epigraph.lang.schema.parser.Fqn;
 import io.epigraph.lang.EpigraphLanguage;
-import com.sumologic.epigraph.schema.parser.SchemaParserDefinition;
-import com.sumologic.epigraph.schema.parser.psi.*;
-import com.sumologic.epigraph.schema.parser.psi.impl.SchemaPsiImplUtil;
+import io.epigraph.lang.schema.parser.SchemaParserDefinition;
+import io.epigraph.lang.schema.parser.psi.*;
+import io.epigraph.lang.schema.parser.psi.impl.SchemaPsiImplUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;

@@ -3,7 +3,7 @@ package com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaPsiUtil;
-import com.sumologic.epigraph.schema.parser.psi.*;
+import io.epigraph.lang.schema.parser.psi.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;

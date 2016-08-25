@@ -1,4 +1,4 @@
-package com.sumologic.epigraph.schema.parser;
+package io.epigraph.lang.schema.parser;
 
 import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;

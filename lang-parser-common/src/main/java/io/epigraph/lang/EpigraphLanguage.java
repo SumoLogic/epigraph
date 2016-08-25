@@ -1,7 +1,7 @@
 package io.epigraph.lang;
 
 import com.intellij.lang.Language;
-import com.sumologic.epigraph.schema.parser.Common;
+import io.epigraph.lang.schema.parser.Common;
 import org.jetbrains.annotations.NotNull;
 
 /**

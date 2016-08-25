@@ -2,7 +2,7 @@ package com.sumologic.epigraph.ideaplugin.schema;
 
 import com.intellij.openapi.fileTypes.FileTypeConsumer;
 import com.intellij.openapi.fileTypes.FileTypeFactory;
-import com.sumologic.epigraph.schema.parser.SchemaFileType;
+import io.epigraph.lang.schema.parser.SchemaFileType;
 import org.jetbrains.annotations.NotNull;
 
 /**
