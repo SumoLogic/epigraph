@@ -13,17 +13,17 @@ import com.sumologic.epigraph.schema.parser.psi.SchemaVarTagDecl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.*;
+import static io.epigraph.lang.lexer.EpigraphElementTypes.*;
 
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
 public class SchemaBraceMatcher implements PairedBraceMatcher {
   private static final BracePair[] pairs = new BracePair[]{
-      new BracePair(S_CURLY_LEFT, S_CURLY_RIGHT, true),
-      new BracePair(S_BRACKET_LEFT, S_BRACKET_RIGHT, false),
-      new BracePair(S_ANGLE_LEFT, S_ANGLE_RIGHT, false),
-      new BracePair(S_PAREN_LEFT, S_PAREN_RIGHT, false)
+      new BracePair(E_CURLY_LEFT, E_CURLY_RIGHT, true),
+      new BracePair(E_BRACKET_LEFT, E_BRACKET_RIGHT, false),
+      new BracePair(E_ANGLE_LEFT, E_ANGLE_RIGHT, false),
+      new BracePair(E_PAREN_LEFT, E_PAREN_RIGHT, false)
   };
 
   @Override

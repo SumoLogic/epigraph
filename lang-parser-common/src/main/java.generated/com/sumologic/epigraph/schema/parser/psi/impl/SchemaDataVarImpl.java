@@ -7,7 +7,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
-import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.*;
+import static io.epigraph.lang.lexer.EpigraphElementTypes.*;
 import com.sumologic.epigraph.schema.parser.psi.*;
 
 public class SchemaDataVarImpl extends SchemaDataValueImpl implements SchemaDataVar {
@@ -34,13 +34,13 @@ public class SchemaDataVarImpl extends SchemaDataValueImpl implements SchemaData
   @Override
   @NotNull
   public PsiElement getAngleLeft() {
-    return notNullChild(findChildByType(S_ANGLE_LEFT));
+    return notNullChild(findChildByType(E_ANGLE_LEFT));
   }
 
   @Override
   @Nullable
   public PsiElement getAngleRight() {
-    return findChildByType(S_ANGLE_RIGHT);
+    return findChildByType(E_ANGLE_RIGHT);
   }
 
 }

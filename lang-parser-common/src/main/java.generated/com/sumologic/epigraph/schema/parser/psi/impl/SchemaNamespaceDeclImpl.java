@@ -7,7 +7,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
-import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.*;
+import static io.epigraph.lang.lexer.EpigraphElementTypes.*;
 import com.intellij.extapi.psi.StubBasedPsiElementBase;
 import com.sumologic.epigraph.schema.parser.psi.stubs.SchemaNamespaceDeclStub;
 import com.sumologic.epigraph.schema.parser.psi.*;
@@ -51,19 +51,19 @@ public class SchemaNamespaceDeclImpl extends StubBasedPsiElementBase<SchemaNames
   @Override
   @Nullable
   public PsiElement getCurlyLeft() {
-    return findChildByType(S_CURLY_LEFT);
+    return findChildByType(E_CURLY_LEFT);
   }
 
   @Override
   @Nullable
   public PsiElement getCurlyRight() {
-    return findChildByType(S_CURLY_RIGHT);
+    return findChildByType(E_CURLY_RIGHT);
   }
 
   @Override
   @NotNull
   public PsiElement getNamespace() {
-    return notNullChild(findChildByType(S_NAMESPACE));
+    return notNullChild(findChildByType(E_NAMESPACE));
   }
 
   @Nullable

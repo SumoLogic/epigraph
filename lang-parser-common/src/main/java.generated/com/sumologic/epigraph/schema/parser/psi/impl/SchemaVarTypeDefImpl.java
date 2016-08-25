@@ -7,7 +7,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
-import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.*;
+import static io.epigraph.lang.lexer.EpigraphElementTypes.*;
 import com.sumologic.epigraph.schema.parser.psi.*;
 import com.sumologic.epigraph.schema.parser.psi.stubs.SchemaVarTypeDefStub;
 import com.intellij.psi.stubs.IStubElementType;
@@ -64,13 +64,13 @@ public class SchemaVarTypeDefImpl extends SchemaVarTypeDefImplBase implements Sc
   @Override
   @Nullable
   public PsiElement getAbstract() {
-    return findChildByType(S_ABSTRACT);
+    return findChildByType(E_ABSTRACT);
   }
 
   @Override
   @NotNull
   public PsiElement getVartype() {
-    return notNullChild(findChildByType(S_VARTYPE));
+    return notNullChild(findChildByType(E_VARTYPE));
   }
 
   @NotNull

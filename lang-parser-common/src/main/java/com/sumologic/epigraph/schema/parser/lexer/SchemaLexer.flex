@@ -1,7 +1,7 @@
 package com.sumologic.epigraph.schema.parser.lexer;
 import com.intellij.lexer.*;
 import com.intellij.psi.tree.IElementType;
-import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.*;
+import static io.epigraph.lang.lexer.EpigraphElementTypes.*;
 
 %%
 
@@ -41,51 +41,51 @@ ID=([:letter:]([:letter:]|[:digit:])*)|(`[^`]*`)
   {WHITE_SPACE}        { return com.intellij.psi.TokenType.WHITE_SPACE; }
   {SPACE}              { return com.intellij.psi.TokenType.WHITE_SPACE; }
 
-  "import"             { return S_IMPORT; }
-  "namespace"          { return S_NAMESPACE; }
-  "default"            { return S_DEFAULT; }
-  "nodefault"          { return S_NODEFAULT; }
-  "map"                { return S_MAP; }
-  "list"               { return S_LIST; }
-  "record"             { return S_RECORD; }
-  "extends"            { return S_EXTENDS; }
-  "meta"               { return S_META; }
-  "supplement"         { return S_SUPPLEMENT; }
-  "supplements"        { return S_SUPPLEMENTS; }
-  "with"               { return S_WITH; }
-  "vartype"            { return S_VARTYPE; }
-  "polymorphic"        { return S_POLYMORPHIC; }
-  "abstract"           { return S_ABSTRACT; }
-  "override"           { return S_OVERRIDE; }
-  "enum"               { return S_ENUM; }
-  "integer"            { return S_INTEGER_T; }
-  "long"               { return S_LONG_T; }
-  "double"             { return S_DOUBLE_T; }
-  "boolean"            { return S_BOOLEAN_T; }
-  "string"             { return S_STRING_T; }
-  ":"                  { return S_COLON; }
-  "."                  { return S_DOT; }
-  ","                  { return S_COMMA; }
-  "="                  { return S_EQ; }
-  "{"                  { return S_CURLY_LEFT; }
-  "}"                  { return S_CURLY_RIGHT; }
-  "["                  { return S_BRACKET_LEFT; }
-  "]"                  { return S_BRACKET_RIGHT; }
-  "("                  { return S_PAREN_LEFT; }
-  ")"                  { return S_PAREN_RIGHT; }
-  "<"                  { return S_ANGLE_LEFT; }
-  ">"                  { return S_ANGLE_RIGHT; }
-  "/"                  { return S_SLASH; }
+  "import"             { return E_IMPORT; }
+  "namespace"          { return E_NAMESPACE; }
+  "default"            { return E_DEFAULT; }
+  "nodefault"          { return E_NODEFAULT; }
+  "map"                { return E_MAP; }
+  "list"               { return E_LIST; }
+  "record"             { return E_RECORD; }
+  "extends"            { return E_EXTENDS; }
+  "meta"               { return E_META; }
+  "supplement"         { return E_SUPPLEMENT; }
+  "supplements"        { return E_SUPPLEMENTS; }
+  "with"               { return E_WITH; }
+  "vartype"            { return E_VARTYPE; }
+  "polymorphic"        { return E_POLYMORPHIC; }
+  "abstract"           { return E_ABSTRACT; }
+  "override"           { return E_OVERRIDE; }
+  "enum"               { return E_ENUM; }
+  "integer"            { return E_INTEGER_T; }
+  "long"               { return E_LONG_T; }
+  "double"             { return E_DOUBLE_T; }
+  "boolean"            { return E_BOOLEAN_T; }
+  "string"             { return E_STRING_T; }
+  ":"                  { return E_COLON; }
+  "."                  { return E_DOT; }
+  ","                  { return E_COMMA; }
+  "="                  { return E_EQ; }
+  "{"                  { return E_CURLY_LEFT; }
+  "}"                  { return E_CURLY_RIGHT; }
+  "["                  { return E_BRACKET_LEFT; }
+  "]"                  { return E_BRACKET_RIGHT; }
+  "("                  { return E_PAREN_LEFT; }
+  ")"                  { return E_PAREN_RIGHT; }
+  "<"                  { return E_ANGLE_LEFT; }
+  ">"                  { return E_ANGLE_RIGHT; }
+  "/"                  { return E_SLASH; }
 
-  {STRING}             { return S_STRING; }
-  {NUMBER}             { return S_NUMBER; }
-  "true"               { return S_BOOLEAN; }
-  "false"              { return S_BOOLEAN; }
-  "null"               { return S_NULL; }
+  {STRING}             { return E_STRING; }
+  {NUMBER}             { return E_NUMBER; }
+  "true"               { return E_BOOLEAN; }
+  "false"              { return E_BOOLEAN; }
+  "null"               { return E_NULL; }
 
-  {LINE_COMMENT}       { return S_COMMENT; }
-  {BLOCK_COMMENT}      { return S_BLOCK_COMMENT; }
-  {ID}                 { return S_ID; }
+  {LINE_COMMENT}       { return E_COMMENT; }
+  {BLOCK_COMMENT}      { return E_BLOCK_COMMENT; }
+  {ID}                 { return E_ID; }
 }
 
 [^]                  { return com.intellij.psi.TokenType.BAD_CHARACTER; }

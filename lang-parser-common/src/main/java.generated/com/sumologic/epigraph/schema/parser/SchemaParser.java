@@ -3,7 +3,7 @@ package com.sumologic.epigraph.schema.parser;
 
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiBuilder.Marker;
-import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.*;
+import static io.epigraph.lang.lexer.EpigraphElementTypes.*;
 import static com.intellij.lang.parser.GeneratedParserUtilBase.*;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.lang.ASTNode;
@@ -23,139 +23,139 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     boolean r;
     b = adapt_builder_(t, b, this, EXTENDS_SETS_);
     Marker m = enter_section_(b, 0, _COLLAPSE_, null);
-    if (t == S_ANON_LIST) {
+    if (t == E_ANON_LIST) {
       r = anonList(b, 0);
     }
-    else if (t == S_ANON_MAP) {
+    else if (t == E_ANON_MAP) {
       r = anonMap(b, 0);
     }
-    else if (t == S_CUSTOM_PARAM) {
+    else if (t == E_CUSTOM_PARAM) {
       r = customParam(b, 0);
     }
-    else if (t == S_DATA_ENUM) {
+    else if (t == E_DATA_ENUM) {
       r = dataEnum(b, 0);
     }
-    else if (t == S_DATA_LIST) {
+    else if (t == E_DATA_LIST) {
       r = dataList(b, 0);
     }
-    else if (t == S_DATA_MAP) {
+    else if (t == E_DATA_MAP) {
       r = dataMap(b, 0);
     }
-    else if (t == S_DATA_MAP_ENTRY) {
+    else if (t == E_DATA_MAP_ENTRY) {
       r = dataMapEntry(b, 0);
     }
-    else if (t == S_DATA_PRIMITIVE) {
+    else if (t == E_DATA_PRIMITIVE) {
       r = dataPrimitive(b, 0);
     }
-    else if (t == S_DATA_RECORD) {
+    else if (t == E_DATA_RECORD) {
       r = dataRecord(b, 0);
     }
-    else if (t == S_DATA_RECORD_ENTRY) {
+    else if (t == E_DATA_RECORD_ENTRY) {
       r = dataRecordEntry(b, 0);
     }
-    else if (t == S_DATA_VALUE) {
+    else if (t == E_DATA_VALUE) {
       r = dataValue(b, 0);
     }
-    else if (t == S_DATA_VAR) {
+    else if (t == E_DATA_VAR) {
       r = dataVar(b, 0);
     }
-    else if (t == S_DATA_VAR_ENTRY) {
+    else if (t == E_DATA_VAR_ENTRY) {
       r = dataVarEntry(b, 0);
     }
-    else if (t == S_DEFAULT_OVERRIDE) {
+    else if (t == E_DEFAULT_OVERRIDE) {
       r = defaultOverride(b, 0);
     }
-    else if (t == S_DEFS) {
+    else if (t == E_DEFS) {
       r = defs(b, 0);
     }
-    else if (t == S_ENUM_MEMBER_DECL) {
+    else if (t == E_ENUM_MEMBER_DECL) {
       r = enumMemberDecl(b, 0);
     }
-    else if (t == S_ENUM_TYPE_BODY) {
+    else if (t == E_ENUM_TYPE_BODY) {
       r = enumTypeBody(b, 0);
     }
-    else if (t == S_ENUM_TYPE_DEF) {
+    else if (t == E_ENUM_TYPE_DEF) {
       r = enumTypeDef(b, 0);
     }
-    else if (t == S_EXTENDS_DECL) {
+    else if (t == E_EXTENDS_DECL) {
       r = extendsDecl(b, 0);
     }
-    else if (t == S_FIELD_DECL) {
+    else if (t == E_FIELD_DECL) {
       r = fieldDecl(b, 0);
     }
-    else if (t == S_FQN) {
+    else if (t == E_FQN) {
       r = fqn(b, 0);
     }
-    else if (t == S_FQN_SEGMENT) {
+    else if (t == E_FQN_SEGMENT) {
       r = fqnSegment(b, 0);
     }
-    else if (t == S_FQN_TYPE_REF) {
+    else if (t == E_FQN_TYPE_REF) {
       r = fqnTypeRef(b, 0);
     }
-    else if (t == S_IMPORT_STATEMENT) {
+    else if (t == E_IMPORT_STATEMENT) {
       r = importStatement(b, 0);
     }
-    else if (t == S_IMPORTS) {
+    else if (t == E_IMPORTS) {
       r = imports(b, 0);
     }
-    else if (t == S_LIST_TYPE_BODY) {
+    else if (t == E_LIST_TYPE_BODY) {
       r = listTypeBody(b, 0);
     }
-    else if (t == S_LIST_TYPE_DEF) {
+    else if (t == E_LIST_TYPE_DEF) {
       r = listTypeDef(b, 0);
     }
-    else if (t == S_MAP_TYPE_BODY) {
+    else if (t == E_MAP_TYPE_BODY) {
       r = mapTypeBody(b, 0);
     }
-    else if (t == S_MAP_TYPE_DEF) {
+    else if (t == E_MAP_TYPE_DEF) {
       r = mapTypeDef(b, 0);
     }
-    else if (t == S_META_DECL) {
+    else if (t == E_META_DECL) {
       r = metaDecl(b, 0);
     }
-    else if (t == S_NAMESPACE_DECL) {
+    else if (t == E_NAMESPACE_DECL) {
       r = namespaceDecl(b, 0);
     }
-    else if (t == S_PRIMITIVE_TYPE_BODY) {
+    else if (t == E_PRIMITIVE_TYPE_BODY) {
       r = primitiveTypeBody(b, 0);
     }
-    else if (t == S_PRIMITIVE_TYPE_DEF) {
+    else if (t == E_PRIMITIVE_TYPE_DEF) {
       r = primitiveTypeDef(b, 0);
     }
-    else if (t == S_QID) {
+    else if (t == E_QID) {
       r = qid(b, 0);
     }
-    else if (t == S_RECORD_TYPE_BODY) {
+    else if (t == E_RECORD_TYPE_BODY) {
       r = recordTypeBody(b, 0);
     }
-    else if (t == S_RECORD_TYPE_DEF) {
+    else if (t == E_RECORD_TYPE_DEF) {
       r = recordTypeDef(b, 0);
     }
-    else if (t == S_SUPPLEMENT_DEF) {
+    else if (t == E_SUPPLEMENT_DEF) {
       r = supplementDef(b, 0);
     }
-    else if (t == S_SUPPLEMENTS_DECL) {
+    else if (t == E_SUPPLEMENTS_DECL) {
       r = supplementsDecl(b, 0);
     }
-    else if (t == S_TYPE_DEF_WRAPPER) {
+    else if (t == E_TYPE_DEF_WRAPPER) {
       r = typeDefWrapper(b, 0);
     }
-    else if (t == S_TYPE_REF) {
+    else if (t == E_TYPE_REF) {
       r = typeRef(b, 0);
     }
-    else if (t == S_VALUE_TYPE_REF) {
+    else if (t == E_VALUE_TYPE_REF) {
       r = valueTypeRef(b, 0);
     }
-    else if (t == S_VAR_TAG_DECL) {
+    else if (t == E_VAR_TAG_DECL) {
       r = varTagDecl(b, 0);
     }
-    else if (t == S_VAR_TAG_REF) {
+    else if (t == E_VAR_TAG_REF) {
       r = varTagRef(b, 0);
     }
-    else if (t == S_VAR_TYPE_BODY) {
+    else if (t == E_VAR_TYPE_BODY) {
       r = varTypeBody(b, 0);
     }
-    else if (t == S_VAR_TYPE_DEF) {
+    else if (t == E_VAR_TYPE_DEF) {
       r = varTypeDef(b, 0);
     }
     else {
@@ -169,23 +169,23 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   public static final TokenSet[] EXTENDS_SETS_ = new TokenSet[] {
-    create_token_set_(S_ANON_LIST, S_ANON_MAP, S_FQN_TYPE_REF, S_TYPE_REF),
-    create_token_set_(S_DATA_ENUM, S_DATA_LIST, S_DATA_MAP, S_DATA_RECORD,
-      S_DATA_VALUE, S_DATA_VAR),
+    create_token_set_(E_ANON_LIST, E_ANON_MAP, E_FQN_TYPE_REF, E_TYPE_REF),
+    create_token_set_(E_DATA_ENUM, E_DATA_LIST, E_DATA_MAP, E_DATA_RECORD,
+      E_DATA_VALUE, E_DATA_VAR),
   };
 
   /* ********************************************************** */
   // 'list' '[' valueTypeRef ']'
   public static boolean anonList(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "anonList")) return false;
-    if (!nextTokenIs(b, S_LIST)) return false;
+    if (!nextTokenIs(b, E_LIST)) return false;
     boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, S_ANON_LIST, null);
-    r = consumeToken(b, S_LIST);
+    Marker m = enter_section_(b, l, _NONE_, E_ANON_LIST, null);
+    r = consumeToken(b, E_LIST);
     p = r; // pin = 1
-    r = r && report_error_(b, consumeToken(b, S_BRACKET_LEFT));
+    r = r && report_error_(b, consumeToken(b, E_BRACKET_LEFT));
     r = p && report_error_(b, valueTypeRef(b, l + 1)) && r;
-    r = p && consumeToken(b, S_BRACKET_RIGHT) && r;
+    r = p && consumeToken(b, E_BRACKET_RIGHT) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -194,16 +194,16 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   // 'map' '[' typeRef ',' valueTypeRef ']'
   public static boolean anonMap(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "anonMap")) return false;
-    if (!nextTokenIs(b, S_MAP)) return false;
+    if (!nextTokenIs(b, E_MAP)) return false;
     boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, S_ANON_MAP, null);
-    r = consumeToken(b, S_MAP);
+    Marker m = enter_section_(b, l, _NONE_, E_ANON_MAP, null);
+    r = consumeToken(b, E_MAP);
     p = r; // pin = 1
-    r = r && report_error_(b, consumeToken(b, S_BRACKET_LEFT));
+    r = r && report_error_(b, consumeToken(b, E_BRACKET_LEFT));
     r = p && report_error_(b, typeRef(b, l + 1)) && r;
-    r = p && report_error_(b, consumeToken(b, S_COMMA)) && r;
+    r = p && report_error_(b, consumeToken(b, E_COMMA)) && r;
     r = p && report_error_(b, valueTypeRef(b, l + 1)) && r;
-    r = p && consumeToken(b, S_BRACKET_RIGHT) && r;
+    r = p && consumeToken(b, E_BRACKET_RIGHT) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -212,11 +212,11 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   // qid '=' dataValue
   public static boolean customParam(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "customParam")) return false;
-    if (!nextTokenIs(b, S_ID)) return false;
+    if (!nextTokenIs(b, E_ID)) return false;
     boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, S_CUSTOM_PARAM, "<custom attribute>");
+    Marker m = enter_section_(b, l, _NONE_, E_CUSTOM_PARAM, "<custom attribute>");
     r = qid(b, l + 1);
-    r = r && consumeToken(b, S_EQ);
+    r = r && consumeToken(b, E_EQ);
     p = r; // pin = 2
     r = r && dataValue(b, l + 1);
     exit_section_(b, l, m, r, p, null);
@@ -227,11 +227,11 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   // qid
   public static boolean dataEnum(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "dataEnum")) return false;
-    if (!nextTokenIs(b, S_ID)) return false;
+    if (!nextTokenIs(b, E_ID)) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = qid(b, l + 1);
-    exit_section_(b, m, S_DATA_ENUM, r);
+    exit_section_(b, m, E_DATA_ENUM, r);
     return r;
   }
 
@@ -239,13 +239,13 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   // '[' (dataValue ','?)* ']'
   public static boolean dataList(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "dataList")) return false;
-    if (!nextTokenIs(b, S_BRACKET_LEFT)) return false;
+    if (!nextTokenIs(b, E_BRACKET_LEFT)) return false;
     boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, S_DATA_LIST, null);
-    r = consumeToken(b, S_BRACKET_LEFT);
+    Marker m = enter_section_(b, l, _NONE_, E_DATA_LIST, null);
+    r = consumeToken(b, E_BRACKET_LEFT);
     p = r; // pin = 1
     r = r && report_error_(b, dataList_1(b, l + 1));
-    r = p && consumeToken(b, S_BRACKET_RIGHT) && r;
+    r = p && consumeToken(b, E_BRACKET_RIGHT) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -276,7 +276,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   // ','?
   private static boolean dataList_1_0_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "dataList_1_0_1")) return false;
-    consumeToken(b, S_COMMA);
+    consumeToken(b, E_COMMA);
     return true;
   }
 
@@ -284,13 +284,13 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   // '(' dataMapEntry* ')'
   public static boolean dataMap(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "dataMap")) return false;
-    if (!nextTokenIs(b, S_PAREN_LEFT)) return false;
+    if (!nextTokenIs(b, E_PAREN_LEFT)) return false;
     boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, S_DATA_MAP, null);
-    r = consumeToken(b, S_PAREN_LEFT);
+    Marker m = enter_section_(b, l, _NONE_, E_DATA_MAP, null);
+    r = consumeToken(b, E_PAREN_LEFT);
     p = r; // pin = 1
     r = r && report_error_(b, dataMap_1(b, l + 1));
-    r = p && consumeToken(b, S_PAREN_RIGHT) && r;
+    r = p && consumeToken(b, E_PAREN_RIGHT) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -312,9 +312,9 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   public static boolean dataMapEntry(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "dataMapEntry")) return false;
     boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, S_DATA_MAP_ENTRY, "<data map entry>");
+    Marker m = enter_section_(b, l, _NONE_, E_DATA_MAP_ENTRY, "<data map entry>");
     r = dataVarValue(b, l + 1);
-    r = r && consumeToken(b, S_COLON);
+    r = r && consumeToken(b, E_COLON);
     p = r; // pin = 2
     r = r && report_error_(b, dataValue(b, l + 1));
     r = p && dataMapEntry_3(b, l + 1) && r;
@@ -325,7 +325,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   // ','?
   private static boolean dataMapEntry_3(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "dataMapEntry_3")) return false;
-    consumeToken(b, S_COMMA);
+    consumeToken(b, E_COMMA);
     return true;
   }
 
@@ -334,10 +334,10 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   public static boolean dataPrimitive(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "dataPrimitive")) return false;
     boolean r;
-    Marker m = enter_section_(b, l, _NONE_, S_DATA_PRIMITIVE, "<data primitive>");
-    r = consumeToken(b, S_STRING);
-    if (!r) r = consumeToken(b, S_NUMBER);
-    if (!r) r = consumeToken(b, S_BOOLEAN);
+    Marker m = enter_section_(b, l, _NONE_, E_DATA_PRIMITIVE, "<data primitive>");
+    r = consumeToken(b, E_STRING);
+    if (!r) r = consumeToken(b, E_NUMBER);
+    if (!r) r = consumeToken(b, E_BOOLEAN);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
@@ -346,13 +346,13 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   // '{' dataRecordEntry* '}'
   public static boolean dataRecord(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "dataRecord")) return false;
-    if (!nextTokenIs(b, S_CURLY_LEFT)) return false;
+    if (!nextTokenIs(b, E_CURLY_LEFT)) return false;
     boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, S_DATA_RECORD, null);
-    r = consumeToken(b, S_CURLY_LEFT);
+    Marker m = enter_section_(b, l, _NONE_, E_DATA_RECORD, null);
+    r = consumeToken(b, E_CURLY_LEFT);
     p = r; // pin = 1
     r = r && report_error_(b, dataRecord_1(b, l + 1));
-    r = p && consumeToken(b, S_CURLY_RIGHT) && r;
+    r = p && consumeToken(b, E_CURLY_RIGHT) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -374,9 +374,9 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   public static boolean dataRecordEntry(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "dataRecordEntry")) return false;
     boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, S_DATA_RECORD_ENTRY, "<data record entry>");
+    Marker m = enter_section_(b, l, _NONE_, E_DATA_RECORD_ENTRY, "<data record entry>");
     r = qid(b, l + 1);
-    r = r && consumeToken(b, S_COLON);
+    r = r && consumeToken(b, E_COLON);
     p = r; // pin = 2
     r = r && report_error_(b, dataValue(b, l + 1));
     r = p && dataRecordEntry_3(b, l + 1) && r;
@@ -387,7 +387,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   // ','?
   private static boolean dataRecordEntry_3(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "dataRecordEntry_3")) return false;
-    consumeToken(b, S_COMMA);
+    consumeToken(b, E_COMMA);
     return true;
   }
 
@@ -410,7 +410,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     boolean r;
     Marker m = enter_section_(b);
     r = fqnTypeRef(b, l + 1);
-    r = r && consumeToken(b, S_SLASH);
+    r = r && consumeToken(b, E_SLASH);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -420,7 +420,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   public static boolean dataValue(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "dataValue")) return false;
     boolean r;
-    Marker m = enter_section_(b, l, _COLLAPSE_, S_DATA_VALUE, "<data value>");
+    Marker m = enter_section_(b, l, _COLLAPSE_, E_DATA_VALUE, "<data value>");
     r = dataValue_0(b, l + 1);
     r = r && dataValue_1(b, l + 1);
     exit_section_(b, l, m, r, false, null);
@@ -463,13 +463,13 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b);
     r = qid(b, l + 1);
     if (!r) r = dataPrimitive(b, l + 1);
-    if (!r) r = consumeToken(b, S_CURLY_RIGHT);
-    if (!r) r = consumeToken(b, S_PAREN_RIGHT);
-    if (!r) r = consumeToken(b, S_ANGLE_RIGHT);
-    if (!r) r = consumeToken(b, S_BRACKET_RIGHT);
-    if (!r) r = consumeToken(b, S_ABSTRACT);
-    if (!r) r = consumeToken(b, S_OVERRIDE);
-    if (!r) r = consumeToken(b, S_COMMA);
+    if (!r) r = consumeToken(b, E_CURLY_RIGHT);
+    if (!r) r = consumeToken(b, E_PAREN_RIGHT);
+    if (!r) r = consumeToken(b, E_ANGLE_RIGHT);
+    if (!r) r = consumeToken(b, E_BRACKET_RIGHT);
+    if (!r) r = consumeToken(b, E_ABSTRACT);
+    if (!r) r = consumeToken(b, E_OVERRIDE);
+    if (!r) r = consumeToken(b, E_COMMA);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -478,13 +478,13 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   // '<' dataVarEntry* '>'
   public static boolean dataVar(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "dataVar")) return false;
-    if (!nextTokenIs(b, S_ANGLE_LEFT)) return false;
+    if (!nextTokenIs(b, E_ANGLE_LEFT)) return false;
     boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, S_DATA_VAR, null);
-    r = consumeToken(b, S_ANGLE_LEFT);
+    Marker m = enter_section_(b, l, _NONE_, E_DATA_VAR, null);
+    r = consumeToken(b, E_ANGLE_LEFT);
     p = r; // pin = 1
     r = r && report_error_(b, dataVar_1(b, l + 1));
-    r = p && consumeToken(b, S_ANGLE_RIGHT) && r;
+    r = p && consumeToken(b, E_ANGLE_RIGHT) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -506,9 +506,9 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   public static boolean dataVarEntry(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "dataVarEntry")) return false;
     boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, S_DATA_VAR_ENTRY, "<data var entry>");
+    Marker m = enter_section_(b, l, _NONE_, E_DATA_VAR_ENTRY, "<data var entry>");
     r = qid(b, l + 1);
-    r = r && consumeToken(b, S_COLON);
+    r = r && consumeToken(b, E_COLON);
     p = r; // pin = 2
     r = r && report_error_(b, dataVarValue(b, l + 1));
     r = p && dataVarEntry_3(b, l + 1) && r;
@@ -519,7 +519,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   // ','?
   private static boolean dataVarEntry_3(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "dataVarEntry_3")) return false;
-    consumeToken(b, S_COMMA);
+    consumeToken(b, E_COMMA);
     return true;
   }
 
@@ -562,22 +562,22 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(b, l, "declRecover_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeToken(b, S_IMPORT);
-    if (!r) r = consumeToken(b, S_NAMESPACE);
-    if (!r) r = consumeToken(b, S_POLYMORPHIC);
-    if (!r) r = consumeToken(b, S_ABSTRACT);
-    if (!r) r = consumeToken(b, S_RECORD);
-    if (!r) r = consumeToken(b, S_COMMA);
-    if (!r) r = consumeToken(b, S_MAP);
-    if (!r) r = consumeToken(b, S_LIST);
-    if (!r) r = consumeToken(b, S_VARTYPE);
-    if (!r) r = consumeToken(b, S_ENUM);
-    if (!r) r = consumeToken(b, S_SUPPLEMENT);
-    if (!r) r = consumeToken(b, S_STRING_T);
-    if (!r) r = consumeToken(b, S_INTEGER_T);
-    if (!r) r = consumeToken(b, S_LONG_T);
-    if (!r) r = consumeToken(b, S_DOUBLE_T);
-    if (!r) r = consumeToken(b, S_BOOLEAN_T);
+    r = consumeToken(b, E_IMPORT);
+    if (!r) r = consumeToken(b, E_NAMESPACE);
+    if (!r) r = consumeToken(b, E_POLYMORPHIC);
+    if (!r) r = consumeToken(b, E_ABSTRACT);
+    if (!r) r = consumeToken(b, E_RECORD);
+    if (!r) r = consumeToken(b, E_COMMA);
+    if (!r) r = consumeToken(b, E_MAP);
+    if (!r) r = consumeToken(b, E_LIST);
+    if (!r) r = consumeToken(b, E_VARTYPE);
+    if (!r) r = consumeToken(b, E_ENUM);
+    if (!r) r = consumeToken(b, E_SUPPLEMENT);
+    if (!r) r = consumeToken(b, E_STRING_T);
+    if (!r) r = consumeToken(b, E_INTEGER_T);
+    if (!r) r = consumeToken(b, E_LONG_T);
+    if (!r) r = consumeToken(b, E_DOUBLE_T);
+    if (!r) r = consumeToken(b, E_BOOLEAN_T);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -598,10 +598,10 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   // 'nodefault' | 'default' varTagRef
   public static boolean defaultOverride(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "defaultOverride")) return false;
-    if (!nextTokenIs(b, "<default override>", S_DEFAULT, S_NODEFAULT)) return false;
+    if (!nextTokenIs(b, "<default override>", E_DEFAULT, E_NODEFAULT)) return false;
     boolean r;
-    Marker m = enter_section_(b, l, _NONE_, S_DEFAULT_OVERRIDE, "<default override>");
-    r = consumeToken(b, S_NODEFAULT);
+    Marker m = enter_section_(b, l, _NONE_, E_DEFAULT_OVERRIDE, "<default override>");
+    r = consumeToken(b, E_NODEFAULT);
     if (!r) r = defaultOverride_1(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
@@ -612,7 +612,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(b, l, "defaultOverride_1")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeToken(b, S_DEFAULT);
+    r = consumeToken(b, E_DEFAULT);
     r = r && varTagRef(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
@@ -622,7 +622,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   // def*
   public static boolean defs(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "defs")) return false;
-    Marker m = enter_section_(b, l, _NONE_, S_DEFS, "<defs>");
+    Marker m = enter_section_(b, l, _NONE_, E_DEFS, "<defs>");
     int c = current_position_(b);
     while (true) {
       if (!def(b, l + 1)) break;
@@ -637,13 +637,13 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   // '{' (enumMemberBodyPart ','?)* '}'
   static boolean enumMemberBody(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "enumMemberBody")) return false;
-    if (!nextTokenIs(b, S_CURLY_LEFT)) return false;
+    if (!nextTokenIs(b, E_CURLY_LEFT)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_);
-    r = consumeToken(b, S_CURLY_LEFT);
+    r = consumeToken(b, E_CURLY_LEFT);
     p = r; // pin = 1
     r = r && report_error_(b, enumMemberBody_1(b, l + 1));
-    r = p && consumeToken(b, S_CURLY_RIGHT) && r;
+    r = p && consumeToken(b, E_CURLY_RIGHT) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -674,7 +674,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   // ','?
   private static boolean enumMemberBody_1_0_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "enumMemberBody_1_0_1")) return false;
-    consumeToken(b, S_COMMA);
+    consumeToken(b, E_COMMA);
     return true;
   }
 
@@ -693,9 +693,9 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   // qid enumMemberBody?
   public static boolean enumMemberDecl(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "enumMemberDecl")) return false;
-    if (!nextTokenIs(b, S_ID)) return false;
+    if (!nextTokenIs(b, E_ID)) return false;
     boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, S_ENUM_MEMBER_DECL, null);
+    Marker m = enter_section_(b, l, _NONE_, E_ENUM_MEMBER_DECL, null);
     r = qid(b, l + 1);
     p = r; // pin = 1
     r = r && enumMemberDecl_1(b, l + 1);
@@ -714,13 +714,13 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   // '{' (enumTypeBodyPart ','?)* '}'
   public static boolean enumTypeBody(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "enumTypeBody")) return false;
-    if (!nextTokenIs(b, S_CURLY_LEFT)) return false;
+    if (!nextTokenIs(b, E_CURLY_LEFT)) return false;
     boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, S_ENUM_TYPE_BODY, null);
-    r = consumeToken(b, S_CURLY_LEFT);
+    Marker m = enter_section_(b, l, _NONE_, E_ENUM_TYPE_BODY, null);
+    r = consumeToken(b, E_CURLY_LEFT);
     p = r; // pin = 1
     r = r && report_error_(b, enumTypeBody_1(b, l + 1));
-    r = p && consumeToken(b, S_CURLY_RIGHT) && r;
+    r = p && consumeToken(b, E_CURLY_RIGHT) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -751,7 +751,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   // ','?
   private static boolean enumTypeBody_1_0_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "enumTypeBody_1_0_1")) return false;
-    consumeToken(b, S_COMMA);
+    consumeToken(b, E_COMMA);
     return true;
   }
 
@@ -771,10 +771,10 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   // 'enum' typeName metaDecl? enumTypeBody
   public static boolean enumTypeDef(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "enumTypeDef")) return false;
-    if (!nextTokenIs(b, S_ENUM)) return false;
+    if (!nextTokenIs(b, E_ENUM)) return false;
     boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, S_ENUM_TYPE_DEF, null);
-    r = consumeToken(b, S_ENUM);
+    Marker m = enter_section_(b, l, _NONE_, E_ENUM_TYPE_DEF, null);
+    r = consumeToken(b, E_ENUM);
     p = r; // pin = 1
     r = r && report_error_(b, typeName(b, l + 1));
     r = p && report_error_(b, enumTypeDef_2(b, l + 1)) && r;
@@ -794,10 +794,10 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   // 'extends' fqnTypeRef (',' fqnTypeRef)*
   public static boolean extendsDecl(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "extendsDecl")) return false;
-    if (!nextTokenIs(b, S_EXTENDS)) return false;
+    if (!nextTokenIs(b, E_EXTENDS)) return false;
     boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, S_EXTENDS_DECL, null);
-    r = consumeToken(b, S_EXTENDS);
+    Marker m = enter_section_(b, l, _NONE_, E_EXTENDS_DECL, null);
+    r = consumeToken(b, E_EXTENDS);
     p = r; // pin = 1
     r = r && report_error_(b, fqnTypeRef(b, l + 1));
     r = p && extendsDecl_2(b, l + 1) && r;
@@ -822,7 +822,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(b, l, "extendsDecl_2_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeToken(b, S_COMMA);
+    r = consumeToken(b, E_COMMA);
     r = r && fqnTypeRef(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
@@ -832,13 +832,13 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   // '{' (fieldBodyPart ','?)* '}'
   static boolean fieldBody(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "fieldBody")) return false;
-    if (!nextTokenIs(b, S_CURLY_LEFT)) return false;
+    if (!nextTokenIs(b, E_CURLY_LEFT)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_);
-    r = consumeToken(b, S_CURLY_LEFT);
+    r = consumeToken(b, E_CURLY_LEFT);
     p = r; // pin = 1
     r = r && report_error_(b, fieldBody_1(b, l + 1));
-    r = p && consumeToken(b, S_CURLY_RIGHT) && r;
+    r = p && consumeToken(b, E_CURLY_RIGHT) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -869,7 +869,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   // ','?
   private static boolean fieldBody_1_0_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "fieldBody_1_0_1")) return false;
-    consumeToken(b, S_COMMA);
+    consumeToken(b, E_COMMA);
     return true;
   }
 
@@ -889,10 +889,10 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   public static boolean fieldDecl(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "fieldDecl")) return false;
     boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, S_FIELD_DECL, "<field decl>");
+    Marker m = enter_section_(b, l, _NONE_, E_FIELD_DECL, "<field decl>");
     r = typeMemberModifiers(b, l + 1);
     r = r && qid(b, l + 1);
-    r = r && consumeToken(b, S_COLON);
+    r = r && consumeToken(b, E_COLON);
     p = r; // pin = 3
     r = r && report_error_(b, valueTypeRef(b, l + 1));
     r = p && fieldDecl_4(b, l + 1) && r;
@@ -911,12 +911,12 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   // fqnSegment ('.' fqnSegment)*
   public static boolean fqn(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "fqn")) return false;
-    if (!nextTokenIs(b, S_ID)) return false;
+    if (!nextTokenIs(b, E_ID)) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = fqnSegment(b, l + 1);
     r = r && fqn_1(b, l + 1);
-    exit_section_(b, m, S_FQN, r);
+    exit_section_(b, m, E_FQN, r);
     return r;
   }
 
@@ -937,7 +937,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(b, l, "fqn_1_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeToken(b, S_DOT);
+    r = consumeToken(b, E_DOT);
     r = r && fqnSegment(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
@@ -947,11 +947,11 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   // qid
   public static boolean fqnSegment(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "fqnSegment")) return false;
-    if (!nextTokenIs(b, S_ID)) return false;
+    if (!nextTokenIs(b, E_ID)) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = qid(b, l + 1);
-    exit_section_(b, m, S_FQN_SEGMENT, r);
+    exit_section_(b, m, E_FQN_SEGMENT, r);
     return r;
   }
 
@@ -959,11 +959,11 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   // fqn
   public static boolean fqnTypeRef(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "fqnTypeRef")) return false;
-    if (!nextTokenIs(b, S_ID)) return false;
+    if (!nextTokenIs(b, E_ID)) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = fqn(b, l + 1);
-    exit_section_(b, m, S_FQN_TYPE_REF, r);
+    exit_section_(b, m, E_FQN_TYPE_REF, r);
     return r;
   }
 
@@ -972,8 +972,8 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   public static boolean importStatement(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "importStatement")) return false;
     boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, S_IMPORT_STATEMENT, "<import statement>");
-    r = consumeToken(b, S_IMPORT);
+    Marker m = enter_section_(b, l, _NONE_, E_IMPORT_STATEMENT, "<import statement>");
+    r = consumeToken(b, E_IMPORT);
     p = r; // pin = 1
     r = r && fqn(b, l + 1);
     exit_section_(b, l, m, r, p, declRecover_parser_);
@@ -984,7 +984,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   // importStatement*
   public static boolean imports(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "imports")) return false;
-    Marker m = enter_section_(b, l, _NONE_, S_IMPORTS, "<imports>");
+    Marker m = enter_section_(b, l, _NONE_, E_IMPORTS, "<imports>");
     int c = current_position_(b);
     while (true) {
       if (!importStatement(b, l + 1)) break;
@@ -999,13 +999,13 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   // '{' (listTypeBodyPart ','?)* '}'
   public static boolean listTypeBody(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "listTypeBody")) return false;
-    if (!nextTokenIs(b, S_CURLY_LEFT)) return false;
+    if (!nextTokenIs(b, E_CURLY_LEFT)) return false;
     boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, S_LIST_TYPE_BODY, null);
-    r = consumeToken(b, S_CURLY_LEFT);
+    Marker m = enter_section_(b, l, _NONE_, E_LIST_TYPE_BODY, null);
+    r = consumeToken(b, E_CURLY_LEFT);
     p = r; // pin = 1
     r = r && report_error_(b, listTypeBody_1(b, l + 1));
-    r = p && consumeToken(b, S_CURLY_RIGHT) && r;
+    r = p && consumeToken(b, E_CURLY_RIGHT) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -1036,7 +1036,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   // ','?
   private static boolean listTypeBody_1_0_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "listTypeBody_1_0_1")) return false;
-    consumeToken(b, S_COMMA);
+    consumeToken(b, E_COMMA);
     return true;
   }
 
@@ -1055,9 +1055,9 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   // typeDefModifiers anonList typeName extendsDecl? metaDecl? supplementsDecl? listTypeBody?
   public static boolean listTypeDef(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "listTypeDef")) return false;
-    if (!nextTokenIs(b, "<list type def>", S_ABSTRACT, S_LIST)) return false;
+    if (!nextTokenIs(b, "<list type def>", E_ABSTRACT, E_LIST)) return false;
     boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, S_LIST_TYPE_DEF, "<list type def>");
+    Marker m = enter_section_(b, l, _NONE_, E_LIST_TYPE_DEF, "<list type def>");
     r = typeDefModifiers(b, l + 1);
     r = r && anonList(b, l + 1);
     p = r; // pin = 2
@@ -1102,13 +1102,13 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   // '{' (mapTypeBodyPart ','?)* '}'
   public static boolean mapTypeBody(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "mapTypeBody")) return false;
-    if (!nextTokenIs(b, S_CURLY_LEFT)) return false;
+    if (!nextTokenIs(b, E_CURLY_LEFT)) return false;
     boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, S_MAP_TYPE_BODY, null);
-    r = consumeToken(b, S_CURLY_LEFT);
+    Marker m = enter_section_(b, l, _NONE_, E_MAP_TYPE_BODY, null);
+    r = consumeToken(b, E_CURLY_LEFT);
     p = r; // pin = 1
     r = r && report_error_(b, mapTypeBody_1(b, l + 1));
-    r = p && consumeToken(b, S_CURLY_RIGHT) && r;
+    r = p && consumeToken(b, E_CURLY_RIGHT) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -1139,7 +1139,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   // ','?
   private static boolean mapTypeBody_1_0_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "mapTypeBody_1_0_1")) return false;
-    consumeToken(b, S_COMMA);
+    consumeToken(b, E_COMMA);
     return true;
   }
 
@@ -1158,9 +1158,9 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   // typeDefModifiers anonMap typeName extendsDecl? metaDecl? supplementsDecl? mapTypeBody?
   public static boolean mapTypeDef(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "mapTypeDef")) return false;
-    if (!nextTokenIs(b, "<map type def>", S_ABSTRACT, S_MAP)) return false;
+    if (!nextTokenIs(b, "<map type def>", E_ABSTRACT, E_MAP)) return false;
     boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, S_MAP_TYPE_DEF, "<map type def>");
+    Marker m = enter_section_(b, l, _NONE_, E_MAP_TYPE_DEF, "<map type def>");
     r = typeDefModifiers(b, l + 1);
     r = r && anonMap(b, l + 1);
     p = r; // pin = 2
@@ -1205,10 +1205,10 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   // 'meta' fqnTypeRef
   public static boolean metaDecl(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "metaDecl")) return false;
-    if (!nextTokenIs(b, S_META)) return false;
+    if (!nextTokenIs(b, E_META)) return false;
     boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, S_META_DECL, null);
-    r = consumeToken(b, S_META);
+    Marker m = enter_section_(b, l, _NONE_, E_META_DECL, null);
+    r = consumeToken(b, E_META);
     p = r; // pin = 1
     r = r && fqnTypeRef(b, l + 1);
     exit_section_(b, l, m, r, p, null);
@@ -1219,13 +1219,13 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   // '{' namespaceBodyPart* '}'
   static boolean namespaceBody(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "namespaceBody")) return false;
-    if (!nextTokenIs(b, S_CURLY_LEFT)) return false;
+    if (!nextTokenIs(b, E_CURLY_LEFT)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_);
-    r = consumeToken(b, S_CURLY_LEFT);
+    r = consumeToken(b, E_CURLY_LEFT);
     p = r; // pin = 1
     r = r && report_error_(b, namespaceBody_1(b, l + 1));
-    r = p && consumeToken(b, S_CURLY_RIGHT) && r;
+    r = p && consumeToken(b, E_CURLY_RIGHT) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -1258,8 +1258,8 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   public static boolean namespaceDecl(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "namespaceDecl")) return false;
     boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, S_NAMESPACE_DECL, "<namespace decl>");
-    r = consumeToken(b, S_NAMESPACE);
+    Marker m = enter_section_(b, l, _NONE_, E_NAMESPACE_DECL, "<namespace decl>");
+    r = consumeToken(b, E_NAMESPACE);
     p = r; // pin = 1
     r = r && report_error_(b, fqn(b, l + 1));
     r = p && namespaceDecl_2(b, l + 1) && r;
@@ -1290,11 +1290,11 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(b, l, "partRecover_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeToken(b, S_CURLY_RIGHT);
+    r = consumeToken(b, E_CURLY_RIGHT);
     if (!r) r = qid(b, l + 1);
-    if (!r) r = consumeToken(b, S_ABSTRACT);
-    if (!r) r = consumeToken(b, S_OVERRIDE);
-    if (!r) r = consumeToken(b, S_COMMA);
+    if (!r) r = consumeToken(b, E_ABSTRACT);
+    if (!r) r = consumeToken(b, E_OVERRIDE);
+    if (!r) r = consumeToken(b, E_COMMA);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -1316,11 +1316,11 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(b, l, "primitiveKind")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeToken(b, S_STRING_T);
-    if (!r) r = consumeToken(b, S_INTEGER_T);
-    if (!r) r = consumeToken(b, S_LONG_T);
-    if (!r) r = consumeToken(b, S_DOUBLE_T);
-    if (!r) r = consumeToken(b, S_BOOLEAN_T);
+    r = consumeToken(b, E_STRING_T);
+    if (!r) r = consumeToken(b, E_INTEGER_T);
+    if (!r) r = consumeToken(b, E_LONG_T);
+    if (!r) r = consumeToken(b, E_DOUBLE_T);
+    if (!r) r = consumeToken(b, E_BOOLEAN_T);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -1329,13 +1329,13 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   // '{' (primitiveBodyPart ','?)* '}'
   public static boolean primitiveTypeBody(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "primitiveTypeBody")) return false;
-    if (!nextTokenIs(b, S_CURLY_LEFT)) return false;
+    if (!nextTokenIs(b, E_CURLY_LEFT)) return false;
     boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, S_PRIMITIVE_TYPE_BODY, null);
-    r = consumeToken(b, S_CURLY_LEFT);
+    Marker m = enter_section_(b, l, _NONE_, E_PRIMITIVE_TYPE_BODY, null);
+    r = consumeToken(b, E_CURLY_LEFT);
     p = r; // pin = 1
     r = r && report_error_(b, primitiveTypeBody_1(b, l + 1));
-    r = p && consumeToken(b, S_CURLY_RIGHT) && r;
+    r = p && consumeToken(b, E_CURLY_RIGHT) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -1366,7 +1366,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   // ','?
   private static boolean primitiveTypeBody_1_0_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "primitiveTypeBody_1_0_1")) return false;
-    consumeToken(b, S_COMMA);
+    consumeToken(b, E_COMMA);
     return true;
   }
 
@@ -1375,7 +1375,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   public static boolean primitiveTypeDef(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "primitiveTypeDef")) return false;
     boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, S_PRIMITIVE_TYPE_DEF, "<primitive type def>");
+    Marker m = enter_section_(b, l, _NONE_, E_PRIMITIVE_TYPE_DEF, "<primitive type def>");
     r = typeDefModifiers(b, l + 1);
     r = r && primitiveKind(b, l + 1);
     p = r; // pin = 2
@@ -1420,11 +1420,11 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   // id
   public static boolean qid(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "qid")) return false;
-    if (!nextTokenIs(b, S_ID)) return false;
+    if (!nextTokenIs(b, E_ID)) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeToken(b, S_ID);
-    exit_section_(b, m, S_QID, r);
+    r = consumeToken(b, E_ID);
+    exit_section_(b, m, E_QID, r);
     return r;
   }
 
@@ -1444,13 +1444,13 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   // '{' (recordBodyPart ','?)* '}'
   public static boolean recordTypeBody(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "recordTypeBody")) return false;
-    if (!nextTokenIs(b, S_CURLY_LEFT)) return false;
+    if (!nextTokenIs(b, E_CURLY_LEFT)) return false;
     boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, S_RECORD_TYPE_BODY, null);
-    r = consumeToken(b, S_CURLY_LEFT);
+    Marker m = enter_section_(b, l, _NONE_, E_RECORD_TYPE_BODY, null);
+    r = consumeToken(b, E_CURLY_LEFT);
     p = r; // pin = 1
     r = r && report_error_(b, recordTypeBody_1(b, l + 1));
-    r = p && consumeToken(b, S_CURLY_RIGHT) && r;
+    r = p && consumeToken(b, E_CURLY_RIGHT) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -1481,7 +1481,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   // ','?
   private static boolean recordTypeBody_1_0_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "recordTypeBody_1_0_1")) return false;
-    consumeToken(b, S_COMMA);
+    consumeToken(b, E_COMMA);
     return true;
   }
 
@@ -1489,11 +1489,11 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   // typeDefModifiers 'record' typeName extendsDecl? metaDecl? supplementsDecl? recordTypeBody?
   public static boolean recordTypeDef(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "recordTypeDef")) return false;
-    if (!nextTokenIs(b, "<record type def>", S_ABSTRACT, S_RECORD)) return false;
+    if (!nextTokenIs(b, "<record type def>", E_ABSTRACT, E_RECORD)) return false;
     boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, S_RECORD_TYPE_DEF, "<record type def>");
+    Marker m = enter_section_(b, l, _NONE_, E_RECORD_TYPE_DEF, "<record type def>");
     r = typeDefModifiers(b, l + 1);
-    r = r && consumeToken(b, S_RECORD);
+    r = r && consumeToken(b, E_RECORD);
     p = r; // pin = 2
     r = r && report_error_(b, typeName(b, l + 1));
     r = p && report_error_(b, recordTypeDef_3(b, l + 1)) && r;
@@ -1536,7 +1536,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   // namespaceDecl imports defs
   static boolean root(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "root")) return false;
-    if (!nextTokenIs(b, S_NAMESPACE)) return false;
+    if (!nextTokenIs(b, E_NAMESPACE)) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = namespaceDecl(b, l + 1);
@@ -1550,14 +1550,14 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   // 'supplement' fqnTypeRef (',' fqnTypeRef)* 'with' fqnTypeRef
   public static boolean supplementDef(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "supplementDef")) return false;
-    if (!nextTokenIs(b, S_SUPPLEMENT)) return false;
+    if (!nextTokenIs(b, E_SUPPLEMENT)) return false;
     boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, S_SUPPLEMENT_DEF, null);
-    r = consumeToken(b, S_SUPPLEMENT);
+    Marker m = enter_section_(b, l, _NONE_, E_SUPPLEMENT_DEF, null);
+    r = consumeToken(b, E_SUPPLEMENT);
     p = r; // pin = 1
     r = r && report_error_(b, fqnTypeRef(b, l + 1));
     r = p && report_error_(b, supplementDef_2(b, l + 1)) && r;
-    r = p && report_error_(b, consumeToken(b, S_WITH)) && r;
+    r = p && report_error_(b, consumeToken(b, E_WITH)) && r;
     r = p && fqnTypeRef(b, l + 1) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
@@ -1580,7 +1580,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(b, l, "supplementDef_2_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeToken(b, S_COMMA);
+    r = consumeToken(b, E_COMMA);
     r = r && fqnTypeRef(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
@@ -1590,10 +1590,10 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   // 'supplements' fqnTypeRef (',' fqnTypeRef)*
   public static boolean supplementsDecl(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "supplementsDecl")) return false;
-    if (!nextTokenIs(b, S_SUPPLEMENTS)) return false;
+    if (!nextTokenIs(b, E_SUPPLEMENTS)) return false;
     boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, S_SUPPLEMENTS_DECL, null);
-    r = consumeToken(b, S_SUPPLEMENTS);
+    Marker m = enter_section_(b, l, _NONE_, E_SUPPLEMENTS_DECL, null);
+    r = consumeToken(b, E_SUPPLEMENTS);
     p = r; // pin = 1
     r = r && report_error_(b, fqnTypeRef(b, l + 1));
     r = p && supplementsDecl_2(b, l + 1) && r;
@@ -1618,7 +1618,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(b, l, "supplementsDecl_2_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeToken(b, S_COMMA);
+    r = consumeToken(b, E_COMMA);
     r = r && fqnTypeRef(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
@@ -1628,7 +1628,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   // 'abstract'?
   static boolean typeDefModifiers(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "typeDefModifiers")) return false;
-    consumeToken(b, S_ABSTRACT);
+    consumeToken(b, E_ABSTRACT);
     return true;
   }
 
@@ -1637,7 +1637,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   public static boolean typeDefWrapper(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "typeDefWrapper")) return false;
     boolean r;
-    Marker m = enter_section_(b, l, _NONE_, S_TYPE_DEF_WRAPPER, "<type definition>");
+    Marker m = enter_section_(b, l, _NONE_, E_TYPE_DEF_WRAPPER, "<type definition>");
     r = varTypeDef(b, l + 1);
     if (!r) r = recordTypeDef(b, l + 1);
     if (!r) r = mapTypeDef(b, l + 1);
@@ -1663,14 +1663,14 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   // 'override'?
   private static boolean typeMemberModifiers_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "typeMemberModifiers_0")) return false;
-    consumeToken(b, S_OVERRIDE);
+    consumeToken(b, E_OVERRIDE);
     return true;
   }
 
   // 'abstract'?
   private static boolean typeMemberModifiers_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "typeMemberModifiers_1")) return false;
-    consumeToken(b, S_ABSTRACT);
+    consumeToken(b, E_ABSTRACT);
     return true;
   }
 
@@ -1685,7 +1685,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   public static boolean typeRef(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "typeRef")) return false;
     boolean r;
-    Marker m = enter_section_(b, l, _COLLAPSE_, S_TYPE_REF, "<type>");
+    Marker m = enter_section_(b, l, _COLLAPSE_, E_TYPE_REF, "<type>");
     r = fqnTypeRef(b, l + 1);
     if (!r) r = anonList(b, l + 1);
     if (!r) r = anonMap(b, l + 1);
@@ -1698,7 +1698,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   public static boolean valueTypeRef(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "valueTypeRef")) return false;
     boolean r;
-    Marker m = enter_section_(b, l, _NONE_, S_VALUE_TYPE_REF, "<value type ref>");
+    Marker m = enter_section_(b, l, _NONE_, E_VALUE_TYPE_REF, "<value type ref>");
     r = valueTypeRef_0(b, l + 1);
     r = r && typeRef(b, l + 1);
     r = r && valueTypeRef_2(b, l + 1);
@@ -1709,7 +1709,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   // 'polymorphic'?
   private static boolean valueTypeRef_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "valueTypeRef_0")) return false;
-    consumeToken(b, S_POLYMORPHIC);
+    consumeToken(b, E_POLYMORPHIC);
     return true;
   }
 
@@ -1725,10 +1725,10 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   public static boolean varTagDecl(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "varTagDecl")) return false;
     boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, S_VAR_TAG_DECL, "<var tag decl>");
+    Marker m = enter_section_(b, l, _NONE_, E_VAR_TAG_DECL, "<var tag decl>");
     r = typeMemberModifiers(b, l + 1);
     r = r && qid(b, l + 1);
-    r = r && consumeToken(b, S_COLON);
+    r = r && consumeToken(b, E_COLON);
     p = r; // pin = 3
     r = r && report_error_(b, typeRef(b, l + 1));
     r = p && varTagDecl_4(b, l + 1) && r;
@@ -1747,11 +1747,11 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   // qid
   public static boolean varTagRef(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "varTagRef")) return false;
-    if (!nextTokenIs(b, S_ID)) return false;
+    if (!nextTokenIs(b, E_ID)) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = qid(b, l + 1);
-    exit_section_(b, m, S_VAR_TAG_REF, r);
+    exit_section_(b, m, E_VAR_TAG_REF, r);
     return r;
   }
 
@@ -1759,13 +1759,13 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   // '{' (varTypeBodyPart ','?)* '}'
   public static boolean varTypeBody(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "varTypeBody")) return false;
-    if (!nextTokenIs(b, S_CURLY_LEFT)) return false;
+    if (!nextTokenIs(b, E_CURLY_LEFT)) return false;
     boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, S_VAR_TYPE_BODY, null);
-    r = consumeToken(b, S_CURLY_LEFT);
+    Marker m = enter_section_(b, l, _NONE_, E_VAR_TYPE_BODY, null);
+    r = consumeToken(b, E_CURLY_LEFT);
     p = r; // pin = 1
     r = r && report_error_(b, varTypeBody_1(b, l + 1));
-    r = p && consumeToken(b, S_CURLY_RIGHT) && r;
+    r = p && consumeToken(b, E_CURLY_RIGHT) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -1796,7 +1796,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   // ','?
   private static boolean varTypeBody_1_0_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "varTypeBody_1_0_1")) return false;
-    consumeToken(b, S_COMMA);
+    consumeToken(b, E_COMMA);
     return true;
   }
 
@@ -1816,11 +1816,11 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   // typeDefModifiers 'vartype' typeName extendsDecl? supplementsDecl? defaultOverride? varTypeBody?
   public static boolean varTypeDef(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "varTypeDef")) return false;
-    if (!nextTokenIs(b, "<var type def>", S_ABSTRACT, S_VARTYPE)) return false;
+    if (!nextTokenIs(b, "<var type def>", E_ABSTRACT, E_VARTYPE)) return false;
     boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, S_VAR_TYPE_DEF, "<var type def>");
+    Marker m = enter_section_(b, l, _NONE_, E_VAR_TYPE_DEF, "<var type def>");
     r = typeDefModifiers(b, l + 1);
-    r = r && consumeToken(b, S_VARTYPE);
+    r = r && consumeToken(b, E_VARTYPE);
     p = r; // pin = 2
     r = r && report_error_(b, typeName(b, l + 1));
     r = p && report_error_(b, varTypeDef_3(b, l + 1)) && r;
@@ -1863,13 +1863,13 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   // '{' (varTypeMemberBodyPart ','?)* '}'
   static boolean varTypeMemberBody(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "varTypeMemberBody")) return false;
-    if (!nextTokenIs(b, S_CURLY_LEFT)) return false;
+    if (!nextTokenIs(b, E_CURLY_LEFT)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_);
-    r = consumeToken(b, S_CURLY_LEFT);
+    r = consumeToken(b, E_CURLY_LEFT);
     p = r; // pin = 1
     r = r && report_error_(b, varTypeMemberBody_1(b, l + 1));
-    r = p && consumeToken(b, S_CURLY_RIGHT) && r;
+    r = p && consumeToken(b, E_CURLY_RIGHT) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -1900,7 +1900,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   // ','?
   private static boolean varTypeMemberBody_1_0_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "varTypeMemberBody_1_0_1")) return false;
-    consumeToken(b, S_COMMA);
+    consumeToken(b, E_COMMA);
     return true;
   }
 
@@ -1926,7 +1926,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     if (!r) r = dataList(b, l + 1);
     if (!r) r = dataEnum(b, l + 1);
     if (!r) r = dataPrimitive(b, l + 1);
-    if (!r) r = consumeToken(b, S_NULL);
+    if (!r) r = consumeToken(b, E_NULL);
     exit_section_(b, m, null, r);
     return r;
   }

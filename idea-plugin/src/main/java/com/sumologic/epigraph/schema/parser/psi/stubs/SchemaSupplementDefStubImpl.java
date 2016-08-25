@@ -3,7 +3,7 @@ package com.sumologic.epigraph.schema.parser.psi.stubs;
 import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.stubs.StubBase;
 import com.intellij.psi.stubs.StubElement;
-import com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes;
+import io.epigraph.lang.lexer.EpigraphElementTypes;
 import com.sumologic.epigraph.schema.parser.psi.SchemaSupplementDef;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,7 +17,7 @@ public class SchemaSupplementDefStubImpl extends StubBase<SchemaSupplementDef> i
   private final List<SerializedFqnTypeRef> supplementedTypeRefs;
 
   protected SchemaSupplementDefStubImpl(StubElement parent, SerializedFqnTypeRef sourceTypeRef, List<SerializedFqnTypeRef> supplementedTypeRefs) {
-    super(parent, (IStubElementType) SchemaElementTypes.S_SUPPLEMENT_DEF);
+    super(parent, (IStubElementType) EpigraphElementTypes.E_SUPPLEMENT_DEF);
     this.sourceTypeRef = sourceTypeRef;
     this.supplementedTypeRefs = supplementedTypeRefs;
   }

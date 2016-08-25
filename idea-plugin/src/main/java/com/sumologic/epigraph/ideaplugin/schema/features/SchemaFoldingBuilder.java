@@ -19,8 +19,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Set;
 
-import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.S_BLOCK_COMMENT;
-import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.S_COMMENT;
+import static io.epigraph.lang.lexer.EpigraphElementTypes.E_BLOCK_COMMENT;
+import static io.epigraph.lang.lexer.EpigraphElementTypes.E_COMMENT;
 
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
@@ -34,7 +34,7 @@ public class SchemaFoldingBuilder extends CustomFoldingBuilder implements DumbAw
     } else if (element instanceof PsiFile) {
       return "/.../";
     } else if (element instanceof PsiComment) {
-      if (((PsiComment) element).getTokenType() == S_BLOCK_COMMENT)
+      if (((PsiComment) element).getTokenType() == E_BLOCK_COMMENT)
         return "/*..*/";
       else
         return "//...";
@@ -125,7 +125,7 @@ public class SchemaFoldingBuilder extends CustomFoldingBuilder implements DumbAw
    */
   private static void addCommentFolds(@NotNull PsiComment comment, @NotNull Set<PsiElement> processedComments,
                                       @NotNull List<FoldingDescriptor> foldElements) {
-    if (processedComments.contains(comment) || comment.getTokenType() != S_COMMENT) {
+    if (processedComments.contains(comment) || comment.getTokenType() != E_COMMENT) {
       return;
     }
 
@@ -137,7 +137,7 @@ public class SchemaFoldingBuilder extends CustomFoldingBuilder implements DumbAw
         break;
       }
       IElementType elementType = node.getElementType();
-      if (elementType == S_COMMENT) {
+      if (elementType == E_COMMENT) {
         end = current;
         // We don't want to process, say, the second comment in case of three subsequent comments when it's being examined
         // during all elements traversal. I.e. we expect to start from the first comment and grab as many subsequent
@@ -179,9 +179,9 @@ public class SchemaFoldingBuilder extends CustomFoldingBuilder implements DumbAw
       final Set<PsiElement> seenComments = ContainerUtil.newHashSet();
 
       PsiTreeUtil.processElements(file, element -> {
-        if (element.getNode().getElementType().equals(S_BLOCK_COMMENT)) {
+        if (element.getNode().getElementType().equals(E_BLOCK_COMMENT)) {
           descriptors.add(new FoldingDescriptor(element, element.getTextRange()));
-        } else if (element.getNode().getElementType().equals(S_COMMENT)) {
+        } else if (element.getNode().getElementType().equals(E_COMMENT)) {
           addCommentFolds((PsiComment) element, seenComments, descriptors);
         }
         return true;

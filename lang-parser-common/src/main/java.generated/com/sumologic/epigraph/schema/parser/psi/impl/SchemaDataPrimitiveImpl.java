@@ -7,7 +7,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
-import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.*;
+import static io.epigraph.lang.lexer.EpigraphElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.sumologic.epigraph.schema.parser.psi.*;
 
@@ -29,19 +29,19 @@ public class SchemaDataPrimitiveImpl extends ASTWrapperPsiElement implements Sch
   @Override
   @Nullable
   public PsiElement getBoolean() {
-    return findChildByType(S_BOOLEAN);
+    return findChildByType(E_BOOLEAN);
   }
 
   @Override
   @Nullable
   public PsiElement getNumber() {
-    return findChildByType(S_NUMBER);
+    return findChildByType(E_NUMBER);
   }
 
   @Override
   @Nullable
   public PsiElement getString() {
-    return findChildByType(S_STRING);
+    return findChildByType(E_STRING);
   }
 
 }

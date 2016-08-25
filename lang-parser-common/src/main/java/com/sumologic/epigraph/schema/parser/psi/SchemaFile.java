@@ -13,9 +13,9 @@ import javax.swing.*;
 import java.util.Collections;
 import java.util.List;
 
-import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.S_DEFS;
-import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.S_IMPORTS;
-import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.S_NAMESPACE_DECL;
+import static io.epigraph.lang.lexer.EpigraphElementTypes.E_DEFS;
+import static io.epigraph.lang.lexer.EpigraphElementTypes.E_IMPORTS;
+import static io.epigraph.lang.lexer.EpigraphElementTypes.E_NAMESPACE_DECL;
 
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
@@ -39,12 +39,12 @@ public class SchemaFile extends PsiFileBase {
 
   @Nullable
   public SchemaDefs getDefs() {
-    return (SchemaDefs) calcTreeElement().findPsiChildByType(S_DEFS);
+    return (SchemaDefs) calcTreeElement().findPsiChildByType(E_DEFS);
   }
 
   @Nullable
   public SchemaImports getImportsStatement() {
-    return (SchemaImports) calcTreeElement().findPsiChildByType(S_IMPORTS);
+    return (SchemaImports) calcTreeElement().findPsiChildByType(E_IMPORTS);
   }
 
   @NotNull
@@ -57,7 +57,7 @@ public class SchemaFile extends PsiFileBase {
 
   @Nullable
   public SchemaNamespaceDecl getNamespaceDecl() {
-    return (SchemaNamespaceDecl) calcTreeElement().findPsiChildByType(S_NAMESPACE_DECL);
+    return (SchemaNamespaceDecl) calcTreeElement().findPsiChildByType(E_NAMESPACE_DECL);
   }
 
   @Override

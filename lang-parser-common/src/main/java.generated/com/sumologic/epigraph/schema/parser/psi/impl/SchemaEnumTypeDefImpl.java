@@ -7,7 +7,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
-import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.*;
+import static io.epigraph.lang.lexer.EpigraphElementTypes.*;
 import com.sumologic.epigraph.schema.parser.psi.*;
 import com.sumologic.epigraph.schema.parser.psi.stubs.SchemaEnumTypeDefStub;
 import com.intellij.psi.stubs.IStubElementType;
@@ -52,7 +52,7 @@ public class SchemaEnumTypeDefImpl extends SchemaEnumTypeDefImplBase implements 
   @Override
   @NotNull
   public PsiElement getEnum() {
-    return notNullChild(findChildByType(S_ENUM));
+    return notNullChild(findChildByType(E_ENUM));
   }
 
 }

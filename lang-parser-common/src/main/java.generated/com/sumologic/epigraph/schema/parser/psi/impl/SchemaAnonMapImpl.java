@@ -7,7 +7,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
-import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.*;
+import static io.epigraph.lang.lexer.EpigraphElementTypes.*;
 import com.sumologic.epigraph.schema.parser.psi.*;
 
 public class SchemaAnonMapImpl extends SchemaTypeRefImpl implements SchemaAnonMap {
@@ -40,25 +40,25 @@ public class SchemaAnonMapImpl extends SchemaTypeRefImpl implements SchemaAnonMa
   @Override
   @Nullable
   public PsiElement getBracketLeft() {
-    return findChildByType(S_BRACKET_LEFT);
+    return findChildByType(E_BRACKET_LEFT);
   }
 
   @Override
   @Nullable
   public PsiElement getBracketRight() {
-    return findChildByType(S_BRACKET_RIGHT);
+    return findChildByType(E_BRACKET_RIGHT);
   }
 
   @Override
   @Nullable
   public PsiElement getComma() {
-    return findChildByType(S_COMMA);
+    return findChildByType(E_COMMA);
   }
 
   @Override
   @NotNull
   public PsiElement getMap() {
-    return notNullChild(findChildByType(S_MAP));
+    return notNullChild(findChildByType(E_MAP));
   }
 
 }

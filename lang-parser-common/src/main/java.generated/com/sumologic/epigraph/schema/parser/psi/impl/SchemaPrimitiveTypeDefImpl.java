@@ -7,7 +7,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
-import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.*;
+import static io.epigraph.lang.lexer.EpigraphElementTypes.*;
 import com.sumologic.epigraph.schema.parser.psi.*;
 import com.sumologic.epigraph.schema.parser.psi.stubs.SchemaPrimitiveTypeDefStub;
 import com.intellij.psi.stubs.IStubElementType;
@@ -64,37 +64,37 @@ public class SchemaPrimitiveTypeDefImpl extends SchemaPrimitiveTypeDefImplBase i
   @Override
   @Nullable
   public PsiElement getAbstract() {
-    return findChildByType(S_ABSTRACT);
+    return findChildByType(E_ABSTRACT);
   }
 
   @Override
   @Nullable
   public PsiElement getBooleanT() {
-    return findChildByType(S_BOOLEAN_T);
+    return findChildByType(E_BOOLEAN_T);
   }
 
   @Override
   @Nullable
   public PsiElement getDoubleT() {
-    return findChildByType(S_DOUBLE_T);
+    return findChildByType(E_DOUBLE_T);
   }
 
   @Override
   @Nullable
   public PsiElement getIntegerT() {
-    return findChildByType(S_INTEGER_T);
+    return findChildByType(E_INTEGER_T);
   }
 
   @Override
   @Nullable
   public PsiElement getLongT() {
-    return findChildByType(S_LONG_T);
+    return findChildByType(E_LONG_T);
   }
 
   @Override
   @Nullable
   public PsiElement getStringT() {
-    return findChildByType(S_STRING_T);
+    return findChildByType(E_STRING_T);
   }
 
   @NotNull

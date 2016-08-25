@@ -1,8 +1,8 @@
 {
   parserClass="com.sumologic.epigraph.schema.parser.SchemaParser"
 
-  elementTypeHolderClass="com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes"
-  elementTypePrefix="S_"
+  elementTypeHolderClass="io.epigraph.lang.lexer.EpigraphElementTypes"
+  elementTypePrefix="E_"
   elementTypeClass="com.sumologic.epigraph.schema.parser.lexer.SchemaElementType"
   tokenTypeClass="com.sumologic.epigraph.schema.parser.lexer.SchemaElementType"
 

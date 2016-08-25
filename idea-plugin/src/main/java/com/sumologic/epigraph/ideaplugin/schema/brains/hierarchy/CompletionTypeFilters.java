@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
 
-import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.S_WITH;
+import static io.epigraph.lang.lexer.EpigraphElementTypes.E_WITH;
 
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
@@ -94,7 +94,7 @@ public abstract class CompletionTypeFilters {
     default boolean include(@NotNull SchemaTypeDef typeDef, @NotNull PsiElement element) {
       SchemaSupplementDef host = PsiTreeUtil.getParentOfType(element, SchemaSupplementDef.class);
       if (host == null) return true;
-      if (SchemaPsiUtil.hasPrevSibling(element.getParent().getParent(), S_WITH)) return true; // we're completing source
+      if (SchemaPsiUtil.hasPrevSibling(element.getParent().getParent(), E_WITH)) return true; // we're completing source
 
       return includeInTarget(typeDef, host);
     }
@@ -107,7 +107,7 @@ public abstract class CompletionTypeFilters {
     default boolean include(@NotNull SchemaTypeDef typeDef, @NotNull PsiElement element) {
       SchemaSupplementDef host = PsiTreeUtil.getParentOfType(element, SchemaSupplementDef.class);
       if (host == null) return true;
-      if (!SchemaPsiUtil.hasPrevSibling(element.getParent().getParent(), S_WITH))
+      if (!SchemaPsiUtil.hasPrevSibling(element.getParent().getParent(), E_WITH))
         return true; // we're completing target
 
       return includeInSource(typeDef, host);

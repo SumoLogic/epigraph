@@ -7,7 +7,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
-import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.*;
+import static io.epigraph.lang.lexer.EpigraphElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.sumologic.epigraph.schema.parser.psi.*;
 
@@ -53,19 +53,19 @@ public class SchemaDataVarEntryImpl extends ASTWrapperPsiElement implements Sche
   @Override
   @NotNull
   public PsiElement getColon() {
-    return notNullChild(findChildByType(S_COLON));
+    return notNullChild(findChildByType(E_COLON));
   }
 
   @Override
   @Nullable
   public PsiElement getComma() {
-    return findChildByType(S_COMMA);
+    return findChildByType(E_COMMA);
   }
 
   @Override
   @Nullable
   public PsiElement getNull() {
-    return findChildByType(S_NULL);
+    return findChildByType(E_NULL);
   }
 
 }

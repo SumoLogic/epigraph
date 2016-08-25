@@ -11,13 +11,13 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IFileElementType;
 import com.intellij.psi.tree.TokenSet;
-import com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes;
 import com.sumologic.epigraph.schema.parser.lexer.SchemaFlexAdapter;
 import com.sumologic.epigraph.schema.parser.psi.SchemaFile;
 import com.sumologic.epigraph.schema.parser.psi.stubs.SchemaStubElementTypes;
+import io.epigraph.lang.lexer.EpigraphElementTypes;
 import org.jetbrains.annotations.NotNull;
 
-import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.*;
+import static io.epigraph.lang.lexer.EpigraphElementTypes.*;
 
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
@@ -25,38 +25,38 @@ import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.*;
 public class SchemaParserDefinition implements ParserDefinition {
 //  public static final SchemaParserDefinition INSTANCE = new SchemaParserDefinition();
   public final static TokenSet WHITESPACES = TokenSet.create(TokenType.WHITE_SPACE);
-  public final static TokenSet IDENTIFIERS = TokenSet.create(S_ID);
-  public final static TokenSet COMMENTS = TokenSet.create(S_COMMENT, S_BLOCK_COMMENT);
-  public final static TokenSet CURLY_BRACES = TokenSet.create(S_CURLY_LEFT, S_CURLY_RIGHT);
+  public final static TokenSet IDENTIFIERS = TokenSet.create(E_ID);
+  public final static TokenSet COMMENTS = TokenSet.create(E_COMMENT, E_BLOCK_COMMENT);
+  public final static TokenSet CURLY_BRACES = TokenSet.create(E_CURLY_LEFT, E_CURLY_RIGHT);
   public final static TokenSet KEYWORDS = TokenSet.create(
-      S_NAMESPACE,
-      S_IMPORT,
-      S_MAP,
-      S_DEFAULT,
-      S_NODEFAULT,
-      S_LIST,
-      S_RECORD,
-      S_EXTENDS,
-      S_VARTYPE,
-      S_ENUM,
-      S_META,
-      S_SUPPLEMENT,
-      S_SUPPLEMENTS,
-      S_WITH,
-      S_ABSTRACT,
-      S_OVERRIDE,
-      S_POLYMORPHIC,
-      S_INTEGER_T,
-      S_LONG_T,
-      S_DOUBLE_T,
-      S_BOOLEAN_T,
-      S_STRING_T,
-      S_NULL // or is ti a LITERAL?
+      E_NAMESPACE,
+      E_IMPORT,
+      E_MAP,
+      E_DEFAULT,
+      E_NODEFAULT,
+      E_LIST,
+      E_RECORD,
+      E_EXTENDS,
+      E_VARTYPE,
+      E_ENUM,
+      E_META,
+      E_SUPPLEMENT,
+      E_SUPPLEMENTS,
+      E_WITH,
+      E_ABSTRACT,
+      E_OVERRIDE,
+      E_POLYMORPHIC,
+      E_INTEGER_T,
+      E_LONG_T,
+      E_DOUBLE_T,
+      E_BOOLEAN_T,
+      E_STRING_T,
+      E_NULL // or is ti a LITERAL?
   );
-  public final static TokenSet STRING_LITERALS = TokenSet.create(S_STRING);
-  public final static TokenSet LITERALS = TokenSet.andSet(STRING_LITERALS, TokenSet.create(S_NUMBER));
-  public final static TokenSet TYPE_KINDS = TokenSet.create(S_VARTYPE, S_RECORD, S_MAP, S_LIST, S_ENUM,
-      S_STRING_T, S_INTEGER_T, S_LONG_T, S_DOUBLE_T, S_BOOLEAN_T);
+  public final static TokenSet STRING_LITERALS = TokenSet.create(E_STRING);
+  public final static TokenSet LITERALS = TokenSet.andSet(STRING_LITERALS, TokenSet.create(E_NUMBER));
+  public final static TokenSet TYPE_KINDS = TokenSet.create(E_VARTYPE, E_RECORD, E_MAP, E_LIST, E_ENUM,
+      E_STRING_T, E_INTEGER_T, E_LONG_T, E_DOUBLE_T, E_BOOLEAN_T);
 
   @NotNull
   @Override
@@ -95,7 +95,7 @@ public class SchemaParserDefinition implements ParserDefinition {
   @NotNull
   @Override
   public PsiElement createElement(ASTNode node) {
-    return SchemaElementTypes.Factory.createElement(node);
+    return EpigraphElementTypes.Factory.createElement(node);
   }
 
   @Override

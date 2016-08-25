@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.*;
+import static io.epigraph.lang.lexer.EpigraphElementTypes.*;
 
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
@@ -47,17 +47,17 @@ public class SchemaCompletionContributor extends CompletionContributor {
 
   // which types can have 'extends' clause
   private static final Set<IElementType> DEFS_SUPPORTING_EXTENDS = new HashSet<>(Arrays.asList(
-      S_VAR_TYPE_DEF, S_RECORD_TYPE_DEF, S_LIST_TYPE_DEF, S_MAP_TYPE_DEF, S_PRIMITIVE_TYPE_DEF
+      E_VAR_TYPE_DEF, E_RECORD_TYPE_DEF, E_LIST_TYPE_DEF, E_MAP_TYPE_DEF, E_PRIMITIVE_TYPE_DEF
   ));
 
   // which types can have 'meta' clause
   private static final Set<IElementType> DEFS_SUPPORTING_META = new HashSet<>(Arrays.asList(
-      S_VAR_TYPE_DEF, S_RECORD_TYPE_DEF, S_LIST_TYPE_DEF, S_MAP_TYPE_DEF, S_ENUM_TYPE_DEF, S_PRIMITIVE_TYPE_DEF
+      E_VAR_TYPE_DEF, E_RECORD_TYPE_DEF, E_LIST_TYPE_DEF, E_MAP_TYPE_DEF, E_ENUM_TYPE_DEF, E_PRIMITIVE_TYPE_DEF
   ));
 
   // which types can have 'supplements' clause
   private static final Set<IElementType> DEFS_SUPPORTING_SUPPLEMENTS = new HashSet<>(Arrays.asList(
-      S_VAR_TYPE_DEF, S_RECORD_TYPE_DEF
+      E_VAR_TYPE_DEF, E_RECORD_TYPE_DEF
   ));
 
   public SchemaCompletionContributor() {
@@ -97,25 +97,25 @@ public class SchemaCompletionContributor extends CompletionContributor {
       boolean completeTypeDef = false;
       boolean completeImport = false;
       boolean completeNamespace = false;
-      boolean afterPolymorphic = SchemaPsiUtil.hasPrevSibling(parent, S_POLYMORPHIC);
-      boolean afterAbstract = SchemaPsiUtil.hasPrevSibling(parent, S_ABSTRACT);
+      boolean afterPolymorphic = SchemaPsiUtil.hasPrevSibling(parent, E_POLYMORPHIC);
+      boolean afterAbstract = SchemaPsiUtil.hasPrevSibling(parent, E_ABSTRACT);
 
       if (grandParent != null) {
         IElementType grandParentElementType = grandParent.getNode().getElementType();
 
-        if (grandParentElementType == S_DEFS) {
+        if (grandParentElementType == E_DEFS) {
           PsiElement nextParentSibling = SchemaPsiUtil.nextNonWhitespaceSibling(parent);
           // don't initiate new type completion if we're followed by anything but a new def, e.g. when we're followed by a {..} dummy block
           completeTypeDef = nextParentSibling == null
               || nextParentSibling instanceof SchemaTypeDefWrapper
               || nextParentSibling instanceof SchemaSupplementDef;
 
-        } else if (grandParentElementType == S_IMPORT_STATEMENT) {
-          if (!SchemaPsiUtil.hasNextSibling(grandParent, S_IMPORT_STATEMENT)) {
+        } else if (grandParentElementType == E_IMPORT_STATEMENT) {
+          if (!SchemaPsiUtil.hasNextSibling(grandParent, E_IMPORT_STATEMENT)) {
             completeTypeDef = true;
           }
           completeImport = true;
-        } else if (grandParentElementType == S_NAMESPACE_DECL) {
+        } else if (grandParentElementType == E_NAMESPACE_DECL) {
           // check if we're between 'namespace' and 'import'
           SchemaImports schemaImports = PsiTreeUtil.getNextSiblingOfType(grandParent, SchemaImports.class);
           if (schemaImports == null || schemaImports.getFirstChild() == null) {
@@ -123,8 +123,8 @@ public class SchemaCompletionContributor extends CompletionContributor {
             completeTypeDef = true;
           }
           completeImport = true;
-        } else if (grandParent instanceof SchemaFile /* && !SchemaPsiUtil.hasNextSibling(grandParent, S_NAMESPACE_DECL) */) {
-          completeNamespace = !SchemaPsiUtil.hasPrevSibling(position, S_TYPE_DEF_WRAPPER);
+        } else if (grandParent instanceof SchemaFile /* && !SchemaPsiUtil.hasNextSibling(grandParent, E_NAMESPACE_DECL) */) {
+          completeNamespace = !SchemaPsiUtil.hasPrevSibling(position, E_TYPE_DEF_WRAPPER);
         }
       }
 
@@ -235,9 +235,9 @@ public class SchemaCompletionContributor extends CompletionContributor {
       if (fqnTypeRef != null) {
         PsiElement prevSibling = SchemaPsiUtil.prevNonWhitespaceSibling(fqnTypeRef);
         if (prevSibling != null
-            && prevSibling.getNode().getElementType() != S_COMMA
-            && prevSibling.getNode().getElementType() != S_SUPPLEMENT
-            && !SchemaPsiUtil.hasPrevSibling(fqnTypeRef, S_WITH)) {
+            && prevSibling.getNode().getElementType() != E_COMMA
+            && prevSibling.getNode().getElementType() != E_SUPPLEMENT
+            && !SchemaPsiUtil.hasPrevSibling(fqnTypeRef, E_WITH)) {
           result.addElement(LookupElementBuilder.create("with "));
         }
       }
@@ -332,11 +332,11 @@ public class SchemaCompletionContributor extends CompletionContributor {
 
     // try to position element to 'override'
     PsiElement element = SchemaPsiUtil.prevNonWhitespaceSibling(position);
-    if (element == null || element.getNode().getElementType() != S_OVERRIDE) {
+    if (element == null || element.getNode().getElementType() != E_OVERRIDE) {
       element = position.getParent();
       if (element == null) return;
       element = SchemaPsiUtil.prevNonWhitespaceSibling(element);
-      if (element == null || element.getNode().getElementType() != S_OVERRIDE) {
+      if (element == null || element.getNode().getElementType() != E_OVERRIDE) {
         return; // give up
       }
     }

@@ -2,7 +2,7 @@ package com.sumologic.epigraph.schema.parser.psi.stubs;
 
 import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.stubs.StubElement;
-import com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes;
+import io.epigraph.lang.lexer.EpigraphElementTypes;
 import com.sumologic.epigraph.schema.parser.psi.SchemaMapTypeDef;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,6 +16,6 @@ public class SchemaMapTypeDefStubImpl extends SchemaTypeDefStubBaseImpl<SchemaMa
                            String name,
                            String namespace,
                            @Nullable final List<SerializedFqnTypeRef> extendsTypeRefs) {
-    super(parent, (IStubElementType) SchemaElementTypes.S_MAP_TYPE_DEF, name, namespace, extendsTypeRefs);
+    super(parent, (IStubElementType) EpigraphElementTypes.E_MAP_TYPE_DEF, name, namespace, extendsTypeRefs);
   }
 }

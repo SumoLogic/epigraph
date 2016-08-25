@@ -6,7 +6,7 @@
   - [x] schema-parser -> lang-parser (with artifact name = epigraph-lang-parser)
   - [ ] com.sumologic.epigraph.schema -> io.epigraph.lang
   - [ ] schema.bnf -> lang.bnf
-    - [ ] elementTypePrefx -> 'E_'
+    - [x] elementTypePrefx -> 'E_'
     - [ ] PsiClassPrefix -> 'Epigraph'? Or make it different for Schema/Data/Projection classes?
   - [ ] `Schema*` classes to `Epigraph*`, except for `SchemaParser`
   - [ ] *.esc -> *.epigraph? *.epigraph_schema?

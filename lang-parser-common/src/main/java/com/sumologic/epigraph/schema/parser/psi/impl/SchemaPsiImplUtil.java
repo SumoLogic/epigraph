@@ -16,10 +16,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.S_WITH;
+import static io.epigraph.lang.lexer.EpigraphElementTypes.E_WITH;
+
 
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
@@ -204,7 +204,7 @@ public class SchemaPsiImplUtil {
     List<SchemaFqnTypeRef> result = new ArrayList<>();
 
     for (PsiElement element = supplementDef.getSupplement();
-         element != null && element.getNode().getElementType() != S_WITH;
+         element != null && element.getNode().getElementType() != E_WITH;
          element = element.getNextSibling()) {
 
       if (element instanceof SchemaFqnTypeRef) result.add((SchemaFqnTypeRef) element);

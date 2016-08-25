@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.*;
+import static io.epigraph.lang.lexer.EpigraphElementTypes.*;
 
 
 /**
@@ -47,11 +47,11 @@ public class SchemaSyntaxHighlighter extends SyntaxHighlighterBase {
 
   static {
     keys = new HashMap<>();
-    keys.put(S_ID, ID);
-    keys.put(S_COMMA, COMMA);
-    keys.put(S_COMMENT, LINE_COMMENT);
-    keys.put(S_BLOCK_COMMENT, BLOCK_COMMENT);
-    add(BRACKETS, S_BRACKET_LEFT, S_BRACKET_RIGHT);
+    keys.put(E_ID, ID);
+    keys.put(E_COMMA, COMMA);
+    keys.put(E_COMMENT, LINE_COMMENT);
+    keys.put(E_BLOCK_COMMENT, BLOCK_COMMENT);
+    add(BRACKETS, E_BRACKET_LEFT, E_BRACKET_RIGHT);
     add(CURLY_BR, SchemaParserDefinition.CURLY_BRACES.getTypes());
     add(KEYWORDS, SchemaParserDefinition.KEYWORDS.getTypes());
   }

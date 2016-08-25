@@ -7,7 +7,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
-import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.*;
+import static io.epigraph.lang.lexer.EpigraphElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.sumologic.epigraph.schema.parser.psi.*;
 
@@ -41,7 +41,7 @@ public class SchemaValueTypeRefImpl extends ASTWrapperPsiElement implements Sche
   @Override
   @Nullable
   public PsiElement getPolymorphic() {
-    return findChildByType(S_POLYMORPHIC);
+    return findChildByType(E_POLYMORPHIC);
   }
 
 }

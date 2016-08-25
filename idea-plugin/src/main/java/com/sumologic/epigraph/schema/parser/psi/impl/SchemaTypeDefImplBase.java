@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.*;
+import static io.epigraph.lang.lexer.EpigraphElementTypes.*;
 
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
@@ -65,18 +65,18 @@ public abstract class SchemaTypeDefImplBase<S extends SchemaTypeDefStubBase<T>, 
 
   @Nullable
   public PsiElement getAbstract() {
-    return findChildByType(S_ABSTRACT);
+    return findChildByType(E_ABSTRACT);
   }
 
   @Nullable
   public PsiElement getPolymorphic() {
-    return findChildByType(S_POLYMORPHIC);
+    return findChildByType(E_POLYMORPHIC);
   }
 
   @Override
   @Nullable
   public SchemaQid getQid() {
-    return findChildByType(S_QID);
+    return findChildByType(E_QID);
   }
 
   @Nullable

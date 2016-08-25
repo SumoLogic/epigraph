@@ -4,7 +4,7 @@ import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.stubs.StubBase;
 import com.intellij.psi.stubs.StubElement;
 import com.sumologic.epigraph.schema.parser.Fqn;
-import com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes;
+import io.epigraph.lang.lexer.EpigraphElementTypes;
 import com.sumologic.epigraph.schema.parser.psi.SchemaNamespaceDecl;
 
 /**
@@ -14,7 +14,7 @@ public class SchemaNamespaceDeclStubImpl extends StubBase<SchemaNamespaceDecl> i
   private final Fqn fqn;
 
   protected SchemaNamespaceDeclStubImpl(StubElement parent, Fqn fqn) {
-    super(parent, (IStubElementType) SchemaElementTypes.S_NAMESPACE_DECL);
+    super(parent, (IStubElementType) EpigraphElementTypes.E_NAMESPACE_DECL);
     this.fqn = fqn;
   }
 

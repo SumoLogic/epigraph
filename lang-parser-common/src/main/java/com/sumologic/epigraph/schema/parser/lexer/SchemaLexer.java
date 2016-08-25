@@ -3,7 +3,7 @@
 package com.sumologic.epigraph.schema.parser.lexer;
 import com.intellij.lexer.*;
 import com.intellij.psi.tree.IElementType;
-import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.*;
+import static io.epigraph.lang.lexer.EpigraphElementTypes.*;
 
 
 /**
@@ -735,171 +735,171 @@ public class SchemaLexer implements FlexLexer {
             }
           case 46: break;
           case 3: 
-            { return S_SLASH;
+            { return E_SLASH;
             }
           case 47: break;
           case 4: 
-            { return S_ID;
+            { return E_ID;
             }
           case 48: break;
           case 5: 
-            { return S_NUMBER;
+            { return E_NUMBER;
             }
           case 49: break;
           case 6: 
-            { return S_DOT;
+            { return E_DOT;
             }
           case 50: break;
           case 7: 
-            { return S_COLON;
+            { return E_COLON;
             }
           case 51: break;
           case 8: 
-            { return S_COMMA;
+            { return E_COMMA;
             }
           case 52: break;
           case 9: 
-            { return S_EQ;
+            { return E_EQ;
             }
           case 53: break;
           case 10: 
-            { return S_CURLY_LEFT;
+            { return E_CURLY_LEFT;
             }
           case 54: break;
           case 11: 
-            { return S_CURLY_RIGHT;
+            { return E_CURLY_RIGHT;
             }
           case 55: break;
           case 12: 
-            { return S_BRACKET_LEFT;
+            { return E_BRACKET_LEFT;
             }
           case 56: break;
           case 13: 
-            { return S_BRACKET_RIGHT;
+            { return E_BRACKET_RIGHT;
             }
           case 57: break;
           case 14: 
-            { return S_PAREN_LEFT;
+            { return E_PAREN_LEFT;
             }
           case 58: break;
           case 15: 
-            { return S_PAREN_RIGHT;
+            { return E_PAREN_RIGHT;
             }
           case 59: break;
           case 16: 
-            { return S_ANGLE_LEFT;
+            { return E_ANGLE_LEFT;
             }
           case 60: break;
           case 17: 
-            { return S_ANGLE_RIGHT;
+            { return E_ANGLE_RIGHT;
             }
           case 61: break;
           case 18: 
-            { return S_COMMENT;
+            { return E_COMMENT;
             }
           case 62: break;
           case 19: 
-            { return S_BLOCK_COMMENT;
+            { return E_BLOCK_COMMENT;
             }
           case 63: break;
           case 20: 
-            { return S_STRING;
+            { return E_STRING;
             }
           case 64: break;
           case 21: 
-            { return S_MAP;
+            { return E_MAP;
             }
           case 65: break;
           case 22: 
-            { return S_META;
+            { return E_META;
             }
           case 66: break;
           case 23: 
-            { return S_BOOLEAN;
+            { return E_BOOLEAN;
             }
           case 67: break;
           case 24: 
-            { return S_NULL;
+            { return E_NULL;
             }
           case 68: break;
           case 25: 
-            { return S_ENUM;
+            { return E_ENUM;
             }
           case 69: break;
           case 26: 
-            { return S_LIST;
+            { return E_LIST;
             }
           case 70: break;
           case 27: 
-            { return S_LONG_T;
+            { return E_LONG_T;
             }
           case 71: break;
           case 28: 
-            { return S_WITH;
+            { return E_WITH;
             }
           case 72: break;
           case 29: 
-            { return S_IMPORT;
+            { return E_IMPORT;
             }
           case 73: break;
           case 30: 
-            { return S_RECORD;
+            { return E_RECORD;
             }
           case 74: break;
           case 31: 
-            { return S_STRING_T;
+            { return E_STRING_T;
             }
           case 75: break;
           case 32: 
-            { return S_DOUBLE_T;
+            { return E_DOUBLE_T;
             }
           case 76: break;
           case 33: 
-            { return S_BOOLEAN_T;
+            { return E_BOOLEAN_T;
             }
           case 77: break;
           case 34: 
-            { return S_INTEGER_T;
+            { return E_INTEGER_T;
             }
           case 78: break;
           case 35: 
-            { return S_EXTENDS;
+            { return E_EXTENDS;
             }
           case 79: break;
           case 36: 
-            { return S_DEFAULT;
+            { return E_DEFAULT;
             }
           case 80: break;
           case 37: 
-            { return S_VARTYPE;
+            { return E_VARTYPE;
             }
           case 81: break;
           case 38: 
-            { return S_OVERRIDE;
+            { return E_OVERRIDE;
             }
           case 82: break;
           case 39: 
-            { return S_ABSTRACT;
+            { return E_ABSTRACT;
             }
           case 83: break;
           case 40: 
-            { return S_NODEFAULT;
+            { return E_NODEFAULT;
             }
           case 84: break;
           case 41: 
-            { return S_NAMESPACE;
+            { return E_NAMESPACE;
             }
           case 85: break;
           case 42: 
-            { return S_SUPPLEMENT;
+            { return E_SUPPLEMENT;
             }
           case 86: break;
           case 43: 
-            { return S_POLYMORPHIC;
+            { return E_POLYMORPHIC;
             }
           case 87: break;
           case 44: 
-            { return S_SUPPLEMENTS;
+            { return E_SUPPLEMENTS;
             }
           case 88: break;
           default:

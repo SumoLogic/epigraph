@@ -24,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.S_FQN_TYPE_REF;
+import static io.epigraph.lang.lexer.EpigraphElementTypes.E_FQN_TYPE_REF;
 
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
@@ -176,7 +176,7 @@ public class SchemaAnnotator implements Annotator {
       public void visitFqn(@NotNull SchemaFqn fqn) {
         PsiElement parent = fqn.getParent();
         // TODO don't check ref in the namespace decl?
-        if (parent.getNode().getElementType() != S_FQN_TYPE_REF) {
+        if (parent.getNode().getElementType() != E_FQN_TYPE_REF) {
           highlightFqn(fqn, holder, null);
         }
       }

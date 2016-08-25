@@ -2,7 +2,7 @@ package com.sumologic.epigraph.schema.parser.psi.stubs;
 
 import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.stubs.StubElement;
-import com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes;
+import io.epigraph.lang.lexer.EpigraphElementTypes;
 import com.sumologic.epigraph.schema.parser.psi.SchemaVarTypeDef;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,7 +19,7 @@ public class SchemaVarTypeDefStubImpl extends SchemaTypeDefStubBaseImpl<SchemaVa
                            String namespace,
                            @Nullable final List<SerializedFqnTypeRef> extendsTypeRefs,
                            @Nullable final List<SerializedFqnTypeRef> supplementedTypeRefs) {
-    super(parent, (IStubElementType) SchemaElementTypes.S_VAR_TYPE_DEF, name, namespace, extendsTypeRefs);
+    super(parent, (IStubElementType) EpigraphElementTypes.E_VAR_TYPE_DEF, name, namespace, extendsTypeRefs);
     this.supplementedTypeRefs = supplementedTypeRefs;
   }
 
