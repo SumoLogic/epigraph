@@ -44,7 +44,7 @@
     <module>schema-schema</module>
     <module>schema-compiler</module>
     <!--<module>idea-plugin</module>-->
-    <module>schema-parser</module>
+    <module>lang-parser</module>
   </modules>
 
   <properties>

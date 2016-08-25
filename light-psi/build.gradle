@@ -29,7 +29,7 @@ configurations {
 
 dependencies {
   lightPsiTmp files("$buildDir/tmp/light-psi-tmp.jar") // this is where packageLightPsi puts it
-  fileList project(":epigraph-schema-parser")
+  fileList project(":epigraph-lang-parser")
 }
 
 ext.isFolder = { String path ->
@@ -80,12 +80,12 @@ task locateGrammarKit << {
 }
 
 task updateFileList2(dependsOn: [locateIdeaHome, locateGrammarKit]) << {
-  def schemaParserJar = project.configurations.fileList.find { it.name.contains('schema-parser') }
-  if (schemaParserJar == null) throw new GradleException('Can\'t locate schema-parser jar, did you build it?')
+  def langParserJar = project.configurations.fileList.find { it.name.contains('lang-parser') }
+  if (langParserJar == null) throw new GradleException('Can\'t locate epigraph-lang-parser jar, did you build it?')
 
-  def producer = new FileListProducer(project.logger, project.ext.ideaHome, new File(project.ext.grammarKit), schemaParserJar)
+  def producer = new FileListProducer(project.logger, project.ext.ideaHome, new File(project.ext.grammarKit), langParserJar)
 
-  producer.traverseAllClasses(schemaParserJar)
+  producer.traverseAllClasses(langParserJar)
   // extra classes (accessed via reflection?)
 //  producer.traverse('com/intellij/openapi/vfs/encoding/EncodingManagerImpl')
 
@@ -97,7 +97,7 @@ task updateFileList2(dependsOn: [locateIdeaHome, locateGrammarKit]) << {
 // deprecated: use updatedFileList2
 task updateFileList(dependsOn: [locateIdeaHome, locateGrammarKit]) << {
   // steps:
-  // Assemble schema-parser standalone runnable
+  // Assemble lang-parser standalone runnable
   // Patch it's launcher script to use real IDEA installation and Grammar-Kit instead of our light-psi jar
   // Run it capturing the list of loaded classes to resources/light-psi-filelist.txt
 
@@ -107,11 +107,11 @@ task updateFileList(dependsOn: [locateIdeaHome, locateGrammarKit]) << {
 
   // TODO patch template must be updated to remove our new light-psi jar from classpath
   // prepare wrapper patch
-  def patch = new File('resources/schema-parser.patch.src').text
+  def patch = new File('resources/lang-parser.patch.src').text
   patch = patch.replaceAll('@IDEALIB', "$project.ext.ideaHome/lib")
   patch = patch.replaceAll('@GKITJAR', project.ext.grammarKit)
 
-  def patchTarget = "$buildDir/schema-parser.patch"
+  def patchTarget = "$buildDir/lang-parser.patch"
   def patchTargetFile = new File(patchTarget)
   patchTargetFile.parentFile.mkdirs()
   patchTargetFile.write(patch)

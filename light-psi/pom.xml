@@ -24,7 +24,7 @@
         <extensions>true</extensions>
         <configuration>
           <sourceJar>${project.basedir}/resources/light-psi-prebuilt.jar</sourceJar>
-          <!--<sourceJar>${project.basedir}/../schema-parser/lib/light-psi-all.jar</sourceJar>-->
+          <!--<sourceJar>${project.basedir}/../lang-parser/lib/light-psi-all.jar</sourceJar>-->
         </configuration>
       </plugin>
 

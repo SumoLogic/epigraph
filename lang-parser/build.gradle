@@ -1,13 +1,14 @@
 apply plugin: 'java'
 apply plugin: 'application'
 
+// TODO remove (together with 'application')
 mainClassName = 'com.sumologic.epigraph.schema.parser.Main'
 
 sourceSets.main.java.srcDirs += file("$buildDir/generated-sources/lang-parser-common.java")
 idea.module.generatedSourceDirs += file("$buildDir/generated-sources/lang-parser-common.java")
 
 // keeping it around for now for light-psi jar regeneration
-//project.ext.set('lightPsiJar', "$rootDir/schema-parser/lib/light-psi-all.jar")
+//project.ext.set('lightPsiJar', "$rootDir/lang-parser/lib/light-psi-all.jar")
 
 dependencies {
   compile project(':epigraph-light-psi')

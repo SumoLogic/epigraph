@@ -3,7 +3,7 @@
 ### Medium
 - Rename things:
   - [x] schema-parser-common -> lang-parser-common
-  - [ ] schema-parser -> lang-parsers (with artifact name = epigraph-lang-parsers)
+  - [x] schema-parser -> lang-parser (with artifact name = epigraph-lang-parser)
   - [ ] com.sumologic.epigraph.schema -> io.epigraph.lang
   - [ ] schema.bnf -> lang.bnf
     - [ ] elementTypePrefx -> 'E_'

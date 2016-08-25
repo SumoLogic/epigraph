@@ -9,8 +9,8 @@ mvn install:install-file \
  -Dpackaging=jar
 
 #mvn deploy:deploy-file \
-# -Dfile=schema-parser/lib/light-psi-all.jar \
-# -Durl=file:./schema-parser/local-maven-repo/ \
+# -Dfile=lang-parser/lib/light-psi-all.jar \
+# -Durl=file:./lang-parser/local-maven-repo/ \
 # -DgroupId=com.sumologic.epigraph.3rd-party \
 # -DartifactId=light-psi-all \
 # -Dversion=0.0-SNAPSHOT \

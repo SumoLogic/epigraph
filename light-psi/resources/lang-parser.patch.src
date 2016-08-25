@@ -1,0 +1,18 @@
+diff --git a/lang-parser.orig b/lang-parser
+index 95ea0b4..3e7927f 100755
+--- a/lang-parser.orig
++++ b/lang-parser
+@@ -64,7 +64,11 @@ case "`uname`" in
+     ;;
+ esac
+
+-CLASSPATH=$APP_HOME/lib/lang-parser-0.0-SNAPSHOT.jar:$APP_HOME/lib/epigraph-light-psi-0.0-SNAPSHOT.jar:$APP_HOME/lib/annotations-15.0.jar:$APP_HOME/lib/jcip-annotations-1.0.jar
++CLASSPATH=$APP_HOME/lib/lang-parser-0.0-SNAPSHOT.jar:$APP_HOME/lib/annotations-15.0.jar:$APP_HOME/lib/jcip-annotations-1.0.jar
++
++IDEA_LIB="@IDEALIB"
++IDEA_LIBS=$( ls -1 "$IDEA_LIB"/*.jar | paste -s -d: - )
++CLASSPATH=$CLASSPATH:$IDEA_LIBS:"@GKITJAR"
+
+ # Determine the Java command to use to start the JVM.
+ if [ -n "$JAVA_HOME" ] ; then
+
