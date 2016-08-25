@@ -7,7 +7,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.tree.IElementType;
-import com.sumologic.epigraph.schema.parser.SchemaLanguage;
+import io.epigraph.lang.EpigraphLanguage;
 import com.sumologic.epigraph.schema.parser.SchemaParserDefinition;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -33,7 +33,7 @@ public class SchemaFormattingModelBuilder implements FormattingModelBuilder {
   }
 
   private SpacingBuilder createSpaceBuilder(CodeStyleSettings settings) {
-    SpacingBuilder spacingBuilder = new SpacingBuilder(settings, SchemaLanguage.INSTANCE);
+    SpacingBuilder spacingBuilder = new SpacingBuilder(settings, EpigraphLanguage.INSTANCE);
 
     for (IElementType type : SchemaParserDefinition.KEYWORDS.getTypes()) {
       if (type != E_LIST && type != E_MAP)

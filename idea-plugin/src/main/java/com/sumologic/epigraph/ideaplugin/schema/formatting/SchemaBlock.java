@@ -8,7 +8,7 @@ import com.intellij.psi.TokenType;
 import com.intellij.psi.formatter.FormatterUtil;
 import com.intellij.psi.formatter.common.AbstractBlock;
 import com.intellij.psi.tree.IElementType;
-import com.sumologic.epigraph.schema.parser.SchemaLanguage;
+import io.epigraph.lang.EpigraphLanguage;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -34,7 +34,7 @@ public class SchemaBlock extends AbstractBlock implements BlockEx {
   @Nullable
   @Override
   public Language getLanguage() {
-    return SchemaLanguage.INSTANCE;
+    return EpigraphLanguage.INSTANCE;
   }
 
   @Override

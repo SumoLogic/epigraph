@@ -2,7 +2,7 @@ package com.sumologic.epigraph.schema.parser.psi.stubs;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.stubs.*;
-import com.sumologic.epigraph.schema.parser.SchemaLanguage;
+import io.epigraph.lang.EpigraphLanguage;
 import com.sumologic.epigraph.schema.parser.psi.SchemaTypeDefWrapper;
 import com.sumologic.epigraph.schema.parser.psi.impl.SchemaTypeDefWrapperImpl;
 import org.jetbrains.annotations.NonNls;
@@ -15,7 +15,7 @@ import java.io.IOException;
  */
 public class SchemaTypeDefWrapperStubElementType extends IStubElementType<SchemaTypeDefWrapperStub, SchemaTypeDefWrapper> {
   public SchemaTypeDefWrapperStubElementType(@NotNull @NonNls String debugName) {
-    super(debugName, SchemaLanguage.INSTANCE);
+    super(debugName, EpigraphLanguage.INSTANCE);
   }
 
   @Override

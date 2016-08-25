@@ -1,16 +1,17 @@
-package com.sumologic.epigraph.schema.parser;
+package io.epigraph.lang;
 
 import com.intellij.lang.Language;
+import com.sumologic.epigraph.schema.parser.Common;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public class SchemaLanguage extends Language {
-  public static final SchemaLanguage INSTANCE = new SchemaLanguage();
+public class EpigraphLanguage extends Language {
+  public static final EpigraphLanguage INSTANCE = new EpigraphLanguage();
 
-  private SchemaLanguage() {
-    super("epi_schema");
+  private EpigraphLanguage() {
+    super("epigraph");
   }
 
   @NotNull

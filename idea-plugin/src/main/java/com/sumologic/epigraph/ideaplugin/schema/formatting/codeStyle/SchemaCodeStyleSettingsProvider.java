@@ -7,7 +7,7 @@ import com.intellij.openapi.options.Configurable;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CodeStyleSettingsProvider;
 import com.intellij.psi.codeStyle.CustomCodeStyleSettings;
-import com.sumologic.epigraph.schema.parser.SchemaLanguage;
+import io.epigraph.lang.EpigraphLanguage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,7 +29,7 @@ public class SchemaCodeStyleSettingsProvider extends CodeStyleSettingsProvider {
       protected CodeStyleAbstractPanel createPanel(CodeStyleSettings settings) {
         final CodeStyleSettings currentSettings = getCurrentSettings();
 
-        return new TabbedLanguageCodeStylePanel(SchemaLanguage.INSTANCE, currentSettings, settings) {
+        return new TabbedLanguageCodeStylePanel(EpigraphLanguage.INSTANCE, currentSettings, settings) {
           @Override
           protected void initTabs(CodeStyleSettings settings) {
             addIndentOptionsTab(settings);
@@ -49,6 +49,6 @@ public class SchemaCodeStyleSettingsProvider extends CodeStyleSettingsProvider {
   @Nullable
   @Override
   public String getConfigurableDisplayName() {
-    return SchemaLanguage.INSTANCE.getDisplayName();
+    return EpigraphLanguage.INSTANCE.getDisplayName();
   }
 }

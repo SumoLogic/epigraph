@@ -1,7 +1,7 @@
 package com.sumologic.epigraph.schema.parser.lexer;
 
 import com.intellij.psi.tree.IElementType;
-import com.sumologic.epigraph.schema.parser.SchemaLanguage;
+import io.epigraph.lang.EpigraphLanguage;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -10,6 +10,6 @@ import org.jetbrains.annotations.NotNull;
  */
 public class SchemaElementType extends IElementType {
   public SchemaElementType(@NotNull @NonNls String debugName) {
-    super(debugName, SchemaLanguage.INSTANCE);
+    super(debugName, EpigraphLanguage.INSTANCE);
   }
 }

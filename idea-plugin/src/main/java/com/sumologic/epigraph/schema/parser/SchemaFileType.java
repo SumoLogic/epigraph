@@ -2,6 +2,7 @@ package com.sumologic.epigraph.schema.parser;
 
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.sumologic.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
+import io.epigraph.lang.EpigraphLanguage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,7 +16,7 @@ public class SchemaFileType extends LanguageFileType {
   public static final String DEFAULT_EXTENSION = Common.FILE_EXTENSION;
 
   protected SchemaFileType() {
-    super(SchemaLanguage.INSTANCE);
+    super(EpigraphLanguage.INSTANCE);
   }
 
   @NotNull

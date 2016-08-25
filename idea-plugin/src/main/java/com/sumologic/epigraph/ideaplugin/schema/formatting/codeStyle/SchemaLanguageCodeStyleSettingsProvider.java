@@ -5,7 +5,7 @@ import com.intellij.application.options.SmartIndentOptionsEditor;
 import com.intellij.lang.Language;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import com.intellij.psi.codeStyle.LanguageCodeStyleSettingsProvider;
-import com.sumologic.epigraph.schema.parser.SchemaLanguage;
+import io.epigraph.lang.EpigraphLanguage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,7 +28,7 @@ public class SchemaLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSe
   @NotNull
   @Override
   public Language getLanguage() {
-    return SchemaLanguage.INSTANCE;
+    return EpigraphLanguage.INSTANCE;
   }
 
   @Override

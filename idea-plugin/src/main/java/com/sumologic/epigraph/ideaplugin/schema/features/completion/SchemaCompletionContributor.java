@@ -12,7 +12,7 @@ import com.intellij.util.ProcessingContext;
 import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.TypeMembers;
 import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaPsiUtil;
 import com.sumologic.epigraph.schema.parser.Fqn;
-import com.sumologic.epigraph.schema.parser.SchemaLanguage;
+import io.epigraph.lang.EpigraphLanguage;
 import com.sumologic.epigraph.schema.parser.SchemaParserDefinition;
 import com.sumologic.epigraph.schema.parser.psi.*;
 import com.sumologic.epigraph.schema.parser.psi.impl.SchemaPsiImplUtil;
@@ -63,7 +63,7 @@ public class SchemaCompletionContributor extends CompletionContributor {
   public SchemaCompletionContributor() {
     extend(
         CompletionType.BASIC,
-        PlatformPatterns.psiElement().withLanguage(SchemaLanguage.INSTANCE),
+        PlatformPatterns.psiElement().withLanguage(EpigraphLanguage.INSTANCE),
         new CompletionProvider<CompletionParameters>() {
           @Override
           protected void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context, @NotNull CompletionResultSet result) {
