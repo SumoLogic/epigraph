@@ -3,7 +3,7 @@ plugins {
 }
 
 dependencies {
-  compile project(':builtin-types-schema')
-  compile project(':schema-schema')
-  compile project(':data-schema')
+  compile project(':epigraph-builtin-types-schema')
+  compile project(':epigraph-schema-schema')
+  compile project(':epigraph-data-schema')
 }

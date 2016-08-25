@@ -2,6 +2,8 @@ plugins {
   id "io.epigraph" version "0.0"
 }
 
+group = 'com.example.epigraph'
+
 dependencies {
-  compile project(':builtin-types-schema')
+  compile project(':epigraph-builtin-types-schema')
 }

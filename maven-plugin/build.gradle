@@ -1,7 +1,7 @@
 apply plugin: 'java'
 
 dependencies {
-  compile project(":schema-compiler")
+  compile project(':epigraph-schema-compiler')
 
   compile "org.apache.maven:maven-archiver"
   compile "org.apache.maven:maven-plugin-api"

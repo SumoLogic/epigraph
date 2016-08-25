@@ -370,13 +370,15 @@ trait CMapType extends CType with CDatumType {self =>
 
 }
 
-class CAnonMapType(override val name: CAnonMapTypeName)(implicit val ctx: CContext) extends CMapType {
+class CAnonMapType(override val name: CAnonMapTypeName)(implicit val ctx: CContext) extends {
+
+  override val valueValueType: CValueType = name.valueValueType
+
+} with CMapType {
 
   override type This = CAnonMapType
 
   override val keyTypeRef: CTypeRef = name.keyTypeRef
-
-  override val valueValueType: CValueType = name.valueValueType // TODO early init
 
   override def isAssignableFrom(subtype: CType): Boolean =
     subtype.kind == kind &&
@@ -392,15 +394,15 @@ class CAnonMapType(override val name: CAnonMapTypeName)(implicit val ctx: CConte
 
 }
 
-class CMapTypeDef(csf: CSchemaFile, override val psi: SchemaMapTypeDef)(implicit ctx: CContext) extends CTypeDef(
-  csf, psi, CTypeKind.MAP
-) with CMapType {
+class CMapTypeDef(csf: CSchemaFile, override val psi: SchemaMapTypeDef)(implicit ctx: CContext) extends {
+
+  val valueValueType: CValueType = new CValueType(csf, psi.getAnonMap.getValueTypeRef)
+
+} with CTypeDef(csf, psi, CTypeKind.MAP) with CMapType {
 
   override type This = CMapTypeDef
 
   override val keyTypeRef: CTypeRef = CTypeRef(csf, psi.getAnonMap.getTypeRef) // TODO check it's not a vartype?
-
-  val valueValueType: CValueType = new CValueType(csf, psi.getAnonMap.getValueTypeRef) // TODO early init
 
 }
 
@@ -443,13 +445,13 @@ class CAnonListType(override val name: CAnonListTypeName)(implicit val ctx: CCon
 }
 
 
-class CListTypeDef(csf: CSchemaFile, override val psi: SchemaListTypeDef)(implicit ctx: CContext) extends CTypeDef(
-  csf, psi, CTypeKind.LIST
-) with CListType {
+class CListTypeDef(csf: CSchemaFile, override val psi: SchemaListTypeDef)(implicit ctx: CContext) extends {
+
+  override val elementValueType: CValueType = new CValueType(csf, psi.getAnonList.getValueTypeRef)
+
+} with CTypeDef(csf, psi, CTypeKind.LIST) with CListType {
 
   override type This = CListTypeDef
-
-  override val elementValueType: CValueType = new CValueType(csf, psi.getAnonList.getValueTypeRef) // TODO early init
 
 }
 
