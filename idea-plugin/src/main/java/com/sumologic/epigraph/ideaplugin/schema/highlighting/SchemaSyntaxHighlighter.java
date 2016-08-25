@@ -6,7 +6,7 @@ import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.fileTypes.SyntaxHighlighterBase;
 import com.intellij.psi.tree.IElementType;
 import com.sumologic.epigraph.schema.parser.SchemaParserDefinition;
-import com.sumologic.epigraph.schema.parser.lexer.SchemaFlexAdapter;
+import io.epigraph.lang.lexer.EpigraphFlexAdapter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -65,7 +65,7 @@ public class SchemaSyntaxHighlighter extends SyntaxHighlighterBase {
   @NotNull
   @Override
   public Lexer getHighlightingLexer() {
-    return SchemaFlexAdapter.newInstance();
+    return EpigraphFlexAdapter.newInstance();
   }
 
   @NotNull

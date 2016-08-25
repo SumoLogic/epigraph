@@ -11,7 +11,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IFileElementType;
 import com.intellij.psi.tree.TokenSet;
-import com.sumologic.epigraph.schema.parser.lexer.SchemaFlexAdapter;
+import io.epigraph.lang.lexer.EpigraphFlexAdapter;
 import com.sumologic.epigraph.schema.parser.psi.SchemaFile;
 import com.sumologic.epigraph.schema.parser.psi.stubs.SchemaStubElementTypes;
 import io.epigraph.lang.lexer.EpigraphElementTypes;
@@ -61,7 +61,7 @@ public class SchemaParserDefinition implements ParserDefinition {
   @NotNull
   @Override
   public Lexer createLexer(Project project) {
-    return SchemaFlexAdapter.newInstance();
+    return EpigraphFlexAdapter.newInstance();
   }
 
   @Override
@@ -111,13 +111,13 @@ public class SchemaParserDefinition implements ParserDefinition {
   //
 
   public static boolean isKeyword(@NotNull String name) {
-    SchemaFlexAdapter lexer = SchemaFlexAdapter.newInstance();
+    EpigraphFlexAdapter lexer = EpigraphFlexAdapter.newInstance();
     lexer.start(name);
     return SchemaParserDefinition.KEYWORDS.contains(lexer.getTokenType()) && lexer.getTokenEnd() == name.length();
   }
 
   public static boolean isIdentifier(@NotNull String name) {
-    SchemaFlexAdapter lexer = SchemaFlexAdapter.newInstance();
+    EpigraphFlexAdapter lexer = EpigraphFlexAdapter.newInstance();
     lexer.start(name);
     return SchemaParserDefinition.IDENTIFIERS.contains(lexer.getTokenType()) && lexer.getTokenEnd() == name.length();
   }

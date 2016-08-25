@@ -1,4 +1,4 @@
-package com.sumologic.epigraph.schema.parser.lexer;
+package io.epigraph.lang.lexer;
 import com.intellij.lexer.*;
 import com.intellij.psi.tree.IElementType;
 import static io.epigraph.lang.lexer.EpigraphElementTypes.*;
@@ -6,13 +6,13 @@ import static io.epigraph.lang.lexer.EpigraphElementTypes.*;
 %%
 
 %{
-  public SchemaLexer() {
+  public EpigraphLexer() {
     this((java.io.Reader)null);
   }
 %}
 
 %public
-%class SchemaLexer
+%class EpigraphLexer
 %implements FlexLexer
 %function advance
 %type IElementType

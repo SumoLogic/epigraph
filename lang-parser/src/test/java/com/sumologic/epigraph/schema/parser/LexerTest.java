@@ -2,7 +2,7 @@ package com.sumologic.epigraph.schema.parser;
 
 import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;
-import com.sumologic.epigraph.schema.parser.lexer.SchemaLexer;
+import io.epigraph.lang.lexer.EpigraphLexer;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -70,8 +70,8 @@ public class LexerTest {
   }
 
   private void testInput(String input, IElementType... expected) throws IOException {
-    SchemaLexer lex = new SchemaLexer();
-    lex.reset(input, 0, input.length(), SchemaLexer.YYINITIAL);
+    EpigraphLexer lex = new EpigraphLexer();
+    lex.reset(input, 0, input.length(), EpigraphLexer.YYINITIAL);
 
     List<IElementType> actual = new ArrayList<>();
 

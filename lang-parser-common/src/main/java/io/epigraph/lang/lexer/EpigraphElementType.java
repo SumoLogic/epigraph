@@ -1,4 +1,4 @@
-package com.sumologic.epigraph.schema.parser.lexer;
+package io.epigraph.lang.lexer;
 
 import com.intellij.psi.tree.IElementType;
 import io.epigraph.lang.EpigraphLanguage;
@@ -8,8 +8,8 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public class SchemaElementType extends IElementType {
-  public SchemaElementType(@NotNull @NonNls String debugName) {
+public class EpigraphElementType extends IElementType {
+  public EpigraphElementType(@NotNull @NonNls String debugName) {
     super(debugName, EpigraphLanguage.INSTANCE);
   }
 }

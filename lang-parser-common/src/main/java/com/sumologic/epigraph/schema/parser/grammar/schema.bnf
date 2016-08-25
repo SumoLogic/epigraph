@@ -3,8 +3,8 @@
 
   elementTypeHolderClass="io.epigraph.lang.lexer.EpigraphElementTypes"
   elementTypePrefix="E_"
-  elementTypeClass="com.sumologic.epigraph.schema.parser.lexer.SchemaElementType"
-  tokenTypeClass="com.sumologic.epigraph.schema.parser.lexer.SchemaElementType"
+  elementTypeClass="io.epigraph.lang.lexer.EpigraphElementType"
+  tokenTypeClass="io.epigraph.lang.lexer.EpigraphElementType"
 
   psiClassPrefix="Schema"
   psiImplClassSuffix="Impl"
