@@ -65,7 +65,7 @@ public class TestCompileMojo extends BaseCompileMojo {
   private <T> Collection<T> merge(Collection<T>... collections) {
     int size = 0;
     for (Collection<T> collection : collections) size += collection.size();
-    Collection<T> merged = new ArrayList<>(size);
+    Collection<T> merged = new ArrayList<T>(size);
     for (Collection<T> collection : collections) merged.addAll(collection);
     return merged;
   }
