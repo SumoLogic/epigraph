@@ -39,7 +39,7 @@ class PathSource(private val path: Path) extends Source {
 
   override def name: String = path.normalize.toString
 
-  println(getClass.getSimpleName + ": '" + name + "'")
+  //println(getClass.getSimpleName + ": '" + name + "'")
 
   @throws[IOException]
   override def text: String = inputStreamToString(Files.newInputStream(path))
@@ -50,7 +50,7 @@ class FileSource(private val file: File) extends Source {
 
   override def name: String = file.getCanonicalPath
 
-  println(getClass.getSimpleName + ": '" + name + "'")
+  //println(getClass.getSimpleName + ": '" + name + "'")
 
   @throws[IOException]
   override def text: String = inputStreamToString(Files.newInputStream(file.toPath))
@@ -61,7 +61,7 @@ class JarSource(private val jarFile: JarFile, private val jarEntry: JarEntry) ex
 
   override val name: String = jarFile.getName + "!/" + jarEntry.getName
 
-  println(getClass.getSimpleName + ": '" + name + "'")
+  //println(getClass.getSimpleName + ": '" + name + "'")
 
   @throws[IOException]
   override def text: String = inputStreamToString(jarFile.getInputStream(jarEntry))
@@ -83,7 +83,7 @@ class ResourceSource(private val resourcePath: String) extends Source {
 
   override val name: String = resourcePath
 
-  println(getClass.getSimpleName + ": '" + name + "'")
+  //println(getClass.getSimpleName + ": '" + name + "'")
 
   @throws[IOException]
   override def text: String = inputStreamToString(getClass.getResourceAsStream(resourcePath)) // FIXME NPE

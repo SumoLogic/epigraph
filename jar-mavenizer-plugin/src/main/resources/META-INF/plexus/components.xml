@@ -1,14 +1,14 @@
 <component-set>
   <components>
 
-    <!-- mavenized-jar packaging -->
+    <!-- mavenized-jar packaging mavenized-jar type -->
     <component>
       <role>org.apache.maven.artifact.handler.ArtifactHandler</role>
       <role-hint>mavenized-jar</role-hint>
       <implementation>org.apache.maven.artifact.handler.DefaultArtifactHandler</implementation>
       <configuration>
         <extension>jar</extension>
-        <type>jar</type>
+        <type>mavenized-jar</type>
         <language>java</language>
         <addedToClasspath>true</addedToClasspath>
       </configuration>

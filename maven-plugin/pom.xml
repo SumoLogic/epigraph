@@ -16,6 +16,11 @@
   <description>Maven plugin for Epigraph Schema</description>
   <url>https://github.com/SumoLogic/epigraph</url>
 
+  <properties>
+    <maven.compiler.source>1.6</maven.compiler.source>
+    <maven.compiler.target>1.6</maven.compiler.target>
+  </properties>
+
   <prerequisites>
     <!--<maven>TBD</maven>-->
   </prerequisites>

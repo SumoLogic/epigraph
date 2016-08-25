@@ -15,9 +15,10 @@ import scala.Option;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.jar.JarFile;
@@ -80,7 +81,7 @@ public abstract class BaseCompileMojo extends AbstractMojo {
   }
 
   protected Collection<Source> getDirectorySources(File sourceDirectory) {
-    Collection<Source> sources = new ArrayList<>();
+    Collection<Source> sources = new ArrayList<Source>();
     if (sourceDirectory != null && sourceDirectory.isDirectory()) {
       String[] includedFiles = getIncludedFiles(sourceDirectory.getAbsolutePath(), getExcludes(), getIncludes());
       for (String subpath : includedFiles) sources.add(new FileSource(new File(sourceDirectory, subpath)));
@@ -90,12 +91,12 @@ public abstract class BaseCompileMojo extends AbstractMojo {
   }
 
   protected Collection<Source> getDependencySources() throws MojoExecutionException {
-    Collection<Source> sources = new ArrayList<>();
+    Collection<Source> sources = new ArrayList<Source>();
     List<Artifact> epigraphSchemaArtifacts = typedArtifacts(project.getArtifacts(), "epigraph-schema");
     for (Artifact artifact : epigraphSchemaArtifacts) {
       File artifactFile = artifact.getFile();
       try {
-        System.out.println("Adding sources from " + artifactFile);
+        getLog().info("Adding sources from " + artifactFile);
         addSourcesFromJar(artifactFile, sources);
       } catch (IOException e) {
         throw new MojoExecutionException("Error reading artifact " + artifactFile, e);
@@ -105,7 +106,7 @@ public abstract class BaseCompileMojo extends AbstractMojo {
   }
 
   private List<Artifact> typedArtifacts(Set set, String type) {
-    List<Artifact> artifacts = new ArrayList<>();
+    List<Artifact> artifacts = new ArrayList<Artifact>();
     for (Object object : set) {
       if (object instanceof Artifact) {
         Artifact artifact = (Artifact) object;
@@ -131,7 +132,8 @@ public abstract class BaseCompileMojo extends AbstractMojo {
   private void addSourcesFromJar(File file, Collection<Source> sources) throws IOException {
     final JarFile jarFile = new JarFile(file);
     // TODO? source encoding like: compiler.setOutputCharacterEncoding(project.getProperties().getProperty("project.build.sourceEncoding"));
-    JarSource.allFiles(jarFile, SCHEMA_FILENAME_PATTERN, StandardCharsets.UTF_8).forEachRemaining(sources::add);
+    Iterator<JarSource> jarSources = JarSource.allFiles(jarFile, SCHEMA_FILENAME_PATTERN, Charset.forName("UTF-8"));
+    while (jarSources.hasNext()) { sources.add(jarSources.next()); }
   }
 
   private String[] getIncludedFiles(String absPath, String[] excludes, String[] includes) {
