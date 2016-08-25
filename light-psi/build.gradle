@@ -282,7 +282,7 @@ class FileListProducer {
                           'com/intellij/xml',
                           'org/jetbrains/annotations',
                           'org/jetbrains/jps',
-                          'org/jetbrains/org',
+//                          'org/jetbrains/org',
                           'io/epigraph', 'com/sumologic']
     return { String cn -> filterPrefixes.find { cn.startsWith(it) } == null }
   }
