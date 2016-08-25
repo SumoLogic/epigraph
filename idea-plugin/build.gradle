@@ -4,11 +4,11 @@ plugins {
 
 apply plugin: 'java'
 
-sourceSets.main.java.srcDirs += file('../schema-parser-common/src/main/java')
-sourceSets.main.java.srcDirs += file('../schema-parser-common/src/main/java.generated')
+sourceSets.main.java.srcDirs += file('../lang-parser-common/src/main/java')
+sourceSets.main.java.srcDirs += file('../lang-parser-common/src/main/java.generated')
 
-idea.module.sourceDirs += file('../schema-parser-common/src/main/java')
-idea.module.generatedSourceDirs += file('../schema-parser-common/src/main/java.generated')
+idea.module.sourceDirs += file('../lang-parser-common/src/main/java')
+idea.module.generatedSourceDirs += file('../lang-parser-common/src/main/java.generated')
 
 dependencies {
   testCompile 'junit:junit'

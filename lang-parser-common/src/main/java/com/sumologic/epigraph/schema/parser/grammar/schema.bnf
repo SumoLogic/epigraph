@@ -278,41 +278,57 @@ dataList ::= '[' (dataValue ','?)* ']' {pin=1 extends=dataValue}
 
 dataEnum ::= qid {extends=dataValue}
 
-dataPrimitive ::= string | number | boolean // | opOutputVarProjection
+dataPrimitive ::= string | number | boolean
 
 private dataValueRecover ::= ! ( qid | dataPrimitive | '}' | ')' | '>' | ']' | 'abstract' | 'override' | ',' )
 
 // ------------- op projections -------------
-
-opParamProjection ::= qid ':' opInputModelProjection
-opParameters ::= 'parameters' ':' '{' (opParamProjection ','?)* '}'
-
-opOutputVarProjection ::= ('{' opOutputTagProjection* '}') | 'default' opOutputModelProjection
-opOutputTagProjection ::= qid ':' opOutputModelProjection // custom params?
-
-opOutputModelProjection ::= (opOutputRecordModelProjection | opOutputListModelProjection |
-                             opOutputMapModelProjection | opOutputEnumModelProjection |
-                             opOutputPrimitiveModelProjection ) opOutputModelProjectionBody
-
-opOutputModelProjectionBody ::= '{' (opOutputModelProjectionBodyPart ','?)* '}'
-opOutputModelProjectionBodyPart ::= 'required' | opParameters | customParam
-
-// op output record
-opOutputRecordModelProjection ::= '(' (opOutputFieldProjection ','?)* ')' opOutputRecordPolyBranch*
-opOutputFieldProjection ::= qid opOutputFieldProjectionBody? (':' opOutputVarProjection)?
-opOutputFieldProjectionBody ::= '{' (opOutputFieldProjectionBodyPart ','?)* '}'
-opOutputFieldProjectionBodyPart ::= opParameters | customParam
-opOutputRecordPolyBranch ::= '~' fqnTypeRef '<' opOutputRecordModelProjection '>'
-
-// files : Files default FileList *(..) ~FileList2(..)
-// op output list
-opOutputListModelProjection ::= '*' opOutputVarProjection opOutputListPolyBranch*
-opOutputListPolyBranch ::= '~' fqnTypeRef '<' opOutputListModelProjection '>' // or straight for elements ?
-
-opOutputMapModelProjection ::= opOutputKeyProjection '*' opOutputVarProjection opOutputMapPolyBranch
-opOutputKeyProjection ::= '[' (opOutputKeyProjectionPart ','?)* ']'
-opOutputKeyProjectionPart ::= 'forbidden' | 'required' | opParameters | customParam
-opOutputMapPolyBranch ::= '~' fqnTypeRef '<' opOutputMapModelProjection '>'
-
-opOutputEnumModelProjection ::= 'enum' // ?
-opOutputPrimitiveModelProjection ::= 'primitive' // ?
+//
+//;{
+//
+//}
+//
+//// --- output
+//
+//opParamProjection ::= qid ':' opInputModelProjection
+//opParameters ::= 'parameters' ':' '{' (opParamProjection ','?)* '}'
+//
+//opOutputVarProjection ::= ('{' opOutputTagProjection* '}') | 'default' opOutputModelProjection
+//opOutputTagProjection ::= qid ':' opOutputModelProjection // custom params?
+//
+//opOutputModelProjection ::= (opOutputRecordModelProjection | opOutputListModelProjection |
+//                             opOutputMapModelProjection | opOutputEnumModelProjection |
+//                             opOutputPrimitiveModelProjection ) opOutputModelProjectionBody
+//
+//opOutputModelProjectionBody ::= '{' (opOutputModelProjectionBodyPart ','?)* '}'
+//opOutputModelProjectionBodyPart ::= 'required' | opParameters | customParam
+//
+//// op output record
+//opOutputRecordModelProjection ::= '(' (opOutputFieldProjection ','?)* ')' opOutputRecordPolyBranch*
+//opOutputFieldProjection ::= qid opOutputFieldProjectionBody? (':' opOutputVarProjection)?
+//opOutputFieldProjectionBody ::= '{' (opOutputFieldProjectionBodyPart ','?)* '}'
+//opOutputFieldProjectionBodyPart ::= opParameters | customParam
+//opOutputRecordPolyBranch ::= '~' fqnTypeRef '<' opOutputRecordModelProjection '>'
+//
+//// files : Files default FileList *(..) ~FileList2(..)
+//// op output list
+//opOutputListModelProjection ::= '*' opOutputVarProjection opOutputListPolyBranch*
+//opOutputListPolyBranch ::= '~' fqnTypeRef '<' opOutputListModelProjection '>' // or straight for elements ?
+//
+//opOutputMapModelProjection ::= opOutputKeyProjection '*' opOutputVarProjection opOutputMapPolyBranch
+//opOutputKeyProjection ::= '[' (opOutputKeyProjectionPart ','?)* ']'
+//opOutputKeyProjectionPart ::= 'forbidden' | 'required' | opParameters | customParam
+//opOutputMapPolyBranch ::= '~' fqnTypeRef '<' opOutputMapModelProjection '>'
+//
+//opOutputEnumModelProjection ::= 'enum' // ?
+//opOutputPrimitiveModelProjection ::= 'primitive' // ?
+//
+//// -- input
+//
+//opInputModelProjection ::= 'ip'
+////opOutputModelProjection ::= (opOutputRecordModelProjection | opOutputListModelProjection |
+////                             opOutputMapModelProjection | opOutputEnumModelProjection |
+////                             opOutputPrimitiveModelProjection ) opOutputModelProjectionBody
+////
+////opOutputModelProjectionBody ::= '{' (opOutputModelProjectionBodyPart ','?)* '}'
+////opOutputModelProjectionBodyPart ::= 'required' | opParameters | customParam

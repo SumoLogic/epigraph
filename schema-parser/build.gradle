@@ -3,8 +3,8 @@ apply plugin: 'application'
 
 mainClassName = 'com.sumologic.epigraph.schema.parser.Main'
 
-sourceSets.main.java.srcDirs += file("$buildDir/generated-sources/schema-parser-common.java")
-idea.module.generatedSourceDirs += file("$buildDir/generated-sources/schema-parser-common.java")
+sourceSets.main.java.srcDirs += file("$buildDir/generated-sources/lang-parser-common.java")
+idea.module.generatedSourceDirs += file("$buildDir/generated-sources/lang-parser-common.java")
 
 // keeping it around for now for light-psi jar regeneration
 //project.ext.set('lightPsiJar', "$rootDir/schema-parser/lib/light-psi-all.jar")
@@ -30,9 +30,9 @@ dependencies {
 //}
 
 task copySources(type: Copy) {
-  from '../schema-parser-common/src/main/java'
-  from '../schema-parser-common/src/main/java.generated'
-  into "$buildDir/generated-sources/schema-parser-common.java"
+  from '../lang-parser-common/src/main/java'
+  from '../lang-parser-common/src/main/java.generated'
+  into "$buildDir/generated-sources/lang-parser-common.java"
 }
 
 compileJava.dependsOn copySources
