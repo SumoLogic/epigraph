@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# THIS FILE IS OBSOLETE, USE GRADLE TASKS IN epigraph-light-psi
+# THIS FILE IS OBSOLETE, USE GRADLE TASKS IN :epigraph-light-psi
 
 # Try to detect IDEA home
 [ -z "$IDEA_HOME" ] && IDEA_HOME="/Applications/IntelliJ IDEA CE.app/Contents"

@@ -8,18 +8,18 @@ pluginRepositories {
 
 rootProject.name = theName
 
-// map from module (sub-project) path to maven-compatible module name (artifact id)
+// map from module (sub-project) path to full module name (maven artifact id)
 Map<String, String> moduleNames = [
     'builtin-types-schema'               : 'epigraph-builtin-types-schema',
     'core'                               : 'epigraph-core',
     'data-schema'                        : 'epigraph-data-schema',
-    'epigraph-gradle-plugin'             : 'epigraph-gradle-plugin', // TODO move to `/gradle-plugin`
+    'gradle-plugin'                      : 'epigraph-gradle-plugin',
     'examples/users-example/users-schema': 'users-schema',
     'idea-plugin'                        : 'idea-plugin',
     'java/codegen'                       : 'epigraph-java-codegen',
     'java/core'                          : 'epigraph-java-core',
 //    'java/projections'                   : 'epigraph-java-projections',
-    'epigraph-light-psi'                 : 'epigraph-light-psi', // TODO move to `/light-psi`
+    'light-psi'                          : 'epigraph-light-psi',
     'maven-plugin'                       : 'epigraph-maven-plugin',
     'projections-schema'                 : 'epigraph-projections-schema',
     'scala-codegen'                      : 'epigraph-scala-codegen',
@@ -31,12 +31,12 @@ Map<String, String> moduleNames = [
 
 // uncomment to build and publish (`publishToMavenLocal`) gradle and maven plugins for the first time
 //moduleNames = [
-//    'core'                  : 'epigraph-core',
-//    'epigraph-gradle-plugin': 'epigraph-gradle-plugin',
-//    'epigraph-light-psi'    : 'epigraph-light-psi',
-//    'maven-plugin'          : 'epigraph-maven-plugin',
-//    'schema-compiler'       : 'epigraph-schema-compiler',
-//    'schema-parser'         : 'epigraph-schema-parser'
+//    'core'           : 'epigraph-core',
+//    'gradle-plugin'  : 'epigraph-gradle-plugin',
+//    'light-psi'      : 'epigraph-light-psi',
+//    'maven-plugin'   : 'epigraph-maven-plugin',
+//    'schema-compiler': 'epigraph-schema-compiler',
+//    'schema-parser'  : 'epigraph-schema-parser'
 //]
 
 moduleNames.each { dir, name ->

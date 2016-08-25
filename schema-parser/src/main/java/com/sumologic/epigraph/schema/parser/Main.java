@@ -18,7 +18,7 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * Mostly used to build epigraph-light-psi/resources/light-psi-filelist.txt
+ * Mostly used to build light-psi/resources/light-psi-filelist.txt
  *
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
