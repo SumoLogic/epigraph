@@ -8,37 +8,38 @@ pluginRepositories {
 
 rootProject.name = theName
 
-Map<String, String> modules = [
-    'epigraph-builtin-types-schema': 'builtin-types-schema',
-    'epigraph-core'                : 'core',
-    'epigraph-data-schema'         : 'data-schema',
-    'epigraph-gradle-plugin'       : 'epigraph-gradle-plugin',
-//    'idea-plugin'                  : 'idea-plugin',
-    'epigraph-light-psi'           : 'epigraph-light-psi',
-    'epigraph-maven-plugin'        : 'maven-plugin',
-    'epigraph-projections-schema'  : 'projections-schema',
-    'epigraph-scala-codegen'       : 'scala-codegen',
-    'epigraph-scala-maven-plugin'  : 'scala-maven-plugin',
-    'epigraph-schema-schema'       : 'schema-schema',
-    'epigraph-schema-compiler'     : 'schema-compiler',
-    'epigraph-java-core'           : 'java/core',
-    'epigraph-java-codegen'        : 'java/codegen',
-//    'epigraph-java-projections'    : 'java/projections',
-    'epigraph-schema-parser'       : 'schema-parser',
-    'users-schema'                 : 'examples/users-example/users-schema'
+// map from module (sub-project) path to maven-compatible module name (artifact id)
+Map<String, String> moduleNames = [
+    'builtin-types-schema'               : 'epigraph-builtin-types-schema',
+    'core'                               : 'epigraph-core',
+    'data-schema'                        : 'epigraph-data-schema',
+    'epigraph-gradle-plugin'             : 'epigraph-gradle-plugin', // TODO move to `/gradle-plugin`
+    'examples/users-example/users-schema': 'users-schema',
+//    'idea-plugin'                        : 'idea-plugin',
+    'java/codegen'                       : 'epigraph-java-codegen',
+    'java/core'                          : 'epigraph-java-core',
+//    'java/projections'                   : 'epigraph-java-projections',
+    'epigraph-light-psi'                 : 'epigraph-light-psi', // TODO move to `/light-psi`
+    'maven-plugin'                       : 'epigraph-maven-plugin',
+    'projections-schema'                 : 'epigraph-projections-schema',
+    'scala-codegen'                      : 'epigraph-scala-codegen',
+    'scala-maven-plugin'                 : 'epigraph-scala-maven-plugin',
+    'schema-compiler'                    : 'epigraph-schema-compiler',
+    'schema-parser'                      : 'epigraph-schema-parser',
+    'schema-schema'                      : 'epigraph-schema-schema',
 ]
 
-// uncomment to build and publish gradle and maven plugins for the first time
-//modules = [
-//    'epigraph-core'                : 'core',
-//    'epigraph-gradle-plugin'       : 'epigraph-gradle-plugin',
-//    'epigraph-light-psi'           : 'epigraph-light-psi',
-//    'epigraph-maven-plugin'        : 'maven-plugin',
-//    'epigraph-schema-compiler'     : 'schema-compiler',
-//    'epigraph-schema-parser'       : 'schema-parser'
+// uncomment to build and publish (`publishToMavenLocal`) gradle and maven plugins for the first time
+//moduleNames = [
+//    'core'                  : 'epigraph-core',
+//    'epigraph-gradle-plugin': 'epigraph-gradle-plugin',
+//    'epigraph-light-psi'    : 'epigraph-light-psi',
+//    'maven-plugin'          : 'epigraph-maven-plugin',
+//    'schema-compiler'       : 'epigraph-schema-compiler',
+//    'schema-parser'         : 'epigraph-schema-parser'
 //]
 
-modules.each { name, dir ->
+moduleNames.each { dir, name ->
   include name
   project(":$name").projectDir = file(dir)
 }
