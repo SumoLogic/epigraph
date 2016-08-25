@@ -13,6 +13,9 @@ plugins {
 
 apply plugin: 'base'
 
+// TODO single task for full rebuild:
+// gradle updateFileList2 packageLightPsi relocate copyPrebuilt && mvn clean install
+
 // `updateFileList` updates resources/light-psi-filelist.txt
 // `packageLightPsi` rebuilds jar in build/tmp/light-psi-tmp.jar using the file list
 // `relocate` adds licenses and relocates packages, puts it into resources/light-psi-prebuilt.jar (which is checked in into git)
@@ -188,6 +191,7 @@ task relocate(type: com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar) 
   relocate 'com.google', 'epigraph.com.google'
   relocate 'gnu', 'epigraph.gnu'
   relocate 'org.picocontainer', 'epigraph.org.picocontainer'
+  relocate 'net.jcip', 'epigraph.net.jcip'
 }
 
 task copyPrebuilt(type: Copy) {
