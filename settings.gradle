@@ -15,7 +15,7 @@ Map<String, String> moduleNames = [
     'data-schema'                        : 'epigraph-data-schema',
     'epigraph-gradle-plugin'             : 'epigraph-gradle-plugin', // TODO move to `/gradle-plugin`
     'examples/users-example/users-schema': 'users-schema',
-//    'idea-plugin'                        : 'idea-plugin',
+    'idea-plugin'                        : 'idea-plugin',
     'java/codegen'                       : 'epigraph-java-codegen',
     'java/core'                          : 'epigraph-java-core',
 //    'java/projections'                   : 'epigraph-java-projections',
