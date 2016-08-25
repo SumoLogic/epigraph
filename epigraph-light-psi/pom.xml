@@ -23,8 +23,8 @@
         <version>0.0-SNAPSHOT</version>
         <extensions>true</extensions>
         <configuration>
-          <!--<sourceJar>${project.basedir}/resources/light-psi-prebuilt.jar</sourceJar>-->
-          <sourceJar>${project.basedir}/../schema-parser/lib/light-psi-all.jar</sourceJar><!-- until above is fixed -->
+          <sourceJar>${project.basedir}/resources/light-psi-prebuilt.jar</sourceJar>
+          <!-- <sourceJar>${project.basedir}/../schema-parser/lib/light-psi-all.jar</sourceJar> --> <!-- in case above is broken -->
         </configuration>
       </plugin>
 
