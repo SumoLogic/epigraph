@@ -95,7 +95,7 @@ importStatement ::= 'import' fqn {pin=1 recoverWhile="declRecover"}
 
 namespaceDecl ::= 'namespace' fqn namespaceBody? {
   methods=[getFqn2 toString]
-  stubClass="io.epigraph.lang.parser.psi.stubs.SchemaNamespaceDeclStub"
+  stubClass="io.epigraph.lang.parser.psi.stubs.EpigraphNamespaceDeclStub"
   elementTypeClass="io.epigraph.lang.parser.psi.stubs.SchemaNamespaceDeclStubElementType"
   pin=1
   recoverWhile="declRecover"
@@ -127,7 +127,7 @@ private def ::= typeDefWrapper | supplementDef {recoverWhile="declRecover"}
 typeDefWrapper ::= varTypeDef | recordTypeDef | mapTypeDef | listTypeDef | primitiveTypeDef | enumTypeDef {
   name="type definition"
   methods=[getElement delete toString]
-  stubClass="io.epigraph.lang.parser.psi.stubs.SchemaTypeDefWrapperStub"
+  stubClass="io.epigraph.lang.parser.psi.stubs.EpigraphTypeDefWrapperStub"
   elementTypeClass="io.epigraph.lang.parser.psi.stubs.SchemaTypeDefWrapperStubElementType"
 }
 
@@ -157,7 +157,7 @@ metaDecl ::= 'meta' fqnTypeRef { pin=1 } // we don't allow anonList or anonMap a
 varTypeDef ::= typeDefModifiers 'vartype' typeName extendsDecl? supplementsDecl? defaultOverride? varTypeBody? {
   methods=[supplemented]
   extends="io.epigraph.lang.parser.psi.impl.EpigraphVarTypeDefImplBase"
-  stubClass="io.epigraph.lang.parser.psi.stubs.SchemaVarTypeDefStub"
+  stubClass="io.epigraph.lang.parser.psi.stubs.EpigraphVarTypeDefStub"
   elementTypeClass="io.epigraph.lang.parser.psi.stubs.SchemaVarTypeDefStubElementType"
   pin=2
 }
@@ -177,7 +177,7 @@ private varTypeMemberBodyPart ::= customParam
 recordTypeDef ::= typeDefModifiers 'record' typeName extendsDecl? metaDecl? supplementsDecl? recordTypeBody? {
   methods=[supplemented]
   extends="io.epigraph.lang.parser.psi.impl.EpigraphRecordTypeDefImplBase"
-  stubClass="io.epigraph.lang.parser.psi.stubs.SchemaRecordTypeDefStub"
+  stubClass="io.epigraph.lang.parser.psi.stubs.EpigraphRecordTypeDefStub"
   elementTypeClass="io.epigraph.lang.parser.psi.stubs.SchemaRecordTypeDefStubElementType"
   pin=2
 }
@@ -197,7 +197,7 @@ private fieldBodyPart ::= customParam
 //listTypeDef2 ::= 'list' typeName extendsDecl listTypeBody? // allows inheritance from lists w/o type params
 listTypeDef ::= typeDefModifiers anonList typeName extendsDecl? metaDecl? supplementsDecl? listTypeBody? {
   extends="io.epigraph.lang.parser.psi.impl.EpigraphListTypeDefImplBase"
-  stubClass="io.epigraph.lang.parser.psi.stubs.SchemaListTypeDefStub"
+  stubClass="io.epigraph.lang.parser.psi.stubs.EpigraphListTypeDefStub"
   elementTypeClass="io.epigraph.lang.parser.psi.stubs.SchemaListTypeDefStubElementType"
   pin=2
 }
@@ -208,7 +208,7 @@ private listTypeBodyPart ::= customParam
 
 mapTypeDef ::= typeDefModifiers anonMap typeName extendsDecl? metaDecl? supplementsDecl? mapTypeBody? {
   extends="io.epigraph.lang.parser.psi.impl.EpigraphMapTypeDefImplBase"
-  stubClass="io.epigraph.lang.parser.psi.stubs.SchemaMapTypeDefStub"
+  stubClass="io.epigraph.lang.parser.psi.stubs.EpigraphMapTypeDefStub"
   elementTypeClass="io.epigraph.lang.parser.psi.stubs.SchemaMapTypeDefStubElementType"
   pin=2
 }
@@ -220,7 +220,7 @@ private mapTypeBodyPart ::= customParam
 // abstract? polymorphic?
 enumTypeDef ::= 'enum' typeName metaDecl? enumTypeBody { // extends?
   extends="io.epigraph.lang.parser.psi.impl.EpigraphEnumTypeDefImplBase"
-  stubClass="io.epigraph.lang.parser.psi.stubs.SchemaEnumTypeDefStub"
+  stubClass="io.epigraph.lang.parser.psi.stubs.EpigraphEnumTypeDefStub"
   elementTypeClass="io.epigraph.lang.parser.psi.stubs.SchemaEnumTypeDefStubElementType"
   pin=1
 }
@@ -240,7 +240,7 @@ private enumMemberBodyPart ::= customParam
 primitiveTypeDef ::= typeDefModifiers primitiveKind typeName extendsDecl? metaDecl? supplementsDecl? primitiveTypeBody? {
   extends="io.epigraph.lang.parser.psi.impl.EpigraphPrimitiveTypeDefImplBase"
   methods=[getPrimitiveTypeKind]
-  stubClass="io.epigraph.lang.parser.psi.stubs.SchemaPrimitiveTypeDefStub"
+  stubClass="io.epigraph.lang.parser.psi.stubs.EpigraphPrimitiveTypeDefStub"
   elementTypeClass="io.epigraph.lang.parser.psi.stubs.SchemaPrimitiveTypeDefStubElementType"
   pin=2
 }
@@ -250,7 +250,7 @@ private primitiveBodyPart ::= customParam
 
 supplementDef ::= 'supplement' fqnTypeRef (',' fqnTypeRef)* 'with' fqnTypeRef {
   methods=[sourceRef supplementedRefs source supplemented getPresentation toString]
-  stubClass="io.epigraph.lang.parser.psi.stubs.SchemaSupplementDefStub"
+  stubClass="io.epigraph.lang.parser.psi.stubs.EpigraphSupplementDefStub"
   elementTypeClass="io.epigraph.lang.parser.psi.stubs.SchemaSupplementDefStubElementType"
   pin=1
 }

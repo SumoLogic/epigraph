@@ -13,7 +13,7 @@ import java.io.IOException;
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public class SchemaTypeDefWrapperStubElementType extends IStubElementType<SchemaTypeDefWrapperStub, SchemaTypeDefWrapper> {
+public class SchemaTypeDefWrapperStubElementType extends IStubElementType<EpigraphTypeDefWrapperStub, SchemaTypeDefWrapper> {
   public SchemaTypeDefWrapperStubElementType(@NotNull @NonNls String debugName) {
     super(debugName, SchemaLanguage.INSTANCE);
   }
@@ -24,13 +24,13 @@ public class SchemaTypeDefWrapperStubElementType extends IStubElementType<Schema
   }
 
   @Override
-  public SchemaTypeDefWrapper createPsi(@NotNull SchemaTypeDefWrapperStub stub) {
+  public SchemaTypeDefWrapper createPsi(@NotNull EpigraphTypeDefWrapperStub stub) {
     return new SchemaTypeDefWrapperImpl(stub, this);
   }
 
   @Override
-  public SchemaTypeDefWrapperStub createStub(@NotNull SchemaTypeDefWrapper typeDef, StubElement parentStub) {
-    return new SchemaTypeDefWrapperStubImpl(parentStub);
+  public EpigraphTypeDefWrapperStub createStub(@NotNull SchemaTypeDefWrapper typeDef, StubElement parentStub) {
+    return new EpigraphTypeDefWrapperStubImpl(parentStub);
   }
 
   @NotNull
@@ -40,17 +40,17 @@ public class SchemaTypeDefWrapperStubElementType extends IStubElementType<Schema
   }
 
   @Override
-  public void serialize(@NotNull SchemaTypeDefWrapperStub stub, @NotNull StubOutputStream dataStream) throws IOException {
+  public void serialize(@NotNull EpigraphTypeDefWrapperStub stub, @NotNull StubOutputStream dataStream) throws IOException {
   }
 
   @NotNull
   @Override
-  public SchemaTypeDefWrapperStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
-    return new SchemaTypeDefWrapperStubImpl(parentStub);
+  public EpigraphTypeDefWrapperStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
+    return new EpigraphTypeDefWrapperStubImpl(parentStub);
   }
 
   @Override
-  public void indexStub(@NotNull SchemaTypeDefWrapperStub stub, @NotNull IndexSink sink) {
+  public void indexStub(@NotNull EpigraphTypeDefWrapperStub stub, @NotNull IndexSink sink) {
 
   }
 }

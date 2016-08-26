@@ -8,7 +8,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static io.epigraph.lang.lexer.EpigraphElementTypes.*;
 import io.epigraph.lang.parser.psi.*;
-import io.epigraph.lang.parser.psi.stubs.SchemaEnumTypeDefStub;
+import io.epigraph.lang.parser.psi.stubs.EpigraphEnumTypeDefStub;
 import com.intellij.psi.stubs.IStubElementType;
 
 public class EpigraphEnumTypeDefImpl extends EpigraphEnumTypeDefImplBase implements EpigraphEnumTypeDef {
@@ -17,7 +17,7 @@ public class EpigraphEnumTypeDefImpl extends EpigraphEnumTypeDefImplBase impleme
     super(node);
   }
 
-  public EpigraphEnumTypeDefImpl(SchemaEnumTypeDefStub stub, IStubElementType nodeType) {
+  public EpigraphEnumTypeDefImpl(EpigraphEnumTypeDefStub stub, IStubElementType nodeType) {
     super(stub, nodeType);
   }
 

@@ -8,7 +8,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static io.epigraph.lang.lexer.EpigraphElementTypes.*;
 import io.epigraph.lang.parser.psi.*;
-import io.epigraph.lang.parser.psi.stubs.SchemaMapTypeDefStub;
+import io.epigraph.lang.parser.psi.stubs.EpigraphMapTypeDefStub;
 import com.intellij.psi.stubs.IStubElementType;
 
 public class EpigraphMapTypeDefImpl extends EpigraphMapTypeDefImplBase implements EpigraphMapTypeDef {
@@ -17,7 +17,7 @@ public class EpigraphMapTypeDefImpl extends EpigraphMapTypeDefImplBase implement
     super(node);
   }
 
-  public EpigraphMapTypeDefImpl(SchemaMapTypeDefStub stub, IStubElementType nodeType) {
+  public EpigraphMapTypeDefImpl(EpigraphMapTypeDefStub stub, IStubElementType nodeType) {
     super(stub, nodeType);
   }
 

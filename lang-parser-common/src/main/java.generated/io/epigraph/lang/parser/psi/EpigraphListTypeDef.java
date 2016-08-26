@@ -4,9 +4,9 @@ package io.epigraph.lang.parser.psi;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.StubBasedPsiElement;
-import io.epigraph.lang.parser.psi.stubs.SchemaListTypeDefStub;
+import io.epigraph.lang.parser.psi.stubs.EpigraphListTypeDefStub;
 
-public interface EpigraphListTypeDef extends EpigraphTypeDef, StubBasedPsiElement<SchemaListTypeDefStub> {
+public interface EpigraphListTypeDef extends EpigraphTypeDef, StubBasedPsiElement<EpigraphListTypeDefStub> {
 
   @NotNull
   SchemaAnonList getAnonList();

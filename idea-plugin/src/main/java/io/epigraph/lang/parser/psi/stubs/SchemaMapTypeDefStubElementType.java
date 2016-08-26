@@ -15,19 +15,19 @@ import java.util.List;
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public class SchemaMapTypeDefStubElementType extends SchemaTypeDefStubElementTypeBase<SchemaMapTypeDefStub, EpigraphMapTypeDef> {
+public class SchemaMapTypeDefStubElementType extends SchemaTypeDefStubElementTypeBase<EpigraphMapTypeDefStub, EpigraphMapTypeDef> {
   public SchemaMapTypeDefStubElementType(@NotNull @NonNls String debugName) {
     super(debugName, "maptypedef");
   }
 
   @Override
-  public EpigraphMapTypeDef createPsi(@NotNull SchemaMapTypeDefStub stub) {
+  public EpigraphMapTypeDef createPsi(@NotNull EpigraphMapTypeDefStub stub) {
     return new EpigraphMapTypeDefImpl(stub, this);
   }
 
   @Override
-  public SchemaMapTypeDefStub createStub(@NotNull EpigraphMapTypeDef typeDef, StubElement parentStub) {
-    return new SchemaMapTypeDefStubImpl(
+  public EpigraphMapTypeDefStub createStub(@NotNull EpigraphMapTypeDef typeDef, StubElement parentStub) {
+    return new EpigraphMapTypeDefStubImpl(
         parentStub,
         typeDef.getName(),
         Fqn.toNullableString(typeDef.getNamespace()),
@@ -36,11 +36,11 @@ public class SchemaMapTypeDefStubElementType extends SchemaTypeDefStubElementTyp
 
   @NotNull
   @Override
-  protected SchemaMapTypeDefStub deserialize(
+  protected EpigraphMapTypeDefStub deserialize(
       @NotNull StubInputStream dataStream,
       StubElement parentStub,
       String name, String namespace,
       @Nullable final List<SerializedFqnTypeRef> extendsTypeRefs) throws IOException {
-    return new SchemaMapTypeDefStubImpl(parentStub, name, namespace, extendsTypeRefs);
+    return new EpigraphMapTypeDefStubImpl(parentStub, name, namespace, extendsTypeRefs);
   }
 }

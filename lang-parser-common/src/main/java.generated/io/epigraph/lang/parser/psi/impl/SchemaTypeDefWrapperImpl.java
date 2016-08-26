@@ -6,12 +6,12 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.extapi.psi.StubBasedPsiElementBase;
-import io.epigraph.lang.parser.psi.stubs.SchemaTypeDefWrapperStub;
+import io.epigraph.lang.parser.psi.stubs.EpigraphTypeDefWrapperStub;
 import io.epigraph.lang.parser.psi.*;
 
-public class SchemaTypeDefWrapperImpl extends StubBasedPsiElementBase<SchemaTypeDefWrapperStub> implements SchemaTypeDefWrapper {
+public class SchemaTypeDefWrapperImpl extends StubBasedPsiElementBase<EpigraphTypeDefWrapperStub> implements SchemaTypeDefWrapper {
 
-  public SchemaTypeDefWrapperImpl(SchemaTypeDefWrapperStub stub, com.intellij.psi.stubs.IStubElementType nodeType) {
+  public SchemaTypeDefWrapperImpl(EpigraphTypeDefWrapperStub stub, com.intellij.psi.stubs.IStubElementType nodeType) {
     super(stub, nodeType);
   }
 
@@ -19,7 +19,7 @@ public class SchemaTypeDefWrapperImpl extends StubBasedPsiElementBase<SchemaType
     super(node);
   }
 
-  public SchemaTypeDefWrapperImpl(SchemaTypeDefWrapperStub stub, com.intellij.psi.tree.IElementType nodeType, ASTNode node) {
+  public SchemaTypeDefWrapperImpl(EpigraphTypeDefWrapperStub stub, com.intellij.psi.tree.IElementType nodeType, ASTNode node) {
     super(stub, nodeType, node);
   }
 

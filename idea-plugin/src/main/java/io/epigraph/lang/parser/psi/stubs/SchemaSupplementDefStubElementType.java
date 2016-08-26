@@ -17,19 +17,19 @@ import java.util.stream.Collectors;
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public class SchemaSupplementDefStubElementType extends IStubElementType<SchemaSupplementDefStub, SchemaSupplementDef> {
+public class SchemaSupplementDefStubElementType extends IStubElementType<EpigraphSupplementDefStub, SchemaSupplementDef> {
   public SchemaSupplementDefStubElementType(@NotNull @NonNls String debugName) {
     super(debugName, SchemaLanguage.INSTANCE);
   }
 
   @Override
-  public SchemaSupplementDef createPsi(@NotNull SchemaSupplementDefStub stub) {
+  public SchemaSupplementDef createPsi(@NotNull EpigraphSupplementDefStub stub) {
     return new SchemaSupplementDefImpl(stub, this);
   }
 
   @Override
-  public SchemaSupplementDefStub createStub(@NotNull SchemaSupplementDef supplementDef, StubElement parentStub) {
-    return new SchemaSupplementDefStubImpl(parentStub,
+  public EpigraphSupplementDefStub createStub(@NotNull SchemaSupplementDef supplementDef, StubElement parentStub) {
+    return new EpigraphSupplementDefStubImpl(parentStub,
         new SerializedFqnTypeRef(supplementDef.sourceRef()),
         supplementDef.supplementedRefs().stream()
             .map(SerializedFqnTypeRef::new)
@@ -45,23 +45,23 @@ public class SchemaSupplementDefStubElementType extends IStubElementType<SchemaS
   }
 
   @Override
-  public void serialize(@NotNull SchemaSupplementDefStub stub, @NotNull StubOutputStream dataStream) throws IOException {
+  public void serialize(@NotNull EpigraphSupplementDefStub stub, @NotNull StubOutputStream dataStream) throws IOException {
     SerializedFqnTypeRef.serializeNullable(stub.getSourceTypeRef(), dataStream);
     StubSerializerUtil.serializeCollection(stub.getSupplementedTypeRefs(), SerializedFqnTypeRef::serialize, dataStream);
   }
 
   @NotNull
   @Override
-  public SchemaSupplementDefStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
+  public EpigraphSupplementDefStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
     SerializedFqnTypeRef target = SerializedFqnTypeRef.deserializeNullable(dataStream);
     List<SerializedFqnTypeRef> sources =
         StubSerializerUtil.deserializeList(SerializedFqnTypeRef::deserialize, dataStream, true);
 
-    return new SchemaSupplementDefStubImpl(parentStub, target, sources);
+    return new EpigraphSupplementDefStubImpl(parentStub, target, sources);
   }
 
   @Override
-  public void indexStub(@NotNull SchemaSupplementDefStub stub, @NotNull IndexSink sink) {
+  public void indexStub(@NotNull EpigraphSupplementDefStub stub, @NotNull IndexSink sink) {
     SerializedFqnTypeRef sourceTypeRef = stub.getSourceTypeRef();
     if (sourceTypeRef != null) {
       Fqn ref = sourceTypeRef.getShortName();

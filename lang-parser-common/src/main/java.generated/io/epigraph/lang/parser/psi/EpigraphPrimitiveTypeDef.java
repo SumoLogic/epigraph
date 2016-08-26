@@ -4,9 +4,9 @@ package io.epigraph.lang.parser.psi;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.StubBasedPsiElement;
-import io.epigraph.lang.parser.psi.stubs.SchemaPrimitiveTypeDefStub;
+import io.epigraph.lang.parser.psi.stubs.EpigraphPrimitiveTypeDefStub;
 
-public interface EpigraphPrimitiveTypeDef extends EpigraphTypeDef, StubBasedPsiElement<SchemaPrimitiveTypeDefStub> {
+public interface EpigraphPrimitiveTypeDef extends EpigraphTypeDef, StubBasedPsiElement<EpigraphPrimitiveTypeDefStub> {
 
   @Nullable
   SchemaExtendsDecl getExtendsDecl();

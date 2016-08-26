@@ -1,12 +1,12 @@
 // This is a generated file. Not intended for manual editing.
 package io.epigraph.lang.parser.psi;
 
+import io.epigraph.lang.parser.psi.stubs.EpigraphTypeDefWrapperStub;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.StubBasedPsiElement;
-import io.epigraph.lang.parser.psi.stubs.SchemaTypeDefWrapperStub;
 
-public interface SchemaTypeDefWrapper extends PsiElement, StubBasedPsiElement<SchemaTypeDefWrapperStub> {
+public interface SchemaTypeDefWrapper extends PsiElement, StubBasedPsiElement<EpigraphTypeDefWrapperStub> {
 
   @Nullable
   EpigraphEnumTypeDef getEnumTypeDef();

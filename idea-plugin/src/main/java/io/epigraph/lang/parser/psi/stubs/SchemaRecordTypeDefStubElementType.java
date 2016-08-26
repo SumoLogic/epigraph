@@ -18,25 +18,25 @@ import java.util.stream.Collectors;
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public class SchemaRecordTypeDefStubElementType extends SchemaTypeDefStubElementTypeBase<SchemaRecordTypeDefStub, EpigraphRecordTypeDef> {
+public class SchemaRecordTypeDefStubElementType extends SchemaTypeDefStubElementTypeBase<EpigraphRecordTypeDefStub, EpigraphRecordTypeDef> {
   public SchemaRecordTypeDefStubElementType(@NotNull @NonNls String debugName) {
     super(debugName, "recordtypedef");
   }
 
   @Override
-  public EpigraphRecordTypeDef createPsi(@NotNull SchemaRecordTypeDefStub stub) {
+  public EpigraphRecordTypeDef createPsi(@NotNull EpigraphRecordTypeDefStub stub) {
     return new EpigraphRecordTypeDefImpl(stub, this);
   }
 
   @Override
-  public SchemaRecordTypeDefStub createStub(@NotNull EpigraphRecordTypeDef typeDef, StubElement parentStub) {
+  public EpigraphRecordTypeDefStub createStub(@NotNull EpigraphRecordTypeDef typeDef, StubElement parentStub) {
     SchemaSupplementsDecl supplementsDecl = typeDef.getSupplementsDecl();
     List<SerializedFqnTypeRef> supplementedRefs = supplementsDecl == null ? null :
         supplementsDecl.getFqnTypeRefList().stream()
             .map(SerializedFqnTypeRef::new)
             .collect(Collectors.toList());
 
-    return new SchemaRecordTypeDefStubImpl(
+    return new EpigraphRecordTypeDefStubImpl(
         parentStub,
         typeDef.getName(),
         Fqn.toNullableString(typeDef.getNamespace()),
@@ -45,19 +45,19 @@ public class SchemaRecordTypeDefStubElementType extends SchemaTypeDefStubElement
   }
 
   @Override
-  public void serialize(@NotNull SchemaRecordTypeDefStub stub, @NotNull StubOutputStream dataStream) throws IOException {
+  public void serialize(@NotNull EpigraphRecordTypeDefStub stub, @NotNull StubOutputStream dataStream) throws IOException {
     super.serialize(stub, dataStream);
     StubSerializerUtil.serializeCollection(stub.getSupplementedTypeRefs(), SerializedFqnTypeRef::serialize, dataStream);
   }
 
   @NotNull
   @Override
-  protected SchemaRecordTypeDefStub deserialize(
+  protected EpigraphRecordTypeDefStub deserialize(
       @NotNull StubInputStream dataStream,
       StubElement parentStub,
       String name, String namespace,
       @Nullable final List<SerializedFqnTypeRef> extendsTypeRefs) throws IOException {
     List<SerializedFqnTypeRef> supplementedRefs = StubSerializerUtil.deserializeList(SerializedFqnTypeRef::deserialize, dataStream, true);
-    return new SchemaRecordTypeDefStubImpl(parentStub, name, namespace, extendsTypeRefs, supplementedRefs);
+    return new EpigraphRecordTypeDefStubImpl(parentStub, name, namespace, extendsTypeRefs, supplementedRefs);
   }
 }

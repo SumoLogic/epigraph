@@ -5,9 +5,9 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.StubBasedPsiElement;
-import io.epigraph.lang.parser.psi.stubs.SchemaRecordTypeDefStub;
+import io.epigraph.lang.parser.psi.stubs.EpigraphRecordTypeDefStub;
 
-public interface EpigraphRecordTypeDef extends EpigraphTypeDef, StubBasedPsiElement<SchemaRecordTypeDefStub> {
+public interface EpigraphRecordTypeDef extends EpigraphTypeDef, StubBasedPsiElement<EpigraphRecordTypeDefStub> {
 
   @Nullable
   SchemaExtendsDecl getExtendsDecl();

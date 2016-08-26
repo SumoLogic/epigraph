@@ -1,6 +1,7 @@
 // This is a generated file. Not intended for manual editing.
 package io.epigraph.lang.parser.psi.impl;
 
+import io.epigraph.lang.parser.psi.stubs.EpigraphListTypeDefStub;
 import org.jetbrains.annotations.*;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
@@ -8,7 +9,6 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static io.epigraph.lang.lexer.EpigraphElementTypes.*;
 import io.epigraph.lang.parser.psi.*;
-import io.epigraph.lang.parser.psi.stubs.SchemaListTypeDefStub;
 import com.intellij.psi.stubs.IStubElementType;
 
 public class EpigraphListTypeDefImpl extends EpigraphListTypeDefImplBase implements EpigraphListTypeDef {
@@ -17,7 +17,7 @@ public class EpigraphListTypeDefImpl extends EpigraphListTypeDefImplBase impleme
     super(node);
   }
 
-  public EpigraphListTypeDefImpl(SchemaListTypeDefStub stub, IStubElementType nodeType) {
+  public EpigraphListTypeDefImpl(EpigraphListTypeDefStub stub, IStubElementType nodeType) {
     super(stub, nodeType);
   }
 

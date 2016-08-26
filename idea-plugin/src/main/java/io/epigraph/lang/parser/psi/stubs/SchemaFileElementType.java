@@ -19,7 +19,7 @@ import java.io.IOException;
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public class SchemaFileElementType extends IStubFileElementType<SchemaFileStub> {
+public class SchemaFileElementType extends IStubFileElementType<EpigraphFileStub> {
   public SchemaFileElementType() {
     super("epigraph_schema.FILE", SchemaLanguage.INSTANCE);
   }
@@ -44,22 +44,22 @@ public class SchemaFileElementType extends IStubFileElementType<SchemaFileStub> 
         if (file instanceof SchemaFile) {
           SchemaFile schemaFile = (SchemaFile) file;
           Fqn namespace = NamespaceManager.getNamespace(schemaFile);
-          return new SchemaFileStubImpl(schemaFile, StringRef.fromNullableString(namespace == null ? null : namespace.toString()));
+          return new EpigraphFileStubImpl(schemaFile, StringRef.fromNullableString(namespace == null ? null : namespace.toString()));
         } else return super.createStubForFile(file);
       }
     };
   }
 
   @Override
-  public void serialize(@NotNull SchemaFileStub stub, @NotNull StubOutputStream dataStream) throws IOException {
+  public void serialize(@NotNull EpigraphFileStub stub, @NotNull StubOutputStream dataStream) throws IOException {
     dataStream.writeName(stub.getNamespace());
   }
 
   @NotNull
   @Override
-  public SchemaFileStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
+  public EpigraphFileStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
     StringRef namespace = dataStream.readName();
-    return new SchemaFileStubImpl(null, namespace);
+    return new EpigraphFileStubImpl(null, namespace);
   }
 
   // indexStub by namespace?

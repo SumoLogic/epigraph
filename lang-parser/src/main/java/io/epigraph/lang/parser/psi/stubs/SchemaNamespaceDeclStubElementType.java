@@ -12,19 +12,19 @@ import java.io.IOException;
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public class SchemaNamespaceDeclStubElementType extends IStubElementType<SchemaNamespaceDeclStub, SchemaNamespaceDecl> {
+public class SchemaNamespaceDeclStubElementType extends IStubElementType<EpigraphNamespaceDeclStub, SchemaNamespaceDecl> {
   public SchemaNamespaceDeclStubElementType(@NotNull @NonNls String debugName) {
     super(debugName, SchemaLanguage.INSTANCE);
   }
 
   @Override
-  public SchemaNamespaceDecl createPsi(@NotNull SchemaNamespaceDeclStub stub) {
+  public SchemaNamespaceDecl createPsi(@NotNull EpigraphNamespaceDeclStub stub) {
     return new SchemaNamespaceDeclImpl(stub, this);
   }
 
   @Override
-  public SchemaNamespaceDeclStub createStub(@NotNull SchemaNamespaceDecl namespaceDecl, StubElement parentStub) {
-    return new SchemaNamespaceDeclStubImpl(parentStub, namespaceDecl.getFqn2());
+  public EpigraphNamespaceDeclStub createStub(@NotNull SchemaNamespaceDecl namespaceDecl, StubElement parentStub) {
+    return new EpigraphNamespaceDeclStubImpl(parentStub, namespaceDecl.getFqn2());
   }
 
   @NotNull
@@ -34,16 +34,16 @@ public class SchemaNamespaceDeclStubElementType extends IStubElementType<SchemaN
   }
 
   @Override
-  public void serialize(@NotNull SchemaNamespaceDeclStub stub, @NotNull StubOutputStream dataStream) throws IOException {
+  public void serialize(@NotNull EpigraphNamespaceDeclStub stub, @NotNull StubOutputStream dataStream) throws IOException {
   }
 
   @NotNull
   @Override
-  public SchemaNamespaceDeclStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
+  public EpigraphNamespaceDeclStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
     throw new UnsupportedOperationException();
   }
 
   @Override
-  public void indexStub(@NotNull SchemaNamespaceDeclStub stub, @NotNull IndexSink sink) {
+  public void indexStub(@NotNull EpigraphNamespaceDeclStub stub, @NotNull IndexSink sink) {
   }
 }

@@ -2,6 +2,8 @@
 package io.epigraph.lang.parser.psi.impl;
 
 import java.util.List;
+
+import io.epigraph.lang.parser.psi.stubs.EpigraphNamespaceDeclStub;
 import org.jetbrains.annotations.*;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
@@ -9,13 +11,12 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static io.epigraph.lang.lexer.EpigraphElementTypes.*;
 import com.intellij.extapi.psi.StubBasedPsiElementBase;
-import io.epigraph.lang.parser.psi.stubs.SchemaNamespaceDeclStub;
 import io.epigraph.lang.parser.psi.*;
 import io.epigraph.lang.parser.Fqn;
 
-public class SchemaNamespaceDeclImpl extends StubBasedPsiElementBase<SchemaNamespaceDeclStub> implements SchemaNamespaceDecl {
+public class SchemaNamespaceDeclImpl extends StubBasedPsiElementBase<EpigraphNamespaceDeclStub> implements SchemaNamespaceDecl {
 
-  public SchemaNamespaceDeclImpl(SchemaNamespaceDeclStub stub, com.intellij.psi.stubs.IStubElementType nodeType) {
+  public SchemaNamespaceDeclImpl(EpigraphNamespaceDeclStub stub, com.intellij.psi.stubs.IStubElementType nodeType) {
     super(stub, nodeType);
   }
 
@@ -23,7 +24,7 @@ public class SchemaNamespaceDeclImpl extends StubBasedPsiElementBase<SchemaNames
     super(node);
   }
 
-  public SchemaNamespaceDeclImpl(SchemaNamespaceDeclStub stub, com.intellij.psi.tree.IElementType nodeType, ASTNode node) {
+  public SchemaNamespaceDeclImpl(EpigraphNamespaceDeclStub stub, com.intellij.psi.tree.IElementType nodeType, ASTNode node) {
     super(stub, nodeType, node);
   }
 

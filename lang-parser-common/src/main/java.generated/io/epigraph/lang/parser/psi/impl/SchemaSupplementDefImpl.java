@@ -9,13 +9,13 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static io.epigraph.lang.lexer.EpigraphElementTypes.*;
 import com.intellij.extapi.psi.StubBasedPsiElementBase;
-import io.epigraph.lang.parser.psi.stubs.SchemaSupplementDefStub;
+import io.epigraph.lang.parser.psi.stubs.EpigraphSupplementDefStub;
 import io.epigraph.lang.parser.psi.*;
 import com.intellij.navigation.ItemPresentation;
 
-public class SchemaSupplementDefImpl extends StubBasedPsiElementBase<SchemaSupplementDefStub> implements SchemaSupplementDef {
+public class SchemaSupplementDefImpl extends StubBasedPsiElementBase<EpigraphSupplementDefStub> implements SchemaSupplementDef {
 
-  public SchemaSupplementDefImpl(SchemaSupplementDefStub stub, com.intellij.psi.stubs.IStubElementType nodeType) {
+  public SchemaSupplementDefImpl(EpigraphSupplementDefStub stub, com.intellij.psi.stubs.IStubElementType nodeType) {
     super(stub, nodeType);
   }
 
@@ -23,7 +23,7 @@ public class SchemaSupplementDefImpl extends StubBasedPsiElementBase<SchemaSuppl
     super(node);
   }
 
-  public SchemaSupplementDefImpl(SchemaSupplementDefStub stub, com.intellij.psi.tree.IElementType nodeType, ASTNode node) {
+  public SchemaSupplementDefImpl(EpigraphSupplementDefStub stub, com.intellij.psi.tree.IElementType nodeType, ASTNode node) {
     super(stub, nodeType, node);
   }
 

@@ -5,9 +5,9 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.StubBasedPsiElement;
-import io.epigraph.lang.parser.psi.stubs.SchemaVarTypeDefStub;
+import io.epigraph.lang.parser.psi.stubs.EpigraphVarTypeDefStub;
 
-public interface EpigraphVarTypeDef extends EpigraphTypeDef, StubBasedPsiElement<SchemaVarTypeDefStub> {
+public interface EpigraphVarTypeDef extends EpigraphTypeDef, StubBasedPsiElement<EpigraphVarTypeDefStub> {
 
   @Nullable
   SchemaDefaultOverride getDefaultOverride();

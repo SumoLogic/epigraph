@@ -15,19 +15,19 @@ import java.util.List;
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public class SchemaPrimitiveTypeDefStubElementType extends SchemaTypeDefStubElementTypeBase<SchemaPrimitiveTypeDefStub, EpigraphPrimitiveTypeDef> {
+public class SchemaPrimitiveTypeDefStubElementType extends SchemaTypeDefStubElementTypeBase<EpigraphPrimitiveTypeDefStub, EpigraphPrimitiveTypeDef> {
   public SchemaPrimitiveTypeDefStubElementType(@NotNull @NonNls String debugName) {
     super(debugName, "primitivetypedef");
   }
 
   @Override
-  public EpigraphPrimitiveTypeDef createPsi(@NotNull SchemaPrimitiveTypeDefStub stub) {
+  public EpigraphPrimitiveTypeDef createPsi(@NotNull EpigraphPrimitiveTypeDefStub stub) {
     return new EpigraphPrimitiveTypeDefImpl(stub, this);
   }
 
   @Override
-  public SchemaPrimitiveTypeDefStub createStub(@NotNull EpigraphPrimitiveTypeDef typeDef, StubElement parentStub) {
-    return new SchemaPrimitiveTypeDefStubImpl(
+  public EpigraphPrimitiveTypeDefStub createStub(@NotNull EpigraphPrimitiveTypeDef typeDef, StubElement parentStub) {
+    return new EpigraphPrimitiveTypeDefStubImpl(
         parentStub,
         typeDef.getName(),
         Fqn.toNullableString(typeDef.getNamespace()),
@@ -36,11 +36,11 @@ public class SchemaPrimitiveTypeDefStubElementType extends SchemaTypeDefStubElem
 
   @NotNull
   @Override
-  protected SchemaPrimitiveTypeDefStub deserialize(
+  protected EpigraphPrimitiveTypeDefStub deserialize(
       @NotNull StubInputStream dataStream,
       StubElement parentStub,
       String name, String namespace,
       @Nullable final List<SerializedFqnTypeRef> extendsTypeRefs) throws IOException {
-    return new SchemaPrimitiveTypeDefStubImpl(parentStub, name, namespace, extendsTypeRefs);
+    return new EpigraphPrimitiveTypeDefStubImpl(parentStub, name, namespace, extendsTypeRefs);
   }
 }

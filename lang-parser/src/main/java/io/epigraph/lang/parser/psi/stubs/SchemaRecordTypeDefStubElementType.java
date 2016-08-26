@@ -9,18 +9,18 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public class SchemaRecordTypeDefStubElementType extends SchemaTypeDefStubElementTypeBase<SchemaRecordTypeDefStub, EpigraphRecordTypeDef> {
+public class SchemaRecordTypeDefStubElementType extends SchemaTypeDefStubElementTypeBase<EpigraphRecordTypeDefStub, EpigraphRecordTypeDef> {
   public SchemaRecordTypeDefStubElementType(@NotNull @NonNls String debugName) {
     super(debugName, "recordtypedef");
   }
 
   @Override
-  public EpigraphRecordTypeDef createPsi(@NotNull SchemaRecordTypeDefStub stub) {
+  public EpigraphRecordTypeDef createPsi(@NotNull EpigraphRecordTypeDefStub stub) {
     return new EpigraphRecordTypeDefImpl(stub, this);
   }
 
   @Override
-  public SchemaRecordTypeDefStub createStub(@NotNull EpigraphRecordTypeDef typeDef, StubElement parentStub) {
-    return new SchemaRecordTypeDefStubImpl(parentStub);
+  public EpigraphRecordTypeDefStub createStub(@NotNull EpigraphRecordTypeDef typeDef, StubElement parentStub) {
+    return new EpigraphRecordTypeDefStubImpl(parentStub);
   }
 }

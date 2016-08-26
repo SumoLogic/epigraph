@@ -9,18 +9,18 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public class SchemaVarTypeDefStubElementType extends SchemaTypeDefStubElementTypeBase<SchemaVarTypeDefStub, EpigraphVarTypeDef> {
+public class SchemaVarTypeDefStubElementType extends SchemaTypeDefStubElementTypeBase<EpigraphVarTypeDefStub, EpigraphVarTypeDef> {
   public SchemaVarTypeDefStubElementType(@NotNull @NonNls String debugName) {
     super(debugName, "vartypedef");
   }
 
   @Override
-  public EpigraphVarTypeDef createPsi(@NotNull SchemaVarTypeDefStub stub) {
+  public EpigraphVarTypeDef createPsi(@NotNull EpigraphVarTypeDefStub stub) {
     return new EpigraphVarTypeDefImpl(stub, this);
   }
 
   @Override
-  public SchemaVarTypeDefStub createStub(@NotNull EpigraphVarTypeDef typeDef, StubElement parentStub) {
-    return new SchemaVarTypeDefStubImpl(parentStub);
+  public EpigraphVarTypeDefStub createStub(@NotNull EpigraphVarTypeDef typeDef, StubElement parentStub) {
+    return new EpigraphVarTypeDefStubImpl(parentStub);
   }
 }

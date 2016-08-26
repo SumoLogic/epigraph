@@ -5,10 +5,10 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.StubBasedPsiElement;
-import io.epigraph.lang.parser.psi.stubs.SchemaSupplementDefStub;
+import io.epigraph.lang.parser.psi.stubs.EpigraphSupplementDefStub;
 import com.intellij.navigation.ItemPresentation;
 
-public interface SchemaSupplementDef extends PsiElement, StubBasedPsiElement<SchemaSupplementDefStub> {
+public interface SchemaSupplementDef extends PsiElement, StubBasedPsiElement<EpigraphSupplementDefStub> {
 
   @NotNull
   List<SchemaFqnTypeRef> getFqnTypeRefList();

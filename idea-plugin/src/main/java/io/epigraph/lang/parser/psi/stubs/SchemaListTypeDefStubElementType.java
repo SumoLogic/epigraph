@@ -15,19 +15,19 @@ import java.util.List;
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public class SchemaListTypeDefStubElementType extends SchemaTypeDefStubElementTypeBase<SchemaListTypeDefStub, EpigraphListTypeDef> {
+public class SchemaListTypeDefStubElementType extends SchemaTypeDefStubElementTypeBase<EpigraphListTypeDefStub, EpigraphListTypeDef> {
   public SchemaListTypeDefStubElementType(@NotNull @NonNls String debugName) {
     super(debugName, "listtypedef");
   }
 
   @Override
-  public EpigraphListTypeDef createPsi(@NotNull SchemaListTypeDefStub stub) {
+  public EpigraphListTypeDef createPsi(@NotNull EpigraphListTypeDefStub stub) {
     return new EpigraphListTypeDefImpl(stub, this);
   }
 
   @Override
-  public SchemaListTypeDefStub createStub(@NotNull EpigraphListTypeDef typeDef, StubElement parentStub) {
-    return new SchemaListTypeDefStubImpl(
+  public EpigraphListTypeDefStub createStub(@NotNull EpigraphListTypeDef typeDef, StubElement parentStub) {
+    return new EpigraphListTypeDefStubImpl(
         parentStub,
         typeDef.getName(),
         Fqn.toNullableString(typeDef.getNamespace()),
@@ -36,11 +36,11 @@ public class SchemaListTypeDefStubElementType extends SchemaTypeDefStubElementTy
 
   @NotNull
   @Override
-  protected SchemaListTypeDefStub deserialize(
+  protected EpigraphListTypeDefStub deserialize(
       @NotNull StubInputStream dataStream,
       StubElement parentStub,
       String name, String namespace,
       @Nullable final List<SerializedFqnTypeRef> extendsTypeRefs) throws IOException {
-    return new SchemaListTypeDefStubImpl(parentStub, name, namespace, extendsTypeRefs);
+    return new EpigraphListTypeDefStubImpl(parentStub, name, namespace, extendsTypeRefs);
   }
 }

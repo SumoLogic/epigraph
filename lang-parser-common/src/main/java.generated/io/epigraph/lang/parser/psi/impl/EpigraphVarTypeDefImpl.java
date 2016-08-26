@@ -9,7 +9,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static io.epigraph.lang.lexer.EpigraphElementTypes.*;
 import io.epigraph.lang.parser.psi.*;
-import io.epigraph.lang.parser.psi.stubs.SchemaVarTypeDefStub;
+import io.epigraph.lang.parser.psi.stubs.EpigraphVarTypeDefStub;
 import com.intellij.psi.stubs.IStubElementType;
 
 public class EpigraphVarTypeDefImpl extends EpigraphVarTypeDefImplBase implements EpigraphVarTypeDef {
@@ -18,7 +18,7 @@ public class EpigraphVarTypeDefImpl extends EpigraphVarTypeDefImplBase implement
     super(node);
   }
 
-  public EpigraphVarTypeDefImpl(SchemaVarTypeDefStub stub, IStubElementType nodeType) {
+  public EpigraphVarTypeDefImpl(EpigraphVarTypeDefStub stub, IStubElementType nodeType) {
     super(stub, nodeType);
   }
 

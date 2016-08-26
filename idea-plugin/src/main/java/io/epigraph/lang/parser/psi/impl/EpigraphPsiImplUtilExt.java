@@ -29,7 +29,7 @@ class EpigraphPsiImplUtilExt {
   @Contract(pure = true)
   @NotNull
   public static List<EpigraphTypeDef> supplemented(@NotNull EpigraphRecordTypeDef recordTypeDef) {
-    SchemaRecordTypeDefStub stub = recordTypeDef.getStub();
+    EpigraphRecordTypeDefStub stub = recordTypeDef.getStub();
     if (stub != null) {
       List<SerializedFqnTypeRef> supplementedTypeRefs = stub.getSupplementedTypeRefs();
       return resolveSerializedTypeRefs(supplementedTypeRefs, recordTypeDef.getProject(), SchemaSearchScopeUtil.getSearchScope(recordTypeDef));
@@ -45,7 +45,7 @@ class EpigraphPsiImplUtilExt {
   @Contract(pure = true)
   @NotNull
   public static List<EpigraphTypeDef> supplemented(@NotNull EpigraphVarTypeDef varTypeDef) {
-    SchemaVarTypeDefStub stub = varTypeDef.getStub();
+    EpigraphVarTypeDefStub stub = varTypeDef.getStub();
     if (stub != null) {
       List<SerializedFqnTypeRef> supplementedTypeRefs = stub.getSupplementedTypeRefs();
       return resolveSerializedTypeRefs(supplementedTypeRefs, varTypeDef.getProject(), SchemaSearchScopeUtil.getSearchScope(varTypeDef));
@@ -61,7 +61,7 @@ class EpigraphPsiImplUtilExt {
   @Contract(pure = true)
   @Nullable
   public static EpigraphTypeDef source(@NotNull SchemaSupplementDef supplementDef) {
-    SchemaSupplementDefStub stub = supplementDef.getStub();
+    EpigraphSupplementDefStub stub = supplementDef.getStub();
     if (stub != null) {
       SerializedFqnTypeRef sourceTypeRef = stub.getSourceTypeRef();
       if (sourceTypeRef == null) return null;
@@ -76,7 +76,7 @@ class EpigraphPsiImplUtilExt {
   @Contract(pure = true)
   @NotNull
   public static List<EpigraphTypeDef> supplemented(@NotNull SchemaSupplementDef supplementDef) {
-    SchemaSupplementDefStub stub = supplementDef.getStub();
+    EpigraphSupplementDefStub stub = supplementDef.getStub();
     if (stub != null) {
       List<SerializedFqnTypeRef> supplementedTypeRefs = stub.getSupplementedTypeRefs();
       return resolveSerializedTypeRefs(supplementedTypeRefs, supplementDef.getProject(), SchemaSearchScopeUtil.getSearchScope(supplementDef));

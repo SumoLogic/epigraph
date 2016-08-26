@@ -10,7 +10,7 @@ import com.intellij.util.IncorrectOperationException;
 import io.epigraph.lang.parser.Fqn;
 import io.epigraph.lang.parser.NamingConventions;
 import io.epigraph.lang.parser.psi.*;
-import io.epigraph.lang.parser.psi.stubs.SchemaNamespaceDeclStub;
+import io.epigraph.lang.parser.psi.stubs.EpigraphNamespaceDeclStub;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -32,7 +32,7 @@ public class EpigraphPsiImplUtil {
   @Contract(pure = true)
   @Nullable
   public static Fqn getFqn2(SchemaNamespaceDecl namespaceDecl) {
-    SchemaNamespaceDeclStub stub = namespaceDecl.getStub();
+    EpigraphNamespaceDeclStub stub = namespaceDecl.getStub();
     if (stub != null) return stub.getFqn();
 
     SchemaFqn schemaFqn = namespaceDecl.getFqn();

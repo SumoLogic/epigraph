@@ -12,19 +12,19 @@ import java.io.IOException;
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public class SchemaSupplementDefStubElementType extends IStubElementType<SchemaSupplementDefStub, SchemaSupplementDef> {
+public class SchemaSupplementDefStubElementType extends IStubElementType<EpigraphSupplementDefStub, SchemaSupplementDef> {
   public SchemaSupplementDefStubElementType(@NotNull @NonNls String debugName) {
     super(debugName, SchemaLanguage.INSTANCE);
   }
 
   @Override
-  public SchemaSupplementDef createPsi(@NotNull SchemaSupplementDefStub stub) {
+  public SchemaSupplementDef createPsi(@NotNull EpigraphSupplementDefStub stub) {
     return new SchemaSupplementDefImpl(stub, this);
   }
 
   @Override
-  public SchemaSupplementDefStub createStub(@NotNull SchemaSupplementDef supplementDef, StubElement parentStub) {
-    return new SchemaSupplementDefStubImpl(parentStub);
+  public EpigraphSupplementDefStub createStub(@NotNull SchemaSupplementDef supplementDef, StubElement parentStub) {
+    return new EpigraphSupplementDefStubImpl(parentStub);
   }
 
   @NotNull
@@ -34,16 +34,16 @@ public class SchemaSupplementDefStubElementType extends IStubElementType<SchemaS
   }
 
   @Override
-  public void serialize(@NotNull SchemaSupplementDefStub stub, @NotNull StubOutputStream dataStream) throws IOException {
+  public void serialize(@NotNull EpigraphSupplementDefStub stub, @NotNull StubOutputStream dataStream) throws IOException {
   }
 
   @NotNull
   @Override
-  public SchemaSupplementDefStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
+  public EpigraphSupplementDefStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
     throw new UnsupportedOperationException();
   }
 
   @Override
-  public void indexStub(@NotNull SchemaSupplementDefStub stub, @NotNull IndexSink sink) {
+  public void indexStub(@NotNull EpigraphSupplementDefStub stub, @NotNull IndexSink sink) {
   }
 }

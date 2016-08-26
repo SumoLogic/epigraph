@@ -9,19 +9,19 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public class SchemaPrimitiveTypeDefStubElementType extends SchemaTypeDefStubElementTypeBase<SchemaPrimitiveTypeDefStub, EpigraphPrimitiveTypeDef> {
+public class SchemaPrimitiveTypeDefStubElementType extends SchemaTypeDefStubElementTypeBase<EpigraphPrimitiveTypeDefStub, EpigraphPrimitiveTypeDef> {
   public SchemaPrimitiveTypeDefStubElementType(@NotNull @NonNls String debugName) {
     super(debugName, "primitivetypedef");
   }
 
   @Override
-  public EpigraphPrimitiveTypeDef createPsi(@NotNull SchemaPrimitiveTypeDefStub stub) {
+  public EpigraphPrimitiveTypeDef createPsi(@NotNull EpigraphPrimitiveTypeDefStub stub) {
     return new EpigraphPrimitiveTypeDefImpl(stub, this);
   }
 
   @Override
-  public SchemaPrimitiveTypeDefStub createStub(@NotNull EpigraphPrimitiveTypeDef typeDef, StubElement parentStub) {
-    return new SchemaPrimitiveTypeDefStubImpl( parentStub);
+  public EpigraphPrimitiveTypeDefStub createStub(@NotNull EpigraphPrimitiveTypeDef typeDef, StubElement parentStub) {
+    return new EpigraphPrimitiveTypeDefStubImpl( parentStub);
   }
 
 }

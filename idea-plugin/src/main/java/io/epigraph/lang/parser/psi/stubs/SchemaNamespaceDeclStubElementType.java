@@ -15,19 +15,19 @@ import java.io.IOException;
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public class SchemaNamespaceDeclStubElementType extends IStubElementType<SchemaNamespaceDeclStub, SchemaNamespaceDecl> {
+public class SchemaNamespaceDeclStubElementType extends IStubElementType<EpigraphNamespaceDeclStub, SchemaNamespaceDecl> {
   public SchemaNamespaceDeclStubElementType(@NotNull @NonNls String debugName) {
     super(debugName, SchemaLanguage.INSTANCE);
   }
 
   @Override
-  public SchemaNamespaceDecl createPsi(@NotNull SchemaNamespaceDeclStub stub) {
+  public SchemaNamespaceDecl createPsi(@NotNull EpigraphNamespaceDeclStub stub) {
     return new SchemaNamespaceDeclImpl(stub, this);
   }
 
   @Override
-  public SchemaNamespaceDeclStub createStub(@NotNull SchemaNamespaceDecl namespaceDecl, StubElement parentStub) {
-    return new SchemaNamespaceDeclStubImpl(parentStub, namespaceDecl.getFqn2());
+  public EpigraphNamespaceDeclStub createStub(@NotNull SchemaNamespaceDecl namespaceDecl, StubElement parentStub) {
+    return new EpigraphNamespaceDeclStubImpl(parentStub, namespaceDecl.getFqn2());
   }
 
   @NotNull
@@ -37,22 +37,22 @@ public class SchemaNamespaceDeclStubElementType extends IStubElementType<SchemaN
   }
 
   @Override
-  public void serialize(@NotNull SchemaNamespaceDeclStub stub, @NotNull StubOutputStream dataStream) throws IOException {
+  public void serialize(@NotNull EpigraphNamespaceDeclStub stub, @NotNull StubOutputStream dataStream) throws IOException {
     Fqn fqn = stub.getFqn();
     dataStream.writeName(fqn == null ? null : fqn.toString());
   }
 
   @NotNull
   @Override
-  public SchemaNamespaceDeclStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
+  public EpigraphNamespaceDeclStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
     StringRef fqnStr = dataStream.readName();
     Fqn fqn = fqnStr == null ? null : Fqn.fromDotSeparated(fqnStr.getString());
 
-    return new SchemaNamespaceDeclStubImpl(parentStub, fqn);
+    return new EpigraphNamespaceDeclStubImpl(parentStub, fqn);
   }
 
   @Override
-  public void indexStub(@NotNull SchemaNamespaceDeclStub stub, @NotNull IndexSink sink) {
+  public void indexStub(@NotNull EpigraphNamespaceDeclStub stub, @NotNull IndexSink sink) {
     Fqn fqn = stub.getFqn();
     if (fqn != null) sink.occurrence(SchemaStubIndexKeys.NAMESPACE_BY_NAME, fqn.toString());
   }
