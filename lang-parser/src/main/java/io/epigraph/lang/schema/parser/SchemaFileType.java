@@ -1,6 +1,7 @@
 package io.epigraph.lang.schema.parser;
 
 import com.intellij.openapi.fileTypes.LanguageFileType;
+import io.epigraph.lang.parser.Common;
 import io.epigraph.lang.schema.SchemaLanguage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

@@ -2,7 +2,7 @@ package com.sumologic.epigraph.ideaplugin.schema.features;
 
 import com.intellij.lang.refactoring.NamesValidator;
 import com.intellij.openapi.project.Project;
-import io.epigraph.lang.schema.parser.SchemaParserDefinition;
+import io.epigraph.lang.parser.SchemaParserDefinition;
 import org.jetbrains.annotations.NotNull;
 
 /**

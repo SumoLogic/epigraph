@@ -5,10 +5,10 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.usages.impl.rules.UsageType;
 import com.intellij.usages.impl.rules.UsageTypeProvider;
-import io.epigraph.lang.schema.parser.psi.SchemaFile;
-import io.epigraph.lang.schema.parser.psi.SchemaFqnSegment;
-import io.epigraph.lang.schema.parser.psi.SchemaImportStatement;
-import io.epigraph.lang.schema.parser.psi.SchemaVarTagRef;
+import io.epigraph.lang.parser.psi.SchemaFile;
+import io.epigraph.lang.parser.psi.SchemaFqnSegment;
+import io.epigraph.lang.parser.psi.SchemaImportStatement;
+import io.epigraph.lang.parser.psi.SchemaVarTagRef;
 import org.jetbrains.annotations.Nullable;
 
 /**

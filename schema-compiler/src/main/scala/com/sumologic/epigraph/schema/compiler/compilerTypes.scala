@@ -4,7 +4,7 @@ package com.sumologic.epigraph.schema.compiler
 
 import java.util.concurrent.ConcurrentLinkedQueue
 
-import io.epigraph.lang.schema.parser.psi._
+import io.epigraph.lang.parser.psi._
 import org.jetbrains.annotations.Nullable
 
 import scala.collection.JavaConversions._

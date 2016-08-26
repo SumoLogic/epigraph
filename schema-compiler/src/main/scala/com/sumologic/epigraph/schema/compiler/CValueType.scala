@@ -2,7 +2,7 @@
 
 package com.sumologic.epigraph.schema.compiler
 
-import io.epigraph.lang.schema.parser.psi.SchemaValueTypeRef
+import io.epigraph.lang.parser.psi.SchemaValueTypeRef
 
 /**
  * Schema value (field value, list element, or map value) type.

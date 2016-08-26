@@ -5,11 +5,11 @@ import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
-import io.epigraph.lang.schema.parser.Fqn;
-import io.epigraph.lang.schema.parser.psi.SchemaFile;
-import io.epigraph.lang.schema.parser.psi.SchemaFqn;
-import io.epigraph.lang.schema.parser.psi.SchemaImportStatement;
-import io.epigraph.lang.schema.parser.psi.SchemaNamespaceDecl;
+import io.epigraph.lang.parser.Fqn;
+import io.epigraph.lang.parser.psi.SchemaFile;
+import io.epigraph.lang.parser.psi.SchemaFqn;
+import io.epigraph.lang.parser.psi.SchemaImportStatement;
+import io.epigraph.lang.parser.psi.SchemaNamespaceDecl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

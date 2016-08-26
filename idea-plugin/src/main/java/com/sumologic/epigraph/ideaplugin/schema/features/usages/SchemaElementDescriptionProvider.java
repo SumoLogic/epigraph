@@ -5,8 +5,8 @@ import com.intellij.psi.ElementDescriptionProvider;
 import com.intellij.psi.PsiElement;
 import com.intellij.usageView.UsageViewLongNameLocation;
 import com.sumologic.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
-import io.epigraph.lang.schema.parser.psi.SchemaFqnSegment;
-import io.epigraph.lang.schema.parser.psi.SchemaTypeDef;
+import io.epigraph.lang.parser.psi.SchemaFqnSegment;
+import io.epigraph.lang.parser.psi.SchemaTypeDef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

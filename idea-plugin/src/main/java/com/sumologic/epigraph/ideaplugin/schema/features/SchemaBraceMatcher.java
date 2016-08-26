@@ -7,9 +7,9 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IElementType;
-import io.epigraph.lang.schema.parser.psi.SchemaFieldDecl;
-import io.epigraph.lang.schema.parser.psi.SchemaTypeDef;
-import io.epigraph.lang.schema.parser.psi.SchemaVarTagDecl;
+import io.epigraph.lang.parser.psi.SchemaFieldDecl;
+import io.epigraph.lang.parser.psi.SchemaTypeDef;
+import io.epigraph.lang.parser.psi.SchemaVarTagDecl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

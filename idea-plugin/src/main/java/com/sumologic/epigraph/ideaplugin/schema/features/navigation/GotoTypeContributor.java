@@ -5,8 +5,8 @@ import com.intellij.navigation.NavigationItem;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
-import io.epigraph.lang.schema.parser.Fqn;
-import io.epigraph.lang.schema.parser.psi.SchemaTypeDef;
+import io.epigraph.lang.parser.Fqn;
+import io.epigraph.lang.parser.psi.SchemaTypeDef;
 import org.jetbrains.annotations.NotNull;
 
 /**

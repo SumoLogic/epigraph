@@ -5,7 +5,7 @@ import com.intellij.openapi.util.Key;
 import com.intellij.psi.*;
 import com.intellij.psi.util.*;
 import com.sumologic.epigraph.ideaplugin.schema.brains.ModificationTrackerImpl;
-import io.epigraph.lang.schema.parser.psi.*;
+import io.epigraph.lang.parser.psi.*;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

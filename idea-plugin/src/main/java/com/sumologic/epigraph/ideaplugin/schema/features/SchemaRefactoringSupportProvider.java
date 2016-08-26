@@ -2,9 +2,9 @@ package com.sumologic.epigraph.ideaplugin.schema.features;
 
 import com.intellij.lang.refactoring.RefactoringSupportProvider;
 import com.intellij.psi.PsiElement;
-import io.epigraph.lang.schema.parser.psi.SchemaFqnSegment;
-import io.epigraph.lang.schema.parser.psi.SchemaTypeDef;
-import io.epigraph.lang.schema.parser.psi.SchemaVarTagDecl;
+import io.epigraph.lang.parser.psi.SchemaFqnSegment;
+import io.epigraph.lang.parser.psi.SchemaTypeDef;
+import io.epigraph.lang.parser.psi.SchemaVarTagDecl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

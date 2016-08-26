@@ -10,7 +10,7 @@ import com.intellij.openapi.ui.InputValidator;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import com.sumologic.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
-import io.epigraph.lang.schema.parser.Common;
+import io.epigraph.lang.parser.Common;
 
 import java.util.Map;
 

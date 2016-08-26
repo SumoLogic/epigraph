@@ -12,7 +12,7 @@
     - [x] elementTypePrefx -> `E_`
     - [x] PsiClassPrefix -> 'Epigraph'? Or make it different for Schema/Data/Projection classes?
   - [x] `Schema*` classes to `Epigraph*`, except for `SchemaParser`
-  - [ ] io.epigraph.lang.schema.**.Schema* -> io.lang.epigraph.**.Epigraph* ?
+  - [ ] io.epigraph.lang.schema.**.Schema* -> io.epigraph.lang.**.Epigraph* ?
   - [ ] *.esc -> *.epigraph? *.epigraph_schema?
 - Smart type completion: suggest out of scope types (+add import)
 - Smart completion for `default <tag>`, `nodefault` on fields, list elements etc

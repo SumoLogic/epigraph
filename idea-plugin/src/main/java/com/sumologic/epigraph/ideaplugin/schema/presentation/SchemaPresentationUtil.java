@@ -9,8 +9,8 @@ import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.sumologic.epigraph.ideaplugin.schema.brains.NamespaceManager;
 import com.sumologic.epigraph.ideaplugin.schema.brains.VirtualFileUtil;
-import io.epigraph.lang.schema.parser.Fqn;
-import io.epigraph.lang.schema.parser.psi.*;
+import io.epigraph.lang.parser.Fqn;
+import io.epigraph.lang.parser.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

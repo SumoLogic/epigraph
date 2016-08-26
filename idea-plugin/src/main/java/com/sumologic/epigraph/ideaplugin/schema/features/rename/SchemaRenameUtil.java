@@ -15,11 +15,11 @@ import com.intellij.util.containers.ContainerUtil;
 import com.sumologic.epigraph.ideaplugin.schema.SchemaBundle;
 import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.SchemaDirectTypeParentsSearch;
 import com.sumologic.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
-import io.epigraph.lang.schema.parser.psi.SchemaFieldDecl;
-import io.epigraph.lang.schema.parser.psi.SchemaRecordTypeBody;
-import io.epigraph.lang.schema.parser.psi.SchemaRecordTypeDef;
-import io.epigraph.lang.schema.parser.psi.SchemaTypeDef;
-import io.epigraph.lang.schema.parser.psi.impl.SchemaElementFactory;
+import io.epigraph.lang.parser.psi.SchemaFieldDecl;
+import io.epigraph.lang.parser.psi.SchemaRecordTypeBody;
+import io.epigraph.lang.parser.psi.SchemaRecordTypeDef;
+import io.epigraph.lang.parser.psi.SchemaTypeDef;
+import io.epigraph.lang.parser.psi.impl.SchemaElementFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

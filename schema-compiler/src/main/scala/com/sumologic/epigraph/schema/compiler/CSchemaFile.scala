@@ -6,8 +6,8 @@ import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.function.BiFunction
 
 import com.intellij.psi.PsiElement
-import io.epigraph.lang.schema.parser.Fqn
-import io.epigraph.lang.schema.parser.psi._
+import io.epigraph.lang.parser.Fqn
+import io.epigraph.lang.parser.psi._
 import net.jcip.annotations.ThreadSafe
 import org.jetbrains.annotations.Nullable
 

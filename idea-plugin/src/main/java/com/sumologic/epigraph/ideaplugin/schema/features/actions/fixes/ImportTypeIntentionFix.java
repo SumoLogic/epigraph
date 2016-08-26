@@ -19,10 +19,10 @@ import com.sumologic.epigraph.ideaplugin.schema.features.actions.SchemaNamespace
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaSearchScopeUtil;
 import com.sumologic.epigraph.ideaplugin.schema.options.SchemaSettings;
-import io.epigraph.lang.schema.parser.Fqn;
-import io.epigraph.lang.schema.parser.psi.SchemaFile;
-import io.epigraph.lang.schema.parser.psi.SchemaFqnTypeRef;
-import io.epigraph.lang.schema.parser.psi.SchemaTypeDef;
+import io.epigraph.lang.parser.Fqn;
+import io.epigraph.lang.parser.psi.SchemaFile;
+import io.epigraph.lang.parser.psi.SchemaFqnTypeRef;
+import io.epigraph.lang.parser.psi.SchemaTypeDef;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 

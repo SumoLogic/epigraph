@@ -3,7 +3,7 @@ package com.sumologic.epigraph.ideaplugin.schema.features.structureview;
 import com.intellij.ide.structureView.*;
 import com.intellij.ide.util.treeView.smartTree.Sorter;
 import com.intellij.openapi.editor.Editor;
-import io.epigraph.lang.schema.parser.psi.*;
+import io.epigraph.lang.parser.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

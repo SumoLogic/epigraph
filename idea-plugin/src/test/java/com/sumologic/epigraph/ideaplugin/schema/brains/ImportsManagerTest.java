@@ -1,9 +1,9 @@
 package com.sumologic.epigraph.ideaplugin.schema.brains;
 
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
-import io.epigraph.lang.schema.parser.Fqn;
-import io.epigraph.lang.schema.parser.psi.SchemaFile;
-import io.epigraph.lang.schema.parser.psi.SchemaImportStatement;
+import io.epigraph.lang.parser.Fqn;
+import io.epigraph.lang.parser.psi.SchemaFile;
+import io.epigraph.lang.parser.psi.SchemaImportStatement;
 
 import java.util.*;
 import java.util.stream.Collectors;

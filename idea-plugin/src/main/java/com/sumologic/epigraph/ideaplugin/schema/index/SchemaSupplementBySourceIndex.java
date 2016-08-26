@@ -2,7 +2,7 @@ package com.sumologic.epigraph.ideaplugin.schema.index;
 
 import com.intellij.psi.stubs.StringStubIndexExtension;
 import com.intellij.psi.stubs.StubIndexKey;
-import io.epigraph.lang.schema.parser.psi.SchemaSupplementDef;
+import io.epigraph.lang.parser.psi.SchemaSupplementDef;
 import org.jetbrains.annotations.NotNull;
 
 /**

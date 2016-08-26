@@ -4,16 +4,16 @@ package io.epigraph.lang.lexer;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.PsiElement;
 import com.intellij.lang.ASTNode;
-import io.epigraph.lang.schema.parser.psi.stubs.SchemaEnumTypeDefStubElementType;
-import io.epigraph.lang.schema.parser.psi.stubs.SchemaListTypeDefStubElementType;
-import io.epigraph.lang.schema.parser.psi.stubs.SchemaMapTypeDefStubElementType;
-import io.epigraph.lang.schema.parser.psi.stubs.SchemaNamespaceDeclStubElementType;
-import io.epigraph.lang.schema.parser.psi.stubs.SchemaPrimitiveTypeDefStubElementType;
-import io.epigraph.lang.schema.parser.psi.stubs.SchemaRecordTypeDefStubElementType;
-import io.epigraph.lang.schema.parser.psi.stubs.SchemaSupplementDefStubElementType;
-import io.epigraph.lang.schema.parser.psi.stubs.SchemaTypeDefWrapperStubElementType;
-import io.epigraph.lang.schema.parser.psi.stubs.SchemaVarTypeDefStubElementType;
-import io.epigraph.lang.schema.parser.psi.impl.*;
+import io.epigraph.lang.parser.psi.stubs.SchemaEnumTypeDefStubElementType;
+import io.epigraph.lang.parser.psi.stubs.SchemaListTypeDefStubElementType;
+import io.epigraph.lang.parser.psi.stubs.SchemaMapTypeDefStubElementType;
+import io.epigraph.lang.parser.psi.stubs.SchemaNamespaceDeclStubElementType;
+import io.epigraph.lang.parser.psi.stubs.SchemaPrimitiveTypeDefStubElementType;
+import io.epigraph.lang.parser.psi.stubs.SchemaRecordTypeDefStubElementType;
+import io.epigraph.lang.parser.psi.stubs.SchemaSupplementDefStubElementType;
+import io.epigraph.lang.parser.psi.stubs.SchemaTypeDefWrapperStubElementType;
+import io.epigraph.lang.parser.psi.stubs.SchemaVarTypeDefStubElementType;
+import io.epigraph.lang.parser.psi.impl.*;
 
 public interface EpigraphElementTypes {
 

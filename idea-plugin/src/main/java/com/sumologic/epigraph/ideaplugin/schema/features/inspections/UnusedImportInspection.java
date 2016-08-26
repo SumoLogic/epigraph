@@ -6,10 +6,10 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElementVisitor;
 import com.sumologic.epigraph.ideaplugin.schema.brains.ImportsManager;
 import com.sumologic.epigraph.ideaplugin.schema.features.actions.fixes.OptimizeImportsQuickFix;
-import io.epigraph.lang.schema.parser.psi.SchemaFile;
-import io.epigraph.lang.schema.parser.psi.SchemaImportStatement;
-import io.epigraph.lang.schema.parser.psi.SchemaImports;
-import io.epigraph.lang.schema.parser.psi.SchemaVisitor;
+import io.epigraph.lang.parser.psi.SchemaFile;
+import io.epigraph.lang.parser.psi.SchemaImportStatement;
+import io.epigraph.lang.parser.psi.SchemaImports;
+import io.epigraph.lang.parser.psi.SchemaVisitor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
