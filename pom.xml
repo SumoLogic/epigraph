@@ -38,13 +38,13 @@
   <modules>
     <module>builtin-types-schema</module>
     <module>core</module>
+    <module>lang-parser</module>
     <!--<module>maven-plugin</module>-->
     <module>scala-codegen</module>
     <!--<module>scala-codegen-test</module>-->
-    <module>schema-schema</module>
     <module>schema-compiler</module>
+    <module>schema-schema</module>
     <!--<module>idea-plugin</module>-->
-    <module>lang-parser</module>
   </modules>
 
   <properties>

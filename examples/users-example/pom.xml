@@ -13,8 +13,8 @@
 
   <modules>
     <module>users-schema</module>
-    <module>users-schema-scala</module>
-    <module>users-service</module>
+    <!--<module>users-schema-scala</module>-->
+    <!--<module>users-service</module>-->
   </modules>
 
 </project>
