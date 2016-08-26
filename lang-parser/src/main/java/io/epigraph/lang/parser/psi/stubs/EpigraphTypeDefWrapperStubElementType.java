@@ -13,8 +13,8 @@ import java.io.IOException;
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public class SchemaTypeDefWrapperStubElementType extends IStubElementType<EpigraphTypeDefWrapperStub, SchemaTypeDefWrapper> {
-  public SchemaTypeDefWrapperStubElementType(@NotNull @NonNls String debugName) {
+public class EpigraphTypeDefWrapperStubElementType extends IStubElementType<EpigraphTypeDefWrapperStub, SchemaTypeDefWrapper> {
+  public EpigraphTypeDefWrapperStubElementType(@NotNull @NonNls String debugName) {
     super(debugName, SchemaLanguage.INSTANCE);
   }
 
@@ -36,7 +36,7 @@ public class SchemaTypeDefWrapperStubElementType extends IStubElementType<Epigra
   @NotNull
   @Override
   public String getExternalId() {
-    return "epigraph_schema.typedef";
+    return "epigraph.typedef";
   }
 
   @Override

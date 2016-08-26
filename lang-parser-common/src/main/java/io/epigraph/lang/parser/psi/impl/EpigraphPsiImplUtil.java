@@ -45,7 +45,7 @@ public class EpigraphPsiImplUtil {
   @NotNull
   public static PsiElement setName(SchemaQid qid, String name) {
     PsiElement oldId = qid.getId();
-    PsiElement newId = SchemaElementFactory.createId(qid.getProject(), name);
+    PsiElement newId = EpigraphElementFactory.createId(qid.getProject(), name);
     oldId.replace(newId);
     return qid;
   }

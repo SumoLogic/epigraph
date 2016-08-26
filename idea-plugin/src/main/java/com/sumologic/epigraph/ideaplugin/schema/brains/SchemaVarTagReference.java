@@ -13,7 +13,7 @@ import io.epigraph.lang.parser.SchemaParserDefinition;
 import io.epigraph.lang.parser.psi.SchemaQid;
 import io.epigraph.lang.parser.psi.SchemaVarTagDecl;
 import io.epigraph.lang.parser.psi.EpigraphVarTypeDef;
-import io.epigraph.lang.parser.psi.impl.SchemaElementFactory;
+import io.epigraph.lang.parser.psi.impl.EpigraphElementFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -96,7 +96,7 @@ public class SchemaVarTagReference extends PsiReferenceBase<PsiElement> implemen
   @Override
   public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
     PsiElement oldElement = getElement();
-    PsiElement newElement = SchemaElementFactory.createId(oldElement.getProject(), newElementName);
+    PsiElement newElement = EpigraphElementFactory.createId(oldElement.getProject(), newElementName);
     return oldElement.replace(newElement);
   }
 }

@@ -13,7 +13,7 @@ import com.intellij.psi.tree.IFileElementType;
 import com.intellij.psi.tree.TokenSet;
 import io.epigraph.lang.lexer.EpigraphFlexAdapter;
 import io.epigraph.lang.parser.psi.SchemaFile;
-import io.epigraph.lang.parser.psi.stubs.SchemaStubElementTypes;
+import io.epigraph.lang.parser.psi.stubs.EpigraphStubElementTypes;
 import io.epigraph.lang.lexer.EpigraphElementTypes;
 import org.jetbrains.annotations.NotNull;
 
@@ -71,7 +71,7 @@ public class SchemaParserDefinition implements ParserDefinition {
 
   @Override
   public IFileElementType getFileNodeType() {
-    return SchemaStubElementTypes.SCHEMA_FILE;
+    return EpigraphStubElementTypes.SCHEMA_FILE;
   }
 
   @NotNull

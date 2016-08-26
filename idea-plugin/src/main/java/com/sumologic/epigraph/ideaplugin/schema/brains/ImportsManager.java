@@ -10,7 +10,7 @@ import com.sumologic.epigraph.ideaplugin.schema.index.SchemaSearchScopeUtil;
 import io.epigraph.lang.parser.Fqn;
 import io.epigraph.lang.parser.psi.*;
 import io.epigraph.lang.parser.psi.impl.EpigraphPsiImplUtil;
-import io.epigraph.lang.parser.psi.impl.SchemaElementFactory;
+import io.epigraph.lang.parser.psi.impl.EpigraphElementFactory;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -54,7 +54,7 @@ public class ImportsManager {
       file.addAfter(newline2(project), schemaImports);
     } else*/
     {
-      SchemaImportStatement importStatement = SchemaElementFactory.createImport(project, importToAdd);
+      SchemaImportStatement importStatement = EpigraphElementFactory.createImport(project, importToAdd);
       List<SchemaImportStatement> importStatementList = schemaImports.getImportStatementList();
 
       if (importStatementList.isEmpty()) {
@@ -71,11 +71,11 @@ public class ImportsManager {
   }
 
   private static PsiElement newline(Project project) {
-    return SchemaElementFactory.createWhitespaces(project, "\n");
+    return EpigraphElementFactory.createWhitespaces(project, "\n");
   }
 
   private static PsiElement newline2(Project project) {
-    return SchemaElementFactory.createWhitespaces(project, "\n\n"); // TODO(low) rely on reformat instead of this
+    return EpigraphElementFactory.createWhitespaces(project, "\n\n"); // TODO(low) rely on reformat instead of this
   }
 
   public static List<Fqn> findImportsBySuffix(@NotNull SchemaFile file, @NotNull Fqn suffix) {

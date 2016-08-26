@@ -19,7 +19,7 @@ import io.epigraph.lang.parser.psi.EpigraphTypeDef;
 import io.epigraph.lang.parser.psi.SchemaFieldDecl;
 import io.epigraph.lang.parser.psi.SchemaRecordTypeBody;
 import io.epigraph.lang.parser.psi.EpigraphRecordTypeDef;
-import io.epigraph.lang.parser.psi.impl.SchemaElementFactory;
+import io.epigraph.lang.parser.psi.impl.EpigraphElementFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -72,7 +72,7 @@ public class SchemaRenameUtil {
         );
     final boolean onlyOneSuperType = typeAndMaxSuperTypes.size() == 1;
 
-    final EpigraphTypeDef renameAllMarkerObject = SchemaElementFactory.createRecordTypeDef(member.getProject(), "renameAll");
+    final EpigraphTypeDef renameAllMarkerObject = EpigraphElementFactory.createRecordTypeDef(member.getProject(), "renameAll");
     typesToMembers.put(renameAllMarkerObject, null);
 
     // should map maintain order?

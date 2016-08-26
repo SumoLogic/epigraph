@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public interface EpigraphRecordTypeDefStub extends SchemaTypeDefStubBase<EpigraphRecordTypeDef> {
+public interface EpigraphRecordTypeDefStub extends EpigraphTypeDefStubBase<EpigraphRecordTypeDef> {
   @Nullable
   List<SerializedFqnTypeRef> getSupplementedTypeRefs();
 }

@@ -6,6 +6,6 @@ import io.epigraph.lang.parser.psi.SchemaFile;
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public interface EpigraphFileStub extends PsiFileStub<SchemaFile> {
+public interface SchemaFileStub extends PsiFileStub<SchemaFile> {
   String getNamespace();
 }

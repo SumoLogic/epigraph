@@ -17,8 +17,8 @@ import java.util.stream.Collectors;
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public class SchemaSupplementDefStubElementType extends IStubElementType<EpigraphSupplementDefStub, SchemaSupplementDef> {
-  public SchemaSupplementDefStubElementType(@NotNull @NonNls String debugName) {
+public class EpigraphSupplementDefStubElementType extends IStubElementType<EpigraphSupplementDefStub, SchemaSupplementDef> {
+  public EpigraphSupplementDefStubElementType(@NotNull @NonNls String debugName) {
     super(debugName, SchemaLanguage.INSTANCE);
   }
 

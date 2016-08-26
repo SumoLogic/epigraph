@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public class EpigraphRecordTypeDefStubImpl extends SchemaTypeDefStubBaseImpl<EpigraphRecordTypeDef> implements EpigraphRecordTypeDefStub {
+public class EpigraphRecordTypeDefStubImpl extends EpigraphTypeDefStubBaseImpl<EpigraphRecordTypeDef> implements EpigraphRecordTypeDefStub {
   private final List<SerializedFqnTypeRef> supplementedTypeRefs;
 
   EpigraphRecordTypeDefStubImpl(StubElement parent,

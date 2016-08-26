@@ -9,8 +9,8 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public class SchemaListTypeDefStubElementType extends SchemaTypeDefStubElementTypeBase<EpigraphListTypeDefStub, EpigraphListTypeDef> {
-  public SchemaListTypeDefStubElementType(@NotNull @NonNls String debugName) {
+public class EpigraphListTypeDefStubElementType extends EpigraphTypeDefStubElementTypeBase<EpigraphListTypeDefStub, EpigraphListTypeDef> {
+  public EpigraphListTypeDefStubElementType(@NotNull @NonNls String debugName) {
     super(debugName, "listtypedef");
   }
 

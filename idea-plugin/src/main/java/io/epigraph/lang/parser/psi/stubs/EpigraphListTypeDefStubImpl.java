@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public class EpigraphListTypeDefStubImpl extends SchemaTypeDefStubBaseImpl<EpigraphListTypeDef> implements EpigraphListTypeDefStub {
+public class EpigraphListTypeDefStubImpl extends EpigraphTypeDefStubBaseImpl<EpigraphListTypeDef> implements EpigraphListTypeDefStub {
   EpigraphListTypeDefStubImpl(StubElement parent,
                               String name,
                               String namespace,

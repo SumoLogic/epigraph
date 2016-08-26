@@ -8,7 +8,7 @@ import io.epigraph.lang.lexer.EpigraphElementTypes;
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public class EpigraphListTypeDefStubImpl extends SchemaTypeDefStubBaseImpl<EpigraphListTypeDef> implements EpigraphListTypeDefStub {
+public class EpigraphListTypeDefStubImpl extends EpigraphTypeDefStubBaseImpl<EpigraphListTypeDef> implements EpigraphListTypeDefStub {
   EpigraphListTypeDefStubImpl(StubElement parent) {
     super(parent, (IStubElementType) EpigraphElementTypes.E_LIST_TYPE_DEF);
   }

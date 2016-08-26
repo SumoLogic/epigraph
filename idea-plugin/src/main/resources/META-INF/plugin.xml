@@ -28,7 +28,7 @@
     <fileTypeFactory implementation="com.sumologic.epigraph.ideaplugin.idl.IdlFileTypeFactory"/>
 
     <internalFileTemplate name="Epigraph Schema"/>
-    <stubElementTypeHolder class="io.epigraph.lang.parser.psi.stubs.SchemaStubElementTypes"/>
+    <stubElementTypeHolder class="io.epigraph.lang.parser.psi.stubs.EpigraphStubElementTypes"/>
 
     <!-- indices -->
     <stubIndex implementation="com.sumologic.epigraph.ideaplugin.schema.index.SchemaShortTypeNameIndex"/>

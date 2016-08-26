@@ -4,15 +4,8 @@ package io.epigraph.lang.lexer;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.PsiElement;
 import com.intellij.lang.ASTNode;
-import io.epigraph.lang.parser.psi.stubs.SchemaEnumTypeDefStubElementType;
-import io.epigraph.lang.parser.psi.stubs.SchemaListTypeDefStubElementType;
-import io.epigraph.lang.parser.psi.stubs.SchemaMapTypeDefStubElementType;
-import io.epigraph.lang.parser.psi.stubs.SchemaNamespaceDeclStubElementType;
-import io.epigraph.lang.parser.psi.stubs.SchemaPrimitiveTypeDefStubElementType;
-import io.epigraph.lang.parser.psi.stubs.SchemaRecordTypeDefStubElementType;
-import io.epigraph.lang.parser.psi.stubs.SchemaSupplementDefStubElementType;
-import io.epigraph.lang.parser.psi.stubs.SchemaTypeDefWrapperStubElementType;
-import io.epigraph.lang.parser.psi.stubs.SchemaVarTypeDefStubElementType;
+import io.epigraph.lang.parser.psi.stubs.*;
+import io.epigraph.lang.parser.psi.stubs.EpigraphVarTypeDefStubElementType;
 import io.epigraph.lang.parser.psi.impl.*;
 
 public interface EpigraphElementTypes {
@@ -34,7 +27,7 @@ public interface EpigraphElementTypes {
   IElementType E_DEFS = new EpigraphElementType("E_DEFS");
   IElementType E_ENUM_MEMBER_DECL = new EpigraphElementType("E_ENUM_MEMBER_DECL");
   IElementType E_ENUM_TYPE_BODY = new EpigraphElementType("E_ENUM_TYPE_BODY");
-  IElementType E_ENUM_TYPE_DEF = new SchemaEnumTypeDefStubElementType("E_ENUM_TYPE_DEF");
+  IElementType E_ENUM_TYPE_DEF = new EpigraphEnumTypeDefStubElementType("E_ENUM_TYPE_DEF");
   IElementType E_EXTENDS_DECL = new EpigraphElementType("E_EXTENDS_DECL");
   IElementType E_FIELD_DECL = new EpigraphElementType("E_FIELD_DECL");
   IElementType E_FQN = new EpigraphElementType("E_FQN");
@@ -43,11 +36,11 @@ public interface EpigraphElementTypes {
   IElementType E_IMPORTS = new EpigraphElementType("E_IMPORTS");
   IElementType E_IMPORT_STATEMENT = new EpigraphElementType("E_IMPORT_STATEMENT");
   IElementType E_LIST_TYPE_BODY = new EpigraphElementType("E_LIST_TYPE_BODY");
-  IElementType E_LIST_TYPE_DEF = new SchemaListTypeDefStubElementType("E_LIST_TYPE_DEF");
+  IElementType E_LIST_TYPE_DEF = new EpigraphListTypeDefStubElementType("E_LIST_TYPE_DEF");
   IElementType E_MAP_TYPE_BODY = new EpigraphElementType("E_MAP_TYPE_BODY");
-  IElementType E_MAP_TYPE_DEF = new SchemaMapTypeDefStubElementType("E_MAP_TYPE_DEF");
+  IElementType E_MAP_TYPE_DEF = new EpigraphMapTypeDefStubElementType("E_MAP_TYPE_DEF");
   IElementType E_META_DECL = new EpigraphElementType("E_META_DECL");
-  IElementType E_NAMESPACE_DECL = new SchemaNamespaceDeclStubElementType("E_NAMESPACE_DECL");
+  IElementType E_NAMESPACE_DECL = new EpigraphNamespaceDeclStubElementType("E_NAMESPACE_DECL");
   IElementType E_OP_INPUT_MODEL_PROJECTION = new EpigraphElementType("E_OP_INPUT_MODEL_PROJECTION");
   IElementType E_OP_OUTPUT_ENUM_MODEL_PROJECTION = new EpigraphElementType("E_OP_OUTPUT_ENUM_MODEL_PROJECTION");
   IElementType E_OP_OUTPUT_FIELD_PROJECTION = new EpigraphElementType("E_OP_OUTPUT_FIELD_PROJECTION");
@@ -70,19 +63,19 @@ public interface EpigraphElementTypes {
   IElementType E_OP_PARAMETERS = new EpigraphElementType("E_OP_PARAMETERS");
   IElementType E_OP_PARAM_PROJECTION = new EpigraphElementType("E_OP_PARAM_PROJECTION");
   IElementType E_PRIMITIVE_TYPE_BODY = new EpigraphElementType("E_PRIMITIVE_TYPE_BODY");
-  IElementType E_PRIMITIVE_TYPE_DEF = new SchemaPrimitiveTypeDefStubElementType("E_PRIMITIVE_TYPE_DEF");
+  IElementType E_PRIMITIVE_TYPE_DEF = new EpigraphPrimitiveTypeDefStubElementType("E_PRIMITIVE_TYPE_DEF");
   IElementType E_QID = new EpigraphElementType("E_QID");
   IElementType E_RECORD_TYPE_BODY = new EpigraphElementType("E_RECORD_TYPE_BODY");
-  IElementType E_RECORD_TYPE_DEF = new SchemaRecordTypeDefStubElementType("E_RECORD_TYPE_DEF");
+  IElementType E_RECORD_TYPE_DEF = new EpigraphRecordTypeDefStubElementType("E_RECORD_TYPE_DEF");
   IElementType E_SUPPLEMENTS_DECL = new EpigraphElementType("E_SUPPLEMENTS_DECL");
-  IElementType E_SUPPLEMENT_DEF = new SchemaSupplementDefStubElementType("E_SUPPLEMENT_DEF");
-  IElementType E_TYPE_DEF_WRAPPER = new SchemaTypeDefWrapperStubElementType("E_TYPE_DEF_WRAPPER");
+  IElementType E_SUPPLEMENT_DEF = new EpigraphSupplementDefStubElementType("E_SUPPLEMENT_DEF");
+  IElementType E_TYPE_DEF_WRAPPER = new EpigraphTypeDefWrapperStubElementType("E_TYPE_DEF_WRAPPER");
   IElementType E_TYPE_REF = new EpigraphElementType("E_TYPE_REF");
   IElementType E_VALUE_TYPE_REF = new EpigraphElementType("E_VALUE_TYPE_REF");
   IElementType E_VAR_TAG_DECL = new EpigraphElementType("E_VAR_TAG_DECL");
   IElementType E_VAR_TAG_REF = new EpigraphElementType("E_VAR_TAG_REF");
   IElementType E_VAR_TYPE_BODY = new EpigraphElementType("E_VAR_TYPE_BODY");
-  IElementType E_VAR_TYPE_DEF = new SchemaVarTypeDefStubElementType("E_VAR_TYPE_DEF");
+  IElementType E_VAR_TYPE_DEF = new EpigraphVarTypeDefStubElementType("E_VAR_TYPE_DEF");
 
   IElementType E_ABSTRACT = new EpigraphElementType("abstract");
   IElementType E_ANGLE_LEFT = new EpigraphElementType("<");

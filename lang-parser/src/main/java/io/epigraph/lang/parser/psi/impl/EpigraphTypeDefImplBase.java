@@ -7,7 +7,7 @@ import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.util.IncorrectOperationException;
 import io.epigraph.lang.parser.Fqn;
 import io.epigraph.lang.parser.psi.*;
-import io.epigraph.lang.parser.psi.stubs.SchemaTypeDefStubBase;
+import io.epigraph.lang.parser.psi.stubs.EpigraphTypeDefStubBase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,7 +23,7 @@ import static io.epigraph.lang.lexer.EpigraphElementTypes.E_QID;
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public abstract class EpigraphTypeDefImplBase<S extends SchemaTypeDefStubBase<T>, T extends EpigraphTypeDef>
+public abstract class EpigraphTypeDefImplBase<S extends EpigraphTypeDefStubBase<T>, T extends EpigraphTypeDef>
     extends StubBasedPsiElementBase<S> implements EpigraphTypeDef {
 
 //  private final static Logger LOG = Logger.getInstance(SchemaTypeDefImplBase.class);
@@ -81,7 +81,7 @@ public abstract class EpigraphTypeDefImplBase<S extends SchemaTypeDefStubBase<T>
     PsiElement id = getQid();
     if (id == null) return null;
     else {
-      PsiElement newId = SchemaElementFactory.createId(getProject(), name);
+      PsiElement newId = EpigraphElementFactory.createId(getProject(), name);
       id.replace(newId);
       return id;
     }

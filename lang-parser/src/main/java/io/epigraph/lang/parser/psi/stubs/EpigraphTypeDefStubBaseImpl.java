@@ -8,8 +8,8 @@ import io.epigraph.lang.parser.psi.EpigraphTypeDef;
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-class SchemaTypeDefStubBaseImpl<T extends EpigraphTypeDef> extends StubBase<T> implements SchemaTypeDefStubBase<T> {
-  SchemaTypeDefStubBaseImpl(StubElement parent, final IStubElementType elementType) {
+class EpigraphTypeDefStubBaseImpl<T extends EpigraphTypeDef> extends StubBase<T> implements EpigraphTypeDefStubBase<T> {
+  EpigraphTypeDefStubBaseImpl(StubElement parent, final IStubElementType elementType) {
     super(parent, elementType);
   }
 }

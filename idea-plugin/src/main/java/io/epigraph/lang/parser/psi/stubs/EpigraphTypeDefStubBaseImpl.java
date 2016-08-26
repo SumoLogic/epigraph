@@ -11,18 +11,18 @@ import java.util.List;
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-class SchemaTypeDefStubBaseImpl<T extends EpigraphTypeDef> extends StubBase<T> implements SchemaTypeDefStubBase<T> {
+class EpigraphTypeDefStubBaseImpl<T extends EpigraphTypeDef> extends StubBase<T> implements EpigraphTypeDefStubBase<T> {
   private final String name;
   private final String namespace;
 
   @Nullable
   private List<SerializedFqnTypeRef> extendsTypeRefs;
 
-  SchemaTypeDefStubBaseImpl(StubElement parent,
-                            final IStubElementType elementType,
-                            final String name,
-                            final String namespace,
-                            @Nullable final List<SerializedFqnTypeRef> extendsTypeRefs) {
+  EpigraphTypeDefStubBaseImpl(StubElement parent,
+                              final IStubElementType elementType,
+                              final String name,
+                              final String namespace,
+                              @Nullable final List<SerializedFqnTypeRef> extendsTypeRefs) {
     super(parent, elementType);
     this.name = name;
     this.namespace = namespace;

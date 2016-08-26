@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public class SchemaElementFactory {
+public class EpigraphElementFactory {
   @NotNull
   public static SchemaFile createFileFromText(@NotNull Project project, @NotNull String text) {
     return (SchemaFile) PsiFileFactory.getInstance(project).createFileFromText("a.s", SchemaLanguage.INSTANCE, text);

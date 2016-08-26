@@ -9,8 +9,8 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public class SchemaPrimitiveTypeDefStubElementType extends SchemaTypeDefStubElementTypeBase<EpigraphPrimitiveTypeDefStub, EpigraphPrimitiveTypeDef> {
-  public SchemaPrimitiveTypeDefStubElementType(@NotNull @NonNls String debugName) {
+public class EpigraphPrimitiveTypeDefStubElementType extends EpigraphTypeDefStubElementTypeBase<EpigraphPrimitiveTypeDefStub, EpigraphPrimitiveTypeDef> {
+  public EpigraphPrimitiveTypeDefStubElementType(@NotNull @NonNls String debugName) {
     super(debugName, "primitivetypedef");
   }
 

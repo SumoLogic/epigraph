@@ -4,9 +4,9 @@ import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.stubs.StubInputStream;
 import com.intellij.psi.stubs.StubOutputStream;
 import io.epigraph.lang.parser.Fqn;
+import io.epigraph.lang.parser.psi.EpigraphRecordTypeDef;
 import io.epigraph.lang.parser.psi.SchemaSupplementsDecl;
-import io.epigraph.lang.parser.psi.EpigraphVarTypeDef;
-import io.epigraph.lang.parser.psi.impl.EpigraphVarTypeDefImpl;
+import io.epigraph.lang.parser.psi.impl.EpigraphRecordTypeDefImpl;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -18,25 +18,25 @@ import java.util.stream.Collectors;
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public class SchemaVarTypeDefStubElementType extends SchemaTypeDefStubElementTypeBase<EpigraphVarTypeDefStub, EpigraphVarTypeDef> {
-  public SchemaVarTypeDefStubElementType(@NotNull @NonNls String debugName) {
-    super(debugName, "vartypedef");
+public class EpigraphRecordTypeDefStubElementType extends EpigraphTypeDefStubElementTypeBase<EpigraphRecordTypeDefStub, EpigraphRecordTypeDef> {
+  public EpigraphRecordTypeDefStubElementType(@NotNull @NonNls String debugName) {
+    super(debugName, "recordtypedef");
   }
 
   @Override
-  public EpigraphVarTypeDef createPsi(@NotNull EpigraphVarTypeDefStub stub) {
-    return new EpigraphVarTypeDefImpl(stub, this);
+  public EpigraphRecordTypeDef createPsi(@NotNull EpigraphRecordTypeDefStub stub) {
+    return new EpigraphRecordTypeDefImpl(stub, this);
   }
 
   @Override
-  public EpigraphVarTypeDefStub createStub(@NotNull EpigraphVarTypeDef typeDef, StubElement parentStub) {
+  public EpigraphRecordTypeDefStub createStub(@NotNull EpigraphRecordTypeDef typeDef, StubElement parentStub) {
     SchemaSupplementsDecl supplementsDecl = typeDef.getSupplementsDecl();
     List<SerializedFqnTypeRef> supplementedRefs = supplementsDecl == null ? null :
         supplementsDecl.getFqnTypeRefList().stream()
             .map(SerializedFqnTypeRef::new)
             .collect(Collectors.toList());
 
-    return new EpigraphVarTypeDefStubImpl(
+    return new EpigraphRecordTypeDefStubImpl(
         parentStub,
         typeDef.getName(),
         Fqn.toNullableString(typeDef.getNamespace()),
@@ -45,19 +45,19 @@ public class SchemaVarTypeDefStubElementType extends SchemaTypeDefStubElementTyp
   }
 
   @Override
-  public void serialize(@NotNull EpigraphVarTypeDefStub stub, @NotNull StubOutputStream dataStream) throws IOException {
+  public void serialize(@NotNull EpigraphRecordTypeDefStub stub, @NotNull StubOutputStream dataStream) throws IOException {
     super.serialize(stub, dataStream);
     StubSerializerUtil.serializeCollection(stub.getSupplementedTypeRefs(), SerializedFqnTypeRef::serialize, dataStream);
   }
 
   @NotNull
   @Override
-  protected EpigraphVarTypeDefStub deserialize(
+  protected EpigraphRecordTypeDefStub deserialize(
       @NotNull StubInputStream dataStream,
       StubElement parentStub,
       String name, String namespace,
       @Nullable final List<SerializedFqnTypeRef> extendsTypeRefs) throws IOException {
     List<SerializedFqnTypeRef> supplementedRefs = StubSerializerUtil.deserializeList(SerializedFqnTypeRef::deserialize, dataStream, true);
-    return new EpigraphVarTypeDefStubImpl(parentStub, name, namespace, extendsTypeRefs, supplementedRefs);
+    return new EpigraphRecordTypeDefStubImpl(parentStub, name, namespace, extendsTypeRefs, supplementedRefs);
   }
 }

@@ -11,7 +11,7 @@ import com.sumologic.epigraph.ideaplugin.schema.index.SchemaSearchScopeUtil;
 import com.sumologic.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
 import io.epigraph.lang.parser.Fqn;
 import io.epigraph.lang.parser.psi.*;
-import io.epigraph.lang.parser.psi.stubs.SchemaTypeDefStubBase;
+import io.epigraph.lang.parser.psi.stubs.EpigraphTypeDefStubBase;
 import io.epigraph.lang.parser.psi.stubs.SerializedFqnTypeRef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -28,7 +28,7 @@ import static io.epigraph.lang.lexer.EpigraphElementTypes.*;
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public abstract class EpigraphTypeDefImplBase<S extends SchemaTypeDefStubBase<T>, T extends EpigraphTypeDef>
+public abstract class EpigraphTypeDefImplBase<S extends EpigraphTypeDefStubBase<T>, T extends EpigraphTypeDef>
     extends StubBasedPsiElementBase<S> implements EpigraphTypeDef {
 
 //  private final static Logger LOG = Logger.getInstance(SchemaTypeDefImplBase.class);

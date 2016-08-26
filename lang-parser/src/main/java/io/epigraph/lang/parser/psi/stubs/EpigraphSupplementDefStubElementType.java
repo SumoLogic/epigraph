@@ -12,8 +12,8 @@ import java.io.IOException;
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public class SchemaSupplementDefStubElementType extends IStubElementType<EpigraphSupplementDefStub, SchemaSupplementDef> {
-  public SchemaSupplementDefStubElementType(@NotNull @NonNls String debugName) {
+public class EpigraphSupplementDefStubElementType extends IStubElementType<EpigraphSupplementDefStub, SchemaSupplementDef> {
+  public EpigraphSupplementDefStubElementType(@NotNull @NonNls String debugName) {
     super(debugName, SchemaLanguage.INSTANCE);
   }
 
@@ -30,7 +30,7 @@ public class SchemaSupplementDefStubElementType extends IStubElementType<Epigrap
   @NotNull
   @Override
   public String getExternalId() {
-    return "epigraph_schema.supplement";
+    return "epigraph.supplement";
   }
 
   @Override

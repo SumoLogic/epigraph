@@ -8,7 +8,7 @@ import io.epigraph.lang.lexer.EpigraphElementTypes;
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public class EpigraphPrimitiveTypeDefStubImpl extends SchemaTypeDefStubBaseImpl<EpigraphPrimitiveTypeDef> implements EpigraphPrimitiveTypeDefStub {
+public class EpigraphPrimitiveTypeDefStubImpl extends EpigraphTypeDefStubBaseImpl<EpigraphPrimitiveTypeDef> implements EpigraphPrimitiveTypeDefStub {
   EpigraphPrimitiveTypeDefStubImpl(StubElement parent) {
     super(parent, (IStubElementType) EpigraphElementTypes.E_PRIMITIVE_TYPE_DEF);
   }

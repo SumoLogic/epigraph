@@ -6,5 +6,5 @@ import io.epigraph.lang.parser.psi.EpigraphTypeDef;
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public interface SchemaTypeDefStubBase<T extends EpigraphTypeDef> extends StubElement<T> {
+public interface EpigraphTypeDefStubBase<T extends EpigraphTypeDef> extends StubElement<T> {
 }

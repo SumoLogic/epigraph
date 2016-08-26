@@ -1,6 +1,9 @@
 package io.epigraph.lang.parser.psi.stubs;
 
 import com.intellij.psi.stubs.*;
+import com.intellij.util.io.StringRef;
+import com.sumologic.epigraph.ideaplugin.schema.index.SchemaStubIndexKeys;
+import io.epigraph.lang.parser.Fqn;
 import io.epigraph.lang.schema.SchemaLanguage;
 import io.epigraph.lang.parser.psi.SchemaNamespaceDecl;
 import io.epigraph.lang.parser.psi.impl.SchemaNamespaceDeclImpl;
@@ -12,8 +15,8 @@ import java.io.IOException;
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public class SchemaNamespaceDeclStubElementType extends IStubElementType<EpigraphNamespaceDeclStub, SchemaNamespaceDecl> {
-  public SchemaNamespaceDeclStubElementType(@NotNull @NonNls String debugName) {
+public class EpigraphNamespaceDeclStubElementType extends IStubElementType<EpigraphNamespaceDeclStub, SchemaNamespaceDecl> {
+  public EpigraphNamespaceDeclStubElementType(@NotNull @NonNls String debugName) {
     super(debugName, SchemaLanguage.INSTANCE);
   }
 
@@ -35,15 +38,22 @@ public class SchemaNamespaceDeclStubElementType extends IStubElementType<Epigrap
 
   @Override
   public void serialize(@NotNull EpigraphNamespaceDeclStub stub, @NotNull StubOutputStream dataStream) throws IOException {
+    Fqn fqn = stub.getFqn();
+    dataStream.writeName(fqn == null ? null : fqn.toString());
   }
 
   @NotNull
   @Override
   public EpigraphNamespaceDeclStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
-    throw new UnsupportedOperationException();
+    StringRef fqnStr = dataStream.readName();
+    Fqn fqn = fqnStr == null ? null : Fqn.fromDotSeparated(fqnStr.getString());
+
+    return new EpigraphNamespaceDeclStubImpl(parentStub, fqn);
   }
 
   @Override
   public void indexStub(@NotNull EpigraphNamespaceDeclStub stub, @NotNull IndexSink sink) {
+    Fqn fqn = stub.getFqn();
+    if (fqn != null) sink.occurrence(SchemaStubIndexKeys.NAMESPACE_BY_NAME, fqn.toString());
   }
 }

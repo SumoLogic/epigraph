@@ -11,14 +11,14 @@ import java.io.IOException;
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public abstract class SchemaTypeDefStubElementTypeBase<S extends SchemaTypeDefStubBase<T>, T extends EpigraphTypeDef>
+public abstract class EpigraphTypeDefStubElementTypeBase<S extends EpigraphTypeDefStubBase<T>, T extends EpigraphTypeDef>
     extends IStubElementType<S, T> {
 
   private final String externalId;
 
-  public SchemaTypeDefStubElementTypeBase(@NotNull @NonNls String debugName, String externalNameSuffix) {
+  public EpigraphTypeDefStubElementTypeBase(@NotNull @NonNls String debugName, String externalNameSuffix) {
     super(debugName, SchemaLanguage.INSTANCE);
-    externalId = "epigraph_schema." + externalNameSuffix;
+    externalId = "epigraph." + externalNameSuffix;
   }
 
   @NotNull

@@ -15,8 +15,8 @@ import java.util.List;
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public class SchemaMapTypeDefStubElementType extends SchemaTypeDefStubElementTypeBase<EpigraphMapTypeDefStub, EpigraphMapTypeDef> {
-  public SchemaMapTypeDefStubElementType(@NotNull @NonNls String debugName) {
+public class EpigraphMapTypeDefStubElementType extends EpigraphTypeDefStubElementTypeBase<EpigraphMapTypeDefStub, EpigraphMapTypeDef> {
+  public EpigraphMapTypeDefStubElementType(@NotNull @NonNls String debugName) {
     super(debugName, "maptypedef");
   }
 

@@ -12,8 +12,8 @@ import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IFileElementType;
 import com.intellij.psi.tree.TokenSet;
 import io.epigraph.lang.idl.parser.psi.IdlFile;
-import io.epigraph.lang.idl.parser.psi.stubs.IdlStubElementTypes;
 import io.epigraph.lang.lexer.EpigraphFlexAdapter;
+import io.epigraph.lang.parser.psi.stubs.EpigraphStubElementTypes;
 import org.jetbrains.annotations.NotNull;
 
 import static io.epigraph.lang.lexer.EpigraphElementTypes.*;
@@ -51,7 +51,7 @@ public class IdlParserDefinition implements ParserDefinition {
 
   @Override
   public IFileElementType getFileNodeType() {
-    return IdlStubElementTypes.IDL_FILE;
+    return EpigraphStubElementTypes.IDL_FILE;
   }
 
   @NotNull

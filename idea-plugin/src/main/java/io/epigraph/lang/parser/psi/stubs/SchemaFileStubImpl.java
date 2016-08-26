@@ -8,10 +8,10 @@ import io.epigraph.lang.parser.psi.SchemaFile;
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public class EpigraphFileStubImpl extends PsiFileStubImpl<SchemaFile> implements EpigraphFileStub {
+public class SchemaFileStubImpl extends PsiFileStubImpl<SchemaFile> implements SchemaFileStub {
   private final StringRef namespace;
 
-  public EpigraphFileStubImpl(SchemaFile file, StringRef namespace) {
+  public SchemaFileStubImpl(SchemaFile file, StringRef namespace) {
     super(file);
     this.namespace = namespace;
   }
@@ -23,6 +23,6 @@ public class EpigraphFileStubImpl extends PsiFileStubImpl<SchemaFile> implements
 
   @Override
   public IStubFileElementType getType() {
-    return (IStubFileElementType) SchemaStubElementTypes.SCHEMA_FILE;
+    return (IStubFileElementType) EpigraphStubElementTypes.SCHEMA_FILE;
   }
 }

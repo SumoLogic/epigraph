@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public interface SchemaTypeDefStubBase<T extends EpigraphTypeDef> extends NamedStub<T> {
+public interface EpigraphTypeDefStubBase<T extends EpigraphTypeDef> extends NamedStub<T> {
   @Nullable
   String getNamespace();
 
