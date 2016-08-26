@@ -7,10 +7,10 @@ import com.intellij.psi.stubs.StubInputStream;
 import com.intellij.psi.stubs.StubOutputStream;
 import com.intellij.util.io.StringRef;
 import com.sumologic.epigraph.ideaplugin.schema.brains.SchemaFqnReference;
-import com.sumologic.epigraph.ideaplugin.schema.brains.SchemaFqnReferenceResolver;
+import com.sumologic.epigraph.ideaplugin.schema.brains.EpigraphFqnReferenceResolver;
 import io.epigraph.lang.parser.Fqn;
 import io.epigraph.lang.parser.psi.EpigraphTypeDef;
-import io.epigraph.lang.parser.psi.SchemaFqnTypeRef;
+import io.epigraph.lang.parser.psi.EpigraphFqnTypeRef;
 import io.epigraph.lang.parser.psi.impl.EpigraphPsiImplUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -28,14 +28,14 @@ public final class SerializedFqnTypeRef {
   private List<Fqn> namespacesToSearch;
   // OR
   @Nullable
-  private SchemaFqnTypeRef typeRef;
+  private EpigraphFqnTypeRef typeRef;
 
   public SerializedFqnTypeRef(@Nullable Fqn shortName, @Nullable List<Fqn> namespacesToSearch) {
     this.namespacesToSearch = namespacesToSearch;
     this.shortName = shortName;
   }
 
-  public SerializedFqnTypeRef(@Nullable SchemaFqnTypeRef typeRef) {
+  public SerializedFqnTypeRef(@Nullable EpigraphFqnTypeRef typeRef) {
     this.typeRef = typeRef; // do the rest lazily
   }
 
@@ -43,7 +43,7 @@ public final class SerializedFqnTypeRef {
     if ((shortName == null || namespacesToSearch == null) && typeRef != null) {
       SchemaFqnReference ref = (SchemaFqnReference) EpigraphPsiImplUtil.getReference(typeRef);
       if (ref != null) {
-        SchemaFqnReferenceResolver resolver = ref.getResolver();
+        EpigraphFqnReferenceResolver resolver = ref.getResolver();
         shortName = resolver.getSuffix();
         namespacesToSearch = resolver.getPrefixes();
       }
@@ -70,7 +70,7 @@ public final class SerializedFqnTypeRef {
     List<Fqn> namespacesToSearch = getNamespacesToSearch();
     Fqn shortName = getShortName();
     if (namespacesToSearch == null || shortName == null) return null;
-    SchemaFqnReferenceResolver resolver = new SchemaFqnReferenceResolver(namespacesToSearch, shortName, searchScope);
+    EpigraphFqnReferenceResolver resolver = new EpigraphFqnReferenceResolver(namespacesToSearch, shortName, searchScope);
     return resolver.resolve(project);
   }
 

@@ -4,7 +4,14 @@ package io.epigraph.lang.lexer;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.PsiElement;
 import com.intellij.lang.ASTNode;
-import io.epigraph.lang.parser.psi.stubs.*;
+import io.epigraph.lang.parser.psi.stubs.EpigraphEnumTypeDefStubElementType;
+import io.epigraph.lang.parser.psi.stubs.EpigraphListTypeDefStubElementType;
+import io.epigraph.lang.parser.psi.stubs.EpigraphMapTypeDefStubElementType;
+import io.epigraph.lang.parser.psi.stubs.EpigraphNamespaceDeclStubElementType;
+import io.epigraph.lang.parser.psi.stubs.EpigraphPrimitiveTypeDefStubElementType;
+import io.epigraph.lang.parser.psi.stubs.EpigraphRecordTypeDefStubElementType;
+import io.epigraph.lang.parser.psi.stubs.EpigraphSupplementDefStubElementType;
+import io.epigraph.lang.parser.psi.stubs.EpigraphTypeDefWrapperStubElementType;
 import io.epigraph.lang.parser.psi.stubs.EpigraphVarTypeDefStubElementType;
 import io.epigraph.lang.parser.psi.impl.*;
 
@@ -124,199 +131,199 @@ public interface EpigraphElementTypes {
     public static PsiElement createElement(ASTNode node) {
       IElementType type = node.getElementType();
        if (type == E_ANON_LIST) {
-        return new SchemaAnonListImpl(node);
+        return new EpigraphAnonListImpl(node);
       }
       else if (type == E_ANON_MAP) {
-        return new SchemaAnonMapImpl(node);
+        return new EpigraphAnonMapImpl(node);
       }
       else if (type == E_CUSTOM_PARAM) {
-        return new SchemaCustomParamImpl(node);
+        return new EpigraphCustomParamImpl(node);
       }
       else if (type == E_DATA_ENUM) {
-        return new SchemaDataEnumImpl(node);
+        return new EpigraphDataEnumImpl(node);
       }
       else if (type == E_DATA_LIST) {
-        return new SchemaDataListImpl(node);
+        return new EpigraphDataListImpl(node);
       }
       else if (type == E_DATA_MAP) {
-        return new SchemaDataMapImpl(node);
+        return new EpigraphDataMapImpl(node);
       }
       else if (type == E_DATA_MAP_ENTRY) {
-        return new SchemaDataMapEntryImpl(node);
+        return new EpigraphDataMapEntryImpl(node);
       }
       else if (type == E_DATA_PRIMITIVE) {
-        return new SchemaDataPrimitiveImpl(node);
+        return new EpigraphDataPrimitiveImpl(node);
       }
       else if (type == E_DATA_RECORD) {
-        return new SchemaDataRecordImpl(node);
+        return new EpigraphDataRecordImpl(node);
       }
       else if (type == E_DATA_RECORD_ENTRY) {
-        return new SchemaDataRecordEntryImpl(node);
+        return new EpigraphDataRecordEntryImpl(node);
       }
       else if (type == E_DATA_VALUE) {
-        return new SchemaDataValueImpl(node);
+        return new EpigraphDataValueImpl(node);
       }
       else if (type == E_DATA_VAR) {
-        return new SchemaDataVarImpl(node);
+        return new EpigraphDataVarImpl(node);
       }
       else if (type == E_DATA_VAR_ENTRY) {
-        return new SchemaDataVarEntryImpl(node);
+        return new EpigraphDataVarEntryImpl(node);
       }
       else if (type == E_DEFAULT_OVERRIDE) {
-        return new SchemaDefaultOverrideImpl(node);
+        return new EpigraphDefaultOverrideImpl(node);
       }
       else if (type == E_DEFS) {
-        return new SchemaDefsImpl(node);
+        return new EpigraphDefsImpl(node);
       }
       else if (type == E_ENUM_MEMBER_DECL) {
-        return new SchemaEnumMemberDeclImpl(node);
+        return new EpigraphEnumMemberDeclImpl(node);
       }
       else if (type == E_ENUM_TYPE_BODY) {
-        return new SchemaEnumTypeBodyImpl(node);
+        return new EpigraphEnumTypeBodyImpl(node);
       }
       else if (type == E_ENUM_TYPE_DEF) {
         return new EpigraphEnumTypeDefImpl(node);
       }
       else if (type == E_EXTENDS_DECL) {
-        return new SchemaExtendsDeclImpl(node);
+        return new EpigraphExtendsDeclImpl(node);
       }
       else if (type == E_FIELD_DECL) {
-        return new SchemaFieldDeclImpl(node);
+        return new EpigraphFieldDeclImpl(node);
       }
       else if (type == E_FQN) {
-        return new SchemaFqnImpl(node);
+        return new EpigraphFqnImpl(node);
       }
       else if (type == E_FQN_SEGMENT) {
-        return new SchemaFqnSegmentImpl(node);
+        return new EpigraphFqnSegmentImpl(node);
       }
       else if (type == E_FQN_TYPE_REF) {
-        return new SchemaFqnTypeRefImpl(node);
+        return new EpigraphFqnTypeRefImpl(node);
       }
       else if (type == E_IMPORTS) {
-        return new SchemaImportsImpl(node);
+        return new EpigraphImportsImpl(node);
       }
       else if (type == E_IMPORT_STATEMENT) {
-        return new SchemaImportStatementImpl(node);
+        return new EpigraphImportStatementImpl(node);
       }
       else if (type == E_LIST_TYPE_BODY) {
-        return new SchemaListTypeBodyImpl(node);
+        return new EpigraphListTypeBodyImpl(node);
       }
       else if (type == E_LIST_TYPE_DEF) {
         return new EpigraphListTypeDefImpl(node);
       }
       else if (type == E_MAP_TYPE_BODY) {
-        return new SchemaMapTypeBodyImpl(node);
+        return new EpigraphMapTypeBodyImpl(node);
       }
       else if (type == E_MAP_TYPE_DEF) {
         return new EpigraphMapTypeDefImpl(node);
       }
       else if (type == E_META_DECL) {
-        return new SchemaMetaDeclImpl(node);
+        return new EpigraphMetaDeclImpl(node);
       }
       else if (type == E_NAMESPACE_DECL) {
-        return new SchemaNamespaceDeclImpl(node);
+        return new EpigraphNamespaceDeclImpl(node);
       }
       else if (type == E_OP_INPUT_MODEL_PROJECTION) {
-        return new SchemaOpInputModelProjectionImpl(node);
+        return new EpigraphOpInputModelProjectionImpl(node);
       }
       else if (type == E_OP_OUTPUT_ENUM_MODEL_PROJECTION) {
-        return new SchemaOpOutputEnumModelProjectionImpl(node);
+        return new EpigraphOpOutputEnumModelProjectionImpl(node);
       }
       else if (type == E_OP_OUTPUT_FIELD_PROJECTION) {
-        return new SchemaOpOutputFieldProjectionImpl(node);
+        return new EpigraphOpOutputFieldProjectionImpl(node);
       }
       else if (type == E_OP_OUTPUT_FIELD_PROJECTION_BODY) {
-        return new SchemaOpOutputFieldProjectionBodyImpl(node);
+        return new EpigraphOpOutputFieldProjectionBodyImpl(node);
       }
       else if (type == E_OP_OUTPUT_FIELD_PROJECTION_BODY_PART) {
-        return new SchemaOpOutputFieldProjectionBodyPartImpl(node);
+        return new EpigraphOpOutputFieldProjectionBodyPartImpl(node);
       }
       else if (type == E_OP_OUTPUT_KEY_PROJECTION) {
-        return new SchemaOpOutputKeyProjectionImpl(node);
+        return new EpigraphOpOutputKeyProjectionImpl(node);
       }
       else if (type == E_OP_OUTPUT_KEY_PROJECTION_PART) {
-        return new SchemaOpOutputKeyProjectionPartImpl(node);
+        return new EpigraphOpOutputKeyProjectionPartImpl(node);
       }
       else if (type == E_OP_OUTPUT_LIST_MODEL_PROJECTION) {
-        return new SchemaOpOutputListModelProjectionImpl(node);
+        return new EpigraphOpOutputListModelProjectionImpl(node);
       }
       else if (type == E_OP_OUTPUT_LIST_POLY_BRANCH) {
-        return new SchemaOpOutputListPolyBranchImpl(node);
+        return new EpigraphOpOutputListPolyBranchImpl(node);
       }
       else if (type == E_OP_OUTPUT_MAP_MODEL_PROJECTION) {
-        return new SchemaOpOutputMapModelProjectionImpl(node);
+        return new EpigraphOpOutputMapModelProjectionImpl(node);
       }
       else if (type == E_OP_OUTPUT_MAP_POLY_BRANCH) {
-        return new SchemaOpOutputMapPolyBranchImpl(node);
+        return new EpigraphOpOutputMapPolyBranchImpl(node);
       }
       else if (type == E_OP_OUTPUT_MODEL_PROJECTION) {
-        return new SchemaOpOutputModelProjectionImpl(node);
+        return new EpigraphOpOutputModelProjectionImpl(node);
       }
       else if (type == E_OP_OUTPUT_MODEL_PROJECTION_BODY) {
-        return new SchemaOpOutputModelProjectionBodyImpl(node);
+        return new EpigraphOpOutputModelProjectionBodyImpl(node);
       }
       else if (type == E_OP_OUTPUT_MODEL_PROJECTION_BODY_PART) {
-        return new SchemaOpOutputModelProjectionBodyPartImpl(node);
+        return new EpigraphOpOutputModelProjectionBodyPartImpl(node);
       }
       else if (type == E_OP_OUTPUT_PRIMITIVE_MODEL_PROJECTION) {
-        return new SchemaOpOutputPrimitiveModelProjectionImpl(node);
+        return new EpigraphOpOutputPrimitiveModelProjectionImpl(node);
       }
       else if (type == E_OP_OUTPUT_RECORD_MODEL_PROJECTION) {
-        return new SchemaOpOutputRecordModelProjectionImpl(node);
+        return new EpigraphOpOutputRecordModelProjectionImpl(node);
       }
       else if (type == E_OP_OUTPUT_RECORD_POLY_BRANCH) {
-        return new SchemaOpOutputRecordPolyBranchImpl(node);
+        return new EpigraphOpOutputRecordPolyBranchImpl(node);
       }
       else if (type == E_OP_OUTPUT_TAG_PROJECTION) {
-        return new SchemaOpOutputTagProjectionImpl(node);
+        return new EpigraphOpOutputTagProjectionImpl(node);
       }
       else if (type == E_OP_OUTPUT_VAR_PROJECTION) {
-        return new SchemaOpOutputVarProjectionImpl(node);
+        return new EpigraphOpOutputVarProjectionImpl(node);
       }
       else if (type == E_OP_PARAMETERS) {
-        return new SchemaOpParametersImpl(node);
+        return new EpigraphOpParametersImpl(node);
       }
       else if (type == E_OP_PARAM_PROJECTION) {
-        return new SchemaOpParamProjectionImpl(node);
+        return new EpigraphOpParamProjectionImpl(node);
       }
       else if (type == E_PRIMITIVE_TYPE_BODY) {
-        return new SchemaPrimitiveTypeBodyImpl(node);
+        return new EpigraphPrimitiveTypeBodyImpl(node);
       }
       else if (type == E_PRIMITIVE_TYPE_DEF) {
         return new EpigraphPrimitiveTypeDefImpl(node);
       }
       else if (type == E_QID) {
-        return new SchemaQidImpl(node);
+        return new EpigraphQidImpl(node);
       }
       else if (type == E_RECORD_TYPE_BODY) {
-        return new SchemaRecordTypeBodyImpl(node);
+        return new EpigraphRecordTypeBodyImpl(node);
       }
       else if (type == E_RECORD_TYPE_DEF) {
         return new EpigraphRecordTypeDefImpl(node);
       }
       else if (type == E_SUPPLEMENTS_DECL) {
-        return new SchemaSupplementsDeclImpl(node);
+        return new EpigraphSupplementsDeclImpl(node);
       }
       else if (type == E_SUPPLEMENT_DEF) {
-        return new SchemaSupplementDefImpl(node);
+        return new EpigraphSupplementDefImpl(node);
       }
       else if (type == E_TYPE_DEF_WRAPPER) {
-        return new SchemaTypeDefWrapperImpl(node);
+        return new EpigraphTypeDefWrapperImpl(node);
       }
       else if (type == E_TYPE_REF) {
-        return new SchemaTypeRefImpl(node);
+        return new EpigraphTypeRefImpl(node);
       }
       else if (type == E_VALUE_TYPE_REF) {
-        return new SchemaValueTypeRefImpl(node);
+        return new EpigraphValueTypeRefImpl(node);
       }
       else if (type == E_VAR_TAG_DECL) {
-        return new SchemaVarTagDeclImpl(node);
+        return new EpigraphVarTagDeclImpl(node);
       }
       else if (type == E_VAR_TAG_REF) {
-        return new SchemaVarTagRefImpl(node);
+        return new EpigraphVarTagRefImpl(node);
       }
       else if (type == E_VAR_TYPE_BODY) {
-        return new SchemaVarTypeBodyImpl(node);
+        return new EpigraphVarTypeBodyImpl(node);
       }
       else if (type == E_VAR_TYPE_DEF) {
         return new EpigraphVarTypeDefImpl(node);

@@ -1,21 +1,22 @@
 // This is a generated file. Not intended for manual editing.
 package io.epigraph.lang.parser.psi;
 
-import io.epigraph.lang.parser.psi.stubs.EpigraphEnumTypeDefStub;
+import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.StubBasedPsiElement;
+import io.epigraph.lang.parser.psi.stubs.EpigraphEnumTypeDefStub;
 
 public interface EpigraphEnumTypeDef extends EpigraphTypeDef, StubBasedPsiElement<EpigraphEnumTypeDefStub> {
 
   @Nullable
-  SchemaEnumTypeBody getEnumTypeBody();
+  EpigraphEnumTypeBody getEnumTypeBody();
 
   @Nullable
-  SchemaMetaDecl getMetaDecl();
+  EpigraphMetaDecl getMetaDecl();
 
   @Nullable
-  SchemaQid getQid();
+  EpigraphQid getQid();
 
   @NotNull
   PsiElement getEnum();

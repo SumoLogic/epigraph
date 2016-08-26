@@ -10,19 +10,19 @@ import io.epigraph.lang.parser.psi.stubs.EpigraphVarTypeDefStub;
 public interface EpigraphVarTypeDef extends EpigraphTypeDef, StubBasedPsiElement<EpigraphVarTypeDefStub> {
 
   @Nullable
-  SchemaDefaultOverride getDefaultOverride();
+  EpigraphDefaultOverride getDefaultOverride();
 
   @Nullable
-  SchemaExtendsDecl getExtendsDecl();
+  EpigraphExtendsDecl getExtendsDecl();
 
   @Nullable
-  SchemaQid getQid();
+  EpigraphQid getQid();
 
   @Nullable
-  SchemaSupplementsDecl getSupplementsDecl();
+  EpigraphSupplementsDecl getSupplementsDecl();
 
   @Nullable
-  SchemaVarTypeBody getVarTypeBody();
+  EpigraphVarTypeBody getVarTypeBody();
 
   @Nullable
   PsiElement getAbstract();

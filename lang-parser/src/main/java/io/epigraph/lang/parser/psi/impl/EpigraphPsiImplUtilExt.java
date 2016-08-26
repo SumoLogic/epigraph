@@ -39,15 +39,15 @@ public class EpigraphPsiImplUtilExt {
   // not exposed through PSI
   @Contract(pure = true)
   @Nullable
-  public static PsiReference getReference(@NotNull SchemaFqnTypeRef typeRef) {
-    List<SchemaFqnSegment> fqnSegmentList = typeRef.getFqn().getFqnSegmentList();
+  public static PsiReference getReference(@NotNull EpigraphFqnTypeRef typeRef) {
+    List<EpigraphFqnSegment> fqnSegmentList = typeRef.getFqn().getFqnSegmentList();
     if (fqnSegmentList.isEmpty()) return null;
     return fqnSegmentList.get(fqnSegmentList.size() - 1).getReference();
   }
 
   @Contract(pure = true)
   @Nullable
-  public static EpigraphTypeDef resolve(@NotNull SchemaFqnTypeRef typeRef) {
+  public static EpigraphTypeDef resolve(@NotNull EpigraphFqnTypeRef typeRef) {
     PsiReference reference = getReference(typeRef);
     if (reference == null) return null;
     PsiElement element = reference.resolve();
@@ -57,25 +57,25 @@ public class EpigraphPsiImplUtilExt {
 
   // supplement --------------------------------------------
 
-  // can't use SchemaSupplementDef::getFqnTypeRefList as it will include both source and all supplemented
+  // can't use EpigraphSupplementDef::getFqnTypeRefList as it will include both source and all supplemented
 
   @Contract(pure = true)
   @Nullable
-  public static EpigraphTypeDef source(@NotNull SchemaSupplementDef supplementDef) {
-    SchemaFqnTypeRef ref = sourceRef(supplementDef);
+  public static EpigraphTypeDef source(@NotNull EpigraphSupplementDef supplementDef) {
+    EpigraphFqnTypeRef ref = sourceRef(supplementDef);
     if (ref == null) return null;
     return ref.resolve();
   }
 
   @Contract(pure = true)
   @NotNull
-  public static List<EpigraphTypeDef> supplemented(@NotNull SchemaSupplementDef supplementDef) {
+  public static List<EpigraphTypeDef> supplemented(@NotNull EpigraphSupplementDef supplementDef) {
     throw new UnsupportedOperationException();
   }
 
   @Contract(pure = true)
   @NotNull
-  public static ItemPresentation getPresentation(@NotNull SchemaSupplementDef supplementDef) {
+  public static ItemPresentation getPresentation(@NotNull EpigraphSupplementDef supplementDef) {
     throw new UnsupportedOperationException();
   }
 
@@ -84,7 +84,7 @@ public class EpigraphPsiImplUtilExt {
 
   @Contract(pure = true)
   @NotNull
-  public static ItemPresentation getPresentation(@NotNull SchemaFieldDecl fieldDecl) {
+  public static ItemPresentation getPresentation(@NotNull EpigraphFieldDecl fieldDecl) {
     throw new UnsupportedOperationException();
   }
 
@@ -92,7 +92,7 @@ public class EpigraphPsiImplUtilExt {
 
   @Contract(pure = true)
   @NotNull
-  public static ItemPresentation getPresentation(@NotNull SchemaVarTagDecl varTagDecl) {
+  public static ItemPresentation getPresentation(@NotNull EpigraphVarTagDecl varTagDecl) {
     throw new UnsupportedOperationException();
   }
 

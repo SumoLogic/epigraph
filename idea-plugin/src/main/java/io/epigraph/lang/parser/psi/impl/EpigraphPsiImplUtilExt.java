@@ -35,7 +35,7 @@ class EpigraphPsiImplUtilExt {
       return resolveSerializedTypeRefs(supplementedTypeRefs, recordTypeDef.getProject(), SchemaSearchScopeUtil.getSearchScope(recordTypeDef));
     }
 
-    SchemaSupplementsDecl supplementsDecl = recordTypeDef.getSupplementsDecl();
+    EpigraphSupplementsDecl supplementsDecl = recordTypeDef.getSupplementsDecl();
     if (supplementsDecl == null) return Collections.emptyList();
     return resolveTypeRefs(supplementsDecl.getFqnTypeRefList());
   }
@@ -51,7 +51,7 @@ class EpigraphPsiImplUtilExt {
       return resolveSerializedTypeRefs(supplementedTypeRefs, varTypeDef.getProject(), SchemaSearchScopeUtil.getSearchScope(varTypeDef));
     }
 
-    SchemaSupplementsDecl supplementsDecl = varTypeDef.getSupplementsDecl();
+    EpigraphSupplementsDecl supplementsDecl = varTypeDef.getSupplementsDecl();
     if (supplementsDecl == null) return Collections.emptyList();
     return resolveTypeRefs(supplementsDecl.getFqnTypeRefList());
   }
@@ -60,7 +60,7 @@ class EpigraphPsiImplUtilExt {
 
   @Contract(pure = true)
   @Nullable
-  public static EpigraphTypeDef source(@NotNull SchemaSupplementDef supplementDef) {
+  public static EpigraphTypeDef source(@NotNull EpigraphSupplementDef supplementDef) {
     EpigraphSupplementDefStub stub = supplementDef.getStub();
     if (stub != null) {
       SerializedFqnTypeRef sourceTypeRef = stub.getSourceTypeRef();
@@ -68,14 +68,14 @@ class EpigraphPsiImplUtilExt {
       return sourceTypeRef.resolveTypeDef(supplementDef.getProject(), SchemaSearchScopeUtil.getSearchScope(supplementDef));
     }
 
-    SchemaFqnTypeRef ref = sourceRef(supplementDef);
+    EpigraphFqnTypeRef ref = sourceRef(supplementDef);
     if (ref == null) return null;
     return ref.resolve();
   }
 
   @Contract(pure = true)
   @NotNull
-  public static List<EpigraphTypeDef> supplemented(@NotNull SchemaSupplementDef supplementDef) {
+  public static List<EpigraphTypeDef> supplemented(@NotNull EpigraphSupplementDef supplementDef) {
     EpigraphSupplementDefStub stub = supplementDef.getStub();
     if (stub != null) {
       List<SerializedFqnTypeRef> supplementedTypeRefs = stub.getSupplementedTypeRefs();
@@ -87,7 +87,7 @@ class EpigraphPsiImplUtilExt {
 
   @Contract(pure = true)
   @NotNull
-  public static ItemPresentation getPresentation(@NotNull SchemaSupplementDef supplementDef) {
+  public static ItemPresentation getPresentation(@NotNull EpigraphSupplementDef supplementDef) {
     return SchemaPresentationUtil.getPresentation(supplementDef, false);
   }
 
@@ -96,7 +96,7 @@ class EpigraphPsiImplUtilExt {
 
   @Contract(pure = true)
   @NotNull
-  public static ItemPresentation getPresentation(@NotNull SchemaFieldDecl fieldDecl) {
+  public static ItemPresentation getPresentation(@NotNull EpigraphFieldDecl fieldDecl) {
     return SchemaPresentationUtil.getPresentation(fieldDecl, false);
   }
 
@@ -104,15 +104,15 @@ class EpigraphPsiImplUtilExt {
 
   @Contract(pure = true)
   @NotNull
-  public static ItemPresentation getPresentation(@NotNull SchemaVarTagDecl varTagDecl) {
+  public static ItemPresentation getPresentation(@NotNull EpigraphVarTagDecl varTagDecl) {
     return SchemaPresentationUtil.getPresentation(varTagDecl, false);
   }
 
 //  /////////////
 
-  private static List<EpigraphTypeDef> resolveTypeRefs(List<SchemaFqnTypeRef> refs) {
+  private static List<EpigraphTypeDef> resolveTypeRefs(List<EpigraphFqnTypeRef> refs) {
     return refs.stream()
-        .map(SchemaFqnTypeRef::resolve)
+        .map(EpigraphFqnTypeRef::resolve)
         .filter(Objects::nonNull)
         .collect(Collectors.toList());
   }

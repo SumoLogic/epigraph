@@ -4,7 +4,7 @@ import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.stubs.StubBase;
 import com.intellij.psi.stubs.StubElement;
 import io.epigraph.lang.lexer.EpigraphElementTypes;
-import io.epigraph.lang.parser.psi.SchemaSupplementDef;
+import io.epigraph.lang.parser.psi.EpigraphSupplementDef;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public class EpigraphSupplementDefStubImpl extends StubBase<SchemaSupplementDef> implements EpigraphSupplementDefStub {
+public class EpigraphSupplementDefStubImpl extends StubBase<EpigraphSupplementDef> implements EpigraphSupplementDefStub {
   private final SerializedFqnTypeRef sourceTypeRef;
   private final List<SerializedFqnTypeRef> supplementedTypeRefs;
 

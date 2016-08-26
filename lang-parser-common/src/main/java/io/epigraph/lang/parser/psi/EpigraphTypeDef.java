@@ -14,7 +14,7 @@ import java.util.List;
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
 public interface EpigraphTypeDef extends PsiNameIdentifierOwner {
-  SchemaQid getQid();
+  EpigraphQid getQid();
 
   @Nullable
   String getName();
@@ -40,13 +40,13 @@ public interface EpigraphTypeDef extends PsiNameIdentifierOwner {
   PsiElement getPolymorphic() ;
 
   @Nullable
-  SchemaExtendsDecl getExtendsDecl();
+  EpigraphExtendsDecl getExtendsDecl();
 
   @Nullable
-  SchemaSupplementsDecl getSupplementsDecl();
+  EpigraphSupplementsDecl getSupplementsDecl();
 
   @Nullable
-  SchemaMetaDecl getMetaDecl();
+  EpigraphMetaDecl getMetaDecl();
 
   @NotNull
   TypeKind getKind();

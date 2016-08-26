@@ -3,9 +3,9 @@ package io.epigraph.lang.parser.psi.stubs;
 import com.intellij.psi.stubs.*;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaStubIndexKeys;
 import io.epigraph.lang.parser.Fqn;
+import io.epigraph.lang.parser.psi.EpigraphSupplementDef;
+import io.epigraph.lang.parser.psi.impl.EpigraphSupplementDefImpl;
 import io.epigraph.lang.schema.SchemaLanguage;
-import io.epigraph.lang.parser.psi.SchemaSupplementDef;
-import io.epigraph.lang.parser.psi.impl.SchemaSupplementDefImpl;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,18 +17,18 @@ import java.util.stream.Collectors;
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public class EpigraphSupplementDefStubElementType extends IStubElementType<EpigraphSupplementDefStub, SchemaSupplementDef> {
+public class EpigraphSupplementDefStubElementType extends IStubElementType<EpigraphSupplementDefStub, EpigraphSupplementDef> {
   public EpigraphSupplementDefStubElementType(@NotNull @NonNls String debugName) {
     super(debugName, SchemaLanguage.INSTANCE);
   }
 
   @Override
-  public SchemaSupplementDef createPsi(@NotNull EpigraphSupplementDefStub stub) {
-    return new SchemaSupplementDefImpl(stub, this);
+  public EpigraphSupplementDef createPsi(@NotNull EpigraphSupplementDefStub stub) {
+    return new EpigraphSupplementDefImpl(stub, this);
   }
 
   @Override
-  public EpigraphSupplementDefStub createStub(@NotNull SchemaSupplementDef supplementDef, StubElement parentStub) {
+  public EpigraphSupplementDefStub createStub(@NotNull EpigraphSupplementDef supplementDef, StubElement parentStub) {
     return new EpigraphSupplementDefStubImpl(parentStub,
         new SerializedFqnTypeRef(supplementDef.sourceRef()),
         supplementDef.supplementedRefs().stream()

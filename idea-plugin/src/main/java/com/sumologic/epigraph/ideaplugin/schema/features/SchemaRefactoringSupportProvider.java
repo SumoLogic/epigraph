@@ -2,9 +2,9 @@ package com.sumologic.epigraph.ideaplugin.schema.features;
 
 import com.intellij.lang.refactoring.RefactoringSupportProvider;
 import com.intellij.psi.PsiElement;
+import io.epigraph.lang.parser.psi.EpigraphFqnSegment;
 import io.epigraph.lang.parser.psi.EpigraphTypeDef;
-import io.epigraph.lang.parser.psi.SchemaFqnSegment;
-import io.epigraph.lang.parser.psi.SchemaVarTagDecl;
+import io.epigraph.lang.parser.psi.EpigraphVarTagDecl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -14,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 public class SchemaRefactoringSupportProvider extends RefactoringSupportProvider {
   @Override
   public boolean isMemberInplaceRenameAvailable(@NotNull PsiElement element, @Nullable PsiElement context) {
-    return element instanceof EpigraphTypeDef || element instanceof SchemaFqnSegment || element instanceof SchemaVarTagDecl;
+    return element instanceof EpigraphTypeDef || element instanceof EpigraphFqnSegment || element instanceof EpigraphVarTagDecl;
   }
 
   @Override

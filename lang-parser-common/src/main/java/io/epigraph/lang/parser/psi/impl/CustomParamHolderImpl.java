@@ -3,7 +3,7 @@ package io.epigraph.lang.parser.psi.impl;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import io.epigraph.lang.parser.psi.CustomParamsHolder;
-import io.epigraph.lang.parser.psi.SchemaCustomParam;
+import io.epigraph.lang.parser.psi.EpigraphCustomParam;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -18,7 +18,7 @@ public class CustomParamHolderImpl extends ASTWrapperPsiElement implements Custo
 
   @NotNull
   @Override
-  public List<SchemaCustomParam> getCustomParamList() {
+  public List<EpigraphCustomParam> getCustomParamList() {
     throw new RuntimeException("Should never happen");
   }
 }

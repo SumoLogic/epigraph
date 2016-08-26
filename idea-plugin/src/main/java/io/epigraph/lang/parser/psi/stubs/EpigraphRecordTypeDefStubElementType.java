@@ -5,7 +5,7 @@ import com.intellij.psi.stubs.StubInputStream;
 import com.intellij.psi.stubs.StubOutputStream;
 import io.epigraph.lang.parser.Fqn;
 import io.epigraph.lang.parser.psi.EpigraphRecordTypeDef;
-import io.epigraph.lang.parser.psi.SchemaSupplementsDecl;
+import io.epigraph.lang.parser.psi.EpigraphSupplementsDecl;
 import io.epigraph.lang.parser.psi.impl.EpigraphRecordTypeDefImpl;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -30,7 +30,7 @@ public class EpigraphRecordTypeDefStubElementType extends EpigraphTypeDefStubEle
 
   @Override
   public EpigraphRecordTypeDefStub createStub(@NotNull EpigraphRecordTypeDef typeDef, StubElement parentStub) {
-    SchemaSupplementsDecl supplementsDecl = typeDef.getSupplementsDecl();
+    EpigraphSupplementsDecl supplementsDecl = typeDef.getSupplementsDecl();
     List<SerializedFqnTypeRef> supplementedRefs = supplementsDecl == null ? null :
         supplementsDecl.getFqnTypeRefList().stream()
             .map(SerializedFqnTypeRef::new)

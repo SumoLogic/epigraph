@@ -25,11 +25,11 @@ public class SchemaStructureViewBuilder extends TreeBasedStructureViewBuilder {
         .withSuitableClasses(
             SchemaFile.class,
             EpigraphTypeDef.class,
-            SchemaSupplementDef.class,
-            SchemaFieldDecl.class,
-            SchemaVarTagDecl.class,
-            SchemaEnumMemberDecl.class,
-            SchemaCustomParam.class
+            EpigraphSupplementDef.class,
+            EpigraphFieldDecl.class,
+            EpigraphVarTagDecl.class,
+            EpigraphEnumMemberDecl.class,
+            EpigraphCustomParam.class
         );
   }
 }

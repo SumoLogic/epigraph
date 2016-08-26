@@ -10,9 +10,9 @@ import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.HierarchyCache;
 import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.TypeMembers;
 import com.sumologic.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
 import io.epigraph.lang.parser.psi.EpigraphTypeDef;
-import io.epigraph.lang.parser.psi.SchemaFieldDecl;
-import io.epigraph.lang.parser.psi.SchemaSupplementDef;
-import io.epigraph.lang.parser.psi.SchemaVarTagDecl;
+import io.epigraph.lang.parser.psi.EpigraphFieldDecl;
+import io.epigraph.lang.parser.psi.EpigraphSupplementDef;
+import io.epigraph.lang.parser.psi.EpigraphVarTagDecl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -41,7 +41,7 @@ public class SchemaLineMarkerProvider extends RelatedItemLineMarkerProvider {
     if (parent instanceof EpigraphTypeDef) {
       EpigraphTypeDef typeDef = (EpigraphTypeDef) parent;
 
-      List<SchemaSupplementDef> supplements = HierarchyCache.getHierarchyCache(project).getSupplementsBySupplemented(typeDef);
+      List<EpigraphSupplementDef> supplements = HierarchyCache.getHierarchyCache(project).getSupplementsBySupplemented(typeDef);
 
       if (!supplements.isEmpty()) {
         NavigationGutterIconBuilder<PsiElement> builder =
@@ -79,10 +79,10 @@ public class SchemaLineMarkerProvider extends RelatedItemLineMarkerProvider {
 
     }
 
-    if (parent instanceof SchemaFieldDecl) {
-      SchemaFieldDecl fieldDecl = (SchemaFieldDecl) parent;
+    if (parent instanceof EpigraphFieldDecl) {
+      EpigraphFieldDecl fieldDecl = (EpigraphFieldDecl) parent;
 
-      List<SchemaFieldDecl> overridenFields = TypeMembers.getOverridenFields(fieldDecl);
+      List<EpigraphFieldDecl> overridenFields = TypeMembers.getOverridenFields(fieldDecl);
       if (!overridenFields.isEmpty()) {
         NavigationGutterIconBuilder<PsiElement> builder =
             NavigationGutterIconBuilder.create(SchemaPresentationUtil.OVERRIDING_FIELD_GUTTER_ICON)
@@ -93,7 +93,7 @@ public class SchemaLineMarkerProvider extends RelatedItemLineMarkerProvider {
         result.add(builder.createLineMarkerInfo(element));
       }
 
-      List<SchemaFieldDecl> overridingFields = TypeMembers.getOverridingFields(fieldDecl);
+      List<EpigraphFieldDecl> overridingFields = TypeMembers.getOverridingFields(fieldDecl);
       if (!overridingFields.isEmpty()) {
         NavigationGutterIconBuilder<PsiElement> builder =
             NavigationGutterIconBuilder.create(SchemaPresentationUtil.OVERRIDEN_FIELD_GUTTER_ICON)
@@ -105,10 +105,10 @@ public class SchemaLineMarkerProvider extends RelatedItemLineMarkerProvider {
       }
     }
 
-    if (parent instanceof SchemaVarTagDecl) {
-      SchemaVarTagDecl varTagDecl = (SchemaVarTagDecl) parent;
+    if (parent instanceof EpigraphVarTagDecl) {
+      EpigraphVarTagDecl varTagDecl = (EpigraphVarTagDecl) parent;
 
-      List<SchemaVarTagDecl> overridenVarTypeMembers = TypeMembers.getOverridenTags(varTagDecl);
+      List<EpigraphVarTagDecl> overridenVarTypeMembers = TypeMembers.getOverridenTags(varTagDecl);
       if (!overridenVarTypeMembers.isEmpty()) {
         NavigationGutterIconBuilder<PsiElement> builder =
             NavigationGutterIconBuilder.create(SchemaPresentationUtil.OVERRIDING_TAG_GUTTER_ICON)
@@ -119,7 +119,7 @@ public class SchemaLineMarkerProvider extends RelatedItemLineMarkerProvider {
         result.add(builder.createLineMarkerInfo(element));
       }
 
-      List<SchemaVarTagDecl> overridingVarTypeMembers = TypeMembers.getOverridingTags(varTagDecl);
+      List<EpigraphVarTagDecl> overridingVarTypeMembers = TypeMembers.getOverridingTags(varTagDecl);
       if (!overridingVarTypeMembers.isEmpty()) {
         NavigationGutterIconBuilder<PsiElement> builder =
             NavigationGutterIconBuilder.create(SchemaPresentationUtil.OVERRIDEN_TAG_GUTTER_ICON)

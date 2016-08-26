@@ -8,9 +8,9 @@ import com.intellij.psi.PsiNamedElement;
 import com.sumologic.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
 import io.epigraph.lang.parser.SchemaParserDefinition;
 import io.epigraph.lang.lexer.EpigraphFlexAdapter;
+import io.epigraph.lang.parser.psi.EpigraphFqnSegment;
 import io.epigraph.lang.parser.psi.EpigraphTypeDef;
-import io.epigraph.lang.parser.psi.SchemaFqnSegment;
-import io.epigraph.lang.parser.psi.SchemaVarTagDecl;
+import io.epigraph.lang.parser.psi.EpigraphVarTagDecl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,13 +36,13 @@ public class SchemaFindUsagesProvider implements FindUsagesProvider {
       return element.getName() != null;
     }
 
-    if (psiElement instanceof SchemaFqnSegment) {
-      SchemaFqnSegment fqnSegment = (SchemaFqnSegment) psiElement;
+    if (psiElement instanceof EpigraphFqnSegment) {
+      EpigraphFqnSegment fqnSegment = (EpigraphFqnSegment) psiElement;
       return fqnSegment.getName() != null;
     }
 
-    if (psiElement instanceof SchemaVarTagDecl) {
-      SchemaVarTagDecl varTagDecl = (SchemaVarTagDecl) psiElement;
+    if (psiElement instanceof EpigraphVarTagDecl) {
+      EpigraphVarTagDecl varTagDecl = (EpigraphVarTagDecl) psiElement;
       return varTagDecl.getName() != null;
     }
 

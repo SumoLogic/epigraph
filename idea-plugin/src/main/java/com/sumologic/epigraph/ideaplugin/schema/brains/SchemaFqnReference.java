@@ -30,14 +30,14 @@ import java.util.stream.Collectors;
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  * @see <a href="https://github.com/SumoLogic/epigraph/wiki/References%20implementation#reference-resolution-algorithm">Reference resolution algorithm</a>
  */
-public class SchemaFqnReference extends PsiReferenceBase<SchemaFqnSegment> implements PsiPolyVariantReference {
-  private final SchemaFqnReferenceResolver resolver;
+public class SchemaFqnReference extends PsiReferenceBase<EpigraphFqnSegment> implements PsiPolyVariantReference {
+  private final EpigraphFqnReferenceResolver resolver;
 
   private final ResolveCache.Resolver cachedResolver = (psiReference, incompleteCode) -> resolveImpl();
   private final ResolveCache.PolyVariantResolver<SchemaFqnReference> polyVariantResolver =
       (schemaFqnReference, incompleteCode) -> multiResolveImpl();
 
-  public SchemaFqnReference(SchemaFqnSegment segment, SchemaFqnReferenceResolver resolver) {
+  public SchemaFqnReference(EpigraphFqnSegment segment, EpigraphFqnReferenceResolver resolver) {
     super(segment);
     this.resolver = resolver;
 
@@ -52,7 +52,7 @@ public class SchemaFqnReference extends PsiReferenceBase<SchemaFqnSegment> imple
   }
 
   @NotNull
-  public SchemaFqnReferenceResolver getResolver() {
+  public EpigraphFqnReferenceResolver getResolver() {
     return resolver;
   }
 
@@ -63,7 +63,7 @@ public class SchemaFqnReference extends PsiReferenceBase<SchemaFqnSegment> imple
 
   @Override
   public boolean isReferenceTo(PsiElement element) {
-    assert !(element instanceof SchemaTypeDefWrapper);
+    assert !(element instanceof EpigraphTypeDefWrapper);
     return super.isReferenceTo(element);
   }
 
@@ -97,7 +97,7 @@ public class SchemaFqnReference extends PsiReferenceBase<SchemaFqnSegment> imple
     final Fqn inputPrefix = input.removeLastSegment();
 
     Set<EpigraphTypeDef> typeDefVariants;
-    Collection<SchemaNamespaceDecl> namespaceVariants;
+    Collection<EpigraphNamespaceDecl> namespaceVariants;
 
     if (input.size() > 1) {
       // we already have multiple segments in the FQN
@@ -157,7 +157,7 @@ public class SchemaFqnReference extends PsiReferenceBase<SchemaFqnSegment> imple
         .collect(Collectors.toSet());
 
     List<Fqn> namespaceFqns = namespaceVariants.stream()
-        .map(SchemaNamespaceDecl::getFqn2)
+        .map(EpigraphNamespaceDecl::getFqn2)
         .filter(fqn -> fqn != null && !fqn.equals(currentNamespace)) // not interested in current namespace
         .collect(Collectors.toList());
 
@@ -180,10 +180,10 @@ public class SchemaFqnReference extends PsiReferenceBase<SchemaFqnSegment> imple
   }
 
   private boolean isImport() {
-    return PsiTreeUtil.getParentOfType(getElement(), SchemaImportStatement.class) != null;
+    return PsiTreeUtil.getParentOfType(getElement(), EpigraphImportStatement.class) != null;
   }
 
   private boolean isNamespaceDecl() {
-    return PsiTreeUtil.getParentOfType(getElement(), SchemaNamespaceDecl.class) != null;
+    return PsiTreeUtil.getParentOfType(getElement(), EpigraphNamespaceDecl.class) != null;
   }
 }

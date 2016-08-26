@@ -5,10 +5,10 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.usages.impl.rules.UsageType;
 import com.intellij.usages.impl.rules.UsageTypeProvider;
+import io.epigraph.lang.parser.psi.EpigraphImportStatement;
+import io.epigraph.lang.parser.psi.EpigraphVarTagRef;
 import io.epigraph.lang.parser.psi.SchemaFile;
-import io.epigraph.lang.parser.psi.SchemaFqnSegment;
-import io.epigraph.lang.parser.psi.SchemaImportStatement;
-import io.epigraph.lang.parser.psi.SchemaVarTagRef;
+import io.epigraph.lang.parser.psi.EpigraphFqnSegment;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -22,14 +22,14 @@ public class SchemaUsageTypeProvider implements UsageTypeProvider {
 
     if (!(psiFile instanceof SchemaFile)) return null;
 
-    if (element instanceof SchemaFqnSegment) {
-      if (PsiTreeUtil.getParentOfType(element, SchemaImportStatement.class) != null) {
+    if (element instanceof EpigraphFqnSegment) {
+      if (PsiTreeUtil.getParentOfType(element, EpigraphImportStatement.class) != null) {
         return IMPORT_USAGE_TYPE;
       }
       return TYPE_REF_USAGE_TYPE; // be more precise: extends, list getElement type etc ?
     }
 
-    if (PsiTreeUtil.getParentOfType(element, SchemaVarTagRef.class) != null)
+    if (PsiTreeUtil.getParentOfType(element, EpigraphVarTagRef.class) != null)
       return VAR_TAG_USAGE_TYPE;
 
     return null;

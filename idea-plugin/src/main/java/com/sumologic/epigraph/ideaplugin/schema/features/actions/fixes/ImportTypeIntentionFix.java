@@ -21,7 +21,7 @@ import com.sumologic.epigraph.ideaplugin.schema.index.SchemaSearchScopeUtil;
 import com.sumologic.epigraph.ideaplugin.schema.options.SchemaSettings;
 import io.epigraph.lang.parser.Fqn;
 import io.epigraph.lang.parser.psi.SchemaFile;
-import io.epigraph.lang.parser.psi.SchemaFqnTypeRef;
+import io.epigraph.lang.parser.psi.EpigraphFqnTypeRef;
 import io.epigraph.lang.parser.psi.EpigraphTypeDef;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
@@ -37,9 +37,9 @@ import java.util.stream.Collectors;
 public class ImportTypeIntentionFix implements HintAction {
   // TODO(low) implement LocalQuickFix, see CreateNSDeclarationIntentionFix
 
-  private final SchemaFqnTypeRef typeRef;
+  private final EpigraphFqnTypeRef typeRef;
 
-  public ImportTypeIntentionFix(SchemaFqnTypeRef typeRef) {
+  public ImportTypeIntentionFix(EpigraphFqnTypeRef typeRef) {
     this.typeRef = typeRef;
   }
 

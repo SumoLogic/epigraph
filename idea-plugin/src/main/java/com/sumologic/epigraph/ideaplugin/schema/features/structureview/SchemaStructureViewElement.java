@@ -51,37 +51,37 @@ class SchemaStructureViewElement implements StructureViewTreeElement {
     }
 
     if (element instanceof SchemaFile) {
-      SchemaDefs defs = ((SchemaFile) element).getDefs();
+      EpigraphDefs defs = ((SchemaFile) element).getDefs();
       if (defs != null) {
-        children.addAll(defs.getTypeDefWrapperList().stream().map(SchemaTypeDefWrapper::getElement).collect(Collectors.toList()));
+        children.addAll(defs.getTypeDefWrapperList().stream().map(EpigraphTypeDefWrapper::getElement).collect(Collectors.toList()));
         children.addAll(defs.getSupplementDefList()); // SchemaSupplementDef
       }
     } else if (element instanceof EpigraphRecordTypeDef) {
-      SchemaRecordTypeBody recordTypeBody = ((EpigraphRecordTypeDef) element).getRecordTypeBody();
+      EpigraphRecordTypeBody recordTypeBody = ((EpigraphRecordTypeDef) element).getRecordTypeBody();
       if (recordTypeBody != null) {
         children.addAll(recordTypeBody.getCustomParamList()); // SchemaCustomParam
         children.addAll(recordTypeBody.getFieldDeclList()); // SchemaFieldDecl
       }
     } else if (element instanceof EpigraphVarTypeDef) {
-      SchemaVarTypeBody varTypeBody = ((EpigraphVarTypeDef) element).getVarTypeBody();
+      EpigraphVarTypeBody varTypeBody = ((EpigraphVarTypeDef) element).getVarTypeBody();
       if (varTypeBody != null) {
         children.addAll(varTypeBody.getCustomParamList());
         children.addAll(varTypeBody.getVarTagDeclList()); // SchemaVarTagDecl
       }
     } else if (element instanceof EpigraphEnumTypeDef) {
-      SchemaEnumTypeBody enumTypeBody = ((EpigraphEnumTypeDef) element).getEnumTypeBody();
+      EpigraphEnumTypeBody enumTypeBody = ((EpigraphEnumTypeDef) element).getEnumTypeBody();
       if (enumTypeBody != null) {
         children.addAll(enumTypeBody.getCustomParamList());
         children.addAll(enumTypeBody.getEnumMemberDeclList()); // SchemaEnumMemberDecl
       }
     } else if (element instanceof EpigraphMapTypeDef) {
-      SchemaMapTypeBody mapTypeBody = ((EpigraphMapTypeDef) element).getMapTypeBody();
+      EpigraphMapTypeBody mapTypeBody = ((EpigraphMapTypeDef) element).getMapTypeBody();
       if (mapTypeBody != null) children.addAll(mapTypeBody.getCustomParamList());
     } else if (element instanceof EpigraphListTypeDef) {
-      SchemaListTypeBody listTypeBody = ((EpigraphListTypeDef) element).getListTypeBody();
+      EpigraphListTypeBody listTypeBody = ((EpigraphListTypeDef) element).getListTypeBody();
       if (listTypeBody != null) children.addAll(listTypeBody.getCustomParamList());
     } else if (element instanceof EpigraphPrimitiveTypeDef) {
-      SchemaPrimitiveTypeBody primitiveTypeBody = ((EpigraphPrimitiveTypeDef) element).getPrimitiveTypeBody();
+      EpigraphPrimitiveTypeBody primitiveTypeBody = ((EpigraphPrimitiveTypeDef) element).getPrimitiveTypeBody();
       if (primitiveTypeBody != null) children.addAll(primitiveTypeBody.getCustomParamList());
     }
 

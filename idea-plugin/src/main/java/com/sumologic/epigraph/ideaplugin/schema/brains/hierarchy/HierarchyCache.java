@@ -22,7 +22,7 @@ public class HierarchyCache {
   private final Key<ParameterizedCachedValue<List<EpigraphTypeDef>, EpigraphTypeDef>> DIRECT_TYPE_PARENTS_KEY = Key.create("DIRECT_TYPE_PARENTS");
   private final Key<ParameterizedCachedValue<List<EpigraphTypeDef>, EpigraphTypeDef>> TYPE_INHERITORS_KEY = Key.create("TYPE_INHERITORS");
   private final Key<ParameterizedCachedValue<List<EpigraphTypeDef>, EpigraphTypeDef>> DIRECT_TYPE_INHERITORS_KEY = Key.create("DIRECT_TYPE_INHERITORS");
-  private final Key<ParameterizedCachedValue<List<SchemaSupplementDef>, EpigraphTypeDef>> SUPPLEMENTS_BY_SUPPLEMENTED_KEY = Key.create("SUPPLEMENTS_BY_SUPPLEMENTED");
+  private final Key<ParameterizedCachedValue<List<EpigraphSupplementDef>, EpigraphTypeDef>> SUPPLEMENTS_BY_SUPPLEMENTED_KEY = Key.create("SUPPLEMENTS_BY_SUPPLEMENTED");
 
   private final Project project;
   private final ModificationTrackerImpl hierarchyModificationTracker = new ModificationTrackerImpl();
@@ -77,7 +77,7 @@ public class HierarchyCache {
   }
 
   @NotNull
-  public List<SchemaSupplementDef> getSupplementsBySupplemented(@NotNull EpigraphTypeDef typeDef) {
+  public List<EpigraphSupplementDef> getSupplementsBySupplemented(@NotNull EpigraphTypeDef typeDef) {
     CachedValuesManager cachedValuesManager = CachedValuesManager.getManager(project);
     return cachedValuesManager.getParameterizedCachedValue(
         typeDef,
@@ -148,11 +148,11 @@ public class HierarchyCache {
     }
   }
 
-  private class SupplementsBySupplementedProvider implements ParameterizedCachedValueProvider<List<SchemaSupplementDef>, EpigraphTypeDef> {
+  private class SupplementsBySupplementedProvider implements ParameterizedCachedValueProvider<List<EpigraphSupplementDef>, EpigraphTypeDef> {
     @Nullable
     @Override
-    public CachedValueProvider.Result<List<SchemaSupplementDef>> compute(EpigraphTypeDef typeDef) {
-      List<SchemaSupplementDef> supplements = SchemaIndexUtil.findSupplementsBySupplemented(project, typeDef);
+    public CachedValueProvider.Result<List<EpigraphSupplementDef>> compute(EpigraphTypeDef typeDef) {
+      List<EpigraphSupplementDef> supplements = SchemaIndexUtil.findSupplementsBySupplemented(project, typeDef);
       return new CachedValueProvider.Result<>(
           supplements,
           hierarchyModificationTracker
@@ -201,27 +201,27 @@ public class HierarchyCache {
       if (child instanceof PsiWhiteSpace) return;
 
       // imports changed
-      if (PsiTreeUtil.getParentOfType(child, SchemaImports.class) != null) {
+      if (PsiTreeUtil.getParentOfType(child, EpigraphImports.class) != null) {
         invalidate = true;
       }
 
       // types added/removed/replaced
-      if (child instanceof SchemaTypeDefWrapper || parent instanceof SchemaDefs) {
+      if (child instanceof EpigraphTypeDefWrapper || parent instanceof EpigraphDefs) {
         invalidate = true;
       }
 
       // supplements added/removed/replaced
-      if (child instanceof SchemaSupplementDef || parent instanceof SchemaDefs) {
+      if (child instanceof EpigraphSupplementDef || parent instanceof EpigraphDefs) {
         invalidate = true;
       }
 
       // "extends" clause changed
-      if ((element instanceof SchemaExtendsDecl) || PsiTreeUtil.getParentOfType(child, SchemaExtendsDecl.class) != null) {
+      if ((element instanceof EpigraphExtendsDecl) || PsiTreeUtil.getParentOfType(child, EpigraphExtendsDecl.class) != null) {
         invalidate = true;
       }
 
       // "supplements" clause changed
-      if ((element instanceof SchemaSupplementDef) || PsiTreeUtil.getParentOfType(child, SchemaSupplementDef.class) != null) {
+      if ((element instanceof EpigraphSupplementDef) || PsiTreeUtil.getParentOfType(child, EpigraphSupplementDef.class) != null) {
         invalidate = true;
       }
 

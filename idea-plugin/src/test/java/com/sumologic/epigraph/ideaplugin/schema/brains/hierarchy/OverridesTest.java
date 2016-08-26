@@ -3,8 +3,8 @@ package com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
-import io.epigraph.lang.parser.psi.SchemaFieldDecl;
-import io.epigraph.lang.parser.psi.SchemaVarTagDecl;
+import io.epigraph.lang.parser.psi.EpigraphFieldDecl;
+import io.epigraph.lang.parser.psi.EpigraphVarTagDecl;
 
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
@@ -18,7 +18,7 @@ public class OverridesTest extends LightCodeInsightFixtureTestCase {
   public void testQuotedVarTagOverride() {
     myFixture.configureByFile("QuotedTagOverride.esc");
     PsiElement element = myFixture.getFile().findElementAt(myFixture.getCaretOffset());
-    SchemaVarTagDecl tagDecl = PsiTreeUtil.getParentOfType(element, SchemaVarTagDecl.class);
+    EpigraphVarTagDecl tagDecl = PsiTreeUtil.getParentOfType(element, EpigraphVarTagDecl.class);
     assertNotNull(tagDecl);
     assertEquals(1, TypeMembers.getOverridenTags(tagDecl).size());
   }
@@ -26,7 +26,7 @@ public class OverridesTest extends LightCodeInsightFixtureTestCase {
   public void testQuotedFieldOverride() {
     myFixture.configureByFile("QuotedFieldOverride.esc");
     PsiElement element = myFixture.getFile().findElementAt(myFixture.getCaretOffset());
-    SchemaFieldDecl fieldDecl = PsiTreeUtil.getParentOfType(element, SchemaFieldDecl.class);
+    EpigraphFieldDecl fieldDecl = PsiTreeUtil.getParentOfType(element, EpigraphFieldDecl.class);
     assertNotNull(fieldDecl);
     assertEquals(1, TypeMembers.getOverridenFields(fieldDecl).size());
   }

@@ -20,7 +20,7 @@ public class EpigraphElementFactory {
   public static PsiElement createId(Project project, String text) {
     final SchemaFile file = createFileFromText(project, "namespace " + text);
     //noinspection ConstantConditions
-    return ((SchemaFqnSegment) file.getNamespaceDecl().getFqn().getLastChild()).getQid().getId();
+    return ((EpigraphFqnSegment) file.getNamespaceDecl().getFqn().getLastChild()).getQid().getId();
   }
 
   @NotNull
@@ -30,18 +30,18 @@ public class EpigraphElementFactory {
     return file.getDefs().getTypeDefWrapperList().get(0).getPrimitiveTypeDef().getQid().getFirstChild();
   }
 
-  public static SchemaFqn createFqn(Project project, String text) {
+  public static EpigraphFqn createFqn(Project project, String text) {
     final SchemaFile file = createFileFromText(project, "namespace " + text);
     //noinspection ConstantConditions
     return file.getNamespaceDecl().getFqn();
   }
 
-  public static SchemaImports createImports(Project project, String importToAdd) {
+  public static EpigraphImports createImports(Project project, String importToAdd) {
     final SchemaFile file = createFileFromText(project, "namespace some\n import " + importToAdd);
     return file.getImportsStatement();
   }
 
-  public static SchemaImportStatement createImport(Project project, String importToAdd) {
+  public static EpigraphImportStatement createImport(Project project, String importToAdd) {
     final SchemaFile file = createFileFromText(project, "namespace some\n import " + importToAdd);
     return file.getImportStatements().get(0);
   }

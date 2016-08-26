@@ -6,7 +6,7 @@
   elementTypeClass="io.epigraph.lang.lexer.EpigraphElementType"
   tokenTypeClass="io.epigraph.lang.lexer.EpigraphElementType"
 
-  psiClassPrefix="Schema"
+  psiClassPrefix="Epigraph"
   psiImplClassSuffix="Impl"
   psiPackage="io.epigraph.lang.parser.psi"
   psiImplPackage="io.epigraph.lang.parser.psi.impl"

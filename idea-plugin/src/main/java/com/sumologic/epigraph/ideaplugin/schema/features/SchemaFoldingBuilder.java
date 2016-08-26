@@ -166,9 +166,9 @@ public class SchemaFoldingBuilder extends CustomFoldingBuilder implements DumbAw
 
     SchemaFile file = (SchemaFile) root;
 
-    SchemaDefs defs = file.getDefs();
+    EpigraphDefs defs = file.getDefs();
     if (defs != null) {
-      for (SchemaTypeDefWrapper typeDefWrapper : defs.getTypeDefWrapperList()) {
+      for (EpigraphTypeDefWrapper typeDefWrapper : defs.getTypeDefWrapperList()) {
         addToFold(descriptors, typeDefWrapper.getElement(), document, true);
       }
     }

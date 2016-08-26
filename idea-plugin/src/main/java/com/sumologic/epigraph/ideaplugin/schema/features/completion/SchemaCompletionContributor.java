@@ -91,7 +91,7 @@ public class SchemaCompletionContributor extends CompletionContributor {
     PsiElement parent = position.getParent();
     if (parent != null) {
 //      IElementType parentElementType = parent.getNode().getElementType();
-      if (parent instanceof EpigraphTypeDef || parent instanceof SchemaSupplementDef) return;
+      if (parent instanceof EpigraphTypeDef || parent instanceof EpigraphSupplementDef) return;
 
       PsiElement grandParent = parent.getParent();
 
@@ -108,8 +108,8 @@ public class SchemaCompletionContributor extends CompletionContributor {
           PsiElement nextParentSibling = SchemaPsiUtil.nextNonWhitespaceSibling(parent);
           // don't initiate new type completion if we're followed by anything but a new def, e.g. when we're followed by a {..} dummy block
           completeTypeDef = nextParentSibling == null
-              || nextParentSibling instanceof SchemaTypeDefWrapper
-              || nextParentSibling instanceof SchemaSupplementDef;
+              || nextParentSibling instanceof EpigraphTypeDefWrapper
+              || nextParentSibling instanceof EpigraphSupplementDef;
 
         } else if (grandParentElementType == E_IMPORT_STATEMENT) {
           if (!SchemaPsiUtil.hasNextSibling(grandParent, E_IMPORT_STATEMENT)) {
@@ -118,8 +118,8 @@ public class SchemaCompletionContributor extends CompletionContributor {
           completeImport = true;
         } else if (grandParentElementType == E_NAMESPACE_DECL) {
           // check if we're between 'namespace' and 'import'
-          SchemaImports schemaImports = PsiTreeUtil.getNextSiblingOfType(grandParent, SchemaImports.class);
-          if (schemaImports == null || schemaImports.getFirstChild() == null) {
+          EpigraphImports epigraphImports = PsiTreeUtil.getNextSiblingOfType(grandParent, EpigraphImports.class);
+          if (epigraphImports == null || epigraphImports.getFirstChild() == null) {
             // we're after 'namespace' not followed by 'import'
             completeTypeDef = true;
           }
@@ -216,8 +216,8 @@ public class SchemaCompletionContributor extends CompletionContributor {
     // this should be the actual type def wrapper
     PsiElement prevParentSibling = SchemaPsiUtil.prevNonWhitespaceSibling(parent);
 
-    if (prevParentSibling instanceof SchemaTypeDefWrapper) {
-      SchemaTypeDefWrapper typeDefWrapper = (SchemaTypeDefWrapper) prevParentSibling;
+    if (prevParentSibling instanceof EpigraphTypeDefWrapper) {
+      EpigraphTypeDefWrapper typeDefWrapper = (EpigraphTypeDefWrapper) prevParentSibling;
       EpigraphTypeDef typeDef = typeDefWrapper.getElement();
 
       if (!canHaveQualifier.qualifies(typeDef)) return;
@@ -229,10 +229,10 @@ public class SchemaCompletionContributor extends CompletionContributor {
 
   private void completeWith(@NotNull PsiElement position, @NotNull final CompletionResultSet result) {
     PsiElement qid = position.getParent();
-    if (!(qid instanceof SchemaQid)) return;
+    if (!(qid instanceof EpigraphQid)) return;
 
-    if (PsiTreeUtil.getParentOfType(qid, SchemaSupplementDef.class) != null) {
-      SchemaFqnTypeRef fqnTypeRef = PsiTreeUtil.getParentOfType(qid, SchemaFqnTypeRef.class);
+    if (PsiTreeUtil.getParentOfType(qid, EpigraphSupplementDef.class) != null) {
+      EpigraphFqnTypeRef fqnTypeRef = PsiTreeUtil.getParentOfType(qid, EpigraphFqnTypeRef.class);
       if (fqnTypeRef != null) {
         PsiElement prevSibling = SchemaPsiUtil.prevNonWhitespaceSibling(fqnTypeRef);
         if (prevSibling != null
@@ -253,7 +253,7 @@ public class SchemaCompletionContributor extends CompletionContributor {
 
     // first check we're in the correct position
     PsiElement qid = position.getParent();
-    if (!(qid instanceof SchemaQid)) return;
+    if (!(qid instanceof EpigraphQid)) return;
     PsiElement parent = qid.getParent();
     if (!(parent instanceof EpigraphTypeDef)) return;
 
@@ -263,7 +263,7 @@ public class SchemaCompletionContributor extends CompletionContributor {
     IElementType prevSiblingElementType = prevSibling.getNode().getElementType();
     if (!SchemaParserDefinition.TYPE_KINDS.contains(prevSiblingElementType)) return;
 
-    PsiElement defs = PsiTreeUtil.getParentOfType(parent, SchemaDefs.class);
+    PsiElement defs = PsiTreeUtil.getParentOfType(parent, EpigraphDefs.class);
     assert defs != null;
 
     // now collect all candidates
@@ -273,8 +273,8 @@ public class SchemaCompletionContributor extends CompletionContributor {
       public void visitElement(PsiElement element) {
         super.visitElement(element);
 
-        if (element instanceof SchemaFqnTypeRef) {
-          SchemaFqnTypeRef typeRef = (SchemaFqnTypeRef) element;
+        if (element instanceof EpigraphFqnTypeRef) {
+          EpigraphFqnTypeRef typeRef = (EpigraphFqnTypeRef) element;
 
           Fqn fqn = typeRef.getFqn().getFqn();
           // only bother if it's single-segment
@@ -305,16 +305,16 @@ public class SchemaCompletionContributor extends CompletionContributor {
 
     PsiElement element = SchemaPsiUtil.prevNonWhitespaceSibling(position);
 
-    if (element instanceof SchemaTypeDefWrapper && element.getFirstChild() instanceof EpigraphRecordTypeDef) {
+    if (element instanceof EpigraphTypeDefWrapper && element.getFirstChild() instanceof EpigraphRecordTypeDef) {
       recordTypeDef = (EpigraphRecordTypeDef) element.getFirstChild();
     }
 
-    if (element instanceof SchemaTypeDefWrapper && element.getFirstChild() instanceof EpigraphVarTypeDef) {
+    if (element instanceof EpigraphTypeDefWrapper && element.getFirstChild() instanceof EpigraphVarTypeDef) {
       varTypeDef = (EpigraphVarTypeDef) element.getFirstChild();
     }
 
     if (recordTypeDef != null) {
-      List<SchemaFieldDecl> fieldDecls = TypeMembers.getFieldDecls(recordTypeDef, null);
+      List<EpigraphFieldDecl> fieldDecls = TypeMembers.getFieldDecls(recordTypeDef, null);
       if (!fieldDecls.isEmpty()) addOverride = true;
     }
 
@@ -344,43 +344,43 @@ public class SchemaCompletionContributor extends CompletionContributor {
 
     element = SchemaPsiUtil.prevNonWhitespaceSibling(element);
 
-    if (element instanceof SchemaTypeDefWrapper && element.getFirstChild() instanceof EpigraphRecordTypeDef) {
+    if (element instanceof EpigraphTypeDefWrapper && element.getFirstChild() instanceof EpigraphRecordTypeDef) {
       recordTypeDef = (EpigraphRecordTypeDef) element.getFirstChild();
     }
 
-    if (element instanceof SchemaTypeDefWrapper && element.getFirstChild() instanceof EpigraphVarTypeDef) {
+    if (element instanceof EpigraphTypeDefWrapper && element.getFirstChild() instanceof EpigraphVarTypeDef) {
       varTypeDef = (EpigraphVarTypeDef) element.getFirstChild();
     }
 
     if (recordTypeDef != null) {
-      Set<SchemaFieldDecl> alreadyDeclaredFields;
+      Set<EpigraphFieldDecl> alreadyDeclaredFields;
 
-      SchemaRecordTypeBody body = recordTypeDef.getRecordTypeBody();
+      EpigraphRecordTypeBody body = recordTypeDef.getRecordTypeBody();
       if (body == null) {
         alreadyDeclaredFields = Collections.emptySet();
       } else {
         alreadyDeclaredFields = new HashSet<>(body.getFieldDeclList());
       }
 
-      List<SchemaFieldDecl> fieldDecls = TypeMembers.getFieldDecls(recordTypeDef, null);
-      for (SchemaFieldDecl fieldDecl : fieldDecls) {
+      List<EpigraphFieldDecl> fieldDecls = TypeMembers.getFieldDecls(recordTypeDef, null);
+      for (EpigraphFieldDecl fieldDecl : fieldDecls) {
         if (!alreadyDeclaredFields.contains(fieldDecl))
           result.addElement(LookupElementBuilder.create(fieldDecl));
       }
     }
 
     if (varTypeDef != null) {
-      Set<SchemaVarTagDecl> alreadyDeclaredTags;
+      Set<EpigraphVarTagDecl> alreadyDeclaredTags;
 
-      SchemaVarTypeBody body = varTypeDef.getVarTypeBody();
+      EpigraphVarTypeBody body = varTypeDef.getVarTypeBody();
       if (body == null) {
         alreadyDeclaredTags = Collections.emptySet();
       } else {
         alreadyDeclaredTags = new HashSet<>(body.getVarTagDeclList());
       }
 
-      List<SchemaVarTagDecl> varTagDecls = TypeMembers.getVarTagDecls(varTypeDef, null);
-      for (SchemaVarTagDecl varTagDecl : varTagDecls) {
+      List<EpigraphVarTagDecl> varTagDecls = TypeMembers.getVarTagDecls(varTypeDef, null);
+      for (EpigraphVarTagDecl varTagDecl : varTagDecls) {
         if (!alreadyDeclaredTags.contains(varTagDecl))
           result.addElement(LookupElementBuilder.create(varTagDecl));
       }

@@ -34,10 +34,10 @@ public class ImportsManager {
   public static void addImport(@NotNull SchemaFile file, @NotNull String importToAdd) {
     // TODO this should return false if this would be a clashing import
 
-    SchemaImports schemaImports = file.getImportsStatement();
+    EpigraphImports epigraphImports = file.getImportsStatement();
 
     Project project = file.getProject();
-    assert schemaImports != null;
+    assert epigraphImports != null;
 
     /*
     if (schemaImports == null) {
@@ -54,15 +54,15 @@ public class ImportsManager {
       file.addAfter(newline2(project), schemaImports);
     } else*/
     {
-      SchemaImportStatement importStatement = EpigraphElementFactory.createImport(project, importToAdd);
-      List<SchemaImportStatement> importStatementList = schemaImports.getImportStatementList();
+      EpigraphImportStatement importStatement = EpigraphElementFactory.createImport(project, importToAdd);
+      List<EpigraphImportStatement> importStatementList = epigraphImports.getImportStatementList();
 
       if (importStatementList.isEmpty()) {
-        schemaImports.add(importStatement);
-        file.addAfter(newline2(project), schemaImports);
+        epigraphImports.add(importStatement);
+        file.addAfter(newline2(project), epigraphImports);
       } else {
-        PsiElement e = schemaImports.addAfter(newline(project), importStatementList.get(importStatementList.size() - 1));
-        e = schemaImports.addAfter(importStatement, e);
+        PsiElement e = epigraphImports.addAfter(newline(project), importStatementList.get(importStatementList.size() - 1));
+        e = epigraphImports.addAfter(importStatement, e);
         file.addAfter(newline(project), e);
       }
     }
@@ -79,16 +79,16 @@ public class ImportsManager {
   }
 
   public static List<Fqn> findImportsBySuffix(@NotNull SchemaFile file, @NotNull Fqn suffix) {
-    SchemaImports schemaImports = file.getImportsStatement();
-    if (schemaImports == null) return Collections.emptyList();
+    EpigraphImports epigraphImports = file.getImportsStatement();
+    if (epigraphImports == null) return Collections.emptyList();
 
-    List<SchemaImportStatement> importStatements = schemaImports.getImportStatementList();
+    List<EpigraphImportStatement> importStatements = epigraphImports.getImportStatementList();
     if (importStatements.isEmpty()) return Collections.emptyList();
 
     //noinspection ConstantConditions
     Stream<Fqn> explicitImports = importStatements.stream()
         .filter(st -> {
-          SchemaFqn sfqn = st.getFqn();
+          EpigraphFqn sfqn = st.getFqn();
           Fqn fqn = sfqn == null ? null : sfqn.getFqn();
           return fqn != null && fqn.endsWith(suffix);
         })
@@ -100,21 +100,21 @@ public class ImportsManager {
     return Stream.concat(explicitImports, implicitImports).collect(Collectors.toList());
   }
 
-  public static Set<SchemaImportStatement> findUnusedImports(@NotNull SchemaFile file) {
-    SchemaImports schemaImports = file.getImportsStatement();
-    if (schemaImports == null) return Collections.emptySet();
+  public static Set<EpigraphImportStatement> findUnusedImports(@NotNull SchemaFile file) {
+    EpigraphImports epigraphImports = file.getImportsStatement();
+    if (epigraphImports == null) return Collections.emptySet();
 
-    List<SchemaImportStatement> importStatements = schemaImports.getImportStatementList();
+    List<EpigraphImportStatement> importStatements = epigraphImports.getImportStatementList();
     if (importStatements.isEmpty()) return Collections.emptySet();
 
-    MultiMap<Fqn, SchemaImportStatement> importsByFqn = getImportsByFqn(importStatements);
+    MultiMap<Fqn, EpigraphImportStatement> importsByFqn = getImportsByFqn(importStatements);
     for (Fqn defaultImport : DEFAULT_IMPORTS) importsByFqn.remove(defaultImport);
 
     // first add all imports, then remove those actually used
-    final Set<SchemaImportStatement> res = new HashSet<>(importsByFqn.values());
+    final Set<EpigraphImportStatement> res = new HashSet<>(importsByFqn.values());
     final GlobalSearchScope searchScope = SchemaSearchScopeUtil.getSearchScope(file);
 
-    SchemaVisitor visitor = new SchemaVisitor() {
+    EpigraphVisitor visitor = new EpigraphVisitor() {
       @Override
       public void visitElement(PsiElement element) {
         super.visitElement(element);
@@ -122,12 +122,12 @@ public class ImportsManager {
       }
 
       @Override
-      public void visitFqnTypeRef(@NotNull SchemaFqnTypeRef typeRef) {
+      public void visitFqnTypeRef(@NotNull EpigraphFqnTypeRef typeRef) {
         super.visitFqnTypeRef(typeRef);
         PsiReference reference = EpigraphPsiImplUtil.getReference(typeRef);
         if (reference instanceof SchemaFqnReference) {
           SchemaFqnReference schemaFqnReference = (SchemaFqnReference) reference;
-          SchemaFqnReferenceResolver resolver = schemaFqnReference.getResolver();
+          EpigraphFqnReferenceResolver resolver = schemaFqnReference.getResolver();
           Fqn targetFqn = resolver.getTargetTypeDefFqn(typeRef.getProject());
 
           if (targetFqn != null) {
@@ -149,7 +149,7 @@ public class ImportsManager {
 
     // add all unresolved imports (unresolved => unused)
     final Project project = file.getProject();
-    for (Map.Entry<Fqn, Collection<SchemaImportStatement>> entry : importsByFqn.entrySet()) {
+    for (Map.Entry<Fqn, Collection<EpigraphImportStatement>> entry : importsByFqn.entrySet()) {
       EpigraphTypeDef typeDef = SchemaIndexUtil.findTypeDef(project, entry.getKey(), searchScope);
       if (typeDef == null && SchemaIndexUtil.findNamespace(project, entry.getKey(), searchScope) == null) {
         res.addAll(entry.getValue());
@@ -163,7 +163,7 @@ public class ImportsManager {
     final List<Fqn> optimizedImports = getOptimizedImports(file);
 
     return () -> {
-      List<SchemaImportStatement> importStatements = file.getImportStatements();
+      List<EpigraphImportStatement> importStatements = file.getImportStatements();
       importStatements.forEach(PsiElement::delete);
 
       for (Fqn fqn : optimizedImports)
@@ -174,9 +174,9 @@ public class ImportsManager {
   static List<Fqn> getOptimizedImports(@NotNull SchemaFile file) {
     // de-duplicated imports without implicits
     Set<Fqn> fqns = file.getImportStatements().stream()
-        .map(SchemaImportStatement::getFqn)
+        .map(EpigraphImportStatement::getFqn)
         .filter(sfqn -> sfqn != null)
-        .map(SchemaFqn::getFqn)
+        .map(EpigraphFqn::getFqn)
         .filter(fqn -> !DEFAULT_IMPORTS_LIST.contains(fqn))
         .collect(Collectors.toSet());
 
@@ -191,12 +191,12 @@ public class ImportsManager {
   }
 
   @NotNull
-  public static MultiMap<Fqn, SchemaImportStatement> getImportsByFqn(List<SchemaImportStatement> importStatements) {
-    MultiMap<Fqn, SchemaImportStatement> importsByFqn = new MultiMap<>();
-    for (SchemaImportStatement importStatement : importStatements) {
-      SchemaFqn schemaFqn = importStatement.getFqn();
-      if (schemaFqn != null) {
-        Fqn fqn = schemaFqn.getFqn();
+  public static MultiMap<Fqn, EpigraphImportStatement> getImportsByFqn(List<EpigraphImportStatement> importStatements) {
+    MultiMap<Fqn, EpigraphImportStatement> importsByFqn = new MultiMap<>();
+    for (EpigraphImportStatement importStatement : importStatements) {
+      EpigraphFqn epigraphFqn = importStatement.getFqn();
+      if (epigraphFqn != null) {
+        Fqn fqn = epigraphFqn.getFqn();
         importsByFqn.putValue(fqn, importStatement);
       }
     }

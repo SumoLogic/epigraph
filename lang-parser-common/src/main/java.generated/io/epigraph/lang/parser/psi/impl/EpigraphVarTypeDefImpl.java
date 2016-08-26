@@ -22,43 +22,43 @@ public class EpigraphVarTypeDefImpl extends EpigraphVarTypeDefImplBase implement
     super(stub, nodeType);
   }
 
-  public void accept(@NotNull SchemaVisitor visitor) {
+  public void accept(@NotNull EpigraphVisitor visitor) {
     visitor.visitVarTypeDef(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof SchemaVisitor) accept((SchemaVisitor)visitor);
+    if (visitor instanceof EpigraphVisitor) accept((EpigraphVisitor)visitor);
     else super.accept(visitor);
   }
 
   @Override
   @Nullable
-  public SchemaDefaultOverride getDefaultOverride() {
-    return PsiTreeUtil.getChildOfType(this, SchemaDefaultOverride.class);
+  public EpigraphDefaultOverride getDefaultOverride() {
+    return PsiTreeUtil.getChildOfType(this, EpigraphDefaultOverride.class);
   }
 
   @Override
   @Nullable
-  public SchemaExtendsDecl getExtendsDecl() {
-    return PsiTreeUtil.getChildOfType(this, SchemaExtendsDecl.class);
+  public EpigraphExtendsDecl getExtendsDecl() {
+    return PsiTreeUtil.getChildOfType(this, EpigraphExtendsDecl.class);
   }
 
   @Override
   @Nullable
-  public SchemaQid getQid() {
-    return PsiTreeUtil.getChildOfType(this, SchemaQid.class);
+  public EpigraphQid getQid() {
+    return PsiTreeUtil.getChildOfType(this, EpigraphQid.class);
   }
 
   @Override
   @Nullable
-  public SchemaSupplementsDecl getSupplementsDecl() {
-    return PsiTreeUtil.getChildOfType(this, SchemaSupplementsDecl.class);
+  public EpigraphSupplementsDecl getSupplementsDecl() {
+    return PsiTreeUtil.getChildOfType(this, EpigraphSupplementsDecl.class);
   }
 
   @Override
   @Nullable
-  public SchemaVarTypeBody getVarTypeBody() {
-    return PsiTreeUtil.getChildOfType(this, SchemaVarTypeBody.class);
+  public EpigraphVarTypeBody getVarTypeBody() {
+    return PsiTreeUtil.getChildOfType(this, EpigraphVarTypeBody.class);
   }
 
   @Override

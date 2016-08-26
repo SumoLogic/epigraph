@@ -7,9 +7,9 @@ import com.intellij.util.containers.MultiMap;
 import com.sumologic.epigraph.ideaplugin.schema.brains.ImportsManager;
 import com.sumologic.epigraph.ideaplugin.schema.features.actions.fixes.OptimizeImportsQuickFix;
 import io.epigraph.lang.parser.Fqn;
-import io.epigraph.lang.parser.psi.SchemaImportStatement;
-import io.epigraph.lang.parser.psi.SchemaImports;
-import io.epigraph.lang.parser.psi.SchemaVisitor;
+import io.epigraph.lang.parser.psi.EpigraphImportStatement;
+import io.epigraph.lang.parser.psi.EpigraphImports;
+import io.epigraph.lang.parser.psi.EpigraphVisitor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -23,16 +23,16 @@ public class DuplicateImportInspection extends LocalInspectionTool {
   @NotNull
   @Override
   public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly) {
-    return new SchemaVisitor() {
+    return new EpigraphVisitor() {
       @Override
-      public void visitImports(@NotNull SchemaImports schemaImports) {
-        super.visitImports(schemaImports);
+      public void visitImports(@NotNull EpigraphImports epigraphImports) {
+        super.visitImports(epigraphImports);
 
-        List<SchemaImportStatement> imports = schemaImports.getImportStatementList();
+        List<EpigraphImportStatement> imports = epigraphImports.getImportStatementList();
 
-        MultiMap<Fqn, SchemaImportStatement> importsByFqn = ImportsManager.getImportsByFqn(imports);
+        MultiMap<Fqn, EpigraphImportStatement> importsByFqn = ImportsManager.getImportsByFqn(imports);
 
-        for (Map.Entry<Fqn, Collection<SchemaImportStatement>> entry : importsByFqn.entrySet()) {
+        for (Map.Entry<Fqn, Collection<EpigraphImportStatement>> entry : importsByFqn.entrySet()) {
           entry.getValue().stream()
               .filter(is -> entry.getValue().size() > 1)
               .forEach(is -> holder.registerProblem(is,

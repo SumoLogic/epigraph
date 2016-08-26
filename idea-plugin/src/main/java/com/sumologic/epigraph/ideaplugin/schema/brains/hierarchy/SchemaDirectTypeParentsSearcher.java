@@ -89,9 +89,9 @@ public class SchemaDirectTypeParentsSearcher implements QueryExecutor<EpigraphTy
 
     if (queryParameters.includeStandaloneSupplements) {
       application.runReadAction(() -> {
-        List<SchemaSupplementDef> supplements = SchemaIndexUtil.findSupplementsBySupplemented(project, target);
+        List<EpigraphSupplementDef> supplements = SchemaIndexUtil.findSupplementsBySupplemented(project, target);
         parents.addAll(supplements.stream()
-            .map(SchemaSupplementDef::source)
+            .map(EpigraphSupplementDef::source)
             .filter(Objects::nonNull)
             .collect(Collectors.toList()));
       });

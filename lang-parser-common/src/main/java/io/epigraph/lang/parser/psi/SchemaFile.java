@@ -36,26 +36,26 @@ public class SchemaFile extends PsiFileBase {
 //  }
 
   @Nullable
-  public SchemaDefs getDefs() {
-    return (SchemaDefs) calcTreeElement().findPsiChildByType(E_DEFS);
+  public EpigraphDefs getDefs() {
+    return (EpigraphDefs) calcTreeElement().findPsiChildByType(E_DEFS);
   }
 
   @Nullable
-  public SchemaImports getImportsStatement() {
-    return (SchemaImports) calcTreeElement().findPsiChildByType(E_IMPORTS);
+  public EpigraphImports getImportsStatement() {
+    return (EpigraphImports) calcTreeElement().findPsiChildByType(E_IMPORTS);
   }
 
   @NotNull
-  public List<SchemaImportStatement> getImportStatements() {
-    SchemaImports importsStatement = getImportsStatement();
+  public List<EpigraphImportStatement> getImportStatements() {
+    EpigraphImports importsStatement = getImportsStatement();
     if (importsStatement == null) return Collections.emptyList();
 
     return importsStatement.getImportStatementList();
   }
 
   @Nullable
-  public SchemaNamespaceDecl getNamespaceDecl() {
-    return (SchemaNamespaceDecl) calcTreeElement().findPsiChildByType(E_NAMESPACE_DECL);
+  public EpigraphNamespaceDecl getNamespaceDecl() {
+    return (EpigraphNamespaceDecl) calcTreeElement().findPsiChildByType(E_NAMESPACE_DECL);
   }
 
   @Override

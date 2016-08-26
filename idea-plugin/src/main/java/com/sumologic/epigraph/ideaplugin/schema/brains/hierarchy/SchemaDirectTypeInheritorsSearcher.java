@@ -64,8 +64,8 @@ public class SchemaDirectTypeInheritorsSearcher implements QueryExecutor<Epigrap
     // -- process 'supplement x with y'
 
     application.runReadAction(() -> {
-      List<SchemaSupplementDef> supplements = SchemaIndexUtil.findSupplementsBySource(project, target);
-      for (SchemaSupplementDef supplement : supplements) {
+      List<EpigraphSupplementDef> supplements = SchemaIndexUtil.findSupplementsBySource(project, target);
+      for (EpigraphSupplementDef supplement : supplements) {
         children.addAll(supplement.supplemented());
       }
     });

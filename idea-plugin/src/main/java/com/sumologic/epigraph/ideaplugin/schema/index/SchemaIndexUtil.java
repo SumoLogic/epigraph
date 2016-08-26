@@ -4,9 +4,9 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.search.GlobalSearchScope;
 import io.epigraph.lang.parser.Fqn;
+import io.epigraph.lang.parser.psi.EpigraphSupplementDef;
 import io.epigraph.lang.parser.psi.EpigraphTypeDef;
-import io.epigraph.lang.parser.psi.SchemaNamespaceDecl;
-import io.epigraph.lang.parser.psi.SchemaSupplementDef;
+import io.epigraph.lang.parser.psi.EpigraphNamespaceDecl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -138,12 +138,12 @@ public class SchemaIndexUtil {
   }
 
   @NotNull
-  public static List<SchemaNamespaceDecl> findNamespaces(@NotNull Project project, @Nullable String namePrefix, @NotNull GlobalSearchScope searchScope) {
+  public static List<EpigraphNamespaceDecl> findNamespaces(@NotNull Project project, @Nullable String namePrefix, @NotNull GlobalSearchScope searchScope) {
     // TODO cache all namespaces (if prefix is null)
 
     SchemaNamespaceByNameIndex index = SchemaNamespaceByNameIndex.EP_NAME.findExtension(SchemaNamespaceByNameIndex.class);
 
-    final List<SchemaNamespaceDecl> result = new ArrayList<>();
+    final List<EpigraphNamespaceDecl> result = new ArrayList<>();
 
     index.processAllKeys(project, namespaceFqn -> {
       if (namePrefix == null || namespaceFqn.startsWith(namePrefix)) {
@@ -156,15 +156,15 @@ public class SchemaIndexUtil {
   }
 
   @Nullable
-  public static SchemaNamespaceDecl findNamespace(@NotNull Project project, @NotNull Fqn namespace, @NotNull GlobalSearchScope searchScope) {
+  public static EpigraphNamespaceDecl findNamespace(@NotNull Project project, @NotNull Fqn namespace, @NotNull GlobalSearchScope searchScope) {
     SchemaNamespaceByNameIndex index = SchemaNamespaceByNameIndex.EP_NAME.findExtension(SchemaNamespaceByNameIndex.class);
 
-    Collection<SchemaNamespaceDecl> namespaceDecls = index.get(namespace.toString(), project, searchScope);
+    Collection<EpigraphNamespaceDecl> namespaceDecls = index.get(namespace.toString(), project, searchScope);
     return namespaceDecls.isEmpty() ? null : namespaceDecls.iterator().next();
   }
 
   @NotNull
-  public static List<SchemaSupplementDef> findSupplementsBySource(@NotNull Project project, @NotNull EpigraphTypeDef source) {
+  public static List<EpigraphSupplementDef> findSupplementsBySource(@NotNull Project project, @NotNull EpigraphTypeDef source) {
     GlobalSearchScope allScope = GlobalSearchScope.allScope(project);
 
     String name = source.getName();
@@ -172,15 +172,15 @@ public class SchemaIndexUtil {
 
     SchemaSupplementBySourceIndex index = SchemaSupplementBySourceIndex.EP_NAME.findExtension(SchemaSupplementBySourceIndex.class);
 
-    final List<SchemaSupplementDef> result = new ArrayList<>();
+    final List<EpigraphSupplementDef> result = new ArrayList<>();
 
     index.processAllKeys(project, sourceShortName -> {
-      Collection<SchemaSupplementDef> schemaSupplementDefs = index.get(sourceShortName, project, allScope);
-      for (SchemaSupplementDef schemaSupplementDef : schemaSupplementDefs) {
+      Collection<EpigraphSupplementDef> epigraphSupplementDefs = index.get(sourceShortName, project, allScope);
+      for (EpigraphSupplementDef epigraphSupplementDef : epigraphSupplementDefs) {
         ProgressManager.checkCanceled();
-        EpigraphTypeDef s = schemaSupplementDef.source();
-        GlobalSearchScope supplementScope = SchemaSearchScopeUtil.getSearchScope(schemaSupplementDef);
-        if (source == s && SchemaSearchScopeUtil.isInScope(supplementScope, source)) result.add(schemaSupplementDef);
+        EpigraphTypeDef s = epigraphSupplementDef.source();
+        GlobalSearchScope supplementScope = SchemaSearchScopeUtil.getSearchScope(epigraphSupplementDef);
+        if (source == s && SchemaSearchScopeUtil.isInScope(supplementScope, source)) result.add(epigraphSupplementDef);
       }
       return true;
     });
@@ -189,7 +189,7 @@ public class SchemaIndexUtil {
   }
 
   @NotNull
-  public static List<SchemaSupplementDef> findSupplementsBySupplemented(@NotNull Project project, @NotNull EpigraphTypeDef supplemented) {
+  public static List<EpigraphSupplementDef> findSupplementsBySupplemented(@NotNull Project project, @NotNull EpigraphTypeDef supplemented) {
     GlobalSearchScope allScope = GlobalSearchScope.allScope(project);
 
     String name = supplemented.getName();
@@ -197,22 +197,22 @@ public class SchemaIndexUtil {
 
     SchemaSupplementBySupplementedIndex index = SchemaSupplementBySupplementedIndex.EP_NAME.findExtension(SchemaSupplementBySupplementedIndex.class);
 
-    final List<SchemaSupplementDef> result = new ArrayList<>();
+    final List<EpigraphSupplementDef> result = new ArrayList<>();
 
     index.processAllKeys(project, sourceShortName -> {
-      Collection<SchemaSupplementDef> schemaSupplementDefs = index.get(sourceShortName, project, allScope);
+      Collection<EpigraphSupplementDef> epigraphSupplementDefs = index.get(sourceShortName, project, allScope);
       // check all supplement defs
-      for (SchemaSupplementDef schemaSupplementDef : schemaSupplementDefs) {
+      for (EpigraphSupplementDef epigraphSupplementDef : epigraphSupplementDefs) {
         ProgressManager.checkCanceled();
         // supplemented must be visible by supplement
-        GlobalSearchScope supplementScope = SchemaSearchScopeUtil.getSearchScope(schemaSupplementDef);
+        GlobalSearchScope supplementScope = SchemaSearchScopeUtil.getSearchScope(epigraphSupplementDef);
         if (SchemaSearchScopeUtil.isInScope(supplementScope, supplemented)) {
           // check their supplemented lists
-          List<EpigraphTypeDef> ss = schemaSupplementDef.supplemented();
+          List<EpigraphTypeDef> ss = epigraphSupplementDef.supplemented();
           for (EpigraphTypeDef s : ss) {
             // try to find `supplemented` among them
             if (supplemented == s) {
-              result.add(schemaSupplementDef);
+              result.add(epigraphSupplementDef);
               break;
             }
           }

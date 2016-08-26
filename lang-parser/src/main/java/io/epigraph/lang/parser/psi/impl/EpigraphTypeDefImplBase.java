@@ -26,7 +26,7 @@ import static io.epigraph.lang.lexer.EpigraphElementTypes.E_QID;
 public abstract class EpigraphTypeDefImplBase<S extends EpigraphTypeDefStubBase<T>, T extends EpigraphTypeDef>
     extends StubBasedPsiElementBase<S> implements EpigraphTypeDef {
 
-//  private final static Logger LOG = Logger.getInstance(SchemaTypeDefImplBase.class);
+//  private final static Logger LOG = Logger.getInstance(EpigraphTypeDefImplBase.class);
 
   public EpigraphTypeDefImplBase(@NotNull ASTNode node) {
     super(node);
@@ -38,20 +38,20 @@ public abstract class EpigraphTypeDefImplBase<S extends EpigraphTypeDefStubBase<
 
   @Override
   @Nullable
-  public SchemaExtendsDecl getExtendsDecl() {
-    return findChildByClass(SchemaExtendsDecl.class);
+  public EpigraphExtendsDecl getExtendsDecl() {
+    return findChildByClass(EpigraphExtendsDecl.class);
   }
 
   @Override
   @Nullable
-  public SchemaSupplementsDecl getSupplementsDecl() {
-    return findChildByClass(SchemaSupplementsDecl.class);
+  public EpigraphSupplementsDecl getSupplementsDecl() {
+    return findChildByClass(EpigraphSupplementsDecl.class);
   }
 
   @Override
   @Nullable
-  public SchemaMetaDecl getMetaDecl() {
-    return findChildByClass(SchemaMetaDecl.class);
+  public EpigraphMetaDecl getMetaDecl() {
+    return findChildByClass(EpigraphMetaDecl.class);
   }
 
   @Nullable
@@ -66,13 +66,13 @@ public abstract class EpigraphTypeDefImplBase<S extends EpigraphTypeDefStubBase<
 
   @Override
   @Nullable
-  public SchemaQid getQid() {
+  public EpigraphQid getQid() {
     return findChildByType(E_QID);
   }
 
   @Nullable
   public String getName() {
-    SchemaQid id = getQid();
+    EpigraphQid id = getQid();
     return id == null ? null : id.getCanonicalName();
   }
 
@@ -127,13 +127,13 @@ public abstract class EpigraphTypeDefImplBase<S extends EpigraphTypeDefStubBase<
 
   @NotNull
   public List<EpigraphTypeDef> extendsParents() {
-    SchemaExtendsDecl extendsDecl = getExtendsDecl();
+    EpigraphExtendsDecl extendsDecl = getExtendsDecl();
     if (extendsDecl == null) return Collections.emptyList();
-    List<SchemaFqnTypeRef> typeRefList = extendsDecl.getFqnTypeRefList();
+    List<EpigraphFqnTypeRef> typeRefList = extendsDecl.getFqnTypeRefList();
     if (typeRefList.isEmpty()) return Collections.emptyList();
 
     List<EpigraphTypeDef> result = new ArrayList<>(typeRefList.size());
-    for (SchemaFqnTypeRef typeRef : typeRefList) {
+    for (EpigraphFqnTypeRef typeRef : typeRefList) {
       EpigraphTypeDef resolved = typeRef.resolve();
       if (resolved != null) result.add(resolved);
     }

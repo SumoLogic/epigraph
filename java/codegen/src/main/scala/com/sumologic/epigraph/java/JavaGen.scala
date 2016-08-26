@@ -5,7 +5,7 @@ package com.sumologic.epigraph.java
 import java.nio.file.Path
 
 import com.sumologic.epigraph.schema.compiler._
-import io.epigraph.lang.schema.parser.Fqn
+import io.epigraph.lang.parser.Fqn
 
 import scala.collection.GenTraversableOnce
 import scala.collection.JavaConversions._

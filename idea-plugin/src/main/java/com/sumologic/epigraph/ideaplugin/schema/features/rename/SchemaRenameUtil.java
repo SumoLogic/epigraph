@@ -15,9 +15,9 @@ import com.intellij.util.containers.ContainerUtil;
 import com.sumologic.epigraph.ideaplugin.schema.SchemaBundle;
 import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.SchemaDirectTypeParentsSearch;
 import com.sumologic.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
+import io.epigraph.lang.parser.psi.EpigraphFieldDecl;
 import io.epigraph.lang.parser.psi.EpigraphTypeDef;
-import io.epigraph.lang.parser.psi.SchemaFieldDecl;
-import io.epigraph.lang.parser.psi.SchemaRecordTypeBody;
+import io.epigraph.lang.parser.psi.EpigraphRecordTypeBody;
 import io.epigraph.lang.parser.psi.EpigraphRecordTypeDef;
 import io.epigraph.lang.parser.psi.impl.EpigraphElementFactory;
 import org.jetbrains.annotations.NotNull;
@@ -152,8 +152,8 @@ public class SchemaRenameUtil {
     EpigraphTypeDef currentType;
     Function<EpigraphTypeDef, PsiNamedElement> typeToMemberFunc;
 
-    if (element instanceof SchemaFieldDecl) {
-      SchemaFieldDecl fieldDecl = (SchemaFieldDecl) element;
+    if (element instanceof EpigraphFieldDecl) {
+      EpigraphFieldDecl fieldDecl = (EpigraphFieldDecl) element;
       currentType = fieldDecl.getRecordTypeDef();
       String name = element.getName();
       assert name != null;
@@ -198,10 +198,10 @@ public class SchemaRenameUtil {
     public PsiNamedElement apply(EpigraphTypeDef typeDef) {
       if (typeDef instanceof EpigraphRecordTypeDef) {
         EpigraphRecordTypeDef recordTypeDef = (EpigraphRecordTypeDef) typeDef;
-        SchemaRecordTypeBody recordTypeBody = recordTypeDef.getRecordTypeBody();
+        EpigraphRecordTypeBody recordTypeBody = recordTypeDef.getRecordTypeBody();
         if (recordTypeBody == null) return null;
 
-        for (SchemaFieldDecl fieldDecl : recordTypeBody.getFieldDeclList()) {
+        for (EpigraphFieldDecl fieldDecl : recordTypeBody.getFieldDeclList()) {
           if (fieldName.equals(fieldDecl.getName()))
             return fieldDecl;
         }

@@ -5,8 +5,8 @@ import com.intellij.psi.ElementDescriptionProvider;
 import com.intellij.psi.PsiElement;
 import com.intellij.usageView.UsageViewLongNameLocation;
 import com.sumologic.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
+import io.epigraph.lang.parser.psi.EpigraphFqnSegment;
 import io.epigraph.lang.parser.psi.EpigraphTypeDef;
-import io.epigraph.lang.parser.psi.SchemaFqnSegment;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,8 +25,8 @@ public class SchemaElementDescriptionProvider implements ElementDescriptionProvi
         return SchemaPresentationUtil.getName(epigraphTypeDef, true);
       }
 
-      if (element instanceof SchemaFqnSegment) {
-        SchemaFqnSegment fqnSegment = (SchemaFqnSegment) element;
+      if (element instanceof EpigraphFqnSegment) {
+        EpigraphFqnSegment fqnSegment = (EpigraphFqnSegment) element;
         return fqnSegment.getFqn().toString();
       }
     }

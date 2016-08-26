@@ -2,8 +2,8 @@ package io.epigraph.lang.parser.psi.stubs;
 
 import com.intellij.psi.stubs.*;
 import io.epigraph.lang.schema.SchemaLanguage;
-import io.epigraph.lang.parser.psi.SchemaSupplementDef;
-import io.epigraph.lang.parser.psi.impl.SchemaSupplementDefImpl;
+import io.epigraph.lang.parser.psi.EpigraphSupplementDef;
+import io.epigraph.lang.parser.psi.impl.EpigraphSupplementDefImpl;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -12,18 +12,18 @@ import java.io.IOException;
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public class EpigraphSupplementDefStubElementType extends IStubElementType<EpigraphSupplementDefStub, SchemaSupplementDef> {
+public class EpigraphSupplementDefStubElementType extends IStubElementType<EpigraphSupplementDefStub, EpigraphSupplementDef> {
   public EpigraphSupplementDefStubElementType(@NotNull @NonNls String debugName) {
     super(debugName, SchemaLanguage.INSTANCE);
   }
 
   @Override
-  public SchemaSupplementDef createPsi(@NotNull EpigraphSupplementDefStub stub) {
-    return new SchemaSupplementDefImpl(stub, this);
+  public EpigraphSupplementDef createPsi(@NotNull EpigraphSupplementDefStub stub) {
+    return new EpigraphSupplementDefImpl(stub, this);
   }
 
   @Override
-  public EpigraphSupplementDefStub createStub(@NotNull SchemaSupplementDef supplementDef, StubElement parentStub) {
+  public EpigraphSupplementDefStub createStub(@NotNull EpigraphSupplementDef supplementDef, StubElement parentStub) {
     return new EpigraphSupplementDefStubImpl(parentStub);
   }
 

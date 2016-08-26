@@ -1,6 +1,7 @@
 // This is a generated file. Not intended for manual editing.
 package io.epigraph.lang.parser.psi.impl;
 
+import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
@@ -21,49 +22,49 @@ public class EpigraphMapTypeDefImpl extends EpigraphMapTypeDefImplBase implement
     super(stub, nodeType);
   }
 
-  public void accept(@NotNull SchemaVisitor visitor) {
+  public void accept(@NotNull EpigraphVisitor visitor) {
     visitor.visitMapTypeDef(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof SchemaVisitor) accept((SchemaVisitor)visitor);
+    if (visitor instanceof EpigraphVisitor) accept((EpigraphVisitor)visitor);
     else super.accept(visitor);
   }
 
   @Override
   @NotNull
-  public SchemaAnonMap getAnonMap() {
-    return notNullChild(PsiTreeUtil.getChildOfType(this, SchemaAnonMap.class));
+  public EpigraphAnonMap getAnonMap() {
+    return notNullChild(PsiTreeUtil.getChildOfType(this, EpigraphAnonMap.class));
   }
 
   @Override
   @Nullable
-  public SchemaExtendsDecl getExtendsDecl() {
-    return PsiTreeUtil.getChildOfType(this, SchemaExtendsDecl.class);
+  public EpigraphExtendsDecl getExtendsDecl() {
+    return PsiTreeUtil.getChildOfType(this, EpigraphExtendsDecl.class);
   }
 
   @Override
   @Nullable
-  public SchemaMapTypeBody getMapTypeBody() {
-    return PsiTreeUtil.getChildOfType(this, SchemaMapTypeBody.class);
+  public EpigraphMapTypeBody getMapTypeBody() {
+    return PsiTreeUtil.getChildOfType(this, EpigraphMapTypeBody.class);
   }
 
   @Override
   @Nullable
-  public SchemaMetaDecl getMetaDecl() {
-    return PsiTreeUtil.getChildOfType(this, SchemaMetaDecl.class);
+  public EpigraphMetaDecl getMetaDecl() {
+    return PsiTreeUtil.getChildOfType(this, EpigraphMetaDecl.class);
   }
 
   @Override
   @Nullable
-  public SchemaQid getQid() {
-    return PsiTreeUtil.getChildOfType(this, SchemaQid.class);
+  public EpigraphQid getQid() {
+    return PsiTreeUtil.getChildOfType(this, EpigraphQid.class);
   }
 
   @Override
   @Nullable
-  public SchemaSupplementsDecl getSupplementsDecl() {
-    return PsiTreeUtil.getChildOfType(this, SchemaSupplementsDecl.class);
+  public EpigraphSupplementsDecl getSupplementsDecl() {
+    return PsiTreeUtil.getChildOfType(this, EpigraphSupplementsDecl.class);
   }
 
   @Override

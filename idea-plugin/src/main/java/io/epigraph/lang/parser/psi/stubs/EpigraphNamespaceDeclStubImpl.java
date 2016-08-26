@@ -5,12 +5,12 @@ import com.intellij.psi.stubs.StubBase;
 import com.intellij.psi.stubs.StubElement;
 import io.epigraph.lang.parser.Fqn;
 import io.epigraph.lang.lexer.EpigraphElementTypes;
-import io.epigraph.lang.parser.psi.SchemaNamespaceDecl;
+import io.epigraph.lang.parser.psi.EpigraphNamespaceDecl;
 
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public class EpigraphNamespaceDeclStubImpl extends StubBase<SchemaNamespaceDecl> implements EpigraphNamespaceDeclStub {
+public class EpigraphNamespaceDeclStubImpl extends StubBase<EpigraphNamespaceDecl> implements EpigraphNamespaceDeclStub {
   private final Fqn fqn;
 
   protected EpigraphNamespaceDeclStubImpl(StubElement parent, Fqn fqn) {

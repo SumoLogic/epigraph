@@ -4,7 +4,7 @@ package com.sumologic.epigraph.schema.compiler
 
 import com.intellij.psi.PsiElement
 import io.epigraph.lang.parser.Fqn
-import io.epigraph.lang.parser.psi.{SchemaAnonList, SchemaAnonMap, SchemaFqnTypeRef, SchemaTypeDef}
+import io.epigraph.lang.parser.psi.{EpigraphAnonList, EpigraphAnonMap, EpigraphFqnTypeRef, EpigraphTypeDef}
 import org.jetbrains.annotations.Nullable
 
 import scala.collection.JavaConversions._
@@ -39,18 +39,18 @@ class CTypeFqn private(csf: CSchemaFile, val fqn: Fqn, psi: PsiElement)(implicit
   @Nullable
   val namespace: String = if (fqn.size == 1) null else fqn.removeLastSegment().toString
 
-  def this(csf: CSchemaFile, parentNs: Fqn, lqn: SchemaFqnTypeRef)(implicit ctx: CContext) = this(
+  def this(csf: CSchemaFile, parentNs: Fqn, lqn: EpigraphFqnTypeRef)(implicit ctx: CContext) = this(
     csf, parentNs.append(lqn.getFqn.getFqn), lqn: PsiElement
   )
 
-  def this(csf: CSchemaFile, parentNs: Fqn, typeDef: SchemaTypeDef)(implicit ctx: CContext) = this(
+  def this(csf: CSchemaFile, parentNs: Fqn, typeDef: EpigraphTypeDef)(implicit ctx: CContext) = this(
     csf, parentNs.append(typeDef.getQid.getCanonicalName), typeDef.getQid.getId: PsiElement
   )
 
 }
 
 
-class CAnonListTypeName(csf: CSchemaFile, override val psi: SchemaAnonList)(implicit ctx: CContext) extends {
+class CAnonListTypeName(csf: CSchemaFile, override val psi: EpigraphAnonList)(implicit ctx: CContext) extends {
 
   val elementValueType: CValueType = new CValueType(csf, psi.getValueTypeRef)
 
@@ -65,7 +65,7 @@ object CAnonListTypeName {
 }
 
 
-class CAnonMapTypeName(csf: CSchemaFile, override val psi: SchemaAnonMap)(implicit ctx: CContext) extends {
+class CAnonMapTypeName(csf: CSchemaFile, override val psi: EpigraphAnonMap)(implicit ctx: CContext) extends {
 
   val keyTypeRef: CTypeRef = CTypeRef(csf, psi.getTypeRef)
 

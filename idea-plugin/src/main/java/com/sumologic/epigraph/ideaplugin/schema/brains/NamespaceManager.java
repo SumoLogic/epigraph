@@ -6,10 +6,10 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
 import io.epigraph.lang.parser.Fqn;
+import io.epigraph.lang.parser.psi.EpigraphFqn;
+import io.epigraph.lang.parser.psi.EpigraphImportStatement;
+import io.epigraph.lang.parser.psi.EpigraphNamespaceDecl;
 import io.epigraph.lang.parser.psi.SchemaFile;
-import io.epigraph.lang.parser.psi.SchemaFqn;
-import io.epigraph.lang.parser.psi.SchemaImportStatement;
-import io.epigraph.lang.parser.psi.SchemaNamespaceDecl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,7 +27,7 @@ public class NamespaceManager {
 //  public static List<Fqn> DEFAULT_NAMESPACES_LIST = Collections.unmodifiableList(Arrays.asList(DEFAULT_NAMESPACES));
 
   private final Project project;
-  private Collection<SchemaNamespaceDecl> allNamespaces;
+  private Collection<EpigraphNamespaceDecl> allNamespaces;
 
   public NamespaceManager(@NotNull Project project) {
     this.project = project;
@@ -39,8 +39,8 @@ public class NamespaceManager {
   }
 
   @NotNull
-  public Collection<SchemaNamespaceDecl> getAllNamespaces(@NotNull GlobalSearchScope searchScope) {
-    Collection<SchemaNamespaceDecl> res = allNamespaces;
+  public Collection<EpigraphNamespaceDecl> getAllNamespaces(@NotNull GlobalSearchScope searchScope) {
+    Collection<EpigraphNamespaceDecl> res = allNamespaces;
     if (res != null) return res;
 
     res = getNamespacesByPrefix(project, null, false, searchScope);
@@ -54,10 +54,10 @@ public class NamespaceManager {
 
     if (schemaFile == null) return null;
 
-    SchemaNamespaceDecl namespaceDecl = schemaFile.getNamespaceDecl();
+    EpigraphNamespaceDecl namespaceDecl = schemaFile.getNamespaceDecl();
     if (namespaceDecl == null) return null;
 
-    SchemaFqn namespaceDeclFqn = namespaceDecl.getFqn();
+    EpigraphFqn namespaceDeclFqn = namespaceDecl.getFqn();
     if (namespaceDeclFqn == null) return null;
 
     return namespaceDeclFqn.getFqn();
@@ -71,9 +71,9 @@ public class NamespaceManager {
     List<Fqn> res = new ArrayList<>();
 
     // 1. imported namespaces
-    List<SchemaImportStatement> importStatements = schemaFile.getImportStatements();
-    for (SchemaImportStatement importStatement : importStatements) {
-      SchemaFqn importFqn = importStatement.getFqn();
+    List<EpigraphImportStatement> importStatements = schemaFile.getImportStatements();
+    for (EpigraphImportStatement importStatement : importStatements) {
+      EpigraphFqn importFqn = importStatement.getFqn();
       if (importFqn != null) res.add(importFqn.getFqn());
     }
 
@@ -101,16 +101,16 @@ public class NamespaceManager {
    * @return collection of matching namespaces.
    */
   @NotNull
-  public static List<SchemaNamespaceDecl> getNamespacesByPrefix(@NotNull Project project,
-                                                                @Nullable Fqn prefix,
-                                                                boolean returnSingleExactMatch,
-                                                                @NotNull GlobalSearchScope searchScope) {
+  public static List<EpigraphNamespaceDecl> getNamespacesByPrefix(@NotNull Project project,
+                                                                  @Nullable Fqn prefix,
+                                                                  boolean returnSingleExactMatch,
+                                                                  @NotNull GlobalSearchScope searchScope) {
     String prefixStr = prefix == null ? null : prefix.toString();
     if (returnSingleExactMatch && prefix != null) {
       assert prefixStr != null;
-      List<SchemaNamespaceDecl> namespaces = SchemaIndexUtil.findNamespaces(project, prefixStr, searchScope);
+      List<EpigraphNamespaceDecl> namespaces = SchemaIndexUtil.findNamespaces(project, prefixStr, searchScope);
       // try to find a namespace which is exactly our prefix
-      for (SchemaNamespaceDecl namespace : namespaces) {
+      for (EpigraphNamespaceDecl namespace : namespaces) {
         //noinspection ConstantConditions
         if (prefix.equals(namespace.getFqn2()))
           return Collections.singletonList(namespace);
@@ -176,7 +176,7 @@ public class NamespaceManager {
       if (child instanceof PsiWhiteSpace) return;
 
       // namespace changed
-      if (PsiTreeUtil.getParentOfType(child, SchemaNamespaceDecl.class) != null) {
+      if (PsiTreeUtil.getParentOfType(child, EpigraphNamespaceDecl.class) != null) {
         invalidate = true;
       }
 

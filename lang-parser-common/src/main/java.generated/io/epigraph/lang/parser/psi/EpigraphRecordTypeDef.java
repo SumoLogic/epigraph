@@ -10,19 +10,19 @@ import io.epigraph.lang.parser.psi.stubs.EpigraphRecordTypeDefStub;
 public interface EpigraphRecordTypeDef extends EpigraphTypeDef, StubBasedPsiElement<EpigraphRecordTypeDefStub> {
 
   @Nullable
-  SchemaExtendsDecl getExtendsDecl();
+  EpigraphExtendsDecl getExtendsDecl();
 
   @Nullable
-  SchemaMetaDecl getMetaDecl();
+  EpigraphMetaDecl getMetaDecl();
 
   @Nullable
-  SchemaQid getQid();
+  EpigraphQid getQid();
 
   @Nullable
-  SchemaRecordTypeBody getRecordTypeBody();
+  EpigraphRecordTypeBody getRecordTypeBody();
 
   @Nullable
-  SchemaSupplementsDecl getSupplementsDecl();
+  EpigraphSupplementsDecl getSupplementsDecl();
 
   @Nullable
   PsiElement getAbstract();

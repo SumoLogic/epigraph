@@ -35,10 +35,10 @@ public class SchemaAnnotator implements Annotator {
 
   @Override
   public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
-    element.accept(new SchemaVisitor() {
+    element.accept(new EpigraphVisitor() {
 
       @Override
-      public void visitFieldDecl(@NotNull SchemaFieldDecl fieldDecl) {
+      public void visitFieldDecl(@NotNull EpigraphFieldDecl fieldDecl) {
         PsiElement id = fieldDecl.getQid();
         setHighlighting(id, holder, SchemaSyntaxHighlighter.FIELD);
 
@@ -54,7 +54,7 @@ public class SchemaAnnotator implements Annotator {
       }
 
       @Override
-      public void visitVarTagDecl(@NotNull SchemaVarTagDecl memberDecl) {
+      public void visitVarTagDecl(@NotNull EpigraphVarTagDecl memberDecl) {
         PsiElement id = memberDecl.getQid();
         setHighlighting(id, holder, SchemaSyntaxHighlighter.VAR_MEMBER);
 
@@ -69,8 +69,8 @@ public class SchemaAnnotator implements Annotator {
       }
 
       @Override
-      public void visitDefaultOverride(@NotNull SchemaDefaultOverride defaultOverride) {
-        SchemaVarTagRef varTagRef = defaultOverride.getVarTagRef();
+      public void visitDefaultOverride(@NotNull EpigraphDefaultOverride defaultOverride) {
+        EpigraphVarTagRef varTagRef = defaultOverride.getVarTagRef();
         if (varTagRef != null) {
           PsiElement id = varTagRef.getQid();
           setHighlighting(id, holder, SchemaSyntaxHighlighter.VAR_MEMBER);
@@ -133,12 +133,12 @@ public class SchemaAnnotator implements Annotator {
 //      }
 
       @Override
-      public void visitExtendsDecl(@NotNull SchemaExtendsDecl schemaExtendsDecl) {
-        EpigraphTypeDef typeDef = (EpigraphTypeDef) schemaExtendsDecl.getParent();
+      public void visitExtendsDecl(@NotNull EpigraphExtendsDecl epigraphExtendsDecl) {
+        EpigraphTypeDef typeDef = (EpigraphTypeDef) epigraphExtendsDecl.getParent();
         if (typeDef == null) return;
 
-        List<SchemaFqnTypeRef> typeRefList = schemaExtendsDecl.getFqnTypeRefList();
-        for (SchemaFqnTypeRef fqnTypeRef : typeRefList) {
+        List<EpigraphFqnTypeRef> typeRefList = epigraphExtendsDecl.getFqnTypeRefList();
+        for (EpigraphFqnTypeRef fqnTypeRef : typeRefList) {
           boolean wrongKind = false;
 
           EpigraphTypeDef parent = fqnTypeRef.resolve();
@@ -152,28 +152,28 @@ public class SchemaAnnotator implements Annotator {
       }
 
       @Override
-      public void visitSupplementsDecl(@NotNull SchemaSupplementsDecl o) {
+      public void visitSupplementsDecl(@NotNull EpigraphSupplementsDecl o) {
         // TODO similar to the above
       }
 
       @Override
-      public void visitSupplementDef(@NotNull SchemaSupplementDef supplementDef) {
+      public void visitSupplementDef(@NotNull EpigraphSupplementDef supplementDef) {
         // TODO check types compatibility (and circular inheritance?)
       }
 
       @Override
-      public void visitCustomParam(@NotNull SchemaCustomParam customParam) {
+      public void visitCustomParam(@NotNull EpigraphCustomParam customParam) {
         setHighlighting(customParam.getQid(), holder, SchemaSyntaxHighlighter.PARAM_NAME);
       }
 
       @Override
-      public void visitFqnTypeRef(@NotNull SchemaFqnTypeRef typeRef) {
-        SchemaFqn fqn = typeRef.getFqn();
+      public void visitFqnTypeRef(@NotNull EpigraphFqnTypeRef typeRef) {
+        EpigraphFqn fqn = typeRef.getFqn();
         highlightFqn(fqn, holder, new ImportTypeIntentionFix(typeRef));
       }
 
       @Override
-      public void visitFqn(@NotNull SchemaFqn fqn) {
+      public void visitFqn(@NotNull EpigraphFqn fqn) {
         PsiElement parent = fqn.getParent();
         // TODO don't check ref in the namespace decl?
         if (parent.getNode().getElementType() != E_FQN_TYPE_REF) {
@@ -182,7 +182,7 @@ public class SchemaAnnotator implements Annotator {
       }
 
       @Override
-      public void visitVarTagRef(@NotNull SchemaVarTagRef tagRef) {
+      public void visitVarTagRef(@NotNull EpigraphVarTagRef tagRef) {
         PsiReference reference = tagRef.getReference();
         if (reference == null || reference.resolve() == null) {
           holder.createErrorAnnotation(tagRef.getNode(), SchemaBundle.message("annotator.unresolved.reference"));
@@ -191,11 +191,11 @@ public class SchemaAnnotator implements Annotator {
     });
   }
 
-  private void validateExtendsList(@NotNull EpigraphTypeDef typeDef, @NotNull SchemaAnonList anonList) {
+  private void validateExtendsList(@NotNull EpigraphTypeDef typeDef, @NotNull EpigraphAnonList anonList) {
     // TODO check types compatibility, lists are covariant?
   }
 
-  private void validateExtendsMap(@NotNull EpigraphTypeDef typeDef, @NotNull SchemaAnonMap anonMap) {
+  private void validateExtendsMap(@NotNull EpigraphTypeDef typeDef, @NotNull EpigraphAnonMap anonMap) {
     // TODO check types compatibility, maps are covariant?
   }
 
@@ -203,12 +203,12 @@ public class SchemaAnnotator implements Annotator {
 //    // TODO
 //  }
 
-  private void highlightFqn(@Nullable SchemaFqn schemaFqn, @NotNull AnnotationHolder holder,
+  private void highlightFqn(@Nullable EpigraphFqn epigraphFqn, @NotNull AnnotationHolder holder,
                             @Nullable IntentionAction unresolvedTypeRefFix) {
-    if (schemaFqn != null) {
+    if (epigraphFqn != null) {
 //      setHighlighting(schemaFqn.getLastChild(), holder, SchemaSyntaxHighlighter.TYPE_REF);
 
-      PsiPolyVariantReference reference = (PsiPolyVariantReference) schemaFqn.getLastChild().getReference();
+      PsiPolyVariantReference reference = (PsiPolyVariantReference) epigraphFqn.getLastChild().getReference();
       assert reference != null;
 
 //      if (reference.resolve() == null) {
@@ -220,13 +220,13 @@ public class SchemaAnnotator implements Annotator {
         }
 
         if (resolveResults.length == 0) {
-          Annotation annotation = holder.createErrorAnnotation(schemaFqn.getNode(),
+          Annotation annotation = holder.createErrorAnnotation(epigraphFqn.getNode(),
               SchemaBundle.message("annotator.unresolved.reference"));
 
           if (unresolvedTypeRefFix != null)
             annotation.registerFix(unresolvedTypeRefFix);
         } else if (typeDefFqns.size() > 1) {
-          Annotation annotation = holder.createErrorAnnotation(schemaFqn.getNode(), SchemaBundle.message("annotator.ambiguous.type.reference"));
+          Annotation annotation = holder.createErrorAnnotation(epigraphFqn.getNode(), SchemaBundle.message("annotator.ambiguous.type.reference"));
           StringBuilder tooltipText = new StringBuilder(SchemaBundle.message("annotator.ambiguous.type.reference.candidates"));
           for (String typeDefFqn : typeDefFqns) {
             tooltipText.append('\n');

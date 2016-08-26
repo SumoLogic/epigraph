@@ -10,8 +10,8 @@ import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.TypeMembers;
 import com.sumologic.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
 import io.epigraph.lang.parser.NamingConventions;
 import io.epigraph.lang.parser.SchemaParserDefinition;
-import io.epigraph.lang.parser.psi.SchemaQid;
-import io.epigraph.lang.parser.psi.SchemaVarTagDecl;
+import io.epigraph.lang.parser.psi.EpigraphQid;
+import io.epigraph.lang.parser.psi.EpigraphVarTagDecl;
 import io.epigraph.lang.parser.psi.EpigraphVarTypeDef;
 import io.epigraph.lang.parser.psi.impl.EpigraphElementFactory;
 import org.jetbrains.annotations.NotNull;
@@ -36,7 +36,7 @@ public class SchemaVarTagReference extends PsiReferenceBase<PsiElement> implemen
   private final ResolveCache.PolyVariantResolver<SchemaVarTagReference> polyVariantResolver =
       (reference, incompleteCode) -> multiResolveImpl();
 
-  public SchemaVarTagReference(@NotNull EpigraphVarTypeDef typeDef, @NotNull SchemaQid id) {
+  public SchemaVarTagReference(@NotNull EpigraphVarTypeDef typeDef, @NotNull EpigraphQid id) {
     super(id);
     this.typeDef = typeDef;
 
@@ -52,7 +52,7 @@ public class SchemaVarTagReference extends PsiReferenceBase<PsiElement> implemen
 
   @Nullable
   protected PsiElement resolveImpl() {
-    List<SchemaVarTagDecl> tagDecls = TypeMembers.getVarTagDecls(typeDef, tagName);
+    List<EpigraphVarTagDecl> tagDecls = TypeMembers.getVarTagDecls(typeDef, tagName);
     if (tagDecls.size() == 0)
       return null;
 
@@ -68,7 +68,7 @@ public class SchemaVarTagReference extends PsiReferenceBase<PsiElement> implemen
 
   @NotNull
   protected ResolveResult[] multiResolveImpl() {
-    List<SchemaVarTagDecl> tagDecls = TypeMembers.getVarTagDecls(typeDef, tagName);
+    List<EpigraphVarTagDecl> tagDecls = TypeMembers.getVarTagDecls(typeDef, tagName);
     return tagDecls.stream()
         .map(PsiElementResult::new)
         .toArray(ResolveResult[]::new);
@@ -77,7 +77,7 @@ public class SchemaVarTagReference extends PsiReferenceBase<PsiElement> implemen
   @NotNull
   @Override
   public Object[] getVariants() {
-    List<SchemaVarTagDecl> tagDecls = TypeMembers.getVarTagDecls(typeDef, null);
+    List<EpigraphVarTagDecl> tagDecls = TypeMembers.getVarTagDecls(typeDef, null);
     return tagDecls.stream()
         .map(varTagDecl ->
             LookupElementBuilder.create(getCompletionName(varTagDecl))
@@ -87,7 +87,7 @@ public class SchemaVarTagReference extends PsiReferenceBase<PsiElement> implemen
         .toArray();
   }
 
-  private String getCompletionName(@NotNull SchemaVarTagDecl varTagDecl) {
+  private String getCompletionName(@NotNull EpigraphVarTagDecl varTagDecl) {
     String name = varTagDecl.getQid().getCanonicalName();
     return SchemaParserDefinition.isKeyword(name) ?
         NamingConventions.enquote(name) : name;

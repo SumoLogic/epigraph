@@ -3,10 +3,10 @@ package io.epigraph.lang.parser.psi.stubs;
 import com.intellij.psi.stubs.*;
 import com.intellij.util.io.StringRef;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaStubIndexKeys;
+import io.epigraph.lang.parser.psi.EpigraphFqnTypeRef;
 import io.epigraph.lang.parser.psi.EpigraphTypeDef;
 import io.epigraph.lang.schema.SchemaLanguage;
-import io.epigraph.lang.parser.psi.SchemaExtendsDecl;
-import io.epigraph.lang.parser.psi.SchemaFqnTypeRef;
+import io.epigraph.lang.parser.psi.EpigraphExtendsDecl;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -38,16 +38,16 @@ public abstract class EpigraphTypeDefStubElementTypeBase<S extends EpigraphTypeD
 
   @Nullable
   protected static List<SerializedFqnTypeRef> getSerializedExtendsTypeRefs(@NotNull EpigraphTypeDef typeDef) {
-    SchemaExtendsDecl extendsDecl = typeDef.getExtendsDecl();
+    EpigraphExtendsDecl extendsDecl = typeDef.getExtendsDecl();
     if (extendsDecl == null) return null;
-    List<SchemaFqnTypeRef> typeRefList = extendsDecl.getFqnTypeRefList();
+    List<EpigraphFqnTypeRef> typeRefList = extendsDecl.getFqnTypeRefList();
     if (typeRefList.isEmpty()) return Collections.emptyList();
 
     return getSerializedFqnTypeRefs(typeRefList);
   }
 
   @NotNull
-  protected static List<SerializedFqnTypeRef> getSerializedFqnTypeRefs(@NotNull List<SchemaFqnTypeRef> typeRefs) {
+  protected static List<SerializedFqnTypeRef> getSerializedFqnTypeRefs(@NotNull List<EpigraphFqnTypeRef> typeRefs) {
     return typeRefs.stream()
         .map(SerializedFqnTypeRef::new)
         .filter(Objects::nonNull) // filter out non-fqn or badly broken type refs

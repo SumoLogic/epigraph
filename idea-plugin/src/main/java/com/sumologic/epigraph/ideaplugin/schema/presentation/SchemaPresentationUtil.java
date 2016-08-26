@@ -36,8 +36,8 @@ public class SchemaPresentationUtil {
 
   @Nullable
   public static String getName(@NotNull PsiNamedElement element, boolean qualified) {
-    if (element instanceof SchemaFqnSegment) {
-      SchemaFqnSegment fqnSegment = (SchemaFqnSegment) element;
+    if (element instanceof EpigraphFqnSegment) {
+      EpigraphFqnSegment fqnSegment = (EpigraphFqnSegment) element;
       return fqnSegment.getFqn().toString();
     }
 
@@ -64,12 +64,12 @@ public class SchemaPresentationUtil {
 
     if (element instanceof EpigraphTypeDef) return AllIcons.Nodes.Class;
 
-    if (element instanceof SchemaSupplementDef) return AllIcons.Nodes.Aspect;
+    if (element instanceof EpigraphSupplementDef) return AllIcons.Nodes.Aspect;
 
-    if (element instanceof SchemaCustomParam) return AllIcons.Nodes.Annotationtype;
-    if (element instanceof SchemaFieldDecl) return AllIcons.Nodes.Field;
-    if (element instanceof SchemaEnumMemberDecl) return AllIcons.Nodes.Property;
-    if (element instanceof SchemaVarTagDecl)
+    if (element instanceof EpigraphCustomParam) return AllIcons.Nodes.Annotationtype;
+    if (element instanceof EpigraphFieldDecl) return AllIcons.Nodes.Field;
+    if (element instanceof EpigraphEnumMemberDecl) return AllIcons.Nodes.Property;
+    if (element instanceof EpigraphVarTagDecl)
       return AllIcons.Nodes.Function; // IconUtil.addText(icon, "D") for default member?
 
     // TODO icons for all!
@@ -89,14 +89,14 @@ public class SchemaPresentationUtil {
       return id == null ? "" : id.getText();
     }
 
-    if (element instanceof SchemaCustomParam) {
-      SchemaCustomParam schemaCustomParam = (SchemaCustomParam) element;
-      return schemaCustomParam.getQid().getName();
+    if (element instanceof EpigraphCustomParam) {
+      EpigraphCustomParam epigraphCustomParam = (EpigraphCustomParam) element;
+      return epigraphCustomParam.getQid().getName();
     }
 
-    if (element instanceof SchemaFieldDecl) {
-      SchemaFieldDecl schemaFieldDecl = (SchemaFieldDecl) element;
-      String name = schemaFieldDecl.getQid().getName();
+    if (element instanceof EpigraphFieldDecl) {
+      EpigraphFieldDecl epigraphFieldDecl = (EpigraphFieldDecl) element;
+      String name = epigraphFieldDecl.getQid().getName();
 
       if (structureView) return name;
 
@@ -107,8 +107,8 @@ public class SchemaPresentationUtil {
       return typeName + '.' + name;
     }
 
-    if (element instanceof SchemaVarTagDecl) {
-      SchemaVarTagDecl varTagDecl = (SchemaVarTagDecl) element;
+    if (element instanceof EpigraphVarTagDecl) {
+      EpigraphVarTagDecl varTagDecl = (EpigraphVarTagDecl) element;
       String name = varTagDecl.getQid().getName();
 
       if (structureView) return name;
@@ -120,23 +120,23 @@ public class SchemaPresentationUtil {
       return varTypeName + '.' + name;
     }
 
-    if (element instanceof SchemaEnumMemberDecl) {
-      SchemaEnumMemberDecl schemaEnumMemberDecl = (SchemaEnumMemberDecl) element;
-      return schemaEnumMemberDecl.getQid().getName();
+    if (element instanceof EpigraphEnumMemberDecl) {
+      EpigraphEnumMemberDecl epigraphEnumMemberDecl = (EpigraphEnumMemberDecl) element;
+      return epigraphEnumMemberDecl.getQid().getName();
     }
 
-    if (element instanceof SchemaSupplementDef) {
-      SchemaSupplementDef schemaSupplementDef = (SchemaSupplementDef) element;
+    if (element instanceof EpigraphSupplementDef) {
+      EpigraphSupplementDef epigraphSupplementDef = (EpigraphSupplementDef) element;
 
       StringBuilder name = new StringBuilder();
 
-      List<SchemaFqnTypeRef> fqnTypeRef = schemaSupplementDef.supplementedRefs();
-      for (SchemaFqnTypeRef typeRef : fqnTypeRef) {
+      List<EpigraphFqnTypeRef> fqnTypeRef = epigraphSupplementDef.supplementedRefs();
+      for (EpigraphFqnTypeRef typeRef : fqnTypeRef) {
         if (name.length() > 0) name.append(", ");
         name.append(typeRef.getFqn().getFqn().toString());
       }
       name.append(" with ");
-      EpigraphTypeDef source = schemaSupplementDef.source();
+      EpigraphTypeDef source = epigraphSupplementDef.source();
       name.append(source == null ? "???" : source.getName());
 
       return "supplement " + name;
@@ -184,9 +184,9 @@ public class SchemaPresentationUtil {
     if (element instanceof EpigraphVarTypeDef) return "Var type";
     if (element instanceof EpigraphRecordTypeDef) return "Record type";
     if (element instanceof EpigraphMapTypeDef) return "Map type";
-    if (element instanceof SchemaFqnSegment) return "Namespace";
-    if (element instanceof SchemaVarTagDecl) return "Var tag";
-    if (element instanceof SchemaFieldDecl) return "Record field";
+    if (element instanceof EpigraphFqnSegment) return "Namespace";
+    if (element instanceof EpigraphVarTagDecl) return "Var tag";
+    if (element instanceof EpigraphFieldDecl) return "Record field";
 
     return "(getType) Unknown element: " + element;
   }

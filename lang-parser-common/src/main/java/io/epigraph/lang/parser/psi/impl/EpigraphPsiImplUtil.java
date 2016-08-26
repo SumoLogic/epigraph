@@ -31,19 +31,19 @@ public class EpigraphPsiImplUtil {
 
   @Contract(pure = true)
   @Nullable
-  public static Fqn getFqn2(SchemaNamespaceDecl namespaceDecl) {
+  public static Fqn getFqn2(EpigraphNamespaceDecl namespaceDecl) {
     EpigraphNamespaceDeclStub stub = namespaceDecl.getStub();
     if (stub != null) return stub.getFqn();
 
-    SchemaFqn schemaFqn = namespaceDecl.getFqn();
-    return schemaFqn == null ? null : getFqn(schemaFqn);
+    EpigraphFqn epigraphFqn = namespaceDecl.getFqn();
+    return epigraphFqn == null ? null : getFqn(epigraphFqn);
   }
 
   // qid --------------------------------------------
 
   @Contract(pure = true)
   @NotNull
-  public static PsiElement setName(SchemaQid qid, String name) {
+  public static PsiElement setName(EpigraphQid qid, String name) {
     PsiElement oldId = qid.getId();
     PsiElement newId = EpigraphElementFactory.createId(qid.getProject(), name);
     oldId.replace(newId);
@@ -52,13 +52,13 @@ public class EpigraphPsiImplUtil {
 
   @Contract(pure = true)
   @NotNull
-  public static String getName(SchemaQid qid) {
+  public static String getName(EpigraphQid qid) {
     return qid.getId().getText();
   }
 
   @Contract(pure = true)
   @NotNull
-  public static String getCanonicalName(SchemaQid qid) {
+  public static String getCanonicalName(EpigraphQid qid) {
     String name = getName(qid);
     return NamingConventions.unquote(name);
   }
@@ -67,12 +67,12 @@ public class EpigraphPsiImplUtil {
 
   @Contract(pure = true)
   @NotNull
-  public static Fqn getFqn(SchemaFqn e) {
-    List<SchemaFqnSegment> fqnSegmentList = e.getFqnSegmentList();
+  public static Fqn getFqn(EpigraphFqn e) {
+    List<EpigraphFqnSegment> fqnSegmentList = e.getFqnSegmentList();
     String[] segments = new String[fqnSegmentList.size()];
     int idx = 0;
 
-    for (SchemaFqnSegment segment : fqnSegmentList) {
+    for (EpigraphFqnSegment segment : fqnSegmentList) {
       segments[idx++] = segment.getQid().getCanonicalName();
     }
 
@@ -81,7 +81,7 @@ public class EpigraphPsiImplUtil {
 
   // typedef wrapper --------------------------------------------
 
-  public static void delete(@NotNull SchemaTypeDefWrapper schemaTypeDef) throws IncorrectOperationException {
+  public static void delete(@NotNull EpigraphTypeDefWrapper schemaTypeDef) throws IncorrectOperationException {
     final ASTNode parentNode = schemaTypeDef.getParent().getNode();
     assert parentNode != null;
 
@@ -97,7 +97,7 @@ public class EpigraphPsiImplUtil {
 
   @Contract(pure = true)
   @NotNull
-  public static EpigraphTypeDef getElement(SchemaTypeDefWrapper typeDef) {
+  public static EpigraphTypeDef getElement(EpigraphTypeDefWrapper typeDef) {
     EpigraphTypeDef e = typeDef.getVarTypeDef();
     if (e != null) return e;
     e = typeDef.getRecordTypeDef();
@@ -153,15 +153,15 @@ public class EpigraphPsiImplUtil {
   // not exposed through PSI
   @Contract(pure = true)
   @Nullable
-  public static PsiReference getReference(@NotNull SchemaFqnTypeRef typeRef) {
-    List<SchemaFqnSegment> fqnSegmentList = typeRef.getFqn().getFqnSegmentList();
+  public static PsiReference getReference(@NotNull EpigraphFqnTypeRef typeRef) {
+    List<EpigraphFqnSegment> fqnSegmentList = typeRef.getFqn().getFqnSegmentList();
     if (fqnSegmentList.isEmpty()) return null;
     return fqnSegmentList.get(fqnSegmentList.size() - 1).getReference();
   }
 
   @Contract(pure = true)
   @Nullable
-  public static EpigraphTypeDef resolve(@NotNull SchemaFqnTypeRef typeRef) {
+  public static EpigraphTypeDef resolve(@NotNull EpigraphFqnTypeRef typeRef) {
     PsiReference reference = getReference(typeRef);
     if (reference == null) return null;
     PsiElement element = reference.resolve();
@@ -176,15 +176,15 @@ public class EpigraphPsiImplUtil {
 
   @Contract(pure = true)
   @Nullable
-  public static SchemaFqnTypeRef sourceRef(@NotNull SchemaSupplementDef supplementDef) {
+  public static EpigraphFqnTypeRef sourceRef(@NotNull EpigraphSupplementDef supplementDef) {
     PsiElement with = supplementDef.getWith();
     if (with == null) return null;
-    return PsiTreeUtil.getNextSiblingOfType(with, SchemaFqnTypeRef.class);
+    return PsiTreeUtil.getNextSiblingOfType(with, EpigraphFqnTypeRef.class);
   }
 
   @Contract(pure = true)
   @NotNull
-  public static List<SchemaFqnTypeRef> supplementedRefs(@NotNull SchemaSupplementDef supplementDef) {
+  public static List<EpigraphFqnTypeRef> supplementedRefs(@NotNull EpigraphSupplementDef supplementDef) {
     /*
     PsiElement with = supplementDef.getWith();
     if (with == null) return Collections.emptyList();
@@ -201,13 +201,13 @@ public class EpigraphPsiImplUtil {
     return result;
     */
 
-    List<SchemaFqnTypeRef> result = new ArrayList<>();
+    List<EpigraphFqnTypeRef> result = new ArrayList<>();
 
     for (PsiElement element = supplementDef.getSupplement();
          element != null && element.getNode().getElementType() != E_WITH;
          element = element.getNextSibling()) {
 
-      if (element instanceof SchemaFqnTypeRef) result.add((SchemaFqnTypeRef) element);
+      if (element instanceof EpigraphFqnTypeRef) result.add((EpigraphFqnTypeRef) element);
     }
 
     return result;
@@ -215,19 +215,19 @@ public class EpigraphPsiImplUtil {
 
   @Contract(pure = true)
   @Nullable
-  public static EpigraphTypeDef source(@NotNull SchemaSupplementDef supplementDef) {
+  public static EpigraphTypeDef source(@NotNull EpigraphSupplementDef supplementDef) {
     return EpigraphPsiImplUtilExt.source(supplementDef);
   }
 
   @Contract(pure = true)
   @NotNull
-  public static List<EpigraphTypeDef> supplemented(@NotNull SchemaSupplementDef supplementDef) {
+  public static List<EpigraphTypeDef> supplemented(@NotNull EpigraphSupplementDef supplementDef) {
     return EpigraphPsiImplUtilExt.supplemented(supplementDef);
   }
 
   @Contract(pure = true)
   @NotNull
-  public static ItemPresentation getPresentation(@NotNull SchemaSupplementDef supplementDef) {
+  public static ItemPresentation getPresentation(@NotNull EpigraphSupplementDef supplementDef) {
     return EpigraphPsiImplUtilExt.getPresentation(supplementDef);
   }
 
@@ -246,14 +246,14 @@ public class EpigraphPsiImplUtil {
    */
   @Contract(pure = true)
   @NotNull
-  public static Fqn getFqn(SchemaFqnSegment e) {
-    SchemaFqn schemaFqn = (SchemaFqn) e.getParent();
-    assert schemaFqn != null;
+  public static Fqn getFqn(EpigraphFqnSegment e) {
+    EpigraphFqn epigraphFqn = (EpigraphFqn) e.getParent();
+    assert epigraphFqn != null;
 
-    List<SchemaFqnSegment> fqnSegmentList = schemaFqn.getFqnSegmentList();
+    List<EpigraphFqnSegment> fqnSegmentList = epigraphFqn.getFqnSegmentList();
     List<String> segments = new ArrayList<>(fqnSegmentList.size());
 
-    for (SchemaFqnSegment segment : fqnSegmentList) {
+    for (EpigraphFqnSegment segment : fqnSegmentList) {
       segments.add(segment.getName());
       if (segment == e) break;
     }
@@ -263,10 +263,10 @@ public class EpigraphPsiImplUtil {
 
   @Contract(pure = true)
   @Nullable
-  public static SchemaFqn getSchemaFqn(SchemaFqnSegment segment) {
+  public static EpigraphFqn getSchemaFqn(EpigraphFqnSegment segment) {
     PsiElement fqn = segment.getParent();
-    if (fqn instanceof SchemaFqn) {
-      return (SchemaFqn) fqn;
+    if (fqn instanceof EpigraphFqn) {
+      return (EpigraphFqn) fqn;
     }
 
     return null;
@@ -274,12 +274,12 @@ public class EpigraphPsiImplUtil {
 
   @Contract(pure = true)
   @Nullable
-  public static SchemaFqnTypeRef getSchemaFqnTypeRef(SchemaFqnSegment segment) {
+  public static EpigraphFqnTypeRef getSchemaFqnTypeRef(EpigraphFqnSegment segment) {
     PsiElement fqn = segment.getParent();
-    if (fqn instanceof SchemaFqn) {
+    if (fqn instanceof EpigraphFqn) {
       PsiElement fqnParent = fqn.getParent();
-      if (fqnParent instanceof SchemaFqnTypeRef) {
-        return (SchemaFqnTypeRef) fqnParent;
+      if (fqnParent instanceof EpigraphFqnTypeRef) {
+        return (EpigraphFqnTypeRef) fqnParent;
       }
     }
 
@@ -288,29 +288,29 @@ public class EpigraphPsiImplUtil {
 
   @Contract(pure = true)
   @Nullable
-  public static String getName(SchemaFqnSegment segment) {
+  public static String getName(EpigraphFqnSegment segment) {
     return getNameIdentifier(segment).getText();
   }
 
   @Contract(pure = true)
   @NotNull
-  public static PsiElement setName(SchemaFqnSegment segment, String name) {
+  public static PsiElement setName(EpigraphFqnSegment segment, String name) {
     segment.getQid().setName(name);
     return segment;
   }
 
   @Contract(pure = true)
   @NotNull
-  public static PsiElement getNameIdentifier(SchemaFqnSegment segment) {
+  public static PsiElement getNameIdentifier(EpigraphFqnSegment segment) {
     return segment.getQid().getId();
   }
 
   @Contract(pure = true)
-  public static boolean isLast(SchemaFqnSegment segment) {
+  public static boolean isLast(EpigraphFqnSegment segment) {
     PsiElement parent = segment.getParent();
-    if (parent instanceof SchemaFqn) {
-      SchemaFqn schemaFqn = (SchemaFqn) parent;
-      List<SchemaFqnSegment> segmentList = schemaFqn.getFqnSegmentList();
+    if (parent instanceof EpigraphFqn) {
+      EpigraphFqn epigraphFqn = (EpigraphFqn) parent;
+      List<EpigraphFqnSegment> segmentList = epigraphFqn.getFqnSegmentList();
       return segment == getLast(segmentList);
     }
     return false;
@@ -318,8 +318,8 @@ public class EpigraphPsiImplUtil {
 
   @Contract(pure = true)
   @Nullable
-  public static PsiReference getReference(SchemaFqnSegment segment) {
-    return SchemaReferenceFactory.getFqnReference(segment);
+  public static PsiReference getReference(EpigraphFqnSegment segment) {
+    return EpigraphReferenceFactory.getFqnReference(segment);
   }
 
 
@@ -328,11 +328,11 @@ public class EpigraphPsiImplUtil {
 
   @Contract(pure = true)
   @Nullable
-  public static String getName(SchemaFieldDecl fieldDecl) {
+  public static String getName(EpigraphFieldDecl fieldDecl) {
     return getNameIdentifier(fieldDecl).getText();
   }
 
-  public static PsiElement setName(SchemaFieldDecl fieldDecl, String name) {
+  public static PsiElement setName(EpigraphFieldDecl fieldDecl, String name) {
 //    if (NamingConventions.validateFieldName(name) != null) name = NamingConventions.enquote(name);
     fieldDecl.getQid().setName(name);
     return fieldDecl;
@@ -340,23 +340,23 @@ public class EpigraphPsiImplUtil {
 
   @Contract(pure = true)
   @NotNull
-  public static PsiElement getNameIdentifier(SchemaFieldDecl fieldDecl) {
+  public static PsiElement getNameIdentifier(EpigraphFieldDecl fieldDecl) {
     return fieldDecl.getQid().getId();
   }
 
-  public static int getTextOffset(@NotNull SchemaFieldDecl fieldDecl) {
+  public static int getTextOffset(@NotNull EpigraphFieldDecl fieldDecl) {
     PsiElement nameIdentifier = fieldDecl.getNameIdentifier();
     return nameIdentifier.getTextOffset();
   }
 
   @Contract(pure = true)
   @NotNull
-  public static ItemPresentation getPresentation(@NotNull SchemaFieldDecl fieldDecl) {
+  public static ItemPresentation getPresentation(@NotNull EpigraphFieldDecl fieldDecl) {
     return EpigraphPsiImplUtilExt.getPresentation(fieldDecl);
   }
 
   @NotNull
-  public static EpigraphRecordTypeDef getRecordTypeDef(@NotNull SchemaFieldDecl fieldDecl) {
+  public static EpigraphRecordTypeDef getRecordTypeDef(@NotNull EpigraphFieldDecl fieldDecl) {
     EpigraphRecordTypeDef recordTypeDef = PsiTreeUtil.getParentOfType(fieldDecl, EpigraphRecordTypeDef.class);
     assert recordTypeDef != null;
     return recordTypeDef;
@@ -366,11 +366,11 @@ public class EpigraphPsiImplUtil {
 
   @Contract(pure = true)
   @Nullable
-  public static String getName(SchemaVarTagDecl varTagDecl) {
+  public static String getName(EpigraphVarTagDecl varTagDecl) {
     return getNameIdentifier(varTagDecl).getText();
   }
 
-  public static PsiElement setName(SchemaVarTagDecl varTagDecl, String name) {
+  public static PsiElement setName(EpigraphVarTagDecl varTagDecl, String name) {
 //    if (NamingConventions.validateTagName(name) != null) name = NamingConventions.enquote(name);
     varTagDecl.getQid().setName(name);
     return varTagDecl;
@@ -378,23 +378,23 @@ public class EpigraphPsiImplUtil {
 
   @Contract(pure = true)
   @NotNull
-  public static PsiElement getNameIdentifier(SchemaVarTagDecl varTagDecl) {
+  public static PsiElement getNameIdentifier(EpigraphVarTagDecl varTagDecl) {
     return varTagDecl.getQid().getId();
   }
 
-  public static int getTextOffset(@NotNull SchemaVarTagDecl varTagDecl) {
+  public static int getTextOffset(@NotNull EpigraphVarTagDecl varTagDecl) {
     PsiElement nameIdentifier = varTagDecl.getNameIdentifier();
     return nameIdentifier.getTextOffset();
   }
 
   @Contract(pure = true)
   @NotNull
-  public static ItemPresentation getPresentation(@NotNull SchemaVarTagDecl varTagDecl) {
+  public static ItemPresentation getPresentation(@NotNull EpigraphVarTagDecl varTagDecl) {
     return EpigraphPsiImplUtilExt.getPresentation(varTagDecl);
   }
 
   @NotNull
-  public static EpigraphVarTypeDef getVarTypeDef(@NotNull SchemaVarTagDecl varTagDecl) {
+  public static EpigraphVarTypeDef getVarTypeDef(@NotNull EpigraphVarTagDecl varTagDecl) {
     EpigraphVarTypeDef varTypeDef = PsiTreeUtil.getParentOfType(varTagDecl, EpigraphVarTypeDef.class);
     assert varTypeDef != null;
     return varTypeDef;
@@ -404,17 +404,17 @@ public class EpigraphPsiImplUtil {
 
   @Contract(pure = true)
   @Nullable
-  public static PsiReference getReference(@NotNull SchemaVarTagRef varTagRef) {
-    return SchemaReferenceFactory.getVarTagReference(varTagRef);
+  public static PsiReference getReference(@NotNull EpigraphVarTagRef varTagRef) {
+    return EpigraphReferenceFactory.getVarTagReference(varTagRef);
   }
 
   @Contract(pure = true)
   @Nullable
-  public static PsiElement getNameIdentifier(@NotNull SchemaVarTagRef varTagRef) {
+  public static PsiElement getNameIdentifier(@NotNull EpigraphVarTagRef varTagRef) {
     return varTagRef.getQid().getId();
   }
 
-  public static PsiElement setName(SchemaVarTagRef varTagRef, String name) {
+  public static PsiElement setName(EpigraphVarTagRef varTagRef, String name) {
 //    if (NamingConventions.validateTagName(name) != null) name = NamingConventions.enquote(name);
     varTagRef.getQid().setName(name);
     return varTagRef;
@@ -424,18 +424,18 @@ public class EpigraphPsiImplUtil {
 
   @Contract(pure = true)
   @Nullable
-  public static String getName(SchemaEnumMemberDecl enumMemberDecl) {
+  public static String getName(EpigraphEnumMemberDecl enumMemberDecl) {
     return getNameIdentifier(enumMemberDecl).getText();
   }
 
-  public static PsiElement setName(SchemaEnumMemberDecl enumMemberDecl, String name) {
+  public static PsiElement setName(EpigraphEnumMemberDecl enumMemberDecl, String name) {
     enumMemberDecl.getQid().setName(name);
     return enumMemberDecl;
   }
 
   @Contract(pure = true)
   @NotNull
-  public static PsiElement getNameIdentifier(SchemaEnumMemberDecl enumMemberDecl) {
+  public static PsiElement getNameIdentifier(EpigraphEnumMemberDecl enumMemberDecl) {
     return enumMemberDecl.getQid().getId();
   }
 
@@ -443,18 +443,18 @@ public class EpigraphPsiImplUtil {
 
   @Contract(pure = true)
   @Nullable
-  public static String getName(SchemaCustomParam customParam) {
+  public static String getName(EpigraphCustomParam customParam) {
     return getNameIdentifier(customParam).getText();
   }
 
-  public static PsiElement setName(SchemaCustomParam customParam, String name) {
+  public static PsiElement setName(EpigraphCustomParam customParam, String name) {
     customParam.getQid().setName(name);
     return customParam;
   }
 
   @Contract(pure = true)
   @NotNull
-  public static PsiElement getNameIdentifier(SchemaCustomParam customParam) {
+  public static PsiElement getNameIdentifier(EpigraphCustomParam customParam) {
     return customParam.getQid().getId();
   }
 

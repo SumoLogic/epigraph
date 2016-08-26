@@ -3,8 +3,8 @@ package io.epigraph.lang.parser.psi.stubs;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.stubs.*;
 import io.epigraph.lang.schema.SchemaLanguage;
-import io.epigraph.lang.parser.psi.SchemaTypeDefWrapper;
-import io.epigraph.lang.parser.psi.impl.SchemaTypeDefWrapperImpl;
+import io.epigraph.lang.parser.psi.EpigraphTypeDefWrapper;
+import io.epigraph.lang.parser.psi.impl.EpigraphTypeDefWrapperImpl;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -13,7 +13,7 @@ import java.io.IOException;
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public class EpigraphTypeDefWrapperStubElementType extends IStubElementType<EpigraphTypeDefWrapperStub, SchemaTypeDefWrapper> {
+public class EpigraphTypeDefWrapperStubElementType extends IStubElementType<EpigraphTypeDefWrapperStub, EpigraphTypeDefWrapper> {
   public EpigraphTypeDefWrapperStubElementType(@NotNull @NonNls String debugName) {
     super(debugName, SchemaLanguage.INSTANCE);
   }
@@ -24,12 +24,12 @@ public class EpigraphTypeDefWrapperStubElementType extends IStubElementType<Epig
   }
 
   @Override
-  public SchemaTypeDefWrapper createPsi(@NotNull EpigraphTypeDefWrapperStub stub) {
-    return new SchemaTypeDefWrapperImpl(stub, this);
+  public EpigraphTypeDefWrapper createPsi(@NotNull EpigraphTypeDefWrapperStub stub) {
+    return new EpigraphTypeDefWrapperImpl(stub, this);
   }
 
   @Override
-  public EpigraphTypeDefWrapperStub createStub(@NotNull SchemaTypeDefWrapper typeDef, StubElement parentStub) {
+  public EpigraphTypeDefWrapperStub createStub(@NotNull EpigraphTypeDefWrapper typeDef, StubElement parentStub) {
     return new EpigraphTypeDefWrapperStubImpl(parentStub);
   }
 

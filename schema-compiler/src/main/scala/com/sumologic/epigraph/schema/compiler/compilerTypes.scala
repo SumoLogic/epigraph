@@ -32,7 +32,7 @@ trait CType {self =>
 }
 
 
-abstract class CTypeDef protected(val csf: CSchemaFile, val psi: SchemaTypeDef, override val kind: CTypeKind)
+abstract class CTypeDef protected(val csf: CSchemaFile, val psi: EpigraphTypeDef, override val kind: CTypeKind)
     (implicit val ctx: CContext) extends CType {self =>
 
   override type This >: this.type <: CTypeDef {type This <: self.This}
@@ -45,7 +45,7 @@ abstract class CTypeDef protected(val csf: CSchemaFile, val psi: SchemaTypeDef, 
   val isPolymorphic: Boolean = psi.getPolymorphic != null
 
   val declaredSupertypeRefs: Seq[CTypeDefRef] = {
-    @Nullable val sed: SchemaExtendsDecl = psi.getExtendsDecl
+    @Nullable val sed: EpigraphExtendsDecl = psi.getExtendsDecl
     if (sed == null) Nil else sed.getFqnTypeRefList.map(CTypeRef(csf, _))
   }
 
@@ -54,7 +54,7 @@ abstract class CTypeDef protected(val csf: CSchemaFile, val psi: SchemaTypeDef, 
   private lazy val cachedDeclaredParents: Seq[CTypeDef] = declaredSupertypeRefs.map(_.resolved)
 
   val declaredSupplementees: Seq[CTypeDefRef] = {
-    @Nullable val ssd: SchemaSupplementsDecl = psi.getSupplementsDecl
+    @Nullable val ssd: EpigraphSupplementsDecl = psi.getSupplementsDecl
     if (ssd == null) Nil else ssd.getFqnTypeRefList.map(CTypeRef(csf, _))
   }
 
@@ -134,17 +134,17 @@ abstract class CTypeDef protected(val csf: CSchemaFile, val psi: SchemaTypeDef, 
 
 object CTypeDef {
 
-  def apply(csf: CSchemaFile, stdw: SchemaTypeDefWrapper)(implicit ctx: CContext): CTypeDef = stdw.getElement match {
-    case typeDef: SchemaVarTypeDef => new CVarTypeDef(csf, typeDef)
-    case typeDef: SchemaRecordTypeDef => new CRecordTypeDef(csf, typeDef)
-    case typeDef: SchemaMapTypeDef => new CMapTypeDef(csf, typeDef)
-    case typeDef: SchemaListTypeDef => new CListTypeDef(csf, typeDef)
-    case typeDef: SchemaEnumTypeDef => new CEnumTypeDef(csf, typeDef)
-    case typeDef: SchemaPrimitiveTypeDef => new CPrimitiveTypeDef(csf, typeDef)
+  def apply(csf: CSchemaFile, stdw: EpigraphTypeDefWrapper)(implicit ctx: CContext): CTypeDef = stdw.getElement match {
+    case typeDef: EpigraphVarTypeDef => new CVarTypeDef(csf, typeDef)
+    case typeDef: EpigraphRecordTypeDef => new CRecordTypeDef(csf, typeDef)
+    case typeDef: EpigraphMapTypeDef => new CMapTypeDef(csf, typeDef)
+    case typeDef: EpigraphListTypeDef => new CListTypeDef(csf, typeDef)
+    case typeDef: EpigraphEnumTypeDef => new CEnumTypeDef(csf, typeDef)
+    case typeDef: EpigraphPrimitiveTypeDef => new CPrimitiveTypeDef(csf, typeDef)
     case unknown => throw new UnsupportedOperationException(unknown.toString)
   }
 
-  def declaredDefaultTagName(@Nullable sdo: SchemaDefaultOverride): Option[Option[String]] = {
+  def declaredDefaultTagName(@Nullable sdo: EpigraphDefaultOverride): Option[Option[String]] = {
     if (sdo == null) {
       None
     } else {
@@ -161,7 +161,7 @@ object CTypeDef {
 }
 
 
-class CVarTypeDef(csf: CSchemaFile, override val psi: SchemaVarTypeDef)(implicit ctx: CContext) extends CTypeDef(
+class CVarTypeDef(csf: CSchemaFile, override val psi: EpigraphVarTypeDef)(implicit ctx: CContext) extends CTypeDef(
   csf, psi, CTypeKind.VARTYPE
 ) {
 
@@ -227,7 +227,7 @@ class CVarTypeDef(csf: CSchemaFile, override val psi: SchemaVarTypeDef)(implicit
 
 }
 
-class CTag(val csf: CSchemaFile, val psi: SchemaVarTagDecl)(implicit val ctx: CContext) {
+class CTag(val csf: CSchemaFile, val psi: EpigraphVarTagDecl)(implicit val ctx: CContext) {
 
   val name: String = psi.getQid.getCanonicalName
 
@@ -249,7 +249,7 @@ trait CDatumType extends CType {
 }
 
 
-class CRecordTypeDef(csf: CSchemaFile, override val psi: SchemaRecordTypeDef)(implicit ctx: CContext) extends CTypeDef(
+class CRecordTypeDef(csf: CSchemaFile, override val psi: EpigraphRecordTypeDef)(implicit ctx: CContext) extends CTypeDef(
   csf, psi, CTypeKind.RECORD
 ) with CDatumType {
 
@@ -313,7 +313,7 @@ class CRecordTypeDef(csf: CSchemaFile, override val psi: SchemaRecordTypeDef)(im
 
 }
 
-class CField(val csf: CSchemaFile, val psi: SchemaFieldDecl, val host: CRecordTypeDef)(implicit val ctx: CContext) {
+class CField(val csf: CSchemaFile, val psi: EpigraphFieldDecl, val host: CRecordTypeDef)(implicit val ctx: CContext) {
 
   val name: String = psi.getQid.getCanonicalName
 
@@ -394,7 +394,7 @@ class CAnonMapType(override val name: CAnonMapTypeName)(implicit val ctx: CConte
 
 }
 
-class CMapTypeDef(csf: CSchemaFile, override val psi: SchemaMapTypeDef)(implicit ctx: CContext) extends {
+class CMapTypeDef(csf: CSchemaFile, override val psi: EpigraphMapTypeDef)(implicit ctx: CContext) extends {
 
   val valueValueType: CValueType = new CValueType(csf, psi.getAnonMap.getValueTypeRef)
 
@@ -445,7 +445,7 @@ class CAnonListType(override val name: CAnonListTypeName)(implicit val ctx: CCon
 }
 
 
-class CListTypeDef(csf: CSchemaFile, override val psi: SchemaListTypeDef)(implicit ctx: CContext) extends {
+class CListTypeDef(csf: CSchemaFile, override val psi: EpigraphListTypeDef)(implicit ctx: CContext) extends {
 
   override val elementValueType: CValueType = new CValueType(csf, psi.getAnonList.getValueTypeRef)
 
@@ -456,7 +456,7 @@ class CListTypeDef(csf: CSchemaFile, override val psi: SchemaListTypeDef)(implic
 }
 
 
-class CEnumTypeDef(csf: CSchemaFile, psi: SchemaEnumTypeDef)(implicit ctx: CContext) extends CTypeDef(
+class CEnumTypeDef(csf: CSchemaFile, psi: EpigraphEnumTypeDef)(implicit ctx: CContext) extends CTypeDef(
   csf, psi, CTypeKind.ENUM
 ) with CDatumType {
 
@@ -469,14 +469,14 @@ class CEnumTypeDef(csf: CSchemaFile, psi: SchemaEnumTypeDef)(implicit ctx: CCont
 
 }
 
-class CEnumValue(csf: CSchemaFile, psi: SchemaEnumMemberDecl)(implicit val ctx: CContext) {
+class CEnumValue(csf: CSchemaFile, psi: EpigraphEnumMemberDecl)(implicit val ctx: CContext) {
 
   val name: String = psi.getQid.getCanonicalName
 
 }
 
 
-class CPrimitiveTypeDef(csf: CSchemaFile, override val psi: SchemaPrimitiveTypeDef)(implicit ctx: CContext)
+class CPrimitiveTypeDef(csf: CSchemaFile, override val psi: EpigraphPrimitiveTypeDef)(implicit ctx: CContext)
     extends CTypeDef(
       csf, psi, CTypeKind.forKeyword(psi.getPrimitiveTypeKind.name)
     ) with CDatumType {
@@ -486,7 +486,7 @@ class CPrimitiveTypeDef(csf: CSchemaFile, override val psi: SchemaPrimitiveTypeD
 }
 
 
-class CSupplement(csf: CSchemaFile, val psi: SchemaSupplementDef)(implicit val ctx: CContext) {
+class CSupplement(csf: CSchemaFile, val psi: EpigraphSupplementDef)(implicit val ctx: CContext) {
 
   val sourceRef: CTypeDefRef = CTypeRef(csf, psi.sourceRef)
 
