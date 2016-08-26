@@ -22,7 +22,7 @@ public class EpigraphPsiImplUtilExt {
 
   @Contract(pure = true)
   @NotNull
-  public static List<SchemaTypeDef> supplemented(@NotNull SchemaRecordTypeDef recordTypeDef) {
+  public static List<EpigraphTypeDef> supplemented(@NotNull EpigraphRecordTypeDef recordTypeDef) {
     return Collections.emptyList();
   }
   
@@ -30,7 +30,7 @@ public class EpigraphPsiImplUtilExt {
 
   @Contract(pure = true)
   @NotNull
-  public static List<SchemaTypeDef> supplemented(@NotNull SchemaVarTypeDef varTypeDef) {
+  public static List<EpigraphTypeDef> supplemented(@NotNull EpigraphVarTypeDef varTypeDef) {
     return Collections.emptyList();
   }
 
@@ -47,11 +47,11 @@ public class EpigraphPsiImplUtilExt {
 
   @Contract(pure = true)
   @Nullable
-  public static SchemaTypeDef resolve(@NotNull SchemaFqnTypeRef typeRef) {
+  public static EpigraphTypeDef resolve(@NotNull SchemaFqnTypeRef typeRef) {
     PsiReference reference = getReference(typeRef);
     if (reference == null) return null;
     PsiElement element = reference.resolve();
-    if (element instanceof SchemaTypeDef) return (SchemaTypeDef) element;
+    if (element instanceof EpigraphTypeDef) return (EpigraphTypeDef) element;
     return null;
   }
 
@@ -61,7 +61,7 @@ public class EpigraphPsiImplUtilExt {
 
   @Contract(pure = true)
   @Nullable
-  public static SchemaTypeDef source(@NotNull SchemaSupplementDef supplementDef) {
+  public static EpigraphTypeDef source(@NotNull SchemaSupplementDef supplementDef) {
     SchemaFqnTypeRef ref = sourceRef(supplementDef);
     if (ref == null) return null;
     return ref.resolve();
@@ -69,7 +69,7 @@ public class EpigraphPsiImplUtilExt {
 
   @Contract(pure = true)
   @NotNull
-  public static List<SchemaTypeDef> supplemented(@NotNull SchemaSupplementDef supplementDef) {
+  public static List<EpigraphTypeDef> supplemented(@NotNull SchemaSupplementDef supplementDef) {
     throw new UnsupportedOperationException();
   }
 

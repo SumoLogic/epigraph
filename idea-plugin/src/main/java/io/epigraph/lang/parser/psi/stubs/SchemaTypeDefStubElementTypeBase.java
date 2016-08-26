@@ -3,10 +3,10 @@ package io.epigraph.lang.parser.psi.stubs;
 import com.intellij.psi.stubs.*;
 import com.intellij.util.io.StringRef;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaStubIndexKeys;
+import io.epigraph.lang.parser.psi.EpigraphTypeDef;
 import io.epigraph.lang.schema.SchemaLanguage;
 import io.epigraph.lang.parser.psi.SchemaExtendsDecl;
 import io.epigraph.lang.parser.psi.SchemaFqnTypeRef;
-import io.epigraph.lang.parser.psi.SchemaTypeDef;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public abstract class SchemaTypeDefStubElementTypeBase<S extends SchemaTypeDefStubBase<T>, T extends SchemaTypeDef>
+public abstract class SchemaTypeDefStubElementTypeBase<S extends SchemaTypeDefStubBase<T>, T extends EpigraphTypeDef>
     extends IStubElementType<S, T> {
 
   private final String externalId;
@@ -37,7 +37,7 @@ public abstract class SchemaTypeDefStubElementTypeBase<S extends SchemaTypeDefSt
   }
 
   @Nullable
-  protected static List<SerializedFqnTypeRef> getSerializedExtendsTypeRefs(@NotNull SchemaTypeDef typeDef) {
+  protected static List<SerializedFqnTypeRef> getSerializedExtendsTypeRefs(@NotNull EpigraphTypeDef typeDef) {
     SchemaExtendsDecl extendsDecl = typeDef.getExtendsDecl();
     if (extendsDecl == null) return null;
     List<SchemaFqnTypeRef> typeRefList = extendsDecl.getFqnTypeRefList();

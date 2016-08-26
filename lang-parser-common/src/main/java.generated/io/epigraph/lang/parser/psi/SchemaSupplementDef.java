@@ -26,10 +26,10 @@ public interface SchemaSupplementDef extends PsiElement, StubBasedPsiElement<Sch
   List<SchemaFqnTypeRef> supplementedRefs();
 
   @Nullable
-  SchemaTypeDef source();
+  EpigraphTypeDef source();
 
   @NotNull
-  List<SchemaTypeDef> supplemented();
+  List<EpigraphTypeDef> supplemented();
 
   @NotNull
   ItemPresentation getPresentation();

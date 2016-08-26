@@ -12,13 +12,13 @@ import io.epigraph.lang.parser.psi.*;
 import io.epigraph.lang.parser.psi.stubs.SchemaVarTypeDefStub;
 import com.intellij.psi.stubs.IStubElementType;
 
-public class SchemaVarTypeDefImpl extends SchemaVarTypeDefImplBase implements SchemaVarTypeDef {
+public class EpigraphVarTypeDefImpl extends EpigraphVarTypeDefImplBase implements EpigraphVarTypeDef {
 
-  public SchemaVarTypeDefImpl(ASTNode node) {
+  public EpigraphVarTypeDefImpl(ASTNode node) {
     super(node);
   }
 
-  public SchemaVarTypeDefImpl(SchemaVarTypeDefStub stub, IStubElementType nodeType) {
+  public EpigraphVarTypeDefImpl(SchemaVarTypeDefStub stub, IStubElementType nodeType) {
     super(stub, nodeType);
   }
 
@@ -74,7 +74,7 @@ public class SchemaVarTypeDefImpl extends SchemaVarTypeDefImplBase implements Sc
   }
 
   @NotNull
-  public List<SchemaTypeDef> supplemented() {
+  public List<EpigraphTypeDef> supplemented() {
     return EpigraphPsiImplUtil.supplemented(this);
   }
 

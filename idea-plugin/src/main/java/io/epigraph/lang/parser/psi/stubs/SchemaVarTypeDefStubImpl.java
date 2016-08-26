@@ -3,7 +3,7 @@ package io.epigraph.lang.parser.psi.stubs;
 import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.stubs.StubElement;
 import io.epigraph.lang.lexer.EpigraphElementTypes;
-import io.epigraph.lang.parser.psi.SchemaVarTypeDef;
+import io.epigraph.lang.parser.psi.EpigraphVarTypeDef;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public class SchemaVarTypeDefStubImpl extends SchemaTypeDefStubBaseImpl<SchemaVarTypeDef> implements SchemaVarTypeDefStub {
+public class SchemaVarTypeDefStubImpl extends SchemaTypeDefStubBaseImpl<EpigraphVarTypeDef> implements SchemaVarTypeDefStub {
   private final List<SerializedFqnTypeRef> supplementedTypeRefs;
 
   SchemaVarTypeDefStubImpl(StubElement parent,

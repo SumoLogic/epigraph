@@ -7,20 +7,20 @@ import com.intellij.psi.SmartPsiElementPointer;
 import com.intellij.util.Query;
 import com.intellij.util.QueryFactory;
 import com.intellij.util.containers.ContainerUtil;
-import io.epigraph.lang.parser.psi.SchemaTypeDef;
+import io.epigraph.lang.parser.psi.EpigraphTypeDef;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public class SchemaTypeInheritorsSearch extends QueryFactory<SchemaTypeDef, SchemaTypeInheritorsSearch.SearchParameters> {
+public class SchemaTypeInheritorsSearch extends QueryFactory<EpigraphTypeDef, SchemaTypeInheritorsSearch.SearchParameters> {
   public static final SchemaTypeInheritorsSearch INSTANCE = new SchemaTypeInheritorsSearch();
 
   public static class SearchParameters {
-    public final SchemaTypeDef schemaTypeDef;
+    public final EpigraphTypeDef epigraphTypeDef;
 
-    public SearchParameters(SchemaTypeDef schemaTypeDef) {
-      this.schemaTypeDef = schemaTypeDef;
+    public SearchParameters(EpigraphTypeDef epigraphTypeDef) {
+      this.epigraphTypeDef = epigraphTypeDef;
     }
   }
 
@@ -28,14 +28,14 @@ public class SchemaTypeInheritorsSearch extends QueryFactory<SchemaTypeDef, Sche
     registerExecutor(new SchemaTypeInheritorsSearcher());
   }
 
-  public static Query<SchemaTypeDef> search(@NotNull final SchemaTypeDef schemaTypeDef) {
-    return search(new SearchParameters(schemaTypeDef));
+  public static Query<EpigraphTypeDef> search(@NotNull final EpigraphTypeDef epigraphTypeDef) {
+    return search(new SearchParameters(epigraphTypeDef));
   }
 
-  public static Query<SchemaTypeDef> search(@NotNull final SearchParameters parameters) {
+  public static Query<EpigraphTypeDef> search(@NotNull final SearchParameters parameters) {
     return INSTANCE.createUniqueResultsQuery(parameters, ContainerUtil.canonicalStrategy(),
         schemaTypeDef -> ApplicationManager.getApplication().runReadAction(
-            (Computable<SmartPsiElementPointer<SchemaTypeDef>>) () ->
+            (Computable<SmartPsiElementPointer<EpigraphTypeDef>>) () ->
                 SmartPointerManager.getInstance(schemaTypeDef.getProject()).createSmartPsiElementPointer(schemaTypeDef)
         )
     );

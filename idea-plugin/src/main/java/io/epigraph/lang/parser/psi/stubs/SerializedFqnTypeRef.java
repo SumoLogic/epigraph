@@ -9,8 +9,8 @@ import com.intellij.util.io.StringRef;
 import com.sumologic.epigraph.ideaplugin.schema.brains.SchemaFqnReference;
 import com.sumologic.epigraph.ideaplugin.schema.brains.SchemaFqnReferenceResolver;
 import io.epigraph.lang.parser.Fqn;
+import io.epigraph.lang.parser.psi.EpigraphTypeDef;
 import io.epigraph.lang.parser.psi.SchemaFqnTypeRef;
-import io.epigraph.lang.parser.psi.SchemaTypeDef;
 import io.epigraph.lang.parser.psi.impl.EpigraphPsiImplUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -75,9 +75,9 @@ public final class SerializedFqnTypeRef {
   }
 
   @Nullable
-  public SchemaTypeDef resolveTypeDef(@NotNull Project project, @NotNull GlobalSearchScope searchScope) {
+  public EpigraphTypeDef resolveTypeDef(@NotNull Project project, @NotNull GlobalSearchScope searchScope) {
     PsiElement element = resolve(project, searchScope);
-    if (element instanceof SchemaTypeDef) return (SchemaTypeDef) element;
+    if (element instanceof EpigraphTypeDef) return (EpigraphTypeDef) element;
     return null;
   }
 

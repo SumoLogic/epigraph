@@ -13,7 +13,7 @@ import com.intellij.psi.PsiNamedElement;
 import com.intellij.ui.LayeredIcon;
 import com.sumologic.epigraph.ideaplugin.schema.brains.NamespaceManager;
 import com.sumologic.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
-import io.epigraph.lang.parser.psi.SchemaTypeDef;
+import io.epigraph.lang.parser.psi.EpigraphTypeDef;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
@@ -24,11 +24,11 @@ import java.awt.*;
 public class SchemaHierarchyNodeDescriptor extends HierarchyNodeDescriptor {
   protected SchemaHierarchyNodeDescriptor(@NotNull Project project, NodeDescriptor parentDescriptor, @NotNull PsiElement element, boolean isBase) {
     super(project, parentDescriptor, element, isBase);
-    assert element instanceof SchemaTypeDef;
+    assert element instanceof EpigraphTypeDef;
   }
 
-  public SchemaTypeDef getTypeDef() {
-    return (SchemaTypeDef) getPsiElement();
+  public EpigraphTypeDef getTypeDef() {
+    return (EpigraphTypeDef) getPsiElement();
   }
 
   public final boolean update() {

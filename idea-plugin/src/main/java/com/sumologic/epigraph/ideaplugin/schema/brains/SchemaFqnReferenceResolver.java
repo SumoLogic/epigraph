@@ -8,8 +8,8 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.ArrayUtil;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
 import io.epigraph.lang.parser.Fqn;
+import io.epigraph.lang.parser.psi.EpigraphTypeDef;
 import io.epigraph.lang.parser.psi.SchemaNamespaceDecl;
-import io.epigraph.lang.parser.psi.SchemaTypeDef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -58,7 +58,7 @@ public class SchemaFqnReferenceResolver {
 
   @Nullable
   public PsiElement resolve(@NotNull Project project) {
-    SchemaTypeDef typeDef = resolveTypeDef(project);
+    EpigraphTypeDef typeDef = resolveTypeDef(project);
     if (typeDef != null) return typeDef;
 
     // we can't find a typedef by this reference, lets check if it points to a namespace declaration
@@ -78,13 +78,13 @@ public class SchemaFqnReferenceResolver {
 
   @Nullable
   public Fqn getTargetTypeDefFqn(@NotNull Project project) {
-    SchemaTypeDef typeDef = resolveTypeDef(project);
+    EpigraphTypeDef typeDef = resolveTypeDef(project);
     if (typeDef != null) return typeDef.getFqn();
     return null;
   }
 
   @Nullable
-  private SchemaTypeDef resolveTypeDef(@NotNull Project project) {
+  private EpigraphTypeDef resolveTypeDef(@NotNull Project project) {
     return SchemaIndexUtil.findTypeDef(project, prefixes, suffix, searchScope);
 //    return SchemaIndexUtil.findSingleTypeDef(project, prefixes, suffix, searchScope);
   }

@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public interface SchemaTypeDef extends PsiNameIdentifierOwner {
+public interface EpigraphTypeDef extends PsiNameIdentifierOwner {
   SchemaQid getQid();
 
   @Nullable
@@ -54,7 +54,7 @@ public interface SchemaTypeDef extends PsiNameIdentifierOwner {
   Icon getIcon(int flags);
 
   @NotNull
-  List<SchemaTypeDef> extendsParents();
+  List<EpigraphTypeDef> extendsParents();
 
   @Override
   void delete() throws IncorrectOperationException;

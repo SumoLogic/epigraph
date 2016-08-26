@@ -9,9 +9,9 @@ import com.intellij.psi.PsiElement;
 import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.HierarchyCache;
 import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.TypeMembers;
 import com.sumologic.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
+import io.epigraph.lang.parser.psi.EpigraphTypeDef;
 import io.epigraph.lang.parser.psi.SchemaFieldDecl;
 import io.epigraph.lang.parser.psi.SchemaSupplementDef;
-import io.epigraph.lang.parser.psi.SchemaTypeDef;
 import io.epigraph.lang.parser.psi.SchemaVarTagDecl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -38,8 +38,8 @@ public class SchemaLineMarkerProvider extends RelatedItemLineMarkerProvider {
 
     PsiElement parent = element.getParent();
 
-    if (parent instanceof SchemaTypeDef) {
-      SchemaTypeDef typeDef = (SchemaTypeDef) parent;
+    if (parent instanceof EpigraphTypeDef) {
+      EpigraphTypeDef typeDef = (EpigraphTypeDef) parent;
 
       List<SchemaSupplementDef> supplements = HierarchyCache.getHierarchyCache(project).getSupplementsBySupplemented(typeDef);
 
@@ -55,7 +55,7 @@ public class SchemaLineMarkerProvider extends RelatedItemLineMarkerProvider {
 
       HierarchyCache hierarchyCache = HierarchyCache.getHierarchyCache(project);
 
-      Collection<SchemaTypeDef> parents = hierarchyCache.getDirectTypeParents(typeDef);
+      Collection<EpigraphTypeDef> parents = hierarchyCache.getDirectTypeParents(typeDef);
       if (!parents.isEmpty()) {
         NavigationGutterIconBuilder<PsiElement> builder =
             NavigationGutterIconBuilder.create(SchemaPresentationUtil.PARENT_TYPES_GUTTER_ICON)
@@ -66,7 +66,7 @@ public class SchemaLineMarkerProvider extends RelatedItemLineMarkerProvider {
         result.add(builder.createLineMarkerInfo(element));
       }
 
-      Collection<SchemaTypeDef> children = hierarchyCache.getDirectTypeInheritors(typeDef);
+      Collection<EpigraphTypeDef> children = hierarchyCache.getDirectTypeInheritors(typeDef);
       if (!children.isEmpty()) {
         NavigationGutterIconBuilder<PsiElement> builder =
             NavigationGutterIconBuilder.create(SchemaPresentationUtil.CHILD_TYPES_GUTTER_ICON)

@@ -1,9 +1,7 @@
 // This is a generated file. Not intended for manual editing.
 package io.epigraph.lang.parser.psi;
 
-import java.util.List;
 import org.jetbrains.annotations.*;
-import com.intellij.psi.PsiElement;
 
 public interface SchemaFqnTypeRef extends SchemaTypeRef {
 
@@ -11,6 +9,6 @@ public interface SchemaFqnTypeRef extends SchemaTypeRef {
   SchemaFqn getFqn();
 
   @Nullable
-  SchemaTypeDef resolve();
+  EpigraphTypeDef resolve();
 
 }

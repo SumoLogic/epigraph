@@ -28,16 +28,16 @@ import static io.epigraph.lang.lexer.EpigraphElementTypes.*;
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public abstract class SchemaTypeDefImplBase<S extends SchemaTypeDefStubBase<T>, T extends SchemaTypeDef>
-    extends StubBasedPsiElementBase<S> implements SchemaTypeDef {
+public abstract class EpigraphTypeDefImplBase<S extends SchemaTypeDefStubBase<T>, T extends EpigraphTypeDef>
+    extends StubBasedPsiElementBase<S> implements EpigraphTypeDef {
 
 //  private final static Logger LOG = Logger.getInstance(SchemaTypeDefImplBase.class);
 
-  public SchemaTypeDefImplBase(@NotNull ASTNode node) {
+  public EpigraphTypeDefImplBase(@NotNull ASTNode node) {
     super(node);
   }
 
-  public SchemaTypeDefImplBase(@NotNull S stub, @NotNull IStubElementType nodeType) {
+  public EpigraphTypeDefImplBase(@NotNull S stub, @NotNull IStubElementType nodeType) {
     super(stub, nodeType);
   }
 
@@ -145,7 +145,7 @@ public abstract class SchemaTypeDefImplBase<S extends SchemaTypeDefStubBase<T>, 
   }
 
   @NotNull
-  public List<SchemaTypeDef> extendsParents() {
+  public List<EpigraphTypeDef> extendsParents() {
     S stub = getStub();
 
     if (stub != null) {
@@ -163,9 +163,9 @@ public abstract class SchemaTypeDefImplBase<S extends SchemaTypeDefStubBase<T>, 
     List<SchemaFqnTypeRef> typeRefList = extendsDecl.getFqnTypeRefList();
     if (typeRefList.isEmpty()) return Collections.emptyList();
 
-    List<SchemaTypeDef> result = new ArrayList<>(typeRefList.size());
+    List<EpigraphTypeDef> result = new ArrayList<>(typeRefList.size());
     for (SchemaFqnTypeRef typeRef : typeRefList) {
-      SchemaTypeDef resolved = typeRef.resolve();
+      EpigraphTypeDef resolved = typeRef.resolve();
       if (resolved != null) result.add(resolved);
     }
     return result;
@@ -175,8 +175,8 @@ public abstract class SchemaTypeDefImplBase<S extends SchemaTypeDefStubBase<T>, 
   public boolean equals(Object obj) {
     if (this == obj) return true;
 
-    if (obj instanceof SchemaTypeDef) {
-      SchemaTypeDef other = (SchemaTypeDef) obj;
+    if (obj instanceof EpigraphTypeDef) {
+      EpigraphTypeDef other = (EpigraphTypeDef) obj;
 
       Fqn thisNamespace = getNamespace();
       Fqn otherNamespace = other.getNamespace();

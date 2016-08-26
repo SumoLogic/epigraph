@@ -46,7 +46,7 @@ public class SchemaElementFactory {
     return file.getImportStatements().get(0);
   }
 
-  public static SchemaRecordTypeDef createRecordTypeDef(Project project, String name) {
+  public static EpigraphRecordTypeDef createRecordTypeDef(Project project, String name) {
     final SchemaFile file = createFileFromText(project, "namespace some\nrecord " + name);
     //noinspection ConstantConditions
     return file.getDefs().getTypeDefWrapperList().get(0).getRecordTypeDef();

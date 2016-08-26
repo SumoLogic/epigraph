@@ -56,32 +56,32 @@ class SchemaStructureViewElement implements StructureViewTreeElement {
         children.addAll(defs.getTypeDefWrapperList().stream().map(SchemaTypeDefWrapper::getElement).collect(Collectors.toList()));
         children.addAll(defs.getSupplementDefList()); // SchemaSupplementDef
       }
-    } else if (element instanceof SchemaRecordTypeDef) {
-      SchemaRecordTypeBody recordTypeBody = ((SchemaRecordTypeDef) element).getRecordTypeBody();
+    } else if (element instanceof EpigraphRecordTypeDef) {
+      SchemaRecordTypeBody recordTypeBody = ((EpigraphRecordTypeDef) element).getRecordTypeBody();
       if (recordTypeBody != null) {
         children.addAll(recordTypeBody.getCustomParamList()); // SchemaCustomParam
         children.addAll(recordTypeBody.getFieldDeclList()); // SchemaFieldDecl
       }
-    } else if (element instanceof SchemaVarTypeDef) {
-      SchemaVarTypeBody varTypeBody = ((SchemaVarTypeDef) element).getVarTypeBody();
+    } else if (element instanceof EpigraphVarTypeDef) {
+      SchemaVarTypeBody varTypeBody = ((EpigraphVarTypeDef) element).getVarTypeBody();
       if (varTypeBody != null) {
         children.addAll(varTypeBody.getCustomParamList());
         children.addAll(varTypeBody.getVarTagDeclList()); // SchemaVarTagDecl
       }
-    } else if (element instanceof SchemaEnumTypeDef) {
-      SchemaEnumTypeBody enumTypeBody = ((SchemaEnumTypeDef) element).getEnumTypeBody();
+    } else if (element instanceof EpigraphEnumTypeDef) {
+      SchemaEnumTypeBody enumTypeBody = ((EpigraphEnumTypeDef) element).getEnumTypeBody();
       if (enumTypeBody != null) {
         children.addAll(enumTypeBody.getCustomParamList());
         children.addAll(enumTypeBody.getEnumMemberDeclList()); // SchemaEnumMemberDecl
       }
-    } else if (element instanceof SchemaMapTypeDef) {
-      SchemaMapTypeBody mapTypeBody = ((SchemaMapTypeDef) element).getMapTypeBody();
+    } else if (element instanceof EpigraphMapTypeDef) {
+      SchemaMapTypeBody mapTypeBody = ((EpigraphMapTypeDef) element).getMapTypeBody();
       if (mapTypeBody != null) children.addAll(mapTypeBody.getCustomParamList());
-    } else if (element instanceof SchemaListTypeDef) {
-      SchemaListTypeBody listTypeBody = ((SchemaListTypeDef) element).getListTypeBody();
+    } else if (element instanceof EpigraphListTypeDef) {
+      SchemaListTypeBody listTypeBody = ((EpigraphListTypeDef) element).getListTypeBody();
       if (listTypeBody != null) children.addAll(listTypeBody.getCustomParamList());
-    } else if (element instanceof SchemaPrimitiveTypeDef) {
-      SchemaPrimitiveTypeBody primitiveTypeBody = ((SchemaPrimitiveTypeDef) element).getPrimitiveTypeBody();
+    } else if (element instanceof EpigraphPrimitiveTypeDef) {
+      SchemaPrimitiveTypeBody primitiveTypeBody = ((EpigraphPrimitiveTypeDef) element).getPrimitiveTypeBody();
       if (primitiveTypeBody != null) children.addAll(primitiveTypeBody.getCustomParamList());
     }
 

@@ -12,7 +12,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
 import com.sumologic.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
-import io.epigraph.lang.parser.psi.SchemaTypeDef;
+import io.epigraph.lang.parser.psi.EpigraphTypeDef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -68,16 +68,16 @@ public class SchemaHierarchyBrowser extends TypeHierarchyBrowserBase {
 
   @Override
   protected boolean isApplicableElement(@NotNull PsiElement element) {
-    return element instanceof SchemaTypeDef;
+    return element instanceof EpigraphTypeDef;
   }
 
   @Nullable
   @Override
   protected HierarchyTreeStructure createHierarchyTreeStructure(@NotNull String type, @NotNull PsiElement psiElement) {
     if (SUPERTYPES_HIERARCHY_TYPE.equals(type)) {
-      return new SchemaSupertypesHierarchyTreeStructure(myProject, (SchemaTypeDef) psiElement);
+      return new SchemaSupertypesHierarchyTreeStructure(myProject, (EpigraphTypeDef) psiElement);
     } else if (SUBTYPES_HIERARCHY_TYPE.equals(type)) {
-      return new SchemaSubtypesHierarchyTreeStructure(myProject, (SchemaTypeDef) psiElement);
+      return new SchemaSubtypesHierarchyTreeStructure(myProject, (EpigraphTypeDef) psiElement);
     } else {
       LOG.error("unexpected type: " + type);
       return null;

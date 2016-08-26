@@ -182,7 +182,7 @@ public interface EpigraphElementTypes {
         return new SchemaEnumTypeBodyImpl(node);
       }
       else if (type == E_ENUM_TYPE_DEF) {
-        return new SchemaEnumTypeDefImpl(node);
+        return new EpigraphEnumTypeDefImpl(node);
       }
       else if (type == E_EXTENDS_DECL) {
         return new SchemaExtendsDeclImpl(node);
@@ -209,13 +209,13 @@ public interface EpigraphElementTypes {
         return new SchemaListTypeBodyImpl(node);
       }
       else if (type == E_LIST_TYPE_DEF) {
-        return new SchemaListTypeDefImpl(node);
+        return new EpigraphListTypeDefImpl(node);
       }
       else if (type == E_MAP_TYPE_BODY) {
         return new SchemaMapTypeBodyImpl(node);
       }
       else if (type == E_MAP_TYPE_DEF) {
-        return new SchemaMapTypeDefImpl(node);
+        return new EpigraphMapTypeDefImpl(node);
       }
       else if (type == E_META_DECL) {
         return new SchemaMetaDeclImpl(node);
@@ -290,7 +290,7 @@ public interface EpigraphElementTypes {
         return new SchemaPrimitiveTypeBodyImpl(node);
       }
       else if (type == E_PRIMITIVE_TYPE_DEF) {
-        return new SchemaPrimitiveTypeDefImpl(node);
+        return new EpigraphPrimitiveTypeDefImpl(node);
       }
       else if (type == E_QID) {
         return new SchemaQidImpl(node);
@@ -299,7 +299,7 @@ public interface EpigraphElementTypes {
         return new SchemaRecordTypeBodyImpl(node);
       }
       else if (type == E_RECORD_TYPE_DEF) {
-        return new SchemaRecordTypeDefImpl(node);
+        return new EpigraphRecordTypeDefImpl(node);
       }
       else if (type == E_SUPPLEMENTS_DECL) {
         return new SchemaSupplementsDeclImpl(node);
@@ -326,7 +326,7 @@ public interface EpigraphElementTypes {
         return new SchemaVarTypeBodyImpl(node);
       }
       else if (type == E_VAR_TYPE_DEF) {
-        return new SchemaVarTypeDefImpl(node);
+        return new EpigraphVarTypeDefImpl(node);
       }
       throw new AssertionError("Unknown element type: " + type);
     }

@@ -1,7 +1,6 @@
 // This is a generated file. Not intended for manual editing.
 package io.epigraph.lang.parser.psi.impl;
 
-import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
@@ -9,21 +8,21 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static io.epigraph.lang.lexer.EpigraphElementTypes.*;
 import io.epigraph.lang.parser.psi.*;
-import io.epigraph.lang.parser.psi.stubs.SchemaMapTypeDefStub;
+import io.epigraph.lang.parser.psi.stubs.SchemaListTypeDefStub;
 import com.intellij.psi.stubs.IStubElementType;
 
-public class SchemaMapTypeDefImpl extends SchemaMapTypeDefImplBase implements SchemaMapTypeDef {
+public class EpigraphListTypeDefImpl extends EpigraphListTypeDefImplBase implements EpigraphListTypeDef {
 
-  public SchemaMapTypeDefImpl(ASTNode node) {
+  public EpigraphListTypeDefImpl(ASTNode node) {
     super(node);
   }
 
-  public SchemaMapTypeDefImpl(SchemaMapTypeDefStub stub, IStubElementType nodeType) {
+  public EpigraphListTypeDefImpl(SchemaListTypeDefStub stub, IStubElementType nodeType) {
     super(stub, nodeType);
   }
 
   public void accept(@NotNull SchemaVisitor visitor) {
-    visitor.visitMapTypeDef(this);
+    visitor.visitListTypeDef(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -33,8 +32,8 @@ public class SchemaMapTypeDefImpl extends SchemaMapTypeDefImplBase implements Sc
 
   @Override
   @NotNull
-  public SchemaAnonMap getAnonMap() {
-    return notNullChild(PsiTreeUtil.getChildOfType(this, SchemaAnonMap.class));
+  public SchemaAnonList getAnonList() {
+    return notNullChild(PsiTreeUtil.getChildOfType(this, SchemaAnonList.class));
   }
 
   @Override
@@ -45,8 +44,8 @@ public class SchemaMapTypeDefImpl extends SchemaMapTypeDefImplBase implements Sc
 
   @Override
   @Nullable
-  public SchemaMapTypeBody getMapTypeBody() {
-    return PsiTreeUtil.getChildOfType(this, SchemaMapTypeBody.class);
+  public SchemaListTypeBody getListTypeBody() {
+    return PsiTreeUtil.getChildOfType(this, SchemaListTypeBody.class);
   }
 
   @Override

@@ -29,7 +29,7 @@ public class SchemaFoldingBuilder extends CustomFoldingBuilder implements DumbAw
 
   private static String getPlaceholderText(PsiElement element) {
     // todo namespace
-    if (element instanceof SchemaTypeDef) {
+    if (element instanceof EpigraphTypeDef) {
       return "{...}";
     } else if (element instanceof PsiFile) {
       return "/.../";
@@ -47,23 +47,23 @@ public class SchemaFoldingBuilder extends CustomFoldingBuilder implements DumbAw
       return null;
     }
 
-    if (element instanceof SchemaTypeDef) {
+    if (element instanceof EpigraphTypeDef) {
       @Nullable
       PsiElement body = null;
 
       // TODO add a mixin with getBody?
-      if (element instanceof SchemaVarTypeDef) {
-        body = ((SchemaVarTypeDef) element).getVarTypeBody();
-      } else if (element instanceof SchemaRecordTypeDef) {
-        body = ((SchemaRecordTypeDef) element).getRecordTypeBody();
-      } else if (element instanceof SchemaPrimitiveTypeDef) {
-        body = ((SchemaPrimitiveTypeDef) element).getPrimitiveTypeBody();
-      } else if (element instanceof SchemaListTypeDef) {
-        body = ((SchemaListTypeDef) element).getListTypeBody();
-      } else if (element instanceof SchemaMapTypeDef) {
-        body = ((SchemaMapTypeDef) element).getMapTypeBody();
-      } else if (element instanceof SchemaEnumTypeDef) {
-        body = ((SchemaEnumTypeDef) element).getEnumTypeBody();
+      if (element instanceof EpigraphVarTypeDef) {
+        body = ((EpigraphVarTypeDef) element).getVarTypeBody();
+      } else if (element instanceof EpigraphRecordTypeDef) {
+        body = ((EpigraphRecordTypeDef) element).getRecordTypeBody();
+      } else if (element instanceof EpigraphPrimitiveTypeDef) {
+        body = ((EpigraphPrimitiveTypeDef) element).getPrimitiveTypeBody();
+      } else if (element instanceof EpigraphListTypeDef) {
+        body = ((EpigraphListTypeDef) element).getListTypeBody();
+      } else if (element instanceof EpigraphMapTypeDef) {
+        body = ((EpigraphMapTypeDef) element).getMapTypeBody();
+      } else if (element instanceof EpigraphEnumTypeDef) {
+        body = ((EpigraphEnumTypeDef) element).getEnumTypeBody();
       }
 
       return body == null ? null : body.getTextRange();

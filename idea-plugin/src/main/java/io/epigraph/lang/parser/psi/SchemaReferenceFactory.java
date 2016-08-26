@@ -85,7 +85,7 @@ public class SchemaReferenceFactory {
 
   @Nullable
   public static PsiReference getVarTagReference(@NotNull SchemaVarTagRef varTagRef) {
-    SchemaVarTypeDef varTypeDef = PsiTreeUtil.getParentOfType(varTagRef, SchemaVarTypeDef.class);
+    EpigraphVarTypeDef varTypeDef = PsiTreeUtil.getParentOfType(varTagRef, EpigraphVarTypeDef.class);
     return varTypeDef == null ? null : new SchemaVarTagReference(varTypeDef, varTagRef.getQid());
   }
 }

@@ -3,7 +3,7 @@ package io.epigraph.lang.parser.psi.stubs;
 import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.stubs.StubBase;
 import com.intellij.psi.stubs.StubElement;
-import io.epigraph.lang.parser.psi.SchemaTypeDef;
+import io.epigraph.lang.parser.psi.EpigraphTypeDef;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-class SchemaTypeDefStubBaseImpl<T extends SchemaTypeDef> extends StubBase<T> implements SchemaTypeDefStubBase<T> {
+class SchemaTypeDefStubBaseImpl<T extends EpigraphTypeDef> extends StubBase<T> implements SchemaTypeDefStubBase<T> {
   private final String name;
   private final String namespace;
 

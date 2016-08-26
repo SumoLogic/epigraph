@@ -65,12 +65,12 @@ public class SchemaSupplementDefImpl extends StubBasedPsiElementBase<SchemaSuppl
   }
 
   @Nullable
-  public SchemaTypeDef source() {
+  public EpigraphTypeDef source() {
     return EpigraphPsiImplUtil.source(this);
   }
 
   @NotNull
-  public List<SchemaTypeDef> supplemented() {
+  public List<EpigraphTypeDef> supplemented() {
     return EpigraphPsiImplUtil.supplemented(this);
   }
 

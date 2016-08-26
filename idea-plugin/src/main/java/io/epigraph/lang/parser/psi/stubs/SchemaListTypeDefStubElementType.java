@@ -3,8 +3,8 @@ package io.epigraph.lang.parser.psi.stubs;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.stubs.StubInputStream;
 import io.epigraph.lang.parser.Fqn;
-import io.epigraph.lang.parser.psi.SchemaListTypeDef;
-import io.epigraph.lang.parser.psi.impl.SchemaListTypeDefImpl;
+import io.epigraph.lang.parser.psi.EpigraphListTypeDef;
+import io.epigraph.lang.parser.psi.impl.EpigraphListTypeDefImpl;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -15,18 +15,18 @@ import java.util.List;
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public class SchemaListTypeDefStubElementType extends SchemaTypeDefStubElementTypeBase<SchemaListTypeDefStub, SchemaListTypeDef> {
+public class SchemaListTypeDefStubElementType extends SchemaTypeDefStubElementTypeBase<SchemaListTypeDefStub, EpigraphListTypeDef> {
   public SchemaListTypeDefStubElementType(@NotNull @NonNls String debugName) {
     super(debugName, "listtypedef");
   }
 
   @Override
-  public SchemaListTypeDef createPsi(@NotNull SchemaListTypeDefStub stub) {
-    return new SchemaListTypeDefImpl(stub, this);
+  public EpigraphListTypeDef createPsi(@NotNull SchemaListTypeDefStub stub) {
+    return new EpigraphListTypeDefImpl(stub, this);
   }
 
   @Override
-  public SchemaListTypeDefStub createStub(@NotNull SchemaListTypeDef typeDef, StubElement parentStub) {
+  public SchemaListTypeDefStub createStub(@NotNull EpigraphListTypeDef typeDef, StubElement parentStub) {
     return new SchemaListTypeDefStubImpl(
         parentStub,
         typeDef.getName(),

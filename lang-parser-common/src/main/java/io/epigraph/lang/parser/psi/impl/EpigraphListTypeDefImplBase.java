@@ -2,8 +2,8 @@ package io.epigraph.lang.parser.psi.impl;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.stubs.IStubElementType;
-import io.epigraph.lang.parser.psi.SchemaListTypeDef;
-import io.epigraph.lang.parser.psi.SchemaTypeDef;
+import io.epigraph.lang.parser.psi.EpigraphListTypeDef;
+import io.epigraph.lang.parser.psi.EpigraphTypeDef;
 import io.epigraph.lang.parser.psi.TypeKind;
 import io.epigraph.lang.parser.psi.stubs.SchemaListTypeDefStub;
 import org.jetbrains.annotations.NotNull;
@@ -11,12 +11,12 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-abstract public class SchemaListTypeDefImplBase extends SchemaTypeDefImplBase<SchemaListTypeDefStub, SchemaListTypeDef> implements SchemaTypeDef {
-  SchemaListTypeDefImplBase(@NotNull ASTNode node) {
+abstract public class EpigraphListTypeDefImplBase extends EpigraphTypeDefImplBase<SchemaListTypeDefStub, EpigraphListTypeDef> implements EpigraphTypeDef {
+  EpigraphListTypeDefImplBase(@NotNull ASTNode node) {
     super(node);
   }
 
-  SchemaListTypeDefImplBase(@NotNull SchemaListTypeDefStub stub, @NotNull IStubElementType nodeType) {
+  EpigraphListTypeDefImplBase(@NotNull SchemaListTypeDefStub stub, @NotNull IStubElementType nodeType) {
     super(stub, nodeType);
   }
 

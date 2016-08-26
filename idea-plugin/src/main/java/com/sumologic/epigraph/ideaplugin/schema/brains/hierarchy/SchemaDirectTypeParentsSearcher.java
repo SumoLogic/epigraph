@@ -14,10 +14,9 @@ import com.sumologic.epigraph.ideaplugin.schema.brains.VirtualFileUtil;
 import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.SchemaDirectTypeParentsSearch.SearchParameters;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaSearchScopeUtil;
-import io.epigraph.lang.parser.psi.SchemaRecordTypeDef;
-import io.epigraph.lang.parser.psi.SchemaSupplementDef;
-import io.epigraph.lang.parser.psi.SchemaTypeDef;
-import io.epigraph.lang.parser.psi.SchemaVarTypeDef;
+import io.epigraph.lang.parser.psi.*;
+import io.epigraph.lang.parser.psi.EpigraphRecordTypeDef;
+import io.epigraph.lang.parser.psi.EpigraphTypeDef;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -28,18 +27,18 @@ import java.util.stream.Collectors;
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public class SchemaDirectTypeParentsSearcher implements QueryExecutor<SchemaTypeDef, SearchParameters> {
+public class SchemaDirectTypeParentsSearcher implements QueryExecutor<EpigraphTypeDef, SearchParameters> {
   @Override
-  public boolean execute(@NotNull SearchParameters queryParameters, @NotNull Processor<SchemaTypeDef> consumer) {
+  public boolean execute(@NotNull SearchParameters queryParameters, @NotNull Processor<EpigraphTypeDef> consumer) {
 
-    final SchemaTypeDef target = queryParameters.schemaTypeDef;
+    final EpigraphTypeDef target = queryParameters.epigraphTypeDef;
     final Project project = PsiUtilCore.getProjectInReadAction(target);
     final VirtualFile targetVirtualFile = VirtualFileUtil.getOriginalVirtualFile(target.getContainingFile());
     if (targetVirtualFile == null) return true;
 
     final Application application = ApplicationManager.getApplication();
 
-    final List<SchemaTypeDef> parents = new ArrayList<>();
+    final List<EpigraphTypeDef> parents = new ArrayList<>();
 
     if (queryParameters.includeExtends) {
       application.runReadAction(() -> {
@@ -51,11 +50,11 @@ public class SchemaDirectTypeParentsSearcher implements QueryExecutor<SchemaType
 
     if (queryParameters.includeSupplements) {
 
-      List<SchemaTypeDef> candidates = application.runReadAction(
-          (Computable<List<SchemaTypeDef>>) () -> SchemaIndexUtil.findTypeDefs(project, null, null, GlobalSearchScope.allScope(project))
+      List<EpigraphTypeDef> candidates = application.runReadAction(
+          (Computable<List<EpigraphTypeDef>>) () -> SchemaIndexUtil.findTypeDefs(project, null, null, GlobalSearchScope.allScope(project))
       );
 
-      for (SchemaTypeDef candidate : candidates) {
+      for (EpigraphTypeDef candidate : candidates) {
         ProgressManager.checkCanceled();
 
         application.runReadAction(() -> {
@@ -64,12 +63,12 @@ public class SchemaDirectTypeParentsSearcher implements QueryExecutor<SchemaType
           final GlobalSearchScope candidateScope = SchemaSearchScopeUtil.getSearchScope(candidate);
           if (candidateScope.contains(targetVirtualFile)) {
 
-            List<SchemaTypeDef> supplementedList = null;
-            if (candidate instanceof SchemaRecordTypeDef) {
-              SchemaRecordTypeDef recordTypeDef = (SchemaRecordTypeDef) candidate;
+            List<EpigraphTypeDef> supplementedList = null;
+            if (candidate instanceof EpigraphRecordTypeDef) {
+              EpigraphRecordTypeDef recordTypeDef = (EpigraphRecordTypeDef) candidate;
               supplementedList = recordTypeDef.supplemented();
-            } else if (candidate instanceof SchemaVarTypeDef) {
-              SchemaVarTypeDef varTypeDef = (SchemaVarTypeDef) candidate;
+            } else if (candidate instanceof EpigraphVarTypeDef) {
+              EpigraphVarTypeDef varTypeDef = (EpigraphVarTypeDef) candidate;
               supplementedList = varTypeDef.supplemented();
             }
 

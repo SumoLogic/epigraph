@@ -1,7 +1,6 @@
 // This is a generated file. Not intended for manual editing.
 package io.epigraph.lang.parser.psi.impl;
 
-import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
@@ -9,21 +8,21 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static io.epigraph.lang.lexer.EpigraphElementTypes.*;
 import io.epigraph.lang.parser.psi.*;
-import io.epigraph.lang.parser.psi.stubs.SchemaRecordTypeDefStub;
+import io.epigraph.lang.parser.psi.stubs.SchemaMapTypeDefStub;
 import com.intellij.psi.stubs.IStubElementType;
 
-public class SchemaRecordTypeDefImpl extends SchemaRecordTypeDefImplBase implements SchemaRecordTypeDef {
+public class EpigraphMapTypeDefImpl extends EpigraphMapTypeDefImplBase implements EpigraphMapTypeDef {
 
-  public SchemaRecordTypeDefImpl(ASTNode node) {
+  public EpigraphMapTypeDefImpl(ASTNode node) {
     super(node);
   }
 
-  public SchemaRecordTypeDefImpl(SchemaRecordTypeDefStub stub, IStubElementType nodeType) {
+  public EpigraphMapTypeDefImpl(SchemaMapTypeDefStub stub, IStubElementType nodeType) {
     super(stub, nodeType);
   }
 
   public void accept(@NotNull SchemaVisitor visitor) {
-    visitor.visitRecordTypeDef(this);
+    visitor.visitMapTypeDef(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -32,9 +31,21 @@ public class SchemaRecordTypeDefImpl extends SchemaRecordTypeDefImplBase impleme
   }
 
   @Override
+  @NotNull
+  public SchemaAnonMap getAnonMap() {
+    return notNullChild(PsiTreeUtil.getChildOfType(this, SchemaAnonMap.class));
+  }
+
+  @Override
   @Nullable
   public SchemaExtendsDecl getExtendsDecl() {
     return PsiTreeUtil.getChildOfType(this, SchemaExtendsDecl.class);
+  }
+
+  @Override
+  @Nullable
+  public SchemaMapTypeBody getMapTypeBody() {
+    return PsiTreeUtil.getChildOfType(this, SchemaMapTypeBody.class);
   }
 
   @Override
@@ -51,12 +62,6 @@ public class SchemaRecordTypeDefImpl extends SchemaRecordTypeDefImplBase impleme
 
   @Override
   @Nullable
-  public SchemaRecordTypeBody getRecordTypeBody() {
-    return PsiTreeUtil.getChildOfType(this, SchemaRecordTypeBody.class);
-  }
-
-  @Override
-  @Nullable
   public SchemaSupplementsDecl getSupplementsDecl() {
     return PsiTreeUtil.getChildOfType(this, SchemaSupplementsDecl.class);
   }
@@ -65,17 +70,6 @@ public class SchemaRecordTypeDefImpl extends SchemaRecordTypeDefImplBase impleme
   @Nullable
   public PsiElement getAbstract() {
     return findChildByType(E_ABSTRACT);
-  }
-
-  @Override
-  @NotNull
-  public PsiElement getRecord() {
-    return notNullChild(findChildByType(E_RECORD));
-  }
-
-  @NotNull
-  public List<SchemaTypeDef> supplemented() {
-    return EpigraphPsiImplUtil.supplemented(this);
   }
 
 }

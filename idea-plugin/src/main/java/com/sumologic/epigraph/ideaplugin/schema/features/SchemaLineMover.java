@@ -9,9 +9,9 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.UnfairTextRange;
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
+import io.epigraph.lang.parser.psi.EpigraphTypeDef;
 import io.epigraph.lang.parser.psi.SchemaFile;
 import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaPsiUtil;
-import io.epigraph.lang.parser.psi.SchemaTypeDef;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -38,7 +38,7 @@ public class SchemaLineMover extends LineMover {
     LineRange toMoveOld = info.toMove;
     info.toMove = new LineRange(moved);
 
-    Class<? extends PsiNamedElement> movedClass = moved instanceof SchemaTypeDef ? SchemaTypeDef.class : moved.getClass();
+    Class<? extends PsiNamedElement> movedClass = moved instanceof EpigraphTypeDef ? EpigraphTypeDef.class : moved.getClass();
 
     if (down) {
       int delta = info.toMove.endLine - toMoveOld.endLine;
@@ -88,7 +88,7 @@ public class SchemaLineMover extends LineMover {
         final PsiElement target = SchemaPsiUtil.getElementOrParentOfType(updatedElement, movedClass, PsiComment.class);
 
         if (target == null) {
-          if (moved instanceof SchemaTypeDef)
+          if (moved instanceof EpigraphTypeDef)
             info.prohibitMove();
           return true;
         }

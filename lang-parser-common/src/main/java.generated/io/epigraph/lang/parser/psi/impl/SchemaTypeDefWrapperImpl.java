@@ -34,42 +34,42 @@ public class SchemaTypeDefWrapperImpl extends StubBasedPsiElementBase<SchemaType
 
   @Override
   @Nullable
-  public SchemaEnumTypeDef getEnumTypeDef() {
-    return PsiTreeUtil.getStubChildOfType(this, SchemaEnumTypeDef.class);
+  public EpigraphEnumTypeDef getEnumTypeDef() {
+    return PsiTreeUtil.getStubChildOfType(this, EpigraphEnumTypeDef.class);
   }
 
   @Override
   @Nullable
-  public SchemaListTypeDef getListTypeDef() {
-    return PsiTreeUtil.getStubChildOfType(this, SchemaListTypeDef.class);
+  public EpigraphListTypeDef getListTypeDef() {
+    return PsiTreeUtil.getStubChildOfType(this, EpigraphListTypeDef.class);
   }
 
   @Override
   @Nullable
-  public SchemaMapTypeDef getMapTypeDef() {
-    return PsiTreeUtil.getStubChildOfType(this, SchemaMapTypeDef.class);
+  public EpigraphMapTypeDef getMapTypeDef() {
+    return PsiTreeUtil.getStubChildOfType(this, EpigraphMapTypeDef.class);
   }
 
   @Override
   @Nullable
-  public SchemaPrimitiveTypeDef getPrimitiveTypeDef() {
-    return PsiTreeUtil.getStubChildOfType(this, SchemaPrimitiveTypeDef.class);
+  public EpigraphPrimitiveTypeDef getPrimitiveTypeDef() {
+    return PsiTreeUtil.getStubChildOfType(this, EpigraphPrimitiveTypeDef.class);
   }
 
   @Override
   @Nullable
-  public SchemaRecordTypeDef getRecordTypeDef() {
-    return PsiTreeUtil.getStubChildOfType(this, SchemaRecordTypeDef.class);
+  public EpigraphRecordTypeDef getRecordTypeDef() {
+    return PsiTreeUtil.getStubChildOfType(this, EpigraphRecordTypeDef.class);
   }
 
   @Override
   @Nullable
-  public SchemaVarTypeDef getVarTypeDef() {
-    return PsiTreeUtil.getStubChildOfType(this, SchemaVarTypeDef.class);
+  public EpigraphVarTypeDef getVarTypeDef() {
+    return PsiTreeUtil.getStubChildOfType(this, EpigraphVarTypeDef.class);
   }
 
   @NotNull
-  public SchemaTypeDef getElement() {
+  public EpigraphTypeDef getElement() {
     return EpigraphPsiImplUtil.getElement(this);
   }
 

@@ -46,8 +46,8 @@ public class SchemaPresentationUtil {
 
     if (qualified) {
       Fqn namespace;
-      if (element instanceof SchemaTypeDef) {
-        SchemaTypeDef typeDef = (SchemaTypeDef) element;
+      if (element instanceof EpigraphTypeDef) {
+        EpigraphTypeDef typeDef = (EpigraphTypeDef) element;
         namespace = typeDef.getNamespace();
       } else namespace = NamespaceManager.getNamespace(element);
       return namespace == null ? shortName : namespace.append(shortName).toString();
@@ -58,11 +58,11 @@ public class SchemaPresentationUtil {
   public static Icon getIcon(@NotNull PsiElement element) {
     if (element instanceof SchemaFile) return SCHEMA_FILE_ICON;
 
-    if (element instanceof SchemaRecordTypeDef) return AllIcons.Nodes.Class;
-    if (element instanceof SchemaEnumTypeDef) return AllIcons.Nodes.Enum;
-    if (element instanceof SchemaVarTypeDef) return AllIcons.Nodes.Interface;
+    if (element instanceof EpigraphRecordTypeDef) return AllIcons.Nodes.Class;
+    if (element instanceof EpigraphEnumTypeDef) return AllIcons.Nodes.Enum;
+    if (element instanceof EpigraphVarTypeDef) return AllIcons.Nodes.Interface;
 
-    if (element instanceof SchemaTypeDef) return AllIcons.Nodes.Class;
+    if (element instanceof EpigraphTypeDef) return AllIcons.Nodes.Class;
 
     if (element instanceof SchemaSupplementDef) return AllIcons.Nodes.Aspect;
 
@@ -82,10 +82,10 @@ public class SchemaPresentationUtil {
       return VirtualFileUtil.getOriginalVirtualFile((SchemaFile) element).getPresentableName();
     }
 
-    if (element instanceof SchemaTypeDef) {
-      SchemaTypeDef schemaTypeDef = (SchemaTypeDef) element;
+    if (element instanceof EpigraphTypeDef) {
+      EpigraphTypeDef epigraphTypeDef = (EpigraphTypeDef) element;
 
-      PsiElement id = schemaTypeDef.getNameIdentifier();
+      PsiElement id = epigraphTypeDef.getNameIdentifier();
       return id == null ? "" : id.getText();
     }
 
@@ -100,7 +100,7 @@ public class SchemaPresentationUtil {
 
       if (structureView) return name;
 
-      SchemaRecordTypeDef recordTypeDef = PsiTreeUtil.getParentOfType(element, SchemaRecordTypeDef.class);
+      EpigraphRecordTypeDef recordTypeDef = PsiTreeUtil.getParentOfType(element, EpigraphRecordTypeDef.class);
       String typeName = recordTypeDef == null ? null : recordTypeDef.getName();
       typeName = typeName == null ? "???" : typeName;
 
@@ -113,7 +113,7 @@ public class SchemaPresentationUtil {
 
       if (structureView) return name;
 
-      SchemaVarTypeDef varTypeDef = PsiTreeUtil.getParentOfType(element, SchemaVarTypeDef.class);
+      EpigraphVarTypeDef varTypeDef = PsiTreeUtil.getParentOfType(element, EpigraphVarTypeDef.class);
       String varTypeName = varTypeDef == null ? null : varTypeDef.getName();
       varTypeName = varTypeName == null ? "???" : varTypeName;
 
@@ -136,7 +136,7 @@ public class SchemaPresentationUtil {
         name.append(typeRef.getFqn().getFqn().toString());
       }
       name.append(" with ");
-      SchemaTypeDef source = schemaSupplementDef.source();
+      EpigraphTypeDef source = schemaSupplementDef.source();
       name.append(source == null ? "???" : source.getName());
 
       return "supplement " + name;
@@ -158,8 +158,8 @@ public class SchemaPresentationUtil {
   public static String getNamespaceString(@NotNull PsiElement element, boolean inParens) {
     Fqn namespace;
 
-    if (element instanceof SchemaTypeDef) {
-      SchemaTypeDef typeDef = (SchemaTypeDef) element;
+    if (element instanceof EpigraphTypeDef) {
+      EpigraphTypeDef typeDef = (EpigraphTypeDef) element;
       namespace = typeDef.getNamespace();
     } else {
       namespace = NamespaceManager.getNamespace(element);
@@ -178,12 +178,12 @@ public class SchemaPresentationUtil {
 
   @NotNull
   public static String getType(@NotNull PsiElement element) {
-    if (element instanceof SchemaListTypeDef) return "List type";
-    if (element instanceof SchemaPrimitiveTypeDef) return "Primitive type";
-    if (element instanceof SchemaEnumTypeDef) return "Enum type";
-    if (element instanceof SchemaVarTypeDef) return "Var type";
-    if (element instanceof SchemaRecordTypeDef) return "Record type";
-    if (element instanceof SchemaMapTypeDef) return "Map type";
+    if (element instanceof EpigraphListTypeDef) return "List type";
+    if (element instanceof EpigraphPrimitiveTypeDef) return "Primitive type";
+    if (element instanceof EpigraphEnumTypeDef) return "Enum type";
+    if (element instanceof EpigraphVarTypeDef) return "Var type";
+    if (element instanceof EpigraphRecordTypeDef) return "Record type";
+    if (element instanceof EpigraphMapTypeDef) return "Map type";
     if (element instanceof SchemaFqnSegment) return "Namespace";
     if (element instanceof SchemaVarTagDecl) return "Var tag";
     if (element instanceof SchemaFieldDecl) return "Record field";

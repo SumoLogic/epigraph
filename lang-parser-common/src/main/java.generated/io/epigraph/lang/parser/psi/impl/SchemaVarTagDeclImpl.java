@@ -98,7 +98,7 @@ public class SchemaVarTagDeclImpl extends CustomParamHolderImpl implements Schem
   }
 
   @NotNull
-  public SchemaVarTypeDef getVarTypeDef() {
+  public EpigraphVarTypeDef getVarTypeDef() {
     return EpigraphPsiImplUtil.getVarTypeDef(this);
   }
 

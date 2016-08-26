@@ -6,7 +6,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
 import io.epigraph.lang.parser.Fqn;
-import io.epigraph.lang.parser.psi.SchemaTypeDef;
+import io.epigraph.lang.parser.psi.EpigraphTypeDef;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -20,7 +20,7 @@ public class GotoTypeContributor implements ChooseByNameContributor {
         ? GlobalSearchScope.allScope(project)
         : GlobalSearchScope.projectScope(project);
 
-    return SchemaIndexUtil.findTypeDefs(project, null, null, scope).stream().map(SchemaTypeDef::getName).toArray(String[]::new);
+    return SchemaIndexUtil.findTypeDefs(project, null, null, scope).stream().map(EpigraphTypeDef::getName).toArray(String[]::new);
   }
 
   @NotNull

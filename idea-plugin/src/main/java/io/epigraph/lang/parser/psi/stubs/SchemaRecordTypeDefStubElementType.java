@@ -4,9 +4,9 @@ import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.stubs.StubInputStream;
 import com.intellij.psi.stubs.StubOutputStream;
 import io.epigraph.lang.parser.Fqn;
-import io.epigraph.lang.parser.psi.SchemaRecordTypeDef;
+import io.epigraph.lang.parser.psi.EpigraphRecordTypeDef;
 import io.epigraph.lang.parser.psi.SchemaSupplementsDecl;
-import io.epigraph.lang.parser.psi.impl.SchemaRecordTypeDefImpl;
+import io.epigraph.lang.parser.psi.impl.EpigraphRecordTypeDefImpl;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -18,18 +18,18 @@ import java.util.stream.Collectors;
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public class SchemaRecordTypeDefStubElementType extends SchemaTypeDefStubElementTypeBase<SchemaRecordTypeDefStub, SchemaRecordTypeDef> {
+public class SchemaRecordTypeDefStubElementType extends SchemaTypeDefStubElementTypeBase<SchemaRecordTypeDefStub, EpigraphRecordTypeDef> {
   public SchemaRecordTypeDefStubElementType(@NotNull @NonNls String debugName) {
     super(debugName, "recordtypedef");
   }
 
   @Override
-  public SchemaRecordTypeDef createPsi(@NotNull SchemaRecordTypeDefStub stub) {
-    return new SchemaRecordTypeDefImpl(stub, this);
+  public EpigraphRecordTypeDef createPsi(@NotNull SchemaRecordTypeDefStub stub) {
+    return new EpigraphRecordTypeDefImpl(stub, this);
   }
 
   @Override
-  public SchemaRecordTypeDefStub createStub(@NotNull SchemaRecordTypeDef typeDef, StubElement parentStub) {
+  public SchemaRecordTypeDefStub createStub(@NotNull EpigraphRecordTypeDef typeDef, StubElement parentStub) {
     SchemaSupplementsDecl supplementsDecl = typeDef.getSupplementsDecl();
     List<SerializedFqnTypeRef> supplementedRefs = supplementsDecl == null ? null :
         supplementsDecl.getFqnTypeRefList().stream()

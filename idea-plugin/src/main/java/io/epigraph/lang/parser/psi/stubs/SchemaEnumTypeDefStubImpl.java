@@ -3,7 +3,7 @@ package io.epigraph.lang.parser.psi.stubs;
 import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.stubs.StubElement;
 import io.epigraph.lang.lexer.EpigraphElementTypes;
-import io.epigraph.lang.parser.psi.SchemaEnumTypeDef;
+import io.epigraph.lang.parser.psi.EpigraphEnumTypeDef;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public class SchemaEnumTypeDefStubImpl extends SchemaTypeDefStubBaseImpl<SchemaEnumTypeDef> implements SchemaEnumTypeDefStub {
+public class SchemaEnumTypeDefStubImpl extends SchemaTypeDefStubBaseImpl<EpigraphEnumTypeDef> implements SchemaEnumTypeDefStub {
   SchemaEnumTypeDefStubImpl(StubElement parent,
                             String name,
                             String namespace,

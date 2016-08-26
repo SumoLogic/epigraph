@@ -7,8 +7,8 @@ import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
+import io.epigraph.lang.parser.psi.EpigraphTypeDef;
 import io.epigraph.lang.parser.psi.SchemaSupplementDef;
-import io.epigraph.lang.parser.psi.SchemaTypeDef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,7 +24,7 @@ public class SchemaHierarchyProvider implements HierarchyProvider {
 
     final PsiElement element = CommonDataKeys.PSI_ELEMENT.getData(dataContext);
 
-    SchemaTypeDef typeDef = PsiTreeUtil.getParentOfType(element, SchemaTypeDef.class, false);
+    EpigraphTypeDef typeDef = PsiTreeUtil.getParentOfType(element, EpigraphTypeDef.class, false);
     if (typeDef != null) return typeDef;
 
 

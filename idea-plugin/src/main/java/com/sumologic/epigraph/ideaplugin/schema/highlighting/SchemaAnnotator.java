@@ -78,7 +78,7 @@ public class SchemaAnnotator implements Annotator {
       }
 
       @Override
-      public void visitTypeDef(@NotNull SchemaTypeDef typeDef) {
+      public void visitTypeDef(@NotNull EpigraphTypeDef typeDef) {
         PsiElement id = typeDef.getNameIdentifier();
         if (id != null) {
           setHighlighting(id, holder, SchemaSyntaxHighlighter.DECL_TYPE_NAME);
@@ -106,14 +106,14 @@ public class SchemaAnnotator implements Annotator {
             }
 
             // check if's already defined
-            List<SchemaTypeDef> typeDefs = SchemaIndexUtil.findTypeDefs(element.getProject(), new Fqn[]{fullTypeNameFqn}, SchemaSearchScopeUtil.getSearchScope(typeDef));
+            List<EpigraphTypeDef> typeDefs = SchemaIndexUtil.findTypeDefs(element.getProject(), new Fqn[]{fullTypeNameFqn}, SchemaSearchScopeUtil.getSearchScope(typeDef));
             if (typeDefs.size() > 1) {
               holder.createErrorAnnotation(id, SchemaBundle.message("annotator.type.already.defined", fullTypeNameFqn));
             }
 
             // check for circular inheritance
             HierarchyCache hierarchyCache = HierarchyCache.getHierarchyCache(element.getProject());
-            List<SchemaTypeDef> typeParents = hierarchyCache.getTypeParents(typeDef);
+            List<EpigraphTypeDef> typeParents = hierarchyCache.getTypeParents(typeDef);
             if (typeParents.contains(typeDef)) {
               holder.createErrorAnnotation(id, SchemaBundle.message("annotator.circular.inheritance"));
             }
@@ -134,14 +134,14 @@ public class SchemaAnnotator implements Annotator {
 
       @Override
       public void visitExtendsDecl(@NotNull SchemaExtendsDecl schemaExtendsDecl) {
-        SchemaTypeDef typeDef = (SchemaTypeDef) schemaExtendsDecl.getParent();
+        EpigraphTypeDef typeDef = (EpigraphTypeDef) schemaExtendsDecl.getParent();
         if (typeDef == null) return;
 
         List<SchemaFqnTypeRef> typeRefList = schemaExtendsDecl.getFqnTypeRefList();
         for (SchemaFqnTypeRef fqnTypeRef : typeRefList) {
           boolean wrongKind = false;
 
-          SchemaTypeDef parent = fqnTypeRef.resolve();
+          EpigraphTypeDef parent = fqnTypeRef.resolve();
           if (parent != null) {
             if (typeDef.getKind() != parent.getKind()) wrongKind = true;
           }
@@ -191,11 +191,11 @@ public class SchemaAnnotator implements Annotator {
     });
   }
 
-  private void validateExtendsList(@NotNull SchemaTypeDef typeDef, @NotNull SchemaAnonList anonList) {
+  private void validateExtendsList(@NotNull EpigraphTypeDef typeDef, @NotNull SchemaAnonList anonList) {
     // TODO check types compatibility, lists are covariant?
   }
 
-  private void validateExtendsMap(@NotNull SchemaTypeDef typeDef, @NotNull SchemaAnonMap anonMap) {
+  private void validateExtendsMap(@NotNull EpigraphTypeDef typeDef, @NotNull SchemaAnonMap anonMap) {
     // TODO check types compatibility, maps are covariant?
   }
 
@@ -215,7 +215,7 @@ public class SchemaAnnotator implements Annotator {
         ResolveResult[] resolveResults = reference.multiResolve(false);
         List<String> typeDefFqns = new ArrayList<>();
         for (ResolveResult resolveResult : resolveResults) {
-          if (resolveResult.getElement() instanceof SchemaTypeDef)
+          if (resolveResult.getElement() instanceof EpigraphTypeDef)
             typeDefFqns.add(SchemaPresentationUtil.getName((PsiNamedElement) resolveResult.getElement(), true));
         }
 

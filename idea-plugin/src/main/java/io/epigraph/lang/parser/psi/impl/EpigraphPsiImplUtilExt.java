@@ -28,7 +28,7 @@ class EpigraphPsiImplUtilExt {
 
   @Contract(pure = true)
   @NotNull
-  public static List<SchemaTypeDef> supplemented(@NotNull SchemaRecordTypeDef recordTypeDef) {
+  public static List<EpigraphTypeDef> supplemented(@NotNull EpigraphRecordTypeDef recordTypeDef) {
     SchemaRecordTypeDefStub stub = recordTypeDef.getStub();
     if (stub != null) {
       List<SerializedFqnTypeRef> supplementedTypeRefs = stub.getSupplementedTypeRefs();
@@ -44,7 +44,7 @@ class EpigraphPsiImplUtilExt {
 
   @Contract(pure = true)
   @NotNull
-  public static List<SchemaTypeDef> supplemented(@NotNull SchemaVarTypeDef varTypeDef) {
+  public static List<EpigraphTypeDef> supplemented(@NotNull EpigraphVarTypeDef varTypeDef) {
     SchemaVarTypeDefStub stub = varTypeDef.getStub();
     if (stub != null) {
       List<SerializedFqnTypeRef> supplementedTypeRefs = stub.getSupplementedTypeRefs();
@@ -60,7 +60,7 @@ class EpigraphPsiImplUtilExt {
 
   @Contract(pure = true)
   @Nullable
-  public static SchemaTypeDef source(@NotNull SchemaSupplementDef supplementDef) {
+  public static EpigraphTypeDef source(@NotNull SchemaSupplementDef supplementDef) {
     SchemaSupplementDefStub stub = supplementDef.getStub();
     if (stub != null) {
       SerializedFqnTypeRef sourceTypeRef = stub.getSourceTypeRef();
@@ -75,7 +75,7 @@ class EpigraphPsiImplUtilExt {
 
   @Contract(pure = true)
   @NotNull
-  public static List<SchemaTypeDef> supplemented(@NotNull SchemaSupplementDef supplementDef) {
+  public static List<EpigraphTypeDef> supplemented(@NotNull SchemaSupplementDef supplementDef) {
     SchemaSupplementDefStub stub = supplementDef.getStub();
     if (stub != null) {
       List<SerializedFqnTypeRef> supplementedTypeRefs = stub.getSupplementedTypeRefs();
@@ -110,16 +110,16 @@ class EpigraphPsiImplUtilExt {
 
 //  /////////////
 
-  private static List<SchemaTypeDef> resolveTypeRefs(List<SchemaFqnTypeRef> refs) {
+  private static List<EpigraphTypeDef> resolveTypeRefs(List<SchemaFqnTypeRef> refs) {
     return refs.stream()
         .map(SchemaFqnTypeRef::resolve)
         .filter(Objects::nonNull)
         .collect(Collectors.toList());
   }
 
-  private static List<SchemaTypeDef> resolveSerializedTypeRefs(@Nullable List<SerializedFqnTypeRef> refs,
-                                                               @NotNull Project project,
-                                                               @NotNull GlobalSearchScope searchScope) {
+  private static List<EpigraphTypeDef> resolveSerializedTypeRefs(@Nullable List<SerializedFqnTypeRef> refs,
+                                                                 @NotNull Project project,
+                                                                 @NotNull GlobalSearchScope searchScope) {
     if (refs == null) return Collections.emptyList();
     return refs.stream()
         .map(tr -> tr.resolveTypeDef(project, searchScope))

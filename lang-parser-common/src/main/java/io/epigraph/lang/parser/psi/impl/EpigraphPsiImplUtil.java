@@ -97,8 +97,8 @@ public class EpigraphPsiImplUtil {
 
   @Contract(pure = true)
   @NotNull
-  public static SchemaTypeDef getElement(SchemaTypeDefWrapper typeDef) {
-    SchemaTypeDef e = typeDef.getVarTypeDef();
+  public static EpigraphTypeDef getElement(SchemaTypeDefWrapper typeDef) {
+    EpigraphTypeDef e = typeDef.getVarTypeDef();
     if (e != null) return e;
     e = typeDef.getRecordTypeDef();
     if (e != null) return e;
@@ -118,14 +118,14 @@ public class EpigraphPsiImplUtil {
 
   @Contract(pure = true)
   @NotNull
-  public static List<SchemaTypeDef> supplemented(@NotNull SchemaRecordTypeDef recordTypeDef) {
+  public static List<EpigraphTypeDef> supplemented(@NotNull EpigraphRecordTypeDef recordTypeDef) {
     return EpigraphPsiImplUtilExt.supplemented(recordTypeDef);
   }
 
   // primitive --------------------------------------------
   @Contract(pure = true)
   @NotNull
-  public static PrimitiveTypeKind getPrimitiveTypeKind(@NotNull SchemaPrimitiveTypeDef primitiveTypeDef) {
+  public static PrimitiveTypeKind getPrimitiveTypeKind(@NotNull EpigraphPrimitiveTypeDef primitiveTypeDef) {
     if (primitiveTypeDef.getStringT() != null) return PrimitiveTypeKind.STRING;
     if (primitiveTypeDef.getLongT() != null) return PrimitiveTypeKind.LONG;
     if (primitiveTypeDef.getIntegerT() != null) return PrimitiveTypeKind.INTEGER;
@@ -139,7 +139,7 @@ public class EpigraphPsiImplUtil {
 
   @Contract(pure = true)
   @NotNull
-  public static List<SchemaTypeDef> supplemented(@NotNull SchemaVarTypeDef varTypeDef) {
+  public static List<EpigraphTypeDef> supplemented(@NotNull EpigraphVarTypeDef varTypeDef) {
     return EpigraphPsiImplUtilExt.supplemented(varTypeDef);
   }
 
@@ -161,11 +161,11 @@ public class EpigraphPsiImplUtil {
 
   @Contract(pure = true)
   @Nullable
-  public static SchemaTypeDef resolve(@NotNull SchemaFqnTypeRef typeRef) {
+  public static EpigraphTypeDef resolve(@NotNull SchemaFqnTypeRef typeRef) {
     PsiReference reference = getReference(typeRef);
     if (reference == null) return null;
     PsiElement element = reference.resolve();
-    if (element instanceof SchemaTypeDef) return (SchemaTypeDef) element;
+    if (element instanceof EpigraphTypeDef) return (EpigraphTypeDef) element;
     return null;
   }
 
@@ -215,13 +215,13 @@ public class EpigraphPsiImplUtil {
 
   @Contract(pure = true)
   @Nullable
-  public static SchemaTypeDef source(@NotNull SchemaSupplementDef supplementDef) {
+  public static EpigraphTypeDef source(@NotNull SchemaSupplementDef supplementDef) {
     return EpigraphPsiImplUtilExt.source(supplementDef);
   }
 
   @Contract(pure = true)
   @NotNull
-  public static List<SchemaTypeDef> supplemented(@NotNull SchemaSupplementDef supplementDef) {
+  public static List<EpigraphTypeDef> supplemented(@NotNull SchemaSupplementDef supplementDef) {
     return EpigraphPsiImplUtilExt.supplemented(supplementDef);
   }
 
@@ -356,8 +356,8 @@ public class EpigraphPsiImplUtil {
   }
 
   @NotNull
-  public static SchemaRecordTypeDef getRecordTypeDef(@NotNull SchemaFieldDecl fieldDecl) {
-    SchemaRecordTypeDef recordTypeDef = PsiTreeUtil.getParentOfType(fieldDecl, SchemaRecordTypeDef.class);
+  public static EpigraphRecordTypeDef getRecordTypeDef(@NotNull SchemaFieldDecl fieldDecl) {
+    EpigraphRecordTypeDef recordTypeDef = PsiTreeUtil.getParentOfType(fieldDecl, EpigraphRecordTypeDef.class);
     assert recordTypeDef != null;
     return recordTypeDef;
   }
@@ -394,8 +394,8 @@ public class EpigraphPsiImplUtil {
   }
 
   @NotNull
-  public static SchemaVarTypeDef getVarTypeDef(@NotNull SchemaVarTagDecl varTagDecl) {
-    SchemaVarTypeDef varTypeDef = PsiTreeUtil.getParentOfType(varTagDecl, SchemaVarTypeDef.class);
+  public static EpigraphVarTypeDef getVarTypeDef(@NotNull SchemaVarTagDecl varTagDecl) {
+    EpigraphVarTypeDef varTypeDef = PsiTreeUtil.getParentOfType(varTagDecl, EpigraphVarTypeDef.class);
     assert varTypeDef != null;
     return varTypeDef;
   }

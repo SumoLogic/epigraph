@@ -12,7 +12,7 @@ import io.epigraph.lang.parser.NamingConventions;
 import io.epigraph.lang.parser.SchemaParserDefinition;
 import io.epigraph.lang.parser.psi.SchemaQid;
 import io.epigraph.lang.parser.psi.SchemaVarTagDecl;
-import io.epigraph.lang.parser.psi.SchemaVarTypeDef;
+import io.epigraph.lang.parser.psi.EpigraphVarTypeDef;
 import io.epigraph.lang.parser.psi.impl.SchemaElementFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -27,7 +27,7 @@ public class SchemaVarTagReference extends PsiReferenceBase<PsiElement> implemen
    * host type def
    */
   @NotNull
-  private final SchemaVarTypeDef typeDef;
+  private final EpigraphVarTypeDef typeDef;
 
   @NotNull
   private final String tagName;
@@ -36,7 +36,7 @@ public class SchemaVarTagReference extends PsiReferenceBase<PsiElement> implemen
   private final ResolveCache.PolyVariantResolver<SchemaVarTagReference> polyVariantResolver =
       (reference, incompleteCode) -> multiResolveImpl();
 
-  public SchemaVarTagReference(@NotNull SchemaVarTypeDef typeDef, @NotNull SchemaQid id) {
+  public SchemaVarTagReference(@NotNull EpigraphVarTypeDef typeDef, @NotNull SchemaQid id) {
     super(id);
     this.typeDef = typeDef;
 

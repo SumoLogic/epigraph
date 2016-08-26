@@ -72,7 +72,7 @@
   recoverWhile(".*Part") = "partRecover"
 
   // extends(".*.TypeDef") = "typeDef" // types hierarchy doesn't work with stubs
-  implements(".*TypeDef")="io.epigraph.lang.parser.psi.SchemaTypeDef"
+  implements(".*TypeDef")="io.epigraph.lang.parser.psi.EpigraphTypeDef"
 
   implements(".*TypeBody") = "io.epigraph.lang.parser.psi.CustomParamsHolder"
   extends(".*TypeBody") = "io.epigraph.lang.parser.psi.impl.CustomParamHolderImpl"
@@ -156,7 +156,7 @@ metaDecl ::= 'meta' fqnTypeRef { pin=1 } // we don't allow anonList or anonMap a
 
 varTypeDef ::= typeDefModifiers 'vartype' typeName extendsDecl? supplementsDecl? defaultOverride? varTypeBody? {
   methods=[supplemented]
-  extends="io.epigraph.lang.parser.psi.impl.SchemaVarTypeDefImplBase"
+  extends="io.epigraph.lang.parser.psi.impl.EpigraphVarTypeDefImplBase"
   stubClass="io.epigraph.lang.parser.psi.stubs.SchemaVarTypeDefStub"
   elementTypeClass="io.epigraph.lang.parser.psi.stubs.SchemaVarTypeDefStubElementType"
   pin=2
@@ -176,7 +176,7 @@ private varTypeMemberBodyPart ::= customParam
 
 recordTypeDef ::= typeDefModifiers 'record' typeName extendsDecl? metaDecl? supplementsDecl? recordTypeBody? {
   methods=[supplemented]
-  extends="io.epigraph.lang.parser.psi.impl.SchemaRecordTypeDefImplBase"
+  extends="io.epigraph.lang.parser.psi.impl.EpigraphRecordTypeDefImplBase"
   stubClass="io.epigraph.lang.parser.psi.stubs.SchemaRecordTypeDefStub"
   elementTypeClass="io.epigraph.lang.parser.psi.stubs.SchemaRecordTypeDefStubElementType"
   pin=2
@@ -196,7 +196,7 @@ private fieldBodyPart ::= customParam
 
 //listTypeDef2 ::= 'list' typeName extendsDecl listTypeBody? // allows inheritance from lists w/o type params
 listTypeDef ::= typeDefModifiers anonList typeName extendsDecl? metaDecl? supplementsDecl? listTypeBody? {
-  extends="io.epigraph.lang.parser.psi.impl.SchemaListTypeDefImplBase"
+  extends="io.epigraph.lang.parser.psi.impl.EpigraphListTypeDefImplBase"
   stubClass="io.epigraph.lang.parser.psi.stubs.SchemaListTypeDefStub"
   elementTypeClass="io.epigraph.lang.parser.psi.stubs.SchemaListTypeDefStubElementType"
   pin=2
@@ -207,7 +207,7 @@ private listTypeBodyPart ::= customParam
 /// map
 
 mapTypeDef ::= typeDefModifiers anonMap typeName extendsDecl? metaDecl? supplementsDecl? mapTypeBody? {
-  extends="io.epigraph.lang.parser.psi.impl.SchemaMapTypeDefImplBase"
+  extends="io.epigraph.lang.parser.psi.impl.EpigraphMapTypeDefImplBase"
   stubClass="io.epigraph.lang.parser.psi.stubs.SchemaMapTypeDefStub"
   elementTypeClass="io.epigraph.lang.parser.psi.stubs.SchemaMapTypeDefStubElementType"
   pin=2
@@ -219,7 +219,7 @@ private mapTypeBodyPart ::= customParam
 
 // abstract? polymorphic?
 enumTypeDef ::= 'enum' typeName metaDecl? enumTypeBody { // extends?
-  extends="io.epigraph.lang.parser.psi.impl.SchemaEnumTypeDefImplBase"
+  extends="io.epigraph.lang.parser.psi.impl.EpigraphEnumTypeDefImplBase"
   stubClass="io.epigraph.lang.parser.psi.stubs.SchemaEnumTypeDefStub"
   elementTypeClass="io.epigraph.lang.parser.psi.stubs.SchemaEnumTypeDefStubElementType"
   pin=1
@@ -238,7 +238,7 @@ private enumMemberBodyPart ::= customParam
 /// primitive
 
 primitiveTypeDef ::= typeDefModifiers primitiveKind typeName extendsDecl? metaDecl? supplementsDecl? primitiveTypeBody? {
-  extends="io.epigraph.lang.parser.psi.impl.SchemaPrimitiveTypeDefImplBase"
+  extends="io.epigraph.lang.parser.psi.impl.EpigraphPrimitiveTypeDefImplBase"
   methods=[getPrimitiveTypeKind]
   stubClass="io.epigraph.lang.parser.psi.stubs.SchemaPrimitiveTypeDefStub"
   elementTypeClass="io.epigraph.lang.parser.psi.stubs.SchemaPrimitiveTypeDefStubElementType"

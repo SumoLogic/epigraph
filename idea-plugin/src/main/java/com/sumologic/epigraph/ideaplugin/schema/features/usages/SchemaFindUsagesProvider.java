@@ -8,8 +8,8 @@ import com.intellij.psi.PsiNamedElement;
 import com.sumologic.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
 import io.epigraph.lang.parser.SchemaParserDefinition;
 import io.epigraph.lang.lexer.EpigraphFlexAdapter;
+import io.epigraph.lang.parser.psi.EpigraphTypeDef;
 import io.epigraph.lang.parser.psi.SchemaFqnSegment;
-import io.epigraph.lang.parser.psi.SchemaTypeDef;
 import io.epigraph.lang.parser.psi.SchemaVarTagDecl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -31,8 +31,8 @@ public class SchemaFindUsagesProvider implements FindUsagesProvider {
   public boolean canFindUsagesFor(@NotNull PsiElement psiElement) {
     // TODO Support fields used by projections
 
-    if (psiElement instanceof SchemaTypeDef) {
-      SchemaTypeDef element = (SchemaTypeDef) psiElement;
+    if (psiElement instanceof EpigraphTypeDef) {
+      EpigraphTypeDef element = (EpigraphTypeDef) psiElement;
       return element.getName() != null;
     }
 

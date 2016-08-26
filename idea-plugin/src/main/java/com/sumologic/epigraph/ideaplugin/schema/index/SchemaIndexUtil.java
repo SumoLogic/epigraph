@@ -4,9 +4,9 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.search.GlobalSearchScope;
 import io.epigraph.lang.parser.Fqn;
+import io.epigraph.lang.parser.psi.EpigraphTypeDef;
 import io.epigraph.lang.parser.psi.SchemaNamespaceDecl;
 import io.epigraph.lang.parser.psi.SchemaSupplementDef;
-import io.epigraph.lang.parser.psi.SchemaTypeDef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,18 +20,18 @@ import java.util.List;
  */
 public class SchemaIndexUtil {
   @NotNull
-  public static List<SchemaTypeDef> findTypeDefs(@NotNull Project project,
-                                                 @Nullable Collection<Fqn> namespaces,
-                                                 @Nullable Fqn suffix,
-                                                 @NotNull GlobalSearchScope scope) {
+  public static List<EpigraphTypeDef> findTypeDefs(@NotNull Project project,
+                                                   @Nullable Collection<Fqn> namespaces,
+                                                   @Nullable Fqn suffix,
+                                                   @NotNull GlobalSearchScope scope) {
     return findTypeDefs(project, namespaces, suffix, scope, new AddAllProcessor<>());
   }
 
   @Nullable
-  public static SchemaTypeDef findTypeDef(@NotNull Project project,
-                                          @NotNull Collection<Fqn> namespaces,
-                                          @NotNull Fqn suffix,
-                                          @NotNull GlobalSearchScope scope) {
+  public static EpigraphTypeDef findTypeDef(@NotNull Project project,
+                                            @NotNull Collection<Fqn> namespaces,
+                                            @NotNull Fqn suffix,
+                                            @NotNull GlobalSearchScope scope) {
     return findTypeDefs(project, namespaces, suffix, scope, new TakeFirstProcessor<>());
   }
 
@@ -40,10 +40,10 @@ public class SchemaIndexUtil {
    * more than one matching.
    */
   @Nullable
-  public static SchemaTypeDef findSingleTypeDef(@NotNull Project project,
-                                                @NotNull Collection<Fqn> namespaces,
-                                                @NotNull Fqn suffix,
-                                                @NotNull GlobalSearchScope scope) {
+  public static EpigraphTypeDef findSingleTypeDef(@NotNull Project project,
+                                                  @NotNull Collection<Fqn> namespaces,
+                                                  @NotNull Fqn suffix,
+                                                  @NotNull GlobalSearchScope scope) {
     return findTypeDefs(project, namespaces, suffix, scope, new TakeSingleProcessor<>());
   }
 
@@ -51,7 +51,7 @@ public class SchemaIndexUtil {
                                     @Nullable Collection<Fqn> namespaces,
                                     @Nullable Fqn suffix,
                                     @NotNull GlobalSearchScope searchScope,
-                                    @NotNull Processor<SchemaTypeDef, R> processor) {
+                                    @NotNull Processor<EpigraphTypeDef, R> processor) {
 
     if (namespaces != null) {
       if (suffix != null) {
@@ -60,7 +60,7 @@ public class SchemaIndexUtil {
 
         for (Fqn namespace : namespaces) {
           String fqn = namespace.append(suffix).toString();
-          Collection<SchemaTypeDef> typeDefs = index.get(fqn, project, searchScope);
+          Collection<EpigraphTypeDef> typeDefs = index.get(fqn, project, searchScope);
           if (!processor.process(typeDefs)) break;
         }
       } else {
@@ -68,7 +68,7 @@ public class SchemaIndexUtil {
         assert index != null;
 
         for (Fqn namespace : namespaces) {
-          Collection<SchemaTypeDef> typeDefs = index.get(namespace.toString(), project, searchScope);
+          Collection<EpigraphTypeDef> typeDefs = index.get(namespace.toString(), project, searchScope);
           if (!processor.process(typeDefs)) break;
         }
       }
@@ -86,7 +86,7 @@ public class SchemaIndexUtil {
         }
 
         for (String name : shortNames) {
-          Collection<SchemaTypeDef> typeDefs = index.get(name, project, searchScope);
+          Collection<EpigraphTypeDef> typeDefs = index.get(name, project, searchScope);
           if (!processor.process(typeDefs)) break;
         }
       } else {
@@ -107,30 +107,30 @@ public class SchemaIndexUtil {
   }
 
   @NotNull
-  public static List<SchemaTypeDef> findTypeDefs(@NotNull Project project, @NotNull Fqn[] fqns, @NotNull GlobalSearchScope searchScope) {
+  public static List<EpigraphTypeDef> findTypeDefs(@NotNull Project project, @NotNull Fqn[] fqns, @NotNull GlobalSearchScope searchScope) {
     return findTypeDefs(project, fqns, new AddAllProcessor<>(), searchScope);
   }
 
   @Nullable
-  public static SchemaTypeDef findTypeDef(Project project, @NotNull Fqn[] fqns, @NotNull GlobalSearchScope searchScope) {
+  public static EpigraphTypeDef findTypeDef(Project project, @NotNull Fqn[] fqns, @NotNull GlobalSearchScope searchScope) {
     return findTypeDefs(project, fqns, new TakeFirstProcessor<>(), searchScope);
   }
 
   @Nullable
-  public static SchemaTypeDef findTypeDef(Project project, @NotNull Fqn fqn, @NotNull GlobalSearchScope searchScope) {
+  public static EpigraphTypeDef findTypeDef(Project project, @NotNull Fqn fqn, @NotNull GlobalSearchScope searchScope) {
     return findTypeDefs(project, new Fqn[]{fqn}, new TakeFirstProcessor<>(), searchScope);
   }
 
   private static <R> R findTypeDefs(@NotNull Project project,
                                     @NotNull Fqn[] fqns,
-                                    @NotNull Processor<SchemaTypeDef, R> processor,
+                                    @NotNull Processor<EpigraphTypeDef, R> processor,
                                     @NotNull GlobalSearchScope searchScope) {
 
     SchemaFullTypeNameIndex index = SchemaFullTypeNameIndex.EP_NAME.findExtension(SchemaFullTypeNameIndex.class);
     assert index != null;
 
     for (Fqn fqn : fqns) {
-      Collection<SchemaTypeDef> typeDefs = index.get(fqn.toString(), project, searchScope);
+      Collection<EpigraphTypeDef> typeDefs = index.get(fqn.toString(), project, searchScope);
       if (!processor.process(typeDefs)) break;
     }
 
@@ -164,7 +164,7 @@ public class SchemaIndexUtil {
   }
 
   @NotNull
-  public static List<SchemaSupplementDef> findSupplementsBySource(@NotNull Project project, @NotNull SchemaTypeDef source) {
+  public static List<SchemaSupplementDef> findSupplementsBySource(@NotNull Project project, @NotNull EpigraphTypeDef source) {
     GlobalSearchScope allScope = GlobalSearchScope.allScope(project);
 
     String name = source.getName();
@@ -178,7 +178,7 @@ public class SchemaIndexUtil {
       Collection<SchemaSupplementDef> schemaSupplementDefs = index.get(sourceShortName, project, allScope);
       for (SchemaSupplementDef schemaSupplementDef : schemaSupplementDefs) {
         ProgressManager.checkCanceled();
-        SchemaTypeDef s = schemaSupplementDef.source();
+        EpigraphTypeDef s = schemaSupplementDef.source();
         GlobalSearchScope supplementScope = SchemaSearchScopeUtil.getSearchScope(schemaSupplementDef);
         if (source == s && SchemaSearchScopeUtil.isInScope(supplementScope, source)) result.add(schemaSupplementDef);
       }
@@ -189,7 +189,7 @@ public class SchemaIndexUtil {
   }
 
   @NotNull
-  public static List<SchemaSupplementDef> findSupplementsBySupplemented(@NotNull Project project, @NotNull SchemaTypeDef supplemented) {
+  public static List<SchemaSupplementDef> findSupplementsBySupplemented(@NotNull Project project, @NotNull EpigraphTypeDef supplemented) {
     GlobalSearchScope allScope = GlobalSearchScope.allScope(project);
 
     String name = supplemented.getName();
@@ -208,8 +208,8 @@ public class SchemaIndexUtil {
         GlobalSearchScope supplementScope = SchemaSearchScopeUtil.getSearchScope(schemaSupplementDef);
         if (SchemaSearchScopeUtil.isInScope(supplementScope, supplemented)) {
           // check their supplemented lists
-          List<SchemaTypeDef> ss = schemaSupplementDef.supplemented();
-          for (SchemaTypeDef s : ss) {
+          List<EpigraphTypeDef> ss = schemaSupplementDef.supplemented();
+          for (EpigraphTypeDef s : ss) {
             // try to find `supplemented` among them
             if (supplemented == s) {
               result.add(schemaSupplementDef);

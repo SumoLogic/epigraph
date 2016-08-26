@@ -22,7 +22,7 @@ import com.sumologic.epigraph.ideaplugin.schema.options.SchemaSettings;
 import io.epigraph.lang.parser.Fqn;
 import io.epigraph.lang.parser.psi.SchemaFile;
 import io.epigraph.lang.parser.psi.SchemaFqnTypeRef;
-import io.epigraph.lang.parser.psi.SchemaTypeDef;
+import io.epigraph.lang.parser.psi.EpigraphTypeDef;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
@@ -127,7 +127,7 @@ public class ImportTypeIntentionFix implements HintAction {
     final int tailSegmentsToRemove = typeRefFqn.size() == 1 ? 0 : typeRefFqn.size() - 1;
 
     return SchemaIndexUtil.findTypeDefs(typeRef.getProject(), null, typeRefFqn, SchemaSearchScopeUtil.getSearchScope(typeRef)).stream()
-        .map(SchemaTypeDef::getFqn)
+        .map(EpigraphTypeDef::getFqn)
         .filter(Objects::nonNull)
         .map(fqn -> fqn.removeTailSegments(tailSegmentsToRemove).toString())
         .sorted()

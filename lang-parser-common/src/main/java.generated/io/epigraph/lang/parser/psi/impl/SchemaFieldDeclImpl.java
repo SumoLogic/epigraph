@@ -98,7 +98,7 @@ public class SchemaFieldDeclImpl extends CustomParamHolderImpl implements Schema
   }
 
   @NotNull
-  public SchemaRecordTypeDef getRecordTypeDef() {
+  public EpigraphRecordTypeDef getRecordTypeDef() {
     return EpigraphPsiImplUtil.getRecordTypeDef(this);
   }
 

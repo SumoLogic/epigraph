@@ -5,18 +5,12 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.StubBasedPsiElement;
-import io.epigraph.lang.parser.psi.stubs.SchemaMapTypeDefStub;
+import io.epigraph.lang.parser.psi.stubs.SchemaRecordTypeDefStub;
 
-public interface SchemaMapTypeDef extends SchemaTypeDef, StubBasedPsiElement<SchemaMapTypeDefStub> {
-
-  @NotNull
-  SchemaAnonMap getAnonMap();
+public interface EpigraphRecordTypeDef extends EpigraphTypeDef, StubBasedPsiElement<SchemaRecordTypeDefStub> {
 
   @Nullable
   SchemaExtendsDecl getExtendsDecl();
-
-  @Nullable
-  SchemaMapTypeBody getMapTypeBody();
 
   @Nullable
   SchemaMetaDecl getMetaDecl();
@@ -25,9 +19,18 @@ public interface SchemaMapTypeDef extends SchemaTypeDef, StubBasedPsiElement<Sch
   SchemaQid getQid();
 
   @Nullable
+  SchemaRecordTypeBody getRecordTypeBody();
+
+  @Nullable
   SchemaSupplementsDecl getSupplementsDecl();
 
   @Nullable
   PsiElement getAbstract();
+
+  @NotNull
+  PsiElement getRecord();
+
+  @NotNull
+  List<EpigraphTypeDef> supplemented();
 
 }

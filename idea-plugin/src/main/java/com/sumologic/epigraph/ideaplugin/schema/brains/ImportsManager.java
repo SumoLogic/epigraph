@@ -150,7 +150,7 @@ public class ImportsManager {
     // add all unresolved imports (unresolved => unused)
     final Project project = file.getProject();
     for (Map.Entry<Fqn, Collection<SchemaImportStatement>> entry : importsByFqn.entrySet()) {
-      SchemaTypeDef typeDef = SchemaIndexUtil.findTypeDef(project, entry.getKey(), searchScope);
+      EpigraphTypeDef typeDef = SchemaIndexUtil.findTypeDef(project, entry.getKey(), searchScope);
       if (typeDef == null && SchemaIndexUtil.findNamespace(project, entry.getKey(), searchScope) == null) {
         res.addAll(entry.getValue());
       }

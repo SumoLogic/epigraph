@@ -24,7 +24,7 @@ public class SchemaStructureViewBuilder extends TreeBasedStructureViewBuilder {
         .withSorters(Sorter.ALPHA_SORTER)
         .withSuitableClasses(
             SchemaFile.class,
-            SchemaTypeDef.class,
+            EpigraphTypeDef.class,
             SchemaSupplementDef.class,
             SchemaFieldDecl.class,
             SchemaVarTagDecl.class,

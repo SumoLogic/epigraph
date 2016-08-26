@@ -91,7 +91,7 @@ public class SchemaCompletionContributor extends CompletionContributor {
     PsiElement parent = position.getParent();
     if (parent != null) {
 //      IElementType parentElementType = parent.getNode().getElementType();
-      if (parent instanceof SchemaTypeDef || parent instanceof SchemaSupplementDef) return;
+      if (parent instanceof EpigraphTypeDef || parent instanceof SchemaSupplementDef) return;
 
       PsiElement grandParent = parent.getParent();
 
@@ -149,9 +149,9 @@ public class SchemaCompletionContributor extends CompletionContributor {
 
   private void completeExtendsKeyword(@NotNull PsiElement position, @NotNull CompletionResultSet result) {
     SchemaPsiUtil.ElementQualifier extendsPresent = element -> {
-      if (element instanceof SchemaTypeDef) {
-        SchemaTypeDef schemaTypeDef = (SchemaTypeDef) element;
-        return schemaTypeDef.getExtendsDecl() != null;
+      if (element instanceof EpigraphTypeDef) {
+        EpigraphTypeDef epigraphTypeDef = (EpigraphTypeDef) element;
+        return epigraphTypeDef.getExtendsDecl() != null;
       }
       return false;
     };
@@ -166,9 +166,9 @@ public class SchemaCompletionContributor extends CompletionContributor {
 
   private void completeMetaKeyword(@NotNull PsiElement position, @NotNull CompletionResultSet result) {
     SchemaPsiUtil.ElementQualifier metaOrExtendsPresent = element -> {
-      if (element instanceof SchemaTypeDef) {
-        SchemaTypeDef schemaTypeDef = (SchemaTypeDef) element;
-        return schemaTypeDef.getMetaDecl() != null || schemaTypeDef.getExtendsDecl() != null;
+      if (element instanceof EpigraphTypeDef) {
+        EpigraphTypeDef epigraphTypeDef = (EpigraphTypeDef) element;
+        return epigraphTypeDef.getMetaDecl() != null || epigraphTypeDef.getExtendsDecl() != null;
       }
       return false;
     };
@@ -183,14 +183,14 @@ public class SchemaCompletionContributor extends CompletionContributor {
 
   private void completeSupplementsKeyword(@NotNull PsiElement position, @NotNull CompletionResultSet result) {
     SchemaPsiUtil.ElementQualifier metaOrExtendsOrSupplementsPresent = element -> {
-      if (element instanceof SchemaTypeDef) {
-        SchemaTypeDef schemaTypeDef = (SchemaTypeDef) element;
-        if (schemaTypeDef.getMetaDecl() != null || schemaTypeDef.getExtendsDecl() != null) return true;
-        if (schemaTypeDef instanceof SchemaRecordTypeDef) {
-          return schemaTypeDef.getSupplementsDecl() != null;
+      if (element instanceof EpigraphTypeDef) {
+        EpigraphTypeDef epigraphTypeDef = (EpigraphTypeDef) element;
+        if (epigraphTypeDef.getMetaDecl() != null || epigraphTypeDef.getExtendsDecl() != null) return true;
+        if (epigraphTypeDef instanceof EpigraphRecordTypeDef) {
+          return epigraphTypeDef.getSupplementsDecl() != null;
         }
-        if (schemaTypeDef instanceof SchemaVarTypeDef) {
-          return schemaTypeDef.getSupplementsDecl() != null;
+        if (epigraphTypeDef instanceof EpigraphVarTypeDef) {
+          return epigraphTypeDef.getSupplementsDecl() != null;
         }
       }
       return false;
@@ -218,7 +218,7 @@ public class SchemaCompletionContributor extends CompletionContributor {
 
     if (prevParentSibling instanceof SchemaTypeDefWrapper) {
       SchemaTypeDefWrapper typeDefWrapper = (SchemaTypeDefWrapper) prevParentSibling;
-      SchemaTypeDef typeDef = typeDefWrapper.getElement();
+      EpigraphTypeDef typeDef = typeDefWrapper.getElement();
 
       if (!canHaveQualifier.qualifies(typeDef)) return;
       if (negativeBeforeQualifier.qualifies(typeDef)) return;
@@ -255,7 +255,7 @@ public class SchemaCompletionContributor extends CompletionContributor {
     PsiElement qid = position.getParent();
     if (!(qid instanceof SchemaQid)) return;
     PsiElement parent = qid.getParent();
-    if (!(parent instanceof SchemaTypeDef)) return;
+    if (!(parent instanceof EpigraphTypeDef)) return;
 
     PsiElement prevSibling = SchemaPsiUtil.prevNonWhitespaceSibling(qid);
     if (prevSibling == null) return;
@@ -300,17 +300,17 @@ public class SchemaCompletionContributor extends CompletionContributor {
 
 //    PsiElement parent = position.getParent();
 
-    SchemaRecordTypeDef recordTypeDef = null;
-    SchemaVarTypeDef varTypeDef = null;
+    EpigraphRecordTypeDef recordTypeDef = null;
+    EpigraphVarTypeDef varTypeDef = null;
 
     PsiElement element = SchemaPsiUtil.prevNonWhitespaceSibling(position);
 
-    if (element instanceof SchemaTypeDefWrapper && element.getFirstChild() instanceof SchemaRecordTypeDef) {
-      recordTypeDef = (SchemaRecordTypeDef) element.getFirstChild();
+    if (element instanceof SchemaTypeDefWrapper && element.getFirstChild() instanceof EpigraphRecordTypeDef) {
+      recordTypeDef = (EpigraphRecordTypeDef) element.getFirstChild();
     }
 
-    if (element instanceof SchemaTypeDefWrapper && element.getFirstChild() instanceof SchemaVarTypeDef) {
-      varTypeDef = (SchemaVarTypeDef) element.getFirstChild();
+    if (element instanceof SchemaTypeDefWrapper && element.getFirstChild() instanceof EpigraphVarTypeDef) {
+      varTypeDef = (EpigraphVarTypeDef) element.getFirstChild();
     }
 
     if (recordTypeDef != null) {
@@ -328,8 +328,8 @@ public class SchemaCompletionContributor extends CompletionContributor {
 
 
   private void completeOverrideMember(@NotNull PsiElement position, @NotNull final CompletionResultSet result) {
-    SchemaRecordTypeDef recordTypeDef = null;
-    SchemaVarTypeDef varTypeDef = null;
+    EpigraphRecordTypeDef recordTypeDef = null;
+    EpigraphVarTypeDef varTypeDef = null;
 
     // try to position element to 'override'
     PsiElement element = SchemaPsiUtil.prevNonWhitespaceSibling(position);
@@ -344,12 +344,12 @@ public class SchemaCompletionContributor extends CompletionContributor {
 
     element = SchemaPsiUtil.prevNonWhitespaceSibling(element);
 
-    if (element instanceof SchemaTypeDefWrapper && element.getFirstChild() instanceof SchemaRecordTypeDef) {
-      recordTypeDef = (SchemaRecordTypeDef) element.getFirstChild();
+    if (element instanceof SchemaTypeDefWrapper && element.getFirstChild() instanceof EpigraphRecordTypeDef) {
+      recordTypeDef = (EpigraphRecordTypeDef) element.getFirstChild();
     }
 
-    if (element instanceof SchemaTypeDefWrapper && element.getFirstChild() instanceof SchemaVarTypeDef) {
-      varTypeDef = (SchemaVarTypeDef) element.getFirstChild();
+    if (element instanceof SchemaTypeDefWrapper && element.getFirstChild() instanceof EpigraphVarTypeDef) {
+      varTypeDef = (EpigraphVarTypeDef) element.getFirstChild();
     }
 
     if (recordTypeDef != null) {

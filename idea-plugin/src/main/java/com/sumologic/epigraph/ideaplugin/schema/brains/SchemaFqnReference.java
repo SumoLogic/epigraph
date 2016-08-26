@@ -96,7 +96,7 @@ public class SchemaFqnReference extends PsiReferenceBase<SchemaFqnSegment> imple
     final Fqn input = resolver.getInput();
     final Fqn inputPrefix = input.removeLastSegment();
 
-    Set<SchemaTypeDef> typeDefVariants;
+    Set<EpigraphTypeDef> typeDefVariants;
     Collection<SchemaNamespaceDecl> namespaceVariants;
 
     if (input.size() > 1) {

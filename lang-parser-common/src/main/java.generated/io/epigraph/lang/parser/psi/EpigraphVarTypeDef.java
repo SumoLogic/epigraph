@@ -7,7 +7,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.StubBasedPsiElement;
 import io.epigraph.lang.parser.psi.stubs.SchemaVarTypeDefStub;
 
-public interface SchemaVarTypeDef extends SchemaTypeDef, StubBasedPsiElement<SchemaVarTypeDefStub> {
+public interface EpigraphVarTypeDef extends EpigraphTypeDef, StubBasedPsiElement<SchemaVarTypeDefStub> {
 
   @Nullable
   SchemaDefaultOverride getDefaultOverride();
@@ -31,6 +31,6 @@ public interface SchemaVarTypeDef extends SchemaTypeDef, StubBasedPsiElement<Sch
   PsiElement getVartype();
 
   @NotNull
-  List<SchemaTypeDef> supplemented();
+  List<EpigraphTypeDef> supplemented();
 
 }

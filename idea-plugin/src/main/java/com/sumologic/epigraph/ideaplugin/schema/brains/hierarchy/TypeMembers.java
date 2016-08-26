@@ -41,20 +41,20 @@ public class TypeMembers {
   }
 
   @NotNull
-  public static List<SchemaFieldDecl> getFieldDecls(@NotNull SchemaTypeDef hostType, @Nullable String fieldName) {
+  public static List<SchemaFieldDecl> getFieldDecls(@NotNull EpigraphTypeDef hostType, @Nullable String fieldName) {
     return getFieldDecls(fieldName, getTypeAndParents(hostType));
   }
 
   @NotNull
-  public static List<SchemaVarTagDecl> getVarTagDecls(@NotNull SchemaTypeDef hostType, @Nullable String tagName) {
+  public static List<SchemaVarTagDecl> getVarTagDecls(@NotNull EpigraphTypeDef hostType, @Nullable String tagName) {
     return getVarTagDecls(tagName, getTypeAndParents(hostType));
   }
 
-  private static List<SchemaTypeDef> getTypeAndParents(@NotNull SchemaTypeDef typeDef) {
+  private static List<EpigraphTypeDef> getTypeAndParents(@NotNull EpigraphTypeDef typeDef) {
     final HierarchyCache hierarchyCache = HierarchyCache.getHierarchyCache(typeDef.getProject());
-    List<SchemaTypeDef> parents = hierarchyCache.getTypeParents(typeDef);
+    List<EpigraphTypeDef> parents = hierarchyCache.getTypeParents(typeDef);
     if (parents.isEmpty()) return Collections.singletonList(typeDef);
-    final ArrayList<SchemaTypeDef> res = new ArrayList<>(parents.size() + 1);
+    final ArrayList<EpigraphTypeDef> res = new ArrayList<>(parents.size() + 1);
     res.add(typeDef);
     res.addAll(parents);
     return res;
@@ -62,26 +62,26 @@ public class TypeMembers {
 
   @NotNull
   private static List<SchemaFieldDecl> getSameNameFields(@NotNull SchemaFieldDecl fieldDecl,
-                                                         @NotNull List<SchemaTypeDef> types) {
+                                                         @NotNull List<EpigraphTypeDef> types) {
     final String fieldName = fieldDecl.getQid().getCanonicalName();
 
     PsiElement body = fieldDecl.getParent();
     if (body == null) return Collections.emptyList();
 
-    SchemaTypeDef typeDef = (SchemaTypeDef) body.getParent();
+    EpigraphTypeDef typeDef = (EpigraphTypeDef) body.getParent();
     if (typeDef == null) return Collections.emptyList();
 
     return getFieldDecls(fieldName, types);
   }
 
   private static List<SchemaFieldDecl> getFieldDecls(@Nullable String fieldName,
-                                                     @NotNull List<SchemaTypeDef> typeAndParents) {
+                                                     @NotNull List<EpigraphTypeDef> typeAndParents) {
     if (typeAndParents.isEmpty()) return Collections.emptyList();
 
     return typeAndParents.stream()
-        .filter(type -> type instanceof SchemaRecordTypeDef)
+        .filter(type -> type instanceof EpigraphRecordTypeDef)
         .flatMap(type -> {
-          SchemaRecordTypeDef recordTypeDef = (SchemaRecordTypeDef) type;
+          EpigraphRecordTypeDef recordTypeDef = (EpigraphRecordTypeDef) type;
           SchemaRecordTypeBody recordTypeBody = recordTypeDef.getRecordTypeBody();
           if (recordTypeBody != null) {
             return recordTypeBody.getFieldDeclList().stream().filter(f -> fieldName == null || fieldName.equals(f.getQid().getCanonicalName()));
@@ -94,26 +94,26 @@ public class TypeMembers {
 
   @NotNull
   private static List<SchemaVarTagDecl> getSameNameTags(@NotNull SchemaVarTagDecl varTagDecl,
-                                                        @NotNull List<SchemaTypeDef> types) {
+                                                        @NotNull List<EpigraphTypeDef> types) {
     final String varTypeMemberName = varTagDecl.getQid().getCanonicalName();
 
     PsiElement body = varTagDecl.getParent();
     if (body == null) return Collections.emptyList();
 
-    SchemaTypeDef typeDef = (SchemaTypeDef) body.getParent();
+    EpigraphTypeDef typeDef = (EpigraphTypeDef) body.getParent();
     if (typeDef == null) return Collections.emptyList();
 
     return getVarTagDecls(varTypeMemberName, types);
   }
 
   private static List<SchemaVarTagDecl> getVarTagDecls(@Nullable String varTagName,
-                                                       @NotNull List<SchemaTypeDef> typeAndParents) {
+                                                       @NotNull List<EpigraphTypeDef> typeAndParents) {
     if (typeAndParents.isEmpty()) return Collections.emptyList();
 
     return typeAndParents.stream()
-        .filter(type -> type instanceof SchemaVarTypeDef)
+        .filter(type -> type instanceof EpigraphVarTypeDef)
         .flatMap(type -> {
-          SchemaVarTypeDef varTypeDef = (SchemaVarTypeDef) type;
+          EpigraphVarTypeDef varTypeDef = (EpigraphVarTypeDef) type;
           SchemaVarTypeBody varTypeBody = varTypeDef.getVarTypeBody();
           if (varTypeBody != null) {
             return varTypeBody.getVarTagDeclList().stream().filter(f -> varTagName == null || varTagName.equals(f.getQid().getCanonicalName()));

@@ -1,7 +1,6 @@
 // This is a generated file. Not intended for manual editing.
 package io.epigraph.lang.parser.psi.impl;
 
-import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
@@ -9,32 +8,26 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static io.epigraph.lang.lexer.EpigraphElementTypes.*;
 import io.epigraph.lang.parser.psi.*;
-import io.epigraph.lang.parser.psi.stubs.SchemaListTypeDefStub;
+import io.epigraph.lang.parser.psi.stubs.SchemaPrimitiveTypeDefStub;
 import com.intellij.psi.stubs.IStubElementType;
 
-public class SchemaListTypeDefImpl extends SchemaListTypeDefImplBase implements SchemaListTypeDef {
+public class EpigraphPrimitiveTypeDefImpl extends EpigraphPrimitiveTypeDefImplBase implements EpigraphPrimitiveTypeDef {
 
-  public SchemaListTypeDefImpl(ASTNode node) {
+  public EpigraphPrimitiveTypeDefImpl(ASTNode node) {
     super(node);
   }
 
-  public SchemaListTypeDefImpl(SchemaListTypeDefStub stub, IStubElementType nodeType) {
+  public EpigraphPrimitiveTypeDefImpl(SchemaPrimitiveTypeDefStub stub, IStubElementType nodeType) {
     super(stub, nodeType);
   }
 
   public void accept(@NotNull SchemaVisitor visitor) {
-    visitor.visitListTypeDef(this);
+    visitor.visitPrimitiveTypeDef(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof SchemaVisitor) accept((SchemaVisitor)visitor);
     else super.accept(visitor);
-  }
-
-  @Override
-  @NotNull
-  public SchemaAnonList getAnonList() {
-    return notNullChild(PsiTreeUtil.getChildOfType(this, SchemaAnonList.class));
   }
 
   @Override
@@ -45,14 +38,14 @@ public class SchemaListTypeDefImpl extends SchemaListTypeDefImplBase implements 
 
   @Override
   @Nullable
-  public SchemaListTypeBody getListTypeBody() {
-    return PsiTreeUtil.getChildOfType(this, SchemaListTypeBody.class);
+  public SchemaMetaDecl getMetaDecl() {
+    return PsiTreeUtil.getChildOfType(this, SchemaMetaDecl.class);
   }
 
   @Override
   @Nullable
-  public SchemaMetaDecl getMetaDecl() {
-    return PsiTreeUtil.getChildOfType(this, SchemaMetaDecl.class);
+  public SchemaPrimitiveTypeBody getPrimitiveTypeBody() {
+    return PsiTreeUtil.getChildOfType(this, SchemaPrimitiveTypeBody.class);
   }
 
   @Override
@@ -71,6 +64,41 @@ public class SchemaListTypeDefImpl extends SchemaListTypeDefImplBase implements 
   @Nullable
   public PsiElement getAbstract() {
     return findChildByType(E_ABSTRACT);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getBooleanT() {
+    return findChildByType(E_BOOLEAN_T);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getDoubleT() {
+    return findChildByType(E_DOUBLE_T);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getIntegerT() {
+    return findChildByType(E_INTEGER_T);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getLongT() {
+    return findChildByType(E_LONG_T);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getStringT() {
+    return findChildByType(E_STRING_T);
+  }
+
+  @NotNull
+  public PrimitiveTypeKind getPrimitiveTypeKind() {
+    return EpigraphPsiImplUtil.getPrimitiveTypeKind(this);
   }
 
 }

@@ -78,7 +78,7 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitCustomParamsHolder(o);
   }
 
-  public void visitEnumTypeDef(@NotNull SchemaEnumTypeDef o) {
+  public void visitEnumTypeDef(@NotNull EpigraphEnumTypeDef o) {
     visitTypeDef(o);
   }
 
@@ -115,7 +115,7 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitCustomParamsHolder(o);
   }
 
-  public void visitListTypeDef(@NotNull SchemaListTypeDef o) {
+  public void visitListTypeDef(@NotNull EpigraphListTypeDef o) {
     visitTypeDef(o);
   }
 
@@ -123,7 +123,7 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitCustomParamsHolder(o);
   }
 
-  public void visitMapTypeDef(@NotNull SchemaMapTypeDef o) {
+  public void visitMapTypeDef(@NotNull EpigraphMapTypeDef o) {
     visitTypeDef(o);
   }
 
@@ -223,7 +223,7 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitCustomParamsHolder(o);
   }
 
-  public void visitPrimitiveTypeDef(@NotNull SchemaPrimitiveTypeDef o) {
+  public void visitPrimitiveTypeDef(@NotNull EpigraphPrimitiveTypeDef o) {
     visitTypeDef(o);
   }
 
@@ -235,7 +235,7 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitCustomParamsHolder(o);
   }
 
-  public void visitRecordTypeDef(@NotNull SchemaRecordTypeDef o) {
+  public void visitRecordTypeDef(@NotNull EpigraphRecordTypeDef o) {
     visitTypeDef(o);
   }
 
@@ -272,7 +272,7 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitCustomParamsHolder(o);
   }
 
-  public void visitVarTypeDef(@NotNull SchemaVarTypeDef o) {
+  public void visitVarTypeDef(@NotNull EpigraphVarTypeDef o) {
     visitTypeDef(o);
   }
 
@@ -288,7 +288,7 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitElement(o);
   }
 
-  public void visitTypeDef(@NotNull SchemaTypeDef o) {
+  public void visitTypeDef(@NotNull EpigraphTypeDef o) {
     visitPsiElement(o);
   }
 

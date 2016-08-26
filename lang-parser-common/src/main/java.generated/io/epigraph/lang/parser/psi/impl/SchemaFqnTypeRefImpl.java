@@ -29,7 +29,7 @@ public class SchemaFqnTypeRefImpl extends SchemaTypeRefImpl implements SchemaFqn
   }
 
   @Nullable
-  public SchemaTypeDef resolve() {
+  public EpigraphTypeDef resolve() {
     return EpigraphPsiImplUtil.resolve(this);
   }
 
