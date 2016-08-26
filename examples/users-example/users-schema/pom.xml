@@ -38,6 +38,9 @@
 
   <build>
 
+    <sourceDirectory>${project.basedir}/src/main/epigraph</sourceDirectory>
+    <testSourceDirectory>${project.basedir}/src/test/epigraph</testSourceDirectory>
+
     <plugins>
 
       <plugin>
