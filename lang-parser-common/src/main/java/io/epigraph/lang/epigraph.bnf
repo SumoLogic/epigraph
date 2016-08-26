@@ -1,5 +1,5 @@
 {
-  parserClass="io.epigraph.lang.parser.SchemaParser"
+  parserClass="io.epigraph.lang.parser.EpigraphParser"
 
   elementTypeHolderClass="io.epigraph.lang.lexer.EpigraphElementTypes"
   elementTypePrefix="E_"
@@ -10,7 +10,7 @@
   psiImplClassSuffix="Impl"
   psiPackage="io.epigraph.lang.parser.psi"
   psiImplPackage="io.epigraph.lang.parser.psi.impl"
-  psiImplUtilClass="io.epigraph.lang.parser.psi.impl.SchemaPsiImplUtil"
+  psiImplUtilClass="io.epigraph.lang.parser.psi.impl.EpigraphPsiImplUtil"
 
   generateTokenAccessors=true
 

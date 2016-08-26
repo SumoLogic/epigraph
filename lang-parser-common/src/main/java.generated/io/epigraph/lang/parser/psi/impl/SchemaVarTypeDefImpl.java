@@ -75,7 +75,7 @@ public class SchemaVarTypeDefImpl extends SchemaVarTypeDefImplBase implements Sc
 
   @NotNull
   public List<SchemaTypeDef> supplemented() {
-    return SchemaPsiImplUtil.supplemented(this);
+    return EpigraphPsiImplUtil.supplemented(this);
   }
 
 }

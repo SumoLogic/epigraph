@@ -56,32 +56,32 @@ public class SchemaSupplementDefImpl extends StubBasedPsiElementBase<SchemaSuppl
 
   @Nullable
   public SchemaFqnTypeRef sourceRef() {
-    return SchemaPsiImplUtil.sourceRef(this);
+    return EpigraphPsiImplUtil.sourceRef(this);
   }
 
   @NotNull
   public List<SchemaFqnTypeRef> supplementedRefs() {
-    return SchemaPsiImplUtil.supplementedRefs(this);
+    return EpigraphPsiImplUtil.supplementedRefs(this);
   }
 
   @Nullable
   public SchemaTypeDef source() {
-    return SchemaPsiImplUtil.source(this);
+    return EpigraphPsiImplUtil.source(this);
   }
 
   @NotNull
   public List<SchemaTypeDef> supplemented() {
-    return SchemaPsiImplUtil.supplemented(this);
+    return EpigraphPsiImplUtil.supplemented(this);
   }
 
   @NotNull
   public ItemPresentation getPresentation() {
-    return SchemaPsiImplUtil.getPresentation(this);
+    return EpigraphPsiImplUtil.getPresentation(this);
   }
 
   @NotNull
   public String toString() {
-    return SchemaPsiImplUtil.toString(this);
+    return EpigraphPsiImplUtil.toString(this);
   }
 
 }

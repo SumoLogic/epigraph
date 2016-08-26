@@ -51,16 +51,16 @@ public class SchemaEnumMemberDeclImpl extends CustomParamHolderImpl implements S
 
   @Nullable
   public String getName() {
-    return SchemaPsiImplUtil.getName(this);
+    return EpigraphPsiImplUtil.getName(this);
   }
 
   public PsiElement setName(String name) {
-    return SchemaPsiImplUtil.setName(this, name);
+    return EpigraphPsiImplUtil.setName(this, name);
   }
 
   @NotNull
   public PsiElement getNameIdentifier() {
-    return SchemaPsiImplUtil.getNameIdentifier(this);
+    return EpigraphPsiImplUtil.getNameIdentifier(this);
   }
 
 }

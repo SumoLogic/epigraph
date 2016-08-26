@@ -1,13 +1,10 @@
 // This is a generated file. Not intended for manual editing.
 package io.epigraph.lang.parser.psi.impl;
 
-import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
-import static io.epigraph.lang.lexer.EpigraphElementTypes.*;
 import io.epigraph.lang.parser.psi.*;
 
 public class SchemaFqnTypeRefImpl extends SchemaTypeRefImpl implements SchemaFqnTypeRef {
@@ -33,7 +30,7 @@ public class SchemaFqnTypeRefImpl extends SchemaTypeRefImpl implements SchemaFqn
 
   @Nullable
   public SchemaTypeDef resolve() {
-    return SchemaPsiImplUtil.resolve(this);
+    return EpigraphPsiImplUtil.resolve(this);
   }
 
 }

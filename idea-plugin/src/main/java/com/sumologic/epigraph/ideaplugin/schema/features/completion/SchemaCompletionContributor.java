@@ -12,10 +12,10 @@ import com.intellij.util.ProcessingContext;
 import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.TypeMembers;
 import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaPsiUtil;
 import io.epigraph.lang.parser.Fqn;
+import io.epigraph.lang.parser.psi.impl.EpigraphPsiImplUtil;
 import io.epigraph.lang.schema.SchemaLanguage;
 import io.epigraph.lang.parser.SchemaParserDefinition;
 import io.epigraph.lang.parser.psi.*;
-import io.epigraph.lang.parser.psi.impl.SchemaPsiImplUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -280,7 +280,7 @@ public class SchemaCompletionContributor extends CompletionContributor {
           // only bother if it's single-segment
           if (fqn.size() != 1) return;
 
-          PsiReference reference = SchemaPsiImplUtil.getReference(typeRef);
+          PsiReference reference = EpigraphPsiImplUtil.getReference(typeRef);
           if (reference == null) return;
 
           if (reference.resolve() != null) return;

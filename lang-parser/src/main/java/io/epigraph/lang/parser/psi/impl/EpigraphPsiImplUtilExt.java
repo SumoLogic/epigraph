@@ -11,12 +11,12 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
 
-import static io.epigraph.lang.parser.psi.impl.SchemaPsiImplUtil.*;
+import static io.epigraph.lang.parser.psi.impl.EpigraphPsiImplUtil.*;
 
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public class SchemaPsiImplUtilExt {
+public class EpigraphPsiImplUtilExt {
 
   // record --------------------------------------------
 

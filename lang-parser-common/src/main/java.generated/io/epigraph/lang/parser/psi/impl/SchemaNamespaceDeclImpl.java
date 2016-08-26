@@ -68,12 +68,12 @@ public class SchemaNamespaceDeclImpl extends StubBasedPsiElementBase<SchemaNames
 
   @Nullable
   public Fqn getFqn2() {
-    return SchemaPsiImplUtil.getFqn2(this);
+    return EpigraphPsiImplUtil.getFqn2(this);
   }
 
   @NotNull
   public String toString() {
-    return SchemaPsiImplUtil.toString(this);
+    return EpigraphPsiImplUtil.toString(this);
   }
 
 }

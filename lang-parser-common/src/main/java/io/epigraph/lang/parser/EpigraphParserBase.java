@@ -1,12 +1,11 @@
 package io.epigraph.lang.parser;
 
 import com.intellij.lang.PsiBuilder;
-import com.intellij.psi.tree.IElementType;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class SchemaParserAbs extends SchemaParser {
+public abstract class EpigraphParserBase extends EpigraphParser {
   protected boolean parseSchema(PsiBuilder b, int l) {
     return schemaRoot(b, l);
   }

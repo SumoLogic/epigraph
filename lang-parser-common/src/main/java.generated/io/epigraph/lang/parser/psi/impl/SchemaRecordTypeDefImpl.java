@@ -75,7 +75,7 @@ public class SchemaRecordTypeDefImpl extends SchemaRecordTypeDefImplBase impleme
 
   @NotNull
   public List<SchemaTypeDef> supplemented() {
-    return SchemaPsiImplUtil.supplemented(this);
+    return EpigraphPsiImplUtil.supplemented(this);
   }
 
 }

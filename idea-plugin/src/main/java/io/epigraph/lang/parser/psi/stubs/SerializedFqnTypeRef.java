@@ -11,7 +11,7 @@ import com.sumologic.epigraph.ideaplugin.schema.brains.SchemaFqnReferenceResolve
 import io.epigraph.lang.parser.Fqn;
 import io.epigraph.lang.parser.psi.SchemaFqnTypeRef;
 import io.epigraph.lang.parser.psi.SchemaTypeDef;
-import io.epigraph.lang.parser.psi.impl.SchemaPsiImplUtil;
+import io.epigraph.lang.parser.psi.impl.EpigraphPsiImplUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -41,7 +41,7 @@ public final class SerializedFqnTypeRef {
 
   private void initFromTypeRef() {
     if ((shortName == null || namespacesToSearch == null) && typeRef != null) {
-      SchemaFqnReference ref = (SchemaFqnReference) SchemaPsiImplUtil.getReference(typeRef);
+      SchemaFqnReference ref = (SchemaFqnReference) EpigraphPsiImplUtil.getReference(typeRef);
       if (ref != null) {
         SchemaFqnReferenceResolver resolver = ref.getResolver();
         shortName = resolver.getSuffix();

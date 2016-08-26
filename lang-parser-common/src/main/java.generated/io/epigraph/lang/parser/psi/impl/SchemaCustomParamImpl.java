@@ -1,7 +1,6 @@
 // This is a generated file. Not intended for manual editing.
 package io.epigraph.lang.parser.psi.impl;
 
-import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
@@ -46,16 +45,16 @@ public class SchemaCustomParamImpl extends ASTWrapperPsiElement implements Schem
 
   @Nullable
   public String getName() {
-    return SchemaPsiImplUtil.getName(this);
+    return EpigraphPsiImplUtil.getName(this);
   }
 
   public PsiElement setName(String name) {
-    return SchemaPsiImplUtil.setName(this, name);
+    return EpigraphPsiImplUtil.setName(this, name);
   }
 
   @NotNull
   public PsiElement getNameIdentifier() {
-    return SchemaPsiImplUtil.getNameIdentifier(this);
+    return EpigraphPsiImplUtil.getNameIdentifier(this);
   }
 
 }

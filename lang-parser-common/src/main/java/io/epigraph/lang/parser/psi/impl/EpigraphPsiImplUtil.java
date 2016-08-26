@@ -24,7 +24,7 @@ import static io.epigraph.lang.lexer.EpigraphElementTypes.E_WITH;
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public class SchemaPsiImplUtil {
+public class EpigraphPsiImplUtil {
 //  private static final SchemaTypeDef[] EMPTY_TYPE_DEFS = new SchemaTypeDef[0];
 
   // namespace --------------------------------------------
@@ -119,7 +119,7 @@ public class SchemaPsiImplUtil {
   @Contract(pure = true)
   @NotNull
   public static List<SchemaTypeDef> supplemented(@NotNull SchemaRecordTypeDef recordTypeDef) {
-    return SchemaPsiImplUtilExt.supplemented(recordTypeDef);
+    return EpigraphPsiImplUtilExt.supplemented(recordTypeDef);
   }
 
   // primitive --------------------------------------------
@@ -140,7 +140,7 @@ public class SchemaPsiImplUtil {
   @Contract(pure = true)
   @NotNull
   public static List<SchemaTypeDef> supplemented(@NotNull SchemaVarTypeDef varTypeDef) {
-    return SchemaPsiImplUtilExt.supplemented(varTypeDef);
+    return EpigraphPsiImplUtilExt.supplemented(varTypeDef);
   }
 
 //  @Nullable
@@ -216,19 +216,19 @@ public class SchemaPsiImplUtil {
   @Contract(pure = true)
   @Nullable
   public static SchemaTypeDef source(@NotNull SchemaSupplementDef supplementDef) {
-    return SchemaPsiImplUtilExt.source(supplementDef);
+    return EpigraphPsiImplUtilExt.source(supplementDef);
   }
 
   @Contract(pure = true)
   @NotNull
   public static List<SchemaTypeDef> supplemented(@NotNull SchemaSupplementDef supplementDef) {
-    return SchemaPsiImplUtilExt.supplemented(supplementDef);
+    return EpigraphPsiImplUtilExt.supplemented(supplementDef);
   }
 
   @Contract(pure = true)
   @NotNull
   public static ItemPresentation getPresentation(@NotNull SchemaSupplementDef supplementDef) {
-    return SchemaPsiImplUtilExt.getPresentation(supplementDef);
+    return EpigraphPsiImplUtilExt.getPresentation(supplementDef);
   }
 
 //  public static PsiElement setName(SchemaFqnTypeRef fqnTypeRef, String name) {
@@ -352,7 +352,7 @@ public class SchemaPsiImplUtil {
   @Contract(pure = true)
   @NotNull
   public static ItemPresentation getPresentation(@NotNull SchemaFieldDecl fieldDecl) {
-    return SchemaPsiImplUtilExt.getPresentation(fieldDecl);
+    return EpigraphPsiImplUtilExt.getPresentation(fieldDecl);
   }
 
   @NotNull
@@ -390,7 +390,7 @@ public class SchemaPsiImplUtil {
   @Contract(pure = true)
   @NotNull
   public static ItemPresentation getPresentation(@NotNull SchemaVarTagDecl varTagDecl) {
-    return SchemaPsiImplUtilExt.getPresentation(varTagDecl);
+    return EpigraphPsiImplUtilExt.getPresentation(varTagDecl);
   }
 
   @NotNull

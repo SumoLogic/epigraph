@@ -16,13 +16,13 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static io.epigraph.lang.parser.psi.impl.SchemaPsiImplUtil.sourceRef;
-import static io.epigraph.lang.parser.psi.impl.SchemaPsiImplUtil.supplementedRefs;
+import static io.epigraph.lang.parser.psi.impl.EpigraphPsiImplUtil.sourceRef;
+import static io.epigraph.lang.parser.psi.impl.EpigraphPsiImplUtil.supplementedRefs;
 
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-class SchemaPsiImplUtilExt {
+class EpigraphPsiImplUtilExt {
 
   // record --------------------------------------------
 

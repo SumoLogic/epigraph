@@ -9,8 +9,8 @@ import com.sumologic.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaSearchScopeUtil;
 import io.epigraph.lang.parser.Fqn;
 import io.epigraph.lang.parser.psi.*;
+import io.epigraph.lang.parser.psi.impl.EpigraphPsiImplUtil;
 import io.epigraph.lang.parser.psi.impl.SchemaElementFactory;
-import io.epigraph.lang.parser.psi.impl.SchemaPsiImplUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -124,7 +124,7 @@ public class ImportsManager {
       @Override
       public void visitFqnTypeRef(@NotNull SchemaFqnTypeRef typeRef) {
         super.visitFqnTypeRef(typeRef);
-        PsiReference reference = SchemaPsiImplUtil.getReference(typeRef);
+        PsiReference reference = EpigraphPsiImplUtil.getReference(typeRef);
         if (reference instanceof SchemaFqnReference) {
           SchemaFqnReference schemaFqnReference = (SchemaFqnReference) reference;
           SchemaFqnReferenceResolver resolver = schemaFqnReference.getResolver();

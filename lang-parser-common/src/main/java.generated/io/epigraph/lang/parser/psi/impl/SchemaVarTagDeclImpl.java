@@ -76,30 +76,30 @@ public class SchemaVarTagDeclImpl extends CustomParamHolderImpl implements Schem
 
   @Nullable
   public String getName() {
-    return SchemaPsiImplUtil.getName(this);
+    return EpigraphPsiImplUtil.getName(this);
   }
 
   public PsiElement setName(String name) {
-    return SchemaPsiImplUtil.setName(this, name);
+    return EpigraphPsiImplUtil.setName(this, name);
   }
 
   @NotNull
   public PsiElement getNameIdentifier() {
-    return SchemaPsiImplUtil.getNameIdentifier(this);
+    return EpigraphPsiImplUtil.getNameIdentifier(this);
   }
 
   public int getTextOffset() {
-    return SchemaPsiImplUtil.getTextOffset(this);
+    return EpigraphPsiImplUtil.getTextOffset(this);
   }
 
   @NotNull
   public ItemPresentation getPresentation() {
-    return SchemaPsiImplUtil.getPresentation(this);
+    return EpigraphPsiImplUtil.getPresentation(this);
   }
 
   @NotNull
   public SchemaVarTypeDef getVarTypeDef() {
-    return SchemaPsiImplUtil.getVarTypeDef(this);
+    return EpigraphPsiImplUtil.getVarTypeDef(this);
   }
 
 }

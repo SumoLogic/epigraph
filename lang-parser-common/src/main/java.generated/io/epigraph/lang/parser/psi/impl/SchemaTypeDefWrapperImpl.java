@@ -1,13 +1,10 @@
 // This is a generated file. Not intended for manual editing.
 package io.epigraph.lang.parser.psi.impl;
 
-import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
-import static io.epigraph.lang.lexer.EpigraphElementTypes.*;
 import com.intellij.extapi.psi.StubBasedPsiElementBase;
 import io.epigraph.lang.parser.psi.stubs.SchemaTypeDefWrapperStub;
 import io.epigraph.lang.parser.psi.*;
@@ -73,16 +70,16 @@ public class SchemaTypeDefWrapperImpl extends StubBasedPsiElementBase<SchemaType
 
   @NotNull
   public SchemaTypeDef getElement() {
-    return SchemaPsiImplUtil.getElement(this);
+    return EpigraphPsiImplUtil.getElement(this);
   }
 
   public void delete() {
-    SchemaPsiImplUtil.delete(this);
+    EpigraphPsiImplUtil.delete(this);
   }
 
   @NotNull
   public String toString() {
-    return SchemaPsiImplUtil.toString(this);
+    return EpigraphPsiImplUtil.toString(this);
   }
 
 }
