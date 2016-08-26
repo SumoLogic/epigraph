@@ -4,7 +4,7 @@ import com.intellij.psi.stubs.*;
 import com.intellij.util.io.StringRef;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaStubIndexKeys;
 import io.epigraph.lang.schema.parser.Fqn;
-import io.epigraph.lang.EpigraphLanguage;
+import io.epigraph.lang.schema.SchemaLanguage;
 import io.epigraph.lang.schema.parser.psi.SchemaNamespaceDecl;
 import io.epigraph.lang.schema.parser.psi.impl.SchemaNamespaceDeclImpl;
 import org.jetbrains.annotations.NonNls;
@@ -17,7 +17,7 @@ import java.io.IOException;
  */
 public class SchemaNamespaceDeclStubElementType extends IStubElementType<SchemaNamespaceDeclStub, SchemaNamespaceDecl> {
   public SchemaNamespaceDeclStubElementType(@NotNull @NonNls String debugName) {
-    super(debugName, EpigraphLanguage.INSTANCE);
+    super(debugName, SchemaLanguage.INSTANCE);
   }
 
   @Override

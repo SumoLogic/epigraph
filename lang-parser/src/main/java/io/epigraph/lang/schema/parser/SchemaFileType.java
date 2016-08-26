@@ -1,7 +1,7 @@
 package io.epigraph.lang.schema.parser;
 
 import com.intellij.openapi.fileTypes.LanguageFileType;
-import io.epigraph.lang.EpigraphLanguage;
+import io.epigraph.lang.schema.SchemaLanguage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,7 +15,7 @@ public class SchemaFileType extends LanguageFileType {
   public static final String DEFAULT_EXTENSION = Common.FILE_EXTENSION;
 
   protected SchemaFileType() {
-    super(EpigraphLanguage.INSTANCE);
+    super(SchemaLanguage.INSTANCE);
   }
 
   @NotNull

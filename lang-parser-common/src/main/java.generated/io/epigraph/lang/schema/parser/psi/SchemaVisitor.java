@@ -135,6 +135,90 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitOpInputModelProjection(@NotNull SchemaOpInputModelProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpOutputEnumModelProjection(@NotNull SchemaOpOutputEnumModelProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpOutputFieldProjection(@NotNull SchemaOpOutputFieldProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpOutputFieldProjectionBody(@NotNull SchemaOpOutputFieldProjectionBody o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpOutputFieldProjectionBodyPart(@NotNull SchemaOpOutputFieldProjectionBodyPart o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpOutputKeyProjection(@NotNull SchemaOpOutputKeyProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpOutputKeyProjectionPart(@NotNull SchemaOpOutputKeyProjectionPart o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpOutputListModelProjection(@NotNull SchemaOpOutputListModelProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpOutputListPolyBranch(@NotNull SchemaOpOutputListPolyBranch o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpOutputMapModelProjection(@NotNull SchemaOpOutputMapModelProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpOutputMapPolyBranch(@NotNull SchemaOpOutputMapPolyBranch o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpOutputModelProjection(@NotNull SchemaOpOutputModelProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpOutputModelProjectionBody(@NotNull SchemaOpOutputModelProjectionBody o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpOutputModelProjectionBodyPart(@NotNull SchemaOpOutputModelProjectionBodyPart o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpOutputPrimitiveModelProjection(@NotNull SchemaOpOutputPrimitiveModelProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpOutputRecordModelProjection(@NotNull SchemaOpOutputRecordModelProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpOutputRecordPolyBranch(@NotNull SchemaOpOutputRecordPolyBranch o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpOutputTagProjection(@NotNull SchemaOpOutputTagProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpOutputVarProjection(@NotNull SchemaOpOutputVarProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpParamProjection(@NotNull SchemaOpParamProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpParameters(@NotNull SchemaOpParameters o) {
+    visitPsiElement(o);
+  }
+
   public void visitPrimitiveTypeBody(@NotNull SchemaPrimitiveTypeBody o) {
     visitCustomParamsHolder(o);
   }

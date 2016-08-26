@@ -30,10 +30,17 @@ dependencies {
 //  classpath += files(project.lightPsiJar)
 //}
 
-task copySources(type: Copy) {
-  from '../lang-parser-common/src/main/java'
-  from '../lang-parser-common/src/main/java.generated'
-  into "$buildDir/generated-sources/lang-parser-common.java"
+//task deleteOldSources(type: Delete) {
+//  delete
+//}
+
+task copySources << {
+  delete { "$buildDir/generated-sources/lang-parser-common.java" }
+  copy {
+    from '../lang-parser-common/src/main/java'
+    from '../lang-parser-common/src/main/java.generated'
+    into "$buildDir/generated-sources/lang-parser-common.java"
+  }
 }
 
 compileJava.dependsOn copySources

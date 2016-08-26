@@ -1,4 +1,4 @@
-package io.epigraph.lang;
+package io.epigraph.lang.schema;
 
 import com.intellij.lang.Language;
 import io.epigraph.lang.schema.parser.Common;
@@ -7,11 +7,11 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public class EpigraphLanguage extends Language {
-  public static final EpigraphLanguage INSTANCE = new EpigraphLanguage();
+public class SchemaLanguage extends Language {
+  public static final SchemaLanguage INSTANCE = new SchemaLanguage();
 
-  private EpigraphLanguage() {
-    super("epigraph");
+  private SchemaLanguage() {
+    super("epi_schema");
   }
 
   @NotNull

@@ -4,7 +4,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFileFactory;
 import io.epigraph.lang.schema.parser.psi.*;
-import io.epigraph.lang.EpigraphLanguage;
+import io.epigraph.lang.schema.SchemaLanguage;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 public class SchemaElementFactory {
   @NotNull
   public static SchemaFile createFileFromText(@NotNull Project project, @NotNull String text) {
-    return (SchemaFile) PsiFileFactory.getInstance(project).createFileFromText("a.s", EpigraphLanguage.INSTANCE, text);
+    return (SchemaFile) PsiFileFactory.getInstance(project).createFileFromText("a.s", SchemaLanguage.INSTANCE, text);
   }
 
   @NotNull

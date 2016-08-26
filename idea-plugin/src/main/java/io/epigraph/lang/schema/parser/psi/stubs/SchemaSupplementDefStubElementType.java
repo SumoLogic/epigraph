@@ -3,7 +3,7 @@ package io.epigraph.lang.schema.parser.psi.stubs;
 import com.intellij.psi.stubs.*;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaStubIndexKeys;
 import io.epigraph.lang.schema.parser.Fqn;
-import io.epigraph.lang.EpigraphLanguage;
+import io.epigraph.lang.schema.SchemaLanguage;
 import io.epigraph.lang.schema.parser.psi.SchemaSupplementDef;
 import io.epigraph.lang.schema.parser.psi.impl.SchemaSupplementDefImpl;
 import org.jetbrains.annotations.NonNls;
@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
  */
 public class SchemaSupplementDefStubElementType extends IStubElementType<SchemaSupplementDefStub, SchemaSupplementDef> {
   public SchemaSupplementDefStubElementType(@NotNull @NonNls String debugName) {
-    super(debugName, EpigraphLanguage.INSTANCE);
+    super(debugName, SchemaLanguage.INSTANCE);
   }
 
   @Override

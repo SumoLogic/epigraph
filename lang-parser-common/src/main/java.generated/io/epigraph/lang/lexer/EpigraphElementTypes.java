@@ -48,6 +48,27 @@ public interface EpigraphElementTypes {
   IElementType E_MAP_TYPE_DEF = new SchemaMapTypeDefStubElementType("E_MAP_TYPE_DEF");
   IElementType E_META_DECL = new EpigraphElementType("E_META_DECL");
   IElementType E_NAMESPACE_DECL = new SchemaNamespaceDeclStubElementType("E_NAMESPACE_DECL");
+  IElementType E_OP_INPUT_MODEL_PROJECTION = new EpigraphElementType("E_OP_INPUT_MODEL_PROJECTION");
+  IElementType E_OP_OUTPUT_ENUM_MODEL_PROJECTION = new EpigraphElementType("E_OP_OUTPUT_ENUM_MODEL_PROJECTION");
+  IElementType E_OP_OUTPUT_FIELD_PROJECTION = new EpigraphElementType("E_OP_OUTPUT_FIELD_PROJECTION");
+  IElementType E_OP_OUTPUT_FIELD_PROJECTION_BODY = new EpigraphElementType("E_OP_OUTPUT_FIELD_PROJECTION_BODY");
+  IElementType E_OP_OUTPUT_FIELD_PROJECTION_BODY_PART = new EpigraphElementType("E_OP_OUTPUT_FIELD_PROJECTION_BODY_PART");
+  IElementType E_OP_OUTPUT_KEY_PROJECTION = new EpigraphElementType("E_OP_OUTPUT_KEY_PROJECTION");
+  IElementType E_OP_OUTPUT_KEY_PROJECTION_PART = new EpigraphElementType("E_OP_OUTPUT_KEY_PROJECTION_PART");
+  IElementType E_OP_OUTPUT_LIST_MODEL_PROJECTION = new EpigraphElementType("E_OP_OUTPUT_LIST_MODEL_PROJECTION");
+  IElementType E_OP_OUTPUT_LIST_POLY_BRANCH = new EpigraphElementType("E_OP_OUTPUT_LIST_POLY_BRANCH");
+  IElementType E_OP_OUTPUT_MAP_MODEL_PROJECTION = new EpigraphElementType("E_OP_OUTPUT_MAP_MODEL_PROJECTION");
+  IElementType E_OP_OUTPUT_MAP_POLY_BRANCH = new EpigraphElementType("E_OP_OUTPUT_MAP_POLY_BRANCH");
+  IElementType E_OP_OUTPUT_MODEL_PROJECTION = new EpigraphElementType("E_OP_OUTPUT_MODEL_PROJECTION");
+  IElementType E_OP_OUTPUT_MODEL_PROJECTION_BODY = new EpigraphElementType("E_OP_OUTPUT_MODEL_PROJECTION_BODY");
+  IElementType E_OP_OUTPUT_MODEL_PROJECTION_BODY_PART = new EpigraphElementType("E_OP_OUTPUT_MODEL_PROJECTION_BODY_PART");
+  IElementType E_OP_OUTPUT_PRIMITIVE_MODEL_PROJECTION = new EpigraphElementType("E_OP_OUTPUT_PRIMITIVE_MODEL_PROJECTION");
+  IElementType E_OP_OUTPUT_RECORD_MODEL_PROJECTION = new EpigraphElementType("E_OP_OUTPUT_RECORD_MODEL_PROJECTION");
+  IElementType E_OP_OUTPUT_RECORD_POLY_BRANCH = new EpigraphElementType("E_OP_OUTPUT_RECORD_POLY_BRANCH");
+  IElementType E_OP_OUTPUT_TAG_PROJECTION = new EpigraphElementType("E_OP_OUTPUT_TAG_PROJECTION");
+  IElementType E_OP_OUTPUT_VAR_PROJECTION = new EpigraphElementType("E_OP_OUTPUT_VAR_PROJECTION");
+  IElementType E_OP_PARAMETERS = new EpigraphElementType("E_OP_PARAMETERS");
+  IElementType E_OP_PARAM_PROJECTION = new EpigraphElementType("E_OP_PARAM_PROJECTION");
   IElementType E_PRIMITIVE_TYPE_BODY = new EpigraphElementType("E_PRIMITIVE_TYPE_BODY");
   IElementType E_PRIMITIVE_TYPE_DEF = new SchemaPrimitiveTypeDefStubElementType("E_PRIMITIVE_TYPE_DEF");
   IElementType E_QID = new EpigraphElementType("E_QID");
@@ -201,6 +222,69 @@ public interface EpigraphElementTypes {
       }
       else if (type == E_NAMESPACE_DECL) {
         return new SchemaNamespaceDeclImpl(node);
+      }
+      else if (type == E_OP_INPUT_MODEL_PROJECTION) {
+        return new SchemaOpInputModelProjectionImpl(node);
+      }
+      else if (type == E_OP_OUTPUT_ENUM_MODEL_PROJECTION) {
+        return new SchemaOpOutputEnumModelProjectionImpl(node);
+      }
+      else if (type == E_OP_OUTPUT_FIELD_PROJECTION) {
+        return new SchemaOpOutputFieldProjectionImpl(node);
+      }
+      else if (type == E_OP_OUTPUT_FIELD_PROJECTION_BODY) {
+        return new SchemaOpOutputFieldProjectionBodyImpl(node);
+      }
+      else if (type == E_OP_OUTPUT_FIELD_PROJECTION_BODY_PART) {
+        return new SchemaOpOutputFieldProjectionBodyPartImpl(node);
+      }
+      else if (type == E_OP_OUTPUT_KEY_PROJECTION) {
+        return new SchemaOpOutputKeyProjectionImpl(node);
+      }
+      else if (type == E_OP_OUTPUT_KEY_PROJECTION_PART) {
+        return new SchemaOpOutputKeyProjectionPartImpl(node);
+      }
+      else if (type == E_OP_OUTPUT_LIST_MODEL_PROJECTION) {
+        return new SchemaOpOutputListModelProjectionImpl(node);
+      }
+      else if (type == E_OP_OUTPUT_LIST_POLY_BRANCH) {
+        return new SchemaOpOutputListPolyBranchImpl(node);
+      }
+      else if (type == E_OP_OUTPUT_MAP_MODEL_PROJECTION) {
+        return new SchemaOpOutputMapModelProjectionImpl(node);
+      }
+      else if (type == E_OP_OUTPUT_MAP_POLY_BRANCH) {
+        return new SchemaOpOutputMapPolyBranchImpl(node);
+      }
+      else if (type == E_OP_OUTPUT_MODEL_PROJECTION) {
+        return new SchemaOpOutputModelProjectionImpl(node);
+      }
+      else if (type == E_OP_OUTPUT_MODEL_PROJECTION_BODY) {
+        return new SchemaOpOutputModelProjectionBodyImpl(node);
+      }
+      else if (type == E_OP_OUTPUT_MODEL_PROJECTION_BODY_PART) {
+        return new SchemaOpOutputModelProjectionBodyPartImpl(node);
+      }
+      else if (type == E_OP_OUTPUT_PRIMITIVE_MODEL_PROJECTION) {
+        return new SchemaOpOutputPrimitiveModelProjectionImpl(node);
+      }
+      else if (type == E_OP_OUTPUT_RECORD_MODEL_PROJECTION) {
+        return new SchemaOpOutputRecordModelProjectionImpl(node);
+      }
+      else if (type == E_OP_OUTPUT_RECORD_POLY_BRANCH) {
+        return new SchemaOpOutputRecordPolyBranchImpl(node);
+      }
+      else if (type == E_OP_OUTPUT_TAG_PROJECTION) {
+        return new SchemaOpOutputTagProjectionImpl(node);
+      }
+      else if (type == E_OP_OUTPUT_VAR_PROJECTION) {
+        return new SchemaOpOutputVarProjectionImpl(node);
+      }
+      else if (type == E_OP_PARAMETERS) {
+        return new SchemaOpParametersImpl(node);
+      }
+      else if (type == E_OP_PARAM_PROJECTION) {
+        return new SchemaOpParamProjectionImpl(node);
       }
       else if (type == E_PRIMITIVE_TYPE_BODY) {
         return new SchemaPrimitiveTypeBodyImpl(node);

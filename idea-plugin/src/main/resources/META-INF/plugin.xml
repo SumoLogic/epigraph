@@ -25,6 +25,8 @@
 
   <extensions defaultExtensionNs="com.intellij">
     <fileTypeFactory implementation="com.sumologic.epigraph.ideaplugin.schema.SchemaFileTypeFactory"/>
+    <fileTypeFactory implementation="com.sumologic.epigraph.ideaplugin.idl.IdlFileTypeFactory"/>
+
     <internalFileTemplate name="Epigraph Schema"/>
     <stubElementTypeHolder class="io.epigraph.lang.schema.parser.psi.stubs.SchemaStubElementTypes"/>
 
@@ -43,55 +45,59 @@
     <!-- change icon if schema file is not under the source root -->
     <fileIconPatcher implementation="com.sumologic.epigraph.ideaplugin.schema.presentation.SchemaFileIconPatcher"/>
 
-    <lang.syntaxHighlighterFactory language="epigraph"
+    <lang.syntaxHighlighterFactory language="epi_schema"
                                    implementationClass="com.sumologic.epigraph.ideaplugin.schema.highlighting.SchemaSyntaxHighlighterFactory"/>
-    <lang.parserDefinition language="epigraph"
+    <lang.parserDefinition language="epi_schema"
                            implementationClass="io.epigraph.lang.schema.parser.SchemaParserDefinition"/>
+    <lang.parserDefinition language="epi_idl"
+                           implementationClass="io.epigraph.lang.idl.parser.IdlParserDefinition"/>
 
-    <completion.contributor language="epigraph"
+    <completion.contributor language="epi_schema"
+                            implementationClass="com.sumologic.epigraph.ideaplugin.schema.features.completion.SchemaCompletionContributor"/>
+    <completion.contributor language="epi_idl"
                             implementationClass="com.sumologic.epigraph.ideaplugin.schema.features.completion.SchemaCompletionContributor"/>
 
-    <lang.formatter language="epigraph"
+    <lang.formatter language="epi_schema"
                     implementationClass="com.sumologic.epigraph.ideaplugin.schema.formatting.SchemaFormattingModelBuilder"/>
     <langCodeStyleSettingsProvider
         implementation="com.sumologic.epigraph.ideaplugin.schema.formatting.codeStyle.SchemaLanguageCodeStyleSettingsProvider"/>
     <codeStyleSettingsProvider
         implementation="com.sumologic.epigraph.ideaplugin.schema.formatting.codeStyle.SchemaCodeStyleSettingsProvider"/>
 
-    <lang.findUsagesProvider language="epigraph"
+    <lang.findUsagesProvider language="epi_schema"
                              implementationClass="com.sumologic.epigraph.ideaplugin.schema.features.usages.SchemaFindUsagesProvider"/>
     <elementDescriptionProvider
         implementation="com.sumologic.epigraph.ideaplugin.schema.features.usages.SchemaElementDescriptionProvider"/>
     <usageTypeProvider
         implementation="com.sumologic.epigraph.ideaplugin.schema.features.usages.SchemaUsageTypeProvider"/>
 
-    <lang.namesValidator language="epigraph"
+    <lang.namesValidator language="epi_schema"
                          implementationClass="com.sumologic.epigraph.ideaplugin.schema.features.SchemaNamesValidator"/>
 
-    <lang.braceMatcher language="epigraph"
+    <lang.braceMatcher language="epi_schema"
                        implementationClass="com.sumologic.epigraph.ideaplugin.schema.features.SchemaBraceMatcher"/>
-    <lang.foldingBuilder language="epigraph"
+    <lang.foldingBuilder language="epi_schema"
                          implementationClass="com.sumologic.epigraph.ideaplugin.schema.features.SchemaFoldingBuilder"/>
-    <lang.commenter language="epigraph"
+    <lang.commenter language="epi_schema"
                     implementationClass="com.sumologic.epigraph.ideaplugin.schema.features.SchemaCommenter"/>
-    <lang.psiStructureViewFactory language="epigraph"
+    <lang.psiStructureViewFactory language="epi_schema"
                                   implementationClass="com.sumologic.epigraph.ideaplugin.schema.features.structureview.SchemaStructureViewFactory"/>
     <statementUpDownMover implementation="com.sumologic.epigraph.ideaplugin.schema.features.SchemaLineMover"/>
-    <quoteHandler fileType="epigraph"
+    <quoteHandler fileType="epi_schema"
                   className="com.sumologic.epigraph.ideaplugin.schema.features.SchemaQuoteHandler"/>
     <gotoClassContributor
         implementation="com.sumologic.epigraph.ideaplugin.schema.features.navigation.GotoTypeContributor"/>
     <!--TODO <gotoSymbolContributor implementation=""-->
     <codeInsight.lineMarkerProvider
-        language="epigraph"
+        language="epi_schema"
         implementationClass="com.sumologic.epigraph.ideaplugin.schema.features.hierarchy.SchemaLineMarkerProvider"/>
 
-    <typeHierarchyProvider language="epigraph"
+    <typeHierarchyProvider language="epi_schema"
                            implementationClass="com.sumologic.epigraph.ideaplugin.schema.features.hierarchy.SchemaHierarchyProvider"/>
 
 
     <!-- annotator -->
-    <annotator language="epigraph"
+    <annotator language="epi_schema"
                implementationClass="com.sumologic.epigraph.ideaplugin.schema.highlighting.SchemaAnnotator"/>
     <!-- highlight errors in parents even if there are errors in children -->
     <highlightRangeExtension
@@ -104,7 +110,7 @@
         implementation="com.sumologic.epigraph.ideaplugin.schema.highlighting.SchemaProblemHighlightFilter"/>
 
     <!-- refactoring -->
-    <lang.refactoringSupport language="epigraph"
+    <lang.refactoringSupport language="epi_schema"
                              implementationClass="com.sumologic.epigraph.ideaplugin.schema.features.SchemaRefactoringSupportProvider"/>
     <renamePsiElementProcessor
         implementation="com.sumologic.epigraph.ideaplugin.schema.features.rename.RenameSchemaFieldProcessor"/>
@@ -112,13 +118,13 @@
     <!-- imports optimizer -->
     <autoImportOptionsProvider
         instance="com.sumologic.epigraph.ideaplugin.schema.options.SchemaAutoImportOptionsProvider"/>
-    <lang.importOptimizer language="epigraph"
+    <lang.importOptimizer language="epi_schema"
                           implementationClass="com.sumologic.epigraph.ideaplugin.schema.features.imports.SchemaImportOptimizer"/>
 
     <!-- inspections -->
     <!-- imports -->
     <localInspection
-        language="epigraph"
+        language="epi_schema"
         shortName="DuplicateImport"
         displayName="Duplicate imports"
         groupPath="Epigraph, Schema"
@@ -127,7 +133,7 @@
         level="WARNING"
         implementationClass="com.sumologic.epigraph.ideaplugin.schema.features.inspections.DuplicateImportInspection"/>
     <localInspection
-        language="epigraph"
+        language="epi_schema"
         shortName="UnnecessaryImport"
         displayName="Unnecessary imports"
         groupPath="Epigraph, Schema"
@@ -136,7 +142,7 @@
         level="WARNING"
         implementationClass="com.sumologic.epigraph.ideaplugin.schema.features.inspections.UnnecessaryImportInspection"/>
     <localInspection
-        language="epigraph"
+        language="epi_schema"
         shortName="UnusedImport"
         displayName="Unused imports"
         groupPath="Epigraph, Schema"
@@ -145,7 +151,7 @@
         level="WARNING"
         implementationClass="com.sumologic.epigraph.ideaplugin.schema.features.inspections.UnusedImportInspection"/>
     <localInspection
-        language="epigraph"
+        language="epi_schema"
         shortName="ConflictingImport"
         displayName="Conflicting imports"
         groupPath="Epigraph, Schema"

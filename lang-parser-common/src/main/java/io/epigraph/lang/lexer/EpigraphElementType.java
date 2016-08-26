@@ -1,7 +1,7 @@
 package io.epigraph.lang.lexer;
 
 import com.intellij.psi.tree.IElementType;
-import io.epigraph.lang.EpigraphLanguage;
+import io.epigraph.lang.schema.SchemaLanguage;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -10,6 +10,6 @@ import org.jetbrains.annotations.NotNull;
  */
 public class EpigraphElementType extends IElementType {
   public EpigraphElementType(@NotNull @NonNls String debugName) {
-    super(debugName, EpigraphLanguage.INSTANCE);
+    super(debugName, SchemaLanguage.INSTANCE);
   }
 }

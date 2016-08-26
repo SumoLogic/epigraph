@@ -66,7 +66,7 @@ public class SchemaParserDefinition implements ParserDefinition {
 
   @Override
   public PsiParser createParser(Project project) {
-    return new SchemaParser();
+    return new SchemaParserW();
   }
 
   @Override

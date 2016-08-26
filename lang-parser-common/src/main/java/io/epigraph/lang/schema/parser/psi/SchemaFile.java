@@ -4,7 +4,7 @@ import com.intellij.extapi.psi.PsiFileBase;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.psi.FileViewProvider;
 import io.epigraph.lang.schema.parser.SchemaFileType;
-import io.epigraph.lang.EpigraphLanguage;
+import io.epigraph.lang.schema.SchemaLanguage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,7 +22,7 @@ import static io.epigraph.lang.lexer.EpigraphElementTypes.E_NAMESPACE_DECL;
  */
 public class SchemaFile extends PsiFileBase {
   public SchemaFile(@NotNull FileViewProvider viewProvider) {
-    super(viewProvider, EpigraphLanguage.INSTANCE);
+    super(viewProvider, SchemaLanguage.INSTANCE);
   }
 
   @NotNull
@@ -31,11 +31,11 @@ public class SchemaFile extends PsiFileBase {
     return SchemaFileType.INSTANCE;
   }
 
-  @Nullable
-  @Override
-  public Icon getIcon(int flags) {
-    return SchemaFileType.INSTANCE.getIcon();
-  }
+//  @Nullable
+//  @Override
+//  public Icon getIcon(int flags) {
+//    return SchemaFileType.INSTANCE.getIcon();
+//  }
 
   @Nullable
   public SchemaDefs getDefs() {

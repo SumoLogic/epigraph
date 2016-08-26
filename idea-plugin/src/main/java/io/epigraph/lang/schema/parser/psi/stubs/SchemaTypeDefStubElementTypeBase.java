@@ -3,7 +3,7 @@ package io.epigraph.lang.schema.parser.psi.stubs;
 import com.intellij.psi.stubs.*;
 import com.intellij.util.io.StringRef;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaStubIndexKeys;
-import io.epigraph.lang.EpigraphLanguage;
+import io.epigraph.lang.schema.SchemaLanguage;
 import io.epigraph.lang.schema.parser.psi.SchemaExtendsDecl;
 import io.epigraph.lang.schema.parser.psi.SchemaFqnTypeRef;
 import io.epigraph.lang.schema.parser.psi.SchemaTypeDef;
@@ -26,7 +26,7 @@ public abstract class SchemaTypeDefStubElementTypeBase<S extends SchemaTypeDefSt
   private final String externalId;
 
   public SchemaTypeDefStubElementTypeBase(@NotNull @NonNls String debugName, String externalNameSuffix) {
-    super(debugName, EpigraphLanguage.INSTANCE);
+    super(debugName, SchemaLanguage.INSTANCE);
     externalId = "epigraph_schema." + externalNameSuffix;
   }
 

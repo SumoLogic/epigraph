@@ -10,7 +10,7 @@ import com.intellij.psi.tree.IStubFileElementType;
 import com.intellij.util.io.StringRef;
 import com.sumologic.epigraph.ideaplugin.schema.brains.NamespaceManager;
 import io.epigraph.lang.schema.parser.Fqn;
-import io.epigraph.lang.EpigraphLanguage;
+import io.epigraph.lang.schema.SchemaLanguage;
 import io.epigraph.lang.schema.parser.psi.SchemaFile;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,7 +21,7 @@ import java.io.IOException;
  */
 public class SchemaFileElementType extends IStubFileElementType<SchemaFileStub> {
   public SchemaFileElementType() {
-    super("epigraph_schema.FILE", EpigraphLanguage.INSTANCE);
+    super("epigraph_schema.FILE", SchemaLanguage.INSTANCE);
   }
 
   @NotNull

@@ -12,7 +12,7 @@ import com.intellij.util.ProcessingContext;
 import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.TypeMembers;
 import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaPsiUtil;
 import io.epigraph.lang.schema.parser.Fqn;
-import io.epigraph.lang.EpigraphLanguage;
+import io.epigraph.lang.schema.SchemaLanguage;
 import io.epigraph.lang.schema.parser.SchemaParserDefinition;
 import io.epigraph.lang.schema.parser.psi.*;
 import io.epigraph.lang.schema.parser.psi.impl.SchemaPsiImplUtil;
@@ -26,6 +26,7 @@ import static io.epigraph.lang.lexer.EpigraphElementTypes.*;
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
 public class SchemaCompletionContributor extends CompletionContributor {
+  // TODO switch to using PsiElementPatterns
   // TODO default` doesn't show up in auto-complete/suggestions after `vartype Foo `
 
   private static final String[] TOP_LEVEL_COMPLETIONS = new String[]{
@@ -63,7 +64,7 @@ public class SchemaCompletionContributor extends CompletionContributor {
   public SchemaCompletionContributor() {
     extend(
         CompletionType.BASIC,
-        PlatformPatterns.psiElement().withLanguage(EpigraphLanguage.INSTANCE),
+        PlatformPatterns.psiElement().withLanguage(SchemaLanguage.INSTANCE),
         new CompletionProvider<CompletionParameters>() {
           @Override
           protected void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context, @NotNull CompletionResultSet result) {
@@ -89,7 +90,7 @@ public class SchemaCompletionContributor extends CompletionContributor {
 
     PsiElement parent = position.getParent();
     if (parent != null) {
-      IElementType parentElementType = parent.getNode().getElementType();
+//      IElementType parentElementType = parent.getNode().getElementType();
       if (parent instanceof SchemaTypeDef || parent instanceof SchemaSupplementDef) return;
 
       PsiElement grandParent = parent.getParent();
