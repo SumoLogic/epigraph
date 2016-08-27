@@ -22,6 +22,8 @@ trait CType {self =>
   // `None` - no declaration, `Some(None)` - declared nodefault, `Some(Some(String))` - declared default
   val declaredDefaultTagName: Option[Option[String]]
 
+  //def effectiveTagsMap: Map[String, CTag]
+
   def isAssignableFrom(subtype: CType): Boolean
 
   def linearizedParents: Seq[This]
@@ -181,7 +183,8 @@ class CVarTypeDef(csf: CSchemaFile, override val psi: EpigraphVarTypeDef)(implic
   def effectiveTagsMap: Map[String, CTag] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, _effectiveTagsMap)
 
   private lazy val _effectiveTagsMap = {
-    (for {vt <- linearizedParents; nt <- vt.effectiveTagsMap} yield nt) ++ declaredTagsMap
+    linearizedParents.flatMap(_.effectiveTagsMap) ++ declaredTagsMap
+    //(for {vt <- linearizedParents; nt <- vt.effectiveTagsMap} yield nt) ++ declaredTagsMap
   } groupBy { case (n, _t) =>
     n
   } map { case (n, seq) =>
@@ -241,10 +244,12 @@ class CTag(val csf: CSchemaFile, val psi: EpigraphVarTagDecl)(implicit val ctx: 
 
 trait CDatumType extends CType {
 
-  val ImpliedDefaultTagName: String = ""
+  val ImpliedDefaultTagName: String = "_"
 
   // `None` - no declaration, `Some(None)` - declared nodefault, `Some(Some(String))` - declared default
   override val declaredDefaultTagName: Some[Some[String]] = Some(Some(ImpliedDefaultTagName))
+
+  //override val effectiveTagsMap: Map[String, CTag] = ???
 
 }
 
@@ -266,19 +271,18 @@ class CRecordTypeDef(csf: CSchemaFile, override val psi: EpigraphRecordTypeDef)(
   def effectiveFieldsMap: Map[String, CField] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, _effectiveFieldsMap)
 
   private lazy val _effectiveFieldsMap = {
-    (for {vt <- linearizedParents; nt <- vt.effectiveFieldsMap} yield nt) ++ declaredFieldsMap
-  } groupBy { case (n, _t) =>
-    n
-  } map { case (n, seq) =>
-    (n, seq.map { case (_n, t) => t })
-  } map { case (n, seq) =>
-    (n, effectiveField(declaredFieldsMap.get(n), seq))
+    linearizedParents.flatMap(_.effectiveFieldsMap) ++ declaredFieldsMap
+  } groupBy { case (fn, _f) =>
+    fn
+  } map { case (fn, nfseq: Seq[(String, CField)]) =>
+    (fn, nfseq.map { case (_fn, f) => f })
+  } map { case (fn, fseq: Seq[CField]) =>
+    (fn, effectiveField(declaredFieldsMap.get(fn), fseq))
   }
 
   private def effectiveField(declaredFieldOpt: Option[CField], superfields: Seq[CField]): CField = {
     declaredFieldOpt match {
       case Some(df) => // check if declared field is compatible with all (if any) overridden ones
-        df.superfields = superfields
         superfields foreach { st =>
           if (!df.compatibleWith(st)) {
             ctx.errors.add(
@@ -323,29 +327,58 @@ class CField(val csf: CSchemaFile, val psi: EpigraphFieldDecl, val host: CRecord
 
   val typeRef: CTypeRef = valueType.typeRef
 
-  var superfields: Seq[CField] = Seq()
+  def superfields: Seq[CField] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, _superfields)
+
+  private lazy val _superfields = host.linearizedParents.flatMap(_.effectiveFieldsMap.get(name))
 
   def compatibleWith(superField: CField): Boolean = superField.typeRef.resolved.isAssignableFrom(typeRef.resolved) && (
-      valueType.declaredDefaultTagName match {
-        case None => true // no default override
-        case Some(superField.effectiveDefaultTagName) => true // same as super
-        case Some(Some(x)) => superField.effectiveDefaultTagName.isEmpty // different from super but it has no default
+      superField.effectiveDefaultTagName match {
+        case None => // super has no effective default tag (nodefault)
+          true
+        case Some(tagName) => // super has effective default tag
+          valueType.defaultDeclarationOpt match {
+            case None => true // we don't have default tag declaration
+            case Some(Some(`tagName`)) => true // we have the same default tag declaration as super
+            case _ => false // we have either nodefault or some default different from super's
+          }
       }
       )
+//  (
+//      valueType.defaultDeclarationOpt match {
+//        case None => true // no default override
+//        case Some(superField.effectiveDefaultTagName) => true // same as super
+//        case Some(Some(x)) => superField.effectiveDefaultTagName.isEmpty // different from super but it has no default
+//      }
+//      )
 
-  // `None` - no default tag, `Some(String)` - effective default tag name
-  val effectiveDefaultTagName: Option[String] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, _effectiveDefaultTagName)
+  // `None` - nodefault, `Some(String)` - effective default tag name
+  def effectiveDefaultTagName: Option[String] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, _effectiveDefaultTagName)
 
   // explicit no/default on the field > no/default from super field(s) > default on type > default on type super type(s)
   private lazy val _effectiveDefaultTagName: Option[String] = {
-    valueType.declaredDefaultTagName match {
-      case Some(defaultTagNameOpt) => defaultTagNameOpt
-      case None => // get default tags from superfields, assert they are the same (ignore Nones), return
+    valueType.defaultDeclarationOpt match {
+      case Some(explicitDefault: Option[String]) => // field has default declaration (maybe `nodefault`)
+        explicitDefault
+      case None => // field doesn't have default declaration
+        // get effective default declarations from superfields, assert they are the same (ignore Nones), return
         superfields.flatMap(_.effectiveDefaultTagName).distinct match {
-          case Seq(theone) => Some(theone)
-          case Seq() => ??? //typeRef.resolved.declaredDefaultTagName
-        }
+          case Seq(theone) => // all superfields (that have effective default tag) have the same one
+            Some(theone)
+          case Seq() => // no superfields (that have effective default tag)
+println(host.name.name + "." + name + " " + valueType.typeRef.resolved.declaredDefaultTagName.flatten)
+            valueType.typeRef.resolved.declaredDefaultTagName.flatten // FIXME use type default etc.
 
+          case multiple => // more than one distinct effective default tag on superfields
+            ctx.errors.add(
+              CError(
+                csf.filename, csf.position(psi.getValueTypeRef),
+                s"Field `$name` inherits from fields with different default tags ${
+                  multiple.mkString("`", "`, `", "`")
+                }"
+              )
+            )
+            None // TODO pick one of the tags so child fields don't think we have nodefault?
+        }
     }
   }
 

@@ -39,17 +39,35 @@ public interface $ln extends${withParents(t)} io.epigraph.data.RecordDatum.Stati
 ${
   t.effectiveFieldsMap.values.map { f => sn"""\
 
+  // Field `f.name`
   @NotNull Field ${jn(f.name)} = new Field("${f.name}", ${lqrn(f.typeRef, t)}.type, ${f.isAbstract});
+  ${
+    println(f.effectiveDefaultTagName.isDefined)
+    if (f.effectiveDefaultTagName.isDefined) sn"""\
+
+  /**
+   * Returns default tag datum for `${f.name}` field.
+   */
+  @Nullable ${lqrn(f.typeRef, t)} get${up(f.name)}(); // FIXME return default tag type not vartype
+"""
+  }${
+    f.valueType.typeRef.resolved match {
+      case vartype: CVarTypeDef =>
+        vartype.effectiveTagsMap.values.map { tag => sn"""\
+
+  /**
+   * Returns `${tag.name}` tag datum for `${f.name}` field.
+   */
+  @Nullable ${lqrn(tag.typeRef, t)} get${up(f.name)}${up(tag.name)}();
+"""
+        }.mkString
+      case _: CDatumType => ""
+      case unexpected => throw new IllegalStateException(unexpected.name.name)
+    }
+  }
 """
   }.mkString
 }\
-${
-    t.effectiveFieldsMap.values.map { f => sn"""\
-
-  @Nullable ${lqrn(f.typeRef, t)} get${up(f.name)}(); // TODO only if there is a default tag
-"""
-    }.mkString
-  }\
 
 //  // FIXME iterate over (immediate) fields
 //

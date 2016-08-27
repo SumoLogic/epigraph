@@ -17,6 +17,6 @@ class CValueType(val csf: CSchemaFile, psi: EpigraphValueTypeRef)(implicit val c
 
   val typeRef: CTypeRef = CTypeRef(csf, psi.getTypeRef)
 
-  val declaredDefaultTagName: Option[Option[String]] = CTypeDef.declaredDefaultTagName(psi.getDefaultOverride)
+  val defaultDeclarationOpt: Option[Option[String]] = CTypeDef.declaredDefaultTagName(psi.getDefaultOverride)
 
 }

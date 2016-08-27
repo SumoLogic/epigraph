@@ -9,7 +9,7 @@ integer UserId extends PersonId
 
 record UserRecord extends PersonRecord {
   id: UserId
-  bestFriend: UserRecord
+  bestFriend: User//Record
   friends: list[UserRecord]
   users: list[User default id]
   override ids: list[UserId]

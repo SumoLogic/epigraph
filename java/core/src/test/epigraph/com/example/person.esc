@@ -9,7 +9,7 @@ integer PersonId
 
 record PersonRecord {
   id: PersonId
-  bestFriend: PersonRecord
+  bestFriend: Person//Record
   friends: list[PersonRecord]
   ids: list[PersonId]
   idss: list[list[PersonId]]
