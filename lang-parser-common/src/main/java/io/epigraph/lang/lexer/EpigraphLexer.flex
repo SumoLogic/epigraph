@@ -63,9 +63,9 @@ ID=([:letter:]([:letter:]|[:digit:])*)|(`[^`]*`)
   "double"             { return E_DOUBLE_T; }
   "boolean"            { return E_BOOLEAN_T; }
   "string"             { return E_STRING_T; }
-  "forbidden"          { return E_FORBIDDEN; }
-  "required"           { return E_REQUIRED; }
-  "parameters"         { return E_PARAMETERS; }
+//  "forbidden"          { return E_FORBIDDEN; }
+//  "required"           { return E_REQUIRED; }
+//  "parameters"         { return E_PARAMETERS; }
   ":"                  { return E_COLON; }
   "."                  { return E_DOT; }
   ","                  { return E_COMMA; }
