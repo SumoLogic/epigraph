@@ -36,21 +36,26 @@ import org.jetbrains.annotations.Nullable;
 public interface $ln extends${withParents(t)} io.epigraph.data.RecordDatum.Static {
 
   @NotNull $ln.Type type = new $ln.Type();
-${
-  t.effectiveFieldsMap.values.map { f => sn"""\
+${ // for each effective field
+  t.effectiveFields.map { f =>
+    sn"""\
 
-  // Field `f.name`
+  // Field `${f.name}`
   @NotNull Field ${jn(f.name)} = new Field("${f.name}", ${lqrn(f.typeRef, t)}.type, ${f.isAbstract});
-  ${
-    println(f.effectiveDefaultTagName.isDefined)
+  ${ // default getter
     if (f.effectiveDefaultTagName.isDefined) sn"""\
 
   /**
    * Returns default tag datum for `${f.name}` field.
    */
-  @Nullable ${lqrn(f.typeRef, t)} get${up(f.name)}(); // FIXME return default tag type not vartype
+  @Nullable ${lqn(dtt(f.typeRef, f.effectiveDefaultTagName.get), t)} get${up(f.name)}();
+
+  /**
+   * Returns default tag value for `${f.name}` field.
+   */
+  @Nullable ${lqn(dtt(f.typeRef, f.effectiveDefaultTagName.get), t)}.Value get_${up(f.name)}();
 """
-  }${
+  }${ // tag getters
     f.valueType.typeRef.resolved match {
       case vartype: CVarTypeDef =>
         vartype.effectiveTagsMap.values.map { tag => sn"""\
@@ -59,29 +64,20 @@ ${
    * Returns `${tag.name}` tag datum for `${f.name}` field.
    */
   @Nullable ${lqrn(tag.typeRef, t)} get${up(f.name)}${up(tag.name)}();
+
+  /**
+   * Returns `${tag.name}` tag value for `${f.name}` field.
+   */
+  @Nullable ${lqrn(tag.typeRef, t)}.Value get_${up(f.name)}${up(tag.name)}();
 """
         }.mkString
       case _: CDatumType => ""
-      case unexpected => throw new IllegalStateException(unexpected.name.name)
+      case unexpected => throw new UnsupportedOperationException(unexpected.name.name)
     }
   }
 """
   }.mkString
 }\
-
-//  // FIXME iterate over (immediate) fields
-//
-//  @NotNull Field bestFriend = new Field("bestFriend", $ln.type, true);
-//
-//  @NotNull Field friends = new Field("friends", $ln.List.type, false);
-//
-//  @Nullable $ln getBestFriend();
-//
-//  @Nullable $ln.Value getBestFriend_value();
-//
-//  @Nullable $ln.List getFriends();
-//
-//  @Nullable $ln.List.Value getFriends_value();
 
   class Type extends io.epigraph.types.RecordType.Static<
       $ln.Imm,
@@ -105,7 +101,13 @@ ${
 
     @Override
     public @NotNull java.util.List<@NotNull Field> immediateFields() {
-      return java.util.Arrays.asList($ln.bestFriend); // FIXME list all immediate fields
+      return java.util.Arrays.asList(\
+${
+    t.declaredFields.map { f => sn"""
+        ${ln + '.' + jn(f.name)}"""
+    }.mkString(",")
+}
+      );
     }
 $listSupplier\
 
@@ -126,7 +128,7 @@ $listSupplier\
     @Override
     @NotNull $ln.Imm.Data toImmutable();
 
-    @Nullable $ln.Value get(); // default tag
+    @Nullable $ln.Value get();
 
   }
 

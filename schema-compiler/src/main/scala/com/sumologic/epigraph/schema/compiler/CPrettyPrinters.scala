@@ -180,7 +180,7 @@ object CPrettyPrinters {
     override def render0(@NotNull t: CRecordTypeDef, c: Config): Iterator[String] = {
       def body = (c: Config) => CTypeDefPrinter.typeDefParts(t, c) ++ Iterator(
         collection("declaredFields", t.declaredFields, c),
-        collection("effectiveFields", t.effectiveFieldsMap, c, (e: (String, CField)) => e._2)
+        collection("effectiveFields", t.effectiveFields, c)
       )
       pprint.Internals.handleChunks("record " + t.name.name, c, body)
     }

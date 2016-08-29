@@ -29,7 +29,7 @@ trait ${bldName(t)} extends ${baseName(t)} with RecordDatumBuilder[${baseName(t)
 
 object ${objName(t)} extends RecordType[${baseName(t)}](namespace \\ "${baseName(t)}", Seq(${parentNames(t, objName)})) {
   ${
-    t.effectiveFieldsMap.values.map { f => s"""
+    t.effectiveFields.map { f => s"""
   val ${fieldName(f)}: ${fieldType(f, t)} = ${fieldDef(f, t)}\n"""
     }.mkString
   }

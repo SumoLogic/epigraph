@@ -8,6 +8,7 @@ import io.epigraph.lang.parser.psi._
 import org.jetbrains.annotations.Nullable
 
 import scala.collection.JavaConversions._
+import scala.collection.immutable.ListMap
 import scala.collection.mutable
 
 
@@ -254,7 +255,8 @@ trait CDatumType extends CType {
 }
 
 
-class CRecordTypeDef(csf: CSchemaFile, override val psi: EpigraphRecordTypeDef)(implicit ctx: CContext) extends CTypeDef(
+class CRecordTypeDef(csf: CSchemaFile, override val psi: EpigraphRecordTypeDef)
+    (implicit ctx: CContext) extends CTypeDef(
   csf, psi, CTypeKind.RECORD
 ) with CDatumType {
 
@@ -268,8 +270,10 @@ class CRecordTypeDef(csf: CSchemaFile, override val psi: EpigraphRecordTypeDef)(
   // TODO check for dupes
   private val declaredFieldsMap: Map[String, CField] = declaredFields.map { ct => (ct.name, ct) }(collection.breakOut)
 
+  @deprecated
   def effectiveFieldsMap: Map[String, CField] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, _effectiveFieldsMap)
 
+  @deprecated
   private lazy val _effectiveFieldsMap = {
     linearizedParents.flatMap(_.effectiveFieldsMap) ++ declaredFieldsMap
   } groupBy { case (fn, _f) =>
@@ -278,6 +282,20 @@ class CRecordTypeDef(csf: CSchemaFile, override val psi: EpigraphRecordTypeDef)(
     (fn, nfseq.map { case (_fn, f) => f })
   } map { case (fn, fseq: Seq[CField]) =>
     (fn, effectiveField(declaredFieldsMap.get(fn), fseq))
+  }
+
+  def effectiveFields: Seq[CField] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, _effectiveFields)
+
+  private lazy val _effectiveFields: Seq[CField] = {
+    val m: mutable.LinkedHashMap[String, mutable.Builder[CField, Seq[CField]]] = new mutable.LinkedHashMap
+    for (f <- linearizedParents.flatMap(_._effectiveFields) ++ declaredFields) {
+      m.getOrElseUpdate(f.name, Seq.newBuilder[CField]) += f
+    }
+    val imb = Seq.newBuilder[CField]
+    for ((fn, nfs) <- m) {
+      imb += effectiveField(declaredFieldsMap.get(fn), nfs.result())
+    }
+    imb.result()
   }
 
   private def effectiveField(declaredFieldOpt: Option[CField], superfields: Seq[CField]): CField = {
@@ -329,7 +347,7 @@ class CField(val csf: CSchemaFile, val psi: EpigraphFieldDecl, val host: CRecord
 
   def superfields: Seq[CField] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, _superfields)
 
-  private lazy val _superfields = host.linearizedParents.flatMap(_.effectiveFieldsMap.get(name))
+  private lazy val _superfields = host.linearizedParents.flatMap(_.effectiveFields.find(_.name == name))
 
   def compatibleWith(superField: CField): Boolean = superField.typeRef.resolved.isAssignableFrom(typeRef.resolved) && (
       superField.effectiveDefaultTagName match {
@@ -365,7 +383,6 @@ class CField(val csf: CSchemaFile, val psi: EpigraphFieldDecl, val host: CRecord
           case Seq(theone) => // all superfields (that have effective default tag) have the same one
             Some(theone)
           case Seq() => // no superfields (that have effective default tag)
-println(host.name.name + "." + name + " " + valueType.typeRef.resolved.declaredDefaultTagName.flatten)
             valueType.typeRef.resolved.declaredDefaultTagName.flatten // FIXME use type default etc.
 
           case multiple => // more than one distinct effective default tag on superfields
