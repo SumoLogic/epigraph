@@ -5,13 +5,10 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface EpigraphOpOutputRecordModelProjection extends PsiElement {
+public interface EpigraphOpOutputRecordMultiPolyBranch extends PsiElement {
 
   @NotNull
-  List<EpigraphOpOutputFieldProjection> getOpOutputFieldProjectionList();
-
-  @Nullable
-  EpigraphOpOutputRecordPolyBranch getOpOutputRecordPolyBranch();
+  List<EpigraphOpOutputRecordSinglePolyBranch> getOpOutputRecordSinglePolyBranchList();
 
   @NotNull
   PsiElement getParenLeft();

@@ -50,4 +50,10 @@ public class EpigraphOpParametersImpl extends ASTWrapperPsiElement implements Ep
     return notNullChild(findChildByType(E_CURLY_RIGHT));
   }
 
+  @Override
+  @NotNull
+  public PsiElement getParameters() {
+    return notNullChild(findChildByType(E_PARAMETERS));
+  }
+
 }

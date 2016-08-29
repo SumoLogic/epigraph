@@ -7,16 +7,10 @@ import com.intellij.psi.PsiElement;
 
 public interface EpigraphOpOutputMapPolyBranch extends PsiElement {
 
-  @NotNull
-  EpigraphFqnTypeRef getFqnTypeRef();
+  @Nullable
+  EpigraphOpOutputMapMultiPolyBranch getOpOutputMapMultiPolyBranch();
 
-  @NotNull
-  EpigraphOpOutputMapModelProjection getOpOutputMapModelProjection();
-
-  @NotNull
-  PsiElement getAngleLeft();
-
-  @NotNull
-  PsiElement getAngleRight();
+  @Nullable
+  EpigraphOpOutputMapSinglePolyBranch getOpOutputMapSinglePolyBranch();
 
 }

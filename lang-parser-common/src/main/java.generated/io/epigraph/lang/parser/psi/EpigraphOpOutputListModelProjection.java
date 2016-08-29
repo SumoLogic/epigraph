@@ -7,10 +7,16 @@ import com.intellij.psi.PsiElement;
 
 public interface EpigraphOpOutputListModelProjection extends PsiElement {
 
-  @NotNull
-  List<EpigraphOpOutputListPolyBranch> getOpOutputListPolyBranchList();
+  @Nullable
+  EpigraphOpOutputListPolyBranch getOpOutputListPolyBranch();
 
-  @NotNull
+  @Nullable
   EpigraphOpOutputVarProjection getOpOutputVarProjection();
+
+  @Nullable
+  PsiElement getParenLeft();
+
+  @Nullable
+  PsiElement getParenRight();
 
 }

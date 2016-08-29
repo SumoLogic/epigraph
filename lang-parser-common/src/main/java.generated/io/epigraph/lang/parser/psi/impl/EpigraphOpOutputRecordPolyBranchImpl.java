@@ -27,27 +27,15 @@ public class EpigraphOpOutputRecordPolyBranchImpl extends ASTWrapperPsiElement i
   }
 
   @Override
-  @NotNull
-  public EpigraphFqnTypeRef getFqnTypeRef() {
-    return notNullChild(PsiTreeUtil.getChildOfType(this, EpigraphFqnTypeRef.class));
+  @Nullable
+  public EpigraphOpOutputRecordMultiPolyBranch getOpOutputRecordMultiPolyBranch() {
+    return PsiTreeUtil.getChildOfType(this, EpigraphOpOutputRecordMultiPolyBranch.class);
   }
 
   @Override
-  @NotNull
-  public EpigraphOpOutputRecordModelProjection getOpOutputRecordModelProjection() {
-    return notNullChild(PsiTreeUtil.getChildOfType(this, EpigraphOpOutputRecordModelProjection.class));
-  }
-
-  @Override
-  @NotNull
-  public PsiElement getAngleLeft() {
-    return notNullChild(findChildByType(E_ANGLE_LEFT));
-  }
-
-  @Override
-  @NotNull
-  public PsiElement getAngleRight() {
-    return notNullChild(findChildByType(E_ANGLE_RIGHT));
+  @Nullable
+  public EpigraphOpOutputRecordSinglePolyBranch getOpOutputRecordSinglePolyBranch() {
+    return PsiTreeUtil.getChildOfType(this, EpigraphOpOutputRecordSinglePolyBranch.class);
   }
 
 }

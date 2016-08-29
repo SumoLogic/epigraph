@@ -1,5 +1,6 @@
 package io.epigraph.lang.parser.psi;
 
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.sumologic.epigraph.ideaplugin.schema.brains.NamespaceManager;
@@ -30,12 +31,12 @@ public class EpigraphReferenceFactory {
 
   @Nullable
   public static EpigraphFqnReferenceResolver getFqnReferenceResolver(@NotNull EpigraphFqnSegment segment) {
-    final SchemaFile file = (SchemaFile) segment.getContainingFile();
-    if (file == null) return null;
+    PsiFile file = segment.getContainingFile();
+    if (!(file instanceof SchemaFile)) return null;
 
     final boolean isImport = PsiTreeUtil.getParentOfType(segment, EpigraphImportStatement.class) != null;
 
-    return getFqnReferenceResolver(file, segment.getFqn(), isImport);
+    return getFqnReferenceResolver((SchemaFile) file, segment.getFqn(), isImport);
   }
 
   @Nullable

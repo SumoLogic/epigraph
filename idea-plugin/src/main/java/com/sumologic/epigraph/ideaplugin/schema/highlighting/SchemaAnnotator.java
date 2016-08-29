@@ -209,7 +209,8 @@ public class SchemaAnnotator implements Annotator {
 //      setHighlighting(schemaFqn.getLastChild(), holder, SchemaSyntaxHighlighter.TYPE_REF);
 
       PsiPolyVariantReference reference = (PsiPolyVariantReference) epigraphFqn.getLastChild().getReference();
-      assert reference != null;
+      if (reference == null) return;
+//      assert reference != null;
 
 //      if (reference.resolve() == null) {
         ResolveResult[] resolveResults = reference.multiResolve(false);

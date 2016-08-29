@@ -27,15 +27,9 @@ public class EpigraphOpOutputKeyProjectionPartImpl extends ASTWrapperPsiElement 
   }
 
   @Override
-  @Nullable
-  public EpigraphCustomParam getCustomParam() {
-    return PsiTreeUtil.getChildOfType(this, EpigraphCustomParam.class);
-  }
-
-  @Override
-  @Nullable
-  public EpigraphOpParameters getOpParameters() {
-    return PsiTreeUtil.getChildOfType(this, EpigraphOpParameters.class);
+  @NotNull
+  public PsiElement getRecord() {
+    return notNullChild(findChildByType(E_RECORD));
   }
 
 }

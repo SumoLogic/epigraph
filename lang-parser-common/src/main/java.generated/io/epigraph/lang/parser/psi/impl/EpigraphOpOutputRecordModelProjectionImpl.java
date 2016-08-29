@@ -33,9 +33,9 @@ public class EpigraphOpOutputRecordModelProjectionImpl extends ASTWrapperPsiElem
   }
 
   @Override
-  @NotNull
-  public List<EpigraphOpOutputRecordPolyBranch> getOpOutputRecordPolyBranchList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, EpigraphOpOutputRecordPolyBranch.class);
+  @Nullable
+  public EpigraphOpOutputRecordPolyBranch getOpOutputRecordPolyBranch() {
+    return PsiTreeUtil.getChildOfType(this, EpigraphOpOutputRecordPolyBranch.class);
   }
 
   @Override
@@ -45,9 +45,9 @@ public class EpigraphOpOutputRecordModelProjectionImpl extends ASTWrapperPsiElem
   }
 
   @Override
-  @NotNull
+  @Nullable
   public PsiElement getParenRight() {
-    return notNullChild(findChildByType(E_PAREN_RIGHT));
+    return findChildByType(E_PAREN_RIGHT);
   }
 
 }

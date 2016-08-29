@@ -38,4 +38,10 @@ public class EpigraphOpOutputModelProjectionBodyPartImpl extends ASTWrapperPsiEl
     return PsiTreeUtil.getChildOfType(this, EpigraphOpParameters.class);
   }
 
+  @Override
+  @Nullable
+  public PsiElement getRequired() {
+    return findChildByType(E_REQUIRED);
+  }
+
 }

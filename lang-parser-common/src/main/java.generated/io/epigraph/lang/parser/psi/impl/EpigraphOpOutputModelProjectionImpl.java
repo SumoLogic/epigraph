@@ -28,12 +28,6 @@ public class EpigraphOpOutputModelProjectionImpl extends ASTWrapperPsiElement im
 
   @Override
   @Nullable
-  public EpigraphOpOutputEnumModelProjection getOpOutputEnumModelProjection() {
-    return PsiTreeUtil.getChildOfType(this, EpigraphOpOutputEnumModelProjection.class);
-  }
-
-  @Override
-  @Nullable
   public EpigraphOpOutputListModelProjection getOpOutputListModelProjection() {
     return PsiTreeUtil.getChildOfType(this, EpigraphOpOutputListModelProjection.class);
   }
@@ -45,21 +39,21 @@ public class EpigraphOpOutputModelProjectionImpl extends ASTWrapperPsiElement im
   }
 
   @Override
-  @NotNull
-  public EpigraphOpOutputModelProjectionBody getOpOutputModelProjectionBody() {
-    return notNullChild(PsiTreeUtil.getChildOfType(this, EpigraphOpOutputModelProjectionBody.class));
-  }
-
-  @Override
   @Nullable
-  public EpigraphOpOutputPrimitiveModelProjection getOpOutputPrimitiveModelProjection() {
-    return PsiTreeUtil.getChildOfType(this, EpigraphOpOutputPrimitiveModelProjection.class);
+  public EpigraphOpOutputModelProjectionBody getOpOutputModelProjectionBody() {
+    return PsiTreeUtil.getChildOfType(this, EpigraphOpOutputModelProjectionBody.class);
   }
 
   @Override
   @Nullable
   public EpigraphOpOutputRecordModelProjection getOpOutputRecordModelProjection() {
     return PsiTreeUtil.getChildOfType(this, EpigraphOpOutputRecordModelProjection.class);
+  }
+
+  @Override
+  @Nullable
+  public EpigraphOpSimpleModelProjection getOpSimpleModelProjection() {
+    return PsiTreeUtil.getChildOfType(this, EpigraphOpSimpleModelProjection.class);
   }
 
 }

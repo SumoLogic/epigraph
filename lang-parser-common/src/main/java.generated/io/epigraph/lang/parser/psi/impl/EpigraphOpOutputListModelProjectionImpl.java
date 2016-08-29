@@ -27,15 +27,27 @@ public class EpigraphOpOutputListModelProjectionImpl extends ASTWrapperPsiElemen
   }
 
   @Override
-  @NotNull
-  public List<EpigraphOpOutputListPolyBranch> getOpOutputListPolyBranchList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, EpigraphOpOutputListPolyBranch.class);
+  @Nullable
+  public EpigraphOpOutputListPolyBranch getOpOutputListPolyBranch() {
+    return PsiTreeUtil.getChildOfType(this, EpigraphOpOutputListPolyBranch.class);
   }
 
   @Override
-  @NotNull
+  @Nullable
   public EpigraphOpOutputVarProjection getOpOutputVarProjection() {
-    return notNullChild(PsiTreeUtil.getChildOfType(this, EpigraphOpOutputVarProjection.class));
+    return PsiTreeUtil.getChildOfType(this, EpigraphOpOutputVarProjection.class);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getParenLeft() {
+    return findChildByType(E_PAREN_LEFT);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getParenRight() {
+    return findChildByType(E_PAREN_RIGHT);
   }
 
 }

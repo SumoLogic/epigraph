@@ -40,6 +40,18 @@ public class EpigraphOpOutputVarProjectionImpl extends ASTWrapperPsiElement impl
 
   @Override
   @Nullable
+  public EpigraphQid getQid() {
+    return PsiTreeUtil.getChildOfType(this, EpigraphQid.class);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getColon() {
+    return findChildByType(E_COLON);
+  }
+
+  @Override
+  @Nullable
   public PsiElement getCurlyLeft() {
     return findChildByType(E_CURLY_LEFT);
   }
@@ -48,12 +60,6 @@ public class EpigraphOpOutputVarProjectionImpl extends ASTWrapperPsiElement impl
   @Nullable
   public PsiElement getCurlyRight() {
     return findChildByType(E_CURLY_RIGHT);
-  }
-
-  @Override
-  @Nullable
-  public PsiElement getDefault() {
-    return findChildByType(E_DEFAULT);
   }
 
 }

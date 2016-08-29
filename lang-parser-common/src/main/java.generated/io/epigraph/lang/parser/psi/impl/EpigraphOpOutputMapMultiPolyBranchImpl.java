@@ -11,14 +11,14 @@ import static io.epigraph.lang.lexer.EpigraphElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import io.epigraph.lang.parser.psi.*;
 
-public class EpigraphOpOutputEnumModelProjectionImpl extends ASTWrapperPsiElement implements EpigraphOpOutputEnumModelProjection {
+public class EpigraphOpOutputMapMultiPolyBranchImpl extends ASTWrapperPsiElement implements EpigraphOpOutputMapMultiPolyBranch {
 
-  public EpigraphOpOutputEnumModelProjectionImpl(ASTNode node) {
+  public EpigraphOpOutputMapMultiPolyBranchImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull EpigraphVisitor visitor) {
-    visitor.visitOpOutputEnumModelProjection(this);
+    visitor.visitOpOutputMapMultiPolyBranch(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -28,8 +28,20 @@ public class EpigraphOpOutputEnumModelProjectionImpl extends ASTWrapperPsiElemen
 
   @Override
   @NotNull
-  public PsiElement getEnum() {
-    return notNullChild(findChildByType(E_ENUM));
+  public List<EpigraphOpOutputMapSinglePolyBranch> getOpOutputMapSinglePolyBranchList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, EpigraphOpOutputMapSinglePolyBranch.class);
+  }
+
+  @Override
+  @NotNull
+  public PsiElement getParenLeft() {
+    return notNullChild(findChildByType(E_PAREN_LEFT));
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getParenRight() {
+    return findChildByType(E_PAREN_RIGHT);
   }
 
 }

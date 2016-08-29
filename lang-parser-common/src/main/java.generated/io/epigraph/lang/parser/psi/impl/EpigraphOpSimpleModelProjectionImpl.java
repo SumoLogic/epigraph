@@ -11,31 +11,19 @@ import static io.epigraph.lang.lexer.EpigraphElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import io.epigraph.lang.parser.psi.*;
 
-public class EpigraphOpOutputListPolyBranchImpl extends ASTWrapperPsiElement implements EpigraphOpOutputListPolyBranch {
+public class EpigraphOpSimpleModelProjectionImpl extends ASTWrapperPsiElement implements EpigraphOpSimpleModelProjection {
 
-  public EpigraphOpOutputListPolyBranchImpl(ASTNode node) {
+  public EpigraphOpSimpleModelProjectionImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull EpigraphVisitor visitor) {
-    visitor.visitOpOutputListPolyBranch(this);
+    visitor.visitOpSimpleModelProjection(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof EpigraphVisitor) accept((EpigraphVisitor)visitor);
     else super.accept(visitor);
-  }
-
-  @Override
-  @Nullable
-  public EpigraphOpOutputListMultiPolyBranch getOpOutputListMultiPolyBranch() {
-    return PsiTreeUtil.getChildOfType(this, EpigraphOpOutputListMultiPolyBranch.class);
-  }
-
-  @Override
-  @Nullable
-  public EpigraphOpOutputListSinglePolyBranch getOpOutputListSinglePolyBranch() {
-    return PsiTreeUtil.getChildOfType(this, EpigraphOpOutputListSinglePolyBranch.class);
   }
 
 }

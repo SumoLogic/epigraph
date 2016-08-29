@@ -39,6 +39,10 @@
     BOOLEAN_T='boolean'
     STRING_T='string'
 
+    FORBIDDEN='forbidden'
+    REQUIRED='required'
+    PARAMETERS='parameters'
+
     COLON = ':'
     DOT = '.'
     COMMA = ','
@@ -287,8 +291,9 @@ dataPrimitive ::= string | number | boolean
 private dataValueRecover ::= ! ( qid | dataPrimitive | '}' | ')' | '>' | ']' | 'abstract' | 'override' | ',' )
 
 // ============= IDL language ============
+// (work in progress )
 
-private idlRoot ::=  opOutputVarProjection
+private idlRoot ::=  opOutputVarProjection ( '%' opOutputVarProjection)*
 
 // ------------- op projections -------------
 
@@ -297,35 +302,45 @@ private idlRoot ::=  opOutputVarProjection
 opParamProjection ::= qid ':' opInputModelProjection
 opParameters ::= 'parameters' ':' '{' (opParamProjection ','?)* '}'
 
-opOutputVarProjection ::= ('{' opOutputTagProjection* '}') | 'default' opOutputModelProjection
+opOutputVarProjection ::= ('{' opOutputTagProjection* '}') | qid? ':' opOutputModelProjection
 opOutputTagProjection ::= qid ':' opOutputModelProjection // custom params?
 
 opOutputModelProjection ::= (opOutputRecordModelProjection | opOutputListModelProjection |
                              opOutputMapModelProjection | opOutputEnumModelProjection |
-                             opOutputPrimitiveModelProjection ) opOutputModelProjectionBody
+                             opOutputPrimitiveModelProjection ) opOutputModelProjectionBody?
 
-opOutputModelProjectionBody ::= '{' (opOutputModelProjectionBodyPart ','?)* '}'
+opOutputModelProjectionBody ::= '{' (opOutputModelProjectionBodyPart ','?)* '}' {pin=1}
 opOutputModelProjectionBodyPart ::= 'required' | opParameters | customParam
 
 // op output record
-opOutputRecordModelProjection ::= '(' (opOutputFieldProjection ','?)* ')' opOutputRecordPolyBranch*
+opOutputRecordModelProjection ::= '(' (opOutputFieldProjection ','?)* ')' opOutputRecordPolyBranch? {pin=1}
 opOutputFieldProjection ::= qid opOutputFieldProjectionBody? (':' opOutputVarProjection)?
 opOutputFieldProjectionBody ::= '{' (opOutputFieldProjectionBodyPart ','?)* '}'
 opOutputFieldProjectionBodyPart ::= opParameters | customParam
-opOutputRecordPolyBranch ::= '~' fqnTypeRef '<' opOutputRecordModelProjection '>'
+opOutputRecordPolyBranch ::= '~' ( opOutputRecordSinglePolyBranch | opOutputRecordMultiPolyBranch) {pin=1}
+opOutputRecordSinglePolyBranch ::= fqnTypeRef opOutputRecordModelProjection
+opOutputRecordMultiPolyBranch ::= '(' (opOutputRecordSinglePolyBranch (',' opOutputRecordSinglePolyBranch)*)? ')' {pin=1}
 
 // files : Files default FileList *(..) ~FileList2(..)
 // op output list
-opOutputListModelProjection ::= '*' opOutputVarProjection opOutputListPolyBranch*
-opOutputListPolyBranch ::= '~' fqnTypeRef '<' opOutputListModelProjection '>' // or straight for elements ?
+opOutputListModelProjection ::= '*' '(' opOutputVarProjection ')' opOutputListPolyBranch? {pin=1}
+opOutputListPolyBranch ::= '~' ( opOutputListSinglePolyBranch | opOutputListMultiPolyBranch) {pin=1}
+opOutputListSinglePolyBranch ::= fqnTypeRef opOutputListModelProjection
+opOutputListMultiPolyBranch ::= '(' (opOutputListSinglePolyBranch (',' opOutputListSinglePolyBranch)*)? ')' {pin=1}
 
-opOutputMapModelProjection ::= opOutputKeyProjection '*' opOutputVarProjection opOutputMapPolyBranch
-opOutputKeyProjection ::= '[' (opOutputKeyProjectionPart ','?)* ']'
-opOutputKeyProjectionPart ::= 'forbidden' | 'required' | opParameters | customParam
-opOutputMapPolyBranch ::= '~' fqnTypeRef '<' opOutputMapModelProjection '>'
+opOutputMapModelProjection ::= opOutputKeyProjection '(' opOutputVarProjection ')' opOutputMapPolyBranch? {pin=1}
+//opOutputKeyProjection ::= '[' (opOutputKeyProjectionPart ','?)* ']' {pin=1}
+opOutputKeyProjection ::= '[' opOutputKeyProjectionPart ']' {pin=1}
+opOutputKeyProjectionPart ::= 'record'
+// opOutputKeyProjectionPart ::= 'forbidden' | 'required' | opParameters | customParam
+opOutputMapPolyBranch ::= '~' ( opOutputMapSinglePolyBranch | opOutputMapMultiPolyBranch) {pin=1}
+opOutputMapSinglePolyBranch ::= fqnTypeRef opOutputMapModelProjection
+opOutputMapMultiPolyBranch ::= '(' (opOutputMapSinglePolyBranch (',' opOutputMapSinglePolyBranch)*)? ')' {pin=1}
 
-opOutputEnumModelProjection ::= 'enum' // ?
-opOutputPrimitiveModelProjection ::= 'primitive' // ?
+// can't distinguish between these
+private opOutputEnumModelProjection ::= opSimpleModelProjection {pin=1}
+private opOutputPrimitiveModelProjection ::= opSimpleModelProjection {pin=1}
+opSimpleModelProjection ::= '#' {pin=1}
 
 // -- input
 
@@ -337,4 +352,4 @@ opInputModelProjection ::= 'ip'
 //opOutputModelProjectionBody ::= '{' (opOutputModelProjectionBodyPart ','?)* '}'
 //opOutputModelProjectionBodyPart ::= 'required' | opParameters | customParam
 
-private partRecover ::= ! ('}' | qid | 'abstract' | 'override' | ',' )
+private partRecover ::= ! ('}' | qid | 'abstract' | 'override' | ',' | ']' )

@@ -49,26 +49,31 @@ public interface EpigraphElementTypes {
   IElementType E_META_DECL = new EpigraphElementType("E_META_DECL");
   IElementType E_NAMESPACE_DECL = new EpigraphNamespaceDeclStubElementType("E_NAMESPACE_DECL");
   IElementType E_OP_INPUT_MODEL_PROJECTION = new EpigraphElementType("E_OP_INPUT_MODEL_PROJECTION");
-  IElementType E_OP_OUTPUT_ENUM_MODEL_PROJECTION = new EpigraphElementType("E_OP_OUTPUT_ENUM_MODEL_PROJECTION");
   IElementType E_OP_OUTPUT_FIELD_PROJECTION = new EpigraphElementType("E_OP_OUTPUT_FIELD_PROJECTION");
   IElementType E_OP_OUTPUT_FIELD_PROJECTION_BODY = new EpigraphElementType("E_OP_OUTPUT_FIELD_PROJECTION_BODY");
   IElementType E_OP_OUTPUT_FIELD_PROJECTION_BODY_PART = new EpigraphElementType("E_OP_OUTPUT_FIELD_PROJECTION_BODY_PART");
   IElementType E_OP_OUTPUT_KEY_PROJECTION = new EpigraphElementType("E_OP_OUTPUT_KEY_PROJECTION");
   IElementType E_OP_OUTPUT_KEY_PROJECTION_PART = new EpigraphElementType("E_OP_OUTPUT_KEY_PROJECTION_PART");
   IElementType E_OP_OUTPUT_LIST_MODEL_PROJECTION = new EpigraphElementType("E_OP_OUTPUT_LIST_MODEL_PROJECTION");
+  IElementType E_OP_OUTPUT_LIST_MULTI_POLY_BRANCH = new EpigraphElementType("E_OP_OUTPUT_LIST_MULTI_POLY_BRANCH");
   IElementType E_OP_OUTPUT_LIST_POLY_BRANCH = new EpigraphElementType("E_OP_OUTPUT_LIST_POLY_BRANCH");
+  IElementType E_OP_OUTPUT_LIST_SINGLE_POLY_BRANCH = new EpigraphElementType("E_OP_OUTPUT_LIST_SINGLE_POLY_BRANCH");
   IElementType E_OP_OUTPUT_MAP_MODEL_PROJECTION = new EpigraphElementType("E_OP_OUTPUT_MAP_MODEL_PROJECTION");
+  IElementType E_OP_OUTPUT_MAP_MULTI_POLY_BRANCH = new EpigraphElementType("E_OP_OUTPUT_MAP_MULTI_POLY_BRANCH");
   IElementType E_OP_OUTPUT_MAP_POLY_BRANCH = new EpigraphElementType("E_OP_OUTPUT_MAP_POLY_BRANCH");
+  IElementType E_OP_OUTPUT_MAP_SINGLE_POLY_BRANCH = new EpigraphElementType("E_OP_OUTPUT_MAP_SINGLE_POLY_BRANCH");
   IElementType E_OP_OUTPUT_MODEL_PROJECTION = new EpigraphElementType("E_OP_OUTPUT_MODEL_PROJECTION");
   IElementType E_OP_OUTPUT_MODEL_PROJECTION_BODY = new EpigraphElementType("E_OP_OUTPUT_MODEL_PROJECTION_BODY");
   IElementType E_OP_OUTPUT_MODEL_PROJECTION_BODY_PART = new EpigraphElementType("E_OP_OUTPUT_MODEL_PROJECTION_BODY_PART");
-  IElementType E_OP_OUTPUT_PRIMITIVE_MODEL_PROJECTION = new EpigraphElementType("E_OP_OUTPUT_PRIMITIVE_MODEL_PROJECTION");
   IElementType E_OP_OUTPUT_RECORD_MODEL_PROJECTION = new EpigraphElementType("E_OP_OUTPUT_RECORD_MODEL_PROJECTION");
+  IElementType E_OP_OUTPUT_RECORD_MULTI_POLY_BRANCH = new EpigraphElementType("E_OP_OUTPUT_RECORD_MULTI_POLY_BRANCH");
   IElementType E_OP_OUTPUT_RECORD_POLY_BRANCH = new EpigraphElementType("E_OP_OUTPUT_RECORD_POLY_BRANCH");
+  IElementType E_OP_OUTPUT_RECORD_SINGLE_POLY_BRANCH = new EpigraphElementType("E_OP_OUTPUT_RECORD_SINGLE_POLY_BRANCH");
   IElementType E_OP_OUTPUT_TAG_PROJECTION = new EpigraphElementType("E_OP_OUTPUT_TAG_PROJECTION");
   IElementType E_OP_OUTPUT_VAR_PROJECTION = new EpigraphElementType("E_OP_OUTPUT_VAR_PROJECTION");
   IElementType E_OP_PARAMETERS = new EpigraphElementType("E_OP_PARAMETERS");
   IElementType E_OP_PARAM_PROJECTION = new EpigraphElementType("E_OP_PARAM_PROJECTION");
+  IElementType E_OP_SIMPLE_MODEL_PROJECTION = new EpigraphElementType("E_OP_SIMPLE_MODEL_PROJECTION");
   IElementType E_PRIMITIVE_TYPE_BODY = new EpigraphElementType("E_PRIMITIVE_TYPE_BODY");
   IElementType E_PRIMITIVE_TYPE_DEF = new EpigraphPrimitiveTypeDefStubElementType("E_PRIMITIVE_TYPE_DEF");
   IElementType E_QID = new EpigraphElementType("E_QID");
@@ -103,6 +108,7 @@ public interface EpigraphElementTypes {
   IElementType E_ENUM = new EpigraphElementType("enum");
   IElementType E_EQ = new EpigraphElementType("=");
   IElementType E_EXTENDS = new EpigraphElementType("extends");
+  IElementType E_FORBIDDEN = new EpigraphElementType("forbidden");
   IElementType E_ID = new EpigraphElementType("id");
   IElementType E_IMPORT = new EpigraphElementType("import");
   IElementType E_INTEGER_T = new EpigraphElementType("integer");
@@ -115,10 +121,12 @@ public interface EpigraphElementTypes {
   IElementType E_NULL = new EpigraphElementType("null");
   IElementType E_NUMBER = new EpigraphElementType("number");
   IElementType E_OVERRIDE = new EpigraphElementType("override");
+  IElementType E_PARAMETERS = new EpigraphElementType("parameters");
   IElementType E_PAREN_LEFT = new EpigraphElementType("(");
   IElementType E_PAREN_RIGHT = new EpigraphElementType(")");
   IElementType E_POLYMORPHIC = new EpigraphElementType("polymorphic");
   IElementType E_RECORD = new EpigraphElementType("record");
+  IElementType E_REQUIRED = new EpigraphElementType("required");
   IElementType E_SLASH = new EpigraphElementType("/");
   IElementType E_STRING = new EpigraphElementType("string");
   IElementType E_STRING_T = new EpigraphElementType("string");
@@ -226,9 +234,6 @@ public interface EpigraphElementTypes {
       else if (type == E_OP_INPUT_MODEL_PROJECTION) {
         return new EpigraphOpInputModelProjectionImpl(node);
       }
-      else if (type == E_OP_OUTPUT_ENUM_MODEL_PROJECTION) {
-        return new EpigraphOpOutputEnumModelProjectionImpl(node);
-      }
       else if (type == E_OP_OUTPUT_FIELD_PROJECTION) {
         return new EpigraphOpOutputFieldProjectionImpl(node);
       }
@@ -247,14 +252,26 @@ public interface EpigraphElementTypes {
       else if (type == E_OP_OUTPUT_LIST_MODEL_PROJECTION) {
         return new EpigraphOpOutputListModelProjectionImpl(node);
       }
+      else if (type == E_OP_OUTPUT_LIST_MULTI_POLY_BRANCH) {
+        return new EpigraphOpOutputListMultiPolyBranchImpl(node);
+      }
       else if (type == E_OP_OUTPUT_LIST_POLY_BRANCH) {
         return new EpigraphOpOutputListPolyBranchImpl(node);
+      }
+      else if (type == E_OP_OUTPUT_LIST_SINGLE_POLY_BRANCH) {
+        return new EpigraphOpOutputListSinglePolyBranchImpl(node);
       }
       else if (type == E_OP_OUTPUT_MAP_MODEL_PROJECTION) {
         return new EpigraphOpOutputMapModelProjectionImpl(node);
       }
+      else if (type == E_OP_OUTPUT_MAP_MULTI_POLY_BRANCH) {
+        return new EpigraphOpOutputMapMultiPolyBranchImpl(node);
+      }
       else if (type == E_OP_OUTPUT_MAP_POLY_BRANCH) {
         return new EpigraphOpOutputMapPolyBranchImpl(node);
+      }
+      else if (type == E_OP_OUTPUT_MAP_SINGLE_POLY_BRANCH) {
+        return new EpigraphOpOutputMapSinglePolyBranchImpl(node);
       }
       else if (type == E_OP_OUTPUT_MODEL_PROJECTION) {
         return new EpigraphOpOutputModelProjectionImpl(node);
@@ -265,14 +282,17 @@ public interface EpigraphElementTypes {
       else if (type == E_OP_OUTPUT_MODEL_PROJECTION_BODY_PART) {
         return new EpigraphOpOutputModelProjectionBodyPartImpl(node);
       }
-      else if (type == E_OP_OUTPUT_PRIMITIVE_MODEL_PROJECTION) {
-        return new EpigraphOpOutputPrimitiveModelProjectionImpl(node);
-      }
       else if (type == E_OP_OUTPUT_RECORD_MODEL_PROJECTION) {
         return new EpigraphOpOutputRecordModelProjectionImpl(node);
       }
+      else if (type == E_OP_OUTPUT_RECORD_MULTI_POLY_BRANCH) {
+        return new EpigraphOpOutputRecordMultiPolyBranchImpl(node);
+      }
       else if (type == E_OP_OUTPUT_RECORD_POLY_BRANCH) {
         return new EpigraphOpOutputRecordPolyBranchImpl(node);
+      }
+      else if (type == E_OP_OUTPUT_RECORD_SINGLE_POLY_BRANCH) {
+        return new EpigraphOpOutputRecordSinglePolyBranchImpl(node);
       }
       else if (type == E_OP_OUTPUT_TAG_PROJECTION) {
         return new EpigraphOpOutputTagProjectionImpl(node);
@@ -285,6 +305,9 @@ public interface EpigraphElementTypes {
       }
       else if (type == E_OP_PARAM_PROJECTION) {
         return new EpigraphOpParamProjectionImpl(node);
+      }
+      else if (type == E_OP_SIMPLE_MODEL_PROJECTION) {
+        return new EpigraphOpSimpleModelProjectionImpl(node);
       }
       else if (type == E_PRIMITIVE_TYPE_BODY) {
         return new EpigraphPrimitiveTypeBodyImpl(node);

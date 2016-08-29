@@ -19,4 +19,7 @@ public interface EpigraphOpParameters extends PsiElement {
   @NotNull
   PsiElement getCurlyRight();
 
+  @NotNull
+  PsiElement getParameters();
+
 }

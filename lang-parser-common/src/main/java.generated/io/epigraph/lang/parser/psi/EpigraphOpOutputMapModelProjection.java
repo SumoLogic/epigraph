@@ -10,10 +10,16 @@ public interface EpigraphOpOutputMapModelProjection extends PsiElement {
   @NotNull
   EpigraphOpOutputKeyProjection getOpOutputKeyProjection();
 
-  @NotNull
+  @Nullable
   EpigraphOpOutputMapPolyBranch getOpOutputMapPolyBranch();
 
-  @NotNull
+  @Nullable
   EpigraphOpOutputVarProjection getOpOutputVarProjection();
+
+  @Nullable
+  PsiElement getParenLeft();
+
+  @Nullable
+  PsiElement getParenRight();
 
 }

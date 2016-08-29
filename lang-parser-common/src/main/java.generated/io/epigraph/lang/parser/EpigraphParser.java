@@ -119,9 +119,6 @@ public class EpigraphParser implements PsiParser, LightPsiParser {
     else if (t == E_OP_INPUT_MODEL_PROJECTION) {
       r = opInputModelProjection(b, 0);
     }
-    else if (t == E_OP_OUTPUT_ENUM_MODEL_PROJECTION) {
-      r = opOutputEnumModelProjection(b, 0);
-    }
     else if (t == E_OP_OUTPUT_FIELD_PROJECTION) {
       r = opOutputFieldProjection(b, 0);
     }
@@ -140,14 +137,26 @@ public class EpigraphParser implements PsiParser, LightPsiParser {
     else if (t == E_OP_OUTPUT_LIST_MODEL_PROJECTION) {
       r = opOutputListModelProjection(b, 0);
     }
+    else if (t == E_OP_OUTPUT_LIST_MULTI_POLY_BRANCH) {
+      r = opOutputListMultiPolyBranch(b, 0);
+    }
     else if (t == E_OP_OUTPUT_LIST_POLY_BRANCH) {
       r = opOutputListPolyBranch(b, 0);
+    }
+    else if (t == E_OP_OUTPUT_LIST_SINGLE_POLY_BRANCH) {
+      r = opOutputListSinglePolyBranch(b, 0);
     }
     else if (t == E_OP_OUTPUT_MAP_MODEL_PROJECTION) {
       r = opOutputMapModelProjection(b, 0);
     }
+    else if (t == E_OP_OUTPUT_MAP_MULTI_POLY_BRANCH) {
+      r = opOutputMapMultiPolyBranch(b, 0);
+    }
     else if (t == E_OP_OUTPUT_MAP_POLY_BRANCH) {
       r = opOutputMapPolyBranch(b, 0);
+    }
+    else if (t == E_OP_OUTPUT_MAP_SINGLE_POLY_BRANCH) {
+      r = opOutputMapSinglePolyBranch(b, 0);
     }
     else if (t == E_OP_OUTPUT_MODEL_PROJECTION) {
       r = opOutputModelProjection(b, 0);
@@ -158,14 +167,17 @@ public class EpigraphParser implements PsiParser, LightPsiParser {
     else if (t == E_OP_OUTPUT_MODEL_PROJECTION_BODY_PART) {
       r = opOutputModelProjectionBodyPart(b, 0);
     }
-    else if (t == E_OP_OUTPUT_PRIMITIVE_MODEL_PROJECTION) {
-      r = opOutputPrimitiveModelProjection(b, 0);
-    }
     else if (t == E_OP_OUTPUT_RECORD_MODEL_PROJECTION) {
       r = opOutputRecordModelProjection(b, 0);
     }
+    else if (t == E_OP_OUTPUT_RECORD_MULTI_POLY_BRANCH) {
+      r = opOutputRecordMultiPolyBranch(b, 0);
+    }
     else if (t == E_OP_OUTPUT_RECORD_POLY_BRANCH) {
       r = opOutputRecordPolyBranch(b, 0);
+    }
+    else if (t == E_OP_OUTPUT_RECORD_SINGLE_POLY_BRANCH) {
+      r = opOutputRecordSinglePolyBranch(b, 0);
     }
     else if (t == E_OP_OUTPUT_TAG_PROJECTION) {
       r = opOutputTagProjection(b, 0);
@@ -178,6 +190,9 @@ public class EpigraphParser implements PsiParser, LightPsiParser {
     }
     else if (t == E_OP_PARAMETERS) {
       r = opParameters(b, 0);
+    }
+    else if (t == E_OP_SIMPLE_MODEL_PROJECTION) {
+      r = opSimpleModelProjection(b, 0);
     }
     else if (t == E_PRIMITIVE_TYPE_BODY) {
       r = primitiveTypeBody(b, 0);
@@ -1031,9 +1046,38 @@ public class EpigraphParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // opOutputVarProjection
+  // opOutputVarProjection ( '%' opOutputVarProjection)*
   static boolean idlRoot(PsiBuilder b, int l) {
-    return opOutputVarProjection(b, l + 1);
+    if (!recursion_guard_(b, l, "idlRoot")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = opOutputVarProjection(b, l + 1);
+    r = r && idlRoot_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // ( '%' opOutputVarProjection)*
+  private static boolean idlRoot_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "idlRoot_1")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!idlRoot_1_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "idlRoot_1", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
+  // '%' opOutputVarProjection
+  private static boolean idlRoot_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "idlRoot_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, "%");
+    r = r && opOutputVarProjection(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
   }
 
   /* ********************************************************** */
@@ -1355,15 +1399,9 @@ public class EpigraphParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'enum'
-  public static boolean opOutputEnumModelProjection(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opOutputEnumModelProjection")) return false;
-    if (!nextTokenIs(b, E_ENUM)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, E_ENUM);
-    exit_section_(b, m, E_OP_OUTPUT_ENUM_MODEL_PROJECTION, r);
-    return r;
+  // opSimpleModelProjection
+  static boolean opOutputEnumModelProjection(PsiBuilder b, int l) {
+    return opSimpleModelProjection(b, l + 1);
   }
 
   /* ********************************************************** */
@@ -1463,143 +1501,274 @@ public class EpigraphParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '[' (opOutputKeyProjectionPart ','?)* ']'
+  // '[' opOutputKeyProjectionPart ']'
   public static boolean opOutputKeyProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opOutputKeyProjection")) return false;
     if (!nextTokenIs(b, E_BRACKET_LEFT)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, E_OP_OUTPUT_KEY_PROJECTION, null);
     r = consumeToken(b, E_BRACKET_LEFT);
-    r = r && opOutputKeyProjection_1(b, l + 1);
-    r = r && consumeToken(b, E_BRACKET_RIGHT);
-    exit_section_(b, m, E_OP_OUTPUT_KEY_PROJECTION, r);
-    return r;
-  }
-
-  // (opOutputKeyProjectionPart ','?)*
-  private static boolean opOutputKeyProjection_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opOutputKeyProjection_1")) return false;
-    int c = current_position_(b);
-    while (true) {
-      if (!opOutputKeyProjection_1_0(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "opOutputKeyProjection_1", c)) break;
-      c = current_position_(b);
-    }
-    return true;
-  }
-
-  // opOutputKeyProjectionPart ','?
-  private static boolean opOutputKeyProjection_1_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opOutputKeyProjection_1_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = opOutputKeyProjectionPart(b, l + 1);
-    r = r && opOutputKeyProjection_1_0_1(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // ','?
-  private static boolean opOutputKeyProjection_1_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opOutputKeyProjection_1_0_1")) return false;
-    consumeToken(b, E_COMMA);
-    return true;
+    p = r; // pin = 1
+    r = r && report_error_(b, opOutputKeyProjectionPart(b, l + 1));
+    r = p && consumeToken(b, E_BRACKET_RIGHT) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   /* ********************************************************** */
-  // 'forbidden' | 'required' | opParameters | customParam
+  // 'record'
   public static boolean opOutputKeyProjectionPart(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opOutputKeyProjectionPart")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, E_OP_OUTPUT_KEY_PROJECTION_PART, "<op output key projection part>");
-    r = consumeToken(b, "forbidden");
-    if (!r) r = consumeToken(b, "required");
-    if (!r) r = opParameters(b, l + 1);
-    if (!r) r = customParam(b, l + 1);
+    r = consumeToken(b, E_RECORD);
     exit_section_(b, l, m, r, false, partRecover_parser_);
     return r;
   }
 
   /* ********************************************************** */
-  // '*' opOutputVarProjection opOutputListPolyBranch*
+  // '*' '(' opOutputVarProjection ')' opOutputListPolyBranch?
   public static boolean opOutputListModelProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opOutputListModelProjection")) return false;
-    boolean r;
+    boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, E_OP_OUTPUT_LIST_MODEL_PROJECTION, "<op output list model projection>");
     r = consumeToken(b, "*");
-    r = r && opOutputVarProjection(b, l + 1);
-    r = r && opOutputListModelProjection_2(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
+    p = r; // pin = 1
+    r = r && report_error_(b, consumeToken(b, E_PAREN_LEFT));
+    r = p && report_error_(b, opOutputVarProjection(b, l + 1)) && r;
+    r = p && report_error_(b, consumeToken(b, E_PAREN_RIGHT)) && r;
+    r = p && opOutputListModelProjection_4(b, l + 1) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // opOutputListPolyBranch?
+  private static boolean opOutputListModelProjection_4(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opOutputListModelProjection_4")) return false;
+    opOutputListPolyBranch(b, l + 1);
+    return true;
+  }
+
+  /* ********************************************************** */
+  // '(' (opOutputListSinglePolyBranch (',' opOutputListSinglePolyBranch)*)? ')'
+  public static boolean opOutputListMultiPolyBranch(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opOutputListMultiPolyBranch")) return false;
+    if (!nextTokenIs(b, E_PAREN_LEFT)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, E_OP_OUTPUT_LIST_MULTI_POLY_BRANCH, null);
+    r = consumeToken(b, E_PAREN_LEFT);
+    p = r; // pin = 1
+    r = r && report_error_(b, opOutputListMultiPolyBranch_1(b, l + 1));
+    r = p && consumeToken(b, E_PAREN_RIGHT) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // (opOutputListSinglePolyBranch (',' opOutputListSinglePolyBranch)*)?
+  private static boolean opOutputListMultiPolyBranch_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opOutputListMultiPolyBranch_1")) return false;
+    opOutputListMultiPolyBranch_1_0(b, l + 1);
+    return true;
+  }
+
+  // opOutputListSinglePolyBranch (',' opOutputListSinglePolyBranch)*
+  private static boolean opOutputListMultiPolyBranch_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opOutputListMultiPolyBranch_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = opOutputListSinglePolyBranch(b, l + 1);
+    r = r && opOutputListMultiPolyBranch_1_0_1(b, l + 1);
+    exit_section_(b, m, null, r);
     return r;
   }
 
-  // opOutputListPolyBranch*
-  private static boolean opOutputListModelProjection_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opOutputListModelProjection_2")) return false;
+  // (',' opOutputListSinglePolyBranch)*
+  private static boolean opOutputListMultiPolyBranch_1_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opOutputListMultiPolyBranch_1_0_1")) return false;
     int c = current_position_(b);
     while (true) {
-      if (!opOutputListPolyBranch(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "opOutputListModelProjection_2", c)) break;
+      if (!opOutputListMultiPolyBranch_1_0_1_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "opOutputListMultiPolyBranch_1_0_1", c)) break;
       c = current_position_(b);
     }
     return true;
   }
 
-  /* ********************************************************** */
-  // '~' fqnTypeRef '<' opOutputListModelProjection '>'
-  public static boolean opOutputListPolyBranch(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opOutputListPolyBranch")) return false;
+  // ',' opOutputListSinglePolyBranch
+  private static boolean opOutputListMultiPolyBranch_1_0_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opOutputListMultiPolyBranch_1_0_1_0")) return false;
     boolean r;
-    Marker m = enter_section_(b, l, _NONE_, E_OP_OUTPUT_LIST_POLY_BRANCH, "<op output list poly branch>");
-    r = consumeToken(b, "~");
-    r = r && fqnTypeRef(b, l + 1);
-    r = r && consumeToken(b, E_ANGLE_LEFT);
-    r = r && opOutputListModelProjection(b, l + 1);
-    r = r && consumeToken(b, E_ANGLE_RIGHT);
-    exit_section_(b, l, m, r, false, null);
+    Marker m = enter_section_(b);
+    r = consumeToken(b, E_COMMA);
+    r = r && opOutputListSinglePolyBranch(b, l + 1);
+    exit_section_(b, m, null, r);
     return r;
   }
 
   /* ********************************************************** */
-  // opOutputKeyProjection '*' opOutputVarProjection opOutputMapPolyBranch
+  // '~' ( opOutputListSinglePolyBranch | opOutputListMultiPolyBranch)
+  public static boolean opOutputListPolyBranch(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opOutputListPolyBranch")) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, E_OP_OUTPUT_LIST_POLY_BRANCH, "<op output list poly branch>");
+    r = consumeToken(b, "~");
+    p = r; // pin = 1
+    r = r && opOutputListPolyBranch_1(b, l + 1);
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // opOutputListSinglePolyBranch | opOutputListMultiPolyBranch
+  private static boolean opOutputListPolyBranch_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opOutputListPolyBranch_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = opOutputListSinglePolyBranch(b, l + 1);
+    if (!r) r = opOutputListMultiPolyBranch(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // fqnTypeRef opOutputListModelProjection
+  public static boolean opOutputListSinglePolyBranch(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opOutputListSinglePolyBranch")) return false;
+    if (!nextTokenIs(b, E_ID)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = fqnTypeRef(b, l + 1);
+    r = r && opOutputListModelProjection(b, l + 1);
+    exit_section_(b, m, E_OP_OUTPUT_LIST_SINGLE_POLY_BRANCH, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // opOutputKeyProjection '(' opOutputVarProjection ')' opOutputMapPolyBranch?
   public static boolean opOutputMapModelProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opOutputMapModelProjection")) return false;
     if (!nextTokenIs(b, E_BRACKET_LEFT)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, E_OP_OUTPUT_MAP_MODEL_PROJECTION, null);
+    r = opOutputKeyProjection(b, l + 1);
+    p = r; // pin = 1
+    r = r && report_error_(b, consumeToken(b, E_PAREN_LEFT));
+    r = p && report_error_(b, opOutputVarProjection(b, l + 1)) && r;
+    r = p && report_error_(b, consumeToken(b, E_PAREN_RIGHT)) && r;
+    r = p && opOutputMapModelProjection_4(b, l + 1) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // opOutputMapPolyBranch?
+  private static boolean opOutputMapModelProjection_4(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opOutputMapModelProjection_4")) return false;
+    opOutputMapPolyBranch(b, l + 1);
+    return true;
+  }
+
+  /* ********************************************************** */
+  // '(' (opOutputMapSinglePolyBranch (',' opOutputMapSinglePolyBranch)*)? ')'
+  public static boolean opOutputMapMultiPolyBranch(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opOutputMapMultiPolyBranch")) return false;
+    if (!nextTokenIs(b, E_PAREN_LEFT)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, E_OP_OUTPUT_MAP_MULTI_POLY_BRANCH, null);
+    r = consumeToken(b, E_PAREN_LEFT);
+    p = r; // pin = 1
+    r = r && report_error_(b, opOutputMapMultiPolyBranch_1(b, l + 1));
+    r = p && consumeToken(b, E_PAREN_RIGHT) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // (opOutputMapSinglePolyBranch (',' opOutputMapSinglePolyBranch)*)?
+  private static boolean opOutputMapMultiPolyBranch_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opOutputMapMultiPolyBranch_1")) return false;
+    opOutputMapMultiPolyBranch_1_0(b, l + 1);
+    return true;
+  }
+
+  // opOutputMapSinglePolyBranch (',' opOutputMapSinglePolyBranch)*
+  private static boolean opOutputMapMultiPolyBranch_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opOutputMapMultiPolyBranch_1_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = opOutputKeyProjection(b, l + 1);
-    r = r && consumeToken(b, "*");
-    r = r && opOutputVarProjection(b, l + 1);
-    r = r && opOutputMapPolyBranch(b, l + 1);
-    exit_section_(b, m, E_OP_OUTPUT_MAP_MODEL_PROJECTION, r);
+    r = opOutputMapSinglePolyBranch(b, l + 1);
+    r = r && opOutputMapMultiPolyBranch_1_0_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // (',' opOutputMapSinglePolyBranch)*
+  private static boolean opOutputMapMultiPolyBranch_1_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opOutputMapMultiPolyBranch_1_0_1")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!opOutputMapMultiPolyBranch_1_0_1_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "opOutputMapMultiPolyBranch_1_0_1", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
+  // ',' opOutputMapSinglePolyBranch
+  private static boolean opOutputMapMultiPolyBranch_1_0_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opOutputMapMultiPolyBranch_1_0_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, E_COMMA);
+    r = r && opOutputMapSinglePolyBranch(b, l + 1);
+    exit_section_(b, m, null, r);
     return r;
   }
 
   /* ********************************************************** */
-  // '~' fqnTypeRef '<' opOutputMapModelProjection '>'
+  // '~' ( opOutputMapSinglePolyBranch | opOutputMapMultiPolyBranch)
   public static boolean opOutputMapPolyBranch(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opOutputMapPolyBranch")) return false;
-    boolean r;
+    boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, E_OP_OUTPUT_MAP_POLY_BRANCH, "<op output map poly branch>");
     r = consumeToken(b, "~");
-    r = r && fqnTypeRef(b, l + 1);
-    r = r && consumeToken(b, E_ANGLE_LEFT);
+    p = r; // pin = 1
+    r = r && opOutputMapPolyBranch_1(b, l + 1);
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // opOutputMapSinglePolyBranch | opOutputMapMultiPolyBranch
+  private static boolean opOutputMapPolyBranch_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opOutputMapPolyBranch_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = opOutputMapSinglePolyBranch(b, l + 1);
+    if (!r) r = opOutputMapMultiPolyBranch(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // fqnTypeRef opOutputMapModelProjection
+  public static boolean opOutputMapSinglePolyBranch(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opOutputMapSinglePolyBranch")) return false;
+    if (!nextTokenIs(b, E_ID)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = fqnTypeRef(b, l + 1);
     r = r && opOutputMapModelProjection(b, l + 1);
-    r = r && consumeToken(b, E_ANGLE_RIGHT);
-    exit_section_(b, l, m, r, false, null);
+    exit_section_(b, m, E_OP_OUTPUT_MAP_SINGLE_POLY_BRANCH, r);
     return r;
   }
 
   /* ********************************************************** */
   // (opOutputRecordModelProjection | opOutputListModelProjection |
   //                              opOutputMapModelProjection | opOutputEnumModelProjection |
-  //                              opOutputPrimitiveModelProjection ) opOutputModelProjectionBody
+  //                              opOutputPrimitiveModelProjection ) opOutputModelProjectionBody?
   public static boolean opOutputModelProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opOutputModelProjection")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, E_OP_OUTPUT_MODEL_PROJECTION, "<op output model projection>");
     r = opOutputModelProjection_0(b, l + 1);
-    r = r && opOutputModelProjectionBody(b, l + 1);
+    r = r && opOutputModelProjection_1(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
@@ -1618,6 +1787,13 @@ public class EpigraphParser implements PsiParser, LightPsiParser {
     if (!r) r = opOutputPrimitiveModelProjection(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
+  }
+
+  // opOutputModelProjectionBody?
+  private static boolean opOutputModelProjection_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opOutputModelProjection_1")) return false;
+    opOutputModelProjectionBody(b, l + 1);
+    return true;
   }
 
   /* ********************************************************** */
@@ -1671,7 +1847,7 @@ public class EpigraphParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(b, l, "opOutputModelProjectionBodyPart")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, E_OP_OUTPUT_MODEL_PROJECTION_BODY_PART, "<op output model projection body part>");
-    r = consumeToken(b, "required");
+    r = consumeToken(b, E_REQUIRED);
     if (!r) r = opParameters(b, l + 1);
     if (!r) r = customParam(b, l + 1);
     exit_section_(b, l, m, r, false, partRecover_parser_);
@@ -1679,29 +1855,25 @@ public class EpigraphParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'primitive'
-  public static boolean opOutputPrimitiveModelProjection(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opOutputPrimitiveModelProjection")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NONE_, E_OP_OUTPUT_PRIMITIVE_MODEL_PROJECTION, "<op output primitive model projection>");
-    r = consumeToken(b, "primitive");
-    exit_section_(b, l, m, r, false, null);
-    return r;
+  // opSimpleModelProjection
+  static boolean opOutputPrimitiveModelProjection(PsiBuilder b, int l) {
+    return opSimpleModelProjection(b, l + 1);
   }
 
   /* ********************************************************** */
-  // '(' (opOutputFieldProjection ','?)* ')' opOutputRecordPolyBranch*
+  // '(' (opOutputFieldProjection ','?)* ')' opOutputRecordPolyBranch?
   public static boolean opOutputRecordModelProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opOutputRecordModelProjection")) return false;
     if (!nextTokenIs(b, E_PAREN_LEFT)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, E_OP_OUTPUT_RECORD_MODEL_PROJECTION, null);
     r = consumeToken(b, E_PAREN_LEFT);
-    r = r && opOutputRecordModelProjection_1(b, l + 1);
-    r = r && consumeToken(b, E_PAREN_RIGHT);
-    r = r && opOutputRecordModelProjection_3(b, l + 1);
-    exit_section_(b, m, E_OP_OUTPUT_RECORD_MODEL_PROJECTION, r);
-    return r;
+    p = r; // pin = 1
+    r = r && report_error_(b, opOutputRecordModelProjection_1(b, l + 1));
+    r = p && report_error_(b, consumeToken(b, E_PAREN_RIGHT)) && r;
+    r = p && opOutputRecordModelProjection_3(b, l + 1) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   // (opOutputFieldProjection ','?)*
@@ -1734,30 +1906,103 @@ public class EpigraphParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // opOutputRecordPolyBranch*
+  // opOutputRecordPolyBranch?
   private static boolean opOutputRecordModelProjection_3(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opOutputRecordModelProjection_3")) return false;
+    opOutputRecordPolyBranch(b, l + 1);
+    return true;
+  }
+
+  /* ********************************************************** */
+  // '(' (opOutputRecordSinglePolyBranch (',' opOutputRecordSinglePolyBranch)*)? ')'
+  public static boolean opOutputRecordMultiPolyBranch(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opOutputRecordMultiPolyBranch")) return false;
+    if (!nextTokenIs(b, E_PAREN_LEFT)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, E_OP_OUTPUT_RECORD_MULTI_POLY_BRANCH, null);
+    r = consumeToken(b, E_PAREN_LEFT);
+    p = r; // pin = 1
+    r = r && report_error_(b, opOutputRecordMultiPolyBranch_1(b, l + 1));
+    r = p && consumeToken(b, E_PAREN_RIGHT) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // (opOutputRecordSinglePolyBranch (',' opOutputRecordSinglePolyBranch)*)?
+  private static boolean opOutputRecordMultiPolyBranch_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opOutputRecordMultiPolyBranch_1")) return false;
+    opOutputRecordMultiPolyBranch_1_0(b, l + 1);
+    return true;
+  }
+
+  // opOutputRecordSinglePolyBranch (',' opOutputRecordSinglePolyBranch)*
+  private static boolean opOutputRecordMultiPolyBranch_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opOutputRecordMultiPolyBranch_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = opOutputRecordSinglePolyBranch(b, l + 1);
+    r = r && opOutputRecordMultiPolyBranch_1_0_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // (',' opOutputRecordSinglePolyBranch)*
+  private static boolean opOutputRecordMultiPolyBranch_1_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opOutputRecordMultiPolyBranch_1_0_1")) return false;
     int c = current_position_(b);
     while (true) {
-      if (!opOutputRecordPolyBranch(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "opOutputRecordModelProjection_3", c)) break;
+      if (!opOutputRecordMultiPolyBranch_1_0_1_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "opOutputRecordMultiPolyBranch_1_0_1", c)) break;
       c = current_position_(b);
     }
     return true;
   }
 
+  // ',' opOutputRecordSinglePolyBranch
+  private static boolean opOutputRecordMultiPolyBranch_1_0_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opOutputRecordMultiPolyBranch_1_0_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, E_COMMA);
+    r = r && opOutputRecordSinglePolyBranch(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
   /* ********************************************************** */
-  // '~' fqnTypeRef '<' opOutputRecordModelProjection '>'
+  // '~' ( opOutputRecordSinglePolyBranch | opOutputRecordMultiPolyBranch)
   public static boolean opOutputRecordPolyBranch(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opOutputRecordPolyBranch")) return false;
-    boolean r;
+    boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, E_OP_OUTPUT_RECORD_POLY_BRANCH, "<op output record poly branch>");
     r = consumeToken(b, "~");
-    r = r && fqnTypeRef(b, l + 1);
-    r = r && consumeToken(b, E_ANGLE_LEFT);
+    p = r; // pin = 1
+    r = r && opOutputRecordPolyBranch_1(b, l + 1);
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // opOutputRecordSinglePolyBranch | opOutputRecordMultiPolyBranch
+  private static boolean opOutputRecordPolyBranch_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opOutputRecordPolyBranch_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = opOutputRecordSinglePolyBranch(b, l + 1);
+    if (!r) r = opOutputRecordMultiPolyBranch(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // fqnTypeRef opOutputRecordModelProjection
+  public static boolean opOutputRecordSinglePolyBranch(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opOutputRecordSinglePolyBranch")) return false;
+    if (!nextTokenIs(b, E_ID)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = fqnTypeRef(b, l + 1);
     r = r && opOutputRecordModelProjection(b, l + 1);
-    r = r && consumeToken(b, E_ANGLE_RIGHT);
-    exit_section_(b, l, m, r, false, null);
+    exit_section_(b, m, E_OP_OUTPUT_RECORD_SINGLE_POLY_BRANCH, r);
     return r;
   }
 
@@ -1776,10 +2021,9 @@ public class EpigraphParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ('{' opOutputTagProjection* '}') | 'default' opOutputModelProjection
+  // ('{' opOutputTagProjection* '}') | qid? ':' opOutputModelProjection
   public static boolean opOutputVarProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opOutputVarProjection")) return false;
-    if (!nextTokenIs(b, "<op output var projection>", E_DEFAULT, E_CURLY_LEFT)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, E_OP_OUTPUT_VAR_PROJECTION, "<op output var projection>");
     r = opOutputVarProjection_0(b, l + 1);
@@ -1812,15 +2056,23 @@ public class EpigraphParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // 'default' opOutputModelProjection
+  // qid? ':' opOutputModelProjection
   private static boolean opOutputVarProjection_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opOutputVarProjection_1")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeToken(b, E_DEFAULT);
+    r = opOutputVarProjection_1_0(b, l + 1);
+    r = r && consumeToken(b, E_COLON);
     r = r && opOutputModelProjection(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
+  }
+
+  // qid?
+  private static boolean opOutputVarProjection_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opOutputVarProjection_1_0")) return false;
+    qid(b, l + 1);
+    return true;
   }
 
   /* ********************************************************** */
@@ -1841,14 +2093,15 @@ public class EpigraphParser implements PsiParser, LightPsiParser {
   // 'parameters' ':' '{' (opParamProjection ','?)* '}'
   public static boolean opParameters(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opParameters")) return false;
+    if (!nextTokenIs(b, E_PARAMETERS)) return false;
     boolean r;
-    Marker m = enter_section_(b, l, _NONE_, E_OP_PARAMETERS, "<op parameters>");
-    r = consumeToken(b, "parameters");
+    Marker m = enter_section_(b);
+    r = consumeToken(b, E_PARAMETERS);
     r = r && consumeToken(b, E_COLON);
     r = r && consumeToken(b, E_CURLY_LEFT);
     r = r && opParameters_3(b, l + 1);
     r = r && consumeToken(b, E_CURLY_RIGHT);
-    exit_section_(b, l, m, r, false, null);
+    exit_section_(b, m, E_OP_PARAMETERS, r);
     return r;
   }
 
@@ -1883,7 +2136,18 @@ public class EpigraphParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ! ('}' | qid | 'abstract' | 'override' | ',' )
+  // '#'
+  public static boolean opSimpleModelProjection(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opSimpleModelProjection")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, E_OP_SIMPLE_MODEL_PROJECTION, "<op simple model projection>");
+    r = consumeToken(b, "#");
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // ! ('}' | qid | 'abstract' | 'override' | ',' | ']' )
   static boolean partRecover(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "partRecover")) return false;
     boolean r;
@@ -1893,7 +2157,7 @@ public class EpigraphParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // '}' | qid | 'abstract' | 'override' | ','
+  // '}' | qid | 'abstract' | 'override' | ',' | ']'
   private static boolean partRecover_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "partRecover_0")) return false;
     boolean r;
@@ -1903,6 +2167,7 @@ public class EpigraphParser implements PsiParser, LightPsiParser {
     if (!r) r = consumeToken(b, E_ABSTRACT);
     if (!r) r = consumeToken(b, E_OVERRIDE);
     if (!r) r = consumeToken(b, E_COMMA);
+    if (!r) r = consumeToken(b, E_BRACKET_RIGHT);
     exit_section_(b, m, null, r);
     return r;
   }

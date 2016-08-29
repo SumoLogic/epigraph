@@ -7,13 +7,13 @@ import com.intellij.psi.PsiElement;
 
 public interface EpigraphOpOutputKeyProjection extends PsiElement {
 
-  @NotNull
-  List<EpigraphOpOutputKeyProjectionPart> getOpOutputKeyProjectionPartList();
+  @Nullable
+  EpigraphOpOutputKeyProjectionPart getOpOutputKeyProjectionPart();
 
   @NotNull
   PsiElement getBracketLeft();
 
-  @NotNull
+  @Nullable
   PsiElement getBracketRight();
 
 }

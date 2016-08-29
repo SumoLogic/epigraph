@@ -14,12 +14,15 @@ public interface EpigraphOpOutputVarProjection extends PsiElement {
   List<EpigraphOpOutputTagProjection> getOpOutputTagProjectionList();
 
   @Nullable
+  EpigraphQid getQid();
+
+  @Nullable
+  PsiElement getColon();
+
+  @Nullable
   PsiElement getCurlyLeft();
 
   @Nullable
   PsiElement getCurlyRight();
-
-  @Nullable
-  PsiElement getDefault();
 
 }

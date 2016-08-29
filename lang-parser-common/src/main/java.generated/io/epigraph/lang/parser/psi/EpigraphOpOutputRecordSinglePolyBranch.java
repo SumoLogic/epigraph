@@ -5,9 +5,12 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface EpigraphOpOutputKeyProjectionPart extends PsiElement {
+public interface EpigraphOpOutputRecordSinglePolyBranch extends PsiElement {
 
   @NotNull
-  PsiElement getRecord();
+  EpigraphFqnTypeRef getFqnTypeRef();
+
+  @NotNull
+  EpigraphOpOutputRecordModelProjection getOpOutputRecordModelProjection();
 
 }

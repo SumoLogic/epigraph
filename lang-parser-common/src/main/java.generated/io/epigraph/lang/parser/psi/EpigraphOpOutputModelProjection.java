@@ -8,21 +8,18 @@ import com.intellij.psi.PsiElement;
 public interface EpigraphOpOutputModelProjection extends PsiElement {
 
   @Nullable
-  EpigraphOpOutputEnumModelProjection getOpOutputEnumModelProjection();
-
-  @Nullable
   EpigraphOpOutputListModelProjection getOpOutputListModelProjection();
 
   @Nullable
   EpigraphOpOutputMapModelProjection getOpOutputMapModelProjection();
 
-  @NotNull
+  @Nullable
   EpigraphOpOutputModelProjectionBody getOpOutputModelProjectionBody();
 
   @Nullable
-  EpigraphOpOutputPrimitiveModelProjection getOpOutputPrimitiveModelProjection();
+  EpigraphOpOutputRecordModelProjection getOpOutputRecordModelProjection();
 
   @Nullable
-  EpigraphOpOutputRecordModelProjection getOpOutputRecordModelProjection();
+  EpigraphOpSimpleModelProjection getOpSimpleModelProjection();
 
 }

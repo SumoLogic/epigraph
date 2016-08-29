@@ -11,14 +11,14 @@ import static io.epigraph.lang.lexer.EpigraphElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import io.epigraph.lang.parser.psi.*;
 
-public class EpigraphOpOutputListPolyBranchImpl extends ASTWrapperPsiElement implements EpigraphOpOutputListPolyBranch {
+public class EpigraphOpOutputListSinglePolyBranchImpl extends ASTWrapperPsiElement implements EpigraphOpOutputListSinglePolyBranch {
 
-  public EpigraphOpOutputListPolyBranchImpl(ASTNode node) {
+  public EpigraphOpOutputListSinglePolyBranchImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull EpigraphVisitor visitor) {
-    visitor.visitOpOutputListPolyBranch(this);
+    visitor.visitOpOutputListSinglePolyBranch(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -27,15 +27,15 @@ public class EpigraphOpOutputListPolyBranchImpl extends ASTWrapperPsiElement imp
   }
 
   @Override
-  @Nullable
-  public EpigraphOpOutputListMultiPolyBranch getOpOutputListMultiPolyBranch() {
-    return PsiTreeUtil.getChildOfType(this, EpigraphOpOutputListMultiPolyBranch.class);
+  @NotNull
+  public EpigraphFqnTypeRef getFqnTypeRef() {
+    return notNullChild(PsiTreeUtil.getChildOfType(this, EpigraphFqnTypeRef.class));
   }
 
   @Override
-  @Nullable
-  public EpigraphOpOutputListSinglePolyBranch getOpOutputListSinglePolyBranch() {
-    return PsiTreeUtil.getChildOfType(this, EpigraphOpOutputListSinglePolyBranch.class);
+  @NotNull
+  public EpigraphOpOutputListModelProjection getOpOutputListModelProjection() {
+    return notNullChild(PsiTreeUtil.getChildOfType(this, EpigraphOpOutputListModelProjection.class));
   }
 
 }

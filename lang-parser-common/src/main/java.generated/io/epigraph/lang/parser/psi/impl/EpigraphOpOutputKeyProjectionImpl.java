@@ -27,9 +27,9 @@ public class EpigraphOpOutputKeyProjectionImpl extends ASTWrapperPsiElement impl
   }
 
   @Override
-  @NotNull
-  public List<EpigraphOpOutputKeyProjectionPart> getOpOutputKeyProjectionPartList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, EpigraphOpOutputKeyProjectionPart.class);
+  @Nullable
+  public EpigraphOpOutputKeyProjectionPart getOpOutputKeyProjectionPart() {
+    return PsiTreeUtil.getChildOfType(this, EpigraphOpOutputKeyProjectionPart.class);
   }
 
   @Override
@@ -39,9 +39,9 @@ public class EpigraphOpOutputKeyProjectionImpl extends ASTWrapperPsiElement impl
   }
 
   @Override
-  @NotNull
+  @Nullable
   public PsiElement getBracketRight() {
-    return notNullChild(findChildByType(E_BRACKET_RIGHT));
+    return findChildByType(E_BRACKET_RIGHT);
   }
 
 }

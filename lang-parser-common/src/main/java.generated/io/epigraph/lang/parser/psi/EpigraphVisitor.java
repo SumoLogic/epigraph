@@ -139,10 +139,6 @@ public class EpigraphVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitOpOutputEnumModelProjection(@NotNull EpigraphOpOutputEnumModelProjection o) {
-    visitPsiElement(o);
-  }
-
   public void visitOpOutputFieldProjection(@NotNull EpigraphOpOutputFieldProjection o) {
     visitPsiElement(o);
   }
@@ -167,7 +163,15 @@ public class EpigraphVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitOpOutputListMultiPolyBranch(@NotNull EpigraphOpOutputListMultiPolyBranch o) {
+    visitPsiElement(o);
+  }
+
   public void visitOpOutputListPolyBranch(@NotNull EpigraphOpOutputListPolyBranch o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpOutputListSinglePolyBranch(@NotNull EpigraphOpOutputListSinglePolyBranch o) {
     visitPsiElement(o);
   }
 
@@ -175,7 +179,15 @@ public class EpigraphVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitOpOutputMapMultiPolyBranch(@NotNull EpigraphOpOutputMapMultiPolyBranch o) {
+    visitPsiElement(o);
+  }
+
   public void visitOpOutputMapPolyBranch(@NotNull EpigraphOpOutputMapPolyBranch o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpOutputMapSinglePolyBranch(@NotNull EpigraphOpOutputMapSinglePolyBranch o) {
     visitPsiElement(o);
   }
 
@@ -191,15 +203,19 @@ public class EpigraphVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitOpOutputPrimitiveModelProjection(@NotNull EpigraphOpOutputPrimitiveModelProjection o) {
-    visitPsiElement(o);
-  }
-
   public void visitOpOutputRecordModelProjection(@NotNull EpigraphOpOutputRecordModelProjection o) {
     visitPsiElement(o);
   }
 
+  public void visitOpOutputRecordMultiPolyBranch(@NotNull EpigraphOpOutputRecordMultiPolyBranch o) {
+    visitPsiElement(o);
+  }
+
   public void visitOpOutputRecordPolyBranch(@NotNull EpigraphOpOutputRecordPolyBranch o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpOutputRecordSinglePolyBranch(@NotNull EpigraphOpOutputRecordSinglePolyBranch o) {
     visitPsiElement(o);
   }
 
@@ -216,6 +232,10 @@ public class EpigraphVisitor extends PsiElementVisitor {
   }
 
   public void visitOpParameters(@NotNull EpigraphOpParameters o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpSimpleModelProjection(@NotNull EpigraphOpSimpleModelProjection o) {
     visitPsiElement(o);
   }
 

@@ -13,4 +13,7 @@ public interface EpigraphOpOutputModelProjectionBodyPart extends PsiElement {
   @Nullable
   EpigraphOpParameters getOpParameters();
 
+  @Nullable
+  PsiElement getRequired();
+
 }

@@ -37,8 +37,8 @@ dependencies {
 task copySources << {
   delete { "$buildDir/generated-sources/lang-parser-common.java" }
   copy {
-    from '../lang-parser-common/src/main/java'
-    from '../lang-parser-common/src/main/java.generated'
+    from('../lang-parser-common/src/main/java') { include '**/*.java' }
+    from('../lang-parser-common/src/main/java.generated') { include '**/*.java' }
     into "$buildDir/generated-sources/lang-parser-common.java"
   }
 }
