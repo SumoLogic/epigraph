@@ -2,16 +2,6 @@
 - Highlight string literals
 
 ### Medium
-- Rename things:
-<<<<<<< HEAD
-  - [x] schema-parser-common -> lang-parser-common
-  - [x] schema-parser -> lang-parser (with artifact name = epigraph-lang-parser)
-  - [x] com.sumologic.epigraph.schema -> io.epigraph.lang
-  - [x] schema.bnf -> lang.bnf
-    - [x] elementTypePrefx -> `E_`
-    - [x] PsiClassPrefix -> 'Epigraph'? Or make it different for Schema/Data/Projection classes?
-  - [x] `Schema*` classes to `Epigraph*`, except for `SchemaParser`
-  - [ ] *.esc -> *.epigraph? *.epigraph_schema?
 - Smart type completion: suggest out of scope types (+add import)
 - Smart completion for `default <tag>`, `nodefault` on fields, list elements etc
   - [ ] Don't allow either on datum types (non-vartypes)

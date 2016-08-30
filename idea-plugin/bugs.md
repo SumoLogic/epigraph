@@ -12,7 +12,6 @@
 - String text should be highlihted as specified in "Preferences > Editor > Colors & Fonts > Language Defaults > String > String Text"
 - Detect useless `extends` e.g. `record Foo extends Bar, Bar`. Take hierarchy into account
 - Ctrl-space marks file as dirty
-- Icon is not substituted for schema files outside of source root, in the files view. See https://intellij-support.jetbrains.com/hc/en-us/community/posts/207277349-handling-custom-language-file-outside-of-source-root
 - Wrong parent type not checked in `supplement`
 - would be nice to teach idea to understand src/main|test/epigraph as sources|testsources root automagically (done for gradle, add to sources autodetection during project import)
 - Code completion for `extend`, `supplements`, `supplements` must understand collections well: `List[Foo]` can extend `List[Bar]` only if `Foo` extends `Bar`
@@ -25,3 +24,4 @@
 ### Medium
 
 ### Low
+- Icon is not substituted for schema files outside of source root, in the files view. See https://intellij-support.jetbrains.com/hc/en-us/community/posts/207277349-handling-custom-language-file-outside-of-source-root

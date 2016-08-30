@@ -8,8 +8,6 @@ import io.epigraph.schema.parser.SchemaLanguage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
-
 import java.util.Collections;
 import java.util.List;
 
@@ -29,12 +27,6 @@ public class SchemaFile extends PsiFileBase {
   @Override
   public FileType getFileType() {
     return SchemaFileType.INSTANCE;
-  }
-
-  @Nullable
-  @Override
-  public Icon getIcon(int flags) {
-    return SchemaFileType.INSTANCE.getIcon();
   }
 
   @Nullable
