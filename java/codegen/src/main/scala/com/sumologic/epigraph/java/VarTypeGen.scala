@@ -28,7 +28,7 @@ trait ${bldName(t)} extends ${baseName(t)} with VarBuilder[${baseName(t)}]
 
 object ${objName(t)} extends VarType[${baseName(t)}](namespace \\ "${baseName(t)}", Seq(${parentNames(t, objName)})) {
   ${
-    t.effectiveTagsMap.values.map { f => s"""
+    t.effectiveTags.map { f => s"""
   val ${tagName(f)}: ${tagType(f, t)} = ${tagDef(f, t)}\n"""
     }.mkString
   }

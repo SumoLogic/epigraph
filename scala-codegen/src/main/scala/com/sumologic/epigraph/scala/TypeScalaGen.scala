@@ -11,7 +11,7 @@ abstract class TypeScalaGen[TypeDef >: Null <: CTypeDef](from: TypeDef) extends 
   protected val t: TypeDef = from
 
   protected override def relativeFilePath: Path = { // TODO respect annotations changing namespace/type names for scala
-    GenUtils.fqnToPath(from.name.fqn.removeLastSegment()).resolve(from.name.local + ".scala")
+    ScalaGenUtils.fqnToPath(from.name.fqn.removeLastSegment()).resolve(from.name.local + ".scala")
   }
 
 }

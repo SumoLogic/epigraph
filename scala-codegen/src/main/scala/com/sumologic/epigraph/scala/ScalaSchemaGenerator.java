@@ -27,7 +27,8 @@ public class ScalaSchemaGenerator {
 
   public void generate() throws IOException {
 
-    Path tmpRoot = GenUtils.rmrf(outputRoot.resolveSibling(outputRoot.getFileName().toString() + "~tmp"), outputRoot.getParent());
+    Path tmpRoot = ScalaGenUtils
+        .rmrf(outputRoot.resolveSibling(outputRoot.getFileName().toString() + "~tmp"), outputRoot.getParent());
 
     for (CNamespace namespace : ctx.namespaces().values()) {
       new NamespaceGen(namespace).writeUnder(tmpRoot);
@@ -70,7 +71,7 @@ public class ScalaSchemaGenerator {
       }
     }
 
-    GenUtils.move(tmpRoot, outputRoot, outputRoot.getParent()); // move new root to final location
+    ScalaGenUtils.move(tmpRoot, outputRoot, outputRoot.getParent()); // move new root to final location
 
   }
 

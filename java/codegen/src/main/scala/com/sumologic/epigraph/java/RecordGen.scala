@@ -60,7 +60,7 @@ ${ // default datum and value getters
 }${ // tags datum and value getters
     f.valueType.typeRef.resolved match {
       case vartype: CVarTypeDef =>
-        vartype.effectiveTagsMap.values.map { tag => sn"""\
+        vartype.effectiveTags.map { tag => sn"""\
 
   /**
    * Returns `${tag.name}` tag datum for `${f.name}` field.
@@ -167,7 +167,7 @@ ${ // default getter
       }${ // tag getters
         f.valueType.typeRef.resolved match {
           case vartype: CVarTypeDef =>
-            vartype.effectiveTagsMap.values.map { tag => sn"""\
+            vartype.effectiveTags.map { tag => sn"""\
 
   /**
    * Returns immutable `${tag.name}` tag datum for `${f.name}` field.
@@ -218,7 +218,7 @@ ${ // default getter
     }${ // tag getters
       f.valueType.typeRef.resolved match {
         case vartype: CVarTypeDef =>
-          vartype.effectiveTagsMap.values.map { tag => sn"""\
+          vartype.effectiveTags.map { tag => sn"""\
 
         /**
          * Returns immutable `${tag.name}` tag datum for `${f.name}` field.
@@ -298,40 +298,58 @@ ${ // default getter
 
     private Builder(@NotNull io.epigraph.data.RecordDatum.Mut.Raw raw) { super($ln.type, raw, $ln.Imm.Impl::new); }
 
-    // FIXME iterate over immediate fields
-    @Override
-    public @Nullable PersonId.Builder getId() {
-      PersonId.Builder.Value value = (PersonId.Builder.Value) _raw()._getValue(PersonRecord.id, PersonId.type.self);
-      return value == null ? null : value.getDatum();
-    }
+${ // for each effective field
+    t.effectiveFields.map { f => sn"""\
+${ // default getter
+      if (f.effectiveDefaultTagName.isDefined) sn"""\
 
-    @Override
-    public @Nullable $ln.Builder.Value getBestFriend_value() {
-      return ($ln.Builder.Value) _raw()._getValue(bestFriend, $ln.type.self);
-    }
+        /**
+         * Returns default tag datum builder for `${f.name}` field.
+         */
+        @Override
+        public @Nullable ${lqn(tt(f.typeRef, f.effectiveDefaultTagName.get), t)}.Builder get${up(f.name)}() {
+          return io.epigraph.util.Util.apply(get_${up(f.name)}(), ${lqn(tt(f.typeRef, f.effectiveDefaultTagName.get), t)}.Builder.Value::getDatum);
+        }
 
-    @Override
-    public @Nullable $ln.Builder getBestFriend() {
-      $ln.Builder.Value value = getBestFriend_value();
-      return value == null ? null : value.getDatum();
-    }
+        /**
+         * Returns default tag value builder for `${f.name}` field.
+         */
+        @Override
+        public @Nullable ${lqn(tt(f.typeRef, f.effectiveDefaultTagName.get), t)}.Builder.Value get_${up(f.name)}() {
+          return (${lqn(tt(f.typeRef, f.effectiveDefaultTagName.get), t)}.Builder.Value) _raw()._getValue($ln.${jn(f.name)}, ${dtrn(f.valueType, f.effectiveDefaultTagName.get, t)});
+        }
+"""
+    }${ // tag getters
+      f.valueType.typeRef.resolved match {
+        case vartype: CVarTypeDef =>
+          vartype.effectiveTags.map { tag => sn"""\
 
-    @Override
-    public @Nullable $ln.List.Builder.Value getFriends_value() {
-      return ($ln.List.Builder.Value) _raw()._getValue($ln.friends, $ln.List.type.self);
-    }
+        /**
+         * Returns `${tag.name}` tag datum builder for `${f.name}` field.
+         */
+        @Override
+        public @Nullable ${lqrn(tag.typeRef, t)}.Builder get${up(f.name)}${up(tag.name)}() {
+          return io.epigraph.util.Util.apply(get_${up(f.name)}${up(tag.name)}(), ${lqn(tt(f.typeRef, tag.name), t)}.Builder.Value::getDatum);
+        }
 
-    @Override
-    public @Nullable $ln.List.Builder getFriends() {
-      $ln.List.Builder.Value value = getFriends_value();
-      return value == null ? null : value.getDatum();
+        /**
+         * Returns `${tag.name}` tag value builder for `${f.name}` field.
+         */
+        @Override
+        public @Nullable ${lqrn(tag.typeRef, t)}.Builder.Value get_${up(f.name)}${up(tag.name)}() {
+          return (${lqn(tt(f.typeRef, tag.name), t)}.Builder.Value) _raw()._getValue($ln.${jn(f.name)}, ${dtrn(f.valueType, tag.name, t)});
+        }
+"""
+          }.mkString
+        case _: CDatumType => ""
+        case unexpected => throw new UnsupportedOperationException(unexpected.name.name)
+      }
     }
+"""
+    }.mkString
+  }\
 
-    public void setBestFriend(@Nullable $ln.Builder bestFriend) {
-      _raw().getOrCreateFieldData($ln.bestFriend)._raw()._setDatum($ln.type.self, bestFriend);
-    }
-
-    // TODO full set of field setters
+    // TODO field datum and value setters
 
 
     /**

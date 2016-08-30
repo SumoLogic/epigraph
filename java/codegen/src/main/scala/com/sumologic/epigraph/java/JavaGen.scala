@@ -116,7 +116,7 @@ abstract class JavaGen[From >: Null <: AnyRef](protected val from: From, protect
 
   /** tag type for given typeref and tag name */
   def tt(tr: CTypeRef, tn: String): CType = tr.resolved match {
-    case tt: CVarTypeDef => tt.effectiveTagsMap(tn).typeRef.resolved
+    case tt: CVarTypeDef => tt.effectiveTags.find(_.name == tn).get.typeRef.resolved
     case tt: CDatumType => tt
     case unknown => throw new UnsupportedOperationException(unknown.toString)
   }

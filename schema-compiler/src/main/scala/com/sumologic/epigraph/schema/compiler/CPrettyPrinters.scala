@@ -151,7 +151,7 @@ object CPrettyPrinters {
     override def render0(@NotNull t: CVarTypeDef, c: Config): Iterator[String] = {
       def body = (c: Config) => CTypeDefPrinter.typeDefParts(t, c) ++ Iterator(
         collection("declaredTags", t.declaredTags, c),
-        collection("effectiveTags", t.effectiveTagsMap, c, (e: (String, CTag)) => e._2)
+        collection("effectiveTags", t.effectiveTags, c)
       )
       pprint.Internals.handleChunks("var " + t.name.name, c, body)
     }

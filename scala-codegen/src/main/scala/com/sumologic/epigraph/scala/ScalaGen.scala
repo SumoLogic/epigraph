@@ -18,7 +18,7 @@ abstract class ScalaGen[From >: Null <: AnyRef](protected val from: From) {
   protected def generate: String
 
   def writeUnder(sourcesRoot: Path): Unit = {
-    GenUtils.writeFile(sourcesRoot, relativeFilePath, generate)
+    ScalaGenUtils.writeFile(sourcesRoot, relativeFilePath, generate)
   }
 
   // TODO protected access for the rest:

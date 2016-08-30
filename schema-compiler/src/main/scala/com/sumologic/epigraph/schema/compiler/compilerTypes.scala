@@ -181,8 +181,24 @@ class CVarTypeDef(csf: CSchemaFile, override val psi: SchemaVarTypeDef)(implicit
   // TODO check for dupes
   private val declaredTagsMap: Map[String, CTag] = declaredTags.map { ct => (ct.name, ct) }(collection.breakOut)
 
+  def effectiveTags: Seq[CTag] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, _effectiveTags)
+
+  private lazy val _effectiveTags: Seq[CTag] = {
+    val m: mutable.LinkedHashMap[String, mutable.Builder[CTag, Seq[CTag]]] = new mutable.LinkedHashMap
+    for (f <- linearizedParents.flatMap(_._effectiveTags) ++ declaredTags) {
+      m.getOrElseUpdate(f.name, Seq.newBuilder[CTag]) += f
+    }
+    val imb = Seq.newBuilder[CTag]
+    for ((fn, nfs) <- m) {
+      imb += effectiveTag(declaredTagsMap.get(fn), nfs.result())
+    }
+    imb.result()
+  }
+
+  @deprecated("use effectiveTags")
   def effectiveTagsMap: Map[String, CTag] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, _effectiveTagsMap)
 
+  @deprecated("use effectiveTags")
   private lazy val _effectiveTagsMap = {
     linearizedParents.flatMap(_.effectiveTagsMap) ++ declaredTagsMap
     //(for {vt <- linearizedParents; nt <- vt.effectiveTagsMap} yield nt) ++ declaredTagsMap
@@ -273,10 +289,10 @@ class CRecordTypeDef(csf: CSchemaFile, override val psi: SchemaRecordTypeDef)(im
   // TODO check for dupes
   private val declaredFieldsMap: Map[String, CField] = declaredFields.map { ct => (ct.name, ct) }(collection.breakOut)
 
-  @deprecated
+  @deprecated("use effectiveFields")
   def effectiveFieldsMap: Map[String, CField] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, _effectiveFieldsMap)
 
-  @deprecated
+  @deprecated("use effectiveFields")
   private lazy val _effectiveFieldsMap = {
     linearizedParents.flatMap(_.effectiveFieldsMap) ++ declaredFieldsMap
   } groupBy { case (fn, _f) =>
