@@ -9,9 +9,6 @@ import epigraph.schema.TypeMemberRef
 import epigraph.schema.TypeRef
 import epigraph.schema.EnumTypeRef
 import epigraph.schema.PrimitiveTypeRef
-import epigraph.schema.FieldName
-
-// TODO specify default projections here (via `includeInDefaultProjection` boolean property on tags and fields?)
 
 record OpOutputVarProjection {
   type: TypeRef
@@ -21,26 +18,27 @@ record OpOutputVarProjection {
 record OpOutputTagProjection {
   tag: TypeMemberRef
   tagProjection: OpOutputModelProjection
+  includeInDefault: Boolean
 }
 
 abstract record OpOutputModelProjection {
   model: DataTypeRef
   required: Boolean
-  params: list[OpParamProjection]
+  params: list[OpParam]
   polymorphicTail: list[OpOutputModelProjection]
 }
 
 record OpOutputRecordModelProjection extends OpOutputModelProjection {
   override model: RecordTypeRef
   fieldProjections: list[OpOutputFieldProjection]
-  fieldProjectiAlt: map[FieldName, OpOutputVarProjection] // TODO this or above (or both?)
   override polymorphicTail: list[OpOutputRecordModelProjection]
 }
 
 record OpOutputFieldProjection {
   field: FieldRef
-  params: list[OpParamProjection]
+  params: list[OpParam]
   varProjection: OpOutputVarProjection
+  includeInDefault: Boolean
 }
 
 record OpOutputListModelProjection extends OpOutputModelProjection {
@@ -58,7 +56,7 @@ record OpOutputMapModelProjection extends OpOutputModelProjection {
 
 record OpOutputKeyProjection {
   required: Boolean
-  params: list[OpParamProjection]
+  params: list[OpParam]
 }
 
 record OpOutputEnumModelProjection extends OpOutputModelProjection {

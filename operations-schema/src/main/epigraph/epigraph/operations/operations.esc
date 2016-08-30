@@ -1,0 +1,41 @@
+namespace epigraph.operations
+
+import epigraph.projections.op.OpDeleteVarProjection
+import epigraph.projections.op.OpInputVarProjection
+import epigraph.projections.op.OpOutputVarProjection
+import epigraph.projections.op.OpParam
+import epigraph.schema.Documented
+
+record Resouce extends Documented {
+  fieldName: String
+  operations: list[polymorphic Operation]
+}
+
+abstract record Operation extends Documented {
+  name: String { doc = "`null` means default operation" }
+  params: list[OpParam]
+  outputProjection: OpOutputVarProjection
+}
+
+record CreateOperation extends Operation {
+  inputDataProjection: OpInputVarProjection
+}
+
+record ReadOperation extends Operation {
+}
+
+record UpdateOperation extends Operation {
+  // HTTP PUT /people*(firstName, lastName) << { 123: { firstName: "Vasya" } } // updates firstName, removes lastName
+  // HTTP PUT /people << { 123: { firstName: "Vasya" } }
+  // HTTP PUT /people/123 << { firstName: "Vasya" }
+  // HTTP PUT /people/123/firstName << "Vasya"
+  updateDataProjection: OpInputVarProjection
+}
+
+record DeleteOperation extends Operation {
+  deleteProjection: OpDeleteVarProjection
+}
+
+record CustomOperation extends Operation {
+  inputDataProjection: OpInputVarProjection
+}

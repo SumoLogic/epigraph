@@ -1,0 +1,69 @@
+namespace epigraph.projections.op
+
+import epigraph.schema.DataTypeRef
+import epigraph.schema.FieldRef
+import epigraph.schema.ListTypeRef
+import epigraph.schema.MapTypeRef
+import epigraph.schema.RecordTypeRef
+import epigraph.schema.TypeMemberRef
+import epigraph.schema.TypeRef
+import epigraph.schema.EnumTypeRef
+import epigraph.schema.PrimitiveTypeRef
+
+// OpOutputProjections with canDelete on vars
+
+record OpDeleteVarProjection {
+  type: TypeRef
+  tagProjections: list[OpDeleteTagProjection]
+  canDelete: Boolean
+}
+
+record OpDeleteTagProjection {
+  tag: TypeMemberRef
+  tagProjection: OpDeleteModelProjection
+}
+
+abstract record OpDeleteModelProjection {
+  model: DataTypeRef
+  params: list[OpParam]
+  polymorphicTail: list[OpDeleteModelProjection]
+}
+
+record OpDeleteRecordModelProjection extends OpDeleteModelProjection {
+  override model: RecordTypeRef
+  fieldProjections: list[OpDeleteFieldProjection]
+  override polymorphicTail: list[OpDeleteRecordModelProjection]
+}
+
+record OpDeleteFieldProjection {
+  field: FieldRef
+  params: list[OpParam]
+  varProjection: OpDeleteVarProjection
+}
+
+record OpDeleteListModelProjection extends OpDeleteModelProjection {
+  override model: ListTypeRef
+  varProjection: OpDeleteVarProjection
+  override polymorphicTail: list[OpDeleteListModelProjection]
+}
+
+record OpDeleteMapModelProjection extends OpDeleteModelProjection {
+  override model: MapTypeRef
+  keyProjection: OpDeleteKeyProjection { doc = "if `null` - keys are not accepted" }
+  varProjection: OpDeleteVarProjection
+  override polymorphicTail: list[OpDeleteMapModelProjection] // TODO figure out what to do with keys in poly tail
+}
+
+record OpDeleteKeyProjection {
+  params: list[OpParam]
+}
+
+record OpDeleteEnumModelProjection extends OpDeleteModelProjection {
+  override model: EnumTypeRef
+  override polymorphicTail: list[OpDeleteEnumModelProjection] // always empty since no enum inheritance - introduce an interface for those that have inheritance?
+}
+
+record OpDeletePrimitiveModelProjection extends OpDeleteModelProjection {
+  override model: PrimitiveTypeRef
+  override polymorphicTail: list[OpDeletePrimitiveModelProjection]
+}

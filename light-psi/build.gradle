@@ -218,6 +218,8 @@ import java.util.*
 import java.net.*
 import java.util.zip.*
 
+// switch to this instead of asm:
+// http://stackoverflow.com/questions/1753337/determine-the-classes-referenced-in-a-class-file/1753747?noredirect=1#comment65681526_1753747
 class FileListProducer {
   private MyClassVisitor visitor
   private Logger logger

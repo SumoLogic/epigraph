@@ -21,6 +21,7 @@ Map<String, String> moduleNames = [
 //    'java/projections'                   : 'epigraph-java-projections',
     'light-psi'                          : 'epigraph-light-psi',
     'maven-plugin'                       : 'epigraph-maven-plugin',
+    'operations-schema'                  : 'epigraph-operations-schema',
     'projections-schema'                 : 'epigraph-projections-schema',
     'scala-codegen'                      : 'epigraph-scala-codegen',
     'scala-maven-plugin'                 : 'epigraph-scala-maven-plugin',
