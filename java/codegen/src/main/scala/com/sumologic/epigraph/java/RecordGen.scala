@@ -37,12 +37,11 @@ public interface $ln extends${withParents(t)} io.epigraph.data.RecordDatum.Stati
 
   @NotNull $ln.Type type = new $ln.Type();
 ${ // for each effective field
-  t.effectiveFields.map { f =>
-    sn"""\
+  t.effectiveFields.map { f => sn"""\
 
   // Field `${f.name}`
   @NotNull Field ${jn(f.name)} = new Field("${f.name}", ${lqrn(f.typeRef, t)}.type, ${f.isAbstract});
-  ${ // default getter
+${ // default datum and value getters
     if (f.effectiveDefaultTagName.isDefined) sn"""\
 
   /**
@@ -55,7 +54,7 @@ ${ // for each effective field
    */
   @Nullable ${lqn(dtt(f.typeRef, f.effectiveDefaultTagName.get), t)}.Value get_${up(f.name)}();
 """
-  }${ // tag getters
+}${ // tags datum and value getters
     f.valueType.typeRef.resolved match {
       case vartype: CVarTypeDef =>
         vartype.effectiveTagsMap.values.map { tag => sn"""\
@@ -134,18 +133,48 @@ $listSupplier\
 
   interface Imm extends $ln,${withParents(".Imm")} io.epigraph.data.RecordDatum.Imm.Static {
 
-    // FIXME iterate over immediate fields
-    @Override
-    @Nullable $ln.Imm getBestFriend();
+${ // for each effective field
+    t.effectiveFields.map { f => sn"""\
+${ // default getter
+        if (f.effectiveDefaultTagName.isDefined) sn"""\
 
-    @Override
-    @Nullable $ln.Imm.Value getBestFriend_value();
+  /**
+   * Returns immutable default tag datum for `${f.name}` field.
+   */
+  @Override
+  @Nullable ${lqn(dtt(f.typeRef, f.effectiveDefaultTagName.get), t)}.Imm get${up(f.name)}();
 
-    @Override
-    @Nullable $ln.List.Imm getFriends();
+  /**
+   * Returns immutable default tag value for `${f.name}` field.
+   */
+  @Override
+  @Nullable ${lqn(dtt(f.typeRef, f.effectiveDefaultTagName.get), t)}.Imm.Value get_${up(f.name)}();
+"""
+      }${ // tag getters
+        f.valueType.typeRef.resolved match {
+          case vartype: CVarTypeDef =>
+            vartype.effectiveTagsMap.values.map { tag => sn"""\
 
-    @Override
-    @Nullable $ln.List.Imm.Value getFriends_value();
+  /**
+   * Returns immutable `${tag.name}` tag datum for `${f.name}` field.
+   */
+  @Override
+  @Nullable ${lqrn(tag.typeRef, t)}.Imm get${up(f.name)}${up(tag.name)}();
+
+  /**
+   * Returns `${tag.name}` tag value for `${f.name}` field.
+   */
+  @Override
+  @Nullable ${lqrn(tag.typeRef, t)}.Imm.Value get_${up(f.name)}${up(tag.name)}();
+"""
+            }.mkString
+          case _: CDatumType => ""
+          case unexpected => throw new UnsupportedOperationException(unexpected.name.name)
+        }
+      }
+"""
+    }.mkString
+  }\
 
     interface Value extends $ln.Value,${withParents(".Imm.Value")} io.epigraph.data.Val.Imm.Static {
 
@@ -185,34 +214,52 @@ $listSupplier\
 
       private Impl(@NotNull io.epigraph.data.RecordDatum.Imm.Raw raw) { super($ln.type, raw); }
 
-      // FIXME iterate
-      @Override
-      public @Nullable PersonId.Imm getId() {
-        PersonId.Imm.Value value = (PersonId.Imm.Value) _raw()._getValue(PersonRecord.id, PersonId.type.self);
-        return value == null ? null : value.getDatum();
-      }
+${ // for each effective field
+    t.effectiveFields.map { f => sn"""\
+${ // default getter
+      if (f.effectiveDefaultTagName.isDefined) sn"""\
 
-      @Override
-      public @Nullable $ln.Imm.Value getBestFriend_value() {
-        return ($ln.Imm.Value) _raw()._getValue($ln.bestFriend, $ln.type.self);
-      }
+        /**
+         * Returns immutable default tag datum for `${f.name}` field.
+         */
+        @Override
+        public @Nullable ${lqn(dtt(f.typeRef, f.effectiveDefaultTagName.get), t)}.Imm get${up(f.name)}() {
+          return io.epigraph.util.Util.apply(get_${up(f.name)}(), ${lqn(dtt(f.typeRef, f.effectiveDefaultTagName.get), t)}.Imm.Value::getDatum);
+        }
 
-      @Override
-      public @Nullable $ln.Imm getBestFriend() {
-        $ln.Imm.Value value = getBestFriend_value();
-        return value == null ? null : value.getDatum();
-      }
+        /**
+         * Returns immutable default tag value for `${f.name}` field.
+         */
+        @Override
+        public @Nullable ${lqn(dtt(f.typeRef, f.effectiveDefaultTagName.get), t)}.Imm.Value get_${up(f.name)}() {
+          return (${lqn(dtt(f.typeRef, f.effectiveDefaultTagName.get), t)}.Imm.Value) _raw()._getValue($ln.${jn(f.name)}, FixMe.type.self);
+        }
+"""
+}${ // tag getters
+      f.valueType.typeRef.resolved match {
+        case vartype: CVarTypeDef =>
+          vartype.effectiveTagsMap.values.map { tag => sn"""\
 
-      @Override
-      public @Nullable $ln.List.Imm.Value getFriends_value() {
-        return ($ln.List.Imm.Value) _raw()._getValue($ln.friends, $ln.List.type.self);
-      }
+        /**
+         * Returns immutable `${tag.name}` tag datum for `${f.name}` field.
+         */
+        @Override
+        public @Nullable ${lqrn(tag.typeRef, t)}.Imm get${up(f.name)}${up(tag.name)}();
 
-      @Override
-      public @Nullable $ln.List.Imm getFriends() {
-        $ln.List.Imm.Value value = getFriends_value();
-        return value == null ? null : value.getDatum();
+        /**
+         * Returns `${tag.name}` tag value for `${f.name}` field.
+         */
+        @Override
+        public @Nullable ${lqrn(tag.typeRef, t)}.Imm.Value get_${up(f.name)}${up(tag.name)}();
+"""
+          }.mkString
+        case _: CDatumType => ""
+        case unexpected => throw new UnsupportedOperationException(unexpected.name.name)
       }
+}
+"""
+    }.mkString
+}\
 
     }
 
