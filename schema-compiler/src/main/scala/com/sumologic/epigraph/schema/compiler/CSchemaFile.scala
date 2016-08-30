@@ -6,8 +6,8 @@ import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.function.BiFunction
 
 import com.intellij.psi.PsiElement
-import io.epigraph.lang.parser.Fqn
-import io.epigraph.lang.parser.psi._
+import com.sumologic.epigraph.schema.parser.Fqn
+import com.sumologic.epigraph.schema.parser.psi._
 import net.jcip.annotations.ThreadSafe
 import org.jetbrains.annotations.Nullable
 
@@ -31,7 +31,7 @@ class CSchemaFile(val psi: SchemaFile)(implicit val ctx: CContext) {
   val importedAliases: Map[String, Fqn] = ctx.implicitImports ++ imports.map { case (alias, ci) => (alias, ci.fqn) }
 
   @Nullable
-  private val defs: EpigraphDefs = psi.getDefs
+  private val defs: SchemaDefs = psi.getDefs
 
   val typeDefs: Seq[CTypeDef] = if (defs == null) Nil else defs.getTypeDefWrapperList.map(CTypeDef.apply(this, _))
 
@@ -39,7 +39,7 @@ class CSchemaFile(val psi: SchemaFile)(implicit val ctx: CContext) {
 
   ctx.schemaFiles.put(filename, this)
 
-  def qualifyLocalTypeRef(sftr: EpigraphFqnTypeRef): CTypeFqn = {
+  def qualifyLocalTypeRef(sftr: SchemaFqnTypeRef): CTypeFqn = {
     val alias = sftr.getFqn.getFqn.first
     val parentNamespace = importedAliases.get(alias) match {
       case Some(fqn) => fqn.removeLastSegment() // typeref starting with imported alias
@@ -63,7 +63,7 @@ class CSchemaFile(val psi: SchemaFile)(implicit val ctx: CContext) {
 
 }
 
-class CNamespace(val psi: EpigraphNamespaceDecl)(implicit val ctx: CContext) {
+class CNamespace(val psi: SchemaNamespaceDecl)(implicit val ctx: CContext) {
 
   @scala.beans.BeanProperty
   val fqn: Fqn = psi.getFqn2
@@ -91,7 +91,7 @@ object CNamespace {
 
 }
 
-class CImport(@Nullable val psi: EpigraphImportStatement)(implicit val ctx: CContext) {
+class CImport(@Nullable val psi: SchemaImportStatement)(implicit val ctx: CContext) {
 
   val fqn: Fqn = psi.getFqn.getFqn
 

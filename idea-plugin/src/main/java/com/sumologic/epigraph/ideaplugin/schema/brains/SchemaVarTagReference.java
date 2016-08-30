@@ -8,12 +8,12 @@ import com.intellij.psi.impl.source.resolve.ResolveCache;
 import com.intellij.util.IncorrectOperationException;
 import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.TypeMembers;
 import com.sumologic.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
-import io.epigraph.lang.parser.NamingConventions;
-import io.epigraph.lang.parser.SchemaParserDefinition;
-import io.epigraph.lang.parser.psi.EpigraphQid;
-import io.epigraph.lang.parser.psi.EpigraphVarTagDecl;
-import io.epigraph.lang.parser.psi.EpigraphVarTypeDef;
-import io.epigraph.lang.parser.psi.impl.EpigraphElementFactory;
+import com.sumologic.epigraph.schema.parser.NamingConventions;
+import com.sumologic.epigraph.schema.parser.SchemaParserDefinition;
+import com.sumologic.epigraph.schema.parser.psi.SchemaQid;
+import com.sumologic.epigraph.schema.parser.psi.SchemaVarTagDecl;
+import com.sumologic.epigraph.schema.parser.psi.SchemaVarTypeDef;
+import com.sumologic.epigraph.schema.parser.psi.impl.SchemaElementFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,7 +27,7 @@ public class SchemaVarTagReference extends PsiReferenceBase<PsiElement> implemen
    * host type def
    */
   @NotNull
-  private final EpigraphVarTypeDef typeDef;
+  private final SchemaVarTypeDef typeDef;
 
   @NotNull
   private final String tagName;
@@ -36,7 +36,7 @@ public class SchemaVarTagReference extends PsiReferenceBase<PsiElement> implemen
   private final ResolveCache.PolyVariantResolver<SchemaVarTagReference> polyVariantResolver =
       (reference, incompleteCode) -> multiResolveImpl();
 
-  public SchemaVarTagReference(@NotNull EpigraphVarTypeDef typeDef, @NotNull EpigraphQid id) {
+  public SchemaVarTagReference(@NotNull SchemaVarTypeDef typeDef, @NotNull SchemaQid id) {
     super(id);
     this.typeDef = typeDef;
 
@@ -52,7 +52,7 @@ public class SchemaVarTagReference extends PsiReferenceBase<PsiElement> implemen
 
   @Nullable
   protected PsiElement resolveImpl() {
-    List<EpigraphVarTagDecl> tagDecls = TypeMembers.getVarTagDecls(typeDef, tagName);
+    List<SchemaVarTagDecl> tagDecls = TypeMembers.getVarTagDecls(typeDef, tagName);
     if (tagDecls.size() == 0)
       return null;
 
@@ -68,7 +68,7 @@ public class SchemaVarTagReference extends PsiReferenceBase<PsiElement> implemen
 
   @NotNull
   protected ResolveResult[] multiResolveImpl() {
-    List<EpigraphVarTagDecl> tagDecls = TypeMembers.getVarTagDecls(typeDef, tagName);
+    List<SchemaVarTagDecl> tagDecls = TypeMembers.getVarTagDecls(typeDef, tagName);
     return tagDecls.stream()
         .map(PsiElementResult::new)
         .toArray(ResolveResult[]::new);
@@ -77,7 +77,7 @@ public class SchemaVarTagReference extends PsiReferenceBase<PsiElement> implemen
   @NotNull
   @Override
   public Object[] getVariants() {
-    List<EpigraphVarTagDecl> tagDecls = TypeMembers.getVarTagDecls(typeDef, null);
+    List<SchemaVarTagDecl> tagDecls = TypeMembers.getVarTagDecls(typeDef, null);
     return tagDecls.stream()
         .map(varTagDecl ->
             LookupElementBuilder.create(getCompletionName(varTagDecl))
@@ -87,7 +87,7 @@ public class SchemaVarTagReference extends PsiReferenceBase<PsiElement> implemen
         .toArray();
   }
 
-  private String getCompletionName(@NotNull EpigraphVarTagDecl varTagDecl) {
+  private String getCompletionName(@NotNull SchemaVarTagDecl varTagDecl) {
     String name = varTagDecl.getQid().getCanonicalName();
     return SchemaParserDefinition.isKeyword(name) ?
         NamingConventions.enquote(name) : name;
@@ -96,7 +96,7 @@ public class SchemaVarTagReference extends PsiReferenceBase<PsiElement> implemen
   @Override
   public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
     PsiElement oldElement = getElement();
-    PsiElement newElement = EpigraphElementFactory.createId(oldElement.getProject(), newElementName);
+    PsiElement newElement = SchemaElementFactory.createId(oldElement.getProject(), newElementName);
     return oldElement.replace(newElement);
   }
 }

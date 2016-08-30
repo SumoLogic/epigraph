@@ -15,8 +15,8 @@ import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.CompletionTypeF
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaSearchScopeUtil;
 import com.sumologic.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
-import io.epigraph.lang.parser.Fqn;
-import io.epigraph.lang.parser.psi.*;
+import com.sumologic.epigraph.schema.parser.Fqn;
+import com.sumologic.epigraph.schema.parser.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,14 +30,14 @@ import java.util.stream.Collectors;
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  * @see <a href="https://github.com/SumoLogic/epigraph/wiki/References%20implementation#reference-resolution-algorithm">Reference resolution algorithm</a>
  */
-public class SchemaFqnReference extends PsiReferenceBase<EpigraphFqnSegment> implements PsiPolyVariantReference {
-  private final EpigraphFqnReferenceResolver resolver;
+public class SchemaFqnReference extends PsiReferenceBase<SchemaFqnSegment> implements PsiPolyVariantReference {
+  private final SchemaFqnReferenceResolver resolver;
 
   private final ResolveCache.Resolver cachedResolver = (psiReference, incompleteCode) -> resolveImpl();
   private final ResolveCache.PolyVariantResolver<SchemaFqnReference> polyVariantResolver =
       (schemaFqnReference, incompleteCode) -> multiResolveImpl();
 
-  public SchemaFqnReference(EpigraphFqnSegment segment, EpigraphFqnReferenceResolver resolver) {
+  public SchemaFqnReference(SchemaFqnSegment segment, SchemaFqnReferenceResolver resolver) {
     super(segment);
     this.resolver = resolver;
 
@@ -52,7 +52,7 @@ public class SchemaFqnReference extends PsiReferenceBase<EpigraphFqnSegment> imp
   }
 
   @NotNull
-  public EpigraphFqnReferenceResolver getResolver() {
+  public SchemaFqnReferenceResolver getResolver() {
     return resolver;
   }
 
@@ -63,7 +63,7 @@ public class SchemaFqnReference extends PsiReferenceBase<EpigraphFqnSegment> imp
 
   @Override
   public boolean isReferenceTo(PsiElement element) {
-    assert !(element instanceof EpigraphTypeDefWrapper);
+    assert !(element instanceof SchemaTypeDefWrapper);
     return super.isReferenceTo(element);
   }
 
@@ -96,8 +96,8 @@ public class SchemaFqnReference extends PsiReferenceBase<EpigraphFqnSegment> imp
     final Fqn input = resolver.getInput();
     final Fqn inputPrefix = input.removeLastSegment();
 
-    Set<EpigraphTypeDef> typeDefVariants;
-    Collection<EpigraphNamespaceDecl> namespaceVariants;
+    Set<SchemaTypeDef> typeDefVariants;
+    Collection<SchemaNamespaceDecl> namespaceVariants;
 
     if (input.size() > 1) {
       // we already have multiple segments in the FQN
@@ -157,7 +157,7 @@ public class SchemaFqnReference extends PsiReferenceBase<EpigraphFqnSegment> imp
         .collect(Collectors.toSet());
 
     List<Fqn> namespaceFqns = namespaceVariants.stream()
-        .map(EpigraphNamespaceDecl::getFqn2)
+        .map(SchemaNamespaceDecl::getFqn2)
         .filter(fqn -> fqn != null && !fqn.equals(currentNamespace)) // not interested in current namespace
         .collect(Collectors.toList());
 
@@ -180,10 +180,10 @@ public class SchemaFqnReference extends PsiReferenceBase<EpigraphFqnSegment> imp
   }
 
   private boolean isImport() {
-    return PsiTreeUtil.getParentOfType(getElement(), EpigraphImportStatement.class) != null;
+    return PsiTreeUtil.getParentOfType(getElement(), SchemaImportStatement.class) != null;
   }
 
   private boolean isNamespaceDecl() {
-    return PsiTreeUtil.getParentOfType(getElement(), EpigraphNamespaceDecl.class) != null;
+    return PsiTreeUtil.getParentOfType(getElement(), SchemaNamespaceDecl.class) != null;
   }
 }

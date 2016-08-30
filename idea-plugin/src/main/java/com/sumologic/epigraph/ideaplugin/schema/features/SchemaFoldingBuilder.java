@@ -12,15 +12,15 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.util.containers.ContainerUtil;
-import io.epigraph.lang.parser.psi.*;
+import com.sumologic.epigraph.schema.parser.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Set;
 
-import static io.epigraph.lang.lexer.EpigraphElementTypes.E_BLOCK_COMMENT;
-import static io.epigraph.lang.lexer.EpigraphElementTypes.E_COMMENT;
+import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.S_BLOCK_COMMENT;
+import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.S_COMMENT;
 
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
@@ -29,12 +29,12 @@ public class SchemaFoldingBuilder extends CustomFoldingBuilder implements DumbAw
 
   private static String getPlaceholderText(PsiElement element) {
     // todo namespace
-    if (element instanceof EpigraphTypeDef) {
+    if (element instanceof SchemaTypeDef) {
       return "{...}";
     } else if (element instanceof PsiFile) {
       return "/.../";
     } else if (element instanceof PsiComment) {
-      if (((PsiComment) element).getTokenType() == E_BLOCK_COMMENT)
+      if (((PsiComment) element).getTokenType() == S_BLOCK_COMMENT)
         return "/*..*/";
       else
         return "//...";
@@ -47,23 +47,23 @@ public class SchemaFoldingBuilder extends CustomFoldingBuilder implements DumbAw
       return null;
     }
 
-    if (element instanceof EpigraphTypeDef) {
+    if (element instanceof SchemaTypeDef) {
       @Nullable
       PsiElement body = null;
 
       // TODO add a mixin with getBody?
-      if (element instanceof EpigraphVarTypeDef) {
-        body = ((EpigraphVarTypeDef) element).getVarTypeBody();
-      } else if (element instanceof EpigraphRecordTypeDef) {
-        body = ((EpigraphRecordTypeDef) element).getRecordTypeBody();
-      } else if (element instanceof EpigraphPrimitiveTypeDef) {
-        body = ((EpigraphPrimitiveTypeDef) element).getPrimitiveTypeBody();
-      } else if (element instanceof EpigraphListTypeDef) {
-        body = ((EpigraphListTypeDef) element).getListTypeBody();
-      } else if (element instanceof EpigraphMapTypeDef) {
-        body = ((EpigraphMapTypeDef) element).getMapTypeBody();
-      } else if (element instanceof EpigraphEnumTypeDef) {
-        body = ((EpigraphEnumTypeDef) element).getEnumTypeBody();
+      if (element instanceof SchemaVarTypeDef) {
+        body = ((SchemaVarTypeDef) element).getVarTypeBody();
+      } else if (element instanceof SchemaRecordTypeDef) {
+        body = ((SchemaRecordTypeDef) element).getRecordTypeBody();
+      } else if (element instanceof SchemaPrimitiveTypeDef) {
+        body = ((SchemaPrimitiveTypeDef) element).getPrimitiveTypeBody();
+      } else if (element instanceof SchemaListTypeDef) {
+        body = ((SchemaListTypeDef) element).getListTypeBody();
+      } else if (element instanceof SchemaMapTypeDef) {
+        body = ((SchemaMapTypeDef) element).getMapTypeBody();
+      } else if (element instanceof SchemaEnumTypeDef) {
+        body = ((SchemaEnumTypeDef) element).getEnumTypeBody();
       }
 
       return body == null ? null : body.getTextRange();
@@ -125,7 +125,7 @@ public class SchemaFoldingBuilder extends CustomFoldingBuilder implements DumbAw
    */
   private static void addCommentFolds(@NotNull PsiComment comment, @NotNull Set<PsiElement> processedComments,
                                       @NotNull List<FoldingDescriptor> foldElements) {
-    if (processedComments.contains(comment) || comment.getTokenType() != E_COMMENT) {
+    if (processedComments.contains(comment) || comment.getTokenType() != S_COMMENT) {
       return;
     }
 
@@ -137,7 +137,7 @@ public class SchemaFoldingBuilder extends CustomFoldingBuilder implements DumbAw
         break;
       }
       IElementType elementType = node.getElementType();
-      if (elementType == E_COMMENT) {
+      if (elementType == S_COMMENT) {
         end = current;
         // We don't want to process, say, the second comment in case of three subsequent comments when it's being examined
         // during all elements traversal. I.e. we expect to start from the first comment and grab as many subsequent
@@ -166,9 +166,9 @@ public class SchemaFoldingBuilder extends CustomFoldingBuilder implements DumbAw
 
     SchemaFile file = (SchemaFile) root;
 
-    EpigraphDefs defs = file.getDefs();
+    SchemaDefs defs = file.getDefs();
     if (defs != null) {
-      for (EpigraphTypeDefWrapper typeDefWrapper : defs.getTypeDefWrapperList()) {
+      for (SchemaTypeDefWrapper typeDefWrapper : defs.getTypeDefWrapperList()) {
         addToFold(descriptors, typeDefWrapper.getElement(), document, true);
       }
     }
@@ -179,9 +179,9 @@ public class SchemaFoldingBuilder extends CustomFoldingBuilder implements DumbAw
       final Set<PsiElement> seenComments = ContainerUtil.newHashSet();
 
       PsiTreeUtil.processElements(file, element -> {
-        if (element.getNode().getElementType().equals(E_BLOCK_COMMENT)) {
+        if (element.getNode().getElementType().equals(S_BLOCK_COMMENT)) {
           descriptors.add(new FoldingDescriptor(element, element.getTextRange()));
-        } else if (element.getNode().getElementType().equals(E_COMMENT)) {
+        } else if (element.getNode().getElementType().equals(S_COMMENT)) {
           addCommentFolds((PsiComment) element, seenComments, descriptors);
         }
         return true;

@@ -1,7 +1,7 @@
 pluginRepositories {
   // pick up gradle plugin from local maven repo
   maven {
-    url 'file://' + System.getProperty('user.home') + '/.m2/repository'
+    url "file://" + System.getProperty("user.home") + "/.m2/repository"
   }
   gradlePluginPortal()
 }
@@ -26,18 +26,18 @@ Map<String, String> moduleNames = [
     'scala-codegen'                      : 'epigraph-scala-codegen',
     'scala-maven-plugin'                 : 'epigraph-scala-maven-plugin',
     'schema-compiler'                    : 'epigraph-schema-compiler',
-    'lang-parser'                        : 'epigraph-lang-parser',
+    'schema-parser'                      : 'epigraph-schema-parser',
     'schema-schema'                      : 'epigraph-schema-schema',
 ]
 
 // uncomment to build and publish (`publishToMavenLocal`) gradle and maven plugins for the first time
-//Map<String, String> moduleNames = [
+//moduleNames = [
 //    'core'           : 'epigraph-core',
 //    'gradle-plugin'  : 'epigraph-gradle-plugin',
 //    'light-psi'      : 'epigraph-light-psi',
 //    'maven-plugin'   : 'epigraph-maven-plugin',
 //    'schema-compiler': 'epigraph-schema-compiler',
-//    'lang-parser'    : 'epigraph-lang-parser'
+//    'schema-parser'  : 'epigraph-schema-parser'
 //]
 
 moduleNames.each { dir, name ->

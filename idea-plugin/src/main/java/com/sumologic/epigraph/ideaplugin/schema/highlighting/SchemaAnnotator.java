@@ -15,16 +15,16 @@ import com.sumologic.epigraph.ideaplugin.schema.features.actions.fixes.ImportTyp
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaSearchScopeUtil;
 import com.sumologic.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
-import io.epigraph.lang.parser.Fqn;
-import io.epigraph.lang.parser.NamingConventions;
-import io.epigraph.lang.parser.psi.*;
+import com.sumologic.epigraph.schema.parser.Fqn;
+import com.sumologic.epigraph.schema.parser.NamingConventions;
+import com.sumologic.epigraph.schema.parser.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static io.epigraph.lang.lexer.EpigraphElementTypes.E_FQN_TYPE_REF;
+import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.S_FQN_TYPE_REF;
 
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
@@ -35,10 +35,10 @@ public class SchemaAnnotator implements Annotator {
 
   @Override
   public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
-    element.accept(new EpigraphVisitor() {
+    element.accept(new SchemaVisitor() {
 
       @Override
-      public void visitFieldDecl(@NotNull EpigraphFieldDecl fieldDecl) {
+      public void visitFieldDecl(@NotNull SchemaFieldDecl fieldDecl) {
         PsiElement id = fieldDecl.getQid();
         setHighlighting(id, holder, SchemaSyntaxHighlighter.FIELD);
 
@@ -54,7 +54,7 @@ public class SchemaAnnotator implements Annotator {
       }
 
       @Override
-      public void visitVarTagDecl(@NotNull EpigraphVarTagDecl memberDecl) {
+      public void visitVarTagDecl(@NotNull SchemaVarTagDecl memberDecl) {
         PsiElement id = memberDecl.getQid();
         setHighlighting(id, holder, SchemaSyntaxHighlighter.VAR_MEMBER);
 
@@ -69,8 +69,8 @@ public class SchemaAnnotator implements Annotator {
       }
 
       @Override
-      public void visitDefaultOverride(@NotNull EpigraphDefaultOverride defaultOverride) {
-        EpigraphVarTagRef varTagRef = defaultOverride.getVarTagRef();
+      public void visitDefaultOverride(@NotNull SchemaDefaultOverride defaultOverride) {
+        SchemaVarTagRef varTagRef = defaultOverride.getVarTagRef();
         if (varTagRef != null) {
           PsiElement id = varTagRef.getQid();
           setHighlighting(id, holder, SchemaSyntaxHighlighter.VAR_MEMBER);
@@ -78,7 +78,7 @@ public class SchemaAnnotator implements Annotator {
       }
 
       @Override
-      public void visitTypeDef(@NotNull EpigraphTypeDef typeDef) {
+      public void visitTypeDef(@NotNull SchemaTypeDef typeDef) {
         PsiElement id = typeDef.getNameIdentifier();
         if (id != null) {
           setHighlighting(id, holder, SchemaSyntaxHighlighter.DECL_TYPE_NAME);
@@ -106,14 +106,14 @@ public class SchemaAnnotator implements Annotator {
             }
 
             // check if's already defined
-            List<EpigraphTypeDef> typeDefs = SchemaIndexUtil.findTypeDefs(element.getProject(), new Fqn[]{fullTypeNameFqn}, SchemaSearchScopeUtil.getSearchScope(typeDef));
+            List<SchemaTypeDef> typeDefs = SchemaIndexUtil.findTypeDefs(element.getProject(), new Fqn[]{fullTypeNameFqn}, SchemaSearchScopeUtil.getSearchScope(typeDef));
             if (typeDefs.size() > 1) {
               holder.createErrorAnnotation(id, SchemaBundle.message("annotator.type.already.defined", fullTypeNameFqn));
             }
 
             // check for circular inheritance
             HierarchyCache hierarchyCache = HierarchyCache.getHierarchyCache(element.getProject());
-            List<EpigraphTypeDef> typeParents = hierarchyCache.getTypeParents(typeDef);
+            List<SchemaTypeDef> typeParents = hierarchyCache.getTypeParents(typeDef);
             if (typeParents.contains(typeDef)) {
               holder.createErrorAnnotation(id, SchemaBundle.message("annotator.circular.inheritance"));
             }
@@ -133,15 +133,15 @@ public class SchemaAnnotator implements Annotator {
 //      }
 
       @Override
-      public void visitExtendsDecl(@NotNull EpigraphExtendsDecl epigraphExtendsDecl) {
-        EpigraphTypeDef typeDef = (EpigraphTypeDef) epigraphExtendsDecl.getParent();
+      public void visitExtendsDecl(@NotNull SchemaExtendsDecl schemaExtendsDecl) {
+        SchemaTypeDef typeDef = (SchemaTypeDef) schemaExtendsDecl.getParent();
         if (typeDef == null) return;
 
-        List<EpigraphFqnTypeRef> typeRefList = epigraphExtendsDecl.getFqnTypeRefList();
-        for (EpigraphFqnTypeRef fqnTypeRef : typeRefList) {
+        List<SchemaFqnTypeRef> typeRefList = schemaExtendsDecl.getFqnTypeRefList();
+        for (SchemaFqnTypeRef fqnTypeRef : typeRefList) {
           boolean wrongKind = false;
 
-          EpigraphTypeDef parent = fqnTypeRef.resolve();
+          SchemaTypeDef parent = fqnTypeRef.resolve();
           if (parent != null) {
             if (typeDef.getKind() != parent.getKind()) wrongKind = true;
           }
@@ -152,37 +152,37 @@ public class SchemaAnnotator implements Annotator {
       }
 
       @Override
-      public void visitSupplementsDecl(@NotNull EpigraphSupplementsDecl o) {
+      public void visitSupplementsDecl(@NotNull SchemaSupplementsDecl o) {
         // TODO similar to the above
       }
 
       @Override
-      public void visitSupplementDef(@NotNull EpigraphSupplementDef supplementDef) {
+      public void visitSupplementDef(@NotNull SchemaSupplementDef supplementDef) {
         // TODO check types compatibility (and circular inheritance?)
       }
 
       @Override
-      public void visitCustomParam(@NotNull EpigraphCustomParam customParam) {
+      public void visitCustomParam(@NotNull SchemaCustomParam customParam) {
         setHighlighting(customParam.getQid(), holder, SchemaSyntaxHighlighter.PARAM_NAME);
       }
 
       @Override
-      public void visitFqnTypeRef(@NotNull EpigraphFqnTypeRef typeRef) {
-        EpigraphFqn fqn = typeRef.getFqn();
+      public void visitFqnTypeRef(@NotNull SchemaFqnTypeRef typeRef) {
+        SchemaFqn fqn = typeRef.getFqn();
         highlightFqn(fqn, holder, new ImportTypeIntentionFix(typeRef));
       }
 
       @Override
-      public void visitFqn(@NotNull EpigraphFqn fqn) {
+      public void visitFqn(@NotNull SchemaFqn fqn) {
         PsiElement parent = fqn.getParent();
         // TODO don't check ref in the namespace decl?
-        if (parent.getNode().getElementType() != E_FQN_TYPE_REF) {
+        if (parent.getNode().getElementType() != S_FQN_TYPE_REF) {
           highlightFqn(fqn, holder, null);
         }
       }
 
       @Override
-      public void visitVarTagRef(@NotNull EpigraphVarTagRef tagRef) {
+      public void visitVarTagRef(@NotNull SchemaVarTagRef tagRef) {
         PsiReference reference = tagRef.getReference();
         if (reference == null || reference.resolve() == null) {
           holder.createErrorAnnotation(tagRef.getNode(), SchemaBundle.message("annotator.unresolved.reference"));
@@ -191,11 +191,11 @@ public class SchemaAnnotator implements Annotator {
     });
   }
 
-  private void validateExtendsList(@NotNull EpigraphTypeDef typeDef, @NotNull EpigraphAnonList anonList) {
+  private void validateExtendsList(@NotNull SchemaTypeDef typeDef, @NotNull SchemaAnonList anonList) {
     // TODO check types compatibility, lists are covariant?
   }
 
-  private void validateExtendsMap(@NotNull EpigraphTypeDef typeDef, @NotNull EpigraphAnonMap anonMap) {
+  private void validateExtendsMap(@NotNull SchemaTypeDef typeDef, @NotNull SchemaAnonMap anonMap) {
     // TODO check types compatibility, maps are covariant?
   }
 
@@ -203,31 +203,30 @@ public class SchemaAnnotator implements Annotator {
 //    // TODO
 //  }
 
-  private void highlightFqn(@Nullable EpigraphFqn epigraphFqn, @NotNull AnnotationHolder holder,
+  private void highlightFqn(@Nullable SchemaFqn schemaFqn, @NotNull AnnotationHolder holder,
                             @Nullable IntentionAction unresolvedTypeRefFix) {
-    if (epigraphFqn != null) {
+    if (schemaFqn != null) {
 //      setHighlighting(schemaFqn.getLastChild(), holder, SchemaSyntaxHighlighter.TYPE_REF);
 
-      PsiPolyVariantReference reference = (PsiPolyVariantReference) epigraphFqn.getLastChild().getReference();
-      if (reference == null) return;
-//      assert reference != null;
+      PsiPolyVariantReference reference = (PsiPolyVariantReference) schemaFqn.getLastChild().getReference();
+      assert reference != null;
 
 //      if (reference.resolve() == null) {
         ResolveResult[] resolveResults = reference.multiResolve(false);
         List<String> typeDefFqns = new ArrayList<>();
         for (ResolveResult resolveResult : resolveResults) {
-          if (resolveResult.getElement() instanceof EpigraphTypeDef)
+          if (resolveResult.getElement() instanceof SchemaTypeDef)
             typeDefFqns.add(SchemaPresentationUtil.getName((PsiNamedElement) resolveResult.getElement(), true));
         }
 
         if (resolveResults.length == 0) {
-          Annotation annotation = holder.createErrorAnnotation(epigraphFqn.getNode(),
+          Annotation annotation = holder.createErrorAnnotation(schemaFqn.getNode(),
               SchemaBundle.message("annotator.unresolved.reference"));
 
           if (unresolvedTypeRefFix != null)
             annotation.registerFix(unresolvedTypeRefFix);
         } else if (typeDefFqns.size() > 1) {
-          Annotation annotation = holder.createErrorAnnotation(epigraphFqn.getNode(), SchemaBundle.message("annotator.ambiguous.type.reference"));
+          Annotation annotation = holder.createErrorAnnotation(schemaFqn.getNode(), SchemaBundle.message("annotator.ambiguous.type.reference"));
           StringBuilder tooltipText = new StringBuilder(SchemaBundle.message("annotator.ambiguous.type.reference.candidates"));
           for (String typeDefFqn : typeDefFqns) {
             tooltipText.append('\n');

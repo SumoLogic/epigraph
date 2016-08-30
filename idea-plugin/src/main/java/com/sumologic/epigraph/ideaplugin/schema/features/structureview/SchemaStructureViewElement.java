@@ -5,7 +5,7 @@ import com.intellij.ide.util.treeView.smartTree.TreeElement;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.psi.NavigatablePsiElement;
 import com.intellij.psi.PsiElement;
-import io.epigraph.lang.parser.psi.*;
+import com.sumologic.epigraph.schema.parser.psi.*;
 import com.sumologic.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
 import com.sumologic.epigraph.ideaplugin.schema.presentation.StaticItemPresentation;
 import org.jetbrains.annotations.NotNull;
@@ -51,37 +51,37 @@ class SchemaStructureViewElement implements StructureViewTreeElement {
     }
 
     if (element instanceof SchemaFile) {
-      EpigraphDefs defs = ((SchemaFile) element).getDefs();
+      SchemaDefs defs = ((SchemaFile) element).getDefs();
       if (defs != null) {
-        children.addAll(defs.getTypeDefWrapperList().stream().map(EpigraphTypeDefWrapper::getElement).collect(Collectors.toList()));
+        children.addAll(defs.getTypeDefWrapperList().stream().map(SchemaTypeDefWrapper::getElement).collect(Collectors.toList()));
         children.addAll(defs.getSupplementDefList()); // SchemaSupplementDef
       }
-    } else if (element instanceof EpigraphRecordTypeDef) {
-      EpigraphRecordTypeBody recordTypeBody = ((EpigraphRecordTypeDef) element).getRecordTypeBody();
+    } else if (element instanceof SchemaRecordTypeDef) {
+      SchemaRecordTypeBody recordTypeBody = ((SchemaRecordTypeDef) element).getRecordTypeBody();
       if (recordTypeBody != null) {
         children.addAll(recordTypeBody.getCustomParamList()); // SchemaCustomParam
         children.addAll(recordTypeBody.getFieldDeclList()); // SchemaFieldDecl
       }
-    } else if (element instanceof EpigraphVarTypeDef) {
-      EpigraphVarTypeBody varTypeBody = ((EpigraphVarTypeDef) element).getVarTypeBody();
+    } else if (element instanceof SchemaVarTypeDef) {
+      SchemaVarTypeBody varTypeBody = ((SchemaVarTypeDef) element).getVarTypeBody();
       if (varTypeBody != null) {
         children.addAll(varTypeBody.getCustomParamList());
         children.addAll(varTypeBody.getVarTagDeclList()); // SchemaVarTagDecl
       }
-    } else if (element instanceof EpigraphEnumTypeDef) {
-      EpigraphEnumTypeBody enumTypeBody = ((EpigraphEnumTypeDef) element).getEnumTypeBody();
+    } else if (element instanceof SchemaEnumTypeDef) {
+      SchemaEnumTypeBody enumTypeBody = ((SchemaEnumTypeDef) element).getEnumTypeBody();
       if (enumTypeBody != null) {
         children.addAll(enumTypeBody.getCustomParamList());
         children.addAll(enumTypeBody.getEnumMemberDeclList()); // SchemaEnumMemberDecl
       }
-    } else if (element instanceof EpigraphMapTypeDef) {
-      EpigraphMapTypeBody mapTypeBody = ((EpigraphMapTypeDef) element).getMapTypeBody();
+    } else if (element instanceof SchemaMapTypeDef) {
+      SchemaMapTypeBody mapTypeBody = ((SchemaMapTypeDef) element).getMapTypeBody();
       if (mapTypeBody != null) children.addAll(mapTypeBody.getCustomParamList());
-    } else if (element instanceof EpigraphListTypeDef) {
-      EpigraphListTypeBody listTypeBody = ((EpigraphListTypeDef) element).getListTypeBody();
+    } else if (element instanceof SchemaListTypeDef) {
+      SchemaListTypeBody listTypeBody = ((SchemaListTypeDef) element).getListTypeBody();
       if (listTypeBody != null) children.addAll(listTypeBody.getCustomParamList());
-    } else if (element instanceof EpigraphPrimitiveTypeDef) {
-      EpigraphPrimitiveTypeBody primitiveTypeBody = ((EpigraphPrimitiveTypeDef) element).getPrimitiveTypeBody();
+    } else if (element instanceof SchemaPrimitiveTypeDef) {
+      SchemaPrimitiveTypeBody primitiveTypeBody = ((SchemaPrimitiveTypeDef) element).getPrimitiveTypeBody();
       if (primitiveTypeBody != null) children.addAll(primitiveTypeBody.getCustomParamList());
     }
 

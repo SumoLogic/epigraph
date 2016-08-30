@@ -14,9 +14,10 @@ import com.sumologic.epigraph.ideaplugin.schema.brains.VirtualFileUtil;
 import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.SchemaDirectTypeParentsSearch.SearchParameters;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaSearchScopeUtil;
-import io.epigraph.lang.parser.psi.*;
-import io.epigraph.lang.parser.psi.EpigraphRecordTypeDef;
-import io.epigraph.lang.parser.psi.EpigraphTypeDef;
+import com.sumologic.epigraph.schema.parser.psi.SchemaRecordTypeDef;
+import com.sumologic.epigraph.schema.parser.psi.SchemaSupplementDef;
+import com.sumologic.epigraph.schema.parser.psi.SchemaTypeDef;
+import com.sumologic.epigraph.schema.parser.psi.SchemaVarTypeDef;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -27,18 +28,18 @@ import java.util.stream.Collectors;
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public class SchemaDirectTypeParentsSearcher implements QueryExecutor<EpigraphTypeDef, SearchParameters> {
+public class SchemaDirectTypeParentsSearcher implements QueryExecutor<SchemaTypeDef, SearchParameters> {
   @Override
-  public boolean execute(@NotNull SearchParameters queryParameters, @NotNull Processor<EpigraphTypeDef> consumer) {
+  public boolean execute(@NotNull SearchParameters queryParameters, @NotNull Processor<SchemaTypeDef> consumer) {
 
-    final EpigraphTypeDef target = queryParameters.epigraphTypeDef;
+    final SchemaTypeDef target = queryParameters.schemaTypeDef;
     final Project project = PsiUtilCore.getProjectInReadAction(target);
     final VirtualFile targetVirtualFile = VirtualFileUtil.getOriginalVirtualFile(target.getContainingFile());
     if (targetVirtualFile == null) return true;
 
     final Application application = ApplicationManager.getApplication();
 
-    final List<EpigraphTypeDef> parents = new ArrayList<>();
+    final List<SchemaTypeDef> parents = new ArrayList<>();
 
     if (queryParameters.includeExtends) {
       application.runReadAction(() -> {
@@ -50,11 +51,11 @@ public class SchemaDirectTypeParentsSearcher implements QueryExecutor<EpigraphTy
 
     if (queryParameters.includeSupplements) {
 
-      List<EpigraphTypeDef> candidates = application.runReadAction(
-          (Computable<List<EpigraphTypeDef>>) () -> SchemaIndexUtil.findTypeDefs(project, null, null, GlobalSearchScope.allScope(project))
+      List<SchemaTypeDef> candidates = application.runReadAction(
+          (Computable<List<SchemaTypeDef>>) () -> SchemaIndexUtil.findTypeDefs(project, null, null, GlobalSearchScope.allScope(project))
       );
 
-      for (EpigraphTypeDef candidate : candidates) {
+      for (SchemaTypeDef candidate : candidates) {
         ProgressManager.checkCanceled();
 
         application.runReadAction(() -> {
@@ -63,12 +64,12 @@ public class SchemaDirectTypeParentsSearcher implements QueryExecutor<EpigraphTy
           final GlobalSearchScope candidateScope = SchemaSearchScopeUtil.getSearchScope(candidate);
           if (candidateScope.contains(targetVirtualFile)) {
 
-            List<EpigraphTypeDef> supplementedList = null;
-            if (candidate instanceof EpigraphRecordTypeDef) {
-              EpigraphRecordTypeDef recordTypeDef = (EpigraphRecordTypeDef) candidate;
+            List<SchemaTypeDef> supplementedList = null;
+            if (candidate instanceof SchemaRecordTypeDef) {
+              SchemaRecordTypeDef recordTypeDef = (SchemaRecordTypeDef) candidate;
               supplementedList = recordTypeDef.supplemented();
-            } else if (candidate instanceof EpigraphVarTypeDef) {
-              EpigraphVarTypeDef varTypeDef = (EpigraphVarTypeDef) candidate;
+            } else if (candidate instanceof SchemaVarTypeDef) {
+              SchemaVarTypeDef varTypeDef = (SchemaVarTypeDef) candidate;
               supplementedList = varTypeDef.supplemented();
             }
 
@@ -89,9 +90,9 @@ public class SchemaDirectTypeParentsSearcher implements QueryExecutor<EpigraphTy
 
     if (queryParameters.includeStandaloneSupplements) {
       application.runReadAction(() -> {
-        List<EpigraphSupplementDef> supplements = SchemaIndexUtil.findSupplementsBySupplemented(project, target);
+        List<SchemaSupplementDef> supplements = SchemaIndexUtil.findSupplementsBySupplemented(project, target);
         parents.addAll(supplements.stream()
-            .map(EpigraphSupplementDef::source)
+            .map(SchemaSupplementDef::source)
             .filter(Objects::nonNull)
             .collect(Collectors.toList()));
       });

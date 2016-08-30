@@ -9,8 +9,8 @@ import com.sumologic.epigraph.ideaplugin.schema.formatting.SchemaBlock;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static io.epigraph.lang.lexer.EpigraphElementTypes.E_LIST;
-import static io.epigraph.lang.lexer.EpigraphElementTypes.E_MAP;
+import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.S_LIST;
+import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.S_MAP;
 
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
@@ -22,7 +22,7 @@ public class AnonCollectionBlock extends SchemaBlock {
 
   @Override
   protected Indent getChildIndent(ASTNode child) {
-    if (child.getElementType() == E_LIST || child.getElementType() == E_MAP)
+    if (child.getElementType() == S_LIST || child.getElementType() == S_MAP)
       return Indent.getNoneIndent();
 
     return Indent.getContinuationIndent();

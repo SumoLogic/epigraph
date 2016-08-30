@@ -2,33 +2,33 @@ package com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy;
 
 import com.intellij.util.Query;
 import com.intellij.util.QueryFactory;
-import io.epigraph.lang.parser.psi.EpigraphTypeDef;
+import com.sumologic.epigraph.schema.parser.psi.SchemaTypeDef;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public class SchemaDirectTypeParentsSearch extends QueryFactory<EpigraphTypeDef, SchemaDirectTypeParentsSearch.SearchParameters> {
+public class SchemaDirectTypeParentsSearch extends QueryFactory<SchemaTypeDef, SchemaDirectTypeParentsSearch.SearchParameters> {
   public static final SchemaDirectTypeParentsSearch INSTANCE = new SchemaDirectTypeParentsSearch();
 
   public static class SearchParameters {
-    public final EpigraphTypeDef epigraphTypeDef;
+    public final SchemaTypeDef schemaTypeDef;
     public final boolean includeExtends;
     public final boolean includeSupplements;
     public final boolean includeStandaloneSupplements;
 
-    public SearchParameters(EpigraphTypeDef epigraphTypeDef,
+    public SearchParameters(SchemaTypeDef schemaTypeDef,
                             boolean includeExtends,
                             boolean includeSupplements,
                             boolean includeStandaloneSupplements) {
-      this.epigraphTypeDef = epigraphTypeDef;
+      this.schemaTypeDef = schemaTypeDef;
       this.includeExtends = includeExtends;
       this.includeSupplements = includeSupplements;
       this.includeStandaloneSupplements = includeStandaloneSupplements;
     }
 
-    public SearchParameters(EpigraphTypeDef epigraphTypeDef) {
-      this(epigraphTypeDef, true, true, true);
+    public SearchParameters(SchemaTypeDef schemaTypeDef) {
+      this(schemaTypeDef, true, true, true);
     }
   }
 
@@ -36,11 +36,11 @@ public class SchemaDirectTypeParentsSearch extends QueryFactory<EpigraphTypeDef,
     registerExecutor(new SchemaDirectTypeParentsSearcher());
   }
 
-  public static Query<EpigraphTypeDef> search(@NotNull final EpigraphTypeDef epigraphTypeDef) {
-    return search(new SearchParameters(epigraphTypeDef));
+  public static Query<SchemaTypeDef> search(@NotNull final SchemaTypeDef schemaTypeDef) {
+    return search(new SearchParameters(schemaTypeDef));
   }
 
-  public static Query<EpigraphTypeDef> search(@NotNull final SearchParameters parameters) {
+  public static Query<SchemaTypeDef> search(@NotNull final SearchParameters parameters) {
     return INSTANCE.createUniqueResultsQuery(parameters);
   }
 }

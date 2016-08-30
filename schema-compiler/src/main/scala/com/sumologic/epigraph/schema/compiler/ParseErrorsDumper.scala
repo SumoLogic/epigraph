@@ -1,7 +1,7 @@
 package com.sumologic.epigraph.schema.compiler
 
 import com.intellij.psi.{PsiErrorElement, PsiRecursiveElementWalkingVisitor}
-import io.epigraph.lang.parser.psi.SchemaFile
+import com.sumologic.epigraph.schema.parser.psi.SchemaFile
 
 import scala.collection.mutable
 

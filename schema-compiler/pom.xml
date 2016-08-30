@@ -20,7 +20,7 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>epigraph-lang-parser</artifactId>
+      <artifactId>epigraph-schema-parser</artifactId>
       <version>${project.version}</version>
     </dependency>
 

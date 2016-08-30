@@ -7,12 +7,12 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.tree.IElementType;
-import io.epigraph.lang.schema.SchemaLanguage;
-import io.epigraph.lang.parser.SchemaParserDefinition;
+import com.sumologic.epigraph.schema.parser.SchemaLanguage;
+import com.sumologic.epigraph.schema.parser.SchemaParserDefinition;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static io.epigraph.lang.lexer.EpigraphElementTypes.*;
+import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.*;
 
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
@@ -36,57 +36,57 @@ public class SchemaFormattingModelBuilder implements FormattingModelBuilder {
     SpacingBuilder spacingBuilder = new SpacingBuilder(settings, SchemaLanguage.INSTANCE);
 
     for (IElementType type : SchemaParserDefinition.KEYWORDS.getTypes()) {
-      if (type != E_LIST && type != E_MAP)
+      if (type != S_LIST && type != S_MAP)
         spacingBuilder.after(type).spaces(1);
     }
 
     // TODO this should be configurable
 
-    spacingBuilder.between(E_QID, E_CURLY_LEFT).spaces(1);
+    spacingBuilder.between(S_QID, S_CURLY_LEFT).spaces(1);
 
-    spacingBuilder.before(E_COLON).spaces(0);
-    spacingBuilder.after(E_COLON).spaces(1);
+    spacingBuilder.before(S_COLON).spaces(0);
+    spacingBuilder.after(S_COLON).spaces(1);
 
-    spacingBuilder.around(E_EQ).spaces(1);
-    spacingBuilder.around(E_SLASH).spaces(0);
-    spacingBuilder.around(E_DOT).spaces(0);
+    spacingBuilder.around(S_EQ).spaces(1);
+    spacingBuilder.around(S_SLASH).spaces(0);
+    spacingBuilder.around(S_DOT).spaces(0);
 
-    spacingBuilder.before(E_COMMA).spaces(0);
+    spacingBuilder.before(S_COMMA).spaces(0);
     // TODO doesn't work:  [1,2,3] => [1, 2, 3]
-    spacingBuilder.after(E_COMMA).spaces(1);
+    spacingBuilder.after(S_COMMA).spaces(1);
 
-    spacingBuilder.around(E_BRACKET_LEFT).spaces(0);
-    spacingBuilder.before(E_BRACKET_RIGHT).spaces(0);
+    spacingBuilder.around(S_BRACKET_LEFT).spaces(0);
+    spacingBuilder.before(S_BRACKET_RIGHT).spaces(0);
 
-    spacingBuilder.around(E_PAREN_LEFT).spaces(0);
-    spacingBuilder.before(E_PAREN_RIGHT).spaces(0);
+    spacingBuilder.around(S_PAREN_LEFT).spaces(0);
+    spacingBuilder.before(S_PAREN_RIGHT).spaces(0);
 
-    spacingBuilder.around(E_ANGLE_LEFT).spaces(0);
-    spacingBuilder.before(E_ANGLE_RIGHT).spaces(0);
+    spacingBuilder.around(S_ANGLE_LEFT).spaces(0);
+    spacingBuilder.before(S_ANGLE_RIGHT).spaces(0);
 
-    spacingBuilder.between(E_ANON_LIST, E_QID).spaces(1);
-    spacingBuilder.between(E_ANON_MAP, E_QID).spaces(1);
+    spacingBuilder.between(S_ANON_LIST, S_QID).spaces(1);
+    spacingBuilder.between(S_ANON_MAP, S_QID).spaces(1);
 
-    spacingBuilder.after(E_DEFAULT).spaces(1);
-    spacingBuilder.after(E_TYPE_REF).spaces(1);
+    spacingBuilder.after(S_DEFAULT).spaces(1);
+    spacingBuilder.after(S_TYPE_REF).spaces(1);
 
-    spacingBuilder.before(E_EXTENDS_DECL).spaces(1);
-    spacingBuilder.before(E_META_DECL).spaces(1);
-    spacingBuilder.before(E_VAR_TAG_DECL).spaces(1);
-    spacingBuilder.before(E_SUPPLEMENTS_DECL).spaces(1);
+    spacingBuilder.before(S_EXTENDS_DECL).spaces(1);
+    spacingBuilder.before(S_META_DECL).spaces(1);
+    spacingBuilder.before(S_VAR_TAG_DECL).spaces(1);
+    spacingBuilder.before(S_SUPPLEMENTS_DECL).spaces(1);
 
-    spacingBuilder.before(E_RECORD_TYPE_BODY).spaces(1);
-    spacingBuilder.before(E_VAR_TYPE_BODY).spaces(1);
-    spacingBuilder.before(E_ENUM_TYPE_BODY).spaces(1);
-    spacingBuilder.before(E_MAP_TYPE_BODY).spaces(1);
-    spacingBuilder.before(E_LIST_TYPE_BODY).spaces(1);
-    spacingBuilder.before(E_PRIMITIVE_TYPE_BODY).spaces(1);
+    spacingBuilder.before(S_RECORD_TYPE_BODY).spaces(1);
+    spacingBuilder.before(S_VAR_TYPE_BODY).spaces(1);
+    spacingBuilder.before(S_ENUM_TYPE_BODY).spaces(1);
+    spacingBuilder.before(S_MAP_TYPE_BODY).spaces(1);
+    spacingBuilder.before(S_LIST_TYPE_BODY).spaces(1);
+    spacingBuilder.before(S_PRIMITIVE_TYPE_BODY).spaces(1);
 
     // TODO doesn't work: [1  2     3] => [1 2 3]
-    spacingBuilder.between(E_DATA_VALUE, E_DATA_VALUE).spaces(1);
+    spacingBuilder.between(S_DATA_VALUE, S_DATA_VALUE).spaces(1);
 
     // same for fields/vartype members ?
-    spacingBuilder.between(E_ENUM_MEMBER_DECL, E_ENUM_MEMBER_DECL).spaces(1);
+    spacingBuilder.between(S_ENUM_MEMBER_DECL, S_ENUM_MEMBER_DECL).spaces(1);
 
     return spacingBuilder;
   }

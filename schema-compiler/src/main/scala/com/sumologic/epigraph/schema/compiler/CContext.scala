@@ -4,7 +4,8 @@ package com.sumologic.epigraph.schema.compiler
 
 import java.util.concurrent.{ConcurrentHashMap, ConcurrentLinkedQueue}
 
-import io.epigraph.lang.parser.Fqn
+import com.sumologic.epigraph.schema.parser.Fqn
+import com.sumologic.epigraph.util.JavaFunction
 
 import scala.collection.JavaConversions._
 

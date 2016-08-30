@@ -2,7 +2,7 @@ package com.sumologic.epigraph.ideaplugin.schema.highlighting;
 
 import com.intellij.codeInsight.daemon.impl.HighlightRangeExtension;
 import com.intellij.psi.PsiFile;
-import io.epigraph.lang.parser.psi.SchemaFile;
+import com.sumologic.epigraph.schema.parser.psi.SchemaFile;
 import org.jetbrains.annotations.NotNull;
 
 /**

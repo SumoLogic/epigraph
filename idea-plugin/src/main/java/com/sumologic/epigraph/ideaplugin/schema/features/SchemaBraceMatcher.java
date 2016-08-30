@@ -1,23 +1,29 @@
 package com.sumologic.epigraph.ideaplugin.schema.features;
 
+import com.intellij.codeInsight.hint.DeclarationRangeUtil;
 import com.intellij.lang.BracePair;
 import com.intellij.lang.PairedBraceMatcher;
+import com.intellij.openapi.util.TextRange;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IElementType;
+import com.sumologic.epigraph.schema.parser.psi.SchemaFieldDecl;
+import com.sumologic.epigraph.schema.parser.psi.SchemaTypeDef;
+import com.sumologic.epigraph.schema.parser.psi.SchemaVarTagDecl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static io.epigraph.lang.lexer.EpigraphElementTypes.*;
+import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.*;
 
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
 public class SchemaBraceMatcher implements PairedBraceMatcher {
   private static final BracePair[] pairs = new BracePair[]{
-      new BracePair(E_CURLY_LEFT, E_CURLY_RIGHT, true),
-      new BracePair(E_BRACKET_LEFT, E_BRACKET_RIGHT, false),
-      new BracePair(E_ANGLE_LEFT, E_ANGLE_RIGHT, false),
-      new BracePair(E_PAREN_LEFT, E_PAREN_RIGHT, false)
+      new BracePair(S_CURLY_LEFT, S_CURLY_RIGHT, true),
+      new BracePair(S_BRACKET_LEFT, S_BRACKET_RIGHT, false),
+      new BracePair(S_ANGLE_LEFT, S_ANGLE_RIGHT, false),
+      new BracePair(S_PAREN_LEFT, S_PAREN_RIGHT, false)
   };
 
   @Override

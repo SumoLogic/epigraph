@@ -6,11 +6,11 @@ import com.intellij.lang.findUsages.FindUsagesProvider;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
 import com.sumologic.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
-import io.epigraph.lang.parser.SchemaParserDefinition;
-import io.epigraph.lang.lexer.EpigraphFlexAdapter;
-import io.epigraph.lang.parser.psi.EpigraphFqnSegment;
-import io.epigraph.lang.parser.psi.EpigraphTypeDef;
-import io.epigraph.lang.parser.psi.EpigraphVarTagDecl;
+import com.sumologic.epigraph.schema.parser.SchemaParserDefinition;
+import com.sumologic.epigraph.schema.parser.lexer.SchemaFlexAdapter;
+import com.sumologic.epigraph.schema.parser.psi.SchemaFqnSegment;
+import com.sumologic.epigraph.schema.parser.psi.SchemaTypeDef;
+import com.sumologic.epigraph.schema.parser.psi.SchemaVarTagDecl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,7 +21,7 @@ public class SchemaFindUsagesProvider implements FindUsagesProvider {
   @Nullable
   @Override
   public WordsScanner getWordsScanner() {
-    return new DefaultWordsScanner(EpigraphFlexAdapter.newInstance(),
+    return new DefaultWordsScanner(SchemaFlexAdapter.newInstance(),
         SchemaParserDefinition.IDENTIFIERS,
         SchemaParserDefinition.COMMENTS,
         SchemaParserDefinition.LITERALS);
@@ -31,18 +31,18 @@ public class SchemaFindUsagesProvider implements FindUsagesProvider {
   public boolean canFindUsagesFor(@NotNull PsiElement psiElement) {
     // TODO Support fields used by projections
 
-    if (psiElement instanceof EpigraphTypeDef) {
-      EpigraphTypeDef element = (EpigraphTypeDef) psiElement;
+    if (psiElement instanceof SchemaTypeDef) {
+      SchemaTypeDef element = (SchemaTypeDef) psiElement;
       return element.getName() != null;
     }
 
-    if (psiElement instanceof EpigraphFqnSegment) {
-      EpigraphFqnSegment fqnSegment = (EpigraphFqnSegment) psiElement;
+    if (psiElement instanceof SchemaFqnSegment) {
+      SchemaFqnSegment fqnSegment = (SchemaFqnSegment) psiElement;
       return fqnSegment.getName() != null;
     }
 
-    if (psiElement instanceof EpigraphVarTagDecl) {
-      EpigraphVarTagDecl varTagDecl = (EpigraphVarTagDecl) psiElement;
+    if (psiElement instanceof SchemaVarTagDecl) {
+      SchemaVarTagDecl varTagDecl = (SchemaVarTagDecl) psiElement;
       return varTagDecl.getName() != null;
     }
 

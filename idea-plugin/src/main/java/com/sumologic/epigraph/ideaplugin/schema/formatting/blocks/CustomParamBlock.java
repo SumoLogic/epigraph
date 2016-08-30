@@ -9,7 +9,7 @@ import com.sumologic.epigraph.ideaplugin.schema.formatting.SchemaBlock;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static io.epigraph.lang.lexer.EpigraphElementTypes.E_ID;
+import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.S_ID;
 
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
@@ -21,7 +21,7 @@ public class CustomParamBlock extends SchemaBlock {
 
   @Override
   protected Indent getChildIndent(ASTNode child) {
-    if (child.getElementType() == E_ID) return Indent.getNoneIndent();
+    if (child.getElementType() == S_ID) return Indent.getNoneIndent();
     return Indent.getContinuationIndent();
   }
 

@@ -2,30 +2,30 @@
 
 package com.sumologic.epigraph.schema.compiler
 
-import io.epigraph.lang.parser.psi.{EpigraphAnonList, EpigraphAnonMap, EpigraphFqnTypeRef, EpigraphTypeRef}
+import com.sumologic.epigraph.schema.parser.psi.{SchemaAnonList, SchemaAnonMap, SchemaFqnTypeRef, SchemaTypeRef}
 
 
 object CTypeRef {
 
-  def apply(csf: CSchemaFile, psi: EpigraphTypeRef)(implicit ctx: CContext): CTypeRef = psi match {
-    case sftr: EpigraphFqnTypeRef => apply(csf, sftr)
-    case sal: EpigraphAnonList => apply(csf, sal)
-    case sam: EpigraphAnonMap => apply(csf, sam)
+  def apply(csf: CSchemaFile, psi: SchemaTypeRef)(implicit ctx: CContext): CTypeRef = psi match {
+    case sftr: SchemaFqnTypeRef => apply(csf, sftr)
+    case sal: SchemaAnonList => apply(csf, sal)
+    case sam: SchemaAnonMap => apply(csf, sam)
     case _ => throw new RuntimeException // TODO exception
   }
 
-  def apply(csf: CSchemaFile, psi: EpigraphFqnTypeRef)(implicit ctx: CContext): CTypeDefRef =
+  def apply(csf: CSchemaFile, psi: SchemaFqnTypeRef)(implicit ctx: CContext): CTypeDefRef =
     new CTypeDefRef(csf, psi)
 
-  def apply(csf: CSchemaFile, psi: EpigraphAnonList)(implicit ctx: CContext): CAnonListTypeRef =
+  def apply(csf: CSchemaFile, psi: SchemaAnonList)(implicit ctx: CContext): CAnonListTypeRef =
     new CAnonListTypeRef(csf, psi)
 
-  def apply(csf: CSchemaFile, psi: EpigraphAnonMap)(implicit ctx: CContext): CAnonMapTypeRef =
+  def apply(csf: CSchemaFile, psi: SchemaAnonMap)(implicit ctx: CContext): CAnonMapTypeRef =
     new CAnonMapTypeRef(csf, psi)
 
 }
 
-abstract class CTypeRef protected(val csf: CSchemaFile, val psi: EpigraphTypeRef)(implicit val ctx: CContext) {
+abstract class CTypeRef protected(val csf: CSchemaFile, val psi: SchemaTypeRef)(implicit val ctx: CContext) {
 
   type Name <: CTypeName
 
@@ -52,7 +52,7 @@ abstract class CTypeRef protected(val csf: CSchemaFile, val psi: EpigraphTypeRef
 }
 
 
-class CTypeDefRef(csf: CSchemaFile, psi: EpigraphFqnTypeRef)(implicit ctx: CContext) extends CTypeRef(csf, psi) {
+class CTypeDefRef(csf: CSchemaFile, psi: SchemaFqnTypeRef)(implicit ctx: CContext) extends CTypeRef(csf, psi) {
 
   final override type Name = CTypeFqn
 
@@ -63,7 +63,7 @@ class CTypeDefRef(csf: CSchemaFile, psi: EpigraphFqnTypeRef)(implicit ctx: CCont
 }
 
 
-class CAnonListTypeRef(csf: CSchemaFile, psi: EpigraphAnonList)(implicit ctx: CContext) extends CTypeRef(csf, psi) {
+class CAnonListTypeRef(csf: CSchemaFile, psi: SchemaAnonList)(implicit ctx: CContext) extends CTypeRef(csf, psi) {
 
   final override type Name = CAnonListTypeName
 
@@ -74,7 +74,7 @@ class CAnonListTypeRef(csf: CSchemaFile, psi: EpigraphAnonList)(implicit ctx: CC
 }
 
 
-class CAnonMapTypeRef(csf: CSchemaFile, psi: EpigraphAnonMap)(implicit ctx: CContext) extends CTypeRef(csf, psi) {
+class CAnonMapTypeRef(csf: CSchemaFile, psi: SchemaAnonMap)(implicit ctx: CContext) extends CTypeRef(csf, psi) {
 
   final override type Name = CAnonMapTypeName
 

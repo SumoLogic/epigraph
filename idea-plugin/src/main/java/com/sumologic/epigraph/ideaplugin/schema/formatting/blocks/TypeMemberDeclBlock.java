@@ -7,11 +7,11 @@ import com.intellij.formatting.Wrap;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.tree.IElementType;
 import com.sumologic.epigraph.ideaplugin.schema.formatting.SchemaBlock;
-import io.epigraph.lang.parser.SchemaParserDefinition;
+import com.sumologic.epigraph.schema.parser.SchemaParserDefinition;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static io.epigraph.lang.lexer.EpigraphElementTypes.E_CUSTOM_PARAM;
+import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.S_CUSTOM_PARAM;
 
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
@@ -27,7 +27,7 @@ public class TypeMemberDeclBlock extends SchemaBlock {
 
     if (child.getPsi().getPrevSibling() == null) return Indent.getNoneIndent();
     if (SchemaParserDefinition.CURLY_BRACES.contains(type)) return Indent.getNoneIndent();
-    if (type == E_CUSTOM_PARAM) return Indent.getNormalIndent();
+    if (type == S_CUSTOM_PARAM) return Indent.getNormalIndent();
     return Indent.getContinuationIndent();
   }
 

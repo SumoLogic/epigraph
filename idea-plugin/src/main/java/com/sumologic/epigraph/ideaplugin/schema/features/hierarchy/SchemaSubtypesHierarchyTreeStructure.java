@@ -4,7 +4,7 @@ import com.intellij.ide.hierarchy.HierarchyNodeDescriptor;
 import com.intellij.ide.hierarchy.HierarchyTreeStructure;
 import com.intellij.openapi.project.Project;
 import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.HierarchyCache;
-import io.epigraph.lang.parser.psi.EpigraphTypeDef;
+import com.sumologic.epigraph.schema.parser.psi.SchemaTypeDef;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -13,17 +13,17 @@ import java.util.List;
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
 class SchemaSubtypesHierarchyTreeStructure extends HierarchyTreeStructure {
-  SchemaSubtypesHierarchyTreeStructure(Project project, EpigraphTypeDef typeDef) {
+  SchemaSubtypesHierarchyTreeStructure(Project project, SchemaTypeDef typeDef) {
     super(project, new SchemaHierarchyNodeDescriptor(project, null, typeDef, true));
   }
 
   @NotNull
   @Override
   protected Object[] buildChildren(@NotNull HierarchyNodeDescriptor descriptor) {
-    final EpigraphTypeDef typeDef = ((SchemaHierarchyNodeDescriptor) descriptor).getTypeDef();
+    final SchemaTypeDef typeDef = ((SchemaHierarchyNodeDescriptor) descriptor).getTypeDef();
 
 //    final List<SchemaTypeDef> inheritors = new ArrayList<>(SchemaDirectTypeInheritorsSearch.search(typeDef).findAll());
-    final List<EpigraphTypeDef> inheritors = HierarchyCache.getHierarchyCache(myProject).getDirectTypeInheritors(typeDef);
+    final List<SchemaTypeDef> inheritors = HierarchyCache.getHierarchyCache(myProject).getDirectTypeInheritors(typeDef);
 
     return inheritors.stream()
         .map(def -> new SchemaHierarchyNodeDescriptor(myProject, descriptor, def, false))

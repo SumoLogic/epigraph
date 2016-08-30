@@ -8,7 +8,7 @@ import com.intellij.psi.TokenType;
 import com.intellij.psi.formatter.FormatterUtil;
 import com.intellij.psi.formatter.common.AbstractBlock;
 import com.intellij.psi.tree.IElementType;
-import io.epigraph.lang.schema.SchemaLanguage;
+import com.sumologic.epigraph.schema.parser.SchemaLanguage;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

@@ -11,9 +11,10 @@ import com.intellij.util.QueryExecutor;
 import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.SchemaDirectTypeInheritorsSearch.SearchParameters;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaSearchScopeUtil;
-import io.epigraph.lang.parser.psi.*;
-import io.epigraph.lang.parser.psi.EpigraphRecordTypeDef;
-import io.epigraph.lang.parser.psi.EpigraphTypeDef;
+import com.sumologic.epigraph.schema.parser.psi.SchemaRecordTypeDef;
+import com.sumologic.epigraph.schema.parser.psi.SchemaSupplementDef;
+import com.sumologic.epigraph.schema.parser.psi.SchemaTypeDef;
+import com.sumologic.epigraph.schema.parser.psi.SchemaVarTypeDef;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -23,25 +24,25 @@ import java.util.stream.Collectors;
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public class SchemaDirectTypeInheritorsSearcher implements QueryExecutor<EpigraphTypeDef, SearchParameters> {
+public class SchemaDirectTypeInheritorsSearcher implements QueryExecutor<SchemaTypeDef, SearchParameters> {
   @Override
-  public boolean execute(@NotNull SearchParameters queryParameters, @NotNull Processor<EpigraphTypeDef> consumer) {
+  public boolean execute(@NotNull SearchParameters queryParameters, @NotNull Processor<SchemaTypeDef> consumer) {
 
-    final EpigraphTypeDef target = queryParameters.epigraphTypeDef;
+    final SchemaTypeDef target = queryParameters.schemaTypeDef;
     final Project project = PsiUtilCore.getProjectInReadAction(target);
     Application application = ApplicationManager.getApplication();
 
-    List<EpigraphTypeDef> candidates = application.runReadAction(
-        (Computable<List<EpigraphTypeDef>>) () -> SchemaIndexUtil.findTypeDefs(project, null, null, SchemaSearchScopeUtil.getSearchScope(target))
+    List<SchemaTypeDef> candidates = application.runReadAction(
+        (Computable<List<SchemaTypeDef>>) () -> SchemaIndexUtil.findTypeDefs(project, null, null, SchemaSearchScopeUtil.getSearchScope(target))
     );
 
-    final List<EpigraphTypeDef> children = new ArrayList<>();
+    final List<SchemaTypeDef> children = new ArrayList<>();
 
-    for (EpigraphTypeDef candidate : candidates) {
+    for (SchemaTypeDef candidate : candidates) {
       ProgressManager.checkCanceled();
 
       application.runReadAction(() -> {
-        List<EpigraphTypeDef> candidateParents = candidate.extendsParents();
+        List<SchemaTypeDef> candidateParents = candidate.extendsParents();
         children.addAll(
             candidateParents.stream()
                 .filter(target::equals)
@@ -53,19 +54,19 @@ public class SchemaDirectTypeInheritorsSearcher implements QueryExecutor<Epigrap
 
     // -- process 'supplements'
 
-    if (target instanceof EpigraphRecordTypeDef) {
-      EpigraphRecordTypeDef recordTypeDef = (EpigraphRecordTypeDef) target;
-      children.addAll(application.runReadAction((Computable<List<EpigraphTypeDef>>) recordTypeDef::supplemented));
-    } else if (target instanceof EpigraphVarTypeDef) {
-      EpigraphVarTypeDef varTypeDef = (EpigraphVarTypeDef) target;
-      children.addAll(application.runReadAction((Computable<List<EpigraphTypeDef>>) varTypeDef::supplemented));
+    if (target instanceof SchemaRecordTypeDef) {
+      SchemaRecordTypeDef recordTypeDef = (SchemaRecordTypeDef) target;
+      children.addAll(application.runReadAction((Computable<List<SchemaTypeDef>>) recordTypeDef::supplemented));
+    } else if (target instanceof SchemaVarTypeDef) {
+      SchemaVarTypeDef varTypeDef = (SchemaVarTypeDef) target;
+      children.addAll(application.runReadAction((Computable<List<SchemaTypeDef>>) varTypeDef::supplemented));
     }
 
     // -- process 'supplement x with y'
 
     application.runReadAction(() -> {
-      List<EpigraphSupplementDef> supplements = SchemaIndexUtil.findSupplementsBySource(project, target);
-      for (EpigraphSupplementDef supplement : supplements) {
+      List<SchemaSupplementDef> supplements = SchemaIndexUtil.findSupplementsBySource(project, target);
+      for (SchemaSupplementDef supplement : supplements) {
         children.addAll(supplement.supplemented());
       }
     });

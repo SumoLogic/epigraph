@@ -5,14 +5,14 @@ import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.fileTypes.SyntaxHighlighterBase;
 import com.intellij.psi.tree.IElementType;
-import io.epigraph.lang.parser.SchemaParserDefinition;
-import io.epigraph.lang.lexer.EpigraphFlexAdapter;
+import com.sumologic.epigraph.schema.parser.SchemaParserDefinition;
+import com.sumologic.epigraph.schema.parser.lexer.SchemaFlexAdapter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static io.epigraph.lang.lexer.EpigraphElementTypes.*;
+import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.*;
 
 
 /**
@@ -47,11 +47,11 @@ public class SchemaSyntaxHighlighter extends SyntaxHighlighterBase {
 
   static {
     keys = new HashMap<>();
-    keys.put(E_ID, ID);
-    keys.put(E_COMMA, COMMA);
-    keys.put(E_COMMENT, LINE_COMMENT);
-    keys.put(E_BLOCK_COMMENT, BLOCK_COMMENT);
-    add(BRACKETS, E_BRACKET_LEFT, E_BRACKET_RIGHT);
+    keys.put(S_ID, ID);
+    keys.put(S_COMMA, COMMA);
+    keys.put(S_COMMENT, LINE_COMMENT);
+    keys.put(S_BLOCK_COMMENT, BLOCK_COMMENT);
+    add(BRACKETS, S_BRACKET_LEFT, S_BRACKET_RIGHT);
     add(CURLY_BR, SchemaParserDefinition.CURLY_BRACES.getTypes());
     add(KEYWORDS, SchemaParserDefinition.KEYWORDS.getTypes());
   }
@@ -65,7 +65,7 @@ public class SchemaSyntaxHighlighter extends SyntaxHighlighterBase {
   @NotNull
   @Override
   public Lexer getHighlightingLexer() {
-    return EpigraphFlexAdapter.newInstance();
+    return SchemaFlexAdapter.newInstance();
   }
 
   @NotNull

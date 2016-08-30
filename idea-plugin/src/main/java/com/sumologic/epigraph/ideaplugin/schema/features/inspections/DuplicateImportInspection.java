@@ -6,10 +6,10 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.util.containers.MultiMap;
 import com.sumologic.epigraph.ideaplugin.schema.brains.ImportsManager;
 import com.sumologic.epigraph.ideaplugin.schema.features.actions.fixes.OptimizeImportsQuickFix;
-import io.epigraph.lang.parser.Fqn;
-import io.epigraph.lang.parser.psi.EpigraphImportStatement;
-import io.epigraph.lang.parser.psi.EpigraphImports;
-import io.epigraph.lang.parser.psi.EpigraphVisitor;
+import com.sumologic.epigraph.schema.parser.Fqn;
+import com.sumologic.epigraph.schema.parser.psi.SchemaImportStatement;
+import com.sumologic.epigraph.schema.parser.psi.SchemaImports;
+import com.sumologic.epigraph.schema.parser.psi.SchemaVisitor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -23,16 +23,16 @@ public class DuplicateImportInspection extends LocalInspectionTool {
   @NotNull
   @Override
   public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly) {
-    return new EpigraphVisitor() {
+    return new SchemaVisitor() {
       @Override
-      public void visitImports(@NotNull EpigraphImports epigraphImports) {
-        super.visitImports(epigraphImports);
+      public void visitImports(@NotNull SchemaImports schemaImports) {
+        super.visitImports(schemaImports);
 
-        List<EpigraphImportStatement> imports = epigraphImports.getImportStatementList();
+        List<SchemaImportStatement> imports = schemaImports.getImportStatementList();
 
-        MultiMap<Fqn, EpigraphImportStatement> importsByFqn = ImportsManager.getImportsByFqn(imports);
+        MultiMap<Fqn, SchemaImportStatement> importsByFqn = ImportsManager.getImportsByFqn(imports);
 
-        for (Map.Entry<Fqn, Collection<EpigraphImportStatement>> entry : importsByFqn.entrySet()) {
+        for (Map.Entry<Fqn, Collection<SchemaImportStatement>> entry : importsByFqn.entrySet()) {
           entry.getValue().stream()
               .filter(is -> entry.getValue().size() > 1)
               .forEach(is -> holder.registerProblem(is,

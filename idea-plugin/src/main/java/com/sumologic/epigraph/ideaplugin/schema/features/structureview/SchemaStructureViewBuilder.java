@@ -3,7 +3,7 @@ package com.sumologic.epigraph.ideaplugin.schema.features.structureview;
 import com.intellij.ide.structureView.*;
 import com.intellij.ide.util.treeView.smartTree.Sorter;
 import com.intellij.openapi.editor.Editor;
-import io.epigraph.lang.parser.psi.*;
+import com.sumologic.epigraph.schema.parser.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,12 +24,12 @@ public class SchemaStructureViewBuilder extends TreeBasedStructureViewBuilder {
         .withSorters(Sorter.ALPHA_SORTER)
         .withSuitableClasses(
             SchemaFile.class,
-            EpigraphTypeDef.class,
-            EpigraphSupplementDef.class,
-            EpigraphFieldDecl.class,
-            EpigraphVarTagDecl.class,
-            EpigraphEnumMemberDecl.class,
-            EpigraphCustomParam.class
+            SchemaTypeDef.class,
+            SchemaSupplementDef.class,
+            SchemaFieldDecl.class,
+            SchemaVarTagDecl.class,
+            SchemaEnumMemberDecl.class,
+            SchemaCustomParam.class
         );
   }
 }

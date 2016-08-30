@@ -4,7 +4,7 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
 import com.intellij.refactoring.rename.RenamePsiElementProcessor;
-import io.epigraph.lang.parser.psi.EpigraphFieldDecl;
+import com.sumologic.epigraph.schema.parser.psi.SchemaFieldDecl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -14,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 public class RenameSchemaFieldProcessor extends RenamePsiElementProcessor {
   @Override
   public boolean canProcessElement(@NotNull PsiElement element) {
-    return element instanceof EpigraphFieldDecl;
+    return element instanceof SchemaFieldDecl;
   }
 
   @Nullable

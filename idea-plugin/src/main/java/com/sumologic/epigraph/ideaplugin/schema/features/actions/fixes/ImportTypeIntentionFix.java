@@ -19,10 +19,10 @@ import com.sumologic.epigraph.ideaplugin.schema.features.actions.SchemaNamespace
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaSearchScopeUtil;
 import com.sumologic.epigraph.ideaplugin.schema.options.SchemaSettings;
-import io.epigraph.lang.parser.Fqn;
-import io.epigraph.lang.parser.psi.SchemaFile;
-import io.epigraph.lang.parser.psi.EpigraphFqnTypeRef;
-import io.epigraph.lang.parser.psi.EpigraphTypeDef;
+import com.sumologic.epigraph.schema.parser.Fqn;
+import com.sumologic.epigraph.schema.parser.psi.SchemaFile;
+import com.sumologic.epigraph.schema.parser.psi.SchemaFqnTypeRef;
+import com.sumologic.epigraph.schema.parser.psi.SchemaTypeDef;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
@@ -37,9 +37,9 @@ import java.util.stream.Collectors;
 public class ImportTypeIntentionFix implements HintAction {
   // TODO(low) implement LocalQuickFix, see CreateNSDeclarationIntentionFix
 
-  private final EpigraphFqnTypeRef typeRef;
+  private final SchemaFqnTypeRef typeRef;
 
-  public ImportTypeIntentionFix(EpigraphFqnTypeRef typeRef) {
+  public ImportTypeIntentionFix(SchemaFqnTypeRef typeRef) {
     this.typeRef = typeRef;
   }
 
@@ -127,7 +127,7 @@ public class ImportTypeIntentionFix implements HintAction {
     final int tailSegmentsToRemove = typeRefFqn.size() == 1 ? 0 : typeRefFqn.size() - 1;
 
     return SchemaIndexUtil.findTypeDefs(typeRef.getProject(), null, typeRefFqn, SchemaSearchScopeUtil.getSearchScope(typeRef)).stream()
-        .map(EpigraphTypeDef::getFqn)
+        .map(SchemaTypeDef::getFqn)
         .filter(Objects::nonNull)
         .map(fqn -> fqn.removeTailSegments(tailSegmentsToRemove).toString())
         .sorted()

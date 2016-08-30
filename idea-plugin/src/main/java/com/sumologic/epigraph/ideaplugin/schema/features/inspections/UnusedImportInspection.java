@@ -6,10 +6,10 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElementVisitor;
 import com.sumologic.epigraph.ideaplugin.schema.brains.ImportsManager;
 import com.sumologic.epigraph.ideaplugin.schema.features.actions.fixes.OptimizeImportsQuickFix;
-import io.epigraph.lang.parser.psi.EpigraphImportStatement;
-import io.epigraph.lang.parser.psi.EpigraphVisitor;
-import io.epigraph.lang.parser.psi.SchemaFile;
-import io.epigraph.lang.parser.psi.EpigraphImports;
+import com.sumologic.epigraph.schema.parser.psi.SchemaFile;
+import com.sumologic.epigraph.schema.parser.psi.SchemaImportStatement;
+import com.sumologic.epigraph.schema.parser.psi.SchemaImports;
+import com.sumologic.epigraph.schema.parser.psi.SchemaVisitor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -21,13 +21,13 @@ public class UnusedImportInspection extends LocalInspectionTool {
   @NotNull
   @Override
   public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly) {
-    return new EpigraphVisitor() {
+    return new SchemaVisitor() {
       @Override
-      public void visitImports(@NotNull EpigraphImports epigraphImports) {
-        super.visitImports(epigraphImports);
+      public void visitImports(@NotNull SchemaImports schemaImports) {
+        super.visitImports(schemaImports);
 
-        Set<EpigraphImportStatement> unusedImports = ImportsManager.findUnusedImports((SchemaFile) epigraphImports.getContainingFile());
-        for (EpigraphImportStatement unusedImport : unusedImports) {
+        Set<SchemaImportStatement> unusedImports = ImportsManager.findUnusedImports((SchemaFile) schemaImports.getContainingFile());
+        for (SchemaImportStatement unusedImport : unusedImports) {
           holder.registerProblem(unusedImport,
               InspectionBundle.message("import.unused.problem.descriptor"),
               ProblemHighlightType.LIKE_UNUSED_SYMBOL,

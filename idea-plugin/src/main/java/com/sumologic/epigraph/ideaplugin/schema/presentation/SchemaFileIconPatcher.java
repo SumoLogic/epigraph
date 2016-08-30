@@ -11,7 +11,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.LayeredIcon;
 import com.intellij.util.PlatformIcons;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaFileIndexUtil;
-import io.epigraph.lang.schema.parser.SchemaFileType;
+import com.sumologic.epigraph.schema.parser.SchemaFileType;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;

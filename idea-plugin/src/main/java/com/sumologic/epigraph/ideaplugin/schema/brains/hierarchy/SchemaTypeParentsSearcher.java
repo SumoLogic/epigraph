@@ -12,7 +12,7 @@ import com.intellij.psi.PsiAnchor;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.Queue;
-import io.epigraph.lang.parser.psi.EpigraphTypeDef;
+import com.sumologic.epigraph.schema.parser.psi.SchemaTypeDef;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -20,10 +20,10 @@ import java.util.Set;
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public class SchemaTypeParentsSearcher extends QueryExecutorBase<EpigraphTypeDef, SchemaTypeParentsSearch.SearchParameters> {
+public class SchemaTypeParentsSearcher extends QueryExecutorBase<SchemaTypeDef, SchemaTypeParentsSearch.SearchParameters> {
   @Override
-  public void processQuery(@NotNull SchemaTypeParentsSearch.SearchParameters parameters, @NotNull Processor<EpigraphTypeDef> consumer) {
-    EpigraphTypeDef baseType = parameters.epigraphTypeDef;
+  public void processQuery(@NotNull SchemaTypeParentsSearch.SearchParameters parameters, @NotNull Processor<SchemaTypeDef> consumer) {
+    SchemaTypeDef baseType = parameters.schemaTypeDef;
 
     ProgressIndicator progress = ProgressIndicatorProvider.getGlobalProgressIndicator();
     if (progress != null) {
@@ -42,17 +42,17 @@ public class SchemaTypeParentsSearcher extends QueryExecutorBase<EpigraphTypeDef
     }
   }
 
-  private static void processParents(@NotNull Processor<EpigraphTypeDef> consumer,
-                                     @NotNull EpigraphTypeDef baseType,
+  private static void processParents(@NotNull Processor<SchemaTypeDef> consumer,
+                                     @NotNull SchemaTypeDef baseType,
                                      @NotNull SchemaTypeParentsSearch.SearchParameters parameters) {
 
-    final Ref<EpigraphTypeDef> currentBase = Ref.create();
+    final Ref<SchemaTypeDef> currentBase = Ref.create();
     final Queue<PsiAnchor> queue = new Queue<>(10);
     final Set<PsiAnchor> processed = ContainerUtil.newTroveSet();
 
-    final Processor<EpigraphTypeDef> processor = new ReadActionProcessor<EpigraphTypeDef>() {
+    final Processor<SchemaTypeDef> processor = new ReadActionProcessor<SchemaTypeDef>() {
       @Override
-      public boolean processInReadAction(EpigraphTypeDef inheritor) {
+      public boolean processInReadAction(SchemaTypeDef inheritor) {
         if (!consumer.process(inheritor)) return false;
         if (inheritor == null) return false;
         queue.addLast(PsiAnchor.create(inheritor));
@@ -72,8 +72,8 @@ public class SchemaTypeParentsSearcher extends QueryExecutorBase<EpigraphTypeDef
       final PsiAnchor anchor = queue.pullFirst();
       if (!processed.add(anchor)) continue;
 
-      EpigraphTypeDef typeDef = ApplicationManager.getApplication().runReadAction(
-          (Computable<EpigraphTypeDef>) () -> (EpigraphTypeDef) anchor.retrieve()
+      SchemaTypeDef typeDef = ApplicationManager.getApplication().runReadAction(
+          (Computable<SchemaTypeDef>) () -> (SchemaTypeDef) anchor.retrieve()
       );
       if (typeDef == null) continue;
 

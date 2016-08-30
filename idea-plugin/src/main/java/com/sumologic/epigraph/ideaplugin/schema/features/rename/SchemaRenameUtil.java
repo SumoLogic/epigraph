@@ -15,11 +15,11 @@ import com.intellij.util.containers.ContainerUtil;
 import com.sumologic.epigraph.ideaplugin.schema.SchemaBundle;
 import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.SchemaDirectTypeParentsSearch;
 import com.sumologic.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
-import io.epigraph.lang.parser.psi.EpigraphFieldDecl;
-import io.epigraph.lang.parser.psi.EpigraphTypeDef;
-import io.epigraph.lang.parser.psi.EpigraphRecordTypeBody;
-import io.epigraph.lang.parser.psi.EpigraphRecordTypeDef;
-import io.epigraph.lang.parser.psi.impl.EpigraphElementFactory;
+import com.sumologic.epigraph.schema.parser.psi.SchemaFieldDecl;
+import com.sumologic.epigraph.schema.parser.psi.SchemaRecordTypeBody;
+import com.sumologic.epigraph.schema.parser.psi.SchemaRecordTypeDef;
+import com.sumologic.epigraph.schema.parser.psi.SchemaTypeDef;
+import com.sumologic.epigraph.schema.parser.psi.impl.SchemaElementFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -60,25 +60,25 @@ public class SchemaRenameUtil {
     final List<PsiNamedElement> memberAndMaxSuperMembers = new ArrayList<>(maxSuperMembers);
     memberAndMaxSuperMembers.add(member);
 
-    final List<EpigraphTypeDef> typeAndMaxSuperTypes = memberAndMaxSuperMembers.stream()
-        .map(e -> PsiTreeUtil.getParentOfType(e, EpigraphTypeDef.class, false))
+    final List<SchemaTypeDef> typeAndMaxSuperTypes = memberAndMaxSuperMembers.stream()
+        .map(e -> PsiTreeUtil.getParentOfType(e, SchemaTypeDef.class, false))
         .collect(Collectors.toList());
 
     // no zippers in java 8..
-    final Map<EpigraphTypeDef, PsiNamedElement> typesToMembers = memberAndMaxSuperMembers.stream()
+    final Map<SchemaTypeDef, PsiNamedElement> typesToMembers = memberAndMaxSuperMembers.stream()
         .collect(Collectors.toMap(
-            t -> PsiTreeUtil.getParentOfType(t, EpigraphTypeDef.class, false),
+            t -> PsiTreeUtil.getParentOfType(t, SchemaTypeDef.class, false),
             Function.identity())
         );
     final boolean onlyOneSuperType = typeAndMaxSuperTypes.size() == 1;
 
-    final EpigraphTypeDef renameAllMarkerObject = EpigraphElementFactory.createRecordTypeDef(member.getProject(), "renameAll");
+    final SchemaTypeDef renameAllMarkerObject = SchemaElementFactory.createRecordTypeDef(member.getProject(), "renameAll");
     typesToMembers.put(renameAllMarkerObject, null);
 
     // should map maintain order?
     // selection = renameAllMarkerObject ?
 
-    final PsiElementProcessor<EpigraphTypeDef> processor = typeDef -> {
+    final PsiElementProcessor<SchemaTypeDef> processor = typeDef -> {
       if (typeDef == renameAllMarkerObject) {
         PsiNamedElement element = typesToMembers.get(typeDef);
         // TODO element is actually null
@@ -86,10 +86,10 @@ public class SchemaRenameUtil {
       } else {
         PsiNamedElement mainOne = typesToMembers.get(typeAndMaxSuperTypes.iterator().next());
         superMembersToRename.clear();
-        Iterator<EpigraphTypeDef> it = typeAndMaxSuperTypes.iterator();
+        Iterator<SchemaTypeDef> it = typeAndMaxSuperTypes.iterator();
         it.next(); // drop first one
         while (it.hasNext()) {
-          EpigraphTypeDef td = it.next();
+          SchemaTypeDef td = it.next();
           if (it.hasNext()) superMembersToRename.add(typesToMembers.get(td)); // drop last one
         }
         action.execute(mainOne);
@@ -107,18 +107,18 @@ public class SchemaRenameUtil {
         SchemaBundle.message("rename.has.multiple.base.members", name);
 
 
-    final EpigraphTypeDef[] typesPlusMarker = typeAndMaxSuperTypes.toArray(new EpigraphTypeDef[typeAndMaxSuperTypes.size() + 1]);
+    final SchemaTypeDef[] typesPlusMarker = typeAndMaxSuperTypes.toArray(new SchemaTypeDef[typeAndMaxSuperTypes.size() + 1]);
     typesPlusMarker[typesPlusMarker.length - 1] = renameAllMarkerObject;
     reverse(typesPlusMarker);
 
-    final JBPopup popup = NavigationUtil.getPsiElementPopup(typesPlusMarker, new PsiElementListCellRenderer<EpigraphTypeDef>() {
+    final JBPopup popup = NavigationUtil.getPsiElementPopup(typesPlusMarker, new PsiElementListCellRenderer<SchemaTypeDef>() {
       @Override
       protected Icon getIcon(PsiElement element) {
         return SchemaPresentationUtil.getIcon(element);
       }
 
       @Override
-      public String getElementText(EpigraphTypeDef t) {
+      public String getElementText(SchemaTypeDef t) {
         if (t == renameAllMarkerObject) return renameAllText;
 
         if (t == typeAndMaxSuperTypes.get(typeAndMaxSuperTypes.size() - 1)) return renameOnlyCurrent;
@@ -128,7 +128,7 @@ public class SchemaRenameUtil {
 
       @Nullable
       @Override
-      protected String getContainerText(EpigraphTypeDef t, String name) {
+      protected String getContainerText(SchemaTypeDef t, String name) {
         if (t == renameAllMarkerObject || t == typeAndMaxSuperTypes.get(typeAndMaxSuperTypes.size() - 1) || onlyOneSuperType)
           return null;
         return SchemaPresentationUtil.getNamespaceString(t, true);
@@ -149,11 +149,11 @@ public class SchemaRenameUtil {
   }
 
   private static List<PsiNamedElement> findMaxSuperMembers(@NotNull PsiNamedElement element) {
-    EpigraphTypeDef currentType;
-    Function<EpigraphTypeDef, PsiNamedElement> typeToMemberFunc;
+    SchemaTypeDef currentType;
+    Function<SchemaTypeDef, PsiNamedElement> typeToMemberFunc;
 
-    if (element instanceof EpigraphFieldDecl) {
-      EpigraphFieldDecl fieldDecl = (EpigraphFieldDecl) element;
+    if (element instanceof SchemaFieldDecl) {
+      SchemaFieldDecl fieldDecl = (SchemaFieldDecl) element;
       currentType = fieldDecl.getRecordTypeDef();
       String name = element.getName();
       assert name != null;
@@ -168,13 +168,13 @@ public class SchemaRenameUtil {
     return res;
   }
 
-  private static void addMaxSuperMembers(@NotNull EpigraphTypeDef currentType,
-                                         @NotNull Function<EpigraphTypeDef, PsiNamedElement> typeFunc,
+  private static void addMaxSuperMembers(@NotNull SchemaTypeDef currentType,
+                                         @NotNull Function<SchemaTypeDef, PsiNamedElement> typeFunc,
                                          @NotNull List<PsiNamedElement> acc) {
 
     final int accSizeBefore = acc.size();
 
-    Query<EpigraphTypeDef> parentsQuery = SchemaDirectTypeParentsSearch.search(currentType);
+    Query<SchemaTypeDef> parentsQuery = SchemaDirectTypeParentsSearch.search(currentType);
     parentsQuery.forEach(typeDef -> {
       PsiNamedElement member = typeFunc.apply(typeDef);
       if (member != null) addMaxSuperMembers(typeDef, typeFunc, acc);
@@ -186,7 +186,7 @@ public class SchemaRenameUtil {
   }
 
 
-  private static class HasFieldFilter implements Function<EpigraphTypeDef, PsiNamedElement> {
+  private static class HasFieldFilter implements Function<SchemaTypeDef, PsiNamedElement> {
     @NotNull
     private final String fieldName;
 
@@ -195,13 +195,13 @@ public class SchemaRenameUtil {
     }
 
     @Override
-    public PsiNamedElement apply(EpigraphTypeDef typeDef) {
-      if (typeDef instanceof EpigraphRecordTypeDef) {
-        EpigraphRecordTypeDef recordTypeDef = (EpigraphRecordTypeDef) typeDef;
-        EpigraphRecordTypeBody recordTypeBody = recordTypeDef.getRecordTypeBody();
+    public PsiNamedElement apply(SchemaTypeDef typeDef) {
+      if (typeDef instanceof SchemaRecordTypeDef) {
+        SchemaRecordTypeDef recordTypeDef = (SchemaRecordTypeDef) typeDef;
+        SchemaRecordTypeBody recordTypeBody = recordTypeDef.getRecordTypeBody();
         if (recordTypeBody == null) return null;
 
-        for (EpigraphFieldDecl fieldDecl : recordTypeBody.getFieldDeclList()) {
+        for (SchemaFieldDecl fieldDecl : recordTypeBody.getFieldDeclList()) {
           if (fieldName.equals(fieldDecl.getName()))
             return fieldDecl;
         }

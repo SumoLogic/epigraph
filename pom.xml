@@ -42,9 +42,9 @@
     <!--<module>maven-plugin</module>-->
     <module>scala-codegen</module>
     <!--<module>scala-codegen-test</module>-->
-    <module>schema-compiler</module>
     <module>schema-schema</module>
     <!--<module>idea-plugin</module>-->
+    <module>schema-parser</module>
   </modules>
 
   <properties>

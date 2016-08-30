@@ -1,9 +1,9 @@
 package com.sumologic.epigraph.ideaplugin.schema.brains;
 
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
-import io.epigraph.lang.parser.Fqn;
-import io.epigraph.lang.parser.psi.SchemaFile;
-import io.epigraph.lang.parser.psi.EpigraphImportStatement;
+import com.sumologic.epigraph.schema.parser.Fqn;
+import com.sumologic.epigraph.schema.parser.psi.SchemaFile;
+import com.sumologic.epigraph.schema.parser.psi.SchemaImportStatement;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -19,9 +19,9 @@ public class ImportsManagerTest extends LightCodeInsightFixtureTestCase {
 
   public void testFindUnusedImports() {
     myFixture.configureByFiles("UnusedImports.esc", "foo.esc", "foobar.esc");
-    Set<EpigraphImportStatement> unusedImports = ImportsManager.findUnusedImports((SchemaFile) myFixture.getFile());
+    Set<SchemaImportStatement> unusedImports = ImportsManager.findUnusedImports((SchemaFile) myFixture.getFile());
 
-    Set<String> strings = unusedImports.stream().map(EpigraphImportStatement::getText).collect(Collectors.toSet());
+    Set<String> strings = unusedImports.stream().map(SchemaImportStatement::getText).collect(Collectors.toSet());
     assertEquals(new HashSet<>(Arrays.asList("import foo", "import foo.Y", "import foo.Z")), strings);
   }
 

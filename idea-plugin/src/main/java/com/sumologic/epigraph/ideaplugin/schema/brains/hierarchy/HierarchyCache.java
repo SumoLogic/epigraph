@@ -5,7 +5,7 @@ import com.intellij.openapi.util.Key;
 import com.intellij.psi.*;
 import com.intellij.psi.util.*;
 import com.sumologic.epigraph.ideaplugin.schema.brains.ModificationTrackerImpl;
-import io.epigraph.lang.parser.psi.*;
+import com.sumologic.epigraph.schema.parser.psi.*;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -18,11 +18,11 @@ import java.util.List;
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
 public class HierarchyCache {
-  private final Key<ParameterizedCachedValue<List<EpigraphTypeDef>, EpigraphTypeDef>> TYPE_PARENTS_KEY = Key.create("TYPE_PARENTS");
-  private final Key<ParameterizedCachedValue<List<EpigraphTypeDef>, EpigraphTypeDef>> DIRECT_TYPE_PARENTS_KEY = Key.create("DIRECT_TYPE_PARENTS");
-  private final Key<ParameterizedCachedValue<List<EpigraphTypeDef>, EpigraphTypeDef>> TYPE_INHERITORS_KEY = Key.create("TYPE_INHERITORS");
-  private final Key<ParameterizedCachedValue<List<EpigraphTypeDef>, EpigraphTypeDef>> DIRECT_TYPE_INHERITORS_KEY = Key.create("DIRECT_TYPE_INHERITORS");
-  private final Key<ParameterizedCachedValue<List<EpigraphSupplementDef>, EpigraphTypeDef>> SUPPLEMENTS_BY_SUPPLEMENTED_KEY = Key.create("SUPPLEMENTS_BY_SUPPLEMENTED");
+  private final Key<ParameterizedCachedValue<List<SchemaTypeDef>, SchemaTypeDef>> TYPE_PARENTS_KEY = Key.create("TYPE_PARENTS");
+  private final Key<ParameterizedCachedValue<List<SchemaTypeDef>, SchemaTypeDef>> DIRECT_TYPE_PARENTS_KEY = Key.create("DIRECT_TYPE_PARENTS");
+  private final Key<ParameterizedCachedValue<List<SchemaTypeDef>, SchemaTypeDef>> TYPE_INHERITORS_KEY = Key.create("TYPE_INHERITORS");
+  private final Key<ParameterizedCachedValue<List<SchemaTypeDef>, SchemaTypeDef>> DIRECT_TYPE_INHERITORS_KEY = Key.create("DIRECT_TYPE_INHERITORS");
+  private final Key<ParameterizedCachedValue<List<SchemaSupplementDef>, SchemaTypeDef>> SUPPLEMENTS_BY_SUPPLEMENTED_KEY = Key.create("SUPPLEMENTS_BY_SUPPLEMENTED");
 
   private final Project project;
   private final ModificationTrackerImpl hierarchyModificationTracker = new ModificationTrackerImpl();
@@ -41,7 +41,7 @@ public class HierarchyCache {
    * Builds transitive type parents, ordered by distance (closest first)
    */
   @NotNull
-  public List<EpigraphTypeDef> getTypeParents(@NotNull EpigraphTypeDef typeDef) {
+  public List<SchemaTypeDef> getTypeParents(@NotNull SchemaTypeDef typeDef) {
     CachedValuesManager cachedValuesManager = CachedValuesManager.getManager(project);
     return cachedValuesManager.getParameterizedCachedValue(
         typeDef,
@@ -53,7 +53,7 @@ public class HierarchyCache {
   }
 
   @NotNull
-  public List<EpigraphTypeDef> getDirectTypeParents(@NotNull EpigraphTypeDef typeDef) {
+  public List<SchemaTypeDef> getDirectTypeParents(@NotNull SchemaTypeDef typeDef) {
     CachedValuesManager cachedValuesManager = CachedValuesManager.getManager(project);
     return cachedValuesManager.getParameterizedCachedValue(
         typeDef,
@@ -65,7 +65,7 @@ public class HierarchyCache {
   }
 
   @NotNull
-  public List<EpigraphTypeDef> getTypeInheritors(@NotNull EpigraphTypeDef typeDef) {
+  public List<SchemaTypeDef> getTypeInheritors(@NotNull SchemaTypeDef typeDef) {
     CachedValuesManager cachedValuesManager = CachedValuesManager.getManager(project);
     return cachedValuesManager.getParameterizedCachedValue(
         typeDef,
@@ -77,7 +77,7 @@ public class HierarchyCache {
   }
 
   @NotNull
-  public List<EpigraphSupplementDef> getSupplementsBySupplemented(@NotNull EpigraphTypeDef typeDef) {
+  public List<SchemaSupplementDef> getSupplementsBySupplemented(@NotNull SchemaTypeDef typeDef) {
     CachedValuesManager cachedValuesManager = CachedValuesManager.getManager(project);
     return cachedValuesManager.getParameterizedCachedValue(
         typeDef,
@@ -89,7 +89,7 @@ public class HierarchyCache {
   }
 
   @NotNull
-  public List<EpigraphTypeDef> getDirectTypeInheritors(@NotNull EpigraphTypeDef typeDef) {
+  public List<SchemaTypeDef> getDirectTypeInheritors(@NotNull SchemaTypeDef typeDef) {
     CachedValuesManager cachedValuesManager = CachedValuesManager.getManager(project);
     return cachedValuesManager.getParameterizedCachedValue(
         typeDef,
@@ -100,11 +100,11 @@ public class HierarchyCache {
     );
   }
 
-  private class TypeParentsProvider implements ParameterizedCachedValueProvider<List<EpigraphTypeDef>, EpigraphTypeDef> {
+  private class TypeParentsProvider implements ParameterizedCachedValueProvider<List<SchemaTypeDef>, SchemaTypeDef> {
     @Nullable
     @Override
-    public CachedValueProvider.Result<List<EpigraphTypeDef>> compute(EpigraphTypeDef typeDef) {
-      Collection<EpigraphTypeDef> parents = SchemaTypeParentsSearch.search(typeDef).findAll();
+    public CachedValueProvider.Result<List<SchemaTypeDef>> compute(SchemaTypeDef typeDef) {
+      Collection<SchemaTypeDef> parents = SchemaTypeParentsSearch.search(typeDef).findAll();
       return new CachedValueProvider.Result<>(
           new ArrayList<>(parents),
           hierarchyModificationTracker
@@ -112,11 +112,11 @@ public class HierarchyCache {
     }
   }
 
-  private class DirectTypeParentsProvider implements ParameterizedCachedValueProvider<List<EpigraphTypeDef>, EpigraphTypeDef> {
+  private class DirectTypeParentsProvider implements ParameterizedCachedValueProvider<List<SchemaTypeDef>, SchemaTypeDef> {
     @Nullable
     @Override
-    public CachedValueProvider.Result<List<EpigraphTypeDef>> compute(EpigraphTypeDef typeDef) {
-      Collection<EpigraphTypeDef> parents = SchemaDirectTypeParentsSearch.search(typeDef).findAll();
+    public CachedValueProvider.Result<List<SchemaTypeDef>> compute(SchemaTypeDef typeDef) {
+      Collection<SchemaTypeDef> parents = SchemaDirectTypeParentsSearch.search(typeDef).findAll();
       return new CachedValueProvider.Result<>(
           new ArrayList<>(parents),
           hierarchyModificationTracker
@@ -124,11 +124,11 @@ public class HierarchyCache {
     }
   }
 
-  private class TypeInheritorsProvider implements ParameterizedCachedValueProvider<List<EpigraphTypeDef>, EpigraphTypeDef> {
+  private class TypeInheritorsProvider implements ParameterizedCachedValueProvider<List<SchemaTypeDef>, SchemaTypeDef> {
     @Nullable
     @Override
-    public CachedValueProvider.Result<List<EpigraphTypeDef>> compute(EpigraphTypeDef typeDef) {
-      Collection<EpigraphTypeDef> inheritors = SchemaTypeInheritorsSearch.search(typeDef).findAll();
+    public CachedValueProvider.Result<List<SchemaTypeDef>> compute(SchemaTypeDef typeDef) {
+      Collection<SchemaTypeDef> inheritors = SchemaTypeInheritorsSearch.search(typeDef).findAll();
       return new CachedValueProvider.Result<>(
           new ArrayList<>(inheritors),
           hierarchyModificationTracker
@@ -136,11 +136,11 @@ public class HierarchyCache {
     }
   }
 
-  private class DirectTypeInheritorsProvider implements ParameterizedCachedValueProvider<List<EpigraphTypeDef>, EpigraphTypeDef> {
+  private class DirectTypeInheritorsProvider implements ParameterizedCachedValueProvider<List<SchemaTypeDef>, SchemaTypeDef> {
     @Nullable
     @Override
-    public CachedValueProvider.Result<List<EpigraphTypeDef>> compute(EpigraphTypeDef typeDef) {
-      Collection<EpigraphTypeDef> inheritors = SchemaDirectTypeInheritorsSearch.search(typeDef).findAll();
+    public CachedValueProvider.Result<List<SchemaTypeDef>> compute(SchemaTypeDef typeDef) {
+      Collection<SchemaTypeDef> inheritors = SchemaDirectTypeInheritorsSearch.search(typeDef).findAll();
       return new CachedValueProvider.Result<>(
           new ArrayList<>(inheritors),
           hierarchyModificationTracker
@@ -148,11 +148,11 @@ public class HierarchyCache {
     }
   }
 
-  private class SupplementsBySupplementedProvider implements ParameterizedCachedValueProvider<List<EpigraphSupplementDef>, EpigraphTypeDef> {
+  private class SupplementsBySupplementedProvider implements ParameterizedCachedValueProvider<List<SchemaSupplementDef>, SchemaTypeDef> {
     @Nullable
     @Override
-    public CachedValueProvider.Result<List<EpigraphSupplementDef>> compute(EpigraphTypeDef typeDef) {
-      List<EpigraphSupplementDef> supplements = SchemaIndexUtil.findSupplementsBySupplemented(project, typeDef);
+    public CachedValueProvider.Result<List<SchemaSupplementDef>> compute(SchemaTypeDef typeDef) {
+      List<SchemaSupplementDef> supplements = SchemaIndexUtil.findSupplementsBySupplemented(project, typeDef);
       return new CachedValueProvider.Result<>(
           supplements,
           hierarchyModificationTracker
@@ -201,27 +201,27 @@ public class HierarchyCache {
       if (child instanceof PsiWhiteSpace) return;
 
       // imports changed
-      if (PsiTreeUtil.getParentOfType(child, EpigraphImports.class) != null) {
+      if (PsiTreeUtil.getParentOfType(child, SchemaImports.class) != null) {
         invalidate = true;
       }
 
       // types added/removed/replaced
-      if (child instanceof EpigraphTypeDefWrapper || parent instanceof EpigraphDefs) {
+      if (child instanceof SchemaTypeDefWrapper || parent instanceof SchemaDefs) {
         invalidate = true;
       }
 
       // supplements added/removed/replaced
-      if (child instanceof EpigraphSupplementDef || parent instanceof EpigraphDefs) {
+      if (child instanceof SchemaSupplementDef || parent instanceof SchemaDefs) {
         invalidate = true;
       }
 
       // "extends" clause changed
-      if ((element instanceof EpigraphExtendsDecl) || PsiTreeUtil.getParentOfType(child, EpigraphExtendsDecl.class) != null) {
+      if ((element instanceof SchemaExtendsDecl) || PsiTreeUtil.getParentOfType(child, SchemaExtendsDecl.class) != null) {
         invalidate = true;
       }
 
       // "supplements" clause changed
-      if ((element instanceof EpigraphSupplementDef) || PsiTreeUtil.getParentOfType(child, EpigraphSupplementDef.class) != null) {
+      if ((element instanceof SchemaSupplementDef) || PsiTreeUtil.getParentOfType(child, SchemaSupplementDef.class) != null) {
         invalidate = true;
       }
 
