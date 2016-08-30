@@ -38,7 +38,7 @@
   <modules>
     <module>builtin-types-schema</module>
     <module>core</module>
-    <module>lang-parser</module>
+    <module>schema-parser</module>
     <!--<module>maven-plugin</module>-->
     <module>scala-codegen</module>
     <!--<module>scala-codegen-test</module>-->
