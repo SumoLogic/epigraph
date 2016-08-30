@@ -2,7 +2,7 @@ package com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
-import com.sumologic.epigraph.schema.parser.psi.*;
+import io.epigraph.schema.parser.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

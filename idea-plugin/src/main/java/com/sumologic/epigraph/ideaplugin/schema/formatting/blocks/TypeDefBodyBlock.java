@@ -7,7 +7,7 @@ import com.intellij.formatting.Wrap;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.tree.IElementType;
 import com.sumologic.epigraph.ideaplugin.schema.formatting.SchemaBlock;
-import com.sumologic.epigraph.schema.parser.SchemaParserDefinition;
+import io.epigraph.schema.parser.SchemaParserDefinition;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

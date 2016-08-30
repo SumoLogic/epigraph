@@ -5,14 +5,14 @@ import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.fileTypes.SyntaxHighlighterBase;
 import com.intellij.psi.tree.IElementType;
-import com.sumologic.epigraph.schema.parser.SchemaParserDefinition;
-import com.sumologic.epigraph.schema.parser.lexer.SchemaFlexAdapter;
+import io.epigraph.schema.parser.SchemaParserDefinition;
+import io.epigraph.schema.lexer.SchemaFlexAdapter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.*;
+import static io.epigraph.schema.lexer.SchemaElementTypes.*;
 
 
 /**

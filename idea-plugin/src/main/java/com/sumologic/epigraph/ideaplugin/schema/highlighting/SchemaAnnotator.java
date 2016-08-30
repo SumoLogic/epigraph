@@ -15,16 +15,16 @@ import com.sumologic.epigraph.ideaplugin.schema.features.actions.fixes.ImportTyp
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaSearchScopeUtil;
 import com.sumologic.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
-import com.sumologic.epigraph.schema.parser.Fqn;
-import com.sumologic.epigraph.schema.parser.NamingConventions;
-import com.sumologic.epigraph.schema.parser.psi.*;
+import io.epigraph.schema.parser.Fqn;
+import io.epigraph.schema.parser.NamingConventions;
+import io.epigraph.schema.parser.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.S_FQN_TYPE_REF;
+import static io.epigraph.schema.lexer.SchemaElementTypes.S_FQN_TYPE_REF;
 
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>

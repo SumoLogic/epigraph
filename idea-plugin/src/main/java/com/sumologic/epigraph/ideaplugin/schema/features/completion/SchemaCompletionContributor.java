@@ -11,16 +11,16 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
 import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.TypeMembers;
 import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaPsiUtil;
-import com.sumologic.epigraph.schema.parser.Fqn;
-import com.sumologic.epigraph.schema.parser.SchemaLanguage;
-import com.sumologic.epigraph.schema.parser.SchemaParserDefinition;
-import com.sumologic.epigraph.schema.parser.psi.*;
-import com.sumologic.epigraph.schema.parser.psi.impl.SchemaPsiImplUtil;
+import io.epigraph.schema.parser.Fqn;
+import io.epigraph.schema.parser.SchemaLanguage;
+import io.epigraph.schema.parser.SchemaParserDefinition;
+import io.epigraph.schema.parser.psi.*;
+import io.epigraph.schema.parser.psi.impl.SchemaPsiImplUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.*;
+import static io.epigraph.schema.lexer.SchemaElementTypes.*;
 
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>

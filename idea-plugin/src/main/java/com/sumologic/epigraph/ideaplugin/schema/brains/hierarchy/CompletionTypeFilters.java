@@ -3,14 +3,14 @@ package com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaPsiUtil;
-import com.sumologic.epigraph.schema.parser.psi.*;
+import io.epigraph.schema.parser.psi.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
 
-import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.S_WITH;
+import static io.epigraph.schema.lexer.SchemaElementTypes.S_WITH;
 
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>

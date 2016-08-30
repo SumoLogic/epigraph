@@ -12,15 +12,15 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.util.containers.ContainerUtil;
-import com.sumologic.epigraph.schema.parser.psi.*;
+import io.epigraph.schema.parser.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Set;
 
-import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.S_BLOCK_COMMENT;
-import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.S_COMMENT;
+import static io.epigraph.schema.lexer.SchemaElementTypes.S_BLOCK_COMMENT;
+import static io.epigraph.schema.lexer.SchemaElementTypes.S_COMMENT;
 
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>

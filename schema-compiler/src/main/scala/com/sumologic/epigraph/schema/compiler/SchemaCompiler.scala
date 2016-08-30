@@ -9,8 +9,8 @@ import java.util.Collections
 import com.intellij.lang.ParserDefinition
 import com.intellij.psi.PsiFile
 import com.sumologic.epigraph.schema.compiler.CPrettyPrinters._
-import com.sumologic.epigraph.schema.parser.SchemaParserDefinition
-import com.sumologic.epigraph.schema.parser.psi.SchemaFile
+import io.epigraph.schema.parser.SchemaParserDefinition
+import io.epigraph.schema.parser.psi.SchemaFile
 import com.sumologic.epigraph.util.JavaFunction
 import org.intellij.grammar.LightPsi
 import org.jetbrains.annotations.Nullable

@@ -1,19 +1,13 @@
 package com.sumologic.epigraph.ideaplugin.schema.features;
 
-import com.intellij.codeInsight.hint.DeclarationRangeUtil;
 import com.intellij.lang.BracePair;
 import com.intellij.lang.PairedBraceMatcher;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IElementType;
-import com.sumologic.epigraph.schema.parser.psi.SchemaFieldDecl;
-import com.sumologic.epigraph.schema.parser.psi.SchemaTypeDef;
-import com.sumologic.epigraph.schema.parser.psi.SchemaVarTagDecl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.*;
+import static io.epigraph.schema.lexer.SchemaElementTypes.*;
 
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>

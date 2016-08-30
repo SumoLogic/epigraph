@@ -1,7 +1,7 @@
 apply plugin: 'java'
 apply plugin: 'application'
 
-mainClassName = 'com.sumologic.epigraph.schema.parser.Main'
+mainClassName = 'io.epigraph.schema.parser.Main'
 
 sourceSets.main.java.srcDirs += file("$buildDir/generated-sources/schema-parser-common.java")
 idea.module.generatedSourceDirs += file("$buildDir/generated-sources/schema-parser-common.java")
@@ -29,10 +29,13 @@ dependencies {
 //  classpath += files(project.lightPsiJar)
 //}
 
-task copySources(type: Copy) {
-  from '../schema-parser-common/src/main/java'
-  from '../schema-parser-common/src/main/java.generated'
-  into "$buildDir/generated-sources/schema-parser-common.java"
+task copySources << {
+  delete { "$buildDir/generated-sources/schema-parser-common.java" }
+  copy {
+    from('../schema-parser-common/src/main/java') { include '**/*.java' }
+    from('../schema-parser-common/src/main/java.generated') { include '**/*.java' }
+    into "$buildDir/generated-sources/schema-parser-common.java"
+  }
 }
 
 compileJava.dependsOn copySources

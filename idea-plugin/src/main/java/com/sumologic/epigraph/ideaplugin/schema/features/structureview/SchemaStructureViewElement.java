@@ -5,7 +5,7 @@ import com.intellij.ide.util.treeView.smartTree.TreeElement;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.psi.NavigatablePsiElement;
 import com.intellij.psi.PsiElement;
-import com.sumologic.epigraph.schema.parser.psi.*;
+import io.epigraph.schema.parser.psi.*;
 import com.sumologic.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
 import com.sumologic.epigraph.ideaplugin.schema.presentation.StaticItemPresentation;
 import org.jetbrains.annotations.NotNull;

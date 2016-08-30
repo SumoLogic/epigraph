@@ -7,12 +7,12 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.tree.IElementType;
-import com.sumologic.epigraph.schema.parser.SchemaLanguage;
-import com.sumologic.epigraph.schema.parser.SchemaParserDefinition;
+import io.epigraph.schema.parser.SchemaLanguage;
+import io.epigraph.schema.parser.SchemaParserDefinition;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.*;
+import static io.epigraph.schema.lexer.SchemaElementTypes.*;
 
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>

@@ -11,10 +11,10 @@ import com.intellij.util.QueryExecutor;
 import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.SchemaDirectTypeInheritorsSearch.SearchParameters;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaSearchScopeUtil;
-import com.sumologic.epigraph.schema.parser.psi.SchemaRecordTypeDef;
-import com.sumologic.epigraph.schema.parser.psi.SchemaSupplementDef;
-import com.sumologic.epigraph.schema.parser.psi.SchemaTypeDef;
-import com.sumologic.epigraph.schema.parser.psi.SchemaVarTypeDef;
+import io.epigraph.schema.parser.psi.SchemaRecordTypeDef;
+import io.epigraph.schema.parser.psi.SchemaSupplementDef;
+import io.epigraph.schema.parser.psi.SchemaTypeDef;
+import io.epigraph.schema.parser.psi.SchemaVarTypeDef;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

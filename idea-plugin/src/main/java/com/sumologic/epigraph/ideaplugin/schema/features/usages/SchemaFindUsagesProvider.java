@@ -6,11 +6,11 @@ import com.intellij.lang.findUsages.FindUsagesProvider;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
 import com.sumologic.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
-import com.sumologic.epigraph.schema.parser.SchemaParserDefinition;
-import com.sumologic.epigraph.schema.parser.lexer.SchemaFlexAdapter;
-import com.sumologic.epigraph.schema.parser.psi.SchemaFqnSegment;
-import com.sumologic.epigraph.schema.parser.psi.SchemaTypeDef;
-import com.sumologic.epigraph.schema.parser.psi.SchemaVarTagDecl;
+import io.epigraph.schema.parser.SchemaParserDefinition;
+import io.epigraph.schema.lexer.SchemaFlexAdapter;
+import io.epigraph.schema.parser.psi.SchemaFqnSegment;
+import io.epigraph.schema.parser.psi.SchemaTypeDef;
+import io.epigraph.schema.parser.psi.SchemaVarTagDecl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

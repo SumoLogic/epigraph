@@ -3,7 +3,7 @@ package com.sumologic.epigraph.ideaplugin.schema.presentation;
 import com.intellij.openapi.fileEditor.impl.EditorTabTitleProvider;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.sumologic.epigraph.schema.parser.Common;
+import io.epigraph.schema.parser.Common;
 import org.jetbrains.annotations.Nullable;
 
 /**

@@ -1,7 +1,7 @@
 package com.sumologic.epigraph.ideaplugin.schema.features.completion;
 
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
-import com.sumologic.epigraph.schema.parser.SchemaFileType;
+import io.epigraph.schema.parser.SchemaFileType;
 
 import java.util.*;
 

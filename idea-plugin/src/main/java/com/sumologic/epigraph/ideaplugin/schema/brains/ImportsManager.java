@@ -7,10 +7,10 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.containers.MultiMap;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaSearchScopeUtil;
-import com.sumologic.epigraph.schema.parser.Fqn;
-import com.sumologic.epigraph.schema.parser.psi.*;
-import com.sumologic.epigraph.schema.parser.psi.impl.SchemaElementFactory;
-import com.sumologic.epigraph.schema.parser.psi.impl.SchemaPsiImplUtil;
+import io.epigraph.schema.parser.Fqn;
+import io.epigraph.schema.parser.psi.*;
+import io.epigraph.schema.parser.psi.impl.SchemaElementFactory;
+import io.epigraph.schema.parser.psi.impl.SchemaPsiImplUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;

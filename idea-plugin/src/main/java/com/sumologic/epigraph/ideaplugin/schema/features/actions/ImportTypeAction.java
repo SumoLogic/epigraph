@@ -7,7 +7,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.PopupChooserBuilder;
 import com.intellij.ui.components.JBList;
 import com.sumologic.epigraph.ideaplugin.schema.brains.ImportsManager;
-import com.sumologic.epigraph.schema.parser.psi.SchemaFile;
+import io.epigraph.schema.parser.psi.SchemaFile;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;

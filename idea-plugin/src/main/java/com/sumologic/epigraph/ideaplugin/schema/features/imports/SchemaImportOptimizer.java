@@ -3,7 +3,7 @@ package com.sumologic.epigraph.ideaplugin.schema.features.imports;
 import com.intellij.lang.ImportOptimizer;
 import com.intellij.psi.PsiFile;
 import com.sumologic.epigraph.ideaplugin.schema.brains.ImportsManager;
-import com.sumologic.epigraph.schema.parser.psi.SchemaFile;
+import io.epigraph.schema.parser.psi.SchemaFile;
 import org.jetbrains.annotations.NotNull;
 
 /**

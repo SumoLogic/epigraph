@@ -9,17 +9,17 @@ import com.intellij.psi.PsiElement;
 import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.HierarchyCache;
 import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.TypeMembers;
 import com.sumologic.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
-import com.sumologic.epigraph.schema.parser.psi.SchemaFieldDecl;
-import com.sumologic.epigraph.schema.parser.psi.SchemaSupplementDef;
-import com.sumologic.epigraph.schema.parser.psi.SchemaTypeDef;
-import com.sumologic.epigraph.schema.parser.psi.SchemaVarTagDecl;
+import io.epigraph.schema.parser.psi.SchemaFieldDecl;
+import io.epigraph.schema.parser.psi.SchemaSupplementDef;
+import io.epigraph.schema.parser.psi.SchemaTypeDef;
+import io.epigraph.schema.parser.psi.SchemaVarTagDecl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.List;
 
-import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.S_QID;
+import static io.epigraph.schema.lexer.SchemaElementTypes.S_QID;
 
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>

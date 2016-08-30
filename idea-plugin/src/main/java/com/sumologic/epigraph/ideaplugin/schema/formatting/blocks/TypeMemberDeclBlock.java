@@ -7,11 +7,11 @@ import com.intellij.formatting.Wrap;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.tree.IElementType;
 import com.sumologic.epigraph.ideaplugin.schema.formatting.SchemaBlock;
-import com.sumologic.epigraph.schema.parser.SchemaParserDefinition;
+import io.epigraph.schema.parser.SchemaParserDefinition;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.sumologic.epigraph.schema.parser.lexer.SchemaElementTypes.S_CUSTOM_PARAM;
+import static io.epigraph.schema.lexer.SchemaElementTypes.S_CUSTOM_PARAM;
 
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
