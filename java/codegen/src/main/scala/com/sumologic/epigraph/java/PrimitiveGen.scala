@@ -82,7 +82,7 @@ $listSupplier\
    */
   interface Imm extends ${baseName(t)},${withParents(t, _ + ".Imm")} io.epigraph.data.${Kind(t)}Datum.Imm.Static {
 
-    /** Private implementation of `${baseName(t)}.Imm` interface. */
+    /** Private implementation of `$ln.Imm` interface. */
     final class Impl extends io.epigraph.data.${Kind(t)}Datum.Imm.Static.Impl implements ${baseName(t)}.Imm {
 
       Impl(@NotNull io.epigraph.data.${Kind(t)}Datum.Imm.Raw raw) { super(${baseName(t)}.type, raw); }
@@ -97,7 +97,7 @@ $listSupplier\
       @Override
       @Nullable ${baseName(t)}.Imm getDatum();
 
-      /** Private implementation of `${baseName(t)}.Imm.Value` interface. */
+      /** Private implementation of `$ln.Imm.Value` interface. */
       final class Impl extends io.epigraph.data.Val.Imm.Static.Impl<${baseName(t)}.Imm.Value, ${baseName(t)}.Imm>
           implements ${baseName(t)}.Imm.Value {
 
@@ -118,7 +118,7 @@ $listSupplier\
       @Override
       @Nullable ${baseName(t)}.Imm get(); // implied default self-tag datum
 
-      /** Private implementation of `${baseName(t)}.Imm.Data` interface. */
+      /** Private implementation of `$ln.Imm.Data` interface. */
       final class Impl extends io.epigraph.data.Data.Imm.Static.Impl<${baseName(t)}.Imm.Data> implements ${baseName(t)}.Imm.Data {
 
         Impl(@NotNull io.epigraph.data.Data.Imm.Raw raw) { super(${baseName(t)}.type, raw); }

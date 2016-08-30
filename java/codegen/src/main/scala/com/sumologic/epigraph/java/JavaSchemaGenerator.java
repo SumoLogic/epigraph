@@ -27,7 +27,7 @@ public class JavaSchemaGenerator {
 
   public void generate() throws IOException {
 
-    Path tmpRoot = GenUtils.rmrf(outputRoot.resolveSibling(outputRoot.getFileName().toString() + "~tmp"), outputRoot.getParent());
+    Path tmpRoot = JavaGenUtils.rmrf(outputRoot.resolveSibling(outputRoot.getFileName().toString() + "~tmp"), outputRoot.getParent());
 
 //    for (CNamespace namespace : ctx.namespaces().values()) {
 //      new NamespaceGen(namespace, ctx).writeUnder(tmpRoot);
@@ -79,7 +79,7 @@ public class JavaSchemaGenerator {
       // TODO new AnonMapGen(amt, ctx).writeUnder(tmpRoot);
     }
 
-    GenUtils.move(tmpRoot, outputRoot, outputRoot.getParent()); // move new root to final location
+    JavaGenUtils.move(tmpRoot, outputRoot, outputRoot.getParent()); // move new root to final location
 
   }
 

@@ -11,7 +11,7 @@ abstract class JavaTypeDefGen[TypeDef >: Null <: CTypeDef](from: TypeDef, ctx: C
     extends JavaTypeGen[TypeDef](from, ctx) {
 
   protected override def relativeFilePath: Path = { // TODO respect annotations changing namespace/type names for scala
-    GenUtils.fqnToPath(from.name.fqn.removeLastSegment()).resolve(from.name.local + ".java")
+    JavaGenUtils.fqnToPath(from.name.fqn.removeLastSegment()).resolve(from.name.local + ".java")
   }
 
   def generateCollections(t: CType): String = {

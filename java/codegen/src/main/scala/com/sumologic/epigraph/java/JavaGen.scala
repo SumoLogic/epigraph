@@ -17,7 +17,7 @@ abstract class JavaGen[From >: Null <: AnyRef](protected val from: From, protect
   protected def generate: String
 
   def writeUnder(sourcesRoot: Path): Unit = {
-    GenUtils.writeFile(sourcesRoot, relativeFilePath, generate)
+    JavaGenUtils.writeFile(sourcesRoot, relativeFilePath, generate)
   }
 
   // TODO protected access for the rest:
@@ -114,12 +114,17 @@ abstract class JavaGen[From >: Null <: AnyRef](protected val from: From, protect
   /** java type name for given typeref as seen from the context of the other type namespace */
   def lqrn(tr: CTypeRef, lt: CType, lnTrans: (String) => String = identity): String = lqn(tr.resolved, lt, lnTrans)
 
-  /** default tag type for given typeref and default tag name */
-  def dtt(tr: CTypeRef, dtn: String): CType = tr.resolved match {
-    case vt: CVarTypeDef => vt.effectiveTagsMap(dtn).typeRef.resolved
-    case dt: CDatumType => dt
+  /** tag type for given typeref and tag name */
+  def tt(tr: CTypeRef, tn: String): CType = tr.resolved match {
+    case tt: CVarTypeDef => tt.effectiveTagsMap(tn).typeRef.resolved
+    case tt: CDatumType => tt
     case unknown => throw new UnsupportedOperationException(unknown.toString)
   }
+
+  /** default tag constant reference name for given value type (as seen from the context of the local type namespace) */
+  def dtrn(vt: CValueType, dtn: String, lt: CType): String = lqrn(vt.typeRef, lt) + ".type." +
+      (if (dtn == CDatumType.ImpliedDefaultTagName) "self" else jn(dtn))
+
 
   /** java package name for given type */
   def pn(t: CType): String = getNamedTypeComponent(t).name.fqn.removeLastSegment().segments.map(jn).mkString(".")

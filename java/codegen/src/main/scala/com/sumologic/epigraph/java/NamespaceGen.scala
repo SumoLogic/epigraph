@@ -15,7 +15,7 @@ class NamespaceGen(from: CNamespace, ctx: CContext) extends JavaGen[CNamespace](
   // TODO respect annotations changing namespace names for scala
 
   protected override def relativeFilePath: Path =
-    GenUtils.fqnToPath(from.fqn).resolve("package.scala")
+    JavaGenUtils.fqnToPath(from.fqn).resolve("package.scala")
 
   protected def generate: String = sn"""\
 /*

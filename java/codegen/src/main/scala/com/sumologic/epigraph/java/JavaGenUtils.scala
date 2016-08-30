@@ -10,7 +10,7 @@ import io.epigraph.schema.parser.Fqn
 
 import scala.collection.JavaConversions._
 
-object GenUtils {
+object JavaGenUtils {
 
   val EmptyPath: Path = Paths.get("")
 

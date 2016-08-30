@@ -245,12 +245,16 @@ class CTag(val csf: CSchemaFile, val psi: SchemaVarTagDecl)(implicit val ctx: CC
 
 trait CDatumType extends CType {
 
-  val ImpliedDefaultTagName: String = "_"
-
   // `None` - no declaration, `Some(None)` - declared nodefault, `Some(Some(String))` - declared default
-  override val declaredDefaultTagName: Some[Some[String]] = Some(Some(ImpliedDefaultTagName))
+  override val declaredDefaultTagName: Some[Some[String]] = Some(Some(CDatumType.ImpliedDefaultTagName))
 
   //override val effectiveTagsMap: Map[String, CTag] = ???
+
+}
+
+object CDatumType {
+
+  val ImpliedDefaultTagName: String = "_"
 
 }
 

@@ -13,7 +13,7 @@ class AnonListGen(from: CAnonListType, ctx: CContext) extends JavaTypeGen[CAnonL
 
   // TODO respect annotations changing namespace/type names for scala
   protected override def relativeFilePath: Path =
-    GenUtils.fqnToPath(getNamedTypeComponent(t).name.fqn.removeLastSegment()).resolve(ln(t) + ".java")
+    JavaGenUtils.fqnToPath(getNamedTypeComponent(t).name.fqn.removeLastSegment()).resolve(ln(t) + ".java")
 
   override def generate: String = sn"""\
 package ${pn(t)};

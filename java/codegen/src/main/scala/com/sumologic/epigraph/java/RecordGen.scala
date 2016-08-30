@@ -33,6 +33,9 @@ import org.jetbrains.annotations.Nullable;
 //import java.util.Collections;
 //import java.util.stream.Collectors;
 
+/**
+ * Base (read) interface for `${t.name.name}` datum.
+ */
 public interface $ln extends${withParents(t)} io.epigraph.data.RecordDatum.Static {
 
   @NotNull $ln.Type type = new $ln.Type();
@@ -47,12 +50,12 @@ ${ // default datum and value getters
   /**
    * Returns default tag datum for `${f.name}` field.
    */
-  @Nullable ${lqn(dtt(f.typeRef, f.effectiveDefaultTagName.get), t)} get${up(f.name)}();
+  @Nullable ${lqn(tt(f.typeRef, f.effectiveDefaultTagName.get), t)} get${up(f.name)}();
 
   /**
    * Returns default tag value for `${f.name}` field.
    */
-  @Nullable ${lqn(dtt(f.typeRef, f.effectiveDefaultTagName.get), t)}.Value get_${up(f.name)}();
+  @Nullable ${lqn(tt(f.typeRef, f.effectiveDefaultTagName.get), t)}.Value get_${up(f.name)}();
 """
 }${ // tags datum and value getters
     f.valueType.typeRef.resolved match {
@@ -78,6 +81,9 @@ ${ // default datum and value getters
   }.mkString
 }\
 
+  /**
+   * Class for `${t.name.name}` datum type.
+   */
   class Type extends io.epigraph.types.RecordType.Static<
       $ln.Imm,
       $ln.Builder,
@@ -112,6 +118,9 @@ $listSupplier\
 
   }
 
+  /**
+   * Base interface for `${t.name.name}` value (holding a datum or an error).
+   */
   interface Value extends${withParents(".Value")} io.epigraph.data.Val.Static {
 
     @Override
@@ -122,6 +131,9 @@ $listSupplier\
 
   }
 
+  /**
+   * Base interface for `${t.name.name}` data (holding single default representation of the type).
+   */
   interface Data extends${withParents(".Data")} io.epigraph.data.Data.Static {
 
     @Override
@@ -131,8 +143,10 @@ $listSupplier\
 
   }
 
+  /**
+   * Immutable interface for `${t.name.name}` datum.
+   */
   interface Imm extends $ln,${withParents(".Imm")} io.epigraph.data.RecordDatum.Imm.Static {
-
 ${ // for each effective field
     t.effectiveFields.map { f => sn"""\
 ${ // default getter
@@ -142,13 +156,13 @@ ${ // default getter
    * Returns immutable default tag datum for `${f.name}` field.
    */
   @Override
-  @Nullable ${lqn(dtt(f.typeRef, f.effectiveDefaultTagName.get), t)}.Imm get${up(f.name)}();
+  @Nullable ${lqn(tt(f.typeRef, f.effectiveDefaultTagName.get), t)}.Imm get${up(f.name)}();
 
   /**
    * Returns immutable default tag value for `${f.name}` field.
    */
   @Override
-  @Nullable ${lqn(dtt(f.typeRef, f.effectiveDefaultTagName.get), t)}.Imm.Value get_${up(f.name)}();
+  @Nullable ${lqn(tt(f.typeRef, f.effectiveDefaultTagName.get), t)}.Imm.Value get_${up(f.name)}();
 """
       }${ // tag getters
         f.valueType.typeRef.resolved match {
@@ -162,7 +176,7 @@ ${ // default getter
   @Nullable ${lqrn(tag.typeRef, t)}.Imm get${up(f.name)}${up(tag.name)}();
 
   /**
-   * Returns `${tag.name}` tag value for `${f.name}` field.
+   * Returns immutable `${tag.name}` tag value for `${f.name}` field.
    */
   @Override
   @Nullable ${lqrn(tag.typeRef, t)}.Imm.Value get_${up(f.name)}${up(tag.name)}();
@@ -176,12 +190,72 @@ ${ // default getter
     }.mkString
   }\
 
+    /** Private implementation of `$ln.Imm` interface. */
+    final class Impl extends io.epigraph.data.RecordDatum.Imm.Static.Impl<$ln.Imm> implements $ln.Imm {
+
+      private Impl(@NotNull io.epigraph.data.RecordDatum.Imm.Raw raw) { super($ln.type, raw); }
+${ // for each effective field
+    t.effectiveFields.map { f => sn"""\
+${ // default getter
+      if (f.effectiveDefaultTagName.isDefined) sn"""\
+
+        /**
+         * Returns immutable default tag datum for `${f.name}` field.
+         */
+        @Override
+        public @Nullable ${lqn(tt(f.typeRef, f.effectiveDefaultTagName.get), t)}.Imm get${up(f.name)}() {
+          return io.epigraph.util.Util.apply(get_${up(f.name)}(), ${lqn(tt(f.typeRef, f.effectiveDefaultTagName.get), t)}.Imm.Value::getDatum);
+        }
+
+        /**
+         * Returns immutable default tag value for `${f.name}` field.
+         */
+        @Override
+        public @Nullable ${lqn(tt(f.typeRef, f.effectiveDefaultTagName.get), t)}.Imm.Value get_${up(f.name)}() {
+          return (${lqn(tt(f.typeRef, f.effectiveDefaultTagName.get), t)}.Imm.Value) _raw()._getValue($ln.${jn(f.name)}, ${dtrn(f.valueType, f.effectiveDefaultTagName.get, t)});
+        }
+"""
+    }${ // tag getters
+      f.valueType.typeRef.resolved match {
+        case vartype: CVarTypeDef =>
+          vartype.effectiveTagsMap.values.map { tag => sn"""\
+
+        /**
+         * Returns immutable `${tag.name}` tag datum for `${f.name}` field.
+         */
+        @Override
+        public @Nullable ${lqrn(tag.typeRef, t)}.Imm get${up(f.name)}${up(tag.name)}() {
+          return io.epigraph.util.Util.apply(get_${up(f.name)}${up(tag.name)}(), ${lqn(tt(f.typeRef, tag.name), t)}.Imm.Value::getDatum);
+        }
+
+        /**
+         * Returns immutable `${tag.name}` tag value for `${f.name}` field.
+         */
+        @Override
+        public @Nullable ${lqrn(tag.typeRef, t)}.Imm.Value get_${up(f.name)}${up(tag.name)}() {
+          return (${lqn(tt(f.typeRef, tag.name), t)}.Imm.Value) _raw()._getValue($ln.${jn(f.name)}, ${dtrn(f.valueType, tag.name, t)});
+        }
+"""
+          }.mkString
+        case _: CDatumType => ""
+        case unexpected => throw new UnsupportedOperationException(unexpected.name.name)
+      }
+    }
+"""
+    }.mkString
+  }\
+
+    }
+
+    /**
+     * Immutable interface for `${t.name.name}` value (holding an immutable datum or an error).
+     */
     interface Value extends $ln.Value,${withParents(".Imm.Value")} io.epigraph.data.Val.Imm.Static {
 
       @Override
       @Nullable $ln.Imm getDatum();
 
-
+      /** Private implementation of `$ln.Imm.Value` interface. */
       final class Impl extends io.epigraph.data.Val.Imm.Static.Impl<$ln.Imm.Value, $ln.Imm>
           implements $ln.Imm.Value {
 
@@ -191,11 +265,15 @@ ${ // default getter
 
     }
 
+    /**
+     * Immutable interface for `${t.name.name}` data (holding single default representation of the type).
+     */
     interface Data extends $ln.Data,${withParents(".Imm.Data")} io.epigraph.data.Data.Imm.Static {
 
       @Override
       @Nullable $ln.Imm.Value get();
 
+      /** Private implementation of `$ln.Imm.Data` interface. */
       final class Impl extends io.epigraph.data.Data.Imm.Static.Impl<$ln.Imm.Data>
           implements $ln.Imm.Data {
 
@@ -210,63 +288,12 @@ ${ // default getter
 
     }
 
-    final class Impl extends io.epigraph.data.RecordDatum.Imm.Static.Impl<$ln.Imm> implements $ln.Imm {
-
-      private Impl(@NotNull io.epigraph.data.RecordDatum.Imm.Raw raw) { super($ln.type, raw); }
-
-${ // for each effective field
-    t.effectiveFields.map { f => sn"""\
-${ // default getter
-      if (f.effectiveDefaultTagName.isDefined) sn"""\
-
-        /**
-         * Returns immutable default tag datum for `${f.name}` field.
-         */
-        @Override
-        public @Nullable ${lqn(dtt(f.typeRef, f.effectiveDefaultTagName.get), t)}.Imm get${up(f.name)}() {
-          return io.epigraph.util.Util.apply(get_${up(f.name)}(), ${lqn(dtt(f.typeRef, f.effectiveDefaultTagName.get), t)}.Imm.Value::getDatum);
-        }
-
-        /**
-         * Returns immutable default tag value for `${f.name}` field.
-         */
-        @Override
-        public @Nullable ${lqn(dtt(f.typeRef, f.effectiveDefaultTagName.get), t)}.Imm.Value get_${up(f.name)}() {
-          return (${lqn(dtt(f.typeRef, f.effectiveDefaultTagName.get), t)}.Imm.Value) _raw()._getValue($ln.${jn(f.name)}, FixMe.type.self);
-        }
-"""
-}${ // tag getters
-      f.valueType.typeRef.resolved match {
-        case vartype: CVarTypeDef =>
-          vartype.effectiveTagsMap.values.map { tag => sn"""\
-
-        /**
-         * Returns immutable `${tag.name}` tag datum for `${f.name}` field.
-         */
-        @Override
-        public @Nullable ${lqrn(tag.typeRef, t)}.Imm get${up(f.name)}${up(tag.name)}();
-
-        /**
-         * Returns `${tag.name}` tag value for `${f.name}` field.
-         */
-        @Override
-        public @Nullable ${lqrn(tag.typeRef, t)}.Imm.Value get_${up(f.name)}${up(tag.name)}();
-"""
-          }.mkString
-        case _: CDatumType => ""
-        case unexpected => throw new UnsupportedOperationException(unexpected.name.name)
-      }
-}
-"""
-    }.mkString
-}\
-
-    }
-
-
   }
 
 
+  /**
+   * Builder for `${t.name.name}` datum.
+   */
   final class Builder extends io.epigraph.data.RecordDatum.Mut.Static<$ln.Imm> implements $ln {
 
     private Builder(@NotNull io.epigraph.data.RecordDatum.Mut.Raw raw) { super($ln.type, raw, $ln.Imm.Impl::new); }
@@ -307,6 +334,9 @@ ${ // default getter
     // TODO full set of field setters
 
 
+    /**
+     * Builder for `${t.name.name}` value (holding a builder or an error).
+     */
     final static class Value extends io.epigraph.data.Val.Mut.Static<$ln.Imm.Value, $ln.Builder>
         implements $ln.Value {
 
@@ -314,6 +344,9 @@ ${ // default getter
 
     }
 
+    /**
+     * Builder for `${t.name.name}` data (holding single default representation of the type).
+     */
     final static class Data extends io.epigraph.data.Data.Mut.Static<$ln.Imm.Data>
         implements $ln.Data {
 
