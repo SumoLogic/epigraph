@@ -29,6 +29,11 @@
       <artifactId>epigraph-schema-compiler</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>epigraph-schema-parser</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 
     <dependency>
       <groupId>org.scalameta</groupId>
