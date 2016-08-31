@@ -16,3 +16,5 @@ record PersonRecord {
   persons: list[Person]
   personss: list[list[Person]]
 }
+
+list[Person default id] PersonList

@@ -8,11 +8,10 @@ import io.epigraph.schema.parser.psi._
 import org.jetbrains.annotations.Nullable
 
 import scala.collection.JavaConversions._
-import scala.collection.immutable.ListMap
 import scala.collection.mutable
 
 
-trait CType {self =>
+abstract class CType(implicit val ctx: CContext) {self =>
 
   type This >: this.type <: CType {type This <: self.This}
 
@@ -23,7 +22,8 @@ trait CType {self =>
   // `None` - no declaration, `Some(None)` - declared nodefault, `Some(Some(String))` - declared default
   val declaredDefaultTagName: Option[Option[String]]
 
-  //def effectiveTagsMap: Map[String, CTag]
+  // `None` - nodefault, `Some(String)` - default tag name
+  def effectiveDefaultTagName: Option[String]
 
   def isAssignableFrom(subtype: CType): Boolean
 
@@ -36,7 +36,7 @@ trait CType {self =>
 
 
 abstract class CTypeDef protected(val csf: CSchemaFile, val psi: SchemaTypeDef, override val kind: CTypeKind)
-    (implicit val ctx: CContext) extends CType {self =>
+    (implicit ctx: CContext) extends CType {self =>
 
   override type This >: this.type <: CTypeDef {type This <: self.This}
 
@@ -168,10 +168,42 @@ class CVarTypeDef(csf: CSchemaFile, override val psi: SchemaVarTypeDef)(implicit
   csf, psi, CTypeKind.VARTYPE
 ) {
 
-  override type This = CVarTypeDef
+  final override type This = CVarTypeDef
 
   // `None` - no declaration, `Some(None)` - declared nodefault, `Some(Some(String))` - declared default
-  override val declaredDefaultTagName: Option[Option[String]] = CTypeDef.declaredDefaultTagName(psi.getDefaultOverride)
+  final override val declaredDefaultTagName: Option[Option[String]] = CTypeDef.declaredDefaultTagName(
+    psi.getDefaultOverride
+  )
+
+  final override def effectiveDefaultTagName: Option[String] = ctx.after(
+    CPhase.COMPUTE_SUPERTYPES, null, _effectiveDefaultTagName
+  )
+
+  // explicit no/default on the type > effective no/default from super type(s)
+  private lazy val _effectiveDefaultTagName: Option[String] = {
+    declaredDefaultTagName match {
+      case Some(explicitDefault: Option[String]) => // this type has explicit default declaration (maybe `nodefault`)
+        explicitDefault
+      case None => // this type doesn't have default declaration
+        // get effective default declarations from supertype(s), assert they are the same (ignore Nones), return
+        supertypes.flatMap(_.effectiveDefaultTagName).distinct match {
+          case Seq(theone) => // all supertypes (that have effective default tag) have the same one
+            Some(theone)
+          case Seq() => // no supertypes have effective default tag
+            None
+          case multiple => // more than one distinct effective default tag on supertypes
+            ctx.errors.add(
+              CError(
+                csf.filename, csf.position(psi.getQid),
+                s"Type `${name.name}` inherits from (and/or is supplemented with) types with different default tags ${
+                  multiple.mkString("`", "`, `", "`")
+                } hence must declare its own"
+              )
+            )
+            None // TODO pick one of the tags so subtypes don't think we have nodefault?
+        }
+    }
+  }
 
   val declaredTags: Seq[CTag] = {
     @Nullable val body = psi.getVarTypeBody
@@ -193,21 +225,6 @@ class CVarTypeDef(csf: CSchemaFile, override val psi: SchemaVarTypeDef)(implicit
       imb += effectiveTag(declaredTagsMap.get(fn), nfs.result())
     }
     imb.result()
-  }
-
-  @deprecated("use effectiveTags")
-  def effectiveTagsMap: Map[String, CTag] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, _effectiveTagsMap)
-
-  @deprecated("use effectiveTags")
-  private lazy val _effectiveTagsMap = {
-    linearizedParents.flatMap(_.effectiveTagsMap) ++ declaredTagsMap
-    //(for {vt <- linearizedParents; nt <- vt.effectiveTagsMap} yield nt) ++ declaredTagsMap
-  } groupBy { case (n, _t) =>
-    n
-  } map { case (n, seq) =>
-    (n, seq.map { case (_n, t) => t })
-  } map { case (n, seq) =>
-    (n, effectiveTag(declaredTagsMap.get(n), seq))
   }
 
   private def effectiveTag(declaredTagOpt: Option[CTag], supertags: Seq[CTag]): CTag = {
@@ -261,10 +278,10 @@ class CTag(val csf: CSchemaFile, val psi: SchemaVarTagDecl)(implicit val ctx: CC
 
 trait CDatumType extends CType {
 
-  // `None` - no declaration, `Some(None)` - declared nodefault, `Some(Some(String))` - declared default
-  override val declaredDefaultTagName: Some[Some[String]] = Some(Some(CDatumType.ImpliedDefaultTagName))
+  final override val effectiveDefaultTagName: Some[String] = Some(CDatumType.ImpliedDefaultTagName)
 
-  //override val effectiveTagsMap: Map[String, CTag] = ???
+  // `None` - no declaration, `Some(None)` - declared nodefault, `Some(Some(String))` - declared default
+  final override val declaredDefaultTagName: Some[Some[String]] = Some(effectiveDefaultTagName)
 
 }
 
@@ -327,7 +344,7 @@ class CRecordTypeDef(csf: CSchemaFile, override val psi: SchemaRecordTypeDef)(im
                 csf.filename, csf.position(df.psi),
                 s"Type `${
                   df.typeRef.resolved.name.name
-                }` of field `${df.name}` is not a subtype of its parent field type or declares incompatible default tag`${
+                }` of field `${df.name}` is not a subtype of its parent field type or declares different default tag`${
                   st.typeRef.resolved.name.name
                 }`"
               )
@@ -380,18 +397,11 @@ class CField(val csf: CSchemaFile, val psi: SchemaFieldDecl, val host: CRecordTy
           }
       }
       )
-//  (
-//      valueType.defaultDeclarationOpt match {
-//        case None => true // no default override
-//        case Some(superField.effectiveDefaultTagName) => true // same as super
-//        case Some(Some(x)) => superField.effectiveDefaultTagName.isEmpty // different from super but it has no default
-//      }
-//      )
 
   // `None` - nodefault, `Some(String)` - effective default tag name
   def effectiveDefaultTagName: Option[String] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, _effectiveDefaultTagName)
 
-  // explicit no/default on the field > no/default from super field(s) > default on type > default on type super type(s)
+  // explicit no/default on the field > no/default from super field(s) > effective default on field type
   private lazy val _effectiveDefaultTagName: Option[String] = {
     valueType.defaultDeclarationOpt match {
       case Some(explicitDefault: Option[String]) => // field has default declaration (maybe `nodefault`)
@@ -402,8 +412,7 @@ class CField(val csf: CSchemaFile, val psi: SchemaFieldDecl, val host: CRecordTy
           case Seq(theone) => // all superfields (that have effective default tag) have the same one
             Some(theone)
           case Seq() => // no superfields (that have effective default tag)
-            valueType.typeRef.resolved.declaredDefaultTagName.flatten // FIXME use type default etc.
-
+            valueType.typeRef.resolved.effectiveDefaultTagName
           case multiple => // more than one distinct effective default tag on superfields
             ctx.errors.add(
               CError(
@@ -433,13 +442,15 @@ trait CMapType extends CType with CDatumType {self =>
 
   final val valueTypeRef: CTypeRef = valueValueType.typeRef
 
+  def effectiveDefaultValueTagName: Option[String] = ??? // FIXME implement similar to list
+
   override val kind: CTypeKind = CTypeKind.MAP
 
   protected def cast(ctype: CType): CMapType = ctype.asInstanceOf[CMapType]
 
 }
 
-class CAnonMapType(override val name: CAnonMapTypeName)(implicit val ctx: CContext) extends {
+class CAnonMapType(override val name: CAnonMapTypeName)(implicit ctx: CContext) extends {
 
   override val valueValueType: CValueType = name.valueValueType
 
@@ -486,6 +497,8 @@ trait CListType extends CType with CDatumType {self =>
 
   final val elementTypeRef: CTypeRef = elementValueType.typeRef
 
+  def effectiveDefaultElementTagName: Option[String]
+
   override val kind: CTypeKind = CTypeKind.LIST
 
   protected def cast(ctype: CType): CListType = ctype.asInstanceOf[CListType]
@@ -493,7 +506,7 @@ trait CListType extends CType with CDatumType {self =>
 }
 
 
-class CAnonListType(override val name: CAnonListTypeName)(implicit val ctx: CContext) extends {
+class CAnonListType(override val name: CAnonListTypeName)(implicit ctx: CContext) extends {
 
   override val elementValueType: CValueType = name.elementValueType
 
@@ -505,11 +518,25 @@ class CAnonListType(override val name: CAnonListTypeName)(implicit val ctx: CCon
     subtype.kind == kind && elementTypeRef.resolved.isAssignableFrom(cast(subtype).elementTypeRef.resolved)
 
   /** Immediate parents of this type in order of decreasing priority */
-  def linearizedParents: Seq[CAnonListType] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, _linearizedParents)
+  override def linearizedParents: Seq[CAnonListType] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, _linearizedParents)
 
   private lazy val _linearizedParents: Seq[CAnonListType] = elementTypeRef.resolved.linearizedParents.flatMap(
     ctx.getAnonListOf // FIXME list[Super] might not exist - autocreate
   )
+
+  final override def effectiveDefaultElementTagName: Option[String] = ctx.after(
+    CPhase.COMPUTE_SUPERTYPES, null, _effectiveDefaultElementTagName
+  )
+
+  // explicit no/default on element > effective no/default from element type
+  private lazy val _effectiveDefaultElementTagName: Option[String] = {
+    elementValueType.defaultDeclarationOpt match {
+      case Some(explicitDefault) => // element has default declaration (maybe `nodefault`)
+        explicitDefault
+      case None => // element doesn't have default declaration - get effective default tag name from its type
+        elementValueType.typeRef.resolved.effectiveDefaultTagName
+    }
+  }
 
 }
 
@@ -521,6 +548,37 @@ class CListTypeDef(csf: CSchemaFile, override val psi: SchemaListTypeDef)(implic
 } with CTypeDef(csf, psi, CTypeKind.LIST) with CListType {
 
   override type This = CListTypeDef
+
+  // `None` - nodefault, `Some(String)` - effective default tag name
+  def effectiveDefaultElementTagName: Option[String] = ctx.after(
+    CPhase.COMPUTE_SUPERTYPES, null, _effectiveDefaultElementTagName
+  )
+
+  // explicit no/default on element > effective default on super type(s) element(s) > effective no/default from element type
+  private lazy val _effectiveDefaultElementTagName: Option[String] = {
+    elementValueType.defaultDeclarationOpt match {
+      case Some(explicitDefault) => // element has default declaration (maybe `nodefault`)
+        explicitDefault // FIXME check it's compatible with supertypes' defaults
+      case None => // element doesn't have no/default declaration
+        // get effective default declarations from supertype(s) element(s), assert they are the same (ignore Nones), return
+        supertypes.flatMap(_.effectiveDefaultElementTagName).distinct match {
+          case Seq(theone) => // all supertypes (that have effective default element tag) have the same one
+            Some(theone)
+          case Seq() => // no supertypes (that have effective default element tag)
+            elementValueType.typeRef.resolved.effectiveDefaultTagName
+          case multiple => // more than one distinct effective default element tag from supertypes
+            ctx.errors.add(
+              CError(
+                csf.filename, csf.position(psi.getAnonList),
+                s"Type `$name` inherits from multiple list types with different default element tags ${
+                  multiple.mkString("`", "`, `", "`")
+                }"
+              )
+            )
+            None // TODO pick one of the tags so subtypes don't think we have nodefault?
+        }
+    }
+  }
 
 }
 

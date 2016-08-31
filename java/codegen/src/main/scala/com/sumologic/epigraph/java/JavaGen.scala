@@ -49,6 +49,7 @@ abstract class JavaGen[From >: Null <: AnyRef](protected val from: From, protect
 
   def baseName(s: String): String = s
 
+  @deprecated("use ln")
   def baseName(t: CType): String = javaLocalName(t, baseName)
 
   def baseValueName(s: String): String = s + ".Value"

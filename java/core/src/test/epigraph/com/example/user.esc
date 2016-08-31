@@ -15,3 +15,5 @@ record UserRecord extends PersonRecord {
   override ids: list[UserId]
   idss: list[list[UserId]]
 }
+
+list[User default `record`] UserList extends PersonList

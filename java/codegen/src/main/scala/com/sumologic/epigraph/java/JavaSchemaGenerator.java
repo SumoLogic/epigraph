@@ -50,7 +50,7 @@ public class JavaSchemaGenerator {
             break;
 
           case LIST:
-            new ListGen((CListTypeDef) typeDef, ctx).writeUnder(tmpRoot);
+            //new ListGen((CListTypeDef) typeDef, ctx).writeUnder(tmpRoot);
             break;
 
           case ENUM:

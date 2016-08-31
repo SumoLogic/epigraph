@@ -7,7 +7,7 @@ import com.sumologic.epigraph.schema.compiler._
 
 class RecordGen(from: CRecordTypeDef, ctx: CContext) extends JavaTypeDefGen[CRecordTypeDef](from, ctx) {
 
-  protected def generate: String = sn"""\
+  protected def generate: String = /*@formatter:off*/sn"""\
 /*
  * Standard header
  */
@@ -47,7 +47,8 @@ ${  f.effectiveDefaultTagName match { // default datum and value getters (if any
   @Nullable ${lqn(tt(f.typeRef, dtn), t)}.Value get_${up(f.name)}();
 """
     }
-}${ f.valueType.typeRef.resolved match { // tags datum and value getters
+}\
+${ f.valueType.typeRef.resolved match { // tags datum and value getters
       case vartype: CVarTypeDef => vartype.effectiveTags.map { tag => sn"""\
 
   /**
@@ -153,7 +154,8 @@ ${  f.effectiveDefaultTagName match { // default getter (if any)
   @Nullable ${lqn(tt(f.typeRef, dtn), t)}.Imm.Value get_${up(f.name)}();
 """
     }
-}${ f.valueType.typeRef.resolved match { // tag getters
+}\
+${ f.valueType.typeRef.resolved match { // tag getters
       case vartype: CVarTypeDef => vartype.effectiveTags.map { tag => sn"""\
 
   /**
@@ -204,7 +206,8 @@ ${  f.effectiveDefaultTagName match { // default getter
         }
 """
     }
-}${ // tag getters
+}\
+${ // tag getters
     f.valueType.typeRef.resolved match {
       case vartype: CVarTypeDef => vartype.effectiveTags.map { tag => sn"""\
 
@@ -323,7 +326,8 @@ ${  f.effectiveDefaultTagName match { // default tag (if any)
     }
 """
     }
-}${ f.valueType.typeRef.resolved match { // tag getters
+}\
+${ f.valueType.typeRef.resolved match { // tag getters
       case vartype: CVarTypeDef => vartype.effectiveTags.map { tag => // for each effective tag
         sn"""\
 
@@ -402,7 +406,7 @@ ${  f.effectiveDefaultTagName match { // default tag (if any)
   }
 
 }
-"""
+"""/*@formatter:on*/
 
   private def poly(f: CField): String = poly(f, " polymorphic", "")
 
