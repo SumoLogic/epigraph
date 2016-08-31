@@ -291,17 +291,17 @@ ${  f.effectiveDefaultTagName match { // default tag (if any)
       case Some(dtn) => sn"""\
 
     /**
-     * Returns default tag datum builder for `${f.name}` field.
+     * Returns default tag datum builder for${poly(f)}`${f.name}` field.
      */
     @Override
-    public @Nullable ${lqn(tt(f.typeRef, dtn), t)}.Builder get${up(f.name)}() {
-      return io.epigraph.util.Util.apply(get_${up(f.name)}(), ${lqn(tt(f.typeRef, dtn), t)}.Builder.Value::getDatum);
+    public @Nullable ${lqn(tt(f.typeRef, dtn), t)}${poly(f, "", ".Builder")} get${up(f.name)}() {
+      return io.epigraph.util.Util.apply(get_${up(f.name)}(), ${lqn(tt(f.typeRef, dtn), t)}${poly(f, "", ".Builder")}.Value::getDatum);
     }
 
     /**
-     * Sets default tag datum builder for `${f.name}` field.
+     * Sets default tag datum builder for${poly(f)} `${f.name}` field.
      */
-    public @NotNull $ln.Builder set${up(f.name)}(@Nullable ${lqn(tt(f.typeRef, dtn), t)}.Builder ${jn(f.name)}) {
+    public ${poly(f, s"<${ln(tt(f.typeRef, dtn))}Builder extends ${lqn(tt(f.typeRef, dtn), t)} & io.epigraph.data.Datum.Mut.Static>\n        ", "")}@NotNull $ln.Builder set${up(f.name)}(@Nullable ${poly(f, s"${ln(tt(f.typeRef, dtn))}Builder", s"${lqn(tt(f.typeRef, dtn), t)}.Builder")} ${jn(f.name)}) {
       _raw().getOrCreateFieldData($ln.${jn(f.name)})._raw()._setDatum(${dtrn(f.valueType, dtn, t)}, ${jn(f.name)});
       return this;
     }
@@ -315,11 +315,11 @@ ${  f.effectiveDefaultTagName match { // default tag (if any)
     }
 
     /**
-     * Returns default tag value builder for `${f.name}` field.
+     * Returns default tag value builder for${poly(f)} `${f.name}` field.
      */
     @Override
-    public @Nullable ${lqn(tt(f.typeRef, dtn), t)}.Builder.Value get_${up(f.name)}() {
-      return (${lqn(tt(f.typeRef, dtn), t)}.Builder.Value) _raw()._getValue($ln.${jn(f.name)}, ${dtrn(f.valueType, dtn, t)});
+    public @Nullable ${lqn(tt(f.typeRef, dtn), t)}${poly(f, "", ".Builder")}.Value get_${up(f.name)}() {
+      return (${lqn(tt(f.typeRef, dtn), t)}${poly(f, "", ".Builder")}.Value) _raw()._getValue($ln.${jn(f.name)}, ${dtrn(f.valueType, dtn, t)});
     }
 """
     }
@@ -328,17 +328,17 @@ ${  f.effectiveDefaultTagName match { // default tag (if any)
         sn"""\
 
     /**
-     * Returns `${tag.name}` tag datum builder for `${f.name}` field.
+     * Returns `${tag.name}` tag datum builder for${poly(f)} `${f.name}` field.
      */
     @Override
-    public @Nullable ${lqrn(tag.typeRef, t)}.Builder get${up(f.name)}${up(tag.name)}() {
-      return io.epigraph.util.Util.apply(get_${up(f.name)}${up(tag.name)}(), ${lqn(tt(f.typeRef, tag.name), t)}.Builder.Value::getDatum);
+    public @Nullable ${lqrn(tag.typeRef, t)}${poly(f, "", ".Builder")} get${up(f.name)}${up(tag.name)}() {
+      return io.epigraph.util.Util.apply(get_${up(f.name)}${up(tag.name)}(), ${lqn(tt(f.typeRef, tag.name), t)}${poly(f, "", ".Builder")}.Value::getDatum);
     }
 
     /**
-     * Sets `${tag.name}` tag datum builder for `${f.name}` field.
+     * Sets `${tag.name}` tag datum builder for${poly(f)} `${f.name}` field.
      */
-    public @NotNull $ln.Builder set${up(f.name)}${up(tag.name)}(@Nullable ${lqn(tt(f.typeRef, tag.name), t)}.Builder ${jn(f.name)}${up(tag.name)}) {
+    public ${poly(f, s"<${ln(tt(f.typeRef, tag.name))}Builder extends ${lqn(tt(f.typeRef, tag.name), t)} & io.epigraph.data.Datum.Mut.Static>\n        ", "")}@NotNull $ln.Builder set${up(f.name)}${up(tag.name)}(@Nullable ${poly(f, s"${ln(tt(f.typeRef, tag.name))}Builder", s"${lqn(tt(f.typeRef, tag.name), t)}.Builder")} ${jn(f.name)}${up(tag.name)}) {
       _raw().getOrCreateFieldData($ln.${jn(f.name)})._raw()._setDatum(${dtrn(f.valueType, tag.name, t)}, ${jn(f.name)});
       return this;
     }
@@ -352,11 +352,11 @@ ${  f.effectiveDefaultTagName match { // default tag (if any)
     }
 
     /**
-     * Returns `${tag.name}` tag value builder for `${f.name}` field.
+     * Returns `${tag.name}` tag value builder for${poly(f)} `${f.name}` field.
      */
     @Override
-    public @Nullable ${lqrn(tag.typeRef, t)}.Builder.Value get_${up(f.name)}${up(tag.name)}() {
-      return (${lqn(tt(f.typeRef, tag.name), t)}.Builder.Value) _raw()._getValue($ln.${jn(f.name)}, ${dtrn(f.valueType, tag.name, t)});
+    public @Nullable ${lqrn(tag.typeRef, t)}${poly(f, "", ".Builder")}.Value get_${up(f.name)}${up(tag.name)}() {
+      return (${lqn(tt(f.typeRef, tag.name), t)}${poly(f, "", ".Builder")}.Value) _raw()._getValue($ln.${jn(f.name)}, ${dtrn(f.valueType, tag.name, t)});
     }
 """
       }.mkString
@@ -403,5 +403,9 @@ ${  f.effectiveDefaultTagName match { // default tag (if any)
 
 }
 """
+
+  private def poly(f: CField): String = poly(f, " polymorphic", "")
+
+  private def poly(f: CField, yes: => String, no: => String): String = if (f.valueType.polymorphic) yes else no
 
 }
