@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public abstract class UnionType extends Type {
 
@@ -51,6 +52,10 @@ public abstract class UnionType extends Type {
 
     @Override // TODO rename to createDataBuilder()?
     public final @NotNull MyMutData createMutableData() { return mutDataConstructor.apply(new Data.Mut.Raw(this)); }
+
+    // should be overridden in (generated) static types that have lists of themselves declared in the schema
+    @Override
+    protected @NotNull Supplier<ListType> listTypeSupplier() { return throwingListTypeSupplier; }
 
   }
 

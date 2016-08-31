@@ -121,9 +121,9 @@ abstract class JavaGen[From >: Null <: AnyRef](protected val from: From, protect
     case unknown => throw new UnsupportedOperationException(unknown.toString)
   }
 
-  /** default tag constant reference name for given value type (as seen from the context of the local type namespace) */
-  def dtrn(vt: CValueType, dtn: String, lt: CType): String = lqrn(vt.typeRef, lt) + ".type." +
-      (if (dtn == CDatumType.ImpliedDefaultTagName) "self" else jn(dtn))
+  /** tag constant reference name for given value type and its tag (as seen from the context of the local type namespace) */
+  def trn(vt: CValueType, tn: String, lt: CType): String = lqrn(vt.typeRef, lt) + "." +
+      (if (tn == CDatumType.ImpliedDefaultTagName) "type.self" else jn(tn))
 
 
   /** java package name for given type */

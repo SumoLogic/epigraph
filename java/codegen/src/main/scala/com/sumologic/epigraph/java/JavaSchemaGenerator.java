@@ -39,7 +39,7 @@ public class JavaSchemaGenerator {
         switch (typeDef.kind()) {
 
           case VARTYPE:
-            //new VarTypeGen((CVarTypeDef) typeDef, ctx).writeUnder(tmpRoot);
+            new VarTypeGen((CVarTypeDef) typeDef, ctx).writeUnder(tmpRoot);
             break;
 
           case RECORD:

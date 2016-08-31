@@ -2,62 +2,170 @@
 
 package com.sumologic.epigraph.java
 
-import com.sumologic.epigraph.schema.compiler.{CContext, CTag, CTypeDef, CVarTypeDef}
+import com.sumologic.epigraph.java.NewlineStringInterpolator.NewlineHelper
+import com.sumologic.epigraph.schema.compiler._
 
 class VarTypeGen(from: CVarTypeDef, ctx: CContext) extends JavaTypeDefGen[CVarTypeDef](from, ctx) {
 
-  protected def generate: String = s"""
+  protected def generate: String = sn"""\
 /*
  * Standard header
  */
 
-package ${javaFqn(t.name.fqn.removeLastSegment())}
+package ${pn(t)};
 
-import com.sumologic.epigraph.xp.data._
-import com.sumologic.epigraph.xp.data.immutable._
-import com.sumologic.epigraph.xp.data.mutable._
-import com.sumologic.epigraph.xp.types._
+import io.epigraph.types.Type.Tag;
 
-trait ${baseName(t)} extends${withParents(t, baseName)} Var[${baseName(t)}]
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-trait ${immName(t)} extends${withParents(t, immName)} ${baseName(t)} with ImmVar[${baseName(t)}]
+/**
+ * Base (read) interface for `${t.name.name}` data.
+ */
+public interface $ln extends${withParents(t)} io.epigraph.data.Data.Static {
 
-trait ${mutName(t)} extends${withParents(t, mutName)} ${baseName(t)} with MutVar[${baseName(t)}]
+  @NotNull $ln.Type type = new $ln.Type();
+${t.effectiveTags.map { tag => // for each effective tag
+    sn"""\
 
-trait ${bldName(t)} extends ${baseName(t)} with VarBuilder[${baseName(t)}]
+  ${"/**"}
+   * Tag `${tag.name}`.
+   */
+  @NotNull Tag ${jn(tag.name)} = new Tag("${tag.name}", ${lqrn(tag.typeRef, t)}.type);
 
-object ${objName(t)} extends VarType[${baseName(t)}](namespace \\ "${baseName(t)}", Seq(${parentNames(t, objName)})) {
-  ${
-    t.effectiveTags.map { f => s"""
-  val ${tagName(f)}: ${tagType(f, t)} = ${tagDef(f, t)}\n"""
-    }.mkString
+  ${"/**"}
+   * Returns `${tag.name}` tag datum.
+   */
+  @Nullable ${lqrn(tag.typeRef, t)} get${up(tag.name)}();
+
+  ${"/**"}
+   * Returns `${tag.name}` tag value.
+   */
+  @Nullable ${lqrn(tag.typeRef, t)}.Value get_${up(tag.name)}();
+"""
+  }.mkString
+}\
+
+  ${"/**"}
+   * Class for `${t.name.name}` type.
+   */
+  class Type extends io.epigraph.types.UnionType.Static<$ln.Imm, $ln.Builder> {
+
+    private Type() {
+      super(
+          new io.epigraph.names.QualifiedTypeName(${qnameArgs(t.name.fqn).mkString("\"", "\", \"", "\"")}),
+          java.util.Arrays.asList(${t.linearizedParents.map(lqn(_, t, _ + ".type")).mkString(", ")}),
+          ${t.isPolymorphic},
+          $ln.Builder::new
+      );
+    }
+
+    @Override
+    public @NotNull java.util.List<@NotNull Tag> immediateTags() {
+      return java.util.Arrays.asList(\
+${t.declaredTags.map { tag => sn"""
+          ${ln + '.' + jn(tag.name)}"""
+  }.mkString(",")
+}
+      );
+    }
+$listSupplier\
+
   }
-  override def declaredFields: DeclaredFields = DeclaredFields(${t.declaredTags.map(tagName).mkString(", ")})
 
-  override def createMutable: ${mutName(t)} = new ${mutImplName(t)}
+  /**
+   * Immutable interface for `${t.name.name}` data.
+   */
+  interface Imm extends $ln,${withParents(".Imm")} io.epigraph.data.Data.Imm.Static {
+${t.effectiveTags.map { tag => // for each effective tag
+    sn"""\
 
-  private class ${mutImplName(t)} extends ${mutName(t)} {
-    override def dataType: ${objName(t)}.type = ${objName(t)}
+    ${"/**"}
+     * Returns immutable `${tag.name}` tag datum.
+     */
+    @Override
+    @Nullable ${lqrn(tag.typeRef, t)}.Imm get${up(tag.name)}();
+
+    ${"/**"}
+     * Returns immutable `${tag.name}` tag value.
+     */
+    @Override
+    @Nullable ${lqrn(tag.typeRef, t)}.Imm.Value get_${up(tag.name)}();
+"""
+  }.mkString
+}\
+
+    /** Private implementation of `$ln.Imm` interface. */
+    final class Impl extends io.epigraph.data.Data.Imm.Static.Impl<$ln.Imm> implements $ln.Imm {
+
+      private Impl(@NotNull io.epigraph.data.Data.Imm.Raw raw) { super($ln.type, raw); }
+${t.effectiveTags.map { tag => // for each effective tag
+    sn"""\
+
+      ${"/**"}
+       * Returns immutable `${tag.name}` tag datum.
+       */
+      @Override
+      public @Nullable ${lqrn(tag.typeRef, t)}.Imm get${up(tag.name)}() {
+        return io.epigraph.util.Util.apply(get_${up(tag.name)}(), ${lqrn(tag.typeRef, t)}.Imm.Value::getDatum);
+      }
+
+      ${"/**"}
+       * Returns immutable `${tag.name}` tag value.
+       */
+      @Override
+      public @Nullable ${lqrn(tag.typeRef, t)}.Imm.Value get_${up(tag.name)}() {
+        return (${lqrn(tag.typeRef, t)}.Imm.Value) _raw()._getValue($ln.${jn(tag.name)});
+      }
+"""
+  }.mkString
+}\
+
+    }
+
   }
 
-  override def createBuilder: ${bldName(t)} = new ${bldImplName(t)}
+  /**
+   * Builder for `${t.name.name}` data.
+   */
+  final class Builder extends io.epigraph.data.Data.Mut.Static<$ln.Imm> implements $ln {
 
-  private class ${bldImplName(t)} extends ${bldName(t)} {
-    override def dataType: ${objName(t)}.type = ${objName(t)}
+    private Builder(@NotNull io.epigraph.data.Data.Mut.Raw raw) { super($ln.type, raw, $ln.Imm.Impl::new); }
+${t.effectiveTags.map { tag => // for each effective tag
+    sn"""\
+
+    ${"/**"}
+     * Returns `${tag.name}` tag datum builder.
+     */
+    @Override
+    public @Nullable ${lqrn(tag.typeRef, t)}.Builder get${up(tag.name)}() {
+      return io.epigraph.util.Util.apply(get_${up(tag.name)}(), ${lqrn(tag.typeRef, t)}.Builder.Value::getDatum);
+    }
+
+    public @NotNull $ln.Builder set${up(tag.name)}(@Nullable ${lqrn(tag.typeRef, t)}.Builder ${jn(tag.name)}) {
+      _raw()._getOrCreateTagValue($ln.${jn(tag.name)})._raw().setDatum(${jn(tag.name)});
+      return this;
+    }
+
+    public @NotNull $ln.Builder set${up(tag.name)}(@NotNull io.epigraph.errors.ErrorValue error) {
+      _raw()._getOrCreateTagValue($ln.${jn(tag.name)})._raw().setError(error);
+      return this;
+    }
+
+    ${"/**"}
+     * Returns `${tag.name}` tag value builder.
+     */
+    @Override
+    public @Nullable ${lqrn(tag.typeRef, t)}.Builder.Value get_${up(tag.name)}() {
+      return (${lqrn(tag.typeRef, t)}.Builder.Value) _raw()._getValue($ln.${jn(tag.name)});
+    }
+"""
+  }.mkString
+}\
+
   }
 
 }
-""".trim
-
-  private def tagName(f: CTag): String = jn(f.name)
-
-  // TODO val _id: DatumField[FooId] = field("id", FooId)
-  private def tagType(f: CTag, ht: CTypeDef): String = s"Tag[${ft(f, ht)}]"
-
-  // TODO val _id: DatumField[FooId] = field("id", FooId)
-  private def tagDef(f: CTag, ht: CTypeDef): String = s"""tag("${f.name}", ${ft(f, ht)})"""
-
-  // TODO val _id: DatumField[FooId] = field("id", FooId)
-  private def ft(f: CTag, ht: CTypeDef): String = s"${f.typeRef.resolved.name.name}"
+"""
 
 }

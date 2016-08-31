@@ -13,4 +13,6 @@ record PersonRecord {
   friends: list[PersonRecord]
   ids: list[PersonId]
   idss: list[list[PersonId]]
+  persons: list[Person]
+  personss: list[list[Person]]
 }
