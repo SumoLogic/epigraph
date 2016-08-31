@@ -14,24 +14,10 @@ class RecordGen(from: CRecordTypeDef, ctx: CContext) extends JavaTypeDefGen[CRec
 
 package ${pn(t)};
 
-//import io.epigraph.data.ListDatum;
-//import io.epigraph.data.RecordDatum;
-//import io.epigraph.data.Val;
-//import io.epigraph.errors.ErrorValue;
-//import io.epigraph.names.AnonListTypeName;
-//import io.epigraph.names.NamespaceName;
-//import io.epigraph.names.QualifiedTypeName;
-//import io.epigraph.types.AnonListType;
-//import io.epigraph.types.ListType;
-//import io.epigraph.types.RecordType;
 import io.epigraph.types.RecordType.Field;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-//import java.util.Arrays;
-//import java.util.Collections;
-//import java.util.stream.Collectors;
 
 /**
  * Base (read) interface for `${t.name.name}` datum.
@@ -39,28 +25,30 @@ import org.jetbrains.annotations.Nullable;
 public interface $ln extends${withParents(t)} io.epigraph.data.RecordDatum.Static {
 
   @NotNull $ln.Type type = new $ln.Type();
-${ // for each effective field
-  t.effectiveFields.map { f => sn"""\
+${t.effectiveFields.map { f => // for each effective field
+    sn"""\
 
-  // Field `${f.name}`
+  ${"/**"}
+   * Field `${f.name}`.
+   */
   @NotNull Field ${jn(f.name)} = new Field("${f.name}", ${lqrn(f.typeRef, t)}.type, ${f.isAbstract});
-${ // default datum and value getters
-    if (f.effectiveDefaultTagName.isDefined) sn"""\
+${  f.effectiveDefaultTagName match { // default datum and value getters (if any)
+      case None => ""
+      case Some(dtn) => sn"""\
 
   /**
    * Returns default tag datum for `${f.name}` field.
    */
-  @Nullable ${lqn(tt(f.typeRef, f.effectiveDefaultTagName.get), t)} get${up(f.name)}();
+  @Nullable ${lqn(tt(f.typeRef, dtn), t)} get${up(f.name)}();
 
   /**
    * Returns default tag value for `${f.name}` field.
    */
-  @Nullable ${lqn(tt(f.typeRef, f.effectiveDefaultTagName.get), t)}.Value get_${up(f.name)}();
+  @Nullable ${lqn(tt(f.typeRef, dtn), t)}.Value get_${up(f.name)}();
 """
-}${ // tags datum and value getters
-    f.valueType.typeRef.resolved match {
-      case vartype: CVarTypeDef =>
-        vartype.effectiveTags.map { tag => sn"""\
+    }
+}${ f.valueType.typeRef.resolved match { // tags datum and value getters
+      case vartype: CVarTypeDef => vartype.effectiveTags.map { tag => sn"""\
 
   /**
    * Returns `${tag.name}` tag datum for `${f.name}` field.
@@ -76,7 +64,7 @@ ${ // default datum and value getters
       case _: CDatumType => ""
       case unexpected => throw new UnsupportedOperationException(unexpected.name.name)
     }
-  }
+  }\
 """
   }.mkString
 }\
@@ -91,7 +79,7 @@ ${ // default datum and value getters
       $ln.Builder.Value,
       $ln.Imm.Data,
       $ln.Builder.Data
-      > {
+  > {
 
     private Type() {
       super(
@@ -107,10 +95,9 @@ ${ // default datum and value getters
     @Override
     public @NotNull java.util.List<@NotNull Field> immediateFields() {
       return java.util.Arrays.asList(\
-${
-    t.declaredFields.map { f => sn"""
-        ${ln + '.' + jn(f.name)}"""
-    }.mkString(",")
+${t.declaredFields.map { f => sn"""
+          ${ln + '.' + jn(f.name)}"""
+  }.mkString(",")
 }
       );
     }
@@ -147,27 +134,27 @@ $listSupplier\
    * Immutable interface for `${t.name.name}` datum.
    */
   interface Imm extends $ln,${withParents(".Imm")} io.epigraph.data.RecordDatum.Imm.Static {
-${ // for each effective field
-    t.effectiveFields.map { f => sn"""\
-${ // default getter
-        if (f.effectiveDefaultTagName.isDefined) sn"""\
+${t.effectiveFields.map { f => // for each effective field
+    sn"""\
+${  f.effectiveDefaultTagName match { // default getter (if any)
+      case None => ""
+      case Some(dtn) => sn"""\
 
   /**
    * Returns immutable default tag datum for `${f.name}` field.
    */
   @Override
-  @Nullable ${lqn(tt(f.typeRef, f.effectiveDefaultTagName.get), t)}.Imm get${up(f.name)}();
+  @Nullable ${lqn(tt(f.typeRef, dtn), t)}.Imm get${up(f.name)}();
 
   /**
    * Returns immutable default tag value for `${f.name}` field.
    */
   @Override
-  @Nullable ${lqn(tt(f.typeRef, f.effectiveDefaultTagName.get), t)}.Imm.Value get_${up(f.name)}();
+  @Nullable ${lqn(tt(f.typeRef, dtn), t)}.Imm.Value get_${up(f.name)}();
 """
-      }${ // tag getters
-        f.valueType.typeRef.resolved match {
-          case vartype: CVarTypeDef =>
-            vartype.effectiveTags.map { tag => sn"""\
+    }
+}${ f.valueType.typeRef.resolved match { // tag getters
+      case vartype: CVarTypeDef => vartype.effectiveTags.map { tag => sn"""\
 
   /**
    * Returns immutable `${tag.name}` tag datum for `${f.name}` field.
@@ -181,44 +168,45 @@ ${ // default getter
   @Override
   @Nullable ${lqrn(tag.typeRef, t)}.Imm.Value get_${up(f.name)}${up(tag.name)}();
 """
-            }.mkString
-          case _: CDatumType => ""
-          case unexpected => throw new UnsupportedOperationException(unexpected.name.name)
-        }
-      }
+      }.mkString
+      case _: CDatumType => ""
+      case unexpected => throw new UnsupportedOperationException(unexpected.name.name)
+    }
+}\
 """
-    }.mkString
-  }\
+  }.mkString
+}\
 
     /** Private implementation of `$ln.Imm` interface. */
     final class Impl extends io.epigraph.data.RecordDatum.Imm.Static.Impl<$ln.Imm> implements $ln.Imm {
 
       private Impl(@NotNull io.epigraph.data.RecordDatum.Imm.Raw raw) { super($ln.type, raw); }
-${ // for each effective field
-    t.effectiveFields.map { f => sn"""\
-${ // default getter
-      if (f.effectiveDefaultTagName.isDefined) sn"""\
+${t.effectiveFields.map { f => // for each effective field
+    sn"""\
+${  f.effectiveDefaultTagName match { // default getter
+      case None => ""
+      case Some(dtn) => sn"""\
 
         /**
          * Returns immutable default tag datum for `${f.name}` field.
          */
         @Override
-        public @Nullable ${lqn(tt(f.typeRef, f.effectiveDefaultTagName.get), t)}.Imm get${up(f.name)}() {
-          return io.epigraph.util.Util.apply(get_${up(f.name)}(), ${lqn(tt(f.typeRef, f.effectiveDefaultTagName.get), t)}.Imm.Value::getDatum);
+        public @Nullable ${lqn(tt(f.typeRef, dtn), t)}.Imm get${up(f.name)}() {
+          return io.epigraph.util.Util.apply(get_${up(f.name)}(), ${lqn(tt(f.typeRef, dtn), t)}.Imm.Value::getDatum);
         }
 
         /**
          * Returns immutable default tag value for `${f.name}` field.
          */
         @Override
-        public @Nullable ${lqn(tt(f.typeRef, f.effectiveDefaultTagName.get), t)}.Imm.Value get_${up(f.name)}() {
-          return (${lqn(tt(f.typeRef, f.effectiveDefaultTagName.get), t)}.Imm.Value) _raw()._getValue($ln.${jn(f.name)}, ${dtrn(f.valueType, f.effectiveDefaultTagName.get, t)});
+        public @Nullable ${lqn(tt(f.typeRef, dtn), t)}.Imm.Value get_${up(f.name)}() {
+          return (${lqn(tt(f.typeRef, dtn), t)}.Imm.Value) _raw()._getValue($ln.${jn(f.name)}, ${dtrn(f.valueType, dtn, t)});
         }
 """
-    }${ // tag getters
-      f.valueType.typeRef.resolved match {
-        case vartype: CVarTypeDef =>
-          vartype.effectiveTags.map { tag => sn"""\
+    }
+}${ // tag getters
+    f.valueType.typeRef.resolved match {
+      case vartype: CVarTypeDef => vartype.effectiveTags.map { tag => sn"""\
 
         /**
          * Returns immutable `${tag.name}` tag datum for `${f.name}` field.
@@ -236,14 +224,14 @@ ${ // default getter
           return (${lqn(tt(f.typeRef, tag.name), t)}.Imm.Value) _raw()._getValue($ln.${jn(f.name)}, ${dtrn(f.valueType, tag.name, t)});
         }
 """
-          }.mkString
-        case _: CDatumType => ""
-        case unexpected => throw new UnsupportedOperationException(unexpected.name.name)
-      }
+      }.mkString
+      case _: CDatumType => ""
+      case unexpected => throw new UnsupportedOperationException(unexpected.name.name)
     }
+}\
 """
-    }.mkString
-  }\
+  }.mkString
+}\
 
     }
 
@@ -290,67 +278,95 @@ ${ // default getter
 
   }
 
-
   /**
    * Builder for `${t.name.name}` datum.
    */
   final class Builder extends io.epigraph.data.RecordDatum.Mut.Static<$ln.Imm> implements $ln {
 
     private Builder(@NotNull io.epigraph.data.RecordDatum.Mut.Raw raw) { super($ln.type, raw, $ln.Imm.Impl::new); }
+${t.effectiveFields.map { f => // for each effective field
+    sn"""\
+${  f.effectiveDefaultTagName match { // default tag (if any)
+      case None => ""
+      case Some(dtn) => sn"""\
 
-${ // for each effective field
-    t.effectiveFields.map { f => sn"""\
-${ // default getter
-      if (f.effectiveDefaultTagName.isDefined) sn"""\
+    /**
+     * Returns default tag datum builder for `${f.name}` field.
+     */
+    @Override
+    public @Nullable ${lqn(tt(f.typeRef, dtn), t)}.Builder get${up(f.name)}() {
+      return io.epigraph.util.Util.apply(get_${up(f.name)}(), ${lqn(tt(f.typeRef, dtn), t)}.Builder.Value::getDatum);
+    }
 
-        /**
-         * Returns default tag datum builder for `${f.name}` field.
-         */
-        @Override
-        public @Nullable ${lqn(tt(f.typeRef, f.effectiveDefaultTagName.get), t)}.Builder get${up(f.name)}() {
-          return io.epigraph.util.Util.apply(get_${up(f.name)}(), ${lqn(tt(f.typeRef, f.effectiveDefaultTagName.get), t)}.Builder.Value::getDatum);
-        }
+    /**
+     * Sets default tag datum builder for `${f.name}` field.
+     */
+    public @NotNull $ln.Builder set${up(f.name)}(@Nullable ${lqn(tt(f.typeRef, dtn), t)}.Builder ${jn(f.name)}) {
+      _raw().getOrCreateFieldData($ln.${jn(f.name)})._raw()._setDatum(${dtrn(f.valueType, dtn, t)}, ${jn(f.name)});
+      return this;
+    }
 
-        /**
-         * Returns default tag value builder for `${f.name}` field.
-         */
-        @Override
-        public @Nullable ${lqn(tt(f.typeRef, f.effectiveDefaultTagName.get), t)}.Builder.Value get_${up(f.name)}() {
-          return (${lqn(tt(f.typeRef, f.effectiveDefaultTagName.get), t)}.Builder.Value) _raw()._getValue($ln.${jn(f.name)}, ${dtrn(f.valueType, f.effectiveDefaultTagName.get, t)});
-        }
-"""
-    }${ // tag getters
-      f.valueType.typeRef.resolved match {
-        case vartype: CVarTypeDef =>
-          vartype.effectiveTags.map { tag => sn"""\
+    /**
+     * Sets default tag error for `${f.name}` field.
+     */
+    public @NotNull $ln.Builder set${up(f.name)}(@NotNull io.epigraph.errors.ErrorValue error) {
+      _raw().getOrCreateFieldData($ln.${jn(f.name)})._raw()._setError(${dtrn(f.valueType, dtn, t)}, error);
+      return this;
+    }
 
-        /**
-         * Returns `${tag.name}` tag datum builder for `${f.name}` field.
-         */
-        @Override
-        public @Nullable ${lqrn(tag.typeRef, t)}.Builder get${up(f.name)}${up(tag.name)}() {
-          return io.epigraph.util.Util.apply(get_${up(f.name)}${up(tag.name)}(), ${lqn(tt(f.typeRef, tag.name), t)}.Builder.Value::getDatum);
-        }
-
-        /**
-         * Returns `${tag.name}` tag value builder for `${f.name}` field.
-         */
-        @Override
-        public @Nullable ${lqrn(tag.typeRef, t)}.Builder.Value get_${up(f.name)}${up(tag.name)}() {
-          return (${lqn(tt(f.typeRef, tag.name), t)}.Builder.Value) _raw()._getValue($ln.${jn(f.name)}, ${dtrn(f.valueType, tag.name, t)});
-        }
-"""
-          }.mkString
-        case _: CDatumType => ""
-        case unexpected => throw new UnsupportedOperationException(unexpected.name.name)
-      }
+    /**
+     * Returns default tag value builder for `${f.name}` field.
+     */
+    @Override
+    public @Nullable ${lqn(tt(f.typeRef, dtn), t)}.Builder.Value get_${up(f.name)}() {
+      return (${lqn(tt(f.typeRef, dtn), t)}.Builder.Value) _raw()._getValue($ln.${jn(f.name)}, ${dtrn(f.valueType, dtn, t)});
     }
 """
-    }.mkString
-  }\
+    }
+}${ f.valueType.typeRef.resolved match { // tag getters
+      case vartype: CVarTypeDef => vartype.effectiveTags.map { tag => // for each effective tag
+        sn"""\
 
-    // TODO field datum and value setters
+    /**
+     * Returns `${tag.name}` tag datum builder for `${f.name}` field.
+     */
+    @Override
+    public @Nullable ${lqrn(tag.typeRef, t)}.Builder get${up(f.name)}${up(tag.name)}() {
+      return io.epigraph.util.Util.apply(get_${up(f.name)}${up(tag.name)}(), ${lqn(tt(f.typeRef, tag.name), t)}.Builder.Value::getDatum);
+    }
 
+    /**
+     * Sets `${tag.name}` tag datum builder for `${f.name}` field.
+     */
+    public @NotNull $ln.Builder set${up(f.name)}${up(tag.name)}(@Nullable ${lqn(tt(f.typeRef, tag.name), t)}.Builder ${jn(f.name)}${up(tag.name)}) {
+      _raw().getOrCreateFieldData($ln.${jn(f.name)})._raw()._setDatum(${dtrn(f.valueType, tag.name, t)}, ${jn(f.name)});
+      return this;
+    }
+
+    /**
+     * Sets `${tag.name}` tag error for `${f.name}` field.
+     */
+    public @NotNull $ln.Builder set${up(f.name)}${up(tag.name)}(@NotNull io.epigraph.errors.ErrorValue error) {
+      _raw().getOrCreateFieldData($ln.${jn(f.name)})._raw()._setError(${dtrn(f.valueType, tag.name, t)}, error);
+      return this;
+    }
+
+    /**
+     * Returns `${tag.name}` tag value builder for `${f.name}` field.
+     */
+    @Override
+    public @Nullable ${lqrn(tag.typeRef, t)}.Builder.Value get_${up(f.name)}${up(tag.name)}() {
+      return (${lqn(tt(f.typeRef, tag.name), t)}.Builder.Value) _raw()._getValue($ln.${jn(f.name)}, ${dtrn(f.valueType, tag.name, t)});
+    }
+"""
+      }.mkString
+      case _: CDatumType => ""
+      case unexpected => throw new UnsupportedOperationException(unexpected.name.name)
+    }
+}\
+"""
+  }.mkString
+}\
 
     /**
      * Builder for `${t.name.name}` value (holding a builder or an error).
@@ -379,7 +395,7 @@ ${ // default getter
 
       public void set(@Nullable $ln.Builder.Value value) {
         _raw()._setValue($ln.type.self, value);
-      } //default tag
+      }
 
     }
 
@@ -387,16 +403,5 @@ ${ // default getter
 
 }
 """
-
-  private def fieldName(f: CField): String = jn(f.name)
-
-  // TODO val _id: DatumField[FooId] = field("id", FooId)
-  private def fieldType(f: CField, ht: CTypeDef): String = s"DatumField[${ft(f, ht)}]"
-
-  // TODO val _id: DatumField[FooId] = field("id", FooId)
-  private def fieldDef(f: CField, ht: CTypeDef): String = s"""field("${f.name}", ${ft(f, ht)})"""
-
-  // TODO val _id: DatumField[FooId] = field("id", FooId)
-  private def ft(f: CField, ht: CTypeDef): String = s"${f.typeRef.resolved.name.name}"
 
 }

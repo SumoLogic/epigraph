@@ -270,7 +270,7 @@ trait CDatumType extends CType {
 
 object CDatumType {
 
-  val ImpliedDefaultTagName: String = "_"
+  val ImpliedDefaultTagName: String = "_" // must not be valid tag name (or refactor JavaGen.dtrn(...))
 
 }
 
