@@ -5,6 +5,7 @@ package io.epigraph.util;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.function.Function;
 
 public interface Util {
@@ -33,6 +34,10 @@ public interface Util {
       @NotNull R ifNull
   ) {
     return arg == null ? ifNull : function.apply(arg);
+  }
+
+  static <T> java.util.List<T> cast(java.util.List<? super T> list) {
+    return (List<T>) list;
   }
 
 }

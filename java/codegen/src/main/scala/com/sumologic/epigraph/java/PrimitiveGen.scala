@@ -71,9 +71,9 @@ $listSupplier\
     @Override
     @NotNull $ln.Imm.Data toImmutable();
 
-    @Nullable $ln.Value get_value(); // default tag value
+    @Nullable $ln get();
 
-    @Nullable $ln get(); // default tag datum
+    @Nullable $ln.Value get_();
 
   }
 
@@ -113,10 +113,10 @@ $listSupplier\
     interface Data extends $ln.Data,${withParents(".Imm.Data")} io.epigraph.data.Data.Imm.Static {
 
       @Override
-      @Nullable $ln.Imm.Value get_value(); // implied default self-tag value
+      @Nullable $ln.Imm get();
 
       @Override
-      @Nullable $ln.Imm get(); // implied default self-tag datum
+      @Nullable $ln.Imm.Value get_();
 
       /** Private implementation of `$ln.Imm.Data` interface. */
       final class Impl extends io.epigraph.data.Data.Imm.Static.Impl<$ln.Imm.Data> implements $ln.Imm.Data {
@@ -124,14 +124,14 @@ $listSupplier\
         Impl(@NotNull io.epigraph.data.Data.Imm.Raw raw) { super($ln.type, raw); }
 
         @Override
-        public @Nullable $ln.Imm.Value get_value() {
-          return ($ln.Imm.Value) _raw()._getValue($ln.type.self);
+        public @Nullable $ln.Imm get() {
+          $ln.Imm.Value value = get_();
+          return value == null ? null : value.getDatum();
         }
 
         @Override
-        public @Nullable $ln.Imm get() {
-          $ln.Imm.Value value = get_value();
-          return value == null ? null : value.getDatum();
+        public @Nullable $ln.Imm.Value get_() {
+          return ($ln.Imm.Value) _raw()._getValue($ln.type.self);
         }
 
       }
@@ -166,22 +166,22 @@ $listSupplier\
       }
 
       @Override
-      public @Nullable $ln.Builder.Value get_value() {
-        return ($ln.Builder.Value) _raw()._getValue($ln.type.self);
+      public @Nullable $ln.Builder get() {
+        return io.epigraph.util.Util.apply(get_(), $ln.Builder.Value::getDatum);
       }
 
       @Override
-      public @Nullable $ln.Builder get() {
-        return io.epigraph.util.Util.apply($ln.Builder.Value::getDatum, get_value());
+      public @Nullable $ln.Builder.Value get_() {
+        return ($ln.Builder.Value) _raw()._getValue($ln.type.self);
       }
-
-      // implied default tag value
-      public void set_value(@Nullable $ln.Builder.Value value) { _raw()._setValue($ln.type.self, value); }
 
       // implied default tag datum
       public void set(@Nullable $ln.Builder datum) {
         _raw()._getOrCreateTagValue($ln.type.self)._raw().setDatum(datum);
       }
+
+      // implied default tag value
+      public void set_value(@Nullable $ln.Builder.Value value) { _raw()._setValue($ln.type.self, value); }
 
     }
 

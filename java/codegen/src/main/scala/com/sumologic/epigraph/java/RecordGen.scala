@@ -127,7 +127,9 @@ $listSupplier\
     @Override
     @NotNull $ln.Imm.Data toImmutable();
 
-    @Nullable $ln.Value get();
+    @Nullable $ln get();
+
+    @Nullable $ln.Value get_();
 
   }
 
@@ -262,7 +264,10 @@ ${ // tag getters
     interface Data extends $ln.Data,${withParents(".Imm.Data")} io.epigraph.data.Data.Imm.Static {
 
       @Override
-      @Nullable $ln.Imm.Value get();
+      @Nullable $ln.Imm get();
+
+      @Override
+      @Nullable $ln.Imm.Value get_();
 
       /** Private implementation of `$ln.Imm.Data` interface. */
       final class Impl extends io.epigraph.data.Data.Imm.Static.Impl<$ln.Imm.Data>
@@ -271,7 +276,12 @@ ${ // tag getters
         protected Impl(@NotNull io.epigraph.data.Data.Imm.Raw raw) { super($ln.type, raw); }
 
         @Override
-        public @Nullable $ln.Imm.Value get() {
+        public @Nullable $ln.Imm get() {
+          return ($ln.Imm) _raw()._getDatum($ln.type.self);
+        }
+
+        @Override
+        public @Nullable $ln.Imm.Value get_() {
           return ($ln.Imm.Value) _raw()._getValue($ln.type.self);
         }
 
@@ -393,11 +403,20 @@ ${ f.valueType.typeRef.resolved match { // tag getters
       }
 
       @Override
-      public @Nullable $ln.Builder.Value get() {
+      public @Nullable $ln.Builder get() {
+        return ($ln.Builder) _raw()._getDatum($ln.type.self);
+      }
+
+      @Override
+      public @Nullable $ln.Builder.Value get_() {
         return ($ln.Builder.Value) _raw()._getValue($ln.type.self);
       }
 
-      public void set(@Nullable $ln.Builder.Value value) {
+      public void set(@Nullable $ln.Builder datum) {
+        _raw()._setDatum($ln.type.self, datum);
+      }
+
+      public void set_(@Nullable $ln.Builder.Value value) {
         _raw()._setValue($ln.type.self, value);
       }
 
