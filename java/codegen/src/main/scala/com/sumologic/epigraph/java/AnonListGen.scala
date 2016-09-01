@@ -11,7 +11,7 @@ class AnonListGen(from: CAnonListType, ctx: CContext) extends JavaTypeGen[CAnonL
 
   /** element value type */
   private val ev = t.elementValueType
-  
+
   /** element type ref */
   private val etr = ev.typeRef
 
@@ -60,12 +60,12 @@ ${et match { // element tags views (for vartypes)
 ${
       evt.effectiveTags.map { tag => sn"""\
 
-  ${"/**"}
+  /**
    * Returns list view of `${tag.name}` tag datums. Elements where the tag value is not set will be `null`.
    */
   @NotNull java.util.List<@Nullable ? extends ${lqn(tt(etr, tag.name), t)}> ${jn(tag.name + "Datums")}();
 
-  ${"/**"}
+  /**
    * Returns list view of `${tag.name}` tag values. Elements where the tag value is not set will be `null`.
    */
   @NotNull java.util.List<@Nullable ? extends ${lqn(tt(etr, tag.name), t)}.Value> ${jn(tag.name + "Values")}();
@@ -167,12 +167,12 @@ ${et match { // element tags (for vartypes)
 ${
       evt.effectiveTags.map { tag => sn"""\
 
-  ${"/**"}
+  /**
    * Returns immutable list view of `${tag.name}` tag datums. Elements where the tag value is not set will be `null`.
    */
   @NotNull java.util.List<@Nullable ? extends ${lqn(tt(etr, tag.name), t)}.Imm> ${jn(tag.name + "Datums")}();
 
-  ${"/**"}
+  /**
    * Returns immutable list view of `${tag.name}` tag values. Elements where the tag value is not set will be `null`.
    */
   @NotNull java.util.List<@Nullable ? extends ${lqn(tt(etr, tag.name), t)}.Imm.Value> ${jn(tag.name + "Values")}();
@@ -187,7 +187,9 @@ ${
     /** Private implementation of `$ln.Imm` interface. */
     final class Impl extends io.epigraph.data.ListDatum.Imm.Static.Impl<$ln.Imm> implements $ln.Imm {
 
-      Impl(@NotNull io.epigraph.data.ListDatum.Imm.Raw raw) { super($ln.type, raw); }
+      Impl(@NotNull io.epigraph.data.ListDatum.Imm.Raw raw) {
+        super($ln.type, raw);
+      }
 ${t.effectiveDefaultElementTagName match { // default element tag (if defined) views
       case None => ""
       case Some(dtn) => sn"""\
@@ -197,7 +199,10 @@ ${t.effectiveDefaultElementTagName match { // default element tag (if defined) v
        */
       @Override
       public @NotNull java.util.List<@Nullable ? extends ${lqn(tt(etr, dtn), t)}.Imm> datums() {
-        return new io.epigraph.util.Unmodifiable.ListView<${lqn(et, t)}.Imm${vt(et, "", ".Data")}, ${lqn(tt(etr, dtn), t)}.Imm>(datas(), ${lqn(et, t)}.Imm${vt(et, "", ".Data")}::get${vt(et, up(dtn), "")});
+        return new io.epigraph.util.Unmodifiable.ListView<${lqn(et, t)}.Imm${vt(et, "", ".Data")}, ${lqn(tt(etr, dtn), t)}.Imm>(
+            datas(),
+            ${lqn(et, t)}.Imm${vt(et, "", ".Data")}::get${vt(et, up(dtn), "")}
+        );
       }
 
       ${"/**"}
@@ -205,7 +210,10 @@ ${t.effectiveDefaultElementTagName match { // default element tag (if defined) v
        */
       @Override
       public @NotNull java.util.List<@Nullable ? extends ${lqn(tt(etr, dtn), t)}.Imm.Value> values() {
-        return new io.epigraph.util.Unmodifiable.ListView<${lqn(et, t)}.Imm${vt(et, "", ".Data")}, ${lqn(tt(etr, dtn), t)}.Imm.Value>(datas(), ${lqn(et, t)}.Imm${vt(et, "", ".Data")}::get_${vt(et, up(dtn), "")});
+        return new io.epigraph.util.Unmodifiable.ListView<${lqn(et, t)}.Imm${vt(et, "", ".Data")}, ${lqn(tt(etr, dtn), t)}.Imm.Value>(
+            datas(),
+            ${lqn(et, t)}.Imm${vt(et, "", ".Data")}::get_${vt(et, up(dtn), "")}
+        );
       }
 """
   }
@@ -223,18 +231,24 @@ ${et match { // element tags (for vartypes)
 ${
       evt.effectiveTags.map { tag => sn"""\
 
-      ${"/**"}
+      /**
        * Returns immutable list view of `${tag.name}` tag datums. Elements where the tag value is not set will be `null`.
        */
       public @NotNull java.util.List<@Nullable ? extends ${lqn(tt(etr, tag.name), t)}.Imm> ${jn(tag.name + "Datums")}() {
-        return new io.epigraph.util.Unmodifiable.ListView<${lqn(et, t)}.Imm${vt(et, "", ".Data")}, ${lqn(tt(etr, tag.name), t)}.Imm>(datas(), ${lqn(et, t)}.Imm${vt(et, "", ".Data")}::get${vt(et, up(tag.name), "")});
+        return new io.epigraph.util.Unmodifiable.ListView<${lqn(et, t)}.Imm${vt(et, "", ".Data")}, ${lqn(tt(etr, tag.name), t)}.Imm>(
+            datas(),
+            ${lqn(et, t)}.Imm${vt(et, "", ".Data")}::get${vt(et, up(tag.name), "")}
+        );
       }
 
-      ${"/**"}
+      /**
        * Returns immutable list view of `${tag.name}` tag values. Elements where the tag value is not set will be `null`.
        */
       public @NotNull java.util.List<@Nullable ? extends ${lqn(tt(etr, tag.name), t)}.Imm.Value> ${jn(tag.name + "Values")}() {
-        return new io.epigraph.util.Unmodifiable.ListView<${lqn(et, t)}.Imm${vt(et, "", ".Data")}, ${lqn(tt(etr, tag.name), t)}.Imm.Value>(datas(), ${lqn(et, t)}.Imm${vt(et, "", ".Data")}::get_${vt(et, up(tag.name), "")});
+        return new io.epigraph.util.Unmodifiable.ListView<${lqn(et, t)}.Imm${vt(et, "", ".Data")}, ${lqn(tt(etr, tag.name), t)}.Imm.Value>(
+            datas(),
+            ${lqn(et, t)}.Imm${vt(et, "", ".Data")}::get_${vt(et, up(tag.name), "")}
+        );
       }
 """
       }.mkString
@@ -308,32 +322,90 @@ ${
    */
   final class Builder extends io.epigraph.data.ListDatum.Mut.Static<$ln.Imm> implements $ln {
 
-    Builder(@NotNull io.epigraph.data.ListDatum.Mut.Raw raw) { super($ln.type, raw, $ln.Imm.Impl::new); }
-
-    // method is private to not expose datas() for non-union types (so simple type can be replaced with union type without breaking backwards-compatibility)
-    private java.util.List<${lqn(et, t)}.Builder.@NotNull Data> datas() {
-      return (java.util.List<${lqn(et, t)}.Builder.Data>) _raw()._elements();
+    Builder(@NotNull io.epigraph.data.ListDatum.Mut.Raw raw) {
+      super($ln.type, raw, $ln.Imm.Impl::new);
     }
+${t.effectiveDefaultElementTagName match { // default element tag (if defined) views
+      case None => ""
+      case Some(dtn) => sn"""\
 
-    @Override
-    public java.util.List<${lqn(et, t)}.Builder.Value> values() {
-      return new io.epigraph.util.ListView<>(
-          datas(),
-          ${lqn(et, t)}.Builder.Data::get_value,
-          ${lqn(et, t)}.Builder.Data::set_value,
-          ${lqn(et, t)}.type::createMutableData
-      );
-    }
+      ${"/**"}
+       * Returns list view of element default tag datum builders. Elements where the tag datum is not set will be `null`.
+       */
+      @Override
+      public @NotNull java.util.List<@Nullable ${lqn(tt(etr, dtn), t)}.Builder> datums() {
+        return new io.epigraph.util.ListView<${lqn(et, t)}.Builder${vt(et, "", ".Data")}, ${lqn(tt(etr, dtn), t)}.Builder>(
+            datas(),
+            ${lqn(et, t)}.Builder${vt(et, "", ".Data")}::get${vt(et, up(dtn), "")},
+            ${lqn(et, t)}.Builder${vt(et, "", ".Data")}::set${vt(et, up(dtn), "")},
+            ${lqn(et, t)}.type::createMutableData
+        );
+      }
 
-    @Override
-    public java.util.List<${lqn(et, t)}.@Nullable Builder> datums() {
-      return new io.epigraph.util.ListView<>(
-          datas(),
-          ${lqn(et, t)}.Builder.Data::get,
-          ${lqn(et, t)}.Builder.Data::set,
-          ${lqn(et, t)}.type::createMutableData
-      );
-    }
+      ${"/**"}
+       * Returns list view of element default tag value builders. Elements where the tag value is not set will be `null`.
+       */
+      @Override
+      public @NotNull java.util.List<@Nullable ${lqn(tt(etr, dtn), t)}.Builder.Value> values() {
+        return new io.epigraph.util.ListView<${lqn(et, t)}.Builder${vt(et, "", ".Data")}, ${lqn(tt(etr, dtn), t)}.Builder.Value>(
+            datas(),
+            ${lqn(et, t)}.Builder${vt(et, "", ".Data")}::get_${vt(et, up(dtn), "")},
+            ${lqn(et, t)}.Builder${vt(et, "", ".Data")}::set_${vt(et, up(dtn), "")},
+            ${lqn(et, t)}.type::createMutableData
+        );
+      }
+"""
+  }
+}\
+${et match { // element tags (for vartypes)
+    case evt: CVarTypeDef => sn"""\
+
+      ${"/**"}
+       * Returns list view of element data builders.
+       */
+      @Override
+      public @NotNull java.util.List<@NotNull ${lqn(et, t)}.Builder> datas() {
+        return io.epigraph.util.Util.cast(_raw()._elements());
+      }
+${
+      evt.effectiveTags.map { tag => sn"""\
+
+      /**
+       * Returns list view of elements `${tag.name}` tag datum builders. Elements where the tag value is not set will be `null`.
+       */
+      public @NotNull java.util.List<@Nullable ${lqn(tt(etr, tag.name), t)}.Builder> ${jn(tag.name + "Datums")}() {
+        return new io.epigraph.util.ListView<${lqn(et, t)}.Builder${vt(et, "", ".Data")}, ${lqn(tt(etr, tag.name), t)}.Builder>(
+            datas(),
+            ${lqn(et, t)}.Builder${vt(et, "", ".Data")}::get${vt(et, up(tag.name), "")},
+            ${lqn(et, t)}.Builder${vt(et, "", ".Data")}::set${vt(et, up(tag.name), "")},
+            ${lqn(et, t)}.type::createMutableData
+        );
+      }
+
+      /**
+       * Returns list view of elements `${tag.name}` tag value builders. Elements where the tag value is not set will be `null`.
+       */
+      public @NotNull java.util.List<@Nullable ${lqn(tt(etr, tag.name), t)}.Builder.Value> ${jn(tag.name + "Values")}() {
+        return new io.epigraph.util.ListView<${lqn(et, t)}.Builder${vt(et, "", ".Data")}, ${lqn(tt(etr, tag.name), t)}.Builder.Value>(
+            datas(),
+            ${lqn(et, t)}.Builder${vt(et, "", ".Data")}::get_${vt(et, up(tag.name), "")},
+            ${lqn(et, t)}.Builder${vt(et, "", ".Data")}::set_${vt(et, up(tag.name), "")},
+            ${lqn(et, t)}.type::createMutableData
+        );
+      }
+"""
+      }.mkString
+}\
+"""
+    case _ => sn"""\
+
+      // method is private to not expose datas() for non-union types (so simple type can be replaced with union type while preserving backwards-compatibility)
+      private @NotNull java.util.List<@NotNull ${lqn(et, t)}.Builder.Data> datas() {
+        return io.epigraph.util.Util.cast(_raw()._elements());
+      }
+"""
+  }
+}\
 
     /**
      * Builder for `${t.name.name}` value (holding a builder or an error).
@@ -355,27 +427,31 @@ ${
         super($ln.type, raw, $ln.Imm.Data.Impl::new);
       }
 
-      // default tag value getter
-      @Override
-      public @Nullable $ln.Builder.Value get_value() {
-        return ($ln.Builder.Value) _raw()._getValue($ln.type.self);
-      }
-
       // default tag datum getter
       @Override
       public @Nullable $ln.Builder get() {
-        return io.epigraph.util.Util.apply($ln.Builder.Value::getDatum, get_value());
+        return io.epigraph.util.Util.apply(get_(), $ln.Builder.Value::getDatum);
       }
 
-
-      // default tag value setter
-      public void set_value(@Nullable $ln.Builder.Value value) {
-        _raw()._setValue($ln.type.self, value);
+      // default tag value getter
+      @Override
+      public @Nullable $ln.Builder.Value get_() {
+        return ($ln.Builder.Value) _raw()._getValue($ln.type.self);
       }
 
-      // default tag datum setter (TODO: if defined)
+      // default tag datum setter
       public void set(@Nullable $ln.Builder datum) {
         _raw()._getOrCreateTagValue($ln.type.self)._raw().setDatum(datum);
+      }
+
+      // default tag error setter // TODO simplified DatumTypeData implementation with this method
+      public void set(@NotNull io.epigraph.errors.ErrorValue error) {
+        _raw()._getOrCreateTagValue($ln.type.self)._raw().setError(error);
+      }
+
+      // default tag value setter
+      public void set_(@Nullable $ln.Builder.Value value) {
+        _raw()._setValue($ln.type.self, value);
       }
 
     }
