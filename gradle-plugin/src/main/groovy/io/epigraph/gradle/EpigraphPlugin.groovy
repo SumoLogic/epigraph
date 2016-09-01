@@ -139,14 +139,21 @@ class EpigraphPlugin implements Plugin<ProjectInternal> {
 
   private static void configureIdeaScopes(Project project) {
     if (project.hasProperty('idea')) {
-      def scopes = project.idea.module.scopes
+      def module = project.idea.module
+
+      module.inheritOutputDirs = false
+
+      def epigraphBuildRoot = new File(project.buildDir, 'epigraph')
+      module.outputDir = new File(epigraphBuildRoot, 'main')
+      module.testOutputDir = new File(epigraphBuildRoot, 'test')
+
+      def scopes = module.scopes
 
       if (scopes.COMPILE == null) addScope('COMPILE', scopes)
       if (scopes.TEST == null) addScope('TEST', scopes)
 
       scopes.COMPILE.plus += [project.configurations.compile]
       scopes.TEST.plus += [project.configurations.testCompile]
-
     }
   }
 

@@ -9,7 +9,7 @@ version = '0.0' // snapshot versions not supported in local repo
 description = """
 Epigraph gradle plugin
 
-todo
+todo full description here
 """
 
 apply plugin: 'groovy'
@@ -19,6 +19,9 @@ dependencies {
 
   compile gradleApi()
   compile localGroovy()
+  testCompile gradleTestKit()
+  testCompile 'junit:junit'
+  testCompile('org.spockframework:spock-core') { exclude module: 'groovy-all' }
 }
 
 plugins.withType(JavaPlugin) {
