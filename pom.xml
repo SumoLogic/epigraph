@@ -73,6 +73,12 @@
       </dependency>
 
       <dependency>
+        <groupId>com.io7m.jpplib</groupId>
+        <artifactId>io7m-jpplib-core</artifactId>
+        <version>0.7.0</version>
+      </dependency>
+
+      <dependency>
         <groupId>com.lihaoyi</groupId>
         <artifactId>pprint_${scala.version.major.minor}</artifactId>
         <version>0.4.1</version>

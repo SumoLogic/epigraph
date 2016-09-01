@@ -18,7 +18,8 @@ Map<String, String> moduleNames = [
     'idea-plugin'                        : 'idea-plugin',
     'java/codegen'                       : 'epigraph-java-codegen',
     'java/core'                          : 'epigraph-java-core',
-//    'java/projections'                   : 'epigraph-java-projections',
+    'java/projections'                   : 'epigraph-java-projections',
+    'java/util'                          : 'epigraph-java-util',
     'light-psi'                          : 'epigraph-light-psi',
     'maven-plugin'                       : 'epigraph-maven-plugin',
     'operations-schema'                  : 'epigraph-operations-schema',
@@ -31,7 +32,7 @@ Map<String, String> moduleNames = [
 ]
 
 // uncomment to build and publish (`publishToMavenLocal`) gradle and maven plugins for the first time
-//moduleNames = [
+//Map<String, String> moduleNames = [
 //    'core'           : 'epigraph-core',
 //    'gradle-plugin'  : 'epigraph-gradle-plugin',
 //    'light-psi'      : 'epigraph-light-psi',
