@@ -7,6 +7,7 @@ import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jps.model.java.JavaModuleSourceRootTypes;
 
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
@@ -18,7 +19,13 @@ public class SchemaFileIndexUtil {
     if (file.isDirectory() || fileTypeManager.isFileIgnored(file)) {
       return false;
     }
+
+    return fileUnderSources(project, file);
+  }
+
+  public static boolean fileUnderSources(@NotNull Project project, @NotNull VirtualFile file) {
     ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
-    return fileIndex.isInSource(file) || fileIndex.isInTestSourceContent(file) || fileIndex.isInLibrarySource(file);
+//    return fileIndex.isInSource(file) || fileIndex.isInTestSourceContent(file) || fileIndex.isInLibrarySource(file);
+    return fileIndex.isUnderSourceRootOfType(file, JavaModuleSourceRootTypes.SOURCES) || fileIndex.isInLibrarySource(file);
   }
 }

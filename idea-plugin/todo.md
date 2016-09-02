@@ -40,15 +40,6 @@
 ---
 ## Done
 ### High
-- Rename things:
-  - [x] schema-parser-common -> lang-parser-common
-  - [x] schema-parser -> lang-parser (with artifact name = epigraph-lang-parser)
-  - [x] com.sumologic.epigraph.schema -> io.epigraph.lang
-  - [x] schema.bnf -> lang.bnf
-    - [x] elementTypePrefx -> `E_`
-    - [x] PsiClassPrefix -> 'Epigraph'? Or make it different for Schema/Data/Projection classes?
-  - [x] `Schema*` classes to `Epigraph*`, except for `SchemaParser`
-  - [x] io.epigraph.lang.schema.**.Schema* -> io.epigraph.lang.**.Epigraph* ?
 - Make light-psi a separate module
 
 ### Medium
