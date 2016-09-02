@@ -11,7 +11,7 @@ import static io.epigraph.schema.lexer.SchemaElementTypes.*;
 import com.intellij.extapi.psi.StubBasedPsiElementBase;
 import io.epigraph.schema.parser.psi.stubs.SchemaNamespaceDeclStub;
 import io.epigraph.schema.parser.psi.*;
-import io.epigraph.schema.parser.Fqn;
+import io.epigraph.lang.Fqn;
 
 public class SchemaNamespaceDeclImpl extends StubBasedPsiElementBase<SchemaNamespaceDeclStub> implements SchemaNamespaceDecl {
 

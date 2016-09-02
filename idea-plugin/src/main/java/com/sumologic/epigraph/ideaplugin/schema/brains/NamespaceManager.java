@@ -5,7 +5,7 @@ import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
-import io.epigraph.schema.parser.Fqn;
+import io.epigraph.lang.Fqn;
 import io.epigraph.schema.parser.psi.SchemaFile;
 import io.epigraph.schema.parser.psi.SchemaFqn;
 import io.epigraph.schema.parser.psi.SchemaImportStatement;

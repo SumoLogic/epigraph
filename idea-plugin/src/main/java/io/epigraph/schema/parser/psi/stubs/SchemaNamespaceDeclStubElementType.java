@@ -3,7 +3,7 @@ package io.epigraph.schema.parser.psi.stubs;
 import com.intellij.psi.stubs.*;
 import com.intellij.util.io.StringRef;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaStubIndexKeys;
-import io.epigraph.schema.parser.Fqn;
+import io.epigraph.lang.Fqn;
 import io.epigraph.schema.parser.SchemaLanguage;
 import io.epigraph.schema.parser.psi.SchemaNamespaceDecl;
 import io.epigraph.schema.parser.psi.impl.SchemaNamespaceDeclImpl;

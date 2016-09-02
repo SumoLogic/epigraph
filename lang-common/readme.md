@@ -1,0 +1,1 @@
+Parts common for all the languages (Schema, IDL)

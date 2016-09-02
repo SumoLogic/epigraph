@@ -3,7 +3,7 @@ package io.epigraph.schema.parser.psi;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNameIdentifierOwner;
 import com.intellij.util.IncorrectOperationException;
-import io.epigraph.schema.parser.Fqn;
+import io.epigraph.lang.Fqn;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

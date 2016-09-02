@@ -3,7 +3,7 @@ package com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
-import io.epigraph.schema.parser.Fqn;
+import io.epigraph.lang.Fqn;
 import io.epigraph.schema.parser.psi.SchemaTypeDef;
 
 import java.util.*;

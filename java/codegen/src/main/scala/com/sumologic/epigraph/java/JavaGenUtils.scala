@@ -6,7 +6,7 @@ import java.io.{BufferedWriter, OutputStream, OutputStreamWriter}
 import java.nio.charset.{Charset, CharsetEncoder, StandardCharsets}
 import java.nio.file.{Files, Path, Paths, StandardOpenOption}
 
-import io.epigraph.schema.parser.Fqn
+import io.epigraph.lang.Fqn
 
 import scala.collection.JavaConversions._
 

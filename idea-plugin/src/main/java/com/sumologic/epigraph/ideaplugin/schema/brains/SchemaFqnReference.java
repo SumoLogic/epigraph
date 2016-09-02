@@ -15,7 +15,7 @@ import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.CompletionTypeF
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaSearchScopeUtil;
 import com.sumologic.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
-import io.epigraph.schema.parser.Fqn;
+import io.epigraph.lang.Fqn;
 import io.epigraph.schema.parser.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

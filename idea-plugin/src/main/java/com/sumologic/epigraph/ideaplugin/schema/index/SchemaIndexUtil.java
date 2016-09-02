@@ -3,7 +3,7 @@ package com.sumologic.epigraph.ideaplugin.schema.index;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.search.GlobalSearchScope;
-import io.epigraph.schema.parser.Fqn;
+import io.epigraph.lang.Fqn;
 import io.epigraph.schema.parser.psi.SchemaNamespaceDecl;
 import io.epigraph.schema.parser.psi.SchemaSupplementDef;
 import io.epigraph.schema.parser.psi.SchemaTypeDef;

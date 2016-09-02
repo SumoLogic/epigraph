@@ -6,7 +6,7 @@ import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.StubBasedPsiElement;
 import io.epigraph.schema.parser.psi.stubs.SchemaNamespaceDeclStub;
-import io.epigraph.schema.parser.Fqn;
+import io.epigraph.lang.Fqn;
 
 public interface SchemaNamespaceDecl extends PsiElement, StubBasedPsiElement<SchemaNamespaceDeclStub> {
 

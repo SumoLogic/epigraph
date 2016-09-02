@@ -8,7 +8,7 @@ import com.intellij.psi.stubs.StubOutputStream;
 import com.intellij.util.io.StringRef;
 import com.sumologic.epigraph.ideaplugin.schema.brains.SchemaFqnReference;
 import com.sumologic.epigraph.ideaplugin.schema.brains.SchemaFqnReferenceResolver;
-import io.epigraph.schema.parser.Fqn;
+import io.epigraph.lang.Fqn;
 import io.epigraph.schema.parser.psi.SchemaFqnTypeRef;
 import io.epigraph.schema.parser.psi.SchemaTypeDef;
 import io.epigraph.schema.parser.psi.impl.SchemaPsiImplUtil;

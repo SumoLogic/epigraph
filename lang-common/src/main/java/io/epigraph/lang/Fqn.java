@@ -1,4 +1,4 @@
-package io.epigraph.schema.parser;
+package io.epigraph.lang;
 
 import net.jcip.annotations.Immutable;
 import org.jetbrains.annotations.NotNull;

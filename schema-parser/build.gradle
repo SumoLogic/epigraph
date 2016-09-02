@@ -11,6 +11,7 @@ idea.module.generatedSourceDirs += file("$buildDir/generated-sources/schema-pars
 
 dependencies {
   compile project(':epigraph-light-psi')
+  compile project(':epigraph-lang-common')
 //  compileOnly files(project.lightPsiJar)
 //  testCompileOnly files(project.lightPsiJar)
 

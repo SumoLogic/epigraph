@@ -3,7 +3,7 @@
 package com.sumologic.epigraph.schema.compiler
 
 import com.intellij.psi.PsiElement
-import io.epigraph.schema.parser.Fqn
+import io.epigraph.lang.Fqn
 import io.epigraph.schema.parser.psi.{SchemaAnonList, SchemaAnonMap, SchemaFqnTypeRef, SchemaTypeDef}
 import org.jetbrains.annotations.Nullable
 

@@ -9,7 +9,7 @@ import com.intellij.psi.stubs.StubOutputStream;
 import com.intellij.psi.tree.IStubFileElementType;
 import com.intellij.util.io.StringRef;
 import com.sumologic.epigraph.ideaplugin.schema.brains.NamespaceManager;
-import io.epigraph.schema.parser.Fqn;
+import io.epigraph.lang.Fqn;
 import io.epigraph.schema.parser.SchemaLanguage;
 import io.epigraph.schema.parser.psi.SchemaFile;
 import org.jetbrains.annotations.NotNull;

@@ -2,7 +2,7 @@ package io.epigraph.schema.parser.psi.stubs;
 
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.stubs.StubInputStream;
-import io.epigraph.schema.parser.Fqn;
+import io.epigraph.lang.Fqn;
 import io.epigraph.schema.parser.psi.SchemaListTypeDef;
 import io.epigraph.schema.parser.psi.impl.SchemaListTypeDefImpl;
 import org.jetbrains.annotations.NonNls;

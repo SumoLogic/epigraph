@@ -3,7 +3,7 @@ package io.epigraph.schema.parser.psi.stubs;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.stubs.StubInputStream;
 import com.intellij.psi.stubs.StubOutputStream;
-import io.epigraph.schema.parser.Fqn;
+import io.epigraph.lang.Fqn;
 import io.epigraph.schema.parser.psi.SchemaRecordTypeDef;
 import io.epigraph.schema.parser.psi.SchemaSupplementsDecl;
 import io.epigraph.schema.parser.psi.impl.SchemaRecordTypeDefImpl;

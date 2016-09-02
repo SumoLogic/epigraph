@@ -9,7 +9,7 @@ import com.intellij.util.IncorrectOperationException;
 import com.sumologic.epigraph.ideaplugin.schema.brains.NamespaceManager;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaSearchScopeUtil;
 import com.sumologic.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
-import io.epigraph.schema.parser.Fqn;
+import io.epigraph.lang.Fqn;
 import io.epigraph.schema.parser.psi.*;
 import io.epigraph.schema.parser.psi.stubs.SchemaTypeDefStubBase;
 import io.epigraph.schema.parser.psi.stubs.SerializedFqnTypeRef;

@@ -4,7 +4,7 @@ package io.epigraph.schema.parser.psi;
 import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
-import io.epigraph.schema.parser.Fqn;
+import io.epigraph.lang.Fqn;
 
 public interface SchemaFqn extends PsiElement {
 

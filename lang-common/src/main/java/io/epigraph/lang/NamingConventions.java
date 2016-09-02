@@ -1,4 +1,4 @@
-package io.epigraph.schema.parser;
+package io.epigraph.lang;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;

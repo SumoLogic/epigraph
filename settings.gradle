@@ -20,6 +20,7 @@ Map<String, String> moduleNames = [
     'java/core'                          : 'epigraph-java-core',
     'java/projections'                   : 'epigraph-java-projections',
     'java/util'                          : 'epigraph-java-util',
+    'lang-common'                        : 'epigraph-lang-common',
     'light-psi'                          : 'epigraph-light-psi',
     'maven-plugin'                       : 'epigraph-maven-plugin',
     'operations-schema'                  : 'epigraph-operations-schema',

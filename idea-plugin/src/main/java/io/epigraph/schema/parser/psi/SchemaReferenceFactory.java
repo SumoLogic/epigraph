@@ -7,7 +7,7 @@ import com.sumologic.epigraph.ideaplugin.schema.brains.SchemaFqnReference;
 import com.sumologic.epigraph.ideaplugin.schema.brains.SchemaFqnReferenceResolver;
 import com.sumologic.epigraph.ideaplugin.schema.brains.SchemaVarTagReference;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaSearchScopeUtil;
-import io.epigraph.schema.parser.Fqn;
+import io.epigraph.lang.Fqn;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

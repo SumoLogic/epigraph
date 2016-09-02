@@ -8,7 +8,7 @@ import com.intellij.psi.impl.source.resolve.ResolveCache;
 import com.intellij.util.IncorrectOperationException;
 import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.TypeMembers;
 import com.sumologic.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
-import io.epigraph.schema.parser.NamingConventions;
+import io.epigraph.lang.NamingConventions;
 import io.epigraph.schema.parser.SchemaParserDefinition;
 import io.epigraph.schema.parser.psi.SchemaQid;
 import io.epigraph.schema.parser.psi.SchemaVarTagDecl;
