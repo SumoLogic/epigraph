@@ -2,7 +2,6 @@ package com.sumologic.epigraph.ideaplugin.schema.features.completion;
 
 import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
-import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiRecursiveElementVisitor;
 import com.intellij.psi.PsiReference;
@@ -17,9 +16,11 @@ import io.epigraph.schema.parser.SchemaParserDefinition;
 import io.epigraph.schema.parser.psi.*;
 import io.epigraph.schema.parser.psi.impl.SchemaPsiImplUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
+import static com.intellij.patterns.PlatformPatterns.psiElement;
 import static io.epigraph.schema.lexer.SchemaElementTypes.*;
 
 /**
@@ -63,23 +64,27 @@ public class SchemaCompletionContributor extends CompletionContributor {
   public SchemaCompletionContributor() {
     extend(
         CompletionType.BASIC,
-        PlatformPatterns.psiElement().withLanguage(SchemaLanguage.INSTANCE),
+        psiElement().withLanguage(SchemaLanguage.INSTANCE),
         new CompletionProvider<CompletionParameters>() {
           @Override
           protected void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context, @NotNull CompletionResultSet result) {
             PsiElement position = parameters.getPosition();
-            completeTopLevelKeywords(position, result);
-            completeExtendsKeyword(position, result);
-            completeMetaKeyword(position, result);
-            completeSupplementsKeyword(position, result);
-            completeWith(position, result);
-            completeNewTypeName(position, result);
-            completeOverride(position, result);
-            completeOverrideMember(position, result);
+            completeTopLevelKeywords(position, result);     // complete top-level schema keywords
+            completeExtendsKeyword(position, result);       // complete `extends` in type defs
+            completeMetaKeyword(position, result);          // complete `meta` in type defs
+            completeSupplementsKeyword(position, result);   // complete `supplements` in type defs
+            completeWith(position, result);                 // complete `with` inside `supplements`
+            completeNewTypeName(position, result);          // complete new type names using unresolved references in current file
+            completeOverride(position, result);             // complete `override` in field/tag decls
+            completeOverrideMember(position, result);       // complete type name after `override`
+            completePolymorphic(position, result);          // complete `polymorphic` keyword in `valueTypeRef`
+            completeDefault(position, result);              // complete `default` keyword in `valueTypeRef`
           }
         }
     );
   }
+
+  // TODO rewrite using `PsiElementPattern`. See `RncCompletionData` for examples
 
   private void completeTopLevelKeywords(@NotNull PsiElement position, @NotNull CompletionResultSet result) {
     // Only complete if this token is first one on the current line?
@@ -385,4 +390,61 @@ public class SchemaCompletionContributor extends CompletionContributor {
       }
     }
   }
+
+  private void completePolymorphic(@NotNull PsiElement position, @NotNull final CompletionResultSet result) {
+    // todo support for anon lists and maps
+
+    SchemaValueTypeRef valueTypeRef = PsiTreeUtil.getParentOfType(position, SchemaValueTypeRef.class);
+    if (valueTypeRef != null && valueTypeRef.getPolymorphic() == null) {
+      PsiElement prevSibling = PsiTreeUtil.prevVisibleLeaf(position);
+      if (prevSibling != null && prevSibling.getNode().getElementType() == S_COLON) {
+        result.addElement(LookupElementBuilder.create("polymorphic "));
+      }
+    } else {
+      PsiElement prevVisibleLeaf = PsiTreeUtil.prevVisibleLeaf(position);
+      if (prevVisibleLeaf != null) {
+        if (PsiTreeUtil.getParentOfType(prevVisibleLeaf, SchemaRecordTypeDef.class) != null) {
+          IElementType prevLeafType = prevVisibleLeaf.getNode().getElementType();
+          if (prevLeafType == S_COLON) {
+            result.addElement(LookupElementBuilder.create("polymorphic "));
+          }
+        }
+      }
+    }
+  }
+
+  private void completeDefault(@NotNull PsiElement position, @NotNull final CompletionResultSet result) {
+    SchemaValueTypeRef valueTypeRef = PsiTreeUtil.getParentOfType(position, SchemaValueTypeRef.class);
+    // there is a value type ref and no 'default' in it yet
+    if (valueTypeRef != null) {
+      completeDefault(valueTypeRef, result);
+    } else {
+      PsiElement prevVisibleLeaf = PsiTreeUtil.prevVisibleLeaf(position);
+      if (prevVisibleLeaf != null) {
+        SchemaFieldDecl fieldDecl = PsiTreeUtil.getParentOfType(prevVisibleLeaf, SchemaFieldDecl.class);
+        if (fieldDecl != null) {
+          completeDefault(fieldDecl.getValueTypeRef(), result);
+        }
+      }
+    }
+  }
+
+  private void completeDefault(@Nullable SchemaValueTypeRef valueTypeRef, @NotNull CompletionResultSet result) {
+    if (valueTypeRef != null && valueTypeRef.getDefaultOverride() == null) {
+      SchemaTypeRef typeRef = valueTypeRef.getTypeRef();
+      // type ref is an FQN type ref (not an anon list or map)
+      if (typeRef instanceof SchemaFqnTypeRef) {
+        // resolve it and ensure it points to a var type
+        SchemaFqnTypeRef fqnTypeRef = (SchemaFqnTypeRef) typeRef;
+        SchemaTypeDef typeDef = fqnTypeRef.resolve();
+        if (typeDef instanceof SchemaVarTypeDef) {
+          PsiElement prevSibling = SchemaPsiUtil.prevNonWhitespaceSibling(valueTypeRef);
+          if (prevSibling != null && prevSibling.getNode().getElementType() == S_COLON) {
+            result.addElement(LookupElementBuilder.create("default "));
+          }
+        }
+      }
+    }
+  }
+
 }

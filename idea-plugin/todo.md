@@ -1,5 +1,4 @@
 ### High
-- Highlight string literals
 
 ### Medium
 - Smart type completion: suggest out of scope types (+add import)
@@ -40,7 +39,7 @@
 ---
 ## Done
 ### High
-- Make light-psi a separate module
+- Highlight string literals
 
 ### Medium
 

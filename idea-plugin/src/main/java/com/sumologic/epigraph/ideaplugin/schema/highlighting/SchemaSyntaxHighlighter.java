@@ -42,6 +42,9 @@ public class SchemaSyntaxHighlighter extends SyntaxHighlighterBase {
 
   public static final TextAttributesKey PARAM_NAME = DefaultLanguageHighlighterColors.METADATA;
 
+  public static final TextAttributesKey STRING_DATA = DefaultLanguageHighlighterColors.STRING;
+  public static final TextAttributesKey NUMERIC_DATA = DefaultLanguageHighlighterColors.NUMBER;
+
   private static final Map<IElementType, TextAttributesKey> keys;
 
 
@@ -51,6 +54,8 @@ public class SchemaSyntaxHighlighter extends SyntaxHighlighterBase {
     keys.put(S_COMMA, COMMA);
     keys.put(S_COMMENT, LINE_COMMENT);
     keys.put(S_BLOCK_COMMENT, BLOCK_COMMENT);
+    keys.put(S_STRING, STRING_DATA);
+    keys.put(S_NUMBER, NUMERIC_DATA);
     add(BRACKETS, S_BRACKET_LEFT, S_BRACKET_RIGHT);
     add(CURLY_BR, SchemaParserDefinition.CURLY_BRACES.getTypes());
     add(KEYWORDS, SchemaParserDefinition.KEYWORDS.getTypes());
