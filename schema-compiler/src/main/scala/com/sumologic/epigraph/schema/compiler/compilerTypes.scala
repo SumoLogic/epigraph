@@ -153,7 +153,6 @@ object CTypeDef {
     } else {
       @Nullable val vtr = sdo.getVarTagRef
       if (vtr == null) {
-        assert(sdo.getNodefault ne null)
         Some(None)
       } else {
         Some(Some(vtr.getQid.getCanonicalName))
@@ -171,9 +170,10 @@ class CVarTypeDef(csf: CSchemaFile, override val psi: SchemaVarTypeDef)(implicit
   final override type This = CVarTypeDef
 
   // `None` - no declaration, `Some(None)` - declared nodefault, `Some(Some(String))` - declared default
-  final override val declaredDefaultTagName: Option[Option[String]] = CTypeDef.declaredDefaultTagName(
-    psi.getDefaultOverride
-  )
+  final override val declaredDefaultTagName: Option[Option[String]] = None
+//  CTypeDef.declaredDefaultTagName(
+//    psi.getDefaultOverride
+//  )
 
   final override def effectiveDefaultTagName: Option[String] = ctx.after(
     CPhase.COMPUTE_SUPERTYPES, null, _effectiveDefaultTagName
