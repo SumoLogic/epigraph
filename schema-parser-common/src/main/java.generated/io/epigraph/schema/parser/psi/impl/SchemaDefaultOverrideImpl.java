@@ -27,21 +27,15 @@ public class SchemaDefaultOverrideImpl extends ASTWrapperPsiElement implements S
   }
 
   @Override
-  @Nullable
+  @NotNull
   public SchemaVarTagRef getVarTagRef() {
-    return PsiTreeUtil.getChildOfType(this, SchemaVarTagRef.class);
+    return notNullChild(PsiTreeUtil.getChildOfType(this, SchemaVarTagRef.class));
   }
 
   @Override
-  @Nullable
+  @NotNull
   public PsiElement getDefault() {
-    return findChildByType(S_DEFAULT);
-  }
-
-  @Override
-  @Nullable
-  public PsiElement getNodefault() {
-    return findChildByType(S_NODEFAULT);
+    return notNullChild(findChildByType(S_DEFAULT));
   }
 
 }

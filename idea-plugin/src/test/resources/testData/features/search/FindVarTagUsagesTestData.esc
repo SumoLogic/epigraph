@@ -1,6 +1,10 @@
-namespace foo
+namespace foo2
 
-vartype T default `foo` {
+vartype T {
   abstract fo<caret>o: T
+}
+
+record X {
+  zz: T default foo
 }
 

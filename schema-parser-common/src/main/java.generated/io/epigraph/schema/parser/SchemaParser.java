@@ -595,26 +595,15 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'nodefault' | 'default' varTagRef
+  // 'default' varTagRef
   public static boolean defaultOverride(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "defaultOverride")) return false;
-    if (!nextTokenIs(b, "<default override>", S_DEFAULT, S_NODEFAULT)) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NONE_, S_DEFAULT_OVERRIDE, "<default override>");
-    r = consumeToken(b, S_NODEFAULT);
-    if (!r) r = defaultOverride_1(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  // 'default' varTagRef
-  private static boolean defaultOverride_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "defaultOverride_1")) return false;
+    if (!nextTokenIs(b, S_DEFAULT)) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, S_DEFAULT);
     r = r && varTagRef(b, l + 1);
-    exit_section_(b, m, null, r);
+    exit_section_(b, m, S_DEFAULT_OVERRIDE, r);
     return r;
   }
 
@@ -1813,7 +1802,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // typeDefModifiers 'vartype' typeName extendsDecl? supplementsDecl? defaultOverride? varTypeBody?
+  // typeDefModifiers 'vartype' typeName extendsDecl? supplementsDecl? varTypeBody?
   public static boolean varTypeDef(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "varTypeDef")) return false;
     if (!nextTokenIs(b, "<var type def>", S_ABSTRACT, S_VARTYPE)) return false;
@@ -1825,8 +1814,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     r = r && report_error_(b, typeName(b, l + 1));
     r = p && report_error_(b, varTypeDef_3(b, l + 1)) && r;
     r = p && report_error_(b, varTypeDef_4(b, l + 1)) && r;
-    r = p && report_error_(b, varTypeDef_5(b, l + 1)) && r;
-    r = p && varTypeDef_6(b, l + 1) && r;
+    r = p && varTypeDef_5(b, l + 1) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -1845,16 +1833,9 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // defaultOverride?
+  // varTypeBody?
   private static boolean varTypeDef_5(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "varTypeDef_5")) return false;
-    defaultOverride(b, l + 1);
-    return true;
-  }
-
-  // varTypeBody?
-  private static boolean varTypeDef_6(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "varTypeDef_6")) return false;
     varTypeBody(b, l + 1);
     return true;
   }

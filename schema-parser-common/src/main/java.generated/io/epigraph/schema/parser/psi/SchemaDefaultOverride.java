@@ -7,13 +7,10 @@ import com.intellij.psi.PsiElement;
 
 public interface SchemaDefaultOverride extends PsiElement {
 
-  @Nullable
+  @NotNull
   SchemaVarTagRef getVarTagRef();
 
-  @Nullable
+  @NotNull
   PsiElement getDefault();
-
-  @Nullable
-  PsiElement getNodefault();
 
 }

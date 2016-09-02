@@ -85,7 +85,19 @@ public class SchemaReferenceFactory {
 
   @Nullable
   public static PsiReference getVarTagReference(@NotNull SchemaVarTagRef varTagRef) {
-    SchemaVarTypeDef varTypeDef = PsiTreeUtil.getParentOfType(varTagRef, SchemaVarTypeDef.class);
-    return varTypeDef == null ? null : new SchemaVarTagReference(varTypeDef, varTagRef.getQid());
+    SchemaValueTypeRef valueTypeRef = PsiTreeUtil.getParentOfType(varTagRef, SchemaValueTypeRef.class);
+    if (valueTypeRef == null) return null;
+
+    SchemaTypeRef varTypeRef = valueTypeRef.getTypeRef();
+    if (varTypeRef instanceof SchemaFqnTypeRef) {
+      SchemaFqnTypeRef fqnVarTypeRef = (SchemaFqnTypeRef) varTypeRef;
+      SchemaTypeDef typeDef = fqnVarTypeRef.resolve();
+      if (typeDef instanceof SchemaVarTypeDef) {
+        SchemaVarTypeDef varTypeDef = (SchemaVarTypeDef) typeDef;
+        return new SchemaVarTagReference(varTypeDef, varTagRef.getQid());
+      }
+    }
+
+    return null;
   }
 }

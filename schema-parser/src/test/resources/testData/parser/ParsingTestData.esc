@@ -7,6 +7,6 @@ record Baz {
   field: SomeType
 }
 
-vartype Var default baz {
+vartype Var {
   `map`: Baz
 }

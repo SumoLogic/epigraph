@@ -19,6 +19,7 @@ record <error descr="Circular inheritance">R2</error> extends R1
 
 record Q1 {
   <error descr="Field overrides nothing">override</error> f: <error descr="Ambiguous type reference">R</error>
+  w: Q1 <error descr="Default override is only applicable to var types">default <error descr="Unresolved reference">x</error></error>
 }
 
 vartype <warning descr="Type 'EE' is shadowed by 'import bar.EE'">EE</warning> {

@@ -1,8 +1,9 @@
-namespace some
+namespace some3
 
-record X
-
-vartype V1 default `st<caret>ring` {
+vartype V1 {
   `string`: X
 }
 
+record X {
+  v: V1 default `str<caret>ing`
+}

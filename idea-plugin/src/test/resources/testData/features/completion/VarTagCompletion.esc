@@ -1,6 +1,10 @@
-namespace some
+namespace some5
 
-vartype Some default <caret> {
+vartype Some {
   `string`: X
   foo: X
+}
+
+record X {
+  foo: Some default <caret>
 }

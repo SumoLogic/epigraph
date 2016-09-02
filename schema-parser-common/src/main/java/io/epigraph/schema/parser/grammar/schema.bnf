@@ -137,7 +137,8 @@ anonMap ::= 'map' '[' typeRef ',' valueTypeRef ']' {pin=1 extends="typeRef" }
 extendsDecl ::= 'extends' fqnTypeRef (',' fqnTypeRef)* {pin=1}
 supplementsDecl ::= 'supplements' fqnTypeRef (',' fqnTypeRef)* {pin=1}
 
-defaultOverride ::= 'nodefault' | 'default' varTagRef
+// TODO Fix: varTagRef doesn't resolve
+defaultOverride ::= 'default' varTagRef
 customParam ::= qid '=' dataValue {
   name="custom attribute"
   implements="com.intellij.psi.PsiNamedElement"
@@ -149,7 +150,7 @@ metaDecl ::= 'meta' fqnTypeRef { pin=1 } // we don't allow anonList or anonMap a
 
 /// vartype
 
-varTypeDef ::= typeDefModifiers 'vartype' typeName extendsDecl? supplementsDecl? defaultOverride? varTypeBody? {
+varTypeDef ::= typeDefModifiers 'vartype' typeName extendsDecl? supplementsDecl? varTypeBody? {
   methods=[supplemented]
   extends="io.epigraph.schema.parser.psi.impl.SchemaVarTypeDefImplBase"
   stubClass="io.epigraph.schema.parser.psi.stubs.SchemaVarTypeDefStub"

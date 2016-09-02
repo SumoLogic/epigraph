@@ -33,12 +33,6 @@ public class SchemaVarTypeDefImpl extends SchemaVarTypeDefImplBase implements Sc
 
   @Override
   @Nullable
-  public SchemaDefaultOverride getDefaultOverride() {
-    return PsiTreeUtil.getChildOfType(this, SchemaDefaultOverride.class);
-  }
-
-  @Override
-  @Nullable
   public SchemaExtendsDecl getExtendsDecl() {
     return PsiTreeUtil.getChildOfType(this, SchemaExtendsDecl.class);
   }

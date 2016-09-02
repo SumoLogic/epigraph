@@ -1,8 +1,9 @@
-namespace some
+namespace some1
 
-record X
-
-vartype V1 default tag<caret>1 {
+vartype V1 {
   tag1: X
 }
 
+record X {
+  v: V1 default tag<caret>1
+}

@@ -71,9 +71,26 @@ public class SchemaAnnotator implements Annotator {
       @Override
       public void visitDefaultOverride(@NotNull SchemaDefaultOverride defaultOverride) {
         SchemaVarTagRef varTagRef = defaultOverride.getVarTagRef();
-        if (varTagRef != null) {
-          PsiElement id = varTagRef.getQid();
-          setHighlighting(id, holder, SchemaSyntaxHighlighter.VAR_MEMBER);
+        PsiElement id = varTagRef.getQid();
+        setHighlighting(id, holder, SchemaSyntaxHighlighter.VAR_MEMBER);
+      }
+
+      @Override
+      public void visitValueTypeRef(@NotNull SchemaValueTypeRef valueTypeRef) {
+        SchemaDefaultOverride defaultOverride = valueTypeRef.getDefaultOverride();
+
+        if (defaultOverride != null) {
+          boolean showWrongOverrideError = true;
+
+          SchemaTypeRef typeRef = valueTypeRef.getTypeRef();
+          if (typeRef instanceof SchemaFqnTypeRef) {
+            SchemaFqnTypeRef fqnTypeRef = (SchemaFqnTypeRef) typeRef;
+            SchemaTypeDef typeDef = fqnTypeRef.resolve();
+            showWrongOverrideError = !(typeDef instanceof SchemaVarTypeDef);
+          }
+
+          if (showWrongOverrideError)
+            holder.createErrorAnnotation(defaultOverride, SchemaBundle.message("annotator.default.override.non.var"));
         }
       }
 

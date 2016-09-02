@@ -1,11 +1,13 @@
 namespace some2
 
-record X
-
-vartype V1 nodefault {
+vartype V1 {
   tag1: X
 }
 
-vartype V2 extends V1 default tag<caret>1 {
+vartype V2 extends V1 {
   tag2: X
+}
+
+record X {
+  v: V2 default tag<caret>1
 }

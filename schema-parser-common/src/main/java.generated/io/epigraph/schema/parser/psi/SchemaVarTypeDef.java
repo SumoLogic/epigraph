@@ -10,9 +10,6 @@ import io.epigraph.schema.parser.psi.stubs.SchemaVarTypeDefStub;
 public interface SchemaVarTypeDef extends SchemaTypeDef, StubBasedPsiElement<SchemaVarTypeDefStub> {
 
   @Nullable
-  SchemaDefaultOverride getDefaultOverride();
-
-  @Nullable
   SchemaExtendsDecl getExtendsDecl();
 
   @Nullable
