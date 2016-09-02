@@ -7,6 +7,7 @@ import org.gradle.api.internal.TaskOutputsInternal
 import org.gradle.api.tasks.ParallelizableTask
 import org.gradle.api.tasks.SourceTask
 import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.Internal
 
 import java.nio.charset.StandardCharsets
 import java.util.jar.JarFile
@@ -35,15 +36,18 @@ class CompileSchemaTask extends SourceTask {
     this.configuration = configuration
   }
 
+  @Internal
   @Override
   TaskOutputsInternal getOutputs() {
     return super.getOutputs()
   }
 
+  @Internal
   private Collection<Source> getSources() {
     return getSource().files.collect { new FileSource(it) }
   }
 
+  @Internal
   private Collection<Source> getDependencySources() {
     getLogger().debug("Getting dependencies from ${configuration}")
     if (configuration == null) return Collections.emptyList()
@@ -60,6 +64,7 @@ class CompileSchemaTask extends SourceTask {
     return dependencySources
   }
 
+  @Internal
   private Collection<Source> getImpliedDependencies() {
     if (getClass().getResource("/epigraph/builtinTypes.esc") != null) {
       return Collections.singletonList(new ResourceSource("/epigraph/builtinTypes.esc")); // TODO use url.openStream?
