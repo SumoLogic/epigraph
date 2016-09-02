@@ -14,9 +14,6 @@ import java.util.LinkedHashSet;
  */
 public class OpOutputVarProjection implements PrettyPrintable {
   @NotNull
-  public static final OpOutputTagProjection[] EMPTY_TAG_PROJECTIONS = new OpOutputTagProjection[0];
-
-  @NotNull
   private final UnionType type;
   @NotNull
   private final LinkedHashSet<OpOutputTagProjection> tagProjections;
@@ -34,13 +31,9 @@ public class OpOutputVarProjection implements PrettyPrintable {
 
 
   @NotNull
-  public UnionType type() {
-    return type;
-  }
+  public UnionType type() { return type; }
 
-  public @NotNull LinkedHashSet<OpOutputTagProjection> tagProjections() {
-    return tagProjections;
-  }
+  public @NotNull LinkedHashSet<OpOutputTagProjection> tagProjections() { return tagProjections; }
 
   // todo projection by tag
 
@@ -71,7 +64,5 @@ public class OpOutputVarProjection implements PrettyPrintable {
   }
 
   @Override
-  public String toString() {
-    return DataPrettyPrinter.prettyPrint(this);
-  }
+  public String toString() { return DataPrettyPrinter.prettyPrint(this); }
 }

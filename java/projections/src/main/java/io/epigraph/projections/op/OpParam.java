@@ -6,17 +6,12 @@ import io.epigraph.types.DatumType;
 import io.epigraph.util.pp.DataPrettyPrinter;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpParam implements PrettyPrintable {
-  public static final OpParam[] EMPTY_PARAMS = new OpParam[0];
-
   @NotNull
   private final String name;
   @NotNull
@@ -35,15 +30,18 @@ public class OpParam implements PrettyPrintable {
     return new HashSet<>(Arrays.asList(params));
   }
 
-  @NotNull
-  public String name() {
-    return name;
+  public static void merge(@NotNull Collection<OpParam> target, @NotNull Collection<OpParam> overlay) {
+    for (OpParam param : overlay) {
+      if (!target.contains(param))
+        target.add(param);
+    }
   }
 
   @NotNull
-  public DatumType model() {
-    return model;
-  }
+  public String name() { return name; }
+
+  @NotNull
+  public DatumType model() { return model; }
 
   // todo equals, hashcode, tostring
 
@@ -54,7 +52,5 @@ public class OpParam implements PrettyPrintable {
   }
 
   @Override
-  public String toString() {
-    return DataPrettyPrinter.prettyPrint(this);
-  }
+  public String toString() { return DataPrettyPrinter.prettyPrint(this); }
 }

@@ -7,15 +7,12 @@ import io.epigraph.util.pp.DataPrettyPrinter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public abstract class OpOutputModelProjection<M extends DatumType, P extends OpOutputModelProjection<M, P>> implements PrettyPrintable {
+public abstract class OpOutputModelProjection<M extends DatumType, P extends OpOutputModelProjection<M, P>> /*extends P*/ implements PrettyPrintable {
   @NotNull
   protected final M model;
   protected final boolean required;
@@ -34,26 +31,63 @@ public abstract class OpOutputModelProjection<M extends DatumType, P extends OpO
     this.polymorphicTail = polymorphicTail;
   }
 
-  public M model() {
-    return model;
-  }
+  public M model() { return model; }
 
-  public boolean required() {
-    return required;
-  }
+  public boolean required() { return required; }
 
-  public @Nullable Set<OpParam> params() {
-    return params;
-  }
+  public @Nullable Set<OpParam> params() { return params; }
 
-  public @Nullable LinkedHashSet<P> polymorphicTail() {
-    return polymorphicTail;
-  }
+  public @Nullable LinkedHashSet<P> polymorphicTail() { return polymorphicTail; }
 
   @NotNull
   public P projectionForModel(@NotNull M model) {
-    // todo merge self + appropriate tails
-    throw new UnsupportedOperationException();
+    if (polymorphicTail == null || polymorphicTail.isEmpty())
+      return self();
+
+    Collection<P> projectionsToMerge = projectionsToMerge(model);
+    boolean mergedRequired = required;
+
+    if (!mergedRequired) {
+      for (P p : projectionsToMerge) {
+        mergedRequired = p.required;
+        if (mergedRequired) break;
+      }
+    }
+
+    @Nullable
+    Set<OpParam> mergedParams = params == null ? null : new HashSet<>(params);
+    for (P p : projectionsToMerge) {
+      Set<OpParam> paramsToMerge = p.params;
+      if (paramsToMerge != null) {
+        if (mergedParams == null) mergedParams = new HashSet<>(paramsToMerge);
+        else OpParam.merge(mergedParams, paramsToMerge);
+      }
+    }
+
+    return mergedProjection(model, mergedRequired, mergedParams, projectionsToMerge);
+  }
+
+  protected P self() {
+    //noinspection unchecked
+    return (P) this;
+  }
+
+  protected abstract P mergedProjection(@NotNull M model,
+                                        boolean mergedRequired,
+                                        @Nullable Set<OpParam> mergedParams,
+                                        @NotNull Collection<P> projectionsToMerge);
+
+  private Collection<P> projectionsToMerge(@NotNull M model) {
+    Collection<P> res = new LinkedHashSet<P>();
+    res.add(self());
+    if (polymorphicTail != null) {
+      for (P p : polymorphicTail) {
+        if (model.isAssignableFrom(p.model))
+          res.add(p);
+      }
+    }
+
+    return res;
   }
 
   @Override
@@ -68,7 +102,7 @@ public abstract class OpOutputModelProjection<M extends DatumType, P extends OpO
   }
 
   protected <Exc extends Exception> void prettyPrintModel(DataLayouter<Exc> l) throws Exc {
-    if (required) l.print("+");
+    if (required) l.print("!");
     l.print(model.name().toString());
   }
 
@@ -98,12 +132,8 @@ public abstract class OpOutputModelProjection<M extends DatumType, P extends OpO
   }
 
   @Override
-  public int hashCode() {
-    return Objects.hash(model, required, params, polymorphicTail);
-  }
+  public int hashCode() { return Objects.hash(model, required, params, polymorphicTail); }
 
   @Override
-  public String toString() {
-    return DataPrettyPrinter.prettyPrint(this);
-  }
+  public String toString() { return DataPrettyPrinter.prettyPrint(this); }
 }

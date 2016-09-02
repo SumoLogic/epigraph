@@ -11,7 +11,7 @@ import java.util.*;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpOutputRecordModelProjection extends OpOutputModelProjection<RecordType, OpOutputRecordModelProjection> {
-  private static final ThreadLocal<Map<OpOutputRecordModelProjection, OpOutputRecordModelProjection>> equalsVisited = new ThreadLocal<>();
+  private static final ThreadLocal<IdentityHashMap<OpOutputRecordModelProjection, OpOutputRecordModelProjection>> equalsVisited = new ThreadLocal<>();
 
   @Nullable
   private LinkedHashSet<OpOutputFieldProjection> fieldProjections;
@@ -43,13 +43,19 @@ public class OpOutputRecordModelProjection extends OpOutputModelProjection<Recor
   }
 
   @Nullable
-  public LinkedHashSet<OpOutputFieldProjection> fieldProjections() {
-    return fieldProjections;
-  }
+  public LinkedHashSet<OpOutputFieldProjection> fieldProjections() { return fieldProjections; }
 
   public void addFieldProjection(@NotNull OpOutputFieldProjection fieldProjection) {
     if (fieldProjections == null) fieldProjections = new LinkedHashSet<>();
     fieldProjections.add(fieldProjection);
+  }
+
+  @Override
+  protected OpOutputRecordModelProjection mergedProjection(@NotNull RecordType model,
+                                                           boolean mergedRequired,
+                                                           @Nullable Set<OpParam> mergedParams,
+                                                           @NotNull Collection<OpOutputRecordModelProjection> projectionsToMerge) {
+    throw new UnsupportedOperationException("todo");
   }
 
   @Override
@@ -59,10 +65,10 @@ public class OpOutputRecordModelProjection extends OpOutputModelProjection<Recor
     if (!super.equals(o)) return false;
     OpOutputRecordModelProjection that = (OpOutputRecordModelProjection) o;
 
-    Map<OpOutputRecordModelProjection, OpOutputRecordModelProjection> visitedMap = equalsVisited.get();
+    IdentityHashMap<OpOutputRecordModelProjection, OpOutputRecordModelProjection> visitedMap = equalsVisited.get();
     boolean mapWasNull = visitedMap == null;
     if (mapWasNull) {
-      visitedMap = new HashMap<>();
+      visitedMap = new IdentityHashMap<>();
       equalsVisited.set(visitedMap);
     } else {
       if (that == visitedMap.get(this)) return true;

@@ -23,6 +23,7 @@ public class OpOutputProjectionsTest {
                     Person.type,
                     new OpOutputTagProjection(
                         Person.id,
+                        true,
                         new OpOutputPrimitiveModelProjection(PersonId.type, false, null, null)
                     )
                 ), true
@@ -38,6 +39,7 @@ public class OpOutputProjectionsTest {
             Person.type,
             new OpOutputTagProjection(
                 Person.record,
+                false,
                 recursivePersonRecordProjection
             )
         ), true
@@ -58,6 +60,7 @@ public class OpOutputProjectionsTest {
                     Person.type,
                     new OpOutputTagProjection(
                         Person.id,
+                        true,
                         new OpOutputPrimitiveModelProjection(PersonId.type, false, null, null)
                     )
                 ), true
@@ -72,6 +75,7 @@ public class OpOutputProjectionsTest {
             Person.type,
             new OpOutputTagProjection(
                 Person.record,
+                false,
                 recursivePersonRecordProjection2
             )
         ), true
@@ -98,6 +102,7 @@ public class OpOutputProjectionsTest {
                     Person.type,
                     new OpOutputTagProjection(
                         Person.id,
+                        true,
                         new OpOutputPrimitiveModelProjection(PersonId.type, false, null, null)
                     )
                 ), true
@@ -113,6 +118,7 @@ public class OpOutputProjectionsTest {
                 Person.type,
                 new OpOutputTagProjection(
                     Person.record,
+                    false,
                     recursivePersonRecordProjection
                 )
             ), true
@@ -131,6 +137,7 @@ public class OpOutputProjectionsTest {
                     Person.type,
                     new OpOutputTagProjection(
                         Person.id,
+                        true,
                         new OpOutputPrimitiveModelProjection(PersonId.type, false, null, null)
                     )
                 ), true
@@ -146,6 +153,7 @@ public class OpOutputProjectionsTest {
                 Person.type,
                 new OpOutputTagProjection(
                     Person.record,
+                    false,
                     recursivePersonRecordProjection2
                 )
             ), true
@@ -170,6 +178,7 @@ public class OpOutputProjectionsTest {
                     Person.type,
                     new OpOutputTagProjection(
                         Person.id,
+                        true,
                         new OpOutputPrimitiveModelProjection(PersonId.type, false, null, null)
                     )
                 ), true
@@ -185,6 +194,7 @@ public class OpOutputProjectionsTest {
                 Person.type,
                 new OpOutputTagProjection(
                     Person.record,
+                    false,
                     recursivePersonRecordProjection
                 )
             ), true
@@ -195,6 +205,7 @@ public class OpOutputProjectionsTest {
         Person.type,
         new OpOutputTagProjection(
             Person.id,
+            true,
             new OpOutputPrimitiveModelProjection(
                 PersonId.type,
                 true,
@@ -206,6 +217,7 @@ public class OpOutputProjectionsTest {
         ),
         new OpOutputTagProjection(
             Person.record,
+            true,
             new OpOutputRecordModelProjection(
                 PersonRecord.type,
                 false,
@@ -219,6 +231,7 @@ public class OpOutputProjectionsTest {
                             Person.type,
                             new OpOutputTagProjection(
                                 Person.id,
+                                true,
                                 new OpOutputPrimitiveModelProjection(PersonId.type, false, null, null)
                             )
                         ), true
@@ -236,6 +249,7 @@ public class OpOutputProjectionsTest {
                                     Person.type, // todo ??
                                     new OpOutputTagProjection(
                                         Person.record, // todo ??
+                                        false,
                                         recursivePersonRecordProjection
                                     )
                                 ),

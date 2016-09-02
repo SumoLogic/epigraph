@@ -14,12 +14,15 @@ import java.util.Objects;
 public class OpOutputTagProjection implements PrettyPrintable {
   @NotNull
   private final Type.Tag tag;
+  private final boolean includeInDefault;
   @NotNull
   private final OpOutputModelProjection<?, ?> projection;
-  boolean includeInDefault;
 
-  public OpOutputTagProjection(@NotNull Type.Tag tag, @NotNull OpOutputModelProjection<?, ?> projection) {
+  public OpOutputTagProjection(@NotNull Type.Tag tag,
+                               boolean includeInDefault,
+                               @NotNull OpOutputModelProjection<?, ?> projection) {
     this.tag = tag;
+    this.includeInDefault = includeInDefault;
     this.projection = projection;
     if (!tag.type.equals(projection.model)) { // or can it be a sub-type?
       throw new IllegalArgumentException("Tag model '" + tag.type + "' is different from tag projection model '" +
@@ -28,18 +31,12 @@ public class OpOutputTagProjection implements PrettyPrintable {
   }
 
   @NotNull
-  public Type.Tag tag() {
-    return tag;
-  }
+  public Type.Tag tag() { return tag; }
 
   @NotNull
-  public OpOutputModelProjection<?, ?> projection() {
-    return projection;
-  }
+  public OpOutputModelProjection<?, ?> projection() { return projection; }
 
-  public boolean includeInDefault() {
-    return includeInDefault;
-  }
+  public boolean includeInDefault() { return includeInDefault; }
 
   @Override
   public boolean equals(Object o) {
@@ -52,9 +49,7 @@ public class OpOutputTagProjection implements PrettyPrintable {
   }
 
   @Override
-  public int hashCode() {
-    return Objects.hash(tag, includeInDefault);
-  }
+  public int hashCode() { return Objects.hash(tag, includeInDefault); }
 
   @Override
   public <Exc extends Exception> void prettyPrint(DataLayouter<Exc> l) throws Exc {
@@ -65,7 +60,5 @@ public class OpOutputTagProjection implements PrettyPrintable {
   }
 
   @Override
-  public String toString() {
-    return DataPrettyPrinter.prettyPrint(this);
-  }
+  public String toString() { return DataPrettyPrinter.prettyPrint(this); }
 }

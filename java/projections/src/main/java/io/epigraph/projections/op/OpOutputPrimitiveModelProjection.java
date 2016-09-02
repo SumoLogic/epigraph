@@ -4,6 +4,7 @@ import io.epigraph.types.PrimitiveType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -16,5 +17,13 @@ public class OpOutputPrimitiveModelProjection extends OpOutputModelProjection<Pr
                                           @Nullable Set<OpParam> params,
                                           @Nullable LinkedHashSet<OpOutputPrimitiveModelProjection> polymorphicTail) {
     super(model, required, params, polymorphicTail);
+  }
+
+  @Override
+  protected OpOutputPrimitiveModelProjection mergedProjection(@NotNull PrimitiveType model,
+                                                              boolean mergedRequired,
+                                                              @Nullable Set<OpParam> mergedParams,
+                                                              @NotNull Collection<OpOutputPrimitiveModelProjection> projectionsToMerge) {
+    return new OpOutputPrimitiveModelProjection(model, mergedRequired, mergedParams, null);
   }
 }
