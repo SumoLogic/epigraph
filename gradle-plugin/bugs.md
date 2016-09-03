@@ -1,0 +1,1 @@
+- Sources from test root should see sources from main root and all dependencies from `compile` configuration

@@ -1,6 +1,6 @@
 namespace com.example.users
 
-vartype User default id {
+vartype User {
   id: UserId
   `record`: UserRecord
 }

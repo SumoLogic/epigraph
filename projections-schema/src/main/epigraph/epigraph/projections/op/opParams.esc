@@ -14,7 +14,7 @@ record OpParam extends Named, Documented {
 
 string ParamName extends LocalName
 
-vartype OpParamRef extends ByNameRef default name {
+vartype OpParamRef extends ByNameRef {
   override name: ParamName
   param: OpParam
 }

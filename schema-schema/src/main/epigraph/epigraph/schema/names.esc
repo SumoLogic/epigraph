@@ -8,13 +8,13 @@ abstract string QualifiedName extends Name
 
 abstract record QualifiedNameStruct {
 
-  `namespace`: QualifiedNamespaceNameVar
+  `namespace`: QualifiedNamespaceNameVar default `string`
 
   abstract local: LocalName
 
 }
 
-abstract vartype QualifiedNameVar default `string` {
+abstract vartype QualifiedNameVar {
 
   abstract `string`: QualifiedName
 

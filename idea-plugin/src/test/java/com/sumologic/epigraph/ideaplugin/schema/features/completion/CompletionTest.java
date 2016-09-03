@@ -228,6 +228,10 @@ public class CompletionTest extends LightCodeInsightFixtureTestCase {
     configureByText("namespace foo vartype V { v: Baz } record Baz { qux: V <caret> }");
     checkCompletionVariants("override ", "default ");
 
+    // TODO fixme
+//    configureByText("namespace foo record Baz { qux: V de<caret> abstract zz: Baz} vartype V { v: Baz }");
+//    checkCompletionVariants("override ", "default ");
+
     configureByText("namespace foo vartype V { v: Baz } record Baz { qux: Baz <caret> }");
     checkCompletionVariants("override ");
 
@@ -285,6 +289,7 @@ public class CompletionTest extends LightCodeInsightFixtureTestCase {
   }
 
   // todo test 'polymorphic' completion in anon lists/maps
+  // todo test 'default' override in anon lists/maps
 
   // ----------------------------------
 
