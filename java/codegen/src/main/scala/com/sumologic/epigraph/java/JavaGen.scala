@@ -70,11 +70,6 @@ abstract class JavaGen[From >: Null <: AnyRef](protected val from: From, protect
     case unknown => throw new UnsupportedOperationException(unknown.toString)
   }
 
-  def withCollections(t: CType): String =
-    if (ctx.hasCollectionsOf(t)) " " + collectionsInterface(t) + "," else ""
-
-  def collectionsInterface(t: CType): String = typeComponents(t).mkString("_") + "_Collections"
-
   def typeComponents(t: CType): Seq[String] = t match {
     case alt: CAnonListType => typeComponents(alt.elementTypeRef.resolved) :+ "List"
     case amt: CAnonMapType => typeComponents(amt.valueTypeRef.resolved) :+ "Map"
@@ -122,8 +117,8 @@ abstract class JavaGen[From >: Null <: AnyRef](protected val from: From, protect
     case unknown => throw new UnsupportedOperationException(unknown.toString)
   }
 
-  /** tag constant reference name for given value type and its tag (as seen from the context of the local type namespace) */
-  def trn(vt: CValueType, tn: String, lt: CType): String = lqrn(vt.typeRef, lt) + "." +
+  /** tag constant reference name for given data type and its tag (as seen from the context of the local type namespace) */
+  def trn(dt: CDataType, tn: String, lt: CType): String = lqrn(dt.typeRef, lt) + "." +
       (if (tn == CDatumType.ImpliedDefaultTagName) "type.self" else jn(tn))
 
 

@@ -24,20 +24,14 @@ public interface Util {
       @NotNull Function<@NotNull T, @NotNull R> function,
       @Nullable T arg,
       @NotNull R ifNull
-  ) {
-    return arg == null ? ifNull : function.apply(arg);
-  }
+  ) { return arg == null ? ifNull : function.apply(arg); }
 
   static <T, R> @NotNull R apply(
       @Nullable T arg,
       @NotNull Function<@NotNull T, @NotNull R> function,
       @NotNull R ifNull
-  ) {
-    return arg == null ? ifNull : function.apply(arg);
-  }
+  ) { return arg == null ? ifNull : function.apply(arg); }
 
-  static <T> java.util.List<T> cast(java.util.List<? super T> list) {
-    return (List<T>) list;
-  }
+  static <T> java.util.List<T> cast(java.util.List<? super T> list) { return (List<T>) list; }
 
 }

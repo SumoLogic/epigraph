@@ -27,10 +27,9 @@ public abstract class RecordType extends DatumType {
 
   public RecordType(
       @NotNull QualifiedTypeName name,
-      @NotNull List<@NotNull ? extends RecordType> immediateSupertypes,
-      boolean polymorphic
+      @NotNull List<@NotNull ? extends RecordType> immediateSupertypes
   ) {
-    super(name, immediateSupertypes, polymorphic);
+    super(name, immediateSupertypes);
   }
 
   @Override
@@ -154,12 +153,11 @@ public abstract class RecordType extends DatumType {
     protected Static(
         @NotNull QualifiedTypeName name,
         @NotNull List<@NotNull ? extends RecordType.Static> immediateSupertypes,
-        boolean polymorphic,
         @NotNull Function<RecordDatum.Mut.@NotNull Raw, @NotNull MyMutDatum> mutDatumConstructor,
         @NotNull Function<Val.Mut.@NotNull Raw, @NotNull MyMutVal> mutValConstructor,
         @NotNull Function<Data.Mut.@NotNull Raw, @NotNull MyMutData> mutDataConstructor
     ) {
-      super(name, immediateSupertypes, polymorphic);
+      super(name, immediateSupertypes);
       this.mutDatumConstructor = mutDatumConstructor;
       this.mutValConstructor = mutValConstructor;
       this.mutDataConstructor = mutDataConstructor;
@@ -176,9 +174,9 @@ public abstract class RecordType extends DatumType {
     @Override
     public final @NotNull MyMutData createMutableData() { return mutDataConstructor.apply(new Data.Mut.Raw(this)); }
 
-    // should be overridden in (generated) static types that have lists of themselves declared in the schema
-    @Override
-    protected @NotNull Supplier<ListType> listTypeSupplier() { return throwingListTypeSupplier; }
+//    // should be overridden in (generated) static types that have lists of themselves declared in the schema
+//    @Override
+//    protected @NotNull Supplier<ListType> listTypeSupplier() { return throwingListTypeSupplier; }
 
   }
 

@@ -14,23 +14,4 @@ abstract class JavaTypeDefGen[TypeDef >: Null <: CTypeDef](from: TypeDef, ctx: C
     JavaGenUtils.fqnToPath(from.name.fqn.removeLastSegment()).resolve(from.name.local + ".java")
   }
 
-  def generateCollections(t: CType): String = {
-    if (ctx.hasCollectionsOf(t)) {
-      sn"""\
-
-/**
- * Private namespace for collection(s) of `${t.name.name}` data.
- */
-interface ${collectionsInterface(t)} {
-${ctx.getAnonListOf(t).map(new AnonListGen(_, ctx).generate).getOrElse("")}\
-// TODO Map, too
-
-}
-${ctx.getAnonListOf(t).map(generateCollections).getOrElse("")}\
-// TODO Map, too
-
-"""
-    } else ""
-  }
-
 }

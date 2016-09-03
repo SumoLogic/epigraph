@@ -7,15 +7,18 @@ import io.epigraph.data.ListDatum;
 import io.epigraph.data.Val;
 import io.epigraph.names.AnonListTypeName;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.function.Function;
-import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 public abstract class AnonListType extends ListType {
 
-  protected AnonListType(boolean polymorphic, @NotNull Type elementType) {
-    super(AnonListTypeName.of(polymorphic, elementType.name()), polymorphic, elementType);
-  }
+  protected AnonListType(
+      @NotNull List<@NotNull ? extends AnonListType> immediateSupertypes,
+      @NotNull DataType elementDataType
+  ) { super(new AnonListTypeName(elementDataType.name), immediateSupertypes, elementDataType); }
 
   @Override
   public @NotNull AnonListTypeName name() { return (AnonListTypeName) super.name(); }
@@ -23,10 +26,22 @@ public abstract class AnonListType extends ListType {
 
   public static final class Raw extends AnonListType implements ListType.Raw {
 
-    public Raw(boolean polymorphic, @NotNull Type elementType) { super(polymorphic, elementType); }
+    public Raw(@NotNull DataType elementDataType) { super(immediateSupertypes(elementDataType), elementDataType); }
 
-    @Override
-    protected @NotNull Supplier<ListType> listTypeSupplier() { return () -> new AnonListType.Raw(false, this); }
+    private static @NotNull List<@NotNull ? extends AnonListType.Raw> immediateSupertypes(@NotNull DataType elementDataType) {
+      return elementDataType.type.immediateSupertypes().stream().map(st -> new AnonListType.Raw(new DataType(
+          elementDataType.polymorphic, // TODO should it be false?
+          st,
+          defaultTag(st, elementDataType.defaultTag)
+      ))).collect(Collectors.toList());
+    }
+
+    private static @Nullable Tag defaultTag(Type type, @Nullable Tag tag) {
+      return tag == null ? null : type.tagsMap().get(tag.name);
+    }
+
+//    @Override
+//    protected @NotNull Supplier<ListType> listTypeSupplier() { return () -> new AnonListType.Raw(this); }
 
     @Override
     public @NotNull ListDatum.Mut createBuilder() { return new ListDatum.Mut.Raw(this); }
@@ -58,13 +73,20 @@ public abstract class AnonListType extends ListType {
     private final @NotNull Function<Data.Mut.Raw, MyMutData> mutDataConstructor;
 
     protected Static(
-        boolean polymorphic,
-        @NotNull Type elementType,
+        @NotNull List<@NotNull ? extends AnonListType.Static<
+            ? super MyImmDatum,
+            ? extends ListDatum.Mut.Static<? super MyImmDatum>,
+            ? super MyImmVal,
+            ? extends Val.Mut.Static<? super MyImmVal, ? extends ListDatum.Mut.Static<? super MyImmDatum>>,
+            ? super MyImmData,
+            ? extends Data.Mut.Static<? super MyImmData>
+            >> immediateSupertypes,
+        @NotNull DataType elementDataType,
         @NotNull Function<ListDatum.Mut.Raw, MyMutDatum> mutDatumConstructor,
         @NotNull Function<Val.Mut.Raw, MyMutVal> mutValConstructor,
         @NotNull Function<Data.Mut.Raw, MyMutData> mutDataConstructor
     ) {
-      super(polymorphic, elementType);
+      super(immediateSupertypes, elementDataType);
       this.mutDatumConstructor = mutDatumConstructor;
       this.mutValConstructor = mutValConstructor;
       this.mutDataConstructor = mutDataConstructor;
@@ -79,9 +101,9 @@ public abstract class AnonListType extends ListType {
     @Override
     public final @NotNull MyMutData createMutableData() { return mutDataConstructor.apply(new Data.Mut.Raw(this)); }
 
-    // should be overridden in (generated) static types that have lists of themselves declared in the schema
-    @Override
-    protected @NotNull Supplier<ListType> listTypeSupplier() { return throwingListTypeSupplier; }
+//    // should be overridden in (generated) static types that have lists of themselves declared in the schema
+//    @Override
+//    protected @NotNull Supplier<ListType> listTypeSupplier() { return throwingListTypeSupplier; }
 
   }
 

@@ -2,24 +2,19 @@
 
 package io.epigraph.names;
 
+import org.jetbrains.annotations.NotNull;
+
 public class AnonListTypeName implements TypeName {
 
-  public final TypeName elementTypeName;
+  public final @NotNull DataTypeName elementTypeName;
 
-  public final boolean polymorphic;
-
-  public AnonListTypeName(boolean polymorphic, TypeName elementTypeName) {
+  public AnonListTypeName(@NotNull DataTypeName elementTypeName) {
     this.elementTypeName = elementTypeName;
-    this.polymorphic = polymorphic;
-  }
-
-  public static AnonListTypeName of(boolean polymorphic, TypeName elementTypeName) {
-    return new AnonListTypeName(polymorphic, elementTypeName); // TODO cache?
   }
 
   @Override
   public String toString() { // TODO cache?
-    return (polymorphic ? "polymorphic list" : "list") + "[" + elementTypeName + "]";
+    return "list[" + elementTypeName + "]";
   }
 
 }

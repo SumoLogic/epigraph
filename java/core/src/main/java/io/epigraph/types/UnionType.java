@@ -15,10 +15,9 @@ public abstract class UnionType extends Type {
 
   protected UnionType(
       @NotNull QualifiedTypeName name,
-      @NotNull List<@NotNull ? extends UnionType> immediateSupertypes,
-      boolean polymorphic
+      @NotNull List<@NotNull ? extends UnionType> immediateSupertypes
   ) {
-    super(name, immediateSupertypes, polymorphic);
+    super(name, immediateSupertypes);
   }
 
   @Override
@@ -43,19 +42,18 @@ public abstract class UnionType extends Type {
     protected Static(
         @NotNull QualifiedTypeName name,
         @NotNull List<@NotNull ? extends UnionType.Static> immediateSupertypes,
-        boolean polymorphic,
         @NotNull Function<Data.Mut.@NotNull Raw, @NotNull MyMutData> mutDataConstructor
     ) {
-      super(name, immediateSupertypes, polymorphic);
+      super(name, immediateSupertypes);
       this.mutDataConstructor = mutDataConstructor;
     }
 
     @Override // TODO rename to createDataBuilder()?
     public final @NotNull MyMutData createMutableData() { return mutDataConstructor.apply(new Data.Mut.Raw(this)); }
 
-    // should be overridden in (generated) static types that have lists of themselves declared in the schema
-    @Override
-    protected @NotNull Supplier<ListType> listTypeSupplier() { return throwingListTypeSupplier; }
+//    // should be overridden in (generated) static types that have lists of themselves declared in the schema
+//    @Override
+//    protected @NotNull Supplier<ListType> listTypeSupplier() { return throwingListTypeSupplier; }
 
   }
 

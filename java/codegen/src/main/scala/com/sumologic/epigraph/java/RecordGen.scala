@@ -48,7 +48,7 @@ ${  f.effectiveDefaultTagName match { // default datum and value getters (if any
 """
     }
 }\
-${ f.valueType.typeRef.resolved match { // tags datum and value getters
+${ f.valueDataType.typeRef.resolved match { // tags datum and value getters
       case vartype: CVarTypeDef => vartype.effectiveTags.map { tag => sn"""\
 
   /**
@@ -157,7 +157,7 @@ ${  f.effectiveDefaultTagName match { // default getter (if any)
 """
     }
 }\
-${ f.valueType.typeRef.resolved match { // tag getters
+${ f.valueDataType.typeRef.resolved match { // tag getters
       case vartype: CVarTypeDef => vartype.effectiveTags.map { tag => sn"""\
 
   /**
@@ -204,13 +204,13 @@ ${  f.effectiveDefaultTagName match { // default getter
          */
         @Override
         public @Nullable ${lqn(tt(f.typeRef, dtn), t)}.Imm.Value get_${up(f.name)}() {
-          return (${lqn(tt(f.typeRef, dtn), t)}.Imm.Value) _raw()._getValue($ln.${jn(f.name)}, ${trn(f.valueType, dtn, t)});
+          return (${lqn(tt(f.typeRef, dtn), t)}.Imm.Value) _raw()._getValue($ln.${jn(f.name)}, ${trn(f.valueDataType, dtn, t)});
         }
 """
     }
 }\
 ${ // tag getters
-    f.valueType.typeRef.resolved match {
+    f.valueDataType.typeRef.resolved match {
       case vartype: CVarTypeDef => vartype.effectiveTags.map { tag => sn"""\
 
         /**
@@ -226,7 +226,7 @@ ${ // tag getters
          */
         @Override
         public @Nullable ${lqrn(tag.typeRef, t)}.Imm.Value get_${up(f.name)}${up(tag.name)}() {
-          return (${lqn(tt(f.typeRef, tag.name), t)}.Imm.Value) _raw()._getValue($ln.${jn(f.name)}, ${trn(f.valueType, tag.name, t)});
+          return (${lqn(tt(f.typeRef, tag.name), t)}.Imm.Value) _raw()._getValue($ln.${jn(f.name)}, ${trn(f.valueDataType, tag.name, t)});
         }
 """
       }.mkString
@@ -315,7 +315,7 @@ ${  f.effectiveDefaultTagName match { // default tag (if any)
      * Sets default tag datum builder for${poly(f)} `${f.name}` field.
      */
     public ${poly(f, s"<${ln(tt(f.typeRef, dtn))}Builder extends ${lqn(tt(f.typeRef, dtn), t)} & io.epigraph.data.Datum.Mut.Static>\n        ", "")}@NotNull $ln.Builder set${up(f.name)}(@Nullable ${poly(f, s"${ln(tt(f.typeRef, dtn))}Builder", s"${lqn(tt(f.typeRef, dtn), t)}.Builder")} ${jn(f.name)}) {
-      _raw().getOrCreateFieldData($ln.${jn(f.name)})._raw()._setDatum(${trn(f.valueType, dtn, t)}, ${jn(f.name)});
+      _raw().getOrCreateFieldData($ln.${jn(f.name)})._raw()._setDatum(${trn(f.valueDataType, dtn, t)}, ${jn(f.name)});
       return this;
     }
 
@@ -323,7 +323,7 @@ ${  f.effectiveDefaultTagName match { // default tag (if any)
      * Sets default tag error for `${f.name}` field.
      */
     public @NotNull $ln.Builder set${up(f.name)}(@NotNull io.epigraph.errors.ErrorValue error) {
-      _raw().getOrCreateFieldData($ln.${jn(f.name)})._raw()._setError(${trn(f.valueType, dtn, t)}, error);
+      _raw().getOrCreateFieldData($ln.${jn(f.name)})._raw()._setError(${trn(f.valueDataType, dtn, t)}, error);
       return this;
     }
 
@@ -332,12 +332,12 @@ ${  f.effectiveDefaultTagName match { // default tag (if any)
      */
     @Override
     public @Nullable ${lqn(tt(f.typeRef, dtn), t)}${poly(f, "", ".Builder")}.Value get_${up(f.name)}() {
-      return (${lqn(tt(f.typeRef, dtn), t)}${poly(f, "", ".Builder")}.Value) _raw()._getValue($ln.${jn(f.name)}, ${trn(f.valueType, dtn, t)});
+      return (${lqn(tt(f.typeRef, dtn), t)}${poly(f, "", ".Builder")}.Value) _raw()._getValue($ln.${jn(f.name)}, ${trn(f.valueDataType, dtn, t)});
     }
 """
     }
 }\
-${ f.valueType.typeRef.resolved match { // tag getters
+${ f.valueDataType.typeRef.resolved match { // tag getters
       case vartype: CVarTypeDef => vartype.effectiveTags.map { tag => // for each effective tag
         sn"""\
 
@@ -353,7 +353,7 @@ ${ f.valueType.typeRef.resolved match { // tag getters
      * Sets `${tag.name}` tag datum builder for${poly(f)} `${f.name}` field.
      */
     public ${poly(f, s"<${ln(tt(f.typeRef, tag.name))}Builder extends ${lqn(tt(f.typeRef, tag.name), t)} & io.epigraph.data.Datum.Mut.Static>\n        ", "")}@NotNull $ln.Builder set${up(f.name)}${up(tag.name)}(@Nullable ${poly(f, s"${ln(tt(f.typeRef, tag.name))}Builder", s"${lqn(tt(f.typeRef, tag.name), t)}.Builder")} ${jn(f.name)}${up(tag.name)}) {
-      _raw().getOrCreateFieldData($ln.${jn(f.name)})._raw()._setDatum(${trn(f.valueType, tag.name, t)}, ${jn(f.name)}${up(tag.name)});
+      _raw().getOrCreateFieldData($ln.${jn(f.name)})._raw()._setDatum(${trn(f.valueDataType, tag.name, t)}, ${jn(f.name)}${up(tag.name)});
       return this;
     }
 
@@ -361,7 +361,7 @@ ${ f.valueType.typeRef.resolved match { // tag getters
      * Sets `${tag.name}` tag error for `${f.name}` field.
      */
     public @NotNull $ln.Builder set${up(f.name)}${up(tag.name)}(@NotNull io.epigraph.errors.ErrorValue error) {
-      _raw().getOrCreateFieldData($ln.${jn(f.name)})._raw()._setError(${trn(f.valueType, tag.name, t)}, error);
+      _raw().getOrCreateFieldData($ln.${jn(f.name)})._raw()._setError(${trn(f.valueDataType, tag.name, t)}, error);
       return this;
     }
 
@@ -370,7 +370,7 @@ ${ f.valueType.typeRef.resolved match { // tag getters
      */
     @Override
     public @Nullable ${lqrn(tag.typeRef, t)}${poly(f, "", ".Builder")}.Value get_${up(f.name)}${up(tag.name)}() {
-      return (${lqn(tt(f.typeRef, tag.name), t)}${poly(f, "", ".Builder")}.Value) _raw()._getValue($ln.${jn(f.name)}, ${trn(f.valueType, tag.name, t)});
+      return (${lqn(tt(f.typeRef, tag.name), t)}${poly(f, "", ".Builder")}.Value) _raw()._getValue($ln.${jn(f.name)}, ${trn(f.valueDataType, tag.name, t)});
     }
 """
       }.mkString
@@ -429,6 +429,6 @@ ${ f.valueType.typeRef.resolved match { // tag getters
 
   private def poly(f: CField): String = poly(f, " polymorphic", "")
 
-  private def poly(f: CField, yes: => String, no: => String): String = if (f.valueType.polymorphic) yes else no
+  private def poly(f: CField, yes: => String, no: => String): String = if (f.valueDataType.polymorphic) yes else no
 
 }

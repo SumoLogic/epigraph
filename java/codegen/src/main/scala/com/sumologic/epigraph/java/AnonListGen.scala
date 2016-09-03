@@ -10,7 +10,7 @@ import com.sumologic.epigraph.schema.compiler.{CAnonListType, CContext, CType, C
 class AnonListGen(from: CAnonListType, ctx: CContext) extends JavaTypeGen[CAnonListType](from, ctx) {
 
   /** element value type */
-  private val ev = t.elementValueType
+  private val ev = t.elementDataType
 
   /** element type ref */
   private val etr = ev.typeRef

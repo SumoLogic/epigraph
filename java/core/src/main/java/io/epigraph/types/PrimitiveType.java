@@ -12,10 +12,9 @@ public abstract class PrimitiveType extends DatumType { // TODO parameterize wit
 
   protected PrimitiveType(
       @NotNull QualifiedTypeName name,
-      @NotNull List<@NotNull ? extends PrimitiveType> immediateSupertypes,
-      boolean polymorphic
+      @NotNull List<@NotNull ? extends PrimitiveType> immediateSupertypes
   ) {
-    super(name, immediateSupertypes, polymorphic);
+    super(name, immediateSupertypes);
   }
 
   @Override

@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.AbstractList;
 
-public class QualifiedName extends AbstractList<String> {
+public class QualifiedName extends AbstractList<String> { // TODO not sure we need this list interface
 
   @Nullable
   public final NamespaceName namespaceName;
@@ -37,8 +37,6 @@ public class QualifiedName extends AbstractList<String> {
   }
 
   @Override
-  public String toString() {
-    return String.join(".", this);
-  }
+  public String toString() { return String.join(".", this); }
 
 }

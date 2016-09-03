@@ -17,10 +17,9 @@ public abstract class StringType extends PrimitiveType {
 
   protected StringType(
       @NotNull QualifiedTypeName name,
-      @NotNull List<@NotNull ? extends StringType> immediateSupertypes,
-      boolean polymorphic
+      @NotNull List<@NotNull ? extends StringType> immediateSupertypes
   ) {
-    super(name, immediateSupertypes, polymorphic);
+    super(name, immediateSupertypes);
   }
 
   @Override
@@ -42,19 +41,16 @@ public abstract class StringType extends PrimitiveType {
 
     protected Raw(
         @NotNull QualifiedTypeName name,
-        @NotNull List<@NotNull ? extends StringType> immediateSupertypes,
-        boolean polymorphic
-    ) { super(name, immediateSupertypes, polymorphic); }
+        @NotNull List<@NotNull ? extends StringType> immediateSupertypes
+    ) { super(name, immediateSupertypes); }
 
     @Override
     public @NotNull StringDatum.Mut.Raw createBuilder(@NotNull String val) {
       return new StringDatum.Mut.Raw(this, val);
     }
 
-    @Override
-    protected @NotNull Supplier<@NotNull ListType> listTypeSupplier() {
-      return () -> new AnonListType.Raw(false, this);
-    }
+//    @Override
+//    protected @NotNull Supplier<@NotNull ListType> listTypeSupplier() { return () -> new AnonListType.Raw(this); }
 
     @Override
     public @NotNull Val.Mut.Raw createMutableValue() { return new Val.Mut.Raw(this); }
@@ -85,12 +81,11 @@ public abstract class StringType extends PrimitiveType {
     protected Static(
         @NotNull QualifiedTypeName name,
         @NotNull List<@NotNull ? extends StringType> immediateSupertypes,
-        boolean polymorphic,
         @NotNull Function<StringDatum.Mut.@NotNull Raw, @NotNull MyMutDatum> mutDatumConstructor,
         @NotNull Function<Val.Mut.@NotNull Raw, @NotNull MyMutVal> mutValConstructor,
         @NotNull Function<Data.Mut.@NotNull Raw, @NotNull MyMutData> mutDataConstructor
     ) {
-      super(name, immediateSupertypes, polymorphic);
+      super(name, immediateSupertypes);
       this.mutDatumConstructor = mutDatumConstructor;
       this.mutValConstructor = mutValConstructor;
       this.mutDataConstructor = mutDataConstructor;
@@ -107,9 +102,9 @@ public abstract class StringType extends PrimitiveType {
     @Override
     public final @NotNull MyMutData createMutableData() { return mutDataConstructor.apply(new Data.Mut.Raw(this)); }
 
-    // should be overridden in (generated) static types that have lists of themselves declared in the schema
-    @Override
-    protected @NotNull Supplier<ListType> listTypeSupplier() { return throwingListTypeSupplier; }
+//    // should be overridden in (generated) static types that have lists of themselves declared in the schema
+//    @Override
+//    protected @NotNull Supplier<ListType> listTypeSupplier() { return throwingListTypeSupplier; }
 
   }
 

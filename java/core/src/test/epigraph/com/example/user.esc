@@ -1,6 +1,6 @@
 namespace com.example
 
-vartype User extends Person default id {
+vartype User extends Person {
   override id: UserId
   override `record`: UserRecord
 }

@@ -32,6 +32,8 @@ abstract class CType(implicit val ctx: CContext) {self =>
   /** Immediate parents of this type in order of increasing priority */
   def getLinearizedParentsReversed: java.lang.Iterable[This] = linearizedParents.reverse // TODO phase guard?
 
+  lazy val selfRef: CTypeRef = CTypeRef(this)
+
 }
 
 
@@ -377,9 +379,9 @@ class CField(val csf: CSchemaFile, val psi: SchemaFieldDecl, val host: CRecordTy
 
   val isAbstract: Boolean = psi.getAbstract ne null
 
-  val valueType: CValueType = new CValueType(csf, psi.getValueTypeRef)
+  val valueDataType: CDataType = new CDataType(csf, psi.getValueTypeRef)
 
-  val typeRef: CTypeRef = valueType.typeRef
+  val typeRef: CTypeRef = valueDataType.typeRef
 
   def superfields: Seq[CField] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, _superfields)
 
@@ -390,7 +392,7 @@ class CField(val csf: CSchemaFile, val psi: SchemaFieldDecl, val host: CRecordTy
         case None => // super has no effective default tag (nodefault)
           true
         case Some(tagName) => // super has effective default tag
-          valueType.defaultDeclarationOpt match {
+          valueDataType.defaultDeclarationOpt match {
             case None => true // we don't have default tag declaration
             case Some(Some(`tagName`)) => true // we have the same default tag declaration as super
             case _ => false // we have either nodefault or some default different from super's
@@ -403,7 +405,7 @@ class CField(val csf: CSchemaFile, val psi: SchemaFieldDecl, val host: CRecordTy
 
   // explicit no/default on the field > no/default from super field(s) > effective default on field type
   private lazy val _effectiveDefaultTagName: Option[String] = {
-    valueType.defaultDeclarationOpt match {
+    valueDataType.defaultDeclarationOpt match {
       case Some(explicitDefault: Option[String]) => // field has default declaration (maybe `nodefault`)
         explicitDefault
       case None => // field doesn't have default declaration
@@ -412,7 +414,7 @@ class CField(val csf: CSchemaFile, val psi: SchemaFieldDecl, val host: CRecordTy
           case Seq(theone) => // all superfields (that have effective default tag) have the same one
             Some(theone)
           case Seq() => // no superfields (that have effective default tag)
-            valueType.typeRef.resolved.effectiveDefaultTagName
+            valueDataType.typeRef.resolved.effectiveDefaultTagName
           case multiple => // more than one distinct effective default tag on superfields
             ctx.errors.add(
               CError(
@@ -438,9 +440,9 @@ trait CMapType extends CType with CDatumType {self =>
 
   val keyTypeRef: CTypeRef
 
-  val valueValueType: CValueType
+  val valueDataType: CDataType
 
-  final val valueTypeRef: CTypeRef = valueValueType.typeRef
+  final val valueTypeRef: CTypeRef = valueDataType.typeRef
 
   def effectiveDefaultValueTagName: Option[String] = ??? // FIXME implement similar to list
 
@@ -452,7 +454,7 @@ trait CMapType extends CType with CDatumType {self =>
 
 class CAnonMapType(override val name: CAnonMapTypeName)(implicit ctx: CContext) extends {
 
-  override val valueValueType: CValueType = name.valueValueType
+  override val valueDataType: CDataType = name.valueDataType
 
 } with CMapType {
 
@@ -476,7 +478,7 @@ class CAnonMapType(override val name: CAnonMapTypeName)(implicit ctx: CContext) 
 
 class CMapTypeDef(csf: CSchemaFile, override val psi: SchemaMapTypeDef)(implicit ctx: CContext) extends {
 
-  val valueValueType: CValueType = new CValueType(csf, psi.getAnonMap.getValueTypeRef)
+  val valueDataType: CDataType = new CDataType(csf, psi.getAnonMap.getValueTypeRef)
 
 } with CTypeDef(csf, psi, CTypeKind.MAP) with CMapType {
 
@@ -493,9 +495,9 @@ trait CListType extends CType with CDatumType {self =>
 
   val name: CTypeName
 
-  val elementValueType: CValueType
+  val elementDataType: CDataType
 
-  final val elementTypeRef: CTypeRef = elementValueType.typeRef
+  final val elementTypeRef: CTypeRef = elementDataType.typeRef
 
   def effectiveDefaultElementTagName: Option[String]
 
@@ -508,9 +510,11 @@ trait CListType extends CType with CDatumType {self =>
 
 class CAnonListType(override val name: CAnonListTypeName)(implicit ctx: CContext) extends {
 
-  override val elementValueType: CValueType = name.elementValueType
+  override val elementDataType: CDataType = name.elementDataType
 
 } with CListType {
+
+  def this(elementDataType: CDataType)(implicit ctx: CContext) = this(new CAnonListTypeName(elementDataType))
 
   override type This = CAnonListType
 
@@ -520,9 +524,13 @@ class CAnonListType(override val name: CAnonListTypeName)(implicit ctx: CContext
   /** Immediate parents of this type in order of decreasing priority */
   override def linearizedParents: Seq[CAnonListType] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, _linearizedParents)
 
-  private lazy val _linearizedParents: Seq[CAnonListType] = elementTypeRef.resolved.linearizedParents.flatMap(
-    ctx.getAnonListOf // FIXME list[Super] might not exist - autocreate
-  )
+  private lazy val _linearizedParents: Seq[CAnonListType] = elementTypeRef.resolved.linearizedParents.map { et =>
+    ctx.getOrCreateAnonListOf(
+      new CDataType(
+        elementDataType.csf, elementDataType.polymorphic/*TODO false?*/ , et.selfRef, elementDataType.defaultTagName
+      )
+    )
+  }
 
   final override def effectiveDefaultElementTagName: Option[String] = ctx.after(
     CPhase.COMPUTE_SUPERTYPES, null, _effectiveDefaultElementTagName
@@ -530,11 +538,11 @@ class CAnonListType(override val name: CAnonListTypeName)(implicit ctx: CContext
 
   // explicit no/default on element > effective no/default from element type
   private lazy val _effectiveDefaultElementTagName: Option[String] = {
-    elementValueType.defaultDeclarationOpt match {
+    elementDataType.defaultDeclarationOpt match {
       case Some(explicitDefault) => // element has default declaration (maybe `nodefault`)
         explicitDefault
       case None => // element doesn't have default declaration - get effective default tag name from its type
-        elementValueType.typeRef.resolved.effectiveDefaultTagName
+        elementDataType.typeRef.resolved.effectiveDefaultTagName
     }
   }
 
@@ -543,7 +551,7 @@ class CAnonListType(override val name: CAnonListTypeName)(implicit ctx: CContext
 
 class CListTypeDef(csf: CSchemaFile, override val psi: SchemaListTypeDef)(implicit ctx: CContext) extends {
 
-  override val elementValueType: CValueType = new CValueType(csf, psi.getAnonList.getValueTypeRef)
+  override val elementDataType: CDataType = new CDataType(csf, psi.getAnonList.getValueTypeRef)
 
 } with CTypeDef(csf, psi, CTypeKind.LIST) with CListType {
 
@@ -554,9 +562,10 @@ class CListTypeDef(csf: CSchemaFile, override val psi: SchemaListTypeDef)(implic
     CPhase.COMPUTE_SUPERTYPES, null, _effectiveDefaultElementTagName
   )
 
+  // FIXME simplify - get default tag from immediate anon list parent element, check it matches named lists' ones
   // explicit no/default on element > effective default on super type(s) element(s) > effective no/default from element type
   private lazy val _effectiveDefaultElementTagName: Option[String] = {
-    elementValueType.defaultDeclarationOpt match {
+    elementDataType.defaultDeclarationOpt match {
       case Some(explicitDefault) => // element has default declaration (maybe `nodefault`)
         explicitDefault // FIXME check it's compatible with supertypes' defaults
       case None => // element doesn't have no/default declaration
@@ -565,7 +574,7 @@ class CListTypeDef(csf: CSchemaFile, override val psi: SchemaListTypeDef)(implic
           case Seq(theone) => // all supertypes (that have effective default element tag) have the same one
             Some(theone)
           case Seq() => // no supertypes (that have effective default element tag)
-            elementValueType.typeRef.resolved.effectiveDefaultTagName
+            elementDataType.typeRef.resolved.effectiveDefaultTagName
           case multiple => // more than one distinct effective default element tag from supertypes
             ctx.errors.add(
               CError(

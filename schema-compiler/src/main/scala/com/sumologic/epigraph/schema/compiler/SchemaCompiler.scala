@@ -127,13 +127,15 @@ class SchemaCompiler(
       case ctr: CTypeDefRef =>
         @Nullable val refType = ctx.typeDefs.get(ctr.name)
         if (refType == null) {
-          ctx.errors.add(CError(csf.filename, csf.position(ctr.psi), s"Not found: type '${ctr.name.name}'"))
+          ctx.errors.add(CError(csf.filename, csf.position(ctr.name.psi), s"Not found: type '${ctr.name.name}'"))
         } else {
           ctr.resolveTo(refType)
         }
       case ctr: CAnonListTypeRef =>
-        ctr.resolveTo(ctx.anonListTypes.computeIfAbsent(ctr.name, AnonListTypeConstructor))
+        ctr.resolveTo(ctx.getOrCreateAnonListOf(ctr.name.elementDataType))
+        //ctr.resolveTo(ctx.anonListTypes.computeIfAbsent(ctr.name, AnonListTypeConstructor))
       case ctr: CAnonMapTypeRef =>
+        // FIXME same as above
         ctr.resolveTo(ctx.anonMapTypes.computeIfAbsent(ctr.name, AnonMapTypeConstructor))
     }
   }

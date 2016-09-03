@@ -1,6 +1,6 @@
 namespace com.example
 
-vartype Person default id {
+vartype Person {
   id: PersonId
   `record`: PersonRecord
 }

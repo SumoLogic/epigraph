@@ -23,9 +23,15 @@ object CTypeRef {
   def apply(csf: CSchemaFile, psi: SchemaAnonMap)(implicit ctx: CContext): CAnonMapTypeRef =
     new CAnonMapTypeRef(csf, psi)
 
+  def apply(ctype: CType)(implicit ctx: CContext): CTypeRef = ctype match {
+    case ctype: CTypeDef => new CTypeDefRef(ctype.csf, ctype.name).resolveTo(ctype)
+    case ctype: CAnonListType => new CAnonListTypeRef(ctype.elementDataType).resolveTo(ctype)
+    case ctype: CAnonMapType => new CAnonMapTypeRef(ctype.keyTypeRef, ctype.valueDataType).resolveTo(ctype)
+  }
+
 }
 
-abstract class CTypeRef protected(val csf: CSchemaFile, val psi: SchemaTypeRef)(implicit val ctx: CContext) {
+abstract class CTypeRef protected(val csf: CSchemaFile)(implicit val ctx: CContext) {
 
   type Name <: CTypeName
 
@@ -52,34 +58,41 @@ abstract class CTypeRef protected(val csf: CSchemaFile, val psi: SchemaTypeRef)(
 }
 
 
-class CTypeDefRef(csf: CSchemaFile, psi: SchemaFqnTypeRef)(implicit ctx: CContext) extends CTypeRef(csf, psi) {
+class CTypeDefRef(csf: CSchemaFile, override val name: CTypeFqn)(implicit ctx: CContext) extends CTypeRef(csf) {
+
+  def this(csf: CSchemaFile, psi: SchemaFqnTypeRef)(implicit ctx: CContext) = this(csf, csf.qualifyLocalTypeRef(psi))
 
   final override type Name = CTypeFqn
 
   final override type Type = CTypeDef
 
-  override val name: CTypeFqn = csf.qualifyLocalTypeRef(psi)
-
 }
 
 
-class CAnonListTypeRef(csf: CSchemaFile, psi: SchemaAnonList)(implicit ctx: CContext) extends CTypeRef(csf, psi) {
+class CAnonListTypeRef(val elementDataType: CDataType)(implicit ctx: CContext) extends CTypeRef(elementDataType.csf) {
+
+  def this(csf: CSchemaFile, psi: SchemaAnonList)(implicit ctx: CContext) =
+    this(new CDataType(csf, psi.getValueTypeRef))
 
   final override type Name = CAnonListTypeName
 
   final override type Type = CAnonListType
 
-  override val name: CAnonListTypeName = new CAnonListTypeName(csf, psi)
+  final override val name: CAnonListTypeName = new CAnonListTypeName(elementDataType)
 
 }
 
 
-class CAnonMapTypeRef(csf: CSchemaFile, psi: SchemaAnonMap)(implicit ctx: CContext) extends CTypeRef(csf, psi) {
+class CAnonMapTypeRef(val keyTypeRef: CTypeRef, val valueDataType: CDataType)(implicit ctx: CContext)
+    extends CTypeRef(valueDataType.csf) {
+
+  def this(csf: CSchemaFile, psi: SchemaAnonMap)(implicit ctx: CContext) =
+    this(CTypeRef(csf, psi.getTypeRef), new CDataType(csf, psi.getValueTypeRef))
 
   final override type Name = CAnonMapTypeName
 
   final override type Type = CAnonMapType
 
-  override val name: CAnonMapTypeName = new CAnonMapTypeName(csf, psi)
+  override val name: CAnonMapTypeName = new CAnonMapTypeName(keyTypeRef, valueDataType)
 
 }

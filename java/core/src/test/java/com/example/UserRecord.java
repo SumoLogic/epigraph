@@ -10,6 +10,7 @@ import io.epigraph.names.AnonListTypeName;
 import io.epigraph.names.NamespaceName;
 import io.epigraph.names.QualifiedTypeName;
 import io.epigraph.types.AnonListType;
+import io.epigraph.types.DataType;
 import io.epigraph.types.ListType;
 import io.epigraph.types.RecordType;
 import io.epigraph.types.RecordType.Field;
@@ -72,7 +73,6 @@ public interface UserRecord extends PersonRecord {
       super(
           new QualifiedTypeName(new NamespaceName(new NamespaceName(null, "com"), "example"), "UserRecord"),
           Collections.emptyList(),
-          false,
           UserRecord.Builder::new,
           UserRecord.Builder.Value::new,
           UserRecord.Builder.Data::new
@@ -85,8 +85,8 @@ public interface UserRecord extends PersonRecord {
     }
 
 
-    @Override
-    protected @NotNull Supplier<ListType> listTypeSupplier() { return () -> UserRecord.List.type; }
+//    @Override
+//    protected @NotNull Supplier<ListType> listTypeSupplier() { return () -> UserRecord.List.type; }
 
   }
 
@@ -439,22 +439,22 @@ public interface UserRecord extends PersonRecord {
 
       private Type() {
         super(
-            false,
-            UserRecord.type,
+            Arrays.asList(PersonRecord.List.type),
+            new DataType(false, UserRecord.type, UserRecord.type.self),
             UserRecord.List.Builder::new,
             UserRecord.List.Builder.Value::new,
             UserRecord.List.Builder.Data::new
         );
       }
 
-      @Override
-      protected @NotNull Supplier<ListType> listTypeSupplier() {
-        return () -> { // TODO or construct raw list type (make this default behavior and override in static types)?
-          throw new IllegalStateException(
-              "'" + AnonListTypeName.of(false, UserRecord.List.type.name()) + "' not used anywhere in the schema"
-          );
-        };
-      }
+//      @Override
+//      protected @NotNull Supplier<ListType> listTypeSupplier() {
+//        return () -> { // TODO or construct raw list type (make this default behavior and override in static types)?
+//          throw new IllegalStateException(
+//              "'" + AnonListTypeName.of(false, UserRecord.List.type.name()) + "' not used anywhere in the schema"
+//          );
+//        };
+//      }
 
     }
 

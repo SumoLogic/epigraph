@@ -10,6 +10,7 @@ import io.epigraph.names.AnonListTypeName;
 import io.epigraph.names.NamespaceName;
 import io.epigraph.names.QualifiedTypeName;
 import io.epigraph.types.AnonListType;
+import io.epigraph.types.DataType;
 import io.epigraph.types.ListType;
 import io.epigraph.types.RecordType;
 import io.epigraph.types.RecordType.Field;
@@ -76,7 +77,6 @@ public interface PersonRecord extends RecordDatum.Static {
       super(
           new QualifiedTypeName(new NamespaceName(new NamespaceName(null, "com"), "example"), "PersonRecord"),
           Collections.emptyList(),
-          false,
           PersonRecord.Builder::new,
           PersonRecord.Builder.Value::new,
           PersonRecord.Builder.Data::new
@@ -89,8 +89,8 @@ public interface PersonRecord extends RecordDatum.Static {
     }
 
 
-    @Override
-    protected @NotNull Supplier<ListType> listTypeSupplier() { return () -> PersonRecord.List.type; }
+//    @Override
+//    protected @NotNull Supplier<ListType> listTypeSupplier() { return () -> PersonRecord.List.type; }
 
   }
 
@@ -453,22 +453,22 @@ public interface PersonRecord extends RecordDatum.Static {
 
       private Type() {
         super(
-            false,
-            PersonRecord.type,
+            Arrays.asList(),
+            new DataType(false, PersonRecord.type, PersonRecord.type.self),
             PersonRecord.List.Builder::new,
             PersonRecord.List.Builder.Value::new,
             PersonRecord.List.Builder.Data::new
         );
       }
 
-      @Override
-      protected @NotNull Supplier<ListType> listTypeSupplier() {
-        return () -> { // TODO or construct raw list type (make this default behavior and override in static types)?
-          throw new IllegalStateException(
-              "'" + AnonListTypeName.of(false, PersonRecord.List.type.name()) + "' not used anywhere in the schema"
-          );
-        };
-      }
+//      @Override
+//      protected @NotNull Supplier<ListType> listTypeSupplier() {
+//        return () -> { // TODO or construct raw list type (make this default behavior and override in static types)?
+//          throw new IllegalStateException(
+//              "'" + AnonListTypeName.of(false, PersonRecord.List.type.name()) + "' not used anywhere in the schema"
+//          );
+//        };
+//      }
 
     }
 

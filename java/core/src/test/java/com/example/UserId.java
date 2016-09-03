@@ -10,6 +10,7 @@ import io.epigraph.names.AnonListTypeName;
 import io.epigraph.names.NamespaceName;
 import io.epigraph.names.QualifiedTypeName;
 import io.epigraph.types.AnonListType;
+import io.epigraph.types.DataType;
 import io.epigraph.types.IntegerType;
 import io.epigraph.types.ListType;
 import io.epigraph.util.Util;
@@ -88,7 +89,7 @@ public interface UserId extends PersonId {
 
         @Override
         public @Nullable UserId.Imm get() {
-          return Util.apply(UserId.Imm.Value::getDatum, get_value());
+          return Util.apply(get_value(), Value::getDatum);
         }
 
       }
@@ -127,7 +128,7 @@ public interface UserId extends PersonId {
 
       @Override
       public @Nullable UserId.Builder get() {
-        return Util.apply(UserId.Builder.Value::getDatum, get_value());
+        return Util.apply(get_value(), UserId.Builder.Value::getDatum);
       }
 
     }
@@ -144,15 +145,14 @@ public interface UserId extends PersonId {
       super(
           new QualifiedTypeName(new NamespaceName(new NamespaceName(null, "com"), "example"), "UserId"),
           Arrays.asList(PersonId.type),
-          false,
           UserId.Builder::new,
           UserId.Builder.Value::new,
           UserId.Builder.Data::new
       );
     }
 
-    @Override // TODO pass as super constructor argument
-    protected @NotNull Supplier<ListType> listTypeSupplier() { return () -> UserId.List.type; }
+//    @Override // TODO pass as super constructor argument
+//    protected @NotNull Supplier<ListType> listTypeSupplier() { return () -> UserId.List.type; }
 
   }
 
@@ -336,22 +336,22 @@ public interface UserId extends PersonId {
 
       private Type() {
         super(
-            false,
-            UserId.type,
+            Arrays.asList(PersonId.List.type),
+            new DataType(false, UserId.type, UserId.type.self),
             UserId.List.Builder::new,
             UserId.List.Builder.Value::new,
             UserId.List.Builder.Data::new
         );
       }
 
-      @Override
-      protected @NotNull Supplier<ListType> listTypeSupplier() {
-        return () -> { // TODO or construct raw list type (make this default behavior and override in static types)?
-          throw new IllegalStateException(
-              "'" + AnonListTypeName.of(false, UserId.List.type.name()) + "' not used anywhere in the schema"
-          );
-        };
-      }
+//      @Override
+//      protected @NotNull Supplier<ListType> listTypeSupplier() {
+//        return () -> { // TODO or construct raw list type (make this default behavior and override in static types)?
+//          throw new IllegalStateException(
+//              "'" + AnonListTypeName.of(false, UserId.List.type.name()) + "' not used anywhere in the schema"
+//          );
+//        };
+//      }
 
     }
 

@@ -7,9 +7,10 @@ import io.epigraph.util.Unmodifiable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.AbstractList;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
+import java.util.RandomAccess;
 import java.util.function.Function;
 
 
@@ -48,6 +49,17 @@ public interface ListDatum extends Datum {
 
     @Override
     @NotNull ListDatum.Imm.Static toImmutable();
+
+
+    interface Tagged extends ListDatum.Static {
+
+      @Override
+      @NotNull ListDatum.Imm.Static.Tagged toImmutable();
+
+      @NotNull List<@Nullable ? extends Datum.Static> datums();
+
+    }
+
 
   }
 
@@ -121,6 +133,17 @@ public interface ListDatum extends Datum {
 
       }
 
+
+      interface Tagged extends ListDatum.Imm.Static {
+
+        @Override
+        @NotNull ListDatum.Imm.Static.Tagged toImmutable();
+
+        @NotNull List<@Nullable ? extends Datum.Imm.Static> datums();
+
+      }
+
+
     }
 
 
@@ -137,17 +160,20 @@ public interface ListDatum extends Datum {
 
     public static final class Raw extends ListDatum.Mut implements ListDatum.Raw, Datum.Mut.Raw {
 
-      private final @NotNull List<Data.@NotNull Mut> elements = new ArrayList<>();
+      private final @NotNull List<Data.@NotNull Mut> elements = new DataList<>(type());
 
-      private @Nullable List<@NotNull ? extends Data.Mut> unmodifiableViewOfElements = null;
+//      private @Nullable List<@NotNull ? extends Data.Mut> unmodifiableViewOfElements = null;
 
       public Raw(ListType type) { super(type); }
 
       @Override
-      public @NotNull List<@NotNull ? extends Data.Mut> _elements() { // FIXME implement modifiable view of elements (YES!)?
-        if (unmodifiableViewOfElements == null) unmodifiableViewOfElements = /*Unmodifiable.list(*/elements/*)*/;
-        return unmodifiableViewOfElements;
-      }
+      public @NotNull List<Data.@NotNull Mut> _elements() { return elements; }
+
+//      @Override
+//      public @NotNull List<@NotNull ? extends Data.Mut> _elements() { // FIXME implement modifiable view of elements (YES!)?
+//        if (unmodifiableViewOfElements == null) unmodifiableViewOfElements = /*Unmodifiable.list(*/elements/*)*/;
+//        return unmodifiableViewOfElements;
+//      }
 
       @Override
       public int size() { return elements.size(); }
@@ -159,6 +185,37 @@ public interface ListDatum extends Datum {
 
       @Override
       public @NotNull ListDatum.Mut.Raw _raw() { return this; }
+
+
+      private static class DataList<E extends Data.@NotNull Mut> extends AbstractList<E> implements RandomAccess {
+
+        private final @NotNull List<@NotNull E> list = new ArrayList<>();
+
+        private final ListType listType;
+
+        public DataList(@NotNull ListType listType) { this.listType = listType; }
+
+        @Override
+        public E get(int index) { return list.get(index); }
+
+        @Override
+        public int size() { return list.size(); }
+
+        @Override
+        public E set(int index, E element) { return list.set(index, validate(element)); }
+
+        @Override
+        public void add(int index, E element) { list.add(index, validate(element)); }
+
+        @Override
+        public E remove(int index) { return list.remove(index); }
+
+        private E validate(E element) throws IllegalArgumentException {
+          return listType.elementType.checkWrite(element);
+        }
+
+      }
+
 
     }
 
@@ -192,6 +249,19 @@ public interface ListDatum extends Datum {
 
       @Override
       public @NotNull ListDatum.Mut.Raw _raw() { return raw; }
+
+
+      public static abstract class Tagged<MyImm extends ListDatum.Imm.Static.Tagged, MyDefault extends Datum.Mut.Static>
+          extends ListDatum.Mut.Static<MyImm> implements ListDatum.Static.Tagged {
+
+        protected Tagged(
+            @NotNull ListType type,
+            @NotNull ListDatum.Mut.Raw raw,
+            @NotNull Function<ListDatum.Imm.Raw, MyImm> immutableConstructor
+        ) { super(type, raw, immutableConstructor); }
+
+      }
+
 
     }
 

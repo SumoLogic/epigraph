@@ -15,48 +15,45 @@ import java.util.stream.Stream;
 
 public abstract class ListType extends DatumType {
 
-  public final @NotNull Type elementType;
-
-  private ListType(
-      @NotNull TypeName name,
-      @NotNull List<@NotNull ListType> immediateSupertypes,
-      boolean polymorphic,
-      @NotNull Type elementType
-  ) {
-    super(name, immediateSupertypes, polymorphic);
-    this.elementType = elementType;
-  }
-
-  protected ListType(@NotNull AnonListTypeName name, boolean polymorphic, @NotNull Type elementType) {
-    this(
-        name,
-        elementType.immediateSupertypes().stream().map(Type::listOf).collect(Collectors.toList()),
-        polymorphic,
-        elementType
-    );
-  }
+  public final @NotNull DataType elementType; // TODO rename to elementDataType
 
   protected ListType(
-      @NotNull QualifiedTypeName name,
-      @NotNull List<@NotNull NamedListType> immediateNamedSupertypes,
-      boolean polymorphic,
-      @NotNull Type elementType
+      @NotNull TypeName name,
+      @NotNull List<@NotNull ? extends ListType> immediateSupertypes,
+      @NotNull DataType elementDataType
   ) {
-    this(name, addAnonSupertypes(immediateNamedSupertypes, elementType), polymorphic, elementType);
+    super(name, immediateSupertypes);
+    this.elementType = elementDataType;
   }
 
-  private static @NotNull List<@NotNull ListType> addAnonSupertypes(
-      @NotNull List<@NotNull ? extends NamedListType> namedSupertypes,
-      @NotNull Type elementType
-  ) {
-    Stream<? extends Type> missingElementSupertypes = elementType.immediateSupertypes().stream().filter(est ->
-        namedSupertypes.stream().anyMatch(nst -> !nst.elementType.doesExtend(est))
-    );
-    return Stream.concat(
-        namedSupertypes.stream(),
-        missingElementSupertypes.map(Type::listOf)
-    ).collect(Collectors.toList());
-  }
+//  protected ListType(@NotNull AnonListTypeName name, @NotNull DataType elementDataType) {
+//    this(
+//        name,
+//        elementDataType.type.immediateSupertypes().stream().map(Type::listOf).collect(Collectors.toList()),
+//        elementDataType
+//    );
+//  }
+//
+//  protected ListType(
+//      @NotNull QualifiedTypeName name,
+//      @NotNull List<@NotNull NamedListType> immediateNamedSupertypes,
+//      @NotNull DataType elementDataType
+//  ) {
+//    this(name, addAnonSupertypes(immediateNamedSupertypes, elementDataType.type), elementDataType);
+//  }
+//
+//  private static @NotNull List<@NotNull ListType> addAnonSupertypes(
+//      @NotNull List<@NotNull ? extends NamedListType> namedSupertypes,
+//      @NotNull Type elementType
+//  ) {
+//    Stream<? extends Type> missingElementSupertypes = elementType.immediateSupertypes().stream().filter(est ->
+//        namedSupertypes.stream().anyMatch(nst -> !nst.elementType.type.doesExtend(est))
+//    );
+//    return Stream.concat(
+//        namedSupertypes.stream(),
+//        missingElementSupertypes.map(Type::listOf)
+//    ).collect(Collectors.toList());
+//  }
 
   @Override
   @SuppressWarnings("unchecked")

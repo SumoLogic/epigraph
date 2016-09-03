@@ -18,10 +18,9 @@ public abstract class DatumType extends Type {
 
   protected DatumType(
       @NotNull TypeName name,
-      @NotNull List<@NotNull ? extends DatumType> immediateSupertypes,
-      boolean polymorphic
+      @NotNull List<@NotNull ? extends DatumType> immediateSupertypes
   ) {
-    super(name, immediateSupertypes, polymorphic);
+    super(name, immediateSupertypes);
   }
 
   @Override
@@ -38,9 +37,6 @@ public abstract class DatumType extends Type {
 
   @Override
   public @NotNull Collection<@NotNull ? extends Tag> immediateTags() { return immediateTags; }
-
-//  @Override
-//  public final @NotNull Collection<@NotNull ? extends Tag> tags() { return immediateTags(); }
 
   public abstract @NotNull Val.Mut createMutableValue();
 

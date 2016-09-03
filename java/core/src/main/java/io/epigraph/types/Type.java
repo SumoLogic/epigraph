@@ -25,20 +25,16 @@ public abstract class Type { // TODO split into interface and impl
 
   private final @NotNull List<@NotNull ? extends Type> immediateSupertypes;
 
-  public final boolean polymorphic; // TODO polymorphic builders have to have separate interface for their immediate children to implement (so children can be accepted in contravariant positions)
-
   private @Nullable Collection<@NotNull ? extends Tag> tags = null;
 
   private @Nullable Map<@NotNull String, @NotNull ? extends Tag> tagsMap = null;
 
   protected Type(
       @NotNull TypeName name,
-      @NotNull List<@NotNull ? extends Type> immediateSupertypes,
-      boolean polymorphic
+      @NotNull List<@NotNull ? extends Type> immediateSupertypes
   ) {
     this.name = name;
     this.immediateSupertypes = Unmodifiable.list(immediateSupertypes);
-    this.polymorphic = polymorphic;
 
     // assert none of the immediate supertypes is a supertype of another one
     if (immediateSupertypes.stream().anyMatch(is -> is.supertypes().stream().anyMatch(immediateSupertypes::contains)))
@@ -75,18 +71,19 @@ public abstract class Type { // TODO split into interface and impl
 
   public boolean isAssignableFrom(@NotNull Type type) { return type.doesExtend(this); }
 
-  private final LazyInitializer<ListType> listOf = new LazyInitializer<>(listTypeSupplier()); // FIXME race?
+//  private final LazyInitializer<ListType> listOf = new LazyInitializer<>(listTypeSupplier()); // FIXME race?
 
-  protected abstract @NotNull Supplier<ListType> listTypeSupplier(); // e.g. () -> new AnonListType(false, this)
+  // FIXME - move to .Raw types (or remove)
+//  protected abstract @NotNull Supplier<ListType> listTypeSupplier(); // e.g. () -> new AnonListType(false, this)
 
-  protected @NotNull Supplier<ListType> throwingListTypeSupplier = () -> { // TODO or construct raw list type?
-    throw new IllegalStateException(
-        "'" + AnonListTypeName.of(false, this.name()) + "' not used anywhere in the schema"
-    );
-  };
+//  protected @NotNull Supplier<ListType> throwingListTypeSupplier = () -> { // TODO or construct raw list type?
+//    throw new IllegalStateException(
+//        "'" + AnonListTypeName.of(false, this.name()) + "' not used anywhere in the schema"
+//    );
+//  };
 
 
-  public ListType listOf() { return listOf.get(); }
+//  public ListType listOf() { return listOf.get(); }
 
   public abstract @NotNull Collection<@NotNull ? extends Tag> immediateTags();
 
@@ -129,6 +126,8 @@ public abstract class Type { // TODO split into interface and impl
       this.name = name;
       this.type = type;
     }
+
+    public @NotNull String name() { return name; }
 
     public @NotNull Val.Mut createMutableValue() { return this.type.createMutableValue(); }
 
