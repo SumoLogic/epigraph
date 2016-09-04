@@ -115,6 +115,9 @@
     <lang.importOptimizer language="epi_schema"
                           implementationClass="com.sumologic.epigraph.ideaplugin.schema.features.imports.SchemaImportOptimizer"/>
 
+    <!-- line painter for default tags on -->
+    <editor.linePainter implementation="com.sumologic.epigraph.ideaplugin.schema.features.linepainter.SchemaDefaultTagLinePainter"/>
+
     <!-- inspections -->
     <!-- imports -->
     <localInspection
@@ -157,6 +160,7 @@
     <!-- services -->
     <applicationService serviceImplementation="com.sumologic.epigraph.ideaplugin.schema.options.SchemaSettings"/>
 
+    <!-- intentions -->
     <intentionAction>
       <category>Epigraph/Schema</category>
       <className>com.sumologic.epigraph.ideaplugin.schema.features.actions.fixes.AddDefaultAction</className>

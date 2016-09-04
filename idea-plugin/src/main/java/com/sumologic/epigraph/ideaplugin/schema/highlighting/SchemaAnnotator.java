@@ -4,8 +4,10 @@ import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
+import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.sumologic.epigraph.ideaplugin.schema.SchemaBundle;
 import com.sumologic.epigraph.ideaplugin.schema.brains.ImportsManager;
@@ -13,6 +15,7 @@ import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.HierarchyCache;
 import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.TypeMembers;
 import com.sumologic.epigraph.ideaplugin.schema.features.actions.fixes.AddDefaultAction;
 import com.sumologic.epigraph.ideaplugin.schema.features.actions.fixes.ImportTypeIntentionFix;
+import com.sumologic.epigraph.ideaplugin.schema.features.linepainter.SchemaDefaultTagLinePainter;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaSearchScopeUtil;
 import com.sumologic.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
@@ -37,6 +40,13 @@ public class SchemaAnnotator implements Annotator {
   @Override
   public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
     element.accept(new SchemaVisitor() {
+
+      @Override
+      public void visitNamespaceDecl(@NotNull SchemaNamespaceDecl namespaceDecl) {
+        // TODO find a better place to invalidate line extensions cache
+        SchemaDefaultTagLinePainter.clearForFile(namespaceDecl.getProject(),
+            namespaceDecl.getContainingFile().getVirtualFile());
+      }
 
       @Override
       public void visitFieldDecl(@NotNull SchemaFieldDecl fieldDecl) {
@@ -88,7 +98,23 @@ public class SchemaAnnotator implements Annotator {
           if (defaultTag == null) {
             Annotation annotation = holder.createWarningAnnotation(valueTypeRef, SchemaBundle.message("annotator.default.override.missing"));
             annotation.registerFix(new AddDefaultAction());
-          } // else show line extension
+          } else {
+            Project project = valueTypeRef.getProject();
+            PsiDocumentManager psiDocumentManager = PsiDocumentManager.getInstance(project);
+            Document document = psiDocumentManager.getDocument(valueTypeRef.getContainingFile());
+            if (document != null) {
+              int lineNumber = document.getLineNumber(valueTypeRef.getTextOffset());
+
+              SchemaDefaultTagLinePainter.DefaultTagsInfo tagsInfo =
+                  SchemaDefaultTagLinePainter.getOrCreate(project);
+
+              tagsInfo.add(
+                  valueTypeRef.getContainingFile().getVirtualFile(),
+                  lineNumber,
+                  " default " + defaultTag.getQid().getText()
+              );
+            }
+          }
         }
       }
 
