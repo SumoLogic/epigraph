@@ -15,6 +15,9 @@ public class FormatterTest extends LightCodeInsightFixtureTestCase {
 
   public void testFormatter() {
     myFixture.configureByFile("FormatterTest.esc");
+//    String psiDump = DebugUtil.psiToString(myFixture.getFile(), true, false).trim();
+//    System.out.println(psiDump);
+
     new WriteCommandAction.Simple<Void>(getProject()) {
       @Override
       protected void run() throws Throwable {

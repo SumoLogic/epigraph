@@ -1,5 +1,6 @@
 package com.sumologic.epigraph.ideaplugin.schema.features.completion;
 
+import com.intellij.psi.impl.DebugUtil;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import io.epigraph.schema.parser.SchemaFileType;
 import org.jetbrains.annotations.NotNull;
@@ -228,18 +229,17 @@ public class CompletionTest extends LightCodeInsightFixtureTestCase {
     configureByText("namespace foo vartype V { v: Baz } record Baz { qux: V <caret> }");
     checkCompletionVariants("override ", "default ");
 
-    // TODO fixme
-//    configureByText("namespace foo record Baz { qux: V de<caret> abstract zz: Baz} vartype V { v: Baz }");
-//    checkCompletionVariants("override ", "default ");
+    configureByText("namespace foo record A { a: A } record Baz extends A { qux: V de<caret> abstract zz: Baz} vartype V { v: Baz }");
+    checkCompletionVariants("override ", "default ");
 
-    configureByText("namespace foo vartype V { v: Baz } record Baz { qux: Baz <caret> }");
+    configureByText("namespace foo vartype V { v: Baz } record A { a: A} record Baz extends A { qux: Baz <caret> }");
     checkCompletionVariants("override ");
 
     configureByText("namespace foo vartype V { v: Baz } record Baz { q: Baz qux: V <caret> }");
-    checkCompletionVariants("override ", "default ");
+    checkCompletionVariants("default ");
 
     configureByText("namespace foo vartype V { v: Baz } record Baz { q: Baz qux: V <caret> w: Baz}");
-    checkCompletionVariants("override ", "default ");
+    checkCompletionVariants("default ");
 
     configureByText("namespace foo vartype V { v: Baz } record Baz { qux: V default <caret> }");
     checkCompletionVariants("v");
@@ -258,6 +258,8 @@ public class CompletionTest extends LightCodeInsightFixtureTestCase {
     configureByText("namespace foo record Bar { bar: Bar } record Baz extends Bar { override <caret> foo : Bar { doc = \"xx\" } }");
     checkCompletionVariants("bar");
   }
+
+  // todo: complete field name after override
 
   // --------------- vartype tags
 
@@ -296,11 +298,11 @@ public class CompletionTest extends LightCodeInsightFixtureTestCase {
   private void checkCompletionVariants(String... variants) {
     myFixture.completeBasic();
     List<String> actual = myFixture.getLookupElementStrings();
-    assertNotNull(actual);
+    assertNotNull(dumpPsi(), actual);
     List<String> expected = Arrays.asList(variants);
     Collections.sort(actual);
     Collections.sort(expected);
-    assertEquals(expected, actual);
+    assertEquals(dumpPsi(), expected, actual);
   }
 
   private void checkCompletionVariants(List<String> variants, String... moreVariants) {
@@ -311,5 +313,10 @@ public class CompletionTest extends LightCodeInsightFixtureTestCase {
 
   private void configureByText(@NotNull String text) {
     myFixture.configureByText(SchemaFileType.INSTANCE, text);
+  }
+
+  @NotNull
+  private String dumpPsi() {
+    return DebugUtil.psiToString(getFile(), true, false).trim();
   }
 }

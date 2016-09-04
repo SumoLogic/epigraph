@@ -10,3 +10,5 @@ record Baz {
 vartype Var {
   `map`: Baz
 }
+
+list[list[Baz]] L

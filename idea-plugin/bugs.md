@@ -5,7 +5,6 @@
 - `polymorphic` completion inside anon lists and maps
 - renaming a tag should suggest to rename base/sub tags (like renaming a field does)
 - renaming a field/tag with `override` modifier should rename base members too (and sub-members with `override`) 
-- completion for `default` keyword doesn't always work, see CompletionTest::testOverrideCompletionInRecord
 
 ### Low
 - String text should be highlihted as specified in "Preferences > Editor > Colors & Fonts > Language Defaults > String > String Text"
@@ -23,6 +22,7 @@
 
 ### Medium
 - Schema files under `resources` should be excluded from analysis
+- completion for `default` keyword doesn't always work, see CompletionTest::testOverrideCompletionInRecord
 
 ### Low
 - Icon is not substituted for schema files outside of source root, in the files view. See https://intellij-support.jetbrains.com/hc/en-us/community/posts/207277349-handling-custom-language-file-outside-of-source-root

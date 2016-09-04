@@ -86,14 +86,14 @@ qid ::= id {
 }
 
 imports ::= importStatement*
-importStatement ::= 'import' fqn {pin=1 recoverWhile="declRecover"}
+importStatement ::= 'import' fqn {pin=1 recoverWhile="importRecover"}
 
 namespaceDecl ::= 'namespace' fqn namespaceBody? {
   methods=[getFqn2 toString]
   stubClass="io.epigraph.schema.parser.psi.stubs.SchemaNamespaceDeclStub"
   elementTypeClass="io.epigraph.schema.parser.psi.stubs.SchemaNamespaceDeclStubElementType"
   pin=1
-  recoverWhile="declRecover"
+  recoverWhile="namespaceDeclRecover"
 }
 
 private namespaceBody ::= '{' namespaceBodyPart* '}'
@@ -221,15 +221,17 @@ enumTypeDef ::= 'enum' typeName metaDecl? enumTypeBody { // extends?
   pin=1
 }
 enumTypeBody ::= '{' (enumTypeBodyPart ','?)* '}'
-private enumTypeBodyPart ::= customParam | enumMemberDecl
+private enumTypeBodyPart ::= customParam | enumMemberDecl { recoverWhile = enumPartRecover }
 enumMemberDecl ::= qid enumMemberBody? {
   implements=["io.epigraph.schema.parser.psi.CustomParamsHolder" "com.intellij.psi.PsiNamedElement"]
   extends="io.epigraph.schema.parser.psi.impl.CustomParamHolderImpl"
   methods=[getName setName getNameIdentifier]
   pin=1
 }
-private enumMemberBody ::='{' (enumMemberBodyPart ','?)* '}'
-private enumMemberBodyPart ::= customParam
+private enumMemberBody ::='{' (enumMemberBodyPar ','?)* '}'
+private enumMemberBodyPar ::= customParam
+
+private enumPartRecover ::= ! (',' | qid | '}')
 
 /// primitive
 
@@ -251,10 +253,18 @@ supplementDef ::= 'supplement' fqnTypeRef (',' fqnTypeRef)* 'with' fqnTypeRef {
   pin=1
 }
 
-private declRecover ::= ! ('import' | 'namespace' | 'polymorphic' | 'abstract' | 'record' | ',' |
+private namespaceDeclRecover ::= ! ('import' | 'namespace' | 'polymorphic' | 'abstract' | 'record' | ',' |
                            'map' | 'list' | 'vartype' | 'enum' | 'supplement'|
                            'string' | 'integer' | 'long' | 'double' | 'boolean')
-private partRecover ::= ! ('}' | qid | 'abstract' | 'override' | ',' )
+
+private importRecover ::= namespaceDeclRecover
+private declRecover ::= namespaceDeclRecover
+//private declRecover ::= ! ('import' | 'namespace' | 'polymorphic' | 'record' | ',' |
+//                           'vartype' | 'enum' | 'supplement'|
+//                           'string' | 'integer' | 'long' | 'double' | 'boolean')
+
+private partRecover ::= ! ('}' | qid '=' | qid ':' | 'abstract' | 'override' | ',' )
+//private partRecover ::= ! ('}' | qid | 'abstract' | 'override' | ',' )
 
 // ------------- data language -------------
 

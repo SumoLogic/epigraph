@@ -1,0 +1,10 @@
+namespace foo
+
+record Baz {
+  qux: V de
+  abstract zz: Baz
+}
+
+vartype V {
+  v: Baz
+}

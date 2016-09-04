@@ -326,67 +326,94 @@ public class SchemaCompletionContributor extends CompletionContributor {
       if (!TypeMembers.getVarTagDecls(varTypeDef, null).isEmpty()) addOverride = true;
     }
 
-    if (addOverride)
-      result.addElement(LookupElementBuilder.create("override "));
+    element = PsiTreeUtil.prevVisibleLeaf(position);
+    if (!addOverride && element != null) {
+      IElementType prevElementType = element.getNode().getElementType();
+
+      SchemaFieldDecl prevFieldDecl = PsiTreeUtil.getParentOfType(element, SchemaFieldDecl.class);
+      recordTypeDef = PsiTreeUtil.getParentOfType(element, SchemaRecordTypeDef.class);
+      if (recordTypeDef != null && isValid(prevFieldDecl, position)) {
+        addOverride = true;
+      }
+
+      SchemaVarTagDecl prevVarTagDecl = PsiTreeUtil.getParentOfType(element, SchemaVarTagDecl.class);
+      varTypeDef = PsiTreeUtil.getParentOfType(element, SchemaVarTypeDef.class);
+      if (varTypeDef != null && isValid(prevVarTagDecl, position)) {
+        addOverride = true;
+      }
+    }
+
+    // last checks: if there's anything to override really?
+    if (addOverride && recordTypeDef != null && TypeMembers.getOverridableFields(recordTypeDef).isEmpty())
+      addOverride = false;
+
+    if (addOverride && varTypeDef != null && TypeMembers.getOverridableTags(varTypeDef).isEmpty())
+      addOverride = false;
+
+    if (addOverride) result.addElement(LookupElementBuilder.create("override "));
   }
 
+  private boolean isValid(@Nullable SchemaFieldDecl fieldDecl, @NotNull PsiElement position) {
+    if (fieldDecl == null) return true;
+    if (fieldDecl.getCurlyRight() != null) return true;
+    SchemaValueTypeRef valueTypeRef = fieldDecl.getValueTypeRef();
+    //noinspection RedundantIfStatement
+    if (valueTypeRef != null && !PsiTreeUtil.isAncestor(valueTypeRef, position, false)) return true;
+    return false;
+  }
+
+  private boolean isValid(@Nullable SchemaVarTagDecl tagDecl, @NotNull PsiElement position) {
+    if (tagDecl == null) return true;
+    if (tagDecl.getCurlyRight() != null) return true;
+    SchemaTypeRef typeRef = tagDecl.getTypeRef();
+    //noinspection RedundantIfStatement
+    if (typeRef != null && !PsiTreeUtil.isAncestor(typeRef, position, false)) return true;
+    return false;
+  }
 
   private void completeOverrideMember(@NotNull PsiElement position, @NotNull final CompletionResultSet result) {
     SchemaRecordTypeDef recordTypeDef = null;
     SchemaVarTypeDef varTypeDef = null;
 
-    // try to position element to 'override'
-    PsiElement element = SchemaPsiUtil.prevNonWhitespaceSibling(position);
-    if (element == null || element.getNode().getElementType() != S_OVERRIDE) {
-      element = position.getParent();
-      if (element == null) return;
-      element = SchemaPsiUtil.prevNonWhitespaceSibling(element);
-      if (element == null || element.getNode().getElementType() != S_OVERRIDE) {
-        return; // give up
-      }
+    PsiElement element = PsiTreeUtil.prevVisibleLeaf(position);
+    if (element == null || element.getNode().getElementType() != S_OVERRIDE) return;
+
+
+//
+//    element = SchemaPsiUtil.prevNonWhitespaceSibling(element);
+//
+//    if (element instanceof SchemaTypeDefWrapper && element.getFirstChild() instanceof SchemaRecordTypeDef) {
+//      recordTypeDef = (SchemaRecordTypeDef) element.getFirstChild();
+//    }
+//
+//    if (element instanceof SchemaTypeDefWrapper && element.getFirstChild() instanceof SchemaVarTypeDef) {
+//      varTypeDef = (SchemaVarTypeDef) element.getFirstChild();
+//    }
+
+    PsiElement elementParent = element.getParent();
+    if (elementParent == null) return;
+
+    recordTypeDef = PsiTreeUtil.getParentOfType(element, SchemaRecordTypeDef.class);
+    if (recordTypeDef == null && elementParent.getNode().getElementType() == S_DEFS) {
+      recordTypeDef = PsiTreeUtil.getParentOfType(PsiTreeUtil.prevVisibleLeaf(element), SchemaRecordTypeDef.class);
     }
 
-    element = SchemaPsiUtil.prevNonWhitespaceSibling(element);
-
-    if (element instanceof SchemaTypeDefWrapper && element.getFirstChild() instanceof SchemaRecordTypeDef) {
-      recordTypeDef = (SchemaRecordTypeDef) element.getFirstChild();
-    }
-
-    if (element instanceof SchemaTypeDefWrapper && element.getFirstChild() instanceof SchemaVarTypeDef) {
-      varTypeDef = (SchemaVarTypeDef) element.getFirstChild();
+    varTypeDef = PsiTreeUtil.getParentOfType(element, SchemaVarTypeDef.class);
+    if (varTypeDef == null && elementParent.getNode().getElementType() == S_DEFS) {
+      varTypeDef = PsiTreeUtil.getParentOfType(PsiTreeUtil.prevVisibleLeaf(element), SchemaVarTypeDef.class);
     }
 
     if (recordTypeDef != null) {
-      Set<SchemaFieldDecl> alreadyDeclaredFields;
-
-      SchemaRecordTypeBody body = recordTypeDef.getRecordTypeBody();
-      if (body == null) {
-        alreadyDeclaredFields = Collections.emptySet();
-      } else {
-        alreadyDeclaredFields = new HashSet<>(body.getFieldDeclList());
-      }
-
-      List<SchemaFieldDecl> fieldDecls = TypeMembers.getFieldDecls(recordTypeDef, null);
-      for (SchemaFieldDecl fieldDecl : fieldDecls) {
-        if (!alreadyDeclaredFields.contains(fieldDecl))
-          result.addElement(LookupElementBuilder.create(fieldDecl));
+      List<SchemaFieldDecl> overrideableFields = TypeMembers.getOverridableFields(recordTypeDef);
+      for (SchemaFieldDecl fieldDecl : overrideableFields) {
+        result.addElement(LookupElementBuilder.create(fieldDecl));
       }
     }
 
     if (varTypeDef != null) {
-      Set<SchemaVarTagDecl> alreadyDeclaredTags;
-
-      SchemaVarTypeBody body = varTypeDef.getVarTypeBody();
-      if (body == null) {
-        alreadyDeclaredTags = Collections.emptySet();
-      } else {
-        alreadyDeclaredTags = new HashSet<>(body.getVarTagDeclList());
-      }
-
-      List<SchemaVarTagDecl> varTagDecls = TypeMembers.getVarTagDecls(varTypeDef, null);
-      for (SchemaVarTagDecl varTagDecl : varTagDecls) {
-        if (!alreadyDeclaredTags.contains(varTagDecl))
-          result.addElement(LookupElementBuilder.create(varTagDecl));
+      List<SchemaVarTagDecl> overrideableTags = TypeMembers.getOverridableTags(varTypeDef);
+      for (SchemaVarTagDecl varTagDecl : overrideableTags) {
+        result.addElement(LookupElementBuilder.create(varTagDecl));
       }
     }
   }

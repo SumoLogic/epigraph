@@ -34,6 +34,7 @@ public class SchemaFormattingModelBuilder implements FormattingModelBuilder {
 
   private SpacingBuilder createSpaceBuilder(CodeStyleSettings settings) {
     SpacingBuilder spacingBuilder = new SpacingBuilder(settings, SchemaLanguage.INSTANCE);
+    spacingBuilder.between(S_ANON_LIST, S_QID).spaces(1);
 
     for (IElementType type : SchemaParserDefinition.KEYWORDS.getTypes()) {
       if (type != S_LIST && type != S_MAP)

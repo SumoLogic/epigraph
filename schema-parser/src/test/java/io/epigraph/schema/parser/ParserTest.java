@@ -20,6 +20,11 @@ public class ParserTest {
     testParse("ParsingTestData.esc", "ParsingTestData.txt");
   }
 
+  @Test
+  public void testParserRecover1() throws IOException {
+    testParse("ParsingRecover1.esc", "ParsingRecover1.txt");
+  }
+
   private void testParse(String inputFile, String expectedOutputFile) throws IOException {
     File dir = new File("src/test/resources/testData/parser");
     File input = new File(dir, inputFile);
@@ -30,7 +35,7 @@ public class ParserTest {
 
     String expectedPsiDump = new String(Files.readAllBytes(Paths.get(dir.getAbsolutePath(), expectedOutputFile)));
 
-    Assert.assertEquals(expectedPsiDump, psiDump);
+    Assert.assertEquals(expectedPsiDump.trim(), psiDump.trim());
   }
 
 }

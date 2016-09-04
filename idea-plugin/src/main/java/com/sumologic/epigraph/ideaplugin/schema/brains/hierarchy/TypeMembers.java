@@ -29,6 +29,15 @@ public class TypeMembers {
   }
 
   @NotNull
+  public static List<SchemaFieldDecl> getOverridableFields(@NotNull SchemaRecordTypeDef recordTypeDef) {
+    final HierarchyCache hierarchyCache = HierarchyCache.getHierarchyCache(recordTypeDef.getProject());
+    List<SchemaFieldDecl> allFieldDecls = getFieldDecls(recordTypeDef, null);
+    List<SchemaFieldDecl> existingFieldDecls = getFieldDecls(null, Collections.singletonList(recordTypeDef));
+    allFieldDecls.removeAll(existingFieldDecls);
+    return allFieldDecls;
+  }
+
+  @NotNull
   public static List<SchemaVarTagDecl> getOverridenTags(@NotNull SchemaVarTagDecl varTagDecl) {
     final HierarchyCache hierarchyCache = HierarchyCache.getHierarchyCache(varTagDecl.getProject());
     return getSameNameTags(varTagDecl, hierarchyCache.getTypeParents(varTagDecl.getVarTypeDef()));
@@ -38,6 +47,15 @@ public class TypeMembers {
   public static List<SchemaVarTagDecl> getOverridingTags(@NotNull SchemaVarTagDecl varTagDecl) {
     Project project = varTagDecl.getProject();
     return getSameNameTags(varTagDecl, HierarchyCache.getHierarchyCache(project).getTypeInheritors(varTagDecl.getVarTypeDef()));
+  }
+
+  @NotNull
+  public static List<SchemaVarTagDecl> getOverridableTags(@NotNull SchemaVarTypeDef varTypeDef) {
+    final HierarchyCache hierarchyCache = HierarchyCache.getHierarchyCache(varTypeDef.getProject());
+    List<SchemaVarTagDecl> allTagDecls = getVarTagDecls(varTypeDef, null);
+    List<SchemaVarTagDecl> existingFieldDecls = getVarTagDecls(null, Collections.singletonList(varTypeDef));
+    allTagDecls.removeAll(existingFieldDecls);
+    return allTagDecls;
   }
 
   @NotNull
