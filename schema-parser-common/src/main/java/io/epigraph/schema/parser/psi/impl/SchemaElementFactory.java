@@ -3,8 +3,8 @@ package io.epigraph.schema.parser.psi.impl;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFileFactory;
-import io.epigraph.schema.parser.psi.*;
 import io.epigraph.schema.parser.SchemaLanguage;
+import io.epigraph.schema.parser.psi.*;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -17,43 +17,59 @@ public class SchemaElementFactory {
   }
 
   @NotNull
-  public static PsiElement createId(Project project, String text) {
+  public static PsiElement createId(@NotNull Project project, String text) {
     final SchemaFile file = createFileFromText(project, "namespace " + text);
     //noinspection ConstantConditions
     return ((SchemaFqnSegment) file.getNamespaceDecl().getFqn().getLastChild()).getQid().getId();
   }
 
   @NotNull
-  public static PsiElement createBackTick(Project project) {
+  public static PsiElement createBackTick(@NotNull Project project) {
     final SchemaFile file = createFileFromText(project, "namespace some\n long `LL`");
     //noinspection ConstantConditions
     return file.getDefs().getTypeDefWrapperList().get(0).getPrimitiveTypeDef().getQid().getFirstChild();
   }
 
-  public static SchemaFqn createFqn(Project project, String text) {
+  @NotNull
+  public static SchemaFqn createFqn(@NotNull Project project, String text) {
     final SchemaFile file = createFileFromText(project, "namespace " + text);
     //noinspection ConstantConditions
     return file.getNamespaceDecl().getFqn();
   }
 
-  public static SchemaImports createImports(Project project, String importToAdd) {
+  @NotNull
+  public static SchemaImports createImports(@NotNull Project project, String importToAdd) {
     final SchemaFile file = createFileFromText(project, "namespace some\n import " + importToAdd);
+    //noinspection ConstantConditions
     return file.getImportsStatement();
   }
 
-  public static SchemaImportStatement createImport(Project project, String importToAdd) {
+  @NotNull
+  public static SchemaImportStatement createImport(@NotNull Project project, String importToAdd) {
     final SchemaFile file = createFileFromText(project, "namespace some\n import " + importToAdd);
     return file.getImportStatements().get(0);
   }
 
-  public static SchemaRecordTypeDef createRecordTypeDef(Project project, String name) {
+  @NotNull
+  public static SchemaRecordTypeDef createRecordTypeDef(@NotNull Project project, String name) {
     final SchemaFile file = createFileFromText(project, "namespace some\nrecord " + name);
     //noinspection ConstantConditions
     return file.getDefs().getTypeDefWrapperList().get(0).getRecordTypeDef();
   }
 
-  public static PsiElement createWhitespaces(Project project, String text) {
+  @NotNull
+  public static PsiElement createWhitespaces(@NotNull Project project, String text) {
     final SchemaFile file = createFileFromText(project, text + "namespace some");
     return file.getChildren()[0];
   }
+
+  @NotNull
+  public static SchemaDefaultOverride createDefaultOverride(@NotNull Project project, @NotNull String tagName) {
+    final SchemaFile file = createFileFromText(project, "namespace some\nrecord X{foo:X default " + tagName + "}");
+    //noinspection ConstantConditions
+
+    return file.getDefs().getTypeDefWrapperList().get(0).getRecordTypeDef().getRecordTypeBody().
+        getFieldDeclList().get(0).getValueTypeRef().getDefaultOverride();
+  }
+
 }

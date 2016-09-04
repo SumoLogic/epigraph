@@ -156,6 +156,11 @@
 
     <!-- services -->
     <applicationService serviceImplementation="com.sumologic.epigraph.ideaplugin.schema.options.SchemaSettings"/>
+
+    <intentionAction>
+      <category>Epigraph/Schema</category>
+      <className>com.sumologic.epigraph.ideaplugin.schema.features.actions.fixes.AddDefaultAction</className>
+    </intentionAction>
   </extensions>
 
   <actions>
