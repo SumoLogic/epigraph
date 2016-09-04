@@ -1,7 +1,10 @@
 package com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy;
 
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiReference;
+import com.intellij.psi.util.PsiTreeUtil;
 import io.epigraph.schema.parser.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -67,6 +70,53 @@ public class TypeMembers {
   public static List<SchemaVarTagDecl> getVarTagDecls(@NotNull SchemaTypeDef hostType, @Nullable String tagName) {
     return getVarTagDecls(tagName, getTypeAndParents(hostType));
   }
+
+  public static boolean canHaveDefault(@NotNull SchemaValueTypeRef valueTypeRef) {
+    SchemaTypeRef typeRef = valueTypeRef.getTypeRef();
+    if (typeRef instanceof SchemaFqnTypeRef) {
+      SchemaFqnTypeRef fqnTypeRef = (SchemaFqnTypeRef) typeRef;
+      SchemaTypeDef typeDef = fqnTypeRef.resolve();
+
+      return typeDef instanceof SchemaVarTypeDef;
+    } else return false;
+  }
+
+  @Nullable
+  public static SchemaVarTagDecl getEffectiveDefault(@NotNull SchemaValueTypeRef valueTypeRef) {
+    if (!canHaveDefault(valueTypeRef)) return null;
+
+    SchemaVarTagDecl defaultTag = getDefaultTag(valueTypeRef);
+    if (defaultTag != null) return defaultTag;
+
+    SchemaFieldDecl fieldDecl = PsiTreeUtil.getParentOfType(valueTypeRef, SchemaFieldDecl.class);
+    if (fieldDecl != null) {
+      List<SchemaFieldDecl> overridenFields = getOverridenFields(fieldDecl);
+
+      for (SchemaFieldDecl overridenField : overridenFields) {
+        ProgressManager.checkCanceled();
+        defaultTag = getDefaultTag(overridenField.getValueTypeRef());
+        if (defaultTag != null) return defaultTag;
+      }
+    }
+
+    return null;
+    // todo handle lists/maps?
+  }
+
+  @Nullable
+  private static SchemaVarTagDecl getDefaultTag(@Nullable SchemaValueTypeRef valueTypeRef) {
+    if (valueTypeRef == null) return null;
+
+    SchemaDefaultOverride defaultOverride = valueTypeRef.getDefaultOverride();
+    if (defaultOverride != null) {
+      SchemaVarTagRef varTagRef = defaultOverride.getVarTagRef();
+      PsiReference reference = varTagRef.getReference();
+      return reference == null ? null : (SchemaVarTagDecl) reference.resolve();
+    }
+    return null;
+  }
+
+  // =========================
 
   private static List<SchemaTypeDef> getTypeAndParents(@NotNull SchemaTypeDef typeDef) {
     final HierarchyCache hierarchyCache = HierarchyCache.getHierarchyCache(typeDef.getProject());

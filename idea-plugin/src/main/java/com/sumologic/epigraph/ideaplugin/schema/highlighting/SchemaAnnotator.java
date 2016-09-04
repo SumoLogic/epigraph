@@ -11,6 +11,7 @@ import com.sumologic.epigraph.ideaplugin.schema.SchemaBundle;
 import com.sumologic.epigraph.ideaplugin.schema.brains.ImportsManager;
 import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.HierarchyCache;
 import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.TypeMembers;
+import com.sumologic.epigraph.ideaplugin.schema.features.actions.fixes.AddDefaultAction;
 import com.sumologic.epigraph.ideaplugin.schema.features.actions.fixes.ImportTypeIntentionFix;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaSearchScopeUtil;
@@ -80,17 +81,14 @@ public class SchemaAnnotator implements Annotator {
         SchemaDefaultOverride defaultOverride = valueTypeRef.getDefaultOverride();
 
         if (defaultOverride != null) {
-          boolean showWrongOverrideError = true;
-
-          SchemaTypeRef typeRef = valueTypeRef.getTypeRef();
-          if (typeRef instanceof SchemaFqnTypeRef) {
-            SchemaFqnTypeRef fqnTypeRef = (SchemaFqnTypeRef) typeRef;
-            SchemaTypeDef typeDef = fqnTypeRef.resolve();
-            showWrongOverrideError = !(typeDef instanceof SchemaVarTypeDef);
-          }
-
-          if (showWrongOverrideError)
+          if (!TypeMembers.canHaveDefault(valueTypeRef))
             holder.createErrorAnnotation(defaultOverride, SchemaBundle.message("annotator.default.override.non.var"));
+        } else {
+          SchemaVarTagDecl defaultTag = TypeMembers.getEffectiveDefault(valueTypeRef);
+          if (defaultTag == null) {
+            Annotation annotation = holder.createWarningAnnotation(valueTypeRef, SchemaBundle.message("annotator.default.override.missing"));
+            annotation.registerFix(new AddDefaultAction());
+          } // else show line extension
         }
       }
 
@@ -229,28 +227,28 @@ public class SchemaAnnotator implements Annotator {
       assert reference != null;
 
 //      if (reference.resolve() == null) {
-        ResolveResult[] resolveResults = reference.multiResolve(false);
-        List<String> typeDefFqns = new ArrayList<>();
-        for (ResolveResult resolveResult : resolveResults) {
-          if (resolveResult.getElement() instanceof SchemaTypeDef)
-            typeDefFqns.add(SchemaPresentationUtil.getName((PsiNamedElement) resolveResult.getElement(), true));
+      ResolveResult[] resolveResults = reference.multiResolve(false);
+      List<String> typeDefFqns = new ArrayList<>();
+      for (ResolveResult resolveResult : resolveResults) {
+        if (resolveResult.getElement() instanceof SchemaTypeDef)
+          typeDefFqns.add(SchemaPresentationUtil.getName((PsiNamedElement) resolveResult.getElement(), true));
+      }
+
+      if (resolveResults.length == 0) {
+        Annotation annotation = holder.createErrorAnnotation(schemaFqn.getNode(),
+            SchemaBundle.message("annotator.unresolved.reference"));
+
+        if (unresolvedTypeRefFix != null)
+          annotation.registerFix(unresolvedTypeRefFix);
+      } else if (typeDefFqns.size() > 1) {
+        Annotation annotation = holder.createErrorAnnotation(schemaFqn.getNode(), SchemaBundle.message("annotator.ambiguous.type.reference"));
+        StringBuilder tooltipText = new StringBuilder(SchemaBundle.message("annotator.ambiguous.type.reference.candidates"));
+        for (String typeDefFqn : typeDefFqns) {
+          tooltipText.append('\n');
+          tooltipText.append("''").append(typeDefFqn).append("''");
         }
-
-        if (resolveResults.length == 0) {
-          Annotation annotation = holder.createErrorAnnotation(schemaFqn.getNode(),
-              SchemaBundle.message("annotator.unresolved.reference"));
-
-          if (unresolvedTypeRefFix != null)
-            annotation.registerFix(unresolvedTypeRefFix);
-        } else if (typeDefFqns.size() > 1) {
-          Annotation annotation = holder.createErrorAnnotation(schemaFqn.getNode(), SchemaBundle.message("annotator.ambiguous.type.reference"));
-          StringBuilder tooltipText = new StringBuilder(SchemaBundle.message("annotator.ambiguous.type.reference.candidates"));
-          for (String typeDefFqn : typeDefFqns) {
-            tooltipText.append('\n');
-            tooltipText.append("''").append(typeDefFqn).append("''");
-          }
-          annotation.setTooltip(tooltipText.toString());
-        } // else we have import prefix matching varTypeple namespaces, OK
+        annotation.setTooltip(tooltipText.toString());
+      } // else we have import prefix matching varTypeple namespaces, OK
 //      }
     }
   }
