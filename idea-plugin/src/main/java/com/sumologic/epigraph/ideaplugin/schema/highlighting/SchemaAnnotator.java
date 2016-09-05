@@ -38,13 +38,6 @@ public class SchemaAnnotator implements Annotator {
   public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
     element.accept(new SchemaVisitor() {
 
-//      @Override
-//      public void visitNamespaceDecl(@NotNull SchemaNamespaceDecl namespaceDecl) {
-//        // TODO find a better place to invalidate line extensions cache
-//        SchemaDefaultTagLinePainter.clearForFile(namespaceDecl.getProject(),
-//            namespaceDecl.getContainingFile().getVirtualFile());
-//      }
-
       @Override
       public void visitFieldDecl(@NotNull SchemaFieldDecl fieldDecl) {
         PsiElement id = fieldDecl.getQid();
