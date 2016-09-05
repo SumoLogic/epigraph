@@ -4,10 +4,8 @@ import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
-import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
-import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.sumologic.epigraph.ideaplugin.schema.SchemaBundle;
 import com.sumologic.epigraph.ideaplugin.schema.brains.ImportsManager;
@@ -15,7 +13,6 @@ import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.HierarchyCache;
 import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.TypeMembers;
 import com.sumologic.epigraph.ideaplugin.schema.features.actions.fixes.AddDefaultAction;
 import com.sumologic.epigraph.ideaplugin.schema.features.actions.fixes.ImportTypeIntentionFix;
-import com.sumologic.epigraph.ideaplugin.schema.features.linepainter.SchemaDefaultTagLinePainter;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaSearchScopeUtil;
 import com.sumologic.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
@@ -88,7 +85,6 @@ public class SchemaAnnotator implements Annotator {
 
       @Override
       public void visitValueTypeRef(@NotNull SchemaValueTypeRef valueTypeRef) {
-        SchemaDefaultTagLinePainter.clearForElement(valueTypeRef);
 
         SchemaDefaultOverride defaultOverride = valueTypeRef.getDefaultOverride();
 
@@ -100,20 +96,6 @@ public class SchemaAnnotator implements Annotator {
           if (defaultTag == null) {
             Annotation annotation = holder.createWarningAnnotation(valueTypeRef, SchemaBundle.message("annotator.default.override.missing"));
             annotation.registerFix(new AddDefaultAction());
-          } else {
-            // TODO this should be moved to a completely separate editor listener
-            Project project = valueTypeRef.getProject();
-            PsiDocumentManager psiDocumentManager = PsiDocumentManager.getInstance(project);
-            Document document = psiDocumentManager.getDocument(valueTypeRef.getContainingFile());
-            if (document != null) {
-              String defaultTagTypeName = getDefaultTagTypeName(defaultTag);
-              String typeAux = defaultTagTypeName == null ? "" : " (" + defaultTagTypeName + ")";
-
-              SchemaDefaultTagLinePainter.add(
-                  valueTypeRef,
-                  " default " + defaultTag.getQid().getText() + typeAux
-              );
-            }
           }
         }
       }
@@ -230,18 +212,6 @@ public class SchemaAnnotator implements Annotator {
         }
       }
     });
-  }
-
-  @Nullable
-  private String getDefaultTagTypeName(@NotNull SchemaVarTagDecl defaultTag) {
-    SchemaTypeRef defaultTagTypeRef = defaultTag.getTypeRef();
-    String defaultTagTypeName = defaultTagTypeRef == null ? null : defaultTagTypeRef.getText();
-    if (defaultTagTypeRef instanceof SchemaFqnTypeRef) {
-      SchemaFqnTypeRef defaultTagFqnTypeRef = (SchemaFqnTypeRef) defaultTagTypeRef;
-      SchemaTypeDef typeDef = defaultTagFqnTypeRef.resolve();
-      if (typeDef != null) defaultTagTypeName = SchemaPresentationUtil.getName(typeDef, true);
-    }
-    return defaultTagTypeName;
   }
 
   private void validateExtendsList(@NotNull SchemaTypeDef typeDef, @NotNull SchemaAnonList anonList) {

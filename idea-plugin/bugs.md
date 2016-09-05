@@ -24,6 +24,7 @@
 ### Medium
 - Schema files under `resources` should be excluded from analysis
 - completion for `default` keyword doesn't always work, see CompletionTest::testOverrideCompletionInRecord
+- inline hints for default tags don't always get updated. Move their logic out of SchemaAnnotator to a separate editor listener component
 
 ### Low
 - Icon is not substituted for schema files outside of source root, in the files view. See https://intellij-support.jetbrains.com/hc/en-us/community/posts/207277349-handling-custom-language-file-outside-of-source-root
