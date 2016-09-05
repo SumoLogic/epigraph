@@ -5,6 +5,7 @@
 - `polymorphic` completion inside anon lists and maps
 - renaming a tag should suggest to rename base/sub tags (like renaming a field does)
 - renaming a field/tag with `override` modifier should rename base members too (and sub-members with `override`) 
+- inline hints for default tags don't always get updated. Move their logic out of SchemaAnnotator to a separate editor listener component
 
 ### Low
 - String text should be highlihted as specified in "Preferences > Editor > Colors & Fonts > Language Defaults > String > String Text"

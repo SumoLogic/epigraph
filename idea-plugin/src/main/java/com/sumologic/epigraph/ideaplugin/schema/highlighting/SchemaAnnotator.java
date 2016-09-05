@@ -41,12 +41,12 @@ public class SchemaAnnotator implements Annotator {
   public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
     element.accept(new SchemaVisitor() {
 
-      @Override
-      public void visitNamespaceDecl(@NotNull SchemaNamespaceDecl namespaceDecl) {
-        // TODO find a better place to invalidate line extensions cache
-        SchemaDefaultTagLinePainter.clearForFile(namespaceDecl.getProject(),
-            namespaceDecl.getContainingFile().getVirtualFile());
-      }
+//      @Override
+//      public void visitNamespaceDecl(@NotNull SchemaNamespaceDecl namespaceDecl) {
+//        // TODO find a better place to invalidate line extensions cache
+//        SchemaDefaultTagLinePainter.clearForFile(namespaceDecl.getProject(),
+//            namespaceDecl.getContainingFile().getVirtualFile());
+//      }
 
       @Override
       public void visitFieldDecl(@NotNull SchemaFieldDecl fieldDecl) {
@@ -88,6 +88,8 @@ public class SchemaAnnotator implements Annotator {
 
       @Override
       public void visitValueTypeRef(@NotNull SchemaValueTypeRef valueTypeRef) {
+        SchemaDefaultTagLinePainter.clearForElement(valueTypeRef);
+
         SchemaDefaultOverride defaultOverride = valueTypeRef.getDefaultOverride();
 
         if (defaultOverride != null) {
@@ -99,19 +101,17 @@ public class SchemaAnnotator implements Annotator {
             Annotation annotation = holder.createWarningAnnotation(valueTypeRef, SchemaBundle.message("annotator.default.override.missing"));
             annotation.registerFix(new AddDefaultAction());
           } else {
+            // TODO this should be moved to a completely separate editor listener
             Project project = valueTypeRef.getProject();
             PsiDocumentManager psiDocumentManager = PsiDocumentManager.getInstance(project);
             Document document = psiDocumentManager.getDocument(valueTypeRef.getContainingFile());
             if (document != null) {
-              int lineNumber = document.getLineNumber(valueTypeRef.getTextOffset());
+              String defaultTagTypeName = getDefaultTagTypeName(defaultTag);
+              String typeAux = defaultTagTypeName == null ? "" : " (" + defaultTagTypeName + ")";
 
-              SchemaDefaultTagLinePainter.DefaultTagsInfo tagsInfo =
-                  SchemaDefaultTagLinePainter.getOrCreate(project);
-
-              tagsInfo.add(
-                  valueTypeRef.getContainingFile().getVirtualFile(),
-                  lineNumber,
-                  " default " + defaultTag.getQid().getText()
+              SchemaDefaultTagLinePainter.add(
+                  valueTypeRef,
+                  " default " + defaultTag.getQid().getText() + typeAux
               );
             }
           }
@@ -230,6 +230,18 @@ public class SchemaAnnotator implements Annotator {
         }
       }
     });
+  }
+
+  @Nullable
+  private String getDefaultTagTypeName(@NotNull SchemaVarTagDecl defaultTag) {
+    SchemaTypeRef defaultTagTypeRef = defaultTag.getTypeRef();
+    String defaultTagTypeName = defaultTagTypeRef == null ? null : defaultTagTypeRef.getText();
+    if (defaultTagTypeRef instanceof SchemaFqnTypeRef) {
+      SchemaFqnTypeRef defaultTagFqnTypeRef = (SchemaFqnTypeRef) defaultTagTypeRef;
+      SchemaTypeDef typeDef = defaultTagFqnTypeRef.resolve();
+      if (typeDef != null) defaultTagTypeName = SchemaPresentationUtil.getName(typeDef, true);
+    }
+    return defaultTagTypeName;
   }
 
   private void validateExtendsList(@NotNull SchemaTypeDef typeDef, @NotNull SchemaAnonList anonList) {
