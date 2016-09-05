@@ -86,8 +86,8 @@ public class SchemaAnnotator implements Annotator {
             holder.createErrorAnnotation(defaultOverride, SchemaBundle.message("annotator.default.override.non.var"));
         } else {
           SchemaVarTagDecl defaultTag = TypeMembers.getEffectiveDefault(valueTypeRef);
-          if (defaultTag == null) {
-            Annotation annotation = holder.createWarningAnnotation(valueTypeRef, SchemaBundle.message("annotator.default.override.missing"));
+          if (defaultTag == null && TypeMembers.canHaveDefault(valueTypeRef)) {
+            Annotation annotation = holder.createWeakWarningAnnotation(valueTypeRef, SchemaBundle.message("annotator.default.override.missing"));
             annotation.registerFix(new AddDefaultAction());
           }
         }
