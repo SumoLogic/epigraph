@@ -21,7 +21,7 @@ public class SchemaFileType extends LanguageFileType {
   @NotNull
   @Override
   public String getName() {
-    return "epi_schema";
+    return "epigraph_schema";
   }
 
   @NotNull

@@ -54,6 +54,6 @@ public class SchemaFile extends PsiFileBase {
 
   @Override
   public String toString() {
-    return "Schema file";
+    return "Epigraph Schema file";
   }
 }

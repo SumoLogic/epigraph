@@ -1,4 +1,4 @@
-package io.epigraph.schema.parser;
+package io.epigraph.idl.parser;
 
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import org.jetbrains.annotations.NotNull;
@@ -7,20 +7,20 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 
 /**
- * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
+ * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class SchemaFileType extends LanguageFileType {
-  public static final SchemaFileType INSTANCE = new SchemaFileType();
+public class IdlFileType extends LanguageFileType {
+  public static final IdlFileType INSTANCE = new IdlFileType();
   public static final String DEFAULT_EXTENSION = Common.FILE_EXTENSION;
 
-  protected SchemaFileType() {
-    super(SchemaLanguage.INSTANCE);
+  protected IdlFileType() {
+    super(IdlLanguage.INSTANCE);
   }
 
   @NotNull
   @Override
   public String getName() {
-    return "epigraph_schema";
+    return "epigraph_idl";
   }
 
   @NotNull

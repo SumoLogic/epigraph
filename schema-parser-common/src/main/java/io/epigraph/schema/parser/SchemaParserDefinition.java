@@ -51,7 +51,7 @@ public class SchemaParserDefinition implements ParserDefinition {
       S_DOUBLE_T,
       S_BOOLEAN_T,
       S_STRING_T,
-      S_NULL // or is ti a LITERAL?
+      S_NULL // or is it a LITERAL?
   );
   public final static TokenSet STRING_LITERALS = TokenSet.create(S_STRING);
   public final static TokenSet LITERALS = TokenSet.andSet(STRING_LITERALS, TokenSet.create(S_NUMBER));
