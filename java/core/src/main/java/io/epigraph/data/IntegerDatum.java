@@ -87,7 +87,7 @@ public interface IntegerDatum extends Datum {
 
         private final @NotNull IntegerDatum.Imm.Raw raw;
 
-        protected Impl(IntegerType type, IntegerDatum.Imm.Raw raw) {
+        protected Impl(@NotNull IntegerType type, @NotNull IntegerDatum.Imm.Raw raw) {
           super(type); // TODO take static type separately?
           this.raw = raw; // TODO validate raw is kosher?
         }

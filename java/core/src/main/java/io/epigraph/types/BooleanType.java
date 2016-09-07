@@ -1,9 +1,9 @@
-/* Created by yegor on 7/22/16. */
+/* Created by yegor on 9/6/16. */
 
 package io.epigraph.types;
 
+import io.epigraph.data.BooleanDatum;
 import io.epigraph.data.Data;
-import io.epigraph.data.IntegerDatum;
 import io.epigraph.data.Val;
 import io.epigraph.names.QualifiedTypeName;
 import org.jetbrains.annotations.NotNull;
@@ -12,38 +12,38 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 
-public abstract class IntegerType extends PrimitiveType {
+public abstract class BooleanType extends PrimitiveType {
 
-  protected IntegerType(
+  protected BooleanType(
       @NotNull QualifiedTypeName name,
-      @NotNull List<@NotNull ? extends IntegerType> immediateSupertypes
+      @NotNull List<@NotNull ? extends BooleanType> immediateSupertypes
   ) { super(name, immediateSupertypes); }
 
   @Override
   @SuppressWarnings("unchecked")
-  public @NotNull List<@NotNull ? extends IntegerType> immediateSupertypes() {
-    return (List<? extends IntegerType>) super.immediateSupertypes();
+  public @NotNull List<@NotNull ? extends BooleanType> immediateSupertypes() {
+    return (List<? extends BooleanType>) super.immediateSupertypes();
   }
 
   @Override
   @SuppressWarnings("unchecked")
-  public @NotNull Collection<@NotNull ? extends IntegerType> supertypes() {
-    return (Collection<? extends IntegerType>) super.supertypes();
+  public @NotNull Collection<@NotNull ? extends BooleanType> supertypes() {
+    return (Collection<? extends BooleanType>) super.supertypes();
   }
 
-  public abstract @NotNull IntegerDatum.Mut createBuilder(@NotNull Integer val);
+  public abstract @NotNull BooleanDatum.Mut createBuilder(@NotNull Boolean val);
 
 
-  public static final class Raw extends IntegerType implements PrimitiveType.Raw {
+  public static final class Raw extends BooleanType implements PrimitiveType.Raw {
 
     protected Raw(
         @NotNull QualifiedTypeName name,
-        @NotNull List<@NotNull ? extends IntegerType> immediateSupertypes
+        @NotNull List<@NotNull ? extends BooleanType> immediateSupertypes
     ) { super(name, immediateSupertypes); }
 
     @Override
-    public @NotNull IntegerDatum.Mut.Raw createBuilder(@NotNull Integer val) {
-      return new IntegerDatum.Mut.Raw(this, val);
+    public @NotNull BooleanDatum.Mut.Raw createBuilder(@NotNull Boolean val) {
+      return new BooleanDatum.Mut.Raw(this, val);
     }
 
     @Override
@@ -56,17 +56,17 @@ public abstract class IntegerType extends PrimitiveType {
 
 
   public static abstract class Static< // TODO MyType extends Type.Static<MyType>?
-      MyImmDatum extends IntegerDatum.Imm.Static,
-      MyMutDatum extends IntegerDatum.Mut.Static<MyImmDatum>,
+      MyImmDatum extends BooleanDatum.Imm.Static,
+      MyMutDatum extends BooleanDatum.Mut.Static<MyImmDatum>,
       MyImmVal extends Val.Imm.Static,
       MyMutVal extends Val.Mut.Static<MyImmVal, MyMutDatum>,
       MyImmData extends Data.Imm.Static,
       MyMutData extends Data.Mut.Static<MyImmData>
-      > extends IntegerType implements DatumType.Static<
-      IntegerType.Static<MyImmDatum, MyMutDatum, MyImmVal, MyMutVal, MyImmData, MyMutData>
+      > extends BooleanType implements DatumType.Static<
+      BooleanType.Static<MyImmDatum, MyMutDatum, MyImmVal, MyMutVal, MyImmData, MyMutData>
       > {
 
-    private final @NotNull Function<IntegerDatum.Mut.@NotNull Raw, @NotNull MyMutDatum> mutDatumConstructor;
+    private final @NotNull Function<BooleanDatum.Mut.@NotNull Raw, @NotNull MyMutDatum> mutDatumConstructor;
 
     private final @NotNull Function<Val.Mut.@NotNull Raw, @NotNull MyMutVal> mutValConstructor;
 
@@ -74,8 +74,8 @@ public abstract class IntegerType extends PrimitiveType {
 
     protected Static(
         @NotNull QualifiedTypeName name,
-        @NotNull List<? extends IntegerType> immediateSupertypes,
-        @NotNull Function<IntegerDatum.Mut.@NotNull Raw, @NotNull MyMutDatum> mutDatumConstructor,
+        @NotNull List<? extends BooleanType> immediateSupertypes,
+        @NotNull Function<BooleanDatum.Mut.@NotNull Raw, @NotNull MyMutDatum> mutDatumConstructor,
         @NotNull Function<Val.Mut.@NotNull Raw, @NotNull MyMutVal> mutValConstructor,
         @NotNull Function<Data.Mut.@NotNull Raw, @NotNull MyMutData> mutDataConstructor
     ) {
@@ -86,8 +86,8 @@ public abstract class IntegerType extends PrimitiveType {
     }
 
     @Override
-    public final @NotNull MyMutDatum createBuilder(@NotNull Integer val) {
-      return mutDatumConstructor.apply(new IntegerDatum.Mut.Raw(this, val));
+    public final @NotNull MyMutDatum createBuilder(@NotNull Boolean val) {
+      return mutDatumConstructor.apply(new BooleanDatum.Mut.Raw(this, val));
     }
 
     @Override

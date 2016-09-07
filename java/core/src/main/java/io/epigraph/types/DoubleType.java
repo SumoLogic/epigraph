@@ -1,9 +1,9 @@
-/* Created by yegor on 7/22/16. */
+/* Created by yegor on 9/6/16. */
 
 package io.epigraph.types;
 
 import io.epigraph.data.Data;
-import io.epigraph.data.IntegerDatum;
+import io.epigraph.data.DoubleDatum;
 import io.epigraph.data.Val;
 import io.epigraph.names.QualifiedTypeName;
 import org.jetbrains.annotations.NotNull;
@@ -12,38 +12,38 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 
-public abstract class IntegerType extends PrimitiveType {
+public abstract class DoubleType extends PrimitiveType {
 
-  protected IntegerType(
+  protected DoubleType(
       @NotNull QualifiedTypeName name,
-      @NotNull List<@NotNull ? extends IntegerType> immediateSupertypes
+      @NotNull List<@NotNull ? extends DoubleType> immediateSupertypes
   ) { super(name, immediateSupertypes); }
 
   @Override
   @SuppressWarnings("unchecked")
-  public @NotNull List<@NotNull ? extends IntegerType> immediateSupertypes() {
-    return (List<? extends IntegerType>) super.immediateSupertypes();
+  public @NotNull List<@NotNull ? extends DoubleType> immediateSupertypes() {
+    return (List<? extends DoubleType>) super.immediateSupertypes();
   }
 
   @Override
   @SuppressWarnings("unchecked")
-  public @NotNull Collection<@NotNull ? extends IntegerType> supertypes() {
-    return (Collection<? extends IntegerType>) super.supertypes();
+  public @NotNull Collection<@NotNull ? extends DoubleType> supertypes() {
+    return (Collection<? extends DoubleType>) super.supertypes();
   }
 
-  public abstract @NotNull IntegerDatum.Mut createBuilder(@NotNull Integer val);
+  public abstract @NotNull DoubleDatum.Mut createBuilder(@NotNull Double val);
 
 
-  public static final class Raw extends IntegerType implements PrimitiveType.Raw {
+  public static final class Raw extends DoubleType implements PrimitiveType.Raw {
 
     protected Raw(
         @NotNull QualifiedTypeName name,
-        @NotNull List<@NotNull ? extends IntegerType> immediateSupertypes
+        @NotNull List<@NotNull ? extends DoubleType> immediateSupertypes
     ) { super(name, immediateSupertypes); }
 
     @Override
-    public @NotNull IntegerDatum.Mut.Raw createBuilder(@NotNull Integer val) {
-      return new IntegerDatum.Mut.Raw(this, val);
+    public @NotNull DoubleDatum.Mut.Raw createBuilder(@NotNull Double val) {
+      return new DoubleDatum.Mut.Raw(this, val);
     }
 
     @Override
@@ -56,17 +56,17 @@ public abstract class IntegerType extends PrimitiveType {
 
 
   public static abstract class Static< // TODO MyType extends Type.Static<MyType>?
-      MyImmDatum extends IntegerDatum.Imm.Static,
-      MyMutDatum extends IntegerDatum.Mut.Static<MyImmDatum>,
+      MyImmDatum extends DoubleDatum.Imm.Static,
+      MyMutDatum extends DoubleDatum.Mut.Static<MyImmDatum>,
       MyImmVal extends Val.Imm.Static,
       MyMutVal extends Val.Mut.Static<MyImmVal, MyMutDatum>,
       MyImmData extends Data.Imm.Static,
       MyMutData extends Data.Mut.Static<MyImmData>
-      > extends IntegerType implements DatumType.Static<
-      IntegerType.Static<MyImmDatum, MyMutDatum, MyImmVal, MyMutVal, MyImmData, MyMutData>
+      > extends DoubleType implements DatumType.Static<
+      DoubleType.Static<MyImmDatum, MyMutDatum, MyImmVal, MyMutVal, MyImmData, MyMutData>
       > {
 
-    private final @NotNull Function<IntegerDatum.Mut.@NotNull Raw, @NotNull MyMutDatum> mutDatumConstructor;
+    private final @NotNull Function<DoubleDatum.Mut.@NotNull Raw, @NotNull MyMutDatum> mutDatumConstructor;
 
     private final @NotNull Function<Val.Mut.@NotNull Raw, @NotNull MyMutVal> mutValConstructor;
 
@@ -74,8 +74,8 @@ public abstract class IntegerType extends PrimitiveType {
 
     protected Static(
         @NotNull QualifiedTypeName name,
-        @NotNull List<? extends IntegerType> immediateSupertypes,
-        @NotNull Function<IntegerDatum.Mut.@NotNull Raw, @NotNull MyMutDatum> mutDatumConstructor,
+        @NotNull List<? extends DoubleType> immediateSupertypes,
+        @NotNull Function<DoubleDatum.Mut.@NotNull Raw, @NotNull MyMutDatum> mutDatumConstructor,
         @NotNull Function<Val.Mut.@NotNull Raw, @NotNull MyMutVal> mutValConstructor,
         @NotNull Function<Data.Mut.@NotNull Raw, @NotNull MyMutData> mutDataConstructor
     ) {
@@ -86,8 +86,8 @@ public abstract class IntegerType extends PrimitiveType {
     }
 
     @Override
-    public final @NotNull MyMutDatum createBuilder(@NotNull Integer val) {
-      return mutDatumConstructor.apply(new IntegerDatum.Mut.Raw(this, val));
+    public final @NotNull MyMutDatum createBuilder(@NotNull Double val) {
+      return mutDatumConstructor.apply(new DoubleDatum.Mut.Raw(this, val));
     }
 
     @Override

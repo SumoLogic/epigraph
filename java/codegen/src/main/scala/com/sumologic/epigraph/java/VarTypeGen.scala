@@ -157,6 +157,14 @@ ${t.effectiveTags.map { tag => // for each effective tag
     public @Nullable ${lqrn(tag.typeRef, t)}.Builder.Value get_${up(tag.name)}() {
       return (${lqrn(tag.typeRef, t)}.Builder.Value) _raw()._getValue($ln.${jn(tag.name)});
     }
+
+    ${"/**"}
+     * Sets `${tag.name}` tag value builder.
+     */
+    public @NotNull $ln.Builder set_${up(tag.name)}(@Nullable ${lqrn(tag.typeRef, t)}.Builder.Value ${jn(tag.name)}Value) {
+      _raw()._setValue($ln.${jn(tag.name)}, ${jn(tag.name)}Value);
+      return this;
+    }
 """
   }.mkString
 }\
