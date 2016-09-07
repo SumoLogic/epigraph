@@ -1,8 +1,11 @@
 apply plugin: 'java'
 
 dependencies {
+  compile project(':epigraph-idl-parser')
   compile project(':epigraph-java-core')
   compile project(':epigraph-java-util')
+  compile project(':epigraph-lang-common')
+  compile project(':epigraph-light-psi')
 
   testCompile 'junit:junit'
   // test classes depend on core test classes. TODO: separate artifact for sample project

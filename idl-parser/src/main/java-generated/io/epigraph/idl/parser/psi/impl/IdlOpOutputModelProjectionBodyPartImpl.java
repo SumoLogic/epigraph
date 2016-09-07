@@ -40,8 +40,8 @@ public class IdlOpOutputModelProjectionBodyPartImpl extends ASTWrapperPsiElement
 
   @Override
   @Nullable
-  public PsiElement getRequried() {
-    return findChildByType(I_REQURIED);
+  public PsiElement getIncludeInDefault() {
+    return findChildByType(I_INCLUDE_IN_DEFAULT);
   }
 
 }

@@ -11,6 +11,9 @@ public interface IdlOpOutputRecordPolyBranch extends PsiElement {
   IdlFqnTypeRef getFqnTypeRef();
 
   @Nullable
+  IdlOpOutputModelProjectionBody getOpOutputModelProjectionBody();
+
+  @Nullable
   IdlOpOutputRecordModelProjection getOpOutputRecordModelProjection();
 
   @Nullable

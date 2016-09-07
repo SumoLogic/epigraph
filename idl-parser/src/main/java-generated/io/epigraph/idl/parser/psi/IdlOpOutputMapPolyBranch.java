@@ -14,6 +14,9 @@ public interface IdlOpOutputMapPolyBranch extends PsiElement {
   IdlOpOutputMapModelProjection getOpOutputMapModelProjection();
 
   @Nullable
+  IdlOpOutputModelProjectionBody getOpOutputModelProjectionBody();
+
+  @Nullable
   PsiElement getAngleLeft();
 
   @Nullable

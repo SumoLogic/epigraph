@@ -79,6 +79,10 @@ public class IdlVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitOpOutputEnumModelProjection(@NotNull IdlOpOutputEnumModelProjection o) {
+    visitPsiElement(o);
+  }
+
   public void visitOpOutputFieldProjection(@NotNull IdlOpOutputFieldProjection o) {
     visitPsiElement(o);
   }
@@ -100,7 +104,7 @@ public class IdlVisitor extends PsiElementVisitor {
   }
 
   public void visitOpOutputListModelProjection(@NotNull IdlOpOutputListModelProjection o) {
-    visitPsiElement(o);
+    visitOpOutputModelProjection(o);
   }
 
   public void visitOpOutputListPolyBranch(@NotNull IdlOpOutputListPolyBranch o) {
@@ -108,7 +112,7 @@ public class IdlVisitor extends PsiElementVisitor {
   }
 
   public void visitOpOutputMapModelProjection(@NotNull IdlOpOutputMapModelProjection o) {
-    visitPsiElement(o);
+    visitOpOutputModelProjection(o);
   }
 
   public void visitOpOutputMapPolyBranch(@NotNull IdlOpOutputMapPolyBranch o) {
@@ -127,8 +131,12 @@ public class IdlVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitOpOutputRecordModelProjection(@NotNull IdlOpOutputRecordModelProjection o) {
+  public void visitOpOutputPrimitiveModelProjection(@NotNull IdlOpOutputPrimitiveModelProjection o) {
     visitPsiElement(o);
+  }
+
+  public void visitOpOutputRecordModelProjection(@NotNull IdlOpOutputRecordModelProjection o) {
+    visitOpOutputModelProjection(o);
   }
 
   public void visitOpOutputRecordPolyBranch(@NotNull IdlOpOutputRecordPolyBranch o) {

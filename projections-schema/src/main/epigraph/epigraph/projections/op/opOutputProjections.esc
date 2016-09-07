@@ -23,7 +23,7 @@ record OpOutputTagProjection {
 
 abstract record OpOutputModelProjection {
   model: DataTypeRef
-  required: Boolean
+  includeInDefault: Boolean
   params: list[OpParam]
   polymorphicTail: list[OpOutputModelProjection]
 }

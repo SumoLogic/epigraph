@@ -15,25 +15,25 @@ import java.util.*;
 public abstract class OpOutputModelProjection<M extends DatumType, P extends OpOutputModelProjection<M, P>> /*extends P*/ implements PrettyPrintable {
   @NotNull
   protected final M model;
-  protected final boolean required;
+  protected final boolean includeInDefault;
   @Nullable
   protected final Set<OpParam> params;
   @Nullable
   protected final LinkedHashSet<P> polymorphicTail;
 
   public OpOutputModelProjection(@NotNull M model,
-                                 boolean required,
+                                 boolean includeInDefault,
                                  @Nullable Set<OpParam> params,
                                  @Nullable LinkedHashSet<P> polymorphicTail) {
     this.model = model;
-    this.required = required;
+    this.includeInDefault = includeInDefault;
     this.params = params;
     this.polymorphicTail = polymorphicTail;
   }
 
   public M model() { return model; }
 
-  public boolean required() { return required; }
+  public boolean includeInDefault() { return includeInDefault; }
 
   public @Nullable Set<OpParam> params() { return params; }
 
@@ -45,11 +45,11 @@ public abstract class OpOutputModelProjection<M extends DatumType, P extends OpO
       return self();
 
     Collection<P> projectionsToMerge = projectionsToMerge(model);
-    boolean mergedRequired = required;
+    boolean mergedRequired = includeInDefault;
 
     if (!mergedRequired) {
       for (P p : projectionsToMerge) {
-        mergedRequired = p.required;
+        mergedRequired = p.includeInDefault;
         if (mergedRequired) break;
       }
     }
@@ -78,7 +78,7 @@ public abstract class OpOutputModelProjection<M extends DatumType, P extends OpO
                                         @NotNull Collection<P> projectionsToMerge);
 
   private Collection<P> projectionsToMerge(@NotNull M model) {
-    Collection<P> res = new LinkedHashSet<P>();
+    Collection<P> res = new LinkedHashSet<>();
     res.add(self());
     if (polymorphicTail != null) {
       for (P p : polymorphicTail) {
@@ -102,7 +102,7 @@ public abstract class OpOutputModelProjection<M extends DatumType, P extends OpO
   }
 
   protected <Exc extends Exception> void prettyPrintModel(DataLayouter<Exc> l) throws Exc {
-    if (required) l.print("!");
+    if (includeInDefault) l.print("+");
     l.print(model.name().toString());
   }
 
@@ -125,14 +125,14 @@ public abstract class OpOutputModelProjection<M extends DatumType, P extends OpO
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     OpOutputModelProjection<?, ?> that = (OpOutputModelProjection<?, ?>) o;
-    return required == that.required &&
-        Objects.equals(model, that.model) &&
-        Objects.equals(params, that.params) &&
-        Objects.equals(polymorphicTail, that.polymorphicTail);
+    return includeInDefault == that.includeInDefault &&
+           Objects.equals(model, that.model) &&
+           Objects.equals(params, that.params) &&
+           Objects.equals(polymorphicTail, that.polymorphicTail);
   }
 
   @Override
-  public int hashCode() { return Objects.hash(model, required, params, polymorphicTail); }
+  public int hashCode() { return Objects.hash(model, includeInDefault, params, polymorphicTail); }
 
   @Override
   public String toString() { return DataPrettyPrinter.prettyPrint(this); }

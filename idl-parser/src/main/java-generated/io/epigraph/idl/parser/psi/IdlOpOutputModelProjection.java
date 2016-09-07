@@ -8,15 +8,15 @@ import com.intellij.psi.PsiElement;
 public interface IdlOpOutputModelProjection extends PsiElement {
 
   @Nullable
-  IdlOpOutputListModelProjection getOpOutputListModelProjection();
+  IdlOpOutputEnumModelProjection getOpOutputEnumModelProjection();
 
   @Nullable
-  IdlOpOutputMapModelProjection getOpOutputMapModelProjection();
+  IdlOpOutputModelProjection getOpOutputModelProjection();
 
   @Nullable
   IdlOpOutputModelProjectionBody getOpOutputModelProjectionBody();
 
   @Nullable
-  IdlOpOutputRecordModelProjection getOpOutputRecordModelProjection();
+  IdlOpOutputPrimitiveModelProjection getOpOutputPrimitiveModelProjection();
 
 }

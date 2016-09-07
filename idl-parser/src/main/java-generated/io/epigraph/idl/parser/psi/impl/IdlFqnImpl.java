@@ -10,6 +10,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import static io.epigraph.idl.lexer.IdlElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import io.epigraph.idl.parser.psi.*;
+import io.epigraph.lang.Fqn;
 
 public class IdlFqnImpl extends ASTWrapperPsiElement implements IdlFqn {
 
@@ -30,6 +31,10 @@ public class IdlFqnImpl extends ASTWrapperPsiElement implements IdlFqn {
   @NotNull
   public List<IdlFqnSegment> getFqnSegmentList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, IdlFqnSegment.class);
+  }
+
+  public Fqn getFqn() {
+    return IdlPsiImplUtil.getFqn(this);
   }
 
 }

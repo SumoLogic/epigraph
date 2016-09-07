@@ -1,9 +1,17 @@
 package io.epigraph.projections.op;
 
 import com.example.*;
+import com.intellij.psi.PsiErrorElement;
+import io.epigraph.idl.parser.projections.ProjectionParserDefinitions;
+import io.epigraph.idl.parser.psi.IdlOpOutputVarProjection;
+import io.epigraph.lang.PsiUtil;
+import io.epigraph.types.DataType;
+import io.epigraph.types.SimpleTypesResolver;
+import io.epigraph.types.TypesResolver;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -162,6 +170,56 @@ public class OpOutputProjectionsTest {
 
     assertEquals(recursivePersonRecordProjection.hashCode(), recursivePersonRecordProjection2.hashCode());
     assertEquals(recursivePersonRecordProjection, recursivePersonRecordProjection2);
+  }
+
+  @Test
+  public void testParsing() throws OpOutputProjectionsParser.ProjectionParsingException {
+    TypesResolver resolver = new SimpleTypesResolver(
+        PersonId.type,
+        Person.type
+    );
+
+    // todo add params
+    String projectionStr = "{ \n" +
+                           "  id : primitive, \n" +
+                           "  record : (\n" +
+                           "    id {includeInDefault}, \n"+
+                           "    bestFriend {includeInDefault} : default (" +
+                           "      id {includeInDefault}, " +
+                           "      bestFriend" +
+                           "    ) \n" +
+                           "  \n) " +
+                           "}";
+
+
+    PsiUtil.ErrorsAccumulator errorsAccumulator = new PsiUtil.ErrorsAccumulator();
+
+    IdlOpOutputVarProjection psiVarProjection = PsiUtil.parseText(
+        projectionStr,
+        ProjectionParserDefinitions.OP_OUTPUT_VAR_PROJECTION.rootElementType(),
+        IdlOpOutputVarProjection.class,
+        ProjectionParserDefinitions.OP_OUTPUT_VAR_PROJECTION,
+        errorsAccumulator
+    );
+
+    if (errorsAccumulator.hasErrors()) {
+      for (PsiErrorElement element : errorsAccumulator.errors()) {
+        System.err.println(element.getErrorDescription() + " at " +
+                           PsiUtil.getLocation(element, projectionStr));
+      }
+      fail();
+    }
+
+//    String psiDump = DebugUtil.psiToString(psiVarProjection, true, false).trim();
+//    System.out.println(psiDump);
+
+    OpOutputVarProjection varProjection = OpOutputProjectionsParser.parseVarProjection(
+        new DataType(false, Person.type, Person.id),
+        psiVarProjection,
+        resolver
+    );
+
+    System.out.println(varProjection);
   }
 
   public static void main(String[] args) {

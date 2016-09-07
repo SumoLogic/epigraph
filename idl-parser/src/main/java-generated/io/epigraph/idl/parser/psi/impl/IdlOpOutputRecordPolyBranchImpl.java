@@ -34,6 +34,12 @@ public class IdlOpOutputRecordPolyBranchImpl extends ASTWrapperPsiElement implem
 
   @Override
   @Nullable
+  public IdlOpOutputModelProjectionBody getOpOutputModelProjectionBody() {
+    return findChildByClass(IdlOpOutputModelProjectionBody.class);
+  }
+
+  @Override
+  @Nullable
   public IdlOpOutputRecordModelProjection getOpOutputRecordModelProjection() {
     return findChildByClass(IdlOpOutputRecordModelProjection.class);
   }

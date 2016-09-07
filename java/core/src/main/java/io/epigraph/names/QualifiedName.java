@@ -2,6 +2,8 @@
 
 package io.epigraph.names;
 
+import io.epigraph.lang.Fqn;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.AbstractList;
@@ -34,6 +36,12 @@ public class QualifiedName extends AbstractList<String> { // TODO not sure we ne
       default:
         return size;
     }
+  }
+
+  @NotNull
+  public Fqn toFqn() {
+    if (namespaceName == null) return new Fqn(localName);
+    else return namespaceName.toFqn().append(localName);
   }
 
   @Override

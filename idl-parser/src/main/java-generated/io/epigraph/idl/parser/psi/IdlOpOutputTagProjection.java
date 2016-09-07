@@ -13,7 +13,7 @@ public interface IdlOpOutputTagProjection extends PsiElement {
   @NotNull
   IdlQid getQid();
 
-  @NotNull
+  @Nullable
   PsiElement getColon();
 
 }

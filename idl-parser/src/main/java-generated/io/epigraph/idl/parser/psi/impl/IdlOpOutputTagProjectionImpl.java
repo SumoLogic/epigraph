@@ -39,9 +39,9 @@ public class IdlOpOutputTagProjectionImpl extends ASTWrapperPsiElement implement
   }
 
   @Override
-  @NotNull
+  @Nullable
   public PsiElement getColon() {
-    return findNotNullChildByType(I_COLON);
+    return findChildByType(I_COLON);
   }
 
 }

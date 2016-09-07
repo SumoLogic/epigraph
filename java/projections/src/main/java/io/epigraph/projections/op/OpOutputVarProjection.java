@@ -2,7 +2,7 @@ package io.epigraph.projections.op;
 
 import de.uka.ilkd.pp.DataLayouter;
 import de.uka.ilkd.pp.PrettyPrintable;
-import io.epigraph.types.UnionType;
+import io.epigraph.types.Type;
 import io.epigraph.util.pp.DataPrettyPrinter;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,24 +14,24 @@ import java.util.LinkedHashSet;
  */
 public class OpOutputVarProjection implements PrettyPrintable {
   @NotNull
-  private final UnionType type;
+  private final Type type;
   @NotNull
   private final LinkedHashSet<OpOutputTagProjection> tagProjections;
 
-  public OpOutputVarProjection(@NotNull UnionType type,
+  public OpOutputVarProjection(@NotNull Type type,
                                @NotNull LinkedHashSet<OpOutputTagProjection> tagProjections) {
     this.type = type;
     this.tagProjections = tagProjections;
   }
 
-  public OpOutputVarProjection(@NotNull UnionType type,
+  public OpOutputVarProjection(@NotNull Type type,
                                OpOutputTagProjection... tagProjections) {
-    this(type, new LinkedHashSet<OpOutputTagProjection>(Arrays.asList(tagProjections)));
+    this(type, new LinkedHashSet<>(Arrays.asList(tagProjections)));
   }
 
 
   @NotNull
-  public UnionType type() { return type; }
+  public Type type() { return type; }
 
   public @NotNull LinkedHashSet<OpOutputTagProjection> tagProjections() { return tagProjections; }
 

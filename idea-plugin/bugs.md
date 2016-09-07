@@ -1,5 +1,6 @@
 ### High
 - `//` and `/*... */` comments should be ignored in string literals (seems to be fixed already?)
+- tooltip on unresolved tags
 
 ### Medium
 - `polymorphic` completion inside anon lists and maps

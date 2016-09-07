@@ -13,8 +13,8 @@ public class IdlSubParser extends IdlParser {
   @NotNull
   private final IElementType entryElementType;
 
-  public IdlSubParser(@NotNull IElementType entryElementType) {
-    this.entryElementType = entryElementType;
+  public IdlSubParser(@NotNull IElementType rootElementType) {
+    this.entryElementType = rootElementType;
   }
 
   @Override

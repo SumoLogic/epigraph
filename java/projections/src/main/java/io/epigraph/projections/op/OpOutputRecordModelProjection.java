@@ -17,11 +17,11 @@ public class OpOutputRecordModelProjection extends OpOutputModelProjection<Recor
   private LinkedHashSet<OpOutputFieldProjection> fieldProjections;
 
   public OpOutputRecordModelProjection(@NotNull RecordType model,
-                                       boolean required,
+                                       boolean includeInDefault,
                                        @Nullable Set<OpParam> params,
                                        @Nullable LinkedHashSet<OpOutputFieldProjection> fieldProjections,
                                        @Nullable LinkedHashSet<OpOutputRecordModelProjection> polymorphicTail) {
-    super(model, required, params, polymorphicTail);
+    super(model, includeInDefault, params, polymorphicTail);
     this.fieldProjections = fieldProjections;
 
     // check that fields belong to proper types? Currently impossible: field doesn't know it's host

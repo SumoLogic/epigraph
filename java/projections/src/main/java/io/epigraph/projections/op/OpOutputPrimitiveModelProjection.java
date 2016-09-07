@@ -13,10 +13,10 @@ import java.util.Set;
  */
 public class OpOutputPrimitiveModelProjection extends OpOutputModelProjection<PrimitiveType, OpOutputPrimitiveModelProjection> {
   public OpOutputPrimitiveModelProjection(@NotNull PrimitiveType model,
-                                          boolean required,
+                                          boolean includeInDefault,
                                           @Nullable Set<OpParam> params,
                                           @Nullable LinkedHashSet<OpOutputPrimitiveModelProjection> polymorphicTail) {
-    super(model, required, params, polymorphicTail);
+    super(model, includeInDefault, params, polymorphicTail);
   }
 
   @Override

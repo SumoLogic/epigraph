@@ -40,6 +40,12 @@ public class IdlOpOutputMapPolyBranchImpl extends ASTWrapperPsiElement implement
 
   @Override
   @Nullable
+  public IdlOpOutputModelProjectionBody getOpOutputModelProjectionBody() {
+    return findChildByClass(IdlOpOutputModelProjectionBody.class);
+  }
+
+  @Override
+  @Nullable
   public PsiElement getAngleLeft() {
     return findChildByType(I_ANGLE_LEFT);
   }

@@ -26,6 +26,7 @@ public interface IdlElementTypes {
   IElementType I_IMPORT_STATEMENT = new IdlElementType("I_IMPORT_STATEMENT");
   IElementType I_NAMESPACE_DECL = new IdlElementType("I_NAMESPACE_DECL");
   IElementType I_OP_INPUT_MODEL_PROJECTION = new IdlElementType("I_OP_INPUT_MODEL_PROJECTION");
+  IElementType I_OP_OUTPUT_ENUM_MODEL_PROJECTION = new IdlElementType("I_OP_OUTPUT_ENUM_MODEL_PROJECTION");
   IElementType I_OP_OUTPUT_FIELD_PROJECTION = new IdlElementType("I_OP_OUTPUT_FIELD_PROJECTION");
   IElementType I_OP_OUTPUT_FIELD_PROJECTION_BODY = new IdlElementType("I_OP_OUTPUT_FIELD_PROJECTION_BODY");
   IElementType I_OP_OUTPUT_FIELD_PROJECTION_BODY_PART = new IdlElementType("I_OP_OUTPUT_FIELD_PROJECTION_BODY_PART");
@@ -38,6 +39,7 @@ public interface IdlElementTypes {
   IElementType I_OP_OUTPUT_MODEL_PROJECTION = new IdlElementType("I_OP_OUTPUT_MODEL_PROJECTION");
   IElementType I_OP_OUTPUT_MODEL_PROJECTION_BODY = new IdlElementType("I_OP_OUTPUT_MODEL_PROJECTION_BODY");
   IElementType I_OP_OUTPUT_MODEL_PROJECTION_BODY_PART = new IdlElementType("I_OP_OUTPUT_MODEL_PROJECTION_BODY_PART");
+  IElementType I_OP_OUTPUT_PRIMITIVE_MODEL_PROJECTION = new IdlElementType("I_OP_OUTPUT_PRIMITIVE_MODEL_PROJECTION");
   IElementType I_OP_OUTPUT_RECORD_MODEL_PROJECTION = new IdlElementType("I_OP_OUTPUT_RECORD_MODEL_PROJECTION");
   IElementType I_OP_OUTPUT_RECORD_POLY_BRANCH = new IdlElementType("I_OP_OUTPUT_RECORD_POLY_BRANCH");
   IElementType I_OP_OUTPUT_TAG_PROJECTION = new IdlElementType("I_OP_OUTPUT_TAG_PROJECTION");
@@ -59,16 +61,19 @@ public interface IdlElementTypes {
   IElementType I_CURLY_RIGHT = new IdlElementType("}");
   IElementType I_DEFAULT = new IdlElementType("default");
   IElementType I_DOT = new IdlElementType(".");
+  IElementType I_ENUM = new IdlElementType("enum");
   IElementType I_EQ = new IdlElementType("=");
   IElementType I_FORBIDDEN = new IdlElementType("forbidden");
   IElementType I_ID = new IdlElementType("id");
   IElementType I_IMPORT = new IdlElementType("import");
+  IElementType I_INCLUDE_IN_DEFAULT = new IdlElementType("includeInDefault");
   IElementType I_NAMESPACE = new IdlElementType("namespace");
   IElementType I_NULL = new IdlElementType("null");
   IElementType I_NUMBER = new IdlElementType("number");
   IElementType I_PARAMETERS = new IdlElementType("parameters");
   IElementType I_PAREN_LEFT = new IdlElementType("(");
   IElementType I_PAREN_RIGHT = new IdlElementType(")");
+  IElementType I_PRIMITIVE = new IdlElementType("primitive");
   IElementType I_REQURIED = new IdlElementType("required");
   IElementType I_SLASH = new IdlElementType("/");
   IElementType I_STAR = new IdlElementType("*");
@@ -132,6 +137,9 @@ public interface IdlElementTypes {
       else if (type == I_OP_INPUT_MODEL_PROJECTION) {
         return new IdlOpInputModelProjectionImpl(node);
       }
+      else if (type == I_OP_OUTPUT_ENUM_MODEL_PROJECTION) {
+        return new IdlOpOutputEnumModelProjectionImpl(node);
+      }
       else if (type == I_OP_OUTPUT_FIELD_PROJECTION) {
         return new IdlOpOutputFieldProjectionImpl(node);
       }
@@ -167,6 +175,9 @@ public interface IdlElementTypes {
       }
       else if (type == I_OP_OUTPUT_MODEL_PROJECTION_BODY_PART) {
         return new IdlOpOutputModelProjectionBodyPartImpl(node);
+      }
+      else if (type == I_OP_OUTPUT_PRIMITIVE_MODEL_PROJECTION) {
+        return new IdlOpOutputPrimitiveModelProjectionImpl(node);
       }
       else if (type == I_OP_OUTPUT_RECORD_MODEL_PROJECTION) {
         return new IdlOpOutputRecordModelProjectionImpl(node);

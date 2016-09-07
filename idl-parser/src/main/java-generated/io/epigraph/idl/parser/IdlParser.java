@@ -77,6 +77,9 @@ public class IdlParser implements PsiParser, LightPsiParser {
     else if (t == I_OP_INPUT_MODEL_PROJECTION) {
       r = opInputModelProjection(b, 0);
     }
+    else if (t == I_OP_OUTPUT_ENUM_MODEL_PROJECTION) {
+      r = opOutputEnumModelProjection(b, 0);
+    }
     else if (t == I_OP_OUTPUT_FIELD_PROJECTION) {
       r = opOutputFieldProjection(b, 0);
     }
@@ -113,6 +116,9 @@ public class IdlParser implements PsiParser, LightPsiParser {
     else if (t == I_OP_OUTPUT_MODEL_PROJECTION_BODY_PART) {
       r = opOutputModelProjectionBodyPart(b, 0);
     }
+    else if (t == I_OP_OUTPUT_PRIMITIVE_MODEL_PROJECTION) {
+      r = opOutputPrimitiveModelProjection(b, 0);
+    }
     else if (t == I_OP_OUTPUT_RECORD_MODEL_PROJECTION) {
       r = opOutputRecordModelProjection(b, 0);
     }
@@ -145,6 +151,7 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   public static final TokenSet[] EXTENDS_SETS_ = new TokenSet[] {
+    create_token_set_(I_OP_OUTPUT_LIST_MODEL_PROJECTION, I_OP_OUTPUT_MAP_MODEL_PROJECTION, I_OP_OUTPUT_MODEL_PROJECTION, I_OP_OUTPUT_RECORD_MODEL_PROJECTION),
     create_token_set_(I_DATA_ENUM, I_DATA_LIST, I_DATA_MAP, I_DATA_RECORD,
       I_DATA_VALUE, I_DATA_VAR),
   };
@@ -482,9 +489,7 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // fqnSegment ('.' fqnSegment)* {
-  // //  methods=[getFqn]
-  // }
+  // fqnSegment ('.' fqnSegment)*
   public static boolean fqn(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "fqn")) return false;
     if (!nextTokenIs(b, I_ID)) return false;
@@ -492,7 +497,6 @@ public class IdlParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b);
     r = fqnSegment(b, l + 1);
     r = r && fqn_1(b, l + 1);
-    r = r && fqn_2(b, l + 1);
     exit_section_(b, m, I_FQN, r);
     return r;
   }
@@ -518,13 +522,6 @@ public class IdlParser implements PsiParser, LightPsiParser {
     r = r && fqnSegment(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
-  }
-
-  // {
-  // //  methods=[getFqn]
-  // }
-  private static boolean fqn_2(PsiBuilder b, int l) {
-    return true;
   }
 
   /* ********************************************************** */
@@ -686,6 +683,18 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // 'enum'
+  public static boolean opOutputEnumModelProjection(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opOutputEnumModelProjection")) return false;
+    if (!nextTokenIs(b, I_ENUM)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, I_ENUM);
+    exit_section_(b, m, I_OP_OUTPUT_ENUM_MODEL_PROJECTION, r);
+    return r;
+  }
+
+  /* ********************************************************** */
   // qid opOutputFieldProjectionBody? (':' opOutputVarProjection)?
   public static boolean opOutputFieldProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opOutputFieldProjection")) return false;
@@ -770,13 +779,13 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // opParameters | customParam
+  // 'includeInDefault' | opParameters | customParam
   public static boolean opOutputFieldProjectionBodyPart(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opOutputFieldProjectionBodyPart")) return false;
-    if (!nextTokenIs(b, "<op output field projection body part>", I_PARAMETERS, I_ID)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, I_OP_OUTPUT_FIELD_PROJECTION_BODY_PART, "<op output field projection body part>");
-    r = opParameters(b, l + 1);
+    r = consumeToken(b, I_INCLUDE_IN_DEFAULT);
+    if (!r) r = opParameters(b, l + 1);
     if (!r) r = customParam(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
@@ -869,7 +878,7 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '~' fqnTypeRef '<' opOutputListModelProjection '>'
+  // '~' fqnTypeRef '<' opOutputListModelProjection opOutputModelProjectionBody? '>'
   public static boolean opOutputListPolyBranch(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opOutputListPolyBranch")) return false;
     if (!nextTokenIs(b, I_TILDA)) return false;
@@ -880,9 +889,17 @@ public class IdlParser implements PsiParser, LightPsiParser {
     r = r && report_error_(b, fqnTypeRef(b, l + 1));
     r = p && report_error_(b, consumeToken(b, I_ANGLE_LEFT)) && r;
     r = p && report_error_(b, opOutputListModelProjection(b, l + 1)) && r;
+    r = p && report_error_(b, opOutputListPolyBranch_4(b, l + 1)) && r;
     r = p && consumeToken(b, I_ANGLE_RIGHT) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
+  }
+
+  // opOutputModelProjectionBody?
+  private static boolean opOutputListPolyBranch_4(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opOutputListPolyBranch_4")) return false;
+    opOutputModelProjectionBody(b, l + 1);
+    return true;
   }
 
   /* ********************************************************** */
@@ -902,7 +919,7 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '~' fqnTypeRef '<' opOutputMapModelProjection '>'
+  // '~' fqnTypeRef '<' opOutputMapModelProjection opOutputModelProjectionBody? '>'
   public static boolean opOutputMapPolyBranch(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opOutputMapPolyBranch")) return false;
     if (!nextTokenIs(b, I_TILDA)) return false;
@@ -913,22 +930,30 @@ public class IdlParser implements PsiParser, LightPsiParser {
     r = r && report_error_(b, fqnTypeRef(b, l + 1));
     r = p && report_error_(b, consumeToken(b, I_ANGLE_LEFT)) && r;
     r = p && report_error_(b, opOutputMapModelProjection(b, l + 1)) && r;
+    r = p && report_error_(b, opOutputMapPolyBranch_4(b, l + 1)) && r;
     r = p && consumeToken(b, I_ANGLE_RIGHT) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
+  }
+
+  // opOutputModelProjectionBody?
+  private static boolean opOutputMapPolyBranch_4(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opOutputMapPolyBranch_4")) return false;
+    opOutputModelProjectionBody(b, l + 1);
+    return true;
   }
 
   /* ********************************************************** */
   // ( opOutputRecordModelProjection
   //                             | opOutputListModelProjection
   //                             | opOutputMapModelProjection
-  // //                            | opOutputEnumModelProjection
-  // //                            | opOutputPrimitiveModelProjection
+  //                             | opOutputEnumModelProjection
+  //                             | opOutputPrimitiveModelProjection
   //                             ) opOutputModelProjectionBody?
   public static boolean opOutputModelProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opOutputModelProjection")) return false;
     boolean r;
-    Marker m = enter_section_(b, l, _NONE_, I_OP_OUTPUT_MODEL_PROJECTION, "<op output model projection>");
+    Marker m = enter_section_(b, l, _COLLAPSE_, I_OP_OUTPUT_MODEL_PROJECTION, "<op output model projection>");
     r = opOutputModelProjection_0(b, l + 1);
     r = r && opOutputModelProjection_1(b, l + 1);
     exit_section_(b, l, m, r, false, null);
@@ -938,6 +963,8 @@ public class IdlParser implements PsiParser, LightPsiParser {
   // opOutputRecordModelProjection
   //                             | opOutputListModelProjection
   //                             | opOutputMapModelProjection
+  //                             | opOutputEnumModelProjection
+  //                             | opOutputPrimitiveModelProjection
   private static boolean opOutputModelProjection_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opOutputModelProjection_0")) return false;
     boolean r;
@@ -945,6 +972,8 @@ public class IdlParser implements PsiParser, LightPsiParser {
     r = opOutputRecordModelProjection(b, l + 1);
     if (!r) r = opOutputListModelProjection(b, l + 1);
     if (!r) r = opOutputMapModelProjection(b, l + 1);
+    if (!r) r = opOutputEnumModelProjection(b, l + 1);
+    if (!r) r = opOutputPrimitiveModelProjection(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -1002,15 +1031,27 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'required' | opParameters | customParam
+  // 'includeInDefault' | opParameters | customParam
   public static boolean opOutputModelProjectionBodyPart(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opOutputModelProjectionBodyPart")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, I_OP_OUTPUT_MODEL_PROJECTION_BODY_PART, "<op output model projection body part>");
-    r = consumeToken(b, I_REQURIED);
+    r = consumeToken(b, I_INCLUDE_IN_DEFAULT);
     if (!r) r = opParameters(b, l + 1);
     if (!r) r = customParam(b, l + 1);
     exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // 'primitive'
+  public static boolean opOutputPrimitiveModelProjection(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opOutputPrimitiveModelProjection")) return false;
+    if (!nextTokenIs(b, I_PRIMITIVE)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, I_PRIMITIVE);
+    exit_section_(b, m, I_OP_OUTPUT_PRIMITIVE_MODEL_PROJECTION, r);
     return r;
   }
 
@@ -1073,7 +1114,7 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '~' fqnTypeRef '<' opOutputRecordModelProjection '>'
+  // '~' fqnTypeRef '<' opOutputRecordModelProjection opOutputModelProjectionBody? '>'
   public static boolean opOutputRecordPolyBranch(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opOutputRecordPolyBranch")) return false;
     if (!nextTokenIs(b, I_TILDA)) return false;
@@ -1084,28 +1125,52 @@ public class IdlParser implements PsiParser, LightPsiParser {
     r = r && report_error_(b, fqnTypeRef(b, l + 1));
     r = p && report_error_(b, consumeToken(b, I_ANGLE_LEFT)) && r;
     r = p && report_error_(b, opOutputRecordModelProjection(b, l + 1)) && r;
+    r = p && report_error_(b, opOutputRecordPolyBranch_4(b, l + 1)) && r;
     r = p && consumeToken(b, I_ANGLE_RIGHT) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
 
-  /* ********************************************************** */
-  // qid ':' opOutputModelProjection
-  public static boolean opOutputTagProjection(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opOutputTagProjection")) return false;
-    if (!nextTokenIs(b, I_ID)) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, I_OP_OUTPUT_TAG_PROJECTION, null);
-    r = qid(b, l + 1);
-    r = r && consumeToken(b, I_COLON);
-    p = r; // pin = 2
-    r = r && opOutputModelProjection(b, l + 1);
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
+  // opOutputModelProjectionBody?
+  private static boolean opOutputRecordPolyBranch_4(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opOutputRecordPolyBranch_4")) return false;
+    opOutputModelProjectionBody(b, l + 1);
+    return true;
   }
 
   /* ********************************************************** */
-  // ('{' opOutputTagProjection* '}') | 'default' opOutputModelProjection
+  // qid (':' opOutputModelProjection)?
+  public static boolean opOutputTagProjection(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opOutputTagProjection")) return false;
+    if (!nextTokenIs(b, I_ID)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = qid(b, l + 1);
+    r = r && opOutputTagProjection_1(b, l + 1);
+    exit_section_(b, m, I_OP_OUTPUT_TAG_PROJECTION, r);
+    return r;
+  }
+
+  // (':' opOutputModelProjection)?
+  private static boolean opOutputTagProjection_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opOutputTagProjection_1")) return false;
+    opOutputTagProjection_1_0(b, l + 1);
+    return true;
+  }
+
+  // ':' opOutputModelProjection
+  private static boolean opOutputTagProjection_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opOutputTagProjection_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, I_COLON);
+    r = r && opOutputModelProjection(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // ('{' (opOutputTagProjection ','?)* '}') | 'default' opOutputModelProjection?
   public static boolean opOutputVarProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opOutputVarProjection")) return false;
     if (!nextTokenIs(b, "<op output var projection>", I_DEFAULT, I_CURLY_LEFT)) return false;
@@ -1117,7 +1182,7 @@ public class IdlParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // '{' opOutputTagProjection* '}'
+  // '{' (opOutputTagProjection ','?)* '}'
   private static boolean opOutputVarProjection_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opOutputVarProjection_0")) return false;
     boolean r;
@@ -1129,27 +1194,52 @@ public class IdlParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // opOutputTagProjection*
+  // (opOutputTagProjection ','?)*
   private static boolean opOutputVarProjection_0_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opOutputVarProjection_0_1")) return false;
     int c = current_position_(b);
     while (true) {
-      if (!opOutputTagProjection(b, l + 1)) break;
+      if (!opOutputVarProjection_0_1_0(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "opOutputVarProjection_0_1", c)) break;
       c = current_position_(b);
     }
     return true;
   }
 
-  // 'default' opOutputModelProjection
+  // opOutputTagProjection ','?
+  private static boolean opOutputVarProjection_0_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opOutputVarProjection_0_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = opOutputTagProjection(b, l + 1);
+    r = r && opOutputVarProjection_0_1_0_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // ','?
+  private static boolean opOutputVarProjection_0_1_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opOutputVarProjection_0_1_0_1")) return false;
+    consumeToken(b, I_COMMA);
+    return true;
+  }
+
+  // 'default' opOutputModelProjection?
   private static boolean opOutputVarProjection_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opOutputVarProjection_1")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, I_DEFAULT);
-    r = r && opOutputModelProjection(b, l + 1);
+    r = r && opOutputVarProjection_1_1(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
+  }
+
+  // opOutputModelProjection?
+  private static boolean opOutputVarProjection_1_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opOutputVarProjection_1_1")) return false;
+    opOutputModelProjection(b, l + 1);
+    return true;
   }
 
   /* ********************************************************** */
@@ -1213,25 +1303,15 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // id {
-  //   // methods=[getName setName getCanonicalName]
-  // }
+  // id
   public static boolean qid(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "qid")) return false;
     if (!nextTokenIs(b, I_ID)) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, I_ID);
-    r = r && qid_1(b, l + 1);
     exit_section_(b, m, I_QID, r);
     return r;
-  }
-
-  // {
-  //   // methods=[getName setName getCanonicalName]
-  // }
-  private static boolean qid_1(PsiBuilder b, int l) {
-    return true;
   }
 
   /* ********************************************************** */

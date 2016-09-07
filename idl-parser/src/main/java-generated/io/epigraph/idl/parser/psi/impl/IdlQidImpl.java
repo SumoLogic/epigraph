@@ -32,4 +32,14 @@ public class IdlQidImpl extends ASTWrapperPsiElement implements IdlQid {
     return findNotNullChildByType(I_ID);
   }
 
+  @NotNull
+  public String getName() {
+    return IdlPsiImplUtil.getName(this);
+  }
+
+  @NotNull
+  public String getCanonicalName() {
+    return IdlPsiImplUtil.getCanonicalName(this);
+  }
+
 }

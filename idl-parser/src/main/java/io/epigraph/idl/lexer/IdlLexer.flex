@@ -46,6 +46,9 @@ ID=([:letter:]([:letter:]|[:digit:])*)|(`[^`]*`)
   "required"           { return I_REQURIED; }
   "parameters"         { return I_PARAMETERS; }
   "default"            { return I_DEFAULT; }
+  "includeInDefault"   { return I_INCLUDE_IN_DEFAULT; }
+  "primitive"          { return I_PRIMITIVE; }
+  "enum"               { return I_ENUM; }
   ":"                  { return I_COLON; }
   "."                  { return I_DOT; }
   ","                  { return I_COMMA; }

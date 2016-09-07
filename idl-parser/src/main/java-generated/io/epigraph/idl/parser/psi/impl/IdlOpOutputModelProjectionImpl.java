@@ -28,14 +28,14 @@ public class IdlOpOutputModelProjectionImpl extends ASTWrapperPsiElement impleme
 
   @Override
   @Nullable
-  public IdlOpOutputListModelProjection getOpOutputListModelProjection() {
-    return findChildByClass(IdlOpOutputListModelProjection.class);
+  public IdlOpOutputEnumModelProjection getOpOutputEnumModelProjection() {
+    return findChildByClass(IdlOpOutputEnumModelProjection.class);
   }
 
   @Override
   @Nullable
-  public IdlOpOutputMapModelProjection getOpOutputMapModelProjection() {
-    return findChildByClass(IdlOpOutputMapModelProjection.class);
+  public IdlOpOutputModelProjection getOpOutputModelProjection() {
+    return findChildByClass(IdlOpOutputModelProjection.class);
   }
 
   @Override
@@ -46,8 +46,8 @@ public class IdlOpOutputModelProjectionImpl extends ASTWrapperPsiElement impleme
 
   @Override
   @Nullable
-  public IdlOpOutputRecordModelProjection getOpOutputRecordModelProjection() {
-    return findChildByClass(IdlOpOutputRecordModelProjection.class);
+  public IdlOpOutputPrimitiveModelProjection getOpOutputPrimitiveModelProjection() {
+    return findChildByClass(IdlOpOutputPrimitiveModelProjection.class);
   }
 
 }

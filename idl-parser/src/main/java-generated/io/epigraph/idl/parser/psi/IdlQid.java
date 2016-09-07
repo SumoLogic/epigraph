@@ -10,4 +10,10 @@ public interface IdlQid extends PsiElement {
   @NotNull
   PsiElement getId();
 
+  @NotNull
+  String getName();
+
+  @NotNull
+  String getCanonicalName();
+
 }

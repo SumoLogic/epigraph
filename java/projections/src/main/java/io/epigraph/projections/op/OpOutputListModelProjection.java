@@ -18,11 +18,11 @@ public class OpOutputListModelProjection extends OpOutputModelProjection<ListTyp
   private OpOutputVarProjection itemsProjection;
 
   public OpOutputListModelProjection(@NotNull ListType model,
-                                     boolean required,
+                                     boolean includeInDefault,
                                      @Nullable Set<OpParam> params,
                                      @NotNull OpOutputVarProjection itemsProjection,
                                      @Nullable LinkedHashSet<OpOutputListModelProjection> polymorphicTail) {
-    super(model, required, params, polymorphicTail);
+    super(model, includeInDefault, params, polymorphicTail);
     this.itemsProjection = itemsProjection;
   }
 

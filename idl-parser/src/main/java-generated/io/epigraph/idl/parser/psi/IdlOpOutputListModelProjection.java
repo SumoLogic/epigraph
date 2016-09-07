@@ -5,7 +5,7 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface IdlOpOutputListModelProjection extends PsiElement {
+public interface IdlOpOutputListModelProjection extends IdlOpOutputModelProjection {
 
   @NotNull
   List<IdlOpOutputListPolyBranch> getOpOutputListPolyBranchList();
