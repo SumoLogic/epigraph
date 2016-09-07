@@ -71,6 +71,10 @@ class SchemaCompiler(
     //printSchemaFiles(cSchemaFiles)
     handleErrors(4)
 
+    ctx.anonListTypes.values() foreach (_.linearizedParents)
+    //ctx.anonListTypes.values() foreach {alt => print(alt.name.name + " "); pprint.pprintln(alt.linearizedParents)}
+    //pprint.pprintln(ctx.anonListTypes.toMap.map{case (k, v) => (k.name, v)})
+
     ctx
   }
 

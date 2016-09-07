@@ -19,9 +19,7 @@ public abstract class DatumType extends Type {
   protected DatumType(
       @NotNull TypeName name,
       @NotNull List<@NotNull ? extends DatumType> immediateSupertypes
-  ) {
-    super(name, immediateSupertypes);
-  }
+  ) { super(name, immediateSupertypes); }
 
   @Override
   @SuppressWarnings("unchecked")
@@ -38,6 +36,8 @@ public abstract class DatumType extends Type {
   @Override
   public @NotNull Collection<@NotNull ? extends Tag> immediateTags() { return immediateTags; }
 
+  public @NotNull DataType dataType(boolean polymorphic) { return new DataType(polymorphic, this, self); } // TODO cache
+
   public abstract @NotNull Val.Mut createMutableValue();
 
 
@@ -45,7 +45,6 @@ public abstract class DatumType extends Type {
 
 
   public interface Static<MyType extends DatumType & DatumType.Static<MyType>> extends Type.Static<MyType> {
-
 
 
   }

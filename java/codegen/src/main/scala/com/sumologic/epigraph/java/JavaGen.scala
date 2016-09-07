@@ -17,6 +17,7 @@ abstract class JavaGen[From >: Null <: AnyRef](protected val from: From, protect
   protected def generate: String
 
   def writeUnder(sourcesRoot: Path): Unit = {
+    //System.out.println("Writing to '" + relativeFilePath + "'")
     JavaGenUtils.writeFile(sourcesRoot, relativeFilePath, generate)
   }
 
@@ -30,8 +31,25 @@ abstract class JavaGen[From >: Null <: AnyRef](protected val from: From, protect
   /** local (short) java name for given type */
   def ln(t: CType): String = t match {
     case t: CTypeDef => t.name.local
-    case t: CAnonListType => ln(t.elementTypeRef.resolved) + "_List"
-    case t: CAnonMapType => ln(t.valueTypeRef.resolved) + "_Map"
+    case t: CAnonListType => alln(t)
+    case t: CAnonMapType => amln(t)
+  }
+
+  def alln(t: CAnonListType): String = t.elementDataType.typeRef.resolved match {
+    case et: CVarTypeDef => ln(et) + varTagPart(t.elementDataType.defaultTagName) + "_List"
+    case et: CDatumType => assert(t.elementDataType.defaultTagName.isEmpty); ln(et) + "_List"
+    case unknown => throw new UnsupportedOperationException(unknown.toString)
+  }
+
+  def amln(t: CAnonMapType): String = t.valueDataType.typeRef.resolved match {
+    case et: CVarTypeDef => ln(et) + varTagPart(t.valueDataType.defaultTagName) + "_Map"
+    case et: CDatumType => assert(t.valueDataType.defaultTagName.isEmpty); ln(et) + "_Map"
+    case unknown => throw new UnsupportedOperationException(unknown.toString)
+  }
+
+  private def varTagPart(tagName: Option[String]): String = tagName match {
+    case Some(name) => "_" + name
+    case None => ""
   }
 
   protected def getNamedTypeComponent(t: CType): CTypeDef = t match {
@@ -117,10 +135,15 @@ abstract class JavaGen[From >: Null <: AnyRef](protected val from: From, protect
     case unknown => throw new UnsupportedOperationException(unknown.toString)
   }
 
-  /** tag constant reference name for given data type and its tag (as seen from the context of the local type namespace) */
-  def trn(dt: CDataType, tn: String, lt: CType): String = lqrn(dt.typeRef, lt) + "." +
-      (if (tn == CDatumType.ImpliedDefaultTagName) "type.self" else jn(tn))
+  /** tag constant reference name for given data type and a tag (as seen from the context of the local type namespace) */
+  def dttr(dt: CDataType, tn: String, lt: CType): String = ttr(dt.typeRef.resolved, tn, lt)
 
+  /** tag constant reference for given type and its tag name */
+  def ttr(t: CType, tn: String, lt: CType): String = t match {
+    case t: CVarTypeDef => lqn(t, lt) + "." + jn(tn)
+    case t: CDatumType => lqn(t, lt) + ".type.self"
+    case unknown => throw new UnsupportedOperationException(unknown.name.name)
+  }
 
   /** java package name for given type */
   def pn(t: CType): String = getNamedTypeComponent(t).name.fqn.removeLastSegment().segments.map(jn).mkString(".")

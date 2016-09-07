@@ -55,7 +55,6 @@ ${t.effectiveTags.map { tag => // for each effective tag
       super(
           new io.epigraph.names.QualifiedTypeName(${qnameArgs(t.name.fqn).mkString("\"", "\", \"", "\"")}),
           java.util.Arrays.asList(${t.linearizedParents.map(lqn(_, t, _ + ".type")).mkString(", ")}),
-          ${t.isPolymorphic},
           $ln.Builder::new
       );
     }
@@ -69,7 +68,6 @@ ${t.declaredTags.map { tag => sn"""
 }
       );
     }
-$listSupplier\
 
   }
 

@@ -105,7 +105,7 @@ public abstract class Type { // TODO split into interface and impl
   }
 
   public final @NotNull Map<@NotNull String, @NotNull ? extends Tag> tagsMap() {
-    if (tagsMap == null) tagsMap = Unmodifiable.map(tags(), f -> f.name, f -> f);
+    if (tagsMap == null) tagsMap = Unmodifiable.map(tags(), t -> t.name, t -> t);
     return tagsMap;
   }
 

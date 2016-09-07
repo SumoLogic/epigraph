@@ -86,7 +86,6 @@ ${ f.valueDataType.typeRef.resolved match { // tags datum and value getters
       super(
           new io.epigraph.names.QualifiedTypeName(${qnameArgs(t.name.fqn).mkString("\"", "\", \"", "\"")}),
           java.util.Arrays.asList(${t.linearizedParents.map(lqn(_, t, _ + ".type")).mkString(", ")}),
-          ${t.isPolymorphic},
           $ln.Builder::new,
           $ln.Builder.Value::new,
           $ln.Builder.Data::new
@@ -102,7 +101,6 @@ ${t.declaredFields.map { f => sn"""
 }
       );
     }
-$listSupplier\
 
   }
 
@@ -204,7 +202,7 @@ ${  f.effectiveDefaultTagName match { // default getter
          */
         @Override
         public @Nullable ${lqn(tt(f.typeRef, dtn), t)}.Imm.Value get_${up(f.name)}() {
-          return (${lqn(tt(f.typeRef, dtn), t)}.Imm.Value) _raw()._getValue($ln.${jn(f.name)}, ${trn(f.valueDataType, dtn, t)});
+          return (${lqn(tt(f.typeRef, dtn), t)}.Imm.Value) _raw()._getValue($ln.${jn(f.name)}, ${dttr(f.valueDataType, dtn, t)});
         }
 """
     }
@@ -226,7 +224,7 @@ ${ // tag getters
          */
         @Override
         public @Nullable ${lqrn(tag.typeRef, t)}.Imm.Value get_${up(f.name)}${up(tag.name)}() {
-          return (${lqn(tt(f.typeRef, tag.name), t)}.Imm.Value) _raw()._getValue($ln.${jn(f.name)}, ${trn(f.valueDataType, tag.name, t)});
+          return (${lqn(tt(f.typeRef, tag.name), t)}.Imm.Value) _raw()._getValue($ln.${jn(f.name)}, ${dttr(f.valueDataType, tag.name, t)});
         }
 """
       }.mkString
@@ -315,7 +313,7 @@ ${  f.effectiveDefaultTagName match { // default tag (if any)
      * Sets default tag datum builder for${poly(f)} `${f.name}` field.
      */
     public ${poly(f, s"<${ln(tt(f.typeRef, dtn))}Builder extends ${lqn(tt(f.typeRef, dtn), t)} & io.epigraph.data.Datum.Mut.Static>\n        ", "")}@NotNull $ln.Builder set${up(f.name)}(@Nullable ${poly(f, s"${ln(tt(f.typeRef, dtn))}Builder", s"${lqn(tt(f.typeRef, dtn), t)}.Builder")} ${jn(f.name)}) {
-      _raw().getOrCreateFieldData($ln.${jn(f.name)})._raw()._setDatum(${trn(f.valueDataType, dtn, t)}, ${jn(f.name)});
+      _raw().getOrCreateFieldData($ln.${jn(f.name)})._raw()._setDatum(${dttr(f.valueDataType, dtn, t)}, ${jn(f.name)});
       return this;
     }
 
@@ -323,7 +321,7 @@ ${  f.effectiveDefaultTagName match { // default tag (if any)
      * Sets default tag error for `${f.name}` field.
      */
     public @NotNull $ln.Builder set${up(f.name)}(@NotNull io.epigraph.errors.ErrorValue error) {
-      _raw().getOrCreateFieldData($ln.${jn(f.name)})._raw()._setError(${trn(f.valueDataType, dtn, t)}, error);
+      _raw().getOrCreateFieldData($ln.${jn(f.name)})._raw()._setError(${dttr(f.valueDataType, dtn, t)}, error);
       return this;
     }
 
@@ -332,7 +330,7 @@ ${  f.effectiveDefaultTagName match { // default tag (if any)
      */
     @Override
     public @Nullable ${lqn(tt(f.typeRef, dtn), t)}${poly(f, "", ".Builder")}.Value get_${up(f.name)}() {
-      return (${lqn(tt(f.typeRef, dtn), t)}${poly(f, "", ".Builder")}.Value) _raw()._getValue($ln.${jn(f.name)}, ${trn(f.valueDataType, dtn, t)});
+      return (${lqn(tt(f.typeRef, dtn), t)}${poly(f, "", ".Builder")}.Value) _raw()._getValue($ln.${jn(f.name)}, ${dttr(f.valueDataType, dtn, t)});
     }
 """
     }
@@ -353,7 +351,7 @@ ${ f.valueDataType.typeRef.resolved match { // tag getters
      * Sets `${tag.name}` tag datum builder for${poly(f)} `${f.name}` field.
      */
     public ${poly(f, s"<${ln(tt(f.typeRef, tag.name))}Builder extends ${lqn(tt(f.typeRef, tag.name), t)} & io.epigraph.data.Datum.Mut.Static>\n        ", "")}@NotNull $ln.Builder set${up(f.name)}${up(tag.name)}(@Nullable ${poly(f, s"${ln(tt(f.typeRef, tag.name))}Builder", s"${lqn(tt(f.typeRef, tag.name), t)}.Builder")} ${jn(f.name)}${up(tag.name)}) {
-      _raw().getOrCreateFieldData($ln.${jn(f.name)})._raw()._setDatum(${trn(f.valueDataType, tag.name, t)}, ${jn(f.name)}${up(tag.name)});
+      _raw().getOrCreateFieldData($ln.${jn(f.name)})._raw()._setDatum(${dttr(f.valueDataType, tag.name, t)}, ${jn(f.name)}${up(tag.name)});
       return this;
     }
 
@@ -361,7 +359,7 @@ ${ f.valueDataType.typeRef.resolved match { // tag getters
      * Sets `${tag.name}` tag error for `${f.name}` field.
      */
     public @NotNull $ln.Builder set${up(f.name)}${up(tag.name)}(@NotNull io.epigraph.errors.ErrorValue error) {
-      _raw().getOrCreateFieldData($ln.${jn(f.name)})._raw()._setError(${trn(f.valueDataType, tag.name, t)}, error);
+      _raw().getOrCreateFieldData($ln.${jn(f.name)})._raw()._setError(${dttr(f.valueDataType, tag.name, t)}, error);
       return this;
     }
 
@@ -370,7 +368,7 @@ ${ f.valueDataType.typeRef.resolved match { // tag getters
      */
     @Override
     public @Nullable ${lqrn(tag.typeRef, t)}${poly(f, "", ".Builder")}.Value get_${up(f.name)}${up(tag.name)}() {
-      return (${lqn(tt(f.typeRef, tag.name), t)}${poly(f, "", ".Builder")}.Value) _raw()._getValue($ln.${jn(f.name)}, ${trn(f.valueDataType, tag.name, t)});
+      return (${lqn(tt(f.typeRef, tag.name), t)}${poly(f, "", ".Builder")}.Value) _raw()._getValue($ln.${jn(f.name)}, ${dttr(f.valueDataType, tag.name, t)});
     }
 """
       }.mkString

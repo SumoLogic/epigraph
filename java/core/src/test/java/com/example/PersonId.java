@@ -134,7 +134,7 @@ public interface PersonId extends IntegerDatum.Static {
 
       @Override
       public @Nullable PersonId.Builder get() {
-        return Util.apply(PersonId.Builder.Value::getDatum, get_value());
+        return Util.apply(get_value(), Value::getDatum);
       }
 
       // implied default tag value

@@ -47,8 +47,6 @@ abstract class CTypeDef protected(val csf: CSchemaFile, val psi: SchemaTypeDef, 
 
   val isAbstract: Boolean = psi.getAbstract != null
 
-  val isPolymorphic: Boolean = psi.getPolymorphic != null
-
   val declaredSupertypeRefs: Seq[CTypeDefRef] = {
     @Nullable val sed: SchemaExtendsDecl = psi.getExtendsDecl
     if (sed == null) Nil else sed.getFqnTypeRefList.map(CTypeRef(csf, _))
@@ -524,12 +522,24 @@ class CAnonListType(override val name: CAnonListTypeName)(implicit ctx: CContext
   /** Immediate parents of this type in order of decreasing priority */
   override def linearizedParents: Seq[CAnonListType] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, _linearizedParents)
 
-  private lazy val _linearizedParents: Seq[CAnonListType] = elementTypeRef.resolved.linearizedParents.map { et =>
+  private lazy val _linearizedParents: Seq[CAnonListType] = elementTypeRef.resolved.linearizedParents.map { est: CType =>
     ctx.getOrCreateAnonListOf(
-      new CDataType(
-        elementDataType.csf, elementDataType.polymorphic/*TODO false?*/ , et.selfRef, elementDataType.defaultTagName
-      )
-    )
+      est match {
+        case est: CVarTypeDef => new CDataType(
+          elementDataType.csf,
+          elementDataType.polymorphic/*TODO false?*/ ,
+          est.selfRef,
+          elementDataType.defaultTagName match {
+            case Some(tagName) => est.effectiveTags.find(_.name == tagName).map(_.name)
+            case None => None
+          }
+        )
+        case est: CDatumType => new CDataType(
+          elementDataType.csf, elementDataType.polymorphic/*TODO false?*/ , est.selfRef, None
+        )
+        case unknown => throw new UnsupportedOperationException(unknown.toString)
+      }
+    ) // FIXME add tagless self-type, too
   }
 
   final override def effectiveDefaultElementTagName: Option[String] = ctx.after(

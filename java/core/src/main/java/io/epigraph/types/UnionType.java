@@ -5,11 +5,11 @@ package io.epigraph.types;
 import io.epigraph.data.Data;
 import io.epigraph.names.QualifiedTypeName;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 public abstract class UnionType extends Type {
 
@@ -30,6 +30,16 @@ public abstract class UnionType extends Type {
   @SuppressWarnings("unchecked")
   public @NotNull Collection<@NotNull ? extends UnionType> supertypes() {
     return (Collection<? extends UnionType>) super.supertypes();
+  }
+
+  public @NotNull DataType dataType(boolean polymorphic, @Nullable Tag defaultTag) {
+    return new DataType(polymorphic, this, checkTagIsKnown(defaultTag));
+  }
+
+  public @Nullable Tag checkTagIsKnown(@Nullable Tag tag) {
+    // TODO check it is our/compatible tag (not just same name)?
+    if (tag != null && tagsMap().containsKey(tag.name)) throw new IllegalArgumentException("TODO " + tag.name);
+    return tag;
   }
 
   // TODO .Raw

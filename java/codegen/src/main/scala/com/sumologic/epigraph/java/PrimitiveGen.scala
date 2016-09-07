@@ -40,13 +40,11 @@ public interface $ln extends${withParents(t)} io.epigraph.data.${kind(t)}Datum.S
       super(
           new io.epigraph.names.QualifiedTypeName(${qnameArgs(t.name.fqn).mkString("\"", "\", \"", "\"")}),
           java.util.Arrays.asList(${t.linearizedParents.map(javaQName(_, t) + ".type").mkString(", ")}),
-          ${t.isPolymorphic},
           $ln.Builder::new,
           $ln.Builder.Value::new,
           $ln.Builder.Data::new
       );
     }
-$listSupplier\
 
   }
 
