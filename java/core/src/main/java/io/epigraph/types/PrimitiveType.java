@@ -13,12 +13,10 @@ public abstract class PrimitiveType extends DatumType { // TODO parameterize wit
   protected PrimitiveType(
       @NotNull QualifiedTypeName name,
       @NotNull List<@NotNull ? extends PrimitiveType> immediateSupertypes
-  ) {
-    super(name, immediateSupertypes);
-  }
+  ) { super(name, immediateSupertypes); }
 
   @Override
-  public @NotNull TypeKind kind() { return TypeKind.PRIMITIVE; }
+  public final @NotNull TypeKind kind() { return TypeKind.PRIMITIVE; }
 
   @Override
   public @NotNull QualifiedTypeName name() { return (QualifiedTypeName) super.name(); }

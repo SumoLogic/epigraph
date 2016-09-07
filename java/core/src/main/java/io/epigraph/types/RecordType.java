@@ -28,12 +28,10 @@ public abstract class RecordType extends DatumType {
   public RecordType(
       @NotNull QualifiedTypeName name,
       @NotNull List<@NotNull ? extends RecordType> immediateSupertypes
-  ) {
-    super(name, immediateSupertypes);
-  }
+  ) { super(name, immediateSupertypes); }
 
   @Override
-  public @NotNull TypeKind kind() { return TypeKind.RECORD; }
+  public final @NotNull TypeKind kind() { return TypeKind.RECORD; }
 
   @Override
   public @NotNull QualifiedTypeName name() { return (QualifiedTypeName) super.name(); }
