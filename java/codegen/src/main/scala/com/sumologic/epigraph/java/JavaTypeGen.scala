@@ -3,7 +3,7 @@
 package com.sumologic.epigraph.java
 
 import com.sumologic.epigraph.java.NewlineStringInterpolator.NewlineHelper
-import com.sumologic.epigraph.schema.compiler.{CContext, CDataType, CType}
+import com.sumologic.epigraph.schema.compiler.{CContext, CDataType, CType, CTypeRef, CVarTypeDef}
 
 import scala.collection.JavaConversions._
 
@@ -38,5 +38,15 @@ abstract class JavaTypeGen[Type >: Null <: CType](from: Type, ctx: CContext) ext
 
   def dataTypeExpr(dt: CDataType, lt: CType): String =
     s"new io.epigraph.types.DataType(${dt.polymorphic}, ${lqrn(dt.typeRef, lt)}.type, ${dt.defaultTagName.map(dttr(dt, _, t)).getOrElse("null")})"
+
+  protected def vt(t: CType, yes: => String, no: => String): String = t match {
+    case _: CVarTypeDef => yes
+    case _ => no
+  }
+
+  protected def vt(tr: CTypeRef, yes: => String, no: => String): String = tr.resolved match {
+    case _: CVarTypeDef => yes
+    case _ => no
+  }
 
 }

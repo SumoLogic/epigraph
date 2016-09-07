@@ -460,9 +460,4 @@ ${
 }
 """//@formatter:on
 
-  private def vt(e: CType, yes: => String, no: => String): String = e match {
-    case _: CVarTypeDef => yes
-    case _ => no
-  }
-
 }

@@ -145,6 +145,12 @@ abstract class JavaGen[From >: Null <: AnyRef](protected val from: From, protect
     case unknown => throw new UnsupportedOperationException(unknown.name.name)
   }
 
+  /** default tag constant reference for given data type (as seen from the context of the local type namespace) */
+  def tcr(dt: CDataType, lt: CType): String = dt.defaultTagName match {
+    case Some(tagName) => ttr(dt.typeRef.resolved, tagName, lt)
+    case None => "null"
+  }
+
   /** java package name for given type */
   def pn(t: CType): String = getNamedTypeComponent(t).name.fqn.removeLastSegment().segments.map(jn).mkString(".")
 

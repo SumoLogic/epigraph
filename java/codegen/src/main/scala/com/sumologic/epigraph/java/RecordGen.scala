@@ -31,7 +31,7 @@ ${t.effectiveFields.map { f => // for each effective field
   ${"/**"}
    * Field `${f.name}`.
    */
-  @NotNull Field ${jn(f.name)} = new Field("${f.name}", ${lqrn(f.typeRef, t)}.type, ${f.isAbstract});
+  @NotNull Field ${jn(f.name)} = new Field("${f.name}", ${lqrn(f.typeRef, t)}.type.dataType(${f.valueDataType.polymorphic}${vt(f.typeRef, s", ${tcr(f.valueDataType, t)}", "")}), ${f.isAbstract});
 ${  f.effectiveDefaultTagName match { // default datum and value getters (if any)
       case None => ""
       case Some(dtn) => sn"""\
