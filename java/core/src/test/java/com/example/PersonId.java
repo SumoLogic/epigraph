@@ -255,7 +255,7 @@ public interface PersonId extends IntegerDatum.Static {
 
         // method is private to not expose datas() for non-union types (so simple type can be replaced with union type without breaking backwards-compatibility)
         private java.util.List<@NotNull ? extends PersonId.Imm.Data> datas() {
-          return (java.util.List<? extends PersonId.Imm.Data>) _raw()._elements();
+          return Util.castEx(_raw()._elements());
         }
 
         @Override // implied default tag values

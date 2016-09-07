@@ -303,7 +303,7 @@ public interface Person extends Data.Static {
 
         @Override
         public java.util.List<@NotNull ? extends Person.Imm> datas() {
-          return (java.util.List<? extends Person.Imm>) _raw()._elements();
+          return Util.castEx(_raw()._elements());
         }
 
         @Override

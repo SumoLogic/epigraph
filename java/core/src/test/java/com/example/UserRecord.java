@@ -26,9 +26,9 @@ public interface UserRecord extends PersonRecord {
 
   @NotNull UserRecord.Type type = new UserRecord.Type();
 
-  @NotNull Field bestFriend = new Field("bestFriend", UserRecord.type, true);
+  @NotNull Field bestFriend = new Field("bestFriend", UserRecord.type.dataType(false), true);
 
-  @NotNull Field friends = new Field("friends", UserRecord.List.type, false);
+  @NotNull Field friends = new Field("friends", UserRecord.List.type.dataType(false), false);
 
   @Nullable UserRecord getBestFriend();
 

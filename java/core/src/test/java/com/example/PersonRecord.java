@@ -26,11 +26,11 @@ public interface PersonRecord extends RecordDatum.Static {
 
   @NotNull PersonRecord.Type type = new PersonRecord.Type();
 
-  @NotNull Field id = new Field("id", PersonId.type, false);
+  @NotNull Field id = new Field("id", PersonId.type.dataType(false), false);
 
-  @NotNull Field bestFriend = new Field("bestFriend", PersonRecord.type, false);
+  @NotNull Field bestFriend = new Field("bestFriend", PersonRecord.type.dataType(false), false);
 
-  @NotNull Field friends = new Field("friends", PersonRecord.List.type, false);
+  @NotNull Field friends = new Field("friends", PersonRecord.List.type.dataType(false), false);
 
   @Nullable PersonId getId();
 
