@@ -262,6 +262,13 @@ class CVarTypeDef(csf: CSchemaFile, override val psi: SchemaVarTypeDef)(implicit
     }
   }
 
+  def dataType(polymorphic: Boolean, defaultTagName: Option[String]): CDataType = new CDataType(
+    csf, // TODO this schema file might not be the one we expect (i.e. not the one where the data type is (maybe indirectly) referenced)
+    polymorphic,
+    selfRef,
+    if (effectiveTags.exists { et => defaultTagName.contains(et.name) }) defaultTagName else None
+  )
+
 }
 
 class CTag(val csf: CSchemaFile, val psi: SchemaVarTagDecl)(implicit val ctx: CContext) {
@@ -276,12 +283,18 @@ class CTag(val csf: CSchemaFile, val psi: SchemaVarTagDecl)(implicit val ctx: CC
 
 }
 
-trait CDatumType extends CType {
+trait CDatumType extends CType {self =>
+
+  override type This >: this.type <: CDatumType {type This <: self.This}
+
+  protected val csf: CSchemaFile
 
   final override val effectiveDefaultTagName: Some[String] = Some(CDatumType.ImpliedDefaultTagName)
 
   // `None` - no declaration, `Some(None)` - declared nodefault, `Some(Some(String))` - declared default
   final override val declaredDefaultTagName: Some[Some[String]] = Some(effectiveDefaultTagName)
+
+  def dataType(polymorphic: Boolean): CDataType = new CDataType(csf, polymorphic, selfRef, None)
 
 }
 
@@ -460,6 +473,8 @@ class CAnonMapType(override val name: CAnonMapTypeName)(implicit ctx: CContext) 
 
   override val keyTypeRef: CTypeRef = name.keyTypeRef
 
+  override protected val csf: CSchemaFile = valueDataType.csf
+
   override def isAssignableFrom(subtype: CType): Boolean =
     subtype.kind == kind &&
         keyTypeRef.resolved == subtype.asInstanceOf[CMapType].keyTypeRef.resolved &&
@@ -516,30 +531,29 @@ class CAnonListType(override val name: CAnonListTypeName)(implicit ctx: CContext
 
   override type This = CAnonListType
 
+  override protected val csf: CSchemaFile = elementDataType.csf
+
   override def isAssignableFrom(subtype: CType): Boolean =
     subtype.kind == kind && elementTypeRef.resolved.isAssignableFrom(cast(subtype).elementTypeRef.resolved)
 
   /** Immediate parents of this type in order of decreasing priority */
   override def linearizedParents: Seq[CAnonListType] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, _linearizedParents)
 
-  private lazy val _linearizedParents: Seq[CAnonListType] = elementTypeRef.resolved.linearizedParents.map { est: CType =>
-    ctx.getOrCreateAnonListOf(
-      est match {
-        case est: CVarTypeDef => new CDataType(
-          elementDataType.csf,
-          elementDataType.polymorphic/*TODO false?*/ ,
-          est.selfRef,
-          elementDataType.defaultTagName match {
-            case Some(tagName) => est.effectiveTags.find(_.name == tagName).map(_.name)
-            case None => None
-          }
-        )
-        case est: CDatumType => new CDataType(
-          elementDataType.csf, elementDataType.polymorphic/*TODO false?*/ , est.selfRef, None
-        )
-        case unknown => throw new UnsupportedOperationException(unknown.toString)
-      }
-    ) // FIXME add tagless self-type, too
+  private lazy val _linearizedParents: Seq[CAnonListType] = elementDataType.typeRef.resolved match {
+    case et: CVarTypeDef => elementDataType.defaultTagName.map { tagName =>
+      if (!et.effectiveTags.exists(_.name == tagName)) ctx.errors.add(
+        CError(csf.filename, CErrorPosition.NA, s"Tag `$tagName` is not defined for union type `${et.name.name}`")
+      )
+      ctx.getOrCreateAnonListOf(et.dataType(elementDataType.polymorphic, None))
+    }.toSeq ++ et.linearizedParents.map { est =>
+      ctx.getOrCreateAnonListOf(
+        est.dataType(elementDataType./*TODO or false?*/ polymorphic, elementDataType.defaultTagName)
+      )
+    }
+    case et: CDatumType => et.linearizedParents.map { est =>
+      ctx.getOrCreateAnonListOf(est.dataType(elementDataType.polymorphic/*TODO or false?*/))
+    }
+    case unknown => throw new UnsupportedOperationException(unknown.toString)
   }
 
   final override def effectiveDefaultElementTagName: Option[String] = ctx.after(
