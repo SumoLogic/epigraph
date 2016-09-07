@@ -34,4 +34,8 @@ public interface Util {
 
   static <T> java.util.List<T> cast(java.util.List<? super T> list) { return (List<T>) list; }
 
+  static <S, T extends S> java.util.List<? extends T> castEx(java.util.List<? extends S> list) {
+    return (List<? extends T>) list;
+  }
+
 }

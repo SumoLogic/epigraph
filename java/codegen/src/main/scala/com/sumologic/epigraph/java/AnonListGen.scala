@@ -225,7 +225,7 @@ ${et match { // element tags (for vartypes)
        */
       @Override
       public @NotNull java.util.List<@NotNull ? extends ${lqn(et, t)}.Imm> datas() {
-        return io.epigraph.util.Util.cast(_raw()._elements());
+        return io.epigraph.util.Util.castEx(_raw()._elements());
       }
 ${
       evt.effectiveTags.map { tag => sn"""\
@@ -257,7 +257,7 @@ ${
 
       // method is private to not expose datas() for non-union types (so simple type can be replaced with union type while preserving backwards-compatibility)
       private @NotNull java.util.List<@NotNull ? extends ${lqn(et, t)}.Imm.Data> datas() {
-        return io.epigraph.util.Util.cast(_raw()._elements());
+        return io.epigraph.util.Util.castEx(_raw()._elements());
       }
 """
   }
