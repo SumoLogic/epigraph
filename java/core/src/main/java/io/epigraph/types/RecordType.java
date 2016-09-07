@@ -33,6 +33,9 @@ public abstract class RecordType extends DatumType {
   }
 
   @Override
+  public @NotNull TypeKind kind() { return TypeKind.RECORD; }
+
+  @Override
   public @NotNull QualifiedTypeName name() { return (QualifiedTypeName) super.name(); }
 
   @Override

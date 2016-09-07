@@ -21,6 +21,9 @@ public abstract class UnionType extends Type {
   }
 
   @Override
+  public @NotNull TypeKind kind() { return TypeKind.UNION; }
+
+  @Override
   @SuppressWarnings("unchecked")
   public @NotNull List<@NotNull ? extends UnionType> immediateSupertypes() {
     return (List<? extends UnionType>) super.immediateSupertypes();

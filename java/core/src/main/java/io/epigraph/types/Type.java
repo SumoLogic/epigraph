@@ -29,10 +29,7 @@ public abstract class Type { // TODO split into interface and impl
 
   private @Nullable Map<@NotNull String, @NotNull ? extends Tag> tagsMap = null;
 
-  protected Type(
-      @NotNull TypeName name,
-      @NotNull List<@NotNull ? extends Type> immediateSupertypes
-  ) {
+  protected Type(@NotNull TypeName name, @NotNull List<@NotNull ? extends Type> immediateSupertypes) {
     this.name = name;
     this.immediateSupertypes = Unmodifiable.list(immediateSupertypes);
 
@@ -40,6 +37,8 @@ public abstract class Type { // TODO split into interface and impl
     if (immediateSupertypes.stream().anyMatch(is -> is.supertypes().stream().anyMatch(immediateSupertypes::contains)))
       throw new IllegalArgumentException();
   }
+
+  public abstract @NotNull TypeKind kind();
 
   public @NotNull TypeName name() { return name; }
 

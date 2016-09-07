@@ -18,6 +18,9 @@ public abstract class PrimitiveType extends DatumType { // TODO parameterize wit
   }
 
   @Override
+  public @NotNull TypeKind kind() { return TypeKind.PRIMITIVE; }
+
+  @Override
   public @NotNull QualifiedTypeName name() { return (QualifiedTypeName) super.name(); }
 
   @Override

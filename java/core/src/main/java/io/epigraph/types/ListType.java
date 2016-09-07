@@ -56,6 +56,9 @@ public abstract class ListType extends DatumType {
 //  }
 
   @Override
+  public @NotNull TypeKind kind() { return TypeKind.LIST; }
+
+  @Override
   @SuppressWarnings("unchecked")
   public @NotNull List<@NotNull ? extends ListType> immediateSupertypes() {
     return (List<? extends ListType>) super.immediateSupertypes();
