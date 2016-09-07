@@ -31,6 +31,7 @@ Map<String, String> moduleNames = [
     'schema-compiler'                    : 'epigraph-schema-compiler',
     'schema-parser'                      : 'epigraph-schema-parser',
     'schema-schema'                      : 'epigraph-schema-schema',
+    'standalone-psi-util'                : 'epigraph-standalone-psi-util'
 ]
 
 // uncomment to build and publish (`publishToMavenLocal`) gradle and maven plugins for the first time

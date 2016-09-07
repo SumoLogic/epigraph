@@ -187,6 +187,8 @@ public class SchemaPresentationUtil {
     if (element instanceof SchemaFqnSegment) return "Namespace";
     if (element instanceof SchemaVarTagDecl) return "Var tag";
     if (element instanceof SchemaFieldDecl) return "Record field";
+    if (element instanceof SchemaVarTagRef)
+      return "Var tag reference";
 
     return "(getType) Unknown element: " + element;
   }

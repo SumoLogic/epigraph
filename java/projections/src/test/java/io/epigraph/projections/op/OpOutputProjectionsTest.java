@@ -4,7 +4,7 @@ import com.example.*;
 import com.intellij.psi.PsiErrorElement;
 import io.epigraph.idl.parser.projections.ProjectionParserDefinitions;
 import io.epigraph.idl.parser.psi.IdlOpOutputVarProjection;
-import io.epigraph.lang.PsiUtil;
+import io.epigraph.psi.PsiUtil;
 import io.epigraph.types.DataType;
 import io.epigraph.types.SimpleTypesResolver;
 import io.epigraph.types.TypesResolver;

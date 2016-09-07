@@ -5,6 +5,7 @@ dependencies {
   compile project(':epigraph-java-core')
   compile project(':epigraph-java-util')
   compile project(':epigraph-lang-common')
+  compile project(':epigraph-standalone-psi-util')
   compile project(':epigraph-light-psi')
 
   testCompile 'junit:junit'

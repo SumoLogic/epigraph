@@ -1,6 +1,5 @@
 ### High
 - `//` and `/*... */` comments should be ignored in string literals (seems to be fixed already?)
-- tooltip on unresolved tags
 
 ### Medium
 - `polymorphic` completion inside anon lists and maps
@@ -21,6 +20,7 @@
 ### High
 - Field/Tag completion after `default` in records/vartypes: currently suggests `namespace`.. should suggest all the super fields/tags
 - Var tag references not resolving in `default` overrides on fields/list elements etc
+- tooltip on unresolved tags
 
 ### Medium
 - Schema files under `resources` should be excluded from analysis

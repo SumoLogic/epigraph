@@ -6,6 +6,7 @@ import com.intellij.openapi.editor.LineExtensionInfo;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.project.IndexNotReadyException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.FileViewProvider;
@@ -58,7 +59,9 @@ public class SchemaDefaultTagLinePainter extends EditorLinePainter {
 
           if (startOffsetLine > lineNumber) break;
 
-          element = addExtensions(res, element);
+          try {
+            element = addExtensions(res, element);
+          } catch (IndexNotReadyException e) { element = null; }
         }
       }
     }

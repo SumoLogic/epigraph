@@ -1,4 +1,4 @@
-package io.epigraph.lang;
+package io.epigraph.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.LanguageParserDefinitions;
