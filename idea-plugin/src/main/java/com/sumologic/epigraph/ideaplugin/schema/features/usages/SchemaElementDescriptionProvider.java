@@ -8,7 +8,6 @@ import com.intellij.usageView.UsageViewShortNameLocation;
 import com.sumologic.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
 import io.epigraph.schema.parser.psi.SchemaFqnSegment;
 import io.epigraph.schema.parser.psi.SchemaTypeDef;
-import io.epigraph.schema.parser.psi.SchemaValueTypeRef;
 import io.epigraph.schema.parser.psi.SchemaVarTagRef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
