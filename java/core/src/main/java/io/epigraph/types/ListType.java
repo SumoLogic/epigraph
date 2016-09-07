@@ -3,15 +3,11 @@
 package io.epigraph.types;
 
 import io.epigraph.data.ListDatum;
-import io.epigraph.names.AnonListTypeName;
-import io.epigraph.names.QualifiedTypeName;
 import io.epigraph.names.TypeName;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public abstract class ListType extends DatumType {
 
@@ -69,6 +65,8 @@ public abstract class ListType extends DatumType {
   public @NotNull Collection<@NotNull ? extends ListType> supertypes() {
     return (Collection<? extends ListType>) super.supertypes();
   }
+
+  public @NotNull DataType elementType() { return elementType; }
 
   public abstract @NotNull ListDatum.Mut createBuilder();
 
