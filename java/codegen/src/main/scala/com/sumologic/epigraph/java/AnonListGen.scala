@@ -333,7 +333,7 @@ ${t.effectiveDefaultElementTagName match { // default element tag (if defined) v
        */
       @Override
       public @NotNull java.util.List<${lqn(tt(etr, dtn), t)}.@Nullable Builder> datums() {
-        return new io.epigraph.util.ListView<${lqn(et, t)}.Builder${vt(et, "", ".Data")}, ${lqn(tt(etr, dtn), t)}.Builder>(
+        return new io.epigraph.util.ListView<>(
             datas(),
             ${lqn(et, t)}.Builder${vt(et, "", ".Data")}::get${vt(et, up(dtn), "")},
             ${lqn(et, t)}.Builder${vt(et, "", ".Data")}::set${vt(et, up(dtn), "")},
@@ -373,7 +373,7 @@ ${
        * Returns list view of elements `${tag.name}` tag datum builders. Elements where the tag value is not set will be `null`.
        */
       public @NotNull java.util.List<${lqn(tt(etr, tag.name), t)}.@Nullable Builder> ${jn(tag.name + "Datums")}() {
-        return new io.epigraph.util.ListView<${lqn(et, t)}.Builder${vt(et, "", ".Data")}, ${lqn(tt(etr, tag.name), t)}.Builder>(
+        return new io.epigraph.util.ListView<>(
             datas(),
             ${lqn(et, t)}.Builder${vt(et, "", ".Data")}::get${vt(et, up(tag.name), "")},
             ${lqn(et, t)}.Builder${vt(et, "", ".Data")}::set${vt(et, up(tag.name), "")},
