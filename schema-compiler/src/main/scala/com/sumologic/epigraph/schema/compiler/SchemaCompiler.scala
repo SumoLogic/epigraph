@@ -9,9 +9,9 @@ import java.util.Collections
 import com.intellij.lang.ParserDefinition
 import com.intellij.psi.PsiFile
 import com.sumologic.epigraph.schema.compiler.CPrettyPrinters._
+import com.sumologic.epigraph.util.JavaFunction
 import io.epigraph.schema.parser.SchemaParserDefinition
 import io.epigraph.schema.parser.psi.SchemaFile
-import com.sumologic.epigraph.util.JavaFunction
 import org.intellij.grammar.LightPsi
 import org.jetbrains.annotations.Nullable
 
@@ -26,7 +26,7 @@ class SchemaCompiler(
   println(sources.map(_.name).mkString("Sources: [", ", ", "]")) // TODO use log or remove
   println(dependencies.map(_.name).mkString("Dependencies: [", ", ", "]")) // TODO use log or remove
 
-  private val spd: SchemaParserDefinition = new SchemaParserDefinition
+  private val spd = new SchemaParserDefinition
 
   implicit val ctx: CContext = new CContext
 
@@ -40,43 +40,52 @@ class SchemaCompiler(
 
     import CPhase._
 
+
+    // parse schema files
+
     ctx.phase(PARSE)
 
     val schemaFiles: Seq[SchemaFile] = parseSourceFiles(sources ++ dependencies)
 
     handleErrors(1)
+
+
+    // instantiate compiler schema files and resolve type references
+
     ctx.phase(RESOLVE_TYPEREFS)
 
-    val cSchemaFiles: Seq[CSchemaFile] = schemaFiles.map(new CSchemaFile(_))
-    //printSchemaFiles(cSchemaFiles)
-
-    registerDefinedTypes(cSchemaFiles)
-    //pprint.pprintln(ctx.types.keys.toSeq)
-
-    resolveTypeRefs(cSchemaFiles)
-    //pprint.pprintln(ctx.anonListTypes.toMap)
-    //pprint.pprintln(ctx.anonMapTypes.toMap)
+    schemaFiles.map(new CSchemaFile(_)) // compiler schema file adds itself to ctx
+    registerDefinedTypes()
+    resolveTypeRefs()
 
     handleErrors(2)
+
+
+    // apply supplements and compute supertypes //
+
     ctx.phase(COMPUTE_SUPERTYPES)
 
     applySupplementingTypeDefs()
-    applySupplements(cSchemaFiles) // FIXME track injecting `supplement`s
+    applySupplements() // FIXME track injecting `supplement`s
     computeSupertypes()
-    //printSchemaFiles(cSchemaFiles)
 
     handleErrors(3)
+
+
+    // verify data types
+
     ctx.phase(INHERIT_FROM_SUPERTYPES)
 
-    //printSchemaFiles(cSchemaFiles)
+    validateTagRefs()
+    ctx.anonListTypes.values() foreach (anonListType => anonListType.linearizedParents)
+
     handleErrors(4)
 
-    ctx.anonListTypes.values() foreach (_.linearizedParents)
-    //ctx.anonListTypes.values() foreach {alt => print(alt.name.name + " "); pprint.pprintln(alt.linearizedParents)}
-    //pprint.pprintln(ctx.anonListTypes.toMap.map{case (k, v) => (k.name, v)})
-    handleErrors(5)
+
+    //printSchemaFiles(ctx.schemaFiles.values)
 
     ctx
+
   }
 
   // TODO below should be private/protected
@@ -108,8 +117,8 @@ class SchemaCompiler(
   def parseFile(source: Source, parserDefinition: ParserDefinition): PsiFile =
     LightPsi.parseFile(source.name, source.text, parserDefinition)
 
-  def registerDefinedTypes(cSchemaFiles: Seq[CSchemaFile]): Unit = {
-    cSchemaFiles.par foreach { csf =>
+  def registerDefinedTypes(): Unit = {
+    ctx.schemaFiles.values.par foreach { csf =>
       csf.typeDefs foreach { ct =>
         val old: CTypeDef = ctx.typeDefs.putIfAbsent(ct.name, ct)
         if (old != null) ctx.errors.add(
@@ -123,11 +132,11 @@ class SchemaCompiler(
     }
   }
 
-  private val AnonListTypeConstructor = JavaFunction[CAnonListTypeName, CAnonListType](new CAnonListType(_))
+  //private val AnonListTypeConstructor = JavaFunction[CAnonListTypeName, CAnonListType](new CAnonListType(_))
 
   private val AnonMapTypeConstructor = JavaFunction[CAnonMapTypeName, CAnonMapType](new CAnonMapType(_))
 
-  def resolveTypeRefs(cSchemaFiles: Seq[CSchemaFile]): Unit = cSchemaFiles.par foreach { csf =>
+  def resolveTypeRefs(): Unit = ctx.schemaFiles.values.par foreach { csf =>
     csf.typerefs foreach {
       case ctr: CTypeDefRef =>
         @Nullable val refType = ctx.typeDefs.get(ctr.name)
@@ -138,7 +147,7 @@ class SchemaCompiler(
         }
       case ctr: CAnonListTypeRef =>
         ctr.resolveTo(ctx.getOrCreateAnonListOf(ctr.name.elementDataType))
-        //ctr.resolveTo(ctx.anonListTypes.computeIfAbsent(ctr.name, AnonListTypeConstructor))
+      //ctr.resolveTo(ctx.anonListTypes.computeIfAbsent(ctr.name, AnonListTypeConstructor))
       case ctr: CAnonMapTypeRef =>
         // FIXME same as above
         ctr.resolveTo(ctx.anonMapTypes.computeIfAbsent(ctr.name, AnonMapTypeConstructor))
@@ -151,19 +160,25 @@ class SchemaCompiler(
     }
   }
 
-  def applySupplements(cSchemaFiles: Seq[CSchemaFile]): Unit = cSchemaFiles foreach { csf =>
+  def applySupplements(): Unit = ctx.schemaFiles.values foreach { csf =>
     csf.supplements foreach { supplement =>
       val sup = supplement.sourceRef.resolved
       supplement.targetRefs foreach (_.resolved.injectedSupertypes.add(sup))
     }
   }
 
+  /** Compute supertypes for all (named and anonymous) collected types */
   def computeSupertypes(): Unit = {
     val visited = mutable.Stack[CTypeDef]()
     ctx.typeDefs.elements foreach { typeDef => typeDef.computeSupertypes(visited); assert(visited.isEmpty) }
+    ctx.anonListTypes.values() foreach (anonListType => anonListType.linearizedParents)
+    ctx.anonMapTypes.values() foreach (anonMapType => anonMapType.linearizedParents)
   }
 
-  def resolveTagRefs() = ???
+  def validateTagRefs(): Unit = ctx.schemaFiles.values foreach { csf =>
+    csf.dataTypes foreach { cdt => cdt.effectiveDefaultTagName }
+    // TODO: list element, map value, and field value tags?
+  }
 
   @throws[SchemaCompilerException]
   def handleErrors(exitCode: Int): Unit = { // FIXME it should not exit but return some error code

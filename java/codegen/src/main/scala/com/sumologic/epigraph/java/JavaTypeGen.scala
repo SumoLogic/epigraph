@@ -37,7 +37,7 @@ abstract class JavaTypeGen[Type >: Null <: CType](from: Type, ctx: CContext) ext
 //  }.getOrElse("")
 
   def dataTypeExpr(dt: CDataType, lt: CType): String =
-    s"new io.epigraph.types.DataType(${dt.polymorphic}, ${lqrn(dt.typeRef, lt)}.type, ${dt.defaultTagName.map(dttr(dt, _, t)).getOrElse("null")})"
+    s"new io.epigraph.types.DataType(${dt.polymorphic}, ${lqrn(dt.typeRef, lt)}.type, ${dt.effectiveDefaultTagName.map(dttr(dt, _, t)).getOrElse("null")})"
 
   protected def vt(t: CType, yes: => String, no: => String): String = t match {
     case _: CVarTypeDef => yes

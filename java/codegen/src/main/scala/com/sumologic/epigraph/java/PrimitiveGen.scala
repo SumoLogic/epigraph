@@ -179,7 +179,7 @@ public interface $ln extends${withParents(t)} io.epigraph.data.${kind(t)}Datum.S
       }
 
       // implied default tag value
-      public void set_value(@Nullable $ln.Builder.Value value) { _raw()._setValue($ln.type.self, value); }
+      public void set_(@Nullable $ln.Builder.Value value) { _raw()._setValue($ln.type.self, value); }
 
     }
 

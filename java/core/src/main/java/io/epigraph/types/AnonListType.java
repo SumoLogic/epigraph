@@ -74,12 +74,12 @@ public abstract class AnonListType extends ListType {
 
     protected Static(
         @NotNull List<@NotNull ? extends AnonListType.Static<
-            ? super MyImmDatum,
-            ? extends ListDatum.Mut.Static<? super MyImmDatum>,
-            ? super MyImmVal,
-            ? extends Val.Mut.Static<? super MyImmVal, ? extends ListDatum.Mut.Static<? super MyImmDatum>>,
-            ? super MyImmData,
-            ? extends Data.Mut.Static<? super MyImmData>
+            ?,// super MyImmDatum,
+            ?,// extends ListDatum.Mut.Static<? super MyImmDatum>,
+            ?,// super MyImmVal,
+            ?,// extends Val.Mut.Static<? super MyImmVal, ? extends ListDatum.Mut.Static<? super MyImmDatum>>,
+            ?,// super MyImmData,
+            ? // extends Data.Mut.Static<? super MyImmData>
             >> immediateSupertypes,
         @NotNull DataType elementDataType,
         @NotNull Function<ListDatum.Mut.Raw, MyMutDatum> mutDatumConstructor,

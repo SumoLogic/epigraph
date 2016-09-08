@@ -1,6 +1,7 @@
 package com.sumologic.epigraph.schema.compiler
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.annotations.Nullable
 
 import scala.collection.mutable
 
@@ -37,7 +38,8 @@ class LineNumberUtil(text: String, tabWidth: Int = 2) {
       lines += Line(lineNumber, lineStartOffset, offset, line.toString)
   }
 
-  def pos(psi: PsiElement): CErrorPosition = pos(psi.getTextRange.getStartOffset)
+  def pos(@Nullable psi: PsiElement): CErrorPosition =
+    if (psi eq null) CErrorPosition.NA else pos(psi.getTextRange.getStartOffset)
 
   def pos(offset: Int): CErrorPosition = {
     lines.find(_.endOffset >= offset) match {
@@ -65,7 +67,8 @@ class LineNumberUtil(text: String, tabWidth: Int = 2) {
   def column(line: Line, offset: Int): Int = {
     val offsetInLine = offset - line.startOffset
     val linePrefix = expandTabs(line.text.substring(0, offsetInLine))
-    val numCrs = linePrefix.count(_ == '\r') // FIXME deal (escape? remove?) with other control characters here (or in constructor)?
+    // FIXME deal with (escape? remove?) other control characters here (or in constructor)?
+    val numCrs = linePrefix.count(_ == '\r')
     1 + linePrefix.length - numCrs
   }
 

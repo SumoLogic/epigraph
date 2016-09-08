@@ -8,10 +8,10 @@ import io.epigraph.schema.parser.psi.{SchemaAnonList, SchemaAnonMap, SchemaFqnTy
 object CTypeRef {
 
   def apply(csf: CSchemaFile, psi: SchemaTypeRef)(implicit ctx: CContext): CTypeRef = psi match {
-    case sftr: SchemaFqnTypeRef => apply(csf, sftr)
-    case sal: SchemaAnonList => apply(csf, sal)
-    case sam: SchemaAnonMap => apply(csf, sam)
-    case _ => throw new RuntimeException // TODO exception
+    case psi: SchemaFqnTypeRef => apply(csf, psi)
+    case psi: SchemaAnonList => apply(csf, psi)
+    case psi: SchemaAnonMap => apply(csf, psi)
+    case unknown => throw new UnsupportedOperationException(unknown.toString)
   }
 
   def apply(csf: CSchemaFile, psi: SchemaFqnTypeRef)(implicit ctx: CContext): CTypeDefRef =
@@ -49,7 +49,7 @@ abstract class CTypeRef protected(val csf: CSchemaFile)(implicit val ctx: CConte
   csf.typerefs.add(this)
 
   def resolveTo(ctype: Type): this.type = {
-    assert(typeOptVar.isEmpty, typeOptVar.get.name.name)
+    typeOptVar.foreach(resolved => assert(resolved eq ctype, typeOptVar.get.name.name))
     assert(ctype.name == name)
     typeOptVar = Some(ctype)
     this

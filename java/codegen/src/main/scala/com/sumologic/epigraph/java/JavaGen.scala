@@ -36,14 +36,14 @@ abstract class JavaGen[From >: Null <: AnyRef](protected val from: From, protect
   }
 
   def alln(t: CAnonListType): String = t.elementDataType.typeRef.resolved match {
-    case et: CVarTypeDef => ln(et) + varTagPart(t.elementDataType.defaultTagName) + "_List"
-    case et: CDatumType => assert(t.elementDataType.defaultTagName.isEmpty); ln(et) + "_List"
+    case et: CVarTypeDef => ln(et) + varTagPart(t.elementDataType.effectiveDefaultTagName) + "_List"
+    case et: CDatumType => ln(et) + "_List"
     case unknown => throw new UnsupportedOperationException(unknown.toString)
   }
 
   def amln(t: CAnonMapType): String = t.valueDataType.typeRef.resolved match {
-    case et: CVarTypeDef => ln(et) + varTagPart(t.valueDataType.defaultTagName) + "_Map"
-    case et: CDatumType => assert(t.valueDataType.defaultTagName.isEmpty); ln(et) + "_Map"
+    case et: CVarTypeDef => ln(et) + varTagPart(t.valueDataType.effectiveDefaultTagName) + "_Map"
+    case et: CDatumType => assert(t.valueDataType.effectiveDefaultTagName.isEmpty); ln(et) + "_Map"
     case unknown => throw new UnsupportedOperationException(unknown.toString)
   }
 
@@ -146,7 +146,7 @@ abstract class JavaGen[From >: Null <: AnyRef](protected val from: From, protect
   }
 
   /** default tag constant reference for given data type (as seen from the context of the local type namespace) */
-  def tcr(dt: CDataType, lt: CType): String = dt.defaultTagName match {
+  def tcr(dt: CDataType, lt: CType): String = dt.effectiveDefaultTagName match {
     case Some(tagName) => ttr(dt.typeRef.resolved, tagName, lt)
     case None => "null"
   }

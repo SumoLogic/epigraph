@@ -22,6 +22,9 @@ class CSchemaFile(val psi: SchemaFile)(implicit val ctx: CContext) {
   @ThreadSafe
   val typerefs: ConcurrentLinkedQueue[CTypeRef] = new java.util.concurrent.ConcurrentLinkedQueue
 
+  @ThreadSafe
+  val dataTypes: ConcurrentLinkedQueue[CDataType] = new java.util.concurrent.ConcurrentLinkedQueue
+
   val namespace: CNamespace = new CNamespace(psi.getNamespaceDecl)
 
   val imports: Map[String, CImport] = psi.getImportStatements.map(new CImport(_)).map { ci =>

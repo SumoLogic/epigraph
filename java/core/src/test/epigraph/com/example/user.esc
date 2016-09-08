@@ -12,7 +12,7 @@ record UserRecord extends PersonRecord {
   bestFriend: User//Record
   friends: list[UserRecord]
   users: list[User default id]
-//  usersShmoozers: list[User default shmoozer]
+  usersShmoozers: list[User/* default shmoozer*/]
   override ids: list[UserId]
   idss: list[list[UserId]]
 }
