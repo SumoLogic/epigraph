@@ -16,6 +16,7 @@ record OpDeleteVarProjection {
   type: TypeRef
   tagProjections: list[OpDeleteTagProjection]
   canDelete: Boolean
+  polymorphicTail: list[OpDeleteVarProjection]
 }
 
 record OpDeleteTagProjection {
@@ -26,13 +27,11 @@ record OpDeleteTagProjection {
 abstract record OpDeleteModelProjection {
   model: DataTypeRef
   params: list[OpParam]
-  polymorphicTail: list[OpDeleteModelProjection]
 }
 
 record OpDeleteRecordModelProjection extends OpDeleteModelProjection {
   override model: RecordTypeRef
   fieldProjections: list[OpDeleteFieldProjection]
-  override polymorphicTail: list[OpDeleteRecordModelProjection]
 }
 
 record OpDeleteFieldProjection {
@@ -44,14 +43,12 @@ record OpDeleteFieldProjection {
 record OpDeleteListModelProjection extends OpDeleteModelProjection {
   override model: ListTypeRef
   varProjection: OpDeleteVarProjection
-  override polymorphicTail: list[OpDeleteListModelProjection]
 }
 
 record OpDeleteMapModelProjection extends OpDeleteModelProjection {
   override model: MapTypeRef
   keyProjection: OpDeleteKeyProjection { doc = "if `null` - keys are not accepted" }
   varProjection: OpDeleteVarProjection
-  override polymorphicTail: list[OpDeleteMapModelProjection] // TODO figure out what to do with keys in poly tail
 }
 
 record OpDeleteKeyProjection {
@@ -60,10 +57,8 @@ record OpDeleteKeyProjection {
 
 record OpDeleteEnumModelProjection extends OpDeleteModelProjection {
   override model: EnumTypeRef
-  override polymorphicTail: list[OpDeleteEnumModelProjection] // always empty since no enum inheritance - introduce an interface for those that have inheritance?
 }
 
 record OpDeletePrimitiveModelProjection extends OpDeleteModelProjection {
   override model: PrimitiveTypeRef
-  override polymorphicTail: list[OpDeletePrimitiveModelProjection]
 }

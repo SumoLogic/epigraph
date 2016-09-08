@@ -31,6 +31,7 @@ import epigraph.schema.FieldName
 record ReqOutputVarProjection {
   type: TypeRef
   tagProjections: list[ReqOutputTagProjection]
+  polymorphicTail: list[ReqOutputVarProjection]
 }
 
 record ReqOutputTagProjection {
@@ -42,14 +43,12 @@ abstract record ReqOutputModelProjection {
   model: DataTypeRef
   required: Boolean
   params: list[ReqParam]
-  polymorphicTail: list[ReqOutputModelProjection]
 }
 
 record ReqOutputRecordModelProjection extends ReqOutputModelProjection {
   override model: RecordTypeRef
   fieldProjections: list[ReqOutputFieldProjection]
   fieldProjectiAlt: map[FieldName, ReqOutputVarProjection] // TODO this or above (or both?)
-  override polymorphicTail: list[ReqOutputRecordModelProjection]
 }
 
 record ReqOutputFieldProjection {
@@ -61,22 +60,18 @@ record ReqOutputFieldProjection {
 record ReqOutputListModelProjection extends ReqOutputModelProjection {
   override model: ListTypeRef
   varProjection: ReqOutputVarProjection
-  override polymorphicTail: list[ReqOutputListModelProjection]
 }
 
 record ReqOutputMapModelProjection extends ReqOutputModelProjection {
   override model: MapTypeRef
   keysProjection: ReqKeysProjection { doc = "if `null` - all keys" }
   varProjection: ReqOutputVarProjection
-  override polymorphicTail: list[ReqOutputMapModelProjection] // TODO figure out what to do with keys in poly tail
 }
 
 record ReqOutputEnumModelProjection extends ReqOutputModelProjection {
   override model: EnumTypeRef
-  override polymorphicTail: list[ReqOutputEnumModelProjection] // always empty since no enum inheritance - introduce an interface for those that have inheritance?
 }
 
 record ReqOutputPrimitiveModelProjection extends ReqOutputModelProjection {
   override model: PrimitiveTypeRef
-  override polymorphicTail: list[ReqOutputPrimitiveModelProjection]
 }

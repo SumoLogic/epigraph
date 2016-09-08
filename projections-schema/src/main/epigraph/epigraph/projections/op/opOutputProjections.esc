@@ -13,6 +13,7 @@ import epigraph.schema.PrimitiveTypeRef
 record OpOutputVarProjection {
   type: TypeRef
   tagProjections: list[OpOutputTagProjection]
+  polymorphicTail: list[OpOutputVarProjection]
 }
 
 record OpOutputTagProjection {
@@ -25,13 +26,11 @@ abstract record OpOutputModelProjection {
   model: DataTypeRef
   includeInDefault: Boolean
   params: list[OpParam]
-  polymorphicTail: list[OpOutputModelProjection]
 }
 
 record OpOutputRecordModelProjection extends OpOutputModelProjection {
   override model: RecordTypeRef
   fieldProjections: list[OpOutputFieldProjection]
-  override polymorphicTail: list[OpOutputRecordModelProjection]
 }
 
 record OpOutputFieldProjection {
@@ -44,14 +43,12 @@ record OpOutputFieldProjection {
 record OpOutputListModelProjection extends OpOutputModelProjection {
   override model: ListTypeRef
   varProjection: OpOutputVarProjection
-  override polymorphicTail: list[OpOutputListModelProjection]
 }
 
 record OpOutputMapModelProjection extends OpOutputModelProjection {
   override model: MapTypeRef
   keyProjection: OpOutputKeyProjection { doc = "if `null` - keys are not accepted" }
   varProjection: OpOutputVarProjection
-  override polymorphicTail: list[OpOutputMapModelProjection] // TODO figure out what to do with keys in poly tail
 }
 
 record OpOutputKeyProjection {
@@ -61,10 +58,8 @@ record OpOutputKeyProjection {
 
 record OpOutputEnumModelProjection extends OpOutputModelProjection {
   override model: EnumTypeRef
-  override polymorphicTail: list[OpOutputEnumModelProjection] // always empty since no enum inheritance - introduce an interface for those that have inheritance?
 }
 
 record OpOutputPrimitiveModelProjection extends OpOutputModelProjection {
   override model: PrimitiveTypeRef
-  override polymorphicTail: list[OpOutputPrimitiveModelProjection]
 }

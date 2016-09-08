@@ -19,6 +19,7 @@ import epigraph.data.EnumDatum
 record OpInputVarProjection {
   type: TypeRef
   tagProjections: list[OpInputTagProjection]
+  polymorphicTail: list[OpInputVarProjection]
 }
 
 record OpInputTagProjection {
@@ -30,14 +31,12 @@ abstract record OpInputModelProjection {
   model: DataTypeRef
   required: Boolean
   defaultValue: Datum
-  polymorphicTail: list[OpInputModelProjection]
 }
 
 record OpInputRecordModelProjection extends OpInputModelProjection {
   override model: RecordTypeRef
   override defaultValue: RecordDatum
   fieldProjections: list[OpInputFieldProjection]
-  override polymorphicTail: list[OpInputRecordModelProjection]
 }
 
 record OpInputFieldProjection {
@@ -50,24 +49,20 @@ record OpInputListModelProjection extends OpInputModelProjection {
   override model: ListTypeRef
   override defaultValue: ListDatum
   varProjection: OpInputVarProjection
-  override polymorphicTail: list[OpInputListModelProjection]
 }
 
 record OpInputMapModelProjection extends OpInputModelProjection {
   override model: MapTypeRef
   override defaultValue: MapDatum
   varProjection: OpInputVarProjection
-  override polymorphicTail: list[OpInputMapModelProjection]
 }
 
 record OpInputEnumModelProjection extends OpInputModelProjection {
   override model: EnumTypeRef
   override defaultValue: EnumDatum
-  override polymorphicTail: list[OpInputEnumModelProjection] // always empty since no enum inheritance
 }
 
 record OpInputPrimitiveModelProjection extends OpInputModelProjection {
   override model: PrimitiveTypeRef
   override defaultValue: PrimitiveDatum
-  override polymorphicTail: list[OpInputPrimitiveModelProjection]
 }
