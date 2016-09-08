@@ -289,7 +289,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-plugin-plugin</artifactId>
-          <version>3.4</version>
+          <version>3.5</version>
           <executions>
             <execution>
               <id>generated-helpmojo</id>
@@ -299,6 +299,9 @@
               <phase>process-classes</phase><!-- doesn't see java annotations in default generate-sources phase -->
             </execution>
           </executions>
+          <configuration>
+            <mojoDependencies></mojoDependencies>
+          </configuration>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
