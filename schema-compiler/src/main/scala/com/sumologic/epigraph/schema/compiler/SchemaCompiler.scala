@@ -9,7 +9,6 @@ import java.util.Collections
 import com.intellij.lang.ParserDefinition
 import com.intellij.psi.PsiFile
 import com.sumologic.epigraph.schema.compiler.CPrettyPrinters._
-import com.sumologic.epigraph.util.JavaFunction
 import io.epigraph.schema.parser.SchemaParserDefinition
 import io.epigraph.schema.parser.psi.SchemaFile
 import org.intellij.grammar.LightPsi
@@ -132,10 +131,6 @@ class SchemaCompiler(
     }
   }
 
-  //private val AnonListTypeConstructor = JavaFunction[CAnonListTypeName, CAnonListType](new CAnonListType(_))
-
-  private val AnonMapTypeConstructor = JavaFunction[CAnonMapTypeName, CAnonMapType](new CAnonMapType(_))
-
   def resolveTypeRefs(): Unit = ctx.schemaFiles.values.par foreach { csf =>
     csf.typerefs foreach {
       case ctr: CTypeDefRef =>
@@ -147,10 +142,8 @@ class SchemaCompiler(
         }
       case ctr: CAnonListTypeRef =>
         ctr.resolveTo(ctx.getOrCreateAnonListOf(ctr.name.elementDataType))
-      //ctr.resolveTo(ctx.anonListTypes.computeIfAbsent(ctr.name, AnonListTypeConstructor))
       case ctr: CAnonMapTypeRef =>
-        // FIXME same as above
-        ctr.resolveTo(ctx.anonMapTypes.computeIfAbsent(ctr.name, AnonMapTypeConstructor))
+        ctr.resolveTo(ctx.getOrCreateAnonMapOf(ctr.name.keyTypeRef, ctr.name.valueDataType))
     }
   }
 
@@ -212,6 +205,7 @@ object SchemaCompiler {
     "builtin-types-schema/src/main/epigraph/epigraph/builtinTypes.esc",
     "java/core/src/test/epigraph/com/example/person.esc",
     "java/core/src/test/epigraph/com/example/user.esc"
+//    "data-schema/src/main/epigraph/epigraph/data/data.esc"
 //    "schema-schema/src/main/epigraph/epigraph/schema/names.esc",
 //    "schema-schema/src/main/epigraph/epigraph/schema/types.esc",
 //    "schema-schema/src/main/epigraph/epigraph/schema/Documented.esc",

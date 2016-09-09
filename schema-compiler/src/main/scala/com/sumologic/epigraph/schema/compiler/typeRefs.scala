@@ -55,6 +55,15 @@ abstract class CTypeRef protected(val csf: CSchemaFile)(implicit val ctx: CConte
     this
   }
 
+  def canEqual(other: Any): Boolean = other.isInstanceOf[CTypeRef]
+
+  override def equals(other: Any): Boolean = other match {
+    case that: CTypeRef => (that canEqual this) && name == that.name
+    case _ => false
+  }
+
+  override def hashCode(): Int = name.hashCode
+
 }
 
 

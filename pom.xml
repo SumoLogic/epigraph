@@ -68,10 +68,10 @@
       </activation>
       <modules>
         <module>builtin-types-schema</module>
-        <!--<module>data-schema</module>--><!-- NPE in compiler -->
+        <module>data-schema</module>
         <module>java-codegen-test</module>
-        <!--<module>operations-schema</module>--><!-- depends on data-schema -->
-        <!--<module>projections-schema</module>--><!-- depends on data-schema -->
+        <module>operations-schema</module>
+        <module>projections-schema</module>
         <module>scala-codegen-test</module>
         <module>schema-schema</module>
       </modules>

@@ -4,8 +4,8 @@ package com.sumologic.epigraph.schema.compiler
 
 import java.util.concurrent.{ConcurrentHashMap, ConcurrentLinkedQueue}
 
-import io.epigraph.lang.Fqn
 import com.sumologic.epigraph.util.JavaFunction
+import io.epigraph.lang.Fqn
 
 import scala.collection.JavaConversions._
 
@@ -29,7 +29,8 @@ class CContext(val tabWidth: Int = 2) {
   //val anonListTypes: ConcurrentHashMap[CAnonListTypeName, CAnonListType] = new java.util.concurrent.ConcurrentHashMap
   val anonListTypes: ConcurrentHashMap[CDataType, CAnonListType] = new java.util.concurrent.ConcurrentHashMap
 
-  val anonMapTypes: ConcurrentHashMap[CAnonMapTypeName, CAnonMapType] = new java.util.concurrent.ConcurrentHashMap
+  //val anonMapTypes: ConcurrentHashMap[CAnonMapTypeName, CAnonMapType] = new java.util.concurrent.ConcurrentHashMap
+  val anonMapTypes: ConcurrentHashMap[(CTypeRef, CDataType), CAnonMapType] = new java.util.concurrent.ConcurrentHashMap
 
   /** Types implicitly imported (unless superseeded by explicit import statement) by every schema file */
   val implicitImports: Map[String, Fqn] = Seq(
@@ -40,27 +41,6 @@ class CContext(val tabWidth: Int = 2) {
     "epigraph.Boolean"
   ).map(Fqn.fromDotSeparated).map { fqn => (fqn.last, fqn) }.toMap
 
-  // TODO private val AnonListTypeConstructor = JavaFunction[CAnonListTypeName, CAnonListType](new CAnonListType(_))
-
-  // TODO def getOrCreateAnonListType(elementType: CType) = anonListTypes.computeIfAbsent(elementType.name, AnonListTypeConstructor)
-
-  @deprecated("to be replaced with DataType based solution")
-  def getAnonListOf(elementType: CType): Option[CAnonListType] = // FIXME doesn't account for polymorphic and default tag
-    anonListTypes.entrySet().find(_.getKey.typeRef.resolved == elementType).map(_.getValue)
-
-  def getOrCreateAnonListOf(elementDataType: CDataType): CAnonListType =
-    anonListTypes.computeIfAbsent(elementDataType, AnonListTypeConstructor)
-
-  private val AnonListTypeConstructor = JavaFunction[CDataType, CAnonListType](new CAnonListType(_)(this))
-
-  @deprecated("to be replaced with DataType based solution")
-  def getAnonMapOf(keyType: CType, valueType: CType): Option[CAnonMapType] =
-    anonMapTypes.entrySet().find(entry =>
-      entry.getKey.keyTypeRef.resolved == keyType && entry.getKey.valueTypeRef.resolved == valueType
-    ).map(_.getValue)
-
-  def after[A](prevPhase: CPhase, default: A, f: => A): A = if (phase.ordinal <= prevPhase.ordinal) default else f
-
   def phase: CPhase = _phase
 
   def phase(next: CPhase): this.type = {
@@ -68,6 +48,19 @@ class CContext(val tabWidth: Int = 2) {
     _phase = next
     this
   }
+
+  def after[A](prevPhase: CPhase, default: A, f: => A): A = if (phase.ordinal <= prevPhase.ordinal) default else f
+
+  def getOrCreateAnonListOf(elementDataType: CDataType): CAnonListType =
+    anonListTypes.computeIfAbsent(elementDataType, AnonListTypeConstructor)
+
+  private val AnonListTypeConstructor = JavaFunction[CDataType, CAnonListType](new CAnonListType(_)(this))
+
+  def getOrCreateAnonMapOf(keyTypeRef: CTypeRef, valueDataType: CDataType): CAnonMapType =
+    anonMapTypes.computeIfAbsent((keyTypeRef, valueDataType), AnonMapTypeConstructor)
+
+  private val AnonMapTypeConstructor =
+    JavaFunction[(CTypeRef, CDataType), CAnonMapType] { case (kt, vt) => new CAnonMapType(kt, vt)(this) }
 
 }
 

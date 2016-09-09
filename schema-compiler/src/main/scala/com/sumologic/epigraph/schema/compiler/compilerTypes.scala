@@ -428,13 +428,16 @@ trait CMapType extends CType with CDatumType {self =>
 
 class CAnonMapType(override val name: CAnonMapTypeName)(implicit ctx: CContext) extends {
 
+  override val keyTypeRef: CTypeRef = name.keyTypeRef
+
   override val valueDataType: CDataType = name.valueDataType
 
 } with CMapType {
 
-  override type This = CAnonMapType
+  def this(keyTypeRef: CTypeRef, elementDataType: CDataType)(implicit ctx: CContext) =
+    this(new CAnonMapTypeName(keyTypeRef, elementDataType))
 
-  override val keyTypeRef: CTypeRef = name.keyTypeRef
+  override type This = CAnonMapType
 
   override protected val csf: CSchemaFile = valueDataType.csf
 
@@ -448,8 +451,21 @@ class CAnonMapType(override val name: CAnonMapTypeName)(implicit ctx: CContext) 
   /** Immediate parents of this type in order of decreasing priority */
   def linearizedParents: Seq[CAnonMapType] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, _linearizedParents)
 
-  private lazy val _linearizedParents: Seq[CAnonMapType] = valueTypeRef.resolved.linearizedParents.map { vp =>
-    ctx.getAnonMapOf(keyTypeRef.resolved, vp).get // FIXME map[K, Super] might not have been referenced in the schema?
+  private lazy val _linearizedParents: Seq[CAnonMapType] = valueDataType.typeRef.resolved match {
+    case vt: CVarTypeDef => valueDataType.effectiveDefaultTagName.map { tagName =>
+      if (!vt.effectiveTags.exists(_.name == tagName)) ctx.errors.add(
+        CError(csf.filename, CErrorPosition.NA, s"Tag `$tagName` is not defined for union type `${vt.name.name}`")
+      )
+      ctx.getOrCreateAnonMapOf(keyTypeRef, vt.dataType(valueDataType.polymorphic, None))
+    }.toSeq ++ vt.linearizedParents.map { vst =>
+      ctx.getOrCreateAnonMapOf(keyTypeRef,
+        vst.dataType(valueDataType./*TODO or false?*/ polymorphic, valueDataType.effectiveDefaultTagName)
+      )
+    }
+    case et: CDatumType => et.linearizedParents.map { vst =>
+      ctx.getOrCreateAnonMapOf(keyTypeRef, vst.dataType(valueDataType.polymorphic/*TODO or false?*/))
+    }
+    case unknown => throw new UnsupportedOperationException(unknown.toString)
   }
 
 }
