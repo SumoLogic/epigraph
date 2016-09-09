@@ -70,4 +70,8 @@ public abstract class ListType extends DatumType {
 
   public abstract @NotNull ListDatum.Mut createBuilder();
 
+
+  public interface Static<MyType extends ListType & ListType.Static<MyType>> extends DatumType.Static<MyType> {}
+
+
 }

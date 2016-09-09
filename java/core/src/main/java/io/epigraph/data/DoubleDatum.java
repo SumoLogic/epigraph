@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.Function;
 
 
-public interface DoubleDatum extends Datum {
+public interface DoubleDatum extends PrimitiveDatum<Double> {
 
   @Override
   @NotNull DoubleType type();
@@ -22,14 +22,14 @@ public interface DoubleDatum extends Datum {
   @NotNull Double getVal();
 
 
-  abstract class Impl extends Datum.Impl<DoubleType> implements DoubleDatum {
+  abstract class Impl extends PrimitiveDatum.Impl<Double, DoubleType> implements DoubleDatum {
 
     protected Impl(@NotNull DoubleType type) { super(type); }
 
   }
 
 
-  interface Raw extends DoubleDatum, Datum.Raw {
+  interface Raw extends DoubleDatum, PrimitiveDatum.Raw<Double> {
 
     @Override
     @NotNull DoubleDatum.Imm.Raw toImmutable();
@@ -37,7 +37,7 @@ public interface DoubleDatum extends Datum {
   }
 
 
-  interface Static extends DoubleDatum, Datum.Static {
+  interface Static extends DoubleDatum, PrimitiveDatum.Static<Double> {
 
     @Override
     @NotNull DoubleDatum.Imm.Static toImmutable();
@@ -45,13 +45,13 @@ public interface DoubleDatum extends Datum {
   }
 
 
-  interface Imm extends DoubleDatum, Datum.Imm {
+  interface Imm extends DoubleDatum, PrimitiveDatum.Imm<Double> {
 
     @Override
     @NotNull DoubleDatum.Imm.Raw _raw();
 
 
-    final class Raw extends DoubleDatum.Impl implements DoubleDatum.Imm, DoubleDatum.Raw, Datum.Imm.Raw {
+    final class Raw extends DoubleDatum.Impl implements DoubleDatum.Imm, DoubleDatum.Raw, PrimitiveDatum.Imm.Raw<Double> {
 
       private final @NotNull Double val;
 
@@ -73,7 +73,7 @@ public interface DoubleDatum extends Datum {
     }
 
 
-    interface Static extends DoubleDatum.Imm, DoubleDatum.Static, Datum.Imm.Static {
+    interface Static extends DoubleDatum.Imm, DoubleDatum.Static, PrimitiveDatum.Imm.Static<Double> {
 
       @Override
       @NotNull DoubleDatum.Imm.Static toImmutable();
@@ -110,7 +110,7 @@ public interface DoubleDatum extends Datum {
   }
 
 
-  abstract class Mut extends DoubleDatum.Impl implements Datum.Mut {
+  abstract class Mut extends DoubleDatum.Impl implements PrimitiveDatum.Mut<Double> {
 
     protected Mut(@NotNull DoubleType type) { super(type); }
 
@@ -120,7 +120,7 @@ public interface DoubleDatum extends Datum {
     public abstract @NotNull DoubleDatum.Mut.Raw _raw();
 
 
-    public static final class Raw extends DoubleDatum.Mut implements DoubleDatum.Raw, Datum.Mut.Raw {
+    public static final class Raw extends DoubleDatum.Mut implements DoubleDatum.Raw, PrimitiveDatum.Mut.Raw<Double> {
 
       private @NotNull Double val;
 
@@ -149,7 +149,7 @@ public interface DoubleDatum extends Datum {
 
 
     public static abstract class Static<MyImmDatum extends DoubleDatum.Imm.Static> extends DoubleDatum.Mut
-        implements DoubleDatum.Static, Datum.Mut.Static {
+        implements DoubleDatum.Static, PrimitiveDatum.Mut.Static<Double, MyImmDatum> {
 
       private final @NotNull DoubleDatum.Mut.Raw raw;
 

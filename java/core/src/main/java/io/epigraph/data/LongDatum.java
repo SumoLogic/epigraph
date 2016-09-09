@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.Function;
 
 
-public interface LongDatum extends Datum {
+public interface LongDatum extends PrimitiveDatum<Long> {
 
   @Override
   @NotNull LongType type();
@@ -22,14 +22,14 @@ public interface LongDatum extends Datum {
   @NotNull Long getVal();
 
 
-  abstract class Impl extends Datum.Impl<LongType> implements LongDatum {
+  abstract class Impl extends PrimitiveDatum.Impl<Long, LongType> implements LongDatum {
 
     protected Impl(@NotNull LongType type) { super(type); }
 
   }
 
 
-  interface Raw extends LongDatum, Datum.Raw {
+  interface Raw extends LongDatum, PrimitiveDatum.Raw<Long> {
 
     @Override
     @NotNull LongDatum.Imm.Raw toImmutable();
@@ -37,7 +37,7 @@ public interface LongDatum extends Datum {
   }
 
 
-  interface Static extends LongDatum, Datum.Static {
+  interface Static extends LongDatum, PrimitiveDatum.Static<Long> {
 
     @Override
     @NotNull LongDatum.Imm.Static toImmutable();
@@ -45,13 +45,13 @@ public interface LongDatum extends Datum {
   }
 
 
-  interface Imm extends LongDatum, Datum.Imm {
+  interface Imm extends LongDatum, PrimitiveDatum.Imm<Long> {
 
     @Override
     @NotNull LongDatum.Imm.Raw _raw();
 
 
-    final class Raw extends LongDatum.Impl implements LongDatum.Imm, LongDatum.Raw, Datum.Imm.Raw {
+    final class Raw extends LongDatum.Impl implements LongDatum.Imm, LongDatum.Raw, PrimitiveDatum.Imm.Raw<Long> {
 
       private final @NotNull Long val;
 
@@ -73,7 +73,7 @@ public interface LongDatum extends Datum {
     }
 
 
-    interface Static extends LongDatum.Imm, LongDatum.Static, Datum.Imm.Static {
+    interface Static extends LongDatum.Imm, LongDatum.Static, PrimitiveDatum.Imm.Static<Long> {
 
       @Override
       @NotNull LongDatum.Imm.Static toImmutable();
@@ -110,7 +110,7 @@ public interface LongDatum extends Datum {
   }
 
 
-  abstract class Mut extends LongDatum.Impl implements Datum.Mut {
+  abstract class Mut extends LongDatum.Impl implements PrimitiveDatum.Mut<Long> {
 
     protected Mut(@NotNull LongType type) { super(type); }
 
@@ -120,7 +120,7 @@ public interface LongDatum extends Datum {
     public abstract @NotNull LongDatum.Mut.Raw _raw();
 
 
-    public static final class Raw extends LongDatum.Mut implements LongDatum.Raw, Datum.Mut.Raw {
+    public static final class Raw extends LongDatum.Mut implements LongDatum.Raw, PrimitiveDatum.Mut.Raw<Long> {
 
       private @NotNull Long val;
 
@@ -149,7 +149,7 @@ public interface LongDatum extends Datum {
 
 
     public static abstract class Static<MyImmDatum extends LongDatum.Imm.Static> extends LongDatum.Mut
-        implements LongDatum.Static, Datum.Mut.Static {
+        implements LongDatum.Static, PrimitiveDatum.Mut.Static<Long, MyImmDatum> {
 
       private final @NotNull LongDatum.Mut.Raw raw;
 

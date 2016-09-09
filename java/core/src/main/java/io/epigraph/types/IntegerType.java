@@ -62,7 +62,7 @@ public abstract class IntegerType extends PrimitiveType {
       MyMutVal extends Val.Mut.Static<MyImmVal, MyMutDatum>,
       MyImmData extends Data.Imm.Static,
       MyMutData extends Data.Mut.Static<MyImmData>
-      > extends IntegerType implements DatumType.Static<
+      > extends IntegerType implements PrimitiveType.Static<
       IntegerType.Static<MyImmDatum, MyMutDatum, MyImmVal, MyMutVal, MyImmData, MyMutData>
       > {
 

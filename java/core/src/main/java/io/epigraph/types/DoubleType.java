@@ -62,7 +62,7 @@ public abstract class DoubleType extends PrimitiveType {
       MyMutVal extends Val.Mut.Static<MyImmVal, MyMutDatum>,
       MyImmData extends Data.Imm.Static,
       MyMutData extends Data.Mut.Static<MyImmData>
-      > extends DoubleType implements DatumType.Static<
+      > extends DoubleType implements PrimitiveType.Static<
       DoubleType.Static<MyImmDatum, MyMutDatum, MyImmVal, MyMutVal, MyImmData, MyMutData>
       > {
 

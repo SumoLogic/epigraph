@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.Function;
 
 
-public interface StringDatum extends Datum {
+public interface StringDatum extends PrimitiveDatum<String> {
 
   @Override
   @NotNull StringType type();
@@ -22,14 +22,14 @@ public interface StringDatum extends Datum {
   @NotNull String getVal();
 
 
-  abstract class Impl extends Datum.Impl<StringType> implements StringDatum {
+  abstract class Impl extends PrimitiveDatum.Impl<String, StringType> implements StringDatum {
 
     protected Impl(@NotNull StringType type) { super(type); }
 
   }
 
 
-  interface Raw extends StringDatum, Datum.Raw {
+  interface Raw extends StringDatum, PrimitiveDatum.Raw<String> {
 
     @Override
     @NotNull StringDatum.Imm.Raw toImmutable();
@@ -37,7 +37,7 @@ public interface StringDatum extends Datum {
   }
 
 
-  interface Static extends StringDatum, Datum.Static {
+  interface Static extends StringDatum, PrimitiveDatum.Static<String> {
 
     @Override
     @NotNull StringDatum.Imm.Static toImmutable();
@@ -45,13 +45,13 @@ public interface StringDatum extends Datum {
   }
 
 
-  interface Imm extends StringDatum, Datum.Imm {
+  interface Imm extends StringDatum, PrimitiveDatum.Imm<String> {
 
     @Override
     @NotNull StringDatum.Imm.Raw _raw();
 
 
-    final class Raw extends StringDatum.Impl implements StringDatum.Imm, StringDatum.Raw, Datum.Imm.Raw {
+    final class Raw extends StringDatum.Impl implements StringDatum.Imm, StringDatum.Raw, PrimitiveDatum.Imm.Raw<String> {
 
       private final @NotNull String val;
 
@@ -73,7 +73,7 @@ public interface StringDatum extends Datum {
     }
 
 
-    interface Static extends StringDatum.Imm, StringDatum.Static, Datum.Imm.Static {
+    interface Static extends StringDatum.Imm, StringDatum.Static, PrimitiveDatum.Imm.Static<String> {
 
       @Override
       @NotNull StringDatum.Imm.Static toImmutable();
@@ -110,7 +110,7 @@ public interface StringDatum extends Datum {
   }
 
 
-  abstract class Mut extends StringDatum.Impl implements Datum.Mut {
+  abstract class Mut extends StringDatum.Impl implements PrimitiveDatum.Mut<String> {
 
     protected Mut(@NotNull StringType type) { super(type); }
 
@@ -120,7 +120,7 @@ public interface StringDatum extends Datum {
     public abstract @NotNull StringDatum.Mut.Raw _raw();
 
 
-    public static final class Raw extends StringDatum.Mut implements StringDatum.Raw, Datum.Mut.Raw {
+    public static final class Raw extends StringDatum.Mut implements StringDatum.Raw, PrimitiveDatum.Mut.Raw<String> {
 
       private @NotNull String val;
 
@@ -149,7 +149,7 @@ public interface StringDatum extends Datum {
 
 
     public static abstract class Static<MyImmDatum extends StringDatum.Imm.Static> extends StringDatum.Mut
-        implements StringDatum.Static, Datum.Mut.Static {
+        implements StringDatum.Static, PrimitiveDatum.Mut.Static<String, MyImmDatum> {
 
       private final @NotNull StringDatum.Mut.Raw raw;
 

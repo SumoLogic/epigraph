@@ -36,4 +36,8 @@ public abstract class PrimitiveType extends DatumType { // TODO parameterize wit
 
   public interface Raw extends DatumType.Raw {}
 
+
+  public interface Static<MyType extends PrimitiveType & PrimitiveType.Static<MyType>>
+      extends DatumType.Static<MyType> {}
+
 }

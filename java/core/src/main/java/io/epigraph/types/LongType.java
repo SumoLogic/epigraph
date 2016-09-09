@@ -62,7 +62,7 @@ public abstract class LongType extends PrimitiveType {
       MyMutVal extends Val.Mut.Static<MyImmVal, MyMutDatum>,
       MyImmData extends Data.Imm.Static,
       MyMutData extends Data.Mut.Static<MyImmData>
-      > extends LongType implements DatumType.Static<
+      > extends LongType implements PrimitiveType.Static<
       LongType.Static<MyImmDatum, MyMutDatum, MyImmVal, MyMutVal, MyImmData, MyMutData>
       > {
 

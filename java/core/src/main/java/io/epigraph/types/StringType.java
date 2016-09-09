@@ -65,7 +65,7 @@ public abstract class StringType extends PrimitiveType {
       MyMutVal extends Val.Mut.Static<MyImmVal, MyMutDatum>,
       MyImmData extends Data.Imm.Static,
       MyMutData extends Data.Mut.Static<MyImmData>
-      > extends StringType implements DatumType.Static<
+      > extends StringType implements PrimitiveType.Static<
       StringType.Static<MyImmDatum, MyMutDatum, MyImmVal, MyMutVal, MyImmData, MyMutData>
       > {
 

@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.Function;
 
 
-public interface IntegerDatum extends Datum {
+public interface IntegerDatum extends PrimitiveDatum<Integer> {
 
   @Override
   @NotNull IntegerType type();
@@ -22,14 +22,14 @@ public interface IntegerDatum extends Datum {
   @NotNull Integer getVal();
 
 
-  abstract class Impl extends Datum.Impl<IntegerType> implements IntegerDatum {
+  abstract class Impl extends PrimitiveDatum.Impl<Integer, IntegerType> implements IntegerDatum {
 
     protected Impl(@NotNull IntegerType type) { super(type); }
 
   }
 
 
-  interface Raw extends IntegerDatum, Datum.Raw {
+  interface Raw extends IntegerDatum, PrimitiveDatum.Raw<Integer> {
 
     @Override
     @NotNull IntegerDatum.Imm.Raw toImmutable();
@@ -37,7 +37,7 @@ public interface IntegerDatum extends Datum {
   }
 
 
-  interface Static extends IntegerDatum, Datum.Static {
+  interface Static extends IntegerDatum, PrimitiveDatum.Static<Integer> {
 
     @Override
     @NotNull IntegerDatum.Imm.Static toImmutable();
@@ -45,13 +45,13 @@ public interface IntegerDatum extends Datum {
   }
 
 
-  interface Imm extends IntegerDatum, Datum.Imm {
+  interface Imm extends IntegerDatum, PrimitiveDatum.Imm<Integer> {
 
     @Override
     @NotNull IntegerDatum.Imm.Raw _raw();
 
 
-    final class Raw extends IntegerDatum.Impl implements IntegerDatum.Imm, IntegerDatum.Raw, Datum.Imm.Raw {
+    final class Raw extends IntegerDatum.Impl implements IntegerDatum.Imm, IntegerDatum.Raw, PrimitiveDatum.Imm.Raw<Integer> {
 
       private final @NotNull Integer val;
 
@@ -73,7 +73,7 @@ public interface IntegerDatum extends Datum {
     }
 
 
-    interface Static extends IntegerDatum.Imm, IntegerDatum.Static, Datum.Imm.Static {
+    interface Static extends IntegerDatum.Imm, IntegerDatum.Static, PrimitiveDatum.Imm.Static<Integer> {
 
       @Override
       @NotNull IntegerDatum.Imm.Static toImmutable();
@@ -110,7 +110,7 @@ public interface IntegerDatum extends Datum {
   }
 
 
-  abstract class Mut extends IntegerDatum.Impl implements Datum.Mut {
+  abstract class Mut extends IntegerDatum.Impl implements PrimitiveDatum.Mut<Integer> {
 
     protected Mut(@NotNull IntegerType type) { super(type); }
 
@@ -120,7 +120,7 @@ public interface IntegerDatum extends Datum {
     public abstract @NotNull IntegerDatum.Mut.Raw _raw();
 
 
-    public static final class Raw extends IntegerDatum.Mut implements IntegerDatum.Raw, Datum.Mut.Raw {
+    public static final class Raw extends IntegerDatum.Mut implements IntegerDatum.Raw, PrimitiveDatum.Mut.Raw<Integer> {
 
       private @NotNull Integer val;
 
@@ -149,7 +149,7 @@ public interface IntegerDatum extends Datum {
 
 
     public static abstract class Static<MyImmDatum extends IntegerDatum.Imm.Static> extends IntegerDatum.Mut
-        implements IntegerDatum.Static, Datum.Mut.Static {
+        implements IntegerDatum.Static, PrimitiveDatum.Mut.Static<Integer, MyImmDatum> {
 
       private final @NotNull IntegerDatum.Mut.Raw raw;
 

@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.Function;
 
 
-public interface BooleanDatum extends Datum {
+public interface BooleanDatum extends PrimitiveDatum<Boolean> {
 
   @Override
   @NotNull BooleanType type();
@@ -22,14 +22,14 @@ public interface BooleanDatum extends Datum {
   @NotNull Boolean getVal();
 
 
-  abstract class Impl extends Datum.Impl<BooleanType> implements BooleanDatum {
+  abstract class Impl extends PrimitiveDatum.Impl<Boolean, BooleanType> implements BooleanDatum {
 
     protected Impl(@NotNull BooleanType type) { super(type); }
 
   }
 
 
-  interface Raw extends BooleanDatum, Datum.Raw {
+  interface Raw extends BooleanDatum, PrimitiveDatum.Raw<Boolean> {
 
     @Override
     @NotNull BooleanDatum.Imm.Raw toImmutable();
@@ -37,7 +37,7 @@ public interface BooleanDatum extends Datum {
   }
 
 
-  interface Static extends BooleanDatum, Datum.Static {
+  interface Static extends BooleanDatum, PrimitiveDatum.Static<Boolean> {
 
     @Override
     @NotNull BooleanDatum.Imm.Static toImmutable();
@@ -45,13 +45,13 @@ public interface BooleanDatum extends Datum {
   }
 
 
-  interface Imm extends BooleanDatum, Datum.Imm {
+  interface Imm extends BooleanDatum, PrimitiveDatum.Imm<Boolean> {
 
     @Override
     @NotNull BooleanDatum.Imm.Raw _raw();
 
 
-    final class Raw extends BooleanDatum.Impl implements BooleanDatum.Imm, BooleanDatum.Raw, Datum.Imm.Raw {
+    final class Raw extends BooleanDatum.Impl implements BooleanDatum.Imm, BooleanDatum.Raw, PrimitiveDatum.Imm.Raw<Boolean> {
 
       private final @NotNull Boolean val;
 
@@ -73,7 +73,7 @@ public interface BooleanDatum extends Datum {
     }
 
 
-    interface Static extends BooleanDatum.Imm, BooleanDatum.Static, Datum.Imm.Static {
+    interface Static extends BooleanDatum.Imm, BooleanDatum.Static, PrimitiveDatum.Imm.Static<Boolean> {
 
       @Override
       @NotNull BooleanDatum.Imm.Static toImmutable();
@@ -110,7 +110,7 @@ public interface BooleanDatum extends Datum {
   }
 
 
-  abstract class Mut extends BooleanDatum.Impl implements Datum.Mut {
+  abstract class Mut extends BooleanDatum.Impl implements PrimitiveDatum.Mut<Boolean> {
 
     protected Mut(@NotNull BooleanType type) { super(type); }
 
@@ -120,7 +120,7 @@ public interface BooleanDatum extends Datum {
     public abstract @NotNull BooleanDatum.Mut.Raw _raw();
 
 
-    public static final class Raw extends BooleanDatum.Mut implements BooleanDatum.Raw, Datum.Mut.Raw {
+    public static final class Raw extends BooleanDatum.Mut implements BooleanDatum.Raw, PrimitiveDatum.Mut.Raw<Boolean> {
 
       private @NotNull Boolean val;
 
@@ -149,7 +149,7 @@ public interface BooleanDatum extends Datum {
 
 
     public static abstract class Static<MyImmDatum extends BooleanDatum.Imm.Static> extends BooleanDatum.Mut
-        implements BooleanDatum.Static, Datum.Mut.Static {
+        implements BooleanDatum.Static, PrimitiveDatum.Mut.Static<Boolean, MyImmDatum> {
 
       private final @NotNull BooleanDatum.Mut.Raw raw;
 

@@ -103,7 +103,7 @@ public interface UserId extends PersonId {
 
   final class Builder extends IntegerDatum.Mut.Static<UserId.Imm> implements UserId {
 
-    private Builder(Raw raw) { super(UserId.type, raw, UserId.Imm.Impl::new); }
+    private Builder(IntegerDatum.Mut.Raw raw) { super(UserId.type, raw, UserId.Imm.Impl::new); }
 
 
     final static class Value extends Val.Mut.Static<UserId.Imm.Value, UserId.Builder> implements UserId.Value {
