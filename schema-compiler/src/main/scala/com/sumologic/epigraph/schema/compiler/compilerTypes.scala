@@ -187,6 +187,8 @@ class CVarTypeDef(csf: CSchemaFile, override val psi: SchemaVarTypeDef)(implicit
     imb.result()
   }
 
+  // TODO tags with override modifier should check they have superfield(s)
+
   private def effectiveTag(declaredTagOpt: Option[CTag], supertags: Seq[CTag]): CTag = {
     declaredTagOpt match {
       case Some(dt) => // check if declared tag is compatible with all (if any) overridden ones
@@ -342,6 +344,8 @@ class CRecordTypeDef(csf: CSchemaFile, override val psi: SchemaRecordTypeDef)(im
 }
 
 class CField(val csf: CSchemaFile, val psi: SchemaFieldDecl, val host: CRecordTypeDef)(implicit val ctx: CContext) {
+
+  // TODO fields with override modifier should check they have superfield(s)
 
   val name: String = psi.getQid.getCanonicalName
 
