@@ -8,8 +8,8 @@ class DefaultEpigraphSourceSet implements EpigraphSourceSet {
   private final SourceDirectorySet epigraph
 
   DefaultEpigraphSourceSet(String displayName, SourceDirectorySetFactory sourceDirectorySetFactory) {
-    epigraph = sourceDirectorySetFactory.create(displayName + " Epigraph source")
-    epigraph.getFilter().include("**/*.esc")
+    epigraph = sourceDirectorySetFactory.create(displayName + ' Epigraph schema source')
+    epigraph.getFilter().include('**/*.' + EpigraphSchemaTask.SCHEMA_EXTENSION)
   }
 
   @Override

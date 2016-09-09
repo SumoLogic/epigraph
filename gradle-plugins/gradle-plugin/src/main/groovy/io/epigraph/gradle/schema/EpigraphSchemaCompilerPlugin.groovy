@@ -1,5 +1,7 @@
-package io.epigraph.gradle
+package io.epigraph.gradle.schema
 
+import io.epigraph.gradle.DefaultEpigraphSourceSet
+import io.epigraph.gradle.EpigraphPluginConvention
 import org.gradle.api.Action
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -21,14 +23,14 @@ import org.gradle.language.base.plugins.LanguageBasePlugin
 
 import javax.inject.Inject
 
-class EpigraphPlugin implements Plugin<ProjectInternal> {
+class EpigraphSchemaCompilerPlugin implements Plugin<ProjectInternal> {
   private static final String EPIGRAPH_PACKAGING_TYPE = 'epigraph-schema'
 
   private final SourceDirectorySetFactory sourceDirectorySetFactory
   private final Instantiator instantiator
 
   @Inject
-  public EpigraphPlugin(SourceDirectorySetFactory sourceDirectorySetFactory, Instantiator instantiator) {
+  public EpigraphSchemaCompilerPlugin(SourceDirectorySetFactory sourceDirectorySetFactory, Instantiator instantiator) {
     this.sourceDirectorySetFactory = sourceDirectorySetFactory
     this.instantiator = instantiator
   }
@@ -76,7 +78,7 @@ class EpigraphPlugin implements Plugin<ProjectInternal> {
       compileSchemaTask.setDescription("Process $sourceSet.name Epigraph schemas.")
       compileSchemaTask.setGroup(BasePlugin.BUILD_GROUP)
       compileSchemaTask.setSource(epigraphDirectorySet)
-      compileSchemaTask.outputs.dir srcDir // TODO better way to make it incremental? It won't unless output dir is defined
+      compileSchemaTask.outputs.dir srcDir // TODO better way to make it incremental? It won't be unless output dir is defined
 
       if (isTestSourceSet(sourceSet)) {
         testCompileTasks.add(compileSchemaTask)
@@ -118,11 +120,7 @@ class EpigraphPlugin implements Plugin<ProjectInternal> {
   }
 
   private static Configuration createCompileConfiguration(Project project, SourceSet sourceSet) {
-    return createConfiguration(project, sourceSet.getCompileConfigurationName())
-  }
-
-  private static Configuration createConfiguration(Project project, String name) {
-    return project.configurations.maybeCreate(name);
+    return project.configurations.maybeCreate(sourceSet.getCompileConfigurationName())
   }
 
   private static void configureIdeaModule(Project project, SourceSet sourceSet, String srcDir) {

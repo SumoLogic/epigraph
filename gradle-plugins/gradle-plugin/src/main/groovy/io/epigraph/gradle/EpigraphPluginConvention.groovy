@@ -21,7 +21,7 @@ class EpigraphPluginConvention {
         DefaultSourceSetContainer.class,
         project.getFileResolver(), project.getTasks(), instantiator,
         project.getServices().get(SourceDirectorySetFactory.class))
-    docsDirName = "docs"
+    docsDirName = 'docs'
   }
 
   /**
