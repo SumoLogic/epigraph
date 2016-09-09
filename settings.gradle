@@ -13,7 +13,7 @@ Map<String, String> modules = [
     'builtin-types-schema'               : 'epigraph-builtin-types-schema',
     'core'                               : 'epigraph-core',
     'data-schema'                        : 'epigraph-data-schema',
-    'gradle-plugin'                      : 'epigraph-gradle-plugin',
+    'gradle-plugins/gradle-plugin'       : 'epigraph-gradle-plugin',
     'examples/users-example/users-schema': 'users-schema',
     'idea-plugin'                        : 'idea-plugin',
     'idl-parser'                         : 'epigraph-idl-parser',
