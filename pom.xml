@@ -36,16 +36,7 @@
   </developers>
 
   <modules>
-    <module>builtin-types-schema</module>
-    <module>core</module>
-    <module>lang-common</module>
-    <!--<module>maven-plugin</module>-->
-    <module>scala-codegen</module>
-    <module>scala-codegen-test</module>
-    <module>schema-schema</module>
-    <module>schema-compiler</module>
-    <!--<module>idea-plugin</module>-->
-    <module>schema-parser</module>
+    <module>jar-mavenizer-plugin</module>
   </modules>
 
   <properties>
@@ -225,11 +216,24 @@
 
       <plugins>
 
-        <plugin><!-- must be installed (circular dependency!) TODO fix this... -->
+        <plugin>
           <groupId>com.sumologic.epigraph</groupId>
           <artifactId>epigraph-maven-plugin</artifactId>
           <version>0.0-SNAPSHOT</version>
           <extensions>true</extensions>
+        </plugin>
+
+        <plugin>
+          <groupId>com.sumologic.epigraph</groupId>
+          <artifactId>epigraph-java-maven-plugin</artifactId>
+          <version>0.0-SNAPSHOT</version>
+          <executions>
+            <execution>
+              <goals>
+                <goal>generate-sources</goal>
+              </goals>
+            </execution>
+          </executions>
         </plugin>
 
         <plugin>
@@ -349,5 +353,50 @@
     </pluginManagement>
 
   </build>
+
+  <profiles>
+    <!-- mvn clean install -P-default,-schemas && mvn install -P light-psi,-default,-schemas && mvn install -P-schemas && mvn install -->
+    <profile>
+      <id>default</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <modules>
+        <module>core</module>
+        <module>java</module>
+        <module>lang-common</module>
+        <!--<module>light-psi</module>-->
+        <module>maven-plugin</module>
+        <module>scala-codegen</module>
+        <module>schema-compiler</module>
+        <!--<module>idea-plugin</module>-->
+        <module>schema-parser</module>
+      </modules>
+    </profile>
+
+    <profile><!-- specify `-P-schemas` option to deactivate (e.g. if epigraph maven plugins are not available) -->
+      <id>schemas</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <modules>
+        <module>builtin-types-schema</module>
+        <!--<module>data-schema</module>--><!-- NPE in compiler -->
+        <module>java-codegen-test</module>
+        <!--<module>operations-schema</module>--><!-- depends on data-schema -->
+        <!--<module>projections-schema</module>-->
+        <module>scala-codegen-test</module>
+        <module>schema-schema</module>
+      </modules>
+    </profile>
+
+    <profile><!-- specify `-P light-psi` option to activate (e.g. to install light-psi artifact) -->
+      <id>light-psi</id>
+      <modules>
+        <module>light-psi</module>
+      </modules>
+    </profile>
+
+  </profiles>
 
 </project>

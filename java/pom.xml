@@ -16,7 +16,7 @@
   <modules>
     <module>codegen</module>
     <module>core</module>
-    <!--<module>maven-plugin</module>-->
+    <module>maven-plugin</module>
   </modules>
 
   <properties>
@@ -153,7 +153,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-plugin-plugin</artifactId>
-          <version>3.3</version>
+          <version>3.5</version>
           <executions>
             <execution>
               <id>generated-helpmojo</id>
