@@ -10,13 +10,14 @@ rootProject.name = theName
 
 
 Map<String, String> modules = [
-    'core'                               : 'epigraph-core',
-    'gradle-plugins/gradle-plugin'       : 'epigraph-gradle-plugin',
-    'lang-common'                        : 'epigraph-lang-common',
-    'light-psi'                          : 'epigraph-light-psi',
-    'maven-plugin'                       : 'epigraph-maven-plugin',
-    'schema-compiler'                    : 'epigraph-schema-compiler',
-    'schema-parser'                      : 'epigraph-schema-parser'
+    'core'                                        : 'epigraph-core',
+    'gradle-plugins/schema-compiler-plugin'       : 'epigraph-schema-compiler-gradle-plugin',
+    'gradle-plugins/gradle-plugins-common'        : 'epigraph-gradle-plugins-common',
+    'lang-common'                                 : 'epigraph-lang-common',
+    'light-psi'                                   : 'epigraph-light-psi',
+    'maven-plugin'                                : 'epigraph-maven-plugin',
+    'schema-compiler'                             : 'epigraph-schema-compiler',
+    'schema-parser'                               : 'epigraph-schema-parser'
 ]
 
 modules.each { dir, name ->

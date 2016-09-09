@@ -1,0 +1,18 @@
+apply plugin: 'groovy'
+
+dependencies {
+  compile project(':epigraph-schema-compiler')
+
+  compile gradleApi()
+  compile localGroovy()
+  testCompile gradleTestKit()
+  testCompile 'junit:junit'
+  testCompile('org.spockframework:spock-core') { exclude module: 'groovy-all' }
+}
+
+plugins.withType(JavaPlugin) {
+  project.tasks.withType(GroovyCompile) { task ->
+    task.sourceCompatibility = 1.7
+    task.targetCompatibility = 1.7
+  }
+}
