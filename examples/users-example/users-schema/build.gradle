@@ -1,5 +1,5 @@
 plugins {
-  id "io.epigraph" version "0.0"
+  id 'io.epigraph.schema' version "0.0"
 }
 
 group = 'com.example.epigraph'
