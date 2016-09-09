@@ -4,9 +4,7 @@ package io.epigraph.types;
 
 import io.epigraph.data.Data;
 import io.epigraph.data.Val;
-import io.epigraph.names.AnonListTypeName;
 import io.epigraph.names.TypeName;
-import io.epigraph.util.LazyInitializer;
 import io.epigraph.util.Unmodifiable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -16,7 +14,6 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Supplier;
 
 
 public abstract class Type { // TODO split into interface and impl
@@ -70,23 +67,9 @@ public abstract class Type { // TODO split into interface and impl
 
   public boolean isAssignableFrom(@NotNull Type type) { return type.doesExtend(this); }
 
-//  private final LazyInitializer<ListType> listOf = new LazyInitializer<>(listTypeSupplier()); // FIXME race?
-
-  // FIXME - move to .Raw types (or remove)
-//  protected abstract @NotNull Supplier<ListType> listTypeSupplier(); // e.g. () -> new AnonListType(false, this)
-
-//  protected @NotNull Supplier<ListType> throwingListTypeSupplier = () -> { // TODO or construct raw list type?
-//    throw new IllegalStateException(
-//        "'" + AnonListTypeName.of(false, this.name()) + "' not used anywhere in the schema"
-//    );
-//  };
-
-
-//  public ListType listOf() { return listOf.get(); }
-
   public abstract @NotNull Collection<@NotNull ? extends Tag> immediateTags();
 
-  public abstract @NotNull Data.Mut createMutableData();
+  public abstract @NotNull Data.Mut createDataBuilder();
 
   public final @NotNull Collection<@NotNull ? extends Tag> tags() {
     // TODO produce better ordering of the tags (i.e. supertypes first, in the order of supertypes and their tags declaration)
@@ -128,14 +111,8 @@ public abstract class Type { // TODO split into interface and impl
 
     public @NotNull String name() { return name; }
 
-    public @NotNull Val.Mut createMutableValue() { return this.type.createMutableValue(); }
+    public @NotNull Val.Mut createMutableValue() { return this.type.createValueBuilder(); }
 
   }
-
-//  public static interface Tagged { // TODO remove?
-//
-//    public Tag tag();
-//
-//  }
 
 }

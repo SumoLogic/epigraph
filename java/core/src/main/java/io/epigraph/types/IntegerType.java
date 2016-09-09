@@ -47,10 +47,10 @@ public abstract class IntegerType extends PrimitiveType {
     }
 
     @Override
-    public @NotNull Val.Mut.Raw createMutableValue() { return new Val.Mut.Raw(this); }
+    public @NotNull Val.Mut.Raw createValueBuilder() { return new Val.Mut.Raw(this); }
 
     @Override
-    public @NotNull Data.Mut.Raw createMutableData() { return new Data.Mut.Raw(this); }
+    public @NotNull Data.Mut.Raw createDataBuilder() { return new Data.Mut.Raw(this); }
 
   }
 
@@ -91,10 +91,10 @@ public abstract class IntegerType extends PrimitiveType {
     }
 
     @Override
-    public final @NotNull MyMutVal createMutableValue() { return mutValConstructor.apply(new Val.Mut.Raw(this)); }
+    public final @NotNull MyMutVal createValueBuilder() { return mutValConstructor.apply(new Val.Mut.Raw(this)); }
 
     @Override
-    public final @NotNull MyMutData createMutableData() { return mutDataConstructor.apply(new Data.Mut.Raw(this)); }
+    public final @NotNull MyMutData createDataBuilder() { return mutDataConstructor.apply(new Data.Mut.Raw(this)); }
 
   }
 

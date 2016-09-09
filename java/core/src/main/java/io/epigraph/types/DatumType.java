@@ -38,7 +38,7 @@ public abstract class DatumType extends Type {
 
   public @NotNull DataType dataType(boolean polymorphic) { return new DataType(polymorphic, this, self); } // TODO cache
 
-  public abstract @NotNull Val.Mut createMutableValue();
+  public abstract @NotNull Val.Mut createValueBuilder();
 
 
   public interface Raw extends Type.Raw {}

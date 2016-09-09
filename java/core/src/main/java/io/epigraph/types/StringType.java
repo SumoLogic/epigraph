@@ -49,14 +49,11 @@ public abstract class StringType extends PrimitiveType {
       return new StringDatum.Mut.Raw(this, val);
     }
 
-//    @Override
-//    protected @NotNull Supplier<@NotNull ListType> listTypeSupplier() { return () -> new AnonListType.Raw(this); }
+    @Override
+    public @NotNull Val.Mut.Raw createValueBuilder() { return new Val.Mut.Raw(this); }
 
     @Override
-    public @NotNull Val.Mut.Raw createMutableValue() { return new Val.Mut.Raw(this); }
-
-    @Override
-    public @NotNull Data.Mut.Raw createMutableData() { return new Data.Mut.Raw(this); }
+    public @NotNull Data.Mut.Raw createDataBuilder() { return new Data.Mut.Raw(this); }
 
   }
 
@@ -97,14 +94,10 @@ public abstract class StringType extends PrimitiveType {
     }
 
     @Override
-    public final @NotNull MyMutVal createMutableValue() { return mutValConstructor.apply(new Val.Mut.Raw(this)); }
+    public final @NotNull MyMutVal createValueBuilder() { return mutValConstructor.apply(new Val.Mut.Raw(this)); }
 
     @Override
-    public final @NotNull MyMutData createMutableData() { return mutDataConstructor.apply(new Data.Mut.Raw(this)); }
-
-//    // should be overridden in (generated) static types that have lists of themselves declared in the schema
-//    @Override
-//    protected @NotNull Supplier<ListType> listTypeSupplier() { return throwingListTypeSupplier; }
+    public final @NotNull MyMutData createDataBuilder() { return mutDataConstructor.apply(new Data.Mut.Raw(this)); }
 
   }
 

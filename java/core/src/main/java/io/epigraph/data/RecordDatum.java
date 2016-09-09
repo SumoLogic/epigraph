@@ -215,7 +215,7 @@ public interface RecordDatum extends Datum {
 
       public @NotNull Data.Mut getOrCreateFieldData(@NotNull Field field) {
         Data.Mut data = _getData(field);
-        if (data == null) _setData(field, data = field.type.createMutableData());
+        if (data == null) _setData(field, data = field.type.createDataBuilder());
         return data;
       }
     }

@@ -60,11 +60,7 @@ public abstract class UnionType extends Type {
     }
 
     @Override // TODO rename to createDataBuilder()?
-    public final @NotNull MyMutData createMutableData() { return mutDataConstructor.apply(new Data.Mut.Raw(this)); }
-
-//    // should be overridden in (generated) static types that have lists of themselves declared in the schema
-//    @Override
-//    protected @NotNull Supplier<ListType> listTypeSupplier() { return throwingListTypeSupplier; }
+    public final @NotNull MyMutData createDataBuilder() { return mutDataConstructor.apply(new Data.Mut.Raw(this)); }
 
   }
 

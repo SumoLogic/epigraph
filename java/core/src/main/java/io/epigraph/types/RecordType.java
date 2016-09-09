@@ -176,14 +176,10 @@ public abstract class RecordType extends DatumType {
     }
 
     @Override
-    public final @NotNull MyMutVal createMutableValue() { return mutValConstructor.apply(new Val.Mut.Raw(this)); }
+    public final @NotNull MyMutVal createValueBuilder() { return mutValConstructor.apply(new Val.Mut.Raw(this)); }
 
     @Override
-    public final @NotNull MyMutData createMutableData() { return mutDataConstructor.apply(new Data.Mut.Raw(this)); }
-
-//    // should be overridden in (generated) static types that have lists of themselves declared in the schema
-//    @Override
-//    protected @NotNull Supplier<ListType> listTypeSupplier() { return throwingListTypeSupplier; }
+    public final @NotNull MyMutData createDataBuilder() { return mutDataConstructor.apply(new Data.Mut.Raw(this)); }
 
   }
 

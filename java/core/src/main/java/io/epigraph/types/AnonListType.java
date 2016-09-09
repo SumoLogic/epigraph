@@ -40,17 +40,14 @@ public abstract class AnonListType extends ListType {
       return tag == null ? null : type.tagsMap().get(tag.name);
     }
 
-//    @Override
-//    protected @NotNull Supplier<ListType> listTypeSupplier() { return () -> new AnonListType.Raw(this); }
-
     @Override
     public @NotNull ListDatum.Mut createBuilder() { return new ListDatum.Mut.Raw(this); }
 
     @Override
-    public @NotNull Val.Mut createMutableValue() { return new Val.Mut.Raw(this); }
+    public @NotNull Val.Mut createValueBuilder() { return new Val.Mut.Raw(this); }
 
     @Override
-    public @NotNull Data.Mut createMutableData() { return new Data.Mut.Raw(this); }
+    public @NotNull Data.Mut createDataBuilder() { return new Data.Mut.Raw(this); }
 
   }
 
@@ -96,14 +93,10 @@ public abstract class AnonListType extends ListType {
     public final @NotNull MyMutDatum createBuilder() { return mutDatumConstructor.apply(new ListDatum.Mut.Raw(this)); }
 
     @Override
-    public final @NotNull MyMutVal createMutableValue() { return mutValConstructor.apply(new Val.Mut.Raw(this)); }
+    public final @NotNull MyMutVal createValueBuilder() { return mutValConstructor.apply(new Val.Mut.Raw(this)); }
 
     @Override
-    public final @NotNull MyMutData createMutableData() { return mutDataConstructor.apply(new Data.Mut.Raw(this)); }
-
-//    // should be overridden in (generated) static types that have lists of themselves declared in the schema
-//    @Override
-//    protected @NotNull Supplier<ListType> listTypeSupplier() { return throwingListTypeSupplier; }
+    public final @NotNull MyMutData createDataBuilder() { return mutDataConstructor.apply(new Data.Mut.Raw(this)); }
 
   }
 
