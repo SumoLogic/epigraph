@@ -9,7 +9,7 @@ pluginRepositories {
 rootProject.name = theName
 
 // map from module (sub-project) path to full module name (maven artifact id)
-Map<String, String> moduleNames = [
+Map<String, String> modules = [
     'builtin-types-schema'               : 'epigraph-builtin-types-schema',
     'core'                               : 'epigraph-core',
     'data-schema'                        : 'epigraph-data-schema',
@@ -35,7 +35,7 @@ Map<String, String> moduleNames = [
 ]
 
 // uncomment to build and publish (`publishToMavenLocal`) gradle and maven plugins for the first time
-//Map<String, String> moduleNames = [
+//Map<String, String> modules = [
 //    'core'           : 'epigraph-core',
 //    'gradle-plugin'  : 'epigraph-gradle-plugin',
 //    'light-psi'      : 'epigraph-light-psi',
@@ -44,7 +44,7 @@ Map<String, String> moduleNames = [
 //    'schema-parser'  : 'epigraph-schema-parser'
 //]
 
-moduleNames.each { dir, name ->
+modules.each { dir, name ->
   include name
   project(":$name").projectDir = file(dir)
 }
