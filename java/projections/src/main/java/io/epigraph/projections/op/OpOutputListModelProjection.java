@@ -6,7 +6,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
-import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -20,9 +19,8 @@ public class OpOutputListModelProjection extends OpOutputModelProjection<ListTyp
   public OpOutputListModelProjection(@NotNull ListType model,
                                      boolean includeInDefault,
                                      @Nullable Set<OpParam> params,
-                                     @NotNull OpOutputVarProjection itemsProjection,
-                                     @Nullable LinkedHashSet<OpOutputListModelProjection> polymorphicTail) {
-    super(model, includeInDefault, params, polymorphicTail);
+                                     @NotNull OpOutputVarProjection itemsProjection) {
+    super(model, includeInDefault, params);
     this.itemsProjection = itemsProjection;
   }
 
@@ -67,6 +65,5 @@ public class OpOutputListModelProjection extends OpOutputModelProjection<ListTyp
     l.end();
 
     l.end().brk().print("}");
-    if (polymorphicTail != null && !polymorphicTail.isEmpty()) prettyPrintTail(l, polymorphicTail);
   }
 }

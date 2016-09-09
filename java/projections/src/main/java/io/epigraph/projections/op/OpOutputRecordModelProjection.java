@@ -19,9 +19,8 @@ public class OpOutputRecordModelProjection extends OpOutputModelProjection<Recor
   public OpOutputRecordModelProjection(@NotNull RecordType model,
                                        boolean includeInDefault,
                                        @Nullable Set<OpParam> params,
-                                       @Nullable LinkedHashSet<OpOutputFieldProjection> fieldProjections,
-                                       @Nullable LinkedHashSet<OpOutputRecordModelProjection> polymorphicTail) {
-    super(model, includeInDefault, params, polymorphicTail);
+                                       @Nullable LinkedHashSet<OpOutputFieldProjection> fieldProjections) {
+    super(model, includeInDefault, params);
     this.fieldProjections = fieldProjections;
 
     // check that fields belong to proper types? Currently impossible: field doesn't know it's host
@@ -35,11 +34,6 @@ public class OpOutputRecordModelProjection extends OpOutputModelProjection<Recor
   @NotNull
   public static LinkedHashSet<OpOutputFieldProjection> fields(OpOutputFieldProjection... fieldProjections) {
     return new LinkedHashSet<>(Arrays.asList(fieldProjections));
-  }
-
-  @NotNull
-  public static LinkedHashSet<OpOutputRecordModelProjection> tails(OpOutputRecordModelProjection... tails) {
-    return new LinkedHashSet<>(Arrays.asList(tails));
   }
 
   @Nullable
@@ -105,6 +99,5 @@ public class OpOutputRecordModelProjection extends OpOutputModelProjection<Recor
     }
 
     l.end().brk().print("}");
-    if (polymorphicTail != null && !polymorphicTail.isEmpty()) prettyPrintTail(l, polymorphicTail);
   }
 }

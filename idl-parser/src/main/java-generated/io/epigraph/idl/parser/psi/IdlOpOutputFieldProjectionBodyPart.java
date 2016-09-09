@@ -13,7 +13,4 @@ public interface IdlOpOutputFieldProjectionBodyPart extends PsiElement {
   @Nullable
   IdlOpParameters getOpParameters();
 
-  @Nullable
-  PsiElement getIncludeInDefault();
-
 }

@@ -5,9 +5,11 @@ import de.uka.ilkd.pp.PrettyPrintable;
 import io.epigraph.types.Type;
 import io.epigraph.util.pp.DataPrettyPrinter;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.LinkedHashSet;
+import java.util.Objects;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -17,16 +19,20 @@ public class OpOutputVarProjection implements PrettyPrintable {
   private final Type type;
   @NotNull
   private final LinkedHashSet<OpOutputTagProjection> tagProjections;
+  @Nullable
+  private final LinkedHashSet<OpOutputVarProjection> polymorphicTails;
 
   public OpOutputVarProjection(@NotNull Type type,
-                               @NotNull LinkedHashSet<OpOutputTagProjection> tagProjections) {
+                               @NotNull LinkedHashSet<OpOutputTagProjection> tagProjections,
+                               @Nullable LinkedHashSet<OpOutputVarProjection> polymorphicTails) {
     this.type = type;
     this.tagProjections = tagProjections;
+    this.polymorphicTails = polymorphicTails;
   }
 
   public OpOutputVarProjection(@NotNull Type type,
                                OpOutputTagProjection... tagProjections) {
-    this(type, new LinkedHashSet<>(Arrays.asList(tagProjections)));
+    this(type, new LinkedHashSet<>(Arrays.asList(tagProjections)), null);
   }
 
 
@@ -35,6 +41,9 @@ public class OpOutputVarProjection implements PrettyPrintable {
 
   public @NotNull LinkedHashSet<OpOutputTagProjection> tagProjections() { return tagProjections; }
 
+  @Nullable
+  public LinkedHashSet<OpOutputVarProjection> polymorphicTails() { return polymorphicTails; }
+
   // todo projection by tag
 
 
@@ -42,25 +51,37 @@ public class OpOutputVarProjection implements PrettyPrintable {
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-
     OpOutputVarProjection that = (OpOutputVarProjection) o;
-
-    return type.equals(that.type) && tagProjections.equals(that.tagProjections);
+    return Objects.equals(type, that.type) &&
+           Objects.equals(tagProjections, that.tagProjections) &&
+           Objects.equals(polymorphicTails, that.polymorphicTails);
   }
 
   @Override
   public int hashCode() {
-    return 31 * type.hashCode() + tagProjections.hashCode();
+    return Objects.hash(type, tagProjections, polymorphicTails);
   }
 
   @Override
   public <Exc extends Exception> void prettyPrint(DataLayouter<Exc> l) throws Exc {
     // TODO treat single-branch/samo- vars in a special way?
-    l.beginCInd().print("var ").print(type.name().toString()).print(" {");
+    l.beginCInd().print("var ").print(type.name().toString()).print(" (");
     for (OpOutputTagProjection tagProjection : tagProjections) {
       l.nl().print(tagProjection);
     }
-    l.end().brk().print("}");
+    l.end().brk().print(")");
+
+    if (polymorphicTails != null && !polymorphicTails.isEmpty()) {
+      l.brk().beginCInd().print("~(");
+      boolean first = true;
+      for (OpOutputVarProjection tail : polymorphicTails) {
+        if (first) first = false;
+        else l.print(",");
+
+        l.brk().print(tail);
+      }
+      l.end().brk().print(")");
+    }
   }
 
   @Override

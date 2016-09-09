@@ -11,14 +11,14 @@ import static io.epigraph.idl.lexer.IdlElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import io.epigraph.idl.parser.psi.*;
 
-public class IdlOpOutputPrimitiveModelProjectionImpl extends ASTWrapperPsiElement implements IdlOpOutputPrimitiveModelProjection {
+public class IdlOpOutputSingleTagProjectionImpl extends ASTWrapperPsiElement implements IdlOpOutputSingleTagProjection {
 
-  public IdlOpOutputPrimitiveModelProjectionImpl(ASTNode node) {
+  public IdlOpOutputSingleTagProjectionImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull IdlVisitor visitor) {
-    visitor.visitOpOutputPrimitiveModelProjection(this);
+    visitor.visitOpOutputSingleTagProjection(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -28,8 +28,26 @@ public class IdlOpOutputPrimitiveModelProjectionImpl extends ASTWrapperPsiElemen
 
   @Override
   @NotNull
-  public PsiElement getPrimitive() {
-    return findNotNullChildByType(I_PRIMITIVE);
+  public IdlOpOutputModelProjection getOpOutputModelProjection() {
+    return findNotNullChildByClass(IdlOpOutputModelProjection.class);
+  }
+
+  @Override
+  @Nullable
+  public IdlQid getQid() {
+    return findChildByClass(IdlQid.class);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getColon() {
+    return findChildByType(I_COLON);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getPlus() {
+    return findChildByType(I_PLUS);
   }
 
 }

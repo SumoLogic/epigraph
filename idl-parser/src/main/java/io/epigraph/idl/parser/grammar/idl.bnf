@@ -21,9 +21,8 @@
     REQURIED = 'required'
     PARAMETERS = 'parameters'
     DEFAULT = 'default'
-    INCLUDE_IN_DEFAULT = 'includeInDefault'
-    PRIMITIVE = 'primitive'
-    ENUM = 'enum'
+//    PRIMITIVE = 'primitive'
+//    ENUM = 'enum'
 
     COLON = ':'
     DOT = '.'
@@ -35,6 +34,7 @@
     BRACKET_RIGHT = ']'
     TILDA = '~'
     STAR = '*'
+    PLUS = '+'
 
     space='regexp:\s+'
     comment='regexp://.*'
@@ -56,7 +56,6 @@
   ]
 
   pin(".*Body") = 1
-  pin(".*Branch") = 1
 }
 
 // TODO proper root
@@ -117,48 +116,51 @@ opParameters ::= 'parameters' ':' '{' (opParamProjection ','?)* '}'
 
 // output
 
-opOutputVarProjection ::= ('{' (opOutputTagProjection ','?)* '}') | 'default' opOutputModelProjection? {pin=1}
-opOutputTagProjection ::= qid (':' opOutputModelProjection)? {pin=2} // custom params?
+opOutputVarProjection ::= ( opOutputMultiTagProjection | opOutputSingleTagProjection ) opOutputVarPolymorphicTail?
+opOutputSingleTagProjection ::= ( ':' '+'? qid )? opOutputModelProjection
+opOutputMultiTagProjection ::= ':' '(' (opOutputMultiTagProjectionItem ','?)* ')' {pin=2}
+opOutputMultiTagProjectionItem ::= '+'? qid opOutputModelProjection
+//
+opOutputVarPolymorphicTail ::= opOutputVarSingleTail | opOutputVarMultiTail
+opOutputVarSingleTail ::= '~' fqnTypeRef opOutputVarProjection
+opOutputVarMultiTail ::= '~' '(' (opOutputVarMultiTailItem ','?)* ')' {pin=2}
+opOutputVarMultiTailItem ::= fqnTypeRef opOutputVarProjection
 
-opOutputModelProjection ::= ( opOutputRecordModelProjection
-                            | opOutputListModelProjection
-                            | opOutputMapModelProjection
-                            | opOutputEnumModelProjection
-                            | opOutputPrimitiveModelProjection
-                            ) opOutputModelProjectionBody?
+opOutputModelProjection ::= '+'? ( opOutputRecordModelProjection
+                                 | opOutputListModelProjection
+                                 | opOutputMapModelProjection
+//                               | opOutputEnumModelProjection
+//                               | opOutputPrimitiveModelProjection
+                                 )? opOutputModelProjectionBody?
 
 opOutputModelProjectionBody ::= '{' (opOutputModelProjectionBodyPart ','?)* '}'
-opOutputModelProjectionBodyPart ::= 'includeInDefault' | opParameters | customParam
+opOutputModelProjectionBodyPart ::= opParameters | customParam
 
 // op output record
-opOutputRecordModelProjection ::= '(' (opOutputFieldProjection ','?)* ')' opOutputRecordPolyBranch* {
+opOutputRecordModelProjection ::= '(' (opOutputFieldProjection ','?)* ')' {
   pin=1
   extends=opOutputModelProjection
 }
-opOutputFieldProjection ::= qid opOutputFieldProjectionBody? (':' opOutputVarProjection)?
+opOutputFieldProjection ::= '+'? qid opOutputFieldProjectionBody? opOutputVarProjection?
 opOutputFieldProjectionBody ::= '{' (opOutputFieldProjectionBodyPart ','?)* '}'
-opOutputFieldProjectionBodyPart ::= 'includeInDefault' | opParameters | customParam
-opOutputRecordPolyBranch ::= '~' fqnTypeRef '<' opOutputRecordModelProjection opOutputModelProjectionBody? '>'
+opOutputFieldProjectionBodyPart ::= opParameters | customParam
 
 // files : Files default FileList *(..) ~FileList2(..)
 // op output list
-opOutputListModelProjection ::= '*' opOutputVarProjection opOutputListPolyBranch* {
+opOutputListModelProjection ::= '*' opOutputVarProjection {
   pin=1
   extends=opOutputModelProjection
 }
-opOutputListPolyBranch ::= '~' fqnTypeRef '<' opOutputListModelProjection opOutputModelProjectionBody? '>' // or straight for elements ?
 
-opOutputMapModelProjection ::= opOutputKeyProjection '*' opOutputVarProjection opOutputMapPolyBranch {
+opOutputMapModelProjection ::= opOutputKeyProjection '*' opOutputVarProjection {
   pin=1
   extends=opOutputModelProjection
 }
 opOutputKeyProjection ::= '[' (opOutputKeyProjectionPart ','?)* ']' {pin=1}
 opOutputKeyProjectionPart ::= 'forbidden' | 'required' | opParameters | customParam
-opOutputMapPolyBranch ::= '~' fqnTypeRef '<' opOutputMapModelProjection opOutputModelProjectionBody? '>'
 
-// todo add tails
-opOutputPrimitiveModelProjection ::= 'primitive' // ?
-opOutputEnumModelProjection ::= 'enum' // ?
+//opOutputPrimitiveModelProjection ::= 'primitive' // ?
+//opOutputEnumModelProjection ::= 'enum' // ?
 
 // input
 

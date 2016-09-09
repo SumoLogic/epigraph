@@ -39,6 +39,7 @@ public class IdlPsiImplUtil {
   }
 
   // fqn --------------------------------------------
+  @NotNull
   public static Fqn getFqn(@NotNull IdlFqn e) {
     List<IdlFqnSegment> fqnSegmentList = e.getFqnSegmentList();
     String[] segments = new String[fqnSegmentList.size()];

@@ -11,6 +11,7 @@ public interface IdlFqn extends PsiElement {
   @NotNull
   List<IdlFqnSegment> getFqnSegmentList();
 
+  @NotNull
   Fqn getFqn();
 
 }

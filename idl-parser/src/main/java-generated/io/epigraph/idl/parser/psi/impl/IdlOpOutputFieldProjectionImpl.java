@@ -46,8 +46,8 @@ public class IdlOpOutputFieldProjectionImpl extends ASTWrapperPsiElement impleme
 
   @Override
   @Nullable
-  public PsiElement getColon() {
-    return findChildByType(I_COLON);
+  public PsiElement getPlus() {
+    return findChildByType(I_PLUS);
   }
 
 }

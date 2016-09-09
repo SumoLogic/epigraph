@@ -7,9 +7,6 @@ import com.intellij.psi.PsiElement;
 
 public interface IdlOpOutputListModelProjection extends IdlOpOutputModelProjection {
 
-  @NotNull
-  List<IdlOpOutputListPolyBranch> getOpOutputListPolyBranchList();
-
   @Nullable
   IdlOpOutputVarProjection getOpOutputVarProjection();
 

@@ -33,12 +33,6 @@ public class IdlOpOutputRecordModelProjectionImpl extends IdlOpOutputModelProjec
 
   @Override
   @NotNull
-  public List<IdlOpOutputRecordPolyBranch> getOpOutputRecordPolyBranchList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, IdlOpOutputRecordPolyBranch.class);
-  }
-
-  @Override
-  @NotNull
   public PsiElement getParenLeft() {
     return findNotNullChildByType(I_PAREN_LEFT);
   }

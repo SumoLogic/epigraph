@@ -11,14 +11,14 @@ import static io.epigraph.idl.lexer.IdlElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import io.epigraph.idl.parser.psi.*;
 
-public class IdlOpOutputMapPolyBranchImpl extends ASTWrapperPsiElement implements IdlOpOutputMapPolyBranch {
+public class IdlOpOutputVarMultiTailImpl extends ASTWrapperPsiElement implements IdlOpOutputVarMultiTail {
 
-  public IdlOpOutputMapPolyBranchImpl(ASTNode node) {
+  public IdlOpOutputVarMultiTailImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull IdlVisitor visitor) {
-    visitor.visitOpOutputMapPolyBranch(this);
+    visitor.visitOpOutputVarMultiTail(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -27,33 +27,21 @@ public class IdlOpOutputMapPolyBranchImpl extends ASTWrapperPsiElement implement
   }
 
   @Override
-  @Nullable
-  public IdlFqnTypeRef getFqnTypeRef() {
-    return findChildByClass(IdlFqnTypeRef.class);
+  @NotNull
+  public List<IdlOpOutputVarMultiTailItem> getOpOutputVarMultiTailItemList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, IdlOpOutputVarMultiTailItem.class);
+  }
+
+  @Override
+  @NotNull
+  public PsiElement getParenLeft() {
+    return findNotNullChildByType(I_PAREN_LEFT);
   }
 
   @Override
   @Nullable
-  public IdlOpOutputMapModelProjection getOpOutputMapModelProjection() {
-    return findChildByClass(IdlOpOutputMapModelProjection.class);
-  }
-
-  @Override
-  @Nullable
-  public IdlOpOutputModelProjectionBody getOpOutputModelProjectionBody() {
-    return findChildByClass(IdlOpOutputModelProjectionBody.class);
-  }
-
-  @Override
-  @Nullable
-  public PsiElement getAngleLeft() {
-    return findChildByType(I_ANGLE_LEFT);
-  }
-
-  @Override
-  @Nullable
-  public PsiElement getAngleRight() {
-    return findChildByType(I_ANGLE_RIGHT);
+  public PsiElement getParenRight() {
+    return findChildByType(I_PAREN_RIGHT);
   }
 
   @Override

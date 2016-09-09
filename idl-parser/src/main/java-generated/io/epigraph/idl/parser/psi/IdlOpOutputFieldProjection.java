@@ -17,6 +17,6 @@ public interface IdlOpOutputFieldProjection extends PsiElement {
   IdlQid getQid();
 
   @Nullable
-  PsiElement getColon();
+  PsiElement getPlus();
 
 }

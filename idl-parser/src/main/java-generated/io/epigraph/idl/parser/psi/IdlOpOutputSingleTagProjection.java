@@ -4,11 +4,19 @@ package io.epigraph.idl.parser.psi;
 import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiNameIdentifierOwner;
 
-public interface IdlVarTagRef extends PsiNameIdentifierOwner {
+public interface IdlOpOutputSingleTagProjection extends PsiElement {
 
   @NotNull
+  IdlOpOutputModelProjection getOpOutputModelProjection();
+
+  @Nullable
   IdlQid getQid();
+
+  @Nullable
+  PsiElement getColon();
+
+  @Nullable
+  PsiElement getPlus();
 
 }

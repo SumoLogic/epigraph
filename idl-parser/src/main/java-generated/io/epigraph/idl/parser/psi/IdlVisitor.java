@@ -79,10 +79,6 @@ public class IdlVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitOpOutputEnumModelProjection(@NotNull IdlOpOutputEnumModelProjection o) {
-    visitPsiElement(o);
-  }
-
   public void visitOpOutputFieldProjection(@NotNull IdlOpOutputFieldProjection o) {
     visitPsiElement(o);
   }
@@ -107,16 +103,8 @@ public class IdlVisitor extends PsiElementVisitor {
     visitOpOutputModelProjection(o);
   }
 
-  public void visitOpOutputListPolyBranch(@NotNull IdlOpOutputListPolyBranch o) {
-    visitPsiElement(o);
-  }
-
   public void visitOpOutputMapModelProjection(@NotNull IdlOpOutputMapModelProjection o) {
     visitOpOutputModelProjection(o);
-  }
-
-  public void visitOpOutputMapPolyBranch(@NotNull IdlOpOutputMapPolyBranch o) {
-    visitPsiElement(o);
   }
 
   public void visitOpOutputModelProjection(@NotNull IdlOpOutputModelProjection o) {
@@ -131,7 +119,11 @@ public class IdlVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitOpOutputPrimitiveModelProjection(@NotNull IdlOpOutputPrimitiveModelProjection o) {
+  public void visitOpOutputMultiTagProjection(@NotNull IdlOpOutputMultiTagProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpOutputMultiTagProjectionItem(@NotNull IdlOpOutputMultiTagProjectionItem o) {
     visitPsiElement(o);
   }
 
@@ -139,15 +131,27 @@ public class IdlVisitor extends PsiElementVisitor {
     visitOpOutputModelProjection(o);
   }
 
-  public void visitOpOutputRecordPolyBranch(@NotNull IdlOpOutputRecordPolyBranch o) {
+  public void visitOpOutputSingleTagProjection(@NotNull IdlOpOutputSingleTagProjection o) {
     visitPsiElement(o);
   }
 
-  public void visitOpOutputTagProjection(@NotNull IdlOpOutputTagProjection o) {
+  public void visitOpOutputVarMultiTail(@NotNull IdlOpOutputVarMultiTail o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpOutputVarMultiTailItem(@NotNull IdlOpOutputVarMultiTailItem o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpOutputVarPolymorphicTail(@NotNull IdlOpOutputVarPolymorphicTail o) {
     visitPsiElement(o);
   }
 
   public void visitOpOutputVarProjection(@NotNull IdlOpOutputVarProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpOutputVarSingleTail(@NotNull IdlOpOutputVarSingleTail o) {
     visitPsiElement(o);
   }
 

@@ -13,6 +13,7 @@ namespace epigraph.projections.req
 // /folders/123/items:list:(id, record:(id, name, :com.box.FolderRecord(...), :com.box.FileRecord(...)))
 // /folders/123/items:list:(id, record:(id, name, :(com.box.FolderRecord(...), com.box.FileRecord(...))))
 // /folders/123/items:list:(id, record:(id, name, com.box.FolderRecord:(...), com.box.FileRecord:(...)))
+// /folders/123/items:map/123:(id, record)
 // /folders/123/items:map[123,234]:(id, record)
 // /folders/123/items(id, name, ...)
 // /folders/123/items::record(id, name, ...)

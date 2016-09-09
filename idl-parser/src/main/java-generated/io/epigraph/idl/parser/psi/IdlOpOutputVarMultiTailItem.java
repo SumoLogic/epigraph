@@ -5,15 +5,12 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface IdlOpOutputMapModelProjection extends IdlOpOutputModelProjection {
+public interface IdlOpOutputVarMultiTailItem extends PsiElement {
 
   @NotNull
-  IdlOpOutputKeyProjection getOpOutputKeyProjection();
+  IdlFqnTypeRef getFqnTypeRef();
 
-  @Nullable
+  @NotNull
   IdlOpOutputVarProjection getOpOutputVarProjection();
-
-  @Nullable
-  PsiElement getStar();
 
 }

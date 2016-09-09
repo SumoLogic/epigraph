@@ -5,7 +5,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
@@ -14,9 +13,8 @@ import java.util.Set;
 public class OpOutputPrimitiveModelProjection extends OpOutputModelProjection<PrimitiveType, OpOutputPrimitiveModelProjection> {
   public OpOutputPrimitiveModelProjection(@NotNull PrimitiveType model,
                                           boolean includeInDefault,
-                                          @Nullable Set<OpParam> params,
-                                          @Nullable LinkedHashSet<OpOutputPrimitiveModelProjection> polymorphicTail) {
-    super(model, includeInDefault, params, polymorphicTail);
+                                          @Nullable Set<OpParam> params) {
+    super(model, includeInDefault, params);
   }
 
   @Override
@@ -24,6 +22,6 @@ public class OpOutputPrimitiveModelProjection extends OpOutputModelProjection<Pr
                                                               boolean mergedRequired,
                                                               @Nullable Set<OpParam> mergedParams,
                                                               @NotNull Collection<OpOutputPrimitiveModelProjection> projectionsToMerge) {
-    return new OpOutputPrimitiveModelProjection(model, mergedRequired, mergedParams, null);
+    return new OpOutputPrimitiveModelProjection(model, mergedRequired, mergedParams);
   }
 }

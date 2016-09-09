@@ -5,10 +5,13 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface IdlOpOutputRecordModelProjection extends IdlOpOutputModelProjection {
+public interface IdlOpOutputMultiTagProjection extends PsiElement {
 
   @NotNull
-  List<IdlOpOutputFieldProjection> getOpOutputFieldProjectionList();
+  List<IdlOpOutputMultiTagProjectionItem> getOpOutputMultiTagProjectionItemList();
+
+  @NotNull
+  PsiElement getColon();
 
   @NotNull
   PsiElement getParenLeft();

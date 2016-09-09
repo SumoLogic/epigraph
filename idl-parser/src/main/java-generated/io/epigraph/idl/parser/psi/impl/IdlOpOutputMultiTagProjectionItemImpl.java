@@ -11,14 +11,14 @@ import static io.epigraph.idl.lexer.IdlElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import io.epigraph.idl.parser.psi.*;
 
-public class IdlOpOutputTagProjectionImpl extends ASTWrapperPsiElement implements IdlOpOutputTagProjection {
+public class IdlOpOutputMultiTagProjectionItemImpl extends ASTWrapperPsiElement implements IdlOpOutputMultiTagProjectionItem {
 
-  public IdlOpOutputTagProjectionImpl(ASTNode node) {
+  public IdlOpOutputMultiTagProjectionItemImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull IdlVisitor visitor) {
-    visitor.visitOpOutputTagProjection(this);
+    visitor.visitOpOutputMultiTagProjectionItem(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -27,9 +27,9 @@ public class IdlOpOutputTagProjectionImpl extends ASTWrapperPsiElement implement
   }
 
   @Override
-  @Nullable
+  @NotNull
   public IdlOpOutputModelProjection getOpOutputModelProjection() {
-    return findChildByClass(IdlOpOutputModelProjection.class);
+    return findNotNullChildByClass(IdlOpOutputModelProjection.class);
   }
 
   @Override
@@ -40,8 +40,8 @@ public class IdlOpOutputTagProjectionImpl extends ASTWrapperPsiElement implement
 
   @Override
   @Nullable
-  public PsiElement getColon() {
-    return findChildByType(I_COLON);
+  public PsiElement getPlus() {
+    return findChildByType(I_PLUS);
   }
 
 }

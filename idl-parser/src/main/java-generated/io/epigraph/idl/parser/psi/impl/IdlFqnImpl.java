@@ -33,6 +33,7 @@ public class IdlFqnImpl extends ASTWrapperPsiElement implements IdlFqn {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, IdlFqnSegment.class);
   }
 
+  @NotNull
   public Fqn getFqn() {
     return IdlPsiImplUtil.getFqn(this);
   }

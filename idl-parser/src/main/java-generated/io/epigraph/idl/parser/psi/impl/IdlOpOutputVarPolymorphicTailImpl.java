@@ -8,16 +8,17 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static io.epigraph.idl.lexer.IdlElementTypes.*;
+import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import io.epigraph.idl.parser.psi.*;
 
-public class IdlOpOutputMapModelProjectionImpl extends IdlOpOutputModelProjectionImpl implements IdlOpOutputMapModelProjection {
+public class IdlOpOutputVarPolymorphicTailImpl extends ASTWrapperPsiElement implements IdlOpOutputVarPolymorphicTail {
 
-  public IdlOpOutputMapModelProjectionImpl(ASTNode node) {
+  public IdlOpOutputVarPolymorphicTailImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull IdlVisitor visitor) {
-    visitor.visitOpOutputMapModelProjection(this);
+    visitor.visitOpOutputVarPolymorphicTail(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -26,21 +27,15 @@ public class IdlOpOutputMapModelProjectionImpl extends IdlOpOutputModelProjectio
   }
 
   @Override
-  @NotNull
-  public IdlOpOutputKeyProjection getOpOutputKeyProjection() {
-    return findNotNullChildByClass(IdlOpOutputKeyProjection.class);
+  @Nullable
+  public IdlOpOutputVarMultiTail getOpOutputVarMultiTail() {
+    return findChildByClass(IdlOpOutputVarMultiTail.class);
   }
 
   @Override
   @Nullable
-  public IdlOpOutputVarProjection getOpOutputVarProjection() {
-    return findChildByClass(IdlOpOutputVarProjection.class);
-  }
-
-  @Override
-  @Nullable
-  public PsiElement getStar() {
-    return findChildByType(I_STAR);
+  public IdlOpOutputVarSingleTail getOpOutputVarSingleTail() {
+    return findChildByClass(IdlOpOutputVarSingleTail.class);
   }
 
 }

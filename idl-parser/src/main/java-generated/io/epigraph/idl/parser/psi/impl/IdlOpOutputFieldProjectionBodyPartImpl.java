@@ -38,10 +38,4 @@ public class IdlOpOutputFieldProjectionBodyPartImpl extends ASTWrapperPsiElement
     return findChildByClass(IdlOpParameters.class);
   }
 
-  @Override
-  @Nullable
-  public PsiElement getIncludeInDefault() {
-    return findChildByType(I_INCLUDE_IN_DEFAULT);
-  }
-
 }

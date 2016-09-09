@@ -28,32 +28,20 @@ public class IdlOpOutputVarProjectionImpl extends ASTWrapperPsiElement implement
 
   @Override
   @Nullable
-  public IdlOpOutputModelProjection getOpOutputModelProjection() {
-    return findChildByClass(IdlOpOutputModelProjection.class);
-  }
-
-  @Override
-  @NotNull
-  public List<IdlOpOutputTagProjection> getOpOutputTagProjectionList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, IdlOpOutputTagProjection.class);
+  public IdlOpOutputMultiTagProjection getOpOutputMultiTagProjection() {
+    return findChildByClass(IdlOpOutputMultiTagProjection.class);
   }
 
   @Override
   @Nullable
-  public PsiElement getCurlyLeft() {
-    return findChildByType(I_CURLY_LEFT);
+  public IdlOpOutputSingleTagProjection getOpOutputSingleTagProjection() {
+    return findChildByClass(IdlOpOutputSingleTagProjection.class);
   }
 
   @Override
   @Nullable
-  public PsiElement getCurlyRight() {
-    return findChildByType(I_CURLY_RIGHT);
-  }
-
-  @Override
-  @Nullable
-  public PsiElement getDefault() {
-    return findChildByType(I_DEFAULT);
+  public IdlOpOutputVarPolymorphicTail getOpOutputVarPolymorphicTail() {
+    return findChildByClass(IdlOpOutputVarPolymorphicTail.class);
   }
 
 }

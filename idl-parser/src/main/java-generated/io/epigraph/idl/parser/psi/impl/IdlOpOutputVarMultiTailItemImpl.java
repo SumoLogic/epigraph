@@ -11,14 +11,14 @@ import static io.epigraph.idl.lexer.IdlElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import io.epigraph.idl.parser.psi.*;
 
-public class IdlOpOutputEnumModelProjectionImpl extends ASTWrapperPsiElement implements IdlOpOutputEnumModelProjection {
+public class IdlOpOutputVarMultiTailItemImpl extends ASTWrapperPsiElement implements IdlOpOutputVarMultiTailItem {
 
-  public IdlOpOutputEnumModelProjectionImpl(ASTNode node) {
+  public IdlOpOutputVarMultiTailItemImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull IdlVisitor visitor) {
-    visitor.visitOpOutputEnumModelProjection(this);
+    visitor.visitOpOutputVarMultiTailItem(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -28,8 +28,14 @@ public class IdlOpOutputEnumModelProjectionImpl extends ASTWrapperPsiElement imp
 
   @Override
   @NotNull
-  public PsiElement getEnum() {
-    return findNotNullChildByType(I_ENUM);
+  public IdlFqnTypeRef getFqnTypeRef() {
+    return findNotNullChildByClass(IdlFqnTypeRef.class);
+  }
+
+  @Override
+  @NotNull
+  public IdlOpOutputVarProjection getOpOutputVarProjection() {
+    return findNotNullChildByClass(IdlOpOutputVarProjection.class);
   }
 
 }

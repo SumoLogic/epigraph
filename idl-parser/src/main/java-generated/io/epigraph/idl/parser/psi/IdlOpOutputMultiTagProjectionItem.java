@@ -5,9 +5,15 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface IdlOpOutputEnumModelProjection extends PsiElement {
+public interface IdlOpOutputMultiTagProjectionItem extends PsiElement {
 
   @NotNull
-  PsiElement getEnum();
+  IdlOpOutputModelProjection getOpOutputModelProjection();
+
+  @NotNull
+  IdlQid getQid();
+
+  @Nullable
+  PsiElement getPlus();
 
 }

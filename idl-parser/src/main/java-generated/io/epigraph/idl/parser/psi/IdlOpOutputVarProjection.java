@@ -8,18 +8,12 @@ import com.intellij.psi.PsiElement;
 public interface IdlOpOutputVarProjection extends PsiElement {
 
   @Nullable
-  IdlOpOutputModelProjection getOpOutputModelProjection();
-
-  @NotNull
-  List<IdlOpOutputTagProjection> getOpOutputTagProjectionList();
+  IdlOpOutputMultiTagProjection getOpOutputMultiTagProjection();
 
   @Nullable
-  PsiElement getCurlyLeft();
+  IdlOpOutputSingleTagProjection getOpOutputSingleTagProjection();
 
   @Nullable
-  PsiElement getCurlyRight();
-
-  @Nullable
-  PsiElement getDefault();
+  IdlOpOutputVarPolymorphicTail getOpOutputVarPolymorphicTail();
 
 }

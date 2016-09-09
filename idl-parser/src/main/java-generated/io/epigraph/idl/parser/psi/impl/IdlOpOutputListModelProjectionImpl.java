@@ -26,12 +26,6 @@ public class IdlOpOutputListModelProjectionImpl extends IdlOpOutputModelProjecti
   }
 
   @Override
-  @NotNull
-  public List<IdlOpOutputListPolyBranch> getOpOutputListPolyBranchList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, IdlOpOutputListPolyBranch.class);
-  }
-
-  @Override
   @Nullable
   public IdlOpOutputVarProjection getOpOutputVarProjection() {
     return findChildByClass(IdlOpOutputVarProjection.class);

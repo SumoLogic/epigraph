@@ -18,17 +18,13 @@ public abstract class OpOutputModelProjection<M extends DatumType, P extends OpO
   protected final boolean includeInDefault;
   @Nullable
   protected final Set<OpParam> params;
-  @Nullable
-  protected final LinkedHashSet<P> polymorphicTail;
 
   public OpOutputModelProjection(@NotNull M model,
                                  boolean includeInDefault,
-                                 @Nullable Set<OpParam> params,
-                                 @Nullable LinkedHashSet<P> polymorphicTail) {
+                                 @Nullable Set<OpParam> params) {
     this.model = model;
     this.includeInDefault = includeInDefault;
     this.params = params;
-    this.polymorphicTail = polymorphicTail;
   }
 
   public M model() { return model; }
@@ -37,8 +33,7 @@ public abstract class OpOutputModelProjection<M extends DatumType, P extends OpO
 
   public @Nullable Set<OpParam> params() { return params; }
 
-  public @Nullable LinkedHashSet<P> polymorphicTail() { return polymorphicTail; }
-
+  /*
   @NotNull
   public P projectionForModel(@NotNull M model) {
     if (polymorphicTail == null || polymorphicTail.isEmpty())
@@ -66,6 +61,7 @@ public abstract class OpOutputModelProjection<M extends DatumType, P extends OpO
 
     return mergedProjection(model, mergedRequired, mergedParams, projectionsToMerge);
   }
+  */
 
   protected P self() {
     //noinspection unchecked
@@ -77,6 +73,7 @@ public abstract class OpOutputModelProjection<M extends DatumType, P extends OpO
                                         @Nullable Set<OpParam> mergedParams,
                                         @NotNull Collection<P> projectionsToMerge);
 
+  /*
   private Collection<P> projectionsToMerge(@NotNull M model) {
     Collection<P> res = new LinkedHashSet<>();
     res.add(self());
@@ -89,6 +86,7 @@ public abstract class OpOutputModelProjection<M extends DatumType, P extends OpO
 
     return res;
   }
+  */
 
   @Override
   public <Exc extends Exception> void prettyPrint(DataLayouter<Exc> l) throws Exc {
@@ -98,7 +96,6 @@ public abstract class OpOutputModelProjection<M extends DatumType, P extends OpO
       prettyPrintParams(l, params);
       l.end().brk().print("}");
     }
-    if (polymorphicTail != null && !polymorphicTail.isEmpty()) prettyPrintTail(l, polymorphicTail);
   }
 
   protected <Exc extends Exception> void prettyPrintModel(DataLayouter<Exc> l) throws Exc {
@@ -127,12 +124,11 @@ public abstract class OpOutputModelProjection<M extends DatumType, P extends OpO
     OpOutputModelProjection<?, ?> that = (OpOutputModelProjection<?, ?>) o;
     return includeInDefault == that.includeInDefault &&
            Objects.equals(model, that.model) &&
-           Objects.equals(params, that.params) &&
-           Objects.equals(polymorphicTail, that.polymorphicTail);
+           Objects.equals(params, that.params);
   }
 
   @Override
-  public int hashCode() { return Objects.hash(model, includeInDefault, params, polymorphicTail); }
+  public int hashCode() { return Objects.hash(model, includeInDefault, params); }
 
   @Override
   public String toString() { return DataPrettyPrinter.prettyPrint(this); }

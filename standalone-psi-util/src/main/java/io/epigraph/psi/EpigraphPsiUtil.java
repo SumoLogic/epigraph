@@ -28,7 +28,7 @@ import java.util.List;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class PsiUtil {
+public class EpigraphPsiUtil {
   @NotNull
   public static <T extends PsiElement> T parseText(
       @NotNull String text,
@@ -91,7 +91,7 @@ public class PsiUtil {
   }
 
   private static void collectErrors(@NotNull PsiElement element,
-                                    @Nullable final PsiUtil.ErrorProcessor errorProcessor) {
+                                    @Nullable final EpigraphPsiUtil.ErrorProcessor errorProcessor) {
     if (errorProcessor != null) {
       element.accept(new PsiRecursiveElementWalkingVisitor() {
         @Override
