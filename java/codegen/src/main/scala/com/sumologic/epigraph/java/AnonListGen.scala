@@ -337,7 +337,7 @@ ${t.effectiveDefaultElementTagName match { // default element tag (if defined) v
             datas(),
             ${lqn(et, t)}.Builder${vt(et, "", ".Data")}::get${vt(et, up(dtn), "")},
             ${lqn(et, t)}.Builder${vt(et, "", ".Data")}::set${vt(et, up(dtn), "")},
-            ${lqn(et, t)}.type::createMutableData
+            ${lqn(et, t)}.type::createDataBuilder
         );
       }
 
@@ -350,7 +350,7 @@ ${t.effectiveDefaultElementTagName match { // default element tag (if defined) v
             datas(),
             ${lqn(et, t)}.Builder${vt(et, "", ".Data")}::get_${vt(et, up(dtn), "")},
             ${lqn(et, t)}.Builder${vt(et, "", ".Data")}::set_${vt(et, up(dtn), "")},
-            ${lqn(et, t)}.type::createMutableData
+            ${lqn(et, t)}.type::createDataBuilder
         );
       }
 """
@@ -377,7 +377,7 @@ ${
             datas(),
             ${lqn(et, t)}.Builder${vt(et, "", ".Data")}::get${vt(et, up(tag.name), "")},
             ${lqn(et, t)}.Builder${vt(et, "", ".Data")}::set${vt(et, up(tag.name), "")},
-            ${lqn(et, t)}.type::createMutableData
+            ${lqn(et, t)}.type::createDataBuilder
         );
       }
 
@@ -389,7 +389,7 @@ ${
             datas(),
             ${lqn(et, t)}.Builder${vt(et, "", ".Data")}::get_${vt(et, up(tag.name), "")},
             ${lqn(et, t)}.Builder${vt(et, "", ".Data")}::set_${vt(et, up(tag.name), "")},
-            ${lqn(et, t)}.type::createMutableData
+            ${lqn(et, t)}.type::createDataBuilder
         );
       }
 """
