@@ -17,6 +17,8 @@
     <module>codegen</module>
     <module>core</module>
     <module>maven-plugin</module>
+    <module>projections</module>
+    <module>util</module>
   </modules>
 
   <properties>

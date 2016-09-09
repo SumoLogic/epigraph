@@ -34,15 +34,7 @@ Map<String, String> modules = [
     'standalone-psi-util'                : 'epigraph-standalone-psi-util'
 ]
 
-// uncomment to build and publish (`publishToMavenLocal`) gradle and maven plugins for the first time
-//Map<String, String> modules = [
-//    'core'           : 'epigraph-core',
-//    'gradle-plugin'  : 'epigraph-gradle-plugin',
-//    'light-psi'      : 'epigraph-light-psi',
-//    'maven-plugin'   : 'epigraph-maven-plugin',
-//    'schema-compiler': 'epigraph-schema-compiler',
-//    'schema-parser'  : 'epigraph-schema-parser'
-//]
+// bootstrap: gradle -c settings-bootstrap.gradle :epigraph-gradle-plugin:publishToMavenLocal
 
 modules.each { dir, name ->
   include name

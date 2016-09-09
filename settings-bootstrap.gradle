@@ -1,0 +1,25 @@
+pluginRepositories {
+  // pick up gradle plugin from local maven repo
+  maven {
+    url "file://" + System.getProperty("user.home") + "/.m2/repository"
+  }
+  gradlePluginPortal()
+}
+
+rootProject.name = theName
+
+
+Map<String, String> modules = [
+    'core'           : 'epigraph-core',
+    'gradle-plugin'  : 'epigraph-gradle-plugin',
+    'lang-common'    : 'epigraph-lang-common',
+    'light-psi'      : 'epigraph-light-psi',
+    'maven-plugin'   : 'epigraph-maven-plugin',
+    'schema-compiler': 'epigraph-schema-compiler',
+    'schema-parser'  : 'epigraph-schema-parser'
+]
+
+modules.each { dir, name ->
+  include name
+  project(":$name").projectDir = file(dir)
+}

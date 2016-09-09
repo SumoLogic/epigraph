@@ -48,6 +48,7 @@
       </activation>
       <modules>
         <module>core</module>
+        <module>idl-parser</module>
         <module>java</module>
         <module>lang-common</module>
         <!--<module>light-psi</module>-->
@@ -56,6 +57,7 @@
         <module>schema-compiler</module>
         <!--<module>idea-plugin</module>-->
         <module>schema-parser</module>
+        <module>standalone-psi-util</module>
       </modules>
     </profile>
 
