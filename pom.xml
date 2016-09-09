@@ -67,9 +67,9 @@
       <modules>
         <module>builtin-types-schema</module>
         <!--<module>data-schema</module>--><!-- NPE in compiler -->
-        <!--<module>java-codegen-test</module>-->
+        <module>java-codegen-test</module>
         <!--<module>operations-schema</module>--><!-- depends on data-schema -->
-        <!--<module>projections-schema</module>-->
+        <!--<module>projections-schema</module>--><!-- depends on data-schema -->
         <module>scala-codegen-test</module>
         <module>schema-schema</module>
       </modules>
