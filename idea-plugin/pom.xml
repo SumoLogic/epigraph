@@ -14,10 +14,83 @@
 
   <properties>
 
+    <!-- hint for 'Intellij plugin development with Maven' IDEA plugin (doesn't seem to have any effect) -->
     <ij.plugin>true</ij.plugin>
+    <!-- To import as IDEA Plugin module:
+      1. import this maven module
+      2. in project structure change module sdk to bundled 'IntelliJ IDEA ...' one
+      3. edit idea-plugin.iml:
+          a) add `type="PLUGIN_MODULE"` attribute to `<module ...>` element
+          b) add `<component name="DevKit.ModuleBuildProperties" url="file://$MODULE_DIR$/src/main/resources/META-INF/plugin.xml" />` element
+      4. re-open the project
+    -->
 
   </properties>
 
-  <!-- TODO dependencies etc. -->
+  <dependencies>
+
+    <dependency>
+      <groupId>com.sumologic.epigraph</groupId>
+      <artifactId>epigraph-lang-common</artifactId>
+      <version>${parent.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+  </dependencies>
+
+  <build>
+
+    <plugins>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.build.directory}/generated-sources/schema-parser-common.java</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>../schema-parser-common/src/main/java</directory>
+                </resource>
+                <resource>
+                  <directory>../schema-parser-common/src/main/java.generated</directory>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>process-sources</phase>
+            <goals>
+              <goal>add-source</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>${project.build.directory}/generated-sources/schema-parser-common.java</source>
+              </sources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+    </plugins>
+
+  </build>
 
 </project>
