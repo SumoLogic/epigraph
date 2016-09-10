@@ -8,7 +8,7 @@ vartype UserTest extends User {
 integer UserIdTest extends UserId
 
 record UserRecordTest extends UserRecord {
-  id: UserIdTest default id
+  id: UserIdTest
   firstName: epigraph.StringTest
   lastName: epigraph.StringTest
 }

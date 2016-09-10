@@ -35,14 +35,31 @@
     </developer>
   </developers>
 
-  <modules>
-    <module>jar-mavenizer-plugin</module>
-  </modules>
-
   <profiles>
-    <!-- mvn clean install -P-default,-schemas && mvn install -P light-psi,-default,-schemas && mvn install -P-schemas && mvn install -->
+    <!-- mvn clean install -Pjar-mavenizer && mvn clean install -Plight-psi && mvn clean install -Pmain && mvn clean install -Pschemas,examples -->
+
     <profile>
-      <id>default</id>
+      <id>jar-mavenizer</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <modules>
+        <module>jar-mavenizer-plugin</module>
+      </modules>
+    </profile>
+
+    <profile>
+      <id>light-psi</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <modules>
+        <module>light-psi</module>
+      </modules>
+    </profile>
+
+    <profile>
+      <id>main</id>
       <activation>
         <activeByDefault>true</activeByDefault>
       </activation>
@@ -51,17 +68,16 @@
         <module>idl-parser</module>
         <module>java</module>
         <module>lang-common</module>
-        <!--<module>light-psi</module>-->
         <module>maven-plugin</module>
         <module>scala-codegen</module>
+        <module>scala-maven-plugin</module>
         <module>schema-compiler</module>
-        <!--<module>idea-plugin</module>-->
         <module>schema-parser</module>
         <module>standalone-psi-util</module>
       </modules>
     </profile>
 
-    <profile><!-- specify `-P-schemas` option to deactivate (e.g. if epigraph maven plugins are not available) -->
+    <profile>
       <id>schemas</id>
       <activation>
         <activeByDefault>true</activeByDefault>
@@ -77,10 +93,23 @@
       </modules>
     </profile>
 
-    <profile><!-- specify `-P light-psi` option to activate (e.g. to install light-psi artifact) -->
-      <id>light-psi</id>
+    <profile>
+      <id>idea-plugin</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
       <modules>
-        <module>light-psi</module>
+        <module>idea-plugin</module>
+      </modules>
+    </profile>
+
+    <profile>
+      <id>examples</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <modules>
+        <module>examples</module>
       </modules>
     </profile>
 
@@ -337,6 +366,11 @@
               </configuration>
             </execution>
           </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-jar-plugin</artifactId>
+          <version>3.0.2</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
