@@ -25,6 +25,8 @@ import org.jetbrains.annotations.Nullable;
 public interface $ln extends${withParents(t)} io.epigraph.data.RecordDatum.Static {
 
   @NotNull $ln.Type type = new $ln.Type();
+
+  static @NotNull $ln.Builder create() { return $ln.type.createBuilder(); }
 ${t.effectiveFields.map { f => // for each effective field
     sn"""\
 

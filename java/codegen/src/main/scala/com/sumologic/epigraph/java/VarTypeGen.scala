@@ -25,6 +25,8 @@ import org.jetbrains.annotations.Nullable;
 public interface $ln extends${withParents(t)} io.epigraph.data.Data.Static {
 
   @NotNull $ln.Type type = new $ln.Type();
+
+  static @NotNull $ln.Builder create() { return $ln.type.createDataBuilder(); }
 ${t.effectiveTags.map { tag => // for each effective tag
     sn"""\
 

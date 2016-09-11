@@ -34,6 +34,8 @@ import org.jetbrains.annotations.Nullable;
 public interface $ln extends${withParents(t)} io.epigraph.data.ListDatum.Static {
 
   $ln.Type type = new $ln.Type();
+
+  static @NotNull $ln.Builder create() { return $ln.type.createBuilder(); }
 ${t.effectiveDefaultElementTagName match { // default element tag (if defined) views
       case None => ""
       case Some(dtn) => sn"""\

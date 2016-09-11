@@ -24,6 +24,8 @@ public interface $ln extends${withParents(t)} io.epigraph.data.${kind(t)}Datum.S
 
   @NotNull $ln.Type type = new $ln.Type();
 
+  static @NotNull $ln.Builder create(@NotNull ${native(t)} val) { return $ln.type.createBuilder(val); }
+
   /**
    * Class for `${t.name.name}` datum type.
    */
@@ -191,6 +193,9 @@ public interface $ln extends${withParents(t)} io.epigraph.data.${kind(t)}Datum.S
   private def kind(t: CPrimitiveTypeDef): String =
     PrimitiveGen.Kinds.getOrElse(t.kind, throw new UnsupportedOperationException(t.kind.name))
 
+  private def native(t: CPrimitiveTypeDef): String =
+    PrimitiveGen.Natives.getOrElse(t.kind, throw new UnsupportedOperationException(t.kind.name))
+
 }
 
 object PrimitiveGen {
@@ -201,6 +206,14 @@ object PrimitiveGen {
     CTypeKind.LONG -> "Long",
     CTypeKind.DOUBLE -> "Double",
     CTypeKind.BOOLEAN -> "Boolean"
+  )
+
+  private val Natives: Map[CTypeKind, String] = Map(
+    CTypeKind.STRING -> "java.lang.String",
+    CTypeKind.INTEGER -> "java.lang.Integer",
+    CTypeKind.LONG -> "java.lang.Long",
+    CTypeKind.DOUBLE -> "java.lang.Double",
+    CTypeKind.BOOLEAN -> "java.lang.Boolean"
   )
 
 }
