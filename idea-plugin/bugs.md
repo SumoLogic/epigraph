@@ -2,6 +2,7 @@
 - `//` and `/*... */` comments should be ignored in string literals (seems to be fixed already?)
 
 ### Medium
+- `record Foo extends Foo`, now erase `extends Foo` -- circular inheritance error stays
 - `polymorphic` completion inside anon lists and maps
 - renaming a tag should suggest to rename base/sub tags (like renaming a field does)
 - renaming a field/tag with `override` modifier should rename base members too (and sub-members with `override`) 
