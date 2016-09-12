@@ -304,17 +304,17 @@ ${  f.effectiveDefaultTagName match { // default tag (if any)
       case Some(dtn) => sn"""\
 
     /**
-     * Returns default tag datum builder for${poly(f)}`${f.name}` field.
+     * Returns default tag datum builder for${poly(f, s" polymorphic", "")} `${f.name}` field.
      */
     @Override
-    public @Nullable ${lqn(tt(f.typeRef, dtn), t)}${poly(f, "", ".Builder")} get${up(f.name)}() {
-      return io.epigraph.util.Util.apply(get_${up(f.name)}(), ${lqn(tt(f.typeRef, dtn), t)}${poly(f, "", ".Builder")}.Value::getDatum);
+    public @Nullable ${lqn(tt(f.typeRef, dtn), t)}.Builder get${up(f.name)}() {
+      return io.epigraph.util.Util.apply(get_${up(f.name)}(), ${lqn(tt(f.typeRef, dtn), t)}.Builder.Value::getDatum);
     }
 
     /**
      * Sets default tag datum builder for${poly(f)} `${f.name}` field.
      */
-    public ${poly(f, s"<${ln(tt(f.typeRef, dtn))}Builder extends ${lqn(tt(f.typeRef, dtn), t)} & io.epigraph.data.Datum.Mut.Static>\n        ", "")}@NotNull $ln.Builder set${up(f.name)}(@Nullable ${poly(f, s"${ln(tt(f.typeRef, dtn))}Builder", s"${lqn(tt(f.typeRef, dtn), t)}.Builder")} ${jn(f.name)}) {
+    public @NotNull $ln.Builder set${up(f.name)}(@Nullable ${lqn(tt(f.typeRef, dtn), t)}.Builder ${jn(f.name)}) {
       _raw().getOrCreateFieldData($ln.${jn(f.name)})._raw()._setDatum(${dttr(f.valueDataType, dtn, t)}, ${jn(f.name)});
       return this;
     }
@@ -331,13 +331,13 @@ ${  f.effectiveDefaultTagName match { // default tag (if any)
      * Returns default tag value builder for${poly(f)} `${f.name}` field.
      */
     @Override
-    public @Nullable ${lqn(tt(f.typeRef, dtn), t)}${poly(f, "", ".Builder")}.Value get_${up(f.name)}() {
-      return (${lqn(tt(f.typeRef, dtn), t)}${poly(f, "", ".Builder")}.Value) _raw()._getValue($ln.${jn(f.name)}, ${dttr(f.valueDataType, dtn, t)});
+    public @Nullable ${lqn(tt(f.typeRef, dtn), t)}.Builder.Value get_${up(f.name)}() {
+      return (${lqn(tt(f.typeRef, dtn), t)}.Builder.Value) _raw()._getValue($ln.${jn(f.name)}, ${dttr(f.valueDataType, dtn, t)});
     }
 """
     }
 }\
-${ f.valueDataType.typeRef.resolved match { // tag getters
+${ f.valueDataType.typeRef.resolved match { // tag accessors for union types
       case vartype: CVarTypeDef => vartype.effectiveTags.map { tag => // for each effective tag
         sn"""\
 

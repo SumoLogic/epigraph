@@ -2,20 +2,20 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>users-example</artifactId>
+  <artifactId>examples-users</artifactId>
   <packaging>pom</packaging>
 
   <parent>
-    <groupId>com.example.epigraph</groupId>
+    <groupId>com.sumologic.epigraph.examples</groupId>
     <artifactId>examples</artifactId>
     <version>0.0-SNAPSHOT</version>
   </parent>
 
   <modules>
-    <module>users-schema</module>
+    <module>schema</module>
     <module>schema-java</module>
-    <!--<module>users-schema-scala</module>-->
-    <!--<module>users-service</module>-->
+    <!--<module>schema-scala</module>-->
+    <module>service</module>
   </modules>
 
 </project>

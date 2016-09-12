@@ -3,43 +3,49 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>examples-users-schema-java</artifactId>
+  <artifactId>examples-users-schema</artifactId>
+  <packaging>epigraph-schema</packaging>
 
   <parent>
-    <groupId>com.example.epigraph</groupId>
-    <artifactId>users-example</artifactId>
+    <groupId>com.sumologic.epigraph.examples</groupId>
+    <artifactId>examples-users</artifactId>
     <version>0.0-SNAPSHOT</version>
   </parent>
 
   <dependencies>
 
-    <dependency>
-      <groupId>${parent.groupId}</groupId>
-      <artifactId>examples-users-schema</artifactId>
-      <version>${parent.version}</version>
-      <type>epigraph-schema</type>
-    </dependency>
+    <!-- main dependencies -->
 
     <dependency>
       <groupId>com.sumologic.epigraph</groupId>
-      <artifactId>epigraph-java-core</artifactId>
+      <artifactId>epigraph-builtin-types-schema</artifactId>
       <version>0.0-SNAPSHOT</version>
+      <type>epigraph-schema</type>
+    </dependency>
+
+    <!-- test dependencies -->
+
+    <dependency>
+      <groupId>com.sumologic.epigraph</groupId>
+      <artifactId>epigraph-builtin-types-schema</artifactId>
+      <version>0.0-SNAPSHOT</version>
+      <type>epigraph-schema</type>
+      <classifier>tests</classifier>
+      <scope>test</scope>
     </dependency>
 
   </dependencies>
 
   <build>
 
+    <sourceDirectory>${project.basedir}/src/main/epigraph</sourceDirectory>
+    <testSourceDirectory>${project.basedir}/src/test/epigraph</testSourceDirectory>
+
     <plugins>
 
       <plugin>
         <groupId>com.sumologic.epigraph</groupId>
         <artifactId>epigraph-maven-plugin</artifactId>
-      </plugin>
-
-      <plugin>
-        <groupId>com.sumologic.epigraph</groupId>
-        <artifactId>epigraph-java-maven-plugin</artifactId>
       </plugin>
 
     </plugins>

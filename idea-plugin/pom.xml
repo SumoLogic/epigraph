@@ -30,9 +30,9 @@
   <dependencies>
 
     <dependency>
-      <groupId>com.sumologic.epigraph</groupId>
+      <groupId>${project.parent.groupId}</groupId>
       <artifactId>epigraph-lang-common</artifactId>
-      <version>${parent.version}</version>
+      <version>${project.parent.version}</version>
     </dependency>
 
     <dependency>
