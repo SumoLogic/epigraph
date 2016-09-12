@@ -1,0 +1,45 @@
+plugins {
+  id 'java-gradle-plugin'
+  id 'maven-publish'
+}
+
+group = 'io.epigraph'
+version = '0.0' // snapshot versions not supported in local repo
+
+description = """
+Epigraph Java code generator plugin
+
+todo full description here
+"""
+
+apply plugin: 'groovy'
+
+dependencies {
+  compile project(':epigraph-java-codegen')
+  compile project(':epigraph-gradle-plugins-common')
+  compile project(':epigraph-schema-compiler')
+
+  compile gradleApi()
+  compile localGroovy()
+  testCompile gradleTestKit()
+  testCompile 'junit:junit'
+  testCompile('org.spockframework:spock-core') { exclude module: 'groovy-all' }
+}
+
+plugins.withType(JavaPlugin) {
+  project.tasks.withType(GroovyCompile) { task ->
+    task.sourceCompatibility = 1.7
+    task.targetCompatibility = 1.7
+  }
+}
+
+gradlePlugin {
+  plugins {
+    epigraph {
+      id = 'io.epigraph.java'
+      implementationClass = 'io.epigraph.gradle.java.EpigraphJavaPlugin'
+    }
+  }
+}
+
+

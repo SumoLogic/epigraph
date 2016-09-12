@@ -8,6 +8,7 @@ import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.internal.reflect.Instantiator
 
 class EpigraphPluginConvention {
+  public static final String NAME = 'epigraph'
 
   private ProjectInternal project
 

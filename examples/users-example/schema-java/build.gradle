@@ -1,0 +1,11 @@
+plugins {
+  id 'io.epigraph.java' version "0.0"
+}
+
+group = 'com.example.epigraph'
+
+dependencies {
+  epigraphSchema project(':examples-users-schema')
+
+  compile project(':epigraph-java-core')
+}

@@ -3,28 +3,25 @@ package io.epigraph.gradle
 import com.sumologic.epigraph.schema.compiler.*
 import org.gradle.api.GradleException
 import org.gradle.api.artifacts.Configuration
-import org.gradle.api.internal.TaskOutputsInternal
+import org.gradle.api.file.FileTree
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.ParallelizableTask
-import org.gradle.api.tasks.SourceTask
 
 import java.nio.charset.StandardCharsets
 import java.util.jar.JarFile
-import java.util.regex.Pattern
+
+import static io.epigraph.gradle.EpigraphSchemaConstants.SCHEMA_EXTENSION
+import static io.epigraph.gradle.EpigraphSchemaConstants.SCHEMA_FILENAME_PATTERN
 
 @ParallelizableTask
-abstract class EpigraphSchemaTask extends SourceTask {
-  public static final String SCHEMA_EXTENSION = 'esc'
-  protected static final Pattern SCHEMA_FILENAME_PATTERN = Pattern.compile(".+\\." + SCHEMA_EXTENSION);
-  protected Configuration configuration;
-
-  EpigraphSchemaTask() {}
+trait EpigraphSchemaTaskBase {
+  private Configuration configuration;
 
   void setConfiguration(Configuration configuration) {
     this.configuration = configuration
   }
 
-  protected CContext compileSchemaFiles() {
+  public CContext compileSchemaFiles() {
     Collection<Source> sources = getSources();
 
     Collection<Source> dependencySources = new ArrayList<>()
@@ -34,16 +31,18 @@ abstract class EpigraphSchemaTask extends SourceTask {
     return compileFiles(sources, dependencySources)
   }
 
-  @Internal
-  @Override
-  TaskOutputsInternal getOutputs() {
-    return super.getOutputs()
-  }
+//  @Internal
+//  TaskOutputsInternal getOutputs() {
+//    return super.getOutputs()
+//  }
 
   @Internal
   private Collection<Source> getSources() {
-    return getSource().files.collect { new FileSource(it) }
+    def source = getSource()
+    return source == null ? Collections.emptyList() : source.files.collect { new FileSource(it) }
   }
+
+  public abstract FileTree getSource();
 
   @Internal
   private Collection<Source> getDependencySources() {
@@ -72,7 +71,7 @@ abstract class EpigraphSchemaTask extends SourceTask {
     return Collections.emptyList();
   }
 
-  protected static CContext compileFiles(Collection<Source> sources, Collection<Source> dependencySources) {
+  public CContext compileFiles(Collection<Source> sources, Collection<Source> dependencySources) {
     try {
       SchemaCompiler compiler = new SchemaCompiler(sources, dependencySources)
       return compiler.compile()

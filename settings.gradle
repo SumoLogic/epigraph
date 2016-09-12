@@ -13,9 +13,11 @@ Map<String, String> modules = [
     'builtin-types-schema'                        : 'epigraph-builtin-types-schema',
     'core'                                        : 'epigraph-core',
     'data-schema'                                 : 'epigraph-data-schema',
-    'gradle-plugins/schema-compiler-plugin'       : 'epigraph-schema-compiler-gradle-plugin',
     'gradle-plugins/gradle-plugins-common'        : 'epigraph-gradle-plugins-common',
-    'examples/users-example/users-schema'         : 'users-schema',
+    'gradle-plugins/java-plugin'                  : 'epigraph-java-gradle-plugin',
+    'gradle-plugins/schema-compiler-plugin'       : 'epigraph-schema-compiler-gradle-plugin',
+    'examples/users-example/schema-java'          : 'examples-users-java',
+    'examples/users-example/users-schema'         : 'examples-users-schema',
     'idea-plugin'                                 : 'idea-plugin',
     'idl-parser'                                  : 'epigraph-idl-parser',
     'java/codegen'                                : 'epigraph-java-codegen',
@@ -34,8 +36,6 @@ Map<String, String> modules = [
     'schema-schema'                               : 'epigraph-schema-schema',
     'standalone-psi-util'                         : 'epigraph-standalone-psi-util'
 ]
-
-// bootstrap: gradle -c settings-bootstrap.gradle :epigraph-gradle-plugins-common:publishToMavenLocal :epigraph-schema-compiler-gradle-plugin:publishToMavenLocal
 
 modules.each { dir, name ->
   include name

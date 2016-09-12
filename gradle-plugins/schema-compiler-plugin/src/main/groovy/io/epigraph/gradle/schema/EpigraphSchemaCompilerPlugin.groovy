@@ -42,7 +42,7 @@ class EpigraphSchemaCompilerPlugin implements Plugin<ProjectInternal> {
     pluginManager.apply(LanguageBasePlugin.class)
 
     EpigraphPluginConvention epigraphConvention = new EpigraphPluginConvention(project, instantiator)
-    project.getConvention().getPlugins().put('epigraph', epigraphConvention)
+    project.getConvention().getPlugins().put(EpigraphPluginConvention.NAME, epigraphConvention)
 
     configureSourceSets(project)
     configurePublishing(project)
@@ -55,14 +55,14 @@ class EpigraphSchemaCompilerPlugin implements Plugin<ProjectInternal> {
       addDefaultSourceSets(project, sourceSets)
     }
 
-    TaskContainer tasks = project.getTasks()
+    TaskContainer tasks = project.tasks
 
     List<CompileSchemaTask> testCompileTasks = new ArrayList<>()
     List<SourceDirectorySet> nonTestDirectorySets = new ArrayList<>()
 
     sourceSets.all { SourceSet sourceSet ->
       String displayName = sourceSet.getDisplayName()
-      project.getLogger().debug("Epigraph: configuring $displayName")
+      project.getLogger().debug("Epigraph schema compiler: configuring $displayName")
       Convention sourceSetConvention = sourceSet.convention
       DefaultEpigraphSourceSet epigraphSourceSet = new DefaultEpigraphSourceSet(displayName, sourceDirectorySetFactory)
       sourceSetConvention.getPlugins().put('epigraph', epigraphSourceSet)

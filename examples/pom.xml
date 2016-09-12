@@ -37,6 +37,19 @@
 
         <plugin>
           <groupId>com.sumologic.epigraph</groupId>
+          <artifactId>epigraph-java-maven-plugin</artifactId>
+          <version>0.0-SNAPSHOT</version>
+          <executions>
+            <execution>
+              <goals>
+                <goal>generate-sources</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+
+        <plugin>
+          <groupId>com.sumologic.epigraph</groupId>
           <artifactId>epigraph-scala-maven-plugin</artifactId>
           <version>0.0-SNAPSHOT</version>
           <executions>
