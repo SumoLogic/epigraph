@@ -53,9 +53,15 @@ trait EpigraphSchemaTaskBase {
 
     configuration.files.each {
       // TODO take charset from build props
-      JarSource.allFiles(new JarFile(it), SCHEMA_FILENAME_PATTERN, StandardCharsets.UTF_8).each {
-        dependencySources.add(it)
-      }
+
+      getLogger().debug("Adding $it")
+      if (it.name.endsWith('.jar')) {
+        JarSource.allFiles(new JarFile(it), SCHEMA_FILENAME_PATTERN, StandardCharsets.UTF_8).each {
+          dependencySources.add(it)
+        }
+      } else if (it.name.endsWith(SCHEMA_EXTENSION)) {
+        dependencySources.add(new FileSource(it))
+      } else throw new GradleException("Don't know how to handle dependency: '$it'")
     }
 
     return dependencySources
