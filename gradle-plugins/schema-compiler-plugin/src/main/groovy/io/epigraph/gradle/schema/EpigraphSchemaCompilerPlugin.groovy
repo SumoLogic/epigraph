@@ -20,6 +20,7 @@ import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.internal.reflect.Instantiator
 import org.gradle.language.base.plugins.LanguageBasePlugin
+import org.gradle.language.base.plugins.LifecycleBasePlugin
 
 import javax.inject.Inject
 
@@ -45,6 +46,7 @@ class EpigraphSchemaCompilerPlugin implements Plugin<ProjectInternal> {
     project.getConvention().getPlugins().put(EpigraphPluginConvention.NAME, epigraphConvention)
 
     configureSourceSets(project)
+    configureTesting(project)
     configurePublishing(project)
     configureIdeaScopes(project)
   }
@@ -57,8 +59,8 @@ class EpigraphSchemaCompilerPlugin implements Plugin<ProjectInternal> {
 
     TaskContainer tasks = project.tasks
 
-    List<CompileSchemaTask> testCompileTasks = new ArrayList<>()
-    List<SourceDirectorySet> nonTestDirectorySets = new ArrayList<>()
+    List<Configuration> testConfigurations = new ArrayList<>()
+    List<Jar> jarTasks = new ArrayList<>()
 
     sourceSets.all { SourceSet sourceSet ->
       String displayName = sourceSet.getDisplayName()
@@ -80,31 +82,46 @@ class EpigraphSchemaCompilerPlugin implements Plugin<ProjectInternal> {
       compileSchemaTask.setSource(epigraphDirectorySet)
       compileSchemaTask.outputs.dir srcDir // TODO better way to make it incremental? It won't be unless output dir is defined
 
-      if (isTestSourceSet(sourceSet)) {
-        testCompileTasks.add(compileSchemaTask)
-      } else {
-        nonTestDirectorySets.add(epigraphDirectorySet)
-      }
-
       // create compile configuration
       def compileConfiguration = createCompileConfiguration(project, sourceSet)
-      if (isMainSourceSet(sourceSet)) {
-        project.configurations.default.extendsFrom(compileConfiguration)
-      }
+      project.getLogger().info("Created configuration '${compileConfiguration.name}'")
 
       compileSchemaTask.setConfiguration(compileConfiguration)
       compileSchemaTask.dependsOn compileConfiguration
 
       configureIdeaModule(project, sourceSet, srcDir)
 
-      createJarTask(project, sourceSet, compileConfiguration, compileSchemaTask)
+      def jarTask = createJarTask(project, sourceSet, compileConfiguration, compileSchemaTask)
+
+      if (isMainSourceSet(sourceSet)) {
+        project.configurations.default.extendsFrom(compileConfiguration)
+        if (jarTask != null) jarTasks.add(jarTask)
+      } else {
+        testConfigurations.add(compileConfiguration)
+      }
     }
 
-    // add non-test schemas to tests
-    testCompileTasks.each {
-      List<Object> sources = new ArrayList<>(nonTestDirectorySets)
-      sources.add(it.getSource())
-      it.setSource(sources)
+    testConfigurations.each { testConfiguration ->
+      jarTasks.each { jarTask ->
+        project.dependencies.add(testConfiguration.name, jarTask.outputs.files)
+      }
+    }
+  }
+
+  private static void configureTesting(Project project) {
+    TaskContainer tasks = project.tasks
+    def test = tasks.create('test')
+    test.setGroup(LifecycleBasePlugin.VERIFICATION_GROUP)
+    test.setDescription('Checks that test schemas compile')
+
+    tasks.findByPath('check').dependsOn(test)
+
+    SourceSetContainer sourceSets = project.sourceSets
+    sourceSets.each { ss ->
+      if (isTestSourceSet(ss)) {
+        String compileTaskName = ss.getCompileTaskName('EpigraphSchema')
+        test.dependsOn(tasks.findByName(compileTaskName))
+      }
     }
   }
 
@@ -117,6 +134,11 @@ class EpigraphSchemaCompilerPlugin implements Plugin<ProjectInternal> {
 
     sourceSets.add(main)
     sourceSets.add(test)
+
+    def compileConfiguration = createCompileConfiguration(project, main)
+    def testCompileConfiguration = createCompileConfiguration(project, test)
+
+    testCompileConfiguration.extendsFrom(compileConfiguration)
   }
 
   private static Configuration createCompileConfiguration(Project project, SourceSet sourceSet) {
@@ -150,8 +172,13 @@ class EpigraphSchemaCompilerPlugin implements Plugin<ProjectInternal> {
       if (scopes.COMPILE == null) addScope('COMPILE', scopes)
       if (scopes.TEST == null) addScope('TEST', scopes)
 
-      scopes.COMPILE.plus += [project.configurations.compile]
-      scopes.TEST.plus += [project.configurations.testCompile]
+      for (configuration in project.configurations) {
+        if (configuration.name =~ 'test') {
+          scopes.TEST.plus += [configuration]
+        } else {
+          scopes.COMPILE.plus += [configuration]
+        }
+      }
     }
   }
 
@@ -163,7 +190,7 @@ class EpigraphSchemaCompilerPlugin implements Plugin<ProjectInternal> {
   }
 
   private
-  static void createJarTask(Project project, SourceSet sourceSet, Configuration configuration, CompileSchemaTask compileSchemaTask) {
+  static Jar createJarTask(Project project, SourceSet sourceSet, Configuration configuration, CompileSchemaTask compileSchemaTask) {
     TaskContainer tasks = project.getTasks()
     String jarTaskName = sourceSet.getJarTaskName()
 
@@ -183,7 +210,11 @@ class EpigraphSchemaCompilerPlugin implements Plugin<ProjectInternal> {
       if (isMainSourceSet(sourceSet)) {
         project.artifacts.add(configuration.getName(), jarTask)
       }
+
+      return jarTask
     }
+
+    return null
   }
 
   private static void configurePublishing(Project project) {
