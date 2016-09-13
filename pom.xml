@@ -51,7 +51,7 @@
     <profile>
       <id>light-psi</id>
       <activation>
-        <activeByDefault>true</activeByDefault>
+        <activeByDefault>false</activeByDefault>
       </activation>
       <modules>
         <module>light-psi</module>
