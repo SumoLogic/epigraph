@@ -10,11 +10,7 @@ import io.epigraph.util.Unmodifiable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 
@@ -133,6 +129,19 @@ public abstract class RecordType extends DatumType {
 
     public @NotNull DataType dataType() { return dataType; }
 
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+      Field field = (Field) o;
+      return Objects.equals(name, field.name) &&
+             Objects.equals(dataType, field.dataType);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(name, dataType);
+    }
   }
 
 

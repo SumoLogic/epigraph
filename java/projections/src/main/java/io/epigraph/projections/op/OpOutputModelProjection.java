@@ -12,7 +12,8 @@ import java.util.*;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public abstract class OpOutputModelProjection<M extends DatumType, P extends OpOutputModelProjection<M, P>> /*extends P*/ implements PrettyPrintable {
+public abstract class OpOutputModelProjection<M extends DatumType, P extends OpOutputModelProjection<M, P>> /*extends P*/
+    implements PrettyPrintable {
   @NotNull
   protected final M model;
   protected final boolean includeInDefault;
@@ -33,60 +34,10 @@ public abstract class OpOutputModelProjection<M extends DatumType, P extends OpO
 
   public @Nullable Set<OpParam> params() { return params; }
 
-  /*
-  @NotNull
-  public P projectionForModel(@NotNull M model) {
-    if (polymorphicTail == null || polymorphicTail.isEmpty())
-      return self();
-
-    Collection<P> projectionsToMerge = projectionsToMerge(model);
-    boolean mergedRequired = includeInDefault;
-
-    if (!mergedRequired) {
-      for (P p : projectionsToMerge) {
-        mergedRequired = p.includeInDefault;
-        if (mergedRequired) break;
-      }
-    }
-
-    @Nullable
-    Set<OpParam> mergedParams = params == null ? null : new HashSet<>(params);
-    for (P p : projectionsToMerge) {
-      Set<OpParam> paramsToMerge = p.params;
-      if (paramsToMerge != null) {
-        if (mergedParams == null) mergedParams = new HashSet<>(paramsToMerge);
-        else OpParam.merge(mergedParams, paramsToMerge);
-      }
-    }
-
-    return mergedProjection(model, mergedRequired, mergedParams, projectionsToMerge);
-  }
-  */
-
   protected P self() {
     //noinspection unchecked
     return (P) this;
   }
-
-  protected abstract P mergedProjection(@NotNull M model,
-                                        boolean mergedRequired,
-                                        @Nullable Set<OpParam> mergedParams,
-                                        @NotNull Collection<P> projectionsToMerge);
-
-  /*
-  private Collection<P> projectionsToMerge(@NotNull M model) {
-    Collection<P> res = new LinkedHashSet<>();
-    res.add(self());
-    if (polymorphicTail != null) {
-      for (P p : polymorphicTail) {
-        if (model.isAssignableFrom(p.model))
-          res.add(p);
-      }
-    }
-
-    return res;
-  }
-  */
 
   @Override
   public <Exc extends Exception> void prettyPrint(DataLayouter<Exc> l) throws Exc {
@@ -103,13 +54,15 @@ public abstract class OpOutputModelProjection<M extends DatumType, P extends OpO
     l.print(model.name().toString());
   }
 
-  protected <Exc extends Exception> void prettyPrintParams(DataLayouter<Exc> l, @NotNull Collection<OpParam> params) throws Exc {
+  protected <Exc extends Exception> void prettyPrintParams(DataLayouter<Exc> l, @NotNull Collection<OpParam> params)
+      throws Exc {
     for (OpParam param : params) {
       l.brk().print(param);
     }
   }
 
-  protected <Exc extends Exception> void prettyPrintTail(DataLayouter<Exc> l, @NotNull Collection<P> polymorphicTail) throws Exc {
+  protected <Exc extends Exception> void prettyPrintTail(DataLayouter<Exc> l, @NotNull Collection<P> polymorphicTail)
+      throws Exc {
     l.brk().beginCInd().print("~(");
     for (P p : polymorphicTail) {
       l.brk().print(p);

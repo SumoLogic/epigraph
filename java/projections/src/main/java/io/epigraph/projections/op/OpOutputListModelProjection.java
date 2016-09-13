@@ -5,7 +5,6 @@ import io.epigraph.types.ListType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
 import java.util.Objects;
 import java.util.Set;
 
@@ -26,14 +25,6 @@ public class OpOutputListModelProjection extends OpOutputModelProjection<ListTyp
 
   @NotNull
   public OpOutputVarProjection itemsProjection() { return itemsProjection; }
-
-  @Override
-  protected OpOutputListModelProjection mergedProjection(@NotNull ListType model,
-                                                           boolean mergedRequired,
-                                                           @Nullable Set<OpParam> mergedParams,
-                                                           @NotNull Collection<OpOutputListModelProjection> projectionsToMerge) {
-    throw new UnsupportedOperationException("todo");
-  }
 
   @Override
   public boolean equals(Object o) {

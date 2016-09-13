@@ -39,13 +39,19 @@ public class OpOutputVarProjection implements PrettyPrintable {
   @NotNull
   public Type type() { return type; }
 
-  public @NotNull LinkedHashSet<OpOutputTagProjection> tagProjections() { return tagProjections; }
+  @NotNull
+  public LinkedHashSet<OpOutputTagProjection> tagProjections() { return tagProjections; }
+
+  @Nullable
+  public OpOutputTagProjection tagProjection(@NotNull Type.Tag tag) {
+    for (OpOutputTagProjection tagProjection : tagProjections)
+      if (tagProjection.tag().equals(tag)) return tagProjection;
+
+    return null;
+  }
 
   @Nullable
   public LinkedHashSet<OpOutputVarProjection> polymorphicTails() { return polymorphicTails; }
-
-  // todo projection by tag
-
 
   @Override
   public boolean equals(Object o) {

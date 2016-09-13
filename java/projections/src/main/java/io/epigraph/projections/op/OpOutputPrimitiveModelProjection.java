@@ -4,7 +4,6 @@ import io.epigraph.types.PrimitiveType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
 import java.util.Set;
 
 /**
@@ -15,13 +14,5 @@ public class OpOutputPrimitiveModelProjection extends OpOutputModelProjection<Pr
                                           boolean includeInDefault,
                                           @Nullable Set<OpParam> params) {
     super(model, includeInDefault, params);
-  }
-
-  @Override
-  protected OpOutputPrimitiveModelProjection mergedProjection(@NotNull PrimitiveType model,
-                                                              boolean mergedRequired,
-                                                              @Nullable Set<OpParam> mergedParams,
-                                                              @NotNull Collection<OpOutputPrimitiveModelProjection> projectionsToMerge) {
-    return new OpOutputPrimitiveModelProjection(model, mergedRequired, mergedParams);
   }
 }

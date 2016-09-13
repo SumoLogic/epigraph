@@ -6,12 +6,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpOutputRecordModelProjection extends OpOutputModelProjection<RecordType, OpOutputRecordModelProjection> {
-  private static final ThreadLocal<IdentityHashMap<OpOutputRecordModelProjection, OpOutputRecordModelProjection>> equalsVisited = new ThreadLocal<>();
+  private static final ThreadLocal<IdentityHashMap<OpOutputRecordModelProjection, OpOutputRecordModelProjection>>
+      equalsVisited = new ThreadLocal<>();
 
   @Nullable
   private LinkedHashSet<OpOutputFieldProjection> fieldProjections;
@@ -23,12 +25,22 @@ public class OpOutputRecordModelProjection extends OpOutputModelProjection<Recor
     super(model, includeInDefault, params);
     this.fieldProjections = fieldProjections;
 
-    // check that fields belong to proper types? Currently impossible: field doesn't know it's host
-//    if (fieldProjections != null) {
-//      for (OpOutputFieldProjection fieldProjection : fieldProjections) {
-//        RecordType.Field field = fieldProjection.getField();
-//      }
-//    }
+    Collection<@NotNull ? extends RecordType.Field> fields = model.fields();
+    if (fieldProjections != null) {
+      for (OpOutputFieldProjection fieldProjection : fieldProjections) {
+        RecordType.Field field = fieldProjection.getField();
+        if (!fields.contains(field))
+          throw new IllegalArgumentException(
+              String.format("Field '%s' does not belong to record model '%s'. Known fields: %s",
+                            field.name(), model.name(), listFields(fields)
+              )
+          );
+      }
+    }
+  }
+
+  private static String listFields(@NotNull Collection<? extends RecordType.Field> fields) {
+    return fields.stream().map(RecordType.Field::name).collect(Collectors.joining(", "));
   }
 
   @NotNull
@@ -42,14 +54,6 @@ public class OpOutputRecordModelProjection extends OpOutputModelProjection<Recor
   public void addFieldProjection(@NotNull OpOutputFieldProjection fieldProjection) {
     if (fieldProjections == null) fieldProjections = new LinkedHashSet<>();
     fieldProjections.add(fieldProjection);
-  }
-
-  @Override
-  protected OpOutputRecordModelProjection mergedProjection(@NotNull RecordType model,
-                                                           boolean mergedRequired,
-                                                           @Nullable Set<OpParam> mergedParams,
-                                                           @NotNull Collection<OpOutputRecordModelProjection> projectionsToMerge) {
-    throw new UnsupportedOperationException("todo");
   }
 
   @Override

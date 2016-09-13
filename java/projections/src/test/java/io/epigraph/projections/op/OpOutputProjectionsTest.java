@@ -276,8 +276,8 @@ public class OpOutputProjectionsTest {
     assertEquals(expected, varProjection.toString());
   }
 
-  public static void main(String[] args) {
-
+  @Test
+  public void testBuildSampleProjection() {
     OpOutputRecordModelProjection recursivePersonRecordProjection = new OpOutputRecordModelProjection(
         PersonRecord.type,
         false,
@@ -386,6 +386,6 @@ public class OpOutputProjectionsTest {
         )
     );
 
-    System.out.println(personVarProjection);
+//    System.out.println(personVarProjection);
   }
 }

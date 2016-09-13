@@ -25,8 +25,9 @@ public class OpOutputTagProjection implements PrettyPrintable {
     this.includeInDefault = includeInDefault;
     this.projection = projection;
     if (!tag.type.equals(projection.model)) { // or can it be a sub-type?
-      throw new IllegalArgumentException("Tag model '" + tag.type + "' is different from tag projection model '" +
-          projection.model + "'");
+      throw new IllegalArgumentException(
+          String.format("Tag model '%s' is different from tag projection model '%s'", tag.type, projection.model)
+      );
     }
   }
 
@@ -44,8 +45,8 @@ public class OpOutputTagProjection implements PrettyPrintable {
     if (o == null || getClass() != o.getClass()) return false;
     OpOutputTagProjection that = (OpOutputTagProjection) o;
     return includeInDefault == that.includeInDefault &&
-        Objects.equals(tag, that.tag) &&
-        Objects.equals(projection, that.projection);
+           Objects.equals(tag, that.tag) &&
+           Objects.equals(projection, that.projection);
   }
 
   @Override

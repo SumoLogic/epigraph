@@ -8,6 +8,8 @@ import io.epigraph.types.Type.Tag;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
+
 /**
  * Declares type of data held by container type components (record fields, list elements, map values).
  */
@@ -45,4 +47,16 @@ public class DataType {
     return data;
   }
 
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    DataType dataType = (DataType) o;
+    return Objects.equals(name, dataType.name);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(name);
+  }
 }
