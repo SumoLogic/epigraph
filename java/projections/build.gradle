@@ -8,10 +8,9 @@ dependencies {
   compile project(':epigraph-standalone-psi-util')
   compile project(':epigraph-light-psi')
 
-  testCompile 'junit:junit'
-  // test classes depend on core test classes. TODO: separate artifact for sample project
-  testCompile project(':epigraph-java-core').sourceSets.test.output
-
   compile 'com.io7m.jpplib:io7m-jpplib-core'
   compile 'org.jetbrains:annotations'
+
+  testCompile project(':epigraph-test-java')
+  testCompile 'junit:junit'
 }

@@ -1,0 +1,16 @@
+namespace io.epigraph.test
+
+vartype Person {
+  id: PersonId
+  `record`: PersonRecord
+}
+
+integer PersonId
+
+record PersonRecord {
+  id: PersonId
+  firstName: String
+  lastName: String
+  bestFriend: Person // default id
+  worstEnemy: polymorphic PersonRecord
+}

@@ -1,0 +1,15 @@
+namespace io.epigraph.test
+
+vartype User extends Person {
+  override id: UserId
+  override `record`: UserRecord
+}
+
+integer UserId extends PersonId
+
+record UserRecord extends PersonRecord {
+  profile: Url
+  override worstEnemy: polymorphic UserRecord
+}
+
+string Url

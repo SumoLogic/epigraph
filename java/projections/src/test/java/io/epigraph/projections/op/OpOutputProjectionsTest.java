@@ -1,10 +1,10 @@
 package io.epigraph.projections.op;
 
-import com.example.*;
 import com.intellij.psi.PsiErrorElement;
 import io.epigraph.idl.parser.projections.ProjectionParserDefinitions;
 import io.epigraph.idl.parser.psi.IdlOpOutputVarProjection;
 import io.epigraph.psi.EpigraphPsiUtil;
+import io.epigraph.test.*;
 import io.epigraph.types.DataType;
 import io.epigraph.types.SimpleTypesResolver;
 import io.epigraph.types.TypesResolver;
@@ -177,6 +177,7 @@ public class OpOutputProjectionsTest {
     TypesResolver resolver = new SimpleTypesResolver(
         PersonId.type,
         Person.type,
+        User.type,
         UserId.type,
         UserRecord.type
     );
@@ -186,12 +187,12 @@ public class OpOutputProjectionsTest {
                            "  +id, \n" +
                            "  record (\n" +
                            "    +id, \n" +
-                           "    +bestFriend (" +
-                           "      +id, " +
-                           "      bestFriend" +
+                           "    +bestFriend :record (\n" +
+                           "      +id, \n" +
+                           "      bestFriend: id \n" +
                            "    ) \n" +
                            "  \n) " +
-                           ") ~com.example.Person :record (bestFriend)";
+                           ") ~io.epigraph.test.User :record (profile)";
 
 
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
@@ -215,20 +216,64 @@ public class OpOutputProjectionsTest {
 //    String psiDump = DebugUtil.psiToString(psiVarProjection, true, false).trim();
 //    System.out.println(psiDump);
 
+    OpOutputVarProjection varProjection = null;
     try {
-      OpOutputVarProjection varProjection = OpOutputProjectionsParser.parseVarProjection(
+      varProjection = OpOutputProjectionsParser.parseVarProjection(
           new DataType(false, Person.type, Person.id),
           psiVarProjection,
           resolver
       );
 
-      System.out.println(varProjection);
     } catch (OpOutputProjectionsParser.ProjectionParsingException e) {
       e.printStackTrace();
       System.err.println(e.getMessage() + " at " +
                          EpigraphPsiUtil.getLocation(e.psi(), projectionStr));
       fail();
     }
+
+    String expected = "var io.epigraph.test.Person (\n" +
+                      "  +id: io.epigraph.test.PersonId\n" +
+                      "  record:\n" +
+                      "    io.epigraph.test.PersonRecord {\n" +
+                      "      fields: {\n" +
+                      "        +id:\n" +
+                      "          var io.epigraph.test.PersonId (\n" +
+                      "            self: io.epigraph.test.PersonId\n" +
+                      "          )\n" +
+                      "        +bestFriend:\n" +
+                      "          var io.epigraph.test.Person (\n" +
+                      "            record:\n" +
+                      "              io.epigraph.test.PersonRecord {\n" +
+                      "                fields: {\n" +
+                      "                  +id:\n" +
+                      "                    var io.epigraph.test.PersonId (\n" +
+                      "                      self: io.epigraph.test.PersonId\n" +
+                      "                    )\n" +
+                      "                  bestFriend:\n" +
+                      "                    var io.epigraph.test.Person (\n" +
+                      "                      id: io.epigraph.test.PersonId\n" +
+                      "                    )\n" +
+                      "                }\n" +
+                      "              }\n" +
+                      "          )\n" +
+                      "      }\n" +
+                      "    }\n" +
+                      ")\n" +
+                      "~(\n" +
+                      "  var io.epigraph.test.User (\n" +
+                      "    record:\n" +
+                      "      io.epigraph.test.UserRecord {\n" +
+                      "        fields: {\n" +
+                      "          profile:\n" +
+                      "            var io.epigraph.test.Url (\n" +
+                      "              self: io.epigraph.test.Url\n" +
+                      "            )\n" +
+                      "        }\n" +
+                      "      }\n" +
+                      "  )\n" +
+                      ")";
+
+    assertEquals(expected, varProjection.toString());
   }
 
   public static void main(String[] args) {
@@ -314,7 +359,7 @@ public class OpOutputProjectionsTest {
                 new OpOutputVarProjection(
                     UserRecord.type,
                     new OpOutputTagProjection(
-                        Person.record,
+                        User.record,
                         true,
                         new OpOutputRecordModelProjection(
                             UserRecord.type,

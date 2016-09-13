@@ -22,6 +22,8 @@ Map<String, String> modules = [
     'gradle-plugins/schema-compiler-plugin': 'epigraph-schema-compiler-gradle-plugin',
     'idea-plugin'                          : 'idea-plugin',
     'idl-parser'                           : 'epigraph-idl-parser',
+    'integration-test/test-java'           : 'epigraph-test-java',
+    'integration-test/test-schema'         : 'epigraph-test-schema',
     'java/codegen'                         : 'epigraph-java-codegen',
     'java/core'                            : 'epigraph-java-core',
     'java/projections'                     : 'epigraph-java-projections',
