@@ -2,8 +2,10 @@ plugins {
   id 'io.epigraph.java' version "0.0"
 }
 
+group = 'com.sumologic.epigraph.tests'
+
 dependencies {
-  epigraphSchema project(':epigraph-test-schema')
+  epigraphSchema project(':tests-schema')
 
   compile project(':epigraph-java-core')
 }

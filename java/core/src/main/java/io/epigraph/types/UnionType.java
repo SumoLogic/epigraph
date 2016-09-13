@@ -39,14 +39,14 @@ public abstract class UnionType extends Type {
 
   public @Nullable Tag checkTagIsKnown(@Nullable Tag tag) {
     // TODO check it is our/compatible tag (not just same name)?
-    if (tag != null && tagsMap().containsKey(tag.name)) throw new IllegalArgumentException("TODO " + tag.name);
+    if (tag != null && !tagsMap().containsKey(tag.name)) throw new IllegalArgumentException("TODO " + tag.name);
     return tag;
   }
 
   // TODO .Raw
 
   public static abstract class Static<MyImmData extends Data.Imm.Static, MyMutData extends Data.Mut.Static<MyImmData>>
-      extends UnionType implements Type.Static<UnionType.Static<MyImmData, MyMutData>> {
+      extends UnionType implements Type.Static<MyImmData, MyMutData> {
 
     private final @NotNull Function<Data.Mut.@NotNull Raw, @NotNull MyMutData> mutDataConstructor;
 
@@ -59,7 +59,7 @@ public abstract class UnionType extends Type {
       this.mutDataConstructor = mutDataConstructor;
     }
 
-    @Override // TODO rename to createDataBuilder()?
+    @Override
     public final @NotNull MyMutData createDataBuilder() { return mutDataConstructor.apply(new Data.Mut.Raw(this)); }
 
   }

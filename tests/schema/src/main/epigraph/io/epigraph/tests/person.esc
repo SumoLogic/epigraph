@@ -1,4 +1,4 @@
-namespace io.epigraph.test
+namespace io.epigraph.tests
 
 vartype Person {
   id: PersonId

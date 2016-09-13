@@ -2,6 +2,9 @@
 
 package io.epigraph.types;
 
+import io.epigraph.data.Data;
+import io.epigraph.data.Datum;
+import io.epigraph.data.Val;
 import io.epigraph.names.QualifiedTypeName;
 import org.jetbrains.annotations.NotNull;
 
@@ -37,7 +40,13 @@ public abstract class PrimitiveType extends DatumType { // TODO parameterize wit
   public interface Raw extends DatumType.Raw {}
 
 
-  public interface Static<MyType extends PrimitiveType & PrimitiveType.Static<MyType>>
-      extends DatumType.Static<MyType> {}
+  public interface Static<
+      MyImmDatum extends Datum.Imm.Static,
+      MyMutDatum extends Datum.Mut.Static<MyImmDatum>,
+      MyImmVal extends Val.Imm.Static,
+      MyMutVal extends Val.Mut.Static<MyImmVal, MyMutDatum>,
+      MyImmData extends Data.Imm.Static,
+      MyMutData extends Data.Mut.Static<MyImmData>
+      > extends DatumType.Static<MyImmDatum, MyMutDatum, MyImmVal, MyMutVal, MyImmData, MyMutData> {}
 
 }

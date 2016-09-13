@@ -128,6 +128,13 @@ abstract class JavaGen[From >: Null <: AnyRef](protected val from: From, protect
   /** java type name for given typeref as seen from the context of the other type namespace */
   def lqrn(tr: CTypeRef, lt: CType, lnTrans: (String) => String = identity): String = lqn(tr.resolved, lt, lnTrans)
 
+  /** locally qualified name for type's Data type (e.g. `PersonRecord.Data` or `Person`) */
+  def lqdrn(tr: CTypeRef, lt: CType): String = tr.resolved match {
+    case t: CVarTypeDef => lqn(t, lt)
+    case t: CDatumType => lqn(t, lt) + ".Data"
+    case unknown => throw new UnsupportedOperationException(unknown.toString)
+  }
+
   /** tag type for given typeref and tag name */
   def tt(tr: CTypeRef, tn: String): CType = tr.resolved match {
     case tt: CVarTypeDef => tt.effectiveTags.find(_.name == tn).get.typeRef.resolved

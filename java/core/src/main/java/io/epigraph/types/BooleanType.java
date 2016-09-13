@@ -62,9 +62,8 @@ public abstract class BooleanType extends PrimitiveType {
       MyMutVal extends Val.Mut.Static<MyImmVal, MyMutDatum>,
       MyImmData extends Data.Imm.Static,
       MyMutData extends Data.Mut.Static<MyImmData>
-      > extends BooleanType implements PrimitiveType.Static<
-      BooleanType.Static<MyImmDatum, MyMutDatum, MyImmVal, MyMutVal, MyImmData, MyMutData>
-      > {
+      > extends BooleanType
+      implements PrimitiveType.Static<MyImmDatum, MyMutDatum, MyImmVal, MyMutVal, MyImmData, MyMutData> {
 
     private final @NotNull Function<BooleanDatum.Mut.@NotNull Raw, @NotNull MyMutDatum> mutDatumConstructor;
 

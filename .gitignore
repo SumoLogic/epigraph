@@ -8,9 +8,10 @@
 # IntelliJ IDEA *.iml module files (everywhere)
 *.iml
 
-# Maven target directories (in the root and its immediate subdirectories only, for now)
+# Maven target directories (in the root and its subdirectories down to two levels deep only, for now)
 /target/
 /*/target/
+/*/*/target/
 
 # Gradle directories
 /.gradle/

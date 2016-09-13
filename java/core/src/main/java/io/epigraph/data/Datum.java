@@ -59,7 +59,12 @@ public interface Datum {
 
     interface Raw extends Datum.Mut, Datum.Raw {}
 
-    interface Static extends Datum.Mut, Datum.Static {}
+    interface Static<MyImmDatum extends Datum.Imm.Static> extends Datum.Mut, Datum.Static {
+
+      @Override
+      @NotNull MyImmDatum toImmutable();
+
+    }
 
   }
 

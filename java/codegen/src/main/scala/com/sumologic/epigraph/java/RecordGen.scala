@@ -299,12 +299,12 @@ ${ // tag getters
     private Builder(@NotNull io.epigraph.data.RecordDatum.Mut.Raw raw) { super($ln.type, raw, $ln.Imm.Impl::new); }
 ${t.effectiveFields.map { f => // for each effective field
     sn"""\
-${  f.effectiveDefaultTagName match { // default tag (if any)
+${  f.effectiveDefaultTagName match { // default tag (implied or explicit, if any)
       case None => ""
       case Some(dtn) => sn"""\
 
     /**
-     * Returns default tag datum builder for${poly(f, s" polymorphic", "")} `${f.name}` field.
+     * Returns default tag datum builder for `${f.name}` field.
      */
     @Override
     public @Nullable ${lqn(tt(f.typeRef, dtn), t)}.Builder get${up(f.name)}() {
@@ -312,7 +312,7 @@ ${  f.effectiveDefaultTagName match { // default tag (if any)
     }
 
     /**
-     * Sets default tag datum builder for${poly(f)} `${f.name}` field.
+     * Sets default tag datum builder for `${f.name}` field.
      */
     public @NotNull $ln.Builder set${up(f.name)}(@Nullable ${lqn(tt(f.typeRef, dtn), t)}.Builder ${jn(f.name)}) {
       _raw().getOrCreateFieldData($ln.${jn(f.name)})._raw()._setDatum(${dttr(f.valueDataType, dtn, t)}, ${jn(f.name)});
@@ -328,7 +328,7 @@ ${  f.effectiveDefaultTagName match { // default tag (if any)
     }
 
     /**
-     * Returns default tag value builder for${poly(f)} `${f.name}` field.
+     * Returns default tag value builder for `${f.name}` field.
      */
     @Override
     public @Nullable ${lqn(tt(f.typeRef, dtn), t)}.Builder.Value get_${up(f.name)}() {
@@ -337,22 +337,22 @@ ${  f.effectiveDefaultTagName match { // default tag (if any)
 """
     }
 }\
-${ f.valueDataType.typeRef.resolved match { // tag accessors for union types
+${ f.valueDataType.typeRef.resolved match { // tag accessors (for union types)
       case vartype: CVarTypeDef => vartype.effectiveTags.map { tag => // for each effective tag
         sn"""\
 
     /**
-     * Returns `${tag.name}` tag datum builder for${poly(f)} `${f.name}` field.
+     * Returns `${tag.name}` tag datum builder for `${f.name}` field.
      */
     @Override
-    public @Nullable ${lqrn(tag.typeRef, t)}${poly(f, "", ".Builder")} get${up(f.name)}${up(tag.name)}() {
-      return io.epigraph.util.Util.apply(get_${up(f.name)}${up(tag.name)}(), ${lqn(tt(f.typeRef, tag.name), t)}${poly(f, "", ".Builder")}.Value::getDatum);
+    public @Nullable ${lqrn(tag.typeRef, t)}.Builder get${up(f.name)}${up(tag.name)}() {
+      return io.epigraph.util.Util.apply(get_${up(f.name)}${up(tag.name)}(), ${lqn(tt(f.typeRef, tag.name), t)}.Builder.Value::getDatum);
     }
 
     /**
-     * Sets `${tag.name}` tag datum builder for${poly(f)} `${f.name}` field.
+     * Sets `${tag.name}` tag datum builder for `${f.name}` field.
      */
-    public ${poly(f, s"<${ln(tt(f.typeRef, tag.name))}Builder extends ${lqn(tt(f.typeRef, tag.name), t)} & io.epigraph.data.Datum.Mut.Static>\n        ", "")}@NotNull $ln.Builder set${up(f.name)}${up(tag.name)}(@Nullable ${poly(f, s"${ln(tt(f.typeRef, tag.name))}Builder", s"${lqn(tt(f.typeRef, tag.name), t)}.Builder")} ${jn(f.name)}${up(tag.name)}) {
+    public @NotNull $ln.Builder set${up(f.name)}${up(tag.name)}(@Nullable ${lqn(tt(f.typeRef, tag.name), t)}.Builder ${jn(f.name)}${up(tag.name)}) {
       _raw().getOrCreateFieldData($ln.${jn(f.name)})._raw()._setDatum(${dttr(f.valueDataType, tag.name, t)}, ${jn(f.name)}${up(tag.name)});
       return this;
     }
@@ -366,17 +366,28 @@ ${ f.valueDataType.typeRef.resolved match { // tag accessors for union types
     }
 
     /**
-     * Returns `${tag.name}` tag value builder for${poly(f)} `${f.name}` field.
+     * Returns `${tag.name}` tag value builder for `${f.name}` field.
      */
     @Override
-    public @Nullable ${lqrn(tag.typeRef, t)}${poly(f, "", ".Builder")}.Value get_${up(f.name)}${up(tag.name)}() {
-      return (${lqn(tt(f.typeRef, tag.name), t)}${poly(f, "", ".Builder")}.Value) _raw()._getValue($ln.${jn(f.name)}, ${dttr(f.valueDataType, tag.name, t)});
+    public @Nullable ${lqrn(tag.typeRef, t)}.Builder.Value get_${up(f.name)}${up(tag.name)}() {
+      return (${lqn(tt(f.typeRef, tag.name), t)}.Builder.Value) _raw()._getValue($ln.${jn(f.name)}, ${dttr(f.valueDataType, tag.name, t)});
     }
 """
       }.mkString
       case _: CDatumType => ""
       case unexpected => throw new UnsupportedOperationException(unexpected.name.name)
     }
+}\
+${  if (f.valueDataType.polymorphic) sn"""\
+
+    /**
+     *
+     */
+    //@Override
+//    public <I extends ${lqdrn(f.typeRef, t)}, B extends Datum.Mut.Static> @Nullable B get${up(f.name)}() {
+//      return null; // TODO
+//    }
+""" else ""
 }\
 """
   }.mkString

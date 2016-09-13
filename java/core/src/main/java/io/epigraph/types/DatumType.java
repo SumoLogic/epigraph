@@ -2,6 +2,8 @@
 
 package io.epigraph.types;
 
+import io.epigraph.data.Data;
+import io.epigraph.data.Datum;
 import io.epigraph.data.Val;
 import io.epigraph.names.TypeName;
 import org.jetbrains.annotations.NotNull;
@@ -44,7 +46,14 @@ public abstract class DatumType extends Type {
   public interface Raw extends Type.Raw {}
 
 
-  public interface Static<MyType extends DatumType & DatumType.Static<MyType>> extends Type.Static<MyType> {}
+  public interface Static<
+      MyImmDatum extends Datum.Imm.Static,
+      MyMutDatum extends Datum.Mut.Static<MyImmDatum>,
+      MyImmVal extends Val.Imm.Static,
+      MyMutVal extends Val.Mut.Static<MyImmVal, MyMutDatum>,
+      MyImmData extends Data.Imm.Static,
+      MyMutData extends Data.Mut.Static<MyImmData>
+      > extends Type.Static<MyImmData, MyMutData>{}
 
 
 }

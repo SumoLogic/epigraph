@@ -114,6 +114,16 @@
       </modules>
     </profile>
 
+    <profile>
+      <id>tests</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <modules>
+        <module>tests</module>
+      </modules>
+    </profile>
+
   </profiles>
 
   <properties>

@@ -85,7 +85,7 @@ public interface PrimitiveDatum<Native> extends Datum {
 
 
     interface Static<Native, MyImmDatum extends PrimitiveDatum.Imm.Static<Native>>
-        extends PrimitiveDatum.Mut<Native>, PrimitiveDatum.Static<Native>, Datum.Mut.Static {}
+        extends PrimitiveDatum.Mut<Native>, PrimitiveDatum.Static<Native>, Datum.Mut.Static<MyImmDatum> {}
 
 
   }

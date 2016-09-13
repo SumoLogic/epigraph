@@ -59,9 +59,8 @@ public abstract class AnonListType extends ListType {
       MyMutVal extends Val.Mut.Static<MyImmVal, MyMutDatum>,
       MyImmData extends Data.Imm.Static,
       MyMutData extends Data.Mut.Static<MyImmData>
-      > extends AnonListType implements ListType.Static<
-      AnonListType.Static<MyImmDatum, MyMutDatum, MyImmVal, MyMutVal, MyImmData, MyMutData>
-      > {
+      > extends AnonListType
+      implements ListType.Static<MyImmDatum, MyMutDatum, MyImmVal, MyMutVal, MyImmData, MyMutData> {
 
     private final @NotNull Function<ListDatum.Mut.Raw, MyMutDatum> mutDatumConstructor;
 

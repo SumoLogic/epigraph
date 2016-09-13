@@ -9,7 +9,7 @@ integer PersonId
 
 record PersonRecord {
   id: polymorphic PersonId
-  bestFriend: polymorphic Person//Record
+  bestFriend: polymorphic Person default id//Record
   friends: list[PersonRecord]
   ids: list[PersonId]
   idss: list[list[PersonId]]

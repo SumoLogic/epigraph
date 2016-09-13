@@ -1,4 +1,4 @@
-namespace io.epigraph.test
+namespace io.epigraph.tests
 
 vartype User extends Person {
   override id: UserId

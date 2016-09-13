@@ -220,17 +220,17 @@ public interface ListDatum extends Datum {
     }
 
 
-    public static abstract class Static<MyImm extends ListDatum.Imm.Static> extends ListDatum.Mut
-        implements ListDatum.Static, Datum.Mut.Static {
+    public static abstract class Static<MyImmDatum extends ListDatum.Imm.Static> extends ListDatum.Mut
+        implements ListDatum.Static, Datum.Mut.Static<MyImmDatum> {
 
       private final @NotNull ListDatum.Mut.Raw raw;
 
-      private final @NotNull Function<ListDatum.Imm.Raw, MyImm> immutableConstructor;
+      private final @NotNull Function<ListDatum.Imm.Raw, MyImmDatum> immutableConstructor;
 
       protected Static(
           @NotNull ListType type,
           @NotNull ListDatum.Mut.Raw raw,
-          @NotNull Function<ListDatum.Imm.Raw, MyImm> immutableConstructor
+          @NotNull Function<ListDatum.Imm.Raw, MyImmDatum> immutableConstructor
       ) {
         super(type); // TODO take static type separately?
         if (raw.type() != type) // TODO shared assertEqual(Type, Type): Type method
@@ -245,7 +245,7 @@ public interface ListDatum extends Datum {
       public int size() { return raw.size(); }
 
       @Override
-      public @NotNull MyImm toImmutable() { return immutableConstructor.apply(_raw().toImmutable()); }
+      public @NotNull MyImmDatum toImmutable() { return immutableConstructor.apply(_raw().toImmutable()); }
 
       @Override
       public @NotNull ListDatum.Mut.Raw _raw() { return raw; }

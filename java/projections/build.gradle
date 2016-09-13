@@ -11,6 +11,6 @@ dependencies {
   compile 'com.io7m.jpplib:io7m-jpplib-core'
   compile 'org.jetbrains:annotations'
 
-  testCompile project(':epigraph-test-java')
+  testCompile project(':tests-schema-java')
   testCompile 'junit:junit'
 }

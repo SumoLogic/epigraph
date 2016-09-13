@@ -223,7 +223,7 @@ public interface RecordDatum extends Datum {
 
     // base for generated mutable record impl classes
     public static abstract class Static<MyImmDatum extends RecordDatum.Imm.Static> extends RecordDatum.Mut
-        implements RecordDatum.Static, Datum.Mut.Static {
+        implements RecordDatum.Static, Datum.Mut.Static<MyImmDatum> {
 
       private final RecordDatum.Mut.Raw raw;
 

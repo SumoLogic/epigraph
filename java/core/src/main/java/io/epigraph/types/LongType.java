@@ -62,9 +62,8 @@ public abstract class LongType extends PrimitiveType {
       MyMutVal extends Val.Mut.Static<MyImmVal, MyMutDatum>,
       MyImmData extends Data.Imm.Static,
       MyMutData extends Data.Mut.Static<MyImmData>
-      > extends LongType implements PrimitiveType.Static<
-      LongType.Static<MyImmDatum, MyMutDatum, MyImmVal, MyMutVal, MyImmData, MyMutData>
-      > {
+      > extends LongType
+      implements PrimitiveType.Static<MyImmDatum, MyMutDatum, MyImmVal, MyMutVal, MyImmData, MyMutData> {
 
     private final @NotNull Function<LongDatum.Mut.@NotNull Raw, @NotNull MyMutDatum> mutDatumConstructor;
 

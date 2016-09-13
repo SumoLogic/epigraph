@@ -2,7 +2,9 @@
 
 package io.epigraph.types;
 
+import io.epigraph.data.Data;
 import io.epigraph.data.ListDatum;
+import io.epigraph.data.Val;
 import io.epigraph.names.TypeName;
 import org.jetbrains.annotations.NotNull;
 
@@ -71,7 +73,14 @@ public abstract class ListType extends DatumType {
   public abstract @NotNull ListDatum.Mut createBuilder();
 
 
-  public interface Static<MyType extends ListType & ListType.Static<MyType>> extends DatumType.Static<MyType> {}
+  public interface Static<
+      MyImmDatum extends ListDatum.Imm.Static,
+      MyMutDatum extends ListDatum.Mut.Static<MyImmDatum>,
+      MyImmVal extends Val.Imm.Static,
+      MyMutVal extends Val.Mut.Static<MyImmVal, MyMutDatum>,
+      MyImmData extends Data.Imm.Static,
+      MyMutData extends Data.Mut.Static<MyImmData>
+      > extends DatumType.Static<MyImmDatum, MyMutDatum, MyImmVal, MyMutVal, MyImmData, MyMutData> {}
 
 
 }

@@ -4,7 +4,7 @@ import com.intellij.psi.PsiErrorElement;
 import io.epigraph.idl.parser.projections.ProjectionParserDefinitions;
 import io.epigraph.idl.parser.psi.IdlOpOutputVarProjection;
 import io.epigraph.psi.EpigraphPsiUtil;
-import io.epigraph.test.*;
+import io.epigraph.tests.*;
 import io.epigraph.types.DataType;
 import io.epigraph.types.SimpleTypesResolver;
 import io.epigraph.types.TypesResolver;
@@ -192,7 +192,7 @@ public class OpOutputProjectionsTest {
                            "      bestFriend: id \n" +
                            "    ) \n" +
                            "  \n) " +
-                           ") ~io.epigraph.test.User :record (profile)";
+                           ") ~io.epigraph.tests.User :record (profile)";
 
 
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
@@ -231,27 +231,27 @@ public class OpOutputProjectionsTest {
       fail();
     }
 
-    String expected = "var io.epigraph.test.Person (\n" +
-                      "  +id: io.epigraph.test.PersonId\n" +
+    String expected = "var io.epigraph.tests.Person (\n" +
+                      "  +id: io.epigraph.tests.PersonId\n" +
                       "  record:\n" +
-                      "    io.epigraph.test.PersonRecord {\n" +
+                      "    io.epigraph.tests.PersonRecord {\n" +
                       "      fields: {\n" +
                       "        +id:\n" +
-                      "          var io.epigraph.test.PersonId (\n" +
-                      "            self: io.epigraph.test.PersonId\n" +
+                      "          var io.epigraph.tests.PersonId (\n" +
+                      "            self: io.epigraph.tests.PersonId\n" +
                       "          )\n" +
                       "        +bestFriend:\n" +
-                      "          var io.epigraph.test.Person (\n" +
+                      "          var io.epigraph.tests.Person (\n" +
                       "            record:\n" +
-                      "              io.epigraph.test.PersonRecord {\n" +
+                      "              io.epigraph.tests.PersonRecord {\n" +
                       "                fields: {\n" +
                       "                  +id:\n" +
-                      "                    var io.epigraph.test.PersonId (\n" +
-                      "                      self: io.epigraph.test.PersonId\n" +
+                      "                    var io.epigraph.tests.PersonId (\n" +
+                      "                      self: io.epigraph.tests.PersonId\n" +
                       "                    )\n" +
                       "                  bestFriend:\n" +
-                      "                    var io.epigraph.test.Person (\n" +
-                      "                      id: io.epigraph.test.PersonId\n" +
+                      "                    var io.epigraph.tests.Person (\n" +
+                      "                      id: io.epigraph.tests.PersonId\n" +
                       "                    )\n" +
                       "                }\n" +
                       "              }\n" +
@@ -260,13 +260,13 @@ public class OpOutputProjectionsTest {
                       "    }\n" +
                       ")\n" +
                       "~(\n" +
-                      "  var io.epigraph.test.User (\n" +
+                      "  var io.epigraph.tests.User (\n" +
                       "    record:\n" +
-                      "      io.epigraph.test.UserRecord {\n" +
+                      "      io.epigraph.tests.UserRecord {\n" +
                       "        fields: {\n" +
                       "          profile:\n" +
-                      "            var io.epigraph.test.Url (\n" +
-                      "              self: io.epigraph.test.Url\n" +
+                      "            var io.epigraph.tests.Url (\n" +
+                      "              self: io.epigraph.tests.Url\n" +
                       "            )\n" +
                       "        }\n" +
                       "      }\n" +

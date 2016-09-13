@@ -11,7 +11,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 public abstract class StringType extends PrimitiveType {
 
@@ -65,9 +64,8 @@ public abstract class StringType extends PrimitiveType {
       MyMutVal extends Val.Mut.Static<MyImmVal, MyMutDatum>,
       MyImmData extends Data.Imm.Static,
       MyMutData extends Data.Mut.Static<MyImmData>
-      > extends StringType implements PrimitiveType.Static<
-      StringType.Static<MyImmDatum, MyMutDatum, MyImmVal, MyMutVal, MyImmData, MyMutData>
-      > {
+      > extends StringType
+      implements PrimitiveType.Static<MyImmDatum, MyMutDatum, MyImmVal, MyMutVal, MyImmData, MyMutData> {
 
     private final @NotNull Function<StringDatum.Mut.@NotNull Raw, @NotNull MyMutDatum> mutDatumConstructor;
 

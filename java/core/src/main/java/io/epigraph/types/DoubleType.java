@@ -62,9 +62,8 @@ public abstract class DoubleType extends PrimitiveType {
       MyMutVal extends Val.Mut.Static<MyImmVal, MyMutDatum>,
       MyImmData extends Data.Imm.Static,
       MyMutData extends Data.Mut.Static<MyImmData>
-      > extends DoubleType implements PrimitiveType.Static<
-      DoubleType.Static<MyImmDatum, MyMutDatum, MyImmVal, MyMutVal, MyImmData, MyMutData>
-      > {
+      > extends DoubleType
+      implements PrimitiveType.Static<MyImmDatum, MyMutDatum, MyImmVal, MyMutVal, MyImmData, MyMutData> {
 
     private final @NotNull Function<DoubleDatum.Mut.@NotNull Raw, @NotNull MyMutDatum> mutDatumConstructor;
 

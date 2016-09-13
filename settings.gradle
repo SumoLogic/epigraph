@@ -22,8 +22,6 @@ Map<String, String> modules = [
     'gradle-plugins/schema-compiler-plugin': 'epigraph-schema-compiler-gradle-plugin',
     'idea-plugin'                          : 'idea-plugin',
     'idl-parser'                           : 'epigraph-idl-parser',
-    'integration-test/test-java'           : 'epigraph-test-java',
-    'integration-test/test-schema'         : 'epigraph-test-schema',
     'java/codegen'                         : 'epigraph-java-codegen',
     'java/core'                            : 'epigraph-java-core',
     'java/projections'                     : 'epigraph-java-projections',
@@ -38,7 +36,9 @@ Map<String, String> modules = [
     'schema-compiler'                      : 'epigraph-schema-compiler',
     'schema-parser'                        : 'epigraph-schema-parser',
     'schema-schema'                        : 'epigraph-schema-schema',
-    'standalone-psi-util'                  : 'epigraph-standalone-psi-util'
+    'standalone-psi-util'                  : 'epigraph-standalone-psi-util',
+    'tests/schema'                         : 'tests-schema',
+    'tests/schema-java'                    : 'tests-schema-java'
 ]
 
 modules.each { dir, name ->

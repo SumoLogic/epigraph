@@ -95,7 +95,11 @@ public abstract class Type { // TODO split into interface and impl
   public interface Raw {}
 
 
-  public interface Static<MyType extends Type & Type.Static<MyType>> {}
+  public interface Static<MyImmData extends Data.Imm.Static, MyMutData extends Data.Mut.Static<MyImmData>> {
+
+    @NotNull MyMutData createDataBuilder();
+
+  }
 
 
   public static class Tag {
