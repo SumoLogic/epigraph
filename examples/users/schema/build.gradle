@@ -6,4 +6,5 @@ group = 'com.sumologic.epigraph.examples'
 
 dependencies {
   compile project(':epigraph-builtin-types-schema')
+  testCompile project(':epigraph-builtin-types-schema').sourceSets.test.allSource
 }
