@@ -3,6 +3,8 @@ package io.epigraph.projections.op;
 import com.intellij.psi.PsiErrorElement;
 import io.epigraph.idl.parser.projections.ProjectionParserDefinitions;
 import io.epigraph.idl.parser.psi.IdlOpOutputVarProjection;
+import io.epigraph.projections.op.input.OpInputPrimitiveModelProjection;
+import io.epigraph.projections.op.output.*;
 import io.epigraph.psi.EpigraphPsiUtil;
 import io.epigraph.tests.*;
 import io.epigraph.types.DataType;
@@ -323,7 +325,8 @@ public class OpOutputProjectionsTest {
                         PersonId.type,
                         true,
                         OpParam.params(
-                            new OpParam("token", UserId.type) // todo string
+                            // todo string
+                            new OpParam("token", new OpInputPrimitiveModelProjection(UserId.type, false, null))
                         )
                     )
                 ),
@@ -367,7 +370,13 @@ public class OpOutputProjectionsTest {
                             OpOutputRecordModelProjection.fields(
                                 new OpOutputFieldProjection(
                                     UserRecord.bestFriend,
-                                    OpParam.params(new OpParam("maxAge", PersonId.type)),
+                                    OpParam.params(new OpParam("maxAge",
+                                                               new OpInputPrimitiveModelProjection(
+                                                                   PersonId.type,
+                                                                   false,
+                                                                   null
+                                                               )
+                                    )),
                                     new OpOutputVarProjection(
                                         Person.type, // todo ??
                                         new OpOutputTagProjection(

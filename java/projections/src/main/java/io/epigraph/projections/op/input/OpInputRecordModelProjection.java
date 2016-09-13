@@ -1,6 +1,7 @@
-package io.epigraph.projections.op;
+package io.epigraph.projections.op.input;
 
 import de.uka.ilkd.pp.DataLayouter;
+import io.epigraph.data.RecordDatum;
 import io.epigraph.types.RecordType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -11,23 +12,23 @@ import java.util.stream.Collectors;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class OpOutputRecordModelProjection extends OpOutputModelProjection<RecordType, OpOutputRecordModelProjection> {
-  private static final ThreadLocal<IdentityHashMap<OpOutputRecordModelProjection, OpOutputRecordModelProjection>>
+public class OpInputRecordModelProjection extends OpInputModelProjection<RecordType, RecordDatum> {
+  private static final ThreadLocal<IdentityHashMap<OpInputRecordModelProjection, OpInputRecordModelProjection>>
       equalsVisited = new ThreadLocal<>();
 
   @Nullable
-  private LinkedHashSet<OpOutputFieldProjection> fieldProjections;
+  private LinkedHashSet<OpInputFieldProjection> fieldProjections;
 
-  public OpOutputRecordModelProjection(@NotNull RecordType model,
-                                       boolean includeInDefault,
-                                       @Nullable Set<OpParam> params,
-                                       @Nullable LinkedHashSet<OpOutputFieldProjection> fieldProjections) {
-    super(model, includeInDefault, params);
+  public OpInputRecordModelProjection(@NotNull RecordType model,
+                                      boolean required,
+                                      @Nullable RecordDatum defaultValue,
+                                      @Nullable LinkedHashSet<OpInputFieldProjection> fieldProjections) {
+    super(model, required, defaultValue);
     this.fieldProjections = fieldProjections;
 
     Collection<@NotNull ? extends RecordType.Field> fields = model.fields();
     if (fieldProjections != null) {
-      for (OpOutputFieldProjection fieldProjection : fieldProjections) {
+      for (OpInputFieldProjection fieldProjection : fieldProjections) {
         RecordType.Field field = fieldProjection.getField();
         if (!fields.contains(field))
           throw new IllegalArgumentException(
@@ -44,14 +45,14 @@ public class OpOutputRecordModelProjection extends OpOutputModelProjection<Recor
   }
 
   @NotNull
-  public static LinkedHashSet<OpOutputFieldProjection> fields(OpOutputFieldProjection... fieldProjections) {
+  public static LinkedHashSet<OpInputFieldProjection> fields(OpInputFieldProjection... fieldProjections) {
     return new LinkedHashSet<>(Arrays.asList(fieldProjections));
   }
 
   @Nullable
-  public LinkedHashSet<OpOutputFieldProjection> fieldProjections() { return fieldProjections; }
+  public LinkedHashSet<OpInputFieldProjection> fieldProjections() { return fieldProjections; }
 
-  public void addFieldProjection(@NotNull OpOutputFieldProjection fieldProjection) {
+  public void addFieldProjection(@NotNull OpInputFieldProjection fieldProjection) {
     if (fieldProjections == null) fieldProjections = new LinkedHashSet<>();
     fieldProjections.add(fieldProjection);
   }
@@ -61,9 +62,9 @@ public class OpOutputRecordModelProjection extends OpOutputModelProjection<Recor
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     if (!super.equals(o)) return false;
-    OpOutputRecordModelProjection that = (OpOutputRecordModelProjection) o;
+    OpInputRecordModelProjection that = (OpInputRecordModelProjection) o;
 
-    IdentityHashMap<OpOutputRecordModelProjection, OpOutputRecordModelProjection> visitedMap = equalsVisited.get();
+    IdentityHashMap<OpInputRecordModelProjection, OpInputRecordModelProjection> visitedMap = equalsVisited.get();
     boolean mapWasNull = visitedMap == null;
     if (mapWasNull) {
       visitedMap = new IdentityHashMap<>();
@@ -88,15 +89,11 @@ public class OpOutputRecordModelProjection extends OpOutputModelProjection<Recor
     prettyPrintModel(l);
     l.beginCInd().print(" {");
 
-    if (params != null && !params.isEmpty()) {
-      l.brk().beginCInd().print("params: {").brk();
-      prettyPrintParams(l, params);
-      l.end().brk().print("}");
-    }
+    prettyPrintDefaultValueBlock(l);
 
     if (fieldProjections != null && !fieldProjections.isEmpty()) {
       l.brk().beginIInd().print("fields: {");
-      for (OpOutputFieldProjection fieldProjection : fieldProjections) {
+      for (OpInputFieldProjection fieldProjection : fieldProjections) {
         l.nl().print(fieldProjection);
       }
       l.end().brk().print("}");

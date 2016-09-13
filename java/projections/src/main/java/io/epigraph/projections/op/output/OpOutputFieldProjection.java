@@ -1,4 +1,4 @@
-package io.epigraph.projections.op;
+package io.epigraph.projections.op.output;
 
 import de.uka.ilkd.pp.DataLayouter;
 import de.uka.ilkd.pp.PrettyPrintable;
@@ -33,23 +33,15 @@ public class OpOutputFieldProjection implements PrettyPrintable {
   }
 
   @NotNull
-  public RecordType.Field getField() {
-    return field;
-  }
+  public RecordType.Field getField() { return field; }
 
   @Nullable
-  public Set<OpParam> params() {
-    return params;
-  }
+  public Set<OpParam> params() { return params; }
 
   @NotNull
-  public OpOutputVarProjection projection() {
-    return projection;
-  }
+  public OpOutputVarProjection projection() { return projection; }
 
-  public boolean includeInDefault() {
-    return includeInDefault;
-  }
+  public boolean includeInDefault() { return includeInDefault; }
 
   @Override
   public <Exc extends Exception> void prettyPrint(DataLayouter<Exc> l) throws Exc {
@@ -79,12 +71,8 @@ public class OpOutputFieldProjection implements PrettyPrintable {
   }
 
   @Override
-  public int hashCode() {
-    return Objects.hash(field, params, projection, includeInDefault);
-  }
+  public int hashCode() { return Objects.hash(field, params, projection, includeInDefault); }
 
   @Override
-  public String toString() {
-    return DataPrettyPrinter.prettyPrint(this);
-  }
+  public String toString() { return DataPrettyPrinter.prettyPrint(this); }
 }

@@ -1,37 +1,37 @@
-package io.epigraph.projections.op;
+package io.epigraph.projections.op.input;
 
 import de.uka.ilkd.pp.DataLayouter;
+import io.epigraph.data.ListDatum;
 import io.epigraph.types.ListType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
-import java.util.Set;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class OpOutputListModelProjection extends OpOutputModelProjection<ListType, OpOutputListModelProjection> {
+public class OpInputListModelProjection extends OpInputModelProjection<ListType, ListDatum> {
   @NotNull
-  private OpOutputVarProjection itemsProjection;
+  private OpInputVarProjection itemsProjection;
 
-  public OpOutputListModelProjection(@NotNull ListType model,
-                                     boolean includeInDefault,
-                                     @Nullable Set<OpParam> params,
-                                     @NotNull OpOutputVarProjection itemsProjection) {
-    super(model, includeInDefault, params);
+  public OpInputListModelProjection(@NotNull ListType model,
+                                    boolean required,
+                                    @Nullable ListDatum defaultValue,
+                                    @NotNull OpInputVarProjection itemsProjection) {
+    super(model, required, defaultValue);
     this.itemsProjection = itemsProjection;
   }
 
   @NotNull
-  public OpOutputVarProjection itemsProjection() { return itemsProjection; }
+  public OpInputVarProjection itemsProjection() { return itemsProjection; }
 
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     if (!super.equals(o)) return false;
-    OpOutputListModelProjection that = (OpOutputListModelProjection) o;
+    OpInputListModelProjection that = (OpInputListModelProjection) o;
     return Objects.equals(itemsProjection, that.itemsProjection);
   }
 
@@ -45,11 +45,7 @@ public class OpOutputListModelProjection extends OpOutputModelProjection<ListTyp
     prettyPrintModel(l);
     l.beginCInd().print(" {");
 
-    if (params != null && !params.isEmpty()) {
-      l.brk().beginCInd().print("params: {").brk();
-      prettyPrintParams(l, params);
-      l.end().brk().print("}");
-    }
+    prettyPrintDefaultValueBlock(l);
 
     l.brk().beginCInd().print("items:").brk();
     l.print(itemsProjection);

@@ -1,8 +1,8 @@
-package io.epigraph.projections.op;
+package io.epigraph.projections.op.output;
 
 import de.uka.ilkd.pp.DataLayouter;
 import de.uka.ilkd.pp.PrettyPrintable;
-import io.epigraph.types.DatumType;
+import io.epigraph.projections.op.input.OpInputModelProjection;
 import io.epigraph.util.pp.DataPrettyPrinter;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,13 +15,11 @@ public class OpParam implements PrettyPrintable {
   @NotNull
   private final String name;
   @NotNull
-  private final DatumType model;
+  private final OpInputModelProjection<?, ?> projection;
 
-  // todo projection
-
-  public OpParam(@NotNull String name, @NotNull DatumType model) {
+  public OpParam(@NotNull String name, @NotNull OpInputModelProjection<?, ?> projection) {
     this.name = name;
-    this.model = model;
+    this.projection = projection;
   }
 
   @NotNull
@@ -30,25 +28,28 @@ public class OpParam implements PrettyPrintable {
     return new HashSet<>(Arrays.asList(params));
   }
 
-  public static void merge(@NotNull Collection<OpParam> target, @NotNull Collection<OpParam> overlay) {
-    for (OpParam param : overlay) {
-      if (!target.contains(param))
-        target.add(param);
-    }
-  }
-
   @NotNull
   public String name() { return name; }
 
-  @NotNull
-  public DatumType model() { return model; }
+  public OpInputModelProjection<?, ?> projection() { return projection; }
 
-  // todo equals, hashcode, tostring
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    OpParam opParam = (OpParam) o;
+    return Objects.equals(name, opParam.name) &&
+           Objects.equals(projection, opParam.projection);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(name, projection);
+  }
 
   @Override
   public <Exc extends Exception> void prettyPrint(DataLayouter<Exc> l) throws Exc {
-    l.print(name).print(": ").print(model.name().toString());
-    // todo projection
+    l.print(name).print(": ").print(projection);
   }
 
   @Override

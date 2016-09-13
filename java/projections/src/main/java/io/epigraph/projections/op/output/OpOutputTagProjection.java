@@ -1,4 +1,4 @@
-package io.epigraph.projections.op;
+package io.epigraph.projections.op.output;
 
 import de.uka.ilkd.pp.DataLayouter;
 import de.uka.ilkd.pp.PrettyPrintable;
@@ -16,11 +16,11 @@ public class OpOutputTagProjection implements PrettyPrintable {
   private final Type.Tag tag;
   private final boolean includeInDefault;
   @NotNull
-  private final OpOutputModelProjection<?, ?> projection;
+  private final OpOutputModelProjection<?> projection;
 
   public OpOutputTagProjection(@NotNull Type.Tag tag,
                                boolean includeInDefault,
-                               @NotNull OpOutputModelProjection<?, ?> projection) {
+                               @NotNull OpOutputModelProjection<?> projection) {
     this.tag = tag;
     this.includeInDefault = includeInDefault;
     this.projection = projection;
@@ -35,7 +35,7 @@ public class OpOutputTagProjection implements PrettyPrintable {
   public Type.Tag tag() { return tag; }
 
   @NotNull
-  public OpOutputModelProjection<?, ?> projection() { return projection; }
+  public OpOutputModelProjection<?> projection() { return projection; }
 
   public boolean includeInDefault() { return includeInDefault; }
 

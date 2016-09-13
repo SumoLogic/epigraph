@@ -1,4 +1,4 @@
-package io.epigraph.projections.op;
+package io.epigraph.projections.op.output;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiErrorElement;
@@ -31,7 +31,7 @@ public class OpOutputProjectionsParser {
 
     @Nullable IdlOpOutputSingleTagProjection singleTagProjection = psi.getOpOutputSingleTagProjection();
     if (singleTagProjection != null) {
-      final OpOutputModelProjection<?, ?> parsedModelProjection;
+      final OpOutputModelProjection<?> parsedModelProjection;
       final boolean includeInDefault = singleTagProjection.getPlus() != null;
       final String tagName = singleTagProjection.getQid() == null
                              ? null
@@ -67,7 +67,7 @@ public class OpOutputProjectionsParser {
         Type.Tag tag = getTag(type, tagName, psiTagProjection);
 
         final boolean includeInDefault = psiTagProjection.getPlus() != null;
-        final OpOutputModelProjection<?, ?> parsedModelProjection;
+        final OpOutputModelProjection<?> parsedModelProjection;
 
         @NotNull DatumType tagType = tag.type;
         @Nullable IdlOpOutputModelProjection modelProjection = psiTagProjection.getOpOutputModelProjection();
@@ -188,7 +188,7 @@ public class OpOutputProjectionsParser {
 //    return false;
 //  }
 
-  public static OpOutputModelProjection<?, ?> parseModelProjection(@NotNull DatumType type,
+  public static OpOutputModelProjection<?> parseModelProjection(@NotNull DatumType type,
                                                                    @NotNull IdlOpOutputModelProjection psi,
                                                                    @NotNull TypesResolver typesResolver)
       throws ProjectionParsingException {
@@ -281,7 +281,7 @@ public class OpOutputProjectionsParser {
     return res;
   }
 
-  private static OpOutputModelProjection<?, ?> createDefaultModelProjection(@NotNull DatumType type,
+  private static OpOutputModelProjection<?> createDefaultModelProjection(@NotNull DatumType type,
                                                                             boolean includeInDefault,
                                                                             @NotNull PsiElement location)
       throws ProjectionParsingException {
