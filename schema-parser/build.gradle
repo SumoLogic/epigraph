@@ -6,14 +6,9 @@ mainClassName = 'io.epigraph.schema.parser.Main'
 sourceSets.main.java.srcDirs += file("$buildDir/generated-sources/schema-parser-common.java")
 idea.module.generatedSourceDirs += file("$buildDir/generated-sources/schema-parser-common.java")
 
-// keeping it around for now for light-psi jar regeneration
-//project.ext.set('lightPsiJar', "$rootDir/schema-parser/lib/light-psi-all.jar")
-
 dependencies {
   compile project(':epigraph-light-psi')
   compile project(':epigraph-lang-common')
-//  compileOnly files(project.lightPsiJar)
-//  testCompileOnly files(project.lightPsiJar)
 
   compile 'org.jetbrains:annotations'
   compile 'net.jcip:jcip-annotations'
@@ -21,14 +16,6 @@ dependencies {
 
   testCompile 'junit:junit'
 }
-
-//jar {
-//  from zipTree(project.lightPsiJar)
-//}
-
-//test {
-//  classpath += files(project.lightPsiJar)
-//}
 
 task copySources << {
   delete { "$buildDir/generated-sources/schema-parser-common.java" }
