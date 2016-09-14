@@ -7,7 +7,16 @@ import com.intellij.psi.PsiElement;
 
 public interface SchemaDataEnum extends SchemaDataValue {
 
+  @Nullable
+  SchemaFqnTypeRef getFqnTypeRef();
+
   @NotNull
   SchemaQid getQid();
+
+  @Nullable
+  PsiElement getParenLeft();
+
+  @Nullable
+  PsiElement getParenRight();
 
 }

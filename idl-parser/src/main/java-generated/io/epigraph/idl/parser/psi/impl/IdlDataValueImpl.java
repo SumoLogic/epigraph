@@ -28,26 +28,8 @@ public class IdlDataValueImpl extends ASTWrapperPsiElement implements IdlDataVal
 
   @Override
   @Nullable
-  public IdlDataPrimitive getDataPrimitive() {
-    return findChildByClass(IdlDataPrimitive.class);
-  }
-
-  @Override
-  @Nullable
-  public IdlDataValue getDataValue() {
-    return findChildByClass(IdlDataValue.class);
-  }
-
-  @Override
-  @NotNull
-  public List<IdlFqnTypeRef> getFqnTypeRefList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, IdlFqnTypeRef.class);
-  }
-
-  @Override
-  @Nullable
-  public PsiElement getNull() {
-    return findChildByType(I_NULL);
+  public IdlVarValue getVarValue() {
+    return findChildByClass(IdlVarValue.class);
   }
 
 }

@@ -8,10 +8,9 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static io.epigraph.schema.lexer.SchemaElementTypes.*;
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import io.epigraph.schema.parser.psi.*;
 
-public class SchemaDataPrimitiveImpl extends ASTWrapperPsiElement implements SchemaDataPrimitive {
+public class SchemaDataPrimitiveImpl extends SchemaDataValueImpl implements SchemaDataPrimitive {
 
   public SchemaDataPrimitiveImpl(ASTNode node) {
     super(node);
@@ -24,6 +23,24 @@ public class SchemaDataPrimitiveImpl extends ASTWrapperPsiElement implements Sch
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof SchemaVisitor) accept((SchemaVisitor)visitor);
     else super.accept(visitor);
+  }
+
+  @Override
+  @Nullable
+  public SchemaFqnTypeRef getFqnTypeRef() {
+    return PsiTreeUtil.getChildOfType(this, SchemaFqnTypeRef.class);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getParenLeft() {
+    return findChildByType(S_PAREN_LEFT);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getParenRight() {
+    return findChildByType(S_PAREN_RIGHT);
   }
 
   @Override

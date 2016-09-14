@@ -8,10 +8,9 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static io.epigraph.idl.lexer.IdlElementTypes.*;
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import io.epigraph.idl.parser.psi.*;
 
-public class IdlDataPrimitiveImpl extends ASTWrapperPsiElement implements IdlDataPrimitive {
+public class IdlDataPrimitiveImpl extends IdlDataValueImpl implements IdlDataPrimitive {
 
   public IdlDataPrimitiveImpl(ASTNode node) {
     super(node);
@@ -24,6 +23,24 @@ public class IdlDataPrimitiveImpl extends ASTWrapperPsiElement implements IdlDat
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof IdlVisitor) accept((IdlVisitor)visitor);
     else super.accept(visitor);
+  }
+
+  @Override
+  @Nullable
+  public IdlFqnTypeRef getFqnTypeRef() {
+    return findChildByClass(IdlFqnTypeRef.class);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getParenLeft() {
+    return findChildByType(I_PAREN_LEFT);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getParenRight() {
+    return findChildByType(I_PAREN_RIGHT);
   }
 
   @Override

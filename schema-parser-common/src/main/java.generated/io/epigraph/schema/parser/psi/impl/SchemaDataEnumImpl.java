@@ -26,9 +26,27 @@ public class SchemaDataEnumImpl extends SchemaDataValueImpl implements SchemaDat
   }
 
   @Override
+  @Nullable
+  public SchemaFqnTypeRef getFqnTypeRef() {
+    return PsiTreeUtil.getChildOfType(this, SchemaFqnTypeRef.class);
+  }
+
+  @Override
   @NotNull
   public SchemaQid getQid() {
     return notNullChild(PsiTreeUtil.getChildOfType(this, SchemaQid.class));
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getParenLeft() {
+    return findChildByType(S_PAREN_LEFT);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getParenRight() {
+    return findChildByType(S_PAREN_RIGHT);
   }
 
 }

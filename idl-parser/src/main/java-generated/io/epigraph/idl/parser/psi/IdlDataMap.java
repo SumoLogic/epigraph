@@ -10,6 +10,9 @@ public interface IdlDataMap extends IdlDataValue {
   @NotNull
   List<IdlDataMapEntry> getDataMapEntryList();
 
+  @Nullable
+  IdlFqnTypeRef getFqnTypeRef();
+
   @NotNull
   PsiElement getParenLeft();
 

@@ -32,6 +32,12 @@ public class IdlDataRecordImpl extends IdlDataValueImpl implements IdlDataRecord
   }
 
   @Override
+  @Nullable
+  public IdlFqnTypeRef getFqnTypeRef() {
+    return findChildByClass(IdlFqnTypeRef.class);
+  }
+
+  @Override
   @NotNull
   public PsiElement getCurlyLeft() {
     return findNotNullChildByType(I_CURLY_LEFT);

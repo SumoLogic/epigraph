@@ -10,6 +10,9 @@ public interface IdlDataRecord extends IdlDataValue {
   @NotNull
   List<IdlDataRecordEntry> getDataRecordEntryList();
 
+  @Nullable
+  IdlFqnTypeRef getFqnTypeRef();
+
   @NotNull
   PsiElement getCurlyLeft();
 

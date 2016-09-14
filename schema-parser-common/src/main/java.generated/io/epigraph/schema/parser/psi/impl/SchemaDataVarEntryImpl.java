@@ -27,27 +27,15 @@ public class SchemaDataVarEntryImpl extends ASTWrapperPsiElement implements Sche
   }
 
   @Override
-  @Nullable
-  public SchemaDataPrimitive getDataPrimitive() {
-    return PsiTreeUtil.getChildOfType(this, SchemaDataPrimitive.class);
-  }
-
-  @Override
-  @Nullable
-  public SchemaDataValue getDataValue() {
-    return PsiTreeUtil.getChildOfType(this, SchemaDataValue.class);
-  }
-
-  @Override
-  @NotNull
-  public List<SchemaFqnTypeRef> getFqnTypeRefList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaFqnTypeRef.class);
-  }
-
-  @Override
   @NotNull
   public SchemaQid getQid() {
     return notNullChild(PsiTreeUtil.getChildOfType(this, SchemaQid.class));
+  }
+
+  @Override
+  @Nullable
+  public SchemaVarValue getVarValue() {
+    return PsiTreeUtil.getChildOfType(this, SchemaVarValue.class);
   }
 
   @Override
@@ -60,12 +48,6 @@ public class SchemaDataVarEntryImpl extends ASTWrapperPsiElement implements Sche
   @Nullable
   public PsiElement getComma() {
     return findChildByType(S_COMMA);
-  }
-
-  @Override
-  @Nullable
-  public PsiElement getNull() {
-    return findChildByType(S_NULL);
   }
 
 }

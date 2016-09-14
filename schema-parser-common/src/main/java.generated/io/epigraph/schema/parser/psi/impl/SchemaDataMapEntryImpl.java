@@ -28,20 +28,14 @@ public class SchemaDataMapEntryImpl extends ASTWrapperPsiElement implements Sche
 
   @Override
   @Nullable
-  public SchemaDataPrimitive getDataPrimitive() {
-    return PsiTreeUtil.getChildOfType(this, SchemaDataPrimitive.class);
+  public SchemaDataValue getDataValue() {
+    return PsiTreeUtil.getChildOfType(this, SchemaDataValue.class);
   }
 
   @Override
   @NotNull
-  public List<SchemaDataValue> getDataValueList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaDataValue.class);
-  }
-
-  @Override
-  @NotNull
-  public List<SchemaFqnTypeRef> getFqnTypeRefList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaFqnTypeRef.class);
+  public SchemaVarValue getVarValue() {
+    return notNullChild(PsiTreeUtil.getChildOfType(this, SchemaVarValue.class));
   }
 
   @Override
@@ -54,12 +48,6 @@ public class SchemaDataMapEntryImpl extends ASTWrapperPsiElement implements Sche
   @Nullable
   public PsiElement getComma() {
     return findChildByType(S_COMMA);
-  }
-
-  @Override
-  @Nullable
-  public PsiElement getNull() {
-    return findChildByType(S_NULL);
   }
 
 }

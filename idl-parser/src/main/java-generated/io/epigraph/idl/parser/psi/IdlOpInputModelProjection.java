@@ -7,7 +7,13 @@ import com.intellij.psi.PsiElement;
 
 public interface IdlOpInputModelProjection extends PsiElement {
 
-  @NotNull
-  PsiElement getId();
+  @Nullable
+  IdlOpInputModelProjection getOpInputModelProjection();
+
+  @Nullable
+  IdlOpInputModelProjectionBody getOpInputModelProjectionBody();
+
+  @Nullable
+  PsiElement getPlus();
 
 }

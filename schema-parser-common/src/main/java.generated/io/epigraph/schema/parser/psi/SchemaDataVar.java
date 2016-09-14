@@ -10,6 +10,9 @@ public interface SchemaDataVar extends SchemaDataValue {
   @NotNull
   List<SchemaDataVarEntry> getDataVarEntryList();
 
+  @Nullable
+  SchemaFqnTypeRef getFqnTypeRef();
+
   @NotNull
   PsiElement getAngleLeft();
 

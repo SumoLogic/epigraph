@@ -37,8 +37,12 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitDataNull(@NotNull SchemaDataNull o) {
+    visitDataValue(o);
+  }
+
   public void visitDataPrimitive(@NotNull SchemaDataPrimitive o) {
-    visitPsiElement(o);
+    visitDataValue(o);
   }
 
   public void visitDataRecord(@NotNull SchemaDataRecord o) {
@@ -190,6 +194,10 @@ public class SchemaVisitor extends PsiElementVisitor {
 
   public void visitVarTypeDef(@NotNull SchemaVarTypeDef o) {
     visitTypeDef(o);
+  }
+
+  public void visitVarValue(@NotNull SchemaVarValue o) {
+    visitPsiElement(o);
   }
 
   public void visitCustomParamsHolder(@NotNull CustomParamsHolder o) {

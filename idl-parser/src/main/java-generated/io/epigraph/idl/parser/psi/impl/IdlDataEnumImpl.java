@@ -26,9 +26,27 @@ public class IdlDataEnumImpl extends IdlDataValueImpl implements IdlDataEnum {
   }
 
   @Override
+  @Nullable
+  public IdlFqnTypeRef getFqnTypeRef() {
+    return findChildByClass(IdlFqnTypeRef.class);
+  }
+
+  @Override
   @NotNull
   public IdlQid getQid() {
     return findNotNullChildByClass(IdlQid.class);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getParenLeft() {
+    return findChildByType(I_PAREN_LEFT);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getParenRight() {
+    return findChildByType(I_PAREN_RIGHT);
   }
 
 }

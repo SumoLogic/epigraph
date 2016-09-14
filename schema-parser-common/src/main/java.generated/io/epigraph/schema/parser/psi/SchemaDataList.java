@@ -10,6 +10,9 @@ public interface SchemaDataList extends SchemaDataValue {
   @NotNull
   List<SchemaDataValue> getDataValueList();
 
+  @Nullable
+  SchemaFqnTypeRef getFqnTypeRef();
+
   @NotNull
   PsiElement getBracketLeft();
 

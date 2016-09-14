@@ -28,20 +28,14 @@ public class IdlDataMapEntryImpl extends ASTWrapperPsiElement implements IdlData
 
   @Override
   @Nullable
-  public IdlDataPrimitive getDataPrimitive() {
-    return findChildByClass(IdlDataPrimitive.class);
+  public IdlDataValue getDataValue() {
+    return findChildByClass(IdlDataValue.class);
   }
 
   @Override
   @NotNull
-  public List<IdlDataValue> getDataValueList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, IdlDataValue.class);
-  }
-
-  @Override
-  @NotNull
-  public List<IdlFqnTypeRef> getFqnTypeRefList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, IdlFqnTypeRef.class);
+  public IdlVarValue getVarValue() {
+    return findNotNullChildByClass(IdlVarValue.class);
   }
 
   @Override
@@ -54,12 +48,6 @@ public class IdlDataMapEntryImpl extends ASTWrapperPsiElement implements IdlData
   @Nullable
   public PsiElement getComma() {
     return findChildByType(I_COMMA);
-  }
-
-  @Override
-  @Nullable
-  public PsiElement getNull() {
-    return findChildByType(I_NULL);
   }
 
 }

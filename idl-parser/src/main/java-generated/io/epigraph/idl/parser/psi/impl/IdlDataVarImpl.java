@@ -32,6 +32,12 @@ public class IdlDataVarImpl extends IdlDataValueImpl implements IdlDataVar {
   }
 
   @Override
+  @Nullable
+  public IdlFqnTypeRef getFqnTypeRef() {
+    return findChildByClass(IdlFqnTypeRef.class);
+  }
+
+  @Override
   @NotNull
   public PsiElement getAngleLeft() {
     return findNotNullChildByType(I_ANGLE_LEFT);

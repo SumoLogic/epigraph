@@ -32,6 +32,12 @@ public class SchemaDataListImpl extends SchemaDataValueImpl implements SchemaDat
   }
 
   @Override
+  @Nullable
+  public SchemaFqnTypeRef getFqnTypeRef() {
+    return PsiTreeUtil.getChildOfType(this, SchemaFqnTypeRef.class);
+  }
+
+  @Override
   @NotNull
   public PsiElement getBracketLeft() {
     return notNullChild(findChildByType(S_BRACKET_LEFT));

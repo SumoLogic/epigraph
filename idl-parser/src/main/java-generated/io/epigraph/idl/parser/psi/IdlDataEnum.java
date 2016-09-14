@@ -7,7 +7,16 @@ import com.intellij.psi.PsiElement;
 
 public interface IdlDataEnum extends IdlDataValue {
 
+  @Nullable
+  IdlFqnTypeRef getFqnTypeRef();
+
   @NotNull
   IdlQid getQid();
+
+  @Nullable
+  PsiElement getParenLeft();
+
+  @Nullable
+  PsiElement getParenRight();
 
 }

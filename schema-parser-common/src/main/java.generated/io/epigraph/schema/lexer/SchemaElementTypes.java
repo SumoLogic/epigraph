@@ -24,6 +24,7 @@ public interface SchemaElementTypes {
   IElementType S_DATA_LIST = new SchemaElementType("S_DATA_LIST");
   IElementType S_DATA_MAP = new SchemaElementType("S_DATA_MAP");
   IElementType S_DATA_MAP_ENTRY = new SchemaElementType("S_DATA_MAP_ENTRY");
+  IElementType S_DATA_NULL = new SchemaElementType("S_DATA_NULL");
   IElementType S_DATA_PRIMITIVE = new SchemaElementType("S_DATA_PRIMITIVE");
   IElementType S_DATA_RECORD = new SchemaElementType("S_DATA_RECORD");
   IElementType S_DATA_RECORD_ENTRY = new SchemaElementType("S_DATA_RECORD_ENTRY");
@@ -62,6 +63,7 @@ public interface SchemaElementTypes {
   IElementType S_VAR_TAG_REF = new SchemaElementType("S_VAR_TAG_REF");
   IElementType S_VAR_TYPE_BODY = new SchemaElementType("S_VAR_TYPE_BODY");
   IElementType S_VAR_TYPE_DEF = new SchemaVarTypeDefStubElementType("S_VAR_TYPE_DEF");
+  IElementType S_VAR_VALUE = new SchemaElementType("S_VAR_VALUE");
 
   IElementType S_ABSTRACT = new SchemaElementType("abstract");
   IElementType S_ANGLE_LEFT = new SchemaElementType("<");
@@ -129,6 +131,9 @@ public interface SchemaElementTypes {
       }
       else if (type == S_DATA_MAP_ENTRY) {
         return new SchemaDataMapEntryImpl(node);
+      }
+      else if (type == S_DATA_NULL) {
+        return new SchemaDataNullImpl(node);
       }
       else if (type == S_DATA_PRIMITIVE) {
         return new SchemaDataPrimitiveImpl(node);
@@ -243,6 +248,9 @@ public interface SchemaElementTypes {
       }
       else if (type == S_VAR_TYPE_DEF) {
         return new SchemaVarTypeDefImpl(node);
+      }
+      else if (type == S_VAR_VALUE) {
+        return new SchemaVarValueImpl(node);
       }
       throw new AssertionError("Unknown element type: " + type);
     }

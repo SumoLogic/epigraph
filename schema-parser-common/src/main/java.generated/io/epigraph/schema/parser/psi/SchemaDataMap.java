@@ -10,6 +10,9 @@ public interface SchemaDataMap extends SchemaDataValue {
   @NotNull
   List<SchemaDataMapEntry> getDataMapEntryList();
 
+  @Nullable
+  SchemaFqnTypeRef getFqnTypeRef();
+
   @NotNull
   PsiElement getParenLeft();
 

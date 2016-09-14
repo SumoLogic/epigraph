@@ -8,21 +8,15 @@ import com.intellij.psi.PsiElement;
 public interface SchemaDataMapEntry extends PsiElement {
 
   @Nullable
-  SchemaDataPrimitive getDataPrimitive();
+  SchemaDataValue getDataValue();
 
   @NotNull
-  List<SchemaDataValue> getDataValueList();
-
-  @NotNull
-  List<SchemaFqnTypeRef> getFqnTypeRefList();
+  SchemaVarValue getVarValue();
 
   @NotNull
   PsiElement getColon();
 
   @Nullable
   PsiElement getComma();
-
-  @Nullable
-  PsiElement getNull();
 
 }

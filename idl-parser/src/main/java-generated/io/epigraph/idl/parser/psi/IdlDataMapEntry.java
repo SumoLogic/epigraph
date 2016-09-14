@@ -8,21 +8,15 @@ import com.intellij.psi.PsiElement;
 public interface IdlDataMapEntry extends PsiElement {
 
   @Nullable
-  IdlDataPrimitive getDataPrimitive();
+  IdlDataValue getDataValue();
 
   @NotNull
-  List<IdlDataValue> getDataValueList();
-
-  @NotNull
-  List<IdlFqnTypeRef> getFqnTypeRefList();
+  IdlVarValue getVarValue();
 
   @NotNull
   PsiElement getColon();
 
   @Nullable
   PsiElement getComma();
-
-  @Nullable
-  PsiElement getNull();
 
 }

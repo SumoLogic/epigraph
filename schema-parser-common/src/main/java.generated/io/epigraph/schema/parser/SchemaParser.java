@@ -44,6 +44,9 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     else if (t == S_DATA_MAP_ENTRY) {
       r = dataMapEntry(b, 0);
     }
+    else if (t == S_DATA_NULL) {
+      r = dataNull(b, 0);
+    }
     else if (t == S_DATA_PRIMITIVE) {
       r = dataPrimitive(b, 0);
     }
@@ -158,6 +161,9 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     else if (t == S_VAR_TYPE_DEF) {
       r = varTypeDef(b, 0);
     }
+    else if (t == S_VAR_VALUE) {
+      r = varValue(b, 0);
+    }
     else {
       r = parse_root_(t, b, 0);
     }
@@ -170,8 +176,8 @@ public class SchemaParser implements PsiParser, LightPsiParser {
 
   public static final TokenSet[] EXTENDS_SETS_ = new TokenSet[] {
     create_token_set_(S_ANON_LIST, S_ANON_MAP, S_FQN_TYPE_REF, S_TYPE_REF),
-    create_token_set_(S_DATA_ENUM, S_DATA_LIST, S_DATA_MAP, S_DATA_RECORD,
-      S_DATA_VALUE, S_DATA_VAR),
+    create_token_set_(S_DATA_ENUM, S_DATA_LIST, S_DATA_MAP, S_DATA_NULL,
+      S_DATA_PRIMITIVE, S_DATA_RECORD, S_DATA_VALUE, S_DATA_VAR),
   };
 
   /* ********************************************************** */
@@ -224,96 +230,113 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // qid
+  // dataSpeccedEnum | dataUnspeccedEnum
   public static boolean dataEnum(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "dataEnum")) return false;
     if (!nextTokenIs(b, S_ID)) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = qid(b, l + 1);
+    r = dataSpeccedEnum(b, l + 1);
+    if (!r) r = dataUnspeccedEnum(b, l + 1);
     exit_section_(b, m, S_DATA_ENUM, r);
     return r;
   }
 
   /* ********************************************************** */
-  // '[' (dataValue ','?)* ']'
+  // dataTypeSpec? '[' (dataValue ','?)* ']'
   public static boolean dataList(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "dataList")) return false;
-    if (!nextTokenIs(b, S_BRACKET_LEFT)) return false;
+    if (!nextTokenIs(b, "<data list>", S_BRACKET_LEFT, S_ID)) return false;
     boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, S_DATA_LIST, null);
-    r = consumeToken(b, S_BRACKET_LEFT);
-    p = r; // pin = 1
-    r = r && report_error_(b, dataList_1(b, l + 1));
+    Marker m = enter_section_(b, l, _NONE_, S_DATA_LIST, "<data list>");
+    r = dataList_0(b, l + 1);
+    r = r && consumeToken(b, S_BRACKET_LEFT);
+    p = r; // pin = 2
+    r = r && report_error_(b, dataList_2(b, l + 1));
     r = p && consumeToken(b, S_BRACKET_RIGHT) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
 
+  // dataTypeSpec?
+  private static boolean dataList_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "dataList_0")) return false;
+    dataTypeSpec(b, l + 1);
+    return true;
+  }
+
   // (dataValue ','?)*
-  private static boolean dataList_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "dataList_1")) return false;
+  private static boolean dataList_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "dataList_2")) return false;
     int c = current_position_(b);
     while (true) {
-      if (!dataList_1_0(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "dataList_1", c)) break;
+      if (!dataList_2_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "dataList_2", c)) break;
       c = current_position_(b);
     }
     return true;
   }
 
   // dataValue ','?
-  private static boolean dataList_1_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "dataList_1_0")) return false;
+  private static boolean dataList_2_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "dataList_2_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = dataValue(b, l + 1);
-    r = r && dataList_1_0_1(b, l + 1);
+    r = r && dataList_2_0_1(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
   // ','?
-  private static boolean dataList_1_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "dataList_1_0_1")) return false;
+  private static boolean dataList_2_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "dataList_2_0_1")) return false;
     consumeToken(b, S_COMMA);
     return true;
   }
 
   /* ********************************************************** */
-  // '(' dataMapEntry* ')'
+  // dataTypeSpec? '(' dataMapEntry* ')'
   public static boolean dataMap(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "dataMap")) return false;
-    if (!nextTokenIs(b, S_PAREN_LEFT)) return false;
+    if (!nextTokenIs(b, "<data map>", S_PAREN_LEFT, S_ID)) return false;
     boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, S_DATA_MAP, null);
-    r = consumeToken(b, S_PAREN_LEFT);
-    p = r; // pin = 1
-    r = r && report_error_(b, dataMap_1(b, l + 1));
+    Marker m = enter_section_(b, l, _NONE_, S_DATA_MAP, "<data map>");
+    r = dataMap_0(b, l + 1);
+    r = r && consumeToken(b, S_PAREN_LEFT);
+    p = r; // pin = 2
+    r = r && report_error_(b, dataMap_2(b, l + 1));
     r = p && consumeToken(b, S_PAREN_RIGHT) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
 
+  // dataTypeSpec?
+  private static boolean dataMap_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "dataMap_0")) return false;
+    dataTypeSpec(b, l + 1);
+    return true;
+  }
+
   // dataMapEntry*
-  private static boolean dataMap_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "dataMap_1")) return false;
+  private static boolean dataMap_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "dataMap_2")) return false;
     int c = current_position_(b);
     while (true) {
       if (!dataMapEntry(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "dataMap_1", c)) break;
+      if (!empty_element_parsed_guard_(b, "dataMap_2", c)) break;
       c = current_position_(b);
     }
     return true;
   }
 
   /* ********************************************************** */
-  // dataVarValue ':' dataValue ','?
+  // varValue ':' dataValue ','?
   public static boolean dataMapEntry(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "dataMapEntry")) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, S_DATA_MAP_ENTRY, "<data map entry>");
-    r = dataVarValue(b, l + 1);
+    r = varValue(b, l + 1);
     r = r && consumeToken(b, S_COLON);
     p = r; // pin = 2
     r = r && report_error_(b, dataValue(b, l + 1));
@@ -330,40 +353,60 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // string | number | boolean
-  public static boolean dataPrimitive(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "dataPrimitive")) return false;
+  // dataSpeccedNull | dataUnspeccedNull
+  public static boolean dataNull(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "dataNull")) return false;
+    if (!nextTokenIs(b, "<data null>", S_NULL, S_ID)) return false;
     boolean r;
-    Marker m = enter_section_(b, l, _NONE_, S_DATA_PRIMITIVE, "<data primitive>");
-    r = consumeToken(b, S_STRING);
-    if (!r) r = consumeToken(b, S_NUMBER);
-    if (!r) r = consumeToken(b, S_BOOLEAN);
+    Marker m = enter_section_(b, l, _NONE_, S_DATA_NULL, "<data null>");
+    r = dataSpeccedNull(b, l + 1);
+    if (!r) r = dataUnspeccedNull(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
 
   /* ********************************************************** */
-  // '{' dataRecordEntry* '}'
+  // dataSpeccedPrimitive | dataUnspeccedPrimitive
+  public static boolean dataPrimitive(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "dataPrimitive")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, S_DATA_PRIMITIVE, "<data primitive>");
+    r = dataSpeccedPrimitive(b, l + 1);
+    if (!r) r = dataUnspeccedPrimitive(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // dataTypeSpec? '{' dataRecordEntry* '}'
   public static boolean dataRecord(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "dataRecord")) return false;
-    if (!nextTokenIs(b, S_CURLY_LEFT)) return false;
+    if (!nextTokenIs(b, "<data record>", S_CURLY_LEFT, S_ID)) return false;
     boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, S_DATA_RECORD, null);
-    r = consumeToken(b, S_CURLY_LEFT);
-    p = r; // pin = 1
-    r = r && report_error_(b, dataRecord_1(b, l + 1));
+    Marker m = enter_section_(b, l, _NONE_, S_DATA_RECORD, "<data record>");
+    r = dataRecord_0(b, l + 1);
+    r = r && consumeToken(b, S_CURLY_LEFT);
+    p = r; // pin = 2
+    r = r && report_error_(b, dataRecord_2(b, l + 1));
     r = p && consumeToken(b, S_CURLY_RIGHT) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
 
+  // dataTypeSpec?
+  private static boolean dataRecord_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "dataRecord_0")) return false;
+    dataTypeSpec(b, l + 1);
+    return true;
+  }
+
   // dataRecordEntry*
-  private static boolean dataRecord_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "dataRecord_1")) return false;
+  private static boolean dataRecord_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "dataRecord_2")) return false;
     int c = current_position_(b);
     while (true) {
       if (!dataRecordEntry(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "dataRecord_1", c)) break;
+      if (!empty_element_parsed_guard_(b, "dataRecord_2", c)) break;
       c = current_position_(b);
     }
     return true;
@@ -392,56 +435,90 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ( fqnTypeRef '/' )*
-  static boolean dataTypeSpec(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "dataTypeSpec")) return false;
-    int c = current_position_(b);
-    while (true) {
-      if (!dataTypeSpec_0(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "dataTypeSpec", c)) break;
-      c = current_position_(b);
-    }
-    return true;
-  }
-
-  // fqnTypeRef '/'
-  private static boolean dataTypeSpec_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "dataTypeSpec_0")) return false;
+  // dataTypeSpec '(' dataUnspeccedEnum ')'
+  static boolean dataSpeccedEnum(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "dataSpeccedEnum")) return false;
+    if (!nextTokenIs(b, S_ID)) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = fqnTypeRef(b, l + 1);
-    r = r && consumeToken(b, S_SLASH);
+    r = dataTypeSpec(b, l + 1);
+    r = r && consumeToken(b, S_PAREN_LEFT);
+    r = r && dataUnspeccedEnum(b, l + 1);
+    r = r && consumeToken(b, S_PAREN_RIGHT);
     exit_section_(b, m, null, r);
     return r;
   }
 
   /* ********************************************************** */
-  // dataTypeSpec? (dataVar | varValue)
+  // dataTypeSpec '(' dataUnspeccedNull ')'
+  static boolean dataSpeccedNull(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "dataSpeccedNull")) return false;
+    if (!nextTokenIs(b, S_ID)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = dataTypeSpec(b, l + 1);
+    r = r && consumeToken(b, S_PAREN_LEFT);
+    r = r && dataUnspeccedNull(b, l + 1);
+    r = r && consumeToken(b, S_PAREN_RIGHT);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // dataTypeSpec '(' dataUnspeccedPrimitive ')'
+  static boolean dataSpeccedPrimitive(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "dataSpeccedPrimitive")) return false;
+    if (!nextTokenIs(b, S_ID)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = dataTypeSpec(b, l + 1);
+    r = r && consumeToken(b, S_PAREN_LEFT);
+    r = r && dataUnspeccedPrimitive(b, l + 1);
+    r = r && consumeToken(b, S_PAREN_RIGHT);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // fqnTypeRef
+  static boolean dataTypeSpec(PsiBuilder b, int l) {
+    return fqnTypeRef(b, l + 1);
+  }
+
+  /* ********************************************************** */
+  // qid
+  static boolean dataUnspeccedEnum(PsiBuilder b, int l) {
+    return qid(b, l + 1);
+  }
+
+  /* ********************************************************** */
+  // 'null'
+  static boolean dataUnspeccedNull(PsiBuilder b, int l) {
+    return consumeToken(b, S_NULL);
+  }
+
+  /* ********************************************************** */
+  // string | number | boolean
+  static boolean dataUnspeccedPrimitive(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "dataUnspeccedPrimitive")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, S_STRING);
+    if (!r) r = consumeToken(b, S_NUMBER);
+    if (!r) r = consumeToken(b, S_BOOLEAN);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // dataVar | varValue
   public static boolean dataValue(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "dataValue")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _COLLAPSE_, S_DATA_VALUE, "<data value>");
-    r = dataValue_0(b, l + 1);
-    r = r && dataValue_1(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  // dataTypeSpec?
-  private static boolean dataValue_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "dataValue_0")) return false;
-    dataTypeSpec(b, l + 1);
-    return true;
-  }
-
-  // dataVar | varValue
-  private static boolean dataValue_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "dataValue_1")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
     r = dataVar(b, l + 1);
     if (!r) r = varValue(b, l + 1);
-    exit_section_(b, m, null, r);
+    exit_section_(b, l, m, r, false, null);
     return r;
   }
 
@@ -475,34 +552,42 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '<' dataVarEntry* '>'
+  // dataTypeSpec? '<' dataVarEntry* '>'
   public static boolean dataVar(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "dataVar")) return false;
-    if (!nextTokenIs(b, S_ANGLE_LEFT)) return false;
+    if (!nextTokenIs(b, "<data var>", S_ANGLE_LEFT, S_ID)) return false;
     boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, S_DATA_VAR, null);
-    r = consumeToken(b, S_ANGLE_LEFT);
-    p = r; // pin = 1
-    r = r && report_error_(b, dataVar_1(b, l + 1));
+    Marker m = enter_section_(b, l, _NONE_, S_DATA_VAR, "<data var>");
+    r = dataVar_0(b, l + 1);
+    r = r && consumeToken(b, S_ANGLE_LEFT);
+    p = r; // pin = 2
+    r = r && report_error_(b, dataVar_2(b, l + 1));
     r = p && consumeToken(b, S_ANGLE_RIGHT) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
 
+  // dataTypeSpec?
+  private static boolean dataVar_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "dataVar_0")) return false;
+    dataTypeSpec(b, l + 1);
+    return true;
+  }
+
   // dataVarEntry*
-  private static boolean dataVar_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "dataVar_1")) return false;
+  private static boolean dataVar_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "dataVar_2")) return false;
     int c = current_position_(b);
     while (true) {
       if (!dataVarEntry(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "dataVar_1", c)) break;
+      if (!empty_element_parsed_guard_(b, "dataVar_2", c)) break;
       c = current_position_(b);
     }
     return true;
   }
 
   /* ********************************************************** */
-  // qid ':' dataVarValue ','?
+  // qid ':' varValue ','?
   public static boolean dataVarEntry(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "dataVarEntry")) return false;
     boolean r, p;
@@ -510,7 +595,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     r = qid(b, l + 1);
     r = r && consumeToken(b, S_COLON);
     p = r; // pin = 2
-    r = r && report_error_(b, dataVarValue(b, l + 1));
+    r = r && report_error_(b, varValue(b, l + 1));
     r = p && dataVarEntry_3(b, l + 1) && r;
     exit_section_(b, l, m, r, p, dataValueRecover_parser_);
     return r || p;
@@ -520,25 +605,6 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   private static boolean dataVarEntry_3(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "dataVarEntry_3")) return false;
     consumeToken(b, S_COMMA);
-    return true;
-  }
-
-  /* ********************************************************** */
-  // dataTypeSpec? varValue
-  static boolean dataVarValue(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "dataVarValue")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = dataVarValue_0(b, l + 1);
-    r = r && varValue(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // dataTypeSpec?
-  private static boolean dataVarValue_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "dataVarValue_0")) return false;
-    dataTypeSpec(b, l + 1);
     return true;
   }
 
@@ -1950,18 +2016,18 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // dataRecord | dataMap | dataList | dataEnum | dataPrimitive | 'null'
-  static boolean varValue(PsiBuilder b, int l) {
+  // dataRecord | dataMap | dataList | dataEnum | dataPrimitive | dataNull
+  public static boolean varValue(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "varValue")) return false;
     boolean r;
-    Marker m = enter_section_(b);
+    Marker m = enter_section_(b, l, _NONE_, S_VAR_VALUE, "<var value>");
     r = dataRecord(b, l + 1);
     if (!r) r = dataMap(b, l + 1);
     if (!r) r = dataList(b, l + 1);
     if (!r) r = dataEnum(b, l + 1);
     if (!r) r = dataPrimitive(b, l + 1);
-    if (!r) r = consumeToken(b, S_NULL);
-    exit_section_(b, m, null, r);
+    if (!r) r = dataNull(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
     return r;
   }
 

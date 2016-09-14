@@ -32,6 +32,12 @@ public class IdlDataMapImpl extends IdlDataValueImpl implements IdlDataMap {
   }
 
   @Override
+  @Nullable
+  public IdlFqnTypeRef getFqnTypeRef() {
+    return findChildByClass(IdlFqnTypeRef.class);
+  }
+
+  @Override
   @NotNull
   public PsiElement getParenLeft() {
     return findNotNullChildByType(I_PAREN_LEFT);

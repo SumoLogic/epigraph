@@ -7,25 +7,16 @@ import com.intellij.psi.PsiElement;
 
 public interface IdlDataVarEntry extends PsiElement {
 
-  @Nullable
-  IdlDataPrimitive getDataPrimitive();
-
-  @Nullable
-  IdlDataValue getDataValue();
-
-  @NotNull
-  List<IdlFqnTypeRef> getFqnTypeRefList();
-
   @NotNull
   IdlQid getQid();
+
+  @Nullable
+  IdlVarValue getVarValue();
 
   @NotNull
   PsiElement getColon();
 
   @Nullable
   PsiElement getComma();
-
-  @Nullable
-  PsiElement getNull();
 
 }

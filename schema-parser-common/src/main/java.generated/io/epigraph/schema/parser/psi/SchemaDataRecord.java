@@ -10,6 +10,9 @@ public interface SchemaDataRecord extends SchemaDataValue {
   @NotNull
   List<SchemaDataRecordEntry> getDataRecordEntryList();
 
+  @Nullable
+  SchemaFqnTypeRef getFqnTypeRef();
+
   @NotNull
   PsiElement getCurlyLeft();
 

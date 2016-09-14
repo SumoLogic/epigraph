@@ -164,31 +164,83 @@ opOutputKeyProjectionPart ::= 'forbidden' | 'required' | opParameters | customPa
 
 // input
 
-opInputModelProjection ::= id // todo
+opInputVarProjection ::= ( opInputMultiTagProjection | opInputSingleTagProjection ) opInputVarPolymorphicTail?
+opInputSingleTagProjection ::= ( ':' qid )? opInputModelProjection
+opInputMultiTagProjection ::= ':' '(' (opInputMultiTagProjectionItem ','?)* ')' {pin=2}
+opInputMultiTagProjectionItem ::= qid opInputModelProjection
+//
+opInputVarPolymorphicTail ::= opInputVarSingleTail | opInputVarMultiTail
+opInputVarSingleTail ::= '~' fqnTypeRef opInputVarProjection
+opInputVarMultiTail ::= '~' '(' (opInputVarMultiTailItem ','?)* ')' {pin=2}
+opInputVarMultiTailItem ::= fqnTypeRef opInputVarProjection
+
+opInputModelProjection ::= '+'? ( opInputRecordModelProjection
+                                | opInputListModelProjection
+                                | opInputMapModelProjection
+//                              | opInputEnumModelProjection
+//                              | opInputPrimitiveModelProjection
+                                )? opInputModelProjectionBody?
+
+opInputModelProjectionBody ::= '{' (opInputModelProjectionBodyPart ','?)* '}'
+opInputModelProjectionBodyPart ::= customParam | opInputDefaultValue | opInputRequired
+opInputDefaultValue ::= 'default' ':' varValue {pin=1}
+opInputRequired ::= 'required' ':' boolean {pin=1}
+
+// op input record
+opInputRecordModelProjection ::= '(' (opInputFieldProjection ','?)* ')' {
+  pin=1
+  extends=opInputModelProjection
+}
+opInputFieldProjection ::= '+'? qid opInputFieldProjectionBody? opInputVarProjection?
+opInputFieldProjectionBody ::= '{' (opInputFieldProjectionBodyPart ','?)* '}'
+opInputFieldProjectionBodyPart ::= customParam | opInputRequired
+
+// files : Files default FileList *(..) ~FileList2(..)
+// op input list
+opInputListModelProjection ::= '*' opInputVarProjection {
+  pin=1
+  extends=opInputModelProjection
+}
+
+opInputMapModelProjection ::= opInputKeyProjection '*' opInputVarProjection {
+  pin=1
+  extends=opInputModelProjection
+}
+opInputKeyProjection ::= '[' (opInputKeyProjectionPart ','?)* ']' {pin=1}
+opInputKeyProjectionPart ::= 'forbidden' | 'required' | customParam
+
+//opOutputPrimitiveModelProjection ::= 'primitive' // ?
+//opOutputEnumModelProjection ::= 'enum' // ?
 
 // ------------- data language -------------
 
-//dataValue ::= dataTypeSpec? (dataVar | dataVarValue)
-//private dataVarValue ::= dataRecord | dataMap | dataList | dataEnum | dataPrimitiveValue | 'null'
-//private dataTypeSpec ::= ( fqnTypeRef '/' )*
-dataValue ::= dataTypeSpec? (dataVar | varValue)
-private dataVarValue ::= dataTypeSpec? varValue   // because we want (foo/bar:baz) ?
-private varValue ::= dataRecord | dataMap | dataList | dataEnum | dataPrimitive | 'null'
-private dataTypeSpec ::= ( fqnTypeRef '/' )* // TODO we only need single type spec now
+dataValue ::= dataVar | varValue
 
-dataVar ::= '<' dataVarEntry* '>' {pin=1 extends=dataValue}
-dataVarEntry ::= qid ':' dataVarValue ','? {pin=2 recoverWhile=dataValueRecover}
+private dataTypeSpec ::= fqnTypeRef
 
-dataRecord ::= '{' dataRecordEntry* '}' {pin=1 extends=dataValue}
+varValue ::= dataRecord | dataMap | dataList | dataEnum | dataPrimitive | dataNull
+
+dataVar ::= dataTypeSpec? '<' dataVarEntry* '>' {pin=2 extends=dataValue}
+dataVarEntry ::= qid ':' varValue ','? {pin=2 recoverWhile=dataValueRecover}
+
+dataRecord ::= dataTypeSpec? '{' dataRecordEntry* '}' {pin=2 extends=dataValue}
 dataRecordEntry ::= qid ':' dataValue ','? {pin=2 recoverWhile=dataValueRecover}
 
-dataMap ::= '(' dataMapEntry* ')' {pin=1 extends=dataValue}
-dataMapEntry ::= dataVarValue ':' dataValue ','? {pin=2 recoverWhile=dataValueRecover}
+dataMap ::= dataTypeSpec? '(' dataMapEntry* ')' {pin=2 extends=dataValue}
+dataMapEntry ::= varValue ':' dataValue ','? {pin=2 recoverWhile=dataValueRecover}
 
-dataList ::= '[' (dataValue ','?)* ']' {pin=1 extends=dataValue}
+dataList ::= dataTypeSpec? '[' (dataValue ','?)* ']' {pin=2 extends=dataValue}
 
-dataEnum ::= qid {extends=dataValue}
+dataEnum ::= dataSpeccedEnum | dataUnspeccedEnum {extends=dataValue}
+private dataSpeccedEnum ::= dataTypeSpec '(' dataUnspeccedEnum ')'
+private dataUnspeccedEnum ::= qid
 
-dataPrimitive ::= string | number | boolean // | opOutputVarProjection
+dataPrimitive ::= dataSpeccedPrimitive | dataUnspeccedPrimitive {extends=dataValue}
+private dataSpeccedPrimitive ::= dataTypeSpec '(' dataUnspeccedPrimitive ')'
+private dataUnspeccedPrimitive ::= string | number | boolean
+
+dataNull ::= dataSpeccedNull | dataUnspeccedNull {extends=dataValue}
+private dataSpeccedNull ::= dataTypeSpec '(' dataUnspeccedNull ')'
+private dataUnspeccedNull ::= 'null'
 
 private dataValueRecover ::= ! ( qid | dataPrimitive | '}' | ')' | '>' | ']' | ',' )

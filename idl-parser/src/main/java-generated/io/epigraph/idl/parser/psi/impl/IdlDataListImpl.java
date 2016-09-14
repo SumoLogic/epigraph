@@ -32,6 +32,12 @@ public class IdlDataListImpl extends IdlDataValueImpl implements IdlDataList {
   }
 
   @Override
+  @Nullable
+  public IdlFqnTypeRef getFqnTypeRef() {
+    return findChildByClass(IdlFqnTypeRef.class);
+  }
+
+  @Override
   @NotNull
   public PsiElement getBracketLeft() {
     return findNotNullChildByType(I_BRACKET_LEFT);

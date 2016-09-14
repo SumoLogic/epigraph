@@ -7,25 +7,16 @@ import com.intellij.psi.PsiElement;
 
 public interface SchemaDataVarEntry extends PsiElement {
 
-  @Nullable
-  SchemaDataPrimitive getDataPrimitive();
-
-  @Nullable
-  SchemaDataValue getDataValue();
-
-  @NotNull
-  List<SchemaFqnTypeRef> getFqnTypeRefList();
-
   @NotNull
   SchemaQid getQid();
+
+  @Nullable
+  SchemaVarValue getVarValue();
 
   @NotNull
   PsiElement getColon();
 
   @Nullable
   PsiElement getComma();
-
-  @Nullable
-  PsiElement getNull();
 
 }

@@ -32,6 +32,12 @@ public class SchemaDataRecordImpl extends SchemaDataValueImpl implements SchemaD
   }
 
   @Override
+  @Nullable
+  public SchemaFqnTypeRef getFqnTypeRef() {
+    return PsiTreeUtil.getChildOfType(this, SchemaFqnTypeRef.class);
+  }
+
+  @Override
   @NotNull
   public PsiElement getCurlyLeft() {
     return notNullChild(findChildByType(S_CURLY_LEFT));

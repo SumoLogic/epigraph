@@ -10,6 +10,9 @@ public interface IdlDataList extends IdlDataValue {
   @NotNull
   List<IdlDataValue> getDataValueList();
 
+  @Nullable
+  IdlFqnTypeRef getFqnTypeRef();
+
   @NotNull
   PsiElement getBracketLeft();
 

@@ -10,6 +10,9 @@ public interface IdlDataVar extends IdlDataValue {
   @NotNull
   List<IdlDataVarEntry> getDataVarEntryList();
 
+  @Nullable
+  IdlFqnTypeRef getFqnTypeRef();
+
   @NotNull
   PsiElement getAngleLeft();
 

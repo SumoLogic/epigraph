@@ -27,8 +27,12 @@ public class IdlVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitDataNull(@NotNull IdlDataNull o) {
+    visitDataValue(o);
+  }
+
   public void visitDataPrimitive(@NotNull IdlDataPrimitive o) {
-    visitPsiElement(o);
+    visitDataValue(o);
   }
 
   public void visitDataRecord(@NotNull IdlDataRecord o) {
@@ -75,7 +79,87 @@ public class IdlVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitOpInputDefaultValue(@NotNull IdlOpInputDefaultValue o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpInputFieldProjection(@NotNull IdlOpInputFieldProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpInputFieldProjectionBody(@NotNull IdlOpInputFieldProjectionBody o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpInputFieldProjectionBodyPart(@NotNull IdlOpInputFieldProjectionBodyPart o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpInputKeyProjection(@NotNull IdlOpInputKeyProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpInputKeyProjectionPart(@NotNull IdlOpInputKeyProjectionPart o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpInputListModelProjection(@NotNull IdlOpInputListModelProjection o) {
+    visitOpInputModelProjection(o);
+  }
+
+  public void visitOpInputMapModelProjection(@NotNull IdlOpInputMapModelProjection o) {
+    visitOpInputModelProjection(o);
+  }
+
   public void visitOpInputModelProjection(@NotNull IdlOpInputModelProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpInputModelProjectionBody(@NotNull IdlOpInputModelProjectionBody o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpInputModelProjectionBodyPart(@NotNull IdlOpInputModelProjectionBodyPart o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpInputMultiTagProjection(@NotNull IdlOpInputMultiTagProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpInputMultiTagProjectionItem(@NotNull IdlOpInputMultiTagProjectionItem o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpInputRecordModelProjection(@NotNull IdlOpInputRecordModelProjection o) {
+    visitOpInputModelProjection(o);
+  }
+
+  public void visitOpInputRequired(@NotNull IdlOpInputRequired o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpInputSingleTagProjection(@NotNull IdlOpInputSingleTagProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpInputVarMultiTail(@NotNull IdlOpInputVarMultiTail o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpInputVarMultiTailItem(@NotNull IdlOpInputVarMultiTailItem o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpInputVarPolymorphicTail(@NotNull IdlOpInputVarPolymorphicTail o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpInputVarProjection(@NotNull IdlOpInputVarProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpInputVarSingleTail(@NotNull IdlOpInputVarSingleTail o) {
     visitPsiElement(o);
   }
 
@@ -164,6 +248,10 @@ public class IdlVisitor extends PsiElementVisitor {
   }
 
   public void visitQid(@NotNull IdlQid o) {
+    visitPsiElement(o);
+  }
+
+  public void visitVarValue(@NotNull IdlVarValue o) {
     visitPsiElement(o);
   }
 
