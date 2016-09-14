@@ -3,8 +3,8 @@ package io.epigraph.projections.op.input;
 import de.uka.ilkd.pp.DataLayouter;
 import de.uka.ilkd.pp.PrettyPrintable;
 import io.epigraph.data.Datum;
+import io.epigraph.projections.generic.GenericModelProjection;
 import io.epigraph.types.DatumType;
-import io.epigraph.util.pp.DataPrettyPrinter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -14,20 +14,16 @@ import java.util.Objects;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public abstract class OpInputModelProjection<M extends DatumType, D extends Datum>
-    implements PrettyPrintable {
-  @NotNull
-  protected final M model;
+    extends GenericModelProjection<M> implements PrettyPrintable {
   protected final boolean required;
   @Nullable
   protected final D defaultValue;
 
   public OpInputModelProjection(@NotNull M model, boolean required, @Nullable D defaultValue) {
-    this.model = model;
+    super(model);
     this.required = required;
     this.defaultValue = defaultValue;
   }
-
-  public M model() { return model; }
 
   public boolean required() { return required; }
 
@@ -70,7 +66,4 @@ public abstract class OpInputModelProjection<M extends DatumType, D extends Datu
 
   @Override
   public int hashCode() { return Objects.hash(model, required, defaultValue); }
-
-  @Override
-  public String toString() { return DataPrettyPrinter.prettyPrint(this); }
 }

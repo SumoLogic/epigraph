@@ -2,20 +2,20 @@ package io.epigraph.projections.op.output;
 
 import de.uka.ilkd.pp.DataLayouter;
 import de.uka.ilkd.pp.PrettyPrintable;
+import io.epigraph.projections.generic.GenericModelProjection;
 import io.epigraph.types.DatumType;
-import io.epigraph.util.pp.DataPrettyPrinter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public abstract class OpOutputModelProjection<M extends DatumType>
-    implements PrettyPrintable {
-  @NotNull
-  protected final M model;
+    extends GenericModelProjection<M> implements PrettyPrintable {
   protected final boolean includeInDefault;
   @Nullable
   protected final Set<OpParam> params;
@@ -23,12 +23,10 @@ public abstract class OpOutputModelProjection<M extends DatumType>
   public OpOutputModelProjection(@NotNull M model,
                                  boolean includeInDefault,
                                  @Nullable Set<OpParam> params) {
-    this.model = model;
+    super(model);
     this.includeInDefault = includeInDefault;
     this.params = params;
   }
-
-  public M model() { return model; }
 
   public boolean includeInDefault() { return includeInDefault; }
 
@@ -55,9 +53,7 @@ public abstract class OpOutputModelProjection<M extends DatumType>
 
   protected <Exc extends Exception> void prettyPrintParams(DataLayouter<Exc> l, @NotNull Collection<OpParam> params)
       throws Exc {
-    for (OpParam param : params) {
-      l.brk().print(param);
-    }
+    for (OpParam param : params) { l.brk().print(param); }
   }
 
   @Override
@@ -72,7 +68,4 @@ public abstract class OpOutputModelProjection<M extends DatumType>
 
   @Override
   public int hashCode() { return Objects.hash(model, includeInDefault, params); }
-
-  @Override
-  public String toString() { return DataPrettyPrinter.prettyPrint(this); }
 }
