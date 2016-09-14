@@ -34,7 +34,7 @@ ${t.effectiveFields.map { f => // for each effective field
    * Field `${f.name}`.
    */
   @NotNull Field ${jn(f.name)} = new Field("${f.name}", ${lqrn(f.typeRef, t)}.type.dataType(${f.valueDataType.polymorphic}${vt(f.typeRef, s", ${tcr(f.valueDataType, t)}", "")}), ${f.isAbstract});
-${  f.effectiveDefaultTagName match { // default datum and value getters (if any)
+${  f.effectiveDefaultTagName match { // default tag datum and value getters (if any)
       case None => ""
       case Some(dtn) => sn"""\
 
@@ -139,7 +139,7 @@ ${t.declaredFields.map { f => sn"""
   interface Imm extends $ln,${withParents(".Imm")} io.epigraph.data.RecordDatum.Imm.Static {
 ${t.effectiveFields.map { f => // for each effective field
     sn"""\
-${  f.effectiveDefaultTagName match { // default getter (if any)
+${  f.effectiveDefaultTagName match {// default tag datum and value getters (if any)
       case None => ""
       case Some(dtn) => sn"""\
 
@@ -187,7 +187,7 @@ ${ f.valueDataType.typeRef.resolved match { // tag getters
       private Impl(@NotNull io.epigraph.data.RecordDatum.Imm.Raw raw) { super($ln.type, raw); }
 ${t.effectiveFields.map { f => // for each effective field
     sn"""\
-${  f.effectiveDefaultTagName match { // default getter
+${  f.effectiveDefaultTagName match { // default tag datum and value getters (if any)
       case None => ""
       case Some(dtn) => sn"""\
 
@@ -337,7 +337,7 @@ ${  f.effectiveDefaultTagName match { // default tag (implied or explicit, if an
 """
     }
 }\
-${ f.valueDataType.typeRef.resolved match { // tag accessors (for union types)
+${  f.valueDataType.typeRef.resolved match { // tag accessors (for union types)
       case vartype: CVarTypeDef => vartype.effectiveTags.map { tag => // for each effective tag
         sn"""\
 
@@ -378,7 +378,7 @@ ${ f.valueDataType.typeRef.resolved match { // tag accessors (for union types)
       case unexpected => throw new UnsupportedOperationException(unexpected.name.name)
     }
 }\
-${ f.valueDataType.typeRef.resolved match { // data accessors (for union types)
+${  f.valueDataType.typeRef.resolved match { // data accessors (for union types)
       case vartype: CVarTypeDef => sn"""\
 
     /**
@@ -403,16 +403,30 @@ ${ f.valueDataType.typeRef.resolved match { // data accessors (for union types)
       case unexpected => throw new UnsupportedOperationException(unexpected.name.name)
     }
 }\
-${  if (f.valueDataType.polymorphic) sn"""\
+${  if (f.valueDataType.polymorphic) f.valueDataType.typeRef.resolved match { // polymorphic accessors
+      case ftype: CVarTypeDef => sn"""\
 
     /**
-     *
+     * Returns polymorphic data builder for `${f.name}` field.
      */
     //@Override
-//    public <I extends ${lqdrn(f.typeRef, t)}, B extends Datum.Mut.Static> @Nullable B get${up(f.name)}() {
-//      return null; // TODO
+    public <B extends io.epigraph.data.Data.Mut.Static<? extends ${lqn(ftype, t)}.Imm> & ${lqn(ftype, t)}>
+    @Nullable B get${up(f.name)}_Poly() {
+      return (B) _raw()._getData($ln.${jn(f.name)});
+    }
+
+//    /**
+//     * Sets `${f.typeRef.name.name}` data builder for `${f.name}` field.
+//     */
+//    public @NotNull $ln.Builder set${up(f.name)}_Data(@Nullable ${lqdrn(f.typeRef, t)}.Builder ${jn(f.name)}) {
+//      _raw()._setData($ln.${jn(f.name)}, ${jn(f.name)});
+//      return this;
 //    }
-""" else ""
+
+"""
+      case _: CDatumType => ""
+      case unexpected => throw new UnsupportedOperationException(unexpected.name.name)
+    } else ""
 }\
 """
   }.mkString
