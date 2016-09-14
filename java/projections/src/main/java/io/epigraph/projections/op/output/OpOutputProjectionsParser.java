@@ -32,7 +32,6 @@ public class OpOutputProjectionsParser {
     @Nullable IdlOpOutputSingleTagProjection singleTagProjection = psi.getOpOutputSingleTagProjection();
     if (singleTagProjection != null) {
       final OpOutputModelProjection<?> parsedModelProjection;
-      final boolean includeInDefault = singleTagProjection.getPlus() != null;
       final String tagName = singleTagProjection.getQid() == null
                              ? null
                              : singleTagProjection.getQid().getCanonicalName();
@@ -54,7 +53,7 @@ public class OpOutputProjectionsParser {
 
       parsedModelProjection = parseModelProjection(tag.type, modelProjection, typesResolver);
 
-      tagProjections.add(new OpOutputTagProjection(tag, includeInDefault, parsedModelProjection));
+      tagProjections.add(new OpOutputTagProjection(tag, parsedModelProjection));
     } else {
       @Nullable IdlOpOutputMultiTagProjection multiTagProjection = psi.getOpOutputMultiTagProjection();
       assert multiTagProjection != null;
@@ -66,14 +65,13 @@ public class OpOutputProjectionsParser {
         String tagName = psiTagProjection.getQid().getCanonicalName();
         Type.Tag tag = getTag(type, tagName, psiTagProjection);
 
-        final boolean includeInDefault = psiTagProjection.getPlus() != null;
         final OpOutputModelProjection<?> parsedModelProjection;
 
         @NotNull DatumType tagType = tag.type;
         @Nullable IdlOpOutputModelProjection modelProjection = psiTagProjection.getOpOutputModelProjection();
         parsedModelProjection = parseModelProjection(tagType, modelProjection, typesResolver);
 
-        tagProjections.add(new OpOutputTagProjection(tag, includeInDefault, parsedModelProjection));
+        tagProjections.add(new OpOutputTagProjection(tag, parsedModelProjection));
       }
     }
 
@@ -160,7 +158,6 @@ public class OpOutputProjectionsParser {
       throws ProjectionParsingException {
     return new OpOutputVarProjection(type, new OpOutputTagProjection(
         tag,
-        true,
         createDefaultModelProjection(tag.type, includeInDefault, location)
     ));
   }
@@ -189,8 +186,8 @@ public class OpOutputProjectionsParser {
 //  }
 
   public static OpOutputModelProjection<?> parseModelProjection(@NotNull DatumType type,
-                                                                   @NotNull IdlOpOutputModelProjection psi,
-                                                                   @NotNull TypesResolver typesResolver)
+                                                                @NotNull IdlOpOutputModelProjection psi,
+                                                                @NotNull TypesResolver typesResolver)
       throws ProjectionParsingException {
 
     @NotNull OpOutputModelProjectionBodyContents body = parseModelBody(psi.getOpOutputModelProjectionBody());
@@ -282,8 +279,8 @@ public class OpOutputProjectionsParser {
   }
 
   private static OpOutputModelProjection<?> createDefaultModelProjection(@NotNull DatumType type,
-                                                                            boolean includeInDefault,
-                                                                            @NotNull PsiElement location)
+                                                                         boolean includeInDefault,
+                                                                         @NotNull PsiElement location)
       throws ProjectionParsingException {
 
     switch (type.kind()) {

@@ -14,15 +14,12 @@ import java.util.Objects;
 public class OpInputTagProjection implements PrettyPrintable {
   @NotNull
   private final Type.Tag tag;
-  private final boolean includeInDefault;
   @NotNull
   private final OpInputModelProjection<?, ?> projection;
 
   public OpInputTagProjection(@NotNull Type.Tag tag,
-                              boolean includeInDefault,
                               @NotNull OpInputModelProjection<?, ?> projection) {
     this.tag = tag;
-    this.includeInDefault = includeInDefault;
     this.projection = projection;
     if (!tag.type.equals(projection.model)) { // or can it be a sub-type?
       throw new IllegalArgumentException(
@@ -37,24 +34,20 @@ public class OpInputTagProjection implements PrettyPrintable {
   @NotNull
   public OpInputModelProjection<?, ?> projection() { return projection; }
 
-  public boolean includeInDefault() { return includeInDefault; }
-
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     OpInputTagProjection that = (OpInputTagProjection) o;
-    return includeInDefault == that.includeInDefault &&
-           Objects.equals(tag, that.tag) &&
+    return Objects.equals(tag, that.tag) &&
            Objects.equals(projection, that.projection);
   }
 
   @Override
-  public int hashCode() { return Objects.hash(tag, includeInDefault); }
+  public int hashCode() { return Objects.hash(tag); }
 
   @Override
   public <Exc extends Exception> void prettyPrint(DataLayouter<Exc> l) throws Exc {
-    if (includeInDefault) l.print("+");
     l.beginC().print(tag.name).print(":").brk();
     l.print(projection);
     l.end();
