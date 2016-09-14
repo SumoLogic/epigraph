@@ -201,7 +201,7 @@ public interface RecordDatum extends Datum {
       }
 
       // TODO allow Data (auto-convert to Data.Mut)?
-      void _setData(@NotNull Field field, @Nullable Data.Mut data) {
+      public void _setData(@NotNull Field field, @Nullable Data.Mut data) {
         if (data == null) {
           fieldsData.remove(type().assertWritable(field).name());
         } else {

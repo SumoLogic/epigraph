@@ -9,7 +9,7 @@ integer UserId extends PersonId
 
 record UserRecord extends PersonRecord {
   id: UserId
-  bestFriend: User//Record
+  bestFriend: User default id // FIXME compiler doesn't detect missing default
   friends: list[UserRecord]
   users: list[User default id]
   usersShmoozers: list[User/* default shmoozer*/]

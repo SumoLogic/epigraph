@@ -378,6 +378,31 @@ ${ f.valueDataType.typeRef.resolved match { // tag accessors (for union types)
       case unexpected => throw new UnsupportedOperationException(unexpected.name.name)
     }
 }\
+${ f.valueDataType.typeRef.resolved match { // data accessors (for union types)
+      case vartype: CVarTypeDef => sn"""\
+
+    /**
+     * Returns `${f.typeRef.name.name}` data builder for `${f.name}` field.
+     */
+    //@Override
+    public @Nullable ${lqdrn(f.typeRef, t)}.Builder get${up(f.name)}_Data() {
+      io.epigraph.data.Data.@Nullable Mut data = _raw()._getData($ln.${jn(f.name)});
+      return data != null && data.type() == ${lqrn(f.typeRef, t)}.type ? (${lqdrn(f.typeRef, t)}.Builder) data : null;
+    }
+
+    /**
+     * Sets `${f.typeRef.name.name}` data builder for `${f.name}` field.
+     */
+    public @NotNull $ln.Builder set${up(f.name)}_Data(@Nullable ${lqdrn(f.typeRef, t)}.Builder ${jn(f.name)}) {
+      _raw()._setData($ln.${jn(f.name)}, ${jn(f.name)});
+      return this;
+    }
+
+"""
+      case _: CDatumType => ""
+      case unexpected => throw new UnsupportedOperationException(unexpected.name.name)
+    }
+}\
 ${  if (f.valueDataType.polymorphic) sn"""\
 
     /**
