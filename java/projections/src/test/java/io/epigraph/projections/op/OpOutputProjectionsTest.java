@@ -3,6 +3,7 @@ package io.epigraph.projections.op;
 import com.intellij.psi.PsiErrorElement;
 import io.epigraph.idl.parser.projections.ProjectionParserDefinitions;
 import io.epigraph.idl.parser.psi.IdlOpOutputVarProjection;
+import io.epigraph.projections.ProjectionParsingException;
 import io.epigraph.projections.op.input.OpInputPrimitiveModelProjection;
 import io.epigraph.projections.op.output.*;
 import io.epigraph.psi.EpigraphPsiUtil;
@@ -167,7 +168,7 @@ public class OpOutputProjectionsTest {
   }
 
   @Test
-  public void testParsing() throws OpOutputProjectionsParser.ProjectionParsingException {
+  public void testParsing() throws ProjectionParsingException {
     TypesResolver resolver = new SimpleTypesResolver(
         PersonId.type,
         Person.type,
@@ -218,7 +219,7 @@ public class OpOutputProjectionsTest {
           resolver
       );
 
-    } catch (OpOutputProjectionsParser.ProjectionParsingException e) {
+    } catch (ProjectionParsingException e) {
       e.printStackTrace();
       System.err.println(e.getMessage() + " at " +
                          EpigraphPsiUtil.getLocation(e.psi(), projectionStr));

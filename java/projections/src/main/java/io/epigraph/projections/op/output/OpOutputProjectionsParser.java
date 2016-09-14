@@ -1,10 +1,10 @@
 package io.epigraph.projections.op.output;
 
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiErrorElement;
 import io.epigraph.idl.parser.psi.*;
 import io.epigraph.idl.parser.psi.impl.IdlOpOutputModelProjectionImpl;
 import io.epigraph.lang.Fqn;
+import io.epigraph.projections.ProjectionParsingException;
 import io.epigraph.types.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -398,28 +398,6 @@ public class OpOutputProjectionsParser {
     public void addParam(@NotNull OpParam param) {
       if (params == null) params = new HashSet<>();
       params.add(param);
-    }
-  }
-
-  // TODO move to appropriate place
-  public static class ProjectionParsingException extends Exception {
-    @NotNull
-    private final PsiElement psi;
-
-    public ProjectionParsingException(@NotNull PsiErrorElement psiErrorElement) {
-      // todo extract line numbers, similar to CError/CErrorPosition
-      super(psiErrorElement.getErrorDescription());
-      psi = psiErrorElement;
-    }
-
-    public ProjectionParsingException(@NotNull String message, @NotNull PsiElement location) {
-      super(message);
-      psi = location;
-    }
-
-    @NotNull
-    public PsiElement psi() {
-      return psi;
     }
   }
 
