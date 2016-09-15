@@ -4,10 +4,7 @@ package com.sumologic.epigraph.schema.compiler
 
 import java.util.concurrent.{ConcurrentHashMap, ConcurrentLinkedQueue}
 
-import com.sumologic.epigraph.util.JavaFunction
 import io.epigraph.lang.Fqn
-
-import scala.collection.JavaConversions._
 
 
 class CContext(val tabWidth: Int = 2) {

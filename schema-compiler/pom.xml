@@ -15,11 +15,6 @@
 
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>epigraph-core</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
       <artifactId>epigraph-schema-parser</artifactId>
       <version>${project.version}</version>
     </dependency>

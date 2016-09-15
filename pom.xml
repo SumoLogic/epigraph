@@ -36,7 +36,7 @@
   </developers>
 
   <profiles>
-    <!-- mvn clean install -Pjar-mavenizer && mvn clean install -Plight-psi && mvn clean install -Pmain && mvn clean install -Pschemas,examples -->
+    <!-- mvn clean install -Pjar-mavenizer && mvn clean install -Plight-psi && mvn clean install -Pmain && mvn clean install -Pschemas,examples,tests -->
 
     <profile>
       <id>jar-mavenizer</id>
