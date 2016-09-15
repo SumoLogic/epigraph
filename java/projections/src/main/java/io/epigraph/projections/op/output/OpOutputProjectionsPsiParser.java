@@ -4,7 +4,7 @@ import com.intellij.psi.PsiElement;
 import io.epigraph.idl.parser.psi.*;
 import io.epigraph.idl.parser.psi.impl.IdlOpOutputModelProjectionImpl;
 import io.epigraph.lang.Fqn;
-import io.epigraph.projections.ProjectionParsingException;
+import io.epigraph.psi.PsiProcessingException;
 import io.epigraph.types.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -18,13 +18,13 @@ import java.util.Set;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class OpOutputProjectionsParser {
+public class OpOutputProjectionsPsiParser {
   // todo custom parameters support
 
   public static OpOutputVarProjection parseVarProjection(@NotNull DataType dataType,
                                                          @NotNull IdlOpOutputVarProjection psi,
                                                          @NotNull TypesResolver typesResolver)
-      throws ProjectionParsingException {
+      throws PsiProcessingException {
 
     final Type type = dataType.type;
     final LinkedHashSet<OpOutputTagProjection> tagProjections = new LinkedHashSet<>();
@@ -40,7 +40,7 @@ public class OpOutputProjectionsParser {
       if (tagName == null) {
         // get default tag
         if (dataType.defaultTag == null)
-          throw new ProjectionParsingException(
+          throw new PsiProcessingException(
               String.format("Can't parse default tag projection for '%s', default tag not specified", type.name()),
               singleTagProjection
           );
@@ -111,7 +111,7 @@ public class OpOutputProjectionsParser {
                                                            IdlOpOutputVarProjection psiTailProjection,
                                                            @NotNull TypesResolver typesResolver,
                                                            PsiElement location)
-      throws ProjectionParsingException {
+      throws PsiProcessingException {
 
     @NotNull Fqn typeFqn = tailTypeRef.getFqn().getFqn();
     @NotNull Type tailType = getType(typesResolver, typeFqn, location);
@@ -124,10 +124,10 @@ public class OpOutputProjectionsParser {
 
   @NotNull
   private static Type.Tag getTag(@NotNull Type type, @NotNull String tagName, @NotNull PsiElement location)
-      throws ProjectionParsingException {
+      throws PsiProcessingException {
     Type.Tag tag = type.tagsMap().get(tagName);
     if (tag == null)
-      throw new ProjectionParsingException(
+      throw new PsiProcessingException(
           String.format("Can't find tag '%s' in '%s'", tagName, type.name()),
           location
       );
@@ -135,19 +135,19 @@ public class OpOutputProjectionsParser {
   }
 
   private static void verifyTag(@NotNull Type type, @NotNull Type.Tag tag, @NotNull PsiElement location)
-      throws ProjectionParsingException {
+      throws PsiProcessingException {
     if (!type.tags().contains(tag))
-      throw new ProjectionParsingException(String.format("Tag '%s' doesn't belong to type '%s'",
-                                                         tag.name(),
-                                                         type.name()
+      throw new PsiProcessingException(String.format("Tag '%s' doesn't belong to type '%s'",
+                                                     tag.name(),
+                                                     type.name()
       ), location);
   }
 
   @NotNull
   private static Type getType(@NotNull TypesResolver resolver, @NotNull Fqn fqn, @NotNull PsiElement location)
-      throws ProjectionParsingException {
+      throws PsiProcessingException {
     @Nullable Type type = resolver.resolve(fqn);
-    if (type == null) throw new ProjectionParsingException(String.format("Can't find type '%s'", fqn), location);
+    if (type == null) throw new PsiProcessingException(String.format("Can't find type '%s'", fqn), location);
     return type;
   }
 
@@ -155,7 +155,7 @@ public class OpOutputProjectionsParser {
                                                                   @NotNull Type.Tag tag,
                                                                   boolean includeInDefault,
                                                                   @NotNull PsiElement location)
-      throws ProjectionParsingException {
+      throws PsiProcessingException {
     return new OpOutputVarProjection(type, new OpOutputTagProjection(
         tag,
         createDefaultModelProjection(tag.type, includeInDefault, location)
@@ -165,7 +165,7 @@ public class OpOutputProjectionsParser {
   private static OpOutputVarProjection createDefaultVarProjection(@NotNull DatumType type,
                                                                   boolean includeInDefault,
                                                                   @NotNull PsiElement location)
-      throws ProjectionParsingException {
+      throws PsiProcessingException {
     return createDefaultVarProjection(type, type.self, includeInDefault, location);
   }
 
@@ -188,7 +188,7 @@ public class OpOutputProjectionsParser {
   public static OpOutputModelProjection<?> parseModelProjection(@NotNull DatumType type,
                                                                 @NotNull IdlOpOutputModelProjection psi,
                                                                 @NotNull TypesResolver typesResolver)
-      throws ProjectionParsingException {
+      throws PsiProcessingException {
 
     @NotNull OpOutputModelProjectionBodyContents body = parseModelBody(psi.getOpOutputModelProjectionBody());
     body.includeInDefault = psi.getPlus() != null;
@@ -209,16 +209,16 @@ public class OpOutputProjectionsParser {
         if (noSpecificKindProjection)
           return createDefaultModelProjection(type, body.includeInDefault, psi);
         ensureModelKind(psi, IdlOpOutputListModelProjection.class, TypeKind.LIST);
-        throw new ProjectionParsingException("Unsupported type kind: " + type.kind(), psi);
+        throw new PsiProcessingException("Unsupported type kind: " + type.kind(), psi);
       case MAP:
         if (noSpecificKindProjection)
           return createDefaultModelProjection(type, body.includeInDefault, psi);
         ensureModelKind(psi, IdlOpOutputMapModelProjection.class, TypeKind.MAP);
-        throw new ProjectionParsingException("Unsupported type kind: " + type.kind(), psi);
+        throw new PsiProcessingException("Unsupported type kind: " + type.kind(), psi);
       case ENUM:
         if (!noSpecificKindProjection)
           wrongProjectionKind(psi, TypeKind.ENUM);
-        throw new ProjectionParsingException("Unsupported type kind: " + type.kind(), psi);
+        throw new PsiProcessingException("Unsupported type kind: " + type.kind(), psi);
       case PRIMITIVE:
         if (!noSpecificKindProjection)
           wrongProjectionKind(psi, TypeKind.PRIMITIVE);
@@ -227,21 +227,21 @@ public class OpOutputProjectionsParser {
                                              body.params
         );
       case UNION:
-        throw new ProjectionParsingException("Unsupported type kind: " + type.kind(), psi);
+        throw new PsiProcessingException("Unsupported type kind: " + type.kind(), psi);
       default:
-        throw new ProjectionParsingException("Unknown type kind: " + type.kind(), psi);
+        throw new PsiProcessingException("Unknown type kind: " + type.kind(), psi);
     }
   }
 
   private static void ensureModelKind(@NotNull IdlOpOutputModelProjection psi,
                                       @NotNull Class<? extends IdlOpOutputModelProjection> expectedClass,
-                                      @NotNull TypeKind expectedKind) throws ProjectionParsingException {
+                                      @NotNull TypeKind expectedKind) throws PsiProcessingException {
     if (!(expectedClass.isAssignableFrom(psi.getClass())))
       wrongProjectionKind(psi, expectedKind);
   }
 
   private static void wrongProjectionKind(@NotNull IdlOpOutputModelProjection psi, @NotNull TypeKind expectedKind)
-      throws ProjectionParsingException {
+      throws PsiProcessingException {
     String actualKind = "Unknown (" + psi.getClass().getName() + ")";
     if (psi instanceof IdlOpOutputRecordModelProjection)
       actualKind = TypeKind.RECORD.toString();
@@ -251,9 +251,9 @@ public class OpOutputProjectionsParser {
       actualKind = TypeKind.LIST.toString();
     // TODO rest
 
-    throw new ProjectionParsingException(MessageFormat.format("Unexpected projection kind ''{0}'', expected ''{1}''",
-                                                              actualKind,
-                                                              expectedKind
+    throw new PsiProcessingException(MessageFormat.format("Unexpected projection kind ''{0}'', expected ''{1}''",
+                                                          actualKind,
+                                                          expectedKind
     ), psi);
   }
 
@@ -281,7 +281,7 @@ public class OpOutputProjectionsParser {
   private static OpOutputModelProjection<?> createDefaultModelProjection(@NotNull DatumType type,
                                                                          boolean includeInDefault,
                                                                          @NotNull PsiElement location)
-      throws ProjectionParsingException {
+      throws PsiProcessingException {
 
     switch (type.kind()) {
       case RECORD:
@@ -296,7 +296,7 @@ public class OpOutputProjectionsParser {
         Type.@Nullable Tag defaultTag = elementType.defaultTag;
 
         if (defaultTag == null)
-          throw new ProjectionParsingException(String.format(
+          throw new PsiProcessingException(String.format(
               "Can't create default projection for list type '%s, as it's element type '%s' doesn't have a default tag",
               type.name(),
               elementType.name
@@ -315,15 +315,15 @@ public class OpOutputProjectionsParser {
                                                itemVarProjection
         );
       case MAP:
-        throw new ProjectionParsingException("Unsupported type kind: " + type.kind(), location);
+        throw new PsiProcessingException("Unsupported type kind: " + type.kind(), location);
       case UNION:
-        throw new ProjectionParsingException("Was expecting to get datum model kind, got: " + type.kind(), location);
+        throw new PsiProcessingException("Was expecting to get datum model kind, got: " + type.kind(), location);
       case ENUM:
-        throw new ProjectionParsingException("Unsupported type kind: " + type.kind(), location);
+        throw new PsiProcessingException("Unsupported type kind: " + type.kind(), location);
       case PRIMITIVE:
         return new OpOutputPrimitiveModelProjection((PrimitiveType) type, includeInDefault, null);
       default:
-        throw new ProjectionParsingException("Unknown type kind: " + type.kind(), location);
+        throw new PsiProcessingException("Unknown type kind: " + type.kind(), location);
     }
   }
 
@@ -332,7 +332,7 @@ public class OpOutputProjectionsParser {
                                                                          @Nullable Set<OpParam> params,
                                                                          @NotNull IdlOpOutputRecordModelProjection psi,
                                                                          @NotNull TypesResolver typesResolver)
-      throws ProjectionParsingException {
+      throws PsiProcessingException {
     LinkedHashSet<OpOutputFieldProjection> fieldProjections = new LinkedHashSet<>();
     @NotNull List<IdlOpOutputFieldProjection> psiFieldProjections = psi.getOpOutputFieldProjectionList();
 
@@ -340,7 +340,7 @@ public class OpOutputProjectionsParser {
       final String fieldName = psiFieldProjection.getQid().getCanonicalName();
       RecordType.Field field = type.fieldsMap().get(fieldName);
       if (field == null)
-        throw new ProjectionParsingException(
+        throw new PsiProcessingException(
             String.format("Can't field projection for '%s', field '%s' not found", type.name(), fieldName),
             psiFieldProjection
         );
@@ -362,7 +362,7 @@ public class OpOutputProjectionsParser {
         @NotNull DataType fieldDataType = field.dataType();
         @Nullable Type.Tag defaultFieldTag = fieldDataType.defaultTag;
         if (defaultFieldTag == null)
-          throw new ProjectionParsingException(String.format(
+          throw new PsiProcessingException(String.format(
               "Can't construct default projection for field '%s', as it's type '%s' has no default tag",
               fieldName,
               fieldDataType.name

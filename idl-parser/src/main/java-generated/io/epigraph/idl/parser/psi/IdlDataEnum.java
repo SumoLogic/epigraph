@@ -5,18 +5,9 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface IdlDataEnum extends IdlDataValue {
-
-  @Nullable
-  IdlFqnTypeRef getFqnTypeRef();
+public interface IdlDataEnum extends IdlVarValue {
 
   @NotNull
   IdlQid getQid();
-
-  @Nullable
-  PsiElement getParenLeft();
-
-  @Nullable
-  PsiElement getParenRight();
 
 }

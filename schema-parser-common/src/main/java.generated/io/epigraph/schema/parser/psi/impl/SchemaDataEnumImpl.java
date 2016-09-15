@@ -10,7 +10,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import static io.epigraph.schema.lexer.SchemaElementTypes.*;
 import io.epigraph.schema.parser.psi.*;
 
-public class SchemaDataEnumImpl extends SchemaDataValueImpl implements SchemaDataEnum {
+public class SchemaDataEnumImpl extends SchemaVarValueImpl implements SchemaDataEnum {
 
   public SchemaDataEnumImpl(ASTNode node) {
     super(node);
@@ -26,27 +26,9 @@ public class SchemaDataEnumImpl extends SchemaDataValueImpl implements SchemaDat
   }
 
   @Override
-  @Nullable
-  public SchemaFqnTypeRef getFqnTypeRef() {
-    return PsiTreeUtil.getChildOfType(this, SchemaFqnTypeRef.class);
-  }
-
-  @Override
   @NotNull
   public SchemaQid getQid() {
     return notNullChild(PsiTreeUtil.getChildOfType(this, SchemaQid.class));
-  }
-
-  @Override
-  @Nullable
-  public PsiElement getParenLeft() {
-    return findChildByType(S_PAREN_LEFT);
-  }
-
-  @Override
-  @Nullable
-  public PsiElement getParenRight() {
-    return findChildByType(S_PAREN_RIGHT);
   }
 
 }

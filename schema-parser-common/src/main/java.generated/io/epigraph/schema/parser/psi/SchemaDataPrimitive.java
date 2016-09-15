@@ -5,16 +5,13 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface SchemaDataPrimitive extends SchemaDataValue {
+public interface SchemaDataPrimitive extends SchemaVarValue {
 
   @Nullable
   SchemaFqnTypeRef getFqnTypeRef();
 
   @Nullable
-  PsiElement getParenLeft();
-
-  @Nullable
-  PsiElement getParenRight();
+  PsiElement getAt();
 
   @Nullable
   PsiElement getBoolean();

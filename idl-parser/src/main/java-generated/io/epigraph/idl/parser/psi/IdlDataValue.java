@@ -8,6 +8,9 @@ import com.intellij.psi.PsiElement;
 public interface IdlDataValue extends PsiElement {
 
   @Nullable
+  IdlDataVar getDataVar();
+
+  @Nullable
   IdlVarValue getVarValue();
 
 }

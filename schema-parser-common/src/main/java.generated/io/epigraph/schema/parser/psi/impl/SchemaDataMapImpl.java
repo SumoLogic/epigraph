@@ -10,7 +10,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import static io.epigraph.schema.lexer.SchemaElementTypes.*;
 import io.epigraph.schema.parser.psi.*;
 
-public class SchemaDataMapImpl extends SchemaDataValueImpl implements SchemaDataMap {
+public class SchemaDataMapImpl extends SchemaVarValueImpl implements SchemaDataMap {
 
   public SchemaDataMapImpl(ASTNode node) {
     super(node);

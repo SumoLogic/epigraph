@@ -5,7 +5,7 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface IdlDataVar extends IdlDataValue {
+public interface IdlDataVar extends PsiElement {
 
   @NotNull
   List<IdlDataVarEntry> getDataVarEntryList();

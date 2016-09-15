@@ -5,7 +5,7 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface SchemaDataVar extends SchemaDataValue {
+public interface SchemaDataVar extends PsiElement {
 
   @NotNull
   List<SchemaDataVarEntry> getDataVarEntryList();

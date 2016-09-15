@@ -10,7 +10,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import static io.epigraph.schema.lexer.SchemaElementTypes.*;
 import io.epigraph.schema.parser.psi.*;
 
-public class SchemaDataPrimitiveImpl extends SchemaDataValueImpl implements SchemaDataPrimitive {
+public class SchemaDataPrimitiveImpl extends SchemaVarValueImpl implements SchemaDataPrimitive {
 
   public SchemaDataPrimitiveImpl(ASTNode node) {
     super(node);
@@ -33,14 +33,8 @@ public class SchemaDataPrimitiveImpl extends SchemaDataValueImpl implements Sche
 
   @Override
   @Nullable
-  public PsiElement getParenLeft() {
-    return findChildByType(S_PAREN_LEFT);
-  }
-
-  @Override
-  @Nullable
-  public PsiElement getParenRight() {
-    return findChildByType(S_PAREN_RIGHT);
+  public PsiElement getAt() {
+    return findChildByType(S_AT);
   }
 
   @Override

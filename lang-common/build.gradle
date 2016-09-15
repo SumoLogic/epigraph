@@ -1,5 +1,8 @@
 apply plugin: 'java'
 
+// NOTE: this project is used by both IDEA plugin and standalone PSI parsers,
+// so it should NOT depend on light-psi and can't use any PSI classes
+
 dependencies {
   compile 'org.jetbrains:annotations'
   compile 'net.jcip:jcip-annotations'

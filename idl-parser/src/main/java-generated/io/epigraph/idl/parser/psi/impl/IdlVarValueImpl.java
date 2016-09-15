@@ -26,10 +26,4 @@ public class IdlVarValueImpl extends ASTWrapperPsiElement implements IdlVarValue
     else super.accept(visitor);
   }
 
-  @Override
-  @NotNull
-  public IdlDataValue getDataValue() {
-    return findNotNullChildByClass(IdlDataValue.class);
-  }
-
 }

@@ -1,9 +1,9 @@
 package io.epigraph.projections.op;
 
 import com.intellij.psi.PsiErrorElement;
-import io.epigraph.idl.parser.projections.ProjectionParserDefinitions;
+import io.epigraph.idl.parser.projections.IdlSubParserDefinitions;
 import io.epigraph.idl.parser.psi.IdlOpOutputVarProjection;
-import io.epigraph.projections.ProjectionParsingException;
+import io.epigraph.psi.PsiProcessingException;
 import io.epigraph.projections.op.input.OpInputPrimitiveModelProjection;
 import io.epigraph.projections.op.output.*;
 import io.epigraph.psi.EpigraphPsiUtil;
@@ -168,7 +168,7 @@ public class OpOutputProjectionsTest {
   }
 
   @Test
-  public void testParsing() throws ProjectionParsingException {
+  public void testParsing() throws PsiProcessingException {
     TypesResolver resolver = new SimpleTypesResolver(
         PersonId.type,
         Person.type,
@@ -194,9 +194,9 @@ public class OpOutputProjectionsTest {
 
     IdlOpOutputVarProjection psiVarProjection = EpigraphPsiUtil.parseText(
         projectionStr,
-        ProjectionParserDefinitions.OP_OUTPUT_VAR_PROJECTION.rootElementType(),
+        IdlSubParserDefinitions.OP_OUTPUT_VAR_PROJECTION.rootElementType(),
         IdlOpOutputVarProjection.class,
-        ProjectionParserDefinitions.OP_OUTPUT_VAR_PROJECTION,
+        IdlSubParserDefinitions.OP_OUTPUT_VAR_PROJECTION,
         errorsAccumulator
     );
 
@@ -213,13 +213,13 @@ public class OpOutputProjectionsTest {
 
     OpOutputVarProjection varProjection = null;
     try {
-      varProjection = OpOutputProjectionsParser.parseVarProjection(
+      varProjection = OpOutputProjectionsPsiParser.parseVarProjection(
           new DataType(false, Person.type, Person.id),
           psiVarProjection,
           resolver
       );
 
-    } catch (ProjectionParsingException e) {
+    } catch (PsiProcessingException e) {
       e.printStackTrace();
       System.err.println(e.getMessage() + " at " +
                          EpigraphPsiUtil.getLocation(e.psi(), projectionStr));

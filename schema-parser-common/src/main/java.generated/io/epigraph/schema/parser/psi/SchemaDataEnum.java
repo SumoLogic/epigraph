@@ -5,18 +5,9 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface SchemaDataEnum extends SchemaDataValue {
-
-  @Nullable
-  SchemaFqnTypeRef getFqnTypeRef();
+public interface SchemaDataEnum extends SchemaVarValue {
 
   @NotNull
   SchemaQid getQid();
-
-  @Nullable
-  PsiElement getParenLeft();
-
-  @Nullable
-  PsiElement getParenRight();
 
 }

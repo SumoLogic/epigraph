@@ -35,6 +35,7 @@
     TILDA = '~'
     STAR = '*'
     PLUS = '+'
+    AT = '@'
 
     space='regexp:\s+'
     comment='regexp://.*'
@@ -215,31 +216,26 @@ opInputKeyProjectionPart ::= 'forbidden' | 'required' | customParam
 // ------------- data language -------------
 
 dataValue ::= dataVar | varValue
-
 private dataTypeSpec ::= fqnTypeRef
 
-varValue ::= dataRecord | dataMap | dataList | dataEnum | dataPrimitive | dataNull
-
-dataVar ::= dataTypeSpec? '<' dataVarEntry* '>' {pin=2 extends=dataValue}
+dataVar ::= dataTypeSpec? '<' dataVarEntry* '>' {pin=2}
 dataVarEntry ::= qid ':' varValue ','? {pin=2 recoverWhile=dataValueRecover}
 
-dataRecord ::= dataTypeSpec? '{' dataRecordEntry* '}' {pin=2 extends=dataValue}
+varValue ::= dataRecord | dataMap | dataList | dataPrimitive | dataEnum | dataNull
+
+dataRecord ::= dataTypeSpec? '{' dataRecordEntry* '}' {pin=2 extends=varValue}
 dataRecordEntry ::= qid ':' dataValue ','? {pin=2 recoverWhile=dataValueRecover}
 
-dataMap ::= dataTypeSpec? '(' dataMapEntry* ')' {pin=2 extends=dataValue}
+dataMap ::= dataTypeSpec? '(' dataMapEntry* ')' {pin=2 extends=varValue}
 dataMapEntry ::= varValue ':' dataValue ','? {pin=2 recoverWhile=dataValueRecover}
 
-dataList ::= dataTypeSpec? '[' (dataValue ','?)* ']' {pin=2 extends=dataValue}
+dataList ::= dataTypeSpec? '[' (dataValue ','?)* ']' {pin=2 extends=varValue}
 
-dataEnum ::= dataSpeccedEnum | dataUnspeccedEnum {extends=dataValue}
-private dataSpeccedEnum ::= dataTypeSpec '(' dataUnspeccedEnum ')'
-private dataUnspeccedEnum ::= qid
+dataPrimitive ::= (dataTypeSpec '@')? (string | number | boolean) {extends=varValue}
 
-dataPrimitive ::= dataSpeccedPrimitive | dataUnspeccedPrimitive {extends=dataValue}
-private dataSpeccedPrimitive ::= dataTypeSpec '(' dataUnspeccedPrimitive ')'
-private dataUnspeccedPrimitive ::= string | number | boolean
+dataEnum ::= qid {extends=varValue}
 
-dataNull ::= dataSpeccedNull | dataUnspeccedNull {extends=dataValue}
+dataNull ::= dataSpeccedNull | dataUnspeccedNull {extends=varValue}
 private dataSpeccedNull ::= dataTypeSpec '(' dataUnspeccedNull ')'
 private dataUnspeccedNull ::= 'null'
 

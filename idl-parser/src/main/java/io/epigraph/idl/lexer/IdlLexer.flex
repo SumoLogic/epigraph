@@ -60,6 +60,7 @@ ID=([:letter:]([:letter:]|[:digit:])*)|(`[^`]*`)
   "~"                  { return I_TILDA; }
   "*"                  { return I_STAR; }
   "+"                  { return I_PLUS; }
+  "@"                  { return I_AT; }
   "/"                  { return I_SLASH; }
   "("                  { return I_PAREN_LEFT; }
   ")"                  { return I_PAREN_RIGHT; }

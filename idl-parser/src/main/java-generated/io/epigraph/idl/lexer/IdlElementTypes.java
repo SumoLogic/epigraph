@@ -73,6 +73,7 @@ public interface IdlElementTypes {
 
   IElementType I_ANGLE_LEFT = new IdlElementType("<");
   IElementType I_ANGLE_RIGHT = new IdlElementType(">");
+  IElementType I_AT = new IdlElementType("@");
   IElementType I_BLOCK_COMMENT = new IdlElementType("block_comment");
   IElementType I_BOOLEAN = new IdlElementType("boolean");
   IElementType I_BRACKET_LEFT = new IdlElementType("[");

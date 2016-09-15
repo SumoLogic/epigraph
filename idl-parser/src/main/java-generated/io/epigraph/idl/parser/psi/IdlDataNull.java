@@ -5,7 +5,7 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface IdlDataNull extends IdlDataValue {
+public interface IdlDataNull extends IdlVarValue {
 
   @Nullable
   IdlFqnTypeRef getFqnTypeRef();

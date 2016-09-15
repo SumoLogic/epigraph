@@ -10,7 +10,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import static io.epigraph.idl.lexer.IdlElementTypes.*;
 import io.epigraph.idl.parser.psi.*;
 
-public class IdlDataEnumImpl extends IdlDataValueImpl implements IdlDataEnum {
+public class IdlDataEnumImpl extends IdlVarValueImpl implements IdlDataEnum {
 
   public IdlDataEnumImpl(ASTNode node) {
     super(node);
@@ -26,27 +26,9 @@ public class IdlDataEnumImpl extends IdlDataValueImpl implements IdlDataEnum {
   }
 
   @Override
-  @Nullable
-  public IdlFqnTypeRef getFqnTypeRef() {
-    return findChildByClass(IdlFqnTypeRef.class);
-  }
-
-  @Override
   @NotNull
   public IdlQid getQid() {
     return findNotNullChildByClass(IdlQid.class);
-  }
-
-  @Override
-  @Nullable
-  public PsiElement getParenLeft() {
-    return findChildByType(I_PAREN_LEFT);
-  }
-
-  @Override
-  @Nullable
-  public PsiElement getParenRight() {
-    return findChildByType(I_PAREN_RIGHT);
   }
 
 }

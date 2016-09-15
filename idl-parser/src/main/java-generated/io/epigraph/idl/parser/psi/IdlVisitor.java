@@ -12,15 +12,15 @@ public class IdlVisitor extends PsiElementVisitor {
   }
 
   public void visitDataEnum(@NotNull IdlDataEnum o) {
-    visitDataValue(o);
+    visitVarValue(o);
   }
 
   public void visitDataList(@NotNull IdlDataList o) {
-    visitDataValue(o);
+    visitVarValue(o);
   }
 
   public void visitDataMap(@NotNull IdlDataMap o) {
-    visitDataValue(o);
+    visitVarValue(o);
   }
 
   public void visitDataMapEntry(@NotNull IdlDataMapEntry o) {
@@ -28,15 +28,15 @@ public class IdlVisitor extends PsiElementVisitor {
   }
 
   public void visitDataNull(@NotNull IdlDataNull o) {
-    visitDataValue(o);
+    visitVarValue(o);
   }
 
   public void visitDataPrimitive(@NotNull IdlDataPrimitive o) {
-    visitDataValue(o);
+    visitVarValue(o);
   }
 
   public void visitDataRecord(@NotNull IdlDataRecord o) {
-    visitDataValue(o);
+    visitVarValue(o);
   }
 
   public void visitDataRecordEntry(@NotNull IdlDataRecordEntry o) {
@@ -48,7 +48,7 @@ public class IdlVisitor extends PsiElementVisitor {
   }
 
   public void visitDataVar(@NotNull IdlDataVar o) {
-    visitDataValue(o);
+    visitPsiElement(o);
   }
 
   public void visitDataVarEntry(@NotNull IdlDataVarEntry o) {

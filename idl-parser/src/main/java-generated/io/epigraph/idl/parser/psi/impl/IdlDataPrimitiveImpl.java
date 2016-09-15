@@ -10,7 +10,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import static io.epigraph.idl.lexer.IdlElementTypes.*;
 import io.epigraph.idl.parser.psi.*;
 
-public class IdlDataPrimitiveImpl extends IdlDataValueImpl implements IdlDataPrimitive {
+public class IdlDataPrimitiveImpl extends IdlVarValueImpl implements IdlDataPrimitive {
 
   public IdlDataPrimitiveImpl(ASTNode node) {
     super(node);
@@ -33,14 +33,8 @@ public class IdlDataPrimitiveImpl extends IdlDataValueImpl implements IdlDataPri
 
   @Override
   @Nullable
-  public PsiElement getParenLeft() {
-    return findChildByType(I_PAREN_LEFT);
-  }
-
-  @Override
-  @Nullable
-  public PsiElement getParenRight() {
-    return findChildByType(I_PAREN_RIGHT);
+  public PsiElement getAt() {
+    return findChildByType(I_AT);
   }
 
   @Override

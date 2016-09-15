@@ -22,15 +22,15 @@ public class SchemaVisitor extends PsiElementVisitor {
   }
 
   public void visitDataEnum(@NotNull SchemaDataEnum o) {
-    visitDataValue(o);
+    visitVarValue(o);
   }
 
   public void visitDataList(@NotNull SchemaDataList o) {
-    visitDataValue(o);
+    visitVarValue(o);
   }
 
   public void visitDataMap(@NotNull SchemaDataMap o) {
-    visitDataValue(o);
+    visitVarValue(o);
   }
 
   public void visitDataMapEntry(@NotNull SchemaDataMapEntry o) {
@@ -38,15 +38,15 @@ public class SchemaVisitor extends PsiElementVisitor {
   }
 
   public void visitDataNull(@NotNull SchemaDataNull o) {
-    visitDataValue(o);
+    visitVarValue(o);
   }
 
   public void visitDataPrimitive(@NotNull SchemaDataPrimitive o) {
-    visitDataValue(o);
+    visitVarValue(o);
   }
 
   public void visitDataRecord(@NotNull SchemaDataRecord o) {
-    visitDataValue(o);
+    visitVarValue(o);
   }
 
   public void visitDataRecordEntry(@NotNull SchemaDataRecordEntry o) {
@@ -58,7 +58,7 @@ public class SchemaVisitor extends PsiElementVisitor {
   }
 
   public void visitDataVar(@NotNull SchemaDataVar o) {
-    visitDataValue(o);
+    visitPsiElement(o);
   }
 
   public void visitDataVarEntry(@NotNull SchemaDataVarEntry o) {

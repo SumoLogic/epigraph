@@ -223,7 +223,7 @@ public class IdlParser implements PsiParser, LightPsiParser {
     create_token_set_(I_OP_OUTPUT_LIST_MODEL_PROJECTION, I_OP_OUTPUT_MAP_MODEL_PROJECTION, I_OP_OUTPUT_MODEL_PROJECTION, I_OP_OUTPUT_RECORD_MODEL_PROJECTION),
     create_token_set_(I_OP_INPUT_LIST_MODEL_PROJECTION, I_OP_INPUT_MAP_MODEL_PROJECTION, I_OP_INPUT_MODEL_PROJECTION, I_OP_INPUT_RECORD_MODEL_PROJECTION),
     create_token_set_(I_DATA_ENUM, I_DATA_LIST, I_DATA_MAP, I_DATA_NULL,
-      I_DATA_PRIMITIVE, I_DATA_RECORD, I_DATA_VALUE, I_DATA_VAR),
+      I_DATA_PRIMITIVE, I_DATA_RECORD, I_VAR_VALUE),
   };
 
   /* ********************************************************** */
@@ -242,14 +242,13 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // dataSpeccedEnum | dataUnspeccedEnum
+  // qid
   public static boolean dataEnum(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "dataEnum")) return false;
     if (!nextTokenIs(b, I_ID)) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = dataSpeccedEnum(b, l + 1);
-    if (!r) r = dataUnspeccedEnum(b, l + 1);
+    r = qid(b, l + 1);
     exit_section_(b, m, I_DATA_ENUM, r);
     return r;
   }
@@ -378,14 +377,44 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // dataSpeccedPrimitive | dataUnspeccedPrimitive
+  // (dataTypeSpec '@')? (string | number | boolean)
   public static boolean dataPrimitive(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "dataPrimitive")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, I_DATA_PRIMITIVE, "<data primitive>");
-    r = dataSpeccedPrimitive(b, l + 1);
-    if (!r) r = dataUnspeccedPrimitive(b, l + 1);
+    r = dataPrimitive_0(b, l + 1);
+    r = r && dataPrimitive_1(b, l + 1);
     exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // (dataTypeSpec '@')?
+  private static boolean dataPrimitive_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "dataPrimitive_0")) return false;
+    dataPrimitive_0_0(b, l + 1);
+    return true;
+  }
+
+  // dataTypeSpec '@'
+  private static boolean dataPrimitive_0_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "dataPrimitive_0_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = dataTypeSpec(b, l + 1);
+    r = r && consumeToken(b, I_AT);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // string | number | boolean
+  private static boolean dataPrimitive_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "dataPrimitive_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, I_STRING);
+    if (!r) r = consumeToken(b, I_NUMBER);
+    if (!r) r = consumeToken(b, I_BOOLEAN);
+    exit_section_(b, m, null, r);
     return r;
   }
 
@@ -447,21 +476,6 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // dataTypeSpec '(' dataUnspeccedEnum ')'
-  static boolean dataSpeccedEnum(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "dataSpeccedEnum")) return false;
-    if (!nextTokenIs(b, I_ID)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = dataTypeSpec(b, l + 1);
-    r = r && consumeToken(b, I_PAREN_LEFT);
-    r = r && dataUnspeccedEnum(b, l + 1);
-    r = r && consumeToken(b, I_PAREN_RIGHT);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  /* ********************************************************** */
   // dataTypeSpec '(' dataUnspeccedNull ')'
   static boolean dataSpeccedNull(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "dataSpeccedNull")) return false;
@@ -477,30 +491,9 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // dataTypeSpec '(' dataUnspeccedPrimitive ')'
-  static boolean dataSpeccedPrimitive(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "dataSpeccedPrimitive")) return false;
-    if (!nextTokenIs(b, I_ID)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = dataTypeSpec(b, l + 1);
-    r = r && consumeToken(b, I_PAREN_LEFT);
-    r = r && dataUnspeccedPrimitive(b, l + 1);
-    r = r && consumeToken(b, I_PAREN_RIGHT);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  /* ********************************************************** */
   // fqnTypeRef
   static boolean dataTypeSpec(PsiBuilder b, int l) {
     return fqnTypeRef(b, l + 1);
-  }
-
-  /* ********************************************************** */
-  // qid
-  static boolean dataUnspeccedEnum(PsiBuilder b, int l) {
-    return qid(b, l + 1);
   }
 
   /* ********************************************************** */
@@ -510,24 +503,11 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // string | number | boolean
-  static boolean dataUnspeccedPrimitive(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "dataUnspeccedPrimitive")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, I_STRING);
-    if (!r) r = consumeToken(b, I_NUMBER);
-    if (!r) r = consumeToken(b, I_BOOLEAN);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  /* ********************************************************** */
   // dataVar | varValue
   public static boolean dataValue(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "dataValue")) return false;
     boolean r;
-    Marker m = enter_section_(b, l, _COLLAPSE_, I_DATA_VALUE, "<data value>");
+    Marker m = enter_section_(b, l, _NONE_, I_DATA_VALUE, "<data value>");
     r = dataVar(b, l + 1);
     if (!r) r = varValue(b, l + 1);
     exit_section_(b, l, m, r, false, null);
@@ -2012,16 +1992,16 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // dataRecord | dataMap | dataList | dataEnum | dataPrimitive | dataNull
+  // dataRecord | dataMap | dataList | dataPrimitive | dataEnum | dataNull
   public static boolean varValue(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "varValue")) return false;
     boolean r;
-    Marker m = enter_section_(b, l, _NONE_, I_VAR_VALUE, "<var value>");
+    Marker m = enter_section_(b, l, _COLLAPSE_, I_VAR_VALUE, "<var value>");
     r = dataRecord(b, l + 1);
     if (!r) r = dataMap(b, l + 1);
     if (!r) r = dataList(b, l + 1);
-    if (!r) r = dataEnum(b, l + 1);
     if (!r) r = dataPrimitive(b, l + 1);
+    if (!r) r = dataEnum(b, l + 1);
     if (!r) r = dataNull(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;

@@ -5,16 +5,13 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface IdlDataPrimitive extends IdlDataValue {
+public interface IdlDataPrimitive extends IdlVarValue {
 
   @Nullable
   IdlFqnTypeRef getFqnTypeRef();
 
   @Nullable
-  PsiElement getParenLeft();
-
-  @Nullable
-  PsiElement getParenRight();
+  PsiElement getAt();
 
   @Nullable
   PsiElement getBoolean();

@@ -7,7 +7,4 @@ import com.intellij.psi.PsiElement;
 
 public interface IdlVarValue extends PsiElement {
 
-  @NotNull
-  IdlDataValue getDataValue();
-
 }

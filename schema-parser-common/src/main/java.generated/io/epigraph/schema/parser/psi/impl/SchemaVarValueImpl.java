@@ -26,10 +26,4 @@ public class SchemaVarValueImpl extends ASTWrapperPsiElement implements SchemaVa
     else super.accept(visitor);
   }
 
-  @Override
-  @NotNull
-  public SchemaDataValue getDataValue() {
-    return notNullChild(PsiTreeUtil.getChildOfType(this, SchemaDataValue.class));
-  }
-
 }

@@ -10,7 +10,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import static io.epigraph.schema.lexer.SchemaElementTypes.*;
 import io.epigraph.schema.parser.psi.*;
 
-public class SchemaDataNullImpl extends SchemaDataValueImpl implements SchemaDataNull {
+public class SchemaDataNullImpl extends SchemaVarValueImpl implements SchemaDataNull {
 
   public SchemaDataNullImpl(ASTNode node) {
     super(node);

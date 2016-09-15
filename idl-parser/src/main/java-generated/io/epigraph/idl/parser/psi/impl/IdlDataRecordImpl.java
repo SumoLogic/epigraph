@@ -10,7 +10,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import static io.epigraph.idl.lexer.IdlElementTypes.*;
 import io.epigraph.idl.parser.psi.*;
 
-public class IdlDataRecordImpl extends IdlDataValueImpl implements IdlDataRecord {
+public class IdlDataRecordImpl extends IdlVarValueImpl implements IdlDataRecord {
 
   public IdlDataRecordImpl(ASTNode node) {
     super(node);
