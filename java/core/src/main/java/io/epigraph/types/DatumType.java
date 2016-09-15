@@ -40,20 +40,27 @@ public abstract class DatumType extends Type {
 
   public @NotNull DataType dataType(boolean polymorphic) { return new DataType(polymorphic, this, self); } // TODO cache
 
-  public abstract @NotNull Val.Mut createValueBuilder();
+  public abstract @NotNull Val.Builder createValueBuilder();
+
+  // TODO this is needed for mutable universe, which is likely to be raw-only - move to .Raw?
+  public /*abstract*/ @NotNull Val.Mut createMutableValue() { throw new UnsupportedOperationException(); }
 
 
-  public interface Raw extends Type.Raw {}
+  public interface Raw extends Type.Raw {
+
+    //@NotNull Val.Mut createMutableValue();
+
+  }
 
 
   public interface Static<
       MyImmDatum extends Datum.Imm.Static,
-      MyMutDatum extends Datum.Mut.Static<MyImmDatum>,
+      MyDatumBuilder extends Datum.Builder.Static<MyImmDatum>,
       MyImmVal extends Val.Imm.Static,
-      MyMutVal extends Val.Mut.Static<MyImmVal, MyMutDatum>,
+      MyValBuilder extends Val.Builder.Static<MyImmVal, MyDatumBuilder>,
       MyImmData extends Data.Imm.Static,
-      MyMutData extends Data.Mut.Static<MyImmData>
-      > extends Type.Static<MyImmData, MyMutData>{}
+      MyDataBuilder extends Data.Builder.Static<MyImmData>
+      > extends Type.Static<MyImmData, MyDataBuilder> {}
 
 
 }

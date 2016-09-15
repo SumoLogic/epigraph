@@ -110,6 +110,80 @@ public interface IntegerDatum extends PrimitiveDatum<Integer> {
   }
 
 
+  abstract class Builder extends IntegerDatum.Impl implements PrimitiveDatum.Builder<Integer> {
+
+    protected Builder(@NotNull IntegerType type) { super(type); }
+
+    public abstract void setVal(@NotNull Integer val);
+
+    @Override
+    public abstract @NotNull IntegerDatum.Builder.Raw _raw();
+
+
+    public static final class Raw extends IntegerDatum.Builder implements IntegerDatum.Raw, PrimitiveDatum.Builder.Raw<Integer> {
+
+      private @NotNull Integer val;
+
+      public Raw(@NotNull IntegerType type, @NotNull Integer val) {
+        super(type);
+        // TODO validate vs type validation rules (once available)
+        this.val = /*this.val = type().validate*/(val);
+      }
+
+      @Override
+      public @NotNull Integer getVal() { return val; }
+
+      @Override
+      public void setVal(@NotNull Integer val) {
+        // TODO validate vs type validation rules (once available)
+        this.val = /*this.val = type().validate*/(val);
+      }
+
+      @Override
+      public @NotNull IntegerDatum.Imm.Raw toImmutable() { return new IntegerDatum.Imm.Raw(type(), this); }
+
+      @Override
+      public @NotNull IntegerDatum.Builder.Raw _raw() { return this; }
+
+    }
+
+
+    public static abstract class Static<MyImmDatum extends IntegerDatum.Imm.Static> extends IntegerDatum.Builder
+        implements IntegerDatum.Static, PrimitiveDatum.Builder.Static<Integer, MyImmDatum> {
+
+      private final @NotNull IntegerDatum.Builder.Raw raw;
+
+      private final @NotNull Function<IntegerDatum.Imm.Raw, MyImmDatum> immDatumConstructor;
+
+      protected Static(
+          @NotNull IntegerType.Static<MyImmDatum, ?, ?, ?, ?, ?> type,
+          @NotNull IntegerDatum.Builder.Raw raw,
+          @NotNull Function<IntegerDatum.Imm.Raw, MyImmDatum> immDatumConstructor
+      ) {
+        super(type);
+        // TODO check type equality
+        this.raw = raw;
+        this.immDatumConstructor = immDatumConstructor;
+      }
+
+      @Override
+      public final @NotNull Integer getVal() { return raw.getVal(); }
+
+      @Override
+      public final void setVal(@NotNull Integer val) { raw.setVal(val); }
+
+      @Override
+      public final @NotNull MyImmDatum toImmutable() { return immDatumConstructor.apply(_raw().toImmutable()); }
+
+      @Override
+      public final @NotNull IntegerDatum.Builder.Raw _raw() { return raw; }
+
+    }
+
+
+  }
+
+
   abstract class Mut extends IntegerDatum.Impl implements PrimitiveDatum.Mut<Integer> {
 
     protected Mut(@NotNull IntegerType type) { super(type); }

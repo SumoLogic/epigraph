@@ -12,7 +12,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 
-public abstract class LongType extends PrimitiveType {
+public abstract class LongType extends PrimitiveType<Long> {
 
   protected LongType(
       @NotNull QualifiedTypeName name,
@@ -31,7 +31,7 @@ public abstract class LongType extends PrimitiveType {
     return (Collection<? extends LongType>) super.supertypes();
   }
 
-  public abstract @NotNull LongDatum.Mut createBuilder(@NotNull Long val);
+  public abstract @NotNull LongDatum.Builder createBuilder(@NotNull Long val);
 
 
   public static final class Raw extends LongType implements PrimitiveType.Raw {
@@ -42,58 +42,62 @@ public abstract class LongType extends PrimitiveType {
     ) { super(name, immediateSupertypes); }
 
     @Override
-    public @NotNull LongDatum.Mut.Raw createBuilder(@NotNull Long val) {
-      return new LongDatum.Mut.Raw(this, val);
+    public @NotNull LongDatum.Builder.Raw createBuilder(@NotNull Long val) {
+      return new LongDatum.Builder.Raw(this, val);
     }
 
     @Override
-    public @NotNull Val.Mut.Raw createValueBuilder() { return new Val.Mut.Raw(this); }
+    public @NotNull Val.Builder.Raw createValueBuilder() { return new Val.Builder.Raw(this); }
 
     @Override
-    public @NotNull Data.Mut.Raw createDataBuilder() { return new Data.Mut.Raw(this); }
+    public @NotNull Data.Builder.Raw createDataBuilder() { return new Data.Builder.Raw(this); }
 
   }
 
 
-  public static abstract class Static< // TODO MyType extends Type.Static<MyType>?
+  public static abstract class Static<
       MyImmDatum extends LongDatum.Imm.Static,
-      MyMutDatum extends LongDatum.Mut.Static<MyImmDatum>,
+      MyDatumBuilder extends LongDatum.Builder.Static<MyImmDatum>,
       MyImmVal extends Val.Imm.Static,
-      MyMutVal extends Val.Mut.Static<MyImmVal, MyMutDatum>,
+      MyValBuilder extends Val.Builder.Static<MyImmVal, MyDatumBuilder>,
       MyImmData extends Data.Imm.Static,
-      MyMutData extends Data.Mut.Static<MyImmData>
-      > extends LongType
-      implements PrimitiveType.Static<MyImmDatum, MyMutDatum, MyImmVal, MyMutVal, MyImmData, MyMutData> {
+      MyDataBuilder extends Data.Builder.Static<MyImmData>
+      > extends LongType implements
+      PrimitiveType.Static<Long, MyImmDatum, MyDatumBuilder, MyImmVal, MyValBuilder, MyImmData, MyDataBuilder> {
 
-    private final @NotNull Function<LongDatum.Mut.@NotNull Raw, @NotNull MyMutDatum> mutDatumConstructor;
+    private final @NotNull Function<LongDatum.Builder.@NotNull Raw, @NotNull MyDatumBuilder> datumBuilderConstructor;
 
-    private final @NotNull Function<Val.Mut.@NotNull Raw, @NotNull MyMutVal> mutValConstructor;
+    private final @NotNull Function<Val.Builder.@NotNull Raw, @NotNull MyValBuilder> valBuilderConstructor;
 
-    private final @NotNull Function<Data.Mut.@NotNull Raw, @NotNull MyMutData> mutDataConstructor;
+    private final @NotNull Function<Data.Builder.@NotNull Raw, @NotNull MyDataBuilder> dataBuilderConstructor;
 
     protected Static(
         @NotNull QualifiedTypeName name,
         @NotNull List<? extends LongType> immediateSupertypes,
-        @NotNull Function<LongDatum.Mut.@NotNull Raw, @NotNull MyMutDatum> mutDatumConstructor,
-        @NotNull Function<Val.Mut.@NotNull Raw, @NotNull MyMutVal> mutValConstructor,
-        @NotNull Function<Data.Mut.@NotNull Raw, @NotNull MyMutData> mutDataConstructor
+        @NotNull Function<LongDatum.Builder.@NotNull Raw, @NotNull MyDatumBuilder> datumBuilderConstructor,
+        @NotNull Function<Val.Builder.@NotNull Raw, @NotNull MyValBuilder> valBuilderConstructor,
+        @NotNull Function<Data.Builder.@NotNull Raw, @NotNull MyDataBuilder> dataBuilderConstructor
     ) {
       super(name, immediateSupertypes);
-      this.mutDatumConstructor = mutDatumConstructor;
-      this.mutValConstructor = mutValConstructor;
-      this.mutDataConstructor = mutDataConstructor;
+      this.datumBuilderConstructor = datumBuilderConstructor;
+      this.valBuilderConstructor = valBuilderConstructor;
+      this.dataBuilderConstructor = dataBuilderConstructor;
     }
 
     @Override
-    public final @NotNull MyMutDatum createBuilder(@NotNull Long val) {
-      return mutDatumConstructor.apply(new LongDatum.Mut.Raw(this, val));
+    public final @NotNull MyDatumBuilder createBuilder(@NotNull Long val) {
+      return datumBuilderConstructor.apply(new LongDatum.Builder.Raw(this, val));
     }
 
     @Override
-    public final @NotNull MyMutVal createValueBuilder() { return mutValConstructor.apply(new Val.Mut.Raw(this)); }
+    public final @NotNull MyValBuilder createValueBuilder() {
+      return valBuilderConstructor.apply(new Val.Builder.Raw(this));
+    }
 
     @Override
-    public final @NotNull MyMutData createDataBuilder() { return mutDataConstructor.apply(new Data.Mut.Raw(this)); }
+    public final @NotNull MyDataBuilder createDataBuilder() {
+      return dataBuilderConstructor.apply(new Data.Builder.Raw(this));
+    }
 
   }
 

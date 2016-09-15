@@ -110,6 +110,80 @@ public interface DoubleDatum extends PrimitiveDatum<Double> {
   }
 
 
+  abstract class Builder extends DoubleDatum.Impl implements PrimitiveDatum.Builder<Double> {
+
+    protected Builder(@NotNull DoubleType type) { super(type); }
+
+    public abstract void setVal(@NotNull Double val);
+
+    @Override
+    public abstract @NotNull DoubleDatum.Builder.Raw _raw();
+
+
+    public static final class Raw extends DoubleDatum.Builder implements DoubleDatum.Raw, PrimitiveDatum.Builder.Raw<Double> {
+
+      private @NotNull Double val;
+
+      public Raw(@NotNull DoubleType type, @NotNull Double val) {
+        super(type);
+        // TODO validate vs type validation rules (once available)
+        this.val = /*this.val = type().validate*/(val);
+      }
+
+      @Override
+      public @NotNull Double getVal() { return val; }
+
+      @Override
+      public void setVal(@NotNull Double val) {
+        // TODO validate vs type validation rules (once available)
+        this.val = /*this.val = type().validate*/(val);
+      }
+
+      @Override
+      public @NotNull DoubleDatum.Imm.Raw toImmutable() { return new DoubleDatum.Imm.Raw(type(), this); }
+
+      @Override
+      public @NotNull DoubleDatum.Builder.Raw _raw() { return this; }
+
+    }
+
+
+    public static abstract class Static<MyImmDatum extends DoubleDatum.Imm.Static> extends DoubleDatum.Builder
+        implements DoubleDatum.Static, PrimitiveDatum.Builder.Static<Double, MyImmDatum> {
+
+      private final @NotNull DoubleDatum.Builder.Raw raw;
+
+      private final @NotNull Function<DoubleDatum.Imm.Raw, MyImmDatum> immDatumConstructor;
+
+      protected Static(
+          @NotNull DoubleType.Static<MyImmDatum, ?, ?, ?, ?, ?> type,
+          @NotNull DoubleDatum.Builder.Raw raw,
+          @NotNull Function<DoubleDatum.Imm.Raw, MyImmDatum> immDatumConstructor
+      ) {
+        super(type);
+        // TODO check type equality
+        this.raw = raw;
+        this.immDatumConstructor = immDatumConstructor;
+      }
+
+      @Override
+      public final @NotNull Double getVal() { return raw.getVal(); }
+
+      @Override
+      public final void setVal(@NotNull Double val) { raw.setVal(val); }
+
+      @Override
+      public final @NotNull MyImmDatum toImmutable() { return immDatumConstructor.apply(_raw().toImmutable()); }
+
+      @Override
+      public final @NotNull DoubleDatum.Builder.Raw _raw() { return raw; }
+
+    }
+
+
+  }
+
+
   abstract class Mut extends DoubleDatum.Impl implements PrimitiveDatum.Mut<Double> {
 
     protected Mut(@NotNull DoubleType type) { super(type); }

@@ -289,7 +289,7 @@ public interface PersonId extends IntegerDatum.Static {
             datas(),
             PersonId.Builder.Data::get_value,
             PersonId.Builder.Data::set_value,
-            PersonId.type::createDataBuilder
+            PersonId.type::createMutableData
         );
       }
 
@@ -299,7 +299,7 @@ public interface PersonId extends IntegerDatum.Static {
             datas(),
             PersonId.Builder.Data::get,
             PersonId.Builder.Data::set,
-            PersonId.type::createDataBuilder
+            PersonId.type::createMutableData
         );
       }
 

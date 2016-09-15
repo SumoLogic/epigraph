@@ -6,12 +6,10 @@ import io.epigraph.data.ListDatum;
 import io.epigraph.data.RecordDatum;
 import io.epigraph.data.Val;
 import io.epigraph.errors.ErrorValue;
-import io.epigraph.names.AnonListTypeName;
 import io.epigraph.names.NamespaceName;
 import io.epigraph.names.QualifiedTypeName;
 import io.epigraph.types.AnonListType;
 import io.epigraph.types.DataType;
-import io.epigraph.types.ListType;
 import io.epigraph.types.RecordType;
 import io.epigraph.types.RecordType.Field;
 import org.jetbrains.annotations.NotNull;
@@ -19,7 +17,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public interface UserRecord extends PersonRecord {
@@ -151,13 +148,13 @@ public interface UserRecord extends PersonRecord {
 
       @Override
       public @Nullable PersonId.Imm getId() {
-        PersonId.Imm.Value value = (PersonId.Imm.Value) _raw()._getValue(PersonRecord.id, PersonId.type.self);
+        PersonId.Imm.Value value = (PersonId.Imm.Value) _raw().getValue(PersonRecord.id, PersonId.type.self);
         return value == null ? null : value.getDatum();
       }
 
       @Override
       public @Nullable UserRecord.Imm.Value getBestFriend_value() {
-        return (UserRecord.Imm.Value) _raw()._getValue(UserRecord.bestFriend, UserRecord.type.self);
+        return (UserRecord.Imm.Value) _raw().getValue(UserRecord.bestFriend, UserRecord.type.self);
       }
 
       @Override
@@ -168,7 +165,7 @@ public interface UserRecord extends PersonRecord {
 
       @Override
       public @Nullable UserRecord.List.Imm.Value getFriends_value() {
-        return (UserRecord.List.Imm.Value) _raw()._getValue(UserRecord.friends, UserRecord.List.type.self);
+        return (UserRecord.List.Imm.Value) _raw().getValue(UserRecord.friends, UserRecord.List.type.self);
       }
 
       @Override
@@ -189,13 +186,13 @@ public interface UserRecord extends PersonRecord {
 
     @Override
     public @Nullable PersonId.Builder getId() {
-      PersonId.Builder.Value value = (PersonId.Builder.Value) _raw()._getValue(PersonRecord.id, PersonId.type.self);
+      PersonId.Builder.Value value = (PersonId.Builder.Value) _raw().getValue(PersonRecord.id, PersonId.type.self);
       return value == null ? null : value.getDatum();
     }
 
     @Override
     public @Nullable UserRecord.Builder.Value getBestFriend_value() {
-      return (UserRecord.Builder.Value) _raw()._getValue(bestFriend, UserRecord.type.self);
+      return (UserRecord.Builder.Value) _raw().getValue(bestFriend, UserRecord.type.self);
     }
 
     @Override
@@ -206,7 +203,7 @@ public interface UserRecord extends PersonRecord {
 
     @Override
     public @Nullable UserRecord.List.Builder.Value getFriends_value() {
-      return (UserRecord.List.Builder.Value) _raw()._getValue(UserRecord.friends, UserRecord.List.type.self);
+      return (UserRecord.List.Builder.Value) _raw().getValue(UserRecord.friends, UserRecord.List.type.self);
     }
 
     @Override
@@ -384,14 +381,14 @@ public interface UserRecord extends PersonRecord {
       public java.util.List<UserRecord.Builder> datums() {
         return _raw()._elements().stream().map(data ->
                 (UserRecord.Builder) data._raw()._getValue(UserRecord.type.self).getDatum()
-            // TODO revise nulls (define Data._getDatum(Tag))
+            // TODO revise nulls (define Data.getDatum(Tag))
         ).collect(Collectors.toList());
       }
 
       @Override
       public java.util.List<@Nullable ErrorValue> errors() {
         return _raw()._elements().stream().map(data ->
-            data._raw()._getValue(UserRecord.type.self).getError() // TODO revise nulls (define Data._getError(Tag))
+            data._raw()._getValue(UserRecord.type.self).getError() // TODO revise nulls (define Data.getError(Tag))
         ).collect(Collectors.toList());
       }
 

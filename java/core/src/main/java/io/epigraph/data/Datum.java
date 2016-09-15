@@ -48,16 +48,38 @@ public interface Datum {
 
   interface Imm extends Datum, Immutable {
 
+
     interface Raw extends Datum.Imm, Datum.Raw {}
 
+
     interface Static extends Datum.Imm, Datum.Static {}
+
+
+  }
+
+
+  interface Builder extends Datum, Mutable {
+
+
+    interface Raw extends Datum.Builder, Datum.Raw {}
+
+
+    interface Static<MyImmDatum extends Datum.Imm.Static> extends Datum.Builder, Datum.Static {
+
+      @Override
+      @NotNull MyImmDatum toImmutable();
+
+    }
+
 
   }
 
 
   interface Mut extends Datum, Mutable {
 
+
     interface Raw extends Datum.Mut, Datum.Raw {}
+
 
     interface Static<MyImmDatum extends Datum.Imm.Static> extends Datum.Mut, Datum.Static {
 
@@ -65,6 +87,7 @@ public interface Datum {
       @NotNull MyImmDatum toImmutable();
 
     }
+
 
   }
 

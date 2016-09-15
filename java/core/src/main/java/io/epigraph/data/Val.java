@@ -13,9 +13,9 @@ public interface Val {
 
   @NotNull DatumType type();
 
-  @Nullable Datum getDatum(); // TODO _getDatum()?
+  @Nullable Datum getDatum(); // TODO getDatum()?
 
-  @Nullable ErrorValue getError(); // TODO _getError()?
+  @Nullable ErrorValue getError(); // TODO getError()?
 
   @NotNull Val.Imm toImmutable();
 
@@ -176,6 +176,98 @@ public interface Val {
 
       }
 
+
+    }
+
+
+  }
+
+
+  abstract class Builder extends Val.Impl implements Mutable {
+
+    protected Builder(@NotNull DatumType type) { super(type); }
+
+    public abstract void setError(@NotNull ErrorValue error);
+
+    @Override
+    public abstract @NotNull Val.Builder.Raw _raw();
+
+
+    public static final class Raw extends Val.Builder implements Val.Raw {
+
+      private @Nullable Object datumOrError = null;
+
+      public Raw(@NotNull DatumType type) { super(type); }
+
+      @Override
+      public @Nullable Datum getDatum() {
+        Object local = datumOrError;
+        return local instanceof ErrorValue ? null : (Datum.Builder) local;
+      }
+
+      // TODO take Datum and auto-convert (via protected abstract method)?
+      public void setDatum(@Nullable Datum datum) { // TODO _setDatum()?
+        if (datum != null && datum.type() != type()) throw new IllegalArgumentException("Incompatible ... TODO");
+        datumOrError = datum;
+      }
+
+      @Override
+      public @Nullable ErrorValue getError() {
+        Object local = datumOrError;
+        return local instanceof ErrorValue ? (ErrorValue) local : null;
+      }
+
+      public void setError(@NotNull ErrorValue error) { datumOrError = error; }
+
+      @Override
+      public @NotNull Val.Imm.Raw toImmutable() {
+        Object local = datumOrError;
+        return local instanceof ErrorValue
+            ? Val.Imm.Raw.create(type(), (ErrorValue) local)
+            : Val.Imm.Raw.create(type(), (Datum.Builder) local);
+      }
+
+      @Override
+      public @NotNull Val.Builder.Raw _raw() { return this; }
+
+    }
+
+
+    public static abstract class Static<MyImmVal extends Val.Imm.Static, MyDatum extends Datum.Static>
+        extends Val.Builder implements Val.Static {
+
+      private final Val.Builder.Raw raw;
+
+      private final @NotNull Function<Val.Imm.Raw, MyImmVal> immutableConstructor;
+
+      public Static(@NotNull Val.Builder.Raw raw, @NotNull Function<Val.Imm.Raw, MyImmVal> immutableConstructor) {
+        super(raw.type());
+        // TODO check type equality
+        this.raw = raw; // TODO validate raw data is kosher?
+        this.immutableConstructor = immutableConstructor;
+      }
+
+      @Override
+      public @Nullable MyDatum getDatum() {
+        @Nullable Datum datum = raw.getDatum();
+        assert !(datum instanceof Datum.Raw);
+        return (MyDatum) datum;
+      }
+
+      public void setDatum(@Nullable MyDatum datum) { raw.setDatum(datum); }
+
+      @Override
+      public final @Nullable ErrorValue getError() { return raw.getError(); }
+
+      @Override
+      public void setError(@NotNull ErrorValue error) { raw.setError(error); }
+
+
+      @Override
+      final public @NotNull MyImmVal toImmutable() { return immutableConstructor.apply(_raw().toImmutable()); }
+
+      @Override
+      public @NotNull Val.Builder.Raw _raw() { return raw; }
 
     }
 

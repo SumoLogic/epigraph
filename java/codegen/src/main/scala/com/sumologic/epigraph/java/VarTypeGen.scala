@@ -128,9 +128,9 @@ ${t.effectiveTags.map { tag => // for each effective tag
   /**
    * Builder for `${t.name.name}` data.
    */
-  final class Builder extends io.epigraph.data.Data.Mut.Static<$ln.Imm> implements $ln {
+  final class Builder extends io.epigraph.data.Data.Builder.Static<$ln.Imm> implements $ln {
 
-    private Builder(@NotNull io.epigraph.data.Data.Mut.Raw raw) { super($ln.type, raw, $ln.Imm.Impl::new); }
+    private Builder(@NotNull io.epigraph.data.Data.Builder.Raw raw) { super($ln.type, raw, $ln.Imm.Impl::new); }
 ${t.effectiveTags.map { tag => // for each effective tag
     sn"""\
 

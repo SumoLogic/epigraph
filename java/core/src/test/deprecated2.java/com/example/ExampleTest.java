@@ -34,7 +34,7 @@ public class ExampleTest {
       pids.datums().add(PersonId.type.createBuilder(i));
     }
     for (int i = 10; i < 20; ++i) {
-      PersonId.Builder.Value valueBuilder = PersonId.type.createValueBuilder();
+      PersonId.Builder.Value valueBuilder = PersonId.type.createMutableValue();
       valueBuilder.setDatum(PersonId.type.createBuilder(i));
       pids.values().add(valueBuilder);
     }

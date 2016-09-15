@@ -143,25 +143,25 @@ public interface $ln extends${withParents(t)} io.epigraph.data.${kind(t)}Datum.S
   /**
    * Builder for `${t.name.name}` datum.
    */
-  final class Builder extends io.epigraph.data.${kind(t)}Datum.Mut.Static<$ln.Imm> implements $ln {
+  final class Builder extends io.epigraph.data.${kind(t)}Datum.Builder.Static<$ln.Imm> implements $ln {
 
-    Builder(@NotNull io.epigraph.data.${kind(t)}Datum.Mut.Raw raw) { super($ln.type, raw, $ln.Imm.Impl::new); }
+    Builder(@NotNull io.epigraph.data.${kind(t)}Datum.Builder.Raw raw) { super($ln.type, raw, $ln.Imm.Impl::new); }
 
     /**
      * Builder for `${t.name.name}` value (holding a builder or an error).
      */
-    public static final class Value extends io.epigraph.data.Val.Mut.Static<$ln.Imm.Value, $ln.Builder> implements $ln.Value {
+    public static final class Value extends io.epigraph.data.Val.Builder.Static<$ln.Imm.Value, $ln.Builder> implements $ln.Value {
 
-      Value(@NotNull io.epigraph.data.Val.Mut.Raw raw) { super(raw, $ln.Imm.Value.Impl::new); }
+      Value(@NotNull io.epigraph.data.Val.Builder.Raw raw) { super(raw, $ln.Imm.Value.Impl::new); }
 
     }
 
     /**
      * Builder for `${t.name.name}` data (holding single default representation of the type).
      */
-    public static final class Data extends io.epigraph.data.Data.Mut.Static<$ln.Imm.Data> implements $ln.Data {
+    public static final class Data extends io.epigraph.data.Data.Builder.Static<$ln.Imm.Data> implements $ln.Data {
 
-      Data(@NotNull io.epigraph.data.Data.Mut.Raw raw) {
+      Data(@NotNull io.epigraph.data.Data.Builder.Raw raw) {
         super($ln.type, raw, $ln.Imm.Data.Impl::new);
       }
 

@@ -41,32 +41,35 @@ public abstract class AnonListType extends ListType {
     }
 
     @Override
-    public @NotNull ListDatum.Mut createBuilder() { return new ListDatum.Mut.Raw(this); }
+    public @NotNull ListDatum.Builder createBuilder() { return new ListDatum.Builder.Raw(this); }
 
     @Override
-    public @NotNull Val.Mut createValueBuilder() { return new Val.Mut.Raw(this); }
+    public @NotNull Val.Builder createValueBuilder() { return new Val.Builder.Raw(this); }
 
     @Override
-    public @NotNull Data.Mut createDataBuilder() { return new Data.Mut.Raw(this); }
+    public @NotNull Data.Builder createDataBuilder() { return new Data.Builder.Raw(this); }
+
+    @Override
+    public @NotNull Data.Mut createMutableData() { return new Data.Mut.Raw(this); }
 
   }
 
 
   public static abstract class Static< // TODO MyType extends Type.Static<MyType>?
       MyImmDatum extends ListDatum.Imm.Static,
-      MyMutDatum extends ListDatum.Mut.Static<MyImmDatum>,
+      MyDatumBuilder extends ListDatum.Builder.Static<MyImmDatum>,
       MyImmVal extends Val.Imm.Static,
-      MyMutVal extends Val.Mut.Static<MyImmVal, MyMutDatum>,
+      MyValBuilder extends Val.Builder.Static<MyImmVal, MyDatumBuilder>,
       MyImmData extends Data.Imm.Static,
-      MyMutData extends Data.Mut.Static<MyImmData>
+      MyDataBuilder extends Data.Builder.Static<MyImmData>
       > extends AnonListType
-      implements ListType.Static<MyImmDatum, MyMutDatum, MyImmVal, MyMutVal, MyImmData, MyMutData> {
+      implements ListType.Static<MyImmDatum, MyDatumBuilder, MyImmVal, MyValBuilder, MyImmData, MyDataBuilder> {
 
-    private final @NotNull Function<ListDatum.Mut.Raw, MyMutDatum> mutDatumConstructor;
+    private final @NotNull Function<ListDatum.Builder.Raw, MyDatumBuilder> datumBuilderConstructor;
 
-    private final @NotNull Function<Val.Mut.Raw, MyMutVal> mutValConstructor;
+    private final @NotNull Function<Val.Builder.Raw, MyValBuilder> valBuilderConstructor;
 
-    private final @NotNull Function<Data.Mut.Raw, MyMutData> mutDataConstructor;
+    private final @NotNull Function<Data.Builder.Raw, MyDataBuilder> dataBuilderConstructor;
 
     protected Static(
         @NotNull List<@NotNull ? extends AnonListType.Static<
@@ -78,24 +81,24 @@ public abstract class AnonListType extends ListType {
             ? // extends Data.Mut.Static<? super MyImmData>
             >> immediateSupertypes,
         @NotNull DataType elementDataType,
-        @NotNull Function<ListDatum.Mut.Raw, MyMutDatum> mutDatumConstructor,
-        @NotNull Function<Val.Mut.Raw, MyMutVal> mutValConstructor,
-        @NotNull Function<Data.Mut.Raw, MyMutData> mutDataConstructor
+        @NotNull Function<ListDatum.Builder.Raw, MyDatumBuilder> datumBuilderConstructor,
+        @NotNull Function<Val.Builder.Raw, MyValBuilder> valBuilderConstructor,
+        @NotNull Function<Data.Builder.Raw, MyDataBuilder> dataBuilderConstructor
     ) {
       super(immediateSupertypes, elementDataType);
-      this.mutDatumConstructor = mutDatumConstructor;
-      this.mutValConstructor = mutValConstructor;
-      this.mutDataConstructor = mutDataConstructor;
+      this.datumBuilderConstructor = datumBuilderConstructor;
+      this.valBuilderConstructor = valBuilderConstructor;
+      this.dataBuilderConstructor = dataBuilderConstructor;
     }
 
     @Override
-    public final @NotNull MyMutDatum createBuilder() { return mutDatumConstructor.apply(new ListDatum.Mut.Raw(this)); }
+    public final @NotNull MyDatumBuilder createBuilder() { return datumBuilderConstructor.apply(new ListDatum.Builder.Raw(this)); }
 
     @Override
-    public final @NotNull MyMutVal createValueBuilder() { return mutValConstructor.apply(new Val.Mut.Raw(this)); }
+    public final @NotNull MyValBuilder createValueBuilder() { return valBuilderConstructor.apply(new Val.Builder.Raw(this)); }
 
     @Override
-    public final @NotNull MyMutData createDataBuilder() { return mutDataConstructor.apply(new Data.Mut.Raw(this)); }
+    public final @NotNull MyDataBuilder createDataBuilder() { return dataBuilderConstructor.apply(new Data.Builder.Raw(this)); }
 
   }
 

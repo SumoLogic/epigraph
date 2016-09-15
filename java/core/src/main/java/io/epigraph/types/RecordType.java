@@ -10,7 +10,12 @@ import io.epigraph.util.Unmodifiable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 
 
@@ -43,7 +48,9 @@ public abstract class RecordType extends DatumType {
 
   public abstract @NotNull List<@NotNull ? extends Field> immediateFields(); // TODO could be protected but used by pretty-printer
 
-  public abstract @NotNull RecordDatum.Mut createBuilder();
+  public abstract @NotNull RecordDatum.Builder createBuilder();
+
+  //public abstract @NotNull RecordDatum.Mut createMutable();
 
 
   public final @NotNull Collection<@NotNull ? extends Field> fields() {
@@ -135,7 +142,7 @@ public abstract class RecordType extends DatumType {
       if (o == null || getClass() != o.getClass()) return false;
       Field field = (Field) o;
       return Objects.equals(name, field.name) &&
-             Objects.equals(dataType, field.dataType);
+          Objects.equals(dataType, field.dataType);
     }
 
     @Override
@@ -150,43 +157,47 @@ public abstract class RecordType extends DatumType {
 
   public static abstract class Static< // TODO MyType extends Type.Static<MyType>?
       MyImmDatum extends RecordDatum.Imm.Static,
-      MyMutDatum extends RecordDatum.Mut.Static<MyImmDatum>,
+      MyDatumBuilder extends RecordDatum.Builder.Static<MyImmDatum>,
       MyImmVal extends Val.Imm.Static,
-      MyMutVal extends Val.Mut.Static<MyImmVal, MyMutDatum>,
+      MyValBuilder extends Val.Builder.Static<MyImmVal, MyDatumBuilder>,
       MyImmData extends Data.Imm.Static,
-      MyMutData extends Data.Mut.Static<MyImmData>
+      MyDataBuilder extends Data.Builder.Static<MyImmData>
       > extends RecordType
-      implements DatumType.Static<MyImmDatum, MyMutDatum, MyImmVal, MyMutVal, MyImmData, MyMutData> {
+      implements DatumType.Static<MyImmDatum, MyDatumBuilder, MyImmVal, MyValBuilder, MyImmData, MyDataBuilder> {
 
-    private final @NotNull Function<RecordDatum.Mut.@NotNull Raw, @NotNull MyMutDatum> mutDatumConstructor;
+    private final @NotNull Function<RecordDatum.Builder.@NotNull Raw, @NotNull MyDatumBuilder> datumBuilderConstructor;
 
-    private final @NotNull Function<Val.Mut.@NotNull Raw, @NotNull MyMutVal> mutValConstructor;
+    private final @NotNull Function<Val.Builder.@NotNull Raw, @NotNull MyValBuilder> valBuilderConstructor;
 
-    private final @NotNull Function<Data.Mut.@NotNull Raw, @NotNull MyMutData> mutDataConstructor;
+    private final @NotNull Function<Data.Builder.@NotNull Raw, @NotNull MyDataBuilder> dataBuilderConstructor;
 
     protected Static(
         @NotNull QualifiedTypeName name,
         @NotNull List<@NotNull ? extends RecordType.Static> immediateSupertypes,
-        @NotNull Function<RecordDatum.Mut.@NotNull Raw, @NotNull MyMutDatum> mutDatumConstructor,
-        @NotNull Function<Val.Mut.@NotNull Raw, @NotNull MyMutVal> mutValConstructor,
-        @NotNull Function<Data.Mut.@NotNull Raw, @NotNull MyMutData> mutDataConstructor
+        @NotNull Function<RecordDatum.Builder.@NotNull Raw, @NotNull MyDatumBuilder> datumBuilderConstructor,
+        @NotNull Function<Val.Builder.@NotNull Raw, @NotNull MyValBuilder> valBuilderConstructor,
+        @NotNull Function<Data.Builder.@NotNull Raw, @NotNull MyDataBuilder> dataBuilderConstructor
     ) {
       super(name, immediateSupertypes);
-      this.mutDatumConstructor = mutDatumConstructor;
-      this.mutValConstructor = mutValConstructor;
-      this.mutDataConstructor = mutDataConstructor;
+      this.datumBuilderConstructor = datumBuilderConstructor;
+      this.valBuilderConstructor = valBuilderConstructor;
+      this.dataBuilderConstructor = dataBuilderConstructor;
     }
 
     @Override
-    public final @NotNull MyMutDatum createBuilder() {
-      return mutDatumConstructor.apply(new RecordDatum.Mut.Raw(this));
+    public final @NotNull MyDatumBuilder createBuilder() {
+      return datumBuilderConstructor.apply(new RecordDatum.Builder.Raw(this));
     }
 
     @Override
-    public final @NotNull MyMutVal createValueBuilder() { return mutValConstructor.apply(new Val.Mut.Raw(this)); }
+    public final @NotNull MyValBuilder createValueBuilder() {
+      return valBuilderConstructor.apply(new Val.Builder.Raw(this));
+    }
 
     @Override
-    public final @NotNull MyMutData createDataBuilder() { return mutDataConstructor.apply(new Data.Mut.Raw(this)); }
+    public final @NotNull MyDataBuilder createDataBuilder() {
+      return dataBuilderConstructor.apply(new Data.Builder.Raw(this));
+    }
 
   }
 

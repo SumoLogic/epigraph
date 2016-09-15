@@ -69,7 +69,10 @@ public abstract class Type { // TODO split into interface and impl
 
   public abstract @NotNull Collection<@NotNull ? extends Tag> immediateTags();
 
-  public abstract @NotNull Data.Mut createDataBuilder();
+  public abstract @NotNull Data.Builder createDataBuilder();
+
+  // TODO this is needed for mutable universe, which is likely to be raw-only - move to .Raw?
+  public /*abstract*/ @NotNull Data.Mut createMutableData() { throw new UnsupportedOperationException(); }
 
   public final @NotNull Collection<@NotNull ? extends Tag> tags() {
     // TODO produce better ordering of the tags (i.e. supertypes first, in the order of supertypes and their tags declaration)
@@ -92,12 +95,16 @@ public abstract class Type { // TODO split into interface and impl
   }
 
 
-  public interface Raw {}
+  public interface Raw {
+
+    //@NotNull Data.Mut createMutableData();
+
+  }
 
 
-  public interface Static<MyImmData extends Data.Imm.Static, MyMutData extends Data.Mut.Static<MyImmData>> {
+  public interface Static<MyImmData extends Data.Imm.Static, MyDataBuilder extends Data.Builder.Static<MyImmData>> {
 
-    @NotNull MyMutData createDataBuilder();
+    @NotNull MyDataBuilder createDataBuilder();
 
   }
 
@@ -115,7 +122,9 @@ public abstract class Type { // TODO split into interface and impl
 
     public @NotNull String name() { return name; }
 
-    public @NotNull Val.Mut createMutableValue() { return this.type.createValueBuilder(); }
+    public @NotNull Val.Builder createValueBuilder() { return this.type.createValueBuilder(); }
+
+    public @NotNull Val.Mut createMutableValue() { return this.type.createMutableValue(); }
 
   }
 

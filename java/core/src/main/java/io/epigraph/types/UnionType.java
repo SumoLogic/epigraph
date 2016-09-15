@@ -45,22 +45,26 @@ public abstract class UnionType extends Type {
 
   // TODO .Raw
 
-  public static abstract class Static<MyImmData extends Data.Imm.Static, MyMutData extends Data.Mut.Static<MyImmData>>
-      extends UnionType implements Type.Static<MyImmData, MyMutData> {
+  public static abstract class Static<
+      MyImmData extends Data.Imm.Static,
+      MyDataBuilder extends Data.Builder.Static<MyImmData>
+      > extends UnionType implements Type.Static<MyImmData, MyDataBuilder> {
 
-    private final @NotNull Function<Data.Mut.@NotNull Raw, @NotNull MyMutData> mutDataConstructor;
+    private final @NotNull Function<Data.Builder.@NotNull Raw, @NotNull MyDataBuilder> dataBuilderConstructor;
 
     protected Static(
         @NotNull QualifiedTypeName name,
         @NotNull List<@NotNull ? extends UnionType.Static> immediateSupertypes,
-        @NotNull Function<Data.Mut.@NotNull Raw, @NotNull MyMutData> mutDataConstructor
+        @NotNull Function<Data.Builder.@NotNull Raw, @NotNull MyDataBuilder> dataBuilderConstructor
     ) {
       super(name, immediateSupertypes);
-      this.mutDataConstructor = mutDataConstructor;
+      this.dataBuilderConstructor = dataBuilderConstructor;
     }
 
     @Override
-    public final @NotNull MyMutData createDataBuilder() { return mutDataConstructor.apply(new Data.Mut.Raw(this)); }
+    public final @NotNull MyDataBuilder createDataBuilder() {
+      return dataBuilderConstructor.apply(new Data.Builder.Raw(this));
+    }
 
   }
 

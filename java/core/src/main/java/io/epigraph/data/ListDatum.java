@@ -150,6 +150,117 @@ public interface ListDatum extends Datum {
   }
 
 
+  abstract class Builder extends ListDatum.Impl implements Datum.Builder {
+
+    protected Builder(@NotNull ListType type) { super(type); }
+
+    @Override
+    public abstract @NotNull ListDatum.Builder.Raw _raw();
+
+
+    public static final class Raw extends ListDatum.Builder implements ListDatum.Raw, Datum.Builder.Raw {
+
+      private final @NotNull List<Data.@NotNull Builder> elements = new DataList<>(type());
+
+      public Raw(ListType type) { super(type); }
+
+      @Override
+      public @NotNull List<Data.@NotNull Builder> _elements() { return elements; }
+
+      @Override
+      public int size() { return elements.size(); }
+
+      // TODO add mut methods here
+
+      @Override
+      public @NotNull ListDatum.Imm.Raw toImmutable() { return new ListDatum.Imm.Raw(type(), this); }
+
+      @Override
+      public @NotNull ListDatum.Builder.Raw _raw() { return this; }
+
+
+      private static class DataList<E extends Data> extends AbstractList<E> implements RandomAccess {
+
+        private final @NotNull List<@NotNull E> list = new ArrayList<>();
+
+        private final ListType listType;
+
+        public DataList(@NotNull ListType listType) { this.listType = listType; }
+
+        @Override
+        public E get(int index) { return list.get(index); }
+
+        @Override
+        public int size() { return list.size(); }
+
+        @Override
+        public E set(int index, E element) { return list.set(index, validate(element)); }
+
+        @Override
+        public void add(int index, E element) { list.add(index, validate(element)); }
+
+        @Override
+        public E remove(int index) { return list.remove(index); }
+
+        private E validate(E element) throws IllegalArgumentException {
+          return listType.elementType.checkWrite(element);
+        }
+
+      }
+
+
+    }
+
+
+    public static abstract class Static<MyImmDatum extends ListDatum.Imm.Static> extends ListDatum.Builder
+        implements ListDatum.Static, Datum.Builder.Static<MyImmDatum> {
+
+      private final @NotNull ListDatum.Builder.Raw raw;
+
+      private final @NotNull Function<ListDatum.Imm.Raw, MyImmDatum> immutableConstructor;
+
+      protected Static(
+          @NotNull ListType type,
+          @NotNull ListDatum.Builder.Raw raw,
+          @NotNull Function<ListDatum.Imm.Raw, MyImmDatum> immutableConstructor
+      ) {
+        super(type); // TODO take static type separately?
+        if (raw.type() != type) // TODO shared assertEqual(Type, Type): Type method
+          throw new IllegalArgumentException( // TODO move mut and imm checks to shared static methods
+              "Incompatible raw and static types (TODO details)"
+          );
+        this.raw = raw; // TODO validate raw data is kosher?
+        this.immutableConstructor = immutableConstructor;
+      }
+
+      @Override
+      public int size() { return raw.size(); }
+
+      @Override
+      public @NotNull MyImmDatum toImmutable() { return immutableConstructor.apply(_raw().toImmutable()); }
+
+      @Override
+      public @NotNull ListDatum.Builder.Raw _raw() { return raw; }
+
+
+      public static abstract class Tagged<MyImm extends ListDatum.Imm.Static.Tagged, MyDefault extends Datum.Builder.Static>
+          extends ListDatum.Builder.Static<MyImm> implements ListDatum.Static.Tagged {
+
+        protected Tagged(
+            @NotNull ListType type,
+            @NotNull ListDatum.Builder.Raw raw,
+            @NotNull Function<ListDatum.Imm.Raw, MyImm> immutableConstructor
+        ) { super(type, raw, immutableConstructor); }
+
+      }
+
+
+    }
+
+
+  }
+
+
   abstract class Mut extends ListDatum.Impl implements Datum.Mut { // TODO public?
 
     protected Mut(@NotNull ListType type) { super(type); }

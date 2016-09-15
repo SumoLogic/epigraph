@@ -356,7 +356,7 @@ public interface Person extends Data.Static {
             datas(),
             Person.Builder::get_value,
             Person.Builder::set_value,
-            Person.type::createDataBuilder
+            Person.type::createMutableData
         );
       }
 
@@ -366,7 +366,7 @@ public interface Person extends Data.Static {
             datas(),
             Person.Builder::get,
             Person.Builder::set,
-            Person.type::createDataBuilder
+            Person.type::createMutableData
         );
       }
 
@@ -376,7 +376,7 @@ public interface Person extends Data.Static {
             datas(),
             Person.Builder::getId_value,
             Person.Builder::setId_value,
-            Person.type::createDataBuilder
+            Person.type::createMutableData
         );
       }
 
@@ -386,7 +386,7 @@ public interface Person extends Data.Static {
             datas(),
             Person.Builder::getId,
             Person.Builder::setId,
-            Person.type::createDataBuilder
+            Person.type::createMutableData
         );
       }
 
@@ -396,7 +396,7 @@ public interface Person extends Data.Static {
             datas(),
             Person.Builder::getRecord_value,
             Person.Builder::setRecord_value,
-            Person.type::createDataBuilder
+            Person.type::createMutableData
         );
       }
 
@@ -406,7 +406,7 @@ public interface Person extends Data.Static {
             datas(),
             Person.Builder::getRecord,
             Person.Builder::setRecord,
-            Person.type::createDataBuilder
+            Person.type::createMutableData
         );
       }
 

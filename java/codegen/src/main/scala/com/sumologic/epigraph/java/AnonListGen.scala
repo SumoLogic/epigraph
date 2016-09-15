@@ -321,9 +321,9 @@ ${
   /**
    * Builder for `${t.name.name}` datum.
    */
-  final class Builder extends io.epigraph.data.ListDatum.Mut.Static<$ln.Imm> implements $ln {
+  final class Builder extends io.epigraph.data.ListDatum.Builder.Static<$ln.Imm> implements $ln {
 
-    Builder(@NotNull io.epigraph.data.ListDatum.Mut.Raw raw) {
+    Builder(@NotNull io.epigraph.data.ListDatum.Builder.Raw raw) {
       super($ln.type, raw, $ln.Imm.Impl::new);
     }
 ${t.effectiveDefaultElementTagName match { // default element tag (if defined) views
@@ -411,20 +411,20 @@ ${
     /**
      * Builder for `${t.name.name}` value (holding a builder or an error).
      */
-    public static final class Value extends io.epigraph.data.Val.Mut.Static<$ln.Imm.Value, $ln.Builder>
+    public static final class Value extends io.epigraph.data.Val.Builder.Static<$ln.Imm.Value, $ln.Builder>
         implements $ln.Value {
 
-      Value(@NotNull io.epigraph.data.Val.Mut.Raw raw) { super(raw, $ln.Imm.Value.Impl::new); }
+      Value(@NotNull io.epigraph.data.Val.Builder.Raw raw) { super(raw, $ln.Imm.Value.Impl::new); }
 
     }
 
     /**
      * Builder for `${t.name.name}` data (holding single default representation of the type).
      */
-    public static final class Data extends io.epigraph.data.Data.Mut.Static<$ln.Imm.Data>
+    public static final class Data extends io.epigraph.data.Data.Builder.Static<$ln.Imm.Data>
         implements $ln.Data {
 
-      Data(@NotNull io.epigraph.data.Data.Mut.Raw raw) {
+      Data(@NotNull io.epigraph.data.Data.Builder.Raw raw) {
         super($ln.type, raw, $ln.Imm.Data.Impl::new);
       }
 

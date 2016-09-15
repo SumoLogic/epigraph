@@ -283,14 +283,14 @@ public interface UserId extends PersonId {
       public java.util.List<UserId.@Nullable Builder> datums() {
         return _raw()._elements().stream().map(data ->
                 (UserId.Builder) data._raw()._getValue(UserId.type.self).getDatum()
-            // TODO revise nulls (define Data._getDatum(Tag))
+            // TODO revise nulls (define Data.getDatum(Tag))
         ).collect(Collectors.toList());
       }
 
       @Override
       public java.util.List<@Nullable ErrorValue> errors() {
         return _raw()._elements().stream().map(data ->
-            data._raw()._getValue(UserId.type.self).getError() // TODO revise nulls (define Data._getError(Tag))
+            data._raw()._getValue(UserId.type.self).getError() // TODO revise nulls (define Data.getError(Tag))
         ).collect(Collectors.toList());
       }
 

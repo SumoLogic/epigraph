@@ -6,12 +6,10 @@ import io.epigraph.data.ListDatum;
 import io.epigraph.data.RecordDatum;
 import io.epigraph.data.Val;
 import io.epigraph.errors.ErrorValue;
-import io.epigraph.names.AnonListTypeName;
 import io.epigraph.names.NamespaceName;
 import io.epigraph.names.QualifiedTypeName;
 import io.epigraph.types.AnonListType;
 import io.epigraph.types.DataType;
-import io.epigraph.types.ListType;
 import io.epigraph.types.RecordType;
 import io.epigraph.types.RecordType.Field;
 import org.jetbrains.annotations.NotNull;
@@ -19,7 +17,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public interface PersonRecord extends RecordDatum.Static {
@@ -158,13 +155,13 @@ public interface PersonRecord extends RecordDatum.Static {
 
       @Override
       public @Nullable PersonId.Imm getId() {
-        PersonId.Imm.Value value = (PersonId.Imm.Value) _raw()._getValue(PersonRecord.id, PersonId.type.self);
+        PersonId.Imm.Value value = (PersonId.Imm.Value) _raw().getValue(PersonRecord.id, PersonId.type.self);
         return value == null ? null : value.getDatum();
       }
 
       @Override
       public @Nullable PersonRecord.Imm.Value getBestFriend_value() {
-        return (PersonRecord.Imm.Value) _raw()._getValue(bestFriend, PersonRecord.type.self);
+        return (PersonRecord.Imm.Value) _raw().getValue(bestFriend, PersonRecord.type.self);
       }
 
       @Override
@@ -175,7 +172,7 @@ public interface PersonRecord extends RecordDatum.Static {
 
       @Override
       public @Nullable PersonRecord.List.Imm.Value getFriends_value() {
-        return (PersonRecord.List.Imm.Value) _raw()._getValue(PersonRecord.friends, PersonRecord.List.type.self);
+        return (PersonRecord.List.Imm.Value) _raw().getValue(PersonRecord.friends, PersonRecord.List.type.self);
       }
 
       @Override
@@ -196,12 +193,12 @@ public interface PersonRecord extends RecordDatum.Static {
 
     @Override
     public @Nullable PersonId.Builder getId() {
-      return (PersonId.Builder) _raw()._getDatum(PersonRecord.id, PersonId.type.self);
+      return (PersonId.Builder) _raw().getDatum(PersonRecord.id, PersonId.type.self);
     }
 
     @Override
     public @Nullable PersonRecord.Builder.Value getBestFriend_value() {
-      return (Builder.Value) _raw()._getValue(bestFriend, PersonRecord.type.self);
+      return (Builder.Value) _raw().getValue(bestFriend, PersonRecord.type.self);
     }
 
     @Override
@@ -212,7 +209,7 @@ public interface PersonRecord extends RecordDatum.Static {
 
     @Override
     public @Nullable PersonRecord.List.Builder.Value getFriends_value() {
-      return (List.Builder.Value) _raw()._getValue(PersonRecord.friends, PersonRecord.List.type.self);
+      return (List.Builder.Value) _raw().getValue(PersonRecord.friends, PersonRecord.List.type.self);
     }
 
     @Override
@@ -398,14 +395,14 @@ public interface PersonRecord extends RecordDatum.Static {
       public java.util.List<PersonRecord.Builder> datums() {
         return _raw()._elements().stream().map(data ->
                 (PersonRecord.Builder) data._raw()._getValue(PersonRecord.type.self).getDatum()
-            // TODO revise nulls (define Data._getDatum(Tag))
+            // TODO revise nulls (define Data.getDatum(Tag))
         ).collect(Collectors.toList());
       }
 
       @Override
       public java.util.List<@Nullable ErrorValue> errors() {
         return _raw()._elements().stream().map(data ->
-            data._raw()._getValue(PersonRecord.type.self).getError() // TODO revise nulls (define Data._getError(Tag))
+            data._raw()._getValue(PersonRecord.type.self).getError() // TODO revise nulls (define Data.getError(Tag))
         ).collect(Collectors.toList());
       }
 

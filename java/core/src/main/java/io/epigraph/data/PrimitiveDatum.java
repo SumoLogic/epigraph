@@ -73,6 +73,24 @@ public interface PrimitiveDatum<Native> extends Datum {
   }
 
 
+  interface Builder<Native> extends PrimitiveDatum<Native>, Datum.Builder {
+
+    void setVal(@NotNull Native val);
+
+    @Override
+    @NotNull PrimitiveDatum.Builder.Raw _raw();
+
+
+    interface Raw<Native> extends PrimitiveDatum.Builder<Native>, PrimitiveDatum.Raw<Native>, Datum.Builder.Raw {}
+
+
+    interface Static<Native, MyImmDatum extends PrimitiveDatum.Imm.Static<Native>>
+        extends PrimitiveDatum.Builder<Native>, PrimitiveDatum.Static<Native>, Datum.Builder.Static<MyImmDatum> {}
+
+
+  }
+
+
   interface Mut<Native> extends PrimitiveDatum<Native>, Datum.Mut {
 
     void setVal(@NotNull Native val);

@@ -70,17 +70,17 @@ public abstract class ListType extends DatumType {
 
   public @NotNull DataType elementType() { return elementType; }
 
-  public abstract @NotNull ListDatum.Mut createBuilder();
+  public abstract @NotNull ListDatum.Builder createBuilder();
 
 
   public interface Static<
       MyImmDatum extends ListDatum.Imm.Static,
-      MyMutDatum extends ListDatum.Mut.Static<MyImmDatum>,
+      MyBuilderDatum extends ListDatum.Builder.Static<MyImmDatum>,
       MyImmVal extends Val.Imm.Static,
-      MyMutVal extends Val.Mut.Static<MyImmVal, MyMutDatum>,
+      MyBuilderVal extends Val.Builder.Static<MyImmVal, MyBuilderDatum>,
       MyImmData extends Data.Imm.Static,
-      MyMutData extends Data.Mut.Static<MyImmData>
-      > extends DatumType.Static<MyImmDatum, MyMutDatum, MyImmVal, MyMutVal, MyImmData, MyMutData> {}
+      MyBuilderData extends Data.Builder.Static<MyImmData>
+      > extends DatumType.Static<MyImmDatum, MyBuilderDatum, MyImmVal, MyBuilderVal, MyImmData, MyBuilderData> {}
 
 
 }
