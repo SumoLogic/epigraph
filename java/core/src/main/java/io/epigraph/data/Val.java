@@ -206,7 +206,7 @@ public interface Val {
       }
 
       // TODO take Datum and auto-convert (via protected abstract method)?
-      public void setDatum(@Nullable Datum datum) { // TODO _setDatum()?
+      public void setDatum(@Nullable Datum datum) { // TODO setDatum()?
         if (datum != null && datum.type() != type()) throw new IllegalArgumentException("Incompatible ... TODO");
         datumOrError = datum;
       }
@@ -301,7 +301,7 @@ public interface Val {
       }
 
       // TODO take Datum and auto-convert (via protected abstract method)?
-      public void setDatum(@Nullable Datum.Mut datum) { // TODO _setDatum()?
+      public void setDatum(@Nullable Datum.Mut datum) { // TODO setDatum()?
         if (datum != null && datum.type() != type()) throw new IllegalArgumentException("Incompatible ... TODO");
         datumOrError = datum;
       }

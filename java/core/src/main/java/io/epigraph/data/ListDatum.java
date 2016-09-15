@@ -40,7 +40,7 @@ public interface ListDatum extends Datum {
     @Override
     @NotNull ListDatum.Imm.Raw toImmutable();
 
-    @NotNull List<@NotNull ? extends Data> _elements(); // TODO or Iterable? or Collection? rename to data()?
+    @NotNull List<@NotNull ? extends Data> elements(); // TODO or Iterable? or Collection? rename to data()?
 
   }
 
@@ -81,7 +81,7 @@ public interface ListDatum extends Datum {
         super(type); // TODO derive type from prototype - or keep allowing sub-instances to be passed?
         // TODO check prototype is compatible?
         elements = Unmodifiable.list(
-            prototype._raw()._elements(),
+            prototype._raw().elements(),
             Data::toImmutable
         ); // TODO filter out irrelevant (subtype-only) data (pass desired type then)?
       }
@@ -90,7 +90,7 @@ public interface ListDatum extends Datum {
       public int size() { return elements.size(); }
 
       @Override
-      public @NotNull List<@NotNull ? extends Data.Imm> _elements() { return elements; }
+      public @NotNull List<@NotNull ? extends Data.Imm> elements() { return elements; }
 
       @Override
       public @NotNull ListDatum.Imm.Raw toImmutable() { return this; }
@@ -165,7 +165,7 @@ public interface ListDatum extends Datum {
       public Raw(ListType type) { super(type); }
 
       @Override
-      public @NotNull List<Data.@NotNull Builder> _elements() { return elements; }
+      public @NotNull List<Data.@NotNull Builder> elements() { return elements; }
 
       @Override
       public int size() { return elements.size(); }
@@ -278,10 +278,10 @@ public interface ListDatum extends Datum {
       public Raw(ListType type) { super(type); }
 
       @Override
-      public @NotNull List<Data.@NotNull Mut> _elements() { return elements; }
+      public @NotNull List<Data.@NotNull Mut> elements() { return elements; }
 
 //      @Override
-//      public @NotNull List<@NotNull ? extends Data.Mut> _elements() { // FIXME implement modifiable view of elements (YES!)?
+//      public @NotNull List<@NotNull ? extends Data.Mut> elements() { // FIXME implement modifiable view of elements (YES!)?
 //        if (unmodifiableViewOfElements == null) unmodifiableViewOfElements = /*Unmodifiable.list(*/elements/*)*/;
 //        return unmodifiableViewOfElements;
 //      }

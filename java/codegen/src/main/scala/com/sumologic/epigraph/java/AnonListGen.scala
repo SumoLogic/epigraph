@@ -227,7 +227,7 @@ ${et match { // element tags (for vartypes)
        */
       @Override
       public @NotNull java.util.List<@NotNull ? extends ${lqn(et, t)}.Imm> datas() {
-        return io.epigraph.util.Util.castEx(_raw()._elements());
+        return io.epigraph.util.Util.castEx(_raw().elements());
       }
 ${
       evt.effectiveTags.map { tag => sn"""\
@@ -259,7 +259,7 @@ ${
 
       // method is private to not expose datas() for non-union types (so simple type can be replaced with union type while preserving backwards-compatibility)
       private @NotNull java.util.List<@NotNull ? extends ${lqn(et, t)}.Imm.Data> datas() {
-        return io.epigraph.util.Util.castEx(_raw()._elements());
+        return io.epigraph.util.Util.castEx(_raw().elements());
       }
 """
   }
@@ -309,7 +309,7 @@ ${
 
         @Override
         public @Nullable $ln.Imm.Value get_() {
-          return ($ln.Imm.Value) _raw()._getValue($ln.type.self);
+          return ($ln.Imm.Value) _raw().getValue($ln.type.self);
         }
 
       }
@@ -366,7 +366,7 @@ ${et match { // element tags (for vartypes)
        */
       @Override
       public @NotNull java.util.List<${lqn(et, t)}.@NotNull Builder> datas() {
-        return io.epigraph.util.Util.cast(_raw()._elements());
+        return io.epigraph.util.Util.cast(_raw().elements());
       }
 ${
       evt.effectiveTags.map { tag => sn"""\
@@ -402,7 +402,7 @@ ${
 
       // method is private to not expose datas() for non-union types (so simple type can be replaced with union type while preserving backwards-compatibility)
       private @NotNull java.util.List<${lqn(et, t)}.Builder.@NotNull Data> datas() {
-        return io.epigraph.util.Util.cast(_raw()._elements());
+        return io.epigraph.util.Util.cast(_raw().elements());
       }
 """
   }
@@ -437,22 +437,22 @@ ${
       // default tag value getter
       @Override
       public @Nullable $ln.Builder.Value get_() {
-        return ($ln.Builder.Value) _raw()._getValue($ln.type.self);
+        return ($ln.Builder.Value) _raw().getValue($ln.type.self);
       }
 
       // default tag datum setter
       public void set(@Nullable $ln.Builder datum) {
-        _raw()._getOrCreateTagValue($ln.type.self)._raw().setDatum(datum);
+        _raw().getOrCreateTagValueBuilder($ln.type.self)._raw().setDatum(datum);
       }
 
       // default tag error setter // TODO simplified DatumTypeData implementation with this method
       public void set(@NotNull io.epigraph.errors.ErrorValue error) {
-        _raw()._getOrCreateTagValue($ln.type.self)._raw().setError(error);
+        _raw().getOrCreateTagValueBuilder($ln.type.self)._raw().setError(error);
       }
 
       // default tag value setter
       public void set_(@Nullable $ln.Builder.Value value) {
-        _raw()._setValue($ln.type.self, value);
+        _raw().setValue($ln.type.self, value);
       }
 
     }

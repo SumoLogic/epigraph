@@ -115,7 +115,7 @@ ${t.effectiveTags.map { tag => // for each effective tag
        */
       @Override
       public @Nullable ${lqrn(tag.typeRef, t)}.Imm.Value get_${up(tag.name)}() {
-        return (${lqrn(tag.typeRef, t)}.Imm.Value) _raw()._getValue($ln.${jn(tag.name)});
+        return (${lqrn(tag.typeRef, t)}.Imm.Value) _raw().getValue($ln.${jn(tag.name)});
       }
 """
   }.mkString
@@ -143,12 +143,12 @@ ${t.effectiveTags.map { tag => // for each effective tag
     }
 
     public @NotNull $ln.Builder set${up(tag.name)}(@Nullable ${lqrn(tag.typeRef, t)}.Builder ${jn(tag.name)}) {
-      _raw()._getOrCreateTagValue($ln.${jn(tag.name)})._raw().setDatum(${jn(tag.name)});
+      _raw().getOrCreateTagValueBuilder($ln.${jn(tag.name)})._raw().setDatum(${jn(tag.name)});
       return this;
     }
 
     public @NotNull $ln.Builder set${up(tag.name)}(@NotNull io.epigraph.errors.ErrorValue error) {
-      _raw()._getOrCreateTagValue($ln.${jn(tag.name)})._raw().setError(error);
+      _raw().getOrCreateTagValueBuilder($ln.${jn(tag.name)})._raw().setError(error);
       return this;
     }
 
@@ -157,14 +157,14 @@ ${t.effectiveTags.map { tag => // for each effective tag
      */
     @Override
     public @Nullable ${lqrn(tag.typeRef, t)}.Builder.Value get_${up(tag.name)}() {
-      return (${lqrn(tag.typeRef, t)}.Builder.Value) _raw()._getValue($ln.${jn(tag.name)});
+      return (${lqrn(tag.typeRef, t)}.Builder.Value) _raw().getValue($ln.${jn(tag.name)});
     }
 
     ${"/**"}
      * Sets `${tag.name}` tag value builder.
      */
     public @NotNull $ln.Builder set_${up(tag.name)}(@Nullable ${lqrn(tag.typeRef, t)}.Builder.Value ${jn(tag.name)}Value) {
-      _raw()._setValue($ln.${jn(tag.name)}, ${jn(tag.name)}Value);
+      _raw().setValue($ln.${jn(tag.name)}, ${jn(tag.name)}Value);
       return this;
     }
 """

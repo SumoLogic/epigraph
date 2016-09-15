@@ -181,7 +181,7 @@ public interface Data { // TODO Var? Union? Values?
         return value == null ? null : value.getError();
       }
 
-      public void _setValue(@NotNull Type.Tag tag, @Nullable Val value) {
+      public void setValue(@NotNull Type.Tag tag, @Nullable Val value) {
         // TODO check tag compatibility with this.type
         if (value == null) {
           tagValues.remove(tag.name);
@@ -191,22 +191,21 @@ public interface Data { // TODO Var? Union? Values?
         }
       }
 
-//      // TODO take Datum and auto-convert?
-//      public void _setDatum(@NotNull Type.Tag tag, @Nullable Datum datum) {
-//        _getOrCreateTagValueBuilder(tag)._raw().setDatum(datum);
-//      }
-//
-//      public void _setError(@NotNull Type.Tag tag, @NotNull ErrorValue error) {
-//        _getOrCreateTagValueBuilder(tag).setError(error);
-//      }
-//
-//      public @NotNull Val.Builder _getOrCreateTagValueBuilder(@NotNull Type.Tag tag) {
-//        // TODO check tag compatibility with this.type
-//        Val value = getValue(tag);
-//        // TODO this (as many other places) is not thread-safe - use ConcurrentHashMap?
-//        if (!(value instanceof Val.Builder)) tagValues.put(tag.name, value = tag.createValueBuilder());
-//        return (Val.Builder) value;
-//      }
+      public void setDatum(@NotNull Type.Tag tag, @Nullable Datum datum) {
+        getOrCreateTagValueBuilder(tag)._raw().setDatum(datum);
+      }
+
+      public void setError(@NotNull Type.Tag tag, @NotNull ErrorValue error) {
+        getOrCreateTagValueBuilder(tag).setError(error);
+      }
+
+      public @NotNull Val.Builder getOrCreateTagValueBuilder(@NotNull Type.Tag tag) {
+        // TODO check tag compatibility with this.type
+        Val value = getValue(tag);
+        // TODO this (as many other places) is not thread-safe - use ConcurrentHashMap?
+        if (!(value instanceof Val.Builder)) tagValues.put(tag.name, value = tag.createValueBuilder());
+        return (Val.Builder) value;
+      }
 
     }
 
@@ -287,7 +286,7 @@ public interface Data { // TODO Var? Union? Values?
       }
 
       // TODO accept Value and auto-convert? convert on write (NO - someone might hold the reference already)?
-      public void _setValue(@NotNull Type.Tag tag, @Nullable Val.Mut value) {
+      public void setValue(@NotNull Type.Tag tag, @Nullable Val.Mut value) {
         // TODO check tag compatibility with this.type
         if (value == null) {
           tagValues.remove(tag.name);
@@ -298,15 +297,15 @@ public interface Data { // TODO Var? Union? Values?
       }
 
       // TODO take Datum and auto-convert?
-      public void _setDatum(@NotNull Type.Tag tag, @Nullable Datum.Mut datum) {
-        _getOrCreateTagValue(tag)._raw().setDatum(datum);
+      public void setDatum(@NotNull Type.Tag tag, @Nullable Datum.Mut datum) {
+        getOrCreateTagValue(tag)._raw().setDatum(datum);
       }
 
-      public void _setError(@NotNull Type.Tag tag, @NotNull ErrorValue error) {
-        _getOrCreateTagValue(tag).setError(error);
+      public void setError(@NotNull Type.Tag tag, @NotNull ErrorValue error) {
+        getOrCreateTagValue(tag).setError(error);
       }
 
-      public @NotNull Val.Mut _getOrCreateTagValue(@NotNull Type.Tag tag) {
+      public @NotNull Val.Mut getOrCreateTagValue(@NotNull Type.Tag tag) {
         // TODO check tag compatibility with this.type
         Val.Mut value = getValue(tag);
         // TODO this (as many other places) is not thread-safe - use ConcurrentHashMap?

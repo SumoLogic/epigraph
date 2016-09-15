@@ -131,7 +131,7 @@ public interface $ln extends${withParents(t)} io.epigraph.data.${kind(t)}Datum.S
 
         @Override
         public @Nullable $ln.Imm.Value get_() {
-          return ($ln.Imm.Value) _raw()._getValue($ln.type.self);
+          return ($ln.Imm.Value) _raw().getValue($ln.type.self);
         }
 
       }
@@ -172,16 +172,16 @@ public interface $ln extends${withParents(t)} io.epigraph.data.${kind(t)}Datum.S
 
       @Override
       public @Nullable $ln.Builder.Value get_() {
-        return ($ln.Builder.Value) _raw()._getValue($ln.type.self);
+        return ($ln.Builder.Value) _raw().getValue($ln.type.self);
       }
 
       // implied default tag datum
       public void set(@Nullable $ln.Builder datum) {
-        _raw()._getOrCreateTagValue($ln.type.self)._raw().setDatum(datum);
+        _raw().getOrCreateTagValueBuilder($ln.type.self)._raw().setDatum(datum);
       }
 
       // implied default tag value
-      public void set_(@Nullable $ln.Builder.Value value) { _raw()._setValue($ln.type.self, value); }
+      public void set_(@Nullable $ln.Builder.Value value) { _raw().setValue($ln.type.self, value); }
 
     }
 
