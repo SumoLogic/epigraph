@@ -1,4 +1,4 @@
-package io.epigraph.lang.gdata;
+package io.epigraph.gdata;
 
 import io.epigraph.lang.Fqn;
 import org.jetbrains.annotations.Nullable;

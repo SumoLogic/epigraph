@@ -16,6 +16,7 @@
   <modules>
     <module>codegen</module>
     <module>core</module>
+    <module>gdata</module>
     <module>maven-plugin</module>
     <module>projections</module>
     <module>util</module>

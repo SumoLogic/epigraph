@@ -1,8 +1,8 @@
 package io.epigraph.idl.gdata;
 
+import io.epigraph.gdata.*;
 import io.epigraph.idl.parser.psi.*;
 import io.epigraph.lang.Fqn;
-import io.epigraph.lang.gdata.*;
 import io.epigraph.psi.PsiProcessingException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

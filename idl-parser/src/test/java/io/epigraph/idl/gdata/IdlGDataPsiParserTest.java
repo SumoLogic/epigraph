@@ -7,7 +7,7 @@ import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.impl.DebugUtil;
 import io.epigraph.idl.parser.projections.IdlSubParserDefinitions;
 import io.epigraph.idl.parser.psi.IdlDataValue;
-import io.epigraph.lang.gdata.GDataValue;
+import io.epigraph.gdata.GDataValue;
 import io.epigraph.psi.EpigraphPsiUtil;
 import io.epigraph.psi.PsiProcessingException;
 import org.jetbrains.annotations.NotNull;

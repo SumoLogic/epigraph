@@ -1,4 +1,4 @@
-package io.epigraph.lang.gdata;
+package io.epigraph.gdata;
 
 import org.jetbrains.annotations.NotNull;
 

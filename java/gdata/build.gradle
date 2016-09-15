@@ -1,0 +1,8 @@
+apply plugin: 'java'
+
+dependencies {
+  compile project(':epigraph-lang-common')
+
+  compile 'org.jetbrains:annotations'
+  compile 'net.jcip:jcip-annotations'
+}

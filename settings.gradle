@@ -24,6 +24,7 @@ Map<String, String> modules = [
     'idl-parser'                           : 'epigraph-idl-parser',
     'java/codegen'                         : 'epigraph-java-codegen',
     'java/core'                            : 'epigraph-java-core',
+    'java/gdata'                           : 'epigraph-java-gdata',
     'java/projections'                     : 'epigraph-java-projections',
     'java/util'                            : 'epigraph-java-util',
     'lang-common'                          : 'epigraph-lang-common',

@@ -1,4 +1,4 @@
-package io.epigraph.lang.gdata;
+package io.epigraph.gdata;
 
 import io.epigraph.lang.Fqn;
 import org.jetbrains.annotations.NotNull;
@@ -11,18 +11,18 @@ import java.util.stream.Collectors;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class GDataRecord extends GDataVarValue {
+public class GDataMap extends GDataVarValue {
   @NotNull
-  private final LinkedHashMap<String, GDataValue> fields;
+  private final LinkedHashMap<GDataVarValue, GDataValue> entries;
 
-  public GDataRecord(@Nullable Fqn typeRef, @NotNull LinkedHashMap<String, GDataValue> fields) {
+  public GDataMap(@Nullable Fqn typeRef, @NotNull LinkedHashMap<GDataVarValue, GDataValue> entries) {
     super(typeRef);
-    this.fields = fields;
+    this.entries = entries;
   }
 
   @NotNull
-  public LinkedHashMap<String, GDataValue> fields() {
-    return fields;
+  public LinkedHashMap<GDataVarValue, GDataValue> entries() {
+    return entries;
   }
 
   @Override
@@ -30,25 +30,25 @@ public class GDataRecord extends GDataVarValue {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     if (!super.equals(o)) return false;
-    GDataRecord gDataMap = (GDataRecord) o;
-    return Objects.equals(fields, gDataMap.fields);
+    GDataMap gDataMap = (GDataMap) o;
+    return Objects.equals(entries, gDataMap.entries);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(super.hashCode(), fields);
+    return Objects.hash(super.hashCode(), entries);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     if (typeRef() != null) sb.append(typeRef());
-    sb.append('{');
-    sb.append(fields.entrySet()
-                    .stream()
-                    .map(e -> e.getKey() + ": " + e.getValue())
-                    .collect(Collectors.joining(", ")));
-    sb.append('}');
+    sb.append('(');
+    sb.append(entries.entrySet()
+                     .stream()
+                     .map(e -> e.getKey() + ": " + e.getValue())
+                     .collect(Collectors.joining(", ")));
+    sb.append(')');
     return sb.toString();
   }
 }

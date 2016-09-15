@@ -1,4 +1,4 @@
-package io.epigraph.lang.gdata;
+package io.epigraph.gdata;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
