@@ -1,6 +1,7 @@
 package io.epigraph.projections.op.output;
 
 import com.intellij.psi.PsiErrorElement;
+import com.intellij.psi.impl.DebugUtil;
 import io.epigraph.idl.parser.projections.IdlSubParserDefinitions;
 import io.epigraph.idl.parser.psi.IdlOpOutputVarProjection;
 import io.epigraph.psi.PsiProcessingException;
@@ -183,9 +184,7 @@ public class OpOutputProjectionsTest {
         "  +id,",
         "  record (",
         "    +id {",
-        "      parameters: {",
-//        "        +param1 : epigraph.String { default : \"hello world\" },", // todo enable once there's `toString` on data
-        "      }",
+//        "    ; +param1 : epigraph.String { default : \"hello world\" },", // todo enable once there's `toString` on data
         "    },",
         "    +bestFriend :record (",
         "      +id,",
@@ -193,6 +192,7 @@ public class OpOutputProjectionsTest {
         // todo get default tag from Person.type, once available
         "    ),",
         "    friends {} *( :+id {}) {}",
+        // :record (....) {params}
         "  )",
         ") ~io.epigraph.tests.User :record (profile)"
     );
@@ -213,11 +213,9 @@ public class OpOutputProjectionsTest {
         System.err.println(element.getErrorDescription() + " at " +
                            EpigraphPsiUtil.getLocation(element, projectionStr));
       }
-      fail();
+      String psiDump = DebugUtil.psiToString(psiVarProjection, true, false).trim();
+      fail(psiDump);
     }
-
-//    String psiDump = DebugUtil.psiToString(psiVarProjection, true, false).trim();
-//    System.out.println(psiDump);
 
     OpOutputVarProjection varProjection = null;
     try {

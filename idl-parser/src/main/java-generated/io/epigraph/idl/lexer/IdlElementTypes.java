@@ -66,7 +66,6 @@ public interface IdlElementTypes {
   IElementType I_OP_OUTPUT_VAR_PROJECTION = new IdlElementType("I_OP_OUTPUT_VAR_PROJECTION");
   IElementType I_OP_OUTPUT_VAR_SINGLE_TAIL = new IdlElementType("I_OP_OUTPUT_VAR_SINGLE_TAIL");
   IElementType I_OP_PARAM = new IdlElementType("I_OP_PARAM");
-  IElementType I_OP_PARAMETERS = new IdlElementType("I_OP_PARAMETERS");
   IElementType I_QID = new IdlElementType("I_QID");
   IElementType I_VAR_VALUE = new IdlElementType("I_VAR_VALUE");
 
@@ -96,6 +95,7 @@ public interface IdlElementTypes {
   IElementType I_PAREN_RIGHT = new IdlElementType(")");
   IElementType I_PLUS = new IdlElementType("+");
   IElementType I_REQURIED = new IdlElementType("required");
+  IElementType I_SEMICOLON = new IdlElementType(";");
   IElementType I_SLASH = new IdlElementType("/");
   IElementType I_STAR = new IdlElementType("*");
   IElementType I_STRING = new IdlElementType("string");
@@ -277,9 +277,6 @@ public interface IdlElementTypes {
       }
       else if (type == I_OP_PARAM) {
         return new IdlOpParamImpl(node);
-      }
-      else if (type == I_OP_PARAMETERS) {
-        return new IdlOpParametersImpl(node);
       }
       else if (type == I_QID) {
         return new IdlQidImpl(node);

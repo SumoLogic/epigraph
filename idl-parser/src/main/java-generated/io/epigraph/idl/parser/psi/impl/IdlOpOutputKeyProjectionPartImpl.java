@@ -34,8 +34,8 @@ public class IdlOpOutputKeyProjectionPartImpl extends ASTWrapperPsiElement imple
 
   @Override
   @Nullable
-  public IdlOpParameters getOpParameters() {
-    return findChildByClass(IdlOpParameters.class);
+  public IdlOpParam getOpParam() {
+    return findChildByClass(IdlOpParam.class);
   }
 
   @Override

@@ -56,4 +56,10 @@ public class IdlOpParamImpl extends ASTWrapperPsiElement implements IdlOpParam {
     return findChildByType(I_PLUS);
   }
 
+  @Override
+  @NotNull
+  public PsiElement getSemicolon() {
+    return findNotNullChildByType(I_SEMICOLON);
+  }
+
 }

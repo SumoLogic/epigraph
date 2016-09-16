@@ -27,6 +27,7 @@
     COLON = ':'
     DOT = '.'
     COMMA = ','
+    SEMICOLON = ';'
     EQ = '='
     CURLY_LEFT = '{'
     CURLY_RIGHT = '}'
@@ -112,10 +113,34 @@ private importRecover ::= namespaceDeclRecover
 
 // ------------- op projections -------------
 
-opParameters ::= 'parameters' ':' '{' (opParam ','?)* '}'
-opParam ::= '+'? qid ':' fqnTypeRef opInputModelProjection
+//opParameters ::= 'parameters' ':' '{' (opParam ','?)* '}'
+opParam ::= ';' '+'? qid ':' fqnTypeRef opInputModelProjection
 
 // output
+
+// field [{ fieldParams }] : ( tag [{ tagParams }] [tagModelProjection], ... ) ~ tail
+// field [{ fieldParams }] [:[+][tag] { tagParams }] [tagModelProjection] [~ tail]
+// field [{ [{fieldParams}] :(tag [ {tagParams} ] [tagModelProjection], ... ) [~tail] }]
+// field [{ [fieldParams] [:[+]tag] [{tagParams}]] [tagModelProjection] [~tail] }]
+
+/*
+
+friends {
+    ; +count: Integer
+    ; cursor: Cursor(+foo,bar(...)=(x:1,y:2)) = (123,(x:1,y:2))
+    :[tag] {
+        ;;sort:Sort=Name
+        ;ascending:Boolean = false
+        [..](..)
+        *(..)
+        (..)
+    }
+
+}
+
+*/
+
+
 
 opOutputVarProjection ::= ( opOutputMultiTagProjection | opOutputSingleTagProjection ) opOutputVarPolymorphicTail?
 opOutputSingleTagProjection ::= ( ':' '+'? qid )? opOutputModelProjection
@@ -135,13 +160,13 @@ opOutputModelProjection ::= ( opOutputRecordModelProjection
                             )? opOutputModelProjectionBody?
 
 opOutputModelProjectionBody ::= '{' (opOutputModelProjectionBodyPart ','?)* '}'
-opOutputModelProjectionBodyPart ::= opParameters | customParam
+opOutputModelProjectionBodyPart ::= opParam | customParam
 
 // op output record
 opOutputRecordModelProjection ::= '(' (opOutputFieldProjection ','?)* ')' { pin=1 }
 opOutputFieldProjection ::= '+'? qid opOutputFieldProjectionBody? opOutputVarProjection?
 opOutputFieldProjectionBody ::= '{' (opOutputFieldProjectionBodyPart ','?)* '}'
-opOutputFieldProjectionBodyPart ::= opParameters | customParam
+opOutputFieldProjectionBodyPart ::= opParam | customParam
 
 // files : Files default FileList *(..) ~FileList2(..)
 // op output list
@@ -149,7 +174,7 @@ opOutputListModelProjection ::= '*' '(' opOutputVarProjection ')' { pin=1 }
 
 opOutputMapModelProjection ::= opOutputKeyProjection '*' '(' opOutputVarProjection ')' { pin=1 }
 opOutputKeyProjection ::= '[' (opOutputKeyProjectionPart ','?)* ']' {pin=1}
-opOutputKeyProjectionPart ::= 'forbidden' | 'required' | opParameters | customParam
+opOutputKeyProjectionPart ::= 'forbidden' | 'required' | opParam | customParam
 
 //opOutputPrimitiveModelProjection ::= 'primitive' // ?
 //opOutputEnumModelProjection ::= 'enum' // ?

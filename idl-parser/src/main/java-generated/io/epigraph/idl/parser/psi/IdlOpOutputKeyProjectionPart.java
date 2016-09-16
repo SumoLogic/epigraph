@@ -11,7 +11,7 @@ public interface IdlOpOutputKeyProjectionPart extends PsiElement {
   IdlCustomParam getCustomParam();
 
   @Nullable
-  IdlOpParameters getOpParameters();
+  IdlOpParam getOpParam();
 
   @Nullable
   PsiElement getForbidden();

@@ -52,6 +52,7 @@ ID=([:letter:]([:letter:]|[:digit:])*)|(`[^`]*`)
   ":"                  { return I_COLON; }
   "."                  { return I_DOT; }
   ","                  { return I_COMMA; }
+  ";"                  { return I_SEMICOLON; }
   "="                  { return I_EQ; }
   "{"                  { return I_CURLY_LEFT; }
   "}"                  { return I_CURLY_RIGHT; }

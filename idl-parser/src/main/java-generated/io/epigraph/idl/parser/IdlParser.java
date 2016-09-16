@@ -197,9 +197,6 @@ public class IdlParser implements PsiParser, LightPsiParser {
     else if (t == I_OP_PARAM) {
       r = opParam(b, 0);
     }
-    else if (t == I_OP_PARAMETERS) {
-      r = opParameters(b, 0);
-    }
     else if (t == I_QID) {
       r = qid(b, 0);
     }
@@ -1430,13 +1427,13 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // opParameters | customParam
+  // opParam | customParam
   public static boolean opOutputFieldProjectionBodyPart(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opOutputFieldProjectionBodyPart")) return false;
-    if (!nextTokenIs(b, "<op output field projection body part>", I_PARAMETERS, I_ID)) return false;
+    if (!nextTokenIs(b, "<op output field projection body part>", I_SEMICOLON, I_ID)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, I_OP_OUTPUT_FIELD_PROJECTION_BODY_PART, "<op output field projection body part>");
-    r = opParameters(b, l + 1);
+    r = opParam(b, l + 1);
     if (!r) r = customParam(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
@@ -1488,14 +1485,14 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'forbidden' | 'required' | opParameters | customParam
+  // 'forbidden' | 'required' | opParam | customParam
   public static boolean opOutputKeyProjectionPart(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opOutputKeyProjectionPart")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, I_OP_OUTPUT_KEY_PROJECTION_PART, "<op output key projection part>");
     r = consumeToken(b, I_FORBIDDEN);
     if (!r) r = consumeToken(b, I_REQURIED);
-    if (!r) r = opParameters(b, l + 1);
+    if (!r) r = opParam(b, l + 1);
     if (!r) r = customParam(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
@@ -1630,13 +1627,13 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // opParameters | customParam
+  // opParam | customParam
   public static boolean opOutputModelProjectionBodyPart(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opOutputModelProjectionBodyPart")) return false;
-    if (!nextTokenIs(b, "<op output model projection body part>", I_PARAMETERS, I_ID)) return false;
+    if (!nextTokenIs(b, "<op output model projection body part>", I_SEMICOLON, I_ID)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, I_OP_OUTPUT_MODEL_PROJECTION_BODY_PART, "<op output model projection body part>");
-    r = opParameters(b, l + 1);
+    r = opParam(b, l + 1);
     if (!r) r = customParam(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
@@ -1909,71 +1906,26 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '+'? qid ':' fqnTypeRef opInputModelProjection
+  // ';' '+'? qid ':' fqnTypeRef opInputModelProjection
   public static boolean opParam(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opParam")) return false;
-    if (!nextTokenIs(b, "<op param>", I_PLUS, I_ID)) return false;
+    if (!nextTokenIs(b, I_SEMICOLON)) return false;
     boolean r;
-    Marker m = enter_section_(b, l, _NONE_, I_OP_PARAM, "<op param>");
-    r = opParam_0(b, l + 1);
+    Marker m = enter_section_(b);
+    r = consumeToken(b, I_SEMICOLON);
+    r = r && opParam_1(b, l + 1);
     r = r && qid(b, l + 1);
     r = r && consumeToken(b, I_COLON);
     r = r && fqnTypeRef(b, l + 1);
     r = r && opInputModelProjection(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
+    exit_section_(b, m, I_OP_PARAM, r);
     return r;
   }
 
   // '+'?
-  private static boolean opParam_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opParam_0")) return false;
+  private static boolean opParam_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opParam_1")) return false;
     consumeToken(b, I_PLUS);
-    return true;
-  }
-
-  /* ********************************************************** */
-  // 'parameters' ':' '{' (opParam ','?)* '}'
-  public static boolean opParameters(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opParameters")) return false;
-    if (!nextTokenIs(b, I_PARAMETERS)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, I_PARAMETERS);
-    r = r && consumeToken(b, I_COLON);
-    r = r && consumeToken(b, I_CURLY_LEFT);
-    r = r && opParameters_3(b, l + 1);
-    r = r && consumeToken(b, I_CURLY_RIGHT);
-    exit_section_(b, m, I_OP_PARAMETERS, r);
-    return r;
-  }
-
-  // (opParam ','?)*
-  private static boolean opParameters_3(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opParameters_3")) return false;
-    int c = current_position_(b);
-    while (true) {
-      if (!opParameters_3_0(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "opParameters_3", c)) break;
-      c = current_position_(b);
-    }
-    return true;
-  }
-
-  // opParam ','?
-  private static boolean opParameters_3_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opParameters_3_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = opParam(b, l + 1);
-    r = r && opParameters_3_0_1(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // ','?
-  private static boolean opParameters_3_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opParameters_3_0_1")) return false;
-    consumeToken(b, I_COMMA);
     return true;
   }
 

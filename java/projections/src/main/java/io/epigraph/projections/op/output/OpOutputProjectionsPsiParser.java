@@ -289,7 +289,10 @@ public class OpOutputProjectionsPsiParser {
     if (body != null) {
       @NotNull List<IdlOpOutputModelProjectionBodyPart> parts = body.getOpOutputModelProjectionBodyPartList();
       for (IdlOpOutputModelProjectionBodyPart part : parts) {
-        parseParameters(part.getOpParameters(), resolver).forEach(res::addParam);
+        @Nullable IdlOpParam paramPsi = part.getOpParam();
+        if (paramPsi != null)
+          res.addParam(parseParameter(paramPsi, resolver));
+
         // todo custom params
       }
 
@@ -370,11 +373,11 @@ public class OpOutputProjectionsPsiParser {
       @Nullable IdlOpOutputFieldProjectionBody fieldBody = psiFieldProjection.getOpOutputFieldProjectionBody();
       if (fieldBody != null) {
         for (IdlOpOutputFieldProjectionBodyPart fieldBodyPart : fieldBody.getOpOutputFieldProjectionBodyPartList()) {
-          List<OpParam> parameters = parseParameters(fieldBodyPart.getOpParameters(), typesResolver);
 
-          if (!parameters.isEmpty()) {
+          @Nullable IdlOpParam opParam = fieldBodyPart.getOpParam();
+          if (opParam != null) {
             if (fieldParams == null) fieldParams = new HashSet<>();
-            fieldParams.addAll(parameters);
+            fieldParams.add(parseParameter(opParam, typesResolver));
           }
 
           //todo parse field custom params
@@ -449,32 +452,22 @@ public class OpOutputProjectionsPsiParser {
     }
   }
 
-  private static List<OpParam> parseParameters(@Nullable IdlOpParameters parametersPsi,
-                                               @NotNull TypesResolver resolver) throws PsiProcessingException {
-    if (parametersPsi == null) return Collections.emptyList();
+  private static OpParam parseParameter(@NotNull IdlOpParam paramPsi,
+                                        @NotNull TypesResolver resolver) throws PsiProcessingException {
+    @NotNull String paramName = paramPsi.getQid().getCanonicalName();
+    @NotNull Fqn paramTypeName = paramPsi.getFqnTypeRef().getFqn().getFqn();
+    @NotNull IdlOpInputModelProjection paramModelProjectionPsi = paramPsi.getOpInputModelProjection();
 
-    @NotNull List<IdlOpParam> paramPsiList = parametersPsi.getOpParamList();
-    if (paramPsiList.isEmpty()) return Collections.emptyList();
-
-    final List<OpParam> res = new ArrayList<>(2);
-    for (IdlOpParam paramPsi : paramPsiList) {
-      @NotNull String paramName = paramPsi.getQid().getCanonicalName();
-      @NotNull Fqn paramTypeName = paramPsi.getFqnTypeRef().getFqn().getFqn();
-      @NotNull IdlOpInputModelProjection paramModelProjectionPsi = paramPsi.getOpInputModelProjection();
-
-      @Nullable DatumType paramType = resolver.resolveDatumType(paramTypeName);
-      if (paramType == null)
-        throw new PsiProcessingException(
-            String.format("Can't resolve parameter '%s' data type '%s'", paramName, paramTypeName), paramPsi
-        );
-
-      OpInputModelProjection<?, ?> paramModelProjection = OpInputProjectionsPsiParser.parseModelProjection(
-          paramType, paramPsi.getPlus() != null, paramModelProjectionPsi, resolver
+    @Nullable DatumType paramType = resolver.resolveDatumType(paramTypeName);
+    if (paramType == null)
+      throw new PsiProcessingException(
+          String.format("Can't resolve parameter '%s' data type '%s'", paramName, paramTypeName), paramPsi
       );
 
-      res.add(new OpParam(paramName, paramModelProjection));
-    }
+    OpInputModelProjection<?, ?> paramModelProjection = OpInputProjectionsPsiParser.parseModelProjection(
+        paramType, paramPsi.getPlus() != null, paramModelProjectionPsi, resolver
+    );
 
-    return res;
+    return new OpParam(paramName, paramModelProjection);
   }
 }

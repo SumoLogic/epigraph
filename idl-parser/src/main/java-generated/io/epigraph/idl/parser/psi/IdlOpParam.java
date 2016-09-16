@@ -22,4 +22,7 @@ public interface IdlOpParam extends PsiElement {
   @Nullable
   PsiElement getPlus();
 
+  @NotNull
+  PsiElement getSemicolon();
+
 }
