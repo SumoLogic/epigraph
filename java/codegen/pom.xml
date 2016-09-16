@@ -13,11 +13,6 @@
 
   <dependencies>
 
-    <!--<dependency>-->
-      <!--<groupId>${project.groupId}</groupId>-->
-      <!--<artifactId>epigraph-core</artifactId>-->
-      <!--<version>${project.version}</version>-->
-    <!--</dependency>-->
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>epigraph-lang-common</artifactId>
@@ -43,17 +38,6 @@
       <groupId>org.scala-lang</groupId>
       <artifactId>scala-library</artifactId>
     </dependency>
-
-    <!--<dependency>-->
-      <!--<groupId>org.scalatest</groupId>-->
-      <!--<artifactId>scalatest_${scala.version.major.minor}</artifactId>-->
-    <!--</dependency>-->
-
-    <!--<dependency>-->
-      <!--<groupId>com.lihaoyi</groupId>-->
-      <!--<artifactId>pprint_${scala.version.major.minor}</artifactId>-->
-      <!--<scope>compile</scope>&lt;!&ndash; TODO - use in test scope only? &ndash;&gt;-->
-    <!--</dependency>-->
 
   </dependencies>
 
