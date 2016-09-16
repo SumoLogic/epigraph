@@ -393,11 +393,11 @@
               <goals>
                 <goal>helpmojo</goal>
               </goals>
-              <phase>process-classes</phase><!-- doesn't see java annotations in default generate-sources phase -->
+              <phase>process-classes</phase><!-- doesn't see java annotations in default (generate-sources) phase -->
             </execution>
           </executions>
           <configuration>
-            <mojoDependencies></mojoDependencies>
+            <mojoDependencies></mojoDependencies><!-- disables scanning dependencies for mojos -->
           </configuration>
         </plugin>
         <plugin>
