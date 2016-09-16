@@ -38,10 +38,4 @@ public class IdlOpOutputModelProjectionImpl extends ASTWrapperPsiElement impleme
     return findChildByClass(IdlOpOutputModelProjectionBody.class);
   }
 
-  @Override
-  @Nullable
-  public PsiElement getPlus() {
-    return findChildByType(I_PLUS);
-  }
-
 }

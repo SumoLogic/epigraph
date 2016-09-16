@@ -29,7 +29,7 @@ public class OpInputProjectionsTest {
 
     // todo add params
     String projectionStr = ":( \n" +
-                           "  id +, \n" +
+                           "  +id, \n" +
                            "  record (\n" +
                            "    +id, \n" +
                            "    +bestFriend :record (\n" +

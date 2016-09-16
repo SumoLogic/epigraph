@@ -184,16 +184,17 @@ public class OpOutputProjectionsTest {
 
     String projectionStr = lines(
         ":(",
-        "  id +,",  // todo `+id` instead of `id +`
+        "  +id,",
         "  record (",
         "    +id {",
         "      parameters: {",
-//        "        param1 : epigraph.String + { default : \"hello world\" },", // todo enable once there's `toString` on data
+//        "        +param1 : epigraph.String { default : \"hello world\" },", // todo enable once there's `toString` on data
         "      }",
         "    },",
         "    +bestFriend :record (",
         "      +id,",
         "      bestFriend: id",
+        // todo get default tag from Person.type, once available
         "    )",
         "  )",
         ") ~io.epigraph.tests.User :record (profile)"
@@ -236,47 +237,49 @@ public class OpOutputProjectionsTest {
       fail();
     }
 
-    String expected = "var io.epigraph.tests.Person (\n" +
-                      "  id: +io.epigraph.tests.PersonId\n" +
-                      "  record:\n" +
-                      "    io.epigraph.tests.PersonRecord {\n" +
-                      "      fields: {\n" +
-                      "        +id:\n" +
-                      "          var io.epigraph.tests.PersonId (\n" +
-                      "            self: io.epigraph.tests.PersonId\n" +
-                      "          )\n" +
-                      "        +bestFriend:\n" +
-                      "          var io.epigraph.tests.Person (\n" +
-                      "            record:\n" +
-                      "              io.epigraph.tests.PersonRecord {\n" +
-                      "                fields: {\n" +
-                      "                  +id:\n" +
-                      "                    var io.epigraph.tests.PersonId (\n" +
-                      "                      self: io.epigraph.tests.PersonId\n" +
-                      "                    )\n" +
-                      "                  bestFriend:\n" +
-                      "                    var io.epigraph.tests.Person (\n" +
-                      "                      id: io.epigraph.tests.PersonId\n" +
-                      "                    )\n" +
-                      "                }\n" +
-                      "              }\n" +
-                      "          )\n" +
-                      "      }\n" +
-                      "    }\n" +
-                      ")\n" +
-                      "~(\n" +
-                      "  var io.epigraph.tests.User (\n" +
-                      "    record:\n" +
-                      "      io.epigraph.tests.UserRecord {\n" +
-                      "        fields: {\n" +
-                      "          profile:\n" +
-                      "            var io.epigraph.tests.Url (\n" +
-                      "              self: io.epigraph.tests.Url\n" +
-                      "            )\n" +
-                      "        }\n" +
-                      "      }\n" +
-                      "  )\n" +
-                      ")";
+    String expected = lines(
+        "var io.epigraph.tests.Person (",
+        "  id: +io.epigraph.tests.PersonId",
+        "  record:",
+        "    io.epigraph.tests.PersonRecord {",
+        "      fields: {",
+        "        +id:",
+        "          var io.epigraph.tests.PersonId (",
+        "            self: io.epigraph.tests.PersonId",
+        "          )",
+        "        +bestFriend:",
+        "          var io.epigraph.tests.Person (",
+        "            record:",
+        "              io.epigraph.tests.PersonRecord {",
+        "                fields: {",
+        "                  +id:",
+        "                    var io.epigraph.tests.PersonId (",
+        "                      self: io.epigraph.tests.PersonId",
+        "                    )",
+        "                  bestFriend:",
+        "                    var io.epigraph.tests.Person (",
+        "                      id: io.epigraph.tests.PersonId",
+        "                    )",
+        "                }",
+        "              }",
+        "          )",
+        "      }",
+        "    }",
+        ")",
+        "~(",
+        "  var io.epigraph.tests.User (",
+        "    record:",
+        "      io.epigraph.tests.UserRecord {",
+        "        fields: {",
+        "          profile:",
+        "            var io.epigraph.tests.Url (",
+        "              self: io.epigraph.tests.Url",
+        "            )",
+        "        }",
+        "      }",
+        "  )",
+        ")"
+    );
 
     assertEquals(expected, varProjection.toString());
   }

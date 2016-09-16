@@ -13,4 +13,7 @@ public interface IdlOpOutputMultiTagProjectionItem extends PsiElement {
   @NotNull
   IdlQid getQid();
 
+  @Nullable
+  PsiElement getPlus();
+
 }

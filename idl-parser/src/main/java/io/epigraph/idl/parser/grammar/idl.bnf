@@ -113,26 +113,26 @@ private importRecover ::= namespaceDeclRecover
 // ------------- op projections -------------
 
 opParameters ::= 'parameters' ':' '{' (opParam ','?)* '}'
-opParam ::= qid ':' fqnTypeRef opInputModelProjection
+opParam ::= '+'? qid ':' fqnTypeRef opInputModelProjection
 
 // output
 
 opOutputVarProjection ::= ( opOutputMultiTagProjection | opOutputSingleTagProjection ) opOutputVarPolymorphicTail?
-opOutputSingleTagProjection ::= ( ':' qid )? opOutputModelProjection
+opOutputSingleTagProjection ::= ( ':' '+'? qid )? opOutputModelProjection
 opOutputMultiTagProjection ::= ':' '(' (opOutputMultiTagProjectionItem ','?)* ')' {pin=2}
-opOutputMultiTagProjectionItem ::= qid opOutputModelProjection
+opOutputMultiTagProjectionItem ::= '+'? qid opOutputModelProjection
 //
 opOutputVarPolymorphicTail ::= opOutputVarSingleTail | opOutputVarMultiTail
 opOutputVarSingleTail ::= '~' fqnTypeRef opOutputVarProjection
 opOutputVarMultiTail ::= '~' '(' (opOutputVarMultiTailItem ','?)* ')' {pin=2}
 opOutputVarMultiTailItem ::= fqnTypeRef opOutputVarProjection
 
-opOutputModelProjection ::= '+'? ( opOutputRecordModelProjection
-                                 | opOutputListModelProjection
-                                 | opOutputMapModelProjection
-//                               | opOutputEnumModelProjection
-//                               | opOutputPrimitiveModelProjection
-                                 )? opOutputModelProjectionBody?
+opOutputModelProjection ::= ( opOutputRecordModelProjection
+                            | opOutputListModelProjection
+                            | opOutputMapModelProjection
+//                          | opOutputEnumModelProjection
+//                          | opOutputPrimitiveModelProjection
+                            )? opOutputModelProjectionBody?
 
 opOutputModelProjectionBody ::= '{' (opOutputModelProjectionBodyPart ','?)* '}'
 opOutputModelProjectionBodyPart ::= opParameters | customParam
@@ -166,21 +166,21 @@ opOutputKeyProjectionPart ::= 'forbidden' | 'required' | opParameters | customPa
 // input
 
 opInputVarProjection ::= ( opInputMultiTagProjection | opInputSingleTagProjection ) opInputVarPolymorphicTail?
-opInputSingleTagProjection ::= ( ':' qid )? opInputModelProjection
+opInputSingleTagProjection ::= ( ':' '+'? qid )? opInputModelProjection
 opInputMultiTagProjection ::= ':' '(' (opInputMultiTagProjectionItem ','?)* ')' {pin=2}
-opInputMultiTagProjectionItem ::= qid opInputModelProjection
+opInputMultiTagProjectionItem ::= '+'? qid opInputModelProjection
 //
 opInputVarPolymorphicTail ::= opInputVarSingleTail | opInputVarMultiTail
 opInputVarSingleTail ::= '~' fqnTypeRef opInputVarProjection
 opInputVarMultiTail ::= '~' '(' (opInputVarMultiTailItem ','?)* ')' {pin=2}
 opInputVarMultiTailItem ::= fqnTypeRef opInputVarProjection
 
-opInputModelProjection ::= '+'? ( opInputRecordModelProjection
-                                | opInputListModelProjection
-                                | opInputMapModelProjection
-//                              | opInputEnumModelProjection
-//                              | opInputPrimitiveModelProjection
-                                )? opInputModelProjectionBody?
+opInputModelProjection ::= ( opInputRecordModelProjection
+                           | opInputListModelProjection
+                           | opInputMapModelProjection
+//                         | opInputEnumModelProjection
+//                         | opInputPrimitiveModelProjection
+                           )? opInputModelProjectionBody?
 
 opInputModelProjectionBody ::= '{' (opInputModelProjectionBodyPart ','?)* '}'
 opInputModelProjectionBodyPart ::= customParam | opInputDefaultValue

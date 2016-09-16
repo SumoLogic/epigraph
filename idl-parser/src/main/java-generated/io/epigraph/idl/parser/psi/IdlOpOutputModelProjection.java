@@ -13,7 +13,4 @@ public interface IdlOpOutputModelProjection extends PsiElement {
   @Nullable
   IdlOpOutputModelProjectionBody getOpOutputModelProjectionBody();
 
-  @Nullable
-  PsiElement getPlus();
-
 }

@@ -16,4 +16,7 @@ public interface IdlOpOutputSingleTagProjection extends PsiElement {
   @Nullable
   PsiElement getColon();
 
+  @Nullable
+  PsiElement getPlus();
+
 }

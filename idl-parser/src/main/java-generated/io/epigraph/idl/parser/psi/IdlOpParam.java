@@ -19,4 +19,7 @@ public interface IdlOpParam extends PsiElement {
   @NotNull
   PsiElement getColon();
 
+  @Nullable
+  PsiElement getPlus();
+
 }

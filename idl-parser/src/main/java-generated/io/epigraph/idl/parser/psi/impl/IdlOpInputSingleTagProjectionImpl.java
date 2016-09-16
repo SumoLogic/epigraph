@@ -44,4 +44,10 @@ public class IdlOpInputSingleTagProjectionImpl extends ASTWrapperPsiElement impl
     return findChildByType(I_COLON);
   }
 
+  @Override
+  @Nullable
+  public PsiElement getPlus() {
+    return findChildByType(I_PLUS);
+  }
+
 }

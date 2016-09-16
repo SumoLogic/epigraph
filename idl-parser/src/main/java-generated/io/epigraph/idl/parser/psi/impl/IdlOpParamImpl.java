@@ -50,4 +50,10 @@ public class IdlOpParamImpl extends ASTWrapperPsiElement implements IdlOpParam {
     return findNotNullChildByType(I_COLON);
   }
 
+  @Override
+  @Nullable
+  public PsiElement getPlus() {
+    return findChildByType(I_PLUS);
+  }
+
 }

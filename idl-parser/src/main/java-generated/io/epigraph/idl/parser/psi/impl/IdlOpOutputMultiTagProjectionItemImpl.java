@@ -38,4 +38,10 @@ public class IdlOpOutputMultiTagProjectionItemImpl extends ASTWrapperPsiElement 
     return findNotNullChildByClass(IdlQid.class);
   }
 
+  @Override
+  @Nullable
+  public PsiElement getPlus() {
+    return findChildByType(I_PLUS);
+  }
+
 }
