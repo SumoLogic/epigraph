@@ -11,19 +11,25 @@ import static io.epigraph.idl.lexer.IdlElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import io.epigraph.idl.parser.psi.*;
 
-public class IdlOpParamProjectionImpl extends ASTWrapperPsiElement implements IdlOpParamProjection {
+public class IdlOpParamImpl extends ASTWrapperPsiElement implements IdlOpParam {
 
-  public IdlOpParamProjectionImpl(ASTNode node) {
+  public IdlOpParamImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull IdlVisitor visitor) {
-    visitor.visitOpParamProjection(this);
+    visitor.visitOpParam(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof IdlVisitor) accept((IdlVisitor)visitor);
     else super.accept(visitor);
+  }
+
+  @Override
+  @NotNull
+  public IdlFqnTypeRef getFqnTypeRef() {
+    return findNotNullChildByClass(IdlFqnTypeRef.class);
   }
 
   @Override

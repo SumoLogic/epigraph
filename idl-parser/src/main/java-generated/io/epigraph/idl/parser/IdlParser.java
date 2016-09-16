@@ -194,8 +194,8 @@ public class IdlParser implements PsiParser, LightPsiParser {
     else if (t == I_OP_OUTPUT_VAR_SINGLE_TAIL) {
       r = opOutputVarSingleTail(b, 0);
     }
-    else if (t == I_OP_PARAM_PROJECTION) {
-      r = opParamProjection(b, 0);
+    else if (t == I_OP_PARAM) {
+      r = opParam(b, 0);
     }
     else if (t == I_OP_PARAMETERS) {
       r = opParameters(b, 0);
@@ -1887,21 +1887,22 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // qid ':' opInputModelProjection
-  public static boolean opParamProjection(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opParamProjection")) return false;
+  // qid ':' fqnTypeRef opInputModelProjection
+  public static boolean opParam(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opParam")) return false;
     if (!nextTokenIs(b, I_ID)) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = qid(b, l + 1);
     r = r && consumeToken(b, I_COLON);
+    r = r && fqnTypeRef(b, l + 1);
     r = r && opInputModelProjection(b, l + 1);
-    exit_section_(b, m, I_OP_PARAM_PROJECTION, r);
+    exit_section_(b, m, I_OP_PARAM, r);
     return r;
   }
 
   /* ********************************************************** */
-  // 'parameters' ':' '{' (opParamProjection ','?)* '}'
+  // 'parameters' ':' '{' (opParam ','?)* '}'
   public static boolean opParameters(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opParameters")) return false;
     if (!nextTokenIs(b, I_PARAMETERS)) return false;
@@ -1916,7 +1917,7 @@ public class IdlParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // (opParamProjection ','?)*
+  // (opParam ','?)*
   private static boolean opParameters_3(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opParameters_3")) return false;
     int c = current_position_(b);
@@ -1928,12 +1929,12 @@ public class IdlParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // opParamProjection ','?
+  // opParam ','?
   private static boolean opParameters_3_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opParameters_3_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = opParamProjection(b, l + 1);
+    r = opParam(b, l + 1);
     r = r && opParameters_3_0_1(b, l + 1);
     exit_section_(b, m, null, r);
     return r;

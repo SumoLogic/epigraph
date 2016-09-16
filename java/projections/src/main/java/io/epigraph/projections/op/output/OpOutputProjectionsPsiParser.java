@@ -4,16 +4,15 @@ import com.intellij.psi.PsiElement;
 import io.epigraph.idl.parser.psi.*;
 import io.epigraph.idl.parser.psi.impl.IdlOpOutputModelProjectionImpl;
 import io.epigraph.lang.Fqn;
+import io.epigraph.projections.op.input.OpInputModelProjection;
+import io.epigraph.projections.op.input.OpInputProjectionsPsiParser;
 import io.epigraph.psi.PsiProcessingException;
 import io.epigraph.types.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.text.MessageFormat;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -190,7 +189,9 @@ public class OpOutputProjectionsPsiParser {
                                                                 @NotNull TypesResolver typesResolver)
       throws PsiProcessingException {
 
-    @NotNull OpOutputModelProjectionBodyContents body = parseModelBody(psi.getOpOutputModelProjectionBody());
+    @NotNull OpOutputModelProjectionBodyContents body =
+        parseModelBody(psi.getOpOutputModelProjectionBody(), typesResolver);
+
     body.includeInDefault = psi.getPlus() != null;
 
     final boolean noSpecificKindProjection = psi.getClass().equals(IdlOpOutputModelProjectionImpl.class);
@@ -258,18 +259,14 @@ public class OpOutputProjectionsPsiParser {
   }
 
   @NotNull
-  private static OpOutputModelProjectionBodyContents parseModelBody(@Nullable IdlOpOutputModelProjectionBody body) {
+  private static OpOutputModelProjectionBodyContents parseModelBody(@Nullable IdlOpOutputModelProjectionBody body,
+                                                                    @NotNull TypesResolver resolver)
+      throws PsiProcessingException {
     final OpOutputModelProjectionBodyContents res = new OpOutputModelProjectionBodyContents();
     if (body != null) {
       @NotNull List<IdlOpOutputModelProjectionBodyPart> parts = body.getOpOutputModelProjectionBodyPartList();
       for (IdlOpOutputModelProjectionBodyPart part : parts) {
-        @Nullable IdlOpParameters opParameters = part.getOpParameters();
-        if (opParameters != null) {
-          @NotNull List<IdlOpParamProjection> paramProjections = opParameters.getOpParamProjectionList();
-
-          // todo convert input projection, put it into param
-        }
-
+        parseParameters(part.getOpParameters(), resolver).forEach(res::addParam);
         // todo custom params
       }
 
@@ -350,7 +347,13 @@ public class OpOutputProjectionsPsiParser {
       @Nullable IdlOpOutputFieldProjectionBody fieldBody = psiFieldProjection.getOpOutputFieldProjectionBody();
       if (fieldBody != null) {
         for (IdlOpOutputFieldProjectionBodyPart fieldBodyPart : fieldBody.getOpOutputFieldProjectionBodyPartList()) {
-          // todo parse fieldParams
+          List<OpParam> parameters = parseParameters(fieldBodyPart.getOpParameters(), typesResolver);
+
+          if (!parameters.isEmpty()) {
+            if (fieldParams == null) fieldParams = new HashSet<>();
+            fieldParams.addAll(parameters);
+          }
+
           //todo parse field custom params
         }
       }
@@ -401,4 +404,32 @@ public class OpOutputProjectionsPsiParser {
     }
   }
 
+  private static List<OpParam> parseParameters(@Nullable IdlOpParameters parametersPsi,
+                                               @NotNull TypesResolver resolver) throws PsiProcessingException {
+    if (parametersPsi == null) return Collections.emptyList();
+
+    @NotNull List<IdlOpParam> params = parametersPsi.getOpParamList();
+    if (params.isEmpty()) return Collections.emptyList();
+
+    final List<OpParam> res = new ArrayList<>(2);
+    for (IdlOpParam param : params) {
+      @NotNull String paramName = param.getQid().getCanonicalName();
+      @NotNull Fqn paramTypeName = param.getFqnTypeRef().getFqn().getFqn();
+      @NotNull IdlOpInputModelProjection paramModelProjectionPsi = param.getOpInputModelProjection();
+
+      @Nullable DatumType paramType = resolver.resolveDatumType(paramTypeName);
+      if (paramType == null)
+        throw new PsiProcessingException(
+            String.format("Can't resolve parameter '%s' data type '%s'", paramName, paramTypeName), param
+        );
+
+      OpInputModelProjection<?, ?> paramModelProjection = OpInputProjectionsPsiParser.parseModelProjection(
+          paramType, paramModelProjectionPsi, resolver
+      );
+
+      res.add(new OpParam(paramName, paramModelProjection));
+    }
+
+    return res;
+  }
 }

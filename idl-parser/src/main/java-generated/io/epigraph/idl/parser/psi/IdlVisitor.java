@@ -235,7 +235,7 @@ public class IdlVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitOpParamProjection(@NotNull IdlOpParamProjection o) {
+  public void visitOpParam(@NotNull IdlOpParam o) {
     visitPsiElement(o);
   }
 

@@ -8,7 +8,7 @@ import com.intellij.psi.PsiElement;
 public interface IdlOpParameters extends PsiElement {
 
   @NotNull
-  List<IdlOpParamProjection> getOpParamProjectionList();
+  List<IdlOpParam> getOpParamList();
 
   @NotNull
   PsiElement getColon();

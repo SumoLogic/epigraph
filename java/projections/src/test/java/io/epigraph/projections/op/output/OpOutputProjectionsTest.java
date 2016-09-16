@@ -15,6 +15,7 @@ import org.junit.Test;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -166,6 +167,10 @@ public class OpOutputProjectionsTest {
     assertEquals(recursivePersonRecordProjection, recursivePersonRecordProjection2);
   }
 
+  private static String lines(String... lines) {
+    return Arrays.stream(lines).collect(Collectors.joining("\n"));
+  }
+
   @Test
   public void testParsing() throws PsiProcessingException {
     TypesResolver resolver = new SimpleTypesResolver(
@@ -173,20 +178,26 @@ public class OpOutputProjectionsTest {
         Person.type,
         User.type,
         UserId.type,
-        UserRecord.type
+        UserRecord.type,
+        epigraph.String.type
     );
 
-    // todo add params
-    String projectionStr = ":( \n" +
-                           "  id +, \n" +
-                           "  record (\n" +
-                           "    +id, \n" +
-                           "    +bestFriend :record (\n" +
-                           "      +id, \n" +
-                           "      bestFriend: id \n" +
-                           "    ) \n" +
-                           "  \n) " +
-                           ") ~io.epigraph.tests.User :record (profile)";
+    String projectionStr = lines(
+        ":(",
+        "  id +,",  // todo `+id` instead of `id +`
+        "  record (",
+        "    +id {",
+        "      parameters: {",
+//        "        param1 : epigraph.String + { default : \"hello world\" },", // todo enable once there's `toString` on data
+        "      }",
+        "    },",
+        "    +bestFriend :record (",
+        "      +id,",
+        "      bestFriend: id",
+        "    )",
+        "  )",
+        ") ~io.epigraph.tests.User :record (profile)"
+    );
 
 
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();

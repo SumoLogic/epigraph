@@ -112,8 +112,8 @@ private importRecover ::= namespaceDeclRecover
 
 // ------------- op projections -------------
 
-opParamProjection ::= qid ':' opInputModelProjection
-opParameters ::= 'parameters' ':' '{' (opParamProjection ','?)* '}'
+opParameters ::= 'parameters' ':' '{' (opParam ','?)* '}'
+opParam ::= qid ':' fqnTypeRef opInputModelProjection
 
 // output
 

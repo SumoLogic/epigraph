@@ -28,8 +28,8 @@ public class IdlOpParametersImpl extends ASTWrapperPsiElement implements IdlOpPa
 
   @Override
   @NotNull
-  public List<IdlOpParamProjection> getOpParamProjectionList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, IdlOpParamProjection.class);
+  public List<IdlOpParam> getOpParamList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, IdlOpParam.class);
   }
 
   @Override
