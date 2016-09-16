@@ -138,25 +138,16 @@ opOutputModelProjectionBody ::= '{' (opOutputModelProjectionBodyPart ','?)* '}'
 opOutputModelProjectionBodyPart ::= opParameters | customParam
 
 // op output record
-opOutputRecordModelProjection ::= '(' (opOutputFieldProjection ','?)* ')' {
-  pin=1
-  extends=opOutputModelProjection
-}
+opOutputRecordModelProjection ::= '(' (opOutputFieldProjection ','?)* ')' { pin=1 }
 opOutputFieldProjection ::= '+'? qid opOutputFieldProjectionBody? opOutputVarProjection?
 opOutputFieldProjectionBody ::= '{' (opOutputFieldProjectionBodyPart ','?)* '}'
 opOutputFieldProjectionBodyPart ::= opParameters | customParam
 
 // files : Files default FileList *(..) ~FileList2(..)
 // op output list
-opOutputListModelProjection ::= '*' opOutputVarProjection {
-  pin=1
-  extends=opOutputModelProjection
-}
+opOutputListModelProjection ::= '*' '(' opOutputVarProjection ')' { pin=1 }
 
-opOutputMapModelProjection ::= opOutputKeyProjection '*' opOutputVarProjection {
-  pin=1
-  extends=opOutputModelProjection
-}
+opOutputMapModelProjection ::= opOutputKeyProjection '*' '(' opOutputVarProjection ')' { pin=1 }
 opOutputKeyProjection ::= '[' (opOutputKeyProjectionPart ','?)* ']' {pin=1}
 opOutputKeyProjectionPart ::= 'forbidden' | 'required' | opParameters | customParam
 
@@ -187,25 +178,16 @@ opInputModelProjectionBodyPart ::= customParam | opInputDefaultValue
 opInputDefaultValue ::= 'default' ':' varValue {pin=1}
 
 // op input record
-opInputRecordModelProjection ::= '(' (opInputFieldProjection ','?)* ')' {
-  pin=1
-  extends=opInputModelProjection
-}
+opInputRecordModelProjection ::= '(' (opInputFieldProjection ','?)* ')' { pin=1 }
 opInputFieldProjection ::= '+'? qid opInputFieldProjectionBody? opInputVarProjection?
 opInputFieldProjectionBody ::= '{' (opInputFieldProjectionBodyPart ','?)* '}'
 opInputFieldProjectionBodyPart ::= customParam
 
 // files : Files default FileList *(..) ~FileList2(..)
 // op input list
-opInputListModelProjection ::= '*' opInputVarProjection {
-  pin=1
-  extends=opInputModelProjection
-}
+opInputListModelProjection ::= '*' '(' opInputVarProjection ')' { pin=1 }
 
-opInputMapModelProjection ::= opInputKeyProjection '*' opInputVarProjection {
-  pin=1
-  extends=opInputModelProjection
-}
+opInputMapModelProjection ::= opInputKeyProjection '*' '(' opInputVarProjection ')' { pin=1 }
 opInputKeyProjection ::= '[' (opInputKeyProjectionPart ','?)* ']' {pin=1}
 opInputKeyProjectionPart ::= 'forbidden' | 'required' | customParam
 

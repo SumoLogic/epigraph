@@ -8,9 +8,10 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static io.epigraph.idl.lexer.IdlElementTypes.*;
+import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import io.epigraph.idl.parser.psi.*;
 
-public class IdlOpOutputListModelProjectionImpl extends IdlOpOutputModelProjectionImpl implements IdlOpOutputListModelProjection {
+public class IdlOpOutputListModelProjectionImpl extends ASTWrapperPsiElement implements IdlOpOutputListModelProjection {
 
   public IdlOpOutputListModelProjectionImpl(ASTNode node) {
     super(node);
@@ -29,6 +30,18 @@ public class IdlOpOutputListModelProjectionImpl extends IdlOpOutputModelProjecti
   @Nullable
   public IdlOpOutputVarProjection getOpOutputVarProjection() {
     return findChildByClass(IdlOpOutputVarProjection.class);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getParenLeft() {
+    return findChildByType(I_PAREN_LEFT);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getParenRight() {
+    return findChildByType(I_PAREN_RIGHT);
   }
 
   @Override

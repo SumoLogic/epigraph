@@ -5,7 +5,7 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface IdlOpOutputRecordModelProjection extends IdlOpOutputModelProjection {
+public interface IdlOpOutputRecordModelProjection extends PsiElement {
 
   @NotNull
   List<IdlOpOutputFieldProjection> getOpOutputFieldProjectionList();

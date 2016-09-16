@@ -5,13 +5,19 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface IdlOpInputMapModelProjection extends IdlOpInputModelProjection {
+public interface IdlOpInputMapModelProjection extends PsiElement {
 
   @NotNull
   IdlOpInputKeyProjection getOpInputKeyProjection();
 
   @Nullable
   IdlOpInputVarProjection getOpInputVarProjection();
+
+  @Nullable
+  PsiElement getParenLeft();
+
+  @Nullable
+  PsiElement getParenRight();
 
   @Nullable
   PsiElement getStar();

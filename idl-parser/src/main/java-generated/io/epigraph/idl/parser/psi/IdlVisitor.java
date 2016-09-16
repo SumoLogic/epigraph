@@ -104,11 +104,11 @@ public class IdlVisitor extends PsiElementVisitor {
   }
 
   public void visitOpInputListModelProjection(@NotNull IdlOpInputListModelProjection o) {
-    visitOpInputModelProjection(o);
+    visitPsiElement(o);
   }
 
   public void visitOpInputMapModelProjection(@NotNull IdlOpInputMapModelProjection o) {
-    visitOpInputModelProjection(o);
+    visitPsiElement(o);
   }
 
   public void visitOpInputModelProjection(@NotNull IdlOpInputModelProjection o) {
@@ -132,7 +132,7 @@ public class IdlVisitor extends PsiElementVisitor {
   }
 
   public void visitOpInputRecordModelProjection(@NotNull IdlOpInputRecordModelProjection o) {
-    visitOpInputModelProjection(o);
+    visitPsiElement(o);
   }
 
   public void visitOpInputSingleTagProjection(@NotNull IdlOpInputSingleTagProjection o) {
@@ -180,11 +180,11 @@ public class IdlVisitor extends PsiElementVisitor {
   }
 
   public void visitOpOutputListModelProjection(@NotNull IdlOpOutputListModelProjection o) {
-    visitOpOutputModelProjection(o);
+    visitPsiElement(o);
   }
 
   public void visitOpOutputMapModelProjection(@NotNull IdlOpOutputMapModelProjection o) {
-    visitOpOutputModelProjection(o);
+    visitPsiElement(o);
   }
 
   public void visitOpOutputModelProjection(@NotNull IdlOpOutputModelProjection o) {
@@ -208,7 +208,7 @@ public class IdlVisitor extends PsiElementVisitor {
   }
 
   public void visitOpOutputRecordModelProjection(@NotNull IdlOpOutputRecordModelProjection o) {
-    visitOpOutputModelProjection(o);
+    visitPsiElement(o);
   }
 
   public void visitOpOutputSingleTagProjection(@NotNull IdlOpOutputSingleTagProjection o) {

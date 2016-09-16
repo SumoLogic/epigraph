@@ -1,12 +1,12 @@
 package io.epigraph.projections.op.input;
 
 import com.intellij.psi.PsiElement;
+import io.epigraph.data.ListDatum;
 import io.epigraph.data.PrimitiveDatum;
 import io.epigraph.data.RecordDatum;
 import io.epigraph.gdata.*;
 import io.epigraph.idl.gdata.IdlGDataPsiParser;
 import io.epigraph.idl.parser.psi.*;
-import io.epigraph.idl.parser.psi.impl.IdlOpInputModelProjectionImpl;
 import io.epigraph.lang.Fqn;
 import io.epigraph.psi.PsiProcessingException;
 import io.epigraph.types.*;
@@ -167,10 +167,13 @@ public class OpInputProjectionsPsiParser {
                                                                  boolean required,
                                                                  @NotNull PsiElement location)
       throws PsiProcessingException {
-    return new OpInputVarProjection(type, new OpInputTagProjection(
-        tag,
-        createDefaultModelProjection(tag.type, required, location)
-    ));
+    return new OpInputVarProjection(
+        type,
+        new OpInputTagProjection(
+            tag,
+            createDefaultModelProjection(tag.type, required, location)
+        )
+    );
   }
 
   private static OpInputVarProjection createDefaultVarProjection(@NotNull DatumType type,
@@ -178,6 +181,20 @@ public class OpInputProjectionsPsiParser {
                                                                  @NotNull PsiElement location)
       throws PsiProcessingException {
     return createDefaultVarProjection(type, type.self, required, location);
+  }
+
+  private static OpInputVarProjection createDefaultVarProjection(@NotNull DataType type,
+                                                                 boolean required,
+                                                                 @NotNull PsiElement location)
+      throws PsiProcessingException {
+
+    @Nullable Type.Tag defaultTag = type.defaultTag;
+    if (defaultTag == null)
+      throw new PsiProcessingException(
+          String.format("Can't build default projection for '%s', default tag not specified", type.name), location
+      );
+
+    return createDefaultVarProjection(type.type, defaultTag, required, location);
   }
 
 //  private static boolean required(@NotNull IdlOpInputModelProjection modelProjection) {
@@ -204,43 +221,51 @@ public class OpInputProjectionsPsiParser {
 
     @NotNull OpInputModelProjectionBodyContents body = parseModelBody(psi.getOpInputModelProjectionBody());
 
-    final boolean noSpecificKindProjection = psi.getClass().equals(IdlOpInputModelProjectionImpl.class);
     switch (type.kind()) {
       case RECORD:
-        if (noSpecificKindProjection)
+        @Nullable IdlOpInputRecordModelProjection recordModelProjectionPsi = psi.getOpInputRecordModelProjection();
+        if (recordModelProjectionPsi == null)
           return createDefaultModelProjection(type, required, psi);
-        ensureModelKind(psi, IdlOpInputRecordModelProjection.class, TypeKind.RECORD);
+        ensureModelKind(psi, TypeKind.RECORD);
         GDataRecord defaultRecordData = body.coerceDefault(GDataRecord.class, psi);
 
-        return parseRecordModelProjection((RecordType) type,
-                                          required,
-                                          defaultRecordData,
-                                          (IdlOpInputRecordModelProjection) psi,
-                                          typesResolver
+        return parseRecordModelProjection(
+            (RecordType) type,
+            required,
+            defaultRecordData,
+            recordModelProjectionPsi,
+            typesResolver
         );
       case LIST:
-        if (noSpecificKindProjection)
+        @Nullable IdlOpInputListModelProjection listModelProjectionPsi = psi.getOpInputListModelProjection();
+        if (listModelProjectionPsi == null)
           return createDefaultModelProjection(type, required, psi);
-        ensureModelKind(psi, IdlOpInputListModelProjection.class, TypeKind.LIST);
-        throw new PsiProcessingException("Unsupported type kind: " + type.kind(), psi);
+        ensureModelKind(psi, TypeKind.LIST);
+        GDataList defaultListData = body.coerceDefault(GDataList.class, psi);
+
+        return parseListModelProjection(
+            (ListType) type,
+            required,
+            defaultListData,
+            listModelProjectionPsi,
+            typesResolver
+        );
       case MAP:
-        if (noSpecificKindProjection)
+        @Nullable IdlOpInputMapModelProjection mapModelProjectionPsi = psi.getOpInputMapModelProjection();
+        if (mapModelProjectionPsi == null)
           return createDefaultModelProjection(type, required, psi);
-        ensureModelKind(psi, IdlOpInputMapModelProjection.class, TypeKind.MAP);
+        ensureModelKind(psi, TypeKind.MAP);
         throw new PsiProcessingException("Unsupported type kind: " + type.kind(), psi);
       case ENUM:
-        if (!noSpecificKindProjection)
-          wrongProjectionKind(psi, TypeKind.ENUM);
         throw new PsiProcessingException("Unsupported type kind: " + type.kind(), psi);
       case PRIMITIVE:
-        if (!noSpecificKindProjection)
-          wrongProjectionKind(psi, TypeKind.PRIMITIVE);
         GDataPrimitive defaultPrimitiveData = body.coerceDefault(GDataPrimitive.class, psi);
-        return parsePrimitiveModelProjection((PrimitiveType) type,
-                                             required,
-                                             defaultPrimitiveData,
-                                             psi,
-                                             typesResolver
+        return parsePrimitiveModelProjection(
+            (PrimitiveType) type,
+            required,
+            defaultPrimitiveData,
+            psi,
+            typesResolver
         );
       case UNION:
         throw new PsiProcessingException("Unsupported type kind: " + type.kind(), psi);
@@ -249,28 +274,23 @@ public class OpInputProjectionsPsiParser {
     }
   }
 
-  private static void ensureModelKind(@NotNull IdlOpInputModelProjection psi,
-                                      @NotNull Class<? extends IdlOpInputModelProjection> expectedClass,
-                                      @NotNull TypeKind expectedKind) throws PsiProcessingException {
-    if (!(expectedClass.isAssignableFrom(psi.getClass())))
-      wrongProjectionKind(psi, expectedKind);
+  private static void ensureModelKind(@NotNull IdlOpInputModelProjection psi, @NotNull TypeKind expectedKind)
+      throws PsiProcessingException {
+
+    @Nullable TypeKind actualKind = findProjectionKind(psi);
+    if (!expectedKind.equals(actualKind))
+      throw new PsiProcessingException(MessageFormat.format("Unexpected projection kind ''{0}'', expected ''{1}''",
+                                                            actualKind,
+                                                            expectedKind
+      ), psi);
   }
 
-  private static void wrongProjectionKind(@NotNull IdlOpInputModelProjection psi, @NotNull TypeKind expectedKind)
-      throws PsiProcessingException {
-    String actualKind = "Unknown (" + psi.getClass().getName() + ")";
-    if (psi instanceof IdlOpInputRecordModelProjection)
-      actualKind = TypeKind.RECORD.toString();
-    else if (psi instanceof IdlOpInputMapModelProjection)
-      actualKind = TypeKind.MAP.toString();
-    else if (psi instanceof IdlOpInputListModelProjection)
-      actualKind = TypeKind.LIST.toString();
-    // TODO rest
-
-    throw new PsiProcessingException(MessageFormat.format("Unexpected projection kind ''{0}'', expected ''{1}''",
-                                                          actualKind,
-                                                          expectedKind
-    ), psi);
+  @Nullable
+  private static TypeKind findProjectionKind(@NotNull IdlOpInputModelProjection psi) {
+    if (psi.getOpInputRecordModelProjection() != null) return TypeKind.RECORD;
+    if (psi.getOpInputMapModelProjection() != null) return TypeKind.MAP;
+    if (psi.getOpInputListModelProjection() != null) return TypeKind.LIST;
+    return null;
   }
 
   @NotNull
@@ -347,6 +367,7 @@ public class OpInputProjectionsPsiParser {
     }
   }
 
+  @NotNull
   public static OpInputRecordModelProjection parseRecordModelProjection(@NotNull RecordType type,
                                                                         boolean required,
                                                                         @Nullable GDataRecord defaultValue,
@@ -410,7 +431,40 @@ public class OpInputProjectionsPsiParser {
     return new OpInputRecordModelProjection(type, required, defaultDatum, fieldProjections);
   }
 
+  @NotNull
+  public static OpInputListModelProjection parseListModelProjection(@NotNull ListType type,
+                                                                    boolean required,
+                                                                    @Nullable GDataList defaultValue,
+                                                                    @NotNull IdlOpInputListModelProjection psi,
+                                                                    @NotNull TypesResolver resolver)
+      throws PsiProcessingException {
 
+    ListDatum defaultDatum = null;
+    if (defaultValue != null) {
+      try {
+        defaultDatum = GDataToData.transform(type, defaultValue, resolver);
+      } catch (GDataToData.ProcessingException e) {
+        throw new PsiProcessingException(e, psi);
+      }
+    }
+
+    OpInputVarProjection itemsProjection;
+    @Nullable IdlOpInputVarProjection opInputVarProjectionPsi = psi.getOpInputVarProjection();
+    if (opInputVarProjectionPsi == null)
+      itemsProjection = createDefaultVarProjection(type, true, psi);
+    else
+      itemsProjection = parseVarProjection(type.elementType(), opInputVarProjectionPsi, resolver);
+
+
+    return new OpInputListModelProjection(
+        type,
+        required,
+        defaultDatum,
+        itemsProjection
+    );
+  }
+
+  @NotNull
   public static OpInputPrimitiveModelProjection parsePrimitiveModelProjection(@NotNull PrimitiveType type,
                                                                               boolean required,
                                                                               @Nullable GDataPrimitive defaultValue,

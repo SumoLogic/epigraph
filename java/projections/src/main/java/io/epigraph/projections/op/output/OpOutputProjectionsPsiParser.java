@@ -2,7 +2,6 @@ package io.epigraph.projections.op.output;
 
 import com.intellij.psi.PsiElement;
 import io.epigraph.idl.parser.psi.*;
-import io.epigraph.idl.parser.psi.impl.IdlOpOutputModelProjectionImpl;
 import io.epigraph.lang.Fqn;
 import io.epigraph.projections.op.input.OpInputModelProjection;
 import io.epigraph.projections.op.input.OpInputProjectionsPsiParser;
@@ -178,6 +177,20 @@ public class OpOutputProjectionsPsiParser {
     return createDefaultVarProjection(type, type.self, includeInDefault, location);
   }
 
+  private static OpOutputVarProjection createDefaultVarProjection(@NotNull DataType type,
+                                                                  boolean includeInDefault,
+                                                                  @NotNull PsiElement location)
+      throws PsiProcessingException {
+
+    @Nullable Type.Tag defaultTag = type.defaultTag;
+    if (defaultTag == null)
+      throw new PsiProcessingException(
+          String.format("Can't build default projection for '%s', default tag not specified", type.name), location
+      );
+
+    return createDefaultVarProjection(type.type, defaultTag, includeInDefault, location);
+  }
+
 //  private static boolean includeInDefault(@NotNull IdlOpOutputModelProjection modelProjection) {
 //    @Nullable
 //    IdlOpOutputModelProjectionBody modelProjectionBody = modelProjection.getOpOutputModelProjectionBody();
@@ -203,38 +216,44 @@ public class OpOutputProjectionsPsiParser {
     @NotNull OpOutputModelProjectionBodyContents body =
         parseModelBody(psi.getOpOutputModelProjectionBody(), typesResolver);
 
-    final boolean noSpecificKindProjection = psi.getClass().equals(IdlOpOutputModelProjectionImpl.class);
     switch (type.kind()) {
       case RECORD:
-        if (noSpecificKindProjection)
+        @Nullable IdlOpOutputRecordModelProjection recordModelProjectionPsi = psi.getOpOutputRecordModelProjection();
+        if (recordModelProjectionPsi == null)
           return createDefaultModelProjection(type, includeInDefault, psi);
-        ensureModelKind(psi, IdlOpOutputRecordModelProjection.class, TypeKind.RECORD);
-        return parseRecordModelProjection((RecordType) type,
-                                          includeInDefault,
-                                          body.params,
-                                          (IdlOpOutputRecordModelProjection) psi,
-                                          typesResolver
+        ensureModelKind(psi, TypeKind.RECORD);
+        return parseRecordModelProjection(
+            (RecordType) type,
+            includeInDefault,
+            body.params,
+            recordModelProjectionPsi,
+            typesResolver
         );
       case LIST:
-        if (noSpecificKindProjection)
+        @Nullable IdlOpOutputListModelProjection listModelProjectionPsi = psi.getOpOutputListModelProjection();
+        if (listModelProjectionPsi == null)
           return createDefaultModelProjection(type, includeInDefault, psi);
-        ensureModelKind(psi, IdlOpOutputListModelProjection.class, TypeKind.LIST);
-        throw new PsiProcessingException("Unsupported type kind: " + type.kind(), psi);
+        ensureModelKind(psi, TypeKind.LIST);
+        return parseListModelProjection(
+            (ListType) type,
+            includeInDefault,
+            body.params,
+            listModelProjectionPsi,
+            typesResolver
+        );
       case MAP:
-        if (noSpecificKindProjection)
+        @Nullable IdlOpOutputMapModelProjection mapModelProjectionPsi = psi.getOpOutputMapModelProjection();
+        if (mapModelProjectionPsi == null)
           return createDefaultModelProjection(type, includeInDefault, psi);
-        ensureModelKind(psi, IdlOpOutputMapModelProjection.class, TypeKind.MAP);
+        ensureModelKind(psi, TypeKind.MAP);
         throw new PsiProcessingException("Unsupported type kind: " + type.kind(), psi);
       case ENUM:
-        if (!noSpecificKindProjection)
-          wrongProjectionKind(psi, TypeKind.ENUM);
         throw new PsiProcessingException("Unsupported type kind: " + type.kind(), psi);
       case PRIMITIVE:
-        if (!noSpecificKindProjection)
-          wrongProjectionKind(psi, TypeKind.PRIMITIVE);
-        return parsePrimitiveModelProjection((PrimitiveType) type,
-                                             includeInDefault,
-                                             body.params
+        return parsePrimitiveModelProjection(
+            (PrimitiveType) type,
+            includeInDefault,
+            body.params
         );
       case UNION:
         throw new PsiProcessingException("Unsupported type kind: " + type.kind(), psi);
@@ -243,28 +262,23 @@ public class OpOutputProjectionsPsiParser {
     }
   }
 
-  private static void ensureModelKind(@NotNull IdlOpOutputModelProjection psi,
-                                      @NotNull Class<? extends IdlOpOutputModelProjection> expectedClass,
-                                      @NotNull TypeKind expectedKind) throws PsiProcessingException {
-    if (!(expectedClass.isAssignableFrom(psi.getClass())))
-      wrongProjectionKind(psi, expectedKind);
+  private static void ensureModelKind(@NotNull IdlOpOutputModelProjection psi, @NotNull TypeKind expectedKind)
+      throws PsiProcessingException {
+
+    @Nullable TypeKind actualKind = findProjectionKind(psi);
+    if (!expectedKind.equals(actualKind))
+      throw new PsiProcessingException(MessageFormat.format("Unexpected projection kind ''{0}'', expected ''{1}''",
+                                                            actualKind,
+                                                            expectedKind
+      ), psi);
   }
 
-  private static void wrongProjectionKind(@NotNull IdlOpOutputModelProjection psi, @NotNull TypeKind expectedKind)
-      throws PsiProcessingException {
-    String actualKind = "Unknown (" + psi.getClass().getName() + ")";
-    if (psi instanceof IdlOpOutputRecordModelProjection)
-      actualKind = TypeKind.RECORD.toString();
-    else if (psi instanceof IdlOpOutputMapModelProjection)
-      actualKind = TypeKind.MAP.toString();
-    else if (psi instanceof IdlOpOutputListModelProjection)
-      actualKind = TypeKind.LIST.toString();
-    // TODO rest
-
-    throw new PsiProcessingException(MessageFormat.format("Unexpected projection kind ''{0}'', expected ''{1}''",
-                                                          actualKind,
-                                                          expectedKind
-    ), psi);
+  @Nullable
+  private static TypeKind findProjectionKind(@NotNull IdlOpOutputModelProjection psi) {
+    if (psi.getOpOutputRecordModelProjection() != null) return TypeKind.RECORD;
+    if (psi.getOpOutputMapModelProjection() != null) return TypeKind.MAP;
+    if (psi.getOpOutputListModelProjection() != null) return TypeKind.LIST;
+    return null;
   }
 
   @NotNull
@@ -394,6 +408,29 @@ public class OpOutputProjectionsPsiParser {
     return new OpOutputRecordModelProjection(type, includeInDefault, params, fieldProjections);
   }
 
+  @NotNull
+  public static OpOutputListModelProjection parseListModelProjection(@NotNull ListType type,
+                                                                     boolean includeInDefault,
+                                                                     @Nullable Set<OpParam> params,
+                                                                     @NotNull IdlOpOutputListModelProjection psi,
+                                                                     @NotNull TypesResolver resolver)
+      throws PsiProcessingException {
+
+    OpOutputVarProjection itemsProjection;
+    @Nullable IdlOpOutputVarProjection opOutputVarProjectionPsi = psi.getOpOutputVarProjection();
+    if (opOutputVarProjectionPsi == null)
+      itemsProjection = createDefaultVarProjection(type, true, psi);
+    else
+      itemsProjection = parseVarProjection(type.elementType(), opOutputVarProjectionPsi, resolver);
+
+
+    return new OpOutputListModelProjection(
+        type,
+        includeInDefault,
+        params,
+        itemsProjection
+    );
+  }
 
   public static OpOutputPrimitiveModelProjection parsePrimitiveModelProjection(@NotNull PrimitiveType type,
                                                                                boolean includeInDefault,

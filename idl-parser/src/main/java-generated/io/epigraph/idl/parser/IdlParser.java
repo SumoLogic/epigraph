@@ -217,8 +217,6 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   public static final TokenSet[] EXTENDS_SETS_ = new TokenSet[] {
-    create_token_set_(I_OP_OUTPUT_LIST_MODEL_PROJECTION, I_OP_OUTPUT_MAP_MODEL_PROJECTION, I_OP_OUTPUT_MODEL_PROJECTION, I_OP_OUTPUT_RECORD_MODEL_PROJECTION),
-    create_token_set_(I_OP_INPUT_LIST_MODEL_PROJECTION, I_OP_INPUT_MAP_MODEL_PROJECTION, I_OP_INPUT_MODEL_PROJECTION, I_OP_INPUT_RECORD_MODEL_PROJECTION),
     create_token_set_(I_DATA_ENUM, I_DATA_LIST, I_DATA_MAP, I_DATA_NULL,
       I_DATA_PRIMITIVE, I_DATA_RECORD, I_VAR_VALUE),
   };
@@ -944,7 +942,7 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '*' opInputVarProjection
+  // '*' '(' opInputVarProjection ')'
   public static boolean opInputListModelProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opInputListModelProjection")) return false;
     if (!nextTokenIs(b, I_STAR)) return false;
@@ -952,13 +950,15 @@ public class IdlParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b, l, _NONE_, I_OP_INPUT_LIST_MODEL_PROJECTION, null);
     r = consumeToken(b, I_STAR);
     p = r; // pin = 1
-    r = r && opInputVarProjection(b, l + 1);
+    r = r && report_error_(b, consumeToken(b, I_PAREN_LEFT));
+    r = p && report_error_(b, opInputVarProjection(b, l + 1)) && r;
+    r = p && consumeToken(b, I_PAREN_RIGHT) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
 
   /* ********************************************************** */
-  // opInputKeyProjection '*' opInputVarProjection
+  // opInputKeyProjection '*' '(' opInputVarProjection ')'
   public static boolean opInputMapModelProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opInputMapModelProjection")) return false;
     if (!nextTokenIs(b, I_BRACKET_LEFT)) return false;
@@ -967,7 +967,9 @@ public class IdlParser implements PsiParser, LightPsiParser {
     r = opInputKeyProjection(b, l + 1);
     p = r; // pin = 1
     r = r && report_error_(b, consumeToken(b, I_STAR));
-    r = p && opInputVarProjection(b, l + 1) && r;
+    r = p && report_error_(b, consumeToken(b, I_PAREN_LEFT)) && r;
+    r = p && report_error_(b, opInputVarProjection(b, l + 1)) && r;
+    r = p && consumeToken(b, I_PAREN_RIGHT) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -982,7 +984,7 @@ public class IdlParser implements PsiParser, LightPsiParser {
   public static boolean opInputModelProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opInputModelProjection")) return false;
     boolean r;
-    Marker m = enter_section_(b, l, _COLLAPSE_, I_OP_INPUT_MODEL_PROJECTION, "<op input model projection>");
+    Marker m = enter_section_(b, l, _NONE_, I_OP_INPUT_MODEL_PROJECTION, "<op input model projection>");
     r = opInputModelProjection_0(b, l + 1);
     r = r && opInputModelProjection_1(b, l + 1);
     exit_section_(b, l, m, r, false, null);
@@ -1500,7 +1502,7 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '*' opOutputVarProjection
+  // '*' '(' opOutputVarProjection ')'
   public static boolean opOutputListModelProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opOutputListModelProjection")) return false;
     if (!nextTokenIs(b, I_STAR)) return false;
@@ -1508,13 +1510,15 @@ public class IdlParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b, l, _NONE_, I_OP_OUTPUT_LIST_MODEL_PROJECTION, null);
     r = consumeToken(b, I_STAR);
     p = r; // pin = 1
-    r = r && opOutputVarProjection(b, l + 1);
+    r = r && report_error_(b, consumeToken(b, I_PAREN_LEFT));
+    r = p && report_error_(b, opOutputVarProjection(b, l + 1)) && r;
+    r = p && consumeToken(b, I_PAREN_RIGHT) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
 
   /* ********************************************************** */
-  // opOutputKeyProjection '*' opOutputVarProjection
+  // opOutputKeyProjection '*' '(' opOutputVarProjection ')'
   public static boolean opOutputMapModelProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opOutputMapModelProjection")) return false;
     if (!nextTokenIs(b, I_BRACKET_LEFT)) return false;
@@ -1523,7 +1527,9 @@ public class IdlParser implements PsiParser, LightPsiParser {
     r = opOutputKeyProjection(b, l + 1);
     p = r; // pin = 1
     r = r && report_error_(b, consumeToken(b, I_STAR));
-    r = p && opOutputVarProjection(b, l + 1) && r;
+    r = p && report_error_(b, consumeToken(b, I_PAREN_LEFT)) && r;
+    r = p && report_error_(b, opOutputVarProjection(b, l + 1)) && r;
+    r = p && consumeToken(b, I_PAREN_RIGHT) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -1538,7 +1544,7 @@ public class IdlParser implements PsiParser, LightPsiParser {
   public static boolean opOutputModelProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opOutputModelProjection")) return false;
     boolean r;
-    Marker m = enter_section_(b, l, _COLLAPSE_, I_OP_OUTPUT_MODEL_PROJECTION, "<op output model projection>");
+    Marker m = enter_section_(b, l, _NONE_, I_OP_OUTPUT_MODEL_PROJECTION, "<op output model projection>");
     r = opOutputModelProjection_0(b, l + 1);
     r = r && opOutputModelProjection_1(b, l + 1);
     exit_section_(b, l, m, r, false, null);

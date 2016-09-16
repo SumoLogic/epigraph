@@ -28,14 +28,26 @@ public class IdlOpInputModelProjectionImpl extends ASTWrapperPsiElement implemen
 
   @Override
   @Nullable
-  public IdlOpInputModelProjection getOpInputModelProjection() {
-    return findChildByClass(IdlOpInputModelProjection.class);
+  public IdlOpInputListModelProjection getOpInputListModelProjection() {
+    return findChildByClass(IdlOpInputListModelProjection.class);
+  }
+
+  @Override
+  @Nullable
+  public IdlOpInputMapModelProjection getOpInputMapModelProjection() {
+    return findChildByClass(IdlOpInputMapModelProjection.class);
   }
 
   @Override
   @Nullable
   public IdlOpInputModelProjectionBody getOpInputModelProjectionBody() {
     return findChildByClass(IdlOpInputModelProjectionBody.class);
+  }
+
+  @Override
+  @Nullable
+  public IdlOpInputRecordModelProjection getOpInputRecordModelProjection() {
+    return findChildByClass(IdlOpInputRecordModelProjection.class);
   }
 
 }

@@ -8,9 +8,10 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static io.epigraph.idl.lexer.IdlElementTypes.*;
+import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import io.epigraph.idl.parser.psi.*;
 
-public class IdlOpInputRecordModelProjectionImpl extends IdlOpInputModelProjectionImpl implements IdlOpInputRecordModelProjection {
+public class IdlOpInputRecordModelProjectionImpl extends ASTWrapperPsiElement implements IdlOpInputRecordModelProjection {
 
   public IdlOpInputRecordModelProjectionImpl(ASTNode node) {
     super(node);

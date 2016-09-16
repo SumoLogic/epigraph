@@ -167,10 +167,6 @@ public class OpOutputProjectionsTest {
     assertEquals(recursivePersonRecordProjection, recursivePersonRecordProjection2);
   }
 
-  private static String lines(String... lines) {
-    return Arrays.stream(lines).collect(Collectors.joining("\n"));
-  }
-
   @Test
   public void testParsing() throws PsiProcessingException {
     TypesResolver resolver = new SimpleTypesResolver(
@@ -195,7 +191,8 @@ public class OpOutputProjectionsTest {
         "      +id,",
         "      bestFriend: id",
         // todo get default tag from Person.type, once available
-        "    )",
+        "    ),",
+        "    friends {} *( :+id {}) {}",
         "  )",
         ") ~io.epigraph.tests.User :record (profile)"
     );
@@ -261,6 +258,16 @@ public class OpOutputProjectionsTest {
         "                      id: io.epigraph.tests.PersonId",
         "                    )",
         "                }",
+        "              }",
+        "          )",
+        "        friends:",
+        "          var list[polymorphic io.epigraph.tests.Person] (",
+        "            self:",
+        "              list[polymorphic io.epigraph.tests.Person] {",
+        "                items:",
+        "                  var io.epigraph.tests.Person (",
+        "                    id: +io.epigraph.tests.PersonId",
+        "                  )",
         "              }",
         "          )",
         "      }",
@@ -395,5 +402,9 @@ public class OpOutputProjectionsTest {
     );
 
 //    System.out.println(personVarProjection);
+  }
+
+  private static String lines(String... lines) {
+    return Arrays.stream(lines).collect(Collectors.joining("\n"));
   }
 }
