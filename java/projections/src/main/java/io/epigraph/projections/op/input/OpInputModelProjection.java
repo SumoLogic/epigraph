@@ -51,7 +51,7 @@ public abstract class OpInputModelProjection<M extends DatumType, D extends Datu
 
   protected <E extends Exception> void prettyPrintDefaultValue(DataLayouter<E> l) throws E {
     assert defaultValue != null;
-    l.print("default:").brk().print(defaultValue);
+    l.print("default:").brk().print(defaultValue.toImmutable());
   }
 
   @Override

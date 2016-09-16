@@ -40,7 +40,6 @@ public interface IdlElementTypes {
   IElementType I_OP_INPUT_MULTI_TAG_PROJECTION = new IdlElementType("I_OP_INPUT_MULTI_TAG_PROJECTION");
   IElementType I_OP_INPUT_MULTI_TAG_PROJECTION_ITEM = new IdlElementType("I_OP_INPUT_MULTI_TAG_PROJECTION_ITEM");
   IElementType I_OP_INPUT_RECORD_MODEL_PROJECTION = new IdlElementType("I_OP_INPUT_RECORD_MODEL_PROJECTION");
-  IElementType I_OP_INPUT_REQUIRED = new IdlElementType("I_OP_INPUT_REQUIRED");
   IElementType I_OP_INPUT_SINGLE_TAG_PROJECTION = new IdlElementType("I_OP_INPUT_SINGLE_TAG_PROJECTION");
   IElementType I_OP_INPUT_VAR_MULTI_TAIL = new IdlElementType("I_OP_INPUT_VAR_MULTI_TAIL");
   IElementType I_OP_INPUT_VAR_MULTI_TAIL_ITEM = new IdlElementType("I_OP_INPUT_VAR_MULTI_TAIL_ITEM");
@@ -200,9 +199,6 @@ public interface IdlElementTypes {
       }
       else if (type == I_OP_INPUT_RECORD_MODEL_PROJECTION) {
         return new IdlOpInputRecordModelProjectionImpl(node);
-      }
-      else if (type == I_OP_INPUT_REQUIRED) {
-        return new IdlOpInputRequiredImpl(node);
       }
       else if (type == I_OP_INPUT_SINGLE_TAG_PROJECTION) {
         return new IdlOpInputSingleTagProjectionImpl(node);

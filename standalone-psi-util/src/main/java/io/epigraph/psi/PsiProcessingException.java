@@ -22,6 +22,11 @@ public class PsiProcessingException extends Exception {
     psi = location;
   }
 
+  public PsiProcessingException(@NotNull Exception cause, @NotNull PsiElement location) {
+    super(cause);
+    psi = location;
+  }
+
   @NotNull
   public PsiElement psi() {
     return psi;

@@ -38,10 +38,4 @@ public class IdlOpInputModelProjectionBodyPartImpl extends ASTWrapperPsiElement 
     return findChildByClass(IdlOpInputDefaultValue.class);
   }
 
-  @Override
-  @Nullable
-  public IdlOpInputRequired getOpInputRequired() {
-    return findChildByClass(IdlOpInputRequired.class);
-  }
-
 }

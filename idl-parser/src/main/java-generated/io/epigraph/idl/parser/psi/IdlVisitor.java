@@ -135,10 +135,6 @@ public class IdlVisitor extends PsiElementVisitor {
     visitOpInputModelProjection(o);
   }
 
-  public void visitOpInputRequired(@NotNull IdlOpInputRequired o) {
-    visitPsiElement(o);
-  }
-
   public void visitOpInputSingleTagProjection(@NotNull IdlOpInputSingleTagProjection o) {
     visitPsiElement(o);
   }

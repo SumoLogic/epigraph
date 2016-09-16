@@ -119,9 +119,6 @@ public class IdlParser implements PsiParser, LightPsiParser {
     else if (t == I_OP_INPUT_RECORD_MODEL_PROJECTION) {
       r = opInputRecordModelProjection(b, 0);
     }
-    else if (t == I_OP_INPUT_REQUIRED) {
-      r = opInputRequired(b, 0);
-    }
     else if (t == I_OP_INPUT_SINGLE_TAG_PROJECTION) {
       r = opInputSingleTagProjection(b, 0);
     }
@@ -877,15 +874,14 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // customParam | opInputRequired
+  // customParam
   public static boolean opInputFieldProjectionBodyPart(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opInputFieldProjectionBodyPart")) return false;
-    if (!nextTokenIs(b, "<op input field projection body part>", I_REQURIED, I_ID)) return false;
+    if (!nextTokenIs(b, I_ID)) return false;
     boolean r;
-    Marker m = enter_section_(b, l, _NONE_, I_OP_INPUT_FIELD_PROJECTION_BODY_PART, "<op input field projection body part>");
+    Marker m = enter_section_(b);
     r = customParam(b, l + 1);
-    if (!r) r = opInputRequired(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
+    exit_section_(b, m, I_OP_INPUT_FIELD_PROJECTION_BODY_PART, r);
     return r;
   }
 
@@ -1080,14 +1076,14 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // customParam | opInputDefaultValue | opInputRequired
+  // customParam | opInputDefaultValue
   public static boolean opInputModelProjectionBodyPart(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opInputModelProjectionBodyPart")) return false;
+    if (!nextTokenIs(b, "<op input model projection body part>", I_DEFAULT, I_ID)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, I_OP_INPUT_MODEL_PROJECTION_BODY_PART, "<op input model projection body part>");
     r = customParam(b, l + 1);
     if (!r) r = opInputDefaultValue(b, l + 1);
-    if (!r) r = opInputRequired(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
@@ -1194,21 +1190,6 @@ public class IdlParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(b, l, "opInputRecordModelProjection_1_0_1")) return false;
     consumeToken(b, I_COMMA);
     return true;
-  }
-
-  /* ********************************************************** */
-  // 'required' ':' boolean
-  public static boolean opInputRequired(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opInputRequired")) return false;
-    if (!nextTokenIs(b, I_REQURIED)) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, I_OP_INPUT_REQUIRED, null);
-    r = consumeToken(b, I_REQURIED);
-    p = r; // pin = 1
-    r = r && report_error_(b, consumeToken(b, I_COLON));
-    r = p && consumeToken(b, I_BOOLEAN) && r;
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
   }
 
   /* ********************************************************** */

@@ -7,10 +7,7 @@ import com.intellij.psi.PsiElement;
 
 public interface IdlOpInputFieldProjectionBodyPart extends PsiElement {
 
-  @Nullable
+  @NotNull
   IdlCustomParam getCustomParam();
-
-  @Nullable
-  IdlOpInputRequired getOpInputRequired();
 
 }

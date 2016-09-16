@@ -15,12 +15,12 @@
 
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>epigraph-idl-parser</artifactId>
+      <artifactId>epigraph-java-core</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>epigraph-java-core</artifactId>
+      <artifactId>epigraph-java-gdata</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -31,6 +31,11 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>epigraph-lang-common</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>epigraph-idl-parser</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

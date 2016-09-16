@@ -27,15 +27,9 @@ public class IdlOpInputFieldProjectionBodyPartImpl extends ASTWrapperPsiElement 
   }
 
   @Override
-  @Nullable
+  @NotNull
   public IdlCustomParam getCustomParam() {
-    return findChildByClass(IdlCustomParam.class);
-  }
-
-  @Override
-  @Nullable
-  public IdlOpInputRequired getOpInputRequired() {
-    return findChildByClass(IdlOpInputRequired.class);
+    return findNotNullChildByClass(IdlCustomParam.class);
   }
 
 }

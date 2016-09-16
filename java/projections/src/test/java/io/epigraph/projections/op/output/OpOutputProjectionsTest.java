@@ -1,11 +1,10 @@
-package io.epigraph.projections.op;
+package io.epigraph.projections.op.output;
 
 import com.intellij.psi.PsiErrorElement;
 import io.epigraph.idl.parser.projections.IdlSubParserDefinitions;
 import io.epigraph.idl.parser.psi.IdlOpOutputVarProjection;
 import io.epigraph.psi.PsiProcessingException;
 import io.epigraph.projections.op.input.OpInputPrimitiveModelProjection;
-import io.epigraph.projections.op.output.*;
 import io.epigraph.psi.EpigraphPsiUtil;
 import io.epigraph.tests.*;
 import io.epigraph.types.DataType;

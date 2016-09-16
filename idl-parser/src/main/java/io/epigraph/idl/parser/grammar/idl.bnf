@@ -183,9 +183,8 @@ opInputModelProjection ::= '+'? ( opInputRecordModelProjection
                                 )? opInputModelProjectionBody?
 
 opInputModelProjectionBody ::= '{' (opInputModelProjectionBodyPart ','?)* '}'
-opInputModelProjectionBodyPart ::= customParam | opInputDefaultValue | opInputRequired
+opInputModelProjectionBodyPart ::= customParam | opInputDefaultValue
 opInputDefaultValue ::= 'default' ':' varValue {pin=1}
-opInputRequired ::= 'required' ':' boolean {pin=1}
 
 // op input record
 opInputRecordModelProjection ::= '(' (opInputFieldProjection ','?)* ')' {
@@ -194,7 +193,7 @@ opInputRecordModelProjection ::= '(' (opInputFieldProjection ','?)* ')' {
 }
 opInputFieldProjection ::= '+'? qid opInputFieldProjectionBody? opInputVarProjection?
 opInputFieldProjectionBody ::= '{' (opInputFieldProjectionBodyPart ','?)* '}'
-opInputFieldProjectionBodyPart ::= customParam | opInputRequired
+opInputFieldProjectionBodyPart ::= customParam
 
 // files : Files default FileList *(..) ~FileList2(..)
 // op input list

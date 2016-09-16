@@ -13,7 +13,4 @@ public interface IdlOpInputModelProjectionBodyPart extends PsiElement {
   @Nullable
   IdlOpInputDefaultValue getOpInputDefaultValue();
 
-  @Nullable
-  IdlOpInputRequired getOpInputRequired();
-
 }

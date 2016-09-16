@@ -149,8 +149,19 @@ public class GDataToData {
     @Nullable Fqn typeRef = gdata.typeRef();
     if (typeRef != null) type = resolveType(resolver, typeRef, PrimitiveType.class);
 
+    // TODO need to carefully coerce types here
+
+    @NotNull Object n = gdata.value();
+    if (type instanceof LongType) {
+      if (n instanceof Number)
+        n = ((Number) n).longValue();
+    } else if (type instanceof IntegerType) {
+      if (n instanceof Number)
+        n = ((Number) n).intValue();
+    }
+
     //noinspection unchecked
-    return ((PrimitiveType<Object>) type).createBuilder(gdata.value());
+    return ((PrimitiveType<Object>) type).createBuilder(n);
   }
 
   @NotNull
