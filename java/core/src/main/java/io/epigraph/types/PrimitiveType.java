@@ -3,7 +3,6 @@
 package io.epigraph.types;
 
 import io.epigraph.data.Data;
-import io.epigraph.data.Datum;
 import io.epigraph.data.PrimitiveDatum;
 import io.epigraph.data.Val;
 import io.epigraph.names.QualifiedTypeName;

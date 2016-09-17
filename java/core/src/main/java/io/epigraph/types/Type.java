@@ -71,9 +71,6 @@ public abstract class Type { // TODO split into interface and impl
 
   public abstract @NotNull Data.Builder createDataBuilder();
 
-  // TODO this is needed for mutable universe, which is likely to be raw-only - move to .Raw?
-  public /*abstract*/ @NotNull Data.Mut createMutableData() { throw new UnsupportedOperationException(); }
-
   public final @NotNull Collection<@NotNull ? extends Tag> tags() {
     // TODO produce better ordering of the tags (i.e. supertypes first, in the order of supertypes and their tags declaration)
     if (tags == null) { // TODO move initialization to constructor (if possible?)
@@ -121,10 +118,6 @@ public abstract class Type { // TODO split into interface and impl
     }
 
     public @NotNull String name() { return name; }
-
-    public @NotNull Val.Builder createValueBuilder() { return this.type.createValueBuilder(); }
-
-    public @NotNull Val.Mut createMutableValue() { return this.type.createMutableValue(); }
 
   }
 

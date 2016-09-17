@@ -6,6 +6,8 @@ import io.epigraph.types.DatumType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.ref.WeakReference;
+
 
 public interface Datum {
 
@@ -16,6 +18,8 @@ public interface Datum {
   @NotNull Datum.Raw _raw();
 
   @NotNull Datum.Imm toImmutable();
+
+  @NotNull Val asValue();
 
 
   abstract class Impl<MyType extends DatumType> implements Datum {
@@ -35,6 +39,9 @@ public interface Datum {
     @Override
     @NotNull Datum.Imm.Raw toImmutable();
 
+    @Override
+    @NotNull Val.Raw asValue();
+
   }
 
 
@@ -43,16 +50,32 @@ public interface Datum {
     @Override
     @NotNull Datum.Imm.Static toImmutable();
 
+    @Override
+    @NotNull Val.Static asValue();
+
   }
 
 
   interface Imm extends Datum, Immutable {
 
+    @Override
+    @NotNull Val.Imm asValue();
 
-    interface Raw extends Datum.Imm, Datum.Raw {}
+
+    interface Raw extends Datum.Imm, Datum.Raw {
+
+      @Override
+      @NotNull Val.Imm.Raw asValue();
+
+    }
 
 
-    interface Static extends Datum.Imm, Datum.Static {}
+    interface Static extends Datum.Imm, Datum.Static {
+
+      @Override
+      @NotNull Val.Imm.Static asValue();
+
+    }
 
 
   }

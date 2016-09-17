@@ -5,6 +5,7 @@ package io.epigraph.types;
 import io.epigraph.data.Data;
 import io.epigraph.data.ListDatum;
 import io.epigraph.data.Val;
+import io.epigraph.errors.ErrorValue;
 import io.epigraph.names.AnonListTypeName;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -44,32 +45,31 @@ public abstract class AnonListType extends ListType {
     public @NotNull ListDatum.Builder createBuilder() { return new ListDatum.Builder.Raw(this); }
 
     @Override
-    public @NotNull Val.Builder createValueBuilder() { return new Val.Builder.Raw(this); }
+    public @NotNull Val.Imm.Raw createValue(@Nullable ErrorValue errorOrNull) {
+      return Val.Imm.Raw.create(errorOrNull);
+    }
 
     @Override
     public @NotNull Data.Builder createDataBuilder() { return new Data.Builder.Raw(this); }
 
-    @Override
-    public @NotNull Data.Mut createMutableData() { return new Data.Mut.Raw(this); }
-
   }
 
 
-  public static abstract class Static< // TODO MyType extends Type.Static<MyType>?
+  public static abstract class Static<
       MyImmDatum extends ListDatum.Imm.Static,
-      MyDatumBuilder extends ListDatum.Builder.Static<MyImmDatum>,
+      MyDatumBuilder extends ListDatum.Builder.Static<MyImmDatum, MyBuilderVal>,
       MyImmVal extends Val.Imm.Static,
-      MyValBuilder extends Val.Builder.Static<MyImmVal, MyDatumBuilder>,
+      MyBuilderVal extends Val.Builder.Static<MyImmVal, MyDatumBuilder>,
       MyImmData extends Data.Imm.Static,
       MyDataBuilder extends Data.Builder.Static<MyImmData>
       > extends AnonListType
-      implements ListType.Static<MyImmDatum, MyDatumBuilder, MyImmVal, MyValBuilder, MyImmData, MyDataBuilder> {
+      implements ListType.Static<MyImmDatum, MyDatumBuilder, MyImmVal, MyBuilderVal, MyImmData, MyDataBuilder> {
 
-    private final @NotNull Function<ListDatum.Builder.Raw, MyDatumBuilder> datumBuilderConstructor;
+    private final @NotNull Function<ListDatum.Builder.@NotNull Raw, @NotNull MyDatumBuilder> datumBuilderConstructor;
 
-    private final @NotNull Function<Val.Builder.Raw, MyValBuilder> valBuilderConstructor;
+    private final @NotNull Function<Val.Imm.@NotNull Raw, @NotNull MyImmVal> immValConstructor;
 
-    private final @NotNull Function<Data.Builder.Raw, MyDataBuilder> dataBuilderConstructor;
+    private final @NotNull Function<Data.Builder.@NotNull Raw, @NotNull MyDataBuilder> dataBuilderConstructor;
 
     protected Static(
         @NotNull List<@NotNull ? extends AnonListType.Static<
@@ -81,24 +81,30 @@ public abstract class AnonListType extends ListType {
             ? // extends Data.Mut.Static<? super MyImmData>
             >> immediateSupertypes,
         @NotNull DataType elementDataType,
-        @NotNull Function<ListDatum.Builder.Raw, MyDatumBuilder> datumBuilderConstructor,
-        @NotNull Function<Val.Builder.Raw, MyValBuilder> valBuilderConstructor,
-        @NotNull Function<Data.Builder.Raw, MyDataBuilder> dataBuilderConstructor
+        @NotNull Function<ListDatum.Builder.@NotNull Raw, @NotNull MyDatumBuilder> datumBuilderConstructor,
+        @NotNull Function<Val.Imm.@NotNull Raw, @NotNull MyImmVal> immValConstructor,
+        @NotNull Function<Data.Builder.@NotNull Raw, @NotNull MyDataBuilder> dataBuilderConstructor
     ) {
       super(immediateSupertypes, elementDataType);
       this.datumBuilderConstructor = datumBuilderConstructor;
-      this.valBuilderConstructor = valBuilderConstructor;
+      this.immValConstructor = immValConstructor;
       this.dataBuilderConstructor = dataBuilderConstructor;
     }
 
     @Override
-    public final @NotNull MyDatumBuilder createBuilder() { return datumBuilderConstructor.apply(new ListDatum.Builder.Raw(this)); }
+    public final @NotNull MyDatumBuilder createBuilder() {
+      return datumBuilderConstructor.apply(new ListDatum.Builder.Raw(this));
+    }
 
     @Override
-    public final @NotNull MyValBuilder createValueBuilder() { return valBuilderConstructor.apply(new Val.Builder.Raw(this)); }
+    public final @NotNull MyImmVal createValue(@Nullable ErrorValue errorOrNull) {
+      return immValConstructor.apply(Val.Imm.Raw.create(errorOrNull));
+    }
 
     @Override
-    public final @NotNull MyDataBuilder createDataBuilder() { return dataBuilderConstructor.apply(new Data.Builder.Raw(this)); }
+    public final @NotNull MyDataBuilder createDataBuilder() {
+      return dataBuilderConstructor.apply(new Data.Builder.Raw(this));
+    }
 
   }
 

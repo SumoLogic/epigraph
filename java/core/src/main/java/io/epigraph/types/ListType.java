@@ -75,7 +75,7 @@ public abstract class ListType extends DatumType {
 
   public interface Static<
       MyImmDatum extends ListDatum.Imm.Static,
-      MyBuilderDatum extends ListDatum.Builder.Static<MyImmDatum>,
+      MyBuilderDatum extends ListDatum.Builder.Static<MyImmDatum, MyBuilderVal>,
       MyImmVal extends Val.Imm.Static,
       MyBuilderVal extends Val.Builder.Static<MyImmVal, MyBuilderDatum>,
       MyImmData extends Data.Imm.Static,

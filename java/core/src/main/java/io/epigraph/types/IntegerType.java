@@ -5,8 +5,10 @@ package io.epigraph.types;
 import io.epigraph.data.Data;
 import io.epigraph.data.IntegerDatum;
 import io.epigraph.data.Val;
+import io.epigraph.errors.ErrorValue;
 import io.epigraph.names.QualifiedTypeName;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.List;
@@ -47,7 +49,9 @@ public abstract class IntegerType extends PrimitiveType<Integer> {
     }
 
     @Override
-    public @NotNull Val.Builder.Raw createValueBuilder() { return new Val.Builder.Raw(this); }
+    public @NotNull Val.Imm.Raw createValue(@Nullable ErrorValue errorOrNull) {
+      return Val.Imm.Raw.create(errorOrNull);
+    }
 
     @Override
     public @NotNull Data.Builder.Raw createDataBuilder() { return new Data.Builder.Raw(this); }
@@ -57,17 +61,17 @@ public abstract class IntegerType extends PrimitiveType<Integer> {
 
   public static abstract class Static< // TODO MyType extends Type.Static<MyType>?
       MyImmDatum extends IntegerDatum.Imm.Static,
-      MyDatumBuilder extends IntegerDatum.Builder.Static<MyImmDatum>,
+      MyDatumBuilder extends IntegerDatum.Builder.Static<MyImmDatum, MyBuilderVal>,
       MyImmVal extends Val.Imm.Static,
-      MyValBuilder extends Val.Builder.Static<MyImmVal, MyDatumBuilder>,
+      MyBuilderVal extends Val.Builder.Static<MyImmVal, MyDatumBuilder>,
       MyImmData extends Data.Imm.Static,
       MyDataBuilder extends Data.Builder.Static<MyImmData>
       > extends IntegerType implements
-      PrimitiveType.Static<Integer, MyImmDatum, MyDatumBuilder, MyImmVal, MyValBuilder, MyImmData, MyDataBuilder> {
+      PrimitiveType.Static<Integer, MyImmDatum, MyDatumBuilder, MyImmVal, MyBuilderVal, MyImmData, MyDataBuilder> {
 
     private final @NotNull Function<IntegerDatum.Builder.@NotNull Raw, @NotNull MyDatumBuilder> datumBuilderConstructor;
 
-    private final @NotNull Function<Val.Builder.@NotNull Raw, @NotNull MyValBuilder> valBuilderConstructor;
+    private final @NotNull Function<Val.Imm.@NotNull Raw, @NotNull MyImmVal> immValConstructor;
 
     private final @NotNull Function<Data.Builder.@NotNull Raw, @NotNull MyDataBuilder> dataBuilderConstructor;
 
@@ -75,12 +79,12 @@ public abstract class IntegerType extends PrimitiveType<Integer> {
         @NotNull QualifiedTypeName name,
         @NotNull List<? extends IntegerType> immediateSupertypes,
         @NotNull Function<IntegerDatum.Builder.@NotNull Raw, @NotNull MyDatumBuilder> datumBuilderConstructor,
-        @NotNull Function<Val.Builder.@NotNull Raw, @NotNull MyValBuilder> valBuilderConstructor,
+        @NotNull Function<Val.Imm.@NotNull Raw, @NotNull MyImmVal> immValConstructor,
         @NotNull Function<Data.Builder.@NotNull Raw, @NotNull MyDataBuilder> dataBuilderConstructor
     ) {
       super(name, immediateSupertypes);
       this.datumBuilderConstructor = datumBuilderConstructor;
-      this.valBuilderConstructor = valBuilderConstructor;
+      this.immValConstructor = immValConstructor;
       this.dataBuilderConstructor = dataBuilderConstructor;
     }
 
@@ -90,8 +94,8 @@ public abstract class IntegerType extends PrimitiveType<Integer> {
     }
 
     @Override
-    public final @NotNull MyValBuilder createValueBuilder() {
-      return valBuilderConstructor.apply(new Val.Builder.Raw(this));
+    public final @NotNull MyImmVal createValue(@Nullable ErrorValue errorOrNull) {
+      return immValConstructor.apply(Val.Imm.Raw.create(errorOrNull));
     }
 
     @Override

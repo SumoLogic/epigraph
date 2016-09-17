@@ -5,8 +5,10 @@ package io.epigraph.types;
 import io.epigraph.data.Data;
 import io.epigraph.data.Datum;
 import io.epigraph.data.Val;
+import io.epigraph.errors.ErrorValue;
 import io.epigraph.names.TypeName;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -40,15 +42,12 @@ public abstract class DatumType extends Type {
 
   public @NotNull DataType dataType(boolean polymorphic) { return new DataType(polymorphic, this, self); } // TODO cache
 
-  public abstract @NotNull Val.Builder createValueBuilder();
-
-  // TODO this is needed for mutable universe, which is likely to be raw-only - move to .Raw?
-  public /*abstract*/ @NotNull Val.Mut createMutableValue() { throw new UnsupportedOperationException(); }
+  public abstract @NotNull Val.Imm createValue(@Nullable ErrorValue errorOrNull);
 
 
   public interface Raw extends Type.Raw {
 
-    //@NotNull Val.Mut createMutableValue();
+    @NotNull Val.Imm.Raw createValue(@Nullable ErrorValue errorOrNull);
 
   }
 
@@ -57,10 +56,17 @@ public abstract class DatumType extends Type {
       MyImmDatum extends Datum.Imm.Static,
       MyDatumBuilder extends Datum.Builder.Static<MyImmDatum>,
       MyImmVal extends Val.Imm.Static,
-      MyValBuilder extends Val.Builder.Static<MyImmVal, MyDatumBuilder>,
+      MyBuilderVal extends Val.Builder.Static<MyImmVal, MyDatumBuilder>,
       MyImmData extends Data.Imm.Static,
       MyDataBuilder extends Data.Builder.Static<MyImmData>
-      > extends Type.Static<MyImmData, MyDataBuilder> {}
+      > extends Type.Static<MyImmData, MyDataBuilder> {
+
+    @Override
+    @NotNull MyDataBuilder createDataBuilder();
+
+    @NotNull MyImmVal createValue(@Nullable ErrorValue errorOrNull);
+
+  }
 
 
 }

@@ -189,14 +189,14 @@ public class GDataToData {
     @Nullable Fqn typeRef = gdata.typeRef();
     if (typeRef != null) type = resolveType(resolver, typeRef, RecordType.class);
 
-    Val.Builder builder = type.createValueBuilder();
+    Val.Builder builder = type.createValue();
     builder._raw().setDatum(null);
     return builder.toImmutable();
   }
 
   @NotNull
   private static Val toVal(@NotNull Datum datum) {
-    Val.Builder builder = datum.type().createValueBuilder();
+    Val.Builder builder = datum.type().createValue();
     builder._raw().setDatum(datum);
     return builder.toImmutable();
   }

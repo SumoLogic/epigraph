@@ -5,6 +5,7 @@ package io.epigraph.types;
 import io.epigraph.data.Data;
 import io.epigraph.data.RecordDatum;
 import io.epigraph.data.Val;
+import io.epigraph.errors.ErrorValue;
 import io.epigraph.names.QualifiedTypeName;
 import io.epigraph.util.Unmodifiable;
 import org.jetbrains.annotations.NotNull;
@@ -50,8 +51,6 @@ public abstract class RecordType extends DatumType {
 
   public abstract @NotNull RecordDatum.Builder createBuilder();
 
-  //public abstract @NotNull RecordDatum.Mut createMutable();
-
 
   public final @NotNull Collection<@NotNull ? extends Field> fields() {
     // TODO produce better ordering of the fields (i.e. supertypes first, in the order of supertypes and their fields declaration)
@@ -72,13 +71,6 @@ public abstract class RecordType extends DatumType {
     if (fieldsMap == null) fieldsMap = Unmodifiable.map(fields(), f -> f.name, f -> f);
     return fieldsMap;
   }
-
-  // TODO public abstract @NotNull ImmRecordDatum immutable(@NotNull RecordDatum)?
-
-  // TODO above and below need to be introduced in raw and static types separately?
-
-  //  @Override
-  //  public abstract @NotNull MutRecordDatum mutable();
 
   public @NotNull Field assertReadable(@NotNull Field field) throws IllegalArgumentException {
     Field knownField = fieldsMap().get(field.name);
@@ -155,19 +147,19 @@ public abstract class RecordType extends DatumType {
   // TODO .Raw (final type builder?)
 
 
-  public static abstract class Static< // TODO MyType extends Type.Static<MyType>?
+  public static abstract class Static<
       MyImmDatum extends RecordDatum.Imm.Static,
-      MyDatumBuilder extends RecordDatum.Builder.Static<MyImmDatum>,
+      MyDatumBuilder extends RecordDatum.Builder.Static<MyImmDatum, MyBuilderVal>,
       MyImmVal extends Val.Imm.Static,
-      MyValBuilder extends Val.Builder.Static<MyImmVal, MyDatumBuilder>,
+      MyBuilderVal extends Val.Builder.Static<MyImmVal, MyDatumBuilder>,
       MyImmData extends Data.Imm.Static,
       MyDataBuilder extends Data.Builder.Static<MyImmData>
       > extends RecordType
-      implements DatumType.Static<MyImmDatum, MyDatumBuilder, MyImmVal, MyValBuilder, MyImmData, MyDataBuilder> {
+      implements DatumType.Static<MyImmDatum, MyDatumBuilder, MyImmVal, MyBuilderVal, MyImmData, MyDataBuilder> {
 
     private final @NotNull Function<RecordDatum.Builder.@NotNull Raw, @NotNull MyDatumBuilder> datumBuilderConstructor;
 
-    private final @NotNull Function<Val.Builder.@NotNull Raw, @NotNull MyValBuilder> valBuilderConstructor;
+    private final @NotNull Function<Val.Imm.@NotNull Raw, @NotNull MyImmVal> immValConstructor;
 
     private final @NotNull Function<Data.Builder.@NotNull Raw, @NotNull MyDataBuilder> dataBuilderConstructor;
 
@@ -175,12 +167,12 @@ public abstract class RecordType extends DatumType {
         @NotNull QualifiedTypeName name,
         @NotNull List<@NotNull ? extends RecordType.Static> immediateSupertypes,
         @NotNull Function<RecordDatum.Builder.@NotNull Raw, @NotNull MyDatumBuilder> datumBuilderConstructor,
-        @NotNull Function<Val.Builder.@NotNull Raw, @NotNull MyValBuilder> valBuilderConstructor,
+        @NotNull Function<Val.Imm.@NotNull Raw, @NotNull MyImmVal> immValConstructor,
         @NotNull Function<Data.Builder.@NotNull Raw, @NotNull MyDataBuilder> dataBuilderConstructor
     ) {
       super(name, immediateSupertypes);
       this.datumBuilderConstructor = datumBuilderConstructor;
-      this.valBuilderConstructor = valBuilderConstructor;
+      this.immValConstructor = immValConstructor;
       this.dataBuilderConstructor = dataBuilderConstructor;
     }
 
@@ -190,8 +182,8 @@ public abstract class RecordType extends DatumType {
     }
 
     @Override
-    public final @NotNull MyValBuilder createValueBuilder() {
-      return valBuilderConstructor.apply(new Val.Builder.Raw(this));
+    public final @NotNull MyImmVal createValue(@Nullable ErrorValue errorOrNull) {
+      return immValConstructor.apply(Val.Imm.Raw.create(errorOrNull));
     }
 
     @Override
