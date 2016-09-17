@@ -43,7 +43,7 @@ public interface $ln extends${withParents(t)} io.epigraph.data.${kind(t)}Datum.S
           new io.epigraph.names.QualifiedTypeName(${qnameArgs(t.name.fqn).mkString("\"", "\", \"", "\"")}),
           java.util.Arrays.asList(${t.linearizedParents.map(javaQName(_, t) + ".type").mkString(", ")}),
           $ln.Builder::new,
-          $ln.Builder.Value::new,
+          $ln.Imm.Value.Impl::new,
           $ln.Builder.Data::new
       );
     }
@@ -71,8 +71,10 @@ public interface $ln extends${withParents(t)} io.epigraph.data.${kind(t)}Datum.S
     @Override
     @NotNull $ln.Imm.Data toImmutable();
 
+    /** Returns default tag datum. */
     @Nullable $ln get();
 
+    /** Returns default tag value. */
     @Nullable $ln.Value get_();
 
   }
@@ -83,9 +85,9 @@ public interface $ln extends${withParents(t)} io.epigraph.data.${kind(t)}Datum.S
   interface Imm extends $ln,${withParents(".Imm")} io.epigraph.data.${kind(t)}Datum.Imm.Static {
 
     /** Private implementation of `$ln.Imm` interface. */
-    final class Impl extends io.epigraph.data.${kind(t)}Datum.Imm.Static.Impl implements $ln.Imm {
+    final class Impl extends io.epigraph.data.${kind(t)}Datum.Imm.Static.Impl<$ln.Imm, $ln.Imm.Value> implements $ln.Imm {
 
-      Impl(@NotNull io.epigraph.data.${kind(t)}Datum.Imm.Raw raw) { super($ln.type, raw); }
+      Impl(@NotNull io.epigraph.data.${kind(t)}Datum.Imm.Raw raw) { super($ln.type, raw, $ln.Imm.Value.Impl::new); }
 
     }
 
@@ -94,6 +96,7 @@ public interface $ln extends${withParents(t)} io.epigraph.data.${kind(t)}Datum.S
      */
     interface Value extends $ln.Value,${withParents(".Imm.Value")} io.epigraph.data.Val.Imm.Static {
 
+      /** Returns immutable default tag datum. */
       @Override
       @Nullable $ln.Imm getDatum();
 
@@ -101,7 +104,7 @@ public interface $ln extends${withParents(t)} io.epigraph.data.${kind(t)}Datum.S
       final class Impl extends io.epigraph.data.Val.Imm.Static.Impl<$ln.Imm.Value, $ln.Imm>
           implements $ln.Imm.Value {
 
-        Impl(@NotNull io.epigraph.data.Val.Imm.Raw raw) { super($ln.type, raw); }
+        Impl(@NotNull io.epigraph.data.Val.Imm.Raw raw) { super(raw); }
 
       }
 
@@ -112,9 +115,11 @@ public interface $ln extends${withParents(t)} io.epigraph.data.${kind(t)}Datum.S
      */
     interface Data extends $ln.Data,${withParents(".Imm.Data")} io.epigraph.data.Data.Imm.Static {
 
+      /** Returns immutable default tag datum. */
       @Override
       @Nullable $ln.Imm get();
 
+      /** Returns immutable default tag value. */
       @Override
       @Nullable $ln.Imm.Value get_();
 
@@ -143,9 +148,9 @@ public interface $ln extends${withParents(t)} io.epigraph.data.${kind(t)}Datum.S
   /**
    * Builder for `${t.name.name}` datum.
    */
-  final class Builder extends io.epigraph.data.${kind(t)}Datum.Builder.Static<$ln.Imm> implements $ln {
+  final class Builder extends io.epigraph.data.${kind(t)}Datum.Builder.Static<$ln.Imm, $ln.Builder.Value> implements $ln {
 
-    Builder(@NotNull io.epigraph.data.${kind(t)}Datum.Builder.Raw raw) { super($ln.type, raw, $ln.Imm.Impl::new); }
+    Builder(@NotNull io.epigraph.data.${kind(t)}Datum.Builder.Raw raw) { super($ln.type, raw, $ln.Imm.Impl::new, $ln.Builder.Value::new); }
 
     /**
      * Builder for `${t.name.name}` value (holding a builder or an error).
@@ -161,27 +166,24 @@ public interface $ln extends${withParents(t)} io.epigraph.data.${kind(t)}Datum.S
      */
     public static final class Data extends io.epigraph.data.Data.Builder.Static<$ln.Imm.Data> implements $ln.Data {
 
-      Data(@NotNull io.epigraph.data.Data.Builder.Raw raw) {
-        super($ln.type, raw, $ln.Imm.Data.Impl::new);
-      }
+      Data(@NotNull io.epigraph.data.Data.Builder.Raw raw) { super($ln.type, raw, $ln.Imm.Data.Impl::new); }
 
+      /** Returns default tag datum. */
       @Override
-      public @Nullable $ln.Builder get() {
-        return io.epigraph.util.Util.apply(get_(), $ln.Builder.Value::getDatum);
-      }
+      public @Nullable $ln get() { return io.epigraph.util.Util.apply(get_(), $ln.Value::getDatum); }
 
+      /** Returns default tag value. */
       @Override
-      public @Nullable $ln.Builder.Value get_() {
-        return ($ln.Builder.Value) _raw().getValue($ln.type.self);
-      }
+      public @Nullable $ln.Value get_() { return ($ln.Value) _raw().getValue($ln.type.self); }
 
-      // implied default tag datum
-      public void set(@Nullable $ln.Builder datum) {
-        _raw().getOrCreateTagValueBuilder($ln.type.self)._raw().setDatum(datum);
-      }
+      /** Sets default tag datum. */
+      public void set(@Nullable $ln.Builder datum) { _raw().setDatum($ln.type.self, datum); }
 
-      // implied default tag value
-      public void set_(@Nullable $ln.Builder.Value value) { _raw().setValue($ln.type.self, value); }
+      /** Sets default tag error. */
+      public void set(@NotNull io.epigraph.errors.ErrorValue error) { _raw().setError($ln.type.self, error); }
+
+      /** Sets default tag value. */
+      public void set(@Nullable $ln.Builder.Value value) { _raw().setValue($ln.type.self, value); }
 
     }
 
