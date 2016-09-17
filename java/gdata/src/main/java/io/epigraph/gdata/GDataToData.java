@@ -183,22 +183,17 @@ public class GDataToData {
       ));
   }
 
-  public static Val transform(@NotNull DatumType type,
+  public static Val.Imm transform(@NotNull DatumType type,
                               @NotNull GDataNull gdata,
                               @NotNull TypesResolver resolver) throws ProcessingException {
     @Nullable Fqn typeRef = gdata.typeRef();
     if (typeRef != null) type = resolveType(resolver, typeRef, RecordType.class);
-
-    Val.Builder builder = type.createValue();
-    builder._raw().setDatum(null);
-    return builder.toImmutable();
+    return type.createValue(null);
   }
 
   @NotNull
-  private static Val toVal(@NotNull Datum datum) {
-    Val.Builder builder = datum.type().createValue();
-    builder._raw().setDatum(datum);
-    return builder.toImmutable();
+  private static Val.Imm toVal(@NotNull Datum datum) {
+    return datum.toImmutable().asValue();
   }
 
   public static class ProcessingException extends Exception {
