@@ -50,10 +50,4 @@ public class IdlOpOutputMapModelProjectionImpl extends ASTWrapperPsiElement impl
     return findChildByType(I_PAREN_RIGHT);
   }
 
-  @Override
-  @Nullable
-  public PsiElement getStar() {
-    return findChildByType(I_STAR);
-  }
-
 }

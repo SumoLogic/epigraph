@@ -5,12 +5,12 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface IdlOpOutputKeyProjectionPart extends PsiElement {
+public interface IdlOpTagName extends PsiElement {
 
   @Nullable
-  IdlCustomParam getCustomParam();
+  IdlQid getQid();
 
   @Nullable
-  IdlOpParam getOpParam();
+  PsiElement getUnderscore();
 
 }

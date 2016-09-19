@@ -47,15 +47,13 @@ public interface IdlElementTypes {
   IElementType I_OP_INPUT_VAR_PROJECTION = new IdlElementType("I_OP_INPUT_VAR_PROJECTION");
   IElementType I_OP_INPUT_VAR_SINGLE_TAIL = new IdlElementType("I_OP_INPUT_VAR_SINGLE_TAIL");
   IElementType I_OP_OUTPUT_FIELD_PROJECTION = new IdlElementType("I_OP_OUTPUT_FIELD_PROJECTION");
-  IElementType I_OP_OUTPUT_FIELD_PROJECTION_BODY = new IdlElementType("I_OP_OUTPUT_FIELD_PROJECTION_BODY");
   IElementType I_OP_OUTPUT_FIELD_PROJECTION_BODY_PART = new IdlElementType("I_OP_OUTPUT_FIELD_PROJECTION_BODY_PART");
   IElementType I_OP_OUTPUT_KEY_PROJECTION = new IdlElementType("I_OP_OUTPUT_KEY_PROJECTION");
   IElementType I_OP_OUTPUT_KEY_PROJECTION_PART = new IdlElementType("I_OP_OUTPUT_KEY_PROJECTION_PART");
   IElementType I_OP_OUTPUT_LIST_MODEL_PROJECTION = new IdlElementType("I_OP_OUTPUT_LIST_MODEL_PROJECTION");
   IElementType I_OP_OUTPUT_MAP_MODEL_PROJECTION = new IdlElementType("I_OP_OUTPUT_MAP_MODEL_PROJECTION");
   IElementType I_OP_OUTPUT_MODEL_PROJECTION = new IdlElementType("I_OP_OUTPUT_MODEL_PROJECTION");
-  IElementType I_OP_OUTPUT_MODEL_PROJECTION_BODY = new IdlElementType("I_OP_OUTPUT_MODEL_PROJECTION_BODY");
-  IElementType I_OP_OUTPUT_MODEL_PROJECTION_BODY_PART = new IdlElementType("I_OP_OUTPUT_MODEL_PROJECTION_BODY_PART");
+  IElementType I_OP_OUTPUT_MODEL_PROPERTY = new IdlElementType("I_OP_OUTPUT_MODEL_PROPERTY");
   IElementType I_OP_OUTPUT_MULTI_TAG_PROJECTION = new IdlElementType("I_OP_OUTPUT_MULTI_TAG_PROJECTION");
   IElementType I_OP_OUTPUT_MULTI_TAG_PROJECTION_ITEM = new IdlElementType("I_OP_OUTPUT_MULTI_TAG_PROJECTION_ITEM");
   IElementType I_OP_OUTPUT_RECORD_MODEL_PROJECTION = new IdlElementType("I_OP_OUTPUT_RECORD_MODEL_PROJECTION");
@@ -66,6 +64,7 @@ public interface IdlElementTypes {
   IElementType I_OP_OUTPUT_VAR_PROJECTION = new IdlElementType("I_OP_OUTPUT_VAR_PROJECTION");
   IElementType I_OP_OUTPUT_VAR_SINGLE_TAIL = new IdlElementType("I_OP_OUTPUT_VAR_SINGLE_TAIL");
   IElementType I_OP_PARAM = new IdlElementType("I_OP_PARAM");
+  IElementType I_OP_TAG_NAME = new IdlElementType("I_OP_TAG_NAME");
   IElementType I_QID = new IdlElementType("I_QID");
   IElementType I_VAR_VALUE = new IdlElementType("I_VAR_VALUE");
 
@@ -100,6 +99,7 @@ public interface IdlElementTypes {
   IElementType I_STAR = new IdlElementType("*");
   IElementType I_STRING = new IdlElementType("string");
   IElementType I_TILDA = new IdlElementType("~");
+  IElementType I_UNDERSCORE = new IdlElementType("_");
 
   class Factory {
     public static PsiElement createElement(ASTNode node) {
@@ -221,9 +221,6 @@ public interface IdlElementTypes {
       else if (type == I_OP_OUTPUT_FIELD_PROJECTION) {
         return new IdlOpOutputFieldProjectionImpl(node);
       }
-      else if (type == I_OP_OUTPUT_FIELD_PROJECTION_BODY) {
-        return new IdlOpOutputFieldProjectionBodyImpl(node);
-      }
       else if (type == I_OP_OUTPUT_FIELD_PROJECTION_BODY_PART) {
         return new IdlOpOutputFieldProjectionBodyPartImpl(node);
       }
@@ -242,11 +239,8 @@ public interface IdlElementTypes {
       else if (type == I_OP_OUTPUT_MODEL_PROJECTION) {
         return new IdlOpOutputModelProjectionImpl(node);
       }
-      else if (type == I_OP_OUTPUT_MODEL_PROJECTION_BODY) {
-        return new IdlOpOutputModelProjectionBodyImpl(node);
-      }
-      else if (type == I_OP_OUTPUT_MODEL_PROJECTION_BODY_PART) {
-        return new IdlOpOutputModelProjectionBodyPartImpl(node);
+      else if (type == I_OP_OUTPUT_MODEL_PROPERTY) {
+        return new IdlOpOutputModelPropertyImpl(node);
       }
       else if (type == I_OP_OUTPUT_MULTI_TAG_PROJECTION) {
         return new IdlOpOutputMultiTagProjectionImpl(node);
@@ -277,6 +271,9 @@ public interface IdlElementTypes {
       }
       else if (type == I_OP_PARAM) {
         return new IdlOpParamImpl(node);
+      }
+      else if (type == I_OP_TAG_NAME) {
+        return new IdlOpTagNameImpl(node);
       }
       else if (type == I_QID) {
         return new IdlQidImpl(node);

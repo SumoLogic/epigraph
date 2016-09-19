@@ -11,14 +11,14 @@ import static io.epigraph.idl.lexer.IdlElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import io.epigraph.idl.parser.psi.*;
 
-public class IdlOpOutputFieldProjectionBodyImpl extends ASTWrapperPsiElement implements IdlOpOutputFieldProjectionBody {
+public class IdlOpTagNameImpl extends ASTWrapperPsiElement implements IdlOpTagName {
 
-  public IdlOpOutputFieldProjectionBodyImpl(ASTNode node) {
+  public IdlOpTagNameImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull IdlVisitor visitor) {
-    visitor.visitOpOutputFieldProjectionBody(this);
+    visitor.visitOpTagName(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -27,21 +27,15 @@ public class IdlOpOutputFieldProjectionBodyImpl extends ASTWrapperPsiElement imp
   }
 
   @Override
-  @NotNull
-  public List<IdlOpOutputFieldProjectionBodyPart> getOpOutputFieldProjectionBodyPartList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, IdlOpOutputFieldProjectionBodyPart.class);
-  }
-
-  @Override
-  @NotNull
-  public PsiElement getCurlyLeft() {
-    return findNotNullChildByType(I_CURLY_LEFT);
+  @Nullable
+  public IdlQid getQid() {
+    return findChildByClass(IdlQid.class);
   }
 
   @Override
   @Nullable
-  public PsiElement getCurlyRight() {
-    return findChildByType(I_CURLY_RIGHT);
+  public PsiElement getUnderscore() {
+    return findChildByType(I_UNDERSCORE);
   }
 
 }

@@ -5,7 +5,7 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface IdlOpOutputModelProjectionBodyPart extends PsiElement {
+public interface IdlOpOutputModelProperty extends PsiElement {
 
   @Nullable
   IdlCustomParam getCustomParam();

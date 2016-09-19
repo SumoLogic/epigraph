@@ -37,6 +37,7 @@
     STAR = '*'
     PLUS = '+'
     AT = '@'
+    UNDERSCORE = '_'
 
     space='regexp:\s+'
     comment='regexp://.*'
@@ -115,66 +116,49 @@ private importRecover ::= namespaceDeclRecover
 
 //opParameters ::= 'parameters' ':' '{' (opParam ','?)* '}'
 opParam ::= ';' '+'? qid ':' fqnTypeRef opInputModelProjection
+opTagName ::= qid | '_'
 
 // output
 
-// field [{ fieldParams }] : ( tag [{ tagParams }] [tagModelProjection], ... ) ~ tail
-// field [{ fieldParams }] [:[+][tag] { tagParams }] [tagModelProjection] [~ tail]
-// field [{ [{fieldParams}] :(tag [ {tagParams} ] [tagModelProjection], ... ) [~tail] }]
-// field [{ [fieldParams] [:[+]tag] [{tagParams}]] [tagModelProjection] [~tail] }]
-
-/*
-
-friends {
-    ; +count: Integer
-    ; cursor: Cursor(+foo,bar(...)=(x:1,y:2)) = (123,(x:1,y:2))
-    :[tag] {
-        ;;sort:Sort=Name
-        ;ascending:Boolean = false
-        [..](..)
-        *(..)
-        (..)
-    }
-
-}
-
-*/
-
-
-
 opOutputVarProjection ::= ( opOutputMultiTagProjection | opOutputSingleTagProjection ) opOutputVarPolymorphicTail?
-opOutputSingleTagProjection ::= ( ':' '+'? qid )? opOutputModelProjection
+
+opOutputSingleTagProjection ::= ( ':' '+'? opTagName)? (opOutputComplexSingleTagProjection | opOutputSimpleSingleTagProjection )
+private opOutputSimpleSingleTagProjection ::= opOutputModelProjection
+private opOutputComplexSingleTagProjection ::= '{' (opOutputModelProperty ','?)* opOutputModelProjection '}' {pin=1}
+
 opOutputMultiTagProjection ::= ':' '(' (opOutputMultiTagProjectionItem ','?)* ')' {pin=2}
-opOutputMultiTagProjectionItem ::= '+'? qid opOutputModelProjection
+opOutputMultiTagProjectionItem ::= '+'? opTagName ( opOutputComplexMultiTagProjectionItem | opOutputSimpleMultiTagProjectionItem )
+private opOutputSimpleMultiTagProjectionItem ::= opOutputModelProjection
+private opOutputComplexMultiTagProjectionItem ::= '{' (opOutputModelProperty ','?)* opOutputModelProjection '}' {pin=1}
 //
 opOutputVarPolymorphicTail ::= opOutputVarSingleTail | opOutputVarMultiTail
 opOutputVarSingleTail ::= '~' fqnTypeRef opOutputVarProjection
 opOutputVarMultiTail ::= '~' '(' (opOutputVarMultiTailItem ','?)* ')' {pin=2}
 opOutputVarMultiTailItem ::= fqnTypeRef opOutputVarProjection
 
+opOutputModelProperty ::= opParam | customParam
+
 opOutputModelProjection ::= ( opOutputRecordModelProjection
                             | opOutputListModelProjection
                             | opOutputMapModelProjection
 //                          | opOutputEnumModelProjection
 //                          | opOutputPrimitiveModelProjection
-                            )? opOutputModelProjectionBody?
-
-opOutputModelProjectionBody ::= '{' (opOutputModelProjectionBodyPart ','?)* '}'
-opOutputModelProjectionBodyPart ::= opParam | customParam
+                            )?
 
 // op output record
 opOutputRecordModelProjection ::= '(' (opOutputFieldProjection ','?)* ')' { pin=1 }
-opOutputFieldProjection ::= '+'? qid opOutputFieldProjectionBody? opOutputVarProjection?
-opOutputFieldProjectionBody ::= '{' (opOutputFieldProjectionBodyPart ','?)* '}'
+opOutputFieldProjection ::= '+'? qid (opOutputComplexFieldProjection | opOutputSimpleFieldProjection)
+private opOutputComplexFieldProjection ::= '{' (opOutputFieldProjectionBodyPart ','? )* opOutputVarProjection? '}'
+private opOutputSimpleFieldProjection ::= opOutputVarProjection
 opOutputFieldProjectionBodyPart ::= opParam | customParam
 
 // files : Files default FileList *(..) ~FileList2(..)
 // op output list
 opOutputListModelProjection ::= '*' '(' opOutputVarProjection ')' { pin=1 }
 
-opOutputMapModelProjection ::= opOutputKeyProjection '*' '(' opOutputVarProjection ')' { pin=1 }
-opOutputKeyProjection ::= '[' (opOutputKeyProjectionPart ','?)* ']' {pin=1}
-opOutputKeyProjectionPart ::= 'forbidden' | 'required' | opParam | customParam
+opOutputMapModelProjection ::= opOutputKeyProjection '(' opOutputVarProjection ')' { pin=1 }
+opOutputKeyProjection ::= '[' ('required' ','?| 'forbidden' ','?)? (opOutputKeyProjectionPart ','?)* ']' {pin=1}
+opOutputKeyProjectionPart ::= opParam | customParam
 
 //opOutputPrimitiveModelProjection ::= 'primitive' // ?
 //opOutputEnumModelProjection ::= 'enum' // ?
@@ -212,7 +196,7 @@ opInputFieldProjectionBodyPart ::= customParam
 // op input list
 opInputListModelProjection ::= '*' '(' opInputVarProjection ')' { pin=1 }
 
-opInputMapModelProjection ::= opInputKeyProjection '*' '(' opInputVarProjection ')' { pin=1 }
+opInputMapModelProjection ::= opInputKeyProjection '(' opInputVarProjection ')' { pin=1 }
 opInputKeyProjection ::= '[' (opInputKeyProjectionPart ','?)* ']' {pin=1}
 opInputKeyProjectionPart ::= 'forbidden' | 'required' | customParam
 

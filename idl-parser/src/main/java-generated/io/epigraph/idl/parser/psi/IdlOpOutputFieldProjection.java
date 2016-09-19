@@ -7,14 +7,20 @@ import com.intellij.psi.PsiElement;
 
 public interface IdlOpOutputFieldProjection extends PsiElement {
 
-  @Nullable
-  IdlOpOutputFieldProjectionBody getOpOutputFieldProjectionBody();
+  @NotNull
+  List<IdlOpOutputFieldProjectionBodyPart> getOpOutputFieldProjectionBodyPartList();
 
   @Nullable
   IdlOpOutputVarProjection getOpOutputVarProjection();
 
   @NotNull
   IdlQid getQid();
+
+  @Nullable
+  PsiElement getCurlyLeft();
+
+  @Nullable
+  PsiElement getCurlyRight();
 
   @Nullable
   PsiElement getPlus();

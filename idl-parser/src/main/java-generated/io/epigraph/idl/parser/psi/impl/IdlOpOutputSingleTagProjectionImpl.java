@@ -27,21 +27,39 @@ public class IdlOpOutputSingleTagProjectionImpl extends ASTWrapperPsiElement imp
   }
 
   @Override
-  @NotNull
+  @Nullable
   public IdlOpOutputModelProjection getOpOutputModelProjection() {
-    return findNotNullChildByClass(IdlOpOutputModelProjection.class);
+    return findChildByClass(IdlOpOutputModelProjection.class);
+  }
+
+  @Override
+  @NotNull
+  public List<IdlOpOutputModelProperty> getOpOutputModelPropertyList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, IdlOpOutputModelProperty.class);
   }
 
   @Override
   @Nullable
-  public IdlQid getQid() {
-    return findChildByClass(IdlQid.class);
+  public IdlOpTagName getOpTagName() {
+    return findChildByClass(IdlOpTagName.class);
   }
 
   @Override
   @Nullable
   public PsiElement getColon() {
     return findChildByType(I_COLON);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getCurlyLeft() {
+    return findChildByType(I_CURLY_LEFT);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getCurlyRight() {
+    return findChildByType(I_CURLY_RIGHT);
   }
 
   @Override

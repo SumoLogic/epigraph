@@ -191,7 +191,11 @@ public class OpOutputProjectionsTest {
         "      bestFriend: id",
         // todo get default tag from Person.type, once available
         "    ),",
-        "    friends {} *( :+id {}) {}",
+        "    friends *( :+id )",
+//        "    friends *( :+id )",
+//        "    friends { *( :+id ) }",
+//        "    friends { { *( :+id {} ) } }",
+//        "    friends { :_ { *( :+id {} ) } }", // same as above
         // :record (....) {params}
         "  )",
         ") ~io.epigraph.tests.User :record (profile)"

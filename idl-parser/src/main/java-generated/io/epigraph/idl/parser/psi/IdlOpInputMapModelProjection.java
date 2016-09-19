@@ -19,7 +19,4 @@ public interface IdlOpInputMapModelProjection extends PsiElement {
   @Nullable
   PsiElement getParenRight();
 
-  @Nullable
-  PsiElement getStar();
-
 }

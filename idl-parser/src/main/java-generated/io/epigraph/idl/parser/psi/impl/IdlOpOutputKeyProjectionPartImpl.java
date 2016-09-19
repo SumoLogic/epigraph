@@ -38,16 +38,4 @@ public class IdlOpOutputKeyProjectionPartImpl extends ASTWrapperPsiElement imple
     return findChildByClass(IdlOpParam.class);
   }
 
-  @Override
-  @Nullable
-  public PsiElement getForbidden() {
-    return findChildByType(I_FORBIDDEN);
-  }
-
-  @Override
-  @Nullable
-  public PsiElement getRequried() {
-    return findChildByType(I_REQURIED);
-  }
-
 }

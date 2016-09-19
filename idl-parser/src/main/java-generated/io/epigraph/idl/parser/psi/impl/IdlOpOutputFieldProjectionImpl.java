@@ -27,9 +27,9 @@ public class IdlOpOutputFieldProjectionImpl extends ASTWrapperPsiElement impleme
   }
 
   @Override
-  @Nullable
-  public IdlOpOutputFieldProjectionBody getOpOutputFieldProjectionBody() {
-    return findChildByClass(IdlOpOutputFieldProjectionBody.class);
+  @NotNull
+  public List<IdlOpOutputFieldProjectionBodyPart> getOpOutputFieldProjectionBodyPartList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, IdlOpOutputFieldProjectionBodyPart.class);
   }
 
   @Override
@@ -42,6 +42,18 @@ public class IdlOpOutputFieldProjectionImpl extends ASTWrapperPsiElement impleme
   @NotNull
   public IdlQid getQid() {
     return findNotNullChildByClass(IdlQid.class);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getCurlyLeft() {
+    return findChildByType(I_CURLY_LEFT);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getCurlyRight() {
+    return findChildByType(I_CURLY_RIGHT);
   }
 
   @Override
