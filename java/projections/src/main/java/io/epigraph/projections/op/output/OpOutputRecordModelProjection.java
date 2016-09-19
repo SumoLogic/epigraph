@@ -1,6 +1,7 @@
 package io.epigraph.projections.op.output;
 
 import de.uka.ilkd.pp.DataLayouter;
+import io.epigraph.projections.op.OpCustomParams;
 import io.epigraph.types.RecordType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -21,8 +22,9 @@ public class OpOutputRecordModelProjection extends OpOutputModelProjection<Recor
   public OpOutputRecordModelProjection(@NotNull RecordType model,
                                        boolean includeInDefault,
                                        @Nullable OpParams params,
+                                       @Nullable OpCustomParams customParams,
                                        @Nullable LinkedHashSet<OpOutputFieldProjection> fieldProjections) {
-    super(model, includeInDefault, params);
+    super(model, includeInDefault, params, customParams);
     this.fieldProjections = fieldProjections;
 
     Collection<@NotNull ? extends RecordType.Field> fields = model.fields();

@@ -2,6 +2,7 @@ package io.epigraph.projections.op.input;
 
 import de.uka.ilkd.pp.DataLayouter;
 import io.epigraph.data.ListDatum;
+import io.epigraph.projections.op.OpCustomParams;
 import io.epigraph.types.ListType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -18,8 +19,9 @@ public class OpInputListModelProjection extends OpInputModelProjection<ListType,
   public OpInputListModelProjection(@NotNull ListType model,
                                     boolean required,
                                     @Nullable ListDatum defaultValue,
+                                    @Nullable OpCustomParams customParams,
                                     @NotNull OpInputVarProjection itemsProjection) {
-    super(model, required, defaultValue);
+    super(model, required, defaultValue, customParams);
     this.itemsProjection = itemsProjection;
   }
 
@@ -45,6 +47,7 @@ public class OpInputListModelProjection extends OpInputModelProjection<ListType,
     prettyPrintModel(l);
     l.beginCInd().print(" {");
 
+    prettyPrintParamsBlock(l);
     prettyPrintDefaultValueBlock(l);
 
     l.brk().beginCInd().print("items:").brk();

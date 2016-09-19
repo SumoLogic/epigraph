@@ -1,6 +1,10 @@
 package io.epigraph.projections;
 
 import com.intellij.psi.PsiElement;
+import io.epigraph.gdata.GDataValue;
+import io.epigraph.idl.gdata.IdlGDataPsiParser;
+import io.epigraph.idl.parser.psi.IdlCustomParam;
+import io.epigraph.idl.parser.psi.IdlDataValue;
 import io.epigraph.idl.parser.psi.IdlOpTagName;
 import io.epigraph.idl.parser.psi.IdlQid;
 import io.epigraph.lang.Fqn;
@@ -9,6 +13,9 @@ import io.epigraph.types.Type;
 import io.epigraph.types.TypesResolver;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -73,5 +80,23 @@ public class ProjectionPsiParserUtil {
     @Nullable Type type = resolver.resolve(fqn);
     if (type == null) throw new PsiProcessingException(String.format("Can't find type '%s'", fqn), location);
     return type;
+  }
+
+  @Nullable
+  public static Map<String, GDataValue> parseCustomParam(
+      @Nullable Map<String, GDataValue> customParamsMap,
+      @Nullable IdlCustomParam customParamPsi)
+      throws PsiProcessingException {
+
+    if (customParamPsi != null) {
+      if (customParamsMap == null) customParamsMap = new HashMap<>();
+      @Nullable IdlDataValue customParamValuePsi = customParamPsi.getDataValue();
+      if (customParamValuePsi != null) {
+        @NotNull String customParamName = customParamPsi.getQid().getCanonicalName();
+        @NotNull GDataValue customParamValue = IdlGDataPsiParser.parseValue(customParamValuePsi);
+        customParamsMap.put(customParamName, customParamValue);
+      }
+    }
+    return customParamsMap;
   }
 }

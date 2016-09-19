@@ -118,7 +118,10 @@ opTagName ::= qid | '_' // `_` is default tag
 
 // output
 
-opParam ::= ';' '+'? qid ':' fqnTypeRef opInputModelProjection ( '=' varValue )?
+opParam ::= ';' '+'? qid ':' fqnTypeRef opInputModelProjection opParamDefault? opParamBody? { pin = 1 }
+private opParamDefault ::= '=' varValue { pin=1 }
+private opParamBody ::= '{' ( opParamBodyPart ','? )* '}'
+private opParamBodyPart ::= customParam
 
 opOutputVarProjection ::= ( opOutputMultiTagProjection | opOutputSingleTagProjection ) opOutputVarPolymorphicTail?
 
@@ -207,6 +210,7 @@ opInputKeyProjectionPart ::= 'forbidden' | 'required' | customParam
 //opInputEnumModelProjection ::= 'enum' // ?
 
 // ------------- data language -------------
+// please keep consistent with schema.bnf
 
 dataValue ::= dataVar | varValue
 private dataTypeSpec ::= fqnTypeRef

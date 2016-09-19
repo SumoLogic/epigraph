@@ -3,6 +3,7 @@ package io.epigraph.projections.op.output;
 import de.uka.ilkd.pp.DataLayouter;
 import de.uka.ilkd.pp.PrettyPrintable;
 import io.epigraph.projections.generic.GenericModelProjection;
+import io.epigraph.projections.op.OpCustomParams;
 import io.epigraph.types.DatumType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -17,18 +18,26 @@ public abstract class OpOutputModelProjection<M extends DatumType>
   protected final boolean includeInDefault;
   @Nullable
   protected final OpParams params;
+  @Nullable
+  protected final OpCustomParams customParams;
 
   public OpOutputModelProjection(@NotNull M model,
                                  boolean includeInDefault,
-                                 @Nullable OpParams params) {
+                                 @Nullable OpParams params,
+                                 @Nullable OpCustomParams customParams) {
     super(model);
     this.includeInDefault = includeInDefault;
     this.params = params;
+    this.customParams = customParams;
   }
 
   public boolean includeInDefault() { return includeInDefault; }
 
-  public @Nullable OpParams params() { return params; }
+  @Nullable
+  public OpParams params() { return params; }
+
+  @Nullable
+  public OpCustomParams customParams() { return customParams; }
 
   @Override
   public <Exc extends Exception> void prettyPrint(DataLayouter<Exc> l) throws Exc {
@@ -43,6 +52,7 @@ public abstract class OpOutputModelProjection<M extends DatumType>
 
   protected <Exc extends Exception> void prettyPrintParamsBlock(DataLayouter<Exc> l) throws Exc {
     if (params != null && !params.isEmpty()) l.print(params);
+    if (customParams != null && !customParams.isEmpty()) l.print(customParams);
   }
 
   @Override
@@ -52,9 +62,10 @@ public abstract class OpOutputModelProjection<M extends DatumType>
     OpOutputModelProjection<?> that = (OpOutputModelProjection<?>) o;
     return includeInDefault == that.includeInDefault &&
            Objects.equals(model, that.model) &&
-           Objects.equals(params, that.params);
+           Objects.equals(params, that.params) &&
+           Objects.equals(customParams, that.customParams);
   }
 
   @Override
-  public int hashCode() { return Objects.hash(model, includeInDefault, params); }
+  public int hashCode() { return Objects.hash(model, includeInDefault, params, customParams); }
 }

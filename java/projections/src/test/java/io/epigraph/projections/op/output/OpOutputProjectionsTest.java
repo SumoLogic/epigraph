@@ -4,9 +4,9 @@ import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.impl.DebugUtil;
 import io.epigraph.idl.parser.projections.IdlSubParserDefinitions;
 import io.epigraph.idl.parser.psi.IdlOpOutputVarProjection;
-import io.epigraph.psi.PsiProcessingException;
 import io.epigraph.projections.op.input.OpInputPrimitiveModelProjection;
 import io.epigraph.psi.EpigraphPsiUtil;
+import io.epigraph.psi.PsiProcessingException;
 import io.epigraph.tests.*;
 import io.epigraph.types.DataType;
 import io.epigraph.types.SimpleTypesResolver;
@@ -31,15 +31,17 @@ public class OpOutputProjectionsTest {
         PersonRecord.type,
         false,
         null,
+        null,
         OpOutputRecordModelProjection.fields(
             new OpOutputFieldProjection(
                 PersonRecord.id,
+                null,
                 null,
                 new OpOutputVarProjection(
                     Person.type,
                     new OpOutputTagProjection(
                         Person.id,
-                        new OpOutputPrimitiveModelProjection(PersonId.type, false, null)
+                        new OpOutputPrimitiveModelProjection(PersonId.type, false, null, null)
                     )
                 ), true
             )
@@ -48,6 +50,7 @@ public class OpOutputProjectionsTest {
 
     OpOutputFieldProjection recursiveBestFriendProjection = new OpOutputFieldProjection(
         PersonRecord.bestFriend,
+        null,
         null,
         new OpOutputVarProjection(
             Person.type,
@@ -65,15 +68,17 @@ public class OpOutputProjectionsTest {
         PersonRecord.type,
         false,
         null,
+        null,
         OpOutputRecordModelProjection.fields(
             new OpOutputFieldProjection(
                 PersonRecord.id,
+                null,
                 null,
                 new OpOutputVarProjection(
                     Person.type,
                     new OpOutputTagProjection(
                         Person.id,
-                        new OpOutputPrimitiveModelProjection(PersonId.type, false, null)
+                        new OpOutputPrimitiveModelProjection(PersonId.type, false, null, null)
                     )
                 ), true
             )
@@ -81,6 +86,7 @@ public class OpOutputProjectionsTest {
     );
     OpOutputFieldProjection recursiveBestFriendProjection2 = new OpOutputFieldProjection(
         PersonRecord.bestFriend,
+        null,
         null,
         new OpOutputVarProjection(
             Person.type,
@@ -104,15 +110,17 @@ public class OpOutputProjectionsTest {
         PersonRecord.type,
         false,
         null,
+        null,
         OpOutputRecordModelProjection.fields(
             new OpOutputFieldProjection(
                 PersonRecord.id,
+                null,
                 null,
                 new OpOutputVarProjection(
                     Person.type,
                     new OpOutputTagProjection(
                         Person.id,
-                        new OpOutputPrimitiveModelProjection(PersonId.type, false, null)
+                        new OpOutputPrimitiveModelProjection(PersonId.type, false, null, null)
                     )
                 ), true
             )
@@ -121,6 +129,7 @@ public class OpOutputProjectionsTest {
     recursivePersonRecordProjection.addFieldProjection(
         new OpOutputFieldProjection(
             PersonRecord.bestFriend,
+            null,
             null,
             new OpOutputVarProjection(
                 Person.type,
@@ -136,15 +145,17 @@ public class OpOutputProjectionsTest {
         PersonRecord.type,
         false,
         null,
+        null,
         OpOutputRecordModelProjection.fields(
             new OpOutputFieldProjection(
                 PersonRecord.id,
+                null,
                 null,
                 new OpOutputVarProjection(
                     Person.type,
                     new OpOutputTagProjection(
                         Person.id,
-                        new OpOutputPrimitiveModelProjection(PersonId.type, false, null)
+                        new OpOutputPrimitiveModelProjection(PersonId.type, false, null, null)
                     )
                 ), true
             )
@@ -153,6 +164,7 @@ public class OpOutputProjectionsTest {
     recursivePersonRecordProjection2.addFieldProjection(
         new OpOutputFieldProjection(
             PersonRecord.bestFriend,
+            null,
             null,
             new OpOutputVarProjection(
                 Person.type,
@@ -179,6 +191,7 @@ public class OpOutputProjectionsTest {
         epigraph.String.type
     );
 
+    // todo add custom params once there's `toString` on data
     String projectionStr = lines(
         ":(",
         "  +id,",
@@ -299,15 +312,17 @@ public class OpOutputProjectionsTest {
         PersonRecord.type,
         false,
         null,
+        null,
         OpOutputRecordModelProjection.fields(
             new OpOutputFieldProjection(
                 PersonRecord.id,
+                null,
                 null,
                 new OpOutputVarProjection(
                     Person.type,
                     new OpOutputTagProjection(
                         Person.id,
-                        new OpOutputPrimitiveModelProjection(PersonId.type, false, null)
+                        new OpOutputPrimitiveModelProjection(PersonId.type, false, null, null)
                     )
                 ), true
             )
@@ -316,6 +331,7 @@ public class OpOutputProjectionsTest {
     recursivePersonRecordProjection.addFieldProjection(
         new OpOutputFieldProjection(
             PersonRecord.bestFriend,
+            null,
             null,
             new OpOutputVarProjection(
                 Person.type,
@@ -338,8 +354,9 @@ public class OpOutputProjectionsTest {
                         true,
                         new OpParams(
                             // todo string
-                            new OpParam("token", new OpInputPrimitiveModelProjection(UserId.type, false, null))
-                        )
+                            new OpParam("token", new OpInputPrimitiveModelProjection(UserId.type, false, null, null))
+                        ),
+                        null
                     )
                 ),
                 new OpOutputTagProjection(
@@ -348,16 +365,17 @@ public class OpOutputProjectionsTest {
                         PersonRecord.type,
                         false,
                         null,
+                        null,
                         OpOutputRecordModelProjection.fields(
                             new OpOutputFieldProjection(
                                 PersonRecord.bestFriend,
-                                null,
+                                null, null,
                                 // todo make it recursive?
                                 new OpOutputVarProjection(
                                     Person.type,
                                     new OpOutputTagProjection(
                                         Person.id,
-                                        new OpOutputPrimitiveModelProjection(PersonId.type, false, null)
+                                        new OpOutputPrimitiveModelProjection(PersonId.type, false, null, null)
                                     )
                                 ),
                                 true
@@ -375,7 +393,7 @@ public class OpOutputProjectionsTest {
                         User.record,
                         new OpOutputRecordModelProjection(
                             UserRecord.type,
-                            false, null,
+                            false, null, null,
                             OpOutputRecordModelProjection.fields(
                                 new OpOutputFieldProjection(
                                     UserRecord.bestFriend,
@@ -383,9 +401,11 @@ public class OpOutputProjectionsTest {
                                                              new OpInputPrimitiveModelProjection(
                                                                  PersonId.type,
                                                                  false,
+                                                                 null,
                                                                  null
                                                              )
                                     )),
+                                    null,
                                     new OpOutputVarProjection(
                                         Person.type, // todo ??
                                         new OpOutputTagProjection(

@@ -8,19 +8,28 @@ import com.intellij.psi.PsiElement;
 public interface IdlOpParam extends PsiElement {
 
   @NotNull
+  List<IdlCustomParam> getCustomParamList();
+
+  @Nullable
   IdlFqnTypeRef getFqnTypeRef();
 
-  @NotNull
+  @Nullable
   IdlOpInputModelProjection getOpInputModelProjection();
 
-  @NotNull
+  @Nullable
   IdlQid getQid();
 
   @Nullable
   IdlVarValue getVarValue();
 
-  @NotNull
+  @Nullable
   PsiElement getColon();
+
+  @Nullable
+  PsiElement getCurlyLeft();
+
+  @Nullable
+  PsiElement getCurlyRight();
 
   @Nullable
   PsiElement getEq();

@@ -2085,21 +2085,23 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ';' '+'? qid ':' fqnTypeRef opInputModelProjection ( '=' varValue )?
+  // ';' '+'? qid ':' fqnTypeRef opInputModelProjection opParamDefault? opParamBody?
   public static boolean opParam(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opParam")) return false;
     if (!nextTokenIs(b, I_SEMICOLON)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, I_OP_PARAM, null);
     r = consumeToken(b, I_SEMICOLON);
-    r = r && opParam_1(b, l + 1);
-    r = r && qid(b, l + 1);
-    r = r && consumeToken(b, I_COLON);
-    r = r && fqnTypeRef(b, l + 1);
-    r = r && opInputModelProjection(b, l + 1);
-    r = r && opParam_6(b, l + 1);
-    exit_section_(b, m, I_OP_PARAM, r);
-    return r;
+    p = r; // pin = 1
+    r = r && report_error_(b, opParam_1(b, l + 1));
+    r = p && report_error_(b, qid(b, l + 1)) && r;
+    r = p && report_error_(b, consumeToken(b, I_COLON)) && r;
+    r = p && report_error_(b, fqnTypeRef(b, l + 1)) && r;
+    r = p && report_error_(b, opInputModelProjection(b, l + 1)) && r;
+    r = p && report_error_(b, opParam_6(b, l + 1)) && r;
+    r = p && opParam_7(b, l + 1) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   // '+'?
@@ -2109,22 +2111,83 @@ public class IdlParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // ( '=' varValue )?
+  // opParamDefault?
   private static boolean opParam_6(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opParam_6")) return false;
-    opParam_6_0(b, l + 1);
+    opParamDefault(b, l + 1);
     return true;
   }
 
-  // '=' varValue
-  private static boolean opParam_6_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opParam_6_0")) return false;
+  // opParamBody?
+  private static boolean opParam_7(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opParam_7")) return false;
+    opParamBody(b, l + 1);
+    return true;
+  }
+
+  /* ********************************************************** */
+  // '{' ( opParamBodyPart ','? )* '}'
+  static boolean opParamBody(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opParamBody")) return false;
+    if (!nextTokenIs(b, I_CURLY_LEFT)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_);
+    r = consumeToken(b, I_CURLY_LEFT);
+    p = r; // pin = 1
+    r = r && report_error_(b, opParamBody_1(b, l + 1));
+    r = p && consumeToken(b, I_CURLY_RIGHT) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // ( opParamBodyPart ','? )*
+  private static boolean opParamBody_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opParamBody_1")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!opParamBody_1_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "opParamBody_1", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
+  // opParamBodyPart ','?
+  private static boolean opParamBody_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opParamBody_1_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeToken(b, I_EQ);
-    r = r && varValue(b, l + 1);
+    r = opParamBodyPart(b, l + 1);
+    r = r && opParamBody_1_0_1(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
+  }
+
+  // ','?
+  private static boolean opParamBody_1_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opParamBody_1_0_1")) return false;
+    consumeToken(b, I_COMMA);
+    return true;
+  }
+
+  /* ********************************************************** */
+  // customParam
+  static boolean opParamBodyPart(PsiBuilder b, int l) {
+    return customParam(b, l + 1);
+  }
+
+  /* ********************************************************** */
+  // '=' varValue
+  static boolean opParamDefault(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opParamDefault")) return false;
+    if (!nextTokenIs(b, I_EQ)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_);
+    r = consumeToken(b, I_EQ);
+    p = r; // pin = 1
+    r = r && varValue(b, l + 1);
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   /* ********************************************************** */

@@ -8,6 +8,7 @@ import io.epigraph.gdata.*;
 import io.epigraph.idl.gdata.IdlGDataPsiParser;
 import io.epigraph.idl.parser.psi.*;
 import io.epigraph.lang.Fqn;
+import io.epigraph.projections.op.OpCustomParams;
 import io.epigraph.psi.PsiProcessingException;
 import io.epigraph.types.*;
 import org.jetbrains.annotations.NotNull;
@@ -16,9 +17,9 @@ import org.jetbrains.annotations.Nullable;
 import java.text.MessageFormat;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 
-import static io.epigraph.projections.ProjectionPsiParserUtil.getTag;
-import static io.epigraph.projections.ProjectionPsiParserUtil.getType;
+import static io.epigraph.projections.ProjectionPsiParserUtil.*;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -51,6 +52,7 @@ public class OpInputProjectionsPsiParser {
           tag.type,
           singleTagProjectionPsi.getPlus() != null,
           getModelDefaultValue(singleTagProjectionPsi.getOpInputModelPropertyList()),
+          parseModelCustomParams(singleTagProjectionPsi.getOpInputModelPropertyList()),
           modelProjection, typesResolver
       );
 
@@ -75,6 +77,7 @@ public class OpInputProjectionsPsiParser {
             tagType,
             tagProjectionPsi.getPlus() != null,
             getModelDefaultValue(tagProjectionPsi.getOpInputModelPropertyList()),
+            parseModelCustomParams(tagProjectionPsi.getOpInputModelPropertyList()),
             modelProjection, typesResolver
         );
 
@@ -130,6 +133,18 @@ public class OpInputProjectionsPsiParser {
     }
 
     return result;
+  }
+
+  @Nullable
+  private static OpCustomParams parseModelCustomParams(@NotNull List<IdlOpInputModelProperty> modelProperties)
+      throws PsiProcessingException {
+
+    Map<String, GDataValue> customParamsMap = null;
+
+    for (IdlOpInputModelProperty modelProperty : modelProperties)
+      customParamsMap = parseCustomParam(customParamsMap, modelProperty.getCustomParam());
+
+    return customParamsMap == null ? null : new OpCustomParams(customParamsMap);
   }
 
   @NotNull
@@ -191,6 +206,7 @@ public class OpInputProjectionsPsiParser {
   public static OpInputModelProjection<?, ?> parseModelProjection(@NotNull DatumType type,
                                                                   boolean required,
                                                                   @Nullable GDataVarValue defaultValue,
+                                                                  @Nullable OpCustomParams customParams,
                                                                   @NotNull IdlOpInputModelProjection psi,
                                                                   @NotNull TypesResolver typesResolver)
       throws PsiProcessingException {
@@ -207,6 +223,7 @@ public class OpInputProjectionsPsiParser {
             (RecordType) type,
             required,
             defaultRecordData,
+            customParams,
             recordModelProjectionPsi,
             typesResolver
         );
@@ -221,6 +238,7 @@ public class OpInputProjectionsPsiParser {
             (ListType) type,
             required,
             defaultListData,
+            customParams,
             listModelProjectionPsi,
             typesResolver
         );
@@ -238,6 +256,7 @@ public class OpInputProjectionsPsiParser {
             (PrimitiveType) type,
             required,
             defaultPrimitiveData,
+            customParams,
             psi,
             typesResolver
         );
@@ -278,6 +297,7 @@ public class OpInputProjectionsPsiParser {
         return new OpInputRecordModelProjection((RecordType) type,
                                                 required,
                                                 null,
+                                                null,
                                                 null
         );
       case LIST:
@@ -302,6 +322,7 @@ public class OpInputProjectionsPsiParser {
         return new OpInputListModelProjection(listType,
                                               required,
                                               null,
+                                              null,
                                               itemVarProjection
         );
       case MAP:
@@ -313,7 +334,7 @@ public class OpInputProjectionsPsiParser {
         // todo
         throw new PsiProcessingException("Unsupported type kind: " + type.kind(), location);
       case PRIMITIVE:
-        return new OpInputPrimitiveModelProjection((PrimitiveType) type, required, null);
+        return new OpInputPrimitiveModelProjection((PrimitiveType) type, required, null, null);
       default:
         throw new PsiProcessingException("Unknown type kind: " + type.kind(), location);
     }
@@ -323,6 +344,7 @@ public class OpInputProjectionsPsiParser {
   public static OpInputRecordModelProjection parseRecordModelProjection(@NotNull RecordType type,
                                                                         boolean required,
                                                                         @Nullable GDataRecord defaultValue,
+                                                                        @Nullable OpCustomParams customParams,
                                                                         @NotNull IdlOpInputRecordModelProjection psi,
                                                                         @NotNull TypesResolver resolver)
       throws PsiProcessingException {
@@ -350,16 +372,14 @@ public class OpInputProjectionsPsiParser {
 
       final boolean fieldRequired = fieldProjectionPsi.getPlus() != null;
 
+      OpCustomParams fieldCustomParams;
+      Map<String, GDataValue> fieldCustomParamsMap = null;
       for (IdlOpInputFieldProjectionBodyPart fieldBodyPart : fieldProjectionPsi.getOpInputFieldProjectionBodyPartList()) {
-        @NotNull IdlCustomParam customParam = fieldBodyPart.getCustomParam();
-        if (customParam != null) {
-          // todo
-        }
+        fieldCustomParamsMap = parseCustomParam(fieldCustomParamsMap, fieldBodyPart.getCustomParam());
       }
-
+      fieldCustomParams = fieldCustomParamsMap == null ? null : new OpCustomParams(fieldCustomParamsMap);
 
       OpInputVarProjection varProjection;
-
       @Nullable IdlOpInputVarProjection psiVarProjection = fieldProjectionPsi.getOpInputVarProjection();
       if (psiVarProjection == null) {
         @NotNull DataType fieldDataType = field.dataType();
@@ -377,18 +397,19 @@ public class OpInputProjectionsPsiParser {
         varProjection = parseVarProjection(field.dataType(), psiVarProjection, resolver);
       }
 
-      fieldProjections.add(new OpInputFieldProjection(field, varProjection, fieldRequired));
+      fieldProjections.add(new OpInputFieldProjection(field, fieldCustomParams, varProjection, fieldRequired));
     }
 
     final LinkedHashSet<OpInputRecordModelProjection> tail;
 
-    return new OpInputRecordModelProjection(type, required, defaultDatum, fieldProjections);
+    return new OpInputRecordModelProjection(type, required, defaultDatum, customParams, fieldProjections);
   }
 
   @NotNull
   public static OpInputListModelProjection parseListModelProjection(@NotNull ListType type,
                                                                     boolean required,
                                                                     @Nullable GDataList defaultValue,
+                                                                    @Nullable OpCustomParams customParams,
                                                                     @NotNull IdlOpInputListModelProjection psi,
                                                                     @NotNull TypesResolver resolver)
       throws PsiProcessingException {
@@ -414,6 +435,7 @@ public class OpInputProjectionsPsiParser {
         type,
         required,
         defaultDatum,
+        customParams,
         itemsProjection
     );
   }
@@ -422,6 +444,7 @@ public class OpInputProjectionsPsiParser {
   public static OpInputPrimitiveModelProjection parsePrimitiveModelProjection(@NotNull PrimitiveType type,
                                                                               boolean required,
                                                                               @Nullable GDataPrimitive defaultValue,
+                                                                              @Nullable OpCustomParams customParams,
                                                                               @NotNull PsiElement location,
                                                                               @NotNull TypesResolver resolver)
       throws PsiProcessingException {
@@ -434,7 +457,7 @@ public class OpInputProjectionsPsiParser {
         throw new PsiProcessingException(e, location);
       }
     }
-    return new OpInputPrimitiveModelProjection(type, required, defaultDatum);
+    return new OpInputPrimitiveModelProjection(type, required, defaultDatum, customParams);
   }
 
   @Nullable

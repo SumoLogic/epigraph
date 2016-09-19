@@ -2,6 +2,7 @@ package io.epigraph.projections.op.input;
 
 import de.uka.ilkd.pp.DataLayouter;
 import io.epigraph.data.RecordDatum;
+import io.epigraph.projections.op.OpCustomParams;
 import io.epigraph.types.RecordType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -22,8 +23,9 @@ public class OpInputRecordModelProjection extends OpInputModelProjection<RecordT
   public OpInputRecordModelProjection(@NotNull RecordType model,
                                       boolean required,
                                       @Nullable RecordDatum defaultValue,
+                                      @Nullable OpCustomParams customParams,
                                       @Nullable LinkedHashSet<OpInputFieldProjection> fieldProjections) {
-    super(model, required, defaultValue);
+    super(model, required, defaultValue, customParams);
     this.fieldProjections = fieldProjections;
 
     Collection<@NotNull ? extends RecordType.Field> fields = model.fields();
@@ -89,6 +91,7 @@ public class OpInputRecordModelProjection extends OpInputModelProjection<RecordT
     prettyPrintModel(l);
     l.beginCInd().print(" {");
 
+    prettyPrintParamsBlock(l);
     prettyPrintDefaultValueBlock(l);
 
     if (fieldProjections != null && !fieldProjections.isEmpty()) {

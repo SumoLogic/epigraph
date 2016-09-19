@@ -2,6 +2,7 @@ package io.epigraph.projections.op.output;
 
 import de.uka.ilkd.pp.DataLayouter;
 import de.uka.ilkd.pp.PrettyPrintable;
+import io.epigraph.projections.op.OpCustomParams;
 import io.epigraph.types.RecordType;
 import io.epigraph.util.pp.DataPrettyPrinter;
 import org.jetbrains.annotations.NotNull;
@@ -17,16 +18,20 @@ public class OpOutputFieldProjection implements PrettyPrintable {
   private final RecordType.Field field;
   @Nullable
   private final OpParams params;
+  @Nullable
+  private final OpCustomParams customParams;
   @NotNull
   private final OpOutputVarProjection projection;
   private final boolean includeInDefault;
 
   public OpOutputFieldProjection(@NotNull RecordType.Field field,
                                  @Nullable OpParams params,
+                                 @Nullable OpCustomParams customParams,
                                  @NotNull OpOutputVarProjection projection,
                                  boolean includeInDefault) {
     this.field = field;
     this.params = params;
+    this.customParams = customParams;
     this.projection = projection;
     this.includeInDefault = includeInDefault;
   }
@@ -35,6 +40,9 @@ public class OpOutputFieldProjection implements PrettyPrintable {
   public RecordType.Field getField() { return field; }
 
   public @Nullable OpParams params() { return params; }
+
+  @Nullable
+  public OpCustomParams customParams() { return customParams; }
 
   @NotNull
   public OpOutputVarProjection projection() { return projection; }
@@ -45,9 +53,10 @@ public class OpOutputFieldProjection implements PrettyPrintable {
   public <Exc extends Exception> void prettyPrint(DataLayouter<Exc> l) throws Exc {
     if (includeInDefault) l.print("+");
     l.print(field.name());
-    if (params != null && !params.isEmpty()) {
+    if ((params != null && !params.isEmpty()) || (customParams != null && !customParams.isEmpty())) {
       l.beginCInd().print(" {");
-      l.print(params);
+      if (params != null) l.print(params);
+      if (customParams != null) l.print(customParams);
       l.end().brk().print("}");
     }
     l.print(":").brk().beginCInd().ind().print(projection).end();
@@ -59,13 +68,14 @@ public class OpOutputFieldProjection implements PrettyPrintable {
     if (o == null || getClass() != o.getClass()) return false;
     OpOutputFieldProjection that = (OpOutputFieldProjection) o;
     return includeInDefault == that.includeInDefault &&
-        Objects.equals(field, that.field) &&
-        Objects.equals(params, that.params) &&
-        Objects.equals(projection, that.projection);
+           Objects.equals(field, that.field) &&
+           Objects.equals(params, that.params) &&
+           Objects.equals(customParams, that.customParams) &&
+           Objects.equals(projection, that.projection);
   }
 
   @Override
-  public int hashCode() { return Objects.hash(field, params, projection, includeInDefault); }
+  public int hashCode() { return Objects.hash(field, params, customParams, projection, includeInDefault); }
 
   @Override
   public String toString() { return DataPrettyPrinter.prettyPrint(this); }

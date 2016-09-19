@@ -28,20 +28,26 @@ public class IdlOpParamImpl extends ASTWrapperPsiElement implements IdlOpParam {
 
   @Override
   @NotNull
+  public List<IdlCustomParam> getCustomParamList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, IdlCustomParam.class);
+  }
+
+  @Override
+  @Nullable
   public IdlFqnTypeRef getFqnTypeRef() {
-    return findNotNullChildByClass(IdlFqnTypeRef.class);
+    return findChildByClass(IdlFqnTypeRef.class);
   }
 
   @Override
-  @NotNull
+  @Nullable
   public IdlOpInputModelProjection getOpInputModelProjection() {
-    return findNotNullChildByClass(IdlOpInputModelProjection.class);
+    return findChildByClass(IdlOpInputModelProjection.class);
   }
 
   @Override
-  @NotNull
+  @Nullable
   public IdlQid getQid() {
-    return findNotNullChildByClass(IdlQid.class);
+    return findChildByClass(IdlQid.class);
   }
 
   @Override
@@ -51,9 +57,21 @@ public class IdlOpParamImpl extends ASTWrapperPsiElement implements IdlOpParam {
   }
 
   @Override
-  @NotNull
+  @Nullable
   public PsiElement getColon() {
-    return findNotNullChildByType(I_COLON);
+    return findChildByType(I_COLON);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getCurlyLeft() {
+    return findChildByType(I_CURLY_LEFT);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getCurlyRight() {
+    return findChildByType(I_CURLY_RIGHT);
   }
 
   @Override

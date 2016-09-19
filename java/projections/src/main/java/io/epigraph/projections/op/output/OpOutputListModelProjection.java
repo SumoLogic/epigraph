@@ -1,6 +1,7 @@
 package io.epigraph.projections.op.output;
 
 import de.uka.ilkd.pp.DataLayouter;
+import io.epigraph.projections.op.OpCustomParams;
 import io.epigraph.types.ListType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -17,8 +18,9 @@ public class OpOutputListModelProjection extends OpOutputModelProjection<ListTyp
   public OpOutputListModelProjection(@NotNull ListType model,
                                      boolean includeInDefault,
                                      @Nullable OpParams params,
+                                     @Nullable OpCustomParams customParams,
                                      @NotNull OpOutputVarProjection itemsProjection) {
-    super(model, includeInDefault, params);
+    super(model, includeInDefault, params, customParams);
     this.itemsProjection = itemsProjection;
   }
 

@@ -33,6 +33,7 @@ public class OpInputProjectionsTest {
     );
 
     // todo add params
+    // todo add custom params once there's `toString` on data
     String projectionStr = lines(
         ":(",
         "  +id,",

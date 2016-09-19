@@ -4,6 +4,7 @@ import de.uka.ilkd.pp.DataLayouter;
 import de.uka.ilkd.pp.PrettyPrintable;
 import io.epigraph.data.Datum;
 import io.epigraph.projections.generic.GenericModelProjection;
+import io.epigraph.projections.op.OpCustomParams;
 import io.epigraph.types.DatumType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -18,11 +19,18 @@ public abstract class OpInputModelProjection<M extends DatumType, D extends Datu
   protected final boolean required;
   @Nullable
   protected final D defaultValue;
+  @Nullable
+  protected final OpCustomParams customParams;
 
-  public OpInputModelProjection(@NotNull M model, boolean required, @Nullable D defaultValue) {
+  public OpInputModelProjection(@NotNull M model,
+                                boolean required,
+                                @Nullable D defaultValue,
+                                @Nullable OpCustomParams customParams) {
+
     super(model);
     this.required = required;
     this.defaultValue = defaultValue;
+    this.customParams = customParams;
   }
 
   public boolean required() { return required; }
@@ -30,9 +38,13 @@ public abstract class OpInputModelProjection<M extends DatumType, D extends Datu
   @Nullable
   public D defaultValue() { return defaultValue; }
 
+  @Nullable
+  public OpCustomParams customParams() { return customParams; }
+
   @Override
   public <Exc extends Exception> void prettyPrint(DataLayouter<Exc> l) throws Exc {
     prettyPrintModel(l);
+    prettyPrintParamsBlock(l);
     prettyPrintDefaultValueBlock(l);
   }
 
@@ -54,6 +66,10 @@ public abstract class OpInputModelProjection<M extends DatumType, D extends Datu
     l.print("default:").brk().print(defaultValue.toImmutable());
   }
 
+  protected <Exc extends Exception> void prettyPrintParamsBlock(DataLayouter<Exc> l) throws Exc {
+    if (customParams != null && !customParams.isEmpty()) l.print(customParams);
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
@@ -61,9 +77,10 @@ public abstract class OpInputModelProjection<M extends DatumType, D extends Datu
     OpInputModelProjection<?, ?> that = (OpInputModelProjection<?, ?>) o;
     return required == that.required &&
            Objects.equals(model, that.model) &&
-           Objects.equals(defaultValue, that.defaultValue);
+           Objects.equals(defaultValue, that.defaultValue) &&
+           Objects.equals(customParams, that.customParams);
   }
 
   @Override
-  public int hashCode() { return Objects.hash(model, required, defaultValue); }
+  public int hashCode() { return Objects.hash(model, required, defaultValue, customParams); }
 }

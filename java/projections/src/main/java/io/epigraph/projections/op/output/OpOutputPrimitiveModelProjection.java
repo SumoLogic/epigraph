@@ -1,5 +1,6 @@
 package io.epigraph.projections.op.output;
 
+import io.epigraph.projections.op.OpCustomParams;
 import io.epigraph.types.PrimitiveType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -10,7 +11,8 @@ import org.jetbrains.annotations.Nullable;
 public class OpOutputPrimitiveModelProjection extends OpOutputModelProjection<PrimitiveType> {
   public OpOutputPrimitiveModelProjection(@NotNull PrimitiveType model,
                                           boolean includeInDefault,
-                                          @Nullable OpParams params) {
-    super(model, includeInDefault, params);
+                                          @Nullable OpParams params,
+                                          @Nullable OpCustomParams customParams) {
+    super(model, includeInDefault, params, customParams);
   }
 }
