@@ -7,7 +7,7 @@ import com.sumologic.epigraph.schema.compiler._
 
 class VarTypeGen(from: CVarTypeDef, ctx: CContext) extends JavaTypeDefGen[CVarTypeDef](from, ctx) {
 
-  protected def generate: String = sn"""\
+  protected def generate: String = /*@formatter:off*/sn"""\
 /*
  * Standard header
  */
@@ -28,8 +28,7 @@ public interface $ln extends${withParents(t)} io.epigraph.data.Data.Static {
 
   /** Returns new builder for `${t.name.name}` data. */
   static @NotNull $ln.Builder create() { return $ln.type.createDataBuilder(); }
-${t.effectiveTags.map { tag => // for each effective tag
-    sn"""\
+${t.effectiveTags.map { tag => sn"""\
 
   ${"/**"} Tag `${tag.name}`. */
   @NotNull Tag ${jn(tag.name)} = new Tag("${tag.name}", ${lqrn(tag.typeRef, t)}.type);
@@ -38,7 +37,7 @@ ${t.effectiveTags.map { tag => // for each effective tag
   @Nullable ${lqrn(tag.typeRef, t)} get${up(tag.name)}();
 
   ${"/**"} Returns `${tag.name}` tag value. */
-  @Nullable ${lqrn(tag.typeRef, t)}.Value get_${up(tag.name)}();
+  @Nullable ${lqrn(tag.typeRef, t)}.Value get${up(tag.name)}$$();
 """
   }.mkString
 }\
@@ -72,8 +71,7 @@ ${t.declaredTags.map { tag => sn"""
    * Immutable interface for `${t.name.name}` data.
    */
   interface Imm extends $ln,${withParents(".Imm")} io.epigraph.data.Data.Imm.Static {
-${t.effectiveTags.map { tag => // for each effective tag
-    sn"""\
+${t.effectiveTags.map { tag => sn"""\
 
     ${"/**"} Returns immutable `${tag.name}` tag datum. */
     @Override
@@ -81,7 +79,7 @@ ${t.effectiveTags.map { tag => // for each effective tag
 
     ${"/**"} Returns immutable `${tag.name}` tag value. */
     @Override
-    @Nullable ${lqrn(tag.typeRef, t)}.Imm.Value get_${up(tag.name)}();
+    @Nullable ${lqrn(tag.typeRef, t)}.Imm.Value get${up(tag.name)}$$();
 """
   }.mkString
 }\
@@ -90,18 +88,17 @@ ${t.effectiveTags.map { tag => // for each effective tag
     final class Impl extends io.epigraph.data.Data.Imm.Static.Impl<$ln.Imm> implements $ln.Imm {
 
       private Impl(@NotNull io.epigraph.data.Data.Imm.Raw raw) { super($ln.type, raw); }
-${t.effectiveTags.map { tag => // for each effective tag
-    sn"""\
+${t.effectiveTags.map { tag => sn"""\
 
       ${"/**"} Returns immutable `${tag.name}` tag datum. */
       @Override
       public @Nullable ${lqrn(tag.typeRef, t)}.Imm get${up(tag.name)}() {
-        return io.epigraph.util.Util.apply(get_${up(tag.name)}(), ${lqrn(tag.typeRef, t)}.Imm.Value::getDatum);
+        return io.epigraph.util.Util.apply(get${up(tag.name)}$$(), ${lqrn(tag.typeRef, t)}.Imm.Value::getDatum);
       }
 
       ${"/**"} Returns immutable `${tag.name}` tag value. */
       @Override
-      public @Nullable ${lqrn(tag.typeRef, t)}.Imm.Value get_${up(tag.name)}() {
+      public @Nullable ${lqrn(tag.typeRef, t)}.Imm.Value get${up(tag.name)}$$() {
         return (${lqrn(tag.typeRef, t)}.Imm.Value) _raw().getValue($ln.${jn(tag.name)});
       }
 """
@@ -124,12 +121,12 @@ ${t.effectiveTags.map { tag => // for each effective tag
     ${"/**"} Returns `${tag.name}` tag datum. */
     @Override
     public @Nullable ${lqrn(tag.typeRef, t)} get${up(tag.name)}() {
-      return io.epigraph.util.Util.apply(get_${up(tag.name)}(), ${lqrn(tag.typeRef, t)}.Value::getDatum);
+      return io.epigraph.util.Util.apply(get${up(tag.name)}$$(), ${lqrn(tag.typeRef, t)}.Value::getDatum);
     }
 
     ${"/**"} Sets `${tag.name}` tag datum. */
     public @NotNull $ln.Builder set${up(tag.name)}(@Nullable ${lqrn(tag.typeRef, t)} ${jn(tag.name)}) {
-      _raw().setDatum($ln.${jn(tag.name)}, ${jn(tag.name)}); return this; // TODO return set_${up(tag.name)}(${jn(tag.name)}.asValue());
+      _raw().setDatum($ln.${jn(tag.name)}, ${jn(tag.name)}); return this; // TODO return set${up(tag.name)}$$(${jn(tag.name)}.asValue());
     }
 
     ${"/**"} Sets `${tag.name}` tag error. */
@@ -139,12 +136,12 @@ ${t.effectiveTags.map { tag => // for each effective tag
 
     ${"/**"} Returns `${tag.name}` tag value. */
     @Override
-    public @Nullable ${lqrn(tag.typeRef, t)}.Value get_${up(tag.name)}() {
+    public @Nullable ${lqrn(tag.typeRef, t)}.Value get${up(tag.name)}$$() {
       return (${lqrn(tag.typeRef, t)}.Value) _raw().getValue($ln.${jn(tag.name)});
     }
 
     ${"/**"} Sets `${tag.name}` tag value. */
-    public @NotNull $ln.Builder set_${up(tag.name)}(@Nullable ${lqrn(tag.typeRef, t)}.Value ${jn(tag.name)}Value) {
+    public @NotNull $ln.Builder set${up(tag.name)}(@Nullable ${lqrn(tag.typeRef, t)}.Value ${jn(tag.name)}Value) {
       _raw().setValue($ln.${jn(tag.name)}, ${jn(tag.name)}Value); return this;
     }
 """
@@ -154,6 +151,6 @@ ${t.effectiveTags.map { tag => // for each effective tag
   }
 
 }
-"""
+"""/*@formatter:on*/
 
 }

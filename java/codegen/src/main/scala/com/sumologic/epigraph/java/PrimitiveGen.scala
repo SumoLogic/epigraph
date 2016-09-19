@@ -75,7 +75,7 @@ public interface $ln extends${withParents(t)} io.epigraph.data.${kind(t)}Datum.S
     @Nullable $ln get();
 
     /** Returns default tag value. */
-    @Nullable $ln.Value get_();
+    @Nullable $ln.Value get$$();
 
   }
 
@@ -121,7 +121,7 @@ public interface $ln extends${withParents(t)} io.epigraph.data.${kind(t)}Datum.S
 
       /** Returns immutable default tag value. */
       @Override
-      @Nullable $ln.Imm.Value get_();
+      @Nullable $ln.Imm.Value get$$();
 
       /** Private implementation of `$ln.Imm.Data` interface. */
       final class Impl extends io.epigraph.data.Data.Imm.Static.Impl<$ln.Imm.Data> implements $ln.Imm.Data {
@@ -130,14 +130,12 @@ public interface $ln extends${withParents(t)} io.epigraph.data.${kind(t)}Datum.S
 
         @Override
         public @Nullable $ln.Imm get() {
-          $ln.Imm.Value value = get_();
+          $ln.Imm.Value value = get$$();
           return value == null ? null : value.getDatum();
         }
 
         @Override
-        public @Nullable $ln.Imm.Value get_() {
-          return ($ln.Imm.Value) _raw().getValue($ln.type.self);
-        }
+        public @Nullable $ln.Imm.Value get$$() { return ($ln.Imm.Value) _raw().getValue($ln.type.self); }
 
       }
 
@@ -170,20 +168,20 @@ public interface $ln extends${withParents(t)} io.epigraph.data.${kind(t)}Datum.S
 
       /** Returns default tag datum. */
       @Override
-      public @Nullable $ln get() { return io.epigraph.util.Util.apply(get_(), $ln.Value::getDatum); }
+      public @Nullable $ln get() { return io.epigraph.util.Util.apply(get$$(), $ln.Value::getDatum); }
 
       /** Returns default tag value. */
       @Override
-      public @Nullable $ln.Value get_() { return ($ln.Value) _raw().getValue($ln.type.self); }
+      public @Nullable $ln.Value get$$() { return ($ln.Value) _raw().getValue($ln.type.self); }
 
       /** Sets default tag datum. */
-      public void set(@Nullable $ln.Builder datum) { _raw().setDatum($ln.type.self, datum); }
+      public @NotNull $ln.Data set(@Nullable $ln datum) { _raw().setDatum($ln.type.self, datum); return this; }
 
       /** Sets default tag error. */
-      public void set(@NotNull io.epigraph.errors.ErrorValue error) { _raw().setError($ln.type.self, error); }
+      public @NotNull $ln.Data set(@NotNull io.epigraph.errors.ErrorValue error) { _raw().setError($ln.type.self, error); return this; }
 
       /** Sets default tag value. */
-      public void set(@Nullable $ln.Builder.Value value) { _raw().setValue($ln.type.self, value); }
+      public @NotNull $ln.Data set(@Nullable $ln.Value value) { _raw().setValue($ln.type.self, value); return this; }
 
     }
 
