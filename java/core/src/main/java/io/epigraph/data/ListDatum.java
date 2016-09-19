@@ -116,15 +116,22 @@ public interface ListDatum extends Datum {
 
 
       // TODO additional sub-classes for Union and Datum element type based lists?
-      abstract class Impl<MyImmDatum extends ListDatum.Imm.Static> extends ListDatum.Impl
+      abstract class Impl<MyImmDatum extends ListDatum.Imm.Static, MyImmVal extends Val.Imm.Static> extends ListDatum.Impl
           implements ListDatum.Imm.Static {
 
         private final @NotNull ListDatum.Imm.Raw raw;
 
-        protected Impl(@NotNull ListType type, @NotNull ListDatum.Imm.Raw raw) {
+        private final @NotNull MyImmVal value;
+
+        protected Impl(
+            @NotNull ListType type,
+            @NotNull ListDatum.Imm.Raw raw,
+            @NotNull Function<Val.Imm.@NotNull Raw, @NotNull MyImmVal> immValConstructor
+        ) {
           super(type);
           // TODO check types are compatible
           this.raw = raw; // TODO validate raw internals is kosher?
+          this.value = immValConstructor.apply(raw.asValue());
         }
 
         @Override
@@ -135,6 +142,9 @@ public interface ListDatum extends Datum {
 
         @Override
         public @NotNull ListDatum.Imm.Raw _raw() { return raw; }
+
+        @Override
+        public @NotNull MyImmVal asValue() { return value; }
 
       }
 
@@ -257,6 +267,9 @@ public interface ListDatum extends Datum {
 
       @Override
       public @NotNull ListDatum.Builder.Raw _raw() { return raw; }
+
+      @Override
+      public @NotNull MyBuilderVal asValue() { return value; }
 
     }
 

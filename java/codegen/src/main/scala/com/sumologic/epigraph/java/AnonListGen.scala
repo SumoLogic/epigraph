@@ -187,9 +187,9 @@ ${
 }\
 
     /** Private implementation of `$ln.Imm` interface. */
-    final class Impl extends io.epigraph.data.ListDatum.Imm.Static.Impl<$ln.Imm> implements $ln.Imm {
+    final class Impl extends io.epigraph.data.ListDatum.Imm.Static.Impl<$ln.Imm, $ln.Imm.Value> implements $ln.Imm {
 
-      Impl(@NotNull io.epigraph.data.ListDatum.Imm.Raw raw) { super($ln.type, raw); }
+      Impl(@NotNull io.epigraph.data.ListDatum.Imm.Raw raw) { super($ln.type, raw, $ln.Imm.Value.Impl::new); }
 ${t.effectiveDefaultElementTagName match { // default element tag (if defined) views
       case None => ""
       case Some(dtn) => sn"""\
