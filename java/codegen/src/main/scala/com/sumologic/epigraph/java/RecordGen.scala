@@ -5,7 +5,8 @@ package com.sumologic.epigraph.java
 import com.sumologic.epigraph.java.NewlineStringInterpolator.NewlineHelper
 import com.sumologic.epigraph.schema.compiler._
 
-class RecordGen(from: CRecordTypeDef, ctx: CContext) extends JavaTypeDefGen[CRecordTypeDef](from, ctx) {
+class RecordGen(from: CRecordTypeDef, ctx: CContext) extends JavaTypeDefGen[CRecordTypeDef](from, ctx)
+    with DatumTypeJavaGen {
 
   protected def generate: String = /*@formatter:off*/sn"""\
 /*
@@ -311,45 +312,7 @@ ${  f.effectiveDefaultTagName match { // default tag (implied or explicit, if an
   }.mkString
 }\
 
-    /**
-     * Builder for `${t.name.name}` value (holding a builder or an error).
-     */
-    final static class Value extends io.epigraph.data.Val.Builder.Static<$ln.Imm.Value, $ln.Builder>
-        implements $ln.Value {
-
-      public Value(@NotNull io.epigraph.data.Val.Builder.Raw raw) { super(raw, $ln.Imm.Value.Impl::new); }
-
-    }
-
-    /**
-     * Builder for `${t.name.name}` data (holding single default representation of the type).
-     */
-    final static class Data extends io.epigraph.data.Data.Builder.Static<$ln.Imm.Data>
-        implements $ln.Data {
-
-      protected Data(@NotNull io.epigraph.data.Data.Builder.Raw raw) {
-        super($ln.type, raw, $ln.Imm.Data.Impl::new);
-      }
-
-      @Override
-      public @Nullable $ln.Builder get() {
-        return ($ln.Builder) _raw().getDatum($ln.type.self);
-      }
-
-      @Override
-      public @Nullable $ln.Builder.Value get$$() {
-        return ($ln.Builder.Value) _raw().getValue($ln.type.self);
-      }
-
-      public void set(@Nullable $ln.Builder datum) {
-        _raw().setDatum($ln.type.self, datum);
-      }
-
-      public void set_(@Nullable $ln.Builder.Value value) {
-        _raw().setValue($ln.type.self, value);
-      }
-
-    }
+$builderValueAndDataBuilder\
 
   }
 

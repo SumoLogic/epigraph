@@ -5,9 +5,10 @@ package com.sumologic.epigraph.java
 import java.nio.file.Path
 
 import com.sumologic.epigraph.java.NewlineStringInterpolator.NewlineHelper
-import com.sumologic.epigraph.schema.compiler.{CAnonListType, CContext, CType, CVarTypeDef}
+import com.sumologic.epigraph.schema.compiler.{CAnonListType, CContext, CVarTypeDef}
 
-class AnonListGen(from: CAnonListType, ctx: CContext) extends JavaTypeGen[CAnonListType](from, ctx) {
+class AnonListGen(from: CAnonListType, ctx: CContext) extends JavaTypeGen[CAnonListType](from, ctx)
+    with DatumTypeJavaGen {
 
   /** element value type */
   private val ev = t.elementDataType
@@ -96,7 +97,7 @@ ${
           java.util.Arrays.asList(${parents(".type")}),
           ${dataTypeExpr(ev, t)},
           $ln.Builder::new,
-          $ln.Builder.Value::new,
+          $ln.Imm.Value.Impl::new,
           $ln.Builder.Data::new
       );
     }
@@ -132,7 +133,7 @@ ${
     /**
      * Returns `${t.name.name}` value.
      */
-    @Nullable $ln.Value get_();
+    @Nullable $ln.Value get$$();
 
   }
 
@@ -188,9 +189,7 @@ ${
     /** Private implementation of `$ln.Imm` interface. */
     final class Impl extends io.epigraph.data.ListDatum.Imm.Static.Impl<$ln.Imm> implements $ln.Imm {
 
-      Impl(@NotNull io.epigraph.data.ListDatum.Imm.Raw raw) {
-        super($ln.type, raw);
-      }
+      Impl(@NotNull io.epigraph.data.ListDatum.Imm.Raw raw) { super($ln.type, raw); }
 ${t.effectiveDefaultElementTagName match { // default element tag (if defined) views
       case None => ""
       case Some(dtn) => sn"""\
@@ -213,7 +212,7 @@ ${t.effectiveDefaultElementTagName match { // default element tag (if defined) v
       public @NotNull java.util.List<@Nullable ? extends ${lqn(tt(etr, dtn), t)}.Imm.Value> values() {
         return new io.epigraph.util.Unmodifiable.ListView<${lqn(et, t)}.Imm${vt(et, "", ".Data")}, ${lqn(tt(etr, dtn), t)}.Imm.Value>(
             datas(),
-            ${lqn(et, t)}.Imm${vt(et, "", ".Data")}::get_${vt(et, up(dtn), "")}
+            ${lqn(et, t)}.Imm${vt(et, "", ".Data")}::get${vt(et, up(dtn), "")}$$
         );
       }
 """
@@ -248,7 +247,7 @@ ${
       public @NotNull java.util.List<@Nullable ? extends ${lqn(tt(etr, tag.name), t)}.Imm.Value> ${jn(tag.name + "Values")}() {
         return new io.epigraph.util.Unmodifiable.ListView<${lqn(et, t)}.Imm${vt(et, "", ".Data")}, ${lqn(tt(etr, tag.name), t)}.Imm.Value>(
             datas(),
-            ${lqn(et, t)}.Imm${vt(et, "", ".Data")}::get_${vt(et, up(tag.name), "")}
+            ${lqn(et, t)}.Imm${vt(et, "", ".Data")}::get${vt(et, up(tag.name), "")}$$
         );
       }
 """
@@ -279,7 +278,7 @@ ${
       final class Impl extends io.epigraph.data.Val.Imm.Static.Impl<$ln.Imm.Value, $ln.Imm>
           implements $ln.Imm.Value {
 
-        Impl(@NotNull io.epigraph.data.Val.Imm.Raw raw) { super($ln.type, raw); }
+        Impl(@NotNull io.epigraph.data.Val.Imm.Raw raw) { super(raw); }
 
       }
 
@@ -294,7 +293,7 @@ ${
       @Nullable $ln.Imm get();
 
       @Override
-      @Nullable $ln.Imm.Value get_();
+      @Nullable $ln.Imm.Value get$$();
 
       /** Private implementation of `$ln.Imm.Data` interface. */
       final class Impl extends io.epigraph.data.Data.Imm.Static.Impl<$ln.Imm.Data>
@@ -304,11 +303,11 @@ ${
 
         @Override
         public @Nullable $ln.Imm get() {
-          return io.epigraph.util.Util.apply(get_(), $ln.Imm.Value::getDatum);
+          return io.epigraph.util.Util.apply(get$$(), $ln.Imm.Value::getDatum);
         }
 
         @Override
-        public @Nullable $ln.Imm.Value get_() {
+        public @Nullable $ln.Imm.Value get$$() {
           return ($ln.Imm.Value) _raw().getValue($ln.type.self);
         }
 
@@ -321,10 +320,10 @@ ${
   /**
    * Builder for `${t.name.name}` datum.
    */
-  final class Builder extends io.epigraph.data.ListDatum.Builder.Static<$ln.Imm> implements $ln {
+  final class Builder extends io.epigraph.data.ListDatum.Builder.Static<$ln.Imm, $ln.Builder.Value> implements $ln {
 
     Builder(@NotNull io.epigraph.data.ListDatum.Builder.Raw raw) {
-      super($ln.type, raw, $ln.Imm.Impl::new);
+      super($ln.type, raw, $ln.Imm.Impl::new, $ln.Builder.Value::new);
     }
 ${t.effectiveDefaultElementTagName match { // default element tag (if defined) views
       case None => ""
@@ -350,8 +349,8 @@ ${t.effectiveDefaultElementTagName match { // default element tag (if defined) v
       public @NotNull java.util.List<${lqn(tt(etr, dtn), t)}.Builder.@Nullable Value> values() {
         return new io.epigraph.util.ListView<>(
             datas(),
-            ${lqn(et, t)}.Builder${vt(et, "", ".Data")}::get_${vt(et, up(dtn), "")},
-            ${lqn(et, t)}.Builder${vt(et, "", ".Data")}::set_${vt(et, up(dtn), "")},
+            ${lqn(et, t)}.Builder${vt(et, "", ".Data")}::get${vt(et, up(dtn), "")}$$,
+            ${lqn(et, t)}.Builder${vt(et, "", ".Data")}::set${vt(et, up(dtn), "")},
             ${lqn(et, t)}.type::createDataBuilder
         );
       }
@@ -389,8 +388,8 @@ ${
       public @NotNull java.util.List<${lqn(tt(etr, tag.name), t)}.Builder.@Nullable Value> ${jn(tag.name + "Values")}() {
         return new io.epigraph.util.ListView<>(
             datas(),
-            ${lqn(et, t)}.Builder${vt(et, "", ".Data")}::get_${vt(et, up(tag.name), "")},
-            ${lqn(et, t)}.Builder${vt(et, "", ".Data")}::set_${vt(et, up(tag.name), "")},
+            ${lqn(et, t)}.Builder${vt(et, "", ".Data")}::get${vt(et, up(tag.name), "")}$$,
+            ${lqn(et, t)}.Builder${vt(et, "", ".Data")}::set${vt(et, up(tag.name), "")},
             ${lqn(et, t)}.type::createDataBuilder
         );
       }
@@ -408,54 +407,7 @@ ${
   }
 }\
 
-    /**
-     * Builder for `${t.name.name}` value (holding a builder or an error).
-     */
-    public static final class Value extends io.epigraph.data.Val.Builder.Static<$ln.Imm.Value, $ln.Builder>
-        implements $ln.Value {
-
-      Value(@NotNull io.epigraph.data.Val.Builder.Raw raw) { super(raw, $ln.Imm.Value.Impl::new); }
-
-    }
-
-    /**
-     * Builder for `${t.name.name}` data (holding single default representation of the type).
-     */
-    public static final class Data extends io.epigraph.data.Data.Builder.Static<$ln.Imm.Data>
-        implements $ln.Data {
-
-      Data(@NotNull io.epigraph.data.Data.Builder.Raw raw) {
-        super($ln.type, raw, $ln.Imm.Data.Impl::new);
-      }
-
-      // default tag datum getter
-      @Override
-      public @Nullable $ln.Builder get() {
-        return io.epigraph.util.Util.apply(get_(), $ln.Builder.Value::getDatum);
-      }
-
-      // default tag value getter
-      @Override
-      public @Nullable $ln.Builder.Value get_() {
-        return ($ln.Builder.Value) _raw().getValue($ln.type.self);
-      }
-
-      // default tag datum setter
-      public void set(@Nullable $ln.Builder datum) {
-        _raw().getOrCreateTagValueBuilder($ln.type.self)._raw().setDatum(datum);
-      }
-
-      // default tag error setter // TODO simplified DatumTypeData implementation with this method
-      public void set(@NotNull io.epigraph.errors.ErrorValue error) {
-        _raw().getOrCreateTagValueBuilder($ln.type.self)._raw().setError(error);
-      }
-
-      // default tag value setter
-      public void set_(@Nullable $ln.Builder.Value value) {
-        _raw().setValue($ln.type.self, value);
-      }
-
-    }
+$builderValueAndDataBuilder\
 
   }
 
