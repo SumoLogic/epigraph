@@ -16,8 +16,14 @@ public interface IdlOpParam extends PsiElement {
   @NotNull
   IdlQid getQid();
 
+  @Nullable
+  IdlVarValue getVarValue();
+
   @NotNull
   PsiElement getColon();
+
+  @Nullable
+  PsiElement getEq();
 
   @Nullable
   PsiElement getPlus();

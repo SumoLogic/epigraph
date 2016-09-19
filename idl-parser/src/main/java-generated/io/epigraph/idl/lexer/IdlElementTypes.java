@@ -28,15 +28,13 @@ public interface IdlElementTypes {
   IElementType I_NAMESPACE_DECL = new IdlElementType("I_NAMESPACE_DECL");
   IElementType I_OP_INPUT_DEFAULT_VALUE = new IdlElementType("I_OP_INPUT_DEFAULT_VALUE");
   IElementType I_OP_INPUT_FIELD_PROJECTION = new IdlElementType("I_OP_INPUT_FIELD_PROJECTION");
-  IElementType I_OP_INPUT_FIELD_PROJECTION_BODY = new IdlElementType("I_OP_INPUT_FIELD_PROJECTION_BODY");
   IElementType I_OP_INPUT_FIELD_PROJECTION_BODY_PART = new IdlElementType("I_OP_INPUT_FIELD_PROJECTION_BODY_PART");
   IElementType I_OP_INPUT_KEY_PROJECTION = new IdlElementType("I_OP_INPUT_KEY_PROJECTION");
   IElementType I_OP_INPUT_KEY_PROJECTION_PART = new IdlElementType("I_OP_INPUT_KEY_PROJECTION_PART");
   IElementType I_OP_INPUT_LIST_MODEL_PROJECTION = new IdlElementType("I_OP_INPUT_LIST_MODEL_PROJECTION");
   IElementType I_OP_INPUT_MAP_MODEL_PROJECTION = new IdlElementType("I_OP_INPUT_MAP_MODEL_PROJECTION");
   IElementType I_OP_INPUT_MODEL_PROJECTION = new IdlElementType("I_OP_INPUT_MODEL_PROJECTION");
-  IElementType I_OP_INPUT_MODEL_PROJECTION_BODY = new IdlElementType("I_OP_INPUT_MODEL_PROJECTION_BODY");
-  IElementType I_OP_INPUT_MODEL_PROJECTION_BODY_PART = new IdlElementType("I_OP_INPUT_MODEL_PROJECTION_BODY_PART");
+  IElementType I_OP_INPUT_MODEL_PROPERTY = new IdlElementType("I_OP_INPUT_MODEL_PROPERTY");
   IElementType I_OP_INPUT_MULTI_TAG_PROJECTION = new IdlElementType("I_OP_INPUT_MULTI_TAG_PROJECTION");
   IElementType I_OP_INPUT_MULTI_TAG_PROJECTION_ITEM = new IdlElementType("I_OP_INPUT_MULTI_TAG_PROJECTION_ITEM");
   IElementType I_OP_INPUT_RECORD_MODEL_PROJECTION = new IdlElementType("I_OP_INPUT_RECORD_MODEL_PROJECTION");
@@ -164,9 +162,6 @@ public interface IdlElementTypes {
       else if (type == I_OP_INPUT_FIELD_PROJECTION) {
         return new IdlOpInputFieldProjectionImpl(node);
       }
-      else if (type == I_OP_INPUT_FIELD_PROJECTION_BODY) {
-        return new IdlOpInputFieldProjectionBodyImpl(node);
-      }
       else if (type == I_OP_INPUT_FIELD_PROJECTION_BODY_PART) {
         return new IdlOpInputFieldProjectionBodyPartImpl(node);
       }
@@ -185,11 +180,8 @@ public interface IdlElementTypes {
       else if (type == I_OP_INPUT_MODEL_PROJECTION) {
         return new IdlOpInputModelProjectionImpl(node);
       }
-      else if (type == I_OP_INPUT_MODEL_PROJECTION_BODY) {
-        return new IdlOpInputModelProjectionBodyImpl(node);
-      }
-      else if (type == I_OP_INPUT_MODEL_PROJECTION_BODY_PART) {
-        return new IdlOpInputModelProjectionBodyPartImpl(node);
+      else if (type == I_OP_INPUT_MODEL_PROPERTY) {
+        return new IdlOpInputModelPropertyImpl(node);
       }
       else if (type == I_OP_INPUT_MULTI_TAG_PROJECTION) {
         return new IdlOpInputMultiTagProjectionImpl(node);

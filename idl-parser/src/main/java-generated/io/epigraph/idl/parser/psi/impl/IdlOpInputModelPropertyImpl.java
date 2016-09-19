@@ -11,14 +11,14 @@ import static io.epigraph.idl.lexer.IdlElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import io.epigraph.idl.parser.psi.*;
 
-public class IdlOpInputModelProjectionBodyImpl extends ASTWrapperPsiElement implements IdlOpInputModelProjectionBody {
+public class IdlOpInputModelPropertyImpl extends ASTWrapperPsiElement implements IdlOpInputModelProperty {
 
-  public IdlOpInputModelProjectionBodyImpl(ASTNode node) {
+  public IdlOpInputModelPropertyImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull IdlVisitor visitor) {
-    visitor.visitOpInputModelProjectionBody(this);
+    visitor.visitOpInputModelProperty(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -27,21 +27,15 @@ public class IdlOpInputModelProjectionBodyImpl extends ASTWrapperPsiElement impl
   }
 
   @Override
-  @NotNull
-  public List<IdlOpInputModelProjectionBodyPart> getOpInputModelProjectionBodyPartList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, IdlOpInputModelProjectionBodyPart.class);
-  }
-
-  @Override
-  @NotNull
-  public PsiElement getCurlyLeft() {
-    return findNotNullChildByType(I_CURLY_LEFT);
+  @Nullable
+  public IdlCustomParam getCustomParam() {
+    return findChildByClass(IdlCustomParam.class);
   }
 
   @Override
   @Nullable
-  public PsiElement getCurlyRight() {
-    return findChildByType(I_CURLY_RIGHT);
+  public IdlOpInputDefaultValue getOpInputDefaultValue() {
+    return findChildByClass(IdlOpInputDefaultValue.class);
   }
 
 }

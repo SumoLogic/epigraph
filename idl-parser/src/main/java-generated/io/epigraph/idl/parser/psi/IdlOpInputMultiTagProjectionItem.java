@@ -7,11 +7,20 @@ import com.intellij.psi.PsiElement;
 
 public interface IdlOpInputMultiTagProjectionItem extends PsiElement {
 
-  @NotNull
+  @Nullable
   IdlOpInputModelProjection getOpInputModelProjection();
 
   @NotNull
-  IdlQid getQid();
+  List<IdlOpInputModelProperty> getOpInputModelPropertyList();
+
+  @NotNull
+  IdlOpTagName getOpTagName();
+
+  @Nullable
+  PsiElement getCurlyLeft();
+
+  @Nullable
+  PsiElement getCurlyRight();
 
   @Nullable
   PsiElement getPlus();

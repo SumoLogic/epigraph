@@ -87,10 +87,6 @@ public class IdlVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitOpInputFieldProjectionBody(@NotNull IdlOpInputFieldProjectionBody o) {
-    visitPsiElement(o);
-  }
-
   public void visitOpInputFieldProjectionBodyPart(@NotNull IdlOpInputFieldProjectionBodyPart o) {
     visitPsiElement(o);
   }
@@ -115,11 +111,7 @@ public class IdlVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitOpInputModelProjectionBody(@NotNull IdlOpInputModelProjectionBody o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOpInputModelProjectionBodyPart(@NotNull IdlOpInputModelProjectionBodyPart o) {
+  public void visitOpInputModelProperty(@NotNull IdlOpInputModelProperty o) {
     visitPsiElement(o);
   }
 

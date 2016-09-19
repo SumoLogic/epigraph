@@ -7,14 +7,23 @@ import com.intellij.psi.PsiElement;
 
 public interface IdlOpInputSingleTagProjection extends PsiElement {
 
-  @NotNull
+  @Nullable
   IdlOpInputModelProjection getOpInputModelProjection();
 
+  @NotNull
+  List<IdlOpInputModelProperty> getOpInputModelPropertyList();
+
   @Nullable
-  IdlQid getQid();
+  IdlOpTagName getOpTagName();
 
   @Nullable
   PsiElement getColon();
+
+  @Nullable
+  PsiElement getCurlyLeft();
+
+  @Nullable
+  PsiElement getCurlyRight();
 
   @Nullable
   PsiElement getPlus();

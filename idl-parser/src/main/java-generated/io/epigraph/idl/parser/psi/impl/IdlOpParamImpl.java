@@ -45,9 +45,21 @@ public class IdlOpParamImpl extends ASTWrapperPsiElement implements IdlOpParam {
   }
 
   @Override
+  @Nullable
+  public IdlVarValue getVarValue() {
+    return findChildByClass(IdlVarValue.class);
+  }
+
+  @Override
   @NotNull
   public PsiElement getColon() {
     return findNotNullChildByType(I_COLON);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getEq() {
+    return findChildByType(I_EQ);
   }
 
   @Override

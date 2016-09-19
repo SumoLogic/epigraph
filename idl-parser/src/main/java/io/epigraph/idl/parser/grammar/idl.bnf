@@ -114,11 +114,11 @@ private importRecover ::= namespaceDeclRecover
 
 // ------------- op projections -------------
 
-//opParameters ::= 'parameters' ':' '{' (opParam ','?)* '}'
-opParam ::= ';' '+'? qid ':' fqnTypeRef opInputModelProjection
-opTagName ::= qid | '_'
+opTagName ::= qid | '_' // `_` is default tag
 
 // output
+
+opParam ::= ';' '+'? qid ':' fqnTypeRef opInputModelProjection ( '=' varValue )?
 
 opOutputVarProjection ::= ( opOutputMultiTagProjection | opOutputSingleTagProjection ) opOutputVarPolymorphicTail?
 
@@ -152,7 +152,6 @@ private opOutputComplexFieldProjection ::= '{' (opOutputFieldProjectionBodyPart 
 private opOutputSimpleFieldProjection ::= opOutputVarProjection
 opOutputFieldProjectionBodyPart ::= opParam | customParam
 
-// files : Files default FileList *(..) ~FileList2(..)
 // op output list
 opOutputListModelProjection ::= '*' '(' opOutputVarProjection ')' { pin=1 }
 
@@ -166,33 +165,37 @@ opOutputKeyProjectionPart ::= opParam | customParam
 // input
 
 opInputVarProjection ::= ( opInputMultiTagProjection | opInputSingleTagProjection ) opInputVarPolymorphicTail?
-opInputSingleTagProjection ::= ( ':' '+'? qid )? opInputModelProjection
+opInputSingleTagProjection ::= ( ':' '+'? opTagName)? (opInputComplexSingleTagProjection | opInputSimpleSingleTagProjection )
+private opInputSimpleSingleTagProjection ::= opInputModelProjection
+private opInputComplexSingleTagProjection ::= '{' (opInputModelProperty ','?)* opInputModelProjection '}' {pin=1}
+
 opInputMultiTagProjection ::= ':' '(' (opInputMultiTagProjectionItem ','?)* ')' {pin=2}
-opInputMultiTagProjectionItem ::= '+'? qid opInputModelProjection
+opInputMultiTagProjectionItem ::= '+'? opTagName ( opInputComplexMultiTagProjectionItem | opInputSimpleMultiTagProjectionItem )
+private opInputSimpleMultiTagProjectionItem ::= opInputModelProjection
+private opInputComplexMultiTagProjectionItem ::= '{' (opInputModelProperty ','?)* opInputModelProjection '}' {pin=1}
 //
 opInputVarPolymorphicTail ::= opInputVarSingleTail | opInputVarMultiTail
 opInputVarSingleTail ::= '~' fqnTypeRef opInputVarProjection
 opInputVarMultiTail ::= '~' '(' (opInputVarMultiTailItem ','?)* ')' {pin=2}
 opInputVarMultiTailItem ::= fqnTypeRef opInputVarProjection
 
+opInputModelProperty ::= opInputDefaultValue | customParam
+opInputDefaultValue ::= 'default' ':' varValue {pin=1}
+
 opInputModelProjection ::= ( opInputRecordModelProjection
                            | opInputListModelProjection
                            | opInputMapModelProjection
 //                         | opInputEnumModelProjection
 //                         | opInputPrimitiveModelProjection
-                           )? opInputModelProjectionBody?
-
-opInputModelProjectionBody ::= '{' (opInputModelProjectionBodyPart ','?)* '}'
-opInputModelProjectionBodyPart ::= customParam | opInputDefaultValue
-opInputDefaultValue ::= 'default' ':' varValue {pin=1}
+                           )?
 
 // op input record
 opInputRecordModelProjection ::= '(' (opInputFieldProjection ','?)* ')' { pin=1 }
-opInputFieldProjection ::= '+'? qid opInputFieldProjectionBody? opInputVarProjection?
-opInputFieldProjectionBody ::= '{' (opInputFieldProjectionBodyPart ','?)* '}'
+opInputFieldProjection ::= '+'? qid (opInputComplexFieldProjection | opInputSimpleFieldProjection)
+private opInputComplexFieldProjection ::= '{' (opInputFieldProjectionBodyPart ','? )* opInputVarProjection? '}'
+private opInputSimpleFieldProjection ::= opInputVarProjection
 opInputFieldProjectionBodyPart ::= customParam
 
-// files : Files default FileList *(..) ~FileList2(..)
 // op input list
 opInputListModelProjection ::= '*' '(' opInputVarProjection ')' { pin=1 }
 
@@ -200,8 +203,8 @@ opInputMapModelProjection ::= opInputKeyProjection '(' opInputVarProjection ')' 
 opInputKeyProjection ::= '[' (opInputKeyProjectionPart ','?)* ']' {pin=1}
 opInputKeyProjectionPart ::= 'forbidden' | 'required' | customParam
 
-//opOutputPrimitiveModelProjection ::= 'primitive' // ?
-//opOutputEnumModelProjection ::= 'enum' // ?
+//opInputPrimitiveModelProjection ::= 'primitive' // ?
+//opInputEnumModelProjection ::= 'enum' // ?
 
 // ------------- data language -------------
 

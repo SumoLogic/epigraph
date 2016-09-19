@@ -14,9 +14,6 @@ public interface IdlOpInputModelProjection extends PsiElement {
   IdlOpInputMapModelProjection getOpInputMapModelProjection();
 
   @Nullable
-  IdlOpInputModelProjectionBody getOpInputModelProjectionBody();
-
-  @Nullable
   IdlOpInputRecordModelProjection getOpInputRecordModelProjection();
 
 }

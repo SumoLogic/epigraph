@@ -17,6 +17,9 @@ import java.text.MessageFormat;
 import java.util.LinkedHashSet;
 import java.util.List;
 
+import static io.epigraph.projections.ProjectionPsiParserUtil.getTag;
+import static io.epigraph.projections.ProjectionPsiParserUtil.getType;
+
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
@@ -34,28 +37,20 @@ public class OpInputProjectionsPsiParser {
     @Nullable IdlOpInputSingleTagProjection singleTagProjectionPsi = psi.getOpInputSingleTagProjection();
     if (singleTagProjectionPsi != null) {
       final OpInputModelProjection<?, ?> parsedModelProjection;
-      final String tagName = singleTagProjectionPsi.getQid() == null
-                             ? null
-                             : singleTagProjectionPsi.getQid().getCanonicalName();
-      final Type.Tag tag;
-
-      if (tagName == null) {
-        // get default tag
-        if (dataType.defaultTag == null)
-          throw new PsiProcessingException(
-              String.format("Can't parse default tag projection for '%s', default tag not specified", type.name()),
-              singleTagProjectionPsi
-          );
-
-        tag = dataType.defaultTag;
-        verifyTag(type, tag, singleTagProjectionPsi);
-      } else tag = getTag(type, tagName, singleTagProjectionPsi);
+      final Type.Tag tag = getTag(
+          type,
+          singleTagProjectionPsi.getOpTagName(),
+          dataType.defaultTag,
+          singleTagProjectionPsi
+      );
 
       @Nullable IdlOpInputModelProjection modelProjection = singleTagProjectionPsi.getOpInputModelProjection();
+      assert modelProjection != null; // todo when it can be null?
 
       parsedModelProjection = parseModelProjection(
           tag.type,
           singleTagProjectionPsi.getPlus() != null,
+          getModelDefaultValue(singleTagProjectionPsi.getOpInputModelPropertyList()),
           modelProjection, typesResolver
       );
 
@@ -68,17 +63,18 @@ public class OpInputProjectionsPsiParser {
           multiTagProjection.getOpInputMultiTagProjectionItemList();
 
       for (IdlOpInputMultiTagProjectionItem tagProjectionPsi : tagProjectionPsiList) {
-        String tagName = tagProjectionPsi.getQid().getCanonicalName();
-        Type.Tag tag = getTag(type, tagName, tagProjectionPsi);
+        final Type.Tag tag = getTag(type, tagProjectionPsi.getOpTagName(), dataType.defaultTag, tagProjectionPsi);
 
         final OpInputModelProjection<?, ?> parsedModelProjection;
 
         @NotNull DatumType tagType = tag.type;
         @Nullable IdlOpInputModelProjection modelProjection = tagProjectionPsi.getOpInputModelProjection();
+        assert modelProjection != null; // todo when it can be null?
 
         parsedModelProjection = parseModelProjection(
             tagType,
             tagProjectionPsi.getPlus() != null,
+            getModelDefaultValue(tagProjectionPsi.getOpInputModelPropertyList()),
             modelProjection, typesResolver
         );
 
@@ -116,6 +112,26 @@ public class OpInputProjectionsPsiParser {
     return new OpInputVarProjection(type, tagProjections, tails);
   }
 
+  @Nullable
+  private static GDataVarValue getModelDefaultValue(@NotNull List<IdlOpInputModelProperty> modelProperties)
+      throws PsiProcessingException {
+
+    GDataVarValue result = null;
+    for (IdlOpInputModelProperty property : modelProperties) {
+      @Nullable IdlOpInputDefaultValue defaultValuePsi = property.getOpInputDefaultValue();
+      if (defaultValuePsi != null) {
+        if (result != null)
+          throw new PsiProcessingException("Default value should only be specified once", defaultValuePsi);
+
+        @Nullable IdlVarValue varValuePsi = defaultValuePsi.getVarValue();
+        if (varValuePsi != null)
+          result = IdlGDataPsiParser.parseVarValue(varValuePsi);
+      }
+    }
+
+    return result;
+  }
+
   @NotNull
   private static OpInputVarProjection buildTailProjection(@NotNull DataType dataType,
                                                           IdlFqnTypeRef tailTypeRef,
@@ -134,34 +150,6 @@ public class OpInputProjectionsPsiParser {
   }
 
   @NotNull
-  private static Type.Tag getTag(@NotNull Type type, @NotNull String tagName, @NotNull PsiElement location)
-      throws PsiProcessingException {
-    Type.Tag tag = type.tagsMap().get(tagName);
-    if (tag == null)
-      throw new PsiProcessingException(
-          String.format("Can't find tag '%s' in '%s'", tagName, type.name()),
-          location
-      );
-    return tag;
-  }
-
-  private static void verifyTag(@NotNull Type type, @NotNull Type.Tag tag, @NotNull PsiElement location)
-      throws PsiProcessingException {
-    if (!type.tags().contains(tag))
-      throw new PsiProcessingException(String.format("Tag '%s' doesn't belong to type '%s'",
-                                                     tag.name(),
-                                                     type.name()
-      ), location);
-  }
-
-  @NotNull
-  private static Type getType(@NotNull TypesResolver resolver, @NotNull Fqn fqn, @NotNull PsiElement location)
-      throws PsiProcessingException {
-    @Nullable Type type = resolver.resolve(fqn);
-    if (type == null) throw new PsiProcessingException(String.format("Can't find type '%s'", fqn), location);
-    return type;
-  }
-
   private static OpInputVarProjection createDefaultVarProjection(@NotNull Type type,
                                                                  @NotNull Type.Tag tag,
                                                                  boolean required,
@@ -176,6 +164,7 @@ public class OpInputProjectionsPsiParser {
     );
   }
 
+  @NotNull
   private static OpInputVarProjection createDefaultVarProjection(@NotNull DatumType type,
                                                                  boolean required,
                                                                  @NotNull PsiElement location)
@@ -183,6 +172,7 @@ public class OpInputProjectionsPsiParser {
     return createDefaultVarProjection(type, type.self, required, location);
   }
 
+  @NotNull
   private static OpInputVarProjection createDefaultVarProjection(@NotNull DataType type,
                                                                  boolean required,
                                                                  @NotNull PsiElement location)
@@ -197,29 +187,13 @@ public class OpInputProjectionsPsiParser {
     return createDefaultVarProjection(type.type, defaultTag, required, location);
   }
 
-//  private static boolean required(@NotNull IdlOpInputModelProjection modelProjection) {
-//    @Nullable
-//    IdlOpInputModelProjectionBody modelProjectionBody = modelProjection.getOpInputModelProjectionBody();
-//
-//    if (modelProjectionBody != null) {
-//      @NotNull
-//      List<IdlOpInputModelProjectionBodyPart> bodyParts = modelProjectionBody.getOpInputModelProjectionBodyPartList();
-//
-//      for (IdlOpInputModelProjectionBodyPart part : bodyParts) {
-//        if (part.getRequired() != null) return true;
-//      }
-//    }
-//
-//    return false;
-//  }
-
+  @NotNull
   public static OpInputModelProjection<?, ?> parseModelProjection(@NotNull DatumType type,
                                                                   boolean required,
+                                                                  @Nullable GDataVarValue defaultValue,
                                                                   @NotNull IdlOpInputModelProjection psi,
                                                                   @NotNull TypesResolver typesResolver)
       throws PsiProcessingException {
-
-    @NotNull OpInputModelProjectionBodyContents body = parseModelBody(psi.getOpInputModelProjectionBody());
 
     switch (type.kind()) {
       case RECORD:
@@ -227,7 +201,7 @@ public class OpInputProjectionsPsiParser {
         if (recordModelProjectionPsi == null)
           return createDefaultModelProjection(type, required, psi);
         ensureModelKind(psi, TypeKind.RECORD);
-        GDataRecord defaultRecordData = body.coerceDefault(GDataRecord.class, psi);
+        GDataRecord defaultRecordData = coerceDefault(defaultValue, GDataRecord.class, psi);
 
         return parseRecordModelProjection(
             (RecordType) type,
@@ -241,7 +215,7 @@ public class OpInputProjectionsPsiParser {
         if (listModelProjectionPsi == null)
           return createDefaultModelProjection(type, required, psi);
         ensureModelKind(psi, TypeKind.LIST);
-        GDataList defaultListData = body.coerceDefault(GDataList.class, psi);
+        GDataList defaultListData = coerceDefault(defaultValue, GDataList.class, psi);
 
         return parseListModelProjection(
             (ListType) type,
@@ -259,7 +233,7 @@ public class OpInputProjectionsPsiParser {
       case ENUM:
         throw new PsiProcessingException("Unsupported type kind: " + type.kind(), psi);
       case PRIMITIVE:
-        GDataPrimitive defaultPrimitiveData = body.coerceDefault(GDataPrimitive.class, psi);
+        GDataPrimitive defaultPrimitiveData = coerceDefault(defaultValue, GDataPrimitive.class, psi);
         return parsePrimitiveModelProjection(
             (PrimitiveType) type,
             required,
@@ -294,28 +268,6 @@ public class OpInputProjectionsPsiParser {
   }
 
   @NotNull
-  private static OpInputModelProjectionBodyContents parseModelBody(@Nullable IdlOpInputModelProjectionBody body)
-      throws PsiProcessingException {
-    final OpInputModelProjectionBodyContents res = new OpInputModelProjectionBodyContents();
-    if (body != null) {
-      @NotNull List<IdlOpInputModelProjectionBodyPart> parts = body.getOpInputModelProjectionBodyPartList();
-      for (IdlOpInputModelProjectionBodyPart part : parts) {
-
-        if (part.getOpInputDefaultValue() != null) {
-          @Nullable IdlVarValue idlVarValue = part.getOpInputDefaultValue().getVarValue();
-          res.defaultValue = idlVarValue == null
-                             ? null
-                             : IdlGDataPsiParser.parseVarValue(idlVarValue);
-        }
-
-        // todo custom params
-      }
-
-    }
-
-    return res;
-  }
-
   private static OpInputModelProjection<?, ?> createDefaultModelProjection(@NotNull DatumType type,
                                                                            boolean required,
                                                                            @NotNull PsiElement location)
@@ -387,26 +339,28 @@ public class OpInputProjectionsPsiParser {
     LinkedHashSet<OpInputFieldProjection> fieldProjections = new LinkedHashSet<>();
     @NotNull List<IdlOpInputFieldProjection> psiFieldProjections = psi.getOpInputFieldProjectionList();
 
-    for (IdlOpInputFieldProjection psiFieldProjection : psiFieldProjections) {
-      final String fieldName = psiFieldProjection.getQid().getCanonicalName();
+    for (IdlOpInputFieldProjection fieldProjectionPsi : psiFieldProjections) {
+      final String fieldName = fieldProjectionPsi.getQid().getCanonicalName();
       RecordType.Field field = type.fieldsMap().get(fieldName);
       if (field == null)
         throw new PsiProcessingException(
             String.format("Can't field projection for '%s', field '%s' not found", type.name(), fieldName),
-            psiFieldProjection
+            fieldProjectionPsi
         );
 
-      final boolean requried = psiFieldProjection.getPlus() != null;
-      @Nullable IdlOpInputFieldProjectionBody fieldBody = psiFieldProjection.getOpInputFieldProjectionBody();
-      if (fieldBody != null) {
-        for (IdlOpInputFieldProjectionBodyPart fieldBodyPart : fieldBody.getOpInputFieldProjectionBodyPartList()) {
-          //todo parse field custom params
+      final boolean fieldRequired = fieldProjectionPsi.getPlus() != null;
+
+      for (IdlOpInputFieldProjectionBodyPart fieldBodyPart : fieldProjectionPsi.getOpInputFieldProjectionBodyPartList()) {
+        @NotNull IdlCustomParam customParam = fieldBodyPart.getCustomParam();
+        if (customParam != null) {
+          // todo
         }
       }
 
+
       OpInputVarProjection varProjection;
 
-      @Nullable IdlOpInputVarProjection psiVarProjection = psiFieldProjection.getOpInputVarProjection();
+      @Nullable IdlOpInputVarProjection psiVarProjection = fieldProjectionPsi.getOpInputVarProjection();
       if (psiVarProjection == null) {
         @NotNull DataType fieldDataType = field.dataType();
         @Nullable Type.Tag defaultFieldTag = fieldDataType.defaultTag;
@@ -415,15 +369,15 @@ public class OpInputProjectionsPsiParser {
               "Can't construct default projection for field '%s', as it's type '%s' has no default tag",
               fieldName,
               fieldDataType.name
-          ), psiFieldProjection);
+          ), fieldProjectionPsi);
 
         varProjection =
-            createDefaultVarProjection(fieldDataType.type, defaultFieldTag, required, psiFieldProjection);
+            createDefaultVarProjection(fieldDataType.type, defaultFieldTag, required, fieldProjectionPsi);
       } else {
         varProjection = parseVarProjection(field.dataType(), psiVarProjection, resolver);
       }
 
-      fieldProjections.add(new OpInputFieldProjection(field, varProjection, requried));
+      fieldProjections.add(new OpInputFieldProjection(field, varProjection, fieldRequired));
     }
 
     final LinkedHashSet<OpInputRecordModelProjection> tail;
@@ -483,21 +437,19 @@ public class OpInputProjectionsPsiParser {
     return new OpInputPrimitiveModelProjection(type, required, defaultDatum);
   }
 
-  private static class OpInputModelProjectionBodyContents {
-    @Nullable GDataVarValue defaultValue;
-    // todo custom params
+  @Nullable
+  private static <D extends GDataVarValue> D coerceDefault(@Nullable GDataVarValue defaultValue,
+                                                           Class<D> cls,
+                                                           @NotNull PsiElement location)
+      throws PsiProcessingException {
 
-    @Nullable
-    public <D extends GDataVarValue> D coerceDefault(Class<D> cls, @NotNull PsiElement location)
-        throws PsiProcessingException {
-      if (defaultValue == null) return null;
-      if (defaultValue instanceof GDataNull) return null;
-      if (defaultValue.getClass().equals(cls)) //noinspection unchecked
-        return (D) defaultValue;
-      throw new PsiProcessingException(
-          String.format("Invalid default value '%s', expected to get '%s'", defaultValue, cls.getName()),
-          location
-      );
-    }
+    if (defaultValue == null) return null;
+    if (defaultValue instanceof GDataNull) return null;
+    if (defaultValue.getClass().equals(cls)) //noinspection unchecked
+      return (D) defaultValue;
+    throw new PsiProcessingException(
+        String.format("Invalid default value '%s', expected to get '%s'", defaultValue, cls.getName()),
+        location
+    );
   }
 }
