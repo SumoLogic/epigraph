@@ -7,6 +7,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiInvalidElementAccessException;
 import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.IconUtil;
 import com.sumologic.epigraph.ideaplugin.schema.brains.NamespaceManager;
 import com.sumologic.epigraph.ideaplugin.schema.brains.VirtualFileUtil;
 import io.epigraph.lang.Fqn;
@@ -21,18 +22,21 @@ import java.util.List;
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
 public class SchemaPresentationUtil {
+  private static final String OVERLAY = "§";
   // TODO own icons!
-  public static final Icon SCHEMA_FILE_ICON = AllIcons.FileTypes.Custom;
-  public static final Icon SCHEMA_OUTSIDE_SOURCE_FILE_ICON = AllIcons.FileTypes.Unknown;
+  public static final Icon SCHEMA_FILE_ICON = addOverlay(AllIcons.FileTypes.Custom);
+  public static final Icon SCHEMA_OUTSIDE_SOURCE_FILE_ICON = addOverlay(AllIcons.FileTypes.Unknown);
 
-  public static final Icon PARENT_TYPES_GUTTER_ICON = AllIcons.Gutter.OverridingMethod;
-  public static final Icon CHILD_TYPES_GUTTER_ICON = AllIcons.Gutter.OverridenMethod;
-  public static final Icon SUPPLEMENTS_GUTTER_ICON = AllIcons.Gutter.ExtAnnotation;
+  public static final Icon PARENT_TYPES_GUTTER_ICON = addOverlay(AllIcons.Gutter.OverridingMethod);
+  public static final Icon CHILD_TYPES_GUTTER_ICON = addOverlay(AllIcons.Gutter.OverridenMethod);
+  public static final Icon SUPPLEMENTS_GUTTER_ICON = addOverlay(AllIcons.Gutter.ExtAnnotation);
 
-  public static final Icon OVERRIDEN_FIELD_GUTTER_ICON = AllIcons.Gutter.OverridenMethod;
-  public static final Icon OVERRIDING_FIELD_GUTTER_ICON = AllIcons.Gutter.OverridingMethod;
-  public static final Icon OVERRIDEN_TAG_GUTTER_ICON = AllIcons.Gutter.ImplementedMethod;
-  public static final Icon OVERRIDING_TAG_GUTTER_ICON = AllIcons.Gutter.ImplementingMethod;
+  public static final Icon OVERRIDEN_FIELD_GUTTER_ICON = addOverlay(AllIcons.Gutter.OverridenMethod);
+  public static final Icon OVERRIDING_FIELD_GUTTER_ICON = addOverlay(AllIcons.Gutter.OverridingMethod);
+  public static final Icon OVERRIDEN_TAG_GUTTER_ICON = addOverlay(AllIcons.Gutter.ImplementedMethod);
+  public static final Icon OVERRIDING_TAG_GUTTER_ICON = addOverlay(AllIcons.Gutter.ImplementingMethod);
+
+  private static Icon addOverlay(@NotNull Icon i) { return IconUtil.addText(i, OVERLAY); }
 
   @Nullable
   public static String getName(@NotNull PsiNamedElement element, boolean qualified) {
@@ -58,19 +62,19 @@ public class SchemaPresentationUtil {
   public static Icon getIcon(@NotNull PsiElement element) {
     if (element instanceof SchemaFile) return SCHEMA_FILE_ICON;
 
-    if (element instanceof SchemaRecordTypeDef) return AllIcons.Nodes.Class;
-    if (element instanceof SchemaEnumTypeDef) return AllIcons.Nodes.Enum;
-    if (element instanceof SchemaVarTypeDef) return AllIcons.Nodes.Interface;
+    if (element instanceof SchemaRecordTypeDef) return addOverlay(AllIcons.Nodes.Class);
+    if (element instanceof SchemaEnumTypeDef) return addOverlay(AllIcons.Nodes.Enum);
+    if (element instanceof SchemaVarTypeDef) return addOverlay(AllIcons.Nodes.Interface);
 
-    if (element instanceof SchemaTypeDef) return AllIcons.Nodes.Class;
+    if (element instanceof SchemaTypeDef) return addOverlay(AllIcons.Nodes.Class);
 
-    if (element instanceof SchemaSupplementDef) return AllIcons.Nodes.Aspect;
+    if (element instanceof SchemaSupplementDef) return addOverlay(AllIcons.Nodes.Aspect);
 
     if (element instanceof SchemaCustomParam) return AllIcons.Nodes.Annotationtype;
     if (element instanceof SchemaFieldDecl) return AllIcons.Nodes.Field;
     if (element instanceof SchemaEnumMemberDecl) return AllIcons.Nodes.Property;
     if (element instanceof SchemaVarTagDecl)
-      return AllIcons.Nodes.Function; // IconUtil.addText(icon, "D") for default member?
+      return AllIcons.Nodes.Function; 
 
     // TODO icons for all!
     return null;
