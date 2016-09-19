@@ -6,7 +6,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
-import java.util.Set;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -17,7 +16,7 @@ public class OpOutputListModelProjection extends OpOutputModelProjection<ListTyp
 
   public OpOutputListModelProjection(@NotNull ListType model,
                                      boolean includeInDefault,
-                                     @Nullable Set<OpParam> params,
+                                     @Nullable OpParams params,
                                      @NotNull OpOutputVarProjection itemsProjection) {
     super(model, includeInDefault, params);
     this.itemsProjection = itemsProjection;

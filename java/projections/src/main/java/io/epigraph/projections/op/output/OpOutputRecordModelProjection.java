@@ -20,7 +20,7 @@ public class OpOutputRecordModelProjection extends OpOutputModelProjection<Recor
 
   public OpOutputRecordModelProjection(@NotNull RecordType model,
                                        boolean includeInDefault,
-                                       @Nullable Set<OpParam> params,
+                                       @Nullable OpParams params,
                                        @Nullable LinkedHashSet<OpOutputFieldProjection> fieldProjections) {
     super(model, includeInDefault, params);
     this.fieldProjections = fieldProjections;

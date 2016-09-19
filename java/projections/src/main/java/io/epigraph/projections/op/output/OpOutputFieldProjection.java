@@ -8,7 +8,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
-import java.util.Set;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -17,13 +16,13 @@ public class OpOutputFieldProjection implements PrettyPrintable {
   @NotNull
   private final RecordType.Field field;
   @Nullable
-  private final Set<OpParam> params;
+  private final OpParams params;
   @NotNull
   private final OpOutputVarProjection projection;
   private final boolean includeInDefault;
 
   public OpOutputFieldProjection(@NotNull RecordType.Field field,
-                                 @Nullable Set<OpParam> params,
+                                 @Nullable OpParams params,
                                  @NotNull OpOutputVarProjection projection,
                                  boolean includeInDefault) {
     this.field = field;
@@ -35,8 +34,7 @@ public class OpOutputFieldProjection implements PrettyPrintable {
   @NotNull
   public RecordType.Field getField() { return field; }
 
-  @Nullable
-  public Set<OpParam> params() { return params; }
+  public @Nullable OpParams params() { return params; }
 
   @NotNull
   public OpOutputVarProjection projection() { return projection; }
@@ -49,11 +47,7 @@ public class OpOutputFieldProjection implements PrettyPrintable {
     l.print(field.name());
     if (params != null && !params.isEmpty()) {
       l.beginCInd().print(" {");
-
-      l.brk().beginCInd().print("params: {");
-      for (OpParam param : params) l.brk().print(param);
-      l.end().brk().print("}");
-
+      l.print(params);
       l.end().brk().print("}");
     }
     l.print(":").brk().beginCInd().ind().print(projection).end();

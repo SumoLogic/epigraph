@@ -336,7 +336,7 @@ public class OpOutputProjectionsTest {
                     new OpOutputPrimitiveModelProjection(
                         PersonId.type,
                         true,
-                        OpParam.params(
+                        new OpParams(
                             // todo string
                             new OpParam("token", new OpInputPrimitiveModelProjection(UserId.type, false, null))
                         )
@@ -379,12 +379,12 @@ public class OpOutputProjectionsTest {
                             OpOutputRecordModelProjection.fields(
                                 new OpOutputFieldProjection(
                                     UserRecord.bestFriend,
-                                    OpParam.params(new OpParam("maxAge",
-                                                               new OpInputPrimitiveModelProjection(
-                                                                   PersonId.type,
-                                                                   false,
-                                                                   null
-                                                               )
+                                    new OpParams(new OpParam("maxAge",
+                                                             new OpInputPrimitiveModelProjection(
+                                                                 PersonId.type,
+                                                                 false,
+                                                                 null
+                                                             )
                                     )),
                                     new OpOutputVarProjection(
                                         Person.type, // todo ??

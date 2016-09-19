@@ -7,9 +7,7 @@ import io.epigraph.types.DatumType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
 import java.util.Objects;
-import java.util.Set;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -18,11 +16,11 @@ public abstract class OpOutputModelProjection<M extends DatumType>
     extends GenericModelProjection<M> implements PrettyPrintable {
   protected final boolean includeInDefault;
   @Nullable
-  protected final Set<OpParam> params;
+  protected final OpParams params;
 
   public OpOutputModelProjection(@NotNull M model,
                                  boolean includeInDefault,
-                                 @Nullable Set<OpParam> params) {
+                                 @Nullable OpParams params) {
     super(model);
     this.includeInDefault = includeInDefault;
     this.params = params;
@@ -30,7 +28,7 @@ public abstract class OpOutputModelProjection<M extends DatumType>
 
   public boolean includeInDefault() { return includeInDefault; }
 
-  public @Nullable Set<OpParam> params() { return params; }
+  public @Nullable OpParams params() { return params; }
 
   @Override
   public <Exc extends Exception> void prettyPrint(DataLayouter<Exc> l) throws Exc {
@@ -44,16 +42,7 @@ public abstract class OpOutputModelProjection<M extends DatumType>
   }
 
   protected <Exc extends Exception> void prettyPrintParamsBlock(DataLayouter<Exc> l) throws Exc {
-    if (params != null && !params.isEmpty()) {
-      l.beginCInd().print(" {");
-      prettyPrintParams(l, params);
-      l.end().brk().print("}");
-    }
-  }
-
-  protected <Exc extends Exception> void prettyPrintParams(DataLayouter<Exc> l, @NotNull Collection<OpParam> params)
-      throws Exc {
-    for (OpParam param : params) { l.brk().print(param); }
+    if (params != null && !params.isEmpty()) l.print(params);
   }
 
   @Override

@@ -13,10 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.text.MessageFormat;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static io.epigraph.projections.ProjectionPsiParserUtil.getTag;
 import static io.epigraph.projections.ProjectionPsiParserUtil.getType;
@@ -118,21 +115,21 @@ public class OpOutputProjectionsPsiParser {
 
 
   @Nullable
-  private static Set<OpParam> parseModelParams(
+  private static OpParams parseModelParams(
       @NotNull List<IdlOpOutputModelProperty> modelProperties,
       @NotNull TypesResolver resolver) throws PsiProcessingException {
 
-    Set<OpParam> res = null;
+    List<OpParam> paramList = null;
 
     for (IdlOpOutputModelProperty modelProperty : modelProperties) {
       @Nullable IdlOpParam paramPsi = modelProperty.getOpParam();
       if (paramPsi != null) {
-        if (res == null) res = new HashSet<>();
-        res.add(parseParameter(paramPsi, resolver));
+        if (paramList == null) paramList = new ArrayList<>(3);
+        paramList.add(parseParameter(paramPsi, resolver));
       }
     }
 
-    return res;
+    return paramList == null ? null : new OpParams(paramList);
   }
 
   @NotNull
@@ -191,7 +188,7 @@ public class OpOutputProjectionsPsiParser {
   @NotNull
   public static OpOutputModelProjection<?> parseModelProjection(@NotNull DatumType type,
                                                                 boolean includeInDefault,
-                                                                @Nullable Set<OpParam> params,
+                                                                @Nullable OpParams params,
                                                                 @NotNull IdlOpOutputModelProjection psi,
                                                                 @NotNull TypesResolver typesResolver)
       throws PsiProcessingException {
@@ -314,7 +311,7 @@ public class OpOutputProjectionsPsiParser {
   @NotNull
   public static OpOutputRecordModelProjection parseRecordModelProjection(@NotNull RecordType type,
                                                                          boolean includeInDefault,
-                                                                         @Nullable Set<OpParam> params,
+                                                                         @Nullable OpParams params,
                                                                          @NotNull IdlOpOutputRecordModelProjection psi,
                                                                          @NotNull TypesResolver typesResolver)
       throws PsiProcessingException {
@@ -332,16 +329,20 @@ public class OpOutputProjectionsPsiParser {
 
       final boolean includeFieldInDefault = fieldProjectionPsi.getPlus() != null;
 
-      Set<OpParam> fieldParams = null;
+      OpParams fieldParams;
+
+      List<OpParam> fieldParamsList = null;
       for (IdlOpOutputFieldProjectionBodyPart fieldBodyPart : fieldProjectionPsi.getOpOutputFieldProjectionBodyPartList()) {
         @Nullable IdlOpParam opParam = fieldBodyPart.getOpParam();
         if (opParam != null) {
-          if (fieldParams == null) fieldParams = new HashSet<>();
-          fieldParams.add(parseParameter(opParam, typesResolver));
+          if (fieldParamsList == null) fieldParamsList = new ArrayList<>(3);
+          fieldParamsList.add(parseParameter(opParam, typesResolver));
         }
 
         //todo parse field custom params
       }
+
+      fieldParams = fieldParamsList == null ? null : new OpParams(fieldParamsList);
 
       OpOutputVarProjection varProjection;
 
@@ -373,7 +374,7 @@ public class OpOutputProjectionsPsiParser {
   @NotNull
   public static OpOutputListModelProjection parseListModelProjection(@NotNull ListType type,
                                                                      boolean includeInDefault,
-                                                                     @Nullable Set<OpParam> params,
+                                                                     @Nullable OpParams params,
                                                                      @NotNull IdlOpOutputListModelProjection psi,
                                                                      @NotNull TypesResolver resolver)
       throws PsiProcessingException {
@@ -397,7 +398,7 @@ public class OpOutputProjectionsPsiParser {
   @NotNull
   public static OpOutputPrimitiveModelProjection parsePrimitiveModelProjection(@NotNull PrimitiveType type,
                                                                                boolean includeInDefault,
-                                                                               @Nullable Set<OpParam> params) {
+                                                                               @Nullable OpParams params) {
     // todo custom params, tails
     return new OpOutputPrimitiveModelProjection(type, includeInDefault, params);
   }
