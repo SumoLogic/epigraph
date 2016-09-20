@@ -64,13 +64,11 @@
         <activeByDefault>true</activeByDefault>
       </activation>
       <modules>
-        <module>core</module>
+        <module>scala</module>
         <module>idl-parser</module>
         <module>java</module>
         <module>lang-common</module>
         <module>maven-plugin</module>
-        <module>scala-codegen</module>
-        <module>scala-maven-plugin</module>
         <module>schema-compiler</module>
         <module>schema-parser</module>
         <module>standalone-psi-util</module>
@@ -85,10 +83,10 @@
       <modules>
         <module>builtin-types-schema</module>
         <module>data-schema</module>
-        <module>java-codegen-test</module>
+        <module>java/codegen-test</module>
         <module>operations-schema</module>
         <module>projections-schema</module>
-        <module>scala-codegen-test</module>
+        <module>scala/codegen-test</module>
         <module>schema-schema</module>
       </modules>
     </profile>

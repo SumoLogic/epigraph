@@ -1,0 +1,22 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <artifactId>epigraph-scala</artifactId>
+  <packaging>pom</packaging>
+
+  <parent>
+    <groupId>com.sumologic.epigraph</groupId>
+    <artifactId>epigraph</artifactId>
+    <version>0.0-SNAPSHOT</version>
+  </parent>
+
+  <description>Epigraph for Scala</description>
+
+  <modules>
+    <module>codegen</module>
+    <module>core</module>
+    <module>maven-plugin</module>
+  </modules>
+
+</project>
