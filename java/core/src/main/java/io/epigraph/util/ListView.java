@@ -7,9 +7,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.AbstractList;
 import java.util.List;
-import java.util.function.BiConsumer;
+import java.util.RandomAccess;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 /**
  * Modifiable mapped view of modifiable list. Optimized for random access original lists.
@@ -23,19 +22,15 @@ public final class ListView<O, V> extends AbstractList<V> {
 
   private final @NotNull Function<@NotNull O, @Nullable V> view;
 
-  private final @NotNull BiConsumer<@NotNull ? super O, @Nullable ? super V> merger;
-
-  private final @NotNull Supplier<@NotNull O> originalElementConstructor;
+  private final @NotNull Function<@Nullable V, @NotNull O> originalElementConstructor;
 
   public ListView(
       @NotNull List<O> original,
       @NotNull Function<@NotNull O, @Nullable V> view,
-      @NotNull BiConsumer<@NotNull ? super O, @Nullable ? super V> merger,
-      @NotNull Supplier<@NotNull O> originalElementConstructor
+      @NotNull Function<@Nullable V, @NotNull O> originalElementConstructor
   ) {
     this.original = original;
     this.view = view;
-    this.merger = merger;
     this.originalElementConstructor = originalElementConstructor;
   }
 
@@ -47,18 +42,11 @@ public final class ListView<O, V> extends AbstractList<V> {
 
   @Override
   public V set(int index, V element) {
-    O originalElement = original.get(index);
-    V old = view.apply(originalElement);
-    merger.accept(originalElement, element);
-    return old;
+    return view.apply(original.set(index, originalElementConstructor.apply(element)));
   }
 
   @Override
-  public void add(int index, V element) {
-    O originalElement = originalElementConstructor.get();
-    merger.accept(originalElement, element);
-    original.add(index, originalElement);
-  }
+  public void add(int index, V element) { original.add(index, originalElementConstructor.apply(element)); }
 
   @Override
   public V remove(int index) { return view.apply(original.remove(index)); }

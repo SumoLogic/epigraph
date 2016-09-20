@@ -62,16 +62,16 @@ ${et match { // element tags views (for vartypes)
   @NotNull java.util.List<@NotNull ? extends ${lqn(et, t)}> datas();
 ${
       evt.effectiveTags.map { tag => sn"""\
-
-  /**
-   * Returns list view of `${tag.name}` tag datums. Elements where the tag value is not set will be `null`.
-   */
-  @NotNull java.util.List<@Nullable ? extends ${lqn(tt(etr, tag.name), t)}> ${jn(tag.name + "Datums")}();
-
-  /**
-   * Returns list view of `${tag.name}` tag values. Elements where the tag value is not set will be `null`.
-   */
-  @NotNull java.util.List<@Nullable ? extends ${lqn(tt(etr, tag.name), t)}.Value> ${jn(tag.name + "Values")}();
+//
+//  /**
+//   * Returns list view of `${tag.name}` tag datums. Elements where the tag value is not set will be `null`.
+//   */
+//  @NotNull java.util.List<@Nullable ? extends ${lqn(tt(etr, tag.name), t)}> ${jn(tag.name + "Datums")}();
+//
+//  /**
+//   * Returns list view of `${tag.name}` tag values. Elements where the tag value is not set will be `null`.
+//   */
+//  @NotNull java.util.List<@Nullable ? extends ${lqn(tt(etr, tag.name), t)}.Value> ${jn(tag.name + "Values")}();
 """
       }.mkString
 }\
@@ -168,16 +168,16 @@ ${et match { // element tags (for vartypes)
   @NotNull java.util.List<@NotNull ? extends ${lqn(et, t)}.Imm> datas();
 ${
       evt.effectiveTags.map { tag => sn"""\
-
-  /**
-   * Returns immutable list view of `${tag.name}` tag datums. Elements where the tag value is not set will be `null`.
-   */
-  @NotNull java.util.List<@Nullable ? extends ${lqn(tt(etr, tag.name), t)}.Imm> ${jn(tag.name + "Datums")}();
-
-  /**
-   * Returns immutable list view of `${tag.name}` tag values. Elements where the tag value is not set will be `null`.
-   */
-  @NotNull java.util.List<@Nullable ? extends ${lqn(tt(etr, tag.name), t)}.Imm.Value> ${jn(tag.name + "Values")}();
+//
+//  /**
+//   * Returns immutable list view of `${tag.name}` tag datums. Elements where the tag value is not set will be `null`.
+//   */
+//  @NotNull java.util.List<@Nullable ? extends ${lqn(tt(etr, tag.name), t)}.Imm> ${jn(tag.name + "Datums")}();
+//
+//  /**
+//   * Returns immutable list view of `${tag.name}` tag values. Elements where the tag value is not set will be `null`.
+//   */
+//  @NotNull java.util.List<@Nullable ? extends ${lqn(tt(etr, tag.name), t)}.Imm.Value> ${jn(tag.name + "Values")}();
 """
       }.mkString
 }\
@@ -230,26 +230,26 @@ ${et match { // element tags (for vartypes)
       }
 ${
       evt.effectiveTags.map { tag => sn"""\
-
-      /**
-       * Returns immutable list view of `${tag.name}` tag datums. Elements where the tag value is not set will be `null`.
-       */
-      public @NotNull java.util.List<@Nullable ? extends ${lqn(tt(etr, tag.name), t)}.Imm> ${jn(tag.name + "Datums")}() {
-        return new io.epigraph.util.Unmodifiable.ListView<${lqn(et, t)}.Imm${vt(et, "", ".Data")}, ${lqn(tt(etr, tag.name), t)}.Imm>(
-            datas(),
-            ${lqn(et, t)}.Imm${vt(et, "", ".Data")}::get${vt(et, up(tag.name), "")}
-        );
-      }
-
-      /**
-       * Returns immutable list view of `${tag.name}` tag values. Elements where the tag value is not set will be `null`.
-       */
-      public @NotNull java.util.List<@Nullable ? extends ${lqn(tt(etr, tag.name), t)}.Imm.Value> ${jn(tag.name + "Values")}() {
-        return new io.epigraph.util.Unmodifiable.ListView<${lqn(et, t)}.Imm${vt(et, "", ".Data")}, ${lqn(tt(etr, tag.name), t)}.Imm.Value>(
-            datas(),
-            ${lqn(et, t)}.Imm${vt(et, "", ".Data")}::get${vt(et, up(tag.name), "")}$$
-        );
-      }
+//
+//      /**
+//       * Returns immutable list view of `${tag.name}` tag datums. Elements where the tag value is not set will be `null`.
+//       */
+//      public @NotNull java.util.List<@Nullable ? extends ${lqn(tt(etr, tag.name), t)}.Imm> ${jn(tag.name + "Datums")}() {
+//        return new io.epigraph.util.Unmodifiable.ListView<${lqn(et, t)}.Imm${vt(et, "", ".Data")}, ${lqn(tt(etr, tag.name), t)}.Imm>(
+//            datas(),
+//            ${lqn(et, t)}.Imm${vt(et, "", ".Data")}::get${vt(et, up(tag.name), "")}
+//        );
+//      }
+//
+//      /**
+//       * Returns immutable list view of `${tag.name}` tag values. Elements where the tag value is not set will be `null`.
+//       */
+//      public @NotNull java.util.List<@Nullable ? extends ${lqn(tt(etr, tag.name), t)}.Imm.Value> ${jn(tag.name + "Values")}() {
+//        return new io.epigraph.util.Unmodifiable.ListView<${lqn(et, t)}.Imm${vt(et, "", ".Data")}, ${lqn(tt(etr, tag.name), t)}.Imm.Value>(
+//            datas(),
+//            ${lqn(et, t)}.Imm${vt(et, "", ".Data")}::get${vt(et, up(tag.name), "")}$$
+//        );
+//      }
 """
       }.mkString
 }\
@@ -329,70 +329,66 @@ ${t.effectiveDefaultElementTagName match { // default element tag (if defined) v
       case None => ""
       case Some(dtn) => sn"""\
 
-      ${"/**"}
-       * Returns list view of element default tag datum builders. Elements where the tag datum is not set will be `null`.
-       */
-      @Override
-      public @NotNull java.util.List<${lqn(tt(etr, dtn), t)}.@Nullable Builder> datums() {
-        return new io.epigraph.util.ListView<>(
-            datas(),
-            ${lqn(et, t)}.Builder${vt(et, "", ".Data")}::get${vt(et, up(dtn), "")},
-            ${lqn(et, t)}.Builder${vt(et, "", ".Data")}::set${vt(et, up(dtn), "")},
-            ${lqn(et, t)}.type::createDataBuilder
-        );
-      }
+    ${"/**"}
+     * Returns modifiable list view of default `$dtn` tag element datums. Elements where the tag datum is not set will be `null`.
+     */
+    @Override
+    public @NotNull java.util.List<@Nullable ${lqn(tt(etr, dtn), t)}> datums() {
+      return new io.epigraph.util.ListView<>(
+          datas(),
+          ${lqn(et, t)}${vt(et, "", ".Data")}::get${vt(et, up(dtn), "")},
+          v -> ${lqn(et, t)}.type.createDataBuilder().set${vt(et, up(dtn), "")}(v)
+      );
+    }
 
-      ${"/**"}
-       * Returns list view of element default tag value builders. Elements where the tag value is not set will be `null`.
-       */
-      @Override
-      public @NotNull java.util.List<${lqn(tt(etr, dtn), t)}.Builder.@Nullable Value> values() {
-        return new io.epigraph.util.ListView<>(
-            datas(),
-            ${lqn(et, t)}.Builder${vt(et, "", ".Data")}::get${vt(et, up(dtn), "")}$$,
-            ${lqn(et, t)}.Builder${vt(et, "", ".Data")}::set${vt(et, up(dtn), "")},
-            ${lqn(et, t)}.type::createDataBuilder
-        );
-      }
+    ${"/**"}
+     * Returns list view of element default tag value builders. Elements where the tag value is not set will be `null`.
+     */
+    @Override
+    public @NotNull java.util.List<${lqn(tt(etr, dtn), t)}.@Nullable Value> values() {
+      return new io.epigraph.util.ListView<>(
+          datas(),
+          ${lqn(et, t)}${vt(et, "", ".Data")}::get${vt(et, up(dtn), "")}$$,
+          v -> ${lqn(et, t)}.type.createDataBuilder().set${vt(et, up(dtn), "")}(v)
+      );
+    }
 """
   }
 }\
-${et match { // element tags (for vartypes)
+${et match { // data view (for vartypes)
     case evt: CVarTypeDef => sn"""\
 
-      ${"/**"}
-       * Returns list view of element data builders.
-       */
-      @Override
-      public @NotNull java.util.List<${lqn(et, t)}.@NotNull Builder> datas() {
-        return io.epigraph.util.Util.cast(_raw().elements());
-      }
+    ${"/**"}
+     * Returns modifiable list view of element data builders.
+     */
+    @Override
+    public @NotNull java.util.List<@NotNull ${lqn(et, t)}> datas() {
+      return io.epigraph.util.Util.cast(_raw().elements());
+    }
 ${
       evt.effectiveTags.map { tag => sn"""\
-
-      /**
-       * Returns list view of elements `${tag.name}` tag datum builders. Elements where the tag value is not set will be `null`.
-       */
-      public @NotNull java.util.List<${lqn(tt(etr, tag.name), t)}.@Nullable Builder> ${jn(tag.name + "Datums")}() {
-        return new io.epigraph.util.ListView<>(
-            datas(),
-            ${lqn(et, t)}.Builder${vt(et, "", ".Data")}::get${vt(et, up(tag.name), "")},
-            ${lqn(et, t)}.Builder${vt(et, "", ".Data")}::set${vt(et, up(tag.name), "")},
-            ${lqn(et, t)}.type::createDataBuilder
-        );
-      }
-
-      /**
-       * Returns list view of elements `${tag.name}` tag value builders. Elements where the tag value is not set will be `null`.
-       */
-      public @NotNull java.util.List<${lqn(tt(etr, tag.name), t)}.Builder.@Nullable Value> ${jn(tag.name + "Values")}() {
-        return new io.epigraph.util.ListView<>(
-            datas(),
-            ${lqn(et, t)}.Builder${vt(et, "", ".Data")}::get${vt(et, up(tag.name), "")}$$,
-            ${lqn(et, t)}.Builder${vt(et, "", ".Data")}::set${vt(et, up(tag.name), "")},
-            ${lqn(et, t)}.type::createDataBuilder
-        );
-      }
+//
+//    /**
+//     * Returns modifiable list view of elements `${tag.name}` tag datums. Elements where the tag value is not set will be `null`.
+//     */
+//    public @NotNull java.util.List<@Nullable ${lqn(tt(etr, tag.name), t)}> ${jn(tag.name + "Datums")}() {
+//      return new io.epigraph.util.ListView<>(
+//          datas(),
+//          ${lqn(et, t)}${vt(et, "", ".Data")}::get${vt(et, up(tag.name), "")},
+//          v -> ${lqn(et, t)}.type.createDataBuilder().set${vt(et, up(tag.name), "")}(v)
+//      );
+//    }
+//
+//    /**
+//     * Returns modifiable list view of elements `${tag.name}` tag values. Elements where the tag value is not set will be `null`.
+//     */
+//    public @NotNull java.util.List<${lqn(tt(etr, tag.name), t)}.@Nullable Value> ${jn(tag.name + "Values")}() {
+//      return new io.epigraph.util.ListView<>(
+//          datas(),
+//          ${lqn(et, t)}${vt(et, "", ".Data")}::get${vt(et, up(tag.name), "")}$$,
+//          v -> ${lqn(et, t)}.type.createDataBuilder().set${vt(et, up(tag.name), "")}(v)
+//      );
+//    }
 """
       }.mkString
 }\
@@ -400,7 +396,7 @@ ${
     case _ => sn"""\
 
       // method is private to not expose datas() for non-union types (so simple type can be replaced with union type while preserving backwards-compatibility)
-      private @NotNull java.util.List<${lqn(et, t)}.Builder.@NotNull Data> datas() {
+      private @NotNull java.util.List<${lqn(et, t)}.@NotNull Data> datas() {
         return io.epigraph.util.Util.cast(_raw().elements());
       }
 """
