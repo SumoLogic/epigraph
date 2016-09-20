@@ -11,6 +11,9 @@ public interface IdlOpParam extends PsiElement {
   List<IdlCustomParam> getCustomParamList();
 
   @Nullable
+  IdlDatum getDatum();
+
+  @Nullable
   IdlFqnTypeRef getFqnTypeRef();
 
   @Nullable
@@ -18,9 +21,6 @@ public interface IdlOpParam extends PsiElement {
 
   @Nullable
   IdlQid getQid();
-
-  @Nullable
-  IdlVarValue getVarValue();
 
   @Nullable
   PsiElement getColon();

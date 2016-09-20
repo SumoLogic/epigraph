@@ -2,7 +2,7 @@ package io.epigraph.projections.op.output;
 
 import com.intellij.psi.PsiElement;
 import io.epigraph.gdata.GDataValue;
-import io.epigraph.gdata.GDataVarValue;
+import io.epigraph.gdata.GDatum;
 import io.epigraph.idl.gdata.IdlGDataPsiParser;
 import io.epigraph.idl.parser.psi.*;
 import io.epigraph.lang.Fqn;
@@ -460,10 +460,10 @@ public class OpOutputProjectionsPsiParser {
           String.format("Can't resolve parameter '%s' data type '%s'", paramName, paramTypeName), paramPsi
       );
 
-    @Nullable IdlVarValue defaultValuePsi = paramPsi.getVarValue();
-    @Nullable GDataVarValue defaultValue = defaultValuePsi == null
+    @Nullable IdlDatum defaultValuePsi = paramPsi.getDatum();
+    @Nullable GDatum defaultValue = defaultValuePsi == null
                                            ? null
-                                           : IdlGDataPsiParser.parseVarValue(defaultValuePsi);
+                                           : IdlGDataPsiParser.parseDatum(defaultValuePsi);
 
     OpInputModelProjection<?, ?> paramModelProjection = OpInputProjectionsPsiParser.parseModelProjection(
         paramType,

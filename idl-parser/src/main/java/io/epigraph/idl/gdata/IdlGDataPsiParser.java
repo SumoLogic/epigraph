@@ -19,20 +19,20 @@ public class IdlGDataPsiParser {
 
   @NotNull
   public static GDataValue parseValue(@NotNull IdlDataValue psi) throws PsiProcessingException {
-    if (psi.getDataVar() != null) return parseVar(psi.getDataVar());
-    else if (psi.getVarValue() != null) return parseVarValue(psi.getVarValue());
-    else throw new PsiProcessingException("Neither dataVar nor varValue is set", psi);
+    if (psi.getData() != null) return parseData(psi.getData());
+    else if (psi.getDatum() != null) return parseDatum(psi.getDatum());
+    else throw new PsiProcessingException("Neither data nor datum is set", psi);
   }
 
   @NotNull
-  public static GDataVar parseVar(@NotNull IdlDataVar psi) throws PsiProcessingException {
+  public static GData parseData(@NotNull IdlData psi) throws PsiProcessingException {
     @Nullable IdlFqnTypeRef typeRef = psi.getFqnTypeRef();
 
-    LinkedHashMap<String, GDataVarValue> tags = new LinkedHashMap<>();
-    for (IdlDataVarEntry entry : psi.getDataVarEntryList()) {
-      @Nullable IdlVarValue value = entry.getVarValue();
+    LinkedHashMap<String, GDatum> tags = new LinkedHashMap<>();
+    for (IdlDataEntry entry : psi.getDataEntryList()) {
+      @Nullable IdlDatum value = entry.getDatum();
       if (value != null)
-        tags.put(entry.getQid().getCanonicalName(), parseVarValue(value));
+        tags.put(entry.getQid().getCanonicalName(), parseDatum(value));
       else
         throw new PsiProcessingException(
             String.format("Got 'null' value for tag '%s'", entry.getQid().getCanonicalName()), psi
@@ -40,32 +40,32 @@ public class IdlGDataPsiParser {
     }
 
 
-    return new GDataVar(getTypeRef(typeRef), tags);
+    return new GData(getTypeRef(typeRef), tags);
   }
 
   @NotNull
-  public static GDataVarValue parseVarValue(@NotNull IdlVarValue psi) throws PsiProcessingException {
-    if (psi instanceof IdlDataRecord)
-      return parseRecord((IdlDataRecord) psi);
-    else if (psi instanceof IdlDataMap)
-      return parseMap((IdlDataMap) psi);
-    else if (psi instanceof IdlDataList)
-      return parseList((IdlDataList) psi);
-    else if (psi instanceof IdlDataEnum)
-      return parseEnum((IdlDataEnum) psi);
-    else if (psi instanceof IdlDataPrimitive)
-      return parsePrimitive((IdlDataPrimitive) psi);
-    else if (psi instanceof IdlDataNull)
-      return parseNull((IdlDataNull) psi);
+  public static GDatum parseDatum(@NotNull IdlDatum psi) throws PsiProcessingException {
+    if (psi instanceof IdlRecordDatum)
+      return parseRecord((IdlRecordDatum) psi);
+    else if (psi instanceof IdlMapDatum)
+      return parseMap((IdlMapDatum) psi);
+    else if (psi instanceof IdlListDatum)
+      return parseList((IdlListDatum) psi);
+    else if (psi instanceof IdlEnumDatum)
+      return parseEnum((IdlEnumDatum) psi);
+    else if (psi instanceof IdlPrimitiveDatum)
+      return parsePrimitive((IdlPrimitiveDatum) psi);
+    else if (psi instanceof IdlNullDatum)
+      return parseNull((IdlNullDatum) psi);
     else throw new PsiProcessingException("Unknown value element", psi);
   }
 
   @NotNull
-  public static GDataRecord parseRecord(@NotNull IdlDataRecord psi) throws PsiProcessingException {
+  public static GRecordDatum parseRecord(@NotNull IdlRecordDatum psi) throws PsiProcessingException {
     @Nullable IdlFqnTypeRef typeRef = psi.getFqnTypeRef();
 
     LinkedHashMap<String, GDataValue> fields = new LinkedHashMap<>();
-    for (IdlDataRecordEntry entry : psi.getDataRecordEntryList()) {
+    for (IdlRecordDatumEntry entry : psi.getRecordDatumEntryList()) {
       @Nullable IdlDataValue value = entry.getDataValue();
       if (value != null)
         fields.put(entry.getQid().getCanonicalName(), parseValue(value));
@@ -75,29 +75,29 @@ public class IdlGDataPsiParser {
         );
     }
 
-    return new GDataRecord(getTypeRef(typeRef), fields);
+    return new GRecordDatum(getTypeRef(typeRef), fields);
   }
 
   @NotNull
-  public static GDataMap parseMap(@NotNull IdlDataMap psi) throws PsiProcessingException {
+  public static GMapDatum parseMap(@NotNull IdlMapDatum psi) throws PsiProcessingException {
     @Nullable IdlFqnTypeRef typeRef = psi.getFqnTypeRef();
 
-    LinkedHashMap<GDataVarValue, GDataValue> map = new LinkedHashMap<>();
-    for (IdlDataMapEntry entry : psi.getDataMapEntryList()) {
+    LinkedHashMap<GDatum, GDataValue> map = new LinkedHashMap<>();
+    for (IdlMapDatumEntry entry : psi.getMapDatumEntryList()) {
       @Nullable IdlDataValue dataValue = entry.getDataValue();
       if (dataValue != null)
-        map.put(parseVarValue(entry.getVarValue()), parseValue(dataValue));
+        map.put(parseDatum(entry.getDatum()), parseValue(dataValue));
       else
         throw new PsiProcessingException(
-            String.format("Got 'null' value for key '%s'", entry.getVarValue().getText()), psi
+            String.format("Got 'null' value for key '%s'", entry.getDataValue().getText()), psi
         );
     }
 
-    return new GDataMap(getTypeRef(typeRef), map);
+    return new GMapDatum(getTypeRef(typeRef), map);
   }
 
   @NotNull
-  public static GDataList parseList(@NotNull IdlDataList psi) throws PsiProcessingException {
+  public static GListDatum parseList(@NotNull IdlListDatum psi) throws PsiProcessingException {
     @Nullable IdlFqnTypeRef typeRef = psi.getFqnTypeRef();
 
     final List<GDataValue> items = new ArrayList<>();
@@ -105,16 +105,16 @@ public class IdlGDataPsiParser {
     for (IdlDataValue value : psi.getDataValueList())
       items.add(parseValue(value));
 
-    return new GDataList(getTypeRef(typeRef), items);
+    return new GListDatum(getTypeRef(typeRef), items);
   }
 
   @NotNull
-  public static GDataEnum parseEnum(@NotNull IdlDataEnum psi) {
+  public static GDataEnum parseEnum(@NotNull IdlEnumDatum psi) {
     return new GDataEnum(psi.getQid().getCanonicalName());
   }
 
   @NotNull
-  public static GDataPrimitive parsePrimitive(@NotNull IdlDataPrimitive psi) throws PsiProcessingException {
+  public static GPrimitiveDatum parsePrimitive(@NotNull IdlPrimitiveDatum psi) throws PsiProcessingException {
     @Nullable IdlFqnTypeRef typeRef = psi.getFqnTypeRef();
 
     final Object value;
@@ -128,15 +128,16 @@ public class IdlGDataPsiParser {
       String text = psi.getNumber().getText();
       if (text.contains(".")) value = Double.valueOf(text);
       else value = Long.valueOf(text);
-    } else throw new PsiProcessingException(String.format("Don't know how to handle primitive '%s'", psi.getText()), psi);
+    } else
+      throw new PsiProcessingException(String.format("Don't know how to handle primitive '%s'", psi.getText()), psi);
 
-    return new GDataPrimitive(getTypeRef(typeRef), value);
+    return new GPrimitiveDatum(getTypeRef(typeRef), value);
   }
 
   @NotNull
-  public static GDataNull parseNull(@NotNull IdlDataNull psi) {
+  public static GNullDatum parseNull(@NotNull IdlNullDatum psi) {
     @Nullable IdlFqnTypeRef typeRef = psi.getFqnTypeRef();
-    return new GDataNull(getTypeRef(typeRef));
+    return new GNullDatum(getTypeRef(typeRef));
   }
 
   @Nullable

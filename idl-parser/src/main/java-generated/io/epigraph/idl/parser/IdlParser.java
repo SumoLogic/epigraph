@@ -26,38 +26,20 @@ public class IdlParser implements PsiParser, LightPsiParser {
     if (t == I_CUSTOM_PARAM) {
       r = customParam(b, 0);
     }
-    else if (t == I_DATA_ENUM) {
-      r = dataEnum(b, 0);
+    else if (t == I_DATA) {
+      r = data(b, 0);
     }
-    else if (t == I_DATA_LIST) {
-      r = dataList(b, 0);
-    }
-    else if (t == I_DATA_MAP) {
-      r = dataMap(b, 0);
-    }
-    else if (t == I_DATA_MAP_ENTRY) {
-      r = dataMapEntry(b, 0);
-    }
-    else if (t == I_DATA_NULL) {
-      r = dataNull(b, 0);
-    }
-    else if (t == I_DATA_PRIMITIVE) {
-      r = dataPrimitive(b, 0);
-    }
-    else if (t == I_DATA_RECORD) {
-      r = dataRecord(b, 0);
-    }
-    else if (t == I_DATA_RECORD_ENTRY) {
-      r = dataRecordEntry(b, 0);
+    else if (t == I_DATA_ENTRY) {
+      r = dataEntry(b, 0);
     }
     else if (t == I_DATA_VALUE) {
       r = dataValue(b, 0);
     }
-    else if (t == I_DATA_VAR) {
-      r = dataVar(b, 0);
+    else if (t == I_DATUM) {
+      r = datum(b, 0);
     }
-    else if (t == I_DATA_VAR_ENTRY) {
-      r = dataVarEntry(b, 0);
+    else if (t == I_ENUM_DATUM) {
+      r = enumDatum(b, 0);
     }
     else if (t == I_FQN) {
       r = fqn(b, 0);
@@ -74,8 +56,20 @@ public class IdlParser implements PsiParser, LightPsiParser {
     else if (t == I_IMPORTS) {
       r = imports(b, 0);
     }
+    else if (t == I_LIST_DATUM) {
+      r = listDatum(b, 0);
+    }
+    else if (t == I_MAP_DATUM) {
+      r = mapDatum(b, 0);
+    }
+    else if (t == I_MAP_DATUM_ENTRY) {
+      r = mapDatumEntry(b, 0);
+    }
     else if (t == I_NAMESPACE_DECL) {
       r = namespaceDecl(b, 0);
+    }
+    else if (t == I_NULL_DATUM) {
+      r = nullDatum(b, 0);
     }
     else if (t == I_OP_INPUT_DEFAULT_VALUE) {
       r = opInputDefaultValue(b, 0);
@@ -188,11 +182,17 @@ public class IdlParser implements PsiParser, LightPsiParser {
     else if (t == I_OP_TAG_NAME) {
       r = opTagName(b, 0);
     }
+    else if (t == I_PRIMITIVE_DATUM) {
+      r = primitiveDatum(b, 0);
+    }
     else if (t == I_QID) {
       r = qid(b, 0);
     }
-    else if (t == I_VAR_VALUE) {
-      r = varValue(b, 0);
+    else if (t == I_RECORD_DATUM) {
+      r = recordDatum(b, 0);
+    }
+    else if (t == I_RECORD_DATUM_ENTRY) {
+      r = recordDatumEntry(b, 0);
     }
     else {
       r = parse_root_(t, b, 0);
@@ -205,8 +205,8 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   public static final TokenSet[] EXTENDS_SETS_ = new TokenSet[] {
-    create_token_set_(I_DATA_ENUM, I_DATA_LIST, I_DATA_MAP, I_DATA_NULL,
-      I_DATA_PRIMITIVE, I_DATA_RECORD, I_VAR_VALUE),
+    create_token_set_(I_DATUM, I_ENUM_DATUM, I_LIST_DATUM, I_MAP_DATUM,
+      I_NULL_DATUM, I_PRIMITIVE_DATUM, I_RECORD_DATUM),
   };
 
   /* ********************************************************** */
@@ -225,252 +225,60 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // qid
-  public static boolean dataEnum(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "dataEnum")) return false;
-    if (!nextTokenIs(b, I_ID)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
+  // dataTypeSpec? '<' dataEntry* '>'
+  public static boolean data(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "data")) return false;
+    if (!nextTokenIs(b, "<data>", I_ANGLE_LEFT, I_ID)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, I_DATA, "<data>");
+    r = data_0(b, l + 1);
+    r = r && consumeToken(b, I_ANGLE_LEFT);
+    p = r; // pin = 2
+    r = r && report_error_(b, data_2(b, l + 1));
+    r = p && consumeToken(b, I_ANGLE_RIGHT) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // dataTypeSpec?
+  private static boolean data_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "data_0")) return false;
+    dataTypeSpec(b, l + 1);
+    return true;
+  }
+
+  // dataEntry*
+  private static boolean data_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "data_2")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!dataEntry(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "data_2", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
+  /* ********************************************************** */
+  // qid ':' datum ','?
+  public static boolean dataEntry(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "dataEntry")) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, I_DATA_ENTRY, "<data entry>");
     r = qid(b, l + 1);
-    exit_section_(b, m, I_DATA_ENUM, r);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // dataTypeSpec? '[' (dataValue ','?)* ']'
-  public static boolean dataList(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "dataList")) return false;
-    if (!nextTokenIs(b, "<data list>", I_BRACKET_LEFT, I_ID)) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, I_DATA_LIST, "<data list>");
-    r = dataList_0(b, l + 1);
-    r = r && consumeToken(b, I_BRACKET_LEFT);
-    p = r; // pin = 2
-    r = r && report_error_(b, dataList_2(b, l + 1));
-    r = p && consumeToken(b, I_BRACKET_RIGHT) && r;
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
-  }
-
-  // dataTypeSpec?
-  private static boolean dataList_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "dataList_0")) return false;
-    dataTypeSpec(b, l + 1);
-    return true;
-  }
-
-  // (dataValue ','?)*
-  private static boolean dataList_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "dataList_2")) return false;
-    int c = current_position_(b);
-    while (true) {
-      if (!dataList_2_0(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "dataList_2", c)) break;
-      c = current_position_(b);
-    }
-    return true;
-  }
-
-  // dataValue ','?
-  private static boolean dataList_2_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "dataList_2_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = dataValue(b, l + 1);
-    r = r && dataList_2_0_1(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // ','?
-  private static boolean dataList_2_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "dataList_2_0_1")) return false;
-    consumeToken(b, I_COMMA);
-    return true;
-  }
-
-  /* ********************************************************** */
-  // dataTypeSpec? '(' dataMapEntry* ')'
-  public static boolean dataMap(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "dataMap")) return false;
-    if (!nextTokenIs(b, "<data map>", I_PAREN_LEFT, I_ID)) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, I_DATA_MAP, "<data map>");
-    r = dataMap_0(b, l + 1);
-    r = r && consumeToken(b, I_PAREN_LEFT);
-    p = r; // pin = 2
-    r = r && report_error_(b, dataMap_2(b, l + 1));
-    r = p && consumeToken(b, I_PAREN_RIGHT) && r;
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
-  }
-
-  // dataTypeSpec?
-  private static boolean dataMap_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "dataMap_0")) return false;
-    dataTypeSpec(b, l + 1);
-    return true;
-  }
-
-  // dataMapEntry*
-  private static boolean dataMap_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "dataMap_2")) return false;
-    int c = current_position_(b);
-    while (true) {
-      if (!dataMapEntry(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "dataMap_2", c)) break;
-      c = current_position_(b);
-    }
-    return true;
-  }
-
-  /* ********************************************************** */
-  // varValue ':' dataValue ','?
-  public static boolean dataMapEntry(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "dataMapEntry")) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, I_DATA_MAP_ENTRY, "<data map entry>");
-    r = varValue(b, l + 1);
     r = r && consumeToken(b, I_COLON);
     p = r; // pin = 2
-    r = r && report_error_(b, dataValue(b, l + 1));
-    r = p && dataMapEntry_3(b, l + 1) && r;
+    r = r && report_error_(b, datum(b, l + 1));
+    r = p && dataEntry_3(b, l + 1) && r;
     exit_section_(b, l, m, r, p, dataValueRecover_parser_);
     return r || p;
   }
 
   // ','?
-  private static boolean dataMapEntry_3(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "dataMapEntry_3")) return false;
+  private static boolean dataEntry_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "dataEntry_3")) return false;
     consumeToken(b, I_COMMA);
     return true;
-  }
-
-  /* ********************************************************** */
-  // dataSpeccedNull | dataUnspeccedNull
-  public static boolean dataNull(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "dataNull")) return false;
-    if (!nextTokenIs(b, "<data null>", I_NULL, I_ID)) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NONE_, I_DATA_NULL, "<data null>");
-    r = dataSpeccedNull(b, l + 1);
-    if (!r) r = dataUnspeccedNull(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // (dataTypeSpec '@')? (string | number | boolean)
-  public static boolean dataPrimitive(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "dataPrimitive")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NONE_, I_DATA_PRIMITIVE, "<data primitive>");
-    r = dataPrimitive_0(b, l + 1);
-    r = r && dataPrimitive_1(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  // (dataTypeSpec '@')?
-  private static boolean dataPrimitive_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "dataPrimitive_0")) return false;
-    dataPrimitive_0_0(b, l + 1);
-    return true;
-  }
-
-  // dataTypeSpec '@'
-  private static boolean dataPrimitive_0_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "dataPrimitive_0_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = dataTypeSpec(b, l + 1);
-    r = r && consumeToken(b, I_AT);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // string | number | boolean
-  private static boolean dataPrimitive_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "dataPrimitive_1")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, I_STRING);
-    if (!r) r = consumeToken(b, I_NUMBER);
-    if (!r) r = consumeToken(b, I_BOOLEAN);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // dataTypeSpec? '{' dataRecordEntry* '}'
-  public static boolean dataRecord(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "dataRecord")) return false;
-    if (!nextTokenIs(b, "<data record>", I_CURLY_LEFT, I_ID)) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, I_DATA_RECORD, "<data record>");
-    r = dataRecord_0(b, l + 1);
-    r = r && consumeToken(b, I_CURLY_LEFT);
-    p = r; // pin = 2
-    r = r && report_error_(b, dataRecord_2(b, l + 1));
-    r = p && consumeToken(b, I_CURLY_RIGHT) && r;
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
-  }
-
-  // dataTypeSpec?
-  private static boolean dataRecord_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "dataRecord_0")) return false;
-    dataTypeSpec(b, l + 1);
-    return true;
-  }
-
-  // dataRecordEntry*
-  private static boolean dataRecord_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "dataRecord_2")) return false;
-    int c = current_position_(b);
-    while (true) {
-      if (!dataRecordEntry(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "dataRecord_2", c)) break;
-      c = current_position_(b);
-    }
-    return true;
-  }
-
-  /* ********************************************************** */
-  // qid ':' dataValue ','?
-  public static boolean dataRecordEntry(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "dataRecordEntry")) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, I_DATA_RECORD_ENTRY, "<data record entry>");
-    r = qid(b, l + 1);
-    r = r && consumeToken(b, I_COLON);
-    p = r; // pin = 2
-    r = r && report_error_(b, dataValue(b, l + 1));
-    r = p && dataRecordEntry_3(b, l + 1) && r;
-    exit_section_(b, l, m, r, p, dataValueRecover_parser_);
-    return r || p;
-  }
-
-  // ','?
-  private static boolean dataRecordEntry_3(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "dataRecordEntry_3")) return false;
-    consumeToken(b, I_COMMA);
-    return true;
-  }
-
-  /* ********************************************************** */
-  // dataTypeSpec '(' dataUnspeccedNull ')'
-  static boolean dataSpeccedNull(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "dataSpeccedNull")) return false;
-    if (!nextTokenIs(b, I_ID)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = dataTypeSpec(b, l + 1);
-    r = r && consumeToken(b, I_PAREN_LEFT);
-    r = r && dataUnspeccedNull(b, l + 1);
-    r = r && consumeToken(b, I_PAREN_RIGHT);
-    exit_section_(b, m, null, r);
-    return r;
   }
 
   /* ********************************************************** */
@@ -480,25 +288,19 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'null'
-  static boolean dataUnspeccedNull(PsiBuilder b, int l) {
-    return consumeToken(b, I_NULL);
-  }
-
-  /* ********************************************************** */
-  // dataVar | varValue
+  // data | datum
   public static boolean dataValue(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "dataValue")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, I_DATA_VALUE, "<data value>");
-    r = dataVar(b, l + 1);
-    if (!r) r = varValue(b, l + 1);
+    r = data(b, l + 1);
+    if (!r) r = datum(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
 
   /* ********************************************************** */
-  // ! ( qid | dataPrimitive | '}' | ')' | '>' | ']' | ',' )
+  // ! ( qid | primitiveDatum | '}' | ')' | '>' | ']' | ',' )
   static boolean dataValueRecover(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "dataValueRecover")) return false;
     boolean r;
@@ -508,13 +310,13 @@ public class IdlParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // qid | dataPrimitive | '}' | ')' | '>' | ']' | ','
+  // qid | primitiveDatum | '}' | ')' | '>' | ']' | ','
   private static boolean dataValueRecover_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "dataValueRecover_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = qid(b, l + 1);
-    if (!r) r = dataPrimitive(b, l + 1);
+    if (!r) r = primitiveDatum(b, l + 1);
     if (!r) r = consumeToken(b, I_CURLY_RIGHT);
     if (!r) r = consumeToken(b, I_PAREN_RIGHT);
     if (!r) r = consumeToken(b, I_ANGLE_RIGHT);
@@ -525,60 +327,31 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // dataTypeSpec? '<' dataVarEntry* '>'
-  public static boolean dataVar(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "dataVar")) return false;
-    if (!nextTokenIs(b, "<data var>", I_ANGLE_LEFT, I_ID)) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, I_DATA_VAR, "<data var>");
-    r = dataVar_0(b, l + 1);
-    r = r && consumeToken(b, I_ANGLE_LEFT);
-    p = r; // pin = 2
-    r = r && report_error_(b, dataVar_2(b, l + 1));
-    r = p && consumeToken(b, I_ANGLE_RIGHT) && r;
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
-  }
-
-  // dataTypeSpec?
-  private static boolean dataVar_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "dataVar_0")) return false;
-    dataTypeSpec(b, l + 1);
-    return true;
-  }
-
-  // dataVarEntry*
-  private static boolean dataVar_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "dataVar_2")) return false;
-    int c = current_position_(b);
-    while (true) {
-      if (!dataVarEntry(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "dataVar_2", c)) break;
-      c = current_position_(b);
-    }
-    return true;
+  // recordDatum | mapDatum | listDatum | primitiveDatum | enumDatum | nullDatum
+  public static boolean datum(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "datum")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _COLLAPSE_, I_DATUM, "<datum>");
+    r = recordDatum(b, l + 1);
+    if (!r) r = mapDatum(b, l + 1);
+    if (!r) r = listDatum(b, l + 1);
+    if (!r) r = primitiveDatum(b, l + 1);
+    if (!r) r = enumDatum(b, l + 1);
+    if (!r) r = nullDatum(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
   }
 
   /* ********************************************************** */
-  // qid ':' varValue ','?
-  public static boolean dataVarEntry(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "dataVarEntry")) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, I_DATA_VAR_ENTRY, "<data var entry>");
+  // qid
+  public static boolean enumDatum(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "enumDatum")) return false;
+    if (!nextTokenIs(b, I_ID)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
     r = qid(b, l + 1);
-    r = r && consumeToken(b, I_COLON);
-    p = r; // pin = 2
-    r = r && report_error_(b, varValue(b, l + 1));
-    r = p && dataVarEntry_3(b, l + 1) && r;
-    exit_section_(b, l, m, r, p, dataValueRecover_parser_);
-    return r || p;
-  }
-
-  // ','?
-  private static boolean dataVarEntry_3(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "dataVarEntry_3")) return false;
-    consumeToken(b, I_COMMA);
-    return true;
+    exit_section_(b, m, I_ENUM_DATUM, r);
+    return r;
   }
 
   /* ********************************************************** */
@@ -688,6 +461,116 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // dataTypeSpec? '[' (dataValue ','?)* ']'
+  public static boolean listDatum(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "listDatum")) return false;
+    if (!nextTokenIs(b, "<list datum>", I_BRACKET_LEFT, I_ID)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, I_LIST_DATUM, "<list datum>");
+    r = listDatum_0(b, l + 1);
+    r = r && consumeToken(b, I_BRACKET_LEFT);
+    p = r; // pin = 2
+    r = r && report_error_(b, listDatum_2(b, l + 1));
+    r = p && consumeToken(b, I_BRACKET_RIGHT) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // dataTypeSpec?
+  private static boolean listDatum_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "listDatum_0")) return false;
+    dataTypeSpec(b, l + 1);
+    return true;
+  }
+
+  // (dataValue ','?)*
+  private static boolean listDatum_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "listDatum_2")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!listDatum_2_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "listDatum_2", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
+  // dataValue ','?
+  private static boolean listDatum_2_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "listDatum_2_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = dataValue(b, l + 1);
+    r = r && listDatum_2_0_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // ','?
+  private static boolean listDatum_2_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "listDatum_2_0_1")) return false;
+    consumeToken(b, I_COMMA);
+    return true;
+  }
+
+  /* ********************************************************** */
+  // dataTypeSpec? '(' mapDatumEntry* ')'
+  public static boolean mapDatum(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "mapDatum")) return false;
+    if (!nextTokenIs(b, "<map datum>", I_PAREN_LEFT, I_ID)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, I_MAP_DATUM, "<map datum>");
+    r = mapDatum_0(b, l + 1);
+    r = r && consumeToken(b, I_PAREN_LEFT);
+    p = r; // pin = 2
+    r = r && report_error_(b, mapDatum_2(b, l + 1));
+    r = p && consumeToken(b, I_PAREN_RIGHT) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // dataTypeSpec?
+  private static boolean mapDatum_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "mapDatum_0")) return false;
+    dataTypeSpec(b, l + 1);
+    return true;
+  }
+
+  // mapDatumEntry*
+  private static boolean mapDatum_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "mapDatum_2")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!mapDatumEntry(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "mapDatum_2", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
+  /* ********************************************************** */
+  // datum ':' dataValue ','?
+  public static boolean mapDatumEntry(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "mapDatumEntry")) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, I_MAP_DATUM_ENTRY, "<map datum entry>");
+    r = datum(b, l + 1);
+    r = r && consumeToken(b, I_COLON);
+    p = r; // pin = 2
+    r = r && report_error_(b, dataValue(b, l + 1));
+    r = p && mapDatumEntry_3(b, l + 1) && r;
+    exit_section_(b, l, m, r, p, dataValueRecover_parser_);
+    return r || p;
+  }
+
+  // ','?
+  private static boolean mapDatumEntry_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "mapDatumEntry_3")) return false;
+    consumeToken(b, I_COMMA);
+    return true;
+  }
+
+  /* ********************************************************** */
   // '{' namespaceBodyPart* '}'
   static boolean namespaceBody(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "namespaceBody")) return false;
@@ -759,6 +642,37 @@ public class IdlParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b);
     r = consumeToken(b, I_IMPORT);
     if (!r) r = consumeToken(b, I_NAMESPACE);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // (dataTypeSpec '@')? 'null'
+  public static boolean nullDatum(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "nullDatum")) return false;
+    if (!nextTokenIs(b, "<null datum>", I_NULL, I_ID)) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, I_NULL_DATUM, "<null datum>");
+    r = nullDatum_0(b, l + 1);
+    r = r && consumeToken(b, I_NULL);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // (dataTypeSpec '@')?
+  private static boolean nullDatum_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "nullDatum_0")) return false;
+    nullDatum_0_0(b, l + 1);
+    return true;
+  }
+
+  // dataTypeSpec '@'
+  private static boolean nullDatum_0_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "nullDatum_0_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = dataTypeSpec(b, l + 1);
+    r = r && consumeToken(b, I_AT);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -908,7 +822,7 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'default' ':' varValue
+  // 'default' ':' datum
   public static boolean opInputDefaultValue(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opInputDefaultValue")) return false;
     if (!nextTokenIs(b, I_DEFAULT)) return false;
@@ -917,7 +831,7 @@ public class IdlParser implements PsiParser, LightPsiParser {
     r = consumeToken(b, I_DEFAULT);
     p = r; // pin = 1
     r = r && report_error_(b, consumeToken(b, I_COLON));
-    r = p && varValue(b, l + 1) && r;
+    r = p && datum(b, l + 1) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -2177,7 +2091,7 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '=' varValue
+  // '=' datum
   static boolean opParamDefault(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opParamDefault")) return false;
     if (!nextTokenIs(b, I_EQ)) return false;
@@ -2185,7 +2099,7 @@ public class IdlParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b, l, _NONE_);
     r = consumeToken(b, I_EQ);
     p = r; // pin = 1
-    r = r && varValue(b, l + 1);
+    r = r && datum(b, l + 1);
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -2204,6 +2118,48 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // (dataTypeSpec '@')? (string | number | boolean)
+  public static boolean primitiveDatum(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "primitiveDatum")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, I_PRIMITIVE_DATUM, "<primitive datum>");
+    r = primitiveDatum_0(b, l + 1);
+    r = r && primitiveDatum_1(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // (dataTypeSpec '@')?
+  private static boolean primitiveDatum_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "primitiveDatum_0")) return false;
+    primitiveDatum_0_0(b, l + 1);
+    return true;
+  }
+
+  // dataTypeSpec '@'
+  private static boolean primitiveDatum_0_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "primitiveDatum_0_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = dataTypeSpec(b, l + 1);
+    r = r && consumeToken(b, I_AT);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // string | number | boolean
+  private static boolean primitiveDatum_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "primitiveDatum_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, I_STRING);
+    if (!r) r = consumeToken(b, I_NUMBER);
+    if (!r) r = consumeToken(b, I_BOOLEAN);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
   // id
   public static boolean qid(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "qid")) return false;
@@ -2213,6 +2169,63 @@ public class IdlParser implements PsiParser, LightPsiParser {
     r = consumeToken(b, I_ID);
     exit_section_(b, m, I_QID, r);
     return r;
+  }
+
+  /* ********************************************************** */
+  // dataTypeSpec? '{' recordDatumEntry* '}'
+  public static boolean recordDatum(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "recordDatum")) return false;
+    if (!nextTokenIs(b, "<record datum>", I_CURLY_LEFT, I_ID)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, I_RECORD_DATUM, "<record datum>");
+    r = recordDatum_0(b, l + 1);
+    r = r && consumeToken(b, I_CURLY_LEFT);
+    p = r; // pin = 2
+    r = r && report_error_(b, recordDatum_2(b, l + 1));
+    r = p && consumeToken(b, I_CURLY_RIGHT) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // dataTypeSpec?
+  private static boolean recordDatum_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "recordDatum_0")) return false;
+    dataTypeSpec(b, l + 1);
+    return true;
+  }
+
+  // recordDatumEntry*
+  private static boolean recordDatum_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "recordDatum_2")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!recordDatumEntry(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "recordDatum_2", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
+  /* ********************************************************** */
+  // qid ':' dataValue ','?
+  public static boolean recordDatumEntry(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "recordDatumEntry")) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, I_RECORD_DATUM_ENTRY, "<record datum entry>");
+    r = qid(b, l + 1);
+    r = r && consumeToken(b, I_COLON);
+    p = r; // pin = 2
+    r = r && report_error_(b, dataValue(b, l + 1));
+    r = p && recordDatumEntry_3(b, l + 1) && r;
+    exit_section_(b, l, m, r, p, dataValueRecover_parser_);
+    return r || p;
+  }
+
+  // ','?
+  private static boolean recordDatumEntry_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "recordDatumEntry_3")) return false;
+    consumeToken(b, I_COMMA);
+    return true;
   }
 
   /* ********************************************************** */
@@ -2226,22 +2239,6 @@ public class IdlParser implements PsiParser, LightPsiParser {
     r = r && imports(b, l + 1);
     r = r && opOutputVarProjection(b, l + 1);
     exit_section_(b, m, null, r);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // dataRecord | dataMap | dataList | dataPrimitive | dataEnum | dataNull
-  public static boolean varValue(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "varValue")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _COLLAPSE_, I_VAR_VALUE, "<var value>");
-    r = dataRecord(b, l + 1);
-    if (!r) r = dataMap(b, l + 1);
-    if (!r) r = dataList(b, l + 1);
-    if (!r) r = dataPrimitive(b, l + 1);
-    if (!r) r = dataEnum(b, l + 1);
-    if (!r) r = dataNull(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
     return r;
   }
 

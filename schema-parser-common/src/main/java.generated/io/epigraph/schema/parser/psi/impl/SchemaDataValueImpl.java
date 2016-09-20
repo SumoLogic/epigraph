@@ -28,14 +28,14 @@ public class SchemaDataValueImpl extends ASTWrapperPsiElement implements SchemaD
 
   @Override
   @Nullable
-  public SchemaDataVar getDataVar() {
-    return PsiTreeUtil.getChildOfType(this, SchemaDataVar.class);
+  public SchemaData getData() {
+    return PsiTreeUtil.getChildOfType(this, SchemaData.class);
   }
 
   @Override
   @Nullable
-  public SchemaVarValue getVarValue() {
-    return PsiTreeUtil.getChildOfType(this, SchemaVarValue.class);
+  public SchemaDatum getDatum() {
+    return PsiTreeUtil.getChildOfType(this, SchemaDatum.class);
   }
 
 }

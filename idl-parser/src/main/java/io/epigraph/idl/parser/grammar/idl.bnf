@@ -119,7 +119,7 @@ opTagName ::= qid | '_' // `_` is default tag
 // output
 
 opParam ::= ';' '+'? qid ':' fqnTypeRef opInputModelProjection opParamDefault? opParamBody? { pin = 1 }
-private opParamDefault ::= '=' varValue { pin=1 }
+private opParamDefault ::= '=' datum { pin=1 }
 private opParamBody ::= '{' ( opParamBodyPart ','? )* '}'
 private opParamBodyPart ::= customParam
 
@@ -183,7 +183,7 @@ opInputVarMultiTail ::= '~' '(' (opInputVarMultiTailItem ','?)* ')' {pin=2}
 opInputVarMultiTailItem ::= fqnTypeRef opInputVarProjection
 
 opInputModelProperty ::= opInputDefaultValue | customParam
-opInputDefaultValue ::= 'default' ':' varValue {pin=1}
+opInputDefaultValue ::= 'default' ':' datum {pin=1}
 
 opInputModelProjection ::= ( opInputRecordModelProjection
                            | opInputListModelProjection
@@ -212,28 +212,26 @@ opInputKeyProjectionPart ::= 'forbidden' | 'required' | customParam
 // ------------- data language -------------
 // please keep consistent with schema.bnf
 
-dataValue ::= dataVar | varValue
+dataValue ::= data | datum
 private dataTypeSpec ::= fqnTypeRef
 
-dataVar ::= dataTypeSpec? '<' dataVarEntry* '>' {pin=2}
-dataVarEntry ::= qid ':' varValue ','? {pin=2 recoverWhile=dataValueRecover}
+data ::= dataTypeSpec? '<' dataEntry* '>' {pin=2}
+dataEntry ::= qid ':' datum ','? {pin=2 recoverWhile=dataValueRecover}
 
-varValue ::= dataRecord | dataMap | dataList | dataPrimitive | dataEnum | dataNull
+datum ::= recordDatum | mapDatum | listDatum | primitiveDatum | enumDatum | nullDatum
 
-dataRecord ::= dataTypeSpec? '{' dataRecordEntry* '}' {pin=2 extends=varValue}
-dataRecordEntry ::= qid ':' dataValue ','? {pin=2 recoverWhile=dataValueRecover}
+recordDatum ::= dataTypeSpec? '{' recordDatumEntry* '}' {pin=2 extends=datum}
+recordDatumEntry ::= qid ':' dataValue ','? {pin=2 recoverWhile=dataValueRecover}
 
-dataMap ::= dataTypeSpec? '(' dataMapEntry* ')' {pin=2 extends=varValue}
-dataMapEntry ::= varValue ':' dataValue ','? {pin=2 recoverWhile=dataValueRecover}
+mapDatum ::= dataTypeSpec? '(' mapDatumEntry* ')' {pin=2 extends=datum}
+mapDatumEntry ::= datum ':' dataValue ','? {pin=2 recoverWhile=dataValueRecover}
 
-dataList ::= dataTypeSpec? '[' (dataValue ','?)* ']' {pin=2 extends=varValue}
+listDatum ::= dataTypeSpec? '[' (dataValue ','?)* ']' {pin=2 extends=datum}
 
-dataPrimitive ::= (dataTypeSpec '@')? (string | number | boolean) {extends=varValue}
+primitiveDatum ::= (dataTypeSpec '@')? (string | number | boolean) {extends=datum}
 
-dataEnum ::= qid {extends=varValue}
+enumDatum ::= qid {extends=datum}
 
-dataNull ::= dataSpeccedNull | dataUnspeccedNull {extends=varValue}
-private dataSpeccedNull ::= dataTypeSpec '(' dataUnspeccedNull ')'
-private dataUnspeccedNull ::= 'null'
+nullDatum ::= (dataTypeSpec '@')? 'null' {extends=datum}
 
-private dataValueRecover ::= ! ( qid | dataPrimitive | '}' | ')' | '>' | ']' | ',' )
+private dataValueRecover ::= ! ( qid | primitiveDatum | '}' | ')' | '>' | ']' | ',' )

@@ -28,14 +28,14 @@ public class IdlDataValueImpl extends ASTWrapperPsiElement implements IdlDataVal
 
   @Override
   @Nullable
-  public IdlDataVar getDataVar() {
-    return findChildByClass(IdlDataVar.class);
+  public IdlData getData() {
+    return findChildByClass(IdlData.class);
   }
 
   @Override
   @Nullable
-  public IdlVarValue getVarValue() {
-    return findChildByClass(IdlVarValue.class);
+  public IdlDatum getDatum() {
+    return findChildByClass(IdlDatum.class);
   }
 
 }

@@ -8,7 +8,7 @@ import com.intellij.psi.PsiElement;
 public interface IdlOpInputDefaultValue extends PsiElement {
 
   @Nullable
-  IdlVarValue getVarValue();
+  IdlDatum getDatum();
 
   @Nullable
   PsiElement getColon();

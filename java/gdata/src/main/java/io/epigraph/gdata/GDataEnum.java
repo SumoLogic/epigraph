@@ -7,7 +7,7 @@ import java.util.Objects;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class GDataEnum extends GDataVarValue {
+public class GDataEnum extends GDatum {
   @NotNull
   private final String value;
 

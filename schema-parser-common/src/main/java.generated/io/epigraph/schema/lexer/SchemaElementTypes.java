@@ -20,19 +20,13 @@ public interface SchemaElementTypes {
   IElementType S_ANON_LIST = new SchemaElementType("S_ANON_LIST");
   IElementType S_ANON_MAP = new SchemaElementType("S_ANON_MAP");
   IElementType S_CUSTOM_PARAM = new SchemaElementType("S_CUSTOM_PARAM");
-  IElementType S_DATA_ENUM = new SchemaElementType("S_DATA_ENUM");
-  IElementType S_DATA_LIST = new SchemaElementType("S_DATA_LIST");
-  IElementType S_DATA_MAP = new SchemaElementType("S_DATA_MAP");
-  IElementType S_DATA_MAP_ENTRY = new SchemaElementType("S_DATA_MAP_ENTRY");
-  IElementType S_DATA_NULL = new SchemaElementType("S_DATA_NULL");
-  IElementType S_DATA_PRIMITIVE = new SchemaElementType("S_DATA_PRIMITIVE");
-  IElementType S_DATA_RECORD = new SchemaElementType("S_DATA_RECORD");
-  IElementType S_DATA_RECORD_ENTRY = new SchemaElementType("S_DATA_RECORD_ENTRY");
+  IElementType S_DATA = new SchemaElementType("S_DATA");
+  IElementType S_DATA_ENTRY = new SchemaElementType("S_DATA_ENTRY");
   IElementType S_DATA_VALUE = new SchemaElementType("S_DATA_VALUE");
-  IElementType S_DATA_VAR = new SchemaElementType("S_DATA_VAR");
-  IElementType S_DATA_VAR_ENTRY = new SchemaElementType("S_DATA_VAR_ENTRY");
+  IElementType S_DATUM = new SchemaElementType("S_DATUM");
   IElementType S_DEFAULT_OVERRIDE = new SchemaElementType("S_DEFAULT_OVERRIDE");
   IElementType S_DEFS = new SchemaElementType("S_DEFS");
+  IElementType S_ENUM_DATUM = new SchemaElementType("S_ENUM_DATUM");
   IElementType S_ENUM_MEMBER_DECL = new SchemaElementType("S_ENUM_MEMBER_DECL");
   IElementType S_ENUM_TYPE_BODY = new SchemaElementType("S_ENUM_TYPE_BODY");
   IElementType S_ENUM_TYPE_DEF = new SchemaEnumTypeDefStubElementType("S_ENUM_TYPE_DEF");
@@ -43,15 +37,22 @@ public interface SchemaElementTypes {
   IElementType S_FQN_TYPE_REF = new SchemaElementType("S_FQN_TYPE_REF");
   IElementType S_IMPORTS = new SchemaElementType("S_IMPORTS");
   IElementType S_IMPORT_STATEMENT = new SchemaElementType("S_IMPORT_STATEMENT");
+  IElementType S_LIST_DATUM = new SchemaElementType("S_LIST_DATUM");
   IElementType S_LIST_TYPE_BODY = new SchemaElementType("S_LIST_TYPE_BODY");
   IElementType S_LIST_TYPE_DEF = new SchemaListTypeDefStubElementType("S_LIST_TYPE_DEF");
+  IElementType S_MAP_DATUM = new SchemaElementType("S_MAP_DATUM");
+  IElementType S_MAP_DATUM_ENTRY = new SchemaElementType("S_MAP_DATUM_ENTRY");
   IElementType S_MAP_TYPE_BODY = new SchemaElementType("S_MAP_TYPE_BODY");
   IElementType S_MAP_TYPE_DEF = new SchemaMapTypeDefStubElementType("S_MAP_TYPE_DEF");
   IElementType S_META_DECL = new SchemaElementType("S_META_DECL");
   IElementType S_NAMESPACE_DECL = new SchemaNamespaceDeclStubElementType("S_NAMESPACE_DECL");
+  IElementType S_NULL_DATUM = new SchemaElementType("S_NULL_DATUM");
+  IElementType S_PRIMITIVE_DATUM = new SchemaElementType("S_PRIMITIVE_DATUM");
   IElementType S_PRIMITIVE_TYPE_BODY = new SchemaElementType("S_PRIMITIVE_TYPE_BODY");
   IElementType S_PRIMITIVE_TYPE_DEF = new SchemaPrimitiveTypeDefStubElementType("S_PRIMITIVE_TYPE_DEF");
   IElementType S_QID = new SchemaElementType("S_QID");
+  IElementType S_RECORD_DATUM = new SchemaElementType("S_RECORD_DATUM");
+  IElementType S_RECORD_DATUM_ENTRY = new SchemaElementType("S_RECORD_DATUM_ENTRY");
   IElementType S_RECORD_TYPE_BODY = new SchemaElementType("S_RECORD_TYPE_BODY");
   IElementType S_RECORD_TYPE_DEF = new SchemaRecordTypeDefStubElementType("S_RECORD_TYPE_DEF");
   IElementType S_SUPPLEMENTS_DECL = new SchemaElementType("S_SUPPLEMENTS_DECL");
@@ -63,7 +64,6 @@ public interface SchemaElementTypes {
   IElementType S_VAR_TAG_REF = new SchemaElementType("S_VAR_TAG_REF");
   IElementType S_VAR_TYPE_BODY = new SchemaElementType("S_VAR_TYPE_BODY");
   IElementType S_VAR_TYPE_DEF = new SchemaVarTypeDefStubElementType("S_VAR_TYPE_DEF");
-  IElementType S_VAR_VALUE = new SchemaElementType("S_VAR_VALUE");
 
   IElementType S_ABSTRACT = new SchemaElementType("abstract");
   IElementType S_ANGLE_LEFT = new SchemaElementType("<");
@@ -121,44 +121,26 @@ public interface SchemaElementTypes {
       else if (type == S_CUSTOM_PARAM) {
         return new SchemaCustomParamImpl(node);
       }
-      else if (type == S_DATA_ENUM) {
-        return new SchemaDataEnumImpl(node);
+      else if (type == S_DATA) {
+        return new SchemaDataImpl(node);
       }
-      else if (type == S_DATA_LIST) {
-        return new SchemaDataListImpl(node);
-      }
-      else if (type == S_DATA_MAP) {
-        return new SchemaDataMapImpl(node);
-      }
-      else if (type == S_DATA_MAP_ENTRY) {
-        return new SchemaDataMapEntryImpl(node);
-      }
-      else if (type == S_DATA_NULL) {
-        return new SchemaDataNullImpl(node);
-      }
-      else if (type == S_DATA_PRIMITIVE) {
-        return new SchemaDataPrimitiveImpl(node);
-      }
-      else if (type == S_DATA_RECORD) {
-        return new SchemaDataRecordImpl(node);
-      }
-      else if (type == S_DATA_RECORD_ENTRY) {
-        return new SchemaDataRecordEntryImpl(node);
+      else if (type == S_DATA_ENTRY) {
+        return new SchemaDataEntryImpl(node);
       }
       else if (type == S_DATA_VALUE) {
         return new SchemaDataValueImpl(node);
       }
-      else if (type == S_DATA_VAR) {
-        return new SchemaDataVarImpl(node);
-      }
-      else if (type == S_DATA_VAR_ENTRY) {
-        return new SchemaDataVarEntryImpl(node);
+      else if (type == S_DATUM) {
+        return new SchemaDatumImpl(node);
       }
       else if (type == S_DEFAULT_OVERRIDE) {
         return new SchemaDefaultOverrideImpl(node);
       }
       else if (type == S_DEFS) {
         return new SchemaDefsImpl(node);
+      }
+      else if (type == S_ENUM_DATUM) {
+        return new SchemaEnumDatumImpl(node);
       }
       else if (type == S_ENUM_MEMBER_DECL) {
         return new SchemaEnumMemberDeclImpl(node);
@@ -190,11 +172,20 @@ public interface SchemaElementTypes {
       else if (type == S_IMPORT_STATEMENT) {
         return new SchemaImportStatementImpl(node);
       }
+      else if (type == S_LIST_DATUM) {
+        return new SchemaListDatumImpl(node);
+      }
       else if (type == S_LIST_TYPE_BODY) {
         return new SchemaListTypeBodyImpl(node);
       }
       else if (type == S_LIST_TYPE_DEF) {
         return new SchemaListTypeDefImpl(node);
+      }
+      else if (type == S_MAP_DATUM) {
+        return new SchemaMapDatumImpl(node);
+      }
+      else if (type == S_MAP_DATUM_ENTRY) {
+        return new SchemaMapDatumEntryImpl(node);
       }
       else if (type == S_MAP_TYPE_BODY) {
         return new SchemaMapTypeBodyImpl(node);
@@ -208,6 +199,12 @@ public interface SchemaElementTypes {
       else if (type == S_NAMESPACE_DECL) {
         return new SchemaNamespaceDeclImpl(node);
       }
+      else if (type == S_NULL_DATUM) {
+        return new SchemaNullDatumImpl(node);
+      }
+      else if (type == S_PRIMITIVE_DATUM) {
+        return new SchemaPrimitiveDatumImpl(node);
+      }
       else if (type == S_PRIMITIVE_TYPE_BODY) {
         return new SchemaPrimitiveTypeBodyImpl(node);
       }
@@ -216,6 +213,12 @@ public interface SchemaElementTypes {
       }
       else if (type == S_QID) {
         return new SchemaQidImpl(node);
+      }
+      else if (type == S_RECORD_DATUM) {
+        return new SchemaRecordDatumImpl(node);
+      }
+      else if (type == S_RECORD_DATUM_ENTRY) {
+        return new SchemaRecordDatumEntryImpl(node);
       }
       else if (type == S_RECORD_TYPE_BODY) {
         return new SchemaRecordTypeBodyImpl(node);
@@ -249,9 +252,6 @@ public interface SchemaElementTypes {
       }
       else if (type == S_VAR_TYPE_DEF) {
         return new SchemaVarTypeDefImpl(node);
-      }
-      else if (type == S_VAR_VALUE) {
-        return new SchemaVarValueImpl(node);
       }
       throw new AssertionError("Unknown element type: " + type);
     }

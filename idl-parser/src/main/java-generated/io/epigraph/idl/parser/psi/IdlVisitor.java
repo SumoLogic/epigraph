@@ -11,35 +11,11 @@ public class IdlVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitDataEnum(@NotNull IdlDataEnum o) {
-    visitVarValue(o);
-  }
-
-  public void visitDataList(@NotNull IdlDataList o) {
-    visitVarValue(o);
-  }
-
-  public void visitDataMap(@NotNull IdlDataMap o) {
-    visitVarValue(o);
-  }
-
-  public void visitDataMapEntry(@NotNull IdlDataMapEntry o) {
+  public void visitData(@NotNull IdlData o) {
     visitPsiElement(o);
   }
 
-  public void visitDataNull(@NotNull IdlDataNull o) {
-    visitVarValue(o);
-  }
-
-  public void visitDataPrimitive(@NotNull IdlDataPrimitive o) {
-    visitVarValue(o);
-  }
-
-  public void visitDataRecord(@NotNull IdlDataRecord o) {
-    visitVarValue(o);
-  }
-
-  public void visitDataRecordEntry(@NotNull IdlDataRecordEntry o) {
+  public void visitDataEntry(@NotNull IdlDataEntry o) {
     visitPsiElement(o);
   }
 
@@ -47,12 +23,12 @@ public class IdlVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitDataVar(@NotNull IdlDataVar o) {
+  public void visitDatum(@NotNull IdlDatum o) {
     visitPsiElement(o);
   }
 
-  public void visitDataVarEntry(@NotNull IdlDataVarEntry o) {
-    visitPsiElement(o);
+  public void visitEnumDatum(@NotNull IdlEnumDatum o) {
+    visitDatum(o);
   }
 
   public void visitFqn(@NotNull IdlFqn o) {
@@ -75,8 +51,24 @@ public class IdlVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitListDatum(@NotNull IdlListDatum o) {
+    visitDatum(o);
+  }
+
+  public void visitMapDatum(@NotNull IdlMapDatum o) {
+    visitDatum(o);
+  }
+
+  public void visitMapDatumEntry(@NotNull IdlMapDatumEntry o) {
+    visitPsiElement(o);
+  }
+
   public void visitNamespaceDecl(@NotNull IdlNamespaceDecl o) {
     visitPsiElement(o);
+  }
+
+  public void visitNullDatum(@NotNull IdlNullDatum o) {
+    visitDatum(o);
   }
 
   public void visitOpInputDefaultValue(@NotNull IdlOpInputDefaultValue o) {
@@ -227,11 +219,19 @@ public class IdlVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitPrimitiveDatum(@NotNull IdlPrimitiveDatum o) {
+    visitDatum(o);
+  }
+
   public void visitQid(@NotNull IdlQid o) {
     visitPsiElement(o);
   }
 
-  public void visitVarValue(@NotNull IdlVarValue o) {
+  public void visitRecordDatum(@NotNull IdlRecordDatum o) {
+    visitDatum(o);
+  }
+
+  public void visitRecordDatumEntry(@NotNull IdlRecordDatumEntry o) {
     visitPsiElement(o);
   }
 

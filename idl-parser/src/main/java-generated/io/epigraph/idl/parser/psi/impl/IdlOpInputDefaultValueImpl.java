@@ -28,8 +28,8 @@ public class IdlOpInputDefaultValueImpl extends ASTWrapperPsiElement implements 
 
   @Override
   @Nullable
-  public IdlVarValue getVarValue() {
-    return findChildByClass(IdlVarValue.class);
+  public IdlDatum getDatum() {
+    return findChildByClass(IdlDatum.class);
   }
 
   @Override

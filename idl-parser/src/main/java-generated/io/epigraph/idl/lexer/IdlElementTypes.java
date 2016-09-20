@@ -9,23 +9,21 @@ import io.epigraph.idl.parser.psi.impl.*;
 public interface IdlElementTypes {
 
   IElementType I_CUSTOM_PARAM = new IdlElementType("I_CUSTOM_PARAM");
-  IElementType I_DATA_ENUM = new IdlElementType("I_DATA_ENUM");
-  IElementType I_DATA_LIST = new IdlElementType("I_DATA_LIST");
-  IElementType I_DATA_MAP = new IdlElementType("I_DATA_MAP");
-  IElementType I_DATA_MAP_ENTRY = new IdlElementType("I_DATA_MAP_ENTRY");
-  IElementType I_DATA_NULL = new IdlElementType("I_DATA_NULL");
-  IElementType I_DATA_PRIMITIVE = new IdlElementType("I_DATA_PRIMITIVE");
-  IElementType I_DATA_RECORD = new IdlElementType("I_DATA_RECORD");
-  IElementType I_DATA_RECORD_ENTRY = new IdlElementType("I_DATA_RECORD_ENTRY");
+  IElementType I_DATA = new IdlElementType("I_DATA");
+  IElementType I_DATA_ENTRY = new IdlElementType("I_DATA_ENTRY");
   IElementType I_DATA_VALUE = new IdlElementType("I_DATA_VALUE");
-  IElementType I_DATA_VAR = new IdlElementType("I_DATA_VAR");
-  IElementType I_DATA_VAR_ENTRY = new IdlElementType("I_DATA_VAR_ENTRY");
+  IElementType I_DATUM = new IdlElementType("I_DATUM");
+  IElementType I_ENUM_DATUM = new IdlElementType("I_ENUM_DATUM");
   IElementType I_FQN = new IdlElementType("I_FQN");
   IElementType I_FQN_SEGMENT = new IdlElementType("I_FQN_SEGMENT");
   IElementType I_FQN_TYPE_REF = new IdlElementType("I_FQN_TYPE_REF");
   IElementType I_IMPORTS = new IdlElementType("I_IMPORTS");
   IElementType I_IMPORT_STATEMENT = new IdlElementType("I_IMPORT_STATEMENT");
+  IElementType I_LIST_DATUM = new IdlElementType("I_LIST_DATUM");
+  IElementType I_MAP_DATUM = new IdlElementType("I_MAP_DATUM");
+  IElementType I_MAP_DATUM_ENTRY = new IdlElementType("I_MAP_DATUM_ENTRY");
   IElementType I_NAMESPACE_DECL = new IdlElementType("I_NAMESPACE_DECL");
+  IElementType I_NULL_DATUM = new IdlElementType("I_NULL_DATUM");
   IElementType I_OP_INPUT_DEFAULT_VALUE = new IdlElementType("I_OP_INPUT_DEFAULT_VALUE");
   IElementType I_OP_INPUT_FIELD_PROJECTION = new IdlElementType("I_OP_INPUT_FIELD_PROJECTION");
   IElementType I_OP_INPUT_FIELD_PROJECTION_BODY_PART = new IdlElementType("I_OP_INPUT_FIELD_PROJECTION_BODY_PART");
@@ -63,8 +61,10 @@ public interface IdlElementTypes {
   IElementType I_OP_OUTPUT_VAR_SINGLE_TAIL = new IdlElementType("I_OP_OUTPUT_VAR_SINGLE_TAIL");
   IElementType I_OP_PARAM = new IdlElementType("I_OP_PARAM");
   IElementType I_OP_TAG_NAME = new IdlElementType("I_OP_TAG_NAME");
+  IElementType I_PRIMITIVE_DATUM = new IdlElementType("I_PRIMITIVE_DATUM");
   IElementType I_QID = new IdlElementType("I_QID");
-  IElementType I_VAR_VALUE = new IdlElementType("I_VAR_VALUE");
+  IElementType I_RECORD_DATUM = new IdlElementType("I_RECORD_DATUM");
+  IElementType I_RECORD_DATUM_ENTRY = new IdlElementType("I_RECORD_DATUM_ENTRY");
 
   IElementType I_ANGLE_LEFT = new IdlElementType("<");
   IElementType I_ANGLE_RIGHT = new IdlElementType(">");
@@ -105,38 +105,20 @@ public interface IdlElementTypes {
        if (type == I_CUSTOM_PARAM) {
         return new IdlCustomParamImpl(node);
       }
-      else if (type == I_DATA_ENUM) {
-        return new IdlDataEnumImpl(node);
+      else if (type == I_DATA) {
+        return new IdlDataImpl(node);
       }
-      else if (type == I_DATA_LIST) {
-        return new IdlDataListImpl(node);
-      }
-      else if (type == I_DATA_MAP) {
-        return new IdlDataMapImpl(node);
-      }
-      else if (type == I_DATA_MAP_ENTRY) {
-        return new IdlDataMapEntryImpl(node);
-      }
-      else if (type == I_DATA_NULL) {
-        return new IdlDataNullImpl(node);
-      }
-      else if (type == I_DATA_PRIMITIVE) {
-        return new IdlDataPrimitiveImpl(node);
-      }
-      else if (type == I_DATA_RECORD) {
-        return new IdlDataRecordImpl(node);
-      }
-      else if (type == I_DATA_RECORD_ENTRY) {
-        return new IdlDataRecordEntryImpl(node);
+      else if (type == I_DATA_ENTRY) {
+        return new IdlDataEntryImpl(node);
       }
       else if (type == I_DATA_VALUE) {
         return new IdlDataValueImpl(node);
       }
-      else if (type == I_DATA_VAR) {
-        return new IdlDataVarImpl(node);
+      else if (type == I_DATUM) {
+        return new IdlDatumImpl(node);
       }
-      else if (type == I_DATA_VAR_ENTRY) {
-        return new IdlDataVarEntryImpl(node);
+      else if (type == I_ENUM_DATUM) {
+        return new IdlEnumDatumImpl(node);
       }
       else if (type == I_FQN) {
         return new IdlFqnImpl(node);
@@ -153,8 +135,20 @@ public interface IdlElementTypes {
       else if (type == I_IMPORT_STATEMENT) {
         return new IdlImportStatementImpl(node);
       }
+      else if (type == I_LIST_DATUM) {
+        return new IdlListDatumImpl(node);
+      }
+      else if (type == I_MAP_DATUM) {
+        return new IdlMapDatumImpl(node);
+      }
+      else if (type == I_MAP_DATUM_ENTRY) {
+        return new IdlMapDatumEntryImpl(node);
+      }
       else if (type == I_NAMESPACE_DECL) {
         return new IdlNamespaceDeclImpl(node);
+      }
+      else if (type == I_NULL_DATUM) {
+        return new IdlNullDatumImpl(node);
       }
       else if (type == I_OP_INPUT_DEFAULT_VALUE) {
         return new IdlOpInputDefaultValueImpl(node);
@@ -267,11 +261,17 @@ public interface IdlElementTypes {
       else if (type == I_OP_TAG_NAME) {
         return new IdlOpTagNameImpl(node);
       }
+      else if (type == I_PRIMITIVE_DATUM) {
+        return new IdlPrimitiveDatumImpl(node);
+      }
       else if (type == I_QID) {
         return new IdlQidImpl(node);
       }
-      else if (type == I_VAR_VALUE) {
-        return new IdlVarValueImpl(node);
+      else if (type == I_RECORD_DATUM) {
+        return new IdlRecordDatumImpl(node);
+      }
+      else if (type == I_RECORD_DATUM_ENTRY) {
+        return new IdlRecordDatumEntryImpl(node);
       }
       throw new AssertionError("Unknown element type: " + type);
     }

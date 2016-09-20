@@ -21,35 +21,11 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitPsiNamedElement(o);
   }
 
-  public void visitDataEnum(@NotNull SchemaDataEnum o) {
-    visitVarValue(o);
-  }
-
-  public void visitDataList(@NotNull SchemaDataList o) {
-    visitVarValue(o);
-  }
-
-  public void visitDataMap(@NotNull SchemaDataMap o) {
-    visitVarValue(o);
-  }
-
-  public void visitDataMapEntry(@NotNull SchemaDataMapEntry o) {
+  public void visitData(@NotNull SchemaData o) {
     visitPsiElement(o);
   }
 
-  public void visitDataNull(@NotNull SchemaDataNull o) {
-    visitVarValue(o);
-  }
-
-  public void visitDataPrimitive(@NotNull SchemaDataPrimitive o) {
-    visitVarValue(o);
-  }
-
-  public void visitDataRecord(@NotNull SchemaDataRecord o) {
-    visitVarValue(o);
-  }
-
-  public void visitDataRecordEntry(@NotNull SchemaDataRecordEntry o) {
+  public void visitDataEntry(@NotNull SchemaDataEntry o) {
     visitPsiElement(o);
   }
 
@@ -57,11 +33,7 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitDataVar(@NotNull SchemaDataVar o) {
-    visitPsiElement(o);
-  }
-
-  public void visitDataVarEntry(@NotNull SchemaDataVarEntry o) {
+  public void visitDatum(@NotNull SchemaDatum o) {
     visitPsiElement(o);
   }
 
@@ -71,6 +43,10 @@ public class SchemaVisitor extends PsiElementVisitor {
 
   public void visitDefs(@NotNull SchemaDefs o) {
     visitPsiElement(o);
+  }
+
+  public void visitEnumDatum(@NotNull SchemaEnumDatum o) {
+    visitDatum(o);
   }
 
   public void visitEnumMemberDecl(@NotNull SchemaEnumMemberDecl o) {
@@ -115,12 +91,24 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitListDatum(@NotNull SchemaListDatum o) {
+    visitDatum(o);
+  }
+
   public void visitListTypeBody(@NotNull SchemaListTypeBody o) {
     visitCustomParamsHolder(o);
   }
 
   public void visitListTypeDef(@NotNull SchemaListTypeDef o) {
     visitTypeDef(o);
+  }
+
+  public void visitMapDatum(@NotNull SchemaMapDatum o) {
+    visitDatum(o);
+  }
+
+  public void visitMapDatumEntry(@NotNull SchemaMapDatumEntry o) {
+    visitPsiElement(o);
   }
 
   public void visitMapTypeBody(@NotNull SchemaMapTypeBody o) {
@@ -139,6 +127,14 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitNullDatum(@NotNull SchemaNullDatum o) {
+    visitDatum(o);
+  }
+
+  public void visitPrimitiveDatum(@NotNull SchemaPrimitiveDatum o) {
+    visitDatum(o);
+  }
+
   public void visitPrimitiveTypeBody(@NotNull SchemaPrimitiveTypeBody o) {
     visitCustomParamsHolder(o);
   }
@@ -148,6 +144,14 @@ public class SchemaVisitor extends PsiElementVisitor {
   }
 
   public void visitQid(@NotNull SchemaQid o) {
+    visitPsiElement(o);
+  }
+
+  public void visitRecordDatum(@NotNull SchemaRecordDatum o) {
+    visitDatum(o);
+  }
+
+  public void visitRecordDatumEntry(@NotNull SchemaRecordDatumEntry o) {
     visitPsiElement(o);
   }
 
@@ -194,10 +198,6 @@ public class SchemaVisitor extends PsiElementVisitor {
 
   public void visitVarTypeDef(@NotNull SchemaVarTypeDef o) {
     visitTypeDef(o);
-  }
-
-  public void visitVarValue(@NotNull SchemaVarValue o) {
-    visitPsiElement(o);
   }
 
   public void visitCustomParamsHolder(@NotNull CustomParamsHolder o) {

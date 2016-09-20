@@ -34,6 +34,12 @@ public class IdlOpParamImpl extends ASTWrapperPsiElement implements IdlOpParam {
 
   @Override
   @Nullable
+  public IdlDatum getDatum() {
+    return findChildByClass(IdlDatum.class);
+  }
+
+  @Override
+  @Nullable
   public IdlFqnTypeRef getFqnTypeRef() {
     return findChildByClass(IdlFqnTypeRef.class);
   }
@@ -48,12 +54,6 @@ public class IdlOpParamImpl extends ASTWrapperPsiElement implements IdlOpParam {
   @Nullable
   public IdlQid getQid() {
     return findChildByClass(IdlQid.class);
-  }
-
-  @Override
-  @Nullable
-  public IdlVarValue getVarValue() {
-    return findChildByClass(IdlVarValue.class);
   }
 
   @Override

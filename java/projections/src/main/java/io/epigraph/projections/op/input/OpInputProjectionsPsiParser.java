@@ -116,19 +116,19 @@ public class OpInputProjectionsPsiParser {
   }
 
   @Nullable
-  private static GDataVarValue getModelDefaultValue(@NotNull List<IdlOpInputModelProperty> modelProperties)
+  private static GDatum getModelDefaultValue(@NotNull List<IdlOpInputModelProperty> modelProperties)
       throws PsiProcessingException {
 
-    GDataVarValue result = null;
+    GDatum result = null;
     for (IdlOpInputModelProperty property : modelProperties) {
       @Nullable IdlOpInputDefaultValue defaultValuePsi = property.getOpInputDefaultValue();
       if (defaultValuePsi != null) {
         if (result != null)
           throw new PsiProcessingException("Default value should only be specified once", defaultValuePsi);
 
-        @Nullable IdlVarValue varValuePsi = defaultValuePsi.getVarValue();
+        @Nullable IdlDatum varValuePsi = defaultValuePsi.getDatum();
         if (varValuePsi != null)
-          result = IdlGDataPsiParser.parseVarValue(varValuePsi);
+          result = IdlGDataPsiParser.parseDatum(varValuePsi);
       }
     }
 
@@ -205,7 +205,7 @@ public class OpInputProjectionsPsiParser {
   @NotNull
   public static OpInputModelProjection<?, ?> parseModelProjection(@NotNull DatumType type,
                                                                   boolean required,
-                                                                  @Nullable GDataVarValue defaultValue,
+                                                                  @Nullable GDatum defaultValue,
                                                                   @Nullable OpCustomParams customParams,
                                                                   @NotNull IdlOpInputModelProjection psi,
                                                                   @NotNull TypesResolver typesResolver)
@@ -217,7 +217,7 @@ public class OpInputProjectionsPsiParser {
         if (recordModelProjectionPsi == null)
           return createDefaultModelProjection(type, required, psi);
         ensureModelKind(psi, TypeKind.RECORD);
-        GDataRecord defaultRecordData = coerceDefault(defaultValue, GDataRecord.class, psi);
+        GRecordDatum defaultRecordData = coerceDefault(defaultValue, GRecordDatum.class, psi);
 
         return parseRecordModelProjection(
             (RecordType) type,
@@ -232,7 +232,7 @@ public class OpInputProjectionsPsiParser {
         if (listModelProjectionPsi == null)
           return createDefaultModelProjection(type, required, psi);
         ensureModelKind(psi, TypeKind.LIST);
-        GDataList defaultListData = coerceDefault(defaultValue, GDataList.class, psi);
+        GListDatum defaultListData = coerceDefault(defaultValue, GListDatum.class, psi);
 
         return parseListModelProjection(
             (ListType) type,
@@ -251,7 +251,7 @@ public class OpInputProjectionsPsiParser {
       case ENUM:
         throw new PsiProcessingException("Unsupported type kind: " + type.kind(), psi);
       case PRIMITIVE:
-        GDataPrimitive defaultPrimitiveData = coerceDefault(defaultValue, GDataPrimitive.class, psi);
+        GPrimitiveDatum defaultPrimitiveData = coerceDefault(defaultValue, GPrimitiveDatum.class, psi);
         return parsePrimitiveModelProjection(
             (PrimitiveType) type,
             required,
@@ -343,7 +343,7 @@ public class OpInputProjectionsPsiParser {
   @NotNull
   public static OpInputRecordModelProjection parseRecordModelProjection(@NotNull RecordType type,
                                                                         boolean required,
-                                                                        @Nullable GDataRecord defaultValue,
+                                                                        @Nullable GRecordDatum defaultValue,
                                                                         @Nullable OpCustomParams customParams,
                                                                         @NotNull IdlOpInputRecordModelProjection psi,
                                                                         @NotNull TypesResolver resolver)
@@ -408,7 +408,7 @@ public class OpInputProjectionsPsiParser {
   @NotNull
   public static OpInputListModelProjection parseListModelProjection(@NotNull ListType type,
                                                                     boolean required,
-                                                                    @Nullable GDataList defaultValue,
+                                                                    @Nullable GListDatum defaultValue,
                                                                     @Nullable OpCustomParams customParams,
                                                                     @NotNull IdlOpInputListModelProjection psi,
                                                                     @NotNull TypesResolver resolver)
@@ -443,7 +443,7 @@ public class OpInputProjectionsPsiParser {
   @NotNull
   public static OpInputPrimitiveModelProjection parsePrimitiveModelProjection(@NotNull PrimitiveType type,
                                                                               boolean required,
-                                                                              @Nullable GDataPrimitive defaultValue,
+                                                                              @Nullable GPrimitiveDatum defaultValue,
                                                                               @Nullable OpCustomParams customParams,
                                                                               @NotNull PsiElement location,
                                                                               @NotNull TypesResolver resolver)
@@ -461,13 +461,13 @@ public class OpInputProjectionsPsiParser {
   }
 
   @Nullable
-  private static <D extends GDataVarValue> D coerceDefault(@Nullable GDataVarValue defaultValue,
-                                                           Class<D> cls,
-                                                           @NotNull PsiElement location)
+  private static <D extends GDatum> D coerceDefault(@Nullable GDatum defaultValue,
+                                                    Class<D> cls,
+                                                    @NotNull PsiElement location)
       throws PsiProcessingException {
 
     if (defaultValue == null) return null;
-    if (defaultValue instanceof GDataNull) return null;
+    if (defaultValue instanceof GNullDatum) return null;
     if (defaultValue.getClass().equals(cls)) //noinspection unchecked
       return (D) defaultValue;
     throw new PsiProcessingException(

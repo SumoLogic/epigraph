@@ -18,15 +18,15 @@ public class GDataToData {
 
     //todo gdata can be one of GDataVar or GDataVarValue, either create var or samovar
 
-    if (gdata instanceof GDataVar) {
-      GDataVar gDataVar = (GDataVar) gdata;
+    if (gdata instanceof GData) {
+      GData gData = (GData) gdata;
 
-      @Nullable Fqn typeRef = gDataVar.typeRef();
+      @Nullable Fqn typeRef = gData.typeRef();
       if (typeRef != null) type = resolveType(resolver, typeRef, Type.class);
 
       @NotNull Data.Builder builder = type.createDataBuilder();
 
-      for (Map.Entry<String, GDataVarValue> entry : gDataVar.tags().entrySet()) {
+      for (Map.Entry<String, GDatum> entry : gData.tags().entrySet()) {
         Type.Tag tag = type.tagsMap().get(entry.getKey());
         if (tag == null) throw new ProcessingException(
             String.format("Unknown tag '%s' in type '%s'", entry.getKey(), typeRef)
@@ -39,13 +39,13 @@ public class GDataToData {
       }
 
       return builder;
-    } else if (gdata instanceof GDataVarValue) {
-      GDataVarValue gDataVarValue = (GDataVarValue) gdata;
+    } else if (gdata instanceof GDatum) {
+      GDatum gDatum = (GDatum) gdata;
 
       if (type instanceof DatumType) {
         DatumType datumType = (DatumType) type;
 
-        Val value = transform(datumType, gDataVarValue, resolver);
+        Val value = transform(datumType, gDatum, resolver);
 
         @NotNull Data.Builder builder = type.createDataBuilder();
         builder._raw().setValue(datumType.self, value);
@@ -59,32 +59,32 @@ public class GDataToData {
 
   @NotNull
   public static Val transform(@NotNull DatumType type,
-                              @NotNull GDataVarValue gdata,
+                              @NotNull GDatum gdata,
                               @NotNull TypesResolver resolver) throws ProcessingException {
 
-    if (gdata instanceof GDataNull) {
-      return transform(type, (GDataNull) gdata, resolver);
-    } else if (gdata instanceof GDataPrimitive) {
+    if (gdata instanceof GNullDatum) {
+      return transform(type, (GNullDatum) gdata, resolver);
+    } else if (gdata instanceof GPrimitiveDatum) {
       if (!(type instanceof PrimitiveType<?>))
         throw new ProcessingException(
             String.format("Can't transform primitive value '%s' into '%s'", gdata, type.name())
         );
 
-      return toVal(transform((PrimitiveType<?>) type, (GDataPrimitive) gdata, resolver));
-    } else if (gdata instanceof GDataRecord) {
+      return toVal(transform((PrimitiveType<?>) type, (GPrimitiveDatum) gdata, resolver));
+    } else if (gdata instanceof GRecordDatum) {
       if (!(type instanceof RecordType))
         throw new ProcessingException(
             String.format("Can't transform record value '%s' into '%s'", gdata, type.name())
         );
 
-      return toVal(transform((RecordType) type, (GDataRecord) gdata, resolver));
-    } else if (gdata instanceof GDataList) {
+      return toVal(transform((RecordType) type, (GRecordDatum) gdata, resolver));
+    } else if (gdata instanceof GListDatum) {
       if (!(type instanceof ListType))
         throw new ProcessingException(
             String.format("Can't transform list value '%s' into '%s'", gdata, type.name())
         );
 
-      return toVal(transform((ListType) type, (GDataList) gdata, resolver));
+      return toVal(transform((ListType) type, (GListDatum) gdata, resolver));
     } else {
       // TODO Map, Enum
       throw new ProcessingException(String.format("Don't know how to handle '%s'", type.getClass().getName()));
@@ -94,7 +94,7 @@ public class GDataToData {
 
   @NotNull
   public static RecordDatum transform(@NotNull RecordType type,
-                                      @NotNull GDataRecord gdata,
+                                      @NotNull GRecordDatum gdata,
                                       @NotNull TypesResolver resolver) throws ProcessingException {
     @Nullable Fqn typeRef = gdata.typeRef();
     if (typeRef != null) type = resolveType(resolver, typeRef, RecordType.class);
@@ -121,7 +121,7 @@ public class GDataToData {
   // todo map
 
   public static ListDatum transform(@NotNull ListType type,
-                                    @NotNull GDataList gdata,
+                                    @NotNull GListDatum gdata,
                                     @NotNull TypesResolver resolver) throws ProcessingException {
     @Nullable Fqn typeRef = gdata.typeRef();
     if (typeRef != null) type = resolveType(resolver, typeRef, ListType.class);
@@ -144,7 +144,7 @@ public class GDataToData {
 
   // todo enum
   public static PrimitiveDatum<?> transform(@NotNull PrimitiveType<?> type,
-                                            @NotNull GDataPrimitive gdata,
+                                            @NotNull GPrimitiveDatum gdata,
                                             @NotNull TypesResolver resolver) throws ProcessingException {
     @Nullable Fqn typeRef = gdata.typeRef();
     if (typeRef != null) type = resolveType(resolver, typeRef, PrimitiveType.class);
@@ -184,7 +184,7 @@ public class GDataToData {
   }
 
   public static Val.Imm transform(@NotNull DatumType type,
-                              @NotNull GDataNull gdata,
+                              @NotNull GNullDatum gdata,
                               @NotNull TypesResolver resolver) throws ProcessingException {
     @Nullable Fqn typeRef = gdata.typeRef();
     if (typeRef != null) type = resolveType(resolver, typeRef, RecordType.class);
