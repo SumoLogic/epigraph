@@ -55,19 +55,21 @@ public abstract class OpInputModelProjection<M extends DatumType, D extends Datu
 
   protected <Exc extends Exception> void prettyPrintDefaultValueBlock(DataLayouter<Exc> l) throws Exc {
     if (defaultValue != null) {
-      l.beginCInd().print(" {");
+      l.nl();
+//      l.beginCInd().print(" {");
       prettyPrintDefaultValue(l);
-      l.end().brk().print("}");
+//      l.end().brk().print("}");
     }
   }
 
   protected <E extends Exception> void prettyPrintDefaultValue(DataLayouter<E> l) throws E {
     assert defaultValue != null;
-    l.print("default:").brk().print(defaultValue.toImmutable());
+//    l.print("default:").brk().print(defaultValue.toImmutable());
+    l.beginCInd().print("default:").brk().print(defaultValue.toImmutable()).end();
   }
 
   protected <Exc extends Exception> void prettyPrintParamsBlock(DataLayouter<Exc> l) throws Exc {
-    if (customParams != null && !customParams.isEmpty()) l.print(customParams);
+    if (customParams != null && !customParams.isEmpty()) l.brk().print(customParams);
   }
 
   @Override

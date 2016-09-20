@@ -50,7 +50,7 @@ public class OpCustomParams implements PrettyPrintable { // rename to OpOutputPa
     if (!isEmpty()) {
       l.beginCInd().print("custom params: {");
       for (Map.Entry<String, GDataValue> entry : params.entrySet()) {
-        l.brk().print(entry.getKey()).print(" = ").print(entry.getValue());
+        l.nl().print(entry.getKey()).print(" = ").print(entry.getValue());
       }
       l.end().brk().print("}");
     }

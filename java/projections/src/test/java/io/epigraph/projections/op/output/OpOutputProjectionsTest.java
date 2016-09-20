@@ -193,13 +193,14 @@ public class OpOutputProjectionsTest {
         epigraph.String.type
     );
 
-    // todo add custom params once there's `toString` on data
+    // todo more elaborate example.
+    // Make pretty-printed result consistent with grammar?
     String projectionStr = lines(
         ":(",
         "  +id,",
         "  record (",
         "    +id {",
-//        "    ; +param1 : epigraph.String { default : \"hello world\" },", // todo enable once there's `toString` on data
+        "    ; +param1 : epigraph.String = \"hello world\" { doc = \"some doc\" },",
         "    },",
         "    +bestFriend :record (",
         "      +id,",
@@ -257,7 +258,16 @@ public class OpOutputProjectionsTest {
         "  record:",
         "    io.epigraph.tests.PersonRecord {",
         "      fields: {",
-        "        +id:",
+        "        +id {",
+        "          params: {",
+        "            param1:",
+        "              +epigraph.String",
+        "              custom params: {",
+        "                doc = some doc",
+        "              }",
+        "              default: epigraph.String@hello world",
+        "          }",
+        "        }:",
         "          var io.epigraph.tests.PersonId (",
         "            self: io.epigraph.tests.PersonId",
         "          )",

@@ -47,7 +47,8 @@ public class OpInputFieldProjection implements PrettyPrintable {
   public <Exc extends Exception> void prettyPrint(DataLayouter<Exc> l) throws Exc {
     if (required) l.print("+");
     l.print(field.name());
-    if (customParams != null && !customParams.isEmpty()) l.print(customParams);
+    if (customParams != null && !customParams.isEmpty())
+      l.beginCInd().nl().print(customParams).end();
     l.print(":").brk().beginCInd().ind().print(projection).end();
   }
 

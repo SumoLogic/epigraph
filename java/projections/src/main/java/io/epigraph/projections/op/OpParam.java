@@ -49,7 +49,7 @@ public class OpParam implements PrettyPrintable { // rename to OpOutputParam?
 
   @Override
   public <Exc extends Exception> void prettyPrint(DataLayouter<Exc> l) throws Exc {
-    l.print(name).print(": ").print(projection);
+    l.beginCInd().print(name).print(":").brk().print(projection).end();
   }
 
   @Override
