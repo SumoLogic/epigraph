@@ -101,7 +101,7 @@ public interface LongDatum extends PrimitiveDatum<Long> {
         ) {
           super(type); // TODO take static type separately?
           this.raw = raw; // TODO validate raw is kosher?
-          this.value = immValConstructor.apply(raw.asValue());
+          this.value = immValConstructor.apply(new Val.Imm.Raw.DatumVal(this));
         }
 
         @Override
@@ -189,7 +189,7 @@ public interface LongDatum extends PrimitiveDatum<Long> {
         super(type);
         // TODO check type equality
         this.raw = raw;
-        this.value = builderValConstructor.apply(raw.asValue());
+        this.value = builderValConstructor.apply(new Val.Builder.Raw.DatumVal(this));
         this.immDatumConstructor = immDatumConstructor;
       }
 

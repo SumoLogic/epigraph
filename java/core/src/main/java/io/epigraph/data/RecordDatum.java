@@ -141,7 +141,7 @@ public interface RecordDatum extends Datum {
               "Incompatible raw and static types (TODO details)"
           );
           this.raw = raw; // TODO check raw data internals is kosher? or trust protected invoker?
-          this.value = immValConstructor.apply(raw.asValue());
+          this.value = immValConstructor.apply(new Val.Imm.Raw.DatumVal(this));
         }
 
         @Override
@@ -259,7 +259,7 @@ public interface RecordDatum extends Datum {
         super(type);
         if (raw.type() != type) throw new IllegalArgumentException("Raw type doesn't match static type (TODO details)");
         this.raw = raw;
-        this.value = builderValConstructor.apply(raw.asValue());
+        this.value = builderValConstructor.apply(new Val.Builder.Raw.DatumVal(this));
         this.immDatumConstructor = immDatumConstructor;
       }
 

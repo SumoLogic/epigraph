@@ -27,7 +27,7 @@ public interface PrimitiveDatum<Native> extends Datum {
     protected Impl(@NotNull PT type) { super(type); }
 
     @Override
-    public @NotNull String toString() { return type().name() + "@" + getVal().toString(); }
+    public @NotNull String toString() { return getClass().getName() + "@" + getVal().toString(); }
 
   }
 

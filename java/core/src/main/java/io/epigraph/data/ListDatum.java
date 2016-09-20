@@ -131,7 +131,7 @@ public interface ListDatum extends Datum {
           super(type);
           // TODO check types are compatible
           this.raw = raw; // TODO validate raw internals is kosher?
-          this.value = immValConstructor.apply(raw.asValue());
+          this.value = immValConstructor.apply(new Val.Imm.Raw.DatumVal(this));
         }
 
         @Override
@@ -255,7 +255,7 @@ public interface ListDatum extends Datum {
               "Incompatible raw and static types (TODO details)"
           );
         this.raw = raw; // TODO validate raw data is kosher?
-        this.value = builderValConstructor.apply(raw.asValue());
+        this.value = builderValConstructor.apply(new Val.Builder.Raw.DatumVal(this));
         this.immutableConstructor = immutableConstructor;
       }
 
