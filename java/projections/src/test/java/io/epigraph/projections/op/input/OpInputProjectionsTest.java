@@ -44,7 +44,7 @@ public class OpInputProjectionsTest {
         "      bestFriend: id",
 //      "      bestFriend: id { default: 123 }", // TODO: need better toString on Data objects
         "    ),",
-        "    friends {} *( :+id {}) {}",
+        "    friends { :_ { *( :+id {} ) } }",
         "  )",
         ") ~io.epigraph.tests.User :record (profile)"
     );
