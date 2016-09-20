@@ -39,7 +39,13 @@ public class GDataPrimitive extends GDataVarValue {
 
   @Override
   public String toString() {
-    if (typeRef() == null) return value.toString();
-    else return typeRef() + "@" + value;
+    String valueString;
+
+    if (value instanceof String) valueString = "\"" + value + '"';
+    else valueString = value.toString();
+
+    // todo enquote typeref if needed
+    if (typeRef() == null) return valueString;
+    else return typeRef() + "@" + valueString;
   }
 }

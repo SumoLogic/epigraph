@@ -27,7 +27,13 @@ public class IdlGDataPsiParserTest {
                         "f: false,\n" +
                         "g: \"foobar\">";
     String expected =
-        "fooType<a: {a1: a, a2: <>}, b: mapType(1: 1, 2: <tag: true>), c: listType[1, 2, false, 33, <q: w>], d: enum, e: q.w.someType@3.14, f: false, g: foobar>";
+        "fooType<a: {a1: \"a\", a2: <>}, " +
+        "b: mapType(1: 1, 2: <tag: true>), " +
+        "c: listType[1, 2, false, \"33\", <q: w>], " +
+        "d: enum, " +
+        "e: q.w.someType@3.14, " +
+        "f: false, " +
+        "g: \"foobar\">";
     testParse(expression, expected);
   }
 
