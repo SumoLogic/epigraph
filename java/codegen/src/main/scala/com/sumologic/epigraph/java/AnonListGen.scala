@@ -34,9 +34,9 @@ import org.jetbrains.annotations.Nullable;
  */
 public interface $ln extends${withParents(t)} io.epigraph.data.ListDatum.Static {
 
-  $ln.Type type = new $ln.Type();
+  $ln.Type type = $ln.Type.instance();
 
-  static @NotNull $ln.Builder create() { return $ln.type.createBuilder(); }
+  static @NotNull $ln.Builder create() { return $ln.Type.instance().createBuilder(); }
 ${t.effectiveDefaultElementTagName match { // default element tag (if defined) views
       case None => ""
       case Some(dtn) => sn"""\
@@ -92,9 +92,13 @@ ${
       $ln.Builder.Data
   > {
 
-    Type() {
+    private static final class Holder { public static $ln.Type instance = new $ln.Type(); }
+
+    public static $ln.Type instance() { return Holder.instance; }
+
+    private Type() {
       super(
-          java.util.Arrays.asList(${parents(".type")}),
+          java.util.Arrays.asList(${parents(".Type.instance()")}),
           ${dataTypeExpr(ev, t)},
           $ln.Builder::new,
           $ln.Imm.Value.Impl::new,
@@ -189,7 +193,7 @@ ${
     /** Private implementation of `$ln.Imm` interface. */
     final class Impl extends io.epigraph.data.ListDatum.Imm.Static.Impl<$ln.Imm, $ln.Imm.Value> implements $ln.Imm {
 
-      Impl(@NotNull io.epigraph.data.ListDatum.Imm.Raw raw) { super($ln.type, raw, $ln.Imm.Value.Impl::new); }
+      Impl(@NotNull io.epigraph.data.ListDatum.Imm.Raw raw) { super($ln.Type.instance(), raw, $ln.Imm.Value.Impl::new); }
 ${t.effectiveDefaultElementTagName match { // default element tag (if defined) views
       case None => ""
       case Some(dtn) => sn"""\
@@ -299,7 +303,7 @@ ${
       final class Impl extends io.epigraph.data.Data.Imm.Static.Impl<$ln.Imm.Data>
           implements $ln.Imm.Data {
 
-        Impl(@NotNull io.epigraph.data.Data.Imm.Raw raw) { super($ln.type, raw); }
+        Impl(@NotNull io.epigraph.data.Data.Imm.Raw raw) { super($ln.Type.instance(), raw); }
 
         @Override
         public @Nullable $ln.Imm get() {
@@ -308,7 +312,7 @@ ${
 
         @Override
         public @Nullable $ln.Imm.Value get$$() {
-          return ($ln.Imm.Value) _raw().getValue($ln.type.self);
+          return ($ln.Imm.Value) _raw().getValue($ln.Type.instance().self);
         }
 
       }
@@ -323,7 +327,7 @@ ${
   final class Builder extends io.epigraph.data.ListDatum.Builder.Static<$ln.Imm, $ln.Builder.Value> implements $ln {
 
     Builder(@NotNull io.epigraph.data.ListDatum.Builder.Raw raw) {
-      super($ln.type, raw, $ln.Imm.Impl::new, $ln.Builder.Value::new);
+      super($ln.Type.instance(), raw, $ln.Imm.Impl::new, $ln.Builder.Value::new);
     }
 ${t.effectiveDefaultElementTagName match { // default element tag (if defined) views
       case None => ""
@@ -337,7 +341,7 @@ ${t.effectiveDefaultElementTagName match { // default element tag (if defined) v
       return new io.epigraph.util.ListView<>(
           datas(),
           ${lqn(et, t)}${vt(et, "", ".Data")}::get${vt(et, up(dtn), "")},
-          v -> ${lqn(et, t)}.type.createDataBuilder().set${vt(et, up(dtn), "")}(v)
+          v -> ${lqn(et, t)}.Type.instance().createDataBuilder().set${vt(et, up(dtn), "")}(v)
       );
     }
 
@@ -349,7 +353,7 @@ ${t.effectiveDefaultElementTagName match { // default element tag (if defined) v
       return new io.epigraph.util.ListView<>(
           datas(),
           ${lqn(et, t)}${vt(et, "", ".Data")}::get${vt(et, up(dtn), "")}$$,
-          v -> ${lqn(et, t)}.type.createDataBuilder().set${vt(et, up(dtn), "")}(v)
+          v -> ${lqn(et, t)}.Type.instance().createDataBuilder().set${vt(et, up(dtn), "")}(v)
       );
     }
 """
@@ -375,7 +379,7 @@ ${
 //      return new io.epigraph.util.ListView<>(
 //          datas(),
 //          ${lqn(et, t)}${vt(et, "", ".Data")}::get${vt(et, up(tag.name), "")},
-//          v -> ${lqn(et, t)}.type.createDataBuilder().set${vt(et, up(tag.name), "")}(v)
+//          v -> ${lqn(et, t)}.Type.instance().createDataBuilder().set${vt(et, up(tag.name), "")}(v)
 //      );
 //    }
 //
@@ -386,7 +390,7 @@ ${
 //      return new io.epigraph.util.ListView<>(
 //          datas(),
 //          ${lqn(et, t)}${vt(et, "", ".Data")}::get${vt(et, up(tag.name), "")}$$,
-//          v -> ${lqn(et, t)}.type.createDataBuilder().set${vt(et, up(tag.name), "")}(v)
+//          v -> ${lqn(et, t)}.Type.instance().createDataBuilder().set${vt(et, up(tag.name), "")}(v)
 //      );
 //    }
 """

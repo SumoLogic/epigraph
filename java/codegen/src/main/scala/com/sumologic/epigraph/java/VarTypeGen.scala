@@ -24,14 +24,14 @@ import org.jetbrains.annotations.Nullable;
  */
 public interface $ln extends${withParents(t)} io.epigraph.data.Data.Static {
 
-  @NotNull $ln.Type type = new $ln.Type();
+  @NotNull $ln.Type type = $ln.Type.instance();
 
   /** Returns new builder for `${t.name.name}` data. */
-  static @NotNull $ln.Builder create() { return $ln.type.createDataBuilder(); }
+  static @NotNull $ln.Builder create() { return $ln.Type.instance().createDataBuilder(); }
 ${t.effectiveTags.map { tag => sn"""\
 
   ${"/**"} Tag `${tag.name}`. */
-  @NotNull Tag ${jn(tag.name)} = new Tag("${tag.name}", ${lqrn(tag.typeRef, t)}.type);
+  @NotNull Tag ${jn(tag.name)} = new Tag("${tag.name}", ${lqrn(tag.typeRef, t)}.Type.instance());
 
   ${"/**"} Returns `${tag.name}` tag datum. */
   @Nullable ${lqrn(tag.typeRef, t)} get${up(tag.name)}();
@@ -45,12 +45,16 @@ ${t.effectiveTags.map { tag => sn"""\
   ${"/**"}
    * Class for `${t.name.name}` type.
    */
-  class Type extends io.epigraph.types.UnionType.Static<$ln.Imm, $ln.Builder> {
+  final class Type extends io.epigraph.types.UnionType.Static<$ln.Imm, $ln.Builder> {
+
+    private static final class Holder { public static $ln.Type instance = new $ln.Type(); }
+
+    public static $ln.Type instance() { return Holder.instance; }
 
     private Type() {
       super(
           new io.epigraph.names.QualifiedTypeName(${qnameArgs(t.name.fqn).mkString("\"", "\", \"", "\"")}),
-          java.util.Arrays.asList(${t.linearizedParents.map(lqn(_, t, _ + ".type")).mkString(", ")}),
+          java.util.Arrays.asList(${t.linearizedParents.map(lqn(_, t, _ + ".Type.instance()")).mkString(", ")}),
           $ln.Builder::new
       );
     }
@@ -87,7 +91,7 @@ ${t.effectiveTags.map { tag => sn"""\
     /** Private implementation of `$ln.Imm` interface. */
     final class Impl extends io.epigraph.data.Data.Imm.Static.Impl<$ln.Imm> implements $ln.Imm {
 
-      private Impl(@NotNull io.epigraph.data.Data.Imm.Raw raw) { super($ln.type, raw); }
+      private Impl(@NotNull io.epigraph.data.Data.Imm.Raw raw) { super($ln.Type.instance(), raw); }
 ${t.effectiveTags.map { tag => sn"""\
 
       ${"/**"} Returns immutable `${tag.name}` tag datum. */
@@ -114,7 +118,7 @@ ${t.effectiveTags.map { tag => sn"""\
    */
   final class Builder extends io.epigraph.data.Data.Builder.Static<$ln.Imm> implements $ln {
 
-    private Builder(@NotNull io.epigraph.data.Data.Builder.Raw raw) { super($ln.type, raw, $ln.Imm.Impl::new); }
+    private Builder(@NotNull io.epigraph.data.Data.Builder.Raw raw) { super($ln.Type.instance(), raw, $ln.Imm.Impl::new); }
 ${t.effectiveTags.map { tag => // for each effective tag
     sn"""\
 

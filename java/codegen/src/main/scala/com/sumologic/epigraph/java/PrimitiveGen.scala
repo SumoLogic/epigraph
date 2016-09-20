@@ -23,9 +23,9 @@ import org.jetbrains.annotations.Nullable;
  */
 public interface $ln extends${withParents(t)} io.epigraph.data.${kind(t)}Datum.Static {
 
-  @NotNull $ln.Type type = new $ln.Type();
+  @NotNull $ln.Type type = $ln.Type.instance();
 
-  static @NotNull $ln.Builder create(@NotNull ${native(t)} val) { return $ln.type.createBuilder(val); }
+  static @NotNull $ln.Builder create(@NotNull ${native(t)} val) { return $ln.Type.instance().createBuilder(val); }
 
   /**
    * Class for `${t.name.name}` datum type.
@@ -39,10 +39,14 @@ public interface $ln extends${withParents(t)} io.epigraph.data.${kind(t)}Datum.S
       $ln.Builder.Data
   > {
 
-    Type() {
+    private static final class Holder { public static $ln.Type instance = new $ln.Type(); }
+
+    public static $ln.Type instance() { return Holder.instance; }
+
+    private Type() {
       super(
           new io.epigraph.names.QualifiedTypeName(${qnameArgs(t.name.fqn).mkString("\"", "\", \"", "\"")}),
-          java.util.Arrays.asList(${t.linearizedParents.map(javaQName(_, t) + ".type").mkString(", ")}),
+          java.util.Arrays.asList(${t.linearizedParents.map(javaQName(_, t) + ".Type.instance()").mkString(", ")}),
           $ln.Builder::new,
           $ln.Imm.Value.Impl::new,
           $ln.Builder.Data::new
@@ -88,7 +92,7 @@ public interface $ln extends${withParents(t)} io.epigraph.data.${kind(t)}Datum.S
     /** Private implementation of `$ln.Imm` interface. */
     final class Impl extends io.epigraph.data.${kind(t)}Datum.Imm.Static.Impl<$ln.Imm, $ln.Imm.Value> implements $ln.Imm {
 
-      Impl(@NotNull io.epigraph.data.${kind(t)}Datum.Imm.Raw raw) { super($ln.type, raw, $ln.Imm.Value.Impl::new); }
+      Impl(@NotNull io.epigraph.data.${kind(t)}Datum.Imm.Raw raw) { super($ln.Type.instance(), raw, $ln.Imm.Value.Impl::new); }
 
     }
 
@@ -127,7 +131,7 @@ public interface $ln extends${withParents(t)} io.epigraph.data.${kind(t)}Datum.S
       /** Private implementation of `$ln.Imm.Data` interface. */
       final class Impl extends io.epigraph.data.Data.Imm.Static.Impl<$ln.Imm.Data> implements $ln.Imm.Data {
 
-        Impl(@NotNull io.epigraph.data.Data.Imm.Raw raw) { super($ln.type, raw); }
+        Impl(@NotNull io.epigraph.data.Data.Imm.Raw raw) { super($ln.Type.instance(), raw); }
 
         @Override
         public @Nullable $ln.Imm get() {
@@ -136,7 +140,7 @@ public interface $ln extends${withParents(t)} io.epigraph.data.${kind(t)}Datum.S
         }
 
         @Override
-        public @Nullable $ln.Imm.Value get$$() { return ($ln.Imm.Value) _raw().getValue($ln.type.self); }
+        public @Nullable $ln.Imm.Value get$$() { return ($ln.Imm.Value) _raw().getValue($ln.Type.instance().self); }
 
       }
 
@@ -149,7 +153,7 @@ public interface $ln extends${withParents(t)} io.epigraph.data.${kind(t)}Datum.S
    */
   final class Builder extends io.epigraph.data.${kind(t)}Datum.Builder.Static<$ln.Imm, $ln.Builder.Value> implements $ln {
 
-    Builder(@NotNull io.epigraph.data.${kind(t)}Datum.Builder.Raw raw) { super($ln.type, raw, $ln.Imm.Impl::new, $ln.Builder.Value::new); }
+    Builder(@NotNull io.epigraph.data.${kind(t)}Datum.Builder.Raw raw) { super($ln.Type.instance(), raw, $ln.Imm.Impl::new, $ln.Builder.Value::new); }
 
 $builderValueAndDataBuilder\
 

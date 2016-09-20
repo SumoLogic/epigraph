@@ -25,13 +25,13 @@ import org.jetbrains.annotations.Nullable;
  */
 public interface $ln extends${withParents(t)} io.epigraph.data.RecordDatum.Static {
 
-  @NotNull $ln.Type type = new $ln.Type();
+  @NotNull $ln.Type type = $ln.Type.instance();
 
-  static @NotNull $ln.Builder create() { return $ln.type.createBuilder(); }
+  static @NotNull $ln.Builder create() { return $ln.Type.instance().createBuilder(); }
 ${t.effectiveFields.map { f => sn"""\
 
   ${"/**"} Field `${f.name}`. */
-  @NotNull Field ${jn(f.name)} = new Field("${f.name}", ${lqrn(f.typeRef, t)}.type.dataType(${f.valueDataType.polymorphic}${vt(f.typeRef, s", ${tcr(f.valueDataType, t)}", "")}), ${f.isAbstract});
+  @NotNull Field ${jn(f.name)} = new Field("${f.name}", ${lqrn(f.typeRef, t)}.Type.instance().dataType(${f.valueDataType.polymorphic}${vt(f.typeRef, s", ${tcr(f.valueDataType, t)}", "")}), ${f.isAbstract});
 """
   }.mkString
 }\
@@ -77,10 +77,14 @@ ${  f.effectiveDefaultTagName match { // default tag accessors (implied or expli
       $ln.Builder.Data
   > {
 
+    private static final class Holder { public static $ln.Type instance = new $ln.Type(); }
+
+    public static $ln.Type instance() { return Holder.instance; }
+
     private Type() {
       super(
           new io.epigraph.names.QualifiedTypeName(${qnameArgs(t.name.fqn).mkString("\"", "\", \"", "\"")}),
-          java.util.Arrays.asList(${t.linearizedParents.map(lqn(_, t, _ + ".type")).mkString(", ")}),
+          java.util.Arrays.asList(${t.linearizedParents.map(lqn(_, t, _ + ".Type.instance()")).mkString(", ")}),
           $ln.Builder::new,
           $ln.Imm.Value.Impl::new,
           $ln.Builder.Data::new
@@ -163,7 +167,7 @@ ${  f.effectiveDefaultTagName match { // default tag accessors (implied or expli
     /** Private implementation of `$ln.Imm` interface. */
     final class Impl extends io.epigraph.data.RecordDatum.Imm.Static.Impl<$ln.Imm, $ln.Imm.Value> implements $ln.Imm {
 
-      private Impl(@NotNull io.epigraph.data.RecordDatum.Imm.Raw raw) { super($ln.type, raw, $ln.Imm.Value.Impl::new); }
+      private Impl(@NotNull io.epigraph.data.RecordDatum.Imm.Raw raw) { super($ln.Type.instance(), raw, $ln.Imm.Value.Impl::new); }
 ${t.effectiveFields.map { f => sn"""\
 ${  f.valueDataType.typeRef.resolved match { // data accessors (for union typed fields)
       case vartype: CVarTypeDef => sn"""\
@@ -235,16 +239,16 @@ ${  f.effectiveDefaultTagName match { // default tag accessors (implied or expli
       final class Impl extends io.epigraph.data.Data.Imm.Static.Impl<$ln.Imm.Data>
           implements $ln.Imm.Data {
 
-        protected Impl(@NotNull io.epigraph.data.Data.Imm.Raw raw) { super($ln.type, raw); }
+        protected Impl(@NotNull io.epigraph.data.Data.Imm.Raw raw) { super($ln.Type.instance(), raw); }
 
         @Override
         public @Nullable $ln.Imm get() {
-          return ($ln.Imm) _raw().getDatum($ln.type.self);
+          return ($ln.Imm) _raw().getDatum($ln.Type.instance().self);
         }
 
         @Override
         public @Nullable $ln.Imm.Value get$$() {
-          return ($ln.Imm.Value) _raw().getValue($ln.type.self);
+          return ($ln.Imm.Value) _raw().getValue($ln.Type.instance().self);
         }
 
       }
@@ -258,7 +262,7 @@ ${  f.effectiveDefaultTagName match { // default tag accessors (implied or expli
    */
   final class Builder extends io.epigraph.data.RecordDatum.Builder.Static<$ln.Imm, $ln.Builder.Value> implements $ln {
 
-    private Builder(@NotNull io.epigraph.data.RecordDatum.Builder.Raw raw) { super($ln.type, raw, $ln.Imm.Impl::new, $ln.Builder.Value::new); }
+    private Builder(@NotNull io.epigraph.data.RecordDatum.Builder.Raw raw) { super($ln.Type.instance(), raw, $ln.Imm.Impl::new, $ln.Builder.Value::new); }
 ${t.effectiveFields.map { f => // for each effective field
     sn"""\
 ${  f.valueDataType.typeRef.resolved match { // data accessors (for union typed fields)
@@ -290,13 +294,13 @@ ${  f.effectiveDefaultTagName match { // default tag (implied or explicit, if an
 
     /** Sets `${f.name}` field to specified ${vt(f.typeRef, s"default `$dtn` tag ", "")}datum. */
     public @NotNull $ln.Builder set${up(f.name)}(@Nullable ${lqn(tt(f.typeRef, dtn), t)} ${jn(f.name)}) {
-      _raw().setData($ln.${jn(f.name)}, ${lqrn(f.typeRef, t)}.type.createDataBuilder().set${vt(f.typeRef, up(dtn), "")}(${jn(f.name)}));
+      _raw().setData($ln.${jn(f.name)}, ${lqrn(f.typeRef, t)}.Type.instance().createDataBuilder().set${vt(f.typeRef, up(dtn), "")}(${jn(f.name)}));
       return this;
     }
 
     /** Sets `${f.name}` field to specified ${vt(f.typeRef, s"default `$dtn` tag ", "")}error. */
     public @NotNull $ln.Builder set${up(f.name)}(@NotNull io.epigraph.errors.ErrorValue error) {
-      _raw().setData($ln.${jn(f.name)}, ${lqrn(f.typeRef, t)}.type.createDataBuilder().set${vt(f.typeRef, up(dtn), "")}(error));
+      _raw().setData($ln.${jn(f.name)}, ${lqrn(f.typeRef, t)}.Type.instance().createDataBuilder().set${vt(f.typeRef, up(dtn), "")}(error));
       return this;
     }
 

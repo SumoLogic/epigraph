@@ -148,7 +148,7 @@ abstract class JavaGen[From >: Null <: AnyRef](protected val from: From, protect
   /** tag constant reference for given type and its tag name */
   def ttr(t: CType, tn: String, lt: CType): String = t match {
     case t: CVarTypeDef => lqn(t, lt) + "." + jn(tn)
-    case t: CDatumType => lqn(t, lt) + ".type.self"
+    case t: CDatumType => lqn(t, lt) + ".Type.instance().self"
     case unknown => throw new UnsupportedOperationException(unknown.name.name)
   }
 
