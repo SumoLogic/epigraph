@@ -111,17 +111,13 @@ public abstract class RecordType extends DatumType {
     @Deprecated // use dataType().type()
     public final @NotNull Type type;
 
-    public final boolean isAbstract;
-
     public Field(
         @NotNull String name,
-        @NotNull DataType dataType,
-        boolean isAbstract
+        @NotNull DataType dataType
     ) { // TODO capture overridden super-fields?
       this.name = name;
       this.dataType = dataType;
       this.type = dataType.type;
-      this.isAbstract = isAbstract;
     }
 
     public @NotNull String name() { return name; }

@@ -36,10 +36,10 @@ trait DatumTypeJavaGen {this: JavaTypeGen[_ >: Null <: CType] =>
       public @NotNull $ln.Data set(@Nullable $ln datum) { _raw().setDatum($ln.Type.instance().self, datum); return this; }
 
       /** Sets default tag error. */
-      public @NotNull $ln.Data set(@NotNull io.epigraph.errors.ErrorValue error) { _raw().setError($ln.Type.instance().self, error); return this; }
+      public @NotNull $ln.Data set$$Error(@NotNull io.epigraph.errors.ErrorValue error) { _raw().setError($ln.Type.instance().self, error); return this; }
 
       /** Sets default tag value. */
-      public @NotNull $ln.Data set(@Nullable $ln.Value value) { _raw().setValue($ln.Type.instance().self, value); return this; }
+      public @NotNull $ln.Data set$$(@Nullable $ln.Value value) { _raw().setValue($ln.Type.instance().self, value); return this; }
 
     }
 """/*@formatter:on*/

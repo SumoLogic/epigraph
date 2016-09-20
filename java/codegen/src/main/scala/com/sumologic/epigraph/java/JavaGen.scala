@@ -43,7 +43,7 @@ abstract class JavaGen[From >: Null <: AnyRef](protected val from: From, protect
 
   def amln(t: CAnonMapType): String = t.valueDataType.typeRef.resolved match {
     case et: CVarTypeDef => ln(et) + varTagPart(t.valueDataType.effectiveDefaultTagName) + "_Map"
-    case et: CDatumType => assert(t.valueDataType.effectiveDefaultTagName.isEmpty); ln(et) + "_Map"
+    case et: CDatumType => ln(et) + "_Map"
     case unknown => throw new UnsupportedOperationException(unknown.toString)
   }
 

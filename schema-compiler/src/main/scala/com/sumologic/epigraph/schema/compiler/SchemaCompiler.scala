@@ -205,7 +205,8 @@ object SchemaCompiler {
     "builtin-types-schema/src/main/epigraph/epigraph/builtinTypes.esc",
     "java/core/src/test/epigraph/com/example/person.esc",
     "java/core/src/test/epigraph/com/example/user.esc"
-//    "java/core/src/test/epigraph/com/example/circular.esc"
+//    "java/core/src/test/epigraph/com/example/circular.esc",
+//    "examples/users/schema/src/main/epigraph/metrics/metrics.esc"
 //    "data-schema/src/main/epigraph/epigraph/data/data.esc"
 //    "schema-schema/src/main/epigraph/epigraph/schema/names.esc",
 //    "schema-schema/src/main/epigraph/epigraph/schema/types.esc",

@@ -353,7 +353,7 @@ ${t.effectiveDefaultElementTagName match { // default element tag (if defined) v
       return new io.epigraph.util.ListView<>(
           datas(),
           ${lqn(et, t)}${vt(et, "", ".Data")}::get${vt(et, up(dtn), "")}$$,
-          v -> ${lqn(et, t)}.Type.instance().createDataBuilder().set${vt(et, up(dtn), "")}(v)
+          v -> ${lqn(et, t)}.Type.instance().createDataBuilder().set${vt(et, up(dtn), "")}$$(v)
       );
     }
 """

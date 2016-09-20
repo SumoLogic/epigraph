@@ -134,7 +134,7 @@ ${t.effectiveTags.map { tag => // for each effective tag
     }
 
     ${"/**"} Sets `${tag.name}` tag error. */
-    public @NotNull $ln.Builder set${up(tag.name)}(@NotNull io.epigraph.errors.ErrorValue error) {
+    public @NotNull $ln.Builder set${up(tag.name)}$$Error(@NotNull io.epigraph.errors.ErrorValue error) {
       _raw().setError($ln.${jn(tag.name)}, error); return this;
     }
 
@@ -145,7 +145,7 @@ ${t.effectiveTags.map { tag => // for each effective tag
     }
 
     ${"/**"} Sets `${tag.name}` tag value. */
-    public @NotNull $ln.Builder set${up(tag.name)}(@Nullable ${lqrn(tag.typeRef, t)}.Value ${jn(tag.name)}Value) {
+    public @NotNull $ln.Builder set${up(tag.name)}$$(@Nullable ${lqrn(tag.typeRef, t)}.Value ${jn(tag.name)}Value) {
       _raw().setValue($ln.${jn(tag.name)}, ${jn(tag.name)}Value); return this;
     }
 """
