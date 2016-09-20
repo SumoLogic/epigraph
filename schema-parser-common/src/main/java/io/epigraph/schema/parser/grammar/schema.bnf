@@ -32,6 +32,7 @@
     POLYMORPHIC='polymorphic'
     ABSTRACT='abstract'
     OVERRIDE='override'
+    // todo add final, primitive, any?
 
     INTEGER_T='integer'
     LONG_T='long'
