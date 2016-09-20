@@ -23,17 +23,7 @@ import static org.junit.Assert.fail;
  */
 public class OpInputProjectionsTest {
   @Test
-  public void testParsing() throws PsiProcessingException {
-    TypesResolver resolver = new SimpleTypesResolver(
-        PersonId.type,
-        Person.type,
-        User.type,
-        UserId.type,
-        UserRecord.type
-    );
-
-    // todo add params
-    // todo add custom params once there's `toString` on data
+  public void testParsing1() throws PsiProcessingException {
     String projectionStr = lines(
         ":(",
         "  +id,",
@@ -41,49 +31,13 @@ public class OpInputProjectionsTest {
         "    +id,",
         "    +bestFriend :record (",
         "      +id,",
-        "      bestFriend: id { default: 123 }", // TODO: need better toString on Data objects
+        "      bestFriend: id { default: 123 }",
         "    ),",
         "    friends { :_ { *( :+id {} ) } }",
         "  )",
         ") ~io.epigraph.tests.User :record (profile)"
     );
 
-
-    EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
-
-    IdlOpInputVarProjection psiVarProjection = EpigraphPsiUtil.parseText(
-        projectionStr,
-        IdlSubParserDefinitions.OP_INPUT_VAR_PROJECTION.rootElementType(),
-        IdlOpInputVarProjection.class,
-        IdlSubParserDefinitions.OP_INPUT_VAR_PROJECTION,
-        errorsAccumulator
-    );
-
-    if (errorsAccumulator.hasErrors()) {
-      for (PsiErrorElement element : errorsAccumulator.errors()) {
-        System.err.println(element.getErrorDescription() + " at " +
-                           EpigraphPsiUtil.getLocation(element, projectionStr));
-      }
-      String psiDump = DebugUtil.psiToString(psiVarProjection, true, false).trim();
-      fail(psiDump);
-    }
-
-
-    OpInputVarProjection varProjection = null;
-    try {
-      varProjection = OpInputProjectionsPsiParser.parseVarProjection(
-          new DataType(false, Person.type, Person.id),
-          psiVarProjection,
-          resolver
-      );
-
-    } catch (PsiProcessingException e) {
-      e.printStackTrace();
-      System.err.println(e.getMessage() + " at " +
-                         EpigraphPsiUtil.getLocation(e.psi(), projectionStr));
-      String psiDump = DebugUtil.psiToString(psiVarProjection, true, false).trim();
-      fail(psiDump);
-    }
 
     String expected = lines(
         "var io.epigraph.tests.Person (",
@@ -108,7 +62,7 @@ public class OpInputProjectionsTest {
         "                    var io.epigraph.tests.Person (",
         "                      id:",
         "                        io.epigraph.tests.PersonId",
-        "                        default: io.epigraph.tests.PersonId@123",
+        "                        default: io.epigraph.tests.PersonId$Imm$Impl@123",
         "                    )",
         "                }",
         "              }",
@@ -141,7 +95,71 @@ public class OpInputProjectionsTest {
         ")"
     );
 
-    assertEquals(expected, varProjection.toString());
+    testParsingVarProjection(
+        new DataType(false, Person.type, Person.id),
+        projectionStr, expected
+    );
+  }
+
+//  @Test
+  public void testParsingEmpty() throws PsiProcessingException {
+    testParsingVarProjection(
+        new DataType(false, Person.type, Person.id),
+        ""
+        ,
+        ""
+    );
+  }
+
+  private void testParsingVarProjection(DataType varDataType, String projectionString, String expected)
+      throws PsiProcessingException {
+
+    TypesResolver resolver = new SimpleTypesResolver(
+        PersonId.type,
+        Person.type,
+        User.type,
+        UserId.type,
+        UserRecord.type
+    );
+
+    EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
+
+    IdlOpInputVarProjection psiVarProjection = EpigraphPsiUtil.parseText(
+        projectionString,
+        IdlSubParserDefinitions.OP_INPUT_VAR_PROJECTION.rootElementType(),
+        IdlOpInputVarProjection.class,
+        IdlSubParserDefinitions.OP_INPUT_VAR_PROJECTION,
+        errorsAccumulator
+    );
+
+    if (errorsAccumulator.hasErrors()) {
+      for (PsiErrorElement element : errorsAccumulator.errors()) {
+        System.err.println(element.getErrorDescription() + " at " +
+                           EpigraphPsiUtil.getLocation(element, projectionString));
+      }
+      String psiDump = DebugUtil.psiToString(psiVarProjection, true, false).trim();
+      fail(psiDump);
+    }
+
+
+    OpInputVarProjection varProjection = null;
+    try {
+      varProjection = OpInputProjectionsPsiParser.parseVarProjection(
+          varDataType,
+          psiVarProjection,
+          resolver
+      );
+
+    } catch (PsiProcessingException e) {
+      e.printStackTrace();
+      System.err.println(e.getMessage() + " at " +
+                         EpigraphPsiUtil.getLocation(e.psi(), projectionString));
+      String psiDump = DebugUtil.psiToString(psiVarProjection, true, false).trim();
+      fail(psiDump);
+    }
+
+    String actual = varProjection.toString();
+    assertEquals("\n" + actual, expected, actual);
   }
 
   private static String lines(String... lines) {
