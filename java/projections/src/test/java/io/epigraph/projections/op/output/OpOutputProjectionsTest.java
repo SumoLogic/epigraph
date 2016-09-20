@@ -4,6 +4,8 @@ import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.impl.DebugUtil;
 import io.epigraph.idl.parser.projections.IdlSubParserDefinitions;
 import io.epigraph.idl.parser.psi.IdlOpOutputVarProjection;
+import io.epigraph.projections.op.OpParam;
+import io.epigraph.projections.op.OpParams;
 import io.epigraph.projections.op.input.OpInputPrimitiveModelProjection;
 import io.epigraph.psi.EpigraphPsiUtil;
 import io.epigraph.psi.PsiProcessingException;

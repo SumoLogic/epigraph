@@ -2,6 +2,7 @@ package io.epigraph.projections.op.output;
 
 import de.uka.ilkd.pp.DataLayouter;
 import io.epigraph.projections.op.OpCustomParams;
+import io.epigraph.projections.op.OpParams;
 import io.epigraph.types.ListType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

@@ -7,6 +7,8 @@ import io.epigraph.idl.gdata.IdlGDataPsiParser;
 import io.epigraph.idl.parser.psi.*;
 import io.epigraph.lang.Fqn;
 import io.epigraph.projections.op.OpCustomParams;
+import io.epigraph.projections.op.OpParam;
+import io.epigraph.projections.op.OpParams;
 import io.epigraph.projections.op.input.OpInputModelProjection;
 import io.epigraph.projections.op.input.OpInputProjectionsPsiParser;
 import io.epigraph.psi.PsiProcessingException;

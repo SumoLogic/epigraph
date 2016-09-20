@@ -1,6 +1,7 @@
 package io.epigraph.projections.op.output;
 
 import io.epigraph.projections.op.OpCustomParams;
+import io.epigraph.projections.op.OpParams;
 import io.epigraph.types.PrimitiveType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

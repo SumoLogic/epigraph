@@ -4,6 +4,7 @@ import de.uka.ilkd.pp.DataLayouter;
 import de.uka.ilkd.pp.PrettyPrintable;
 import io.epigraph.projections.generic.GenericModelProjection;
 import io.epigraph.projections.op.OpCustomParams;
+import io.epigraph.projections.op.OpParams;
 import io.epigraph.types.DatumType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

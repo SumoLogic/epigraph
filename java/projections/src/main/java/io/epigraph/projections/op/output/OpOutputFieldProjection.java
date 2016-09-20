@@ -3,6 +3,7 @@ package io.epigraph.projections.op.output;
 import de.uka.ilkd.pp.DataLayouter;
 import de.uka.ilkd.pp.PrettyPrintable;
 import io.epigraph.projections.op.OpCustomParams;
+import io.epigraph.projections.op.OpParams;
 import io.epigraph.types.RecordType;
 import io.epigraph.util.pp.DataPrettyPrinter;
 import org.jetbrains.annotations.NotNull;

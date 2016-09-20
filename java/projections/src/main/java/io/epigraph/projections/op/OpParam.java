@@ -1,4 +1,4 @@
-package io.epigraph.projections.op.output;
+package io.epigraph.projections.op;
 
 import de.uka.ilkd.pp.DataLayouter;
 import de.uka.ilkd.pp.PrettyPrintable;
