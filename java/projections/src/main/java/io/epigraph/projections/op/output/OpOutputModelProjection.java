@@ -20,16 +20,17 @@ public abstract class OpOutputModelProjection<M extends DatumType>
   @Nullable
   protected final OpParams params;
   @Nullable
-  protected final OpCustomParams customParams;
+  protected final OpOutputModelProjection<?> metaProjection;
 
   public OpOutputModelProjection(@NotNull M model,
                                  boolean includeInDefault,
                                  @Nullable OpParams params,
-                                 @Nullable OpCustomParams customParams) {
-    super(model);
+                                 @Nullable OpCustomParams customParams,
+                                 @Nullable OpOutputModelProjection<?> metaProjection) {
+    super(model, customParams);
     this.includeInDefault = includeInDefault;
     this.params = params;
-    this.customParams = customParams;
+    this.metaProjection = metaProjection;
   }
 
   public boolean includeInDefault() { return includeInDefault; }
@@ -38,7 +39,7 @@ public abstract class OpOutputModelProjection<M extends DatumType>
   public OpParams params() { return params; }
 
   @Nullable
-  public OpCustomParams customParams() { return customParams; }
+  public OpOutputModelProjection<?> metaProjection() { return metaProjection; }
 
   @Override
   public <Exc extends Exception> void prettyPrint(DataLayouter<Exc> l) throws Exc {
@@ -48,13 +49,15 @@ public abstract class OpOutputModelProjection<M extends DatumType>
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
+    if (!super.equals(o)) return false;
     OpOutputModelProjection<?> that = (OpOutputModelProjection<?>) o;
     return includeInDefault == that.includeInDefault &&
-           Objects.equals(model, that.model) &&
            Objects.equals(params, that.params) &&
-           Objects.equals(customParams, that.customParams);
+           Objects.equals(metaProjection, that.metaProjection);
   }
 
   @Override
-  public int hashCode() { return Objects.hash(model, includeInDefault, params, customParams); }
+  public int hashCode() {
+    return Objects.hash(super.hashCode(), includeInDefault, params, metaProjection);
+  }
 }

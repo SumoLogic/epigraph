@@ -11,6 +11,9 @@ public interface IdlOpOutputModelProperty extends PsiElement {
   IdlCustomParam getCustomParam();
 
   @Nullable
+  IdlOpOutputModelMeta getOpOutputModelMeta();
+
+  @Nullable
   IdlOpParam getOpParam();
 
 }

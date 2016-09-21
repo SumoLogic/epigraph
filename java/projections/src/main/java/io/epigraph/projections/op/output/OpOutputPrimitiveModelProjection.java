@@ -13,7 +13,8 @@ public class OpOutputPrimitiveModelProjection extends OpOutputModelProjection<Pr
   public OpOutputPrimitiveModelProjection(@NotNull PrimitiveType model,
                                           boolean includeInDefault,
                                           @Nullable OpParams params,
-                                          @Nullable OpCustomParams customParams) {
-    super(model, includeInDefault, params, customParams);
+                                          @Nullable OpCustomParams customParams,
+                                          @Nullable OpOutputModelProjection<?> metaProjection) {
+    super(model, includeInDefault, params, customParams, metaProjection);
   }
 }

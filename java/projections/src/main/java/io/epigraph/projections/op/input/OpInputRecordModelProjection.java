@@ -25,8 +25,9 @@ public class OpInputRecordModelProjection extends OpInputModelProjection<RecordT
                                       boolean required,
                                       @Nullable RecordDatum defaultValue,
                                       @Nullable OpCustomParams customParams,
+                                      @Nullable OpInputModelProjection<?, ?> metaProjection,
                                       @Nullable LinkedHashSet<OpInputFieldProjection> fieldProjections) {
-    super(model, required, defaultValue, customParams);
+    super(model, required, defaultValue, customParams, metaProjection);
     this.fieldProjections = fieldProjections;
 
     Collection<@NotNull ? extends RecordType.Field> fields = model.fields();

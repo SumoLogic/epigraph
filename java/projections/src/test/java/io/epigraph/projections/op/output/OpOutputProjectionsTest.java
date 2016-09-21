@@ -34,6 +34,7 @@ public class OpOutputProjectionsTest {
         false,
         null,
         null,
+        null,
         OpOutputRecordModelProjection.fields(
             new OpOutputFieldProjection(
                 PersonRecord.id,
@@ -43,7 +44,7 @@ public class OpOutputProjectionsTest {
                     Person.type,
                     new OpOutputTagProjection(
                         Person.id,
-                        new OpOutputPrimitiveModelProjection(PersonId.type, false, null, null)
+                        new OpOutputPrimitiveModelProjection(PersonId.type, false, null, null, null)
                     )
                 ), true
             )
@@ -71,6 +72,7 @@ public class OpOutputProjectionsTest {
         false,
         null,
         null,
+        null,
         OpOutputRecordModelProjection.fields(
             new OpOutputFieldProjection(
                 PersonRecord.id,
@@ -80,7 +82,7 @@ public class OpOutputProjectionsTest {
                     Person.type,
                     new OpOutputTagProjection(
                         Person.id,
-                        new OpOutputPrimitiveModelProjection(PersonId.type, false, null, null)
+                        new OpOutputPrimitiveModelProjection(PersonId.type, false, null, null, null)
                     )
                 ), true
             )
@@ -113,6 +115,7 @@ public class OpOutputProjectionsTest {
         false,
         null,
         null,
+        null,
         OpOutputRecordModelProjection.fields(
             new OpOutputFieldProjection(
                 PersonRecord.id,
@@ -122,7 +125,7 @@ public class OpOutputProjectionsTest {
                     Person.type,
                     new OpOutputTagProjection(
                         Person.id,
-                        new OpOutputPrimitiveModelProjection(PersonId.type, false, null, null)
+                        new OpOutputPrimitiveModelProjection(PersonId.type, false, null, null, null)
                     )
                 ), true
             )
@@ -148,6 +151,7 @@ public class OpOutputProjectionsTest {
         false,
         null,
         null,
+        null,
         OpOutputRecordModelProjection.fields(
             new OpOutputFieldProjection(
                 PersonRecord.id,
@@ -157,7 +161,7 @@ public class OpOutputProjectionsTest {
                     Person.type,
                     new OpOutputTagProjection(
                         Person.id,
-                        new OpOutputPrimitiveModelProjection(PersonId.type, false, null, null)
+                        new OpOutputPrimitiveModelProjection(PersonId.type, false, null, null, null)
                     )
                 ), true
             )
@@ -361,6 +365,7 @@ public class OpOutputProjectionsTest {
         false,
         null,
         null,
+        null,
         OpOutputRecordModelProjection.fields(
             new OpOutputFieldProjection(
                 PersonRecord.id,
@@ -370,7 +375,7 @@ public class OpOutputProjectionsTest {
                     Person.type,
                     new OpOutputTagProjection(
                         Person.id,
-                        new OpOutputPrimitiveModelProjection(PersonId.type, false, null, null)
+                        new OpOutputPrimitiveModelProjection(PersonId.type, false, null, null, null)
                     )
                 ), true
             )
@@ -402,8 +407,11 @@ public class OpOutputProjectionsTest {
                         true,
                         new OpParams(
                             // todo string
-                            new OpParam("token", new OpInputPrimitiveModelProjection(UserId.type, false, null, null))
+                            new OpParam("token",
+                                        new OpInputPrimitiveModelProjection(UserId.type, false, null, null, null)
+                            )
                         ),
+                        null,
                         null
                     )
                 ),
@@ -412,6 +420,7 @@ public class OpOutputProjectionsTest {
                     new OpOutputRecordModelProjection(
                         PersonRecord.type,
                         false,
+                        null,
                         null,
                         null,
                         OpOutputRecordModelProjection.fields(
@@ -423,7 +432,7 @@ public class OpOutputProjectionsTest {
                                     Person.type,
                                     new OpOutputTagProjection(
                                         Person.id,
-                                        new OpOutputPrimitiveModelProjection(PersonId.type, false, null, null)
+                                        new OpOutputPrimitiveModelProjection(PersonId.type, false, null, null, null)
                                     )
                                 ),
                                 true
@@ -441,7 +450,7 @@ public class OpOutputProjectionsTest {
                         User.record,
                         new OpOutputRecordModelProjection(
                             UserRecord.type,
-                            false, null, null,
+                            false, null, null, null,
                             OpOutputRecordModelProjection.fields(
                                 new OpOutputFieldProjection(
                                     UserRecord.bestFriend,
@@ -449,6 +458,7 @@ public class OpOutputProjectionsTest {
                                                              new OpInputPrimitiveModelProjection(
                                                                  PersonId.type,
                                                                  false,
+                                                                 null,
                                                                  null,
                                                                  null
                                                              )

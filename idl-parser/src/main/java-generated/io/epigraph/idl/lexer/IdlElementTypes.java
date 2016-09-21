@@ -31,6 +31,7 @@ public interface IdlElementTypes {
   IElementType I_OP_INPUT_KEY_PROJECTION_PART = new IdlElementType("I_OP_INPUT_KEY_PROJECTION_PART");
   IElementType I_OP_INPUT_LIST_MODEL_PROJECTION = new IdlElementType("I_OP_INPUT_LIST_MODEL_PROJECTION");
   IElementType I_OP_INPUT_MAP_MODEL_PROJECTION = new IdlElementType("I_OP_INPUT_MAP_MODEL_PROJECTION");
+  IElementType I_OP_INPUT_MODEL_META = new IdlElementType("I_OP_INPUT_MODEL_META");
   IElementType I_OP_INPUT_MODEL_PROJECTION = new IdlElementType("I_OP_INPUT_MODEL_PROJECTION");
   IElementType I_OP_INPUT_MODEL_PROPERTY = new IdlElementType("I_OP_INPUT_MODEL_PROPERTY");
   IElementType I_OP_INPUT_MULTI_TAG_PROJECTION = new IdlElementType("I_OP_INPUT_MULTI_TAG_PROJECTION");
@@ -48,6 +49,7 @@ public interface IdlElementTypes {
   IElementType I_OP_OUTPUT_KEY_PROJECTION_PART = new IdlElementType("I_OP_OUTPUT_KEY_PROJECTION_PART");
   IElementType I_OP_OUTPUT_LIST_MODEL_PROJECTION = new IdlElementType("I_OP_OUTPUT_LIST_MODEL_PROJECTION");
   IElementType I_OP_OUTPUT_MAP_MODEL_PROJECTION = new IdlElementType("I_OP_OUTPUT_MAP_MODEL_PROJECTION");
+  IElementType I_OP_OUTPUT_MODEL_META = new IdlElementType("I_OP_OUTPUT_MODEL_META");
   IElementType I_OP_OUTPUT_MODEL_PROJECTION = new IdlElementType("I_OP_OUTPUT_MODEL_PROJECTION");
   IElementType I_OP_OUTPUT_MODEL_PROPERTY = new IdlElementType("I_OP_OUTPUT_MODEL_PROPERTY");
   IElementType I_OP_OUTPUT_MULTI_TAG_PROJECTION = new IdlElementType("I_OP_OUTPUT_MULTI_TAG_PROJECTION");
@@ -84,6 +86,7 @@ public interface IdlElementTypes {
   IElementType I_FORBIDDEN = new IdlElementType("forbidden");
   IElementType I_ID = new IdlElementType("id");
   IElementType I_IMPORT = new IdlElementType("import");
+  IElementType I_META = new IdlElementType("meta");
   IElementType I_NAMESPACE = new IdlElementType("namespace");
   IElementType I_NULL = new IdlElementType("null");
   IElementType I_NUMBER = new IdlElementType("number");
@@ -171,6 +174,9 @@ public interface IdlElementTypes {
       else if (type == I_OP_INPUT_MAP_MODEL_PROJECTION) {
         return new IdlOpInputMapModelProjectionImpl(node);
       }
+      else if (type == I_OP_INPUT_MODEL_META) {
+        return new IdlOpInputModelMetaImpl(node);
+      }
       else if (type == I_OP_INPUT_MODEL_PROJECTION) {
         return new IdlOpInputModelProjectionImpl(node);
       }
@@ -221,6 +227,9 @@ public interface IdlElementTypes {
       }
       else if (type == I_OP_OUTPUT_MAP_MODEL_PROJECTION) {
         return new IdlOpOutputMapModelProjectionImpl(node);
+      }
+      else if (type == I_OP_OUTPUT_MODEL_META) {
+        return new IdlOpOutputModelMetaImpl(node);
       }
       else if (type == I_OP_OUTPUT_MODEL_PROJECTION) {
         return new IdlOpOutputModelProjectionImpl(node);

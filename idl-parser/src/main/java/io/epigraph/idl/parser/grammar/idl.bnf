@@ -17,6 +17,7 @@
   tokens=[
     NAMESPACE = 'namespace'
     IMPORT = 'import'
+    META = 'meta'
     FORBIDDEN = 'forbidden'
     REQURIED = 'required'
     PARAMETERS = 'parameters'
@@ -123,6 +124,8 @@ private opParamDefault ::= '=' datum { pin=1 }
 private opParamBody ::= '{' ( opParamBodyPart ','? )* '}'
 private opParamBodyPart ::= customParam
 
+opOutputModelMeta ::= 'meta' ':' '+'? opOutputModelProjection
+
 opOutputVarProjection ::= ( opOutputMultiTagProjection | opOutputSingleTagProjection ) opOutputVarPolymorphicTail?
 
 opOutputSingleTagProjection ::= ( ':' '+'? opTagName)? (opOutputComplexSingleTagProjection | opOutputSimpleSingleTagProjection )
@@ -139,7 +142,7 @@ opOutputVarSingleTail ::= '~' fqnTypeRef opOutputVarProjection
 opOutputVarMultiTail ::= '~' '(' (opOutputVarMultiTailItem ','?)* ')' {pin=2}
 opOutputVarMultiTailItem ::= fqnTypeRef opOutputVarProjection
 
-opOutputModelProperty ::= opParam | customParam
+opOutputModelProperty ::= opParam | customParam | opOutputModelMeta
 
 opOutputModelProjection ::= ( opOutputRecordModelProjection
                             | opOutputListModelProjection
@@ -167,6 +170,8 @@ opOutputKeyProjectionPart ::= opParam | customParam
 
 // input
 
+opInputModelMeta ::= 'meta' ':' '+'? opInputModelProjection
+
 opInputVarProjection ::= ( opInputMultiTagProjection | opInputSingleTagProjection ) opInputVarPolymorphicTail?
 opInputSingleTagProjection ::= ( ':' '+'? opTagName)? (opInputComplexSingleTagProjection | opInputSimpleSingleTagProjection )
 private opInputSimpleSingleTagProjection ::= opInputModelProjection
@@ -182,7 +187,7 @@ opInputVarSingleTail ::= '~' fqnTypeRef opInputVarProjection
 opInputVarMultiTail ::= '~' '(' (opInputVarMultiTailItem ','?)* ')' {pin=2}
 opInputVarMultiTailItem ::= fqnTypeRef opInputVarProjection
 
-opInputModelProperty ::= opInputDefaultValue | customParam
+opInputModelProperty ::= opInputDefaultValue | customParam | opInputModelMeta
 opInputDefaultValue ::= 'default' ':' datum {pin=1}
 
 opInputModelProjection ::= ( opInputRecordModelProjection

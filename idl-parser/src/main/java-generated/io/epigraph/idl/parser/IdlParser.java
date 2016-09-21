@@ -92,6 +92,9 @@ public class IdlParser implements PsiParser, LightPsiParser {
     else if (t == I_OP_INPUT_MAP_MODEL_PROJECTION) {
       r = opInputMapModelProjection(b, 0);
     }
+    else if (t == I_OP_INPUT_MODEL_META) {
+      r = opInputModelMeta(b, 0);
+    }
     else if (t == I_OP_INPUT_MODEL_PROJECTION) {
       r = opInputModelProjection(b, 0);
     }
@@ -142,6 +145,9 @@ public class IdlParser implements PsiParser, LightPsiParser {
     }
     else if (t == I_OP_OUTPUT_MAP_MODEL_PROJECTION) {
       r = opOutputMapModelProjection(b, 0);
+    }
+    else if (t == I_OP_OUTPUT_MODEL_META) {
+      r = opOutputModelMeta(b, 0);
     }
     else if (t == I_OP_OUTPUT_MODEL_PROJECTION) {
       r = opOutputModelProjection(b, 0);
@@ -971,6 +977,28 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // 'meta' ':' '+'? opInputModelProjection
+  public static boolean opInputModelMeta(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opInputModelMeta")) return false;
+    if (!nextTokenIs(b, I_META)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, I_META);
+    r = r && consumeToken(b, I_COLON);
+    r = r && opInputModelMeta_2(b, l + 1);
+    r = r && opInputModelProjection(b, l + 1);
+    exit_section_(b, m, I_OP_INPUT_MODEL_META, r);
+    return r;
+  }
+
+  // '+'?
+  private static boolean opInputModelMeta_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opInputModelMeta_2")) return false;
+    consumeToken(b, I_PLUS);
+    return true;
+  }
+
+  /* ********************************************************** */
   // ( opInputRecordModelProjection
   //                            | opInputListModelProjection
   //                            | opInputMapModelProjection
@@ -1000,14 +1028,14 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // opInputDefaultValue | customParam
+  // opInputDefaultValue | customParam | opInputModelMeta
   public static boolean opInputModelProperty(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opInputModelProperty")) return false;
-    if (!nextTokenIs(b, "<op input model property>", I_DEFAULT, I_ID)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, I_OP_INPUT_MODEL_PROPERTY, "<op input model property>");
     r = opInputDefaultValue(b, l + 1);
     if (!r) r = customParam(b, l + 1);
+    if (!r) r = opInputModelMeta(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
@@ -1652,6 +1680,28 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // 'meta' ':' '+'? opOutputModelProjection
+  public static boolean opOutputModelMeta(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opOutputModelMeta")) return false;
+    if (!nextTokenIs(b, I_META)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, I_META);
+    r = r && consumeToken(b, I_COLON);
+    r = r && opOutputModelMeta_2(b, l + 1);
+    r = r && opOutputModelProjection(b, l + 1);
+    exit_section_(b, m, I_OP_OUTPUT_MODEL_META, r);
+    return r;
+  }
+
+  // '+'?
+  private static boolean opOutputModelMeta_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opOutputModelMeta_2")) return false;
+    consumeToken(b, I_PLUS);
+    return true;
+  }
+
+  /* ********************************************************** */
   // ( opOutputRecordModelProjection
   //                             | opOutputListModelProjection
   //                             | opOutputMapModelProjection
@@ -1681,14 +1731,14 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // opParam | customParam
+  // opParam | customParam | opOutputModelMeta
   public static boolean opOutputModelProperty(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opOutputModelProperty")) return false;
-    if (!nextTokenIs(b, "<op output model property>", I_SEMICOLON, I_ID)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, I_OP_OUTPUT_MODEL_PROPERTY, "<op output model property>");
     r = opParam(b, l + 1);
     if (!r) r = customParam(b, l + 1);
+    if (!r) r = opOutputModelMeta(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }

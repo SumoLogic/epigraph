@@ -15,6 +15,7 @@ import epigraph.data.ListDatum
 import epigraph.data.RecordDatum
 import epigraph.data.PrimitiveDatum
 import epigraph.data.EnumDatum
+import epigraph.data.Data
 
 record OpInputVarProjection {
   type: TypeRef
@@ -31,6 +32,8 @@ abstract record OpInputModelProjection {
   model: DataTypeRef
   required: Boolean
   defaultValue: Datum
+  customParams: map[String, polymorphic Data]
+  `meta`: OpInputModelProjection
 }
 
 record OpInputRecordModelProjection extends OpInputModelProjection {
@@ -42,6 +45,7 @@ record OpInputRecordModelProjection extends OpInputModelProjection {
 record OpInputFieldProjection {
   field: FieldRef
   required: Boolean
+  customParams: map[String, polymorphic Data]
   varProjection: OpInputVarProjection
 }
 
@@ -54,7 +58,14 @@ record OpInputListModelProjection extends OpInputModelProjection {
 record OpInputMapModelProjection extends OpInputModelProjection {
   override model: MapTypeRef
   override defaultValue: MapDatum
+  keyProjection: OpInputKeyProjection
   varProjection: OpInputVarProjection
+}
+
+record OpInputKeyProjection {
+  forbidden: Boolean
+  required: Boolean
+  customParams: map[String, polymorphic Data]
 }
 
 record OpInputEnumModelProjection extends OpInputModelProjection {

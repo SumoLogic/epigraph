@@ -25,8 +25,9 @@ public class OpOutputRecordModelProjection extends OpOutputModelProjection<Recor
                                        boolean includeInDefault,
                                        @Nullable OpParams params,
                                        @Nullable OpCustomParams customParams,
+                                       @Nullable OpOutputModelProjection<?> metaProjection,
                                        @Nullable LinkedHashSet<OpOutputFieldProjection> fieldProjections) {
-    super(model, includeInDefault, params, customParams);
+    super(model, includeInDefault, params, customParams, metaProjection);
     this.fieldProjections = fieldProjections;
 
     Collection<@NotNull ? extends RecordType.Field> fields = model.fields();

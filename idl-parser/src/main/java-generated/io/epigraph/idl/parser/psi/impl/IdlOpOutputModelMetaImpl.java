@@ -11,14 +11,14 @@ import static io.epigraph.idl.lexer.IdlElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import io.epigraph.idl.parser.psi.*;
 
-public class IdlOpOutputModelPropertyImpl extends ASTWrapperPsiElement implements IdlOpOutputModelProperty {
+public class IdlOpOutputModelMetaImpl extends ASTWrapperPsiElement implements IdlOpOutputModelMeta {
 
-  public IdlOpOutputModelPropertyImpl(ASTNode node) {
+  public IdlOpOutputModelMetaImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull IdlVisitor visitor) {
-    visitor.visitOpOutputModelProperty(this);
+    visitor.visitOpOutputModelMeta(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -27,21 +27,27 @@ public class IdlOpOutputModelPropertyImpl extends ASTWrapperPsiElement implement
   }
 
   @Override
-  @Nullable
-  public IdlCustomParam getCustomParam() {
-    return findChildByClass(IdlCustomParam.class);
+  @NotNull
+  public IdlOpOutputModelProjection getOpOutputModelProjection() {
+    return findNotNullChildByClass(IdlOpOutputModelProjection.class);
+  }
+
+  @Override
+  @NotNull
+  public PsiElement getColon() {
+    return findNotNullChildByType(I_COLON);
+  }
+
+  @Override
+  @NotNull
+  public PsiElement getMeta() {
+    return findNotNullChildByType(I_META);
   }
 
   @Override
   @Nullable
-  public IdlOpOutputModelMeta getOpOutputModelMeta() {
-    return findChildByClass(IdlOpOutputModelMeta.class);
-  }
-
-  @Override
-  @Nullable
-  public IdlOpParam getOpParam() {
-    return findChildByClass(IdlOpParam.class);
+  public PsiElement getPlus() {
+    return findChildByType(I_PLUS);
   }
 
 }

@@ -99,6 +99,10 @@ public class IdlVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitOpInputModelMeta(@NotNull IdlOpInputModelMeta o) {
+    visitPsiElement(o);
+  }
+
   public void visitOpInputModelProjection(@NotNull IdlOpInputModelProjection o) {
     visitPsiElement(o);
   }
@@ -164,6 +168,10 @@ public class IdlVisitor extends PsiElementVisitor {
   }
 
   public void visitOpOutputMapModelProjection(@NotNull IdlOpOutputMapModelProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpOutputModelMeta(@NotNull IdlOpOutputModelMeta o) {
     visitPsiElement(o);
   }
 

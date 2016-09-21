@@ -4,10 +4,15 @@ import epigraph.schema.ByNameRef
 import epigraph.schema.Documented
 import epigraph.schema.LocalName
 import epigraph.schema.Named
+import epigraph.data.Datum
+import epigraph.data.Data
 
 record OpParam extends Named, Documented {
+  required: Boolean
   override name: ParamName
   modelProjection: OpInputModelProjection
+  `default`: Datum
+  customParams: map[String, polymorphic Data]
 }
 
 string ParamName extends LocalName

@@ -13,7 +13,8 @@ public class OpInputPrimitiveModelProjection extends OpInputModelProjection<Prim
   public OpInputPrimitiveModelProjection(@NotNull PrimitiveType model,
                                          boolean required,
                                          @Nullable PrimitiveDatum<?> defaultValue,
-                                         @Nullable OpCustomParams customParams) {
-    super(model, required, defaultValue, customParams);
+                                         @Nullable OpCustomParams customParams,
+                                         @Nullable OpInputModelProjection<?, ?> metaProjection) {
+    super(model, required, defaultValue, customParams, metaProjection);
   }
 }

@@ -37,6 +37,10 @@ public class OpOutputTagProjection extends GenericTagProjection<OpOutputModelPro
         //noinspection ConstantConditions
         l.print(projection().customParams());
 
+      if (projection().metaProjection() != null)
+        //noinspection ConstantConditions
+        l.nl().beginIInd().print("meta:").brk().print(projection().metaProjection()).end();
+
       PrettyPrinterUtil.printWithBrkIfNonEmpty(l, projection());
 
       l.end().nl().print('}');

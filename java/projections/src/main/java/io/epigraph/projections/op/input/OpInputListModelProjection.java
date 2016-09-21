@@ -20,8 +20,9 @@ public class OpInputListModelProjection extends OpInputModelProjection<ListType,
                                     boolean required,
                                     @Nullable ListDatum defaultValue,
                                     @Nullable OpCustomParams customParams,
+                                    @Nullable OpInputModelProjection<?, ?> metaProjection,
                                     @NotNull OpInputVarProjection itemsProjection) {
-    super(model, required, defaultValue, customParams);
+    super(model, required, defaultValue, customParams, metaProjection);
     this.itemsProjection = itemsProjection;
   }
 

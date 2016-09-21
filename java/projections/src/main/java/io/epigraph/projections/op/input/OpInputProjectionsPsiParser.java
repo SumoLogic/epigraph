@@ -49,11 +49,13 @@ public class OpInputProjectionsPsiParser {
       @Nullable IdlOpInputModelProjection modelProjection = singleTagProjectionPsi.getOpInputModelProjection();
       assert modelProjection != null; // todo when it can be null?
 
+      @NotNull List<IdlOpInputModelProperty> modelPropertiesPsi = singleTagProjectionPsi.getOpInputModelPropertyList();
       parsedModelProjection = parseModelProjection(
           tag.type,
           singleTagProjectionPsi.getPlus() != null,
-          getModelDefaultValue(singleTagProjectionPsi.getOpInputModelPropertyList()),
-          parseModelCustomParams(singleTagProjectionPsi.getOpInputModelPropertyList()),
+          getModelDefaultValue(modelPropertiesPsi),
+          parseModelCustomParams(modelPropertiesPsi),
+          parseModelMetaProjection(tag.type, modelPropertiesPsi, typesResolver),
           modelProjection, typesResolver
       );
 
@@ -73,12 +75,14 @@ public class OpInputProjectionsPsiParser {
         @NotNull DatumType tagType = tag.type;
         @Nullable IdlOpInputModelProjection modelProjection = tagProjectionPsi.getOpInputModelProjection();
         assert modelProjection != null; // todo when it can be null?
+        @NotNull List<IdlOpInputModelProperty> modelPropertiesPsi = tagProjectionPsi.getOpInputModelPropertyList();
 
         parsedModelProjection = parseModelProjection(
             tagType,
             tagProjectionPsi.getPlus() != null,
-            getModelDefaultValue(tagProjectionPsi.getOpInputModelPropertyList()),
-            parseModelCustomParams(tagProjectionPsi.getOpInputModelPropertyList()),
+            getModelDefaultValue(modelPropertiesPsi),
+            parseModelCustomParams(modelPropertiesPsi),
+            parseModelMetaProjection(tagType, modelPropertiesPsi, typesResolver),
             modelProjection, typesResolver
         );
 
@@ -148,6 +152,42 @@ public class OpInputProjectionsPsiParser {
     return customParamsMap == null ? null : new OpCustomParams(customParamsMap);
   }
 
+  @Nullable
+  private static OpInputModelProjection<?, ?> parseModelMetaProjection(
+      @NotNull DatumType type,
+      @NotNull List<IdlOpInputModelProperty> modelProperties,
+      @NotNull TypesResolver resolver
+  ) throws PsiProcessingException {
+
+    @Nullable IdlOpInputModelMeta modelMetaPsi = null;
+
+    for (IdlOpInputModelProperty modelProperty : modelProperties) {
+      if (modelMetaPsi != null)
+        throw new PsiProcessingException("Metadata projection should only be specified once", modelProperty);
+
+      modelMetaPsi = modelProperty.getOpInputModelMeta();
+    }
+
+    if (modelMetaPsi != null) {
+      @Nullable DatumType metaType = null; // TODO need a way to extract it from 'type'
+      if (metaType == null) throw new PsiProcessingException(
+          String.format("Type '%s' doesn't have a metadata, metadata projection can't be specified", type.name()),
+          modelMetaPsi
+      );
+
+      @NotNull IdlOpInputModelProjection metaProjectionPsi = modelMetaPsi.getOpInputModelProjection();
+      return parseModelProjection(
+          metaType,
+          modelMetaPsi.getPlus() != null,
+          null, // TODO do we want to specify defaults for meta?
+          null,
+          null, // TODO what if meta-type has it's own meta-type? meta-meta-type projection should go here
+          metaProjectionPsi,
+          resolver
+      );
+    } else return null;
+  }
+
   @NotNull
   private static OpInputVarProjection buildTailProjection(@NotNull DataType dataType,
                                                           IdlFqnTypeRef tailTypeRef,
@@ -208,6 +248,7 @@ public class OpInputProjectionsPsiParser {
                                                                   boolean required,
                                                                   @Nullable GDatum defaultValue,
                                                                   @Nullable OpCustomParams customParams,
+                                                                  @Nullable OpInputModelProjection<?, ?> metaProjection,
                                                                   @NotNull IdlOpInputModelProjection psi,
                                                                   @NotNull TypesResolver typesResolver)
       throws PsiProcessingException {
@@ -225,6 +266,7 @@ public class OpInputProjectionsPsiParser {
             required,
             defaultRecordData,
             customParams,
+            metaProjection,
             recordModelProjectionPsi,
             typesResolver
         );
@@ -240,13 +282,14 @@ public class OpInputProjectionsPsiParser {
             required,
             defaultListData,
             customParams,
+            metaProjection,
             listModelProjectionPsi,
             typesResolver
         );
       case MAP:
         @Nullable IdlOpInputMapModelProjection mapModelProjectionPsi = psi.getOpInputMapModelProjection();
         if (mapModelProjectionPsi == null)
-          return createDefaultModelProjection(type, required,defaultValue, customParams, psi, typesResolver);
+          return createDefaultModelProjection(type, required, defaultValue, customParams, psi, typesResolver);
         ensureModelKind(psi, TypeKind.MAP);
         throw new PsiProcessingException("Unsupported type kind: " + type.kind(), psi);
       case ENUM:
@@ -258,6 +301,7 @@ public class OpInputProjectionsPsiParser {
             required,
             defaultPrimitiveData,
             customParams,
+            metaProjection,
             psi,
             typesResolver
         );
@@ -311,6 +355,7 @@ public class OpInputProjectionsPsiParser {
                                                 required,
                                                 (RecordDatum) defaultDatum,
                                                 customParams,
+                                                null,
                                                 null
         );
       case LIST:
@@ -336,6 +381,7 @@ public class OpInputProjectionsPsiParser {
                                               required,
                                               (ListDatum) defaultDatum,
                                               customParams,
+                                              null,
                                               itemVarProjection
         );
       case MAP:
@@ -350,7 +396,8 @@ public class OpInputProjectionsPsiParser {
         return new OpInputPrimitiveModelProjection((PrimitiveType) type,
                                                    required,
                                                    (PrimitiveDatum<?>) defaultDatum,
-                                                   customParams
+                                                   customParams,
+                                                   null
         );
       default:
         throw new PsiProcessingException("Unknown type kind: " + type.kind(), location);
@@ -358,12 +405,14 @@ public class OpInputProjectionsPsiParser {
   }
 
   @NotNull
-  public static OpInputRecordModelProjection parseRecordModelProjection(@NotNull RecordType type,
-                                                                        boolean required,
-                                                                        @Nullable GRecordDatum defaultValue,
-                                                                        @Nullable OpCustomParams customParams,
-                                                                        @NotNull IdlOpInputRecordModelProjection psi,
-                                                                        @NotNull TypesResolver resolver)
+  public static OpInputRecordModelProjection parseRecordModelProjection(
+      @NotNull RecordType type,
+      boolean required,
+      @Nullable GRecordDatum defaultValue,
+      @Nullable OpCustomParams customParams,
+      @Nullable OpInputModelProjection<?, ?> metaProjection,
+      @NotNull IdlOpInputRecordModelProjection psi,
+      @NotNull TypesResolver resolver)
       throws PsiProcessingException {
 
     RecordDatum defaultDatum = null;
@@ -419,16 +468,24 @@ public class OpInputProjectionsPsiParser {
 
     final LinkedHashSet<OpInputRecordModelProjection> tail;
 
-    return new OpInputRecordModelProjection(type, required, defaultDatum, customParams, fieldProjections);
+    return new OpInputRecordModelProjection(type,
+                                            required,
+                                            defaultDatum,
+                                            customParams,
+                                            metaProjection,
+                                            fieldProjections
+    );
   }
 
   @NotNull
-  public static OpInputListModelProjection parseListModelProjection(@NotNull ListType type,
-                                                                    boolean required,
-                                                                    @Nullable GListDatum defaultValue,
-                                                                    @Nullable OpCustomParams customParams,
-                                                                    @NotNull IdlOpInputListModelProjection psi,
-                                                                    @NotNull TypesResolver resolver)
+  public static OpInputListModelProjection parseListModelProjection(
+      @NotNull ListType type,
+      boolean required,
+      @Nullable GListDatum defaultValue,
+      @Nullable OpCustomParams customParams,
+      @Nullable OpInputModelProjection<?, ?> metaProjection,
+      @NotNull IdlOpInputListModelProjection psi,
+      @NotNull TypesResolver resolver)
       throws PsiProcessingException {
 
     ListDatum defaultDatum = null;
@@ -453,17 +510,20 @@ public class OpInputProjectionsPsiParser {
         required,
         defaultDatum,
         customParams,
+        metaProjection,
         itemsProjection
     );
   }
 
   @NotNull
-  public static OpInputPrimitiveModelProjection parsePrimitiveModelProjection(@NotNull PrimitiveType type,
-                                                                              boolean required,
-                                                                              @Nullable GPrimitiveDatum defaultValue,
-                                                                              @Nullable OpCustomParams customParams,
-                                                                              @NotNull PsiElement location,
-                                                                              @NotNull TypesResolver resolver)
+  public static OpInputPrimitiveModelProjection parsePrimitiveModelProjection(
+      @NotNull PrimitiveType type,
+      boolean required,
+      @Nullable GPrimitiveDatum defaultValue,
+      @Nullable OpCustomParams customParams,
+      @Nullable OpInputModelProjection<?, ?> metaProjection,
+      @NotNull PsiElement location,
+      @NotNull TypesResolver resolver)
       throws PsiProcessingException {
 
     PrimitiveDatum<?> defaultDatum = null;
@@ -474,7 +534,7 @@ public class OpInputProjectionsPsiParser {
         throw new PsiProcessingException(e, location);
       }
     }
-    return new OpInputPrimitiveModelProjection(type, required, defaultDatum, customParams);
+    return new OpInputPrimitiveModelProjection(type, required, defaultDatum, customParams, metaProjection);
   }
 
   @Nullable

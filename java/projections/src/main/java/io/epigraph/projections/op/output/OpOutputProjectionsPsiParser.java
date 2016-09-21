@@ -51,11 +51,15 @@ public class OpOutputProjectionsPsiParser {
       @Nullable IdlOpOutputModelProjection modelProjection = singleTagProjectionPsi.getOpOutputModelProjection();
       assert modelProjection != null; // todo when it can be null?
 
+      @NotNull List<IdlOpOutputModelProperty> modelPropertiesPsi =
+          singleTagProjectionPsi.getOpOutputModelPropertyList();
+
       parsedModelProjection = parseModelProjection(
           tag.type,
           singleTagProjectionPsi.getPlus() != null,
-          parseModelParams(singleTagProjectionPsi.getOpOutputModelPropertyList(), typesResolver),
-          parseModelCustomParams(singleTagProjectionPsi.getOpOutputModelPropertyList()),
+          parseModelParams(modelPropertiesPsi, typesResolver),
+          parseModelCustomParams(modelPropertiesPsi),
+          parseModelMetaProjection(tag.type, modelPropertiesPsi, typesResolver),
           modelProjection,
           typesResolver
       );
@@ -77,11 +81,14 @@ public class OpOutputProjectionsPsiParser {
         @Nullable IdlOpOutputModelProjection modelProjection = tagProjectionPsi.getOpOutputModelProjection();
         assert modelProjection != null; // todo when it can be null?
 
+        @NotNull List<IdlOpOutputModelProperty> modelPropertiesPsi = tagProjectionPsi.getOpOutputModelPropertyList();
+
         parsedModelProjection = parseModelProjection(
             tagType,
             tagProjectionPsi.getPlus() != null,
-            parseModelParams(tagProjectionPsi.getOpOutputModelPropertyList(), typesResolver),
-            parseModelCustomParams(tagProjectionPsi.getOpOutputModelPropertyList()),
+            parseModelParams(modelPropertiesPsi, typesResolver),
+            parseModelCustomParams(modelPropertiesPsi),
+            parseModelMetaProjection(tagType, modelPropertiesPsi, typesResolver),
             modelProjection,
             typesResolver
         );
@@ -151,6 +158,42 @@ public class OpOutputProjectionsPsiParser {
     return customParamsMap == null ? null : new OpCustomParams(customParamsMap);
   }
 
+  @Nullable
+  private static OpOutputModelProjection<?> parseModelMetaProjection(
+      @NotNull DatumType type,
+      @NotNull List<IdlOpOutputModelProperty> modelProperties,
+      @NotNull TypesResolver resolver
+  ) throws PsiProcessingException {
+
+    @Nullable IdlOpOutputModelMeta modelMetaPsi = null;
+
+    for (IdlOpOutputModelProperty modelProperty : modelProperties) {
+      if (modelMetaPsi != null)
+        throw new PsiProcessingException("Metadata projection should only be specified once", modelProperty);
+
+      modelMetaPsi = modelProperty.getOpOutputModelMeta();
+    }
+
+    if (modelMetaPsi != null) {
+      @Nullable DatumType metaType = null; // TODO need a way to extract it from 'type'
+      if (metaType == null) throw new PsiProcessingException(
+          String.format("Type '%s' doesn't have a metadata, metadata projection can't be specified", type.name()),
+          modelMetaPsi
+      );
+
+      @NotNull IdlOpOutputModelProjection metaProjectionPsi = modelMetaPsi.getOpOutputModelProjection();
+      return parseModelProjection(
+          metaType,
+          modelMetaPsi.getPlus() != null,
+          null,
+          null,
+          null, // TODO what if meta-type has it's own meta-type? meta-meta-type projection should go here
+          metaProjectionPsi,
+          resolver
+      );
+    } else return null;
+  }
+
   @NotNull
   private static OpOutputVarProjection buildTailProjection(@NotNull DataType dataType,
                                                            IdlFqnTypeRef tailTypeRef,
@@ -209,6 +252,7 @@ public class OpOutputProjectionsPsiParser {
                                                                 boolean includeInDefault,
                                                                 @Nullable OpParams params,
                                                                 @Nullable OpCustomParams customParams,
+                                                                @Nullable OpOutputModelProjection<?> metaProjection,
                                                                 @NotNull IdlOpOutputModelProjection psi,
                                                                 @NotNull TypesResolver typesResolver)
       throws PsiProcessingException {
@@ -224,6 +268,7 @@ public class OpOutputProjectionsPsiParser {
             includeInDefault,
             params,
             customParams,
+            metaProjection,
             recordModelProjectionPsi,
             typesResolver
         );
@@ -237,6 +282,7 @@ public class OpOutputProjectionsPsiParser {
             includeInDefault,
             params,
             customParams,
+            metaProjection,
             listModelProjectionPsi,
             typesResolver
         );
@@ -249,7 +295,12 @@ public class OpOutputProjectionsPsiParser {
       case ENUM:
         throw new PsiProcessingException("Unsupported type kind: " + type.kind(), psi);
       case PRIMITIVE:
-        return parsePrimitiveModelProjection((PrimitiveType) type, includeInDefault, params, customParams);
+        return parsePrimitiveModelProjection((PrimitiveType) type,
+                                             includeInDefault,
+                                             params,
+                                             customParams,
+                                             metaProjection
+        );
       case UNION:
         throw new PsiProcessingException("Unsupported type kind: " + type.kind(), psi);
       default:
@@ -290,6 +341,7 @@ public class OpOutputProjectionsPsiParser {
                                                  includeInDefault,
                                                  params,
                                                  customParams,
+                                                 null,
                                                  null
         );
       case LIST:
@@ -315,6 +367,7 @@ public class OpOutputProjectionsPsiParser {
                                                includeInDefault,
                                                params,
                                                customParams,
+                                               null,
                                                itemVarProjection
         );
       case MAP:
@@ -324,20 +377,22 @@ public class OpOutputProjectionsPsiParser {
       case ENUM:
         throw new PsiProcessingException("Unsupported type kind: " + type.kind(), location);
       case PRIMITIVE:
-        return new OpOutputPrimitiveModelProjection((PrimitiveType) type, includeInDefault, params, customParams);
+        return new OpOutputPrimitiveModelProjection((PrimitiveType) type, includeInDefault, params, customParams, null);
       default:
         throw new PsiProcessingException("Unknown type kind: " + type.kind(), location);
     }
   }
 
   @NotNull
-  public static OpOutputRecordModelProjection parseRecordModelProjection(@NotNull RecordType type,
-                                                                         boolean includeInDefault,
-                                                                         @Nullable OpParams params,
-                                                                         @Nullable OpCustomParams customParams,
-                                                                         @NotNull IdlOpOutputRecordModelProjection psi,
-                                                                         @NotNull TypesResolver typesResolver)
-      throws PsiProcessingException {
+  public static OpOutputRecordModelProjection parseRecordModelProjection(
+      @NotNull RecordType type,
+      boolean includeInDefault,
+      @Nullable OpParams params,
+      @Nullable OpCustomParams customParams,
+      @Nullable OpOutputModelProjection<?> metaProjection,
+      @NotNull IdlOpOutputRecordModelProjection psi,
+      @NotNull TypesResolver typesResolver) throws PsiProcessingException {
+
     LinkedHashSet<OpOutputFieldProjection> fieldProjections = new LinkedHashSet<>();
     @NotNull List<IdlOpOutputFieldProjection> psiFieldProjections = psi.getOpOutputFieldProjectionList();
 
@@ -398,16 +453,24 @@ public class OpOutputProjectionsPsiParser {
 
     final LinkedHashSet<OpOutputRecordModelProjection> tail;
 
-    return new OpOutputRecordModelProjection(type, includeInDefault, params, customParams, fieldProjections);
+    return new OpOutputRecordModelProjection(type,
+                                             includeInDefault,
+                                             params,
+                                             customParams,
+                                             metaProjection,
+                                             fieldProjections
+    );
   }
 
   @NotNull
-  public static OpOutputListModelProjection parseListModelProjection(@NotNull ListType type,
-                                                                     boolean includeInDefault,
-                                                                     @Nullable OpParams params,
-                                                                     @Nullable OpCustomParams customParams,
-                                                                     @NotNull IdlOpOutputListModelProjection psi,
-                                                                     @NotNull TypesResolver resolver)
+  public static OpOutputListModelProjection parseListModelProjection(
+      @NotNull ListType type,
+      boolean includeInDefault,
+      @Nullable OpParams params,
+      @Nullable OpCustomParams customParams,
+      @Nullable OpOutputModelProjection<?> metaProjection,
+      @NotNull IdlOpOutputListModelProjection psi,
+      @NotNull TypesResolver resolver)
       throws PsiProcessingException {
 
     OpOutputVarProjection itemsProjection;
@@ -423,16 +486,20 @@ public class OpOutputProjectionsPsiParser {
         includeInDefault,
         params,
         customParams,
+        metaProjection,
         itemsProjection
     );
   }
 
   @NotNull
-  public static OpOutputPrimitiveModelProjection parsePrimitiveModelProjection(@NotNull PrimitiveType type,
-                                                                               boolean includeInDefault,
-                                                                               @Nullable OpParams params,
-                                                                               @Nullable OpCustomParams customParams) {
-    return new OpOutputPrimitiveModelProjection(type, includeInDefault, params, customParams);
+  public static OpOutputPrimitiveModelProjection parsePrimitiveModelProjection(
+      @NotNull PrimitiveType type,
+      boolean includeInDefault,
+      @Nullable OpParams params,
+      @Nullable OpCustomParams customParams,
+      @Nullable OpOutputModelProjection<?> metaProjection) {
+
+    return new OpOutputPrimitiveModelProjection(type, includeInDefault, params, customParams, metaProjection);
   }
 
   @NotNull
@@ -472,6 +539,7 @@ public class OpOutputProjectionsPsiParser {
         paramPsi.getPlus() != null,
         defaultValue,
         customParams,
+        null, // TODO do we want to support metadata on parameters?
         paramModelProjectionPsi,
         resolver
     );

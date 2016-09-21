@@ -20,8 +20,9 @@ public class OpOutputListModelProjection extends OpOutputModelProjection<ListTyp
                                      boolean includeInDefault,
                                      @Nullable OpParams params,
                                      @Nullable OpCustomParams customParams,
+                                     @Nullable OpOutputModelProjection<?> metaProjection,
                                      @NotNull OpOutputVarProjection itemsProjection) {
-    super(model, includeInDefault, params, customParams);
+    super(model, includeInDefault, params, customParams, metaProjection);
     this.itemsProjection = itemsProjection;
   }
 

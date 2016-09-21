@@ -16,7 +16,9 @@ public class OpInputTagProjection extends GenericTagProjection<OpInputModelProje
 
   @Override
   public <Exc extends Exception> void prettyPrint(DataLayouter<Exc> l) throws Exc {
-    if (projection().defaultValue() == null && projection().customParams() == null) {
+    if (projection().defaultValue() == null && projection().customParams() == null &&
+        projection().metaProjection() == null) {
+
       l.beginCInd();
       if (projection().required()) l.print('+');
       l.print(tag().name());
@@ -31,6 +33,10 @@ public class OpInputTagProjection extends GenericTagProjection<OpInputModelProje
 
       if (projection().defaultValue() != null)
         l.nl().beginCInd().print("default:").brk().print(projection().defaultValue()).end();
+
+      if (projection().metaProjection() != null)
+        //noinspection ConstantConditions
+        l.nl().beginIInd().print("meta:").brk().print(projection().metaProjection()).end();
 
       if (projection().customParams() != null)
         //noinspection ConstantConditions
