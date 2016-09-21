@@ -8,9 +8,7 @@ public class AnonListTypeName implements TypeName {
 
   public final @NotNull DataTypeName elementTypeName;
 
-  public AnonListTypeName(@NotNull DataTypeName elementTypeName) {
-    this.elementTypeName = elementTypeName;
-  }
+  public AnonListTypeName(@NotNull DataTypeName elementTypeName) { this.elementTypeName = elementTypeName; }
 
   @Override
   public String toString() { // TODO cache?

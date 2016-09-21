@@ -30,6 +30,7 @@ public abstract class AnonListType extends ListType {
     public Raw(@NotNull DataType elementDataType) { super(immediateSupertypes(elementDataType), elementDataType); }
 
     private static @NotNull List<@NotNull ? extends AnonListType.Raw> immediateSupertypes(@NotNull DataType elementDataType) {
+      // FIXME too many new raw types
       return elementDataType.type.immediateSupertypes().stream().map(st -> new AnonListType.Raw(new DataType(
           elementDataType.polymorphic, // TODO should it be false?
           st,

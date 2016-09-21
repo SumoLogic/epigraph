@@ -76,6 +76,17 @@ public interface Unmodifiable {
   }
 
   @Contract(pure = true)
+  static @NotNull <OK, OV, K, V> Map<K, ? extends V> map(
+      @NotNull Map<? extends OK, ? extends OV> original,
+      @NotNull Function<? super OK, ? extends K> keyMapper,
+      @NotNull Function<? super OV, ? extends V> valueMapper
+  ) {
+    HashMap<K, V> map = Unmodifiable.<K, V>hashMap(original.size()).get();
+    original.forEach((k, v) -> map.put(keyMapper.apply(k), valueMapper.apply(v)));
+    return Unmodifiable.map(map);
+  }
+
+  @Contract(pure = true)
   static @NotNull <K, V> Supplier<HashMap<K, V>> hashMap(int size) { // TODO hashMapSupplier?
     return () -> new HashMap<>(hashMapCapacity(size), 0.75f);
   }

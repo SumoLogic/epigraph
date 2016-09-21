@@ -86,7 +86,7 @@ public class JavaSchemaGenerator {
   public static void main(String... args) throws IOException {
     new JavaSchemaGenerator(
         SchemaCompiler.testcompile(),
-        Paths.get("java-codegen-test/src/main/java")
+        Paths.get("java/codegen-test/src/main/java")
     ).generate();
   }
 

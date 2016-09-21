@@ -57,10 +57,9 @@ public interface BooleanDatum extends PrimitiveDatum<Boolean> {
 
       private @NotNull Val.Imm.Raw value = new Val.Imm.Raw.DatumVal(this);
 
-      public Raw(@NotNull BooleanType type, @NotNull BooleanDatum prototype) {
-        super(type);
-        // TODO check types are compatible
-        this.val = prototype.getVal(); // TODO copy metadata
+      public Raw(@NotNull BooleanDatum.Builder.Raw builder) {
+        super(builder.type());
+        this.val = builder.getVal(); // TODO copy metadata
       }
 
       @Override
@@ -157,7 +156,7 @@ public interface BooleanDatum extends PrimitiveDatum<Boolean> {
       }
 
       @Override
-      public @NotNull BooleanDatum.Imm.Raw toImmutable() { return new BooleanDatum.Imm.Raw(type(), this); }
+      public @NotNull BooleanDatum.Imm.Raw toImmutable() { return new BooleanDatum.Imm.Raw(this); }
 
       @Override
       public @NotNull BooleanDatum.Builder.Raw _raw() { return this; }

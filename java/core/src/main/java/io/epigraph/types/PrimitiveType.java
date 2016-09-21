@@ -38,17 +38,26 @@ public abstract class PrimitiveType<Native> extends DatumType {
 
   public abstract @NotNull PrimitiveDatum.Builder<Native> createBuilder(@NotNull Native val);
 
+  //public abstract @NotNull PrimitiveDatum.Imm<Native> createImmutable(@NotNull Native val);
 
-  public interface Raw extends DatumType.Raw {}
+
+  public interface Raw extends DatumType.Raw {} // TODO parameterize with Native?
 
 
   public interface Static<Native,
       MyImmDatum extends PrimitiveDatum.Imm.Static<Native>,
-      MyBuilderDatum extends PrimitiveDatum.Builder.Static<Native, MyImmDatum>,
+      MyDatumBuilder extends PrimitiveDatum.Builder.Static<Native, MyImmDatum>,
       MyImmVal extends Val.Imm.Static,
-      MyBuilderVal extends Val.Builder.Static<MyImmVal, MyBuilderDatum>,
+      MyBuilderVal extends Val.Builder.Static<MyImmVal, MyDatumBuilder>,
       MyImmData extends Data.Imm.Static,
       MyBuilderData extends Data.Builder.Static<MyImmData>
-      > extends DatumType.Static<MyImmDatum, MyBuilderDatum, MyImmVal, MyBuilderVal, MyImmData, MyBuilderData> {}
+      > extends DatumType.Static<MyImmDatum, MyDatumBuilder, MyImmVal, MyBuilderVal, MyImmData, MyBuilderData> {
+
+    @NotNull MyDatumBuilder createBuilder(@NotNull Native val);
+
+    //@NotNull MyImmDatum createImmutable(@NotNull Native val);
+
+  }
+
 
 }

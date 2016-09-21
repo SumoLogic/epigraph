@@ -5,7 +5,6 @@ package io.epigraph.data;
 import io.epigraph.types.ListType;
 import io.epigraph.util.Unmodifiable;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.AbstractList;
 import java.util.ArrayList;
@@ -50,17 +49,6 @@ public interface ListDatum extends Datum {
     @Override
     @NotNull ListDatum.Imm.Static toImmutable();
 
-
-//    interface Tagged extends ListDatum.Static {
-//
-//      @Override
-//      @NotNull ListDatum.Imm.Static.Tagged toImmutable();
-//
-//      @NotNull List<@Nullable ? extends Datum.Static> datums();
-//
-//    }
-
-
   }
 
 
@@ -76,16 +64,9 @@ public interface ListDatum extends Datum {
 
       private @NotNull Val.Imm.Raw value = new Val.Imm.Raw.DatumVal(this);
 
-      public Raw(
-          @NotNull ListType type,
-          @NotNull ListDatum prototype
-      ) { // TODO allow only ListDatum.Mut in constructor?
-        super(type); // TODO derive type from prototype - or keep allowing sub-instances to be passed?
-        // TODO check prototype is compatible?
-        elements = Unmodifiable.list(
-            prototype._raw().elements(),
-            Data::toImmutable
-        ); // TODO filter out irrelevant (subtype-only) data (pass desired type then)?
+      public Raw(@NotNull ListDatum.Builder.Raw builder) {
+        super(builder.type());
+        elements = Unmodifiable.list(builder.elements(), Data::toImmutable);
       }
 
       @Override
@@ -116,8 +97,8 @@ public interface ListDatum extends Datum {
 
 
       // TODO additional sub-classes for Union and Datum element type based lists?
-      abstract class Impl<MyImmDatum extends ListDatum.Imm.Static, MyImmVal extends Val.Imm.Static> extends ListDatum.Impl
-          implements ListDatum.Imm.Static {
+      abstract class Impl<MyImmDatum extends ListDatum.Imm.Static, MyImmVal extends Val.Imm.Static>
+          extends ListDatum.Impl implements ListDatum.Imm.Static {
 
         private final @NotNull ListDatum.Imm.Raw raw;
 
@@ -190,7 +171,7 @@ public interface ListDatum extends Datum {
       // TODO add mut methods here
 
       @Override
-      public @NotNull ListDatum.Imm.Raw toImmutable() { return new ListDatum.Imm.Raw(type(), this); }
+      public @NotNull ListDatum.Imm.Raw toImmutable() { return new ListDatum.Imm.Raw(this); }
 
       @Override
       public @NotNull ListDatum.Builder.Raw _raw() { return this; }
@@ -223,7 +204,7 @@ public interface ListDatum extends Datum {
         public E remove(int index) { return list.remove(index); }
 
         private E validate(E element) throws IllegalArgumentException {
-          return listType.elementType.checkWrite(element);
+          return listType.elementType.checkAssignable(element);
         }
 
       }
@@ -338,7 +319,7 @@ public interface ListDatum extends Datum {
 //        public E remove(int index) { return list.remove(index); }
 //
 //        private E validate(E element) throws IllegalArgumentException {
-//          return listType.elementType.checkWrite(element);
+//          return listType.elementType.checkAssignable(element);
 //        }
 //
 //      }

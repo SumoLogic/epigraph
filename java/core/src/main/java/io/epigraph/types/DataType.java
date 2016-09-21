@@ -38,13 +38,8 @@ public class DataType {
 //
 //  public @Nullable Tag defaultTag() { return defaultTag; }
 
-  public <D extends Data> D checkWrite(@NotNull D data) throws IllegalArgumentException {
-    if (polymorphic) {
-      if (!type.isAssignableFrom(data.type())) throw new IllegalArgumentException();
-    } else {
-      if (type != data.type()) throw new IllegalArgumentException();
-    }
-    return data;
+  public <D extends Data> D checkAssignable(@NotNull D data) throws IllegalArgumentException {
+    return type.checkAssignable(data);
   }
 
   @Override

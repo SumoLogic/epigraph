@@ -72,13 +72,9 @@ public interface RecordDatum extends Datum {
 
       private final @NotNull Val.Imm.Raw value = new Val.Imm.Raw.DatumVal(this);
 
-      // TODO take RecordDatum.Mut only? make private and use static method to re-use immutables?
-      public Raw(RecordType type, RecordDatum prototype) {
-        super(type);
-        fieldsData = prototype instanceof RecordDatum.Imm
-            ? ((RecordDatum.Imm) prototype)._raw().fieldsData()
-            : Unmodifiable
-                .map(prototype._raw().fieldsData().entrySet(), Map.Entry::getKey, me -> me.getValue().toImmutable());
+      public Raw(@NotNull RecordDatum.Builder.Raw builder) {
+        super(builder.type());
+        fieldsData = Unmodifiable.map(builder.fieldsData(), k->k, Data::toImmutable);
       }
 
       @Override
@@ -179,7 +175,7 @@ public interface RecordDatum extends Datum {
       public Raw(@NotNull RecordType type) { super(type); }
 
       @Override
-      public @NotNull RecordDatum.Imm.Raw toImmutable() { return new RecordDatum.Imm.Raw(type(), this); }
+      public @NotNull RecordDatum.Imm.Raw toImmutable() { return new RecordDatum.Imm.Raw(this); }
 
       @Override
       public @NotNull RecordDatum.Builder.Raw _raw() { return this; }

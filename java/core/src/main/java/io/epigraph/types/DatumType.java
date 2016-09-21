@@ -40,6 +40,14 @@ public abstract class DatumType extends Type {
   @Override
   public @NotNull Collection<@NotNull ? extends Tag> immediateTags() { return immediateTags; }
 
+  /** @see Class#isInstance(Object) */
+  public boolean isInstance(@Nullable Datum datum) { return datum != null && isAssignableFrom(datum.type()); }
+
+  public <D extends Datum> D checkAssignable(@NotNull D datum) throws IllegalArgumentException { // TODO accept nulls?
+    if (!isInstance(datum)) throw new IllegalArgumentException("TODO");
+    return datum;
+  }
+
   public @NotNull DataType dataType(boolean polymorphic) { return new DataType(polymorphic, this, self); } // TODO cache
 
   public abstract @NotNull Val.Imm createValue(@Nullable ErrorValue errorOrNull);

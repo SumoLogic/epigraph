@@ -78,7 +78,7 @@ public class ScalaSchemaGenerator {
   public static void main(String... args) throws IOException {
     new ScalaSchemaGenerator(
         SchemaCompiler.testcompile(),
-        Paths.get("scala-codegen-test/src/test/epigraph-scala")
+        Paths.get("scala/codegen-test/src/main/scala")
     ).generate();
   }
 

@@ -3,7 +3,6 @@
 package io.epigraph.types;
 
 import io.epigraph.data.Data;
-import io.epigraph.data.Val;
 import io.epigraph.names.TypeName;
 import io.epigraph.util.Unmodifiable;
 import org.jetbrains.annotations.NotNull;
@@ -63,9 +62,11 @@ public abstract class Type { // TODO split into interface and impl
     return supertypes;
   }
 
-  public boolean doesExtend(@NotNull Type type) { return this.equals(type) || supertypes().contains(type); }
+  /** @see Class#isAssignableFrom(Class) */
+  public boolean isAssignableFrom(@NotNull Type type) { return type.equals(this) || type.supertypes().contains(this); }
 
-  public boolean isAssignableFrom(@NotNull Type type) { return type.doesExtend(this); }
+  /** @see Class#isInstance(Object) */
+  public boolean isInstance(@Nullable Data data) { return data != null && isAssignableFrom(data.type()); }
 
   public abstract @NotNull Collection<@NotNull ? extends Tag> immediateTags();
 
@@ -89,6 +90,11 @@ public abstract class Type { // TODO split into interface and impl
   public final @NotNull Map<@NotNull String, @NotNull ? extends Tag> tagsMap() {
     if (tagsMap == null) tagsMap = Unmodifiable.map(tags(), t -> t.name, t -> t);
     return tagsMap;
+  }
+
+  public <D extends Data> D checkAssignable(@NotNull D data) throws IllegalArgumentException { // TODO accept nulls?
+    if (!isInstance(data)) throw new IllegalArgumentException("TODO");
+    return data;
   }
 
 
@@ -120,5 +126,6 @@ public abstract class Type { // TODO split into interface and impl
     public @NotNull String name() { return name; }
 
   }
+
 
 }
