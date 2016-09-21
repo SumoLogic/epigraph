@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
 public class NamingConventions {
-  // TODO validation logic should be common with epigraph-core?
+  // TODO validation logic should be common with epigraph-java|scala-core?
 
   @Nullable
   public static String validateTypeName(@NotNull String typeName) {

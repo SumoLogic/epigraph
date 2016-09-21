@@ -11,7 +11,6 @@ rootProject.name = theName
 // map from module (sub-project) path to full module name (maven artifact id)
 Map<String, String> modules = [
     'builtin-types-schema'                 : 'epigraph-builtin-types-schema',
-    'core'                                 : 'epigraph-core',
     'data-schema'                          : 'epigraph-data-schema',
     'examples/users/schema'                : 'examples-users-schema',
     'examples/users/schema-java'           : 'examples-users-schema-java',
@@ -32,8 +31,9 @@ Map<String, String> modules = [
     'maven-plugin'                         : 'epigraph-maven-plugin',
     'operations-schema'                    : 'epigraph-operations-schema',
     'projections-schema'                   : 'epigraph-projections-schema',
-    'scala-codegen'                        : 'epigraph-scala-codegen',
-    'scala-maven-plugin'                   : 'epigraph-scala-maven-plugin',
+    'scala/codegen'                        : 'epigraph-scala-codegen',
+    'scala/core'                           : 'epigraph-scala-core',
+    'scala/maven-plugin'                   : 'epigraph-scala-maven-plugin',
     'schema-compiler'                      : 'epigraph-schema-compiler',
     'schema-parser'                        : 'epigraph-schema-parser',
     'schema-schema'                        : 'epigraph-schema-schema',
