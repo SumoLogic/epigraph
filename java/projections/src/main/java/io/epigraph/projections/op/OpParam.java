@@ -50,7 +50,7 @@ public class OpParam implements PrettyPrintable {
 
   @Override
   public <Exc extends Exception> void prettyPrint(DataLayouter<Exc> l) throws Exc {
-    l.beginCInd();
+    l.beginIInd();
     l.print(';');
     if (projection.required()) l.print('+');
     l.print(name).print(':').brk();
@@ -59,12 +59,12 @@ public class OpParam implements PrettyPrintable {
 
     Object defaultValue = projection.defaultValue();
     if (defaultValue != null) {
-      l.print(" = ").print(defaultValue);
+      l.brk().print("=").brk().print(defaultValue);
     }
 
     OpCustomParams customParams = projection.customParams();
     if (customParams != null) {
-      l.beginCInd();
+      l.beginIInd();
       l.print(" {");
       l.print(customParams);
       l.end().nl().print('}');

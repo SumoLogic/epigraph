@@ -14,4 +14,5 @@ dependencies {
 
   testCompile project(':tests-schema-java')
   testCompile 'junit:junit'
+  testCompile 'org.slf4j:slf4j-nop'
 }

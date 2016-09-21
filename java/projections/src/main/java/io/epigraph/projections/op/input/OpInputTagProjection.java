@@ -32,15 +32,15 @@ public class OpInputTagProjection extends GenericTagProjection<OpInputModelProje
       l.print(" {");
 
       if (projection().defaultValue() != null)
-        l.nl().beginCInd().print("default:").brk().print(projection().defaultValue()).end();
+        l.nl().beginIInd(0).print("default:").brk().print(projection().defaultValue()).end();
 
       if (projection().metaProjection() != null)
         //noinspection ConstantConditions
-        l.nl().beginIInd().print("meta:").brk().print(projection().metaProjection()).end();
+        l.nl().beginIInd(0).print("meta:").brk().print(projection().metaProjection()).end();
 
       if (projection().customParams() != null)
         //noinspection ConstantConditions
-        l.print(projection().customParams());
+        l.beginIInd(0).print(projection().customParams()).end();
 
       PrettyPrinterUtil.printWithBrkIfNonEmpty(l, projection());
 

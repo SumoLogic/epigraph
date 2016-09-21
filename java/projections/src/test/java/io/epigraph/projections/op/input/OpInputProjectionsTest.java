@@ -56,8 +56,7 @@ public class OpInputProjectionsTest {
         "          )",
         "      friends *( :+id )",
         "    )",
-        ")",
-        "~io.epigraph.tests.User :record ( profile )"
+        ") ~io.epigraph.tests.User :record ( profile )"
     );
 
     testParsingVarProjection(

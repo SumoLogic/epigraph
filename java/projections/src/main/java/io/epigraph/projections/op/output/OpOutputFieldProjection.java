@@ -55,12 +55,12 @@ public class OpOutputFieldProjection implements PrettyPrintable {
     if (includeInDefault) l.print("+");
     l.print(field.name());
     if ((params != null && !params.isEmpty()) || (customParams != null && !customParams.isEmpty())) {
-      l.beginCInd().print(" {");
+      l.beginIInd().print(" {");
       if (params != null) l.nl().print(params);
       if (customParams != null) l.nl().print(customParams);
       l.end().nl().print("}");
     }
-    l.print(":").brk().beginCInd().ind().print(projection).end();
+    l.print(":").brk().beginIInd().ind().print(projection).end();
   }
 
   @Override

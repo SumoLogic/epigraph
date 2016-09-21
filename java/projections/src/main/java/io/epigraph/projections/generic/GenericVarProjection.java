@@ -91,7 +91,7 @@ public class GenericVarProjection<T extends GenericTagProjection<?>, S extends G
         l.print(tail.type().name().toString());
         l.print(' ').print(tail);
       } else {
-        l.beginCInd();
+        l.beginIInd();
         l.print("~(");
         for (GenericVarProjection tail : polymorphicTails) {
           l.nl().print(tail.type().name().toString()).print(' ').print(tail);

@@ -96,13 +96,13 @@ public class OpOutputRecordModelProjection extends OpOutputModelProjection<Recor
       for (OpOutputFieldProjection fieldProjection : fieldProjections) {
         l.brk();
         if (fieldProjection.customParams() == null) {
-          l.beginCInd();
+          l.beginIInd();
           if (fieldProjection.includeInDefault()) l.print('+');
           l.print(fieldProjection.field().name());
           PrettyPrinterUtil.printWithBrkIfNonEmpty(l, fieldProjection.projection());
           l.end();
         } else {
-          l.beginCInd();
+          l.beginIInd();
           if (fieldProjection.includeInDefault()) l.print('+');
           l.print(fieldProjection.field().name());
           l.print(" {");

@@ -90,19 +90,19 @@ public class OpInputRecordModelProjection extends OpInputModelProjection<RecordT
 
   @Override
   public <Exc extends Exception> void prettyPrint(DataLayouter<Exc> l) throws Exc {
-    l.beginCInd().print('(');
+    l.print('(').beginCInd();
 
     if (fieldProjections != null) {
       for (OpInputFieldProjection fieldProjection : fieldProjections) {
         l.brk();
         if (fieldProjection.customParams() == null) {
-          l.beginCInd();
+          l.beginIInd();
           if (fieldProjection.required()) l.print('+');
           l.print(fieldProjection.field().name());
           PrettyPrinterUtil.printWithBrkIfNonEmpty(l, fieldProjection.projection());
           l.end();
         } else {
-          l.beginCInd();
+          l.beginIInd();
           if (fieldProjection.required()) l.print('+');
           l.print(fieldProjection.field().name());
           l.print(" {");

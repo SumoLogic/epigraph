@@ -21,7 +21,7 @@ public class DataPrettyPrinter {
 
     MarkingStringBackend backend = new MarkingStringBackend(lineWith);
     MarkingDataLayouter layouter = new MarkingDataLayouter(backend, indentation);
-    layouter.beginC(0);
+    layouter.beginI(0);
     layouter.print(o);
     layouter.end();
     layouter.close();

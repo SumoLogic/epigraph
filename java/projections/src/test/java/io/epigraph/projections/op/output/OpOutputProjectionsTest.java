@@ -216,8 +216,7 @@ public class OpOutputProjectionsTest {
         ":(",
         "  +id",
         "  record ( +id +bestFriend :record ( +id bestFriend :id ) friends *( :+id ) )",
-        ")",
-        "~io.epigraph.tests.User :record ( profile )"
+        ") ~io.epigraph.tests.User :record ( profile )"
     );
 
     testParsingVarProjection(
@@ -245,8 +244,8 @@ public class OpOutputProjectionsTest {
         ,
         lines(
             ":id {",
-            "  ;+param:",
-            "    io.epigraph.tests.UserId = io.epigraph.tests.UserId$Builder@123 {",
+            "  ;+param: io.epigraph.tests.UserId =",
+            "    io.epigraph.tests.UserId$Builder@123 {",
             "      deprecated = true",
             "    }",
             "}"
