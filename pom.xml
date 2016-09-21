@@ -81,13 +81,9 @@
         <activeByDefault>true</activeByDefault>
       </activation>
       <modules>
-        <module>builtin-types-schema</module>
-        <module>data-schema</module>
         <module>java/codegen-test</module>
-        <module>operations-schema</module>
-        <module>projections-schema</module>
         <module>scala/codegen-test</module>
-        <module>schema-schema</module>
+        <module>schemas</module>
       </modules>
     </profile>
 
