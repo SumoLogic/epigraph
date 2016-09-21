@@ -61,30 +61,39 @@ public class GDataToData {
   public static Val transform(@NotNull DatumType type,
                               @NotNull GDatum gdata,
                               @NotNull TypesResolver resolver) throws ProcessingException {
+    @Nullable Datum datum = transformDatum(type, gdata, resolver);
+    if (datum == null) return type.createValue(null);
+    else return toVal(datum);
+  }
+
+  @Nullable
+  public static Datum transformDatum(@NotNull DatumType type,
+                                     @NotNull GDatum gdata,
+                                     @NotNull TypesResolver resolver) throws ProcessingException {
 
     if (gdata instanceof GNullDatum) {
-      return transform(type, (GNullDatum) gdata, resolver);
+      return null;
     } else if (gdata instanceof GPrimitiveDatum) {
       if (!(type instanceof PrimitiveType<?>))
         throw new ProcessingException(
             String.format("Can't transform primitive value '%s' into '%s'", gdata, type.name())
         );
 
-      return toVal(transform((PrimitiveType<?>) type, (GPrimitiveDatum) gdata, resolver));
+      return transform((PrimitiveType<?>) type, (GPrimitiveDatum) gdata, resolver);
     } else if (gdata instanceof GRecordDatum) {
       if (!(type instanceof RecordType))
         throw new ProcessingException(
             String.format("Can't transform record value '%s' into '%s'", gdata, type.name())
         );
 
-      return toVal(transform((RecordType) type, (GRecordDatum) gdata, resolver));
+      return transform((RecordType) type, (GRecordDatum) gdata, resolver);
     } else if (gdata instanceof GListDatum) {
       if (!(type instanceof ListType))
         throw new ProcessingException(
             String.format("Can't transform list value '%s' into '%s'", gdata, type.name())
         );
 
-      return toVal(transform((ListType) type, (GListDatum) gdata, resolver));
+      return transform((ListType) type, (GListDatum) gdata, resolver);
     } else {
       // TODO Map, Enum
       throw new ProcessingException(String.format("Don't know how to handle '%s'", type.getClass().getName()));
@@ -184,8 +193,8 @@ public class GDataToData {
   }
 
   public static Val.Imm transform(@NotNull DatumType type,
-                              @NotNull GNullDatum gdata,
-                              @NotNull TypesResolver resolver) throws ProcessingException {
+                                  @NotNull GNullDatum gdata,
+                                  @NotNull TypesResolver resolver) throws ProcessingException {
     @Nullable Fqn typeRef = gdata.typeRef();
     if (typeRef != null) type = resolveType(resolver, typeRef, RecordType.class);
     return type.createValue(null);

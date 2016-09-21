@@ -38,7 +38,7 @@ public class OpOutputFieldProjection implements PrettyPrintable {
   }
 
   @NotNull
-  public RecordType.Field getField() { return field; }
+  public RecordType.Field field() { return field; }
 
   public @Nullable OpParams params() { return params; }
 

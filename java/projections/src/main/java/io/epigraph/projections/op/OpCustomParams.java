@@ -47,12 +47,8 @@ public class OpCustomParams implements PrettyPrintable { // rename to OpOutputPa
 
   @Override
   public <Exc extends Exception> void prettyPrint(DataLayouter<Exc> l) throws Exc {
-    if (!isEmpty()) {
-      l.beginCInd().print("custom params: {");
-      for (Map.Entry<String, GDataValue> entry : params.entrySet()) {
-        l.nl().print(entry.getKey()).print(" = ").print(entry.getValue());
-      }
-      l.end().brk().print("}");
+    for (Map.Entry<String, GDataValue> entry : params.entrySet()) {
+      l.nl().print(entry.getKey()).print(" = ").print(entry.getValue());
     }
   }
 

@@ -4,6 +4,7 @@ import de.uka.ilkd.pp.DataLayouter;
 import de.uka.ilkd.pp.PrettyPrintable;
 import io.epigraph.projections.op.input.OpInputModelProjection;
 import io.epigraph.util.pp.DataPrettyPrinter;
+import io.epigraph.util.pp.PrettyPrinterUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -49,7 +50,27 @@ public class OpParam implements PrettyPrintable { // rename to OpOutputParam?
 
   @Override
   public <Exc extends Exception> void prettyPrint(DataLayouter<Exc> l) throws Exc {
-    l.beginCInd().print(name).print(":").brk().print(projection).end();
+    l.beginCInd();
+    l.print(';');
+    if (projection.required()) l.print('+');
+    l.print(name).print(':').brk();
+    l.print(projection.model().name().toString());
+    PrettyPrinterUtil.printWithBrkIfNonEmpty(l, projection);
+
+    Object defaultValue = projection.defaultValue();
+    if (defaultValue != null) {
+      l.print(" = ").print(defaultValue);
+    }
+
+    OpCustomParams customParams = projection.customParams();
+    if (customParams != null) {
+      l.beginCInd();
+      l.print(" {");
+      l.print(customParams);
+      l.end().nl().print('}');
+    }
+
+    l.end();
   }
 
   @Override

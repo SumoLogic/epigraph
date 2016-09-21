@@ -42,18 +42,6 @@ public abstract class OpOutputModelProjection<M extends DatumType>
 
   @Override
   public <Exc extends Exception> void prettyPrint(DataLayouter<Exc> l) throws Exc {
-    prettyPrintModel(l);
-    prettyPrintParamsBlock(l);
-  }
-
-  protected <Exc extends Exception> void prettyPrintModel(DataLayouter<Exc> l) throws Exc {
-    if (includeInDefault) l.print("+");
-    l.print(model.name().toString());
-  }
-
-  protected <Exc extends Exception> void prettyPrintParamsBlock(DataLayouter<Exc> l) throws Exc {
-    if (params != null && !params.isEmpty()) l.brk().print(params);
-    if (customParams != null && !customParams.isEmpty()) l.brk().print(customParams);
   }
 
   @Override

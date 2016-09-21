@@ -1,6 +1,7 @@
 package io.epigraph.projections.op.input;
 
 import com.intellij.psi.PsiElement;
+import io.epigraph.data.Datum;
 import io.epigraph.data.ListDatum;
 import io.epigraph.data.PrimitiveDatum;
 import io.epigraph.data.RecordDatum;
@@ -174,7 +175,7 @@ public class OpInputProjectionsPsiParser {
         type,
         new OpInputTagProjection(
             tag,
-            createDefaultModelProjection(tag.type, required, location)
+            createDefaultModelProjection(tag.type, required, null, null, location, null)
         )
     );
   }
@@ -215,7 +216,7 @@ public class OpInputProjectionsPsiParser {
       case RECORD:
         @Nullable IdlOpInputRecordModelProjection recordModelProjectionPsi = psi.getOpInputRecordModelProjection();
         if (recordModelProjectionPsi == null)
-          return createDefaultModelProjection(type, required, psi);
+          return createDefaultModelProjection(type, required, defaultValue, customParams, psi, typesResolver);
         ensureModelKind(psi, TypeKind.RECORD);
         GRecordDatum defaultRecordData = coerceDefault(defaultValue, GRecordDatum.class, psi);
 
@@ -230,7 +231,7 @@ public class OpInputProjectionsPsiParser {
       case LIST:
         @Nullable IdlOpInputListModelProjection listModelProjectionPsi = psi.getOpInputListModelProjection();
         if (listModelProjectionPsi == null)
-          return createDefaultModelProjection(type, required, psi);
+          return createDefaultModelProjection(type, required, defaultValue, customParams, psi, typesResolver);
         ensureModelKind(psi, TypeKind.LIST);
         GListDatum defaultListData = coerceDefault(defaultValue, GListDatum.class, psi);
 
@@ -245,7 +246,7 @@ public class OpInputProjectionsPsiParser {
       case MAP:
         @Nullable IdlOpInputMapModelProjection mapModelProjectionPsi = psi.getOpInputMapModelProjection();
         if (mapModelProjectionPsi == null)
-          return createDefaultModelProjection(type, required, psi);
+          return createDefaultModelProjection(type, required,defaultValue, customParams, psi, typesResolver);
         ensureModelKind(psi, TypeKind.MAP);
         throw new PsiProcessingException("Unsupported type kind: " + type.kind(), psi);
       case ENUM:
@@ -289,15 +290,27 @@ public class OpInputProjectionsPsiParser {
   @NotNull
   private static OpInputModelProjection<?, ?> createDefaultModelProjection(@NotNull DatumType type,
                                                                            boolean required,
-                                                                           @NotNull PsiElement location)
+                                                                           @Nullable GDatum defaultValue,
+                                                                           @Nullable OpCustomParams customParams,
+                                                                           @NotNull PsiElement location,
+                                                                           @Nullable TypesResolver resolver)
       throws PsiProcessingException {
+
+    @Nullable Datum defaultDatum = null;
+    if (defaultValue != null)
+      try {
+        assert resolver != null;
+        defaultDatum = GDataToData.transformDatum(type, defaultValue, resolver);
+      } catch (GDataToData.ProcessingException e) {
+        throw new PsiProcessingException(e, location);
+      }
 
     switch (type.kind()) {
       case RECORD:
         return new OpInputRecordModelProjection((RecordType) type,
                                                 required,
-                                                null,
-                                                null,
+                                                (RecordDatum) defaultDatum,
+                                                customParams,
                                                 null
         );
       case LIST:
@@ -321,8 +334,8 @@ public class OpInputProjectionsPsiParser {
 
         return new OpInputListModelProjection(listType,
                                               required,
-                                              null,
-                                              null,
+                                              (ListDatum) defaultDatum,
+                                              customParams,
                                               itemVarProjection
         );
       case MAP:
@@ -334,7 +347,11 @@ public class OpInputProjectionsPsiParser {
         // todo
         throw new PsiProcessingException("Unsupported type kind: " + type.kind(), location);
       case PRIMITIVE:
-        return new OpInputPrimitiveModelProjection((PrimitiveType) type, required, null, null);
+        return new OpInputPrimitiveModelProjection((PrimitiveType) type,
+                                                   required,
+                                                   (PrimitiveDatum<?>) defaultDatum,
+                                                   customParams
+        );
       default:
         throw new PsiProcessingException("Unknown type kind: " + type.kind(), location);
     }

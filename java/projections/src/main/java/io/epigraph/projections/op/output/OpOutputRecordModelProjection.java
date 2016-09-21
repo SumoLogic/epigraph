@@ -4,6 +4,7 @@ import de.uka.ilkd.pp.DataLayouter;
 import io.epigraph.projections.op.OpCustomParams;
 import io.epigraph.projections.op.OpParams;
 import io.epigraph.types.RecordType;
+import io.epigraph.util.pp.PrettyPrinterUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -31,7 +32,7 @@ public class OpOutputRecordModelProjection extends OpOutputModelProjection<Recor
     Collection<@NotNull ? extends RecordType.Field> fields = model.fields();
     if (fieldProjections != null) {
       for (OpOutputFieldProjection fieldProjection : fieldProjections) {
-        RecordType.Field field = fieldProjection.getField();
+        RecordType.Field field = fieldProjection.field();
         if (!fields.contains(field))
           throw new IllegalArgumentException(
               String.format("Field '%s' does not belong to record model '%s'. Known fields: %s",
@@ -88,19 +89,30 @@ public class OpOutputRecordModelProjection extends OpOutputModelProjection<Recor
 
   @Override
   public <Exc extends Exception> void prettyPrint(DataLayouter<Exc> l) throws Exc {
-    prettyPrintModel(l);
-    l.beginCInd().print(" {");
+    l.beginCInd().print('(');
 
-    prettyPrintParamsBlock(l);
-
-    if (fieldProjections != null && !fieldProjections.isEmpty()) {
-      l.brk().beginIInd().print("fields: {");
+    if (fieldProjections != null) {
       for (OpOutputFieldProjection fieldProjection : fieldProjections) {
-        l.nl().print(fieldProjection);
+        l.brk();
+        if (fieldProjection.customParams() == null) {
+          l.beginCInd();
+          if (fieldProjection.includeInDefault()) l.print('+');
+          l.print(fieldProjection.field().name());
+          PrettyPrinterUtil.printWithBrkIfNonEmpty(l, fieldProjection.projection());
+          l.end();
+        } else {
+          l.beginCInd();
+          if (fieldProjection.includeInDefault()) l.print('+');
+          l.print(fieldProjection.field().name());
+          l.print(" {");
+          //noinspection ConstantConditions
+          l.print(fieldProjection.customParams());
+          PrettyPrinterUtil.printWithNlIfNonEmpty(l, fieldProjection.projection());
+          l.end().nl().print('}');
+        }
       }
-      l.end().brk().print("}");
     }
 
-    l.end().brk().print("}");
+    l.end().brk().print(')');
   }
 }

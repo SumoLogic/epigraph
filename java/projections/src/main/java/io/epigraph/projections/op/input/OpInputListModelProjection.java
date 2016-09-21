@@ -44,16 +44,9 @@ public class OpInputListModelProjection extends OpInputModelProjection<ListType,
 
   @Override
   public <Exc extends Exception> void prettyPrint(DataLayouter<Exc> l) throws Exc {
-    prettyPrintModel(l);
-    l.beginCInd().print(" {");
-
-    prettyPrintParamsBlock(l);
-    prettyPrintDefaultValueBlock(l);
-
-    l.brk().beginCInd().print("items:").brk();
-    l.print(itemsProjection);
-    l.end();
-
-    l.end().brk().print("}");
+    l.beginCInd();
+    l.print("*(").brk();
+    l.print(itemsProjection());
+    l.end().brk().print(')');
   }
 }

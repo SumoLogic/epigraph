@@ -60,11 +60,7 @@ public class OpParams implements PrettyPrintable { // rename to OpOutputParams?
 
   @Override
   public <Exc extends Exception> void prettyPrint(DataLayouter<Exc> l) throws Exc {
-    if (!isEmpty()) {
-      l.beginCInd().print("params: {");
-      for (OpParam param : params.values()) l.nl().print(param);
-      l.end().brk().print("}");
-    }
+    for (OpParam param : params.values()) l.nl().print(param);
   }
 
   @Override

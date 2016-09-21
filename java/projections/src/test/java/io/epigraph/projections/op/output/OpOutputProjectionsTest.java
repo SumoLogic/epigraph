@@ -184,15 +184,6 @@ public class OpOutputProjectionsTest {
 
   @Test
   public void testParsing() throws PsiProcessingException {
-    TypesResolver resolver = new SimpleTypesResolver(
-        PersonId.type,
-        Person.type,
-        User.type,
-        UserId.type,
-        UserRecord.type,
-        epigraph.String.type
-    );
-
     // todo more elaborate example.
     // Make pretty-printed result consistent with grammar?
     String projectionStr = lines(
@@ -217,105 +208,150 @@ public class OpOutputProjectionsTest {
         ") ~io.epigraph.tests.User :record (profile)"
     );
 
-
-    EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
-
-    IdlOpOutputVarProjection psiVarProjection = EpigraphPsiUtil.parseText(
-        projectionStr,
-        IdlSubParserDefinitions.OP_OUTPUT_VAR_PROJECTION.rootElementType(),
-        IdlOpOutputVarProjection.class,
-        IdlSubParserDefinitions.OP_OUTPUT_VAR_PROJECTION,
-        errorsAccumulator
-    );
-
-    if (errorsAccumulator.hasErrors()) {
-      for (PsiErrorElement element : errorsAccumulator.errors()) {
-        System.err.println(element.getErrorDescription() + " at " +
-                           EpigraphPsiUtil.getLocation(element, projectionStr));
-      }
-      String psiDump = DebugUtil.psiToString(psiVarProjection, true, false).trim();
-      fail(psiDump);
-    }
-
-    OpOutputVarProjection varProjection = null;
-    try {
-      varProjection = OpOutputProjectionsPsiParser.parseVarProjection(
-          new DataType(false, Person.type, Person.id),
-          psiVarProjection,
-          resolver
-      );
-
-    } catch (PsiProcessingException e) {
-      e.printStackTrace();
-      System.err.println(e.getMessage() + " at " +
-                         EpigraphPsiUtil.getLocation(e.psi(), projectionStr));
-      fail();
-    }
-
     String expected = lines(
-        "var io.epigraph.tests.Person (",
-        "  id: +io.epigraph.tests.PersonId",
-        "  record:",
-        "    io.epigraph.tests.PersonRecord {",
-        "      fields: {",
-        "        +id {",
-        "          params: {",
-        "            param1:",
-        "              +epigraph.String",
-        "              custom params: {",
-        "                doc = \"some doc\"",
-        "              }",
-        "              default: epigraph.String$Imm$Impl@hello world",
-        "          }",
-        "        }:",
-        "          var io.epigraph.tests.PersonId (",
-        "            self: io.epigraph.tests.PersonId",
-        "          )",
-        "        +bestFriend:",
-        "          var io.epigraph.tests.Person (",
-        "            record:",
-        "              io.epigraph.tests.PersonRecord {",
-        "                fields: {",
-        "                  +id:",
-        "                    var io.epigraph.tests.PersonId (",
-        "                      self: io.epigraph.tests.PersonId",
-        "                    )",
-        "                  bestFriend:",
-        "                    var io.epigraph.tests.Person (",
-        "                      id: io.epigraph.tests.PersonId",
-        "                    )",
-        "                }",
-        "              }",
-        "          )",
-        "        friends:",
-        "          var list[polymorphic io.epigraph.tests.Person] (",
-        "            self:",
-        "              list[polymorphic io.epigraph.tests.Person] {",
-        "                items:",
-        "                  var io.epigraph.tests.Person (",
-        "                    id: +io.epigraph.tests.PersonId",
-        "                  )",
-        "              }",
-        "          )",
-        "      }",
-        "    }",
+        ":(",
+        "  +id",
+        "  record ( +id +bestFriend :record ( +id bestFriend :id ) friends *( :+id ) )",
         ")",
-        "~(",
-        "  var io.epigraph.tests.User (",
-        "    record:",
-        "      io.epigraph.tests.UserRecord {",
-        "        fields: {",
-        "          profile:",
-        "            var io.epigraph.tests.Url (",
-        "              self: io.epigraph.tests.Url",
-        "            )",
-        "        }",
-        "      }",
-        "  )",
-        ")"
+        "~io.epigraph.tests.User :record ( profile )"
     );
 
-    assertEquals(expected, varProjection.toString());
+    testParsingVarProjection(
+        new DataType(false, Person.type, Person.id),
+        projectionStr,
+        expected
+    );
+  }
+
+  @Test
+  public void testParseEmpty() throws PsiProcessingException {
+    testParsingVarProjection(
+        new DataType(false, Person.type, Person.id),
+        ""
+        ,
+        ":id"
+    );
+  }
+
+  @Test
+  public void testParseParam() throws PsiProcessingException {
+    testParsingVarProjection(
+        new DataType(false, Person.type, Person.id),
+        ":id { ;+param: io.epigraph.tests.UserId = 123 { deprecated = true } }"
+        ,
+        lines(
+            ":id {",
+            "  ;+param:",
+            "    io.epigraph.tests.UserId = io.epigraph.tests.UserId$Builder@123 {",
+            "      deprecated = true",
+            "    }",
+            "}"
+        )
+    );
+  }
+
+  @Test
+  public void testParseMultipleTags() throws PsiProcessingException {
+    testParsingVarProjection(
+        new DataType(false, Person.type, Person.id),
+        ":(id, record)"
+        ,
+        lines(
+            ":(",
+            "  id",
+            "  record ( )",
+            ")"
+        )
+    );
+  }
+
+  @Test
+  public void testParseTail() throws PsiProcessingException {
+    testParsingVarProjection(
+        new DataType(false, Person.type, Person.id),
+        "~io.epigraph.tests.User :id"
+        ,
+        ":id ~io.epigraph.tests.User :id"
+    );
+  }
+
+  @Test
+  public void testParseTails() throws PsiProcessingException {
+    testParsingVarProjection(
+        new DataType(false, Person.type, Person.id),
+        "~( io.epigraph.tests.User :id, io.epigraph.tests.Person :id )"
+        ,
+        lines(
+            ":id",
+            "~(",
+            "  io.epigraph.tests.User :id",
+            "  io.epigraph.tests.Person :id",
+            ")"
+        )
+    );
+  }
+
+  @Test
+  public void testParseCustomParams() throws PsiProcessingException {
+    testParsingVarProjection(
+        new DataType(false, Person.type, Person.id),
+        ":id { deprecated = true }"
+        ,
+        lines(
+            ":id {",
+            "  deprecated = true",
+            "}"
+        )
+    );
+  }
+
+  @Test
+  public void testParseRecordDefaultFields() throws PsiProcessingException {
+    testParsingVarProjection(
+        new DataType(false, Person.type, Person.id),
+        ":record (id, firstName)"
+        ,
+        ":record ( id firstName )"
+    );
+  }
+
+  @Test
+  public void testParseRecordFieldsWithStructure() throws PsiProcessingException {
+    testParsingVarProjection(
+        new DataType(false, Person.type, Person.id),
+        ":record ( id, bestFriend :record ( id ) )"
+        ,
+        ":record ( id bestFriend :record ( id ) )"
+    );
+  }
+
+  @Test
+  public void testParseRecordFieldsWithCustomParams() throws PsiProcessingException {
+    testParsingVarProjection(
+        new DataType(false, Person.type, Person.id),
+        ":record ( id, bestFriend { deprecated=true :record ( id ) } )"
+        ,
+        lines(
+            ":record",
+            "  (",
+            "    id",
+            "    bestFriend {",
+            "      deprecated = true",
+            "      :record ( id )",
+            "    }",
+            "  )"
+        )
+    );
+  }
+
+  @Test
+  public void testParseList() throws PsiProcessingException {
+    testParsingVarProjection(
+        new DataType(false, Person.type, Person.id),
+        ":record ( friends *( :id ) )"
+        ,
+        ":record ( friends *( :id ) )"
+    );
   }
 
   @Test
@@ -436,6 +472,59 @@ public class OpOutputProjectionsTest {
     );
 
 //    System.out.println(personVarProjection);
+  }
+
+  private void testParsingVarProjection(DataType varDataType, String projectionString, String expected)
+      throws PsiProcessingException {
+
+    TypesResolver resolver = new SimpleTypesResolver(
+        PersonId.type,
+        Person.type,
+        User.type,
+        UserId.type,
+        UserRecord.type,
+        epigraph.String.type
+    );
+
+    EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
+
+    IdlOpOutputVarProjection psiVarProjection = EpigraphPsiUtil.parseText(
+        projectionString,
+        IdlSubParserDefinitions.OP_OUTPUT_VAR_PROJECTION.rootElementType(),
+        IdlOpOutputVarProjection.class,
+        IdlSubParserDefinitions.OP_OUTPUT_VAR_PROJECTION,
+        errorsAccumulator
+    );
+
+    if (errorsAccumulator.hasErrors()) {
+      for (PsiErrorElement element : errorsAccumulator.errors()) {
+        System.err.println(element.getErrorDescription() + " at " +
+                           EpigraphPsiUtil.getLocation(element, projectionString));
+      }
+      String psiDump = DebugUtil.psiToString(psiVarProjection, true, false).trim();
+      fail(psiDump);
+    }
+
+
+    OpOutputVarProjection varProjection = null;
+    try {
+      varProjection = OpOutputProjectionsPsiParser.parseVarProjection(
+          varDataType,
+          psiVarProjection,
+          resolver
+      );
+
+    } catch (PsiProcessingException e) {
+      e.printStackTrace();
+      System.err.println(e.getMessage() + " at " +
+                         EpigraphPsiUtil.getLocation(e.psi(), projectionString));
+      String psiDump = DebugUtil.psiToString(psiVarProjection, true, false).trim();
+      fail(psiDump);
+    }
+
+    String actual = varProjection.toString();
+    assertEquals("\n" + actual, expected, actual);
+//    assertEquals(expected.trim(), actual.trim());
   }
 
   private static String lines(String... lines) {

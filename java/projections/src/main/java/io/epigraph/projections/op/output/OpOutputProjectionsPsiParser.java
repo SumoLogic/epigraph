@@ -177,7 +177,7 @@ public class OpOutputProjectionsPsiParser {
       throws PsiProcessingException {
     return new OpOutputVarProjection(type, new OpOutputTagProjection(
         tag,
-        createDefaultModelProjection(tag.type, includeInDefault, location)
+        createDefaultModelProjection(tag.type, includeInDefault, null, null, location)
     ));
   }
 
@@ -217,7 +217,7 @@ public class OpOutputProjectionsPsiParser {
       case RECORD:
         @Nullable IdlOpOutputRecordModelProjection recordModelProjectionPsi = psi.getOpOutputRecordModelProjection();
         if (recordModelProjectionPsi == null)
-          return createDefaultModelProjection(type, includeInDefault, psi);
+          return createDefaultModelProjection(type, includeInDefault, params, customParams, psi);
         ensureModelKind(psi, TypeKind.RECORD);
         return parseRecordModelProjection(
             (RecordType) type,
@@ -230,7 +230,7 @@ public class OpOutputProjectionsPsiParser {
       case LIST:
         @Nullable IdlOpOutputListModelProjection listModelProjectionPsi = psi.getOpOutputListModelProjection();
         if (listModelProjectionPsi == null)
-          return createDefaultModelProjection(type, includeInDefault, psi);
+          return createDefaultModelProjection(type, includeInDefault, params, customParams, psi);
         ensureModelKind(psi, TypeKind.LIST);
         return parseListModelProjection(
             (ListType) type,
@@ -243,7 +243,7 @@ public class OpOutputProjectionsPsiParser {
       case MAP:
         @Nullable IdlOpOutputMapModelProjection mapModelProjectionPsi = psi.getOpOutputMapModelProjection();
         if (mapModelProjectionPsi == null)
-          return createDefaultModelProjection(type, includeInDefault, psi);
+          return createDefaultModelProjection(type, includeInDefault, params, customParams, psi);
         ensureModelKind(psi, TypeKind.MAP);
         throw new PsiProcessingException("Unsupported type kind: " + type.kind(), psi);
       case ENUM:
@@ -279,6 +279,8 @@ public class OpOutputProjectionsPsiParser {
   @NotNull
   private static OpOutputModelProjection<?> createDefaultModelProjection(@NotNull DatumType type,
                                                                          boolean includeInDefault,
+                                                                         @Nullable OpParams params,
+                                                                         @Nullable OpCustomParams customParams,
                                                                          @NotNull PsiElement location)
       throws PsiProcessingException {
 
@@ -286,8 +288,8 @@ public class OpOutputProjectionsPsiParser {
       case RECORD:
         return new OpOutputRecordModelProjection((RecordType) type,
                                                  includeInDefault,
-                                                 null,
-                                                 null,
+                                                 params,
+                                                 customParams,
                                                  null
         );
       case LIST:
@@ -311,8 +313,8 @@ public class OpOutputProjectionsPsiParser {
 
         return new OpOutputListModelProjection(listType,
                                                includeInDefault,
-                                               null,
-                                               null,
+                                               params,
+                                               customParams,
                                                itemVarProjection
         );
       case MAP:
@@ -322,7 +324,7 @@ public class OpOutputProjectionsPsiParser {
       case ENUM:
         throw new PsiProcessingException("Unsupported type kind: " + type.kind(), location);
       case PRIMITIVE:
-        return new OpOutputPrimitiveModelProjection((PrimitiveType) type, includeInDefault, null, null);
+        return new OpOutputPrimitiveModelProjection((PrimitiveType) type, includeInDefault, params, customParams);
       default:
         throw new PsiProcessingException("Unknown type kind: " + type.kind(), location);
     }
@@ -462,8 +464,8 @@ public class OpOutputProjectionsPsiParser {
 
     @Nullable IdlDatum defaultValuePsi = paramPsi.getDatum();
     @Nullable GDatum defaultValue = defaultValuePsi == null
-                                           ? null
-                                           : IdlGDataPsiParser.parseDatum(defaultValuePsi);
+                                    ? null
+                                    : IdlGDataPsiParser.parseDatum(defaultValuePsi);
 
     OpInputModelProjection<?, ?> paramModelProjection = OpInputProjectionsPsiParser.parseModelProjection(
         paramType,

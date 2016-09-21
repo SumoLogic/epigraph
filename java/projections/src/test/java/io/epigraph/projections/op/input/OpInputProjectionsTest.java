@@ -40,59 +40,24 @@ public class OpInputProjectionsTest {
 
 
     String expected = lines(
-        "var io.epigraph.tests.Person (",
-        "  id: +io.epigraph.tests.PersonId",
-        "  record:",
-        "    io.epigraph.tests.PersonRecord {",
-        "      fields: {",
-        "        +id:",
-        "          var io.epigraph.tests.PersonId (",
-        "            self: io.epigraph.tests.PersonId",
-        "          )",
-        "        +bestFriend:",
-        "          var io.epigraph.tests.Person (",
-        "            record:",
-        "              io.epigraph.tests.PersonRecord {",
-        "                fields: {",
-        "                  +id:",
-        "                    var io.epigraph.tests.PersonId (",
-        "                      self: io.epigraph.tests.PersonId",
-        "                    )",
-        "                  bestFriend:",
-        "                    var io.epigraph.tests.Person (",
-        "                      id:",
-        "                        io.epigraph.tests.PersonId",
-        "                        default: io.epigraph.tests.PersonId$Imm$Impl@123",
-        "                    )",
-        "                }",
+        ":(",
+        "  +id",
+        "  record",
+        "    (",
+        "      +id",
+        "      +bestFriend",
+        "        :record",
+        "          (",
+        "            +id",
+        "            bestFriend",
+        "              :id {",
+        "                default: io.epigraph.tests.PersonId$Builder@123",
         "              }",
         "          )",
-        "        friends:",
-        "          var list[polymorphic io.epigraph.tests.Person] (",
-        "            self:",
-        "              list[polymorphic io.epigraph.tests.Person] {",
-        "                items:",
-        "                  var io.epigraph.tests.Person (",
-        "                    id: +io.epigraph.tests.PersonId",
-        "                  )",
-        "              }",
-        "          )",
-        "      }",
-        "    }",
+        "      friends *( :+id )",
+        "    )",
         ")",
-        "~(",
-        "  var io.epigraph.tests.User (",
-        "    record:",
-        "      io.epigraph.tests.UserRecord {",
-        "        fields: {",
-        "          profile:",
-        "            var io.epigraph.tests.Url (",
-        "              self: io.epigraph.tests.Url",
-        "            )",
-        "        }",
-        "      }",
-        "  )",
-        ")"
+        "~io.epigraph.tests.User :record ( profile )"
     );
 
     testParsingVarProjection(
@@ -101,13 +66,131 @@ public class OpInputProjectionsTest {
     );
   }
 
-//  @Test
-  public void testParsingEmpty() throws PsiProcessingException {
+  @Test
+  public void testParseEmpty() throws PsiProcessingException {
     testParsingVarProjection(
         new DataType(false, Person.type, Person.id),
         ""
         ,
-        ""
+        ":id"
+    );
+  }
+
+  @Test
+  public void testParseDefault() throws PsiProcessingException {
+    testParsingVarProjection(
+        new DataType(false, Person.type, Person.id),
+        ":id { default: 123 }"
+        ,
+        lines(
+            ":id {",
+            "  default: io.epigraph.tests.PersonId$Builder@123",
+            "}"
+        )
+    );
+  }
+
+  @Test
+  public void testParseMultipleTags() throws PsiProcessingException {
+    testParsingVarProjection(
+        new DataType(false, Person.type, Person.id),
+        ":(id, record)"
+        ,
+        lines(
+            ":(",
+            "  id",
+            "  record ( )",
+            ")"
+        )
+    );
+  }
+
+  @Test
+  public void testParseTail() throws PsiProcessingException {
+    testParsingVarProjection(
+        new DataType(false, Person.type, Person.id),
+        "~io.epigraph.tests.User :id"
+        ,
+        ":id ~io.epigraph.tests.User :id"
+    );
+  }
+
+  @Test
+  public void testParseTails() throws PsiProcessingException {
+    testParsingVarProjection(
+        new DataType(false, Person.type, Person.id),
+        "~( io.epigraph.tests.User :id, io.epigraph.tests.Person :id )"
+        ,
+        lines(
+            ":id",
+            "~(",
+            "  io.epigraph.tests.User :id",
+            "  io.epigraph.tests.Person :id",
+            ")"
+        )
+    );
+  }
+
+  @Test
+  public void testParseCustomParams() throws PsiProcessingException {
+    testParsingVarProjection(
+        new DataType(false, Person.type, Person.id),
+        ":id { deprecated = true }"
+        ,
+        lines(
+            ":id {",
+            "  deprecated = true",
+            "}"
+        )
+    );
+  }
+
+  @Test
+  public void testParseRecordDefaultFields() throws PsiProcessingException {
+    testParsingVarProjection(
+        new DataType(false, Person.type, Person.id),
+        ":record (id, firstName)"
+        ,
+        ":record ( id firstName )"
+    );
+  }
+
+  @Test
+  public void testParseRecordFieldsWithStructure() throws PsiProcessingException {
+    testParsingVarProjection(
+        new DataType(false, Person.type, Person.id),
+        ":record ( id, bestFriend :record ( id ) )"
+        ,
+        ":record ( id bestFriend :record ( id ) )"
+    );
+  }
+
+  @Test
+  public void testParseRecordFieldsWithCustomParams() throws PsiProcessingException {
+    testParsingVarProjection(
+        new DataType(false, Person.type, Person.id),
+        ":record ( id, bestFriend { deprecated=true :record ( id ) } )"
+        ,
+        lines(
+            ":record",
+            "  (",
+            "    id",
+            "    bestFriend {",
+            "      deprecated = true",
+            "      :record ( id )",
+            "    }",
+            "  )"
+        )
+    );
+  }
+
+  @Test
+  public void testParseList() throws PsiProcessingException {
+    testParsingVarProjection(
+        new DataType(false, Person.type, Person.id),
+        ":record ( friends *( :id ) )"
+        ,
+        ":record ( friends *( :id ) )"
     );
   }
 
@@ -160,6 +243,7 @@ public class OpInputProjectionsTest {
 
     String actual = varProjection.toString();
     assertEquals("\n" + actual, expected, actual);
+//    assertEquals(expected.trim(), actual.trim());
   }
 
   private static String lines(String... lines) {

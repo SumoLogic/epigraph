@@ -3,6 +3,7 @@ package io.epigraph.projections.generic;
 import de.uka.ilkd.pp.DataLayouter;
 import de.uka.ilkd.pp.PrettyPrintable;
 import io.epigraph.types.Type;
+import io.epigraph.types.TypeKind;
 import io.epigraph.util.pp.DataPrettyPrinter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -65,23 +66,38 @@ public class GenericVarProjection<T extends GenericTagProjection<?>, S extends G
 
   @Override
   public <Exc extends Exception> void prettyPrint(DataLayouter<Exc> l) throws Exc {
-    // TODO treat single-branch/samo- vars in a special way?
-    l.beginCInd().print("var ").print(type.name().toString()).print(" (");
-    for (T tagProjection : tagProjections) {
-      l.nl().print(tagProjection);
+    if (type().kind() != TypeKind.UNION) {
+      // samovar
+      l.print(tagProjections.iterator().next().projection());
+    } else if (tagProjections.size() == 1) {
+      T tagProjection = tagProjections.iterator().next();
+      l.print(':').print(tagProjection);
+    } else if (tagProjections.isEmpty()) {
+      l.print(":()");
+    } else {
+      l.beginCInd();
+      l.print(":(");
+      for (T tagProjection : tagProjections) {
+        l.nl().print(tagProjection);
+      }
+      l.end().nl().print(")");
     }
-    l.end().brk().print(")");
 
     if (polymorphicTails != null && !polymorphicTails.isEmpty()) {
-      l.brk().beginCInd().print("~(");
-      boolean first = true;
-      for (GenericVarProjection tail : polymorphicTails) {
-        if (first) first = false;
-        else l.print(",");
-
-        l.brk().print(tail);
+      l.brk();
+      if (polymorphicTails.size() == 1) {
+        l.print('~');
+        S tail = polymorphicTails.iterator().next();
+        l.print(tail.type().name().toString());
+        l.print(' ').print(tail);
+      } else {
+        l.beginCInd();
+        l.print("~(");
+        for (GenericVarProjection tail : polymorphicTails) {
+          l.nl().print(tail.type().name().toString()).print(' ').print(tail);
+        }
+        l.end().nl().print(")");
       }
-      l.end().brk().print(")");
     }
   }
 
