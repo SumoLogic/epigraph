@@ -12,7 +12,7 @@ import java.util.*;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class OpParam implements PrettyPrintable { // rename to OpOutputParam?
+public class OpParam implements PrettyPrintable {
   @NotNull
   private final String name;
   @NotNull

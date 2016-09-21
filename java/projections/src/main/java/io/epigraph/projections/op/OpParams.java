@@ -14,7 +14,7 @@ import java.util.Objects;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class OpParams implements PrettyPrintable { // rename to OpOutputParams?
+public class OpParams implements PrettyPrintable {
   @NotNull
   private final Map<String, OpParam> params;
 
