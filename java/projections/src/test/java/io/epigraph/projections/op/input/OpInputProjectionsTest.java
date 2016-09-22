@@ -41,19 +41,11 @@ public class OpInputProjectionsTest {
 
     String expected = lines(
         ":(",
-        "  +id",
+        "  +id,",
         "  record",
         "    (",
-        "      +id",
-        "      +bestFriend",
-        "        :record",
-        "          (",
-        "            +id",
-        "            bestFriend",
-        "              :id {",
-        "                default: io.epigraph.tests.PersonId$Builder@123",
-        "              }",
-        "          )",
+        "      +id,",
+        "      +bestFriend :record ( +id, bestFriend :id { default: io.epigraph.tests.PersonId$Builder@123 } ),",
         "      friends *( :+id )",
         "    )",
         ") ~io.epigraph.tests.User :record ( profile )"
@@ -81,27 +73,13 @@ public class OpInputProjectionsTest {
         new DataType(false, Person.type, Person.id),
         ":id { default: 123 }"
         ,
-        lines(
-            ":id {",
-            "  default: io.epigraph.tests.PersonId$Builder@123",
-            "}"
-        )
+        ":id { default: io.epigraph.tests.PersonId$Builder@123 }"
     );
   }
 
   @Test
   public void testParseMultipleTags() throws PsiProcessingException {
-    testParsingVarProjection(
-        new DataType(false, Person.type, Person.id),
-        ":(id, record)"
-        ,
-        lines(
-            ":(",
-            "  id",
-            "  record ( )",
-            ")"
-        )
-    );
+    testParsingVarProjection(":( id, record )");
   }
 
   @Test
@@ -120,77 +98,44 @@ public class OpInputProjectionsTest {
         new DataType(false, Person.type, Person.id),
         "~( io.epigraph.tests.User :id, io.epigraph.tests.Person :id )"
         ,
-        lines(
-            ":id",
-            "~(",
-            "  io.epigraph.tests.User :id",
-            "  io.epigraph.tests.Person :id",
-            ")"
-        )
+        ":id ~( io.epigraph.tests.User :id, io.epigraph.tests.Person :id )"
     );
   }
 
   @Test
   public void testParseCustomParams() throws PsiProcessingException {
-    testParsingVarProjection(
-        new DataType(false, Person.type, Person.id),
-        ":id { deprecated = true }"
-        ,
-        lines(
-            ":id {",
-            "  deprecated = true",
-            "}"
-        )
-    );
+    testParsingVarProjection(":id { deprecated = true }");
   }
 
   @Test
   public void testParseRecordDefaultFields() throws PsiProcessingException {
-    testParsingVarProjection(
-        new DataType(false, Person.type, Person.id),
-        ":record (id, firstName)"
-        ,
-        ":record ( id firstName )"
-    );
+    testParsingVarProjection(":record ( id, firstName )");
   }
 
   @Test
   public void testParseRecordFieldsWithStructure() throws PsiProcessingException {
-    testParsingVarProjection(
-        new DataType(false, Person.type, Person.id),
-        ":record ( id, bestFriend :record ( id ) )"
-        ,
-        ":record ( id bestFriend :record ( id ) )"
-    );
+    testParsingVarProjection(":record ( id, bestFriend :record ( id ) )");
   }
 
   @Test
   public void testParseRecordFieldsWithCustomParams() throws PsiProcessingException {
-    testParsingVarProjection(
-        new DataType(false, Person.type, Person.id),
-        ":record ( id, bestFriend { deprecated=true :record ( id ) } )"
-        ,
-        lines(
-            ":record",
-            "  (",
-            "    id",
-            "    bestFriend {",
-            "      deprecated = true",
-            "      :record ( id )",
-            "    }",
-            "  )"
-        )
-    );
+    testParsingVarProjection(":record ( id, bestFriend { deprecated = true :record ( id ) } )");
   }
 
   @Test
   public void testParseList() throws PsiProcessingException {
+    testParsingVarProjection(":record ( friends *( :id ) )");
+  }
+
+  private void testParsingVarProjection(String str)
+      throws PsiProcessingException {
     testParsingVarProjection(
         new DataType(false, Person.type, Person.id),
-        ":record ( friends *( :id ) )"
+        str
         ,
-        ":record ( friends *( :id ) )"
+        str
     );
+
   }
 
   private void testParsingVarProjection(DataType varDataType, String projectionString, String expected)

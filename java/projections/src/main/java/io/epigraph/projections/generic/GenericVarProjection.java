@@ -77,27 +77,35 @@ public class GenericVarProjection<T extends GenericTagProjection<?>, S extends G
     } else {
       l.beginCInd();
       l.print(":(");
+      boolean first = true;
       for (T tagProjection : tagProjections) {
-        l.nl().print(tagProjection);
+        if (first) first = false;
+        else l.print(',');
+        l.brk().print(tagProjection);
       }
-      l.end().nl().print(")");
+      l.brk(1, -DataPrettyPrinter.DEFAULT_INDENTATION).end().print(")");
     }
 
     if (polymorphicTails != null && !polymorphicTails.isEmpty()) {
+      l.beginIInd();
       l.brk();
       if (polymorphicTails.size() == 1) {
         l.print('~');
         S tail = polymorphicTails.iterator().next();
         l.print(tail.type().name().toString());
-        l.print(' ').print(tail);
+        l.brk().print(tail);
       } else {
-        l.beginIInd();
+        l.beginCInd();
         l.print("~(");
+        boolean first = true;
         for (GenericVarProjection tail : polymorphicTails) {
-          l.nl().print(tail.type().name().toString()).print(' ').print(tail);
+          if (first) first = false;
+          else l.print(',');
+          l.brk().print(tail.type().name().toString()).brk().print(tail);
         }
-        l.end().nl().print(")");
+        l.brk(1, -DataPrettyPrinter.DEFAULT_INDENTATION).end().print(")");
       }
+      l.end();
     }
   }
 

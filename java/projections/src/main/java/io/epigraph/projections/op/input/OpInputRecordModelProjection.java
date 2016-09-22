@@ -4,6 +4,7 @@ import de.uka.ilkd.pp.DataLayouter;
 import io.epigraph.data.RecordDatum;
 import io.epigraph.projections.op.OpCustomParams;
 import io.epigraph.types.RecordType;
+import io.epigraph.util.pp.DataPrettyPrinter;
 import io.epigraph.util.pp.PrettyPrinterUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -90,10 +91,12 @@ public class OpInputRecordModelProjection extends OpInputModelProjection<RecordT
 
   @Override
   public <Exc extends Exception> void prettyPrint(DataLayouter<Exc> l) throws Exc {
-    l.print('(').beginCInd();
-
     if (fieldProjections != null) {
+      l.print('(').beginCInd();
+      boolean first = true;
       for (OpInputFieldProjection fieldProjection : fieldProjections) {
+        if (first) first = false;
+        else l.print(',');
         l.brk();
         if (fieldProjection.customParams() == null) {
           l.beginIInd();
@@ -102,18 +105,17 @@ public class OpInputRecordModelProjection extends OpInputModelProjection<RecordT
           PrettyPrinterUtil.printWithBrkIfNonEmpty(l, fieldProjection.projection());
           l.end();
         } else {
-          l.beginIInd();
+          l.beginCInd();
           if (fieldProjection.required()) l.print('+');
           l.print(fieldProjection.field().name());
           l.print(" {");
           //noinspection ConstantConditions
           l.print(fieldProjection.customParams());
-          PrettyPrinterUtil.printWithNlIfNonEmpty(l, fieldProjection.projection());
-          l.end().nl().print('}');
+          PrettyPrinterUtil.printWithBrkIfNonEmpty(l, fieldProjection.projection());
+          l.brk(1, -DataPrettyPrinter.DEFAULT_INDENTATION).end().print('}');
         }
       }
+      l.brk(1, -DataPrettyPrinter.DEFAULT_INDENTATION).end().print(')');
     }
-
-    l.end().brk().print(')');
   }
 }

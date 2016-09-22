@@ -212,11 +212,10 @@ public class OpOutputProjectionsTest {
         ") ~io.epigraph.tests.User :record (profile)"
     );
 
+
     String expected = lines(
-        ":(",
-        "  +id",
-        "  record ( +id +bestFriend :record ( +id bestFriend :id ) friends *( :+id ) )",
-        ") ~io.epigraph.tests.User :record ( profile )"
+        ":( +id, record ( +id, +bestFriend :record ( +id, bestFriend :id ), friends *( :+id ) ) ) ~io.epigraph.tests.User",
+        "  :record ( profile )"
     );
 
     testParsingVarProjection(
@@ -240,31 +239,15 @@ public class OpOutputProjectionsTest {
   public void testParseParam() throws PsiProcessingException {
     testParsingVarProjection(
         new DataType(false, Person.type, Person.id),
-        ":id { ;+param: io.epigraph.tests.UserId = 123 { deprecated = true } }"
-        ,
-        lines(
-            ":id {",
-            "  ;+param: io.epigraph.tests.UserId =",
-            "    io.epigraph.tests.UserId$Builder@123 {",
-            "      deprecated = true",
-            "    }",
-            "}"
-        )
+        ":id { ;+param: io.epigraph.tests.UserId = 123 { deprecated = true } }",
+        ":id { ;+param: io.epigraph.tests.UserId = io.epigraph.tests.UserId$Builder@123 { deprecated = true } }"
     );
   }
 
   @Test
   public void testParseMultipleTags() throws PsiProcessingException {
     testParsingVarProjection(
-        new DataType(false, Person.type, Person.id),
-        ":(id, record)"
-        ,
-        lines(
-            ":(",
-            "  id",
-            "  record ( )",
-            ")"
-        )
+        ":( id, record )"
     );
   }
 
@@ -284,66 +267,35 @@ public class OpOutputProjectionsTest {
         new DataType(false, Person.type, Person.id),
         "~( io.epigraph.tests.User :id, io.epigraph.tests.Person :id )"
         ,
-        lines(
-            ":id",
-            "~(",
-            "  io.epigraph.tests.User :id",
-            "  io.epigraph.tests.Person :id",
-            ")"
-        )
+        ":id ~( io.epigraph.tests.User :id, io.epigraph.tests.Person :id )"
     );
   }
 
   @Test
   public void testParseCustomParams() throws PsiProcessingException {
     testParsingVarProjection(
-        new DataType(false, Person.type, Person.id),
         ":id { deprecated = true }"
-        ,
-        lines(
-            ":id {",
-            "  deprecated = true",
-            "}"
-        )
     );
   }
 
   @Test
   public void testParseRecordDefaultFields() throws PsiProcessingException {
     testParsingVarProjection(
-        new DataType(false, Person.type, Person.id),
-        ":record (id, firstName)"
-        ,
-        ":record ( id firstName )"
+        ":record ( id, firstName )"
     );
   }
 
   @Test
   public void testParseRecordFieldsWithStructure() throws PsiProcessingException {
     testParsingVarProjection(
-        new DataType(false, Person.type, Person.id),
         ":record ( id, bestFriend :record ( id ) )"
-        ,
-        ":record ( id bestFriend :record ( id ) )"
     );
   }
 
   @Test
   public void testParseRecordFieldsWithCustomParams() throws PsiProcessingException {
     testParsingVarProjection(
-        new DataType(false, Person.type, Person.id),
-        ":record ( id, bestFriend { deprecated=true :record ( id ) } )"
-        ,
-        lines(
-            ":record",
-            "  (",
-            "    id",
-            "    bestFriend {",
-            "      deprecated = true",
-            "      :record ( id )",
-            "    }",
-            "  )"
-        )
+        ":record ( id, bestFriend { deprecated = true :record ( id ) } )"
     );
   }
 
@@ -481,6 +433,15 @@ public class OpOutputProjectionsTest {
     );
 
 //    System.out.println(personVarProjection);
+  }
+
+  private void testParsingVarProjection(String str) throws PsiProcessingException {
+    testParsingVarProjection(
+        new DataType(false, Person.type, Person.id),
+        str
+        ,
+        str
+    );
   }
 
   private void testParsingVarProjection(DataType varDataType, String projectionString, String expected)

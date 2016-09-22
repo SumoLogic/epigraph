@@ -14,12 +14,4 @@ public class PrettyPrinterUtil {
     if (!s.isEmpty()) l.brk();
     l.print(obj);
   }
-
-  public static <E extends Exception> void printWithNlIfNonEmpty(DataLayouter<E> l, Object obj)
-      throws E {
-
-    @NotNull String s = DataPrettyPrinter.prettyPrint(obj);
-    if (!s.isEmpty()) l.nl();
-    l.print(obj);
-  }
 }

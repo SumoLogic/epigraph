@@ -1,11 +1,8 @@
 package io.epigraph.projections.op.output;
 
-import de.uka.ilkd.pp.DataLayouter;
-import de.uka.ilkd.pp.PrettyPrintable;
 import io.epigraph.projections.op.OpCustomParams;
 import io.epigraph.projections.op.OpParams;
 import io.epigraph.types.RecordType;
-import io.epigraph.util.pp.DataPrettyPrinter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -14,7 +11,7 @@ import java.util.Objects;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class OpOutputFieldProjection implements PrettyPrintable {
+public class OpOutputFieldProjection {
   @NotNull
   private final RecordType.Field field;
   @Nullable
@@ -51,19 +48,6 @@ public class OpOutputFieldProjection implements PrettyPrintable {
   public boolean includeInDefault() { return includeInDefault; }
 
   @Override
-  public <Exc extends Exception> void prettyPrint(DataLayouter<Exc> l) throws Exc {
-    if (includeInDefault) l.print("+");
-    l.print(field.name());
-    if ((params != null && !params.isEmpty()) || (customParams != null && !customParams.isEmpty())) {
-      l.beginIInd().print(" {");
-      if (params != null) l.nl().print(params);
-      if (customParams != null) l.nl().print(customParams);
-      l.end().nl().print("}");
-    }
-    l.print(":").brk().beginIInd().ind().print(projection).end();
-  }
-
-  @Override
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
@@ -77,7 +61,4 @@ public class OpOutputFieldProjection implements PrettyPrintable {
 
   @Override
   public int hashCode() { return Objects.hash(field, params, customParams, projection, includeInDefault); }
-
-  @Override
-  public String toString() { return DataPrettyPrinter.prettyPrint(this); }
 }

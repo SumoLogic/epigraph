@@ -60,7 +60,7 @@ public class OpParams implements PrettyPrintable {
 
   @Override
   public <Exc extends Exception> void prettyPrint(DataLayouter<Exc> l) throws Exc {
-    for (OpParam param : params.values()) l.nl().print(param);
+    for (OpParam param : params.values()) l.brk().print(param);
   }
 
   @Override

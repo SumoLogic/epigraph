@@ -64,10 +64,10 @@ public class OpParam implements PrettyPrintable {
 
     OpCustomParams customParams = projection.customParams();
     if (customParams != null) {
-      l.beginIInd();
+      l.beginCInd();
       l.print(" {");
       l.print(customParams);
-      l.end().nl().print('}');
+      l.end().brk().print('}');
     }
 
     l.end();
