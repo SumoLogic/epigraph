@@ -22,6 +22,7 @@ import static org.junit.Assert.fail;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpInputProjectionsTest {
+  // todo add map tests when codegen is ready
   @Test
   public void testParsing1() throws PsiProcessingException {
     String projectionStr = lines(

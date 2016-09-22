@@ -272,6 +272,21 @@ public class OpOutputProjectionsPsiParser {
             recordModelProjectionPsi,
             typesResolver
         );
+      case MAP:
+        @Nullable IdlOpOutputMapModelProjection mapModelProjectionPsi = psi.getOpOutputMapModelProjection();
+        if (mapModelProjectionPsi == null)
+          return createDefaultModelProjection(type, includeInDefault, params, customParams, psi);
+        ensureModelKind(psi, TypeKind.MAP);
+
+        return parseMapModelProjection(
+            (MapType) type,
+            includeInDefault,
+            params,
+            customParams,
+            metaProjection,
+            mapModelProjectionPsi,
+            typesResolver
+        );
       case LIST:
         @Nullable IdlOpOutputListModelProjection listModelProjectionPsi = psi.getOpOutputListModelProjection();
         if (listModelProjectionPsi == null)
@@ -286,12 +301,6 @@ public class OpOutputProjectionsPsiParser {
             listModelProjectionPsi,
             typesResolver
         );
-      case MAP:
-        @Nullable IdlOpOutputMapModelProjection mapModelProjectionPsi = psi.getOpOutputMapModelProjection();
-        if (mapModelProjectionPsi == null)
-          return createDefaultModelProjection(type, includeInDefault, params, customParams, psi);
-        ensureModelKind(psi, TypeKind.MAP);
-        throw new PsiProcessingException("Unsupported type kind: " + type.kind(), psi);
       case ENUM:
         throw new PsiProcessingException("Unsupported type kind: " + type.kind(), psi);
       case PRIMITIVE:
@@ -344,12 +353,43 @@ public class OpOutputProjectionsPsiParser {
                                                  null,
                                                  null
         );
+      case MAP:
+        MapType mapType = (MapType) type;
+
+        final OpOutputKeyProjection keyProjection =
+            new OpOutputKeyProjection(OpOutputKeyProjection.Presence.OPTIONAL, null, null);
+
+        @NotNull DataType valueType = mapType.valueType();
+        Type.@Nullable Tag defaultValuesTag = valueType.defaultTag;
+
+        if (defaultValuesTag == null)
+          throw new PsiProcessingException(String.format(
+              "Can't create default projection for map type '%s, as it's value type '%s' doesn't have a default tag",
+              type.name(),
+              valueType.name
+          ), location);
+
+        final OpOutputVarProjection valueVarProjection = createDefaultVarProjection(
+            valueType.type,
+            defaultValuesTag,
+            includeInDefault,
+            location
+        );
+
+        return new OpOutputMapModelProjection(mapType,
+                                              includeInDefault,
+                                              params,
+                                              customParams,
+                                              null,
+                                              keyProjection,
+                                              valueVarProjection
+        );
       case LIST:
         ListType listType = (ListType) type;
         @NotNull DataType elementType = listType.elementType();
-        Type.@Nullable Tag defaultTag = elementType.defaultTag;
+        Type.@Nullable Tag defaultElementsTag = elementType.defaultTag;
 
-        if (defaultTag == null)
+        if (defaultElementsTag == null)
           throw new PsiProcessingException(String.format(
               "Can't create default projection for list type '%s, as it's element type '%s' doesn't have a default tag",
               type.name(),
@@ -358,7 +398,7 @@ public class OpOutputProjectionsPsiParser {
 
         final OpOutputVarProjection itemVarProjection = createDefaultVarProjection(
             elementType.type,
-            defaultTag,
+            defaultElementsTag,
             includeInDefault,
             location
         );
@@ -370,8 +410,6 @@ public class OpOutputProjectionsPsiParser {
                                                null,
                                                itemVarProjection
         );
-      case MAP:
-        throw new PsiProcessingException("Unsupported type kind: " + type.kind(), location);
       case UNION:
         throw new PsiProcessingException("Was expecting to get datum model kind, got: " + type.kind(), location);
       case ENUM:
@@ -459,6 +497,67 @@ public class OpOutputProjectionsPsiParser {
                                              customParams,
                                              metaProjection,
                                              fieldProjections
+    );
+  }
+
+  @NotNull
+  public static OpOutputMapModelProjection parseMapModelProjection(
+      @NotNull MapType type,
+      boolean includeInDefault,
+      @Nullable OpParams params,
+      @Nullable OpCustomParams customParams,
+      @Nullable OpOutputModelProjection<?> metaProjection,
+      @NotNull IdlOpOutputMapModelProjection psi,
+      @NotNull TypesResolver resolver)
+      throws PsiProcessingException {
+
+    @NotNull OpOutputKeyProjection keyProjection = parseKeyProjection(psi.getOpOutputKeyProjection(), resolver);
+
+    @Nullable IdlOpOutputVarProjection valueProjectionPsi = psi.getOpOutputVarProjection();
+    @NotNull OpOutputVarProjection valueProjection =
+        valueProjectionPsi == null
+        ? createDefaultVarProjection(type.valueType(),
+                                     keyProjection.presence() == OpOutputKeyProjection.Presence.REQUIRED,
+                                     psi
+        )
+        : parseVarProjection(type.valueType(), valueProjectionPsi, resolver);
+
+    return new OpOutputMapModelProjection(
+        type, includeInDefault, params, customParams, metaProjection, keyProjection, valueProjection
+    );
+  }
+
+  @NotNull
+  private static OpOutputKeyProjection parseKeyProjection(
+      @NotNull IdlOpOutputKeyProjection keyProjectionPsi,
+      @NotNull TypesResolver resolver) throws PsiProcessingException {
+
+    final OpOutputKeyProjection.Presence presence;
+
+    if (keyProjectionPsi.getForbidden() != null)
+      presence = OpOutputKeyProjection.Presence.FORBIDDEN;
+    else if (keyProjectionPsi.getRequried() != null)
+      presence = OpOutputKeyProjection.Presence.REQUIRED;
+    else
+      presence = OpOutputKeyProjection.Presence.OPTIONAL;
+
+    List<OpParam> params = null;
+    Map<String, GDataValue> customParamsMap = null;
+
+    for (IdlOpOutputKeyProjectionPart keyPart : keyProjectionPsi.getOpOutputKeyProjectionPartList()) {
+      @Nullable IdlOpParam paramPsi = keyPart.getOpParam();
+      if (paramPsi != null) {
+        if (params == null) params = new ArrayList<>(3);
+        params.add(parseParameter(paramPsi, resolver));
+      }
+
+      customParamsMap = parseCustomParam(customParamsMap, keyPart.getCustomParam());
+    }
+
+    return new OpOutputKeyProjection(
+        presence,
+        params == null ? null : new OpParams(params),
+        customParamsMap == null ? null : new OpCustomParams(customParamsMap)
     );
   }
 

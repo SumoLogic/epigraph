@@ -9,14 +9,16 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Map;
 
 /**
+ * Transforms raw schema-less {@code GData} instances to typed {@code Data}
+ * 
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class GDataToData {
+  // todo attach location info to GData instances and propagate it to ProcessingExceptions
+
   public static Data transform(@NotNull Type type,
                                @NotNull GDataValue gdata,
                                @NotNull TypesResolver resolver) throws ProcessingException {
-
-    //todo gdata can be one of GDataVar or GDataVarValue, either create var or samovar
 
     if (gdata instanceof GData) {
       GData gData = (GData) gdata;
@@ -87,6 +89,13 @@ public class GDataToData {
         );
 
       return transform((RecordType) type, (GRecordDatum) gdata, resolver);
+    } else if (gdata instanceof GMapDatum) {
+      if (!(type instanceof MapType))
+        throw new ProcessingException(
+            String.format("Can't transform map value '%s' into '%s'", gdata, type.name())
+        );
+
+      return transform((MapType) type, (GMapDatum) gdata, resolver);
     } else if (gdata instanceof GListDatum) {
       if (!(type instanceof ListType))
         throw new ProcessingException(
@@ -95,7 +104,7 @@ public class GDataToData {
 
       return transform((ListType) type, (GListDatum) gdata, resolver);
     } else {
-      // TODO Map, Enum
+      // TODO Enum
       throw new ProcessingException(String.format("Don't know how to handle '%s'", type.getClass().getName()));
     }
   }
@@ -111,7 +120,6 @@ public class GDataToData {
     @NotNull RecordDatum.Builder builder = type.createBuilder();
 
     for (Map.Entry<String, GDataValue> entry : gdata.fields().entrySet()) {
-      // todo
       String fieldName = entry.getKey();
       RecordType.Field field = type.fieldsMap().get(fieldName);
 
@@ -120,14 +128,34 @@ public class GDataToData {
 
       Data fieldData = transform(field.dataType.type, entry.getValue(), resolver);
 
-      // todo should take non-builder
-//      builder._raw().setData(field, fieldData);
+      builder._raw().setData(field, fieldData);
     }
 
     return builder;
   }
 
-  // todo map
+  public static MapDatum transform(@NotNull MapType type,
+                                   @NotNull GMapDatum gdata,
+                                   @NotNull TypesResolver resolver) throws ProcessingException {
+    @Nullable Fqn typeRef = gdata.typeRef();
+    if (typeRef != null) type = resolveType(resolver, typeRef, MapType.class);
+
+    @NotNull DatumType keyType = type.keyType();
+    @NotNull Type valueType = type.valueType().type;
+    @NotNull MapDatum.Builder builder = type.createBuilder();
+
+    for (Map.Entry<GDatum, GDataValue> entry : gdata.entries().entrySet()) {
+      @Nullable Datum key = transformDatum(keyType, entry.getKey(), resolver);
+      if (key == null)
+        throw new ProcessingException("'" + type.name() + "': Null keys in maps not allowed");
+
+      Data value = transform(valueType, entry.getValue(), resolver);
+      
+      builder._raw().elements().put(key.toImmutable(), value);
+    }
+
+    return builder;
+  }
 
   public static ListDatum transform(@NotNull ListType type,
                                     @NotNull GListDatum gdata,
@@ -139,19 +167,15 @@ public class GDataToData {
     @NotNull ListDatum.Builder builder = type.createBuilder();
 
     for (GDataValue gitem : gdata.values()) {
-
       Data item = transform(elementType, gitem, resolver);
-
-      // todo shouldn't take builders..
-//      builder._raw().elements().add(
-//data
-//      );
+      builder._raw().elements().add(item);
     }
 
     return builder;
   }
 
   // todo enum
+
   public static PrimitiveDatum<?> transform(@NotNull PrimitiveType<?> type,
                                             @NotNull GPrimitiveDatum gdata,
                                             @NotNull TypesResolver resolver) throws ProcessingException {

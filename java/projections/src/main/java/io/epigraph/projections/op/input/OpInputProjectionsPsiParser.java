@@ -1,10 +1,7 @@
 package io.epigraph.projections.op.input;
 
 import com.intellij.psi.PsiElement;
-import io.epigraph.data.Datum;
-import io.epigraph.data.ListDatum;
-import io.epigraph.data.PrimitiveDatum;
-import io.epigraph.data.RecordDatum;
+import io.epigraph.data.*;
 import io.epigraph.gdata.*;
 import io.epigraph.idl.gdata.IdlGDataPsiParser;
 import io.epigraph.idl.parser.psi.*;
@@ -26,8 +23,6 @@ import static io.epigraph.projections.ProjectionPsiParserUtil.*;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpInputProjectionsPsiParser {
-  // todo custom parameters support
-
   public static OpInputVarProjection parseVarProjection(@NotNull DataType dataType,
                                                         @NotNull IdlOpInputVarProjection psi,
                                                         @NotNull TypesResolver typesResolver)
@@ -270,6 +265,22 @@ public class OpInputProjectionsPsiParser {
             recordModelProjectionPsi,
             typesResolver
         );
+      case MAP:
+        @Nullable IdlOpInputMapModelProjection mapModelProjectionPsi = psi.getOpInputMapModelProjection();
+        if (mapModelProjectionPsi == null)
+          return createDefaultModelProjection(type, required, defaultValue, customParams, psi, typesResolver);
+        ensureModelKind(psi, TypeKind.MAP);
+        GMapDatum defaultMapData = coerceDefault(defaultValue, GMapDatum.class, psi);
+
+        return parseMapModelProjection(
+            (MapType) type,
+            required,
+            defaultMapData,
+            customParams,
+            metaProjection,
+            mapModelProjectionPsi,
+            typesResolver
+        );
       case LIST:
         @Nullable IdlOpInputListModelProjection listModelProjectionPsi = psi.getOpInputListModelProjection();
         if (listModelProjectionPsi == null)
@@ -286,12 +297,6 @@ public class OpInputProjectionsPsiParser {
             listModelProjectionPsi,
             typesResolver
         );
-      case MAP:
-        @Nullable IdlOpInputMapModelProjection mapModelProjectionPsi = psi.getOpInputMapModelProjection();
-        if (mapModelProjectionPsi == null)
-          return createDefaultModelProjection(type, required, defaultValue, customParams, psi, typesResolver);
-        ensureModelKind(psi, TypeKind.MAP);
-        throw new PsiProcessingException("Unsupported type kind: " + type.kind(), psi);
       case ENUM:
         throw new PsiProcessingException("Unsupported type kind: " + type.kind(), psi);
       case PRIMITIVE:
@@ -358,12 +363,39 @@ public class OpInputProjectionsPsiParser {
                                                 null,
                                                 null
         );
+      case MAP:
+        MapType mapType = (MapType) type;
+
+        @NotNull DataType valueType = mapType.valueType();
+        Type.@Nullable Tag defaultValuesTag = valueType.defaultTag;
+
+        if (defaultValuesTag == null)
+          throw new PsiProcessingException(String.format(
+              "Can't create default projection for map type '%s, as it's value type '%s' doesn't have a default tag",
+              type.name(),
+              valueType.name
+          ), location);
+
+        final OpInputVarProjection valueVarProjection = createDefaultVarProjection(
+            valueType.type,
+            defaultValuesTag,
+            required,
+            location
+        );
+
+        return new OpInputMapModelProjection(mapType,
+                                             required,
+                                             (MapDatum) defaultDatum,
+                                             customParams,
+                                             null,
+                                             valueVarProjection
+        );
       case LIST:
         ListType listType = (ListType) type;
         @NotNull DataType elementType = listType.elementType();
-        Type.@Nullable Tag defaultTag = elementType.defaultTag;
+        Type.@Nullable Tag defaultElementsTag = elementType.defaultTag;
 
-        if (defaultTag == null)
+        if (defaultElementsTag == null)
           throw new PsiProcessingException(String.format(
               "Can't create default projection for list type '%s, as it's element type '%s' doesn't have a default tag",
               type.name(),
@@ -372,7 +404,7 @@ public class OpInputProjectionsPsiParser {
 
         final OpInputVarProjection itemVarProjection = createDefaultVarProjection(
             elementType.type,
-            defaultTag,
+            defaultElementsTag,
             required,
             location
         );
@@ -384,9 +416,6 @@ public class OpInputProjectionsPsiParser {
                                               null,
                                               itemVarProjection
         );
-      case MAP:
-        // todo
-        throw new PsiProcessingException("Unsupported type kind: " + type.kind(), location);
       case UNION:
         throw new PsiProcessingException("Was expecting to get datum model kind, got: " + type.kind(), location);
       case ENUM:
@@ -474,6 +503,40 @@ public class OpInputProjectionsPsiParser {
                                             customParams,
                                             metaProjection,
                                             fieldProjections
+    );
+  }
+
+  @NotNull
+  public static OpInputMapModelProjection parseMapModelProjection(
+      @NotNull MapType type,
+      boolean required,
+      @Nullable GMapDatum defaultValue,
+      @Nullable OpCustomParams customParams,
+      @Nullable OpInputModelProjection<?, ?> metaProjection,
+      @NotNull IdlOpInputMapModelProjection psi,
+      @NotNull TypesResolver resolver)
+      throws PsiProcessingException {
+
+    MapDatum defaultDatum = null;
+    if (defaultValue != null) {
+      try {
+        defaultDatum = GDataToData.transform(type, defaultValue, resolver);
+      } catch (GDataToData.ProcessingException e) {
+        throw new PsiProcessingException(e, psi);
+      }
+    }
+
+    @Nullable IdlOpInputVarProjection valueProjectionPsi = psi.getOpInputVarProjection();
+    @NotNull OpInputVarProjection valueProjection =
+        valueProjectionPsi == null
+        ? createDefaultVarProjection(type.valueType(),
+                                     false,
+                                     psi
+        )
+        : parseVarProjection(type.valueType(), valueProjectionPsi, resolver);
+
+    return new OpInputMapModelProjection(
+        type, required, defaultDatum, customParams, metaProjection, valueProjection
     );
   }
 

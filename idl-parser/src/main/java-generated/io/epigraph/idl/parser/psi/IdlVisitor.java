@@ -87,10 +87,6 @@ public class IdlVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitOpInputKeyProjectionPart(@NotNull IdlOpInputKeyProjectionPart o) {
-    visitPsiElement(o);
-  }
-
   public void visitOpInputListModelProjection(@NotNull IdlOpInputListModelProjection o) {
     visitPsiElement(o);
   }

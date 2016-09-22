@@ -27,6 +27,7 @@ import static org.junit.Assert.fail;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpOutputProjectionsTest {
+  // todo add map tests when codegen is ready
   @Test
   public void testRecursiveFieldProjection() {
     OpOutputRecordModelProjection recursivePersonRecordProjection = new OpOutputRecordModelProjection(

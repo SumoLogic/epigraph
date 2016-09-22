@@ -28,20 +28,14 @@ public class IdlOpInputKeyProjectionImpl extends ASTWrapperPsiElement implements
 
   @Override
   @NotNull
-  public List<IdlOpInputKeyProjectionPart> getOpInputKeyProjectionPartList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, IdlOpInputKeyProjectionPart.class);
-  }
-
-  @Override
-  @NotNull
   public PsiElement getBracketLeft() {
     return findNotNullChildByType(I_BRACKET_LEFT);
   }
 
   @Override
-  @Nullable
+  @NotNull
   public PsiElement getBracketRight() {
-    return findChildByType(I_BRACKET_RIGHT);
+    return findNotNullChildByType(I_BRACKET_RIGHT);
   }
 
 }

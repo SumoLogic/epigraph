@@ -8,12 +8,9 @@ import com.intellij.psi.PsiElement;
 public interface IdlOpInputKeyProjection extends PsiElement {
 
   @NotNull
-  List<IdlOpInputKeyProjectionPart> getOpInputKeyProjectionPartList();
-
-  @NotNull
   PsiElement getBracketLeft();
 
-  @Nullable
+  @NotNull
   PsiElement getBracketRight();
 
 }

@@ -210,8 +210,7 @@ opInputListModelProjection ::= '*' '(' opInputVarProjection ')' { pin=1 }
 
 // op input map
 opInputMapModelProjection ::= opInputKeyProjection '(' opInputVarProjection ')' { pin=1 }
-opInputKeyProjection ::= '[' (opInputKeyProjectionPart ','?)* ']' {pin=1}
-opInputKeyProjectionPart ::= 'forbidden' | 'required' | customParam
+opInputKeyProjection ::= '[' ']'
 
 //opInputPrimitiveModelProjection ::= 'primitive' // ?
 //opInputEnumModelProjection ::= 'enum' // ?
