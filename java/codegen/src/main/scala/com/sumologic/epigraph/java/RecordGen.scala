@@ -307,7 +307,7 @@ ${  f.effectiveDefaultTagName match { // default tag (implied or explicit, if an
     /** Returns `${f.name}` field entry${vt(f.typeRef, s" for default `$dtn` tag", "")}. */
     @Override
     public @Nullable ${lqn(tt(f.typeRef, dtn), t)}.Value get${up(f.name)}$$() {
-      return (${lqn(tt(f.typeRef, dtn), t)}.Builder.Value) _raw().getValue($ln.${jn(f.name)}, ${dttr(f.valueDataType, dtn, t)});
+      return (${lqn(tt(f.typeRef, dtn), t)}.Value) _raw().getValue($ln.${jn(f.name)}, ${dttr(f.valueDataType, dtn, t)});
     }
 """
     }

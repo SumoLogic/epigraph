@@ -13,7 +13,7 @@ public interface Val { // TODO rename to TagEntry?
 
   @Nullable Datum getDatum();
 
-  @Nullable ErrorValue getError();
+  @Nullable ErrorValue getError(); // TODO isError()?
 
   @NotNull Val.Imm toImmutable();
 

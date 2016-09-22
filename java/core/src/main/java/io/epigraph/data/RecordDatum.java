@@ -3,6 +3,7 @@
 package io.epigraph.data;
 
 import io.epigraph.errors.ErrorValue;
+import io.epigraph.types.DatumType;
 import io.epigraph.types.RecordType;
 import io.epigraph.types.RecordType.Field;
 import io.epigraph.types.Type.Tag;
@@ -16,6 +17,9 @@ import java.util.function.Function;
 
 
 public interface RecordDatum extends Datum {
+
+  @Override
+  @NotNull RecordType type();
 
   @Override
   @NotNull RecordDatum.Imm toImmutable();
