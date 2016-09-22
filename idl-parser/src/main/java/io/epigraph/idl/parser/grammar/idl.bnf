@@ -161,6 +161,7 @@ opOutputFieldProjectionBodyPart ::= opParam | customParam
 // op output list
 opOutputListModelProjection ::= '*' '(' opOutputVarProjection ')' { pin=1 }
 
+// op output map
 opOutputMapModelProjection ::= opOutputKeyProjection '(' opOutputVarProjection ')' { pin=1 }
 opOutputKeyProjection ::= '[' ('required' ','?| 'forbidden' ','?)? (opOutputKeyProjectionPart ','?)* ']' {pin=1}
 opOutputKeyProjectionPart ::= opParam | customParam
@@ -207,6 +208,7 @@ opInputFieldProjectionBodyPart ::= customParam
 // op input list
 opInputListModelProjection ::= '*' '(' opInputVarProjection ')' { pin=1 }
 
+// op input map
 opInputMapModelProjection ::= opInputKeyProjection '(' opInputVarProjection ')' { pin=1 }
 opInputKeyProjection ::= '[' (opInputKeyProjectionPart ','?)* ']' {pin=1}
 opInputKeyProjectionPart ::= 'forbidden' | 'required' | customParam

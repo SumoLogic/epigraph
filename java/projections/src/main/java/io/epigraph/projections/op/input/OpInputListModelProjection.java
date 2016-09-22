@@ -4,6 +4,7 @@ import de.uka.ilkd.pp.DataLayouter;
 import io.epigraph.data.ListDatum;
 import io.epigraph.projections.op.OpCustomParams;
 import io.epigraph.types.ListType;
+import io.epigraph.util.pp.DataPrettyPrinter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -48,6 +49,6 @@ public class OpInputListModelProjection extends OpInputModelProjection<ListType,
     l.beginIInd();
     l.print("*(").brk();
     l.print(itemsProjection());
-    l.end().brk().print(')');
+    l.brk(1, -DataPrettyPrinter.DEFAULT_INDENTATION).end().print(')');
   }
 }

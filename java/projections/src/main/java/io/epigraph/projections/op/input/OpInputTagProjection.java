@@ -3,6 +3,7 @@ package io.epigraph.projections.op.input;
 import de.uka.ilkd.pp.DataLayouter;
 import io.epigraph.projections.generic.GenericTagProjection;
 import io.epigraph.types.Type;
+import io.epigraph.util.pp.DataPrettyPrinter;
 import io.epigraph.util.pp.PrettyPrinterUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -40,11 +41,11 @@ public class OpInputTagProjection extends GenericTagProjection<OpInputModelProje
 
       if (projection().customParams() != null)
         //noinspection ConstantConditions
-        l.beginCInd(0).print(projection().customParams()).end();
+        l.print(projection().customParams());
 
       PrettyPrinterUtil.printWithBrkIfNonEmpty(l, projection());
 
-      l.end().brk().print('}');
+      l.brk(1, -DataPrettyPrinter.DEFAULT_INDENTATION).end().print('}');
     }
   }
 }

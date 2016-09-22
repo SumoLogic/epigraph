@@ -67,7 +67,7 @@ public class OpParam implements PrettyPrintable {
       l.beginCInd();
       l.print(" {");
       l.print(customParams);
-      l.end().brk().print('}');
+      l.brk(1, -DataPrettyPrinter.DEFAULT_INDENTATION).end().print('}');
     }
 
     l.end();
