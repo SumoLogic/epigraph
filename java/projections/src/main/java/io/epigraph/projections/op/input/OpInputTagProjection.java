@@ -45,7 +45,7 @@ public class OpInputTagProjection extends GenericTagProjection<OpInputModelProje
 
       PrettyPrinterUtil.printWithBrkIfNonEmpty(l, projection());
 
-      l.brk(1, -DataPrettyPrinter.DEFAULT_INDENTATION).end().print('}');
+      l.brk(1, -l.getDefaultIndentation()).end().print('}');
     }
   }
 }

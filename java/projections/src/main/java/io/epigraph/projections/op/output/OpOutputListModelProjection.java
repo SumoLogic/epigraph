@@ -49,6 +49,6 @@ public class OpOutputListModelProjection extends OpOutputModelProjection<ListTyp
     l.beginIInd();
     l.print("*(").brk();
     l.print(itemsProjection());
-    l.brk(1, -DataPrettyPrinter.DEFAULT_INDENTATION).end().print(')');
+    l.brk(1, -l.getDefaultIndentation()).end().print(')');
   }
 }

@@ -50,6 +50,6 @@ public class OpInputMapModelProjection extends OpInputModelProjection<MapType, M
 
     l.print("[](").brk();
     l.print(itemsProjection());
-    l.brk(1, -DataPrettyPrinter.DEFAULT_INDENTATION).end().print(')');
+    l.brk(1, -l.getDefaultIndentation()).end().print(')');
   }
 }

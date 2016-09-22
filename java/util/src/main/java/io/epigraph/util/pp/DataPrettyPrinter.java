@@ -6,8 +6,8 @@ import org.jetbrains.annotations.NotNull;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class DataPrettyPrinter {
-  public static final int DEFAULT_LINE_WIDTH = 120;
-  public static final int DEFAULT_INDENTATION = 2;
+  private static final int DEFAULT_LINE_WIDTH = 120;
+  private static final int DEFAULT_INDENTATION = 2;
 
   @NotNull
   public static String prettyPrint(Object o) {

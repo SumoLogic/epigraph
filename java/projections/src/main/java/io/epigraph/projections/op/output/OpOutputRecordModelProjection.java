@@ -112,10 +112,10 @@ public class OpOutputRecordModelProjection extends OpOutputModelProjection<Recor
           //noinspection ConstantConditions
           l.print(fieldProjection.customParams());
           PrettyPrinterUtil.printWithBrkIfNonEmpty(l, fieldProjection.projection());
-          l.brk(1, -DataPrettyPrinter.DEFAULT_INDENTATION).end().print('}');
+          l.brk(1, -l.getDefaultIndentation()).end().print('}');
         }
       }
-      l.brk(1, -DataPrettyPrinter.DEFAULT_INDENTATION).end().print(')');
+      l.brk(1, -l.getDefaultIndentation()).end().print(')');
     }
   }
 }
