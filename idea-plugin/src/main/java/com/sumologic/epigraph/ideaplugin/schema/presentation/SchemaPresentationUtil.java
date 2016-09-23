@@ -36,7 +36,14 @@ public class SchemaPresentationUtil {
   public static final Icon OVERRIDEN_TAG_GUTTER_ICON = addOverlay(AllIcons.Gutter.ImplementedMethod);
   public static final Icon OVERRIDING_TAG_GUTTER_ICON = addOverlay(AllIcons.Gutter.ImplementingMethod);
 
+  public static final Icon TAG_ICON = AllIcons.Nodes.Function;
+  public static final Icon FIELD_ICON = AllIcons.Nodes.Field;
+  public static final Icon CUSTOM_PROPERTY_ICON = AllIcons.Nodes.Annotationtype;
+  public static final Icon ENUM_MEMBER_ICON = AllIcons.Nodes.Property;
+
+  // causes deadlocks?
   private static Icon addOverlay(@NotNull Icon i) { return IconUtil.addText(i, OVERLAY); }
+//  private static Icon addOverlay(@NotNull Icon i) { return i; }
 
   @Nullable
   public static String getName(@NotNull PsiNamedElement element, boolean qualified) {
@@ -70,11 +77,10 @@ public class SchemaPresentationUtil {
 
     if (element instanceof SchemaSupplementDef) return addOverlay(AllIcons.Nodes.Aspect);
 
-    if (element instanceof SchemaCustomParam) return AllIcons.Nodes.Annotationtype;
-    if (element instanceof SchemaFieldDecl) return AllIcons.Nodes.Field;
-    if (element instanceof SchemaEnumMemberDecl) return AllIcons.Nodes.Property;
-    if (element instanceof SchemaVarTagDecl)
-      return AllIcons.Nodes.Function; 
+    if (element instanceof SchemaCustomParam) return CUSTOM_PROPERTY_ICON;
+    if (element instanceof SchemaFieldDecl) return FIELD_ICON;
+    if (element instanceof SchemaEnumMemberDecl) return ENUM_MEMBER_ICON;
+    if (element instanceof SchemaVarTagDecl) return TAG_ICON;
 
     // TODO icons for all!
     return null;

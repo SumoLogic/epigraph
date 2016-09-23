@@ -18,8 +18,10 @@ dependencies {
 apply plugin: 'org.jetbrains.intellij'
 intellij {
   version ideaVersion
+  type ideaType
   pluginName 'Epigraph'
   downloadSources Boolean.valueOf(sources)
   sameSinceUntilBuild Boolean.valueOf(isEAP)
+  plugins = [ 'uml' ]
   // alternativeIdeaPath localIdePath
 }

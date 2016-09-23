@@ -8,6 +8,8 @@
       Epigraph framework support
     ]]></description>
 
+  <depends optional="true" config-file="plugin-uml.xml">com.intellij.diagram</depends>
+
   <change-notes><![CDATA[
       Initial release.
     ]]>
