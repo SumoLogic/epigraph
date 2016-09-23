@@ -23,7 +23,11 @@ public class DataPrinter<Exc extends Exception> {
 
   public final boolean withTypes;
 
-  private final Map<Datum, Boolean> visiting = new IdentityHashMap<>();
+  private final Map<Datum, Integer> visiting = new IdentityHashMap<>();
+
+  private int lastId = 0;
+
+  private final Integer UNASSIGNED_ID = lastId;
 
   public DataPrinter(@NotNull Layouter<Exc> lo, boolean withTypes) {
     this.lo = lo;
@@ -78,7 +82,7 @@ public class DataPrinter<Exc extends Exception> {
       if (withTypes && datum != null) lo.print("(").print(value.getDatum().type().name().toString()).print(") ");
       print(datum);
     } else {
-      lo.print("!").print(error.toString()); // TODO
+      lo.print("!").print(error.toString()); // TODO?
     }
   }
 
@@ -102,7 +106,7 @@ public class DataPrinter<Exc extends Exception> {
   }
 
   public void print(@NotNull RecordDatum datum) throws Exc {
-    if (visiting.put(datum, Boolean.TRUE) != null) { lo.print("{ ... }"); } else try {
+    if (enterSelf(datum, "...", "")) try {
       lo.print("{").beginCInd();
       RecordDatum.Raw raw = datum._raw();
       boolean first = true;
@@ -117,11 +121,11 @@ public class DataPrinter<Exc extends Exception> {
       }
       if (!first) lo.end();
       lo.brk(1, -lo.getDefaultIndentation()).print("}").end();
-    } finally { visiting.remove(datum); }
+    } finally { leaveSelf(datum); }
   }
 
   public void print(@NotNull ListDatum datum) throws Exc {
-    if (visiting.put(datum, Boolean.TRUE) != null) { lo.print("[ ... ]"); } else try {
+    if (enterSelf(datum, "...", "")) try {
       lo.print("[").beginCInd();
       ListDatum.Raw raw = datum._raw();
       boolean first = true;
@@ -133,11 +137,11 @@ public class DataPrinter<Exc extends Exception> {
       }
       if (!first) lo.end();
       lo.brk(1, -lo.getDefaultIndentation()).print("]").end();
-    } finally { visiting.remove(datum); }
+    } finally { leaveSelf(datum); }
   }
 
   public void print(@NotNull MapDatum datum) throws Exc {
-    if (visiting.put(datum, Boolean.TRUE) != null) { lo.print("( ... )"); } else try {
+    if (enterSelf(datum, "...", "")) try {
       lo.print("(").beginCInd();
       MapDatum.Raw raw = datum._raw();
       boolean first = true;
@@ -151,7 +155,27 @@ public class DataPrinter<Exc extends Exception> {
       }
       if (!first) lo.end();
       lo.brk(1, -lo.getDefaultIndentation()).print(")").end();
-    } finally { visiting.remove(datum); }
+    } finally { leaveSelf(datum); }
+  }
+
+  private boolean enterSelf(@NotNull Datum datum, @NotNull String left, @NotNull String right) throws Exc {
+    Integer selfId = visiting.get(datum);
+    if (selfId == null) {
+      visiting.put(datum, UNASSIGNED_ID);
+      return true;
+    } else {
+      if (selfId == UNASSIGNED_ID) {
+        selfId = ++lastId;
+        visiting.put(datum, selfId);
+      }
+      lo.print(left).print("@").print(selfId.toString()).print(right);
+      return false;
+    }
+  }
+
+  private void leaveSelf(@NotNull Datum datum) throws Exc {
+    Integer selfId = visiting.remove(datum);
+    if (selfId != null && selfId != UNASSIGNED_ID) lo.print("@").print(selfId.toString());
   }
 
 }
