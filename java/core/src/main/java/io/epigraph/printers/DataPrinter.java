@@ -106,7 +106,7 @@ public class DataPrinter<Exc extends Exception> {
   }
 
   public void print(@NotNull RecordDatum datum) throws Exc {
-    if (enterSelf(datum, "...", "")) try {
+    if (enter(datum)) try {
       lo.print("{").beginCInd();
       RecordDatum.Raw raw = datum._raw();
       boolean first = true;
@@ -121,11 +121,11 @@ public class DataPrinter<Exc extends Exception> {
       }
       if (!first) lo.end();
       lo.brk(1, -lo.getDefaultIndentation()).print("}").end();
-    } finally { leaveSelf(datum); }
+    } finally { leave(datum); }
   }
 
   public void print(@NotNull ListDatum datum) throws Exc {
-    if (enterSelf(datum, "...", "")) try {
+    if (enter(datum)) try {
       lo.print("[").beginCInd();
       ListDatum.Raw raw = datum._raw();
       boolean first = true;
@@ -137,11 +137,11 @@ public class DataPrinter<Exc extends Exception> {
       }
       if (!first) lo.end();
       lo.brk(1, -lo.getDefaultIndentation()).print("]").end();
-    } finally { leaveSelf(datum); }
+    } finally { leave(datum); }
   }
 
   public void print(@NotNull MapDatum datum) throws Exc {
-    if (enterSelf(datum, "...", "")) try {
+    if (enter(datum)) try {
       lo.print("(").beginCInd();
       MapDatum.Raw raw = datum._raw();
       boolean first = true;
@@ -155,10 +155,10 @@ public class DataPrinter<Exc extends Exception> {
       }
       if (!first) lo.end();
       lo.brk(1, -lo.getDefaultIndentation()).print(")").end();
-    } finally { leaveSelf(datum); }
+    } finally { leave(datum); }
   }
 
-  private boolean enterSelf(@NotNull Datum datum, @NotNull String left, @NotNull String right) throws Exc {
+  private boolean enter(@NotNull Datum datum) throws Exc {
     Integer selfId = visiting.get(datum);
     if (selfId == null) {
       visiting.put(datum, UNASSIGNED_ID);
@@ -168,12 +168,12 @@ public class DataPrinter<Exc extends Exception> {
         selfId = ++lastId;
         visiting.put(datum, selfId);
       }
-      lo.print(left).print("@").print(selfId.toString()).print(right);
+      lo.print("...@").print(selfId.toString());
       return false;
     }
   }
 
-  private void leaveSelf(@NotNull Datum datum) throws Exc {
+  private void leave(@NotNull Datum datum) throws Exc {
     Integer selfId = visiting.remove(datum);
     if (selfId != null && selfId != UNASSIGNED_ID) lo.print("@").print(selfId.toString());
   }
