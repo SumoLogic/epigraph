@@ -1,6 +1,7 @@
 package io.epigraph.projections.generic;
 
 import de.uka.ilkd.pp.Layouter;
+import io.epigraph.gdata.GDataPrettyPrinter;
 import io.epigraph.gdata.GDataValue;
 import io.epigraph.printers.DataPrinter;
 import io.epigraph.projections.op.OpCustomParams;
@@ -25,6 +26,8 @@ public abstract class GenericProjectionsPrettyPrinter<
   protected final Layouter<E> l;
   @NotNull
   protected DataPrinter<E> dataPrinter;
+  @NotNull
+  protected GDataPrettyPrinter<E> gdataPrettyPrinter;
 
   private int nextRefNumber = 1;
   private Map<GenericVarProjection<T, S>, Integer> varRefs = new HashMap<>();
@@ -33,6 +36,7 @@ public abstract class GenericProjectionsPrettyPrinter<
   protected GenericProjectionsPrettyPrinter(@NotNull Layouter<E> layouter) {
     l = layouter;
     dataPrinter = new DataPrinter<>(l);
+    gdataPrettyPrinter = new GDataPrettyPrinter<>(l);
   }
 
   public void print(@NotNull GenericVarProjection<T, S> p) throws E {
@@ -110,8 +114,8 @@ public abstract class GenericProjectionsPrettyPrinter<
   protected void print(@NotNull OpCustomParams cp) throws E {
     l.beginCInd(0);
     for (Map.Entry<String, GDataValue> entry : cp.params().entrySet()) {
-      // todo pretty printer for gdata
-      l.brk().print(entry.getKey()).brk().print("=").brk().print(entry.getValue().toString());
+      l.brk().print(entry.getKey()).brk().print("=").brk();
+      gdataPrettyPrinter.print(entry.getValue());
     }
     l.end();
   }
