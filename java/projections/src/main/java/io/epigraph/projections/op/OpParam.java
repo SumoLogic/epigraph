@@ -1,10 +1,6 @@
 package io.epigraph.projections.op;
 
-import de.uka.ilkd.pp.DataLayouter;
-import de.uka.ilkd.pp.PrettyPrintable;
 import io.epigraph.projections.op.input.OpInputModelProjection;
-import io.epigraph.util.pp.DataPrettyPrinter;
-import io.epigraph.util.pp.PrettyPrinterUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -12,7 +8,7 @@ import java.util.*;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class OpParam implements PrettyPrintable {
+public class OpParam {
   @NotNull
   private final String name;
   @NotNull
@@ -32,6 +28,7 @@ public class OpParam implements PrettyPrintable {
   @NotNull
   public String name() { return name; }
 
+  @NotNull
   public OpInputModelProjection<?, ?> projection() { return projection; }
 
   @Override
@@ -47,32 +44,4 @@ public class OpParam implements PrettyPrintable {
   public int hashCode() {
     return Objects.hash(name, projection);
   }
-
-  @Override
-  public <Exc extends Exception> void prettyPrint(DataLayouter<Exc> l) throws Exc {
-    l.beginIInd();
-    l.print(';');
-    if (projection.required()) l.print('+');
-    l.print(name).print(':').brk();
-    l.print(projection.model().name().toString());
-    PrettyPrinterUtil.printWithBrkIfNonEmpty(l, projection);
-
-    Object defaultValue = projection.defaultValue();
-    if (defaultValue != null) {
-      l.brk().print("=").brk().print(defaultValue);
-    }
-
-    OpCustomParams customParams = projection.customParams();
-    if (customParams != null) {
-      l.beginCInd();
-      l.print(" {");
-      l.print(customParams);
-      l.brk(1, -l.getDefaultIndentation()).end().print('}');
-    }
-
-    l.end();
-  }
-
-  @Override
-  public String toString() { return DataPrettyPrinter.prettyPrint(this); }
 }

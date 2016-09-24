@@ -1,10 +1,8 @@
 package io.epigraph.projections.op.output;
 
-import de.uka.ilkd.pp.DataLayouter;
 import io.epigraph.projections.op.OpCustomParams;
 import io.epigraph.projections.op.OpParams;
 import io.epigraph.types.MapType;
-import io.epigraph.util.pp.DataPrettyPrinter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -50,35 +48,5 @@ public class OpOutputMapModelProjection extends OpOutputModelProjection<MapType>
   @Override
   public int hashCode() {
     return Objects.hash(super.hashCode(), itemsProjection, keyProjection);
-  }
-
-  @Override
-  public <Exc extends Exception> void prettyPrint(DataLayouter<Exc> l) throws Exc {
-    l.beginIInd();
-
-    { // keys
-      l.beginCInd();
-      l.print('[');
-
-      if (keyProjection.presence() == OpOutputKeyProjection.Presence.FORBIDDEN)
-        l.brk().print("forbidden");
-
-      if (keyProjection.presence() == OpOutputKeyProjection.Presence.REQUIRED)
-        l.brk().print("required");
-
-      if (keyProjection.params() != null)
-        //noinspection ConstantConditions
-        l.print(keyProjection.params());
-
-      if (keyProjection.customParams() != null)
-        //noinspection ConstantConditions
-        l.print(keyProjection.customParams());
-
-      l.brk(1, -l.getDefaultIndentation()).end().print(']');
-    }
-
-    l.print('(').brk();
-    l.print(itemsProjection());
-    l.brk(1, -l.getDefaultIndentation()).end().print(')');
   }
 }

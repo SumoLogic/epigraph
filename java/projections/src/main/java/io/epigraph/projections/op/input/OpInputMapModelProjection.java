@@ -1,10 +1,8 @@
 package io.epigraph.projections.op.input;
 
-import de.uka.ilkd.pp.DataLayouter;
 import io.epigraph.data.MapDatum;
 import io.epigraph.projections.op.OpCustomParams;
 import io.epigraph.types.MapType;
-import io.epigraph.util.pp.DataPrettyPrinter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,7 +13,7 @@ import java.util.Objects;
  */
 public class OpInputMapModelProjection extends OpInputModelProjection<MapType, MapDatum> {
   @NotNull
-  private final OpInputVarProjection itemsProjection;
+  private final OpInputVarProjection valuesProjection;
 
   public OpInputMapModelProjection(@NotNull MapType model,
                                    boolean required,
@@ -24,11 +22,11 @@ public class OpInputMapModelProjection extends OpInputModelProjection<MapType, M
                                    @Nullable OpInputModelProjection<?, ?> metaProjection,
                                    @NotNull OpInputVarProjection valuesProjection) {
     super(model, required, defaultValue, customParams, metaProjection);
-    this.itemsProjection = valuesProjection;
+    this.valuesProjection = valuesProjection;
   }
 
   @NotNull
-  public OpInputVarProjection itemsProjection() { return itemsProjection; }
+  public OpInputVarProjection itemsProjection() { return valuesProjection; }
 
   @Override
   public boolean equals(Object o) {
@@ -36,20 +34,11 @@ public class OpInputMapModelProjection extends OpInputModelProjection<MapType, M
     if (o == null || getClass() != o.getClass()) return false;
     if (!super.equals(o)) return false;
     OpInputMapModelProjection that = (OpInputMapModelProjection) o;
-    return Objects.equals(itemsProjection, that.itemsProjection);
+    return Objects.equals(valuesProjection, that.valuesProjection);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(super.hashCode(), itemsProjection);
-  }
-
-  @Override
-  public <Exc extends Exception> void prettyPrint(DataLayouter<Exc> l) throws Exc {
-    l.beginIInd();
-
-    l.print("[](").brk();
-    l.print(itemsProjection());
-    l.brk(1, -l.getDefaultIndentation()).end().print(')');
+    return Objects.hash(super.hashCode(), valuesProjection);
   }
 }

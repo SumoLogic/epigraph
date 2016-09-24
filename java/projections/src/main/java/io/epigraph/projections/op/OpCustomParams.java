@@ -1,9 +1,6 @@
 package io.epigraph.projections.op;
 
-import de.uka.ilkd.pp.DataLayouter;
-import de.uka.ilkd.pp.PrettyPrintable;
 import io.epigraph.gdata.GDataValue;
-import io.epigraph.util.pp.DataPrettyPrinter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,7 +10,7 @@ import java.util.Objects;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class OpCustomParams implements PrettyPrintable { // rename to OpOutputParams?
+public class OpCustomParams { // rename to OpOutputParams?
   @NotNull
   private final Map<String, GDataValue> params;
 
@@ -32,6 +29,11 @@ public class OpCustomParams implements PrettyPrintable { // rename to OpOutputPa
     return params.get(key);
   }
 
+  @NotNull
+  public Map<String, GDataValue> params() {
+    return params;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
@@ -44,16 +46,4 @@ public class OpCustomParams implements PrettyPrintable { // rename to OpOutputPa
   public int hashCode() {
     return Objects.hash(params);
   }
-
-  @Override
-  public <Exc extends Exception> void prettyPrint(DataLayouter<Exc> l) throws Exc {
-    l.beginCInd(0);
-    for (Map.Entry<String, GDataValue> entry : params.entrySet()) {
-      l.brk().print(entry.getKey()).brk().print("=").brk().print(entry.getValue());
-    }
-    l.end();
-  }
-
-  @Override
-  public String toString() { return DataPrettyPrinter.prettyPrint(this); }
 }

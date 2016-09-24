@@ -1,10 +1,8 @@
 package io.epigraph.projections.op.output;
 
-import de.uka.ilkd.pp.DataLayouter;
 import io.epigraph.projections.op.OpCustomParams;
 import io.epigraph.projections.op.OpParams;
 import io.epigraph.types.ListType;
-import io.epigraph.util.pp.DataPrettyPrinter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -42,13 +40,5 @@ public class OpOutputListModelProjection extends OpOutputModelProjection<ListTyp
   @Override
   public int hashCode() {
     return Objects.hash(super.hashCode(), itemsProjection);
-  }
-
-  @Override
-  public <Exc extends Exception> void prettyPrint(DataLayouter<Exc> l) throws Exc {
-    l.beginIInd();
-    l.print("*(").brk();
-    l.print(itemsProjection());
-    l.brk(1, -l.getDefaultIndentation()).end().print(')');
   }
 }

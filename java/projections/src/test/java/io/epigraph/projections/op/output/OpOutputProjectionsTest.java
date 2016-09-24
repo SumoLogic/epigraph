@@ -2,6 +2,9 @@ package io.epigraph.projections.op.output;
 
 import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.impl.DebugUtil;
+import de.uka.ilkd.pp.Layouter;
+import de.uka.ilkd.pp.NoExceptions;
+import de.uka.ilkd.pp.StringBackend;
 import io.epigraph.idl.parser.projections.IdlSubParserDefinitions;
 import io.epigraph.idl.parser.psi.IdlOpOutputVarProjection;
 import io.epigraph.projections.op.OpParam;
@@ -215,8 +218,15 @@ public class OpOutputProjectionsTest {
 
 
     String expected = lines(
-        ":( +id, record ( +id, +bestFriend :record ( +id, bestFriend :id ), friends *( :+id ) ) ) ~io.epigraph.tests.User",
-        "  :record ( profile )"
+        ":(",
+        "  +id,",
+        "  record",
+        "    (",
+        "      +id { ;+param1: epigraph.String = \"hello world\" { doc = \"some doc\" } },",
+        "      +bestFriend :record ( +id, bestFriend :id ),",
+        "      friends *( :+id )",
+        "    )",
+        ") ~io.epigraph.tests.User :record ( profile )"
     );
 
     testParsingVarProjection(
@@ -239,9 +249,7 @@ public class OpOutputProjectionsTest {
   @Test
   public void testParseParam() throws PsiProcessingException {
     testParsingVarProjection(
-        new DataType(false, Person.type, Person.id),
-        ":id { ;+param: io.epigraph.tests.UserId = 123 { deprecated = true } }",
-        ":id { ;+param: io.epigraph.tests.UserId = io.epigraph.tests.UserId$Builder@123 { deprecated = true } }"
+        ":id { ;+param: io.epigraph.tests.UserId = 123 { deprecated = true } }"
     );
   }
 
@@ -433,7 +441,9 @@ public class OpOutputProjectionsTest {
         )
     );
 
-//    System.out.println(personVarProjection);
+    // shouldn't blow up with stack overflow
+    String recursivePrint = print(personVarProjection);
+//    System.out.println(recursivePrint);
   }
 
   private void testParsingVarProjection(String str) throws PsiProcessingException {
@@ -493,9 +503,19 @@ public class OpOutputProjectionsTest {
       fail(psiDump);
     }
 
-    String actual = varProjection.toString();
+    String actual = print(varProjection);
+
     assertEquals("\n" + actual, expected, actual);
 //    assertEquals(expected.trim(), actual.trim());
+  }
+
+  private String print(OpOutputVarProjection projection) {
+    StringBackend sb = new StringBackend(120);
+    Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
+    OpOutputProjectionsPrettyPrinter<NoExceptions> printer = new OpOutputProjectionsPrettyPrinter<>(layouter);
+    printer.print(projection);
+    layouter.close();
+    return sb.getString();
   }
 
   private static String lines(String... lines) {

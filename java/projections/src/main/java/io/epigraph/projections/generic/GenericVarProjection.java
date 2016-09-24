@@ -1,10 +1,6 @@
 package io.epigraph.projections.generic;
 
-import de.uka.ilkd.pp.DataLayouter;
-import de.uka.ilkd.pp.PrettyPrintable;
 import io.epigraph.types.Type;
-import io.epigraph.types.TypeKind;
-import io.epigraph.util.pp.DataPrettyPrinter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -14,8 +10,7 @@ import java.util.Objects;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class GenericVarProjection<T extends GenericTagProjection<?>, S extends GenericVarProjection<T, S>>
-    implements PrettyPrintable {
+public class GenericVarProjection<T extends GenericTagProjection<?>, S extends GenericVarProjection<T, S>> {
   @NotNull
   private final Type type;
   @NotNull
@@ -63,52 +58,4 @@ public class GenericVarProjection<T extends GenericTagProjection<?>, S extends G
   public int hashCode() {
     return Objects.hash(type, tagProjections, polymorphicTails);
   }
-
-  @Override
-  public <Exc extends Exception> void prettyPrint(DataLayouter<Exc> l) throws Exc {
-    if (type().kind() != TypeKind.UNION) {
-      // samovar
-      l.print(tagProjections.iterator().next().projection());
-    } else if (tagProjections.size() == 1) {
-      T tagProjection = tagProjections.iterator().next();
-      l.print(':').print(tagProjection);
-    } else if (tagProjections.isEmpty()) {
-      l.print(":()");
-    } else {
-      l.beginCInd();
-      l.print(":(");
-      boolean first = true;
-      for (T tagProjection : tagProjections) {
-        if (first) first = false;
-        else l.print(',');
-        l.brk().print(tagProjection);
-      }
-      l.brk(1, -l.getDefaultIndentation()).end().print(")");
-    }
-
-    if (polymorphicTails != null && !polymorphicTails.isEmpty()) {
-      l.beginIInd();
-      l.brk();
-      if (polymorphicTails.size() == 1) {
-        l.print('~');
-        S tail = polymorphicTails.iterator().next();
-        l.print(tail.type().name().toString());
-        l.brk().print(tail);
-      } else {
-        l.beginCInd();
-        l.print("~(");
-        boolean first = true;
-        for (GenericVarProjection tail : polymorphicTails) {
-          if (first) first = false;
-          else l.print(',');
-          l.brk().print(tail.type().name().toString()).brk().print(tail);
-        }
-        l.brk(1, -l.getDefaultIndentation()).end().print(")");
-      }
-      l.end();
-    }
-  }
-
-  @Override
-  public String toString() { return DataPrettyPrinter.prettyPrint(this); }
 }

@@ -1,7 +1,5 @@
 package io.epigraph.projections.op.output;
 
-import de.uka.ilkd.pp.DataLayouter;
-import de.uka.ilkd.pp.PrettyPrintable;
 import io.epigraph.projections.generic.GenericModelProjection;
 import io.epigraph.projections.op.OpCustomParams;
 import io.epigraph.projections.op.OpParams;
@@ -14,8 +12,7 @@ import java.util.Objects;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public abstract class OpOutputModelProjection<M extends DatumType>
-    extends GenericModelProjection<M> implements PrettyPrintable {
+public abstract class OpOutputModelProjection<M extends DatumType> extends GenericModelProjection<M> {
   protected final boolean includeInDefault;
   @Nullable
   protected final OpParams params;
@@ -40,10 +37,6 @@ public abstract class OpOutputModelProjection<M extends DatumType>
 
   @Nullable
   public OpOutputModelProjection<?> metaProjection() { return metaProjection; }
-
-  @Override
-  public <Exc extends Exception> void prettyPrint(DataLayouter<Exc> l) throws Exc {
-  }
 
   @Override
   public boolean equals(Object o) {

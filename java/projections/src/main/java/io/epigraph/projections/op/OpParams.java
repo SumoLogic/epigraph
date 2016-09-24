@@ -1,8 +1,5 @@
 package io.epigraph.projections.op;
 
-import de.uka.ilkd.pp.DataLayouter;
-import de.uka.ilkd.pp.PrettyPrintable;
-import io.epigraph.util.pp.DataPrettyPrinter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -14,7 +11,7 @@ import java.util.Objects;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class OpParams implements PrettyPrintable {
+public class OpParams {
   @NotNull
   private final Map<String, OpParam> params;
 
@@ -45,6 +42,9 @@ public class OpParams implements PrettyPrintable {
     return params.get(key);
   }
 
+  @NotNull
+  public Map<String, OpParam> params() { return params; }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
@@ -57,14 +57,4 @@ public class OpParams implements PrettyPrintable {
   public int hashCode() {
     return Objects.hash(params);
   }
-
-  @Override
-  public <Exc extends Exception> void prettyPrint(DataLayouter<Exc> l) throws Exc {
-    l.beginCInd(0);
-    for (OpParam param : params.values()) l.brk().print(param);
-    l.end();
-  }
-
-  @Override
-  public String toString() { return DataPrettyPrinter.prettyPrint(this); }
 }

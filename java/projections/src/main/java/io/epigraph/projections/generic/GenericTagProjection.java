@@ -1,8 +1,6 @@
 package io.epigraph.projections.generic;
 
-import de.uka.ilkd.pp.PrettyPrintable;
 import io.epigraph.types.Type;
-import io.epigraph.util.pp.DataPrettyPrinter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -10,7 +8,7 @@ import java.util.Objects;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public abstract class GenericTagProjection<MP extends GenericModelProjection<?>> implements PrettyPrintable {
+public abstract class GenericTagProjection<MP extends GenericModelProjection<?>> {
   @NotNull
   private final Type.Tag tag;
   @NotNull
@@ -43,7 +41,4 @@ public abstract class GenericTagProjection<MP extends GenericModelProjection<?>>
 
   @Override
   public int hashCode() { return Objects.hash(tag); }
-
-  @Override
-  public String toString() { return DataPrettyPrinter.prettyPrint(this); }
 }

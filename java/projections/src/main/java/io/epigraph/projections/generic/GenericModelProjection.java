@@ -1,9 +1,7 @@
 package io.epigraph.projections.generic;
 
-import de.uka.ilkd.pp.PrettyPrintable;
 import io.epigraph.projections.op.OpCustomParams;
 import io.epigraph.types.DatumType;
-import io.epigraph.util.pp.DataPrettyPrinter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -12,7 +10,7 @@ import java.util.Objects;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public abstract class GenericModelProjection<M extends DatumType> implements PrettyPrintable {
+public abstract class GenericModelProjection<M extends DatumType> {
   @NotNull
   protected final M model;
   @Nullable
@@ -28,9 +26,6 @@ public abstract class GenericModelProjection<M extends DatumType> implements Pre
 
   @Nullable
   public OpCustomParams customParams() { return customParams; }
-
-  @Override
-  public String toString() { return DataPrettyPrinter.prettyPrint(this); }
 
   @Override
   public boolean equals(Object o) {

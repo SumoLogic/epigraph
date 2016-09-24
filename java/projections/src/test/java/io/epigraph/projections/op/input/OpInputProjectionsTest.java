@@ -2,6 +2,9 @@ package io.epigraph.projections.op.input;
 
 import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.impl.DebugUtil;
+import de.uka.ilkd.pp.Layouter;
+import de.uka.ilkd.pp.NoExceptions;
+import de.uka.ilkd.pp.StringBackend;
 import io.epigraph.idl.parser.projections.IdlSubParserDefinitions;
 import io.epigraph.idl.parser.psi.IdlOpInputVarProjection;
 import io.epigraph.psi.EpigraphPsiUtil;
@@ -39,17 +42,9 @@ public class OpInputProjectionsTest {
         ") ~io.epigraph.tests.User :record (profile)"
     );
 
-
     String expected = lines(
-        ":(",
-        "  +id,",
-        "  record",
-        "    (",
-        "      +id,",
-        "      +bestFriend :record ( +id, bestFriend :id { default: io.epigraph.tests.PersonId$Builder@123 } ),",
-        "      friends *( :+id )",
-        "    )",
-        ") ~io.epigraph.tests.User :record ( profile )"
+        ":( +id, record ( +id, +bestFriend :record ( +id, bestFriend :id { default: 123 } ), friends *( :+id ) ) )",
+        "  ~io.epigraph.tests.User :record ( profile )"
     );
 
     testParsingVarProjection(
@@ -70,12 +65,7 @@ public class OpInputProjectionsTest {
 
   @Test
   public void testParseDefault() throws PsiProcessingException {
-    testParsingVarProjection(
-        new DataType(false, Person.type, Person.id),
-        ":id { default: 123 }"
-        ,
-        ":id { default: io.epigraph.tests.PersonId$Builder@123 }"
-    );
+    testParsingVarProjection(":id { default: 123 }");
   }
 
   @Test
@@ -186,7 +176,13 @@ public class OpInputProjectionsTest {
       fail(psiDump);
     }
 
-    String actual = varProjection.toString();
+    StringBackend sb = new StringBackend(120);
+    Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
+    OpInputProjectionsPrettyPrinter<NoExceptions> printer = new OpInputProjectionsPrettyPrinter<>(layouter);
+    printer.print(varProjection);
+    layouter.close();
+    String actual = sb.getString();
+
     assertEquals("\n" + actual, expected, actual);
 //    assertEquals(expected.trim(), actual.trim());
   }

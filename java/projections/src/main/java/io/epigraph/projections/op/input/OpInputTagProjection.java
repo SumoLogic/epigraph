@@ -1,10 +1,7 @@
 package io.epigraph.projections.op.input;
 
-import de.uka.ilkd.pp.DataLayouter;
 import io.epigraph.projections.generic.GenericTagProjection;
 import io.epigraph.types.Type;
-import io.epigraph.util.pp.DataPrettyPrinter;
-import io.epigraph.util.pp.PrettyPrinterUtil;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -13,39 +10,5 @@ import org.jetbrains.annotations.NotNull;
 public class OpInputTagProjection extends GenericTagProjection<OpInputModelProjection<?, ?>> {
   public OpInputTagProjection(@NotNull Type.Tag tag, @NotNull OpInputModelProjection<?, ?> projection) {
     super(tag, projection);
-  }
-
-  @Override
-  public <Exc extends Exception> void prettyPrint(DataLayouter<Exc> l) throws Exc {
-    if (projection().defaultValue() == null && projection().customParams() == null &&
-        projection().metaProjection() == null) {
-
-      l.beginCInd();
-      if (projection().required()) l.print('+');
-      l.print(tag().name());
-
-      PrettyPrinterUtil.printWithBrkIfNonEmpty(l, projection());
-      l.end();
-    } else {
-      l.beginCInd();
-      if (projection().required()) l.print('+');
-      l.print(tag().name());
-      l.print(" {");
-
-      if (projection().defaultValue() != null)
-        l.brk().beginIInd(0).print("default:").brk().print(projection().defaultValue()).end();
-
-      if (projection().metaProjection() != null)
-        //noinspection ConstantConditions
-        l.brk().beginIInd(0).print("meta:").brk().print(projection().metaProjection()).end();
-
-      if (projection().customParams() != null)
-        //noinspection ConstantConditions
-        l.print(projection().customParams());
-
-      PrettyPrinterUtil.printWithBrkIfNonEmpty(l, projection());
-
-      l.brk(1, -l.getDefaultIndentation()).end().print('}');
-    }
   }
 }
