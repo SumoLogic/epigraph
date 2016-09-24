@@ -25,11 +25,6 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>epigraph-java-util</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
       <artifactId>epigraph-lang-common</artifactId>
       <version>${project.version}</version>
     </dependency>
