@@ -333,9 +333,7 @@ ${t.effectiveDefaultElementTagName match { // default element tag (if defined) v
       case None => ""
       case Some(dtn) => sn"""\
 
-    ${"/**"}
-     * Returns modifiable list view of default `$dtn` tag element datums. Elements where the tag datum is not set will be `null`.
-     */
+    ${"/**"} Returns modifiable list view of default `$dtn` tag element datums. Elements where the tag datum is not set will be `null`. */
     @Override
     public @NotNull java.util.List<@Nullable ${lqn(tt(etr, dtn), t)}> datums() {
       return new io.epigraph.util.ListView<>(
@@ -345,9 +343,7 @@ ${t.effectiveDefaultElementTagName match { // default element tag (if defined) v
       );
     }
 
-    ${"/**"}
-     * Returns list view of element default tag value builders. Elements where the tag value is not set will be `null`.
-     */
+    ${"/**"} Returns list view of element default tag value builders. Elements where the tag value is not set will be `null`. */
     @Override
     public @NotNull java.util.List<${lqn(tt(etr, dtn), t)}.@Nullable Value> values() {
       return new io.epigraph.util.ListView<>(
@@ -356,6 +352,19 @@ ${t.effectiveDefaultElementTagName match { // default element tag (if defined) v
           v -> ${lqn(et, t)}.Type.instance().createDataBuilder().set${vt(et, up(dtn), "")}$$(v)
       );
     }
+
+    ${"/**"} Adds${vt(et, s" default `$dtn` tag", "")} datum to the list. */
+    public @NotNull $ln.Builder add(@Nullable ${lqn(tt(etr, dtn), t)} datum) {
+      datas().add(${lqn(et, t)}.Type.instance().createDataBuilder().set${vt(et, up(dtn), "")}(datum));
+      return this;
+    }
+
+    ${"/**"} Adds${vt(et, s" default `$dtn` tag", "")} value to the list. */
+    public @NotNull $ln.Builder add$$(@Nullable ${lqn(tt(etr, dtn), t)}.Value value) {
+      datas().add(${lqn(et, t)}.Type.instance().createDataBuilder().set${vt(et, up(dtn), "")}$$(value));
+      return this;
+    }
+
 """
   }
 }\
