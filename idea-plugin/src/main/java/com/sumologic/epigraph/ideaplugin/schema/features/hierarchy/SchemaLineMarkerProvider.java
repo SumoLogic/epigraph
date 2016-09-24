@@ -45,7 +45,7 @@ public class SchemaLineMarkerProvider extends RelatedItemLineMarkerProvider {
 
       if (!supplements.isEmpty()) {
         NavigationGutterIconBuilder<PsiElement> builder =
-            NavigationGutterIconBuilder.create(SchemaPresentationUtil.supplementsGutterIcon())
+            NavigationGutterIconBuilder.create(SchemaPresentationUtil.SUPPLEMENTS_GUTTER_ICON)
                 .setTargets(supplements)
                 .setAlignment(GutterIconRenderer.Alignment.CENTER)
                 .setTooltipText("Navigate to supplement");
@@ -58,7 +58,7 @@ public class SchemaLineMarkerProvider extends RelatedItemLineMarkerProvider {
       Collection<SchemaTypeDef> parents = hierarchyCache.getDirectTypeParents(typeDef);
       if (!parents.isEmpty()) {
         NavigationGutterIconBuilder<PsiElement> builder =
-            NavigationGutterIconBuilder.create(SchemaPresentationUtil.parentTypesGutterIcon())
+            NavigationGutterIconBuilder.create(SchemaPresentationUtil.PARENT_TYPES_GUTTER_ICON)
                 .setTargets(parents)
                 .setAlignment(GutterIconRenderer.Alignment.LEFT)
                 .setTooltipText("Navigate to parent");
@@ -69,7 +69,7 @@ public class SchemaLineMarkerProvider extends RelatedItemLineMarkerProvider {
       Collection<SchemaTypeDef> children = hierarchyCache.getDirectTypeInheritors(typeDef);
       if (!children.isEmpty()) {
         NavigationGutterIconBuilder<PsiElement> builder =
-            NavigationGutterIconBuilder.create(SchemaPresentationUtil.childTypesGutterIcon())
+            NavigationGutterIconBuilder.create(SchemaPresentationUtil.CHILD_TYPES_GUTTER_ICON)
                 .setTargets(children)
                 .setAlignment(GutterIconRenderer.Alignment.RIGHT)
                 .setTooltipText("Navigate to child");

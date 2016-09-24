@@ -27,9 +27,15 @@ public class SchemaPresentationUtil {
   private static Icon SCHEMA_FILE_ICON;
   private static Icon SCHEMA_OUTSIDE_SOURCE_FILE_ICON;
 
-  private static Icon PARENT_TYPES_GUTTER_ICON;
-  private static Icon CHILD_TYPES_GUTTER_ICON;
-  private static Icon SUPPLEMENTS_GUTTER_ICON;
+  private static Icon TYPE_ICON;
+  private static Icon RECORD_TYPE_ICON;
+  private static Icon ENUM_TYPE_ICON;
+  private static Icon VAR_TYPE_ICON;
+  private static Icon SUPPLEMENT_ICON;
+
+  public static final Icon PARENT_TYPES_GUTTER_ICON = AllIcons.Gutter.OverridingMethod;
+  public static final Icon CHILD_TYPES_GUTTER_ICON = AllIcons.Gutter.OverridenMethod;
+  public static final Icon SUPPLEMENTS_GUTTER_ICON = AllIcons.Gutter.ExtAnnotation;
 
   public static final Icon OVERRIDEN_FIELD_GUTTER_ICON = AllIcons.Gutter.OverridenMethod;
   public static final Icon OVERRIDING_FIELD_GUTTER_ICON = AllIcons.Gutter.OverridingMethod;
@@ -55,21 +61,6 @@ public class SchemaPresentationUtil {
     if (SCHEMA_OUTSIDE_SOURCE_FILE_ICON == null)
       SCHEMA_OUTSIDE_SOURCE_FILE_ICON = addOverlay(AllIcons.FileTypes.Unknown);
     return SCHEMA_OUTSIDE_SOURCE_FILE_ICON;
-  }
-
-  public static Icon parentTypesGutterIcon() {
-    if (PARENT_TYPES_GUTTER_ICON == null) PARENT_TYPES_GUTTER_ICON = addOverlay(AllIcons.Gutter.OverridingMethod);
-    return PARENT_TYPES_GUTTER_ICON;
-  }
-
-  public static Icon childTypesGutterIcon() {
-    if (CHILD_TYPES_GUTTER_ICON == null) CHILD_TYPES_GUTTER_ICON = addOverlay(AllIcons.Gutter.OverridenMethod);
-    return CHILD_TYPES_GUTTER_ICON;
-  }
-
-  public static Icon supplementsGutterIcon() {
-    if (SUPPLEMENTS_GUTTER_ICON == null) SUPPLEMENTS_GUTTER_ICON = addOverlay(AllIcons.Gutter.ExtAnnotation);
-    return SUPPLEMENTS_GUTTER_ICON;
   }
 
   // causes deadlocks?
@@ -100,13 +91,28 @@ public class SchemaPresentationUtil {
   public static Icon getIcon(@NotNull PsiElement element) {
     if (element instanceof SchemaFile) return SCHEMA_FILE_ICON;
 
-    if (element instanceof SchemaRecordTypeDef) return addOverlay(AllIcons.Nodes.Class);
-    if (element instanceof SchemaEnumTypeDef) return addOverlay(AllIcons.Nodes.Enum);
-    if (element instanceof SchemaVarTypeDef) return addOverlay(AllIcons.Nodes.Interface);
+    if (element instanceof SchemaRecordTypeDef) {
+      if (RECORD_TYPE_ICON == null) RECORD_TYPE_ICON = addOverlay(AllIcons.Nodes.Class);
+      return RECORD_TYPE_ICON;
+    }
+    if (element instanceof SchemaEnumTypeDef) {
+      if (ENUM_TYPE_ICON == null) ENUM_TYPE_ICON = addOverlay(AllIcons.Nodes.Enum);
+      return ENUM_TYPE_ICON;
+    }
+    if (element instanceof SchemaVarTypeDef) {
+      if (VAR_TYPE_ICON == null) VAR_TYPE_ICON = addOverlay(AllIcons.Nodes.Interface);
+      return VAR_TYPE_ICON;
+    }
 
-    if (element instanceof SchemaTypeDef) return addOverlay(AllIcons.Nodes.Class);
+    if (element instanceof SchemaTypeDef) {
+      if (TYPE_ICON == null) TYPE_ICON = addOverlay(AllIcons.Nodes.Class);
+      return TYPE_ICON;
+    }
 
-    if (element instanceof SchemaSupplementDef) return addOverlay(AllIcons.Nodes.Aspect);
+    if (element instanceof SchemaSupplementDef) {
+      if (SUPPLEMENT_ICON == null) SUPPLEMENT_ICON = addOverlay(AllIcons.Nodes.Aspect);
+      return SUPPLEMENT_ICON;
+    }
 
     if (element instanceof SchemaCustomParam) return CUSTOM_PROPERTY_ICON;
     if (element instanceof SchemaFieldDecl) return FIELD_ICON;
