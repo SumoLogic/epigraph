@@ -26,13 +26,13 @@ public class CreateSchemaFileAction extends CreateFileFromTemplateAction impleme
   public static final String NEW_SCHEMA_FILE = "New Epigraph Schema File";
 
   public CreateSchemaFileAction() {
-    super(NEW_SCHEMA_FILE, "", SchemaPresentationUtil.SCHEMA_FILE_ICON);
+    super(NEW_SCHEMA_FILE, "", SchemaPresentationUtil.schemaFileIcon());
   }
 
   @Override
   protected void buildDialog(Project project, PsiDirectory directory, CreateFileFromTemplateDialog.Builder builder) {
     builder.setTitle(NEW_SCHEMA_FILE)
-        .addKind("Empty schema", SchemaPresentationUtil.SCHEMA_FILE_ICON, "Epigraph Schema." + Common.FILE_EXTENSION)
+        .addKind("Empty schema", SchemaPresentationUtil.schemaFileIcon(), "Epigraph Schema." + Common.FILE_EXTENSION)
         .setValidator(new InputValidator() {
           @Override
           public boolean checkInput(String inputString) {

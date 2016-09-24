@@ -24,22 +24,53 @@ import java.util.List;
 public class SchemaPresentationUtil {
   private static final String OVERLAY = "§";
   // TODO own icons!
-  public static final Icon SCHEMA_FILE_ICON = addOverlay(AllIcons.FileTypes.Custom);
-  public static final Icon SCHEMA_OUTSIDE_SOURCE_FILE_ICON = addOverlay(AllIcons.FileTypes.Unknown);
+  private static Icon SCHEMA_FILE_ICON;
+  private static Icon SCHEMA_OUTSIDE_SOURCE_FILE_ICON;
 
-  public static final Icon PARENT_TYPES_GUTTER_ICON = addOverlay(AllIcons.Gutter.OverridingMethod);
-  public static final Icon CHILD_TYPES_GUTTER_ICON = addOverlay(AllIcons.Gutter.OverridenMethod);
-  public static final Icon SUPPLEMENTS_GUTTER_ICON = addOverlay(AllIcons.Gutter.ExtAnnotation);
+  private static Icon PARENT_TYPES_GUTTER_ICON;
+  private static Icon CHILD_TYPES_GUTTER_ICON;
+  private static Icon SUPPLEMENTS_GUTTER_ICON;
 
-  public static final Icon OVERRIDEN_FIELD_GUTTER_ICON = addOverlay(AllIcons.Gutter.OverridenMethod);
-  public static final Icon OVERRIDING_FIELD_GUTTER_ICON = addOverlay(AllIcons.Gutter.OverridingMethod);
-  public static final Icon OVERRIDEN_TAG_GUTTER_ICON = addOverlay(AllIcons.Gutter.ImplementedMethod);
-  public static final Icon OVERRIDING_TAG_GUTTER_ICON = addOverlay(AllIcons.Gutter.ImplementingMethod);
+  public static final Icon OVERRIDEN_FIELD_GUTTER_ICON = AllIcons.Gutter.OverridenMethod;
+  public static final Icon OVERRIDING_FIELD_GUTTER_ICON = AllIcons.Gutter.OverridingMethod;
+  public static final Icon OVERRIDEN_TAG_GUTTER_ICON = AllIcons.Gutter.ImplementedMethod;
+  public static final Icon OVERRIDING_TAG_GUTTER_ICON = AllIcons.Gutter.ImplementingMethod;
 
   public static final Icon TAG_ICON = AllIcons.Nodes.Function;
   public static final Icon FIELD_ICON = AllIcons.Nodes.Field;
   public static final Icon CUSTOM_PROPERTY_ICON = AllIcons.Nodes.Annotationtype;
   public static final Icon ENUM_MEMBER_ICON = AllIcons.Nodes.Property;
+
+  // need lazy init on overlayed icons to avoid start-up deadlocks
+  public static Icon schemaFileIcon() {
+    // this still deadlocks as it tries to create an action
+
+//    if (SCHEMA_FILE_ICON == null) SCHEMA_FILE_ICON = addOverlay(AllIcons.FileTypes.Custom);
+//    return SCHEMA_FILE_ICON;
+
+    return AllIcons.FileTypes.Custom;
+  }
+
+  public static Icon schemaOutsideSourceFileIcon() {
+    if (SCHEMA_OUTSIDE_SOURCE_FILE_ICON == null)
+      SCHEMA_OUTSIDE_SOURCE_FILE_ICON = addOverlay(AllIcons.FileTypes.Unknown);
+    return SCHEMA_OUTSIDE_SOURCE_FILE_ICON;
+  }
+
+  public static Icon parentTypesGutterIcon() {
+    if (PARENT_TYPES_GUTTER_ICON == null) PARENT_TYPES_GUTTER_ICON = addOverlay(AllIcons.Gutter.OverridingMethod);
+    return PARENT_TYPES_GUTTER_ICON;
+  }
+
+  public static Icon childTypesGutterIcon() {
+    if (CHILD_TYPES_GUTTER_ICON == null) CHILD_TYPES_GUTTER_ICON = addOverlay(AllIcons.Gutter.OverridenMethod);
+    return CHILD_TYPES_GUTTER_ICON;
+  }
+
+  public static Icon supplementsGutterIcon() {
+    if (SUPPLEMENTS_GUTTER_ICON == null) SUPPLEMENTS_GUTTER_ICON = addOverlay(AllIcons.Gutter.ExtAnnotation);
+    return SUPPLEMENTS_GUTTER_ICON;
+  }
 
   // causes deadlocks?
   private static Icon addOverlay(@NotNull Icon i) { return IconUtil.addText(i, OVERLAY); }

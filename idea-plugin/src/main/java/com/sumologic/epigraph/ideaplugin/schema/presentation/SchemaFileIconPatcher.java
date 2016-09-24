@@ -39,7 +39,7 @@ public class SchemaFileIconPatcher implements FileIconPatcher {
   private static Icon replaceIcon(VirtualFile file, @Iconable.IconFlags int flags, Project project, Icon baseIcon) {
     FileType fileType = file.getFileType();
     if (fileType == SchemaFileType.INSTANCE && !SchemaFileIndexUtil.isSchemaSourceFile(project, file)) {
-      return SchemaPresentationUtil.SCHEMA_OUTSIDE_SOURCE_FILE_ICON;
+      return SchemaPresentationUtil.schemaOutsideSourceFileIcon();
     }
 
     return baseIcon;
