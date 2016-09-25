@@ -353,30 +353,33 @@ ${t.effectiveDefaultElementTagName match { // default element tag (if defined) v
       );
     }
 
-    ${"/**"} Adds${vt(et, s" default `$dtn` tag", "")} datum to the list. */
+    ${"/**"} Adds${vt(et, s" default `$dtn` tag", "")} datum element to the list. */
     public @NotNull $ln.Builder add(@Nullable ${lqn(tt(etr, dtn), t)} datum) {
       datas().add(${lqn(et, t)}.Type.instance().createDataBuilder().set${vt(et, up(dtn), "")}(datum));
       return this;
     }
 
-    ${"/**"} Adds${vt(et, s" default `$dtn` tag", "")} value to the list. */
+    ${"/**"} Adds${vt(et, s" default `$dtn` tag", "")} value element to the list. */
     public @NotNull $ln.Builder add$$(@Nullable ${lqn(tt(etr, dtn), t)}.Value value) {
       datas().add(${lqn(et, t)}.Type.instance().createDataBuilder().set${vt(et, up(dtn), "")}$$(value));
       return this;
     }
-
 """
   }
 }\
 ${et match { // data view (for vartypes)
     case evt: CVarTypeDef => sn"""\
 
-    ${"/**"}
-     * Returns modifiable list view of element data builders.
-     */
+    ${"/**"} Returns modifiable list view of element data builders. */
     @Override
     public @NotNull java.util.List<@NotNull ${lqn(et, t)}> datas() {
       return io.epigraph.util.Util.cast(_raw().elements());
+    }
+
+    ${"/**"} Adds data element to the list. */
+    public @NotNull $ln.Builder add(@NotNull ${lqn(et, t)} data) {
+      datas().add(data);
+      return this;
     }
 ${
       evt.effectiveTags.map { tag => sn"""\
