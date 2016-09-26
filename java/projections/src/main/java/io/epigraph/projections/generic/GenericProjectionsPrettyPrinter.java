@@ -2,8 +2,8 @@ package io.epigraph.projections.generic;
 
 import de.uka.ilkd.pp.Layouter;
 import io.epigraph.gdata.GDataPrettyPrinter;
-import io.epigraph.gdata.GDataValue;
 import io.epigraph.printers.DataPrinter;
+import io.epigraph.projections.op.OpCustomParam;
 import io.epigraph.projections.op.OpCustomParams;
 import io.epigraph.types.TypeKind;
 import org.jetbrains.annotations.NotNull;
@@ -113,9 +113,9 @@ public abstract class GenericProjectionsPrettyPrinter<
 
   protected void print(@NotNull OpCustomParams cp) throws E {
     l.beginCInd(0);
-    for (Map.Entry<String, GDataValue> entry : cp.params().entrySet()) {
+    for (Map.Entry<String, OpCustomParam> entry : cp.params().entrySet()) {
       l.brk().print(entry.getKey()).brk().print("=").brk();
-      gdataPrettyPrinter.print(entry.getValue());
+      gdataPrettyPrinter.print(entry.getValue().value());
     }
     l.end();
   }

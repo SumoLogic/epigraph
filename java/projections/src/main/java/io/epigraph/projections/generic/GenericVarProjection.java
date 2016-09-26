@@ -1,5 +1,6 @@
 package io.epigraph.projections.generic;
 
+import io.epigraph.lang.TextLocation;
 import io.epigraph.types.Type;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -17,13 +18,17 @@ public class GenericVarProjection<T extends GenericTagProjection<?>, S extends G
   private final LinkedHashSet<T> tagProjections;
   @Nullable
   private final LinkedHashSet<S> polymorphicTails;
+  @NotNull
+  private final TextLocation location;
 
   public GenericVarProjection(@NotNull Type type,
                               @NotNull LinkedHashSet<T> tagProjections,
-                              @Nullable LinkedHashSet<S> polymorphicTails) {
+                              @Nullable LinkedHashSet<S> polymorphicTails,
+                              @NotNull TextLocation location) {
     this.type = type;
     this.tagProjections = tagProjections;
     this.polymorphicTails = polymorphicTails;
+    this.location = location;
   }
 
 
@@ -43,6 +48,11 @@ public class GenericVarProjection<T extends GenericTagProjection<?>, S extends G
 
   @Nullable
   public LinkedHashSet<S> polymorphicTails() { return polymorphicTails; }
+
+  @NotNull
+  public TextLocation location() {
+    return location;
+  }
 
   @Override
   public boolean equals(Object o) {

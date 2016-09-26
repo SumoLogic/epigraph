@@ -1,6 +1,7 @@
 package io.epigraph.projections.op.input;
 
 import io.epigraph.data.RecordDatum;
+import io.epigraph.lang.TextLocation;
 import io.epigraph.projections.op.OpCustomParams;
 import io.epigraph.types.RecordType;
 import org.jetbrains.annotations.NotNull;
@@ -24,8 +25,9 @@ public class OpInputRecordModelProjection extends OpInputModelProjection<RecordT
                                       @Nullable RecordDatum defaultValue,
                                       @Nullable OpCustomParams customParams,
                                       @Nullable OpInputModelProjection<?, ?> metaProjection,
-                                      @Nullable LinkedHashSet<OpInputFieldProjection> fieldProjections) {
-    super(model, required, defaultValue, customParams, metaProjection);
+                                      @Nullable LinkedHashSet<OpInputFieldProjection> fieldProjections,
+                                      @NotNull TextLocation location) {
+    super(model, required, defaultValue, customParams, metaProjection, location);
     this.fieldProjections = fieldProjections;
 
     Collection<@NotNull ? extends RecordType.Field> fields = model.fields();

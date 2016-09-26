@@ -1,5 +1,6 @@
 package io.epigraph.projections.op.output;
 
+import io.epigraph.lang.TextLocation;
 import io.epigraph.projections.op.OpCustomParams;
 import io.epigraph.projections.op.OpParams;
 import io.epigraph.types.RecordType;
@@ -21,17 +22,21 @@ public class OpOutputFieldProjection {
   @NotNull
   private final OpOutputVarProjection projection;
   private final boolean includeInDefault;
+  @NotNull
+  private final TextLocation location;
 
   public OpOutputFieldProjection(@NotNull RecordType.Field field,
                                  @Nullable OpParams params,
                                  @Nullable OpCustomParams customParams,
                                  @NotNull OpOutputVarProjection projection,
-                                 boolean includeInDefault) {
+                                 boolean includeInDefault,
+                                 @NotNull TextLocation location) {
     this.field = field;
     this.params = params;
     this.customParams = customParams;
     this.projection = projection;
     this.includeInDefault = includeInDefault;
+    this.location = location;
   }
 
   @NotNull
@@ -46,6 +51,9 @@ public class OpOutputFieldProjection {
   public OpOutputVarProjection projection() { return projection; }
 
   public boolean includeInDefault() { return includeInDefault; }
+
+  @NotNull
+  public TextLocation location() { return location; }
 
   @Override
   public boolean equals(Object o) {

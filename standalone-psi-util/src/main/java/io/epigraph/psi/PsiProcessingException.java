@@ -17,14 +17,14 @@ public class PsiProcessingException extends Exception {
     psi = psiErrorElement;
   }
 
-  public PsiProcessingException(@NotNull String message, @NotNull PsiElement location) {
+  public PsiProcessingException(@NotNull String message, @NotNull PsiElement psi) {
     super(message);
-    psi = location;
+    this.psi = psi;
   }
 
-  public PsiProcessingException(@NotNull Exception cause, @NotNull PsiElement location) {
+  public PsiProcessingException(@NotNull Exception cause, @NotNull PsiElement psi) {
     super(cause);
-    psi = location;
+    this.psi = psi;
   }
 
   @NotNull

@@ -1,5 +1,6 @@
 package io.epigraph.projections.op.output;
 
+import io.epigraph.lang.TextLocation;
 import io.epigraph.projections.generic.GenericVarProjection;
 import io.epigraph.types.Type;
 import org.jetbrains.annotations.NotNull;
@@ -14,11 +15,14 @@ import java.util.LinkedHashSet;
 public class OpOutputVarProjection extends GenericVarProjection<OpOutputTagProjection, OpOutputVarProjection> {
   public OpOutputVarProjection(@NotNull Type type,
                                @NotNull LinkedHashSet<OpOutputTagProjection> tagProjections,
-                               @Nullable LinkedHashSet<OpOutputVarProjection> polymorphicTails) {
-    super(type, tagProjections, polymorphicTails);
+                               @Nullable LinkedHashSet<OpOutputVarProjection> polymorphicTails,
+                               @NotNull TextLocation location) {
+    super(type, tagProjections, polymorphicTails, location);
   }
 
-  public OpOutputVarProjection(@NotNull Type type, OpOutputTagProjection... tagProjections) {
-    this(type, new LinkedHashSet<>(Arrays.asList(tagProjections)), null);
+  public OpOutputVarProjection(@NotNull Type type,
+                               @NotNull TextLocation location,
+                               OpOutputTagProjection... tagProjections) {
+    this(type, new LinkedHashSet<>(Arrays.asList(tagProjections)), null, location);
   }
 }

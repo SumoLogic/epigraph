@@ -1,5 +1,6 @@
 package io.epigraph.projections.generic;
 
+import io.epigraph.lang.TextLocation;
 import io.epigraph.types.Type;
 import org.jetbrains.annotations.NotNull;
 
@@ -13,10 +14,14 @@ public abstract class GenericTagProjection<MP extends GenericModelProjection<?>>
   private final Type.Tag tag;
   @NotNull
   private final MP projection;
+  @NotNull
+  private final TextLocation location;
 
-  public GenericTagProjection(@NotNull Type.Tag tag, @NotNull MP projection) {
+  public GenericTagProjection(@NotNull Type.Tag tag, @NotNull MP projection, @NotNull TextLocation location) {
     this.tag = tag;
     this.projection = projection;
+    this.location = location;
+
     if (!tag.type.equals(projection.model)) { // or can it be a sub-type?
       throw new IllegalArgumentException(
           String.format("Tag model '%s' is different from tag projection model '%s'", tag.type, projection.model)
@@ -29,6 +34,9 @@ public abstract class GenericTagProjection<MP extends GenericModelProjection<?>>
 
   @NotNull
   public MP projection() { return projection; }
+
+  @NotNull
+  public TextLocation location() { return location; }
 
   @Override
   public boolean equals(Object o) {

@@ -1,6 +1,7 @@
 package io.epigraph.projections.op.input;
 
 import io.epigraph.data.Datum;
+import io.epigraph.lang.TextLocation;
 import io.epigraph.projections.generic.GenericModelProjection;
 import io.epigraph.projections.op.OpCustomParams;
 import io.epigraph.types.DatumType;
@@ -27,8 +28,9 @@ public abstract class OpInputModelProjection<M extends DatumType, D extends Datu
                                 boolean required,
                                 @Nullable D defaultValue,
                                 @Nullable OpCustomParams customParams,
-                                @Nullable OpInputModelProjection<?, ?> metaProjection) {
-    super(model, customParams);
+                                @Nullable OpInputModelProjection<?, ?> metaProjection,
+                                @NotNull TextLocation location) {
+    super(model, customParams, location);
     this.required = required;
     this.defaultValue = defaultValue;
     this.customParams = customParams;

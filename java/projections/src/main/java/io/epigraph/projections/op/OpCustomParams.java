@@ -10,29 +10,24 @@ import java.util.Objects;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class OpCustomParams { // rename to OpOutputParams?
+public class OpCustomParams {
   @NotNull
-  private final Map<String, GDataValue> params;
+  private final Map<String, OpCustomParam> params;
 
-  public OpCustomParams(@NotNull Map<String, GDataValue> params) {this.params = params;}
+  public OpCustomParams(@NotNull Map<String, OpCustomParam> params) {this.params = params;}
 
-  public boolean hasParam(@NotNull String name) {
-    return params.containsKey(name);
-  }
+  public boolean hasParam(@NotNull String name) { return params.containsKey(name); }
 
-  public boolean isEmpty() {
-    return params.isEmpty();
-  }
+  public boolean isEmpty() { return params.isEmpty(); }
 
   @Nullable
   public GDataValue get(@NotNull String key) {
-    return params.get(key);
+    OpCustomParam customParam = params.get(key);
+    return customParam == null ? null : customParam.value();
   }
 
   @NotNull
-  public Map<String, GDataValue> params() {
-    return params;
-  }
+  public Map<String, OpCustomParam> params() { return params; }
 
   @Override
   public boolean equals(Object o) {

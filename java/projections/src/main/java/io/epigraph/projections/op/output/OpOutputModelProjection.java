@@ -1,5 +1,6 @@
 package io.epigraph.projections.op.output;
 
+import io.epigraph.lang.TextLocation;
 import io.epigraph.projections.generic.GenericModelProjection;
 import io.epigraph.projections.op.OpCustomParams;
 import io.epigraph.projections.op.OpParams;
@@ -23,8 +24,9 @@ public abstract class OpOutputModelProjection<M extends DatumType> extends Gener
                                  boolean includeInDefault,
                                  @Nullable OpParams params,
                                  @Nullable OpCustomParams customParams,
-                                 @Nullable OpOutputModelProjection<?> metaProjection) {
-    super(model, customParams);
+                                 @Nullable OpOutputModelProjection<?> metaProjection,
+                                 @NotNull TextLocation location) {
+    super(model, customParams, location);
     this.includeInDefault = includeInDefault;
     this.params = params;
     this.metaProjection = metaProjection;

@@ -1,5 +1,6 @@
 package io.epigraph.projections.op;
 
+import io.epigraph.lang.TextLocation;
 import io.epigraph.projections.op.input.OpInputModelProjection;
 import org.jetbrains.annotations.NotNull;
 
@@ -13,10 +14,15 @@ public class OpParam {
   private final String name;
   @NotNull
   private final OpInputModelProjection<?, ?> projection;
+  @NotNull
+  private final TextLocation location;
 
-  public OpParam(@NotNull String name, @NotNull OpInputModelProjection<?, ?> projection) {
+  public OpParam(@NotNull String name,
+                 @NotNull OpInputModelProjection<?, ?> projection,
+                 @NotNull TextLocation location) {
     this.name = name;
     this.projection = projection;
+    this.location = location;
   }
 
   @NotNull
@@ -30,6 +36,9 @@ public class OpParam {
 
   @NotNull
   public OpInputModelProjection<?, ?> projection() { return projection; }
+
+  @NotNull
+  public TextLocation location() { return location; }
 
   @Override
   public boolean equals(Object o) {

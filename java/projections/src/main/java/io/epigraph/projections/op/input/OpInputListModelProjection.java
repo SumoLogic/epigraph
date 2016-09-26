@@ -1,6 +1,7 @@
 package io.epigraph.projections.op.input;
 
 import io.epigraph.data.ListDatum;
+import io.epigraph.lang.TextLocation;
 import io.epigraph.projections.op.OpCustomParams;
 import io.epigraph.types.ListType;
 import org.jetbrains.annotations.NotNull;
@@ -20,8 +21,9 @@ public class OpInputListModelProjection extends OpInputModelProjection<ListType,
                                     @Nullable ListDatum defaultValue,
                                     @Nullable OpCustomParams customParams,
                                     @Nullable OpInputModelProjection<?, ?> metaProjection,
-                                    @NotNull OpInputVarProjection itemsProjection) {
-    super(model, required, defaultValue, customParams, metaProjection);
+                                    @NotNull OpInputVarProjection itemsProjection,
+                                    @NotNull TextLocation location) {
+    super(model, required, defaultValue, customParams, metaProjection, location);
     this.itemsProjection = itemsProjection;
   }
 

@@ -1,5 +1,6 @@
 package io.epigraph.projections.op.input;
 
+import io.epigraph.lang.TextLocation;
 import io.epigraph.projections.op.OpCustomParams;
 import io.epigraph.types.RecordType;
 import org.jetbrains.annotations.NotNull;
@@ -18,15 +19,19 @@ public class OpInputFieldProjection {
   @NotNull
   private final OpInputVarProjection projection;
   private final boolean required;
+  @NotNull
+  private final TextLocation location;
 
   public OpInputFieldProjection(@NotNull RecordType.Field field,
                                 @Nullable OpCustomParams customParams,
                                 @NotNull OpInputVarProjection projection,
-                                boolean required) {
+                                boolean required,
+                                @NotNull TextLocation location) {
     this.field = field;
     this.customParams = customParams;
     this.projection = projection;
     this.required = required;
+    this.location = location;
   }
 
   @NotNull
@@ -39,6 +44,9 @@ public class OpInputFieldProjection {
   public OpInputVarProjection projection() { return projection; }
 
   public boolean required() { return required; }
+
+  @NotNull
+  public TextLocation location() { return location; }
 
   @Override
   public boolean equals(Object o) {

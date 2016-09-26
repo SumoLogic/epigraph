@@ -1,16 +1,17 @@
 package io.epigraph.projections.op.output;
 
 import com.intellij.psi.PsiElement;
-import io.epigraph.gdata.GDataValue;
 import io.epigraph.gdata.GDatum;
 import io.epigraph.idl.gdata.IdlGDataPsiParser;
 import io.epigraph.idl.parser.psi.*;
 import io.epigraph.lang.Fqn;
+import io.epigraph.projections.op.OpCustomParam;
 import io.epigraph.projections.op.OpCustomParams;
 import io.epigraph.projections.op.OpParam;
 import io.epigraph.projections.op.OpParams;
 import io.epigraph.projections.op.input.OpInputModelProjection;
 import io.epigraph.projections.op.input.OpInputProjectionsPsiParser;
+import io.epigraph.psi.EpigraphPsiUtil;
 import io.epigraph.psi.PsiProcessingException;
 import io.epigraph.types.*;
 import org.jetbrains.annotations.NotNull;
@@ -64,7 +65,10 @@ public class OpOutputProjectionsPsiParser {
           typesResolver
       );
 
-      tagProjections.add(new OpOutputTagProjection(tag, parsedModelProjection));
+      tagProjections.add(new OpOutputTagProjection(tag,
+                                                   parsedModelProjection,
+                                                   EpigraphPsiUtil.getLocation(singleTagProjectionPsi)
+      ));
     } else {
       @Nullable IdlOpOutputMultiTagProjection multiTagProjection = psi.getOpOutputMultiTagProjection();
       assert multiTagProjection != null;
@@ -93,7 +97,10 @@ public class OpOutputProjectionsPsiParser {
             typesResolver
         );
 
-        tagProjections.add(new OpOutputTagProjection(tag, parsedModelProjection));
+        tagProjections.add(new OpOutputTagProjection(tag,
+                                                     parsedModelProjection,
+                                                     EpigraphPsiUtil.getLocation(tagProjectionPsi)
+        ));
       }
     }
 
@@ -124,7 +131,7 @@ public class OpOutputProjectionsPsiParser {
 
     } else tails = null;
 
-    return new OpOutputVarProjection(type, tagProjections, tails);
+    return new OpOutputVarProjection(type, tagProjections, tails, EpigraphPsiUtil.getLocation(psi));
   }
 
 
@@ -150,7 +157,7 @@ public class OpOutputProjectionsPsiParser {
   private static OpCustomParams parseModelCustomParams(@NotNull List<IdlOpOutputModelProperty> modelProperties)
       throws PsiProcessingException {
 
-    Map<String, GDataValue> customParamsMap = null;
+    @Nullable Map<String, OpCustomParam> customParamsMap = null;
 
     for (IdlOpOutputModelProperty modelProperty : modelProperties)
       customParamsMap = parseCustomParam(customParamsMap, modelProperty.getCustomParam());
@@ -199,11 +206,11 @@ public class OpOutputProjectionsPsiParser {
                                                            IdlFqnTypeRef tailTypeRef,
                                                            IdlOpOutputVarProjection psiTailProjection,
                                                            @NotNull TypesResolver typesResolver,
-                                                           PsiElement location)
+                                                           PsiElement locationPsi)
       throws PsiProcessingException {
 
     @NotNull Fqn typeFqn = tailTypeRef.getFqn().getFqn();
-    @NotNull Type tailType = getType(typesResolver, typeFqn, location);
+    @NotNull Type tailType = getType(typesResolver, typeFqn, locationPsi);
     return parseVarProjection(
         new DataType(dataType.polymorphic, tailType, dataType.defaultTag),
         psiTailProjection,
@@ -216,35 +223,40 @@ public class OpOutputProjectionsPsiParser {
   private static OpOutputVarProjection createDefaultVarProjection(@NotNull Type type,
                                                                   @NotNull Type.Tag tag,
                                                                   boolean includeInDefault,
-                                                                  @NotNull PsiElement location)
+                                                                  @NotNull PsiElement locationPsi)
       throws PsiProcessingException {
-    return new OpOutputVarProjection(type, new OpOutputTagProjection(
-        tag,
-        createDefaultModelProjection(tag.type, includeInDefault, null, null, location)
-    ));
+    return new OpOutputVarProjection(
+        type,
+        EpigraphPsiUtil.getLocation(locationPsi),
+        new OpOutputTagProjection(
+            tag,
+            createDefaultModelProjection(tag.type, includeInDefault, null, null, locationPsi),
+            EpigraphPsiUtil.getLocation(locationPsi)
+        )
+    );
   }
 
   @NotNull
   private static OpOutputVarProjection createDefaultVarProjection(@NotNull DatumType type,
                                                                   boolean includeInDefault,
-                                                                  @NotNull PsiElement location)
+                                                                  @NotNull PsiElement locationPsi)
       throws PsiProcessingException {
-    return createDefaultVarProjection(type, type.self, includeInDefault, location);
+    return createDefaultVarProjection(type, type.self, includeInDefault, locationPsi);
   }
 
   @NotNull
   private static OpOutputVarProjection createDefaultVarProjection(@NotNull DataType type,
                                                                   boolean includeInDefault,
-                                                                  @NotNull PsiElement location)
+                                                                  @NotNull PsiElement locationPsi)
       throws PsiProcessingException {
 
     @Nullable Type.Tag defaultTag = type.defaultTag;
     if (defaultTag == null)
       throw new PsiProcessingException(
-          String.format("Can't build default projection for '%s', default tag not specified", type.name), location
+          String.format("Can't build default projection for '%s', default tag not specified", type.name), locationPsi
       );
 
-    return createDefaultVarProjection(type.type, defaultTag, includeInDefault, location);
+    return createDefaultVarProjection(type.type, defaultTag, includeInDefault, locationPsi);
   }
 
   @NotNull
@@ -308,7 +320,8 @@ public class OpOutputProjectionsPsiParser {
                                              includeInDefault,
                                              params,
                                              customParams,
-                                             metaProjection
+                                             metaProjection,
+                                             psi
         );
       case UNION:
         throw new PsiProcessingException("Unsupported type kind: " + type.kind(), psi);
@@ -341,7 +354,7 @@ public class OpOutputProjectionsPsiParser {
                                                                          boolean includeInDefault,
                                                                          @Nullable OpParams params,
                                                                          @Nullable OpCustomParams customParams,
-                                                                         @NotNull PsiElement location)
+                                                                         @NotNull PsiElement locationPsi)
       throws PsiProcessingException {
 
     switch (type.kind()) {
@@ -351,13 +364,18 @@ public class OpOutputProjectionsPsiParser {
                                                  params,
                                                  customParams,
                                                  null,
-                                                 null
+                                                 null,
+                                                 EpigraphPsiUtil.getLocation(locationPsi)
         );
       case MAP:
         MapType mapType = (MapType) type;
 
         final OpOutputKeyProjection keyProjection =
-            new OpOutputKeyProjection(OpOutputKeyProjection.Presence.OPTIONAL, null, null);
+            new OpOutputKeyProjection(OpOutputKeyProjection.Presence.OPTIONAL,
+                                      null,
+                                      null,
+                                      EpigraphPsiUtil.getLocation(locationPsi)
+            );
 
         @NotNull DataType valueType = mapType.valueType();
         Type.@Nullable Tag defaultValuesTag = valueType.defaultTag;
@@ -367,13 +385,13 @@ public class OpOutputProjectionsPsiParser {
               "Can't create default projection for map type '%s, as it's value type '%s' doesn't have a default tag",
               type.name(),
               valueType.name
-          ), location);
+          ), locationPsi);
 
         final OpOutputVarProjection valueVarProjection = createDefaultVarProjection(
             valueType.type,
             defaultValuesTag,
             includeInDefault,
-            location
+            locationPsi
         );
 
         return new OpOutputMapModelProjection(mapType,
@@ -382,7 +400,8 @@ public class OpOutputProjectionsPsiParser {
                                               customParams,
                                               null,
                                               keyProjection,
-                                              valueVarProjection
+                                              valueVarProjection,
+                                              EpigraphPsiUtil.getLocation(locationPsi)
         );
       case LIST:
         ListType listType = (ListType) type;
@@ -394,13 +413,13 @@ public class OpOutputProjectionsPsiParser {
               "Can't create default projection for list type '%s, as it's element type '%s' doesn't have a default tag",
               type.name(),
               elementType.name
-          ), location);
+          ), locationPsi);
 
         final OpOutputVarProjection itemVarProjection = createDefaultVarProjection(
             elementType.type,
             defaultElementsTag,
             includeInDefault,
-            location
+            locationPsi
         );
 
         return new OpOutputListModelProjection(listType,
@@ -408,16 +427,23 @@ public class OpOutputProjectionsPsiParser {
                                                params,
                                                customParams,
                                                null,
-                                               itemVarProjection
+                                               itemVarProjection,
+                                               EpigraphPsiUtil.getLocation(locationPsi)
         );
       case UNION:
-        throw new PsiProcessingException("Was expecting to get datum model kind, got: " + type.kind(), location);
+        throw new PsiProcessingException("Was expecting to get datum model kind, got: " + type.kind(), locationPsi);
       case ENUM:
-        throw new PsiProcessingException("Unsupported type kind: " + type.kind(), location);
+        throw new PsiProcessingException("Unsupported type kind: " + type.kind(), locationPsi);
       case PRIMITIVE:
-        return new OpOutputPrimitiveModelProjection((PrimitiveType) type, includeInDefault, params, customParams, null);
+        return new OpOutputPrimitiveModelProjection((PrimitiveType) type,
+                                                    includeInDefault,
+                                                    params,
+                                                    customParams,
+                                                    null,
+                                                    EpigraphPsiUtil.getLocation(locationPsi)
+        );
       default:
-        throw new PsiProcessingException("Unknown type kind: " + type.kind(), location);
+        throw new PsiProcessingException("Unknown type kind: " + type.kind(), locationPsi);
     }
   }
 
@@ -449,7 +475,7 @@ public class OpOutputProjectionsPsiParser {
       OpCustomParams fieldCustomParams;
 
       List<OpParam> fieldParamsList = null;
-      Map<String, GDataValue> fieldCustomParamsMap = null;
+      @Nullable Map<String, OpCustomParam> fieldCustomParamsMap = null;
       for (IdlOpOutputFieldProjectionBodyPart fieldBodyPart : fieldProjectionPsi.getOpOutputFieldProjectionBodyPartList()) {
         @Nullable IdlOpParam fieldParamPsi = fieldBodyPart.getOpParam();
         if (fieldParamPsi != null) {
@@ -485,7 +511,8 @@ public class OpOutputProjectionsPsiParser {
                                                        fieldParams,
                                                        fieldCustomParams,
                                                        varProjection,
-                                                       includeFieldInDefault
+                                                       includeFieldInDefault,
+                                                       EpigraphPsiUtil.getLocation(fieldProjectionPsi)
       ));
     }
 
@@ -496,7 +523,8 @@ public class OpOutputProjectionsPsiParser {
                                              params,
                                              customParams,
                                              metaProjection,
-                                             fieldProjections
+                                             fieldProjections,
+                                             EpigraphPsiUtil.getLocation(psi)
     );
   }
 
@@ -523,7 +551,14 @@ public class OpOutputProjectionsPsiParser {
         : parseVarProjection(type.valueType(), valueProjectionPsi, resolver);
 
     return new OpOutputMapModelProjection(
-        type, includeInDefault, params, customParams, metaProjection, keyProjection, valueProjection
+        type,
+        includeInDefault,
+        params,
+        customParams,
+        metaProjection,
+        keyProjection,
+        valueProjection,
+        EpigraphPsiUtil.getLocation(psi)
     );
   }
 
@@ -542,7 +577,7 @@ public class OpOutputProjectionsPsiParser {
       presence = OpOutputKeyProjection.Presence.OPTIONAL;
 
     List<OpParam> params = null;
-    Map<String, GDataValue> customParamsMap = null;
+    @Nullable Map<String, OpCustomParam> customParamsMap = null;
 
     for (IdlOpOutputKeyProjectionPart keyPart : keyProjectionPsi.getOpOutputKeyProjectionPartList()) {
       @Nullable IdlOpParam paramPsi = keyPart.getOpParam();
@@ -557,7 +592,8 @@ public class OpOutputProjectionsPsiParser {
     return new OpOutputKeyProjection(
         presence,
         params == null ? null : new OpParams(params),
-        customParamsMap == null ? null : new OpCustomParams(customParamsMap)
+        customParamsMap == null ? null : new OpCustomParams(customParamsMap),
+        EpigraphPsiUtil.getLocation(keyProjectionPsi)
     );
   }
 
@@ -586,7 +622,8 @@ public class OpOutputProjectionsPsiParser {
         params,
         customParams,
         metaProjection,
-        itemsProjection
+        itemsProjection,
+        EpigraphPsiUtil.getLocation(psi)
     );
   }
 
@@ -596,9 +633,16 @@ public class OpOutputProjectionsPsiParser {
       boolean includeInDefault,
       @Nullable OpParams params,
       @Nullable OpCustomParams customParams,
-      @Nullable OpOutputModelProjection<?> metaProjection) {
+      @Nullable OpOutputModelProjection<?> metaProjection,
+      @NotNull PsiElement locationPsi) {
 
-    return new OpOutputPrimitiveModelProjection(type, includeInDefault, params, customParams, metaProjection);
+    return new OpOutputPrimitiveModelProjection(type,
+                                                includeInDefault,
+                                                params,
+                                                customParams,
+                                                metaProjection,
+                                                EpigraphPsiUtil.getLocation(locationPsi)
+    );
   }
 
   @NotNull
@@ -617,7 +661,7 @@ public class OpOutputProjectionsPsiParser {
     if (paramModelProjectionPsi == null) // can this ever happen?
       throw new PsiProcessingException(String.format("Parameter '%s' projection", paramName), paramPsi);
 
-    Map<String, GDataValue> customParamMap = null;
+    @Nullable Map<String, OpCustomParam> customParamMap = null;
     for (IdlCustomParam customParamPsi : paramPsi.getCustomParamList())
       customParamMap = parseCustomParam(customParamMap, customParamPsi);
     OpCustomParams customParams = customParamMap == null ? null : new OpCustomParams(customParamMap);
@@ -643,6 +687,6 @@ public class OpOutputProjectionsPsiParser {
         resolver
     );
 
-    return new OpParam(paramName, paramModelProjection);
+    return new OpParam(paramName, paramModelProjection, EpigraphPsiUtil.getLocation(paramPsi));
   }
 }

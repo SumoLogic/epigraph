@@ -1,5 +1,6 @@
 package io.epigraph.projections.op.output;
 
+import io.epigraph.lang.TextLocation;
 import io.epigraph.projections.op.OpCustomParams;
 import io.epigraph.projections.op.OpParams;
 import org.jetbrains.annotations.NotNull;
@@ -19,13 +20,17 @@ public class OpOutputKeyProjection {
   private final OpParams params;
   @Nullable
   private final OpCustomParams customParams;
+  @NotNull
+  private final TextLocation location;
 
   public OpOutputKeyProjection(@NotNull Presence presence,
                                @Nullable OpParams params,
-                               @Nullable OpCustomParams customParams) {
+                               @Nullable OpCustomParams customParams,
+                               @NotNull TextLocation location) {
     this.presence = presence;
     this.params = params;
     this.customParams = customParams;
+    this.location = location;
   }
 
   @NotNull
@@ -36,6 +41,9 @@ public class OpOutputKeyProjection {
 
   @Nullable
   public OpCustomParams customParams() { return customParams; }
+
+  @NotNull
+  public TextLocation location() { return location; }
 
   @Override
   public boolean equals(Object o) {

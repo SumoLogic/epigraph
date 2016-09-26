@@ -29,18 +29,12 @@ public class OpParams {
       this.params.put(param.name(), param);
   }
 
-  public boolean hasParam(@NotNull String name) {
-    return params.containsKey(name);
-  }
+  public boolean hasParam(@NotNull String name) { return params.containsKey(name); }
 
-  public boolean isEmpty() {
-    return params.isEmpty();
-  }
+  public boolean isEmpty() { return params.isEmpty(); }
 
   @Nullable
-  public OpParam get(@NotNull String key) {
-    return params.get(key);
-  }
+  public OpParam get(@NotNull String key) { return params.get(key); }
 
   @NotNull
   public Map<String, OpParam> params() { return params; }

@@ -1,5 +1,6 @@
 package io.epigraph.projections.op.output;
 
+import io.epigraph.lang.TextLocation;
 import io.epigraph.projections.op.OpCustomParams;
 import io.epigraph.projections.op.OpParams;
 import io.epigraph.types.MapType;
@@ -23,8 +24,9 @@ public class OpOutputMapModelProjection extends OpOutputModelProjection<MapType>
                                     @Nullable OpCustomParams customParams,
                                     @Nullable OpOutputModelProjection<?> metaProjection,
                                     @NotNull OpOutputKeyProjection keyProjection,
-                                    @NotNull OpOutputVarProjection valuesProjection) {
-    super(model, includeInDefault, params, customParams, metaProjection);
+                                    @NotNull OpOutputVarProjection valuesProjection,
+                                    @NotNull TextLocation location) {
+    super(model, includeInDefault, params, customParams, metaProjection, location);
     this.itemsProjection = valuesProjection;
     this.keyProjection = keyProjection;
   }

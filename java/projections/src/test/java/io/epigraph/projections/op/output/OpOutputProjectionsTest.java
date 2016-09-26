@@ -7,6 +7,7 @@ import de.uka.ilkd.pp.NoExceptions;
 import de.uka.ilkd.pp.StringBackend;
 import io.epigraph.idl.parser.projections.IdlSubParserDefinitions;
 import io.epigraph.idl.parser.psi.IdlOpOutputVarProjection;
+import io.epigraph.lang.TextLocation;
 import io.epigraph.projections.op.OpParam;
 import io.epigraph.projections.op.OpParams;
 import io.epigraph.projections.op.input.OpInputPrimitiveModelProjection;
@@ -46,13 +47,16 @@ public class OpOutputProjectionsTest {
                 null,
                 new OpOutputVarProjection(
                     Person.type,
+                    TextLocation.UNKNOWN,
                     new OpOutputTagProjection(
                         Person.id,
-                        new OpOutputPrimitiveModelProjection(PersonId.type, false, null, null, null)
+                        new OpOutputPrimitiveModelProjection(PersonId.type, false, null, null, null, TextLocation.UNKNOWN),
+                        TextLocation.UNKNOWN
                     )
-                ), true
+                ), true, TextLocation.UNKNOWN
             )
-        )
+        ),
+        TextLocation.UNKNOWN
     );
 
     OpOutputFieldProjection recursiveBestFriendProjection = new OpOutputFieldProjection(
@@ -61,11 +65,13 @@ public class OpOutputProjectionsTest {
         null,
         new OpOutputVarProjection(
             Person.type,
+            TextLocation.UNKNOWN,
             new OpOutputTagProjection(
                 Person.record,
-                recursivePersonRecordProjection
+                recursivePersonRecordProjection,
+                TextLocation.UNKNOWN
             )
-        ), true
+        ), true, TextLocation.UNKNOWN
     );
     recursivePersonRecordProjection.addFieldProjection(
         recursiveBestFriendProjection
@@ -84,13 +90,16 @@ public class OpOutputProjectionsTest {
                 null,
                 new OpOutputVarProjection(
                     Person.type,
+                    TextLocation.UNKNOWN,
                     new OpOutputTagProjection(
                         Person.id,
-                        new OpOutputPrimitiveModelProjection(PersonId.type, false, null, null, null)
+                        new OpOutputPrimitiveModelProjection(PersonId.type, false, null, null, null, TextLocation.UNKNOWN),
+                        TextLocation.UNKNOWN
                     )
-                ), true
+                ), true, TextLocation.UNKNOWN
             )
-        )
+        ),
+        TextLocation.UNKNOWN
     );
     OpOutputFieldProjection recursiveBestFriendProjection2 = new OpOutputFieldProjection(
         PersonRecord.bestFriend,
@@ -98,11 +107,13 @@ public class OpOutputProjectionsTest {
         null,
         new OpOutputVarProjection(
             Person.type,
+            TextLocation.UNKNOWN,
             new OpOutputTagProjection(
                 Person.record,
-                recursivePersonRecordProjection2
+                recursivePersonRecordProjection2,
+                TextLocation.UNKNOWN
             )
-        ), true
+        ), true, TextLocation.UNKNOWN
     );
     recursivePersonRecordProjection2.addFieldProjection(
         recursiveBestFriendProjection2
@@ -127,13 +138,15 @@ public class OpOutputProjectionsTest {
                 null,
                 new OpOutputVarProjection(
                     Person.type,
+                    TextLocation.UNKNOWN,
                     new OpOutputTagProjection(
                         Person.id,
-                        new OpOutputPrimitiveModelProjection(PersonId.type, false, null, null, null)
+                        new OpOutputPrimitiveModelProjection(PersonId.type, false, null, null, null, TextLocation.UNKNOWN),
+                        TextLocation.UNKNOWN
                     )
-                ), true
+                ), true, TextLocation.UNKNOWN
             )
-        )
+        ), TextLocation.UNKNOWN
     );
     recursivePersonRecordProjection.addFieldProjection(
         new OpOutputFieldProjection(
@@ -142,11 +155,13 @@ public class OpOutputProjectionsTest {
             null,
             new OpOutputVarProjection(
                 Person.type,
+                TextLocation.UNKNOWN,
                 new OpOutputTagProjection(
                     Person.record,
-                    recursivePersonRecordProjection
+                    recursivePersonRecordProjection,
+                    TextLocation.UNKNOWN
                 )
-            ), true
+            ), true, TextLocation.UNKNOWN
         )
     );
 
@@ -163,13 +178,16 @@ public class OpOutputProjectionsTest {
                 null,
                 new OpOutputVarProjection(
                     Person.type,
+                    TextLocation.UNKNOWN,
                     new OpOutputTagProjection(
                         Person.id,
-                        new OpOutputPrimitiveModelProjection(PersonId.type, false, null, null, null)
+                        new OpOutputPrimitiveModelProjection(PersonId.type, false, null, null, null, TextLocation.UNKNOWN),
+                        TextLocation.UNKNOWN
                     )
-                ), true
+                ), true, TextLocation.UNKNOWN
             )
-        )
+        ),
+        TextLocation.UNKNOWN
     );
     recursivePersonRecordProjection2.addFieldProjection(
         new OpOutputFieldProjection(
@@ -178,11 +196,13 @@ public class OpOutputProjectionsTest {
             null,
             new OpOutputVarProjection(
                 Person.type,
+                TextLocation.UNKNOWN,
                 new OpOutputTagProjection(
                     Person.record,
-                    recursivePersonRecordProjection2
+                    recursivePersonRecordProjection2,
+                    TextLocation.UNKNOWN
                 )
-            ), true
+            ), true, TextLocation.UNKNOWN
         )
     );
 
@@ -333,13 +353,15 @@ public class OpOutputProjectionsTest {
                 null,
                 new OpOutputVarProjection(
                     Person.type,
+                    TextLocation.UNKNOWN,
                     new OpOutputTagProjection(
                         Person.id,
-                        new OpOutputPrimitiveModelProjection(PersonId.type, false, null, null, null)
+                        new OpOutputPrimitiveModelProjection(PersonId.type, false, null, null, null, TextLocation.UNKNOWN),
+                        TextLocation.UNKNOWN
                     )
-                ), true
+                ), true, TextLocation.UNKNOWN
             )
-        )
+        ), TextLocation.UNKNOWN
     );
     recursivePersonRecordProjection.addFieldProjection(
         new OpOutputFieldProjection(
@@ -348,11 +370,13 @@ public class OpOutputProjectionsTest {
             null,
             new OpOutputVarProjection(
                 Person.type,
+                TextLocation.UNKNOWN,
                 new OpOutputTagProjection(
                     Person.record,
-                    recursivePersonRecordProjection
+                    recursivePersonRecordProjection,
+                    TextLocation.UNKNOWN
                 )
-            ), true
+            ), true, TextLocation.UNKNOWN
         )
     );
 
@@ -368,12 +392,14 @@ public class OpOutputProjectionsTest {
                         new OpParams(
                             // todo string
                             new OpParam("token",
-                                        new OpInputPrimitiveModelProjection(UserId.type, false, null, null, null)
+                                        new OpInputPrimitiveModelProjection(UserId.type, false, null, null, null, TextLocation.UNKNOWN),
+                                        TextLocation.UNKNOWN
                             )
                         ),
                         null,
-                        null
-                    )
+                        null,
+                        TextLocation.UNKNOWN
+                    ), TextLocation.UNKNOWN
                 ),
                 new OpOutputTagProjection(
                     Person.record,
@@ -390,15 +416,20 @@ public class OpOutputProjectionsTest {
                                 // todo make it recursive?
                                 new OpOutputVarProjection(
                                     Person.type,
+                                    TextLocation.UNKNOWN,
                                     new OpOutputTagProjection(
                                         Person.id,
-                                        new OpOutputPrimitiveModelProjection(PersonId.type, false, null, null, null)
+                                        new OpOutputPrimitiveModelProjection(PersonId.type, false, null, null, null, TextLocation.UNKNOWN),
+                                        TextLocation.UNKNOWN
                                     )
                                 ),
-                                true
+                                true,
+                                TextLocation.UNKNOWN
                             )
-                        )
-                    )
+                        ),
+                        TextLocation.UNKNOWN
+                    ),
+                    TextLocation.UNKNOWN
                 )
             )
         ),
@@ -406,6 +437,7 @@ public class OpOutputProjectionsTest {
             Collections.singletonList(
                 new OpOutputVarProjection(
                     UserRecord.type,
+                    TextLocation.UNKNOWN,
                     new OpOutputTagProjection(
                         User.record,
                         new OpOutputRecordModelProjection(
@@ -420,25 +452,33 @@ public class OpOutputProjectionsTest {
                                                                  false,
                                                                  null,
                                                                  null,
-                                                                 null
-                                                             )
+                                                                 null,
+                                                                 TextLocation.UNKNOWN
+                                                             ),
+                                                             TextLocation.UNKNOWN
                                     )),
                                     null,
                                     new OpOutputVarProjection(
                                         Person.type, // todo ??
+                                        TextLocation.UNKNOWN,
                                         new OpOutputTagProjection(
                                             Person.record, // todo ??
-                                            recursivePersonRecordProjection
+                                            recursivePersonRecordProjection,
+                                            TextLocation.UNKNOWN
                                         )
                                     ),
-                                    true
+                                    true,
+                                    TextLocation.UNKNOWN
                                 )
-                            )
-                        )
+                            ),
+                            TextLocation.UNKNOWN
+                        ),
+                        TextLocation.UNKNOWN
                     )
                 )
             )
-        )
+        ),
+        TextLocation.UNKNOWN
     );
 
     // shouldn't blow up with stack overflow

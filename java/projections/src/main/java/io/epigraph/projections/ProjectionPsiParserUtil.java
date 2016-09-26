@@ -8,6 +8,8 @@ import io.epigraph.idl.parser.psi.IdlDataValue;
 import io.epigraph.idl.parser.psi.IdlOpTagName;
 import io.epigraph.idl.parser.psi.IdlQid;
 import io.epigraph.lang.Fqn;
+import io.epigraph.projections.op.OpCustomParam;
+import io.epigraph.psi.EpigraphPsiUtil;
 import io.epigraph.psi.PsiProcessingException;
 import io.epigraph.types.Type;
 import io.epigraph.types.TypesResolver;
@@ -83,8 +85,8 @@ public class ProjectionPsiParserUtil {
   }
 
   @Nullable
-  public static Map<String, GDataValue> parseCustomParam(
-      @Nullable Map<String, GDataValue> customParamsMap,
+  public static Map<String, OpCustomParam> parseCustomParam(
+      @Nullable Map<String, OpCustomParam> customParamsMap,
       @Nullable IdlCustomParam customParamPsi)
       throws PsiProcessingException {
 
@@ -94,7 +96,12 @@ public class ProjectionPsiParserUtil {
       if (customParamValuePsi != null) {
         @NotNull String customParamName = customParamPsi.getQid().getCanonicalName();
         @NotNull GDataValue customParamValue = IdlGDataPsiParser.parseValue(customParamValuePsi);
-        customParamsMap.put(customParamName, customParamValue);
+        customParamsMap.put(customParamName,
+                            new OpCustomParam(customParamName,
+                                              customParamValue,
+                                              EpigraphPsiUtil.getLocation(customParamPsi)
+                            )
+        );
       }
     }
     return customParamsMap;
