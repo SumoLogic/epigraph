@@ -3,6 +3,7 @@ package io.epigraph.idl.gdata;
 import io.epigraph.gdata.*;
 import io.epigraph.idl.parser.psi.*;
 import io.epigraph.lang.Fqn;
+import io.epigraph.psi.EpigraphPsiUtil;
 import io.epigraph.psi.PsiProcessingException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -40,7 +41,7 @@ public class IdlGDataPsiParser {
     }
 
 
-    return new GData(getTypeRef(typeRef), tags);
+    return new GData(getTypeRef(typeRef), tags, EpigraphPsiUtil.getLocation(psi));
   }
 
   @NotNull
@@ -75,7 +76,7 @@ public class IdlGDataPsiParser {
         );
     }
 
-    return new GRecordDatum(getTypeRef(typeRef), fields);
+    return new GRecordDatum(getTypeRef(typeRef), fields, EpigraphPsiUtil.getLocation(psi));
   }
 
   @NotNull
@@ -93,7 +94,7 @@ public class IdlGDataPsiParser {
         );
     }
 
-    return new GMapDatum(getTypeRef(typeRef), map);
+    return new GMapDatum(getTypeRef(typeRef), map, EpigraphPsiUtil.getLocation(psi));
   }
 
   @NotNull
@@ -105,12 +106,12 @@ public class IdlGDataPsiParser {
     for (IdlDataValue value : psi.getDataValueList())
       items.add(parseValue(value));
 
-    return new GListDatum(getTypeRef(typeRef), items);
+    return new GListDatum(getTypeRef(typeRef), items, EpigraphPsiUtil.getLocation(psi));
   }
 
   @NotNull
   public static GDataEnum parseEnum(@NotNull IdlEnumDatum psi) {
-    return new GDataEnum(psi.getQid().getCanonicalName());
+    return new GDataEnum(psi.getQid().getCanonicalName(), EpigraphPsiUtil.getLocation(psi));
   }
 
   @NotNull
@@ -131,13 +132,13 @@ public class IdlGDataPsiParser {
     } else
       throw new PsiProcessingException(String.format("Don't know how to handle primitive '%s'", psi.getText()), psi);
 
-    return new GPrimitiveDatum(getTypeRef(typeRef), value);
+    return new GPrimitiveDatum(getTypeRef(typeRef), value, EpigraphPsiUtil.getLocation(psi));
   }
 
   @NotNull
   public static GNullDatum parseNull(@NotNull IdlNullDatum psi) {
     @Nullable IdlFqnTypeRef typeRef = psi.getFqnTypeRef();
-    return new GNullDatum(getTypeRef(typeRef));
+    return new GNullDatum(getTypeRef(typeRef), EpigraphPsiUtil.getLocation(psi));
   }
 
   @Nullable

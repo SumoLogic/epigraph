@@ -480,7 +480,7 @@ public class OpOutputProjectionsTest {
     if (errorsAccumulator.hasErrors()) {
       for (PsiErrorElement element : errorsAccumulator.errors()) {
         System.err.println(element.getErrorDescription() + " at " +
-                           EpigraphPsiUtil.getLocation(element, projectionString));
+                           EpigraphPsiUtil.getLocation(element));
       }
       String psiDump = DebugUtil.psiToString(psiVarProjection, true, false).trim();
       fail(psiDump);
@@ -498,7 +498,7 @@ public class OpOutputProjectionsTest {
     } catch (PsiProcessingException e) {
       e.printStackTrace();
       System.err.println(e.getMessage() + " at " +
-                         EpigraphPsiUtil.getLocation(e.psi(), projectionString));
+                         EpigraphPsiUtil.getLocation(e.psi()));
       String psiDump = DebugUtil.psiToString(psiVarProjection, true, false).trim();
       fail(psiDump);
     }

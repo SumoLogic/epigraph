@@ -50,8 +50,7 @@ public class IdlGDataPsiParserTest {
 
     if (errorsAccumulator.hasErrors()) {
       for (PsiErrorElement element : errorsAccumulator.errors()) {
-        System.err.println(element.getErrorDescription() + " at " +
-                           EpigraphPsiUtil.getLocation(element, dataStr));
+        System.err.println(element.getErrorDescription() + " at " + EpigraphPsiUtil.getLocation(element));
       }
       fail(DebugUtil.psiTreeToString(dataValue, true));
     }
@@ -61,8 +60,7 @@ public class IdlGDataPsiParserTest {
       gDataValue = IdlGDataPsiParser.parseValue(dataValue);
     } catch (PsiProcessingException e) {
       e.printStackTrace();
-      System.err.println(e.getMessage() + " at " +
-                         EpigraphPsiUtil.getLocation(e.psi(), dataStr));
+      System.err.println(e.getMessage() + " at " + EpigraphPsiUtil.getLocation(e.psi()));
       fail();
     }
 

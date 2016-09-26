@@ -1,6 +1,7 @@
 package io.epigraph.gdata;
 
 import io.epigraph.lang.Fqn;
+import io.epigraph.lang.TextLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,8 +14,8 @@ public class GPrimitiveDatum extends GDatum {
   @NotNull
   private final Object value;
 
-  public GPrimitiveDatum(@Nullable Fqn typeRef, @NotNull Object value) {
-    super(typeRef);
+  public GPrimitiveDatum(@Nullable Fqn typeRef, @NotNull Object value, @NotNull TextLocation location) {
+    super(typeRef, location);
     this.value = value;
   }
 

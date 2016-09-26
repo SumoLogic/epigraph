@@ -1,5 +1,6 @@
 package io.epigraph.gdata;
 
+import io.epigraph.lang.TextLocation;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -11,8 +12,8 @@ public class GDataEnum extends GDatum {
   @NotNull
   private final String value;
 
-  public GDataEnum(@NotNull String value) {
-    super(null);
+  public GDataEnum(@NotNull String value, @NotNull TextLocation location) {
+    super(null, location);
     this.value = value;
   }
 

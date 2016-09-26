@@ -1,6 +1,7 @@
 package io.epigraph.gdata;
 
 import io.epigraph.lang.Fqn;
+import io.epigraph.lang.TextLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,8 +16,8 @@ public class GListDatum extends GDatum {
   @NotNull
   private final List<GDataValue> values;
 
-  public GListDatum(@Nullable Fqn typeRef, @NotNull List<GDataValue> values) {
-    super(typeRef);
+  public GListDatum(@Nullable Fqn typeRef, @NotNull List<GDataValue> values, @NotNull TextLocation location) {
+    super(typeRef, location);
     this.values = values;
   }
 

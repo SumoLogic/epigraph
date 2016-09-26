@@ -1,15 +1,15 @@
 package io.epigraph.gdata;
 
 import io.epigraph.lang.Fqn;
+import io.epigraph.lang.TextLocation;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class GNullDatum extends GDatum {
-  public static GNullDatum NO_TYPE_INSTANCE = new GNullDatum(null);
-
-  public GNullDatum(@Nullable Fqn typeRef) { super(typeRef); }
+  public GNullDatum(@Nullable Fqn typeRef, @NotNull TextLocation location) { super(typeRef, location); }
 
   @Override
   public String toString() {

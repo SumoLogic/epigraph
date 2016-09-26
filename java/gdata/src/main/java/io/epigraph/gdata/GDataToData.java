@@ -2,6 +2,7 @@ package io.epigraph.gdata;
 
 import io.epigraph.data.*;
 import io.epigraph.lang.Fqn;
+import io.epigraph.lang.TextLocation;
 import io.epigraph.types.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -10,7 +11,7 @@ import java.util.Map;
 
 /**
  * Transforms raw schema-less {@code GData} instances to typed {@code Data}
- * 
+ *
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class GDataToData {
@@ -24,14 +25,15 @@ public class GDataToData {
       GData gData = (GData) gdata;
 
       @Nullable Fqn typeRef = gData.typeRef();
-      if (typeRef != null) type = resolveType(resolver, typeRef, Type.class);
+      if (typeRef != null) type = resolveType(resolver, typeRef, Type.class, gdata.location());
 
       @NotNull Data.Builder builder = type.createDataBuilder();
 
       for (Map.Entry<String, GDatum> entry : gData.tags().entrySet()) {
         Type.Tag tag = type.tagsMap().get(entry.getKey());
         if (tag == null) throw new ProcessingException(
-            String.format("Unknown tag '%s' in type '%s'", entry.getKey(), typeRef)
+            String.format("Unknown tag '%s' in type '%s'", entry.getKey(), typeRef),
+            gdata.location()
         );
 
         @NotNull DatumType tagType = tag.type;
@@ -54,7 +56,8 @@ public class GDataToData {
 
         return builder;
       } else throw new ProcessingException(
-          String.format("Can't create vartype '%s' from datum '%s'", type.name(), gdata)
+          String.format("Can't create vartype '%s' from datum '%s'", type.name(), gdata),
+          gdata.location()
       );
     } else throw new IllegalArgumentException(gdata.getClass().getName());
   }
@@ -78,34 +81,40 @@ public class GDataToData {
     } else if (gdata instanceof GPrimitiveDatum) {
       if (!(type instanceof PrimitiveType<?>))
         throw new ProcessingException(
-            String.format("Can't transform primitive value '%s' into '%s'", gdata, type.name())
+            String.format("Can't transform primitive value '%s' into '%s'", gdata, type.name()),
+            gdata.location()
         );
 
       return transform((PrimitiveType<?>) type, (GPrimitiveDatum) gdata, resolver);
     } else if (gdata instanceof GRecordDatum) {
       if (!(type instanceof RecordType))
         throw new ProcessingException(
-            String.format("Can't transform record value '%s' into '%s'", gdata, type.name())
+            String.format("Can't transform record value '%s' into '%s'", gdata, type.name()),
+            gdata.location()
         );
 
       return transform((RecordType) type, (GRecordDatum) gdata, resolver);
     } else if (gdata instanceof GMapDatum) {
       if (!(type instanceof MapType))
         throw new ProcessingException(
-            String.format("Can't transform map value '%s' into '%s'", gdata, type.name())
+            String.format("Can't transform map value '%s' into '%s'", gdata, type.name()),
+            gdata.location()
         );
 
       return transform((MapType) type, (GMapDatum) gdata, resolver);
     } else if (gdata instanceof GListDatum) {
       if (!(type instanceof ListType))
         throw new ProcessingException(
-            String.format("Can't transform list value '%s' into '%s'", gdata, type.name())
+            String.format("Can't transform list value '%s' into '%s'", gdata, type.name()),
+            gdata.location()
         );
 
       return transform((ListType) type, (GListDatum) gdata, resolver);
     } else {
       // TODO Enum
-      throw new ProcessingException(String.format("Don't know how to handle '%s'", type.getClass().getName()));
+      throw new ProcessingException(String.format("Don't know how to handle '%s'", type.getClass().getName()),
+                                    gdata.location()
+      );
     }
   }
 
@@ -115,7 +124,7 @@ public class GDataToData {
                                       @NotNull GRecordDatum gdata,
                                       @NotNull TypesResolver resolver) throws ProcessingException {
     @Nullable Fqn typeRef = gdata.typeRef();
-    if (typeRef != null) type = resolveType(resolver, typeRef, RecordType.class);
+    if (typeRef != null) type = resolveType(resolver, typeRef, RecordType.class, gdata.location());
 
     @NotNull RecordDatum.Builder builder = type.createBuilder();
 
@@ -124,7 +133,9 @@ public class GDataToData {
       RecordType.Field field = type.fieldsMap().get(fieldName);
 
       if (field == null)
-        throw new ProcessingException(String.format("Can't find field '%s' in type '%s'", fieldName, type.name()));
+        throw new ProcessingException(String.format("Can't find field '%s' in type '%s'", fieldName, type.name()),
+                                      gdata.location()
+        );
 
       Data fieldData = transform(field.dataType.type, entry.getValue(), resolver);
 
@@ -138,7 +149,7 @@ public class GDataToData {
                                    @NotNull GMapDatum gdata,
                                    @NotNull TypesResolver resolver) throws ProcessingException {
     @Nullable Fqn typeRef = gdata.typeRef();
-    if (typeRef != null) type = resolveType(resolver, typeRef, MapType.class);
+    if (typeRef != null) type = resolveType(resolver, typeRef, MapType.class, gdata.location());
 
     @NotNull DatumType keyType = type.keyType();
     @NotNull Type valueType = type.valueType().type;
@@ -147,10 +158,10 @@ public class GDataToData {
     for (Map.Entry<GDatum, GDataValue> entry : gdata.entries().entrySet()) {
       @Nullable Datum key = transformDatum(keyType, entry.getKey(), resolver);
       if (key == null)
-        throw new ProcessingException("'" + type.name() + "': Null keys in maps not allowed");
+        throw new ProcessingException("'" + type.name() + "': Null keys in maps not allowed", gdata.location());
 
       Data value = transform(valueType, entry.getValue(), resolver);
-      
+
       builder._raw().elements().put(key.toImmutable(), value);
     }
 
@@ -161,7 +172,7 @@ public class GDataToData {
                                     @NotNull GListDatum gdata,
                                     @NotNull TypesResolver resolver) throws ProcessingException {
     @Nullable Fqn typeRef = gdata.typeRef();
-    if (typeRef != null) type = resolveType(resolver, typeRef, ListType.class);
+    if (typeRef != null) type = resolveType(resolver, typeRef, ListType.class, gdata.location());
 
     @NotNull Type elementType = type.elementType().type;
     @NotNull ListDatum.Builder builder = type.createBuilder();
@@ -180,7 +191,7 @@ public class GDataToData {
                                             @NotNull GPrimitiveDatum gdata,
                                             @NotNull TypesResolver resolver) throws ProcessingException {
     @Nullable Fqn typeRef = gdata.typeRef();
-    if (typeRef != null) type = resolveType(resolver, typeRef, PrimitiveType.class);
+    if (typeRef != null) type = resolveType(resolver, typeRef, PrimitiveType.class, gdata.location());
 
     // TODO need to carefully coerce types here
 
@@ -200,9 +211,10 @@ public class GDataToData {
   @NotNull
   private static <T extends Type> T resolveType(@NotNull TypesResolver resolver,
                                                 @NotNull Fqn ref,
-                                                @NotNull Class<T> expectedClass) throws ProcessingException {
+                                                @NotNull Class<T> expectedClass,
+                                                @NotNull TextLocation location) throws ProcessingException {
     @Nullable Type type = resolver.resolve(ref);
-    if (type == null) throw new ProcessingException("Can't resolve type '" + ref + "'");
+    if (type == null) throw new ProcessingException("Can't resolve type '" + ref + "'", location);
 
     if (expectedClass.isAssignableFrom(type.getClass()))
       //noinspection unchecked
@@ -213,14 +225,14 @@ public class GDataToData {
           ref,
           type.getClass().getName(),
           expectedClass.getName()
-      ));
+      ), location);
   }
 
   public static Val.Imm transform(@NotNull DatumType type,
                                   @NotNull GNullDatum gdata,
                                   @NotNull TypesResolver resolver) throws ProcessingException {
     @Nullable Fqn typeRef = gdata.typeRef();
-    if (typeRef != null) type = resolveType(resolver, typeRef, RecordType.class);
+    if (typeRef != null) type = resolveType(resolver, typeRef, RecordType.class, gdata.location());
     return type.createValue(null);
   }
 
@@ -230,8 +242,17 @@ public class GDataToData {
   }
 
   public static class ProcessingException extends Exception {
-    ProcessingException(String message) {
+    @NotNull
+    private final TextLocation location;
+
+    ProcessingException(String message, @NotNull TextLocation location) {
       super(message);
+      this.location = location;
+    }
+
+    @NotNull
+    public TextLocation location() {
+      return location;
     }
   }
 }

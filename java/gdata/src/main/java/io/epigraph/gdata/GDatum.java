@@ -1,6 +1,8 @@
 package io.epigraph.gdata;
 
 import io.epigraph.lang.Fqn;
+import io.epigraph.lang.TextLocation;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
@@ -12,7 +14,9 @@ public abstract class GDatum extends GDataValue {
   @Nullable
   private final Fqn typeRef;
 
-  protected GDatum(@Nullable Fqn typeRef) {this.typeRef = typeRef;}
+  protected GDatum(@Nullable Fqn typeRef, @NotNull TextLocation location) {
+    super(location);
+    this.typeRef = typeRef;}
 
   @Nullable
   public Fqn typeRef() {

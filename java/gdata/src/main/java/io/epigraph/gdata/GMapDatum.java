@@ -1,6 +1,7 @@
 package io.epigraph.gdata;
 
 import io.epigraph.lang.Fqn;
+import io.epigraph.lang.TextLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,8 +16,11 @@ public class GMapDatum extends GDatum {
   @NotNull
   private final LinkedHashMap<GDatum, GDataValue> entries;
 
-  public GMapDatum(@Nullable Fqn typeRef, @NotNull LinkedHashMap<GDatum, GDataValue> entries) {
-    super(typeRef);
+  public GMapDatum(@Nullable Fqn typeRef,
+                   @NotNull LinkedHashMap<GDatum, GDataValue> entries,
+                   @NotNull TextLocation location) {
+
+    super(typeRef, location);
     this.entries = entries;
   }
 

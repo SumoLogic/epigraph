@@ -8,6 +8,7 @@ import com.intellij.lang.impl.PsiBuilderImpl;
 import com.intellij.lexer.Lexer;
 import com.intellij.mock.MockProjectEx;
 import com.intellij.mock.MockPsiManager;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.Trinity;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiErrorElement;
@@ -16,6 +17,7 @@ import com.intellij.psi.PsiRecursiveElementWalkingVisitor;
 import com.intellij.psi.impl.PsiFileFactoryImpl;
 import com.intellij.psi.impl.source.CharTableImpl;
 import com.intellij.psi.tree.IElementType;
+import io.epigraph.lang.TextLocation;
 import org.intellij.grammar.LightPsi;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -90,6 +92,17 @@ public class EpigraphPsiUtil {
     return res;
   }
 
+  @NotNull
+  public static TextLocation getLocation(@NotNull PsiElement psi) {
+    TextRange textRange = psi.getTextRange();
+    PsiFile psiFile = psi.getContainingFile();
+
+    return new TextLocation(textRange.getStartOffset(),
+                            textRange.getEndOffset(),
+                            psiFile == null ? null : psiFile.getName()
+    );
+  }
+
   private static void collectErrors(@NotNull PsiElement element,
                                     @Nullable final EpigraphPsiUtil.ErrorProcessor errorProcessor) {
     if (errorProcessor != null) {
@@ -99,30 +112,6 @@ public class EpigraphPsiUtil {
           errorProcessor.process(element);
         }
       });
-    }
-  }
-
-  public static Location getLocation(@NotNull PsiElement element, @Nullable String text) {
-    if (text == null) text = element.getContainingFile().getText();
-    int offset = element.getTextRange().getStartOffset();
-    // todo port LineNumberUtil to Java
-    int line = text.substring(0, offset).split("\r\n|\r|\n").length;
-    return new Location(line, -1);
-  }
-
-  public static class Location {
-    public final int line;
-    public final int column;
-
-    public Location(int line, int column) {
-      this.line = line;
-      this.column = column;
-    }
-
-    @Override
-    public String toString() {
-      if (column == -1) return "line " + line;
-      else return String.format("(%d:%d)", line, column);
     }
   }
 

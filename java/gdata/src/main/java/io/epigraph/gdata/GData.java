@@ -1,6 +1,7 @@
 package io.epigraph.gdata;
 
 import io.epigraph.lang.Fqn;
+import io.epigraph.lang.TextLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,7 +18,11 @@ public class GData extends GDataValue {
   @NotNull
   private final LinkedHashMap<String, GDatum> tags;
 
-  public GData(@Nullable Fqn typeRef, @NotNull LinkedHashMap<String, GDatum> tags) {
+  public GData(@Nullable Fqn typeRef,
+               @NotNull LinkedHashMap<String, GDatum> tags,
+               @NotNull TextLocation location) {
+
+    super(location);
     this.typeRef = typeRef;
     this.tags = tags;
   }
