@@ -2,7 +2,7 @@ package io.epigraph.projections.op.input;
 
 import io.epigraph.data.PrimitiveDatum;
 import io.epigraph.lang.TextLocation;
-import io.epigraph.projections.op.OpCustomParams;
+import io.epigraph.projections.CustomParams;
 import io.epigraph.types.PrimitiveType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -14,7 +14,7 @@ public class OpInputPrimitiveModelProjection extends OpInputModelProjection<Prim
   public OpInputPrimitiveModelProjection(@NotNull PrimitiveType model,
                                          boolean required,
                                          @Nullable PrimitiveDatum<?> defaultValue,
-                                         @Nullable OpCustomParams customParams,
+                                         @Nullable CustomParams customParams,
                                          @Nullable OpInputModelProjection<?, ?> metaProjection,
                                          @NotNull TextLocation location) {
     super(model, required, defaultValue, customParams, metaProjection, location);

@@ -3,7 +3,7 @@ package io.epigraph.projections.op.input;
 import io.epigraph.data.Datum;
 import io.epigraph.lang.TextLocation;
 import io.epigraph.projections.generic.GenericModelProjection;
-import io.epigraph.projections.op.OpCustomParams;
+import io.epigraph.projections.CustomParams;
 import io.epigraph.types.DatumType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -20,14 +20,14 @@ public abstract class OpInputModelProjection<M extends DatumType, D extends Datu
   @Nullable
   protected final D defaultValue;
   @Nullable
-  protected final OpCustomParams customParams;
+  protected final CustomParams customParams;
   @Nullable
   protected final OpInputModelProjection<?, ?> metaProjection;
 
   public OpInputModelProjection(@NotNull M model,
                                 boolean required,
                                 @Nullable D defaultValue,
-                                @Nullable OpCustomParams customParams,
+                                @Nullable CustomParams customParams,
                                 @Nullable OpInputModelProjection<?, ?> metaProjection,
                                 @NotNull TextLocation location) {
     super(model, customParams, location);
@@ -43,7 +43,7 @@ public abstract class OpInputModelProjection<M extends DatumType, D extends Datu
   public D defaultValue() { return defaultValue; }
 
   @Nullable
-  public OpCustomParams customParams() { return customParams; }
+  public CustomParams customParams() { return customParams; }
 
   @Nullable
   public OpInputModelProjection<?, ?> metaProjection() { return metaProjection; }

@@ -14,7 +14,7 @@ public interface IdlOpInputComaSingleTagProjection extends PsiElement {
   List<IdlOpInputModelProperty> getOpInputModelPropertyList();
 
   @Nullable
-  IdlOpTagName getOpTagName();
+  IdlTagName getTagName();
 
   @Nullable
   PsiElement getColon();

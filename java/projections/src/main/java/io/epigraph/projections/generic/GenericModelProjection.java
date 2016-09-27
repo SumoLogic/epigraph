@@ -1,7 +1,7 @@
 package io.epigraph.projections.generic;
 
 import io.epigraph.lang.TextLocation;
-import io.epigraph.projections.op.OpCustomParams;
+import io.epigraph.projections.CustomParams;
 import io.epigraph.types.DatumType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -15,12 +15,12 @@ public abstract class GenericModelProjection<M extends DatumType> {
   @NotNull
   protected final M model;
   @Nullable
-  protected final OpCustomParams customParams;
+  protected final CustomParams customParams;
   @NotNull
   private final TextLocation location;
 
   public GenericModelProjection(@NotNull M model,
-                                @Nullable OpCustomParams customParams,
+                                @Nullable CustomParams customParams,
                                 @NotNull TextLocation location) {
     this.model = model;
     this.customParams = customParams;
@@ -30,7 +30,7 @@ public abstract class GenericModelProjection<M extends DatumType> {
   public M model() { return model; }
 
   @Nullable
-  public OpCustomParams customParams() { return customParams; }
+  public CustomParams customParams() { return customParams; }
 
   @NotNull
   public TextLocation location() { return location; }

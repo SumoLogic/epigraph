@@ -11,14 +11,14 @@ import static io.epigraph.idl.lexer.IdlElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import io.epigraph.idl.parser.psi.*;
 
-public class IdlOpTagNameImpl extends ASTWrapperPsiElement implements IdlOpTagName {
+public class IdlReqOutputComaModelProjectionImpl extends ASTWrapperPsiElement implements IdlReqOutputComaModelProjection {
 
-  public IdlOpTagNameImpl(ASTNode node) {
+  public IdlReqOutputComaModelProjectionImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull IdlVisitor visitor) {
-    visitor.visitOpTagName(this);
+    visitor.visitReqOutputComaModelProjection(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -28,14 +28,20 @@ public class IdlOpTagNameImpl extends ASTWrapperPsiElement implements IdlOpTagNa
 
   @Override
   @Nullable
-  public IdlQid getQid() {
-    return findChildByClass(IdlQid.class);
+  public IdlReqOutputComaListModelProjection getReqOutputComaListModelProjection() {
+    return findChildByClass(IdlReqOutputComaListModelProjection.class);
   }
 
   @Override
   @Nullable
-  public PsiElement getUnderscore() {
-    return findChildByType(I_UNDERSCORE);
+  public IdlReqOutputComaMapModelProjection getReqOutputComaMapModelProjection() {
+    return findChildByClass(IdlReqOutputComaMapModelProjection.class);
+  }
+
+  @Override
+  @Nullable
+  public IdlReqOutputComaRecordModelProjection getReqOutputComaRecordModelProjection() {
+    return findChildByClass(IdlReqOutputComaRecordModelProjection.class);
   }
 
 }

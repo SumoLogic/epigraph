@@ -64,6 +64,8 @@ ID=([:letter:]([:letter:]|[:digit:])*)|(`[^`]*`)
   "+"                  { return I_PLUS; }
   "@"                  { return I_AT; }
   "_"                  { return I_UNDERSCORE; }
+  "!"                  { return I_BANG; }
+
   "/"                  { return I_SLASH; }
   "("                  { return I_PAREN_LEFT; }
   ")"                  { return I_PAREN_RIGHT; }

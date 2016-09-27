@@ -1,0 +1,20 @@
+namespace epigraph.projections.req
+
+import epigraph.data.Datum
+import epigraph.projections.CustomParam
+
+record ReqOutputKeysProjection {
+  required: Boolean
+  keys: list[ReqOutputKey]
+}
+
+record ReqOutputKey {
+  value: Datum { doc = "of appropriate (enclosing map key) type"}
+  projection: ReqOutputKeyProjection
+}
+
+record ReqOutputKeyProjection {
+  // required is specified once for all keys
+  params: list[ReqParam]
+  customParams: list[CustomParam]
+}

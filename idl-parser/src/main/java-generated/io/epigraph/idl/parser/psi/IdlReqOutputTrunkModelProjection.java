@@ -5,12 +5,9 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface IdlOpTagName extends PsiElement {
+public interface IdlReqOutputTrunkModelProjection extends IdlReqOutputComaModelProjection {
 
   @Nullable
-  IdlQid getQid();
-
-  @Nullable
-  PsiElement getUnderscore();
+  IdlReqOutputTrunkRecordOrMapModelProjection getReqOutputTrunkRecordOrMapModelProjection();
 
 }

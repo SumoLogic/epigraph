@@ -2,7 +2,7 @@ package io.epigraph.projections.op.output;
 
 import io.epigraph.lang.TextLocation;
 import io.epigraph.projections.generic.GenericModelProjection;
-import io.epigraph.projections.op.OpCustomParams;
+import io.epigraph.projections.CustomParams;
 import io.epigraph.projections.op.OpParams;
 import io.epigraph.types.DatumType;
 import org.jetbrains.annotations.NotNull;
@@ -23,7 +23,7 @@ public abstract class OpOutputModelProjection<M extends DatumType> extends Gener
   public OpOutputModelProjection(@NotNull M model,
                                  boolean includeInDefault,
                                  @Nullable OpParams params,
-                                 @Nullable OpCustomParams customParams,
+                                 @Nullable CustomParams customParams,
                                  @Nullable OpOutputModelProjection<?> metaProjection,
                                  @NotNull TextLocation location) {
     super(model, customParams, location);

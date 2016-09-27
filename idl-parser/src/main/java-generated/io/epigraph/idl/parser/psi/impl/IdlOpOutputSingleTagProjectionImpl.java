@@ -40,8 +40,8 @@ public class IdlOpOutputSingleTagProjectionImpl extends ASTWrapperPsiElement imp
 
   @Override
   @Nullable
-  public IdlOpTagName getOpTagName() {
-    return findChildByClass(IdlOpTagName.class);
+  public IdlTagName getTagName() {
+    return findChildByClass(IdlTagName.class);
   }
 
   @Override

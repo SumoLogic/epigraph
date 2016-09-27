@@ -1,7 +1,7 @@
 package io.epigraph.projections.op.output;
 
 import io.epigraph.lang.TextLocation;
-import io.epigraph.projections.op.OpCustomParams;
+import io.epigraph.projections.CustomParams;
 import io.epigraph.projections.op.OpParams;
 import io.epigraph.types.PrimitiveType;
 import org.jetbrains.annotations.NotNull;
@@ -14,7 +14,7 @@ public class OpOutputPrimitiveModelProjection extends OpOutputModelProjection<Pr
   public OpOutputPrimitiveModelProjection(@NotNull PrimitiveType model,
                                           boolean includeInDefault,
                                           @Nullable OpParams params,
-                                          @Nullable OpCustomParams customParams,
+                                          @Nullable CustomParams customParams,
                                           @Nullable OpOutputModelProjection<?> metaProjection,
                                           @NotNull TextLocation location) {
     super(model, includeInDefault, params, customParams, metaProjection, location);

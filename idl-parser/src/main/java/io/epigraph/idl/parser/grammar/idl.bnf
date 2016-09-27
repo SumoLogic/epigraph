@@ -39,6 +39,7 @@
     PLUS = '+'
     AT = '@'
     UNDERSCORE = '_'
+    BANG = '!'
 
     space='regexp:\s+'
     comment='regexp://.*'
@@ -63,7 +64,7 @@
 }
 
 // TODO proper root
-root ::= namespaceDecl imports opOutputVarProjection opInputTrunkVarProjection
+root ::= namespaceDecl imports opOutputVarProjection opInputTrunkVarProjection reqOutputTrunkVarProjection
 
 // either quoted or unquoted id
 qid ::= id {
@@ -103,7 +104,7 @@ fqnTypeRef ::= fqn {
 ////  methods=[setName getNameIdentifier getReference]
 //}
 
-customParam ::= qid '=' dataValue {
+customParam ::= qid '=' dataValue { // todo (here and schema): rename to annotation
   name="custom attribute"
 //  implements="com.intellij.psi.PsiNamedElement"
 //  methods = [getName setName getNameIdentifier]
@@ -113,29 +114,28 @@ customParam ::= qid '=' dataValue {
 private namespaceDeclRecover ::= ! ('import' | 'namespace' )
 private importRecover ::= namespaceDeclRecover
 
-// ------------- op projections -------------
+tagName ::= qid | '_' // `_` is default tag
 
-opTagName ::= qid | '_' // `_` is default tag
-
-// output --------------------------------------------------------
+// ============= op projections =============
 
 opParam ::= ';' '+'? qid ':' fqnTypeRef opInputComaModelProjection opParamDefault? opParamBody? { pin = 1 }
 private opParamDefault ::= '=' datum { pin=1 }
 private opParamBody ::= '{' ( opParamBodyPart ','? )* '}'
 private opParamBodyPart ::= customParam
 
+// output --------------------------------------------------------
+
 opOutputModelMeta ::= 'meta' ':' '+'? opOutputModelProjection
 
 opOutputVarProjection ::= ( opOutputMultiTagProjection | opOutputSingleTagProjection ) opOutputVarPolymorphicTail?
 
-opOutputSingleTagProjection ::= ( ':' '+'? opTagName)? (opOutputComplexSingleTagProjection | opOutputSimpleSingleTagProjection )
-private opOutputSimpleSingleTagProjection ::= opOutputModelProjection
-private opOutputComplexSingleTagProjection ::= '{' (opOutputModelProperty ','?)* opOutputModelProjection '}' {pin=1}
-
 opOutputMultiTagProjection ::= ':' '(' (opOutputMultiTagProjectionItem ','?)* ')' {pin=2}
-opOutputMultiTagProjectionItem ::= '+'? opTagName ( opOutputComplexMultiTagProjectionItem | opOutputSimpleMultiTagProjectionItem )
-private opOutputSimpleMultiTagProjectionItem ::= opOutputModelProjection
-private opOutputComplexMultiTagProjectionItem ::= '{' (opOutputModelProperty ','?)* opOutputModelProjection '}' {pin=1}
+opOutputSingleTagProjection ::= ( ':' '+'? tagName)? (opOutputComplexTagProjection | opOutputSimpleTagProjection )
+opOutputMultiTagProjectionItem ::= '+'? tagName ( opOutputComplexTagProjection | opOutputSimpleTagProjection )
+
+private opOutputSimpleTagProjection ::= opOutputModelProjection
+private opOutputComplexTagProjection ::= '{' (opOutputModelProperty ','?)* opOutputModelProjection '}' {pin=1}
+
 //
 opOutputVarPolymorphicTail ::= opOutputVarSingleTail | opOutputVarMultiTail
 opOutputVarSingleTail ::= '~' fqnTypeRef opOutputVarProjection
@@ -189,7 +189,7 @@ opInputFieldProjectionBodyPart ::= customParam
 // input trunk part
 
 opInputTrunkVarProjection ::= ( opInputComaMultiTagProjection | opInputTrunkSingleTagProjection ) opInputVarPolymorphicTail?
-opInputTrunkSingleTagProjection ::= ( ':' '+'? opTagName)? (opInputTrunkComplexSingleTagProjection | opInputTrunkSimpleSingleTagProjection )
+opInputTrunkSingleTagProjection ::= ( ':' '+'? tagName)? (opInputTrunkComplexSingleTagProjection | opInputTrunkSimpleSingleTagProjection )
 private opInputTrunkSimpleSingleTagProjection ::= opInputTrunkModelProjection
 private opInputTrunkComplexSingleTagProjection ::= '{' (opInputModelProperty ','?)* opInputTrunkModelProjection '}' {pin=1}
 
@@ -212,14 +212,12 @@ private opInputTrunkSimpleFieldProjection ::= opInputTrunkVarProjection
 // input coma part
 
 opInputComaVarProjection ::= ( opInputComaMultiTagProjection | opInputComaSingleTagProjection ) opInputVarPolymorphicTail?
-opInputComaSingleTagProjection ::= ( ':' '+'? opTagName)? (opInputComaComplexSingleTagProjection | opInputComaSimpleSingleTagProjection )
-private opInputComaSimpleSingleTagProjection ::= opInputComaModelProjection
-private opInputComaComplexSingleTagProjection ::= '{' (opInputModelProperty ','?)* opInputComaModelProjection '}' {pin=1}
-
 opInputComaMultiTagProjection ::= ':' '(' (opInputComaMultiTagProjectionItem ','?)* ')' {pin=2}
-opInputComaMultiTagProjectionItem ::= '+'? opTagName ( opInputComaComplexMultiTagProjectionItem | opInputComaSimpleMultiTagProjectionItem )
-private opInputComaSimpleMultiTagProjectionItem ::= opInputComaModelProjection
-private opInputComaComplexMultiTagProjectionItem ::= '{' (opInputModelProperty ','?)* opInputComaModelProjection '}' {pin=1}
+opInputComaSingleTagProjection ::= ( ':' '+'? tagName)? (opInputComaComplexTagProjection | opInputComaSimpleTagProjection )
+opInputComaMultiTagProjectionItem ::= '+'? tagName ( opInputComaComplexTagProjection | opInputComaSimpleTagProjection )
+
+private opInputComaSimpleTagProjection ::= opInputComaModelProjection
+private opInputComaComplexTagProjection ::= '{' (opInputModelProperty ','?)* opInputComaModelProjection '}' {pin=1}
 //
 
 opInputComaModelProjection ::= ( opInputComaRecordModelProjection
@@ -238,10 +236,76 @@ opInputComaListModelProjection ::= '*' '(' opInputComaVarProjection ')' { pin=1 
 
 // op input map
 opInputComaMapModelProjection ::= opInputComaKeyProjection '(' opInputComaVarProjection ')'
-opInputComaKeyProjection ::= '[' ']' {pin=2}
+opInputComaKeyProjection ::= '[' ']' {pin=1}
 
-// ------------- data language -------------
-// please keep consistent with schema.bnf
+// ============= req projections =============
+
+reqParam ::= ';' qid '=' datum
+reqAnnotation ::= '!' customParam
+private reqParamsAndAnnotations ::= ( reqParam | reqAnnotation )* 
+
+// req output --------------------------------------------------------
+// this is based on opInput
+
+reqOutputModelMeta ::= '@' '+'? reqOutputComaModelProjection // no params/annotations on meta?
+
+reqOutputVarPolymorphicTail ::= reqOutputVarSingleTail | reqOutputVarMultiTail
+reqOutputVarSingleTail ::= '~' fqnTypeRef reqOutputComaVarProjection
+reqOutputVarMultiTail ::= '~' '(' (reqOutputVarMultiTailItem ','?)* ')' {pin=2}
+reqOutputVarMultiTailItem ::= fqnTypeRef reqOutputComaVarProjection
+
+//reqOutputFieldProjectionBodyPart ::= customParam
+
+// input projection consists of two parts: trunk and coma. Trunk can't have any branching, i.e. only
+// singular tags and fields are allowed in var and record projections. Coma can contain branching
+
+// input trunk part
+
+reqOutputTrunkVarProjection ::= ( reqOutputComaMultiTagProjection | reqOutputTrunkSingleTagProjection ) reqOutputVarPolymorphicTail?
+reqOutputTrunkSingleTagProjection ::= ( ':' '+'? tagName )? reqParamsAndAnnotations reqOutputTrunkModelProjection reqOutputModelMeta?
+
+//
+
+reqOutputTrunkModelProjection ::= ( reqOutputTrunkRecordOrMapModelProjection
+                                  | reqOutputComaRecordModelProjection
+                                  | reqOutputComaMapModelProjection
+                                  | reqOutputComaListModelProjection
+                                  )? {
+  extends = reqOutputComaModelProjection
+}
+
+// record or map. We can't tell which one it is based on syntax only, need to check with model or op projection
+reqOutputTrunkRecordOrMapModelProjection ::= '/' reqOutputTrunkFieldOrKeyProjection { pin=1 }
+// this ought to be '+' (datum | qid), but enumDatum would match qid anyways.. todo: fix if enums are eliminated
+reqOutputTrunkFieldOrKeyProjection ::= '+'? datum reqParamsAndAnnotations reqOutputTrunkVarProjection
+
+// input coma part
+
+reqOutputComaVarProjection ::= ( reqOutputComaMultiTagProjection | reqOutputComaSingleTagProjection ) reqOutputVarPolymorphicTail?
+reqOutputComaSingleTagProjection ::= ( ':' '+'? tagName)? reqOutputComaTagProjectionItem
+reqOutputComaMultiTagProjection ::= ':' '(' ('+'? tagName reqOutputComaTagProjectionItem ','?)* ')' {pin=2}
+reqOutputComaTagProjectionItem ::= reqParamsAndAnnotations reqOutputComaModelProjection reqOutputModelMeta?
+//
+
+reqOutputComaModelProjection ::= ( reqOutputComaRecordModelProjection
+                                 | reqOutputComaListModelProjection
+                                 | reqOutputComaMapModelProjection
+                                 )?
+
+// op input record
+reqOutputComaRecordModelProjection ::= '(' (reqOutputComaFieldProjection ','?)* ')' { pin=1 }
+reqOutputComaFieldProjection ::= '+'? qid reqParamsAndAnnotations reqOutputComaVarProjection
+
+// op input list
+reqOutputComaListModelProjection ::= '*' '(' reqOutputComaVarProjection ')' { pin=1 }
+
+// op input map
+reqOutputComaMapModelProjection ::= reqOutputComaKeysProjection '(' reqOutputComaVarProjection ')'
+reqOutputComaKeysProjection ::= '+'? '[' ( reqOutputComaKeyProjection ','? )* ']' {pin=2}
+reqOutputComaKeyProjection ::= datum reqParamsAndAnnotations
+
+// ============= data language =============
+// please keep in sync with data language from schema.bnf
 
 dataValue ::= data | datum
 private dataTypeSpec ::= fqnTypeRef

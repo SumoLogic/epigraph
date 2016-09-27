@@ -239,10 +239,6 @@ public class IdlVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitOpTagName(@NotNull IdlOpTagName o) {
-    visitPsiElement(o);
-  }
-
   public void visitPrimitiveDatum(@NotNull IdlPrimitiveDatum o) {
     visitDatum(o);
   }
@@ -256,6 +252,102 @@ public class IdlVisitor extends PsiElementVisitor {
   }
 
   public void visitRecordDatumEntry(@NotNull IdlRecordDatumEntry o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqAnnotation(@NotNull IdlReqAnnotation o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqOutputComaFieldProjection(@NotNull IdlReqOutputComaFieldProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqOutputComaKeyProjection(@NotNull IdlReqOutputComaKeyProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqOutputComaKeysProjection(@NotNull IdlReqOutputComaKeysProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqOutputComaListModelProjection(@NotNull IdlReqOutputComaListModelProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqOutputComaMapModelProjection(@NotNull IdlReqOutputComaMapModelProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqOutputComaModelProjection(@NotNull IdlReqOutputComaModelProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqOutputComaMultiTagProjection(@NotNull IdlReqOutputComaMultiTagProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqOutputComaRecordModelProjection(@NotNull IdlReqOutputComaRecordModelProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqOutputComaSingleTagProjection(@NotNull IdlReqOutputComaSingleTagProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqOutputComaTagProjectionItem(@NotNull IdlReqOutputComaTagProjectionItem o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqOutputComaVarProjection(@NotNull IdlReqOutputComaVarProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqOutputModelMeta(@NotNull IdlReqOutputModelMeta o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqOutputTrunkFieldOrKeyProjection(@NotNull IdlReqOutputTrunkFieldOrKeyProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqOutputTrunkModelProjection(@NotNull IdlReqOutputTrunkModelProjection o) {
+    visitReqOutputComaModelProjection(o);
+  }
+
+  public void visitReqOutputTrunkRecordOrMapModelProjection(@NotNull IdlReqOutputTrunkRecordOrMapModelProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqOutputTrunkSingleTagProjection(@NotNull IdlReqOutputTrunkSingleTagProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqOutputTrunkVarProjection(@NotNull IdlReqOutputTrunkVarProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqOutputVarMultiTail(@NotNull IdlReqOutputVarMultiTail o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqOutputVarMultiTailItem(@NotNull IdlReqOutputVarMultiTailItem o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqOutputVarPolymorphicTail(@NotNull IdlReqOutputVarPolymorphicTail o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqOutputVarSingleTail(@NotNull IdlReqOutputVarSingleTail o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqParam(@NotNull IdlReqParam o) {
+    visitPsiElement(o);
+  }
+
+  public void visitTagName(@NotNull IdlTagName o) {
     visitPsiElement(o);
   }
 

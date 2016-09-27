@@ -3,7 +3,7 @@ package io.epigraph.projections.op.output;
 import de.uka.ilkd.pp.Layouter;
 import io.epigraph.data.Datum;
 import io.epigraph.projections.generic.GenericProjectionsPrettyPrinter;
-import io.epigraph.projections.op.OpCustomParams;
+import io.epigraph.projections.CustomParams;
 import io.epigraph.projections.op.OpParam;
 import io.epigraph.projections.op.OpParams;
 import io.epigraph.projections.op.input.OpInputModelProjection;
@@ -28,7 +28,7 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception> extends
     OpOutputModelProjection<?> projection = tp.projection();
     OpOutputModelProjection<?> metaProjection = projection.metaProjection();
     OpParams params = projection.params();
-    OpCustomParams customParams = projection.customParams();
+    CustomParams customParams = projection.customParams();
 
     if (params == null && customParams == null) {
       l.beginCInd();
@@ -88,7 +88,7 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception> extends
 
         @NotNull OpOutputVarProjection fieldVarProjection = fieldProjection.projection();
         @Nullable OpParams fieldParams = fieldProjection.params();
-        @Nullable OpCustomParams fieldCustomParams = fieldProjection.customParams();
+        @Nullable CustomParams fieldCustomParams = fieldProjection.customParams();
 
         if (fieldParams == null && fieldCustomParams == null) {
           l.beginIInd();
@@ -136,7 +136,7 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception> extends
       @Nullable OpParams keyParams = keyProjection.params();
       if (keyParams != null) print(keyParams);
 
-      @Nullable OpCustomParams keyCustomParams = keyProjection.customParams();
+      @Nullable CustomParams keyCustomParams = keyProjection.customParams();
       if (keyCustomParams != null) print(keyCustomParams);
 
       l.brk(1, -l.getDefaultIndentation()).end().print("]");
@@ -185,7 +185,7 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception> extends
       dataPrinter.print(defaultValue);
     }
 
-    OpCustomParams customParams = projection.customParams();
+    CustomParams customParams = projection.customParams();
     if (customParams != null) {
       l.beginCInd();
       l.print(" {");

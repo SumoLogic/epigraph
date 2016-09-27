@@ -40,8 +40,8 @@ public class IdlOpInputComaMultiTagProjectionItemImpl extends ASTWrapperPsiEleme
 
   @Override
   @NotNull
-  public IdlOpTagName getOpTagName() {
-    return findNotNullChildByClass(IdlOpTagName.class);
+  public IdlTagName getTagName() {
+    return findNotNullChildByClass(IdlTagName.class);
   }
 
   @Override

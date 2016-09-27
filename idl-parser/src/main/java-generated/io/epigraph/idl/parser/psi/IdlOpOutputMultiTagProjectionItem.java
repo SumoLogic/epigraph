@@ -14,7 +14,7 @@ public interface IdlOpOutputMultiTagProjectionItem extends PsiElement {
   List<IdlOpOutputModelProperty> getOpOutputModelPropertyList();
 
   @NotNull
-  IdlOpTagName getOpTagName();
+  IdlTagName getTagName();
 
   @Nullable
   PsiElement getCurlyLeft();

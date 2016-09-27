@@ -33,9 +33,9 @@ public class IdlOpInputComaKeyProjectionImpl extends ASTWrapperPsiElement implem
   }
 
   @Override
-  @NotNull
+  @Nullable
   public PsiElement getBracketRight() {
-    return findNotNullChildByType(I_BRACKET_RIGHT);
+    return findChildByType(I_BRACKET_RIGHT);
   }
 
 }

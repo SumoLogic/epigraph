@@ -14,7 +14,7 @@ public interface IdlOpOutputSingleTagProjection extends PsiElement {
   List<IdlOpOutputModelProperty> getOpOutputModelPropertyList();
 
   @Nullable
-  IdlOpTagName getOpTagName();
+  IdlTagName getTagName();
 
   @Nullable
   PsiElement getColon();

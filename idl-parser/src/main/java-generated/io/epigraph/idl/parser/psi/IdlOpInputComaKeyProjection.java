@@ -10,7 +10,7 @@ public interface IdlOpInputComaKeyProjection extends PsiElement {
   @NotNull
   PsiElement getBracketLeft();
 
-  @NotNull
+  @Nullable
   PsiElement getBracketRight();
 
 }

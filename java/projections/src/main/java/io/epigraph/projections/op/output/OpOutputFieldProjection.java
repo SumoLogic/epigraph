@@ -1,7 +1,7 @@
 package io.epigraph.projections.op.output;
 
 import io.epigraph.lang.TextLocation;
-import io.epigraph.projections.op.OpCustomParams;
+import io.epigraph.projections.CustomParams;
 import io.epigraph.projections.op.OpParams;
 import io.epigraph.types.RecordType;
 import org.jetbrains.annotations.NotNull;
@@ -18,7 +18,7 @@ public class OpOutputFieldProjection {
   @Nullable
   private final OpParams params;
   @Nullable
-  private final OpCustomParams customParams;
+  private final CustomParams customParams;
   @NotNull
   private final OpOutputVarProjection projection;
   private final boolean includeInDefault;
@@ -27,7 +27,7 @@ public class OpOutputFieldProjection {
 
   public OpOutputFieldProjection(@NotNull RecordType.Field field,
                                  @Nullable OpParams params,
-                                 @Nullable OpCustomParams customParams,
+                                 @Nullable CustomParams customParams,
                                  @NotNull OpOutputVarProjection projection,
                                  boolean includeInDefault,
                                  @NotNull TextLocation location) {
@@ -45,7 +45,7 @@ public class OpOutputFieldProjection {
   public @Nullable OpParams params() { return params; }
 
   @Nullable
-  public OpCustomParams customParams() { return customParams; }
+  public CustomParams customParams() { return customParams; }
 
   @NotNull
   public OpOutputVarProjection projection() { return projection; }

@@ -1,4 +1,4 @@
-package io.epigraph.projections.op;
+package io.epigraph.projections;
 
 import io.epigraph.gdata.GDataValue;
 import io.epigraph.lang.TextLocation;
@@ -9,7 +9,7 @@ import java.util.Objects;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class OpCustomParam {
+public class CustomParam {
   @NotNull
   private final String name;
   @NotNull
@@ -17,7 +17,7 @@ public class OpCustomParam {
   @NotNull
   private final TextLocation location;
 
-  public OpCustomParam(@NotNull String name, @NotNull GDataValue value, @NotNull TextLocation location) {
+  public CustomParam(@NotNull String name, @NotNull GDataValue value, @NotNull TextLocation location) {
     this.name = name;
     this.value = value;
     this.location = location;
@@ -36,7 +36,7 @@ public class OpCustomParam {
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-    OpCustomParam that = (OpCustomParam) o;
+    CustomParam that = (CustomParam) o;
     return Objects.equals(name, that.name) &&
            Objects.equals(value, that.value);
   }

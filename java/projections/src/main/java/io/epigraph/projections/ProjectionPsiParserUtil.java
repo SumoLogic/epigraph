@@ -5,10 +5,9 @@ import io.epigraph.gdata.GDataValue;
 import io.epigraph.idl.gdata.IdlGDataPsiParser;
 import io.epigraph.idl.parser.psi.IdlCustomParam;
 import io.epigraph.idl.parser.psi.IdlDataValue;
-import io.epigraph.idl.parser.psi.IdlOpTagName;
 import io.epigraph.idl.parser.psi.IdlQid;
+import io.epigraph.idl.parser.psi.IdlTagName;
 import io.epigraph.lang.Fqn;
-import io.epigraph.projections.op.OpCustomParam;
 import io.epigraph.psi.EpigraphPsiUtil;
 import io.epigraph.psi.PsiProcessingException;
 import io.epigraph.types.Type;
@@ -24,7 +23,7 @@ import java.util.Map;
  */
 public class ProjectionPsiParserUtil {
   @Nullable
-  public static String getTagName(@Nullable IdlOpTagName tagNamePsi) {
+  public static String getTagName(@Nullable IdlTagName tagNamePsi) {
     if (tagNamePsi == null) return null;
     @Nullable IdlQid qid = tagNamePsi.getQid();
     if (qid == null) return null;
@@ -34,7 +33,7 @@ public class ProjectionPsiParserUtil {
   @NotNull
   public static Type.Tag getTag(
       @NotNull Type type,
-      @Nullable IdlOpTagName tagName,
+      @Nullable IdlTagName tagName,
       @Nullable Type.Tag defaultTag,
       @NotNull PsiElement location) throws PsiProcessingException {
 
@@ -85,8 +84,8 @@ public class ProjectionPsiParserUtil {
   }
 
   @Nullable
-  public static Map<String, OpCustomParam> parseCustomParam(
-      @Nullable Map<String, OpCustomParam> customParamsMap,
+  public static Map<String, CustomParam> parseCustomParam(
+      @Nullable Map<String, CustomParam> customParamsMap,
       @Nullable IdlCustomParam customParamPsi)
       throws PsiProcessingException {
 
@@ -97,9 +96,9 @@ public class ProjectionPsiParserUtil {
         @NotNull String customParamName = customParamPsi.getQid().getCanonicalName();
         @NotNull GDataValue customParamValue = IdlGDataPsiParser.parseValue(customParamValuePsi);
         customParamsMap.put(customParamName,
-                            new OpCustomParam(customParamName,
-                                              customParamValue,
-                                              EpigraphPsiUtil.getLocation(customParamPsi)
+                            new CustomParam(customParamName,
+                                            customParamValue,
+                                            EpigraphPsiUtil.getLocation(customParamPsi)
                             )
         );
       }

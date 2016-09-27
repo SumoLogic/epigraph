@@ -1,4 +1,4 @@
-package io.epigraph.projections.op;
+package io.epigraph.projections;
 
 import io.epigraph.gdata.GDataValue;
 import org.jetbrains.annotations.NotNull;
@@ -10,11 +10,11 @@ import java.util.Objects;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class OpCustomParams {
+public class CustomParams {
   @NotNull
-  private final Map<String, OpCustomParam> params;
+  private final Map<String, CustomParam> params;
 
-  public OpCustomParams(@NotNull Map<String, OpCustomParam> params) {this.params = params;}
+  public CustomParams(@NotNull Map<String, CustomParam> params) {this.params = params;}
 
   public boolean hasParam(@NotNull String name) { return params.containsKey(name); }
 
@@ -22,18 +22,18 @@ public class OpCustomParams {
 
   @Nullable
   public GDataValue get(@NotNull String key) {
-    OpCustomParam customParam = params.get(key);
+    CustomParam customParam = params.get(key);
     return customParam == null ? null : customParam.value();
   }
 
   @NotNull
-  public Map<String, OpCustomParam> params() { return params; }
+  public Map<String, CustomParam> params() { return params; }
 
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-    OpCustomParams opParams = (OpCustomParams) o;
+    CustomParams opParams = (CustomParams) o;
     return Objects.equals(params, opParams.params);
   }
 

@@ -1,0 +1,5 @@
+namespace epigraph.projections
+
+import epigraph.schema.LocalName
+
+string ParamName extends LocalName

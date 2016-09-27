@@ -8,8 +8,8 @@ import io.epigraph.idl.parser.psi.*;
 import io.epigraph.lang.Fqn;
 import io.epigraph.lang.TextLocation;
 import io.epigraph.projections.StepsAndProjection;
-import io.epigraph.projections.op.OpCustomParams;
-import io.epigraph.projections.op.OpCustomParam;
+import io.epigraph.projections.CustomParams;
+import io.epigraph.projections.CustomParam;
 import io.epigraph.psi.EpigraphPsiUtil;
 import io.epigraph.psi.PsiProcessingException;
 import io.epigraph.types.*;
@@ -42,7 +42,7 @@ public class OpInputProjectionsPsiParser {
       final OpInputModelProjection<?, ?> parsedModelProjection;
       final Type.Tag tag = getTag(
           type,
-          singleTagProjectionPsi.getOpTagName(),
+          singleTagProjectionPsi.getTagName(),
           dataType.defaultTag,
           singleTagProjectionPsi
       );
@@ -102,7 +102,7 @@ public class OpInputProjectionsPsiParser {
       final OpInputModelProjection<?, ?> parsedModelProjection;
       final Type.Tag tag = getTag(
           type,
-          singleTagProjectionPsi.getOpTagName(),
+          singleTagProjectionPsi.getTagName(),
           dataType.defaultTag,
           singleTagProjectionPsi
       );
@@ -156,7 +156,7 @@ public class OpInputProjectionsPsiParser {
 
     for (IdlOpInputComaMultiTagProjectionItem tagProjectionPsi : tagProjectionPsiList) {
       final Type.Tag tag =
-          getTag(dataType.type, tagProjectionPsi.getOpTagName(), dataType.defaultTag, tagProjectionPsi);
+          getTag(dataType.type, tagProjectionPsi.getTagName(), dataType.defaultTag, tagProjectionPsi);
 
       final OpInputModelProjection<?, ?> parsedModelProjection;
 
@@ -241,15 +241,15 @@ public class OpInputProjectionsPsiParser {
   }
 
   @Nullable
-  private static OpCustomParams parseModelCustomParams(@NotNull List<IdlOpInputModelProperty> modelProperties)
+  private static CustomParams parseModelCustomParams(@NotNull List<IdlOpInputModelProperty> modelProperties)
       throws PsiProcessingException {
 
-    @Nullable Map<String, OpCustomParam> customParamsMap = null;
+    @Nullable Map<String, CustomParam> customParamsMap = null;
 
     for (IdlOpInputModelProperty modelProperty : modelProperties)
       customParamsMap = parseCustomParam(customParamsMap, modelProperty.getCustomParam());
 
-    return customParamsMap == null ? null : new OpCustomParams(customParamsMap);
+    return customParamsMap == null ? null : new CustomParams(customParamsMap);
   }
 
   @Nullable
@@ -350,7 +350,7 @@ public class OpInputProjectionsPsiParser {
       @NotNull DatumType type,
       boolean required,
       @Nullable GDatum defaultValue,
-      @Nullable OpCustomParams customParams,
+      @Nullable CustomParams customParams,
       @Nullable OpInputModelProjection<?, ?> metaProjection,
       @NotNull IdlOpInputTrunkModelProjection psi,
       @NotNull TypesResolver typesResolver) throws PsiProcessingException {
@@ -393,7 +393,7 @@ public class OpInputProjectionsPsiParser {
       @NotNull DatumType type,
       boolean required,
       @Nullable GDatum defaultValue,
-      @Nullable OpCustomParams customParams,
+      @Nullable CustomParams customParams,
       @Nullable OpInputModelProjection<?, ?> metaProjection,
       @NotNull IdlOpInputComaModelProjection psi,
       @NotNull TypesResolver typesResolver) throws PsiProcessingException {
@@ -513,7 +513,7 @@ public class OpInputProjectionsPsiParser {
   private static OpInputModelProjection<?, ?> createDefaultModelProjection(@NotNull DatumType type,
                                                                            boolean required,
                                                                            @Nullable GDatum defaultValue,
-                                                                           @Nullable OpCustomParams customParams,
+                                                                           @Nullable CustomParams customParams,
                                                                            @NotNull PsiElement locationPsi,
                                                                            @Nullable TypesResolver resolver)
       throws PsiProcessingException {
@@ -617,7 +617,7 @@ public class OpInputProjectionsPsiParser {
       @NotNull RecordType type,
       boolean required,
       @Nullable GRecordDatum defaultValue,
-      @Nullable OpCustomParams customParams,
+      @Nullable CustomParams customParams,
       @Nullable OpInputModelProjection<?, ?> metaProjection,
       @NotNull IdlOpInputTrunkRecordModelProjection psi,
       @NotNull TypesResolver resolver) throws PsiProcessingException {
@@ -647,12 +647,12 @@ public class OpInputProjectionsPsiParser {
 
     final boolean fieldRequired = fieldProjectionPsi.getPlus() != null;
 
-    OpCustomParams fieldCustomParams;
-    @Nullable Map<String, OpCustomParam> fieldCustomParamsMap = null;
+    CustomParams fieldCustomParams;
+    @Nullable Map<String, CustomParam> fieldCustomParamsMap = null;
     for (IdlOpInputFieldProjectionBodyPart fieldBodyPart : fieldProjectionPsi.getOpInputFieldProjectionBodyPartList()) {
       fieldCustomParamsMap = parseCustomParam(fieldCustomParamsMap, fieldBodyPart.getCustomParam());
     }
-    fieldCustomParams = fieldCustomParamsMap == null ? null : new OpCustomParams(fieldCustomParamsMap);
+    fieldCustomParams = fieldCustomParamsMap == null ? null : new CustomParams(fieldCustomParamsMap);
 
     final int steps;
 
@@ -706,7 +706,7 @@ public class OpInputProjectionsPsiParser {
       @NotNull RecordType type,
       boolean required,
       @Nullable GRecordDatum defaultValue,
-      @Nullable OpCustomParams customParams,
+      @Nullable CustomParams customParams,
       @Nullable OpInputModelProjection<?, ?> metaProjection,
       @NotNull IdlOpInputComaRecordModelProjection psi,
       @NotNull TypesResolver resolver) throws PsiProcessingException {
@@ -734,12 +734,12 @@ public class OpInputProjectionsPsiParser {
 
       final boolean fieldRequired = fieldProjectionPsi.getPlus() != null;
 
-      OpCustomParams fieldCustomParams;
-      @Nullable Map<String, OpCustomParam> fieldCustomParamsMap = null;
+      CustomParams fieldCustomParams;
+      @Nullable Map<String, CustomParam> fieldCustomParamsMap = null;
       for (IdlOpInputFieldProjectionBodyPart fieldBodyPart : fieldProjectionPsi.getOpInputFieldProjectionBodyPartList()) {
         fieldCustomParamsMap = parseCustomParam(fieldCustomParamsMap, fieldBodyPart.getCustomParam());
       }
-      fieldCustomParams = fieldCustomParamsMap == null ? null : new OpCustomParams(fieldCustomParamsMap);
+      fieldCustomParams = fieldCustomParamsMap == null ? null : new CustomParams(fieldCustomParamsMap);
 
       OpInputVarProjection varProjection;
       @Nullable IdlOpInputComaVarProjection psiVarProjection = fieldProjectionPsi.getOpInputComaVarProjection();
@@ -786,7 +786,7 @@ public class OpInputProjectionsPsiParser {
       @NotNull MapType type,
       boolean required,
       @Nullable GMapDatum defaultValue,
-      @Nullable OpCustomParams customParams,
+      @Nullable CustomParams customParams,
       @Nullable OpInputModelProjection<?, ?> metaProjection,
       @NotNull IdlOpInputComaMapModelProjection psi,
       @NotNull TypesResolver resolver) throws PsiProcessingException {
@@ -802,12 +802,7 @@ public class OpInputProjectionsPsiParser {
 
     @Nullable IdlOpInputComaVarProjection valueProjectionPsi = psi.getOpInputComaVarProjection();
     @NotNull OpInputVarProjection valueProjection =
-        valueProjectionPsi == null
-        ? createDefaultVarProjection(type.valueType(),
-                                     false,
-                                     psi
-        )
-        : parseComaVarProjection(type.valueType(), valueProjectionPsi, resolver).projection();
+        parseComaVarProjection(type.valueType(), valueProjectionPsi, resolver).projection();
 
     return new StepsAndProjection<>(
         0,
@@ -828,7 +823,7 @@ public class OpInputProjectionsPsiParser {
       @NotNull ListType type,
       boolean required,
       @Nullable GListDatum defaultValue,
-      @Nullable OpCustomParams customParams,
+      @Nullable CustomParams customParams,
       @Nullable OpInputModelProjection<?, ?> metaProjection,
       @NotNull IdlOpInputComaListModelProjection psi,
       @NotNull TypesResolver resolver) throws PsiProcessingException {
@@ -869,7 +864,7 @@ public class OpInputProjectionsPsiParser {
       @NotNull PrimitiveType type,
       boolean required,
       @Nullable GPrimitiveDatum defaultValue,
-      @Nullable OpCustomParams customParams,
+      @Nullable CustomParams customParams,
       @Nullable OpInputModelProjection<?, ?> metaProjection,
       @NotNull PsiElement locationPsi,
       @NotNull TypesResolver resolver) throws PsiProcessingException {

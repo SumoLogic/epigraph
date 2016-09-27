@@ -1,7 +1,7 @@
 package io.epigraph.projections.op.output;
 
 import io.epigraph.lang.TextLocation;
-import io.epigraph.projections.op.OpCustomParams;
+import io.epigraph.projections.CustomParams;
 import io.epigraph.projections.op.OpParams;
 import io.epigraph.types.RecordType;
 import org.jetbrains.annotations.NotNull;
@@ -23,7 +23,7 @@ public class OpOutputRecordModelProjection extends OpOutputModelProjection<Recor
   public OpOutputRecordModelProjection(@NotNull RecordType model,
                                        boolean includeInDefault,
                                        @Nullable OpParams params,
-                                       @Nullable OpCustomParams customParams,
+                                       @Nullable CustomParams customParams,
                                        @Nullable OpOutputModelProjection<?> metaProjection,
                                        @Nullable LinkedHashSet<OpOutputFieldProjection> fieldProjections,
                                        @NotNull TextLocation location) {

@@ -141,7 +141,7 @@ supplementsDecl ::= 'supplements' fqnTypeRef (',' fqnTypeRef)* {pin=1}
 
 // TODO Fix: varTagRef doesn't resolve
 defaultOverride ::= 'default' varTagRef
-customParam ::= qid '=' dataValue {
+customParam ::= qid '=' dataValue { // todo (here and idl): rename to annotation
   name="custom attribute"
   implements="com.intellij.psi.PsiNamedElement"
   methods = [getName setName getNameIdentifier]
@@ -268,8 +268,8 @@ private declRecover ::= namespaceDeclRecover
 private partRecover ::= ! ('}' | qid '=' | qid ':' | 'abstract' | 'override' | ',' )
 //private partRecover ::= ! ('}' | qid | 'abstract' | 'override' | ',' )
 
-// ------------- data language -------------
-// please keep consistent with idl.bnf
+// ============= data language =============
+// please keep in sync with data language from schema.bnf
 
 dataValue ::= data | datum
 private dataTypeSpec ::= fqnTypeRef

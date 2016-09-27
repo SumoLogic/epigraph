@@ -31,6 +31,8 @@ public class OpParam {
     return new HashSet<>(Arrays.asList(params));
   }
 
+  // note: custom params are on the model projection
+
   @NotNull
   public String name() { return name; }
 

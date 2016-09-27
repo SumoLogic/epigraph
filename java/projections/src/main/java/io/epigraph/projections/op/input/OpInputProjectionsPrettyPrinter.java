@@ -2,7 +2,7 @@ package io.epigraph.projections.op.input;
 
 import de.uka.ilkd.pp.Layouter;
 import io.epigraph.projections.generic.GenericProjectionsPrettyPrinter;
-import io.epigraph.projections.op.OpCustomParams;
+import io.epigraph.projections.CustomParams;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,7 +22,7 @@ public class OpInputProjectionsPrettyPrinter<E extends Exception>
   public void print(@NotNull OpInputTagProjection tp, int pathSteps) throws E {
     OpInputModelProjection<?, ?> projection = tp.projection();
     OpInputModelProjection<?, ?> metaProjection = projection.metaProjection();
-    OpCustomParams customParams = projection.customParams();
+    CustomParams customParams = projection.customParams();
 
     if (projection.defaultValue() == null && customParams == null &&
         metaProjection == null) {
@@ -110,7 +110,7 @@ public class OpInputProjectionsPrettyPrinter<E extends Exception>
 
   private void print(OpInputFieldProjection fieldProjection, int pathSteps) throws E {
     @NotNull OpInputVarProjection fieldVarProjection = fieldProjection.projection();
-    @Nullable OpCustomParams fieldCustomParams = fieldProjection.customParams();
+    @Nullable CustomParams fieldCustomParams = fieldProjection.customParams();
 
     if (fieldCustomParams == null) {
       l.beginIInd();

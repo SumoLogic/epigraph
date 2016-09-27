@@ -14,7 +14,7 @@ public interface IdlOpInputTrunkSingleTagProjection extends PsiElement {
   IdlOpInputTrunkModelProjection getOpInputTrunkModelProjection();
 
   @Nullable
-  IdlOpTagName getOpTagName();
+  IdlTagName getTagName();
 
   @Nullable
   PsiElement getColon();
