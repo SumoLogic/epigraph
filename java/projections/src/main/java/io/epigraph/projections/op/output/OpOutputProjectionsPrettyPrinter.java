@@ -24,7 +24,7 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception> extends
   }
 
   @Override
-  public void print(@NotNull OpOutputTagProjection tp) throws E {
+  public void print(@NotNull OpOutputTagProjection tp, int pathSteps) throws E {
     OpOutputModelProjection<?> projection = tp.projection();
     OpOutputModelProjection<?> metaProjection = projection.metaProjection();
     OpParams params = projection.params();
@@ -37,7 +37,7 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception> extends
 
       if (!isPrintoutEmpty(projection)) {
         l.brk();
-        print(projection);
+        print(projection, 0);
       }
 
       l.end();
@@ -52,13 +52,13 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception> extends
 
       if (metaProjection != null) {
         l.brk().beginIInd(0).print("meta:").brk();
-        print(metaProjection);
+        print(metaProjection, 0);
         l.end();
       }
 
       if (!isPrintoutEmpty(projection)) {
         l.brk();
-        print(projection);
+        print(projection, 0);
       }
 
       l.brk(1, -l.getDefaultIndentation()).end().print("}");
@@ -66,7 +66,7 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception> extends
   }
 
   @Override
-  public void print(@NotNull OpOutputModelProjection<?> mp) throws E {
+  public void print(@NotNull OpOutputModelProjection<?> mp, int pathSteps) throws E {
     if (mp instanceof OpOutputRecordModelProjection)
       print((OpOutputRecordModelProjection) mp);
     else if (mp instanceof OpOutputMapModelProjection)
@@ -96,7 +96,7 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception> extends
           l.print(fieldProjection.field().name());
           if (!isPrintoutEmpty(fieldVarProjection)) {
             l.brk();
-            print(fieldVarProjection);
+            print(fieldVarProjection, 0);
           }
           l.end();
         } else {
@@ -108,7 +108,7 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception> extends
           if (fieldCustomParams != null) print(fieldCustomParams);
           if (!isPrintoutEmpty(fieldVarProjection)) {
             l.brk();
-            print(fieldVarProjection);
+            print(fieldVarProjection, 0);
           }
           l.brk(1, -l.getDefaultIndentation()).end().print("}");
         }
@@ -143,14 +143,14 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception> extends
     }
 
     l.print("(").brk();
-    print(mp.itemsProjection());
+    print(mp.itemsProjection(), 0);
     l.brk(1, -l.getDefaultIndentation()).end().print(")");
   }
 
   private void print(OpOutputListModelProjection mp) throws E {
     l.beginIInd();
     l.print("*(").brk();
-    print(mp.itemsProjection());
+    print(mp.itemsProjection(), 0);
     l.brk(1, -l.getDefaultIndentation()).end().print(")");
   }
 
@@ -176,7 +176,7 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception> extends
 
     if (!ipp.isPrintoutEmpty(projection)) {
       l.brk();
-      ipp.print(projection);
+      ipp.print(projection, 0);
     }
 
     Datum defaultValue = projection.defaultValue();

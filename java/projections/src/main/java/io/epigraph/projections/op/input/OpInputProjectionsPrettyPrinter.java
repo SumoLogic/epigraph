@@ -19,7 +19,7 @@ public class OpInputProjectionsPrettyPrinter<E extends Exception>
   }
 
   @Override
-  public void print(@NotNull OpInputTagProjection tp) throws E {
+  public void print(@NotNull OpInputTagProjection tp, int pathSteps) throws E {
     OpInputModelProjection<?, ?> projection = tp.projection();
     OpInputModelProjection<?, ?> metaProjection = projection.metaProjection();
     OpCustomParams customParams = projection.customParams();
@@ -33,7 +33,7 @@ public class OpInputProjectionsPrettyPrinter<E extends Exception>
 
       if (!isPrintoutEmpty(projection)) {
         l.brk();
-        print(projection);
+        print(projection, pathSteps);
       }
       l.end();
     } else {
@@ -50,7 +50,7 @@ public class OpInputProjectionsPrettyPrinter<E extends Exception>
 
       if (metaProjection != null) {
         l.brk().beginIInd(0).print("meta:").brk();
-        print(metaProjection);
+        print(metaProjection, 0);
         l.end();
       }
 
@@ -58,7 +58,7 @@ public class OpInputProjectionsPrettyPrinter<E extends Exception>
 
       if (!isPrintoutEmpty(projection)) {
         l.brk();
-        print(projection);
+        print(projection, pathSteps);
       }
 
       l.brk(1, -l.getDefaultIndentation()).end().print("}");
@@ -66,67 +66,92 @@ public class OpInputProjectionsPrettyPrinter<E extends Exception>
   }
 
   @Override
-  public void print(@NotNull OpInputModelProjection<?, ?> mp) throws E {
+  public void print(@NotNull OpInputModelProjection<?, ?> mp, int pathSteps) throws E {
     if (mp instanceof OpInputRecordModelProjection)
-      print((OpInputRecordModelProjection) mp);
+      print((OpInputRecordModelProjection) mp, pathSteps);
     else if (mp instanceof OpInputMapModelProjection)
-      print((OpInputMapModelProjection) mp);
+      print((OpInputMapModelProjection) mp, pathSteps);
     else if (mp instanceof OpInputListModelProjection)
-      print((OpInputListModelProjection) mp);
+      print((OpInputListModelProjection) mp, pathSteps);
   }
 
-  private void print(@NotNull OpInputRecordModelProjection mp) throws E {
+  private void print(@NotNull OpInputRecordModelProjection mp, int pathSteps) throws E {
     @Nullable LinkedHashSet<OpInputFieldProjection> fieldProjections = mp.fieldProjections();
 
     if (fieldProjections != null) {
-      l.print("(").beginCInd();
-      boolean first = true;
-      for (OpInputFieldProjection fieldProjection : fieldProjections) {
-        if (first) first = false;
-        else l.print(",");
-        l.brk();
+      if (pathSteps > 0) {
+        if (fieldProjections.isEmpty()) return;
+        if (fieldProjections.size() > 1) throw new IllegalArgumentException(
+            String.format("Encountered %d fields while still having %d path steps", fieldProjections.size(), pathSteps)
+        );
 
-        @NotNull OpInputVarProjection fieldVarProjection = fieldProjection.projection();
-        @Nullable OpCustomParams fieldCustomParams = fieldProjection.customParams();
+        OpInputFieldProjection fieldProjection = fieldProjections.iterator().next();
+        l.beginIInd();
+        l.print("/").brk();
+        print(fieldProjection, pathSteps);
+        l.end();
 
-        if (fieldCustomParams == null) {
-          l.beginIInd();
-          if (fieldProjection.required()) l.print("+");
-          l.print(fieldProjection.field().name());
-          if (!isPrintoutEmpty(fieldVarProjection)) {
-            l.brk();
-            print(fieldVarProjection);
-          }
-          l.end();
-        } else {
-          l.beginCInd();
-          if (fieldProjection.required()) l.print("+");
-          l.print(fieldProjection.field().name());
-          l.print(" {");
-          print(fieldCustomParams);
-          if (!isPrintoutEmpty(fieldVarProjection)) {
-            l.brk();
-            print(fieldVarProjection);
-          }
-          l.brk(1, -l.getDefaultIndentation()).end().print("}");
+      } else {
+
+        l.print("(").beginCInd();
+        boolean first = true;
+        for (OpInputFieldProjection fieldProjection : fieldProjections) {
+          if (first) first = false;
+          else l.print(",");
+          l.brk();
+
+          print(fieldProjection, 0);
+
         }
-
+        l.brk(1, -l.getDefaultIndentation()).end().print(")");
       }
-      l.brk(1, -l.getDefaultIndentation()).end().print(")");
     }
   }
 
-  private void print(OpInputMapModelProjection mp) throws E {
+  private void print(OpInputFieldProjection fieldProjection, int pathSteps) throws E {
+    @NotNull OpInputVarProjection fieldVarProjection = fieldProjection.projection();
+    @Nullable OpCustomParams fieldCustomParams = fieldProjection.customParams();
+
+    if (fieldCustomParams == null) {
+      l.beginIInd();
+      if (fieldProjection.required()) l.print("+");
+      l.print(fieldProjection.field().name());
+      if (!isPrintoutEmpty(fieldVarProjection)) {
+        l.brk();
+        print(fieldVarProjection, decSteps(pathSteps));
+      }
+      l.end();
+    } else {
+      l.beginCInd();
+      if (fieldProjection.required()) l.print("+");
+      l.print(fieldProjection.field().name());
+      l.print(" {");
+      print(fieldCustomParams);
+      if (!isPrintoutEmpty(fieldVarProjection)) {
+        l.brk();
+        print(fieldVarProjection, decSteps(pathSteps));
+      }
+      l.brk(1, -l.getDefaultIndentation()).end().print("}");
+    }
+  }
+
+  private void print(OpInputMapModelProjection mp, int pathSteps) throws E {
+    if (pathSteps > 0) throw new IllegalArgumentException(
+        String.format("Encountered map projection while still having %d path steps", pathSteps)
+    );
     l.beginIInd();
     l.print("[](").brk();
-    print(mp.itemsProjection());
+    print(mp.itemsProjection(), 0);
     l.brk(1, -l.getDefaultIndentation()).end().print(")");
   }
 
-  private void print(OpInputListModelProjection mp) throws E {
+  private void print(OpInputListModelProjection mp, int pathSteps) throws E {
+    if (pathSteps > 0) throw new IllegalArgumentException(
+        String.format("Encountered list projection while still having %d path steps", pathSteps)
+    );
     l.beginIInd();
     l.print("*(").brk();
-    print(mp.itemsProjection());
+    print(mp.itemsProjection(), 0);
     l.brk(1, -l.getDefaultIndentation()).end().print(")");
   }
 

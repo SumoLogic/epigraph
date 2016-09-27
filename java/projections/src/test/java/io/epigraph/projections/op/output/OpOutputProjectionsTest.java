@@ -553,7 +553,7 @@ public class OpOutputProjectionsTest {
     StringBackend sb = new StringBackend(120);
     Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
     OpOutputProjectionsPrettyPrinter<NoExceptions> printer = new OpOutputProjectionsPrettyPrinter<>(layouter);
-    printer.print(projection);
+    printer.print(projection, 0);
     layouter.close();
     return sb.getString();
   }

@@ -58,7 +58,7 @@ public class OpInputProjectionsTest {
   public void testParseEmpty() throws PsiProcessingException {
     testParsingVarProjection(
         new DataType(false, Person.type, Person.id),
-        "" , ":id", 1
+        "", ":id", 1
     );
   }
 
@@ -76,7 +76,7 @@ public class OpInputProjectionsTest {
   public void testParseTail() throws PsiProcessingException {
     testParsingVarProjection(
         new DataType(false, Person.type, Person.id),
-        "~io.epigraph.tests.User :id" ,
+        "~io.epigraph.tests.User :id",
         ":id ~io.epigraph.tests.User :id", 1
     );
   }
@@ -85,7 +85,7 @@ public class OpInputProjectionsTest {
   public void testParseTails() throws PsiProcessingException {
     testParsingVarProjection(
         new DataType(false, Person.type, Person.id),
-        "~( io.epigraph.tests.User :id, io.epigraph.tests.Person :id )" ,
+        "~( io.epigraph.tests.User :id, io.epigraph.tests.Person :id )",
         ":id ~( io.epigraph.tests.User :id, io.epigraph.tests.Person :id )",
         1
     );
@@ -116,6 +116,16 @@ public class OpInputProjectionsTest {
     testParsingVarProjection(":record ( friends *( :id ) )", 1);
   }
 
+  @Test
+  public void testSimplePath() throws PsiProcessingException {
+    testParsingVarProjection(":record / id", 3);
+  }
+
+  @Test
+  public void testLongPath() throws PsiProcessingException {
+    testParsingVarProjection(":record / bestFriend :record / bestFriend :record ( id, firstName )", 5);
+  }
+
   private void testParsingVarProjection(String str) throws PsiProcessingException {
     testParsingVarProjection(str, 0);
   }
@@ -123,7 +133,7 @@ public class OpInputProjectionsTest {
   private void testParsingVarProjection(String str, int steps) throws PsiProcessingException {
     testParsingVarProjection(
         new DataType(false, Person.type, Person.id),
-        str ,
+        str,
         str, steps
     );
 
@@ -135,7 +145,10 @@ public class OpInputProjectionsTest {
     testParsingVarProjection(varDataType, projectionString, expected, 0);
   }
 
-  private void testParsingVarProjection(DataType varDataType, String projectionString, String expected, int expectedSteps)
+  private void testParsingVarProjection(DataType varDataType,
+                                        String projectionString,
+                                        String expected,
+                                        int expectedSteps)
       throws PsiProcessingException {
 
     TypesResolver resolver = new SimpleTypesResolver(
@@ -188,7 +201,7 @@ public class OpInputProjectionsTest {
     StringBackend sb = new StringBackend(120);
     Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
     OpInputProjectionsPrettyPrinter<NoExceptions> printer = new OpInputProjectionsPrettyPrinter<>(layouter);
-    printer.print(varProjection);
+    printer.print(varProjection, expectedSteps);
     layouter.close();
     String actual = sb.getString();
 

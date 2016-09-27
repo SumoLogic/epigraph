@@ -39,7 +39,7 @@ public abstract class GenericProjectionsPrettyPrinter<
     gdataPrettyPrinter = new GDataPrettyPrinter<>(l);
   }
 
-  public void print(@NotNull GenericVarProjection<T, S> p) throws E {
+  public void print(@NotNull GenericVarProjection<T, S> p, int pathSteps) throws E {
     if (varsStack.contains(p)) {
       int ref = nextRefNumber++;
       varRefs.put(p, ref);
@@ -54,14 +54,17 @@ public abstract class GenericProjectionsPrettyPrinter<
 
       if (p.type().kind() != TypeKind.UNION) {
         // samovar
-        print(tagProjections.iterator().next().projection());
+        print(tagProjections.iterator().next().projection(), decSteps(pathSteps));
       } else if (tagProjections.size() == 1) {
         T tagProjection = tagProjections.iterator().next();
         l.print(":");
-        print(tagProjection);
+        print(tagProjection, decSteps(pathSteps));
       } else if (tagProjections.isEmpty()) {
         l.print(":()");
       } else {
+        if (pathSteps > 0) throw new IllegalArgumentException(
+            String.format("found %d var tags while path still contains %d steps", tagProjections.size(), pathSteps)
+        );
         l.beginCInd();
         l.print(":(");
         boolean first = true;
@@ -69,7 +72,7 @@ public abstract class GenericProjectionsPrettyPrinter<
           if (first) first = false;
           else l.print(",");
           l.brk();
-          print(tagProjection);
+          print(tagProjection, 0);
         }
         l.brk(1, -l.getDefaultIndentation()).end().print(")");
       }
@@ -84,7 +87,7 @@ public abstract class GenericProjectionsPrettyPrinter<
           S tail = polymorphicTails.iterator().next();
           l.print(tail.type().name().toString());
           l.brk();
-          print(tail);
+          print(tail, 0);
         } else {
           l.beginCInd();
           l.print("~(");
@@ -93,7 +96,7 @@ public abstract class GenericProjectionsPrettyPrinter<
             if (first) first = false;
             else l.print(",");
             l.brk().print(tail.type().name().toString()).brk();
-            print(tail);
+            print(tail, 0);
           }
           l.brk(1, -l.getDefaultIndentation()).end().print(")");
         }
@@ -107,9 +110,9 @@ public abstract class GenericProjectionsPrettyPrinter<
 
   }
 
-  public abstract void print(@NotNull T tp) throws E;
+  public abstract void print(@NotNull T tp, int pathSteps) throws E;
 
-  public abstract void print(@NotNull MP mp) throws E;
+  public abstract void print(@NotNull MP mp, int pathSteps) throws E;
 
   protected void print(@NotNull OpCustomParams cp) throws E {
     l.beginCInd(0);
@@ -125,12 +128,15 @@ public abstract class GenericProjectionsPrettyPrinter<
     if (tails != null && !tails.isEmpty()) return false;
     if (vp.type().kind() == TypeKind.UNION) return false; // non-samovar always prints something
 
-    for (T tagProjection : vp.tagProjections()) {
+    for (T tagProjection : vp.tagProjections())
       if (!isPrintoutEmpty(tagProjection.projection())) return false;
-    }
 
     return true;
   }
 
   public abstract boolean isPrintoutEmpty(@NotNull MP mp);
+
+  protected int decSteps(int pathSteps) {
+    return pathSteps == 0 ? 0 : pathSteps - 1;
+  }
 }

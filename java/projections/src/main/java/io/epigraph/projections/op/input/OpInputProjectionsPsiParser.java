@@ -361,7 +361,6 @@ public class OpInputProjectionsPsiParser {
 
       if (trunkRecordModelProjectionPsi != null) {
 
-        ensureModelKind(psi, TypeKind.RECORD);
         GRecordDatum defaultRecordData = coerceDefault(defaultValue, GRecordDatum.class, psi);
 
         return parseTrunkRecordModelProjection(
