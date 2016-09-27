@@ -4,7 +4,6 @@ package io.epigraph.util;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.BinaryOperator;
@@ -12,96 +11,103 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-public interface Unmodifiable {
+public class Unmodifiable {
 
-  Class<?> UnmodifiableCollectionClass = Collections.unmodifiableCollection(new ArrayList()).getClass();
+  private static final Class<?> UnmodifiableCollectionClass =
+      Collections.unmodifiableCollection(Collections.emptySet()).getClass();
 
-  Class<?> UnmodifiableMapClass = Collections.unmodifiableMap(new HashMap<>()).getClass();
+  private static final Class<?> UnmodifiableMapClass = Collections.unmodifiableMap(Collections.emptyMap()).getClass();
 
-  Class<?> SingletonMapClass = Collections.singletonMap(null, null).getClass();
+//  private static final Class<?> SingletonMapClass = Collections.singletonMap(null, null).getClass();
+//
+//  private static final Class<?> EmptyMapClass = Collections.emptyMap().getClass();
+//
+//  private static final Collection<Class<?>> UnmodifiableMapClasses =
+//      Collections.unmodifiableCollection(Arrays.asList(UnmodifiableMapClass, SingletonMapClass, EmptyMapClass));
 
-  Class<?> EmptyMapClass = Collections.emptyMap().getClass();
+  private static final Class<?> UnmodifiableSetClass = Collections.unmodifiableSet(Collections.emptySet()).getClass();
 
-  Collection<Class<?>> UnmodifiableMapClasses =
-      Collections.unmodifiableCollection(Arrays.asList(UnmodifiableMapClass, SingletonMapClass, EmptyMapClass));
+//  private static final Class<?> SingletonSetClass = Collections.singleton(null).getClass();
+//
+//  private static final Class<?> EmptySetClass = Collections.emptySet().getClass();
+//
+//  private static final Collection<Class<?>> UnmodifiableSetClasses =
+//      Collections.unmodifiableCollection(Arrays.asList(UnmodifiableSetClass, SingletonSetClass, EmptySetClass));
 
   @Contract(pure = true)
-  static @NotNull <T> BinaryOperator<T> throwingMerger() {
-    return (oldValue, newValue) -> { throw new IllegalStateException(); };
-  }
-
-  @Contract(pure = true)
-  static @NotNull <E> Collection<? extends E> collection(@NotNull Collection<? extends E> collection) {
+  public static @NotNull <E> Collection<? extends E> collection(@NotNull Collection<? extends E> collection) {
     return UnmodifiableCollectionClass.isInstance(collection)
         ? collection
         : Collections.unmodifiableCollection(collection);
   }
 
   @Contract(pure = true)
-  static @NotNull <E> List<? extends E> list(@NotNull List<? extends E> list) {
-    return UnmodifiableCollectionClass.isInstance(list)
-        ? list
-        : Collections.unmodifiableList(list);
+  public static @NotNull <E> Set<? extends E> set(@NotNull Set<? extends E> set) {
+    return UnmodifiableSetClass.isInstance(set) ? set : Collections.unmodifiableSet(set);
   }
 
   @Contract(pure = true)
-  static @NotNull <O, E> List<? extends E> list(
+  public static @NotNull <E> List<? extends E> list(@NotNull List<? extends E> list) {
+    return UnmodifiableCollectionClass.isInstance(list) ? list : Collections.unmodifiableList(list);
+  }
+
+  @Contract(pure = true)
+  public static @NotNull <O, E> List<? extends E> list(
       @NotNull Collection<O> collection,
       @NotNull Function<? super O, ? extends E> elementMapper
   ) {
     List<E> list = new ArrayList<>(collection.size());
     for (O element : collection) list.add(elementMapper.apply(element));
     return Unmodifiable.list(list);
-    // return Unmodifiable.list(collection.stream().map(elementMapper).collect(Collectors.toList())); // doesn't start with empty list of required size
   }
 
   @Contract(pure = true) // TODO rename to arrayListSupplier()?
-  static @NotNull <E> Supplier<ArrayList<E>> arrayList(int size) { return () -> new ArrayList<E>(size); }
+  public static @NotNull <E> Supplier<ArrayList<E>> arrayList(int size) { return () -> new ArrayList<E>(size); }
 
   @Contract(pure = true)
-  static @NotNull <K, V> Map<K, ? extends V> map(@NotNull Map<K, ? extends V> map) {
-    for (Class<?> unmodifiableMapClass : UnmodifiableMapClasses) if (unmodifiableMapClass.isInstance(map)) return map;
-    return Collections.unmodifiableMap(map);
+  public static @NotNull <K, V> Map<K, ? extends V> map(@NotNull Map<K, ? extends V> map) {
+//    for (Class<?> unmodifiableMapClass : UnmodifiableMapClasses) if (unmodifiableMapClass.isInstance(map)) return map;
+//    return Collections.unmodifiableMap(map);
+    return UnmodifiableMapClass.isInstance(map) ? map : Collections.unmodifiableMap(map);
   }
 
   @Contract(pure = true)
-  static @NotNull <O, K, V> Map<K, ? extends V> map(
+  public static @NotNull <O, K, V> Map<K, ? extends V> map(
       @NotNull Collection<? extends O> collection,
       @NotNull Function<? super O, ? extends K> keyMapper,
       @NotNull Function<? super O, ? extends V> valueMapper
   ) {
     return Unmodifiable.map(collection.stream().collect(
-        Collectors.toMap(keyMapper, valueMapper, Unmodifiable.throwingMerger(), Unmodifiable.hashMap(collection.size()))
+        Collectors.toMap(keyMapper, valueMapper, Unmodifiable.throwingMerger(), Util.hashMapSupplier(collection.size()))
     ));
   }
 
   @Contract(pure = true)
-  static @NotNull <OK, OV, K, V> Map<K, ? extends V> map(
+  @SuppressWarnings("unchecked")
+  private static @NotNull <T> BinaryOperator<T> throwingMerger() { return (BinaryOperator<T>) ThrowingMerger; }
+
+  private static final @NotNull BinaryOperator<Void> ThrowingMerger =
+      (oldValue, newValue) -> { throw new IllegalStateException(); };
+
+  @Contract(pure = true)
+  public static @NotNull <OK, OV, K, V> Map<K, ? extends V> map(
       @NotNull Map<? extends OK, ? extends OV> original,
       @NotNull Function<? super OK, ? extends K> keyMapper,
       @NotNull Function<? super OV, ? extends V> valueMapper
   ) {
-    HashMap<K, V> map = Unmodifiable.<K, V>hashMap(original.size()).get();
+    HashMap<K, V> map = Util.createHashMap(original.size());
     original.forEach((k, v) -> map.put(keyMapper.apply(k), valueMapper.apply(v)));
     return Unmodifiable.map(map);
   }
 
-  @Contract(pure = true)
-  static @NotNull <K, V> Supplier<HashMap<K, V>> hashMap(int size) { // TODO hashMapSupplier?
-    return () -> new HashMap<>(hashMapCapacity(size), 0.75f);
-  }
-
-  @Contract(pure = true)
-  static int hashMapCapacity(int size) { return (size * 4 + 2) / 3; } // TODO make sure arithmetic is correct
-
 
   /**
-   * Unmodifiable mapped collection view.
+   * Unmodifiable mapped view of a collection.
    *
    * @param <O> Original collection element type
    * @param <V> View collection element type
    */
-  class CollectionView<O, V> extends AbstractCollection<V> {
+  public static final class CollectionView<O, V> extends AbstractCollection<V> {
 
     private final @NotNull Collection<? extends O> original;
 
@@ -121,11 +127,11 @@ public interface Unmodifiable {
   }
 
 
-  final class MappedIterator<O, V> implements Iterator<V> {
+  public static final class MappedIterator<O, V> implements Iterator<V> {
 
     private final @NotNull Iterator<? extends O> iterator;
 
-    private final @NotNull Function<? super O, @Nullable V> view;
+    private final @NotNull Function<? super O, V> view;
 
     public MappedIterator(@NotNull Iterator<? extends O> iterator, @NotNull Function<? super O, V> view) {
       this.iterator = iterator;
@@ -136,18 +142,18 @@ public interface Unmodifiable {
     public boolean hasNext() { return iterator.hasNext(); }
 
     @Override
-    public @Nullable V next() { return view.apply(iterator.next()); }
+    public V next() { return view.apply(iterator.next()); }
 
   }
 
 
   /**
-   * Unmodifiable mapped list view. Optimized for random access original lists.
+   * Unmodifiable mapped view of a list. Optimized for random access original lists.
    *
    * @param <O> Original list element type
    * @param <V> View list element type
    */
-  final class ListView<O, V> extends AbstractList<V> {
+  public static final class ListView<O, V> extends AbstractList<V> {
 
     private final @NotNull List<? extends O> original;
 
@@ -159,9 +165,87 @@ public interface Unmodifiable {
     }
 
     @Override
-    public V get(int index) {
-      return view.apply(original.get(index));
+    public V get(int index) { return view.apply(original.get(index)); }
+
+    @Override
+    public int size() { return original.size(); }
+
+  }
+
+
+  /**
+   * Unmodifiable mapped view of a map.
+   *
+   * @param <K>  Key type
+   * @param <OV> Original map value type
+   * @param <V>  View value type
+   */
+  public static final class MapView<K, OV, V> extends AbstractMap<K, V> {
+
+    private final @NotNull Map<? extends K, ? extends OV> original;
+
+    private final @NotNull Function<OV, V> view;
+
+    public MapView(@NotNull Map<? extends K, ? extends OV> original, @NotNull Function<OV, V> view) {
+      this.original = original;
+      this.view = view;
     }
+
+    @Override
+    public boolean containsKey(Object key) { return original.containsKey(key); }
+
+    @Override
+    public V get(Object key) { return view.apply(original.get(key)); }
+
+    @Override
+    public int size() { return original.size(); }
+
+    @Override
+    public @NotNull Set<Map.Entry<K, V>> entrySet() {
+      return new Unmodifiable.SetView<>(original.entrySet(), Entry::new);
+    }
+
+
+    private final class Entry implements Map.Entry<K, V> {
+
+      private final Map.Entry<? extends K, ? extends OV> original;
+
+      public Entry(@NotNull Map.Entry<? extends K, ? extends OV> original) { this.original = original; }
+
+      @Override
+      public K getKey() { return original.getKey(); }
+
+      @Override
+      public V getValue() { return view.apply(original.getValue()); }
+
+      @Override
+      public V setValue(V value) throws UnsupportedOperationException { throw new UnsupportedOperationException(); }
+
+    }
+
+
+  }
+
+
+  /**
+   * Unmodifiable mapped view of a set.
+   *
+   * @param <O> Original set element type
+   * @param <V> View set element type
+   */
+  public static final class SetView<O, V> extends AbstractSet<V> {
+
+    private final @NotNull Set<? extends O> original;
+
+    private final @NotNull Function<O, V> view;
+
+    public SetView(@NotNull Set<? extends O> original, @NotNull Function<O, V> view) {
+      this.original = original;
+      this.view = view;
+    }
+
+    @Override
+    public @NotNull Iterator<V> iterator() { return new MappedIterator<>(original.iterator(), view); }
 
     @Override
     public int size() { return original.size(); }

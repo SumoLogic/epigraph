@@ -87,7 +87,7 @@ public interface MapDatum extends Datum {
     }
 
 
-    interface Static<K extends Datum.Imm> extends MapDatum.Imm, MapDatum.Static, Datum.Imm.Static {
+    interface Static<K extends Datum.Imm> extends MapDatum.Imm, MapDatum.Static<K>, Datum.Imm.Static {
 
       @Override
       @NotNull MapDatum.Imm.Static<K> toImmutable();

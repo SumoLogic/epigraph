@@ -76,7 +76,10 @@ class SchemaCompiler(
     ctx.phase(INHERIT_FROM_SUPERTYPES)
 
     validateTagRefs()
-    ctx.anonListTypes.values() foreach (anonListType => anonListType.linearizedParents)
+    // ensure all anonymous parents are auto-created
+    ctx.typeDefs.values() foreach (_.linearizedParents)
+    ctx.anonListTypes.values() foreach (_.linearizedParents)
+    ctx.anonMapTypes.values() foreach (_.linearizedParents)
 
     handleErrors(4)
 

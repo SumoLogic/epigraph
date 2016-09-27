@@ -418,7 +418,7 @@ trait CMapType extends CType with CDatumType {self =>
 
   final val valueTypeRef: CTypeRef = valueDataType.typeRef
 
-  def effectiveDefaultValueTagName: Option[String] = ??? // FIXME implement similar to list
+  def effectiveDefaultValueTagName: Option[String]// = ??? // FIXME implement similar to list
 
   override val kind: CTypeKind = CTypeKind.MAP
 
@@ -468,6 +468,10 @@ class CAnonMapType(override val name: CAnonMapTypeName)(implicit ctx: CContext) 
     case unknown => throw new UnsupportedOperationException(unknown.toString)
   }
 
+  final override def effectiveDefaultValueTagName: Option[String] = ctx.after(
+    CPhase.COMPUTE_SUPERTYPES, null, valueDataType.effectiveDefaultTagName
+  )
+
 }
 
 class CMapTypeDef(csf: CSchemaFile, override val psi: SchemaMapTypeDef)(implicit ctx: CContext) extends {
@@ -479,6 +483,26 @@ class CMapTypeDef(csf: CSchemaFile, override val psi: SchemaMapTypeDef)(implicit
   override type This = CMapTypeDef
 
   override val keyTypeRef: CTypeRef = CTypeRef(csf, psi.getAnonMap.getTypeRef) // TODO check it's not a vartype?
+
+  // `None` - no default, `Some(String)` - effective default tag name
+  override def effectiveDefaultValueTagName: Option[String] = ctx.after(
+    CPhase.COMPUTE_SUPERTYPES, null, _effectiveDefaultElementTagName
+  )
+
+  private lazy val _effectiveDefaultElementTagName: Option[String] = {
+    linearizedParents.foreach { st =>
+      if (!valueDataType.compatibleWith(st.valueDataType)) ctx.errors.add(
+        CError(
+          csf.filename,
+          csf.position(psi.getAnonMap),
+          s"Type `$name` inherits from map type `${st.name.name}` with different default value tag `${st.valueDataType.effectiveDefaultTagName.get}`"
+        )
+      )
+    }
+    valueDataType.effectiveDefaultTagName
+  }
+
+  // FIXME include anon map in supertypes
 
 }
 
@@ -555,7 +579,7 @@ class CListTypeDef(csf: CSchemaFile, override val psi: SchemaListTypeDef)(implic
   override type This = CListTypeDef
 
   // `None` - no default, `Some(String)` - effective default tag name
-  def effectiveDefaultElementTagName: Option[String] = ctx.after(
+  override def effectiveDefaultElementTagName: Option[String] = ctx.after(
     CPhase.COMPUTE_SUPERTYPES, null, _effectiveDefaultElementTagName
   )
 
@@ -571,6 +595,8 @@ class CListTypeDef(csf: CSchemaFile, override val psi: SchemaListTypeDef)(implic
     }
     elementDataType.effectiveDefaultTagName
   }
+
+  // FIXME include anon list in supertypes
 
 }
 

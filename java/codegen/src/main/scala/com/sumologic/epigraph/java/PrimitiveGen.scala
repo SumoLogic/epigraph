@@ -27,6 +27,9 @@ public interface $ln extends${withParents(t)} io.epigraph.data.${kind(t)}Datum.S
 
   static @NotNull $ln.Builder create(@NotNull ${native(t)} val) { return $ln.Type.instance().createBuilder(val); }
 
+  @Override
+  @NotNull $ln.Imm toImmutable();
+
   /**
    * Class for `${t.name.name}` datum type.
    */

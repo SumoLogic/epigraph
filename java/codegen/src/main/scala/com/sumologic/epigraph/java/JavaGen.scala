@@ -42,13 +42,13 @@ abstract class JavaGen[From >: Null <: AnyRef](protected val from: From, protect
   }
 
   def amln(t: CAnonMapType): String = t.valueDataType.typeRef.resolved match {
-    case et: CVarTypeDef => ln(et) + varTagPart(t.valueDataType.effectiveDefaultTagName) + "_Map"
-    case et: CDatumType => ln(et) + "_Map"
+    case vt: CVarTypeDef => ln(t.keyTypeRef.resolved) + "_" + ln(vt) + varTagPart(t.valueDataType.effectiveDefaultTagName) + "_Map"
+    case vt: CDatumType => ln(t.keyTypeRef.resolved) + "_" + ln(vt) + "_Map"
     case unknown => throw new UnsupportedOperationException(unknown.toString)
   }
 
   private def varTagPart(tagName: Option[String]): String = tagName match {
-    case Some(name) => "_" + name
+    case Some(name) => "$" + name
     case None => ""
   }
 

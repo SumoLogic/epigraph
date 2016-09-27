@@ -88,7 +88,7 @@ public abstract class AnonMapType extends MapType {
             ?,// super MyImmData,
             ? // extends Data.Mut.Static<? super MyImmData>
             >> immediateSupertypes,
-        @NotNull DatumType keyType,
+        @NotNull DatumType/*.Static<K, ?, ?, ?, ?, ?>*/ keyType,
         @NotNull DataType valueType,
         @NotNull Function<MapDatum.Builder.@NotNull Raw, @NotNull MyDatumBuilder> datumBuilderConstructor,
         @NotNull Function<Val.Imm.@NotNull Raw, @NotNull MyImmVal> immValConstructor,

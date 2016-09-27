@@ -9,6 +9,10 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class JavaSchemaGenerator {
 
@@ -21,9 +25,7 @@ public class JavaSchemaGenerator {
     this.outputRoot = outputRoot;
   }
 
-  public JavaSchemaGenerator(CContext ctx, File outputRoot) {
-    this(ctx, outputRoot.toPath());
-  }
+  public JavaSchemaGenerator(CContext ctx, File outputRoot) { this(ctx, outputRoot.toPath()); }
 
   public void generate() throws IOException {
 
@@ -76,8 +78,17 @@ public class JavaSchemaGenerator {
     }
 
     for (CAnonMapType amt : ctx.anonMapTypes().values()) {
-      // TODO new AnonMapGen(amt, ctx).writeUnder(tmpRoot);
+      //System.out.println(amt.name().name());
+      new AnonMapGen(amt, ctx).writeUnder(tmpRoot);
     }
+
+//    final Set<CDataType> anonMapValueTypes = new HashSet<>();
+//    for (CAnonMapType amt : ctx.anonMapTypes().values()) {
+//      anonMapValueTypes.add(amt.valueDataType());
+//    }
+//    for (CDataType valueType : anonMapValueTypes) {
+//      new AnonBaseMapGen(valueType, ctx).writeUnder(tmpRoot);
+//    }
 
     JavaGenUtils.move(tmpRoot, outputRoot, outputRoot.getParent()); // move new root to final location
 

@@ -12,6 +12,7 @@ record PersonRecord {
   firstName: String
   bestFriend: polymorphic Person default id//Record
   friends: list[PersonRecord]
+  friendsMap: map[PersonId, Person default id]
   ids: list[PersonId]
   idss: list[list[PersonId]]
   persons: list[Person]

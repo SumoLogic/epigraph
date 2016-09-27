@@ -8,6 +8,12 @@ import com.sumologic.epigraph.schema.compiler.CType
 trait DatumTypeJavaGen {this: JavaTypeGen[_ >: Null <: CType] =>
 
   def builderValueAndDataBuilder: String = /*@formatter:off*/sn"""\
+$builderValue\
+
+$dataBuilder\
+"""/*@formatter:on*/
+
+  def builderValue: String = /*@formatter:off*/sn"""\
     /**
      * Builder for `${t.name.name}` value (holding a builder or an error).
      */
@@ -16,7 +22,9 @@ trait DatumTypeJavaGen {this: JavaTypeGen[_ >: Null <: CType] =>
       Value(@NotNull io.epigraph.data.Val.Builder.Raw raw) { super(raw, $ln.Imm.Value.Impl::new); }
 
     }
+"""/*@formatter:on*/
 
+  def dataBuilder: String = /*@formatter:off*/sn"""\
     /**
      * Builder for `${t.name.name}` data (holding single default representation of the type).
      */

@@ -41,7 +41,7 @@ public final class ListView<O, V> extends AbstractList<V> {
   public int size() { return original.size(); }
 
   @Override
-  public V set(int index, V element) {
+  public V set(int index, V element) { // TODO take merger in constructor?
     return view.apply(original.set(index, originalElementConstructor.apply(element)));
   }
 
