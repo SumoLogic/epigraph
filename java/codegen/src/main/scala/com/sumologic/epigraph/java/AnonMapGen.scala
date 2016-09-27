@@ -385,7 +385,7 @@ ${vt match { // data view (for vartypes)
     }
 
     ${"/**"} Associates specified data with specified key in this map. */
-    public @NotNull $ln.Builder put(@NotNull ${lqn(kt, t)}.Imm key, @NotNull ${lqn(vt, t)} data) {
+    public @NotNull $ln.Builder put_(@NotNull ${lqn(kt, t)}.Imm key, @NotNull ${lqn(vt, t)} data) {
       datas().put(key, data);
       return this;
     }
