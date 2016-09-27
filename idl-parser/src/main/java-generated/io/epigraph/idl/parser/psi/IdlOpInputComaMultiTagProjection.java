@@ -5,10 +5,10 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface IdlOpInputMultiTagProjection extends PsiElement {
+public interface IdlOpInputComaMultiTagProjection extends PsiElement {
 
   @NotNull
-  List<IdlOpInputMultiTagProjectionItem> getOpInputMultiTagProjectionItemList();
+  List<IdlOpInputComaMultiTagProjectionItem> getOpInputComaMultiTagProjectionItemList();
 
   @NotNull
   PsiElement getColon();

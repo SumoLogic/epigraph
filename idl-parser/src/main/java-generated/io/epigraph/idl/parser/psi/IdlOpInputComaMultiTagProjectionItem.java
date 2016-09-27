@@ -5,19 +5,16 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface IdlOpInputSingleTagProjection extends PsiElement {
+public interface IdlOpInputComaMultiTagProjectionItem extends PsiElement {
 
   @Nullable
-  IdlOpInputModelProjection getOpInputModelProjection();
+  IdlOpInputComaModelProjection getOpInputComaModelProjection();
 
   @NotNull
   List<IdlOpInputModelProperty> getOpInputModelPropertyList();
 
-  @Nullable
+  @NotNull
   IdlOpTagName getOpTagName();
-
-  @Nullable
-  PsiElement getColon();
 
   @Nullable
   PsiElement getCurlyLeft();

@@ -11,14 +11,14 @@ import static io.epigraph.idl.lexer.IdlElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import io.epigraph.idl.parser.psi.*;
 
-public class IdlOpInputMultiTagProjectionItemImpl extends ASTWrapperPsiElement implements IdlOpInputMultiTagProjectionItem {
+public class IdlOpInputTrunkFieldProjectionImpl extends ASTWrapperPsiElement implements IdlOpInputTrunkFieldProjection {
 
-  public IdlOpInputMultiTagProjectionItemImpl(ASTNode node) {
+  public IdlOpInputTrunkFieldProjectionImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull IdlVisitor visitor) {
-    visitor.visitOpInputMultiTagProjectionItem(this);
+    visitor.visitOpInputTrunkFieldProjection(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -27,21 +27,21 @@ public class IdlOpInputMultiTagProjectionItemImpl extends ASTWrapperPsiElement i
   }
 
   @Override
+  @NotNull
+  public List<IdlOpInputFieldProjectionBodyPart> getOpInputFieldProjectionBodyPartList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, IdlOpInputFieldProjectionBodyPart.class);
+  }
+
+  @Override
   @Nullable
-  public IdlOpInputModelProjection getOpInputModelProjection() {
-    return findChildByClass(IdlOpInputModelProjection.class);
+  public IdlOpInputTrunkVarProjection getOpInputTrunkVarProjection() {
+    return findChildByClass(IdlOpInputTrunkVarProjection.class);
   }
 
   @Override
   @NotNull
-  public List<IdlOpInputModelProperty> getOpInputModelPropertyList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, IdlOpInputModelProperty.class);
-  }
-
-  @Override
-  @NotNull
-  public IdlOpTagName getOpTagName() {
-    return findNotNullChildByClass(IdlOpTagName.class);
+  public IdlQid getQid() {
+    return findNotNullChildByClass(IdlQid.class);
   }
 
   @Override

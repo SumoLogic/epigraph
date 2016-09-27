@@ -24,23 +24,28 @@ public interface IdlElementTypes {
   IElementType I_MAP_DATUM_ENTRY = new IdlElementType("I_MAP_DATUM_ENTRY");
   IElementType I_NAMESPACE_DECL = new IdlElementType("I_NAMESPACE_DECL");
   IElementType I_NULL_DATUM = new IdlElementType("I_NULL_DATUM");
+  IElementType I_OP_INPUT_COMA_FIELD_PROJECTION = new IdlElementType("I_OP_INPUT_COMA_FIELD_PROJECTION");
+  IElementType I_OP_INPUT_COMA_KEY_PROJECTION = new IdlElementType("I_OP_INPUT_COMA_KEY_PROJECTION");
+  IElementType I_OP_INPUT_COMA_LIST_MODEL_PROJECTION = new IdlElementType("I_OP_INPUT_COMA_LIST_MODEL_PROJECTION");
+  IElementType I_OP_INPUT_COMA_MAP_MODEL_PROJECTION = new IdlElementType("I_OP_INPUT_COMA_MAP_MODEL_PROJECTION");
+  IElementType I_OP_INPUT_COMA_MODEL_PROJECTION = new IdlElementType("I_OP_INPUT_COMA_MODEL_PROJECTION");
+  IElementType I_OP_INPUT_COMA_MULTI_TAG_PROJECTION = new IdlElementType("I_OP_INPUT_COMA_MULTI_TAG_PROJECTION");
+  IElementType I_OP_INPUT_COMA_MULTI_TAG_PROJECTION_ITEM = new IdlElementType("I_OP_INPUT_COMA_MULTI_TAG_PROJECTION_ITEM");
+  IElementType I_OP_INPUT_COMA_RECORD_MODEL_PROJECTION = new IdlElementType("I_OP_INPUT_COMA_RECORD_MODEL_PROJECTION");
+  IElementType I_OP_INPUT_COMA_SINGLE_TAG_PROJECTION = new IdlElementType("I_OP_INPUT_COMA_SINGLE_TAG_PROJECTION");
+  IElementType I_OP_INPUT_COMA_VAR_PROJECTION = new IdlElementType("I_OP_INPUT_COMA_VAR_PROJECTION");
   IElementType I_OP_INPUT_DEFAULT_VALUE = new IdlElementType("I_OP_INPUT_DEFAULT_VALUE");
-  IElementType I_OP_INPUT_FIELD_PROJECTION = new IdlElementType("I_OP_INPUT_FIELD_PROJECTION");
   IElementType I_OP_INPUT_FIELD_PROJECTION_BODY_PART = new IdlElementType("I_OP_INPUT_FIELD_PROJECTION_BODY_PART");
-  IElementType I_OP_INPUT_KEY_PROJECTION = new IdlElementType("I_OP_INPUT_KEY_PROJECTION");
-  IElementType I_OP_INPUT_LIST_MODEL_PROJECTION = new IdlElementType("I_OP_INPUT_LIST_MODEL_PROJECTION");
-  IElementType I_OP_INPUT_MAP_MODEL_PROJECTION = new IdlElementType("I_OP_INPUT_MAP_MODEL_PROJECTION");
   IElementType I_OP_INPUT_MODEL_META = new IdlElementType("I_OP_INPUT_MODEL_META");
-  IElementType I_OP_INPUT_MODEL_PROJECTION = new IdlElementType("I_OP_INPUT_MODEL_PROJECTION");
   IElementType I_OP_INPUT_MODEL_PROPERTY = new IdlElementType("I_OP_INPUT_MODEL_PROPERTY");
-  IElementType I_OP_INPUT_MULTI_TAG_PROJECTION = new IdlElementType("I_OP_INPUT_MULTI_TAG_PROJECTION");
-  IElementType I_OP_INPUT_MULTI_TAG_PROJECTION_ITEM = new IdlElementType("I_OP_INPUT_MULTI_TAG_PROJECTION_ITEM");
-  IElementType I_OP_INPUT_RECORD_MODEL_PROJECTION = new IdlElementType("I_OP_INPUT_RECORD_MODEL_PROJECTION");
-  IElementType I_OP_INPUT_SINGLE_TAG_PROJECTION = new IdlElementType("I_OP_INPUT_SINGLE_TAG_PROJECTION");
+  IElementType I_OP_INPUT_TRUNK_FIELD_PROJECTION = new IdlElementType("I_OP_INPUT_TRUNK_FIELD_PROJECTION");
+  IElementType I_OP_INPUT_TRUNK_MODEL_PROJECTION = new IdlElementType("I_OP_INPUT_TRUNK_MODEL_PROJECTION");
+  IElementType I_OP_INPUT_TRUNK_RECORD_MODEL_PROJECTION = new IdlElementType("I_OP_INPUT_TRUNK_RECORD_MODEL_PROJECTION");
+  IElementType I_OP_INPUT_TRUNK_SINGLE_TAG_PROJECTION = new IdlElementType("I_OP_INPUT_TRUNK_SINGLE_TAG_PROJECTION");
+  IElementType I_OP_INPUT_TRUNK_VAR_PROJECTION = new IdlElementType("I_OP_INPUT_TRUNK_VAR_PROJECTION");
   IElementType I_OP_INPUT_VAR_MULTI_TAIL = new IdlElementType("I_OP_INPUT_VAR_MULTI_TAIL");
   IElementType I_OP_INPUT_VAR_MULTI_TAIL_ITEM = new IdlElementType("I_OP_INPUT_VAR_MULTI_TAIL_ITEM");
   IElementType I_OP_INPUT_VAR_POLYMORPHIC_TAIL = new IdlElementType("I_OP_INPUT_VAR_POLYMORPHIC_TAIL");
-  IElementType I_OP_INPUT_VAR_PROJECTION = new IdlElementType("I_OP_INPUT_VAR_PROJECTION");
   IElementType I_OP_INPUT_VAR_SINGLE_TAIL = new IdlElementType("I_OP_INPUT_VAR_SINGLE_TAIL");
   IElementType I_OP_OUTPUT_FIELD_PROJECTION = new IdlElementType("I_OP_OUTPUT_FIELD_PROJECTION");
   IElementType I_OP_OUTPUT_FIELD_PROJECTION_BODY_PART = new IdlElementType("I_OP_OUTPUT_FIELD_PROJECTION_BODY_PART");
@@ -152,44 +157,62 @@ public interface IdlElementTypes {
       else if (type == I_NULL_DATUM) {
         return new IdlNullDatumImpl(node);
       }
+      else if (type == I_OP_INPUT_COMA_FIELD_PROJECTION) {
+        return new IdlOpInputComaFieldProjectionImpl(node);
+      }
+      else if (type == I_OP_INPUT_COMA_KEY_PROJECTION) {
+        return new IdlOpInputComaKeyProjectionImpl(node);
+      }
+      else if (type == I_OP_INPUT_COMA_LIST_MODEL_PROJECTION) {
+        return new IdlOpInputComaListModelProjectionImpl(node);
+      }
+      else if (type == I_OP_INPUT_COMA_MAP_MODEL_PROJECTION) {
+        return new IdlOpInputComaMapModelProjectionImpl(node);
+      }
+      else if (type == I_OP_INPUT_COMA_MODEL_PROJECTION) {
+        return new IdlOpInputComaModelProjectionImpl(node);
+      }
+      else if (type == I_OP_INPUT_COMA_MULTI_TAG_PROJECTION) {
+        return new IdlOpInputComaMultiTagProjectionImpl(node);
+      }
+      else if (type == I_OP_INPUT_COMA_MULTI_TAG_PROJECTION_ITEM) {
+        return new IdlOpInputComaMultiTagProjectionItemImpl(node);
+      }
+      else if (type == I_OP_INPUT_COMA_RECORD_MODEL_PROJECTION) {
+        return new IdlOpInputComaRecordModelProjectionImpl(node);
+      }
+      else if (type == I_OP_INPUT_COMA_SINGLE_TAG_PROJECTION) {
+        return new IdlOpInputComaSingleTagProjectionImpl(node);
+      }
+      else if (type == I_OP_INPUT_COMA_VAR_PROJECTION) {
+        return new IdlOpInputComaVarProjectionImpl(node);
+      }
       else if (type == I_OP_INPUT_DEFAULT_VALUE) {
         return new IdlOpInputDefaultValueImpl(node);
-      }
-      else if (type == I_OP_INPUT_FIELD_PROJECTION) {
-        return new IdlOpInputFieldProjectionImpl(node);
       }
       else if (type == I_OP_INPUT_FIELD_PROJECTION_BODY_PART) {
         return new IdlOpInputFieldProjectionBodyPartImpl(node);
       }
-      else if (type == I_OP_INPUT_KEY_PROJECTION) {
-        return new IdlOpInputKeyProjectionImpl(node);
-      }
-      else if (type == I_OP_INPUT_LIST_MODEL_PROJECTION) {
-        return new IdlOpInputListModelProjectionImpl(node);
-      }
-      else if (type == I_OP_INPUT_MAP_MODEL_PROJECTION) {
-        return new IdlOpInputMapModelProjectionImpl(node);
-      }
       else if (type == I_OP_INPUT_MODEL_META) {
         return new IdlOpInputModelMetaImpl(node);
-      }
-      else if (type == I_OP_INPUT_MODEL_PROJECTION) {
-        return new IdlOpInputModelProjectionImpl(node);
       }
       else if (type == I_OP_INPUT_MODEL_PROPERTY) {
         return new IdlOpInputModelPropertyImpl(node);
       }
-      else if (type == I_OP_INPUT_MULTI_TAG_PROJECTION) {
-        return new IdlOpInputMultiTagProjectionImpl(node);
+      else if (type == I_OP_INPUT_TRUNK_FIELD_PROJECTION) {
+        return new IdlOpInputTrunkFieldProjectionImpl(node);
       }
-      else if (type == I_OP_INPUT_MULTI_TAG_PROJECTION_ITEM) {
-        return new IdlOpInputMultiTagProjectionItemImpl(node);
+      else if (type == I_OP_INPUT_TRUNK_MODEL_PROJECTION) {
+        return new IdlOpInputTrunkModelProjectionImpl(node);
       }
-      else if (type == I_OP_INPUT_RECORD_MODEL_PROJECTION) {
-        return new IdlOpInputRecordModelProjectionImpl(node);
+      else if (type == I_OP_INPUT_TRUNK_RECORD_MODEL_PROJECTION) {
+        return new IdlOpInputTrunkRecordModelProjectionImpl(node);
       }
-      else if (type == I_OP_INPUT_SINGLE_TAG_PROJECTION) {
-        return new IdlOpInputSingleTagProjectionImpl(node);
+      else if (type == I_OP_INPUT_TRUNK_SINGLE_TAG_PROJECTION) {
+        return new IdlOpInputTrunkSingleTagProjectionImpl(node);
+      }
+      else if (type == I_OP_INPUT_TRUNK_VAR_PROJECTION) {
+        return new IdlOpInputTrunkVarProjectionImpl(node);
       }
       else if (type == I_OP_INPUT_VAR_MULTI_TAIL) {
         return new IdlOpInputVarMultiTailImpl(node);
@@ -199,9 +222,6 @@ public interface IdlElementTypes {
       }
       else if (type == I_OP_INPUT_VAR_POLYMORPHIC_TAIL) {
         return new IdlOpInputVarPolymorphicTailImpl(node);
-      }
-      else if (type == I_OP_INPUT_VAR_PROJECTION) {
-        return new IdlOpInputVarProjectionImpl(node);
       }
       else if (type == I_OP_INPUT_VAR_SINGLE_TAIL) {
         return new IdlOpInputVarSingleTailImpl(node);

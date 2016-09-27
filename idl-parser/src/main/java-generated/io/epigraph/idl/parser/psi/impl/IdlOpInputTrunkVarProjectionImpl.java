@@ -11,14 +11,14 @@ import static io.epigraph.idl.lexer.IdlElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import io.epigraph.idl.parser.psi.*;
 
-public class IdlOpInputListModelProjectionImpl extends ASTWrapperPsiElement implements IdlOpInputListModelProjection {
+public class IdlOpInputTrunkVarProjectionImpl extends ASTWrapperPsiElement implements IdlOpInputTrunkVarProjection {
 
-  public IdlOpInputListModelProjectionImpl(ASTNode node) {
+  public IdlOpInputTrunkVarProjectionImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull IdlVisitor visitor) {
-    visitor.visitOpInputListModelProjection(this);
+    visitor.visitOpInputTrunkVarProjection(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -28,26 +28,20 @@ public class IdlOpInputListModelProjectionImpl extends ASTWrapperPsiElement impl
 
   @Override
   @Nullable
-  public IdlOpInputVarProjection getOpInputVarProjection() {
-    return findChildByClass(IdlOpInputVarProjection.class);
+  public IdlOpInputComaMultiTagProjection getOpInputComaMultiTagProjection() {
+    return findChildByClass(IdlOpInputComaMultiTagProjection.class);
   }
 
   @Override
   @Nullable
-  public PsiElement getParenLeft() {
-    return findChildByType(I_PAREN_LEFT);
+  public IdlOpInputTrunkSingleTagProjection getOpInputTrunkSingleTagProjection() {
+    return findChildByClass(IdlOpInputTrunkSingleTagProjection.class);
   }
 
   @Override
   @Nullable
-  public PsiElement getParenRight() {
-    return findChildByType(I_PAREN_RIGHT);
-  }
-
-  @Override
-  @NotNull
-  public PsiElement getStar() {
-    return findNotNullChildByType(I_STAR);
+  public IdlOpInputVarPolymorphicTail getOpInputVarPolymorphicTail() {
+    return findChildByClass(IdlOpInputVarPolymorphicTail.class);
   }
 
 }

@@ -8,17 +8,16 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static io.epigraph.idl.lexer.IdlElementTypes.*;
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import io.epigraph.idl.parser.psi.*;
 
-public class IdlOpInputRecordModelProjectionImpl extends ASTWrapperPsiElement implements IdlOpInputRecordModelProjection {
+public class IdlOpInputTrunkModelProjectionImpl extends IdlOpInputComaModelProjectionImpl implements IdlOpInputTrunkModelProjection {
 
-  public IdlOpInputRecordModelProjectionImpl(ASTNode node) {
+  public IdlOpInputTrunkModelProjectionImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull IdlVisitor visitor) {
-    visitor.visitOpInputRecordModelProjection(this);
+    visitor.visitOpInputTrunkModelProjection(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -27,21 +26,9 @@ public class IdlOpInputRecordModelProjectionImpl extends ASTWrapperPsiElement im
   }
 
   @Override
-  @NotNull
-  public List<IdlOpInputFieldProjection> getOpInputFieldProjectionList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, IdlOpInputFieldProjection.class);
-  }
-
-  @Override
-  @NotNull
-  public PsiElement getParenLeft() {
-    return findNotNullChildByType(I_PAREN_LEFT);
-  }
-
-  @Override
   @Nullable
-  public PsiElement getParenRight() {
-    return findChildByType(I_PAREN_RIGHT);
+  public IdlOpInputTrunkRecordModelProjection getOpInputTrunkRecordModelProjection() {
+    return findChildByClass(IdlOpInputTrunkRecordModelProjection.class);
   }
 
 }

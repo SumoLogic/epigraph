@@ -5,12 +5,9 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface IdlOpInputKeyProjection extends PsiElement {
+public interface IdlOpInputTrunkModelProjection extends IdlOpInputComaModelProjection {
 
-  @NotNull
-  PsiElement getBracketLeft();
-
-  @NotNull
-  PsiElement getBracketRight();
+  @Nullable
+  IdlOpInputTrunkRecordModelProjection getOpInputTrunkRecordModelProjection();
 
 }

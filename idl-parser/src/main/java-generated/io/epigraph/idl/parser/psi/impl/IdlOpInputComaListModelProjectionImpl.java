@@ -11,14 +11,14 @@ import static io.epigraph.idl.lexer.IdlElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import io.epigraph.idl.parser.psi.*;
 
-public class IdlOpInputKeyProjectionImpl extends ASTWrapperPsiElement implements IdlOpInputKeyProjection {
+public class IdlOpInputComaListModelProjectionImpl extends ASTWrapperPsiElement implements IdlOpInputComaListModelProjection {
 
-  public IdlOpInputKeyProjectionImpl(ASTNode node) {
+  public IdlOpInputComaListModelProjectionImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull IdlVisitor visitor) {
-    visitor.visitOpInputKeyProjection(this);
+    visitor.visitOpInputComaListModelProjection(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -27,15 +27,27 @@ public class IdlOpInputKeyProjectionImpl extends ASTWrapperPsiElement implements
   }
 
   @Override
-  @NotNull
-  public PsiElement getBracketLeft() {
-    return findNotNullChildByType(I_BRACKET_LEFT);
+  @Nullable
+  public IdlOpInputComaVarProjection getOpInputComaVarProjection() {
+    return findChildByClass(IdlOpInputComaVarProjection.class);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getParenLeft() {
+    return findChildByType(I_PAREN_LEFT);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getParenRight() {
+    return findChildByType(I_PAREN_RIGHT);
   }
 
   @Override
   @NotNull
-  public PsiElement getBracketRight() {
-    return findNotNullChildByType(I_BRACKET_RIGHT);
+  public PsiElement getStar() {
+    return findNotNullChildByType(I_STAR);
   }
 
 }

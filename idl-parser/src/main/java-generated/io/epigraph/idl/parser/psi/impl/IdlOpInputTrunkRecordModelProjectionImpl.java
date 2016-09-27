@@ -11,14 +11,14 @@ import static io.epigraph.idl.lexer.IdlElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import io.epigraph.idl.parser.psi.*;
 
-public class IdlOpInputModelProjectionImpl extends ASTWrapperPsiElement implements IdlOpInputModelProjection {
+public class IdlOpInputTrunkRecordModelProjectionImpl extends ASTWrapperPsiElement implements IdlOpInputTrunkRecordModelProjection {
 
-  public IdlOpInputModelProjectionImpl(ASTNode node) {
+  public IdlOpInputTrunkRecordModelProjectionImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull IdlVisitor visitor) {
-    visitor.visitOpInputModelProjection(this);
+    visitor.visitOpInputTrunkRecordModelProjection(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -28,20 +28,14 @@ public class IdlOpInputModelProjectionImpl extends ASTWrapperPsiElement implemen
 
   @Override
   @Nullable
-  public IdlOpInputListModelProjection getOpInputListModelProjection() {
-    return findChildByClass(IdlOpInputListModelProjection.class);
+  public IdlOpInputTrunkFieldProjection getOpInputTrunkFieldProjection() {
+    return findChildByClass(IdlOpInputTrunkFieldProjection.class);
   }
 
   @Override
-  @Nullable
-  public IdlOpInputMapModelProjection getOpInputMapModelProjection() {
-    return findChildByClass(IdlOpInputMapModelProjection.class);
-  }
-
-  @Override
-  @Nullable
-  public IdlOpInputRecordModelProjection getOpInputRecordModelProjection() {
-    return findChildByClass(IdlOpInputRecordModelProjection.class);
+  @NotNull
+  public PsiElement getSlash() {
+    return findNotNullChildByType(I_SLASH);
   }
 
 }

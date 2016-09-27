@@ -11,14 +11,14 @@ import static io.epigraph.idl.lexer.IdlElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import io.epigraph.idl.parser.psi.*;
 
-public class IdlOpInputMapModelProjectionImpl extends ASTWrapperPsiElement implements IdlOpInputMapModelProjection {
+public class IdlOpInputComaModelProjectionImpl extends ASTWrapperPsiElement implements IdlOpInputComaModelProjection {
 
-  public IdlOpInputMapModelProjectionImpl(ASTNode node) {
+  public IdlOpInputComaModelProjectionImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull IdlVisitor visitor) {
-    visitor.visitOpInputMapModelProjection(this);
+    visitor.visitOpInputComaModelProjection(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -27,27 +27,21 @@ public class IdlOpInputMapModelProjectionImpl extends ASTWrapperPsiElement imple
   }
 
   @Override
-  @NotNull
-  public IdlOpInputKeyProjection getOpInputKeyProjection() {
-    return findNotNullChildByClass(IdlOpInputKeyProjection.class);
+  @Nullable
+  public IdlOpInputComaListModelProjection getOpInputComaListModelProjection() {
+    return findChildByClass(IdlOpInputComaListModelProjection.class);
   }
 
   @Override
   @Nullable
-  public IdlOpInputVarProjection getOpInputVarProjection() {
-    return findChildByClass(IdlOpInputVarProjection.class);
+  public IdlOpInputComaMapModelProjection getOpInputComaMapModelProjection() {
+    return findChildByClass(IdlOpInputComaMapModelProjection.class);
   }
 
   @Override
   @Nullable
-  public PsiElement getParenLeft() {
-    return findChildByType(I_PAREN_LEFT);
-  }
-
-  @Override
-  @Nullable
-  public PsiElement getParenRight() {
-    return findChildByType(I_PAREN_RIGHT);
+  public IdlOpInputComaRecordModelProjection getOpInputComaRecordModelProjection() {
+    return findChildByClass(IdlOpInputComaRecordModelProjection.class);
   }
 
 }

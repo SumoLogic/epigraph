@@ -11,14 +11,14 @@ import static io.epigraph.idl.lexer.IdlElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import io.epigraph.idl.parser.psi.*;
 
-public class IdlOpInputVarMultiTailItemImpl extends ASTWrapperPsiElement implements IdlOpInputVarMultiTailItem {
+public class IdlOpInputComaMultiTagProjectionImpl extends ASTWrapperPsiElement implements IdlOpInputComaMultiTagProjection {
 
-  public IdlOpInputVarMultiTailItemImpl(ASTNode node) {
+  public IdlOpInputComaMultiTagProjectionImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull IdlVisitor visitor) {
-    visitor.visitOpInputVarMultiTailItem(this);
+    visitor.visitOpInputComaMultiTagProjection(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -28,14 +28,26 @@ public class IdlOpInputVarMultiTailItemImpl extends ASTWrapperPsiElement impleme
 
   @Override
   @NotNull
-  public IdlFqnTypeRef getFqnTypeRef() {
-    return findNotNullChildByClass(IdlFqnTypeRef.class);
+  public List<IdlOpInputComaMultiTagProjectionItem> getOpInputComaMultiTagProjectionItemList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, IdlOpInputComaMultiTagProjectionItem.class);
   }
 
   @Override
   @NotNull
-  public IdlOpInputComaVarProjection getOpInputComaVarProjection() {
-    return findNotNullChildByClass(IdlOpInputComaVarProjection.class);
+  public PsiElement getColon() {
+    return findNotNullChildByType(I_COLON);
+  }
+
+  @Override
+  @NotNull
+  public PsiElement getParenLeft() {
+    return findNotNullChildByType(I_PAREN_LEFT);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getParenRight() {
+    return findChildByType(I_PAREN_RIGHT);
   }
 
 }

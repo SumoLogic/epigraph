@@ -6,7 +6,8 @@ import de.uka.ilkd.pp.Layouter;
 import de.uka.ilkd.pp.NoExceptions;
 import de.uka.ilkd.pp.StringBackend;
 import io.epigraph.idl.parser.projections.IdlSubParserDefinitions;
-import io.epigraph.idl.parser.psi.IdlOpInputVarProjection;
+import io.epigraph.idl.parser.psi.IdlOpInputTrunkVarProjection;
+import io.epigraph.projections.StepsAndProjection;
 import io.epigraph.psi.EpigraphPsiUtil;
 import io.epigraph.psi.PsiProcessingException;
 import io.epigraph.tests.*;
@@ -57,15 +58,13 @@ public class OpInputProjectionsTest {
   public void testParseEmpty() throws PsiProcessingException {
     testParsingVarProjection(
         new DataType(false, Person.type, Person.id),
-        ""
-        ,
-        ":id"
+        "" , ":id", 1
     );
   }
 
   @Test
   public void testParseDefault() throws PsiProcessingException {
-    testParsingVarProjection(":id { default: 123 }");
+    testParsingVarProjection(":id { default: 123 }", 1);
   }
 
   @Test
@@ -77,9 +76,8 @@ public class OpInputProjectionsTest {
   public void testParseTail() throws PsiProcessingException {
     testParsingVarProjection(
         new DataType(false, Person.type, Person.id),
-        "~io.epigraph.tests.User :id"
-        ,
-        ":id ~io.epigraph.tests.User :id"
+        "~io.epigraph.tests.User :id" ,
+        ":id ~io.epigraph.tests.User :id", 1
     );
   }
 
@@ -87,49 +85,57 @@ public class OpInputProjectionsTest {
   public void testParseTails() throws PsiProcessingException {
     testParsingVarProjection(
         new DataType(false, Person.type, Person.id),
-        "~( io.epigraph.tests.User :id, io.epigraph.tests.Person :id )"
-        ,
-        ":id ~( io.epigraph.tests.User :id, io.epigraph.tests.Person :id )"
+        "~( io.epigraph.tests.User :id, io.epigraph.tests.Person :id )" ,
+        ":id ~( io.epigraph.tests.User :id, io.epigraph.tests.Person :id )",
+        1
     );
   }
 
   @Test
   public void testParseCustomParams() throws PsiProcessingException {
-    testParsingVarProjection(":id { deprecated = true }");
+    testParsingVarProjection(":id { deprecated = true }", 1);
   }
 
   @Test
   public void testParseRecordDefaultFields() throws PsiProcessingException {
-    testParsingVarProjection(":record ( id, firstName )");
+    testParsingVarProjection(":record ( id, firstName )", 1);
   }
 
   @Test
   public void testParseRecordFieldsWithStructure() throws PsiProcessingException {
-    testParsingVarProjection(":record ( id, bestFriend :record ( id ) )");
+    testParsingVarProjection(":record ( id, bestFriend :record ( id ) )", 1);
   }
 
   @Test
   public void testParseRecordFieldsWithCustomParams() throws PsiProcessingException {
-    testParsingVarProjection(":record ( id, bestFriend { deprecated = true :record ( id ) } )");
+    testParsingVarProjection(":record ( id, bestFriend { deprecated = true :record ( id ) } )", 1);
   }
 
   @Test
   public void testParseList() throws PsiProcessingException {
-    testParsingVarProjection(":record ( friends *( :id ) )");
+    testParsingVarProjection(":record ( friends *( :id ) )", 1);
   }
 
-  private void testParsingVarProjection(String str)
-      throws PsiProcessingException {
+  private void testParsingVarProjection(String str) throws PsiProcessingException {
+    testParsingVarProjection(str, 0);
+  }
+
+  private void testParsingVarProjection(String str, int steps) throws PsiProcessingException {
     testParsingVarProjection(
         new DataType(false, Person.type, Person.id),
-        str
-        ,
-        str
+        str ,
+        str, steps
     );
 
   }
 
   private void testParsingVarProjection(DataType varDataType, String projectionString, String expected)
+      throws PsiProcessingException {
+
+    testParsingVarProjection(varDataType, projectionString, expected, 0);
+  }
+
+  private void testParsingVarProjection(DataType varDataType, String projectionString, String expected, int expectedSteps)
       throws PsiProcessingException {
 
     TypesResolver resolver = new SimpleTypesResolver(
@@ -142,10 +148,10 @@ public class OpInputProjectionsTest {
 
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
-    IdlOpInputVarProjection psiVarProjection = EpigraphPsiUtil.parseText(
+    IdlOpInputTrunkVarProjection psiVarProjection = EpigraphPsiUtil.parseText(
         projectionString,
         IdlSubParserDefinitions.OP_INPUT_VAR_PROJECTION.rootElementType(),
-        IdlOpInputVarProjection.class,
+        IdlOpInputTrunkVarProjection.class,
         IdlSubParserDefinitions.OP_INPUT_VAR_PROJECTION,
         errorsAccumulator
     );
@@ -162,12 +168,15 @@ public class OpInputProjectionsTest {
 
     OpInputVarProjection varProjection = null;
     try {
-      varProjection = OpInputProjectionsPsiParser.parseVarProjection(
-          varDataType,
-          psiVarProjection,
-          resolver
-      );
+      StepsAndProjection<OpInputVarProjection> stepsAndProjection =
+          OpInputProjectionsPsiParser.parseTrunkVarProjection(
+              varDataType,
+              psiVarProjection,
+              resolver
+          );
 
+      assertEquals(expectedSteps, stepsAndProjection.pathSteps());
+      varProjection = stepsAndProjection.projection();
     } catch (PsiProcessingException e) {
       e.printStackTrace();
       System.err.println(e.getMessage() + " at " +

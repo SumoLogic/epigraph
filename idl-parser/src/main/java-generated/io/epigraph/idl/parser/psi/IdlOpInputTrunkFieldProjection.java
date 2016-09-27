@@ -5,13 +5,13 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface IdlOpInputFieldProjection extends PsiElement {
+public interface IdlOpInputTrunkFieldProjection extends PsiElement {
 
   @NotNull
   List<IdlOpInputFieldProjectionBodyPart> getOpInputFieldProjectionBodyPartList();
 
   @Nullable
-  IdlOpInputVarProjection getOpInputVarProjection();
+  IdlOpInputTrunkVarProjection getOpInputTrunkVarProjection();
 
   @NotNull
   IdlQid getQid();

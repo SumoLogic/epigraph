@@ -11,14 +11,14 @@ import static io.epigraph.idl.lexer.IdlElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import io.epigraph.idl.parser.psi.*;
 
-public class IdlOpInputVarMultiTailItemImpl extends ASTWrapperPsiElement implements IdlOpInputVarMultiTailItem {
+public class IdlOpInputComaKeyProjectionImpl extends ASTWrapperPsiElement implements IdlOpInputComaKeyProjection {
 
-  public IdlOpInputVarMultiTailItemImpl(ASTNode node) {
+  public IdlOpInputComaKeyProjectionImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull IdlVisitor visitor) {
-    visitor.visitOpInputVarMultiTailItem(this);
+    visitor.visitOpInputComaKeyProjection(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -28,14 +28,14 @@ public class IdlOpInputVarMultiTailItemImpl extends ASTWrapperPsiElement impleme
 
   @Override
   @NotNull
-  public IdlFqnTypeRef getFqnTypeRef() {
-    return findNotNullChildByClass(IdlFqnTypeRef.class);
+  public PsiElement getBracketLeft() {
+    return findNotNullChildByType(I_BRACKET_LEFT);
   }
 
   @Override
   @NotNull
-  public IdlOpInputComaVarProjection getOpInputComaVarProjection() {
-    return findNotNullChildByClass(IdlOpInputComaVarProjection.class);
+  public PsiElement getBracketRight() {
+    return findNotNullChildByType(I_BRACKET_RIGHT);
   }
 
 }

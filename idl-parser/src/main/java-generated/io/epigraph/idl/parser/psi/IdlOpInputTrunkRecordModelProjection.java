@@ -5,12 +5,12 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface IdlOpInputVarMultiTailItem extends PsiElement {
+public interface IdlOpInputTrunkRecordModelProjection extends PsiElement {
+
+  @Nullable
+  IdlOpInputTrunkFieldProjection getOpInputTrunkFieldProjection();
 
   @NotNull
-  IdlFqnTypeRef getFqnTypeRef();
-
-  @NotNull
-  IdlOpInputComaVarProjection getOpInputComaVarProjection();
+  PsiElement getSlash();
 
 }

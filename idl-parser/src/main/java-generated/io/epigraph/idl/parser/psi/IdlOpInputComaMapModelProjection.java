@@ -5,15 +5,18 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface IdlOpInputRecordModelProjection extends PsiElement {
+public interface IdlOpInputComaMapModelProjection extends PsiElement {
 
   @NotNull
-  List<IdlOpInputFieldProjection> getOpInputFieldProjectionList();
+  IdlOpInputComaKeyProjection getOpInputComaKeyProjection();
+
+  @NotNull
+  IdlOpInputComaVarProjection getOpInputComaVarProjection();
 
   @NotNull
   PsiElement getParenLeft();
 
-  @Nullable
+  @NotNull
   PsiElement getParenRight();
 
 }

@@ -516,8 +516,6 @@ public class OpOutputProjectionsPsiParser {
       ));
     }
 
-    final LinkedHashSet<OpOutputRecordModelProjection> tail;
-
     return new OpOutputRecordModelProjection(type,
                                              includeInDefault,
                                              params,
@@ -657,7 +655,7 @@ public class OpOutputProjectionsPsiParser {
       throw new PsiProcessingException(String.format("Parameter '%s' type not specified", paramName), paramPsi);
     @NotNull Fqn paramTypeName = fqnTypeRef.getFqn().getFqn();
 
-    @Nullable IdlOpInputModelProjection paramModelProjectionPsi = paramPsi.getOpInputModelProjection();
+    @Nullable IdlOpInputComaModelProjection paramModelProjectionPsi = paramPsi.getOpInputComaModelProjection();
     if (paramModelProjectionPsi == null) // can this ever happen?
       throw new PsiProcessingException(String.format("Parameter '%s' projection", paramName), paramPsi);
 
@@ -677,7 +675,7 @@ public class OpOutputProjectionsPsiParser {
                                     ? null
                                     : IdlGDataPsiParser.parseDatum(defaultValuePsi);
 
-    OpInputModelProjection<?, ?> paramModelProjection = OpInputProjectionsPsiParser.parseModelProjection(
+    OpInputModelProjection<?, ?> paramModelProjection = OpInputProjectionsPsiParser.parseComaModelProjection(
         paramType,
         paramPsi.getPlus() != null,
         defaultValue,
@@ -685,7 +683,7 @@ public class OpOutputProjectionsPsiParser {
         null, // TODO do we want to support metadata on parameters?
         paramModelProjectionPsi,
         resolver
-    );
+    ).projection();
 
     return new OpParam(paramName, paramModelProjection, EpigraphPsiUtil.getLocation(paramPsi));
   }

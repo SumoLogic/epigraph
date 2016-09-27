@@ -5,22 +5,16 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface IdlOpParam extends PsiElement {
+public interface IdlOpInputTrunkSingleTagProjection extends PsiElement {
 
   @NotNull
-  List<IdlCustomParam> getCustomParamList();
+  List<IdlOpInputModelProperty> getOpInputModelPropertyList();
 
   @Nullable
-  IdlDatum getDatum();
+  IdlOpInputTrunkModelProjection getOpInputTrunkModelProjection();
 
   @Nullable
-  IdlFqnTypeRef getFqnTypeRef();
-
-  @Nullable
-  IdlOpInputComaModelProjection getOpInputComaModelProjection();
-
-  @Nullable
-  IdlQid getQid();
+  IdlOpTagName getOpTagName();
 
   @Nullable
   PsiElement getColon();
@@ -32,12 +26,6 @@ public interface IdlOpParam extends PsiElement {
   PsiElement getCurlyRight();
 
   @Nullable
-  PsiElement getEq();
-
-  @Nullable
   PsiElement getPlus();
-
-  @NotNull
-  PsiElement getSemicolon();
 
 }

@@ -11,14 +11,14 @@ import static io.epigraph.idl.lexer.IdlElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import io.epigraph.idl.parser.psi.*;
 
-public class IdlOpInputFieldProjectionImpl extends ASTWrapperPsiElement implements IdlOpInputFieldProjection {
+public class IdlOpInputComaMultiTagProjectionItemImpl extends ASTWrapperPsiElement implements IdlOpInputComaMultiTagProjectionItem {
 
-  public IdlOpInputFieldProjectionImpl(ASTNode node) {
+  public IdlOpInputComaMultiTagProjectionItemImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull IdlVisitor visitor) {
-    visitor.visitOpInputFieldProjection(this);
+    visitor.visitOpInputComaMultiTagProjectionItem(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -27,21 +27,21 @@ public class IdlOpInputFieldProjectionImpl extends ASTWrapperPsiElement implemen
   }
 
   @Override
-  @NotNull
-  public List<IdlOpInputFieldProjectionBodyPart> getOpInputFieldProjectionBodyPartList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, IdlOpInputFieldProjectionBodyPart.class);
-  }
-
-  @Override
   @Nullable
-  public IdlOpInputVarProjection getOpInputVarProjection() {
-    return findChildByClass(IdlOpInputVarProjection.class);
+  public IdlOpInputComaModelProjection getOpInputComaModelProjection() {
+    return findChildByClass(IdlOpInputComaModelProjection.class);
   }
 
   @Override
   @NotNull
-  public IdlQid getQid() {
-    return findNotNullChildByClass(IdlQid.class);
+  public List<IdlOpInputModelProperty> getOpInputModelPropertyList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, IdlOpInputModelProperty.class);
+  }
+
+  @Override
+  @NotNull
+  public IdlOpTagName getOpTagName() {
+    return findNotNullChildByClass(IdlOpTagName.class);
   }
 
   @Override

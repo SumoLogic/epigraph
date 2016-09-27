@@ -11,14 +11,14 @@ import static io.epigraph.idl.lexer.IdlElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import io.epigraph.idl.parser.psi.*;
 
-public class IdlOpParamImpl extends ASTWrapperPsiElement implements IdlOpParam {
+public class IdlOpInputTrunkSingleTagProjectionImpl extends ASTWrapperPsiElement implements IdlOpInputTrunkSingleTagProjection {
 
-  public IdlOpParamImpl(ASTNode node) {
+  public IdlOpInputTrunkSingleTagProjectionImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull IdlVisitor visitor) {
-    visitor.visitOpParam(this);
+    visitor.visitOpInputTrunkSingleTagProjection(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -28,32 +28,20 @@ public class IdlOpParamImpl extends ASTWrapperPsiElement implements IdlOpParam {
 
   @Override
   @NotNull
-  public List<IdlCustomParam> getCustomParamList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, IdlCustomParam.class);
+  public List<IdlOpInputModelProperty> getOpInputModelPropertyList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, IdlOpInputModelProperty.class);
   }
 
   @Override
   @Nullable
-  public IdlDatum getDatum() {
-    return findChildByClass(IdlDatum.class);
+  public IdlOpInputTrunkModelProjection getOpInputTrunkModelProjection() {
+    return findChildByClass(IdlOpInputTrunkModelProjection.class);
   }
 
   @Override
   @Nullable
-  public IdlFqnTypeRef getFqnTypeRef() {
-    return findChildByClass(IdlFqnTypeRef.class);
-  }
-
-  @Override
-  @Nullable
-  public IdlOpInputComaModelProjection getOpInputComaModelProjection() {
-    return findChildByClass(IdlOpInputComaModelProjection.class);
-  }
-
-  @Override
-  @Nullable
-  public IdlQid getQid() {
-    return findChildByClass(IdlQid.class);
+  public IdlOpTagName getOpTagName() {
+    return findChildByClass(IdlOpTagName.class);
   }
 
   @Override
@@ -76,20 +64,8 @@ public class IdlOpParamImpl extends ASTWrapperPsiElement implements IdlOpParam {
 
   @Override
   @Nullable
-  public PsiElement getEq() {
-    return findChildByType(I_EQ);
-  }
-
-  @Override
-  @Nullable
   public PsiElement getPlus() {
     return findChildByType(I_PLUS);
-  }
-
-  @Override
-  @NotNull
-  public PsiElement getSemicolon() {
-    return findNotNullChildByType(I_SEMICOLON);
   }
 
 }

@@ -5,13 +5,13 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface IdlOpInputVarProjection extends PsiElement {
+public interface IdlOpInputComaVarProjection extends PsiElement {
 
   @Nullable
-  IdlOpInputMultiTagProjection getOpInputMultiTagProjection();
+  IdlOpInputComaMultiTagProjection getOpInputComaMultiTagProjection();
 
   @Nullable
-  IdlOpInputSingleTagProjection getOpInputSingleTagProjection();
+  IdlOpInputComaSingleTagProjection getOpInputComaSingleTagProjection();
 
   @Nullable
   IdlOpInputVarPolymorphicTail getOpInputVarPolymorphicTail();

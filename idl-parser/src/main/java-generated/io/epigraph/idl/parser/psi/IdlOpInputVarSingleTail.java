@@ -11,7 +11,7 @@ public interface IdlOpInputVarSingleTail extends PsiElement {
   IdlFqnTypeRef getFqnTypeRef();
 
   @NotNull
-  IdlOpInputVarProjection getOpInputVarProjection();
+  IdlOpInputComaVarProjection getOpInputComaVarProjection();
 
   @NotNull
   PsiElement getTilda();

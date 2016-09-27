@@ -11,14 +11,14 @@ import static io.epigraph.idl.lexer.IdlElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import io.epigraph.idl.parser.psi.*;
 
-public class IdlOpInputModelMetaImpl extends ASTWrapperPsiElement implements IdlOpInputModelMeta {
+public class IdlOpInputComaFieldProjectionImpl extends ASTWrapperPsiElement implements IdlOpInputComaFieldProjection {
 
-  public IdlOpInputModelMetaImpl(ASTNode node) {
+  public IdlOpInputComaFieldProjectionImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull IdlVisitor visitor) {
-    visitor.visitOpInputModelMeta(this);
+    visitor.visitOpInputComaFieldProjection(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -27,21 +27,33 @@ public class IdlOpInputModelMetaImpl extends ASTWrapperPsiElement implements Idl
   }
 
   @Override
-  @NotNull
-  public IdlOpInputComaModelProjection getOpInputComaModelProjection() {
-    return findNotNullChildByClass(IdlOpInputComaModelProjection.class);
+  @Nullable
+  public IdlOpInputComaVarProjection getOpInputComaVarProjection() {
+    return findChildByClass(IdlOpInputComaVarProjection.class);
   }
 
   @Override
   @NotNull
-  public PsiElement getColon() {
-    return findNotNullChildByType(I_COLON);
+  public List<IdlOpInputFieldProjectionBodyPart> getOpInputFieldProjectionBodyPartList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, IdlOpInputFieldProjectionBodyPart.class);
   }
 
   @Override
   @NotNull
-  public PsiElement getMeta() {
-    return findNotNullChildByType(I_META);
+  public IdlQid getQid() {
+    return findNotNullChildByClass(IdlQid.class);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getCurlyLeft() {
+    return findChildByType(I_CURLY_LEFT);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getCurlyRight() {
+    return findChildByType(I_CURLY_RIGHT);
   }
 
   @Override

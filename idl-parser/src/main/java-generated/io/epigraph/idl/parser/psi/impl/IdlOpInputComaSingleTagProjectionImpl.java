@@ -11,14 +11,14 @@ import static io.epigraph.idl.lexer.IdlElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import io.epigraph.idl.parser.psi.*;
 
-public class IdlOpInputSingleTagProjectionImpl extends ASTWrapperPsiElement implements IdlOpInputSingleTagProjection {
+public class IdlOpInputComaSingleTagProjectionImpl extends ASTWrapperPsiElement implements IdlOpInputComaSingleTagProjection {
 
-  public IdlOpInputSingleTagProjectionImpl(ASTNode node) {
+  public IdlOpInputComaSingleTagProjectionImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull IdlVisitor visitor) {
-    visitor.visitOpInputSingleTagProjection(this);
+    visitor.visitOpInputComaSingleTagProjection(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -28,8 +28,8 @@ public class IdlOpInputSingleTagProjectionImpl extends ASTWrapperPsiElement impl
 
   @Override
   @Nullable
-  public IdlOpInputModelProjection getOpInputModelProjection() {
-    return findChildByClass(IdlOpInputModelProjection.class);
+  public IdlOpInputComaModelProjection getOpInputComaModelProjection() {
+    return findChildByClass(IdlOpInputComaModelProjection.class);
   }
 
   @Override

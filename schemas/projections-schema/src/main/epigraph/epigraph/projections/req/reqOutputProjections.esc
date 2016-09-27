@@ -19,15 +19,14 @@ namespace epigraph.projections.req
 // /folders/123/items::record(id, name, ...)
 
 import epigraph.schema.DataTypeRef
+import epigraph.schema.EnumTypeRef
 import epigraph.schema.FieldRef
 import epigraph.schema.ListTypeRef
 import epigraph.schema.MapTypeRef
+import epigraph.schema.PrimitiveTypeRef
 import epigraph.schema.RecordTypeRef
 import epigraph.schema.TypeMemberRef
 import epigraph.schema.TypeRef
-import epigraph.schema.EnumTypeRef
-import epigraph.schema.PrimitiveTypeRef
-import epigraph.schema.FieldName
 
 record ReqOutputVarProjection {
   type: TypeRef
@@ -49,7 +48,7 @@ abstract record ReqOutputModelProjection {
 record ReqOutputRecordModelProjection extends ReqOutputModelProjection {
   override model: RecordTypeRef
   fieldProjections: list[ReqOutputFieldProjection]
-  fieldProjectiAlt: map[FieldName, ReqOutputVarProjection] // TODO this or above (or both?)
+//  fieldProjectiAlt: map[FieldName, ReqOutputVarProjection] // TODO this or above (or both?)
 }
 
 record ReqOutputFieldProjection {
