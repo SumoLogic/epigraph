@@ -269,7 +269,7 @@ ${
     case _ => sn"""\
 
       // method is private to not expose datas() for non-union types (so simple type can be replaced with union type while preserving backwards-compatibility)
-      private @NotNull java.util.Map<${lqn(kt, t)}.@NotNull Imm, @NotNull ? extends ${lqn(vt, t)}.Imm.Data> datas() {
+      private @NotNull java.util.Map<@NotNull ? extends ${lqn(kt, t)}.Imm, @NotNull ? extends ${lqn(vt, t)}.Imm.Data> datas() {
         return io.epigraph.util.Util.castEx(_raw().elements());
       }
 """
