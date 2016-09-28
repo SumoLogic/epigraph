@@ -22,7 +22,8 @@
     - [ ] Don't warn if at least one of the targets is not a child of source
 - Namespace declaration completion: take folder structure into account
 - Rename folders on namespace renaming
-- Diagrams support. Bonus: show field types
+- [x] Diagrams support. Bonus: show field types
+- Highlight tag types that are vartypes themselve as errors
 
 ### Low
 - Option to auto optimize imports on code formatting
