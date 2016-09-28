@@ -47,8 +47,7 @@ public class OpInputProjectionsPsiParser {
           singleTagProjectionPsi
       );
 
-      @Nullable IdlOpInputTrunkModelProjection modelProjection =
-          singleTagProjectionPsi.getOpInputTrunkModelProjection();
+      @Nullable IdlOpInputTrunkModelProjection modelProjection = singleTagProjectionPsi.getOpInputTrunkModelProjection();
       assert modelProjection != null; // todo when it can be null?
 
       @NotNull List<IdlOpInputModelProperty> modelPropertiesPsi = singleTagProjectionPsi.getOpInputModelPropertyList();

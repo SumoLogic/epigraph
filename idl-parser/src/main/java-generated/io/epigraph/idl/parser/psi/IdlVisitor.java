@@ -287,15 +287,15 @@ public class IdlVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitReqOutputComaMultiTagProjectionItem(@NotNull IdlReqOutputComaMultiTagProjectionItem o) {
+    visitPsiElement(o);
+  }
+
   public void visitReqOutputComaRecordModelProjection(@NotNull IdlReqOutputComaRecordModelProjection o) {
     visitPsiElement(o);
   }
 
   public void visitReqOutputComaSingleTagProjection(@NotNull IdlReqOutputComaSingleTagProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqOutputComaTagProjectionItem(@NotNull IdlReqOutputComaTagProjectionItem o) {
     visitPsiElement(o);
   }
 
@@ -307,7 +307,7 @@ public class IdlVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitReqOutputTrunkFieldOrKeyProjection(@NotNull IdlReqOutputTrunkFieldOrKeyProjection o) {
+  public void visitReqOutputTrunkMapModelProjection(@NotNull IdlReqOutputTrunkMapModelProjection o) {
     visitPsiElement(o);
   }
 
@@ -315,7 +315,7 @@ public class IdlVisitor extends PsiElementVisitor {
     visitReqOutputComaModelProjection(o);
   }
 
-  public void visitReqOutputTrunkRecordOrMapModelProjection(@NotNull IdlReqOutputTrunkRecordOrMapModelProjection o) {
+  public void visitReqOutputTrunkRecordModelProjection(@NotNull IdlReqOutputTrunkRecordModelProjection o) {
     visitPsiElement(o);
   }
 

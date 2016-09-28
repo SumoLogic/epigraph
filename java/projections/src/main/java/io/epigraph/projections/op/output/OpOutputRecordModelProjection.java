@@ -19,6 +19,8 @@ public class OpOutputRecordModelProjection extends OpOutputModelProjection<Recor
 
   @Nullable
   private LinkedHashSet<OpOutputFieldProjection> fieldProjections;
+  @Nullable
+  private Map<String, OpOutputFieldProjection> indexedFieldProjections;
 
   public OpOutputRecordModelProjection(@NotNull RecordType model,
                                        boolean includeInDefault,
@@ -55,6 +57,19 @@ public class OpOutputRecordModelProjection extends OpOutputModelProjection<Recor
 
   @Nullable
   public LinkedHashSet<OpOutputFieldProjection> fieldProjections() { return fieldProjections; }
+
+  @Nullable
+  public Map<String, OpOutputFieldProjection> indexedFieldProjections() {
+    if (indexedFieldProjections != null) return indexedFieldProjections;
+    if (fieldProjections == null) return null;
+
+    Map<String, OpOutputFieldProjection> res = new HashMap<>();
+    for (OpOutputFieldProjection fieldProjection : fieldProjections)
+      res.put(fieldProjection.field().name(), fieldProjection);
+
+    indexedFieldProjections = res;
+    return res;
+  }
 
   public void addFieldProjection(@NotNull OpOutputFieldProjection fieldProjection) {
     if (fieldProjections == null) fieldProjections = new LinkedHashSet<>();

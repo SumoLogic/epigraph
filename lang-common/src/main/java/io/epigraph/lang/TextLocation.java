@@ -43,6 +43,6 @@ public class TextLocation {
 
   @Override
   public String toString() {
-    return String.format("%s@(%d:%d)", fileName(), startOffset(), endOffset());
+    return String.format("%s@(%d-%d)", fileName(), startOffset(), endOffset());
   }
 }

@@ -266,7 +266,8 @@ reqOutputTrunkSingleTagProjection ::= ( ':' '+'? tagName )? reqParamsAndAnnotati
 
 //
 
-reqOutputTrunkModelProjection ::= ( reqOutputTrunkRecordOrMapModelProjection
+reqOutputTrunkModelProjection ::= ( reqOutputTrunkRecordModelProjection
+                                  | reqOutputTrunkMapModelProjection
                                   | reqOutputComaRecordModelProjection
                                   | reqOutputComaMapModelProjection
                                   | reqOutputComaListModelProjection
@@ -274,17 +275,19 @@ reqOutputTrunkModelProjection ::= ( reqOutputTrunkRecordOrMapModelProjection
   extends = reqOutputComaModelProjection
 }
 
-// record or map. We can't tell which one it is based on syntax only, need to check with model or op projection
-reqOutputTrunkRecordOrMapModelProjection ::= '/' reqOutputTrunkFieldOrKeyProjection { pin=1 }
-// this ought to be '+' (datum | qid), but enumDatum would match qid anyways.. todo: fix if enums are eliminated
-reqOutputTrunkFieldOrKeyProjection ::= '+'? datum reqParamsAndAnnotations reqOutputTrunkVarProjection
+reqOutputTrunkRecordModelProjection ::= '/' reqOutputTrunkFieldProjection
+private reqOutputTrunkFieldProjection ::= '+'? qid reqParamsAndAnnotations reqOutputTrunkVarProjection {pin=2}
+
+reqOutputTrunkMapModelProjection ::= '/' reqOutputTrunkKeyProjection
+private reqOutputTrunkKeyProjection ::= '+'? datum reqParamsAndAnnotations reqOutputTrunkVarProjection {pin=2}
 
 // input coma part
 
 reqOutputComaVarProjection ::= ( reqOutputComaMultiTagProjection | reqOutputComaSingleTagProjection ) reqOutputVarPolymorphicTail?
 reqOutputComaSingleTagProjection ::= ( ':' '+'? tagName)? reqOutputComaTagProjectionItem
-reqOutputComaMultiTagProjection ::= ':' '(' ('+'? tagName reqOutputComaTagProjectionItem ','?)* ')' {pin=2}
-reqOutputComaTagProjectionItem ::= reqParamsAndAnnotations reqOutputComaModelProjection reqOutputModelMeta?
+reqOutputComaMultiTagProjection ::= ':' '(' (reqOutputComaMultiTagProjectionItem ','?)* ')' {pin=2}
+reqOutputComaMultiTagProjectionItem ::= '+'? tagName reqOutputComaTagProjectionItem
+private reqOutputComaTagProjectionItem ::= reqParamsAndAnnotations reqOutputComaModelProjection reqOutputModelMeta?
 //
 
 reqOutputComaModelProjection ::= ( reqOutputComaRecordModelProjection
@@ -301,7 +304,7 @@ reqOutputComaListModelProjection ::= '*' '(' reqOutputComaVarProjection ')' { pi
 
 // op input map
 reqOutputComaMapModelProjection ::= reqOutputComaKeysProjection '(' reqOutputComaVarProjection ')'
-reqOutputComaKeysProjection ::= '+'? '[' ( reqOutputComaKeyProjection ','? )* ']' {pin=2}
+reqOutputComaKeysProjection ::= '+'? '[' ('*') | ( ( reqOutputComaKeyProjection ','? )* ) ']' {pin=2}
 reqOutputComaKeyProjection ::= datum reqParamsAndAnnotations
 
 // ============= data language =============
@@ -325,7 +328,7 @@ listDatum ::= dataTypeSpec? '[' (dataValue ','?)* ']' {pin=2 extends=datum}
 
 primitiveDatum ::= (dataTypeSpec '@')? (string | number | boolean) {extends=datum}
 
-enumDatum ::= qid {extends=datum}
+enumDatum ::= '@' qid {extends=datum}
 
 nullDatum ::= (dataTypeSpec '@')? 'null' {extends=datum}
 

@@ -5,27 +5,24 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface IdlReqOutputComaSingleTagProjection extends PsiElement {
+public interface IdlReqOutputTrunkMapModelProjection extends PsiElement {
+
+  @NotNull
+  IdlDatum getDatum();
 
   @NotNull
   List<IdlReqAnnotation> getReqAnnotationList();
 
-  @NotNull
-  IdlReqOutputComaModelProjection getReqOutputComaModelProjection();
-
   @Nullable
-  IdlReqOutputModelMeta getReqOutputModelMeta();
+  IdlReqOutputTrunkVarProjection getReqOutputTrunkVarProjection();
 
   @NotNull
   List<IdlReqParam> getReqParamList();
 
   @Nullable
-  IdlTagName getTagName();
-
-  @Nullable
-  PsiElement getColon();
-
-  @Nullable
   PsiElement getPlus();
+
+  @NotNull
+  PsiElement getSlash();
 
 }

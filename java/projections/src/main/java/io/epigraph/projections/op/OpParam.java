@@ -25,12 +25,6 @@ public class OpParam {
     this.location = location;
   }
 
-  @NotNull
-  public static Set<OpParam> params(OpParam... params) {
-    if (params.length == 0) return Collections.emptySet();
-    return new HashSet<>(Arrays.asList(params));
-  }
-
   // note: custom params are on the model projection
 
   @NotNull

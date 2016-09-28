@@ -21,16 +21,16 @@ public class IdlGDataPsiParserTest {
   public void testGDataVarParsing() {
     String expression = "fooType < a: { a1 : \"a\", a2 : <>}, \n" +
                         "b: mapType( 1 : 1, 2: <tag: true>), \n" +
-                        "c: listType[1,2,false,\"33\", <q:w>], \n" +
-                        "d: enum, \n" +
+                        "c: listType[1,2,false,\"33\", <q:@w>], \n" +
+                        "d: @enum, \n" +
                         "e: q.w.someType@3.14, \n" +
                         "f: false,\n" +
                         "g: \"foobar\">";
     String expected =
         "fooType<a: {a1: \"a\", a2: <>}, " +
         "b: mapType(1: 1, 2: <tag: true>), " +
-        "c: listType[1, 2, false, \"33\", <q: w>], " +
-        "d: enum, " +
+        "c: listType[1, 2, false, \"33\", <q: @w>], " +
+        "d: @enum, " +
         "e: q.w.someType@3.14, " +
         "f: false, " +
         "g: \"foobar\">";

@@ -11,14 +11,14 @@ import static io.epigraph.idl.lexer.IdlElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import io.epigraph.idl.parser.psi.*;
 
-public class IdlReqOutputComaTagProjectionItemImpl extends ASTWrapperPsiElement implements IdlReqOutputComaTagProjectionItem {
+public class IdlReqOutputTrunkMapModelProjectionImpl extends ASTWrapperPsiElement implements IdlReqOutputTrunkMapModelProjection {
 
-  public IdlReqOutputComaTagProjectionItemImpl(ASTNode node) {
+  public IdlReqOutputTrunkMapModelProjectionImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull IdlVisitor visitor) {
-    visitor.visitReqOutputComaTagProjectionItem(this);
+    visitor.visitReqOutputTrunkMapModelProjection(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -28,26 +28,38 @@ public class IdlReqOutputComaTagProjectionItemImpl extends ASTWrapperPsiElement 
 
   @Override
   @NotNull
+  public IdlDatum getDatum() {
+    return findNotNullChildByClass(IdlDatum.class);
+  }
+
+  @Override
+  @NotNull
   public List<IdlReqAnnotation> getReqAnnotationList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, IdlReqAnnotation.class);
   }
 
   @Override
-  @NotNull
-  public IdlReqOutputComaModelProjection getReqOutputComaModelProjection() {
-    return findNotNullChildByClass(IdlReqOutputComaModelProjection.class);
-  }
-
-  @Override
   @Nullable
-  public IdlReqOutputModelMeta getReqOutputModelMeta() {
-    return findChildByClass(IdlReqOutputModelMeta.class);
+  public IdlReqOutputTrunkVarProjection getReqOutputTrunkVarProjection() {
+    return findChildByClass(IdlReqOutputTrunkVarProjection.class);
   }
 
   @Override
   @NotNull
   public List<IdlReqParam> getReqParamList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, IdlReqParam.class);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getPlus() {
+    return findChildByType(I_PLUS);
+  }
+
+  @Override
+  @NotNull
+  public PsiElement getSlash() {
+    return findNotNullChildByType(I_SLASH);
   }
 
 }

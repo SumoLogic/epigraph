@@ -10,4 +10,7 @@ public interface IdlEnumDatum extends IdlDatum {
   @NotNull
   IdlQid getQid();
 
+  @NotNull
+  PsiElement getAt();
+
 }

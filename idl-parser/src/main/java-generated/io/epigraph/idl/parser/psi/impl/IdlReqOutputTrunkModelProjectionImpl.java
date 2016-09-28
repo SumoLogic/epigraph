@@ -27,8 +27,14 @@ public class IdlReqOutputTrunkModelProjectionImpl extends IdlReqOutputComaModelP
 
   @Override
   @Nullable
-  public IdlReqOutputTrunkRecordOrMapModelProjection getReqOutputTrunkRecordOrMapModelProjection() {
-    return findChildByClass(IdlReqOutputTrunkRecordOrMapModelProjection.class);
+  public IdlReqOutputTrunkMapModelProjection getReqOutputTrunkMapModelProjection() {
+    return findChildByClass(IdlReqOutputTrunkMapModelProjection.class);
+  }
+
+  @Override
+  @Nullable
+  public IdlReqOutputTrunkRecordModelProjection getReqOutputTrunkRecordModelProjection() {
+    return findChildByClass(IdlReqOutputTrunkRecordModelProjection.class);
   }
 
 }

@@ -37,10 +37,25 @@ public class ProjectionPsiParserUtil {
       @Nullable Type.Tag defaultTag,
       @NotNull PsiElement location) throws PsiProcessingException {
 
-    final Type.Tag tag;
-    final String tagNameStr = getTagName(tagName);
+    String tagNameStr = null;
+    if (tagName != null) {
+      @Nullable IdlQid qid = tagName.getQid();
+      tagNameStr = qid == null ? null : qid.getCanonicalName();
+    }
 
-    if (tagNameStr == null) {
+    return getTag(type, tagNameStr, defaultTag, location);
+  }
+
+  @NotNull
+  public static Type.Tag getTag(
+      @NotNull Type type,
+      @Nullable String tagName,
+      @Nullable Type.Tag defaultTag,
+      @NotNull PsiElement location) throws PsiProcessingException {
+
+    final Type.Tag tag;
+
+    if (tagName == null) {
       // get default tag
       if (defaultTag == null)
         throw new PsiProcessingException(
@@ -50,7 +65,7 @@ public class ProjectionPsiParserUtil {
 
       tag = defaultTag;
       verifyTag(type, tag, location);
-    } else tag = getTag(type, tagNameStr, location);
+    } else tag = getTag(type, tagName, location);
     return tag;
   }
 

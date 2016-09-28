@@ -5,7 +5,7 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface IdlReqOutputComaTagProjectionItem extends PsiElement {
+public interface IdlReqOutputComaMultiTagProjectionItem extends PsiElement {
 
   @NotNull
   List<IdlReqAnnotation> getReqAnnotationList();
@@ -18,5 +18,11 @@ public interface IdlReqOutputComaTagProjectionItem extends PsiElement {
 
   @NotNull
   List<IdlReqParam> getReqParamList();
+
+  @NotNull
+  IdlTagName getTagName();
+
+  @Nullable
+  PsiElement getPlus();
 
 }

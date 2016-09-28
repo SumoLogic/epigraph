@@ -289,7 +289,7 @@ listDatum ::= dataTypeSpec? '[' (dataValue ','?)* ']' {pin=2 extends=datum}
 
 primitiveDatum ::= (dataTypeSpec '@')? (string | number | boolean) {extends=datum}
 
-enumDatum ::= qid {extends=datum}
+enumDatum ::= '@' qid {extends=datum}
 
 nullDatum ::= (dataTypeSpec '@')? 'null' {extends=datum}
 

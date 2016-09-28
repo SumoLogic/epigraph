@@ -8,10 +8,7 @@ import com.intellij.psi.PsiElement;
 public interface IdlReqOutputComaMultiTagProjection extends PsiElement {
 
   @NotNull
-  List<IdlReqOutputComaTagProjectionItem> getReqOutputComaTagProjectionItemList();
-
-  @NotNull
-  List<IdlTagName> getTagNameList();
+  List<IdlReqOutputComaMultiTagProjectionItem> getReqOutputComaMultiTagProjectionItemList();
 
   @NotNull
   PsiElement getColon();

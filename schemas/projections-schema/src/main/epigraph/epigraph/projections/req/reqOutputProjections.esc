@@ -67,6 +67,7 @@ record ReqOutputListModelProjection extends ReqOutputModelProjection {
 
 record ReqOutputMapModelProjection extends ReqOutputModelProjection {
   override model: MapTypeRef
+  keysRequired: Boolean // one for all keys
   keysProjection: ReqOutputKeysProjection { doc = "if `null` - all keys" }
   varProjection: ReqOutputVarProjection
 }

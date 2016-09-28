@@ -11,14 +11,14 @@ import static io.epigraph.idl.lexer.IdlElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import io.epigraph.idl.parser.psi.*;
 
-public class IdlReqOutputTrunkFieldOrKeyProjectionImpl extends ASTWrapperPsiElement implements IdlReqOutputTrunkFieldOrKeyProjection {
+public class IdlReqOutputTrunkRecordModelProjectionImpl extends ASTWrapperPsiElement implements IdlReqOutputTrunkRecordModelProjection {
 
-  public IdlReqOutputTrunkFieldOrKeyProjectionImpl(ASTNode node) {
+  public IdlReqOutputTrunkRecordModelProjectionImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull IdlVisitor visitor) {
-    visitor.visitReqOutputTrunkFieldOrKeyProjection(this);
+    visitor.visitReqOutputTrunkRecordModelProjection(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -28,8 +28,8 @@ public class IdlReqOutputTrunkFieldOrKeyProjectionImpl extends ASTWrapperPsiElem
 
   @Override
   @NotNull
-  public IdlDatum getDatum() {
-    return findNotNullChildByClass(IdlDatum.class);
+  public IdlQid getQid() {
+    return findNotNullChildByClass(IdlQid.class);
   }
 
   @Override
@@ -39,9 +39,9 @@ public class IdlReqOutputTrunkFieldOrKeyProjectionImpl extends ASTWrapperPsiElem
   }
 
   @Override
-  @NotNull
+  @Nullable
   public IdlReqOutputTrunkVarProjection getReqOutputTrunkVarProjection() {
-    return findNotNullChildByClass(IdlReqOutputTrunkVarProjection.class);
+    return findChildByClass(IdlReqOutputTrunkVarProjection.class);
   }
 
   @Override
@@ -54,6 +54,12 @@ public class IdlReqOutputTrunkFieldOrKeyProjectionImpl extends ASTWrapperPsiElem
   @Nullable
   public PsiElement getPlus() {
     return findChildByType(I_PLUS);
+  }
+
+  @Override
+  @NotNull
+  public PsiElement getSlash() {
+    return findNotNullChildByType(I_SLASH);
   }
 
 }

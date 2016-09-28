@@ -28,14 +28,8 @@ public class IdlReqOutputComaMultiTagProjectionImpl extends ASTWrapperPsiElement
 
   @Override
   @NotNull
-  public List<IdlReqOutputComaTagProjectionItem> getReqOutputComaTagProjectionItemList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, IdlReqOutputComaTagProjectionItem.class);
-  }
-
-  @Override
-  @NotNull
-  public List<IdlTagName> getTagNameList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, IdlTagName.class);
+  public List<IdlReqOutputComaMultiTagProjectionItem> getReqOutputComaMultiTagProjectionItemList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, IdlReqOutputComaMultiTagProjectionItem.class);
   }
 
   @Override

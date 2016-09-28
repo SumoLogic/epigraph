@@ -8,6 +8,9 @@ import com.intellij.psi.PsiElement;
 public interface IdlReqOutputTrunkModelProjection extends IdlReqOutputComaModelProjection {
 
   @Nullable
-  IdlReqOutputTrunkRecordOrMapModelProjection getReqOutputTrunkRecordOrMapModelProjection();
+  IdlReqOutputTrunkMapModelProjection getReqOutputTrunkMapModelProjection();
+
+  @Nullable
+  IdlReqOutputTrunkRecordModelProjection getReqOutputTrunkRecordModelProjection();
 
 }

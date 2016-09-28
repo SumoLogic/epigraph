@@ -5,15 +5,15 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface IdlReqOutputTrunkFieldOrKeyProjection extends PsiElement {
+public interface IdlReqOutputTrunkRecordModelProjection extends PsiElement {
 
   @NotNull
-  IdlDatum getDatum();
+  IdlQid getQid();
 
   @NotNull
   List<IdlReqAnnotation> getReqAnnotationList();
 
-  @NotNull
+  @Nullable
   IdlReqOutputTrunkVarProjection getReqOutputTrunkVarProjection();
 
   @NotNull
@@ -21,5 +21,8 @@ public interface IdlReqOutputTrunkFieldOrKeyProjection extends PsiElement {
 
   @Nullable
   PsiElement getPlus();
+
+  @NotNull
+  PsiElement getSlash();
 
 }

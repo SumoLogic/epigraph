@@ -10,10 +10,7 @@ import com.intellij.mock.MockProjectEx;
 import com.intellij.mock.MockPsiManager;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.Trinity;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiErrorElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiRecursiveElementWalkingVisitor;
+import com.intellij.psi.*;
 import com.intellij.psi.impl.PsiFileFactoryImpl;
 import com.intellij.psi.impl.source.CharTableImpl;
 import com.intellij.psi.tree.IElementType;
@@ -95,7 +92,12 @@ public class EpigraphPsiUtil {
   @NotNull
   public static TextLocation getLocation(@NotNull PsiElement psi) {
     TextRange textRange = psi.getTextRange();
-    PsiFile psiFile = psi.getContainingFile();
+    PsiFile psiFile = null;
+    try {
+      psiFile = psi.getContainingFile();
+    } catch (PsiInvalidElementAccessException ignored) {
+      // any way to do this without try-catch?
+    }
 
     return new TextLocation(textRange.getStartOffset(),
                             textRange.getEndOffset(),
