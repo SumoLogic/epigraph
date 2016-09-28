@@ -206,9 +206,9 @@ object SchemaCompiler {
 
   val testPaths: Seq[String] = Seq(
     "schemas/builtin-types-schema/src/main/epigraph/epigraph/builtinTypes.esc",
-    "java/core/src/test/epigraph/com/example/person.esc",
-    "java/core/src/test/epigraph/com/example/user.esc"
-//    "java/core/src/test/epigraph/com/example/circular.esc",
+    "java/codegen-test/src/main/epigraph/com/example/person.esc",
+    "java/codegen-test/src/main/epigraph/com/example/user.esc"
+//    "java/codegen-test/src/main/epigraph/com/example/circular.esc",
 //    "examples/users/schema/src/main/epigraph/metrics/metrics.esc"
 //    "schemas/data-schema/src/main/epigraph/epigraph/data/data.esc"
 //    "schemas/schema-schema/src/main/epigraph/epigraph/schema/names.esc",

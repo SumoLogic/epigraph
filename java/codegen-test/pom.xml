@@ -16,7 +16,14 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>epigraph-java-core</artifactId>
-      <version>${project.version}</version>
+      <version>${project.parent.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.sumologic.epigraph</groupId>
+      <artifactId>epigraph-builtin-types-schema</artifactId>
+      <version>${project.parent.version}</version>
+      <type>epigraph-schema</type>
     </dependency>
 
     <dependency>
@@ -26,5 +33,31 @@
     </dependency>
 
   </dependencies>
+
+  <build>
+
+    <plugins>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>process-sources</phase>
+            <goals>
+              <goal>add-source</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>${project.basedir}/src/main/epigraph</source>
+              </sources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+    </plugins>
+
+  </build>
 
 </project>
