@@ -15,7 +15,8 @@ import scala.collection.mutable
 
 abstract class CType(implicit val ctx: CContext) {self =>
 
-  type This >: this.type <: CType {type This <: self.This}
+  /** common type of this type's supertypes */
+  type Super >: this.type <: CType {type Super <: self.Super}
 
   val name: CTypeName
 
@@ -23,10 +24,10 @@ abstract class CType(implicit val ctx: CContext) {self =>
 
   def isAssignableFrom(subtype: CType): Boolean
 
-  def linearizedParents: Seq[This]
+  def linearizedParents: Seq[Super]
 
   /** Immediate parents of this type in order of increasing priority */
-  def getLinearizedParentsReversed: java.lang.Iterable[This] = linearizedParents.reverse // TODO phase guard?
+  def getLinearizedParentsReversed: java.lang.Iterable[Super] = linearizedParents.reverse // TODO phase guard?
 
   lazy val selfRef: CTypeRef = CTypeRef(this)
 
@@ -36,7 +37,7 @@ abstract class CType(implicit val ctx: CContext) {self =>
 abstract class CTypeDef protected(val csf: CSchemaFile, val psi: SchemaTypeDef, override val kind: CTypeKind)
     (implicit ctx: CContext) extends CType {self =>
 
-  override type This >: this.type <: CTypeDef {type This <: self.This}
+  override type Super >: this.type <: CTypeDef {type Super <: self.Super}
 
   val name: CTypeFqn = new CTypeFqn(csf, csf.namespace.fqn, psi)
 
@@ -64,9 +65,9 @@ abstract class CTypeDef protected(val csf: CSchemaFile, val psi: SchemaTypeDef, 
 
   private lazy val cachedDeclaredAndInjectedParents: Seq[CTypeDef] = declaredParents ++ injectedSupertypes
 
-  def supertypes: Seq[This] = ctx.after(CPhase.RESOLVE_TYPEREFS, null, computedSupertypes.getOrElse(Nil))
+  def supertypes: Seq[Super] = ctx.after(CPhase.RESOLVE_TYPEREFS, null, computedSupertypes.getOrElse(Nil))
 
-  private var computedSupertypes: Option[Seq[This]] = None
+  private var computedSupertypes: Option[Seq[Super]] = None
 
   def computeSupertypes(visited: mutable.Stack[CTypeDef]): Unit = {
     if (computedSupertypes.isEmpty) {
@@ -86,7 +87,7 @@ abstract class CTypeDef protected(val csf: CSchemaFile, val psi: SchemaTypeDef, 
           }
         }
         computedSupertypes = Some(
-          declaredAndInjectedParents.flatMap { st => st.supertypes :+ st }.distinct.asInstanceOf[Seq[This]]
+          declaredAndInjectedParents.flatMap { st => st.supertypes :+ st }.distinct.asInstanceOf[Seq[Super]]
         )
       } else {
         ctx.errors.add(
@@ -101,27 +102,27 @@ abstract class CTypeDef protected(val csf: CSchemaFile, val psi: SchemaTypeDef, 
     }
   }
 
-  def parents: Seq[This] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, cachedParents)
+  def parents: Seq[Super] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, cachedParents)
 
-  private lazy val cachedParents: Seq[This] = (declaredSupertypeRefs.map(_.resolved) ++ injectedSupertypes)
-      .asInstanceOf[Seq[This]]
+  private lazy val cachedParents: Seq[Super] = (declaredSupertypeRefs.map(_.resolved) ++ injectedSupertypes)
+      .asInstanceOf[Seq[Super]]
 
   /** Immediate parents of this type in order of decreasing priority */
-  def linearizedParents: Seq[This] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, _linearizedParents)
+  def linearizedParents: Seq[Super] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, _linearizedParents)
 
-  private lazy val _linearizedParents: Seq[This] = parents.foldLeft[Seq[This]](Nil) { (acc, p) =>
+  private lazy val _linearizedParents: Seq[Super] = parents.foldLeft[Seq[Super]](Nil) { (acc, p) =>
     if (acc.contains(p) || parents.exists(_.supertypes.contains(p))) acc else p +: acc
   }
 
-  def linearizedSupertypes: Seq[This] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, _linearizedSupertypes)
+  def linearizedSupertypes: Seq[Super] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, _linearizedSupertypes)
 
-  private lazy val _linearizedSupertypes: Seq[This] = parents.foldLeft[Seq[This]](Nil) { (acc, p) =>
+  private lazy val _linearizedSupertypes: Seq[Super] = parents.foldLeft[Seq[Super]](Nil) { (acc, p) =>
     p.linearized.filterNot(acc.contains) ++ acc
   }
 
-  def linearized: Seq[This] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, _linearized)
+  def linearized: Seq[Super] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, _linearized)
 
-  private lazy val _linearized: Seq[This] = this.asInstanceOf/*scalac bug*/ [this.type] +: linearizedSupertypes
+  private lazy val _linearized: Seq[Super] = this.asInstanceOf/*scalac bug*/ [this.type] +: linearizedSupertypes
 
   override def isAssignableFrom(subtype: CType): Boolean = subtype match {
     case subDef: CTypeDef => kind == subtype.kind && subDef.linearized.contains(this)
@@ -162,7 +163,7 @@ class CVarTypeDef(csf: CSchemaFile, override val psi: SchemaVarTypeDef)(implicit
   csf, psi, CTypeKind.VARTYPE
 ) {
 
-  final override type This = CVarTypeDef
+  final override type Super = CVarTypeDef
 
   val declaredTags: Seq[CTag] = {
     @Nullable val body = psi.getVarTypeBody
@@ -243,7 +244,7 @@ class CTag(val csf: CSchemaFile, val name: String, val typeRef: CTypeRef, @Nulla
 
 trait CDatumType extends CType {self =>
 
-  override type This >: this.type <: CDatumType {type This <: self.This}
+  override type Super >: this.type <: CDatumType {type Super <: self.Super}
 
   protected val csf: CSchemaFile
 
@@ -267,7 +268,7 @@ class CRecordTypeDef(csf: CSchemaFile, override val psi: SchemaRecordTypeDef)(im
   csf, psi, CTypeKind.RECORD
 ) with CDatumType {
 
-  override type This = CRecordTypeDef
+  override type Super = CRecordTypeDef
 
   val declaredFields: Seq[CField] = {
     @Nullable val body = psi.getRecordTypeBody
@@ -407,7 +408,7 @@ class CField(val csf: CSchemaFile, val psi: SchemaFieldDecl, val host: CRecordTy
 
 trait CMapType extends CType with CDatumType {self =>
 
-  override type This >: this.type <: CMapType {type This <: self.This}
+  override type Super >: this.type <: CMapType {type Super <: self.Super}
 
   val name: CTypeName
 
@@ -436,7 +437,7 @@ class CAnonMapType(override val name: CAnonMapTypeName)(implicit ctx: CContext) 
   def this(keyTypeRef: CTypeRef, elementDataType: CDataType)(implicit ctx: CContext) =
     this(new CAnonMapTypeName(keyTypeRef, elementDataType))
 
-  override type This = CAnonMapType
+  override type Super = CAnonMapType
 
   override protected val csf: CSchemaFile = valueDataType.csf
 
@@ -483,7 +484,7 @@ class CMapTypeDef(csf: CSchemaFile, override val psi: SchemaMapTypeDef)(implicit
 
 } with CTypeDef(csf, psi, CTypeKind.MAP) with CMapType {
 
-  override type This = CMapTypeDef
+  override type Super = CMapTypeDef
 
   override val keyTypeRef: CTypeRef = CTypeRef(csf, psi.getAnonMap.getTypeRef) // TODO check it's not a vartype?
 
@@ -512,7 +513,7 @@ class CMapTypeDef(csf: CSchemaFile, override val psi: SchemaMapTypeDef)(implicit
 
 trait CListType extends CType with CDatumType {self =>
 
-  override type This >: this.type <: CListType {type This <: self.This}
+  override type Super >: this.type <: CListType {type Super <: self.Super}
 
   val name: CTypeName
 
@@ -537,7 +538,7 @@ class CAnonListType(override val name: CAnonListTypeName)(implicit ctx: CContext
 
   def this(elementDataType: CDataType)(implicit ctx: CContext) = this(new CAnonListTypeName(elementDataType))
 
-  override type This = CAnonListType
+  override type Super = CAnonListType
 
   override protected val csf: CSchemaFile = elementDataType.csf
 
@@ -583,7 +584,7 @@ class CListTypeDef(csf: CSchemaFile, override val psi: SchemaListTypeDef)(implic
 
 } with CTypeDef(csf, psi, CTypeKind.LIST) with CListType {
 
-  override type This = CListTypeDef
+  override type Super = CListTypeDef
 
   // `None` - no default, `Some(String)` - effective default tag name
   override def effectiveDefaultElementTagName: Option[String] = ctx.after(
@@ -612,7 +613,7 @@ class CEnumTypeDef(csf: CSchemaFile, psi: SchemaEnumTypeDef)(implicit ctx: CCont
   csf, psi, CTypeKind.ENUM
 ) with CDatumType {
 
-  override type This = CEnumTypeDef
+  override type Super = CEnumTypeDef
 
   val values: Seq[CEnumValue] = {
     @Nullable val body = psi.getEnumTypeBody
@@ -633,7 +634,7 @@ class CPrimitiveTypeDef(csf: CSchemaFile, override val psi: SchemaPrimitiveTypeD
       csf, psi, CTypeKind.forKeyword(psi.getPrimitiveTypeKind.name)
     ) with CDatumType {
 
-  override type This = CPrimitiveTypeDef
+  override type Super = CPrimitiveTypeDef
 
 }
 
