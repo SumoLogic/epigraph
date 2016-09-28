@@ -35,6 +35,7 @@
 - Custom attribute values must be based (and validated against) meta-schema. Find usages/refactorings/completion must take it into account
 - File drag&drop: treat as move refactoring (fix namespaces)
 - Auto insert imports on paste?
+- Remove 'No default vartype member specified' warning on data types (field value, list element, map value)
 
 ---
 ## Done
