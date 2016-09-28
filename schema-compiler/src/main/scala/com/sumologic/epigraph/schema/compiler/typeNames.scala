@@ -25,10 +25,8 @@ abstract class CTypeName protected(val name: String)(implicit val ctx: CContext)
 class CTypeFqn private(csf: CSchemaFile, val fqn: Fqn, val psi: PsiElement)(implicit ctx: CContext)
     extends CTypeName(fqn.toString) {
 
-  @scala.beans.BeanProperty
   val local: String = fqn.last()
 
-  @scala.beans.BeanProperty
   @Nullable val namespace: String = if (fqn.size == 1) null else fqn.removeLastSegment().toString
 
   def this(csf: CSchemaFile, parentNs: Fqn, lqn: SchemaFqnTypeRef)(implicit ctx: CContext) = this(

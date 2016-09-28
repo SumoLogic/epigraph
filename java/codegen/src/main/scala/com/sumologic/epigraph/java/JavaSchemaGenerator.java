@@ -9,10 +9,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 public class JavaSchemaGenerator {
 
@@ -52,7 +48,7 @@ public class JavaSchemaGenerator {
             break;
 
           case LIST:
-            //new ListGen((CListTypeDef) typeDef, ctx).writeUnder(tmpRoot);
+            new ListGen((CListTypeDef) typeDef, ctx).writeUnder(tmpRoot);
             break;
 
           case ENUM:

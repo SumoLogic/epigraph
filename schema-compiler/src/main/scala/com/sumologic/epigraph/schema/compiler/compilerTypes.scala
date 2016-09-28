@@ -38,7 +38,6 @@ abstract class CTypeDef protected(val csf: CSchemaFile, val psi: SchemaTypeDef, 
 
   override type This >: this.type <: CTypeDef {type This <: self.This}
 
-  @scala.beans.BeanProperty
   val name: CTypeFqn = new CTypeFqn(csf, csf.namespace.fqn, psi)
 
   val isAbstract: Boolean = psi.getAbstract != null
@@ -48,9 +47,9 @@ abstract class CTypeDef protected(val csf: CSchemaFile, val psi: SchemaTypeDef, 
     if (sed == null) Nil else sed.getFqnTypeRefList.map(CTypeRef(csf, _))
   }
 
-  def declaredParents: Seq[CTypeDef] = ctx.after(CPhase.RESOLVE_TYPEREFS, null, cachedDeclaredParents)
+  def declaredParents: Seq[CTypeDef] = ctx.after(CPhase.RESOLVE_TYPEREFS, null, _cachedDeclaredParents)
 
-  private lazy val cachedDeclaredParents: Seq[CTypeDef] = declaredSupertypeRefs.map(_.resolved)
+  private lazy val _cachedDeclaredParents: Seq[CTypeDef] = declaredSupertypeRefs.map(_.resolved)
 
   val declaredSupplementees: Seq[CTypeDefRef] = {
     @Nullable val ssd: SchemaSupplementsDecl = psi.getSupplementsDecl

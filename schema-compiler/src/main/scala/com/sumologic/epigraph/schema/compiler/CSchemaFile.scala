@@ -33,8 +33,7 @@ class CSchemaFile(val psi: SchemaFile)(implicit val ctx: CContext) {
 
   val importedAliases: Map[String, Fqn] = ctx.implicitImports ++ imports.map { case (alias, ci) => (alias, ci.fqn) }
 
-  @Nullable
-  private val defs: SchemaDefs = psi.getDefs
+  @Nullable private val defs: SchemaDefs = psi.getDefs
 
   val typeDefs: Seq[CTypeDef] = if (defs == null) Nil else defs.getTypeDefWrapperList.map(CTypeDef.apply(this, _))
 
@@ -68,15 +67,11 @@ class CSchemaFile(val psi: SchemaFile)(implicit val ctx: CContext) {
 
 class CNamespace(val psi: SchemaNamespaceDecl)(implicit val ctx: CContext) {
 
-  @scala.beans.BeanProperty
   val fqn: Fqn = psi.getFqn2
 
-  @scala.beans.BeanProperty
   val local: String = fqn.last()
 
-  @scala.beans.BeanProperty
-  @Nullable
-  val parent: String = if (fqn.size == 1) null else fqn.removeLastSegment().toString
+  @Nullable val parent: String = if (fqn.size == 1) null else fqn.removeLastSegment().toString
 
   // TODO expose custom attributes
 
