@@ -29,8 +29,9 @@ public class GenericVarProjection<T extends GenericTagProjection<?>, S extends G
     this.tagProjections = tagProjections;
     this.polymorphicTails = polymorphicTails;
     this.location = location;
-  }
 
+    // todo validate tails (should be subtypes of `type`)
+  }
 
   @NotNull
   public Type type() { return type; }

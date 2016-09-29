@@ -163,15 +163,20 @@ opOutputListModelProjection ::= '*' '(' opOutputVarProjection ')' { pin=1 }
 
 // op output map
 opOutputMapModelProjection ::= opOutputKeyProjection '(' opOutputVarProjection ')' { pin=1 }
-opOutputKeyProjection ::= '[' ('required' ','?| 'forbidden' ','?)? (opOutputKeyProjectionPart ','?)* ']' {pin=1}
+opOutputKeyProjection ::= '[' opOutputKeyProjectionInt ']' {pin=1}
+private opOutputKeyProjectionInt ::= ('required' ','?| 'forbidden' ','?)? (opOutputKeyProjectionPart ','?)* {
+  recoverWhile = opOutputKeyProjectionRecover
+}
 opOutputKeyProjectionPart ::= opParam | customParam
+private opOutputKeyProjectionRecover ::= ! ( ']' )
 
 //opOutputPrimitiveModelProjection ::= 'primitive' // ?
 //opOutputEnumModelProjection ::= 'enum' // ?
 
 // input --------------------------------------------------------
 
-opInputModelProperty ::= opInputDefaultValue | customParam | opInputModelMeta
+opInputModelProperty ::= opInputDefaultValue | customParam | opInputModelMeta {recoverWhile = opInputModelPropertyRecover}
+private opInputModelPropertyRecover ::= ! ( '}' )
 opInputDefaultValue ::= 'default' ':' datum {pin=1}
 
 opInputModelMeta ::= 'meta' ':' '+'? opInputComaModelProjection
@@ -179,9 +184,13 @@ opInputModelMeta ::= 'meta' ':' '+'? opInputComaModelProjection
 opInputVarPolymorphicTail ::= opInputVarSingleTail | opInputVarMultiTail
 opInputVarSingleTail ::= '~' fqnTypeRef opInputComaVarProjection
 opInputVarMultiTail ::= '~' '(' (opInputVarMultiTailItem ','?)* ')' {pin=2}
-opInputVarMultiTailItem ::= fqnTypeRef opInputComaVarProjection
+// todo: recovery. Commented out one breaks parsing tests
+opInputVarMultiTailItem ::= fqnTypeRef opInputComaVarProjection // {recoverWhile = opInputVarMultiTailItemRecover}
+//private opInputVarMultiTailItemRecover ::= ! ( ')' )
 
-opInputFieldProjectionBodyPart ::= customParam
+// todo: recovery. Commented out one breaks parsing tests
+opInputFieldProjectionBodyPart ::= customParam // {recoverWhile=opInputFieldProjectionBodyPartRecover}
+//private opInputFieldProjectionBodyPartRecover ::= ! ( '}' )
 
 // input projection consists of two parts: trunk and coma. Trunk can't have any branching, i.e. only
 // singular tags and fields are allowed in var and record projections. Coma can contain branching
@@ -259,7 +268,7 @@ reqOutputVarMultiTailItem ::= fqnTypeRef reqOutputComaVarProjection
 // input projection consists of two parts: trunk and coma. Trunk can't have any branching, i.e. only
 // singular tags and fields are allowed in var and record projections. Coma can contain branching
 
-// input trunk part
+// req output trunk part
 
 reqOutputTrunkVarProjection ::= ( reqOutputComaMultiTagProjection | reqOutputTrunkSingleTagProjection ) reqOutputVarPolymorphicTail?
 reqOutputTrunkSingleTagProjection ::= ( ':' '+'? tagName )? reqParamsAndAnnotations reqOutputTrunkModelProjection reqOutputModelMeta?
@@ -281,7 +290,7 @@ private reqOutputTrunkFieldProjection ::= '+'? qid reqParamsAndAnnotations reqOu
 reqOutputTrunkMapModelProjection ::= '/' reqOutputTrunkKeyProjection
 private reqOutputTrunkKeyProjection ::= '+'? datum reqParamsAndAnnotations reqOutputTrunkVarProjection {pin=2}
 
-// input coma part
+// req output coma part
 
 reqOutputComaVarProjection ::= ( reqOutputComaMultiTagProjection | reqOutputComaSingleTagProjection ) reqOutputVarPolymorphicTail?
 reqOutputComaSingleTagProjection ::= ( ':' '+'? tagName)? reqOutputComaTagProjectionItem
@@ -295,16 +304,16 @@ reqOutputComaModelProjection ::= ( reqOutputComaRecordModelProjection
                                  | reqOutputComaMapModelProjection
                                  )?
 
-// op input record
+// req output record
 reqOutputComaRecordModelProjection ::= '(' (reqOutputComaFieldProjection ','?)* ')' { pin=1 }
 reqOutputComaFieldProjection ::= '+'? qid reqParamsAndAnnotations reqOutputComaVarProjection
 
-// op input list
+// req output list
 reqOutputComaListModelProjection ::= '*' '(' reqOutputComaVarProjection ')' { pin=1 }
 
-// op input map
+// req output map
 reqOutputComaMapModelProjection ::= reqOutputComaKeysProjection '(' reqOutputComaVarProjection ')'
-reqOutputComaKeysProjection ::= '+'? '[' ('*') | ( ( reqOutputComaKeyProjection ','? )* ) ']' {pin=2}
+reqOutputComaKeysProjection ::= ( '+'? ( '[' ( reqOutputComaKeyProjection ','? )* ']' ) | ( '[' '*' ']' ) )
 reqOutputComaKeyProjection ::= datum reqParamsAndAnnotations
 
 // ============= data language =============

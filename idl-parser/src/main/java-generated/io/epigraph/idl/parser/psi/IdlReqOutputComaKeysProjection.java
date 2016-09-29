@@ -10,10 +10,10 @@ public interface IdlReqOutputComaKeysProjection extends PsiElement {
   @NotNull
   List<IdlReqOutputComaKeyProjection> getReqOutputComaKeyProjectionList();
 
-  @Nullable
+  @NotNull
   PsiElement getBracketLeft();
 
-  @Nullable
+  @NotNull
   PsiElement getBracketRight();
 
   @Nullable

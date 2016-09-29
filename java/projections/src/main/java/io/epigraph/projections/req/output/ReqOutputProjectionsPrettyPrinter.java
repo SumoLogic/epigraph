@@ -117,6 +117,7 @@ public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
       if (keys != null && keys.size() == 1) {
         ReqOutputKeyProjection key = keys.iterator().next();
         dataPrinter.print(key.value());
+        printParams(key.params());
         printAnnotations(key.annotations());
       } else
         throw new IllegalArgumentException(
@@ -126,11 +127,12 @@ public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
             )
         );
 
-      l.brk().print("/");
+      l.brk();
       print(mp.itemsProjection(), decSteps(pathSteps));
       l.end();
     } else {
       l.beginIInd();
+      if (mp.keysRequired()) l.print("+");
       l.print("[").brk();
 
       if (keys == null) {
@@ -142,13 +144,17 @@ public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
           else l.print(", ");
 
           dataPrinter.print(key.value());
+          printParams(key.params());
           printAnnotations(key.annotations());
         }
       }
 
       l.brk().print("](");
 
-      print(mp.itemsProjection(), 0);
+      if (!isPrintoutEmpty(mp.itemsProjection())) {
+        l.brk();
+        print(mp.itemsProjection(), 0);
+      }
       l.brk(1, -l.getDefaultIndentation()).end().print(")");
     }
   }

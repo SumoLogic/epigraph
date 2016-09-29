@@ -117,6 +117,11 @@ public class OpInputProjectionsTest {
   }
 
   @Test
+  public void testParseMap() throws PsiProcessingException {
+    testParsingVarProjection(":record ( friendsMap []( :id ) )", 1);
+  }
+
+  @Test
   public void testSimplePath() throws PsiProcessingException {
     testParsingVarProjection(":record / id", 3);
   }

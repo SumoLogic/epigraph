@@ -126,18 +126,27 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception> extends
 
       l.beginCInd();
       l.print("[");
+      boolean commaNeeded = false;
 
-      if (keyProjection.presence() == OpOutputKeyProjection.Presence.FORBIDDEN)
+      if (keyProjection.presence() == OpOutputKeyProjection.Presence.FORBIDDEN) {
         l.brk().print("forbidden");
+        commaNeeded = true;
+      }
 
-      if (keyProjection.presence() == OpOutputKeyProjection.Presence.REQUIRED)
+      if (keyProjection.presence() == OpOutputKeyProjection.Presence.REQUIRED) {
+        if (commaNeeded) l.print(",");
         l.brk().print("required");
+        commaNeeded = true;
+      }
 
       @Nullable OpParams keyParams = keyProjection.params();
-      if (keyParams != null) print(keyParams);
+      if (keyParams != null) {
+        print(keyParams, true, !commaNeeded);
+        commaNeeded = !keyParams.isEmpty();
+      }
 
       @Nullable CustomParams keyCustomParams = keyProjection.customParams();
-      if (keyCustomParams != null) print(keyCustomParams);
+      if (keyCustomParams != null) print(keyCustomParams, true, !commaNeeded);
 
       l.brk(1, -l.getDefaultIndentation()).end().print("]");
     }
@@ -155,8 +164,16 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception> extends
   }
 
   protected void print(@NotNull OpParams p) throws E {
+    print(p, false, true);
+  }
+
+  protected void print(@NotNull OpParams p, boolean needCommas, boolean first) throws E {
     l.beginCInd(0);
     for (OpParam param : p.params().values()) {
+      if (needCommas) {
+        if (first) first = false;
+        else l.print(",");
+      }
       l.brk();
       print(param);
     }

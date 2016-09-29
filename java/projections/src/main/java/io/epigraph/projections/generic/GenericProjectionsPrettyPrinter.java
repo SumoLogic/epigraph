@@ -115,8 +115,16 @@ public abstract class GenericProjectionsPrettyPrinter<
   public abstract void print(@NotNull MP mp, int pathSteps) throws E;
 
   protected void print(@NotNull CustomParams cp) throws E {
+    print(cp, false, true);
+  }
+
+  protected void print(@NotNull CustomParams cp, boolean needCommas, boolean first) throws E {
     l.beginCInd(0);
     for (Map.Entry<String, CustomParam> entry : cp.params().entrySet()) {
+      if (needCommas) {
+        if (first) first = false;
+        else l.print(",");
+      }
       l.brk().print(entry.getKey()).brk().print("=").brk();
       gdataPrettyPrinter.print(entry.getValue().value());
     }

@@ -33,15 +33,15 @@ public class IdlReqOutputComaKeysProjectionImpl extends ASTWrapperPsiElement imp
   }
 
   @Override
-  @Nullable
+  @NotNull
   public PsiElement getBracketLeft() {
-    return findChildByType(I_BRACKET_LEFT);
+    return findNotNullChildByType(I_BRACKET_LEFT);
   }
 
   @Override
-  @Nullable
+  @NotNull
   public PsiElement getBracketRight() {
-    return findChildByType(I_BRACKET_RIGHT);
+    return findNotNullChildByType(I_BRACKET_RIGHT);
   }
 
   @Override

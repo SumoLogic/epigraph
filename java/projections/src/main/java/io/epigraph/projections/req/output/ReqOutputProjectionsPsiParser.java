@@ -789,7 +789,7 @@ public class ReqOutputProjectionsPsiParser {
 
     ReqOutputKeyProjection keyProjection = new ReqOutputKeyProjection(
         keyValue,
-        parseReqParams(psi.getReqParamList(), op.params(), resolver),
+        parseReqParams(psi.getReqParamList(), op.keyProjection().params(), resolver),
         parseAnnotations(psi.getReqAnnotationList()),
         EpigraphPsiUtil.getLocation(psi)
     );
@@ -853,7 +853,7 @@ public class ReqOutputProjectionsPsiParser {
         keyProjections.add(
             new ReqOutputKeyProjection(
                 keyValue,
-                parseReqParams(keyProjectionPsi.getReqParamList(), op.params(), resolver),
+                parseReqParams(keyProjectionPsi.getReqParamList(), op.keyProjection().params(), resolver),
                 parseAnnotations(keyProjectionPsi.getReqAnnotationList()),
                 EpigraphPsiUtil.getLocation(keyProjectionPsi)
             )
@@ -958,7 +958,10 @@ public class ReqOutputProjectionsPsiParser {
       @Nullable OpParams opParams,
       @NotNull TypesResolver resolver) throws PsiProcessingException {
 
-    if (opParams == null) return null;
+    if (reqParamsPsi.isEmpty()) return null;
+
+    if (opParams == null)
+      throw new PsiProcessingException("Parameters are not supported here", reqParamsPsi.iterator().next());
 
     Map<String, ReqParam> paramMap = null;
 
@@ -982,7 +985,14 @@ public class ReqOutputProjectionsPsiParser {
       OpParam opParam = opParams.params().get(name);
 
       if (opParam == null)
-        throw new PsiProcessingException(String.format("Unknown parameter '%s'", name), reqParamPsi);
+        throw new PsiProcessingException(
+            String.format(
+                "Unsupported parameter '%s', supported parameters: {%s}",
+                name,
+                String.join(", ", opParams.params().keySet())
+            ),
+            reqParamPsi
+        );
 
       final String errorMsgPrefix = String.format("Error processing parameter '%s' value: ", name);
       OpInputModelProjection<?, ?> projection = opParam.projection();

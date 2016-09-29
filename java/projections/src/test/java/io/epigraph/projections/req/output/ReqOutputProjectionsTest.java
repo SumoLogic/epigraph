@@ -45,7 +45,7 @@ public class ReqOutputProjectionsTest {
           "  id,",
           "  record (",
           "    id {",
-          "      ; param1 : epigraph.String = \"hello world\" { doc = \"some doc\" },",
+          "      ;param1 : epigraph.String = \"hello world\" { doc = \"some doc\" },",
           "    },",
           "    bestFriend :record (",
           "      id,",
@@ -54,16 +54,54 @@ public class ReqOutputProjectionsTest {
           "        firstName",
           "      ),",
           "    ),",
-          "    friends *( :+id )",
+          "    friends *( :+id ),",
+          "    friendsMap [;keyParam:epigraph.String]( :(id, record (id, firstName) ) )",
           "  )",
           ") ~io.epigraph.tests.User :record (profile)"
       )
   );
 
   @Test
-  public void testParse1() {
-    testParse(":record / bestFriend :record / bestFriend :record ( id, firstName )", 5);
+  public void testParsePath() {
+    testParse(":record / bestFriend :+record / bestFriend :record ( id, firstName )", 5);
   }
+
+  @Test
+  public void testParsePathMap() {
+    testParse(":record / friendsMap / +\"John\" ;keyParam = \"foo\" :record ( +firstName )", 5);
+  }
+
+  @Test
+  public void testParseMap() {
+    testParse(":record / friendsMap +[ \"Alice\", \"Bob\" !sla = 100 ]( :id )", 3);
+  }
+
+  @Test
+  public void testParseMapStar() {
+    testParse(":record / friendsMap [ * ]( :id )", 3);
+  }
+
+  @Test
+  public void testParseList() {
+    testParse(":record / friends *( :id )", 3);
+  }
+
+  @Test
+  public void testParseParam() {
+    testParse(":( id, record ( id ;param1 = \"foo\" ) )", 0);
+  }
+
+  @Test
+  public void testParseParamDefault() {
+    testParse(":( id, record ( id ) )", 0); // defaults are not substituted!
+  }
+
+  @Test
+  public void testParseTail() {
+    testParse(":id ~io.epigraph.tests.User :record ( profile )", 1);
+  }
+
+  // todo negative test cases too
 
   private void testParse(String expr, int steps) {
     IdlReqOutputTrunkVarProjection psi = getPsi(expr);

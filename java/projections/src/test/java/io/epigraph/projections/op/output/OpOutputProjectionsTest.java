@@ -315,6 +315,16 @@ public class OpOutputProjectionsTest {
   }
 
   @Test
+  public void testParseDoubleTail() throws PsiProcessingException {
+    testParsingVarProjection(
+        new DataType(false, Person.type, Person.id),
+        "~io.epigraph.tests.User :id ~io.epigraph.tests.Person :id"
+        ,
+        ":id ~io.epigraph.tests.User :id ~io.epigraph.tests.Person :id"
+    );
+  }
+
+  @Test
   public void testParseTails() throws PsiProcessingException {
     testParsingVarProjection(
         new DataType(false, Person.type, Person.id),
@@ -326,40 +336,32 @@ public class OpOutputProjectionsTest {
 
   @Test
   public void testParseCustomParams() throws PsiProcessingException {
-    testParsingVarProjection(
-        ":id { deprecated = true }"
-    );
+    testParsingVarProjection( ":id { deprecated = true }" );
   }
 
   @Test
   public void testParseRecordDefaultFields() throws PsiProcessingException {
-    testParsingVarProjection(
-        ":record ( id, firstName )"
-    );
+    testParsingVarProjection( ":record ( id, firstName )" );
   }
 
   @Test
   public void testParseRecordFieldsWithStructure() throws PsiProcessingException {
-    testParsingVarProjection(
-        ":record ( id, bestFriend :record ( id ) )"
-    );
+    testParsingVarProjection( ":record ( id, bestFriend :record ( id ) )" );
   }
 
   @Test
   public void testParseRecordFieldsWithCustomParams() throws PsiProcessingException {
-    testParsingVarProjection(
-        ":record ( id, bestFriend { deprecated = true :record ( id ) } )"
-    );
+    testParsingVarProjection( ":record ( id, bestFriend { deprecated = true :record ( id ) } )" );
   }
 
   @Test
   public void testParseList() throws PsiProcessingException {
-    testParsingVarProjection(
-        new DataType(false, Person.type, Person.id),
-        ":record ( friends *( :id ) )"
-        ,
-        ":record ( friends *( :id ) )"
-    );
+    testParsingVarProjection( ":record ( friends *( :id ) )" );
+  }
+
+  @Test
+  public void testParseMap() throws PsiProcessingException {
+    testParsingVarProjection(":record ( friendsMap [ forbidden, ;+param: epigraph.String, doc = \"no keys\" ]( :id ) )");
   }
 
   @Test
