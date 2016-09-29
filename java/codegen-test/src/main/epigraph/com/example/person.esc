@@ -21,7 +21,7 @@ record PersonRecord {
   mapppsss: map[map[list[String], list[Integer]], map[UserId, map[list[UserId], User default id]]]
 }
 
-list[Person] PersonList
+list[Person/* default id*/] PersonList
 
 vartype Bad {
   //bad: Person

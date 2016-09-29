@@ -22,16 +22,39 @@ abstract class CType(implicit val ctx: CContext) {self =>
 
   val kind: CTypeKind
 
-  def isAssignableFrom(subtype: CType): Boolean
+  lazy val selfRef: CTypeRef = CTypeRef(this)
 
+  /** All (valid) supertypes of this type. After [[CPhase.RESOLVE_TYPEREFS]]. */
+  def supertypes: Seq[Super]
+
+  /** Sanitized declared parents of this type in order of increasing priority. After [[CPhase.RESOLVE_TYPEREFS]]. */
+  def parents: Seq[Super]
+
+  /** Immediate parents of this type in order of decreasing priority. After [[CPhase.COMPUTE_SUPERTYPES]]. */
   def linearizedParents: Seq[Super]
 
-  //def supertypes: Seq[Super]
+  /** Immediate parents of this type in order of increasing priority. After [[CPhase.COMPUTE_SUPERTYPES]]. */
+  final def getLinearizedParentsReversed: java.lang.Iterable[Super] = ctx.after(
+    CPhase.COMPUTE_SUPERTYPES, null, linearizedParents.reverse
+  )
 
-  /** Immediate parents of this type in order of increasing priority */
-  def getLinearizedParentsReversed: java.lang.Iterable[Super] = linearizedParents.reverse // TODO phase guard?
+  /** Linearized supertypes of this type in order of decreasing priority. After [[CPhase.COMPUTE_SUPERTYPES]]. */
+  final def linearizedSupertypes: Seq[Super] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, _linearizedSupertypes)
 
-  lazy val selfRef: CTypeRef = CTypeRef(this)
+  private lazy val _linearizedSupertypes: Seq[Super] = parents.foldLeft[Seq[Super]](Nil) { (acc, p) =>
+    p.linearization.filterNot(acc.contains) ++ acc
+  }
+
+  /**
+   * Linearization of this type (i.e. this type and all of its supertypes in order of decreasing priority).
+   * After [[CPhase.COMPUTE_SUPERTYPES]].
+   */
+  final def linearization: Seq[Super] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, _linearization)
+
+  private lazy val _linearization: Seq[Super] = this.asInstanceOf/*scalac bug*/ [self.type] +: linearizedSupertypes
+
+  /** After [[CPhase.COMPUTE_SUPERTYPES]]. */
+  final def isAssignableFrom(subtype: CType): Boolean = subtype.kind == kind && subtype.linearization.contains(this)
 
 }
 
@@ -39,11 +62,17 @@ abstract class CType(implicit val ctx: CContext) {self =>
 abstract class CTypeDef protected(val csf: CSchemaFile, val psi: SchemaTypeDef, override val kind: CTypeKind)
     (implicit ctx: CContext) extends CType {self =>
 
-  override type Super >: this.type <: CTypeDef {type Super <: self.Super}
+  //override type Super >: self.type <: CType {type Super <: self.Super} // idea scala bug
 
   val name: CTypeFqn = new CTypeFqn(csf, csf.namespace.fqn, psi)
 
   val isAbstract: Boolean = psi.getAbstract != null
+
+  /** References to types this type supplements (injects itself into). */
+  val supplementedTypeRefs: Seq[CTypeDefRef] = {
+    @Nullable val ssd: SchemaSupplementsDecl = psi.getSupplementsDecl
+    if (ssd == null) Nil else ssd.getFqnTypeRefList.map(CTypeRef(csf, _))
+  }
 
   /** References to types this type explicitly extends. */
   val extendedTypeRefs: Seq[CTypeDefRef] = {
@@ -55,12 +84,6 @@ abstract class CTypeDef protected(val csf: CSchemaFile, val psi: SchemaTypeDef, 
   private def extendedTypes: Seq[CTypeDef] = ctx.after(CPhase.RESOLVE_TYPEREFS, null, _extendedTypes)
 
   private lazy val _extendedTypes: Seq[CTypeDef] = extendedTypeRefs.map(_.resolved)
-
-  /** References to types this type supplements (injects itself into). */
-  val supplementedTypeRefs: Seq[CTypeDefRef] = {
-    @Nullable val ssd: SchemaSupplementsDecl = psi.getSupplementsDecl
-    if (ssd == null) Nil else ssd.getFqnTypeRefList.map(CTypeRef(csf, _))
-  }
 
   /** Accumulator for types injected (via `supplements` clause or `supplement` declaration) into this type. */
   val injectedTypes: ConcurrentLinkedQueue[CTypeDef] = new ConcurrentLinkedQueue
@@ -104,10 +127,10 @@ abstract class CTypeDef protected(val csf: CSchemaFile, val psi: SchemaTypeDef, 
     }
   }
 
-  /** Declared parents of this type in order of increasing priority. */
-  def parents: Seq[Super] = ctx.after( // after compute supertypes phase all these should be instances of `Super`
-    CPhase.COMPUTE_SUPERTYPES, null, extendedAndInjectedTypes.asInstanceOf[Seq[Super]]
-  )
+  /** Sanitized declared parents of this type in order of increasing priority. After [[CPhase.RESOLVE_TYPEREFS]]. */
+  def parents: Seq[Super] = ctx.after(CPhase.RESOLVE_TYPEREFS, null, _parents)
+
+  private lazy val _parents: Seq[Super] = extendedAndInjectedTypes.filter(_.kind == kind).asInstanceOf[Seq[Super]]
 
   /** Immediate parents of this type in order of decreasing priority. */
   def linearizedParents: Seq[Super] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, _linearizedParents)
@@ -116,22 +139,10 @@ abstract class CTypeDef protected(val csf: CSchemaFile, val psi: SchemaTypeDef, 
     if (acc.contains(p) || parents.exists(_.supertypes.contains(p))) acc else p +: acc
   }
 
-  /** Linearized supertypes of this type in order of decreasing priority. */
-  def linearizedSupertypes: Seq[Super] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, _linearizedSupertypes)
-
-  private lazy val _linearizedSupertypes: Seq[Super] = parents.foldLeft[Seq[Super]](Nil) { (acc, p) =>
-    p.linearization.filterNot(acc.contains) ++ acc
-  }
-
-  /** Linearization of this type (i.e. this type and all of its supertypes in order of decreasing priority). */
-  def linearization: Seq[Super] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, _linearization)
-
-  private lazy val _linearization: Seq[Super] = this.asInstanceOf/*scalac bug*/ [self.type] +: linearizedSupertypes
-
-  override def isAssignableFrom(subtype: CType): Boolean = subtype match {
-    case subDef: CTypeDef if kind == subtype.kind && subDef.linearization.contains(this) => true
-    case _ => false
-  }
+//  override def isAssignableFrom(subtype: CType): Boolean = subtype match {
+//    case subDef: CTypeDef if kind == subtype.kind && subDef.linearization.contains(this) => true
+//    case _ => false
+//  }
 
 }
 
@@ -257,7 +268,7 @@ trait CDatumType extends CType {self =>
 
   val impliedTag: CTag = new CTag(csf, CDatumType.ImpliedDefaultTagName, selfRef, psi)
 
-  def dataType(polymorphic: Boolean): CDataType = new CDataType(csf, polymorphic, selfRef, None)
+  def dataType(@Deprecated polymorphic: Boolean): CDataType = new CDataType(csf, polymorphic, selfRef, None)
 
 }
 
@@ -447,10 +458,33 @@ class CAnonMapType(override val name: CAnonMapTypeName)(implicit ctx: CContext) 
 
   @Nullable override protected val psi: PsiElement = null
 
-  override def isAssignableFrom(subtype: CType): Boolean =
-    subtype.kind == kind &&
-        keyTypeRef.resolved == subtype.asInstanceOf[CMapType].keyTypeRef.resolved &&
-        valueTypeRef.resolved.isAssignableFrom(cast(subtype).valueTypeRef.resolved)
+//  override def isAssignableFrom(subtype: CType): Boolean =
+//    subtype.kind == kind &&
+//        keyTypeRef.resolved == subtype.asInstanceOf[CMapType].keyTypeRef.resolved &&
+//        valueTypeRef.resolved.isAssignableFrom(cast(subtype).valueTypeRef.resolved)
+
+  override def supertypes: Seq[CAnonMapType] = ctx.after(CPhase.RESOLVE_TYPEREFS, null, _supertypes)
+
+  private lazy val _supertypes = parents.flatMap { st => st.supertypes :+ st }.distinct
+
+  def parents: Seq[CAnonMapType] = ctx.after(CPhase.RESOLVE_TYPEREFS, null, _parents)
+
+  private lazy val _parents: Seq[CAnonMapType] = valueDataType.typeRef.resolved match {
+
+    case vt: CVarTypeDef => valueDataType.effectiveDefaultTagName match {
+      case Some(tagName) => Seq(ctx.getOrCreateAnonMapOf(keyTypeRef, vt.dataType(false, None))) ++ vt.parents.map(
+        etp => ctx.getOrCreateAnonMapOf(
+          keyTypeRef, etp.dataType(false, etp.effectiveTags.find(_.name == tagName).map(_.name))
+        )
+      )
+      case None => vt.parents.map(etp => ctx.getOrCreateAnonMapOf(keyTypeRef, etp.dataType(false, None)))
+    }
+
+    case vt: CDatumType => vt.parents.map(est => ctx.getOrCreateAnonMapOf(keyTypeRef, est.dataType(false)))
+
+    case unknown => throw new UnsupportedOperationException(unknown.toString)
+
+  }
 
   /** Immediate parents of this type in order of decreasing priority */
   def linearizedParents: Seq[CAnonMapType] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, _linearizedParents)
@@ -489,7 +523,7 @@ class CMapTypeDef(csf: CSchemaFile, override val psi: SchemaMapTypeDef)(implicit
 
 } with CTypeDef(csf, psi, CTypeKind.MAP) with CMapType {
 
-  override type Super = CMapTypeDef
+  override type Super = CMapType
 
   override val keyTypeRef: CTypeRef = CTypeRef(csf, psi.getAnonMap.getTypeRef) // TODO check it's not a vartype?
 
@@ -511,7 +545,8 @@ class CMapTypeDef(csf: CSchemaFile, override val psi: SchemaMapTypeDef)(implicit
     valueDataType.effectiveDefaultTagName
   }
 
-  // FIXME include anon map in supertypes
+  /** Sanitized declared parents of this type in order of increasing priority. After [[CPhase.RESOLVE_TYPEREFS]]. */
+  override def parents: Seq[CMapType] = ctx.getOrCreateAnonMapOf(keyTypeRef, valueDataType) +: super.parents
 
 }
 
@@ -549,14 +584,35 @@ class CAnonListType(override val name: CAnonListTypeName)(implicit ctx: CContext
 
   @Nullable override protected val psi: PsiElement = null
 
-  override def isAssignableFrom(subtype: CType): Boolean =
-    subtype.kind == kind && elementTypeRef.resolved.isAssignableFrom(cast(subtype).elementTypeRef.resolved)
+//  override def isAssignableFrom(subtype: CType): Boolean =
+//    subtype.kind == kind && elementTypeRef.resolved.isAssignableFrom(cast(subtype).elementTypeRef.resolved)
+
+  override def supertypes: Seq[CAnonListType] = ctx.after(CPhase.RESOLVE_TYPEREFS, null, _supertypes)
+
+  private lazy val _supertypes = parents.flatMap { st => st.supertypes :+ st }.distinct
+
+  def parents: Seq[CAnonListType] = ctx.after(CPhase.RESOLVE_TYPEREFS, null, _parents)
+
+  private lazy val _parents: Seq[CAnonListType] = elementDataType.typeRef.resolved match {
+
+    case et: CVarTypeDef => elementDataType.effectiveDefaultTagName match {
+      case Some(tagName) => Seq(ctx.getOrCreateAnonListOf(et.dataType(false, None))) ++ et.parents.map(
+        etp => ctx.getOrCreateAnonListOf(etp.dataType(false, etp.effectiveTags.find(_.name == tagName).map(_.name)))
+      )
+      case None => et.parents.map(etp => ctx.getOrCreateAnonListOf(etp.dataType(false, None)))
+    }
+
+    case et: CDatumType => et.parents.map(est => ctx.getOrCreateAnonListOf(est.dataType(false)))
+
+    case unknown => throw new UnsupportedOperationException(unknown.toString)
+
+  }
 
   /** Immediate parents of this type in order of decreasing priority */
   override def linearizedParents: Seq[CAnonListType] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, _linearizedParents)
 
   private lazy val _linearizedParents: Seq[CAnonListType] = {
-    val parents = elementDataType.typeRef.resolved match {
+    val linParents = elementDataType.typeRef.resolved match {
       case et: CVarTypeDef => elementDataType.effectiveDefaultTagName.map { tagName =>
         if (!et.effectiveTags.exists(_.name == tagName)) ctx.errors.add(
           CError(csf.filename, CErrorPosition.NA, s"Tag `$tagName` is not defined for union type `${et.name.name}`")
@@ -564,7 +620,10 @@ class CAnonListType(override val name: CAnonListTypeName)(implicit ctx: CContext
         ctx.getOrCreateAnonListOf(et.dataType(elementDataType.polymorphic, None))
       }.toSeq ++ et.linearizedParents.map { est =>
         ctx.getOrCreateAnonListOf(
-          est.dataType(elementDataType./*TODO or false?*/ polymorphic, elementDataType.effectiveDefaultTagName)
+          est.dataType(
+            elementDataType./*TODO or false?*/ polymorphic,
+            elementDataType.effectiveDefaultTagName /* FIXME parent might not have the tag */
+          )
         )
       }
       case et: CDatumType => et.linearizedParents.map { est =>
@@ -572,8 +631,8 @@ class CAnonListType(override val name: CAnonListTypeName)(implicit ctx: CContext
       }
       case unknown => throw new UnsupportedOperationException(unknown.toString)
     }
-    parents foreach (_.linearizedParents) // trigger parents linearization
-    parents
+    linParents foreach (_.linearizedParents) // trigger parents linearization
+    linParents
   }
 
   final override def effectiveDefaultElementTagName: Option[String] = ctx.after(
@@ -589,7 +648,7 @@ class CListTypeDef(csf: CSchemaFile, override val psi: SchemaListTypeDef)(implic
 
 } with CTypeDef(csf, psi, CTypeKind.LIST) with CListType {
 
-  override type Super = CListTypeDef
+  override type Super = CListType
 
   // `None` - no default, `Some(String)` - effective default tag name
   override def effectiveDefaultElementTagName: Option[String] = ctx.after(
@@ -609,7 +668,8 @@ class CListTypeDef(csf: CSchemaFile, override val psi: SchemaListTypeDef)(implic
     elementDataType.effectiveDefaultTagName
   }
 
-  // FIXME include anon list in supertypes
+  /** Sanitized declared parents of this type in order of increasing priority. After [[CPhase.RESOLVE_TYPEREFS]]. */
+  override def parents: Seq[CListType] = ctx.getOrCreateAnonListOf(elementDataType) +: super.parents
 
 }
 

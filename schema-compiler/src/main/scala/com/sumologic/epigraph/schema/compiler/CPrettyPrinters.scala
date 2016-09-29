@@ -100,12 +100,12 @@ object CPrettyPrinters {
     }
 
     def typeDefParts(@NotNull t: CTypeDef, c: Config): Iterator[Iterator[String]] = Iterator(
-      collection("declaredParents", t.extendedTypeRefs, c),
+      collection("extendedParents", t.extendedTypeRefs, c),
       collection("injectedParents", t.injectedTypes, c, (x: CTypeDef) => x.name),
-      collection("resolvedParents", t.parents, c, (x: CTypeDef) => x.name),
-      collection("linearizedParents", t.linearizedParents, c, { x: CTypeDef => x.name }),
-      collection("linearization", t.linearization, c, (x: CTypeDef) => x.name),
-      collection("effectiveSupertypes", t.supertypes, c, (x: CTypeDef) => x.name),
+      collection("resolvedParents", t.parents, c, (x: CType) => x.name),
+      collection("linearizedParents", t.linearizedParents, c, { x: CType => x.name }),
+      collection("linearization", t.linearization, c, (x: CType) => x.name),
+      collection("effectiveSupertypes", t.supertypes, c, (x: CType) => x.name),
       collection("supplementedSubtypes", t.supplementedTypeRefs, c)
     )
 
@@ -253,7 +253,7 @@ object CPrettyPrinters {
     override def render0(@NotNull t: CListTypeDef, c: Config): Iterator[String] = {
       pprint.Internals.handleChunks(
         "list " + t.name.name, c, (c: Config) => CTypeDefPrinter.typeDefParts(t, c) ++ Iterator(
-          Iterator("valueType", t.elementTypeRef.name.name)
+          Iterator("elementType: ") ++ CTypeRefPrinter.render(t.elementTypeRef, c)
         )
       )
     }
