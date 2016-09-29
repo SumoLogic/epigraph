@@ -45,41 +45,43 @@ abstract class CTypeDef protected(val csf: CSchemaFile, val psi: SchemaTypeDef, 
 
   val isAbstract: Boolean = psi.getAbstract != null
 
-  val declaredSupertypeRefs: Seq[CTypeDefRef] = {
+  /** References to types this type explicitly extends. */
+  val extendedTypeRefs: Seq[CTypeDefRef] = {
     @Nullable val sed: SchemaExtendsDecl = psi.getExtendsDecl
     if (sed == null) Nil else sed.getFqnTypeRefList.map(CTypeRef(csf, _))
   }
 
-  private def declaredSupertypes: Seq[CTypeDef] = ctx.after(CPhase.RESOLVE_TYPEREFS, null, _declaredSupertypes)
+  /** Types this type explicitly extends. */
+  private def extendedTypes: Seq[CTypeDef] = ctx.after(CPhase.RESOLVE_TYPEREFS, null, _extendedTypes)
 
-  private lazy val _declaredSupertypes: Seq[CTypeDef] = declaredSupertypeRefs.map(_.resolved)
+  private lazy val _extendedTypes: Seq[CTypeDef] = extendedTypeRefs.map(_.resolved)
 
-  val declaredSupplementees: Seq[CTypeDefRef] = {
+  /** References to types this type supplements (injects itself into). */
+  val supplementedTypeRefs: Seq[CTypeDefRef] = {
     @Nullable val ssd: SchemaSupplementsDecl = psi.getSupplementsDecl
     if (ssd == null) Nil else ssd.getFqnTypeRefList.map(CTypeRef(csf, _))
   }
 
-  val injectedSupertypes: ConcurrentLinkedQueue[CTypeDef] = new ConcurrentLinkedQueue
+  /** Accumulator for types injected (via `supplements` clause or `supplement` declaration) into this type. */
+  val injectedTypes: ConcurrentLinkedQueue[CTypeDef] = new ConcurrentLinkedQueue
 
-  def declaredAndInjectedSupertypes: Seq[CTypeDef] = ctx.after(
-    CPhase.RESOLVE_TYPEREFS, null, _declaredAndInjectedSupertypes
-  )
+  def extendedAndInjectedTypes: Seq[CTypeDef] = ctx.after(CPhase.RESOLVE_TYPEREFS, null, _extendedAndInjectedTypes)
 
-  private lazy val _declaredAndInjectedSupertypes: Seq[CTypeDef] = declaredSupertypes ++ injectedSupertypes
+  private lazy val _extendedAndInjectedTypes: Seq[CTypeDef] = extendedTypes ++ injectedTypes
 
-  /*override*/ def supertypes: Seq[Super] = ctx.after(CPhase.RESOLVE_TYPEREFS, null, computedSupertypes.getOrElse(Nil))
+  /*override*/ def supertypes: Seq[Super] = ctx.after(CPhase.RESOLVE_TYPEREFS, null, _computedSupertypes.getOrElse(Nil))
 
-  private var computedSupertypes: Option[Seq[Super]] = None
+  private var _computedSupertypes: Option[Seq[Super]] = None
 
   def computeSupertypes(visited: mutable.Stack[CTypeDef]): Unit = {
-    if (computedSupertypes.isEmpty) {
+    if (_computedSupertypes.isEmpty) {
       val thisIdx = visited.indexOf(this)
       visited.push(this)
       if (thisIdx == -1) {
-        declaredAndInjectedSupertypes foreach (_.computeSupertypes(visited))
-        val (good, bad) = declaredAndInjectedSupertypes.partition(_.kind == kind)
+        extendedAndInjectedTypes foreach (_.computeSupertypes(visited))
+        val (good, bad) = extendedAndInjectedTypes.partition(_.kind == kind)
         bad foreach { st =>
-          val stSource = if (injectedSupertypes.contains(st)) "injected" else "declared"
+          val stSource = if (injectedTypes.contains(st)) "injected" else "declared"
           ctx.errors.add(
             CError(
               csf.filename, csf.position(psi.getQid), // TODO use injection source/position for injection failures
@@ -88,7 +90,7 @@ abstract class CTypeDef protected(val csf: CSchemaFile, val psi: SchemaTypeDef, 
           )
         }
         // now that we (kind of) checked all good supertypes to be of the same kind and hence instances of `Super`
-        computedSupertypes = Some(good.asInstanceOf[Seq[Super]].flatMap { st => st.supertypes :+ st }.distinct)
+        _computedSupertypes = Some(good.asInstanceOf[Seq[Super]].flatMap { st => st.supertypes :+ st }.distinct)
       } else {
         ctx.errors.add(
           CError(
@@ -96,16 +98,16 @@ abstract class CTypeDef protected(val csf: CSchemaFile, val psi: SchemaTypeDef, 
             s"Cyclic inheritance: type ${visited.view(0, thisIdx + 2).reverseIterator.map(_.name.name).mkString(" < ")}"
           )
         )
-        computedSupertypes = Some(Nil)
+        _computedSupertypes = Some(Nil)
       }
       visited.pop()
     }
   }
 
-  def parents: Seq[Super] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, cachedParents)
-
-  private lazy val cachedParents: Seq[Super] = (declaredSupertypeRefs.map(_.resolved) ++ injectedSupertypes)
-      .asInstanceOf[Seq[Super]]
+  /** Declared parents of this type in order of increasing priority. */
+  def parents: Seq[Super] = ctx.after( // after compute supertypes phase all these should be instances of `Super`
+    CPhase.COMPUTE_SUPERTYPES, null, extendedAndInjectedTypes.asInstanceOf[Seq[Super]]
+  )
 
   /** Immediate parents of this type in order of decreasing priority. */
   def linearizedParents: Seq[Super] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, _linearizedParents)
@@ -114,18 +116,20 @@ abstract class CTypeDef protected(val csf: CSchemaFile, val psi: SchemaTypeDef, 
     if (acc.contains(p) || parents.exists(_.supertypes.contains(p))) acc else p +: acc
   }
 
+  /** Linearized supertypes of this type in order of decreasing priority. */
   def linearizedSupertypes: Seq[Super] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, _linearizedSupertypes)
 
   private lazy val _linearizedSupertypes: Seq[Super] = parents.foldLeft[Seq[Super]](Nil) { (acc, p) =>
-    p.linearized.filterNot(acc.contains) ++ acc
+    p.linearization.filterNot(acc.contains) ++ acc
   }
 
-  def linearized: Seq[Super] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, _linearized)
+  /** Linearization of this type (i.e. this type and all of its supertypes in order of decreasing priority). */
+  def linearization: Seq[Super] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, _linearized)
 
   private lazy val _linearized: Seq[Super] = this.asInstanceOf/*scalac bug*/ [self.type] +: linearizedSupertypes
 
   override def isAssignableFrom(subtype: CType): Boolean = subtype match {
-    case subDef: CTypeDef => kind == subtype.kind && subDef.linearized.contains(this)
+    case subDef: CTypeDef if kind == subtype.kind && subDef.linearization.contains(this) => true
     case _ => false
   }
 

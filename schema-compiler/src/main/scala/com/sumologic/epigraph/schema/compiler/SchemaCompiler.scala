@@ -151,15 +151,15 @@ class SchemaCompiler(
   }
 
   def applySupplementingTypeDefs(): Unit = ctx.typeDefs.elements foreach { typeDef =>
-    typeDef.declaredSupplementees foreach { subRef =>
-      subRef.resolved.injectedSupertypes.add(typeDef) // TODO capture injector source?
+    typeDef.supplementedTypeRefs foreach { subRef =>
+      subRef.resolved.injectedTypes.add(typeDef) // TODO capture injector source?
     }
   }
 
   def applySupplements(): Unit = ctx.schemaFiles.values foreach { csf =>
     csf.supplements foreach { supplement =>
       val sup = supplement.sourceRef.resolved
-      supplement.targetRefs foreach (_.resolved.injectedSupertypes.add(sup))
+      supplement.targetRefs foreach (_.resolved.injectedTypes.add(sup))
     }
   }
 

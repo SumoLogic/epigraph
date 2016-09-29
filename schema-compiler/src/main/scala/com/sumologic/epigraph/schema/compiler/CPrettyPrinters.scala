@@ -100,13 +100,13 @@ object CPrettyPrinters {
     }
 
     def typeDefParts(@NotNull t: CTypeDef, c: Config): Iterator[Iterator[String]] = Iterator(
-      collection("declaredParents", t.declaredSupertypeRefs, c),
-      collection("injectedParents", t.injectedSupertypes, c, (x: CTypeDef) => x.name),
+      collection("declaredParents", t.extendedTypeRefs, c),
+      collection("injectedParents", t.injectedTypes, c, (x: CTypeDef) => x.name),
       collection("resolvedParents", t.parents, c, (x: CTypeDef) => x.name),
       collection("linearizedParents", t.linearizedParents, c, { x: CTypeDef => x.name }),
-      collection("linearization", t.linearized, c, (x: CTypeDef) => x.name),
+      collection("linearization", t.linearization, c, (x: CTypeDef) => x.name),
       collection("effectiveSupertypes", t.supertypes, c, (x: CTypeDef) => x.name),
-      collection("supplementedSubtypes", t.declaredSupplementees, c)
+      collection("supplementedSubtypes", t.supplementedTypeRefs, c)
     )
 
   }
