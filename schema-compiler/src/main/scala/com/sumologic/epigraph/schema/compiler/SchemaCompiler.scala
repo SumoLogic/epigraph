@@ -165,7 +165,7 @@ class SchemaCompiler(
 
   /** Compute supertypes for all (named and anonymous) collected types */
   def computeSupertypes(): Unit = {
-    val visited = mutable.Stack[CTypeDef]()
+    val visited = mutable.Stack[CType]()
     ctx.typeDefs.elements foreach { typeDef => typeDef.computeSupertypes(visited); assert(visited.isEmpty) }
     ctx.anonListTypes.values() foreach (anonListType => anonListType.linearizedParents)
     ctx.anonMapTypes.values() foreach (anonMapType => anonMapType.linearizedParents)

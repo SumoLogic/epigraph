@@ -73,7 +73,7 @@ abstract class CTypeDef protected(val csf: CSchemaFile, val psi: SchemaTypeDef, 
 
   private var _computedSupertypes: Option[Seq[Super]] = None
 
-  def computeSupertypes(visited: mutable.Stack[CTypeDef]): Unit = {
+  def computeSupertypes(visited: mutable.Stack[CType]): Unit = {
     if (_computedSupertypes.isEmpty) {
       val thisIdx = visited.indexOf(this)
       visited.push(this)
@@ -124,9 +124,9 @@ abstract class CTypeDef protected(val csf: CSchemaFile, val psi: SchemaTypeDef, 
   }
 
   /** Linearization of this type (i.e. this type and all of its supertypes in order of decreasing priority). */
-  def linearization: Seq[Super] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, _linearized)
+  def linearization: Seq[Super] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, _linearization)
 
-  private lazy val _linearized: Seq[Super] = this.asInstanceOf/*scalac bug*/ [self.type] +: linearizedSupertypes
+  private lazy val _linearization: Seq[Super] = this.asInstanceOf/*scalac bug*/ [self.type] +: linearizedSupertypes
 
   override def isAssignableFrom(subtype: CType): Boolean = subtype match {
     case subDef: CTypeDef if kind == subtype.kind && subDef.linearization.contains(this) => true
