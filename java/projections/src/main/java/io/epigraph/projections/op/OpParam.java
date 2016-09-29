@@ -25,7 +25,7 @@ public class OpParam {
     this.location = location;
   }
 
-  // note: custom params are on the model projection
+  // note: annotations are on the model projection
 
   @NotNull
   public String name() { return name; }

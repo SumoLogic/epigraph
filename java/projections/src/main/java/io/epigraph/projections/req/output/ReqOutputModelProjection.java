@@ -1,7 +1,7 @@
 package io.epigraph.projections.req.output;
 
 import io.epigraph.lang.TextLocation;
-import io.epigraph.projections.CustomParams;
+import io.epigraph.projections.Annotations;
 import io.epigraph.projections.generic.GenericModelProjection;
 import io.epigraph.projections.req.ReqParams;
 import io.epigraph.types.DatumType;
@@ -19,20 +19,20 @@ public abstract class ReqOutputModelProjection<M extends DatumType> extends Gene
   @Nullable
   protected final ReqParams params;
   @Nullable
-  protected final CustomParams customParams;
+  protected final Annotations annotations;
   @Nullable
   protected final ReqOutputModelProjection<?> metaProjection;
 
   public ReqOutputModelProjection(@NotNull M model,
                                   boolean required,
                                   @Nullable ReqParams params,
-                                  @Nullable CustomParams customParams,
+                                  @Nullable Annotations annotations,
                                   @Nullable ReqOutputModelProjection<?> metaProjection,
                                   @NotNull TextLocation location) {
-    super(model, customParams, location);
+    super(model, annotations, location);
     this.required = required;
     this.params = params;
-    this.customParams = customParams;
+    this.annotations = annotations;
     this.metaProjection = metaProjection;
   }
 
@@ -42,7 +42,7 @@ public abstract class ReqOutputModelProjection<M extends DatumType> extends Gene
   public ReqParams params() { return params; }
 
   @Nullable
-  public CustomParams customParams() { return customParams; }
+  public Annotations annotations() { return annotations; }
 
   @Nullable
   public ReqOutputModelProjection<?> metaProjection() { return metaProjection; }
@@ -55,12 +55,12 @@ public abstract class ReqOutputModelProjection<M extends DatumType> extends Gene
     ReqOutputModelProjection<?> that = (ReqOutputModelProjection<?>) o;
     return required == that.required &&
            Objects.equals(params, that.params) &&
-           Objects.equals(customParams, that.customParams) &&
+           Objects.equals(annotations, that.annotations) &&
            Objects.equals(metaProjection, that.metaProjection);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(super.hashCode(), required, params, customParams, metaProjection);
+    return Objects.hash(super.hashCode(), required, params, annotations, metaProjection);
   }
 }

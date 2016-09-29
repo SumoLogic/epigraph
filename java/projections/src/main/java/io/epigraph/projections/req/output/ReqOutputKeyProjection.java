@@ -2,7 +2,7 @@ package io.epigraph.projections.req.output;
 
 import io.epigraph.data.Datum;
 import io.epigraph.lang.TextLocation;
-import io.epigraph.projections.CustomParams;
+import io.epigraph.projections.Annotations;
 import io.epigraph.projections.req.ReqParams;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -18,17 +18,17 @@ public class ReqOutputKeyProjection {
   @Nullable
   private final ReqParams params;
   @Nullable
-  private final CustomParams customParams;
+  private final Annotations annotations;
   @NotNull
   private final TextLocation location;
 
   public ReqOutputKeyProjection(@NotNull Datum value,
                                 @Nullable ReqParams params,
-                                @Nullable CustomParams customParams,
+                                @Nullable Annotations annotations,
                                 @NotNull TextLocation location) {
     this.value = value;
     this.params = params;
-    this.customParams = customParams;
+    this.annotations = annotations;
     this.location = location;
   }
 
@@ -39,7 +39,7 @@ public class ReqOutputKeyProjection {
   public ReqParams params() { return params; }
 
   @Nullable
-  public CustomParams annotations() { return customParams; }
+  public Annotations annotations() { return annotations; }
 
   @NotNull
   public TextLocation location() { return location; }
@@ -51,9 +51,9 @@ public class ReqOutputKeyProjection {
     ReqOutputKeyProjection that = (ReqOutputKeyProjection) o;
     return Objects.equals(value, that.value) &&
            Objects.equals(params, that.params) &&
-           Objects.equals(customParams, that.customParams);
+           Objects.equals(annotations, that.annotations);
   }
 
   @Override
-  public int hashCode() { return Objects.hash(value, params, customParams); }
+  public int hashCode() { return Objects.hash(value, params, annotations); }
 }

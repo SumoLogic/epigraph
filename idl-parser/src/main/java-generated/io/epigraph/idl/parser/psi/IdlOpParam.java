@@ -8,7 +8,7 @@ import com.intellij.psi.PsiElement;
 public interface IdlOpParam extends PsiElement {
 
   @NotNull
-  List<IdlCustomParam> getCustomParamList();
+  List<IdlAnnotation> getAnnotationList();
 
   @Nullable
   IdlDatum getDatum();

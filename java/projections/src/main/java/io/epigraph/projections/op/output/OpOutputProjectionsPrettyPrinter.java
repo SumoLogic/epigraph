@@ -3,7 +3,7 @@ package io.epigraph.projections.op.output;
 import de.uka.ilkd.pp.Layouter;
 import io.epigraph.data.Datum;
 import io.epigraph.projections.generic.GenericProjectionsPrettyPrinter;
-import io.epigraph.projections.CustomParams;
+import io.epigraph.projections.Annotations;
 import io.epigraph.projections.op.OpParam;
 import io.epigraph.projections.op.OpParams;
 import io.epigraph.projections.op.input.OpInputModelProjection;
@@ -28,9 +28,9 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception> extends
     OpOutputModelProjection<?> projection = tp.projection();
     OpOutputModelProjection<?> metaProjection = projection.metaProjection();
     OpParams params = projection.params();
-    CustomParams customParams = projection.customParams();
+    Annotations annotations = projection.annotations();
 
-    if (params == null && customParams == null) {
+    if (params == null && annotations == null) {
       l.beginCInd();
       if (projection.includeInDefault()) l.print("+");
       l.print(tp.tag().name());
@@ -48,7 +48,7 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception> extends
       l.print(" {");
 
       if (params != null) print(params);
-      if (customParams != null) print(customParams);
+      if (annotations != null) print(annotations);
 
       if (metaProjection != null) {
         l.brk().beginIInd(0).print("meta:").brk();
@@ -88,9 +88,9 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception> extends
 
         @NotNull OpOutputVarProjection fieldVarProjection = fieldProjection.projection();
         @Nullable OpParams fieldParams = fieldProjection.params();
-        @Nullable CustomParams fieldCustomParams = fieldProjection.customParams();
+        @Nullable Annotations fieldAnnotations = fieldProjection.annotations();
 
-        if (fieldParams == null && fieldCustomParams == null) {
+        if (fieldParams == null && fieldAnnotations == null) {
           l.beginIInd();
           if (fieldProjection.includeInDefault()) l.print("+");
           l.print(fieldProjection.field().name());
@@ -105,7 +105,7 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception> extends
           l.print(fieldProjection.field().name());
           l.print(" {");
           if (fieldParams != null) print(fieldParams);
-          if (fieldCustomParams != null) print(fieldCustomParams);
+          if (fieldAnnotations != null) print(fieldAnnotations);
           if (!isPrintoutEmpty(fieldVarProjection)) {
             l.brk();
             print(fieldVarProjection, 0);
@@ -145,8 +145,8 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception> extends
         commaNeeded = !keyParams.isEmpty();
       }
 
-      @Nullable CustomParams keyCustomParams = keyProjection.customParams();
-      if (keyCustomParams != null) print(keyCustomParams, true, !commaNeeded);
+      @Nullable Annotations keyAnnotations = keyProjection.annotations();
+      if (keyAnnotations != null) print(keyAnnotations, true, !commaNeeded);
 
       l.brk(1, -l.getDefaultIndentation()).end().print("]");
     }
@@ -202,11 +202,11 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception> extends
       dataPrinter.print(defaultValue);
     }
 
-    CustomParams customParams = projection.customParams();
-    if (customParams != null) {
+    Annotations annotations = projection.annotations();
+    if (annotations != null) {
       l.beginCInd();
       l.print(" {");
-      print(customParams);
+      print(annotations);
       l.brk(1, -l.getDefaultIndentation()).end().print("}");
     }
 
@@ -228,7 +228,7 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception> extends
 
       if (keyProjection.presence() != OpOutputKeyProjection.Presence.OPTIONAL) return false;
       if (keyProjection.params() != null) return false;
-      if (keyProjection.customParams() != null) return false;
+      if (keyProjection.annotations() != null) return false;
 
       return isPrintoutEmpty(mapModelProjection.itemsProjection());
     }

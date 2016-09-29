@@ -3,8 +3,8 @@ package io.epigraph.projections.generic;
 import de.uka.ilkd.pp.Layouter;
 import io.epigraph.gdata.GDataPrettyPrinter;
 import io.epigraph.printers.DataPrinter;
-import io.epigraph.projections.CustomParam;
-import io.epigraph.projections.CustomParams;
+import io.epigraph.projections.Annotation;
+import io.epigraph.projections.Annotations;
 import io.epigraph.types.TypeKind;
 import org.jetbrains.annotations.NotNull;
 
@@ -114,13 +114,13 @@ public abstract class GenericProjectionsPrettyPrinter<
 
   public abstract void print(@NotNull MP mp, int pathSteps) throws E;
 
-  protected void print(@NotNull CustomParams cp) throws E {
+  protected void print(@NotNull Annotations cp) throws E {
     print(cp, false, true);
   }
 
-  protected void print(@NotNull CustomParams cp, boolean needCommas, boolean first) throws E {
+  protected void print(@NotNull Annotations cp, boolean needCommas, boolean first) throws E {
     l.beginCInd(0);
-    for (Map.Entry<String, CustomParam> entry : cp.params().entrySet()) {
+    for (Map.Entry<String, Annotation> entry : cp.params().entrySet()) {
       if (needCommas) {
         if (first) first = false;
         else l.print(",");

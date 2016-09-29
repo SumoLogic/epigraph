@@ -2,7 +2,7 @@ package io.epigraph.projections.op.input;
 
 import de.uka.ilkd.pp.Layouter;
 import io.epigraph.projections.generic.GenericProjectionsPrettyPrinter;
-import io.epigraph.projections.CustomParams;
+import io.epigraph.projections.Annotations;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,9 +22,9 @@ public class OpInputProjectionsPrettyPrinter<E extends Exception>
   public void print(@NotNull OpInputTagProjection tp, int pathSteps) throws E {
     OpInputModelProjection<?, ?> projection = tp.projection();
     OpInputModelProjection<?, ?> metaProjection = projection.metaProjection();
-    CustomParams customParams = projection.customParams();
+    Annotations annotations = projection.annotations();
 
-    if (projection.defaultValue() == null && customParams == null &&
+    if (projection.defaultValue() == null && annotations == null &&
         metaProjection == null) {
 
       l.beginCInd();
@@ -54,7 +54,7 @@ public class OpInputProjectionsPrettyPrinter<E extends Exception>
         l.end();
       }
 
-      if (customParams != null) print(customParams);
+      if (annotations != null) print(annotations);
 
       if (!isPrintoutEmpty(projection)) {
         l.brk();
@@ -110,9 +110,9 @@ public class OpInputProjectionsPrettyPrinter<E extends Exception>
 
   private void print(OpInputFieldProjection fieldProjection, int pathSteps) throws E {
     @NotNull OpInputVarProjection fieldVarProjection = fieldProjection.projection();
-    @Nullable CustomParams fieldCustomParams = fieldProjection.customParams();
+    @Nullable Annotations fieldAnnotations = fieldProjection.annotations();
 
-    if (fieldCustomParams == null) {
+    if (fieldAnnotations == null) {
       l.beginIInd();
       if (fieldProjection.required()) l.print("+");
       l.print(fieldProjection.field().name());
@@ -126,7 +126,7 @@ public class OpInputProjectionsPrettyPrinter<E extends Exception>
       if (fieldProjection.required()) l.print("+");
       l.print(fieldProjection.field().name());
       l.print(" {");
-      print(fieldCustomParams);
+      print(fieldAnnotations);
       if (!isPrintoutEmpty(fieldVarProjection)) {
         l.brk();
         print(fieldVarProjection, pathSteps);

@@ -46,7 +46,7 @@ public class IdlPsiImplUtil {
     int idx = 0;
 
     for (IdlFqnSegment segment : fqnSegmentList) {
-      segments[idx++] = segment.getQid().getCanonicalName();
+      segments[idx++] = getCanonicalName(segment.getQid());
     }
 
     return new Fqn(segments);

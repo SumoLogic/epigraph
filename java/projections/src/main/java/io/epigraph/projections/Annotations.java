@@ -10,11 +10,11 @@ import java.util.Objects;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class CustomParams {
+public class Annotations {
   @NotNull
-  private final Map<String, CustomParam> params;
+  private final Map<String, Annotation> params;
 
-  public CustomParams(@NotNull Map<String, CustomParam> params) {this.params = params;}
+  public Annotations(@NotNull Map<String, Annotation> params) {this.params = params;}
 
   public boolean hasParam(@NotNull String name) { return params.containsKey(name); }
 
@@ -22,18 +22,18 @@ public class CustomParams {
 
   @Nullable
   public GDataValue get(@NotNull String key) {
-    CustomParam customParam = params.get(key);
-    return customParam == null ? null : customParam.value();
+    Annotation annotation = params.get(key);
+    return annotation == null ? null : annotation.value();
   }
 
   @NotNull
-  public Map<String, CustomParam> params() { return params; }
+  public Map<String, Annotation> params() { return params; }
 
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-    CustomParams opParams = (CustomParams) o;
+    Annotations opParams = (Annotations) o;
     return Objects.equals(params, opParams.params);
   }
 

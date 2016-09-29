@@ -28,8 +28,8 @@ public class IdlOpInputModelPropertyImpl extends ASTWrapperPsiElement implements
 
   @Override
   @Nullable
-  public IdlCustomParam getCustomParam() {
-    return findChildByClass(IdlCustomParam.class);
+  public IdlAnnotation getAnnotation() {
+    return findChildByClass(IdlAnnotation.class);
   }
 
   @Override

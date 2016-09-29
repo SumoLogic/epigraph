@@ -28,8 +28,8 @@ public class IdlOpOutputKeyProjectionPartImpl extends ASTWrapperPsiElement imple
 
   @Override
   @Nullable
-  public IdlCustomParam getCustomParam() {
-    return findChildByClass(IdlCustomParam.class);
+  public IdlAnnotation getAnnotation() {
+    return findChildByClass(IdlAnnotation.class);
   }
 
   @Override

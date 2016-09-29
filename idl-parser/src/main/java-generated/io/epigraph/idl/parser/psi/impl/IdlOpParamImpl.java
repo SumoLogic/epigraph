@@ -28,8 +28,8 @@ public class IdlOpParamImpl extends ASTWrapperPsiElement implements IdlOpParam {
 
   @Override
   @NotNull
-  public List<IdlCustomParam> getCustomParamList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, IdlCustomParam.class);
+  public List<IdlAnnotation> getAnnotationList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, IdlAnnotation.class);
   }
 
   @Override

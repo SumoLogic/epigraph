@@ -1,7 +1,7 @@
 package io.epigraph.projections.req.output;
 
 import io.epigraph.lang.TextLocation;
-import io.epigraph.projections.CustomParams;
+import io.epigraph.projections.Annotations;
 import io.epigraph.projections.req.ReqParams;
 import io.epigraph.types.RecordType;
 import org.jetbrains.annotations.NotNull;
@@ -18,7 +18,7 @@ public class ReqOutputFieldProjection {
   @Nullable
   private final ReqParams reqParams;
   @Nullable
-  private final CustomParams customParams;
+  private final Annotations annotations;
   @NotNull
   private final ReqOutputVarProjection projection;
   private final boolean required;
@@ -27,13 +27,13 @@ public class ReqOutputFieldProjection {
 
   public ReqOutputFieldProjection(@NotNull RecordType.Field field,
                                   @Nullable ReqParams reqParams,
-                                  @Nullable CustomParams customParams,
+                                  @Nullable Annotations annotations,
                                   @NotNull ReqOutputVarProjection projection,
                                   boolean required,
                                   @NotNull TextLocation location) {
     this.field = field;
     this.reqParams = reqParams;
-    this.customParams = customParams;
+    this.annotations = annotations;
     this.projection = projection;
     this.required = required;
     this.location = location;
@@ -46,7 +46,7 @@ public class ReqOutputFieldProjection {
   public ReqParams reqParams() { return reqParams; }
 
   @Nullable
-  public CustomParams customParams() { return customParams; }
+  public Annotations annotations() { return annotations; }
 
   @NotNull
   public ReqOutputVarProjection projection() { return projection; }
@@ -64,10 +64,10 @@ public class ReqOutputFieldProjection {
     return required == that.required &&
            Objects.equals(field, that.field) &&
            Objects.equals(reqParams, that.reqParams) &&
-           Objects.equals(customParams, that.customParams) &&
+           Objects.equals(annotations, that.annotations) &&
            Objects.equals(projection, that.projection);
   }
 
   @Override
-  public int hashCode() { return Objects.hash(field, reqParams, customParams, projection, required); }
+  public int hashCode() { return Objects.hash(field, reqParams, annotations, projection, required); }
 }

@@ -1,8 +1,8 @@
 package io.epigraph.projections.req.output;
 
 import de.uka.ilkd.pp.Layouter;
-import io.epigraph.projections.CustomParam;
-import io.epigraph.projections.CustomParams;
+import io.epigraph.projections.Annotation;
+import io.epigraph.projections.Annotations;
 import io.epigraph.projections.generic.GenericProjectionsPrettyPrinter;
 import io.epigraph.projections.req.ReqParam;
 import io.epigraph.projections.req.ReqParams;
@@ -28,7 +28,7 @@ public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
     ReqOutputModelProjection<?> metaProjection = projection.metaProjection();
 
     ReqParams params = projection.params();
-    CustomParams annotations = projection.customParams();
+    Annotations annotations = projection.annotations();
 
     l.beginCInd();
     if (projection.required()) l.print("+");
@@ -89,14 +89,14 @@ public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
 
   private void print(ReqOutputFieldProjection fieldProjection, int pathSteps) throws E {
     @NotNull ReqOutputVarProjection fieldVarProjection = fieldProjection.projection();
-    @Nullable CustomParams fieldCustomParams = fieldProjection.customParams();
+    @Nullable Annotations fieldAnnotations = fieldProjection.annotations();
 
     l.beginIInd();
     if (fieldProjection.required()) l.print("+");
     l.print(fieldProjection.field().name());
 
     printParams(fieldProjection.reqParams());
-    printAnnotations(fieldCustomParams);
+    printAnnotations(fieldAnnotations);
 
     if (!isPrintoutEmpty(fieldVarProjection)) {
       l.brk();
@@ -206,10 +206,10 @@ public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
     l.end();
   }
 
-  private void printAnnotations(@Nullable CustomParams annotations) throws E {
+  private void printAnnotations(@Nullable Annotations annotations) throws E {
     l.beginCInd();
     if (annotations != null) {
-      for (CustomParam annotation : annotations.params().values()) {
+      for (Annotation annotation : annotations.params().values()) {
         l.brk().beginIInd();
         l.print("!").print(annotation.name()).brk().print("=").brk();
         gdataPrettyPrinter.print(annotation.value());

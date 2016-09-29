@@ -28,8 +28,8 @@ public class IdlReqAnnotationImpl extends ASTWrapperPsiElement implements IdlReq
 
   @Override
   @NotNull
-  public IdlCustomParam getCustomParam() {
-    return findNotNullChildByClass(IdlCustomParam.class);
+  public IdlAnnotation getAnnotation() {
+    return findNotNullChildByClass(IdlAnnotation.class);
   }
 
   @Override

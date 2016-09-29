@@ -7,7 +7,7 @@ import com.intellij.psi.PsiElement;
 
 public class IdlVisitor extends PsiElementVisitor {
 
-  public void visitCustomParam(@NotNull IdlCustomParam o) {
+  public void visitAnnotation(@NotNull IdlAnnotation o) {
     visitPsiElement(o);
   }
 

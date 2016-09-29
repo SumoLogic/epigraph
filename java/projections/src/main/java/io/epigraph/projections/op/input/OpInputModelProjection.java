@@ -3,7 +3,7 @@ package io.epigraph.projections.op.input;
 import io.epigraph.data.Datum;
 import io.epigraph.lang.TextLocation;
 import io.epigraph.projections.generic.GenericModelProjection;
-import io.epigraph.projections.CustomParams;
+import io.epigraph.projections.Annotations;
 import io.epigraph.types.DatumType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -20,20 +20,20 @@ public abstract class OpInputModelProjection<M extends DatumType, D extends Datu
   @Nullable
   protected final D defaultValue;
   @Nullable
-  protected final CustomParams customParams;
+  protected final Annotations annotations;
   @Nullable
   protected final OpInputModelProjection<?, ?> metaProjection;
 
   public OpInputModelProjection(@NotNull M model,
                                 boolean required,
                                 @Nullable D defaultValue,
-                                @Nullable CustomParams customParams,
+                                @Nullable Annotations annotations,
                                 @Nullable OpInputModelProjection<?, ?> metaProjection,
                                 @NotNull TextLocation location) {
-    super(model, customParams, location);
+    super(model, annotations, location);
     this.required = required;
     this.defaultValue = defaultValue;
-    this.customParams = customParams;
+    this.annotations = annotations;
     this.metaProjection = metaProjection;
   }
 
@@ -43,7 +43,7 @@ public abstract class OpInputModelProjection<M extends DatumType, D extends Datu
   public D defaultValue() { return defaultValue; }
 
   @Nullable
-  public CustomParams customParams() { return customParams; }
+  public Annotations annotations() { return annotations; }
 
   @Nullable
   public OpInputModelProjection<?, ?> metaProjection() { return metaProjection; }
@@ -56,12 +56,12 @@ public abstract class OpInputModelProjection<M extends DatumType, D extends Datu
     OpInputModelProjection<?, ?> that = (OpInputModelProjection<?, ?>) o;
     return required == that.required &&
            Objects.equals(defaultValue, that.defaultValue) &&
-           Objects.equals(customParams, that.customParams) &&
+           Objects.equals(annotations, that.annotations) &&
            Objects.equals(metaProjection, that.metaProjection);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(super.hashCode(), required, defaultValue, customParams, metaProjection);
+    return Objects.hash(super.hashCode(), required, defaultValue, annotations, metaProjection);
   }
 }

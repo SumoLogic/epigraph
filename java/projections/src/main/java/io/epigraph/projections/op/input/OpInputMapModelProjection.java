@@ -2,7 +2,7 @@ package io.epigraph.projections.op.input;
 
 import io.epigraph.data.MapDatum;
 import io.epigraph.lang.TextLocation;
-import io.epigraph.projections.CustomParams;
+import io.epigraph.projections.Annotations;
 import io.epigraph.types.MapType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -19,11 +19,11 @@ public class OpInputMapModelProjection extends OpInputModelProjection<MapType, M
   public OpInputMapModelProjection(@NotNull MapType model,
                                    boolean required,
                                    @Nullable MapDatum defaultValue,
-                                   @Nullable CustomParams customParams,
+                                   @Nullable Annotations annotations,
                                    @Nullable OpInputModelProjection<?, ?> metaProjection,
                                    @NotNull OpInputVarProjection valuesProjection,
                                    @NotNull TextLocation location) {
-    super(model, required, defaultValue, customParams, metaProjection, location);
+    super(model, required, defaultValue, annotations, metaProjection, location);
     this.valuesProjection = valuesProjection;
   }
 

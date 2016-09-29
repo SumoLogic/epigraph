@@ -1,7 +1,7 @@
 package io.epigraph.projections.req.output;
 
 import io.epigraph.lang.TextLocation;
-import io.epigraph.projections.CustomParams;
+import io.epigraph.projections.Annotations;
 import io.epigraph.projections.req.ReqParams;
 import io.epigraph.types.RecordType;
 import org.jetbrains.annotations.NotNull;
@@ -25,11 +25,11 @@ public class ReqOutputRecordModelProjection extends ReqOutputModelProjection<Rec
   public ReqOutputRecordModelProjection(@NotNull RecordType model,
                                         boolean required,
                                         @Nullable ReqParams params,
-                                        @Nullable CustomParams customParams,
+                                        @Nullable Annotations annotations,
                                         @Nullable ReqOutputModelProjection<?> metaProjection,
                                         @Nullable LinkedHashSet<ReqOutputFieldProjection> fieldProjections,
                                         @NotNull TextLocation location) {
-    super(model, required, params, customParams, metaProjection, location);
+    super(model, required, params, annotations, metaProjection, location);
     this.fieldProjections = fieldProjections;
 
     Collection<@NotNull ? extends RecordType.Field> fields = model.fields();

@@ -8,7 +8,7 @@ import io.epigraph.idl.parser.psi.impl.*;
 
 public interface IdlElementTypes {
 
-  IElementType I_CUSTOM_PARAM = new IdlElementType("I_CUSTOM_PARAM");
+  IElementType I_ANNOTATION = new IdlElementType("I_ANNOTATION");
   IElementType I_DATA = new IdlElementType("I_DATA");
   IElementType I_DATA_ENTRY = new IdlElementType("I_DATA_ENTRY");
   IElementType I_DATA_VALUE = new IdlElementType("I_DATA_VALUE");
@@ -133,8 +133,8 @@ public interface IdlElementTypes {
   class Factory {
     public static PsiElement createElement(ASTNode node) {
       IElementType type = node.getElementType();
-       if (type == I_CUSTOM_PARAM) {
-        return new IdlCustomParamImpl(node);
+       if (type == I_ANNOTATION) {
+        return new IdlAnnotationImpl(node);
       }
       else if (type == I_DATA) {
         return new IdlDataImpl(node);

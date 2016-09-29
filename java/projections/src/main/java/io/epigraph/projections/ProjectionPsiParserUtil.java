@@ -3,10 +3,7 @@ package io.epigraph.projections;
 import com.intellij.psi.PsiElement;
 import io.epigraph.gdata.GDataValue;
 import io.epigraph.idl.gdata.IdlGDataPsiParser;
-import io.epigraph.idl.parser.psi.IdlCustomParam;
-import io.epigraph.idl.parser.psi.IdlDataValue;
-import io.epigraph.idl.parser.psi.IdlQid;
-import io.epigraph.idl.parser.psi.IdlTagName;
+import io.epigraph.idl.parser.psi.*;
 import io.epigraph.lang.Fqn;
 import io.epigraph.psi.EpigraphPsiUtil;
 import io.epigraph.psi.PsiProcessingException;
@@ -99,25 +96,25 @@ public class ProjectionPsiParserUtil {
   }
 
   @Nullable
-  public static Map<String, CustomParam> parseCustomParam(
-      @Nullable Map<String, CustomParam> customParamsMap,
-      @Nullable IdlCustomParam customParamPsi)
+  public static Map<String, Annotation> parseAnnotation(
+      @Nullable Map<String, Annotation> annotationsMap,
+      @Nullable IdlAnnotation annotationPsi)
       throws PsiProcessingException {
 
-    if (customParamPsi != null) {
-      if (customParamsMap == null) customParamsMap = new HashMap<>();
-      @Nullable IdlDataValue customParamValuePsi = customParamPsi.getDataValue();
-      if (customParamValuePsi != null) {
-        @NotNull String customParamName = customParamPsi.getQid().getCanonicalName();
-        @NotNull GDataValue customParamValue = IdlGDataPsiParser.parseValue(customParamValuePsi);
-        customParamsMap.put(customParamName,
-                            new CustomParam(customParamName,
-                                            customParamValue,
-                                            EpigraphPsiUtil.getLocation(customParamPsi)
-                            )
+    if (annotationPsi != null) {
+      if (annotationsMap == null) annotationsMap = new HashMap<>();
+      @Nullable IdlDataValue annotationValuePsi = annotationPsi.getDataValue();
+      if (annotationValuePsi != null) {
+        @NotNull String annotationName = annotationPsi.getQid().getCanonicalName();
+        @NotNull GDataValue annotationValue = IdlGDataPsiParser.parseValue(annotationValuePsi);
+        annotationsMap.put(annotationName,
+                           new Annotation(annotationName,
+                                          annotationValue,
+                                          EpigraphPsiUtil.getLocation(annotationPsi)
+                           )
         );
       }
     }
-    return customParamsMap;
+    return annotationsMap;
   }
 }

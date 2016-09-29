@@ -28,8 +28,8 @@ public class IdlNamespaceDeclImpl extends ASTWrapperPsiElement implements IdlNam
 
   @Override
   @NotNull
-  public List<IdlCustomParam> getCustomParamList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, IdlCustomParam.class);
+  public List<IdlAnnotation> getAnnotationList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, IdlAnnotation.class);
   }
 
   @Override

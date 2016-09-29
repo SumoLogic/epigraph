@@ -8,7 +8,7 @@ import com.intellij.psi.PsiElement;
 public interface IdlOpOutputModelProperty extends PsiElement {
 
   @Nullable
-  IdlCustomParam getCustomParam();
+  IdlAnnotation getAnnotation();
 
   @Nullable
   IdlOpOutputModelMeta getOpOutputModelMeta();

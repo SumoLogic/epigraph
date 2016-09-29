@@ -9,7 +9,7 @@ import java.util.Objects;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class CustomParam {
+public class Annotation {
   @NotNull
   private final String name;
   @NotNull
@@ -17,7 +17,7 @@ public class CustomParam {
   @NotNull
   private final TextLocation location;
 
-  public CustomParam(@NotNull String name, @NotNull GDataValue value, @NotNull TextLocation location) {
+  public Annotation(@NotNull String name, @NotNull GDataValue value, @NotNull TextLocation location) {
     this.name = name;
     this.value = value;
     this.location = location;
@@ -36,7 +36,7 @@ public class CustomParam {
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-    CustomParam that = (CustomParam) o;
+    Annotation that = (Annotation) o;
     return Objects.equals(name, that.name) &&
            Objects.equals(value, that.value);
   }

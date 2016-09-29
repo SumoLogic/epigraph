@@ -1,7 +1,7 @@
 package io.epigraph.projections.op.output;
 
 import io.epigraph.lang.TextLocation;
-import io.epigraph.projections.CustomParams;
+import io.epigraph.projections.Annotations;
 import io.epigraph.projections.op.OpParams;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -19,17 +19,17 @@ public class OpOutputKeyProjection {
   @Nullable
   private final OpParams params;
   @Nullable
-  private final CustomParams customParams;
+  private final Annotations annotations;
   @NotNull
   private final TextLocation location;
 
   public OpOutputKeyProjection(@NotNull Presence presence,
                                @Nullable OpParams params,
-                               @Nullable CustomParams customParams,
+                               @Nullable Annotations annotations,
                                @NotNull TextLocation location) {
     this.presence = presence;
     this.params = params;
-    this.customParams = customParams;
+    this.annotations = annotations;
     this.location = location;
   }
 
@@ -40,7 +40,7 @@ public class OpOutputKeyProjection {
   public OpParams params() { return params; }
 
   @Nullable
-  public CustomParams customParams() { return customParams; }
+  public Annotations annotations() { return annotations; }
 
   @NotNull
   public TextLocation location() { return location; }
@@ -50,11 +50,11 @@ public class OpOutputKeyProjection {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     OpOutputKeyProjection that = (OpOutputKeyProjection) o;
-    return presence == that.presence && Objects.equals(customParams, that.customParams);
+    return presence == that.presence && Objects.equals(annotations, that.annotations);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(presence, customParams);
+    return Objects.hash(presence, annotations);
   }
 }

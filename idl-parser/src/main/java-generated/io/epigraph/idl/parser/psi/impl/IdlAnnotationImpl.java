@@ -11,14 +11,14 @@ import static io.epigraph.idl.lexer.IdlElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import io.epigraph.idl.parser.psi.*;
 
-public class IdlCustomParamImpl extends ASTWrapperPsiElement implements IdlCustomParam {
+public class IdlAnnotationImpl extends ASTWrapperPsiElement implements IdlAnnotation {
 
-  public IdlCustomParamImpl(ASTNode node) {
+  public IdlAnnotationImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull IdlVisitor visitor) {
-    visitor.visitCustomParam(this);
+    visitor.visitAnnotation(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {

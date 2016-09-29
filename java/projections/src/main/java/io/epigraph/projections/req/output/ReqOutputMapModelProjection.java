@@ -1,7 +1,7 @@
 package io.epigraph.projections.req.output;
 
 import io.epigraph.lang.TextLocation;
-import io.epigraph.projections.CustomParams;
+import io.epigraph.projections.Annotations;
 import io.epigraph.projections.req.ReqParams;
 import io.epigraph.types.MapType;
 import org.jetbrains.annotations.NotNull;
@@ -23,13 +23,13 @@ public class ReqOutputMapModelProjection extends ReqOutputModelProjection<MapTyp
   public ReqOutputMapModelProjection(@NotNull MapType model,
                                      boolean required,
                                      @Nullable ReqParams params,
-                                     @Nullable CustomParams customParams,
+                                     @Nullable Annotations annotations,
                                      @Nullable ReqOutputModelProjection<?> metaProjection,
                                      @Nullable List<ReqOutputKeyProjection> keys,
                                      boolean keysRequired,
                                      @NotNull ReqOutputVarProjection valuesProjection,
                                      @NotNull TextLocation location) {
-    super(model, required, params, customParams, metaProjection, location);
+    super(model, required, params, annotations, metaProjection, location);
     this.keys = keys;
     this.keysRequired = keysRequired;
     this.valuesProjection = valuesProjection;

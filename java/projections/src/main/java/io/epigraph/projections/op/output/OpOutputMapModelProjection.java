@@ -1,7 +1,7 @@
 package io.epigraph.projections.op.output;
 
 import io.epigraph.lang.TextLocation;
-import io.epigraph.projections.CustomParams;
+import io.epigraph.projections.Annotations;
 import io.epigraph.projections.op.OpParams;
 import io.epigraph.types.MapType;
 import org.jetbrains.annotations.NotNull;
@@ -21,12 +21,12 @@ public class OpOutputMapModelProjection extends OpOutputModelProjection<MapType>
   public OpOutputMapModelProjection(@NotNull MapType model,
                                     boolean includeInDefault,
                                     @Nullable OpParams params,
-                                    @Nullable CustomParams customParams,
+                                    @Nullable Annotations annotations,
                                     @Nullable OpOutputModelProjection<?> metaProjection,
                                     @NotNull OpOutputKeyProjection keyProjection,
                                     @NotNull OpOutputVarProjection valuesProjection,
                                     @NotNull TextLocation location) {
-    super(model, includeInDefault, params, customParams, metaProjection, location);
+    super(model, includeInDefault, params, annotations, metaProjection, location);
     this.itemsProjection = valuesProjection;
     this.keyProjection = keyProjection;
   }

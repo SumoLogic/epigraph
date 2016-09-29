@@ -8,6 +8,6 @@ import com.intellij.psi.PsiElement;
 public interface IdlOpInputFieldProjectionBodyPart extends PsiElement {
 
   @NotNull
-  IdlCustomParam getCustomParam();
+  IdlAnnotation getAnnotation();
 
 }

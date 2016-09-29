@@ -8,8 +8,8 @@ import io.epigraph.idl.gdata.IdlGDataPsiParser;
 import io.epigraph.idl.parser.psi.*;
 import io.epigraph.lang.Fqn;
 import io.epigraph.lang.TextLocation;
-import io.epigraph.projections.CustomParam;
-import io.epigraph.projections.CustomParams;
+import io.epigraph.projections.Annotation;
+import io.epigraph.projections.Annotations;
 import io.epigraph.projections.StepsAndProjection;
 import io.epigraph.projections.op.OpParam;
 import io.epigraph.projections.op.OpParams;
@@ -373,7 +373,7 @@ public class ReqOutputProjectionsPsiParser {
       @NotNull OpOutputModelProjection<?> op,
       boolean required,
       @Nullable ReqParams params,
-      @Nullable CustomParams customParams,
+      @Nullable Annotations annotations,
       @Nullable ReqOutputModelProjection<?> metaProjection,
       @NotNull IdlReqOutputTrunkModelProjection psi,
       @NotNull TypesResolver typesResolver) throws PsiProcessingException {
@@ -388,7 +388,7 @@ public class ReqOutputProjectionsPsiParser {
               (OpOutputRecordModelProjection) op,
               required,
               params,
-              customParams,
+              annotations,
               metaProjection,
               trunkRecordProjectionPsi,
               typesResolver
@@ -404,7 +404,7 @@ public class ReqOutputProjectionsPsiParser {
               (OpOutputMapModelProjection) op,
               required,
               params,
-              customParams,
+              annotations,
               metaProjection,
               trunkMapProjectionPsi,
               typesResolver
@@ -413,7 +413,7 @@ public class ReqOutputProjectionsPsiParser {
     }
 
     // end of path
-    return parseComaModelProjection(op, required, params, customParams, metaProjection, psi, typesResolver);
+    return parseComaModelProjection(op, required, params, annotations, metaProjection, psi, typesResolver);
 
   }
 
@@ -422,7 +422,7 @@ public class ReqOutputProjectionsPsiParser {
       @NotNull OpOutputModelProjection<?> op,
       boolean required,
       @Nullable ReqParams params,
-      @Nullable CustomParams customParams,
+      @Nullable Annotations annotations,
       @Nullable ReqOutputModelProjection<?> metaProjection,
       @NotNull IdlReqOutputComaModelProjection psi,
       @NotNull TypesResolver typesResolver) throws PsiProcessingException {
@@ -436,7 +436,7 @@ public class ReqOutputProjectionsPsiParser {
         if (recordModelProjectionPsi == null)
           return new StepsAndProjection<>(
               0,
-              createDefaultModelProjection(model, required, params, customParams, psi)
+              createDefaultModelProjection(model, required, params, annotations, psi)
           );
 
         ensureModelKind(psi, TypeKind.RECORD);
@@ -445,7 +445,7 @@ public class ReqOutputProjectionsPsiParser {
             (OpOutputRecordModelProjection) op,
             required,
             params,
-            customParams,
+            annotations,
             metaProjection,
             recordModelProjectionPsi,
             typesResolver
@@ -457,7 +457,7 @@ public class ReqOutputProjectionsPsiParser {
         if (mapModelProjectionPsi == null)
           return new StepsAndProjection<>(
               0,
-              createDefaultModelProjection(model, required, params, customParams, psi)
+              createDefaultModelProjection(model, required, params, annotations, psi)
           );
 
         ensureModelKind(psi, TypeKind.MAP);
@@ -466,7 +466,7 @@ public class ReqOutputProjectionsPsiParser {
             (OpOutputMapModelProjection) op,
             required,
             params,
-            customParams,
+            annotations,
             metaProjection,
             mapModelProjectionPsi,
             typesResolver
@@ -479,7 +479,7 @@ public class ReqOutputProjectionsPsiParser {
         if (listModelProjectionPsi == null)
           return new StepsAndProjection<>(
               0,
-              createDefaultModelProjection(model, required, params, customParams, psi)
+              createDefaultModelProjection(model, required, params, annotations, psi)
           );
 
         ensureModelKind(psi, TypeKind.LIST);
@@ -488,7 +488,7 @@ public class ReqOutputProjectionsPsiParser {
             (OpOutputListModelProjection) op,
             required,
             params,
-            customParams,
+            annotations,
             metaProjection,
             listModelProjectionPsi,
             typesResolver
@@ -502,7 +502,7 @@ public class ReqOutputProjectionsPsiParser {
             (PrimitiveType) model,
             required,
             params,
-            customParams,
+            annotations,
             metaProjection,
             psi
         );
@@ -539,7 +539,7 @@ public class ReqOutputProjectionsPsiParser {
       @NotNull DatumType type,
       boolean required,
       @Nullable ReqParams params,
-      @Nullable CustomParams customParams,
+      @Nullable Annotations annotations,
       @NotNull PsiElement locationPsi) throws PsiProcessingException {
 
     @NotNull TextLocation location = EpigraphPsiUtil.getLocation(locationPsi);
@@ -549,7 +549,7 @@ public class ReqOutputProjectionsPsiParser {
         return new ReqOutputRecordModelProjection((RecordType) type,
                                                   required,
                                                   params,
-                                                  customParams,
+                                                  annotations,
                                                   null,
                                                   null,
                                                   location
@@ -577,7 +577,7 @@ public class ReqOutputProjectionsPsiParser {
         return new ReqOutputMapModelProjection(mapType,
                                                required,
                                                params,
-                                               customParams,
+                                               annotations,
                                                null,
                                                null,
                                                false,
@@ -606,7 +606,7 @@ public class ReqOutputProjectionsPsiParser {
         return new ReqOutputListModelProjection(listType,
                                                 required,
                                                 params,
-                                                customParams,
+                                                annotations,
                                                 null,
                                                 itemVarProjection,
                                                 location
@@ -620,7 +620,7 @@ public class ReqOutputProjectionsPsiParser {
         return new ReqOutputPrimitiveModelProjection((PrimitiveType) type,
                                                      required,
                                                      params,
-                                                     customParams,
+                                                     annotations,
                                                      null,
                                                      location
         );
@@ -634,7 +634,7 @@ public class ReqOutputProjectionsPsiParser {
       @NotNull OpOutputRecordModelProjection op,
       boolean required,
       @Nullable ReqParams params,
-      @Nullable CustomParams customParams,
+      @Nullable Annotations annotations,
       @Nullable ReqOutputModelProjection<?> metaProjection,
       @NotNull IdlReqOutputTrunkRecordModelProjection psi,
       @NotNull TypesResolver resolver) throws PsiProcessingException {
@@ -651,7 +651,7 @@ public class ReqOutputProjectionsPsiParser {
 
     final boolean fieldRequired = psi.getPlus() != null;
 
-    CustomParams fieldCustomParams = parseAnnotations(psi.getReqAnnotationList());
+    Annotations fieldAnnotations = parseAnnotations(psi.getReqAnnotationList());
 
     final int steps;
     final ReqOutputVarProjection varProjection;
@@ -684,7 +684,7 @@ public class ReqOutputProjectionsPsiParser {
         new ReqOutputFieldProjection(
             field,
             parseReqParams(psi.getReqParamList(), opFieldProjection.params(), resolver),
-            fieldCustomParams,
+            fieldAnnotations,
             varProjection,
             fieldRequired,
             EpigraphPsiUtil.getLocation(psi)
@@ -696,7 +696,7 @@ public class ReqOutputProjectionsPsiParser {
             op.model(),
             required,
             params,
-            customParams,
+            annotations,
             metaProjection,
             fieldProjections,
             EpigraphPsiUtil.getLocation(psi)
@@ -709,7 +709,7 @@ public class ReqOutputProjectionsPsiParser {
       @NotNull OpOutputRecordModelProjection op,
       boolean required,
       @Nullable ReqParams params,
-      @Nullable CustomParams customParams,
+      @Nullable Annotations annotations,
       @Nullable ReqOutputModelProjection<?> metaProjection,
       @NotNull IdlReqOutputComaRecordModelProjection psi,
       @NotNull TypesResolver resolver) throws PsiProcessingException {
@@ -740,7 +740,7 @@ public class ReqOutputProjectionsPsiParser {
       final boolean fieldRequired = fieldProjectionPsi.getPlus() != null;
 
       ReqParams fieldParams = parseReqParams(fieldProjectionPsi.getReqParamList(), opField.params(), resolver);
-      CustomParams fieldCustomParams = parseAnnotations(fieldProjectionPsi.getReqAnnotationList());
+      Annotations fieldAnnotations = parseAnnotations(fieldProjectionPsi.getReqAnnotationList());
 
       @Nullable IdlReqOutputComaVarProjection psiVarProjection = fieldProjectionPsi.getReqOutputComaVarProjection();
       @NotNull ReqOutputVarProjection varProjection =
@@ -749,7 +749,7 @@ public class ReqOutputProjectionsPsiParser {
       fieldProjections.add(new ReqOutputFieldProjection(
           field,
           fieldParams,
-          fieldCustomParams,
+          fieldAnnotations,
           varProjection,
           fieldRequired,
           EpigraphPsiUtil.getLocation(fieldProjectionPsi)
@@ -762,7 +762,7 @@ public class ReqOutputProjectionsPsiParser {
             op.model(),
             required,
             params,
-            customParams,
+            annotations,
             metaProjection,
             fieldProjections,
             EpigraphPsiUtil.getLocation(psi)
@@ -775,7 +775,7 @@ public class ReqOutputProjectionsPsiParser {
       @NotNull OpOutputMapModelProjection op,
       boolean required,
       @Nullable ReqParams params,
-      @Nullable CustomParams customParams,
+      @Nullable Annotations annotations,
       @Nullable ReqOutputModelProjection<?> metaProjection,
       @NotNull IdlReqOutputTrunkMapModelProjection psi,
       @NotNull TypesResolver resolver) throws PsiProcessingException {
@@ -816,7 +816,7 @@ public class ReqOutputProjectionsPsiParser {
             op.model(),
             required,
             params,
-            customParams,
+            annotations,
             metaProjection,
             Collections.singletonList(keyProjection),
             psi.getPlus() != null,
@@ -831,7 +831,7 @@ public class ReqOutputProjectionsPsiParser {
       @NotNull OpOutputMapModelProjection op,
       boolean required,
       @Nullable ReqParams params,
-      @Nullable CustomParams customParams,
+      @Nullable Annotations annotations,
       @Nullable ReqOutputModelProjection<?> metaProjection,
       @NotNull IdlReqOutputComaMapModelProjection psi,
       @NotNull TypesResolver resolver) throws PsiProcessingException {
@@ -871,7 +871,7 @@ public class ReqOutputProjectionsPsiParser {
             op.model(),
             required,
             params,
-            customParams,
+            annotations,
             metaProjection,
             keyProjections,
             keysProjectionPsi.getPlus() != null,
@@ -886,7 +886,7 @@ public class ReqOutputProjectionsPsiParser {
       @NotNull OpOutputListModelProjection op,
       boolean required,
       @Nullable ReqParams params,
-      @Nullable CustomParams customParams,
+      @Nullable Annotations annotations,
       @Nullable ReqOutputModelProjection<?> metaProjection,
       @NotNull IdlReqOutputComaListModelProjection psi,
       @NotNull TypesResolver resolver) throws PsiProcessingException {
@@ -910,7 +910,7 @@ public class ReqOutputProjectionsPsiParser {
             op.model(),
             required,
             params,
-            customParams,
+            annotations,
             metaProjection,
             itemsProjection,
             EpigraphPsiUtil.getLocation(psi)
@@ -923,7 +923,7 @@ public class ReqOutputProjectionsPsiParser {
       @NotNull PrimitiveType type,
       boolean required,
       @Nullable ReqParams params,
-      @Nullable CustomParams customParams,
+      @Nullable Annotations annotations,
       @Nullable ReqOutputModelProjection<?> metaProjection,
       @NotNull PsiElement locationPsi) throws PsiProcessingException {
 
@@ -933,7 +933,7 @@ public class ReqOutputProjectionsPsiParser {
             type,
             required,
             params,
-            customParams,
+            annotations,
             metaProjection,
             EpigraphPsiUtil.getLocation(locationPsi)
         )
@@ -941,15 +941,15 @@ public class ReqOutputProjectionsPsiParser {
   }
 
   @Nullable
-  private static CustomParams parseAnnotations(@NotNull List<IdlReqAnnotation> annotationsPsi)
+  private static Annotations parseAnnotations(@NotNull List<IdlReqAnnotation> annotationsPsi)
       throws PsiProcessingException {
-    Map<String, CustomParam> paramMap = null;
+    Map<String, Annotation> paramMap = null;
 
     for (IdlReqAnnotation annotation : annotationsPsi) {
-      paramMap = parseCustomParam(paramMap, annotation.getCustomParam());
+      paramMap = parseAnnotation(paramMap, annotation.getAnnotation());
     }
 
-    return paramMap == null ? null : new CustomParams(paramMap);
+    return paramMap == null ? null : new Annotations(paramMap);
   }
 
   @Nullable

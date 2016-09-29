@@ -8,7 +8,7 @@ import com.intellij.psi.PsiElement;
 public interface IdlReqAnnotation extends PsiElement {
 
   @NotNull
-  IdlCustomParam getCustomParam();
+  IdlAnnotation getAnnotation();
 
   @NotNull
   PsiElement getBang();

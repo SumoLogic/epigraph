@@ -23,8 +23,8 @@ public class IdlParser implements PsiParser, LightPsiParser {
     boolean r;
     b = adapt_builder_(t, b, this, EXTENDS_SETS_);
     Marker m = enter_section_(b, 0, _COLLAPSE_, null);
-    if (t == I_CUSTOM_PARAM) {
-      r = customParam(b, 0);
+    if (t == I_ANNOTATION) {
+      r = annotation(b, 0);
     }
     else if (t == I_DATA) {
       r = data(b, 0);
@@ -300,11 +300,11 @@ public class IdlParser implements PsiParser, LightPsiParser {
 
   /* ********************************************************** */
   // qid '=' dataValue
-  public static boolean customParam(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "customParam")) return false;
+  public static boolean annotation(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "annotation")) return false;
     if (!nextTokenIs(b, I_ID)) return false;
     boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, I_CUSTOM_PARAM, "<custom attribute>");
+    Marker m = enter_section_(b, l, _NONE_, I_ANNOTATION, "<custom annotation>");
     r = qid(b, l + 1);
     r = r && consumeToken(b, I_EQ);
     p = r; // pin = 2
@@ -688,9 +688,9 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // customParam
+  // annotation
   static boolean namespaceBodyPart(PsiBuilder b, int l) {
-    return customParam(b, l + 1);
+    return annotation(b, l + 1);
   }
 
   /* ********************************************************** */
@@ -1198,13 +1198,13 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // customParam
+  // annotation
   public static boolean opInputFieldProjectionBodyPart(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opInputFieldProjectionBodyPart")) return false;
     if (!nextTokenIs(b, I_ID)) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = customParam(b, l + 1);
+    r = annotation(b, l + 1);
     exit_section_(b, m, I_OP_INPUT_FIELD_PROJECTION_BODY_PART, r);
     return r;
   }
@@ -1232,13 +1232,13 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // opInputDefaultValue | customParam | opInputModelMeta
+  // opInputDefaultValue | annotation | opInputModelMeta
   public static boolean opInputModelProperty(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opInputModelProperty")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, I_OP_INPUT_MODEL_PROPERTY, "<op input model property>");
     r = opInputDefaultValue(b, l + 1);
-    if (!r) r = customParam(b, l + 1);
+    if (!r) r = annotation(b, l + 1);
     if (!r) r = opInputModelMeta(b, l + 1);
     exit_section_(b, l, m, r, false, opInputModelPropertyRecover_parser_);
     return r;
@@ -1747,14 +1747,14 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // opParam | customParam
+  // opParam | annotation
   public static boolean opOutputFieldProjectionBodyPart(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opOutputFieldProjectionBodyPart")) return false;
     if (!nextTokenIs(b, "<op output field projection body part>", I_SEMICOLON, I_ID)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, I_OP_OUTPUT_FIELD_PROJECTION_BODY_PART, "<op output field projection body part>");
     r = opParam(b, l + 1);
-    if (!r) r = customParam(b, l + 1);
+    if (!r) r = annotation(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
@@ -1871,14 +1871,14 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // opParam | customParam
+  // opParam | annotation
   public static boolean opOutputKeyProjectionPart(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opOutputKeyProjectionPart")) return false;
     if (!nextTokenIs(b, "<op output key projection part>", I_SEMICOLON, I_ID)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, I_OP_OUTPUT_KEY_PROJECTION_PART, "<op output key projection part>");
     r = opParam(b, l + 1);
-    if (!r) r = customParam(b, l + 1);
+    if (!r) r = annotation(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
@@ -1988,13 +1988,13 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // opParam | customParam | opOutputModelMeta
+  // opParam | annotation | opOutputModelMeta
   public static boolean opOutputModelProperty(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opOutputModelProperty")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, I_OP_OUTPUT_MODEL_PROPERTY, "<op output model property>");
     r = opParam(b, l + 1);
-    if (!r) r = customParam(b, l + 1);
+    if (!r) r = annotation(b, l + 1);
     if (!r) r = opOutputModelMeta(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
@@ -2386,9 +2386,9 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // customParam
+  // annotation
   static boolean opParamBodyPart(PsiBuilder b, int l) {
-    return customParam(b, l + 1);
+    return annotation(b, l + 1);
   }
 
   /* ********************************************************** */
@@ -2517,14 +2517,14 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '!' customParam
+  // '!' annotation
   public static boolean reqAnnotation(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqAnnotation")) return false;
     if (!nextTokenIs(b, I_BANG)) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, I_BANG);
-    r = r && customParam(b, l + 1);
+    r = r && annotation(b, l + 1);
     exit_section_(b, m, I_REQ_ANNOTATION, r);
     return r;
   }

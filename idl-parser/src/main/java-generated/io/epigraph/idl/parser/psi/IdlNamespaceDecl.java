@@ -8,7 +8,7 @@ import com.intellij.psi.PsiElement;
 public interface IdlNamespaceDecl extends PsiElement {
 
   @NotNull
-  List<IdlCustomParam> getCustomParamList();
+  List<IdlAnnotation> getAnnotationList();
 
   @Nullable
   IdlFqn getFqn();
