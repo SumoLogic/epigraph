@@ -41,7 +41,7 @@ public class ReqOutputMapModelProjection extends ReqOutputModelProjection<MapTyp
   @Nullable
   public List<ReqOutputKeyProjection> keys() { return keys; }
 
-  public boolean isKeysRequired() { return keysRequired; }
+  public boolean keysRequired() { return keysRequired; }
 
   @Override
   public boolean equals(Object o) {

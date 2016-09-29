@@ -39,7 +39,7 @@ public class ReqOutputKeyProjection {
   public ReqParams params() { return params; }
 
   @Nullable
-  public CustomParams customParams() { return customParams; }
+  public CustomParams annotations() { return customParams; }
 
   @NotNull
   public TextLocation location() { return location; }

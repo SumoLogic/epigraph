@@ -13,6 +13,7 @@ import io.epigraph.projections.CustomParams;
 import io.epigraph.projections.StepsAndProjection;
 import io.epigraph.projections.op.OpParam;
 import io.epigraph.projections.op.OpParams;
+import io.epigraph.projections.op.input.OpInputModelProjection;
 import io.epigraph.projections.op.output.*;
 import io.epigraph.projections.req.ReqParam;
 import io.epigraph.projections.req.ReqParams;
@@ -23,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static io.epigraph.projections.ProjectionPsiParserUtil.*;
 
@@ -53,7 +55,14 @@ public class ReqOutputProjectionsPsiParser {
 
       @Nullable OpOutputTagProjection opTagProjection = op.tagProjection(tag);
       if (opTagProjection == null)
-        throw new PsiProcessingException(String.format("Unsupported tag '%s'", tag.name()), singleTagProjectionPsi);
+        throw new PsiProcessingException(
+            String.format(
+                "Unsupported tag '%s', supported tags: {%s}",
+                tag.name(),
+                op.tagProjections().stream().map(p -> p.tag().name()).collect(Collectors.joining(", "))
+            ),
+            singleTagProjectionPsi
+        );
 
       @NotNull OpOutputModelProjection<?> opModelProjection = opTagProjection.projection();
       @NotNull IdlReqOutputTrunkModelProjection modelProjectionPsi =
@@ -308,6 +317,10 @@ public class ReqOutputProjectionsPsiParser {
     if (opTails == null) return null;
     // TODO a deep merge of op projections wrt to tailType is needed here, probably moved into a separate class
     // we simply look for the first fully matching tail for now
+    // algo should be: DFS on tails, look for tailType
+    // if found: merge all op tail up the stack into one mega-op-var-projection: squash all tags/fields/params together. Should be OK since they all are supertypes of tailType
+    // else null
+
     for (OpOutputVarProjection opTail : opTails) {
       if (opTail.type().equals(tailType)) return opTail;
     }
@@ -708,8 +721,18 @@ public class ReqOutputProjectionsPsiParser {
     for (IdlReqOutputComaFieldProjection fieldProjectionPsi : psiFieldProjections) {
       final String fieldName = fieldProjectionPsi.getQid().getCanonicalName();
 
-      if (opFields == null || !opFields.containsKey(fieldName))
-        throw new PsiProcessingException(String.format("Unsupported field '%s'", fieldName), fieldProjectionPsi);
+      if (opFields == null || !opFields.containsKey(fieldName)) {
+        @Nullable LinkedHashSet<OpOutputFieldProjection> opFieldProjections = op.fieldProjections();
+        throw new PsiProcessingException(
+            String.format(
+                "Unsupported field '%s', supported fields: {%s}",
+                fieldName,
+                opFieldProjections == null ? "none" : // want to preserve order
+                opFieldProjections.stream().map(p -> p.field().name()).collect(Collectors.joining(", "))
+            ),
+            fieldProjectionPsi
+        );
+      }
 
       @NotNull OpOutputFieldProjection opField = opFields.get(fieldName);
       @NotNull RecordType.Field field = opField.field();
@@ -962,7 +985,10 @@ public class ReqOutputProjectionsPsiParser {
         throw new PsiProcessingException(String.format("Unknown parameter '%s'", name), reqParamPsi);
 
       final String errorMsgPrefix = String.format("Error processing parameter '%s' value: ", name);
-      @Nullable Datum value = getDatum(reqParamPsi.getDatum(), opParam.projection().model(), resolver, errorMsgPrefix);
+      OpInputModelProjection<?, ?> projection = opParam.projection();
+      @Nullable Datum value = getDatum(reqParamPsi.getDatum(), projection.model(), resolver, errorMsgPrefix);
+      if (value == null) value = projection.defaultValue();
+
       // todo validate value against input projection
 
       reqParamsMap.put(name, new ReqParam(name, value, EpigraphPsiUtil.getLocation(reqParamPsi)));

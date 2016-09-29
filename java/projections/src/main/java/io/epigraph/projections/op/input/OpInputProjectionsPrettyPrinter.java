@@ -88,7 +88,7 @@ public class OpInputProjectionsPrettyPrinter<E extends Exception>
         OpInputFieldProjection fieldProjection = fieldProjections.iterator().next();
         l.beginIInd();
         l.print("/").brk();
-        print(fieldProjection, pathSteps);
+        print(fieldProjection, decSteps(pathSteps));
         l.end();
 
       } else {
@@ -118,7 +118,7 @@ public class OpInputProjectionsPrettyPrinter<E extends Exception>
       l.print(fieldProjection.field().name());
       if (!isPrintoutEmpty(fieldVarProjection)) {
         l.brk();
-        print(fieldVarProjection, decSteps(pathSteps));
+        print(fieldVarProjection, pathSteps);
       }
       l.end();
     } else {
@@ -129,7 +129,7 @@ public class OpInputProjectionsPrettyPrinter<E extends Exception>
       print(fieldCustomParams);
       if (!isPrintoutEmpty(fieldVarProjection)) {
         l.brk();
-        print(fieldVarProjection, decSteps(pathSteps));
+        print(fieldVarProjection, pathSteps);
       }
       l.brk(1, -l.getDefaultIndentation()).end().print("}");
     }

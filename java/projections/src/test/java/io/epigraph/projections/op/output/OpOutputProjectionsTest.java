@@ -50,7 +50,13 @@ public class OpOutputProjectionsTest {
                     TextLocation.UNKNOWN,
                     new OpOutputTagProjection(
                         Person.id,
-                        new OpOutputPrimitiveModelProjection(PersonId.type, false, null, null, null, TextLocation.UNKNOWN),
+                        new OpOutputPrimitiveModelProjection(PersonId.type,
+                                                             false,
+                                                             null,
+                                                             null,
+                                                             null,
+                                                             TextLocation.UNKNOWN
+                        ),
                         TextLocation.UNKNOWN
                     )
                 ), true, TextLocation.UNKNOWN
@@ -93,7 +99,13 @@ public class OpOutputProjectionsTest {
                     TextLocation.UNKNOWN,
                     new OpOutputTagProjection(
                         Person.id,
-                        new OpOutputPrimitiveModelProjection(PersonId.type, false, null, null, null, TextLocation.UNKNOWN),
+                        new OpOutputPrimitiveModelProjection(PersonId.type,
+                                                             false,
+                                                             null,
+                                                             null,
+                                                             null,
+                                                             TextLocation.UNKNOWN
+                        ),
                         TextLocation.UNKNOWN
                     )
                 ), true, TextLocation.UNKNOWN
@@ -141,7 +153,13 @@ public class OpOutputProjectionsTest {
                     TextLocation.UNKNOWN,
                     new OpOutputTagProjection(
                         Person.id,
-                        new OpOutputPrimitiveModelProjection(PersonId.type, false, null, null, null, TextLocation.UNKNOWN),
+                        new OpOutputPrimitiveModelProjection(PersonId.type,
+                                                             false,
+                                                             null,
+                                                             null,
+                                                             null,
+                                                             TextLocation.UNKNOWN
+                        ),
                         TextLocation.UNKNOWN
                     )
                 ), true, TextLocation.UNKNOWN
@@ -181,7 +199,13 @@ public class OpOutputProjectionsTest {
                     TextLocation.UNKNOWN,
                     new OpOutputTagProjection(
                         Person.id,
-                        new OpOutputPrimitiveModelProjection(PersonId.type, false, null, null, null, TextLocation.UNKNOWN),
+                        new OpOutputPrimitiveModelProjection(PersonId.type,
+                                                             false,
+                                                             null,
+                                                             null,
+                                                             null,
+                                                             TextLocation.UNKNOWN
+                        ),
                         TextLocation.UNKNOWN
                     )
                 ), true, TextLocation.UNKNOWN
@@ -212,14 +236,14 @@ public class OpOutputProjectionsTest {
 
   @Test
   public void testParsing() throws PsiProcessingException {
-    // todo more elaborate example.
+    // todo more elaborate example (multiple tails!).
     // Make pretty-printed result consistent with grammar?
     String projectionStr = lines(
         ":(",
         "  +id,",
         "  record (",
         "    +id {",
-        "    ; +param1 : epigraph.String = \"hello world\" { doc = \"some doc\" },",
+        "      ; +param1 : epigraph.String = \"hello world\" { doc = \"some doc\" },",
         "    },",
         "    +bestFriend :record (",
         "      +id,",
@@ -356,7 +380,13 @@ public class OpOutputProjectionsTest {
                     TextLocation.UNKNOWN,
                     new OpOutputTagProjection(
                         Person.id,
-                        new OpOutputPrimitiveModelProjection(PersonId.type, false, null, null, null, TextLocation.UNKNOWN),
+                        new OpOutputPrimitiveModelProjection(PersonId.type,
+                                                             false,
+                                                             null,
+                                                             null,
+                                                             null,
+                                                             TextLocation.UNKNOWN
+                        ),
                         TextLocation.UNKNOWN
                     )
                 ), true, TextLocation.UNKNOWN
@@ -392,7 +422,13 @@ public class OpOutputProjectionsTest {
                         new OpParams(
                             // todo string
                             new OpParam("token",
-                                        new OpInputPrimitiveModelProjection(UserId.type, false, null, null, null, TextLocation.UNKNOWN),
+                                        new OpInputPrimitiveModelProjection(UserId.type,
+                                                                            false,
+                                                                            null,
+                                                                            null,
+                                                                            null,
+                                                                            TextLocation.UNKNOWN
+                                        ),
                                         TextLocation.UNKNOWN
                             )
                         ),
@@ -419,7 +455,13 @@ public class OpOutputProjectionsTest {
                                     TextLocation.UNKNOWN,
                                     new OpOutputTagProjection(
                                         Person.id,
-                                        new OpOutputPrimitiveModelProjection(PersonId.type, false, null, null, null, TextLocation.UNKNOWN),
+                                        new OpOutputPrimitiveModelProjection(PersonId.type,
+                                                                             false,
+                                                                             null,
+                                                                             null,
+                                                                             null,
+                                                                             TextLocation.UNKNOWN
+                                        ),
                                         TextLocation.UNKNOWN
                                     )
                                 ),
@@ -498,7 +540,17 @@ public class OpOutputProjectionsTest {
   private void testParsingVarProjection(DataType varDataType, String projectionString, String expected)
       throws PsiProcessingException {
 
-    TypesResolver resolver = new SimpleTypesResolver(
+    OpOutputVarProjection varProjection = parseOpOutputVarProjection(varDataType, projectionString);
+
+    String actual = print(varProjection);
+
+    assertEquals("\n" + actual, expected, actual);
+//    assertEquals(expected.trim(), actual.trim());
+  }
+
+  private OpOutputVarProjection parseOpOutputVarProjection(DataType varDataType, String projectionString) {
+    TypesResolver
+        resolver = new SimpleTypesResolver(
         PersonId.type,
         Person.type,
         User.type,
@@ -526,7 +578,6 @@ public class OpOutputProjectionsTest {
       fail(psiDump);
     }
 
-
     OpOutputVarProjection varProjection = null;
     try {
       varProjection = OpOutputProjectionsPsiParser.parseVarProjection(
@@ -542,11 +593,7 @@ public class OpOutputProjectionsTest {
       String psiDump = DebugUtil.psiToString(psiVarProjection, true, false).trim();
       fail(psiDump);
     }
-
-    String actual = print(varProjection);
-
-    assertEquals("\n" + actual, expected, actual);
-//    assertEquals(expected.trim(), actual.trim());
+    return varProjection;
   }
 
   private String print(OpOutputVarProjection projection) {
