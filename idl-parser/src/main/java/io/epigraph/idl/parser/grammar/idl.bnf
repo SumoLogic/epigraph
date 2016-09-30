@@ -20,10 +20,16 @@
     META = 'meta'
     FORBIDDEN = 'forbidden'
     REQURIED = 'required'
-    PARAMETERS = 'parameters'
     DEFAULT = 'default'
-//    PRIMITIVE = 'primitive'
-//    ENUM = 'enum'
+
+    RESOURCE = 'resource'
+    READ = 'READ'
+    CREATE = 'CREATE'
+    UPDATE = 'UPDATE'
+    DELETE = 'DELETE'
+    CUSTOM = 'CUSTOM'
+    INPUT = 'input'
+    OUTPUT = 'output'
 
     COLON = ':'
     DOT = '.'
@@ -65,7 +71,7 @@
 }
 
 // TODO proper root
-root ::= namespaceDecl imports opOutputVarProjection opInputTrunkVarProjection reqOutputTrunkVarProjection
+root ::= namespaceDecl imports resourceDefs
 
 // either quoted or unquoted id
 qid ::= id {
@@ -116,6 +122,55 @@ private namespaceDeclRecover ::= ! ('import' | 'namespace' )
 private importRecover ::= namespaceDeclRecover
 
 tagName ::= qid | '_' // `_` is default tag
+
+// ============= resources =============
+
+private resourceDefs ::= (resourceDef ','?)*
+resourceDef ::= 'resource' resourceName resourceType resourceDefBody
+resourceName ::= qid
+resourceType ::= ':' fqnTypeRef defaultOverride?
+defaultOverride ::= 'default' varTagRef
+varTagRef ::= qid {
+//  implements="com.intellij.psi.PsiNameIdentifierOwner"
+//  methods=[setName getNameIdentifier getReference]
+}
+
+private resourceDefBody ::= '{' (resourceDefPart ','?)* '}'
+private resourceDefPart ::= operationDef { recoverWhile = operationBodyRecover }
+
+operationName ::= 'default' | qid
+operationInput ::= 'input' opInputTrunkVarProjection {pin=1}
+operationOutput ::= 'output' opOutputVarProjection {pin=1}
+
+operationDef ::= readOperationDef | createOperationDef | updateOperationDef | customOperationDef
+
+readOperationDef ::= operationName? 'READ' readOperationBody {pin=2}
+private readOperationBody ::= '{' (readOperationBodyPart ','?)* '}'
+readOperationBodyPart ::= operationOutput | opParam | annotation {
+  recoverWhile = operationBodyRecover
+}
+
+createOperationDef ::= operationName? 'CREATE' createOperationBody {pin=2}
+private createOperationBody ::= '{' (createOperationBodyPart ','?)* '}'
+createOperationBodyPart ::= operationInput | operationOutput | opParam | annotation {
+  recoverWhile = operationBodyRecover
+}
+
+updateOperationDef ::= operationName? 'UPDATE' updateOperationBody {pin=2}
+private updateOperationBody ::= '{' (updateOperationBodyPart ','?)* '}'
+updateOperationBodyPart ::= operationInput | operationOutput | opParam | annotation {
+  recoverWhile = operationBodyRecover
+}
+
+// todo DELETE
+
+customOperationDef ::= qid 'CUSTOM' customOperationBody {pin=2} // todo specify verb?
+private customOperationBody ::= '{' (customOperationBodyPart ','?)* '}'
+customOperationBodyPart ::= operationInput | operationOutput | opParam | annotation {
+  recoverWhile = operationBodyRecover
+}
+
+private operationBodyRecover ::= ! ( '}' | ',' )
 
 // ============= op projections =============
 
@@ -249,6 +304,8 @@ opInputComaMapModelProjection ::= opInputComaKeyProjection '(' opInputComaVarPro
 opInputComaKeyProjection ::= '[' ']' {pin=1}
 
 // ============= req projections =============
+
+// TODO this must be moved to a separate client definition language
 
 reqParam ::= ';' qid '=' datum
 reqAnnotation ::= '!' annotation

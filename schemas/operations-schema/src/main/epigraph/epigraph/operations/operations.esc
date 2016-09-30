@@ -5,10 +5,12 @@ import epigraph.projections.op.OpInputVarProjection
 import epigraph.projections.op.OpOutputVarProjection
 import epigraph.projections.op.OpParam
 import epigraph.schema.Documented
+import epigraph.schema.VarTypeRef
 
-record Resouce extends Documented {
+record Resource extends Documented {
   fieldName: String
-  operations: list[polymorphic Operation]
+  fieldType: VarTypeRef
+  operations: list[Operation]
 }
 
 abstract record Operation extends Documented {

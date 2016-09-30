@@ -9,10 +9,15 @@ import io.epigraph.idl.parser.psi.impl.*;
 public interface IdlElementTypes {
 
   IElementType I_ANNOTATION = new IdlElementType("I_ANNOTATION");
+  IElementType I_CREATE_OPERATION_BODY_PART = new IdlElementType("I_CREATE_OPERATION_BODY_PART");
+  IElementType I_CREATE_OPERATION_DEF = new IdlElementType("I_CREATE_OPERATION_DEF");
+  IElementType I_CUSTOM_OPERATION_BODY_PART = new IdlElementType("I_CUSTOM_OPERATION_BODY_PART");
+  IElementType I_CUSTOM_OPERATION_DEF = new IdlElementType("I_CUSTOM_OPERATION_DEF");
   IElementType I_DATA = new IdlElementType("I_DATA");
   IElementType I_DATA_ENTRY = new IdlElementType("I_DATA_ENTRY");
   IElementType I_DATA_VALUE = new IdlElementType("I_DATA_VALUE");
   IElementType I_DATUM = new IdlElementType("I_DATUM");
+  IElementType I_DEFAULT_OVERRIDE = new IdlElementType("I_DEFAULT_OVERRIDE");
   IElementType I_ENUM_DATUM = new IdlElementType("I_ENUM_DATUM");
   IElementType I_FQN = new IdlElementType("I_FQN");
   IElementType I_FQN_SEGMENT = new IdlElementType("I_FQN_SEGMENT");
@@ -24,6 +29,10 @@ public interface IdlElementTypes {
   IElementType I_MAP_DATUM_ENTRY = new IdlElementType("I_MAP_DATUM_ENTRY");
   IElementType I_NAMESPACE_DECL = new IdlElementType("I_NAMESPACE_DECL");
   IElementType I_NULL_DATUM = new IdlElementType("I_NULL_DATUM");
+  IElementType I_OPERATION_DEF = new IdlElementType("I_OPERATION_DEF");
+  IElementType I_OPERATION_INPUT = new IdlElementType("I_OPERATION_INPUT");
+  IElementType I_OPERATION_NAME = new IdlElementType("I_OPERATION_NAME");
+  IElementType I_OPERATION_OUTPUT = new IdlElementType("I_OPERATION_OUTPUT");
   IElementType I_OP_INPUT_COMA_FIELD_PROJECTION = new IdlElementType("I_OP_INPUT_COMA_FIELD_PROJECTION");
   IElementType I_OP_INPUT_COMA_KEY_PROJECTION = new IdlElementType("I_OP_INPUT_COMA_KEY_PROJECTION");
   IElementType I_OP_INPUT_COMA_LIST_MODEL_PROJECTION = new IdlElementType("I_OP_INPUT_COMA_LIST_MODEL_PROJECTION");
@@ -68,6 +77,8 @@ public interface IdlElementTypes {
   IElementType I_OP_PARAM = new IdlElementType("I_OP_PARAM");
   IElementType I_PRIMITIVE_DATUM = new IdlElementType("I_PRIMITIVE_DATUM");
   IElementType I_QID = new IdlElementType("I_QID");
+  IElementType I_READ_OPERATION_BODY_PART = new IdlElementType("I_READ_OPERATION_BODY_PART");
+  IElementType I_READ_OPERATION_DEF = new IdlElementType("I_READ_OPERATION_DEF");
   IElementType I_RECORD_DATUM = new IdlElementType("I_RECORD_DATUM");
   IElementType I_RECORD_DATUM_ENTRY = new IdlElementType("I_RECORD_DATUM_ENTRY");
   IElementType I_REQ_ANNOTATION = new IdlElementType("I_REQ_ANNOTATION");
@@ -93,7 +104,13 @@ public interface IdlElementTypes {
   IElementType I_REQ_OUTPUT_VAR_POLYMORPHIC_TAIL = new IdlElementType("I_REQ_OUTPUT_VAR_POLYMORPHIC_TAIL");
   IElementType I_REQ_OUTPUT_VAR_SINGLE_TAIL = new IdlElementType("I_REQ_OUTPUT_VAR_SINGLE_TAIL");
   IElementType I_REQ_PARAM = new IdlElementType("I_REQ_PARAM");
+  IElementType I_RESOURCE_DEF = new IdlElementType("I_RESOURCE_DEF");
+  IElementType I_RESOURCE_NAME = new IdlElementType("I_RESOURCE_NAME");
+  IElementType I_RESOURCE_TYPE = new IdlElementType("I_RESOURCE_TYPE");
   IElementType I_TAG_NAME = new IdlElementType("I_TAG_NAME");
+  IElementType I_UPDATE_OPERATION_BODY_PART = new IdlElementType("I_UPDATE_OPERATION_BODY_PART");
+  IElementType I_UPDATE_OPERATION_DEF = new IdlElementType("I_UPDATE_OPERATION_DEF");
+  IElementType I_VAR_TAG_REF = new IdlElementType("I_VAR_TAG_REF");
 
   IElementType I_ANGLE_LEFT = new IdlElementType("<");
   IElementType I_ANGLE_RIGHT = new IdlElementType(">");
@@ -106,36 +123,55 @@ public interface IdlElementTypes {
   IElementType I_COLON = new IdlElementType(":");
   IElementType I_COMMA = new IdlElementType(",");
   IElementType I_COMMENT = new IdlElementType("comment");
+  IElementType I_CREATE = new IdlElementType("CREATE");
   IElementType I_CURLY_LEFT = new IdlElementType("{");
   IElementType I_CURLY_RIGHT = new IdlElementType("}");
+  IElementType I_CUSTOM = new IdlElementType("CUSTOM");
   IElementType I_DEFAULT = new IdlElementType("default");
+  IElementType I_DELETE = new IdlElementType("DELETE");
   IElementType I_DOT = new IdlElementType(".");
   IElementType I_EQ = new IdlElementType("=");
   IElementType I_FORBIDDEN = new IdlElementType("forbidden");
   IElementType I_HASH = new IdlElementType("#");
   IElementType I_ID = new IdlElementType("id");
   IElementType I_IMPORT = new IdlElementType("import");
+  IElementType I_INPUT = new IdlElementType("input");
   IElementType I_META = new IdlElementType("meta");
   IElementType I_NAMESPACE = new IdlElementType("namespace");
   IElementType I_NULL = new IdlElementType("null");
   IElementType I_NUMBER = new IdlElementType("number");
-  IElementType I_PARAMETERS = new IdlElementType("parameters");
+  IElementType I_OUTPUT = new IdlElementType("output");
   IElementType I_PAREN_LEFT = new IdlElementType("(");
   IElementType I_PAREN_RIGHT = new IdlElementType(")");
   IElementType I_PLUS = new IdlElementType("+");
+  IElementType I_READ = new IdlElementType("READ");
   IElementType I_REQURIED = new IdlElementType("required");
+  IElementType I_RESOURCE = new IdlElementType("resource");
   IElementType I_SEMICOLON = new IdlElementType(";");
   IElementType I_SLASH = new IdlElementType("/");
   IElementType I_STAR = new IdlElementType("*");
   IElementType I_STRING = new IdlElementType("string");
   IElementType I_TILDA = new IdlElementType("~");
   IElementType I_UNDERSCORE = new IdlElementType("_");
+  IElementType I_UPDATE = new IdlElementType("UPDATE");
 
   class Factory {
     public static PsiElement createElement(ASTNode node) {
       IElementType type = node.getElementType();
        if (type == I_ANNOTATION) {
         return new IdlAnnotationImpl(node);
+      }
+      else if (type == I_CREATE_OPERATION_BODY_PART) {
+        return new IdlCreateOperationBodyPartImpl(node);
+      }
+      else if (type == I_CREATE_OPERATION_DEF) {
+        return new IdlCreateOperationDefImpl(node);
+      }
+      else if (type == I_CUSTOM_OPERATION_BODY_PART) {
+        return new IdlCustomOperationBodyPartImpl(node);
+      }
+      else if (type == I_CUSTOM_OPERATION_DEF) {
+        return new IdlCustomOperationDefImpl(node);
       }
       else if (type == I_DATA) {
         return new IdlDataImpl(node);
@@ -148,6 +184,9 @@ public interface IdlElementTypes {
       }
       else if (type == I_DATUM) {
         return new IdlDatumImpl(node);
+      }
+      else if (type == I_DEFAULT_OVERRIDE) {
+        return new IdlDefaultOverrideImpl(node);
       }
       else if (type == I_ENUM_DATUM) {
         return new IdlEnumDatumImpl(node);
@@ -181,6 +220,18 @@ public interface IdlElementTypes {
       }
       else if (type == I_NULL_DATUM) {
         return new IdlNullDatumImpl(node);
+      }
+      else if (type == I_OPERATION_DEF) {
+        return new IdlOperationDefImpl(node);
+      }
+      else if (type == I_OPERATION_INPUT) {
+        return new IdlOperationInputImpl(node);
+      }
+      else if (type == I_OPERATION_NAME) {
+        return new IdlOperationNameImpl(node);
+      }
+      else if (type == I_OPERATION_OUTPUT) {
+        return new IdlOperationOutputImpl(node);
       }
       else if (type == I_OP_INPUT_COMA_FIELD_PROJECTION) {
         return new IdlOpInputComaFieldProjectionImpl(node);
@@ -314,6 +365,12 @@ public interface IdlElementTypes {
       else if (type == I_QID) {
         return new IdlQidImpl(node);
       }
+      else if (type == I_READ_OPERATION_BODY_PART) {
+        return new IdlReadOperationBodyPartImpl(node);
+      }
+      else if (type == I_READ_OPERATION_DEF) {
+        return new IdlReadOperationDefImpl(node);
+      }
       else if (type == I_RECORD_DATUM) {
         return new IdlRecordDatumImpl(node);
       }
@@ -389,8 +446,26 @@ public interface IdlElementTypes {
       else if (type == I_REQ_PARAM) {
         return new IdlReqParamImpl(node);
       }
+      else if (type == I_RESOURCE_DEF) {
+        return new IdlResourceDefImpl(node);
+      }
+      else if (type == I_RESOURCE_NAME) {
+        return new IdlResourceNameImpl(node);
+      }
+      else if (type == I_RESOURCE_TYPE) {
+        return new IdlResourceTypeImpl(node);
+      }
       else if (type == I_TAG_NAME) {
         return new IdlTagNameImpl(node);
+      }
+      else if (type == I_UPDATE_OPERATION_BODY_PART) {
+        return new IdlUpdateOperationBodyPartImpl(node);
+      }
+      else if (type == I_UPDATE_OPERATION_DEF) {
+        return new IdlUpdateOperationDefImpl(node);
+      }
+      else if (type == I_VAR_TAG_REF) {
+        return new IdlVarTagRefImpl(node);
       }
       throw new AssertionError("Unknown element type: " + type);
     }

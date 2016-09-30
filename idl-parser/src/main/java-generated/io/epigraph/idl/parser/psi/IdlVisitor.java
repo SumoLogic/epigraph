@@ -11,6 +11,22 @@ public class IdlVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitCreateOperationBodyPart(@NotNull IdlCreateOperationBodyPart o) {
+    visitPsiElement(o);
+  }
+
+  public void visitCreateOperationDef(@NotNull IdlCreateOperationDef o) {
+    visitPsiElement(o);
+  }
+
+  public void visitCustomOperationBodyPart(@NotNull IdlCustomOperationBodyPart o) {
+    visitPsiElement(o);
+  }
+
+  public void visitCustomOperationDef(@NotNull IdlCustomOperationDef o) {
+    visitPsiElement(o);
+  }
+
   public void visitData(@NotNull IdlData o) {
     visitPsiElement(o);
   }
@@ -24,6 +40,10 @@ public class IdlVisitor extends PsiElementVisitor {
   }
 
   public void visitDatum(@NotNull IdlDatum o) {
+    visitPsiElement(o);
+  }
+
+  public void visitDefaultOverride(@NotNull IdlDefaultOverride o) {
     visitPsiElement(o);
   }
 
@@ -239,11 +259,35 @@ public class IdlVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitOperationDef(@NotNull IdlOperationDef o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOperationInput(@NotNull IdlOperationInput o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOperationName(@NotNull IdlOperationName o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOperationOutput(@NotNull IdlOperationOutput o) {
+    visitPsiElement(o);
+  }
+
   public void visitPrimitiveDatum(@NotNull IdlPrimitiveDatum o) {
     visitDatum(o);
   }
 
   public void visitQid(@NotNull IdlQid o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReadOperationBodyPart(@NotNull IdlReadOperationBodyPart o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReadOperationDef(@NotNull IdlReadOperationDef o) {
     visitPsiElement(o);
   }
 
@@ -347,7 +391,31 @@ public class IdlVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitResourceDef(@NotNull IdlResourceDef o) {
+    visitPsiElement(o);
+  }
+
+  public void visitResourceName(@NotNull IdlResourceName o) {
+    visitPsiElement(o);
+  }
+
+  public void visitResourceType(@NotNull IdlResourceType o) {
+    visitPsiElement(o);
+  }
+
   public void visitTagName(@NotNull IdlTagName o) {
+    visitPsiElement(o);
+  }
+
+  public void visitUpdateOperationBodyPart(@NotNull IdlUpdateOperationBodyPart o) {
+    visitPsiElement(o);
+  }
+
+  public void visitUpdateOperationDef(@NotNull IdlUpdateOperationDef o) {
+    visitPsiElement(o);
+  }
+
+  public void visitVarTagRef(@NotNull IdlVarTagRef o) {
     visitPsiElement(o);
   }
 

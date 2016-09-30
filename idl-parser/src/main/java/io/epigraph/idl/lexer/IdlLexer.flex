@@ -45,11 +45,15 @@ ID=([:letter:]([:letter:]|[:digit:])*)|(`[^`]*`)
   "meta"               { return I_META; }
   "forbidden"          { return I_FORBIDDEN; }
   "required"           { return I_REQURIED; }
-  "parameters"         { return I_PARAMETERS; }
   "default"            { return I_DEFAULT; }
-//  "includeInDefault"   { return I_INCLUDE_IN_DEFAULT; }
-//  "primitive"          { return I_PRIMITIVE; }
-//  "enum"               { return I_ENUM; }
+  "resource"           { return I_RESOURCE; }
+  "READ"               { return I_READ; }
+  "CREATE"             { return I_CREATE; }
+  "UPDATE"             { return I_UPDATE; }
+  "DELETE"             { return I_DELETE; }
+  "CUSTOM"             { return I_CUSTOM; }
+  "input"              { return I_INPUT; }
+  "output"             { return I_OUTPUT; }
   ":"                  { return I_COLON; }
   "."                  { return I_DOT; }
   ","                  { return I_COMMA; }

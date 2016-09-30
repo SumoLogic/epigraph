@@ -12,7 +12,7 @@ record OpParam extends Named, Documented {
   override name: ParamName
   modelProjection: OpInputModelProjection
   `default`: Datum
-  customParams: map[String, polymorphic Data]
+  customParams: map[String, Data]
 }
 
 vartype OpParamRef extends ByNameRef {

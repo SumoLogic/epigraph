@@ -26,6 +26,18 @@ public class IdlParser implements PsiParser, LightPsiParser {
     if (t == I_ANNOTATION) {
       r = annotation(b, 0);
     }
+    else if (t == I_CREATE_OPERATION_BODY_PART) {
+      r = createOperationBodyPart(b, 0);
+    }
+    else if (t == I_CREATE_OPERATION_DEF) {
+      r = createOperationDef(b, 0);
+    }
+    else if (t == I_CUSTOM_OPERATION_BODY_PART) {
+      r = customOperationBodyPart(b, 0);
+    }
+    else if (t == I_CUSTOM_OPERATION_DEF) {
+      r = customOperationDef(b, 0);
+    }
     else if (t == I_DATA) {
       r = data(b, 0);
     }
@@ -37,6 +49,9 @@ public class IdlParser implements PsiParser, LightPsiParser {
     }
     else if (t == I_DATUM) {
       r = datum(b, 0);
+    }
+    else if (t == I_DEFAULT_OVERRIDE) {
+      r = defaultOverride(b, 0);
     }
     else if (t == I_ENUM_DATUM) {
       r = enumDatum(b, 0);
@@ -197,11 +212,29 @@ public class IdlParser implements PsiParser, LightPsiParser {
     else if (t == I_OP_PARAM) {
       r = opParam(b, 0);
     }
+    else if (t == I_OPERATION_DEF) {
+      r = operationDef(b, 0);
+    }
+    else if (t == I_OPERATION_INPUT) {
+      r = operationInput(b, 0);
+    }
+    else if (t == I_OPERATION_NAME) {
+      r = operationName(b, 0);
+    }
+    else if (t == I_OPERATION_OUTPUT) {
+      r = operationOutput(b, 0);
+    }
     else if (t == I_PRIMITIVE_DATUM) {
       r = primitiveDatum(b, 0);
     }
     else if (t == I_QID) {
       r = qid(b, 0);
+    }
+    else if (t == I_READ_OPERATION_BODY_PART) {
+      r = readOperationBodyPart(b, 0);
+    }
+    else if (t == I_READ_OPERATION_DEF) {
+      r = readOperationDef(b, 0);
     }
     else if (t == I_RECORD_DATUM) {
       r = recordDatum(b, 0);
@@ -278,8 +311,26 @@ public class IdlParser implements PsiParser, LightPsiParser {
     else if (t == I_REQ_PARAM) {
       r = reqParam(b, 0);
     }
+    else if (t == I_RESOURCE_DEF) {
+      r = resourceDef(b, 0);
+    }
+    else if (t == I_RESOURCE_NAME) {
+      r = resourceName(b, 0);
+    }
+    else if (t == I_RESOURCE_TYPE) {
+      r = resourceType(b, 0);
+    }
     else if (t == I_TAG_NAME) {
       r = tagName(b, 0);
+    }
+    else if (t == I_UPDATE_OPERATION_BODY_PART) {
+      r = updateOperationBodyPart(b, 0);
+    }
+    else if (t == I_UPDATE_OPERATION_DEF) {
+      r = updateOperationDef(b, 0);
+    }
+    else if (t == I_VAR_TAG_REF) {
+      r = varTagRef(b, 0);
     }
     else {
       r = parse_root_(t, b, 0);
@@ -309,6 +360,160 @@ public class IdlParser implements PsiParser, LightPsiParser {
     r = r && consumeToken(b, I_EQ);
     p = r; // pin = 2
     r = r && dataValue(b, l + 1);
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  /* ********************************************************** */
+  // '{' (createOperationBodyPart ','?)* '}'
+  static boolean createOperationBody(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "createOperationBody")) return false;
+    if (!nextTokenIs(b, I_CURLY_LEFT)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_);
+    r = consumeToken(b, I_CURLY_LEFT);
+    p = r; // pin = 1
+    r = r && report_error_(b, createOperationBody_1(b, l + 1));
+    r = p && consumeToken(b, I_CURLY_RIGHT) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // (createOperationBodyPart ','?)*
+  private static boolean createOperationBody_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "createOperationBody_1")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!createOperationBody_1_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "createOperationBody_1", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
+  // createOperationBodyPart ','?
+  private static boolean createOperationBody_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "createOperationBody_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = createOperationBodyPart(b, l + 1);
+    r = r && createOperationBody_1_0_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // ','?
+  private static boolean createOperationBody_1_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "createOperationBody_1_0_1")) return false;
+    consumeToken(b, I_COMMA);
+    return true;
+  }
+
+  /* ********************************************************** */
+  // operationInput | operationOutput | opParam | annotation
+  public static boolean createOperationBodyPart(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "createOperationBodyPart")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, I_CREATE_OPERATION_BODY_PART, "<create operation body part>");
+    r = operationInput(b, l + 1);
+    if (!r) r = operationOutput(b, l + 1);
+    if (!r) r = opParam(b, l + 1);
+    if (!r) r = annotation(b, l + 1);
+    exit_section_(b, l, m, r, false, operationBodyRecover_parser_);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // operationName? 'CREATE' createOperationBody
+  public static boolean createOperationDef(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "createOperationDef")) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, I_CREATE_OPERATION_DEF, "<create operation def>");
+    r = createOperationDef_0(b, l + 1);
+    r = r && consumeToken(b, I_CREATE);
+    p = r; // pin = 2
+    r = r && createOperationBody(b, l + 1);
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // operationName?
+  private static boolean createOperationDef_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "createOperationDef_0")) return false;
+    operationName(b, l + 1);
+    return true;
+  }
+
+  /* ********************************************************** */
+  // '{' (customOperationBodyPart ','?)* '}'
+  static boolean customOperationBody(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "customOperationBody")) return false;
+    if (!nextTokenIs(b, I_CURLY_LEFT)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_);
+    r = consumeToken(b, I_CURLY_LEFT);
+    p = r; // pin = 1
+    r = r && report_error_(b, customOperationBody_1(b, l + 1));
+    r = p && consumeToken(b, I_CURLY_RIGHT) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // (customOperationBodyPart ','?)*
+  private static boolean customOperationBody_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "customOperationBody_1")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!customOperationBody_1_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "customOperationBody_1", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
+  // customOperationBodyPart ','?
+  private static boolean customOperationBody_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "customOperationBody_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = customOperationBodyPart(b, l + 1);
+    r = r && customOperationBody_1_0_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // ','?
+  private static boolean customOperationBody_1_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "customOperationBody_1_0_1")) return false;
+    consumeToken(b, I_COMMA);
+    return true;
+  }
+
+  /* ********************************************************** */
+  // operationInput | operationOutput | opParam | annotation
+  public static boolean customOperationBodyPart(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "customOperationBodyPart")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, I_CUSTOM_OPERATION_BODY_PART, "<custom operation body part>");
+    r = operationInput(b, l + 1);
+    if (!r) r = operationOutput(b, l + 1);
+    if (!r) r = opParam(b, l + 1);
+    if (!r) r = annotation(b, l + 1);
+    exit_section_(b, l, m, r, false, operationBodyRecover_parser_);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // qid 'CUSTOM' customOperationBody
+  public static boolean customOperationDef(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "customOperationDef")) return false;
+    if (!nextTokenIs(b, I_ID)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, I_CUSTOM_OPERATION_DEF, null);
+    r = qid(b, l + 1);
+    r = r && consumeToken(b, I_CUSTOM);
+    p = r; // pin = 2
+    r = r && customOperationBody(b, l + 1);
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -429,6 +634,19 @@ public class IdlParser implements PsiParser, LightPsiParser {
     if (!r) r = enumDatum(b, l + 1);
     if (!r) r = nullDatum(b, l + 1);
     exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // 'default' varTagRef
+  public static boolean defaultOverride(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "defaultOverride")) return false;
+    if (!nextTokenIs(b, I_DEFAULT)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, I_DEFAULT);
+    r = r && varTagRef(b, l + 1);
+    exit_section_(b, m, I_DEFAULT_OVERRIDE, r);
     return r;
   }
 
@@ -2407,6 +2625,83 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // ! ( '}' | ',' )
+  static boolean operationBodyRecover(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "operationBodyRecover")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NOT_);
+    r = !operationBodyRecover_0(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // '}' | ','
+  private static boolean operationBodyRecover_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "operationBodyRecover_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, I_CURLY_RIGHT);
+    if (!r) r = consumeToken(b, I_COMMA);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // readOperationDef | createOperationDef | updateOperationDef | customOperationDef
+  public static boolean operationDef(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "operationDef")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, I_OPERATION_DEF, "<operation def>");
+    r = readOperationDef(b, l + 1);
+    if (!r) r = createOperationDef(b, l + 1);
+    if (!r) r = updateOperationDef(b, l + 1);
+    if (!r) r = customOperationDef(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // 'input' opInputTrunkVarProjection
+  public static boolean operationInput(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "operationInput")) return false;
+    if (!nextTokenIs(b, I_INPUT)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, I_OPERATION_INPUT, null);
+    r = consumeToken(b, I_INPUT);
+    p = r; // pin = 1
+    r = r && opInputTrunkVarProjection(b, l + 1);
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  /* ********************************************************** */
+  // 'default' | qid
+  public static boolean operationName(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "operationName")) return false;
+    if (!nextTokenIs(b, "<operation name>", I_DEFAULT, I_ID)) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, I_OPERATION_NAME, "<operation name>");
+    r = consumeToken(b, I_DEFAULT);
+    if (!r) r = qid(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // 'output' opOutputVarProjection
+  public static boolean operationOutput(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "operationOutput")) return false;
+    if (!nextTokenIs(b, I_OUTPUT)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, I_OPERATION_OUTPUT, null);
+    r = consumeToken(b, I_OUTPUT);
+    p = r; // pin = 1
+    r = r && opOutputVarProjection(b, l + 1);
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  /* ********************************************************** */
   // (dataTypeSpec '@')? (string | number | boolean)
   public static boolean primitiveDatum(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "primitiveDatum")) return false;
@@ -2458,6 +2753,85 @@ public class IdlParser implements PsiParser, LightPsiParser {
     r = consumeToken(b, I_ID);
     exit_section_(b, m, I_QID, r);
     return r;
+  }
+
+  /* ********************************************************** */
+  // '{' (readOperationBodyPart ','?)* '}'
+  static boolean readOperationBody(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "readOperationBody")) return false;
+    if (!nextTokenIs(b, I_CURLY_LEFT)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_);
+    r = consumeToken(b, I_CURLY_LEFT);
+    p = r; // pin = 1
+    r = r && report_error_(b, readOperationBody_1(b, l + 1));
+    r = p && consumeToken(b, I_CURLY_RIGHT) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // (readOperationBodyPart ','?)*
+  private static boolean readOperationBody_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "readOperationBody_1")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!readOperationBody_1_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "readOperationBody_1", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
+  // readOperationBodyPart ','?
+  private static boolean readOperationBody_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "readOperationBody_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = readOperationBodyPart(b, l + 1);
+    r = r && readOperationBody_1_0_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // ','?
+  private static boolean readOperationBody_1_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "readOperationBody_1_0_1")) return false;
+    consumeToken(b, I_COMMA);
+    return true;
+  }
+
+  /* ********************************************************** */
+  // operationOutput | opParam | annotation
+  public static boolean readOperationBodyPart(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "readOperationBodyPart")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, I_READ_OPERATION_BODY_PART, "<read operation body part>");
+    r = operationOutput(b, l + 1);
+    if (!r) r = opParam(b, l + 1);
+    if (!r) r = annotation(b, l + 1);
+    exit_section_(b, l, m, r, false, operationBodyRecover_parser_);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // operationName? 'READ' readOperationBody
+  public static boolean readOperationDef(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "readOperationDef")) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, I_READ_OPERATION_DEF, "<read operation def>");
+    r = readOperationDef_0(b, l + 1);
+    r = r && consumeToken(b, I_READ);
+    p = r; // pin = 2
+    r = r && readOperationBody(b, l + 1);
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // operationName?
+  private static boolean readOperationDef_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "readOperationDef_0")) return false;
+    operationName(b, l + 1);
+    return true;
   }
 
   /* ********************************************************** */
@@ -3234,7 +3608,142 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // namespaceDecl imports opOutputVarProjection opInputTrunkVarProjection reqOutputTrunkVarProjection
+  // 'resource' resourceName resourceType resourceDefBody
+  public static boolean resourceDef(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "resourceDef")) return false;
+    if (!nextTokenIs(b, I_RESOURCE)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, I_RESOURCE);
+    r = r && resourceName(b, l + 1);
+    r = r && resourceType(b, l + 1);
+    r = r && resourceDefBody(b, l + 1);
+    exit_section_(b, m, I_RESOURCE_DEF, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // '{' (resourceDefPart ','?)* '}'
+  static boolean resourceDefBody(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "resourceDefBody")) return false;
+    if (!nextTokenIs(b, I_CURLY_LEFT)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_);
+    r = consumeToken(b, I_CURLY_LEFT);
+    p = r; // pin = 1
+    r = r && report_error_(b, resourceDefBody_1(b, l + 1));
+    r = p && consumeToken(b, I_CURLY_RIGHT) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // (resourceDefPart ','?)*
+  private static boolean resourceDefBody_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "resourceDefBody_1")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!resourceDefBody_1_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "resourceDefBody_1", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
+  // resourceDefPart ','?
+  private static boolean resourceDefBody_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "resourceDefBody_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = resourceDefPart(b, l + 1);
+    r = r && resourceDefBody_1_0_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // ','?
+  private static boolean resourceDefBody_1_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "resourceDefBody_1_0_1")) return false;
+    consumeToken(b, I_COMMA);
+    return true;
+  }
+
+  /* ********************************************************** */
+  // operationDef
+  static boolean resourceDefPart(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "resourceDefPart")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_);
+    r = operationDef(b, l + 1);
+    exit_section_(b, l, m, r, false, operationBodyRecover_parser_);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // (resourceDef ','?)*
+  static boolean resourceDefs(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "resourceDefs")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!resourceDefs_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "resourceDefs", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
+  // resourceDef ','?
+  private static boolean resourceDefs_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "resourceDefs_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = resourceDef(b, l + 1);
+    r = r && resourceDefs_0_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // ','?
+  private static boolean resourceDefs_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "resourceDefs_0_1")) return false;
+    consumeToken(b, I_COMMA);
+    return true;
+  }
+
+  /* ********************************************************** */
+  // qid
+  public static boolean resourceName(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "resourceName")) return false;
+    if (!nextTokenIs(b, I_ID)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = qid(b, l + 1);
+    exit_section_(b, m, I_RESOURCE_NAME, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // ':' fqnTypeRef defaultOverride?
+  public static boolean resourceType(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "resourceType")) return false;
+    if (!nextTokenIs(b, I_COLON)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, I_COLON);
+    r = r && fqnTypeRef(b, l + 1);
+    r = r && resourceType_2(b, l + 1);
+    exit_section_(b, m, I_RESOURCE_TYPE, r);
+    return r;
+  }
+
+  // defaultOverride?
+  private static boolean resourceType_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "resourceType_2")) return false;
+    defaultOverride(b, l + 1);
+    return true;
+  }
+
+  /* ********************************************************** */
+  // namespaceDecl imports resourceDefs
   static boolean root(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "root")) return false;
     if (!nextTokenIs(b, I_NAMESPACE)) return false;
@@ -3242,9 +3751,7 @@ public class IdlParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b);
     r = namespaceDecl(b, l + 1);
     r = r && imports(b, l + 1);
-    r = r && opOutputVarProjection(b, l + 1);
-    r = r && opInputTrunkVarProjection(b, l + 1);
-    r = r && reqOutputTrunkVarProjection(b, l + 1);
+    r = r && resourceDefs(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -3260,6 +3767,110 @@ public class IdlParser implements PsiParser, LightPsiParser {
     if (!r) r = consumeToken(b, I_UNDERSCORE);
     exit_section_(b, l, m, r, false, null);
     return r;
+  }
+
+  /* ********************************************************** */
+  // '{' (updateOperationBodyPart ','?)* '}'
+  static boolean updateOperationBody(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "updateOperationBody")) return false;
+    if (!nextTokenIs(b, I_CURLY_LEFT)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_);
+    r = consumeToken(b, I_CURLY_LEFT);
+    p = r; // pin = 1
+    r = r && report_error_(b, updateOperationBody_1(b, l + 1));
+    r = p && consumeToken(b, I_CURLY_RIGHT) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // (updateOperationBodyPart ','?)*
+  private static boolean updateOperationBody_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "updateOperationBody_1")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!updateOperationBody_1_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "updateOperationBody_1", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
+  // updateOperationBodyPart ','?
+  private static boolean updateOperationBody_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "updateOperationBody_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = updateOperationBodyPart(b, l + 1);
+    r = r && updateOperationBody_1_0_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // ','?
+  private static boolean updateOperationBody_1_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "updateOperationBody_1_0_1")) return false;
+    consumeToken(b, I_COMMA);
+    return true;
+  }
+
+  /* ********************************************************** */
+  // operationInput | operationOutput | opParam | annotation
+  public static boolean updateOperationBodyPart(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "updateOperationBodyPart")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, I_UPDATE_OPERATION_BODY_PART, "<update operation body part>");
+    r = operationInput(b, l + 1);
+    if (!r) r = operationOutput(b, l + 1);
+    if (!r) r = opParam(b, l + 1);
+    if (!r) r = annotation(b, l + 1);
+    exit_section_(b, l, m, r, false, operationBodyRecover_parser_);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // operationName? 'UPDATE' updateOperationBody
+  public static boolean updateOperationDef(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "updateOperationDef")) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, I_UPDATE_OPERATION_DEF, "<update operation def>");
+    r = updateOperationDef_0(b, l + 1);
+    r = r && consumeToken(b, I_UPDATE);
+    p = r; // pin = 2
+    r = r && updateOperationBody(b, l + 1);
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // operationName?
+  private static boolean updateOperationDef_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "updateOperationDef_0")) return false;
+    operationName(b, l + 1);
+    return true;
+  }
+
+  /* ********************************************************** */
+  // qid {
+  // //  implements="com.intellij.psi.PsiNameIdentifierOwner"
+  // //  methods=[setName getNameIdentifier getReference]
+  // }
+  public static boolean varTagRef(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "varTagRef")) return false;
+    if (!nextTokenIs(b, I_ID)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = qid(b, l + 1);
+    r = r && varTagRef_1(b, l + 1);
+    exit_section_(b, m, I_VAR_TAG_REF, r);
+    return r;
+  }
+
+  // {
+  // //  implements="com.intellij.psi.PsiNameIdentifierOwner"
+  // //  methods=[setName getNameIdentifier getReference]
+  // }
+  private static boolean varTagRef_1(PsiBuilder b, int l) {
+    return true;
   }
 
   final static Parser dataValueRecover_parser_ = new Parser() {
@@ -3285,6 +3896,11 @@ public class IdlParser implements PsiParser, LightPsiParser {
   final static Parser opOutputKeyProjectionRecover_parser_ = new Parser() {
     public boolean parse(PsiBuilder b, int l) {
       return opOutputKeyProjectionRecover(b, l + 1);
+    }
+  };
+  final static Parser operationBodyRecover_parser_ = new Parser() {
+    public boolean parse(PsiBuilder b, int l) {
+      return operationBodyRecover(b, l + 1);
     }
   };
 }

@@ -32,10 +32,18 @@ public class IdlParserDefinition implements ParserDefinition {
   public final static TokenSet KEYWORDS = TokenSet.create(
       I_NAMESPACE,
       I_IMPORT,
+      I_META,
       I_FORBIDDEN,
       I_REQURIED,
-      I_PARAMETERS,
-      I_DEFAULT
+      I_DEFAULT,
+      I_RESOURCE,
+      I_READ,
+      I_CREATE,
+      I_UPDATE,
+      I_DELETE,
+      I_CUSTOM,
+      I_INPUT,
+      I_OUTPUT
   );
 
   public final static TokenSet STRING_LITERALS = TokenSet.create(I_STRING);
