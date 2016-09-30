@@ -63,6 +63,7 @@ ID=([:letter:]([:letter:]|[:digit:])*)|(`[^`]*`)
   "*"                  { return I_STAR; }
   "+"                  { return I_PLUS; }
   "@"                  { return I_AT; }
+  "#"                  { return I_HASH; }
   "_"                  { return I_UNDERSCORE; }
   "!"                  { return I_BANG; }
 

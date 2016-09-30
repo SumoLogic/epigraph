@@ -44,7 +44,7 @@ public class SchemaPresentationUtil {
 
   public static final Icon TAG_ICON = AllIcons.Nodes.Function;
   public static final Icon FIELD_ICON = AllIcons.Nodes.Field;
-  public static final Icon CUSTOM_PROPERTY_ICON = AllIcons.Nodes.Annotationtype;
+  public static final Icon ANNOTATION_ICON = AllIcons.Nodes.Annotationtype;
   public static final Icon ENUM_MEMBER_ICON = AllIcons.Nodes.Property;
 
   // need lazy init on overlayed icons to avoid start-up deadlocks
@@ -114,7 +114,7 @@ public class SchemaPresentationUtil {
       return SUPPLEMENT_ICON;
     }
 
-    if (element instanceof SchemaCustomParam) return CUSTOM_PROPERTY_ICON;
+    if (element instanceof SchemaAnnotation) return ANNOTATION_ICON;
     if (element instanceof SchemaFieldDecl) return FIELD_ICON;
     if (element instanceof SchemaEnumMemberDecl) return ENUM_MEMBER_ICON;
     if (element instanceof SchemaVarTagDecl) return TAG_ICON;
@@ -136,10 +136,8 @@ public class SchemaPresentationUtil {
       return id == null ? "" : id.getText();
     }
 
-    if (element instanceof SchemaCustomParam) {
-      SchemaCustomParam schemaCustomParam = (SchemaCustomParam) element;
-      return schemaCustomParam.getQid().getName();
-    }
+    if (element instanceof SchemaAnnotation)
+      return ((SchemaAnnotation) element).getQid().getName();
 
     if (element instanceof SchemaFieldDecl) {
       SchemaFieldDecl schemaFieldDecl = (SchemaFieldDecl) element;

@@ -112,6 +112,7 @@ public interface IdlElementTypes {
   IElementType I_DOT = new IdlElementType(".");
   IElementType I_EQ = new IdlElementType("=");
   IElementType I_FORBIDDEN = new IdlElementType("forbidden");
+  IElementType I_HASH = new IdlElementType("#");
   IElementType I_ID = new IdlElementType("id");
   IElementType I_IMPORT = new IdlElementType("import");
   IElementType I_META = new IdlElementType("meta");

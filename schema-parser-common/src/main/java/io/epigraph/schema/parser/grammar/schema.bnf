@@ -49,6 +49,7 @@
     BRACKET_LEFT = '['
     BRACKET_RIGHT = ']'
     AT = '@'
+    HASH = '#'
 
     space='regexp:\s+'
     comment='regexp://.*'
@@ -76,8 +77,8 @@
   // extends(".*.TypeDef") = "typeDef" // types hierarchy doesn't work with stubs
   implements(".*TypeDef")="io.epigraph.schema.parser.psi.SchemaTypeDef"
 
-  implements(".*TypeBody") = "io.epigraph.schema.parser.psi.CustomParamsHolder"
-  extends(".*TypeBody") = "io.epigraph.schema.parser.psi.impl.CustomParamHolderImpl"
+  implements(".*TypeBody") = "io.epigraph.schema.parser.psi.AnnotationsHolder"
+  extends(".*TypeBody") = "io.epigraph.schema.parser.psi.impl.AnnotationsHolderImpl"
 }
 
 root ::= namespaceDecl imports defs
@@ -99,7 +100,7 @@ namespaceDecl ::= 'namespace' fqn namespaceBody? {
 }
 
 private namespaceBody ::= '{' namespaceBodyPart* '}'
-private namespaceBodyPart ::= customParam // | ...
+private namespaceBodyPart ::= annotation // | ...
 
 fqnSegment ::= qid {
   implements="com.intellij.psi.PsiNameIdentifierOwner"
@@ -141,8 +142,8 @@ supplementsDecl ::= 'supplements' fqnTypeRef (',' fqnTypeRef)* {pin=1}
 
 // TODO Fix: varTagRef doesn't resolve
 defaultOverride ::= 'default' varTagRef
-customParam ::= qid '=' dataValue { // todo (here and idl): rename to annotation
-  name="custom attribute"
+annotation ::= qid '=' dataValue {
+  name="custom annotation"
   implements="com.intellij.psi.PsiNamedElement"
   methods = [getName setName getNameIdentifier]
   pin = 2
@@ -160,15 +161,15 @@ varTypeDef ::= typeDefModifiers 'vartype' typeName extendsDecl? supplementsDecl?
   pin=2
 }
 varTypeBody ::= '{' (varTypeBodyPart ','?)* '}'
-private varTypeBodyPart ::= varTagDecl | customParam
+private varTypeBodyPart ::= varTagDecl | annotation
 varTagDecl ::= typeMemberModifiers qid ':' typeRef varTypeMemberBody? {
-  implements=["io.epigraph.schema.parser.psi.CustomParamsHolder" "com.intellij.psi.PsiNamedElement"]
-  extends="io.epigraph.schema.parser.psi.impl.CustomParamHolderImpl"
+  implements=["io.epigraph.schema.parser.psi.AnnotationsHolder" "com.intellij.psi.PsiNamedElement"]
+  extends="io.epigraph.schema.parser.psi.impl.AnnotationsHolderImpl"
   methods=[getName setName getNameIdentifier getTextOffset getPresentation getVarTypeDef]
   pin=3
 }
 private varTypeMemberBody ::= '{' (varTypeMemberBodyPart ','?)* '}'
-private varTypeMemberBodyPart ::= customParam
+private varTypeMemberBodyPart ::= annotation
 
 /// record
 
@@ -180,15 +181,15 @@ recordTypeDef ::= typeDefModifiers 'record' typeName extendsDecl? metaDecl? supp
   pin=2
 }
 recordTypeBody ::= '{' (recordBodyPart ','?)* '}'
-private recordBodyPart ::= fieldDecl | customParam
+private recordBodyPart ::= fieldDecl | annotation
 fieldDecl ::= typeMemberModifiers qid ':' valueTypeRef fieldBody? {
-  implements=["io.epigraph.schema.parser.psi.CustomParamsHolder" "com.intellij.psi.PsiNamedElement"]
-  extends="io.epigraph.schema.parser.psi.impl.CustomParamHolderImpl"
+  implements=["io.epigraph.schema.parser.psi.AnnotationsHolder" "com.intellij.psi.PsiNamedElement"]
+  extends="io.epigraph.schema.parser.psi.impl.AnnotationsHolderImpl"
   methods=[getName setName getNameIdentifier getTextOffset getPresentation getRecordTypeDef]
   pin=3
 }
 private fieldBody ::= '{' (fieldBodyPart ','?)* '}'
-private fieldBodyPart ::= customParam
+private fieldBodyPart ::= annotation
 
 /// list
 
@@ -200,7 +201,7 @@ listTypeDef ::= typeDefModifiers anonList typeName extendsDecl? metaDecl? supple
   pin=2
 }
 listTypeBody ::= '{' (listTypeBodyPart ','?)* '}'
-private listTypeBodyPart ::= customParam
+private listTypeBodyPart ::= annotation
 
 /// map
 
@@ -211,7 +212,7 @@ mapTypeDef ::= typeDefModifiers anonMap typeName extendsDecl? metaDecl? suppleme
   pin=2
 }
 mapTypeBody ::= '{' (mapTypeBodyPart ','?)* '}'
-private mapTypeBodyPart ::= customParam
+private mapTypeBodyPart ::= annotation
 
 /// enum
 
@@ -223,15 +224,15 @@ enumTypeDef ::= 'enum' typeName metaDecl? enumTypeBody { // extends?
   pin=1
 }
 enumTypeBody ::= '{' (enumTypeBodyPart ','?)* '}'
-private enumTypeBodyPart ::= customParam | enumMemberDecl { recoverWhile = enumPartRecover }
+private enumTypeBodyPart ::= annotation | enumMemberDecl { recoverWhile = enumPartRecover }
 enumMemberDecl ::= qid enumMemberBody? {
-  implements=["io.epigraph.schema.parser.psi.CustomParamsHolder" "com.intellij.psi.PsiNamedElement"]
-  extends="io.epigraph.schema.parser.psi.impl.CustomParamHolderImpl"
+  implements=["io.epigraph.schema.parser.psi.AnnotationsHolder" "com.intellij.psi.PsiNamedElement"]
+  extends="io.epigraph.schema.parser.psi.impl.AnnotationsHolderImpl"
   methods=[getName setName getNameIdentifier]
   pin=1
 }
 private enumMemberBody ::='{' (enumMemberBodyPar ','?)* '}'
-private enumMemberBodyPar ::= customParam
+private enumMemberBodyPar ::= annotation
 
 private enumPartRecover ::= ! (',' | qid | '}')
 
@@ -246,7 +247,7 @@ primitiveTypeDef ::= typeDefModifiers primitiveKind typeName extendsDecl? metaDe
 }
 private primitiveKind ::= 'string' | 'integer' | 'long' | 'double' | 'boolean'
 primitiveTypeBody ::= '{' (primitiveBodyPart ','?)* '}'
-private primitiveBodyPart ::= customParam
+private primitiveBodyPart ::= annotation
 
 supplementDef ::= 'supplement' fqnTypeRef (',' fqnTypeRef)* 'with' fqnTypeRef {
   methods=[sourceRef supplementedRefs source supplemented getPresentation toString]
@@ -289,8 +290,8 @@ listDatum ::= dataTypeSpec? '[' (dataValue ','?)* ']' {pin=2 extends=datum}
 
 primitiveDatum ::= (dataTypeSpec '@')? (string | number | boolean) {extends=datum}
 
-enumDatum ::= '@' qid {extends=datum}
+enumDatum ::= '#' qid {extends=datum}
 
 nullDatum ::= (dataTypeSpec '@')? 'null' {extends=datum}
 
-private dataValueRecover ::= ! ( qid | primitiveDatum | '}' | ')' | '>' | ']' | 'abstract' | 'override' | ',' )
+private dataValueRecover ::= ! ( '#' | qid | primitiveDatum | '}' | ')' | '>' | ']' | 'abstract' | 'override' | ',' )

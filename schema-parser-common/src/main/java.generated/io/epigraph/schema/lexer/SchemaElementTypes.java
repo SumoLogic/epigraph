@@ -17,9 +17,9 @@ import io.epigraph.schema.parser.psi.impl.*;
 
 public interface SchemaElementTypes {
 
+  IElementType S_ANNOTATION = new SchemaElementType("S_ANNOTATION");
   IElementType S_ANON_LIST = new SchemaElementType("S_ANON_LIST");
   IElementType S_ANON_MAP = new SchemaElementType("S_ANON_MAP");
-  IElementType S_CUSTOM_PARAM = new SchemaElementType("S_CUSTOM_PARAM");
   IElementType S_DATA = new SchemaElementType("S_DATA");
   IElementType S_DATA_ENTRY = new SchemaElementType("S_DATA_ENTRY");
   IElementType S_DATA_VALUE = new SchemaElementType("S_DATA_VALUE");
@@ -85,6 +85,7 @@ public interface SchemaElementTypes {
   IElementType S_ENUM = new SchemaElementType("enum");
   IElementType S_EQ = new SchemaElementType("=");
   IElementType S_EXTENDS = new SchemaElementType("extends");
+  IElementType S_HASH = new SchemaElementType("#");
   IElementType S_ID = new SchemaElementType("id");
   IElementType S_IMPORT = new SchemaElementType("import");
   IElementType S_INTEGER_T = new SchemaElementType("integer");
@@ -112,14 +113,14 @@ public interface SchemaElementTypes {
   class Factory {
     public static PsiElement createElement(ASTNode node) {
       IElementType type = node.getElementType();
-       if (type == S_ANON_LIST) {
+       if (type == S_ANNOTATION) {
+        return new SchemaAnnotationImpl(node);
+      }
+      else if (type == S_ANON_LIST) {
         return new SchemaAnonListImpl(node);
       }
       else if (type == S_ANON_MAP) {
         return new SchemaAnonMapImpl(node);
-      }
-      else if (type == S_CUSTOM_PARAM) {
-        return new SchemaCustomParamImpl(node);
       }
       else if (type == S_DATA) {
         return new SchemaDataImpl(node);

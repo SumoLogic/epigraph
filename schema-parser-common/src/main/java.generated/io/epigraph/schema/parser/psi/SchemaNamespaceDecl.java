@@ -11,7 +11,7 @@ import io.epigraph.lang.Fqn;
 public interface SchemaNamespaceDecl extends PsiElement, StubBasedPsiElement<SchemaNamespaceDeclStub> {
 
   @NotNull
-  List<SchemaCustomParam> getCustomParamList();
+  List<SchemaAnnotation> getAnnotationList();
 
   @Nullable
   SchemaFqn getFqn();

@@ -389,7 +389,7 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ! ( qid | primitiveDatum | '}' | ')' | '>' | ']' | ',' )
+  // ! ( '#' | qid | primitiveDatum | '}' | ')' | '>' | ']' | ',' )
   static boolean dataValueRecover(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "dataValueRecover")) return false;
     boolean r;
@@ -399,12 +399,13 @@ public class IdlParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // qid | primitiveDatum | '}' | ')' | '>' | ']' | ','
+  // '#' | qid | primitiveDatum | '}' | ')' | '>' | ']' | ','
   private static boolean dataValueRecover_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "dataValueRecover_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = qid(b, l + 1);
+    r = consumeToken(b, I_HASH);
+    if (!r) r = qid(b, l + 1);
     if (!r) r = primitiveDatum(b, l + 1);
     if (!r) r = consumeToken(b, I_CURLY_RIGHT);
     if (!r) r = consumeToken(b, I_PAREN_RIGHT);
@@ -432,13 +433,13 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '@' qid
+  // '#' qid
   public static boolean enumDatum(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "enumDatum")) return false;
-    if (!nextTokenIs(b, I_AT)) return false;
+    if (!nextTokenIs(b, I_HASH)) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeToken(b, I_AT);
+    r = consumeToken(b, I_HASH);
     r = r && qid(b, l + 1);
     exit_section_(b, m, I_ENUM_DATUM, r);
     return r;

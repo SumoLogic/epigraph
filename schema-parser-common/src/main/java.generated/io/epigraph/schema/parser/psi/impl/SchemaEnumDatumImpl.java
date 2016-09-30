@@ -31,4 +31,10 @@ public class SchemaEnumDatumImpl extends SchemaDatumImpl implements SchemaEnumDa
     return notNullChild(PsiTreeUtil.getChildOfType(this, SchemaQid.class));
   }
 
+  @Override
+  @NotNull
+  public PsiElement getHash() {
+    return notNullChild(findChildByType(S_HASH));
+  }
+
 }

@@ -77,6 +77,7 @@ ID=([:letter:]([:letter:]|[:digit:])*)|(`[^`]*`)
   ">"                  { return S_ANGLE_RIGHT; }
   "/"                  { return S_SLASH; }
   "@"                  { return S_AT; }
+  "#"                  { return S_HASH; }
 
   {STRING}             { return S_STRING; }
   {NUMBER}             { return S_NUMBER; }

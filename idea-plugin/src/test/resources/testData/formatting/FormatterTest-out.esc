@@ -3,9 +3,9 @@ namespace some
 import foo
 
 record R {
-  attr = value
-  attr1 = value
-  attr2 = (a: b, c: <d: e> z: x)
+  attr = #value
+  attr1 = #value
+  attr2 = (#a: #b, #c: <d: #e> #z: #x)
   f: map[Q, list[W]]
 }
 

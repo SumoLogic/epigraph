@@ -9,16 +9,16 @@ import com.intellij.psi.PsiNameIdentifierOwner;
 
 public class SchemaVisitor extends PsiElementVisitor {
 
+  public void visitAnnotation(@NotNull SchemaAnnotation o) {
+    visitPsiNamedElement(o);
+  }
+
   public void visitAnonList(@NotNull SchemaAnonList o) {
     visitTypeRef(o);
   }
 
   public void visitAnonMap(@NotNull SchemaAnonMap o) {
     visitTypeRef(o);
-  }
-
-  public void visitCustomParam(@NotNull SchemaCustomParam o) {
-    visitPsiNamedElement(o);
   }
 
   public void visitData(@NotNull SchemaData o) {
@@ -50,12 +50,12 @@ public class SchemaVisitor extends PsiElementVisitor {
   }
 
   public void visitEnumMemberDecl(@NotNull SchemaEnumMemberDecl o) {
-    visitCustomParamsHolder(o);
+    visitAnnotationsHolder(o);
     // visitPsiNamedElement(o);
   }
 
   public void visitEnumTypeBody(@NotNull SchemaEnumTypeBody o) {
-    visitCustomParamsHolder(o);
+    visitAnnotationsHolder(o);
   }
 
   public void visitEnumTypeDef(@NotNull SchemaEnumTypeDef o) {
@@ -67,7 +67,7 @@ public class SchemaVisitor extends PsiElementVisitor {
   }
 
   public void visitFieldDecl(@NotNull SchemaFieldDecl o) {
-    visitCustomParamsHolder(o);
+    visitAnnotationsHolder(o);
     // visitPsiNamedElement(o);
   }
 
@@ -96,7 +96,7 @@ public class SchemaVisitor extends PsiElementVisitor {
   }
 
   public void visitListTypeBody(@NotNull SchemaListTypeBody o) {
-    visitCustomParamsHolder(o);
+    visitAnnotationsHolder(o);
   }
 
   public void visitListTypeDef(@NotNull SchemaListTypeDef o) {
@@ -112,7 +112,7 @@ public class SchemaVisitor extends PsiElementVisitor {
   }
 
   public void visitMapTypeBody(@NotNull SchemaMapTypeBody o) {
-    visitCustomParamsHolder(o);
+    visitAnnotationsHolder(o);
   }
 
   public void visitMapTypeDef(@NotNull SchemaMapTypeDef o) {
@@ -136,7 +136,7 @@ public class SchemaVisitor extends PsiElementVisitor {
   }
 
   public void visitPrimitiveTypeBody(@NotNull SchemaPrimitiveTypeBody o) {
-    visitCustomParamsHolder(o);
+    visitAnnotationsHolder(o);
   }
 
   public void visitPrimitiveTypeDef(@NotNull SchemaPrimitiveTypeDef o) {
@@ -156,7 +156,7 @@ public class SchemaVisitor extends PsiElementVisitor {
   }
 
   public void visitRecordTypeBody(@NotNull SchemaRecordTypeBody o) {
-    visitCustomParamsHolder(o);
+    visitAnnotationsHolder(o);
   }
 
   public void visitRecordTypeDef(@NotNull SchemaRecordTypeDef o) {
@@ -184,7 +184,7 @@ public class SchemaVisitor extends PsiElementVisitor {
   }
 
   public void visitVarTagDecl(@NotNull SchemaVarTagDecl o) {
-    visitCustomParamsHolder(o);
+    visitAnnotationsHolder(o);
     // visitPsiNamedElement(o);
   }
 
@@ -193,14 +193,14 @@ public class SchemaVisitor extends PsiElementVisitor {
   }
 
   public void visitVarTypeBody(@NotNull SchemaVarTypeBody o) {
-    visitCustomParamsHolder(o);
+    visitAnnotationsHolder(o);
   }
 
   public void visitVarTypeDef(@NotNull SchemaVarTypeDef o) {
     visitTypeDef(o);
   }
 
-  public void visitCustomParamsHolder(@NotNull CustomParamsHolder o) {
+  public void visitAnnotationsHolder(@NotNull AnnotationsHolder o) {
     visitElement(o);
   }
 

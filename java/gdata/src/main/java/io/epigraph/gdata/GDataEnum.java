@@ -38,6 +38,6 @@ public class GDataEnum extends GDatum {
 
   @Override
   public String toString() {
-    return "@" + value;
+    return "#" + value;
   }
 }

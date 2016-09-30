@@ -23,14 +23,14 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     boolean r;
     b = adapt_builder_(t, b, this, EXTENDS_SETS_);
     Marker m = enter_section_(b, 0, _COLLAPSE_, null);
-    if (t == S_ANON_LIST) {
+    if (t == S_ANNOTATION) {
+      r = annotation(b, 0);
+    }
+    else if (t == S_ANON_LIST) {
       r = anonList(b, 0);
     }
     else if (t == S_ANON_MAP) {
       r = anonMap(b, 0);
-    }
-    else if (t == S_CUSTOM_PARAM) {
-      r = customParam(b, 0);
     }
     else if (t == S_DATA) {
       r = data(b, 0);
@@ -181,6 +181,21 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   };
 
   /* ********************************************************** */
+  // qid '=' dataValue
+  public static boolean annotation(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "annotation")) return false;
+    if (!nextTokenIs(b, S_ID)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, S_ANNOTATION, "<custom annotation>");
+    r = qid(b, l + 1);
+    r = r && consumeToken(b, S_EQ);
+    p = r; // pin = 2
+    r = r && dataValue(b, l + 1);
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  /* ********************************************************** */
   // 'list' '[' valueTypeRef ']'
   public static boolean anonList(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "anonList")) return false;
@@ -210,21 +225,6 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     r = p && report_error_(b, consumeToken(b, S_COMMA)) && r;
     r = p && report_error_(b, valueTypeRef(b, l + 1)) && r;
     r = p && consumeToken(b, S_BRACKET_RIGHT) && r;
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
-  }
-
-  /* ********************************************************** */
-  // qid '=' dataValue
-  public static boolean customParam(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "customParam")) return false;
-    if (!nextTokenIs(b, S_ID)) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, S_CUSTOM_PARAM, "<custom attribute>");
-    r = qid(b, l + 1);
-    r = r && consumeToken(b, S_EQ);
-    p = r; // pin = 2
-    r = r && dataValue(b, l + 1);
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -305,7 +305,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ! ( qid | primitiveDatum | '}' | ')' | '>' | ']' | 'abstract' | 'override' | ',' )
+  // ! ( '#' | qid | primitiveDatum | '}' | ')' | '>' | ']' | 'abstract' | 'override' | ',' )
   static boolean dataValueRecover(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "dataValueRecover")) return false;
     boolean r;
@@ -315,12 +315,13 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // qid | primitiveDatum | '}' | ')' | '>' | ']' | 'abstract' | 'override' | ','
+  // '#' | qid | primitiveDatum | '}' | ')' | '>' | ']' | 'abstract' | 'override' | ','
   private static boolean dataValueRecover_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "dataValueRecover_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = qid(b, l + 1);
+    r = consumeToken(b, S_HASH);
+    if (!r) r = qid(b, l + 1);
     if (!r) r = primitiveDatum(b, l + 1);
     if (!r) r = consumeToken(b, S_CURLY_RIGHT);
     if (!r) r = consumeToken(b, S_PAREN_RIGHT);
@@ -396,13 +397,14 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // qid
+  // '#' qid
   public static boolean enumDatum(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "enumDatum")) return false;
-    if (!nextTokenIs(b, S_ID)) return false;
+    if (!nextTokenIs(b, S_HASH)) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = qid(b, l + 1);
+    r = consumeToken(b, S_HASH);
+    r = r && qid(b, l + 1);
     exit_section_(b, m, S_ENUM_DATUM, r);
     return r;
   }
@@ -453,9 +455,9 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // customParam
+  // annotation
   static boolean enumMemberBodyPar(PsiBuilder b, int l) {
-    return customParam(b, l + 1);
+    return annotation(b, l + 1);
   }
 
   /* ********************************************************** */
@@ -548,12 +550,12 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // customParam | enumMemberDecl
+  // annotation | enumMemberDecl
   static boolean enumTypeBodyPart(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "enumTypeBodyPart")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_);
-    r = customParam(b, l + 1);
+    r = annotation(b, l + 1);
     if (!r) r = enumMemberDecl(b, l + 1);
     exit_section_(b, l, m, r, false, enumPartRecover_parser_);
     return r;
@@ -666,12 +668,12 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // customParam
+  // annotation
   static boolean fieldBodyPart(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "fieldBodyPart")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_);
-    r = customParam(b, l + 1);
+    r = annotation(b, l + 1);
     exit_section_(b, l, m, r, false, partRecover_parser_);
     return r;
   }
@@ -892,12 +894,12 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // customParam
+  // annotation
   static boolean listTypeBodyPart(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "listTypeBodyPart")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_);
-    r = customParam(b, l + 1);
+    r = annotation(b, l + 1);
     exit_section_(b, l, m, r, false, partRecover_parser_);
     return r;
   }
@@ -1052,12 +1054,12 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // customParam
+  // annotation
   static boolean mapTypeBodyPart(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "mapTypeBodyPart")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_);
-    r = customParam(b, l + 1);
+    r = annotation(b, l + 1);
     exit_section_(b, l, m, r, false, partRecover_parser_);
     return r;
   }
@@ -1151,12 +1153,12 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // customParam
+  // annotation
   static boolean namespaceBodyPart(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "namespaceBodyPart")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_);
-    r = customParam(b, l + 1);
+    r = annotation(b, l + 1);
     exit_section_(b, l, m, r, false, partRecover_parser_);
     return r;
   }
@@ -1302,12 +1304,12 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // customParam
+  // annotation
   static boolean primitiveBodyPart(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "primitiveBodyPart")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_);
-    r = customParam(b, l + 1);
+    r = annotation(b, l + 1);
     exit_section_(b, l, m, r, false, partRecover_parser_);
     return r;
   }
@@ -1473,13 +1475,13 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // fieldDecl | customParam
+  // fieldDecl | annotation
   static boolean recordBodyPart(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "recordBodyPart")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_);
     r = fieldDecl(b, l + 1);
-    if (!r) r = customParam(b, l + 1);
+    if (!r) r = annotation(b, l + 1);
     exit_section_(b, l, m, r, false, partRecover_parser_);
     return r;
   }
@@ -1902,13 +1904,13 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // varTagDecl | customParam
+  // varTagDecl | annotation
   static boolean varTypeBodyPart(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "varTypeBodyPart")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_);
     r = varTagDecl(b, l + 1);
-    if (!r) r = customParam(b, l + 1);
+    if (!r) r = annotation(b, l + 1);
     exit_section_(b, l, m, r, false, partRecover_parser_);
     return r;
   }
@@ -1998,12 +2000,12 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // customParam
+  // annotation
   static boolean varTypeMemberBodyPart(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "varTypeMemberBodyPart")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_);
-    r = customParam(b, l + 1);
+    r = annotation(b, l + 1);
     exit_section_(b, l, m, r, false, partRecover_parser_);
     return r;
   }

@@ -6,10 +6,10 @@ import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
 
-public interface SchemaEnumMemberDecl extends CustomParamsHolder, PsiNamedElement {
+public interface SchemaEnumMemberDecl extends AnnotationsHolder, PsiNamedElement {
 
   @NotNull
-  List<SchemaCustomParam> getCustomParamList();
+  List<SchemaAnnotation> getAnnotationList();
 
   @NotNull
   SchemaQid getQid();

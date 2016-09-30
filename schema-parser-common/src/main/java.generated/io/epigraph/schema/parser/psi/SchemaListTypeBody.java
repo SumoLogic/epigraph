@@ -5,10 +5,10 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface SchemaListTypeBody extends CustomParamsHolder {
+public interface SchemaListTypeBody extends AnnotationsHolder {
 
   @NotNull
-  List<SchemaCustomParam> getCustomParamList();
+  List<SchemaAnnotation> getAnnotationList();
 
   @NotNull
   PsiElement getCurlyLeft();

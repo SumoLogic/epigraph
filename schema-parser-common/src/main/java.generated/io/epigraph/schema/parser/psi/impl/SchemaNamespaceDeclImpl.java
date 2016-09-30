@@ -38,8 +38,8 @@ public class SchemaNamespaceDeclImpl extends StubBasedPsiElementBase<SchemaNames
 
   @Override
   @NotNull
-  public List<SchemaCustomParam> getCustomParamList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaCustomParam.class);
+  public List<SchemaAnnotation> getAnnotationList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaAnnotation.class);
   }
 
   @Override

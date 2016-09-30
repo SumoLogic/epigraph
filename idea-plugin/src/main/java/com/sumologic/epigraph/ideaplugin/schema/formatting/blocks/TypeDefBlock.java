@@ -59,7 +59,7 @@ public class TypeDefBlock extends SchemaBlock {
 //        AlignmentStrategy.wrap( // align members
 //            Alignment.createAlignment(),
 //            false,
-//            S_CUSTOM_PARAM,
+//            S_ANNOTATION,
 //            S_MULTI_MEMBER_DECL,
 //            S_FIELD_DECL,
 //            S_TAG_DECL,

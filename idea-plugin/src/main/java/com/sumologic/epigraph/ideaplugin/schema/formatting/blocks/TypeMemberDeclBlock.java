@@ -11,7 +11,7 @@ import io.epigraph.schema.parser.SchemaParserDefinition;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static io.epigraph.schema.lexer.SchemaElementTypes.S_CUSTOM_PARAM;
+import static io.epigraph.schema.lexer.SchemaElementTypes.S_ANNOTATION;
 
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
@@ -27,7 +27,7 @@ public class TypeMemberDeclBlock extends SchemaBlock {
 
     if (child.getPsi().getPrevSibling() == null) return Indent.getNoneIndent();
     if (SchemaParserDefinition.CURLY_BRACES.contains(type)) return Indent.getNoneIndent();
-    if (type == S_CUSTOM_PARAM) return Indent.getNormalIndent();
+    if (type == S_ANNOTATION) return Indent.getNormalIndent();
     return Indent.getContinuationIndent();
   }
 

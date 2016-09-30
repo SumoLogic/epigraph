@@ -14,8 +14,8 @@ import static io.epigraph.schema.lexer.SchemaElementTypes.S_ID;
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public class CustomParamBlock extends SchemaBlock {
-  public CustomParamBlock(@NotNull ASTNode node, @Nullable Wrap wrap, @Nullable Alignment alignment, @Nullable Indent indent, SpacingBuilder spacingBuilder) {
+public class AnnotationBlock extends SchemaBlock {
+  public AnnotationBlock(@NotNull ASTNode node, @Nullable Wrap wrap, @Nullable Alignment alignment, @Nullable Indent indent, SpacingBuilder spacingBuilder) {
     super(node, wrap, alignment, indent, spacingBuilder);
   }
 

@@ -10,7 +10,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import static io.epigraph.schema.lexer.SchemaElementTypes.*;
 import io.epigraph.schema.parser.psi.*;
 
-public class SchemaVarTypeBodyImpl extends CustomParamHolderImpl implements SchemaVarTypeBody {
+public class SchemaVarTypeBodyImpl extends AnnotationsHolderImpl implements SchemaVarTypeBody {
 
   public SchemaVarTypeBodyImpl(ASTNode node) {
     super(node);
@@ -27,8 +27,8 @@ public class SchemaVarTypeBodyImpl extends CustomParamHolderImpl implements Sche
 
   @Override
   @NotNull
-  public List<SchemaCustomParam> getCustomParamList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaCustomParam.class);
+  public List<SchemaAnnotation> getAnnotationList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaAnnotation.class);
   }
 
   @Override

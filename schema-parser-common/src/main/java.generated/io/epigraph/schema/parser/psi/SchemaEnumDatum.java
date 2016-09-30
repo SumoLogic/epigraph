@@ -10,4 +10,7 @@ public interface SchemaEnumDatum extends SchemaDatum {
   @NotNull
   SchemaQid getQid();
 
+  @NotNull
+  PsiElement getHash();
+
 }

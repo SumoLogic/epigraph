@@ -5,10 +5,10 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface SchemaRecordTypeBody extends CustomParamsHolder {
+public interface SchemaRecordTypeBody extends AnnotationsHolder {
 
   @NotNull
-  List<SchemaCustomParam> getCustomParamList();
+  List<SchemaAnnotation> getAnnotationList();
 
   @NotNull
   List<SchemaFieldDecl> getFieldDeclList();

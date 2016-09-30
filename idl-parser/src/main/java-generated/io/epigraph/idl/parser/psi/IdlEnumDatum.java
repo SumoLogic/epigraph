@@ -11,6 +11,6 @@ public interface IdlEnumDatum extends IdlDatum {
   IdlQid getQid();
 
   @NotNull
-  PsiElement getAt();
+  PsiElement getHash();
 
 }

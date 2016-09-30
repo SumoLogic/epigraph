@@ -11,14 +11,14 @@ import static io.epigraph.schema.lexer.SchemaElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import io.epigraph.schema.parser.psi.*;
 
-public class SchemaCustomParamImpl extends ASTWrapperPsiElement implements SchemaCustomParam {
+public class SchemaAnnotationImpl extends ASTWrapperPsiElement implements SchemaAnnotation {
 
-  public SchemaCustomParamImpl(ASTNode node) {
+  public SchemaAnnotationImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull SchemaVisitor visitor) {
-    visitor.visitCustomParam(this);
+    visitor.visitAnnotation(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {

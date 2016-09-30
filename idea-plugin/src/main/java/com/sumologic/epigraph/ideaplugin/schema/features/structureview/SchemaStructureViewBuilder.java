@@ -29,7 +29,7 @@ public class SchemaStructureViewBuilder extends TreeBasedStructureViewBuilder {
             SchemaFieldDecl.class,
             SchemaVarTagDecl.class,
             SchemaEnumMemberDecl.class,
-            SchemaCustomParam.class
+            SchemaAnnotation.class
         );
   }
 }

@@ -11,7 +11,7 @@ import static io.epigraph.schema.lexer.SchemaElementTypes.*;
 import io.epigraph.schema.parser.psi.*;
 import com.intellij.navigation.ItemPresentation;
 
-public class SchemaFieldDeclImpl extends CustomParamHolderImpl implements SchemaFieldDecl {
+public class SchemaFieldDeclImpl extends AnnotationsHolderImpl implements SchemaFieldDecl {
 
   public SchemaFieldDeclImpl(ASTNode node) {
     super(node);
@@ -28,8 +28,8 @@ public class SchemaFieldDeclImpl extends CustomParamHolderImpl implements Schema
 
   @Override
   @NotNull
-  public List<SchemaCustomParam> getCustomParamList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaCustomParam.class);
+  public List<SchemaAnnotation> getAnnotationList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaAnnotation.class);
   }
 
   @Override

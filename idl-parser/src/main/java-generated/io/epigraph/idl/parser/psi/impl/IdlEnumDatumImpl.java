@@ -33,8 +33,8 @@ public class IdlEnumDatumImpl extends IdlDatumImpl implements IdlEnumDatum {
 
   @Override
   @NotNull
-  public PsiElement getAt() {
-    return findNotNullChildByType(I_AT);
+  public PsiElement getHash() {
+    return findNotNullChildByType(I_HASH);
   }
 
 }

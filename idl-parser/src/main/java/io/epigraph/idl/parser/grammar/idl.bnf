@@ -38,6 +38,7 @@
     STAR = '*'
     PLUS = '+'
     AT = '@'
+    HASH = '#'
     UNDERSCORE = '_'
     BANG = '!'
 
@@ -104,7 +105,7 @@ fqnTypeRef ::= fqn {
 ////  methods=[setName getNameIdentifier getReference]
 //}
 
-annotation ::= qid '=' dataValue { // todo (here and schema): rename to annotation
+annotation ::= qid '=' dataValue {
   name="custom annotation"
 //  implements="com.intellij.psi.PsiNamedElement"
 //  methods = [getName setName getNameIdentifier]
@@ -335,8 +336,8 @@ listDatum ::= dataTypeSpec? '[' (dataValue ','?)* ']' {pin=2 extends=datum}
 
 primitiveDatum ::= (dataTypeSpec '@')? (string | number | boolean) {extends=datum}
 
-enumDatum ::= '@' qid {extends=datum}
+enumDatum ::= '#' qid {extends=datum}
 
 nullDatum ::= (dataTypeSpec '@')? 'null' {extends=datum}
 
-private dataValueRecover ::= ! ( qid | primitiveDatum | '}' | ')' | '>' | ']' | ',' )
+private dataValueRecover ::= ! ( '#' | qid | primitiveDatum | '}' | ')' | '>' | ']' | ',' )

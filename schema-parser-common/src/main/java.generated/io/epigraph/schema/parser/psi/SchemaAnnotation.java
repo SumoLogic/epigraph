@@ -6,7 +6,7 @@ import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
 
-public interface SchemaCustomParam extends PsiNamedElement {
+public interface SchemaAnnotation extends PsiNamedElement {
 
   @Nullable
   SchemaDataValue getDataValue();

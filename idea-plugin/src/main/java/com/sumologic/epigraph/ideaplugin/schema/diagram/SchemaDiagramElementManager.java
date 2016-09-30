@@ -4,7 +4,6 @@ import com.intellij.diagram.AbstractDiagramElementManager;
 import com.intellij.diagram.presentation.DiagramState;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.LangDataKeys;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiNamedElement;
 import com.intellij.ui.SimpleColoredText;
@@ -85,7 +84,7 @@ public class SchemaDiagramElementManager extends AbstractDiagramElementManager<P
       SchemaVarTypeBody body = varTypeDef.getVarTypeBody();
       if (body != null) {
         res.addAll(body.getVarTagDeclList());
-        res.addAll(body.getCustomParamList());
+        res.addAll(body.getAnnotationsList());
       }
     }
 
@@ -94,7 +93,7 @@ public class SchemaDiagramElementManager extends AbstractDiagramElementManager<P
       SchemaRecordTypeBody body = recordTypeDef.getRecordTypeBody();
       if (body != null) {
         res.addAll(body.getFieldDeclList());
-        res.addAll(body.getCustomParamList());
+        res.addAll(body.getAnnotationsList());
       }
     }
 
@@ -102,7 +101,7 @@ public class SchemaDiagramElementManager extends AbstractDiagramElementManager<P
       SchemaMapTypeDef mapTypeDef = (SchemaMapTypeDef) parent;
       SchemaMapTypeBody body = mapTypeDef.getMapTypeBody();
       if (body != null) {
-        res.addAll(body.getCustomParamList());
+        res.addAll(body.getAnnotationsList());
       }
     }
 
@@ -110,7 +109,7 @@ public class SchemaDiagramElementManager extends AbstractDiagramElementManager<P
       SchemaListTypeDef listTypeDef = (SchemaListTypeDef) parent;
       SchemaListTypeBody body = listTypeDef.getListTypeBody();
       if (body != null) {
-        res.addAll(body.getCustomParamList());
+        res.addAll(body.getAnnotationsList());
       }
     }
 
@@ -119,7 +118,7 @@ public class SchemaDiagramElementManager extends AbstractDiagramElementManager<P
       SchemaEnumTypeBody body = enumTypeDef.getEnumTypeBody();
       if (body != null) {
         res.addAll(body.getEnumMemberDeclList());
-        res.addAll(body.getCustomParamList());
+        res.addAll(body.getAnnotationsList());
       }
     }
 
@@ -127,7 +126,7 @@ public class SchemaDiagramElementManager extends AbstractDiagramElementManager<P
       SchemaPrimitiveTypeDef primitiveTypeDef = (SchemaPrimitiveTypeDef) parent;
       SchemaPrimitiveTypeBody body = primitiveTypeDef.getPrimitiveTypeBody();
       if (body != null) {
-        res.addAll(body.getCustomParamList());
+        res.addAll(body.getAnnotationsList());
       }
     }
 
@@ -147,8 +146,8 @@ public class SchemaDiagramElementManager extends AbstractDiagramElementManager<P
     if (element instanceof SchemaEnumMemberDecl)
       return SchemaPresentationUtil.ENUM_MEMBER_ICON;
 
-    if (element instanceof SchemaCustomParam)
-      return SchemaPresentationUtil.CUSTOM_PROPERTY_ICON;
+    if (element instanceof SchemaAnnotation)
+      return SchemaPresentationUtil.ANNOTATION_ICON;
 
     return super.getItemIcon(element, presentation);
   }

@@ -178,8 +178,8 @@ public class SchemaAnnotator implements Annotator {
       }
 
       @Override
-      public void visitCustomParam(@NotNull SchemaCustomParam customParam) {
-        setHighlighting(customParam.getQid(), holder, SchemaSyntaxHighlighter.PARAM_NAME);
+      public void visitAnnotation(@NotNull SchemaAnnotation annotation) {
+        setHighlighting(annotation.getQid(), holder, SchemaSyntaxHighlighter.PARAM_NAME);
       }
 
       @Override

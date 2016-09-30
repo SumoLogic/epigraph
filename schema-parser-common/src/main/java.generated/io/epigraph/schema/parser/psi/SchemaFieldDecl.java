@@ -7,10 +7,10 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
 import com.intellij.navigation.ItemPresentation;
 
-public interface SchemaFieldDecl extends CustomParamsHolder, PsiNamedElement {
+public interface SchemaFieldDecl extends AnnotationsHolder, PsiNamedElement {
 
   @NotNull
-  List<SchemaCustomParam> getCustomParamList();
+  List<SchemaAnnotation> getAnnotationList();
 
   @NotNull
   SchemaQid getQid();

@@ -438,23 +438,23 @@ public class SchemaPsiImplUtil {
     return enumMemberDecl.getQid().getId();
   }
 
-  // custom param
+  // annotation
 
   @Contract(pure = true)
   @Nullable
-  public static String getName(SchemaCustomParam customParam) {
-    return getNameIdentifier(customParam).getText();
+  public static String getName(SchemaAnnotation annotation) {
+    return getNameIdentifier(annotation).getText();
   }
 
-  public static PsiElement setName(SchemaCustomParam customParam, String name) {
-    customParam.getQid().setName(name);
-    return customParam;
+  public static PsiElement setName(SchemaAnnotation annotation, String name) {
+    annotation.getQid().setName(name);
+    return annotation;
   }
 
   @Contract(pure = true)
   @NotNull
-  public static PsiElement getNameIdentifier(SchemaCustomParam customParam) {
-    return customParam.getQid().getId();
+  public static PsiElement getNameIdentifier(SchemaAnnotation annotation) {
+    return annotation.getQid().getId();
   }
 
   // common toNullableString for all stub-based elements --------------------------------------------

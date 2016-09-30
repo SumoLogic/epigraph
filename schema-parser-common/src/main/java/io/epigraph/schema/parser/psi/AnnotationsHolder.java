@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
-public interface CustomParamsHolder extends PsiElement {
+public interface AnnotationsHolder extends PsiElement {
   @NotNull
-  List<SchemaCustomParam> getCustomParamList();
+  List<SchemaAnnotation> getAnnotationsList();
 }
