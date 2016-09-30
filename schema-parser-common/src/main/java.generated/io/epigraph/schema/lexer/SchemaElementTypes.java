@@ -100,7 +100,6 @@ public interface SchemaElementTypes {
   IElementType S_OVERRIDE = new SchemaElementType("override");
   IElementType S_PAREN_LEFT = new SchemaElementType("(");
   IElementType S_PAREN_RIGHT = new SchemaElementType(")");
-  IElementType S_POLYMORPHIC = new SchemaElementType("polymorphic");
   IElementType S_RECORD = new SchemaElementType("record");
   IElementType S_SLASH = new SchemaElementType("/");
   IElementType S_STRING = new SchemaElementType("string");

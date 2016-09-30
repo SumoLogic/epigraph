@@ -1185,7 +1185,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ! ('import' | 'namespace' | 'polymorphic' | 'abstract' | 'record' | ',' |
+  // ! ('import' | 'namespace' | 'abstract' | 'record' | ',' |
   //                            'map' | 'list' | 'vartype' | 'enum' | 'supplement'|
   //                            'string' | 'integer' | 'long' | 'double' | 'boolean')
   static boolean namespaceDeclRecover(PsiBuilder b, int l) {
@@ -1197,7 +1197,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // 'import' | 'namespace' | 'polymorphic' | 'abstract' | 'record' | ',' |
+  // 'import' | 'namespace' | 'abstract' | 'record' | ',' |
   //                            'map' | 'list' | 'vartype' | 'enum' | 'supplement'|
   //                            'string' | 'integer' | 'long' | 'double' | 'boolean'
   private static boolean namespaceDeclRecover_0(PsiBuilder b, int l) {
@@ -1206,7 +1206,6 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b);
     r = consumeToken(b, S_IMPORT);
     if (!r) r = consumeToken(b, S_NAMESPACE);
-    if (!r) r = consumeToken(b, S_POLYMORPHIC);
     if (!r) r = consumeToken(b, S_ABSTRACT);
     if (!r) r = consumeToken(b, S_RECORD);
     if (!r) r = consumeToken(b, S_COMMA);
@@ -1797,28 +1796,20 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'polymorphic'? typeRef defaultOverride?
+  // typeRef defaultOverride?
   public static boolean valueTypeRef(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "valueTypeRef")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, S_VALUE_TYPE_REF, "<value type ref>");
-    r = valueTypeRef_0(b, l + 1);
-    r = r && typeRef(b, l + 1);
-    r = r && valueTypeRef_2(b, l + 1);
+    r = typeRef(b, l + 1);
+    r = r && valueTypeRef_1(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
 
-  // 'polymorphic'?
-  private static boolean valueTypeRef_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "valueTypeRef_0")) return false;
-    consumeToken(b, S_POLYMORPHIC);
-    return true;
-  }
-
   // defaultOverride?
-  private static boolean valueTypeRef_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "valueTypeRef_2")) return false;
+  private static boolean valueTypeRef_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "valueTypeRef_1")) return false;
     defaultOverride(b, l + 1);
     return true;
   }

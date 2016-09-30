@@ -37,9 +37,6 @@ public interface SchemaTypeDef extends PsiNameIdentifierOwner {
   PsiElement getAbstract() ;
 
   @Nullable
-  PsiElement getPolymorphic() ;
-
-  @Nullable
   SchemaExtendsDecl getExtendsDecl();
 
   @Nullable

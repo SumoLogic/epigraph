@@ -68,11 +68,6 @@ public abstract class SchemaTypeDefImplBase<S extends SchemaTypeDefStubBase<T>, 
     return findChildByType(S_ABSTRACT);
   }
 
-  @Nullable
-  public PsiElement getPolymorphic() {
-    return findChildByType(S_POLYMORPHIC);
-  }
-
   @Override
   @Nullable
   public SchemaQid getQid() {

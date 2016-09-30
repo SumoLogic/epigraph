@@ -54,7 +54,6 @@ ID=([:letter:]([:letter:]|[:digit:])*)|(`[^`]*`)
   "supplements"        { return S_SUPPLEMENTS; }
   "with"               { return S_WITH; }
   "vartype"            { return S_VARTYPE; }
-  "polymorphic"        { return S_POLYMORPHIC; }
   "abstract"           { return S_ABSTRACT; }
   "override"           { return S_OVERRIDE; }
   "enum"               { return S_ENUM; }

@@ -29,7 +29,6 @@
     SUPPLEMENT='supplement'
     SUPPLEMENTS='supplements'
     WITH='with'
-    POLYMORPHIC='polymorphic'
     ABSTRACT='abstract'
     OVERRIDE='override'
     // todo add final, primitive, any?
@@ -132,7 +131,7 @@ typeDefWrapper ::= varTypeDef | recordTypeDef | mapTypeDef | listTypeDef | primi
 private typeDefModifiers ::= 'abstract'?
 private typeMemberModifiers ::= 'override'? 'abstract'?
 
-valueTypeRef ::= 'polymorphic'? typeRef defaultOverride?
+valueTypeRef ::= typeRef defaultOverride?
 
 anonList ::= 'list' '[' valueTypeRef ']' {pin=1 extends="typeRef" }
 anonMap ::= 'map' '[' typeRef ',' valueTypeRef ']' {pin=1 extends="typeRef" }
@@ -216,7 +215,7 @@ private mapTypeBodyPart ::= annotation
 
 /// enum
 
-// abstract? polymorphic?
+// abstract?
 enumTypeDef ::= 'enum' typeName metaDecl? enumTypeBody { // extends?
   extends="io.epigraph.schema.parser.psi.impl.SchemaEnumTypeDefImplBase"
   stubClass="io.epigraph.schema.parser.psi.stubs.SchemaEnumTypeDefStub"
@@ -256,13 +255,13 @@ supplementDef ::= 'supplement' fqnTypeRef (',' fqnTypeRef)* 'with' fqnTypeRef {
   pin=1
 }
 
-private namespaceDeclRecover ::= ! ('import' | 'namespace' | 'polymorphic' | 'abstract' | 'record' | ',' |
+private namespaceDeclRecover ::= ! ('import' | 'namespace' | 'abstract' | 'record' | ',' |
                            'map' | 'list' | 'vartype' | 'enum' | 'supplement'|
                            'string' | 'integer' | 'long' | 'double' | 'boolean')
 
 private importRecover ::= namespaceDeclRecover
 private declRecover ::= namespaceDeclRecover
-//private declRecover ::= ! ('import' | 'namespace' | 'polymorphic' | 'record' | ',' |
+//private declRecover ::= ! ('import' | 'namespace' | 'record' | ',' |
 //                           'vartype' | 'enum' | 'supplement'|
 //                           'string' | 'integer' | 'long' | 'double' | 'boolean')
 

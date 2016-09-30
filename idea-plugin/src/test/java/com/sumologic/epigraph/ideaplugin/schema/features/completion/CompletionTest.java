@@ -12,7 +12,7 @@ import java.util.*;
  */
 public class CompletionTest extends LightCodeInsightFixtureTestCase {
   private final List<String> TOP_LEVEL = Arrays.asList(
-      "polymorphic ", "abstract ", "vartype ", "record ", "map", "list", "enum ",
+      "abstract ", "vartype ", "record ", "map", "list", "enum ",
       "string ", "double ", "integer ", "long ", "boolean ", "supplement "
   );
 
@@ -59,7 +59,7 @@ public class CompletionTest extends LightCodeInsightFixtureTestCase {
 
   public void testCompletionAfterAbstract() {
     myFixture.configureByFile("CompletionAfterAbstract.esc");
-    checkCompletionVariants("polymorphic ", "record ", "map", "list", "string ", "double ", "integer ", "long ", "boolean ");
+    checkCompletionVariants("record ", "map", "list", "string ", "double ", "integer ", "long ", "boolean ");
   }
 
   public void testCompletionAfterRecordName() {
@@ -224,7 +224,7 @@ public class CompletionTest extends LightCodeInsightFixtureTestCase {
     checkCompletionVariants("override "); // Baz is not a vartype, so no 'default'
 
     configureByText("namespace foo vartype V { v: Baz } record Baz { qux: <caret> }");
-    checkCompletionVariants("polymorphic ", "V", "Baz");
+    checkCompletionVariants("V", "Baz");
 
     configureByText("namespace foo vartype V { v: Baz } record Baz { qux: V <caret> }");
     checkCompletionVariants("override ", "default ");
@@ -290,7 +290,6 @@ public class CompletionTest extends LightCodeInsightFixtureTestCase {
     checkCompletionVariants("bar");
   }
 
-  // todo test 'polymorphic' completion in anon lists/maps
   // todo test 'default' override in anon lists/maps
 
   // ----------------------------------

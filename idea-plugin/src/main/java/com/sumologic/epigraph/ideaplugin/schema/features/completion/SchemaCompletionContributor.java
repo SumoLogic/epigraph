@@ -30,16 +30,10 @@ public class SchemaCompletionContributor extends CompletionContributor {
   // TODO default` doesn't show up in auto-complete/suggestions after `vartype Foo `
 
   private static final String[] TOP_LEVEL_COMPLETIONS = new String[]{
-      "polymorphic ", "abstract ",
-      "record ", "map", "list", "vartype ", "enum ",
+      "abstract ", "record ", "map", "list", "vartype ", "enum ",
       "integer ", "long ", "double ", "boolean ", "string ",
       "supplement "
   };
-
-  // items from TOP_LEVEL_COMPLETIONS that can't follow 'polymorphic' keyword
-  private static final Set<String> TOP_LEVEL_CANT_FOLLOW_POLY = new HashSet<>(Arrays.asList(
-      "polymorphic ", "abstract ", "vartype ", "enum ", "supplement "
-  ));
 
   // items from TOP_LEVEL_COMPLETIONS that can't follow 'abstract' keyword
   private static final Set<String> TOP_LEVEL_CANT_FOLLOW_ABSTRACT = new HashSet<>(Arrays.asList(
@@ -77,7 +71,6 @@ public class SchemaCompletionContributor extends CompletionContributor {
             completeNewTypeName(position, result);          // complete new type names using unresolved references in current file
             completeOverride(position, result);             // complete `override` in field/tag decls
             completeOverrideMember(position, result);       // complete type name after `override`
-            completePolymorphic(position, result);          // complete `polymorphic` keyword in `valueTypeRef`
             completeDefault(position, result);              // complete `default` keyword in `valueTypeRef`
           }
         }
@@ -102,7 +95,6 @@ public class SchemaCompletionContributor extends CompletionContributor {
       boolean completeTypeDef = false;
       boolean completeImport = false;
       boolean completeNamespace = false;
-      boolean afterPolymorphic = SchemaPsiUtil.hasPrevSibling(parent, S_POLYMORPHIC);
       boolean afterAbstract = SchemaPsiUtil.hasPrevSibling(parent, S_ABSTRACT);
 
       if (grandParent != null) {
@@ -135,7 +127,6 @@ public class SchemaCompletionContributor extends CompletionContributor {
 
       if (completeTypeDef) {
         for (String topLevelKeyword : TOP_LEVEL_COMPLETIONS) {
-          if (afterPolymorphic && TOP_LEVEL_CANT_FOLLOW_POLY.contains(topLevelKeyword)) continue;
           if (afterAbstract && TOP_LEVEL_CANT_FOLLOW_ABSTRACT.contains(topLevelKeyword)) continue;
           result.addElement(LookupElementBuilder.create(topLevelKeyword));
         }
@@ -414,28 +405,6 @@ public class SchemaCompletionContributor extends CompletionContributor {
       List<SchemaVarTagDecl> overrideableTags = TypeMembers.getOverridableTags(varTypeDef);
       for (SchemaVarTagDecl varTagDecl : overrideableTags) {
         result.addElement(LookupElementBuilder.create(varTagDecl));
-      }
-    }
-  }
-
-  private void completePolymorphic(@NotNull PsiElement position, @NotNull final CompletionResultSet result) {
-    // todo support for anon lists and maps
-
-    SchemaValueTypeRef valueTypeRef = PsiTreeUtil.getParentOfType(position, SchemaValueTypeRef.class);
-    if (valueTypeRef != null && valueTypeRef.getPolymorphic() == null) {
-      PsiElement prevSibling = PsiTreeUtil.prevVisibleLeaf(position);
-      if (prevSibling != null && prevSibling.getNode().getElementType() == S_COLON) {
-        result.addElement(LookupElementBuilder.create("polymorphic "));
-      }
-    } else {
-      PsiElement prevVisibleLeaf = PsiTreeUtil.prevVisibleLeaf(position);
-      if (prevVisibleLeaf != null) {
-        if (PsiTreeUtil.getParentOfType(prevVisibleLeaf, SchemaRecordTypeDef.class) != null) {
-          IElementType prevLeafType = prevVisibleLeaf.getNode().getElementType();
-          if (prevLeafType == S_COLON) {
-            result.addElement(LookupElementBuilder.create("polymorphic "));
-          }
-        }
       }
     }
   }

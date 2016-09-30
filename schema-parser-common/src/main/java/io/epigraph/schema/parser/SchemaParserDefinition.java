@@ -45,7 +45,6 @@ public class SchemaParserDefinition implements ParserDefinition {
       S_WITH,
       S_ABSTRACT,
       S_OVERRIDE,
-      S_POLYMORPHIC,
       S_INTEGER_T,
       S_LONG_T,
       S_DOUBLE_T,

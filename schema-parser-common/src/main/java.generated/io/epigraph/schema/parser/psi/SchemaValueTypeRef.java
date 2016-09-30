@@ -13,7 +13,4 @@ public interface SchemaValueTypeRef extends PsiElement {
   @NotNull
   SchemaTypeRef getTypeRef();
 
-  @Nullable
-  PsiElement getPolymorphic();
-
 }

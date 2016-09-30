@@ -22,8 +22,8 @@
     - [ ] Don't warn if at least one of the targets is not a child of source
 - Namespace declaration completion: take folder structure into account
 - Rename folders on namespace renaming
-- [x] Diagrams support. Bonus: show field types
 - Highlight tag types that are vartypes themselve as errors
+- Completion: suggest out-of-scope types with auto-import (implementation: copy ref completion logic from `LegacyCompletionContributor` to `SchemaCompletionContributor`, move `SchemaFqnReference.getVariants` there as well, but now with invocation count logic. Add `autoImport` to `beforeCompletion`, see `JavaCompletionContributor:712`)
 
 ### Low
 - Option to auto optimize imports on code formatting
@@ -38,11 +38,3 @@
 - Auto insert imports on paste?
 - Remove 'No default vartype member specified' warning on data types (field value, list element, map value)
 
----
-## Done
-### High
-- Highlight string literals
-
-### Medium
-
-### Low

@@ -38,10 +38,4 @@ public class SchemaValueTypeRefImpl extends ASTWrapperPsiElement implements Sche
     return notNullChild(PsiTreeUtil.getChildOfType(this, SchemaTypeRef.class));
   }
 
-  @Override
-  @Nullable
-  public PsiElement getPolymorphic() {
-    return findChildByType(S_POLYMORPHIC);
-  }
-
 }
