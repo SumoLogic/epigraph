@@ -4,7 +4,7 @@ import epigraph.data.Datum
 import epigraph.schema.Documented
 import epigraph.schema.Named
 
-record CustomParam extends Named, Documented {
+record Annotation extends Named, Documented {
   required: Boolean
   override name: ParamName
   value: Datum

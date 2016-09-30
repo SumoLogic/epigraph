@@ -9,7 +9,7 @@ import epigraph.schema.PrimitiveTypeRef
 import epigraph.schema.RecordTypeRef
 import epigraph.schema.TypeMemberRef
 import epigraph.schema.TypeRef
-import epigraph.projections.CustomParam
+import epigraph.projections.Annotation
 
 record OpOutputVarProjection {
   type: TypeRef
@@ -27,7 +27,7 @@ abstract record OpOutputModelProjection {
   model: DataTypeRef
   includeInDefault: Boolean
   params: list[OpParam]
-  customParams: list[CustomParam]
+  annotations: list[Annotation]
   `meta`: OpOutputModelProjection
 }
 
@@ -39,7 +39,7 @@ record OpOutputRecordModelProjection extends OpOutputModelProjection {
 record OpOutputFieldProjection {
   field: FieldRef
   params: list[OpParam]
-  customParams: list[CustomParam]
+  annotations: list[Annotation]
   varProjection: OpOutputVarProjection
   includeInDefault: Boolean
 }
@@ -58,7 +58,7 @@ record OpOutputMapModelProjection extends OpOutputModelProjection {
 record OpOutputKeyProjection {
   required: Boolean
   params: list[OpParam]
-  customParams: list[CustomParam]
+  annotations: list[Annotation]
 }
 
 record OpOutputEnumModelProjection extends OpOutputModelProjection {

@@ -27,7 +27,7 @@ import epigraph.schema.PrimitiveTypeRef
 import epigraph.schema.RecordTypeRef
 import epigraph.schema.TypeMemberRef
 import epigraph.schema.TypeRef
-import epigraph.projections.CustomParam
+import epigraph.projections.Annotation
 
 record ReqOutputVarProjection {
   type: TypeRef
@@ -44,7 +44,7 @@ abstract record ReqOutputModelProjection {
   model: DataTypeRef
   required: Boolean
   params: list[ReqParam]
-  customParams: list[CustomParam]
+  annotations: list[Annotation]
   `meta`: ReqOutputModelProjection
 }
 
@@ -56,7 +56,7 @@ record ReqOutputRecordModelProjection extends ReqOutputModelProjection {
 record ReqOutputFieldProjection {
   field: FieldRef
   params: list[ReqParam]
-  customParams: list[CustomParam]
+  annotations: list[Annotation]
   varProjection: ReqOutputVarProjection
 }
 
