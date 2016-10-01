@@ -395,10 +395,6 @@ public class IdlVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitResourceName(@NotNull IdlResourceName o) {
-    visitPsiElement(o);
-  }
-
   public void visitResourceType(@NotNull IdlResourceType o) {
     visitPsiElement(o);
   }

@@ -114,11 +114,11 @@ public abstract class GenericProjectionsPrettyPrinter<
 
   public abstract void print(@NotNull MP mp, int pathSteps) throws E;
 
-  protected void print(@NotNull Annotations cp) throws E {
+  public void print(@NotNull Annotations cp) throws E {
     print(cp, false, true);
   }
 
-  protected void print(@NotNull Annotations cp, boolean needCommas, boolean first) throws E {
+  public boolean print(@NotNull Annotations cp, boolean needCommas, boolean first) throws E {
     l.beginCInd(0);
     for (Map.Entry<String, Annotation> entry : cp.params().entrySet()) {
       if (needCommas) {
@@ -129,6 +129,8 @@ public abstract class GenericProjectionsPrettyPrinter<
       gdataPrettyPrinter.print(entry.getValue().value());
     }
     l.end();
+
+    return first;
   }
 
   protected boolean isPrintoutEmpty(@NotNull GenericVarProjection<T, S> vp) {

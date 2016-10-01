@@ -644,7 +644,7 @@ public class OpOutputProjectionsPsiParser {
   }
 
   @NotNull
-  private static OpParam parseParameter(@NotNull IdlOpParam paramPsi,
+  public static OpParam parseParameter(@NotNull IdlOpParam paramPsi,
                                         @NotNull TypesResolver resolver) throws PsiProcessingException {
     @Nullable IdlQid qid = paramPsi.getQid();
     if (qid == null) throw new PsiProcessingException("Parameter name not specified", paramPsi);

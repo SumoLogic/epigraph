@@ -105,7 +105,6 @@ public interface IdlElementTypes {
   IElementType I_REQ_OUTPUT_VAR_SINGLE_TAIL = new IdlElementType("I_REQ_OUTPUT_VAR_SINGLE_TAIL");
   IElementType I_REQ_PARAM = new IdlElementType("I_REQ_PARAM");
   IElementType I_RESOURCE_DEF = new IdlElementType("I_RESOURCE_DEF");
-  IElementType I_RESOURCE_NAME = new IdlElementType("I_RESOURCE_NAME");
   IElementType I_RESOURCE_TYPE = new IdlElementType("I_RESOURCE_TYPE");
   IElementType I_TAG_NAME = new IdlElementType("I_TAG_NAME");
   IElementType I_UPDATE_OPERATION_BODY_PART = new IdlElementType("I_UPDATE_OPERATION_BODY_PART");
@@ -448,9 +447,6 @@ public interface IdlElementTypes {
       }
       else if (type == I_RESOURCE_DEF) {
         return new IdlResourceDefImpl(node);
-      }
-      else if (type == I_RESOURCE_NAME) {
-        return new IdlResourceNameImpl(node);
       }
       else if (type == I_RESOURCE_TYPE) {
         return new IdlResourceTypeImpl(node);

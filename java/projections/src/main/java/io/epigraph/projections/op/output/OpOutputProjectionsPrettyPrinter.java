@@ -19,7 +19,7 @@ import java.util.LinkedHashSet;
 public class OpOutputProjectionsPrettyPrinter<E extends Exception> extends
     GenericProjectionsPrettyPrinter<OpOutputVarProjection, OpOutputTagProjection, OpOutputModelProjection<?>, E> {
 
-  protected OpOutputProjectionsPrettyPrinter(Layouter<E> layouter) {
+  public OpOutputProjectionsPrettyPrinter(Layouter<E> layouter) {
     super(layouter);
   }
 
@@ -163,11 +163,11 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception> extends
     l.brk(1, -l.getDefaultIndentation()).end().print(")");
   }
 
-  protected void print(@NotNull OpParams p) throws E {
+  public void print(@NotNull OpParams p) throws E {
     print(p, false, true);
   }
 
-  protected void print(@NotNull OpParams p, boolean needCommas, boolean first) throws E {
+  public boolean print(@NotNull OpParams p, boolean needCommas, boolean first) throws E {
     l.beginCInd(0);
     for (OpParam param : p.params().values()) {
       if (needCommas) {
@@ -178,9 +178,11 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception> extends
       print(param);
     }
     l.end();
+
+    return first;
   }
 
-  private void print(@NotNull OpParam p) throws E {
+  public void print(@NotNull OpParam p) throws E {
     OpInputModelProjection<?, ?> projection = p.projection();
 
     l.beginIInd();

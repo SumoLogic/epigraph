@@ -70,7 +70,6 @@
   pin(".*Body") = 1
 }
 
-// TODO proper root
 root ::= namespaceDecl imports resourceDefs
 
 // either quoted or unquoted id
@@ -126,8 +125,7 @@ tagName ::= qid | '_' // `_` is default tag
 // ============= resources =============
 
 private resourceDefs ::= (resourceDef ','?)*
-resourceDef ::= 'resource' resourceName resourceType resourceDefBody
-resourceName ::= qid
+resourceDef ::= 'resource' qid resourceType resourceDefBody
 resourceType ::= ':' fqnTypeRef defaultOverride?
 defaultOverride ::= 'default' varTagRef
 varTagRef ::= qid {

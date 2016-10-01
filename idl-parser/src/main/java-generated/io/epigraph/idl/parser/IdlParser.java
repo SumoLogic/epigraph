@@ -314,9 +314,6 @@ public class IdlParser implements PsiParser, LightPsiParser {
     else if (t == I_RESOURCE_DEF) {
       r = resourceDef(b, 0);
     }
-    else if (t == I_RESOURCE_NAME) {
-      r = resourceName(b, 0);
-    }
     else if (t == I_RESOURCE_TYPE) {
       r = resourceType(b, 0);
     }
@@ -3608,14 +3605,14 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'resource' resourceName resourceType resourceDefBody
+  // 'resource' qid resourceType resourceDefBody
   public static boolean resourceDef(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "resourceDef")) return false;
     if (!nextTokenIs(b, I_RESOURCE)) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, I_RESOURCE);
-    r = r && resourceName(b, l + 1);
+    r = r && qid(b, l + 1);
     r = r && resourceType(b, l + 1);
     r = r && resourceDefBody(b, l + 1);
     exit_section_(b, m, I_RESOURCE_DEF, r);
@@ -3707,18 +3704,6 @@ public class IdlParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(b, l, "resourceDefs_0_1")) return false;
     consumeToken(b, I_COMMA);
     return true;
-  }
-
-  /* ********************************************************** */
-  // qid
-  public static boolean resourceName(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "resourceName")) return false;
-    if (!nextTokenIs(b, I_ID)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = qid(b, l + 1);
-    exit_section_(b, m, I_RESOURCE_NAME, r);
-    return r;
   }
 
   /* ********************************************************** */

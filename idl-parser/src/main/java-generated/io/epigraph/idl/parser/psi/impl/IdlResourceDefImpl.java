@@ -34,8 +34,8 @@ public class IdlResourceDefImpl extends ASTWrapperPsiElement implements IdlResou
 
   @Override
   @NotNull
-  public IdlResourceName getResourceName() {
-    return findNotNullChildByClass(IdlResourceName.class);
+  public IdlQid getQid() {
+    return findNotNullChildByClass(IdlQid.class);
   }
 
   @Override
