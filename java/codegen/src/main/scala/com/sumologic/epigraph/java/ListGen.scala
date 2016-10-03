@@ -1,11 +1,12 @@
-/* Created by yegor on 7/12/16. */
+/* Created by yegor on 10/3/16. */
 
 package com.sumologic.epigraph.java
 
 import com.sumologic.epigraph.java.NewlineStringInterpolator.NewlineHelper
-import com.sumologic.epigraph.schema.compiler.{CContext, CListTypeDef, CVarTypeDef}
+import com.sumologic.epigraph.schema.compiler.{CContext, CListType, CVarTypeDef}
 
-class ListGen(from: CListTypeDef, ctx: CContext) extends JavaTypeDefGen[CListTypeDef](from, ctx) with DatumTypeJavaGen {
+abstract class ListGen[Type >: Null <: CListType](from: Type, ctx: CContext) extends JavaTypeGen[Type](from, ctx)
+    with DatumTypeJavaGen {
 
   /** element value type */
   private val ev = t.elementDataType

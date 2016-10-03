@@ -48,7 +48,7 @@ public class JavaSchemaGenerator {
             break;
 
           case LIST:
-            new ListGen((CListTypeDef) typeDef, ctx).writeUnder(tmpRoot);
+            new NamedListGen((CListTypeDef) typeDef, ctx).writeUnder(tmpRoot);
             break;
 
           case ENUM:

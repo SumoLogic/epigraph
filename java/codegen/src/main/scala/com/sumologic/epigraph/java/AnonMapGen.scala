@@ -25,10 +25,6 @@ class AnonMapGen(from: CAnonMapType, ctx: CContext) extends JavaTypeGen[CAnonMap
   /** value type */
   private val vt = vtr.resolved
 
-  // TODO respect annotations changing namespace/type names for scala
-  protected override def relativeFilePath: Path =
-  JavaGenUtils.fqnToPath(getNamedTypeComponent(t).name.fqn.removeLastSegment()).resolve(ln(t) + ".java")
-
   override def generate: String = /*@formatter:off*/sn"""\
 package ${pn(t)};
 

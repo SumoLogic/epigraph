@@ -2,7 +2,8 @@
 
 package com.sumologic.epigraph.java
 
-import com.sumologic.epigraph.java.NewlineStringInterpolator.NewlineHelper
+import java.nio.file.Path
+
 import com.sumologic.epigraph.schema.compiler.{CContext, CDataType, CType, CTypeRef, CVarTypeDef}
 
 import scala.collection.JavaConversions._
@@ -10,6 +11,10 @@ import scala.collection.JavaConversions._
 abstract class JavaTypeGen[Type >: Null <: CType](from: Type, ctx: CContext) extends JavaGen[Type](from, ctx) {
 
   protected val t: Type = from
+
+  // TODO respect annotations changing namespace/type names for scala
+  protected override def relativeFilePath: Path =
+  JavaGenUtils.fqnToPath(getNamedTypeComponent(t).name.fqn.removeLastSegment()).resolve(ln(t) + ".java")
 
   /** local java name for type [[t]] */
   def ln: String = ln(t)
