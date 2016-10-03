@@ -38,8 +38,8 @@ abstract class CType(implicit val ctx: CContext) {self =>
     CPhase.COMPUTE_SUPERTYPES, null, linearizedParents.reverse
   )
 
-  /** Linearized supertypes of this type in order of decreasing priority. After [[CPhase.COMPUTE_SUPERTYPES]]. */
-  final def linearizedSupertypes: Seq[Super] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, _linearizedSupertypes)
+  /** Linearized supertypes of this type in order of decreasing priority. After [[CPhase.RESOLVE_TYPEREFS]]. */
+  final def linearizedSupertypes: Seq[Super] = ctx.after(CPhase.RESOLVE_TYPEREFS, null, _linearizedSupertypes)
 
   private lazy val _linearizedSupertypes: Seq[Super] = parents.foldLeft[Seq[Super]](Nil) { (acc, p) =>
     p.linearization.filterNot(acc.contains) ++ acc
@@ -47,9 +47,9 @@ abstract class CType(implicit val ctx: CContext) {self =>
 
   /**
    * Linearization of this type (i.e. this type and all of its supertypes in order of decreasing priority).
-   * After [[CPhase.COMPUTE_SUPERTYPES]].
+   * After [[CPhase.RESOLVE_TYPEREFS]].
    */
-  final def linearization: Seq[Super] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, _linearization)
+  final def linearization: Seq[Super] = ctx.after(CPhase.RESOLVE_TYPEREFS, null, _linearization)
 
   private lazy val _linearization: Seq[Super] = this.asInstanceOf/*scalac bug*/ [self.type] +: linearizedSupertypes
 
@@ -102,7 +102,7 @@ abstract class CTypeDef protected(val csf: CSchemaFile, val psi: SchemaTypeDef, 
       visited.push(this)
       if (thisIdx == -1) {
         extendedAndInjectedTypes foreach (_.computeSupertypes(visited))
-        val (good, bad) = extendedAndInjectedTypes.partition(_.kind == kind)
+        val (good, bad) = parents.partition(_.kind == kind)
         bad foreach { st =>
           val stSource = if (injectedTypes.contains(st)) "injected" else "declared"
           ctx.errors.add(
@@ -133,7 +133,7 @@ abstract class CTypeDef protected(val csf: CSchemaFile, val psi: SchemaTypeDef, 
   private lazy val _parents: Seq[Super] = extendedAndInjectedTypes.filter(_.kind == kind).asInstanceOf[Seq[Super]]
 
   /** Immediate parents of this type in order of decreasing priority. */
-  def linearizedParents: Seq[Super] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, _linearizedParents)
+  def linearizedParents: Seq[Super] = ctx.after(CPhase.RESOLVE_TYPEREFS, null, _linearizedParents)
 
   private lazy val _linearizedParents: Seq[Super] = parents.foldLeft[Seq[Super]](Nil) { (acc, p) =>
     if (acc.contains(p) || parents.exists(_.supertypes.contains(p))) acc else p +: acc
@@ -188,7 +188,7 @@ class CVarTypeDef(csf: CSchemaFile, override val psi: SchemaVarTypeDef)(implicit
   // TODO check for dupes
   private val declaredTagsMap: Map[String, CTag] = declaredTags.map { ct => (ct.name, ct) }(collection.breakOut)
 
-  def effectiveTags: Seq[CTag] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, _effectiveTags)
+  def effectiveTags: Seq[CTag] = ctx.after(CPhase.RESOLVE_TYPEREFS, null, _effectiveTags)
 
   private lazy val _effectiveTags: Seq[CTag] = {
     val m: mutable.LinkedHashMap[String, mutable.Builder[CTag, Seq[CTag]]] = new mutable.LinkedHashMap
@@ -595,12 +595,14 @@ class CAnonListType(override val name: CAnonListTypeName)(implicit ctx: CContext
 
   private lazy val _parents: Seq[CAnonListType] = elementDataType.typeRef.resolved match {
 
-    case et: CVarTypeDef => elementDataType.effectiveDefaultTagName match {
-      case Some(tagName) => Seq(ctx.getOrCreateAnonListOf(et.dataType(false, None))) ++ et.parents.map(
-        etp => ctx.getOrCreateAnonListOf(etp.dataType(false, etp.effectiveTags.find(_.name == tagName).map(_.name)))
-      )
-      case None => et.parents.map(etp => ctx.getOrCreateAnonListOf(etp.dataType(false, None)))
-    }
+    case et: CVarTypeDef =>
+      et.computeSupertypes(mutable.Stack())
+      elementDataType.effectiveDefaultTagName match {
+        case Some(tagName) => Seq(ctx.getOrCreateAnonListOf(et.dataType(false, None))) ++ et.parents.map(
+          etp => ctx.getOrCreateAnonListOf(etp.dataType(false, etp.effectiveTags.find(_.name == tagName).map(_.name)))
+        )
+        case None => et.parents.map(etp => ctx.getOrCreateAnonListOf(etp.dataType(false, None)))
+      }
 
     case et: CDatumType => et.parents.map(est => ctx.getOrCreateAnonListOf(est.dataType(false)))
 

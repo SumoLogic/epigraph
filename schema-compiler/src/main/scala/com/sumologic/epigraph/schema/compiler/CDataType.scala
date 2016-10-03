@@ -26,7 +26,7 @@ final class CDataType( // TODO split into CVarDataType and CDatumDataType?
 
   csf.dataTypes.add(this) // register self with schema file
 
-  def defaultTag: Option[CTag] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, _defaultTag)
+  def defaultTag: Option[CTag] = ctx.after(CPhase.RESOLVE_TYPEREFS, null, _defaultTag)
 
   private lazy val _defaultTag: Option[CTag] = typeRef.resolved match {
     case t: CVarTypeDef => defaultTagNameDecl match {
@@ -46,13 +46,13 @@ final class CDataType( // TODO split into CVarDataType and CDatumDataType?
     case unknown => throw new UnsupportedOperationException(unknown.toString)
   }
 
-  def hasDefault: Boolean = ctx.after(CPhase.COMPUTE_SUPERTYPES, false, defaultTag.nonEmpty)
+  def hasDefault: Boolean = ctx.after(CPhase.RESOLVE_TYPEREFS, false, defaultTag.nonEmpty)
 
   @deprecated("use defaultTagName")
   val defaultDeclarationOpt: Option[Option[String]] = Option(defaultTagNameDecl)
 
   // `None` - nodefault, `Some(String)` - effective default tag name
-  def effectiveDefaultTagName: Option[String] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, defaultTag.map(_.name))
+  def effectiveDefaultTagName: Option[String] = ctx.after(CPhase.RESOLVE_TYPEREFS, null, defaultTag.map(_.name))
 
   // valid after CPhase.COMPUTE_SUPERTYPES
   def compatibleWith(superDataType: CDataType): Boolean = superDataType.typeRef.resolved.isAssignableFrom(
