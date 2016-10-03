@@ -293,20 +293,6 @@ class CRecordTypeDef(csf: CSchemaFile, override val psi: SchemaRecordTypeDef)(im
   // TODO check for dupes
   private val declaredFieldsMap: Map[String, CField] = declaredFields.map { ct => (ct.name, ct) }(collection.breakOut)
 
-  @deprecated("use effectiveFields")
-  def effectiveFieldsMap: Map[String, CField] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, _effectiveFieldsMap)
-
-  @deprecated("use effectiveFields")
-  private lazy val _effectiveFieldsMap = {
-    linearizedParents.flatMap(_.effectiveFieldsMap) ++ declaredFieldsMap
-  } groupBy { case (fn, _f) =>
-    fn
-  } map { case (fn, nfseq: Seq[(String, CField)]) =>
-    (fn, nfseq.map { case (_fn, f) => f })
-  } map { case (fn, fseq: Seq[CField]) =>
-    (fn, effectiveField(declaredFieldsMap.get(fn), fseq))
-  }
-
   def effectiveFields: Seq[CField] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, _effectiveFields)
 
   private lazy val _effectiveFields: Seq[CField] = {
