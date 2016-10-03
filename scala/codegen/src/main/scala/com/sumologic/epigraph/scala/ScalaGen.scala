@@ -24,6 +24,54 @@ abstract class ScalaGen[From >: Null <: AnyRef](protected val from: From) {
   // TODO protected access for the rest:
   def scalaName(name: String): String = Term.Name(name).toString
 
+
+
+
+
+  /** scala package name for given type */
+  def pn(t: CType): String = getNamedTypeComponent(t).name.fqn.removeLastSegment().segments.map(scalaName).mkString(".")
+
+  /** scala type name for given type as seen from the context of the other type namespace */
+  def lqn(t: CType, lt: CType, lnTrans: (String) => String = identity): String = {
+    val tpn = pn(t)
+    if (tpn == pn(lt)) lnTrans(ln(t)) else tpn + "." + ln(t)
+  }
+
+  /** local (short) scala name for given type */
+  def ln(t: CType): String = t match {
+    case t: CTypeDef => t.name.local
+    case t: CAnonListType => alln(t)
+    case t: CAnonMapType => amln(t)
+  }
+
+  def alln(t: CAnonListType): String = t.elementDataType.typeRef.resolved match {
+    case et: CVarTypeDef => ln(et) + varTagPart(t.elementDataType.effectiveDefaultTagName) + "_List"
+    case et: CDatumType => ln(et) + "_List"
+    case unknown => throw new UnsupportedOperationException(unknown.toString)
+  }
+
+  def amln(t: CAnonMapType): String = t.valueDataType.typeRef.resolved match {
+    case vt: CVarTypeDef => ln(t.keyTypeRef.resolved) + "_" + ln(vt) + varTagPart(t.valueDataType.effectiveDefaultTagName) + "_Map"
+    case vt: CDatumType => ln(t.keyTypeRef.resolved) + "_" + ln(vt) + "_Map"
+    case unknown => throw new UnsupportedOperationException(unknown.toString)
+  }
+
+  private def varTagPart(tagName: Option[String]): String = tagName match {
+    case Some(name) => "$" + name
+    case None => ""
+  }
+
+  protected def getNamedTypeComponent(t: CType): CTypeDef = t match {
+    case td: CTypeDef => td
+    case alt: CAnonListType => getNamedTypeComponent(alt.elementTypeRef.resolved)
+    case amt: CAnonMapType => getNamedTypeComponent(amt.valueTypeRef.resolved)
+    case unknown => throw new UnsupportedOperationException(unknown.toString)
+  }
+
+
+
+
+
   def scalaFqn(fqn: Fqn): String = fqn.segments.map(scalaName).mkString(".")
 
   def localQName(typeFqn: Fqn, localNs: Fqn, trans: (String) => String = identity): Fqn = {
@@ -76,10 +124,10 @@ abstract class ScalaGen[From >: Null <: AnyRef](protected val from: From) {
   def bldQName(t: CTypeDef, ht: CTypeDef): String = scalaQName(t, ht, bldName)
 
   def withParents(t: CTypeDef, trans: (String) => String = identity): String =
-    t.getLinearizedParentsReversed.map(" " + scalaQName(_, t, trans) + " with").mkString
+    t.getLinearizedParentsReversed.map(" " + lqn(_, t, trans) + " with").mkString
 
   def parentNames(t: CTypeDef, trans: (String) => String = identity): String =
-    t.getLinearizedParentsReversed.map(scalaQName(_, t, trans)).mkString(", ")
+    t.getLinearizedParentsReversed.map(lqn(_, t, trans)).mkString(", ")
 
   def ?(arg: AnyRef, ifNotNull: => String, ifNull: => String): String = if (arg ne null) ifNotNull else ifNull
 
