@@ -16,7 +16,7 @@ final class CDataType( // TODO split into CVarDataType and CDatumDataType?
 )(implicit val ctx: CContext) {
 
   def this(csf: CSchemaFile, psi: SchemaValueTypeRef)(implicit ctx: CContext) = this(
-    csf, psi.getPolymorphic ne null, CTypeRef(csf, psi.getTypeRef), CDataType.defaultTagName(psi.getDefaultOverride)
+    csf, false, CTypeRef(csf, psi.getTypeRef), CDataType.defaultTagName(psi.getDefaultOverride)
   )
 
   val name: String =
