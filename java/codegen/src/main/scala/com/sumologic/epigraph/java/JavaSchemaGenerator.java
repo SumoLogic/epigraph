@@ -45,6 +45,7 @@ public class JavaSchemaGenerator {
             break;
 
           case MAP:
+            new NamedMapGen((CMapTypeDef) typeDef, ctx).writeUnder(tmpRoot);
             break;
 
           case LIST:

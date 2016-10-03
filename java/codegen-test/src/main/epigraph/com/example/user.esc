@@ -18,3 +18,5 @@ record UserRecord extends PersonRecord {
 }
 
 list[User default `record`] UserList extends PersonList
+
+map[String, User] UsersMap extends PersonsMap

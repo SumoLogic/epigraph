@@ -23,6 +23,8 @@ record PersonRecord {
 
 list[Person/* default id*/] PersonList
 
+map[String, Person] PersonsMap
+
 vartype Bad {
   //bad: Person
 }
