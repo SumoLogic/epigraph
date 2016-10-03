@@ -76,8 +76,6 @@ record DataTypeData extends TypeData { // TODO extends VarTypeData?
 
   override supertypes: list[DataTypeRef default name]
 
-  `polymorphic`: Boolean
-
   metaType: DataTypeRef default name
 
 }

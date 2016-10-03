@@ -8,9 +8,9 @@ vartype Person {
 integer PersonId
 
 record PersonRecord {
-  id: polymorphic PersonId
+  id:  PersonId
   firstName: String
-  bestFriend: polymorphic Person default id//Record
+  bestFriend:  Person default id//Record
   friends: list[PersonRecord]
   friendsMap: map[PersonId, Person default id]
   ids: list[PersonId]
@@ -26,3 +26,5 @@ list[Person/* default id*/] PersonList
 vartype Bad {
   //bad: Person
 }
+
+//list[Self] Self

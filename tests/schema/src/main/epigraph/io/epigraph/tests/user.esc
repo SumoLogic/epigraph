@@ -9,7 +9,7 @@ integer UserId extends PersonId
 
 record UserRecord extends PersonRecord {
   profile: Url
-  override worstEnemy: polymorphic UserRecord
+  override worstEnemy: UserRecord
 }
 
 string Url

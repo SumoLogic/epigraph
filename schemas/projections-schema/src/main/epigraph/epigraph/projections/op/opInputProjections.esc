@@ -32,7 +32,7 @@ abstract record OpInputModelProjection {
   model: DataTypeRef
   required: Boolean
   defaultValue: Datum
-  customParams: map[String, polymorphic Data]
+  customParams: map[String, Data]
   `meta`: OpInputModelProjection
 }
 
@@ -45,7 +45,7 @@ record OpInputRecordModelProjection extends OpInputModelProjection {
 record OpInputFieldProjection {
   field: FieldRef
   required: Boolean
-  customParams: map[String, polymorphic Data]
+  customParams: map[String, Data]
   varProjection: OpInputVarProjection
 }
 
@@ -65,7 +65,7 @@ record OpInputMapModelProjection extends OpInputModelProjection {
 record OpInputKeyProjection {
   forbidden: Boolean
   required: Boolean
-  customParams: map[String, polymorphic Data]
+  customParams: map[String, Data]
 }
 
 record OpInputEnumModelProjection extends OpInputModelProjection {
