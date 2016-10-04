@@ -5,6 +5,7 @@ import io.epigraph.gdata.GDataPrettyPrinter;
 import io.epigraph.printers.DataPrinter;
 import io.epigraph.projections.Annotation;
 import io.epigraph.projections.Annotations;
+import io.epigraph.types.Type;
 import io.epigraph.types.TypeKind;
 import org.jetbrains.annotations.NotNull;
 
@@ -38,6 +39,7 @@ public abstract class GenericProjectionsPrettyPrinter<
 
   public void print(@NotNull GenericVarProjection<T, S> p, int pathSteps) throws E {
     if (varsStack.contains(p)) {
+      // handle recursive projections
       int ref = nextRefNumber++;
       varRefs.put(p, ref);
       l.print("... = @").print(Integer.toString(ref));
@@ -47,15 +49,15 @@ public abstract class GenericProjectionsPrettyPrinter<
     try {
       varsStack.push(p);
 
-      LinkedHashSet<T> tagProjections = p.tagProjections();
+      LinkedHashMap<Type.Tag, T> tagProjections = p.tagProjections();
 
       if (p.type().kind() != TypeKind.UNION) {
         // samovar
-        print(tagProjections.iterator().next().projection(), decSteps(pathSteps));
+        print(tagProjections.values().iterator().next().projection(), decSteps(pathSteps));
       } else if (tagProjections.size() == 1) {
-        T tagProjection = tagProjections.iterator().next();
+        Map.Entry<Type.Tag, T> entry = tagProjections.entrySet().iterator().next();
         l.print(":");
-        print(tagProjection, decSteps(pathSteps));
+        print(entry.getKey(), entry.getValue(), decSteps(pathSteps));
       } else if (tagProjections.isEmpty()) {
         l.print(":()");
       } else {
@@ -65,11 +67,11 @@ public abstract class GenericProjectionsPrettyPrinter<
         l.beginCInd();
         l.print(":(");
         boolean first = true;
-        for (T tagProjection : tagProjections) {
+        for (Map.Entry<Type.Tag, T> entry : tagProjections.entrySet()) {
           if (first) first = false;
           else l.print(",");
           l.brk();
-          print(tagProjection, 0);
+          print(entry.getKey(), entry.getValue(), 0);
         }
         l.brk(1, -l.getDefaultIndentation()).end().print(")");
       }
@@ -107,7 +109,7 @@ public abstract class GenericProjectionsPrettyPrinter<
 
   }
 
-  public abstract void print(@NotNull T tp, int pathSteps) throws E;
+  public abstract void print(@NotNull Type.Tag tag, @NotNull T tp, int pathSteps) throws E;
 
   public abstract void print(@NotNull MP mp, int pathSteps) throws E;
 
@@ -135,7 +137,7 @@ public abstract class GenericProjectionsPrettyPrinter<
     if (tails != null && !tails.isEmpty()) return false;
     if (vp.type().kind() == TypeKind.UNION) return false; // non-samovar always prints something
 
-    for (T tagProjection : vp.tagProjections())
+    for (T tagProjection : vp.tagProjections().values())
       if (!isPrintoutEmpty(tagProjection.projection())) return false;
 
     return true;

@@ -7,6 +7,7 @@ import io.epigraph.idl.TypeRefs;
 import io.epigraph.idl.parser.psi.*;
 import io.epigraph.projections.Annotation;
 import io.epigraph.projections.Annotations;
+import io.epigraph.projections.ProjectionUtils;
 import io.epigraph.projections.op.OpParam;
 import io.epigraph.projections.op.OpParams;
 import io.epigraph.projections.op.input.OpInputModelProjection;
@@ -20,10 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static io.epigraph.projections.ProjectionPsiParserUtil.*;
 
@@ -38,7 +36,7 @@ public class OpOutputProjectionsPsiParser {
       throws PsiProcessingException {
 
     final Type type = dataType.type;
-    final LinkedHashSet<OpOutputTagProjection> tagProjections = new LinkedHashSet<>();
+    final LinkedHashMap<Type.Tag, OpOutputTagProjection> tagProjections = new LinkedHashMap<>();
 
     @Nullable IdlOpOutputSingleTagProjection singleTagProjectionPsi = psi.getOpOutputSingleTagProjection();
 
@@ -67,10 +65,13 @@ public class OpOutputProjectionsPsiParser {
           typesResolver
       );
 
-      tagProjections.add(new OpOutputTagProjection(tag,
-                                                   parsedModelProjection,
-                                                   EpigraphPsiUtil.getLocation(singleTagProjectionPsi)
-      ));
+      tagProjections.put(
+          tag,
+          new OpOutputTagProjection(
+              parsedModelProjection,
+              EpigraphPsiUtil.getLocation(singleTagProjectionPsi)
+          )
+      );
     } else {
       @Nullable IdlOpOutputMultiTagProjection multiTagProjection = psi.getOpOutputMultiTagProjection();
       assert multiTagProjection != null;
@@ -99,10 +100,13 @@ public class OpOutputProjectionsPsiParser {
             typesResolver
         );
 
-        tagProjections.add(new OpOutputTagProjection(tag,
-                                                     parsedModelProjection,
-                                                     EpigraphPsiUtil.getLocation(tagProjectionPsi)
-        ));
+        tagProjections.put(
+            tag,
+            new OpOutputTagProjection(
+                parsedModelProjection,
+                EpigraphPsiUtil.getLocation(tagProjectionPsi)
+            )
+        );
       }
     }
 
@@ -222,19 +226,22 @@ public class OpOutputProjectionsPsiParser {
 
 
   @NotNull
-  private static OpOutputVarProjection createDefaultVarProjection(@NotNull Type type,
-                                                                  @NotNull Type.Tag tag,
-                                                                  boolean includeInDefault,
-                                                                  @NotNull PsiElement locationPsi)
-      throws PsiProcessingException {
+  private static OpOutputVarProjection createDefaultVarProjection(
+      @NotNull Type type,
+      @NotNull Type.Tag tag,
+      boolean includeInDefault,
+      @NotNull PsiElement locationPsi) throws PsiProcessingException {
     return new OpOutputVarProjection(
         type,
-        EpigraphPsiUtil.getLocation(locationPsi),
-        new OpOutputTagProjection(
+        ProjectionUtils.singletonLinkedHashMap(
             tag,
-            createDefaultModelProjection(tag.type, includeInDefault, null, null, locationPsi),
-            EpigraphPsiUtil.getLocation(locationPsi)
-        )
+            new OpOutputTagProjection(
+                createDefaultModelProjection(tag.type, includeInDefault, null, null, locationPsi),
+                EpigraphPsiUtil.getLocation(locationPsi)
+            )
+        ),
+        null,
+        EpigraphPsiUtil.getLocation(locationPsi)
     );
   }
 
@@ -647,7 +654,7 @@ public class OpOutputProjectionsPsiParser {
 
   @NotNull
   public static OpParam parseParameter(@NotNull IdlOpParam paramPsi,
-                                        @NotNull TypesResolver resolver) throws PsiProcessingException {
+                                       @NotNull TypesResolver resolver) throws PsiProcessingException {
     @Nullable IdlQid qid = paramPsi.getQid();
     if (qid == null) throw new PsiProcessingException("Parameter name not specified", paramPsi);
     @NotNull String paramName = qid.getCanonicalName();

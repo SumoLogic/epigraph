@@ -8,6 +8,7 @@ import io.epigraph.idl.parser.psi.*;
 import io.epigraph.lang.TextLocation;
 import io.epigraph.projections.Annotation;
 import io.epigraph.projections.Annotations;
+import io.epigraph.projections.ProjectionUtils;
 import io.epigraph.projections.StepsAndProjection;
 import io.epigraph.psi.EpigraphPsiUtil;
 import io.epigraph.psi.PsiProcessingException;
@@ -18,10 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static io.epigraph.projections.ProjectionPsiParserUtil.*;
 
@@ -35,12 +33,12 @@ public class OpInputProjectionsPsiParser {
       @NotNull TypesResolver typesResolver) throws PsiProcessingException {
 
     final Type type = dataType.type;
-    final LinkedHashSet<OpInputTagProjection> tagProjections;
+    final LinkedHashMap<Type.Tag, OpInputTagProjection> tagProjections;
     final int steps;
 
     @Nullable IdlOpInputTrunkSingleTagProjection singleTagProjectionPsi = psi.getOpInputTrunkSingleTagProjection();
     if (singleTagProjectionPsi != null) {
-      tagProjections = new LinkedHashSet<>();
+      tagProjections = new LinkedHashMap<>();
       final OpInputModelProjection<?, ?> parsedModelProjection;
       final Type.Tag tag = getTag(
           type,
@@ -67,12 +65,13 @@ public class OpInputProjectionsPsiParser {
       parsedModelProjection = stepsAndProjection.projection();
       steps = stepsAndProjection.pathSteps() + 1;
 
-      tagProjections.add(
+      tagProjections.put(
+          tag,
           new OpInputTagProjection(
-              tag,
               parsedModelProjection,
               EpigraphPsiUtil.getLocation(singleTagProjectionPsi)
-          ));
+          )
+      );
 
     } else {
       @Nullable IdlOpInputComaMultiTagProjection multiTagProjection = psi.getOpInputComaMultiTagProjection();
@@ -96,11 +95,11 @@ public class OpInputProjectionsPsiParser {
       @NotNull TypesResolver typesResolver) throws PsiProcessingException {
 
     final Type type = dataType.type;
-    final LinkedHashSet<OpInputTagProjection> tagProjections;
+    final LinkedHashMap<Type.Tag, OpInputTagProjection> tagProjections;
 
     @Nullable IdlOpInputComaSingleTagProjection singleTagProjectionPsi = psi.getOpInputComaSingleTagProjection();
     if (singleTagProjectionPsi != null) {
-      tagProjections = new LinkedHashSet<>();
+      tagProjections = new LinkedHashMap<>();
       final OpInputModelProjection<?, ?> parsedModelProjection;
       final Type.Tag tag = getTag(
           type,
@@ -122,9 +121,9 @@ public class OpInputProjectionsPsiParser {
           modelProjection, typesResolver
       ).projection();
 
-      tagProjections.add(
+      tagProjections.put(
+          tag,
           new OpInputTagProjection(
-              tag,
               parsedModelProjection,
               EpigraphPsiUtil.getLocation(singleTagProjectionPsi)
           ));
@@ -145,12 +144,12 @@ public class OpInputProjectionsPsiParser {
   }
 
   @NotNull
-  private static LinkedHashSet<OpInputTagProjection> parseComaMultiTagProjection(
+  private static LinkedHashMap<Type.Tag, OpInputTagProjection> parseComaMultiTagProjection(
       @NotNull DataType dataType,
       @NotNull IdlOpInputComaMultiTagProjection multiTagProjection,
       @NotNull TypesResolver typesResolver) throws PsiProcessingException {
 
-    final LinkedHashSet<OpInputTagProjection> tagProjections = new LinkedHashSet<>();
+    final LinkedHashMap<Type.Tag, OpInputTagProjection> tagProjections = new LinkedHashMap<>();
 
     // parse list of tags
     @NotNull List<IdlOpInputComaMultiTagProjectionItem> tagProjectionPsiList =
@@ -176,12 +175,13 @@ public class OpInputProjectionsPsiParser {
           modelProjection, typesResolver
       ).projection();
 
-      tagProjections.add(
+      tagProjections.put(
+          tag,
           new OpInputTagProjection(
-              tag,
               parsedModelProjection,
               EpigraphPsiUtil.getLocation(tagProjectionPsi)
-          ));
+          )
+      );
     }
 
     return tagProjections;
@@ -308,19 +308,22 @@ public class OpInputProjectionsPsiParser {
   }
 
   @NotNull
-  private static OpInputVarProjection createDefaultVarProjection(@NotNull Type type,
-                                                                 @NotNull Type.Tag tag,
-                                                                 boolean required,
-                                                                 @NotNull PsiElement locationPsi)
-      throws PsiProcessingException {
+  private static OpInputVarProjection createDefaultVarProjection(
+      @NotNull Type type,
+      @NotNull Type.Tag tag,
+      boolean required,
+      @NotNull PsiElement locationPsi) throws PsiProcessingException {
     return new OpInputVarProjection(
         type,
-        EpigraphPsiUtil.getLocation(locationPsi),
-        new OpInputTagProjection(
+        ProjectionUtils.singletonLinkedHashMap(
             tag,
-            createDefaultModelProjection(tag.type, required, null, null, locationPsi, null),
-            EpigraphPsiUtil.getLocation(locationPsi)
-        )
+            new OpInputTagProjection(
+                createDefaultModelProjection(tag.type, required, null, null, locationPsi, null),
+                EpigraphPsiUtil.getLocation(locationPsi)
+            )
+        ),
+        null,
+        EpigraphPsiUtil.getLocation(locationPsi)
     );
   }
 

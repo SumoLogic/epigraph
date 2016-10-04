@@ -5,7 +5,7 @@ import io.epigraph.types.Type;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.LinkedHashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Objects;
 
@@ -16,14 +16,14 @@ public class GenericVarProjection<T extends GenericTagProjection<?>, S extends G
   @NotNull
   private final Type type;
   @NotNull
-  private final LinkedHashSet<T> tagProjections; // todo change to map
+  private final LinkedHashMap<Type.Tag, T> tagProjections;
   @Nullable
   private final List<S> polymorphicTails;
   @NotNull
   private final TextLocation location;
 
   public GenericVarProjection(@NotNull Type type,
-                              @NotNull LinkedHashSet<T> tagProjections,
+                              @NotNull LinkedHashMap<Type.Tag, T> tagProjections,
                               @Nullable List<S> polymorphicTails,
                               @NotNull TextLocation location) {
     this.type = type;
@@ -31,21 +31,18 @@ public class GenericVarProjection<T extends GenericTagProjection<?>, S extends G
     this.polymorphicTails = polymorphicTails;
     this.location = location;
 
+    // todo validate tag types == tag projection models
     // todo validate tails (should be subtypes of `type`)
   }
 
   @NotNull
   public Type type() { return type; }
 
-  @NotNull
-  public LinkedHashSet<T> tagProjections() { return tagProjections; }
+  public @NotNull LinkedHashMap<Type.Tag, T> tagProjections() { return tagProjections; }
 
   @Nullable
   public T tagProjection(@NotNull Type.Tag tag) {
-    for (T tagProjection : tagProjections)
-      if (tagProjection.tag().equals(tag)) return tagProjection;
-
-    return null;
+    return tagProjections.get(tag);
   }
 
   public @Nullable List<S> polymorphicTails() { return polymorphicTails; }

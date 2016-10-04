@@ -6,8 +6,7 @@ import io.epigraph.types.Type;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
-import java.util.LinkedHashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
@@ -15,13 +14,9 @@ import java.util.List;
  */
 public class OpInputVarProjection extends GenericVarProjection<OpInputTagProjection, OpInputVarProjection> {
   public OpInputVarProjection(@NotNull Type type,
-                              @NotNull LinkedHashSet<OpInputTagProjection> tagProjections,
+                              @NotNull LinkedHashMap<Type.Tag, OpInputTagProjection> tagProjections,
                               @Nullable List<OpInputVarProjection> polymorphicTails,
                               @NotNull TextLocation location) {
     super(type, tagProjections, polymorphicTails, location);
-  }
-
-  public OpInputVarProjection(@NotNull Type type, @NotNull TextLocation location, OpInputTagProjection... tagProjections) {
-    this(type, new LinkedHashSet<>(Arrays.asList(tagProjections)), null, location);
   }
 }

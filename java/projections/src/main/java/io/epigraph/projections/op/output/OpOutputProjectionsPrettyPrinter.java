@@ -8,6 +8,7 @@ import io.epigraph.projections.op.OpParam;
 import io.epigraph.projections.op.OpParams;
 import io.epigraph.projections.op.input.OpInputModelProjection;
 import io.epigraph.projections.op.input.OpInputProjectionsPrettyPrinter;
+import io.epigraph.types.Type;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,7 +25,7 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception> extends
   }
 
   @Override
-  public void print(@NotNull OpOutputTagProjection tp, int pathSteps) throws E {
+  public void print(@NotNull Type.Tag tag, @NotNull OpOutputTagProjection tp, int pathSteps) throws E {
     OpOutputModelProjection<?> projection = tp.projection();
     OpOutputModelProjection<?> metaProjection = projection.metaProjection();
     OpParams params = projection.params();
@@ -33,7 +34,7 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception> extends
     if (params == null && annotations == null) {
       l.beginCInd();
       if (projection.includeInDefault()) l.print("+");
-      l.print(tp.tag().name());
+      l.print(tag.name());
 
       if (!isPrintoutEmpty(projection)) {
         l.brk();
@@ -44,7 +45,7 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception> extends
     } else {
       l.beginCInd();
       if (projection.includeInDefault()) l.print("+");
-      l.print(tp.tag().name());
+      l.print(tag.name());
       l.print(" {");
 
       if (params != null) print(params);
