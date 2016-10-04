@@ -34,7 +34,7 @@ abstract class ScalaGen[From >: Null <: AnyRef](protected val from: From) {
   /** scala type name for given type as seen from the context of the other type namespace */
   def lqn(t: CType, lt: CType, lnTrans: (String) => String = identity): String = {
     val tpn = pn(t)
-    if (tpn == pn(lt)) lnTrans(ln(t)) else tpn + "." + ln(t)
+    if (tpn == pn(lt)) lnTrans(ln(t)) else tpn + "." + lnTrans(ln(t))
   }
 
   /** local (short) scala name for given type */
