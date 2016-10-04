@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable
  */
 final class CDataType( // TODO split into CVarDataType and CDatumDataType?
     val csf: CSchemaFile,
-    val polymorphic: Boolean,
+    @Deprecated val polymorphic: Boolean,
     val typeRef: CTypeRef,
     private val defaultTagNameDecl: Option[String]
 )(implicit val ctx: CContext) {

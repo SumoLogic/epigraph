@@ -305,7 +305,7 @@ public class ReqOutputProjectionsPsiParser {
       );
 
     return parseComaVarProjection(
-        new DataType(dataType.polymorphic, tailType, dataType.defaultTag),
+        new DataType(tailType, dataType.defaultTag),
         opTail,
         tailProjectionPsi,
         typesResolver

@@ -274,7 +274,7 @@ public class OpOutputProjectionsTest {
     );
 
     testParsingVarProjection(
-        new DataType(false, Person.type, Person.id),
+        new DataType(Person.type, Person.id),
         projectionStr,
         expected
     );
@@ -283,7 +283,7 @@ public class OpOutputProjectionsTest {
   @Test
   public void testParseEmpty() throws PsiProcessingException {
     testParsingVarProjection(
-        new DataType(false, Person.type, Person.id),
+        new DataType(Person.type, Person.id),
         ""
         ,
         ":id"
@@ -307,7 +307,7 @@ public class OpOutputProjectionsTest {
   @Test
   public void testParseTail() throws PsiProcessingException {
     testParsingVarProjection(
-        new DataType(false, Person.type, Person.id),
+        new DataType(Person.type, Person.id),
         "~io.epigraph.tests.User :id"
         ,
         ":id ~io.epigraph.tests.User :id"
@@ -317,7 +317,7 @@ public class OpOutputProjectionsTest {
   @Test
   public void testParseDoubleTail() throws PsiProcessingException {
     testParsingVarProjection(
-        new DataType(false, Person.type, Person.id),
+        new DataType(Person.type, Person.id),
         "~io.epigraph.tests.User :id ~io.epigraph.tests.Person :id"
         ,
         ":id ~io.epigraph.tests.User :id ~io.epigraph.tests.Person :id"
@@ -327,7 +327,7 @@ public class OpOutputProjectionsTest {
   @Test
   public void testParseTails() throws PsiProcessingException {
     testParsingVarProjection(
-        new DataType(false, Person.type, Person.id),
+        new DataType(Person.type, Person.id),
         "~( io.epigraph.tests.User :id, io.epigraph.tests.Person :id )"
         ,
         ":id ~( io.epigraph.tests.User :id, io.epigraph.tests.Person :id )"
@@ -532,7 +532,7 @@ public class OpOutputProjectionsTest {
 
   private void testParsingVarProjection(String str) throws PsiProcessingException {
     testParsingVarProjection(
-        new DataType(false, Person.type, Person.id),
+        new DataType(Person.type, Person.id),
         str
         ,
         str

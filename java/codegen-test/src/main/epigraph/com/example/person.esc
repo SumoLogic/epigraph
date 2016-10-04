@@ -25,6 +25,8 @@ list[Person/* default id*/] PersonList
 
 map[String, Person] PersonsMap
 
+//FIXME map[String, Integer] Ints
+
 vartype Bad {
   //bad: Person
 }

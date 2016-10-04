@@ -214,7 +214,7 @@ public class OpOutputProjectionsPsiParser {
     @NotNull TypeRef tailTypeRef = TypeRefs.fromPsi(tailTypeRefPsi);
     @NotNull Type tailType = getType(tailTypeRef, typesResolver, locationPsi);
     return parseVarProjection(
-        new DataType(dataType.polymorphic, tailType, dataType.defaultTag),
+        new DataType(tailType, dataType.defaultTag),
         psiTailProjection,
         typesResolver
     );

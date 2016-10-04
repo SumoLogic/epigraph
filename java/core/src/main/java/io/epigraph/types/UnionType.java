@@ -33,8 +33,8 @@ public abstract class UnionType extends Type {
     return (Collection<? extends UnionType>) super.supertypes();
   }
 
-  public @NotNull DataType dataType(boolean polymorphic, @Nullable Tag defaultTag) {
-    return new DataType(polymorphic, this, checkTagIsKnown(defaultTag));
+  public @NotNull DataType dataType(@Nullable Tag defaultTag) {
+    return new DataType(this, checkTagIsKnown(defaultTag));
   }
 
   public @Nullable Tag checkTagIsKnown(@Nullable Tag tag) {

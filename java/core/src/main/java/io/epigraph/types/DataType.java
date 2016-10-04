@@ -13,9 +13,7 @@ import java.util.Objects;
 /**
  * Declares type of data held by container type components (record fields, list elements, map values).
  */
-public class DataType {
-
-  public final boolean polymorphic;
+public final class DataType {
 
   public final @NotNull Type type;
 
@@ -23,17 +21,12 @@ public class DataType {
 
   public final @NotNull DataTypeName name;
 
-  public DataType(boolean polymorphic, @NotNull Type type, @Nullable Tag defaultTag) {
-    this.polymorphic = polymorphic;
+  public DataType(@NotNull Type type, @Nullable Tag defaultTag) {
     this.type = type;
     this.defaultTag = defaultTag;
-    this.name = new DataTypeName(polymorphic, type.name(), defaultTag == null ? null : defaultTag.name);
+    this.name = new DataTypeName(type.name(), defaultTag == null ? null : defaultTag.name);
   }
 
-
-
-//  public boolean polymorphic() { return polymorphic; }
-//
 //  public @NotNull Type type() { return type; }
 //
 //  public @Nullable Tag defaultTag() { return defaultTag; }
@@ -51,7 +44,6 @@ public class DataType {
   }
 
   @Override
-  public int hashCode() {
-    return Objects.hash(name);
-  }
+  public int hashCode() { return name.hashCode(); }
+
 }

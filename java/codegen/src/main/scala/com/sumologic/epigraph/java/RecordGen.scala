@@ -31,7 +31,7 @@ public interface $ln extends${withParents(t)} io.epigraph.data.RecordDatum.Stati
 ${t.effectiveFields.map { f => sn"""\
 
   ${"/**"} Field `${f.name}`. */
-  @NotNull Field ${jn(f.name)} = new Field("${f.name}", ${lqrn(f.typeRef, t)}.Type.instance().dataType(${f.valueDataType.polymorphic}${vt(f.typeRef, s", ${tcr(f.valueDataType, t)}", "")}));
+  @NotNull Field ${jn(f.name)} = new Field("${f.name}", ${lqrn(f.typeRef, t)}.Type.instance().dataType(${vt(f.typeRef, tcr(f.valueDataType, t), "")}));
 """
   }.mkString
 }\

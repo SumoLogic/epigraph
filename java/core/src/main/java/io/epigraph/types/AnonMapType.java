@@ -39,7 +39,7 @@ public abstract class AnonMapType extends MapType {
     ) {
       return valueType.type.immediateSupertypes().stream().map(st -> new AnonMapType.Raw(// FIXME too many new raw types
           keyType,
-          new DataType(valueType.polymorphic/* TODO should it be false?*/, st, defaultTag(st, valueType.defaultTag))
+          new DataType(st, defaultTag(st, valueType.defaultTag))
       )).collect(Collectors.toList());
     }
 

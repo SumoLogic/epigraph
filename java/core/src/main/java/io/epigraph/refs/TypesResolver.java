@@ -37,6 +37,7 @@ public interface TypesResolver {
         defaultTag = null;
     }
 
-    return new DataType(false, type, defaultTag);
+    return new DataType(type, defaultTag);
   }
+
 }

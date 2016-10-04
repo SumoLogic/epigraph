@@ -29,7 +29,7 @@ import static org.junit.Assert.fail;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ReqOutputProjectionsTest {
-  private DataType dataType = new DataType(false, Person.type, Person.id);
+  private DataType dataType = new DataType(Person.type, Person.id);
   private TypesResolver resolver = new SimpleTypesResolver(
       PersonId.type,
       Person.type,

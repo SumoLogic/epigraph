@@ -32,7 +32,6 @@ public abstract class AnonListType extends ListType {
     private static @NotNull List<@NotNull ? extends AnonListType.Raw> immediateSupertypes(@NotNull DataType elementDataType) {
       // FIXME too many new raw types
       return elementDataType.type.immediateSupertypes().stream().map(st -> new AnonListType.Raw(new DataType(
-          elementDataType.polymorphic, // TODO should it be false?
           st,
           defaultTag(st, elementDataType.defaultTag)
       ))).collect(Collectors.toList());

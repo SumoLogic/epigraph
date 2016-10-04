@@ -49,7 +49,7 @@ public class OpInputProjectionsTest {
     );
 
     testParsingVarProjection(
-        new DataType(false, Person.type, Person.id),
+        new DataType(Person.type, Person.id),
         projectionStr, expected
     );
   }
@@ -57,7 +57,7 @@ public class OpInputProjectionsTest {
   @Test
   public void testParseEmpty() throws PsiProcessingException {
     testParsingVarProjection(
-        new DataType(false, Person.type, Person.id),
+        new DataType(Person.type, Person.id),
         "", ":id", 1
     );
   }
@@ -75,7 +75,7 @@ public class OpInputProjectionsTest {
   @Test
   public void testParseTail() throws PsiProcessingException {
     testParsingVarProjection(
-        new DataType(false, Person.type, Person.id),
+        new DataType(Person.type, Person.id),
         "~io.epigraph.tests.User :id",
         ":id ~io.epigraph.tests.User :id", 1
     );
@@ -84,7 +84,7 @@ public class OpInputProjectionsTest {
   @Test
   public void testParseTails() throws PsiProcessingException {
     testParsingVarProjection(
-        new DataType(false, Person.type, Person.id),
+        new DataType(Person.type, Person.id),
         "~( io.epigraph.tests.User :id, io.epigraph.tests.Person :id )",
         ":id ~( io.epigraph.tests.User :id, io.epigraph.tests.Person :id )",
         1
@@ -137,7 +137,7 @@ public class OpInputProjectionsTest {
 
   private void testParsingVarProjection(String str, int steps) throws PsiProcessingException {
     testParsingVarProjection(
-        new DataType(false, Person.type, Person.id),
+        new DataType(Person.type, Person.id),
         str,
         str, steps
     );

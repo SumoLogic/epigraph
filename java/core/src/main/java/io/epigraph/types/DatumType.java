@@ -48,7 +48,7 @@ public abstract class DatumType extends Type {
     return datum;
   }
 
-  public @NotNull DataType dataType(boolean polymorphic) { return new DataType(polymorphic, this, self); } // TODO cache
+  public @NotNull DataType dataType() { return new DataType(this, self); } // TODO cache
 
   public abstract @NotNull Val.Imm createValue(@Nullable ErrorValue errorOrNull);
 

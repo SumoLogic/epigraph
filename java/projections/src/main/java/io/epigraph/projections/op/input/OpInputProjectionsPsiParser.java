@@ -299,7 +299,7 @@ public class OpInputProjectionsPsiParser {
     @NotNull TypeRef tailTypeRef = TypeRefs.fromPsi(tailTypeRefPsi);
     @NotNull Type tailType = getType(tailTypeRef, typesResolver, locationPsi);
     return parseComaVarProjection(
-        new DataType(dataType.polymorphic, tailType, dataType.defaultTag),
+        new DataType(tailType, dataType.defaultTag),
         psiTailProjection,
         typesResolver
     ).projection();
