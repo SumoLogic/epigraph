@@ -340,7 +340,7 @@ ${t.effectiveDefaultValueTagName match { // default value tag (if defined) views
 
     ${"/**"} Returns modifiable map view of default `$dtn` tag element datums. Elements where the tag datum is not set will be `null`. */
     @Override
-    public @NotNull java.util.Map<${lqn(kt, t)}.@NotNull Imm, @Nullable ${lqn(tt(vtr, dtn), t)}> datums() {
+    public @NotNull java.util.Map<${lqn(kt, t)}.@NotNull Imm, ${lqn("@Nullable ", tt(vtr, dtn), t)}> datums() {
       return new io.epigraph.util.MapView<>(
           datas(),
           ${lqn(vt, t)}${vt(vt, "", ".Data")}::get${vt(vt, up(dtn), "")},
@@ -377,7 +377,7 @@ ${vt match { // data view (for vartypes)
 
     ${"/**"} Returns modifiable map view of element data builders. */
     @Override
-    public @NotNull java.util.Map<${lqn(kt, t)}.@NotNull Imm, @NotNull ${lqn(vt, t)}> datas() {
+    public @NotNull java.util.Map<${lqn(kt, t)}.@NotNull Imm, ${lqn("@NotNull ", vt, t)}> datas() {
       return io.epigraph.util.Util.cast(_raw().elements());
     }
 
@@ -392,7 +392,7 @@ ${
 //    /**
 //     * Returns modifiable map view of elements `${tag.name}` tag datums. Elements where the tag value is not set will be `null`.
 //     */
-//    public @NotNull java.util.Map<${lqn(kt, t)}.@NotNull Imm, @Nullable ${lqn(tt(vtr, tag.name), t)}> ${jn(tag.name + "Datums")}() {
+//    public @NotNull java.util.Map<${lqn(kt, t)}.@NotNull Imm, ${lqn("@Nullable ", tt(vtr, tag.name), t)}> ${jn(tag.name + "Datums")}() {
 //      return new io.epigraph.util.MapView<>(
 //          datas(),
 //          ${lqn(vt, t)}${vt(vt, "", ".Data")}::get${vt(vt, up(tag.name), "")},

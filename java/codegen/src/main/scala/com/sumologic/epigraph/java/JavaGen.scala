@@ -125,7 +125,9 @@ abstract class JavaGen[From >: Null <: AnyRef](protected val from: From, protect
     if (tpn == pn(lt)) lnTrans(ln(t)) else tpn + "." + lnTrans(ln(t))
   }
 
-  /** java type name for given typeref as seen from the context of the other type namespace */
+  def lqn(prefix: String, t: CType, lt: CType): String = lqn(t, lt, prefix + _)
+
+    /** java type name for given typeref as seen from the context of the other type namespace */
   def lqrn(tr: CTypeRef, lt: CType, lnTrans: (String) => String = identity): String = lqn(tr.resolved, lt, lnTrans)
 
   /** locally qualified name for type's Data type (e.g. `PersonRecord.Data` or `Person`) */

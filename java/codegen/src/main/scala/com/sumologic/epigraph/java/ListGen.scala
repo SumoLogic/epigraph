@@ -329,7 +329,7 @@ ${t.effectiveDefaultElementTagName match { // default element tag (if defined) v
 
     ${"/**"} Returns modifiable list view of default `$dtn` tag element datums. Elements where the tag datum is not set will be `null`. */
     @Override
-    public @NotNull java.util.List<@Nullable ${lqn(tt(etr, dtn), t)}> datums() {
+    public @NotNull java.util.List<${lqn("@Nullable ", tt(etr, dtn), t)}> datums() {
       return new io.epigraph.util.ListView<>(
           datas(),
           ${lqn(et, t)}${vt(et, "", ".Data")}::get${vt(et, up(dtn), "")},
@@ -366,7 +366,7 @@ ${et match { // data view (for vartypes)
 
     ${"/**"} Returns modifiable list view of element data builders. */
     @Override
-    public @NotNull java.util.List<@NotNull ${lqn(et, t)}> datas() {
+    public @NotNull java.util.List<${lqn("@NotNull ", et, t)}> datas() {
       return io.epigraph.util.Util.cast(_raw().elements());
     }
 
@@ -381,7 +381,7 @@ ${
 //    /**
 //     * Returns modifiable list view of elements `${tag.name}` tag datums. Elements where the tag value is not set will be `null`.
 //     */
-//    public @NotNull java.util.List<@Nullable ${lqn(tt(etr, tag.name), t)}> ${jn(tag.name + "Datums")}() {
+//    public @NotNull java.util.List<${lqn("@Nullable ", tt(etr, tag.name), t)}> ${jn(tag.name + "Datums")}() {
 //      return new io.epigraph.util.ListView<>(
 //          datas(),
 //          ${lqn(et, t)}${vt(et, "", ".Data")}::get${vt(et, up(tag.name), "")},

@@ -36,7 +36,13 @@
   </developers>
 
   <profiles>
-    <!-- mvn clean install -Pjar-mavenizer && mvn clean install -Plight-psi && mvn clean install -Pmain && mvn clean install -Pschemas,examples,tests -->
+    <!-- // first-time build bootstrap sequence:
+mvn clean install -P jar-mavenizer && \
+mvn clean install -P light-psi && \
+mvn clean install -P main -pl -java/projections && \
+mvn clean install -P schemas,examples,tests && \
+mvn clean install -P main -pl java/projections
+    -->
 
     <profile>
       <id>jar-mavenizer</id>
