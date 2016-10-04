@@ -3,15 +3,15 @@ package io.epigraph.projections.op.input;
 import com.intellij.psi.PsiElement;
 import io.epigraph.data.*;
 import io.epigraph.gdata.*;
-import io.epigraph.gdata.IdlGDataPsiParser;
+import io.epigraph.idl.TypeRefs;
 import io.epigraph.idl.parser.psi.*;
-import io.epigraph.lang.Fqn;
 import io.epigraph.lang.TextLocation;
-import io.epigraph.projections.StepsAndProjection;
-import io.epigraph.projections.Annotations;
 import io.epigraph.projections.Annotation;
+import io.epigraph.projections.Annotations;
+import io.epigraph.projections.StepsAndProjection;
 import io.epigraph.psi.EpigraphPsiUtil;
 import io.epigraph.psi.PsiProcessingException;
+import io.epigraph.refs.TypeRef;
 import io.epigraph.refs.TypesResolver;
 import io.epigraph.types.*;
 import org.jetbrains.annotations.NotNull;
@@ -198,16 +198,16 @@ public class OpInputProjectionsPsiParser {
 
       @Nullable IdlOpInputVarSingleTail singleTail = tailPsi.getOpInputVarSingleTail();
       if (singleTail != null) {
-        @NotNull IdlFqnTypeRef tailTypeRef = singleTail.getFqnTypeRef();
+        @NotNull IdlTypeRef typeRefPsi = singleTail.getTypeRef();
         @NotNull IdlOpInputComaVarProjection psiTailProjection = singleTail.getOpInputComaVarProjection();
         @NotNull OpInputVarProjection tailProjection =
-            buildTailProjection(dataType, tailTypeRef, psiTailProjection, typesResolver, singleTail);
+            buildTailProjection(dataType, typeRefPsi, psiTailProjection, typesResolver, singleTail);
         tails.add(tailProjection);
       } else {
         @Nullable IdlOpInputVarMultiTail multiTail = tailPsi.getOpInputVarMultiTail();
         assert multiTail != null;
         for (IdlOpInputVarMultiTailItem tailItem : multiTail.getOpInputVarMultiTailItemList()) {
-          @NotNull IdlFqnTypeRef tailTypeRef = tailItem.getFqnTypeRef();
+          @NotNull IdlTypeRef tailTypeRef = tailItem.getTypeRef();
           @NotNull IdlOpInputComaVarProjection psiTailProjection = tailItem.getOpInputComaVarProjection();
           @NotNull OpInputVarProjection tailProjection =
               buildTailProjection(dataType, tailTypeRef, psiTailProjection, typesResolver, tailItem);
@@ -290,14 +290,14 @@ public class OpInputProjectionsPsiParser {
 
   @NotNull
   private static OpInputVarProjection buildTailProjection(@NotNull DataType dataType,
-                                                          IdlFqnTypeRef tailTypeRef,
+                                                          @NotNull IdlTypeRef tailTypeRefPsi,
                                                           IdlOpInputComaVarProjection psiTailProjection,
                                                           @NotNull TypesResolver typesResolver,
                                                           PsiElement locationPsi)
       throws PsiProcessingException {
 
-    @NotNull Fqn typeFqn = tailTypeRef.getFqn().getFqn();
-    @NotNull Type tailType = getType(typesResolver, typeFqn, locationPsi);
+    @NotNull TypeRef tailTypeRef = TypeRefs.fromPsi(tailTypeRefPsi);
+    @NotNull Type tailType = getType(tailTypeRef, typesResolver, locationPsi);
     return parseComaVarProjection(
         new DataType(dataType.polymorphic, tailType, dataType.defaultTag),
         psiTailProjection,

@@ -8,9 +8,9 @@ import com.intellij.psi.PsiElement;
 public interface IdlReqOutputVarMultiTailItem extends PsiElement {
 
   @NotNull
-  IdlFqnTypeRef getFqnTypeRef();
+  IdlReqOutputComaVarProjection getReqOutputComaVarProjection();
 
   @NotNull
-  IdlReqOutputComaVarProjection getReqOutputComaVarProjection();
+  IdlTypeRef getTypeRef();
 
 }

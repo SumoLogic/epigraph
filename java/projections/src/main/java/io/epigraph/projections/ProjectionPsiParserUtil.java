@@ -8,6 +8,7 @@ import io.epigraph.lang.Fqn;
 import io.epigraph.psi.EpigraphPsiUtil;
 import io.epigraph.psi.PsiProcessingException;
 import io.epigraph.refs.FqnTypeRef;
+import io.epigraph.refs.TypeRef;
 import io.epigraph.types.Type;
 import io.epigraph.refs.TypesResolver;
 import org.jetbrains.annotations.NotNull;
@@ -89,10 +90,10 @@ public class ProjectionPsiParserUtil {
   }
 
   @NotNull
-  public static Type getType(@NotNull TypesResolver resolver, @NotNull Fqn fqn, @NotNull PsiElement location)
+  public static Type getType(@NotNull TypeRef typeRef, @NotNull TypesResolver resolver, @NotNull PsiElement location)
       throws PsiProcessingException {
-    @Nullable Type type = resolver.resolve(new FqnTypeRef(fqn)); // TODO this is only used by tails, and tails should allow all kinds of refs, including anon lists and maps
-    if (type == null) throw new PsiProcessingException(String.format("Can't find type '%s'", fqn), location);
+    @Nullable Type type = typeRef.resolve(resolver);
+    if (type == null) throw new PsiProcessingException(String.format("Can't find type '%s'", typeRef.toString()), location);
     return type;
   }
 

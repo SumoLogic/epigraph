@@ -5,8 +5,8 @@ import io.epigraph.data.Datum;
 import io.epigraph.gdata.GDataToData;
 import io.epigraph.gdata.GDatum;
 import io.epigraph.gdata.IdlGDataPsiParser;
+import io.epigraph.idl.TypeRefs;
 import io.epigraph.idl.parser.psi.*;
-import io.epigraph.lang.Fqn;
 import io.epigraph.lang.TextLocation;
 import io.epigraph.projections.Annotation;
 import io.epigraph.projections.Annotations;
@@ -19,6 +19,7 @@ import io.epigraph.projections.req.ReqParam;
 import io.epigraph.projections.req.ReqParams;
 import io.epigraph.psi.EpigraphPsiUtil;
 import io.epigraph.psi.PsiProcessingException;
+import io.epigraph.refs.TypeRef;
 import io.epigraph.refs.TypesResolver;
 import io.epigraph.types.*;
 import org.jetbrains.annotations.NotNull;
@@ -232,7 +233,7 @@ public class ReqOutputProjectionsPsiParser {
 
       @Nullable IdlReqOutputVarSingleTail singleTail = tailPsi.getReqOutputVarSingleTail();
       if (singleTail != null) {
-        @NotNull IdlFqnTypeRef tailTypeRef = singleTail.getFqnTypeRef();
+        @NotNull IdlTypeRef tailTypeRef = singleTail.getTypeRef();
         @NotNull IdlReqOutputComaVarProjection psiTailProjection = singleTail.getReqOutputComaVarProjection();
         @NotNull ReqOutputVarProjection tailProjection =
             buildTailProjection(dataType, op, tailTypeRef, psiTailProjection, typesResolver, singleTail);
@@ -241,7 +242,7 @@ public class ReqOutputProjectionsPsiParser {
         @Nullable IdlReqOutputVarMultiTail multiTail = tailPsi.getReqOutputVarMultiTail();
         assert multiTail != null;
         for (IdlReqOutputVarMultiTailItem tailItem : multiTail.getReqOutputVarMultiTailItemList()) {
-          @NotNull IdlFqnTypeRef tailTypeRef = tailItem.getFqnTypeRef();
+          @NotNull IdlTypeRef tailTypeRef = tailItem.getTypeRef();
           @NotNull IdlReqOutputComaVarProjection psiTailProjection = tailItem.getReqOutputComaVarProjection();
           @NotNull ReqOutputVarProjection tailProjection =
               buildTailProjection(dataType, op, tailTypeRef, psiTailProjection, typesResolver, tailItem);
@@ -288,14 +289,13 @@ public class ReqOutputProjectionsPsiParser {
   private static ReqOutputVarProjection buildTailProjection(
       @NotNull DataType dataType,
       @NotNull OpOutputVarProjection op,
-      IdlFqnTypeRef tailTypeRef,
-      IdlReqOutputComaVarProjection tailProjectionPsi,
+      @NotNull IdlTypeRef tailTypeRefPsi,
+      @NotNull IdlReqOutputComaVarProjection tailProjectionPsi,
       @NotNull TypesResolver typesResolver,
-      PsiElement locationPsi)
-      throws PsiProcessingException {
+      @NotNull PsiElement locationPsi) throws PsiProcessingException {
 
-    @NotNull Fqn typeFqn = tailTypeRef.getFqn().getFqn();
-    @NotNull Type tailType = getType(typesResolver, typeFqn, locationPsi);
+    @NotNull TypeRef tailTypeRef = TypeRefs.fromPsi(tailTypeRefPsi);
+    @NotNull Type tailType = getType(tailTypeRef, typesResolver, locationPsi);
 
     @Nullable OpOutputVarProjection opTail = mergeOpTails(op, tailType);
     if (opTail == null)

@@ -1840,15 +1840,14 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // fqnTypeRef opInputComaVarProjection
+  // typeRef opInputComaVarProjection
   public static boolean opInputVarMultiTailItem(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opInputVarMultiTailItem")) return false;
-    if (!nextTokenIs(b, I_ID)) return false;
     boolean r;
-    Marker m = enter_section_(b);
-    r = fqnTypeRef(b, l + 1);
+    Marker m = enter_section_(b, l, _NONE_, I_OP_INPUT_VAR_MULTI_TAIL_ITEM, "<op input var multi tail item>");
+    r = typeRef(b, l + 1);
     r = r && opInputComaVarProjection(b, l + 1);
-    exit_section_(b, m, I_OP_INPUT_VAR_MULTI_TAIL_ITEM, r);
+    exit_section_(b, l, m, r, false, null);
     return r;
   }
 
@@ -1866,14 +1865,14 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '~' fqnTypeRef opInputComaVarProjection
+  // '~' typeRef opInputComaVarProjection
   public static boolean opInputVarSingleTail(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opInputVarSingleTail")) return false;
     if (!nextTokenIs(b, I_TILDA)) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, I_TILDA);
-    r = r && fqnTypeRef(b, l + 1);
+    r = r && typeRef(b, l + 1);
     r = r && opInputComaVarProjection(b, l + 1);
     exit_section_(b, m, I_OP_INPUT_VAR_SINGLE_TAIL, r);
     return r;
@@ -2493,15 +2492,14 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // fqnTypeRef opOutputVarProjection
+  // typeRef opOutputVarProjection
   public static boolean opOutputVarMultiTailItem(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opOutputVarMultiTailItem")) return false;
-    if (!nextTokenIs(b, I_ID)) return false;
     boolean r;
-    Marker m = enter_section_(b);
-    r = fqnTypeRef(b, l + 1);
+    Marker m = enter_section_(b, l, _NONE_, I_OP_OUTPUT_VAR_MULTI_TAIL_ITEM, "<op output var multi tail item>");
+    r = typeRef(b, l + 1);
     r = r && opOutputVarProjection(b, l + 1);
-    exit_section_(b, m, I_OP_OUTPUT_VAR_MULTI_TAIL_ITEM, r);
+    exit_section_(b, l, m, r, false, null);
     return r;
   }
 
@@ -2549,14 +2547,14 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '~' fqnTypeRef opOutputVarProjection
+  // '~' typeRef opOutputVarProjection
   public static boolean opOutputVarSingleTail(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opOutputVarSingleTail")) return false;
     if (!nextTokenIs(b, I_TILDA)) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, I_TILDA);
-    r = r && fqnTypeRef(b, l + 1);
+    r = r && typeRef(b, l + 1);
     r = r && opOutputVarProjection(b, l + 1);
     exit_section_(b, m, I_OP_OUTPUT_VAR_SINGLE_TAIL, r);
     return r;
@@ -3622,15 +3620,14 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // fqnTypeRef reqOutputComaVarProjection
+  // typeRef reqOutputComaVarProjection
   public static boolean reqOutputVarMultiTailItem(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqOutputVarMultiTailItem")) return false;
-    if (!nextTokenIs(b, I_ID)) return false;
     boolean r;
-    Marker m = enter_section_(b);
-    r = fqnTypeRef(b, l + 1);
+    Marker m = enter_section_(b, l, _NONE_, I_REQ_OUTPUT_VAR_MULTI_TAIL_ITEM, "<req output var multi tail item>");
+    r = typeRef(b, l + 1);
     r = r && reqOutputComaVarProjection(b, l + 1);
-    exit_section_(b, m, I_REQ_OUTPUT_VAR_MULTI_TAIL_ITEM, r);
+    exit_section_(b, l, m, r, false, null);
     return r;
   }
 
@@ -3648,14 +3645,14 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '~' fqnTypeRef reqOutputComaVarProjection
+  // '~' typeRef reqOutputComaVarProjection
   public static boolean reqOutputVarSingleTail(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqOutputVarSingleTail")) return false;
     if (!nextTokenIs(b, I_TILDA)) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, I_TILDA);
-    r = r && fqnTypeRef(b, l + 1);
+    r = r && typeRef(b, l + 1);
     r = r && reqOutputComaVarProjection(b, l + 1);
     exit_section_(b, m, I_REQ_OUTPUT_VAR_SINGLE_TAIL, r);
     return r;

@@ -8,9 +8,9 @@ import com.intellij.psi.PsiElement;
 public interface IdlOpInputVarMultiTailItem extends PsiElement {
 
   @NotNull
-  IdlFqnTypeRef getFqnTypeRef();
+  IdlOpInputComaVarProjection getOpInputComaVarProjection();
 
   @NotNull
-  IdlOpInputComaVarProjection getOpInputComaVarProjection();
+  IdlTypeRef getTypeRef();
 
 }

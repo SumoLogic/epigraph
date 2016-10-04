@@ -8,10 +8,10 @@ import com.intellij.psi.PsiElement;
 public interface IdlReqOutputVarSingleTail extends PsiElement {
 
   @NotNull
-  IdlFqnTypeRef getFqnTypeRef();
+  IdlReqOutputComaVarProjection getReqOutputComaVarProjection();
 
   @NotNull
-  IdlReqOutputComaVarProjection getReqOutputComaVarProjection();
+  IdlTypeRef getTypeRef();
 
   @NotNull
   PsiElement getTilda();

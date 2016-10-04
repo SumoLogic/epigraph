@@ -28,14 +28,14 @@ public class IdlOpInputVarMultiTailItemImpl extends ASTWrapperPsiElement impleme
 
   @Override
   @NotNull
-  public IdlFqnTypeRef getFqnTypeRef() {
-    return findNotNullChildByClass(IdlFqnTypeRef.class);
+  public IdlOpInputComaVarProjection getOpInputComaVarProjection() {
+    return findNotNullChildByClass(IdlOpInputComaVarProjection.class);
   }
 
   @Override
   @NotNull
-  public IdlOpInputComaVarProjection getOpInputComaVarProjection() {
-    return findNotNullChildByClass(IdlOpInputComaVarProjection.class);
+  public IdlTypeRef getTypeRef() {
+    return findNotNullChildByClass(IdlTypeRef.class);
   }
 
 }

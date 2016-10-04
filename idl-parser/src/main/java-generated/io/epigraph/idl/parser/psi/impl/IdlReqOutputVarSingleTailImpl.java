@@ -28,14 +28,14 @@ public class IdlReqOutputVarSingleTailImpl extends ASTWrapperPsiElement implemen
 
   @Override
   @NotNull
-  public IdlFqnTypeRef getFqnTypeRef() {
-    return findNotNullChildByClass(IdlFqnTypeRef.class);
+  public IdlReqOutputComaVarProjection getReqOutputComaVarProjection() {
+    return findNotNullChildByClass(IdlReqOutputComaVarProjection.class);
   }
 
   @Override
   @NotNull
-  public IdlReqOutputComaVarProjection getReqOutputComaVarProjection() {
-    return findNotNullChildByClass(IdlReqOutputComaVarProjection.class);
+  public IdlTypeRef getTypeRef() {
+    return findNotNullChildByClass(IdlTypeRef.class);
   }
 
   @Override

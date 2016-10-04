@@ -28,14 +28,14 @@ public class IdlOpOutputVarSingleTailImpl extends ASTWrapperPsiElement implement
 
   @Override
   @NotNull
-  public IdlFqnTypeRef getFqnTypeRef() {
-    return findNotNullChildByClass(IdlFqnTypeRef.class);
+  public IdlOpOutputVarProjection getOpOutputVarProjection() {
+    return findNotNullChildByClass(IdlOpOutputVarProjection.class);
   }
 
   @Override
   @NotNull
-  public IdlOpOutputVarProjection getOpOutputVarProjection() {
-    return findNotNullChildByClass(IdlOpOutputVarProjection.class);
+  public IdlTypeRef getTypeRef() {
+    return findNotNullChildByClass(IdlTypeRef.class);
   }
 
   @Override

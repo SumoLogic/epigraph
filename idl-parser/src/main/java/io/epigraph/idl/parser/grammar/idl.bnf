@@ -204,9 +204,9 @@ private opOutputComplexTagProjection ::= '{' (opOutputModelProperty ','?)* opOut
 
 //
 opOutputVarPolymorphicTail ::= opOutputVarSingleTail | opOutputVarMultiTail
-opOutputVarSingleTail ::= '~' fqnTypeRef opOutputVarProjection // TODO fqnTypeRef -> typeRef
+opOutputVarSingleTail ::= '~' typeRef opOutputVarProjection
 opOutputVarMultiTail ::= '~' '(' (opOutputVarMultiTailItem ','?)* ')' {pin=2}
-opOutputVarMultiTailItem ::= fqnTypeRef opOutputVarProjection
+opOutputVarMultiTailItem ::= typeRef opOutputVarProjection
 
 opOutputModelProperty ::= opParam | annotation | opOutputModelMeta
 
@@ -248,10 +248,10 @@ opInputDefaultValue ::= 'default' ':' datum {pin=1}
 opInputModelMeta ::= 'meta' ':' '+'? opInputComaModelProjection
 
 opInputVarPolymorphicTail ::= opInputVarSingleTail | opInputVarMultiTail
-opInputVarSingleTail ::= '~' fqnTypeRef opInputComaVarProjection
+opInputVarSingleTail ::= '~' typeRef opInputComaVarProjection
 opInputVarMultiTail ::= '~' '(' (opInputVarMultiTailItem ','?)* ')' {pin=2}
 // todo: recovery. Commented out one breaks parsing tests
-opInputVarMultiTailItem ::= fqnTypeRef opInputComaVarProjection // {recoverWhile = opInputVarMultiTailItemRecover}
+opInputVarMultiTailItem ::= typeRef opInputComaVarProjection // {recoverWhile = opInputVarMultiTailItemRecover}
 //private opInputVarMultiTailItemRecover ::= ! ( ')' )
 
 // todo: recovery. Commented out one breaks parsing tests
@@ -327,9 +327,9 @@ private reqParamsAndAnnotations ::= ( reqParam | reqAnnotation )*
 reqOutputModelMeta ::= '@' '+'? reqOutputComaModelProjection // no params/annotations on meta?
 
 reqOutputVarPolymorphicTail ::= reqOutputVarSingleTail | reqOutputVarMultiTail
-reqOutputVarSingleTail ::= '~' fqnTypeRef reqOutputComaVarProjection
+reqOutputVarSingleTail ::= '~' typeRef reqOutputComaVarProjection
 reqOutputVarMultiTail ::= '~' '(' (reqOutputVarMultiTailItem ','?)* ')' {pin=2}
-reqOutputVarMultiTailItem ::= fqnTypeRef reqOutputComaVarProjection
+reqOutputVarMultiTailItem ::= typeRef reqOutputComaVarProjection
 
 // input projection consists of two parts: trunk and coma. Trunk can't have any branching, i.e. only
 // singular tags and fields are allowed in var and record projections. Coma can contain branching
