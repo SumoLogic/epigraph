@@ -8,16 +8,18 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static io.epigraph.idl.lexer.IdlElementTypes.*;
+import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import io.epigraph.idl.parser.psi.*;
+import io.epigraph.lang.Qn;
 
-public class IdlFqnTypeRefImpl extends IdlTypeRefImpl implements IdlFqnTypeRef {
+public class IdlQnImpl extends ASTWrapperPsiElement implements IdlQn {
 
-  public IdlFqnTypeRefImpl(ASTNode node) {
+  public IdlQnImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull IdlVisitor visitor) {
-    visitor.visitFqnTypeRef(this);
+    visitor.visitQn(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -27,8 +29,13 @@ public class IdlFqnTypeRefImpl extends IdlTypeRefImpl implements IdlFqnTypeRef {
 
   @Override
   @NotNull
-  public IdlFqn getFqn() {
-    return findNotNullChildByClass(IdlFqn.class);
+  public List<IdlQnSegment> getQnSegmentList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, IdlQnSegment.class);
+  }
+
+  @NotNull
+  public Qn getQn() {
+    return IdlPsiImplUtil.getQn(this);
   }
 
 }

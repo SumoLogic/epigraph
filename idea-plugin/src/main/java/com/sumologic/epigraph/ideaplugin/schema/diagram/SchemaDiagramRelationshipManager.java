@@ -6,7 +6,7 @@ import com.intellij.diagram.DiagramRelationshipInfoAdapter;
 import com.intellij.diagram.DiagramRelationshipManager;
 import com.intellij.diagram.presentation.DiagramLineType;
 import com.intellij.psi.PsiNamedElement;
-import io.epigraph.schema.parser.psi.SchemaFqnTypeRef;
+import io.epigraph.schema.parser.psi.SchemaQnTypeRef;
 import io.epigraph.schema.parser.psi.SchemaMetaDecl;
 import io.epigraph.schema.parser.psi.SchemaTypeDef;
 import org.jetbrains.annotations.Nullable;
@@ -73,7 +73,7 @@ public class SchemaDiagramRelationshipManager implements DiagramRelationshipMana
 
       SchemaMetaDecl metaDecl = td1.getMetaDecl();
       if (metaDecl != null) {
-        SchemaFqnTypeRef typeRef = metaDecl.getFqnTypeRef();
+        SchemaQnTypeRef typeRef = metaDecl.getQnTypeRef();
         if (typeRef != null) {
           SchemaTypeDef typeDef = typeRef.resolve();
           if (e2.equals(typeDef)) return META;

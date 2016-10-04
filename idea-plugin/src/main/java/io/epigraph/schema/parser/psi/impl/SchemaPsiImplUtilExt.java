@@ -37,7 +37,7 @@ class SchemaPsiImplUtilExt {
 
     SchemaSupplementsDecl supplementsDecl = recordTypeDef.getSupplementsDecl();
     if (supplementsDecl == null) return Collections.emptyList();
-    return resolveTypeRefs(supplementsDecl.getFqnTypeRefList());
+    return resolveTypeRefs(supplementsDecl.getQnTypeRefList());
   }
 
   // var --------------------------------------------
@@ -53,7 +53,7 @@ class SchemaPsiImplUtilExt {
 
     SchemaSupplementsDecl supplementsDecl = varTypeDef.getSupplementsDecl();
     if (supplementsDecl == null) return Collections.emptyList();
-    return resolveTypeRefs(supplementsDecl.getFqnTypeRefList());
+    return resolveTypeRefs(supplementsDecl.getQnTypeRefList());
   }
 
   // supplement --------------------------------------------
@@ -68,7 +68,7 @@ class SchemaPsiImplUtilExt {
       return sourceTypeRef.resolveTypeDef(supplementDef.getProject(), SchemaSearchScopeUtil.getSearchScope(supplementDef));
     }
 
-    SchemaFqnTypeRef ref = sourceRef(supplementDef);
+    SchemaQnTypeRef ref = sourceRef(supplementDef);
     if (ref == null) return null;
     return ref.resolve();
   }
@@ -110,9 +110,9 @@ class SchemaPsiImplUtilExt {
 
 //  /////////////
 
-  private static List<SchemaTypeDef> resolveTypeRefs(List<SchemaFqnTypeRef> refs) {
+  private static List<SchemaTypeDef> resolveTypeRefs(List<SchemaQnTypeRef> refs) {
     return refs.stream()
-        .map(SchemaFqnTypeRef::resolve)
+        .map(SchemaQnTypeRef::resolve)
         .filter(Objects::nonNull)
         .collect(Collectors.toList());
   }

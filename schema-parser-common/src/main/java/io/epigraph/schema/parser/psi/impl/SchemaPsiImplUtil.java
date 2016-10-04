@@ -7,7 +7,7 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
-import io.epigraph.lang.Fqn;
+import io.epigraph.lang.Qn;
 import io.epigraph.lang.NamingConventions;
 import io.epigraph.schema.parser.psi.*;
 import io.epigraph.schema.parser.psi.stubs.SchemaNamespaceDeclStub;
@@ -30,12 +30,12 @@ public class SchemaPsiImplUtil {
 
   @Contract(pure = true)
   @Nullable
-  public static Fqn getFqn2(SchemaNamespaceDecl namespaceDecl) {
+  public static Qn getFqn(SchemaNamespaceDecl namespaceDecl) {
     SchemaNamespaceDeclStub stub = namespaceDecl.getStub();
     if (stub != null) return stub.getFqn();
 
-    SchemaFqn schemaFqn = namespaceDecl.getFqn();
-    return schemaFqn == null ? null : getFqn(schemaFqn);
+    SchemaQn schemaQn = namespaceDecl.getQn();
+    return schemaQn == null ? null : getQn(schemaQn);
   }
 
   // qid --------------------------------------------
@@ -66,16 +66,16 @@ public class SchemaPsiImplUtil {
 
   @Contract(pure = true)
   @NotNull
-  public static Fqn getFqn(SchemaFqn e) {
-    List<SchemaFqnSegment> fqnSegmentList = e.getFqnSegmentList();
+  public static Qn getQn(SchemaQn e) {
+    List<SchemaQnSegment> fqnSegmentList = e.getQnSegmentList();
     String[] segments = new String[fqnSegmentList.size()];
     int idx = 0;
 
-    for (SchemaFqnSegment segment : fqnSegmentList) {
+    for (SchemaQnSegment segment : fqnSegmentList) {
       segments[idx++] = segment.getQid().getCanonicalName();
     }
 
-    return new Fqn(segments);
+    return new Qn(segments);
   }
 
   // typedef wrapper --------------------------------------------
@@ -152,15 +152,15 @@ public class SchemaPsiImplUtil {
   // not exposed through PSI
   @Contract(pure = true)
   @Nullable
-  public static PsiReference getReference(@NotNull SchemaFqnTypeRef typeRef) {
-    List<SchemaFqnSegment> fqnSegmentList = typeRef.getFqn().getFqnSegmentList();
+  public static PsiReference getReference(@NotNull SchemaQnTypeRef typeRef) {
+    List<SchemaQnSegment> fqnSegmentList = typeRef.getQn().getQnSegmentList();
     if (fqnSegmentList.isEmpty()) return null;
     return fqnSegmentList.get(fqnSegmentList.size() - 1).getReference();
   }
 
   @Contract(pure = true)
   @Nullable
-  public static SchemaTypeDef resolve(@NotNull SchemaFqnTypeRef typeRef) {
+  public static SchemaTypeDef resolve(@NotNull SchemaQnTypeRef typeRef) {
     PsiReference reference = getReference(typeRef);
     if (reference == null) return null;
     PsiElement element = reference.resolve();
@@ -175,15 +175,15 @@ public class SchemaPsiImplUtil {
 
   @Contract(pure = true)
   @Nullable
-  public static SchemaFqnTypeRef sourceRef(@NotNull SchemaSupplementDef supplementDef) {
+  public static SchemaQnTypeRef sourceRef(@NotNull SchemaSupplementDef supplementDef) {
     PsiElement with = supplementDef.getWith();
     if (with == null) return null;
-    return PsiTreeUtil.getNextSiblingOfType(with, SchemaFqnTypeRef.class);
+    return PsiTreeUtil.getNextSiblingOfType(with, SchemaQnTypeRef.class);
   }
 
   @Contract(pure = true)
   @NotNull
-  public static List<SchemaFqnTypeRef> supplementedRefs(@NotNull SchemaSupplementDef supplementDef) {
+  public static List<SchemaQnTypeRef> supplementedRefs(@NotNull SchemaSupplementDef supplementDef) {
     /*
     PsiElement with = supplementDef.getWith();
     if (with == null) return Collections.emptyList();
@@ -200,13 +200,13 @@ public class SchemaPsiImplUtil {
     return result;
     */
 
-    List<SchemaFqnTypeRef> result = new ArrayList<>();
+    List<SchemaQnTypeRef> result = new ArrayList<>();
 
     for (PsiElement element = supplementDef.getSupplement();
          element != null && element.getNode().getElementType() != S_WITH;
          element = element.getNextSibling()) {
 
-      if (element instanceof SchemaFqnTypeRef) result.add((SchemaFqnTypeRef) element);
+      if (element instanceof SchemaQnTypeRef) result.add((SchemaQnTypeRef) element);
     }
 
     return result;
@@ -245,27 +245,27 @@ public class SchemaPsiImplUtil {
    */
   @Contract(pure = true)
   @NotNull
-  public static Fqn getFqn(SchemaFqnSegment e) {
-    SchemaFqn schemaFqn = (SchemaFqn) e.getParent();
-    assert schemaFqn != null;
+  public static Qn getQn(SchemaQnSegment e) {
+    SchemaQn schemaQn = (SchemaQn) e.getParent();
+    assert schemaQn != null;
 
-    List<SchemaFqnSegment> fqnSegmentList = schemaFqn.getFqnSegmentList();
+    List<SchemaQnSegment> fqnSegmentList = schemaQn.getQnSegmentList();
     List<String> segments = new ArrayList<>(fqnSegmentList.size());
 
-    for (SchemaFqnSegment segment : fqnSegmentList) {
+    for (SchemaQnSegment segment : fqnSegmentList) {
       segments.add(segment.getName());
       if (segment == e) break;
     }
 
-    return new Fqn(segments);
+    return new Qn(segments);
   }
 
   @Contract(pure = true)
   @Nullable
-  public static SchemaFqn getSchemaFqn(SchemaFqnSegment segment) {
+  public static SchemaQn getSchemaFqn(SchemaQnSegment segment) {
     PsiElement fqn = segment.getParent();
-    if (fqn instanceof SchemaFqn) {
-      return (SchemaFqn) fqn;
+    if (fqn instanceof SchemaQn) {
+      return (SchemaQn) fqn;
     }
 
     return null;
@@ -273,12 +273,12 @@ public class SchemaPsiImplUtil {
 
   @Contract(pure = true)
   @Nullable
-  public static SchemaFqnTypeRef getSchemaFqnTypeRef(SchemaFqnSegment segment) {
+  public static SchemaQnTypeRef getSchemaFqnTypeRef(SchemaQnSegment segment) {
     PsiElement fqn = segment.getParent();
-    if (fqn instanceof SchemaFqn) {
+    if (fqn instanceof SchemaQn) {
       PsiElement fqnParent = fqn.getParent();
-      if (fqnParent instanceof SchemaFqnTypeRef) {
-        return (SchemaFqnTypeRef) fqnParent;
+      if (fqnParent instanceof SchemaQnTypeRef) {
+        return (SchemaQnTypeRef) fqnParent;
       }
     }
 
@@ -287,29 +287,29 @@ public class SchemaPsiImplUtil {
 
   @Contract(pure = true)
   @Nullable
-  public static String getName(SchemaFqnSegment segment) {
+  public static String getName(SchemaQnSegment segment) {
     return getNameIdentifier(segment).getText();
   }
 
   @Contract(pure = true)
   @NotNull
-  public static PsiElement setName(SchemaFqnSegment segment, String name) {
+  public static PsiElement setName(SchemaQnSegment segment, String name) {
     segment.getQid().setName(name);
     return segment;
   }
 
   @Contract(pure = true)
   @NotNull
-  public static PsiElement getNameIdentifier(SchemaFqnSegment segment) {
+  public static PsiElement getNameIdentifier(SchemaQnSegment segment) {
     return segment.getQid().getId();
   }
 
   @Contract(pure = true)
-  public static boolean isLast(SchemaFqnSegment segment) {
+  public static boolean isLast(SchemaQnSegment segment) {
     PsiElement parent = segment.getParent();
-    if (parent instanceof SchemaFqn) {
-      SchemaFqn schemaFqn = (SchemaFqn) parent;
-      List<SchemaFqnSegment> segmentList = schemaFqn.getFqnSegmentList();
+    if (parent instanceof SchemaQn) {
+      SchemaQn schemaQn = (SchemaQn) parent;
+      List<SchemaQnSegment> segmentList = schemaQn.getQnSegmentList();
       return segment == getLast(segmentList);
     }
     return false;
@@ -317,8 +317,8 @@ public class SchemaPsiImplUtil {
 
   @Contract(pure = true)
   @Nullable
-  public static PsiReference getReference(SchemaFqnSegment segment) {
-    return SchemaReferenceFactory.getFqnReference(segment);
+  public static PsiReference getReference(SchemaQnSegment segment) {
+    return SchemaReferenceFactory.getQnReference(segment);
   }
 
 

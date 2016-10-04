@@ -73,8 +73,8 @@ public class TypeMembers {
 
   public static boolean canHaveDefault(@NotNull SchemaValueTypeRef valueTypeRef) {
     SchemaTypeRef typeRef = valueTypeRef.getTypeRef();
-    if (typeRef instanceof SchemaFqnTypeRef) {
-      SchemaFqnTypeRef fqnTypeRef = (SchemaFqnTypeRef) typeRef;
+    if (typeRef instanceof SchemaQnTypeRef) {
+      SchemaQnTypeRef fqnTypeRef = (SchemaQnTypeRef) typeRef;
       SchemaTypeDef typeDef = fqnTypeRef.resolve();
 
       return typeDef instanceof SchemaVarTypeDef;

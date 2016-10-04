@@ -24,7 +24,7 @@ public class SchemaNamespaceDeclStubElementType extends IStubElementType<SchemaN
 
   @Override
   public SchemaNamespaceDeclStub createStub(@NotNull SchemaNamespaceDecl namespaceDecl, StubElement parentStub) {
-    return new SchemaNamespaceDeclStubImpl(parentStub, namespaceDecl.getFqn2());
+    return new SchemaNamespaceDeclStubImpl(parentStub, namespaceDecl.getFqn());
   }
 
   @NotNull

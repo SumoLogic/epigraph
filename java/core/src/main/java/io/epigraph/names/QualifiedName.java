@@ -2,7 +2,7 @@
 
 package io.epigraph.names;
 
-import io.epigraph.lang.Fqn;
+import io.epigraph.lang.Qn;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,8 +39,8 @@ public class QualifiedName extends AbstractList<String> { // TODO not sure we ne
   }
 
   @NotNull
-  public Fqn toFqn() {
-    if (namespaceName == null) return new Fqn(localName);
+  public Qn toFqn() {
+    if (namespaceName == null) return new Qn(localName);
     else return namespaceName.toFqn().append(localName);
   }
 

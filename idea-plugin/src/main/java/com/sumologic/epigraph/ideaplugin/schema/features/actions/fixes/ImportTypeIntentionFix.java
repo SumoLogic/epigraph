@@ -19,9 +19,9 @@ import com.sumologic.epigraph.ideaplugin.schema.features.actions.SchemaNamespace
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaSearchScopeUtil;
 import com.sumologic.epigraph.ideaplugin.schema.options.SchemaSettings;
-import io.epigraph.lang.Fqn;
+import io.epigraph.lang.Qn;
 import io.epigraph.schema.parser.psi.SchemaFile;
-import io.epigraph.schema.parser.psi.SchemaFqnTypeRef;
+import io.epigraph.schema.parser.psi.SchemaQnTypeRef;
 import io.epigraph.schema.parser.psi.SchemaTypeDef;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
@@ -37,9 +37,9 @@ import java.util.stream.Collectors;
 public class ImportTypeIntentionFix implements HintAction {
   // TODO(low) implement LocalQuickFix, see CreateNSDeclarationIntentionFix
 
-  private final SchemaFqnTypeRef typeRef;
+  private final SchemaQnTypeRef typeRef;
 
-  public ImportTypeIntentionFix(SchemaFqnTypeRef typeRef) {
+  public ImportTypeIntentionFix(SchemaQnTypeRef typeRef) {
     this.typeRef = typeRef;
   }
 
@@ -123,13 +123,13 @@ public class ImportTypeIntentionFix implements HintAction {
   ////
 
   private List<String> calculateImportOptions() {
-    final Fqn typeRefFqn = typeRef.getFqn().getFqn();
-    final int tailSegmentsToRemove = typeRefFqn.size() == 1 ? 0 : typeRefFqn.size() - 1;
+    final Qn typeRefQn = typeRef.getQn().getQn();
+    final int tailSegmentsToRemove = typeRefQn.size() == 1 ? 0 : typeRefQn.size() - 1;
 
-    return SchemaIndexUtil.findTypeDefs(typeRef.getProject(), null, typeRefFqn, SchemaSearchScopeUtil.getSearchScope(typeRef)).stream()
-        .map(SchemaTypeDef::getFqn)
+    return SchemaIndexUtil.findTypeDefs(typeRef.getProject(), null, typeRefQn, SchemaSearchScopeUtil.getSearchScope(typeRef)).stream()
+        .map(SchemaTypeDef::getQn)
         .filter(Objects::nonNull)
-        .map(fqn -> fqn.removeTailSegments(tailSegmentsToRemove).toString())
+        .map(qn -> qn.removeTailSegments(tailSegmentsToRemove).toString())
         .sorted()
         .distinct()
         .collect(Collectors.toList());

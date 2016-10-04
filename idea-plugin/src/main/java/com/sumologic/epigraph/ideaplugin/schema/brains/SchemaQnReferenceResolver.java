@@ -7,7 +7,7 @@ import com.intellij.psi.ResolveResult;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.ArrayUtil;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
-import io.epigraph.lang.Fqn;
+import io.epigraph.lang.Qn;
 import io.epigraph.schema.parser.psi.SchemaNamespaceDecl;
 import io.epigraph.schema.parser.psi.SchemaTypeDef;
 import org.jetbrains.annotations.NotNull;
@@ -22,17 +22,17 @@ import java.util.stream.Collectors;
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  * @see <a href="https://github.com/SumoLogic/epigraph/wiki/References%20implementation#reference-resolution-algorithm">Reference resolution algorithm</a>
  */
-public class SchemaFqnReferenceResolver {
+public class SchemaQnReferenceResolver {
   @NotNull
-  private final List<Fqn> prefixes;
+  private final List<Qn> prefixes;
   @NotNull
-  private final Fqn suffix;
+  private final Qn suffix;
   @NotNull
-  private final Fqn input;
+  private final Qn input;
   @NotNull
   private final GlobalSearchScope searchScope;
 
-  public SchemaFqnReferenceResolver(@NotNull List<Fqn> prefixes, @NotNull Fqn input, @NotNull GlobalSearchScope searchScope) {
+  public SchemaQnReferenceResolver(@NotNull List<Qn> prefixes, @NotNull Qn input, @NotNull GlobalSearchScope searchScope) {
     this.searchScope = searchScope;
     if (input.isEmpty()) throw new IllegalArgumentException("Empty input");
 
@@ -42,17 +42,17 @@ public class SchemaFqnReferenceResolver {
   }
 
   @NotNull
-  public Fqn getInput() {
+  public Qn getInput() {
     return input;
   }
 
   @NotNull
-  public Fqn getSuffix() {
+  public Qn getSuffix() {
     return suffix;
   }
 
   @NotNull
-  public List<Fqn> getPrefixes() {
+  public List<Qn> getPrefixes() {
     return prefixes;
   }
 
@@ -66,7 +66,7 @@ public class SchemaFqnReferenceResolver {
     // type name input (which we tried to append to different prefixes) now becomes
     // source namespace's prefix
 
-    Fqn prefix = input;
+    Qn prefix = input;
     List<SchemaNamespaceDecl> namespaces = resolveNamespaces(project, prefix);
     if (namespaces.size() == 1) {
       SchemaNamespaceDecl namespaceDecl = namespaces.get(0);
@@ -77,9 +77,9 @@ public class SchemaFqnReferenceResolver {
   }
 
   @Nullable
-  public Fqn getTargetTypeDefFqn(@NotNull Project project) {
+  public Qn getTargetTypeDefQn(@NotNull Project project) {
     SchemaTypeDef typeDef = resolveTypeDef(project);
-    if (typeDef != null) return typeDef.getFqn();
+    if (typeDef != null) return typeDef.getQn();
     return null;
   }
 
@@ -99,7 +99,7 @@ public class SchemaFqnReferenceResolver {
 
     // see comment in `resolve` above re. namespace declaration reference
 
-    Fqn prefix = input;
+    Qn prefix = input;
     int prefixLength = prefix.size();
     List<SchemaNamespaceDecl> namespaceDecls = resolveNamespaces(project, prefix);
 
@@ -115,12 +115,12 @@ public class SchemaFqnReferenceResolver {
    * of namespaces that start with prefix
    */
   @NotNull
-  private List<SchemaNamespaceDecl> resolveNamespaces(@NotNull Project project, @NotNull Fqn prefix) {
+  private List<SchemaNamespaceDecl> resolveNamespaces(@NotNull Project project, @NotNull Qn prefix) {
     List<SchemaNamespaceDecl> namespaces = SchemaIndexUtil.findNamespaces(project, prefix.toString(), searchScope);
     // try to find a namespace which is exactly our prefix
     for (SchemaNamespaceDecl namespace : namespaces) {
       //noinspection ConstantConditions
-      if (namespace.getFqn2().equals(prefix))
+      if (namespace.getFqn().equals(prefix))
         return Collections.singletonList(namespace);
     }
 

@@ -71,18 +71,6 @@ public class SchemaVisitor extends PsiElementVisitor {
     // visitPsiNamedElement(o);
   }
 
-  public void visitFqn(@NotNull SchemaFqn o) {
-    visitPsiElement(o);
-  }
-
-  public void visitFqnSegment(@NotNull SchemaFqnSegment o) {
-    visitPsiNameIdentifierOwner(o);
-  }
-
-  public void visitFqnTypeRef(@NotNull SchemaFqnTypeRef o) {
-    visitTypeRef(o);
-  }
-
   public void visitImportStatement(@NotNull SchemaImportStatement o) {
     visitPsiElement(o);
   }
@@ -145,6 +133,18 @@ public class SchemaVisitor extends PsiElementVisitor {
 
   public void visitQid(@NotNull SchemaQid o) {
     visitPsiElement(o);
+  }
+
+  public void visitQn(@NotNull SchemaQn o) {
+    visitPsiElement(o);
+  }
+
+  public void visitQnSegment(@NotNull SchemaQnSegment o) {
+    visitPsiNameIdentifierOwner(o);
+  }
+
+  public void visitQnTypeRef(@NotNull SchemaQnTypeRef o) {
+    visitTypeRef(o);
   }
 
   public void visitRecordDatum(@NotNull SchemaRecordDatum o) {

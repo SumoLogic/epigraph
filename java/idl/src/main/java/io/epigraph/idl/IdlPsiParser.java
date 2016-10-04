@@ -4,7 +4,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import io.epigraph.idl.operations.Operation;
 import io.epigraph.idl.operations.OperationsPsiParser;
 import io.epigraph.idl.parser.psi.*;
-import io.epigraph.lang.Fqn;
+import io.epigraph.lang.Qn;
 import io.epigraph.psi.EpigraphPsiUtil;
 import io.epigraph.psi.PsiProcessingException;
 import io.epigraph.refs.TypesResolver;
@@ -29,11 +29,11 @@ public class IdlPsiParser {
     @Nullable IdlNamespaceDecl namespaceDeclPsi = PsiTreeUtil.getChildOfType(idlPsi, IdlNamespaceDecl.class);
     if (namespaceDeclPsi == null)
       throw new PsiProcessingException("namespace not specified", idlPsi);
-    @Nullable IdlFqn namespaceFqnPsi = namespaceDeclPsi.getFqn();
+    @Nullable IdlQn namespaceFqnPsi = namespaceDeclPsi.getQn();
     if (namespaceFqnPsi == null)
       throw new PsiProcessingException("namespace not specified", idlPsi);
 
-    Fqn namespace = namespaceFqnPsi.getFqn();
+    Qn namespace = namespaceFqnPsi.getQn();
 
     // todo parse imports
 

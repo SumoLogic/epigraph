@@ -10,7 +10,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
 import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.TypeMembers;
 import com.sumologic.epigraph.ideaplugin.schema.psi.SchemaPsiUtil;
-import io.epigraph.lang.Fqn;
+import io.epigraph.lang.Qn;
 import io.epigraph.schema.parser.SchemaLanguage;
 import io.epigraph.schema.parser.SchemaParserDefinition;
 import io.epigraph.schema.parser.psi.*;
@@ -227,13 +227,13 @@ public class SchemaCompletionContributor extends CompletionContributor {
     if (!(qid instanceof SchemaQid)) return;
 
     if (PsiTreeUtil.getParentOfType(qid, SchemaSupplementDef.class) != null) {
-      SchemaFqnTypeRef fqnTypeRef = PsiTreeUtil.getParentOfType(qid, SchemaFqnTypeRef.class);
-      if (fqnTypeRef != null) {
-        PsiElement prevSibling = SchemaPsiUtil.prevNonWhitespaceSibling(fqnTypeRef);
+      SchemaQnTypeRef qnTypeRef = PsiTreeUtil.getParentOfType(qid, SchemaQnTypeRef.class);
+      if (qnTypeRef != null) {
+        PsiElement prevSibling = SchemaPsiUtil.prevNonWhitespaceSibling(qnTypeRef);
         if (prevSibling != null
             && prevSibling.getNode().getElementType() != S_COMMA
             && prevSibling.getNode().getElementType() != S_SUPPLEMENT
-            && !SchemaPsiUtil.hasPrevSibling(fqnTypeRef, S_WITH)) {
+            && !SchemaPsiUtil.hasPrevSibling(qnTypeRef, S_WITH)) {
           result.addElement(LookupElementBuilder.create("with "));
         }
       }
@@ -268,12 +268,12 @@ public class SchemaCompletionContributor extends CompletionContributor {
       public void visitElement(PsiElement element) {
         super.visitElement(element);
 
-        if (element instanceof SchemaFqnTypeRef) {
-          SchemaFqnTypeRef typeRef = (SchemaFqnTypeRef) element;
+        if (element instanceof SchemaQnTypeRef) {
+          SchemaQnTypeRef typeRef = (SchemaQnTypeRef) element;
 
-          Fqn fqn = typeRef.getFqn().getFqn();
+          Qn qn = typeRef.getQn().getQn();
           // only bother if it's single-segment
-          if (fqn.size() != 1) return;
+          if (qn.size() != 1) return;
 
           PsiReference reference = SchemaPsiImplUtil.getReference(typeRef);
           if (reference == null) return;
@@ -282,7 +282,7 @@ public class SchemaCompletionContributor extends CompletionContributor {
 
           // now here is the place to look around and be more intelligent
 
-          result.addElement(LookupElementBuilder.create(fqn.toString()));
+          result.addElement(LookupElementBuilder.create(qn.toString()));
         }
 
       }
@@ -428,11 +428,11 @@ public class SchemaCompletionContributor extends CompletionContributor {
   private void completeDefault(@Nullable SchemaValueTypeRef valueTypeRef, @NotNull CompletionResultSet result) {
     if (valueTypeRef != null && valueTypeRef.getDefaultOverride() == null) {
       SchemaTypeRef typeRef = valueTypeRef.getTypeRef();
-      // type ref is an FQN type ref (not an anon list or map)
-      if (typeRef instanceof SchemaFqnTypeRef) {
+      // type ref is an QN type ref (not an anon list or map)
+      if (typeRef instanceof SchemaQnTypeRef) {
         // resolve it and ensure it points to a var type
-        SchemaFqnTypeRef fqnTypeRef = (SchemaFqnTypeRef) typeRef;
-        SchemaTypeDef typeDef = fqnTypeRef.resolve();
+        SchemaQnTypeRef qnTypeRef = (SchemaQnTypeRef) typeRef;
+        SchemaTypeDef typeDef = qnTypeRef.resolve();
         if (typeDef instanceof SchemaVarTypeDef) {
           PsiElement prevSibling = SchemaPsiUtil.prevNonWhitespaceSibling(valueTypeRef);
           if (prevSibling != null && prevSibling.getNode().getElementType() == S_COLON) {

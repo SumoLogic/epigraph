@@ -21,9 +21,6 @@ public interface IdlElementTypes {
   IElementType I_DATUM = new IdlElementType("I_DATUM");
   IElementType I_DEFAULT_OVERRIDE = new IdlElementType("I_DEFAULT_OVERRIDE");
   IElementType I_ENUM_DATUM = new IdlElementType("I_ENUM_DATUM");
-  IElementType I_FQN = new IdlElementType("I_FQN");
-  IElementType I_FQN_SEGMENT = new IdlElementType("I_FQN_SEGMENT");
-  IElementType I_FQN_TYPE_REF = new IdlElementType("I_FQN_TYPE_REF");
   IElementType I_IMPORTS = new IdlElementType("I_IMPORTS");
   IElementType I_IMPORT_STATEMENT = new IdlElementType("I_IMPORT_STATEMENT");
   IElementType I_LIST_DATUM = new IdlElementType("I_LIST_DATUM");
@@ -79,6 +76,9 @@ public interface IdlElementTypes {
   IElementType I_OP_PARAM = new IdlElementType("I_OP_PARAM");
   IElementType I_PRIMITIVE_DATUM = new IdlElementType("I_PRIMITIVE_DATUM");
   IElementType I_QID = new IdlElementType("I_QID");
+  IElementType I_QN = new IdlElementType("I_QN");
+  IElementType I_QN_SEGMENT = new IdlElementType("I_QN_SEGMENT");
+  IElementType I_QN_TYPE_REF = new IdlElementType("I_QN_TYPE_REF");
   IElementType I_READ_OPERATION_BODY_PART = new IdlElementType("I_READ_OPERATION_BODY_PART");
   IElementType I_READ_OPERATION_DEF = new IdlElementType("I_READ_OPERATION_DEF");
   IElementType I_RECORD_DATUM = new IdlElementType("I_RECORD_DATUM");
@@ -201,15 +201,6 @@ public interface IdlElementTypes {
       }
       else if (type == I_ENUM_DATUM) {
         return new IdlEnumDatumImpl(node);
-      }
-      else if (type == I_FQN) {
-        return new IdlFqnImpl(node);
-      }
-      else if (type == I_FQN_SEGMENT) {
-        return new IdlFqnSegmentImpl(node);
-      }
-      else if (type == I_FQN_TYPE_REF) {
-        return new IdlFqnTypeRefImpl(node);
       }
       else if (type == I_IMPORTS) {
         return new IdlImportsImpl(node);
@@ -375,6 +366,15 @@ public interface IdlElementTypes {
       }
       else if (type == I_QID) {
         return new IdlQidImpl(node);
+      }
+      else if (type == I_QN) {
+        return new IdlQnImpl(node);
+      }
+      else if (type == I_QN_SEGMENT) {
+        return new IdlQnSegmentImpl(node);
+      }
+      else if (type == I_QN_TYPE_REF) {
+        return new IdlQnTypeRefImpl(node);
       }
       else if (type == I_READ_OPERATION_BODY_PART) {
         return new IdlReadOperationBodyPartImpl(node);

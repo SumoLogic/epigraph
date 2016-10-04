@@ -88,10 +88,10 @@ qid ::= id {
 }
 
 imports ::= importStatement*
-importStatement ::= 'import' fqn {pin=1 recoverWhile="importRecover"}
+importStatement ::= 'import' qn {pin=1 recoverWhile="importRecover"}
 
-namespaceDecl ::= 'namespace' fqn namespaceBody? {
-  methods=[getFqn2 toString]
+namespaceDecl ::= 'namespace' qn namespaceBody? {
+  methods=[getFqn toString]
   stubClass="io.epigraph.schema.parser.psi.stubs.SchemaNamespaceDeclStub"
   elementTypeClass="io.epigraph.schema.parser.psi.stubs.SchemaNamespaceDeclStubElementType"
   pin=1
@@ -101,15 +101,15 @@ namespaceDecl ::= 'namespace' fqn namespaceBody? {
 private namespaceBody ::= '{' namespaceBodyPart* '}'
 private namespaceBodyPart ::= annotation // | ...
 
-fqnSegment ::= qid {
+qnSegment ::= qid {
   implements="com.intellij.psi.PsiNameIdentifierOwner"
-  methods=[getName setName getNameIdentifier getSchemaFqn getSchemaFqnTypeRef isLast getReference getFqn]
+  methods=[getName setName getNameIdentifier getSchemaFqn getSchemaFqnTypeRef isLast getReference getQn]
 }
-fqn ::= fqnSegment ('.' fqnSegment)* { methods=[getFqn] }
+qn ::= qnSegment ('.' qnSegment)* { methods=[getQn] }
 
 private typeName ::= qid
-typeRef ::= fqnTypeRef | anonList | anonMap {name="type"}
-fqnTypeRef ::= fqn { methods=[resolve] extends="typeRef" }
+typeRef ::= qnTypeRef | anonList | anonMap {name="type"}
+qnTypeRef ::= qn { methods=[resolve] extends="typeRef" }
 varTagRef ::= qid {
   implements="com.intellij.psi.PsiNameIdentifierOwner"
   methods=[setName getNameIdentifier getReference]
@@ -136,8 +136,8 @@ valueTypeRef ::= typeRef defaultOverride?
 anonList ::= 'list' '[' valueTypeRef ']' {pin=1 extends="typeRef" }
 anonMap ::= 'map' '[' typeRef ',' valueTypeRef ']' {pin=1 extends="typeRef" }
 
-extendsDecl ::= 'extends' fqnTypeRef (',' fqnTypeRef)* {pin=1}
-supplementsDecl ::= 'supplements' fqnTypeRef (',' fqnTypeRef)* {pin=1}
+extendsDecl ::= 'extends' qnTypeRef (',' qnTypeRef)* {pin=1}
+supplementsDecl ::= 'supplements' qnTypeRef (',' qnTypeRef)* {pin=1}
 
 // TODO Fix: varTagRef doesn't resolve
 defaultOverride ::= 'default' varTagRef
@@ -148,7 +148,7 @@ annotation ::= qid '=' dataValue {
   pin = 2
 }
 
-metaDecl ::= 'meta' fqnTypeRef { pin=1 } // we don't allow anonList or anonMap as meta
+metaDecl ::= 'meta' qnTypeRef { pin=1 } // we don't allow anonList or anonMap as meta
 
 /// vartype
 
@@ -248,7 +248,7 @@ private primitiveKind ::= 'string' | 'integer' | 'long' | 'double' | 'boolean'
 primitiveTypeBody ::= '{' (primitiveBodyPart ','?)* '}'
 private primitiveBodyPart ::= annotation
 
-supplementDef ::= 'supplement' fqnTypeRef (',' fqnTypeRef)* 'with' fqnTypeRef {
+supplementDef ::= 'supplement' qnTypeRef (',' qnTypeRef)* 'with' qnTypeRef {
   methods=[sourceRef supplementedRefs source supplemented getPresentation toString]
   stubClass="io.epigraph.schema.parser.psi.stubs.SchemaSupplementDefStub"
   elementTypeClass="io.epigraph.schema.parser.psi.stubs.SchemaSupplementDefStubElementType"

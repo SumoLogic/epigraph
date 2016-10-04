@@ -2,7 +2,7 @@ package io.epigraph.schema.parser.psi.stubs;
 
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.stubs.StubInputStream;
-import io.epigraph.lang.Fqn;
+import io.epigraph.lang.Qn;
 import io.epigraph.schema.parser.psi.SchemaPrimitiveTypeDef;
 import io.epigraph.schema.parser.psi.impl.SchemaPrimitiveTypeDefImpl;
 import org.jetbrains.annotations.NonNls;
@@ -30,7 +30,7 @@ public class SchemaPrimitiveTypeDefStubElementType extends SchemaTypeDefStubElem
     return new SchemaPrimitiveTypeDefStubImpl(
         parentStub,
         typeDef.getName(),
-        Fqn.toNullableString(typeDef.getNamespace()),
+        Qn.toNullableString(typeDef.getNamespace()),
         getSerializedExtendsTypeRefs(typeDef));
   }
 

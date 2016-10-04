@@ -11,7 +11,7 @@ import static io.epigraph.schema.lexer.SchemaElementTypes.*;
 import com.intellij.extapi.psi.StubBasedPsiElementBase;
 import io.epigraph.schema.parser.psi.stubs.SchemaNamespaceDeclStub;
 import io.epigraph.schema.parser.psi.*;
-import io.epigraph.lang.Fqn;
+import io.epigraph.lang.Qn;
 
 public class SchemaNamespaceDeclImpl extends StubBasedPsiElementBase<SchemaNamespaceDeclStub> implements SchemaNamespaceDecl {
 
@@ -44,8 +44,8 @@ public class SchemaNamespaceDeclImpl extends StubBasedPsiElementBase<SchemaNames
 
   @Override
   @Nullable
-  public SchemaFqn getFqn() {
-    return PsiTreeUtil.getChildOfType(this, SchemaFqn.class);
+  public SchemaQn getQn() {
+    return PsiTreeUtil.getChildOfType(this, SchemaQn.class);
   }
 
   @Override
@@ -67,8 +67,8 @@ public class SchemaNamespaceDeclImpl extends StubBasedPsiElementBase<SchemaNames
   }
 
   @Nullable
-  public Fqn getFqn2() {
-    return SchemaPsiImplUtil.getFqn2(this);
+  public Qn getFqn() {
+    return SchemaPsiImplUtil.getFqn(this);
   }
 
   @NotNull

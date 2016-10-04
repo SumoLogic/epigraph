@@ -1,16 +1,17 @@
 // This is a generated file. Not intended for manual editing.
-package io.epigraph.schema.parser.psi;
+package io.epigraph.idl.parser.psi;
 
 import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
+import io.epigraph.lang.Qn;
 
-public interface SchemaFqnTypeRef extends SchemaTypeRef {
+public interface IdlQn extends PsiElement {
 
   @NotNull
-  SchemaFqn getFqn();
+  List<IdlQnSegment> getQnSegmentList();
 
-  @Nullable
-  SchemaTypeDef resolve();
+  @NotNull
+  Qn getQn();
 
 }

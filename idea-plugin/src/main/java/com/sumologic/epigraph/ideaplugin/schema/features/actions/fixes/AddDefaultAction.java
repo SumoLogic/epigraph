@@ -71,8 +71,8 @@ public class AddDefaultAction extends PsiElementBaseIntentionAction implements L
   private SchemaVarTypeDef findVarTypeDef(@Nullable SchemaValueTypeRef valueTypeRef) {
     if (valueTypeRef != null && valueTypeRef.getDefaultOverride() == null) {
       SchemaTypeRef typeRef = valueTypeRef.getTypeRef();
-      if (typeRef instanceof SchemaFqnTypeRef) {
-        SchemaFqnTypeRef fqnTypeRef = (SchemaFqnTypeRef) typeRef;
+      if (typeRef instanceof SchemaQnTypeRef) {
+        SchemaQnTypeRef fqnTypeRef = (SchemaQnTypeRef) typeRef;
         SchemaTypeDef typeDef = fqnTypeRef.resolve();
         if (typeDef instanceof SchemaVarTypeDef) {
           return (SchemaVarTypeDef) typeDef;

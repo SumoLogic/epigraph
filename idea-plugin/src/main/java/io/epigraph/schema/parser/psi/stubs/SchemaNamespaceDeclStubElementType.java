@@ -3,7 +3,7 @@ package io.epigraph.schema.parser.psi.stubs;
 import com.intellij.psi.stubs.*;
 import com.intellij.util.io.StringRef;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaStubIndexKeys;
-import io.epigraph.lang.Fqn;
+import io.epigraph.lang.Qn;
 import io.epigraph.schema.parser.SchemaLanguage;
 import io.epigraph.schema.parser.psi.SchemaNamespaceDecl;
 import io.epigraph.schema.parser.psi.impl.SchemaNamespaceDeclImpl;
@@ -27,7 +27,7 @@ public class SchemaNamespaceDeclStubElementType extends IStubElementType<SchemaN
 
   @Override
   public SchemaNamespaceDeclStub createStub(@NotNull SchemaNamespaceDecl namespaceDecl, StubElement parentStub) {
-    return new SchemaNamespaceDeclStubImpl(parentStub, namespaceDecl.getFqn2());
+    return new SchemaNamespaceDeclStubImpl(parentStub, namespaceDecl.getFqn());
   }
 
   @NotNull
@@ -38,7 +38,7 @@ public class SchemaNamespaceDeclStubElementType extends IStubElementType<SchemaN
 
   @Override
   public void serialize(@NotNull SchemaNamespaceDeclStub stub, @NotNull StubOutputStream dataStream) throws IOException {
-    Fqn fqn = stub.getFqn();
+    Qn fqn = stub.getFqn();
     dataStream.writeName(fqn == null ? null : fqn.toString());
   }
 
@@ -46,14 +46,14 @@ public class SchemaNamespaceDeclStubElementType extends IStubElementType<SchemaN
   @Override
   public SchemaNamespaceDeclStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
     StringRef fqnStr = dataStream.readName();
-    Fqn fqn = fqnStr == null ? null : Fqn.fromDotSeparated(fqnStr.getString());
+    Qn fqn = fqnStr == null ? null : Qn.fromDotSeparated(fqnStr.getString());
 
     return new SchemaNamespaceDeclStubImpl(parentStub, fqn);
   }
 
   @Override
   public void indexStub(@NotNull SchemaNamespaceDeclStub stub, @NotNull IndexSink sink) {
-    Fqn fqn = stub.getFqn();
+    Qn fqn = stub.getFqn();
     if (fqn != null) sink.occurrence(SchemaStubIndexKeys.NAMESPACE_BY_NAME, fqn.toString());
   }
 }

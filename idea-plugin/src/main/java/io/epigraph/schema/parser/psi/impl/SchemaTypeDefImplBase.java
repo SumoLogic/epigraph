@@ -9,7 +9,7 @@ import com.intellij.util.IncorrectOperationException;
 import com.sumologic.epigraph.ideaplugin.schema.brains.NamespaceManager;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaSearchScopeUtil;
 import com.sumologic.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
-import io.epigraph.lang.Fqn;
+import io.epigraph.lang.Qn;
 import io.epigraph.schema.parser.psi.*;
 import io.epigraph.schema.parser.psi.stubs.SchemaTypeDefStubBase;
 import io.epigraph.schema.parser.psi.stubs.SerializedFqnTypeRef;
@@ -103,10 +103,10 @@ public abstract class SchemaTypeDefImplBase<S extends SchemaTypeDefStubBase<T>, 
 
   @Nullable
   @Override
-  public Fqn getNamespace() {
+  public Qn getNamespace() {
     S stub = getStub();
     if (stub != null) {
-      return Fqn.fromNullableDotSeparated(stub.getNamespace());
+      return Qn.fromNullableDotSeparated(stub.getNamespace());
     }
 
     return NamespaceManager.getNamespace(this);
@@ -114,11 +114,11 @@ public abstract class SchemaTypeDefImplBase<S extends SchemaTypeDefStubBase<T>, 
 
   @Nullable
   @Override
-  public Fqn getFqn() {
+  public Qn getQn() {
     String name = getName();
     if (name == null) return null;
-    Fqn namespace = getNamespace();
-    if (namespace == null) return new Fqn(name);
+    Qn namespace = getNamespace();
+    if (namespace == null) return new Qn(name);
     return namespace.append(name);
   }
 
@@ -155,11 +155,11 @@ public abstract class SchemaTypeDefImplBase<S extends SchemaTypeDefStubBase<T>, 
 
     SchemaExtendsDecl extendsDecl = getExtendsDecl();
     if (extendsDecl == null) return Collections.emptyList();
-    List<SchemaFqnTypeRef> typeRefList = extendsDecl.getFqnTypeRefList();
+    List<SchemaQnTypeRef> typeRefList = extendsDecl.getQnTypeRefList();
     if (typeRefList.isEmpty()) return Collections.emptyList();
 
     List<SchemaTypeDef> result = new ArrayList<>(typeRefList.size());
-    for (SchemaFqnTypeRef typeRef : typeRefList) {
+    for (SchemaQnTypeRef typeRef : typeRefList) {
       SchemaTypeDef resolved = typeRef.resolve();
       if (resolved != null) result.add(resolved);
     }
@@ -173,8 +173,8 @@ public abstract class SchemaTypeDefImplBase<S extends SchemaTypeDefStubBase<T>, 
     if (obj instanceof SchemaTypeDef) {
       SchemaTypeDef other = (SchemaTypeDef) obj;
 
-      Fqn thisNamespace = getNamespace();
-      Fqn otherNamespace = other.getNamespace();
+      Qn thisNamespace = getNamespace();
+      Qn otherNamespace = other.getNamespace();
 
       String thisName = getName();
       String otherName = other.getName();
@@ -198,7 +198,7 @@ public abstract class SchemaTypeDefImplBase<S extends SchemaTypeDefStubBase<T>, 
 
   @Override
   public int hashCode() {
-    Fqn namespace = getNamespace();
+    Qn namespace = getNamespace();
     String name = getName();
 
     if (namespace == null && name == null) return super.hashCode();

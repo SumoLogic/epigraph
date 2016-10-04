@@ -2,19 +2,19 @@
 
 package com.sumologic.epigraph.schema.compiler
 
-import io.epigraph.schema.parser.psi.{SchemaAnonList, SchemaAnonMap, SchemaFqnTypeRef, SchemaTypeRef}
+import io.epigraph.schema.parser.psi.{SchemaAnonList, SchemaAnonMap, SchemaQnTypeRef, SchemaTypeRef}
 
 
 object CTypeRef {
 
   def apply(csf: CSchemaFile, psi: SchemaTypeRef)(implicit ctx: CContext): CTypeRef = psi match {
-    case psi: SchemaFqnTypeRef => apply(csf, psi)
+    case psi: SchemaQnTypeRef => apply(csf, psi)
     case psi: SchemaAnonList => apply(csf, psi)
     case psi: SchemaAnonMap => apply(csf, psi)
     case unknown => throw new UnsupportedOperationException(unknown.toString)
   }
 
-  def apply(csf: CSchemaFile, psi: SchemaFqnTypeRef)(implicit ctx: CContext): CTypeDefRef =
+  def apply(csf: CSchemaFile, psi: SchemaQnTypeRef)(implicit ctx: CContext): CTypeDefRef =
     new CTypeDefRef(csf, psi)
 
   def apply(csf: CSchemaFile, psi: SchemaAnonList)(implicit ctx: CContext): CAnonListTypeRef =
@@ -69,7 +69,7 @@ abstract class CTypeRef protected(val csf: CSchemaFile)(implicit val ctx: CConte
 
 class CTypeDefRef(csf: CSchemaFile, override val name: CTypeFqn)(implicit ctx: CContext) extends CTypeRef(csf) {
 
-  def this(csf: CSchemaFile, psi: SchemaFqnTypeRef)(implicit ctx: CContext) = this(csf, csf.qualifyLocalTypeRef(psi))
+  def this(csf: CSchemaFile, psi: SchemaQnTypeRef)(implicit ctx: CContext) = this(csf, csf.qualifyLocalTypeRef(psi))
 
   final override type Name = CTypeFqn
 

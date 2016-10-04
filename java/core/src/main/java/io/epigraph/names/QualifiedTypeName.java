@@ -2,7 +2,6 @@
 
 package io.epigraph.names;
 
-import io.epigraph.lang.Fqn;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

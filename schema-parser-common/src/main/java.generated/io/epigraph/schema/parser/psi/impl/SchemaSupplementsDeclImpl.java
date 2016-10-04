@@ -28,8 +28,8 @@ public class SchemaSupplementsDeclImpl extends ASTWrapperPsiElement implements S
 
   @Override
   @NotNull
-  public List<SchemaFqnTypeRef> getFqnTypeRefList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaFqnTypeRef.class);
+  public List<SchemaQnTypeRef> getQnTypeRefList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaQnTypeRef.class);
   }
 
   @Override

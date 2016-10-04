@@ -5,7 +5,7 @@ import com.intellij.util.io.StringRef;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaStubIndexKeys;
 import io.epigraph.schema.parser.SchemaLanguage;
 import io.epigraph.schema.parser.psi.SchemaExtendsDecl;
-import io.epigraph.schema.parser.psi.SchemaFqnTypeRef;
+import io.epigraph.schema.parser.psi.SchemaQnTypeRef;
 import io.epigraph.schema.parser.psi.SchemaTypeDef;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -40,14 +40,14 @@ public abstract class SchemaTypeDefStubElementTypeBase<S extends SchemaTypeDefSt
   protected static List<SerializedFqnTypeRef> getSerializedExtendsTypeRefs(@NotNull SchemaTypeDef typeDef) {
     SchemaExtendsDecl extendsDecl = typeDef.getExtendsDecl();
     if (extendsDecl == null) return null;
-    List<SchemaFqnTypeRef> typeRefList = extendsDecl.getFqnTypeRefList();
+    List<SchemaQnTypeRef> typeRefList = extendsDecl.getQnTypeRefList();
     if (typeRefList.isEmpty()) return Collections.emptyList();
 
     return getSerializedFqnTypeRefs(typeRefList);
   }
 
   @NotNull
-  protected static List<SerializedFqnTypeRef> getSerializedFqnTypeRefs(@NotNull List<SchemaFqnTypeRef> typeRefs) {
+  protected static List<SerializedFqnTypeRef> getSerializedFqnTypeRefs(@NotNull List<SchemaQnTypeRef> typeRefs) {
     return typeRefs.stream()
         .map(SerializedFqnTypeRef::new)
         .filter(Objects::nonNull) // filter out non-fqn or badly broken type refs

@@ -10,14 +10,14 @@ import com.intellij.psi.util.PsiTreeUtil;
 import static io.epigraph.schema.lexer.SchemaElementTypes.*;
 import io.epigraph.schema.parser.psi.*;
 
-public class SchemaFqnTypeRefImpl extends SchemaTypeRefImpl implements SchemaFqnTypeRef {
+public class SchemaQnTypeRefImpl extends SchemaTypeRefImpl implements SchemaQnTypeRef {
 
-  public SchemaFqnTypeRefImpl(ASTNode node) {
+  public SchemaQnTypeRefImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull SchemaVisitor visitor) {
-    visitor.visitFqnTypeRef(this);
+    visitor.visitQnTypeRef(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -27,8 +27,8 @@ public class SchemaFqnTypeRefImpl extends SchemaTypeRefImpl implements SchemaFqn
 
   @Override
   @NotNull
-  public SchemaFqn getFqn() {
-    return notNullChild(PsiTreeUtil.getChildOfType(this, SchemaFqn.class));
+  public SchemaQn getQn() {
+    return notNullChild(PsiTreeUtil.getChildOfType(this, SchemaQn.class));
   }
 
   @Nullable

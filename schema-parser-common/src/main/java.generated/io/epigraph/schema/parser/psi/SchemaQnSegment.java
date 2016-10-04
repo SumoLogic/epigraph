@@ -6,9 +6,9 @@ import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNameIdentifierOwner;
 import com.intellij.psi.PsiReference;
-import io.epigraph.lang.Fqn;
+import io.epigraph.lang.Qn;
 
-public interface SchemaFqnSegment extends PsiNameIdentifierOwner {
+public interface SchemaQnSegment extends PsiNameIdentifierOwner {
 
   @NotNull
   SchemaQid getQid();
@@ -23,10 +23,10 @@ public interface SchemaFqnSegment extends PsiNameIdentifierOwner {
   PsiElement getNameIdentifier();
 
   @Nullable
-  SchemaFqn getSchemaFqn();
+  SchemaQn getSchemaFqn();
 
   @Nullable
-  SchemaFqnTypeRef getSchemaFqnTypeRef();
+  SchemaQnTypeRef getSchemaFqnTypeRef();
 
   boolean isLast();
 
@@ -34,6 +34,6 @@ public interface SchemaFqnSegment extends PsiNameIdentifierOwner {
   PsiReference getReference();
 
   @NotNull
-  Fqn getFqn();
+  Qn getQn();
 
 }

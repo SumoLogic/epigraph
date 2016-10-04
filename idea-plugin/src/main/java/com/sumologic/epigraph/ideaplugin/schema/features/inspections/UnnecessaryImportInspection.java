@@ -7,7 +7,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.util.containers.MultiMap;
 import com.sumologic.epigraph.ideaplugin.schema.brains.ImportsManager;
 import com.sumologic.epigraph.ideaplugin.schema.features.actions.fixes.OptimizeImportsQuickFix;
-import io.epigraph.lang.Fqn;
+import io.epigraph.lang.Qn;
 import io.epigraph.schema.parser.psi.SchemaImportStatement;
 import io.epigraph.schema.parser.psi.SchemaImports;
 import io.epigraph.schema.parser.psi.SchemaVisitor;
@@ -30,9 +30,9 @@ public class UnnecessaryImportInspection extends LocalInspectionTool {
         super.visitImports(schemaImports);
 
         List<SchemaImportStatement> imports = schemaImports.getImportStatementList();
-        MultiMap<Fqn, SchemaImportStatement> importsByFqn = ImportsManager.getImportsByFqn(imports);
+        MultiMap<Qn, SchemaImportStatement> importsByQn = ImportsManager.getImportsByQn(imports);
 
-        for (Map.Entry<Fqn, Collection<SchemaImportStatement>> entry : importsByFqn.entrySet()) {
+        for (Map.Entry<Qn, Collection<SchemaImportStatement>> entry : importsByQn.entrySet()) {
           entry.getValue().stream()
               .filter(is -> ImportsManager.DEFAULT_IMPORTS_LIST.contains(entry.getKey()))
               .forEach(is -> holder.registerProblem(is,

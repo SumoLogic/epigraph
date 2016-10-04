@@ -2,7 +2,7 @@ package io.epigraph.schema.parser.psi.stubs;
 
 import com.intellij.psi.stubs.*;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaStubIndexKeys;
-import io.epigraph.lang.Fqn;
+import io.epigraph.lang.Qn;
 import io.epigraph.schema.parser.SchemaLanguage;
 import io.epigraph.schema.parser.psi.SchemaSupplementDef;
 import io.epigraph.schema.parser.psi.impl.SchemaSupplementDefImpl;
@@ -64,7 +64,7 @@ public class SchemaSupplementDefStubElementType extends IStubElementType<SchemaS
   public void indexStub(@NotNull SchemaSupplementDefStub stub, @NotNull IndexSink sink) {
     SerializedFqnTypeRef sourceTypeRef = stub.getSourceTypeRef();
     if (sourceTypeRef != null) {
-      Fqn ref = sourceTypeRef.getShortName();
+      Qn ref = sourceTypeRef.getShortName();
       if (ref != null && ref.last() != null) {
         //noinspection ConstantConditions
         sink.occurrence(SchemaStubIndexKeys.SUPPLEMENTS_BY_SOURCE, ref.last());
@@ -74,7 +74,7 @@ public class SchemaSupplementDefStubElementType extends IStubElementType<SchemaS
     List<SerializedFqnTypeRef> supplementedTypeRefs = stub.getSupplementedTypeRefs();
     if (supplementedTypeRefs != null) {
       for (SerializedFqnTypeRef supplementedTypeRef : supplementedTypeRefs) {
-        Fqn ref = supplementedTypeRef.getShortName();
+        Qn ref = supplementedTypeRef.getShortName();
         if (ref != null && ref.last() != null) {
           //noinspection ConstantConditions
           sink.occurrence(SchemaStubIndexKeys.SUPPLEMENTS_BY_SUPPLEMENTED, ref.last());

@@ -71,13 +71,13 @@ abstract class CTypeDef protected(val csf: CSchemaFile, val psi: SchemaTypeDef, 
   /** References to types this type supplements (injects itself into). */
   val supplementedTypeRefs: Seq[CTypeDefRef] = {
     @Nullable val ssd: SchemaSupplementsDecl = psi.getSupplementsDecl
-    if (ssd == null) Nil else ssd.getFqnTypeRefList.map(CTypeRef(csf, _))
+    if (ssd == null) Nil else ssd.getQnTypeRefList.map(CTypeRef(csf, _))
   }
 
   /** References to types this type explicitly extends. */
   val extendedTypeRefs: Seq[CTypeDefRef] = {
     @Nullable val sed: SchemaExtendsDecl = psi.getExtendsDecl
-    if (sed == null) Nil else sed.getFqnTypeRefList.map(CTypeRef(csf, _))
+    if (sed == null) Nil else sed.getQnTypeRefList.map(CTypeRef(csf, _))
   }
 
   /** Types this type explicitly extends. */

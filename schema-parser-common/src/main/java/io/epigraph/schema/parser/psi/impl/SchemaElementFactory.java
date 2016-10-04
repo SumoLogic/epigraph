@@ -20,7 +20,7 @@ public class SchemaElementFactory {
   public static PsiElement createId(@NotNull Project project, String text) {
     final SchemaFile file = createFileFromText(project, "namespace " + text);
     //noinspection ConstantConditions
-    return ((SchemaFqnSegment) file.getNamespaceDecl().getFqn().getLastChild()).getQid().getId();
+    return ((SchemaQnSegment) file.getNamespaceDecl().getQn().getLastChild()).getQid().getId();
   }
 
   @NotNull
@@ -31,10 +31,10 @@ public class SchemaElementFactory {
   }
 
   @NotNull
-  public static SchemaFqn createFqn(@NotNull Project project, String text) {
+  public static SchemaQn createFqn(@NotNull Project project, String text) {
     final SchemaFile file = createFileFromText(project, "namespace " + text);
     //noinspection ConstantConditions
-    return file.getNamespaceDecl().getFqn();
+    return file.getNamespaceDecl().getQn();
   }
 
   @NotNull

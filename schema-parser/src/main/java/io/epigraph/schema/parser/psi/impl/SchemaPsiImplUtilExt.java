@@ -39,15 +39,15 @@ public class SchemaPsiImplUtilExt {
   // not exposed through PSI
   @Contract(pure = true)
   @Nullable
-  public static PsiReference getReference(@NotNull SchemaFqnTypeRef typeRef) {
-    List<SchemaFqnSegment> fqnSegmentList = typeRef.getFqn().getFqnSegmentList();
+  public static PsiReference getReference(@NotNull SchemaQnTypeRef typeRef) {
+    List<SchemaQnSegment> fqnSegmentList = typeRef.getQn().getQnSegmentList();
     if (fqnSegmentList.isEmpty()) return null;
     return fqnSegmentList.get(fqnSegmentList.size() - 1).getReference();
   }
 
   @Contract(pure = true)
   @Nullable
-  public static SchemaTypeDef resolve(@NotNull SchemaFqnTypeRef typeRef) {
+  public static SchemaTypeDef resolve(@NotNull SchemaQnTypeRef typeRef) {
     PsiReference reference = getReference(typeRef);
     if (reference == null) return null;
     PsiElement element = reference.resolve();
@@ -57,12 +57,12 @@ public class SchemaPsiImplUtilExt {
 
   // supplement --------------------------------------------
 
-  // can't use SchemaSupplementDef::getFqnTypeRefList as it will include both source and all supplemented
+  // can't use SchemaSupplementDef::getQnTypeRefList as it will include both source and all supplemented
 
   @Contract(pure = true)
   @Nullable
   public static SchemaTypeDef source(@NotNull SchemaSupplementDef supplementDef) {
-    SchemaFqnTypeRef ref = sourceRef(supplementDef);
+    SchemaQnTypeRef ref = sourceRef(supplementDef);
     if (ref == null) return null;
     return ref.resolve();
   }

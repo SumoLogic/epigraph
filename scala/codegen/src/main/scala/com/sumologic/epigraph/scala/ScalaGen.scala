@@ -5,7 +5,7 @@ package com.sumologic.epigraph.scala
 import java.nio.file.Path
 
 import com.sumologic.epigraph.schema.compiler._
-import io.epigraph.lang.Fqn
+import io.epigraph.lang.Qn
 
 import scala.collection.GenTraversableOnce
 import scala.collection.JavaConversions._
@@ -72,12 +72,12 @@ abstract class ScalaGen[From >: Null <: AnyRef](protected val from: From) {
 
 
 
-  def scalaFqn(fqn: Fqn): String = fqn.segments.map(scalaName).mkString(".")
+  def scalaFqn(fqn: Qn): String = fqn.segments.map(scalaName).mkString(".")
 
-  def localQName(typeFqn: Fqn, localNs: Fqn, trans: (String) => String = identity): Fqn = {
+  def localQName(typeFqn: Qn, localNs: Qn, trans: (String) => String = identity): Qn = {
     val transLocal = trans(typeFqn.last())
     val ns = typeFqn.removeLastSegment()
-    if (ns == localNs) new Fqn(transLocal) else ns.append(transLocal)
+    if (ns == localNs) new Qn(transLocal) else ns.append(transLocal)
   }
 
   def ln(t: CTypeDef): String = t.name.local

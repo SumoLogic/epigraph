@@ -11,7 +11,7 @@ import com.intellij.navigation.ItemPresentation;
 public interface SchemaSupplementDef extends PsiElement, StubBasedPsiElement<SchemaSupplementDefStub> {
 
   @NotNull
-  List<SchemaFqnTypeRef> getFqnTypeRefList();
+  List<SchemaQnTypeRef> getQnTypeRefList();
 
   @NotNull
   PsiElement getSupplement();
@@ -20,10 +20,10 @@ public interface SchemaSupplementDef extends PsiElement, StubBasedPsiElement<Sch
   PsiElement getWith();
 
   @Nullable
-  SchemaFqnTypeRef sourceRef();
+  SchemaQnTypeRef sourceRef();
 
   @NotNull
-  List<SchemaFqnTypeRef> supplementedRefs();
+  List<SchemaQnTypeRef> supplementedRefs();
 
   @Nullable
   SchemaTypeDef source();

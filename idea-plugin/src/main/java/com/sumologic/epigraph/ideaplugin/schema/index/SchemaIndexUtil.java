@@ -3,7 +3,7 @@ package com.sumologic.epigraph.ideaplugin.schema.index;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.search.GlobalSearchScope;
-import io.epigraph.lang.Fqn;
+import io.epigraph.lang.Qn;
 import io.epigraph.schema.parser.psi.SchemaNamespaceDecl;
 import io.epigraph.schema.parser.psi.SchemaSupplementDef;
 import io.epigraph.schema.parser.psi.SchemaTypeDef;
@@ -21,16 +21,16 @@ import java.util.List;
 public class SchemaIndexUtil {
   @NotNull
   public static List<SchemaTypeDef> findTypeDefs(@NotNull Project project,
-                                                 @Nullable Collection<Fqn> namespaces,
-                                                 @Nullable Fqn suffix,
+                                                 @Nullable Collection<Qn> namespaces,
+                                                 @Nullable Qn suffix,
                                                  @NotNull GlobalSearchScope scope) {
     return findTypeDefs(project, namespaces, suffix, scope, new AddAllProcessor<>());
   }
 
   @Nullable
   public static SchemaTypeDef findTypeDef(@NotNull Project project,
-                                          @NotNull Collection<Fqn> namespaces,
-                                          @NotNull Fqn suffix,
+                                          @NotNull Collection<Qn> namespaces,
+                                          @NotNull Qn suffix,
                                           @NotNull GlobalSearchScope scope) {
     return findTypeDefs(project, namespaces, suffix, scope, new TakeFirstProcessor<>());
   }
@@ -41,15 +41,15 @@ public class SchemaIndexUtil {
    */
   @Nullable
   public static SchemaTypeDef findSingleTypeDef(@NotNull Project project,
-                                                @NotNull Collection<Fqn> namespaces,
-                                                @NotNull Fqn suffix,
+                                                @NotNull Collection<Qn> namespaces,
+                                                @NotNull Qn suffix,
                                                 @NotNull GlobalSearchScope scope) {
     return findTypeDefs(project, namespaces, suffix, scope, new TakeSingleProcessor<>());
   }
 
   private static <R> R findTypeDefs(@NotNull Project project,
-                                    @Nullable Collection<Fqn> namespaces,
-                                    @Nullable Fqn suffix,
+                                    @Nullable Collection<Qn> namespaces,
+                                    @Nullable Qn suffix,
                                     @NotNull GlobalSearchScope searchScope,
                                     @NotNull Processor<SchemaTypeDef, R> processor) {
 
@@ -58,7 +58,7 @@ public class SchemaIndexUtil {
         SchemaFullTypeNameIndex index = SchemaFullTypeNameIndex.EP_NAME.findExtension(SchemaFullTypeNameIndex.class);
         assert index != null;
 
-        for (Fqn namespace : namespaces) {
+        for (Qn namespace : namespaces) {
           String fqn = namespace.append(suffix).toString();
           Collection<SchemaTypeDef> typeDefs = index.get(fqn, project, searchScope);
           if (!processor.process(typeDefs)) break;
@@ -67,7 +67,7 @@ public class SchemaIndexUtil {
         SchemaTypesByNamespaceIndex index = SchemaTypesByNamespaceIndex.EP_NAME.findExtension(SchemaTypesByNamespaceIndex.class);
         assert index != null;
 
-        for (Fqn namespace : namespaces) {
+        for (Qn namespace : namespaces) {
           Collection<SchemaTypeDef> typeDefs = index.get(namespace.toString(), project, searchScope);
           if (!processor.process(typeDefs)) break;
         }
@@ -107,29 +107,29 @@ public class SchemaIndexUtil {
   }
 
   @NotNull
-  public static List<SchemaTypeDef> findTypeDefs(@NotNull Project project, @NotNull Fqn[] fqns, @NotNull GlobalSearchScope searchScope) {
+  public static List<SchemaTypeDef> findTypeDefs(@NotNull Project project, @NotNull Qn[] fqns, @NotNull GlobalSearchScope searchScope) {
     return findTypeDefs(project, fqns, new AddAllProcessor<>(), searchScope);
   }
 
   @Nullable
-  public static SchemaTypeDef findTypeDef(Project project, @NotNull Fqn[] fqns, @NotNull GlobalSearchScope searchScope) {
+  public static SchemaTypeDef findTypeDef(Project project, @NotNull Qn[] fqns, @NotNull GlobalSearchScope searchScope) {
     return findTypeDefs(project, fqns, new TakeFirstProcessor<>(), searchScope);
   }
 
   @Nullable
-  public static SchemaTypeDef findTypeDef(Project project, @NotNull Fqn fqn, @NotNull GlobalSearchScope searchScope) {
-    return findTypeDefs(project, new Fqn[]{fqn}, new TakeFirstProcessor<>(), searchScope);
+  public static SchemaTypeDef findTypeDef(Project project, @NotNull Qn fqn, @NotNull GlobalSearchScope searchScope) {
+    return findTypeDefs(project, new Qn[]{fqn}, new TakeFirstProcessor<>(), searchScope);
   }
 
   private static <R> R findTypeDefs(@NotNull Project project,
-                                    @NotNull Fqn[] fqns,
+                                    @NotNull Qn[] fqns,
                                     @NotNull Processor<SchemaTypeDef, R> processor,
                                     @NotNull GlobalSearchScope searchScope) {
 
     SchemaFullTypeNameIndex index = SchemaFullTypeNameIndex.EP_NAME.findExtension(SchemaFullTypeNameIndex.class);
     assert index != null;
 
-    for (Fqn fqn : fqns) {
+    for (Qn fqn : fqns) {
       Collection<SchemaTypeDef> typeDefs = index.get(fqn.toString(), project, searchScope);
       if (!processor.process(typeDefs)) break;
     }
@@ -156,7 +156,7 @@ public class SchemaIndexUtil {
   }
 
   @Nullable
-  public static SchemaNamespaceDecl findNamespace(@NotNull Project project, @NotNull Fqn namespace, @NotNull GlobalSearchScope searchScope) {
+  public static SchemaNamespaceDecl findNamespace(@NotNull Project project, @NotNull Qn namespace, @NotNull GlobalSearchScope searchScope) {
     SchemaNamespaceByNameIndex index = SchemaNamespaceByNameIndex.EP_NAME.findExtension(SchemaNamespaceByNameIndex.class);
 
     Collection<SchemaNamespaceDecl> namespaceDecls = index.get(namespace.toString(), project, searchScope);

@@ -8,7 +8,7 @@ import com.intellij.psi.PsiElement;
 public interface SchemaImportStatement extends PsiElement {
 
   @Nullable
-  SchemaFqn getFqn();
+  SchemaQn getQn();
 
   @NotNull
   PsiElement getImport();

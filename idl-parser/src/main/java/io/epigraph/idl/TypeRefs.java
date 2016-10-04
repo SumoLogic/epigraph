@@ -14,9 +14,9 @@ public class TypeRefs {
 
   @NotNull
   public static TypeRef fromPsi(@NotNull IdlTypeRef psi) throws PsiProcessingException {
-    if (psi instanceof IdlFqnTypeRef) {
-      IdlFqnTypeRef fqnTypeRefPsi = (IdlFqnTypeRef) psi;
-      return new FqnTypeRef(fqnTypeRefPsi.getFqn().getFqn());
+    if (psi instanceof IdlQnTypeRef) {
+      IdlQnTypeRef fqnTypeRefPsi = (IdlQnTypeRef) psi;
+      return new QnTypeRef(fqnTypeRefPsi.getQn().getQn());
     }
 
     if (psi instanceof IdlAnonList) {

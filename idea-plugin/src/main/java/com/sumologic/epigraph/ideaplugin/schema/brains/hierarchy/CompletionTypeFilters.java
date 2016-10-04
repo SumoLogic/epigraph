@@ -134,7 +134,7 @@ public abstract class CompletionTypeFilters {
     private boolean includeInSupplement(@NotNull SchemaTypeDef typeDef, @NotNull SchemaSupplementDef host, boolean checkSource) {
       if (checkSource && typeDef.equals(host.source())) return false;
 
-      for (SchemaFqnTypeRef targetRef : host.supplementedRefs()) {
+      for (SchemaQnTypeRef targetRef : host.supplementedRefs()) {
         SchemaTypeDef target = targetRef.resolve();
         if (target != null && typeDef.equals(target)) return false;
       }
@@ -170,7 +170,7 @@ public abstract class CompletionTypeFilters {
         if (source != null && typeDef.getKind() != source.getKind()) return false;
       }
 
-      for (SchemaFqnTypeRef targetRef : host.supplementedRefs()) {
+      for (SchemaQnTypeRef targetRef : host.supplementedRefs()) {
         SchemaTypeDef target = targetRef.resolve();
         if (target != null && typeDef.getKind() != target.getKind()) return false;
       }
@@ -216,7 +216,7 @@ public abstract class CompletionTypeFilters {
         }
       }
 
-      for (SchemaFqnTypeRef targetRef : host.supplementedRefs()) {
+      for (SchemaQnTypeRef targetRef : host.supplementedRefs()) {
         SchemaTypeDef target = targetRef.resolve();
         if (target instanceof SchemaPrimitiveTypeDef) {
           SchemaPrimitiveTypeDef primitiveTarget = (SchemaPrimitiveTypeDef) target;
@@ -249,8 +249,8 @@ public abstract class CompletionTypeFilters {
     public boolean include(@NotNull SchemaTypeDef typeDef, @NotNull SchemaTypeDef host, @NotNull SchemaExtendsDecl extendsDecl) {
       HierarchyCache hierarchyCache = HierarchyCache.getHierarchyCache(host.getProject());
 
-      for (SchemaFqnTypeRef fqnTypeRef : extendsDecl.getFqnTypeRefList()) {
-        SchemaTypeDef parent = fqnTypeRef.resolve();
+      for (SchemaQnTypeRef qnTypeRef : extendsDecl.getQnTypeRefList()) {
+        SchemaTypeDef parent = qnTypeRef.resolve();
         if (parent != null) {
           if (parent.equals(typeDef) || hierarchyCache.getTypeParents(parent).contains(typeDef)) return false;
         }
@@ -271,14 +271,14 @@ public abstract class CompletionTypeFilters {
   private static class TypeAlreadySupplementedFilter implements SupplementsCompletionFilter {
     @Override
     public boolean include(@NotNull SchemaTypeDef typeDef, @NotNull SchemaTypeDef host, @NotNull SchemaSupplementsDecl supplementsDecl) {
-      List<SchemaFqnTypeRef> supplementsList = supplementsDecl.getFqnTypeRefList();
+      List<SchemaQnTypeRef> supplementsList = supplementsDecl.getQnTypeRefList();
       if (supplementsList.isEmpty()) return true;
 
       HierarchyCache hierarchyCache = HierarchyCache.getHierarchyCache(host.getProject());
       List<SchemaTypeDef> typeParents = hierarchyCache.getTypeParents(typeDef);
 
-      for (SchemaFqnTypeRef fqnTypeRef : supplementsList) {
-        SchemaTypeDef child = fqnTypeRef.resolve();
+      for (SchemaQnTypeRef qnTypeRef : supplementsList) {
+        SchemaTypeDef child = qnTypeRef.resolve();
         if (child != null && child.equals(typeDef) || typeParents.contains(child)) return false;
       }
 
@@ -308,7 +308,7 @@ public abstract class CompletionTypeFilters {
       // if candidate is a child if source then it's a useless supplement
       if (source != null && typeParents.contains(source)) return false;
 
-      for (SchemaFqnTypeRef supplementedTypeRef : host.supplementedRefs()) {
+      for (SchemaQnTypeRef supplementedTypeRef : host.supplementedRefs()) {
         SchemaTypeDef supplemented = supplementedTypeRef.resolve();
         if (supplemented != null && supplemented.equals(typeDef) || typeParents.contains(supplemented)) return false;
       }

@@ -105,8 +105,8 @@ public class SchemaDefaultTagLinePainter extends EditorLinePainter {
   private String getDefaultTagTypeName(@NotNull SchemaVarTagDecl defaultTag) {
     SchemaTypeRef defaultTagTypeRef = defaultTag.getTypeRef();
     String defaultTagTypeName = defaultTagTypeRef == null ? null : defaultTagTypeRef.getText();
-    if (defaultTagTypeRef instanceof SchemaFqnTypeRef) {
-      SchemaFqnTypeRef defaultTagFqnTypeRef = (SchemaFqnTypeRef) defaultTagTypeRef;
+    if (defaultTagTypeRef instanceof SchemaQnTypeRef) {
+      SchemaQnTypeRef defaultTagFqnTypeRef = (SchemaQnTypeRef) defaultTagTypeRef;
       SchemaTypeDef typeDef = defaultTagFqnTypeRef.resolve();
       if (typeDef != null) defaultTagTypeName = SchemaPresentationUtil.getName(typeDef, true);
     }

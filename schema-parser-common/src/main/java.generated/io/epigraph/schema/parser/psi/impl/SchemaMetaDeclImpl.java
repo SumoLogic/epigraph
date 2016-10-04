@@ -28,8 +28,8 @@ public class SchemaMetaDeclImpl extends ASTWrapperPsiElement implements SchemaMe
 
   @Override
   @Nullable
-  public SchemaFqnTypeRef getFqnTypeRef() {
-    return PsiTreeUtil.getChildOfType(this, SchemaFqnTypeRef.class);
+  public SchemaQnTypeRef getQnTypeRef() {
+    return PsiTreeUtil.getChildOfType(this, SchemaQnTypeRef.class);
   }
 
   @Override

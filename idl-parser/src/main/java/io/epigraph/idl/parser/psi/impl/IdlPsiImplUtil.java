@@ -1,9 +1,9 @@
 package io.epigraph.idl.parser.psi.impl;
 
-import io.epigraph.idl.parser.psi.IdlFqn;
-import io.epigraph.idl.parser.psi.IdlFqnSegment;
 import io.epigraph.idl.parser.psi.IdlQid;
-import io.epigraph.lang.Fqn;
+import io.epigraph.idl.parser.psi.IdlQn;
+import io.epigraph.idl.parser.psi.IdlQnSegment;
+import io.epigraph.lang.Qn;
 import io.epigraph.lang.NamingConventions;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -40,15 +40,15 @@ public class IdlPsiImplUtil {
 
   // fqn --------------------------------------------
   @NotNull
-  public static Fqn getFqn(@NotNull IdlFqn e) {
-    List<IdlFqnSegment> fqnSegmentList = e.getFqnSegmentList();
+  public static Qn getQn(@NotNull IdlQn e) {
+    List<IdlQnSegment> fqnSegmentList = e.getQnSegmentList();
     String[] segments = new String[fqnSegmentList.size()];
     int idx = 0;
 
-    for (IdlFqnSegment segment : fqnSegmentList) {
+    for (IdlQnSegment segment : fqnSegmentList) {
       segments[idx++] = getCanonicalName(segment.getQid());
     }
 
-    return new Fqn(segments);
+    return new Qn(segments);
   }
 }

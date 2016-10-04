@@ -10,7 +10,7 @@ import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
 import com.sumologic.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
-import io.epigraph.lang.Fqn;
+import io.epigraph.lang.Qn;
 import io.epigraph.schema.parser.psi.SchemaFile;
 import io.epigraph.schema.parser.psi.SchemaTypeDef;
 import org.jetbrains.annotations.Nullable;
@@ -51,7 +51,7 @@ public class SchemaDiagramVfsResolver implements DiagramVfsResolver<PsiNamedElem
     if (s.startsWith(TYPE_PREFIX)) {
       String name = s.substring(TYPE_PREFIX.length());
 
-      SchemaIndexUtil.findTypeDef(project, Fqn.fromDotSeparated(name), GlobalSearchScope.allScope(project));
+      SchemaIndexUtil.findTypeDef(project, Qn.fromDotSeparated(name), GlobalSearchScope.allScope(project));
     }
 
     return null;

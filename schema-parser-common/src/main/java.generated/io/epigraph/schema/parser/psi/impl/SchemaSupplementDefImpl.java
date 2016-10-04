@@ -38,8 +38,8 @@ public class SchemaSupplementDefImpl extends StubBasedPsiElementBase<SchemaSuppl
 
   @Override
   @NotNull
-  public List<SchemaFqnTypeRef> getFqnTypeRefList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaFqnTypeRef.class);
+  public List<SchemaQnTypeRef> getQnTypeRefList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaQnTypeRef.class);
   }
 
   @Override
@@ -55,12 +55,12 @@ public class SchemaSupplementDefImpl extends StubBasedPsiElementBase<SchemaSuppl
   }
 
   @Nullable
-  public SchemaFqnTypeRef sourceRef() {
+  public SchemaQnTypeRef sourceRef() {
     return SchemaPsiImplUtil.sourceRef(this);
   }
 
   @NotNull
-  public List<SchemaFqnTypeRef> supplementedRefs() {
+  public List<SchemaQnTypeRef> supplementedRefs() {
     return SchemaPsiImplUtil.supplementedRefs(this);
   }
 

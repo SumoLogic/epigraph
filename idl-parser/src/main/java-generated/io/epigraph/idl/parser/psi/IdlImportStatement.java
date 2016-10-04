@@ -8,7 +8,7 @@ import com.intellij.psi.PsiElement;
 public interface IdlImportStatement extends PsiElement {
 
   @Nullable
-  IdlFqn getFqn();
+  IdlQn getQn();
 
   @NotNull
   PsiElement getImport();

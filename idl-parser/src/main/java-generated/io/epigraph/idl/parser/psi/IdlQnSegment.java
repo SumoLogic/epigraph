@@ -5,9 +5,9 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface IdlFqnTypeRef extends IdlTypeRef {
+public interface IdlQnSegment extends PsiElement {
 
   @NotNull
-  IdlFqn getFqn();
+  IdlQid getQid();
 
 }

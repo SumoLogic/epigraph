@@ -6,7 +6,7 @@ import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.function.BiFunction
 
 import com.intellij.psi.PsiElement
-import io.epigraph.lang.Fqn
+import io.epigraph.lang.Qn
 import io.epigraph.schema.parser.psi._
 import net.jcip.annotations.ThreadSafe
 import org.jetbrains.annotations.Nullable
@@ -31,7 +31,7 @@ class CSchemaFile(val psi: SchemaFile)(implicit val ctx: CContext) {
     (ci.alias, ci)
   }(collection.breakOut) // TODO deal with dupes (foo.Baz and bar.Baz)
 
-  val importedAliases: Map[String, Fqn] = ctx.implicitImports ++ imports.map { case (alias, ci) => (alias, ci.fqn) }
+  val importedAliases: Map[String, Qn] = ctx.implicitImports ++ imports.map { case (alias, ci) => (alias, ci.fqn) }
 
   @Nullable private val defs: SchemaDefs = psi.getDefs
 
@@ -41,13 +41,13 @@ class CSchemaFile(val psi: SchemaFile)(implicit val ctx: CContext) {
 
   ctx.schemaFiles.put(filename, this)
 
-  def qualifyLocalTypeRef(sftr: SchemaFqnTypeRef): CTypeFqn = {
-    val alias = sftr.getFqn.getFqn.first
+  def qualifyLocalTypeRef(sftr: SchemaQnTypeRef): CTypeFqn = {
+    val alias = sftr.getQn.getQn.first
     val parentNamespace = importedAliases.get(alias) match {
       case Some(fqn) => fqn.removeLastSegment() // typeref starting with imported alias
-      case None => sftr.getFqn.getFqn.size match {
+      case None => sftr.getQn.getQn.size match {
         case 1 => namespace.fqn // single-segment typeref to a type in schema document namespace
-        case _ => Fqn.EMPTY // fully qualified typeref
+        case _ => Qn.EMPTY // fully qualified typeref
       }
     }
     new CTypeFqn(this, parentNamespace, sftr)
@@ -67,7 +67,7 @@ class CSchemaFile(val psi: SchemaFile)(implicit val ctx: CContext) {
 
 class CNamespace(val psi: SchemaNamespaceDecl)(implicit val ctx: CContext) {
 
-  val fqn: Fqn = psi.getFqn2
+  val fqn: Qn = psi.getFqn
 
   val local: String = fqn.last()
 
@@ -91,7 +91,7 @@ object CNamespace {
 
 class CImport(@Nullable val psi: SchemaImportStatement)(implicit val ctx: CContext) {
 
-  val fqn: Fqn = psi.getFqn.getFqn
+  val fqn: Qn = psi.getQn.getQn
 
   val alias: String = fqn.last
 

@@ -3,7 +3,7 @@ package com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
-import io.epigraph.lang.Fqn;
+import io.epigraph.lang.Qn;
 import io.epigraph.schema.parser.psi.SchemaTypeDef;
 
 import java.util.*;
@@ -85,8 +85,8 @@ public class InheritanceTest extends LightCodeInsightFixtureTestCase {
   private SchemaTypeDef findTypeDef(String name) {
     SchemaTypeDef typeDef = SchemaIndexUtil.findTypeDef(
         myFixture.getProject(),
-        Collections.singleton(new Fqn("x")),
-        new Fqn(name),
+        Collections.singleton(new Qn("x")),
+        new Qn(name),
         GlobalSearchScope.allScope(myFixture.getProject()));
     assertNotNull(typeDef);
     return typeDef;

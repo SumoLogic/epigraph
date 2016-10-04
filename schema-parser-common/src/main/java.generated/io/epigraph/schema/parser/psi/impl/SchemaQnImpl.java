@@ -10,16 +10,16 @@ import com.intellij.psi.util.PsiTreeUtil;
 import static io.epigraph.schema.lexer.SchemaElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import io.epigraph.schema.parser.psi.*;
-import io.epigraph.lang.Fqn;
+import io.epigraph.lang.Qn;
 
-public class SchemaFqnImpl extends ASTWrapperPsiElement implements SchemaFqn {
+public class SchemaQnImpl extends ASTWrapperPsiElement implements SchemaQn {
 
-  public SchemaFqnImpl(ASTNode node) {
+  public SchemaQnImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull SchemaVisitor visitor) {
-    visitor.visitFqn(this);
+    visitor.visitQn(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -29,13 +29,13 @@ public class SchemaFqnImpl extends ASTWrapperPsiElement implements SchemaFqn {
 
   @Override
   @NotNull
-  public List<SchemaFqnSegment> getFqnSegmentList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaFqnSegment.class);
+  public List<SchemaQnSegment> getQnSegmentList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaQnSegment.class);
   }
 
   @NotNull
-  public Fqn getFqn() {
-    return SchemaPsiImplUtil.getFqn(this);
+  public Qn getQn() {
+    return SchemaPsiImplUtil.getQn(this);
   }
 
 }

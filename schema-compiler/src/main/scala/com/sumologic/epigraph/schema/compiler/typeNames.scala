@@ -3,8 +3,8 @@
 package com.sumologic.epigraph.schema.compiler
 
 import com.intellij.psi.PsiElement
-import io.epigraph.lang.Fqn
-import io.epigraph.schema.parser.psi.{SchemaAnonList, SchemaAnonMap, SchemaFqnTypeRef, SchemaTypeDef}
+import io.epigraph.lang.Qn
+import io.epigraph.schema.parser.psi.{SchemaAnonList, SchemaAnonMap, SchemaQnTypeRef, SchemaTypeDef}
 import org.jetbrains.annotations.Nullable
 
 
@@ -22,18 +22,18 @@ abstract class CTypeName protected(val name: String)(implicit val ctx: CContext)
 }
 
 
-class CTypeFqn private(csf: CSchemaFile, val fqn: Fqn, val psi: PsiElement)(implicit ctx: CContext)
+class CTypeFqn private(csf: CSchemaFile, val fqn: Qn, val psi: PsiElement)(implicit ctx: CContext)
     extends CTypeName(fqn.toString) {
 
   val local: String = fqn.last()
 
   @Nullable val namespace: String = if (fqn.size == 1) null else fqn.removeLastSegment().toString
 
-  def this(csf: CSchemaFile, parentNs: Fqn, lqn: SchemaFqnTypeRef)(implicit ctx: CContext) = this(
-    csf, parentNs.append(lqn.getFqn.getFqn), lqn: PsiElement
+  def this(csf: CSchemaFile, parentNs: Qn, lqn: SchemaQnTypeRef)(implicit ctx: CContext) = this(
+    csf, parentNs.append(lqn.getQn.getQn), lqn: PsiElement
   )
 
-  def this(csf: CSchemaFile, parentNs: Fqn, typeDef: SchemaTypeDef)(implicit ctx: CContext) = this(
+  def this(csf: CSchemaFile, parentNs: Qn, typeDef: SchemaTypeDef)(implicit ctx: CContext) = this(
     csf, parentNs.append(typeDef.getQid.getCanonicalName), typeDef.getQid.getId: PsiElement
   )
 

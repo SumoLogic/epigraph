@@ -28,8 +28,8 @@ public class SchemaImportStatementImpl extends ASTWrapperPsiElement implements S
 
   @Override
   @Nullable
-  public SchemaFqn getFqn() {
-    return PsiTreeUtil.getChildOfType(this, SchemaFqn.class);
+  public SchemaQn getQn() {
+    return PsiTreeUtil.getChildOfType(this, SchemaQn.class);
   }
 
   @Override

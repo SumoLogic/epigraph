@@ -28,8 +28,8 @@ public class IdlImportStatementImpl extends ASTWrapperPsiElement implements IdlI
 
   @Override
   @Nullable
-  public IdlFqn getFqn() {
-    return findChildByClass(IdlFqn.class);
+  public IdlQn getQn() {
+    return findChildByClass(IdlQn.class);
   }
 
   @Override

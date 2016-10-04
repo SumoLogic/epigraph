@@ -1,7 +1,7 @@
 package com.sumologic.epigraph.ideaplugin.schema.brains;
 
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
-import io.epigraph.lang.Fqn;
+import io.epigraph.lang.Qn;
 import io.epigraph.schema.parser.psi.SchemaFile;
 import io.epigraph.schema.parser.psi.SchemaImportStatement;
 
@@ -27,12 +27,12 @@ public class ImportsManagerTest extends LightCodeInsightFixtureTestCase {
 
   public void testOptimizeImports() {
     myFixture.configureByFiles("UnusedImports.esc", "foo.esc", "foobar.esc");
-    List<Fqn> optimizedImports = ImportsManager.getOptimizedImports((SchemaFile) myFixture.getFile());
+    List<Qn> optimizedImports = ImportsManager.getOptimizedImports((SchemaFile) myFixture.getFile());
 
     assertEquals(Arrays.asList(
-        new Fqn[]{
-            Fqn.fromDotSeparated("foo.X"),
-            Fqn.fromDotSeparated("foo.bar")
+        new Qn[]{
+            Qn.fromDotSeparated("foo.X"),
+            Qn.fromDotSeparated("foo.bar")
         }
     ), optimizedImports);
 

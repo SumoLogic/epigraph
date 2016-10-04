@@ -5,7 +5,7 @@ package com.sumologic.epigraph.java
 import java.nio.file.Path
 
 import com.sumologic.epigraph.schema.compiler._
-import io.epigraph.lang.Fqn
+import io.epigraph.lang.Qn
 
 import scala.collection.GenTraversableOnce
 import scala.collection.JavaConversions._
@@ -26,7 +26,7 @@ abstract class JavaGen[From >: Null <: AnyRef](protected val from: From, protect
   /** java identifier name (https://docs.oracle.com/javase/specs/jls/se8/html/jls-3.html#jls-3.8) */
   def jn(name: String): String = if (JavaReserved.reserved.contains(name)) name + '_' else name
 
-  def javaFqn(fqn: Fqn): String = fqn.segments.map(jn).mkString(".")
+  def javaFqn(fqn: Qn): String = fqn.segments.map(jn).mkString(".")
 
   /** local (short) java name for given type */
   def ln(t: CType): String = t match {
@@ -168,10 +168,10 @@ abstract class JavaGen[From >: Null <: AnyRef](protected val from: From, protect
     localQName(getNamedTypeComponent(t).name.fqn, getNamedTypeComponent(ht).name.fqn.removeLastSegment(), trans)
   )
 
-  def localQName(typeFqn: Fqn, localNs: Fqn, trans: (String) => String = identity): Fqn = {
+  def localQName(typeFqn: Qn, localNs: Qn, trans: (String) => String = identity): Qn = {
     val transLocal = trans(typeFqn.last()) // FIXME use ln(t) here
     val ns = typeFqn.removeLastSegment()
-    if (ns == localNs) new Fqn(transLocal) else ns.append(transLocal)
+    if (ns == localNs) new Qn(transLocal) else ns.append(transLocal)
   }
 
   @Deprecated
@@ -184,7 +184,7 @@ abstract class JavaGen[From >: Null <: AnyRef](protected val from: From, protect
 
   def bldQName(t: CTypeDef, ht: CTypeDef): String = javaQName(t, ht, bldName)
 
-  def qnameArgs(fqn: Fqn): Seq[String] = fqn.last() +: fqn.removeLastSegment().segments.toSeq
+  def qnameArgs(fqn: Qn): Seq[String] = fqn.last() +: fqn.removeLastSegment().segments.toSeq
 
   def withParents(t: CType, trans: (String) => String = identity): String = {
     t.getLinearizedParentsReversed.map(" " + lqn(_, t, trans) + ",").mkString

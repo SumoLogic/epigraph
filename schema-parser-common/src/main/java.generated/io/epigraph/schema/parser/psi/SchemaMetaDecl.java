@@ -8,7 +8,7 @@ import com.intellij.psi.PsiElement;
 public interface SchemaMetaDecl extends PsiElement {
 
   @Nullable
-  SchemaFqnTypeRef getFqnTypeRef();
+  SchemaQnTypeRef getQnTypeRef();
 
   @NotNull
   PsiElement getMeta();

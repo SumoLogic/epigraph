@@ -149,8 +149,8 @@ public class SchemaDiagramDataModel extends DiagramDataModel<PsiNamedElement> im
                          final String label,
                          final String fromLabel,
                          final String toLabel) {
-    if (typeRef instanceof SchemaFqnTypeRef) {
-      SchemaTypeDef targetTypeDef = ((SchemaFqnTypeRef) typeRef).resolve();
+    if (typeRef instanceof SchemaQnTypeRef) {
+      SchemaTypeDef targetTypeDef = ((SchemaQnTypeRef) typeRef).resolve();
       if (targetTypeDef != null) {
         DiagramNode<PsiNamedElement> targetNode = getOrAddNode(targetTypeDef, allElements);
         if (targetNode != null) {
@@ -221,7 +221,7 @@ public class SchemaDiagramDataModel extends DiagramDataModel<PsiNamedElement> im
                        Collection<PsiNamedElement> allElements) {
     SchemaMetaDecl metaDecl = typeDef.getMetaDecl();
     if (metaDecl != null) {
-      SchemaFqnTypeRef typeRef = metaDecl.getFqnTypeRef();
+      SchemaQnTypeRef typeRef = metaDecl.getQnTypeRef();
       if (typeRef != null) {
         SchemaTypeDef metaType = typeRef.resolve();
         if (metaType != null) {

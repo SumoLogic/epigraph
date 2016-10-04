@@ -59,18 +59,6 @@ public class IdlVisitor extends PsiElementVisitor {
     visitDatum(o);
   }
 
-  public void visitFqn(@NotNull IdlFqn o) {
-    visitPsiElement(o);
-  }
-
-  public void visitFqnSegment(@NotNull IdlFqnSegment o) {
-    visitPsiElement(o);
-  }
-
-  public void visitFqnTypeRef(@NotNull IdlFqnTypeRef o) {
-    visitTypeRef(o);
-  }
-
   public void visitImportStatement(@NotNull IdlImportStatement o) {
     visitPsiElement(o);
   }
@@ -289,6 +277,18 @@ public class IdlVisitor extends PsiElementVisitor {
 
   public void visitQid(@NotNull IdlQid o) {
     visitPsiElement(o);
+  }
+
+  public void visitQn(@NotNull IdlQn o) {
+    visitPsiElement(o);
+  }
+
+  public void visitQnSegment(@NotNull IdlQnSegment o) {
+    visitPsiElement(o);
+  }
+
+  public void visitQnTypeRef(@NotNull IdlQnTypeRef o) {
+    visitTypeRef(o);
   }
 
   public void visitReadOperationBodyPart(@NotNull IdlReadOperationBodyPart o) {

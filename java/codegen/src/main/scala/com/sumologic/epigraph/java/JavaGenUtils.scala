@@ -6,7 +6,7 @@ import java.io.{BufferedWriter, OutputStream, OutputStreamWriter}
 import java.nio.charset.{Charset, CharsetEncoder, StandardCharsets}
 import java.nio.file.{Files, Path, Paths, StandardOpenOption}
 
-import io.epigraph.lang.Fqn
+import io.epigraph.lang.Qn
 
 import scala.collection.JavaConversions._
 
@@ -14,7 +14,7 @@ object JavaGenUtils {
 
   val EmptyPath: Path = Paths.get("")
 
-  def fqnToPath(fqn: Fqn): Path = if (fqn.isEmpty) EmptyPath else Paths.get(fqn.first, fqn.segments.tail: _*)
+  def fqnToPath(fqn: Qn): Path = if (fqn.isEmpty) EmptyPath else Paths.get(fqn.first, fqn.segments.tail: _*)
 
   def writeFile(
       root: Path,

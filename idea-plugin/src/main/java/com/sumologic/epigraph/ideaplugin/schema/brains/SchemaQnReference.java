@@ -15,7 +15,7 @@ import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.CompletionTypeF
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaSearchScopeUtil;
 import com.sumologic.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
-import io.epigraph.lang.Fqn;
+import io.epigraph.lang.Qn;
 import io.epigraph.schema.parser.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,14 +30,14 @@ import java.util.stream.Collectors;
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  * @see <a href="https://github.com/SumoLogic/epigraph/wiki/References%20implementation#reference-resolution-algorithm">Reference resolution algorithm</a>
  */
-public class SchemaFqnReference extends PsiReferenceBase<SchemaFqnSegment> implements PsiPolyVariantReference {
-  private final SchemaFqnReferenceResolver resolver;
+public class SchemaQnReference extends PsiReferenceBase<SchemaQnSegment> implements PsiPolyVariantReference {
+  private final SchemaQnReferenceResolver resolver;
 
   private final ResolveCache.Resolver cachedResolver = (psiReference, incompleteCode) -> resolveImpl();
-  private final ResolveCache.PolyVariantResolver<SchemaFqnReference> polyVariantResolver =
-      (schemaFqnReference, incompleteCode) -> multiResolveImpl();
+  private final ResolveCache.PolyVariantResolver<SchemaQnReference> polyVariantResolver =
+      (schemaQnReference, incompleteCode) -> multiResolveImpl();
 
-  public SchemaFqnReference(SchemaFqnSegment segment, SchemaFqnReferenceResolver resolver) {
+  public SchemaQnReference(SchemaQnSegment segment, SchemaQnReferenceResolver resolver) {
     super(segment);
     this.resolver = resolver;
 
@@ -52,7 +52,7 @@ public class SchemaFqnReference extends PsiReferenceBase<SchemaFqnSegment> imple
   }
 
   @NotNull
-  public SchemaFqnReferenceResolver getResolver() {
+  public SchemaQnReferenceResolver getResolver() {
     return resolver;
   }
 
@@ -91,10 +91,10 @@ public class SchemaFqnReference extends PsiReferenceBase<SchemaFqnSegment> imple
     final boolean isNamespaceDecl = isNamespaceDecl();
     final Project project = myElement.getProject();
     final GlobalSearchScope searchScope = SchemaSearchScopeUtil.getSearchScope(myElement);
-    final Fqn currentNamespace = NamespaceManager.getNamespace(getElement());
+    final Qn currentNamespace = NamespaceManager.getNamespace(getElement());
 
-    final Fqn input = resolver.getInput();
-    final Fqn inputPrefix = input.removeLastSegment();
+    final Qn input = resolver.getInput();
+    final Qn inputPrefix = input.removeLastSegment();
 
     Set<SchemaTypeDef> typeDefVariants;
     Collection<SchemaNamespaceDecl> namespaceVariants;
@@ -102,12 +102,12 @@ public class SchemaFqnReference extends PsiReferenceBase<SchemaFqnSegment> imple
     if (input.size() > 1) {
       // we already have multiple segments in the FQN
 
-      Fqn suffixPrefix = resolver.getSuffix().removeLastSegment();
+      Qn suffixPrefix = resolver.getSuffix().removeLastSegment();
 
       if (isNamespaceDecl) {
         typeDefVariants = Collections.emptySet();
       } else {
-        List<Fqn> namespacesToSearchForTypes = resolver.getPrefixes().stream().map(fqn -> fqn.append(suffixPrefix)).collect(Collectors.toList());
+        List<Qn> namespacesToSearchForTypes = resolver.getPrefixes().stream().map(fqn -> fqn.append(suffixPrefix)).collect(Collectors.toList());
         typeDefVariants = SchemaIndexUtil.findTypeDefs(project, namespacesToSearchForTypes, null, searchScope).stream()
             .filter(typeDef ->
                 // don't suggest to import types from the same namespace
@@ -120,11 +120,11 @@ public class SchemaFqnReference extends PsiReferenceBase<SchemaFqnSegment> imple
     } else {
       // we have only one segment in the FQN
 
-      List<Fqn> namespacesToSearchForTypes = NamespaceManager.getImportedNamespaces(myElement);
+      List<Qn> namespacesToSearchForTypes = NamespaceManager.getImportedNamespaces(myElement);
 
       if (!isImport && !isNamespaceDecl) {
         typeDefVariants = SchemaIndexUtil
-            .findTypeDefs(project, namespacesToSearchForTypes.toArray(new Fqn[namespacesToSearchForTypes.size()]), searchScope)
+            .findTypeDefs(project, namespacesToSearchForTypes.toArray(new Qn[namespacesToSearchForTypes.size()]), searchScope)
             .stream()
             .filter(typeDef -> typeDef.getName() != null)
             .collect(Collectors.toSet());
@@ -156,16 +156,16 @@ public class SchemaFqnReference extends PsiReferenceBase<SchemaFqnSegment> imple
                 .withTypeText(SchemaPresentationUtil.getNamespaceString(typeDef, true)))
         .collect(Collectors.toSet());
 
-    List<Fqn> namespaceFqns = namespaceVariants.stream()
-        .map(SchemaNamespaceDecl::getFqn2)
-        .filter(fqn -> fqn != null && !fqn.equals(currentNamespace)) // not interested in current namespace
-        .collect(Collectors.toList());
+    List<Qn> namespaceFqns = namespaceVariants.stream()
+                                              .map(SchemaNamespaceDecl::getFqn)
+                                              .filter(fqn -> fqn != null && !fqn.equals(currentNamespace)) // not interested in current namespace
+                                              .collect(Collectors.toList());
 
-    Set<String> namespaceElements = Fqn.getMatchingWithPrefixRemoved(namespaceFqns, inputPrefix)
-        .stream()
-        .map(Fqn::first) // only leave next segment after removing matching prefix
-        .filter(s -> s != null && s.length() > 0)
-        .collect(Collectors.toSet());
+    Set<String> namespaceElements = Qn.getMatchingWithPrefixRemoved(namespaceFqns, inputPrefix)
+                                      .stream()
+                                      .map(Qn::first) // only leave next segment after removing matching prefix
+                                      .filter(s -> s != null && s.length() > 0)
+                                      .collect(Collectors.toSet());
 
     @SuppressWarnings("UnnecessaryLocalVariable")
     Set<Object> res = typeDefElements;

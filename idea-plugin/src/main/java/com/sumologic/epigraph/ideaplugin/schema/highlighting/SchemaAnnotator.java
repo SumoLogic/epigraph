@@ -11,12 +11,11 @@ import com.sumologic.epigraph.ideaplugin.schema.SchemaBundle;
 import com.sumologic.epigraph.ideaplugin.schema.brains.ImportsManager;
 import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.HierarchyCache;
 import com.sumologic.epigraph.ideaplugin.schema.brains.hierarchy.TypeMembers;
-import com.sumologic.epigraph.ideaplugin.schema.features.actions.fixes.AddDefaultAction;
 import com.sumologic.epigraph.ideaplugin.schema.features.actions.fixes.ImportTypeIntentionFix;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaSearchScopeUtil;
 import com.sumologic.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
-import io.epigraph.lang.Fqn;
+import io.epigraph.lang.Qn;
 import io.epigraph.lang.NamingConventions;
 import io.epigraph.schema.parser.psi.*;
 import org.jetbrains.annotations.NotNull;
@@ -25,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-import static io.epigraph.schema.lexer.SchemaElementTypes.S_FQN_TYPE_REF;
+import static io.epigraph.schema.lexer.SchemaElementTypes.S_QN_TYPE_REF;
 
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
@@ -101,8 +100,8 @@ public class SchemaAnnotator implements Annotator {
 
           String typeName = typeDef.getName();
           if (typeName != null) {
-            Fqn shortTypeNameFqn = new Fqn(typeName);
-            Fqn fullTypeNameFqn = typeDef.getFqn();
+            Qn shortTypeQn = new Qn(typeName);
+            Qn fullTypeNameQn = typeDef.getQn();
 
             String namingError = NamingConventions.validateTypeName(typeName);
             if (namingError != null) {
@@ -110,21 +109,24 @@ public class SchemaAnnotator implements Annotator {
             }
 
             // check if it hides an import
-            List<Fqn> importsBySuffix = ImportsManager.findImportsBySuffix((SchemaFile) typeDef.getContainingFile(), shortTypeNameFqn);
+            List<Qn> importsBySuffix = ImportsManager.findImportsBySuffix((SchemaFile) typeDef.getContainingFile(),
+                                                                          shortTypeQn
+            );
             if (!importsBySuffix.isEmpty()) {
-              Fqn importFqn = importsBySuffix.iterator().next();
-              boolean isImplicit = ImportsManager.DEFAULT_IMPORTS_LIST.contains(importFqn);
+              Qn importQn = importsBySuffix.iterator().next();
+              boolean isImplicit = ImportsManager.DEFAULT_IMPORTS_LIST.contains(importQn);
               holder.createWarningAnnotation(id,
                   SchemaBundle.message(isImplicit ?
                           "annotator.type.shadowed.by.implicit.import" :
                           "annotator.type.shadowed.by.import",
-                      typeName, importFqn));
+                                       typeName, importQn
+                  ));
             }
 
             // check if's already defined
-            List<SchemaTypeDef> typeDefs = SchemaIndexUtil.findTypeDefs(element.getProject(), new Fqn[]{fullTypeNameFqn}, SchemaSearchScopeUtil.getSearchScope(typeDef));
+            List<SchemaTypeDef> typeDefs = SchemaIndexUtil.findTypeDefs(element.getProject(), new Qn[]{fullTypeNameQn}, SchemaSearchScopeUtil.getSearchScope(typeDef));
             if (typeDefs.size() > 1) {
-              holder.createErrorAnnotation(id, SchemaBundle.message("annotator.type.already.defined", fullTypeNameFqn));
+              holder.createErrorAnnotation(id, SchemaBundle.message("annotator.type.already.defined", fullTypeNameQn));
             }
 
             // check for circular inheritance
@@ -153,17 +155,17 @@ public class SchemaAnnotator implements Annotator {
         SchemaTypeDef typeDef = (SchemaTypeDef) schemaExtendsDecl.getParent();
         if (typeDef == null) return;
 
-        List<SchemaFqnTypeRef> typeRefList = schemaExtendsDecl.getFqnTypeRefList();
-        for (SchemaFqnTypeRef fqnTypeRef : typeRefList) {
+        List<SchemaQnTypeRef> typeRefList = schemaExtendsDecl.getQnTypeRefList();
+        for (SchemaQnTypeRef qnTypeRef : typeRefList) {
           boolean wrongKind = false;
 
-          SchemaTypeDef parent = fqnTypeRef.resolve();
+          SchemaTypeDef parent = qnTypeRef.resolve();
           if (parent != null) {
             if (typeDef.getKind() != parent.getKind()) wrongKind = true;
           }
 
           if (wrongKind)
-            holder.createErrorAnnotation(fqnTypeRef, SchemaBundle.message("annotator.wrong.parent.type.kind"));
+            holder.createErrorAnnotation(qnTypeRef, SchemaBundle.message("annotator.wrong.parent.type.kind"));
         }
       }
 
@@ -183,17 +185,17 @@ public class SchemaAnnotator implements Annotator {
       }
 
       @Override
-      public void visitFqnTypeRef(@NotNull SchemaFqnTypeRef typeRef) {
-        SchemaFqn fqn = typeRef.getFqn();
-        highlightFqn(fqn, holder, new ImportTypeIntentionFix(typeRef));
+      public void visitQnTypeRef(@NotNull SchemaQnTypeRef typeRef) {
+        SchemaQn qn = typeRef.getQn();
+        highlightQn(qn, holder, new ImportTypeIntentionFix(typeRef));
       }
 
       @Override
-      public void visitFqn(@NotNull SchemaFqn fqn) {
-        PsiElement parent = fqn.getParent();
+      public void visitQn(@NotNull SchemaQn qn) {
+        PsiElement parent = qn.getParent();
         // TODO don't check ref in the namespace decl?
-        if (parent.getNode().getElementType() != S_FQN_TYPE_REF) {
-          highlightFqn(fqn, holder, null);
+        if (parent.getNode().getElementType() != S_QN_TYPE_REF) {
+          highlightQn(qn, holder, null);
         }
       }
 
@@ -219,34 +221,34 @@ public class SchemaAnnotator implements Annotator {
 //    // TODO
 //  }
 
-  private void highlightFqn(@Nullable SchemaFqn schemaFqn, @NotNull AnnotationHolder holder,
+  private void highlightQn(@Nullable SchemaQn schemaQn, @NotNull AnnotationHolder holder,
                             @Nullable IntentionAction unresolvedTypeRefFix) {
-    if (schemaFqn != null) {
-//      setHighlighting(schemaFqn.getLastChild(), holder, SchemaSyntaxHighlighter.TYPE_REF);
+    if (schemaQn != null) {
+//      setHighlighting(schemaQn.getLastChild(), holder, SchemaSyntaxHighlighter.TYPE_REF);
 
-      PsiPolyVariantReference reference = (PsiPolyVariantReference) schemaFqn.getLastChild().getReference();
+      PsiPolyVariantReference reference = (PsiPolyVariantReference) schemaQn.getLastChild().getReference();
       assert reference != null;
 
 //      if (reference.resolve() == null) {
       ResolveResult[] resolveResults = reference.multiResolve(false);
-      List<String> typeDefFqns = new ArrayList<>();
+      List<String> typeDefQns = new ArrayList<>();
       for (ResolveResult resolveResult : resolveResults) {
         if (resolveResult.getElement() instanceof SchemaTypeDef)
-          typeDefFqns.add(SchemaPresentationUtil.getName((PsiNamedElement) resolveResult.getElement(), true));
+          typeDefQns.add(SchemaPresentationUtil.getName((PsiNamedElement) resolveResult.getElement(), true));
       }
 
       if (resolveResults.length == 0) {
-        Annotation annotation = holder.createErrorAnnotation(schemaFqn.getNode(),
-            SchemaBundle.message("annotator.unresolved.reference"));
+        Annotation annotation = holder.createErrorAnnotation(schemaQn.getNode(),
+                                                             SchemaBundle.message("annotator.unresolved.reference"));
 
         if (unresolvedTypeRefFix != null)
           annotation.registerFix(unresolvedTypeRefFix);
-      } else if (typeDefFqns.size() > 1) {
-        Annotation annotation = holder.createErrorAnnotation(schemaFqn.getNode(), SchemaBundle.message("annotator.ambiguous.type.reference"));
+      } else if (typeDefQns.size() > 1) {
+        Annotation annotation = holder.createErrorAnnotation(schemaQn.getNode(), SchemaBundle.message("annotator.ambiguous.type.reference"));
         StringBuilder tooltipText = new StringBuilder(SchemaBundle.message("annotator.ambiguous.type.reference.candidates"));
-        for (String typeDefFqn : typeDefFqns) {
+        for (String typeDefQn : typeDefQns) {
           tooltipText.append('\n');
-          tooltipText.append("''").append(typeDefFqn).append("''");
+          tooltipText.append("''").append(typeDefQn).append("''");
         }
         annotation.setTooltip(tooltipText.toString());
       } // else we have import prefix matching varTypeple namespaces, OK

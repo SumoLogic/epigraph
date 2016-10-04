@@ -1,6 +1,6 @@
 package io.epigraph.refs;
 
-import io.epigraph.lang.Fqn;
+import io.epigraph.lang.Qn;
 import io.epigraph.names.QualifiedTypeName;
 import io.epigraph.names.TypeName;
 import io.epigraph.types.*;
@@ -16,7 +16,7 @@ import java.util.Map;
 public class SimpleTypesResolver implements TypesResolver {
   // todo add support for imports?
 
-  private final Map<Fqn, Type> types;
+  private final Map<Qn, Type> types;
   private final Map<DataType, AnonListType> anonLists;
   private final Map<DataType, Map<DatumType, AnonMapType>> anonMaps;
 
@@ -47,7 +47,7 @@ public class SimpleTypesResolver implements TypesResolver {
 
   @Nullable
   @Override
-  public Type resolve(@NotNull FqnTypeRef reference) {
+  public Type resolve(@NotNull QnTypeRef reference) {
     return types.get(reference.fqn());
   }
 

@@ -4,14 +4,14 @@ package io.epigraph.schema.parser.psi;
 import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
-import io.epigraph.lang.Fqn;
+import io.epigraph.lang.Qn;
 
-public interface SchemaFqn extends PsiElement {
-
-  @NotNull
-  List<SchemaFqnSegment> getFqnSegmentList();
+public interface SchemaQn extends PsiElement {
 
   @NotNull
-  Fqn getFqn();
+  List<SchemaQnSegment> getQnSegmentList();
+
+  @NotNull
+  Qn getQn();
 
 }

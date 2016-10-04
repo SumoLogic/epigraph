@@ -6,7 +6,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.usageView.UsageViewLongNameLocation;
 import com.intellij.usageView.UsageViewShortNameLocation;
 import com.sumologic.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
-import io.epigraph.schema.parser.psi.SchemaFqnSegment;
+import io.epigraph.schema.parser.psi.SchemaQnSegment;
 import io.epigraph.schema.parser.psi.SchemaTypeDef;
 import io.epigraph.schema.parser.psi.SchemaVarTagRef;
 import org.jetbrains.annotations.NotNull;
@@ -28,9 +28,9 @@ public class SchemaElementDescriptionProvider implements ElementDescriptionProvi
         return SchemaPresentationUtil.getName(schemaTypeDef, true);
       }
 
-      if (element instanceof SchemaFqnSegment) {
-        SchemaFqnSegment fqnSegment = (SchemaFqnSegment) element;
-        return fqnSegment.getFqn().toString();
+      if (element instanceof SchemaQnSegment) {
+        SchemaQnSegment fqnSegment = (SchemaQnSegment) element;
+        return fqnSegment.getQn().toString();
       }
 
       if (element instanceof SchemaVarTagRef) {

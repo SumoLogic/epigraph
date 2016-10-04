@@ -3,7 +3,7 @@ package io.epigraph.schema.parser.psi.stubs;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.stubs.StubInputStream;
 import com.intellij.psi.stubs.StubOutputStream;
-import io.epigraph.lang.Fqn;
+import io.epigraph.lang.Qn;
 import io.epigraph.schema.parser.psi.SchemaRecordTypeDef;
 import io.epigraph.schema.parser.psi.SchemaSupplementsDecl;
 import io.epigraph.schema.parser.psi.impl.SchemaRecordTypeDefImpl;
@@ -32,14 +32,14 @@ public class SchemaRecordTypeDefStubElementType extends SchemaTypeDefStubElement
   public SchemaRecordTypeDefStub createStub(@NotNull SchemaRecordTypeDef typeDef, StubElement parentStub) {
     SchemaSupplementsDecl supplementsDecl = typeDef.getSupplementsDecl();
     List<SerializedFqnTypeRef> supplementedRefs = supplementsDecl == null ? null :
-        supplementsDecl.getFqnTypeRefList().stream()
+        supplementsDecl.getQnTypeRefList().stream()
             .map(SerializedFqnTypeRef::new)
             .collect(Collectors.toList());
 
     return new SchemaRecordTypeDefStubImpl(
         parentStub,
         typeDef.getName(),
-        Fqn.toNullableString(typeDef.getNamespace()),
+        Qn.toNullableString(typeDef.getNamespace()),
         getSerializedExtendsTypeRefs(typeDef),
         supplementedRefs);
   }

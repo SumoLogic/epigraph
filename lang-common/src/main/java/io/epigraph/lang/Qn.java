@@ -14,15 +14,15 @@ import java.util.stream.Collectors;
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
 @Immutable
-public class Fqn implements Comparable<Fqn> {
+public class Qn implements Comparable<Qn> {
   // todo this often acts as Fqn prefix/suffix. Rename to Qn ?
 
-  public static final Fqn EMPTY = new Fqn();
+  public static final Qn EMPTY = new Qn();
 
   @NotNull
   public final String[] segments;
 
-  public Fqn(@NotNull String... segments) {
+  public Qn(@NotNull String... segments) {
     this.segments = new String[segments.length];
     System.arraycopy(segments, 0, this.segments, 0, segments.length);
 
@@ -33,18 +33,18 @@ public class Fqn implements Comparable<Fqn> {
     }
   }
 
-  public Fqn(@NotNull Collection<String> segments) {
+  public Qn(@NotNull Collection<String> segments) {
     this(segments.toArray(new String[segments.size()]));
   }
 
   @NotNull
-  public static Fqn fromDotSeparated(@NotNull String fqn) {
+  public static Qn fromDotSeparated(@NotNull String fqn) {
     // will break if dot is inside backticks..
-    return new Fqn(fqn.split("\\."));
+    return new Qn(fqn.split("\\."));
   }
 
   @Nullable
-  public static Fqn fromNullableDotSeparated(@Nullable String fqn) {
+  public static Qn fromNullableDotSeparated(@Nullable String fqn) {
     return fqn == null ? null : fromDotSeparated(fqn);
   }
 
@@ -69,55 +69,55 @@ public class Fqn implements Comparable<Fqn> {
   }
 
   @NotNull
-  public Fqn removeLastSegment() {
+  public Qn removeLastSegment() {
     return removeTailSegments(1);
   }
 
   @NotNull
-  public Fqn removeFirstSegment() {
+  public Qn removeFirstSegment() {
     return removeHeadSegments(1);
   }
 
   @NotNull
-  public Fqn removeHeadSegments(int n) {
+  public Qn removeHeadSegments(int n) {
     if (size() < n) throw new IllegalArgumentException("Can't remove " + n + " segments from '" + toString() + "'");
     if (size() == n) return EMPTY;
 
     String[] f = new String[size() - n];
     System.arraycopy(segments, n, f, 0, size() - n);
-    return new Fqn(f);
+    return new Qn(f);
   }
 
   @NotNull
-  public Fqn removeTailSegments(int n) {
+  public Qn removeTailSegments(int n) {
     if (size() < n) throw new IllegalArgumentException("Can't remove " + n + " segments from '" + toString() + "'");
     if (size() == n) return EMPTY;
 
     String[] f = new String[size() - n];
     System.arraycopy(segments, 0, f, 0, size() - n);
-    return new Fqn(f);
+    return new Qn(f);
   }
 
   @NotNull
-  public Fqn append(@NotNull Fqn suffix) {
+  public Qn append(@NotNull Qn suffix) {
     if (isEmpty()) return suffix;
     if (suffix.isEmpty()) return this;
 
     String[] f = new String[size() + suffix.size()];
     System.arraycopy(segments, 0, f, 0, size());
     System.arraycopy(suffix.segments, 0, f, size(), suffix.size());
-    return new Fqn(f);
+    return new Qn(f);
   }
 
   @NotNull
-  public Fqn append(@NotNull String segment) {
+  public Qn append(@NotNull String segment) {
     String[] f = new String[size() + 1];
     System.arraycopy(segments, 0, f, 0, size());
     f[size()] = NamingConventions.unquote(segment);
-    return new Fqn(f);
+    return new Qn(f);
   }
 
-  public boolean startsWith(@NotNull Fqn prefix) {
+  public boolean startsWith(@NotNull Qn prefix) {
     if (prefix.isEmpty()) return true;
     if (size() < prefix.size()) return false;
 
@@ -128,7 +128,7 @@ public class Fqn implements Comparable<Fqn> {
     return true;
   }
 
-  public boolean endsWith(@NotNull Fqn suffix) {
+  public boolean endsWith(@NotNull Qn suffix) {
     if (suffix.isEmpty()) return true;
     int diff = size() - suffix.size();
     if (diff < 0) return false;
@@ -155,7 +155,7 @@ public class Fqn implements Comparable<Fqn> {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
 
-    Fqn fqn = (Fqn) o;
+    Qn fqn = (Qn) o;
 
     return Arrays.equals(segments, fqn.segments);
   }
@@ -166,24 +166,24 @@ public class Fqn implements Comparable<Fqn> {
   }
 
   @Nullable
-  public static String toNullableString(@Nullable Fqn fqn) {
+  public static String toNullableString(@Nullable Qn fqn) {
     return fqn == null ? null : fqn.toString();
   }
 
   @Override
-  public int compareTo(@NotNull Fqn fqn) {
+  public int compareTo(@NotNull Qn fqn) {
     return toString().compareTo(fqn.toString());
   }
 
   /**
    * Find all FQNs starting with {@code prefix} and remove prefix from them
    */
-  public static Collection<Fqn> getMatchingWithPrefixRemoved(@NotNull Collection<Fqn> fqns, @NotNull Fqn prefix) {
-    if (prefix.isEmpty()) return fqns;
-    return fqns.stream()
-        .filter(fqn -> fqn.startsWith(prefix))
-        .map(fqn -> fqn.removeHeadSegments(prefix.size()))
+  public static Collection<Qn> getMatchingWithPrefixRemoved(@NotNull Collection<Qn> qns, @NotNull Qn prefix) {
+    if (prefix.isEmpty()) return qns;
+    return qns.stream()
+              .filter(fqn -> fqn.startsWith(prefix))
+              .map(fqn -> fqn.removeHeadSegments(prefix.size()))
 //        .filter(fqn -> !fqn.isEmpty())
-        .collect(Collectors.toSet());
+              .collect(Collectors.toSet());
   }
 }

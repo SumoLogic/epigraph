@@ -6,10 +6,10 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.StubInputStream;
 import com.intellij.psi.stubs.StubOutputStream;
 import com.intellij.util.io.StringRef;
-import com.sumologic.epigraph.ideaplugin.schema.brains.SchemaFqnReference;
-import com.sumologic.epigraph.ideaplugin.schema.brains.SchemaFqnReferenceResolver;
-import io.epigraph.lang.Fqn;
-import io.epigraph.schema.parser.psi.SchemaFqnTypeRef;
+import com.sumologic.epigraph.ideaplugin.schema.brains.SchemaQnReference;
+import com.sumologic.epigraph.ideaplugin.schema.brains.SchemaQnReferenceResolver;
+import io.epigraph.lang.Qn;
+import io.epigraph.schema.parser.psi.SchemaQnTypeRef;
 import io.epigraph.schema.parser.psi.SchemaTypeDef;
 import io.epigraph.schema.parser.psi.impl.SchemaPsiImplUtil;
 import org.jetbrains.annotations.NotNull;
@@ -23,27 +23,27 @@ import java.util.List;
  */
 public final class SerializedFqnTypeRef {
   @Nullable
-  private Fqn shortName;
+  private Qn shortName;
   @Nullable
-  private List<Fqn> namespacesToSearch;
+  private List<Qn> namespacesToSearch;
   // OR
   @Nullable
-  private SchemaFqnTypeRef typeRef;
+  private SchemaQnTypeRef typeRef;
 
-  public SerializedFqnTypeRef(@Nullable Fqn shortName, @Nullable List<Fqn> namespacesToSearch) {
+  public SerializedFqnTypeRef(@Nullable Qn shortName, @Nullable List<Qn> namespacesToSearch) {
     this.namespacesToSearch = namespacesToSearch;
     this.shortName = shortName;
   }
 
-  public SerializedFqnTypeRef(@Nullable SchemaFqnTypeRef typeRef) {
+  public SerializedFqnTypeRef(@Nullable SchemaQnTypeRef typeRef) {
     this.typeRef = typeRef; // do the rest lazily
   }
 
   private void initFromTypeRef() {
     if ((shortName == null || namespacesToSearch == null) && typeRef != null) {
-      SchemaFqnReference ref = (SchemaFqnReference) SchemaPsiImplUtil.getReference(typeRef);
+      SchemaQnReference ref = (SchemaQnReference) SchemaPsiImplUtil.getReference(typeRef);
       if (ref != null) {
-        SchemaFqnReferenceResolver resolver = ref.getResolver();
+        SchemaQnReferenceResolver resolver = ref.getResolver();
         shortName = resolver.getSuffix();
         namespacesToSearch = resolver.getPrefixes();
       }
@@ -53,13 +53,13 @@ public final class SerializedFqnTypeRef {
   }
 
   @Nullable
-  public Fqn getShortName() {
+  public Qn getShortName() {
     initFromTypeRef();
     return shortName;
   }
 
   @Nullable
-  public List<Fqn> getNamespacesToSearch() {
+  public List<Qn> getNamespacesToSearch() {
     initFromTypeRef();
     return namespacesToSearch;
   }
@@ -67,10 +67,10 @@ public final class SerializedFqnTypeRef {
   @Nullable
   private PsiElement resolve(@NotNull Project project, @NotNull GlobalSearchScope searchScope) {
     initFromTypeRef();
-    List<Fqn> namespacesToSearch = getNamespacesToSearch();
-    Fqn shortName = getShortName();
+    List<Qn> namespacesToSearch = getNamespacesToSearch();
+    Qn shortName = getShortName();
     if (namespacesToSearch == null || shortName == null) return null;
-    SchemaFqnReferenceResolver resolver = new SchemaFqnReferenceResolver(namespacesToSearch, shortName, searchScope);
+    SchemaQnReferenceResolver resolver = new SchemaQnReferenceResolver(namespacesToSearch, shortName, searchScope);
     return resolver.resolve(project);
   }
 
@@ -113,16 +113,16 @@ public final class SerializedFqnTypeRef {
   public static SerializedFqnTypeRef deserialize(@NotNull StubInputStream stream) throws IOException {
     String shortNameStr = StringRef.toString(stream.readName());
 
-    Fqn shortName = null;
-    List<Fqn> namespacesToSearch = null;
+    Qn shortName = null;
+    List<Qn> namespacesToSearch = null;
 
     if (shortNameStr != null) {
-      shortName = Fqn.fromDotSeparated(shortNameStr);
+      shortName = Qn.fromDotSeparated(shortNameStr);
 
       namespacesToSearch = StubSerializerUtil.deserializeList(s -> {
         StringRef namespaceRef = s.readName();
         String namespace = StringRef.toString(namespaceRef);
-        return namespace == null ? null : Fqn.fromDotSeparated(namespace);
+        return namespace == null ? null : Qn.fromDotSeparated(namespace);
       }, stream, true);
     }
 

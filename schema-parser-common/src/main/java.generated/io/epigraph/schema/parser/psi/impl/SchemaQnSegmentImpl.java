@@ -11,16 +11,16 @@ import static io.epigraph.schema.lexer.SchemaElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import io.epigraph.schema.parser.psi.*;
 import com.intellij.psi.PsiReference;
-import io.epigraph.lang.Fqn;
+import io.epigraph.lang.Qn;
 
-public class SchemaFqnSegmentImpl extends ASTWrapperPsiElement implements SchemaFqnSegment {
+public class SchemaQnSegmentImpl extends ASTWrapperPsiElement implements SchemaQnSegment {
 
-  public SchemaFqnSegmentImpl(ASTNode node) {
+  public SchemaQnSegmentImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull SchemaVisitor visitor) {
-    visitor.visitFqnSegment(this);
+    visitor.visitQnSegment(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -50,12 +50,12 @@ public class SchemaFqnSegmentImpl extends ASTWrapperPsiElement implements Schema
   }
 
   @Nullable
-  public SchemaFqn getSchemaFqn() {
+  public SchemaQn getSchemaFqn() {
     return SchemaPsiImplUtil.getSchemaFqn(this);
   }
 
   @Nullable
-  public SchemaFqnTypeRef getSchemaFqnTypeRef() {
+  public SchemaQnTypeRef getSchemaFqnTypeRef() {
     return SchemaPsiImplUtil.getSchemaFqnTypeRef(this);
   }
 
@@ -69,8 +69,8 @@ public class SchemaFqnSegmentImpl extends ASTWrapperPsiElement implements Schema
   }
 
   @NotNull
-  public Fqn getFqn() {
-    return SchemaPsiImplUtil.getFqn(this);
+  public Qn getQn() {
+    return SchemaPsiImplUtil.getQn(this);
   }
 
 }

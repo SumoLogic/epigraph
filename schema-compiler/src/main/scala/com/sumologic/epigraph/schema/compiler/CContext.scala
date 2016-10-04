@@ -4,7 +4,7 @@ package com.sumologic.epigraph.schema.compiler
 
 import java.util.concurrent.{ConcurrentHashMap, ConcurrentLinkedQueue}
 
-import io.epigraph.lang.Fqn
+import io.epigraph.lang.Qn
 
 
 class CContext(val tabWidth: Int = 2) {
@@ -30,13 +30,13 @@ class CContext(val tabWidth: Int = 2) {
   val anonMapTypes: ConcurrentHashMap[(CTypeRef, CDataType), CAnonMapType] = new java.util.concurrent.ConcurrentHashMap
 
   /** Types implicitly imported (unless superseeded by explicit import statement) by every schema file */
-  val implicitImports: Map[String, Fqn] = Seq(
+  val implicitImports: Map[String, Qn] = Seq(
     "epigraph.String",
     "epigraph.Integer",
     "epigraph.Long",
     "epigraph.Double",
     "epigraph.Boolean"
-  ).map(Fqn.fromDotSeparated).map { fqn => (fqn.last, fqn) }.toMap
+  ).map(Qn.fromDotSeparated).map { fqn => (fqn.last, fqn) }.toMap
 
   def phase: CPhase = _phase
 

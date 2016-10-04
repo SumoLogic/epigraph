@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public interface TypesResolver {
   @Nullable
-  Type resolve(@NotNull FqnTypeRef reference);
+  Type resolve(@NotNull QnTypeRef reference);
 
   @Nullable
   Type resolve(@NotNull AnonListRef reference);

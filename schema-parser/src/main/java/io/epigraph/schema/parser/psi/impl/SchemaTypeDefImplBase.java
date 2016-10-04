@@ -5,7 +5,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.util.IncorrectOperationException;
-import io.epigraph.lang.Fqn;
+import io.epigraph.lang.Qn;
 import io.epigraph.schema.parser.psi.*;
 import io.epigraph.schema.parser.psi.stubs.SchemaTypeDefStubBase;
 import org.jetbrains.annotations.NotNull;
@@ -87,17 +87,17 @@ public abstract class SchemaTypeDefImplBase<S extends SchemaTypeDefStubBase<T>, 
 
   @Nullable
   @Override
-  public Fqn getNamespace() {
+  public Qn getNamespace() {
     throw new UnsupportedOperationException();
   }
 
   @Nullable
   @Override
-  public Fqn getFqn() {
+  public Qn getQn() {
     String name = getName();
     if (name == null) return null;
-    Fqn namespace = getNamespace();
-    if (namespace == null) return new Fqn(name);
+    Qn namespace = getNamespace();
+    if (namespace == null) return new Qn(name);
     return namespace.append(name);
   }
 
@@ -122,11 +122,11 @@ public abstract class SchemaTypeDefImplBase<S extends SchemaTypeDefStubBase<T>, 
   public List<SchemaTypeDef> extendsParents() {
     SchemaExtendsDecl extendsDecl = getExtendsDecl();
     if (extendsDecl == null) return Collections.emptyList();
-    List<SchemaFqnTypeRef> typeRefList = extendsDecl.getFqnTypeRefList();
+    List<SchemaQnTypeRef> typeRefList = extendsDecl.getQnTypeRefList();
     if (typeRefList.isEmpty()) return Collections.emptyList();
 
     List<SchemaTypeDef> result = new ArrayList<>(typeRefList.size());
-    for (SchemaFqnTypeRef typeRef : typeRefList) {
+    for (SchemaQnTypeRef typeRef : typeRefList) {
       SchemaTypeDef resolved = typeRef.resolve();
       if (resolved != null) result.add(resolved);
     }

@@ -10,7 +10,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IconUtil;
 import com.sumologic.epigraph.ideaplugin.schema.brains.NamespaceManager;
 import com.sumologic.epigraph.ideaplugin.schema.brains.VirtualFileUtil;
-import io.epigraph.lang.Fqn;
+import io.epigraph.lang.Qn;
 import io.epigraph.schema.parser.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -69,16 +69,16 @@ public class SchemaPresentationUtil {
 
   @Nullable
   public static String getName(@NotNull PsiNamedElement element, boolean qualified) {
-    if (element instanceof SchemaFqnSegment) {
-      SchemaFqnSegment fqnSegment = (SchemaFqnSegment) element;
-      return fqnSegment.getFqn().toString();
+    if (element instanceof SchemaQnSegment) {
+      SchemaQnSegment qnSegment = (SchemaQnSegment) element;
+      return qnSegment.getQn().toString();
     }
 
     String shortName = element.getName();
     if (shortName == null) return null;
 
     if (qualified) {
-      Fqn namespace;
+      Qn namespace;
       if (element instanceof SchemaTypeDef) {
         SchemaTypeDef typeDef = (SchemaTypeDef) element;
         namespace = typeDef.getNamespace();
@@ -175,10 +175,10 @@ public class SchemaPresentationUtil {
 
       StringBuilder name = new StringBuilder();
 
-      List<SchemaFqnTypeRef> fqnTypeRef = schemaSupplementDef.supplementedRefs();
-      for (SchemaFqnTypeRef typeRef : fqnTypeRef) {
+      List<SchemaQnTypeRef> qnTypeRef = schemaSupplementDef.supplementedRefs();
+      for (SchemaQnTypeRef typeRef : qnTypeRef) {
         if (name.length() > 0) name.append(", ");
-        name.append(typeRef.getFqn().getFqn().toString());
+        name.append(typeRef.getQn().getQn().toString());
       }
       name.append(" with ");
       SchemaTypeDef source = schemaSupplementDef.source();
@@ -201,7 +201,7 @@ public class SchemaPresentationUtil {
 
   @NotNull
   public static String getNamespaceString(@NotNull PsiElement element, boolean inParens) {
-    Fqn namespace;
+    Qn namespace;
 
     if (element instanceof SchemaTypeDef) {
       SchemaTypeDef typeDef = (SchemaTypeDef) element;
@@ -229,7 +229,7 @@ public class SchemaPresentationUtil {
     if (element instanceof SchemaVarTypeDef) return "Var type";
     if (element instanceof SchemaRecordTypeDef) return "Record type";
     if (element instanceof SchemaMapTypeDef) return "Map type";
-    if (element instanceof SchemaFqnSegment) return "Namespace";
+    if (element instanceof SchemaQnSegment) return "Namespace";
     if (element instanceof SchemaVarTagDecl) return "Var tag";
     if (element instanceof SchemaFieldDecl) return "Record field";
     if (element instanceof SchemaVarTagRef)

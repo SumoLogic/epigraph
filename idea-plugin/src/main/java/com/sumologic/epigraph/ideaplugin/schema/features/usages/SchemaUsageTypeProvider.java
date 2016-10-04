@@ -6,7 +6,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.usages.impl.rules.UsageType;
 import com.intellij.usages.impl.rules.UsageTypeProvider;
 import io.epigraph.schema.parser.psi.SchemaFile;
-import io.epigraph.schema.parser.psi.SchemaFqnSegment;
+import io.epigraph.schema.parser.psi.SchemaQnSegment;
 import io.epigraph.schema.parser.psi.SchemaImportStatement;
 import io.epigraph.schema.parser.psi.SchemaVarTagRef;
 import org.jetbrains.annotations.Nullable;
@@ -22,7 +22,7 @@ public class SchemaUsageTypeProvider implements UsageTypeProvider {
 
     if (!(psiFile instanceof SchemaFile)) return null;
 
-    if (element instanceof SchemaFqnSegment) {
+    if (element instanceof SchemaQnSegment) {
       if (PsiTreeUtil.getParentOfType(element, SchemaImportStatement.class) != null) {
         return IMPORT_USAGE_TYPE;
       }

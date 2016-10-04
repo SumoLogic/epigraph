@@ -3,7 +3,7 @@ package io.epigraph.schema.parser.psi;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNameIdentifierOwner;
 import com.intellij.util.IncorrectOperationException;
-import io.epigraph.lang.Fqn;
+import io.epigraph.lang.Qn;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,10 +26,10 @@ public interface SchemaTypeDef extends PsiNameIdentifierOwner {
   PsiElement getNameIdentifier();
 
   @Nullable
-  Fqn getNamespace();
+  Qn getNamespace();
 
   @Nullable
-  Fqn getFqn();
+  Qn getQn();
 
   int getTextOffset();
 

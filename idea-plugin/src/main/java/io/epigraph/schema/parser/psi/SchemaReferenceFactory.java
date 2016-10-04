@@ -3,11 +3,11 @@ package io.epigraph.schema.parser.psi;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.sumologic.epigraph.ideaplugin.schema.brains.NamespaceManager;
-import com.sumologic.epigraph.ideaplugin.schema.brains.SchemaFqnReference;
-import com.sumologic.epigraph.ideaplugin.schema.brains.SchemaFqnReferenceResolver;
+import com.sumologic.epigraph.ideaplugin.schema.brains.SchemaQnReference;
+import com.sumologic.epigraph.ideaplugin.schema.brains.SchemaQnReferenceResolver;
 import com.sumologic.epigraph.ideaplugin.schema.brains.SchemaVarTagReference;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaSearchScopeUtil;
-import io.epigraph.lang.Fqn;
+import io.epigraph.lang.Qn;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,27 +22,27 @@ import static com.sumologic.epigraph.ideaplugin.schema.brains.NamespaceManager.g
  */
 public class SchemaReferenceFactory {
   @Nullable
-  public static PsiReference getFqnReference(@NotNull SchemaFqnSegment segment) {
-    SchemaFqnReferenceResolver resolver = getFqnReferenceResolver(segment);
+  public static PsiReference getQnReference(@NotNull SchemaQnSegment segment) {
+    SchemaQnReferenceResolver resolver = getQnReferenceResolver(segment);
 
-    return resolver == null ? null : new SchemaFqnReference(segment, resolver);
+    return resolver == null ? null : new SchemaQnReference(segment, resolver);
   }
 
   @Nullable
-  public static SchemaFqnReferenceResolver getFqnReferenceResolver(@NotNull SchemaFqnSegment segment) {
+  public static SchemaQnReferenceResolver getQnReferenceResolver(@NotNull SchemaQnSegment segment) {
     final SchemaFile file = (SchemaFile) segment.getContainingFile();
     if (file == null) return null;
 
     final boolean isImport = PsiTreeUtil.getParentOfType(segment, SchemaImportStatement.class) != null;
 
-    return getFqnReferenceResolver(file, segment.getFqn(), isImport);
+    return getQnReferenceResolver(file, segment.getQn(), isImport);
   }
 
   @Nullable
-  public static SchemaFqnReferenceResolver getFqnReferenceResolver(@NotNull SchemaFile file, @NotNull Fqn fqn, boolean isImport) {
+  public static SchemaQnReferenceResolver getQnReferenceResolver(@NotNull SchemaFile file, @NotNull Qn fqn, boolean isImport) {
     if (fqn.isEmpty()) return null;
 
-    final List<Fqn> prefixes = new ArrayList<>();
+    final List<Qn> prefixes = new ArrayList<>();
     boolean isSingleSegment = fqn.size() == 1;
 
     final String first = fqn.first();
@@ -54,7 +54,7 @@ public class SchemaReferenceFactory {
           // imports ending with our first segment, with last segment removed
           NamespaceManager.getImportedNamespaces(file).stream()
               .filter(f -> first.equals(f.last()))
-              .map(Fqn::removeLastSegment)
+              .map(Qn::removeLastSegment)
               .collect(Collectors.toList())
       );
     }
@@ -66,21 +66,21 @@ public class SchemaReferenceFactory {
       }
 
       // current namespace
-      Fqn currentNamespace = getNamespace(file);
+      Qn currentNamespace = getNamespace(file);
       if (currentNamespace != null) {
         prefixes.add(currentNamespace);
       }
 
     } else {
-      prefixes.add(Fqn.EMPTY);
+      prefixes.add(Qn.EMPTY);
     }
 
     // deduplicate, preserving order
-    Set<Fqn> dedupPrefixes = new LinkedHashSet<>(prefixes);
+    Set<Qn> dedupPrefixes = new LinkedHashSet<>(prefixes);
     prefixes.clear();
     prefixes.addAll(dedupPrefixes);
 
-    return new SchemaFqnReferenceResolver(prefixes, fqn, SchemaSearchScopeUtil.getSearchScope(file));
+    return new SchemaQnReferenceResolver(prefixes, fqn, SchemaSearchScopeUtil.getSearchScope(file));
   }
 
   @Nullable
@@ -89,8 +89,8 @@ public class SchemaReferenceFactory {
     if (valueTypeRef == null) return null;
 
     SchemaTypeRef varTypeRef = valueTypeRef.getTypeRef();
-    if (varTypeRef instanceof SchemaFqnTypeRef) {
-      SchemaFqnTypeRef fqnVarTypeRef = (SchemaFqnTypeRef) varTypeRef;
+    if (varTypeRef instanceof SchemaQnTypeRef) {
+      SchemaQnTypeRef fqnVarTypeRef = (SchemaQnTypeRef) varTypeRef;
       SchemaTypeDef typeDef = fqnVarTypeRef.resolve();
       if (typeDef instanceof SchemaVarTypeDef) {
         SchemaVarTypeDef varTypeDef = (SchemaVarTypeDef) typeDef;

@@ -2,7 +2,7 @@ package io.epigraph.schema.parser.psi.stubs;
 
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.stubs.StubInputStream;
-import io.epigraph.lang.Fqn;
+import io.epigraph.lang.Qn;
 import io.epigraph.schema.parser.psi.SchemaMapTypeDef;
 import io.epigraph.schema.parser.psi.impl.SchemaMapTypeDefImpl;
 import org.jetbrains.annotations.NonNls;
@@ -30,7 +30,7 @@ public class SchemaMapTypeDefStubElementType extends SchemaTypeDefStubElementTyp
     return new SchemaMapTypeDefStubImpl(
         parentStub,
         typeDef.getName(),
-        Fqn.toNullableString(typeDef.getNamespace()),
+        Qn.toNullableString(typeDef.getNamespace()),
         getSerializedExtendsTypeRefs(typeDef));
   }
 

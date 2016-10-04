@@ -1,6 +1,5 @@
 package io.epigraph.gdata;
 
-import io.epigraph.lang.Fqn;
 import io.epigraph.lang.TextLocation;
 import io.epigraph.refs.TypeRef;
 import org.jetbrains.annotations.NotNull;

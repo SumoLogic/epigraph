@@ -5,9 +5,9 @@ import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
-import io.epigraph.lang.Fqn;
+import io.epigraph.lang.Qn;
 import io.epigraph.schema.parser.psi.SchemaFile;
-import io.epigraph.schema.parser.psi.SchemaFqn;
+import io.epigraph.schema.parser.psi.SchemaQn;
 import io.epigraph.schema.parser.psi.SchemaImportStatement;
 import io.epigraph.schema.parser.psi.SchemaNamespaceDecl;
 import org.jetbrains.annotations.NotNull;
@@ -23,8 +23,8 @@ import java.util.stream.Collectors;
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
 public class NamespaceManager {
-  public static Fqn[] DEFAULT_NAMESPACES = new Fqn[]{new Fqn("epigraph")};
-//  public static List<Fqn> DEFAULT_NAMESPACES_LIST = Collections.unmodifiableList(Arrays.asList(DEFAULT_NAMESPACES));
+  public static Qn[] DEFAULT_NAMESPACES = new Qn[]{new Qn("epigraph")};
+//  public static List<Qn> DEFAULT_NAMESPACES_LIST = Collections.unmodifiableList(Arrays.asList(DEFAULT_NAMESPACES));
 
   private final Project project;
   private Collection<SchemaNamespaceDecl> allNamespaces;
@@ -49,7 +49,7 @@ public class NamespaceManager {
   }
 
   @Nullable
-  public static Fqn getNamespace(@NotNull PsiElement element) {
+  public static Qn getNamespace(@NotNull PsiElement element) {
     SchemaFile schemaFile = getSchemaFile(element);
 
     if (schemaFile == null) return null;
@@ -57,24 +57,24 @@ public class NamespaceManager {
     SchemaNamespaceDecl namespaceDecl = schemaFile.getNamespaceDecl();
     if (namespaceDecl == null) return null;
 
-    SchemaFqn namespaceDeclFqn = namespaceDecl.getFqn();
-    if (namespaceDeclFqn == null) return null;
+    SchemaQn namespaceDeclQn = namespaceDecl.getQn();
+    if (namespaceDeclQn == null) return null;
 
-    return namespaceDeclFqn.getFqn();
+    return namespaceDeclQn.getQn();
   }
 
-  public static List<Fqn> getImportedNamespaces(@NotNull PsiElement element) {
+  public static List<Qn> getImportedNamespaces(@NotNull PsiElement element) {
     SchemaFile schemaFile = getSchemaFile(element);
     if (schemaFile == null) return Collections.emptyList();
 
 
-    List<Fqn> res = new ArrayList<>();
+    List<Qn> res = new ArrayList<>();
 
     // 1. imported namespaces
     List<SchemaImportStatement> importStatements = schemaFile.getImportStatements();
     for (SchemaImportStatement importStatement : importStatements) {
-      SchemaFqn importFqn = importStatement.getFqn();
-      if (importFqn != null) res.add(importFqn.getFqn());
+      SchemaQn importQn = importStatement.getQn();
+      if (importQn != null) res.add(importQn.getQn());
     }
 
 //    // 2. default namespaces
@@ -83,8 +83,8 @@ public class NamespaceManager {
 //    // 3. current namespace
 //    SchemaNamespaceDecl namespaceDecl = schemaFile.getNamespaceDecl();
 //    if (namespaceDecl != null) {
-//      SchemaFqn namespaceDeclFqn = namespaceDecl.getFqn();
-//      if (namespaceDeclFqn != null) res.add(namespaceDeclFqn.getFqn());
+//      SchemaQn namespaceDeclQn = namespaceDecl.getQn();
+//      if (namespaceDeclQn != null) res.add(namespaceDeclQn.getQn());
 //    }
 
     return res;
@@ -102,7 +102,7 @@ public class NamespaceManager {
    */
   @NotNull
   public static List<SchemaNamespaceDecl> getNamespacesByPrefix(@NotNull Project project,
-                                                                @Nullable Fqn prefix,
+                                                                @Nullable Qn prefix,
                                                                 boolean returnSingleExactMatch,
                                                                 @NotNull GlobalSearchScope searchScope) {
     String prefixStr = prefix == null ? null : prefix.toString();
@@ -112,7 +112,7 @@ public class NamespaceManager {
       // try to find a namespace which is exactly our prefix
       for (SchemaNamespaceDecl namespace : namespaces) {
         //noinspection ConstantConditions
-        if (prefix.equals(namespace.getFqn2()))
+        if (prefix.equals(namespace.getFqn()))
           return Collections.singletonList(namespace);
       }
 
@@ -120,7 +120,7 @@ public class NamespaceManager {
       // 'foo.bar.bazzzz', but we're interested in 'foo.bar.baz.qux'
 
       //noinspection ConstantConditions
-      return namespaces.stream().filter(ns -> ns.getFqn2().startsWith(prefix)).collect(Collectors.toList());
+      return namespaces.stream().filter(ns -> ns.getFqn().startsWith(prefix)).collect(Collectors.toList());
     } else {
       String prefixWithDot = prefix == null ? null : prefix.isEmpty() ? prefix.toString() : prefix.toString() + '.';
       return SchemaIndexUtil.findNamespaces(project, prefixWithDot, searchScope);

@@ -6,7 +6,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.util.containers.MultiMap;
 import com.sumologic.epigraph.ideaplugin.schema.brains.ImportsManager;
 import com.sumologic.epigraph.ideaplugin.schema.features.actions.fixes.OptimizeImportsQuickFix;
-import io.epigraph.lang.Fqn;
+import io.epigraph.lang.Qn;
 import io.epigraph.schema.parser.psi.SchemaImportStatement;
 import io.epigraph.schema.parser.psi.SchemaImports;
 import io.epigraph.schema.parser.psi.SchemaVisitor;
@@ -30,10 +30,10 @@ public class ConflictingImportInspection extends LocalInspectionTool {
         super.visitImports(schemaImports);
 
         List<SchemaImportStatement> imports = schemaImports.getImportStatementList();
-        MultiMap<Fqn, SchemaImportStatement> importsByFqn = ImportsManager.getImportsByFqn(imports);
+        MultiMap<Qn, SchemaImportStatement> importsByQn = ImportsManager.getImportsByQn(imports);
 
-        MultiMap<String, SchemaImportStatement> importsByLastSegment = new MultiMap<>(importsByFqn.size(), 0.75f);
-        for (Map.Entry<Fqn, Collection<SchemaImportStatement>> entry : importsByFqn.entrySet()) {
+        MultiMap<String, SchemaImportStatement> importsByLastSegment = new MultiMap<>(importsByQn.size(), 0.75f);
+        for (Map.Entry<Qn, Collection<SchemaImportStatement>> entry : importsByQn.entrySet()) {
           String lastSegment = entry.getKey().last();
           assert lastSegment != null;
           importsByLastSegment.putValue(lastSegment, entry.getValue().iterator().next()); // take only first one so we don't report duplicate imports as conflicts

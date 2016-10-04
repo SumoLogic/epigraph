@@ -81,9 +81,9 @@ qid ::= id {
 }
 
 imports ::= importStatement*
-importStatement ::= 'import' fqn {pin=1 recoverWhile="importRecover"}
+importStatement ::= 'import' qn {pin=1 recoverWhile="importRecover"}
 
-namespaceDecl ::= 'namespace' fqn namespaceBody? {
+namespaceDecl ::= 'namespace' qn namespaceBody? {
 //  methods=[getFqn2 toString]
 //  stubClass="io.epigraph.schema.parser.psi.stubs.SchemaNamespaceDeclStub"
 //  elementTypeClass="io.epigraph.schema.parser.psi.stubs.SchemaNamespaceDeclStubElementType"
@@ -94,17 +94,17 @@ namespaceDecl ::= 'namespace' fqn namespaceBody? {
 private namespaceBody ::= '{' namespaceBodyPart* '}'
 private namespaceBodyPart ::= annotation // | ...
 
-fqnSegment ::= qid {
+qnSegment ::= qid {
 //  implements="com.intellij.psi.PsiNameIdentifierOwner"
 //  methods=[getName setName getNameIdentifier getSchemaFqn getSchemaFqnTypeRef isLast getReference getFqn]
 }
-fqn ::= fqnSegment ('.' fqnSegment)* {
-  methods=[getFqn]
+qn ::= qnSegment ('.' qnSegment)* {
+  methods=[getQn]
 }
 
 // types --------
-typeRef ::= fqnTypeRef | anonList | anonMap {name="type"}
-fqnTypeRef ::= fqn {
+typeRef ::= qnTypeRef | anonList | anonMap {name="type"}
+qnTypeRef ::= qn {
   extends=typeRef
 //  methods=[resolve] extends="typeRef"
 }

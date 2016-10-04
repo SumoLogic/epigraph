@@ -32,9 +32,6 @@ public interface SchemaElementTypes {
   IElementType S_ENUM_TYPE_DEF = new SchemaEnumTypeDefStubElementType("S_ENUM_TYPE_DEF");
   IElementType S_EXTENDS_DECL = new SchemaElementType("S_EXTENDS_DECL");
   IElementType S_FIELD_DECL = new SchemaElementType("S_FIELD_DECL");
-  IElementType S_FQN = new SchemaElementType("S_FQN");
-  IElementType S_FQN_SEGMENT = new SchemaElementType("S_FQN_SEGMENT");
-  IElementType S_FQN_TYPE_REF = new SchemaElementType("S_FQN_TYPE_REF");
   IElementType S_IMPORTS = new SchemaElementType("S_IMPORTS");
   IElementType S_IMPORT_STATEMENT = new SchemaElementType("S_IMPORT_STATEMENT");
   IElementType S_LIST_DATUM = new SchemaElementType("S_LIST_DATUM");
@@ -51,6 +48,9 @@ public interface SchemaElementTypes {
   IElementType S_PRIMITIVE_TYPE_BODY = new SchemaElementType("S_PRIMITIVE_TYPE_BODY");
   IElementType S_PRIMITIVE_TYPE_DEF = new SchemaPrimitiveTypeDefStubElementType("S_PRIMITIVE_TYPE_DEF");
   IElementType S_QID = new SchemaElementType("S_QID");
+  IElementType S_QN = new SchemaElementType("S_QN");
+  IElementType S_QN_SEGMENT = new SchemaElementType("S_QN_SEGMENT");
+  IElementType S_QN_TYPE_REF = new SchemaElementType("S_QN_TYPE_REF");
   IElementType S_RECORD_DATUM = new SchemaElementType("S_RECORD_DATUM");
   IElementType S_RECORD_DATUM_ENTRY = new SchemaElementType("S_RECORD_DATUM_ENTRY");
   IElementType S_RECORD_TYPE_BODY = new SchemaElementType("S_RECORD_TYPE_BODY");
@@ -157,15 +157,6 @@ public interface SchemaElementTypes {
       else if (type == S_FIELD_DECL) {
         return new SchemaFieldDeclImpl(node);
       }
-      else if (type == S_FQN) {
-        return new SchemaFqnImpl(node);
-      }
-      else if (type == S_FQN_SEGMENT) {
-        return new SchemaFqnSegmentImpl(node);
-      }
-      else if (type == S_FQN_TYPE_REF) {
-        return new SchemaFqnTypeRefImpl(node);
-      }
       else if (type == S_IMPORTS) {
         return new SchemaImportsImpl(node);
       }
@@ -213,6 +204,15 @@ public interface SchemaElementTypes {
       }
       else if (type == S_QID) {
         return new SchemaQidImpl(node);
+      }
+      else if (type == S_QN) {
+        return new SchemaQnImpl(node);
+      }
+      else if (type == S_QN_SEGMENT) {
+        return new SchemaQnSegmentImpl(node);
+      }
+      else if (type == S_QN_TYPE_REF) {
+        return new SchemaQnTypeRefImpl(node);
       }
       else if (type == S_RECORD_DATUM) {
         return new SchemaRecordDatumImpl(node);

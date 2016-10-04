@@ -11,7 +11,7 @@ public interface IdlNamespaceDecl extends PsiElement {
   List<IdlAnnotation> getAnnotationList();
 
   @Nullable
-  IdlFqn getFqn();
+  IdlQn getQn();
 
   @Nullable
   PsiElement getCurlyLeft();

@@ -34,8 +34,8 @@ public class IdlNamespaceDeclImpl extends ASTWrapperPsiElement implements IdlNam
 
   @Override
   @Nullable
-  public IdlFqn getFqn() {
-    return findChildByClass(IdlFqn.class);
+  public IdlQn getQn() {
+    return findChildByClass(IdlQn.class);
   }
 
   @Override
