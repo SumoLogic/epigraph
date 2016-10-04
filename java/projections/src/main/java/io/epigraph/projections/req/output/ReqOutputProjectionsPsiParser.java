@@ -96,7 +96,7 @@ public class ReqOutputProjectionsPsiParser {
       steps = 0;
     }
 
-    final LinkedHashSet<ReqOutputVarProjection> tails =
+    final List<ReqOutputVarProjection> tails =
         parseTails(dataType, op, psi.getReqOutputVarPolymorphicTail(), typesResolver);
 
     return new StepsAndProjection<>(
@@ -156,7 +156,7 @@ public class ReqOutputProjectionsPsiParser {
       tagProjections = parseComaMultiTagProjection(dataType, op, multiTagProjection, typesResolver);
     }
 
-    final LinkedHashSet<ReqOutputVarProjection> tails =
+    final List<ReqOutputVarProjection> tails =
         parseTails(dataType, op, psi.getReqOutputVarPolymorphicTail(), typesResolver);
 
     return new StepsAndProjection<>(
@@ -195,7 +195,6 @@ public class ReqOutputProjectionsPsiParser {
 
       final ReqOutputModelProjection<?> parsedModelProjection;
 
-      @NotNull DatumType tagType = tag.type;
       @NotNull IdlReqOutputComaModelProjection modelProjection = tagProjectionPsi.getReqOutputComaModelProjection();
 
       parsedModelProjection = parseComaModelProjection(
@@ -219,17 +218,17 @@ public class ReqOutputProjectionsPsiParser {
   }
 
   @Nullable
-  private static LinkedHashSet<ReqOutputVarProjection> parseTails(
+  private static List<ReqOutputVarProjection> parseTails(
       @NotNull DataType dataType,
       @NotNull OpOutputVarProjection op,
       @Nullable IdlReqOutputVarPolymorphicTail tailPsi,
       @NotNull TypesResolver typesResolver) throws PsiProcessingException {
 
-    final LinkedHashSet<ReqOutputVarProjection> tails;
+    final List<ReqOutputVarProjection> tails;
 
     if (tailPsi != null) {
 
-      tails = new LinkedHashSet<>();
+      tails = new ArrayList<>();
 
       @Nullable IdlReqOutputVarSingleTail singleTail = tailPsi.getReqOutputVarSingleTail();
       if (singleTail != null) {
@@ -314,12 +313,12 @@ public class ReqOutputProjectionsPsiParser {
 
   @Nullable
   private static OpOutputVarProjection mergeOpTails(@NotNull OpOutputVarProjection op, @NotNull Type tailType) {
-    LinkedHashSet<OpOutputVarProjection> opTails = op.polymorphicTails();
+    List<OpOutputVarProjection> opTails = op.polymorphicTails();
     if (opTails == null) return null;
     // TODO a deep merge of op projections wrt to tailType is needed here, probably moved into a separate class
     // we simply look for the first fully matching tail for now
-    // algo should be: DFS on tails, look for tailType
-    // if found: merge all op tail up the stack into one mega-op-var-projection: squash all tags/fields/params together. Should be OK since they all are supertypes of tailType
+    // algo should be: DFS on tails, look for exact match on tailType
+    // if found: merge all op tails up the stack into one mega-op-var-projection: squash all tags/fields/params together. Should be OK since they all are supertypes of tailType
     // else null
 
     for (OpOutputVarProjection opTail : opTails) {

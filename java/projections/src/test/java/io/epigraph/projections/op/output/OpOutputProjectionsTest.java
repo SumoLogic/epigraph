@@ -336,27 +336,27 @@ public class OpOutputProjectionsTest {
 
   @Test
   public void testParseCustomParams() throws PsiProcessingException {
-    testParsingVarProjection( ":id { deprecated = true }" );
+    testParsingVarProjection(":id { deprecated = true }");
   }
 
   @Test
   public void testParseRecordDefaultFields() throws PsiProcessingException {
-    testParsingVarProjection( ":record ( id, firstName )" );
+    testParsingVarProjection(":record ( id, firstName )");
   }
 
   @Test
   public void testParseRecordFieldsWithStructure() throws PsiProcessingException {
-    testParsingVarProjection( ":record ( id, bestFriend :record ( id ) )" );
+    testParsingVarProjection(":record ( id, bestFriend :record ( id ) )");
   }
 
   @Test
   public void testParseRecordFieldsWithCustomParams() throws PsiProcessingException {
-    testParsingVarProjection( ":record ( id, bestFriend { deprecated = true :record ( id ) } )" );
+    testParsingVarProjection(":record ( id, bestFriend { deprecated = true :record ( id ) } )");
   }
 
   @Test
   public void testParseList() throws PsiProcessingException {
-    testParsingVarProjection( ":record ( friends *( :id ) )" );
+    testParsingVarProjection(":record ( friends *( :id ) )");
   }
 
   @Test
@@ -477,48 +477,46 @@ public class OpOutputProjectionsTest {
                 )
             )
         ),
-        new LinkedHashSet<>(
-            Collections.singletonList(
-                new OpOutputVarProjection(
-                    UserRecord.type,
-                    TextLocation.UNKNOWN,
-                    new OpOutputTagProjection(
-                        User.record,
-                        new OpOutputRecordModelProjection(
-                            UserRecord.type,
-                            false, null, null, null,
-                            OpOutputRecordModelProjection.fields(
-                                new OpOutputFieldProjection(
-                                    UserRecord.bestFriend,
-                                    new OpParams(new OpParam("maxAge",
-                                                             new OpInputPrimitiveModelProjection(
-                                                                 PersonId.type,
-                                                                 false,
-                                                                 null,
-                                                                 null,
-                                                                 null,
-                                                                 TextLocation.UNKNOWN
-                                                             ),
+        Collections.singletonList(
+            new OpOutputVarProjection(
+                UserRecord.type,
+                TextLocation.UNKNOWN,
+                new OpOutputTagProjection(
+                    User.record,
+                    new OpOutputRecordModelProjection(
+                        UserRecord.type,
+                        false, null, null, null,
+                        OpOutputRecordModelProjection.fields(
+                            new OpOutputFieldProjection(
+                                UserRecord.bestFriend,
+                                new OpParams(new OpParam("maxAge",
+                                                         new OpInputPrimitiveModelProjection(
+                                                             PersonId.type,
+                                                             false,
+                                                             null,
+                                                             null,
+                                                             null,
                                                              TextLocation.UNKNOWN
-                                    )),
-                                    null,
-                                    new OpOutputVarProjection(
-                                        Person.type, // todo ??
-                                        TextLocation.UNKNOWN,
-                                        new OpOutputTagProjection(
-                                            Person.record, // todo ??
-                                            recursivePersonRecordProjection,
-                                            TextLocation.UNKNOWN
-                                        )
-                                    ),
-                                    true,
-                                    TextLocation.UNKNOWN
-                                )
-                            ),
-                            TextLocation.UNKNOWN
+                                                         ),
+                                                         TextLocation.UNKNOWN
+                                )),
+                                null,
+                                new OpOutputVarProjection(
+                                    Person.type, // todo ??
+                                    TextLocation.UNKNOWN,
+                                    new OpOutputTagProjection(
+                                        Person.record, // todo ??
+                                        recursivePersonRecordProjection,
+                                        TextLocation.UNKNOWN
+                                    )
+                                ),
+                                true,
+                                TextLocation.UNKNOWN
+                            )
                         ),
                         TextLocation.UNKNOWN
-                    )
+                    ),
+                    TextLocation.UNKNOWN
                 )
             )
         ),

@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.LinkedHashSet;
+import java.util.List;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -15,7 +16,7 @@ import java.util.LinkedHashSet;
 public class ReqOutputVarProjection extends GenericVarProjection<ReqOutputTagProjection, ReqOutputVarProjection> {
   public ReqOutputVarProjection(@NotNull Type type,
                               @NotNull LinkedHashSet<ReqOutputTagProjection> tagProjections,
-                              @Nullable LinkedHashSet<ReqOutputVarProjection> polymorphicTails,
+                              @Nullable List<ReqOutputVarProjection> polymorphicTails,
                               @NotNull TextLocation location) {
     super(type, tagProjections, polymorphicTails, location);
   }

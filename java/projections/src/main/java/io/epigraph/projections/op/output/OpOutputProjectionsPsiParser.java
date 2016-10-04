@@ -107,10 +107,10 @@ public class OpOutputProjectionsPsiParser {
     }
 
     // parse tails
-    final LinkedHashSet<OpOutputVarProjection> tails;
+    final List<OpOutputVarProjection> tails;
     @Nullable IdlOpOutputVarPolymorphicTail psiTail = psi.getOpOutputVarPolymorphicTail();
     if (psiTail != null) {
-      tails = new LinkedHashSet<>();
+      tails = new ArrayList<>();
 
       @Nullable IdlOpOutputVarSingleTail singleTail = psiTail.getOpOutputVarSingleTail();
       if (singleTail != null) {

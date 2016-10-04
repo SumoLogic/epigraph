@@ -8,10 +8,7 @@ import io.epigraph.projections.Annotations;
 import io.epigraph.types.TypeKind;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Stack;
+import java.util.*;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -77,7 +74,7 @@ public abstract class GenericProjectionsPrettyPrinter<
         l.brk(1, -l.getDefaultIndentation()).end().print(")");
       }
 
-      LinkedHashSet<S> polymorphicTails = p.polymorphicTails();
+      List<S> polymorphicTails = p.polymorphicTails();
 
       if (polymorphicTails != null && !polymorphicTails.isEmpty()) {
         l.beginIInd();
@@ -134,7 +131,7 @@ public abstract class GenericProjectionsPrettyPrinter<
   }
 
   protected boolean isPrintoutEmpty(@NotNull GenericVarProjection<T, S> vp) {
-    LinkedHashSet<S> tails = vp.polymorphicTails();
+    List<S> tails = vp.polymorphicTails();
     if (tails != null && !tails.isEmpty()) return false;
     if (vp.type().kind() == TypeKind.UNION) return false; // non-samovar always prints something
 

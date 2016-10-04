@@ -18,6 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -48,7 +49,8 @@ public class OpInputProjectionsPsiParser {
           singleTagProjectionPsi
       );
 
-      @Nullable IdlOpInputTrunkModelProjection modelProjection = singleTagProjectionPsi.getOpInputTrunkModelProjection();
+      @Nullable IdlOpInputTrunkModelProjection modelProjection =
+          singleTagProjectionPsi.getOpInputTrunkModelProjection();
       assert modelProjection != null; // todo when it can be null?
 
       @NotNull List<IdlOpInputModelProperty> modelPropertiesPsi = singleTagProjectionPsi.getOpInputModelPropertyList();
@@ -79,7 +81,7 @@ public class OpInputProjectionsPsiParser {
       steps = 0;
     }
 
-    final LinkedHashSet<OpInputVarProjection> tails =
+    final List<OpInputVarProjection> tails =
         parseTails(dataType, psi.getOpInputVarPolymorphicTail(), typesResolver);
 
     return new StepsAndProjection<>(
@@ -133,7 +135,7 @@ public class OpInputProjectionsPsiParser {
       tagProjections = parseComaMultiTagProjection(dataType, multiTagProjection, typesResolver);
     }
 
-    final LinkedHashSet<OpInputVarProjection> tails =
+    final List<OpInputVarProjection> tails =
         parseTails(dataType, psi.getOpInputVarPolymorphicTail(), typesResolver);
 
     return new StepsAndProjection<>(
@@ -186,15 +188,15 @@ public class OpInputProjectionsPsiParser {
   }
 
   @Nullable
-  private static LinkedHashSet<OpInputVarProjection> parseTails(
+  private static List<OpInputVarProjection> parseTails(
       @NotNull DataType dataType,
       @Nullable IdlOpInputVarPolymorphicTail tailPsi,
       @NotNull TypesResolver typesResolver) throws PsiProcessingException {
 
-    final LinkedHashSet<OpInputVarProjection> tails;
+    final List<OpInputVarProjection> tails;
 
     if (tailPsi != null) {
-      tails = new LinkedHashSet<>();
+      tails = new ArrayList<>();
 
       @Nullable IdlOpInputVarSingleTail singleTail = tailPsi.getOpInputVarSingleTail();
       if (singleTail != null) {

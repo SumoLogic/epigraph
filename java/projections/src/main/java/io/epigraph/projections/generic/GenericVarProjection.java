@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -17,13 +18,13 @@ public class GenericVarProjection<T extends GenericTagProjection<?>, S extends G
   @NotNull
   private final LinkedHashSet<T> tagProjections; // todo change to map
   @Nullable
-  private final LinkedHashSet<S> polymorphicTails;
+  private final List<S> polymorphicTails;
   @NotNull
   private final TextLocation location;
 
   public GenericVarProjection(@NotNull Type type,
                               @NotNull LinkedHashSet<T> tagProjections,
-                              @Nullable LinkedHashSet<S> polymorphicTails,
+                              @Nullable List<S> polymorphicTails,
                               @NotNull TextLocation location) {
     this.type = type;
     this.tagProjections = tagProjections;
@@ -47,8 +48,7 @@ public class GenericVarProjection<T extends GenericTagProjection<?>, S extends G
     return null;
   }
 
-  @Nullable
-  public LinkedHashSet<S> polymorphicTails() { return polymorphicTails; }
+  public @Nullable List<S> polymorphicTails() { return polymorphicTails; }
 
   @NotNull
   public TextLocation location() {

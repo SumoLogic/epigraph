@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.LinkedHashSet;
+import java.util.List;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -15,7 +16,7 @@ import java.util.LinkedHashSet;
 public class OpInputVarProjection extends GenericVarProjection<OpInputTagProjection, OpInputVarProjection> {
   public OpInputVarProjection(@NotNull Type type,
                               @NotNull LinkedHashSet<OpInputTagProjection> tagProjections,
-                              @Nullable LinkedHashSet<OpInputVarProjection> polymorphicTails,
+                              @Nullable List<OpInputVarProjection> polymorphicTails,
                               @NotNull TextLocation location) {
     super(type, tagProjections, polymorphicTails, location);
   }
