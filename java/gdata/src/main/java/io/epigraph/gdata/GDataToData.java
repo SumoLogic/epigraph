@@ -1,9 +1,8 @@
 package io.epigraph.gdata;
 
 import io.epigraph.data.*;
-import io.epigraph.lang.Fqn;
 import io.epigraph.lang.TextLocation;
-import io.epigraph.refs.FqnTypeRef;
+import io.epigraph.refs.TypeRef;
 import io.epigraph.refs.TypesResolver;
 import io.epigraph.types.*;
 import org.jetbrains.annotations.NotNull;
@@ -26,8 +25,8 @@ public class GDataToData {
     if (gdata instanceof GData) {
       GData gData = (GData) gdata;
 
-      @Nullable Fqn typeRef = gData.typeRef();
-      if (typeRef != null) type = resolveType(resolver, typeRef, Type.class, gdata.location());
+      @Nullable TypeRef typeRef = gData.typeRef();
+      if (typeRef != null) type = resolveType(typeRef, Type.class, resolver, gdata.location());
 
       @NotNull Data.Builder builder = type.createDataBuilder();
 
@@ -125,8 +124,8 @@ public class GDataToData {
   public static RecordDatum transform(@NotNull RecordType type,
                                       @NotNull GRecordDatum gdata,
                                       @NotNull TypesResolver resolver) throws ProcessingException {
-    @Nullable Fqn typeRef = gdata.typeRef();
-    if (typeRef != null) type = resolveType(resolver, typeRef, RecordType.class, gdata.location());
+    @Nullable TypeRef typeRef = gdata.typeRef();
+    if (typeRef != null) type = resolveType(typeRef, RecordType.class, resolver, gdata.location());
 
     @NotNull RecordDatum.Builder builder = type.createBuilder();
 
@@ -150,8 +149,8 @@ public class GDataToData {
   public static MapDatum transform(@NotNull MapType type,
                                    @NotNull GMapDatum gdata,
                                    @NotNull TypesResolver resolver) throws ProcessingException {
-    @Nullable Fqn typeRef = gdata.typeRef();
-    if (typeRef != null) type = resolveType(resolver, typeRef, MapType.class, gdata.location());
+    @Nullable TypeRef typeRef = gdata.typeRef();
+    if (typeRef != null) type = resolveType(typeRef, MapType.class, resolver, gdata.location());
 
     @NotNull DatumType keyType = type.keyType();
     @NotNull Type valueType = type.valueType().type;
@@ -173,8 +172,8 @@ public class GDataToData {
   public static ListDatum transform(@NotNull ListType type,
                                     @NotNull GListDatum gdata,
                                     @NotNull TypesResolver resolver) throws ProcessingException {
-    @Nullable Fqn typeRef = gdata.typeRef();
-    if (typeRef != null) type = resolveType(resolver, typeRef, ListType.class, gdata.location());
+    @Nullable TypeRef typeRef = gdata.typeRef();
+    if (typeRef != null) type = resolveType(typeRef, ListType.class, resolver, gdata.location());
 
     @NotNull Type elementType = type.elementType().type;
     @NotNull ListDatum.Builder builder = type.createBuilder();
@@ -192,8 +191,8 @@ public class GDataToData {
   public static PrimitiveDatum<?> transform(@NotNull PrimitiveType<?> type,
                                             @NotNull GPrimitiveDatum gdata,
                                             @NotNull TypesResolver resolver) throws ProcessingException {
-    @Nullable Fqn typeRef = gdata.typeRef();
-    if (typeRef != null) type = resolveType(resolver, typeRef, PrimitiveType.class, gdata.location());
+    @Nullable TypeRef typeRef = gdata.typeRef();
+    if (typeRef != null) type = resolveType(typeRef, PrimitiveType.class, resolver, gdata.location());
 
     // TODO need to carefully coerce types here
 
@@ -210,12 +209,11 @@ public class GDataToData {
     return ((PrimitiveType<Object>) type).createBuilder(n);
   }
 
-  @NotNull
-  private static <T extends Type> T resolveType(@NotNull TypesResolver resolver,
-                                                @NotNull Fqn ref, // TODO GData should allow anon lists and maps
+  private static <T extends Type> T resolveType(@NotNull TypeRef ref,
                                                 @NotNull Class<T> expectedClass,
+                                                @NotNull TypesResolver resolver,
                                                 @NotNull TextLocation location) throws ProcessingException {
-    @Nullable Type type = resolver.resolve(new FqnTypeRef(ref));
+    @Nullable Type type = ref.resolve(resolver);
     if (type == null) throw new ProcessingException("Can't resolve type '" + ref + "'", location);
 
     if (expectedClass.isAssignableFrom(type.getClass()))
@@ -233,8 +231,8 @@ public class GDataToData {
   public static Val.Imm transform(@NotNull DatumType type,
                                   @NotNull GNullDatum gdata,
                                   @NotNull TypesResolver resolver) throws ProcessingException {
-    @Nullable Fqn typeRef = gdata.typeRef();
-    if (typeRef != null) type = resolveType(resolver, typeRef, RecordType.class, gdata.location());
+    @Nullable TypeRef typeRef = gdata.typeRef();
+    if (typeRef != null) type = resolveType(typeRef, RecordType.class, resolver, gdata.location());
     return type.createValue(null);
   }
 

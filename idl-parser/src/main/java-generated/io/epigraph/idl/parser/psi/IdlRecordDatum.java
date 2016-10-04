@@ -7,11 +7,11 @@ import com.intellij.psi.PsiElement;
 
 public interface IdlRecordDatum extends IdlDatum {
 
-  @Nullable
-  IdlFqnTypeRef getFqnTypeRef();
-
   @NotNull
   List<IdlRecordDatumEntry> getRecordDatumEntryList();
+
+  @Nullable
+  IdlTypeRef getTypeRef();
 
   @NotNull
   PsiElement getCurlyLeft();

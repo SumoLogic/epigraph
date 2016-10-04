@@ -26,15 +26,15 @@ public class IdlMapDatumImpl extends IdlDatumImpl implements IdlMapDatum {
   }
 
   @Override
-  @Nullable
-  public IdlFqnTypeRef getFqnTypeRef() {
-    return findChildByClass(IdlFqnTypeRef.class);
-  }
-
-  @Override
   @NotNull
   public List<IdlMapDatumEntry> getMapDatumEntryList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, IdlMapDatumEntry.class);
+  }
+
+  @Override
+  @Nullable
+  public IdlTypeRef getTypeRef() {
+    return findChildByClass(IdlTypeRef.class);
   }
 
   @Override

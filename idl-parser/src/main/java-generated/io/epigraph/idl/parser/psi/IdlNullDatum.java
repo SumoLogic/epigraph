@@ -8,7 +8,7 @@ import com.intellij.psi.PsiElement;
 public interface IdlNullDatum extends IdlDatum {
 
   @Nullable
-  IdlFqnTypeRef getFqnTypeRef();
+  IdlTypeRef getTypeRef();
 
   @Nullable
   PsiElement getAt();

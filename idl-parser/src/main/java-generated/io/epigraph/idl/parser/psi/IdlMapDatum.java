@@ -7,11 +7,11 @@ import com.intellij.psi.PsiElement;
 
 public interface IdlMapDatum extends IdlDatum {
 
-  @Nullable
-  IdlFqnTypeRef getFqnTypeRef();
-
   @NotNull
   List<IdlMapDatumEntry> getMapDatumEntryList();
+
+  @Nullable
+  IdlTypeRef getTypeRef();
 
   @NotNull
   PsiElement getParenLeft();

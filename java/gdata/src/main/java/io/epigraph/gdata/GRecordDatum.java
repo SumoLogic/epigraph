@@ -2,6 +2,7 @@ package io.epigraph.gdata;
 
 import io.epigraph.lang.Fqn;
 import io.epigraph.lang.TextLocation;
+import io.epigraph.refs.TypeRef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,7 +17,7 @@ public class GRecordDatum extends GDatum {
   @NotNull
   private final LinkedHashMap<String, GDataValue> fields;
 
-  public GRecordDatum(@Nullable Fqn typeRef,
+  public GRecordDatum(@Nullable TypeRef typeRef,
                       @NotNull LinkedHashMap<String, GDataValue> fields,
                       @NotNull TextLocation location) {
 
@@ -25,9 +26,7 @@ public class GRecordDatum extends GDatum {
   }
 
   @NotNull
-  public LinkedHashMap<String, GDataValue> fields() {
-    return fields;
-  }
+  public LinkedHashMap<String, GDataValue> fields() { return fields; }
 
   @Override
   public boolean equals(Object o) {
@@ -39,9 +38,7 @@ public class GRecordDatum extends GDatum {
   }
 
   @Override
-  public int hashCode() {
-    return Objects.hash(super.hashCode(), fields);
-  }
+  public int hashCode() { return Objects.hash(super.hashCode(), fields); }
 
   @Override
   public String toString() {

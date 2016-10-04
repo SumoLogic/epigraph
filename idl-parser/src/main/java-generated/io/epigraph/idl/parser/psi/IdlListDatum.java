@@ -11,7 +11,7 @@ public interface IdlListDatum extends IdlDatum {
   List<IdlDataValue> getDataValueList();
 
   @Nullable
-  IdlFqnTypeRef getFqnTypeRef();
+  IdlTypeRef getTypeRef();
 
   @NotNull
   PsiElement getBracketLeft();

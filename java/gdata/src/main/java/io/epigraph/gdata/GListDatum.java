@@ -1,7 +1,7 @@
 package io.epigraph.gdata;
 
-import io.epigraph.lang.Fqn;
 import io.epigraph.lang.TextLocation;
+import io.epigraph.refs.TypeRef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,15 +16,13 @@ public class GListDatum extends GDatum {
   @NotNull
   private final List<GDataValue> values;
 
-  public GListDatum(@Nullable Fqn typeRef, @NotNull List<GDataValue> values, @NotNull TextLocation location) {
+  public GListDatum(@Nullable TypeRef typeRef, @NotNull List<GDataValue> values, @NotNull TextLocation location) {
     super(typeRef, location);
     this.values = values;
   }
 
   @NotNull
-  public List<GDataValue> values() {
-    return values;
-  }
+  public List<GDataValue> values() { return values; }
 
   @Override
   public boolean equals(Object o) {
@@ -36,9 +34,7 @@ public class GListDatum extends GDatum {
   }
 
   @Override
-  public int hashCode() {
-    return Objects.hash(super.hashCode(), values);
-  }
+  public int hashCode() { return Objects.hash(super.hashCode(), values); }
 
   @Override
   public String toString() {

@@ -26,15 +26,15 @@ public class IdlRecordDatumImpl extends IdlDatumImpl implements IdlRecordDatum {
   }
 
   @Override
-  @Nullable
-  public IdlFqnTypeRef getFqnTypeRef() {
-    return findChildByClass(IdlFqnTypeRef.class);
-  }
-
-  @Override
   @NotNull
   public List<IdlRecordDatumEntry> getRecordDatumEntryList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, IdlRecordDatumEntry.class);
+  }
+
+  @Override
+  @Nullable
+  public IdlTypeRef getTypeRef() {
+    return findChildByClass(IdlTypeRef.class);
   }
 
   @Override

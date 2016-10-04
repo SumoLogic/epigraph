@@ -18,9 +18,7 @@ public class GDataEnum extends GDatum {
   }
 
   @NotNull
-  public String value() {
-    return value;
-  }
+  public String value() { return value; }
 
   @Override
   public boolean equals(Object o) {
@@ -32,12 +30,8 @@ public class GDataEnum extends GDatum {
   }
 
   @Override
-  public int hashCode() {
-    return Objects.hash(super.hashCode(), value);
-  }
+  public int hashCode() { return Objects.hash(super.hashCode(), value); }
 
   @Override
-  public String toString() {
-    return "#" + value;
-  }
+  public String toString() { return "#" + value; }
 }

@@ -34,8 +34,8 @@ public class IdlDataImpl extends ASTWrapperPsiElement implements IdlData {
 
   @Override
   @Nullable
-  public IdlFqnTypeRef getFqnTypeRef() {
-    return findChildByClass(IdlFqnTypeRef.class);
+  public IdlTypeRef getTypeRef() {
+    return findChildByClass(IdlTypeRef.class);
   }
 
   @Override

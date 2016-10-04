@@ -11,7 +11,7 @@ public interface IdlData extends PsiElement {
   List<IdlDataEntry> getDataEntryList();
 
   @Nullable
-  IdlFqnTypeRef getFqnTypeRef();
+  IdlTypeRef getTypeRef();
 
   @NotNull
   PsiElement getAngleLeft();

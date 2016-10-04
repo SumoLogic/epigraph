@@ -566,7 +566,6 @@ public class IdlParser implements PsiParser, LightPsiParser {
   // dataTypeSpec? '<' dataEntry* '>'
   public static boolean data(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "data")) return false;
-    if (!nextTokenIs(b, "<data>", I_ANGLE_LEFT, I_ID)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, I_DATA, "<data>");
     r = data_0(b, l + 1);
@@ -620,9 +619,9 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // fqnTypeRef
+  // typeRef
   static boolean dataTypeSpec(PsiBuilder b, int l) {
-    return fqnTypeRef(b, l + 1);
+    return typeRef(b, l + 1);
   }
 
   /* ********************************************************** */
@@ -817,7 +816,6 @@ public class IdlParser implements PsiParser, LightPsiParser {
   // dataTypeSpec? '[' (dataValue ','?)* ']'
   public static boolean listDatum(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "listDatum")) return false;
-    if (!nextTokenIs(b, "<list datum>", I_BRACKET_LEFT, I_ID)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, I_LIST_DATUM, "<list datum>");
     r = listDatum_0(b, l + 1);
@@ -870,7 +868,6 @@ public class IdlParser implements PsiParser, LightPsiParser {
   // dataTypeSpec? '(' mapDatumEntry* ')'
   public static boolean mapDatum(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "mapDatum")) return false;
-    if (!nextTokenIs(b, "<map datum>", I_PAREN_LEFT, I_ID)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, I_MAP_DATUM, "<map datum>");
     r = mapDatum_0(b, l + 1);
@@ -1003,7 +1000,6 @@ public class IdlParser implements PsiParser, LightPsiParser {
   // (dataTypeSpec '@')? 'null'
   public static boolean nullDatum(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "nullDatum")) return false;
-    if (!nextTokenIs(b, "<null datum>", I_NULL, I_ID)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, I_NULL_DATUM, "<null datum>");
     r = nullDatum_0(b, l + 1);
@@ -2929,7 +2925,6 @@ public class IdlParser implements PsiParser, LightPsiParser {
   // dataTypeSpec? '{' recordDatumEntry* '}'
   public static boolean recordDatum(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "recordDatum")) return false;
-    if (!nextTokenIs(b, "<record datum>", I_CURLY_LEFT, I_ID)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, I_RECORD_DATUM, "<record datum>");
     r = recordDatum_0(b, l + 1);

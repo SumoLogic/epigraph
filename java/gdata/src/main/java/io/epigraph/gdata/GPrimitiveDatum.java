@@ -1,7 +1,7 @@
 package io.epigraph.gdata;
 
-import io.epigraph.lang.Fqn;
 import io.epigraph.lang.TextLocation;
+import io.epigraph.refs.TypeRef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -14,15 +14,13 @@ public class GPrimitiveDatum extends GDatum {
   @NotNull
   private final Object value;
 
-  public GPrimitiveDatum(@Nullable Fqn typeRef, @NotNull Object value, @NotNull TextLocation location) {
+  public GPrimitiveDatum(@Nullable TypeRef typeRef, @NotNull Object value, @NotNull TextLocation location) {
     super(typeRef, location);
     this.value = value;
   }
 
   @NotNull
-  public Object value() {
-    return value;
-  }
+  public Object value() { return value; }
 
   @Override
   public boolean equals(Object o) {
@@ -34,9 +32,7 @@ public class GPrimitiveDatum extends GDatum {
   }
 
   @Override
-  public int hashCode() {
-    return Objects.hash(super.hashCode(), value);
-  }
+  public int hashCode() { return Objects.hash(super.hashCode(), value); }
 
   @Override
   public String toString() {

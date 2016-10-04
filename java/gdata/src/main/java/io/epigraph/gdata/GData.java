@@ -1,7 +1,7 @@
 package io.epigraph.gdata;
 
-import io.epigraph.lang.Fqn;
 import io.epigraph.lang.TextLocation;
+import io.epigraph.refs.TypeRef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -14,11 +14,11 @@ import java.util.stream.Collectors;
  */
 public class GData extends GDataValue {
   @Nullable
-  private final Fqn typeRef;
+  private final TypeRef typeRef;
   @NotNull
   private final LinkedHashMap<String, GDatum> tags;
 
-  public GData(@Nullable Fqn typeRef,
+  public GData(@Nullable TypeRef typeRef,
                @NotNull LinkedHashMap<String, GDatum> tags,
                @NotNull TextLocation location) {
 
@@ -27,14 +27,11 @@ public class GData extends GDataValue {
     this.tags = tags;
   }
 
-  public Fqn typeRef() {
-    return typeRef;
-  }
+  @Nullable
+  public TypeRef typeRef() { return typeRef; }
 
   @NotNull
-  public LinkedHashMap<String, GDatum> tags() {
-    return tags;
-  }
+  public LinkedHashMap<String, GDatum> tags() { return tags; }
 
   @Override
   public boolean equals(Object o) {
@@ -46,9 +43,7 @@ public class GData extends GDataValue {
   }
 
   @Override
-  public int hashCode() {
-    return Objects.hash(typeRef, tags);
-  }
+  public int hashCode() { return Objects.hash(typeRef, tags); }
 
   @Override
   public String toString() {

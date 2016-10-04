@@ -1,9 +1,10 @@
 package io.epigraph.gdata;
 
+import io.epigraph.idl.TypeRefs;
 import io.epigraph.idl.parser.psi.*;
-import io.epigraph.lang.Fqn;
 import io.epigraph.psi.EpigraphPsiUtil;
 import io.epigraph.psi.PsiProcessingException;
+import io.epigraph.refs.TypeRef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,7 +27,7 @@ public class IdlGDataPsiParser {
 
   @NotNull
   public static GData parseData(@NotNull IdlData psi) throws PsiProcessingException {
-    @Nullable IdlFqnTypeRef typeRef = psi.getFqnTypeRef();
+    @Nullable IdlTypeRef typeRef = psi.getTypeRef();
 
     LinkedHashMap<String, GDatum> tags = new LinkedHashMap<>();
     for (IdlDataEntry entry : psi.getDataEntryList()) {
@@ -62,7 +63,7 @@ public class IdlGDataPsiParser {
 
   @NotNull
   public static GRecordDatum parseRecord(@NotNull IdlRecordDatum psi) throws PsiProcessingException {
-    @Nullable IdlFqnTypeRef typeRef = psi.getFqnTypeRef();
+    @Nullable IdlTypeRef typeRef = psi.getTypeRef();
 
     LinkedHashMap<String, GDataValue> fields = new LinkedHashMap<>();
     for (IdlRecordDatumEntry entry : psi.getRecordDatumEntryList()) {
@@ -80,7 +81,7 @@ public class IdlGDataPsiParser {
 
   @NotNull
   public static GMapDatum parseMap(@NotNull IdlMapDatum psi) throws PsiProcessingException {
-    @Nullable IdlFqnTypeRef typeRef = psi.getFqnTypeRef();
+    @Nullable IdlTypeRef typeRef = psi.getTypeRef();
 
     LinkedHashMap<GDatum, GDataValue> map = new LinkedHashMap<>();
     for (IdlMapDatumEntry entry : psi.getMapDatumEntryList()) {
@@ -98,7 +99,7 @@ public class IdlGDataPsiParser {
 
   @NotNull
   public static GListDatum parseList(@NotNull IdlListDatum psi) throws PsiProcessingException {
-    @Nullable IdlFqnTypeRef typeRef = psi.getFqnTypeRef();
+    @Nullable IdlTypeRef typeRef = psi.getTypeRef();
 
     final List<GDataValue> items = new ArrayList<>();
 
@@ -115,7 +116,7 @@ public class IdlGDataPsiParser {
 
   @NotNull
   public static GPrimitiveDatum parsePrimitive(@NotNull IdlPrimitiveDatum psi) throws PsiProcessingException {
-    @Nullable IdlFqnTypeRef typeRef = psi.getFqnTypeRef();
+    @Nullable IdlTypeRef typeRef = psi.getTypeRef();
 
     final Object value;
     if (psi.getString() != null) {
@@ -135,11 +136,13 @@ public class IdlGDataPsiParser {
   }
 
   @NotNull
-  public static GNullDatum parseNull(@NotNull IdlNullDatum psi) {
-    @Nullable IdlFqnTypeRef typeRef = psi.getFqnTypeRef();
+  public static GNullDatum parseNull(@NotNull IdlNullDatum psi) throws PsiProcessingException {
+    @Nullable IdlTypeRef typeRef = psi.getTypeRef();
     return new GNullDatum(getTypeRef(typeRef), EpigraphPsiUtil.getLocation(psi));
   }
 
   @Nullable
-  private static Fqn getTypeRef(IdlFqnTypeRef typeRef) {return typeRef == null ? null : typeRef.getFqn().getFqn();}
+  private static TypeRef getTypeRef(IdlTypeRef typeRef) throws PsiProcessingException {
+    return typeRef == null ? null : TypeRefs.fromPsi(typeRef);
+  }
 }

@@ -386,7 +386,7 @@ reqOutputComaKeyProjection ::= datum reqParamsAndAnnotations
 // please keep in sync with data language from schema.bnf
 
 dataValue ::= data | datum
-private dataTypeSpec ::= fqnTypeRef // todo typeRef
+private dataTypeSpec ::= typeRef
 
 data ::= dataTypeSpec? '<' dataEntry* '>' {pin=2}
 dataEntry ::= qid ':' datum ','? {pin=2 recoverWhile=dataValueRecover}

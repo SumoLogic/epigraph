@@ -1,7 +1,7 @@
 package io.epigraph.gdata;
 
 import de.uka.ilkd.pp.Layouter;
-import io.epigraph.lang.Fqn;
+import io.epigraph.refs.TypeRef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,7 +27,7 @@ public final class GDataPrettyPrinter<E extends Exception> {
   public void print(@NotNull GData data) throws E {
     l.beginCInd();
 
-    @Nullable Fqn typeRef = data.typeRef();
+    @Nullable TypeRef typeRef = data.typeRef();
     if (typeRef != null) l.print(typeRef.toString()).brk();
 
     l.print("<");
@@ -57,7 +57,7 @@ public final class GDataPrettyPrinter<E extends Exception> {
   private void print(@NotNull GRecordDatum d) throws E {
     l.beginCInd();
 
-    @Nullable Fqn typeRef = d.typeRef();
+    @Nullable TypeRef typeRef = d.typeRef();
     if (typeRef != null) l.print(typeRef.toString()).brk();
 
     l.print("{");
@@ -78,7 +78,7 @@ public final class GDataPrettyPrinter<E extends Exception> {
   private void print(@NotNull GMapDatum d) throws E {
     l.beginCInd();
 
-    @Nullable Fqn typeRef = d.typeRef();
+    @Nullable TypeRef typeRef = d.typeRef();
     if (typeRef != null) l.print(typeRef.toString()).brk();
 
     l.print("(");
@@ -101,7 +101,7 @@ public final class GDataPrettyPrinter<E extends Exception> {
   private void print(@NotNull GListDatum d) throws E {
     l.beginCInd();
 
-    @Nullable Fqn typeRef = d.typeRef();
+    @Nullable TypeRef typeRef = d.typeRef();
     if (typeRef != null) l.print(typeRef.toString()).brk();
 
     l.print("[");
@@ -127,7 +127,7 @@ public final class GDataPrettyPrinter<E extends Exception> {
     else valueString = value.toString();
 
     l.beginCInd();
-    @Nullable Fqn typeRef = d.typeRef();
+    @Nullable TypeRef typeRef = d.typeRef();
     if (typeRef != null) l.print(typeRef.toString()).print("@");
 
     l.print(valueString).end();
@@ -135,7 +135,7 @@ public final class GDataPrettyPrinter<E extends Exception> {
 
   private void print(@NotNull GNullDatum d) throws E {
     l.beginCInd();
-    @Nullable Fqn typeRef = d.typeRef();
+    @Nullable TypeRef typeRef = d.typeRef();
     if (typeRef != null) l.print(typeRef.toString()).print("@");
 
     l.print("null").end();

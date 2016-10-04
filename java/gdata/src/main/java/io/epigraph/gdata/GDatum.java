@@ -1,7 +1,7 @@
 package io.epigraph.gdata;
 
-import io.epigraph.lang.Fqn;
 import io.epigraph.lang.TextLocation;
+import io.epigraph.refs.TypeRef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -12,16 +12,14 @@ import java.util.Objects;
  */
 public abstract class GDatum extends GDataValue {
   @Nullable
-  private final Fqn typeRef;
+  private final TypeRef typeRef;
 
-  protected GDatum(@Nullable Fqn typeRef, @NotNull TextLocation location) {
+  protected GDatum(@Nullable TypeRef typeRef, @NotNull TextLocation location) {
     super(location);
-    this.typeRef = typeRef;}
-
-  @Nullable
-  public Fqn typeRef() {
-    return typeRef;
+    this.typeRef = typeRef;
   }
+
+  public @Nullable TypeRef typeRef() { return typeRef; }
 
   @Override
   public boolean equals(Object o) {
@@ -32,8 +30,6 @@ public abstract class GDatum extends GDataValue {
   }
 
   @Override
-  public int hashCode() {
-    return Objects.hash(typeRef);
-  }
+  public int hashCode() { return Objects.hash(typeRef); }
 }
 
