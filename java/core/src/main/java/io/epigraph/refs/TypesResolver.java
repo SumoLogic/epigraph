@@ -1,7 +1,6 @@
 package io.epigraph.refs;
 
 import io.epigraph.types.DataType;
-import io.epigraph.types.DatumType;
 import io.epigraph.types.Type;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,10 +29,6 @@ public interface TypesResolver {
       defaultTag = type.tagsMap().get(defaultTagOverride);
       if (defaultTag == null) return null;
     } else {
-//      if (type instanceof DatumType) {
-//        DatumType datumType = (DatumType) type;
-//        defaultTag = datumType.self;
-//      } else
         defaultTag = null;
     }
 
