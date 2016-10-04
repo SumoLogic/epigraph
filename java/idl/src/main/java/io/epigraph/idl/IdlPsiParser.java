@@ -74,7 +74,7 @@ public class IdlPsiParser {
     // convert datum type to samovar
     @NotNull Type type = dataType.type;
     if (dataType.defaultTag == null && valueTypeRef.defaultOverride() == null && type instanceof DatumType) {
-      dataType = new DataType(dataType.polymorphic, type, ((DatumType) type).self);
+      dataType = new DataType(type, ((DatumType) type).self);
     }
 
     @NotNull List<IdlOperationDef> defsPsi = psi.getOperationDefList();
