@@ -8,7 +8,7 @@ import com.intellij.psi.PsiElement;
 public interface SchemaPrimitiveDatum extends SchemaDatum {
 
   @Nullable
-  SchemaFqnTypeRef getFqnTypeRef();
+  SchemaTypeRef getTypeRef();
 
   @Nullable
   PsiElement getAt();

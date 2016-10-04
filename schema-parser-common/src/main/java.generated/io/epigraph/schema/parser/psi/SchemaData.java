@@ -11,7 +11,7 @@ public interface SchemaData extends PsiElement {
   List<SchemaDataEntry> getDataEntryList();
 
   @Nullable
-  SchemaFqnTypeRef getFqnTypeRef();
+  SchemaTypeRef getTypeRef();
 
   @NotNull
   PsiElement getAngleLeft();

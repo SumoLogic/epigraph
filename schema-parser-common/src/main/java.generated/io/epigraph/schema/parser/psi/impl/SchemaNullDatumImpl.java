@@ -27,8 +27,8 @@ public class SchemaNullDatumImpl extends SchemaDatumImpl implements SchemaNullDa
 
   @Override
   @Nullable
-  public SchemaFqnTypeRef getFqnTypeRef() {
-    return PsiTreeUtil.getChildOfType(this, SchemaFqnTypeRef.class);
+  public SchemaTypeRef getTypeRef() {
+    return PsiTreeUtil.getChildOfType(this, SchemaTypeRef.class);
   }
 
   @Override

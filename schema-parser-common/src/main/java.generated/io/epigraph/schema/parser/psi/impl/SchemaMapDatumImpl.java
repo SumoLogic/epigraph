@@ -26,15 +26,15 @@ public class SchemaMapDatumImpl extends SchemaDatumImpl implements SchemaMapDatu
   }
 
   @Override
-  @Nullable
-  public SchemaFqnTypeRef getFqnTypeRef() {
-    return PsiTreeUtil.getChildOfType(this, SchemaFqnTypeRef.class);
-  }
-
-  @Override
   @NotNull
   public List<SchemaMapDatumEntry> getMapDatumEntryList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaMapDatumEntry.class);
+  }
+
+  @Override
+  @Nullable
+  public SchemaTypeRef getTypeRef() {
+    return PsiTreeUtil.getChildOfType(this, SchemaTypeRef.class);
   }
 
   @Override

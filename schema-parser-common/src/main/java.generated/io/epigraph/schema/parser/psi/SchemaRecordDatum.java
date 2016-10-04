@@ -7,11 +7,11 @@ import com.intellij.psi.PsiElement;
 
 public interface SchemaRecordDatum extends SchemaDatum {
 
-  @Nullable
-  SchemaFqnTypeRef getFqnTypeRef();
-
   @NotNull
   List<SchemaRecordDatumEntry> getRecordDatumEntryList();
+
+  @Nullable
+  SchemaTypeRef getTypeRef();
 
   @NotNull
   PsiElement getCurlyLeft();

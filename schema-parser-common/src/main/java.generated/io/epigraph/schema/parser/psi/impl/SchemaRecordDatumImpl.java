@@ -26,15 +26,15 @@ public class SchemaRecordDatumImpl extends SchemaDatumImpl implements SchemaReco
   }
 
   @Override
-  @Nullable
-  public SchemaFqnTypeRef getFqnTypeRef() {
-    return PsiTreeUtil.getChildOfType(this, SchemaFqnTypeRef.class);
-  }
-
-  @Override
   @NotNull
   public List<SchemaRecordDatumEntry> getRecordDatumEntryList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaRecordDatumEntry.class);
+  }
+
+  @Override
+  @Nullable
+  public SchemaTypeRef getTypeRef() {
+    return PsiTreeUtil.getChildOfType(this, SchemaTypeRef.class);
   }
 
   @Override

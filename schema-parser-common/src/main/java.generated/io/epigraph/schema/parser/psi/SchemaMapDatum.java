@@ -7,11 +7,11 @@ import com.intellij.psi.PsiElement;
 
 public interface SchemaMapDatum extends SchemaDatum {
 
-  @Nullable
-  SchemaFqnTypeRef getFqnTypeRef();
-
   @NotNull
   List<SchemaMapDatumEntry> getMapDatumEntryList();
+
+  @Nullable
+  SchemaTypeRef getTypeRef();
 
   @NotNull
   PsiElement getParenLeft();

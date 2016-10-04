@@ -11,7 +11,7 @@ public interface SchemaListDatum extends SchemaDatum {
   List<SchemaDataValue> getDataValueList();
 
   @Nullable
-  SchemaFqnTypeRef getFqnTypeRef();
+  SchemaTypeRef getTypeRef();
 
   @NotNull
   PsiElement getBracketLeft();
