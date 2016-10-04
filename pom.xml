@@ -39,9 +39,9 @@
     <!-- // first-time build bootstrap sequence:
 mvn clean install -P jar-mavenizer && \
 mvn clean install -P light-psi && \
-mvn clean install -P main -pl -java/projections && \
+mvn clean install -P main -pl -java/idl,-java/projections && \
 mvn clean install -P schemas,examples,tests && \
-mvn clean install -P main -pl java/projections
+mvn clean install -P main -pl java/idl,java/projections
     -->
 
     <profile>
