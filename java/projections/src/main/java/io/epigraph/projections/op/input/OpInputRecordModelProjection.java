@@ -3,12 +3,12 @@ package io.epigraph.projections.op.input;
 import io.epigraph.data.RecordDatum;
 import io.epigraph.lang.TextLocation;
 import io.epigraph.projections.Annotations;
+import io.epigraph.projections.ProjectionUtils;
 import io.epigraph.types.RecordType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -18,36 +18,20 @@ public class OpInputRecordModelProjection extends OpInputModelProjection<RecordT
       equalsVisited = new ThreadLocal<>();
 
   @Nullable
-  private LinkedHashSet<OpInputFieldProjection> fieldProjections;
-  @Nullable
-  private Map<String, OpInputFieldProjection> indexedFieldProjections;
+  private LinkedHashMap<RecordType.Field, OpInputFieldProjection> fieldProjections;
 
   public OpInputRecordModelProjection(@NotNull RecordType model,
                                       boolean required,
                                       @Nullable RecordDatum defaultValue,
                                       @Nullable Annotations annotations,
                                       @Nullable OpInputModelProjection<?, ?> metaProjection,
-                                      @Nullable LinkedHashSet<OpInputFieldProjection> fieldProjections,
+                                      @Nullable LinkedHashMap<RecordType.Field, OpInputFieldProjection> fieldProjections,
                                       @NotNull TextLocation location) {
     super(model, required, defaultValue, annotations, metaProjection, location);
     this.fieldProjections = fieldProjections;
 
-    Collection<@NotNull ? extends RecordType.Field> fields = model.fields();
-    if (fieldProjections != null) {
-      for (OpInputFieldProjection fieldProjection : fieldProjections) {
-        RecordType.Field field = fieldProjection.field();
-        if (!fields.contains(field))
-          throw new IllegalArgumentException(
-              String.format("Field '%s' does not belong to record model '%s'. Known fields: %s",
-                            field.name(), model.name(), listFields(fields)
-              )
-          );
-      }
-    }
-  }
-
-  private static String listFields(@NotNull Collection<? extends RecordType.Field> fields) {
-    return fields.stream().map(RecordType.Field::name).collect(Collectors.joining(", "));
+    if (fieldProjections != null)
+      ProjectionUtils.checkFieldsBelongsToModel(fieldProjections.keySet(), model);
   }
 
   @NotNull
@@ -56,24 +40,11 @@ public class OpInputRecordModelProjection extends OpInputModelProjection<RecordT
   }
 
   @Nullable
-  public LinkedHashSet<OpInputFieldProjection> fieldProjections() { return fieldProjections; }
+  public LinkedHashMap<RecordType.Field, OpInputFieldProjection> fieldProjections() { return fieldProjections; }
 
-  @Nullable
-  public Map<String, OpInputFieldProjection> indexedFieldProjections() {
-    if (indexedFieldProjections != null) return indexedFieldProjections;
-    if (fieldProjections == null) return null;
-
-    Map<String, OpInputFieldProjection> res = new HashMap<>();
-    for (OpInputFieldProjection fieldProjection : fieldProjections)
-      res.put(fieldProjection.field().name(), fieldProjection);
-
-    indexedFieldProjections = res;
-    return res;
-  }
-
-  public void addFieldProjection(@NotNull OpInputFieldProjection fieldProjection) {
-    if (fieldProjections == null) fieldProjections = new LinkedHashSet<>();
-    fieldProjections.add(fieldProjection);
+  public void addFieldProjection(@NotNull RecordType.Field field, @NotNull OpInputFieldProjection fieldProjection) {
+    if (fieldProjections == null) fieldProjections = new LinkedHashMap<>();
+    fieldProjections.put(field, fieldProjection);
   }
 
   @Override

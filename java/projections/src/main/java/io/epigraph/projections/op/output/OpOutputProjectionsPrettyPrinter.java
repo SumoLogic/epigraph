@@ -2,17 +2,19 @@ package io.epigraph.projections.op.output;
 
 import de.uka.ilkd.pp.Layouter;
 import io.epigraph.data.Datum;
-import io.epigraph.projections.generic.GenericProjectionsPrettyPrinter;
 import io.epigraph.projections.Annotations;
+import io.epigraph.projections.generic.GenericProjectionsPrettyPrinter;
 import io.epigraph.projections.op.OpParam;
 import io.epigraph.projections.op.OpParams;
 import io.epigraph.projections.op.input.OpInputModelProjection;
 import io.epigraph.projections.op.input.OpInputProjectionsPrettyPrinter;
+import io.epigraph.types.RecordType;
 import io.epigraph.types.Type;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.LinkedHashSet;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -77,15 +79,18 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception> extends
   }
 
   private void print(@NotNull OpOutputRecordModelProjection mp) throws E {
-    @Nullable LinkedHashSet<OpOutputFieldProjection> fieldProjections = mp.fieldProjections();
+    @Nullable LinkedHashMap<RecordType.Field, OpOutputFieldProjection> fieldProjections = mp.fieldProjections();
 
     if (fieldProjections != null) {
       l.print("(").beginCInd();
       boolean first = true;
-      for (OpOutputFieldProjection fieldProjection : fieldProjections) {
+      for (Map.Entry<RecordType.Field, OpOutputFieldProjection> entry : fieldProjections.entrySet()) {
         if (first) first = false;
         else l.print(",");
         l.brk();
+
+        @NotNull RecordType.Field field = entry.getKey();
+        @NotNull OpOutputFieldProjection fieldProjection = entry.getValue();
 
         @NotNull OpOutputVarProjection fieldVarProjection = fieldProjection.projection();
         @Nullable OpParams fieldParams = fieldProjection.params();
@@ -94,7 +99,7 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception> extends
         if (fieldParams == null && fieldAnnotations == null) {
           l.beginIInd();
           if (fieldProjection.includeInDefault()) l.print("+");
-          l.print(fieldProjection.field().name());
+          l.print(field.name());
           if (!isPrintoutEmpty(fieldVarProjection)) {
             l.brk();
             print(fieldVarProjection, 0);
@@ -103,7 +108,7 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception> extends
         } else {
           l.beginCInd();
           if (fieldProjection.includeInDefault()) l.print("+");
-          l.print(fieldProjection.field().name());
+          l.print(field.name());
           l.print(" {");
           if (fieldParams != null) print(fieldParams);
           if (fieldAnnotations != null) print(fieldAnnotations);
@@ -220,7 +225,7 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception> extends
   public boolean isPrintoutEmpty(@NotNull OpOutputModelProjection<?> mp) {
     if (mp instanceof OpOutputRecordModelProjection) {
       OpOutputRecordModelProjection recordModelProjection = (OpOutputRecordModelProjection) mp;
-      @Nullable LinkedHashSet<OpOutputFieldProjection> fieldProjections =
+      @Nullable LinkedHashMap<RecordType.Field, OpOutputFieldProjection> fieldProjections =
           recordModelProjection.fieldProjections();
       return fieldProjections == null || fieldProjections.isEmpty();
     }

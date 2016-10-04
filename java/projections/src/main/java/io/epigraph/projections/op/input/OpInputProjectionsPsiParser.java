@@ -126,7 +126,8 @@ public class OpInputProjectionsPsiParser {
           new OpInputTagProjection(
               parsedModelProjection,
               EpigraphPsiUtil.getLocation(singleTagProjectionPsi)
-          ));
+          )
+      );
 
     } else {
       @Nullable IdlOpInputComaMultiTagProjection multiTagProjection = psi.getOpInputComaMultiTagProjection();
@@ -636,7 +637,7 @@ public class OpInputProjectionsPsiParser {
       }
     }
 
-    LinkedHashSet<OpInputFieldProjection> fieldProjections = new LinkedHashSet<>();
+    LinkedHashMap<RecordType.Field, OpInputFieldProjection> fieldProjections = new LinkedHashMap<>();
     @Nullable IdlOpInputTrunkFieldProjection fieldProjectionPsi = psi.getOpInputTrunkFieldProjection();
 
     if (fieldProjectionPsi == null)
@@ -685,12 +686,15 @@ public class OpInputProjectionsPsiParser {
       steps = stepsAndProjection.pathSteps() + 1;
     }
 
-    fieldProjections.add(new OpInputFieldProjection(field,
-                                                    fieldAnnotations,
-                                                    varProjection,
-                                                    fieldRequired,
-                                                    EpigraphPsiUtil.getLocation(fieldProjectionPsi)
-    ));
+    fieldProjections.put(
+        field,
+        new OpInputFieldProjection(
+            fieldAnnotations,
+            varProjection,
+            fieldRequired,
+            EpigraphPsiUtil.getLocation(fieldProjectionPsi)
+        )
+    );
 
     return new StepsAndProjection<>(
         steps,
@@ -725,7 +729,7 @@ public class OpInputProjectionsPsiParser {
       }
     }
 
-    LinkedHashSet<OpInputFieldProjection> fieldProjections = new LinkedHashSet<>();
+    LinkedHashMap<RecordType.Field, OpInputFieldProjection> fieldProjections = new LinkedHashMap<>();
     @NotNull List<IdlOpInputComaFieldProjection> psiFieldProjections = psi.getOpInputComaFieldProjectionList();
 
     for (IdlOpInputComaFieldProjection fieldProjectionPsi : psiFieldProjections) {
@@ -764,12 +768,15 @@ public class OpInputProjectionsPsiParser {
         varProjection = parseComaVarProjection(field.dataType(), psiVarProjection, resolver).projection();
       }
 
-      fieldProjections.add(new OpInputFieldProjection(field,
-                                                      fieldAnnotations,
-                                                      varProjection,
-                                                      fieldRequired,
-                                                      EpigraphPsiUtil.getLocation(fieldProjectionPsi)
-      ));
+      fieldProjections.put(
+          field,
+          new OpInputFieldProjection(
+              fieldAnnotations,
+              varProjection,
+              fieldRequired,
+              EpigraphPsiUtil.getLocation(fieldProjectionPsi)
+          )
+      );
     }
 
     return new StepsAndProjection<>(

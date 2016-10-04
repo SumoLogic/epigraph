@@ -3,11 +3,13 @@ package io.epigraph.projections.op.input;
 import de.uka.ilkd.pp.Layouter;
 import io.epigraph.projections.generic.GenericProjectionsPrettyPrinter;
 import io.epigraph.projections.Annotations;
+import io.epigraph.types.RecordType;
 import io.epigraph.types.Type;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.LinkedHashSet;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -77,7 +79,7 @@ public class OpInputProjectionsPrettyPrinter<E extends Exception>
   }
 
   private void print(@NotNull OpInputRecordModelProjection mp, int pathSteps) throws E {
-    @Nullable LinkedHashSet<OpInputFieldProjection> fieldProjections = mp.fieldProjections();
+    @Nullable LinkedHashMap<RecordType.Field, OpInputFieldProjection> fieldProjections = mp.fieldProjections();
 
     if (fieldProjections != null) {
       if (pathSteps > 0) {
@@ -86,22 +88,22 @@ public class OpInputProjectionsPrettyPrinter<E extends Exception>
             String.format("Encountered %d fields while still having %d path steps", fieldProjections.size(), pathSteps)
         );
 
-        OpInputFieldProjection fieldProjection = fieldProjections.iterator().next();
+        Map.Entry<RecordType.Field, OpInputFieldProjection> entry = fieldProjections.entrySet().iterator().next();
         l.beginIInd();
         l.print("/").brk();
-        print(fieldProjection, decSteps(pathSteps));
+        print(entry.getKey(), entry.getValue(), decSteps(pathSteps));
         l.end();
 
       } else {
 
         l.print("(").beginCInd();
         boolean first = true;
-        for (OpInputFieldProjection fieldProjection : fieldProjections) {
+        for (Map.Entry<RecordType.Field, OpInputFieldProjection> entry : fieldProjections.entrySet()) {
           if (first) first = false;
           else l.print(",");
           l.brk();
 
-          print(fieldProjection, 0);
+          print(entry.getKey(), entry.getValue(), 0);
 
         }
         l.brk(1, -l.getDefaultIndentation()).end().print(")");
@@ -109,14 +111,15 @@ public class OpInputProjectionsPrettyPrinter<E extends Exception>
     }
   }
 
-  private void print(OpInputFieldProjection fieldProjection, int pathSteps) throws E {
+  private void print(@NotNull RecordType.Field field, @NotNull OpInputFieldProjection fieldProjection, int pathSteps)
+      throws E {
     @NotNull OpInputVarProjection fieldVarProjection = fieldProjection.projection();
     @Nullable Annotations fieldAnnotations = fieldProjection.annotations();
 
     if (fieldAnnotations == null) {
       l.beginIInd();
       if (fieldProjection.required()) l.print("+");
-      l.print(fieldProjection.field().name());
+      l.print(field.name());
       if (!isPrintoutEmpty(fieldVarProjection)) {
         l.brk();
         print(fieldVarProjection, pathSteps);
@@ -125,7 +128,7 @@ public class OpInputProjectionsPrettyPrinter<E extends Exception>
     } else {
       l.beginCInd();
       if (fieldProjection.required()) l.print("+");
-      l.print(fieldProjection.field().name());
+      l.print(field.name());
       l.print(" {");
       print(fieldAnnotations);
       if (!isPrintoutEmpty(fieldVarProjection)) {
@@ -161,7 +164,7 @@ public class OpInputProjectionsPrettyPrinter<E extends Exception>
   public boolean isPrintoutEmpty(@NotNull OpInputModelProjection<?, ?> mp) {
     if (mp instanceof OpInputRecordModelProjection) {
       OpInputRecordModelProjection recordModelProjection = (OpInputRecordModelProjection) mp;
-      @Nullable LinkedHashSet<OpInputFieldProjection> fieldProjections =
+      @Nullable LinkedHashMap<RecordType.Field, OpInputFieldProjection> fieldProjections =
           recordModelProjection.fieldProjections();
       return fieldProjections == null || fieldProjections.isEmpty();
     }
