@@ -15,6 +15,11 @@
 
     <dependency>
       <groupId>${project.groupId}</groupId>
+      <artifactId>epigraph-idl-parser</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
       <artifactId>epigraph-java-core</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -37,6 +42,12 @@
     <dependency>
       <groupId>org.jetbrains</groupId>
       <artifactId>annotations</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
     </dependency>
 
   </dependencies>

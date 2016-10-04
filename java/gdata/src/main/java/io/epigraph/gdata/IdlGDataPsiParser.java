@@ -1,6 +1,5 @@
-package io.epigraph.idl.gdata;
+package io.epigraph.gdata;
 
-import io.epigraph.gdata.*;
 import io.epigraph.idl.parser.psi.*;
 import io.epigraph.lang.Fqn;
 import io.epigraph.psi.EpigraphPsiUtil;

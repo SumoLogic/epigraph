@@ -5,12 +5,6 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface IdlResourceType extends PsiElement {
-
-  @NotNull
-  IdlValueTypeRef getValueTypeRef();
-
-  @NotNull
-  PsiElement getColon();
+public interface IdlTypeRef extends PsiElement {
 
 }

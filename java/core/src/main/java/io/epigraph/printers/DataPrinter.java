@@ -61,7 +61,7 @@ public class DataPrinter<Exc extends Exception> {
               else comma = true;
             /*if (!single)*/
               lo.brk(1);
-              lo.beginIInd(0).print("").print(tag.name).print(" ");
+              lo.beginIInd(0).print("").print(tag.name).print(": ");
               print(value);
             }
           }

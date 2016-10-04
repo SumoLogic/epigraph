@@ -2,7 +2,8 @@ package io.epigraph.projections.op.output;
 
 import com.intellij.psi.PsiElement;
 import io.epigraph.gdata.GDatum;
-import io.epigraph.idl.gdata.IdlGDataPsiParser;
+import io.epigraph.gdata.IdlGDataPsiParser;
+import io.epigraph.idl.TypeRefs;
 import io.epigraph.idl.parser.psi.*;
 import io.epigraph.lang.Fqn;
 import io.epigraph.projections.Annotation;
@@ -13,6 +14,8 @@ import io.epigraph.projections.op.input.OpInputModelProjection;
 import io.epigraph.projections.op.input.OpInputProjectionsPsiParser;
 import io.epigraph.psi.EpigraphPsiUtil;
 import io.epigraph.psi.PsiProcessingException;
+import io.epigraph.refs.TypeRef;
+import io.epigraph.refs.TypesResolver;
 import io.epigraph.types.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -650,10 +653,16 @@ public class OpOutputProjectionsPsiParser {
     if (qid == null) throw new PsiProcessingException("Parameter name not specified", paramPsi);
     @NotNull String paramName = qid.getCanonicalName();
 
-    @Nullable IdlFqnTypeRef fqnTypeRef = paramPsi.getFqnTypeRef();
-    if (fqnTypeRef == null)
+    @Nullable IdlTypeRef typeRef = paramPsi.getTypeRef();
+    if (typeRef == null)
       throw new PsiProcessingException(String.format("Parameter '%s' type not specified", paramName), paramPsi);
-    @NotNull Fqn paramTypeName = fqnTypeRef.getFqn().getFqn();
+    @NotNull TypeRef paramTypeRef = TypeRefs.fromPsi(typeRef);
+    @Nullable DatumType paramType = paramTypeRef.resolveDatumType(resolver);
+
+    if (paramType == null)
+      throw new PsiProcessingException(
+          String.format("Can't resolve parameter '%s' data type '%s'", paramName, paramTypeRef), paramPsi
+      );
 
     @Nullable IdlOpInputComaModelProjection paramModelProjectionPsi = paramPsi.getOpInputComaModelProjection();
     if (paramModelProjectionPsi == null) // can this ever happen?
@@ -664,11 +673,6 @@ public class OpOutputProjectionsPsiParser {
       annotationMap = parseAnnotation(annotationMap, annotationPsi);
     Annotations annotations = annotationMap == null ? null : new Annotations(annotationMap);
 
-    @Nullable DatumType paramType = resolver.resolveDatumType(paramTypeName);
-    if (paramType == null)
-      throw new PsiProcessingException(
-          String.format("Can't resolve parameter '%s' data type '%s'", paramName, paramTypeName), paramPsi
-      );
 
     @Nullable IdlDatum defaultValuePsi = paramPsi.getDatum();
     @Nullable GDatum defaultValue = defaultValuePsi == null

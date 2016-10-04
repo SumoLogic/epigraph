@@ -43,6 +43,8 @@ ID=([:letter:]([:letter:]|[:digit:])*)|(`[^`]*`)
   "namespace"          { return I_NAMESPACE; }
   "import"             { return I_IMPORT; }
   "meta"               { return I_META; }
+  "list"               { return I_LIST; }
+  "map"                { return I_MAP; }
   "forbidden"          { return I_FORBIDDEN; }
   "required"           { return I_REQURIED; }
   "default"            { return I_DEFAULT; }

@@ -15,7 +15,7 @@ public class GenericVarProjection<T extends GenericTagProjection<?>, S extends G
   @NotNull
   private final Type type;
   @NotNull
-  private final LinkedHashSet<T> tagProjections;
+  private final LinkedHashSet<T> tagProjections; // todo change to map
   @Nullable
   private final LinkedHashSet<S> polymorphicTails;
   @NotNull

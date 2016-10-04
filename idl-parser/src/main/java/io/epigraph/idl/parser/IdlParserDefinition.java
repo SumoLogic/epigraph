@@ -24,6 +24,8 @@ import static io.epigraph.idl.lexer.IdlElementTypes.*;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class IdlParserDefinition implements ParserDefinition {
+  public static IdlParserDefinition INSTANCE = new IdlParserDefinition();
+
   public final static TokenSet WHITESPACES = TokenSet.create(TokenType.WHITE_SPACE);
   public final static TokenSet IDENTIFIERS = TokenSet.create(I_ID);
   public final static TokenSet COMMENTS = TokenSet.create(I_COMMENT, I_BLOCK_COMMENT);

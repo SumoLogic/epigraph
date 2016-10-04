@@ -11,31 +11,19 @@ import static io.epigraph.idl.lexer.IdlElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import io.epigraph.idl.parser.psi.*;
 
-public class IdlResourceTypeImpl extends ASTWrapperPsiElement implements IdlResourceType {
+public class IdlTypeRefImpl extends ASTWrapperPsiElement implements IdlTypeRef {
 
-  public IdlResourceTypeImpl(ASTNode node) {
+  public IdlTypeRefImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull IdlVisitor visitor) {
-    visitor.visitResourceType(this);
+    visitor.visitTypeRef(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof IdlVisitor) accept((IdlVisitor)visitor);
     else super.accept(visitor);
-  }
-
-  @Override
-  @NotNull
-  public IdlValueTypeRef getValueTypeRef() {
-    return findNotNullChildByClass(IdlValueTypeRef.class);
-  }
-
-  @Override
-  @NotNull
-  public PsiElement getColon() {
-    return findNotNullChildByType(I_COLON);
   }
 
 }

@@ -18,6 +18,8 @@
     NAMESPACE = 'namespace'
     IMPORT = 'import'
     META = 'meta'
+    LIST = 'list'
+    MAP = 'map'
     FORBIDDEN = 'forbidden'
     REQURIED = 'required'
     DEFAULT = 'default'
@@ -100,10 +102,24 @@ fqn ::= fqnSegment ('.' fqnSegment)* {
   methods=[getFqn]
 }
 
+// types --------
+typeRef ::= fqnTypeRef | anonList | anonMap {name="type"}
 fqnTypeRef ::= fqn {
-  name="type"
+  extends=typeRef
 //  methods=[resolve] extends="typeRef"
 }
+
+anonList ::= 'list' '[' valueTypeRef ']' {pin=1 extends=typeRef }
+anonMap ::= 'map' '[' typeRef ',' valueTypeRef ']' {pin=1 extends=typeRef }
+
+valueTypeRef ::= typeRef defaultOverride?
+defaultOverride ::= 'default' varTagRef
+varTagRef ::= qid {
+//  implements="com.intellij.psi.PsiNameIdentifierOwner"
+//  methods=[setName getNameIdentifier getReference]
+}
+
+// -----------
 
 //varTagRef ::= qid {
 //  implements="com.intellij.psi.PsiNameIdentifierOwner"
@@ -117,7 +133,7 @@ annotation ::= qid '=' dataValue {
   pin = 2
 }
 
-private namespaceDeclRecover ::= ! ('import' | 'namespace' )
+private namespaceDeclRecover ::= ! ('import' | 'resource' )
 private importRecover ::= namespaceDeclRecover
 
 tagName ::= qid | '_' // `_` is default tag
@@ -126,12 +142,7 @@ tagName ::= qid | '_' // `_` is default tag
 
 private resourceDefs ::= (resourceDef ','?)*
 resourceDef ::= 'resource' qid resourceType resourceDefBody
-resourceType ::= ':' fqnTypeRef defaultOverride?
-defaultOverride ::= 'default' varTagRef
-varTagRef ::= qid {
-//  implements="com.intellij.psi.PsiNameIdentifierOwner"
-//  methods=[setName getNameIdentifier getReference]
-}
+resourceType ::= ':' valueTypeRef
 
 private resourceDefBody ::= '{' (resourceDefPart ','?)* '}'
 private resourceDefPart ::= operationDef { recoverWhile = operationBodyRecover }
@@ -168,11 +179,12 @@ customOperationBodyPart ::= operationInput | operationOutput | opParam | annotat
   recoverWhile = operationBodyRecover
 }
 
-private operationBodyRecover ::= ! ( '}' | ',' )
+private operationBodyRecover ::= ! ( '}' | ',' | ';' | 'input' | 'output' | (id '=') |
+  (id? ('READ' | 'CREATE' | 'UPDATE' | 'DELETE') ) )
 
 // ============= op projections =============
 
-opParam ::= ';' '+'? qid ':' fqnTypeRef opInputComaModelProjection opParamDefault? opParamBody? { pin = 1 }
+opParam ::= ';' '+'? qid ':' typeRef opInputComaModelProjection opParamDefault? opParamBody? { pin = 1 }
 private opParamDefault ::= '=' datum { pin=1 }
 private opParamBody ::= '{' ( opParamBodyPart ','? )* '}'
 private opParamBodyPart ::= annotation
@@ -192,7 +204,7 @@ private opOutputComplexTagProjection ::= '{' (opOutputModelProperty ','?)* opOut
 
 //
 opOutputVarPolymorphicTail ::= opOutputVarSingleTail | opOutputVarMultiTail
-opOutputVarSingleTail ::= '~' fqnTypeRef opOutputVarProjection
+opOutputVarSingleTail ::= '~' fqnTypeRef opOutputVarProjection // TODO fqnTypeRef -> typeRef
 opOutputVarMultiTail ::= '~' '(' (opOutputVarMultiTailItem ','?)* ')' {pin=2}
 opOutputVarMultiTailItem ::= fqnTypeRef opOutputVarProjection
 
@@ -374,7 +386,7 @@ reqOutputComaKeyProjection ::= datum reqParamsAndAnnotations
 // please keep in sync with data language from schema.bnf
 
 dataValue ::= data | datum
-private dataTypeSpec ::= fqnTypeRef
+private dataTypeSpec ::= fqnTypeRef // todo typeRef
 
 data ::= dataTypeSpec? '<' dataEntry* '>' {pin=2}
 dataEntry ::= qid ':' datum ','? {pin=2 recoverWhile=dataValueRecover}

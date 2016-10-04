@@ -1,17 +1,16 @@
-package io.epigraph.idl.gdata;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+package io.epigraph.gdata;
 
 import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.impl.DebugUtil;
 import io.epigraph.idl.parser.projections.IdlSubParserDefinitions;
 import io.epigraph.idl.parser.psi.IdlDataValue;
-import io.epigraph.gdata.GDataValue;
 import io.epigraph.psi.EpigraphPsiUtil;
 import io.epigraph.psi.PsiProcessingException;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>

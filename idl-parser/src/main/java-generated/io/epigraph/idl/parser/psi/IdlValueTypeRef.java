@@ -5,12 +5,12 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface IdlResourceType extends PsiElement {
+public interface IdlValueTypeRef extends PsiElement {
+
+  @Nullable
+  IdlDefaultOverride getDefaultOverride();
 
   @NotNull
-  IdlValueTypeRef getValueTypeRef();
-
-  @NotNull
-  PsiElement getColon();
+  IdlTypeRef getTypeRef();
 
 }

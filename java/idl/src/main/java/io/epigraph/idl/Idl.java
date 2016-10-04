@@ -1,5 +1,6 @@
 package io.epigraph.idl;
 
+import io.epigraph.lang.Fqn;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -9,9 +10,16 @@ import java.util.List;
  */
 public class Idl {
   @NotNull
+  private final Fqn namespace;
+  @NotNull
   private final List<Resource> resources;
 
-  public Idl(@NotNull List<Resource> resources) {this.resources = resources;}
+  public Idl(@NotNull Fqn namespace, @NotNull List<Resource> resources) {
+    this.namespace = namespace;
+    this.resources = resources;
+  }
+
+  @NotNull public Fqn namespace() { return namespace; }
 
   @NotNull
   public List<Resource> resources() { return resources; }

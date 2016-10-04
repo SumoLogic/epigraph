@@ -15,8 +15,8 @@ import io.epigraph.psi.EpigraphPsiUtil;
 import io.epigraph.psi.PsiProcessingException;
 import io.epigraph.tests.*;
 import io.epigraph.types.DataType;
-import io.epigraph.types.SimpleTypesResolver;
-import io.epigraph.types.TypesResolver;
+import io.epigraph.refs.SimpleTypesResolver;
+import io.epigraph.refs.TypesResolver;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -293,7 +293,7 @@ public class OpOutputProjectionsTest {
   @Test
   public void testParseParam() throws PsiProcessingException {
     testParsingVarProjection(
-        ":id { ;+param: io.epigraph.tests.UserId = 123 { deprecated = true } }"
+        ":id { ;+param: map[epigraph.String,io.epigraph.tests.Person] []( :id ) = ( \"foo\": < id: 123 > ) { deprecated = true } }"
     );
   }
 
@@ -558,6 +558,7 @@ public class OpOutputProjectionsTest {
         User.type,
         UserId.type,
         UserRecord.type,
+        String_Person_Map.type,
         epigraph.String.type
     );
 

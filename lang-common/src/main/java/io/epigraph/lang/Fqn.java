@@ -15,6 +15,8 @@ import java.util.stream.Collectors;
  */
 @Immutable
 public class Fqn implements Comparable<Fqn> {
+  // todo this often acts as Fqn prefix/suffix. Rename to Qn ?
+
   public static final Fqn EMPTY = new Fqn();
 
   @NotNull

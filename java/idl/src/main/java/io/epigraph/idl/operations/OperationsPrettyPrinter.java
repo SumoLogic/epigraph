@@ -36,7 +36,7 @@ public class OperationsPrettyPrinter<E extends Exception> {
     l.brk().print("{");
     l.beginCInd();
 
-    boolean first = false;
+    boolean first = true;
 
     @Nullable OpParams params = operation.params();
     if (params != null) first = opOutputPrinter.print(params, true, first);
@@ -62,8 +62,10 @@ public class OperationsPrettyPrinter<E extends Exception> {
       if (first) first = false;
       else l.print(",").brk();
 
+      l.beginIInd();
       l.print("input").brk();
       opInputPrinter.print(projection.projection(), projection.pathSteps());
+      l.end();
     }
 
     return first;
@@ -73,8 +75,10 @@ public class OperationsPrettyPrinter<E extends Exception> {
     if (first) first = false;
     else l.print(",").brk();
 
+    l.beginIInd();
     l.print("output").brk();
     opOutputPrinter.print(operation.outputProjection(), 0);
+    l.end();
 
     return first;
   }

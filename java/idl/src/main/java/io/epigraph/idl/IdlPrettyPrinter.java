@@ -4,8 +4,8 @@ import de.uka.ilkd.pp.Layouter;
 import io.epigraph.idl.operations.Operation;
 import io.epigraph.idl.operations.OperationsPrettyPrinter;
 import io.epigraph.types.DataType;
+import io.epigraph.types.DatumType;
 import io.epigraph.types.Type;
-import io.epigraph.types.TypesResolver;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,35 +23,43 @@ public class IdlPrettyPrinter<E extends Exception> {
     operationsPrettyPrinter = new OperationsPrettyPrinter<>(l);
   }
 
-  public void print(@NotNull Idl idl, @NotNull TypesResolver resolver) throws E {
+  public void print(@NotNull Idl idl) throws E {
     // should we try to preserve imports?
 
     l.beginCInd(0);
+    l.print("namespace ").print(idl.namespace().toString());
+    if (!idl.resources().isEmpty()) l.nl();
 
     for (Resource resource : idl.resources())
-      printResource(resource, resolver);
+      printResource(resource);
 
     l.end();
   }
 
-  public void printResource(@NotNull Resource resource, @NotNull TypesResolver resolver) throws E {
-    l.beginIInd();
+  public void printResource(@NotNull Resource resource) throws E {
+    l.beginIInd(0);
     l.print("resource").brk();
-    l.print(resource.fieldName()).brk();
+    l.print(resource.fieldName()).print(":").brk();
 
     @NotNull DataType fieldType = resource.fieldType();
     l.print(fieldType.type.name().toString()).brk();
 
-    Type.@Nullable Tag defaultTag = fieldType.defaultTag;
-    if (defaultTag != null) l.print(defaultTag.name()).brk();
+    @Nullable Type.Tag defaultTag = fieldType.defaultTag;
+    if (defaultTag != null && !(fieldType.type instanceof DatumType)) {
+      l.print("default").brk();
+      l.print(defaultTag.name()).brk();
+    }
 
     l.print("{");
     l.beginIInd();
 
-    for (Operation operation : resource.operations())
+    for (Operation operation : resource.operations()) {
+      l.brk();
       operationsPrettyPrinter.printOperation(operation);
+    }
 
-    l.brk(1, -l.getDefaultIndentation()).end().print("}");
+    l.end();
+    l.brk(1, -l.getDefaultIndentation()).print("}");
     l.end();
   }
 }

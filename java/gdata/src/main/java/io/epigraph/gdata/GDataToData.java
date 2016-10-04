@@ -3,6 +3,8 @@ package io.epigraph.gdata;
 import io.epigraph.data.*;
 import io.epigraph.lang.Fqn;
 import io.epigraph.lang.TextLocation;
+import io.epigraph.refs.FqnTypeRef;
+import io.epigraph.refs.TypesResolver;
 import io.epigraph.types.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -210,10 +212,10 @@ public class GDataToData {
 
   @NotNull
   private static <T extends Type> T resolveType(@NotNull TypesResolver resolver,
-                                                @NotNull Fqn ref,
+                                                @NotNull Fqn ref, // TODO GData should allow anon lists and maps
                                                 @NotNull Class<T> expectedClass,
                                                 @NotNull TextLocation location) throws ProcessingException {
-    @Nullable Type type = resolver.resolve(ref);
+    @Nullable Type type = resolver.resolve(new FqnTypeRef(ref));
     if (type == null) throw new ProcessingException("Can't resolve type '" + ref + "'", location);
 
     if (expectedClass.isAssignableFrom(type.getClass()))

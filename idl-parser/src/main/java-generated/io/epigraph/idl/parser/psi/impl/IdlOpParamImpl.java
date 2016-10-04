@@ -40,12 +40,6 @@ public class IdlOpParamImpl extends ASTWrapperPsiElement implements IdlOpParam {
 
   @Override
   @Nullable
-  public IdlFqnTypeRef getFqnTypeRef() {
-    return findChildByClass(IdlFqnTypeRef.class);
-  }
-
-  @Override
-  @Nullable
   public IdlOpInputComaModelProjection getOpInputComaModelProjection() {
     return findChildByClass(IdlOpInputComaModelProjection.class);
   }
@@ -54,6 +48,12 @@ public class IdlOpParamImpl extends ASTWrapperPsiElement implements IdlOpParam {
   @Nullable
   public IdlQid getQid() {
     return findChildByClass(IdlQid.class);
+  }
+
+  @Override
+  @Nullable
+  public IdlTypeRef getTypeRef() {
+    return findChildByClass(IdlTypeRef.class);
   }
 
   @Override

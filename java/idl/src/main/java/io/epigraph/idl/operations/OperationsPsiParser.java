@@ -14,7 +14,7 @@ import io.epigraph.projections.op.output.OpOutputVarProjection;
 import io.epigraph.psi.EpigraphPsiUtil;
 import io.epigraph.psi.PsiProcessingException;
 import io.epigraph.types.DataType;
-import io.epigraph.types.TypesResolver;
+import io.epigraph.refs.TypesResolver;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -213,7 +213,7 @@ public class OperationsPsiParser {
       }
     }
 
-    return null;
+    return inputProjection;
   }
 
   @Nullable
@@ -234,7 +234,7 @@ public class OperationsPsiParser {
       }
     }
 
-    return null;
+    return outputProjection;
   }
 
   @Nullable

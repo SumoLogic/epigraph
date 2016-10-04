@@ -26,6 +26,12 @@ public class IdlParser implements PsiParser, LightPsiParser {
     if (t == I_ANNOTATION) {
       r = annotation(b, 0);
     }
+    else if (t == I_ANON_LIST) {
+      r = anonList(b, 0);
+    }
+    else if (t == I_ANON_MAP) {
+      r = anonMap(b, 0);
+    }
     else if (t == I_CREATE_OPERATION_BODY_PART) {
       r = createOperationBodyPart(b, 0);
     }
@@ -320,11 +326,17 @@ public class IdlParser implements PsiParser, LightPsiParser {
     else if (t == I_TAG_NAME) {
       r = tagName(b, 0);
     }
+    else if (t == I_TYPE_REF) {
+      r = typeRef(b, 0);
+    }
     else if (t == I_UPDATE_OPERATION_BODY_PART) {
       r = updateOperationBodyPart(b, 0);
     }
     else if (t == I_UPDATE_OPERATION_DEF) {
       r = updateOperationDef(b, 0);
+    }
+    else if (t == I_VALUE_TYPE_REF) {
+      r = valueTypeRef(b, 0);
     }
     else if (t == I_VAR_TAG_REF) {
       r = varTagRef(b, 0);
@@ -342,6 +354,7 @@ public class IdlParser implements PsiParser, LightPsiParser {
   public static final TokenSet[] EXTENDS_SETS_ = new TokenSet[] {
     create_token_set_(I_OP_INPUT_COMA_MODEL_PROJECTION, I_OP_INPUT_TRUNK_MODEL_PROJECTION),
     create_token_set_(I_REQ_OUTPUT_COMA_MODEL_PROJECTION, I_REQ_OUTPUT_TRUNK_MODEL_PROJECTION),
+    create_token_set_(I_ANON_LIST, I_ANON_MAP, I_FQN_TYPE_REF, I_TYPE_REF),
     create_token_set_(I_DATUM, I_ENUM_DATUM, I_LIST_DATUM, I_MAP_DATUM,
       I_NULL_DATUM, I_PRIMITIVE_DATUM, I_RECORD_DATUM),
   };
@@ -357,6 +370,40 @@ public class IdlParser implements PsiParser, LightPsiParser {
     r = r && consumeToken(b, I_EQ);
     p = r; // pin = 2
     r = r && dataValue(b, l + 1);
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  /* ********************************************************** */
+  // 'list' '[' valueTypeRef ']'
+  public static boolean anonList(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "anonList")) return false;
+    if (!nextTokenIs(b, I_LIST)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, I_ANON_LIST, null);
+    r = consumeToken(b, I_LIST);
+    p = r; // pin = 1
+    r = r && report_error_(b, consumeToken(b, I_BRACKET_LEFT));
+    r = p && report_error_(b, valueTypeRef(b, l + 1)) && r;
+    r = p && consumeToken(b, I_BRACKET_RIGHT) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  /* ********************************************************** */
+  // 'map' '[' typeRef ',' valueTypeRef ']'
+  public static boolean anonMap(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "anonMap")) return false;
+    if (!nextTokenIs(b, I_MAP)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, I_ANON_MAP, null);
+    r = consumeToken(b, I_MAP);
+    p = r; // pin = 1
+    r = r && report_error_(b, consumeToken(b, I_BRACKET_LEFT));
+    r = p && report_error_(b, typeRef(b, l + 1)) && r;
+    r = p && report_error_(b, consumeToken(b, I_COMMA)) && r;
+    r = p && report_error_(b, valueTypeRef(b, l + 1)) && r;
+    r = p && consumeToken(b, I_BRACKET_RIGHT) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -726,9 +773,9 @@ public class IdlParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(b, l, "fqnTypeRef")) return false;
     if (!nextTokenIs(b, I_ID)) return false;
     boolean r;
-    Marker m = enter_section_(b, l, _NONE_, I_FQN_TYPE_REF, "<type>");
+    Marker m = enter_section_(b);
     r = fqn(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
+    exit_section_(b, m, I_FQN_TYPE_REF, r);
     return r;
   }
 
@@ -931,7 +978,7 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ! ('import' | 'namespace' )
+  // ! ('import' | 'resource' )
   static boolean namespaceDeclRecover(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "namespaceDeclRecover")) return false;
     boolean r;
@@ -941,13 +988,13 @@ public class IdlParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // 'import' | 'namespace'
+  // 'import' | 'resource'
   private static boolean namespaceDeclRecover_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "namespaceDeclRecover_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, I_IMPORT);
-    if (!r) r = consumeToken(b, I_NAMESPACE);
+    if (!r) r = consumeToken(b, I_RESOURCE);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -2516,7 +2563,7 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ';' '+'? qid ':' fqnTypeRef opInputComaModelProjection opParamDefault? opParamBody?
+  // ';' '+'? qid ':' typeRef opInputComaModelProjection opParamDefault? opParamBody?
   public static boolean opParam(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opParam")) return false;
     if (!nextTokenIs(b, I_SEMICOLON)) return false;
@@ -2527,7 +2574,7 @@ public class IdlParser implements PsiParser, LightPsiParser {
     r = r && report_error_(b, opParam_1(b, l + 1));
     r = p && report_error_(b, qid(b, l + 1)) && r;
     r = p && report_error_(b, consumeToken(b, I_COLON)) && r;
-    r = p && report_error_(b, fqnTypeRef(b, l + 1)) && r;
+    r = p && report_error_(b, typeRef(b, l + 1)) && r;
     r = p && report_error_(b, opInputComaModelProjection(b, l + 1)) && r;
     r = p && report_error_(b, opParam_6(b, l + 1)) && r;
     r = p && opParam_7(b, l + 1) && r;
@@ -2622,7 +2669,8 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ! ( '}' | ',' )
+  // ! ( '}' | ',' | ';' | 'input' | 'output' | (id '=') |
+  //   (id? ('READ' | 'CREATE' | 'UPDATE' | 'DELETE') ) )
   static boolean operationBodyRecover(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "operationBodyRecover")) return false;
     boolean r;
@@ -2632,13 +2680,61 @@ public class IdlParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // '}' | ','
+  // '}' | ',' | ';' | 'input' | 'output' | (id '=') |
+  //   (id? ('READ' | 'CREATE' | 'UPDATE' | 'DELETE') )
   private static boolean operationBodyRecover_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "operationBodyRecover_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, I_CURLY_RIGHT);
     if (!r) r = consumeToken(b, I_COMMA);
+    if (!r) r = consumeToken(b, I_SEMICOLON);
+    if (!r) r = consumeToken(b, I_INPUT);
+    if (!r) r = consumeToken(b, I_OUTPUT);
+    if (!r) r = operationBodyRecover_0_5(b, l + 1);
+    if (!r) r = operationBodyRecover_0_6(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // id '='
+  private static boolean operationBodyRecover_0_5(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "operationBodyRecover_0_5")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, I_ID);
+    r = r && consumeToken(b, I_EQ);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // id? ('READ' | 'CREATE' | 'UPDATE' | 'DELETE')
+  private static boolean operationBodyRecover_0_6(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "operationBodyRecover_0_6")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = operationBodyRecover_0_6_0(b, l + 1);
+    r = r && operationBodyRecover_0_6_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // id?
+  private static boolean operationBodyRecover_0_6_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "operationBodyRecover_0_6_0")) return false;
+    consumeToken(b, I_ID);
+    return true;
+  }
+
+  // 'READ' | 'CREATE' | 'UPDATE' | 'DELETE'
+  private static boolean operationBodyRecover_0_6_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "operationBodyRecover_0_6_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, I_READ);
+    if (!r) r = consumeToken(b, I_CREATE);
+    if (!r) r = consumeToken(b, I_UPDATE);
+    if (!r) r = consumeToken(b, I_DELETE);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -3707,24 +3803,16 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ':' fqnTypeRef defaultOverride?
+  // ':' valueTypeRef
   public static boolean resourceType(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "resourceType")) return false;
     if (!nextTokenIs(b, I_COLON)) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, I_COLON);
-    r = r && fqnTypeRef(b, l + 1);
-    r = r && resourceType_2(b, l + 1);
+    r = r && valueTypeRef(b, l + 1);
     exit_section_(b, m, I_RESOURCE_TYPE, r);
     return r;
-  }
-
-  // defaultOverride?
-  private static boolean resourceType_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "resourceType_2")) return false;
-    defaultOverride(b, l + 1);
-    return true;
   }
 
   /* ********************************************************** */
@@ -3750,6 +3838,19 @@ public class IdlParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b, l, _NONE_, I_TAG_NAME, "<tag name>");
     r = qid(b, l + 1);
     if (!r) r = consumeToken(b, I_UNDERSCORE);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // fqnTypeRef | anonList | anonMap
+  public static boolean typeRef(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "typeRef")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _COLLAPSE_, I_TYPE_REF, "<type>");
+    r = fqnTypeRef(b, l + 1);
+    if (!r) r = anonList(b, l + 1);
+    if (!r) r = anonMap(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
@@ -3831,6 +3932,25 @@ public class IdlParser implements PsiParser, LightPsiParser {
   private static boolean updateOperationDef_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "updateOperationDef_0")) return false;
     operationName(b, l + 1);
+    return true;
+  }
+
+  /* ********************************************************** */
+  // typeRef defaultOverride?
+  public static boolean valueTypeRef(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "valueTypeRef")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, I_VALUE_TYPE_REF, "<value type ref>");
+    r = typeRef(b, l + 1);
+    r = r && valueTypeRef_1(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // defaultOverride?
+  private static boolean valueTypeRef_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "valueTypeRef_1")) return false;
+    defaultOverride(b, l + 1);
     return true;
   }
 

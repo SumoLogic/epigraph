@@ -11,6 +11,14 @@ public class IdlVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitAnonList(@NotNull IdlAnonList o) {
+    visitTypeRef(o);
+  }
+
+  public void visitAnonMap(@NotNull IdlAnonMap o) {
+    visitTypeRef(o);
+  }
+
   public void visitCreateOperationBodyPart(@NotNull IdlCreateOperationBodyPart o) {
     visitPsiElement(o);
   }
@@ -60,7 +68,7 @@ public class IdlVisitor extends PsiElementVisitor {
   }
 
   public void visitFqnTypeRef(@NotNull IdlFqnTypeRef o) {
-    visitPsiElement(o);
+    visitTypeRef(o);
   }
 
   public void visitImportStatement(@NotNull IdlImportStatement o) {
@@ -403,11 +411,19 @@ public class IdlVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitTypeRef(@NotNull IdlTypeRef o) {
+    visitPsiElement(o);
+  }
+
   public void visitUpdateOperationBodyPart(@NotNull IdlUpdateOperationBodyPart o) {
     visitPsiElement(o);
   }
 
   public void visitUpdateOperationDef(@NotNull IdlUpdateOperationDef o) {
+    visitPsiElement(o);
+  }
+
+  public void visitValueTypeRef(@NotNull IdlValueTypeRef o) {
     visitPsiElement(o);
   }
 

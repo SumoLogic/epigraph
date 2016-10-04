@@ -1,10 +1,15 @@
 apply plugin: 'java'
 
 dependencies {
+  compile project(':epigraph-idl-parser')
   compile project(':epigraph-java-core')
   compile project(':epigraph-lang-common')
+  compile project(':epigraph-standalone-psi-util')
+  compile project(':epigraph-light-psi')
 
   compile 'com.io7m.jpplib:io7m-jpplib-core'
   compile 'org.jetbrains:annotations'
   compile 'net.jcip:jcip-annotations'
+
+  testCompile 'junit:junit'
 }

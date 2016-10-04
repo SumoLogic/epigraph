@@ -14,13 +14,13 @@ public interface IdlOpParam extends PsiElement {
   IdlDatum getDatum();
 
   @Nullable
-  IdlFqnTypeRef getFqnTypeRef();
-
-  @Nullable
   IdlOpInputComaModelProjection getOpInputComaModelProjection();
 
   @Nullable
   IdlQid getQid();
+
+  @Nullable
+  IdlTypeRef getTypeRef();
 
   @Nullable
   PsiElement getColon();

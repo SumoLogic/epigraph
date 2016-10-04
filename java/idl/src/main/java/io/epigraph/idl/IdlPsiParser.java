@@ -7,10 +7,11 @@ import io.epigraph.idl.parser.psi.*;
 import io.epigraph.lang.Fqn;
 import io.epigraph.psi.EpigraphPsiUtil;
 import io.epigraph.psi.PsiProcessingException;
+import io.epigraph.refs.TypesResolver;
+import io.epigraph.refs.ValueTypeRef;
 import io.epigraph.types.DataType;
+import io.epigraph.types.DatumType;
 import io.epigraph.types.Type;
-import io.epigraph.types.TypesResolver;
-import io.epigraph.types.UnionType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,6 +25,16 @@ import java.util.List;
 public class IdlPsiParser {
   @NotNull
   public static Idl parseIdl(@NotNull IdlFile idlPsi, @NotNull TypesResolver resolver) throws PsiProcessingException {
+
+    @Nullable IdlNamespaceDecl namespaceDeclPsi = PsiTreeUtil.getChildOfType(idlPsi, IdlNamespaceDecl.class);
+    if (namespaceDeclPsi == null)
+      throw new PsiProcessingException("namespace not specified", idlPsi);
+    @Nullable IdlFqn namespaceFqnPsi = namespaceDeclPsi.getFqn();
+    if (namespaceFqnPsi == null)
+      throw new PsiProcessingException("namespace not specified", idlPsi);
+
+    Fqn namespace = namespaceFqnPsi.getFqn();
+
     // todo parse imports
 
     @Nullable IdlResourceDef[] resourceDefsPsi = PsiTreeUtil.getChildrenOfType(idlPsi, IdlResourceDef.class);
@@ -41,7 +52,7 @@ public class IdlPsiParser {
       resources = Collections.emptyList();
 
 
-    return new Idl(resources);
+    return new Idl(namespace, resources);
   }
 
   public static Resource parseResource(@NotNull IdlResourceDef psi, @NotNull TypesResolver resolver)
@@ -51,30 +62,20 @@ public class IdlPsiParser {
     @NotNull IdlResourceType resourceTypePsi = psi.getResourceType();
 
     // todo take imports into account
-    @NotNull Fqn typeRef = resourceTypePsi.getFqnTypeRef().getFqn().getFqn();
-    @Nullable UnionType type = resolver.resolveVarType(typeRef);
+    @NotNull IdlValueTypeRef valueTypeRefPsi = resourceTypePsi.getValueTypeRef();
+    @NotNull ValueTypeRef valueTypeRef = TypeRefs.fromPsi(valueTypeRefPsi);
+    @Nullable DataType dataType = resolver.resolve(valueTypeRef);
 
-    if (type == null) throw new PsiProcessingException(
-        String.format("Can't resolve resource '%s' type '%s'", fieldName, typeRef),
+    if (dataType == null) throw new PsiProcessingException(
+        String.format("Can't resolve resource '%s' type '%s'", fieldName, valueTypeRef),
         resourceTypePsi
     );
 
-    Type.Tag defaultTag = null;
-
-    @Nullable IdlDefaultOverride defaultOverridePsi = resourceTypePsi.getDefaultOverride();
-    if (defaultOverridePsi != null) {
-      @NotNull IdlVarTagRef varTagRef = defaultOverridePsi.getVarTagRef();
-      @NotNull String defaultTagName = varTagRef.getQid().getCanonicalName();
-
-      defaultTag = type.tagsMap().get(defaultTagName);
-      if (defaultTag == null) throw new PsiProcessingException(
-          String.format("Invalid tag '%s' for type '%s' of resource '%s'", defaultTagName, typeRef, fieldName),
-          varTagRef
-      );
+    // convert datum type to samovar
+    @NotNull Type type = dataType.type;
+    if (dataType.defaultTag == null && valueTypeRef.defaultOverride() == null && type instanceof DatumType) {
+      dataType = new DataType(dataType.polymorphic, type, ((DatumType) type).self);
     }
-
-    final DataType dataType = new DataType(false, type, defaultTag);
-
 
     @NotNull List<IdlOperationDef> defsPsi = psi.getOperationDefList();
 

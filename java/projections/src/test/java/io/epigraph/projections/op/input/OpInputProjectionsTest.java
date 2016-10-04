@@ -12,8 +12,8 @@ import io.epigraph.psi.EpigraphPsiUtil;
 import io.epigraph.psi.PsiProcessingException;
 import io.epigraph.tests.*;
 import io.epigraph.types.DataType;
-import io.epigraph.types.SimpleTypesResolver;
-import io.epigraph.types.TypesResolver;
+import io.epigraph.refs.SimpleTypesResolver;
+import io.epigraph.refs.TypesResolver;
 import org.junit.Test;
 
 import java.util.Arrays;

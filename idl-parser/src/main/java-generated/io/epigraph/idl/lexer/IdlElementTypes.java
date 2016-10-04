@@ -9,6 +9,8 @@ import io.epigraph.idl.parser.psi.impl.*;
 public interface IdlElementTypes {
 
   IElementType I_ANNOTATION = new IdlElementType("I_ANNOTATION");
+  IElementType I_ANON_LIST = new IdlElementType("I_ANON_LIST");
+  IElementType I_ANON_MAP = new IdlElementType("I_ANON_MAP");
   IElementType I_CREATE_OPERATION_BODY_PART = new IdlElementType("I_CREATE_OPERATION_BODY_PART");
   IElementType I_CREATE_OPERATION_DEF = new IdlElementType("I_CREATE_OPERATION_DEF");
   IElementType I_CUSTOM_OPERATION_BODY_PART = new IdlElementType("I_CUSTOM_OPERATION_BODY_PART");
@@ -107,8 +109,10 @@ public interface IdlElementTypes {
   IElementType I_RESOURCE_DEF = new IdlElementType("I_RESOURCE_DEF");
   IElementType I_RESOURCE_TYPE = new IdlElementType("I_RESOURCE_TYPE");
   IElementType I_TAG_NAME = new IdlElementType("I_TAG_NAME");
+  IElementType I_TYPE_REF = new IdlElementType("I_TYPE_REF");
   IElementType I_UPDATE_OPERATION_BODY_PART = new IdlElementType("I_UPDATE_OPERATION_BODY_PART");
   IElementType I_UPDATE_OPERATION_DEF = new IdlElementType("I_UPDATE_OPERATION_DEF");
+  IElementType I_VALUE_TYPE_REF = new IdlElementType("I_VALUE_TYPE_REF");
   IElementType I_VAR_TAG_REF = new IdlElementType("I_VAR_TAG_REF");
 
   IElementType I_ANGLE_LEFT = new IdlElementType("<");
@@ -135,6 +139,8 @@ public interface IdlElementTypes {
   IElementType I_ID = new IdlElementType("id");
   IElementType I_IMPORT = new IdlElementType("import");
   IElementType I_INPUT = new IdlElementType("input");
+  IElementType I_LIST = new IdlElementType("list");
+  IElementType I_MAP = new IdlElementType("map");
   IElementType I_META = new IdlElementType("meta");
   IElementType I_NAMESPACE = new IdlElementType("namespace");
   IElementType I_NULL = new IdlElementType("null");
@@ -159,6 +165,12 @@ public interface IdlElementTypes {
       IElementType type = node.getElementType();
        if (type == I_ANNOTATION) {
         return new IdlAnnotationImpl(node);
+      }
+      else if (type == I_ANON_LIST) {
+        return new IdlAnonListImpl(node);
+      }
+      else if (type == I_ANON_MAP) {
+        return new IdlAnonMapImpl(node);
       }
       else if (type == I_CREATE_OPERATION_BODY_PART) {
         return new IdlCreateOperationBodyPartImpl(node);
@@ -454,11 +466,17 @@ public interface IdlElementTypes {
       else if (type == I_TAG_NAME) {
         return new IdlTagNameImpl(node);
       }
+      else if (type == I_TYPE_REF) {
+        return new IdlTypeRefImpl(node);
+      }
       else if (type == I_UPDATE_OPERATION_BODY_PART) {
         return new IdlUpdateOperationBodyPartImpl(node);
       }
       else if (type == I_UPDATE_OPERATION_DEF) {
         return new IdlUpdateOperationDefImpl(node);
+      }
+      else if (type == I_VALUE_TYPE_REF) {
+        return new IdlValueTypeRefImpl(node);
       }
       else if (type == I_VAR_TAG_REF) {
         return new IdlVarTagRefImpl(node);
