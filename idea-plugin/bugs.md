@@ -5,6 +5,10 @@
 - `record Foo extends Foo`, now erase `extends Foo` -- circular inheritance error stays
 - renaming a tag should suggest to rename base/sub tags (like renaming a field does)
 - renaming a field/tag with `override` modifier should rename base members too (and sub-members with `override`) 
+- Parser error reporting often points to spaces before bad token instead of the token itself:
+        
+        map [ 33
+           ^ error points to this space instead of '33'
 
 ### Low
 - Detect useless `extends` e.g. `record Foo extends Bar, Bar`. Take hierarchy into account
