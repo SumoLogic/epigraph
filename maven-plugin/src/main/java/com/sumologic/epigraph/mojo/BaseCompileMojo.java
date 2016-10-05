@@ -76,9 +76,7 @@ public abstract class BaseCompileMojo extends AbstractMojo {
     }
   }
 
-  private Collection<Source> getSources(File sourceDirectory) {
-    return getDirectorySources(sourceDirectory);
-  }
+  private Collection<Source> getSources(File sourceDirectory) { return getDirectorySources(sourceDirectory); }
 
   protected Collection<Source> getDirectorySources(File sourceDirectory) {
     Collection<Source> sources = new ArrayList<Source>();
@@ -169,8 +167,8 @@ public abstract class BaseCompileMojo extends AbstractMojo {
         sb.append("Error: ").append(err.message()).append('\n');
         final Option<String> errText = pos.lineText();
         if (errText.nonEmpty()) {
-          sb.append(errText.get()).append('\n');
-          sb.append(String.format("%" + (pos.column()) + "s", "^").replace(" ", ".")).append('\n');
+          sb.append('\177').append(errText.get()).append('\n');
+          sb.append('\177').append(String.format("%" + (pos.column()) + "s", "^")).append('\n');
         }
       }
       throw new MojoFailureException(this, "Schema compilation failed", sb.toString());

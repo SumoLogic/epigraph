@@ -44,9 +44,6 @@ final class CDataType( // TODO split into CVarDataType and CDatumDataType?
 
   def hasDefault: Boolean = ctx.after(CPhase.RESOLVE_TYPEREFS, false, defaultTag.nonEmpty)
 
-  @deprecated("use defaultTagName")
-  val defaultDeclarationOpt: Option[Option[String]] = Option(defaultTagNameDecl)
-
   // `None` - nodefault, `Some(String)` - effective default tag name
   def effectiveDefaultTagName: Option[String] = ctx.after(CPhase.RESOLVE_TYPEREFS, null, defaultTag.map(_.name))
 

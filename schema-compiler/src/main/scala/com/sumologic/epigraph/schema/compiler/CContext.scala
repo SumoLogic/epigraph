@@ -61,9 +61,7 @@ class CContext(val tabWidth: Int = 2) {
 
 }
 
-case class CError(filename: String, position: CErrorPosition, message: String) {
-
-}
+case class CError(filename: String, position: CErrorPosition, message: String)
 
 case class CErrorPosition(line: Int, column: Int, lineText: Option[String])
 
