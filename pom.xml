@@ -39,9 +39,8 @@
     <!-- // first-time build bootstrap sequence:
 mvn clean install -P jar-mavenizer && \
 mvn clean install -P light-psi && \
-mvn clean install -P main -pl -java/idl,-java/projections && \
-mvn clean install -P schemas,examples,tests && \
-mvn clean install -P main -pl java/idl,java/projections
+mvn clean install -P main && \
+mvn clean install -P examples,schemas,tests,tests-dependents
     -->
 
     <profile>
@@ -82,18 +81,6 @@ mvn clean install -P main -pl java/idl,java/projections
     </profile>
 
     <profile>
-      <id>schemas</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <modules>
-        <module>java/codegen-test</module>
-        <module>scala/codegen-test</module>
-        <module>schemas</module>
-      </modules>
-    </profile>
-
-    <profile>
       <id>idea-plugin</id>
       <activation>
         <activeByDefault>false</activeByDefault>
@@ -111,6 +98,18 @@ mvn clean install -P main -pl java/idl,java/projections
       </activation>
       <modules>
         <module>examples</module>
+      </modules>
+    </profile>
+
+    <profile>
+      <id>schemas</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <modules>
+        <module>java/codegen-test</module>
+        <module>scala/codegen-test</module>
+        <module>schemas</module>
       </modules>
     </profile>
 

@@ -13,15 +13,34 @@
 
   <description>Epigraph for Java</description>
 
-  <modules>
-    <module>codegen</module>
-    <module>core</module>
-    <module>gdata</module>
-    <module>idl</module>
-    <module>maven-plugin</module>
-    <!--<module>preprint</module>-->
-    <module>projections</module>
-    <module>util</module>
-  </modules>
+  <profiles>
+
+    <profile>
+      <id>main</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <modules>
+        <module>codegen</module>
+        <module>core</module>
+        <module>gdata</module>
+        <module>maven-plugin</module>
+        <!--<module>preprint</module>-->
+        <module>util</module>
+      </modules>
+    </profile>
+
+    <profile>
+      <id>tests-dependents</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <modules>
+        <module>idl</module>
+        <module>projections</module>
+      </modules>
+    </profile>
+
+  </profiles>
 
 </project>
