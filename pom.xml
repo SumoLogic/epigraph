@@ -40,7 +40,7 @@
 mvn clean install -P jar-mavenizer && \
 mvn clean install -P light-psi && \
 mvn clean install -P main && \
-mvn clean install -P examples,schemas,tests,tests-dependents
+mvn clean install -P maven-plugin-dependent
     -->
 
     <profile>
@@ -81,6 +81,22 @@ mvn clean install -P examples,schemas,tests,tests-dependents
     </profile>
 
     <profile>
+      <id>maven-plugin-dependent</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <modules>
+        <module>examples</module>
+        <module>java/codegen-test</module>
+        <module>java/idl</module>
+        <module>java/projections</module>
+        <module>scala/codegen-test</module>
+        <module>schemas</module>
+        <module>tests</module>
+      </modules>
+    </profile>
+
+    <profile>
       <id>idea-plugin</id>
       <activation>
         <activeByDefault>false</activeByDefault>
@@ -88,38 +104,6 @@ mvn clean install -P examples,schemas,tests,tests-dependents
       <modules>
         <module>idea-plugin</module>
         <module>lang-common</module>
-      </modules>
-    </profile>
-
-    <profile>
-      <id>examples</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <modules>
-        <module>examples</module>
-      </modules>
-    </profile>
-
-    <profile>
-      <id>schemas</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <modules>
-        <module>java/codegen-test</module>
-        <module>scala/codegen-test</module>
-        <module>schemas</module>
-      </modules>
-    </profile>
-
-    <profile>
-      <id>tests</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <modules>
-        <module>tests</module>
       </modules>
     </profile>
 
