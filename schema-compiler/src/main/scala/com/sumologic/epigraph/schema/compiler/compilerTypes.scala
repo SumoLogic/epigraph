@@ -239,9 +239,8 @@ class CVarTypeDef(csf: CSchemaFile, override val psi: SchemaVarTypeDef)(implicit
     }
   }
 
-  def dataType(polymorphic: Boolean, defaultTagName: Option[String]): CDataType = new CDataType(
+  def dataType(defaultTagName: Option[String]): CDataType = new CDataType(
     csf, // TODO this schema file might not be the one we expect (i.e. not the one where the data type is (maybe indirectly) referenced)
-    polymorphic,
     selfRef,
     if (effectiveTags.exists { et => defaultTagName.contains(et.name) }) defaultTagName else None
   )
@@ -268,7 +267,7 @@ trait CDatumType extends CType {self =>
 
   val impliedTag: CTag = new CTag(csf, CDatumType.ImpliedDefaultTagName, selfRef, psi)
 
-  def dataType(@Deprecated polymorphic: Boolean): CDataType = new CDataType(csf, polymorphic, selfRef, None)
+  def dataType: CDataType = new CDataType(csf, selfRef, None)
 
 }
 
@@ -458,15 +457,15 @@ class CAnonMapType(override val name: CAnonMapTypeName)(implicit ctx: CContext) 
   private lazy val _parents: Seq[CAnonMapType] = valueDataType.typeRef.resolved match {
 
     case vt: CVarTypeDef => valueDataType.effectiveDefaultTagName match {
-      case Some(tagName) => Seq(ctx.getOrCreateAnonMapOf(keyTypeRef, vt.dataType(false, None))) ++ vt.parents.map(
+      case Some(tagName) => Seq(ctx.getOrCreateAnonMapOf(keyTypeRef, vt.dataType(None))) ++ vt.parents.map(
         etp => ctx.getOrCreateAnonMapOf(
-          keyTypeRef, etp.dataType(false, etp.effectiveTags.find(_.name == tagName).map(_.name))
+          keyTypeRef, etp.dataType(etp.effectiveTags.find(_.name == tagName).map(_.name))
         )
       )
-      case None => vt.parents.map(etp => ctx.getOrCreateAnonMapOf(keyTypeRef, etp.dataType(false, None)))
+      case None => vt.parents.map(etp => ctx.getOrCreateAnonMapOf(keyTypeRef, etp.dataType(None)))
     }
 
-    case vt: CDatumType => vt.parents.map(est => ctx.getOrCreateAnonMapOf(keyTypeRef, est.dataType(false)))
+    case vt: CDatumType => vt.parents.map(est => ctx.getOrCreateAnonMapOf(keyTypeRef, est.dataType))
 
     case unknown => throw new UnsupportedOperationException(unknown.toString)
 
@@ -481,16 +480,11 @@ class CAnonMapType(override val name: CAnonMapTypeName)(implicit ctx: CContext) 
         if (!vt.effectiveTags.exists(_.name == tagName)) ctx.errors.add(
           CError(csf.filename, CErrorPosition.NA, s"Tag `$tagName` is not defined for union type `${vt.name.name}`")
         )
-        ctx.getOrCreateAnonMapOf(keyTypeRef, vt.dataType(valueDataType.polymorphic, None))
+        ctx.getOrCreateAnonMapOf(keyTypeRef, vt.dataType(None))
       }.toSeq ++ vt.linearizedParents.map { vst =>
-        ctx.getOrCreateAnonMapOf(
-          keyTypeRef,
-          vst.dataType(valueDataType./*TODO or false?*/ polymorphic, valueDataType.effectiveDefaultTagName)
-        )
+        ctx.getOrCreateAnonMapOf(keyTypeRef, vst.dataType(valueDataType.effectiveDefaultTagName))
       }
-      case et: CDatumType => et.linearizedParents.map { vst =>
-        ctx.getOrCreateAnonMapOf(keyTypeRef, vst.dataType(valueDataType.polymorphic/*TODO or false?*/))
-      }
+      case et: CDatumType => et.linearizedParents.map { vst => ctx.getOrCreateAnonMapOf(keyTypeRef, vst.dataType) }
       case unknown => throw new UnsupportedOperationException(unknown.toString)
     }
     parents foreach (_.linearizedParents) // trigger parents linearization
@@ -584,13 +578,13 @@ class CAnonListType(override val name: CAnonListTypeName)(implicit ctx: CContext
     case et: CVarTypeDef =>
       et.computeSupertypes(mutable.Stack())
       elementDataType.effectiveDefaultTagName match {
-        case Some(tagName) => Seq(ctx.getOrCreateAnonListOf(et.dataType(false, None))) ++ et.parents.map(
-          etp => ctx.getOrCreateAnonListOf(etp.dataType(false, etp.effectiveTags.find(_.name == tagName).map(_.name)))
+        case Some(tagName) => Seq(ctx.getOrCreateAnonListOf(et.dataType(None))) ++ et.parents.map(
+          etp => ctx.getOrCreateAnonListOf(etp.dataType(etp.effectiveTags.find(_.name == tagName).map(_.name)))
         )
-        case None => et.parents.map(etp => ctx.getOrCreateAnonListOf(etp.dataType(false, None)))
+        case None => et.parents.map(etp => ctx.getOrCreateAnonListOf(etp.dataType(None)))
       }
 
-    case et: CDatumType => et.parents.map(est => ctx.getOrCreateAnonListOf(est.dataType(false)))
+    case et: CDatumType => et.parents.map(est => ctx.getOrCreateAnonListOf(est.dataType))
 
     case unknown => throw new UnsupportedOperationException(unknown.toString)
 
@@ -605,18 +599,11 @@ class CAnonListType(override val name: CAnonListTypeName)(implicit ctx: CContext
         if (!et.effectiveTags.exists(_.name == tagName)) ctx.errors.add(
           CError(csf.filename, CErrorPosition.NA, s"Tag `$tagName` is not defined for union type `${et.name.name}`")
         )
-        ctx.getOrCreateAnonListOf(et.dataType(elementDataType.polymorphic, None))
-      }.toSeq ++ et.linearizedParents.map { est =>
-        ctx.getOrCreateAnonListOf(
-          est.dataType(
-            elementDataType./*TODO or false?*/ polymorphic,
-            elementDataType.effectiveDefaultTagName /* FIXME parent might not have the tag */
-          )
-        )
+        ctx.getOrCreateAnonListOf(et.dataType(None))
+      }.toSeq ++ et.linearizedParents.map { est => /* FIXME parent might not have the tag */
+        ctx.getOrCreateAnonListOf(est.dataType(elementDataType.effectiveDefaultTagName))
       }
-      case et: CDatumType => et.linearizedParents.map { est =>
-        ctx.getOrCreateAnonListOf(est.dataType(elementDataType.polymorphic/*TODO or false?*/))
-      }
+      case et: CDatumType => et.linearizedParents.map { est => ctx.getOrCreateAnonListOf(est.dataType) }
       case unknown => throw new UnsupportedOperationException(unknown.toString)
     }
     linParents foreach (_.linearizedParents) // trigger parents linearization

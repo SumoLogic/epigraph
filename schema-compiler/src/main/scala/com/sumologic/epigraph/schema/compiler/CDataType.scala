@@ -10,19 +10,15 @@ import org.jetbrains.annotations.Nullable
  */
 final class CDataType( // TODO split into CVarDataType and CDatumDataType?
     val csf: CSchemaFile,
-    @Deprecated val polymorphic: Boolean,
     val typeRef: CTypeRef,
     private val defaultTagNameDecl: Option[String]
 )(implicit val ctx: CContext) {
 
   def this(csf: CSchemaFile, psi: SchemaValueTypeRef)(implicit ctx: CContext) = this(
-    csf, false, CTypeRef(csf, psi.getTypeRef), CDataType.defaultTagName(psi.getDefaultOverride)
+    csf, CTypeRef(csf, psi.getTypeRef), CDataType.defaultTagName(psi.getDefaultOverride)
   )
 
-  val name: String =
-    (if (polymorphic) "polymorphic " else "") + typeRef.name.name + defaultTagNameDecl.map(" default " + _).getOrElse(
-      ""
-    )
+  val name: String = typeRef.name.name + defaultTagNameDecl.map(" default " + _).getOrElse("")
 
   csf.dataTypes.add(this) // register self with schema file
 
@@ -69,9 +65,8 @@ final class CDataType( // TODO split into CVarDataType and CDatumDataType?
 
   override def equals(other: Any): Boolean = other match {
     case that: CDataType => (that canEqual this) &&
-        polymorphic == that.polymorphic &&
-        typeRef.name == that.typeRef.name &&
-        defaultTagNameDecl == that.defaultTagNameDecl
+          typeRef.name == that.typeRef.name &&
+          defaultTagNameDecl == that.defaultTagNameDecl
     case _ => false
   }
 

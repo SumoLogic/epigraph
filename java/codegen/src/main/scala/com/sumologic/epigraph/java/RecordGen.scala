@@ -323,8 +323,4 @@ $builderValueAndDataBuilder\
 }
 """/*@formatter:on*/
 
-  private def poly(f: CField): String = poly(f, " polymorphic", "")
-
-  private def poly(f: CField, yes: => String, no: => String): String = if (f.valueDataType.polymorphic) yes else no
-
 }
