@@ -19,3 +19,4 @@
       and `Map<KeyImmDatum, DefaultTagDatum>` interfaces, respectively
       (if default is implied/declared).
 
+- [ ] Enum type bindings
