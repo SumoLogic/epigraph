@@ -2,6 +2,7 @@
 
 package io.epigraph.types;
 
+import com.sun.prism.impl.Disposer;
 import io.epigraph.data.Data;
 import io.epigraph.data.RecordDatum;
 import io.epigraph.data.Val;
@@ -140,7 +141,25 @@ public abstract class RecordType extends DatumType {
   }
 
 
-  // TODO .Raw (final type builder?)
+  public static abstract class Raw extends RecordType implements DatumType.Raw {
+
+    protected Raw(
+        @NotNull QualifiedTypeName name,
+        @NotNull List<@NotNull ? extends RecordType> immediateSupertypes
+    ) { super(name, immediateSupertypes); }
+
+    @Override
+    public @NotNull RecordDatum.Builder createBuilder() { return new RecordDatum.Builder.Raw(this); }
+
+    @Override
+    public @NotNull Val.Imm.Raw createValue(@Nullable ErrorValue errorOrNull) {
+      return Val.Imm.Raw.create(errorOrNull);
+    }
+
+    @Override
+    public @NotNull Data.Builder.Raw createDataBuilder() { return new Data.Builder.Raw(this); }
+
+  }
 
 
   public static abstract class Static<
