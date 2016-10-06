@@ -4,7 +4,8 @@
 ### Medium
 - `record Foo extends Foo`, now erase `extends Foo` -- circular inheritance error stays
 - renaming a tag should suggest to rename base/sub tags (like renaming a field does)
-- renaming a field/tag with `override` modifier should rename base members too (and sub-members with `override`) 
+- renaming a field/tag with `override` modifier should rename base members too (and sub-members with `override`)
+- namespaces in UpperCamelCase should trigger errors
 - Parser error reporting often points to spaces before bad token instead of the token itself:
         
         map [ 33

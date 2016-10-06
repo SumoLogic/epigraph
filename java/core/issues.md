@@ -1,1 +1,2 @@
 - [ ] Enum type support
+- [ ] Named map type

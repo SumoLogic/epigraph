@@ -2,9 +2,11 @@
 
 package com.sumologic.epigraph.schema.compiler
 
+import java.util.regex.Pattern
+
 import com.intellij.psi.PsiElement
 import io.epigraph.lang.Qn
-import io.epigraph.schema.parser.psi.{SchemaAnonList, SchemaAnonMap, SchemaQnTypeRef, SchemaTypeDef}
+import io.epigraph.schema.parser.psi.{SchemaQnTypeRef, SchemaTypeDef}
 import org.jetbrains.annotations.Nullable
 
 
@@ -25,7 +27,7 @@ abstract class CTypeName protected(val name: String)(implicit val ctx: CContext)
 class CTypeFqn private(csf: CSchemaFile, val fqn: Qn, val psi: PsiElement)(implicit ctx: CContext)
     extends CTypeName(fqn.toString) {
 
-  val local: String = fqn.last()
+  val local: String = validate(fqn.last())
 
   @Nullable val namespace: String = if (fqn.size == 1) null else fqn.removeLastSegment().toString
 
@@ -36,6 +38,19 @@ class CTypeFqn private(csf: CSchemaFile, val fqn: Qn, val psi: PsiElement)(impli
   def this(csf: CSchemaFile, parentNs: Qn, typeDef: SchemaTypeDef)(implicit ctx: CContext) = this(
     csf, parentNs.append(typeDef.getQid.getCanonicalName), typeDef.getQid.getId: PsiElement
   )
+
+  private def validate(local: String)(implicit ctx: CContext): String = {
+    if (!CTypeFqn.LocalTypeNamePattern.matcher(local).matches) ctx.errors.add(
+      CError(csf.filename, csf.position(psi), s"Invalid type name '$local'")
+    )
+    local
+  }
+
+}
+
+object CTypeFqn {
+
+  val LocalTypeNamePattern: Pattern = """\p{Upper}\p{Alnum}*""".r.pattern
 
 }
 
