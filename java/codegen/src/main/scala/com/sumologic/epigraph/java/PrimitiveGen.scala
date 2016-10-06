@@ -83,7 +83,7 @@ public interface $ln extends${withParents(t)} io.epigraph.data.${kind(t)}Datum.S
     @Nullable $ln get();
 
     /** Returns default tag value. */
-    @Nullable $ln.Value get$$();
+    @Nullable $ln.Value get_();
 
   }
 
@@ -129,7 +129,7 @@ public interface $ln extends${withParents(t)} io.epigraph.data.${kind(t)}Datum.S
 
       /** Returns immutable default tag value. */
       @Override
-      @Nullable $ln.Imm.Value get$$();
+      @Nullable $ln.Imm.Value get_();
 
       /** Private implementation of `$ln.Imm.Data` interface. */
       final class Impl extends io.epigraph.data.Data.Imm.Static.Impl<$ln.Imm.Data> implements $ln.Imm.Data {
@@ -138,12 +138,12 @@ public interface $ln extends${withParents(t)} io.epigraph.data.${kind(t)}Datum.S
 
         @Override
         public @Nullable $ln.Imm get() {
-          $ln.Imm.Value value = get$$();
+          $ln.Imm.Value value = get_();
           return value == null ? null : value.getDatum();
         }
 
         @Override
-        public @Nullable $ln.Imm.Value get$$() { return ($ln.Imm.Value) _raw().getValue($ln.Type.instance().self); }
+        public @Nullable $ln.Imm.Value get_() { return ($ln.Imm.Value) _raw().getValue($ln.Type.instance().self); }
 
       }
 

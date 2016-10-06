@@ -37,7 +37,7 @@ ${t.effectiveTags.map { tag => sn"""\
   @Nullable ${lqrn(tag.typeRef, t)} get${up(tag.name)}();
 
   ${"/**"} Returns `${tag.name}` tag value. */
-  @Nullable ${lqrn(tag.typeRef, t)}.Value get${up(tag.name)}$$();
+  @Nullable ${lqrn(tag.typeRef, t)}.Value get${up(tag.name)}_();
 """
   }.mkString
 }\
@@ -83,7 +83,7 @@ ${t.effectiveTags.map { tag => sn"""\
 
     ${"/**"} Returns immutable `${tag.name}` tag value. */
     @Override
-    @Nullable ${lqrn(tag.typeRef, t)}.Imm.Value get${up(tag.name)}$$();
+    @Nullable ${lqrn(tag.typeRef, t)}.Imm.Value get${up(tag.name)}_();
 """
   }.mkString
 }\
@@ -97,12 +97,12 @@ ${t.effectiveTags.map { tag => sn"""\
       ${"/**"} Returns immutable `${tag.name}` tag datum. */
       @Override
       public @Nullable ${lqrn(tag.typeRef, t)}.Imm get${up(tag.name)}() {
-        return io.epigraph.util.Util.apply(get${up(tag.name)}$$(), ${lqrn(tag.typeRef, t)}.Imm.Value::getDatum);
+        return io.epigraph.util.Util.apply(get${up(tag.name)}_(), ${lqrn(tag.typeRef, t)}.Imm.Value::getDatum);
       }
 
       ${"/**"} Returns immutable `${tag.name}` tag value. */
       @Override
-      public @Nullable ${lqrn(tag.typeRef, t)}.Imm.Value get${up(tag.name)}$$() {
+      public @Nullable ${lqrn(tag.typeRef, t)}.Imm.Value get${up(tag.name)}_() {
         return (${lqrn(tag.typeRef, t)}.Imm.Value) _raw().getValue($ln.${jn(tag.name)});
       }
 """
@@ -125,27 +125,27 @@ ${t.effectiveTags.map { tag => // for each effective tag
     ${"/**"} Returns `${tag.name}` tag datum. */
     @Override
     public @Nullable ${lqrn(tag.typeRef, t)} get${up(tag.name)}() {
-      return io.epigraph.util.Util.apply(get${up(tag.name)}$$(), ${lqrn(tag.typeRef, t)}.Value::getDatum);
+      return io.epigraph.util.Util.apply(get${up(tag.name)}_(), ${lqrn(tag.typeRef, t)}.Value::getDatum);
     }
 
     ${"/**"} Sets `${tag.name}` tag datum. */
     public @NotNull $ln.Builder set${up(tag.name)}(@Nullable ${lqrn(tag.typeRef, t)} ${jn(tag.name)}) {
-      _raw().setDatum($ln.${jn(tag.name)}, ${jn(tag.name)}); return this; // TODO return set${up(tag.name)}$$(${jn(tag.name)}.asValue());
+      _raw().setDatum($ln.${jn(tag.name)}, ${jn(tag.name)}); return this; // TODO return set${up(tag.name)}_(${jn(tag.name)}.asValue());
     }
 
     ${"/**"} Sets `${tag.name}` tag error. */
-    public @NotNull $ln.Builder set${up(tag.name)}$$Error(@NotNull io.epigraph.errors.ErrorValue error) {
+    public @NotNull $ln.Builder set${up(tag.name)}_Error(@NotNull io.epigraph.errors.ErrorValue error) {
       _raw().setError($ln.${jn(tag.name)}, error); return this;
     }
 
     ${"/**"} Returns `${tag.name}` tag value. */
     @Override
-    public @Nullable ${lqrn(tag.typeRef, t)}.Value get${up(tag.name)}$$() {
+    public @Nullable ${lqrn(tag.typeRef, t)}.Value get${up(tag.name)}_() {
       return (${lqrn(tag.typeRef, t)}.Value) _raw().getValue($ln.${jn(tag.name)});
     }
 
     ${"/**"} Sets `${tag.name}` tag value. */
-    public @NotNull $ln.Builder set${up(tag.name)}$$(@Nullable ${lqrn(tag.typeRef, t)}.Value ${jn(tag.name)}Value) {
+    public @NotNull $ln.Builder set${up(tag.name)}_(@Nullable ${lqrn(tag.typeRef, t)}.Value ${jn(tag.name)}Value) {
       _raw().setValue($ln.${jn(tag.name)}, ${jn(tag.name)}Value); return this;
     }
 """

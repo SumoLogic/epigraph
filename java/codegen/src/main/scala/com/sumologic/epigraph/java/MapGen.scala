@@ -142,7 +142,7 @@ ${
     /**
      * Returns `${t.name.name}` value.
      */
-    @Nullable $ln.Value get$$();
+    @Nullable $ln.Value get_();
 
   }
 
@@ -221,7 +221,7 @@ ${t.effectiveDefaultValueTagName match { // default value tag (if defined) views
       public @NotNull java.util.Map<${lqn(kt, t)}.@NotNull Imm, @Nullable ? extends ${lqn(tt(vtr, dtn), t)}.Imm.Value> values() {
         return new io.epigraph.util.Unmodifiable.MapView<${lqn(kt, t)}.Imm, ${lqn(vt, t)}.Imm${vt(vt, "", ".Data")}, ${lqn(tt(vtr, dtn), t)}.Imm.Value>(
             datas(),
-            ${lqn(vt, t)}.Imm${vt(vt, "", ".Data")}::get${vt(vt, up(dtn), "")}$$
+            ${lqn(vt, t)}.Imm${vt(vt, "", ".Data")}::get${vt(vt, up(dtn), "")}_
         );
       }
 """
@@ -256,7 +256,7 @@ ${
 //      public @NotNull java.util.Map<${lqn(kt, t)}.@NotNull Imm, @Nullable ? extends ${lqn(tt(vtr, tag.name), t)}.Imm.Value> ${jn(tag.name + "Values")}() {
 //        return new io.epigraph.util.Unmodifiable.MapView<${lqn(kt, t)}.Imm, ${lqn(vt, t)}.Imm${vt(vt, "", ".Data")}, ${lqn(tt(vtr, tag.name), t)}.Imm.Value>(
 //            datas(),
-//            ${lqn(vt, t)}.Imm${vt(vt, "", ".Data")}::get${vt(vt, up(tag.name), "")}$$
+//            ${lqn(vt, t)}.Imm${vt(vt, "", ".Data")}::get${vt(vt, up(tag.name), "")}_
 //        );
 //      }
 """
@@ -302,7 +302,7 @@ ${
       @Nullable $ln.Imm get();
 
       @Override
-      @Nullable $ln.Imm.Value get$$();
+      @Nullable $ln.Imm.Value get_();
 
       /** Private implementation of `$ln.Imm.Data` interface. */
       final class Impl extends io.epigraph.data.Data.Imm.Static.Impl<$ln.Imm.Data>
@@ -312,11 +312,11 @@ ${
 
         @Override
         public @Nullable $ln.Imm get() {
-          return io.epigraph.util.Util.apply(get$$(), $ln.Imm.Value::getDatum);
+          return io.epigraph.util.Util.apply(get_(), $ln.Imm.Value::getDatum);
         }
 
         @Override
-        public @Nullable $ln.Imm.Value get$$() {
+        public @Nullable $ln.Imm.Value get_() {
           return ($ln.Imm.Value) _raw().getValue($ln.Type.instance().self);
         }
 
@@ -353,8 +353,8 @@ ${t.effectiveDefaultValueTagName match { // default value tag (if defined) views
     public @NotNull java.util.Map<${lqn(kt, t)}.@NotNull Imm, ${lqn(tt(vtr, dtn), t)}.@Nullable Value> values() {
       return new io.epigraph.util.MapView<>(
           datas(),
-          ${lqn(vt, t)}${vt(vt, "", ".Data")}::get${vt(vt, up(dtn), "")}$$,
-          v -> ${lqn(vt, t)}.Type.instance().createDataBuilder().set${vt(vt, up(dtn), "")}$$(v)
+          ${lqn(vt, t)}${vt(vt, "", ".Data")}::get${vt(vt, up(dtn), "")}_,
+          v -> ${lqn(vt, t)}.Type.instance().createDataBuilder().set${vt(vt, up(dtn), "")}_(v)
       );
     }
 
@@ -365,8 +365,8 @@ ${t.effectiveDefaultValueTagName match { // default value tag (if defined) views
     }
 
     ${"/**"} Associates specified${vt(vt, s" default `$dtn` tag", "")} value with specified key in this map. */
-    public @NotNull $ln.Builder put$$(@NotNull ${lqn(kt, t)}.Imm key, @Nullable ${lqn(tt(vtr, dtn), t)}.Value value) {
-      datas().put(key, ${lqn(vt, t)}.Type.instance().createDataBuilder().set${vt(vt, up(dtn), "")}$$(value));
+    public @NotNull $ln.Builder put_(@NotNull ${lqn(kt, t)}.Imm key, @Nullable ${lqn(tt(vtr, dtn), t)}.Value value) {
+      datas().put(key, ${lqn(vt, t)}.Type.instance().createDataBuilder().set${vt(vt, up(dtn), "")}_(value));
       return this;
     }
 """
@@ -382,7 +382,7 @@ ${vt match { // data view (for vartypes)
     }
 
     ${"/**"} Associates specified data with specified key in this map. */
-    public @NotNull $ln.Builder put_(@NotNull ${lqn(kt, t)}.Imm key, @NotNull ${lqn(vt, t)} data) {
+    public @NotNull $ln.Builder put$$(@NotNull ${lqn(kt, t)}.Imm key, @NotNull ${lqn(vt, t)} data) {
       datas().put(key, data);
       return this;
     }
@@ -406,7 +406,7 @@ ${
 //    public @NotNull java.util.Map<${lqn(kt, t)}.@NotNull Imm, ${lqn(tt(vtr, tag.name), t)}.@Nullable Value> ${jn(tag.name + "Values")}() {
 //      return new io.epigraph.util.MapView<>(
 //          datas(),
-//          ${lqn(vt, t)}${vt(vt, "", ".Data")}::get${vt(vt, up(tag.name), "")}$$,
+//          ${lqn(vt, t)}${vt(vt, "", ".Data")}::get${vt(vt, up(tag.name), "")}_,
 //          v -> ${lqn(vt, t)}.Type.instance().createDataBuilder().set${vt(vt, up(tag.name), "")}(v)
 //      );
 //    }

@@ -41,7 +41,7 @@ ${  f.valueDataType.typeRef.resolved match { // data accessors (for union typed 
 
   /** Returns `${f.name}` field data. */
   //@Override TODO where applicable
-  @Nullable ${lqdrn(f.typeRef, t)} get${up(f.name)}_();
+  @Nullable ${lqdrn(f.typeRef, t)} get${up(f.name)}$$();
 """
       case _: CDatumType => "" // no data accessors for datum fields
       case unexpected => throw new UnsupportedOperationException(unexpected.name.name)
@@ -57,7 +57,7 @@ ${  f.effectiveDefaultTagName match { // default tag accessors (implied or expli
 
   /** Returns `${f.name}` field entry${vt(f.typeRef, s" for default `$dtn` tag", "")}. */
   //@Override TODO where applicable
-  @Nullable ${lqn(tt(f.typeRef, dtn), t)}.Value get${up(f.name)}$$();
+  @Nullable ${lqn(tt(f.typeRef, dtn), t)}.Value get${up(f.name)}_();
 """
     }
 }\
@@ -126,7 +126,7 @@ ${t.declaredFields.map { f => sn"""
 
     @Nullable $ln get();
 
-    @Nullable $ln.Value get$$();
+    @Nullable $ln.Value get_();
 
   }
 
@@ -140,7 +140,7 @@ ${  f.valueDataType.typeRef.resolved match { // data accessors (for union typed 
 
     /** Returns immutable `${f.name}` field data. */
     @Override
-    @Nullable ${lqdrn(f.typeRef, t)}.Imm get${up(f.name)}_();
+    @Nullable ${lqdrn(f.typeRef, t)}.Imm get${up(f.name)}$$();
 """
       case _: CDatumType => "" // no data accessors for datum fields
       case unexpected => throw new UnsupportedOperationException(unexpected.name.name)
@@ -156,7 +156,7 @@ ${  f.effectiveDefaultTagName match { // default tag accessors (implied or expli
 
     /** Returns immutable `${f.name}` field entry${vt(f.typeRef, s" for default `$dtn` tag", "")}. */
     @Override
-    @Nullable ${lqn(tt(f.typeRef, dtn), t)}.Imm.Value get${up(f.name)}$$();
+    @Nullable ${lqn(tt(f.typeRef, dtn), t)}.Imm.Value get${up(f.name)}_();
 """
     }
 }\
@@ -174,7 +174,7 @@ ${  f.valueDataType.typeRef.resolved match { // data accessors (for union typed 
 
         /** Returns immutable `${f.name}` field data. */
         @Override
-        public @Nullable ${lqdrn(f.typeRef, t)}.Imm get${up(f.name)}_() {
+        public @Nullable ${lqdrn(f.typeRef, t)}.Imm get${up(f.name)}$$() {
           return (${lqdrn(f.typeRef, t)}.Imm) _raw().getData($ln.${jn(f.name)});
         }
 """
@@ -189,12 +189,12 @@ ${  f.effectiveDefaultTagName match { // default tag accessors (implied or expli
         /** Returns immutable `${f.name}` field datum${vt(f.typeRef, s" for default `$dtn` tag", "")}. */
         @Override
         public @Nullable ${lqn(tt(f.typeRef, dtn), t)}.Imm get${up(f.name)}() {
-          return io.epigraph.util.Util.apply(get${up(f.name)}$$(), ${lqn(tt(f.typeRef, dtn), t)}.Imm.Value::getDatum);
+          return io.epigraph.util.Util.apply(get${up(f.name)}_(), ${lqn(tt(f.typeRef, dtn), t)}.Imm.Value::getDatum);
         }
 
         /** Returns immutable `${f.name}` field entry${vt(f.typeRef, s" for default `$dtn` tag", "")}. */
         @Override
-        public @Nullable ${lqn(tt(f.typeRef, dtn), t)}.Imm.Value get${up(f.name)}$$() {
+        public @Nullable ${lqn(tt(f.typeRef, dtn), t)}.Imm.Value get${up(f.name)}_() {
           return (${lqn(tt(f.typeRef, dtn), t)}.Imm.Value) _raw().getValue($ln.${jn(f.name)}, ${dttr(f.valueDataType, dtn, t)});
         }
 """
@@ -233,7 +233,7 @@ ${  f.effectiveDefaultTagName match { // default tag accessors (implied or expli
       @Nullable $ln.Imm get();
 
       @Override
-      @Nullable $ln.Imm.Value get$$();
+      @Nullable $ln.Imm.Value get_();
 
       /** Private implementation of `$ln.Imm.Data` interface. */
       final class Impl extends io.epigraph.data.Data.Imm.Static.Impl<$ln.Imm.Data>
@@ -247,7 +247,7 @@ ${  f.effectiveDefaultTagName match { // default tag accessors (implied or expli
         }
 
         @Override
-        public @Nullable $ln.Imm.Value get$$() {
+        public @Nullable $ln.Imm.Value get_() {
           return ($ln.Imm.Value) _raw().getValue($ln.Type.instance().self);
         }
 
@@ -270,10 +270,10 @@ ${  f.valueDataType.typeRef.resolved match { // data accessors (for union typed 
 
     /** Returns `${f.name}` field data. */
     @Override
-    public @Nullable ${lqdrn(f.typeRef, t)} get${up(f.name)}_() { return (${lqdrn(f.typeRef, t)}) _raw().getData($ln.${jn(f.name)}); }
+    public @Nullable ${lqdrn(f.typeRef, t)} get${up(f.name)}$$() { return (${lqdrn(f.typeRef, t)}) _raw().getData($ln.${jn(f.name)}); }
 
     /** Sets `${f.name}` field data. */
-    public @NotNull $ln.Builder set${up(f.name)}_(@Nullable ${lqrn(f.typeRef, t)} ${jn(f.name)}) {
+    public @NotNull $ln.Builder set${up(f.name)}$$(@Nullable ${lqrn(f.typeRef, t)} ${jn(f.name)}) {
       _raw().setData($ln.${jn(f.name)}, ${jn(f.name)}); return this;
     }
 
@@ -289,7 +289,7 @@ ${  f.effectiveDefaultTagName match { // default tag (implied or explicit, if an
     /** Returns `${f.name}` field datum${vt(f.typeRef, s" for default `$dtn` tag", "")}. */
     @Override
     public @Nullable ${lqn(tt(f.typeRef, dtn), t)} get${up(f.name)}() {
-      return io.epigraph.util.Util.apply(get${up(f.name)}$$(), ${lqn(tt(f.typeRef, dtn), t)}.Value::getDatum);
+      return io.epigraph.util.Util.apply(get${up(f.name)}_(), ${lqn(tt(f.typeRef, dtn), t)}.Value::getDatum);
     }
 
     /** Sets `${f.name}` field to specified ${vt(f.typeRef, s"default `$dtn` tag ", "")}datum. */
@@ -299,14 +299,14 @@ ${  f.effectiveDefaultTagName match { // default tag (implied or explicit, if an
     }
 
     /** Sets `${f.name}` field to specified ${vt(f.typeRef, s"default `$dtn` tag ", "")}error. */
-    public @NotNull $ln.Builder set${up(f.name)}$$Error(@NotNull io.epigraph.errors.ErrorValue error) {
-      _raw().setData($ln.${jn(f.name)}, ${lqrn(f.typeRef, t)}.Type.instance().createDataBuilder().set${vt(f.typeRef, up(dtn), "")}$$Error(error));
+    public @NotNull $ln.Builder set${up(f.name)}_Error(@NotNull io.epigraph.errors.ErrorValue error) {
+      _raw().setData($ln.${jn(f.name)}, ${lqrn(f.typeRef, t)}.Type.instance().createDataBuilder().set${vt(f.typeRef, up(dtn), "")}_Error(error));
       return this;
     }
 
     /** Returns `${f.name}` field entry${vt(f.typeRef, s" for default `$dtn` tag", "")}. */
     @Override
-    public @Nullable ${lqn(tt(f.typeRef, dtn), t)}.Value get${up(f.name)}$$() {
+    public @Nullable ${lqn(tt(f.typeRef, dtn), t)}.Value get${up(f.name)}_() {
       return (${lqn(tt(f.typeRef, dtn), t)}.Value) _raw().getValue($ln.${jn(f.name)}, ${dttr(f.valueDataType, dtn, t)});
     }
 """

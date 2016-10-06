@@ -34,20 +34,20 @@ $dataBuilder\
 
       /** Returns default tag datum. */
       @Override
-      public @Nullable $ln get() { return io.epigraph.util.Util.apply(get$$(), $ln.Value::getDatum); }
+      public @Nullable $ln get() { return io.epigraph.util.Util.apply(get_(), $ln.Value::getDatum); }
 
       /** Returns default tag value. */
       @Override
-      public @Nullable $ln.Value get$$() { return ($ln.Value) _raw().getValue($ln.Type.instance().self); }
+      public @Nullable $ln.Value get_() { return ($ln.Value) _raw().getValue($ln.Type.instance().self); }
 
       /** Sets default tag datum. */
       public @NotNull $ln.Data set(@Nullable $ln datum) { _raw().setDatum($ln.Type.instance().self, datum); return this; }
 
       /** Sets default tag error. */
-      public @NotNull $ln.Data set$$Error(@NotNull io.epigraph.errors.ErrorValue error) { _raw().setError($ln.Type.instance().self, error); return this; }
+      public @NotNull $ln.Data set_Error(@NotNull io.epigraph.errors.ErrorValue error) { _raw().setError($ln.Type.instance().self, error); return this; }
 
       /** Sets default tag value. */
-      public @NotNull $ln.Data set$$(@Nullable $ln.Value value) { _raw().setValue($ln.Type.instance().self, value); return this; }
+      public @NotNull $ln.Data set_(@Nullable $ln.Value value) { _raw().setValue($ln.Type.instance().self, value); return this; }
 
     }
 """/*@formatter:on*/

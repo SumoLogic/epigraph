@@ -131,7 +131,7 @@ ${
     /**
      * Returns `${t.name.name}` value.
      */
-    @Nullable $ln.Value get$$();
+    @Nullable $ln.Value get_();
 
   }
 
@@ -210,7 +210,7 @@ ${t.effectiveDefaultElementTagName match { // default element tag (if defined) v
       public @NotNull java.util.List<@Nullable ? extends ${lqn(tt(etr, dtn), t)}.Imm.Value> values() {
         return new io.epigraph.util.Unmodifiable.ListView<${lqn(et, t)}.Imm${vt(et, "", ".Data")}, ${lqn(tt(etr, dtn), t)}.Imm.Value>(
             datas(),
-            ${lqn(et, t)}.Imm${vt(et, "", ".Data")}::get${vt(et, up(dtn), "")}$$
+            ${lqn(et, t)}.Imm${vt(et, "", ".Data")}::get${vt(et, up(dtn), "")}_
         );
       }
 """
@@ -245,7 +245,7 @@ ${
 //      public @NotNull java.util.List<@Nullable ? extends ${lqn(tt(etr, tag.name), t)}.Imm.Value> ${jn(tag.name + "Values")}() {
 //        return new io.epigraph.util.Unmodifiable.ListView<${lqn(et, t)}.Imm${vt(et, "", ".Data")}, ${lqn(tt(etr, tag.name), t)}.Imm.Value>(
 //            datas(),
-//            ${lqn(et, t)}.Imm${vt(et, "", ".Data")}::get${vt(et, up(tag.name), "")}$$
+//            ${lqn(et, t)}.Imm${vt(et, "", ".Data")}::get${vt(et, up(tag.name), "")}_
 //        );
 //      }
 """
@@ -291,7 +291,7 @@ ${
       @Nullable $ln.Imm get();
 
       @Override
-      @Nullable $ln.Imm.Value get$$();
+      @Nullable $ln.Imm.Value get_();
 
       /** Private implementation of `$ln.Imm.Data` interface. */
       final class Impl extends io.epigraph.data.Data.Imm.Static.Impl<$ln.Imm.Data>
@@ -301,11 +301,11 @@ ${
 
         @Override
         public @Nullable $ln.Imm get() {
-          return io.epigraph.util.Util.apply(get$$(), $ln.Imm.Value::getDatum);
+          return io.epigraph.util.Util.apply(get_(), $ln.Imm.Value::getDatum);
         }
 
         @Override
-        public @Nullable $ln.Imm.Value get$$() {
+        public @Nullable $ln.Imm.Value get_() {
           return ($ln.Imm.Value) _raw().getValue($ln.Type.instance().self);
         }
 
@@ -342,8 +342,8 @@ ${t.effectiveDefaultElementTagName match { // default element tag (if defined) v
     public @NotNull java.util.List<${lqn(tt(etr, dtn), t)}.@Nullable Value> values() {
       return new io.epigraph.util.ListView<>(
           datas(),
-          ${lqn(et, t)}${vt(et, "", ".Data")}::get${vt(et, up(dtn), "")}$$,
-          v -> ${lqn(et, t)}.Type.instance().createDataBuilder().set${vt(et, up(dtn), "")}$$(v)
+          ${lqn(et, t)}${vt(et, "", ".Data")}::get${vt(et, up(dtn), "")}_,
+          v -> ${lqn(et, t)}.Type.instance().createDataBuilder().set${vt(et, up(dtn), "")}_(v)
       );
     }
 
@@ -354,8 +354,8 @@ ${t.effectiveDefaultElementTagName match { // default element tag (if defined) v
     }
 
     ${"/**"} Adds${vt(et, s" default `$dtn` tag", "")} value element to the list. */
-    public @NotNull $ln.Builder add$$(@Nullable ${lqn(tt(etr, dtn), t)}.Value value) {
-      datas().add(${lqn(et, t)}.Type.instance().createDataBuilder().set${vt(et, up(dtn), "")}$$(value));
+    public @NotNull $ln.Builder add_(@Nullable ${lqn(tt(etr, dtn), t)}.Value value) {
+      datas().add(${lqn(et, t)}.Type.instance().createDataBuilder().set${vt(et, up(dtn), "")}_(value));
       return this;
     }
 """
@@ -395,7 +395,7 @@ ${
 //    public @NotNull java.util.List<${lqn(tt(etr, tag.name), t)}.@Nullable Value> ${jn(tag.name + "Values")}() {
 //      return new io.epigraph.util.ListView<>(
 //          datas(),
-//          ${lqn(et, t)}${vt(et, "", ".Data")}::get${vt(et, up(tag.name), "")}$$,
+//          ${lqn(et, t)}${vt(et, "", ".Data")}::get${vt(et, up(tag.name), "")}_,
 //          v -> ${lqn(et, t)}.Type.instance().createDataBuilder().set${vt(et, up(tag.name), "")}(v)
 //      );
 //    }
