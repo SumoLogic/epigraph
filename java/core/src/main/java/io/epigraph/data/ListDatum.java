@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.RandomAccess;
 import java.util.function.Function;
 
@@ -62,11 +63,14 @@ public interface ListDatum extends Datum {
 
       private final List<? extends Data.Imm> elements;
 
-      private @NotNull Val.Imm.Raw value = new Val.Imm.Raw.DatumVal(this);
+      private final @NotNull Val.Imm.Raw value = new Val.Imm.Raw.DatumVal(this);
 
-      public Raw(@NotNull ListDatum.Builder.Raw builder) {
-        super(builder.type());
-        elements = Unmodifiable.list(builder.elements(), Data::toImmutable);
+      private final int hashCode;
+
+      public Raw(@NotNull ListDatum.Builder.Raw mutable) {
+        super(mutable.type());
+        elements = Unmodifiable.list(mutable.elements(), Data::toImmutable);
+        hashCode = Objects.hash(type(), elements);
       }
 
       @Override
@@ -83,6 +87,18 @@ public interface ListDatum extends Datum {
 
       @Override
       public @NotNull Val.Imm.Raw asValue() { return value; }
+
+      @Override
+      public final boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ListDatum)) return false;
+        if (o instanceof Immutable && hashCode != o.hashCode()) return false;
+        ListDatum that = (ListDatum) o;
+        return type().equals(that.type()) && elements.equals(that._raw().elements());
+      }
+
+      @Override
+      public final int hashCode() { return hashCode; }
 
     }
 
@@ -174,6 +190,17 @@ public interface ListDatum extends Datum {
 
       @Override
       public @NotNull Val.Builder.Raw asValue() { return value; }
+
+      @Override
+      public final boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ListDatum)) return false;
+        ListDatum that = (ListDatum) o;
+        return type().equals(that.type()) && elements.equals(that._raw().elements());
+      }
+
+      @Override
+      public final int hashCode() { return Objects.hash(type(), elements); }
 
 
       private static class DataList<E extends Data> extends AbstractList<E> implements RandomAccess {

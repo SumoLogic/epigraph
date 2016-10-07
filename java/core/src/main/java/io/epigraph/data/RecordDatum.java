@@ -123,6 +123,7 @@ public interface RecordDatum extends Datum {
       public final boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof RecordDatum)) return false;
+        if (o instanceof Immutable && hashCode != o.hashCode()) return false;
         RecordDatum that = (RecordDatum) o;
         return type().equals(that.type()) && fieldsData.equals(that._raw().fieldsData());
       }

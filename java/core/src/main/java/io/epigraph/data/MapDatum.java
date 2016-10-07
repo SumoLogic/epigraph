@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -39,7 +40,7 @@ public interface MapDatum extends Datum {
     @Override
     @NotNull MapDatum.Imm.Raw toImmutable();
 
-    @NotNull Map<Datum.@NotNull Imm, @NotNull ? extends Data> elements(); // TODO rename to data()?
+    @NotNull Map<Datum.@NotNull Imm, @NotNull ? extends Data> elements();
 
   }
 
@@ -62,11 +63,14 @@ public interface MapDatum extends Datum {
 
       private final Map<Datum.@NotNull Imm, ? extends Data.Imm> elements;
 
-      private @NotNull Val.Imm.Raw value = new Val.Imm.Raw.DatumVal(this);
+      private final @NotNull Val.Imm.Raw value = new Val.Imm.Raw.DatumVal(this);
+
+      private final int hashCode;
 
       public Raw(@NotNull MapDatum.Builder.Raw mutable) {
         super(mutable.type());
         elements = Unmodifiable.map(mutable.elements(), k -> k, Data::toImmutable);
+        hashCode = Objects.hash(type(), elements);
       }
 
       @Override
@@ -83,6 +87,18 @@ public interface MapDatum extends Datum {
 
       @Override
       public @NotNull Val.Imm.Raw asValue() { return value; }
+
+      @Override
+      public final boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof MapDatum)) return false;
+        if (o instanceof Immutable && hashCode != o.hashCode()) return false;
+        MapDatum that = (MapDatum) o;
+        return type().equals(that.type()) && elements.equals(that._raw().elements());
+      }
+
+      @Override
+      public final int hashCode() { return hashCode; }
 
     }
 
@@ -174,6 +190,17 @@ public interface MapDatum extends Datum {
 
       @Override
       public @NotNull Val.Builder.Raw asValue() { return value; }
+
+      @Override
+      public final boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof MapDatum)) return false;
+        MapDatum that = (MapDatum) o;
+        return type().equals(that.type()) && elements.equals(that._raw().elements());
+      }
+
+      @Override
+      public final int hashCode() { return Objects.hash(type(), elements); }
 
 
       private static class DataMap<K extends Datum.Imm, V extends Data> extends AbstractMap<K, V> {
