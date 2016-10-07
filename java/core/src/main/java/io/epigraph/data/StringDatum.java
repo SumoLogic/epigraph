@@ -51,7 +51,8 @@ public interface StringDatum extends PrimitiveDatum<String> {
     @NotNull StringDatum.Imm.Raw _raw();
 
 
-    final class Raw extends StringDatum.Impl implements StringDatum.Imm, StringDatum.Raw, PrimitiveDatum.Imm.Raw<String> {
+    final class Raw extends StringDatum.Impl
+        implements StringDatum.Imm, StringDatum.Raw, PrimitiveDatum.Imm.Raw<String> {
 
       private final @NotNull String val;
 
@@ -75,6 +76,16 @@ public interface StringDatum extends PrimitiveDatum<String> {
       @Override
       public @NotNull Val.Imm.Raw asValue() { return value; }
 
+      @Override
+      public int hashCode() { return val.hashCode(); }
+
+      @Override
+      public boolean equals(Object o) {
+        if (o instanceof PrimitiveDatum) {
+          PrimitiveDatum that = (PrimitiveDatum) o;
+          return val.equals(that.getVal()) && type() == that.type();
+        } else return false;
+      }
     }
 
 
@@ -116,6 +127,12 @@ public interface StringDatum extends PrimitiveDatum<String> {
         @Override
         public @NotNull MyImmVal asValue() { return value; }
 
+        @Override
+        public int hashCode() { return _raw().hashCode(); }
+
+        @Override
+        public boolean equals(Object obj) { return _raw().equals(obj); }
+
       }
 
 
@@ -135,7 +152,8 @@ public interface StringDatum extends PrimitiveDatum<String> {
     public abstract @NotNull StringDatum.Builder.Raw _raw();
 
 
-    public static final class Raw extends StringDatum.Builder implements StringDatum.Raw, PrimitiveDatum.Builder.Raw<String> {
+    public static final class Raw extends StringDatum.Builder
+        implements StringDatum.Raw, PrimitiveDatum.Builder.Raw<String> {
 
       private @NotNull String val;
 
