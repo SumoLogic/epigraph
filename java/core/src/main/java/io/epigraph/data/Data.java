@@ -66,12 +66,11 @@ public interface Data { // TODO Var? Union? Values?
 
     final class Raw extends Data.Impl implements Data.Imm, Data.Raw {
 
-      private final Map<@NotNull String, @NotNull ? extends Val.Imm> tagValues;
+      private final Map<@NotNull String, @NotNull ? extends Val.Imm> tagValues; // TODO optimize for single-tag types
 
-      protected Raw(@NotNull Type type, Data prototype) {
-        super(type);
-        // FIXME unmodifiable copy of immutable prototype data
-        tagValues = new HashMap<>(); // TODO optimize for single-tag types
+      protected Raw(@NotNull Data.Builder.Raw mutable) {
+        super(mutable.type());
+        tagValues = Unmodifiable.map(mutable.tagValues(), k -> k, Val::toImmutable);
       }
 
       @Override
@@ -152,7 +151,7 @@ public interface Data { // TODO Var? Union? Values?
       public Raw(@NotNull Type type) { super(type); }
 
       @Override
-      public @NotNull Data.Imm.Raw toImmutable() { return new Data.Imm.Raw(type(), this); }
+      public @NotNull Data.Imm.Raw toImmutable() { return new Data.Imm.Raw(this); }
 
       @Override
       public @NotNull Data.Builder.Raw _raw() { return this; }
