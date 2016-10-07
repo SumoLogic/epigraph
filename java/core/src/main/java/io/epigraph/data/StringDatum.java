@@ -5,6 +5,7 @@ package io.epigraph.data;
 import io.epigraph.types.StringType;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
 import java.util.function.Function;
 
 
@@ -56,12 +57,14 @@ public interface StringDatum extends PrimitiveDatum<String> {
 
       private final @NotNull String val;
 
-      private @NotNull Val.Imm.Raw value = new Val.Imm.Raw.DatumVal(this);
+      private final @NotNull Val.Imm.Raw value = new Val.Imm.Raw.DatumVal(this);
 
-      public Raw(@NotNull StringType type, @NotNull StringDatum prototype) {
-        super(type);
-        // TODO check types are compatible
-        this.val = prototype.getVal(); // TODO copy metadata
+      private final int hashCode;
+
+      public Raw(@NotNull StringDatum.Builder.Raw mutable) {
+        super(mutable.type());
+        val = mutable.getVal(); // TODO copy metadata
+        hashCode = Objects.hash(type(), val);
       }
 
       @Override
@@ -77,15 +80,17 @@ public interface StringDatum extends PrimitiveDatum<String> {
       public @NotNull Val.Imm.Raw asValue() { return value; }
 
       @Override
-      public int hashCode() { return val.hashCode(); }
+      public final boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof StringDatum)) return false;
+        if (o instanceof Immutable && hashCode != o.hashCode()) return false;
+        StringDatum that = (StringDatum) o;
+        return type().equals(that.type()) && val.equals(that._raw().getVal());
+      }
 
       @Override
-      public boolean equals(Object o) {
-        if (o instanceof PrimitiveDatum) {
-          PrimitiveDatum that = (PrimitiveDatum) o;
-          return val.equals(that.getVal()) && type() == that.type();
-        } else return false;
-      }
+      public final int hashCode() { return hashCode; }
+
     }
 
 
@@ -175,13 +180,24 @@ public interface StringDatum extends PrimitiveDatum<String> {
       }
 
       @Override
-      public @NotNull StringDatum.Imm.Raw toImmutable() { return new StringDatum.Imm.Raw(type(), this); }
+      public @NotNull StringDatum.Imm.Raw toImmutable() { return new StringDatum.Imm.Raw(this); }
 
       @Override
       public @NotNull StringDatum.Builder.Raw _raw() { return this; }
 
       @Override
       public @NotNull Val.Builder.Raw asValue() { return value; }
+
+      @Override
+      public final boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof StringDatum)) return false;
+        StringDatum that = (StringDatum) o;
+        return type().equals(that.type()) && val.equals(that._raw().getVal());
+      }
+
+      @Override
+      public final int hashCode() { return Objects.hash(type(), val); }
 
     }
 

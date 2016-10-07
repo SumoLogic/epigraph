@@ -207,7 +207,7 @@ public interface ListDatum extends Datum {
 
         private final @NotNull List<@NotNull E> list = new ArrayList<>();
 
-        private final ListType listType;
+        private final @NotNull ListType listType;
 
         public DataList(@NotNull ListType listType) { this.listType = listType; }
 

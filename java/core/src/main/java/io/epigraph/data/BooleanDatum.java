@@ -5,6 +5,7 @@ package io.epigraph.data;
 import io.epigraph.types.BooleanType;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
 import java.util.function.Function;
 
 
@@ -55,11 +56,14 @@ public interface BooleanDatum extends PrimitiveDatum<Boolean> {
 
       private final @NotNull Boolean val;
 
-      private @NotNull Val.Imm.Raw value = new Val.Imm.Raw.DatumVal(this);
+      private final @NotNull Val.Imm.Raw value = new Val.Imm.Raw.DatumVal(this);
 
-      public Raw(@NotNull BooleanDatum.Builder.Raw builder) {
-        super(builder.type());
-        this.val = builder.getVal(); // TODO copy metadata
+      private final int hashCode;
+
+      public Raw(@NotNull BooleanDatum.Builder.Raw mutable) {
+        super(mutable.type());
+        val = mutable.getVal(); // TODO copy metadata
+        hashCode = Objects.hash(type(), val);
       }
 
       @Override
@@ -73,6 +77,18 @@ public interface BooleanDatum extends PrimitiveDatum<Boolean> {
 
       @Override
       public @NotNull Val.Imm.Raw asValue() { return value; }
+
+      @Override
+      public final boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof BooleanDatum)) return false;
+        if (o instanceof Immutable && hashCode != o.hashCode()) return false;
+        BooleanDatum that = (BooleanDatum) o;
+        return type().equals(that.type()) && val.equals(that._raw().getVal());
+      }
+
+      @Override
+      public final int hashCode() { return hashCode; }
 
     }
 
@@ -169,6 +185,17 @@ public interface BooleanDatum extends PrimitiveDatum<Boolean> {
 
       @Override
       public @NotNull Val.Builder.Raw asValue() { return value; }
+
+      @Override
+      public final boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof BooleanDatum)) return false;
+        BooleanDatum that = (BooleanDatum) o;
+        return type().equals(that.type()) && val.equals(that._raw().getVal());
+      }
+
+      @Override
+      public final int hashCode() { return Objects.hash(type(), val); }
 
     }
 

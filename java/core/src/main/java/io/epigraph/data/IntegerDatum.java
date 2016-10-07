@@ -5,6 +5,7 @@ package io.epigraph.data;
 import io.epigraph.types.IntegerType;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
 import java.util.function.Function;
 
 
@@ -55,12 +56,14 @@ public interface IntegerDatum extends PrimitiveDatum<Integer> {
 
       private final @NotNull Integer val;
 
-      private @NotNull Val.Imm.Raw value = new Val.Imm.Raw.DatumVal(this);
+      private final @NotNull Val.Imm.Raw value = new Val.Imm.Raw.DatumVal(this);
 
-      public Raw(@NotNull IntegerType type, @NotNull IntegerDatum prototype) {
-        super(type);
-        // TODO check types are compatible
-        this.val = prototype.getVal(); // TODO copy metadata
+      private final int hashCode;
+
+      public Raw(@NotNull IntegerDatum.Builder.Raw mutable) {
+        super(mutable.type());
+        val = mutable.getVal(); // TODO copy metadata
+        hashCode = Objects.hash(type(), val);
       }
 
       @Override
@@ -74,6 +77,18 @@ public interface IntegerDatum extends PrimitiveDatum<Integer> {
 
       @Override
       public @NotNull Val.Imm.Raw asValue() { return value; }
+
+      @Override
+      public final boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof IntegerDatum)) return false;
+        if (o instanceof Immutable && hashCode != o.hashCode()) return false;
+        IntegerDatum that = (IntegerDatum) o;
+        return type().equals(that.type()) && val.equals(that._raw().getVal());
+      }
+
+      @Override
+      public final int hashCode() { return hashCode; }
 
     }
 
@@ -163,13 +178,24 @@ public interface IntegerDatum extends PrimitiveDatum<Integer> {
       }
 
       @Override
-      public @NotNull IntegerDatum.Imm.Raw toImmutable() { return new IntegerDatum.Imm.Raw(type(), this); }
+      public @NotNull IntegerDatum.Imm.Raw toImmutable() { return new IntegerDatum.Imm.Raw(this); }
 
       @Override
       public @NotNull IntegerDatum.Builder.Raw _raw() { return this; }
 
       @Override
       public @NotNull Val.Builder.Raw asValue() { return value; }
+
+      @Override
+      public final boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof IntegerDatum)) return false;
+        IntegerDatum that = (IntegerDatum) o;
+        return type().equals(that.type()) && val.equals(that._raw().getVal());
+      }
+
+      @Override
+      public final int hashCode() { return Objects.hash(type(), val); }
 
     }
 

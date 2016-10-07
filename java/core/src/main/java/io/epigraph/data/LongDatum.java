@@ -5,6 +5,7 @@ package io.epigraph.data;
 import io.epigraph.types.LongType;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
 import java.util.function.Function;
 
 
@@ -55,12 +56,14 @@ public interface LongDatum extends PrimitiveDatum<Long> {
 
       private final @NotNull Long val;
 
-      private @NotNull Val.Imm.Raw value = new Val.Imm.Raw.DatumVal(this);
+      private final @NotNull Val.Imm.Raw value = new Val.Imm.Raw.DatumVal(this);
 
-      public Raw(@NotNull LongType type, @NotNull LongDatum prototype) {
-        super(type);
-        // TODO check types are compatible
-        this.val = prototype.getVal(); // TODO copy metadata
+      private final int hashCode;
+
+      public Raw(@NotNull LongDatum.Builder.Raw mutable) {
+        super(mutable.type());
+        val = mutable.getVal(); // TODO copy metadata
+        hashCode = Objects.hash(type(), val);
       }
 
       @Override
@@ -74,6 +77,18 @@ public interface LongDatum extends PrimitiveDatum<Long> {
 
       @Override
       public @NotNull Val.Imm.Raw asValue() { return value; }
+
+      @Override
+      public final boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof LongDatum)) return false;
+        if (o instanceof Immutable && hashCode != o.hashCode()) return false;
+        LongDatum that = (LongDatum) o;
+        return type().equals(that.type()) && val.equals(that._raw().getVal());
+      }
+
+      @Override
+      public final int hashCode() { return hashCode; }
 
     }
 
@@ -163,13 +178,24 @@ public interface LongDatum extends PrimitiveDatum<Long> {
       }
 
       @Override
-      public @NotNull LongDatum.Imm.Raw toImmutable() { return new LongDatum.Imm.Raw(type(), this); }
+      public @NotNull LongDatum.Imm.Raw toImmutable() { return new LongDatum.Imm.Raw(this); }
 
       @Override
       public @NotNull LongDatum.Builder.Raw _raw() { return this; }
 
       @Override
       public @NotNull Val.Builder.Raw asValue() { return value; }
+
+      @Override
+      public final boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof LongDatum)) return false;
+        LongDatum that = (LongDatum) o;
+        return type().equals(that.type()) && val.equals(that._raw().getVal());
+      }
+
+      @Override
+      public final int hashCode() { return Objects.hash(type(), val); }
 
     }
 

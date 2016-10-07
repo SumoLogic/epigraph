@@ -5,6 +5,7 @@ package io.epigraph.data;
 import io.epigraph.types.DoubleType;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
 import java.util.function.Function;
 
 
@@ -55,12 +56,14 @@ public interface DoubleDatum extends PrimitiveDatum<Double> {
 
       private final @NotNull Double val;
 
-      private @NotNull Val.Imm.Raw value = new Val.Imm.Raw.DatumVal(this);
+      private final @NotNull Val.Imm.Raw value = new Val.Imm.Raw.DatumVal(this);
 
-      public Raw(@NotNull DoubleType type, @NotNull DoubleDatum prototype) {
-        super(type);
-        // TODO check types are compatible
-        this.val = prototype.getVal(); // TODO copy metadata
+      private final int hashCode;
+
+      public Raw(@NotNull DoubleDatum.Builder.Raw mutable) {
+        super(mutable.type());
+        val = mutable.getVal(); // TODO copy metadata
+        hashCode = Objects.hash(type(), val);
       }
 
       @Override
@@ -74,6 +77,18 @@ public interface DoubleDatum extends PrimitiveDatum<Double> {
 
       @Override
       public @NotNull Val.Imm.Raw asValue() { return value; }
+
+      @Override
+      public final boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof DoubleDatum)) return false;
+        if (o instanceof Immutable && hashCode != o.hashCode()) return false;
+        DoubleDatum that = (DoubleDatum) o;
+        return type().equals(that.type()) && val.equals(that._raw().getVal());
+      }
+
+      @Override
+      public final int hashCode() { return hashCode; }
 
     }
 
@@ -163,13 +178,24 @@ public interface DoubleDatum extends PrimitiveDatum<Double> {
       }
 
       @Override
-      public @NotNull DoubleDatum.Imm.Raw toImmutable() { return new DoubleDatum.Imm.Raw(type(), this); }
+      public @NotNull DoubleDatum.Imm.Raw toImmutable() { return new DoubleDatum.Imm.Raw(this); }
 
       @Override
       public @NotNull DoubleDatum.Builder.Raw _raw() { return this; }
 
       @Override
       public @NotNull Val.Builder.Raw asValue() { return value; }
+
+      @Override
+      public final boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof DoubleDatum)) return false;
+        DoubleDatum that = (DoubleDatum) o;
+        return type().equals(that.type()) && val.equals(that._raw().getVal());
+      }
+
+      @Override
+      public final int hashCode() { return Objects.hash(type(), val); }
 
     }
 

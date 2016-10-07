@@ -207,7 +207,7 @@ public interface MapDatum extends Datum {
 
         private final @NotNull Map<@NotNull K, @NotNull V> map = new HashMap<>();
 
-        private final MapType mapType;
+        private final @NotNull MapType mapType;
 
         public DataMap(@NotNull MapType mapType) { this.mapType = mapType; }
 
