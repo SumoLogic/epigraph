@@ -46,6 +46,11 @@
     </dependency>
 
     <dependency>
+      <groupId>org.jetbrains</groupId>
+      <artifactId>annotations</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>org.scalameta</groupId>
       <artifactId>trees_${scala.version.major.minor}</artifactId>
     </dependency>

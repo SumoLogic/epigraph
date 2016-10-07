@@ -21,8 +21,8 @@
         <module>maven-plugin</module>
         <!--<module>preprint</module>-->
         <!--<module>projections</module>-->
-        <module>server</module>
-        <module>service</module>
+        <!--<module>server</module>-->
+        <!--<module>service</module>-->
         <module>util</module>
       </modules>
 

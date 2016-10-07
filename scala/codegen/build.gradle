@@ -5,6 +5,7 @@ dependencies {
   compile project(':epigraph-lang-common')
   compile project(':epigraph-schema-compiler')
 
+  compile 'org.jetbrains:annotations'
   compile "org.scalameta:trees_$scalaVersionMajorMinor"
   compile "com.lihaoyi:pprint_$scalaVersionMajorMinor"
 }
