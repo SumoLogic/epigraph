@@ -375,10 +375,10 @@ reqOutputComaRecordModelProjection ::= '(' (reqOutputComaFieldProjection ','?)* 
 reqOutputComaFieldProjection ::= '+'? qid reqParamsAndAnnotations reqOutputComaVarProjection
 
 // req output list
-reqOutputComaListModelProjection ::= '*' '(' reqOutputComaVarProjection ')' { pin=1 }
+reqOutputComaListModelProjection ::= '*' ( '(' reqOutputComaVarProjection ')' )? { pin=1 }
 
 // req output map
-reqOutputComaMapModelProjection ::= reqOutputComaKeysProjection '(' reqOutputComaVarProjection ')'
+reqOutputComaMapModelProjection ::= reqOutputComaKeysProjection ( '(' reqOutputComaVarProjection ')' )?
 reqOutputComaKeysProjection ::= ( '+'? ( '[' ( reqOutputComaKeyProjection ','? )* ']' ) | ( '[' '*' ']' ) )
 reqOutputComaKeyProjection ::= datum reqParamsAndAnnotations
 

@@ -72,14 +72,14 @@ public class UndertowHandler implements HttpHandler {
 
       String resourceName = matcher.group(1);
       String resourceProjectionString = matcher.group(3);
-//      if (resourceProjectionString.length() > 0) resourceProjectionString = resourceProjectionString.substring(1); // remove leading '/'
 
       Resource resource = ResourceRouter.findResource(resourceName, service);
 
-      IdlReqOutputTrunkFieldProjection outputPsi = parsePsi(resourceProjectionString, exchange);
+      IdlReqOutputTrunkFieldProjection outputProjectionPsi = parsePsi(resourceProjectionString, exchange);
 
       if (requestMethod.equals(Methods.GET)) {
-        handleReadRequest(resource, outputPsi, exchange);
+        handleReadRequest(resource, outputProjectionPsi, exchange);
+        // todo handle the rest
       } else {
         badRequest("Unknown HTTP method '" + requestMethod + "'", exchange);
         throw RequestFailedException.INSTANCE;
@@ -102,7 +102,7 @@ public class UndertowHandler implements HttpHandler {
   }
 
   private void handleReadRequest(@NotNull Resource resource,
-                                 @NotNull IdlReqOutputTrunkFieldProjection outputPsi,
+                                 @NotNull IdlReqOutputTrunkFieldProjection outputProjectionPsi,
                                  @NotNull HttpServerExchange exchange)
       throws ResourceNotFoundException, OperationNotFoundException, RequestFailedException {
 
@@ -113,34 +113,35 @@ public class UndertowHandler implements HttpHandler {
     @NotNull ReadOperationIdl operationDeclaration = operation.declaration();
 
     try {
+      // parse output projection
       @NotNull StepsAndProjection<ReqOutputFieldProjection> stepsAndProjection =
           ReqOutputProjectionsPsiParser.parseTrunkFieldProjection(
               true,
               resourceDeclaration.fieldType(),
               operationDeclaration.params(),
               operationDeclaration.outputProjection(),
-              outputPsi,
+              outputProjectionPsi,
               typesResolver
           );
 
+      // run operation
       CompletableFuture<ReadOperationResponse> future =
           operation.process(new ReadOperationRequest(stepsAndProjection.projection()));
 
-
+      // send response back
       handleReadResponse(stepsAndProjection.pathSteps(),
                          stepsAndProjection.projection().projection(),
                          future,
                          exchange
       );
     } catch (PsiProcessingException e) {
-      StringBuilder sb = new StringBuilder(outputPsi.getText());
-      sb.append('\n');
+      StringBuilder sb = new StringBuilder();
+
       TextRange textRange = e.psi().getTextRange();
       String errorDescription = e.getMessage();
-      addPsiError(sb, textRange, errorDescription);
+      addPsiError(sb, outputProjectionPsi.getText(), textRange, errorDescription);
 
       badRequest(sb.toString(), exchange);
-
 
       throw RequestFailedException.INSTANCE;
     }
@@ -180,31 +181,47 @@ public class UndertowHandler implements HttpHandler {
     // todo validate response: e.g. all required parts must be present
 
     Data trimmedData = data == null ? null : ProjectionDataTrimmer.trimData(data, reqProjection);
+    int stepsToRemove = pathSteps == 0 ? 0 : pathSteps - 1; // last segment of path = our data, so keep it
 
+    final Sender sender = exchange.getResponseSender();
     if (trimmedData == null) {
-      writeNullResponse(exchange.getResponseSender());
+      writeNullResponse(sender);
     } else {
       try {
-        DataPathRemover.PathRemovalResult noPathData = DataPathRemover.removePath(trimmedData, pathSteps);
+        DataPathRemover.PathRemovalResult noPathData = DataPathRemover.removePath(trimmedData, stepsToRemove);
 
         // todo marshal to proper json or whatever
         if (noPathData.data != null) {
-          exchange.getResponseSender().send(dataToString(noPathData.data));
+          sender.send(dataToString(noPathData.data) + "\n");
         } else if (noPathData.datum != null) {
-          exchange.getResponseSender().send(datumToString(noPathData.datum));
+          sender.send(datumToString(noPathData.datum) + "\n");
         } else if (noPathData.error != null) {
           @Nullable final Integer statusCode = noPathData.error.statusCode();
           if (statusCode != null) exchange.setStatusCode(statusCode);
 
           @Nullable final Exception cause = noPathData.error.cause;
           if (cause != null) {
-            exchange.getResponseSender().send(cause.getMessage());
+            sender.send(cause.getMessage());
             //send stacktrace too?
           }
-        } else writeNullResponse(exchange.getResponseSender());
+        } else writeNullResponse(sender);
 
       } catch (DataPathRemover.AmbiguousPathException e) {
-        serverError("Can't remove " + pathSteps + " path steps from data: \n" + dataToString(data), exchange);
+        serverError(
+            String.format("Can't remove %d path steps from data: \n%s",
+                          stepsToRemove,
+                          dataToString(trimmedData)
+            ),
+            exchange
+        );
+      } catch (Exception e) {
+        // todo log, sanitize etc
+
+        e.printStackTrace();
+        exchange.setStatusCode(StatusCodes.INTERNAL_SERVER_ERROR);
+        sender.send(e.getMessage());
+
+        sender.close();
       }
     }
   }
@@ -230,7 +247,7 @@ public class UndertowHandler implements HttpHandler {
   }
 
   private void writeNullResponse(@NotNull Sender sender) {
-    sender.send("null");
+    sender.send("null\n");
   }
 
   @Nullable
@@ -265,11 +282,9 @@ public class UndertowHandler implements HttpHandler {
       for (PsiErrorElement errorElement : errorsAccumulator.errors()) {
         if (sb.length() > 0) sb.append('\n');
 
-        sb.append(projectionString);
-        sb.append('\n');
         TextRange textRange = errorElement.getTextRange();
         String errorDescription = errorElement.getErrorDescription();
-        addPsiError(sb, textRange, errorDescription);
+        addPsiError(sb, projectionString, textRange, errorDescription);
       }
 
       sender.send(sb.toString());
@@ -293,20 +308,32 @@ public class UndertowHandler implements HttpHandler {
     if (message != null) exchange.getResponseSender().send(message);
   }
 
-  private void addPsiError(StringBuilder sb, TextRange textRange, String errorDescription) {
-    int i = 0;
+  private void addPsiError(StringBuilder sb, String projectionString, TextRange textRange, String errorDescription) {
+    final int startOffset = textRange.getStartOffset();
+    final int endOffset = textRange.getEndOffset();
 
-    while (i < textRange.getStartOffset()) {
-      sb.append(' ');
-      i++;
+    sb.append(errorDescription).append('\n');
+
+    if (startOffset != 0 || endOffset != 0) {
+      int i = 0;
+
+      sb.append(projectionString).append('\n');
+
+
+      while (i < startOffset) {
+        sb.append(' ');
+        i++;
+      }
+
+      while (i < endOffset) {
+        sb.append('^');
+        i++;
+      }
+
+      if (startOffset == endOffset) sb.append('^'); // fix grammar so this never happens?
+
+      sb.append('\n');
     }
-
-    while (i < textRange.getEndOffset()) {
-      sb.append('~');
-      i++;
-    }
-
-    sb.append("  ").append(errorDescription);
   }
 
   private static class RequestFailedException extends Exception {

@@ -10,13 +10,13 @@ public interface IdlReqOutputComaMapModelProjection extends PsiElement {
   @NotNull
   IdlReqOutputComaKeysProjection getReqOutputComaKeysProjection();
 
-  @NotNull
+  @Nullable
   IdlReqOutputComaVarProjection getReqOutputComaVarProjection();
 
-  @NotNull
+  @Nullable
   PsiElement getParenLeft();
 
-  @NotNull
+  @Nullable
   PsiElement getParenRight();
 
 }

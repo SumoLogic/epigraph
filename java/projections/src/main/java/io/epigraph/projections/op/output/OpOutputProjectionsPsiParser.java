@@ -41,6 +41,8 @@ public class OpOutputProjectionsPsiParser {
     @Nullable IdlOpOutputSingleTagProjection singleTagProjectionPsi = psi.getOpOutputSingleTagProjection();
 
     if (singleTagProjectionPsi != null) {
+      boolean isDatum = type.kind() != TypeKind.UNION;
+
       final OpOutputModelProjection<?> parsedModelProjection;
       final Type.Tag tag = getTag(
           type,
@@ -57,7 +59,7 @@ public class OpOutputProjectionsPsiParser {
 
       parsedModelProjection = parseModelProjection(
           tag.type,
-          singleTagProjectionPsi.getPlus() != null,
+          isDatum || singleTagProjectionPsi.getPlus() != null,
           parseModelParams(modelPropertiesPsi, typesResolver),
           parseModelAnnotations(modelPropertiesPsi),
           parseModelMetaProjection(tag.type, modelPropertiesPsi, typesResolver),
@@ -511,7 +513,7 @@ public class OpOutputProjectionsPsiParser {
           ), fieldProjectionPsi);
 
         varProjection =
-            createDefaultVarProjection(fieldDataType.type, defaultFieldTag, includeInDefault, fieldProjectionPsi);
+            createDefaultVarProjection(fieldDataType.type, defaultFieldTag, true, fieldProjectionPsi);
       } else {
         varProjection = parseVarProjection(field.dataType(), psiVarProjection, typesResolver);
       }

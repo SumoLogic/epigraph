@@ -3113,7 +3113,7 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '*' '(' reqOutputComaVarProjection ')'
+  // '*' ( '(' reqOutputComaVarProjection ')' )?
   public static boolean reqOutputComaListModelProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqOutputComaListModelProjection")) return false;
     if (!nextTokenIs(b, I_STAR)) return false;
@@ -3121,25 +3121,59 @@ public class IdlParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b, l, _NONE_, I_REQ_OUTPUT_COMA_LIST_MODEL_PROJECTION, null);
     r = consumeToken(b, I_STAR);
     p = r; // pin = 1
-    r = r && report_error_(b, consumeToken(b, I_PAREN_LEFT));
-    r = p && report_error_(b, reqOutputComaVarProjection(b, l + 1)) && r;
-    r = p && consumeToken(b, I_PAREN_RIGHT) && r;
+    r = r && reqOutputComaListModelProjection_1(b, l + 1);
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
 
+  // ( '(' reqOutputComaVarProjection ')' )?
+  private static boolean reqOutputComaListModelProjection_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqOutputComaListModelProjection_1")) return false;
+    reqOutputComaListModelProjection_1_0(b, l + 1);
+    return true;
+  }
+
+  // '(' reqOutputComaVarProjection ')'
+  private static boolean reqOutputComaListModelProjection_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqOutputComaListModelProjection_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, I_PAREN_LEFT);
+    r = r && reqOutputComaVarProjection(b, l + 1);
+    r = r && consumeToken(b, I_PAREN_RIGHT);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
   /* ********************************************************** */
-  // reqOutputComaKeysProjection '(' reqOutputComaVarProjection ')'
+  // reqOutputComaKeysProjection ( '(' reqOutputComaVarProjection ')' )?
   public static boolean reqOutputComaMapModelProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqOutputComaMapModelProjection")) return false;
     if (!nextTokenIs(b, "<req output coma map model projection>", I_PLUS, I_BRACKET_LEFT)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, I_REQ_OUTPUT_COMA_MAP_MODEL_PROJECTION, "<req output coma map model projection>");
     r = reqOutputComaKeysProjection(b, l + 1);
-    r = r && consumeToken(b, I_PAREN_LEFT);
+    r = r && reqOutputComaMapModelProjection_1(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // ( '(' reqOutputComaVarProjection ')' )?
+  private static boolean reqOutputComaMapModelProjection_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqOutputComaMapModelProjection_1")) return false;
+    reqOutputComaMapModelProjection_1_0(b, l + 1);
+    return true;
+  }
+
+  // '(' reqOutputComaVarProjection ')'
+  private static boolean reqOutputComaMapModelProjection_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqOutputComaMapModelProjection_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, I_PAREN_LEFT);
     r = r && reqOutputComaVarProjection(b, l + 1);
     r = r && consumeToken(b, I_PAREN_RIGHT);
-    exit_section_(b, l, m, r, false, null);
+    exit_section_(b, m, null, r);
     return r;
   }
 

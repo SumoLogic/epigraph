@@ -48,7 +48,7 @@ public class HttpServerTest {
       "resource users : map[epigraph.String,io.epigraph.tests.Person] {",
       "  READ {",
       "    ; authToken : epigraph.String",
-      "    output [required]( :record (id, firstName) )",
+      "    output [required]( :+record (+id, firstName) )",
       "  }",
       "}"
   );

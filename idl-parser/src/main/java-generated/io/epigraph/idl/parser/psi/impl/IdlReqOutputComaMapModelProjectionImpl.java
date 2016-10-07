@@ -33,21 +33,21 @@ public class IdlReqOutputComaMapModelProjectionImpl extends ASTWrapperPsiElement
   }
 
   @Override
-  @NotNull
+  @Nullable
   public IdlReqOutputComaVarProjection getReqOutputComaVarProjection() {
-    return findNotNullChildByClass(IdlReqOutputComaVarProjection.class);
+    return findChildByClass(IdlReqOutputComaVarProjection.class);
   }
 
   @Override
-  @NotNull
+  @Nullable
   public PsiElement getParenLeft() {
-    return findNotNullChildByType(I_PAREN_LEFT);
+    return findChildByType(I_PAREN_LEFT);
   }
 
   @Override
-  @NotNull
+  @Nullable
   public PsiElement getParenRight() {
-    return findNotNullChildByType(I_PAREN_RIGHT);
+    return findChildByType(I_PAREN_RIGHT);
   }
 
 }

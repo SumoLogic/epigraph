@@ -14,6 +14,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -72,7 +73,7 @@ public class ProjectionPsiParserUtil {
     Type.Tag tag = type.tagsMap().get(tagName);
     if (tag == null)
       throw new PsiProcessingException(
-          String.format("Can't find tag '%s' in '%s'", tagName, type.name()),
+          String.format("Unknown tag '%s' in type '%s', known tags: {%s}", tagName, type.name(), listTags(type)),
           location
       );
     return tag;
@@ -81,17 +82,24 @@ public class ProjectionPsiParserUtil {
   public static void verifyTag(@NotNull Type type, @NotNull Type.Tag tag, @NotNull PsiElement location)
       throws PsiProcessingException {
     if (!type.tags().contains(tag))
-      throw new PsiProcessingException(String.format("Tag '%s' doesn't belong to type '%s'",
-                                                     tag.name(),
-                                                     type.name()
-      ), location);
+      throw new PsiProcessingException(
+          String.format("Tag '%s' doesn't belong to type '%s', known tags: {%s}",
+                        tag.name(),
+                        type.name(),
+                        listTags(type)
+          ), location);
+  }
+
+  private static String listTags(@NotNull Type type) {
+    return type.tags().stream().map(Type.Tag::name).collect(Collectors.joining(", "));
   }
 
   @NotNull
   public static Type getType(@NotNull TypeRef typeRef, @NotNull TypesResolver resolver, @NotNull PsiElement location)
       throws PsiProcessingException {
     @Nullable Type type = typeRef.resolve(resolver);
-    if (type == null) throw new PsiProcessingException(String.format("Can't find type '%s'", typeRef.toString()), location);
+    if (type == null)
+      throw new PsiProcessingException(String.format("Can't find type '%s'", typeRef.toString()), location);
     return type;
   }
 
