@@ -88,7 +88,7 @@ public class HttpServerTest {
       public CompletableFuture<ReadOperationResponse> process(@NotNull ReadOperationRequest request) {
         String_Person_Map.Imm imm = String_Person_Map
             .create()
-            .put_(epigraph.String.create("1").toImmutable(), Person
+            .put$(epigraph.String.create("1").toImmutable(), Person
                 .create()
                 .setId(PersonId.create(1))
                 .setRecord(
@@ -98,7 +98,7 @@ public class HttpServerTest {
                         .setFirstName(epigraph.String.create("Alfred"))
                 )
             )
-            .put_(epigraph.String.create("2").toImmutable(), Person
+            .put$(epigraph.String.create("2").toImmutable(), Person
                 .create()
                 .setId(PersonId.create(2))
                 .setRecord(
@@ -108,10 +108,10 @@ public class HttpServerTest {
                         .setFirstName(epigraph.String.create("Bruce"))
                 )
             )
-            .put_(epigraph.String.create("3").toImmutable(), Person
+            .put$(epigraph.String.create("3").toImmutable(), Person
                 .create()
                 .setId(PersonId.create(3))
-                .setRecord$Error(
+                .setRecord_Error(
                     new ErrorValue(402, new Exception("Payment required to fetch user data"))
                 )
             )
