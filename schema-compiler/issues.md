@@ -2,7 +2,7 @@
 
 - [x] lowerCamelCase type names should trigger errors
 
-- [ ] UpperCamelCase namespace names should trigger errors
+- [x] UpperCamelCase namespace names should trigger errors
 
 - [ ] References to var types in tag declarations should trigger errors
 

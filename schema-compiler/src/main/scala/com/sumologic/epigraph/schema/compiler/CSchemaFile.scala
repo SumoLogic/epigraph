@@ -4,6 +4,7 @@ package com.sumologic.epigraph.schema.compiler
 
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.function.BiFunction
+import java.util.regex.Pattern
 
 import com.intellij.psi.PsiElement
 import io.epigraph.lang.Qn
@@ -25,7 +26,7 @@ class CSchemaFile(val psi: SchemaFile)(implicit val ctx: CContext) {
   @ThreadSafe
   val dataTypes: ConcurrentLinkedQueue[CDataType] = new java.util.concurrent.ConcurrentLinkedQueue
 
-  val namespace: CNamespace = new CNamespace(psi.getNamespaceDecl)
+  val namespace: CNamespace = new CNamespace(this, psi.getNamespaceDecl)
 
   val imports: Map[String, CImport] = psi.getImportStatements.map(new CImport(_)).map { ci =>
     (ci.alias, ci)
@@ -65,11 +66,11 @@ class CSchemaFile(val psi: SchemaFile)(implicit val ctx: CContext) {
 
 }
 
-class CNamespace(val psi: SchemaNamespaceDecl)(implicit val ctx: CContext) {
+class CNamespace(val csf: CSchemaFile, val psi: SchemaNamespaceDecl)(implicit val ctx: CContext) {
 
   val fqn: Qn = psi.getFqn
 
-  val local: String = fqn.last()
+  val local: String = validate(fqn.last())
 
   @Nullable val parent: String = if (fqn.size == 1) null else fqn.removeLastSegment().toString
 
@@ -77,9 +78,18 @@ class CNamespace(val psi: SchemaNamespaceDecl)(implicit val ctx: CContext) {
 
   ctx.namespaces.merge(fqn.toString, this, CNamespace.MergeFunction)
 
+  private def validate(local: String)(implicit ctx: CContext): String = {
+    if (!CNamespace.LocalNamespaceNamePattern.matcher(local).matches) ctx.errors.add(
+      CError(csf.filename, csf.position(psi), s"Invalid namespace name '$local'")
+    )
+    local
+  }
+
 }
 
 object CNamespace {
+
+  val LocalNamespaceNamePattern: Pattern = """\p{Lower}\p{Alnum}*""".r.pattern
 
   val MergeFunction: BiFunction[CNamespace, CNamespace, CNamespace] =
     new BiFunction[CNamespace, CNamespace, CNamespace] {
