@@ -127,6 +127,12 @@ public interface MapDatum extends Datum {
         @Override
         public @NotNull MyImmVal asValue() { return value; }
 
+        @Override
+        public final int hashCode() { return _raw().hashCode(); }
+
+        @Override
+        public final boolean equals(Object obj) { return _raw().equals(obj); }
+
       }
 
 
@@ -234,6 +240,12 @@ public interface MapDatum extends Datum {
 
       @Override
       public @NotNull MyBuilderVal asValue() { return value; }
+
+      @Override
+      public final int hashCode() { return _raw().hashCode(); }
+
+      @Override
+      public final boolean equals(Object obj) { return _raw().equals(obj); }
 
     }
 

@@ -127,17 +127,13 @@ public interface ListDatum extends Datum {
         @Override
         public @NotNull MyImmVal asValue() { return value; }
 
+        @Override
+        public final int hashCode() { return _raw().hashCode(); }
+
+        @Override
+        public final boolean equals(Object obj) { return _raw().equals(obj); }
+
       }
-
-
-//      interface Tagged extends ListDatum.Imm.Static {
-//
-//        @Override
-//        @NotNull ListDatum.Imm.Static.Tagged toImmutable();
-//
-//        @NotNull List<@Nullable ? extends Datum.Imm.Static> datums();
-//
-//      }
 
 
     }
@@ -252,129 +248,16 @@ public interface ListDatum extends Datum {
       @Override
       public @NotNull MyBuilderVal asValue() { return value; }
 
+      @Override
+      public final int hashCode() { return _raw().hashCode(); }
+
+      @Override
+      public final boolean equals(Object obj) { return _raw().equals(obj); }
+
     }
 
 
   }
-
-
-//  abstract class Mut extends ListDatum.Impl implements Datum.Mut { // TODO public?
-//
-//    protected Mut(@NotNull ListType type) { super(type); }
-//
-//    @Override
-//    public abstract @NotNull ListDatum.Mut.Raw _raw();
-//
-//
-//    public static final class Raw extends ListDatum.Mut implements ListDatum.Raw, Datum.Mut.Raw {
-//
-//      private final @NotNull List<Data.@NotNull Mut> elements = new DataList<>(type());
-//
-////      private @Nullable List<@NotNull ? extends Data.Mut> unmodifiableViewOfElements = null;
-//
-//      public Raw(ListType type) { super(type); }
-//
-//      @Override
-//      public @NotNull List<Data.@NotNull Mut> elements() { return elements; }
-//
-////      @Override
-////      public @NotNull List<@NotNull ? extends Data.Mut> elements() { // FIXME implement modifiable view of elements (YES!)?
-////        if (unmodifiableViewOfElements == null) unmodifiableViewOfElements = /*Unmodifiable.list(*/elements/*)*/;
-////        return unmodifiableViewOfElements;
-////      }
-//
-//      @Override
-//      public int size() { return elements.size(); }
-//
-//      // TODO add mut methods here
-//
-//      @Override
-//      public @NotNull ListDatum.Imm.Raw toImmutable() { return new ListDatum.Imm.Raw(type(), this); }
-//
-//      @Override
-//      public @NotNull ListDatum.Mut.Raw _raw() { return this; }
-//
-//
-//      private static class DataList<E extends Data.@NotNull Mut> extends AbstractList<E> implements RandomAccess {
-//
-//        private final @NotNull List<@NotNull E> list = new ArrayList<>();
-//
-//        private final ListType listType;
-//
-//        public DataList(@NotNull ListType listType) { this.listType = listType; }
-//
-//        @Override
-//        public E get(int index) { return list.get(index); }
-//
-//        @Override
-//        public int size() { return list.size(); }
-//
-//        @Override
-//        public E set(int index, E element) { return list.set(index, validate(element)); }
-//
-//        @Override
-//        public void add(int index, E element) { list.add(index, validate(element)); }
-//
-//        @Override
-//        public E remove(int index) { return list.remove(index); }
-//
-//        private E validate(E element) throws IllegalArgumentException {
-//          return listType.elementType.checkAssignable(element);
-//        }
-//
-//      }
-//
-//
-//    }
-//
-//
-//    public static abstract class Static<MyImmDatum extends ListDatum.Imm.Static> extends ListDatum.Mut
-//        implements ListDatum.Static, Datum.Mut.Static<MyImmDatum> {
-//
-//      private final @NotNull ListDatum.Mut.Raw raw;
-//
-//      private final @NotNull Function<ListDatum.Imm.Raw, MyImmDatum> immutableConstructor;
-//
-//      protected Static(
-//          @NotNull ListType type,
-//          @NotNull ListDatum.Mut.Raw raw,
-//          @NotNull Function<ListDatum.Imm.Raw, MyImmDatum> immutableConstructor
-//      ) {
-//        super(type); // TODO take static type separately?
-//        if (raw.type() != type) // TODO shared assertEqual(Type, Type): Type method
-//          throw new IllegalArgumentException( // TODO move mut and imm checks to shared static methods
-//              "Incompatible raw and static types (TODO details)"
-//          );
-//        this.raw = raw; // TODO validate raw data is kosher?
-//        this.immutableConstructor = immutableConstructor;
-//      }
-//
-//      @Override
-//      public int size() { return raw.size(); }
-//
-//      @Override
-//      public @NotNull MyImmDatum toImmutable() { return immutableConstructor.apply(_raw().toImmutable()); }
-//
-//      @Override
-//      public @NotNull ListDatum.Mut.Raw _raw() { return raw; }
-//
-//
-//      public static abstract class Tagged<MyImm extends ListDatum.Imm.Static.Tagged, MyDefault extends Datum.Mut.Static>
-//          extends ListDatum.Mut.Static<MyImm> implements ListDatum.Static.Tagged {
-//
-//        protected Tagged(
-//            @NotNull ListType type,
-//            @NotNull ListDatum.Mut.Raw raw,
-//            @NotNull Function<ListDatum.Imm.Raw, MyImm> immutableConstructor
-//        ) { super(type, raw, immutableConstructor); }
-//
-//      }
-//
-//
-//    }
-//
-//
-//  }
 
 
 }

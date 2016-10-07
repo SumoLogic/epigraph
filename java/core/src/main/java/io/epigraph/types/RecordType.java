@@ -135,9 +135,8 @@ public abstract class RecordType extends DatumType {
     }
 
     @Override
-    public int hashCode() {
-      return Objects.hash(name, dataType);
-    }
+    public int hashCode() { return Objects.hash(name, dataType); }
+
   }
 
 

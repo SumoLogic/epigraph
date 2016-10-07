@@ -116,6 +116,12 @@ public interface LongDatum extends PrimitiveDatum<Long> {
         @Override
         public @NotNull MyImmVal asValue() { return value; }
 
+        @Override
+        public final int hashCode() { return _raw().hashCode(); }
+
+        @Override
+        public final boolean equals(Object obj) { return _raw().equals(obj); }
+
       }
 
 
@@ -208,84 +214,16 @@ public interface LongDatum extends PrimitiveDatum<Long> {
       @Override
       public @NotNull MyBuilderVal asValue() { return value; }
 
+      @Override
+      public final int hashCode() { return _raw().hashCode(); }
+
+      @Override
+      public final boolean equals(Object obj) { return _raw().equals(obj); }
+
     }
 
 
   }
-
-
-//  abstract class Mut extends LongDatum.Impl implements PrimitiveDatum.Mut<Long> {
-//
-//    protected Mut(@NotNull LongType type) { super(type); }
-//
-//    public abstract void setVal(@NotNull Long val);
-//
-//    @Override
-//    public abstract @NotNull LongDatum.Mut.Raw _raw();
-//
-//
-//    public static final class Raw extends LongDatum.Mut implements LongDatum.Raw, PrimitiveDatum.Mut.Raw<Long> {
-//
-//      private @NotNull Long val;
-//
-//      public Raw(@NotNull LongType type, @NotNull Long val) {
-//        super(type);
-//        // TODO validate vs type validation rules (once available)
-//        this.val = /*this.val = type().validate*/(val);
-//      }
-//
-//      @Override
-//      public @NotNull Long getVal() { return val; }
-//
-//      @Override
-//      public void setVal(@NotNull Long val) {
-//        // TODO validate vs type validation rules (once available)
-//        this.val = /*this.val = type().validate*/(val);
-//      }
-//
-//      @Override
-//      public @NotNull LongDatum.Imm.Raw toImmutable() { return new LongDatum.Imm.Raw(type(), this); }
-//
-//      @Override
-//      public @NotNull LongDatum.Mut.Raw _raw() { return this; }
-//
-//    }
-//
-//
-//    public static abstract class Static<MyImmDatum extends LongDatum.Imm.Static> extends LongDatum.Mut
-//        implements LongDatum.Static, PrimitiveDatum.Mut.Static<Long, MyImmDatum> {
-//
-//      private final @NotNull LongDatum.Mut.Raw raw;
-//
-//      private final @NotNull Function<LongDatum.Imm.Raw, MyImmDatum> immDatumConstructor;
-//
-//      protected Static(
-//          @NotNull LongType.Static<MyImmDatum, ?, ?, ?, ?, ?> type,
-//          @NotNull LongDatum.Mut.Raw raw,
-//          @NotNull Function<LongDatum.Imm.Raw, MyImmDatum> immDatumConstructor
-//      ) {
-//        super(type);
-//        // TODO check type equality
-//        this.raw = raw;
-//        this.immDatumConstructor = immDatumConstructor;
-//      }
-//
-//      @Override
-//      public final @NotNull Long getVal() { return raw.getVal(); }
-//
-//      @Override
-//      public final void setVal(@NotNull Long val) { raw.setVal(val); }
-//
-//      @Override
-//      public final @NotNull MyImmDatum toImmutable() { return immDatumConstructor.apply(_raw().toImmutable()); }
-//
-//      @Override
-//      public final @NotNull LongDatum.Mut.Raw _raw() { return raw; }
-//
-//    }
-//
-//
-//  }
 
 
 }

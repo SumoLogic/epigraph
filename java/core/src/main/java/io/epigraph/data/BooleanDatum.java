@@ -115,6 +115,12 @@ public interface BooleanDatum extends PrimitiveDatum<Boolean> {
         @Override
         public @NotNull MyImmVal asValue() { return value; }
 
+        @Override
+        public final int hashCode() { return _raw().hashCode(); }
+
+        @Override
+        public final boolean equals(Object obj) { return _raw().equals(obj); }
+
       }
 
 
@@ -207,84 +213,16 @@ public interface BooleanDatum extends PrimitiveDatum<Boolean> {
       @Override
       public @NotNull MyBuilderVal asValue() { return value; }
 
+      @Override
+      public final int hashCode() { return _raw().hashCode(); }
+
+      @Override
+      public final boolean equals(Object obj) { return _raw().equals(obj); }
+
     }
 
 
   }
-
-
-//  abstract class Mut extends BooleanDatum.Impl implements PrimitiveDatum.Mut<Boolean> {
-//
-//    protected Mut(@NotNull BooleanType type) { super(type); }
-//
-//    public abstract void setVal(@NotNull Boolean val);
-//
-//    @Override
-//    public abstract @NotNull BooleanDatum.Mut.Raw _raw();
-//
-//
-//    public static final class Raw extends BooleanDatum.Mut implements BooleanDatum.Raw, PrimitiveDatum.Mut.Raw<Boolean> {
-//
-//      private @NotNull Boolean val;
-//
-//      public Raw(@NotNull BooleanType type, @NotNull Boolean val) {
-//        super(type);
-//        // TODO validate vs type validation rules (once available)
-//        this.val = /*this.val = type().validate*/(val);
-//      }
-//
-//      @Override
-//      public @NotNull Boolean getVal() { return val; }
-//
-//      @Override
-//      public void setVal(@NotNull Boolean val) {
-//        // TODO validate vs type validation rules (once available)
-//        this.val = /*this.val = type().validate*/(val);
-//      }
-//
-//      @Override
-//      public @NotNull BooleanDatum.Imm.Raw toImmutable() { return new BooleanDatum.Imm.Raw(type(), this); }
-//
-//      @Override
-//      public @NotNull BooleanDatum.Mut.Raw _raw() { return this; }
-//
-//    }
-//
-//
-//    public static abstract class Static<MyImmDatum extends BooleanDatum.Imm.Static> extends BooleanDatum.Mut
-//        implements BooleanDatum.Static, PrimitiveDatum.Mut.Static<Boolean, MyImmDatum> {
-//
-//      private final @NotNull BooleanDatum.Mut.Raw raw;
-//
-//      private final @NotNull Function<BooleanDatum.Imm.Raw, MyImmDatum> immDatumConstructor;
-//
-//      protected Static(
-//          @NotNull BooleanType.Static<MyImmDatum, ?, ?, ?, ?, ?> type,
-//          @NotNull BooleanDatum.Mut.Raw raw,
-//          @NotNull Function<BooleanDatum.Imm.Raw, MyImmDatum> immDatumConstructor
-//      ) {
-//        super(type);
-//        // TODO check type equality
-//        this.raw = raw;
-//        this.immDatumConstructor = immDatumConstructor;
-//      }
-//
-//      @Override
-//      public final @NotNull Boolean getVal() { return raw.getVal(); }
-//
-//      @Override
-//      public final void setVal(@NotNull Boolean val) { raw.setVal(val); }
-//
-//      @Override
-//      public final @NotNull MyImmDatum toImmutable() { return immDatumConstructor.apply(_raw().toImmutable()); }
-//
-//      @Override
-//      public final @NotNull BooleanDatum.Mut.Raw _raw() { return raw; }
-//
-//    }
-//
-//
-//  }
 
 
 }

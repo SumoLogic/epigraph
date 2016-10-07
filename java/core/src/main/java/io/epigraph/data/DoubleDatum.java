@@ -116,6 +116,12 @@ public interface DoubleDatum extends PrimitiveDatum<Double> {
         @Override
         public @NotNull MyImmVal asValue() { return value; }
 
+        @Override
+        public final int hashCode() { return _raw().hashCode(); }
+
+        @Override
+        public final boolean equals(Object obj) { return _raw().equals(obj); }
+
       }
 
 
@@ -208,84 +214,16 @@ public interface DoubleDatum extends PrimitiveDatum<Double> {
       @Override
       public @NotNull MyBuilderVal asValue() { return value; }
 
+      @Override
+      public final int hashCode() { return _raw().hashCode(); }
+
+      @Override
+      public final boolean equals(Object obj) { return _raw().equals(obj); }
+
     }
 
 
   }
-
-
-//  abstract class Mut extends DoubleDatum.Impl implements PrimitiveDatum.Mut<Double> {
-//
-//    protected Mut(@NotNull DoubleType type) { super(type); }
-//
-//    public abstract void setVal(@NotNull Double val);
-//
-//    @Override
-//    public abstract @NotNull DoubleDatum.Mut.Raw _raw();
-//
-//
-//    public static final class Raw extends DoubleDatum.Mut implements DoubleDatum.Raw, PrimitiveDatum.Mut.Raw<Double> {
-//
-//      private @NotNull Double val;
-//
-//      public Raw(@NotNull DoubleType type, @NotNull Double val) {
-//        super(type);
-//        // TODO validate vs type validation rules (once available)
-//        this.val = /*this.val = type().validate*/(val);
-//      }
-//
-//      @Override
-//      public @NotNull Double getVal() { return val; }
-//
-//      @Override
-//      public void setVal(@NotNull Double val) {
-//        // TODO validate vs type validation rules (once available)
-//        this.val = /*this.val = type().validate*/(val);
-//      }
-//
-//      @Override
-//      public @NotNull DoubleDatum.Imm.Raw toImmutable() { return new DoubleDatum.Imm.Raw(type(), this); }
-//
-//      @Override
-//      public @NotNull DoubleDatum.Mut.Raw _raw() { return this; }
-//
-//    }
-//
-//
-//    public static abstract class Static<MyImmDatum extends DoubleDatum.Imm.Static> extends DoubleDatum.Mut
-//        implements DoubleDatum.Static, PrimitiveDatum.Mut.Static<Double, MyImmDatum> {
-//
-//      private final @NotNull DoubleDatum.Mut.Raw raw;
-//
-//      private final @NotNull Function<DoubleDatum.Imm.Raw, MyImmDatum> immDatumConstructor;
-//
-//      protected Static(
-//          @NotNull DoubleType.Static<MyImmDatum, ?, ?, ?, ?, ?> type,
-//          @NotNull DoubleDatum.Mut.Raw raw,
-//          @NotNull Function<DoubleDatum.Imm.Raw, MyImmDatum> immDatumConstructor
-//      ) {
-//        super(type);
-//        // TODO check type equality
-//        this.raw = raw;
-//        this.immDatumConstructor = immDatumConstructor;
-//      }
-//
-//      @Override
-//      public final @NotNull Double getVal() { return raw.getVal(); }
-//
-//      @Override
-//      public final void setVal(@NotNull Double val) { raw.setVal(val); }
-//
-//      @Override
-//      public final @NotNull MyImmDatum toImmutable() { return immDatumConstructor.apply(_raw().toImmutable()); }
-//
-//      @Override
-//      public final @NotNull DoubleDatum.Mut.Raw _raw() { return raw; }
-//
-//    }
-//
-//
-//  }
 
 
 }

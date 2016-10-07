@@ -3,7 +3,6 @@
 package io.epigraph.data;
 
 import io.epigraph.errors.ErrorValue;
-import io.epigraph.types.DatumType;
 import io.epigraph.types.RecordType;
 import io.epigraph.types.RecordType.Field;
 import io.epigraph.types.Type.Tag;
@@ -78,7 +77,7 @@ public interface RecordDatum extends Datum {
 
       public Raw(@NotNull RecordDatum.Builder.Raw builder) {
         super(builder.type());
-        fieldsData = Unmodifiable.map(builder.fieldsData(), k->k, Data::toImmutable);
+        fieldsData = Unmodifiable.map(builder.fieldsData(), k -> k, Data::toImmutable);
       }
 
       @Override
@@ -153,6 +152,12 @@ public interface RecordDatum extends Datum {
         @Override
         public @NotNull MyImmVal asValue() { return value; }
 
+        @Override
+        public final int hashCode() { return _raw().hashCode(); }
+
+        @Override
+        public final boolean equals(Object obj) { return _raw().equals(obj); }
+
       }
 
 
@@ -213,26 +218,14 @@ public interface RecordDatum extends Datum {
         return data == null ? null : data._raw().getError(tag);
       }
 
-      public void set(@NotNull Field field, @NotNull Tag tag, @Nullable Val value) {
-        // FIXME
-      }
-
+      // TODO parameterize with mut data type (final raw or static)?
       public void setData(@NotNull Field field, @Nullable Data data) {
         if (data == null) {
           fieldsData.remove(type().assertWritable(field).name());
         } else {
           // TODO check data is compatible with effective field
-          fieldsData.put(
-              type().assertWritable(field).name(),
-              data
-          ); // TODO parameterize with mut data type (final raw or static)?
+          fieldsData.put(type().assertWritable(field).name(), data);
         }
-      }
-
-      public @NotNull Data getOrCreateFieldData(@NotNull Field field) {
-        Data data = getData(field);
-        if (data == null) setData(field, data = field.type.createDataBuilder());
-        return data;
       }
 
     }
@@ -272,111 +265,16 @@ public interface RecordDatum extends Datum {
       @Override
       public @NotNull MyBuilderVal asValue() { return value; }
 
+      @Override
+      public final int hashCode() { return _raw().hashCode(); }
+
+      @Override
+      public final boolean equals(Object obj) { return _raw().equals(obj); }
+
     }
 
 
   }
-
-//  abstract class Mut extends RecordDatum.Impl implements Datum.Mut {
-//
-//    protected Mut(@NotNull RecordType type) { super(type); }
-//
-//    @Override
-//    public abstract @NotNull RecordDatum.Mut.Raw _raw();
-//
-//
-//    public static final class Raw extends RecordDatum.Mut implements RecordDatum.Raw, Datum.Mut.Raw {
-//
-//      private final Map<String, Data.Mut> fieldsData = new HashMap<>();
-//
-//      public Raw(@NotNull RecordType type) { super(type); }
-//
-//      @Override
-//      public @NotNull RecordDatum.Imm.Raw toImmutable() { return new RecordDatum.Imm.Raw(type(), this); }
-//
-//      @Override
-//      public @NotNull RecordDatum.Mut.Raw _raw() { return this; }
-//
-//      @Override
-//      public @NotNull Map<String, ? extends Data.Mut> fieldsData() { return fieldsData; }
-//
-//      @Override
-//      public @Nullable Data.Mut getData(@NotNull Field field) {
-//        return fieldsData().get(type().assertReadable(field).name());
-//      }
-//
-//      @Override
-//      public @Nullable Val.Mut getValue(@NotNull Field field, @NotNull Tag tag) {
-//        Data.Mut data = getData(field);
-//        return data == null ? null : data._raw().getValue(tag);
-//      }
-//
-//      @Override
-//      public @Nullable Datum getDatum(@NotNull Field field, @NotNull Tag tag) {
-//        Data.Mut data = getData(field);
-//        return data == null ? null : data._raw().getDatum(tag);
-//      }
-//
-//      @Override
-//      public @Nullable ErrorValue getError(@NotNull Field field, @NotNull Tag tag) {
-//        Data.Mut data = getData(field);
-//        return data == null ? null : data._raw().getError(tag);
-//      }
-//
-//      public void set(@NotNull Field field, @NotNull Tag tag, @Nullable Val value) {
-//        // FIXME
-//      }
-//
-//      // TODO allow Data (auto-convert to Data.Mut)?
-//      public void setData(@NotNull Field field, @Nullable Data.Mut data) {
-//        if (data == null) {
-//          fieldsData.remove(type().assertWritable(field).name());
-//        } else {
-//          // TODO check data is compatible with effective field
-//          fieldsData.put(
-//              type().assertWritable(field).name(),
-//              data
-//          ); // TODO parameterize with mut data type (final raw or static)?
-//        }
-//      }
-//
-//      public @NotNull Data.Mut getOrCreateFieldData(@NotNull Field field) {
-//        Data.Mut data = getData(field);
-//        if (data == null) setData(field, data = field.type.createMutableData());
-//        return data;
-//      }
-//    }
-//
-//
-//    // base for generated mutable record impl classes
-//    public static abstract class Static<MyImmDatum extends RecordDatum.Imm.Static> extends RecordDatum.Mut
-//        implements RecordDatum.Static, Datum.Mut.Static<MyImmDatum> {
-//
-//      private final RecordDatum.Mut.Raw raw;
-//
-//      private final @NotNull Function<RecordDatum.Imm.Raw, MyImmDatum> immDatumConstructor;
-//
-//      protected Static(
-//          @NotNull RecordType.Static<MyImmDatum, ?, ?, ?, ?, ?> type,
-//          @NotNull RecordDatum.Mut.Raw raw,
-//          @NotNull Function<RecordDatum.Imm.Raw, MyImmDatum> immDatumConstructor
-//      ) {
-//        super(type);
-//        if (raw.type() != type) throw new IllegalArgumentException("Raw type doesn't match static type (TODO details)");
-//        this.raw = raw;
-//        this.immDatumConstructor = immDatumConstructor;
-//      }
-//
-//      @Override
-//      public final @NotNull MyImmDatum toImmutable() { return immDatumConstructor.apply(_raw().toImmutable()); }
-//
-//      @Override
-//      public final @NotNull RecordDatum.Mut.Raw _raw() { return raw; }
-//
-//    }
-//
-//
-//  }
 
 
 }

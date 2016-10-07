@@ -128,10 +128,10 @@ public interface StringDatum extends PrimitiveDatum<String> {
         public @NotNull MyImmVal asValue() { return value; }
 
         @Override
-        public int hashCode() { return _raw().hashCode(); }
+        public final int hashCode() { return _raw().hashCode(); }
 
         @Override
-        public boolean equals(Object obj) { return _raw().equals(obj); }
+        public final boolean equals(Object obj) { return _raw().equals(obj); }
 
       }
 
@@ -226,84 +226,16 @@ public interface StringDatum extends PrimitiveDatum<String> {
       @Override
       public @NotNull MyBuilderVal asValue() { return value; }
 
+      @Override
+      public final int hashCode() { return _raw().hashCode(); }
+
+      @Override
+      public final boolean equals(Object obj) { return _raw().equals(obj); }
+
     }
 
 
   }
-
-
-//  abstract class Mut extends StringDatum.Impl implements PrimitiveDatum.Mut<String> {
-//
-//    protected Mut(@NotNull StringType type) { super(type); }
-//
-//    public abstract void setVal(@NotNull String val);
-//
-//    @Override
-//    public abstract @NotNull StringDatum.Mut.Raw _raw();
-//
-//
-//    public static final class Raw extends StringDatum.Mut implements StringDatum.Raw, PrimitiveDatum.Mut.Raw<String> {
-//
-//      private @NotNull String val;
-//
-//      public Raw(@NotNull StringType type, @NotNull String val) {
-//        super(type);
-//        // TODO validate vs type validation rules (once available)
-//        this.val = /*this.val = type().validate*/(val);
-//      }
-//
-//      @Override
-//      public @NotNull String getVal() { return val; }
-//
-//      @Override
-//      public void setVal(@NotNull String val) {
-//        // TODO validate vs type validation rules (once available)
-//        this.val = /*this.val = type().validate*/(val);
-//      }
-//
-//      @Override
-//      public @NotNull StringDatum.Imm.Raw toImmutable() { return new StringDatum.Imm.Raw(type(), this); }
-//
-//      @Override
-//      public @NotNull StringDatum.Mut.Raw _raw() { return this; }
-//
-//    }
-//
-//
-//    public static abstract class Static<MyImmDatum extends StringDatum.Imm.Static> extends StringDatum.Mut
-//        implements StringDatum.Static, PrimitiveDatum.Mut.Static<String, MyImmDatum> {
-//
-//      private final @NotNull StringDatum.Mut.Raw raw;
-//
-//      private final @NotNull Function<StringDatum.Imm.Raw, MyImmDatum> immDatumConstructor;
-//
-//      protected Static(
-//          @NotNull StringType.Static<MyImmDatum, ?, ?, ?, ?, ?> type,
-//          @NotNull StringDatum.Mut.Raw raw,
-//          @NotNull Function<StringDatum.Imm.Raw, MyImmDatum> immDatumConstructor
-//      ) {
-//        super(type);
-//        // TODO check type equality
-//        this.raw = raw;
-//        this.immDatumConstructor = immDatumConstructor;
-//      }
-//
-//      @Override
-//      public final @NotNull String getVal() { return raw.getVal(); }
-//
-//      @Override
-//      public final void setVal(@NotNull String val) { raw.setVal(val); }
-//
-//      @Override
-//      public final @NotNull MyImmDatum toImmutable() { return immDatumConstructor.apply(_raw().toImmutable()); }
-//
-//      @Override
-//      public final @NotNull StringDatum.Mut.Raw _raw() { return raw; }
-//
-//    }
-//
-//
-//  }
 
 
 }
