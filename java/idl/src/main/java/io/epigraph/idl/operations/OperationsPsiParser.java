@@ -27,7 +27,7 @@ import java.util.Map;
  */
 public class OperationsPsiParser {
   @NotNull
-  public static Operation parseOperation(
+  public static OperationIdl parseOperation(
       @NotNull DataType type,
       @NotNull IdlOperationDef psi,
       @NotNull TypesResolver resolver) throws PsiProcessingException {
@@ -48,7 +48,7 @@ public class OperationsPsiParser {
   }
 
   @NotNull
-  private static ReadOperation parseRead(
+  private static ReadOperationIdl parseRead(
       @NotNull DataType type,
       @NotNull IdlReadOperationDef psi,
       @NotNull TypesResolver resolver) throws PsiProcessingException {
@@ -67,7 +67,7 @@ public class OperationsPsiParser {
     if (outputProjection == null)
       throw new PsiProcessingException("Output projection must be specified", psi);
 
-    return new ReadOperation(
+    return new ReadOperationIdl(
         parseOperationName(psi.getOperationName()),
         params == null ? null : new OpParams(params),
         annotations == null ? null : new Annotations(annotations),
@@ -77,7 +77,7 @@ public class OperationsPsiParser {
   }
 
   @NotNull
-  private static CreateOperation parseCreate(
+  private static CreateOperationIdl parseCreate(
       @NotNull DataType type,
       @NotNull IdlCreateOperationDef psi,
       @NotNull TypesResolver resolver) throws PsiProcessingException {
@@ -101,7 +101,7 @@ public class OperationsPsiParser {
     if (outputProjection == null)
       throw new PsiProcessingException("Output projection must be specified", psi);
 
-    return new CreateOperation(
+    return new CreateOperationIdl(
         parseOperationName(psi.getOperationName()),
         params == null ? null : new OpParams(params),
         annotations == null ? null : new Annotations(annotations),
@@ -112,7 +112,7 @@ public class OperationsPsiParser {
   }
 
   @NotNull
-  private static UpdateOperation parseUpdate(
+  private static UpdateOperationIdl parseUpdate(
       @NotNull DataType type,
       @NotNull IdlUpdateOperationDef psi,
       @NotNull TypesResolver resolver) throws PsiProcessingException {
@@ -136,7 +136,7 @@ public class OperationsPsiParser {
     if (outputProjection == null)
       throw new PsiProcessingException("Output projection must be specified", psi);
 
-    return new UpdateOperation(
+    return new UpdateOperationIdl(
         parseOperationName(psi.getOperationName()),
         params == null ? null : new OpParams(params),
         annotations == null ? null : new Annotations(annotations),
@@ -147,7 +147,7 @@ public class OperationsPsiParser {
   }
 
   @NotNull
-  private static CustomOperation parseCustom(
+  private static CustomOperationIdl parseCustom(
       @NotNull DataType type,
       @NotNull IdlCustomOperationDef psi,
       @NotNull TypesResolver resolver) throws PsiProcessingException {
@@ -171,7 +171,7 @@ public class OperationsPsiParser {
     if (outputProjection == null)
       throw new PsiProcessingException("Output projection must be specified", psi);
 
-    return new CustomOperation(
+    return new CustomOperationIdl(
         psi.getQid().getCanonicalName(),
         params == null ? null : new OpParams(params),
         annotations == null ? null : new Annotations(annotations),

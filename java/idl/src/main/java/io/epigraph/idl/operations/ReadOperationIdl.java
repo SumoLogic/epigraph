@@ -10,12 +10,12 @@ import org.jetbrains.annotations.Nullable;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class ReadOperation extends Operation {
-  protected ReadOperation(@Nullable String name,
-                          @Nullable OpParams params,
-                          @Nullable Annotations annotations,
-                          @NotNull OpOutputVarProjection outputProjection,
-                          @NotNull TextLocation location) {
+public class ReadOperationIdl extends OperationIdl {
+  protected ReadOperationIdl(@Nullable String name,
+                             @Nullable OpParams params,
+                             @Nullable Annotations annotations,
+                             @NotNull OpOutputVarProjection outputProjection,
+                             @NotNull TextLocation location) {
     super(OperationType.READ, name, params, annotations, outputProjection, location);
   }
 }

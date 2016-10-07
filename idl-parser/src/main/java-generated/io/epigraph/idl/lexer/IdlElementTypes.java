@@ -96,6 +96,7 @@ public interface IdlElementTypes {
   IElementType I_REQ_OUTPUT_COMA_SINGLE_TAG_PROJECTION = new IdlElementType("I_REQ_OUTPUT_COMA_SINGLE_TAG_PROJECTION");
   IElementType I_REQ_OUTPUT_COMA_VAR_PROJECTION = new IdlElementType("I_REQ_OUTPUT_COMA_VAR_PROJECTION");
   IElementType I_REQ_OUTPUT_MODEL_META = new IdlElementType("I_REQ_OUTPUT_MODEL_META");
+  IElementType I_REQ_OUTPUT_TRUNK_FIELD_PROJECTION = new IdlElementType("I_REQ_OUTPUT_TRUNK_FIELD_PROJECTION");
   IElementType I_REQ_OUTPUT_TRUNK_MAP_MODEL_PROJECTION = new IdlElementType("I_REQ_OUTPUT_TRUNK_MAP_MODEL_PROJECTION");
   IElementType I_REQ_OUTPUT_TRUNK_MODEL_PROJECTION = new IdlElementType("I_REQ_OUTPUT_TRUNK_MODEL_PROJECTION");
   IElementType I_REQ_OUTPUT_TRUNK_RECORD_MODEL_PROJECTION = new IdlElementType("I_REQ_OUTPUT_TRUNK_RECORD_MODEL_PROJECTION");
@@ -426,6 +427,9 @@ public interface IdlElementTypes {
       }
       else if (type == I_REQ_OUTPUT_MODEL_META) {
         return new IdlReqOutputModelMetaImpl(node);
+      }
+      else if (type == I_REQ_OUTPUT_TRUNK_FIELD_PROJECTION) {
+        return new IdlReqOutputTrunkFieldProjectionImpl(node);
       }
       else if (type == I_REQ_OUTPUT_TRUNK_MAP_MODEL_PROJECTION) {
         return new IdlReqOutputTrunkMapModelProjectionImpl(node);

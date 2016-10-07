@@ -24,6 +24,8 @@ Map<String, String> modules = [
     'java/gdata'                           : 'epigraph-java-gdata',
     'java/idl'                             : 'epigraph-java-idl',
     'java/projections'                     : 'epigraph-java-projections',
+    'java/server'                          : 'epigraph-java-server',
+    'java/service'                         : 'epigraph-java-service',
     'java/util'                            : 'epigraph-java-util',
     'lang-common'                          : 'epigraph-lang-common',
     'light-psi'                            : 'epigraph-light-psi',

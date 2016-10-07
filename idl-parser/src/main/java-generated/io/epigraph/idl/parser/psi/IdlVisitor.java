@@ -359,6 +359,10 @@ public class IdlVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitReqOutputTrunkFieldProjection(@NotNull IdlReqOutputTrunkFieldProjection o) {
+    visitPsiElement(o);
+  }
+
   public void visitReqOutputTrunkMapModelProjection(@NotNull IdlReqOutputTrunkMapModelProjection o) {
     visitPsiElement(o);
   }

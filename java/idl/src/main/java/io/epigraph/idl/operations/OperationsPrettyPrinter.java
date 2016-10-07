@@ -26,7 +26,7 @@ public class OperationsPrettyPrinter<E extends Exception> {
     opInputPrinter = new OpInputProjectionsPrettyPrinter<>(l);
   }
 
-  public void printOperation(@NotNull Operation operation) throws E {
+  public void printOperation(@NotNull OperationIdl operation) throws E {
     l.beginIInd(0);
 
     if (!operation.isDefault())
@@ -51,12 +51,12 @@ public class OperationsPrettyPrinter<E extends Exception> {
     l.end();
   }
 
-  private boolean printInput(@NotNull Operation operation, boolean first) throws E {
+  private boolean printInput(@NotNull OperationIdl operation, boolean first) throws E {
     StepsAndProjection<OpInputVarProjection> projection = null;
 
-    if (operation instanceof CreateOperation) projection = ((CreateOperation) operation).inputProjection();
-    if (operation instanceof UpdateOperation) projection = ((UpdateOperation) operation).updateProjection();
-    if (operation instanceof CustomOperation) projection = ((CustomOperation) operation).inputProjection();
+    if (operation instanceof CreateOperationIdl) projection = ((CreateOperationIdl) operation).inputProjection();
+    if (operation instanceof UpdateOperationIdl) projection = ((UpdateOperationIdl) operation).updateProjection();
+    if (operation instanceof CustomOperationIdl) projection = ((CustomOperationIdl) operation).inputProjection();
 
     if (projection != null) {
       if (first) first = false;
@@ -71,7 +71,7 @@ public class OperationsPrettyPrinter<E extends Exception> {
     return first;
   }
 
-  private boolean printOutput(@NotNull Operation operation, boolean first) throws E {
+  private boolean printOutput(@NotNull OperationIdl operation, boolean first) throws E {
     if (first) first = false;
     else l.print(",").brk();
 

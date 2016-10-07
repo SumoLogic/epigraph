@@ -350,8 +350,8 @@ reqOutputTrunkModelProjection ::= ( reqOutputTrunkRecordModelProjection
   extends = reqOutputComaModelProjection
 }
 
-reqOutputTrunkRecordModelProjection ::= '/' reqOutputTrunkFieldProjection
-private reqOutputTrunkFieldProjection ::= '+'? qid reqParamsAndAnnotations reqOutputTrunkVarProjection {pin=2}
+reqOutputTrunkRecordModelProjection ::= '/' '+'? qid reqOutputTrunkFieldProjection {pin=3}
+reqOutputTrunkFieldProjection ::= reqParamsAndAnnotations reqOutputTrunkVarProjection
 
 reqOutputTrunkMapModelProjection ::= '/' reqOutputTrunkKeyProjection
 private reqOutputTrunkKeyProjection ::= '+'? datum reqParamsAndAnnotations reqOutputTrunkVarProjection {pin=2}

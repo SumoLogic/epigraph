@@ -287,6 +287,9 @@ public class IdlParser implements PsiParser, LightPsiParser {
     else if (t == I_REQ_OUTPUT_MODEL_META) {
       r = reqOutputModelMeta(b, 0);
     }
+    else if (t == I_REQ_OUTPUT_TRUNK_FIELD_PROJECTION) {
+      r = reqOutputTrunkFieldProjection(b, 0);
+    }
     else if (t == I_REQ_OUTPUT_TRUNK_MAP_MODEL_PROJECTION) {
       r = reqOutputTrunkMapModelProjection(b, 0);
     }
@@ -3388,26 +3391,15 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '+'? qid reqParamsAndAnnotations reqOutputTrunkVarProjection
-  static boolean reqOutputTrunkFieldProjection(PsiBuilder b, int l) {
+  // reqParamsAndAnnotations reqOutputTrunkVarProjection
+  public static boolean reqOutputTrunkFieldProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqOutputTrunkFieldProjection")) return false;
-    if (!nextTokenIs(b, "", I_PLUS, I_ID)) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_);
-    r = reqOutputTrunkFieldProjection_0(b, l + 1);
-    r = r && qid(b, l + 1);
-    p = r; // pin = 2
-    r = r && report_error_(b, reqParamsAndAnnotations(b, l + 1));
-    r = p && reqOutputTrunkVarProjection(b, l + 1) && r;
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
-  }
-
-  // '+'?
-  private static boolean reqOutputTrunkFieldProjection_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputTrunkFieldProjection_0")) return false;
-    consumeToken(b, I_PLUS);
-    return true;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, I_REQ_OUTPUT_TRUNK_FIELD_PROJECTION, "<req output trunk field projection>");
+    r = reqParamsAndAnnotations(b, l + 1);
+    r = r && reqOutputTrunkVarProjection(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
   }
 
   /* ********************************************************** */
@@ -3479,16 +3471,26 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '/' reqOutputTrunkFieldProjection
+  // '/' '+'? qid reqOutputTrunkFieldProjection
   public static boolean reqOutputTrunkRecordModelProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqOutputTrunkRecordModelProjection")) return false;
     if (!nextTokenIs(b, I_SLASH)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, I_REQ_OUTPUT_TRUNK_RECORD_MODEL_PROJECTION, null);
     r = consumeToken(b, I_SLASH);
+    r = r && reqOutputTrunkRecordModelProjection_1(b, l + 1);
+    r = r && qid(b, l + 1);
+    p = r; // pin = 3
     r = r && reqOutputTrunkFieldProjection(b, l + 1);
-    exit_section_(b, m, I_REQ_OUTPUT_TRUNK_RECORD_MODEL_PROJECTION, r);
-    return r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // '+'?
+  private static boolean reqOutputTrunkRecordModelProjection_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqOutputTrunkRecordModelProjection_1")) return false;
+    consumeToken(b, I_PLUS);
+    return true;
   }
 
   /* ********************************************************** */

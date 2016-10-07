@@ -62,7 +62,7 @@ public class ReqOutputProjectionsPsiParser {
             String.format(
                 "Unsupported tag '%s', supported tags: {%s}",
                 tag.name(),
-                op.tagProjections().entrySet().stream().map(e -> e.getKey().name()).collect(Collectors.joining(", "))
+                listTags(op)
             ),
             singleTagProjectionPsi
         );
@@ -107,6 +107,9 @@ public class ReqOutputProjectionsPsiParser {
     );
   }
 
+  private static String listTags(@NotNull OpOutputVarProjection op) {return op.tagProjections().entrySet().stream().map(e -> e.getKey().name()).collect(
+      Collectors.joining(", "));}
+
   public static StepsAndProjection<ReqOutputVarProjection> parseComaVarProjection(
       @NotNull DataType dataType,
       @NotNull OpOutputVarProjection op,
@@ -129,7 +132,14 @@ public class ReqOutputProjectionsPsiParser {
 
       @Nullable OpOutputTagProjection opTagProjection = op.tagProjection(tag);
       if (opTagProjection == null)
-        throw new PsiProcessingException(String.format("Unsupported tag '%s'", tag.name()), singleTagProjectionPsi);
+        throw new PsiProcessingException(
+            String.format(
+                "Unsupported tag '%s', supported tags: {%s}",
+                tag.name(),
+                listTags(op)
+            ),
+            singleTagProjectionPsi
+        );
 
       @NotNull OpOutputModelProjection<?> opModelProjection = opTagProjection.projection();
 
@@ -192,7 +202,14 @@ public class ReqOutputProjectionsPsiParser {
       @Nullable OpOutputTagProjection opTag = op.tagProjection(tag);
 
       if (opTag == null)
-        throw new PsiProcessingException(String.format("Unsupported tag '%s'", tag.name()), tagProjectionPsi);
+        throw new PsiProcessingException(
+            String.format(
+                "Unsupported tag '%s', supported tags: {%s}",
+                tag.name(),
+                listTags(op)
+            ),
+            tagProjectionPsi
+        );
 
       OpOutputModelProjection<?> opTagProjection = opTag.projection();
 
@@ -569,7 +586,7 @@ public class ReqOutputProjectionsPsiParser {
 
         if (defaultValuesTag == null)
           throw new PsiProcessingException(String.format(
-              "Can't create default projection for map type '%s, as it's value type '%s' doesn't have a default tag",
+              "Can't create default projection for map type '%s', as it's value type '%s' doesn't have a default tag",
               type.name(),
               valueType.name
           ), locationPsi);
@@ -647,71 +664,78 @@ public class ReqOutputProjectionsPsiParser {
       @NotNull TypesResolver resolver) throws PsiProcessingException {
 
     @Nullable Map<RecordType.Field, OpOutputFieldProjection> opFields = op.fieldProjections();
-
     final String fieldName = psi.getQid().getCanonicalName();
     @Nullable RecordType.Field field = op.model().fieldsMap().get(fieldName);
 
     if (field == null)
       throw new PsiProcessingException(
-          String.format("Unknown field '%s', supported field: %s",
+          String.format("Unknown field '%s', supported fields: {%s}",
                         fieldName,
                         ProjectionUtils.listFields(opFields == null ? null : opFields.keySet())
           ),
-          psi
+          psi.getQid()
       );
 
-    OpOutputFieldProjection opFieldProjection = opFields == null ? null : opFields.get(field);
+    @NotNull DataType fieldType = field.dataType();
 
-    if (opFieldProjection == null)
-      throw new PsiProcessingException(
-          String.format("Unsupported field '%s', supported field: %s",
-                        fieldName,
-                        ProjectionUtils.listFields(opFields == null ? null : opFields.keySet())
-          ),
-          psi
-      );
+    @Nullable IdlReqOutputTrunkFieldProjection fieldProjectionPsi = psi.getReqOutputTrunkFieldProjection();
+    boolean fieldRequired = psi.getPlus() != null;
 
-    final boolean fieldRequired = psi.getPlus() != null;
-
-    Annotations fieldAnnotations = parseAnnotations(psi.getReqAnnotationList());
-
+    @Nullable LinkedHashMap<RecordType.Field, ReqOutputFieldProjection> fieldProjections = new LinkedHashMap<>();
     final int steps;
-    final ReqOutputVarProjection varProjection;
 
-    @Nullable IdlReqOutputTrunkVarProjection psiVarProjection = psi.getReqOutputTrunkVarProjection();
-    if (psiVarProjection == null) {
-      @NotNull DataType fieldDataType = field.dataType();
-      @Nullable Type.Tag defaultFieldTag = fieldDataType.defaultTag;
+    if (fieldProjectionPsi == null) {
+      @Nullable Type.Tag defaultFieldTag = fieldType.defaultTag;
       if (defaultFieldTag == null)
         throw new PsiProcessingException(String.format(
             "Can't construct default projection for field '%s', as it's type '%s' has no default tag",
             fieldName,
-            fieldDataType.name
+            fieldType.name
         ), psi);
 
-      varProjection = createDefaultVarProjection(fieldDataType, required, psi);
+      @NotNull ReqOutputVarProjection varProjection = createDefaultVarProjection(fieldType, required, psi);
+      fieldProjections.put(
+          field,
+          new ReqOutputFieldProjection(
+              null,
+              null,
+              varProjection,
+              fieldRequired,
+              EpigraphPsiUtil.getLocation(psi)
+          )
+      );
+
       // first step = our field, second step = default var. default var projection is a trunk projection, default model projection is a coma projection
       steps = 2;
     } else {
-      StepsAndProjection<ReqOutputVarProjection> stepsAndProjection =
-          parseTrunkVarProjection(field.dataType(), opFieldProjection.projection(), psiVarProjection, resolver);
 
-      varProjection = stepsAndProjection.projection();
-      steps = stepsAndProjection.pathSteps() + 1;
+      OpOutputFieldProjection opFieldProjection = opFields == null ? null : opFields.get(field);
+
+      if (opFieldProjection == null)
+        throw new PsiProcessingException(
+            String.format("Unsupported field '%s', supported fields: {%s}",
+                          fieldName,
+                          ProjectionUtils.listFields(opFields == null ? null : opFields.keySet())
+            ),
+            fieldProjectionPsi
+        );
+
+
+      @NotNull StepsAndProjection<ReqOutputFieldProjection> fieldStepsAndProjection =
+          parseTrunkFieldProjection(fieldRequired,
+                                    fieldType,
+                                    opFieldProjection,
+                                    fieldProjectionPsi,
+                                    resolver
+          );
+
+      fieldProjections.put(
+          field,
+          fieldStepsAndProjection.projection()
+      );
+
+      steps = fieldStepsAndProjection.pathSteps();
     }
-
-    @Nullable LinkedHashMap<RecordType.Field, ReqOutputFieldProjection> fieldProjections = new LinkedHashMap<>();
-
-    fieldProjections.put(
-        field,
-        new ReqOutputFieldProjection(
-            parseReqParams(psi.getReqParamList(), opFieldProjection.params(), resolver),
-            fieldAnnotations,
-            varProjection,
-            fieldRequired,
-            EpigraphPsiUtil.getLocation(psi)
-        )
-    );
 
     return new StepsAndProjection<>(
         steps,
@@ -722,6 +746,50 @@ public class ReqOutputProjectionsPsiParser {
             annotations,
             metaProjection,
             fieldProjections,
+            EpigraphPsiUtil.getLocation(psi)
+        )
+    );
+  }
+
+  @NotNull
+  public static StepsAndProjection<ReqOutputFieldProjection> parseTrunkFieldProjection(
+      boolean required,
+      @NotNull DataType fieldType,
+      @NotNull OpOutputFieldProjection op,
+      @NotNull IdlReqOutputTrunkFieldProjection psi,
+      @NotNull TypesResolver resolver
+  ) throws PsiProcessingException {
+
+    return parseTrunkFieldProjection(required, fieldType, op.params(), op.projection(), psi, resolver);
+  }
+
+  @NotNull
+  public static StepsAndProjection<ReqOutputFieldProjection> parseTrunkFieldProjection(
+      boolean required,
+      @NotNull DataType fieldType,
+      @Nullable OpParams opParams,
+      @NotNull OpOutputVarProjection opVarProjection,
+      @NotNull IdlReqOutputTrunkFieldProjection psi,
+      @NotNull TypesResolver resolver
+  ) throws PsiProcessingException {
+
+    final int steps;
+    final ReqOutputVarProjection varProjection;
+
+    @Nullable IdlReqOutputTrunkVarProjection psiVarProjection = psi.getReqOutputTrunkVarProjection();
+    StepsAndProjection<ReqOutputVarProjection> stepsAndProjection =
+        parseTrunkVarProjection(fieldType, opVarProjection, psiVarProjection, resolver);
+
+    varProjection = stepsAndProjection.projection();
+    steps = stepsAndProjection.pathSteps() + 1;
+
+    return new StepsAndProjection<>(
+        steps,
+        new ReqOutputFieldProjection(
+            parseReqParams(psi.getReqParamList(), opParams, resolver),
+            parseAnnotations(psi.getReqAnnotationList()),
+            varProjection,
+            required,
             EpigraphPsiUtil.getLocation(psi)
         )
     );
@@ -749,22 +817,22 @@ public class ReqOutputProjectionsPsiParser {
 
       if (field == null)
         throw new PsiProcessingException(
-            String.format("Unknown field '%s', supported field: %s",
+            String.format("Unknown field '%s', supported fields: {%s}",
                           fieldName,
                           ProjectionUtils.listFields(opFields == null ? null : opFields.keySet())
             ),
-            psi
+            fieldProjectionPsi
         );
 
       OpOutputFieldProjection opFieldProjection = opFields == null ? null : opFields.get(field);
 
       if (opFieldProjection == null)
         throw new PsiProcessingException(
-            String.format("Unsupported field '%s', supported field: %s",
+            String.format("Unsupported field '%s', supported fields: {%s}",
                           fieldName,
                           ProjectionUtils.listFields(opFields == null ? null : opFields.keySet())
             ),
-            psi
+            fieldProjectionPsi
         );
 
       final boolean fieldRequired = fieldProjectionPsi.getPlus() != null;
@@ -820,6 +888,8 @@ public class ReqOutputProjectionsPsiParser {
 
     final List<ReqOutputKeyProjection> keyProjections;
 
+    if (op.keyProjection().presence() == OpOutputKeyProjection.Presence.FORBIDDEN)
+      throw new PsiProcessingException("Map keys are forbidden", psi.getDatum());
 
     @NotNull IdlDatum valuePsi = psi.getDatum();
     @Nullable Datum keyValue = getDatum(valuePsi, op.model().keyType(), resolver, "Error processing map key: ");
@@ -876,12 +946,20 @@ public class ReqOutputProjectionsPsiParser {
 
     @NotNull IdlReqOutputComaKeysProjection keysProjectionPsi = psi.getReqOutputComaKeysProjection();
 
+    @NotNull final OpOutputKeyProjection opKeyProjection = op.keyProjection();
     final List<ReqOutputKeyProjection> keyProjections;
 
-    if (keysProjectionPsi.getStar() != null) keyProjections = null;
+    if (keysProjectionPsi.getStar() != null) {
+      keyProjections = null;
+      if (opKeyProjection.presence() == OpOutputKeyProjection.Presence.REQUIRED)
+        throw new PsiProcessingException("Map keys are required", keysProjectionPsi.getStar());
+    }
     else {
+      if (opKeyProjection.presence() == OpOutputKeyProjection.Presence.FORBIDDEN)
+        throw new PsiProcessingException("Map keys are forbidden", keysProjectionPsi);
 
-      keyProjections = new ArrayList<>(keysProjectionPsi.getReqOutputComaKeyProjectionList().size());
+      final int keysSize = keysProjectionPsi.getReqOutputComaKeyProjectionList().size();
+      keyProjections = new ArrayList<>(keysSize);
       for (IdlReqOutputComaKeyProjection keyProjectionPsi : keysProjectionPsi.getReqOutputComaKeyProjectionList()) {
 
         @NotNull IdlDatum valuePsi = keyProjectionPsi.getDatum();
@@ -891,7 +969,7 @@ public class ReqOutputProjectionsPsiParser {
         keyProjections.add(
             new ReqOutputKeyProjection(
                 keyValue,
-                parseReqParams(keyProjectionPsi.getReqParamList(), op.keyProjection().params(), resolver),
+                parseReqParams(keyProjectionPsi.getReqParamList(), opKeyProjection.params(), resolver),
                 parseAnnotations(keyProjectionPsi.getReqAnnotationList()),
                 EpigraphPsiUtil.getLocation(keyProjectionPsi)
             )

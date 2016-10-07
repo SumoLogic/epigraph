@@ -90,6 +90,7 @@ mvn clean install -P maven-plugin-dependent
         <module>java/codegen-test</module>
         <module>java/idl</module>
         <module>java/projections</module>
+        <module>java/service</module>
         <module>scala/codegen-test</module>
         <module>schemas</module>
         <module>tests</module>
@@ -151,6 +152,12 @@ mvn clean install -P maven-plugin-dependent
         <groupId>com.typesafe.scala-logging</groupId>
         <artifactId>scala-logging_${scala.version.major.minor}</artifactId>
         <version>3.1.0</version>
+      </dependency>
+
+      <dependency>
+        <groupId>io.undertow</groupId>
+        <artifactId>undertow-core</artifactId>
+        <version>1.4.3.Final</version>
       </dependency>
 
       <dependency>

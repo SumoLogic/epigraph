@@ -1,7 +1,7 @@
 package io.epigraph.idl;
 
 import de.uka.ilkd.pp.Layouter;
-import io.epigraph.idl.operations.Operation;
+import io.epigraph.idl.operations.OperationIdl;
 import io.epigraph.idl.operations.OperationsPrettyPrinter;
 import io.epigraph.types.DataType;
 import io.epigraph.types.DatumType;
@@ -30,13 +30,13 @@ public class IdlPrettyPrinter<E extends Exception> {
     l.print("namespace ").print(idl.namespace().toString());
     if (!idl.resources().isEmpty()) l.nl();
 
-    for (Resource resource : idl.resources())
+    for (ResourceIdl resource : idl.resources().values())
       printResource(resource);
 
     l.end();
   }
 
-  public void printResource(@NotNull Resource resource) throws E {
+  public void printResource(@NotNull ResourceIdl resource) throws E {
     l.beginIInd(0);
     l.print("resource").brk();
     l.print(resource.fieldName()).print(":").brk();
@@ -53,7 +53,7 @@ public class IdlPrettyPrinter<E extends Exception> {
     l.print("{");
     l.beginIInd();
 
-    for (Operation operation : resource.operations()) {
+    for (OperationIdl operation : resource.operations()) {
       l.brk();
       operationsPrettyPrinter.printOperation(operation);
     }

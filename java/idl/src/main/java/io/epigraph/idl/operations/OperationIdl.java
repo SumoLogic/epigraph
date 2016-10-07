@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public abstract class Operation {
+public abstract class OperationIdl {
   @NotNull
   private final OperationType type;
   @Nullable
@@ -24,12 +24,12 @@ public abstract class Operation {
   @NotNull
   private final TextLocation location;
 
-  protected Operation(@NotNull OperationType type,
-                      @Nullable String name,
-                      @Nullable OpParams params,
-                      @Nullable Annotations annotations,
-                      @NotNull OpOutputVarProjection outputProjection,
-                      @NotNull TextLocation location) {
+  protected OperationIdl(@NotNull OperationType type,
+                         @Nullable String name,
+                         @Nullable OpParams params,
+                         @Nullable Annotations annotations,
+                         @NotNull OpOutputVarProjection outputProjection,
+                         @NotNull TextLocation location) {
     this.type = type;
     this.name = name;
     this.params = params;

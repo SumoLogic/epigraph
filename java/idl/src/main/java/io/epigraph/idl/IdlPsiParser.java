@@ -1,7 +1,7 @@
 package io.epigraph.idl;
 
 import com.intellij.psi.util.PsiTreeUtil;
-import io.epigraph.idl.operations.Operation;
+import io.epigraph.idl.operations.OperationIdl;
 import io.epigraph.idl.operations.OperationsPsiParser;
 import io.epigraph.idl.parser.psi.*;
 import io.epigraph.lang.Qn;
@@ -15,9 +15,7 @@ import io.epigraph.types.Type;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -39,23 +37,28 @@ public class IdlPsiParser {
 
     @Nullable IdlResourceDef[] resourceDefsPsi = PsiTreeUtil.getChildrenOfType(idlPsi, IdlResourceDef.class);
 
-    final List<Resource> resources;
+    final Map<String, ResourceIdl> resources;
 
     if (resourceDefsPsi != null) {
-      resources = new ArrayList<>(resourceDefsPsi.length);
+      resources = new HashMap<>();
       for (IdlResourceDef resourceDefPsi : resourceDefsPsi) {
         if (resourceDefPsi != null) {
-          resources.add(parseResource(resourceDefPsi, resolver));
+          ResourceIdl resource = parseResource(resourceDefPsi, resolver);
+          String fieldName = resource.fieldName();
+          if (resources.containsKey(fieldName))
+            throw new PsiProcessingException("Resource '" + fieldName + "' is already defined", resourceDefPsi);
+          else
+            resources.put(fieldName, resource);
         }
       }
     } else
-      resources = Collections.emptyList();
+      resources = Collections.emptyMap();
 
 
     return new Idl(namespace, resources);
   }
 
-  public static Resource parseResource(@NotNull IdlResourceDef psi, @NotNull TypesResolver resolver)
+  public static ResourceIdl parseResource(@NotNull IdlResourceDef psi, @NotNull TypesResolver resolver)
       throws PsiProcessingException {
     final String fieldName = psi.getQid().getCanonicalName();
 
@@ -79,11 +82,11 @@ public class IdlPsiParser {
 
     @NotNull List<IdlOperationDef> defsPsi = psi.getOperationDefList();
 
-    final List<Operation> operations = new ArrayList<>(defsPsi.size());
+    final List<OperationIdl> operations = new ArrayList<>(defsPsi.size());
     for (IdlOperationDef defPsi : defsPsi)
       operations.add(OperationsPsiParser.parseOperation(dataType, defPsi, resolver));
 
-    return new Resource(
+    return new ResourceIdl(
         fieldName, dataType, operations, EpigraphPsiUtil.getLocation(psi)
     );
   }

@@ -33,21 +33,9 @@ public class IdlReqOutputTrunkRecordModelProjectionImpl extends ASTWrapperPsiEle
   }
 
   @Override
-  @NotNull
-  public List<IdlReqAnnotation> getReqAnnotationList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, IdlReqAnnotation.class);
-  }
-
-  @Override
   @Nullable
-  public IdlReqOutputTrunkVarProjection getReqOutputTrunkVarProjection() {
-    return findChildByClass(IdlReqOutputTrunkVarProjection.class);
-  }
-
-  @Override
-  @NotNull
-  public List<IdlReqParam> getReqParamList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, IdlReqParam.class);
+  public IdlReqOutputTrunkFieldProjection getReqOutputTrunkFieldProjection() {
+    return findChildByClass(IdlReqOutputTrunkFieldProjection.class);
   }
 
   @Override

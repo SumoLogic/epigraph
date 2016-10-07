@@ -1,0 +1,9 @@
+apply plugin: 'java'
+
+dependencies {
+  compile project(':epigraph-java-core')
+  compile project(':epigraph-java-idl')
+  compile project(':epigraph-java-projections')
+
+  compile 'org.jetbrains:annotations'
+}

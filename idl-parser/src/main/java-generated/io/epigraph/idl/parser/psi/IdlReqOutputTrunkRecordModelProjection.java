@@ -10,14 +10,8 @@ public interface IdlReqOutputTrunkRecordModelProjection extends PsiElement {
   @NotNull
   IdlQid getQid();
 
-  @NotNull
-  List<IdlReqAnnotation> getReqAnnotationList();
-
   @Nullable
-  IdlReqOutputTrunkVarProjection getReqOutputTrunkVarProjection();
-
-  @NotNull
-  List<IdlReqParam> getReqParamList();
+  IdlReqOutputTrunkFieldProjection getReqOutputTrunkFieldProjection();
 
   @Nullable
   PsiElement getPlus();

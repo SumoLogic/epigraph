@@ -205,8 +205,12 @@ public class GDataToData {
         n = ((Number) n).intValue();
     }
 
-    //noinspection unchecked
-    return ((PrimitiveType<Object>) type).createBuilder(n);
+    try {
+      //noinspection unchecked
+      return ((PrimitiveType<Object>) type).createBuilder(n);
+    } catch (ClassCastException e) {
+      throw new ProcessingException("Can't convert '" + n + "' to '" + type.name() + "'", gdata.location());
+    }
   }
 
   private static <T extends Type> T resolveType(@NotNull TypeRef ref,

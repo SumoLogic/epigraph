@@ -23,6 +23,8 @@ public class IdlSubParserDefinitions {
   @NotNull
   public static final IdlSubParserDefinitions.IdlSubParserDefinition REQ_OUTPUT_VAR_PROJECTION =
       new IdlSubParserDefinition(I_REQ_OUTPUT_TRUNK_VAR_PROJECTION);
+  public static final IdlSubParserDefinitions.IdlSubParserDefinition REQ_OUTPUT_FIELD_PROJECTION =
+      new IdlSubParserDefinition(I_REQ_OUTPUT_TRUNK_FIELD_PROJECTION);
   @NotNull
   public static final IdlSubParserDefinitions.IdlSubParserDefinition DATA_VALUE =
       new IdlSubParserDefinition(I_DATA_VALUE);

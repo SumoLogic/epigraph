@@ -14,15 +14,15 @@ import java.util.Objects;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class CreateOperation extends Operation {
+public class CreateOperationIdl extends OperationIdl {
   private final StepsAndProjection<OpInputVarProjection> inputProjection;
 
-  protected CreateOperation(@Nullable String name,
-                            @Nullable OpParams params,
-                            @Nullable Annotations annotations,
-                            @NotNull OpOutputVarProjection outputProjection,
-                            @NotNull StepsAndProjection<OpInputVarProjection> inputProjection,
-                            @NotNull TextLocation location) {
+  protected CreateOperationIdl(@Nullable String name,
+                               @Nullable OpParams params,
+                               @Nullable Annotations annotations,
+                               @NotNull OpOutputVarProjection outputProjection,
+                               @NotNull StepsAndProjection<OpInputVarProjection> inputProjection,
+                               @NotNull TextLocation location) {
     super(OperationType.CREATE, name, params, annotations, outputProjection, location);
     this.inputProjection = inputProjection;
   }
@@ -34,7 +34,7 @@ public class CreateOperation extends Operation {
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-    CreateOperation that = (CreateOperation) o;
+    CreateOperationIdl that = (CreateOperationIdl) o;
     return Objects.equals(inputProjection, that.inputProjection);
   }
 
