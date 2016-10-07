@@ -86,7 +86,7 @@ public class HttpServerTest {
       @NotNull
       @Override
       public CompletableFuture<ReadOperationResponse> process(@NotNull ReadOperationRequest request) {
-        String_Person_Map.Imm imm = String_Person_Map
+        String_Person_Map/*.Imm*/ imm = String_Person_Map
             .create()
             .put$(epigraph.String.create("1").toImmutable(), Person
                 .create()
@@ -115,7 +115,7 @@ public class HttpServerTest {
                     new ErrorValue(402, new Exception("Payment required to fetch user data"))
                 )
             )
-            .toImmutable();
+            /*.toImmutable()*/;
 
         CompletableFuture<ReadOperationResponse> future = new CompletableFuture<>();
         future.complete(
