@@ -12,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 
 
@@ -75,9 +76,12 @@ public interface RecordDatum extends Datum {
 
       private final @NotNull Val.Imm.Raw value = new Val.Imm.Raw.DatumVal(this);
 
+      private final int hashCode;
+
       public Raw(@NotNull RecordDatum.Builder.Raw builder) {
         super(builder.type());
         fieldsData = Unmodifiable.map(builder.fieldsData(), k -> k, Data::toImmutable);
+        hashCode = Objects.hash(type(), fieldsData);
       }
 
       @Override
@@ -114,6 +118,17 @@ public interface RecordDatum extends Datum {
 
       @Override
       public @NotNull Val.Imm.Raw asValue() { return value; }
+
+      @Override
+      public final boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof RecordDatum)) return false;
+        RecordDatum that = (RecordDatum) o;
+        return type().equals(that.type()) && fieldsData.equals(that._raw().fieldsData());
+      }
+
+      @Override
+      public final int hashCode() { return hashCode; }
 
     }
 
@@ -227,6 +242,17 @@ public interface RecordDatum extends Datum {
           fieldsData.put(type().assertWritable(field).name(), data);
         }
       }
+
+      @Override
+      public final boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof RecordDatum)) return false;
+        RecordDatum that = (RecordDatum) o;
+        return type().equals(that.type()) && fieldsData.equals(that._raw().fieldsData());
+      }
+
+      @Override
+      public final int hashCode() { return Objects.hash(type(), fieldsData); }
 
     }
 
