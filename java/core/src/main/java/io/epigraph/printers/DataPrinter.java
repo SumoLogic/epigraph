@@ -70,7 +70,7 @@ public class DataPrinter<Exc extends Exception> {
           lo.brk(1, -lo.getDefaultIndentation()).print(">").end();
           break;
         default:
-          print(data._raw().getValue(((DatumType) data.type()).self));
+          print(data._raw().getValue(((DatumType) data.type()).self)); // expecting datum data to always have self-tag...
       }
     }
   }
@@ -86,6 +86,16 @@ public class DataPrinter<Exc extends Exception> {
     }
   }
 
+  public void print(@NotNull ErrorValue error) throws Exc {
+    lo.print("!");
+    Integer statusCode = error.statusCode();
+    if (statusCode != null) lo.print(statusCode.toString());
+    if (error.cause != null) {
+      String message = error.cause.getMessage();
+      if (message != null) lo.print("\"").print(message).print("\"");
+    }
+  }
+
   public void print(@Nullable Datum datum) throws Exc {
     if (datum == null) {
       lo.print("null");
@@ -94,7 +104,7 @@ public class DataPrinter<Exc extends Exception> {
       else if (datum instanceof RecordDatum) print((RecordDatum) datum);
       else if (datum instanceof ListDatum) print((ListDatum) datum);
       else if (datum instanceof MapDatum) print((MapDatum) datum);
-        //else if (datum instanceof EnumDatum) print((EnumDatum) datum);
+//    else if (datum instanceof EnumDatum) print((EnumDatum) datum);
       else if (datum instanceof Datum) lo.print(datum.type().name().toString());
       else throw new UnsupportedOperationException(datum.type().name().toString());
     }
