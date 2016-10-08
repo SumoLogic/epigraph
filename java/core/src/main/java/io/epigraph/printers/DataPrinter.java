@@ -82,7 +82,7 @@ public class DataPrinter<Exc extends Exception> {
       if (withTypes && datum != null) lo.print("(").print(value.getDatum().type().name().toString()).print(") ");
       print(datum);
     } else {
-      lo.print("!").print(error.toString()); // TODO?
+      print(error);
     }
   }
 
