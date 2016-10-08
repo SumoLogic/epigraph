@@ -201,7 +201,7 @@ public class UndertowHandler implements HttpHandler {
 
           @Nullable final Exception cause = noPathData.error.cause;
           if (cause != null) {
-            sender.send(cause.getMessage());
+            sender.send(cause.getMessage() + '\n');
             //send stacktrace too?
           }
         } else writeNullResponse(sender);

@@ -83,24 +83,28 @@ public class ProjectionDataTrimmer { // todo move somewhere else?
   @NotNull
   public static Datum trimMapDatum(@NotNull MapDatum datum, @NotNull ReqOutputMapModelProjection projection) {
 
+    @NotNull final MapDatum.Raw raw = datum._raw();
+    @NotNull final MapDatum.Builder.Raw b = datum.type().createBuilder()._raw();
+
     @Nullable final List<ReqOutputKeyProjection> keyProjections = projection.keys();
 
     if (keyProjections != null) {
-      @NotNull final MapDatum.Raw raw = datum._raw();
-      @NotNull final MapDatum.Builder.Raw b = datum.type().createBuilder()._raw();
-
       for (ReqOutputKeyProjection keyProjection : keyProjections) {
         @NotNull final Datum.Imm keyValue = keyProjection.value().toImmutable();
         @Nullable final Data data = raw.elements().get(keyValue);
 
         if (data != null) b.elements().put(keyValue, trimData(data, projection.itemsProjection()));
       }
-
-      return b;
     } else {
-      return datum; // all keys?
+      for (Map.Entry<Datum.Imm, ? extends Data> entry : raw.elements().entrySet()) {
+        final Datum.Imm keyValue = entry.getKey();
+        final Data data = entry.getValue();
+
+        if (data != null) b.elements().put(keyValue, trimData(data, projection.itemsProjection()));
+      }
     }
 
+    return b;
   }
 
   @NotNull

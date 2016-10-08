@@ -1216,7 +1216,7 @@ public class ReqOutputProjectionsPsiParser {
                 name,
                 String.join(", ", opParams.params().keySet())
             ),
-            reqParamPsi
+            reqParamPsi.getQid()
         );
 
       final String errorMsgPrefix = String.format("Error processing parameter '%s' value: ", name);

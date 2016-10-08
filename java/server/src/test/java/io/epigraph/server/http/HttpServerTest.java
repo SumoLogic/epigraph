@@ -48,7 +48,7 @@ public class HttpServerTest {
       "resource users : map[epigraph.String,io.epigraph.tests.Person] {",
       "  READ {",
       "    ; authToken : epigraph.String",
-      "    output [required]( :+record (+id, firstName) )",
+      "    output []( :+record (+id, firstName) )",
       "  }",
       "}"
   );
@@ -86,8 +86,9 @@ public class HttpServerTest {
       @NotNull
       @Override
       public CompletableFuture<ReadOperationResponse> process(@NotNull ReadOperationRequest request) {
-        String_Person_Map.Imm imm = String_Person_Map
+        String_Person_Map.Imm personMap = String_Person_Map
             .create()
+
             .put$(epigraph.String.create("1").toImmutable(), Person
                 .create()
                 .setId(PersonId.create(1))
@@ -98,6 +99,7 @@ public class HttpServerTest {
                         .setFirstName(epigraph.String.create("Alfred"))
                 )
             )
+
             .put$(epigraph.String.create("2").toImmutable(), Person
                 .create()
                 .setId(PersonId.create(2))
@@ -108,6 +110,7 @@ public class HttpServerTest {
                         .setFirstName(epigraph.String.create("Bruce"))
                 )
             )
+
             .put$(epigraph.String.create("3").toImmutable(), Person
                 .create()
                 .setId(PersonId.create(3))
@@ -115,12 +118,15 @@ public class HttpServerTest {
                     new ErrorValue(402, new Exception("Payment required to fetch user data"))
                 )
             )
+
             .toImmutable();
+
+        ///////////////
 
         CompletableFuture<ReadOperationResponse> future = new CompletableFuture<>();
         future.complete(
             new ReadOperationResponse(
-                String_Person_Map.type.createDataBuilder().set(imm)
+                String_Person_Map.type.createDataBuilder().set(personMap)
             )
         );
         return future;
