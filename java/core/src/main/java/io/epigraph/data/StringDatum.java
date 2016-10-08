@@ -127,16 +127,16 @@ public interface StringDatum extends PrimitiveDatum<String> {
         public @NotNull MyImmDatum toImmutable() { return (MyImmDatum) this; }
 
         @Override
-        public @NotNull StringDatum.Imm.Raw _raw() { return raw; }
+        public final @NotNull StringDatum.Imm.Raw _raw() { return raw; }
 
         @Override
         public @NotNull MyImmVal asValue() { return value; }
 
         @Override
-        public final int hashCode() { return _raw().hashCode(); }
+        public final int hashCode() { return raw.hashCode(); }
 
         @Override
-        public final boolean equals(Object obj) { return _raw().equals(obj); }
+        public final boolean equals(Object obj) { return raw.equals(obj); }
 
       }
 
@@ -243,10 +243,10 @@ public interface StringDatum extends PrimitiveDatum<String> {
       public @NotNull MyBuilderVal asValue() { return value; }
 
       @Override
-      public final int hashCode() { return _raw().hashCode(); }
+      public final int hashCode() { return raw.hashCode(); }
 
       @Override
-      public final boolean equals(Object obj) { return _raw().equals(obj); }
+      public final boolean equals(Object obj) { return raw.equals(obj); }
 
     }
 

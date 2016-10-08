@@ -138,16 +138,16 @@ public interface MapDatum extends Datum {
         public @NotNull MyImmDatum toImmutable() { return (MyImmDatum) this; }  // TODO or make abstract and implement in final static impl?
 
         @Override
-        public @NotNull MapDatum.Imm.Raw _raw() { return raw; }
+        public final @NotNull MapDatum.Imm.Raw _raw() { return raw; }
 
         @Override
         public @NotNull MyImmVal asValue() { return value; }
 
         @Override
-        public final int hashCode() { return _raw().hashCode(); }
+        public final int hashCode() { return raw.hashCode(); }
 
         @Override
-        public final boolean equals(Object obj) { return _raw().equals(obj); }
+        public final boolean equals(Object obj) { return raw.equals(obj); }
 
       }
 
@@ -263,16 +263,16 @@ public interface MapDatum extends Datum {
       public @NotNull MyImmDatum toImmutable() { return immutableConstructor.apply(_raw().toImmutable()); }
 
       @Override
-      public @NotNull MapDatum.Builder.Raw _raw() { return raw; }
+      public final @NotNull MapDatum.Builder.Raw _raw() { return raw; }
 
       @Override
       public @NotNull MyBuilderVal asValue() { return value; }
 
       @Override
-      public final int hashCode() { return _raw().hashCode(); }
+      public final int hashCode() { return raw.hashCode(); }
 
       @Override
-      public final boolean equals(Object obj) { return _raw().equals(obj); }
+      public final boolean equals(Object obj) { return raw.equals(obj); }
 
     }
 

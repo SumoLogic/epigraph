@@ -163,16 +163,16 @@ public interface RecordDatum extends Datum {
         public @NotNull MyImmDatum toImmutable() { return (MyImmDatum) this; } // TODO this could be violated - make abstract?..
 
         @Override
-        public @NotNull RecordDatum.Imm.Raw _raw() { return raw; }
+        public final @NotNull RecordDatum.Imm.Raw _raw() { return raw; }
 
         @Override
         public @NotNull MyImmVal asValue() { return value; }
 
         @Override
-        public final int hashCode() { return _raw().hashCode(); }
+        public final int hashCode() { return raw.hashCode(); }
 
         @Override
-        public final boolean equals(Object obj) { return _raw().equals(obj); }
+        public final boolean equals(Object obj) { return raw.equals(obj); }
 
       }
 
@@ -293,10 +293,10 @@ public interface RecordDatum extends Datum {
       public @NotNull MyBuilderVal asValue() { return value; }
 
       @Override
-      public final int hashCode() { return _raw().hashCode(); }
+      public final int hashCode() { return raw.hashCode(); }
 
       @Override
-      public final boolean equals(Object obj) { return _raw().equals(obj); }
+      public final boolean equals(Object obj) { return raw.equals(obj); }
 
     }
 

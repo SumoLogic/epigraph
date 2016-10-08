@@ -6,6 +6,7 @@ import io.epigraph.errors.ErrorValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
 import java.util.function.Function;
 
 
@@ -43,7 +44,7 @@ public interface Val { // TODO rename to TagEntry?
     abstract class Impl<MyRaw extends Val.Raw, MyImmVal extends Val.Imm.Static, MyDatum extends Datum.Static>
         implements Val.Static {
 
-      private final MyRaw raw;
+      protected final MyRaw raw;
 
       public Impl(@NotNull MyRaw raw) { this.raw = raw; }
 
@@ -59,6 +60,12 @@ public interface Val { // TODO rename to TagEntry?
 
       @Override
       public final @NotNull MyRaw _raw() { return raw; }
+
+      @Override
+      public final int hashCode() { return raw.hashCode(); }
+
+      @Override
+      public final boolean equals(Object obj) { return raw.equals(obj); }
 
     }
 
@@ -87,6 +94,15 @@ public interface Val { // TODO rename to TagEntry?
       @Override
       public final @NotNull Val.Imm.Raw _raw() { return this; }
 
+      @Override
+      public final boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Val)) return false;
+        if (o instanceof Immutable && hashCode() != o.hashCode()) return false;
+        Val that = (Val) o;
+        return Objects.equals(getDatum(), that.getDatum()) && Objects.equals(getError(), that.getError());
+      }
+
 
       static final class DatumVal extends Val.Imm.Raw {
 
@@ -99,6 +115,9 @@ public interface Val { // TODO rename to TagEntry?
 
         @Override
         public @Nullable ErrorValue getError() { return null; }
+
+        @Override
+        public int hashCode() { return datum.hashCode(); }
 
       }
 
@@ -115,6 +134,9 @@ public interface Val { // TODO rename to TagEntry?
         @Override
         public @Nullable ErrorValue getError() { return null; }
 
+        @Override
+        public int hashCode() { return 1337; }
+
       }
 
 
@@ -129,6 +151,9 @@ public interface Val { // TODO rename to TagEntry?
 
         @Override
         public @NotNull ErrorValue getError() { return error; }
+
+        @Override
+        public int hashCode() { return error.hashCode(); }
 
       }
 
@@ -164,10 +189,19 @@ public interface Val { // TODO rename to TagEntry?
 
   interface Builder extends Val, Mutable {
 
+
     abstract class Raw implements Val.Builder, Val.Raw {
 
       @Override
       public @NotNull Val.Builder.Raw _raw() { return this; }
+
+      @Override
+      public final boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Val)) return false;
+        Val that = (Val) o;
+        return Objects.equals(getDatum(), that.getDatum()) && Objects.equals(getError(), that.getError());
+      }
 
 
       static final class DatumVal extends Val.Builder.Raw {
@@ -185,6 +219,9 @@ public interface Val { // TODO rename to TagEntry?
         @Override
         public @NotNull Val.Imm.Raw toImmutable() { return new Val.Imm.Raw.DatumVal(datum.toImmutable()); }
 
+        @Override
+        public int hashCode() { return datum.hashCode(); }
+
       }
 
 
@@ -198,6 +235,9 @@ public interface Val { // TODO rename to TagEntry?
 
         @Override
         public @NotNull Val.Imm.Raw toImmutable() { return Val.Imm.Raw.NullVal.instance; }
+
+        @Override
+        public int hashCode() { return 1337; }
 
       }
 
@@ -217,6 +257,9 @@ public interface Val { // TODO rename to TagEntry?
         @Override
         public @NotNull Val.Imm.Raw toImmutable() { return new Val.Imm.Raw.ErrorVal(error); }
 
+        @Override
+        public int hashCode() { return error.hashCode(); }
+
       }
 
 
@@ -224,28 +267,18 @@ public interface Val { // TODO rename to TagEntry?
 
 
     abstract class Static<MyImmVal extends Val.Imm.Static, MyDatumBuilder extends Datum.Builder.Static>
+        extends Val.Static.Impl<Val.Builder.Raw, MyImmVal, MyDatumBuilder>
         implements Val.Builder, Val.Static {
-
-      private final Val.Builder.Raw raw;
 
       private final @NotNull Function<Val.Imm.Raw, MyImmVal> immutableConstructor;
 
       public Static(@NotNull Val.Builder.Raw raw, @NotNull Function<Val.Imm.Raw, MyImmVal> immutableConstructor) {
-        this.raw = raw;
+        super(raw);
         this.immutableConstructor = immutableConstructor;
       }
 
       @Override
-      public final @Nullable MyDatumBuilder getDatum() { return (MyDatumBuilder) raw.getDatum(); }
-
-      @Override
-      public final @Nullable ErrorValue getError() { return raw.getError(); }
-
-      @Override
       public final @NotNull MyImmVal toImmutable() { return immutableConstructor.apply(raw.toImmutable()); }
-
-      @Override
-      public final @NotNull Val.Builder.Raw _raw() { return raw; }
 
     }
 

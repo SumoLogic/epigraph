@@ -124,7 +124,7 @@ public interface Data { // TODO Var? Union? Values?
         public @NotNull MyImmData toImmutable() { return (MyImmData) this; } // TODO make abstract, override in subclasses?
 
         @Override
-        public @NotNull Data.Imm.Raw _raw() { return raw; }
+        public final @NotNull Data.Imm.Raw _raw() { return raw; }
 
       }
 
