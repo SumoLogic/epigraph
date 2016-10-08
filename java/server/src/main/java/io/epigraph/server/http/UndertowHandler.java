@@ -40,7 +40,7 @@ import java.util.regex.Pattern;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class UndertowHandler implements HttpHandler {
-  private final static Pattern RESOURCE_PATTERN = Pattern.compile("/(\\p{Lower}(\\p{Lower}|\\d)*)(.*)");
+  private final static Pattern RESOURCE_PATTERN = Pattern.compile("/(\\p{Lower}\\p{Alnum}*)(.*)");
   @NotNull
   private final Service service;
   @NotNull
@@ -60,10 +60,10 @@ public class UndertowHandler implements HttpHandler {
 
     try {
       HttpString requestMethod = exchange.getRequestMethod();
-      String url = exchange.getRequestURI();
+      String path = exchange.getRequestPath();
 
       // extract resource name and the rest of the path
-      Matcher matcher = RESOURCE_PATTERN.matcher(url);
+      Matcher matcher = RESOURCE_PATTERN.matcher(path);
 
       if (!matcher.matches()) {
         badRequest(null, exchange);
@@ -71,7 +71,7 @@ public class UndertowHandler implements HttpHandler {
       }
 
       String resourceName = matcher.group(1);
-      String resourceProjectionString = matcher.group(3);
+      String resourceProjectionString = matcher.group(2);
 
       Resource resource = ResourceRouter.findResource(resourceName, service);
 
