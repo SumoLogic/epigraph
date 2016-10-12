@@ -38,7 +38,7 @@ public class IdlPsiImplUtil {
     return NamingConventions.unquote(name);
   }
 
-  // fqn --------------------------------------------
+  // qn --------------------------------------------
   @NotNull
   public static Qn getQn(@NotNull IdlQn e) {
     List<IdlQnSegment> fqnSegmentList = e.getQnSegmentList();

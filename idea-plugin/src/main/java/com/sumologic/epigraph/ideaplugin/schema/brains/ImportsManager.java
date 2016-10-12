@@ -17,20 +17,13 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static io.epigraph.lang.DefaultImports.DEFAULT_IMPORTS;
+import static io.epigraph.lang.DefaultImports.DEFAULT_IMPORTS_LIST;
+
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
 public class ImportsManager {
-  public static Qn[] DEFAULT_IMPORTS = new Qn[]{
-      new Qn("epigraph", "String"),
-      new Qn("epigraph", "Integer"),
-      new Qn("epigraph", "Long"),
-      new Qn("epigraph", "Double"),
-      new Qn("epigraph", "Boolean"),
-  };
-
-  public static List<Qn> DEFAULT_IMPORTS_LIST = Collections.unmodifiableList(Arrays.asList(DEFAULT_IMPORTS));
-
   public static void addImport(@NotNull SchemaFile file, @NotNull String importToAdd) {
     // TODO this should return false if this would be a clashing import
 
@@ -61,7 +54,8 @@ public class ImportsManager {
         schemaImports.add(importStatement);
         file.addAfter(newline2(project), schemaImports);
       } else {
-        PsiElement e = schemaImports.addAfter(newline(project), importStatementList.get(importStatementList.size() - 1));
+        PsiElement e =
+            schemaImports.addAfter(newline(project), importStatementList.get(importStatementList.size() - 1));
         e = schemaImports.addAfter(importStatement, e);
         file.addAfter(newline(project), e);
       }
@@ -86,13 +80,14 @@ public class ImportsManager {
     if (importStatements.isEmpty()) return Collections.emptyList();
 
     //noinspection ConstantConditions
-    Stream<Qn> explicitImports = importStatements.stream()
-                                                 .filter(st -> {
+    Stream<Qn> explicitImports = importStatements
+        .stream()
+        .filter(st -> {
           SchemaQn sqn = st.getQn();
           Qn qn = sqn == null ? null : sqn.getQn();
           return qn != null && qn.endsWith(suffix);
         })
-                                                 .map(st -> st.getQn().getQn());
+        .map(st -> st.getQn().getQn());
 
     Stream<Qn> implicitImports = DEFAULT_IMPORTS_LIST.stream()
                                                      .filter(qn -> qn.endsWith(suffix));
@@ -137,8 +132,8 @@ public class ImportsManager {
               assert inputFirstSegment != null;
 
               importsByQn.entrySet().stream()
-                  .filter(entry -> inputFirstSegment.equals(entry.getKey().last()))
-                  .forEach(entry -> res.removeAll(entry.getValue()));
+                         .filter(entry -> inputFirstSegment.equals(entry.getKey().last()))
+                         .forEach(entry -> res.removeAll(entry.getValue()));
             }
           }
         }

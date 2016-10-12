@@ -40,6 +40,8 @@ public class SchemaReferenceFactory {
 
   @Nullable
   public static SchemaQnReferenceResolver getQnReferenceResolver(@NotNull SchemaFile file, @NotNull Qn fqn, boolean isImport) {
+    // todo extract `isImport` part and reuse ImportAwareTypesResolver?
+
     if (fqn.isEmpty()) return null;
 
     final List<Qn> prefixes = new ArrayList<>();

@@ -4,4 +4,6 @@ dependencies {
   compile 'org.jetbrains:annotations'
   compile project(':epigraph-lang-common')
   compile 'com.io7m.jpplib:io7m-jpplib-core'
+
+  testCompile 'junit:junit'
 }

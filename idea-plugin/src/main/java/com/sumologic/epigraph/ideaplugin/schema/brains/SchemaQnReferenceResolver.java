@@ -20,7 +20,6 @@ import java.util.stream.Collectors;
 
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
- * @see <a href="https://github.com/SumoLogic/epigraph/wiki/References%20implementation#reference-resolution-algorithm">Reference resolution algorithm</a>
  */
 public class SchemaQnReferenceResolver {
   @NotNull
@@ -128,7 +127,7 @@ public class SchemaQnReferenceResolver {
   }
 
   private PsiElement getTargetSegment(@NotNull SchemaNamespaceDecl namespaceDecl, @SuppressWarnings("UnusedParameters") int prefixLength) {
-    // This forces PSI tree reparse. Addint stubs for SchemaFqn and SchemaFqnSegment is one option.
+    // This forces PSI tree re-parse. Adding stubs for SchemaFqn and SchemaFqnSegment is one option.
     // Just pointing to the namespace decl is another
 
 //    SchemaFqn fqn = namespaceDecl.getFqn();

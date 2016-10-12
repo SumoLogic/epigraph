@@ -17,7 +17,7 @@ public class QnTypeRef implements TypeRef {
   public QnTypeRef(@NotNull Qn qn) {this.qn = qn;}
 
   @NotNull
-  public Qn fqn() { return qn; }
+  public Qn qn() { return qn; }
 
   @Override
   public @Nullable Type resolve(@NotNull TypesResolver resolver) {

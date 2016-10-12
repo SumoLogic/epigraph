@@ -13,7 +13,6 @@ dependencies {
   compile 'org.jetbrains:annotations'
   compile 'net.jcip:jcip-annotations'
 
-
   testCompile 'junit:junit'
 }
 

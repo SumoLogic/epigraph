@@ -48,7 +48,7 @@ public class SimpleTypesResolver implements TypesResolver {
   @Nullable
   @Override
   public Type resolve(@NotNull QnTypeRef reference) {
-    return types.get(reference.fqn());
+    return types.get(reference.qn());
   }
 
   @Nullable
