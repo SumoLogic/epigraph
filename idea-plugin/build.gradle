@@ -11,6 +11,7 @@ idea.module.sourceDirs += file('../schema-parser-common/src/main/java')
 idea.module.generatedSourceDirs += file('../schema-parser-common/src/main/java.generated')
 
 dependencies {
+  compile project(':epigraph-java-core') // for ImportAwareTypesResolver
   compile project(':epigraph-lang-common')
   testCompile 'junit:junit'
 }

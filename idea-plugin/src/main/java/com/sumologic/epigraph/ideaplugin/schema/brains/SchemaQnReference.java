@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static io.epigraph.lang.DefaultImports.DEFAULT_IMPORTS;
+
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  * @see <a href="https://github.com/SumoLogic/epigraph/wiki/References%20implementation#reference-resolution-algorithm">Reference resolution algorithm</a>
@@ -135,7 +137,7 @@ public class SchemaQnReference extends PsiReferenceBase<SchemaQnSegment> impleme
             .collect(Collectors.toSet()));
 
         // add standard imports
-        typeDefVariants.addAll(SchemaIndexUtil.findTypeDefs(project, ImportsManager.DEFAULT_IMPORTS, searchScope).stream()
+        typeDefVariants.addAll(SchemaIndexUtil.findTypeDefs(project, DEFAULT_IMPORTS, searchScope).stream()
             .filter(typeDef -> typeDef.getName() != null)
             .collect(Collectors.toSet()));
 

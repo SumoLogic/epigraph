@@ -63,30 +63,18 @@ public class NamespaceManager {
     return namespaceDeclQn.getQn();
   }
 
+  @NotNull
   public static List<Qn> getImportedNamespaces(@NotNull PsiElement element) {
     SchemaFile schemaFile = getSchemaFile(element);
     if (schemaFile == null) return Collections.emptyList();
 
-
     List<Qn> res = new ArrayList<>();
 
-    // 1. imported namespaces
     List<SchemaImportStatement> importStatements = schemaFile.getImportStatements();
     for (SchemaImportStatement importStatement : importStatements) {
       SchemaQn importQn = importStatement.getQn();
       if (importQn != null) res.add(importQn.getQn());
     }
-
-//    // 2. default namespaces
-//    res.addAll(DEFAULT_IMPORTS_LIST);
-//
-//    // 3. current namespace
-//    SchemaNamespaceDecl namespaceDecl = schemaFile.getNamespaceDecl();
-//    if (namespaceDecl != null) {
-//      SchemaQn namespaceDeclQn = namespaceDecl.getQn();
-//      if (namespaceDeclQn != null) res.add(namespaceDeclQn.getQn());
-//    }
-
     return res;
   }
 

@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -33,12 +34,32 @@ public class ImportAwareTypesResolver implements TypesResolver {
   @Nullable
   @Override
   public Type resolve(@NotNull QnTypeRef reference) {
+    @NotNull final Qn qn = reference.qn();
+
+    List<Qn> prefixes = calculateResolutionPrefixes(qn, currentNamespace, imports, false);
+    if (prefixes == null) return null;
+
+    return prefixes.stream()
+                   .map(prefix -> prefix.append(qn))
+                   .map(fqn -> typesResolver.resolve(new QnTypeRef(fqn)))
+                   .filter(Objects::nonNull)
+                   .findFirst()
+                   .orElse(null);
+  }
+
+  @Nullable
+  public static List<Qn> calculateResolutionPrefixes(@NotNull Qn reference,
+                                                     @Nullable Qn currentNamespace,
+                                                     @NotNull List<Qn> imports,
+                                                     boolean deduplicate) {
+
     // see https://github.com/SumoLogic/epigraph/wiki/References%20implementation
 
-    @NotNull final Qn qn = reference.qn();
-    if (qn.isEmpty()) return null;
+    // move this to a separate class? This method is also used by idea-plugin
 
-    String firstSegment = qn.first();
+    if (reference.isEmpty()) return null;
+
+    String firstSegment = reference.first();
     assert firstSegment != null;
 
     List<Qn> prefixes = new ArrayList<>();
@@ -51,7 +72,7 @@ public class ImportAwareTypesResolver implements TypesResolver {
             .collect(Collectors.toList())
     );
 
-    if (qn.size() == 1) {
+    if (reference.size() == 1) {
       prefixes.addAll(
           DefaultImports.DEFAULT_IMPORTS_LIST
               .stream()
@@ -60,17 +81,18 @@ public class ImportAwareTypesResolver implements TypesResolver {
               .collect(Collectors.toList())
       );
 
-      prefixes.add(currentNamespace);
+      if (currentNamespace != null) prefixes.add(currentNamespace);
     } else {
       prefixes.add(Qn.EMPTY);
     }
 
-    return prefixes.stream()
-                   .map(prefix -> prefix.append(qn))
-                   .map(fqn -> typesResolver.resolve(new QnTypeRef(fqn)))
-                   .filter(Objects::nonNull)
-                   .findFirst()
-                   .orElse(null);
+    if (deduplicate) {
+      LinkedHashSet<Qn> dedup = new LinkedHashSet<>(prefixes);
+      prefixes.clear();
+      prefixes.addAll(dedup);
+    }
+
+    return prefixes;
   }
 
   @Nullable

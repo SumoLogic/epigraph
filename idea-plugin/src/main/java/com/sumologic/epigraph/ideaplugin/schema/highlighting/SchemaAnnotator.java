@@ -24,6 +24,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+import static io.epigraph.lang.DefaultImports.DEFAULT_IMPORTS_LIST;
 import static io.epigraph.schema.lexer.SchemaElementTypes.S_QN_TYPE_REF;
 
 /**
@@ -114,7 +115,7 @@ public class SchemaAnnotator implements Annotator {
             );
             if (!importsBySuffix.isEmpty()) {
               Qn importQn = importsBySuffix.iterator().next();
-              boolean isImplicit = ImportsManager.DEFAULT_IMPORTS_LIST.contains(importQn);
+              boolean isImplicit = DEFAULT_IMPORTS_LIST.contains(importQn);
               holder.createWarningAnnotation(id,
                   SchemaBundle.message(isImplicit ?
                           "annotator.type.shadowed.by.implicit.import" :

@@ -8,11 +8,12 @@ import com.sumologic.epigraph.ideaplugin.schema.brains.SchemaQnReferenceResolver
 import com.sumologic.epigraph.ideaplugin.schema.brains.SchemaVarTagReference;
 import com.sumologic.epigraph.ideaplugin.schema.index.SchemaSearchScopeUtil;
 import io.epigraph.lang.Qn;
+import io.epigraph.refs.ImportAwareTypesResolver;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.sumologic.epigraph.ideaplugin.schema.brains.NamespaceManager.getNamespace;
 
@@ -39,50 +40,34 @@ public class SchemaReferenceFactory {
   }
 
   @Nullable
-  public static SchemaQnReferenceResolver getQnReferenceResolver(@NotNull SchemaFile file, @NotNull Qn fqn, boolean isImport) {
-    // todo extract `isImport` part and reuse ImportAwareTypesResolver?
+  public static SchemaQnReferenceResolver getQnReferenceResolver(@NotNull SchemaFile file,
+                                                                 @NotNull Qn qn,
+                                                                 boolean isImport) {
+    if (qn.isEmpty()) return null;
 
-    if (fqn.isEmpty()) return null;
+    final List<Qn> prefixes;
+    @Nullable Qn currentNamespace = getNamespace(file);
 
-    final List<Qn> prefixes = new ArrayList<>();
-    boolean isSingleSegment = fqn.size() == 1;
+    if (isImport) {
+      prefixes = new ArrayList<>();
 
-    final String first = fqn.first();
-    assert first != null;
-
-
-    if (!isImport) {
-      prefixes.addAll(
-          // imports ending with our first segment, with last segment removed
-          NamespaceManager.getImportedNamespaces(file).stream()
-              .filter(f -> first.equals(f.last()))
-              .map(Qn::removeLastSegment)
-              .collect(Collectors.toList())
-      );
-    }
-
-    if (isSingleSegment) {
-      if (!isImport) {
-        // add all default namespaces
-        Collections.addAll(prefixes, NamespaceManager.DEFAULT_NAMESPACES);
+      if (qn.size() == 1) {
+        if (currentNamespace != null) prefixes.add(currentNamespace);
+      } else {
+        prefixes.add(Qn.EMPTY);
       }
-
-      // current namespace
-      Qn currentNamespace = getNamespace(file);
-      if (currentNamespace != null) {
-        prefixes.add(currentNamespace);
-      }
-
     } else {
-      prefixes.add(Qn.EMPTY);
+      prefixes = ImportAwareTypesResolver.calculateResolutionPrefixes(
+          qn,
+          currentNamespace,
+          NamespaceManager.getImportedNamespaces(file),
+          true
+      );
+
+      assert prefixes != null; // we know qn is non-empty
     }
 
-    // deduplicate, preserving order
-    Set<Qn> dedupPrefixes = new LinkedHashSet<>(prefixes);
-    prefixes.clear();
-    prefixes.addAll(dedupPrefixes);
-
-    return new SchemaQnReferenceResolver(prefixes, fqn, SchemaSearchScopeUtil.getSearchScope(file));
+    return  new SchemaQnReferenceResolver(prefixes, qn, SchemaSearchScopeUtil.getSearchScope(file));
   }
 
   @Nullable

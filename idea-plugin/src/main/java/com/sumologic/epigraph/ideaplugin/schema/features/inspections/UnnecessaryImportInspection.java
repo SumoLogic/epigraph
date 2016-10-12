@@ -17,6 +17,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import static io.epigraph.lang.DefaultImports.DEFAULT_IMPORTS_LIST;
+
 /**
  * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
  */
@@ -34,7 +36,7 @@ public class UnnecessaryImportInspection extends LocalInspectionTool {
 
         for (Map.Entry<Qn, Collection<SchemaImportStatement>> entry : importsByQn.entrySet()) {
           entry.getValue().stream()
-              .filter(is -> ImportsManager.DEFAULT_IMPORTS_LIST.contains(entry.getKey()))
+              .filter(is -> DEFAULT_IMPORTS_LIST.contains(entry.getKey()))
               .forEach(is -> holder.registerProblem(is,
                   InspectionBundle.message("import.unnecessary.problem.descriptor"),
                   ProblemHighlightType.LIKE_UNUSED_SYMBOL,
