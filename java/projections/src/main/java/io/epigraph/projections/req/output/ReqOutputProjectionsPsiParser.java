@@ -44,6 +44,7 @@ public class ReqOutputProjectionsPsiParser {
     final Type type = dataType.type;
     final LinkedHashMap<Type.Tag, ReqOutputTagProjection> tagProjections;
     final int steps;
+    final boolean parenthesized;
 
     @Nullable IdlReqOutputTrunkSingleTagProjection singleTagProjectionPsi = psi.getReqOutputTrunkSingleTagProjection();
     if (singleTagProjectionPsi != null) {
@@ -76,12 +77,14 @@ public class ReqOutputProjectionsPsiParser {
               EpigraphPsiUtil.getLocation(singleTagProjectionPsi)
           )
       );
+      parenthesized = false;
 
     } else {
       @Nullable IdlReqOutputComaMultiTagProjection multiTagProjection = psi.getReqOutputComaMultiTagProjection();
       assert multiTagProjection != null;
       tagProjections = parseComaMultiTagProjection(dataType, op, multiTagProjection, typesResolver);
       steps = 0;
+      parenthesized = true;
     }
 
     final List<ReqOutputVarProjection> tails =
@@ -89,7 +92,7 @@ public class ReqOutputProjectionsPsiParser {
 
     return new StepsAndProjection<>(
         steps,
-        new ReqOutputVarProjection(type, tagProjections, tails, EpigraphPsiUtil.getLocation(psi))
+        new ReqOutputVarProjection(type, tagProjections, tails, parenthesized, EpigraphPsiUtil.getLocation(psi))
     );
   }
 
@@ -158,6 +161,7 @@ public class ReqOutputProjectionsPsiParser {
 
     final Type type = dataType.type;
     final LinkedHashMap<Type.Tag, ReqOutputTagProjection> tagProjections;
+    final boolean parenthesized;
 
     @Nullable IdlReqOutputComaSingleTagProjection singleTagProjectionPsi = psi.getReqOutputComaSingleTagProjection();
     if (singleTagProjectionPsi != null) {
@@ -188,11 +192,13 @@ public class ReqOutputProjectionsPsiParser {
               EpigraphPsiUtil.getLocation(singleTagProjectionPsi)
           )
       );
+      parenthesized = false;
 
     } else {
       @Nullable IdlReqOutputComaMultiTagProjection multiTagProjection = psi.getReqOutputComaMultiTagProjection();
       assert multiTagProjection != null;
       tagProjections = parseComaMultiTagProjection(dataType, op, multiTagProjection, typesResolver);
+      parenthesized = true;
     }
 
     final List<ReqOutputVarProjection> tails =
@@ -200,7 +206,7 @@ public class ReqOutputProjectionsPsiParser {
 
     return new StepsAndProjection<>(
         0,
-        new ReqOutputVarProjection(type, tagProjections, tails, EpigraphPsiUtil.getLocation(psi))
+        new ReqOutputVarProjection(type, tagProjections, tails, parenthesized, EpigraphPsiUtil.getLocation(psi))
     );
   }
 
@@ -394,7 +400,7 @@ public class ReqOutputProjectionsPsiParser {
       );
     }
 
-    return new ReqOutputVarProjection(type, tagProjections, null, EpigraphPsiUtil.getLocation(locationPsi));
+    return new ReqOutputVarProjection(type, tagProjections, null, false, EpigraphPsiUtil.getLocation(locationPsi));
   }
 
   @NotNull
@@ -436,7 +442,7 @@ public class ReqOutputProjectionsPsiParser {
         );
     }
 
-    return new ReqOutputVarProjection(type, tagProjections, null, EpigraphPsiUtil.getLocation(locationPsi));
+    return new ReqOutputVarProjection(type, tagProjections, null, false, EpigraphPsiUtil.getLocation(locationPsi));
   }
 
   @NotNull
