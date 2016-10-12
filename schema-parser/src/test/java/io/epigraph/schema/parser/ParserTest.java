@@ -17,20 +17,20 @@ import java.nio.file.Paths;
 public class ParserTest {
   @Test
   public void testParserSimple() throws IOException {
-    testParse("ParsingTestData.esc", "ParsingTestData.txt");
+    testParse("ParsingTestData.esc", "ParsingTestData.txt", false);
   }
 
   @Test
   public void testParserRecover1() throws IOException {
-    testParse("ParsingRecover1.esc", "ParsingRecover1.txt");
+    testParse("ParsingRecover1.esc", "ParsingRecover1.txt", true);
   }
 
-  private void testParse(String inputFile, String expectedOutputFile) throws IOException {
+  private void testParse(String inputFile, String expectedOutputFile, boolean withRanges) throws IOException {
     File dir = new File("src/test/resources/testData/parser");
     File input = new File(dir, inputFile);
 
     PsiFile psi = LightPsi.parseFile(input, new SchemaParserDefinition());
-    String psiDump = DebugUtil.psiToString(psi, true, false).trim();
+    String psiDump = DebugUtil.psiToString(psi, true, withRanges).trim();
 //    System.out.println("psiDump = " + psiDump);
 
     String expectedPsiDump = new String(Files.readAllBytes(Paths.get(dir.getAbsolutePath(), expectedOutputFile)));

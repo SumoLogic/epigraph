@@ -1,6 +1,7 @@
 namespace foo
 
 record Baz {
+  lox: 2Baz
   qux: V de
   abstract zz: Baz
 }
