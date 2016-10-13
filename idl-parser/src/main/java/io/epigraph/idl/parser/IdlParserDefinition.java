@@ -36,7 +36,7 @@ public class IdlParserDefinition implements ParserDefinition {
       I_IMPORT,
       I_META,
       I_FORBIDDEN,
-      I_REQURIED,
+      I_REQUIRED,
       I_DEFAULT,
       I_RESOURCE,
       I_READ,

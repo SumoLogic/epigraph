@@ -584,7 +584,7 @@ public class OpOutputProjectionsPsiParser {
 
     if (keyProjectionPsi.getForbidden() != null)
       presence = OpOutputKeyProjection.Presence.FORBIDDEN;
-    else if (keyProjectionPsi.getRequried() != null)
+    else if (keyProjectionPsi.getRequired() != null)
       presence = OpOutputKeyProjection.Presence.REQUIRED;
     else
       presence = OpOutputKeyProjection.Presence.OPTIONAL;

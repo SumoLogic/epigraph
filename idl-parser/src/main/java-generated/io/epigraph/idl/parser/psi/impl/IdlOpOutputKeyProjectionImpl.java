@@ -52,8 +52,8 @@ public class IdlOpOutputKeyProjectionImpl extends ASTWrapperPsiElement implement
 
   @Override
   @Nullable
-  public PsiElement getRequried() {
-    return findChildByType(I_REQURIED);
+  public PsiElement getRequired() {
+    return findChildByType(I_REQUIRED);
   }
 
 }

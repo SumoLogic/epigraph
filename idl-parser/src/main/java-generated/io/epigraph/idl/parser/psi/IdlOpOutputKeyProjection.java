@@ -20,6 +20,6 @@ public interface IdlOpOutputKeyProjection extends PsiElement {
   PsiElement getForbidden();
 
   @Nullable
-  PsiElement getRequried();
+  PsiElement getRequired();
 
 }

@@ -21,7 +21,7 @@
     LIST = 'list'
     MAP = 'map'
     FORBIDDEN = 'forbidden'
-    REQURIED = 'required'
+    REQUIRED = 'required'
     DEFAULT = 'default'
 
     RESOURCE = 'resource'

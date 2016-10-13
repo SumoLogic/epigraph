@@ -46,7 +46,7 @@ ID=([:letter:]([:letter:]|[:digit:])*)|(`[^`]*`)
   "list"               { return I_LIST; }
   "map"                { return I_MAP; }
   "forbidden"          { return I_FORBIDDEN; }
-  "required"           { return I_REQURIED; }
+  "required"           { return I_REQUIRED; }
   "default"            { return I_DEFAULT; }
   "resource"           { return I_RESOURCE; }
   "READ"               { return I_READ; }

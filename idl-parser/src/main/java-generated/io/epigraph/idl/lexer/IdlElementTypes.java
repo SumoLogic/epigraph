@@ -151,7 +151,7 @@ public interface IdlElementTypes {
   IElementType I_PAREN_RIGHT = new IdlElementType(")");
   IElementType I_PLUS = new IdlElementType("+");
   IElementType I_READ = new IdlElementType("READ");
-  IElementType I_REQURIED = new IdlElementType("required");
+  IElementType I_REQUIRED = new IdlElementType("required");
   IElementType I_RESOURCE = new IdlElementType("resource");
   IElementType I_SEMICOLON = new IdlElementType(";");
   IElementType I_SLASH = new IdlElementType("/");

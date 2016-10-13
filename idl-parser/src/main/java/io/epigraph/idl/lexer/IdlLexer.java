@@ -864,7 +864,7 @@ public class IdlLexer implements FlexLexer {
             }
           case 89: break;
           case 44: 
-            { return I_REQURIED;
+            { return I_REQUIRED;
             }
           case 90: break;
           case 45: 

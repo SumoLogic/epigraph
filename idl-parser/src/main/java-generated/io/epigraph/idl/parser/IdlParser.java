@@ -1998,7 +1998,7 @@ public class IdlParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(b, l, "opOutputKeyProjectionInt_0_0_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeToken(b, I_REQURIED);
+    r = consumeToken(b, I_REQUIRED);
     r = r && opOutputKeyProjectionInt_0_0_0_1(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
