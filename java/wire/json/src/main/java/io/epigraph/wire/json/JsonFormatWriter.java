@@ -59,11 +59,8 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
       for (Tag tag : type.tags()) {
         Deque<ReqOutputModelProjection> modelProjections = new ArrayDeque<>(projections.size());
         for (ReqOutputVarProjection vp : projections) {
-          Tag vpTag = vp.type().tagsMap().get(tag.name());
-          if (vpTag != null) {
-            ReqOutputTagProjection tagProjection = vp.tagProjection(vpTag);
-            if (tagProjection != null) modelProjections.add(tagProjection.projection());
-          }
+          ReqOutputTagProjection tagProjection = vp.tagProjection(tag.name());
+          if (tagProjection != null) modelProjections.add(tagProjection.projection());
         }
         if (!modelProjections.isEmpty()) { // if this tag was mentioned in at least one projection
           if (renderMulti) {
@@ -85,9 +82,9 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
     String tagName = null;
     for (ReqOutputVarProjection vp : projections) {
       if (vp.parenthesized()) return true;
-      for (Tag tag : vp.tagProjections().keySet()) {
-        if (tagName == null) tagName = tag.name();
-        else if (!tagName.equals(tag.name())) return true;
+      for (String vpTagName : vp.tagProjections().keySet()) {
+        if (tagName == null) tagName = vpTagName;
+        else if (!tagName.equals(vpTagName)) return true;
       }
     }
     return false;
@@ -153,11 +150,8 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
     for (Field field : type.fields()) {
       Deque<ReqOutputVarProjection> varProjections = new ArrayDeque<>(projections.size());
       for (ReqOutputRecordModelProjection mp : projections) {
-        Field mpField = mp.model().fieldsMap().get(field.name());
-        if (mpField != null) {
-          ReqOutputFieldProjection fieldProjection = mp.fieldProjection(mpField);
-          if (fieldProjection != null) varProjections.add(fieldProjection.projection());
-        }
+        ReqOutputFieldProjection fieldProjection = mp.fieldProjection(field.name());
+        if (fieldProjection != null) varProjections.add(fieldProjection.projection());
       }
       if (!varProjections.isEmpty()) { // if this field was mentioned in at least one projection
         Data fieldData = datum._raw().getData(field);
