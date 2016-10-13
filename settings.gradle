@@ -27,6 +27,8 @@ Map<String, String> modules = [
     'java/server'                          : 'epigraph-java-server',
     'java/service'                         : 'epigraph-java-service',
     'java/util'                            : 'epigraph-java-util',
+    'java/wire/common'                     : 'epigraph-java-wire-common',
+    'java/wire/json'                       : 'epigraph-java-wire-json',
     'lang-common'                          : 'epigraph-lang-common',
     'light-psi'                            : 'epigraph-light-psi',
     'maven-plugin'                         : 'epigraph-maven-plugin',

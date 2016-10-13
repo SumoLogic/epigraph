@@ -5,6 +5,7 @@ dependencies {
   compile project(':epigraph-java-idl')
   compile project(':epigraph-java-projections')
   compile project(':epigraph-java-service')
+  compile project(':epigraph-java-wire-json')
 
   compile 'io.undertow:undertow-core'
   compile 'org.jetbrains:annotations'
