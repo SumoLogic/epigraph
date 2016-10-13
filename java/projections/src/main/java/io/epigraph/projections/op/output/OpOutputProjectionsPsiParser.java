@@ -468,7 +468,7 @@ public class OpOutputProjectionsPsiParser {
       @NotNull IdlOpOutputRecordModelProjection psi,
       @NotNull TypesResolver typesResolver) throws PsiProcessingException {
 
-    LinkedHashMap<RecordType.Field, OpOutputFieldProjection> fieldProjections = new LinkedHashMap<>();
+    LinkedHashMap<String, OpOutputFieldProjection> fieldProjections = new LinkedHashMap<>();
     @NotNull List<IdlOpOutputFieldProjection> psiFieldProjections = psi.getOpOutputFieldProjectionList();
 
     for (IdlOpOutputFieldProjection fieldProjectionPsi : psiFieldProjections) {
@@ -519,7 +519,7 @@ public class OpOutputProjectionsPsiParser {
       }
 
       fieldProjections.put(
-          field,
+          fieldName,
           new OpOutputFieldProjection(
               fieldParams,
               fieldAnnotations,
@@ -530,13 +530,14 @@ public class OpOutputProjectionsPsiParser {
       );
     }
 
-    return new OpOutputRecordModelProjection(type,
-                                             includeInDefault,
-                                             params,
-                                             annotations,
-                                             metaProjection,
-                                             fieldProjections,
-                                             EpigraphPsiUtil.getLocation(psi)
+    return new OpOutputRecordModelProjection(
+        type,
+        includeInDefault,
+        params,
+        annotations,
+        metaProjection,
+        fieldProjections,
+        EpigraphPsiUtil.getLocation(psi)
     );
   }
 

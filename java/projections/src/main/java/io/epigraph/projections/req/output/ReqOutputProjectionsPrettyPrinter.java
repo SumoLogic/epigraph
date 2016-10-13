@@ -6,7 +6,6 @@ import io.epigraph.projections.Annotations;
 import io.epigraph.projections.generic.GenericProjectionsPrettyPrinter;
 import io.epigraph.projections.req.ReqParam;
 import io.epigraph.projections.req.ReqParams;
-import io.epigraph.types.RecordType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -57,7 +56,7 @@ public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
   }
 
   private void print(@NotNull ReqOutputRecordModelProjection mp, int pathSteps) throws E {
-    @Nullable LinkedHashMap<RecordType.Field, ReqOutputFieldProjection> fieldProjections = mp.fieldProjections();
+    @Nullable LinkedHashMap<String, ReqOutputFieldProjection> fieldProjections = mp.fieldProjections();
 
     if (fieldProjections != null) {
       if (pathSteps > 0) {
@@ -66,7 +65,7 @@ public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
             String.format("Encountered %d fields while still having %d path steps", fieldProjections.size(), pathSteps)
         );
 
-        Map.Entry<RecordType.Field, ReqOutputFieldProjection> entry = fieldProjections.entrySet().iterator().next();
+        Map.Entry<String, ReqOutputFieldProjection> entry = fieldProjections.entrySet().iterator().next();
         l.beginIInd();
         l.print("/").brk();
         print(entry.getKey(), entry.getValue(), decSteps(pathSteps));
@@ -76,7 +75,7 @@ public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
 
         l.print("(").beginCInd();
         boolean first = true;
-        for (Map.Entry<RecordType.Field, ReqOutputFieldProjection> entry : fieldProjections.entrySet()) {
+        for (Map.Entry<String, ReqOutputFieldProjection> entry : fieldProjections.entrySet()) {
           if (first) first = false;
           else l.print(",");
           l.brk();
@@ -89,7 +88,7 @@ public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
     }
   }
 
-  private void print(@NotNull RecordType.Field field, @NotNull ReqOutputFieldProjection fieldProjection, int pathSteps)
+  private void print(@NotNull String fieldName, @NotNull ReqOutputFieldProjection fieldProjection, int pathSteps)
       throws E {
 
     @NotNull ReqOutputVarProjection fieldVarProjection = fieldProjection.projection();
@@ -97,7 +96,7 @@ public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
 
     l.beginIInd();
     if (fieldProjection.required()) l.print("+");
-    l.print(field.name());
+    l.print(fieldName);
 
     printParams(fieldProjection.reqParams());
     printAnnotations(fieldAnnotations);
@@ -178,7 +177,7 @@ public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
   public boolean isPrintoutEmpty(@NotNull ReqOutputModelProjection<?> mp) {
     if (mp instanceof ReqOutputRecordModelProjection) {
       ReqOutputRecordModelProjection recordModelProjection = (ReqOutputRecordModelProjection) mp;
-      @Nullable LinkedHashMap<RecordType.Field, ReqOutputFieldProjection> fieldProjections =
+      @Nullable LinkedHashMap<String, ReqOutputFieldProjection> fieldProjections =
           recordModelProjection.fieldProjections();
       return fieldProjections == null || fieldProjections.isEmpty();
     }

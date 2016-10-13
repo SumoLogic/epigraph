@@ -8,7 +8,6 @@ import io.epigraph.projections.op.OpParam;
 import io.epigraph.projections.op.OpParams;
 import io.epigraph.projections.op.input.OpInputModelProjection;
 import io.epigraph.projections.op.input.OpInputProjectionsPrettyPrinter;
-import io.epigraph.types.RecordType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -78,17 +77,17 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception> extends
   }
 
   private void print(@NotNull OpOutputRecordModelProjection mp) throws E {
-    @Nullable LinkedHashMap<RecordType.Field, OpOutputFieldProjection> fieldProjections = mp.fieldProjections();
+    @Nullable LinkedHashMap<String, OpOutputFieldProjection> fieldProjections = mp.fieldProjections();
 
     if (fieldProjections != null) {
       l.print("(").beginCInd();
       boolean first = true;
-      for (Map.Entry<RecordType.Field, OpOutputFieldProjection> entry : fieldProjections.entrySet()) {
+      for (Map.Entry<String, OpOutputFieldProjection> entry : fieldProjections.entrySet()) {
         if (first) first = false;
         else l.print(",");
         l.brk();
 
-        @NotNull RecordType.Field field = entry.getKey();
+        @NotNull String fieldName = entry.getKey();
         @NotNull OpOutputFieldProjection fieldProjection = entry.getValue();
 
         @NotNull OpOutputVarProjection fieldVarProjection = fieldProjection.projection();
@@ -98,7 +97,7 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception> extends
         if (fieldParams == null && fieldAnnotations == null) {
           l.beginIInd();
           if (fieldProjection.includeInDefault()) l.print("+");
-          l.print(field.name());
+          l.print(fieldName);
           if (!isPrintoutEmpty(fieldVarProjection)) {
             l.brk();
             print(fieldVarProjection, 0);
@@ -107,7 +106,7 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception> extends
         } else {
           l.beginCInd();
           if (fieldProjection.includeInDefault()) l.print("+");
-          l.print(field.name());
+          l.print(fieldName);
           l.print(" {");
           if (fieldParams != null) print(fieldParams);
           if (fieldAnnotations != null) print(fieldAnnotations);
@@ -224,7 +223,7 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception> extends
   public boolean isPrintoutEmpty(@NotNull OpOutputModelProjection<?> mp) {
     if (mp instanceof OpOutputRecordModelProjection) {
       OpOutputRecordModelProjection recordModelProjection = (OpOutputRecordModelProjection) mp;
-      @Nullable LinkedHashMap<RecordType.Field, OpOutputFieldProjection> fieldProjections =
+      @Nullable LinkedHashMap<String, OpOutputFieldProjection> fieldProjections =
           recordModelProjection.fieldProjections();
       return fieldProjections == null || fieldProjections.isEmpty();
     }

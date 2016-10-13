@@ -637,7 +637,7 @@ public class OpInputProjectionsPsiParser {
       }
     }
 
-    LinkedHashMap<RecordType.Field, OpInputFieldProjection> fieldProjections = new LinkedHashMap<>();
+    LinkedHashMap<String, OpInputFieldProjection> fieldProjections = new LinkedHashMap<>();
     @Nullable IdlOpInputTrunkFieldProjection fieldProjectionPsi = psi.getOpInputTrunkFieldProjection();
 
     if (fieldProjectionPsi == null)
@@ -647,7 +647,7 @@ public class OpInputProjectionsPsiParser {
     RecordType.Field field = type.fieldsMap().get(fieldName);
     if (field == null)
       throw new PsiProcessingException(
-          String.format("Can't field projection for '%s', field '%s' not found", type.name(), fieldName),
+          String.format("Can't build field projection for '%s', field '%s' not found", type.name(), fieldName),
           fieldProjectionPsi
       );
 
@@ -687,7 +687,7 @@ public class OpInputProjectionsPsiParser {
     }
 
     fieldProjections.put(
-        field,
+        fieldName,
         new OpInputFieldProjection(
             fieldAnnotations,
             varProjection,
@@ -729,7 +729,7 @@ public class OpInputProjectionsPsiParser {
       }
     }
 
-    LinkedHashMap<RecordType.Field, OpInputFieldProjection> fieldProjections = new LinkedHashMap<>();
+    LinkedHashMap<String, OpInputFieldProjection> fieldProjections = new LinkedHashMap<>();
     @NotNull List<IdlOpInputComaFieldProjection> psiFieldProjections = psi.getOpInputComaFieldProjectionList();
 
     for (IdlOpInputComaFieldProjection fieldProjectionPsi : psiFieldProjections) {
@@ -737,7 +737,7 @@ public class OpInputProjectionsPsiParser {
       RecordType.Field field = type.fieldsMap().get(fieldName);
       if (field == null)
         throw new PsiProcessingException(
-            String.format("Can't field projection for '%s', field '%s' not found", type.name(), fieldName),
+            String.format("Can't build field projection for '%s', field '%s' not found", type.name(), fieldName),
             fieldProjectionPsi
         );
 
@@ -769,7 +769,7 @@ public class OpInputProjectionsPsiParser {
       }
 
       fieldProjections.put(
-          field,
+          fieldName,
           new OpInputFieldProjection(
               fieldAnnotations,
               varProjection,

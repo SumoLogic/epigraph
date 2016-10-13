@@ -18,14 +18,14 @@ public class OpInputRecordModelProjection extends OpInputModelProjection<RecordT
       equalsVisited = new ThreadLocal<>();
 
   @Nullable
-  private LinkedHashMap<RecordType.Field, OpInputFieldProjection> fieldProjections;
+  private LinkedHashMap<String, OpInputFieldProjection> fieldProjections;
 
   public OpInputRecordModelProjection(@NotNull RecordType model,
                                       boolean required,
                                       @Nullable RecordDatum defaultValue,
                                       @Nullable Annotations annotations,
                                       @Nullable OpInputModelProjection<?, ?> metaProjection,
-                                      @Nullable LinkedHashMap<RecordType.Field, OpInputFieldProjection> fieldProjections,
+                                      @Nullable LinkedHashMap<String, OpInputFieldProjection> fieldProjections,
                                       @NotNull TextLocation location) {
     super(model, required, defaultValue, annotations, metaProjection, location);
     this.fieldProjections = fieldProjections;
@@ -40,11 +40,11 @@ public class OpInputRecordModelProjection extends OpInputModelProjection<RecordT
   }
 
   @Nullable
-  public LinkedHashMap<RecordType.Field, OpInputFieldProjection> fieldProjections() { return fieldProjections; }
+  public LinkedHashMap<String, OpInputFieldProjection> fieldProjections() { return fieldProjections; }
 
-  public void addFieldProjection(@NotNull RecordType.Field field, @NotNull OpInputFieldProjection fieldProjection) {
+  public void addFieldProjection(@NotNull String fieldName, @NotNull OpInputFieldProjection fieldProjection) {
     if (fieldProjections == null) fieldProjections = new LinkedHashMap<>();
-    fieldProjections.put(field, fieldProjection);
+    fieldProjections.put(fieldName, fieldProjection);
   }
 
   @Override

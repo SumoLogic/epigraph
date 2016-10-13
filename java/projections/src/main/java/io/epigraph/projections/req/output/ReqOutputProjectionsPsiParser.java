@@ -164,6 +164,24 @@ public class ReqOutputProjectionsPsiParser {
     return op.tagProjections().keySet().stream().collect(Collectors.joining(", "));
   }
 
+  @NotNull
+  private static RecordType.Field findField(@NotNull RecordType recordType,
+                                            @NotNull String fieldName,
+                                            @NotNull PsiElement location) throws PsiProcessingException {
+
+    final Map<@NotNull String, @NotNull ? extends RecordType.Field> fieldsMap = recordType.fieldsMap();
+    final RecordType.Field field = fieldsMap.get(fieldName);
+    if (field == null)
+      throw new PsiProcessingException(
+          String.format("Can't find field '%s' in type '%s'; known fields: {%s}",
+                        fieldName, recordType.name(), String.join(", ", fieldsMap.keySet())
+          ),
+          location
+      );
+
+    return field;
+  }
+
   public static StepsAndProjection<ReqOutputVarProjection> parseComaVarProjection(
       @NotNull DataType dataType,
       @NotNull OpOutputVarProjection op,
@@ -642,31 +660,34 @@ public class ReqOutputProjectionsPsiParser {
     switch (type.kind()) {
       case RECORD:
         OpOutputRecordModelProjection opRecord = (OpOutputRecordModelProjection) op;
-        @Nullable final LinkedHashMap<RecordType.Field, OpOutputFieldProjection> opFields = opRecord.fieldProjections();
+        final @Nullable LinkedHashMap<String, OpOutputFieldProjection> opFields = opRecord.fieldProjections();
 
-        final LinkedHashMap<RecordType.Field, ReqOutputFieldProjection> fields;
+        final LinkedHashMap<String, ReqOutputFieldProjection> fields;
         if (opFields == null) {
           fields = null;
         } else {
           fields = new LinkedHashMap<>();
 
-          for (Map.Entry<RecordType.Field, OpOutputFieldProjection> entry : opFields.entrySet()) {
+          for (Map.Entry<String, OpOutputFieldProjection> entry : opFields.entrySet()) {
             final OpOutputFieldProjection opFieldProjection = entry.getValue();
             if (opFieldProjection.includeInDefault()) {
-              final RecordType.Field field = entry.getKey();
-              fields.put(field,
-                         new ReqOutputFieldProjection(
-                             null,
-                             null,
-                             createDefaultVarProjection(
-                                 field.dataType().type,
-                                 opFieldProjection.projection(),
-                                 false,
-                                 locationPsi
-                             ),
-                             false,
-                             TextLocation.UNKNOWN
-                         )
+              final String fieldName = entry.getKey();
+              final RecordType.Field field = opRecord.model().fieldsMap().get(fieldName);
+
+              fields.put(
+                  fieldName,
+                  new ReqOutputFieldProjection(
+                      null,
+                      null,
+                      createDefaultVarProjection(
+                          field.dataType().type,
+                          opFieldProjection.projection(),
+                          false,
+                          locationPsi
+                      ),
+                      false,
+                      TextLocation.UNKNOWN
+                  )
               );
             }
           }
@@ -770,22 +791,14 @@ public class ReqOutputProjectionsPsiParser {
       @NotNull IdlReqOutputTrunkRecordModelProjection psi,
       @NotNull TypesResolver resolver) throws PsiProcessingException {
 
-    @Nullable Map<RecordType.Field, OpOutputFieldProjection> opFields = op.fieldProjections();
+    @Nullable LinkedHashMap<String, OpOutputFieldProjection> opFields = op.fieldProjections();
     final String fieldName = psi.getQid().getCanonicalName();
-    @Nullable RecordType.Field field = op.model().fieldsMap().get(fieldName);
+    final RecordType.Field field = findField(op.model(), fieldName, psi.getQid());
 
-    if (field == null || opFields == null) {
-      String s = field == null ? "Unknown" : "Unsupported";
-      throw new PsiProcessingException(
-          String.format(s + " field '%s', supported fields: (%s)",
-                        fieldName,
-                        ProjectionUtils.listFields(opFields == null ? null : opFields.keySet())
-          ),
-          psi.getQid()
-      );
-    }
+    if (opFields == null)
+      throw new PsiProcessingException("Fields are not supported by the operation", psi.getQid());
 
-    OpOutputFieldProjection opFieldProjection = opFields.get(field);
+    OpOutputFieldProjection opFieldProjection = opFields.get(fieldName);
     if (opFieldProjection == null) {
       throw new PsiProcessingException(
           String.format("Unsupported field '%s', supported fields: (%s)",
@@ -802,7 +815,7 @@ public class ReqOutputProjectionsPsiParser {
     @Nullable IdlReqOutputTrunkFieldProjection fieldProjectionPsi = psi.getReqOutputTrunkFieldProjection();
     boolean fieldRequired = psi.getPlus() != null;
 
-    @Nullable LinkedHashMap<RecordType.Field, ReqOutputFieldProjection> fieldProjections = new LinkedHashMap<>();
+    @Nullable LinkedHashMap<String, ReqOutputFieldProjection> fieldProjections = new LinkedHashMap<>();
     final int steps;
 
     if (fieldProjectionPsi == null) {
@@ -822,7 +835,7 @@ public class ReqOutputProjectionsPsiParser {
       );
 
       fieldProjections.put(
-          field,
+          fieldName,
           new ReqOutputFieldProjection(
               null,
               null,
@@ -844,7 +857,7 @@ public class ReqOutputProjectionsPsiParser {
           );
 
       fieldProjections.put(
-          field,
+          fieldName,
           fieldStepsAndProjection.projection()
       );
 
@@ -919,26 +932,16 @@ public class ReqOutputProjectionsPsiParser {
       @NotNull IdlReqOutputComaRecordModelProjection psi,
       @NotNull TypesResolver resolver) throws PsiProcessingException {
 
-    LinkedHashMap<RecordType.Field, ReqOutputFieldProjection> fieldProjections = new LinkedHashMap<>();
+    LinkedHashMap<String, ReqOutputFieldProjection> fieldProjections = new LinkedHashMap<>();
     @NotNull List<IdlReqOutputComaFieldProjection> psiFieldProjections = psi.getReqOutputComaFieldProjectionList();
 
-    @Nullable LinkedHashMap<RecordType.Field, OpOutputFieldProjection> opFields = op.fieldProjections();
+    @Nullable LinkedHashMap<String, OpOutputFieldProjection> opFields = op.fieldProjections();
 
     for (IdlReqOutputComaFieldProjection fieldProjectionPsi : psiFieldProjections) {
       final String fieldName = fieldProjectionPsi.getQid().getCanonicalName();
 
-      @Nullable RecordType.Field field = op.model().fieldsMap().get(fieldName);
-
-      if (field == null)
-        throw new PsiProcessingException(
-            String.format("Unknown field '%s', supported fields: (%s)",
-                          fieldName,
-                          ProjectionUtils.listFields(opFields == null ? null : opFields.keySet())
-            ),
-            fieldProjectionPsi
-        );
-
-      OpOutputFieldProjection opFieldProjection = opFields == null ? null : opFields.get(field);
+      @NotNull RecordType.Field field = findField(op.model(), fieldName, fieldProjectionPsi);
+      @Nullable OpOutputFieldProjection opFieldProjection = opFields == null ? null : opFields.get(fieldName);
 
       if (opFieldProjection == null)
         throw new PsiProcessingException(
@@ -965,7 +968,7 @@ public class ReqOutputProjectionsPsiParser {
           ).projection();
 
       fieldProjections.put(
-          field,
+          fieldName,
           new ReqOutputFieldProjection(
               fieldParams,
               fieldAnnotations,
