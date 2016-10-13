@@ -16,7 +16,7 @@ public class ReqOutputVarProjection extends GenericVarProjection<ReqOutputTagPro
   private final boolean parenthesized; // if parens were present, e.g. `:(id, ...)`. Tells marshaller if to use multi- or single-var
 
   public ReqOutputVarProjection(@NotNull Type type,
-                                @NotNull LinkedHashMap<Type.Tag, ReqOutputTagProjection> tagProjections,
+                                @NotNull LinkedHashMap<String, ReqOutputTagProjection> tagProjections,
                                 @Nullable List<ReqOutputVarProjection> polymorphicTails,
                                 boolean parenthesized,
                                 @NotNull TextLocation location) {

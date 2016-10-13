@@ -14,7 +14,7 @@ import java.util.List;
  */
 public class OpInputVarProjection extends GenericVarProjection<OpInputTagProjection, OpInputVarProjection> {
   public OpInputVarProjection(@NotNull Type type,
-                              @NotNull LinkedHashMap<Type.Tag, OpInputTagProjection> tagProjections,
+                              @NotNull LinkedHashMap<String, OpInputTagProjection> tagProjections,
                               @Nullable List<OpInputVarProjection> polymorphicTails,
                               @NotNull TextLocation location) {
     super(type, tagProjections, polymorphicTails, location);

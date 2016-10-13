@@ -1,10 +1,9 @@
 package io.epigraph.projections.op.input;
 
 import de.uka.ilkd.pp.Layouter;
-import io.epigraph.projections.generic.GenericProjectionsPrettyPrinter;
 import io.epigraph.projections.Annotations;
+import io.epigraph.projections.generic.GenericProjectionsPrettyPrinter;
 import io.epigraph.types.RecordType;
-import io.epigraph.types.Type;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,7 +21,7 @@ public class OpInputProjectionsPrettyPrinter<E extends Exception>
   }
 
   @Override
-  public void print(@NotNull Type.Tag tag, @NotNull OpInputTagProjection tp, int pathSteps) throws E {
+  public void print(@NotNull String tagName, @NotNull OpInputTagProjection tp, int pathSteps) throws E {
     OpInputModelProjection<?, ?> projection = tp.projection();
     OpInputModelProjection<?, ?> metaProjection = projection.metaProjection();
     Annotations annotations = projection.annotations();
@@ -32,7 +31,7 @@ public class OpInputProjectionsPrettyPrinter<E extends Exception>
 
       l.beginCInd();
       if (projection.required()) l.print("+");
-      l.print(tag.name());
+      l.print(tagName);
 
       if (!isPrintoutEmpty(projection)) {
         l.brk();
@@ -42,7 +41,7 @@ public class OpInputProjectionsPrettyPrinter<E extends Exception>
     } else {
       l.beginCInd();
       if (projection.required()) l.print("+");
-      l.print(tag.name());
+      l.print(tagName);
       l.print(" {");
 
       if (projection.defaultValue() != null) {

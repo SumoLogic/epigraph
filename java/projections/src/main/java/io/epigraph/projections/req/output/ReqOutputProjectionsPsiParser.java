@@ -47,7 +47,7 @@ public class ReqOutputProjectionsPsiParser {
       @NotNull TypesResolver typesResolver) throws PsiProcessingException {
 
     final Type type = dataType.type;
-    final LinkedHashMap<Type.Tag, ReqOutputTagProjection> tagProjections;
+    final LinkedHashMap<String, ReqOutputTagProjection> tagProjections;
     final int steps;
     final boolean parenthesized;
 
@@ -57,7 +57,7 @@ public class ReqOutputProjectionsPsiParser {
 
       final ReqOutputModelProjection<?> parsedModelProjection;
       @NotNull final Type.Tag tag = findTag(type, singleTagProjectionPsi.getTagName(), op, singleTagProjectionPsi);
-      @NotNull OpOutputTagProjection opTagProjection = findTagProjection(tag, op, singleTagProjectionPsi);
+      @NotNull OpOutputTagProjection opTagProjection = findTagProjection(tag.name(), op, singleTagProjectionPsi);
 
       @NotNull OpOutputModelProjection<?> opModelProjection = opTagProjection.projection();
       @NotNull IdlReqOutputTrunkModelProjection modelProjectionPsi =
@@ -76,7 +76,7 @@ public class ReqOutputProjectionsPsiParser {
       steps = stepsAndProjection.pathSteps() + 1;
 
       tagProjections.put(
-          tag,
+          tag.name(),
           new ReqOutputTagProjection(
               parsedModelProjection,
               EpigraphPsiUtil.getLocation(singleTagProjectionPsi)
@@ -117,45 +117,51 @@ public class ReqOutputProjectionsPsiParser {
     if (tagName != null) {
       tag = getTag(type, tagName, location);
     } else {
-      Type.Tag defaultTag = null;
-      for (Map.Entry<Type.Tag, OpOutputTagProjection> entry : opOutputVarProjection.tagProjections().entrySet()) {
+      String defaultTagName = null;
+      for (Map.Entry<String, OpOutputTagProjection> entry : opOutputVarProjection.tagProjections().entrySet()) {
         if (entry.getValue().projection().includeInDefault()) {
-          if (defaultTag != null)
+          if (defaultTagName != null)
             throw new PsiProcessingException(
                 String.format("Operation supports more than one default tag for type '%s'", type.name()),
                 location
             );
           else
-            defaultTag = entry.getKey();
+            defaultTagName = entry.getKey();
         }
       }
 
-      if (defaultTag == null)
+      if (defaultTagName == null)
         throw new PsiProcessingException(
             String.format("Operation doesn't provide default tags for type '%s'", type.name()),
             location
         );
 
-      tag = defaultTag;
+      tag = type.tagsMap().get(defaultTagName);
+
+      if (tag == null)
+        throw new PsiProcessingException(
+            String.format("Tag '%s' not found in type '%s'", defaultTagName, type.name()),
+            location
+        );
     }
 
     return tag;
   }
 
   @NotNull
-  private static OpOutputTagProjection findTagProjection(@NotNull Type.Tag tag,
+  private static OpOutputTagProjection findTagProjection(@NotNull String tagName,
                                                          @NotNull OpOutputVarProjection op,
                                                          @NotNull PsiElement location) throws PsiProcessingException {
-    @Nullable final OpOutputTagProjection tagProjection = op.tagProjection(tag);
+    @Nullable final OpOutputTagProjection tagProjection = op.tagProjection(tagName);
     if (tagProjection == null) {
       throw new PsiProcessingException(
-          String.format("Tag '%s' is unsupported, supported tags: {%s}", tag.name(), listTags(op)), location);
+          String.format("Tag '%s' is unsupported, supported tags: {%s}", tagName, listTags(op)), location);
     }
     return tagProjection;
   }
 
   private static String listTags(@NotNull OpOutputVarProjection op) {
-    return op.tagProjections().keySet().stream().map(Type.Tag::name).collect(Collectors.joining(", "));
+    return op.tagProjections().keySet().stream().collect(Collectors.joining(", "));
   }
 
   public static StepsAndProjection<ReqOutputVarProjection> parseComaVarProjection(
@@ -165,7 +171,7 @@ public class ReqOutputProjectionsPsiParser {
       @NotNull TypesResolver typesResolver) throws PsiProcessingException {
 
     final Type type = dataType.type;
-    final LinkedHashMap<Type.Tag, ReqOutputTagProjection> tagProjections;
+    final LinkedHashMap<String, ReqOutputTagProjection> tagProjections;
     final boolean parenthesized;
 
     @Nullable IdlReqOutputComaSingleTagProjection singleTagProjectionPsi = psi.getReqOutputComaSingleTagProjection();
@@ -174,7 +180,7 @@ public class ReqOutputProjectionsPsiParser {
       final ReqOutputModelProjection<?> parsedModelProjection;
 
       @NotNull Type.Tag tag = findTag(type, singleTagProjectionPsi.getTagName(), op, singleTagProjectionPsi);
-      @NotNull OpOutputTagProjection opTagProjection = findTagProjection(tag, op, singleTagProjectionPsi);
+      @NotNull OpOutputTagProjection opTagProjection = findTagProjection(tag.name(), op, singleTagProjectionPsi);
 
       @NotNull OpOutputModelProjection<?> opModelProjection = opTagProjection.projection();
 
@@ -191,7 +197,7 @@ public class ReqOutputProjectionsPsiParser {
       ).projection();
 
       tagProjections.put(
-          tag,
+          tag.name(),
           new ReqOutputTagProjection(
               parsedModelProjection,
               EpigraphPsiUtil.getLocation(singleTagProjectionPsi)
@@ -216,7 +222,7 @@ public class ReqOutputProjectionsPsiParser {
   }
 
   @NotNull
-  private static LinkedHashMap<Type.Tag, ReqOutputTagProjection> parseComaMultiTagProjection(
+  private static LinkedHashMap<String, ReqOutputTagProjection> parseComaMultiTagProjection(
       @NotNull DataType dataType,
       @NotNull OpOutputVarProjection op,
       @NotNull IdlReqOutputComaMultiTagProjection psi,
@@ -228,7 +234,7 @@ public class ReqOutputProjectionsPsiParser {
           psi
       );
 
-    final LinkedHashMap<Type.Tag, ReqOutputTagProjection> tagProjections = new LinkedHashMap<>();
+    final LinkedHashMap<String, ReqOutputTagProjection> tagProjections = new LinkedHashMap<>();
 
     // parse list of tags
     @NotNull List<IdlReqOutputComaMultiTagProjectionItem> tagProjectionPsiList =
@@ -237,7 +243,7 @@ public class ReqOutputProjectionsPsiParser {
     for (IdlReqOutputComaMultiTagProjectionItem tagProjectionPsi : tagProjectionPsiList) {
 //      final Type.Tag tag = getTag(dataType.type, tagProjectionPsi.getTagName(), dataType.defaultTag, tagProjectionPsi);
       @NotNull Type.Tag tag = findTag(dataType.type, tagProjectionPsi.getTagName(), op, tagProjectionPsi);
-      @NotNull OpOutputTagProjection opTag = findTagProjection(tag, op, tagProjectionPsi);
+      @NotNull OpOutputTagProjection opTag = findTagProjection(tag.name(), op, tagProjectionPsi);
 
       OpOutputModelProjection<?> opTagProjection = opTag.projection();
 
@@ -255,7 +261,7 @@ public class ReqOutputProjectionsPsiParser {
       ).projection();
 
       tagProjections.put(
-          tag,
+          tag.name(),
           new ReqOutputTagProjection(
               parsedModelProjection,
               EpigraphPsiUtil.getLocation(tagProjectionPsi)
@@ -385,12 +391,12 @@ public class ReqOutputProjectionsPsiParser {
       @NotNull OpOutputVarProjection op,
       @NotNull PsiElement locationPsi) throws PsiProcessingException {
 
-    LinkedHashMap<Type.Tag, ReqOutputTagProjection> tagProjections = new LinkedHashMap<>();
+    LinkedHashMap<String, ReqOutputTagProjection> tagProjections = new LinkedHashMap<>();
 
-    final OpOutputTagProjection opOutputTagProjection = op.tagProjections().get(tag);
+    final OpOutputTagProjection opOutputTagProjection = op.tagProjections().get(tag.name());
     if (opOutputTagProjection != null && opOutputTagProjection.projection().includeInDefault()) {
       tagProjections.put(
-          tag,
+          tag.name(),
           new ReqOutputTagProjection(
               createDefaultModelProjection(
                   tag.type,
@@ -424,15 +430,17 @@ public class ReqOutputProjectionsPsiParser {
                                                                    @NotNull PsiElement locationPsi)
       throws PsiProcessingException {
 
-    LinkedHashMap<Type.Tag, ReqOutputTagProjection> tagProjections = new LinkedHashMap<>();
+    LinkedHashMap<String, ReqOutputTagProjection> tagProjections = new LinkedHashMap<>();
 
-    for (Map.Entry<Type.Tag, OpOutputTagProjection> entry : op.tagProjections().entrySet()) {
-      final Type.Tag tag = entry.getKey();
+    for (Map.Entry<String, OpOutputTagProjection> entry : op.tagProjections().entrySet()) {
+      final String tagName = entry.getKey();
+      final Type.Tag tag = type.tagsMap().get(tagName);
+
       final OpOutputTagProjection tagProjection = entry.getValue();
 
       if (tagProjection.projection().includeInDefault())
         tagProjections.put(
-            tag,
+            tagName,
             new ReqOutputTagProjection(
                 createDefaultModelProjection(
                     tag.type,

@@ -5,7 +5,6 @@ import io.epigraph.gdata.GDataPrettyPrinter;
 import io.epigraph.printers.DataPrinter;
 import io.epigraph.projections.Annotation;
 import io.epigraph.projections.Annotations;
-import io.epigraph.types.Type;
 import io.epigraph.types.TypeKind;
 import org.jetbrains.annotations.NotNull;
 
@@ -49,13 +48,13 @@ public abstract class GenericProjectionsPrettyPrinter<
     try {
       varsStack.push(p);
 
-      LinkedHashMap<Type.Tag, T> tagProjections = p.tagProjections();
+      LinkedHashMap<String, T> tagProjections = p.tagProjections();
 
       if (p.type().kind() != TypeKind.UNION) {
         // samovar
         print(tagProjections.values().iterator().next().projection(), decSteps(pathSteps));
       } else if (tagProjections.size() == 1) {
-        Map.Entry<Type.Tag, T> entry = tagProjections.entrySet().iterator().next();
+        Map.Entry<String, T> entry = tagProjections.entrySet().iterator().next();
         l.print(":");
         print(entry.getKey(), entry.getValue(), decSteps(pathSteps));
       } else if (tagProjections.isEmpty()) {
@@ -67,7 +66,7 @@ public abstract class GenericProjectionsPrettyPrinter<
         l.beginCInd();
         l.print(":(");
         boolean first = true;
-        for (Map.Entry<Type.Tag, T> entry : tagProjections.entrySet()) {
+        for (Map.Entry<String, T> entry : tagProjections.entrySet()) {
           if (first) first = false;
           else l.print(",");
           l.brk();
@@ -109,7 +108,7 @@ public abstract class GenericProjectionsPrettyPrinter<
 
   }
 
-  public abstract void print(@NotNull Type.Tag tag, @NotNull T tp, int pathSteps) throws E;
+  public abstract void print(@NotNull String tagName, @NotNull T tp, int pathSteps) throws E;
 
   public abstract void print(@NotNull MP mp, int pathSteps) throws E;
 

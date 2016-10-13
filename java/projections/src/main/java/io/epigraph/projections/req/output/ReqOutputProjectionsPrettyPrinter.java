@@ -7,7 +7,6 @@ import io.epigraph.projections.generic.GenericProjectionsPrettyPrinter;
 import io.epigraph.projections.req.ReqParam;
 import io.epigraph.projections.req.ReqParams;
 import io.epigraph.types.RecordType;
-import io.epigraph.types.Type;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,7 +25,7 @@ public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
   }
 
   @Override
-  public void print(@NotNull Type.Tag tag, @NotNull ReqOutputTagProjection tp, int pathSteps) throws E {
+  public void print(@NotNull String tagName, @NotNull ReqOutputTagProjection tp, int pathSteps) throws E {
     ReqOutputModelProjection<?> projection = tp.projection();
     ReqOutputModelProjection<?> metaProjection = projection.metaProjection();
 
@@ -35,7 +34,7 @@ public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
 
     l.beginCInd();
     if (projection.required()) l.print("+");
-    l.print(tag.name());
+    l.print(tagName);
 
     printParams(params);
     printAnnotations(annotations);

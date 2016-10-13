@@ -16,7 +16,7 @@ public class GenericVarProjection<T extends GenericTagProjection<?>, S extends G
   @NotNull
   private final Type type;
   @NotNull
-  private final LinkedHashMap<Type.Tag, T> tagProjections;
+  private final LinkedHashMap<String, T> tagProjections;
   @Nullable
   private final List<S> polymorphicTails;
 
@@ -25,7 +25,7 @@ public class GenericVarProjection<T extends GenericTagProjection<?>, S extends G
   private final TextLocation location;
 
   public GenericVarProjection(@NotNull Type type,
-                              @NotNull LinkedHashMap<Type.Tag, T> tagProjections,
+                              @NotNull LinkedHashMap<String, T> tagProjections,
                               @Nullable List<S> polymorphicTails,
                               @NotNull TextLocation location) {
     this.type = type;
@@ -40,11 +40,11 @@ public class GenericVarProjection<T extends GenericTagProjection<?>, S extends G
   @NotNull
   public Type type() { return type; }
 
-  public @NotNull LinkedHashMap<Type.Tag, T> tagProjections() { return tagProjections; }
+  public @NotNull LinkedHashMap<String, T> tagProjections() { return tagProjections; }
 
   @Nullable
-  public T tagProjection(@NotNull Type.Tag tag) {
-    return tagProjections.get(tag);
+  public T tagProjection(@NotNull String tagName) {
+    return tagProjections.get(tagName);
   }
 
   public @Nullable List<S> polymorphicTails() { return polymorphicTails; }
