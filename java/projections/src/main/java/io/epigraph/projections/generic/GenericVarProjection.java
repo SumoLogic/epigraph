@@ -19,6 +19,8 @@ public class GenericVarProjection<T extends GenericTagProjection<?>, S extends G
   private final LinkedHashMap<Type.Tag, T> tagProjections;
   @Nullable
   private final List<S> polymorphicTails;
+
+  private int polymorphicDepth = -1;
   @NotNull
   private final TextLocation location;
 
@@ -46,6 +48,14 @@ public class GenericVarProjection<T extends GenericTagProjection<?>, S extends G
   }
 
   public @Nullable List<S> polymorphicTails() { return polymorphicTails; }
+
+  /** Max polymorphic tail depth. */
+  public int polymorphicDepth() {
+    if (polymorphicDepth == -1) polymorphicDepth = polymorphicTails == null
+        ? 0
+        : polymorphicTails.stream().mapToInt(GenericVarProjection::polymorphicDepth).max().orElse(0);
+    return polymorphicDepth;
+  }
 
   @NotNull
   public TextLocation location() {

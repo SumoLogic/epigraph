@@ -11,12 +11,7 @@ import io.epigraph.util.Unmodifiable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Function;
 
 
@@ -54,13 +49,15 @@ public abstract class RecordType extends DatumType {
 
   public final @NotNull Collection<@NotNull ? extends Field> fields() {
     // TODO produce better ordering of the fields (i.e. supertypes first, in the order of supertypes and their fields declaration)
-    if (fields == null) { // TODO move initialization to constructor (if possible?)
-      LinkedList<Field> acc = new LinkedList<>(immediateFields());
+    if (fields == null) { // TODO move initialization to constructor (if possible?) - NO, not possible
+      List<Field> acc = new ArrayList<>();
       for (RecordType st : supertypes()) {
         st.fields().stream().filter(sf ->
-            acc.stream().noneMatch(af -> af.name.equals(sf.name))
+            acc.stream().noneMatch(af -> af.name.equals(sf.name)) &&
+                immediateFields().stream().noneMatch(f -> f.name.equals(sf.name))
         ).forEachOrdered(acc::add);
       }
+      acc.addAll(immediateFields());
       fields = Unmodifiable.collection(new LinkedHashSet<>(acc));
       assert fields.size() == acc.size(); // assert there was no duplicates in the acc
     }

@@ -45,11 +45,38 @@ public class HttpServerTest {
 
   private static final String idlText = lines(
       "namespace test",
-      "resource users : map[epigraph.String,io.epigraph.tests.Person] {",
+
+      "resource users: map[epigraph.String,io.epigraph.tests.Person] {",
       "  READ {",
       "    ; authToken : epigraph.String",
-      "    output []( :(id, +record (+id, firstName)) )",
+      "    output []( :(+id, record (+id, +firstName, +lastName, +bestFriend: (+id, record(+id, +firstName, +lastName)))) )",
       "  }",
+      "}",
+
+      "resource user: io.epigraph.tests.Person {",
+      "  READ { ",
+      "    output :( ",
+      "      +id, record ( ",
+      "        +id, ",
+      "        +firstName, ",
+      "        +lastName, ",
+      "        +bestFriend: ( ",
+      "          +id, ",
+      "          record( ",
+      "            +id, ",
+      "            +firstName, ",
+      "            +lastName, ",
+      "            +bestFriend:id ",
+      "          ) ",
+      "        )~io.epigraph.tests.User:( ",
+      "          +record( ",
+      "            +profile ",
+      "          ) ",
+      "        ) ",
+      "      ) ",
+      "    )~io.epigraph.tests.User:(+id, record(+profile)) ",
+      "  } ",
+
       "}"
   );
 
@@ -64,7 +91,59 @@ public class HttpServerTest {
   }
 
   private static Service buildUsersService() throws ServiceInitializationException {
-    return new Service("users", Collections.singletonList(buildUsersResource()));
+    return new Service("users", Arrays.asList(buildUserResource(), buildUsersResource()));
+  }
+
+  private static Resource buildUserResource() throws ServiceInitializationException {
+    ResourceIdl userResource = idl.resources().get("user");
+    assert userResource != null;
+
+    return new Resource(
+        userResource,
+        Collections.singletonList(
+            buildDefaultUserReadOperation(
+                ((ReadOperationIdl) userResource.operations().get(0))
+            )
+        )
+    );
+  }
+
+  private static ReadOperation buildDefaultUserReadOperation(@NotNull ReadOperationIdl operationIdl) {
+    return new ReadOperation(operationIdl) {
+      @NotNull
+      @Override
+      public CompletableFuture<ReadOperationResponse> process(@NotNull ReadOperationRequest request) {
+        Person.Imm person = User
+            .create()
+            .setId(UserId.create(1))
+            .setRecord(
+                UserRecord
+                    .create()
+                    .setId(PersonId.create(1))
+                    .setFirstName(epigraph.String.create("Alfred"))
+                    .setLastName(epigraph.String.create("Hitchcock"))
+                    .setProfile_Error(new ErrorValue(404, "Not Found", null))
+                    .setBestFriend$(User
+                        .create()
+                        .setId(UserId.create(2))
+                        .setRecord(
+                            UserRecord
+                                .create()
+                                .setId(PersonId.create(2))
+                                .setFirstName(epigraph.String.create("Bruce"))
+                                .setLastName(epigraph.String.create("Willis"))
+                                .setProfile(Url.create("http://google.com/"))
+                        ))
+            )
+            .toImmutable();
+
+        ///////////////
+
+        CompletableFuture<ReadOperationResponse> future = new CompletableFuture<>();
+        future.complete(new ReadOperationResponse(person));
+        return future;
+      }
+    };
   }
 
   private static Resource buildUsersResource() throws ServiceInitializationException {
@@ -97,6 +176,17 @@ public class HttpServerTest {
                         .create()
                         .setId(PersonId.create(1))
                         .setFirstName(epigraph.String.create("Alfred"))
+                        .setLastName(epigraph.String.create("Hitchcock"))
+                        .setBestFriend$(Person
+                            .create()
+                            .setId(PersonId.create(2))
+                            .setRecord(
+                                PersonRecord
+                                    .create()
+                                    .setId(PersonId.create(2))
+                                    .setFirstName(epigraph.String.create("Bruce"))
+                                    .setLastName(epigraph.String.create("Willis"))
+                            ))
                 )
             )
 
@@ -108,6 +198,7 @@ public class HttpServerTest {
                         .create()
                         .setId(PersonId.create(2))
                         .setFirstName(epigraph.String.create("Bruce"))
+                        .setLastName(epigraph.String.create("Willis"))
                 )
             )
 

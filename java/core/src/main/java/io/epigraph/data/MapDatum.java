@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.AbstractMap;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -205,7 +206,7 @@ public interface MapDatum extends Datum {
 
       private static class DataMap<K extends Datum.Imm, V extends Data> extends AbstractMap<K, V> {
 
-        private final @NotNull Map<@NotNull K, @NotNull V> map = new HashMap<>();
+        private final @NotNull Map<@NotNull K, @NotNull V> map = new LinkedHashMap<>();
 
         private final @NotNull MapType mapType;
 

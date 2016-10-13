@@ -38,6 +38,6 @@ public class ProjectionUtils {
   @NotNull
   public static String listFields(@Nullable Collection<? extends RecordType.Field> fields) {
     if (fields == null) return "<none>";
-    return fields.stream().map(RecordType.Field::name).collect(Collectors.joining(", "));
+    return fields.stream().map(RecordType.Field::name).collect(Collectors.joining(","));
   }
 }

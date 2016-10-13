@@ -8,7 +8,8 @@ vartype Person {
 integer PersonId
 
 record PersonRecord {
-  id: PersonId
+  avroType = "Person"
+  id: PersonId { avroField = "personId" }
   firstName: String
   lastName: String
   bestFriend: Person // default id

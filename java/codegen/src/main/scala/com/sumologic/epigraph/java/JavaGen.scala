@@ -25,7 +25,7 @@ abstract class JavaGen[From >: Null <: AnyRef](protected val from: From, protect
   // TODO protected access for the rest:
 
   /** java identifier name (https://docs.oracle.com/javase/specs/jls/se8/html/jls-3.html#jls-3.8) */
-  def jn(name: String): String = if (JavaNames.reserved.contains(name)) name + '_' else name
+  def jn(name: String): String = JavaNames.jn(name)
 
   def javaFqn(fqn: Qn): String = fqn.segments.map(jn).mkString(".")
 

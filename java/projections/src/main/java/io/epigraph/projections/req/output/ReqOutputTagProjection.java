@@ -2,6 +2,7 @@ package io.epigraph.projections.req.output;
 
 import io.epigraph.lang.TextLocation;
 import io.epigraph.projections.generic.GenericTagProjection;
+import io.epigraph.types.DatumType;
 import org.jetbrains.annotations.NotNull;
 
 /**

@@ -42,6 +42,11 @@ public class ReqOutputRecordModelProjection extends ReqOutputModelProjection<Rec
 
   public @Nullable LinkedHashMap<RecordType.Field, ReqOutputFieldProjection> fieldProjections() { return fieldProjections; }
 
+  @Nullable
+  public ReqOutputFieldProjection fieldProjection(@NotNull RecordType.Field field) {
+    return fieldProjections == null ? null : fieldProjections.get(field);
+  }
+
   public void addFieldProjection(@NotNull RecordType.Field field, @NotNull ReqOutputFieldProjection fieldProjection) {
     if (fieldProjections == null) fieldProjections = new LinkedHashMap<>();
     fieldProjections.put(field, fieldProjection);

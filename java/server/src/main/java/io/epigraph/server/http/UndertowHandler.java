@@ -23,6 +23,7 @@ import io.epigraph.service.*;
 import io.epigraph.service.operations.ReadOperation;
 import io.epigraph.service.operations.ReadOperationRequest;
 import io.epigraph.service.operations.ReadOperationResponse;
+import io.epigraph.wire.json.JsonFormatWriter;
 import io.undertow.io.Sender;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
@@ -30,6 +31,8 @@ import io.undertow.util.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
+import java.io.StringWriter;
 import java.util.Deque;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -191,20 +194,24 @@ public class UndertowHandler implements HttpHandler {
         DataPathRemover.PathRemovalResult noPathData = DataPathRemover.removePath(trimmedData, stepsToRemove);
 
         // todo marshal to proper json or whatever
-        if (noPathData.data != null) {
-          sender.send(dataToString(noPathData.data) + "\n");
-        } else if (noPathData.datum != null) {
-          sender.send(datumToString(noPathData.datum) + "\n");
-        } else if (noPathData.error != null) {
-          @Nullable final Integer statusCode = noPathData.error.statusCode();
-          if (statusCode != null) exchange.setStatusCode(statusCode);
+        if (stepsToRemove <= 1) { // FIXME - use path-traversed projection always
+          sender.send(dataToString(reqProjection, data));
+        } else {
+          if (noPathData.data != null) {
+            sender.send(dataToString(noPathData.data) + "\n");
+          } else if (noPathData.datum != null) {
+            sender.send(datumToString(noPathData.datum) + "\n");
+          } else if (noPathData.error != null) {
+            @Nullable final Integer statusCode = noPathData.error.statusCode();
+            if (statusCode != null) exchange.setStatusCode(statusCode);
 
-          @Nullable final Exception cause = noPathData.error.cause;
-          if (cause != null) {
-            sender.send(cause.getMessage() + '\n');
-            //send stacktrace too?
-          }
-        } else writeNullResponse(sender);
+            @Nullable final Exception cause = noPathData.error.cause;
+            if (cause != null) {
+              sender.send(cause.getMessage() + '\n');
+              //send stacktrace too?
+            }
+          } else writeNullResponse(sender);
+        }
 
       } catch (DataPathRemover.AmbiguousPathException e) {
         serverError(
@@ -227,8 +234,20 @@ public class UndertowHandler implements HttpHandler {
   }
 
   @NotNull
+  private String dataToString(@NotNull ReqOutputVarProjection projection, @Nullable Data data) {
+    StringWriter sw = new StringWriter();
+    JsonFormatWriter fw = new JsonFormatWriter(sw);
+    try {
+      fw.write(projection, data);
+    } catch (IOException e) {
+      return e.toString();
+    }
+    return sw.toString();
+  }
+
+  @NotNull
   private String dataToString(@Nullable Data data) {
-    StringBackend sb = new StringBackend(120);
+    StringBackend sb = new StringBackend(80);
     Layouter<NoExceptions> l = new Layouter<>(sb, 2);
     DataPrinter<NoExceptions> dp = new DataPrinter<>(l);
     dp.print(data);
@@ -238,7 +257,7 @@ public class UndertowHandler implements HttpHandler {
 
   @NotNull
   private String datumToString(@Nullable Datum datum) {
-    StringBackend sb = new StringBackend(120);
+    StringBackend sb = new StringBackend(80);
     Layouter<NoExceptions> l = new Layouter<>(sb, 2);
     DataPrinter<NoExceptions> dp = new DataPrinter<>(l);
     dp.print(datum);

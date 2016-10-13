@@ -2,6 +2,8 @@
 
 package io.epigraph.util;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -75,6 +77,6 @@ public class JavaNames {
 
   )));
 
-  public static String jn(String n) { return reserved.contains(n) ? n + '_' : n; }
+  public static @NotNull String jn(@NotNull String n) { return reserved.contains(n) ? n + '_' : n; }
 
 }

@@ -764,7 +764,7 @@ public class ReqOutputProjectionsPsiParser {
     if (field == null || opFields == null) {
       String s = field == null ? "Unknown" : "Unsupported";
       throw new PsiProcessingException(
-          String.format(s + " field '%s', supported fields: {%s}",
+          String.format(s + " field '%s', supported fields: (%s)",
                         fieldName,
                         ProjectionUtils.listFields(opFields == null ? null : opFields.keySet())
           ),
@@ -775,7 +775,7 @@ public class ReqOutputProjectionsPsiParser {
     OpOutputFieldProjection opFieldProjection = opFields.get(field);
     if (opFieldProjection == null) {
       throw new PsiProcessingException(
-          String.format("Unsupported field '%s', supported fields: {%s}",
+          String.format("Unsupported field '%s', supported fields: (%s)",
                         fieldName,
                         ProjectionUtils.listFields(opFields.keySet())
           ),
@@ -918,7 +918,7 @@ public class ReqOutputProjectionsPsiParser {
 
       if (field == null)
         throw new PsiProcessingException(
-            String.format("Unknown field '%s', supported fields: {%s}",
+            String.format("Unknown field '%s', supported fields: (%s)",
                           fieldName,
                           ProjectionUtils.listFields(opFields == null ? null : opFields.keySet())
             ),
@@ -929,7 +929,7 @@ public class ReqOutputProjectionsPsiParser {
 
       if (opFieldProjection == null)
         throw new PsiProcessingException(
-            String.format("Unsupported field '%s', supported fields: {%s}",
+            String.format("Unsupported field '%s', supported fields: (%s)",
                           fieldName,
                           ProjectionUtils.listFields(opFields == null ? null : opFields.keySet())
             ),

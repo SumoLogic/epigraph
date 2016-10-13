@@ -97,6 +97,13 @@ public abstract class Type { // TODO split into interface and impl
     return data;
   }
 
+  /** Ensures specified type is a subtype of this type. */
+  public <T extends Type> T checkAssignable(@NotNull T type) throws IllegalArgumentException {
+    if (!isAssignableFrom(type))
+      throw new IllegalArgumentException("Type '" + type.name() + "' is not compatible with type '" + name() + "'");
+    return type;
+  }
+
 
   public interface Raw {
 
