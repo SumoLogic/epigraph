@@ -2,7 +2,6 @@
 
 package io.epigraph.types;
 
-import com.sun.prism.impl.Disposer;
 import io.epigraph.data.Data;
 import io.epigraph.data.RecordDatum;
 import io.epigraph.data.Val;

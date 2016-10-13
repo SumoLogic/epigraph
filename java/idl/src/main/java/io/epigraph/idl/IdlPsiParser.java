@@ -7,6 +7,7 @@ import io.epigraph.idl.parser.psi.*;
 import io.epigraph.lang.Qn;
 import io.epigraph.psi.EpigraphPsiUtil;
 import io.epigraph.psi.PsiProcessingException;
+import io.epigraph.refs.ImportAwareTypesResolver;
 import io.epigraph.refs.TypesResolver;
 import io.epigraph.refs.ValueTypeRef;
 import io.epigraph.types.DataType;
@@ -16,13 +17,15 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class IdlPsiParser {
   @NotNull
-  public static Idl parseIdl(@NotNull IdlFile idlPsi, @NotNull TypesResolver resolver) throws PsiProcessingException {
+  public static Idl parseIdl(@NotNull IdlFile idlPsi, @NotNull TypesResolver basicResolver)
+      throws PsiProcessingException {
 
     @Nullable IdlNamespaceDecl namespaceDeclPsi = PsiTreeUtil.getChildOfType(idlPsi, IdlNamespaceDecl.class);
     if (namespaceDeclPsi == null)
@@ -33,7 +36,7 @@ public class IdlPsiParser {
 
     Qn namespace = namespaceFqnPsi.getQn();
 
-    // todo parse imports
+    TypesResolver resolver = new ImportAwareTypesResolver(namespace, parseImports(idlPsi), basicResolver);
 
     @Nullable IdlResourceDef[] resourceDefsPsi = PsiTreeUtil.getChildrenOfType(idlPsi, IdlResourceDef.class);
 
@@ -54,8 +57,25 @@ public class IdlPsiParser {
     } else
       resources = Collections.emptyMap();
 
-
     return new Idl(namespace, resources);
+  }
+
+  @NotNull
+  private static List<Qn> parseImports(@NotNull IdlFile idlPsi) {
+    @Nullable final IdlImports importsPsi = PsiTreeUtil.getChildOfType(idlPsi, IdlImports.class);
+    if (importsPsi == null) return Collections.emptyList();
+
+    @NotNull final List<IdlImportStatement> importStatementsPsi = importsPsi.getImportStatementList();
+
+    if (importStatementsPsi.isEmpty()) return Collections.emptyList();
+
+    return importStatementsPsi
+        .stream()
+        .filter(Objects::nonNull)
+        .map(IdlImportStatement::getQn)
+        .filter(Objects::nonNull)
+        .map(IdlQn::getQn)
+        .collect(Collectors.toList());
   }
 
   public static ResourceIdl parseResource(@NotNull IdlResourceDef psi, @NotNull TypesResolver resolver)
@@ -64,7 +84,6 @@ public class IdlPsiParser {
 
     @NotNull IdlResourceType resourceTypePsi = psi.getResourceType();
 
-    // todo take imports into account
     @NotNull IdlValueTypeRef valueTypeRefPsi = resourceTypePsi.getValueTypeRef();
     @NotNull ValueTypeRef valueTypeRef = TypeRefs.fromPsi(valueTypeRefPsi);
     @Nullable DataType dataType = resolver.resolve(valueTypeRef);

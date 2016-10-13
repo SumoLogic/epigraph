@@ -7,8 +7,10 @@ import de.uka.ilkd.pp.NoExceptions;
 import de.uka.ilkd.pp.StringBackend;
 import io.epigraph.idl.parser.IdlParserDefinition;
 import io.epigraph.idl.parser.psi.IdlFile;
+import io.epigraph.lang.Qn;
 import io.epigraph.psi.EpigraphPsiUtil;
 import io.epigraph.psi.PsiProcessingException;
+import io.epigraph.refs.ImportAwareTypesResolver;
 import io.epigraph.tests.*;
 import io.epigraph.refs.SimpleTypesResolver;
 import io.epigraph.refs.TypesResolver;
@@ -17,6 +19,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
@@ -51,7 +54,11 @@ public class IdlTest {
   public void testEmptyResource() throws Exception {
     testParse(
         lines(
-            "namespace test",
+            "namespace io.epigraph.tests",
+            "resource users: map[String,Person] { }"
+        ),
+        lines(
+            "namespace io.epigraph.tests",
             "resource users: map[epigraph.String,io.epigraph.tests.Person] { }"
         )
     );
@@ -62,21 +69,22 @@ public class IdlTest {
     testParse(
         lines(
             "namespace test",
-            "resource users : map[epigraph.String,io.epigraph.tests.Person] {",
+            "import io.epigraph.tests.Person",
+            "resource users : map[String,Person] {",
             "  READ {",
             "    doc = \"dome doc string\"",
-            "    ; authToken : epigraph.String",
+            "    ; authToken : String",
             "    output [required]( :record (id, firstName) )",
             "  }",
             "  UPDATE {",
             "    doc = \"dome doc string\"",
-            "    ; authToken : epigraph.String",
+            "    ; authToken : String",
             "    input []( :record ( firstName, lastName) )",
             "    output [forbidden]( :id )",
             "  }",
             "  customUpdate UPDATE {",
             "    doc = \"dome doc string\"",
-            "    ; authToken : epigraph.String",
+            "    ; authToken : String",
             "    input []( :record ( firstName, lastName) )",
             "    output [forbidden]( :id )",
             "  }",

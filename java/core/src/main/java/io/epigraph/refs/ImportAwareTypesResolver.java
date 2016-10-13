@@ -2,14 +2,13 @@ package io.epigraph.refs;
 
 import io.epigraph.lang.DefaultImports;
 import io.epigraph.lang.Qn;
+import io.epigraph.types.DataType;
+import io.epigraph.types.DatumType;
 import io.epigraph.types.Type;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -21,14 +20,14 @@ public class ImportAwareTypesResolver implements TypesResolver {
   @NotNull
   private final List<Qn> imports;
   @NotNull
-  private final TypesResolver typesResolver;
+  private final TypesResolver childResolver;
 
   public ImportAwareTypesResolver(@NotNull Qn currentNamespace,
                                   @NotNull List<Qn> imports,
-                                  @NotNull TypesResolver typesResolver) {
+                                  @NotNull TypesResolver childResolver) {
     this.currentNamespace = currentNamespace;
     this.imports = imports;
-    this.typesResolver = typesResolver;
+    this.childResolver = childResolver;
   }
 
   @Nullable
@@ -41,7 +40,7 @@ public class ImportAwareTypesResolver implements TypesResolver {
 
     return prefixes.stream()
                    .map(prefix -> prefix.append(qn))
-                   .map(fqn -> typesResolver.resolve(new QnTypeRef(fqn)))
+                   .map(fqn -> childResolver.resolve(new QnTypeRef(fqn)))
                    .filter(Objects::nonNull)
                    .findFirst()
                    .orElse(null);
@@ -98,12 +97,26 @@ public class ImportAwareTypesResolver implements TypesResolver {
   @Nullable
   @Override
   public Type resolve(@NotNull AnonListRef reference) {
-    return typesResolver.resolve(reference);
+    @NotNull ValueTypeRef itemTypeRef = reference.itemsType();
+    @Nullable DataType itemType = resolve(itemTypeRef);
+    if (itemType == null) return null;
+
+    @NotNull final AnonListRef normalizedRef = TypeReferenceFactory.createAnonListReference(itemType);
+    return childResolver.resolve(normalizedRef);
   }
 
   @Nullable
   @Override
   public Type resolve(@NotNull AnonMapRef reference) {
-    return typesResolver.resolve(reference);
+    @NotNull ValueTypeRef valueTypeRef = reference.itemsType();
+    @Nullable DataType valueType = resolve(valueTypeRef);
+    if (valueType == null) return null;
+
+    @Nullable Type keyType = reference.keysType().resolve(this);
+    if (keyType instanceof DatumType) {
+      DatumType keyDatumType = (DatumType) keyType;
+      @NotNull final AnonMapRef normalizedRef = TypeReferenceFactory.createAnonMapReference(keyDatumType, valueType);
+      return childResolver.resolve(normalizedRef);
+    } else return null;
   }
 }
