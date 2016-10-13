@@ -33,6 +33,7 @@ import java.util.stream.Collectors;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class HttpServerTest {
+
   private static final TypesResolver resolver = new SimpleTypesResolver(
       PersonId.type,
       Person.type,
@@ -49,32 +50,61 @@ public class HttpServerTest {
       "resource users: map[epigraph.String,io.epigraph.tests.Person] {",
       "  READ {",
       "    ; authToken : epigraph.String",
-      "    output []( :(+id, record (+id, +firstName, +lastName, +bestFriend: (+id, record(+id, +firstName, +lastName)))) )",
-      "  }",
-      "}",
-
-      "resource user: io.epigraph.tests.Person {",
-      "  READ { ",
-      "    output :( ",
-      "      +id, record ( ",
+//    "    output []( :(+id, record (+id, +firstName, +lastName, +bestFriend: (+id, record(+id, +firstName, +lastName)))) )",
+      "    output []( :( ",
+      "      +id, ",
+      "      record ( ",
       "        +id, ",
       "        +firstName, ",
       "        +lastName, ",
-      "        +bestFriend: ( ",
+      "        +bestFriend:( ",
       "          +id, ",
       "          record( ",
       "            +id, ",
       "            +firstName, ",
       "            +lastName, ",
       "            +bestFriend:id ",
+      "            +worstEnemy ",
       "          ) ",
       "        )~io.epigraph.tests.User:( ",
       "          +record( ",
+      "            +worstEnemy(+id, +firstName, +lastName, +profile) ",
       "            +profile ",
       "          ) ",
       "        ) ",
+      "        +worstEnemy(+id, +firstName, +lastName) ",
       "      ) ",
-      "    )~io.epigraph.tests.User:(+id, record(+profile)) ",
+      "    )~io.epigraph.tests.User:(+id, record(+profile, +worstEnemy(profile))) ",
+      "    ) ",
+      "  } ",
+      "}",
+
+      "resource user: io.epigraph.tests.Person {",
+      "  READ { ",
+      "    output:( ",
+      "      +id, ",
+      "      record ( ",
+      "        +id, ",
+      "        +firstName, ",
+      "        +lastName, ",
+      "        +bestFriend:( ",
+      "          +id, ",
+      "          record( ",
+      "            +id, ",
+      "            +firstName, ",
+      "            +lastName, ",
+      "            +bestFriend:id ",
+      "            +worstEnemy ",
+      "          ) ",
+      "        )~io.epigraph.tests.User:( ",
+      "          +record( ",
+      "            +worstEnemy(+id, +firstName, +lastName, +profile) ",
+      "            +profile ",
+      "          ) ",
+      "        ) ",
+      "        +worstEnemy(+id, +firstName, +lastName) ",
+      "      ) ",
+      "    )~io.epigraph.tests.User:(+id, record(+profile, +worstEnemy(profile))) ",
       "  } ",
 
       "}"
@@ -113,27 +143,28 @@ public class HttpServerTest {
       @NotNull
       @Override
       public CompletableFuture<ReadOperationResponse> process(@NotNull ReadOperationRequest request) {
-        Person.Imm person = User
-            .create()
+        Person.Imm person = User.create()
             .setId(UserId.create(1))
-            .setRecord(
-                UserRecord
-                    .create()
-                    .setId(PersonId.create(1))
-                    .setFirstName(epigraph.String.create("Alfred"))
-                    .setLastName(epigraph.String.create("Hitchcock"))
-                    .setProfile_Error(new ErrorValue(404, "Not Found", null))
-                    .setBestFriend$(User
-                        .create()
-                        .setId(UserId.create(2))
-                        .setRecord(
-                            UserRecord
-                                .create()
-                                .setId(PersonId.create(2))
-                                .setFirstName(epigraph.String.create("Bruce"))
-                                .setLastName(epigraph.String.create("Willis"))
-                                .setProfile(Url.create("http://google.com/"))
-                        ))
+            .setRecord(UserRecord.create()
+                .setId(PersonId.create(1))
+                .setFirstName(epigraph.String.create("Alfred"))
+                .setLastName(epigraph.String.create("Hitchcock"))
+                .setProfile_Error(new ErrorValue(404, "Not Found", null))
+                .setBestFriend$(User.create()
+                    .setId(UserId.create(2))
+                    .setRecord(UserRecord.create()
+                        .setId(PersonId.create(2))
+                        .setFirstName(epigraph.String.create("Bruce"))
+                        .setLastName(epigraph.String.create("Willis"))
+                        .setProfile(Url.create("http://google.com/"))
+                    )
+                )
+                .setWorstEnemy(UserRecord.create()
+                    .setId(PersonId.create(3))
+                    .setFirstName(epigraph.String.create("Chuck"))
+                    .setLastName(epigraph.String.create("Norris"))
+                    .setProfile(Url.create("http://bing.com/"))
+                )
             )
             .toImmutable();
 
@@ -168,25 +199,28 @@ public class HttpServerTest {
         String_Person_Map.Imm personMap = String_Person_Map
             .create()
 
-            .put$(epigraph.String.create("1").toImmutable(), Person
-                .create()
-                .setId(PersonId.create(1))
-                .setRecord(
-                    PersonRecord
-                        .create()
-                        .setId(PersonId.create(1))
-                        .setFirstName(epigraph.String.create("Alfred"))
-                        .setLastName(epigraph.String.create("Hitchcock"))
-                        .setBestFriend$(Person
-                            .create()
+            .put$(epigraph.String.create("1").toImmutable(), User.create()
+                .setId(UserId.create(1))
+                .setRecord(UserRecord.create()
+                    .setId(PersonId.create(1))
+                    .setFirstName(epigraph.String.create("Alfred"))
+                    .setLastName(epigraph.String.create("Hitchcock"))
+                    .setProfile_Error(new ErrorValue(404, "Not Found", null))
+                    .setBestFriend$(User.create()
+                        .setId(UserId.create(2))
+                        .setRecord(UserRecord.create()
                             .setId(PersonId.create(2))
-                            .setRecord(
-                                PersonRecord
-                                    .create()
-                                    .setId(PersonId.create(2))
-                                    .setFirstName(epigraph.String.create("Bruce"))
-                                    .setLastName(epigraph.String.create("Willis"))
-                            ))
+                            .setFirstName(epigraph.String.create("Bruce"))
+                            .setLastName(epigraph.String.create("Willis"))
+                            .setProfile(Url.create("http://google.com/"))
+                        )
+                    )
+                    .setWorstEnemy(UserRecord.create()
+                        .setId(PersonId.create(3))
+                        .setFirstName(epigraph.String.create("Chuck"))
+                        .setLastName(epigraph.String.create("Norris"))
+                        .setProfile(Url.create("http://bing.com/"))
+                    )
                 )
             )
 
@@ -227,9 +261,9 @@ public class HttpServerTest {
 
   public static void main(String[] args) throws ServiceInitializationException {
     Undertow server = Undertow.builder()
-                              .addHttpListener(8888, "localhost")
-                              .setHandler(new UndertowHandler(buildUsersService(), resolver))
-                              .build();
+        .addHttpListener(8888, "localhost")
+        .setHandler(new UndertowHandler(buildUsersService(), resolver))
+        .build();
 
     server.start();
   }

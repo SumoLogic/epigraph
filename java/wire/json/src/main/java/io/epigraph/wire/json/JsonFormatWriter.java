@@ -18,8 +18,10 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Deque;
+import java.util.List;
 
 public class JsonFormatWriter implements FormatWriter<IOException> {
 
@@ -182,9 +184,81 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
   private void write(@NotNull Deque<? extends ReqOutputMapModelProjection> projections, @NotNull MapDatum datum)
       throws IOException {
     out.write("{");
-
-
+    List<? extends ReqOutputKeyProjection> keyProjections = keyProjections(projections);
+    Deque<? extends ReqOutputVarProjection> valueProjections = valueProjections(projections);
+    boolean renderValuePolymorphic = valueProjections.stream().anyMatch(vp -> vp.polymorphicTails() != null);
+    if (keyProjections == null) {
+      out.write("\"*\":\"Not implemented yet\"");
+    } else {
+      boolean comma = false;
+      for (ReqOutputKeyProjection keyProjection : keyProjections) {
+        Datum key = keyProjection.value();
+        @SuppressWarnings("SuspiciousMethodCalls") Data keyData = datum._raw().elements().get(key);
+        if (keyData != null) {
+          if (comma) out.write(',');
+          else comma = true;
+          out.write('"');
+          out.write(keyString(key));
+          out.write("\":");
+          Deque<? extends ReqOutputVarProjection> flatValueProjections = flatten(valueProjections, keyData.type());
+          write(renderValuePolymorphic, flatValueProjections, keyData);
+        }
+      }
+    }
     out.write("}");
+  }
+
+  /** Builds a superset of all key projections. `null` is treated as wildcard and yields wildcard result immediately. */
+  private static @Nullable List<? extends ReqOutputKeyProjection> keyProjections(
+      @NotNull Deque<? extends ReqOutputMapModelProjection> projections // non-empty
+  ) {
+    switch (projections.size()) {
+      case 0:
+        throw new IllegalArgumentException("No projections");
+      case 1:
+        return projections.peek().keys();
+      default:
+        List<ReqOutputKeyProjection> keys = null;
+        for (ReqOutputMapModelProjection projection : projections) {
+          List<? extends ReqOutputKeyProjection> projectionKeys = projection.keys();
+          if (projectionKeys == null) return null;
+          if (keys == null) keys = new ArrayList<>(projectionKeys);
+          else keys.addAll(projectionKeys);
+        }
+        return keys;
+    }
+  }
+
+  private static @NotNull Deque<? extends ReqOutputVarProjection> valueProjections(
+      @NotNull Deque<? extends ReqOutputMapModelProjection> projections // non-empty
+  ) {
+    ArrayDeque<ReqOutputVarProjection> valueProjections = new ArrayDeque<>(projections.size());
+    switch (projections.size()) {
+      case 0:
+        throw new IllegalArgumentException("No projections");
+      case 1:
+        valueProjections.add(projections.peek().itemsProjection());
+        break;
+      default:
+        for (ReqOutputMapModelProjection projection : projections) valueProjections.add(projection.itemsProjection());
+    }
+    return valueProjections;
+  }
+
+  /** Returns string representation of specified datum to be used as json map key. */
+  private static @NotNull String keyString(@NotNull Datum key) {
+    switch (key.type().kind()) {
+      case PRIMITIVE:
+        return ((PrimitiveDatum) key).getVal().toString();
+      case RECORD:
+      case MAP:
+      case LIST:
+      case ENUM:
+        throw new UnsupportedOperationException(key.type().kind().name() + " keys rendering not implemented yet");
+      case UNION:
+      default:
+        throw new UnsupportedOperationException(key.type().kind().name());
+    }
   }
 
   private void write(@NotNull Deque<? extends ReqOutputListModelProjection> projections, @NotNull ListDatum datum)
@@ -231,7 +305,7 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
   private static @NotNull Deque<? extends ReqOutputVarProjection> flatten(
       @NotNull Collection<? extends ReqOutputVarProjection> projections,
       @NotNull Type varType
-  ) {
+  ) { // TODO more careful ordering of projections might be needed to ensure last one is the most precise in complex cases
     ArrayDeque<ReqOutputVarProjection> acc = new ArrayDeque<>();
     for (ReqOutputVarProjection projection : projections) append(acc, projection, varType);
     return acc;

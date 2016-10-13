@@ -41,7 +41,7 @@ public class ReqOutputMapModelProjection extends ReqOutputModelProjection<MapTyp
   @Nullable
   public List<ReqOutputKeyProjection> keys() { return keys; }
 
-  public boolean keysRequired() { return keysRequired; }
+  public boolean keysRequired() { return keysRequired; } // FIXME what's the meaning of this?
 
   @Override
   public boolean equals(Object o) {
