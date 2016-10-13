@@ -17,11 +17,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Deque;
-import java.util.List;
+import java.util.*;
+import java.util.function.Function;
 
 public class JsonFormatWriter implements FormatWriter<IOException> {
 
@@ -184,27 +181,28 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
   private void write(@NotNull Deque<? extends ReqOutputMapModelProjection> projections, @NotNull MapDatum datum)
       throws IOException {
     out.write("{");
+
     List<? extends ReqOutputKeyProjection> keyProjections = keyProjections(projections);
     Deque<? extends ReqOutputVarProjection> valueProjections = valueProjections(projections);
-    boolean renderValuePolymorphic = valueProjections.stream().anyMatch(vp -> vp.polymorphicTails() != null);
-    if (keyProjections == null) {
-      out.write("\"*\":\"Not implemented yet\"");
-    } else {
-      boolean comma = false;
-      for (ReqOutputKeyProjection keyProjection : keyProjections) {
-        Datum key = keyProjection.value();
-        @SuppressWarnings("SuspiciousMethodCalls") Data keyData = datum._raw().elements().get(key);
-        if (keyData != null) {
-          if (comma) out.write(',');
-          else comma = true;
-          out.write('"');
-          out.write(keyString(key));
-          out.write("\":");
-          Deque<? extends ReqOutputVarProjection> flatValueProjections = flatten(valueProjections, keyData.type());
-          write(renderValuePolymorphic, flatValueProjections, keyData);
-        }
-      }
-    }
+    boolean polymorphicValue = valueProjections.stream().anyMatch(vp -> vp.polymorphicTails() != null);
+    Map<Type, Deque<? extends ReqOutputVarProjection>> polymorphicCache = polymorphicValue ? new HashMap<>() : null;
+    if (keyProjections == null)
+      writeMapEntries(
+          valueProjections,
+          polymorphicCache,
+          datum._raw().elements().entrySet(),
+          Map.Entry::getKey,
+          Map.Entry::getValue
+      );
+    else
+      writeMapEntries(
+          valueProjections,
+          polymorphicCache,
+          keyProjections,
+          ReqOutputKeyProjection::value,
+          kp -> datum._raw().elements().get(kp.value())
+      );
+
     out.write("}");
   }
 
@@ -245,6 +243,32 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
     return valueProjections;
   }
 
+  private <E> void writeMapEntries(
+      @NotNull Deque<? extends ReqOutputVarProjection> valueProjections,
+      @Nullable Map<Type, Deque<? extends ReqOutputVarProjection>> polymorphicCache,
+      @NotNull Iterable<E> entries,
+      @NotNull Function<E, @NotNull Datum> keyFunc,
+      @NotNull Function<E, @Nullable Data> valueFunc
+  ) throws IOException {
+    boolean comma = false;
+    for (E entry : entries) {
+      @NotNull Datum key = keyFunc.apply(entry);
+      @Nullable Data valueData = valueFunc.apply(entry);
+      if (valueData != null) {
+        if (comma) out.write(',');
+        else comma = true;
+        out.write('"');
+        out.write(keyString(key));
+        out.write("\":");
+        Deque<? extends ReqOutputVarProjection> flatValueProjections = polymorphicCache == null
+            ? valueProjections
+            : polymorphicCache.computeIfAbsent(valueData.type(), t -> flatten(valueProjections, t));
+        write(polymorphicCache != null, flatValueProjections, valueData);
+      }
+    }
+  }
+
+
   /** Returns string representation of specified datum to be used as json map key. */
   private static @NotNull String keyString(@NotNull Datum key) {
     switch (key.type().kind()) {
@@ -256,6 +280,7 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
       case ENUM:
         throw new UnsupportedOperationException(key.type().kind().name() + " keys rendering not implemented yet");
       case UNION:
+        throw new IllegalArgumentException(key.type().kind().name());
       default:
         throw new UnsupportedOperationException(key.type().kind().name());
     }
@@ -319,6 +344,19 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
       out.write(s); // FIXME apply proper json string escaping https://tools.ietf.org/html/rfc7159#section-7
       out.write('"');
     }
+  }
+
+  private static class MapEntry {
+
+    public final @NotNull Datum key;
+
+    public final @Nullable Data value;
+
+    public MapEntry(@NotNull Datum key, @Nullable Data value) {
+      this.key = key;
+      this.value = value;
+    }
+
   }
 
 }

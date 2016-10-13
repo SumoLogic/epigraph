@@ -4,6 +4,7 @@ package io.epigraph.util;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.BinaryOperator;
@@ -223,6 +224,28 @@ public class Unmodifiable {
 
     }
 
+
+  }
+
+  public static class MapEntry<K, V> implements Map.Entry<K, V> {
+
+    private final @NotNull K key;
+
+    private final @Nullable V value;
+
+    public MapEntry(@NotNull K key, @Nullable V value) {
+      this.key = key;
+      this.value = value;
+    }
+
+    @Override
+    public @NotNull K getKey() { return key; }
+
+    @Override
+    public @Nullable V getValue() { return value; }
+
+    @Override
+    public V setValue(V value) throws UnsupportedOperationException { throw new UnsupportedOperationException(); }
 
   }
 
