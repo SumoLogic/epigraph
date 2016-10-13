@@ -95,8 +95,16 @@ public class Unmodifiable {
       @NotNull Map<? extends OK, ? extends OV> original,
       @NotNull Function<? super OK, ? extends K> keyMapper,
       @NotNull Function<? super OV, ? extends V> valueMapper
+  ) { return map(original, keyMapper, valueMapper, () -> Util.createHashMap(original.size())); }
+
+  @Contract(pure = true)
+  public static @NotNull <OK, OV, K, V> Map<K, ? extends V> map(
+      @NotNull Map<? extends OK, ? extends OV> original,
+      @NotNull Function<? super OK, ? extends K> keyMapper,
+      @NotNull Function<? super OV, ? extends V> valueMapper,
+      @NotNull Supplier<? extends Map<K, V>> mapSupplier
   ) {
-    HashMap<K, V> map = Util.createHashMap(original.size());
+    Map<K, V> map = mapSupplier.get();
     original.forEach((k, v) -> map.put(keyMapper.apply(k), valueMapper.apply(v)));
     return Unmodifiable.map(map);
   }

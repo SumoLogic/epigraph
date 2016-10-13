@@ -130,16 +130,16 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
   }
 
   private void write(ErrorValue error) throws IOException {
-//    out.write("{\"ERROR\":");
-//    out.write(error.statusCode().toString());
-//    out.write(",\"message\":");
-//    write(error.message());
-//    out.write('}');
-    out.write('['); // rendering error as `[int, string]` array so it can't be confused with map datum
+    out.write("{\"ERROR\":");
     out.write(error.statusCode().toString());
-    out.write(',');
+    out.write(",\"message\":");
     write(error.message());
-    out.write(']');
+    out.write('}');
+//    out.write('['); // rendering error as `[int, string]` array so it can't be confused with map datum
+//    out.write(error.statusCode().toString());
+//    out.write(',');
+//    write(error.message());
+//    out.write(']');
   }
 
   private void write(@NotNull Deque<? extends ReqOutputRecordModelProjection> projections, @NotNull RecordDatum datum)
@@ -174,7 +174,7 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
 
   private void write(@NotNull Deque<? extends ReqOutputMapModelProjection> projections, @NotNull MapDatum datum)
       throws IOException {
-    out.write("{");
+    out.write("[");
 
     List<? extends ReqOutputKeyProjection> keyProjections = keyProjections(projections);
     Deque<? extends ReqOutputVarProjection> valueProjections = valueProjections(projections);
@@ -197,7 +197,7 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
           kp -> datum._raw().elements().get(kp.value())
       );
 
-    out.write("}");
+    out.write("]");
   }
 
   /** Builds a superset of all key projections. `null` is treated as wildcard and yields wildcard result immediately. */
@@ -251,19 +251,20 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
       if (valueData != null) {
         if (comma) out.write(',');
         else comma = true;
-        out.write('"');
-        out.write(keyString(key));
-        out.write("\":");
+        out.write("{\"key\":");
+        out.write(keyString(key)); // FIXME properly render (as structure, not as string) projectionless key datum
+        out.write(",\"value\":");
         Deque<? extends ReqOutputVarProjection> flatValueProjections = polymorphicCache == null
             ? valueProjections
             : polymorphicCache.computeIfAbsent(valueData.type(), t -> flatten(valueProjections, t));
         write(polymorphicCache != null, flatValueProjections, valueData);
+        out.write('}');
       }
     }
   }
 
-
   /** Returns string representation of specified datum to be used as json map key. */
+  @Deprecated
   private static @NotNull String keyString(@NotNull Datum key) {
     switch (key.type().kind()) {
       case PRIMITIVE:

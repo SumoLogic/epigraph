@@ -4,6 +4,7 @@ package io.epigraph.data;
 
 import io.epigraph.types.MapType;
 import io.epigraph.util.Unmodifiable;
+import io.epigraph.util.Util;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.AbstractMap;
@@ -70,7 +71,12 @@ public interface MapDatum extends Datum {
 
       public Raw(@NotNull MapDatum.Builder.Raw mutable) {
         super(mutable.type());
-        elements = Unmodifiable.map(mutable.elements(), k -> k, Data::toImmutable);
+        elements = Unmodifiable.map(
+            mutable.elements(),
+            k -> k,
+            Data::toImmutable,
+            () -> Util.createLinkedHashMap(mutable.size())
+        );
         hashCode = Objects.hash(type(), elements);
       }
 

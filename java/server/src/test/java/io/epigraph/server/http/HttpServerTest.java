@@ -196,7 +196,7 @@ public class HttpServerTest {
       @NotNull
       @Override
       public CompletableFuture<ReadOperationResponse> process(@NotNull ReadOperationRequest request) {
-        String_Person_Map.Imm personMap = String_Person_Map
+        String_Person_Map personMap = String_Person_Map
             .create()
 
             .put$(epigraph.String.create("1").toImmutable(), User.create()

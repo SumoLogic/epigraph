@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -19,6 +20,11 @@ public interface Util {
 
   @Contract(pure = true)
   static @NotNull <K, V> HashMap<K, V> createHashMap(int size) { return new HashMap<>(hashMapCapacity(size), 0.75f); }
+
+  @Contract(pure = true)
+  static @NotNull <K, V> LinkedHashMap<K, V> createLinkedHashMap(int size) {
+    return new LinkedHashMap<>(hashMapCapacity(size), 0.75f);
+  }
 
   @Contract(pure = true)
   static int hashMapCapacity(int size) { return (size * 4 + 2) / 3; } // TODO make sure arithmetic is correct
