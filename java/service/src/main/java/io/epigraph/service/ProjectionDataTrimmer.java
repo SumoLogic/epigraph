@@ -22,8 +22,9 @@ public class ProjectionDataTrimmer { // todo move somewhere else?
     @NotNull final Data.Raw raw = data._raw();
     @NotNull final Data.Builder.Raw b = data.type().createDataBuilder()._raw();
 
-    for (Map.Entry<Type.Tag, ReqOutputTagProjection> entry : projection.tagProjections().entrySet()) {
-      final Type.Tag tag = entry.getKey();
+    for (Map.Entry<String, ReqOutputTagProjection> entry : projection.tagProjections().entrySet()) {
+      final String tagName = entry.getKey();
+      final Type.Tag tag = projection.type().tagsMap().get(tagName);
 
       @Nullable final Val val = raw.getValue(tag);
       if (val != null) {
@@ -66,11 +67,12 @@ public class ProjectionDataTrimmer { // todo move somewhere else?
     @NotNull final RecordDatum.Builder.Raw b = datum.type().createBuilder()._raw();
 
     @Nullable
-    LinkedHashMap<RecordType.Field, ReqOutputFieldProjection> fieldProjections = projection.fieldProjections();
+    LinkedHashMap<String, ReqOutputFieldProjection> fieldProjections = projection.fieldProjections();
 
     if (fieldProjections != null) {
-      for (Map.Entry<RecordType.Field, ReqOutputFieldProjection> entry : fieldProjections.entrySet()) {
-        final RecordType.Field field = entry.getKey();
+      for (Map.Entry<String, ReqOutputFieldProjection> entry : fieldProjections.entrySet()) {
+        final String fieldName = entry.getKey();
+        final RecordType.Field field = projection.model().fieldsMap().get(fieldName);
         @Nullable final Data data = raw.getData(field);
 
         if (data != null) b.setData(field, trimData(data, entry.getValue().projection()));

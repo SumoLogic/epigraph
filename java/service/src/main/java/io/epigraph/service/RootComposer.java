@@ -19,6 +19,8 @@ import java.util.List;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class RootComposer {
+  // TODO remove this class
+
   public static OpOutputRecordModelProjection composeRoot(@NotNull Service service, @NotNull TypesResolver resolver) {
     // todo set namespace?
     final String rootTypeName = service.name() + "Root";
@@ -35,7 +37,7 @@ public class RootComposer {
       }
     };
 
-    LinkedHashMap<RecordType.Field, OpOutputFieldProjection> fieldProjections = null;
+    LinkedHashMap<String, OpOutputFieldProjection> fieldProjections = null;
 
     return new OpOutputRecordModelProjection(
         rootType,
