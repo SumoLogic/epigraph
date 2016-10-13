@@ -44,6 +44,7 @@ idea {
 task publishGradlePlugins(dependsOn: [
     ':epigraph-scala-core:publishToMavenLocal',
     ':epigraph-java-codegen:publishToMavenLocal',
+    ':epigraph-java-util:publishToMavenLocal',
     ':epigraph-lang-common:publishToMavenLocal',
     ':epigraph-light-psi:publishToMavenLocal',
     ':epigraph-schema-parser:publishToMavenLocal',
