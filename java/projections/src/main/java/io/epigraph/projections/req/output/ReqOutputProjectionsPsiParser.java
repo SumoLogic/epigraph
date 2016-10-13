@@ -35,6 +35,11 @@ import static io.epigraph.projections.ProjectionPsiParserUtil.*;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ReqOutputProjectionsPsiParser {
+  // todo error messages listing supported fields/tags should take parents into account:
+  // op : ..bestFriend(id,firstName)~User(profileUrl)
+  // req: ..bestFriend(id,firstName)~User(x) -- supported fields are (id, firstName, profileUrl)
+
+
   public static StepsAndProjection<ReqOutputVarProjection> parseTrunkVarProjection(
       @NotNull DataType dataType,
       @NotNull OpOutputVarProjection op,
