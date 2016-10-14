@@ -1,4 +1,4 @@
-package io.epigraph.idl.parser;
+package io.epigraph.url.parser;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.ParserDefinition;
@@ -12,61 +12,48 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IFileElementType;
 import com.intellij.psi.tree.TokenSet;
-import io.epigraph.idl.lexer.IdlElementTypes;
-import io.epigraph.idl.lexer.IdlLexer;
-import io.epigraph.idl.parser.psi.IdlFile;
-import io.epigraph.idl.parser.psi.stubs.IdlStubElementTypes;
+import io.epigraph.url.lexer.UrlElementTypes;
+import io.epigraph.url.lexer.UrlLexer;
+import io.epigraph.url.parser.psi.UrlFile;
+import io.epigraph.url.parser.psi.stubs.UrlStubElementTypes;
 import org.jetbrains.annotations.NotNull;
 
-import static io.epigraph.idl.lexer.IdlElementTypes.*;
+import static io.epigraph.url.lexer.UrlElementTypes.*;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class IdlParserDefinition implements ParserDefinition {
-  public static IdlParserDefinition INSTANCE = new IdlParserDefinition();
+public class UrlParserDefinition implements ParserDefinition {
+  public static UrlParserDefinition INSTANCE = new UrlParserDefinition();
 
   public final static TokenSet WHITESPACES = TokenSet.create(TokenType.WHITE_SPACE);
-  public final static TokenSet IDENTIFIERS = TokenSet.create(I_ID);
-  public final static TokenSet COMMENTS = TokenSet.create(I_COMMENT, I_BLOCK_COMMENT);
-  public final static TokenSet CURLY_BRACES = TokenSet.create(I_CURLY_LEFT, I_CURLY_RIGHT);
+  public final static TokenSet IDENTIFIERS = TokenSet.create(U_ID, U_PARAM_NAME);
+  public final static TokenSet COMMENTS = TokenSet.create(U_BLOCK_COMMENT);
+  public final static TokenSet CURLY_BRACES = TokenSet.create(U_CURLY_LEFT, U_CURLY_RIGHT);
 
   public final static TokenSet KEYWORDS = TokenSet.create(
-      I_NAMESPACE,
-      I_IMPORT,
-      I_META,
-      I_MAP,
-      I_LIST,
-      I_FORBIDDEN,
-      I_REQUIRED,
-      I_DEFAULT,
-      I_RESOURCE,
-      I_READ,
-      I_CREATE,
-      I_UPDATE,
-      I_DELETE,
-      I_CUSTOM,
-      I_INPUT,
-      I_OUTPUT
+      U_MAP,
+      U_LIST,
+      U_DEFAULT
   );
 
-  public final static TokenSet STRING_LITERALS = TokenSet.create(I_STRING);
-  public final static TokenSet LITERALS = TokenSet.andSet(STRING_LITERALS, TokenSet.create(I_NUMBER, I_BOOLEAN));
+  public final static TokenSet STRING_LITERALS = TokenSet.create(U_STRING);
+  public final static TokenSet LITERALS = TokenSet.andSet(STRING_LITERALS, TokenSet.create(U_NUMBER, U_BOOLEAN));
 
   @NotNull
   @Override
   public Lexer createLexer(Project project) {
-    return new FlexAdapter(new IdlLexer());
+    return new FlexAdapter(new UrlLexer());
   }
 
   @Override
   public PsiParser createParser(Project project) {
-    return new IdlParser();
+    return new UrlParser();
   }
 
   @Override
   public IFileElementType getFileNodeType() {
-    return IdlStubElementTypes.IDL_FILE;
+    return UrlStubElementTypes.URL_FILE;
   }
 
   @Override
@@ -87,12 +74,12 @@ public class IdlParserDefinition implements ParserDefinition {
   @NotNull
   @Override
   public PsiElement createElement(ASTNode astNode) {
-    return IdlElementTypes.Factory.createElement(astNode);
+    return UrlElementTypes.Factory.createElement(astNode);
   }
 
   @Override
   public PsiFile createFile(FileViewProvider fileViewProvider) {
-    return new IdlFile(fileViewProvider);
+    return new UrlFile(fileViewProvider);
   }
 
   @Override

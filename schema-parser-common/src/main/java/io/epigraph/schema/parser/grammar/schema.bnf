@@ -269,7 +269,7 @@ private partRecover ::= ! ('}' | qid '=' | qid ':' | 'abstract' | 'override' | '
 //private partRecover ::= ! ('}' | qid | 'abstract' | 'override' | ',' )
 
 // ============= data language =============
-// please keep in sync with data language from schema.bnf
+// please keep in sync with data language from idl.bnf and url.bnf
 
 dataValue ::= data | datum
 private dataTypeSpec ::= typeRef

@@ -26,6 +26,7 @@ Map<String, String> modules = [
     'java/projections'                     : 'epigraph-java-projections',
     'java/server'                          : 'epigraph-java-server',
     'java/service'                         : 'epigraph-java-service',
+    'java/url-request-parser'              : 'epigraph-java-url-request-parser',
     'java/util'                            : 'epigraph-java-util',
     'java/wire/common'                     : 'epigraph-java-wire-common',
     'java/wire/json'                       : 'epigraph-java-wire-json',
