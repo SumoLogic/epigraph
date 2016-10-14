@@ -92,6 +92,7 @@ mvn clean install -P maven-plugin-dependent
         <module>java/projections</module>
         <module>java/server</module>
         <module>java/service</module>
+        <module>java/wire</module>
         <module>scala/codegen-test</module>
         <module>schemas</module>
         <module>tests</module>
