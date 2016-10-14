@@ -40,42 +40,38 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
   private void writeData(
       boolean renderPoly,
       @NotNull Deque<? extends ReqOutputVarProjection> projections, // non-empty, polymorphic tails ignored
-      @Nullable Data data
+      @NotNull Data data
   )
       throws IOException {
-    if (data == null) {
-      out.write("null"); // TODO may get away without this check
-    } else {
-      Type type = projections.peekLast().type(); // use deepest match type from here on
-      // TODO check all projections (not just the ones that matched actual data type)?
-      boolean renderMulti = type.kind() == TypeKind.UNION && needMultiRendering(projections);
-      if (renderPoly) {
-        out.write("{\"type\":\"");
-        out.write(type.name().toString()); // TODO use (potentially short) type name used in request projection
-        out.write("\",\"data\":");
-      }
-      if (renderMulti) out.write('{');
-      boolean comma = false;
-      for (Tag tag : type.tags()) {
-        Deque<ReqOutputModelProjection> modelProjections = new ArrayDeque<>(projections.size());
-        for (ReqOutputVarProjection vp : projections) {
-          ReqOutputTagProjection tagProjection = vp.tagProjection(tag.name());
-          if (tagProjection != null) modelProjections.add(tagProjection.projection());
-        }
-        if (!modelProjections.isEmpty()) { // if this tag was mentioned in at least one projection
-          if (renderMulti) {
-            if (comma) out.write(',');
-            else comma = true;
-            out.write('"');
-            out.write(tag.name());
-            out.write("\":");
-          }
-          writeValue(modelProjections, data._raw().getValue(tag));
-        }
-      }
-      if (renderMulti) out.write('}');
-      if (renderPoly) out.write('}');
+    Type type = projections.peekLast().type(); // use deepest match type from here on
+    // TODO check all projections (not just the ones that matched actual data type)?
+    boolean renderMulti = type.kind() == TypeKind.UNION && needMultiRendering(projections);
+    if (renderPoly) {
+      out.write("{\"type\":\"");
+      out.write(type.name().toString()); // TODO use (potentially short) type name used in request projection?
+      out.write("\",\"data\":");
     }
+    if (renderMulti) out.write('{');
+    boolean comma = false;
+    for (Tag tag : type.tags()) {
+      Deque<ReqOutputModelProjection> modelProjections = new ArrayDeque<>(projections.size());
+      for (ReqOutputVarProjection vp : projections) {
+        ReqOutputTagProjection tagProjection = vp.tagProjection(tag.name());
+        if (tagProjection != null) modelProjections.add(tagProjection.projection());
+      }
+      if (!modelProjections.isEmpty()) { // if this tag was mentioned in at least one projection
+        if (renderMulti) {
+          if (comma) out.write(',');
+          else comma = true;
+          out.write('"');
+          out.write(tag.name());
+          out.write("\":");
+        }
+        writeValue(modelProjections, data._raw().getValue(tag));
+      }
+    } // TODO if we're not rendering multi and zero tags were requested (projection error) - render error instead
+    if (renderMulti) out.write('}');
+    if (renderPoly) out.write('}');
   }
 
   private static boolean needMultiRendering(@NotNull Collection<? extends ReqOutputVarProjection> projections) {
@@ -87,7 +83,7 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
         else if (!tagName.equals(vpTagName)) return true;
       }
     }
-    return false;
+    return tagName == null; // false if there was exactly one tag and not parenthesized projections
   }
 
   private void writeValue(@NotNull Deque<? extends ReqOutputModelProjection> projections, @Nullable Val value)
