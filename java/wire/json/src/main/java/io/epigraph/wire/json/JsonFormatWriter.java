@@ -180,7 +180,10 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
   ) throws IOException {
     out.write("[");
     List<? extends ReqOutputKeyProjection> keyProjections = keyProjections(projections);
-    Deque<? extends ReqOutputVarProjection> valueProjections = valueProjections(projections);
+    Deque<? extends ReqOutputVarProjection> valueProjections = subProjections(
+        projections,
+        ReqOutputMapModelProjection::itemsProjection
+    );
     boolean polymorphicValue = valueProjections.stream().anyMatch(vp -> vp.polymorphicTails() != null);
     Map<Type, Deque<? extends ReqOutputVarProjection>> polymorphicCache = polymorphicValue ? new HashMap<>() : null;
     if (keyProjections == null)
@@ -223,20 +226,21 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
     }
   }
 
-  private static @NotNull Deque<? extends ReqOutputVarProjection> valueProjections(
-      @NotNull Deque<? extends ReqOutputMapModelProjection> projections // non-empty
+  private static <P> @NotNull Deque<? extends ReqOutputVarProjection> subProjections(
+      @NotNull Deque<? extends P> projections, // non-empty
+      @NotNull Function<P, ReqOutputVarProjection> varFunc
   ) {
-    ArrayDeque<ReqOutputVarProjection> valueProjections = new ArrayDeque<>(projections.size());
+    ArrayDeque<ReqOutputVarProjection> subProjections = new ArrayDeque<>(projections.size());
     switch (projections.size()) {
       case 0:
         throw new IllegalArgumentException("No projections");
       case 1:
-        valueProjections.add(projections.peek().itemsProjection());
+        subProjections.add(varFunc.apply(projections.peek()));
         break;
       default:
-        for (ReqOutputMapModelProjection projection : projections) valueProjections.add(projection.itemsProjection());
+        for (P projection : projections) subProjections.add(varFunc.apply(projection));
     }
-    return valueProjections;
+    return subProjections;
   }
 
   private <E> void writeMapEntries(
@@ -285,7 +289,23 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
 
   private void writeList(@NotNull Deque<? extends ReqOutputListModelProjection> projections, @NotNull ListDatum datum)
       throws IOException {
-    out.write("[ ]"); // FIXME
+    out.write('[');
+    Deque<? extends ReqOutputVarProjection> elementProjections = subProjections(
+        projections,
+        ReqOutputListModelProjection::itemsProjection
+    );
+    boolean polymorphicValue = elementProjections.stream().anyMatch(vp -> vp.polymorphicTails() != null);
+    Map<Type, Deque<? extends ReqOutputVarProjection>> polymorphicCache = polymorphicValue ? new HashMap<>() : null;
+    boolean comma = false;
+    for (Data element : datum._raw().elements()) {
+      if (comma) out.write(',');
+      else comma = true;
+      Deque<? extends ReqOutputVarProjection> flatElementProjections = polymorphicCache == null
+          ? elementProjections
+          : polymorphicCache.computeIfAbsent(element.type(), t -> flatten(elementProjections, t));
+      writeData(polymorphicCache != null, flatElementProjections, element);
+    }
+    out.write(']');
   }
 
   private void writePrimitive(
@@ -295,7 +315,7 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
     if (datum instanceof StringDatum) {
       writeString(((StringDatum) datum).getVal());
     } else {
-      // FIXME treat double values properly https://tools.ietf.org/html/rfc7159#section-6
+      // FIXME treat double values (NaN, infinity) properly https://tools.ietf.org/html/rfc7159#section-6
       out.write(datum.getVal().toString());
     }
   }
@@ -341,19 +361,6 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
       out.write(s); // FIXME apply proper json string escaping https://tools.ietf.org/html/rfc7159#section-7
       out.write('"');
     }
-  }
-
-  private static class MapEntry {
-
-    public final @NotNull Datum key;
-
-    public final @Nullable Data value;
-
-    public MapEntry(@NotNull Datum key, @Nullable Data value) {
-      this.key = key;
-      this.value = value;
-    }
-
   }
 
 }

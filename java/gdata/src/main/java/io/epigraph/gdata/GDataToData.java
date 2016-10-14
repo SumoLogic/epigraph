@@ -203,6 +203,8 @@ public class GDataToData {
     } else if (type instanceof IntegerType) {
       if (n instanceof Number)
         n = ((Number) n).intValue();
+    } else if (type instanceof StringType) {
+      n = n.toString();
     }
 
     try {

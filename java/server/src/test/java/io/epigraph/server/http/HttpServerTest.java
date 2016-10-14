@@ -73,6 +73,7 @@ public class HttpServerTest {
       "          ) ",
       "        ) ",
       "        +worstEnemy(+id, +firstName, +lastName) ",
+      "        +friends *(:(+id, record(+id, +firstName, +lastName))) ",
       "      ) ",
       "    )~io.epigraph.tests.User:(+id, record(+profile, +worstEnemy(profile))) ",
       "    ) ",
@@ -103,6 +104,7 @@ public class HttpServerTest {
       "          ) ",
       "        ) ",
       "        +worstEnemy(+id, +firstName, +lastName) ",
+      "        +friends *(:(+id, record(+id, +firstName, +lastName))) ",
       "      ) ",
       "    )~io.epigraph.tests.User:(+id, record(+profile, +worstEnemy(profile))) ",
       "  } ",
@@ -165,6 +167,25 @@ public class HttpServerTest {
                     .setLastName(epigraph.String.create("Norris"))
                     .setProfile(Url.create("http://bing.com/"))
                 )
+                .setFriends(Person_List.create()
+                    .add(User.create()
+                        .setId(UserId.create(2))
+                        .setRecord(UserRecord.create()
+                            .setId(PersonId.create(2))
+                            .setFirstName(epigraph.String.create("Bruce"))
+                            .setLastName(epigraph.String.create("Willis"))
+                            .setProfile(Url.create("http://google.com/"))
+                        )
+                    )
+                    .add(Person.create()
+                        .setId(PersonId.create(4))
+                        .setRecord(PersonRecord.create()
+                            .setId(PersonId.create(4))
+                            .setFirstName(epigraph.String.create("Douglas"))
+                            .setLastName(epigraph.String.create("Adams"))
+                        )
+                    )
+                )
             )
             .toImmutable();
 
@@ -220,6 +241,25 @@ public class HttpServerTest {
                         .setFirstName(epigraph.String.create("Chuck"))
                         .setLastName(epigraph.String.create("Norris"))
                         .setProfile(Url.create("http://bing.com/"))
+                    )
+                    .setFriends(Person_List.create()
+                        .add(User.create()
+                            .setId(UserId.create(2))
+                            .setRecord(UserRecord.create()
+                                .setId(PersonId.create(2))
+                                .setFirstName(epigraph.String.create("Bruce"))
+                                .setLastName(epigraph.String.create("Willis"))
+                                .setProfile(Url.create("http://google.com/"))
+                            )
+                        )
+                        .add(Person.create()
+                            .setId(PersonId.create(4))
+                            .setRecord(PersonRecord.create()
+                                .setId(PersonId.create(4))
+                                .setFirstName(epigraph.String.create("Douglas"))
+                                .setLastName(epigraph.String.create("Adams"))
+                            )
+                        )
                     )
                 )
             )
