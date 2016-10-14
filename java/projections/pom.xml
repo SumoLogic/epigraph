@@ -90,11 +90,6 @@
     <plugins>
 
       <plugin>
-        <groupId>${project.groupId}</groupId>
-        <artifactId>epigraph-maven-plugin</artifactId>
-      </plugin>
-
-      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
       </plugin>

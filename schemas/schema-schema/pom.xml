@@ -4,7 +4,6 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>epigraph-schema-schema</artifactId>
-  <packaging>epigraph-schema</packaging>
 
   <parent>
     <groupId>com.sumologic.epigraph</groupId>
@@ -18,7 +17,7 @@
       <groupId>${project.groupId}</groupId>
       <artifactId>epigraph-builtin-types-schema</artifactId>
       <version>${project.version}</version>
-      <type>epigraph-schema</type>
+      <classifier>epigraph-sources</classifier>
     </dependency>
 
   </dependencies>

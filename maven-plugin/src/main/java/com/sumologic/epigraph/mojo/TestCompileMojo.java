@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * Compile Epigraph source files (.esc)
+ * Compile Epigraph schema source files (.esc).
  */
 @Mojo(
     name = "test-compile",
@@ -33,7 +33,7 @@ public class TestCompileMojo extends BaseCompileMojo {
   /**
    *
    */
-  @Parameter(defaultValue = "${project.build.directory}/epigraph-test-schema")
+  @Parameter(defaultValue = "${project.build.directory}/epigraph-tests")
   private File testOutputDirectory;
 
   /**
@@ -53,9 +53,7 @@ public class TestCompileMojo extends BaseCompileMojo {
   private String[] testExcludes = new String[]{};
 
   @Override
-  protected File getSourceDirectory() {
-    return testSourceDirectory;
-  }
+  protected File getSourceDirectory() { return testSourceDirectory; }
 
   @Override
   protected Collection<Source> getDependencySources() throws MojoExecutionException {
@@ -71,13 +69,9 @@ public class TestCompileMojo extends BaseCompileMojo {
   }
 
   @Override
-  protected String[] getIncludes() {
-    return testIncludes;
-  }
+  protected String[] getIncludes() { return testIncludes; }
 
   @Override
-  protected String[] getExcludes() {
-    return testExcludes;
-  }
+  protected String[] getExcludes() { return testExcludes; }
 
 }

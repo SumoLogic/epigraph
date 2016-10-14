@@ -10,7 +10,7 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import java.io.File;
 
 /**
- * Compile Epigraph source files (.esc)
+ * Compile Epigraph schema source files (.esc).
  */
 @Mojo(
     name = "compile",
@@ -37,18 +37,12 @@ public class MainCompileMojo extends BaseCompileMojo {
   private String[] excludes = new String[]{};
 
   @Override
-  protected File getSourceDirectory() {
-    return sourceDirectory;
-  }
+  protected File getSourceDirectory() { return sourceDirectory; }
 
   @Override
-  protected String[] getIncludes() {
-    return includes;
-  }
+  protected String[] getIncludes() { return includes; }
 
   @Override
-  protected String[] getExcludes() {
-    return excludes;
-  }
+  protected String[] getExcludes() { return excludes; }
 
 }

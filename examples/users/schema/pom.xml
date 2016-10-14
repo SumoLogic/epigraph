@@ -4,7 +4,6 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>examples-users-schema</artifactId>
-  <packaging>epigraph-schema</packaging>
 
   <parent>
     <groupId>com.sumologic.epigraph.examples</groupId>
@@ -20,7 +19,7 @@
       <groupId>com.sumologic.epigraph</groupId>
       <artifactId>epigraph-builtin-types-schema</artifactId>
       <version>0.0-SNAPSHOT</version>
-      <type>epigraph-schema</type>
+      <classifier>epigraph-sources</classifier>
     </dependency>
 
     <!-- test dependencies -->
@@ -29,8 +28,7 @@
       <groupId>com.sumologic.epigraph</groupId>
       <artifactId>epigraph-builtin-types-schema</artifactId>
       <version>0.0-SNAPSHOT</version>
-      <type>epigraph-schema</type>
-      <classifier>tests</classifier>
+      <classifier>epigraph-test-sources</classifier>
       <scope>test</scope>
     </dependency>
 

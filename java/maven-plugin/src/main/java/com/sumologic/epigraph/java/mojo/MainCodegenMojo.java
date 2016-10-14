@@ -11,7 +11,7 @@ import org.apache.maven.project.MavenProject;
 import java.io.File;
 
 /**
- * Compile Epigraph source files (.esc)
+ * Generate Java bindings for Epigraph schema source files (.esc).
  */
 @Mojo(
     name = "generate-sources",
@@ -19,7 +19,7 @@ import java.io.File;
     requiresDependencyResolution = ResolutionScope.COMPILE,
     threadSafe = true
 )
-public class MainCodegenMojo extends BaseCodegenMojo {
+public class MainCodegenMojo extends BaseCodegenMojo { // TODO TestCodegenMojo?
 
   /**
    * A set of Ant-like inclusion patterns used to select files from the source
@@ -38,23 +38,15 @@ public class MainCodegenMojo extends BaseCodegenMojo {
   private String[] excludes = new String[]{};
 
   @Override
-  protected File getSourceDirectory() {
-    return sourceDirectory;
-  }
+  protected File getSourceDirectory() { return sourceDirectory; }
 
   @Override
-  protected String[] getIncludes() {
-    return includes;
-  }
+  protected String[] getIncludes() { return includes; }
 
   @Override
-  protected String[] getExcludes() {
-    return excludes;
-  }
+  protected String[] getExcludes() { return excludes; }
 
   @Override
-  protected void addGeneratedSourcesToProject(MavenProject project, String path) {
-    project.addCompileSourceRoot(path);
-  }
+  protected void addGeneratedSourcesToProject(MavenProject project, String path) { project.addCompileSourceRoot(path); }
 
 }

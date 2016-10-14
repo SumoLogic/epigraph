@@ -14,31 +14,21 @@ import java.io.File;
 @Mojo(name = "test-package", defaultPhase = LifecyclePhase.PACKAGE, requiresProject = true, threadSafe = true)
 public class TestPackageMojo extends BasePackageMojo {
 
-  /**
-   * Directory containing test epigraph schema sources that should be packaged into the JAR.
-   */
+  /** Directory containing test epigraph sources that should be packaged into the JAR. */
   @Parameter(defaultValue = "${project.basedir}/src/test/epigraph"/*${project.build.testOutputDirectory}"?*/, required = true)
-  private File testClassesDirectory = null;
+  private File testClassesDirectory;
 
-  /**
-   * Classifier used for test-package artifact.
-   */
-  @Parameter(defaultValue = "tests")
-  private String classifier = null;
+  /** Classifier used for test-package artifact. */
+  @Parameter(defaultValue = "epigraph-test-sources", required = true)
+  private String classifier;
 
   @Override
-  protected File getClassesDirectory() {
-    return testClassesDirectory;
-  }
+  protected File getClassesDirectory() { return testClassesDirectory; }
 
   @Override
-  protected String getClassifier() {
-    return classifier;
-  }
+  protected String getClassifier() { return classifier; }
 
   @Override
-  protected String getType() {
-    return "epigraph-test-schema";
-  }
+  protected String getType() { return null/*"epigraph-test-schema"*/; }
 
 }

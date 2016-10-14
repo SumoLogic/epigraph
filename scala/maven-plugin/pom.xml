@@ -26,7 +26,7 @@
     <!--<groupId>${project.parent.groupId}</groupId>-->
     <!--<artifactId>epigraph-builtin-types-schema</artifactId>-->
     <!--<version>${project.parent.version}</version>-->
-    <!--<type>epigraph-schema</type>-->
+    <!--<classifier>epigraph-sources</classifier>-->
     <!--<scope>runtime</scope>-->
     <!--</dependency>-->
 
@@ -73,17 +73,14 @@
   </dependencies>
 
   <build>
-    <plugins>
 
-      <!--<plugin>-->
-      <!--<groupId>com.sumologic.epigraph</groupId>-->
-      <!--<artifactId>epigraph-maven-plugin</artifactId>-->
-      <!--</plugin>-->
+    <plugins>
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-plugin-plugin</artifactId>
       </plugin>
+
     </plugins>
 
   </build>

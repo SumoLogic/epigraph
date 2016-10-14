@@ -18,7 +18,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.jar.JarFile;
@@ -94,12 +96,16 @@ public abstract class BaseCodegenMojo extends AbstractMojo {
 
   protected Collection<Source> getDependencySources() throws MojoExecutionException {
     Collection<Source> sources = new ArrayList<>();
-    List<Artifact> epigraphSchemaArtifacts = typedArtifacts(project.getArtifacts(), "epigraph-schema");
-    System.out.println(epigraphSchemaArtifacts.size());
-    for (Artifact artifact : epigraphSchemaArtifacts) {
+//  Collection<Artifact> epigraphArtifacts = typedArtifacts(project.getArtifacts(), "epigraph-schema");
+    Collection<? extends Artifact> epigraphArtifacts = classifiedArtifacts(
+        project.getArtifacts(),
+        "epigraph-sources",
+        "epigraph-test-sources"
+    );
+    for (Artifact artifact : epigraphArtifacts) {
       File artifactFile = artifact.getFile();
       try {
-        System.out.println("Adding sources from " + artifactFile);
+        getLog().info("Adding sources from " + artifactFile);
         addSourcesFromJar(artifactFile, sources);
       } catch (IOException e) {
         throw new MojoExecutionException("Error reading artifact " + artifactFile, e);
@@ -108,15 +114,24 @@ public abstract class BaseCodegenMojo extends AbstractMojo {
     return sources;
   }
 
-  private List<Artifact> typedArtifacts(Set set, String type) {
-    List<Artifact> artifacts = new ArrayList<>();
-    for (Object object : set) {
-      if (object instanceof Artifact) {
-        Artifact artifact = (Artifact) object;
-        if (type == null || type.equals(artifact.getType())) artifacts.add(artifact);
-      }
+//  private Collection<? extends Artifact> typedArtifacts(Iterable<? extends Artifact> artifacts, String type) {
+//    List<Artifact> typedArtifacts = new ArrayList<Artifact>();
+//    for (Artifact artifact : artifacts) {
+//      if (type == null || type.equals(artifact.getType())) typedArtifacts.add(artifact);
+//    }
+//    return typedArtifacts;
+//  }
+
+  private Collection<? extends Artifact> classifiedArtifacts(
+      Iterable<? extends Artifact> artifacts,
+      String... classifiers
+  ) {
+    List<Artifact> classifiedArtifacts = new ArrayList<Artifact>();
+    Collection<? extends String> classifierSet = new HashSet<String>(Arrays.asList(classifiers));
+    for (Artifact artifact : artifacts) {
+      if (classifierSet.contains(artifact.getClassifier())) classifiedArtifacts.add(artifact);
     }
-    return artifacts;
+    return classifiedArtifacts;
   }
 
   private void addSourcesFromJar(File file, Collection<Source> sources) throws IOException {
@@ -163,13 +178,13 @@ public abstract class BaseCodegenMojo extends AbstractMojo {
     } catch (SchemaCompilerException failure) {
       StringBuilder sb = new StringBuilder();
       for (CError err : compiler.ctx().errors()) {
-        final CErrorPosition pos = err.position(); // TODO skip :line:colon, line text, and ^ if NA
+        CErrorPosition pos = err.position(); // TODO skip :line:colon, line text, and ^ if NA
         sb.append(err.filename()).append(':').append(pos.line()).append(':').append(pos.column()).append('\n');
         sb.append("Error: ").append(err.message()).append('\n');
-        final Option<String> errText = pos.lineText();
+        Option<String> errText = pos.lineText();
         if (errText.nonEmpty()) {
-          sb.append(errText.get()).append('\n');
-          sb.append(String.format("%" + (pos.column()) + "s", "^").replace(" ", ".")).append('\n');
+          sb.append('\177').append(errText.get()).append('\n');
+          sb.append('\177').append(String.format("%" + (pos.column()) + "s", "^")).append('\n');
         }
       }
       throw new MojoFailureException(this, "Schema compilation failed", sb.toString());

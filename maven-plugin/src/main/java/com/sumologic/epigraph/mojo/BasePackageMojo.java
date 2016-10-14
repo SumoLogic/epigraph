@@ -19,7 +19,7 @@ import java.io.File;
 
 public abstract class BasePackageMojo extends AbstractMojo {
 
-  private static final String[] DEFAULT_INCLUDES = new String[]{"**/*.esc"};
+  private static final String[] DEFAULT_INCLUDES = new String[]{"**/*.esc", "**/*.idl"};
 
   /**
    * List of files to include. Specified as fileset patterns which are relative to the input directory whose contents
@@ -37,27 +37,24 @@ public abstract class BasePackageMojo extends AbstractMojo {
   @Parameter
   private String[] excludes = DEFAULT_EXCLUDES;
 
-  /**
-   * Directory containing the generated JAR.
-   */
+  /** Directory containing the generated JAR. */
   @Parameter(defaultValue = "${project.build.directory}", required = true)
   private File outputDirectory;
 
   /**
-   * Name of the generated JAR.
+   * Name of the generated JAR. For the epigraph:package goal, "-epigraph-sources" is appended to this filename.
+   * For the epigraph:test-package goal, "-epigraph-test-sources" is appended.
    */
   @Parameter(defaultValue = "${project.build.finalName}", readonly = true)
   private String finalName;
 
-  /**
-   * The Jar archiver.
-   */
+  /** The Jar archiver. */
   @Component(role = Archiver.class, hint = "jar")
   private JarArchiver jarArchiver;
 
   /**
-   * The archive configuration to use. See <a href="http://maven.apache.org/shared/maven-archiver/index.html">Maven
-   * Archiver Reference</a>.
+   * The archive configuration to use.
+   * See <a href="http://maven.apache.org/shared/maven-archiver/index.html">Maven Archiver Reference</a>.
    */
   @Parameter
   private MavenArchiveConfiguration archive = new MavenArchiveConfiguration();
@@ -83,21 +80,21 @@ public abstract class BasePackageMojo extends AbstractMojo {
   @Override
   public void execute() throws MojoExecutionException, MojoFailureException {
     File jarFile = createArchive();
-
-    if (hasClassifier()) {
-      projectHelper.attachArtifact(project, getType(), getClassifier(), jarFile);
-    } else {
-      if (projectHasAlreadySetAnArtifact()) {
-        throw new MojoExecutionException("You have to use a classifier "
-            + "to attach supplemental artifacts to the project instead of replacing them.");
+    if (projectHasAlreadySetAnArtifact()) {
+      if (hasClassifier()) {
+        projectHelper.attachArtifact(project, jarFile, getClassifier());
+      } else {
+        throw new MojoExecutionException(
+            "You have to use a classifier to attach supplemental artifacts to the project instead of replacing them."
+        );
       }
+    } else {
       project.getArtifact().setFile(jarFile);
     }
-
   }
 
   /**
-   * @return true in case where the classifier is not {@code null} and contains something else than white spaces.
+   * @return true in case where the classifier is not {@code null} and contains something else than white space.
    */
   private boolean hasClassifier() {
     String classifier = getClassifier();
@@ -165,21 +162,11 @@ public abstract class BasePackageMojo extends AbstractMojo {
    * @return the file to generate
    */
   private File getJarFile(File basedir, String resultFinalName, String classifier) {
-    if (basedir == null) {
-      throw new IllegalArgumentException("basedir is not allowed to be null");
-    }
-    if (resultFinalName == null) {
-      throw new IllegalArgumentException("finalName is not allowed to be null");
-    }
-
+    if (basedir == null) throw new IllegalArgumentException("basedir is not allowed to be null");
+    if (resultFinalName == null) throw new IllegalArgumentException("finalName is not allowed to be null");
     StringBuilder fileName = new StringBuilder(resultFinalName);
-
-    if (hasClassifier()) {
-      fileName.append("-").append(classifier);
-    }
-
+    if (hasClassifier()) fileName.append("-").append(classifier);
     fileName.append(".jar");
-
     return new File(basedir, fileName.toString());
   }
 

@@ -14,9 +14,7 @@ import java.io.File;
 @Mojo(name = "package", defaultPhase = LifecyclePhase.PACKAGE, requiresProject = true, threadSafe = true)
 public class MainPackageMojo extends BasePackageMojo {
 
-  /**
-   * Directory containing main epigraph schema sources that should be packaged into the JAR.
-   */
+  /** Directory containing main epigraph sources that should be packaged into the JAR. */
   @Parameter(defaultValue = "${project.basedir}/src/main/epigraph"/*${project.build.outputDirectory}"?*/, required = true)
   private File classesDirectory = null;
 
@@ -25,22 +23,16 @@ public class MainPackageMojo extends BasePackageMojo {
    * If not given this will create the main artifact which is the default behavior.
    * If you try to do that a second time without using a classifier the build will fail.
    */
-  @Parameter
-  private String classifier = null;
+  @Parameter(defaultValue = "epigraph-sources", required = true)
+  private String classifier;
 
   @Override
-  protected File getClassesDirectory() {
-    return classesDirectory;
-  }
+  protected File getClassesDirectory() { return classesDirectory; }
 
   @Override
-  protected String getClassifier() {
-    return classifier;
-  }
+  protected String getClassifier() { return classifier; }
 
   @Override
-  protected String getType() {
-    return "epigraph-schema";
-  }
+  protected String getType() { return null/*"epigraph-schema"*/; }
 
 }
