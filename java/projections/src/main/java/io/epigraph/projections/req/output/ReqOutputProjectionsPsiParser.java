@@ -56,7 +56,11 @@ public class ReqOutputProjectionsPsiParser {
       tagProjections = new LinkedHashMap<>();
 
       final ReqOutputModelProjection<?> parsedModelProjection;
-      @NotNull final Type.Tag tag = findTag(type, singleTagProjectionPsi.getTagName(), op, singleTagProjectionPsi);
+      @Nullable final IdlTagName tagNamePsi = singleTagProjectionPsi.getTagName();
+
+      @NotNull final Type.Tag tag;
+
+      tag = findTagOrSingleDefaultTag(type, tagNamePsi, op, singleTagProjectionPsi);
       @NotNull OpOutputTagProjection opTagProjection = findTagProjection(tag.name(), op, singleTagProjectionPsi);
 
       @NotNull OpOutputModelProjection<?> opModelProjection = opTagProjection.projection();
@@ -101,51 +105,72 @@ public class ReqOutputProjectionsPsiParser {
     );
   }
 
+  /**
+   * Finds supported tag with a given name in type {@code type} if {@code idlTagName} is not null.
+   * <p>
+   * Otherwise gets all {@link #findDefaultTags(Type, OpOutputVarProjection, PsiElement) default tags} and, if
+   * this collection contains only one element, returns it; otherwise fails.
+   */
+  @NotNull
+  private static Type.Tag findTagOrSingleDefaultTag(@NotNull Type type,
+                                                    @Nullable IdlTagName idlTagName,
+                                                    @NotNull OpOutputVarProjection opOutputVarProjection,
+                                                    @NotNull PsiElement location) throws PsiProcessingException {
+
+    if (idlTagName != null) return findTag(type, idlTagName, opOutputVarProjection, location);
+    else {
+      @NotNull final List<Type.Tag> defaultTags = findDefaultTags(type, opOutputVarProjection, location);
+      switch (defaultTags.size()) {
+        case 0:
+          throw new PsiProcessingException(
+              String.format("Can't build projection for type '%s': no tags supported", type.name()),
+              location
+          );
+
+        case 1:
+          return defaultTags.get(0);
+
+        default:
+          throw new PsiProcessingException(
+              String.format("Can't build projection for type '%s': more than one default tag supported by the " +
+                            "operation: {%s}. Please specify explicitly which one(s) to build",
+                            type.name(),
+                            defaultTags.stream().map(Type.Tag::name).collect(Collectors.joining(", "))
+              ),
+              location
+          );
+      }
+    }
+  }
+
+  /**
+   * Finds supported tag with a given name in type {@code type}
+   */
   @NotNull
   private static Type.Tag findTag(@NotNull Type type,
-                                  @Nullable IdlTagName idlTagName,
+                                  @NotNull IdlTagName idlTagName,
                                   @NotNull OpOutputVarProjection opOutputVarProjection,
                                   @NotNull PsiElement location) throws PsiProcessingException {
     final Type.Tag tag;
 
-    String tagName = null;
-    if (idlTagName != null) {
-      @Nullable final IdlQid qid = idlTagName.getQid();
-      if (qid != null) tagName = qid.getCanonicalName();
-    }
+    @Nullable final IdlQid qid = idlTagName.getQid();
 
-    if (tagName != null) {
+    if (qid == null)
+      throw new PsiProcessingException("Tag name is missing", idlTagName);
+    else {
+      String tagName = qid.getCanonicalName();
       tag = getTag(type, tagName, location);
-    } else {
-      String defaultTagName = null;
-      for (Map.Entry<String, OpOutputTagProjection> entry : opOutputVarProjection.tagProjections().entrySet()) {
-        if (entry.getValue().projection().includeInDefault()) {
-          if (defaultTagName != null)
-            throw new PsiProcessingException(
-                String.format("Operation supports more than one default tag for type '%s'", type.name()),
-                location
-            );
-          else
-            defaultTagName = entry.getKey();
-        }
-      }
 
-      if (defaultTagName == null)
+      if (!opOutputVarProjection.tagProjections().containsKey(tag.name()))
         throw new PsiProcessingException(
-            String.format("Operation doesn't provide default tags for type '%s'", type.name()),
+            String.format("Tag '%s' is not supported by the operation. Supported tags: {%s}",
+                          tagName, listTags(opOutputVarProjection)
+            ),
             location
         );
 
-      tag = type.tagsMap().get(defaultTagName);
-
-      if (tag == null)
-        throw new PsiProcessingException(
-            String.format("Tag '%s' not found in type '%s'", defaultTagName, type.name()),
-            location
-        );
+      return tag;
     }
-
-    return tag;
   }
 
   @NotNull
@@ -162,6 +187,23 @@ public class ReqOutputProjectionsPsiParser {
 
   private static String listTags(@NotNull OpOutputVarProjection op) {
     return op.tagProjections().keySet().stream().collect(Collectors.joining(", "));
+  }
+
+  @NotNull
+  private static Type.Tag findTag(@NotNull Type type, @NotNull String tagName, @NotNull PsiElement location)
+      throws PsiProcessingException {
+
+    final Map<@NotNull String, @NotNull ? extends Type.Tag> tagsMap = type.tagsMap();
+    final Type.Tag tag = tagsMap.get(tagName);
+    if (tag == null)
+      throw new PsiProcessingException(
+          String.format("Can't find tag '%s' in type '%s'; known tags: {%s}",
+                        tagName, type.name(), String.join(", ", tagsMap.keySet())
+          ),
+          location
+      );
+
+    return tag;
   }
 
   @NotNull
@@ -197,7 +239,7 @@ public class ReqOutputProjectionsPsiParser {
       tagProjections = new LinkedHashMap<>();
       final ReqOutputModelProjection<?> parsedModelProjection;
 
-      @NotNull Type.Tag tag = findTag(type, singleTagProjectionPsi.getTagName(), op, singleTagProjectionPsi);
+      @NotNull Type.Tag tag = findTagOrSingleDefaultTag(type, singleTagProjectionPsi.getTagName(), op, singleTagProjectionPsi);
       @NotNull OpOutputTagProjection opTagProjection = findTagProjection(tag.name(), op, singleTagProjectionPsi);
 
       @NotNull OpOutputModelProjection<?> opModelProjection = opTagProjection.projection();
@@ -401,69 +443,27 @@ public class ReqOutputProjectionsPsiParser {
     return null;
   }
 
-  @NotNull
+  /**
+   * Creates default var projection with explicitly specified list of tags
+   */
   private static ReqOutputVarProjection createDefaultVarProjection(
       @NotNull Type type,
-      @NotNull Type.Tag tag,
-      boolean required,
-      @NotNull OpOutputVarProjection op,
+      @NotNull List<Type.Tag> tags,
+      @NotNull OpOutputVarProjection op, boolean required,
       @NotNull PsiElement locationPsi) throws PsiProcessingException {
 
     LinkedHashMap<String, ReqOutputTagProjection> tagProjections = new LinkedHashMap<>();
 
-    final OpOutputTagProjection opOutputTagProjection = op.tagProjections().get(tag.name());
-    if (opOutputTagProjection != null && opOutputTagProjection.projection().includeInDefault()) {
-      tagProjections.put(
-          tag.name(),
-          new ReqOutputTagProjection(
-              createDefaultModelProjection(
-                  tag.type,
-                  required,
-                  opOutputTagProjection.projection(),
-                  null,
-                  null,
-                  locationPsi
-              ),
-              EpigraphPsiUtil.getLocation(locationPsi)
-          )
-      );
-    }
-
-    return new ReqOutputVarProjection(type, tagProjections, null, false, EpigraphPsiUtil.getLocation(locationPsi));
-  }
-
-  @NotNull
-  private static ReqOutputVarProjection createDefaultVarProjection(@NotNull DatumType type,
-                                                                   @NotNull OpOutputVarProjection op,
-                                                                   boolean required,
-                                                                   @NotNull PsiElement locationPsi)
-      throws PsiProcessingException {
-    return createDefaultVarProjection(type, type.self, required, op, locationPsi);
-  }
-
-  @NotNull
-  private static ReqOutputVarProjection createDefaultVarProjection(@NotNull Type type,
-                                                                   @NotNull OpOutputVarProjection op,
-                                                                   boolean required,
-                                                                   @NotNull PsiElement locationPsi)
-      throws PsiProcessingException {
-
-    LinkedHashMap<String, ReqOutputTagProjection> tagProjections = new LinkedHashMap<>();
-
-    for (Map.Entry<String, OpOutputTagProjection> entry : op.tagProjections().entrySet()) {
-      final String tagName = entry.getKey();
-      final Type.Tag tag = type.tagsMap().get(tagName);
-
-      final OpOutputTagProjection tagProjection = entry.getValue();
-
-      if (tagProjection.projection().includeInDefault())
+    for (Type.Tag tag : tags) {
+      final OpOutputTagProjection opOutputTagProjection = op.tagProjections().get(tag.name());
+      if (opOutputTagProjection != null) {
         tagProjections.put(
-            tagName,
+            tag.name(),
             new ReqOutputTagProjection(
                 createDefaultModelProjection(
                     tag.type,
                     required,
-                    tagProjection.projection(),
+                    opOutputTagProjection.projection(),
                     null,
                     null,
                     locationPsi
@@ -471,9 +471,74 @@ public class ReqOutputProjectionsPsiParser {
                 EpigraphPsiUtil.getLocation(locationPsi)
             )
         );
+      }
     }
 
     return new ReqOutputVarProjection(type, tagProjections, null, false, EpigraphPsiUtil.getLocation(locationPsi));
+  }
+
+  @NotNull
+  private static ReqOutputVarProjection createDefaultVarProjection(
+      @NotNull Type type,
+      @NotNull OpOutputVarProjection op,
+      boolean required,
+      @NotNull PsiElement locationPsi) throws PsiProcessingException {
+
+    List<Type.Tag> defaultTags = findDefaultTags(type, op, locationPsi);
+    return createDefaultVarProjection(type, defaultTags, op, required, locationPsi);
+  }
+
+  /**
+   * Finds default tags for a given {@code type}
+   * <p>
+   * If it's a {@code DatumType}, then default tag is {@code self}, provided that {@code op} contains it.
+   * If it's a {@code UnionType}, then all default tags from {@code op} are included.
+   */
+  @NotNull
+  private static List<Type.Tag> findDefaultTags(
+      @NotNull Type type,
+      @NotNull OpOutputVarProjection op,
+      @NotNull PsiElement locationPsi) throws PsiProcessingException {
+
+    if (type.kind() != TypeKind.UNION) {
+      DatumType datumType = (DatumType) type;
+      final Type.@NotNull Tag self = datumType.self;
+      findTagProjection(self.name(), op, locationPsi); // check that op contains it
+      return Collections.singletonList(self);
+    }
+
+    final LinkedHashMap<String, OpOutputTagProjection> opTagProjections = op.tagProjections();
+
+    List<Type.Tag> defaultTags = new ArrayList<>(opTagProjections.size());
+    for (Map.Entry<String, OpOutputTagProjection> entry : opTagProjections.entrySet()) {
+      final OpOutputModelProjection<?> opTagProjection = entry.getValue().projection();
+      if (opTagProjection.includeInDefault()) {
+        String tagName = entry.getKey();
+        defaultTags.add(findTag(type, tagName, locationPsi));
+      }
+    }
+
+    return defaultTags;
+  }
+
+  @NotNull
+  private static ReqOutputVarProjection createDefaultVarProjection(
+      @NotNull DataType type,
+      @NotNull OpOutputVarProjection op,
+      boolean required,
+      @NotNull PsiElement locationPsi) throws PsiProcessingException {
+
+    return createDefaultVarProjection(type.type, op, required, locationPsi);
+  }
+
+  @NotNull
+  private static ReqOutputVarProjection createDefaultVarProjection(
+      @NotNull DatumType type,
+      @NotNull OpOutputVarProjection op,
+      boolean required,
+      @NotNull PsiElement locationPsi) throws PsiProcessingException {
+
+    return createDefaultVarProjection(type, Collections.singletonList(type.self), op, required, locationPsi);
   }
 
   @NotNull
@@ -711,16 +776,9 @@ public class ReqOutputProjectionsPsiParser {
           );
 
         MapType mapType = (MapType) type;
-
-        @NotNull DataType valueType = mapType.valueType();
-        @NotNull Type.Tag defaultValuesTag =
-            findTag(mapType.valueType.type, null, opMap.itemsProjection(), locationPsi);
-
         final ReqOutputVarProjection valueVarProjection = createDefaultVarProjection(
-            valueType.type,
-            defaultValuesTag,
-            required,
-            opMap.itemsProjection(),
+            mapType.valueType(),
+            opMap.itemsProjection(), required,
             locationPsi
         );
 
@@ -737,21 +795,10 @@ public class ReqOutputProjectionsPsiParser {
       case LIST:
         OpOutputListModelProjection opList = (OpOutputListModelProjection) op;
         ListType listType = (ListType) type;
-        @NotNull DataType elementType = listType.elementType();
-        Type.@Nullable Tag defaultElementsTag = elementType.defaultTag;
-
-        if (defaultElementsTag == null)
-          throw new PsiProcessingException(String.format(
-              "Can't create default projection for list type '%s, as it's element type '%s' doesn't have a default tag",
-              type.name(),
-              elementType.name
-          ), locationPsi);
 
         final ReqOutputVarProjection itemVarProjection = createDefaultVarProjection(
-            elementType.type,
-            defaultElementsTag,
-            required,
-            opList.itemsProjection(),
+            listType.elementType(),
+            opList.itemsProjection(), required,
             locationPsi
         );
 
@@ -1139,14 +1186,14 @@ public class ReqOutputProjectionsPsiParser {
       @NotNull TypesResolver resolver) throws PsiProcessingException {
 
     ReqOutputVarProjection itemsProjection;
-    @Nullable IdlReqOutputComaVarProjection ReqOutputVarProjectionPsi = psi.getReqOutputComaVarProjection();
-    if (ReqOutputVarProjectionPsi == null)
-      itemsProjection = createDefaultVarProjection(op.model(), op.itemsProjection(), true, psi);
+    @Nullable IdlReqOutputComaVarProjection reqOutputVarProjectionPsi = psi.getReqOutputComaVarProjection();
+    if (reqOutputVarProjectionPsi == null)
+      itemsProjection = createDefaultVarProjection(op.model().elementType(), op.itemsProjection(), true, psi);
     else
       itemsProjection =
           parseComaVarProjection(op.model().elementType(),
                                  op.itemsProjection(),
-                                 ReqOutputVarProjectionPsi,
+                                 reqOutputVarProjectionPsi,
                                  resolver
           ).projection();
 
