@@ -43,6 +43,10 @@ import java.util.regex.Pattern;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class UndertowHandler implements HttpHandler {
+  public static final String TEXT = "text/plain";
+  public static final String JSON = "application/json";
+  public static final String HTML = "text/html";
+
   private final static Pattern RESOURCE_PATTERN = Pattern.compile("/(\\p{Lower}\\p{Alnum}*)(.*)");
   @NotNull
   private final Service service;
@@ -57,9 +61,9 @@ public class UndertowHandler implements HttpHandler {
   @Override
   public void handleRequest(HttpServerExchange exchange) throws Exception {
     final Sender sender = exchange.getResponseSender();
-    HeaderMap responseHeaders = exchange.getResponseHeaders();
 
-    responseHeaders.put(Headers.CONTENT_TYPE, "text/plain"); // todo
+//    HeaderMap responseHeaders = exchange.getResponseHeaders();
+//    responseHeaders.put(Headers.CONTENT_TYPE, "text/plain"); // todo
 
     try {
       HttpString requestMethod = exchange.getRequestMethod();
@@ -69,7 +73,7 @@ public class UndertowHandler implements HttpHandler {
       Matcher matcher = RESOURCE_PATTERN.matcher(path);
 
       if (!matcher.matches()) {
-        badRequest(null, exchange);
+        badRequest("Bad URL format\n", TEXT, exchange);
         throw RequestFailedException.INSTANCE;
       }
 
@@ -84,12 +88,12 @@ public class UndertowHandler implements HttpHandler {
         handleReadRequest(resource, outputProjectionPsi, exchange);
         // todo handle the rest
       } else {
-        badRequest("Unknown HTTP method '" + requestMethod + "'", exchange);
+        badRequest("Unknown HTTP method '" + requestMethod + "'\n", TEXT, exchange);
         throw RequestFailedException.INSTANCE;
       }
 
     } catch (ResourceNotFoundException | OperationNotFoundException e) {
-      badRequest(e.getMessage(), exchange);
+      badRequest(e.getMessage(), TEXT, exchange);
       sender.close();
     } catch (RequestFailedException ignored) {
       sender.close();
@@ -139,12 +143,18 @@ public class UndertowHandler implements HttpHandler {
       );
     } catch (PsiProcessingException e) {
       StringBuilder sb = new StringBuilder();
-
       TextRange textRange = e.psi().getTextRange();
       String errorDescription = e.getMessage();
-      addPsiError(sb, outputProjectionPsi.getText(), textRange, errorDescription);
 
-      badRequest(sb.toString(), exchange);
+      if (htmlAccepted(exchange)) {
+        appendHtmlErrorHeader(sb);
+        addPsiErrorHtml(sb, outputProjectionPsi.getText(), textRange, errorDescription);
+        appendHtmlErrorFooter(sb);
+        badRequest(sb.toString(), HTML, exchange);
+      } else {
+        addPsiErrorPlainText(sb, outputProjectionPsi.getText(), textRange, errorDescription);
+        badRequest(sb.toString(), TEXT, exchange);
+      }
 
       throw RequestFailedException.INSTANCE;
     }
@@ -169,7 +179,7 @@ public class UndertowHandler implements HttpHandler {
       } else {
         // todo this can be a non-500
 
-        serverError(throwable.getMessage(), exchange);
+        serverError(throwable.getMessage(), TEXT, exchange);
       }
 
       sender.close();
@@ -186,51 +196,71 @@ public class UndertowHandler implements HttpHandler {
     Data trimmedData = data == null ? null : ProjectionDataTrimmer.trimData(data, reqProjection);
     int stepsToRemove = pathSteps == 0 ? 0 : pathSteps - 1; // last segment of path = our data, so keep it
 
-    final Sender sender = exchange.getResponseSender();
-    if (trimmedData == null) {
-      writeNullResponse(sender);
-    } else {
-      try {
+    String contentType = JSON; // todo should depend on marshaller
+    int statusCode = 200;
+    @NotNull String responseText;
+
+    try {
+      if (trimmedData == null) {
+        responseText = getNullResponse();
+      } else {
         DataPathRemover.PathRemovalResult noPathData = DataPathRemover.removePath(trimmedData, stepsToRemove);
 
         // todo marshal to proper json or whatever
         if (stepsToRemove <= 1) { // FIXME - use path-traversed projection always
-          sender.send(dataToString(reqProjection, data));
+          responseText = dataToString(reqProjection, data);
         } else {
           if (noPathData.data != null) {
-            sender.send(dataToString(noPathData.data) + "\n");
+            responseText = dataToString(noPathData.data);
           } else if (noPathData.datum != null) {
-            sender.send(datumToString(noPathData.datum) + "\n");
+            responseText = datumToString(noPathData.datum);
           } else if (noPathData.error != null) {
-            @Nullable final Integer statusCode = noPathData.error.statusCode();
-            if (statusCode != null) exchange.setStatusCode(statusCode);
+            contentType = "text/plain"; // todo report errors in json too?
+            statusCode = noPathData.error.statusCode();
+            responseText = noPathData.error.message();
 
             @Nullable final Exception cause = noPathData.error.cause;
             if (cause != null) {
-              sender.send(cause.getMessage() + '\n');
-              //send stacktrace too?
+              responseText = responseText + "\ncaused by: " + cause.toString();
+              //add stacktrace too?
             }
-          } else writeNullResponse(sender);
+          } else {
+            responseText = getNullResponse();
+          }
         }
-
-      } catch (DataPathRemover.AmbiguousPathException e) {
-        serverError(
-            String.format("Can't remove %d path steps from data: \n%s",
-                          stepsToRemove,
-                          dataToString(trimmedData)
-            ),
-            exchange
-        );
-      } catch (Exception e) {
-        // todo log, sanitize etc
-
-        e.printStackTrace();
-        exchange.setStatusCode(StatusCodes.INTERNAL_SERVER_ERROR);
-        sender.send(e.getMessage());
-
-        sender.close();
       }
+
+      writeResponse(statusCode, responseText + "\n", contentType, exchange);
+
+    } catch (DataPathRemover.AmbiguousPathException e) {
+      serverError(
+          String.format("Can't remove %d path steps from data: \n%s\n",
+                        stepsToRemove,
+                        dataToString(trimmedData)
+          ),
+          TEXT,
+          exchange
+      );
+    } catch (Exception e) {
+      // todo log, sanitize etc
+      e.printStackTrace();
+      final String message = e.getMessage();
+      serverError(message == null ? null : message + "\n", TEXT, exchange);
+
+    } finally {
+      exchange.getResponseSender().close();
     }
+  }
+
+  private void writeResponse(
+      int statusCode,
+      @Nullable String response,
+      @NotNull String contentType,
+      @NotNull HttpServerExchange exchange) {
+
+    exchange.setStatusCode(statusCode);
+    exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, contentType);
+    if (response != null) exchange.getResponseSender().send(response);
   }
 
   @NotNull
@@ -265,9 +295,8 @@ public class UndertowHandler implements HttpHandler {
     return sb.getString();
   }
 
-  private void writeNullResponse(@NotNull Sender sender) {
-    sender.send("null\n");
-  }
+  @NotNull
+  private String getNullResponse() { return "null"; }
 
   @Nullable
   private String getOperationName(@NotNull Map<String, Deque<String>> parameters) {
@@ -292,21 +321,38 @@ public class UndertowHandler implements HttpHandler {
     );
 
     if (errorsAccumulator.hasErrors()) {
-      badRequest(null, exchange);
-
       // try to highlight errors
-      Sender sender = exchange.getResponseSender();
+
+      final boolean htmlAccepted = htmlAccepted(exchange);
 
       StringBuilder sb = new StringBuilder();
+      if (htmlAccepted) appendHtmlErrorHeader(sb);
+
+      boolean first = true;
       for (PsiErrorElement errorElement : errorsAccumulator.errors()) {
-        if (sb.length() > 0) sb.append('\n');
+
+        if (first) {
+          first = false;
+        } else {
+          if (htmlAccepted) sb.append("<br/><br/>");
+          else sb.append('\n');
+        }
 
         TextRange textRange = errorElement.getTextRange();
         String errorDescription = errorElement.getErrorDescription();
-        addPsiError(sb, projectionString, textRange, errorDescription);
+        if (htmlAccepted)
+          addPsiErrorHtml(sb, projectionString, textRange, errorDescription);
+        else
+          addPsiErrorPlainText(sb, projectionString, textRange, errorDescription);
       }
 
-      sender.send(sb.toString());
+      if (htmlAccepted) {
+        appendHtmlErrorFooter(sb);
+        badRequest(sb.toString(), HTML, exchange);
+      } else {
+        badRequest(sb.toString(), TEXT, exchange);
+      }
+
 
       throw RequestFailedException.INSTANCE;
     }
@@ -314,24 +360,25 @@ public class UndertowHandler implements HttpHandler {
     return psiFieldProjection;
   }
 
-  private void badRequest(@Nullable String message, @NotNull HttpServerExchange exchange) {
-    failRequest(StatusCodes.BAD_REQUEST, message, exchange);
+  private void badRequest(@Nullable String message, @NotNull String contentType, @NotNull HttpServerExchange exchange) {
+    writeResponse(StatusCodes.BAD_REQUEST, message, contentType, exchange);
   }
 
-  private void serverError(@Nullable String message, @NotNull HttpServerExchange exchange) {
-    failRequest(StatusCodes.INTERNAL_SERVER_ERROR, message, exchange);
+  private void serverError(@Nullable String message,
+                           @NotNull String contentType,
+                           @NotNull HttpServerExchange exchange) {
+    writeResponse(StatusCodes.INTERNAL_SERVER_ERROR, message, contentType, exchange);
   }
 
-  private void failRequest(int code, @Nullable String message, @NotNull HttpServerExchange exchange) {
-    exchange.setStatusCode(code);
-    if (message != null) exchange.getResponseSender().send(message);
-  }
+  private void addPsiErrorPlainText(StringBuilder sb,
+                                    String projectionString,
+                                    TextRange textRange,
+                                    String errorDescription) {
 
-  private void addPsiError(StringBuilder sb, String projectionString, TextRange textRange, String errorDescription) {
     final int startOffset = textRange.getStartOffset();
     final int endOffset = textRange.getEndOffset();
 
-    sb.append(errorDescription).append('\n');
+    sb.append(errorDescription).append("\n\n");
 
     if (startOffset != 0 || endOffset != 0) {
       int i = 0;
@@ -353,6 +400,72 @@ public class UndertowHandler implements HttpHandler {
 
       sb.append('\n');
     }
+  }
+
+  private void addPsiErrorHtml(StringBuilder sb,
+                               String projectionString,
+                               TextRange textRange,
+                               String errorDescription) {
+
+    int startOffset = textRange.getStartOffset();
+    int endOffset = textRange.getEndOffset();
+
+    sb.append(errorDescription).append("<br/><br/>");
+
+    if (startOffset != 0 || endOffset != 0) {
+      if (startOffset == endOffset) {
+        endOffset++;
+        if (endOffset > projectionString.length()) {
+          projectionString += " "; // to have something to point to at the end of the string
+        }
+      }
+
+      String s1 = projectionString.substring(0, startOffset);
+      String s2 = projectionString.substring(startOffset, endOffset);
+      String s3 = projectionString.substring(endOffset);
+
+      sb.append(s1);
+      sb.append("<div class=\"err\">").append(s2).append("</div>");
+      sb.append(s3);
+
+      sb.append("<br/>");
+    }
+  }
+
+  private void appendHtmlErrorHeader(@NotNull StringBuilder sb) {
+    sb.append("<!DOCTYPE html><head><style>")
+      .append("body {")
+      .append("  font-family: monospace;")
+      .append("}")
+      .append("")
+      .append(".err {")
+      .append("  border-bottom:2px dotted red;")
+      .append("  display: inline-block;")
+      .append("  position: relative;")
+      .append("}")
+      .append("")
+      .append(".err:after {")
+      .append("  content: '';")
+      .append("  width: 100%;")
+      .append("  height: 5px;")
+      .append("  border-bottom:2px dotted red;")
+      .append("  position: absolute;")
+      .append("  bottom: -3px;")
+      .append("  left: -2px;")
+      .append("  display: inline-block;")
+      .append("}")
+      .append("</style></head><body>");
+  }
+
+  private void appendHtmlErrorFooter(@NotNull StringBuilder sb) {
+    sb.append("</body>");
+  }
+
+  private boolean htmlAccepted(@NotNull HttpServerExchange exchange) {
+    final HeaderValues contentTypeHeader = exchange.getRequestHeaders().get(Headers.ACCEPT);
+    if (contentTypeHeader == null) return false;
+    for (String header : contentTypeHeader) if (header.toLowerCase().contains(HTML)) return true;
+    return false;
   }
 
   private static class RequestFailedException extends Exception {
