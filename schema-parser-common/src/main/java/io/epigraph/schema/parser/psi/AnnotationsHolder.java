@@ -10,5 +10,5 @@ import java.util.List;
  */
 public interface AnnotationsHolder extends PsiElement {
   @NotNull
-  List<SchemaAnnotation> getAnnotationsList();
+  List<SchemaAnnotation> getAnnotationList();
 }

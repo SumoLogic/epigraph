@@ -18,7 +18,7 @@ public class AnnotationsHolderImpl extends ASTWrapperPsiElement implements Annot
 
   @NotNull
   @Override
-  public List<SchemaAnnotation> getAnnotationsList() {
-    throw new RuntimeException("Should never happen");
+  public List<SchemaAnnotation> getAnnotationList() {
+    throw new RuntimeException("Should never happen: " + getClass().getName());
   }
 }

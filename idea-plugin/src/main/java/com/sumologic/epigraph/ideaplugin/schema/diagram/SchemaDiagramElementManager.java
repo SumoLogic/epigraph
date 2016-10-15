@@ -84,7 +84,7 @@ public class SchemaDiagramElementManager extends AbstractDiagramElementManager<P
       SchemaVarTypeBody body = varTypeDef.getVarTypeBody();
       if (body != null) {
         res.addAll(body.getVarTagDeclList());
-        res.addAll(body.getAnnotationsList());
+        res.addAll(body.getAnnotationList());
       }
     }
 
@@ -93,7 +93,7 @@ public class SchemaDiagramElementManager extends AbstractDiagramElementManager<P
       SchemaRecordTypeBody body = recordTypeDef.getRecordTypeBody();
       if (body != null) {
         res.addAll(body.getFieldDeclList());
-        res.addAll(body.getAnnotationsList());
+        res.addAll(body.getAnnotationList());
       }
     }
 
@@ -101,7 +101,7 @@ public class SchemaDiagramElementManager extends AbstractDiagramElementManager<P
       SchemaMapTypeDef mapTypeDef = (SchemaMapTypeDef) parent;
       SchemaMapTypeBody body = mapTypeDef.getMapTypeBody();
       if (body != null) {
-        res.addAll(body.getAnnotationsList());
+        res.addAll(body.getAnnotationList());
       }
     }
 
@@ -109,7 +109,7 @@ public class SchemaDiagramElementManager extends AbstractDiagramElementManager<P
       SchemaListTypeDef listTypeDef = (SchemaListTypeDef) parent;
       SchemaListTypeBody body = listTypeDef.getListTypeBody();
       if (body != null) {
-        res.addAll(body.getAnnotationsList());
+        res.addAll(body.getAnnotationList());
       }
     }
 
@@ -118,7 +118,7 @@ public class SchemaDiagramElementManager extends AbstractDiagramElementManager<P
       SchemaEnumTypeBody body = enumTypeDef.getEnumTypeBody();
       if (body != null) {
         res.addAll(body.getEnumMemberDeclList());
-        res.addAll(body.getAnnotationsList());
+        res.addAll(body.getAnnotationList());
       }
     }
 
@@ -126,7 +126,7 @@ public class SchemaDiagramElementManager extends AbstractDiagramElementManager<P
       SchemaPrimitiveTypeDef primitiveTypeDef = (SchemaPrimitiveTypeDef) parent;
       SchemaPrimitiveTypeBody body = primitiveTypeDef.getPrimitiveTypeBody();
       if (body != null) {
-        res.addAll(body.getAnnotationsList());
+        res.addAll(body.getAnnotationList());
       }
     }
 

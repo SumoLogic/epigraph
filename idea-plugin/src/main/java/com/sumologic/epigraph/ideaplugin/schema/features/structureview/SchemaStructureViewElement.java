@@ -47,7 +47,7 @@ class SchemaStructureViewElement implements StructureViewTreeElement {
     final Collection<PsiElement> children = new ArrayList<>();
 
     if (element instanceof AnnotationsHolder) {
-      children.addAll(((AnnotationsHolder) element).getAnnotationsList());
+      children.addAll(((AnnotationsHolder) element).getAnnotationList());
     }
 
     if (element instanceof SchemaFile) {
@@ -59,30 +59,30 @@ class SchemaStructureViewElement implements StructureViewTreeElement {
     } else if (element instanceof SchemaRecordTypeDef) {
       SchemaRecordTypeBody recordTypeBody = ((SchemaRecordTypeDef) element).getRecordTypeBody();
       if (recordTypeBody != null) {
-        children.addAll(recordTypeBody.getAnnotationsList()); // SchemaCustomParam
+        children.addAll(recordTypeBody.getAnnotationList()); // SchemaCustomParam
         children.addAll(recordTypeBody.getFieldDeclList()); // SchemaFieldDecl
       }
     } else if (element instanceof SchemaVarTypeDef) {
       SchemaVarTypeBody varTypeBody = ((SchemaVarTypeDef) element).getVarTypeBody();
       if (varTypeBody != null) {
-        children.addAll(varTypeBody.getAnnotationsList());
+        children.addAll(varTypeBody.getAnnotationList());
         children.addAll(varTypeBody.getVarTagDeclList()); // SchemaVarTagDecl
       }
     } else if (element instanceof SchemaEnumTypeDef) {
       SchemaEnumTypeBody enumTypeBody = ((SchemaEnumTypeDef) element).getEnumTypeBody();
       if (enumTypeBody != null) {
-        children.addAll(enumTypeBody.getAnnotationsList());
+        children.addAll(enumTypeBody.getAnnotationList());
         children.addAll(enumTypeBody.getEnumMemberDeclList()); // SchemaEnumMemberDecl
       }
     } else if (element instanceof SchemaMapTypeDef) {
       SchemaMapTypeBody mapTypeBody = ((SchemaMapTypeDef) element).getMapTypeBody();
-      if (mapTypeBody != null) children.addAll(mapTypeBody.getAnnotationsList());
+      if (mapTypeBody != null) children.addAll(mapTypeBody.getAnnotationList());
     } else if (element instanceof SchemaListTypeDef) {
       SchemaListTypeBody listTypeBody = ((SchemaListTypeDef) element).getListTypeBody();
-      if (listTypeBody != null) children.addAll(listTypeBody.getAnnotationsList());
+      if (listTypeBody != null) children.addAll(listTypeBody.getAnnotationList());
     } else if (element instanceof SchemaPrimitiveTypeDef) {
       SchemaPrimitiveTypeBody primitiveTypeBody = ((SchemaPrimitiveTypeDef) element).getPrimitiveTypeBody();
-      if (primitiveTypeBody != null) children.addAll(primitiveTypeBody.getAnnotationsList());
+      if (primitiveTypeBody != null) children.addAll(primitiveTypeBody.getAnnotationList());
     }
 
     if (children.isEmpty()) return StructureViewTreeElement.EMPTY_ARRAY;
