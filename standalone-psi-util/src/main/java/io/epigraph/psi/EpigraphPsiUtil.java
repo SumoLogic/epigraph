@@ -105,7 +105,7 @@ public class EpigraphPsiUtil {
     );
   }
 
-  private static void collectErrors(@NotNull PsiElement element,
+  public static void collectErrors(@NotNull PsiElement element,
                                     @Nullable final EpigraphPsiUtil.ErrorProcessor errorProcessor) {
     if (errorProcessor != null) {
       element.accept(new PsiRecursiveElementWalkingVisitor() {

@@ -314,7 +314,7 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ! ( '#' | qid | primitiveDatum | ')' | '>' | ']' | ',' )
+  // ! ( '#' | qid | primitiveDatum | ')' | '>' | ']' | ',' | '?' )
   static boolean dataValueRecover(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "dataValueRecover")) return false;
     boolean r;
@@ -324,7 +324,7 @@ public class UrlParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // '#' | qid | primitiveDatum | ')' | '>' | ']' | ','
+  // '#' | qid | primitiveDatum | ')' | '>' | ']' | ',' | '?'
   private static boolean dataValueRecover_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "dataValueRecover_0")) return false;
     boolean r;
@@ -336,6 +336,7 @@ public class UrlParser implements PsiParser, LightPsiParser {
     if (!r) r = consumeToken(b, U_ANGLE_RIGHT);
     if (!r) r = consumeToken(b, U_BRACKET_RIGHT);
     if (!r) r = consumeToken(b, U_COMMA);
+    if (!r) r = consumeToken(b, U_QMARK);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -1511,7 +1512,7 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '/' qid reqOutputTrunkVarProjection requestParams
+  // '/' qid reqOutputTrunkFieldProjection requestParams
   public static boolean url(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "url")) return false;
     if (!nextTokenIs(b, U_SLASH)) return false;
@@ -1519,7 +1520,7 @@ public class UrlParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b);
     r = consumeToken(b, U_SLASH);
     r = r && qid(b, l + 1);
-    r = r && reqOutputTrunkVarProjection(b, l + 1);
+    r = r && reqOutputTrunkFieldProjection(b, l + 1);
     r = r && requestParams(b, l + 1);
     exit_section_(b, m, U_URL, r);
     return r;

@@ -11,7 +11,7 @@ public interface UrlUrl extends PsiElement {
   UrlQid getQid();
 
   @NotNull
-  UrlReqOutputTrunkVarProjection getReqOutputTrunkVarProjection();
+  UrlReqOutputTrunkFieldProjection getReqOutputTrunkFieldProjection();
 
   @NotNull
   List<UrlRequestParam> getRequestParamList();

@@ -3,7 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>epigraph-java-idl</artifactId>
+  <artifactId>epigraph-java-request-url</artifactId>
 
   <parent>
     <groupId>com.sumologic.epigraph</groupId>
@@ -20,13 +20,13 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>epigraph-java-projections</artifactId>
+      <artifactId>epigraph-java-gdata</artifactId>
       <version>${project.version}</version>
     </dependency>
-
     <dependency>
-      <groupId>com.io7m.jpplib</groupId>
-      <artifactId>io7m-jpplib-core</artifactId>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>epigraph-java-projections</artifactId>
+      <version>${project.version}</version>
     </dependency>
 
     <dependency>

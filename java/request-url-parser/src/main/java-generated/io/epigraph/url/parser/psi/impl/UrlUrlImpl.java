@@ -34,8 +34,8 @@ public class UrlUrlImpl extends ASTWrapperPsiElement implements UrlUrl {
 
   @Override
   @NotNull
-  public UrlReqOutputTrunkVarProjection getReqOutputTrunkVarProjection() {
-    return findNotNullChildByClass(UrlReqOutputTrunkVarProjection.class);
+  public UrlReqOutputTrunkFieldProjection getReqOutputTrunkFieldProjection() {
+    return findNotNullChildByClass(UrlReqOutputTrunkFieldProjection.class);
   }
 
   @Override

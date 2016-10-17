@@ -3,7 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>epigraph-java-request-parser</artifactId>
+  <artifactId>epigraph-java-request-url-parser</artifactId>
 
   <parent>
     <groupId>com.sumologic.epigraph</groupId>
@@ -21,6 +21,11 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>epigraph-java-projections</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>epigraph-java-request-url</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -54,6 +59,30 @@
       <artifactId>annotations</artifactId>
     </dependency>
 
+    <!-- test dependencies -->
+
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>epigraph-java-core</artifactId>
+      <version>${project.version}</version>
+      <classifier>tests</classifier>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>epigraph-java-projections-idl-psi-parser</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.sumologic.epigraph.tests</groupId>
+      <artifactId>tests-schema-java</artifactId>
+      <version>0.0-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -63,6 +92,12 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-nop</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.io7m.jpplib</groupId>
+      <artifactId>io7m-jpplib-core</artifactId>
       <scope>test</scope>
     </dependency>
 

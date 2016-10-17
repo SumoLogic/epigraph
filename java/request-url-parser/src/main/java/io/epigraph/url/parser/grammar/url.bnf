@@ -88,7 +88,7 @@ tagName ::= qid
 
 // ============= url =============
 
-url ::= '/' qid reqOutputTrunkVarProjection requestParams
+url ::= '/' qid reqOutputTrunkFieldProjection requestParams
 private requestParams ::= requestParam*
 requestParam ::= '?' PARAM_NAME '=' datum {
   pin = 1
@@ -189,4 +189,4 @@ enumDatum ::= '#' qid {extends=datum}
 
 nullDatum ::= (dataTypeSpec '@')? 'null' {extends=datum}
 
-private dataValueRecover ::= ! ( '#' | qid | primitiveDatum | ')' | '>' | ']' | ',' )
+private dataValueRecover ::= ! ( '#' | qid | primitiveDatum | ')' | '>' | ']' | ',' | '?' )

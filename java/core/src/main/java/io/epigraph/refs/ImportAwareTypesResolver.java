@@ -30,6 +30,9 @@ public class ImportAwareTypesResolver implements TypesResolver {
     this.childResolver = childResolver;
   }
 
+  @NotNull
+  public TypesResolver childResolver() { return childResolver; }
+
   @Nullable
   @Override
   public Type resolve(@NotNull QnTypeRef reference) {

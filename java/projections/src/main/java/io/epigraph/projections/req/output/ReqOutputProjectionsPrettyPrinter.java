@@ -19,6 +19,8 @@ import java.util.Map;
 public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
     extends GenericProjectionsPrettyPrinter<ReqOutputVarProjection, ReqOutputTagProjection, ReqOutputModelProjection<?>, E> {
 
+  // todo: take var projection's 'parenthesized' into account
+
   public ReqOutputProjectionsPrettyPrinter(Layouter<E> layouter) {
     super(layouter);
   }
@@ -88,7 +90,7 @@ public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
     }
   }
 
-  private void print(@NotNull String fieldName, @NotNull ReqOutputFieldProjection fieldProjection, int pathSteps)
+  public void print(@NotNull String fieldName, @NotNull ReqOutputFieldProjection fieldProjection, int pathSteps)
       throws E {
 
     @NotNull ReqOutputVarProjection fieldVarProjection = fieldProjection.projection();
