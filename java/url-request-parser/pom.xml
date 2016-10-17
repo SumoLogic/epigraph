@@ -20,6 +20,11 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
+      <artifactId>epigraph-java-projections</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
       <artifactId>epigraph-light-psi</artifactId>
       <version>${project.version}</version>
     </dependency>

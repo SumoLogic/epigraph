@@ -7,10 +7,7 @@ import com.intellij.psi.PsiElement;
 
 public interface UrlTagName extends PsiElement {
 
-  @Nullable
+  @NotNull
   UrlQid getQid();
-
-  @Nullable
-  PsiElement getUnderscore();
 
 }

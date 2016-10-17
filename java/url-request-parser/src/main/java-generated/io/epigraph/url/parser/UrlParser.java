@@ -965,6 +965,7 @@ public class UrlParser implements PsiParser, LightPsiParser {
   // '+'? tagName reqOutputComaTagProjectionItem
   public static boolean reqOutputComaMultiTagProjectionItem(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqOutputComaMultiTagProjectionItem")) return false;
+    if (!nextTokenIs(b, "<req output coma multi tag projection item>", U_PLUS, U_ID)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, U_REQ_OUTPUT_COMA_MULTI_TAG_PROJECTION_ITEM, "<req output coma multi tag projection item>");
     r = reqOutputComaMultiTagProjectionItem_0(b, l + 1);
@@ -1444,7 +1445,7 @@ public class UrlParser implements PsiParser, LightPsiParser {
   public static boolean requestParam(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "requestParam")) return false;
     boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, U_REQUEST_PARAM, "<request param>");
+    Marker m = enter_section_(b, l, _NONE_, U_REQUEST_PARAM, "<request parameter>");
     r = consumeToken(b, U_QMARK);
     p = r; // pin = 1
     r = r && report_error_(b, consumeToken(b, U_PARAM_NAME));
@@ -1485,15 +1486,14 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // qid | '_'
+  // qid
   public static boolean tagName(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "tagName")) return false;
-    if (!nextTokenIs(b, "<tag name>", U_UNDERSCORE, U_ID)) return false;
+    if (!nextTokenIs(b, U_ID)) return false;
     boolean r;
-    Marker m = enter_section_(b, l, _NONE_, U_TAG_NAME, "<tag name>");
+    Marker m = enter_section_(b);
     r = qid(b, l + 1);
-    if (!r) r = consumeToken(b, U_UNDERSCORE);
-    exit_section_(b, l, m, r, false, null);
+    exit_section_(b, m, U_TAG_NAME, r);
     return r;
   }
 

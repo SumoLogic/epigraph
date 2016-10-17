@@ -84,7 +84,7 @@ annotation ::= qid '=' dataValue {
   pin = 2
 }
 
-tagName ::= qid | '_' // `_` is default tag
+tagName ::= qid
 
 // ============= url =============
 
@@ -92,6 +92,7 @@ url ::= '/' qid reqOutputTrunkVarProjection requestParams
 private requestParams ::= requestParam*
 requestParam ::= '?' PARAM_NAME '=' datum {
   pin = 1
+  name = "request parameter"
   recoverWhile = requestParamRecover
 }
 private requestParamRecover ::= ! '?'

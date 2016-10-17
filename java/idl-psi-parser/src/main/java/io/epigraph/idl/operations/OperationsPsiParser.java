@@ -13,8 +13,8 @@ import io.epigraph.projections.op.output.OpOutputProjectionsPsiParser;
 import io.epigraph.projections.op.output.OpOutputVarProjection;
 import io.epigraph.psi.EpigraphPsiUtil;
 import io.epigraph.psi.PsiProcessingException;
-import io.epigraph.types.DataType;
 import io.epigraph.refs.TypesResolver;
+import io.epigraph.types.DataType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

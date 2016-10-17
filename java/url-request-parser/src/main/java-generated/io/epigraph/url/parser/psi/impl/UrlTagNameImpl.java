@@ -27,15 +27,9 @@ public class UrlTagNameImpl extends ASTWrapperPsiElement implements UrlTagName {
   }
 
   @Override
-  @Nullable
+  @NotNull
   public UrlQid getQid() {
-    return findChildByClass(UrlQid.class);
-  }
-
-  @Override
-  @Nullable
-  public PsiElement getUnderscore() {
-    return findChildByType(U_UNDERSCORE);
+    return findNotNullChildByClass(UrlQid.class);
   }
 
 }

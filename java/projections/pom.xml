@@ -30,16 +30,6 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>epigraph-idl-parser</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.sumologic.epigraph</groupId>
-      <artifactId>epigraph-light-psi</artifactId>
-      <version>0.0-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
       <artifactId>epigraph-standalone-psi-util</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -52,35 +42,6 @@
     <dependency>
       <groupId>org.jetbrains</groupId>
       <artifactId>annotations</artifactId>
-    </dependency>
-
-    <!-- test dependencies -->
-
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>epigraph-java-core</artifactId>
-      <version>${project.version}</version>
-      <classifier>tests</classifier>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>com.sumologic.epigraph.tests</groupId>
-      <artifactId>tests-schema-java</artifactId>
-      <version>0.0-SNAPSHOT</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-nop</artifactId>
-      <scope>test</scope>
     </dependency>
 
   </dependencies>

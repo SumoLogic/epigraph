@@ -17,10 +17,10 @@
         <module>codegen</module>
         <module>core</module>
         <module>gdata</module>
-        <!--<module>idl</module>-->
+        <module>idl</module>
         <module>maven-plugin</module>
         <!--<module>preprint</module>-->
-        <!--<module>projections</module>-->
+        <module>projections</module>
         <!--<module>server</module>-->
         <!--<module>service</module>-->
         <module>util</module>

@@ -2,7 +2,7 @@ package io.epigraph.projections.op.output;
 
 import com.intellij.psi.PsiElement;
 import io.epigraph.gdata.GDatum;
-import io.epigraph.gdata.IdlGDataPsiParser;
+import io.epigraph.idl.gdata.IdlGDataPsiParser;
 import io.epigraph.idl.TypeRefs;
 import io.epigraph.idl.parser.psi.*;
 import io.epigraph.projections.Annotation;

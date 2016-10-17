@@ -1,0 +1,2 @@
+- [ ] relocate sources under some_root/namespace, see maven plugin for conventions
+- [ ] (anonymous) types should be collected from *.eidl files too

@@ -88,8 +88,8 @@ mvn clean install -P maven-plugin-dependent
       <modules>
         <module>examples</module>
         <module>java/codegen-test</module>
-        <module>java/idl</module>
-        <module>java/projections</module>
+        <module>java/idl-psi-parser</module>
+        <module>java/projections-idl-psi-parser</module>
         <module>java/server</module>
         <module>java/service</module>
         <module>java/url-request-parser</module>

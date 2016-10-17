@@ -4,6 +4,7 @@ import com.intellij.psi.PsiElement;
 import io.epigraph.data.*;
 import io.epigraph.gdata.*;
 import io.epigraph.idl.TypeRefs;
+import io.epigraph.idl.gdata.IdlGDataPsiParser;
 import io.epigraph.idl.parser.psi.*;
 import io.epigraph.lang.TextLocation;
 import io.epigraph.projections.Annotation;

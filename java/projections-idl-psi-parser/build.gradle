@@ -1,18 +1,18 @@
 apply plugin: 'java'
 
-sourceSets.main.java.srcDirs += file("$projectDir/src/main/java-generated")
-idea.module.generatedSourceDirs += file("$projectDir/src/main/java-generated")
-
 dependencies {
   compile project(':epigraph-java-core')
   compile project(':epigraph-java-gdata')
-  compile project(':epigraph-light-psi')
+  compile project(':epigraph-java-projections')
   compile project(':epigraph-lang-common')
+  compile project(':epigraph-idl-parser')
+  compile project(':epigraph-light-psi')
   compile project(':epigraph-standalone-psi-util')
 
   compile 'org.jetbrains:annotations'
-  compile 'net.jcip:jcip-annotations'
 
+  testCompile project(':tests-schema-java')
   testCompile 'junit:junit'
   testCompile 'org.slf4j:slf4j-nop'
+  testCompile 'com.io7m.jpplib:io7m-jpplib-core'
 }

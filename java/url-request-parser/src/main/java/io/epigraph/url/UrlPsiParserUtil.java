@@ -1,14 +1,17 @@
-package io.epigraph.projections;
+package io.epigraph.url;
 
 import com.intellij.psi.PsiElement;
 import io.epigraph.gdata.GDataValue;
-import io.epigraph.gdata.IdlGDataPsiParser;
-import io.epigraph.idl.parser.psi.*;
+import io.epigraph.projections.Annotation;
 import io.epigraph.psi.EpigraphPsiUtil;
 import io.epigraph.psi.PsiProcessingException;
 import io.epigraph.refs.TypeRef;
-import io.epigraph.types.Type;
 import io.epigraph.refs.TypesResolver;
+import io.epigraph.types.Type;
+import io.epigraph.url.gdata.UrlGDataPsiParser;
+import io.epigraph.url.parser.psi.UrlAnnotation;
+import io.epigraph.url.parser.psi.UrlDataValue;
+import io.epigraph.url.parser.psi.UrlTagName;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,27 +22,24 @@ import java.util.stream.Collectors;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class ProjectionPsiParserUtil {
+public class UrlPsiParserUtil {
   @Nullable
-  public static String getTagName(@Nullable IdlTagName tagNamePsi) {
+  public static String getTagName(@Nullable UrlTagName tagNamePsi) {
     if (tagNamePsi == null) return null;
-    @Nullable IdlQid qid = tagNamePsi.getQid();
-    if (qid == null) return null;
-    return qid.getCanonicalName();
+    return tagNamePsi.getQid().getCanonicalName();
   }
 
   @NotNull
   public static Type.Tag getTag(
       @NotNull Type type,
-      @Nullable IdlTagName tagName,
+      @Nullable UrlTagName tagName,
       @Nullable Type.Tag defaultTag,
       @NotNull PsiElement location) throws PsiProcessingException {
 
     String tagNameStr = null;
-    if (tagName != null) {
-      @Nullable IdlQid qid = tagName.getQid();
-      tagNameStr = qid == null ? null : qid.getCanonicalName();
-    }
+
+    if (tagName != null)
+      tagNameStr = tagName.getQid().getCanonicalName();
 
     return getTag(type, tagNameStr, defaultTag, location);
   }
@@ -106,15 +106,15 @@ public class ProjectionPsiParserUtil {
   @Nullable
   public static Map<String, Annotation> parseAnnotation(
       @Nullable Map<String, Annotation> annotationsMap,
-      @Nullable IdlAnnotation annotationPsi)
+      @Nullable UrlAnnotation annotationPsi)
       throws PsiProcessingException {
 
     if (annotationPsi != null) {
       if (annotationsMap == null) annotationsMap = new HashMap<>();
-      @Nullable IdlDataValue annotationValuePsi = annotationPsi.getDataValue();
+      @Nullable UrlDataValue annotationValuePsi = annotationPsi.getDataValue();
       if (annotationValuePsi != null) {
         @NotNull String annotationName = annotationPsi.getQid().getCanonicalName();
-        @NotNull GDataValue annotationValue = IdlGDataPsiParser.parseValue(annotationValuePsi);
+        @NotNull GDataValue annotationValue = UrlGDataPsiParser.parseValue(annotationValuePsi);
         annotationsMap.put(annotationName,
                            new Annotation(annotationName,
                                           annotationValue,
