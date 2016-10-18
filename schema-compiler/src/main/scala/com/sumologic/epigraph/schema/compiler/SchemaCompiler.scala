@@ -18,8 +18,8 @@ import scala.collection.JavaConversions._
 import scala.collection.{GenTraversableOnce, mutable}
 
 class SchemaCompiler(
-    private val sources: util.Collection[Source],
-    private val dependencies: util.Collection[Source] = Collections.emptyList()
+    private val sources: util.Collection[_ <: Source],
+    private val dependencies: util.Collection[_ <: Source] = Collections.emptyList()
 ) {
 
   println(sources.map(_.name).mkString("Sources: [", ", ", "]")) // TODO use log or remove

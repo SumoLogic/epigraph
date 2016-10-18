@@ -17,14 +17,12 @@
       <groupId>${project.groupId}</groupId>
       <artifactId>epigraph-builtin-types-schema</artifactId>
       <version>${project.version}</version>
-      <classifier>epigraph-sources</classifier>
     </dependency>
 
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>epigraph-schema-schema</artifactId>
       <version>${project.version}</version>
-      <classifier>epigraph-sources</classifier>
     </dependency>
 
   </dependencies>

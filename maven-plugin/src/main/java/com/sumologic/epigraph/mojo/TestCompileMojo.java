@@ -2,22 +2,22 @@
 
 package com.sumologic.epigraph.mojo;
 
-import com.sumologic.epigraph.schema.compiler.Source;
-import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.project.MavenProject;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.Collection;
 
 /**
  * Compile Epigraph schema source files (.esc).
  */
 @Mojo(
-    name = "test-compile",
+    name = "testCompile",
     defaultPhase = LifecyclePhase.TEST_COMPILE,
     requiresDependencyResolution = ResolutionScope.TEST,
     threadSafe = true
@@ -27,13 +27,13 @@ public class TestCompileMojo extends BaseCompileMojo {
   /**
    *
    */
-  @Parameter(defaultValue = "${project.basedir}/src/test/epigraph")
+  @Parameter(defaultValue = "${project.build.testSourceDirectory}/../epigraph")
   private File testSourceDirectory;
 
   /**
    *
    */
-  @Parameter(defaultValue = "${project.build.directory}/epigraph-tests")
+  @Parameter(defaultValue = "${project.build.testOutputDirectory}")
   private File testOutputDirectory;
 
   /**
@@ -42,7 +42,7 @@ public class TestCompileMojo extends BaseCompileMojo {
    * <code>**&#47;*.esc</code> is used to select epigraph schema files.
    */
   @Parameter
-  private String[] testIncludes = new String[]{"**/*.esc"};
+  private String[] testIncludes = new String[]{SCHEMA_FILE_ANT_PATTERN};
 
   /**
    * A set of Ant-like exclusion patterns used to prevent certain files from
@@ -53,25 +53,21 @@ public class TestCompileMojo extends BaseCompileMojo {
   private String[] testExcludes = new String[]{};
 
   @Override
-  protected File getSourceDirectory() { return testSourceDirectory; }
-
-  @Override
-  protected Collection<Source> getDependencySources() throws MojoExecutionException {
-    return merge(super.getDependencySources(), getDirectorySources(sourceDirectory));
-  }
-
-  private <T> Collection<T> merge(Collection<T>... collections) {
-    int size = 0;
-    for (Collection<T> collection : collections) size += collection.size();
-    Collection<T> merged = new ArrayList<T>(size);
-    for (Collection<T> collection : collections) merged.addAll(collection);
-    return merged;
+  protected Collection<? extends String> getSourceRoots(@NotNull MavenProject project) throws IOException {
+    project.addTestCompileSourceRoot(testSourceDirectory.getCanonicalPath());
+    return project.getTestCompileSourceRoots();
   }
 
   @Override
-  protected String[] getIncludes() { return testIncludes; }
+  protected File getOutputDirectory() { return testOutputDirectory; }
 
   @Override
-  protected String[] getExcludes() { return testExcludes; }
+  protected String[] includes() { return testIncludes; }
+
+  @Override
+  protected String[] excludes() { return testExcludes; }
+
+  @Override
+  protected boolean dependsOnMainOutput() { return true; }
 
 }

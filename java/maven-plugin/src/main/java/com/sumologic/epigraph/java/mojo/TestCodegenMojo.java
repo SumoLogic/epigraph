@@ -17,12 +17,12 @@ import java.util.Collection;
  * Generate Java bindings for Epigraph schema source files (.esc).
  */
 @Mojo(
-    name = "generate-sources", // TODO generateSources?
-    defaultPhase = LifecyclePhase.GENERATE_SOURCES,
-    requiresDependencyResolution = ResolutionScope.COMPILE,
+    name = "generate-test-sources", // TODO generateTestSources?
+    defaultPhase = LifecyclePhase.GENERATE_TEST_SOURCES,
+    requiresDependencyResolution = ResolutionScope.TEST,
     threadSafe = true
 )
-public class MainCodegenMojo extends BaseCodegenMojo {
+public class TestCodegenMojo extends BaseCodegenMojo {
 
   /**
    * The source directory of Epigraph schema files. This directory is added to the
@@ -30,14 +30,14 @@ public class MainCodegenMojo extends BaseCodegenMojo {
    * as classpath resources following the directory structure under the
    * source directory.
    */
-  @Parameter(defaultValue = "${project.build.sourceDirectory}/../epigraph")
-  protected File sourceDirectory;
+  @Parameter(defaultValue = "${project.build.testSourceDirectory}/../epigraph")
+  protected File testSourceDirectory;
 
   /**
    *
    */
-  @Parameter(defaultValue = "${project.build.directory}/generated-sources/epigraph.java")
-  private File outputDirectory;
+  @Parameter(defaultValue = "${project.build.directory}/generated-test-sources/epigraph.java")
+  private File testOutputDirectory;
 
   /**
    * A set of Ant-like inclusion patterns used to select files from the source
@@ -45,7 +45,7 @@ public class MainCodegenMojo extends BaseCodegenMojo {
    * <code>**&#47;*.esc</code> is used to select epigraph schema files.
    */
   @Parameter
-  private String[] includes = new String[]{SCHEMA_FILE_ANT_PATTERN};
+  private String[] testIncludes = new String[]{SCHEMA_FILE_ANT_PATTERN};
 
   /**
    * A set of Ant-like exclusion patterns used to prevent certain files from
@@ -53,27 +53,27 @@ public class MainCodegenMojo extends BaseCodegenMojo {
    * excluded.
    */
   @Parameter
-  private String[] excludes = new String[]{};
+  private String[] testExcludes = new String[]{};
 
   @Override
-  protected String[] includes() { return includes; }
+  protected String[] includes() { return testIncludes; }
 
   @Override
-  protected String[] excludes() { return excludes; }
+  protected String[] excludes() { return testExcludes; }
 
   @Override
   protected Collection<? extends String> getSourceRoots(@NotNull MavenProject project) throws IOException {
-    project.addCompileSourceRoot(sourceDirectory.getCanonicalPath());
+    project.addCompileSourceRoot(testSourceDirectory.getCanonicalPath());
     return project.getCompileSourceRoots();
   }
 
   @Override
-  protected boolean dependsOnMainOutput() { return false; }
+  protected boolean dependsOnMainOutput() { return true; }
 
   @Override
-  protected File getOutputDirectory() { return outputDirectory; }
+  protected File getOutputDirectory() { return testOutputDirectory; }
 
   @Override
-  protected void addResultsToProject(MavenProject project, String path) { project.addCompileSourceRoot(path); }
+  protected void addResultsToProject(MavenProject project, String path) { project.addTestCompileSourceRoot(path); }
 
 }

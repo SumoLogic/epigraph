@@ -21,10 +21,15 @@
       <plugin>
         <groupId>com.sumologic.epigraph</groupId>
         <artifactId>epigraph-maven-plugin</artifactId>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
         <executions>
           <execution>
             <goals>
-              <goal>test-package</goal>
+              <goal>test-jar</goal>
             </goals>
           </execution>
         </executions>

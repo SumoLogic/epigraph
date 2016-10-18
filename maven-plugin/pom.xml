@@ -27,6 +27,11 @@
 
   <dependencies>
 
+    <dependency>
+      <groupId>${project.parent.groupId}</groupId>
+      <artifactId>epigraph-maven-plugin-common</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
     <!--<dependency>-->
     <!--<groupId>${project.parent.groupId}</groupId>-->
     <!--<artifactId>epigraph-builtin-types-schema</artifactId>-->
@@ -43,15 +48,11 @@
 
     <dependency>
       <groupId>org.apache.maven</groupId>
-      <artifactId>maven-archiver</artifactId>
+      <artifactId>maven-core</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-plugin-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-project</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.plugin-tools</groupId>

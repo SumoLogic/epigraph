@@ -32,13 +32,11 @@
           <groupId>com.sumologic.epigraph</groupId>
           <artifactId>epigraph-maven-plugin</artifactId>
           <version>0.0-SNAPSHOT</version>
-          <!--<extensions>true</extensions>-->
           <executions>
             <execution>
               <goals>
                 <goal>compile</goal>
-                <goal>test-compile</goal>
-                <goal>package</goal>
+                <goal>testCompile</goal>
               </goals>
             </execution>
           </executions>
@@ -52,6 +50,7 @@
             <execution>
               <goals>
                 <goal>generate-sources</goal>
+                <goal>generate-test-sources</goal>
               </goals>
             </execution>
           </executions>

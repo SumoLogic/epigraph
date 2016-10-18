@@ -74,7 +74,7 @@ object JarSource {
 
   def allFiles(jarFile: JarFile, filenamePattern: Pattern, charset: Charset): util.Iterator[JarSource] =
     jarFile.entries()
-    .filter(e => filenamePattern.matcher(e.getName).matches() && !e.isDirectory)
+    .filter(e => !e.isDirectory && filenamePattern.matcher(e.getName).matches())
     .map(e => new JarSource(jarFile, e))
     .asJava
 }

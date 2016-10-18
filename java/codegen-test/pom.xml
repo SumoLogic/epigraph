@@ -23,7 +23,6 @@
       <groupId>com.sumologic.epigraph</groupId>
       <artifactId>epigraph-builtin-types-schema</artifactId>
       <version>${project.parent.version}</version>
-      <classifier>epigraph-sources</classifier>
     </dependency>
 
     <dependency>

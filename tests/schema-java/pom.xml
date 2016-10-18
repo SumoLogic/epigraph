@@ -17,7 +17,6 @@
       <groupId>${project.parent.groupId}</groupId>
       <artifactId>tests-schema</artifactId>
       <version>${project.parent.version}</version>
-      <classifier>epigraph-sources</classifier>
     </dependency>
 
     <dependency>

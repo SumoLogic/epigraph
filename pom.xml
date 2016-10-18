@@ -74,6 +74,7 @@ mvn clean install -P maven-plugin-dependent
         <module>java</module>
         <module>lang-common</module>
         <module>maven-plugin</module>
+        <module>maven-plugin-common</module>
         <module>schema-compiler</module>
         <module>schema-parser</module>
         <module>standalone-psi-util</module>
@@ -188,13 +189,13 @@ mvn clean install -P maven-plugin-dependent
       </dependency>
       <dependency>
         <groupId>org.apache.maven</groupId>
-        <artifactId>maven-plugin-api</artifactId>
-        <version>3.3.9</version>
+        <artifactId>maven-core</artifactId>
+        <version>3.1.1</version>
       </dependency>
       <dependency>
         <groupId>org.apache.maven</groupId>
-        <artifactId>maven-project</artifactId>
-        <version>2.2.1</version>
+        <artifactId>maven-plugin-api</artifactId>
+        <version>3.3.9</version>
       </dependency>
       <dependency>
         <groupId>org.apache.maven.plugin-tools</groupId>
@@ -207,6 +208,11 @@ mvn clean install -P maven-plugin-dependent
         <groupId>org.apache.maven.shared</groupId>
         <artifactId>file-management</artifactId>
         <version>1.2.1</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.maven.shared</groupId>
+        <artifactId>maven-shared-utils</artifactId>
+        <version>3.0.1</version>
       </dependency>
 
       <dependency>
@@ -308,13 +314,11 @@ mvn clean install -P maven-plugin-dependent
           <groupId>com.sumologic.epigraph</groupId>
           <artifactId>epigraph-maven-plugin</artifactId>
           <version>0.0-SNAPSHOT</version>
-          <!--<extensions>true</extensions>-->
           <executions>
             <execution>
               <goals>
                 <goal>compile</goal>
-                <goal>test-compile</goal>
-                <goal>package</goal>
+                <goal>testCompile</goal>
               </goals>
             </execution>
           </executions>
@@ -328,6 +332,7 @@ mvn clean install -P maven-plugin-dependent
             <execution>
               <goals>
                 <goal>generate-sources</goal>
+                <goal>generate-test-sources</goal>
               </goals>
             </execution>
           </executions>
@@ -406,7 +411,9 @@ mvn clean install -P maven-plugin-dependent
             </execution>
           </executions>
           <configuration>
-            <mojoDependencies></mojoDependencies><!-- disables scanning dependencies for mojos -->
+            <mojoDependencies>
+              <mojoDependency>${project.groupId}:epigraph-maven-plugin-common</mojoDependency>
+            </mojoDependencies>
           </configuration>
         </plugin>
         <plugin>

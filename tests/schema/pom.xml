@@ -19,7 +19,6 @@
       <groupId>com.sumologic.epigraph</groupId>
       <artifactId>epigraph-builtin-types-schema</artifactId>
       <version>0.0-SNAPSHOT</version>
-      <classifier>epigraph-sources</classifier>
     </dependency>
 
     <!-- test dependencies -->
@@ -28,7 +27,7 @@
       <groupId>com.sumologic.epigraph</groupId>
       <artifactId>epigraph-builtin-types-schema</artifactId>
       <version>0.0-SNAPSHOT</version>
-      <classifier>epigraph-test-sources</classifier>
+      <type>test-jar</type>
       <scope>test</scope>
     </dependency>
 
