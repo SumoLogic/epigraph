@@ -36,6 +36,7 @@
     UNDERSCORE = '_'
     BANG = '!'
     QMARK = '?'
+    AMP = '&'
     PARAM_NAME = 'regexp:(\p{Alnum}+)'
 
     space='regexp:\s+'
@@ -90,12 +91,12 @@ tagName ::= qid
 
 url ::= '/' qid reqOutputTrunkFieldProjection requestParams
 private requestParams ::= requestParam*
-requestParam ::= '?' PARAM_NAME '=' datum {
+requestParam ::= ('?' | '&') PARAM_NAME '=' datum {  // ? vs & nonsense is sorted out in the UrlRequestPsiParser
   pin = 1
   name = "request parameter"
   recoverWhile = requestParamRecover
 }
-private requestParamRecover ::= ! '?'
+private requestParamRecover ::= ! ( '?' | '&' )
 
 // ============= req output projection =============
 

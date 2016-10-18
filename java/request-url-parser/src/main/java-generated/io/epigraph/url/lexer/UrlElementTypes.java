@@ -59,6 +59,7 @@ public interface UrlElementTypes {
   IElementType U_VALUE_TYPE_REF = new UrlElementType("U_VALUE_TYPE_REF");
   IElementType U_VAR_TAG_REF = new UrlElementType("U_VAR_TAG_REF");
 
+  IElementType U_AMP = new UrlElementType("&");
   IElementType U_ANGLE_LEFT = new UrlElementType("<");
   IElementType U_ANGLE_RIGHT = new UrlElementType(">");
   IElementType U_AT = new UrlElementType("@");

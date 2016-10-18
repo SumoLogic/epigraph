@@ -64,13 +64,38 @@ public class RequestUrlPsiParser {
     @NotNull final StepsAndProjection<ReqOutputFieldProjection> stepsAndProjection =
         parseTrunkFieldProjection(true, fieldType, op, fieldProjectionPsi, newResolver);
 
+    final Map<String, GDatum> requestParams = parseRequestParams(urlPsi);
+
+    int pathSteps = stepsAndProjection.pathSteps();
+
+    return new RequestUrl(
+        fieldName,
+        new StepsAndProjection<>(
+            pathSteps == 0 ? 0 : pathSteps - 1,
+            stepsAndProjection.projection()
+        ),
+        requestParams);
+  }
+
+  @NotNull
+  private static Map<String, GDatum> parseRequestParams(@NotNull UrlUrl urlPsi) throws PsiProcessingException {
     final Map<String, GDatum> requestParams;
 
     @NotNull final List<UrlRequestParam> requestParamList = urlPsi.getRequestParamList();
     if (!requestParamList.isEmpty()) {
+      boolean first = true;
       requestParams = new HashMap<>();
 
       for (UrlRequestParam requestParamPsi : requestParamList) {
+        if (first) {
+          @Nullable final PsiElement amp = requestParamPsi.getAmp();
+          if (amp != null) throw new PsiProcessingException("'?' expected, got '&'", amp);
+          first = false;
+        } else {
+          @Nullable final PsiElement qmark = requestParamPsi.getQmark();
+          if (qmark != null) throw new PsiProcessingException("'&' expected, got '?'", qmark);
+        }
+
         @Nullable final PsiElement paramNamePsi = requestParamPsi.getParamName();
         if (paramNamePsi == null) throw new PsiProcessingException("Missing parameter name", requestParamPsi);
         String paramName = paramNamePsi.getText();
@@ -84,15 +109,7 @@ public class RequestUrlPsiParser {
       }
     } else requestParams = Collections.emptyMap();
 
-    int pathSteps = stepsAndProjection.pathSteps();
-
-    return new RequestUrl(
-        fieldName,
-        new StepsAndProjection<>(
-            pathSteps == 0 ? 0 : pathSteps - 1,
-            stepsAndProjection.projection()
-        ),
-        requestParams);
+    return requestParams;
   }
 
   @NotNull

@@ -109,7 +109,7 @@ public class UrlReqOutputProjectionsTest {
   @Test
   public void testParseRequestParam() {
     testParse(
-        "/user :( id )?param1='foo'?param2='bar'",
+        "/user :( id )?param1='foo'&param2='bar'",
         "user",
         "+user :id", // todo: fix pretty printer to output ":( id )" (take 'parenthesized' into account)
         0,

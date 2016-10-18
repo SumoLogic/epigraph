@@ -9,12 +9,10 @@ import io.epigraph.data.Data;
 import io.epigraph.data.Datum;
 import io.epigraph.idl.ResourceIdl;
 import io.epigraph.idl.operations.ReadOperationIdl;
-import io.epigraph.idl.parser.projections.IdlSubParserDefinitions;
-import io.epigraph.idl.parser.psi.IdlReqOutputTrunkFieldProjection;
 import io.epigraph.printers.DataPrinter;
 import io.epigraph.projections.StepsAndProjection;
+import io.epigraph.projections.op.output.OpOutputFieldProjection;
 import io.epigraph.projections.req.output.ReqOutputFieldProjection;
-import io.epigraph.projections.req.output.ReqOutputProjectionsPsiParser;
 import io.epigraph.projections.req.output.ReqOutputVarProjection;
 import io.epigraph.psi.EpigraphPsiUtil;
 import io.epigraph.psi.PsiProcessingException;
@@ -23,16 +21,23 @@ import io.epigraph.service.*;
 import io.epigraph.service.operations.ReadOperation;
 import io.epigraph.service.operations.ReadOperationRequest;
 import io.epigraph.service.operations.ReadOperationResponse;
+import io.epigraph.url.RequestUrl;
+import io.epigraph.url.RequestUrlPsiParser;
+import io.epigraph.url.parser.UrlParserDefinition;
+import io.epigraph.url.parser.psi.UrlFile;
 import io.epigraph.wire.json.JsonFormatWriter;
+import io.undertow.UndertowOptions;
 import io.undertow.io.Sender;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.*;
+import org.intellij.grammar.LightPsi;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.Deque;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -67,10 +72,11 @@ public class UndertowHandler implements HttpHandler {
 
     try {
       HttpString requestMethod = exchange.getRequestMethod();
-      String path = exchange.getRequestPath();
+
+      String decodedUri = getDecodedRequestString(exchange);
 
       // extract resource name and the rest of the path
-      Matcher matcher = RESOURCE_PATTERN.matcher(path);
+      Matcher matcher = RESOURCE_PATTERN.matcher(decodedUri);
 
       if (!matcher.matches()) {
         badRequest("Bad URL format\n", TEXT, exchange);
@@ -78,14 +84,12 @@ public class UndertowHandler implements HttpHandler {
       }
 
       String resourceName = matcher.group(1);
-      String resourceProjectionString = matcher.group(2);
-
       Resource resource = ResourceRouter.findResource(resourceName, service);
 
-      IdlReqOutputTrunkFieldProjection outputProjectionPsi = parsePsi(resourceProjectionString, exchange);
+      UrlFile urlFilePsi = parsePsi(decodedUri, exchange);
 
       if (requestMethod.equals(Methods.GET)) {
-        handleReadRequest(resource, outputProjectionPsi, exchange);
+        handleReadRequest(resource, urlFilePsi, exchange);
         // todo handle the rest
       } else {
         badRequest("Unknown HTTP method '" + requestMethod + "'\n", TEXT, exchange);
@@ -108,8 +112,28 @@ public class UndertowHandler implements HttpHandler {
     }
   }
 
+  @NotNull
+  private String getDecodedRequestString(@NotNull HttpServerExchange exchange) {
+    // any way to disable request parsing in Undertow? we don't really need it..
+
+    final String uri = exchange.getRequestURI(); // this doesn't include query params?!
+    final String queryString = exchange.getQueryString();
+
+    final String encodedReq;
+
+    if (queryString == null || queryString.isEmpty()) encodedReq = uri;
+    else encodedReq = uri + "%3f" + queryString; // question mark gets removed
+
+    return URLUtils.decode(
+        encodedReq,
+        exchange.getConnection().getUndertowOptions().get(UndertowOptions.URL_CHARSET, StandardCharsets.UTF_8.name()),
+        false,
+        new StringBuilder()
+    );
+  }
+
   private void handleReadRequest(@NotNull Resource resource,
-                                 @NotNull IdlReqOutputTrunkFieldProjection outputProjectionPsi,
+                                 @NotNull UrlFile urlFilePsi,
                                  @NotNull HttpServerExchange exchange)
       throws ResourceNotFoundException, OperationNotFoundException, RequestFailedException {
 
@@ -120,16 +144,11 @@ public class UndertowHandler implements HttpHandler {
     @NotNull ReadOperationIdl operationDeclaration = operation.declaration();
 
     try {
+      @Nullable
+      final RequestUrl requestUrl = parseRequestUrl(urlFilePsi, resourceDeclaration, operationDeclaration);
+
       // parse output projection
-      @NotNull StepsAndProjection<ReqOutputFieldProjection> stepsAndProjection =
-          ReqOutputProjectionsPsiParser.parseTrunkFieldProjection(
-              true,
-              resourceDeclaration.fieldType(),
-              operationDeclaration.params(),
-              operationDeclaration.outputProjection(),
-              outputProjectionPsi,
-              typesResolver
-          );
+      @NotNull StepsAndProjection<ReqOutputFieldProjection> stepsAndProjection = requestUrl.fieldProjection();
 
       // run operation
       CompletableFuture<ReadOperationResponse> future =
@@ -148,16 +167,38 @@ public class UndertowHandler implements HttpHandler {
 
       if (htmlAccepted(exchange)) {
         appendHtmlErrorHeader(sb);
-        addPsiErrorHtml(sb, outputProjectionPsi.getText(), textRange, errorDescription);
+        addPsiErrorHtml(sb, urlFilePsi.getText(), textRange, errorDescription);
         appendHtmlErrorFooter(sb);
         badRequest(sb.toString(), HTML, exchange);
       } else {
-        addPsiErrorPlainText(sb, outputProjectionPsi.getText(), textRange, errorDescription);
+        addPsiErrorPlainText(sb, urlFilePsi.getText(), textRange, errorDescription);
         badRequest(sb.toString(), TEXT, exchange);
       }
 
       throw RequestFailedException.INSTANCE;
     }
+  }
+
+  @NotNull
+  private RequestUrl parseRequestUrl(@NotNull UrlFile urlFilePsi,
+                                     ResourceIdl resourceDeclaration,
+                                     ReadOperationIdl operationDeclaration) throws PsiProcessingException {
+    @Nullable
+    final RequestUrl requestUrl = RequestUrlPsiParser.parseRequestUrl(
+        resourceDeclaration.fieldType(),
+        new OpOutputFieldProjection(
+            operationDeclaration.params(),
+            null,
+            operationDeclaration.outputProjection(),
+            true,
+            resourceDeclaration.location()
+        ),
+        urlFilePsi,
+        typesResolver
+    );
+
+    assert requestUrl != null; // or else what?
+    return requestUrl;
   }
 
   private void handleReadResponse(
@@ -306,19 +347,14 @@ public class UndertowHandler implements HttpHandler {
     return deque.iterator().next();
   }
 
-  private IdlReqOutputTrunkFieldProjection parsePsi(
+  private UrlFile parsePsi(
       @NotNull String projectionString,
       @NotNull HttpServerExchange exchange) throws RequestFailedException {
 
-    EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
+    final UrlFile psiFile = (UrlFile) LightPsi.parseFile("url", projectionString, UrlParserDefinition.INSTANCE);
 
-    IdlReqOutputTrunkFieldProjection psiFieldProjection = EpigraphPsiUtil.parseText(
-        projectionString,
-        IdlSubParserDefinitions.REQ_OUTPUT_FIELD_PROJECTION.rootElementType(),
-        IdlReqOutputTrunkFieldProjection.class,
-        IdlSubParserDefinitions.REQ_OUTPUT_FIELD_PROJECTION,
-        errorsAccumulator
-    );
+    EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
+    EpigraphPsiUtil.collectErrors(psiFile,errorsAccumulator);
 
     if (errorsAccumulator.hasErrors()) {
       // try to highlight errors
@@ -357,7 +393,7 @@ public class UndertowHandler implements HttpHandler {
       throw RequestFailedException.INSTANCE;
     }
 
-    return psiFieldProjection;
+    return psiFile;
   }
 
   private void badRequest(@Nullable String message, @NotNull String contentType, @NotNull HttpServerExchange exchange) {

@@ -11,12 +11,15 @@ public interface UrlRequestParam extends PsiElement {
   UrlDatum getDatum();
 
   @Nullable
+  PsiElement getAmp();
+
+  @Nullable
   PsiElement getEq();
 
   @Nullable
   PsiElement getParamName();
 
-  @NotNull
+  @Nullable
   PsiElement getQmark();
 
 }

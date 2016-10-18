@@ -1442,12 +1442,12 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '?' PARAM_NAME '=' datum
+  // ('?' | '&') PARAM_NAME '=' datum
   public static boolean requestParam(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "requestParam")) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, U_REQUEST_PARAM, "<request parameter>");
-    r = consumeToken(b, U_QMARK);
+    r = requestParam_0(b, l + 1);
     p = r; // pin = 1
     r = r && report_error_(b, consumeToken(b, U_PARAM_NAME));
     r = p && report_error_(b, consumeToken(b, U_EQ)) && r;
@@ -1456,14 +1456,36 @@ public class UrlParser implements PsiParser, LightPsiParser {
     return r || p;
   }
 
+  // '?' | '&'
+  private static boolean requestParam_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "requestParam_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, U_QMARK);
+    if (!r) r = consumeToken(b, U_AMP);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
   /* ********************************************************** */
-  // ! '?'
+  // ! ( '?' | '&' )
   static boolean requestParamRecover(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "requestParamRecover")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NOT_);
-    r = !consumeToken(b, U_QMARK);
+    r = !requestParamRecover_0(b, l + 1);
     exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // '?' | '&'
+  private static boolean requestParamRecover_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "requestParamRecover_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, U_QMARK);
+    if (!r) r = consumeToken(b, U_AMP);
+    exit_section_(b, m, null, r);
     return r;
   }
 

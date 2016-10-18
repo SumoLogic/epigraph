@@ -34,6 +34,12 @@ public class UrlRequestParamImpl extends ASTWrapperPsiElement implements UrlRequ
 
   @Override
   @Nullable
+  public PsiElement getAmp() {
+    return findChildByType(U_AMP);
+  }
+
+  @Override
+  @Nullable
   public PsiElement getEq() {
     return findChildByType(U_EQ);
   }
@@ -45,9 +51,9 @@ public class UrlRequestParamImpl extends ASTWrapperPsiElement implements UrlRequ
   }
 
   @Override
-  @NotNull
+  @Nullable
   public PsiElement getQmark() {
-    return findNotNullChildByType(U_QMARK);
+    return findChildByType(U_QMARK);
   }
 
 }

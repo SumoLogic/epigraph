@@ -21,6 +21,7 @@ import io.epigraph.service.operations.ReadOperationRequest;
 import io.epigraph.service.operations.ReadOperationResponse;
 import io.epigraph.tests.*;
 import io.undertow.Undertow;
+import io.undertow.UndertowOptions;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -146,48 +147,74 @@ public class HttpServerTest {
       @Override
       public CompletableFuture<ReadOperationResponse> process(@NotNull ReadOperationRequest request) {
         Person.Imm person = User.create()
-            .setId(UserId.create(1))
-            .setRecord(UserRecord.create()
-                .setId(PersonId.create(1))
-                .setFirstName(epigraph.String.create("Alfred"))
-                .setLastName(epigraph.String.create("Hitchcock"))
-                .setProfile_Error(new ErrorValue(404, "Not Found", null))
-                .setBestFriend$(User.create()
-                    .setId(UserId.create(2))
-                    .setRecord(UserRecord.create()
-                        .setId(PersonId.create(2))
-                        .setFirstName(epigraph.String.create("Bruce"))
-                        .setLastName(epigraph.String.create("Willis"))
-                        .setProfile(Url.create("http://google.com/"))
-                    )
-                )
-                .setWorstEnemy(UserRecord.create()
-                    .setId(PersonId.create(3))
-                    .setFirstName(epigraph.String.create("Chuck"))
-                    .setLastName(epigraph.String.create("Norris"))
-                    .setProfile(Url.create("http://bing.com/"))
-                )
-                .setFriends(Person_List.create()
-                    .add(User.create()
-                        .setId(UserId.create(2))
-                        .setRecord(UserRecord.create()
-                            .setId(PersonId.create(2))
-                            .setFirstName(epigraph.String.create("Bruce"))
-                            .setLastName(epigraph.String.create("Willis"))
-                            .setProfile(Url.create("http://google.com/"))
-                        )
-                    )
-                    .add(Person.create()
-                        .setId(PersonId.create(4))
-                        .setRecord(PersonRecord.create()
-                            .setId(PersonId.create(4))
-                            .setFirstName(epigraph.String.create("Douglas"))
-                            .setLastName(epigraph.String.create("Adams"))
-                        )
-                    )
-                )
-            )
-            .toImmutable();
+                                .setId(UserId.create(1))
+                                .setRecord(UserRecord.create()
+                                                     .setId(PersonId.create(1))
+                                                     .setFirstName(epigraph.String.create("Alfred"))
+                                                     .setLastName(epigraph.String.create("Hitchcock"))
+                                                     .setProfile_Error(new ErrorValue(404, "Not Found", null))
+                                                     .setBestFriend$(User.create()
+                                                                         .setId(UserId.create(2))
+                                                                         .setRecord(UserRecord.create()
+                                                                                              .setId(PersonId.create(2))
+                                                                                              .setFirstName(epigraph.String
+                                                                                                                .create(
+                                                                                                                    "Bruce"))
+                                                                                              .setLastName(epigraph.String
+                                                                                                               .create(
+                                                                                                                   "Willis"))
+                                                                                              .setProfile(Url.create(
+                                                                                                  "http://google.com/"))
+                                                                         )
+                                                     )
+                                                     .setWorstEnemy(UserRecord.create()
+                                                                              .setId(PersonId.create(3))
+                                                                              .setFirstName(epigraph.String.create(
+                                                                                  "Chuck"))
+                                                                              .setLastName(epigraph.String.create(
+                                                                                  "Norris"))
+                                                                              .setProfile(Url.create("http://bing.com/"))
+                                                     )
+                                                     .setFriends(Person_List.create()
+                                                                            .add(User.create()
+                                                                                     .setId(UserId.create(2))
+                                                                                     .setRecord(UserRecord.create()
+                                                                                                          .setId(
+                                                                                                              PersonId.create(
+                                                                                                                  2))
+                                                                                                          .setFirstName(
+                                                                                                              epigraph.String
+                                                                                                                  .create(
+                                                                                                                      "Bruce"))
+                                                                                                          .setLastName(
+                                                                                                              epigraph.String
+                                                                                                                  .create(
+                                                                                                                      "Willis"))
+                                                                                                          .setProfile(
+                                                                                                              Url.create(
+                                                                                                                  "http://google.com/"))
+                                                                                     )
+                                                                            )
+                                                                            .add(Person.create()
+                                                                                       .setId(PersonId.create(4))
+                                                                                       .setRecord(PersonRecord.create()
+                                                                                                              .setId(
+                                                                                                                  PersonId
+                                                                                                                      .create(
+                                                                                                                          4))
+                                                                                                              .setFirstName(
+                                                                                                                  epigraph.String
+                                                                                                                      .create(
+                                                                                                                          "Douglas"))
+                                                                                                              .setLastName(
+                                                                                                                  epigraph.String
+                                                                                                                      .create(
+                                                                                                                          "Adams"))
+                                                                                       )
+                                                                            )
+                                                     )
+                                )
+                                .toImmutable();
 
         ///////////////
 
@@ -221,47 +248,109 @@ public class HttpServerTest {
             .create()
 
             .put$(epigraph.String.create("1").toImmutable(), User.create()
-                .setId(UserId.create(1))
-                .setRecord(UserRecord.create()
-                    .setId(PersonId.create(1))
-                    .setFirstName(epigraph.String.create("Alfred"))
-                    .setLastName(epigraph.String.create("Hitchcock"))
-                    .setProfile_Error(new ErrorValue(404, "Not Found", null))
-                    .setBestFriend$(User.create()
-                        .setId(UserId.create(2))
-                        .setRecord(UserRecord.create()
-                            .setId(PersonId.create(2))
-                            .setFirstName(epigraph.String.create("Bruce"))
-                            .setLastName(epigraph.String.create("Willis"))
-                            .setProfile(Url.create("http://google.com/"))
-                        )
-                    )
-                    .setWorstEnemy(UserRecord.create()
-                        .setId(PersonId.create(3))
-                        .setFirstName(epigraph.String.create("Chuck"))
-                        .setLastName(epigraph.String.create("Norris"))
-                        .setProfile(Url.create("http://bing.com/"))
-                    )
-                    .setFriends(Person_List.create()
-                        .add(User.create()
-                            .setId(UserId.create(2))
-                            .setRecord(UserRecord.create()
-                                .setId(PersonId.create(2))
-                                .setFirstName(epigraph.String.create("Bruce"))
-                                .setLastName(epigraph.String.create("Willis"))
-                                .setProfile(Url.create("http://google.com/"))
-                            )
-                        )
-                        .add(Person.create()
-                            .setId(PersonId.create(4))
-                            .setRecord(PersonRecord.create()
-                                .setId(PersonId.create(4))
-                                .setFirstName(epigraph.String.create("Douglas"))
-                                .setLastName(epigraph.String.create("Adams"))
-                            )
-                        )
-                    )
-                )
+                                                                 .setId(UserId.create(1))
+                                                                 .setRecord(UserRecord.create()
+                                                                                      .setId(PersonId.create(1))
+                                                                                      .setFirstName(epigraph.String.create(
+                                                                                          "Alfred"))
+                                                                                      .setLastName(epigraph.String.create(
+                                                                                          "Hitchcock"))
+                                                                                      .setProfile_Error(new ErrorValue(
+                                                                                          404,
+                                                                                          "Not Found",
+                                                                                          null
+                                                                                      ))
+                                                                                      .setBestFriend$(User.create()
+                                                                                                          .setId(UserId.create(
+                                                                                                              2))
+                                                                                                          .setRecord(
+                                                                                                              UserRecord
+                                                                                                                  .create()
+                                                                                                                  .setId(
+                                                                                                                      PersonId
+                                                                                                                          .create(
+                                                                                                                              2))
+                                                                                                                  .setFirstName(
+                                                                                                                      epigraph.String
+                                                                                                                          .create(
+                                                                                                                              "Bruce"))
+                                                                                                                  .setLastName(
+                                                                                                                      epigraph.String
+                                                                                                                          .create(
+                                                                                                                              "Willis"))
+                                                                                                                  .setProfile(
+                                                                                                                      Url.create(
+                                                                                                                          "http://google.com/"))
+                                                                                                          )
+                                                                                      )
+                                                                                      .setWorstEnemy(UserRecord.create()
+                                                                                                               .setId(
+                                                                                                                   PersonId
+                                                                                                                       .create(
+                                                                                                                           3))
+                                                                                                               .setFirstName(
+                                                                                                                   epigraph.String
+                                                                                                                       .create(
+                                                                                                                           "Chuck"))
+                                                                                                               .setLastName(
+                                                                                                                   epigraph.String
+                                                                                                                       .create(
+                                                                                                                           "Norris"))
+                                                                                                               .setProfile(
+                                                                                                                   Url.create(
+                                                                                                                       "http://bing.com/"))
+                                                                                      )
+                                                                                      .setFriends(Person_List.create()
+                                                                                                             .add(User.create()
+                                                                                                                      .setId(
+                                                                                                                          UserId
+                                                                                                                              .create(
+                                                                                                                                  2))
+                                                                                                                      .setRecord(
+                                                                                                                          UserRecord
+                                                                                                                              .create()
+                                                                                                                              .setId(
+                                                                                                                                  PersonId
+                                                                                                                                      .create(
+                                                                                                                                          2))
+                                                                                                                              .setFirstName(
+                                                                                                                                  epigraph.String
+                                                                                                                                      .create(
+                                                                                                                                          "Bruce"))
+                                                                                                                              .setLastName(
+                                                                                                                                  epigraph.String
+                                                                                                                                      .create(
+                                                                                                                                          "Willis"))
+                                                                                                                              .setProfile(
+                                                                                                                                  Url.create(
+                                                                                                                                      "http://google.com/"))
+                                                                                                                      )
+                                                                                                             )
+                                                                                                             .add(Person
+                                                                                                                      .create()
+                                                                                                                      .setId(
+                                                                                                                          PersonId
+                                                                                                                              .create(
+                                                                                                                                  4))
+                                                                                                                      .setRecord(
+                                                                                                                          PersonRecord
+                                                                                                                              .create()
+                                                                                                                              .setId(
+                                                                                                                                  PersonId
+                                                                                                                                      .create(
+                                                                                                                                          4))
+                                                                                                                              .setFirstName(
+                                                                                                                                  epigraph.String
+                                                                                                                                      .create(
+                                                                                                                                          "Douglas"))
+                                                                                                                              .setLastName(
+                                                                                                                                  epigraph.String
+                                                                                                                                      .create(
+                                                                                                                                          "Adams"))
+                                                                                                                      )
+                                                                                                             )
+                                                                                      )
+                                                                 )
             )
 
             .put$(epigraph.String.create("2").toImmutable(), Person
@@ -301,9 +390,10 @@ public class HttpServerTest {
 
   public static void main(String[] args) throws ServiceInitializationException {
     Undertow server = Undertow.builder()
-        .addHttpListener(8888, "localhost")
-        .setHandler(new UndertowHandler(buildUsersService(), resolver))
-        .build();
+                              .addHttpListener(8888, "localhost")
+                              .setServerOption(UndertowOptions.DECODE_URL, false) // don't decode URLs
+                              .setHandler(new UndertowHandler(buildUsersService(), resolver))
+                              .build();
 
     server.start();
   }

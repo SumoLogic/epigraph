@@ -6,6 +6,8 @@ dependencies {
   compile project(':epigraph-java-idl-psi-parser')
   compile project(':epigraph-java-projections')
   compile project(':epigraph-java-projections-idl-psi-parser')
+  compile project(':epigraph-java-request-url')
+  compile project(':epigraph-java-request-url-parser')
   compile project(':epigraph-java-service')
   compile project(':epigraph-java-wire-json')
 
