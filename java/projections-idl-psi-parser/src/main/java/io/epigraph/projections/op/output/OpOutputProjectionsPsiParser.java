@@ -123,7 +123,7 @@ public class OpOutputProjectionsPsiParser {
         @NotNull IdlTypeRef tailTypeRef = singleTail.getTypeRef();
         @NotNull IdlOpOutputVarProjection psiTailProjection = singleTail.getOpOutputVarProjection();
         @NotNull OpOutputVarProjection tailProjection =
-            buildTailProjection(dataType, tailTypeRef, psiTailProjection, typesResolver, singleTail);
+            buildTailProjection(dataType, tailTypeRef, psiTailProjection, typesResolver);
         tails.add(tailProjection);
       } else {
         @Nullable IdlOpOutputVarMultiTail multiTail = psiTail.getOpOutputVarMultiTail();
@@ -132,7 +132,7 @@ public class OpOutputProjectionsPsiParser {
           @NotNull IdlTypeRef tailTypeRef = tailItem.getTypeRef();
           @NotNull IdlOpOutputVarProjection psiTailProjection = tailItem.getOpOutputVarProjection();
           @NotNull OpOutputVarProjection tailProjection =
-              buildTailProjection(dataType, tailTypeRef, psiTailProjection, typesResolver, tailItem);
+              buildTailProjection(dataType, tailTypeRef, psiTailProjection, typesResolver);
           tails.add(tailProjection);
         }
       }
@@ -210,15 +210,14 @@ public class OpOutputProjectionsPsiParser {
   }
 
   @NotNull
-  private static OpOutputVarProjection buildTailProjection(@NotNull DataType dataType,
-                                                           @NotNull IdlTypeRef tailTypeRefPsi,
-                                                           @NotNull IdlOpOutputVarProjection psiTailProjection,
-                                                           @NotNull TypesResolver typesResolver,
-                                                           @NotNull PsiElement locationPsi)
-      throws PsiProcessingException {
+  private static OpOutputVarProjection buildTailProjection(
+      @NotNull DataType dataType,
+      @NotNull IdlTypeRef tailTypeRefPsi,
+      @NotNull IdlOpOutputVarProjection psiTailProjection,
+      @NotNull TypesResolver typesResolver) throws PsiProcessingException {
 
     @NotNull TypeRef tailTypeRef = TypeRefs.fromPsi(tailTypeRefPsi);
-    @NotNull Type tailType = getType(tailTypeRef, typesResolver, locationPsi);
+    @NotNull Type tailType = getType(tailTypeRef, typesResolver, tailTypeRefPsi);
     return parseVarProjection(
         new DataType(tailType, dataType.defaultTag),
         psiTailProjection,

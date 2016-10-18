@@ -350,7 +350,7 @@ public class ReqOutputProjectionsPsiParser {
         @NotNull IdlTypeRef tailTypeRef = singleTail.getTypeRef();
         @NotNull IdlReqOutputComaVarProjection psiTailProjection = singleTail.getReqOutputComaVarProjection();
         @NotNull ReqOutputVarProjection tailProjection =
-            buildTailProjection(dataType, op, tailTypeRef, psiTailProjection, typesResolver, singleTail);
+            buildTailProjection(dataType, op, tailTypeRef, psiTailProjection, typesResolver);
         tails.add(tailProjection);
       } else {
         @Nullable IdlReqOutputVarMultiTail multiTail = tailPsi.getReqOutputVarMultiTail();
@@ -359,7 +359,7 @@ public class ReqOutputProjectionsPsiParser {
           @NotNull IdlTypeRef tailTypeRef = tailItem.getTypeRef();
           @NotNull IdlReqOutputComaVarProjection psiTailProjection = tailItem.getReqOutputComaVarProjection();
           @NotNull ReqOutputVarProjection tailProjection =
-              buildTailProjection(dataType, op, tailTypeRef, psiTailProjection, typesResolver, tailItem);
+              buildTailProjection(dataType, op, tailTypeRef, psiTailProjection, typesResolver);
           tails.add(tailProjection);
         }
       }
@@ -405,11 +405,10 @@ public class ReqOutputProjectionsPsiParser {
       @NotNull OpOutputVarProjection op,
       @NotNull IdlTypeRef tailTypeRefPsi,
       @NotNull IdlReqOutputComaVarProjection tailProjectionPsi,
-      @NotNull TypesResolver typesResolver,
-      @NotNull PsiElement locationPsi) throws PsiProcessingException {
+      @NotNull TypesResolver typesResolver) throws PsiProcessingException {
 
     @NotNull TypeRef tailTypeRef = TypeRefs.fromPsi(tailTypeRefPsi);
-    @NotNull Type tailType = getType(tailTypeRef, typesResolver, locationPsi);
+    @NotNull Type tailType = getType(tailTypeRef, typesResolver, tailTypeRefPsi);
 
     @Nullable OpOutputVarProjection opTail = mergeOpTails(op, tailType);
     if (opTail == null)

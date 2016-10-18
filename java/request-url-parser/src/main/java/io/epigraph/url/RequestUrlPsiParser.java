@@ -418,7 +418,7 @@ public class RequestUrlPsiParser {
 
     final List<ReqOutputVarProjection> tails;
 
-    @NotNull final TypesResolver subResolver = addTypeNamespace(dataType.type, typesResolver);
+    @NotNull TypesResolver subResolver = addTypeNamespace(dataType.type, typesResolver);
 
     if (tailPsi != null) {
 
@@ -429,17 +429,24 @@ public class RequestUrlPsiParser {
         @NotNull UrlTypeRef tailTypeRef = singleTail.getTypeRef();
         @NotNull UrlReqOutputComaVarProjection psiTailProjection = singleTail.getReqOutputComaVarProjection();
         @NotNull ReqOutputVarProjection tailProjection =
-            buildTailProjection(dataType, op, tailTypeRef, psiTailProjection, subResolver, singleTail);
+            buildTailProjection(dataType, op, tailTypeRef, psiTailProjection, subResolver);
         tails.add(tailProjection);
       } else {
         @Nullable UrlReqOutputVarMultiTail multiTail = tailPsi.getReqOutputVarMultiTail();
         assert multiTail != null;
+        Type prevTailType = null;
+
         for (UrlReqOutputVarMultiTailItem tailItem : multiTail.getReqOutputVarMultiTailItemList()) {
+          if (prevTailType != null)
+            subResolver = addTypeNamespace(prevTailType, typesResolver);
+
           @NotNull UrlTypeRef tailTypeRef = tailItem.getTypeRef();
           @NotNull UrlReqOutputComaVarProjection psiTailProjection = tailItem.getReqOutputComaVarProjection();
           @NotNull ReqOutputVarProjection tailProjection =
-              buildTailProjection(dataType, op, tailTypeRef, psiTailProjection, subResolver, tailItem);
+              buildTailProjection(dataType, op, tailTypeRef, psiTailProjection, subResolver);
           tails.add(tailProjection);
+
+          prevTailType = tailProjection.type();
         }
       }
 
@@ -484,11 +491,10 @@ public class RequestUrlPsiParser {
       @NotNull OpOutputVarProjection op,
       @NotNull UrlTypeRef tailTypeRefPsi,
       @NotNull UrlReqOutputComaVarProjection tailProjectionPsi,
-      @NotNull TypesResolver typesResolver,
-      @NotNull PsiElement locationPsi) throws PsiProcessingException {
+      @NotNull TypesResolver typesResolver) throws PsiProcessingException {
 
     @NotNull TypeRef tailTypeRef = TypeRefs.fromPsi(tailTypeRefPsi);
-    @NotNull Type tailType = getType(tailTypeRef, typesResolver, locationPsi);
+    @NotNull Type tailType = getType(tailTypeRef, typesResolver, tailTypeRefPsi);
 
     @Nullable OpOutputVarProjection opTail = mergeOpTails(op, tailType);
     if (opTail == null)

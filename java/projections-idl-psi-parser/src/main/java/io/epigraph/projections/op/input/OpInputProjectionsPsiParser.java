@@ -205,7 +205,7 @@ public class OpInputProjectionsPsiParser {
         @NotNull IdlTypeRef typeRefPsi = singleTail.getTypeRef();
         @NotNull IdlOpInputComaVarProjection psiTailProjection = singleTail.getOpInputComaVarProjection();
         @NotNull OpInputVarProjection tailProjection =
-            buildTailProjection(dataType, typeRefPsi, psiTailProjection, typesResolver, singleTail);
+            buildTailProjection(dataType, typeRefPsi, psiTailProjection, typesResolver);
         tails.add(tailProjection);
       } else {
         @Nullable IdlOpInputVarMultiTail multiTail = tailPsi.getOpInputVarMultiTail();
@@ -214,7 +214,7 @@ public class OpInputProjectionsPsiParser {
           @NotNull IdlTypeRef tailTypeRef = tailItem.getTypeRef();
           @NotNull IdlOpInputComaVarProjection psiTailProjection = tailItem.getOpInputComaVarProjection();
           @NotNull OpInputVarProjection tailProjection =
-              buildTailProjection(dataType, tailTypeRef, psiTailProjection, typesResolver, tailItem);
+              buildTailProjection(dataType, tailTypeRef, psiTailProjection, typesResolver);
           tails.add(tailProjection);
         }
       }
@@ -293,15 +293,14 @@ public class OpInputProjectionsPsiParser {
   }
 
   @NotNull
-  private static OpInputVarProjection buildTailProjection(@NotNull DataType dataType,
-                                                          @NotNull IdlTypeRef tailTypeRefPsi,
-                                                          IdlOpInputComaVarProjection psiTailProjection,
-                                                          @NotNull TypesResolver typesResolver,
-                                                          PsiElement locationPsi)
-      throws PsiProcessingException {
+  private static OpInputVarProjection buildTailProjection(
+      @NotNull DataType dataType,
+      @NotNull IdlTypeRef tailTypeRefPsi,
+      IdlOpInputComaVarProjection psiTailProjection,
+      @NotNull TypesResolver typesResolver) throws PsiProcessingException {
 
     @NotNull TypeRef tailTypeRef = TypeRefs.fromPsi(tailTypeRefPsi);
-    @NotNull Type tailType = getType(tailTypeRef, typesResolver, locationPsi);
+    @NotNull Type tailType = getType(tailTypeRef, typesResolver, tailTypeRefPsi);
     return parseComaVarProjection(
         new DataType(tailType, dataType.defaultTag),
         psiTailProjection,
