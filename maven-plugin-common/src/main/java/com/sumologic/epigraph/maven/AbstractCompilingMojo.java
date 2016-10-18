@@ -74,14 +74,14 @@ public abstract class AbstractCompilingMojo extends AbstractMojo {
 
   private Collection<? extends File> getSourceDirectories() throws IOException {
     Collection<? extends String> sourceRoots = getSourceRoots(project);
-    getLog().info("sourceRoots: " + sourceRoots);
+    getLog().debug("sourceRoots: " + sourceRoots);
     Collection<File> sourceDirectories = new LinkedHashSet<File>();
     for (String sourceRoot : sourceRoots) {
       File sourceDirectory = new File(sourceRoot);
       if (sourceDirectory.exists()) sourceDirectories.add(sourceDirectory.getCanonicalFile());
       else getLog().debug("Skipping missing source directory '" + sourceRoot + "'");
     }
-    getLog().info("sourceDirectories: " + sourceDirectories);
+    getLog().debug("sourceDirectories: " + sourceDirectories);
     return sourceDirectories;
   }
 

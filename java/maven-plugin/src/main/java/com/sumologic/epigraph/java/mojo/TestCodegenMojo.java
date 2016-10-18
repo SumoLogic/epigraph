@@ -23,6 +23,8 @@ import java.util.Collection;
     threadSafe = true
 )
 public class TestCodegenMojo extends BaseCodegenMojo {
+  // TODO currently test sources are generated for all (both test and main) schema files
+  // TODO ideally these should not include what's already generated from main schema
 
   /**
    * The source directory of Epigraph schema files. This directory is added to the
