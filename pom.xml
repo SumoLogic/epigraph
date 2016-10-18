@@ -456,4 +456,17 @@ mvn clean install -P maven-plugin-dependent
 
   </build>
 
+  <distributionManagement>
+    <snapshotRepository>
+      <id>sumo-snapshots</id>
+      <name>Sumo Snapshots</name>
+      <url>https://sumologicusw1.artifactoryonline.com/sumologicusw1/libs-snapshot-local/</url>
+    </snapshotRepository>
+    <repository>
+      <id>sumo-releases</id>
+      <name>Sumo Snapshots</name>
+      <url>https://sumologicusw1.artifactoryonline.com/sumologicusw1/libs-release-local/</url>
+    </repository>
+  </distributionManagement>
+
 </project>
