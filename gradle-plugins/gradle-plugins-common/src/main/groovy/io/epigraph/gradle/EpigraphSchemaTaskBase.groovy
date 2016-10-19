@@ -4,17 +4,21 @@ import com.sumologic.epigraph.schema.compiler.*
 import org.gradle.api.GradleException
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.FileTree
+import org.gradle.api.logging.Logger
+import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.ParallelizableTask
 
 import java.nio.charset.StandardCharsets
 import java.util.jar.JarFile
 
-import static io.epigraph.gradle.EpigraphSchemaConstants.SCHEMA_EXTENSION
-import static io.epigraph.gradle.EpigraphSchemaConstants.SCHEMA_FILENAME_PATTERN
+import static EpigraphConstants.SCHEMA_FILE_EXTENSION
+import static EpigraphConstants.SCHEMA_FILE_PATH_PATTERN
 
 @ParallelizableTask
 trait EpigraphSchemaTaskBase {
+  // implementations decide on their own if they want to extend `DefaultTask` or `SourceTask`
+
   private Configuration configuration;
 
   void setConfiguration(Configuration configuration) {
@@ -22,26 +26,24 @@ trait EpigraphSchemaTaskBase {
   }
 
   public CContext compileSchemaFiles() {
-    Collection<Source> sources = getSources();
+    Collection<Source> sources = getFileSources()
 
     Collection<Source> dependencySources = new ArrayList<>()
     dependencySources.addAll(getDependencySources())
-    dependencySources.addAll(getImpliedDependencies())
 
     return compileFiles(sources, dependencySources)
   }
 
-//  @Internal
-//  TaskOutputsInternal getOutputs() {
-//    return super.getOutputs()
-//  }
 
   @Internal
-  private Collection<Source> getSources() {
-    def source = getSource()
-    return source == null ? Collections.emptyList() : source.files.collect { new FileSource(it) }
+  List<FileSource> getFileSources() {
+    getSource().files.collect { new FileSource(it) }
   }
 
+  @Internal
+  public abstract Logger getLogger();
+
+  @InputFiles
   public abstract FileTree getSource();
 
   @Internal
@@ -56,25 +58,15 @@ trait EpigraphSchemaTaskBase {
 
       getLogger().debug("Adding $it")
       if (it.name.endsWith('.jar')) {
-        JarSource.allFiles(new JarFile(it), SCHEMA_FILENAME_PATTERN, StandardCharsets.UTF_8).each {
+        JarSource.allFiles(new JarFile(it), SCHEMA_FILE_PATH_PATTERN, StandardCharsets.UTF_8).each {
           dependencySources.add(it)
         }
-      } else if (it.name.endsWith(SCHEMA_EXTENSION)) {
+      } else if (it.name.endsWith(SCHEMA_FILE_EXTENSION)) { // there may be direct dependencies on files, see examples/users/schema/build.gradle
         dependencySources.add(new FileSource(it))
       } else throw new GradleException("Don't know how to handle dependency: '$it'")
     }
 
     return dependencySources
-  }
-
-  @Internal
-  private Collection<Source> getImpliedDependencies() {
-    if (getClass().getResource('/epigraph/builtinTypes.' + SCHEMA_EXTENSION) != null) {
-      // TODO use url.openStream?
-      return Collections.singletonList(new ResourceSource('/epigraph/builtinTypes.' + SCHEMA_EXTENSION));
-    }
-
-    return Collections.emptyList();
   }
 
   public CContext compileFiles(Collection<Source> sources, Collection<Source> dependencySources) {

@@ -53,7 +53,7 @@ class EpigraphJavaPlugin implements Plugin<ProjectInternal> {
     sourceSets.all { SourceSet sourceSet ->
       if (!isTestSourceSet(sourceSet)) {
         String taskName = sourceSet.getTaskName('generate', 'EpigraphJavaBindings')
-        GenerateSchemaBindingsTask task = tasks.create(taskName, GenerateSchemaBindingsTask.class)
+        GenerateJavaBindingsTask task = tasks.create(taskName, GenerateJavaBindingsTask.class)
         task.setDescription("Generate $sourceSet.name Epigraph Java bindings")
         task.setGroup(BasePlugin.BUILD_GROUP)
         task.sourceSetName = sourceSet.name

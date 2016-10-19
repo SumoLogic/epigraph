@@ -17,10 +17,11 @@
 - [ ] Scan `*.eidl` files too
 
 # Gradle plugin
-- [ ] Don't auto-include built-in types (because versioning)
-- [ ] package compiled schemas under `epigraph$artifacts` zip entry (see maven plugin)
-- [ ] create folder structure based on namespaces, then put original files inside
+- [x] Don't auto-include built-in types (because versioning)
+- [x] package compiled schemas under `epigraph$artifacts` zip entry (see maven plugin)
+- [x] create folder structure based on namespaces, then put original files inside
 - [ ] Scan `*.eidl` files too
+- [ ] Rename `epigraph-schema-compiler-gradle-plugin` to just `gradle-plugin`. Move it together with `common` to top level, to mimic maven plugins structure
 
 # Projections
 - [ ] ***see `operations.esc`, bring java classes in sync***

@@ -1,6 +1,7 @@
 package io.epigraph.gradle.java
 
 import com.sumologic.epigraph.java.JavaSchemaGenerator
+import io.epigraph.gradle.EmptyFileTree
 import io.epigraph.gradle.EpigraphSchemaTaskBase
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
@@ -11,11 +12,11 @@ import org.gradle.api.tasks.ParallelizableTask
 import org.gradle.api.tasks.TaskAction
 
 @ParallelizableTask
-class GenerateSchemaBindingsTask extends DefaultTask implements EpigraphSchemaTaskBase {
+class GenerateJavaBindingsTask extends DefaultTask implements EpigraphSchemaTaskBase {
   private String sourceSetName
   private File destinationDir
 
-  GenerateSchemaBindingsTask() {}
+  GenerateJavaBindingsTask() {}
 
   @TaskAction
   public void run() {
@@ -30,9 +31,8 @@ class GenerateSchemaBindingsTask extends DefaultTask implements EpigraphSchemaTa
   }
 
   @Override
-  @Internal
   FileTree getSource() {
-    return null
+    return EmptyFileTree.INSTANCE // we only generate from dependencies
   }
 
   @Internal

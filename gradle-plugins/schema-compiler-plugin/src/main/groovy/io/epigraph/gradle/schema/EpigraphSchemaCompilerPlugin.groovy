@@ -5,7 +5,6 @@ import io.epigraph.gradle.EpigraphPluginConvention
 import org.gradle.api.Action
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.XmlProvider
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.internal.file.SourceDirectorySetFactory
@@ -50,7 +49,7 @@ class EpigraphSchemaCompilerPlugin implements Plugin<ProjectInternal> {
 
     configureSourceSets(project)
     configureTesting(project)
-    configurePublishing(project)
+//    configurePublishing(project)
     configureIdeaScopes(project)
   }
 
@@ -61,6 +60,7 @@ class EpigraphSchemaCompilerPlugin implements Plugin<ProjectInternal> {
     }
 
     TaskContainer tasks = project.tasks
+    def buildDir = project.buildDir
 
     List<Configuration> testConfigurations = new ArrayList<>()
     List<Jar> jarTasks = new ArrayList<>()
@@ -78,12 +78,17 @@ class EpigraphSchemaCompilerPlugin implements Plugin<ProjectInternal> {
       sourceSet.getAllSource().source(epigraphDirectorySet)
 
       // create compile schema task for this source set
+      def classesDir = new File(new File(buildDir, "classes"), sourceSet.name) // any way to get it from standard code?
+//      def classesDir = sourceSet.getOutput().classesDir // this is null
+      sourceSet.getOutput().classesDir = classesDir
+
       String compileTaskName = sourceSet.getCompileTaskName('EpigraphSchema')
       CompileSchemaTask compileSchemaTask = tasks.create(compileTaskName, CompileSchemaTask.class)
       compileSchemaTask.setDescription("Process $sourceSet.name Epigraph schemas.")
       compileSchemaTask.setGroup(BasePlugin.BUILD_GROUP)
       compileSchemaTask.setSource(epigraphDirectorySet)
-      compileSchemaTask.outputs.dir srcDir // TODO better way to make it incremental? It won't be unless output dir is defined
+      compileSchemaTask.setDestinationDir(classesDir)
+      compileSchemaTask.outputs.dir classesDir
 
       // create compile configuration
       def compileConfiguration = createCompileConfiguration(project, sourceSet)
@@ -104,6 +109,7 @@ class EpigraphSchemaCompilerPlugin implements Plugin<ProjectInternal> {
       }
     }
 
+    // all tests depends on all jars
     testConfigurations.each { testConfiguration ->
       jarTasks.each { jarTask ->
         project.dependencies.add(testConfiguration.name, jarTask.outputs.files)
@@ -203,43 +209,31 @@ class EpigraphSchemaCompilerPlugin implements Plugin<ProjectInternal> {
         void execute(Jar jar) {
           jar.description = "Assembles a jar archive for $sourceSet.name Epigraph schema"
           jar.group = BasePlugin.BUILD_GROUP
-          jar.from(sourceSet.allSource)
+          jar.from(compileSchemaTask.destinationDir)
 
           jar.dependsOn(compileSchemaTask)
-
         }
       })
 
       if (isMainSourceSet(sourceSet)) {
         project.artifacts.add(configuration.getName(), jarTask)
+
+        if (project.hasProperty('publishing')) {
+          project.publishing {
+            publications {
+              withType(MavenPublication) {
+                artifact jarTask
+              }
+            }
+          }
+        }
+
       }
 
       return jarTask
     }
 
     return null
-  }
-
-  private static void configurePublishing(Project project) {
-    // TODO only change <packaging> for epigraph jars ?
-
-    if (project.hasProperty('publishing')) {
-      project.publishing {
-        publications {
-          withType(MavenPublication) {
-            pom.withXml { XmlProvider xml ->
-              def node = xml.asNode()
-              def packaging = node.packaging
-              if (packaging.isEmpty()) {
-                node.appendNode('packaging', EPIGRAPH_PACKAGING_TYPE)
-              } else {
-                packaging*.setValue(EPIGRAPH_PACKAGING_TYPE)
-              }
-            }
-          }
-        }
-      }
-    }
   }
 
 }

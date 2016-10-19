@@ -27,10 +27,8 @@ public class Qn implements Comparable<Qn> {
     System.arraycopy(segments, 0, this.segments, 0, segments.length);
 
     // auto-canonicalize
-    for (int i = 0; i < segments.length; i++) {
+    for (int i = 0; i < segments.length; i++)
       this.segments[i] = NamingConventions.unquote(this.segments[i]);
-
-    }
   }
 
   public Qn(@NotNull Collection<String> segments) {
@@ -39,7 +37,7 @@ public class Qn implements Comparable<Qn> {
 
   @NotNull
   public static Qn fromDotSeparated(@NotNull String fqn) {
-    // will break if dot is inside backticks..
+    // todo will break if dot is inside back-ticks..
     return new Qn(fqn.split("\\."));
   }
 
