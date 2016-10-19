@@ -1,12 +1,16 @@
 namespace epigraph.operations
 
-import epigraph.projections.op.OpDeleteVarProjection
+import epigraph.projections.Annotation
 import epigraph.projections.op.OpInputVarProjection
 import epigraph.projections.op.OpOutputVarProjection
 import epigraph.projections.op.OpParam
+import epigraph.schema.DataTypeRef
 import epigraph.schema.Documented
+import epigraph.schema.FieldRef
+import epigraph.schema.TypeRef
 import epigraph.schema.VarTypeRef
-import epigraph.projections.Annotation
+
+// TODO this version is ahead of reality (Java classes)
 
 record Resource extends Documented {
   fieldName: String
@@ -18,14 +22,31 @@ abstract record Operation extends Documented {
   name: String { doc = "`null` means default operation" }
   params: list[OpParam]
   annotations: list[Annotation]
-  outputProjection: OpOutputVarProjection
+
+  path: OpVarPath // starts with resource field type
+
+  inputType: TypeRef
+  inputProjection: OpInputVarProjection // starts from `inputType` (can be different from resource field type)
+
+  outputType: TypeRef // type `outputProjection` starts with
+  outputProjection: OpOutputVarProjection // todo OpOutputFieldProjection = params + annotations + varProjection
 }
 
+// routing:
+// if operation name is provided using query parameter: find operation by verb and name. Else:
+// find all unnamed operations by verb (NB: methods can be overriden in X-HTTP-METHOD header)
+// if it's a READ: there must be a most one unnamed op - pick it; else fail (on build/startup). For others:
+// sort them by op path length in descending order then declaration order (use stable sort!)
+// extract path from request (have to have full URL Request parser for this! )
+// try to match parsed path with operation path. First operation that matches is our operation
+
 record CreateOperation extends Operation {
-  inputDataProjection: OpInputVarProjection
+  // HTTP POST /people ~ *(status) <<< [ { user1 }, { user2 } ]
 }
 
 record ReadOperation extends Operation {
+  // `path` is null, outputType = resource field type
+  // inputType = inputProjection = null
 }
 
 record UpdateOperation extends Operation {
@@ -33,13 +54,64 @@ record UpdateOperation extends Operation {
   // HTTP PUT /people << { 123: { firstName: "Vasya" } }
   // HTTP PUT /people/123 << { firstName: "Vasya" }
   // HTTP PUT /people/123/firstName << "Vasya"
-  updateDataProjection: OpInputVarProjection
+
+  //updateDataProjection: OpInputVarProjection // projection for body data, starts from `path` tip
+
+  // contract: outputType = path tip type
 }
 
 record DeleteOperation extends Operation {
-  deleteProjection: OpDeleteVarProjection
+  // HTTP DELETE /people/123(firstName, lastName) <-- not supported for now
+  // HTTP DELETE /people
+  // HTTP DELETE /people/123
+  // HTTP DELETE /people/123/firstName
+
+  //deleteProjection: OpDeleteVarProjection // delete operation is guided by `path`
+
+  // inputType = inputProjection = null
 }
 
 record CustomOperation extends Operation {
-  inputDataProjection: OpInputVarProjection
+  // HTTP POST       /people/123 ~ /foo/234(bar, baz) ? param=value <<< { 'x' : 'y' }
+  //  any ^ verb?     ^             ^                         ^          ^
+  // path, guided by `path          |                         |          |
+  // ReqOutputVarProjection, parsed using `outputProjection`  |          |
+  //                                            query parameters         |
+  //                    request body, (de)serialized using `inputProjection`
+
+  //path: OpVarPath
+  //inputProjection: OpInputModelProjection
+  //outputProjection: OpOutputVarProjection
 }
+
+// todo move to projections.esc
+record OpVarPath {
+  tagEntry: OpModelPathEntry
+}
+
+record OpModelPathEntry {
+  model: DataTypeRef
+  modelPath: OpModelPath
+}
+
+record OpModelPath {
+  params: list[OpParam]
+  annotations: list[Annotation]
+}
+
+record OpRecordModelPath {
+  fieldEntry: OpFieldPathEntry
+}
+
+record OpFieldPathEntry {
+  field: FieldRef
+  fieldPath: OpFieldPath
+}
+
+record OpFieldPath {
+  params: list[OpParam]
+  annotations: list[Annotation]
+  varPath: OpVarPath
+}
+
+// TODO other model kinds

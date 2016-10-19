@@ -293,6 +293,16 @@ public class UndertowHandler implements HttpHandler {
     }
   }
 
+  private void badRequest(@Nullable String message, @NotNull String contentType, @NotNull HttpServerExchange exchange) {
+    writeResponse(StatusCodes.BAD_REQUEST, message, contentType, exchange);
+  }
+
+  private void serverError(@Nullable String message,
+                           @NotNull String contentType,
+                           @NotNull HttpServerExchange exchange) {
+    writeResponse(StatusCodes.INTERNAL_SERVER_ERROR, message, contentType, exchange);
+  }
+
   private void writeResponse(
       int statusCode,
       @Nullable String response,
@@ -316,6 +326,7 @@ public class UndertowHandler implements HttpHandler {
     return sw.toString();
   }
 
+  @Deprecated
   @NotNull
   private String dataToString(@Nullable Data data) {
     StringBackend sb = new StringBackend(80);
@@ -326,6 +337,7 @@ public class UndertowHandler implements HttpHandler {
     return sb.getString();
   }
 
+  @Deprecated
   @NotNull
   private String datumToString(@Nullable Datum datum) {
     StringBackend sb = new StringBackend(80);
@@ -396,15 +408,6 @@ public class UndertowHandler implements HttpHandler {
     return psiFile;
   }
 
-  private void badRequest(@Nullable String message, @NotNull String contentType, @NotNull HttpServerExchange exchange) {
-    writeResponse(StatusCodes.BAD_REQUEST, message, contentType, exchange);
-  }
-
-  private void serverError(@Nullable String message,
-                           @NotNull String contentType,
-                           @NotNull HttpServerExchange exchange) {
-    writeResponse(StatusCodes.INTERNAL_SERVER_ERROR, message, contentType, exchange);
-  }
 
   private void addPsiErrorPlainText(StringBuilder sb,
                                     String projectionString,
