@@ -41,8 +41,7 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
       boolean renderPoly,
       @NotNull Deque<? extends ReqOutputVarProjection> projections, // non-empty, polymorphic tails ignored
       @NotNull Data data
-  )
-      throws IOException {
+  ) throws IOException {
     Type type = projections.peekLast().type(); // use deepest match type from here on
     // TODO check all projections (not just the ones that matched actual data type)?
     boolean renderMulti = type.kind() == TypeKind.UNION && needMultiRendering(projections);
@@ -93,36 +92,48 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
     } else {
       ErrorValue error = value.getError();
       if (error == null) {
-        Datum datum = value.getDatum();
-        if (datum == null) {
-          out.write("null");
-        } else {
-          DatumType model = projections.peekLast().model();
-          switch (model.kind()) {
-            case RECORD:
-              writeRecord((Deque<? extends ReqOutputRecordModelProjection>) projections, (RecordDatum) datum);
-              break;
-            case MAP:
-              writeMap((Deque<? extends ReqOutputMapModelProjection>) projections, (MapDatum) datum);
-              break;
-            case LIST:
-              writeList((Deque<? extends ReqOutputListModelProjection>) projections, (ListDatum) datum);
-              break;
-            case PRIMITIVE:
-              writePrimitive((Deque<? extends ReqOutputPrimitiveModelProjection>) projections, (PrimitiveDatum) datum);
-              break;
-            case ENUM:
-//            writeEnum((Deque<? extends ReqOutputEnumModelProjection>) modelProjections, (EnumDatum) datum);
-//            break;
-            case UNION:
-            default:
-              throw new UnsupportedOperationException(model.kind().name());
-          }
-        }
+        writeDatum(projections, value.getDatum());
       } else {
         writeError(error);
       }
     }
+  }
+
+  @Override
+  public void writeDatum(@Nullable ReqOutputModelProjection projection, @Nullable Datum datum) throws IOException {
+    ArrayDeque<ReqOutputModelProjection> projections = new ArrayDeque<>(1);
+    projections.add(projection);
+    writeDatum(projections, datum);
+  }
+
+  private void writeDatum(@NotNull Deque<? extends ReqOutputModelProjection> projections, @Nullable Datum datum)
+      throws IOException {
+    if (datum == null) {
+      out.write("null");
+    } else {
+      DatumType model = projections.peekLast().model();
+      switch (model.kind()) {
+        case RECORD:
+          writeRecord((Deque<? extends ReqOutputRecordModelProjection>) projections, (RecordDatum) datum);
+          break;
+        case MAP:
+          writeMap((Deque<? extends ReqOutputMapModelProjection>) projections, (MapDatum) datum);
+          break;
+        case LIST:
+          writeList((Deque<? extends ReqOutputListModelProjection>) projections, (ListDatum) datum);
+          break;
+        case PRIMITIVE:
+          writePrimitive((Deque<? extends ReqOutputPrimitiveModelProjection>) projections, (PrimitiveDatum) datum);
+          break;
+        case ENUM:
+//            writeEnum((Deque<? extends ReqOutputEnumModelProjection>) modelProjections, (EnumDatum) datum);
+//            break;
+        case UNION:
+        default:
+          throw new UnsupportedOperationException(model.kind().name());
+      }
+    }
+
   }
 
   public void writeError(@NotNull ErrorValue error) throws IOException {
@@ -177,22 +188,20 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
     );
     boolean polymorphicValue = valueProjections.stream().anyMatch(vp -> vp.polymorphicTails() != null);
     Map<Type, Deque<? extends ReqOutputVarProjection>> polymorphicCache = polymorphicValue ? new HashMap<>() : null;
-    if (keyProjections == null)
-      writeMapEntries(
-          valueProjections,
-          polymorphicCache,
-          datum._raw().elements().entrySet(),
-          Map.Entry::getKey,
-          Map.Entry::getValue
-      );
-    else
-      writeMapEntries(
-          valueProjections,
-          polymorphicCache,
-          keyProjections,
-          ReqOutputKeyProjection::value,
-          kp -> datum._raw().elements().get(kp.value())
-      );
+    if (keyProjections == null) writeMapEntries(
+        valueProjections,
+        polymorphicCache,
+        datum._raw().elements().entrySet(),
+        Map.Entry::getKey,
+        Map.Entry::getValue
+    );
+    else writeMapEntries(
+        valueProjections,
+        polymorphicCache,
+        keyProjections,
+        ReqOutputKeyProjection::value,
+        kp -> datum._raw().elements().get(kp.value()) // Datum.equals() contract says this is ok.
+    );
     out.write("]");
   }
 
@@ -281,15 +290,19 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
     out.write(']');
   }
 
+  private static @NotNull Deque<? extends ReqOutputVarProjection> flatten(
+      @NotNull Collection<? extends ReqOutputVarProjection> projections,
+      @NotNull Type varType
+  ) { // TODO more careful ordering of projections might be needed to ensure last one is the most precise in complex cases
+    ArrayDeque<ReqOutputVarProjection> acc = new ArrayDeque<>();
+    for (ReqOutputVarProjection projection : projections) append(acc, projection, varType);
+    return acc;
+  }
+
   private void writePrimitive(
       @NotNull Deque<? extends ReqOutputPrimitiveModelProjection> projections,
       @NotNull PrimitiveDatum datum
   ) throws IOException { writePrimitive(datum); }
-
-  @Override
-  public void writeDatum(@Nullable ReqOutputModelProjection projection, @Nullable Datum datum) throws IOException {
-    // FIXME TODO
-  }
 
   private static @NotNull Deque<? extends ReqOutputVarProjection> varProjections(
       @NotNull ReqOutputVarProjection projection,
@@ -307,25 +320,6 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
       if (tail.type().isAssignableFrom(varType)) return append(acc, tail, varType);
     }
     return acc;
-  }
-
-  private static @NotNull Deque<? extends ReqOutputVarProjection> flatten(
-      @NotNull Collection<? extends ReqOutputVarProjection> projections,
-      @NotNull Type varType
-  ) { // TODO more careful ordering of projections might be needed to ensure last one is the most precise in complex cases
-    ArrayDeque<ReqOutputVarProjection> acc = new ArrayDeque<>();
-    for (ReqOutputVarProjection projection : projections) append(acc, projection, varType);
-    return acc;
-  }
-
-  private void writeString(@Nullable String s) throws IOException {
-    if (s == null) {
-      out.write("null");
-    } else {
-      out.write('"');
-      out.write(s); // FIXME apply proper json string escaping https://tools.ietf.org/html/rfc7159#section-7
-      out.write('"');
-    }
   }
 
   @Override
@@ -447,6 +441,58 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
     } else {
       // FIXME treat double values (NaN, infinity) properly https://tools.ietf.org/html/rfc7159#section-6
       out.write(datum.getVal().toString());
+    }
+  }
+
+  private static final char[] HEX_DIGITS = "0123456789ABCDEF".toCharArray();
+
+  /** See https://tools.ietf.org/html/rfc7159#section-7. */
+  private void writeString(@Nullable String s) throws IOException {
+    if (s == null) {
+      out.write("null");
+    } else {
+      out.write('"');
+      int length = s.length(), from = 0;
+      char c;
+      String escape = null;
+      for (int i = 0; i < length; ++i) {
+        c = s.charAt(i);
+        switch (c) {
+          case '\b':
+            escape = "\\b";
+            break;
+          case '\t':
+            escape = "\\t";
+            break;
+          case '\n':
+            escape = "\\n";
+            break;
+          case '\f':
+            escape = "\\f";
+            break;
+          case '\r':
+            escape = "\\r";
+            break;
+          case '"':
+            escape = "\\\"";
+            break;
+          case '\\':
+            escape = "\\\\";
+            break;
+          default:
+            if (c < 0x20) escape = "\\u00" + HEX_DIGITS[c >> 4] + HEX_DIGITS[c & 0x0f];
+        }
+        if (escape != null) {
+          int len = i - from;
+          if (len != 0) out.write(s, from, len);
+          out.write(escape);
+          escape = null;
+          from = i + 1;
+        }
+      }
+      int len = length - from;
+      if (len != 0) out.write(s, from, len);
+      out.write('"');
     }
   }
 
