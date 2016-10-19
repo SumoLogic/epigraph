@@ -16,6 +16,8 @@ import org.gradle.internal.reflect.Instantiator
 
 import javax.inject.Inject
 
+import static io.epigraph.gradle.GradleUtils.isTestSourceSet
+
 class EpigraphJavaPlugin implements Plugin<ProjectInternal> {
   private final Instantiator instantiator
   private Configuration schemasConfiguration
@@ -75,9 +77,5 @@ class EpigraphJavaPlugin implements Plugin<ProjectInternal> {
         }
       }
     }
-  }
-
-  private static boolean isTestSourceSet(SourceSet sourceSet) {
-    return sourceSet.name == SourceSet.TEST_SOURCE_SET_NAME
   }
 }

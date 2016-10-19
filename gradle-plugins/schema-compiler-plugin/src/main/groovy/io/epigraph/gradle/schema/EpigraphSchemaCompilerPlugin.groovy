@@ -24,6 +24,9 @@ import org.gradle.language.base.plugins.LifecycleBasePlugin
 
 import javax.inject.Inject
 
+import static io.epigraph.gradle.GradleUtils.isMainSourceSet
+import static io.epigraph.gradle.GradleUtils.isTestSourceSet
+
 class EpigraphSchemaCompilerPlugin implements Plugin<ProjectInternal> {
   private static final String EPIGRAPH_PACKAGING_TYPE = 'epigraph-schema'
 
@@ -239,11 +242,4 @@ class EpigraphSchemaCompilerPlugin implements Plugin<ProjectInternal> {
     }
   }
 
-  private static boolean isMainSourceSet(SourceSet sourceSet) {
-    return sourceSet.name == SourceSet.MAIN_SOURCE_SET_NAME
-  }
-
-  private static boolean isTestSourceSet(SourceSet sourceSet) {
-    return sourceSet.name == SourceSet.TEST_SOURCE_SET_NAME
-  }
 }
