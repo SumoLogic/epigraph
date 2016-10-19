@@ -73,7 +73,7 @@ public class UrlPsiParserUtil {
     Type.Tag tag = type.tagsMap().get(tagName);
     if (tag == null)
       throw new PsiProcessingException(
-          String.format("Unknown tag '%s' in type '%s', known tags: {%s}", tagName, type.name(), listTags(type)),
+          String.format("Unknown tag '%s' in type '%s', known tags: (%s)", tagName, type.name(), listTags(type)),
           location
       );
     return tag;
@@ -83,7 +83,7 @@ public class UrlPsiParserUtil {
       throws PsiProcessingException {
     if (!type.tags().contains(tag))
       throw new PsiProcessingException(
-          String.format("Tag '%s' doesn't belong to type '%s', known tags: {%s}",
+          String.format("Tag '%s' doesn't belong to type '%s', known tags: (%s)",
                         tag.name(),
                         type.name(),
                         listTags(type)
@@ -91,7 +91,7 @@ public class UrlPsiParserUtil {
   }
 
   private static String listTags(@NotNull Type type) {
-    return type.tags().stream().map(Type.Tag::name).collect(Collectors.joining(", "));
+    return type.tags().stream().map(Type.Tag::name).collect(Collectors.joining(","));
   }
 
   @NotNull

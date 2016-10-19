@@ -35,6 +35,6 @@ public class ProjectionUtils {
   @NotNull
   public static String listFields(@Nullable Collection<String> fieldNames) {
     if (fieldNames == null) return "<none>";
-    return String.join(", ", fieldNames);
+    return String.join(",", fieldNames);
   }
 }

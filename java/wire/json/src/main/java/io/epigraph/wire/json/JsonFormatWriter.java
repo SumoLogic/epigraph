@@ -27,7 +27,7 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
   public JsonFormatWriter(@NotNull Writer out) { this.out = out; }
 
   @Override
-  public void write(@NotNull ReqOutputVarProjection projection, @Nullable Data data) throws IOException {
+  public void writeData(@NotNull ReqOutputVarProjection projection, @Nullable Data data) throws IOException {
     if (data == null) {
       out.write("null");
     } else {
@@ -125,17 +125,12 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
     }
   }
 
-  private void writeError(ErrorValue error) throws IOException {
+  public void writeError(@NotNull ErrorValue error) throws IOException {
     out.write("{\"ERROR\":");
     out.write(error.statusCode().toString());
     out.write(",\"message\":");
     writeString(error.message());
     out.write('}');
-//    out.write('['); // rendering error as `[int, string]` array so it can't be confused with map datum
-//    out.write(error.statusCode().toString());
-//    out.write(',');
-//    write(error.message());
-//    out.write(']');
   }
 
   private void writeRecord(
@@ -254,7 +249,7 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
         if (comma) out.write(',');
         else comma = true;
         out.write("{\"key\":");
-        out.write(keyString(key)); // FIXME properly render (as structure, not as string) projectionless key datum
+        writeDatum(key);
         out.write(",\"value\":");
         Deque<? extends ReqOutputVarProjection> flatValueProjections = polymorphicCache == null
             ? valueProjections
@@ -262,24 +257,6 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
         writeData(polymorphicCache != null, flatValueProjections, valueData);
         out.write('}');
       }
-    }
-  }
-
-  /** Returns string representation of specified datum to be used as json map key. */
-  @Deprecated
-  private static @NotNull String keyString(@NotNull Datum key) {
-    switch (key.type().kind()) {
-      case PRIMITIVE:
-        return ((PrimitiveDatum) key).getVal().toString();
-      case RECORD:
-      case MAP:
-      case LIST:
-      case ENUM:
-        throw new UnsupportedOperationException(key.type().kind().name() + " keys rendering not implemented yet");
-      case UNION:
-        throw new IllegalArgumentException(key.type().kind().name());
-      default:
-        throw new UnsupportedOperationException(key.type().kind().name());
     }
   }
 
@@ -307,19 +284,11 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
   private void writePrimitive(
       @NotNull Deque<? extends ReqOutputPrimitiveModelProjection> projections,
       @NotNull PrimitiveDatum datum
-  ) throws IOException {
-    if (datum instanceof StringDatum) {
-      writeString(((StringDatum) datum).getVal());
-    } else {
-      // FIXME treat double values (NaN, infinity) properly https://tools.ietf.org/html/rfc7159#section-6
-      out.write(datum.getVal().toString());
-    }
-  }
+  ) throws IOException { writePrimitive(datum); }
 
   @Override
-  public <M extends DatumType> void write(@Nullable ReqOutputModelProjection<M> projection, @Nullable Datum datum)
-      throws IOException {
-
+  public void writeDatum(@Nullable ReqOutputModelProjection projection, @Nullable Datum datum) throws IOException {
+    // FIXME TODO
   }
 
   private static @NotNull Deque<? extends ReqOutputVarProjection> varProjections(
@@ -356,6 +325,128 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
       out.write('"');
       out.write(s); // FIXME apply proper json string escaping https://tools.ietf.org/html/rfc7159#section-7
       out.write('"');
+    }
+  }
+
+  @Override
+  public void writeData(@Nullable Data data) throws IOException {
+    if (data == null) {
+      out.write("null");
+    } else {
+      Type type = data.type();
+      boolean renderMulti = type.kind() == TypeKind.UNION;
+      if (renderMulti) {
+        out.write('{');
+        boolean comma = false;
+        for (Tag tag : type.tags()) {
+          Val value = data._raw().getValue(tag);
+          if (value != null) {
+            if (comma) out.write(',');
+            else comma = true;
+            out.write('"');
+            out.write(tag.name());
+            out.write("\":");
+            writeValue(value);
+          }
+        }
+        out.write('}');
+      } else {
+        Tag tag = ((DatumType) type).self; // TODO use instanceof instead of kind?
+        Val value = data._raw().getValue(tag);
+        if (value == null) value = tag.type.createValue(new ErrorValue(500, "No value", null));
+        writeValue(value);
+      }
+    }
+  }
+
+  public void writeValue(@NotNull Val value) throws IOException {
+    ErrorValue error = value.getError();
+    if (error == null) {
+      writeDatum(value.getDatum());
+    } else {
+      writeError(error);
+    }
+  }
+
+
+  @Override
+  public void writeDatum(@Nullable Datum datum) throws IOException {
+    if (datum == null) {
+      out.write("null");
+    } else {
+      DatumType model = datum.type();
+      switch (model.kind()) {
+        case RECORD:
+          writeRecord((RecordDatum) datum);
+          break;
+        case MAP:
+          writeMap((MapDatum) datum);
+          break;
+        case LIST:
+          writeList((ListDatum) datum);
+          break;
+        case PRIMITIVE:
+          writePrimitive((PrimitiveDatum) datum);
+          break;
+        case ENUM:
+//        writeEnum((EnumDatum) datum);
+//        break;
+        case UNION:
+        default:
+          throw new UnsupportedOperationException(model.kind().name());
+      }
+    }
+  }
+
+  private void writeRecord(@NotNull RecordDatum datum) throws IOException {
+    out.write('{');
+    boolean comma = false;
+    for (Field field : datum.type().fields()) {
+      Data fieldData = datum._raw().getData(field);
+      if (fieldData != null) {
+        if (comma) out.write(',');
+        else comma = true;
+        out.write('"');
+        out.write(field.name());
+        out.write("\":");
+        writeData(fieldData);
+      }
+    }
+    out.write('}');
+  }
+
+  private void writeMap(@NotNull MapDatum datum) throws IOException {
+    out.write("[");
+    boolean comma = false;
+    for (Map.Entry<Datum.Imm, @NotNull ? extends Data> entry : datum._raw().elements().entrySet()) {
+      if (comma) out.write(',');
+      else comma = true;
+      out.write("{\"key\":");
+      writeDatum(entry.getKey());
+      out.write(",\"value\":");
+      writeData(entry.getValue());
+      out.write('}');
+    }
+    out.write("]");
+  }
+
+  private void writeList(@NotNull ListDatum datum) throws IOException {
+    out.write('[');
+    boolean comma = false;
+    for (Data elementData : datum._raw().elements()) {
+      if (comma) out.write(',');
+      else comma = true;
+      writeData(elementData);
+    }
+    out.write(']');
+  }
+
+  private void writePrimitive(@NotNull PrimitiveDatum datum) throws IOException {
+    if (datum instanceof StringDatum) {
+      writeString(((StringDatum) datum).getVal());
+    } else {
+      // FIXME treat double values (NaN, infinity) properly https://tools.ietf.org/html/rfc7159#section-6
+      out.write(datum.getVal().toString());
     }
   }
 

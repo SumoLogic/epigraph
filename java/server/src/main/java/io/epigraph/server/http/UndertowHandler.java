@@ -319,7 +319,7 @@ public class UndertowHandler implements HttpHandler {
     StringWriter sw = new StringWriter();
     JsonFormatWriter fw = new JsonFormatWriter(sw);
     try {
-      fw.write(projection, data);
+      fw.writeData(projection, data);
     } catch (IOException e) {
       return e.toString();
     }

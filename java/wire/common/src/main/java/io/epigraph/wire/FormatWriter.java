@@ -4,16 +4,25 @@ package io.epigraph.wire;
 
 import io.epigraph.data.Data;
 import io.epigraph.data.Datum;
+import io.epigraph.data.Val;
+import io.epigraph.errors.ErrorValue;
 import io.epigraph.projections.req.output.ReqOutputModelProjection;
 import io.epigraph.projections.req.output.ReqOutputVarProjection;
-import io.epigraph.types.DatumType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public interface FormatWriter<Exc extends Exception> {
 
-  void write(@NotNull ReqOutputVarProjection projection, @Nullable Data data) throws Exc;
+  void writeData(@NotNull ReqOutputVarProjection projection, @Nullable Data data) throws Exc;
 
-  <M extends DatumType> void write(@NotNull ReqOutputModelProjection<M> projection, @Nullable Datum datum) throws Exc;
+  void writeDatum(@NotNull ReqOutputModelProjection projection, @Nullable Datum datum) throws Exc;
+
+  void writeData(@Nullable Data data) throws Exc; // TODO writeData
+
+  void writeDatum(@Nullable Datum datum) throws Exc; // TODO writeDatum
+
+  void writeValue(@NotNull Val value) throws Exc;
+
+  void writeError(@NotNull ErrorValue error) throws Exc;
 
 }
