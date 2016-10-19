@@ -30,19 +30,15 @@ import java.util.regex.Pattern;
  */
 public abstract class AbstractCompilingMojo extends AbstractMojo {
 
-  public static final String ARTIFACTS_PATH_PREFIX = "epigraph$artifacts";
-
-  private static final Pattern SCHEMA_FILE_PATH_PATTERN = Pattern.compile( // TODO use Predicate?
-      /*Pattern.quote(ARTIFACTS_PATH_PREFIX + '/') + */".+\\.esc" // FIXME fix full path pattern
-  );
-
   public static final String SCHEMA_FILE_EXTENSION = "esc";
 
   public static final String SCHEMA_FILE_ANT_PATTERN = "**/*." + SCHEMA_FILE_EXTENSION;
 
-  private static final String[] IMPLIED_DEPENDENCIES = {
-      "/epigraph/builtinTypes.esc"
-  };
+  public static final String ARTIFACTS_PATH_PREFIX = "epigraph$artifacts";
+
+  private static final Pattern SCHEMA_FILE_PATH_PATTERN = Pattern.compile( // TODO use Predicate?
+      Pattern.quote(ARTIFACTS_PATH_PREFIX + '/') + ".+\\." + Pattern.quote(SCHEMA_FILE_EXTENSION)
+  );
 
   /**
    * The {@link {MavenProject}.
@@ -64,7 +60,6 @@ public abstract class AbstractCompilingMojo extends AbstractMojo {
     try {
       Collection<? extends FileSource> sources = getSources(getSourceDirectories());
       Collection<Source> dependencySources = getDependencySources();
-      addImpliedDependencies(dependencySources); // TODO why are we doing this?
       CContext ctx = compile(sources, dependencySources);
       produceOutput(getOutputDirectory(), sources, ctx);
     } catch (IOException e) {
@@ -147,22 +142,12 @@ public abstract class AbstractCompilingMojo extends AbstractMojo {
     while (jarSources.hasNext()) sources.add(jarSources.next());
   }
 
-  private void addImpliedDependencies(@NotNull Collection<Source> dependencySources) {
-    for (String impliedDependency : IMPLIED_DEPENDENCIES) {
-      String resourcePath = '/' + ARTIFACTS_PATH_PREFIX + impliedDependency;
-      if (getClass().getResource(resourcePath) != null) {
-        Source source = new ResourceSource(resourcePath); // TODO use url.openStream?
-        dependencySources.add(source);
-      }
-    }
-  }
-
   private @NotNull CContext compile(
       Collection<? extends FileSource> sources,
       Collection<? extends Source> dependencySources
   ) throws MojoFailureException {
     // TODO catch and sort compiler exceptions into MojoExecutionException (abnormal) and MojoFailureException (normal failure)
-    final SchemaCompiler compiler = new SchemaCompiler(sources, dependencySources);
+    SchemaCompiler compiler = new SchemaCompiler(sources, dependencySources);
     try {
       return compiler.compile();
     } catch (SchemaCompilerException failure) {
