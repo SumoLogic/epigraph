@@ -35,17 +35,21 @@ abstract record Operation extends Documented {
 // routing:
 // if operation name is provided using query parameter: find operation by verb and name. Else:
 // find all unnamed operations by verb (NB: methods can be overriden in X-HTTP-METHOD header)
-// if it's a READ: there must be a most one unnamed op - pick it; else fail (on build/startup). For others:
-// sort them by op path length in descending order then declaration order (use stable sort!)
-// extract path from request (have to have full URL Request parser for this! )
-// try to match parsed path with operation path. First operation that matches is our operation
+// sort them by op path length in descending order then declaration order (must be stable!)
+// for each of them:
+// if it's a READ:
+//   Try to parse read request projection against URL, if it matches and read request path is not shorter
+//   than operation `path`: this is our operation
+// else (not a READ):
+//   extract path from request (have to have full URL Request parser for this! )
+//   try to match parsed path with operation path. First operation that matches is our operation
 
 record CreateOperation extends Operation {
   // HTTP POST /people ~ *(status) <<< [ { user1 }, { user2 } ]
 }
 
 record ReadOperation extends Operation {
-  // `path` is null, outputType = resource field type
+  // `path` is leading part of `outputProjection`, outputType = resource field type
   // inputType = inputProjection = null
 }
 

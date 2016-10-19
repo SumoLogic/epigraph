@@ -4,11 +4,11 @@ dependencies {
   compile project(':epigraph-scala-codegen')
   compile project(':epigraph-schema-compiler')
 
-  compile "org.apache.maven:maven-archiver"
-  compile "org.apache.maven:maven-plugin-api"
-  compile "org.apache.maven:maven-project"
-  compile "org.apache.maven.plugin-tools:maven-plugin-annotations"
-  compile "org.apache.maven.shared:file-management"
+  compile 'org.apache.maven:maven-archiver'
+  compile 'org.apache.maven:maven-core'
+  compile 'org.apache.maven:maven-plugin-api'
+  compile 'org.apache.maven.plugin-tools:maven-plugin-annotations'
+  compile 'org.apache.maven.shared:file-management'
 
-  testCompile "junit:junit"
+  testCompile 'junit:junit'
 }
