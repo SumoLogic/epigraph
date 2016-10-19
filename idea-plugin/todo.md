@@ -1,4 +1,5 @@
 ### High
+- Add support for `*.eidl` files
 
 ### Medium
 - Smart type completion: suggest out of scope types (+add import)
@@ -7,7 +8,6 @@
   - [ ] Changing default on vartypes is allowed. Defaults on fields (even implicit) must be compatible with parent fields:
   Default on a field = field default > field type default > parent field default > parent field type default 
 - add SourceRootFinder to detect src/main/epigraph, test/epigraph etc
-- Structure popup (ctrl-f12)
 - Rename on fields (**Incomplete**)
 - Rename on vartype tags
 - On project import: detect `epigraph` as source folders
@@ -28,6 +28,7 @@
 ### Low
 - Option to auto optimize imports on code formatting
 - Structure view: option to show inherited members
+- Structure popup (ctrl-f12)
 - Auto insert matching quotes/backticks/parens/<> in parameters and data
 - Namespace declaration: inspection to warn about namespaces not matching folder structure
 - Rename projects to `epigraph-idea-plugin` and `epigraph-schema-parser(-common)` ?

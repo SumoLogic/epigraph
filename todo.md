@@ -11,20 +11,29 @@
 # Schema compiler
 - [ ] Annotations support. Should they be inherited? Annotations on annotations?
 - [ ] Verbose mode? (propagate it from gradle/maven)
-- [ ] (anonymous) types should be collected from *.eidl files too
+- [ ] (anonymous) types should be collected from `*.eidl` files too
 
-# Gradle
+# Maven plugin
+- [ ] Scan `*.eidl` files too
+
+# Gradle plugin
 - [ ] Don't auto-include built-in types (because versioning)
 - [ ] package compiled schemas under `epigraph$artifacts` zip entry (see maven plugin)
 - [ ] create folder structure based on namespaces, then put original files inside
+- [ ] Scan `*.eidl` files too
 
 # Projections
-- [ ] see `operations.esc`, bring java classes in sync
+- [ ] ***see `operations.esc`, bring java classes in sync***
 - [ ] var projection: add `@Nullable getPathTagProjection`. Same for records and maps
 - [ ] unify tag/model projections?
 
 # Operations  
-- [ ] see `operations.esc`, restructure operations accordingly
+- [ ] ***see `operations.esc`, restructure operations accordingly***
 
 # Service
-- [ ] see `operations.esc`, change routing accordingly
+- [ ] ***see `operations.esc`, change routing accordingly***
+
+# Other
+- See [IDEA plugin todo](idea-plugin/todo.md)
+- See [IDEA plugin bugs](idea-plugin/bugs.md)
+- See `**/issues.md`
