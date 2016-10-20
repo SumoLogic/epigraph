@@ -4,9 +4,8 @@ import epigraph.projections.Annotation
 import epigraph.projections.op.OpInputVarProjection
 import epigraph.projections.op.OpOutputVarProjection
 import epigraph.projections.op.OpParam
-import epigraph.schema.DataTypeRef
+import epigraph.projections.op.OpVarPath
 import epigraph.schema.Documented
-import epigraph.schema.FieldRef
 import epigraph.schema.TypeRef
 import epigraph.schema.VarTypeRef
 
@@ -38,8 +37,8 @@ abstract record Operation extends Documented {
 // sort them by op path length in descending order then declaration order (must be stable!)
 // for each of them:
 // if it's a READ:
-//   Try to parse read request projection against URL, if it matches and read request path is not shorter
-//   than operation `path`: this is our operation
+//   Try to parse read request projection against URL + `path` (the result of this would be `reqPath` + `reqOutputProjection`)
+//   first that matches is our operation
 // else (not a READ):
 //   extract path from request (have to have full URL Request parser for this! )
 //   try to match parsed path with operation path. First operation that matches is our operation
@@ -49,7 +48,7 @@ record CreateOperation extends Operation {
 }
 
 record ReadOperation extends Operation {
-  // `path` is leading part of `outputProjection`, outputType = resource field type
+  // contract: outputType = path tip type, or resource fieldType if path is null
   // inputType = inputProjection = null
 }
 
@@ -61,7 +60,7 @@ record UpdateOperation extends Operation {
 
   //updateDataProjection: OpInputVarProjection // projection for body data, starts from `path` tip
 
-  // contract: outputType = path tip type
+  // contract: outputType = path tip type, or resource fieldType if path is null
 }
 
 record DeleteOperation extends Operation {
@@ -78,7 +77,7 @@ record DeleteOperation extends Operation {
 record CustomOperation extends Operation {
   // HTTP POST       /people/123 ~ /foo/234(bar, baz) ? param=value <<< { 'x' : 'y' }
   //  any ^ verb?     ^             ^                         ^          ^
-  // path, guided by `path          |                         |          |
+  // path, guided by `path`         |                         |          |
   // ReqOutputVarProjection, parsed using `outputProjection`  |          |
   //                                            query parameters         |
   //                    request body, (de)serialized using `inputProjection`
@@ -87,35 +86,3 @@ record CustomOperation extends Operation {
   //inputProjection: OpInputModelProjection
   //outputProjection: OpOutputVarProjection
 }
-
-// todo move to projections.esc
-record OpVarPath {
-  tagEntry: OpModelPathEntry
-}
-
-record OpModelPathEntry {
-  model: DataTypeRef
-  modelPath: OpModelPath
-}
-
-record OpModelPath {
-  params: list[OpParam]
-  annotations: list[Annotation]
-}
-
-record OpRecordModelPath {
-  fieldEntry: OpFieldPathEntry
-}
-
-record OpFieldPathEntry {
-  field: FieldRef
-  fieldPath: OpFieldPath
-}
-
-record OpFieldPath {
-  params: list[OpParam]
-  annotations: list[Annotation]
-  varPath: OpVarPath
-}
-
-// TODO other model kinds

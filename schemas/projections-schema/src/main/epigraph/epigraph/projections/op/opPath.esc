@@ -1,0 +1,66 @@
+namespace epigraph.projections.op
+
+import epigraph.projections.Annotation
+import epigraph.schema.DataTypeRef
+import epigraph.schema.FieldRef
+import epigraph.schema.TypeMemberRef
+import epigraph.schema.RecordTypeRef
+import epigraph.schema.MapTypeRef
+import epigraph.schema.ListTypeRef
+import epigraph.schema.PrimitiveTypeRef
+import epigraph.schema.EnumTypeRef
+
+record OpVarPath {
+  tag: OpTagPath
+}
+
+record OpTagPath {
+  tag: TypeMemberRef
+  modelPath: OpModelPath
+}
+
+record OpModelPath {
+  model: DataTypeRef
+  params: list[OpParam]
+  annotations: list[Annotation]
+}
+
+record OpRecordModelPath extends OpModelPath {
+  override model: RecordTypeRef
+  fieldEntry: OpFieldPathEntry
+}
+
+record OpFieldPathEntry {
+  field: FieldRef
+  fieldPath: OpFieldPath
+}
+
+record OpFieldPath {
+  params: list[OpParam]
+  annotations: list[Annotation]
+  varPath: OpVarPath
+}
+
+record OpMapModelPath extends OpModelPath {
+  override model: MapTypeRef
+  keyProjection: OpPathKeyProjection
+  varPath: OpVarPath
+}
+
+record OpPathKeyProjection {
+  // path keys are always requried
+  params: list[OpParam]
+  annotations: list[Annotation]
+}
+
+record OpListModelPath extends OpModelPath { // lists are terminals: we don't support indices
+  override model: ListTypeRef
+}
+
+record OpEnumModelPath extends OpModelPath {
+  override model: EnumTypeRef
+}
+
+record OpPrimitiveModelPath extends OpModelPath {
+  override model: PrimitiveTypeRef
+}
