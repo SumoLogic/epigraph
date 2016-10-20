@@ -1,51 +1,55 @@
 namespace epigraph.projections.op
 
+import epigraph.data.Datum
+import epigraph.data.EnumDatum
+import epigraph.data.ListDatum
+import epigraph.data.MapDatum
+import epigraph.data.PrimitiveDatum
+import epigraph.data.RecordDatum
+import epigraph.projections.Annotation
 import epigraph.schema.DataTypeRef
+import epigraph.schema.EnumTypeRef
 import epigraph.schema.FieldRef
 import epigraph.schema.ListTypeRef
 import epigraph.schema.MapTypeRef
+import epigraph.schema.PrimitiveTypeRef
 import epigraph.schema.RecordTypeRef
 import epigraph.schema.TypeMemberRef
 import epigraph.schema.TypeRef
-import epigraph.schema.EnumTypeRef
-import epigraph.schema.PrimitiveTypeRef
-import epigraph.data.Datum
-import epigraph.data.MapDatum
-import epigraph.data.ListDatum
-import epigraph.data.RecordDatum
-import epigraph.data.PrimitiveDatum
-import epigraph.data.EnumDatum
-import epigraph.data.Data
 
 record OpInputVarProjection {
   type: TypeRef
-  tagProjections: list[OpInputTagProjection]
+  tagProjections: map[String, OpInputTagProjectionEntry]
   polymorphicTail: list[OpInputVarProjection]
 }
 
-record OpInputTagProjection {
+record OpInputTagProjectionEntry {
   tag: TypeMemberRef
-  tagProjection: OpInputModelProjection
+  projection: OpInputModelProjection // OpInputTagProjection = opInputModelProjection
 }
 
 abstract record OpInputModelProjection {
   model: DataTypeRef
   required: Boolean
   defaultValue: Datum
-  customParams: map[String, Data]
+  annotations: map[String, Annotation]
   `meta`: OpInputModelProjection
 }
 
 record OpInputRecordModelProjection extends OpInputModelProjection {
   override model: RecordTypeRef
   override defaultValue: RecordDatum
-  fieldProjections: list[OpInputFieldProjection]
+  fieldProjections: map[String, OpInputFieldProjectionEntry]
+}
+
+record OpInputFieldProjectionEntry {
+  field: FieldRef
+  projection: OpInputFieldProjection
 }
 
 record OpInputFieldProjection {
-  field: FieldRef
   required: Boolean
-  customParams: map[String, Data]
+  annotations: map[String, Annotation]
   varProjection: OpInputVarProjection
 }
 
@@ -65,7 +69,7 @@ record OpInputMapModelProjection extends OpInputModelProjection {
 record OpInputKeyProjection {
   forbidden: Boolean
   required: Boolean
-  customParams: map[String, Data]
+  annotations: map[String, Annotation]
 }
 
 record OpInputEnumModelProjection extends OpInputModelProjection {
