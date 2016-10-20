@@ -13,14 +13,14 @@ import java.util.Map;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpInputProjectionsPrettyPrinter<E extends Exception>
-    extends GenericProjectionsPrettyPrinter<OpInputVarProjection, OpInputTagProjection, OpInputModelProjection<?, ?>, E> {
+    extends GenericProjectionsPrettyPrinter<OpInputVarProjection, OpInputTagProjectionEntry, OpInputModelProjection<?, ?>, E> {
 
   public OpInputProjectionsPrettyPrinter(Layouter<E> layouter) {
     super(layouter);
   }
 
   @Override
-  public void print(@NotNull String tagName, @NotNull OpInputTagProjection tp, int pathSteps) throws E {
+  public void print(@NotNull String tagName, @NotNull OpInputTagProjectionEntry tp, int pathSteps) throws E {
     OpInputModelProjection<?, ?> projection = tp.projection();
     OpInputModelProjection<?, ?> metaProjection = projection.metaProjection();
     Annotations annotations = projection.annotations();

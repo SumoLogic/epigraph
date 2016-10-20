@@ -12,9 +12,9 @@ import java.util.List;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class OpOutputVarProjection extends GenericVarProjection<OpOutputTagProjection, OpOutputVarProjection> {
+public class OpOutputVarProjection extends GenericVarProjection<OpOutputTagProjectionEntry, OpOutputVarProjection> {
   public OpOutputVarProjection(@NotNull Type type,
-                               @NotNull LinkedHashMap<String, OpOutputTagProjection> tagProjections,
+                               @NotNull LinkedHashMap<String, OpOutputTagProjectionEntry> tagProjections,
                                @Nullable List<OpOutputVarProjection> polymorphicTails,
                                @NotNull TextLocation location) {
     super(type, tagProjections, polymorphicTails, location);

@@ -15,7 +15,7 @@ import java.util.*;
  */
 public abstract class GenericProjectionsPrettyPrinter<
     S extends GenericVarProjection<T, S>,
-    T extends GenericTagProjection<MP>,
+    T extends GenericTagProjectionEntry<MP>,
     MP extends GenericModelProjection<?>,
     E extends Exception> {
 

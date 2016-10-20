@@ -12,11 +12,11 @@ import java.util.List;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class ReqOutputVarProjection extends GenericVarProjection<ReqOutputTagProjection, ReqOutputVarProjection> {
+public class ReqOutputVarProjection extends GenericVarProjection<ReqOutputTagProjectionEntry, ReqOutputVarProjection> {
   private final boolean parenthesized; // if parens were present, e.g. `:(id, ...)`. Tells marshaller if to use multi- or single-var
 
   public ReqOutputVarProjection(@NotNull Type type,
-                                @NotNull LinkedHashMap<String, ReqOutputTagProjection> tagProjections,
+                                @NotNull LinkedHashMap<String, ReqOutputTagProjectionEntry> tagProjections,
                                 @Nullable List<ReqOutputVarProjection> polymorphicTails,
                                 boolean parenthesized,
                                 @NotNull TextLocation location) {

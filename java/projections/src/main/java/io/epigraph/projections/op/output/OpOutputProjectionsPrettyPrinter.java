@@ -18,14 +18,14 @@ import java.util.Map;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpOutputProjectionsPrettyPrinter<E extends Exception> extends
-    GenericProjectionsPrettyPrinter<OpOutputVarProjection, OpOutputTagProjection, OpOutputModelProjection<?>, E> {
+    GenericProjectionsPrettyPrinter<OpOutputVarProjection, OpOutputTagProjectionEntry, OpOutputModelProjection<?>, E> {
 
   public OpOutputProjectionsPrettyPrinter(Layouter<E> layouter) {
     super(layouter);
   }
 
   @Override
-  public void print(@NotNull String tagName, @NotNull OpOutputTagProjection tp, int pathSteps) throws E {
+  public void print(@NotNull String tagName, @NotNull OpOutputTagProjectionEntry tp, int pathSteps) throws E {
     OpOutputModelProjection<?> projection = tp.projection();
     OpOutputModelProjection<?> metaProjection = projection.metaProjection();
     OpParams params = projection.params();

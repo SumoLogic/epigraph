@@ -12,7 +12,7 @@ import java.util.Objects;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class GenericVarProjection<T extends GenericTagProjection<?>, S extends GenericVarProjection<T, S>> {
+public class GenericVarProjection<T extends GenericTagProjectionEntry<?>, S extends GenericVarProjection<T, S>> {
   @NotNull
   private final Type type;
   @NotNull
@@ -43,9 +43,7 @@ public class GenericVarProjection<T extends GenericTagProjection<?>, S extends G
   public @NotNull LinkedHashMap<String, T> tagProjections() { return tagProjections; }
 
   @Nullable
-  public T tagProjection(@NotNull String tagName) {
-    return tagProjections.get(tagName);
-  }
+  public T tagProjection(@NotNull String tagName) { return tagProjections.get(tagName); }
 
   public @Nullable List<S> polymorphicTails() { return polymorphicTails; }
 

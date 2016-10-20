@@ -17,7 +17,7 @@ import java.util.Map;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
-    extends GenericProjectionsPrettyPrinter<ReqOutputVarProjection, ReqOutputTagProjection, ReqOutputModelProjection<?>, E> {
+    extends GenericProjectionsPrettyPrinter<ReqOutputVarProjection, ReqOutputTagProjectionEntry, ReqOutputModelProjection<?>, E> {
 
   // todo: take var projection's 'parenthesized' into account
 
@@ -26,7 +26,7 @@ public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
   }
 
   @Override
-  public void print(@NotNull String tagName, @NotNull ReqOutputTagProjection tp, int pathSteps) throws E {
+  public void print(@NotNull String tagName, @NotNull ReqOutputTagProjectionEntry tp, int pathSteps) throws E {
     ReqOutputModelProjection<?> projection = tp.projection();
     ReqOutputModelProjection<?> metaProjection = projection.metaProjection();
 

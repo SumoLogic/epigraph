@@ -22,7 +22,7 @@ public class ProjectionDataTrimmer { // todo move somewhere else?
     @NotNull final Data.Raw raw = data._raw();
     @NotNull final Data.Builder.Raw b = data.type().createDataBuilder()._raw();
 
-    for (Map.Entry<String, ReqOutputTagProjection> entry : projection.tagProjections().entrySet()) {
+    for (Map.Entry<String, ReqOutputTagProjectionEntry> entry : projection.tagProjections().entrySet()) {
       final String tagName = entry.getKey();
       final Type.Tag tag = projection.type().tagsMap().get(tagName);
 

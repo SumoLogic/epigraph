@@ -55,7 +55,7 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
     for (Tag tag : type.tags()) {
       Deque<ReqOutputModelProjection> modelProjections = new ArrayDeque<>(projections.size());
       for (ReqOutputVarProjection vp : projections) {
-        ReqOutputTagProjection tagProjection = vp.tagProjection(tag.name());
+        ReqOutputTagProjectionEntry tagProjection = vp.tagProjection(tag.name());
         if (tagProjection != null) modelProjections.add(tagProjection.projection());
       }
       if (!modelProjections.isEmpty()) { // if this tag was mentioned in at least one projection

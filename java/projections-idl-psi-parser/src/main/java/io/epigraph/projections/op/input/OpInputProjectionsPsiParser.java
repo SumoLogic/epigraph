@@ -34,7 +34,7 @@ public class OpInputProjectionsPsiParser {
       @NotNull TypesResolver typesResolver) throws PsiProcessingException {
 
     final Type type = dataType.type;
-    final LinkedHashMap<String, OpInputTagProjection> tagProjections;
+    final LinkedHashMap<String, OpInputTagProjectionEntry> tagProjections;
     final int steps;
 
     @Nullable IdlOpInputTrunkSingleTagProjection singleTagProjectionPsi = psi.getOpInputTrunkSingleTagProjection();
@@ -68,7 +68,8 @@ public class OpInputProjectionsPsiParser {
 
       tagProjections.put(
           tag.name(),
-          new OpInputTagProjection(
+          new OpInputTagProjectionEntry(
+              tag,
               parsedModelProjection,
               EpigraphPsiUtil.getLocation(singleTagProjectionPsi)
           )
@@ -96,7 +97,7 @@ public class OpInputProjectionsPsiParser {
       @NotNull TypesResolver typesResolver) throws PsiProcessingException {
 
     final Type type = dataType.type;
-    final LinkedHashMap<String, OpInputTagProjection> tagProjections;
+    final LinkedHashMap<String, OpInputTagProjectionEntry> tagProjections;
 
     @Nullable IdlOpInputComaSingleTagProjection singleTagProjectionPsi = psi.getOpInputComaSingleTagProjection();
     if (singleTagProjectionPsi != null) {
@@ -124,7 +125,8 @@ public class OpInputProjectionsPsiParser {
 
       tagProjections.put(
           tag.name(),
-          new OpInputTagProjection(
+          new OpInputTagProjectionEntry(
+              tag,
               parsedModelProjection,
               EpigraphPsiUtil.getLocation(singleTagProjectionPsi)
           )
@@ -146,12 +148,12 @@ public class OpInputProjectionsPsiParser {
   }
 
   @NotNull
-  private static LinkedHashMap<String, OpInputTagProjection> parseComaMultiTagProjection(
+  private static LinkedHashMap<String, OpInputTagProjectionEntry> parseComaMultiTagProjection(
       @NotNull DataType dataType,
       @NotNull IdlOpInputComaMultiTagProjection multiTagProjection,
       @NotNull TypesResolver typesResolver) throws PsiProcessingException {
 
-    final LinkedHashMap<String, OpInputTagProjection> tagProjections = new LinkedHashMap<>();
+    final LinkedHashMap<String, OpInputTagProjectionEntry> tagProjections = new LinkedHashMap<>();
 
     // parse list of tags
     @NotNull List<IdlOpInputComaMultiTagProjectionItem> tagProjectionPsiList =
@@ -179,7 +181,8 @@ public class OpInputProjectionsPsiParser {
 
       tagProjections.put(
           tag.name(),
-          new OpInputTagProjection(
+          new OpInputTagProjectionEntry(
+              tag,
               parsedModelProjection,
               EpigraphPsiUtil.getLocation(tagProjectionPsi)
           )
@@ -318,7 +321,8 @@ public class OpInputProjectionsPsiParser {
         type,
         ProjectionUtils.singletonLinkedHashMap(
             tag.name(),
-            new OpInputTagProjection(
+            new OpInputTagProjectionEntry(
+                tag,
                 createDefaultModelProjection(tag.type, required, null, null, locationPsi, null),
                 EpigraphPsiUtil.getLocation(locationPsi)
             )

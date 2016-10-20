@@ -36,7 +36,7 @@ public class OpOutputProjectionsPsiParser {
       throws PsiProcessingException {
 
     final Type type = dataType.type;
-    final LinkedHashMap<String, OpOutputTagProjection> tagProjections = new LinkedHashMap<>();
+    final LinkedHashMap<String, OpOutputTagProjectionEntry> tagProjections = new LinkedHashMap<>();
 
     @Nullable IdlOpOutputSingleTagProjection singleTagProjectionPsi = psi.getOpOutputSingleTagProjection();
 
@@ -69,7 +69,8 @@ public class OpOutputProjectionsPsiParser {
 
       tagProjections.put(
           tag.name(),
-          new OpOutputTagProjection(
+          new OpOutputTagProjectionEntry(
+              tag,
               parsedModelProjection,
               EpigraphPsiUtil.getLocation(singleTagProjectionPsi)
           )
@@ -104,7 +105,8 @@ public class OpOutputProjectionsPsiParser {
 
         tagProjections.put(
             tag.name(),
-            new OpOutputTagProjection(
+            new OpOutputTagProjectionEntry(
+                tag,
                 parsedModelProjection,
                 EpigraphPsiUtil.getLocation(tagProjectionPsi)
             )
@@ -236,7 +238,8 @@ public class OpOutputProjectionsPsiParser {
         type,
         ProjectionUtils.singletonLinkedHashMap(
             tag.name(),
-            new OpOutputTagProjection(
+            new OpOutputTagProjectionEntry(
+                tag,
                 createDefaultModelProjection(tag.type, includeInDefault, null, null, locationPsi),
                 EpigraphPsiUtil.getLocation(locationPsi)
             )
