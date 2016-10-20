@@ -5,6 +5,7 @@ import io.epigraph.gdata.GDatum;
 import io.epigraph.idl.gdata.IdlGDataPsiParser;
 import io.epigraph.idl.TypeRefs;
 import io.epigraph.idl.parser.psi.*;
+import io.epigraph.lang.TextLocation;
 import io.epigraph.projections.Annotation;
 import io.epigraph.projections.Annotations;
 import io.epigraph.projections.ProjectionUtils;
@@ -30,9 +31,10 @@ import static io.epigraph.projections.ProjectionPsiParserUtil.*;
  */
 public class OpOutputProjectionsPsiParser {
 
-  public static OpOutputVarProjection parseVarProjection(@NotNull DataType dataType,
-                                                         @NotNull IdlOpOutputVarProjection psi,
-                                                         @NotNull TypesResolver typesResolver)
+  public static OpOutputVarProjection parseVarProjection(
+      @NotNull DataType dataType,
+      @NotNull IdlOpOutputVarProjection psi,
+      @NotNull TypesResolver typesResolver)
       throws PsiProcessingException {
 
     final Type type = dataType.type;
@@ -250,17 +252,19 @@ public class OpOutputProjectionsPsiParser {
   }
 
   @NotNull
-  private static OpOutputVarProjection createDefaultVarProjection(@NotNull DatumType type,
-                                                                  boolean includeInDefault,
-                                                                  @NotNull PsiElement locationPsi)
+  private static OpOutputVarProjection createDefaultVarProjection(
+      @NotNull DatumType type,
+      boolean includeInDefault,
+      @NotNull PsiElement locationPsi)
       throws PsiProcessingException {
     return createDefaultVarProjection(type, type.self, includeInDefault, locationPsi);
   }
 
   @NotNull
-  private static OpOutputVarProjection createDefaultVarProjection(@NotNull DataType type,
-                                                                  boolean includeInDefault,
-                                                                  @NotNull PsiElement locationPsi)
+  private static OpOutputVarProjection createDefaultVarProjection(
+      @NotNull DataType type,
+      boolean includeInDefault,
+      @NotNull PsiElement locationPsi)
       throws PsiProcessingException {
 
     @Nullable Type.Tag defaultTag = type.defaultTag;
@@ -273,13 +277,14 @@ public class OpOutputProjectionsPsiParser {
   }
 
   @NotNull
-  public static OpOutputModelProjection<?> parseModelProjection(@NotNull DatumType type,
-                                                                boolean includeInDefault,
-                                                                @Nullable OpParams params,
-                                                                @Nullable Annotations annotations,
-                                                                @Nullable OpOutputModelProjection<?> metaProjection,
-                                                                @NotNull IdlOpOutputModelProjection psi,
-                                                                @NotNull TypesResolver typesResolver)
+  public static OpOutputModelProjection<?> parseModelProjection(
+      @NotNull DatumType type,
+      boolean includeInDefault,
+      @Nullable OpParams params,
+      @Nullable Annotations annotations,
+      @Nullable OpOutputModelProjection<?> metaProjection,
+      @NotNull IdlOpOutputModelProjection psi,
+      @NotNull TypesResolver typesResolver)
       throws PsiProcessingException {
 
     switch (type.kind()) {
@@ -329,12 +334,13 @@ public class OpOutputProjectionsPsiParser {
       case ENUM:
         throw new PsiProcessingException("Unsupported type kind: " + type.kind(), psi);
       case PRIMITIVE:
-        return parsePrimitiveModelProjection((PrimitiveType) type,
-                                             includeInDefault,
-                                             params,
-                                             annotations,
-                                             metaProjection,
-                                             psi
+        return parsePrimitiveModelProjection(
+            (PrimitiveType) type,
+            includeInDefault,
+            params,
+            annotations,
+            metaProjection,
+            psi
         );
       case UNION:
         throw new PsiProcessingException("Unsupported type kind: " + type.kind(), psi);
@@ -348,9 +354,10 @@ public class OpOutputProjectionsPsiParser {
 
     @Nullable TypeKind actualKind = findProjectionKind(psi);
     if (!expectedKind.equals(actualKind))
-      throw new PsiProcessingException(MessageFormat.format("Unexpected projection kind ''{0}'', expected ''{1}''",
-                                                            actualKind,
-                                                            expectedKind
+      throw new PsiProcessingException(MessageFormat.format(
+          "Unexpected projection kind ''{0}'', expected ''{1}''",
+          actualKind,
+          expectedKind
       ), psi);
   }
 
@@ -363,31 +370,34 @@ public class OpOutputProjectionsPsiParser {
   }
 
   @NotNull
-  private static OpOutputModelProjection<?> createDefaultModelProjection(@NotNull DatumType type,
-                                                                         boolean includeInDefault,
-                                                                         @Nullable OpParams params,
-                                                                         @Nullable Annotations annotations,
-                                                                         @NotNull PsiElement locationPsi)
+  private static OpOutputModelProjection<?> createDefaultModelProjection(
+      @NotNull DatumType type,
+      boolean includeInDefault,
+      @Nullable OpParams params,
+      @Nullable Annotations annotations,
+      @NotNull PsiElement locationPsi)
       throws PsiProcessingException {
 
     switch (type.kind()) {
       case RECORD:
-        return new OpOutputRecordModelProjection((RecordType) type,
-                                                 includeInDefault,
-                                                 params,
-                                                 annotations,
-                                                 null,
-                                                 null,
-                                                 EpigraphPsiUtil.getLocation(locationPsi)
+        return new OpOutputRecordModelProjection(
+            (RecordType) type,
+            includeInDefault,
+            params,
+            annotations,
+            null,
+            null,
+            EpigraphPsiUtil.getLocation(locationPsi)
         );
       case MAP:
         MapType mapType = (MapType) type;
 
         final OpOutputKeyProjection keyProjection =
-            new OpOutputKeyProjection(OpOutputKeyProjection.Presence.OPTIONAL,
-                                      null,
-                                      null,
-                                      EpigraphPsiUtil.getLocation(locationPsi)
+            new OpOutputKeyProjection(
+                OpOutputKeyProjection.Presence.OPTIONAL,
+                null,
+                null,
+                EpigraphPsiUtil.getLocation(locationPsi)
             );
 
         @NotNull DataType valueType = mapType.valueType();
@@ -407,14 +417,15 @@ public class OpOutputProjectionsPsiParser {
             locationPsi
         );
 
-        return new OpOutputMapModelProjection(mapType,
-                                              includeInDefault,
-                                              params,
-                                              annotations,
-                                              null,
-                                              keyProjection,
-                                              valueVarProjection,
-                                              EpigraphPsiUtil.getLocation(locationPsi)
+        return new OpOutputMapModelProjection(
+            mapType,
+            includeInDefault,
+            params,
+            annotations,
+            null,
+            keyProjection,
+            valueVarProjection,
+            EpigraphPsiUtil.getLocation(locationPsi)
         );
       case LIST:
         ListType listType = (ListType) type;
@@ -435,25 +446,27 @@ public class OpOutputProjectionsPsiParser {
             locationPsi
         );
 
-        return new OpOutputListModelProjection(listType,
-                                               includeInDefault,
-                                               params,
-                                               annotations,
-                                               null,
-                                               itemVarProjection,
-                                               EpigraphPsiUtil.getLocation(locationPsi)
+        return new OpOutputListModelProjection(
+            listType,
+            includeInDefault,
+            params,
+            annotations,
+            null,
+            itemVarProjection,
+            EpigraphPsiUtil.getLocation(locationPsi)
         );
       case UNION:
         throw new PsiProcessingException("Was expecting to get datum model kind, got: " + type.kind(), locationPsi);
       case ENUM:
         throw new PsiProcessingException("Unsupported type kind: " + type.kind(), locationPsi);
       case PRIMITIVE:
-        return new OpOutputPrimitiveModelProjection((PrimitiveType) type,
-                                                    includeInDefault,
-                                                    params,
-                                                    annotations,
-                                                    null,
-                                                    EpigraphPsiUtil.getLocation(locationPsi)
+        return new OpOutputPrimitiveModelProjection(
+            (PrimitiveType) type,
+            includeInDefault,
+            params,
+            annotations,
+            null,
+            EpigraphPsiUtil.getLocation(locationPsi)
         );
       default:
         throw new PsiProcessingException("Unknown type kind: " + type.kind(), locationPsi);
@@ -470,7 +483,7 @@ public class OpOutputProjectionsPsiParser {
       @NotNull IdlOpOutputRecordModelProjection psi,
       @NotNull TypesResolver typesResolver) throws PsiProcessingException {
 
-    LinkedHashMap<String, OpOutputFieldProjection> fieldProjections = new LinkedHashMap<>();
+    LinkedHashMap<String, OpOutputFieldProjectionEntry> fieldProjections = new LinkedHashMap<>();
     @NotNull List<IdlOpOutputFieldProjection> psiFieldProjections = psi.getOpOutputFieldProjectionList();
 
     for (IdlOpOutputFieldProjection fieldProjectionPsi : psiFieldProjections) {
@@ -520,14 +533,19 @@ public class OpOutputProjectionsPsiParser {
         varProjection = parseVarProjection(field.dataType(), psiVarProjection, typesResolver);
       }
 
+      @NotNull final TextLocation fieldLocation = EpigraphPsiUtil.getLocation(fieldProjectionPsi);
       fieldProjections.put(
           fieldName,
-          new OpOutputFieldProjection(
-              fieldParams,
-              fieldAnnotations,
-              varProjection,
-              includeFieldInDefault,
-              EpigraphPsiUtil.getLocation(fieldProjectionPsi)
+          new OpOutputFieldProjectionEntry(
+              field,
+              new OpOutputFieldProjection(
+                  fieldParams,
+                  fieldAnnotations,
+                  varProjection,
+                  includeFieldInDefault,
+                  fieldLocation
+              ),
+              fieldLocation
           )
       );
     }
@@ -559,9 +577,10 @@ public class OpOutputProjectionsPsiParser {
     @Nullable IdlOpOutputVarProjection valueProjectionPsi = psi.getOpOutputVarProjection();
     @NotNull OpOutputVarProjection valueProjection =
         valueProjectionPsi == null
-        ? createDefaultVarProjection(type.valueType(),
-                                     keyProjection.presence() == OpOutputKeyProjection.Presence.REQUIRED,
-                                     psi
+        ? createDefaultVarProjection(
+            type.valueType(),
+            keyProjection.presence() == OpOutputKeyProjection.Presence.REQUIRED,
+            psi
         )
         : parseVarProjection(type.valueType(), valueProjectionPsi, resolver);
 
@@ -651,18 +670,20 @@ public class OpOutputProjectionsPsiParser {
       @Nullable OpOutputModelProjection<?> metaProjection,
       @NotNull PsiElement locationPsi) {
 
-    return new OpOutputPrimitiveModelProjection(type,
-                                                includeInDefault,
-                                                params,
-                                                annotations,
-                                                metaProjection,
-                                                EpigraphPsiUtil.getLocation(locationPsi)
+    return new OpOutputPrimitiveModelProjection(
+        type,
+        includeInDefault,
+        params,
+        annotations,
+        metaProjection,
+        EpigraphPsiUtil.getLocation(locationPsi)
     );
   }
 
   @NotNull
-  public static OpParam parseParameter(@NotNull IdlOpParam paramPsi,
-                                       @NotNull TypesResolver resolver) throws PsiProcessingException {
+  public static OpParam parseParameter(
+      @NotNull IdlOpParam paramPsi,
+      @NotNull TypesResolver resolver) throws PsiProcessingException {
     @Nullable IdlQid qid = paramPsi.getQid();
     if (qid == null) throw new PsiProcessingException("Parameter name not specified", paramPsi);
     @NotNull String paramName = qid.getCanonicalName();

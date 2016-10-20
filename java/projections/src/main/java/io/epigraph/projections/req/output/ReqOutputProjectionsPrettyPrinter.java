@@ -28,7 +28,7 @@ public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
   @Override
   public void print(@NotNull String tagName, @NotNull ReqOutputTagProjectionEntry tp, int pathSteps) throws E {
     ReqOutputModelProjection<?> projection = tp.projection();
-    ReqOutputModelProjection<?> metaProjection = projection.metaProjection();
+    ReqOutputModelProjection<?> metaProjection = projection.metaProjection(); // todo print meta projection
 
     ReqParams params = projection.params();
     Annotations annotations = projection.annotations();
@@ -58,7 +58,7 @@ public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
   }
 
   private void print(@NotNull ReqOutputRecordModelProjection mp, int pathSteps) throws E {
-    @Nullable LinkedHashMap<String, ReqOutputFieldProjection> fieldProjections = mp.fieldProjections();
+    @Nullable LinkedHashMap<String, ReqOutputFieldProjectionEntry> fieldProjections = mp.fieldProjections();
 
     if (fieldProjections != null) {
       if (pathSteps > 0) {
@@ -67,22 +67,22 @@ public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
             String.format("Encountered %d fields while still having %d path steps", fieldProjections.size(), pathSteps)
         );
 
-        Map.Entry<String, ReqOutputFieldProjection> entry = fieldProjections.entrySet().iterator().next();
+        Map.Entry<String, ReqOutputFieldProjectionEntry> entry = fieldProjections.entrySet().iterator().next();
         l.beginIInd();
         l.print("/").brk();
-        print(entry.getKey(), entry.getValue(), decSteps(pathSteps));
+        print(entry.getKey(), entry.getValue().projection(), decSteps(pathSteps));
         l.end();
 
       } else {
 
         l.print("(").beginCInd();
         boolean first = true;
-        for (Map.Entry<String, ReqOutputFieldProjection> entry : fieldProjections.entrySet()) {
+        for (Map.Entry<String, ReqOutputFieldProjectionEntry> entry : fieldProjections.entrySet()) {
           if (first) first = false;
           else l.print(",");
           l.brk();
 
-          print(entry.getKey(), entry.getValue(), 0);
+          print(entry.getKey(), entry.getValue().projection(), 0);
 
         }
         l.brk(1, -l.getDefaultIndentation()).end().print(")");
@@ -179,7 +179,7 @@ public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
   public boolean isPrintoutEmpty(@NotNull ReqOutputModelProjection<?> mp) {
     if (mp instanceof ReqOutputRecordModelProjection) {
       ReqOutputRecordModelProjection recordModelProjection = (ReqOutputRecordModelProjection) mp;
-      @Nullable LinkedHashMap<String, ReqOutputFieldProjection> fieldProjections =
+      @Nullable LinkedHashMap<String, ReqOutputFieldProjectionEntry> fieldProjections =
           recordModelProjection.fieldProjections();
       return fieldProjections == null || fieldProjections.isEmpty();
     }

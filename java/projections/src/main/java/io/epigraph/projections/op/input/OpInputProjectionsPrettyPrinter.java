@@ -77,7 +77,7 @@ public class OpInputProjectionsPrettyPrinter<E extends Exception>
   }
 
   private void print(@NotNull OpInputRecordModelProjection mp, int pathSteps) throws E {
-    @Nullable LinkedHashMap<String, OpInputFieldProjection> fieldProjections = mp.fieldProjections();
+    @Nullable LinkedHashMap<String, OpInputFieldProjectionEntry> fieldProjections = mp.fieldProjections();
 
     if (fieldProjections != null) {
       if (pathSteps > 0) {
@@ -86,22 +86,22 @@ public class OpInputProjectionsPrettyPrinter<E extends Exception>
             String.format("Encountered %d fields while still having %d path steps", fieldProjections.size(), pathSteps)
         );
 
-        Map.Entry<String, OpInputFieldProjection> entry = fieldProjections.entrySet().iterator().next();
+        Map.Entry<String, OpInputFieldProjectionEntry> entry = fieldProjections.entrySet().iterator().next();
         l.beginIInd();
         l.print("/").brk();
-        print(entry.getKey(), entry.getValue(), decSteps(pathSteps));
+        print(entry.getKey(), entry.getValue().projection(), decSteps(pathSteps));
         l.end();
 
       } else {
 
         l.print("(").beginCInd();
         boolean first = true;
-        for (Map.Entry<String, OpInputFieldProjection> entry : fieldProjections.entrySet()) {
+        for (Map.Entry<String, OpInputFieldProjectionEntry> entry : fieldProjections.entrySet()) {
           if (first) first = false;
           else l.print(",");
           l.brk();
 
-          print(entry.getKey(), entry.getValue(), 0);
+          print(entry.getKey(), entry.getValue().projection(), 0);
 
         }
         l.brk(1, -l.getDefaultIndentation()).end().print(")");
@@ -162,7 +162,7 @@ public class OpInputProjectionsPrettyPrinter<E extends Exception>
   public boolean isPrintoutEmpty(@NotNull OpInputModelProjection<?, ?> mp) {
     if (mp instanceof OpInputRecordModelProjection) {
       OpInputRecordModelProjection recordModelProjection = (OpInputRecordModelProjection) mp;
-      @Nullable LinkedHashMap<String, OpInputFieldProjection> fieldProjections =
+      @Nullable LinkedHashMap<String, OpInputFieldProjectionEntry> fieldProjections =
           recordModelProjection.fieldProjections();
       return fieldProjections == null || fieldProjections.isEmpty();
     }

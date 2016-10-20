@@ -14,19 +14,21 @@ import java.util.*;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpOutputRecordModelProjection extends OpOutputModelProjection<RecordType> {
-  private static final ThreadLocal<IdentityHashMap<OpOutputRecordModelProjection, OpOutputRecordModelProjection>>
-      equalsVisited = new ThreadLocal<>();
+  private static final
+  ThreadLocal<IdentityHashMap<OpOutputRecordModelProjection, OpOutputRecordModelProjection>> equalsVisited =
+      new ThreadLocal<>();
 
   @Nullable
-  private LinkedHashMap<String, OpOutputFieldProjection> fieldProjections;
+  private LinkedHashMap<String, OpOutputFieldProjectionEntry> fieldProjections;
 
-  public OpOutputRecordModelProjection(@NotNull RecordType model,
-                                       boolean includeInDefault,
-                                       @Nullable OpParams params,
-                                       @Nullable Annotations annotations,
-                                       @Nullable OpOutputModelProjection<?> metaProjection,
-                                       @Nullable LinkedHashMap<String, OpOutputFieldProjection> fieldProjections,
-                                       @NotNull TextLocation location) {
+  public OpOutputRecordModelProjection(
+      @NotNull RecordType model,
+      boolean includeInDefault,
+      @Nullable OpParams params,
+      @Nullable Annotations annotations,
+      @Nullable OpOutputModelProjection<?> metaProjection,
+      @Nullable LinkedHashMap<String, OpOutputFieldProjectionEntry> fieldProjections,
+      @NotNull TextLocation location) {
     super(model, includeInDefault, params, annotations, metaProjection, location);
     this.fieldProjections = fieldProjections;
 
@@ -35,15 +37,17 @@ public class OpOutputRecordModelProjection extends OpOutputModelProjection<Recor
   }
 
   @NotNull
-  public static LinkedHashSet<OpOutputFieldProjection> fields(OpOutputFieldProjection... fieldProjections) {
+  public static LinkedHashSet<OpOutputFieldProjectionEntry> fields(OpOutputFieldProjectionEntry... fieldProjections) {
     return new LinkedHashSet<>(Arrays.asList(fieldProjections));
   }
 
-  public @Nullable LinkedHashMap<String, OpOutputFieldProjection> fieldProjections() { return fieldProjections; }
+  public @Nullable LinkedHashMap<String, OpOutputFieldProjectionEntry> fieldProjections() { return fieldProjections; }
 
-  public void addFieldProjection(@NotNull String fieldName, @NotNull OpOutputFieldProjection fieldProjection) {
+  public void addFieldProjectionEntry(
+      @NotNull String fieldName,
+      @NotNull OpOutputFieldProjectionEntry fieldProjectionEntry) {
     if (fieldProjections == null) fieldProjections = new LinkedHashMap<>();
-    fieldProjections.put(fieldName, fieldProjection);
+    fieldProjections.put(fieldName, fieldProjectionEntry);
   }
 
   @Override

@@ -77,19 +77,18 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception> extends
   }
 
   private void print(@NotNull OpOutputRecordModelProjection mp) throws E {
-    @Nullable LinkedHashMap<String, OpOutputFieldProjection> fieldProjections = mp.fieldProjections();
+    @Nullable LinkedHashMap<String, OpOutputFieldProjectionEntry> fieldProjections = mp.fieldProjections();
 
     if (fieldProjections != null) {
       l.print("(").beginCInd();
       boolean first = true;
-      for (Map.Entry<String, OpOutputFieldProjection> entry : fieldProjections.entrySet()) {
+      for (Map.Entry<String, OpOutputFieldProjectionEntry> entry : fieldProjections.entrySet()) {
         if (first) first = false;
         else l.print(",");
         l.brk();
 
         @NotNull String fieldName = entry.getKey();
-        @NotNull OpOutputFieldProjection fieldProjection = entry.getValue();
-
+        @NotNull OpOutputFieldProjection fieldProjection = entry.getValue().projection();
         @NotNull OpOutputVarProjection fieldVarProjection = fieldProjection.projection();
         @Nullable OpParams fieldParams = fieldProjection.params();
         @Nullable Annotations fieldAnnotations = fieldProjection.annotations();
@@ -223,7 +222,7 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception> extends
   public boolean isPrintoutEmpty(@NotNull OpOutputModelProjection<?> mp) {
     if (mp instanceof OpOutputRecordModelProjection) {
       OpOutputRecordModelProjection recordModelProjection = (OpOutputRecordModelProjection) mp;
-      @Nullable LinkedHashMap<String, OpOutputFieldProjection> fieldProjections =
+      @Nullable LinkedHashMap<String, OpOutputFieldProjectionEntry> fieldProjections =
           recordModelProjection.fieldProjections();
       return fieldProjections == null || fieldProjections.isEmpty();
     }

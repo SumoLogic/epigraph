@@ -18,15 +18,17 @@ public class OpInputRecordModelProjection extends OpInputModelProjection<RecordT
       equalsVisited = new ThreadLocal<>();
 
   @Nullable
-  private LinkedHashMap<String, OpInputFieldProjection> fieldProjections;
+  private LinkedHashMap<String, OpInputFieldProjectionEntry> fieldProjections;
 
-  public OpInputRecordModelProjection(@NotNull RecordType model,
-                                      boolean required,
-                                      @Nullable RecordDatum defaultValue,
-                                      @Nullable Annotations annotations,
-                                      @Nullable OpInputModelProjection<?, ?> metaProjection,
-                                      @Nullable LinkedHashMap<String, OpInputFieldProjection> fieldProjections,
-                                      @NotNull TextLocation location) {
+  public OpInputRecordModelProjection(
+      @NotNull RecordType model,
+      boolean required,
+      @Nullable RecordDatum defaultValue,
+      @Nullable Annotations annotations,
+      @Nullable OpInputModelProjection<?, ?> metaProjection,
+      @Nullable LinkedHashMap<String, OpInputFieldProjectionEntry> fieldProjections,
+      @NotNull TextLocation location) {
+
     super(model, required, defaultValue, annotations, metaProjection, location);
     this.fieldProjections = fieldProjections;
 
@@ -35,16 +37,16 @@ public class OpInputRecordModelProjection extends OpInputModelProjection<RecordT
   }
 
   @NotNull
-  public static LinkedHashSet<OpInputFieldProjection> fields(OpInputFieldProjection... fieldProjections) {
+  public static LinkedHashSet<OpInputFieldProjectionEntry> fields(OpInputFieldProjectionEntry... fieldProjections) {
     return new LinkedHashSet<>(Arrays.asList(fieldProjections));
   }
 
   @Nullable
-  public LinkedHashMap<String, OpInputFieldProjection> fieldProjections() { return fieldProjections; }
+  public LinkedHashMap<String, OpInputFieldProjectionEntry> fieldProjections() { return fieldProjections; }
 
-  public void addFieldProjection(@NotNull String fieldName, @NotNull OpInputFieldProjection fieldProjection) {
+  public void addFieldProjectionEntry(@NotNull OpInputFieldProjectionEntry fieldProjection) {
     if (fieldProjections == null) fieldProjections = new LinkedHashMap<>();
-    fieldProjections.put(fieldName, fieldProjection);
+    fieldProjections.put(fieldProjection.field().name(), fieldProjection);
   }
 
   @Override

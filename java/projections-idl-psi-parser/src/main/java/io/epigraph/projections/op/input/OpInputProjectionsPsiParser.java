@@ -333,17 +333,19 @@ public class OpInputProjectionsPsiParser {
   }
 
   @NotNull
-  private static OpInputVarProjection createDefaultVarProjection(@NotNull DatumType type,
-                                                                 boolean required,
-                                                                 @NotNull PsiElement locationPsi)
+  private static OpInputVarProjection createDefaultVarProjection(
+      @NotNull DatumType type,
+      boolean required,
+      @NotNull PsiElement locationPsi)
       throws PsiProcessingException {
     return createDefaultVarProjection(type, type.self, required, locationPsi);
   }
 
   @NotNull
-  private static OpInputVarProjection createDefaultVarProjection(@NotNull DataType type,
-                                                                 boolean required,
-                                                                 @NotNull PsiElement locationPsi)
+  private static OpInputVarProjection createDefaultVarProjection(
+      @NotNull DataType type,
+      boolean required,
+      @NotNull PsiElement locationPsi)
       throws PsiProcessingException {
 
     @Nullable Type.Tag defaultTag = type.defaultTag;
@@ -505,9 +507,10 @@ public class OpInputProjectionsPsiParser {
 
     @Nullable TypeKind actualKind = findProjectionKind(psi);
     if (!expectedKind.equals(actualKind))
-      throw new PsiProcessingException(MessageFormat.format("Unexpected projection kind ''{0}'', expected ''{1}''",
-                                                            actualKind,
-                                                            expectedKind
+      throw new PsiProcessingException(MessageFormat.format(
+          "Unexpected projection kind ''{0}'', expected ''{1}''",
+          actualKind,
+          expectedKind
       ), psi);
   }
 
@@ -520,12 +523,13 @@ public class OpInputProjectionsPsiParser {
   }
 
   @NotNull
-  private static OpInputModelProjection<?, ?> createDefaultModelProjection(@NotNull DatumType type,
-                                                                           boolean required,
-                                                                           @Nullable GDatum defaultValue,
-                                                                           @Nullable Annotations annotations,
-                                                                           @NotNull PsiElement locationPsi,
-                                                                           @Nullable TypesResolver resolver)
+  private static OpInputModelProjection<?, ?> createDefaultModelProjection(
+      @NotNull DatumType type,
+      boolean required,
+      @Nullable GDatum defaultValue,
+      @Nullable Annotations annotations,
+      @NotNull PsiElement locationPsi,
+      @Nullable TypesResolver resolver)
       throws PsiProcessingException {
 
     @NotNull TextLocation location = EpigraphPsiUtil.getLocation(locationPsi);
@@ -541,13 +545,14 @@ public class OpInputProjectionsPsiParser {
 
     switch (type.kind()) {
       case RECORD:
-        return new OpInputRecordModelProjection((RecordType) type,
-                                                required,
-                                                (RecordDatum) defaultDatum,
-                                                annotations,
-                                                null,
-                                                null,
-                                                location
+        return new OpInputRecordModelProjection(
+            (RecordType) type,
+            required,
+            (RecordDatum) defaultDatum,
+            annotations,
+            null,
+            null,
+            location
         );
       case MAP:
         MapType mapType = (MapType) type;
@@ -569,13 +574,14 @@ public class OpInputProjectionsPsiParser {
             locationPsi
         );
 
-        return new OpInputMapModelProjection(mapType,
-                                             required,
-                                             (MapDatum) defaultDatum,
-                                             annotations,
-                                             null,
-                                             valueVarProjection,
-                                             location
+        return new OpInputMapModelProjection(
+            mapType,
+            required,
+            (MapDatum) defaultDatum,
+            annotations,
+            null,
+            valueVarProjection,
+            location
         );
       case LIST:
         ListType listType = (ListType) type;
@@ -596,13 +602,14 @@ public class OpInputProjectionsPsiParser {
             locationPsi
         );
 
-        return new OpInputListModelProjection(listType,
-                                              required,
-                                              (ListDatum) defaultDatum,
-                                              annotations,
-                                              null,
-                                              itemVarProjection,
-                                              location
+        return new OpInputListModelProjection(
+            listType,
+            required,
+            (ListDatum) defaultDatum,
+            annotations,
+            null,
+            itemVarProjection,
+            location
         );
       case UNION:
         throw new PsiProcessingException("Was expecting to get datum model kind, got: " + type.kind(), locationPsi);
@@ -610,12 +617,13 @@ public class OpInputProjectionsPsiParser {
         // todo
         throw new PsiProcessingException("Unsupported type kind: " + type.kind(), locationPsi);
       case PRIMITIVE:
-        return new OpInputPrimitiveModelProjection((PrimitiveType) type,
-                                                   required,
-                                                   (PrimitiveDatum<?>) defaultDatum,
-                                                   annotations,
-                                                   null,
-                                                   location
+        return new OpInputPrimitiveModelProjection(
+            (PrimitiveType) type,
+            required,
+            (PrimitiveDatum<?>) defaultDatum,
+            annotations,
+            null,
+            location
         );
       default:
         throw new PsiProcessingException("Unknown type kind: " + type.kind(), locationPsi);
@@ -641,7 +649,7 @@ public class OpInputProjectionsPsiParser {
       }
     }
 
-    LinkedHashMap<String, OpInputFieldProjection> fieldProjections = new LinkedHashMap<>();
+    LinkedHashMap<String, OpInputFieldProjectionEntry> fieldProjections = new LinkedHashMap<>();
     @Nullable IdlOpInputTrunkFieldProjection fieldProjectionPsi = psi.getOpInputTrunkFieldProjection();
 
     if (fieldProjectionPsi == null)
@@ -690,13 +698,20 @@ public class OpInputProjectionsPsiParser {
       steps = stepsAndProjection.pathSteps() + 1;
     }
 
+    // introduce separate grammar rule for better fieldEntry/field TextLocation separation?
+    @NotNull final TextLocation fieldLocation = EpigraphPsiUtil.getLocation(fieldProjectionPsi);
+
     fieldProjections.put(
         fieldName,
-        new OpInputFieldProjection(
-            fieldAnnotations,
-            varProjection,
-            fieldRequired,
-            EpigraphPsiUtil.getLocation(fieldProjectionPsi)
+        new OpInputFieldProjectionEntry(
+            field,
+            new OpInputFieldProjection(
+                fieldAnnotations,
+                varProjection,
+                fieldRequired,
+                fieldLocation
+            ),
+            fieldLocation
         )
     );
 
@@ -733,7 +748,7 @@ public class OpInputProjectionsPsiParser {
       }
     }
 
-    LinkedHashMap<String, OpInputFieldProjection> fieldProjections = new LinkedHashMap<>();
+    LinkedHashMap<String, OpInputFieldProjectionEntry> fieldProjections = new LinkedHashMap<>();
     @NotNull List<IdlOpInputComaFieldProjection> psiFieldProjections = psi.getOpInputComaFieldProjectionList();
 
     for (IdlOpInputComaFieldProjection fieldProjectionPsi : psiFieldProjections) {
@@ -772,13 +787,20 @@ public class OpInputProjectionsPsiParser {
         varProjection = parseComaVarProjection(field.dataType(), psiVarProjection, resolver).projection();
       }
 
+      @NotNull final TextLocation fieldLocation = EpigraphPsiUtil.getLocation(fieldProjectionPsi);
+
       fieldProjections.put(
           fieldName,
-          new OpInputFieldProjection(
-              fieldAnnotations,
-              varProjection,
-              fieldRequired,
-              EpigraphPsiUtil.getLocation(fieldProjectionPsi)
+          new OpInputFieldProjectionEntry(
+              field,
+              new OpInputFieldProjection(
+                  fieldAnnotations,
+                  varProjection,
+                  fieldRequired,
+                  fieldLocation
+              )
+              ,
+              fieldLocation
           )
       );
     }
@@ -908,9 +930,10 @@ public class OpInputProjectionsPsiParser {
   }
 
   @Nullable
-  private static <D extends GDatum> D coerceDefault(@Nullable GDatum defaultValue,
-                                                    Class<D> cls,
-                                                    @NotNull PsiElement location)
+  private static <D extends GDatum> D coerceDefault(
+      @Nullable GDatum defaultValue,
+      Class<D> cls,
+      @NotNull PsiElement location)
       throws PsiProcessingException {
 
     if (defaultValue == null) return null;

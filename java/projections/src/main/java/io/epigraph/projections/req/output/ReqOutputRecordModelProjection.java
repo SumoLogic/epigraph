@@ -18,14 +18,14 @@ public class ReqOutputRecordModelProjection extends ReqOutputModelProjection<Rec
       equalsVisited = new ThreadLocal<>();
 
   @Nullable
-  private LinkedHashMap<String, ReqOutputFieldProjection> fieldProjections;
+  private LinkedHashMap<String, ReqOutputFieldProjectionEntry> fieldProjections;
 
   public ReqOutputRecordModelProjection(@NotNull RecordType model,
                                         boolean required,
                                         @Nullable ReqParams params,
                                         @Nullable Annotations annotations,
                                         @Nullable ReqOutputModelProjection<?> metaProjection,
-                                        @Nullable LinkedHashMap<String, ReqOutputFieldProjection> fieldProjections,
+                                        @Nullable LinkedHashMap<String, ReqOutputFieldProjectionEntry> fieldProjections,
                                         @NotNull TextLocation location) {
     super(model, required, params, annotations, metaProjection, location);
     this.fieldProjections = fieldProjections;
@@ -40,16 +40,16 @@ public class ReqOutputRecordModelProjection extends ReqOutputModelProjection<Rec
     return new LinkedHashSet<>(Arrays.asList(fieldProjections));
   }
 
-  public @Nullable LinkedHashMap<String, ReqOutputFieldProjection> fieldProjections() { return fieldProjections; }
+  public @Nullable LinkedHashMap<String, ReqOutputFieldProjectionEntry> fieldProjections() { return fieldProjections; }
 
   @Nullable
-  public ReqOutputFieldProjection fieldProjection(@NotNull String fieldName) {
+  public ReqOutputFieldProjectionEntry fieldProjection(@NotNull String fieldName) {
     return fieldProjections == null ? null : fieldProjections.get(fieldName);
   }
 
-  public void addFieldProjection(@NotNull String fieldName, @NotNull ReqOutputFieldProjection fieldProjection) {
+  public void addFieldProjection(@NotNull ReqOutputFieldProjectionEntry fieldProjection) {
     if (fieldProjections == null) fieldProjections = new LinkedHashMap<>();
-    fieldProjections.put(fieldName, fieldProjection);
+    fieldProjections.put(fieldProjection.field().name(), fieldProjection);
   }
 
   @Override

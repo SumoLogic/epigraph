@@ -67,15 +67,15 @@ public class ProjectionDataTrimmer { // todo move somewhere else?
     @NotNull final RecordDatum.Builder.Raw b = datum.type().createBuilder()._raw();
 
     @Nullable
-    LinkedHashMap<String, ReqOutputFieldProjection> fieldProjections = projection.fieldProjections();
+    LinkedHashMap<String, ReqOutputFieldProjectionEntry> fieldProjections = projection.fieldProjections();
 
     if (fieldProjections != null) {
-      for (Map.Entry<String, ReqOutputFieldProjection> entry : fieldProjections.entrySet()) {
-        final String fieldName = entry.getKey();
-        final RecordType.Field field = projection.model().fieldsMap().get(fieldName);
+      for (Map.Entry<String, ReqOutputFieldProjectionEntry> entry : fieldProjections.entrySet()) {
+        final ReqOutputFieldProjectionEntry fieldProjectionEntry = entry.getValue();
+        final RecordType.Field field = fieldProjectionEntry.field();
         @Nullable final Data data = raw.getData(field);
 
-        if (data != null) b.setData(field, trimData(data, entry.getValue().projection()));
+        if (data != null) b.setData(field, trimData(data, fieldProjectionEntry.projection().projection()));
       }
     }
 

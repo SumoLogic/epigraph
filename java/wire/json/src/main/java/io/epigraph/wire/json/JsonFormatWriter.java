@@ -151,8 +151,11 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
     for (Field field : type.fields()) {
       Deque<ReqOutputVarProjection> varProjections = new ArrayDeque<>(projections.size());
       for (ReqOutputRecordModelProjection mp : projections) {
-        ReqOutputFieldProjection fieldProjection = mp.fieldProjection(field.name());
-        if (fieldProjection != null) varProjections.add(fieldProjection.projection());
+        @Nullable ReqOutputFieldProjectionEntry fieldProjectionEntry = mp.fieldProjection(field.name());
+        if (fieldProjectionEntry != null) {
+          @NotNull final ReqOutputFieldProjection fieldProjection = fieldProjectionEntry.projection();
+          varProjections.add(fieldProjection.projection());
+        }
       }
       if (!varProjections.isEmpty()) { // if this field was mentioned in at least one projection
         Data fieldData = datum._raw().getData(field);
