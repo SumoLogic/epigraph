@@ -91,11 +91,8 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
       out.write("null");
     } else {
       ErrorValue error = value.getError();
-      if (error == null) {
-        writeDatum(projections, value.getDatum());
-      } else {
-        writeError(error);
-      }
+      if (error == null) writeDatum(projections, value.getDatum());
+      else writeError(error);
     }
   }
 
@@ -328,8 +325,7 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
       out.write("null");
     } else {
       Type type = data.type();
-      boolean renderMulti = type.kind() == TypeKind.UNION;
-      if (renderMulti) {
+      if (type.kind() == TypeKind.UNION) { // TODO use instanceof instead of kind?
         out.write('{');
         boolean comma = false;
         for (Tag tag : type.tags()) {
@@ -345,21 +341,19 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
         }
         out.write('}');
       } else {
-        Tag tag = ((DatumType) type).self; // TODO use instanceof instead of kind?
-        Val value = data._raw().getValue(tag);
-        if (value == null) value = tag.type.createValue(new ErrorValue(500, "No value", null));
-        writeValue(value);
+        Val value = data._raw().getValue(((DatumType) type).self);
+        if (value == null) writeError(NO_VALUE);
+        else writeValue(value);
       }
     }
   }
 
+  private static final ErrorValue NO_VALUE = new ErrorValue(500, "No value", null);
+
   public void writeValue(@NotNull Val value) throws IOException {
     ErrorValue error = value.getError();
-    if (error == null) {
-      writeDatum(value.getDatum());
-    } else {
-      writeError(error);
-    }
+    if (error == null) writeDatum(value.getDatum());
+    else writeError(error);
   }
 
 
@@ -436,15 +430,16 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
   }
 
   private void writePrimitive(@NotNull PrimitiveDatum datum) throws IOException {
-    if (datum instanceof StringDatum) {
-      writeString(((StringDatum) datum).getVal());
-    } else {
-      // FIXME treat double values (NaN, infinity) properly https://tools.ietf.org/html/rfc7159#section-6
-      out.write(datum.getVal().toString());
-    }
+    if (datum instanceof StringDatum) writeString(((StringDatum) datum).getVal());
+    else if (datum instanceof DoubleDatum) writeDouble(((DoubleDatum) datum).getVal());
+    else out.write(datum.getVal().toString());
   }
 
-  private static final char[] HEX_DIGITS = "0123456789ABCDEF".toCharArray();
+  /** See https://tools.ietf.org/html/rfc7159#section-6. */
+  private void writeDouble(@NotNull Double d) throws IOException {
+    if (d.isInfinite() || d.isNaN()) out.write("null"); // TODO render ErrorValue(500) instead?
+    else out.write(d.toString()); // TODO more compact representation / better rfc compliance?
+  }
 
   /** See https://tools.ietf.org/html/rfc7159#section-7. */
   private void writeString(@Nullable String s) throws IOException {
@@ -495,5 +490,7 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
       out.write('"');
     }
   }
+
+  private static final char[] HEX_DIGITS = "0123456789ABCDEF".toCharArray();
 
 }
