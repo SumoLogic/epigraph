@@ -40,12 +40,14 @@ public class AbstractVarProjection<T extends AbstractTagProjectionEntry<?>, S ex
   @NotNull
   public Type type() { return type; }
 
-  public @NotNull LinkedHashMap<String, T> tagProjections() { return tagProjections; }
+  @NotNull
+  public LinkedHashMap<String, T> tagProjections() { return tagProjections; }
 
   @Nullable
   public T tagProjection(@NotNull String tagName) { return tagProjections.get(tagName); }
 
-  public @Nullable List<S> polymorphicTails() { return polymorphicTails; }
+  @Nullable
+  public List<S> polymorphicTails() { return polymorphicTails; }
 
   /** Max polymorphic tail depth. */
   public int polymorphicDepth() {

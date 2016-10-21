@@ -4,7 +4,6 @@
 # Framework
 - [ ] JSON unmarshaller
 - [ ] Format for parameter values in URL. Currently: GData with single quotes.
-- [ ] ***see `operations.esc`, restructure projections accordingly***
 
 # Type system
 - [ ] Enums

@@ -24,7 +24,7 @@ public abstract class AbstractTagProjectionEntry<MP extends AbstractModelProject
   }
 
   @NotNull
-  public Type.Tag getTag() { return tag; }
+  public Type.Tag tag() { return tag; }
 
   @NotNull
   public MP projection() { return projection; }

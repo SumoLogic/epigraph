@@ -27,6 +27,7 @@ public abstract class AbstractModelProjection<M extends DatumType> {
     this.location = location;
   }
 
+  @NotNull
   public M model() { return model; }
 
   @Nullable
