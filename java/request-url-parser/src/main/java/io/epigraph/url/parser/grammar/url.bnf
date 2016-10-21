@@ -58,6 +58,15 @@
   ]
 }
 
+// TODO request URL format is different for different operations. see operations.esc
+// we must define different parsers:
+
+// read       '/' fieldName reqPath reqOutputTrunkFieldProjection requestParams
+// create     '/' fieldName reqPath '~' reqOutputTrunkFieldProjection requestParams
+// update     '/' fieldName reqPath reqUpdateVarProjection '~' reqOutputTrunkFieldProjection requestParams
+// delete     '/' fieldName reqPath reqDeleteVarProjection '~' reqOutputTrunkFieldProjection requestParams
+// custom     '/' fieldName reqPath '~' reqOutputTrunkFieldProjection requestParams
+
 root ::= url
 
 // either quoted or unquoted id

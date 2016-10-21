@@ -13,33 +13,37 @@ import epigraph.projections.Annotation
 
 record OpOutputVarProjection {
   type: TypeRef
-  tagProjections: list[OpOutputTagProjection]
+  tagProjections: list[OpOutputTagProjectionEntry]
   polymorphicTail: list[OpOutputVarProjection]
 }
 
-record OpOutputTagProjection {
+record OpOutputTagProjectionEntry {
   tag: TypeMemberRef
-  tagProjection: OpOutputModelProjection
+  projection: OpOutputModelProjection
   includeInDefault: Boolean
 }
 
 abstract record OpOutputModelProjection {
   model: DataTypeRef
   includeInDefault: Boolean
-  params: list[OpParam]
-  annotations: list[Annotation]
+  params: map[String, OpParam]
+  annotations: map[String, Annotation]
   `meta`: OpOutputModelProjection
 }
 
 record OpOutputRecordModelProjection extends OpOutputModelProjection {
   override model: RecordTypeRef
-  fieldProjections: list[OpOutputFieldProjection]
+  fieldProjections: map[String, OpOutputFieldProjectionEntry]
+}
+
+record OpOutputFieldProjectionEntry {
+  field: FieldRef
+  projection: OpOutputFieldProjection
 }
 
 record OpOutputFieldProjection {
-  field: FieldRef
-  params: list[OpParam]
-  annotations: list[Annotation]
+  params: map[String, OpParam]
+  annotations: map[String, Annotation]
   varProjection: OpOutputVarProjection
   includeInDefault: Boolean
 }
@@ -52,8 +56,8 @@ record OpOutputMapModelProjection extends OpOutputModelProjection {
 
 record OpOutputKeyProjection {
   required: Boolean
-  params: list[OpParam]
-  annotations: list[Annotation]
+  params: map[String, OpParam]
+  annotations: map[String, Annotation]
 }
 
 record OpOutputListModelProjection extends OpOutputModelProjection {

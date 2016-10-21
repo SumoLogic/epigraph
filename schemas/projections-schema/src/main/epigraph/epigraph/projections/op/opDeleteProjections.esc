@@ -14,29 +14,33 @@ import epigraph.schema.PrimitiveTypeRef
 
 record OpDeleteVarProjection {
   type: TypeRef
-  tagProjections: list[OpDeleteTagProjection]
+  tagProjections: list[OpDeleteTagProjectionEntry]
   canDelete: Boolean
   polymorphicTail: list[OpDeleteVarProjection]
 }
 
-record OpDeleteTagProjection {
+record OpDeleteTagProjectionEntry {
   tag: TypeMemberRef
-  tagProjection: OpDeleteModelProjection
+  projection: OpDeleteModelProjection
 }
 
 abstract record OpDeleteModelProjection {
   model: DataTypeRef
-  params: list[OpParam]
+  params: map[String, OpParam]
 }
 
 record OpDeleteRecordModelProjection extends OpDeleteModelProjection {
   override model: RecordTypeRef
-  fieldProjections: list[OpDeleteFieldProjection]
+  fieldProjections: list[OpDeleteFieldProjectionEntry]
+}
+
+record OpDeleteFieldProjectionEntry {
+  field: FieldRef
+  projection: OpDeleteFieldProjection
 }
 
 record OpDeleteFieldProjection {
-  field: FieldRef
-  params: list[OpParam]
+  params: map[String, OpParam]
   varProjection: OpDeleteVarProjection
 }
 
@@ -52,7 +56,7 @@ record OpDeleteMapModelProjection extends OpDeleteModelProjection {
 }
 
 record OpDeleteKeyProjection {
-  params: list[OpParam]
+  params: map[String, OpParam]
 }
 
 record OpDeleteEnumModelProjection extends OpDeleteModelProjection {

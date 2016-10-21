@@ -1,0 +1,84 @@
+namespace epigraph.projections.req
+
+/**
+ * Request-time projections specifying which parts of the object should be deleted. See operations.esc/DeleteOperation
+ */
+
+import epigraph.projections.Annotation
+import epigraph.schema.DataTypeRef
+import epigraph.schema.EnumTypeRef
+import epigraph.schema.FieldRef
+import epigraph.schema.ListTypeRef
+import epigraph.schema.MapTypeRef
+import epigraph.schema.PrimitiveTypeRef
+import epigraph.schema.RecordTypeRef
+import epigraph.schema.TypeMemberRef
+import epigraph.schema.TypeRef
+import epigraph.data.Datum
+
+record ReqDeleteVarProjection {
+  type: TypeRef
+  tagProjections: map[String, ReqDeleteTagProjectionEntry]
+  polymorphicTail: list[ReqDeleteVarProjection]
+}
+
+record ReqDeleteTagProjectionEntry {
+  tag: TypeMemberRef
+  projection: ReqDeleteModelProjection
+}
+
+abstract record ReqDeleteModelProjection {
+  model: DataTypeRef
+  params: map[String, ReqParam]
+  annotations: map[String, Annotation]
+  `meta`: ReqDeleteModelProjection
+}
+
+record ReqDeleteRecordModelProjection extends ReqDeleteModelProjection {
+  override model: RecordTypeRef
+  fieldProjections: list[ReqDeleteFieldProjectionEntry]
+}
+record ReqDeleteFieldProjectionEntry {
+  field: FieldRef
+  projection: ReqDeleteFieldProjection
+}
+
+record ReqDeleteFieldProjection {
+  field: FieldRef
+  params: map[String, ReqParam]
+  annotations: map[String, Annotation]
+  varProjection: ReqDeleteVarProjection
+}
+
+record ReqDeleteListModelProjection extends ReqDeleteModelProjection {
+  override model: ListTypeRef
+  varProjection: ReqDeleteVarProjection
+}
+
+record ReqDeleteMapModelProjection extends ReqDeleteModelProjection {
+  override model: MapTypeRef
+  keysProjection: ReqDeleteKeysProjection { doc = "if `null` - all keys" }
+  varProjection: ReqDeleteVarProjection
+}
+
+record ReqDeleteKeysProjection {
+  keys: list[ReqDeleteKey]
+}
+
+record ReqDeleteKey {
+  value: Datum { doc = "of appropriate (enclosing map key) type"}
+  projection: ReqDeleteKeyProjection
+}
+
+record ReqDeleteKeyProjection {
+  params: map[String, ReqParam]
+  annotations: map[String, Annotation]
+}
+
+record ReqDeleteEnumModelProjection extends ReqDeleteModelProjection {
+  override model: EnumTypeRef
+}
+
+record ReqDeletePrimitiveModelProjection extends ReqDeleteModelProjection {
+  override model: PrimitiveTypeRef
+}

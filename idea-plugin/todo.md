@@ -2,6 +2,7 @@
 - Add support for `*.eidl` files
 
 ### Medium
+- Errors on duplicate fields/tags
 - Warning if folder structure doesn't correspond to namespace (ideally with hotfixes)
 - Smart completion for `default <tag>`, `nodefault` on fields, list elements etc
   - [ ] Don't allow either on datum types (non-vartypes)

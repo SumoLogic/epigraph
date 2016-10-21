@@ -18,6 +18,7 @@ namespace epigraph.projections.req
 // /folders/123/items(id, name, ...)
 // /folders/123/items::record(id, name, ...)
 
+import epigraph.projections.Annotation
 import epigraph.schema.DataTypeRef
 import epigraph.schema.EnumTypeRef
 import epigraph.schema.FieldRef
@@ -27,36 +28,45 @@ import epigraph.schema.PrimitiveTypeRef
 import epigraph.schema.RecordTypeRef
 import epigraph.schema.TypeMemberRef
 import epigraph.schema.TypeRef
-import epigraph.projections.Annotation
+import epigraph.data.Datum
+
+// req projections also have a notion of path = number of steps without branching, e.g.
+// /foo/bar(baz1, baz2) vs /foo(bar(baz1, baz2), qux)   or
+// /a/b/c vs a(b(c))
+// this is not reflected in the schema, but psi parsers return projections along with 'number of path steps' = path length
 
 record ReqOutputVarProjection {
   type: TypeRef
-  tagProjections: list[ReqOutputTagProjection]
+  tagProjections: map[String, ReqOutputTagProjectionEntry]
   polymorphicTail: list[ReqOutputVarProjection]
 }
 
-record ReqOutputTagProjection {
+record ReqOutputTagProjectionEntry {
   tag: TypeMemberRef
-  tagProjection: ReqOutputModelProjection
+  projection: ReqOutputModelProjection
 }
 
 abstract record ReqOutputModelProjection {
   model: DataTypeRef
   required: Boolean
-  params: list[ReqParam]
-  annotations: list[Annotation]
+  params: map[String, ReqParam]
+  annotations: map[String, Annotation]
   `meta`: ReqOutputModelProjection
 }
 
 record ReqOutputRecordModelProjection extends ReqOutputModelProjection {
   override model: RecordTypeRef
-  fieldProjections: list[ReqOutputFieldProjection]
+  fieldProjections: list[ReqOutputFieldProjectionEntry]
+}
+record ReqOutputFieldProjectionEntry {
+  field: FieldRef
+  projection: ReqOutputFieldProjection
 }
 
 record ReqOutputFieldProjection {
   field: FieldRef
-  params: list[ReqParam]
-  annotations: list[Annotation]
+  params: map[String, ReqParam]
+  annotations: map[String, Annotation]
   varProjection: ReqOutputVarProjection
 }
 
@@ -70,6 +80,21 @@ record ReqOutputMapModelProjection extends ReqOutputModelProjection {
   keysRequired: Boolean // one for all keys
   keysProjection: ReqOutputKeysProjection { doc = "if `null` - all keys" }
   varProjection: ReqOutputVarProjection
+}
+
+record ReqOutputKeysProjection {
+  keys: list[ReqOutputKey]
+}
+
+record ReqOutputKey {
+  value: Datum { doc = "of appropriate (enclosing map key) type"}
+  projection: ReqOutputKeyProjection
+}
+
+record ReqOutputKeyProjection {
+  // required is specified once for all keys
+  params: map[String, ReqParam]
+  annotations: map[String, Annotation]
 }
 
 record ReqOutputEnumModelProjection extends ReqOutputModelProjection {

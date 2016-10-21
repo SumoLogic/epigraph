@@ -8,6 +8,7 @@ import epigraph.projections.op.OpVarPath
 import epigraph.schema.Documented
 import epigraph.schema.TypeRef
 import epigraph.schema.VarTypeRef
+import epigraph.projections.op.OpDeleteVarProjection
 
 // TODO this version is ahead of reality (Java classes)
 
@@ -43,6 +44,9 @@ abstract record Operation extends Documented {
 //   extract path from request (have to have full URL Request parser for this! )
 //   try to match parsed path with operation path. First operation that matches is our operation
 
+// see also: url.bnf
+
+
 record CreateOperation extends Operation {
   // HTTP POST /people ~ *(status) <<< [ { user1 }, { user2 } ]
 }
@@ -69,9 +73,14 @@ record DeleteOperation extends Operation {
   // HTTP DELETE /people/123
   // HTTP DELETE /people/123/firstName
 
-  //deleteProjection: OpDeleteVarProjection // delete operation is guided by `path`
+  deleteProjection: OpDeleteVarProjection // starts at the tip of `path`
 
   // inputType = inputProjection = null
+
+  // HTTP DELETE  /people[1,2,3]
+  //              ^^^^^^^
+  //              path   ^^^^^^^
+  //                     ReqDeleteProjection (parsed against deleteProjection)
 }
 
 record CustomOperation extends Operation {

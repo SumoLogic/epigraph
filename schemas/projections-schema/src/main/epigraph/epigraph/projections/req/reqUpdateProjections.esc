@@ -1,0 +1,88 @@
+namespace epigraph.projections.req
+
+/**
+ * Request-time projections describing update operation body payload. Should be
+ * synchronous with it's structure and provides additional information for it, e.g.
+ * parameters and which parts must be updated versus patched
+ */
+
+import epigraph.projections.Annotation
+import epigraph.schema.DataTypeRef
+import epigraph.schema.EnumTypeRef
+import epigraph.schema.FieldRef
+import epigraph.schema.ListTypeRef
+import epigraph.schema.MapTypeRef
+import epigraph.schema.PrimitiveTypeRef
+import epigraph.schema.RecordTypeRef
+import epigraph.schema.TypeMemberRef
+import epigraph.schema.TypeRef
+import epigraph.data.Datum
+
+record ReqUpdateVarProjection {
+  type: TypeRef
+  tagProjections: map[String, ReqUpdateTagProjectionEntry]
+  polymorphicTail: list[ReqUpdateVarProjection]
+}
+
+record ReqUpdateTagProjectionEntry {
+  tag: TypeMemberRef
+  projection: ReqUpdateModelProjection
+}
+
+abstract record ReqUpdateModelProjection {
+  model: DataTypeRef
+  update: Boolean // update or patch?
+  params: map[String, ReqParam]
+  annotations: map[String, Annotation]
+  `meta`: ReqUpdateModelProjection
+}
+
+record ReqUpdateRecordModelProjection extends ReqUpdateModelProjection {
+  override model: RecordTypeRef
+  fieldProjections: list[ReqUpdateFieldProjectionEntry]
+}
+record ReqUpdateFieldProjectionEntry {
+  field: FieldRef
+  projection: ReqUpdateFieldProjection
+}
+
+record ReqUpdateFieldProjection {
+  field: FieldRef
+  params: map[String, ReqParam]
+  annotations: map[String, Annotation]
+  varProjection: ReqUpdateVarProjection
+}
+
+record ReqUpdateListModelProjection extends ReqUpdateModelProjection {
+  override model: ListTypeRef
+  varProjection: ReqUpdateVarProjection
+}
+
+record ReqUpdateMapModelProjection extends ReqUpdateModelProjection {
+  override model: MapTypeRef
+  update: Boolean // update or patch? applies to all keys
+  keysProjection: ReqUpdateKeysProjection { doc = "if `null` - all keys" }
+  varProjection: ReqUpdateVarProjection
+}
+
+record ReqUpdateKeysProjection {
+  keys: list[ReqUpdateKey]
+}
+
+record ReqUpdateKey {
+  value: Datum { doc = "of appropriate (enclosing map key) type"}
+  projection: ReqUpdateKeyProjection
+}
+
+record ReqUpdateKeyProjection {
+  params: map[String, ReqParam]
+  annotations: map[String, Annotation]
+}
+
+record ReqUpdateEnumModelProjection extends ReqUpdateModelProjection {
+  override model: EnumTypeRef
+}
+
+record ReqUpdatePrimitiveModelProjection extends ReqUpdateModelProjection {
+  override model: PrimitiveTypeRef
+}
