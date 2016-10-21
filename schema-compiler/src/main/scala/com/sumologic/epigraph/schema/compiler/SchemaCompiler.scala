@@ -55,9 +55,12 @@ class SchemaCompiler(
 
     schemaFiles.map(new CSchemaFile(_)) // compiler schema file adds itself to ctx
     registerDefinedTypes()
-    resolveTypeRefs()
 
     handleErrors(2)
+
+    resolveTypeRefs()
+
+    handleErrors(3)
 
 
     // apply supplements and compute supertypes //
@@ -68,7 +71,7 @@ class SchemaCompiler(
     applySupplements() // FIXME track injecting `supplement`s
     computeSupertypes()
 
-    handleErrors(3)
+    handleErrors(4)
 
 
     // verify data types
@@ -81,7 +84,7 @@ class SchemaCompiler(
     ctx.anonListTypes.values() foreach (_.linearizedParents)
     ctx.anonMapTypes.values() foreach (_.linearizedParents)
 
-    handleErrors(4)
+    handleErrors(5)
 
 
     //printSchemaFiles(ctx.schemaFiles.values)
