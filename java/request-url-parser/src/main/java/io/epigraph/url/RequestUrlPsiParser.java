@@ -550,7 +550,13 @@ public class RequestUrlPsiParser {
       }
     }
 
-    return new ReqOutputVarProjection(type, tagProjections, null, false, EpigraphPsiUtil.getLocation(locationPsi));
+    return new ReqOutputVarProjection(
+        type,
+        tagProjections,
+        null,
+        tagProjections.size() > 1,
+        EpigraphPsiUtil.getLocation(locationPsi)
+    );
   }
 
   @NotNull
