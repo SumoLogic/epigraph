@@ -2,7 +2,7 @@ package io.epigraph.projections.op.input;
 
 import de.uka.ilkd.pp.Layouter;
 import io.epigraph.projections.Annotations;
-import io.epigraph.projections.generic.GenericProjectionsPrettyPrinter;
+import io.epigraph.projections.abs.AbstractProjectionsPrettyPrinter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,7 +13,7 @@ import java.util.Map;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpInputProjectionsPrettyPrinter<E extends Exception>
-    extends GenericProjectionsPrettyPrinter<OpInputVarProjection, OpInputTagProjectionEntry, OpInputModelProjection<?, ?>, E> {
+    extends AbstractProjectionsPrettyPrinter<OpInputVarProjection, OpInputTagProjectionEntry, OpInputModelProjection<?, ?>, E> {
 
   public OpInputProjectionsPrettyPrinter(Layouter<E> layouter) {
     super(layouter);

@@ -3,7 +3,7 @@ package io.epigraph.projections.req.output;
 import de.uka.ilkd.pp.Layouter;
 import io.epigraph.projections.Annotation;
 import io.epigraph.projections.Annotations;
-import io.epigraph.projections.generic.GenericProjectionsPrettyPrinter;
+import io.epigraph.projections.abs.AbstractProjectionsPrettyPrinter;
 import io.epigraph.projections.req.ReqParam;
 import io.epigraph.projections.req.ReqParams;
 import org.jetbrains.annotations.NotNull;
@@ -17,7 +17,7 @@ import java.util.Map;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
-    extends GenericProjectionsPrettyPrinter<ReqOutputVarProjection, ReqOutputTagProjectionEntry, ReqOutputModelProjection<?>, E> {
+    extends AbstractProjectionsPrettyPrinter<ReqOutputVarProjection, ReqOutputTagProjectionEntry, ReqOutputModelProjection<?>, E> {
 
   // todo: take var projection's 'parenthesized' into account
 

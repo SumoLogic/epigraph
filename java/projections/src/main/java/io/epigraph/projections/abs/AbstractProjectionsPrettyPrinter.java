@@ -1,4 +1,4 @@
-package io.epigraph.projections.generic;
+package io.epigraph.projections.abs;
 
 import de.uka.ilkd.pp.Layouter;
 import io.epigraph.gdata.GDataPrettyPrinter;
@@ -13,10 +13,10 @@ import java.util.*;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public abstract class GenericProjectionsPrettyPrinter<
-    S extends GenericVarProjection<T, S>,
-    T extends GenericTagProjectionEntry<MP>,
-    MP extends GenericModelProjection<?>,
+public abstract class AbstractProjectionsPrettyPrinter<
+    S extends AbstractVarProjection<T, S>,
+    T extends AbstractTagProjectionEntry<MP>,
+    MP extends AbstractModelProjection<?>,
     E extends Exception> {
 
   @NotNull
@@ -27,16 +27,16 @@ public abstract class GenericProjectionsPrettyPrinter<
   protected GDataPrettyPrinter<E> gdataPrettyPrinter;
 
   private int nextRefNumber = 1;
-  private Map<GenericVarProjection<T, S>, Integer> varRefs = new HashMap<>();
-  private Stack<GenericVarProjection<T, S>> varsStack = new Stack<>();
+  private Map<AbstractVarProjection<T, S>, Integer> varRefs = new HashMap<>();
+  private Stack<AbstractVarProjection<T, S>> varsStack = new Stack<>();
 
-  protected GenericProjectionsPrettyPrinter(@NotNull Layouter<E> layouter) {
+  protected AbstractProjectionsPrettyPrinter(@NotNull Layouter<E> layouter) {
     l = layouter;
     dataPrinter = new DataPrinter<>(l);
     gdataPrettyPrinter = new GDataPrettyPrinter<>(l);
   }
 
-  public void print(@NotNull GenericVarProjection<T, S> p, int pathSteps) throws E {
+  public void print(@NotNull AbstractVarProjection<T, S> p, int pathSteps) throws E {
     if (varsStack.contains(p)) {
       // handle recursive projections
       int ref = nextRefNumber++;
@@ -90,7 +90,7 @@ public abstract class GenericProjectionsPrettyPrinter<
           l.beginCInd();
           l.print("~(");
           boolean first = true;
-          for (GenericVarProjection<T, S> tail : polymorphicTails) {
+          for (AbstractVarProjection<T, S> tail : polymorphicTails) {
             if (first) first = false;
             else l.print(",");
             l.brk().print(tail.type().name().toString()).brk();
@@ -131,7 +131,7 @@ public abstract class GenericProjectionsPrettyPrinter<
     return first;
   }
 
-  protected boolean isPrintoutEmpty(@NotNull GenericVarProjection<T, S> vp) {
+  protected boolean isPrintoutEmpty(@NotNull AbstractVarProjection<T, S> vp) {
     List<S> tails = vp.polymorphicTails();
     if (tails != null && !tails.isEmpty()) return false;
     if (vp.type().kind() == TypeKind.UNION) return false; // non-samovar always prints something

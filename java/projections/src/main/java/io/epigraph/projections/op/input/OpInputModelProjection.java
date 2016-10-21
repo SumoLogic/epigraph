@@ -2,7 +2,7 @@ package io.epigraph.projections.op.input;
 
 import io.epigraph.data.Datum;
 import io.epigraph.lang.TextLocation;
-import io.epigraph.projections.generic.GenericModelProjection;
+import io.epigraph.projections.abs.AbstractModelProjection;
 import io.epigraph.projections.Annotations;
 import io.epigraph.types.DatumType;
 import org.jetbrains.annotations.NotNull;
@@ -14,7 +14,7 @@ import java.util.Objects;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public abstract class OpInputModelProjection<M extends DatumType, D extends Datum>
-    extends GenericModelProjection<M> {
+    extends AbstractModelProjection<M> {
 
   protected final boolean required;
   @Nullable

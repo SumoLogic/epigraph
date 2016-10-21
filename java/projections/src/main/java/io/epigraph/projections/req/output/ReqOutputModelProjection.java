@@ -2,7 +2,7 @@ package io.epigraph.projections.req.output;
 
 import io.epigraph.lang.TextLocation;
 import io.epigraph.projections.Annotations;
-import io.epigraph.projections.generic.GenericModelProjection;
+import io.epigraph.projections.abs.AbstractModelProjection;
 import io.epigraph.projections.req.ReqParams;
 import io.epigraph.types.DatumType;
 import org.jetbrains.annotations.NotNull;
@@ -13,7 +13,7 @@ import java.util.Objects;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public abstract class ReqOutputModelProjection<M extends DatumType> extends GenericModelProjection<M> {
+public abstract class ReqOutputModelProjection<M extends DatumType> extends AbstractModelProjection<M> {
 
   protected final boolean required;
   @Nullable

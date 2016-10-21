@@ -1,4 +1,4 @@
-package io.epigraph.projections.generic;
+package io.epigraph.projections.abs;
 
 import io.epigraph.lang.TextLocation;
 import io.epigraph.types.RecordType;
@@ -9,7 +9,7 @@ import java.util.Objects;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class GenericFieldProjectionEntry<FP> {
+public abstract class AbstractFieldProjectionEntry<FP> {
   @NotNull
   private final RecordType.Field field;
   @NotNull
@@ -17,7 +17,7 @@ public class GenericFieldProjectionEntry<FP> {
   @NotNull
   private final TextLocation location;
 
-  public GenericFieldProjectionEntry(
+  public AbstractFieldProjectionEntry(
       @NotNull RecordType.Field field,
       @NotNull FP projection,
       @NotNull TextLocation location) {
@@ -40,7 +40,7 @@ public class GenericFieldProjectionEntry<FP> {
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-    GenericFieldProjectionEntry that = (GenericFieldProjectionEntry) o;
+    AbstractFieldProjectionEntry that = (AbstractFieldProjectionEntry) o;
     return Objects.equals(field.name(), that.field.name()) &&
            Objects.equals(projection, that.projection);
   }

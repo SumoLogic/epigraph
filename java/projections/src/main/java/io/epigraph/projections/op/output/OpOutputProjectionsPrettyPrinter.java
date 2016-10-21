@@ -3,7 +3,7 @@ package io.epigraph.projections.op.output;
 import de.uka.ilkd.pp.Layouter;
 import io.epigraph.data.Datum;
 import io.epigraph.projections.Annotations;
-import io.epigraph.projections.generic.GenericProjectionsPrettyPrinter;
+import io.epigraph.projections.abs.AbstractProjectionsPrettyPrinter;
 import io.epigraph.projections.op.OpParam;
 import io.epigraph.projections.op.OpParams;
 import io.epigraph.projections.op.input.OpInputModelProjection;
@@ -18,7 +18,7 @@ import java.util.Map;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpOutputProjectionsPrettyPrinter<E extends Exception> extends
-    GenericProjectionsPrettyPrinter<OpOutputVarProjection, OpOutputTagProjectionEntry, OpOutputModelProjection<?>, E> {
+    AbstractProjectionsPrettyPrinter<OpOutputVarProjection, OpOutputTagProjectionEntry, OpOutputModelProjection<?>, E> {
 
   public OpOutputProjectionsPrettyPrinter(Layouter<E> layouter) {
     super(layouter);

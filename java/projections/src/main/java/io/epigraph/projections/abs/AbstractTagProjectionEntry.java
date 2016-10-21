@@ -1,4 +1,4 @@
-package io.epigraph.projections.generic;
+package io.epigraph.projections.abs;
 
 import io.epigraph.lang.TextLocation;
 import io.epigraph.types.Type;
@@ -9,7 +9,7 @@ import java.util.Objects;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public abstract class GenericTagProjectionEntry<MP extends GenericModelProjection<?>> {
+public abstract class AbstractTagProjectionEntry<MP extends AbstractModelProjection<?>> {
   @NotNull
   private final Type.Tag tag;
   @NotNull
@@ -17,7 +17,7 @@ public abstract class GenericTagProjectionEntry<MP extends GenericModelProjectio
   @NotNull
   private final TextLocation location;
 
-  public GenericTagProjectionEntry(@NotNull Type.Tag tag, @NotNull MP projection, @NotNull TextLocation location) {
+  public AbstractTagProjectionEntry(@NotNull Type.Tag tag, @NotNull MP projection, @NotNull TextLocation location) {
     this.tag = tag;
     this.projection = projection;
     this.location = location;
@@ -36,7 +36,7 @@ public abstract class GenericTagProjectionEntry<MP extends GenericModelProjectio
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-    GenericTagProjectionEntry that = (GenericTagProjectionEntry) o;
+    AbstractTagProjectionEntry that = (AbstractTagProjectionEntry) o;
     return Objects.equals(tag.name(), that.tag.name()) && Objects.equals(projection, that.projection);
   }
 

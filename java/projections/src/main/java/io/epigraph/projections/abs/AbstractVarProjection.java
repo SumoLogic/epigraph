@@ -1,4 +1,4 @@
-package io.epigraph.projections.generic;
+package io.epigraph.projections.abs;
 
 import io.epigraph.lang.TextLocation;
 import io.epigraph.types.Type;
@@ -12,7 +12,7 @@ import java.util.Objects;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class GenericVarProjection<T extends GenericTagProjectionEntry<?>, S extends GenericVarProjection<T, S>> {
+public class AbstractVarProjection<T extends AbstractTagProjectionEntry<?>, S extends AbstractVarProjection<T, S>> {
   @NotNull
   private final Type type;
   @NotNull
@@ -24,10 +24,10 @@ public class GenericVarProjection<T extends GenericTagProjectionEntry<?>, S exte
   @NotNull
   private final TextLocation location;
 
-  public GenericVarProjection(@NotNull Type type,
-                              @NotNull LinkedHashMap<String, T> tagProjections,
-                              @Nullable List<S> polymorphicTails,
-                              @NotNull TextLocation location) {
+  public AbstractVarProjection(@NotNull Type type,
+                               @NotNull LinkedHashMap<String, T> tagProjections,
+                               @Nullable List<S> polymorphicTails,
+                               @NotNull TextLocation location) {
     this.type = type;
     this.tagProjections = tagProjections;
     this.polymorphicTails = polymorphicTails;
@@ -51,7 +51,7 @@ public class GenericVarProjection<T extends GenericTagProjectionEntry<?>, S exte
   public int polymorphicDepth() {
     if (polymorphicDepth == -1) polymorphicDepth = polymorphicTails == null
         ? 0
-        : polymorphicTails.stream().mapToInt(GenericVarProjection::polymorphicDepth).max().orElse(0);
+        : polymorphicTails.stream().mapToInt(AbstractVarProjection::polymorphicDepth).max().orElse(0);
     return polymorphicDepth;
   }
 
@@ -64,7 +64,7 @@ public class GenericVarProjection<T extends GenericTagProjectionEntry<?>, S exte
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-    GenericVarProjection that = (GenericVarProjection) o;
+    AbstractVarProjection that = (AbstractVarProjection) o;
     return Objects.equals(type, that.type) &&
            Objects.equals(tagProjections, that.tagProjections) &&
            Objects.equals(polymorphicTails, that.polymorphicTails);
