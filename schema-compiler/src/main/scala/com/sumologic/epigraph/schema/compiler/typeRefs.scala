@@ -49,7 +49,8 @@ abstract class CTypeRef protected(val csf: CSchemaFile)(implicit val ctx: CConte
   csf.typerefs.add(this)
 
   def resolveTo(ctype: Type): this.type = {
-    typeOptVar.foreach(resolved => assert(resolved eq ctype, typeOptVar.get.name.name))
+    // fails if type is defined twice (which gets reported anyways)
+//    typeOptVar.foreach(resolved => assert(resolved eq ctype, typeOptVar.get.name.name))
     assert(ctype.name == name)
     typeOptVar = Some(ctype)
     this
