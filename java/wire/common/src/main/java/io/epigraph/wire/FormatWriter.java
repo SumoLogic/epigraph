@@ -17,9 +17,9 @@ public interface FormatWriter<Exc extends Exception> {
 
   void writeDatum(@NotNull ReqOutputModelProjection projection, @Nullable Datum datum) throws Exc;
 
-  void writeData(@Nullable Data data) throws Exc; // TODO writeData
+  void writeData(@Nullable Data data) throws Exc;
 
-  void writeDatum(@Nullable Datum datum) throws Exc; // TODO writeDatum
+  void writeDatum(@Nullable Datum datum) throws Exc;
 
   void writeValue(@NotNull Val value) throws Exc;
 

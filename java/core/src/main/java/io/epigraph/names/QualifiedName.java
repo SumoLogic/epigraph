@@ -6,36 +6,15 @@ import io.epigraph.lang.Qn;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.AbstractList;
+public abstract class QualifiedName {
 
-public class QualifiedName extends AbstractList<String> { // TODO not sure we need this list interface
+  private final @Nullable NamespaceName namespaceName;
 
-  @Nullable
-  public final NamespaceName namespaceName;
+  private final @NotNull String localName;
 
-  public final String localName;
-
-  public QualifiedName(@Nullable NamespaceName namespaceName, String localName) {
+  protected QualifiedName(@Nullable NamespaceName namespaceName, @NotNull String localName) {
     this.namespaceName = namespaceName;
     this.localName = localName;
-  }
-
-  @Override
-  public String get(int index) {
-    if (index < 0 || size <= index) throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
-    return index == size - 1 ? localName : namespaceName.get(index);
-  }
-
-  private int size = 0;
-
-  @Override
-  public int size() {
-    switch (size) {
-      case 0:
-        size = namespaceName == null ? 1 : namespaceName.size() + 1;
-      default:
-        return size;
-    }
   }
 
   @NotNull
@@ -44,7 +23,10 @@ public class QualifiedName extends AbstractList<String> { // TODO not sure we ne
     else return namespaceName.toFqn().append(localName);
   }
 
+  /** Returns canonical string representation for this qualified name. */
   @Override
-  public String toString() { return String.join(".", this); }
+  public @NotNull String toString() {
+    return namespaceName == null ? localName : namespaceName.toString() + '.' + localName;
+  }
 
 }

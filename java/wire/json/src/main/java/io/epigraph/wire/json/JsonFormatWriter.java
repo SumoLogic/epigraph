@@ -46,9 +46,9 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
     // TODO check all projections (not just the ones that matched actual data type)?
     boolean renderMulti = type.kind() == TypeKind.UNION && needMultiRendering(projections);
     if (renderPoly) {
-      out.write("{\"type\":\"");
+      out.write("{\"" + JsonFormat.POLYMORPHIC_TYPE_FIELD + "\":\"");
       out.write(type.name().toString()); // TODO use (potentially short) type name used in request projection?
-      out.write("\",\"data\":");
+      out.write("\",\"" + JsonFormat.POLYMORPHIC_VALUE_FIELD + "\":");
     }
     if (renderMulti) out.write('{');
     boolean comma = false;
@@ -134,9 +134,9 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
   }
 
   public void writeError(@NotNull ErrorValue error) throws IOException {
-    out.write("{\"ERROR\":");
+    out.write("{\"" + JsonFormat.ERROR_CODE_FIELD + "\":");
     out.write(error.statusCode().toString());
-    out.write(",\"message\":");
+    out.write(",\"" + JsonFormat.ERROR_MESSAGE_FIELD + "\":");
     writeString(error.message());
     out.write('}');
   }
@@ -276,7 +276,8 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
         projections,
         ReqOutputListModelProjection::itemsProjection
     );
-    boolean polymorphicValue = elementProjections.stream().anyMatch(vp -> vp.polymorphicTails() != null);
+    boolean polymorphicValue = elementProjections.stream()
+        .anyMatch(vp -> vp.polymorphicTails() != null); //TODO extract to method and re-use in maps, too?
     Map<Type, Deque<? extends ReqOutputVarProjection>> polymorphicCache = polymorphicValue ? new HashMap<>() : null;
     boolean comma = false;
     for (Data element : datum._raw().elements()) {
@@ -412,9 +413,9 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
     for (Map.Entry<Datum.Imm, @NotNull ? extends Data> entry : datum._raw().elements().entrySet()) {
       if (comma) out.write(',');
       else comma = true;
-      out.write("{\"key\":");
+      out.write("{\"" + JsonFormat.MAP_ENTRY_KEY_FIELD + "\":");
       writeDatum(entry.getKey());
-      out.write(",\"value\":");
+      out.write(",\"" + JsonFormat.MAP_ENTRY_VALUE_FIELD + "\":");
       writeData(entry.getValue());
       out.write('}');
     }

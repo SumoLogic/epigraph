@@ -2,13 +2,17 @@
 
 package io.epigraph.names;
 
+import io.epigraph.data.Immutable;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class AnonMapTypeName implements TypeName {
+public class AnonMapTypeName implements TypeName, Immutable {
 
   public final @NotNull TypeName keyTypeName;
 
   public final @NotNull DataTypeName valueTypeName;
+
+  private @Nullable String toString = null;
 
   public AnonMapTypeName(@NotNull TypeName keyTypeName, @NotNull DataTypeName valueTypeName) {
     this.keyTypeName = keyTypeName;
@@ -16,8 +20,9 @@ public class AnonMapTypeName implements TypeName {
   }
 
   @Override
-  public String toString() { // TODO cache?
-    return "map[" + keyTypeName + "," + valueTypeName + "]";
+  public @NotNull String toString() {
+    if (toString == null) toString = "map[" + keyTypeName + "," + valueTypeName + "]";
+    return toString;
   }
 
 }
