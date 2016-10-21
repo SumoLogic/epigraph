@@ -2,17 +2,22 @@
 
 package io.epigraph.names;
 
+import io.epigraph.data.Immutable;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class AnonListTypeName implements TypeName {
+public final class AnonListTypeName implements TypeName, Immutable {
 
   public final @NotNull DataTypeName elementTypeName;
+
+  private @Nullable String toString = null;
 
   public AnonListTypeName(@NotNull DataTypeName elementTypeName) { this.elementTypeName = elementTypeName; }
 
   @Override
-  public String toString() { // TODO cache?
-    return "list[" + elementTypeName + "]";
+  public @NotNull String toString() {
+    if (toString == null) toString = "list[" + elementTypeName + "]";
+    return toString;
   }
 
 }
