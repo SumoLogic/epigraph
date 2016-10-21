@@ -39,6 +39,7 @@ class CompileSchemaTask extends SourceTask implements EpigraphSchemaTaskBase {
       throw new GradleException('Epigraph schema compilation failed with errors')
 
     def artifactsDir = new File(destinationDir, EpigraphConstants.ARTIFACTS_PATH_PREFIX).getCanonicalFile()
+    artifactsDir.delete()
 
     // see BaseCompileMojo
     getFileSources().each { fileSource ->
