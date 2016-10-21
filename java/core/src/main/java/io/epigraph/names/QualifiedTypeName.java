@@ -2,13 +2,10 @@
 
 package io.epigraph.names;
 
-import io.epigraph.data.Immutable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public final class QualifiedTypeName extends QualifiedName implements TypeName, Immutable {
-
-  private @Nullable String toString = null;
+public class QualifiedTypeName extends QualifiedName implements TypeName {
 
   public QualifiedTypeName(@Nullable NamespaceName namespaceName, @NotNull String localName) {
     super(namespaceName, localName);
@@ -16,12 +13,6 @@ public final class QualifiedTypeName extends QualifiedName implements TypeName, 
 
   public QualifiedTypeName(@NotNull String localName, @NotNull String... namespaceNames) {
     this(NamespaceName.from(namespaceNames), localName);
-  }
-
-  @Override
-  public @NotNull String toString() {
-    if (toString == null) toString = super.toString();
-    return toString;
   }
 
 }
