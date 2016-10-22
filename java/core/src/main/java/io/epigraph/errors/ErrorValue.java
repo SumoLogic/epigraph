@@ -14,6 +14,9 @@ public class ErrorValue { // TODO rename to DatumError (to avoid clash with java
 
   public final @Nullable Exception cause; // TODO Throwable?
 
+  // TODO add generic property bag for custom properties?
+  // TODO add (hierarchical?) error category set (e.g. [ "BadRequest", "InvalidParameterValue" ])?
+
   public ErrorValue(@NotNull Integer statusCode, @NotNull String message, @Nullable Exception cause) {
     this.message = message;
     this.statusCode = statusCode;

@@ -8,6 +8,7 @@
 # Type system
 - [ ] Enums
 - [ ] Rename Data/Var/Union type to some common name
+- [ ] Restrict map keys to exact declared type only (throw runtime exception - no static checks unfortunately, unless we introduce yet another data flavor that doesn't inherit from supertypes)
 
 # Schema compiler
 - [ ] Annotations support. Should they be inherited? Annotations on annotations?
