@@ -40,7 +40,7 @@ public class OpInputProjectionsPsiParser {
     @Nullable IdlOpInputTrunkSingleTagProjection singleTagProjectionPsi = psi.getOpInputTrunkSingleTagProjection();
     if (singleTagProjectionPsi != null) {
       tagProjections = new LinkedHashMap<>();
-      final OpInputModelProjection<?, ?> parsedModelProjection;
+      final OpInputModelProjection<?, ?, ?> parsedModelProjection;
       final Type.Tag tag = getTag(
           type,
           singleTagProjectionPsi.getTagName(),
@@ -54,7 +54,7 @@ public class OpInputProjectionsPsiParser {
 
       @NotNull List<IdlOpInputModelProperty> modelPropertiesPsi = singleTagProjectionPsi.getOpInputModelPropertyList();
 
-      StepsAndProjection<? extends OpInputModelProjection<?, ?>> stepsAndProjection = parseTrunkModelProjection(
+      StepsAndProjection<? extends OpInputModelProjection<?, ?, ?>> stepsAndProjection = parseTrunkModelProjection(
           tag.type,
           singleTagProjectionPsi.getPlus() != null,
           getModelDefaultValue(modelPropertiesPsi),
@@ -102,7 +102,7 @@ public class OpInputProjectionsPsiParser {
     @Nullable IdlOpInputComaSingleTagProjection singleTagProjectionPsi = psi.getOpInputComaSingleTagProjection();
     if (singleTagProjectionPsi != null) {
       tagProjections = new LinkedHashMap<>();
-      final OpInputModelProjection<?, ?> parsedModelProjection;
+      final OpInputModelProjection<?, ?, ?> parsedModelProjection;
       final Type.Tag tag = getTag(
           type,
           singleTagProjectionPsi.getTagName(),
@@ -163,7 +163,7 @@ public class OpInputProjectionsPsiParser {
       final Type.Tag tag =
           getTag(dataType.type, tagProjectionPsi.getTagName(), dataType.defaultTag, tagProjectionPsi);
 
-      final OpInputModelProjection<?, ?> parsedModelProjection;
+      final OpInputModelProjection<?, ?, ?> parsedModelProjection;
 
       @NotNull DatumType tagType = tag.type;
       @Nullable IdlOpInputComaModelProjection modelProjection = tagProjectionPsi.getOpInputComaModelProjection();
@@ -260,7 +260,7 @@ public class OpInputProjectionsPsiParser {
   }
 
   @Nullable
-  private static OpInputModelProjection<?, ?> parseModelMetaProjection(
+  private static OpInputModelProjection<?, ?, ?> parseModelMetaProjection(
       @NotNull DatumType type,
       @NotNull List<IdlOpInputModelProperty> modelProperties,
       @NotNull TypesResolver resolver
@@ -358,12 +358,12 @@ public class OpInputProjectionsPsiParser {
   }
 
   @NotNull
-  public static StepsAndProjection<? extends OpInputModelProjection<?, ?>> parseTrunkModelProjection(
+  public static StepsAndProjection<? extends OpInputModelProjection<?, ?, ?>> parseTrunkModelProjection(
       @NotNull DatumType type,
       boolean required,
       @Nullable GDatum defaultValue,
       @Nullable Annotations annotations,
-      @Nullable OpInputModelProjection<?, ?> metaProjection,
+      @Nullable OpInputModelProjection<?, ?, ?> metaProjection,
       @NotNull IdlOpInputTrunkModelProjection psi,
       @NotNull TypesResolver typesResolver) throws PsiProcessingException {
 
@@ -380,7 +380,7 @@ public class OpInputProjectionsPsiParser {
             required,
             defaultRecordData,
             annotations,
-            metaProjection,
+            (OpInputRecordModelProjection) metaProjection,
             trunkRecordModelProjectionPsi,
             typesResolver
         );
@@ -401,12 +401,12 @@ public class OpInputProjectionsPsiParser {
   }
 
   @NotNull
-  public static StepsAndProjection<? extends OpInputModelProjection<?, ?>> parseComaModelProjection(
+  public static StepsAndProjection<? extends OpInputModelProjection<?, ?, ?>> parseComaModelProjection(
       @NotNull DatumType type,
       boolean required,
       @Nullable GDatum defaultValue,
       @Nullable Annotations annotations,
-      @Nullable OpInputModelProjection<?, ?> metaProjection,
+      @Nullable OpInputModelProjection<?, ?, ?> metaProjection,
       @NotNull IdlOpInputComaModelProjection psi,
       @NotNull TypesResolver typesResolver) throws PsiProcessingException {
 
@@ -429,7 +429,7 @@ public class OpInputProjectionsPsiParser {
             required,
             defaultRecordData,
             annotations,
-            metaProjection,
+            (OpInputRecordModelProjection) metaProjection,
             recordModelProjectionPsi,
             typesResolver
         );
@@ -451,7 +451,7 @@ public class OpInputProjectionsPsiParser {
             required,
             defaultMapData,
             annotations,
-            metaProjection,
+            (OpInputMapModelProjection) metaProjection,
             mapModelProjectionPsi,
             typesResolver
         );
@@ -473,7 +473,7 @@ public class OpInputProjectionsPsiParser {
             required,
             defaultListData,
             annotations,
-            metaProjection,
+            (OpInputListModelProjection) metaProjection,
             listModelProjectionPsi,
             typesResolver
         );
@@ -489,7 +489,7 @@ public class OpInputProjectionsPsiParser {
             required,
             defaultPrimitiveData,
             annotations,
-            metaProjection,
+            (OpInputPrimitiveModelProjection) metaProjection,
             psi,
             typesResolver
         );
@@ -523,7 +523,7 @@ public class OpInputProjectionsPsiParser {
   }
 
   @NotNull
-  private static OpInputModelProjection<?, ?> createDefaultModelProjection(
+  private static OpInputModelProjection<?, ?, ?> createDefaultModelProjection(
       @NotNull DatumType type,
       boolean required,
       @Nullable GDatum defaultValue,
@@ -551,7 +551,7 @@ public class OpInputProjectionsPsiParser {
             (RecordDatum) defaultDatum,
             annotations,
             null,
-            null,
+            Collections.emptyMap(),
             location
         );
       case MAP:
@@ -636,7 +636,7 @@ public class OpInputProjectionsPsiParser {
       boolean required,
       @Nullable GRecordDatum defaultValue,
       @Nullable Annotations annotations,
-      @Nullable OpInputModelProjection<?, ?> metaProjection,
+      @Nullable OpInputRecordModelProjection metaProjection,
       @NotNull IdlOpInputTrunkRecordModelProjection psi,
       @NotNull TypesResolver resolver) throws PsiProcessingException {
 
@@ -735,7 +735,7 @@ public class OpInputProjectionsPsiParser {
       boolean required,
       @Nullable GRecordDatum defaultValue,
       @Nullable Annotations annotations,
-      @Nullable OpInputModelProjection<?, ?> metaProjection,
+      @Nullable OpInputRecordModelProjection metaProjection,
       @NotNull IdlOpInputComaRecordModelProjection psi,
       @NotNull TypesResolver resolver) throws PsiProcessingException {
 
@@ -825,7 +825,7 @@ public class OpInputProjectionsPsiParser {
       boolean required,
       @Nullable GMapDatum defaultValue,
       @Nullable Annotations annotations,
-      @Nullable OpInputModelProjection<?, ?> metaProjection,
+      @Nullable OpInputMapModelProjection metaProjection,
       @NotNull IdlOpInputComaMapModelProjection psi,
       @NotNull TypesResolver resolver) throws PsiProcessingException {
 
@@ -862,7 +862,7 @@ public class OpInputProjectionsPsiParser {
       boolean required,
       @Nullable GListDatum defaultValue,
       @Nullable Annotations annotations,
-      @Nullable OpInputModelProjection<?, ?> metaProjection,
+      @Nullable OpInputListModelProjection metaProjection,
       @NotNull IdlOpInputComaListModelProjection psi,
       @NotNull TypesResolver resolver) throws PsiProcessingException {
 
@@ -903,7 +903,7 @@ public class OpInputProjectionsPsiParser {
       boolean required,
       @Nullable GPrimitiveDatum defaultValue,
       @Nullable Annotations annotations,
-      @Nullable OpInputModelProjection<?, ?> metaProjection,
+      @Nullable OpInputPrimitiveModelProjection metaProjection,
       @NotNull PsiElement locationPsi,
       @NotNull TypesResolver resolver) throws PsiProcessingException {
 

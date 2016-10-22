@@ -2,6 +2,7 @@ package io.epigraph.projections.op.output;
 
 import io.epigraph.lang.TextLocation;
 import io.epigraph.projections.Annotations;
+import io.epigraph.projections.gen.GenListModelProjection;
 import io.epigraph.projections.op.OpParams;
 import io.epigraph.types.ListType;
 import org.jetbrains.annotations.NotNull;
@@ -12,17 +13,27 @@ import java.util.Objects;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class OpOutputListModelProjection extends OpOutputModelProjection<ListType> {
+public class OpOutputListModelProjection
+    extends OpOutputModelProjection<OpOutputListModelProjection, ListType>
+    implements GenListModelProjection<
+    OpOutputVarProjection,
+    OpOutputTagProjectionEntry,
+    OpOutputModelProjection<?, ?>,
+    OpOutputListModelProjection,
+    ListType
+    > {
+
   @NotNull
   private OpOutputVarProjection itemsProjection;
 
-  public OpOutputListModelProjection(@NotNull ListType model,
-                                     boolean includeInDefault,
-                                     @Nullable OpParams params,
-                                     @Nullable Annotations annotations,
-                                     @Nullable OpOutputModelProjection<?> metaProjection,
-                                     @NotNull OpOutputVarProjection itemsProjection,
-                                     @NotNull TextLocation location) {
+  public OpOutputListModelProjection(
+      @NotNull ListType model,
+      boolean includeInDefault,
+      @Nullable OpParams params,
+      @Nullable Annotations annotations,
+      @Nullable OpOutputListModelProjection metaProjection,
+      @NotNull OpOutputVarProjection itemsProjection,
+      @NotNull TextLocation location) {
     super(model, includeInDefault, params, annotations, metaProjection, location);
     this.itemsProjection = itemsProjection;
   }

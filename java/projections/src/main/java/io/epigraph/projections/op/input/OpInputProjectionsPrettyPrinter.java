@@ -6,14 +6,16 @@ import io.epigraph.projections.abs.AbstractProjectionsPrettyPrinter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class OpInputProjectionsPrettyPrinter<E extends Exception>
-    extends AbstractProjectionsPrettyPrinter<OpInputVarProjection, OpInputTagProjectionEntry, OpInputModelProjection<?, ?>, E> {
+public class OpInputProjectionsPrettyPrinter<E extends Exception> extends AbstractProjectionsPrettyPrinter<
+    OpInputVarProjection,
+    OpInputTagProjectionEntry,
+    OpInputModelProjection<?, ?, ?>,
+    E> {
 
   public OpInputProjectionsPrettyPrinter(Layouter<E> layouter) {
     super(layouter);
@@ -21,8 +23,8 @@ public class OpInputProjectionsPrettyPrinter<E extends Exception>
 
   @Override
   public void print(@NotNull String tagName, @NotNull OpInputTagProjectionEntry tp, int pathSteps) throws E {
-    OpInputModelProjection<?, ?> projection = tp.projection();
-    OpInputModelProjection<?, ?> metaProjection = projection.metaProjection();
+    OpInputModelProjection<?, ?, ?> projection = tp.projection();
+    OpInputModelProjection<?, ?, ?> metaProjection = projection.metaProjection();
     Annotations annotations = projection.annotations();
 
     if (projection.defaultValue() == null && annotations == null &&
@@ -67,7 +69,7 @@ public class OpInputProjectionsPrettyPrinter<E extends Exception>
   }
 
   @Override
-  public void print(@NotNull OpInputModelProjection<?, ?> mp, int pathSteps) throws E {
+  public void print(@NotNull OpInputModelProjection<?, ?, ?> mp, int pathSteps) throws E {
     if (mp instanceof OpInputRecordModelProjection)
       print((OpInputRecordModelProjection) mp, pathSteps);
     else if (mp instanceof OpInputMapModelProjection)
@@ -77,35 +79,33 @@ public class OpInputProjectionsPrettyPrinter<E extends Exception>
   }
 
   private void print(@NotNull OpInputRecordModelProjection mp, int pathSteps) throws E {
-    @Nullable LinkedHashMap<String, OpInputFieldProjectionEntry> fieldProjections = mp.fieldProjections();
+    Map<String, OpInputFieldProjectionEntry> fieldProjections = mp.fieldProjections();
 
-    if (fieldProjections != null) {
-      if (pathSteps > 0) {
-        if (fieldProjections.isEmpty()) return;
-        if (fieldProjections.size() > 1) throw new IllegalArgumentException(
-            String.format("Encountered %d fields while still having %d path steps", fieldProjections.size(), pathSteps)
-        );
+    if (pathSteps > 0) {
+      if (fieldProjections.isEmpty()) return;
+      if (fieldProjections.size() > 1) throw new IllegalArgumentException(
+          String.format("Encountered %d fields while still having %d path steps", fieldProjections.size(), pathSteps)
+      );
 
-        Map.Entry<String, OpInputFieldProjectionEntry> entry = fieldProjections.entrySet().iterator().next();
-        l.beginIInd();
-        l.print("/").brk();
-        print(entry.getKey(), entry.getValue().projection(), decSteps(pathSteps));
-        l.end();
+      Map.Entry<String, OpInputFieldProjectionEntry> entry = fieldProjections.entrySet().iterator().next();
+      l.beginIInd();
+      l.print("/").brk();
+      print(entry.getKey(), entry.getValue().projection(), decSteps(pathSteps));
+      l.end();
 
-      } else {
+    } else {
 
-        l.print("(").beginCInd();
-        boolean first = true;
-        for (Map.Entry<String, OpInputFieldProjectionEntry> entry : fieldProjections.entrySet()) {
-          if (first) first = false;
-          else l.print(",");
-          l.brk();
+      l.print("(").beginCInd();
+      boolean first = true;
+      for (Map.Entry<String, OpInputFieldProjectionEntry> entry : fieldProjections.entrySet()) {
+        if (first) first = false;
+        else l.print(",");
+        l.brk();
 
-          print(entry.getKey(), entry.getValue().projection(), 0);
+        print(entry.getKey(), entry.getValue().projection(), 0);
 
-        }
-        l.brk(1, -l.getDefaultIndentation()).end().print(")");
       }
+      l.brk(1, -l.getDefaultIndentation()).end().print(")");
     }
   }
 
@@ -159,12 +159,11 @@ public class OpInputProjectionsPrettyPrinter<E extends Exception>
 
 
   @Override
-  public boolean isPrintoutEmpty(@NotNull OpInputModelProjection<?, ?> mp) {
+  public boolean isPrintoutEmpty(@NotNull OpInputModelProjection<?, ?, ?> mp) {
     if (mp instanceof OpInputRecordModelProjection) {
       OpInputRecordModelProjection recordModelProjection = (OpInputRecordModelProjection) mp;
-      @Nullable LinkedHashMap<String, OpInputFieldProjectionEntry> fieldProjections =
-          recordModelProjection.fieldProjections();
-      return fieldProjections == null || fieldProjections.isEmpty();
+      Map<String, OpInputFieldProjectionEntry> fieldProjections = recordModelProjection.fieldProjections();
+      return fieldProjections.isEmpty();
     }
 
     if (mp instanceof OpInputMapModelProjection) {

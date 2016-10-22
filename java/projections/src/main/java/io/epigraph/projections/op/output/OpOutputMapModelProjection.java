@@ -2,6 +2,7 @@ package io.epigraph.projections.op.output;
 
 import io.epigraph.lang.TextLocation;
 import io.epigraph.projections.Annotations;
+import io.epigraph.projections.gen.GenMapModelProjection;
 import io.epigraph.projections.op.OpParams;
 import io.epigraph.types.MapType;
 import org.jetbrains.annotations.NotNull;
@@ -12,20 +13,30 @@ import java.util.Objects;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class OpOutputMapModelProjection extends OpOutputModelProjection<MapType> {
+public class OpOutputMapModelProjection
+    extends OpOutputModelProjection<OpOutputMapModelProjection, MapType>
+    implements GenMapModelProjection<
+    OpOutputVarProjection,
+    OpOutputTagProjectionEntry,
+    OpOutputModelProjection<?, ?>,
+    OpOutputMapModelProjection,
+    MapType
+    > {
+
   @NotNull
   private final OpOutputVarProjection itemsProjection;
   @NotNull
   private final OpOutputKeyProjection keyProjection;
 
-  public OpOutputMapModelProjection(@NotNull MapType model,
-                                    boolean includeInDefault,
-                                    @Nullable OpParams params,
-                                    @Nullable Annotations annotations,
-                                    @Nullable OpOutputModelProjection<?> metaProjection,
-                                    @NotNull OpOutputKeyProjection keyProjection,
-                                    @NotNull OpOutputVarProjection valuesProjection,
-                                    @NotNull TextLocation location) {
+  public OpOutputMapModelProjection(
+      @NotNull MapType model,
+      boolean includeInDefault,
+      @Nullable OpParams params,
+      @Nullable Annotations annotations,
+      @Nullable OpOutputMapModelProjection metaProjection,
+      @NotNull OpOutputKeyProjection keyProjection,
+      @NotNull OpOutputVarProjection valuesProjection,
+      @NotNull TextLocation location) {
     super(model, includeInDefault, params, annotations, metaProjection, location);
     this.itemsProjection = valuesProjection;
     this.keyProjection = keyProjection;

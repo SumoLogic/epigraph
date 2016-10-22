@@ -4,6 +4,7 @@ import io.epigraph.data.RecordDatum;
 import io.epigraph.lang.TextLocation;
 import io.epigraph.projections.Annotations;
 import io.epigraph.projections.ProjectionUtils;
+import io.epigraph.projections.gen.GenRecordModelProjection;
 import io.epigraph.types.RecordType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -13,27 +14,37 @@ import java.util.*;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class OpInputRecordModelProjection extends OpInputModelProjection<RecordType, RecordDatum> {
+public class OpInputRecordModelProjection
+    extends OpInputModelProjection<OpInputRecordModelProjection, RecordType, RecordDatum>
+    implements GenRecordModelProjection<
+    OpInputVarProjection,
+    OpInputTagProjectionEntry,
+    OpInputModelProjection<?, ?, ?>,
+    OpInputRecordModelProjection,
+    OpInputFieldProjectionEntry,
+    OpInputFieldProjection,
+    RecordType
+    > {
+
   private static final ThreadLocal<IdentityHashMap<OpInputRecordModelProjection, OpInputRecordModelProjection>>
       equalsVisited = new ThreadLocal<>();
 
-  @Nullable
-  private LinkedHashMap<String, OpInputFieldProjectionEntry> fieldProjections;
+  @NotNull
+  private Map<String, OpInputFieldProjectionEntry> fieldProjections;
 
   public OpInputRecordModelProjection(
       @NotNull RecordType model,
       boolean required,
       @Nullable RecordDatum defaultValue,
       @Nullable Annotations annotations,
-      @Nullable OpInputModelProjection<?, ?> metaProjection,
-      @Nullable LinkedHashMap<String, OpInputFieldProjectionEntry> fieldProjections,
+      @Nullable OpInputRecordModelProjection metaProjection,
+      @NotNull Map<String, OpInputFieldProjectionEntry> fieldProjections,
       @NotNull TextLocation location) {
 
     super(model, required, defaultValue, annotations, metaProjection, location);
     this.fieldProjections = fieldProjections;
 
-    if (fieldProjections != null)
-      ProjectionUtils.checkFieldsBelongsToModel(fieldProjections.keySet(), model);
+    ProjectionUtils.checkFieldsBelongsToModel(fieldProjections.keySet(), model);
   }
 
   @NotNull
@@ -41,11 +52,10 @@ public class OpInputRecordModelProjection extends OpInputModelProjection<RecordT
     return new LinkedHashSet<>(Arrays.asList(fieldProjections));
   }
 
-  @Nullable
-  public LinkedHashMap<String, OpInputFieldProjectionEntry> fieldProjections() { return fieldProjections; }
+  @NotNull
+  public Map<String, OpInputFieldProjectionEntry> fieldProjections() { return fieldProjections; }
 
   public void addFieldProjectionEntry(@NotNull OpInputFieldProjectionEntry fieldProjection) {
-    if (fieldProjections == null) fieldProjections = new LinkedHashMap<>();
     fieldProjections.put(fieldProjection.field().name(), fieldProjection);
   }
 
@@ -73,6 +83,6 @@ public class OpInputRecordModelProjection extends OpInputModelProjection<RecordT
 
   @Override
   public int hashCode() {
-    return super.hashCode() * 31 + (fieldProjections == null ? 13 : fieldProjections.size());
+    return super.hashCode() * 31 + fieldProjections.size();
   }
 }

@@ -8,14 +8,13 @@ import io.epigraph.types.Type;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class ProjectionDataTrimmer { // todo move somewhere else?
+public class ProjectionDataTrimmer { // todo move somewhere else? Generify?
 
   @NotNull
   public static Data trimData(@NotNull Data data, @NotNull ReqOutputVarProjection projection) {
@@ -42,7 +41,7 @@ public class ProjectionDataTrimmer { // todo move somewhere else?
   }
 
   @NotNull
-  public static Datum trimDatum(@NotNull Datum datum, @NotNull ReqOutputModelProjection<?> projection) {
+  public static Datum trimDatum(@NotNull Datum datum, @NotNull ReqOutputModelProjection<?, ?> projection) {
     switch (datum.type().kind()) {
       case RECORD:
         return trimRecordDatum((RecordDatum) datum, (ReqOutputRecordModelProjection) projection);
@@ -66,17 +65,15 @@ public class ProjectionDataTrimmer { // todo move somewhere else?
     @NotNull final RecordDatum.Raw raw = datum._raw();
     @NotNull final RecordDatum.Builder.Raw b = datum.type().createBuilder()._raw();
 
-    @Nullable
-    LinkedHashMap<String, ReqOutputFieldProjectionEntry> fieldProjections = projection.fieldProjections();
+    @NotNull
+    Map<String, ReqOutputFieldProjectionEntry> fieldProjections = projection.fieldProjections();
 
-    if (fieldProjections != null) {
-      for (Map.Entry<String, ReqOutputFieldProjectionEntry> entry : fieldProjections.entrySet()) {
-        final ReqOutputFieldProjectionEntry fieldProjectionEntry = entry.getValue();
-        final RecordType.Field field = fieldProjectionEntry.field();
-        @Nullable final Data data = raw.getData(field);
+    for (Map.Entry<String, ReqOutputFieldProjectionEntry> entry : fieldProjections.entrySet()) {
+      final ReqOutputFieldProjectionEntry fieldProjectionEntry = entry.getValue();
+      final RecordType.Field field = fieldProjectionEntry.field();
+      @Nullable final Data data = raw.getData(field);
 
-        if (data != null) b.setData(field, trimData(data, fieldProjectionEntry.projection().projection()));
-      }
+      if (data != null) b.setData(field, trimData(data, fieldProjectionEntry.projection().projection()));
     }
 
     return b;

@@ -3,6 +3,7 @@ package io.epigraph.projections.req.output;
 import io.epigraph.lang.TextLocation;
 import io.epigraph.projections.Annotations;
 import io.epigraph.projections.ProjectionUtils;
+import io.epigraph.projections.gen.GenRecordModelProjection;
 import io.epigraph.projections.req.ReqParams;
 import io.epigraph.types.RecordType;
 import org.jetbrains.annotations.NotNull;
@@ -13,26 +14,36 @@ import java.util.*;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class ReqOutputRecordModelProjection extends ReqOutputModelProjection<RecordType> {
+public class ReqOutputRecordModelProjection
+    extends ReqOutputModelProjection<ReqOutputRecordModelProjection, RecordType>
+    implements GenRecordModelProjection<
+    ReqOutputVarProjection,
+    ReqOutputTagProjectionEntry,
+    ReqOutputModelProjection<?, ?>,
+    ReqOutputRecordModelProjection,
+    ReqOutputFieldProjectionEntry,
+    ReqOutputFieldProjection,
+    RecordType
+    > {
   private static final ThreadLocal<IdentityHashMap<ReqOutputRecordModelProjection, ReqOutputRecordModelProjection>>
       equalsVisited = new ThreadLocal<>();
 
-  @Nullable
-  private LinkedHashMap<String, ReqOutputFieldProjectionEntry> fieldProjections;
+  @NotNull
+  private Map<String, ReqOutputFieldProjectionEntry> fieldProjections;
 
-  public ReqOutputRecordModelProjection(@NotNull RecordType model,
-                                        boolean required,
-                                        @Nullable ReqParams params,
-                                        @Nullable Annotations annotations,
-                                        @Nullable ReqOutputModelProjection<?> metaProjection,
-                                        @Nullable LinkedHashMap<String, ReqOutputFieldProjectionEntry> fieldProjections,
-                                        @NotNull TextLocation location) {
+  public ReqOutputRecordModelProjection(
+      @NotNull RecordType model,
+      boolean required,
+      @Nullable ReqParams params,
+      @Nullable Annotations annotations,
+      @Nullable ReqOutputRecordModelProjection metaProjection,
+      @NotNull Map<String, ReqOutputFieldProjectionEntry> fieldProjections,
+      @NotNull TextLocation location) {
     super(model, required, params, annotations, metaProjection, location);
     this.fieldProjections = fieldProjections;
 
     Collection<@NotNull ? extends RecordType.Field> fields = model.fields();
-    if (fieldProjections != null)
-      ProjectionUtils.checkFieldsBelongsToModel(fieldProjections.keySet(), model);
+    ProjectionUtils.checkFieldsBelongsToModel(fieldProjections.keySet(), model);
   }
 
   @NotNull
@@ -40,15 +51,15 @@ public class ReqOutputRecordModelProjection extends ReqOutputModelProjection<Rec
     return new LinkedHashSet<>(Arrays.asList(fieldProjections));
   }
 
-  public @Nullable LinkedHashMap<String, ReqOutputFieldProjectionEntry> fieldProjections() { return fieldProjections; }
+  @NotNull
+  public Map<String, ReqOutputFieldProjectionEntry> fieldProjections() { return fieldProjections; }
 
   @Nullable
   public ReqOutputFieldProjectionEntry fieldProjection(@NotNull String fieldName) {
-    return fieldProjections == null ? null : fieldProjections.get(fieldName);
+    return fieldProjections.get(fieldName);
   }
 
   public void addFieldProjection(@NotNull ReqOutputFieldProjectionEntry fieldProjection) {
-    if (fieldProjections == null) fieldProjections = new LinkedHashMap<>();
     fieldProjections.put(fieldProjection.field().name(), fieldProjection);
   }
 
@@ -76,6 +87,6 @@ public class ReqOutputRecordModelProjection extends ReqOutputModelProjection<Rec
 
   @Override
   public int hashCode() {
-    return super.hashCode() * 31 + (fieldProjections == null ? 13 : fieldProjections.size());
+    return super.hashCode() * 31 + fieldProjections.size();
   }
 }

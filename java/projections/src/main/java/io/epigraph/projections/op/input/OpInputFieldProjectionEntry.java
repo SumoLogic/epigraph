@@ -8,7 +8,12 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class OpInputFieldProjectionEntry extends AbstractFieldProjectionEntry<OpInputFieldProjection> {
+public class OpInputFieldProjectionEntry extends AbstractFieldProjectionEntry<
+    OpInputVarProjection,
+    OpInputTagProjectionEntry,
+    OpInputModelProjection<?, ?,?>,
+    OpInputFieldProjection
+    > {
   public OpInputFieldProjectionEntry(
       @NotNull RecordType.Field field,
       @NotNull OpInputFieldProjection projection,

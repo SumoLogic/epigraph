@@ -1,6 +1,7 @@
 package io.epigraph.projections.abs;
 
 import io.epigraph.lang.TextLocation;
+import io.epigraph.projections.gen.GenTagProjectionEntry;
 import io.epigraph.types.Type;
 import org.jetbrains.annotations.NotNull;
 
@@ -9,7 +10,8 @@ import java.util.Objects;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public abstract class AbstractTagProjectionEntry<MP extends AbstractModelProjection<?>> {
+public abstract class AbstractTagProjectionEntry<MP extends AbstractModelProjection</*MP*/?, ?>>
+    implements GenTagProjectionEntry<MP> {
   @NotNull
   private final Type.Tag tag;
   @NotNull

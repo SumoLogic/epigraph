@@ -13,12 +13,12 @@ public class OpParam {
   @NotNull
   private final String name;
   @NotNull
-  private final OpInputModelProjection<?, ?> projection;
+  private final OpInputModelProjection<?, ?, ?> projection;
   @NotNull
   private final TextLocation location;
 
   public OpParam(@NotNull String name,
-                 @NotNull OpInputModelProjection<?, ?> projection,
+                 @NotNull OpInputModelProjection<?, ?, ?> projection,
                  @NotNull TextLocation location) {
     this.name = name;
     this.projection = projection;
@@ -31,7 +31,7 @@ public class OpParam {
   public String name() { return name; }
 
   @NotNull
-  public OpInputModelProjection<?, ?> projection() { return projection; }
+  public OpInputModelProjection<?, ?, ?> projection() { return projection; }
 
   @NotNull
   public TextLocation location() { return location; }

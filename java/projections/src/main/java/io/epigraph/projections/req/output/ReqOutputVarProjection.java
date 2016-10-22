@@ -12,14 +12,20 @@ import java.util.List;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class ReqOutputVarProjection extends AbstractVarProjection<ReqOutputTagProjectionEntry, ReqOutputVarProjection> {
-  private final boolean parenthesized; // if parens were present, e.g. `:(id, ...)`. Tells marshaller if to use multi- or single-var
+public class ReqOutputVarProjection extends AbstractVarProjection<
+    ReqOutputVarProjection,
+    ReqOutputTagProjectionEntry,
+    ReqOutputModelProjection<?, ?>
+    > {
+  private final boolean parenthesized;
+      // if parens were present, e.g. `:(id, ...)`. Tells marshaller if to use multi- or single-var
 
-  public ReqOutputVarProjection(@NotNull Type type,
-                                @NotNull LinkedHashMap<String, ReqOutputTagProjectionEntry> tagProjections,
-                                @Nullable List<ReqOutputVarProjection> polymorphicTails,
-                                boolean parenthesized,
-                                @NotNull TextLocation location) {
+  public ReqOutputVarProjection(
+      @NotNull Type type,
+      @NotNull LinkedHashMap<String, ReqOutputTagProjectionEntry> tagProjections,
+      @Nullable List<ReqOutputVarProjection> polymorphicTails,
+      boolean parenthesized,
+      @NotNull TextLocation location) {
     super(type, tagProjections, polymorphicTails, location);
     this.parenthesized = parenthesized;
   }

@@ -11,18 +11,28 @@ import java.util.List;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public interface GenVarProjection<PD, MD, FD> {
+public interface GenVarProjection<
+    VP extends GenVarProjection<VP, TP, MP>,
+    TP extends GenTagProjectionEntry<MP>,
+    MP extends GenModelProjection</*MP*/?, ?>
+    > {
 
   @NotNull Type type();
 
-  @NotNull LinkedHashMap<String, ? extends GenTagProjectionEntry<PD, MD, FD>> tagProjections();
+  @NotNull LinkedHashMap<String, TP> tagProjections();
 
   /**
-   * @throws IllegalArgumentException if there's more than one tag
+   * @throws IllegalStateException if there's more than one tag
    */
-  @Nullable GenTagProjectionEntry<PD, MD, FD> getPathTagProjection();
+  @Nullable
+  default GenTagProjectionEntry pathTagProjection() throws IllegalStateException {
+    @NotNull final LinkedHashMap<String, TP> tagProjections = tagProjections();
+    if (tagProjections.isEmpty()) return null;
+    if (tagProjections.size() > 1) throw new IllegalStateException();
+    return tagProjections.values().iterator().next();
+  }
 
-  @Nullable List<? extends GenVarProjection<PD, MD, FD>> polymorphicTails();
+  @Nullable List<VP> polymorphicTails();
 
   @NotNull TextLocation location();
 }

@@ -13,27 +13,25 @@ import java.util.Objects;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public abstract class ReqOutputModelProjection<M extends DatumType> extends AbstractModelProjection<M> {
+public abstract class ReqOutputModelProjection<
+    MP extends ReqOutputModelProjection</*MP*/?, M>,
+    M extends DatumType>
+    extends AbstractModelProjection<MP, M> {
 
   protected final boolean required;
   @Nullable
   protected final ReqParams params;
-  @Nullable
-  protected final Annotations annotations;
-  @Nullable
-  protected final ReqOutputModelProjection<?> metaProjection;
 
-  public ReqOutputModelProjection(@NotNull M model,
-                                  boolean required,
-                                  @Nullable ReqParams params,
-                                  @Nullable Annotations annotations,
-                                  @Nullable ReqOutputModelProjection<?> metaProjection,
-                                  @NotNull TextLocation location) {
-    super(model, annotations, location);
+  public ReqOutputModelProjection(
+      @NotNull M model,
+      boolean required,
+      @Nullable ReqParams params,
+      @Nullable Annotations annotations,
+      @Nullable MP metaProjection,
+      @NotNull TextLocation location) {
+    super(model, metaProjection, annotations, location);
     this.required = required;
     this.params = params;
-    this.annotations = annotations;
-    this.metaProjection = metaProjection;
   }
 
   public boolean required() { return required; }
@@ -41,26 +39,18 @@ public abstract class ReqOutputModelProjection<M extends DatumType> extends Abst
   @Nullable
   public ReqParams params() { return params; }
 
-  @Nullable
-  public Annotations annotations() { return annotations; }
-
-  @Nullable
-  public ReqOutputModelProjection<?> metaProjection() { return metaProjection; }
-
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     if (!super.equals(o)) return false;
-    ReqOutputModelProjection<?> that = (ReqOutputModelProjection<?>) o;
+    ReqOutputModelProjection<?, ?> that = (ReqOutputModelProjection<?, ?>) o;
     return required == that.required &&
-           Objects.equals(params, that.params) &&
-           Objects.equals(annotations, that.annotations) &&
-           Objects.equals(metaProjection, that.metaProjection);
+           Objects.equals(params, that.params);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(super.hashCode(), required, params, annotations, metaProjection);
+    return Objects.hash(super.hashCode(), required, params);
   }
 }

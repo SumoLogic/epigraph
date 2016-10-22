@@ -45,7 +45,7 @@ public class OpOutputProjectionsPsiParser {
     if (singleTagProjectionPsi != null) {
       boolean isDatum = type.kind() != TypeKind.UNION;
 
-      final OpOutputModelProjection<?> parsedModelProjection;
+      final OpOutputModelProjection<?,?> parsedModelProjection;
       final Type.Tag tag = getTag(
           type,
           singleTagProjectionPsi.getTagName(),
@@ -87,7 +87,7 @@ public class OpOutputProjectionsPsiParser {
       for (IdlOpOutputMultiTagProjectionItem tagProjectionPsi : tagProjectionPsiList) {
         final Type.Tag tag = getTag(type, tagProjectionPsi.getTagName(), dataType.defaultTag, tagProjectionPsi);
 
-        final OpOutputModelProjection<?> parsedModelProjection;
+        final OpOutputModelProjection<?,?> parsedModelProjection;
 
         @NotNull DatumType tagType = tag.type;
         @Nullable IdlOpOutputModelProjection modelProjection = tagProjectionPsi.getOpOutputModelProjection();
@@ -178,7 +178,7 @@ public class OpOutputProjectionsPsiParser {
   }
 
   @Nullable
-  private static OpOutputModelProjection<?> parseModelMetaProjection(
+  private static OpOutputModelProjection<?,?> parseModelMetaProjection(
       @NotNull DatumType type,
       @NotNull List<IdlOpOutputModelProperty> modelProperties,
       @NotNull TypesResolver resolver
@@ -277,12 +277,12 @@ public class OpOutputProjectionsPsiParser {
   }
 
   @NotNull
-  public static OpOutputModelProjection<?> parseModelProjection(
+  public static OpOutputModelProjection<?,?> parseModelProjection(
       @NotNull DatumType type,
       boolean includeInDefault,
       @Nullable OpParams params,
       @Nullable Annotations annotations,
-      @Nullable OpOutputModelProjection<?> metaProjection,
+      @Nullable OpOutputModelProjection<?,?> metaProjection,
       @NotNull IdlOpOutputModelProjection psi,
       @NotNull TypesResolver typesResolver)
       throws PsiProcessingException {
@@ -298,7 +298,7 @@ public class OpOutputProjectionsPsiParser {
             includeInDefault,
             params,
             annotations,
-            metaProjection,
+            (OpOutputRecordModelProjection) metaProjection,
             recordModelProjectionPsi,
             typesResolver
         );
@@ -313,7 +313,7 @@ public class OpOutputProjectionsPsiParser {
             includeInDefault,
             params,
             annotations,
-            metaProjection,
+            (OpOutputMapModelProjection) metaProjection,
             mapModelProjectionPsi,
             typesResolver
         );
@@ -322,12 +322,13 @@ public class OpOutputProjectionsPsiParser {
         if (listModelProjectionPsi == null)
           return createDefaultModelProjection(type, includeInDefault, params, annotations, psi);
         ensureModelKind(psi, TypeKind.LIST);
+
         return parseListModelProjection(
             (ListType) type,
             includeInDefault,
             params,
             annotations,
-            metaProjection,
+            (OpOutputListModelProjection) metaProjection,
             listModelProjectionPsi,
             typesResolver
         );
@@ -339,7 +340,7 @@ public class OpOutputProjectionsPsiParser {
             includeInDefault,
             params,
             annotations,
-            metaProjection,
+            (OpOutputPrimitiveModelProjection) metaProjection,
             psi
         );
       case UNION:
@@ -370,7 +371,7 @@ public class OpOutputProjectionsPsiParser {
   }
 
   @NotNull
-  private static OpOutputModelProjection<?> createDefaultModelProjection(
+  private static OpOutputModelProjection<?,?> createDefaultModelProjection(
       @NotNull DatumType type,
       boolean includeInDefault,
       @Nullable OpParams params,
@@ -386,7 +387,7 @@ public class OpOutputProjectionsPsiParser {
             params,
             annotations,
             null,
-            null,
+            Collections.emptyMap(),
             EpigraphPsiUtil.getLocation(locationPsi)
         );
       case MAP:
@@ -479,7 +480,7 @@ public class OpOutputProjectionsPsiParser {
       boolean includeInDefault,
       @Nullable OpParams params,
       @Nullable Annotations annotations,
-      @Nullable OpOutputModelProjection<?> metaProjection,
+      @Nullable OpOutputRecordModelProjection metaProjection,
       @NotNull IdlOpOutputRecordModelProjection psi,
       @NotNull TypesResolver typesResolver) throws PsiProcessingException {
 
@@ -567,7 +568,7 @@ public class OpOutputProjectionsPsiParser {
       boolean includeInDefault,
       @Nullable OpParams params,
       @Nullable Annotations annotations,
-      @Nullable OpOutputModelProjection<?> metaProjection,
+      @Nullable OpOutputMapModelProjection metaProjection,
       @NotNull IdlOpOutputMapModelProjection psi,
       @NotNull TypesResolver resolver)
       throws PsiProcessingException {
@@ -637,7 +638,7 @@ public class OpOutputProjectionsPsiParser {
       boolean includeInDefault,
       @Nullable OpParams params,
       @Nullable Annotations annotations,
-      @Nullable OpOutputModelProjection<?> metaProjection,
+      @Nullable OpOutputListModelProjection metaProjection,
       @NotNull IdlOpOutputListModelProjection psi,
       @NotNull TypesResolver resolver)
       throws PsiProcessingException {
@@ -667,7 +668,7 @@ public class OpOutputProjectionsPsiParser {
       boolean includeInDefault,
       @Nullable OpParams params,
       @Nullable Annotations annotations,
-      @Nullable OpOutputModelProjection<?> metaProjection,
+      @Nullable OpOutputPrimitiveModelProjection metaProjection,
       @NotNull PsiElement locationPsi) {
 
     return new OpOutputPrimitiveModelProjection(
@@ -714,7 +715,7 @@ public class OpOutputProjectionsPsiParser {
                                     ? null
                                     : IdlGDataPsiParser.parseDatum(defaultValuePsi);
 
-    OpInputModelProjection<?, ?> paramModelProjection = OpInputProjectionsPsiParser.parseComaModelProjection(
+    OpInputModelProjection<?, ?, ?> paramModelProjection = OpInputProjectionsPsiParser.parseComaModelProjection(
         paramType,
         paramPsi.getPlus() != null,
         defaultValue,

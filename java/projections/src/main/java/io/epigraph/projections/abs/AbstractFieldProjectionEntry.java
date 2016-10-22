@@ -1,6 +1,7 @@
 package io.epigraph.projections.abs;
 
 import io.epigraph.lang.TextLocation;
+import io.epigraph.projections.gen.*;
 import io.epigraph.types.RecordType;
 import org.jetbrains.annotations.NotNull;
 
@@ -9,7 +10,13 @@ import java.util.Objects;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public abstract class AbstractFieldProjectionEntry<FP> {
+public abstract class AbstractFieldProjectionEntry<
+    VP extends GenVarProjection<VP, TP, MP>,
+    TP extends GenTagProjectionEntry<MP>,
+    MP extends GenModelProjection</*MP*/?, ?>,
+    FP extends GenFieldProjection<VP, TP, MP>
+    > implements GenFieldProjectionEntry<VP, TP, MP, FP> {
+
   @NotNull
   private final RecordType.Field field;
   @NotNull

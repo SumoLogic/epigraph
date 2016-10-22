@@ -1,6 +1,9 @@
 package io.epigraph.projections.abs;
 
 import io.epigraph.lang.TextLocation;
+import io.epigraph.projections.gen.GenModelProjection;
+import io.epigraph.projections.gen.GenTagProjectionEntry;
+import io.epigraph.projections.gen.GenVarProjection;
 import io.epigraph.types.Type;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -12,22 +15,28 @@ import java.util.Objects;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class AbstractVarProjection<T extends AbstractTagProjectionEntry<?>, S extends AbstractVarProjection<T, S>> {
+public abstract class AbstractVarProjection<
+    VP extends AbstractVarProjection<VP, TP, MP>,
+    TP extends GenTagProjectionEntry<MP>,
+    MP extends GenModelProjection</*MP*/?, ?>
+    > implements GenVarProjection<VP, TP, MP> {
+
   @NotNull
   private final Type type;
   @NotNull
-  private final LinkedHashMap<String, T> tagProjections;
+  private final LinkedHashMap<String, TP> tagProjections;
   @Nullable
-  private final List<S> polymorphicTails;
+  private final List<VP> polymorphicTails;
 
   private int polymorphicDepth = -1;
   @NotNull
   private final TextLocation location;
 
-  public AbstractVarProjection(@NotNull Type type,
-                               @NotNull LinkedHashMap<String, T> tagProjections,
-                               @Nullable List<S> polymorphicTails,
-                               @NotNull TextLocation location) {
+  public AbstractVarProjection(
+      @NotNull Type type,
+      @NotNull LinkedHashMap<String, TP> tagProjections,
+      @Nullable List<VP> polymorphicTails,
+      @NotNull TextLocation location) {
     this.type = type;
     this.tagProjections = tagProjections;
     this.polymorphicTails = polymorphicTails;
@@ -41,19 +50,25 @@ public class AbstractVarProjection<T extends AbstractTagProjectionEntry<?>, S ex
   public Type type() { return type; }
 
   @NotNull
-  public LinkedHashMap<String, T> tagProjections() { return tagProjections; }
+  public LinkedHashMap<String, TP> tagProjections() { return tagProjections; }
 
   @Nullable
-  public T tagProjection(@NotNull String tagName) { return tagProjections.get(tagName); }
+  public TP tagProjection(@NotNull String tagName) { return tagProjections.get(tagName); }
 
   @Nullable
-  public List<S> polymorphicTails() { return polymorphicTails; }
+  public List<VP> polymorphicTails() { return polymorphicTails; }
 
-  /** Max polymorphic tail depth. */
+  /**
+   * Max polymorphic tail depth.
+   */
   public int polymorphicDepth() {
-    if (polymorphicDepth == -1) polymorphicDepth = polymorphicTails == null
-        ? 0
-        : polymorphicTails.stream().mapToInt(AbstractVarProjection::polymorphicDepth).max().orElse(0);
+    if (polymorphicDepth == -1)
+      polymorphicDepth = polymorphicTails == null
+                         ? 0
+                         : polymorphicTails.stream()
+                                           .mapToInt(AbstractVarProjection::polymorphicDepth)
+                                           .max()
+                                           .orElse(0);
     return polymorphicDepth;
   }
 

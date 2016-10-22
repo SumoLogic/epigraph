@@ -131,7 +131,7 @@ public class RequestUrlPsiParser {
     if (singleTagProjectionPsi != null) {
       tagProjections = new LinkedHashMap<>();
 
-      final ReqOutputModelProjection<?> parsedModelProjection;
+      final ReqOutputModelProjection<?, ?> parsedModelProjection;
       @Nullable final UrlTagName tagNamePsi = singleTagProjectionPsi.getTagName();
 
       @NotNull final Type.Tag tag;
@@ -139,11 +139,11 @@ public class RequestUrlPsiParser {
       tag = findTagOrSingleDefaultTag(type, tagNamePsi, op, singleTagProjectionPsi);
       @NotNull OpOutputTagProjectionEntry opTagProjection = findTagProjection(tag.name(), op, singleTagProjectionPsi);
 
-      @NotNull OpOutputModelProjection<?> opModelProjection = opTagProjection.projection();
+      @NotNull OpOutputModelProjection<?, ?> opModelProjection = opTagProjection.projection();
       @NotNull UrlReqOutputTrunkModelProjection modelProjectionPsi =
           singleTagProjectionPsi.getReqOutputTrunkModelProjection();
 
-      StepsAndProjection<? extends ReqOutputModelProjection<?>> stepsAndProjection = parseTrunkModelProjection(
+      StepsAndProjection<? extends ReqOutputModelProjection<?, ?>> stepsAndProjection = parseTrunkModelProjection(
           opModelProjection,
           singleTagProjectionPsi.getPlus() != null,
           parseReqParams(singleTagProjectionPsi.getReqParamList(), opModelProjection.params(), subResolver),
@@ -299,13 +299,13 @@ public class RequestUrlPsiParser {
     @Nullable UrlReqOutputComaSingleTagProjection singleTagProjectionPsi = psi.getReqOutputComaSingleTagProjection();
     if (singleTagProjectionPsi != null) {
       tagProjections = new LinkedHashMap<>();
-      final ReqOutputModelProjection<?> parsedModelProjection;
+      final ReqOutputModelProjection<?, ?> parsedModelProjection;
 
       @NotNull Type.Tag tag =
           findTagOrSingleDefaultTag(type, singleTagProjectionPsi.getTagName(), op, singleTagProjectionPsi);
       @NotNull OpOutputTagProjectionEntry opTagProjection = findTagProjection(tag.name(), op, singleTagProjectionPsi);
 
-      @NotNull OpOutputModelProjection<?> opModelProjection = opTagProjection.projection();
+      @NotNull OpOutputModelProjection<?, ?> opModelProjection = opTagProjection.projection();
 
       @NotNull UrlReqOutputComaModelProjection modelProjectionPsi =
           singleTagProjectionPsi.getReqOutputComaModelProjection();
@@ -371,9 +371,9 @@ public class RequestUrlPsiParser {
       @NotNull Type.Tag tag = findTag(dataType.type, tagProjectionPsi.getTagName(), op, tagProjectionPsi);
       @NotNull OpOutputTagProjectionEntry opTag = findTagProjection(tag.name(), op, tagProjectionPsi);
 
-      OpOutputModelProjection<?> opTagProjection = opTag.projection();
+      OpOutputModelProjection<?, ?> opTagProjection = opTag.projection();
 
-      final ReqOutputModelProjection<?> parsedModelProjection;
+      final ReqOutputModelProjection<?, ?> parsedModelProjection;
 
       @NotNull UrlReqOutputComaModelProjection modelProjection = tagProjectionPsi.getReqOutputComaModelProjection();
 
@@ -447,15 +447,15 @@ public class RequestUrlPsiParser {
 
 
   @Nullable
-  private static ReqOutputModelProjection<?> parseModelMetaProjection(
-      @NotNull OpOutputModelProjection<?> op,
+  private static ReqOutputModelProjection<?, ?> parseModelMetaProjection(
+      @NotNull OpOutputModelProjection<?, ?> op,
       @Nullable UrlReqOutputModelMeta modelMetaPsi,
       @NotNull TypesResolver resolver
   ) throws PsiProcessingException {
 
     if (modelMetaPsi == null) return null;
 
-    OpOutputModelProjection<?> metaOp = op.metaProjection();
+    OpOutputModelProjection<?, ?> metaOp = op.metaProjection();
 
     if (metaOp == null) throw new PsiProcessingException(
         String.format("Meta projection not supported on type '%s'", op.model().name()),
@@ -593,7 +593,7 @@ public class RequestUrlPsiParser {
 
     List<Type.Tag> defaultTags = new ArrayList<>(opTagProjections.size());
     for (Map.Entry<String, OpOutputTagProjectionEntry> entry : opTagProjections.entrySet()) {
-      final OpOutputModelProjection<?> opTagProjection = entry.getValue().projection();
+      final OpOutputModelProjection<?, ?> opTagProjection = entry.getValue().projection();
       if (opTagProjection.includeInDefault()) {
         String tagName = entry.getKey();
         defaultTags.add(findTag(type, tagName, locationPsi));
@@ -624,12 +624,12 @@ public class RequestUrlPsiParser {
   }
 
   @NotNull
-  public static StepsAndProjection<? extends ReqOutputModelProjection<?>> parseTrunkModelProjection(
-      @NotNull OpOutputModelProjection<?> op,
+  public static StepsAndProjection<? extends ReqOutputModelProjection<?, ?>> parseTrunkModelProjection(
+      @NotNull OpOutputModelProjection<?, ?> op,
       boolean required,
       @Nullable ReqParams params,
       @Nullable Annotations annotations,
-      @Nullable ReqOutputModelProjection<?> metaProjection,
+      @Nullable ReqOutputModelProjection<?, ?> metaProjection,
       @NotNull UrlReqOutputTrunkModelProjection psi,
       @NotNull TypesResolver typesResolver) throws PsiProcessingException {
 
@@ -646,7 +646,7 @@ public class RequestUrlPsiParser {
               required,
               params,
               annotations,
-              metaProjection,
+              (ReqOutputRecordModelProjection) metaProjection,
               trunkRecordProjectionPsi,
               subResolver
           );
@@ -662,7 +662,7 @@ public class RequestUrlPsiParser {
               required,
               params,
               annotations,
-              metaProjection,
+              (ReqOutputMapModelProjection) metaProjection,
               trunkMapProjectionPsi,
               subResolver
           );
@@ -675,12 +675,12 @@ public class RequestUrlPsiParser {
   }
 
   @NotNull
-  public static StepsAndProjection<? extends ReqOutputModelProjection<?>> parseComaModelProjection(
-      @NotNull OpOutputModelProjection<?> op,
+  public static StepsAndProjection<? extends ReqOutputModelProjection<?, ?>> parseComaModelProjection(
+      @NotNull OpOutputModelProjection<?, ?> op,
       boolean required,
       @Nullable ReqParams params,
       @Nullable Annotations annotations,
-      @Nullable ReqOutputModelProjection<?> metaProjection,
+      @Nullable ReqOutputModelProjection<?, ?> metaProjection,
       @NotNull UrlReqOutputComaModelProjection psi,
       @NotNull TypesResolver typesResolver) throws PsiProcessingException {
 
@@ -707,7 +707,7 @@ public class RequestUrlPsiParser {
             required,
             params,
             annotations,
-            metaProjection,
+            (ReqOutputRecordModelProjection) metaProjection,
             recordModelProjectionPsi,
             subResolver
         );
@@ -729,7 +729,7 @@ public class RequestUrlPsiParser {
             required,
             params,
             annotations,
-            metaProjection,
+            (ReqOutputMapModelProjection) metaProjection,
             mapModelProjectionPsi,
             subResolver
         );
@@ -752,7 +752,7 @@ public class RequestUrlPsiParser {
             required,
             params,
             annotations,
-            metaProjection,
+            (ReqOutputListModelProjection) metaProjection,
             listModelProjectionPsi,
             subResolver
         );
@@ -766,7 +766,7 @@ public class RequestUrlPsiParser {
             required,
             params,
             annotations,
-            metaProjection,
+            (ReqOutputPrimitiveModelProjection) metaProjection,
             psi
         );
 
@@ -798,10 +798,10 @@ public class RequestUrlPsiParser {
   }
 
   @NotNull
-  private static ReqOutputModelProjection<?> createDefaultModelProjection(
+  private static ReqOutputModelProjection<?, ?> createDefaultModelProjection(
       @NotNull DatumType type,
       boolean required,
-      @NotNull OpOutputModelProjection<?> op,
+      @NotNull OpOutputModelProjection<?, ?> op,
       @Nullable ReqParams params,
       @Nullable Annotations annotations,
       @NotNull PsiElement locationPsi) throws PsiProcessingException {
@@ -811,11 +811,12 @@ public class RequestUrlPsiParser {
     switch (type.kind()) {
       case RECORD:
         OpOutputRecordModelProjection opRecord = (OpOutputRecordModelProjection) op;
-        final @Nullable LinkedHashMap<String, OpOutputFieldProjectionEntry> opFields = opRecord.fieldProjections();
+        final Map<String, OpOutputFieldProjectionEntry> opFields = opRecord.fieldProjections();
 
-        final LinkedHashMap<String, ReqOutputFieldProjectionEntry> fields;
-        if (opFields == null) {
-          fields = null;
+        @NotNull final Map<String, ReqOutputFieldProjectionEntry> fields;
+
+        if (opFields.isEmpty()) {
+          fields = Collections.emptyMap();
         } else {
           fields = new LinkedHashMap<>();
 
@@ -930,15 +931,15 @@ public class RequestUrlPsiParser {
       boolean required,
       @Nullable ReqParams params,
       @Nullable Annotations annotations,
-      @Nullable ReqOutputModelProjection<?> metaProjection,
+      @Nullable ReqOutputRecordModelProjection metaProjection,
       @NotNull UrlReqOutputTrunkRecordModelProjection psi,
       @NotNull TypesResolver resolver) throws PsiProcessingException {
 
-    @Nullable LinkedHashMap<String, OpOutputFieldProjectionEntry> opFields = op.fieldProjections();
+    Map<String, OpOutputFieldProjectionEntry> opFields = op.fieldProjections();
     final String fieldName = psi.getQid().getCanonicalName();
 
-    if (opFields == null)
-      throw new PsiProcessingException("Fields are not supported by the operation", psi.getQid());
+    if (opFields.isEmpty())
+      throw new PsiProcessingException("No fields are supported by the operation", psi.getQid());
 
     OpOutputFieldProjectionEntry opFieldProjectionEntry = opFields.get(fieldName);
     if (opFieldProjectionEntry == null) {
@@ -1084,26 +1085,26 @@ public class RequestUrlPsiParser {
       boolean required,
       @Nullable ReqParams params,
       @Nullable Annotations annotations,
-      @Nullable ReqOutputModelProjection<?> metaProjection,
+      @Nullable ReqOutputRecordModelProjection metaProjection,
       @NotNull UrlReqOutputComaRecordModelProjection psi,
       @NotNull TypesResolver resolver) throws PsiProcessingException {
 
     LinkedHashMap<String, ReqOutputFieldProjectionEntry> fieldProjections = new LinkedHashMap<>();
     @NotNull List<UrlReqOutputComaFieldProjection> psiFieldProjections = psi.getReqOutputComaFieldProjectionList();
 
-    @Nullable LinkedHashMap<String, OpOutputFieldProjectionEntry> opFields = op.fieldProjections();
+    Map<String, OpOutputFieldProjectionEntry> opFields = op.fieldProjections();
 
     for (UrlReqOutputComaFieldProjection fieldProjectionPsi : psiFieldProjections) {
       final String fieldName = fieldProjectionPsi.getQid().getCanonicalName();
 
-      @Nullable OpOutputFieldProjectionEntry opFieldProjectionEntry = opFields == null ? null : opFields.get(fieldName);
+      @Nullable OpOutputFieldProjectionEntry opFieldProjectionEntry = opFields.get(fieldName);
 
       if (opFieldProjectionEntry == null)
         throw new PsiProcessingException(
             String.format(
                 "Unsupported field '%s', supported fields: (%s)",
                 fieldName,
-                ProjectionUtils.listFields(opFields == null ? null : opFields.keySet())
+                ProjectionUtils.listFields(opFields.keySet())
             ),
             fieldProjectionPsi
         );
@@ -1164,7 +1165,7 @@ public class RequestUrlPsiParser {
       boolean required,
       @Nullable ReqParams params,
       @Nullable Annotations annotations,
-      @Nullable ReqOutputModelProjection<?> metaProjection,
+      @Nullable ReqOutputMapModelProjection metaProjection,
       @NotNull UrlReqOutputTrunkMapModelProjection psi,
       @NotNull TypesResolver resolver) throws PsiProcessingException {
 
@@ -1222,7 +1223,7 @@ public class RequestUrlPsiParser {
       boolean required,
       @Nullable ReqParams params,
       @Nullable Annotations annotations,
-      @Nullable ReqOutputModelProjection<?> metaProjection,
+      @Nullable ReqOutputMapModelProjection metaProjection,
       @NotNull UrlReqOutputComaMapModelProjection psi,
       @NotNull TypesResolver resolver) throws PsiProcessingException {
 
@@ -1299,7 +1300,7 @@ public class RequestUrlPsiParser {
       boolean required,
       @Nullable ReqParams params,
       @Nullable Annotations annotations,
-      @Nullable ReqOutputModelProjection<?> metaProjection,
+      @Nullable ReqOutputListModelProjection metaProjection,
       @NotNull UrlReqOutputComaListModelProjection psi,
       @NotNull TypesResolver resolver) throws PsiProcessingException {
 
@@ -1337,7 +1338,7 @@ public class RequestUrlPsiParser {
       boolean required,
       @Nullable ReqParams params,
       @Nullable Annotations annotations,
-      @Nullable ReqOutputModelProjection<?> metaProjection,
+      @Nullable ReqOutputPrimitiveModelProjection metaProjection,
       @NotNull PsiElement locationPsi) throws PsiProcessingException {
 
     return new StepsAndProjection<>(
@@ -1408,7 +1409,7 @@ public class RequestUrlPsiParser {
         );
 
       final String errorMsgPrefix = String.format("Error processing parameter '%s' value: ", name);
-      OpInputModelProjection<?, ?> projection = opParam.projection();
+      OpInputModelProjection<?, ?, ?> projection = opParam.projection();
       final DatumType model = projection.model();
       @NotNull final TypesResolver subResolver = addTypeNamespace(model, resolver);
 

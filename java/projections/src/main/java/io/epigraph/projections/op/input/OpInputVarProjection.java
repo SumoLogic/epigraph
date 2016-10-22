@@ -12,11 +12,16 @@ import java.util.List;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class OpInputVarProjection extends AbstractVarProjection<OpInputTagProjectionEntry, OpInputVarProjection> {
-  public OpInputVarProjection(@NotNull Type type,
-                              @NotNull LinkedHashMap<String, OpInputTagProjectionEntry> tagProjections,
-                              @Nullable List<OpInputVarProjection> polymorphicTails,
-                              @NotNull TextLocation location) {
+public class OpInputVarProjection extends AbstractVarProjection<
+    OpInputVarProjection,
+    OpInputTagProjectionEntry,
+    OpInputModelProjection<?, ?, ?>
+    > {
+  public OpInputVarProjection(
+      @NotNull Type type,
+      @NotNull LinkedHashMap<String, OpInputTagProjectionEntry> tagProjections,
+      @Nullable List<OpInputVarProjection> polymorphicTails,
+      @NotNull TextLocation location) {
     super(type, tagProjections, polymorphicTails, location);
   }
 }

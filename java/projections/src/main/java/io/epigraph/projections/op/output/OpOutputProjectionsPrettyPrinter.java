@@ -11,14 +11,17 @@ import io.epigraph.projections.op.input.OpInputProjectionsPrettyPrinter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class OpOutputProjectionsPrettyPrinter<E extends Exception> extends
-    AbstractProjectionsPrettyPrinter<OpOutputVarProjection, OpOutputTagProjectionEntry, OpOutputModelProjection<?>, E> {
+public class OpOutputProjectionsPrettyPrinter<E extends Exception>
+    extends AbstractProjectionsPrettyPrinter<
+    OpOutputVarProjection,
+    OpOutputTagProjectionEntry,
+    OpOutputModelProjection<?, ?>,
+    E> {
 
   public OpOutputProjectionsPrettyPrinter(Layouter<E> layouter) {
     super(layouter);
@@ -26,8 +29,8 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception> extends
 
   @Override
   public void print(@NotNull String tagName, @NotNull OpOutputTagProjectionEntry tp, int pathSteps) throws E {
-    OpOutputModelProjection<?> projection = tp.projection();
-    OpOutputModelProjection<?> metaProjection = projection.metaProjection();
+    OpOutputModelProjection<?, ?> projection = tp.projection();
+    OpOutputModelProjection<?, ?> metaProjection = projection.metaProjection();
     OpParams params = projection.params();
     Annotations annotations = projection.annotations();
 
@@ -67,7 +70,7 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception> extends
   }
 
   @Override
-  public void print(@NotNull OpOutputModelProjection<?> mp, int pathSteps) throws E {
+  public void print(@NotNull OpOutputModelProjection<?, ?> mp, int pathSteps) throws E {
     if (mp instanceof OpOutputRecordModelProjection)
       print((OpOutputRecordModelProjection) mp);
     else if (mp instanceof OpOutputMapModelProjection)
@@ -77,48 +80,46 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception> extends
   }
 
   private void print(@NotNull OpOutputRecordModelProjection mp) throws E {
-    @Nullable LinkedHashMap<String, OpOutputFieldProjectionEntry> fieldProjections = mp.fieldProjections();
+    Map<String, OpOutputFieldProjectionEntry> fieldProjections = mp.fieldProjections();
 
-    if (fieldProjections != null) {
-      l.print("(").beginCInd();
-      boolean first = true;
-      for (Map.Entry<String, OpOutputFieldProjectionEntry> entry : fieldProjections.entrySet()) {
-        if (first) first = false;
-        else l.print(",");
-        l.brk();
+    l.print("(").beginCInd();
+    boolean first = true;
+    for (Map.Entry<String, OpOutputFieldProjectionEntry> entry : fieldProjections.entrySet()) {
+      if (first) first = false;
+      else l.print(",");
+      l.brk();
 
-        @NotNull String fieldName = entry.getKey();
-        @NotNull OpOutputFieldProjection fieldProjection = entry.getValue().projection();
-        @NotNull OpOutputVarProjection fieldVarProjection = fieldProjection.projection();
-        @Nullable OpParams fieldParams = fieldProjection.params();
-        @Nullable Annotations fieldAnnotations = fieldProjection.annotations();
+      @NotNull String fieldName = entry.getKey();
+      @NotNull OpOutputFieldProjection fieldProjection = entry.getValue().projection();
+      @NotNull OpOutputVarProjection fieldVarProjection = fieldProjection.projection();
+      @Nullable OpParams fieldParams = fieldProjection.params();
+      @Nullable Annotations fieldAnnotations = fieldProjection.annotations();
 
-        if (fieldParams == null && fieldAnnotations == null) {
-          l.beginIInd();
-          if (fieldProjection.includeInDefault()) l.print("+");
-          l.print(fieldName);
-          if (!isPrintoutEmpty(fieldVarProjection)) {
-            l.brk();
-            print(fieldVarProjection, 0);
-          }
-          l.end();
-        } else {
-          l.beginCInd();
-          if (fieldProjection.includeInDefault()) l.print("+");
-          l.print(fieldName);
-          l.print(" {");
-          if (fieldParams != null) print(fieldParams);
-          if (fieldAnnotations != null) print(fieldAnnotations);
-          if (!isPrintoutEmpty(fieldVarProjection)) {
-            l.brk();
-            print(fieldVarProjection, 0);
-          }
-          l.brk(1, -l.getDefaultIndentation()).end().print("}");
+      if (fieldParams == null && fieldAnnotations == null) {
+        l.beginIInd();
+        if (fieldProjection.includeInDefault()) l.print("+");
+        l.print(fieldName);
+        if (!isPrintoutEmpty(fieldVarProjection)) {
+          l.brk();
+          print(fieldVarProjection, 0);
         }
-
+        l.end();
+      } else {
+        l.beginCInd();
+        if (fieldProjection.includeInDefault()) l.print("+");
+        l.print(fieldName);
+        l.print(" {");
+        if (fieldParams != null) print(fieldParams);
+        if (fieldAnnotations != null) print(fieldAnnotations);
+        if (!isPrintoutEmpty(fieldVarProjection)) {
+          l.brk();
+          print(fieldVarProjection, 0);
+        }
+        l.brk(1, -l.getDefaultIndentation()).end().print("}");
       }
-      l.brk(1, -l.getDefaultIndentation()).end().print(")");
+
     }
+    l.brk(1, -l.getDefaultIndentation()).end().print(")");
   }
 
   private void print(OpOutputMapModelProjection mp) throws E {
@@ -186,7 +187,7 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception> extends
   }
 
   public void print(@NotNull OpParam p) throws E {
-    OpInputModelProjection<?, ?> projection = p.projection();
+    OpInputModelProjection<?, ?, ?> projection = p.projection();
 
     l.beginIInd();
     l.print(";");
@@ -219,12 +220,11 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception> extends
   }
 
   @Override
-  public boolean isPrintoutEmpty(@NotNull OpOutputModelProjection<?> mp) {
+  public boolean isPrintoutEmpty(@NotNull OpOutputModelProjection<?, ?> mp) {
     if (mp instanceof OpOutputRecordModelProjection) {
       OpOutputRecordModelProjection recordModelProjection = (OpOutputRecordModelProjection) mp;
-      @Nullable LinkedHashMap<String, OpOutputFieldProjectionEntry> fieldProjections =
-          recordModelProjection.fieldProjections();
-      return fieldProjections == null || fieldProjections.isEmpty();
+      Map<String, OpOutputFieldProjectionEntry> fieldProjections = recordModelProjection.fieldProjections();
+      return fieldProjections.isEmpty();
     }
 
     if (mp instanceof OpOutputMapModelProjection) {

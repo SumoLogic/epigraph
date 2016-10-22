@@ -5,6 +5,9 @@ import io.epigraph.gdata.GDataPrettyPrinter;
 import io.epigraph.printers.DataPrinter;
 import io.epigraph.projections.Annotation;
 import io.epigraph.projections.Annotations;
+import io.epigraph.projections.gen.GenModelProjection;
+import io.epigraph.projections.gen.GenTagProjectionEntry;
+import io.epigraph.projections.gen.GenVarProjection;
 import io.epigraph.types.TypeKind;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,9 +17,9 @@ import java.util.*;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public abstract class AbstractProjectionsPrettyPrinter<
-    S extends AbstractVarProjection<T, S>,
-    T extends AbstractTagProjectionEntry<MP>,
-    MP extends AbstractModelProjection<?>,
+    VP extends GenVarProjection<VP, TP, MP>,
+    TP extends GenTagProjectionEntry<MP>,
+    MP extends GenModelProjection</*MP*/?, ?>,
     E extends Exception> {
 
   @NotNull
@@ -27,8 +30,8 @@ public abstract class AbstractProjectionsPrettyPrinter<
   protected GDataPrettyPrinter<E> gdataPrettyPrinter;
 
   private int nextRefNumber = 1;
-  private Map<AbstractVarProjection<T, S>, Integer> varRefs = new HashMap<>();
-  private Stack<AbstractVarProjection<T, S>> varsStack = new Stack<>();
+  private Map<VP, Integer> varRefs = new HashMap<>();
+  private Stack<VP> varsStack = new Stack<>();
 
   protected AbstractProjectionsPrettyPrinter(@NotNull Layouter<E> layouter) {
     l = layouter;
@@ -36,7 +39,7 @@ public abstract class AbstractProjectionsPrettyPrinter<
     gdataPrettyPrinter = new GDataPrettyPrinter<>(l);
   }
 
-  public void print(@NotNull AbstractVarProjection<T, S> p, int pathSteps) throws E {
+  public void print(@NotNull VP p, int pathSteps) throws E {
     if (varsStack.contains(p)) {
       // handle recursive projections
       int ref = nextRefNumber++;
@@ -48,13 +51,13 @@ public abstract class AbstractProjectionsPrettyPrinter<
     try {
       varsStack.push(p);
 
-      LinkedHashMap<String, T> tagProjections = p.tagProjections();
+      LinkedHashMap<String, TP> tagProjections = p.tagProjections();
 
       if (p.type().kind() != TypeKind.UNION) {
         // samovar
         print(tagProjections.values().iterator().next().projection(), decSteps(pathSteps));
       } else if (tagProjections.size() == 1) {
-        Map.Entry<String, T> entry = tagProjections.entrySet().iterator().next();
+        Map.Entry<String, TP> entry = tagProjections.entrySet().iterator().next();
         l.print(":");
         print(entry.getKey(), entry.getValue(), decSteps(pathSteps));
       } else if (tagProjections.isEmpty()) {
@@ -66,7 +69,7 @@ public abstract class AbstractProjectionsPrettyPrinter<
         l.beginCInd();
         l.print(":(");
         boolean first = true;
-        for (Map.Entry<String, T> entry : tagProjections.entrySet()) {
+        for (Map.Entry<String, TP> entry : tagProjections.entrySet()) {
           if (first) first = false;
           else l.print(",");
           l.brk();
@@ -75,14 +78,14 @@ public abstract class AbstractProjectionsPrettyPrinter<
         l.brk(1, -l.getDefaultIndentation()).end().print(")");
       }
 
-      List<S> polymorphicTails = p.polymorphicTails();
+      List<VP> polymorphicTails = p.polymorphicTails();
 
       if (polymorphicTails != null && !polymorphicTails.isEmpty()) {
         l.beginIInd();
         l.brk();
         if (polymorphicTails.size() == 1) {
           l.print("~");
-          S tail = polymorphicTails.iterator().next();
+          VP tail = polymorphicTails.iterator().next();
           l.print(tail.type().name().toString());
           l.brk();
           print(tail, 0);
@@ -90,7 +93,7 @@ public abstract class AbstractProjectionsPrettyPrinter<
           l.beginCInd();
           l.print("~(");
           boolean first = true;
-          for (AbstractVarProjection<T, S> tail : polymorphicTails) {
+          for (VP tail : polymorphicTails) {
             if (first) first = false;
             else l.print(",");
             l.brk().print(tail.type().name().toString()).brk();
@@ -108,7 +111,7 @@ public abstract class AbstractProjectionsPrettyPrinter<
 
   }
 
-  public abstract void print(@NotNull String tagName, @NotNull T tp, int pathSteps) throws E;
+  public abstract void print(@NotNull String tagName, @NotNull TP tp, int pathSteps) throws E;
 
   public abstract void print(@NotNull MP mp, int pathSteps) throws E;
 
@@ -131,12 +134,12 @@ public abstract class AbstractProjectionsPrettyPrinter<
     return first;
   }
 
-  protected boolean isPrintoutEmpty(@NotNull AbstractVarProjection<T, S> vp) {
-    List<S> tails = vp.polymorphicTails();
+  protected boolean isPrintoutEmpty(@NotNull VP vp) {
+    List<VP> tails = vp.polymorphicTails();
     if (tails != null && !tails.isEmpty()) return false;
     if (vp.type().kind() == TypeKind.UNION) return false; // non-samovar always prints something
 
-    for (T tagProjection : vp.tagProjections().values())
+    for (TP tagProjection : vp.tagProjections().values())
       if (!isPrintoutEmpty(tagProjection.projection())) return false;
 
     return true;

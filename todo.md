@@ -30,6 +30,7 @@
 - [ ] ***see `operations.esc`, bring java classes in sync***
 - [ ] var projection: add `@Nullable getPathTagProjection`. Same for records and maps
 - [ ] unify tag/model projections?
+- [ ] remove default tags from op projections. If var type has default tag (in schema), and operation can build this tag -- then it becomes an implicit default
 
 # Operations  
 - [ ] ***see `operations.esc`, restructure operations accordingly***

@@ -13,23 +13,24 @@ import java.util.Objects;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public abstract class OpOutputModelProjection<M extends DatumType> extends AbstractModelProjection<M> {
+public abstract class OpOutputModelProjection<
+    MP extends OpOutputModelProjection</*MP*/?, M>,
+    M extends DatumType
+    > extends AbstractModelProjection<MP, M> {
   protected final boolean includeInDefault;
   @Nullable
   protected final OpParams params;
-  @Nullable
-  protected final OpOutputModelProjection<?> metaProjection;
 
-  public OpOutputModelProjection(@NotNull M model,
-                                 boolean includeInDefault,
-                                 @Nullable OpParams params,
-                                 @Nullable Annotations annotations,
-                                 @Nullable OpOutputModelProjection<?> metaProjection,
-                                 @NotNull TextLocation location) {
-    super(model, annotations, location);
+  public OpOutputModelProjection(
+      @NotNull M model,
+      boolean includeInDefault,
+      @Nullable OpParams params,
+      @Nullable Annotations annotations,
+      @Nullable MP metaProjection,
+      @NotNull TextLocation location) {
+    super(model, metaProjection, annotations, location);
     this.includeInDefault = includeInDefault;
     this.params = params;
-    this.metaProjection = metaProjection;
   }
 
   public boolean includeInDefault() { return includeInDefault; }
@@ -37,22 +38,18 @@ public abstract class OpOutputModelProjection<M extends DatumType> extends Abstr
   @Nullable
   public OpParams params() { return params; }
 
-  @Nullable
-  public OpOutputModelProjection<?> metaProjection() { return metaProjection; }
-
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     if (!super.equals(o)) return false;
-    OpOutputModelProjection<?> that = (OpOutputModelProjection<?>) o;
+    OpOutputModelProjection<?, ?> that = (OpOutputModelProjection<?, ?>) o;
     return includeInDefault == that.includeInDefault &&
-           Objects.equals(params, that.params) &&
-           Objects.equals(metaProjection, that.metaProjection);
+           Objects.equals(params, that.params);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(super.hashCode(), includeInDefault, params, metaProjection);
+    return Objects.hash(super.hashCode(), includeInDefault, params);
   }
 }

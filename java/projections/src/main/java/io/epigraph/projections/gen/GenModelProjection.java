@@ -9,13 +9,11 @@ import org.jetbrains.annotations.Nullable;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public interface GenModelProjection<M extends DatumType, PD, MD, FD> {
+public interface GenModelProjection<MP extends GenModelProjection</*MP*/?, ?>, M extends DatumType> {
 
   @NotNull M model();
 
-  @Nullable MD modelData();
-
-  @Nullable PD params();
+  @Nullable MP metaProjection();
 
   @Nullable Annotations annotations();
 

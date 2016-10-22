@@ -13,28 +13,26 @@ import java.util.Objects;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public abstract class OpInputModelProjection<M extends DatumType, D extends Datum>
-    extends AbstractModelProjection<M> {
+public abstract class OpInputModelProjection<
+    MP extends OpInputModelProjection</*MP*/?, M, D>,
+    M extends DatumType,
+    D extends Datum>
+    extends AbstractModelProjection<MP, M> {
 
   protected final boolean required;
   @Nullable
   protected final D defaultValue;
-  @Nullable
-  protected final Annotations annotations;
-  @Nullable
-  protected final OpInputModelProjection<?, ?> metaProjection;
 
-  public OpInputModelProjection(@NotNull M model,
-                                boolean required,
-                                @Nullable D defaultValue,
-                                @Nullable Annotations annotations,
-                                @Nullable OpInputModelProjection<?, ?> metaProjection,
-                                @NotNull TextLocation location) {
-    super(model, annotations, location);
+  public OpInputModelProjection(
+      @NotNull M model,
+      boolean required,
+      @Nullable D defaultValue,
+      @Nullable Annotations annotations,
+      @Nullable MP metaProjection,
+      @NotNull TextLocation location) {
+    super(model, metaProjection, annotations, location);
     this.required = required;
     this.defaultValue = defaultValue;
-    this.annotations = annotations;
-    this.metaProjection = metaProjection;
   }
 
   public boolean required() { return required; }
@@ -42,26 +40,17 @@ public abstract class OpInputModelProjection<M extends DatumType, D extends Datu
   @Nullable
   public D defaultValue() { return defaultValue; }
 
-  @Nullable
-  public Annotations annotations() { return annotations; }
-
-  @Nullable
-  public OpInputModelProjection<?, ?> metaProjection() { return metaProjection; }
-
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     if (!super.equals(o)) return false;
-    OpInputModelProjection<?, ?> that = (OpInputModelProjection<?, ?>) o;
-    return required == that.required &&
-           Objects.equals(defaultValue, that.defaultValue) &&
-           Objects.equals(annotations, that.annotations) &&
-           Objects.equals(metaProjection, that.metaProjection);
+    OpInputModelProjection<?, ?, ?> that = (OpInputModelProjection<?, ?, ?>) o;
+    return required == that.required && Objects.equals(defaultValue, that.defaultValue);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(super.hashCode(), required, defaultValue, annotations, metaProjection);
+    return Objects.hash(super.hashCode(), required, defaultValue);
   }
 }
