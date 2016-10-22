@@ -52,7 +52,8 @@ public class ReqOutputMapModelProjection
   @Nullable
   public List<ReqOutputKeyProjection> keys() { return keys; }
 
-  public boolean keysRequired() { return keysRequired; } // FIXME what's the meaning of this? If the caller would be upset in case some of the case are missing or not
+  /** Whether it's an error if requested key is missing. TODO: what do we do if this happens? do we need this at all? */
+  public boolean keysRequired() { return keysRequired; }
 
   @Override
   public boolean equals(Object o) {
