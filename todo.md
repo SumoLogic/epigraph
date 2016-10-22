@@ -9,6 +9,7 @@
 - [ ] Enums
 - [ ] Rename Data/Var/Union type to some common name
 - [ ] Restrict map keys to exact declared type only (throw runtime exception - no static checks unfortunately, unless we introduce yet another data flavor that doesn't inherit from supertypes)
+  - [ ] Alternatively, define equals for map keys to be declared type-scoped only, implement with wrapper over keys.
 
 # Schema compiler
 - [ ] Annotations support. Should they be inherited? Annotations on annotations?

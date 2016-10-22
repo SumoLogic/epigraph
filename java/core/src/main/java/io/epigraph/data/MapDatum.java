@@ -224,6 +224,7 @@ public interface MapDatum extends Datum {
         @Override
         public V put(K key, V value) {
           // FIXME we might have to restrict keys to exactly declared type only to ensure clients can properly parse these
+          // FIXME better, wrap keys in an object that computes equals and hashCode based on declared type properties only
           return map.put(mapType.keyType.checkAssignable(key), mapType.valueType.checkAssignable(value));
         }
 
