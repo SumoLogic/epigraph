@@ -6,8 +6,8 @@ import io.epigraph.types.Type;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -22,7 +22,7 @@ public class ReqOutputVarProjection extends AbstractVarProjection<
 
   public ReqOutputVarProjection(
       @NotNull Type type,
-      @NotNull LinkedHashMap<String, ReqOutputTagProjectionEntry> tagProjections,
+      @NotNull Map<String, ReqOutputTagProjectionEntry> tagProjections,
       @Nullable List<ReqOutputVarProjection> polymorphicTails,
       boolean parenthesized,
       @NotNull TextLocation location) {

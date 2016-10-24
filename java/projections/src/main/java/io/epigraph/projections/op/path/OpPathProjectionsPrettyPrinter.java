@@ -72,8 +72,6 @@ public class OpPathProjectionsPrettyPrinter<E extends Exception>
       print((OpPathRecordModelProjection) mp);
     else if (mp instanceof OpPathMapModelProjection)
       print((OpPathMapModelProjection) mp);
-    else if (mp instanceof OpPathListModelProjection)
-      print((OpPathListModelProjection) mp);
   }
 
   private void print(@NotNull OpPathRecordModelProjection mp) throws E {
@@ -140,13 +138,6 @@ public class OpPathProjectionsPrettyPrinter<E extends Exception>
     }
 
     l.print("(").brk();
-    print(mp.itemsProjection(), 0);
-    l.brk(1, -l.getDefaultIndentation()).end().print(")");
-  }
-
-  private void print(OpPathListModelProjection mp) throws E {
-    l.beginIInd();
-    l.print("*(").brk();
     print(mp.itemsProjection(), 0);
     l.brk(1, -l.getDefaultIndentation()).end().print(")");
   }
@@ -219,11 +210,6 @@ public class OpPathProjectionsPrettyPrinter<E extends Exception>
       if (!keyProjection.annotations().isEmpty()) return false;
 
       return isPrintoutEmpty(mapModelProjection.itemsProjection());
-    }
-
-    if (mp instanceof OpPathListModelProjection) {
-      OpPathListModelProjection pathListModelProjection = (OpPathListModelProjection) mp;
-      return isPrintoutEmpty(pathListModelProjection.itemsProjection());
     }
 
     return true;
