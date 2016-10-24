@@ -25,7 +25,7 @@ public interface GenVarProjection<
    * @return single tag if there's just one; {@code null} otherwise
    */
   @Nullable
-  default GenTagProjectionEntry pathTagProjection() throws IllegalStateException {
+  default GenTagProjectionEntry pathTagProjection() {
     @NotNull final LinkedHashMap<String, TP> tagProjections = tagProjections();
     if (tagProjections.size() == 1) return tagProjections.values().iterator().next();
     else return null;

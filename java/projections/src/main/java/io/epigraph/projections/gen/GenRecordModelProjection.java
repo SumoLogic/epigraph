@@ -25,7 +25,7 @@ public interface GenRecordModelProjection<
    * @return single field projection if there's just one, {@code null} otherwise
    */
   @Nullable
-  default FPE pathFieldProjection() throws IllegalStateException {
+  default FPE pathFieldProjection() {
     @NotNull final Map<String, FPE> fieldProjections = fieldProjections();
     if (fieldProjections.size() == 1) return fieldProjections.values().iterator().next();
     else return null;
