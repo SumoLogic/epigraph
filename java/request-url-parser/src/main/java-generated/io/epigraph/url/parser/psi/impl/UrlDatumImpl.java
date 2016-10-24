@@ -11,7 +11,7 @@ import static io.epigraph.url.lexer.UrlElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import io.epigraph.url.parser.psi.*;
 
-public class UrlDatumImpl extends ASTWrapperPsiElement implements UrlDatum {
+public abstract class UrlDatumImpl extends ASTWrapperPsiElement implements UrlDatum {
 
   public UrlDatumImpl(ASTNode node) {
     super(node);

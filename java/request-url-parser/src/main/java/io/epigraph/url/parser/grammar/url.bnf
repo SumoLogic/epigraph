@@ -146,7 +146,7 @@ reqOutputTrunkRecordModelProjection ::= '/' '+'? qid reqOutputTrunkFieldProjecti
 reqOutputTrunkFieldProjection ::= reqParamsAndAnnotations reqOutputTrunkVarProjection
 
 reqOutputTrunkMapModelProjection ::= '/' reqOutputTrunkKeyProjection
-private reqOutputTrunkKeyProjection ::= '+'? datum reqParamsAndAnnotations reqOutputTrunkVarProjection {pin=2}
+private reqOutputTrunkKeyProjection ::= datum reqParamsAndAnnotations reqOutputTrunkVarProjection {pin=2}
 
 // req output coma part
 
@@ -171,7 +171,7 @@ reqOutputComaListModelProjection ::= '*' ( '(' reqOutputComaVarProjection ')' )?
 
 // req output map
 reqOutputComaMapModelProjection ::= reqOutputComaKeysProjection ( '(' reqOutputComaVarProjection ')' )?
-reqOutputComaKeysProjection ::= ( '+'? ( '[' ( reqOutputComaKeyProjection ','? )* ']' ) | ( '[' '*' ']' ) )
+reqOutputComaKeysProjection ::= ( ( '[' ( reqOutputComaKeyProjection ','? )* ']' ) | ( '[' '*' ']' ) )
 reqOutputComaKeyProjection ::= datum reqParamsAndAnnotations
 
 // ============= data language =============

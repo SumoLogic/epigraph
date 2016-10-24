@@ -114,9 +114,6 @@ public interface UrlElementTypes {
       else if (type == U_DATA_VALUE) {
         return new UrlDataValueImpl(node);
       }
-      else if (type == U_DATUM) {
-        return new UrlDatumImpl(node);
-      }
       else if (type == U_DEFAULT_OVERRIDE) {
         return new UrlDefaultOverrideImpl(node);
       }
@@ -233,9 +230,6 @@ public interface UrlElementTypes {
       }
       else if (type == U_TAG_NAME) {
         return new UrlTagNameImpl(node);
-      }
-      else if (type == U_TYPE_REF) {
-        return new UrlTypeRefImpl(node);
       }
       else if (type == U_URL) {
         return new UrlUrlImpl(node);

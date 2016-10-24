@@ -118,7 +118,7 @@ public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
       l.beginIInd();
       l.print("/").brk();
 
-      if (mp.keysRequired()) l.print("+");
+//      if (mp.keysRequired()) l.print("+");
 
       if (keys != null && keys.size() == 1) {
         ReqOutputKeyProjection key = keys.iterator().next();
@@ -139,7 +139,7 @@ public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
       l.end();
     } else {
       l.beginIInd();
-      if (mp.keysRequired()) l.print("+");
+//      if (mp.keysRequired()) l.print("+");
       l.print("[").brk();
 
       if (keys == null) {

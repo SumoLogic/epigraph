@@ -740,74 +740,56 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '+'? ( '[' ( reqOutputComaKeyProjection ','? )* ']' ) | ( '[' '*' ']' )
+  // ( '[' ( reqOutputComaKeyProjection ','? )* ']' ) | ( '[' '*' ']' )
   public static boolean reqOutputComaKeysProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqOutputComaKeysProjection")) return false;
-    if (!nextTokenIs(b, "<req output coma keys projection>", U_PLUS, U_BRACKET_LEFT)) return false;
+    if (!nextTokenIs(b, U_BRACKET_LEFT)) return false;
     boolean r;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_OUTPUT_COMA_KEYS_PROJECTION, "<req output coma keys projection>");
+    Marker m = enter_section_(b);
     r = reqOutputComaKeysProjection_0(b, l + 1);
     if (!r) r = reqOutputComaKeysProjection_1(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
+    exit_section_(b, m, U_REQ_OUTPUT_COMA_KEYS_PROJECTION, r);
     return r;
   }
 
-  // '+'? ( '[' ( reqOutputComaKeyProjection ','? )* ']' )
+  // '[' ( reqOutputComaKeyProjection ','? )* ']'
   private static boolean reqOutputComaKeysProjection_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqOutputComaKeysProjection_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = reqOutputComaKeysProjection_0_0(b, l + 1);
-    r = r && reqOutputComaKeysProjection_0_1(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // '+'?
-  private static boolean reqOutputComaKeysProjection_0_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputComaKeysProjection_0_0")) return false;
-    consumeToken(b, U_PLUS);
-    return true;
-  }
-
-  // '[' ( reqOutputComaKeyProjection ','? )* ']'
-  private static boolean reqOutputComaKeysProjection_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputComaKeysProjection_0_1")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
     r = consumeToken(b, U_BRACKET_LEFT);
-    r = r && reqOutputComaKeysProjection_0_1_1(b, l + 1);
+    r = r && reqOutputComaKeysProjection_0_1(b, l + 1);
     r = r && consumeToken(b, U_BRACKET_RIGHT);
     exit_section_(b, m, null, r);
     return r;
   }
 
   // ( reqOutputComaKeyProjection ','? )*
-  private static boolean reqOutputComaKeysProjection_0_1_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputComaKeysProjection_0_1_1")) return false;
+  private static boolean reqOutputComaKeysProjection_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqOutputComaKeysProjection_0_1")) return false;
     int c = current_position_(b);
     while (true) {
-      if (!reqOutputComaKeysProjection_0_1_1_0(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "reqOutputComaKeysProjection_0_1_1", c)) break;
+      if (!reqOutputComaKeysProjection_0_1_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "reqOutputComaKeysProjection_0_1", c)) break;
       c = current_position_(b);
     }
     return true;
   }
 
   // reqOutputComaKeyProjection ','?
-  private static boolean reqOutputComaKeysProjection_0_1_1_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputComaKeysProjection_0_1_1_0")) return false;
+  private static boolean reqOutputComaKeysProjection_0_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqOutputComaKeysProjection_0_1_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = reqOutputComaKeyProjection(b, l + 1);
-    r = r && reqOutputComaKeysProjection_0_1_1_0_1(b, l + 1);
+    r = r && reqOutputComaKeysProjection_0_1_0_1(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
   // ','?
-  private static boolean reqOutputComaKeysProjection_0_1_1_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputComaKeysProjection_0_1_1_0_1")) return false;
+  private static boolean reqOutputComaKeysProjection_0_1_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqOutputComaKeysProjection_0_1_0_1")) return false;
     consumeToken(b, U_COMMA);
     return true;
   }
@@ -861,12 +843,12 @@ public class UrlParser implements PsiParser, LightPsiParser {
   // reqOutputComaKeysProjection ( '(' reqOutputComaVarProjection ')' )?
   public static boolean reqOutputComaMapModelProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqOutputComaMapModelProjection")) return false;
-    if (!nextTokenIs(b, "<req output coma map model projection>", U_PLUS, U_BRACKET_LEFT)) return false;
+    if (!nextTokenIs(b, U_BRACKET_LEFT)) return false;
     boolean r;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_OUTPUT_COMA_MAP_MODEL_PROJECTION, "<req output coma map model projection>");
+    Marker m = enter_section_(b);
     r = reqOutputComaKeysProjection(b, l + 1);
     r = r && reqOutputComaMapModelProjection_1(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
+    exit_section_(b, m, U_REQ_OUTPUT_COMA_MAP_MODEL_PROJECTION, r);
     return r;
   }
 
@@ -1150,25 +1132,17 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '+'? datum reqParamsAndAnnotations reqOutputTrunkVarProjection
+  // datum reqParamsAndAnnotations reqOutputTrunkVarProjection
   static boolean reqOutputTrunkKeyProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqOutputTrunkKeyProjection")) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_);
-    r = reqOutputTrunkKeyProjection_0(b, l + 1);
-    r = r && datum(b, l + 1);
+    r = datum(b, l + 1);
+    r = r && reqParamsAndAnnotations(b, l + 1);
     p = r; // pin = 2
-    r = r && report_error_(b, reqParamsAndAnnotations(b, l + 1));
-    r = p && reqOutputTrunkVarProjection(b, l + 1) && r;
+    r = r && reqOutputTrunkVarProjection(b, l + 1);
     exit_section_(b, l, m, r, p, null);
     return r || p;
-  }
-
-  // '+'?
-  private static boolean reqOutputTrunkKeyProjection_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputTrunkKeyProjection_0")) return false;
-    consumeToken(b, U_PLUS);
-    return true;
   }
 
   /* ********************************************************** */

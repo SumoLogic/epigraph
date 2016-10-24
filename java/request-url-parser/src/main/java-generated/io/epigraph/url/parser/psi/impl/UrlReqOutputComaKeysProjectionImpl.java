@@ -46,12 +46,6 @@ public class UrlReqOutputComaKeysProjectionImpl extends ASTWrapperPsiElement imp
 
   @Override
   @Nullable
-  public PsiElement getPlus() {
-    return findChildByType(U_PLUS);
-  }
-
-  @Override
-  @Nullable
   public PsiElement getStar() {
     return findChildByType(U_STAR);
   }

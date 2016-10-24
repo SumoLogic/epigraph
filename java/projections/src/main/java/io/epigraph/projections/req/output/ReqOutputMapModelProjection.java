@@ -26,7 +26,6 @@ public class ReqOutputMapModelProjection
 
   @Nullable
   private final List<ReqOutputKeyProjection> keys;
-  private final boolean keysRequired;
   @NotNull
   private final ReqOutputVarProjection valuesProjection;
 
@@ -37,12 +36,10 @@ public class ReqOutputMapModelProjection
       @NotNull Annotations annotations,
       @Nullable ReqOutputMapModelProjection metaProjection,
       @Nullable List<ReqOutputKeyProjection> keys,
-      boolean keysRequired,
       @NotNull ReqOutputVarProjection valuesProjection,
       @NotNull TextLocation location) {
     super(model, required, params, annotations, metaProjection, location);
     this.keys = keys;
-    this.keysRequired = keysRequired;
     this.valuesProjection = valuesProjection;
   }
 
@@ -52,20 +49,16 @@ public class ReqOutputMapModelProjection
   @Nullable
   public List<ReqOutputKeyProjection> keys() { return keys; }
 
-  /** Whether it's an error if requested key is missing. TODO: what do we do if this happens? do we need this at all? */
-  public boolean keysRequired() { return keysRequired; }
-
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     if (!super.equals(o)) return false;
     ReqOutputMapModelProjection that = (ReqOutputMapModelProjection) o;
-    return keysRequired == that.keysRequired &&
-           Objects.equals(keys, that.keys) &&
+    return Objects.equals(keys, that.keys) &&
            Objects.equals(valuesProjection, that.valuesProjection);
   }
 
   @Override
-  public int hashCode() { return Objects.hash(super.hashCode(), keys, keysRequired, valuesProjection); }
+  public int hashCode() { return Objects.hash(super.hashCode(), keys, valuesProjection); }
 }

@@ -11,7 +11,7 @@ import static io.epigraph.url.lexer.UrlElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import io.epigraph.url.parser.psi.*;
 
-public class UrlTypeRefImpl extends ASTWrapperPsiElement implements UrlTypeRef {
+public abstract class UrlTypeRefImpl extends ASTWrapperPsiElement implements UrlTypeRef {
 
   public UrlTypeRefImpl(ASTNode node) {
     super(node);

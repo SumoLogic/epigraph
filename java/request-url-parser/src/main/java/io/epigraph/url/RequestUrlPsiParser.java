@@ -883,7 +883,6 @@ public class RequestUrlPsiParser {
             annotations,
             null,
             null,
-            false,
             valueVarProjection,
             location
         );
@@ -1210,7 +1209,6 @@ public class RequestUrlPsiParser {
             annotations,
             metaProjection,
             Collections.singletonList(keyProjection),
-            psi.getPlus() != null,
             valueProjection,
             EpigraphPsiUtil.getLocation(psi)
         )
@@ -1287,7 +1285,6 @@ public class RequestUrlPsiParser {
             annotations,
             metaProjection,
             keyProjections,
-            keysProjectionPsi.getPlus() != null,
             valueProjection,
             EpigraphPsiUtil.getLocation(psi)
         )

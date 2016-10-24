@@ -78,12 +78,12 @@ public class UrlReqOutputProjectionsTest {
 
   @Test
   public void testParsePathMap() {
-    testParse(":record / friendsMap / +'John' ;keyParam = 'foo' :record ( +firstName )", 5);
+    testParse(":record / friendsMap / 'John' ;keyParam = 'foo' :record ( +firstName )", 5);
   }
 
   @Test
   public void testParseMap() {
-    testParse(":record / friendsMap +[ 'Alice', 'Bob' !sla = 100 ]( :id )", 3);
+    testParse(":record / friendsMap [ 'Alice', 'Bob' !sla = 100 ]( :id )", 3);
   }
 
   @Test

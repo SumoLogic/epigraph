@@ -19,9 +19,6 @@ public interface UrlReqOutputTrunkMapModelProjection extends PsiElement {
   @NotNull
   List<UrlReqParam> getReqParamList();
 
-  @Nullable
-  PsiElement getPlus();
-
   @NotNull
   PsiElement getSlash();
 
