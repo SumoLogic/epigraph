@@ -22,14 +22,13 @@ public interface GenVarProjection<
   @NotNull LinkedHashMap<String, TP> tagProjections();
 
   /**
-   * @throws IllegalStateException if there's more than one tag
+   * @return single tag if there's just one; {@code null} otherwise
    */
   @Nullable
   default GenTagProjectionEntry pathTagProjection() throws IllegalStateException {
     @NotNull final LinkedHashMap<String, TP> tagProjections = tagProjections();
-    if (tagProjections.isEmpty()) return null;
-    if (tagProjections.size() > 1) throw new IllegalStateException();
-    return tagProjections.values().iterator().next();
+    if (tagProjections.size() == 1) return tagProjections.values().iterator().next();
+    else return null;
   }
 
   @Nullable List<VP> polymorphicTails();

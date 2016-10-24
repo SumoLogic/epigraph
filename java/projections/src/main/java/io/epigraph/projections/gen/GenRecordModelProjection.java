@@ -22,13 +22,12 @@ public interface GenRecordModelProjection<
   @NotNull Map<String, FPE> fieldProjections();
 
   /**
-   * @throws IllegalStateException if there's more than one field
+   * @return single field projection if there's just one, {@code null} otherwise
    */
   @Nullable
   default FPE pathFieldProjection() throws IllegalStateException {
     @NotNull final Map<String, FPE> fieldProjections = fieldProjections();
-    if (fieldProjections.isEmpty()) return null;
-    if (fieldProjections.size() > 1) throw new IllegalStateException();
-    return fieldProjections.values().iterator().next();
+    if (fieldProjections.size() == 1) return fieldProjections.values().iterator().next();
+    else return null;
   }
 }
