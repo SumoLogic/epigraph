@@ -51,7 +51,7 @@ public abstract class AbstractProjectionsPrettyPrinter<
     try {
       varsStack.push(p);
 
-      LinkedHashMap<String, TP> tagProjections = p.tagProjections();
+      Map<String, TP> tagProjections = p.tagProjections();
 
       if (p.type().kind() != TypeKind.UNION) {
         // samovar

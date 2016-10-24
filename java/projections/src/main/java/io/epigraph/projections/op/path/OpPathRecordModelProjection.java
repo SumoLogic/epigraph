@@ -1,4 +1,4 @@
-package io.epigraph.projections.op.output;
+package io.epigraph.projections.op.path;
 
 import io.epigraph.lang.TextLocation;
 import io.epigraph.projections.Annotations;
@@ -14,50 +14,52 @@ import java.util.*;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class OpOutputRecordModelProjection
-    extends OpOutputModelProjection<OpOutputRecordModelProjection, RecordType>
+public class OpPathRecordModelProjection
+    extends OpPathModelProjection<OpPathRecordModelProjection, RecordType>
     implements GenRecordModelProjection<
-    OpOutputVarProjection,
-    OpOutputTagProjectionEntry,
-    OpOutputModelProjection<?, ?>,
-    OpOutputRecordModelProjection,
-    OpOutputFieldProjectionEntry,
-    OpOutputFieldProjection,
+    OpPathVarProjection,
+    OpPathTagProjectionEntry,
+    OpPathModelProjection<?, ?>,
+    OpPathRecordModelProjection,
+    OpPathFieldProjectionEntry,
+    OpPathFieldProjection,
     RecordType
     > {
 
   private static final
-  ThreadLocal<IdentityHashMap<OpOutputRecordModelProjection, OpOutputRecordModelProjection>> equalsVisited =
+  ThreadLocal<IdentityHashMap<OpPathRecordModelProjection, OpPathRecordModelProjection>> equalsVisited =
       new ThreadLocal<>();
 
   @NotNull
-  private Map<String, OpOutputFieldProjectionEntry> fieldProjections;
+  private Map<String, OpPathFieldProjectionEntry> fieldProjections;
 
-  public OpOutputRecordModelProjection(
+  public OpPathRecordModelProjection(
       @NotNull RecordType model,
-      boolean includeInDefault,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
-      @Nullable OpOutputRecordModelProjection metaProjection,
-      @NotNull Map<String, OpOutputFieldProjectionEntry> fieldProjections,
+      @Nullable OpPathRecordModelProjection metaProjection,
+      @Nullable OpPathFieldProjectionEntry fieldProjection,
       @NotNull TextLocation location) {
-    super(model, includeInDefault, params, annotations, metaProjection, location);
-    this.fieldProjections = fieldProjections;
+    super(model, params, annotations, metaProjection, location);
+
+    this.fieldProjections = fieldProjection == null ?
+                            Collections.emptyMap() :
+                            Collections.singletonMap(fieldProjection.field().name(), fieldProjection);
 
     ProjectionUtils.checkFieldsBelongsToModel(fieldProjections.keySet(), model);
   }
 
   @NotNull
-  public Map<String, OpOutputFieldProjectionEntry> fieldProjections() { return fieldProjections; }
+  public Map<String, OpPathFieldProjectionEntry> fieldProjections() { return fieldProjections; }
 
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     if (!super.equals(o)) return false;
-    OpOutputRecordModelProjection that = (OpOutputRecordModelProjection) o;
+    OpPathRecordModelProjection that = (OpPathRecordModelProjection) o;
 
-    IdentityHashMap<OpOutputRecordModelProjection, OpOutputRecordModelProjection> visitedMap = equalsVisited.get();
+    IdentityHashMap<OpPathRecordModelProjection, OpPathRecordModelProjection> visitedMap = equalsVisited.get();
     boolean mapWasNull = visitedMap == null;
     if (mapWasNull) {
       visitedMap = new IdentityHashMap<>();

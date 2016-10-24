@@ -8,8 +8,8 @@ import io.epigraph.types.Type;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -24,7 +24,7 @@ public abstract class AbstractVarProjection<
   @NotNull
   private final Type type;
   @NotNull
-  private final LinkedHashMap<String, TP> tagProjections;
+  private final Map<String, TP> tagProjections;
   @Nullable
   private final List<VP> polymorphicTails;
 
@@ -34,7 +34,7 @@ public abstract class AbstractVarProjection<
 
   public AbstractVarProjection(
       @NotNull Type type,
-      @NotNull LinkedHashMap<String, TP> tagProjections,
+      @NotNull Map<String, TP> tagProjections,
       @Nullable List<VP> polymorphicTails,
       @NotNull TextLocation location) {
     this.type = type;
@@ -50,7 +50,7 @@ public abstract class AbstractVarProjection<
   public Type type() { return type; }
 
   @NotNull
-  public LinkedHashMap<String, TP> tagProjections() { return tagProjections; }
+  public Map<String, TP> tagProjections() { return tagProjections; }
 
   @Nullable
   public TP tagProjection(@NotNull String tagName) { return tagProjections.get(tagName); }

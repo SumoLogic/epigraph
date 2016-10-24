@@ -589,7 +589,7 @@ public class RequestUrlPsiParser {
       return Collections.singletonList(self);
     }
 
-    final LinkedHashMap<String, OpOutputTagProjectionEntry> opTagProjections = op.tagProjections();
+    final Map<String, OpOutputTagProjectionEntry> opTagProjections = op.tagProjections();
 
     List<Type.Tag> defaultTags = new ArrayList<>(opTagProjections.size());
     for (Map.Entry<String, OpOutputTagProjectionEntry> entry : opTagProjections.entrySet()) {
