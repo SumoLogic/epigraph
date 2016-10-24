@@ -11,7 +11,7 @@ import static io.epigraph.idl.lexer.IdlElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import io.epigraph.idl.parser.psi.*;
 
-public class IdlTypeRefImpl extends ASTWrapperPsiElement implements IdlTypeRef {
+public abstract class IdlTypeRefImpl extends ASTWrapperPsiElement implements IdlTypeRef {
 
   public IdlTypeRefImpl(ASTNode node) {
     super(node);

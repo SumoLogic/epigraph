@@ -83,30 +83,6 @@ public interface IdlElementTypes {
   IElementType I_READ_OPERATION_DEF = new IdlElementType("I_READ_OPERATION_DEF");
   IElementType I_RECORD_DATUM = new IdlElementType("I_RECORD_DATUM");
   IElementType I_RECORD_DATUM_ENTRY = new IdlElementType("I_RECORD_DATUM_ENTRY");
-  IElementType I_REQ_ANNOTATION = new IdlElementType("I_REQ_ANNOTATION");
-  IElementType I_REQ_OUTPUT_COMA_FIELD_PROJECTION = new IdlElementType("I_REQ_OUTPUT_COMA_FIELD_PROJECTION");
-  IElementType I_REQ_OUTPUT_COMA_KEYS_PROJECTION = new IdlElementType("I_REQ_OUTPUT_COMA_KEYS_PROJECTION");
-  IElementType I_REQ_OUTPUT_COMA_KEY_PROJECTION = new IdlElementType("I_REQ_OUTPUT_COMA_KEY_PROJECTION");
-  IElementType I_REQ_OUTPUT_COMA_LIST_MODEL_PROJECTION = new IdlElementType("I_REQ_OUTPUT_COMA_LIST_MODEL_PROJECTION");
-  IElementType I_REQ_OUTPUT_COMA_MAP_MODEL_PROJECTION = new IdlElementType("I_REQ_OUTPUT_COMA_MAP_MODEL_PROJECTION");
-  IElementType I_REQ_OUTPUT_COMA_MODEL_PROJECTION = new IdlElementType("I_REQ_OUTPUT_COMA_MODEL_PROJECTION");
-  IElementType I_REQ_OUTPUT_COMA_MULTI_TAG_PROJECTION = new IdlElementType("I_REQ_OUTPUT_COMA_MULTI_TAG_PROJECTION");
-  IElementType I_REQ_OUTPUT_COMA_MULTI_TAG_PROJECTION_ITEM = new IdlElementType("I_REQ_OUTPUT_COMA_MULTI_TAG_PROJECTION_ITEM");
-  IElementType I_REQ_OUTPUT_COMA_RECORD_MODEL_PROJECTION = new IdlElementType("I_REQ_OUTPUT_COMA_RECORD_MODEL_PROJECTION");
-  IElementType I_REQ_OUTPUT_COMA_SINGLE_TAG_PROJECTION = new IdlElementType("I_REQ_OUTPUT_COMA_SINGLE_TAG_PROJECTION");
-  IElementType I_REQ_OUTPUT_COMA_VAR_PROJECTION = new IdlElementType("I_REQ_OUTPUT_COMA_VAR_PROJECTION");
-  IElementType I_REQ_OUTPUT_MODEL_META = new IdlElementType("I_REQ_OUTPUT_MODEL_META");
-  IElementType I_REQ_OUTPUT_TRUNK_FIELD_PROJECTION = new IdlElementType("I_REQ_OUTPUT_TRUNK_FIELD_PROJECTION");
-  IElementType I_REQ_OUTPUT_TRUNK_MAP_MODEL_PROJECTION = new IdlElementType("I_REQ_OUTPUT_TRUNK_MAP_MODEL_PROJECTION");
-  IElementType I_REQ_OUTPUT_TRUNK_MODEL_PROJECTION = new IdlElementType("I_REQ_OUTPUT_TRUNK_MODEL_PROJECTION");
-  IElementType I_REQ_OUTPUT_TRUNK_RECORD_MODEL_PROJECTION = new IdlElementType("I_REQ_OUTPUT_TRUNK_RECORD_MODEL_PROJECTION");
-  IElementType I_REQ_OUTPUT_TRUNK_SINGLE_TAG_PROJECTION = new IdlElementType("I_REQ_OUTPUT_TRUNK_SINGLE_TAG_PROJECTION");
-  IElementType I_REQ_OUTPUT_TRUNK_VAR_PROJECTION = new IdlElementType("I_REQ_OUTPUT_TRUNK_VAR_PROJECTION");
-  IElementType I_REQ_OUTPUT_VAR_MULTI_TAIL = new IdlElementType("I_REQ_OUTPUT_VAR_MULTI_TAIL");
-  IElementType I_REQ_OUTPUT_VAR_MULTI_TAIL_ITEM = new IdlElementType("I_REQ_OUTPUT_VAR_MULTI_TAIL_ITEM");
-  IElementType I_REQ_OUTPUT_VAR_POLYMORPHIC_TAIL = new IdlElementType("I_REQ_OUTPUT_VAR_POLYMORPHIC_TAIL");
-  IElementType I_REQ_OUTPUT_VAR_SINGLE_TAIL = new IdlElementType("I_REQ_OUTPUT_VAR_SINGLE_TAIL");
-  IElementType I_REQ_PARAM = new IdlElementType("I_REQ_PARAM");
   IElementType I_RESOURCE_DEF = new IdlElementType("I_RESOURCE_DEF");
   IElementType I_RESOURCE_TYPE = new IdlElementType("I_RESOURCE_TYPE");
   IElementType I_TAG_NAME = new IdlElementType("I_TAG_NAME");
@@ -193,9 +169,6 @@ public interface IdlElementTypes {
       }
       else if (type == I_DATA_VALUE) {
         return new IdlDataValueImpl(node);
-      }
-      else if (type == I_DATUM) {
-        return new IdlDatumImpl(node);
       }
       else if (type == I_DEFAULT_OVERRIDE) {
         return new IdlDefaultOverrideImpl(node);
@@ -389,78 +362,6 @@ public interface IdlElementTypes {
       else if (type == I_RECORD_DATUM_ENTRY) {
         return new IdlRecordDatumEntryImpl(node);
       }
-      else if (type == I_REQ_ANNOTATION) {
-        return new IdlReqAnnotationImpl(node);
-      }
-      else if (type == I_REQ_OUTPUT_COMA_FIELD_PROJECTION) {
-        return new IdlReqOutputComaFieldProjectionImpl(node);
-      }
-      else if (type == I_REQ_OUTPUT_COMA_KEYS_PROJECTION) {
-        return new IdlReqOutputComaKeysProjectionImpl(node);
-      }
-      else if (type == I_REQ_OUTPUT_COMA_KEY_PROJECTION) {
-        return new IdlReqOutputComaKeyProjectionImpl(node);
-      }
-      else if (type == I_REQ_OUTPUT_COMA_LIST_MODEL_PROJECTION) {
-        return new IdlReqOutputComaListModelProjectionImpl(node);
-      }
-      else if (type == I_REQ_OUTPUT_COMA_MAP_MODEL_PROJECTION) {
-        return new IdlReqOutputComaMapModelProjectionImpl(node);
-      }
-      else if (type == I_REQ_OUTPUT_COMA_MODEL_PROJECTION) {
-        return new IdlReqOutputComaModelProjectionImpl(node);
-      }
-      else if (type == I_REQ_OUTPUT_COMA_MULTI_TAG_PROJECTION) {
-        return new IdlReqOutputComaMultiTagProjectionImpl(node);
-      }
-      else if (type == I_REQ_OUTPUT_COMA_MULTI_TAG_PROJECTION_ITEM) {
-        return new IdlReqOutputComaMultiTagProjectionItemImpl(node);
-      }
-      else if (type == I_REQ_OUTPUT_COMA_RECORD_MODEL_PROJECTION) {
-        return new IdlReqOutputComaRecordModelProjectionImpl(node);
-      }
-      else if (type == I_REQ_OUTPUT_COMA_SINGLE_TAG_PROJECTION) {
-        return new IdlReqOutputComaSingleTagProjectionImpl(node);
-      }
-      else if (type == I_REQ_OUTPUT_COMA_VAR_PROJECTION) {
-        return new IdlReqOutputComaVarProjectionImpl(node);
-      }
-      else if (type == I_REQ_OUTPUT_MODEL_META) {
-        return new IdlReqOutputModelMetaImpl(node);
-      }
-      else if (type == I_REQ_OUTPUT_TRUNK_FIELD_PROJECTION) {
-        return new IdlReqOutputTrunkFieldProjectionImpl(node);
-      }
-      else if (type == I_REQ_OUTPUT_TRUNK_MAP_MODEL_PROJECTION) {
-        return new IdlReqOutputTrunkMapModelProjectionImpl(node);
-      }
-      else if (type == I_REQ_OUTPUT_TRUNK_MODEL_PROJECTION) {
-        return new IdlReqOutputTrunkModelProjectionImpl(node);
-      }
-      else if (type == I_REQ_OUTPUT_TRUNK_RECORD_MODEL_PROJECTION) {
-        return new IdlReqOutputTrunkRecordModelProjectionImpl(node);
-      }
-      else if (type == I_REQ_OUTPUT_TRUNK_SINGLE_TAG_PROJECTION) {
-        return new IdlReqOutputTrunkSingleTagProjectionImpl(node);
-      }
-      else if (type == I_REQ_OUTPUT_TRUNK_VAR_PROJECTION) {
-        return new IdlReqOutputTrunkVarProjectionImpl(node);
-      }
-      else if (type == I_REQ_OUTPUT_VAR_MULTI_TAIL) {
-        return new IdlReqOutputVarMultiTailImpl(node);
-      }
-      else if (type == I_REQ_OUTPUT_VAR_MULTI_TAIL_ITEM) {
-        return new IdlReqOutputVarMultiTailItemImpl(node);
-      }
-      else if (type == I_REQ_OUTPUT_VAR_POLYMORPHIC_TAIL) {
-        return new IdlReqOutputVarPolymorphicTailImpl(node);
-      }
-      else if (type == I_REQ_OUTPUT_VAR_SINGLE_TAIL) {
-        return new IdlReqOutputVarSingleTailImpl(node);
-      }
-      else if (type == I_REQ_PARAM) {
-        return new IdlReqParamImpl(node);
-      }
       else if (type == I_RESOURCE_DEF) {
         return new IdlResourceDefImpl(node);
       }
@@ -469,9 +370,6 @@ public interface IdlElementTypes {
       }
       else if (type == I_TAG_NAME) {
         return new IdlTagNameImpl(node);
-      }
-      else if (type == I_TYPE_REF) {
-        return new IdlTypeRefImpl(node);
       }
       else if (type == I_UPDATE_OPERATION_BODY_PART) {
         return new IdlUpdateOperationBodyPartImpl(node);

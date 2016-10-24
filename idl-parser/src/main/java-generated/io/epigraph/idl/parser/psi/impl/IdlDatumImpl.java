@@ -11,7 +11,7 @@ import static io.epigraph.idl.lexer.IdlElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import io.epigraph.idl.parser.psi.*;
 
-public class IdlDatumImpl extends ASTWrapperPsiElement implements IdlDatum {
+public abstract class IdlDatumImpl extends ASTWrapperPsiElement implements IdlDatum {
 
   public IdlDatumImpl(ASTNode node) {
     super(node);
