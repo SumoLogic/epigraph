@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
@@ -14,8 +15,15 @@ import java.util.stream.Collectors;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class Annotations {
+  public static final Annotations EMPTY = new Annotations(Collections.emptyMap());
+
   @NotNull
   private final Map<String, Annotation> entries;
+
+  @NotNull
+  public static Annotations fromMap(@Nullable Map<String, Annotation> entries) {
+    return entries == null ? EMPTY : new Annotations(entries);
+  }
 
   public Annotations(@NotNull Map<String, Annotation> entries) {this.entries = entries;}
 

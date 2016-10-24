@@ -9,7 +9,6 @@ import io.epigraph.projections.op.OpParams;
 import io.epigraph.projections.op.input.OpInputModelProjection;
 import io.epigraph.projections.op.input.OpInputProjectionsPrettyPrinter;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
@@ -34,7 +33,7 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception>
     OpParams params = projection.params();
     Annotations annotations = projection.annotations();
 
-    if (params == null && annotations == null) {
+    if (params.isEmpty() && annotations.isEmpty()) {
       l.beginCInd();
       if (projection.includeInDefault()) l.print("+");
       l.print(tagName);
@@ -51,8 +50,8 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception>
       l.print(tagName);
       l.print(" {");
 
-      if (params != null) print(params);
-      if (annotations != null) print(annotations);
+      if (!params.isEmpty()) print(params);
+      if (!annotations.isEmpty()) print(annotations);
 
       if (metaProjection != null) {
         l.brk().beginIInd(0).print("meta:").brk();
@@ -92,10 +91,10 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception>
       @NotNull String fieldName = entry.getKey();
       @NotNull OpOutputFieldProjection fieldProjection = entry.getValue().projection();
       @NotNull OpOutputVarProjection fieldVarProjection = fieldProjection.projection();
-      @Nullable OpParams fieldParams = fieldProjection.params();
-      @Nullable Annotations fieldAnnotations = fieldProjection.annotations();
+      @NotNull OpParams fieldParams = fieldProjection.params();
+      @NotNull Annotations fieldAnnotations = fieldProjection.annotations();
 
-      if (fieldParams == null && fieldAnnotations == null) {
+      if (fieldParams.isEmpty() && fieldAnnotations.isEmpty()) {
         l.beginIInd();
         if (fieldProjection.includeInDefault()) l.print("+");
         l.print(fieldName);
@@ -109,8 +108,8 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception>
         if (fieldProjection.includeInDefault()) l.print("+");
         l.print(fieldName);
         l.print(" {");
-        if (fieldParams != null) print(fieldParams);
-        if (fieldAnnotations != null) print(fieldAnnotations);
+        if (!fieldParams.isEmpty()) print(fieldParams);
+        if (!fieldAnnotations.isEmpty()) print(fieldAnnotations);
         if (!isPrintoutEmpty(fieldVarProjection)) {
           l.brk();
           print(fieldVarProjection, 0);
@@ -143,14 +142,14 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception>
         commaNeeded = true;
       }
 
-      @Nullable OpParams keyParams = keyProjection.params();
-      if (keyParams != null) {
+      @NotNull OpParams keyParams = keyProjection.params();
+      if (!keyParams.isEmpty()) {
         print(keyParams, true, !commaNeeded);
         commaNeeded = !keyParams.isEmpty();
       }
 
-      @Nullable Annotations keyAnnotations = keyProjection.annotations();
-      if (keyAnnotations != null) print(keyAnnotations, true, !commaNeeded);
+      @NotNull Annotations keyAnnotations = keyProjection.annotations();
+      if (!keyAnnotations.isEmpty()) print(keyAnnotations, true, !commaNeeded);
 
       l.brk(1, -l.getDefaultIndentation()).end().print("]");
     }
@@ -209,7 +208,7 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception>
     }
 
     Annotations annotations = projection.annotations();
-    if (annotations != null) {
+    if (!annotations.isEmpty()) {
       l.beginCInd();
       l.print(" {");
       print(annotations);
@@ -232,8 +231,8 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception>
       @NotNull OpOutputKeyProjection keyProjection = mapModelProjection.keyProjection();
 
       if (keyProjection.presence() != OpOutputKeyProjection.Presence.OPTIONAL) return false;
-      if (keyProjection.params() != null) return false;
-      if (keyProjection.annotations() != null) return false;
+      if (!keyProjection.params().isEmpty()) return false;
+      if (!keyProjection.annotations().isEmpty()) return false;
 
       return isPrintoutEmpty(mapModelProjection.itemsProjection());
     }

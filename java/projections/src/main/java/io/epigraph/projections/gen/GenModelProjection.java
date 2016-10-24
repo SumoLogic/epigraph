@@ -15,7 +15,7 @@ public interface GenModelProjection<MP extends GenModelProjection</*MP*/?, ?>, M
 
   @Nullable MP metaProjection();
 
-  @Nullable Annotations annotations();
+  @NotNull Annotations annotations();
 
   @NotNull TextLocation location();
 }

@@ -95,7 +95,7 @@ public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
       throws E {
 
     @NotNull ReqOutputVarProjection fieldVarProjection = fieldProjection.projection();
-    @Nullable Annotations fieldAnnotations = fieldProjection.annotations();
+    @NotNull Annotations fieldAnnotations = fieldProjection.annotations();
 
     l.beginIInd();
     if (fieldProjection.required()) l.print("+");
@@ -200,9 +200,9 @@ public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
     return true;
   }
 
-  private void printParams(@Nullable ReqParams params) throws E { // move to req common?
+  private void printParams(@NotNull ReqParams params) throws E { // move to req common?
     l.beginCInd();
-    if (params != null) {
+    if (!params.isEmpty()) {
       for (ReqParam param : params.params().values()) {
         l.brk().beginIInd();
         l.print(";").print(param.name()).brk().print("=").brk();
@@ -213,9 +213,9 @@ public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
     l.end();
   }
 
-  private void printAnnotations(@Nullable Annotations annotations) throws E {
+  private void printAnnotations(@NotNull Annotations annotations) throws E {
     l.beginCInd();
-    if (annotations != null) {
+    if (!annotations.isEmpty()) {
       for (Annotation annotation : annotations.params().values()) {
         l.brk().beginIInd();
         l.print("!").print(annotation.name()).brk().print("=").brk();

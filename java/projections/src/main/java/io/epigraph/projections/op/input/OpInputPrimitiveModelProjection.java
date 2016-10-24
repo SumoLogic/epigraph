@@ -19,7 +19,7 @@ public class OpInputPrimitiveModelProjection
       @NotNull PrimitiveType model,
       boolean required,
       @Nullable PrimitiveDatum<?> defaultValue,
-      @Nullable Annotations annotations,
+      @NotNull Annotations annotations,
       @Nullable OpInputPrimitiveModelProjection metaProjection,
       @NotNull TextLocation location) {
     super(model, required, defaultValue, annotations, metaProjection, location);

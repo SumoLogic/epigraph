@@ -147,7 +147,7 @@ public class OpOutputProjectionsPsiParser {
   }
 
 
-  @Nullable
+  @NotNull
   private static OpParams parseModelParams(
       @NotNull List<IdlOpOutputModelProperty> modelProperties,
       @NotNull TypesResolver resolver) throws PsiProcessingException {
@@ -162,10 +162,10 @@ public class OpOutputProjectionsPsiParser {
       }
     }
 
-    return paramList == null ? null : new OpParams(paramList);
+    return paramList == null ? OpParams.EMPTY : new OpParams(paramList);
   }
 
-  @Nullable
+  @NotNull
   private static Annotations parseModelAnnotations(@NotNull List<IdlOpOutputModelProperty> modelProperties)
       throws PsiProcessingException {
 
@@ -174,7 +174,7 @@ public class OpOutputProjectionsPsiParser {
     for (IdlOpOutputModelProperty modelProperty : modelProperties)
       annotationsMap = parseAnnotation(annotationsMap, modelProperty.getAnnotation());
 
-    return annotationsMap == null ? null : new Annotations(annotationsMap);
+    return annotationsMap == null ? Annotations.EMPTY : new Annotations(annotationsMap);
   }
 
   @Nullable
@@ -242,7 +242,7 @@ public class OpOutputProjectionsPsiParser {
             tag.name(),
             new OpOutputTagProjectionEntry(
                 tag,
-                createDefaultModelProjection(tag.type, includeInDefault, null, null, locationPsi),
+                createDefaultModelProjection(tag.type, includeInDefault, OpParams.EMPTY, Annotations.EMPTY, locationPsi),
                 EpigraphPsiUtil.getLocation(locationPsi)
             )
         ),
@@ -280,8 +280,8 @@ public class OpOutputProjectionsPsiParser {
   public static OpOutputModelProjection<?,?> parseModelProjection(
       @NotNull DatumType type,
       boolean includeInDefault,
-      @Nullable OpParams params,
-      @Nullable Annotations annotations,
+      @NotNull OpParams params,
+      @NotNull Annotations annotations,
       @Nullable OpOutputModelProjection<?,?> metaProjection,
       @NotNull IdlOpOutputModelProjection psi,
       @NotNull TypesResolver typesResolver)
@@ -374,8 +374,8 @@ public class OpOutputProjectionsPsiParser {
   private static OpOutputModelProjection<?,?> createDefaultModelProjection(
       @NotNull DatumType type,
       boolean includeInDefault,
-      @Nullable OpParams params,
-      @Nullable Annotations annotations,
+      @NotNull OpParams params,
+      @NotNull Annotations annotations,
       @NotNull PsiElement locationPsi)
       throws PsiProcessingException {
 
@@ -396,8 +396,8 @@ public class OpOutputProjectionsPsiParser {
         final OpOutputKeyProjection keyProjection =
             new OpOutputKeyProjection(
                 OpOutputKeyProjection.Presence.OPTIONAL,
-                null,
-                null,
+                OpParams.EMPTY,
+                Annotations.EMPTY,
                 EpigraphPsiUtil.getLocation(locationPsi)
             );
 
@@ -478,8 +478,8 @@ public class OpOutputProjectionsPsiParser {
   public static OpOutputRecordModelProjection parseRecordModelProjection(
       @NotNull RecordType type,
       boolean includeInDefault,
-      @Nullable OpParams params,
-      @Nullable Annotations annotations,
+      @NotNull OpParams params,
+      @NotNull Annotations annotations,
       @Nullable OpOutputRecordModelProjection metaProjection,
       @NotNull IdlOpOutputRecordModelProjection psi,
       @NotNull TypesResolver typesResolver) throws PsiProcessingException {
@@ -498,8 +498,8 @@ public class OpOutputProjectionsPsiParser {
 
       final boolean includeFieldInDefault = fieldProjectionPsi.getPlus() != null;
 
-      OpParams fieldParams;
-      Annotations fieldAnnotations;
+      @NotNull OpParams fieldParams;
+      @NotNull Annotations fieldAnnotations;
 
       List<OpParam> fieldParamsList = null;
       @Nullable Map<String, Annotation> fieldAnnotationsMap = null;
@@ -513,8 +513,8 @@ public class OpOutputProjectionsPsiParser {
         fieldAnnotationsMap = parseAnnotation(fieldAnnotationsMap, fieldBodyPart.getAnnotation());
       }
 
-      fieldParams = fieldParamsList == null ? null : new OpParams(fieldParamsList);
-      fieldAnnotations = fieldAnnotationsMap == null ? null : new Annotations(fieldAnnotationsMap);
+      fieldParams = fieldParamsList == null ? OpParams.EMPTY : new OpParams(fieldParamsList);
+      fieldAnnotations = fieldAnnotationsMap == null ? Annotations.EMPTY : new Annotations(fieldAnnotationsMap);
 
       OpOutputVarProjection varProjection;
       @Nullable IdlOpOutputVarProjection psiVarProjection = fieldProjectionPsi.getOpOutputVarProjection();
@@ -566,8 +566,8 @@ public class OpOutputProjectionsPsiParser {
   public static OpOutputMapModelProjection parseMapModelProjection(
       @NotNull MapType type,
       boolean includeInDefault,
-      @Nullable OpParams params,
-      @Nullable Annotations annotations,
+      @NotNull OpParams params,
+      @NotNull Annotations annotations,
       @Nullable OpOutputMapModelProjection metaProjection,
       @NotNull IdlOpOutputMapModelProjection psi,
       @NotNull TypesResolver resolver)
@@ -626,8 +626,8 @@ public class OpOutputProjectionsPsiParser {
 
     return new OpOutputKeyProjection(
         presence,
-        params == null ? null : new OpParams(params),
-        annotationsMap == null ? null : new Annotations(annotationsMap),
+        params == null ? OpParams.EMPTY : new OpParams(params),
+        annotationsMap == null ? Annotations.EMPTY : new Annotations(annotationsMap),
         EpigraphPsiUtil.getLocation(keyProjectionPsi)
     );
   }
@@ -636,8 +636,8 @@ public class OpOutputProjectionsPsiParser {
   public static OpOutputListModelProjection parseListModelProjection(
       @NotNull ListType type,
       boolean includeInDefault,
-      @Nullable OpParams params,
-      @Nullable Annotations annotations,
+      @NotNull OpParams params,
+      @NotNull Annotations annotations,
       @Nullable OpOutputListModelProjection metaProjection,
       @NotNull IdlOpOutputListModelProjection psi,
       @NotNull TypesResolver resolver)
@@ -666,8 +666,8 @@ public class OpOutputProjectionsPsiParser {
   public static OpOutputPrimitiveModelProjection parsePrimitiveModelProjection(
       @NotNull PrimitiveType type,
       boolean includeInDefault,
-      @Nullable OpParams params,
-      @Nullable Annotations annotations,
+      @NotNull OpParams params,
+      @NotNull Annotations annotations,
       @Nullable OpOutputPrimitiveModelProjection metaProjection,
       @NotNull PsiElement locationPsi) {
 
@@ -707,8 +707,7 @@ public class OpOutputProjectionsPsiParser {
     @Nullable Map<String, Annotation> annotationMap = null;
     for (IdlAnnotation annotationPsi : paramPsi.getAnnotationList())
       annotationMap = parseAnnotation(annotationMap, annotationPsi);
-    Annotations annotations = annotationMap == null ? null : new Annotations(annotationMap);
-
+    @NotNull Annotations annotations = annotationMap == null ? Annotations.EMPTY : new Annotations(annotationMap);
 
     @Nullable IdlDatum defaultValuePsi = paramPsi.getDatum();
     @Nullable GDatum defaultValue = defaultValuePsi == null

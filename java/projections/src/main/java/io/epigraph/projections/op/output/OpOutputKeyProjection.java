@@ -4,7 +4,6 @@ import io.epigraph.lang.TextLocation;
 import io.epigraph.projections.Annotations;
 import io.epigraph.projections.op.OpParams;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -16,16 +15,16 @@ public class OpOutputKeyProjection {
 
   @NotNull
   private final Presence presence;
-  @Nullable
+  @NotNull
   private final OpParams params;
-  @Nullable
+  @NotNull
   private final Annotations annotations;
   @NotNull
   private final TextLocation location;
 
   public OpOutputKeyProjection(@NotNull Presence presence,
-                               @Nullable OpParams params,
-                               @Nullable Annotations annotations,
+                               @NotNull OpParams params,
+                               @NotNull Annotations annotations,
                                @NotNull TextLocation location) {
     this.presence = presence;
     this.params = params;
@@ -36,10 +35,10 @@ public class OpOutputKeyProjection {
   @NotNull
   public Presence presence() { return presence; }
 
-  @Nullable
+  @NotNull
   public OpParams params() { return params; }
 
-  @Nullable
+  @NotNull
   public Annotations annotations() { return annotations; }
 
   @NotNull

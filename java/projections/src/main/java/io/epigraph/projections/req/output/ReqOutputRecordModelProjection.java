@@ -34,8 +34,8 @@ public class ReqOutputRecordModelProjection
   public ReqOutputRecordModelProjection(
       @NotNull RecordType model,
       boolean required,
-      @Nullable ReqParams params,
-      @Nullable Annotations annotations,
+      @NotNull ReqParams params,
+      @NotNull Annotations annotations,
       @Nullable ReqOutputRecordModelProjection metaProjection,
       @NotNull Map<String, ReqOutputFieldProjectionEntry> fieldProjections,
       @NotNull TextLocation location) {

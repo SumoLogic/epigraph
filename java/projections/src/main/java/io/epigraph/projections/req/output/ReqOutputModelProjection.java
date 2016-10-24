@@ -19,14 +19,14 @@ public abstract class ReqOutputModelProjection<
     extends AbstractModelProjection<MP, M> {
 
   protected final boolean required;
-  @Nullable
+  @NotNull
   protected final ReqParams params;
 
   public ReqOutputModelProjection(
       @NotNull M model,
       boolean required,
-      @Nullable ReqParams params,
-      @Nullable Annotations annotations,
+      @NotNull ReqParams params,
+      @NotNull Annotations annotations,
       @Nullable MP metaProjection,
       @NotNull TextLocation location) {
     super(model, metaProjection, annotations, location);
@@ -36,7 +36,7 @@ public abstract class ReqOutputModelProjection<
 
   public boolean required() { return required; }
 
-  @Nullable
+  @NotNull
   public ReqParams params() { return params; }
 
   @Override

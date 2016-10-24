@@ -3,17 +3,20 @@ package io.epigraph.projections.req;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ReqParams {
+  public static final ReqParams EMPTY = new ReqParams(Collections.emptyMap());
   @NotNull
   private final Map<String, ReqParam> params;
+
+  @NotNull
+  public static ReqParams fromMap(@Nullable Map<String, ReqParam> params) {
+    return params == null ? EMPTY : new ReqParams(params);
+  }
 
   public ReqParams(@NotNull Map<String, ReqParam> params) {this.params = params;}
 

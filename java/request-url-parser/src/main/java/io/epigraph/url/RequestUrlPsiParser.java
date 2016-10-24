@@ -467,8 +467,8 @@ public class RequestUrlPsiParser {
     return parseComaModelProjection(
         metaOp,
         modelMetaPsi.getPlus() != null,
-        null,
-        null,
+        ReqParams.EMPTY, 
+        Annotations.EMPTY,
         null,
         modelMetaPsi.getReqOutputComaModelProjection(),
         addTypeNamespace(metaOp.model(), resolver)
@@ -540,8 +540,8 @@ public class RequestUrlPsiParser {
                     tag.type,
                     required,
                     opOutputTagProjection.projection(),
-                    null,
-                    null,
+                    ReqParams.EMPTY,
+                    Annotations.EMPTY,
                     locationPsi
                 ),
                 EpigraphPsiUtil.getLocation(locationPsi)
@@ -627,8 +627,8 @@ public class RequestUrlPsiParser {
   public static StepsAndProjection<? extends ReqOutputModelProjection<?, ?>> parseTrunkModelProjection(
       @NotNull OpOutputModelProjection<?, ?> op,
       boolean required,
-      @Nullable ReqParams params,
-      @Nullable Annotations annotations,
+      @NotNull ReqParams params,
+      @NotNull Annotations annotations,
       @Nullable ReqOutputModelProjection<?, ?> metaProjection,
       @NotNull UrlReqOutputTrunkModelProjection psi,
       @NotNull TypesResolver typesResolver) throws PsiProcessingException {
@@ -678,8 +678,8 @@ public class RequestUrlPsiParser {
   public static StepsAndProjection<? extends ReqOutputModelProjection<?, ?>> parseComaModelProjection(
       @NotNull OpOutputModelProjection<?, ?> op,
       boolean required,
-      @Nullable ReqParams params,
-      @Nullable Annotations annotations,
+      @NotNull ReqParams params,
+      @NotNull Annotations annotations,
       @Nullable ReqOutputModelProjection<?, ?> metaProjection,
       @NotNull UrlReqOutputComaModelProjection psi,
       @NotNull TypesResolver typesResolver) throws PsiProcessingException {
@@ -802,8 +802,8 @@ public class RequestUrlPsiParser {
       @NotNull DatumType type,
       boolean required,
       @NotNull OpOutputModelProjection<?, ?> op,
-      @Nullable ReqParams params,
-      @Nullable Annotations annotations,
+      @NotNull ReqParams params,
+      @NotNull Annotations annotations,
       @NotNull PsiElement locationPsi) throws PsiProcessingException {
 
     @NotNull TextLocation location = EpigraphPsiUtil.getLocation(locationPsi);
@@ -833,8 +833,8 @@ public class RequestUrlPsiParser {
                   new ReqOutputFieldProjectionEntry(
                       field,
                       new ReqOutputFieldProjection(
-                          null,
-                          null,
+                          ReqParams.EMPTY, 
+                          Annotations.EMPTY, 
                           createDefaultVarProjection(
                               field.dataType().type,
                               opFieldProjection.projection(),
@@ -929,8 +929,8 @@ public class RequestUrlPsiParser {
   public static StepsAndProjection<ReqOutputRecordModelProjection> parseTrunkRecordModelProjection(
       @NotNull OpOutputRecordModelProjection op,
       boolean required,
-      @Nullable ReqParams params,
-      @Nullable Annotations annotations,
+      @NotNull ReqParams params,
+      @NotNull Annotations annotations,
       @Nullable ReqOutputRecordModelProjection metaProjection,
       @NotNull UrlReqOutputTrunkRecordModelProjection psi,
       @NotNull TypesResolver resolver) throws PsiProcessingException {
@@ -987,8 +987,8 @@ public class RequestUrlPsiParser {
           new ReqOutputFieldProjectionEntry(
               field,
               new ReqOutputFieldProjection(
-                  null,
-                  null,
+                  ReqParams.EMPTY,
+                  Annotations.EMPTY,
                   varProjection,
                   fieldRequired,
                   fieldLocation
@@ -1083,8 +1083,8 @@ public class RequestUrlPsiParser {
   public static StepsAndProjection<ReqOutputRecordModelProjection> parseComaRecordModelProjection(
       @NotNull OpOutputRecordModelProjection op,
       boolean required,
-      @Nullable ReqParams params,
-      @Nullable Annotations annotations,
+      @NotNull ReqParams params,
+      @NotNull Annotations annotations,
       @Nullable ReqOutputRecordModelProjection metaProjection,
       @NotNull UrlReqOutputComaRecordModelProjection psi,
       @NotNull TypesResolver resolver) throws PsiProcessingException {
@@ -1163,8 +1163,8 @@ public class RequestUrlPsiParser {
   public static StepsAndProjection<ReqOutputMapModelProjection> parseTrunkMapModelProjection(
       @NotNull OpOutputMapModelProjection op,
       boolean required,
-      @Nullable ReqParams params,
-      @Nullable Annotations annotations,
+      @NotNull ReqParams params,
+      @NotNull Annotations annotations,
       @Nullable ReqOutputMapModelProjection metaProjection,
       @NotNull UrlReqOutputTrunkMapModelProjection psi,
       @NotNull TypesResolver resolver) throws PsiProcessingException {
@@ -1221,8 +1221,8 @@ public class RequestUrlPsiParser {
   public static StepsAndProjection<ReqOutputMapModelProjection> parseComaMapModelProjection(
       @NotNull OpOutputMapModelProjection op,
       boolean required,
-      @Nullable ReqParams params,
-      @Nullable Annotations annotations,
+      @NotNull ReqParams params,
+      @NotNull Annotations annotations,
       @Nullable ReqOutputMapModelProjection metaProjection,
       @NotNull UrlReqOutputComaMapModelProjection psi,
       @NotNull TypesResolver resolver) throws PsiProcessingException {
@@ -1298,8 +1298,8 @@ public class RequestUrlPsiParser {
   public static StepsAndProjection<ReqOutputListModelProjection> parseListModelProjection(
       @NotNull OpOutputListModelProjection op,
       boolean required,
-      @Nullable ReqParams params,
-      @Nullable Annotations annotations,
+      @NotNull ReqParams params,
+      @NotNull Annotations annotations,
       @Nullable ReqOutputListModelProjection metaProjection,
       @NotNull UrlReqOutputComaListModelProjection psi,
       @NotNull TypesResolver resolver) throws PsiProcessingException {
@@ -1336,8 +1336,8 @@ public class RequestUrlPsiParser {
   public static StepsAndProjection<ReqOutputPrimitiveModelProjection> parsePrimitiveModelProjection(
       @NotNull PrimitiveType type,
       boolean required,
-      @Nullable ReqParams params,
-      @Nullable Annotations annotations,
+      @NotNull ReqParams params,
+      @NotNull Annotations annotations,
       @Nullable ReqOutputPrimitiveModelProjection metaProjection,
       @NotNull PsiElement locationPsi) throws PsiProcessingException {
 
@@ -1354,7 +1354,7 @@ public class RequestUrlPsiParser {
     );
   }
 
-  @Nullable
+  @NotNull
   private static Annotations parseAnnotations(@NotNull List<UrlReqAnnotation> annotationsPsi)
       throws PsiProcessingException {
     Map<String, Annotation> paramMap = null;
@@ -1363,16 +1363,16 @@ public class RequestUrlPsiParser {
       paramMap = parseAnnotation(paramMap, annotation.getAnnotation());
     }
 
-    return paramMap == null ? null : new Annotations(paramMap);
+    return Annotations.fromMap(paramMap);
   }
 
-  @Nullable
+  @NotNull
   private static ReqParams parseReqParams(
       @NotNull List<UrlReqParam> reqParamsPsi,
       @Nullable OpParams opParams,
       @NotNull TypesResolver resolver) throws PsiProcessingException {
 
-    if (reqParamsPsi.isEmpty()) return null;
+    if (reqParamsPsi.isEmpty()) return ReqParams.EMPTY;
 
     if (opParams == null)
       throw new PsiProcessingException("Parameters are not supported here", reqParamsPsi.iterator().next());
@@ -1382,7 +1382,7 @@ public class RequestUrlPsiParser {
     for (UrlReqParam reqParamPsi : reqParamsPsi)
       paramMap = parseReqParam(paramMap, reqParamPsi, opParams, resolver);
 
-    return paramMap == null ? null : new ReqParams(paramMap);
+    return ReqParams.fromMap(paramMap);
   }
 
   @Nullable

@@ -36,8 +36,8 @@ public class OpOutputRecordModelProjection
   public OpOutputRecordModelProjection(
       @NotNull RecordType model,
       boolean includeInDefault,
-      @Nullable OpParams params,
-      @Nullable Annotations annotations,
+      @NotNull OpParams params,
+      @NotNull Annotations annotations,
       @Nullable OpOutputRecordModelProjection metaProjection,
       @NotNull Map<String, OpOutputFieldProjectionEntry> fieldProjections,
       @NotNull TextLocation location) {

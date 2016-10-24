@@ -3,15 +3,14 @@ package io.epigraph.projections.op;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpParams {
+  public static final OpParams EMPTY = new OpParams(Collections.emptyMap());
+
   @NotNull
   private final Map<String, OpParam> params;
 

@@ -18,14 +18,14 @@ public abstract class OpOutputModelProjection<
     M extends DatumType
     > extends AbstractModelProjection<MP, M> {
   protected final boolean includeInDefault;
-  @Nullable
+  @NotNull
   protected final OpParams params;
 
   public OpOutputModelProjection(
       @NotNull M model,
       boolean includeInDefault,
-      @Nullable OpParams params,
-      @Nullable Annotations annotations,
+      @NotNull OpParams params,
+      @NotNull Annotations annotations,
       @Nullable MP metaProjection,
       @NotNull TextLocation location) {
     super(model, metaProjection, annotations, location);
@@ -35,7 +35,7 @@ public abstract class OpOutputModelProjection<
 
   public boolean includeInDefault() { return includeInDefault; }
 
-  @Nullable
+  @NotNull
   public OpParams params() { return params; }
 
   @Override

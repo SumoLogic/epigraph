@@ -31,8 +31,8 @@ public class OpOutputMapModelProjection
   public OpOutputMapModelProjection(
       @NotNull MapType model,
       boolean includeInDefault,
-      @Nullable OpParams params,
-      @Nullable Annotations annotations,
+      @NotNull OpParams params,
+      @NotNull Annotations annotations,
       @Nullable OpOutputMapModelProjection metaProjection,
       @NotNull OpOutputKeyProjection keyProjection,
       @NotNull OpOutputVarProjection valuesProjection,

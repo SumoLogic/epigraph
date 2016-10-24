@@ -28,8 +28,8 @@ public class ReqOutputListModelProjection
   public ReqOutputListModelProjection(
       @NotNull ListType model,
       boolean required,
-      @Nullable ReqParams params,
-      @Nullable Annotations annotations,
+      @NotNull ReqParams params,
+      @NotNull Annotations annotations,
       @Nullable ReqOutputListModelProjection metaProjection,
       @NotNull ReqOutputVarProjection itemsProjection,
       @NotNull TextLocation location) {

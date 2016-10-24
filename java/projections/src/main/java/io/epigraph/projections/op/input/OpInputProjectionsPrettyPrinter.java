@@ -4,7 +4,6 @@ import de.uka.ilkd.pp.Layouter;
 import io.epigraph.projections.Annotations;
 import io.epigraph.projections.abs.AbstractProjectionsPrettyPrinter;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
@@ -27,7 +26,7 @@ public class OpInputProjectionsPrettyPrinter<E extends Exception> extends Abstra
     OpInputModelProjection<?, ?, ?> metaProjection = projection.metaProjection();
     Annotations annotations = projection.annotations();
 
-    if (projection.defaultValue() == null && annotations == null &&
+    if (projection.defaultValue() == null && annotations.isEmpty() &&
         metaProjection == null) {
 
       l.beginCInd();
@@ -57,7 +56,7 @@ public class OpInputProjectionsPrettyPrinter<E extends Exception> extends Abstra
         l.end();
       }
 
-      if (annotations != null) print(annotations);
+      if (!annotations.isEmpty()) print(annotations);
 
       if (!isPrintoutEmpty(projection)) {
         l.brk();
@@ -112,9 +111,9 @@ public class OpInputProjectionsPrettyPrinter<E extends Exception> extends Abstra
   private void print(@NotNull String fieldName, @NotNull OpInputFieldProjection fieldProjection, int pathSteps)
       throws E {
     @NotNull OpInputVarProjection fieldVarProjection = fieldProjection.projection();
-    @Nullable Annotations fieldAnnotations = fieldProjection.annotations();
+    @NotNull Annotations fieldAnnotations = fieldProjection.annotations();
 
-    if (fieldAnnotations == null) {
+    if (fieldAnnotations.isEmpty()) {
       l.beginIInd();
       if (fieldProjection.required()) l.print("+");
       l.print(fieldName);

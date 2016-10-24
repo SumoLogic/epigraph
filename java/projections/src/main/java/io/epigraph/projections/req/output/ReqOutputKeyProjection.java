@@ -5,7 +5,6 @@ import io.epigraph.lang.TextLocation;
 import io.epigraph.projections.Annotations;
 import io.epigraph.projections.req.ReqParams;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -15,16 +14,16 @@ import java.util.Objects;
 public class ReqOutputKeyProjection {
   @NotNull
   private final Datum value;
-  @Nullable
+  @NotNull
   private final ReqParams params;
-  @Nullable
+  @NotNull
   private final Annotations annotations;
   @NotNull
   private final TextLocation location;
 
   public ReqOutputKeyProjection(@NotNull Datum value,
-                                @Nullable ReqParams params,
-                                @Nullable Annotations annotations,
+                                @NotNull ReqParams params,
+                                @NotNull Annotations annotations,
                                 @NotNull TextLocation location) {
     this.value = value;
     this.params = params;
@@ -35,10 +34,10 @@ public class ReqOutputKeyProjection {
   @NotNull
   public Datum value() { return value; }
 
-  @Nullable
+  @NotNull
   public ReqParams params() { return params; }
 
-  @Nullable
+  @NotNull
   public Annotations annotations() { return annotations; }
 
   @NotNull

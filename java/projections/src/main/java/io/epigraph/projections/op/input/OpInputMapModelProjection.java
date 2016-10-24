@@ -29,7 +29,7 @@ public class OpInputMapModelProjection
       @NotNull MapType model,
       boolean required,
       @Nullable MapDatum defaultValue,
-      @Nullable Annotations annotations,
+      @NotNull Annotations annotations,
       @Nullable OpInputMapModelProjection metaProjection,
       @NotNull OpInputVarProjection valuesProjection,
       @NotNull TextLocation location) {

@@ -36,7 +36,7 @@ public class OpInputRecordModelProjection
       @NotNull RecordType model,
       boolean required,
       @Nullable RecordDatum defaultValue,
-      @Nullable Annotations annotations,
+      @NotNull Annotations annotations,
       @Nullable OpInputRecordModelProjection metaProjection,
       @NotNull Map<String, OpInputFieldProjectionEntry> fieldProjections,
       @NotNull TextLocation location) {

@@ -18,8 +18,8 @@ public class OpOutputPrimitiveModelProjection
   public OpOutputPrimitiveModelProjection(
       @NotNull PrimitiveType model,
       boolean includeInDefault,
-      @Nullable OpParams params,
-      @Nullable Annotations annotations,
+      @NotNull OpParams params,
+      @NotNull Annotations annotations,
       @Nullable OpOutputPrimitiveModelProjection metaProjection,
       @NotNull TextLocation location) {
     super(model, includeInDefault, params, annotations, metaProjection, location);

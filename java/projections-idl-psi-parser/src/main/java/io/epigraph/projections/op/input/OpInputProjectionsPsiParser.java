@@ -247,7 +247,7 @@ public class OpInputProjectionsPsiParser {
     return result;
   }
 
-  @Nullable
+  @NotNull
   private static Annotations parseModelAnnotations(@NotNull List<IdlOpInputModelProperty> modelProperties)
       throws PsiProcessingException {
 
@@ -256,7 +256,7 @@ public class OpInputProjectionsPsiParser {
     for (IdlOpInputModelProperty modelProperty : modelProperties)
       annotationsMap = parseAnnotation(annotationsMap, modelProperty.getAnnotation());
 
-    return annotationsMap == null ? null : new Annotations(annotationsMap);
+    return annotationsMap == null ? Annotations.EMPTY : new Annotations(annotationsMap);
   }
 
   @Nullable
@@ -323,7 +323,7 @@ public class OpInputProjectionsPsiParser {
             tag.name(),
             new OpInputTagProjectionEntry(
                 tag,
-                createDefaultModelProjection(tag.type, required, null, null, locationPsi, null),
+                createDefaultModelProjection(tag.type, required, null, Annotations.EMPTY, locationPsi, null),
                 EpigraphPsiUtil.getLocation(locationPsi)
             )
         ),
@@ -362,7 +362,7 @@ public class OpInputProjectionsPsiParser {
       @NotNull DatumType type,
       boolean required,
       @Nullable GDatum defaultValue,
-      @Nullable Annotations annotations,
+      @NotNull Annotations annotations,
       @Nullable OpInputModelProjection<?, ?, ?> metaProjection,
       @NotNull IdlOpInputTrunkModelProjection psi,
       @NotNull TypesResolver typesResolver) throws PsiProcessingException {
@@ -405,7 +405,7 @@ public class OpInputProjectionsPsiParser {
       @NotNull DatumType type,
       boolean required,
       @Nullable GDatum defaultValue,
-      @Nullable Annotations annotations,
+      @NotNull Annotations annotations,
       @Nullable OpInputModelProjection<?, ?, ?> metaProjection,
       @NotNull IdlOpInputComaModelProjection psi,
       @NotNull TypesResolver typesResolver) throws PsiProcessingException {
@@ -527,7 +527,7 @@ public class OpInputProjectionsPsiParser {
       @NotNull DatumType type,
       boolean required,
       @Nullable GDatum defaultValue,
-      @Nullable Annotations annotations,
+      @NotNull Annotations annotations,
       @NotNull PsiElement locationPsi,
       @Nullable TypesResolver resolver)
       throws PsiProcessingException {
@@ -635,7 +635,7 @@ public class OpInputProjectionsPsiParser {
       @NotNull RecordType type,
       boolean required,
       @Nullable GRecordDatum defaultValue,
-      @Nullable Annotations annotations,
+      @NotNull Annotations annotations,
       @Nullable OpInputRecordModelProjection metaProjection,
       @NotNull IdlOpInputTrunkRecordModelProjection psi,
       @NotNull TypesResolver resolver) throws PsiProcessingException {
@@ -665,12 +665,12 @@ public class OpInputProjectionsPsiParser {
 
     final boolean fieldRequired = fieldProjectionPsi.getPlus() != null;
 
-    Annotations fieldAnnotations;
+    @NotNull Annotations fieldAnnotations;
     @Nullable Map<String, Annotation> fieldAnnotationsMap = null;
     for (IdlOpInputFieldProjectionBodyPart fieldBodyPart : fieldProjectionPsi.getOpInputFieldProjectionBodyPartList()) {
       fieldAnnotationsMap = parseAnnotation(fieldAnnotationsMap, fieldBodyPart.getAnnotation());
     }
-    fieldAnnotations = fieldAnnotationsMap == null ? null : new Annotations(fieldAnnotationsMap);
+    fieldAnnotations = fieldAnnotationsMap == null ? Annotations.EMPTY : new Annotations(fieldAnnotationsMap);
 
     final int steps;
 
@@ -734,7 +734,7 @@ public class OpInputProjectionsPsiParser {
       @NotNull RecordType type,
       boolean required,
       @Nullable GRecordDatum defaultValue,
-      @Nullable Annotations annotations,
+      @NotNull Annotations annotations,
       @Nullable OpInputRecordModelProjection metaProjection,
       @NotNull IdlOpInputComaRecordModelProjection psi,
       @NotNull TypesResolver resolver) throws PsiProcessingException {
@@ -762,12 +762,12 @@ public class OpInputProjectionsPsiParser {
 
       final boolean fieldRequired = fieldProjectionPsi.getPlus() != null;
 
-      Annotations fieldAnnotations;
+      @NotNull Annotations fieldAnnotations;
       @Nullable Map<String, Annotation> fieldAnnotationsMap = null;
       for (IdlOpInputFieldProjectionBodyPart fieldBodyPart : fieldProjectionPsi.getOpInputFieldProjectionBodyPartList()) {
         fieldAnnotationsMap = parseAnnotation(fieldAnnotationsMap, fieldBodyPart.getAnnotation());
       }
-      fieldAnnotations = fieldAnnotationsMap == null ? null : new Annotations(fieldAnnotationsMap);
+      fieldAnnotations = fieldAnnotationsMap == null ? Annotations.EMPTY : new Annotations(fieldAnnotationsMap);
 
       OpInputVarProjection varProjection;
       @Nullable IdlOpInputComaVarProjection psiVarProjection = fieldProjectionPsi.getOpInputComaVarProjection();
@@ -824,7 +824,7 @@ public class OpInputProjectionsPsiParser {
       @NotNull MapType type,
       boolean required,
       @Nullable GMapDatum defaultValue,
-      @Nullable Annotations annotations,
+      @NotNull Annotations annotations,
       @Nullable OpInputMapModelProjection metaProjection,
       @NotNull IdlOpInputComaMapModelProjection psi,
       @NotNull TypesResolver resolver) throws PsiProcessingException {
@@ -861,7 +861,7 @@ public class OpInputProjectionsPsiParser {
       @NotNull ListType type,
       boolean required,
       @Nullable GListDatum defaultValue,
-      @Nullable Annotations annotations,
+      @NotNull Annotations annotations,
       @Nullable OpInputListModelProjection metaProjection,
       @NotNull IdlOpInputComaListModelProjection psi,
       @NotNull TypesResolver resolver) throws PsiProcessingException {
@@ -902,7 +902,7 @@ public class OpInputProjectionsPsiParser {
       @NotNull PrimitiveType type,
       boolean required,
       @Nullable GPrimitiveDatum defaultValue,
-      @Nullable Annotations annotations,
+      @NotNull Annotations annotations,
       @Nullable OpInputPrimitiveModelProjection metaProjection,
       @NotNull PsiElement locationPsi,
       @NotNull TypesResolver resolver) throws PsiProcessingException {

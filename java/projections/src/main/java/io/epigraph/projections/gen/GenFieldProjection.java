@@ -13,7 +13,7 @@ public interface GenFieldProjection<
     TP extends GenTagProjectionEntry<MP>,
     MP extends GenModelProjection</*MP*/?, ?>
     > {
-  @Nullable Annotations annotations();
+  @NotNull Annotations annotations();
 
   @NotNull VP projection();
 

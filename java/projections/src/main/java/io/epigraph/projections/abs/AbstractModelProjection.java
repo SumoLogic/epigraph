@@ -18,14 +18,15 @@ public abstract class AbstractModelProjection<MP extends GenModelProjection</*MP
   protected final M model;
   @Nullable
   protected final MP metaProjection;
-  @Nullable
+  @NotNull
   protected final Annotations annotations;
   @NotNull
   private final TextLocation location;
 
   public AbstractModelProjection(
       @NotNull M model,
-      @Nullable MP metaProjection, @Nullable Annotations annotations,
+      @Nullable MP metaProjection,
+      @NotNull Annotations annotations,
       @NotNull TextLocation location) {
     this.model = model;
     this.metaProjection = metaProjection;
@@ -40,7 +41,7 @@ public abstract class AbstractModelProjection<MP extends GenModelProjection</*MP
   @Override
   public MP metaProjection() { return metaProjection; }
 
-  @Nullable
+  @NotNull
   public Annotations annotations() { return annotations; }
 
   @NotNull

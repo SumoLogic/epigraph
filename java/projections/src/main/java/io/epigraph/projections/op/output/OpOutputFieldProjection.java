@@ -5,7 +5,6 @@ import io.epigraph.projections.Annotations;
 import io.epigraph.projections.abs.AbstractFieldProjection;
 import io.epigraph.projections.op.OpParams;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -18,13 +17,13 @@ public class OpOutputFieldProjection extends AbstractFieldProjection<
     OpOutputModelProjection<?, ?>
     > {
 
-  @Nullable
+  @NotNull
   private final OpParams params;
   private final boolean includeInDefault;
 
   public OpOutputFieldProjection(
-      @Nullable OpParams params,
-      @Nullable Annotations annotations,
+      @NotNull OpParams params,
+      @NotNull Annotations annotations,
       @NotNull OpOutputVarProjection projection,
       boolean includeInDefault,
       @NotNull TextLocation location) {
@@ -33,7 +32,8 @@ public class OpOutputFieldProjection extends AbstractFieldProjection<
     this.includeInDefault = includeInDefault;
   }
 
-  public @Nullable OpParams params() { return params; }
+  @NotNull
+  public OpParams params() { return params; }
 
   public boolean includeInDefault() { return includeInDefault; }
 

@@ -7,7 +7,6 @@ import io.epigraph.projections.gen.GenModelProjection;
 import io.epigraph.projections.gen.GenTagProjectionEntry;
 import io.epigraph.projections.gen.GenVarProjection;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -20,7 +19,7 @@ public abstract class AbstractFieldProjection<
     MP extends GenModelProjection</*MP*/?, ?>
     > implements GenFieldProjection<VP, TP, MP> {
 
-  @Nullable
+  @NotNull
   private final Annotations annotations;
 
   @NotNull
@@ -30,7 +29,7 @@ public abstract class AbstractFieldProjection<
   private final TextLocation location;
 
   protected AbstractFieldProjection(
-      @Nullable Annotations annotations,
+      @NotNull Annotations annotations,
       @NotNull VP projection,
       @NotNull TextLocation location) {
     this.annotations = annotations;
@@ -38,7 +37,7 @@ public abstract class AbstractFieldProjection<
     this.location = location;
   }
 
-  @Nullable
+  @NotNull
   @Override
   public Annotations annotations() { return annotations; }
 

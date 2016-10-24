@@ -5,7 +5,6 @@ import io.epigraph.projections.Annotations;
 import io.epigraph.projections.abs.AbstractFieldProjection;
 import io.epigraph.projections.req.ReqParams;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -17,13 +16,13 @@ public class ReqOutputFieldProjection extends AbstractFieldProjection<
     ReqOutputTagProjectionEntry,
     ReqOutputModelProjection<?, ?>
     > {
-  @Nullable
+  @NotNull
   private final ReqParams reqParams;
   private final boolean required;
 
   public ReqOutputFieldProjection(
-      @Nullable ReqParams reqParams,
-      @Nullable Annotations annotations,
+      @NotNull ReqParams reqParams,
+      @NotNull Annotations annotations,
       @NotNull ReqOutputVarProjection projection,
       boolean required,
       @NotNull TextLocation location) {
@@ -32,7 +31,7 @@ public class ReqOutputFieldProjection extends AbstractFieldProjection<
     this.required = required;
   }
 
-  @Nullable
+  @NotNull
   public ReqParams reqParams() { return reqParams; }
 
   public boolean required() { return required; }

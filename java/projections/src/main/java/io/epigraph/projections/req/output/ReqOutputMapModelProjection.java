@@ -33,8 +33,8 @@ public class ReqOutputMapModelProjection
   public ReqOutputMapModelProjection(
       @NotNull MapType model,
       boolean required,
-      @Nullable ReqParams params,
-      @Nullable Annotations annotations,
+      @NotNull ReqParams params,
+      @NotNull Annotations annotations,
       @Nullable ReqOutputMapModelProjection metaProjection,
       @Nullable List<ReqOutputKeyProjection> keys,
       boolean keysRequired,

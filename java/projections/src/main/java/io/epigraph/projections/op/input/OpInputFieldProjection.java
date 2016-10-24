@@ -4,7 +4,6 @@ import io.epigraph.lang.TextLocation;
 import io.epigraph.projections.Annotations;
 import io.epigraph.projections.abs.AbstractFieldProjection;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -20,7 +19,7 @@ public class OpInputFieldProjection extends AbstractFieldProjection<
   private final boolean required;
 
   public OpInputFieldProjection(
-      @Nullable Annotations annotations,
+      @NotNull Annotations annotations,
       @NotNull OpInputVarProjection projection,
       boolean required,
       @NotNull TextLocation location) {

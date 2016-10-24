@@ -30,7 +30,7 @@ public class OpInputListModelProjection
       @NotNull ListType model,
       boolean required,
       @Nullable ListDatum defaultValue,
-      @Nullable Annotations annotations,
+      @NotNull Annotations annotations,
       @Nullable OpInputListModelProjection metaProjection,
       @NotNull OpInputVarProjection itemsProjection,
       @NotNull TextLocation location) {

@@ -27,7 +27,7 @@ public abstract class OpInputModelProjection<
       @NotNull M model,
       boolean required,
       @Nullable D defaultValue,
-      @Nullable Annotations annotations,
+      @NotNull Annotations annotations,
       @Nullable MP metaProjection,
       @NotNull TextLocation location) {
     super(model, metaProjection, annotations, location);

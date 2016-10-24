@@ -18,8 +18,8 @@ public class ReqOutputPrimitiveModelProjection
   public ReqOutputPrimitiveModelProjection(
       @NotNull PrimitiveType model,
       boolean required,
-      @Nullable ReqParams params,
-      @Nullable Annotations annotations,
+      @NotNull ReqParams params,
+      @NotNull Annotations annotations,
       @Nullable ReqOutputPrimitiveModelProjection metaProjection,
       @NotNull TextLocation location) {
     super(model, required, params, annotations, metaProjection, location);
