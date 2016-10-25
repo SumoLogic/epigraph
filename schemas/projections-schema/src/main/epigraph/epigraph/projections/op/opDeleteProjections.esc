@@ -10,12 +10,12 @@ import epigraph.schema.TypeRef
 import epigraph.schema.EnumTypeRef
 import epigraph.schema.PrimitiveTypeRef
 
-// OpOutputProjections with canDelete on vars
+// OpOutputProjections with canDelete on vars (we can only delete entities)
 
 record OpDeleteVarProjection {
   type: TypeRef
   tagProjections: list[OpDeleteTagProjectionEntry]
-  canDelete: Boolean
+  canDelete: Boolean // true == this can be a leaf
   polymorphicTail: list[OpDeleteVarProjection]
 }
 
