@@ -8,7 +8,7 @@ import com.intellij.psi.PsiElement;
 public interface IdlOpInputVarSingleTail extends PsiElement {
 
   @NotNull
-  IdlOpInputComaVarProjection getOpInputComaVarProjection();
+  IdlOpInputVarProjection getOpInputVarProjection();
 
   @NotNull
   IdlTypeRef getTypeRef();

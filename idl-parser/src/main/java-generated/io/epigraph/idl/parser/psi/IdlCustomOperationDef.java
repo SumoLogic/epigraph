@@ -20,6 +20,6 @@ public interface IdlCustomOperationDef extends PsiElement {
   PsiElement getCurlyRight();
 
   @NotNull
-  PsiElement getCustom();
+  PsiElement getCustomOp();
 
 }

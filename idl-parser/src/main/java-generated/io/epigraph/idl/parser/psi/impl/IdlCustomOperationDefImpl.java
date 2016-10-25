@@ -52,8 +52,8 @@ public class IdlCustomOperationDefImpl extends ASTWrapperPsiElement implements I
 
   @Override
   @NotNull
-  public PsiElement getCustom() {
-    return findNotNullChildByType(I_CUSTOM);
+  public PsiElement getCustomOp() {
+    return findNotNullChildByType(I_CUSTOM_OP);
   }
 
 }

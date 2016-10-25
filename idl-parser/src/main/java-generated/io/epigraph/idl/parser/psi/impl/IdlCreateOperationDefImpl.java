@@ -40,8 +40,8 @@ public class IdlCreateOperationDefImpl extends ASTWrapperPsiElement implements I
 
   @Override
   @NotNull
-  public PsiElement getCreate() {
-    return findNotNullChildByType(I_CREATE);
+  public PsiElement getCreateOp() {
+    return findNotNullChildByType(I_CREATE_OP);
   }
 
   @Override

@@ -8,7 +8,7 @@ import com.intellij.psi.PsiElement;
 public interface IdlOpInputModelMeta extends PsiElement {
 
   @NotNull
-  IdlOpInputComaModelProjection getOpInputComaModelProjection();
+  IdlOpInputModelProjection getOpInputModelProjection();
 
   @NotNull
   PsiElement getColon();

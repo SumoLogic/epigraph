@@ -30,12 +30,12 @@
     UPDATE_OP = 'UPDATE'
     DELETE_OP = 'DELETE'
     CUSTOM_OP = 'CUSTOM'
-    INPUT = 'input'
-    OUTPUT = 'output'
-    DELETE = 'delete'
+    INPUT_TYPE = 'inputType'
+    INPUT_PROJECTION = 'inputProjection'
+    OUTPUT_TYPE = 'outputType'
+    OUTPUT_PROJECTION = 'outputProjection'
+    DELETE_PROJECTION = 'deleteProjection'
     PATH = 'path'
-    TYPE = 'type'
-    PROJECTION = 'projection'
 
     COLON = ':'
     DOT = '.'
@@ -152,14 +152,30 @@ resourceType ::= ':' valueTypeRef
 private resourceDefBody ::= '{' (resourceDefPart ','?)* '}'
 private resourceDefPart ::= operationDef { recoverWhile = operationBodyRecover }
 
+/*
+resource users map[String,User] {
+  CREATE {
+    ; foo : String = "sf"
+    doc = "sdf"
+
+    path * { ;foo : Int, name = "id" } : record / bestFriend
+    // or path $id { ;foo : Int } : record / bestFriend // todo give name to path and op key(s)
+    inputType Foo
+    inputProjection (..)
+    outputType Bar
+    outputProjection (..)
+  }
+}
+ */
+
 // operation def parts
 operationName ::= 'default' | qid
 operationPath ::= 'path' opVarPath {pin=1}
-operationInputType ::= 'input' 'type' typeRef {pin=2}
-operationInputProjection ::= 'input' 'projection' opInputComaModelProjection {pin=2}
-operationOutputType ::= 'output' 'type' valueTypeRef {pin=2}
-operationOutputProjection ::= 'output' 'projection' opOutputVarProjection {pin=2}
-operationDeleteProjection ::= 'delete' 'projection' opDeleteVarProjection {pin=2}
+operationInputType ::= 'inputType' typeRef {pin=2}
+operationInputProjection ::= 'inputProjection' opInputModelProjection {pin=2}
+operationOutputType ::= 'outputType' valueTypeRef {pin=2}
+operationOutputProjection ::= 'outputProjection' opOutputVarProjection {pin=2}
+operationDeleteProjection ::= 'deleteProjection' opDeleteVarProjection {pin=2}
 
 operationDef ::= createOperationDef | readOperationDef | updateOperationDef | deleteOperationDef | customOperationDef
 
@@ -187,7 +203,9 @@ readOperationBodyPart ::= operationPath |
 updateOperationDef ::= operationName? 'UPDATE' updateOperationBody {pin=2}
 private updateOperationBody ::= '{' (updateOperationBodyPart ','?)* '}'
 updateOperationBodyPart ::= operationPath |
-                            operationInputProjection | 
+                            operationInputType |
+                            operationInputProjection |
+                            operationOutputType |
                             operationOutputProjection | 
                             opParam | 
                             annotation {
@@ -216,7 +234,7 @@ private operationBodyRecover ::= ! ( '}' | ',' | ';' | 'input' | 'output' | 'pat
 
 // ============= op projections =============
 
-opParam ::= ';' '+'? qid ':' typeRef opInputComaModelProjection opParamDefault? opParamBody? { pin = 1 }
+opParam ::= ';' '+'? qid ':' typeRef opInputModelProjection opParamDefault? opParamBody? { pin = 1 }
 private opParamDefault ::= '=' datum { pin=1 }
 private opParamBody ::= '{' ( opParamBodyPart ','? )* '}'
 private opParamBodyPart ::= annotation
@@ -301,73 +319,46 @@ opInputModelProperty ::= opInputDefaultValue | annotation | opInputModelMeta {re
 private opInputModelPropertyRecover ::= ! ( '}' )
 opInputDefaultValue ::= 'default' ':' datum {pin=1}
 
-opInputModelMeta ::= 'meta' ':' '+'? opInputComaModelProjection
+opInputModelMeta ::= 'meta' ':' '+'? opInputModelProjection
 
 opInputVarPolymorphicTail ::= opInputVarSingleTail | opInputVarMultiTail
-opInputVarSingleTail ::= '~' typeRef opInputComaVarProjection
+opInputVarSingleTail ::= '~' typeRef opInputVarProjection
 opInputVarMultiTail ::= '~' '(' (opInputVarMultiTailItem ','?)* ')' {pin=2}
 // todo: recovery. Commented out one breaks parsing tests
-opInputVarMultiTailItem ::= typeRef opInputComaVarProjection // {recoverWhile = opInputVarMultiTailItemRecover}
+opInputVarMultiTailItem ::= typeRef opInputVarProjection // {recoverWhile = opInputVarMultiTailItemRecover}
 //private opInputVarMultiTailItemRecover ::= ! ( ')' )
 
 // todo: recovery. Commented out one breaks parsing tests
 opInputFieldProjectionBodyPart ::= annotation // {recoverWhile=opInputFieldProjectionBodyPartRecover}
 //private opInputFieldProjectionBodyPartRecover ::= ! ( '}' )
 
-// input projection consists of two parts: trunk and coma. Trunk can't have any branching, i.e. only
-// singular tags and fields are allowed in var and record projections. Coma can contain branching
 
-// input trunk part
+opInputVarProjection ::= ( opInputMultiTagProjection | opInputSingleTagProjection ) opInputVarPolymorphicTail?
+opInputMultiTagProjection ::= ':' '(' (opInputMultiTagProjectionItem ','?)* ')' {pin=2}
+opInputSingleTagProjection ::= ( ':' '+'? tagName)? (opInputComplexTagProjection | opInputSimpleTagProjection )
+opInputMultiTagProjectionItem ::= '+'? tagName ( opInputComplexTagProjection | opInputSimpleTagProjection )
 
-//opInputTrunkVarProjection ::= ( opInputComaMultiTagProjection | opInputTrunkSingleTagProjection ) opInputVarPolymorphicTail?
-//opInputTrunkSingleTagProjection ::= ( ':' '+'? tagName)? (opInputTrunkComplexSingleTagProjection | opInputTrunkSimpleSingleTagProjection )
-//private opInputTrunkSimpleSingleTagProjection ::= opInputTrunkModelProjection
-//private opInputTrunkComplexSingleTagProjection ::= '{' (opInputModelProperty ','?)* opInputTrunkModelProjection '}' {pin=1}
-//
-////
-//
-//opInputTrunkModelProjection ::= ( opInputTrunkRecordModelProjection
-//                                | opInputComaRecordModelProjection
-//                                | opInputComaListModelProjection
-//                                | opInputComaMapModelProjection
-//                                )? {
-//  extends = opInputComaModelProjection
-//}
-//
-//// op input record trunk
-//opInputTrunkRecordModelProjection ::= '/' opInputTrunkFieldProjection { pin=1 }
-//opInputTrunkFieldProjection ::= '+'? qid (opInputTrunkComplexFieldProjection | opInputTrunkSimpleFieldProjection)
-//private opInputTrunkComplexFieldProjection ::= '{' (opInputFieldProjectionBodyPart ','? )* opInputTrunkVarProjection? '}'
-//private opInputTrunkSimpleFieldProjection ::= opInputTrunkVarProjection
-
-// input coma part
-
-opInputComaVarProjection ::= ( opInputComaMultiTagProjection | opInputComaSingleTagProjection ) opInputVarPolymorphicTail?
-opInputComaMultiTagProjection ::= ':' '(' (opInputComaMultiTagProjectionItem ','?)* ')' {pin=2}
-opInputComaSingleTagProjection ::= ( ':' '+'? tagName)? (opInputComaComplexTagProjection | opInputComaSimpleTagProjection )
-opInputComaMultiTagProjectionItem ::= '+'? tagName ( opInputComaComplexTagProjection | opInputComaSimpleTagProjection )
-
-private opInputComaSimpleTagProjection ::= opInputComaModelProjection
-private opInputComaComplexTagProjection ::= '{' (opInputModelProperty ','?)* opInputComaModelProjection '}' {pin=1}
+private opInputSimpleTagProjection ::= opInputModelProjection
+private opInputComplexTagProjection ::= '{' (opInputModelProperty ','?)* opInputModelProjection '}' {pin=1}
 //
 
-opInputComaModelProjection ::= ( opInputComaRecordModelProjection
-                               | opInputComaListModelProjection
-                               | opInputComaMapModelProjection
+opInputModelProjection ::= ( opInputRecordModelProjection
+                               | opInputListModelProjection
+                               | opInputMapModelProjection
                                )?
 
 // op input record
-opInputComaRecordModelProjection ::= '(' (opInputComaFieldProjection ','?)* ')' { pin=1 }
-opInputComaFieldProjection ::= '+'? qid (opInputComaComplexFieldProjection | opInputComaSimpleFieldProjection)
-private opInputComaComplexFieldProjection ::= '{' (opInputFieldProjectionBodyPart ','? )* opInputComaVarProjection? '}'
-private opInputComaSimpleFieldProjection ::= opInputComaVarProjection
+opInputRecordModelProjection ::= '(' (opInputFieldProjection ','?)* ')' { pin=1 }
+opInputFieldProjection ::= '+'? qid (opInputComplexFieldProjection | opInputSimpleFieldProjection)
+private opInputComplexFieldProjection ::= '{' (opInputFieldProjectionBodyPart ','? )* opInputVarProjection? '}'
+private opInputSimpleFieldProjection ::= opInputVarProjection
 
 // op input list
-opInputComaListModelProjection ::= '*' '(' opInputComaVarProjection ')' { pin=1 }
+opInputListModelProjection ::= '*' '(' opInputVarProjection ')' { pin=1 }
 
 // op input map
-opInputComaMapModelProjection ::= opInputComaKeyProjection '(' opInputComaVarProjection ')'
-opInputComaKeyProjection ::= '[' ']' {pin=1}
+opInputMapModelProjection ::= opInputKeyProjection '(' opInputVarProjection ')'
+opInputKeyProjection ::= '[' ']' {pin=1}
 
 // delete --------------------------------------------------------
 

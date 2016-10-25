@@ -40,6 +40,12 @@ public class IdlOperationDefImpl extends ASTWrapperPsiElement implements IdlOper
 
   @Override
   @Nullable
+  public IdlDeleteOperationDef getDeleteOperationDef() {
+    return findChildByClass(IdlDeleteOperationDef.class);
+  }
+
+  @Override
+  @Nullable
   public IdlReadOperationDef getReadOperationDef() {
     return findChildByClass(IdlReadOperationDef.class);
   }

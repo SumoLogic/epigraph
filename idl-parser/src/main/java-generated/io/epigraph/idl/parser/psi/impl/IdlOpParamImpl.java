@@ -40,8 +40,8 @@ public class IdlOpParamImpl extends ASTWrapperPsiElement implements IdlOpParam {
 
   @Override
   @Nullable
-  public IdlOpInputComaModelProjection getOpInputComaModelProjection() {
-    return findChildByClass(IdlOpInputComaModelProjection.class);
+  public IdlOpInputModelProjection getOpInputModelProjection() {
+    return findChildByClass(IdlOpInputModelProjection.class);
   }
 
   @Override

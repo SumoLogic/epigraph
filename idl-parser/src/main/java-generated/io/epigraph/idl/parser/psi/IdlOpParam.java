@@ -14,7 +14,7 @@ public interface IdlOpParam extends PsiElement {
   IdlDatum getDatum();
 
   @Nullable
-  IdlOpInputComaModelProjection getOpInputComaModelProjection();
+  IdlOpInputModelProjection getOpInputModelProjection();
 
   @Nullable
   IdlQid getQid();

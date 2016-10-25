@@ -28,8 +28,8 @@ public class IdlOpInputVarSingleTailImpl extends ASTWrapperPsiElement implements
 
   @Override
   @NotNull
-  public IdlOpInputComaVarProjection getOpInputComaVarProjection() {
-    return findNotNullChildByClass(IdlOpInputComaVarProjection.class);
+  public IdlOpInputVarProjection getOpInputVarProjection() {
+    return findNotNullChildByClass(IdlOpInputVarProjection.class);
   }
 
   @Override

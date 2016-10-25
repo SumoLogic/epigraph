@@ -20,6 +20,8 @@ public interface IdlElementTypes {
   IElementType I_DATA_VALUE = new IdlElementType("I_DATA_VALUE");
   IElementType I_DATUM = new IdlElementType("I_DATUM");
   IElementType I_DEFAULT_OVERRIDE = new IdlElementType("I_DEFAULT_OVERRIDE");
+  IElementType I_DELETE_OPERATION_BODY_PART = new IdlElementType("I_DELETE_OPERATION_BODY_PART");
+  IElementType I_DELETE_OPERATION_DEF = new IdlElementType("I_DELETE_OPERATION_DEF");
   IElementType I_ENUM_DATUM = new IdlElementType("I_ENUM_DATUM");
   IElementType I_IMPORTS = new IdlElementType("I_IMPORTS");
   IElementType I_IMPORT_STATEMENT = new IdlElementType("I_IMPORT_STATEMENT");
@@ -29,32 +31,53 @@ public interface IdlElementTypes {
   IElementType I_NAMESPACE_DECL = new IdlElementType("I_NAMESPACE_DECL");
   IElementType I_NULL_DATUM = new IdlElementType("I_NULL_DATUM");
   IElementType I_OPERATION_DEF = new IdlElementType("I_OPERATION_DEF");
-  IElementType I_OPERATION_INPUT = new IdlElementType("I_OPERATION_INPUT");
+  IElementType I_OPERATION_DELETE_PROJECTION = new IdlElementType("I_OPERATION_DELETE_PROJECTION");
+  IElementType I_OPERATION_INPUT_PROJECTION = new IdlElementType("I_OPERATION_INPUT_PROJECTION");
+  IElementType I_OPERATION_INPUT_TYPE = new IdlElementType("I_OPERATION_INPUT_TYPE");
   IElementType I_OPERATION_NAME = new IdlElementType("I_OPERATION_NAME");
-  IElementType I_OPERATION_OUTPUT = new IdlElementType("I_OPERATION_OUTPUT");
-  IElementType I_OP_INPUT_COMA_FIELD_PROJECTION = new IdlElementType("I_OP_INPUT_COMA_FIELD_PROJECTION");
-  IElementType I_OP_INPUT_COMA_KEY_PROJECTION = new IdlElementType("I_OP_INPUT_COMA_KEY_PROJECTION");
-  IElementType I_OP_INPUT_COMA_LIST_MODEL_PROJECTION = new IdlElementType("I_OP_INPUT_COMA_LIST_MODEL_PROJECTION");
-  IElementType I_OP_INPUT_COMA_MAP_MODEL_PROJECTION = new IdlElementType("I_OP_INPUT_COMA_MAP_MODEL_PROJECTION");
-  IElementType I_OP_INPUT_COMA_MODEL_PROJECTION = new IdlElementType("I_OP_INPUT_COMA_MODEL_PROJECTION");
-  IElementType I_OP_INPUT_COMA_MULTI_TAG_PROJECTION = new IdlElementType("I_OP_INPUT_COMA_MULTI_TAG_PROJECTION");
-  IElementType I_OP_INPUT_COMA_MULTI_TAG_PROJECTION_ITEM = new IdlElementType("I_OP_INPUT_COMA_MULTI_TAG_PROJECTION_ITEM");
-  IElementType I_OP_INPUT_COMA_RECORD_MODEL_PROJECTION = new IdlElementType("I_OP_INPUT_COMA_RECORD_MODEL_PROJECTION");
-  IElementType I_OP_INPUT_COMA_SINGLE_TAG_PROJECTION = new IdlElementType("I_OP_INPUT_COMA_SINGLE_TAG_PROJECTION");
-  IElementType I_OP_INPUT_COMA_VAR_PROJECTION = new IdlElementType("I_OP_INPUT_COMA_VAR_PROJECTION");
+  IElementType I_OPERATION_OUTPUT_PROJECTION = new IdlElementType("I_OPERATION_OUTPUT_PROJECTION");
+  IElementType I_OPERATION_OUTPUT_TYPE = new IdlElementType("I_OPERATION_OUTPUT_TYPE");
+  IElementType I_OPERATION_PATH = new IdlElementType("I_OPERATION_PATH");
+  IElementType I_OP_DELETE_FIELD_PROJECTION = new IdlElementType("I_OP_DELETE_FIELD_PROJECTION");
+  IElementType I_OP_DELETE_FIELD_PROJECTION_BODY_PART = new IdlElementType("I_OP_DELETE_FIELD_PROJECTION_BODY_PART");
+  IElementType I_OP_DELETE_KEY_PROJECTION = new IdlElementType("I_OP_DELETE_KEY_PROJECTION");
+  IElementType I_OP_DELETE_KEY_PROJECTION_PART = new IdlElementType("I_OP_DELETE_KEY_PROJECTION_PART");
+  IElementType I_OP_DELETE_LIST_MODEL_PROJECTION = new IdlElementType("I_OP_DELETE_LIST_MODEL_PROJECTION");
+  IElementType I_OP_DELETE_MAP_MODEL_PROJECTION = new IdlElementType("I_OP_DELETE_MAP_MODEL_PROJECTION");
+  IElementType I_OP_DELETE_MODEL_PROJECTION = new IdlElementType("I_OP_DELETE_MODEL_PROJECTION");
+  IElementType I_OP_DELETE_MODEL_PROPERTY = new IdlElementType("I_OP_DELETE_MODEL_PROPERTY");
+  IElementType I_OP_DELETE_MULTI_TAG_PROJECTION = new IdlElementType("I_OP_DELETE_MULTI_TAG_PROJECTION");
+  IElementType I_OP_DELETE_MULTI_TAG_PROJECTION_ITEM = new IdlElementType("I_OP_DELETE_MULTI_TAG_PROJECTION_ITEM");
+  IElementType I_OP_DELETE_RECORD_MODEL_PROJECTION = new IdlElementType("I_OP_DELETE_RECORD_MODEL_PROJECTION");
+  IElementType I_OP_DELETE_SINGLE_TAG_PROJECTION = new IdlElementType("I_OP_DELETE_SINGLE_TAG_PROJECTION");
+  IElementType I_OP_DELETE_VAR_MULTI_TAIL = new IdlElementType("I_OP_DELETE_VAR_MULTI_TAIL");
+  IElementType I_OP_DELETE_VAR_MULTI_TAIL_ITEM = new IdlElementType("I_OP_DELETE_VAR_MULTI_TAIL_ITEM");
+  IElementType I_OP_DELETE_VAR_POLYMORPHIC_TAIL = new IdlElementType("I_OP_DELETE_VAR_POLYMORPHIC_TAIL");
+  IElementType I_OP_DELETE_VAR_PROJECTION = new IdlElementType("I_OP_DELETE_VAR_PROJECTION");
+  IElementType I_OP_DELETE_VAR_SINGLE_TAIL = new IdlElementType("I_OP_DELETE_VAR_SINGLE_TAIL");
+  IElementType I_OP_FIELD_PATH = new IdlElementType("I_OP_FIELD_PATH");
+  IElementType I_OP_FIELD_PATH_BODY_PART = new IdlElementType("I_OP_FIELD_PATH_BODY_PART");
   IElementType I_OP_INPUT_DEFAULT_VALUE = new IdlElementType("I_OP_INPUT_DEFAULT_VALUE");
+  IElementType I_OP_INPUT_FIELD_PROJECTION = new IdlElementType("I_OP_INPUT_FIELD_PROJECTION");
   IElementType I_OP_INPUT_FIELD_PROJECTION_BODY_PART = new IdlElementType("I_OP_INPUT_FIELD_PROJECTION_BODY_PART");
+  IElementType I_OP_INPUT_KEY_PROJECTION = new IdlElementType("I_OP_INPUT_KEY_PROJECTION");
+  IElementType I_OP_INPUT_LIST_MODEL_PROJECTION = new IdlElementType("I_OP_INPUT_LIST_MODEL_PROJECTION");
+  IElementType I_OP_INPUT_MAP_MODEL_PROJECTION = new IdlElementType("I_OP_INPUT_MAP_MODEL_PROJECTION");
   IElementType I_OP_INPUT_MODEL_META = new IdlElementType("I_OP_INPUT_MODEL_META");
+  IElementType I_OP_INPUT_MODEL_PROJECTION = new IdlElementType("I_OP_INPUT_MODEL_PROJECTION");
   IElementType I_OP_INPUT_MODEL_PROPERTY = new IdlElementType("I_OP_INPUT_MODEL_PROPERTY");
-  IElementType I_OP_INPUT_TRUNK_FIELD_PROJECTION = new IdlElementType("I_OP_INPUT_TRUNK_FIELD_PROJECTION");
-  IElementType I_OP_INPUT_TRUNK_MODEL_PROJECTION = new IdlElementType("I_OP_INPUT_TRUNK_MODEL_PROJECTION");
-  IElementType I_OP_INPUT_TRUNK_RECORD_MODEL_PROJECTION = new IdlElementType("I_OP_INPUT_TRUNK_RECORD_MODEL_PROJECTION");
-  IElementType I_OP_INPUT_TRUNK_SINGLE_TAG_PROJECTION = new IdlElementType("I_OP_INPUT_TRUNK_SINGLE_TAG_PROJECTION");
-  IElementType I_OP_INPUT_TRUNK_VAR_PROJECTION = new IdlElementType("I_OP_INPUT_TRUNK_VAR_PROJECTION");
+  IElementType I_OP_INPUT_MULTI_TAG_PROJECTION = new IdlElementType("I_OP_INPUT_MULTI_TAG_PROJECTION");
+  IElementType I_OP_INPUT_MULTI_TAG_PROJECTION_ITEM = new IdlElementType("I_OP_INPUT_MULTI_TAG_PROJECTION_ITEM");
+  IElementType I_OP_INPUT_RECORD_MODEL_PROJECTION = new IdlElementType("I_OP_INPUT_RECORD_MODEL_PROJECTION");
+  IElementType I_OP_INPUT_SINGLE_TAG_PROJECTION = new IdlElementType("I_OP_INPUT_SINGLE_TAG_PROJECTION");
   IElementType I_OP_INPUT_VAR_MULTI_TAIL = new IdlElementType("I_OP_INPUT_VAR_MULTI_TAIL");
   IElementType I_OP_INPUT_VAR_MULTI_TAIL_ITEM = new IdlElementType("I_OP_INPUT_VAR_MULTI_TAIL_ITEM");
   IElementType I_OP_INPUT_VAR_POLYMORPHIC_TAIL = new IdlElementType("I_OP_INPUT_VAR_POLYMORPHIC_TAIL");
+  IElementType I_OP_INPUT_VAR_PROJECTION = new IdlElementType("I_OP_INPUT_VAR_PROJECTION");
   IElementType I_OP_INPUT_VAR_SINGLE_TAIL = new IdlElementType("I_OP_INPUT_VAR_SINGLE_TAIL");
+  IElementType I_OP_MAP_MODEL_PATH = new IdlElementType("I_OP_MAP_MODEL_PATH");
+  IElementType I_OP_MODEL_PATH = new IdlElementType("I_OP_MODEL_PATH");
+  IElementType I_OP_MODEL_PATH_PROPERTY = new IdlElementType("I_OP_MODEL_PATH_PROPERTY");
   IElementType I_OP_OUTPUT_FIELD_PROJECTION = new IdlElementType("I_OP_OUTPUT_FIELD_PROJECTION");
   IElementType I_OP_OUTPUT_FIELD_PROJECTION_BODY_PART = new IdlElementType("I_OP_OUTPUT_FIELD_PROJECTION_BODY_PART");
   IElementType I_OP_OUTPUT_KEY_PROJECTION = new IdlElementType("I_OP_OUTPUT_KEY_PROJECTION");
@@ -74,6 +97,10 @@ public interface IdlElementTypes {
   IElementType I_OP_OUTPUT_VAR_PROJECTION = new IdlElementType("I_OP_OUTPUT_VAR_PROJECTION");
   IElementType I_OP_OUTPUT_VAR_SINGLE_TAIL = new IdlElementType("I_OP_OUTPUT_VAR_SINGLE_TAIL");
   IElementType I_OP_PARAM = new IdlElementType("I_OP_PARAM");
+  IElementType I_OP_PATH_KEY_PROJECTION = new IdlElementType("I_OP_PATH_KEY_PROJECTION");
+  IElementType I_OP_PATH_KEY_PROJECTION_PART = new IdlElementType("I_OP_PATH_KEY_PROJECTION_PART");
+  IElementType I_OP_RECORD_MODEL_PATH = new IdlElementType("I_OP_RECORD_MODEL_PATH");
+  IElementType I_OP_VAR_PATH = new IdlElementType("I_OP_VAR_PATH");
   IElementType I_PRIMITIVE_DATUM = new IdlElementType("I_PRIMITIVE_DATUM");
   IElementType I_QID = new IdlElementType("I_QID");
   IElementType I_QN = new IdlElementType("I_QN");
@@ -84,6 +111,7 @@ public interface IdlElementTypes {
   IElementType I_RECORD_DATUM = new IdlElementType("I_RECORD_DATUM");
   IElementType I_RECORD_DATUM_ENTRY = new IdlElementType("I_RECORD_DATUM_ENTRY");
   IElementType I_RESOURCE_DEF = new IdlElementType("I_RESOURCE_DEF");
+  IElementType I_RESOURCE_NAME = new IdlElementType("I_RESOURCE_NAME");
   IElementType I_RESOURCE_TYPE = new IdlElementType("I_RESOURCE_TYPE");
   IElementType I_TAG_NAME = new IdlElementType("I_TAG_NAME");
   IElementType I_TYPE_REF = new IdlElementType("I_TYPE_REF");
@@ -103,28 +131,32 @@ public interface IdlElementTypes {
   IElementType I_COLON = new IdlElementType(":");
   IElementType I_COMMA = new IdlElementType(",");
   IElementType I_COMMENT = new IdlElementType("comment");
-  IElementType I_CREATE = new IdlElementType("CREATE");
+  IElementType I_CREATE_OP = new IdlElementType("CREATE");
   IElementType I_CURLY_LEFT = new IdlElementType("{");
   IElementType I_CURLY_RIGHT = new IdlElementType("}");
-  IElementType I_CUSTOM = new IdlElementType("CUSTOM");
+  IElementType I_CUSTOM_OP = new IdlElementType("CUSTOM");
   IElementType I_DEFAULT = new IdlElementType("default");
-  IElementType I_DELETE = new IdlElementType("DELETE");
+  IElementType I_DELETE_OP = new IdlElementType("DELETE");
+  IElementType I_DELETE_PROJECTION = new IdlElementType("deleteProjection");
   IElementType I_DOT = new IdlElementType(".");
   IElementType I_EQ = new IdlElementType("=");
   IElementType I_FORBIDDEN = new IdlElementType("forbidden");
   IElementType I_HASH = new IdlElementType("#");
   IElementType I_ID = new IdlElementType("id");
   IElementType I_IMPORT = new IdlElementType("import");
-  IElementType I_INPUT = new IdlElementType("input");
+  IElementType I_INPUT_PROJECTION = new IdlElementType("inputProjection");
+  IElementType I_INPUT_TYPE = new IdlElementType("inputType");
   IElementType I_LIST = new IdlElementType("list");
   IElementType I_MAP = new IdlElementType("map");
   IElementType I_META = new IdlElementType("meta");
   IElementType I_NAMESPACE = new IdlElementType("namespace");
   IElementType I_NULL = new IdlElementType("null");
   IElementType I_NUMBER = new IdlElementType("number");
-  IElementType I_OUTPUT = new IdlElementType("output");
+  IElementType I_OUTPUT_PROJECTION = new IdlElementType("outputProjection");
+  IElementType I_OUTPUT_TYPE = new IdlElementType("outputType");
   IElementType I_PAREN_LEFT = new IdlElementType("(");
   IElementType I_PAREN_RIGHT = new IdlElementType(")");
+  IElementType I_PATH = new IdlElementType("path");
   IElementType I_PLUS = new IdlElementType("+");
   IElementType I_READ = new IdlElementType("READ");
   IElementType I_REQUIRED = new IdlElementType("required");
@@ -135,7 +167,7 @@ public interface IdlElementTypes {
   IElementType I_STRING = new IdlElementType("string");
   IElementType I_TILDA = new IdlElementType("~");
   IElementType I_UNDERSCORE = new IdlElementType("_");
-  IElementType I_UPDATE = new IdlElementType("UPDATE");
+  IElementType I_UPDATE_OP = new IdlElementType("UPDATE");
 
   class Factory {
     public static PsiElement createElement(ASTNode node) {
@@ -173,6 +205,12 @@ public interface IdlElementTypes {
       else if (type == I_DEFAULT_OVERRIDE) {
         return new IdlDefaultOverrideImpl(node);
       }
+      else if (type == I_DELETE_OPERATION_BODY_PART) {
+        return new IdlDeleteOperationBodyPartImpl(node);
+      }
+      else if (type == I_DELETE_OPERATION_DEF) {
+        return new IdlDeleteOperationDefImpl(node);
+      }
       else if (type == I_ENUM_DATUM) {
         return new IdlEnumDatumImpl(node);
       }
@@ -200,71 +238,122 @@ public interface IdlElementTypes {
       else if (type == I_OPERATION_DEF) {
         return new IdlOperationDefImpl(node);
       }
-      else if (type == I_OPERATION_INPUT) {
-        return new IdlOperationInputImpl(node);
+      else if (type == I_OPERATION_DELETE_PROJECTION) {
+        return new IdlOperationDeleteProjectionImpl(node);
+      }
+      else if (type == I_OPERATION_INPUT_PROJECTION) {
+        return new IdlOperationInputProjectionImpl(node);
+      }
+      else if (type == I_OPERATION_INPUT_TYPE) {
+        return new IdlOperationInputTypeImpl(node);
       }
       else if (type == I_OPERATION_NAME) {
         return new IdlOperationNameImpl(node);
       }
-      else if (type == I_OPERATION_OUTPUT) {
-        return new IdlOperationOutputImpl(node);
+      else if (type == I_OPERATION_OUTPUT_PROJECTION) {
+        return new IdlOperationOutputProjectionImpl(node);
       }
-      else if (type == I_OP_INPUT_COMA_FIELD_PROJECTION) {
-        return new IdlOpInputComaFieldProjectionImpl(node);
+      else if (type == I_OPERATION_OUTPUT_TYPE) {
+        return new IdlOperationOutputTypeImpl(node);
       }
-      else if (type == I_OP_INPUT_COMA_KEY_PROJECTION) {
-        return new IdlOpInputComaKeyProjectionImpl(node);
+      else if (type == I_OPERATION_PATH) {
+        return new IdlOperationPathImpl(node);
       }
-      else if (type == I_OP_INPUT_COMA_LIST_MODEL_PROJECTION) {
-        return new IdlOpInputComaListModelProjectionImpl(node);
+      else if (type == I_OP_DELETE_FIELD_PROJECTION) {
+        return new IdlOpDeleteFieldProjectionImpl(node);
       }
-      else if (type == I_OP_INPUT_COMA_MAP_MODEL_PROJECTION) {
-        return new IdlOpInputComaMapModelProjectionImpl(node);
+      else if (type == I_OP_DELETE_FIELD_PROJECTION_BODY_PART) {
+        return new IdlOpDeleteFieldProjectionBodyPartImpl(node);
       }
-      else if (type == I_OP_INPUT_COMA_MODEL_PROJECTION) {
-        return new IdlOpInputComaModelProjectionImpl(node);
+      else if (type == I_OP_DELETE_KEY_PROJECTION) {
+        return new IdlOpDeleteKeyProjectionImpl(node);
       }
-      else if (type == I_OP_INPUT_COMA_MULTI_TAG_PROJECTION) {
-        return new IdlOpInputComaMultiTagProjectionImpl(node);
+      else if (type == I_OP_DELETE_KEY_PROJECTION_PART) {
+        return new IdlOpDeleteKeyProjectionPartImpl(node);
       }
-      else if (type == I_OP_INPUT_COMA_MULTI_TAG_PROJECTION_ITEM) {
-        return new IdlOpInputComaMultiTagProjectionItemImpl(node);
+      else if (type == I_OP_DELETE_LIST_MODEL_PROJECTION) {
+        return new IdlOpDeleteListModelProjectionImpl(node);
       }
-      else if (type == I_OP_INPUT_COMA_RECORD_MODEL_PROJECTION) {
-        return new IdlOpInputComaRecordModelProjectionImpl(node);
+      else if (type == I_OP_DELETE_MAP_MODEL_PROJECTION) {
+        return new IdlOpDeleteMapModelProjectionImpl(node);
       }
-      else if (type == I_OP_INPUT_COMA_SINGLE_TAG_PROJECTION) {
-        return new IdlOpInputComaSingleTagProjectionImpl(node);
+      else if (type == I_OP_DELETE_MODEL_PROJECTION) {
+        return new IdlOpDeleteModelProjectionImpl(node);
       }
-      else if (type == I_OP_INPUT_COMA_VAR_PROJECTION) {
-        return new IdlOpInputComaVarProjectionImpl(node);
+      else if (type == I_OP_DELETE_MODEL_PROPERTY) {
+        return new IdlOpDeleteModelPropertyImpl(node);
+      }
+      else if (type == I_OP_DELETE_MULTI_TAG_PROJECTION) {
+        return new IdlOpDeleteMultiTagProjectionImpl(node);
+      }
+      else if (type == I_OP_DELETE_MULTI_TAG_PROJECTION_ITEM) {
+        return new IdlOpDeleteMultiTagProjectionItemImpl(node);
+      }
+      else if (type == I_OP_DELETE_RECORD_MODEL_PROJECTION) {
+        return new IdlOpDeleteRecordModelProjectionImpl(node);
+      }
+      else if (type == I_OP_DELETE_SINGLE_TAG_PROJECTION) {
+        return new IdlOpDeleteSingleTagProjectionImpl(node);
+      }
+      else if (type == I_OP_DELETE_VAR_MULTI_TAIL) {
+        return new IdlOpDeleteVarMultiTailImpl(node);
+      }
+      else if (type == I_OP_DELETE_VAR_MULTI_TAIL_ITEM) {
+        return new IdlOpDeleteVarMultiTailItemImpl(node);
+      }
+      else if (type == I_OP_DELETE_VAR_POLYMORPHIC_TAIL) {
+        return new IdlOpDeleteVarPolymorphicTailImpl(node);
+      }
+      else if (type == I_OP_DELETE_VAR_PROJECTION) {
+        return new IdlOpDeleteVarProjectionImpl(node);
+      }
+      else if (type == I_OP_DELETE_VAR_SINGLE_TAIL) {
+        return new IdlOpDeleteVarSingleTailImpl(node);
+      }
+      else if (type == I_OP_FIELD_PATH) {
+        return new IdlOpFieldPathImpl(node);
+      }
+      else if (type == I_OP_FIELD_PATH_BODY_PART) {
+        return new IdlOpFieldPathBodyPartImpl(node);
       }
       else if (type == I_OP_INPUT_DEFAULT_VALUE) {
         return new IdlOpInputDefaultValueImpl(node);
       }
+      else if (type == I_OP_INPUT_FIELD_PROJECTION) {
+        return new IdlOpInputFieldProjectionImpl(node);
+      }
       else if (type == I_OP_INPUT_FIELD_PROJECTION_BODY_PART) {
         return new IdlOpInputFieldProjectionBodyPartImpl(node);
+      }
+      else if (type == I_OP_INPUT_KEY_PROJECTION) {
+        return new IdlOpInputKeyProjectionImpl(node);
+      }
+      else if (type == I_OP_INPUT_LIST_MODEL_PROJECTION) {
+        return new IdlOpInputListModelProjectionImpl(node);
+      }
+      else if (type == I_OP_INPUT_MAP_MODEL_PROJECTION) {
+        return new IdlOpInputMapModelProjectionImpl(node);
       }
       else if (type == I_OP_INPUT_MODEL_META) {
         return new IdlOpInputModelMetaImpl(node);
       }
+      else if (type == I_OP_INPUT_MODEL_PROJECTION) {
+        return new IdlOpInputModelProjectionImpl(node);
+      }
       else if (type == I_OP_INPUT_MODEL_PROPERTY) {
         return new IdlOpInputModelPropertyImpl(node);
       }
-      else if (type == I_OP_INPUT_TRUNK_FIELD_PROJECTION) {
-        return new IdlOpInputTrunkFieldProjectionImpl(node);
+      else if (type == I_OP_INPUT_MULTI_TAG_PROJECTION) {
+        return new IdlOpInputMultiTagProjectionImpl(node);
       }
-      else if (type == I_OP_INPUT_TRUNK_MODEL_PROJECTION) {
-        return new IdlOpInputTrunkModelProjectionImpl(node);
+      else if (type == I_OP_INPUT_MULTI_TAG_PROJECTION_ITEM) {
+        return new IdlOpInputMultiTagProjectionItemImpl(node);
       }
-      else if (type == I_OP_INPUT_TRUNK_RECORD_MODEL_PROJECTION) {
-        return new IdlOpInputTrunkRecordModelProjectionImpl(node);
+      else if (type == I_OP_INPUT_RECORD_MODEL_PROJECTION) {
+        return new IdlOpInputRecordModelProjectionImpl(node);
       }
-      else if (type == I_OP_INPUT_TRUNK_SINGLE_TAG_PROJECTION) {
-        return new IdlOpInputTrunkSingleTagProjectionImpl(node);
-      }
-      else if (type == I_OP_INPUT_TRUNK_VAR_PROJECTION) {
-        return new IdlOpInputTrunkVarProjectionImpl(node);
+      else if (type == I_OP_INPUT_SINGLE_TAG_PROJECTION) {
+        return new IdlOpInputSingleTagProjectionImpl(node);
       }
       else if (type == I_OP_INPUT_VAR_MULTI_TAIL) {
         return new IdlOpInputVarMultiTailImpl(node);
@@ -275,8 +364,20 @@ public interface IdlElementTypes {
       else if (type == I_OP_INPUT_VAR_POLYMORPHIC_TAIL) {
         return new IdlOpInputVarPolymorphicTailImpl(node);
       }
+      else if (type == I_OP_INPUT_VAR_PROJECTION) {
+        return new IdlOpInputVarProjectionImpl(node);
+      }
       else if (type == I_OP_INPUT_VAR_SINGLE_TAIL) {
         return new IdlOpInputVarSingleTailImpl(node);
+      }
+      else if (type == I_OP_MAP_MODEL_PATH) {
+        return new IdlOpMapModelPathImpl(node);
+      }
+      else if (type == I_OP_MODEL_PATH) {
+        return new IdlOpModelPathImpl(node);
+      }
+      else if (type == I_OP_MODEL_PATH_PROPERTY) {
+        return new IdlOpModelPathPropertyImpl(node);
       }
       else if (type == I_OP_OUTPUT_FIELD_PROJECTION) {
         return new IdlOpOutputFieldProjectionImpl(node);
@@ -335,6 +436,18 @@ public interface IdlElementTypes {
       else if (type == I_OP_PARAM) {
         return new IdlOpParamImpl(node);
       }
+      else if (type == I_OP_PATH_KEY_PROJECTION) {
+        return new IdlOpPathKeyProjectionImpl(node);
+      }
+      else if (type == I_OP_PATH_KEY_PROJECTION_PART) {
+        return new IdlOpPathKeyProjectionPartImpl(node);
+      }
+      else if (type == I_OP_RECORD_MODEL_PATH) {
+        return new IdlOpRecordModelPathImpl(node);
+      }
+      else if (type == I_OP_VAR_PATH) {
+        return new IdlOpVarPathImpl(node);
+      }
       else if (type == I_PRIMITIVE_DATUM) {
         return new IdlPrimitiveDatumImpl(node);
       }
@@ -364,6 +477,9 @@ public interface IdlElementTypes {
       }
       else if (type == I_RESOURCE_DEF) {
         return new IdlResourceDefImpl(node);
+      }
+      else if (type == I_RESOURCE_NAME) {
+        return new IdlResourceNameImpl(node);
       }
       else if (type == I_RESOURCE_TYPE) {
         return new IdlResourceTypeImpl(node);

@@ -28,8 +28,8 @@ public class IdlOpInputVarMultiTailItemImpl extends ASTWrapperPsiElement impleme
 
   @Override
   @NotNull
-  public IdlOpInputComaVarProjection getOpInputComaVarProjection() {
-    return findNotNullChildByClass(IdlOpInputComaVarProjection.class);
+  public IdlOpInputVarProjection getOpInputVarProjection() {
+    return findNotNullChildByClass(IdlOpInputVarProjection.class);
   }
 
   @Override

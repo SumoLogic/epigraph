@@ -54,11 +54,12 @@ ID=([:letter:]([:letter:]|[:digit:])*)|(`[^`]*`)
   "UPDATE"             { return I_UPDATE_OP; }
   "DELETE"             { return I_DELETE_OP; }
   "CUSTOM"             { return I_CUSTOM_OP; }
-  "input"              { return I_INPUT; }
-  "output"             { return I_OUTPUT; }
+  "inputType"          { return I_INPUT_TYPE; }
+  "inputProjection"    { return I_INPUT_PROJECTION; }
+  "outputType"         { return I_OUTPUT_TYPE; }
+  "outputProjection"   { return I_OUTPUT_PROJECTION; }
+  "deleteProjection"   { return I_DELETE_PROJECTION; }
   "path"               { return I_PATH; }
-  "type"               { return I_TYPE; }
-  "projection"         { return I_PROJECTION; }
   ":"                  { return I_COLON; }
   "."                  { return I_DOT; }
   ","                  { return I_COMMA; }

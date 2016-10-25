@@ -14,6 +14,9 @@ public interface IdlOperationDef extends PsiElement {
   IdlCustomOperationDef getCustomOperationDef();
 
   @Nullable
+  IdlDeleteOperationDef getDeleteOperationDef();
+
+  @Nullable
   IdlReadOperationDef getReadOperationDef();
 
   @Nullable

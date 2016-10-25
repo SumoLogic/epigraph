@@ -40,14 +40,14 @@ public class IdlCustomOperationBodyPartImpl extends ASTWrapperPsiElement impleme
 
   @Override
   @Nullable
-  public IdlOperationInput getOperationInput() {
-    return findChildByClass(IdlOperationInput.class);
+  public IdlOperationInputProjection getOperationInputProjection() {
+    return findChildByClass(IdlOperationInputProjection.class);
   }
 
   @Override
   @Nullable
-  public IdlOperationOutput getOperationOutput() {
-    return findChildByClass(IdlOperationOutput.class);
+  public IdlOperationOutputProjection getOperationOutputProjection() {
+    return findChildByClass(IdlOperationOutputProjection.class);
   }
 
 }

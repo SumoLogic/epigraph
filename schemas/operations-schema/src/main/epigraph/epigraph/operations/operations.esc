@@ -52,7 +52,7 @@ record CreateOperation extends Operation {
   // HTTP POST /people ~ *(status) <<< [ { user1 }, { user2 } ]
   // inputType (if not specified) = path tip type, or resource fieldType if path is null
 
-  // can be specified: path, inputType, inputProjection, outputType, outputProjection
+  // can be specified: path, inputType?, inputProjection, outputType, outputProjection
 }
 
 record ReadOperation extends Operation {
@@ -70,9 +70,9 @@ record UpdateOperation extends Operation {
 
   //updateDataProjection: OpInputVarProjection // projection for body data, starts from `path` tip
 
-  // contract: inputType = outputType = path tip type, or resource fieldType if path is null
+  // inputType (if not specified) = path tip type, or resource fieldType if path is null
 
-  // can be specified: path, inputProjection, outputProjection
+  // can be specified: path, inputType?, inputProjection, outputType, outputProjection
 }
 
 record DeleteOperation extends Operation {

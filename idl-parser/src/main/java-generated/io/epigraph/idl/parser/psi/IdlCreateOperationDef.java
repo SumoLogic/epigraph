@@ -14,7 +14,7 @@ public interface IdlCreateOperationDef extends PsiElement {
   IdlOperationName getOperationName();
 
   @NotNull
-  PsiElement getCreate();
+  PsiElement getCreateOp();
 
   @Nullable
   PsiElement getCurlyLeft();

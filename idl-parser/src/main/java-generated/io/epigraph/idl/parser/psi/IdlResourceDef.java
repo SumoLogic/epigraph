@@ -11,7 +11,7 @@ public interface IdlResourceDef extends PsiElement {
   List<IdlOperationDef> getOperationDefList();
 
   @NotNull
-  IdlQid getQid();
+  IdlResourceName getResourceName();
 
   @NotNull
   IdlResourceType getResourceType();

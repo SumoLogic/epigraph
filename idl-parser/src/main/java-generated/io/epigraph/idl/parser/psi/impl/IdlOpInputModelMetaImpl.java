@@ -28,8 +28,8 @@ public class IdlOpInputModelMetaImpl extends ASTWrapperPsiElement implements Idl
 
   @Override
   @NotNull
-  public IdlOpInputComaModelProjection getOpInputComaModelProjection() {
-    return findNotNullChildByClass(IdlOpInputComaModelProjection.class);
+  public IdlOpInputModelProjection getOpInputModelProjection() {
+    return findNotNullChildByClass(IdlOpInputModelProjection.class);
   }
 
   @Override

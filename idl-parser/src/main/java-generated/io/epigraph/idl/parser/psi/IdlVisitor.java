@@ -55,6 +55,14 @@ public class IdlVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitDeleteOperationBodyPart(@NotNull IdlDeleteOperationBodyPart o) {
+    visitPsiElement(o);
+  }
+
+  public void visitDeleteOperationDef(@NotNull IdlDeleteOperationDef o) {
+    visitPsiElement(o);
+  }
+
   public void visitEnumDatum(@NotNull IdlEnumDatum o) {
     visitDatum(o);
   }
@@ -87,43 +95,79 @@ public class IdlVisitor extends PsiElementVisitor {
     visitDatum(o);
   }
 
-  public void visitOpInputComaFieldProjection(@NotNull IdlOpInputComaFieldProjection o) {
+  public void visitOpDeleteFieldProjection(@NotNull IdlOpDeleteFieldProjection o) {
     visitPsiElement(o);
   }
 
-  public void visitOpInputComaKeyProjection(@NotNull IdlOpInputComaKeyProjection o) {
+  public void visitOpDeleteFieldProjectionBodyPart(@NotNull IdlOpDeleteFieldProjectionBodyPart o) {
     visitPsiElement(o);
   }
 
-  public void visitOpInputComaListModelProjection(@NotNull IdlOpInputComaListModelProjection o) {
+  public void visitOpDeleteKeyProjection(@NotNull IdlOpDeleteKeyProjection o) {
     visitPsiElement(o);
   }
 
-  public void visitOpInputComaMapModelProjection(@NotNull IdlOpInputComaMapModelProjection o) {
+  public void visitOpDeleteKeyProjectionPart(@NotNull IdlOpDeleteKeyProjectionPart o) {
     visitPsiElement(o);
   }
 
-  public void visitOpInputComaModelProjection(@NotNull IdlOpInputComaModelProjection o) {
+  public void visitOpDeleteListModelProjection(@NotNull IdlOpDeleteListModelProjection o) {
     visitPsiElement(o);
   }
 
-  public void visitOpInputComaMultiTagProjection(@NotNull IdlOpInputComaMultiTagProjection o) {
+  public void visitOpDeleteMapModelProjection(@NotNull IdlOpDeleteMapModelProjection o) {
     visitPsiElement(o);
   }
 
-  public void visitOpInputComaMultiTagProjectionItem(@NotNull IdlOpInputComaMultiTagProjectionItem o) {
+  public void visitOpDeleteModelProjection(@NotNull IdlOpDeleteModelProjection o) {
     visitPsiElement(o);
   }
 
-  public void visitOpInputComaRecordModelProjection(@NotNull IdlOpInputComaRecordModelProjection o) {
+  public void visitOpDeleteModelProperty(@NotNull IdlOpDeleteModelProperty o) {
     visitPsiElement(o);
   }
 
-  public void visitOpInputComaSingleTagProjection(@NotNull IdlOpInputComaSingleTagProjection o) {
+  public void visitOpDeleteMultiTagProjection(@NotNull IdlOpDeleteMultiTagProjection o) {
     visitPsiElement(o);
   }
 
-  public void visitOpInputComaVarProjection(@NotNull IdlOpInputComaVarProjection o) {
+  public void visitOpDeleteMultiTagProjectionItem(@NotNull IdlOpDeleteMultiTagProjectionItem o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpDeleteRecordModelProjection(@NotNull IdlOpDeleteRecordModelProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpDeleteSingleTagProjection(@NotNull IdlOpDeleteSingleTagProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpDeleteVarMultiTail(@NotNull IdlOpDeleteVarMultiTail o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpDeleteVarMultiTailItem(@NotNull IdlOpDeleteVarMultiTailItem o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpDeleteVarPolymorphicTail(@NotNull IdlOpDeleteVarPolymorphicTail o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpDeleteVarProjection(@NotNull IdlOpDeleteVarProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpDeleteVarSingleTail(@NotNull IdlOpDeleteVarSingleTail o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpFieldPath(@NotNull IdlOpFieldPath o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpFieldPathBodyPart(@NotNull IdlOpFieldPathBodyPart o) {
     visitPsiElement(o);
   }
 
@@ -131,7 +175,23 @@ public class IdlVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitOpInputFieldProjection(@NotNull IdlOpInputFieldProjection o) {
+    visitPsiElement(o);
+  }
+
   public void visitOpInputFieldProjectionBodyPart(@NotNull IdlOpInputFieldProjectionBodyPart o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpInputKeyProjection(@NotNull IdlOpInputKeyProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpInputListModelProjection(@NotNull IdlOpInputListModelProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpInputMapModelProjection(@NotNull IdlOpInputMapModelProjection o) {
     visitPsiElement(o);
   }
 
@@ -139,27 +199,27 @@ public class IdlVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitOpInputModelProjection(@NotNull IdlOpInputModelProjection o) {
+    visitPsiElement(o);
+  }
+
   public void visitOpInputModelProperty(@NotNull IdlOpInputModelProperty o) {
     visitPsiElement(o);
   }
 
-  public void visitOpInputTrunkFieldProjection(@NotNull IdlOpInputTrunkFieldProjection o) {
+  public void visitOpInputMultiTagProjection(@NotNull IdlOpInputMultiTagProjection o) {
     visitPsiElement(o);
   }
 
-  public void visitOpInputTrunkModelProjection(@NotNull IdlOpInputTrunkModelProjection o) {
-    visitOpInputComaModelProjection(o);
-  }
-
-  public void visitOpInputTrunkRecordModelProjection(@NotNull IdlOpInputTrunkRecordModelProjection o) {
+  public void visitOpInputMultiTagProjectionItem(@NotNull IdlOpInputMultiTagProjectionItem o) {
     visitPsiElement(o);
   }
 
-  public void visitOpInputTrunkSingleTagProjection(@NotNull IdlOpInputTrunkSingleTagProjection o) {
+  public void visitOpInputRecordModelProjection(@NotNull IdlOpInputRecordModelProjection o) {
     visitPsiElement(o);
   }
 
-  public void visitOpInputTrunkVarProjection(@NotNull IdlOpInputTrunkVarProjection o) {
+  public void visitOpInputSingleTagProjection(@NotNull IdlOpInputSingleTagProjection o) {
     visitPsiElement(o);
   }
 
@@ -175,7 +235,23 @@ public class IdlVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitOpInputVarProjection(@NotNull IdlOpInputVarProjection o) {
+    visitPsiElement(o);
+  }
+
   public void visitOpInputVarSingleTail(@NotNull IdlOpInputVarSingleTail o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpMapModelPath(@NotNull IdlOpMapModelPath o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpModelPath(@NotNull IdlOpModelPath o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpModelPathProperty(@NotNull IdlOpModelPathProperty o) {
     visitPsiElement(o);
   }
 
@@ -255,11 +331,35 @@ public class IdlVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitOpPathKeyProjection(@NotNull IdlOpPathKeyProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpPathKeyProjectionPart(@NotNull IdlOpPathKeyProjectionPart o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpRecordModelPath(@NotNull IdlOpRecordModelPath o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpVarPath(@NotNull IdlOpVarPath o) {
+    visitPsiElement(o);
+  }
+
   public void visitOperationDef(@NotNull IdlOperationDef o) {
     visitPsiElement(o);
   }
 
-  public void visitOperationInput(@NotNull IdlOperationInput o) {
+  public void visitOperationDeleteProjection(@NotNull IdlOperationDeleteProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOperationInputProjection(@NotNull IdlOperationInputProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOperationInputType(@NotNull IdlOperationInputType o) {
     visitPsiElement(o);
   }
 
@@ -267,7 +367,15 @@ public class IdlVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitOperationOutput(@NotNull IdlOperationOutput o) {
+  public void visitOperationOutputProjection(@NotNull IdlOperationOutputProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOperationOutputType(@NotNull IdlOperationOutputType o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOperationPath(@NotNull IdlOperationPath o) {
     visitPsiElement(o);
   }
 
@@ -308,6 +416,10 @@ public class IdlVisitor extends PsiElementVisitor {
   }
 
   public void visitResourceDef(@NotNull IdlResourceDef o) {
+    visitPsiElement(o);
+  }
+
+  public void visitResourceName(@NotNull IdlResourceName o) {
     visitPsiElement(o);
   }
 
