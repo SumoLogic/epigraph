@@ -60,13 +60,13 @@ record ReqUpdateListModelProjection extends ReqUpdateModelProjection {
 
 record ReqUpdateMapModelProjection extends ReqUpdateModelProjection {
   override model: MapTypeRef
-  update: Boolean // update or patch? applies to all keys
-  keysProjection: ReqUpdateKeysProjection { doc = "if `null` - all keys" }
+  keysProjection: ReqUpdateKeysProjection
   varProjection: ReqUpdateVarProjection
 }
 
 record ReqUpdateKeysProjection {
-  keys: list[ReqUpdateKey]
+  update: Boolean // update or patch? applies to all keys
+  // actual key values are part of the payload (request body)
 }
 
 record ReqUpdateKey {
