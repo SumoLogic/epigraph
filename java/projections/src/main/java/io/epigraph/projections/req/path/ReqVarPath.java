@@ -12,16 +12,16 @@ import java.util.List;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class ReqPathVarProjection extends AbstractVarProjection<
-    ReqPathVarProjection,
-    ReqPathTagProjectionEntry,
-    ReqPathModelProjection<?, ?>
+public class ReqVarPath extends AbstractVarProjection<
+    ReqVarPath,
+    ReqTagPath,
+    ReqModelPath<?, ?>
     > {
 
-  public ReqPathVarProjection(
+  public ReqVarPath(
       @NotNull Type type,
-      @NotNull ReqPathTagProjectionEntry tagProjection,
-      @Nullable List<ReqPathVarProjection> polymorphicTails,
+      @NotNull ReqTagPath tagProjection,
+      @Nullable List<ReqVarPath> polymorphicTails,
       @NotNull TextLocation location) {
     super(type, Collections.singletonMap(tagProjection.tag().name(), tagProjection), polymorphicTails, location);
   }

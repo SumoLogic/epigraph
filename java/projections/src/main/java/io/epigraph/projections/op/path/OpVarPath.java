@@ -11,14 +11,14 @@ import java.util.Collections;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class OpPathVarProjection extends AbstractVarProjection<
-    OpPathVarProjection,
-    OpPathTagProjectionEntry,
-    OpPathModelProjection<?, ?>
+public class OpVarPath extends AbstractVarProjection<
+    OpVarPath,
+    OpTagPath,
+    OpModelPath<?, ?>
     > {
-  public OpPathVarProjection(
+  public OpVarPath(
       @NotNull Type type,
-      @Nullable OpPathTagProjectionEntry tagProjection,
+      @Nullable OpTagPath tagProjection,
       @NotNull TextLocation location) {
     super(
         type,

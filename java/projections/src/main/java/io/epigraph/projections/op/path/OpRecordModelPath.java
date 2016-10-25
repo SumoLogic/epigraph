@@ -14,31 +14,31 @@ import java.util.*;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class OpPathRecordModelProjection
-    extends OpPathModelProjection<OpPathRecordModelProjection, RecordType>
+public class OpRecordModelPath
+    extends OpModelPath<OpRecordModelPath, RecordType>
     implements GenRecordModelProjection<
-    OpPathVarProjection,
-    OpPathTagProjectionEntry,
-    OpPathModelProjection<?, ?>,
-    OpPathRecordModelProjection,
-    OpPathFieldProjectionEntry,
-    OpPathFieldProjection,
+    OpVarPath,
+    OpTagPath,
+    OpModelPath<?, ?>,
+    OpRecordModelPath,
+    OpFieldPathEntry,
+    OpFieldPath,
     RecordType
     > {
 
   private static final
-  ThreadLocal<IdentityHashMap<OpPathRecordModelProjection, OpPathRecordModelProjection>> equalsVisited =
+  ThreadLocal<IdentityHashMap<OpRecordModelPath, OpRecordModelPath>> equalsVisited =
       new ThreadLocal<>();
 
   @NotNull
-  private Map<String, OpPathFieldProjectionEntry> fieldProjections;
+  private Map<String, OpFieldPathEntry> fieldProjections;
 
-  public OpPathRecordModelProjection(
+  public OpRecordModelPath(
       @NotNull RecordType model,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
-      @Nullable OpPathRecordModelProjection metaProjection,
-      @Nullable OpPathFieldProjectionEntry fieldProjection,
+      @Nullable OpRecordModelPath metaProjection,
+      @Nullable OpFieldPathEntry fieldProjection,
       @NotNull TextLocation location) {
     super(model, params, annotations, metaProjection, location);
 
@@ -50,16 +50,16 @@ public class OpPathRecordModelProjection
   }
 
   @NotNull
-  public Map<String, OpPathFieldProjectionEntry> fieldProjections() { return fieldProjections; }
+  public Map<String, OpFieldPathEntry> fieldProjections() { return fieldProjections; }
 
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     if (!super.equals(o)) return false;
-    OpPathRecordModelProjection that = (OpPathRecordModelProjection) o;
+    OpRecordModelPath that = (OpRecordModelPath) o;
 
-    IdentityHashMap<OpPathRecordModelProjection, OpPathRecordModelProjection> visitedMap = equalsVisited.get();
+    IdentityHashMap<OpRecordModelPath, OpRecordModelPath> visitedMap = equalsVisited.get();
     boolean mapWasNull = visitedMap == null;
     if (mapWasNull) {
       visitedMap = new IdentityHashMap<>();

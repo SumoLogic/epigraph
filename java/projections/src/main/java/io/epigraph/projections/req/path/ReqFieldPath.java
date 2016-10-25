@@ -11,19 +11,19 @@ import java.util.Objects;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class ReqPathFieldProjection extends AbstractFieldProjection<
-    ReqPathVarProjection,
-    ReqPathTagProjectionEntry,
-    ReqPathModelProjection<?, ?>
+public class ReqFieldPath extends AbstractFieldProjection<
+    ReqVarPath,
+    ReqTagPath,
+    ReqModelPath<?, ?>
     > {
   @NotNull
   private final ReqParams reqParams;
   private final boolean required;
 
-  public ReqPathFieldProjection(
+  public ReqFieldPath(
       @NotNull ReqParams reqParams,
       @NotNull Annotations annotations,
-      @NotNull ReqPathVarProjection projection,
+      @NotNull ReqVarPath projection,
       boolean required,
       @NotNull TextLocation location) {
     super(annotations, projection, location);
@@ -41,7 +41,7 @@ public class ReqPathFieldProjection extends AbstractFieldProjection<
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     if (!super.equals(o)) return false;
-    ReqPathFieldProjection that = (ReqPathFieldProjection) o;
+    ReqFieldPath that = (ReqFieldPath) o;
     return required == that.required &&
            Objects.equals(reqParams, that.reqParams);
   }

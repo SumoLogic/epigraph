@@ -8,10 +8,10 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class ReqPathTagProjectionEntry extends AbstractTagProjectionEntry<ReqPathModelProjection<?, ?>> {
-  public ReqPathTagProjectionEntry(
+public class ReqTagPath extends AbstractTagProjectionEntry<ReqModelPath<?, ?>> {
+  public ReqTagPath(
       @NotNull Type.Tag tag,
-      @NotNull ReqPathModelProjection<?, ?> projection,
+      @NotNull ReqModelPath<?, ?> projection,
       @NotNull TextLocation location) {
     super(tag, projection, location);
   }

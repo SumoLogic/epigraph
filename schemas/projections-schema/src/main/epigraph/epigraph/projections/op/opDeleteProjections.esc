@@ -9,6 +9,7 @@ import epigraph.schema.TypeMemberRef
 import epigraph.schema.TypeRef
 import epigraph.schema.EnumTypeRef
 import epigraph.schema.PrimitiveTypeRef
+import epigraph.projections.Annotation
 
 // OpOutputProjections with canDelete on vars (we can only delete entities)
 
@@ -27,6 +28,7 @@ record OpDeleteTagProjectionEntry {
 abstract record OpDeleteModelProjection {
   model: DataTypeRef
   params: map[String, OpParam]
+  annotations: map[String, Annotation]
 }
 
 record OpDeleteRecordModelProjection extends OpDeleteModelProjection {
@@ -51,12 +53,14 @@ record OpDeleteListModelProjection extends OpDeleteModelProjection {
 
 record OpDeleteMapModelProjection extends OpDeleteModelProjection {
   override model: MapTypeRef
-  keyProjection: OpDeleteKeyProjection { doc = "if `null` - keys are not accepted" }
+  keyProjection: OpDeleteKeyProjection
   varProjection: OpDeleteVarProjection
 }
 
 record OpDeleteKeyProjection {
+  required: Boolean { doc = "if `null` - keys are not accepted" }
   params: map[String, OpParam]
+  annotations: map[String, Annotation]
 }
 
 record OpDeleteEnumModelProjection extends OpDeleteModelProjection {

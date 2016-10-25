@@ -50,12 +50,15 @@ ID=([:letter:]([:letter:]|[:digit:])*)|(`[^`]*`)
   "default"            { return I_DEFAULT; }
   "resource"           { return I_RESOURCE; }
   "READ"               { return I_READ; }
-  "CREATE"             { return I_CREATE; }
-  "UPDATE"             { return I_UPDATE; }
-  "DELETE"             { return I_DELETE; }
-  "CUSTOM"             { return I_CUSTOM; }
+  "CREATE"             { return I_CREATE_OP; }
+  "UPDATE"             { return I_UPDATE_OP; }
+  "DELETE"             { return I_DELETE_OP; }
+  "CUSTOM"             { return I_CUSTOM_OP; }
   "input"              { return I_INPUT; }
   "output"             { return I_OUTPUT; }
+  "path"               { return I_PATH; }
+  "type"               { return I_TYPE; }
+  "projection"         { return I_PROJECTION; }
   ":"                  { return I_COLON; }
   "."                  { return I_DOT; }
   ","                  { return I_COMMA; }

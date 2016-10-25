@@ -11,15 +11,15 @@ import org.jetbrains.annotations.Nullable;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class OpPathPrimitiveModelProjection
-    extends OpPathModelProjection<OpPathPrimitiveModelProjection, PrimitiveType<?>>
-    implements GenPrimitiveModelProjection<OpPathPrimitiveModelProjection, PrimitiveType<?>> {
+public class OpPrimitiveModelPath
+    extends OpModelPath<OpPrimitiveModelPath, PrimitiveType<?>>
+    implements GenPrimitiveModelProjection<OpPrimitiveModelPath, PrimitiveType<?>> {
 
-  public OpPathPrimitiveModelProjection(
+  public OpPrimitiveModelPath(
       @NotNull PrimitiveType model,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
-      @Nullable OpPathPrimitiveModelProjection metaProjection,
+      @Nullable OpPrimitiveModelPath metaProjection,
       @NotNull TextLocation location) {
     super(model, params, annotations, metaProjection, location);
   }

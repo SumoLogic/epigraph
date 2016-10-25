@@ -15,21 +15,21 @@ import java.util.Map;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class OpPathProjectionsPrettyPrinter<E extends Exception>
+public class OpPathPrettyPrinter<E extends Exception>
     extends AbstractProjectionsPrettyPrinter<
-    OpPathVarProjection,
-    OpPathTagProjectionEntry,
-    OpPathModelProjection<?, ?>,
+    OpVarPath,
+    OpTagPath,
+    OpModelPath<?, ?>,
     E> {
 
-  public OpPathProjectionsPrettyPrinter(Layouter<E> layouter) {
+  public OpPathPrettyPrinter(Layouter<E> layouter) {
     super(layouter);
   }
 
   @Override
-  public void print(@NotNull String tagName, @NotNull OpPathTagProjectionEntry tp, int pathSteps) throws E {
-    OpPathModelProjection<?, ?> projection = tp.projection();
-    OpPathModelProjection<?, ?> metaProjection = projection.metaProjection();
+  public void print(@NotNull String tagName, @NotNull OpTagPath tp, int pathSteps) throws E {
+    OpModelPath<?, ?> projection = tp.projection();
+    OpModelPath<?, ?> metaProjection = projection.metaProjection();
     OpParams params = projection.params();
     Annotations annotations = projection.annotations();
 
@@ -67,26 +67,26 @@ public class OpPathProjectionsPrettyPrinter<E extends Exception>
   }
 
   @Override
-  public void print(@NotNull OpPathModelProjection<?, ?> mp, int pathSteps) throws E {
-    if (mp instanceof OpPathRecordModelProjection)
-      print((OpPathRecordModelProjection) mp);
+  public void print(@NotNull OpModelPath<?, ?> mp, int pathSteps) throws E {
+    if (mp instanceof OpRecordModelPath)
+      print((OpRecordModelPath) mp);
     else if (mp instanceof OpPathMapModelProjection)
       print((OpPathMapModelProjection) mp);
   }
 
-  private void print(@NotNull OpPathRecordModelProjection mp) throws E {
-    Map<String, OpPathFieldProjectionEntry> fieldProjections = mp.fieldProjections();
+  private void print(@NotNull OpRecordModelPath mp) throws E {
+    Map<String, OpFieldPathEntry> fieldProjections = mp.fieldProjections();
 
     l.print("(").beginCInd();
     boolean first = true;
-    for (Map.Entry<String, OpPathFieldProjectionEntry> entry : fieldProjections.entrySet()) {
+    for (Map.Entry<String, OpFieldPathEntry> entry : fieldProjections.entrySet()) {
       if (first) first = false;
       else l.print(",");
       l.brk();
 
       @NotNull String fieldName = entry.getKey();
-      @NotNull OpPathFieldProjection fieldProjection = entry.getValue().projection();
-      @NotNull OpPathVarProjection fieldVarProjection = fieldProjection.projection();
+      @NotNull OpFieldPath fieldProjection = entry.getValue().projection();
+      @NotNull OpVarPath fieldVarProjection = fieldProjection.projection();
       @NotNull OpParams fieldParams = fieldProjection.params();
       @NotNull Annotations fieldAnnotations = fieldProjection.annotations();
 
@@ -195,10 +195,10 @@ public class OpPathProjectionsPrettyPrinter<E extends Exception>
   }
 
   @Override
-  public boolean isPrintoutEmpty(@NotNull OpPathModelProjection<?, ?> mp) {
-    if (mp instanceof OpPathRecordModelProjection) {
-      OpPathRecordModelProjection recordModelProjection = (OpPathRecordModelProjection) mp;
-      Map<String, OpPathFieldProjectionEntry> fieldProjections = recordModelProjection.fieldProjections();
+  public boolean isPrintoutEmpty(@NotNull OpModelPath<?, ?> mp) {
+    if (mp instanceof OpRecordModelPath) {
+      OpRecordModelPath recordModelProjection = (OpRecordModelPath) mp;
+      Map<String, OpFieldPathEntry> fieldProjections = recordModelProjection.fieldProjections();
       return fieldProjections.isEmpty();
     }
 

@@ -1,32 +1,31 @@
 package io.epigraph.projections.op.path;
 
 import io.epigraph.lang.TextLocation;
-import io.epigraph.projections.abs.AbstractModelProjection;
 import io.epigraph.projections.Annotations;
+import io.epigraph.projections.abs.AbstractFieldProjection;
 import io.epigraph.projections.op.OpParams;
-import io.epigraph.types.DatumType;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public abstract class OpPathModelProjection<
-    MP extends OpPathModelProjection</*MP*/?, M>,
-    M extends DatumType
-    > extends AbstractModelProjection<MP, M> {
-  @NotNull
-  protected final OpParams params;
+public class OpFieldPath extends AbstractFieldProjection<
+    OpVarPath,
+    OpTagPath,
+    OpModelPath<?, ?>
+    > {
 
-  public OpPathModelProjection(
-      @NotNull M model,
+  @NotNull
+  private final OpParams params;
+
+  public OpFieldPath(
       @NotNull OpParams params,
       @NotNull Annotations annotations,
-      @Nullable MP metaProjection,
+      @NotNull OpVarPath projection,
       @NotNull TextLocation location) {
-    super(model, metaProjection, annotations, location);
+    super(annotations, projection, location);
     this.params = params;
   }
 
@@ -38,7 +37,7 @@ public abstract class OpPathModelProjection<
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     if (!super.equals(o)) return false;
-    OpPathModelProjection<?, ?> that = (OpPathModelProjection<?, ?>) o;
+    OpFieldPath that = (OpFieldPath) o;
     return Objects.equals(params, that.params);
   }
 

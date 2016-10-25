@@ -13,20 +13,20 @@ import java.util.Map;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class ReqPathProjectionsPrettyPrinter<E extends Exception>
+public class ReqPathPrettyPrinter<E extends Exception>
     extends AbstractProjectionsPrettyPrinter<
-    ReqPathVarProjection,
-    ReqPathTagProjectionEntry,
-    ReqPathModelProjection<?, ?>,
+    ReqVarPath,
+    ReqTagPath,
+    ReqModelPath<?, ?>,
     E> {
 
-  public ReqPathProjectionsPrettyPrinter(Layouter<E> layouter) {
+  public ReqPathPrettyPrinter(Layouter<E> layouter) {
     super(layouter);
   }
 
   @Override
-  public void print(@NotNull String tagName, @NotNull ReqPathTagProjectionEntry tp, int pathSteps) throws E {
-    ReqPathModelProjection<?, ?> projection = tp.projection();
+  public void print(@NotNull String tagName, @NotNull ReqTagPath tp, int pathSteps) throws E {
+    ReqModelPath<?, ?> projection = tp.projection();
 
     ReqParams params = projection.params();
     Annotations annotations = projection.annotations();
@@ -46,15 +46,15 @@ public class ReqPathProjectionsPrettyPrinter<E extends Exception>
   }
 
   @Override
-  public void print(@NotNull ReqPathModelProjection<?, ?> mp, int pathSteps) throws E {
-    if (mp instanceof ReqPathRecordModelProjection)
-      print((ReqPathRecordModelProjection) mp, pathSteps);
-    else if (mp instanceof ReqPathMapModelProjection)
-      print((ReqPathMapModelProjection) mp, pathSteps);
+  public void print(@NotNull ReqModelPath<?, ?> mp, int pathSteps) throws E {
+    if (mp instanceof ReqRecordModelPath)
+      print((ReqRecordModelPath) mp, pathSteps);
+    else if (mp instanceof ReqMapModelPath)
+      print((ReqMapModelPath) mp, pathSteps);
   }
 
-  private void print(@NotNull ReqPathRecordModelProjection mp, int pathSteps) throws E {
-    Map<String, ReqPathFieldProjectionEntry> fieldProjections = mp.fieldProjections();
+  private void print(@NotNull ReqRecordModelPath mp, int pathSteps) throws E {
+    Map<String, ReqFieldPathEntry> fieldProjections = mp.fieldProjections();
 
     if (pathSteps > 0) {
       if (fieldProjections.isEmpty()) return;
@@ -62,7 +62,7 @@ public class ReqPathProjectionsPrettyPrinter<E extends Exception>
           String.format("Encountered %d fields while still having %d path steps", fieldProjections.size(), pathSteps)
       );
 
-      Map.Entry<String, ReqPathFieldProjectionEntry> entry = fieldProjections.entrySet().iterator().next();
+      Map.Entry<String, ReqFieldPathEntry> entry = fieldProjections.entrySet().iterator().next();
       l.beginIInd();
       l.print("/").brk();
       print(entry.getKey(), entry.getValue().projection(), decSteps(pathSteps));
@@ -73,10 +73,10 @@ public class ReqPathProjectionsPrettyPrinter<E extends Exception>
     }
   }
 
-  public void print(@NotNull String fieldName, @NotNull ReqPathFieldProjection fieldProjection, int pathSteps)
+  public void print(@NotNull String fieldName, @NotNull ReqFieldPath fieldProjection, int pathSteps)
       throws E {
 
-    @NotNull ReqPathVarProjection fieldVarProjection = fieldProjection.projection();
+    @NotNull ReqVarPath fieldVarProjection = fieldProjection.projection();
     @NotNull Annotations fieldAnnotations = fieldProjection.annotations();
 
     l.beginIInd();
@@ -93,7 +93,7 @@ public class ReqPathProjectionsPrettyPrinter<E extends Exception>
     l.end();
   }
 
-  private void print(ReqPathMapModelProjection mp, int pathSteps) throws E {
+  private void print(ReqMapModelPath mp, int pathSteps) throws E {
     @NotNull final ReqPathKeyProjection key = mp.key();
 
     if (pathSteps > 0) {
@@ -113,15 +113,15 @@ public class ReqPathProjectionsPrettyPrinter<E extends Exception>
   }
 
   @Override
-  public boolean isPrintoutEmpty(@NotNull ReqPathModelProjection<?, ?> mp) {
-    if (mp instanceof ReqPathRecordModelProjection) {
-      ReqPathRecordModelProjection recordModelProjection = (ReqPathRecordModelProjection) mp;
-      Map<String, ReqPathFieldProjectionEntry> fieldProjections =
+  public boolean isPrintoutEmpty(@NotNull ReqModelPath<?, ?> mp) {
+    if (mp instanceof ReqRecordModelPath) {
+      ReqRecordModelPath recordModelProjection = (ReqRecordModelPath) mp;
+      Map<String, ReqFieldPathEntry> fieldProjections =
           recordModelProjection.fieldProjections();
       return fieldProjections.isEmpty();
     }
 
-    return !(mp instanceof ReqPathMapModelProjection); // map key always present
+    return !(mp instanceof ReqMapModelPath); // map key always present
   }
 
   private void printParams(@NotNull ReqParams params) throws E { // move to req common?

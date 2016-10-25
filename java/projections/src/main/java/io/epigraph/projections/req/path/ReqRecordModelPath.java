@@ -14,31 +14,31 @@ import java.util.*;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class ReqPathRecordModelProjection
-    extends ReqPathModelProjection<ReqPathRecordModelProjection, RecordType>
+public class ReqRecordModelPath
+    extends ReqModelPath<ReqRecordModelPath, RecordType>
     implements GenRecordModelProjection<
-    ReqPathVarProjection,
-    ReqPathTagProjectionEntry,
-    ReqPathModelProjection<?, ?>,
-    ReqPathRecordModelProjection,
-    ReqPathFieldProjectionEntry,
-    ReqPathFieldProjection,
+    ReqVarPath,
+    ReqTagPath,
+    ReqModelPath<?, ?>,
+    ReqRecordModelPath,
+    ReqFieldPathEntry,
+    ReqFieldPath,
     RecordType
     > {
 
-  private static final ThreadLocal<IdentityHashMap<ReqPathRecordModelProjection, ReqPathRecordModelProjection>>
+  private static final ThreadLocal<IdentityHashMap<ReqRecordModelPath, ReqRecordModelPath>>
       equalsVisited = new ThreadLocal<>();
 
   @NotNull
-  private Map<String, ReqPathFieldProjectionEntry> fieldProjections;
+  private Map<String, ReqFieldPathEntry> fieldProjections;
 
-  public ReqPathRecordModelProjection(
+  public ReqRecordModelPath(
       @NotNull RecordType model,
       boolean required,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
-      @Nullable ReqPathRecordModelProjection metaProjection,
-      @NotNull ReqPathFieldProjectionEntry fieldProjection,
+      @Nullable ReqRecordModelPath metaProjection,
+      @NotNull ReqFieldPathEntry fieldProjection,
       @NotNull TextLocation location) {
     super(model, required, params, annotations, metaProjection, location);
     this.fieldProjections = Collections.singletonMap(fieldProjection.field().name(), fieldProjection);
@@ -48,10 +48,10 @@ public class ReqPathRecordModelProjection
   }
 
   @NotNull
-  public Map<String, ReqPathFieldProjectionEntry> fieldProjections() { return fieldProjections; }
+  public Map<String, ReqFieldPathEntry> fieldProjections() { return fieldProjections; }
 
   @Nullable
-  public ReqPathFieldProjectionEntry fieldProjection(@NotNull String fieldName) {
+  public ReqFieldPathEntry fieldProjection(@NotNull String fieldName) {
     return fieldProjections.get(fieldName);
   }
 
@@ -60,9 +60,9 @@ public class ReqPathRecordModelProjection
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     if (!super.equals(o)) return false;
-    ReqPathRecordModelProjection that = (ReqPathRecordModelProjection) o;
+    ReqRecordModelPath that = (ReqRecordModelPath) o;
 
-    IdentityHashMap<ReqPathRecordModelProjection, ReqPathRecordModelProjection> visitedMap = equalsVisited.get();
+    IdentityHashMap<ReqRecordModelPath, ReqRecordModelPath> visitedMap = equalsVisited.get();
     boolean mapWasNull = visitedMap == null;
     if (mapWasNull) {
       visitedMap = new IdentityHashMap<>();

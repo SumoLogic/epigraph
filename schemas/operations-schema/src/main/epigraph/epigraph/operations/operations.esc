@@ -1,14 +1,15 @@
 namespace epigraph.operations
 
 import epigraph.projections.Annotation
-import epigraph.projections.op.OpInputVarProjection
+import epigraph.projections.op.OpDeleteVarProjection
+import epigraph.projections.op.OpInputModelProjection
 import epigraph.projections.op.OpOutputVarProjection
 import epigraph.projections.op.OpParam
 import epigraph.projections.op.OpVarPath
+import epigraph.schema.DataTypeRef
 import epigraph.schema.Documented
 import epigraph.schema.TypeRef
 import epigraph.schema.VarTypeRef
-import epigraph.projections.op.OpDeleteVarProjection
 
 // TODO this version is ahead of reality (Java classes)
 
@@ -23,10 +24,10 @@ abstract record Operation extends Documented {
   params: list[OpParam]
   annotations: list[Annotation]
 
-  path: OpVarPath // starts with resource field type
+  path: OpVarPath // starts with resource field type, ends with var type
 
-  inputType: TypeRef
-  inputProjection: OpInputVarProjection // starts from `inputType` (can be different from resource field type)
+  inputType: DataTypeRef
+  inputProjection: OpInputModelProjection // starts from `inputType` (can be different from resource field type)
 
   outputType: TypeRef // type `outputProjection` starts with
   outputProjection: OpOutputVarProjection // todo OpOutputFieldProjection = params + annotations + varProjection
@@ -49,11 +50,16 @@ abstract record Operation extends Documented {
 
 record CreateOperation extends Operation {
   // HTTP POST /people ~ *(status) <<< [ { user1 }, { user2 } ]
+  // inputType (if not specified) = path tip type, or resource fieldType if path is null
+
+  // can be specified: path, inputType, inputProjection, outputType, outputProjection
 }
 
 record ReadOperation extends Operation {
   // contract: outputType = path tip type, or resource fieldType if path is null
   // inputType = inputProjection = null
+
+  // can be specified: path, outputProjection
 }
 
 record UpdateOperation extends Operation {
@@ -64,7 +70,9 @@ record UpdateOperation extends Operation {
 
   //updateDataProjection: OpInputVarProjection // projection for body data, starts from `path` tip
 
-  // contract: outputType = path tip type, or resource fieldType if path is null
+  // contract: inputType = outputType = path tip type, or resource fieldType if path is null
+
+  // can be specified: path, inputProjection, outputProjection
 }
 
 record DeleteOperation extends Operation {
@@ -81,6 +89,8 @@ record DeleteOperation extends Operation {
   //              ^^^^^^^
   //              path   ^^^^^^^
   //                     ReqDeleteProjection (parsed against deleteProjection)
+
+  // can be specified: path, deleteProjection, outputType, outputProjection
 }
 
 record CustomOperation extends Operation {
@@ -91,7 +101,5 @@ record CustomOperation extends Operation {
   //                                            query parameters         |
   //                    request body, (de)serialized using `inputProjection`
 
-  //path: OpVarPath
-  //inputProjection: OpInputModelProjection
-  //outputProjection: OpOutputVarProjection
+  // can be specified: path, inputType, inputProjection, outputType, outputProjection
 }

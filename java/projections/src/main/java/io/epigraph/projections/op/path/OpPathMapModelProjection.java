@@ -14,17 +14,17 @@ import java.util.Objects;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpPathMapModelProjection
-    extends OpPathModelProjection<OpPathMapModelProjection, MapType>
+    extends OpModelPath<OpPathMapModelProjection, MapType>
     implements GenMapModelProjection<
-    OpPathVarProjection,
-    OpPathTagProjectionEntry,
-    OpPathModelProjection<?, ?>,
+    OpVarPath,
+    OpTagPath,
+    OpModelPath<?, ?>,
     OpPathMapModelProjection,
     MapType
     > {
 
   @NotNull
-  private final OpPathVarProjection itemsProjection;
+  private final OpVarPath itemsProjection;
   @NotNull
   private final OpPathKeyProjection keyProjection;
 
@@ -34,7 +34,7 @@ public class OpPathMapModelProjection
       @NotNull Annotations annotations,
       @Nullable OpPathMapModelProjection metaProjection,
       @NotNull OpPathKeyProjection keyProjection,
-      @NotNull OpPathVarProjection valuesProjection,
+      @NotNull OpVarPath valuesProjection,
       @NotNull TextLocation location) {
     super(model, params, annotations, metaProjection, location);
     this.itemsProjection = valuesProjection;
@@ -42,7 +42,7 @@ public class OpPathMapModelProjection
   }
 
   @NotNull
-  public OpPathVarProjection itemsProjection() { return itemsProjection; }
+  public OpVarPath itemsProjection() { return itemsProjection; }
 
   @NotNull
   public OpPathKeyProjection keyProjection() { return keyProjection; }

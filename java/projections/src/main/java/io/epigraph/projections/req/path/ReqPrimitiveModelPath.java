@@ -11,16 +11,16 @@ import org.jetbrains.annotations.Nullable;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class ReqPathPrimitiveModelProjection
-    extends ReqPathModelProjection<ReqPathPrimitiveModelProjection, PrimitiveType<?>>
-    implements GenPrimitiveModelProjection<ReqPathPrimitiveModelProjection, PrimitiveType<?>> {
+public class ReqPrimitiveModelPath
+    extends ReqModelPath<ReqPrimitiveModelPath, PrimitiveType<?>>
+    implements GenPrimitiveModelProjection<ReqPrimitiveModelPath, PrimitiveType<?>> {
 
-  public ReqPathPrimitiveModelProjection(
+  public ReqPrimitiveModelPath(
       @NotNull PrimitiveType model,
       boolean required,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
-      @Nullable ReqPathPrimitiveModelProjection metaProjection,
+      @Nullable ReqPrimitiveModelPath metaProjection,
       @NotNull TextLocation location) {
     super(model, required, params, annotations, metaProjection, location);
   }

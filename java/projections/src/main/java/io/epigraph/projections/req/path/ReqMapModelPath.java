@@ -13,29 +13,29 @@ import java.util.Objects;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class ReqPathMapModelProjection
-    extends ReqPathModelProjection<ReqPathMapModelProjection, MapType>
+public class ReqMapModelPath
+    extends ReqModelPath<ReqMapModelPath, MapType>
     implements GenMapModelProjection<
-    ReqPathVarProjection,
-    ReqPathTagProjectionEntry,
-    ReqPathModelProjection<?, ?>,
-    ReqPathMapModelProjection,
+    ReqVarPath,
+    ReqTagPath,
+    ReqModelPath<?, ?>,
+    ReqMapModelPath,
     MapType
     > {
 
   @NotNull
   private final ReqPathKeyProjection key;
   @NotNull
-  private final ReqPathVarProjection valuesProjection;
+  private final ReqVarPath valuesProjection;
 
-  public ReqPathMapModelProjection(
+  public ReqMapModelPath(
       @NotNull MapType model,
       boolean required,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
-      @Nullable ReqPathMapModelProjection metaProjection,
+      @Nullable ReqMapModelPath metaProjection,
       @NotNull ReqPathKeyProjection key,
-      @NotNull ReqPathVarProjection valuesProjection,
+      @NotNull ReqVarPath valuesProjection,
       @NotNull TextLocation location) {
     super(model, required, params, annotations, metaProjection, location);
     this.key = key;
@@ -43,7 +43,7 @@ public class ReqPathMapModelProjection
   }
 
   @NotNull
-  public ReqPathVarProjection itemsProjection() { return valuesProjection; }
+  public ReqVarPath itemsProjection() { return valuesProjection; }
 
   @NotNull
   public ReqPathKeyProjection key() { return key; }
@@ -53,7 +53,7 @@ public class ReqPathMapModelProjection
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     if (!super.equals(o)) return false;
-    ReqPathMapModelProjection that = (ReqPathMapModelProjection) o;
+    ReqMapModelPath that = (ReqMapModelPath) o;
     return Objects.equals(key, that.key) &&
            Objects.equals(valuesProjection, that.valuesProjection);
   }

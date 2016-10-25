@@ -26,12 +26,16 @@
 
     RESOURCE = 'resource'
     READ = 'READ'
-    CREATE = 'CREATE'
-    UPDATE = 'UPDATE'
-    DELETE = 'DELETE'
-    CUSTOM = 'CUSTOM'
+    CREATE_OP = 'CREATE'
+    UPDATE_OP = 'UPDATE'
+    DELETE_OP = 'DELETE'
+    CUSTOM_OP = 'CUSTOM'
     INPUT = 'input'
     OUTPUT = 'output'
+    DELETE = 'delete'
+    PATH = 'path'
+    TYPE = 'type'
+    PROJECTION = 'projection'
 
     COLON = ':'
     DOT = '.'
@@ -141,45 +145,73 @@ tagName ::= qid | '_' // `_` is default tag
 // ============= resources =============
 
 private resourceDefs ::= (resourceDef ','?)*
-resourceDef ::= 'resource' qid resourceType resourceDefBody
+resourceDef ::= 'resource' resourceName resourceType resourceDefBody
+resourceName ::= qid
 resourceType ::= ':' valueTypeRef
 
 private resourceDefBody ::= '{' (resourceDefPart ','?)* '}'
 private resourceDefPart ::= operationDef { recoverWhile = operationBodyRecover }
 
+// operation def parts
 operationName ::= 'default' | qid
-operationInput ::= 'input' opInputTrunkVarProjection {pin=1}
-operationOutput ::= 'output' opOutputVarProjection {pin=1}
+operationPath ::= 'path' opVarPath {pin=1}
+operationInputType ::= 'input' 'type' typeRef {pin=2}
+operationInputProjection ::= 'input' 'projection' opInputComaModelProjection {pin=2}
+operationOutputType ::= 'output' 'type' valueTypeRef {pin=2}
+operationOutputProjection ::= 'output' 'projection' opOutputVarProjection {pin=2}
+operationDeleteProjection ::= 'delete' 'projection' opDeleteVarProjection {pin=2}
 
-operationDef ::= readOperationDef | createOperationDef | updateOperationDef | customOperationDef
-
-readOperationDef ::= operationName? 'READ' readOperationBody {pin=2}
-private readOperationBody ::= '{' (readOperationBodyPart ','?)* '}'
-readOperationBodyPart ::= operationOutput | opParam | annotation {
-  recoverWhile = operationBodyRecover
-}
+operationDef ::= createOperationDef | readOperationDef | updateOperationDef | deleteOperationDef | customOperationDef
 
 createOperationDef ::= operationName? 'CREATE' createOperationBody {pin=2}
 private createOperationBody ::= '{' (createOperationBodyPart ','?)* '}'
-createOperationBodyPart ::= operationInput | operationOutput | opParam | annotation {
+createOperationBodyPart ::= operationPath |
+                            operationInputType |
+                            operationInputProjection |
+                            operationOutputType |
+                            operationOutputProjection |
+                            opParam |
+                            annotation {
+  recoverWhile = operationBodyRecover
+}
+
+readOperationDef ::= operationName? 'READ' readOperationBody {pin=2}
+private readOperationBody ::= '{' (readOperationBodyPart ','?)* '}'
+readOperationBodyPart ::= operationPath |
+                          operationOutputProjection |
+                          opParam |
+                          annotation {
   recoverWhile = operationBodyRecover
 }
 
 updateOperationDef ::= operationName? 'UPDATE' updateOperationBody {pin=2}
 private updateOperationBody ::= '{' (updateOperationBodyPart ','?)* '}'
-updateOperationBodyPart ::= operationInput | operationOutput | opParam | annotation {
+updateOperationBodyPart ::= operationPath |
+                            operationInputProjection | 
+                            operationOutputProjection | 
+                            opParam | 
+                            annotation {
   recoverWhile = operationBodyRecover
 }
 
-// todo DELETE
+deleteOperationDef ::= operationName? 'DELETE' deleteOperationBody {pin=2}
+private deleteOperationBody ::= '{' (deleteOperationBodyPart ','?)* '}'
+deleteOperationBodyPart ::= operationPath |
+                            operationDeleteProjection |
+                            operationOutputType |
+                            operationOutputProjection |
+                            opParam |
+                            annotation {
+  recoverWhile = operationBodyRecover
+}
 
 customOperationDef ::= qid 'CUSTOM' customOperationBody {pin=2} // todo specify verb?
 private customOperationBody ::= '{' (customOperationBodyPart ','?)* '}'
-customOperationBodyPart ::= operationInput | operationOutput | opParam | annotation {
+customOperationBodyPart ::= operationInputProjection | operationOutputProjection | opParam | annotation {
   recoverWhile = operationBodyRecover
 }
 
-private operationBodyRecover ::= ! ( '}' | ',' | ';' | 'input' | 'output' | (id '=') |
+private operationBodyRecover ::= ! ( '}' | ',' | ';' | 'input' | 'output' | 'path' | (id '=') |
   (id? ('READ' | 'CREATE' | 'UPDATE' | 'DELETE') ) )
 
 // ============= op projections =============
@@ -188,6 +220,35 @@ opParam ::= ';' '+'? qid ':' typeRef opInputComaModelProjection opParamDefault? 
 private opParamDefault ::= '=' datum { pin=1 }
 private opParamBody ::= '{' ( opParamBodyPart ','? )* '}'
 private opParamBodyPart ::= annotation
+
+// op path --------------------------------------------------------
+
+// no tails, no branching, no meta
+
+// :tag / field / * / field
+// :tag { ;foo:String } / field { ;foo:String } / * { ;foo:String }
+
+opVarPath ::= ( ':' tagName)? (opComplexTagPath | opSimpleTagPath )
+private opSimpleTagPath ::= opModelPath
+private opComplexTagPath ::= '{' (opModelPathProperty ','?)* opModelPath '}' {pin=1}
+
+opModelPathProperty ::= opParam | annotation
+
+opModelPath ::= ( opRecordModelPath
+                | opMapModelPath
+                )?
+
+// op record path
+opRecordModelPath ::= '/' opFieldPath
+opFieldPath ::= qid (opComplexFieldPath | opSimpleFieldPath) {pin=1}
+private opComplexFieldPath ::= '{' (opFieldPathBodyPart ','? )* opVarPath? '}'
+private opSimpleFieldPath ::= opVarPath
+opFieldPathBodyPart ::= opParam | annotation
+
+// op map path
+opMapModelPath ::= '/' '*' opPathKeyProjection? opVarPath
+opPathKeyProjection ::= '{' (opPathKeyProjectionPart ','?)*  '}' {pin=1}
+opPathKeyProjectionPart ::= opParam | annotation
 
 // output --------------------------------------------------------
 
@@ -213,8 +274,6 @@ opOutputModelProperty ::= opParam | annotation | opOutputModelMeta
 opOutputModelProjection ::= ( opOutputRecordModelProjection
                             | opOutputListModelProjection
                             | opOutputMapModelProjection
-//                          | opOutputEnumModelProjection
-//                          | opOutputPrimitiveModelProjection
                             )?
 
 // op output record
@@ -235,9 +294,6 @@ private opOutputKeyProjectionInt ::= ('required' ','?| 'forbidden' ','?)? (opOut
 }
 opOutputKeyProjectionPart ::= opParam | annotation
 private opOutputKeyProjectionRecover ::= ! ( ']' )
-
-//opOutputPrimitiveModelProjection ::= 'primitive' // ?
-//opOutputEnumModelProjection ::= 'enum' // ?
 
 // input --------------------------------------------------------
 
@@ -261,30 +317,28 @@ opInputFieldProjectionBodyPart ::= annotation // {recoverWhile=opInputFieldProje
 // input projection consists of two parts: trunk and coma. Trunk can't have any branching, i.e. only
 // singular tags and fields are allowed in var and record projections. Coma can contain branching
 
-// todo: remove trunk syntax, leave only coma?
-
 // input trunk part
 
-opInputTrunkVarProjection ::= ( opInputComaMultiTagProjection | opInputTrunkSingleTagProjection ) opInputVarPolymorphicTail?
-opInputTrunkSingleTagProjection ::= ( ':' '+'? tagName)? (opInputTrunkComplexSingleTagProjection | opInputTrunkSimpleSingleTagProjection )
-private opInputTrunkSimpleSingleTagProjection ::= opInputTrunkModelProjection
-private opInputTrunkComplexSingleTagProjection ::= '{' (opInputModelProperty ','?)* opInputTrunkModelProjection '}' {pin=1}
-
+//opInputTrunkVarProjection ::= ( opInputComaMultiTagProjection | opInputTrunkSingleTagProjection ) opInputVarPolymorphicTail?
+//opInputTrunkSingleTagProjection ::= ( ':' '+'? tagName)? (opInputTrunkComplexSingleTagProjection | opInputTrunkSimpleSingleTagProjection )
+//private opInputTrunkSimpleSingleTagProjection ::= opInputTrunkModelProjection
+//private opInputTrunkComplexSingleTagProjection ::= '{' (opInputModelProperty ','?)* opInputTrunkModelProjection '}' {pin=1}
 //
-
-opInputTrunkModelProjection ::= ( opInputTrunkRecordModelProjection
-                                | opInputComaRecordModelProjection
-                                | opInputComaListModelProjection
-                                | opInputComaMapModelProjection
-                                )? {
-  extends = opInputComaModelProjection
-}
-
-// op input record trunk
-opInputTrunkRecordModelProjection ::= '/' opInputTrunkFieldProjection { pin=1 }
-opInputTrunkFieldProjection ::= '+'? qid (opInputTrunkComplexFieldProjection | opInputTrunkSimpleFieldProjection)
-private opInputTrunkComplexFieldProjection ::= '{' (opInputFieldProjectionBodyPart ','? )* opInputTrunkVarProjection? '}'
-private opInputTrunkSimpleFieldProjection ::= opInputTrunkVarProjection
+////
+//
+//opInputTrunkModelProjection ::= ( opInputTrunkRecordModelProjection
+//                                | opInputComaRecordModelProjection
+//                                | opInputComaListModelProjection
+//                                | opInputComaMapModelProjection
+//                                )? {
+//  extends = opInputComaModelProjection
+//}
+//
+//// op input record trunk
+//opInputTrunkRecordModelProjection ::= '/' opInputTrunkFieldProjection { pin=1 }
+//opInputTrunkFieldProjection ::= '+'? qid (opInputTrunkComplexFieldProjection | opInputTrunkSimpleFieldProjection)
+//private opInputTrunkComplexFieldProjection ::= '{' (opInputFieldProjectionBodyPart ','? )* opInputTrunkVarProjection? '}'
+//private opInputTrunkSimpleFieldProjection ::= opInputTrunkVarProjection
 
 // input coma part
 
@@ -314,6 +368,55 @@ opInputComaListModelProjection ::= '*' '(' opInputComaVarProjection ')' { pin=1 
 // op input map
 opInputComaMapModelProjection ::= opInputComaKeyProjection '(' opInputComaVarProjection ')'
 opInputComaKeyProjection ::= '[' ']' {pin=1}
+
+// delete --------------------------------------------------------
+
+// can delete current entity or a link to bestFriend:
+// + :record ( bestFriend )
+
+// can delete current entity or a bestFriend entity
+// + :record ( bestFriend + )
+
+opDeleteVarProjection ::= '+'? ( opDeleteMultiTagProjection | opDeleteSingleTagProjection ) opDeleteVarPolymorphicTail?
+
+opDeleteMultiTagProjection ::= ':' '(' (opDeleteMultiTagProjectionItem ','?)* ')' {pin=2}
+opDeleteSingleTagProjection ::= ( ':' tagName)? (opDeleteComplexTagProjection | opDeleteSimpleTagProjection )
+opDeleteMultiTagProjectionItem ::= tagName ( opDeleteComplexTagProjection | opDeleteSimpleTagProjection )
+
+private opDeleteSimpleTagProjection ::= opDeleteModelProjection
+private opDeleteComplexTagProjection ::= '{' (opDeleteModelProperty ','?)* opDeleteModelProjection '}' {pin=1}
+
+//
+opDeleteVarPolymorphicTail ::= opDeleteVarSingleTail | opDeleteVarMultiTail
+opDeleteVarSingleTail ::= '~' typeRef opDeleteVarProjection
+opDeleteVarMultiTail ::= '~' '(' (opDeleteVarMultiTailItem ','?)* ')' {pin=2}
+opDeleteVarMultiTailItem ::= typeRef opDeleteVarProjection
+
+opDeleteModelProperty ::= opParam | annotation
+
+opDeleteModelProjection ::= ( opDeleteRecordModelProjection
+                            | opDeleteListModelProjection
+                            | opDeleteMapModelProjection
+                            )?
+
+// op delete record
+opDeleteRecordModelProjection ::= '(' (opDeleteFieldProjection ','?)* ')' { pin=1 }
+opDeleteFieldProjection ::= qid (opDeleteComplexFieldProjection | opDeleteSimpleFieldProjection)
+private opDeleteComplexFieldProjection ::= '{' (opDeleteFieldProjectionBodyPart ','? )* opDeleteVarProjection? '}'
+private opDeleteSimpleFieldProjection ::= opDeleteVarProjection
+opDeleteFieldProjectionBodyPart ::= opParam | annotation
+
+// op delete list
+opDeleteListModelProjection ::= '*' '(' opDeleteVarProjection ')' { pin=1 }
+
+// op delete map
+opDeleteMapModelProjection ::= opDeleteKeyProjection '(' opDeleteVarProjection ')' { pin=1 }
+opDeleteKeyProjection ::= '[' opDeleteKeyProjectionInt ']' {pin=1}
+private opDeleteKeyProjectionInt ::= ('required' ','?| 'forbidden' ','?)? (opDeleteKeyProjectionPart ','?)* {
+  recoverWhile = opDeleteKeyProjectionRecover
+}
+opDeleteKeyProjectionPart ::= opParam | annotation
+private opDeleteKeyProjectionRecover ::= ! ( ']' )
 
 // ============= req projections =============
 

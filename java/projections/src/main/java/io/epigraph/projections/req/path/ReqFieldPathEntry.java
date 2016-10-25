@@ -1,4 +1,4 @@
-package io.epigraph.projections.op.path;
+package io.epigraph.projections.req.path;
 
 import io.epigraph.lang.TextLocation;
 import io.epigraph.projections.abs.AbstractFieldProjectionEntry;
@@ -8,15 +8,15 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class OpPathFieldProjectionEntry extends AbstractFieldProjectionEntry<
-    OpPathVarProjection,
-    OpPathTagProjectionEntry,
-    OpPathModelProjection<?, ?>,
-    OpPathFieldProjection
+public class ReqFieldPathEntry extends AbstractFieldProjectionEntry<
+    ReqVarPath,
+    ReqTagPath,
+    ReqModelPath<?, ?>,
+    ReqFieldPath
     > {
-  public OpPathFieldProjectionEntry(
+  public ReqFieldPathEntry(
       @NotNull RecordType.Field field,
-      @NotNull OpPathFieldProjection projection,
+      @NotNull ReqFieldPath projection,
       @NotNull TextLocation location) {
     super(field, projection, location);
   }
