@@ -1,4 +1,4 @@
-package io.epigraph.projections.req.output;
+package io.epigraph.projections.req.delete;
 
 import io.epigraph.lang.TextLocation;
 import io.epigraph.projections.Annotations;
@@ -14,42 +14,40 @@ import java.util.*;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class ReqOutputRecordModelProjection
-    extends ReqOutputModelProjection<ReqOutputRecordModelProjection, RecordType>
+public class ReqDeleteRecordModelProjection
+    extends ReqDeleteModelProjection<ReqDeleteRecordModelProjection, RecordType>
     implements GenRecordModelProjection<
-    ReqOutputVarProjection,
-    ReqOutputTagProjectionEntry,
-    ReqOutputModelProjection<?, ?>,
-    ReqOutputRecordModelProjection,
-    ReqOutputFieldProjectionEntry,
-    ReqOutputFieldProjection,
+    ReqDeleteVarProjection,
+    ReqDeleteTagProjectionEntry,
+    ReqDeleteModelProjection<?, ?>,
+    ReqDeleteRecordModelProjection,
+    ReqDeleteFieldProjectionEntry,
+    ReqDeleteFieldProjection,
     RecordType
     > {
-  private static final ThreadLocal<IdentityHashMap<ReqOutputRecordModelProjection, ReqOutputRecordModelProjection>>
+  private static final ThreadLocal<IdentityHashMap<ReqDeleteRecordModelProjection, ReqDeleteRecordModelProjection>>
       equalsVisited = new ThreadLocal<>();
 
   @NotNull
-  private Map<String, ReqOutputFieldProjectionEntry> fieldProjections;
+  private Map<String, ReqDeleteFieldProjectionEntry> fieldProjections;
 
-  public ReqOutputRecordModelProjection(
+  public ReqDeleteRecordModelProjection(
       @NotNull RecordType model,
-      boolean required,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
-      @Nullable ReqOutputRecordModelProjection metaProjection,
-      @NotNull Map<String, ReqOutputFieldProjectionEntry> fieldProjections,
+      @NotNull Map<String, ReqDeleteFieldProjectionEntry> fieldProjections,
       @NotNull TextLocation location) {
-    super(model, required, params, annotations, metaProjection, location);
+    super(model, params, annotations, location);
     this.fieldProjections = fieldProjections;
 
     ProjectionUtils.checkFieldsBelongsToModel(fieldProjections.keySet(), model);
   }
 
   @NotNull
-  public Map<String, ReqOutputFieldProjectionEntry> fieldProjections() { return fieldProjections; }
+  public Map<String, ReqDeleteFieldProjectionEntry> fieldProjections() { return fieldProjections; }
 
   @Nullable
-  public ReqOutputFieldProjectionEntry fieldProjection(@NotNull String fieldName) {
+  public ReqDeleteFieldProjectionEntry fieldProjection(@NotNull String fieldName) {
     return fieldProjections.get(fieldName);
   }
 
@@ -58,9 +56,9 @@ public class ReqOutputRecordModelProjection
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     if (!super.equals(o)) return false;
-    ReqOutputRecordModelProjection that = (ReqOutputRecordModelProjection) o;
+    ReqDeleteRecordModelProjection that = (ReqDeleteRecordModelProjection) o;
 
-    IdentityHashMap<ReqOutputRecordModelProjection, ReqOutputRecordModelProjection> visitedMap = equalsVisited.get();
+    IdentityHashMap<ReqDeleteRecordModelProjection, ReqDeleteRecordModelProjection> visitedMap = equalsVisited.get();
     boolean mapWasNull = visitedMap == null;
     if (mapWasNull) {
       visitedMap = new IdentityHashMap<>();

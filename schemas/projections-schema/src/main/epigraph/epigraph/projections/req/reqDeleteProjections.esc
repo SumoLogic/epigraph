@@ -31,7 +31,6 @@ abstract record ReqDeleteModelProjection {
   model: DataTypeRef
   params: map[String, ReqParam]
   annotations: map[String, Annotation]
-  `meta`: ReqDeleteModelProjection
 }
 
 record ReqDeleteRecordModelProjection extends ReqDeleteModelProjection {

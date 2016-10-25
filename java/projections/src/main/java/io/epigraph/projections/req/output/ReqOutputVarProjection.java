@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -31,4 +32,18 @@ public class ReqOutputVarProjection extends AbstractVarProjection<
   }
 
   public boolean parenthesized() { return parenthesized; }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    if (!super.equals(o)) return false;
+    ReqOutputVarProjection that = (ReqOutputVarProjection) o;
+    return parenthesized == that.parenthesized;
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(super.hashCode(), parenthesized);
+  }
 }
