@@ -1,6 +1,10 @@
 package io.epigraph.projections;
 
+import io.epigraph.projections.gen.GenTagProjectionEntry;
+import io.epigraph.projections.op.path.*;
+import io.epigraph.types.DatumType;
 import io.epigraph.types.RecordType;
+import io.epigraph.types.Type;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,5 +40,33 @@ public class ProjectionUtils {
   public static String listFields(@Nullable Collection<String> fieldNames) {
     if (fieldNames == null) return "<none>";
     return String.join(",", fieldNames);
+  }
+
+  /**
+   * @return {@code path} tip type
+   */
+  @NotNull
+  public static Type tipType(@NotNull OpVarPath path) {
+    while (true) {
+      final OpTagPath tagProjection = path.pathTagProjection();
+      if (tagProjection == null) return path.type();
+
+      final OpModelPath<?, ?> modelPath = tagProjection.projection();
+      final DatumType model = modelPath.model();
+      switch (model.kind()) {
+        case RECORD:
+          OpRecordModelPath recordPath = (OpRecordModelPath) modelPath;
+          OpFieldPathEntry fieldProjection = recordPath.pathFieldProjection();
+          if (fieldProjection == null) return model;
+          path = fieldProjection.projection().projection();
+          break;
+        case MAP:
+          OpMapModelPath mapPath = (OpMapModelPath) modelPath;
+          path = mapPath.itemsProjection();
+          break;
+        default:
+          return model;
+      }
+    }
   }
 }

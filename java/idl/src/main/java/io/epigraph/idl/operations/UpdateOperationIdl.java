@@ -2,44 +2,28 @@ package io.epigraph.idl.operations;
 
 import io.epigraph.lang.TextLocation;
 import io.epigraph.projections.Annotations;
-import io.epigraph.projections.StepsAndProjection;
 import io.epigraph.projections.op.OpParams;
-import io.epigraph.projections.op.input.OpInputVarProjection;
+import io.epigraph.projections.op.input.OpInputModelProjection;
 import io.epigraph.projections.op.output.OpOutputVarProjection;
+import io.epigraph.projections.op.path.OpVarPath;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Objects;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class UpdateOperationIdl extends OperationIdl {
-  private final StepsAndProjection<OpInputVarProjection> updateProjection;
+  protected UpdateOperationIdl(
+      @Nullable String name,
+      @Nullable OpParams params,
+      @Nullable Annotations annotations,
+      @Nullable OpVarPath path,
+      @NotNull OpInputModelProjection<?, ?, ?> inputProjection,
+      @NotNull OpOutputVarProjection outputProjection,
+      @NotNull TextLocation location) {
 
-  protected UpdateOperationIdl(@Nullable String name,
-                               @Nullable OpParams params,
-                               @Nullable Annotations annotations,
-                               @NotNull OpOutputVarProjection outputProjection,
-                               @NotNull StepsAndProjection<OpInputVarProjection> updateProjection,
-                               @NotNull TextLocation location) {
-    super(OperationType.UPDATE, name, params, annotations, outputProjection, location);
-    this.updateProjection = updateProjection;
-  }
-
-  @NotNull
-  public StepsAndProjection<OpInputVarProjection> updateProjection() { return updateProjection; }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    UpdateOperationIdl that = (UpdateOperationIdl) o;
-    return Objects.equals(updateProjection, that.updateProjection);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(updateProjection);
+    super(OperationKind.UPDATE, name, params, annotations,
+          path, inputProjection, outputProjection, location
+    );
   }
 }

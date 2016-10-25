@@ -1,45 +1,67 @@
 package io.epigraph.idl.operations;
 
+import io.epigraph.idl.IdlError;
+import io.epigraph.idl.ResourceIdl;
 import io.epigraph.lang.TextLocation;
 import io.epigraph.projections.Annotations;
+import io.epigraph.projections.ProjectionUtils;
+import io.epigraph.projections.gen.GenVarProjection;
 import io.epigraph.projections.op.OpParams;
+import io.epigraph.projections.op.input.OpInputModelProjection;
 import io.epigraph.projections.op.output.OpOutputVarProjection;
+import io.epigraph.projections.op.path.OpVarPath;
+import io.epigraph.types.DatumType;
+import io.epigraph.types.Type;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+import java.util.Objects;
+
 /**
+ * Abstract operation definition. See {@code operations.esc}.
+ *
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public abstract class OperationIdl {
   @NotNull
-  private final OperationType type;
+  protected final OperationKind type;
   @Nullable
-  private final String name;
+  protected final String name;
   @Nullable
-  private final OpParams params;
+  protected final OpParams params;
   @Nullable
-  private final Annotations annotations;
+  protected final Annotations annotations;
+  @Nullable
+  protected final OpVarPath path;
+  @Nullable
+  protected final OpInputModelProjection<?, ?, ?> inputProjection;
   @NotNull
-  private final OpOutputVarProjection outputProjection;
+  protected final OpOutputVarProjection outputProjection;
   @NotNull
-  private final TextLocation location;
+  protected final TextLocation location;
 
-  protected OperationIdl(@NotNull OperationType type,
-                         @Nullable String name,
-                         @Nullable OpParams params,
-                         @Nullable Annotations annotations,
-                         @NotNull OpOutputVarProjection outputProjection,
-                         @NotNull TextLocation location) {
+  protected OperationIdl(
+      @NotNull OperationKind type,
+      @Nullable String name,
+      @Nullable OpParams params,
+      @Nullable Annotations annotations,
+      @Nullable OpVarPath path,
+      @Nullable OpInputModelProjection<?, ?, ?> inputProjection,
+      @NotNull OpOutputVarProjection outputProjection,
+      @NotNull TextLocation location) {
     this.type = type;
     this.name = name;
     this.params = params;
     this.annotations = annotations;
+    this.path = path;
+    this.inputProjection = inputProjection;
     this.outputProjection = outputProjection;
     this.location = location;
   }
 
   @NotNull
-  public OperationType type() { return type; }
+  public OperationKind type() { return type; }
 
   @Nullable
   public String name() { return name; }
@@ -52,11 +74,73 @@ public abstract class OperationIdl {
   @Nullable
   public Annotations annotations() { return annotations; }
 
+  @Nullable
+  public OpVarPath path() { return path; }
+
+  @Nullable
+  public DatumType inputType() {
+    return inputProjection == null ? null : inputProjection.model();
+  }
+
+  @Nullable
+  public OpInputModelProjection<?, ?, ?> inputProjection() { return inputProjection; }
+
+  @NotNull
+  public Type outputType() { return outputProjection.type(); }
+
   @NotNull
   public OpOutputVarProjection outputProjection() { return outputProjection; }
 
   @NotNull
   public TextLocation location() { return location; }
+
+  protected void validate(@NotNull ResourceIdl resource, @NotNull List<IdlError> errors) { }
+
+  protected void ensureProjectionStartsWithResourceType(
+      @NotNull ResourceIdl resource,
+      @NotNull GenVarProjection<?, ?, ?> projection,
+      @NotNull String projectionName,
+      @NotNull List<IdlError> errors) {
+
+    @NotNull Type outputType = resource.fieldType().type;
+    if (path != null) outputType = ProjectionUtils.tipType(path);
+
+    final Type outputProjectionType = projection.type();
+
+    if (!outputType.equals(outputProjectionType))
+      errors.add(
+          new IdlError(
+              resource,
+              this,
+              String.format(
+                  "Operation type '%s' != %s projection type '%s'",
+                  outputType.name(),
+                  projectionName,
+                  outputProjectionType.name()
+              ),
+              outputProjection.location()
+          )
+      );
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    OperationIdl that = (OperationIdl) o;
+    return type == that.type &&
+           Objects.equals(name, that.name) &&
+           Objects.equals(params, that.params) &&
+           Objects.equals(annotations, that.annotations) &&
+           Objects.equals(path, that.path) &&
+           Objects.equals(inputProjection, that.inputProjection) &&
+           Objects.equals(outputProjection, that.outputProjection);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(type, name, params, annotations, path, inputProjection, outputProjection);
+  }
 
   @Override
   public String toString() {

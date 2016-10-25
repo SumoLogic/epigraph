@@ -13,13 +13,13 @@ import java.util.Objects;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class OpPathMapModelProjection
-    extends OpModelPath<OpPathMapModelProjection, MapType>
+public class OpMapModelPath
+    extends OpModelPath<OpMapModelPath, MapType>
     implements GenMapModelProjection<
     OpVarPath,
     OpTagPath,
     OpModelPath<?, ?>,
-    OpPathMapModelProjection,
+    OpMapModelPath,
     MapType
     > {
 
@@ -28,11 +28,11 @@ public class OpPathMapModelProjection
   @NotNull
   private final OpPathKeyProjection keyProjection;
 
-  public OpPathMapModelProjection(
+  public OpMapModelPath(
       @NotNull MapType model,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
-      @Nullable OpPathMapModelProjection metaProjection,
+      @Nullable OpMapModelPath metaProjection,
       @NotNull OpPathKeyProjection keyProjection,
       @NotNull OpVarPath valuesProjection,
       @NotNull TextLocation location) {
@@ -52,7 +52,7 @@ public class OpPathMapModelProjection
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     if (!super.equals(o)) return false;
-    OpPathMapModelProjection that = (OpPathMapModelProjection) o;
+    OpMapModelPath that = (OpMapModelPath) o;
     return Objects.equals(itemsProjection, that.itemsProjection) &&
            Objects.equals(keyProjection, that.keyProjection);
   }

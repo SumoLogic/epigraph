@@ -1,6 +1,6 @@
 package io.epigraph.service;
 
-import io.epigraph.idl.operations.OperationType;
+import io.epigraph.idl.operations.OperationKind;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -11,23 +11,23 @@ public class OperationNotFoundException extends Exception {
   @NotNull
   private final String resourceName;
   @NotNull
-  private final OperationType operationType;
+  private final OperationKind operationKind;
   @Nullable
   private final String operationName;
 
   public OperationNotFoundException(@NotNull String resourceName,
-                                    @NotNull OperationType operationType,
+                                    @NotNull OperationKind operationKind,
                                     @Nullable String operationName) {
 
     super(
         String.format(
             "%s operation '%s' in resource '%s' not found",
-            operationType, operationName == null ? "<default>" : operationName, resourceName
+            operationKind, operationName == null ? "<default>" : operationName, resourceName
         )
     );
 
     this.resourceName = resourceName;
-    this.operationType = operationType;
+    this.operationKind = operationKind;
     this.operationName = operationName;
   }
 
@@ -35,7 +35,7 @@ public class OperationNotFoundException extends Exception {
   public String resourceName() { return resourceName; }
 
   @NotNull
-  public OperationType operationType() { return operationType; }
+  public OperationKind operationType() { return operationKind; }
 
   @Nullable
   public String operationName() { return operationName; }

@@ -1,6 +1,6 @@
 package io.epigraph.service;
 
-import io.epigraph.idl.operations.OperationType;
+import io.epigraph.idl.operations.OperationKind;
 import io.epigraph.service.operations.ReadOperation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -25,7 +25,7 @@ public class ResourceRouter { // todo move to service?
                               : resource.namedReadOperation(operationName);
 
     if (operation == null)
-      throw new OperationNotFoundException(resource.declaration().fieldName(), OperationType.READ, operationName);
+      throw new OperationNotFoundException(resource.declaration().fieldName(), OperationKind.READ, operationName);
 
     return operation;
   }

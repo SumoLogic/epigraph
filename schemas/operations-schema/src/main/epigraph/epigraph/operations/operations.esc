@@ -68,8 +68,6 @@ record UpdateOperation extends Operation {
   // HTTP PUT /people/123 << { firstName: "Vasya" }
   // HTTP PUT /people/123/firstName << "Vasya"
 
-  //updateDataProjection: OpInputVarProjection // projection for body data, starts from `path` tip
-
   // inputType (if not specified) = path tip type, or resource fieldType if path is null
 
   // can be specified: path, inputType?, inputProjection, outputType, outputProjection

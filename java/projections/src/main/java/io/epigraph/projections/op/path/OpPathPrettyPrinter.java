@@ -70,8 +70,8 @@ public class OpPathPrettyPrinter<E extends Exception>
   public void print(@NotNull OpModelPath<?, ?> mp, int pathSteps) throws E {
     if (mp instanceof OpRecordModelPath)
       print((OpRecordModelPath) mp);
-    else if (mp instanceof OpPathMapModelProjection)
-      print((OpPathMapModelProjection) mp);
+    else if (mp instanceof OpMapModelPath)
+      print((OpMapModelPath) mp);
   }
 
   private void print(@NotNull OpRecordModelPath mp) throws E {
@@ -115,7 +115,7 @@ public class OpPathPrettyPrinter<E extends Exception>
     l.brk(1, -l.getDefaultIndentation()).end().print(")");
   }
 
-  private void print(OpPathMapModelProjection mp) throws E {
+  private void print(OpMapModelPath mp) throws E {
     l.beginIInd();
 
     { // keys
@@ -202,8 +202,8 @@ public class OpPathPrettyPrinter<E extends Exception>
       return fieldProjections.isEmpty();
     }
 
-    if (mp instanceof OpPathMapModelProjection) {
-      OpPathMapModelProjection mapModelProjection = (OpPathMapModelProjection) mp;
+    if (mp instanceof OpMapModelPath) {
+      OpMapModelPath mapModelProjection = (OpMapModelPath) mp;
       @NotNull OpPathKeyProjection keyProjection = mapModelProjection.keyProjection();
 
       if (!keyProjection.params().isEmpty()) return false;
