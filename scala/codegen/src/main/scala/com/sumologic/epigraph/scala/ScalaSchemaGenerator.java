@@ -8,7 +8,6 @@ import scala.collection.JavaConversions;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 public class ScalaSchemaGenerator {
 
@@ -75,12 +74,12 @@ public class ScalaSchemaGenerator {
 
   }
 
-  public static void main(String... args) throws IOException {
-    new ScalaSchemaGenerator(
-        SchemaCompiler.testcompile(),
-        Paths.get("scala/codegen-test/src/main/scala")
-    ).generate();
-  }
+//  public static void main(String... args) throws IOException {
+//    new ScalaSchemaGenerator(
+//        SchemaCompiler.testcompile(),
+//        Paths.get("scala/codegen-test/src/main/scala")
+//    ).generate();
+//  }
 
 
 }
