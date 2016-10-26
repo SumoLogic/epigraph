@@ -2,7 +2,7 @@
 
 package com.sumologic.epigraph.schema.compiler
 
-import java.io.{File, IOException}
+import java.io.IOException
 import java.util
 import java.util.Collections
 
@@ -94,9 +94,7 @@ class SchemaCompiler(
 
   }
 
-  // TODO below should be private/protected
-
-  def parseSourceFiles(sources: util.Collection[Source]): Seq[SchemaFile] = {
+  private def parseSourceFiles(sources: util.Collection[Source]): Seq[SchemaFile] = {
 
     val schemaFiles: Seq[SchemaFile] = sources.par.flatMap { source =>
       try {
@@ -109,7 +107,7 @@ class SchemaCompiler(
         }
       } catch {
         case ioe: IOException =>
-          ctx.errors.add(CError(source.name, CErrorPosition.NA, "File not found"))
+          ctx.errors.add(CError(source.name, CErrorPosition.NA, "Couldn't read"))
           Nil
       }
     }(collection.breakOut)
@@ -120,10 +118,10 @@ class SchemaCompiler(
   }
 
   @throws[IOException]
-  def parseFile(source: Source, parserDefinition: ParserDefinition): PsiFile =
+  private def parseFile(source: Source, parserDefinition: ParserDefinition): PsiFile =
     LightPsi.parseFile(source.name, source.text, parserDefinition)
 
-  def registerDefinedTypes(): Unit = {
+  private def registerDefinedTypes(): Unit = {
     ctx.schemaFiles.values.par foreach { csf =>
       csf.typeDefs foreach { ct =>
         val old: CTypeDef = ctx.typeDefs.putIfAbsent(ct.name, ct)
@@ -138,7 +136,7 @@ class SchemaCompiler(
     }
   }
 
-  def resolveTypeRefs(): Unit = ctx.schemaFiles.values.par foreach { csf =>
+  private def resolveTypeRefs(): Unit = ctx.schemaFiles.values.par foreach { csf =>
     csf.typerefs foreach {
       case ctr: CTypeDefRef =>
         @Nullable val refType = ctx.typeDefs.get(ctr.name)
@@ -154,13 +152,13 @@ class SchemaCompiler(
     }
   }
 
-  def applySupplementingTypeDefs(): Unit = ctx.typeDefs.elements foreach { typeDef =>
+  private def applySupplementingTypeDefs(): Unit = ctx.typeDefs.elements foreach { typeDef =>
     typeDef.supplementedTypeRefs foreach { subRef =>
       subRef.resolved.injectedTypes.add(typeDef) // TODO capture injector source?
     }
   }
 
-  def applySupplements(): Unit = ctx.schemaFiles.values foreach { csf =>
+  private def applySupplements(): Unit = ctx.schemaFiles.values foreach { csf =>
     csf.supplements foreach { supplement =>
       val sup = supplement.sourceRef.resolved
       supplement.targetRefs foreach (_.resolved.injectedTypes.add(sup))
@@ -168,67 +166,35 @@ class SchemaCompiler(
   }
 
   /** Compute supertypes for all (named and anonymous) collected types */
-  def computeSupertypes(): Unit = {
+  private def computeSupertypes(): Unit = {
     val visited = mutable.Stack[CType]()
     ctx.typeDefs.elements foreach { typeDef => typeDef.computeSupertypes(visited); assert(visited.isEmpty) }
     ctx.anonListTypes.values() foreach (anonListType => anonListType.linearizedParents)
     ctx.anonMapTypes.values() foreach (anonMapType => anonMapType.linearizedParents)
   }
 
-  def validateTagRefs(): Unit = ctx.schemaFiles.values foreach { csf =>
+  private def validateTagRefs(): Unit = ctx.schemaFiles.values foreach { csf =>
     csf.dataTypes foreach { cdt => cdt.effectiveDefaultTagName }
     // TODO: list element, map value, and field value tags?
   }
 
-  def validateRecordFields(): Unit = ctx.typeDefs.values foreach {
-    case crtd: CRecordTypeDef => assert(crtd.effectiveFields ne null)
+  private def validateRecordFields(): Unit = ctx.typeDefs.values foreach {
+    case rt: CRecordTypeDef => rt.effectiveFields ne null
     case _ =>
   }
 
   @throws[SchemaCompilerException]
-  def handleErrors(exitCode: Int): Unit = { // FIXME it should not exit but return some error code
-    if (ctx.errors.nonEmpty) {
-      renderErrors(ctx)
-      throw new SchemaCompilerException(exitCode.toString, ctx.errors, null)
-    }
+  private def handleErrors(exitCode: Int): Unit = if (ctx.errors.nonEmpty) {
+    renderErrors(ctx)
+    throw new SchemaCompilerException(exitCode.toString, ctx.errors, null)
   }
 
-  def renderErrors(ctx: CContext): Unit = {
-    ctx.errors foreach pprint.pprintln
-  }
+  private def renderErrors(ctx: CContext): Unit = ctx.errors foreach pprint.pprintln
 
-  def printSchemaFiles(schemaFiles: GenTraversableOnce[CSchemaFile]): Unit = {
-    schemaFiles foreach pprint.pprintln
-  }
+  private def printSchemaFiles(schemaFiles: GenTraversableOnce[CSchemaFile]): Unit = schemaFiles foreach pprint.pprintln
 
 }
 
-object SchemaCompiler {
-
-  def main(args: Array[String]) {
-    new SchemaCompiler(testPaths.map(path => new FileSource(new File(path)))).compile()
-  }
-
-  def testcompile: CContext = {
-    new SchemaCompiler(testPaths.map(path => new FileSource(new File(path)))).compile()
-  }
-
-  val testPaths: Seq[String] = Seq(
-    "schemas/builtin-types-schema/src/main/epigraph/epigraph/builtinTypes.esc",
-    "java/codegen-test/src/main/epigraph/com/example/person.esc",
-    "java/codegen-test/src/main/epigraph/com/example/user.esc"
-//    "java/codegen-test/src/main/epigraph/com/example/circular.esc",
-//    "examples/users/schema/src/main/epigraph/metrics/metrics.esc"
-//    "schemas/data-schema/src/main/epigraph/epigraph/data/data.esc"
-//    "schemas/schema-schema/src/main/epigraph/epigraph/schema/names.esc",
-//    "schemas/schema-schema/src/main/epigraph/epigraph/schema/types.esc",
-//    "schemas/schema-schema/src/main/epigraph/epigraph/schema/Documented.esc",
-//    "schemas/schema-schema/src/test/epigraph/example/abstract.esc",
-//    "schemas/schema-compiler/src/test/epigraph/example/compilerExamples.esc"
-    //"blah"
-  )
-
-}
 
 class SchemaCompilerException(
     message: String,
