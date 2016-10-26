@@ -25,6 +25,7 @@
 - Rename folders on namespace renaming
 - Highlight tag types that are vartypes themselve as errors
 - Completion: suggest out-of-scope types with auto-import (implementation: copy ref completion logic from `LegacyCompletionContributor` to `SchemaCompletionContributor`, move `SchemaFqnReference.getVariants` there as well, but now with invocation count logic. Add `autoImport` to `beforeCompletion`, see `JavaCompletionContributor:712`)
+- Type lookup by fully qualified name fails if there is duplicate type elsewhere in classpath (e.g. in target/classes/epigraph$artifacts/...). Short local name lookup still works.
 
 ### Low
 - Option to auto optimize imports on code formatting
