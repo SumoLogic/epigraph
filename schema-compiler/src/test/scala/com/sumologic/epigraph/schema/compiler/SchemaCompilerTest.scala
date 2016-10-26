@@ -9,7 +9,7 @@ import org.scalatest.junit.JUnitRunner
 import org.scalatest.{FlatSpec, Matchers}
 
 @RunWith(classOf[JUnitRunner])
-class CompilerSpec extends FlatSpec with Matchers {
+class SchemaCompilerTest extends FlatSpec with Matchers {
 
   "SchemaCompiler" should "detect incompatible overridden fields" in {
     val compiler = new SchemaCompiler(
@@ -17,8 +17,7 @@ class CompilerSpec extends FlatSpec with Matchers {
         new ResourceSource("/com/sumologic/epigraph/schema/compiler/tests/incompatibleFields.esc")
       )
     )
-    val exception = intercept[SchemaCompilerException](compiler.compile())
-    exception.errors shouldNot be('empty)
+    intercept[SchemaCompilerException](compiler.compile()).errors shouldNot be('empty)
   }
 
 }
