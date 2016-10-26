@@ -314,9 +314,9 @@ class CRecordTypeDef(csf: CSchemaFile, override val psi: SchemaRecordTypeDef)(im
                 csf.filename, csf.position(df.psi),
                 s"Type `${
                   df.typeRef.resolved.name.name
-                }` of field `${df.name}` is not a subtype of its parent field type or declares different default tag`${
+                }` of field `${df.name}` is not a subtype of its parent field type `${
                   sf.typeRef.resolved.name.name
-                }`"
+                }` or declares different default tag"
               )
             )
           }

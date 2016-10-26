@@ -51,8 +51,15 @@
     </dependency>
 
     <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
       <groupId>org.scalatest</groupId>
       <artifactId>scalatest_${scala.version.major.minor}</artifactId>
+      <scope>test</scope>
     </dependency>
 
   </dependencies>
