@@ -79,6 +79,7 @@ class SchemaCompiler(
     ctx.phase(INHERIT_FROM_SUPERTYPES)
 
     validateTagRefs()
+    validateRecordFields()
     // ensure all anonymous parents are auto-created
     ctx.typeDefs.values() foreach (_.linearizedParents)
     ctx.anonListTypes.values() foreach (_.linearizedParents)
@@ -177,6 +178,11 @@ class SchemaCompiler(
   def validateTagRefs(): Unit = ctx.schemaFiles.values foreach { csf =>
     csf.dataTypes foreach { cdt => cdt.effectiveDefaultTagName }
     // TODO: list element, map value, and field value tags?
+  }
+
+  def validateRecordFields(): Unit = ctx.typeDefs.values foreach {
+    case crtd: CRecordTypeDef => assert(crtd.effectiveFields ne null)
+    case _ =>
   }
 
   @throws[SchemaCompilerException]

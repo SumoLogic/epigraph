@@ -1,0 +1,9 @@
+namespace com.sumologic.epigraph.schema.compiler.tests
+
+integer A
+
+integer B
+
+record Sup { f: A }
+
+record Sub extends Sup { override f: B }

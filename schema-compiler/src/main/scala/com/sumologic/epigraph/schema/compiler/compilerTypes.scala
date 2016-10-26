@@ -290,7 +290,7 @@ class CRecordTypeDef(csf: CSchemaFile, override val psi: SchemaRecordTypeDef)(im
   }
 
   // TODO check for dupes
-  private val declaredFieldsMap: Map[String, CField] = declaredFields.map { ct => (ct.name, ct) }(collection.breakOut)
+  private val declaredFieldsMap: Map[String, CField] = declaredFields.map { f => (f.name, f) }(collection.breakOut)
 
   def effectiveFields: Seq[CField] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, _effectiveFields)
 
@@ -300,24 +300,22 @@ class CRecordTypeDef(csf: CSchemaFile, override val psi: SchemaRecordTypeDef)(im
       m.getOrElseUpdate(f.name, Seq.newBuilder[CField]) += f
     }
     val imb = Seq.newBuilder[CField]
-    for ((fn, nfs) <- m) {
-      imb += effectiveField(declaredFieldsMap.get(fn), nfs.result())
-    }
+    for ((fn, nfs) <- m) imb += effectiveField(declaredFieldsMap.get(fn), nfs.result())
     imb.result()
   }
 
   private def effectiveField(declaredFieldOpt: Option[CField], superfields: Seq[CField]): CField = {
     declaredFieldOpt match {
       case Some(df) => // check if declared field is compatible with all (if any) overridden ones
-        superfields foreach { st =>
-          if (!df.compatibleWith(st)) {
+        superfields foreach { sf =>
+          if (!df.compatibleWith(sf)) {
             ctx.errors.add(
               CError(
                 csf.filename, csf.position(df.psi),
                 s"Type `${
                   df.typeRef.resolved.name.name
                 }` of field `${df.name}` is not a subtype of its parent field type or declares different default tag`${
-                  st.typeRef.resolved.name.name
+                  sf.typeRef.resolved.name.name
                 }`"
               )
             )
