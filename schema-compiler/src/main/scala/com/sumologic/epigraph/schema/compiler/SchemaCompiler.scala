@@ -22,8 +22,8 @@ class SchemaCompiler(
     private val dependencies: util.Collection[_ <: Source] = Collections.emptyList()
 ) {
 
-  println(sources.map(_.name).mkString("Sources: [", ", ", "]")) // TODO use log or remove
-  println(dependencies.map(_.name).mkString("Dependencies: [", ", ", "]")) // TODO use log or remove
+  println(sources.map(_.name).mkString("Sources: [\n", ",\n", "\n]")) // TODO use log or remove
+  println(dependencies.map(_.name).mkString("Dependencies: [\n", ",\n", "\n]")) // TODO use log or remove
 
   private val spd = new SchemaParserDefinition
 
