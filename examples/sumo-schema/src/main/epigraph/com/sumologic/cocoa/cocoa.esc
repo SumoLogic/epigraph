@@ -1,0 +1,170 @@
+namespace com.sumologic.cocoa
+
+
+import com.sumologic.LocalId
+import com.sumologic.Timestamp
+import com.sumologic.Timezone
+import com.sumologic.Version
+import com.sumologic.org.Metadata
+import com.sumologic.org.OrganizationId
+
+long CollectorId extends LocalId
+
+vartype Collector {
+  id: CollectorId
+  rec: CollectorRec
+}
+
+/*
+case class CollectorBaseProperties(id: CollectorId = Collector.UndefinedCollectorId,
+                                  version: Version = Collector.UndefinedVersion,
+                                  metadata: Option[Metadata] = None,
+                                  customerId: CustomerId,
+                                  name: String,
+                                  hostName: Option[String] = None,
+                                  timeZone: TimeZone = Collector.DefaultTimeZone,
+                                  category: Option[String] = None,
+                                  description: Option[String] = None)
+*/
+record CollectorRec {
+  id: CollectorId
+  version: Version
+  metadata: Metadata
+  customerId: OrganizationId
+  name: String
+  hostName: String
+  timeZone: Timezone,
+  category: String
+  description: String
+}
+
+record HostedCollector extends CollectorRec
+
+/*
+case class InstalledCollector(override val base: CollectorBaseProperties,
+                             ephemeral: Boolean,
+                             targetCpu: Option[Int] = None,
+                             sourceSyncMode: SyncMode = UI)
+*/
+record InstalledCollector extends CollectorRec {
+  ephemeral: Boolean
+  targetCpu: Integer
+  sourceSyncMode: SyncMode
+}
+
+string SyncMode // TODO: change to Enumeration once available
+
+long SourceId extends LocalId
+
+vartype Source {
+  id: SourceId
+  rec: SourceRec
+}
+
+/*
+case class SourceBaseProperties(id: SourceId = Source.UndefinedSourceId,
+                               version: Version = Source.UndefinedVersion,
+                               metadata: Option[Metadata] = None,
+                               collectorId: CollectorId,
+                               name: String,
+                               category: Option[String] = None,
+                               description: Option[String] = None,
+                               hostName: Option[String] = None,
+                               charsetName: String = Source.DefaultCharsetName,
+                               // Processing of timestamps
+                               timestampParsing: Boolean = Source.DefaultTimestampParsing,
+                               timestampFormat: Option[String] = None,
+                               // Processing of multiple lines
+                               multiLineProcessing: Boolean = Source.DefaultMultiLineProcessing,
+                               multiLineBoundaryRegex: Option[String] = None,
+                               // Time zone Extraction:
+                               forceTimeZone: Boolean = Source.DefaultForceTimeZone,
+                               timeZone: Option[TimeZone] = None, // If None, use collector-level time zone
+                               filters: List[Filter] = List.empty,
+                               cutoffTimestamp: Long = Source.DefaultCutoffTimestamp,
+                               // Third-party integration
+                               thirdPartyRef: Option[ThirdPartyRef] = None,
+                               contentType: Option[ContentType] = None)
+*/
+record SourceRec {
+  id: SourceId
+  version: Version
+  metadata: Metadata
+  collectorId: CollectorId
+  name: String
+  category: String
+  description: String
+  hostName: String
+  charsetName: String
+  timestampParsing: Boolean
+  timestampFormat: String
+  multiLineProcessing: Boolean
+  multiLineBoundaryRegex: String
+  forceTimeZone: Boolean
+  timeZone: Timezone
+  filters: list[Filter]
+  cutoffTimestamp: Timestamp
+  thirdPartyRef: ThirdPartyRef
+  contentType: ContentType
+}
+
+/*
+case class ThirdPartyRef(resources: List[ThirdPartyLocator] = List.empty) {
+*/
+record ThirdPartyRef {
+  resources: list[ThirdPartyLocator]
+}
+
+/*
+case class ThirdPartyLocator( serviceType: CollectionServiceType.CollectionServiceType,
+                              path: ThirdPartyPath,
+                              authentication: ThirdPartyAuth) {
+*/
+record ThirdPartyLocator {
+  serviceType: CollectionServiceType
+  path: ThirdPartyPath,
+  authentication: ThirdPartyAuth
+}
+
+string ThirdPartyPath // TODO: Do this hierarchy properly
+
+string ThirdPartyAuth // TODO: Do this hierarchy properly
+
+string CollectionServiceType // TODO: change to enumeration when available
+
+string ContentType
+
+/*
+sealed abstract class Filter {
+
+  def name: String
+  def regexp: String
+*/
+record Filter {
+  name: String
+  regexp: String
+}
+
+/*
+case class SyslogSource(override val base: SourceBaseProperties,
+                       @NotPasswordField protocol: NetworkProtocol.NetworkProtocol,
+                       @NotPasswordField port: Port) extends Source(base)
+*/
+record SyslogSourceRec extends SourceRec {
+ protocol: NetworkProtocol,
+ port: Port
+}
+
+string NetworkProtocol // TODO: change to enumeration when available
+
+integer Port
+
+/*
+case class LocalFileSource(override val base: SourceBaseProperties,
+                           @NotPasswordField pathExpression: String,
+                           @NotPasswordField blacklist: List[String],
+                           @InternalField @NotPasswordField scanInterval: Long = 2.seconds,
+                           @InternalField @NotPasswordField maxThreads: Int = 6) extends Source(base)
+                       
+
+

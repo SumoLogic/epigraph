@@ -1,0 +1,24 @@
+namespace com.sumologic
+
+string Email
+
+long Version
+
+long Timestamp
+
+string Timezone
+
+string DeploymentKey
+
+long LocalId
+
+record GlobalId {
+  deployment: DeploymentKey
+  id: SumoId
+}
+
+vartype SumoId {
+  id: LocalId
+  globalId: GlobalId
+}
+

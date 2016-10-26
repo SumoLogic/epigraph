@@ -1,0 +1,195 @@
+namespace com.sumologic.org
+
+import com.sumologic.Version
+import com.sumologic.SumoId
+import com.sumologic.Timestamp
+import com.sumologic.LocalId
+import com.sumologic.Email
+
+/*
+case class Metadata(createdAt: Long,
+  createdBy: UserId,
+  modifiedAt: Long,
+  modifiedBy: UserId)
+*/
+record Metadata {
+  createdAt: Timestamp
+  createdBy: User default id
+  modifiedAt: Timestamp
+  modifiedBy: User default id
+}
+
+/*
+case class BaseObjectProperties[K](id: Option[K] = None,
+                                version: Version = DefaultValues.InitialVersion,
+                                metadata: Option[Metadata] = None)
+*/
+record BaseObjectProperties {
+  id: LocalId
+  version: Version
+  metadata: Metadata
+}
+
+vartype Organization {
+  id: OrganizationId
+  rec: OrganizationRec
+}
+
+long OrganizationId extends LocalId
+
+/*
+case class Organization(override val base: BaseObjectProperties[CustomerId],
+                       internalName: Option[String],
+                       displayName: String,
+                       ownerId: Option[UserId] = None,
+                       auditEnabled: Boolean = false,
+                       dataVolumeEnabled: Boolean = false,
+                       signupSource: Option[String] = None,
+                       marketoId: Option[String] = None,
+                       maxSessionTimeoutMinutes: Int = Organization.defaultMaxSessionTimeout) extends BaseObjectGeneric[CustomerId](base)
+*/
+
+/*
+case class ProtocolOrganization(id: Long,
+                               name: String,
+                               isDeactivated: Boolean,
+                               maxUsers: Int,
+                               usgStatus: UsageStatus,
+                               accType: AccountType,
+                               maxDashboardMonitors: Int,
+                               maxDashboardMonitorTimerangeDays: Int,
+                               createTime: Long,
+                               updateTime: Long,
+                               displayName: String)
+class ProtocolOrganizationExtended(id: Long, name: String,
+                                  isDeactivated: Boolean,
+                                  maxUsers: Int,
+                                  usgStatus: UsageStatus,
+                                  accType: AccountType, maxDashboardMonitors: Int,
+                                  maxDashedboardMonitorTimerangeDays: Int,
+                                  createTime: Long,
+                                  updateTime: Long,
+                                  val numUsers: Int,
+                                  val retPolicy: ProtocolRetentionPolicy,
+                                  displayName: String) extends ProtocolOrganization
+*/
+record OrganizationRec extends BaseObjectProperties {
+  override id: OrganizationId
+  internalName: String
+  displayName: String
+  ownerId: UserId
+  auditEnabled: Boolean
+  dataVolumeEnabled: Boolean
+  signupSource: String
+  marketoId: String
+  maxSessionTimeoutMinutes: Integer
+  isDeactivated: Boolean
+  maxUsers: Integer
+  usgStatus: UsageStatus
+  accType: AccountType
+  maxDashboardMonitors: Integer
+  maxDashboardMonitorTimerangeDays: Integer
+  numUsers: Integer
+  retPolicy: ProtocolRetentionPolicy
+}
+
+/*
+case class UsageStatus(dbValue: Int,
+                              shortName: String,
+                              name: String,
+                              closeToUsageLimit: Boolean,
+                              overUsageLimit: Boolean,
+                              loginEnabled: Boolean,
+                              searchEnabled: Boolean,
+                              collectorsEnabled: Boolean)
+*/
+record UsageStatus {
+  dbValue: Integer
+  shortName: String
+  name: String
+  closeToUsageLimit: Boolean
+  overUsageLimit: Boolean
+  loginEnabled: Boolean
+  searchEnabled: Boolean
+  collectorsEnabled: Boolean
+}
+
+/*
+
+sealed abstract case class AccountType(val dbValue: Int,
+                                       val shortName: String,
+                                       val name: String,
+                                       val showUpdateLink: Boolean,
+                                       val defaultEps: Int)
+*/
+record AccountType {
+  dbValue: Integer
+  shortName: String
+  name: String
+  showUpdateLink: Boolean
+  defaultEps: Integer
+}
+
+/*
+case class ProtocolRetentionPolicy(shortTermRetention: Int, longTermRetention: Option[Int])
+*/
+record ProtocolRetentionPolicy {
+  shortTermRetention: Integer // TODO: type? days?
+  longTermRetention: Integer // TODO: type? days?
+}
+
+
+long UserId extends LocalId
+
+vartype User {
+  id: UserId
+  rec: UserRec
+}
+
+/*
+case class ProtocolUser(id: Long,
+                       email: String,
+                       firstName: String,
+                       lastName: String,
+                       passwordHash: String,
+                       expires: Long,
+                       passwordExpires: Long,
+                       enabled: Boolean,
+                       requirePasswordChangeOnLogin: Boolean,
+                       hideDemoOverview: Boolean,
+                       version: Long,
+                       orgId: Long,
+                       lastLoginTimestamp: Long,
+                       lastUpdatedPasswordTimestamp: Long,
+                       failedLoginAttempts: Array[Long],
+                       previousPasswordHashes: Array[String],
+                       createdTime: Long,
+                       updatedTime: Long,
+                       switchableEnabledOrgs: String,
+                       switchableDisabledOrgs: String,
+                       lastAccessedOrg: String,
+                       emailVerified: Boolean) extends TimeSource
+*/
+record UserRec extends BaseObjectProperties {
+  override id: UserId
+  email: Email
+  firstName: String
+  lastName: String,
+  passwordHash: String
+  expires: Long
+  passwordExpires: Long
+  enabled: Boolean
+  requirePasswordChangeOnLogin: Boolean
+  hideDemoOverview: Boolean
+  version: Version
+  organization: Organization
+  lastLoginTimestamp: Timestamp
+  lastUpdatedPasswordTimestamp: Timestamp
+  failedLoginAttempts: list[Timestamp]
+  previousPasswordHashes: list[String]
+  switchableEnabledOrgs: list[Organization]
+  switchableDisabledOrgs: list[Organization]
+  lastAccessedOrg: Organization
+  emailVerified: Boolean
+}
+
