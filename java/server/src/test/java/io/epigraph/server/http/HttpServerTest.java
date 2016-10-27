@@ -48,188 +48,22 @@ public class HttpServerTest {
 
   static {
     try {
-      idl = parseIdlResource("/io/epigraph/server/http/testService.sdl");
+      idl = parseIdlResource("/io/epigraph/tests/service/testService.sdl");
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
   }
 
   private static Service buildUsersService() throws ServiceInitializationException {
-    return new Service("users", Arrays.asList(buildUserResource(), buildUsersResource()));
-  }
-
-  private static Resource buildUserResource() throws ServiceInitializationException {
-    ResourceIdl userResource = idl.resources().get("user");
-    assert userResource != null;
-
-    return new Resource(
-        userResource,
-        Collections.singletonList(
-            buildDefaultUserReadOperation(
-                ((ReadOperationIdl) userResource.operations().get(0))
-            )
+    return new Service(
+        "users",
+        Arrays.asList(
+            new UserResource(idl.resources().get("user")),
+            new UsersResource(idl.resources().get("users"))
         )
     );
   }
 
-  private static ReadOperation buildDefaultUserReadOperation(@NotNull ReadOperationIdl operationIdl) {
-    return new ReadOperation(operationIdl) {
-      @NotNull
-      @Override
-      public CompletableFuture<ReadOperationResponse> process(@NotNull ReadOperationRequest request) {
-        Person.Imm person = User.create()
-            .setId(UserId.create(1))
-            .setRecord(UserRecord.create()
-                .setId(PersonId.create(1))
-                .setFirstName(epigraph.String.create("Alfred"))
-                .setLastName(epigraph.String.create("Hitchcock"))
-                .setProfile_Error(new ErrorValue(404, "Not Found", null))
-                .setBestFriend$(User.create()
-                    .setId(UserId.create(2))
-                    .setRecord(UserRecord.create()
-                        .setId(PersonId.create(2))
-                        .setFirstName(epigraph.String.create("Bruce"))
-                        .setLastName(epigraph.String.create("Willis"))
-                        .setProfile(Url.create("http://google.com/"))
-                    )
-                )
-                .setWorstEnemy(UserRecord.create()
-                    .setId(PersonId.create(3))
-                    .setFirstName(epigraph.String.create("Chuck"))
-                    .setLastName(epigraph.String.create("Norris"))
-                    .setProfile(Url.create("http://bing.com/"))
-                )
-                .setFriends(Person_List.create()
-                    .add(User.create()
-                        .setId(UserId.create(2))
-                        .setRecord(UserRecord.create()
-                            .setId(PersonId.create(2))
-                            .setFirstName(epigraph.String.create("Bruce"))
-                            .setLastName(epigraph.String.create("Willis"))
-                            .setProfile(Url.create("http://google.com/"))
-                        )
-                    )
-                    .add(Person.create()
-                        .setId(PersonId.create(4))
-                        .setRecord(PersonRecord.create()
-                            .setId(PersonId.create(4))
-                            .setFirstName(epigraph.String.create("Douglas"))
-                            .setLastName(epigraph.String.create("Adams"))
-                        )
-                    )
-                )
-            )
-            .toImmutable();
-
-        ///////////////
-
-        CompletableFuture<ReadOperationResponse> future = new CompletableFuture<>();
-        future.complete(new ReadOperationResponse(person));
-        return future;
-      }
-    };
-  }
-
-  private static Resource buildUsersResource() throws ServiceInitializationException {
-    ResourceIdl usersResource = idl.resources().get("users");
-    assert usersResource != null;
-
-    return new Resource(
-        usersResource,
-        Collections.singletonList(
-            buildDefaultUsersReadOperation(
-                ((ReadOperationIdl) usersResource.operations().get(0))
-            )
-        )
-    );
-  }
-
-  private static ReadOperation buildDefaultUsersReadOperation(@NotNull ReadOperationIdl operationIdl) {
-    return new ReadOperation(operationIdl) {
-      @NotNull
-      @Override
-      public CompletableFuture<ReadOperationResponse> process(@NotNull ReadOperationRequest request) {
-        String_Person_Map personMap = String_Person_Map
-            .create()
-
-            .put$(epigraph.String.create("1").toImmutable(), User.create()
-                .setId(UserId.create(1))
-                .setRecord(UserRecord.create()
-                    .setId(PersonId.create(1))
-                    .setFirstName(epigraph.String.create("Alfred"))
-                    .setLastName(epigraph.String.create("Hitchcock"))
-                    .setProfile_Error(new ErrorValue(404, "Not Found", null))
-                    .setBestFriend$(User.create()
-                        .setId(UserId.create(2))
-                        .setRecord(UserRecord.create()
-                            .setId(PersonId.create(2))
-                            .setFirstName(epigraph.String.create("Bruce"))
-                            .setLastName(epigraph.String.create("Willis"))
-                            .setProfile(Url.create("http://google.com/"))
-                        )
-                    )
-                    .setWorstEnemy(UserRecord.create()
-                        .setId(PersonId.create(3))
-                        .setFirstName(epigraph.String.create("Chuck"))
-                        .setLastName(epigraph.String.create("Norris"))
-                        .setProfile(Url.create("http://bing.com/"))
-                    )
-                    .setFriends(Person_List.create()
-                        .add(User.create()
-                            .setId(UserId.create(2))
-                            .setRecord(UserRecord.create()
-                                .setId(PersonId.create(2))
-                                .setFirstName(epigraph.String.create("Bruce"))
-                                .setLastName(epigraph.String.create("Willis"))
-                                .setProfile(Url.create("http://google.com/"))
-                            )
-                        )
-                        .add(Person.create()
-                            .setId(PersonId.create(4))
-                            .setRecord(PersonRecord.create()
-                                .setId(PersonId.create(4))
-                                .setFirstName(epigraph.String.create("Douglas"))
-                                .setLastName(epigraph.String.create("Adams"))
-                            )
-                        )
-                    )
-                )
-            )
-
-            .put$(epigraph.String.create("2").toImmutable(), Person
-                .create()
-                .setId(PersonId.create(2))
-                .setRecord(
-                    PersonRecord
-                        .create()
-                        .setId(PersonId.create(2))
-                        .setFirstName(epigraph.String.create("Bruce"))
-                        .setLastName(epigraph.String.create("Willis"))
-                )
-            )
-
-            .put$(epigraph.String.create("3").toImmutable(), Person
-                .create()
-                .setId(PersonId.create(3))
-                .setRecord_Error(
-                    new ErrorValue(402, new Exception("Payment required to fetch user data"))
-                )
-            )
-
-            .toImmutable();
-
-        ///////////////
-
-        CompletableFuture<ReadOperationResponse> future = new CompletableFuture<>();
-        future.complete(
-            new ReadOperationResponse(
-                String_Person_Map.type.createDataBuilder().set(personMap)
-            )
-        );
-        return future;
-      }
-    };
-  }
 
   public static void main(String[] args) throws ServiceInitializationException {
     Undertow server = Undertow.builder()

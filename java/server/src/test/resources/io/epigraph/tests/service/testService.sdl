@@ -1,6 +1,9 @@
-namespace test
+namespace io.epigraph.server.http
 
-resource users: map[epigraph.String,io.epigraph.tests.Person] {
+import io.epigraph.tests.Person
+import io.epigraph.tests.User
+
+resource users: map[String,Person] {
 
   READ {
     ; authToken : epigraph.String
@@ -28,7 +31,7 @@ resource users: map[epigraph.String,io.epigraph.tests.Person] {
             )
           )
         )
-      )~io.epigraph.tests.User:(
+      )~User:(
         +id,
         record( +profile, +worstEnemy( profile ) )
       )
@@ -37,7 +40,7 @@ resource users: map[epigraph.String,io.epigraph.tests.Person] {
 
 }
 
-resource user: io.epigraph.tests.Person {
+resource user: Person {
 
   READ {
     outputProjection :(
@@ -63,7 +66,7 @@ resource user: io.epigraph.tests.Person {
           )
         )
       )
-    )~io.epigraph.tests.User:(
+    )~User:(
       +id,
       record( +profile, +worstEnemy( profile ) )
     )
