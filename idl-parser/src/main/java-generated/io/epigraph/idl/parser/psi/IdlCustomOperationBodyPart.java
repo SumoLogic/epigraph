@@ -17,6 +17,15 @@ public interface IdlCustomOperationBodyPart extends PsiElement {
   IdlOperationInputProjection getOperationInputProjection();
 
   @Nullable
+  IdlOperationInputType getOperationInputType();
+
+  @Nullable
   IdlOperationOutputProjection getOperationOutputProjection();
+
+  @Nullable
+  IdlOperationOutputType getOperationOutputType();
+
+  @Nullable
+  IdlOperationPath getOperationPath();
 
 }

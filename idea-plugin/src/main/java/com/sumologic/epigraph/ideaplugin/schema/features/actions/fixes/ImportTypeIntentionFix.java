@@ -79,6 +79,7 @@ public class ImportTypeIntentionFix implements HintAction {
     return typeRef != null && typeRef.isValid() && typeRef.resolve() == null; // TODO and there are any options to import
   }
 
+  @SuppressWarnings("unchecked")
   @Override
   public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
     if (!FileModificationService.getInstance().prepareFileForWrite(file)) return;
@@ -89,7 +90,6 @@ public class ImportTypeIntentionFix implements HintAction {
 
     if (importOptions.size() > 1) {
       final JList list = new JBList(importOptions);
-      //noinspection unchecked
       list.setCellRenderer(SchemaNamespaceRenderer.INSTANCE);
 
       Runnable runnable = () -> {

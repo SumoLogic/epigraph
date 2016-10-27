@@ -19,7 +19,7 @@ public class CustomOperationIdl extends OperationIdl {
       @Nullable OpParams params,
       @Nullable Annotations annotations,
       @Nullable OpVarPath path,
-      @NotNull OpInputModelProjection<?, ?, ?> inputProjection,
+      @Nullable OpInputModelProjection<?, ?, ?> inputProjection,
       @NotNull OpOutputVarProjection outputProjection,
       @NotNull TextLocation location) {
 

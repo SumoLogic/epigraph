@@ -6,7 +6,6 @@ import io.epigraph.projections.gen.GenListModelProjection;
 import io.epigraph.projections.op.OpParams;
 import io.epigraph.types.ListType;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -30,10 +29,9 @@ public class OpDeleteListModelProjection
       @NotNull ListType model,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
-      @Nullable OpDeleteListModelProjection metaProjection,
       @NotNull OpDeleteVarProjection itemsProjection,
       @NotNull TextLocation location) {
-    super(model, params, annotations, metaProjection, location);
+    super(model, params, annotations, location);
     this.itemsProjection = itemsProjection;
   }
 

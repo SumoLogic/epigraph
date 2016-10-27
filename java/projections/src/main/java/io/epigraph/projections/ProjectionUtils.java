@@ -1,7 +1,7 @@
 package io.epigraph.projections;
 
-import io.epigraph.projections.gen.GenTagProjectionEntry;
 import io.epigraph.projections.op.path.*;
+import io.epigraph.types.DataType;
 import io.epigraph.types.DatumType;
 import io.epigraph.types.RecordType;
 import io.epigraph.types.Type;
@@ -46,10 +46,22 @@ public class ProjectionUtils {
    * @return {@code path} tip type
    */
   @NotNull
-  public static Type tipType(@NotNull OpVarPath path) {
+  public static DataType tipType(@NotNull OpVarPath path) {
+    DataType lastDataType;
+
+    final Type type = path.type();
+    if (type instanceof DatumType) {
+      DatumType datumType = (DatumType) type;
+      lastDataType = datumType.dataType();
+    } else {
+      lastDataType = new DataType(type, null);
+    }
+
     while (true) {
       final OpTagPath tagProjection = path.pathTagProjection();
-      if (tagProjection == null) return path.type();
+      if (tagProjection == null) break;
+
+      lastDataType = tagProjection.tag().type.dataType();
 
       final OpModelPath<?, ?> modelPath = tagProjection.projection();
       final DatumType model = modelPath.model();
@@ -57,16 +69,20 @@ public class ProjectionUtils {
         case RECORD:
           OpRecordModelPath recordPath = (OpRecordModelPath) modelPath;
           OpFieldPathEntry fieldProjection = recordPath.pathFieldProjection();
-          if (fieldProjection == null) return model;
+          if (fieldProjection == null) break;
+          lastDataType = fieldProjection.field().dataType();
           path = fieldProjection.projection().projection();
           break;
         case MAP:
           OpMapModelPath mapPath = (OpMapModelPath) modelPath;
+          lastDataType = mapPath.model().valueType();
           path = mapPath.itemsProjection();
           break;
         default:
-          return model;
+          break;
       }
     }
+
+    return lastDataType;
   }
 }

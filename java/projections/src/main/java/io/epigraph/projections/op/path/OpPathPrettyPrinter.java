@@ -27,9 +27,16 @@ public class OpPathPrettyPrinter<E extends Exception>
   }
 
   @Override
+  protected void printVarOnly(@NotNull OpVarPath p, int pathSteps) throws E {
+    // no tags = end of path
+    if (!p.tagProjections().isEmpty()) {
+      super.printVarOnly(p, pathSteps);
+    }
+  }
+
+  @Override
   public void print(@NotNull String tagName, @NotNull OpTagPath tp, int pathSteps) throws E {
     OpModelPath<?, ?> projection = tp.projection();
-    OpModelPath<?, ?> metaProjection = projection.metaProjection();
     OpParams params = projection.params();
     Annotations annotations = projection.annotations();
 
@@ -50,12 +57,6 @@ public class OpPathPrettyPrinter<E extends Exception>
 
       if (!params.isEmpty()) print(params);
       if (!annotations.isEmpty()) print(annotations);
-
-      if (metaProjection != null) {
-        l.brk().beginIInd(0).print("meta:").brk();
-        print(metaProjection, 0);
-        l.end();
-      }
 
       if (!isPrintoutEmpty(projection)) {
         l.brk();
@@ -116,30 +117,37 @@ public class OpPathPrettyPrinter<E extends Exception>
   }
 
   private void print(OpMapModelPath mp) throws E {
-    l.beginIInd();
+    l.beginIInd(0);
 
-    { // keys
-      @NotNull OpPathKeyProjection keyProjection = mp.keyProjection();
+    @NotNull OpPathKeyProjection keyProjection = mp.keyProjection();
+    @NotNull OpParams keyParams = keyProjection.params();
+    @NotNull Annotations keyAnnotations = keyProjection.annotations();
 
+    l.print("/").brk().print(".");
+
+    if (!keyParams.isEmpty() || !keyAnnotations.isEmpty()) {
       l.beginCInd();
-      l.print("[");
+      l.brk().print("{");
+
       boolean commaNeeded = false;
 
-      @NotNull OpParams keyParams = keyProjection.params();
       if (!keyParams.isEmpty()) {
         print(keyParams, true, true);
         commaNeeded = !keyParams.isEmpty();
       }
 
-      @NotNull Annotations keyAnnotations = keyProjection.annotations();
       if (!keyAnnotations.isEmpty()) print(keyAnnotations, true, !commaNeeded);
 
-      l.brk(1, -l.getDefaultIndentation()).end().print("]");
+      l.brk(1, -l.getDefaultIndentation()).end().print("}");
     }
 
-    l.print("(").brk();
-    print(mp.itemsProjection(), 0);
-    l.brk(1, -l.getDefaultIndentation()).end().print(")");
+    if (!isPrintoutEmpty(mp.itemsProjection())) {
+      l.print("(").brk();
+      print(mp.itemsProjection(), 0);
+      l.brk(1, -l.getDefaultIndentation()).end().print(")");
+    }
+
+    l.end();
   }
 
   public void print(@NotNull OpParams p) throws E {
@@ -192,6 +200,12 @@ public class OpPathPrettyPrinter<E extends Exception>
     }
 
     l.end();
+  }
+
+  @Override
+  protected boolean isPrintoutEmpty(@NotNull OpVarPath opVarPath) {
+    // no tags = end of path = empty printout
+    return opVarPath.tagProjections().isEmpty() || super.isPrintoutEmpty(opVarPath);
   }
 
   @Override

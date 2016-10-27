@@ -24,7 +24,7 @@ abstract record Operation extends Documented {
   params: list[OpParam]
   annotations: list[Annotation]
 
-  path: OpVarPath // starts with resource field type, ends with var type
+  path: OpVarPath // starts with resource field type, ends with data type (var container)
 
   inputType: DataTypeRef
   inputProjection: OpInputModelProjection // starts from `inputType` (can be different from resource field type)
@@ -52,14 +52,14 @@ record CreateOperation extends Operation {
   // HTTP POST /people ~ *(status) <<< [ { user1 }, { user2 } ]
   // inputType (if not specified) = path tip type, or resource fieldType if path is null
 
-  // can be specified: path, inputType?, inputProjection, outputType, outputProjection
+  // can be specified: path?, inputType?, inputProjection, outputType, outputProjection
 }
 
 record ReadOperation extends Operation {
   // contract: outputType = path tip type, or resource fieldType if path is null
   // inputType = inputProjection = null
 
-  // can be specified: path, outputProjection
+  // can be specified: path?, outputProjection
 }
 
 record UpdateOperation extends Operation {
@@ -69,8 +69,9 @@ record UpdateOperation extends Operation {
   // HTTP PUT /people/123/firstName << "Vasya"
 
   // inputType (if not specified) = path tip type, or resource fieldType if path is null
+  // outputType (if not specified) = path tip type, or resource fieldType if path is null
 
-  // can be specified: path, inputType?, inputProjection, outputType, outputProjection
+  // can be specified: path?, inputType?, inputProjection, outputType?, outputProjection
 }
 
 record DeleteOperation extends Operation {
@@ -88,7 +89,7 @@ record DeleteOperation extends Operation {
   //              path   ^^^^^^^
   //                     ReqDeleteProjection (parsed against deleteProjection)
 
-  // can be specified: path, deleteProjection, outputType, outputProjection
+  // can be specified: path?, deleteProjection, outputType, outputProjection
 }
 
 record CustomOperation extends Operation {
@@ -99,5 +100,8 @@ record CustomOperation extends Operation {
   //                                            query parameters         |
   //                    request body, (de)serialized using `inputProjection`
 
-  // can be specified: path, inputType, inputProjection, outputType, outputProjection
+  // inputType (if not specified) = path tip type, or resource fieldType if path is null
+  // outputType (if not specified) = path tip type, or resource fieldType if path is null
+
+  // can be specified: path?, inputType?, inputProjection, outputType?, outputProjection
 }

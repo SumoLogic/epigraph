@@ -7,6 +7,7 @@ import de.uka.ilkd.pp.NoExceptions;
 import de.uka.ilkd.pp.StringBackend;
 import io.epigraph.idl.parser.IdlParserDefinition;
 import io.epigraph.idl.parser.psi.IdlFile;
+import io.epigraph.lang.TextLocation;
 import io.epigraph.psi.EpigraphPsiUtil;
 import io.epigraph.psi.PsiProcessingException;
 import io.epigraph.refs.SimpleTypesResolver;
@@ -33,7 +34,8 @@ public class IdlTest {
       UserId.type,
       UserRecord.type,
       String_Person_Map.type,
-      epigraph.String.type
+      epigraph.String.type,
+      epigraph.Boolean.type
   );
 
   @Test
@@ -63,6 +65,7 @@ public class IdlTest {
 
   @Test
   public void testResource() throws Exception {
+    // todo test custom
     testParse(
         lines(
             "namespace test",
@@ -71,20 +74,43 @@ public class IdlTest {
             "  READ {",
             "    doc = \"dome doc string\"",
             "    ; authToken : String",
-            "    output [required]( :record (id, firstName) )",
+            "    outputProjection [required]( :record (id, firstName) )",
+            "  }",
+            "  readWithPath READ {",
+            "    path / .",
+            "    outputProjection :record (id, firstName)",
+            "  }",
+            "  CREATE {",
+            "    inputProjection []( :record ( firstName, lastName) )",
+            "    outputType Boolean",
+            "    outputProjection", // empty projection
             "  }",
             "  UPDATE {",
             "    doc = \"dome doc string\"",
             "    ; authToken : String",
-            "    input []( :record ( firstName, lastName) )",
-            "    output [forbidden]( :id )",
+            "    inputProjection []( :record ( firstName, lastName) )",
+            "    outputProjection [forbidden]( :id )",
             "  }",
             "  customUpdate UPDATE {",
             "    doc = \"dome doc string\"",
             "    ; authToken : String",
-            "    input []( :record ( firstName, lastName) )",
-            "    output [forbidden]( :id )",
+            "    inputProjection []( :record ( firstName, lastName) )",
+            "    outputProjection [forbidden]( :id )",
             "  }",
+            "  DELETE {",
+            "    deleteProjection [forbidden]( +:record ( firstName ) )",
+            "    outputType Boolean",
+            "    outputProjection", // empty projection
+            "  }",
+//            "  customOp CUSTOM {",
+//            "    doc = \"dome doc string\"",
+//            "    ; authToken : String",
+//            "    path / . :record / bestFriend",
+//            "    inputType map[String,Person]",
+//            "    inputProjection []( :record ( firstName, lastName) )",
+//            "    outputType map[String,Person]",
+//            "    outputProjection [forbidden]( :id )",
+//            "  }",
             "}"
         ),
         lines(
@@ -92,18 +118,58 @@ public class IdlTest {
             "resource users: map[epigraph.String,io.epigraph.tests.Person]",
             "{",
             "  READ",
-            "  { ;authToken: epigraph.String, doc = \"dome doc string\",",
-            "    output [ required ]( :record ( id, firstName ) )",
+            "  {",
+            "    ;authToken: epigraph.String,",
+            "    doc = \"dome doc string\",",
+            "    outputType map[epigraph.String,io.epigraph.tests.Person],",
+            "    outputProjection [ required ]( :record ( id, firstName ) )",
+            "  }",
+            "  readWithPath READ",
+            "  {",
+            "    path / .,",
+            "    outputType io.epigraph.tests.Person,",
+            "    outputProjection :record ( id, firstName )",
+            "  }",
+            "  CREATE",
+            "  {",
+            "    inputType map[epigraph.String,io.epigraph.tests.Person],",
+            "    inputProjection []( :record ( firstName, lastName ) ),",
+            "    outputType epigraph.Boolean,",
+            "    outputProjection ", // empty projection
             "  }",
             "  UPDATE",
-            "  { ;authToken: epigraph.String, doc = \"dome doc string\",",
-            "    input []( :record ( firstName, lastName ) ),",
-            "    output [ forbidden ]( :id )",
+            "  {",
+            "    ;authToken: epigraph.String,",
+            "    doc = \"dome doc string\",",
+            "    inputType map[epigraph.String,io.epigraph.tests.Person],",
+            "    inputProjection []( :record ( firstName, lastName ) ),",
+            "    outputType map[epigraph.String,io.epigraph.tests.Person],",
+            "    outputProjection [ forbidden ]( :id )",
             "  }",
             "  customUpdate UPDATE",
-            "  { ;authToken: epigraph.String, doc = \"dome doc string\",",
-            "    input []( :record ( firstName, lastName ) ),",
-            "    output [ forbidden ]( :id )",
+            "  {",
+            "    ;authToken: epigraph.String,",
+            "    doc = \"dome doc string\",",
+            "    inputType map[epigraph.String,io.epigraph.tests.Person],",
+            "    inputProjection []( :record ( firstName, lastName ) ),",
+            "    outputType map[epigraph.String,io.epigraph.tests.Person],",
+            "    outputProjection [ forbidden ]( :id )",
+            "  }",
+            "  DELETE",
+            "  {",
+            "    deleteProjection [ forbidden ]( +:record ( firstName ) ),",
+            "    outputType epigraph.Boolean,",
+            "    outputProjection ", // empty projection
+//            "  }",
+//            "  customOp CUSTOM",
+//            "  {",
+//            "    doc = \"dome doc string\"",
+//            "    ; authToken : String",
+//            "    path / . :record / bestFriend",
+//            "    inputType map[epigraph.String,io.epigraph.tests.Person],",
+//            "    inputProjection []( :record ( firstName, lastName) )",
+//            "    outputType map[epigraph.String,io.epigraph.tests.Person],",
+//            "    outputProjection [forbidden]( :id )",
             "  } }"
         )
     );
@@ -143,7 +209,13 @@ public class IdlTest {
       return IdlPsiParser.parseIdl(psiFile, resolver);
     } catch (PsiProcessingException e) {
       e.printStackTrace();
-      System.err.println(e.getMessage() + " at " + EpigraphPsiUtil.getLocation(e.psi()));
+      @NotNull final TextLocation location = EpigraphPsiUtil.getLocation(e.psi());
+      System.err.println(e.getMessage() + " at " + location);
+
+      System.err.print(text.substring(location.startOffset()));
+      System.err.print(">>>");
+      System.err.print(text.substring(location.startOffset(), location.endOffset()));
+      System.err.println("<<<");
       fail();
     }
 

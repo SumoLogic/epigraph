@@ -7,9 +7,10 @@ import io.epigraph.projections.gen.GenRecordModelProjection;
 import io.epigraph.projections.op.OpParams;
 import io.epigraph.types.RecordType;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.IdentityHashMap;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -37,10 +38,9 @@ public class OpDeleteRecordModelProjection
       @NotNull RecordType model,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
-      @Nullable OpDeleteRecordModelProjection metaProjection,
       @NotNull Map<String, OpDeleteFieldProjectionEntry> fieldProjections,
       @NotNull TextLocation location) {
-    super(model, params, annotations, metaProjection, location);
+    super(model, params, annotations, location);
     this.fieldProjections = fieldProjections;
 
     ProjectionUtils.checkFieldsBelongsToModel(fieldProjections.keySet(), model);

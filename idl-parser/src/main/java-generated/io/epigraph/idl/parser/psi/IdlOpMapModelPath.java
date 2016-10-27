@@ -7,16 +7,13 @@ import com.intellij.psi.PsiElement;
 
 public interface IdlOpMapModelPath extends PsiElement {
 
-  @Nullable
+  @NotNull
   IdlOpPathKeyProjection getOpPathKeyProjection();
 
-  @NotNull
+  @Nullable
   IdlOpVarPath getOpVarPath();
 
   @NotNull
   PsiElement getSlash();
-
-  @NotNull
-  PsiElement getStar();
 
 }

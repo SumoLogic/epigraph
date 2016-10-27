@@ -11,7 +11,7 @@ import epigraph.schema.EnumTypeRef
 import epigraph.schema.PrimitiveTypeRef
 import epigraph.projections.Annotation
 
-// OpOutputProjections with canDelete on vars (we can only delete entities)
+// OpOutputProjections with canDelete on vars (we can only delete entities) and no `meta` on models
 
 record OpDeleteVarProjection {
   type: TypeRef

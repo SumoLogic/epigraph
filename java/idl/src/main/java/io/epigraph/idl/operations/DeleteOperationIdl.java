@@ -30,7 +30,7 @@ public class DeleteOperationIdl extends OperationIdl {
       @NotNull OpOutputVarProjection outputProjection,
       @NotNull TextLocation location) {
 
-    super(OperationKind.CUSTOM, name, params, annotations,
+    super(OperationKind.DELETE, name, params, annotations,
           path, null, outputProjection, location
     );
 

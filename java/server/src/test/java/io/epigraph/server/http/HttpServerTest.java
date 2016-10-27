@@ -52,7 +52,7 @@ public class HttpServerTest {
       "  READ {",
       "    ; authToken : epigraph.String",
 //    "    output []( :(+id, record (+id, +firstName, +lastName, +bestFriend: (+id, record(+id, +firstName, +lastName)))) )",
-      "    output []( :( ",
+      "    outputProjection []( :( ",
       "      id, ",
       "      +record ( ",
       "        +id, ",
@@ -83,7 +83,7 @@ public class HttpServerTest {
 
       "resource user: io.epigraph.tests.Person {",
       "  READ { ",
-      "    output:( ",
+      "    outputProjection :( ",
       "      +id, ",
       "      record ( ",
       "        +id, ",

@@ -33,21 +33,21 @@ public class IdlOpInputMapModelProjectionImpl extends ASTWrapperPsiElement imple
   }
 
   @Override
-  @NotNull
+  @Nullable
   public IdlOpInputVarProjection getOpInputVarProjection() {
-    return findNotNullChildByClass(IdlOpInputVarProjection.class);
+    return findChildByClass(IdlOpInputVarProjection.class);
   }
 
   @Override
-  @NotNull
+  @Nullable
   public PsiElement getParenLeft() {
-    return findNotNullChildByType(I_PAREN_LEFT);
+    return findChildByType(I_PAREN_LEFT);
   }
 
   @Override
-  @NotNull
+  @Nullable
   public PsiElement getParenRight() {
-    return findNotNullChildByType(I_PAREN_RIGHT);
+    return findChildByType(I_PAREN_RIGHT);
   }
 
 }

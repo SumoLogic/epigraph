@@ -34,8 +34,8 @@ public class IdlCustomOperationDefImpl extends ASTWrapperPsiElement implements I
 
   @Override
   @NotNull
-  public IdlQid getQid() {
-    return findNotNullChildByClass(IdlQid.class);
+  public IdlOperationName getOperationName() {
+    return findNotNullChildByClass(IdlOperationName.class);
   }
 
   @Override

@@ -6,7 +6,6 @@ import io.epigraph.projections.abs.AbstractModelProjection;
 import io.epigraph.projections.req.ReqParams;
 import io.epigraph.types.DatumType;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -27,9 +26,8 @@ public abstract class ReqModelPath<
       boolean required,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
-      @Nullable MP metaProjection,
       @NotNull TextLocation location) {
-    super(model, metaProjection, annotations, location);
+    super(model, null, annotations, location);
     this.required = required;
     this.params = params;
   }

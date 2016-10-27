@@ -223,14 +223,21 @@ deleteOperationBodyPart ::= operationPath |
   recoverWhile = operationBodyRecover
 }
 
-customOperationDef ::= qid 'CUSTOM' customOperationBody {pin=2} // todo specify verb?
+customOperationDef ::= operationName 'CUSTOM' customOperationBody {pin=2} // todo specify verb?
 private customOperationBody ::= '{' (customOperationBodyPart ','?)* '}'
-customOperationBodyPart ::= operationInputProjection | operationOutputProjection | opParam | annotation {
+customOperationBodyPart ::= operationPath |
+                            operationInputType |
+                            operationInputProjection |
+                            operationOutputType |
+                            operationOutputProjection |
+                            opParam |
+                            annotation {
   recoverWhile = operationBodyRecover
 }
 
-private operationBodyRecover ::= ! ( '}' | ',' | ';' | 'input' | 'output' | 'path' | (id '=') |
-  (id? ('READ' | 'CREATE' | 'UPDATE' | 'DELETE') ) )
+private operationBodyRecover ::= ! ( '}' | ',' | ';' |
+  'inputType' | 'inputProjection' | 'outputType' | 'outputProjection' | 'deleteProjection' | 'path' | (id '=') |
+  (id? ('READ' | 'CREATE' | 'UPDATE' | 'DELETE' | 'CUSTOM') ) )
 
 // ============= op projections =============
 
@@ -264,8 +271,9 @@ private opSimpleFieldPath ::= opVarPath
 opFieldPathBodyPart ::= opParam | annotation
 
 // op map path
-opMapModelPath ::= '/' '*' opPathKeyProjection? opVarPath
-opPathKeyProjection ::= '{' (opPathKeyProjectionPart ','?)*  '}' {pin=1}
+opMapModelPath ::= '/' opPathKeyProjection opVarPath {pin=2}
+opPathKeyProjection ::= '.' opPathKeyProjectionBody? {pin=1}
+opPathKeyProjectionBody ::= '{' (opPathKeyProjectionPart ','?)*  '}' {pin=1}
 opPathKeyProjectionPart ::= opParam | annotation
 
 // output --------------------------------------------------------
@@ -357,7 +365,7 @@ private opInputSimpleFieldProjection ::= opInputVarProjection
 opInputListModelProjection ::= '*' '(' opInputVarProjection ')' { pin=1 }
 
 // op input map
-opInputMapModelProjection ::= opInputKeyProjection '(' opInputVarProjection ')'
+opInputMapModelProjection ::= opInputKeyProjection '(' opInputVarProjection ')' { pin=1 }
 opInputKeyProjection ::= '[' ']' {pin=1}
 
 // delete --------------------------------------------------------

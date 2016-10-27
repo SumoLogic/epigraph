@@ -80,33 +80,33 @@ public class IdlPsiParser {
 
   public static ResourceIdl parseResource(@NotNull IdlResourceDef psi, @NotNull TypesResolver resolver)
       throws PsiProcessingException {
-    final String fieldName = psi.getQid().getCanonicalName();
+    final String fieldName = psi.getResourceName().getQid().getCanonicalName();
 
     @NotNull IdlResourceType resourceTypePsi = psi.getResourceType();
 
     @NotNull IdlValueTypeRef valueTypeRefPsi = resourceTypePsi.getValueTypeRef();
     @NotNull ValueTypeRef valueTypeRef = TypeRefs.fromPsi(valueTypeRefPsi);
-    @Nullable DataType dataType = resolver.resolve(valueTypeRef);
+    @Nullable DataType resourceType = resolver.resolve(valueTypeRef);
 
-    if (dataType == null) throw new PsiProcessingException(
+    if (resourceType == null) throw new PsiProcessingException(
         String.format("Can't resolve resource '%s' type '%s'", fieldName, valueTypeRef),
         resourceTypePsi
     );
 
     // convert datum type to samovar
-    @NotNull Type type = dataType.type;
-    if (dataType.defaultTag == null && valueTypeRef.defaultOverride() == null && type instanceof DatumType) {
-      dataType = new DataType(type, ((DatumType) type).self);
+    @NotNull Type type = resourceType.type;
+    if (resourceType.defaultTag == null && valueTypeRef.defaultOverride() == null && type instanceof DatumType) {
+      resourceType = new DataType(type, ((DatumType) type).self);
     }
 
     @NotNull List<IdlOperationDef> defsPsi = psi.getOperationDefList();
 
     final List<OperationIdl> operations = new ArrayList<>(defsPsi.size());
     for (IdlOperationDef defPsi : defsPsi)
-      operations.add(OperationsPsiParser.parseOperation(dataType, defPsi, resolver));
+      operations.add(OperationsPsiParser.parseOperation(resourceType, defPsi, resolver));
 
     return new ResourceIdl(
-        fieldName, dataType, operations, EpigraphPsiUtil.getLocation(psi)
+        fieldName, resourceType, operations, EpigraphPsiUtil.getLocation(psi)
     );
   }
 }

@@ -14,6 +14,16 @@ public class OpParams {
   @NotNull
   private final Map<String, OpParam> params;
 
+  @NotNull
+  public static OpParams fromMap(@Nullable Map<String, OpParam> params) {
+    return params == null ? EMPTY : new OpParams(params);
+  }
+
+  @NotNull
+  public static OpParams fromCollection(@Nullable Collection<OpParam> params) {
+    return params == null ? EMPTY : new OpParams(params);
+  }
+
   public OpParams(@NotNull Map<String, OpParam> params) {this.params = params;}
 
   public OpParams(OpParam... params) {

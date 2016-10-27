@@ -335,6 +335,10 @@ public class IdlVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitOpPathKeyProjectionBody(@NotNull IdlOpPathKeyProjectionBody o) {
+    visitPsiElement(o);
+  }
+
   public void visitOpPathKeyProjectionPart(@NotNull IdlOpPathKeyProjectionPart o) {
     visitPsiElement(o);
   }

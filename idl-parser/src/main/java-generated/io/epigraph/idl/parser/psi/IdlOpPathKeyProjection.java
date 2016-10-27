@@ -7,13 +7,10 @@ import com.intellij.psi.PsiElement;
 
 public interface IdlOpPathKeyProjection extends PsiElement {
 
-  @NotNull
-  List<IdlOpPathKeyProjectionPart> getOpPathKeyProjectionPartList();
-
-  @NotNull
-  PsiElement getCurlyLeft();
-
   @Nullable
-  PsiElement getCurlyRight();
+  IdlOpPathKeyProjectionBody getOpPathKeyProjectionBody();
+
+  @NotNull
+  PsiElement getDot();
 
 }

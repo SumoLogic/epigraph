@@ -11,14 +11,14 @@ import static io.epigraph.idl.lexer.IdlElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import io.epigraph.idl.parser.psi.*;
 
-public class IdlOpMapModelPathImpl extends ASTWrapperPsiElement implements IdlOpMapModelPath {
+public class IdlOpPathKeyProjectionBodyImpl extends ASTWrapperPsiElement implements IdlOpPathKeyProjectionBody {
 
-  public IdlOpMapModelPathImpl(ASTNode node) {
+  public IdlOpPathKeyProjectionBodyImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull IdlVisitor visitor) {
-    visitor.visitOpMapModelPath(this);
+    visitor.visitOpPathKeyProjectionBody(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -28,20 +28,20 @@ public class IdlOpMapModelPathImpl extends ASTWrapperPsiElement implements IdlOp
 
   @Override
   @NotNull
-  public IdlOpPathKeyProjection getOpPathKeyProjection() {
-    return findNotNullChildByClass(IdlOpPathKeyProjection.class);
-  }
-
-  @Override
-  @Nullable
-  public IdlOpVarPath getOpVarPath() {
-    return findChildByClass(IdlOpVarPath.class);
+  public List<IdlOpPathKeyProjectionPart> getOpPathKeyProjectionPartList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, IdlOpPathKeyProjectionPart.class);
   }
 
   @Override
   @NotNull
-  public PsiElement getSlash() {
-    return findNotNullChildByType(I_SLASH);
+  public PsiElement getCurlyLeft() {
+    return findNotNullChildByType(I_CURLY_LEFT);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getCurlyRight() {
+    return findChildByType(I_CURLY_RIGHT);
   }
 
 }

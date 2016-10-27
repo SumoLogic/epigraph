@@ -39,7 +39,7 @@ public abstract class AbstractProjectionsPrettyPrinter<
     gdataPrettyPrinter = new GDataPrettyPrinter<>(l);
   }
 
-  public void print(@NotNull VP p, int pathSteps) throws E {
+  public final void print(@NotNull VP p, int pathSteps) throws E {
     if (varsStack.contains(p)) {
       // handle recursive projections
       int ref = nextRefNumber++;
@@ -51,64 +51,73 @@ public abstract class AbstractProjectionsPrettyPrinter<
     try {
       varsStack.push(p);
 
-      Map<String, TP> tagProjections = p.tagProjections();
-
-      if (p.type().kind() != TypeKind.UNION) {
-        // samovar
-        print(tagProjections.values().iterator().next().projection(), decSteps(pathSteps));
-      } else if (tagProjections.size() == 1) {
-        Map.Entry<String, TP> entry = tagProjections.entrySet().iterator().next();
-        l.print(":");
-        print(entry.getKey(), entry.getValue(), decSteps(pathSteps));
-      } else if (tagProjections.isEmpty()) {
-        l.print(":()");
-      } else {
-        if (pathSteps > 0) throw new IllegalArgumentException(
-            String.format("found %d var tags while path still contains %d steps", tagProjections.size(), pathSteps)
-        );
-        l.beginCInd();
-        l.print(":(");
-        boolean first = true;
-        for (Map.Entry<String, TP> entry : tagProjections.entrySet()) {
-          if (first) first = false;
-          else l.print(",");
-          l.brk();
-          print(entry.getKey(), entry.getValue(), 0);
-        }
-        l.brk(1, -l.getDefaultIndentation()).end().print(")");
-      }
-
-      List<VP> polymorphicTails = p.polymorphicTails();
-
-      if (polymorphicTails != null && !polymorphicTails.isEmpty()) {
-        l.beginIInd();
-        l.brk();
-        if (polymorphicTails.size() == 1) {
-          l.print("~");
-          VP tail = polymorphicTails.iterator().next();
-          l.print(tail.type().name().toString());
-          l.brk();
-          print(tail, 0);
-        } else {
-          l.beginCInd();
-          l.print("~(");
-          boolean first = true;
-          for (VP tail : polymorphicTails) {
-            if (first) first = false;
-            else l.print(",");
-            l.brk().print(tail.type().name().toString()).brk();
-            print(tail, 0);
-          }
-          l.brk(1, -l.getDefaultIndentation()).end().print(")");
-        }
-        l.end();
-      }
+      printVarOnly(p, pathSteps);
+      printTailsOnly(p);
     } finally {
       varsStack.pop();
       Integer ref = varRefs.remove(p);
       if (ref != null) l.print("@").print(Integer.toString(ref));
     }
 
+  }
+
+  protected void printVarOnly(@NotNull VP p, int pathSteps) throws E {
+    printVarDecoration(p);
+    Map<String, TP> tagProjections = p.tagProjections();
+    if (p.type().kind() != TypeKind.UNION) {
+      // samovar
+      print(tagProjections.values().iterator().next().projection(), decSteps(pathSteps));
+    } else if (tagProjections.size() == 1) {
+      Map.Entry<String, TP> entry = tagProjections.entrySet().iterator().next();
+      l.print(":");
+      print(entry.getKey(), entry.getValue(), decSteps(pathSteps));
+    } else if (tagProjections.isEmpty()) {
+      l.print(":()");
+    } else {
+      if (pathSteps > 0) throw new IllegalArgumentException(
+          String.format("found %d var tags while path still contains %d steps", tagProjections.size(), pathSteps)
+      );
+      l.beginCInd();
+      l.print(":(");
+      boolean first = true;
+      for (Map.Entry<String, TP> entry : tagProjections.entrySet()) {
+        if (first) first = false;
+        else l.print(",");
+        l.brk();
+        print(entry.getKey(), entry.getValue(), 0);
+      }
+      l.brk(1, -l.getDefaultIndentation()).end().print(")");
+    }
+  }
+
+  protected void printVarDecoration(@NotNull VP p) throws E { }
+
+  protected void printTailsOnly(@NotNull VP p) throws E {
+    List<VP> polymorphicTails = p.polymorphicTails();
+
+    if (polymorphicTails != null && !polymorphicTails.isEmpty()) {
+      l.beginIInd();
+      l.brk();
+      if (polymorphicTails.size() == 1) {
+        l.print("~");
+        VP tail = polymorphicTails.iterator().next();
+        l.print(tail.type().name().toString());
+        l.brk();
+        print(tail, 0);
+      } else {
+        l.beginCInd();
+        l.print("~(");
+        boolean first = true;
+        for (VP tail : polymorphicTails) {
+          if (first) first = false;
+          else l.print(",");
+          l.brk().print(tail.type().name().toString()).brk();
+          print(tail, 0);
+        }
+        l.brk(1, -l.getDefaultIndentation()).end().print(")");
+      }
+      l.end();
+    }
   }
 
   public abstract void print(@NotNull String tagName, @NotNull TP tp, int pathSteps) throws E;
@@ -120,21 +129,23 @@ public abstract class AbstractProjectionsPrettyPrinter<
   }
 
   public boolean print(@NotNull Annotations cp, boolean needCommas, boolean first) throws E {
-    l.beginCInd(0);
     for (Map.Entry<String, Annotation> entry : cp.params().entrySet()) {
       if (needCommas) {
         if (first) first = false;
         else l.print(",");
       }
-      l.brk().print(entry.getKey()).brk().print("=").brk();
+      l.brk();
+      l.beginCInd(0);
+      l.print(entry.getKey()).brk().print("=").brk();
       gdataPrettyPrinter.print(entry.getValue().value());
+      l.end();
     }
-    l.end();
 
     return first;
   }
 
   protected boolean isPrintoutEmpty(@NotNull VP vp) {
+
     List<VP> tails = vp.polymorphicTails();
     if (tails != null && !tails.isEmpty()) return false;
     if (vp.type().kind() == TypeKind.UNION) return false; // non-samovar always prints something

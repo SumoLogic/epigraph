@@ -30,11 +30,11 @@ public class ImportTypeAction implements QuestionAction {
     this.editor = editor;
   }
 
+  @SuppressWarnings("unchecked")
   @Override
   public boolean execute() {
 
     final JList list = new JBList(importOptions);
-    //noinspection unchecked
     list.setCellRenderer(SchemaNamespaceRenderer.INSTANCE);
     list.setSelectedIndex(0);
 

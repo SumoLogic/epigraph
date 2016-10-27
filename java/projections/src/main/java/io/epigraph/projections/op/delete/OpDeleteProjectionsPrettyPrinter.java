@@ -26,7 +26,10 @@ public class OpDeleteProjectionsPrettyPrinter<E extends Exception>
     super(layouter);
   }
 
-  // todo override/augment print(VP) to show `canDelete`; keep in sync with grammar
+  @Override
+  protected void printVarDecoration(@NotNull OpDeleteVarProjection p) throws E {
+    if (p.canDelete()) l.print("+");
+  }
 
   @Override
   public void print(@NotNull String tagName, @NotNull OpDeleteTagProjectionEntry tp, int pathSteps) throws E {
@@ -214,6 +217,11 @@ public class OpDeleteProjectionsPrettyPrinter<E extends Exception>
     }
 
     l.end();
+  }
+
+  @Override
+  protected boolean isPrintoutEmpty(@NotNull OpDeleteVarProjection opDeleteVarProjection) {
+    return !opDeleteVarProjection.canDelete() && super.isPrintoutEmpty(opDeleteVarProjection);
   }
 
   @Override

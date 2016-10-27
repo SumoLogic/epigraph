@@ -98,6 +98,7 @@ public interface IdlElementTypes {
   IElementType I_OP_OUTPUT_VAR_SINGLE_TAIL = new IdlElementType("I_OP_OUTPUT_VAR_SINGLE_TAIL");
   IElementType I_OP_PARAM = new IdlElementType("I_OP_PARAM");
   IElementType I_OP_PATH_KEY_PROJECTION = new IdlElementType("I_OP_PATH_KEY_PROJECTION");
+  IElementType I_OP_PATH_KEY_PROJECTION_BODY = new IdlElementType("I_OP_PATH_KEY_PROJECTION_BODY");
   IElementType I_OP_PATH_KEY_PROJECTION_PART = new IdlElementType("I_OP_PATH_KEY_PROJECTION_PART");
   IElementType I_OP_RECORD_MODEL_PATH = new IdlElementType("I_OP_RECORD_MODEL_PATH");
   IElementType I_OP_VAR_PATH = new IdlElementType("I_OP_VAR_PATH");
@@ -438,6 +439,9 @@ public interface IdlElementTypes {
       }
       else if (type == I_OP_PATH_KEY_PROJECTION) {
         return new IdlOpPathKeyProjectionImpl(node);
+      }
+      else if (type == I_OP_PATH_KEY_PROJECTION_BODY) {
+        return new IdlOpPathKeyProjectionBodyImpl(node);
       }
       else if (type == I_OP_PATH_KEY_PROJECTION_PART) {
         return new IdlOpPathKeyProjectionPartImpl(node);

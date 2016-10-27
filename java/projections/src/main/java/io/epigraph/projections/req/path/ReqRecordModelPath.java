@@ -37,10 +37,9 @@ public class ReqRecordModelPath
       boolean required,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
-      @Nullable ReqRecordModelPath metaProjection,
       @NotNull ReqFieldPathEntry fieldProjection,
       @NotNull TextLocation location) {
-    super(model, required, params, annotations, metaProjection, location);
+    super(model, required, params, annotations, location);
     this.fieldProjections = Collections.singletonMap(fieldProjection.field().name(), fieldProjection);
 
     Collection<@NotNull ? extends RecordType.Field> fields = model.fields();

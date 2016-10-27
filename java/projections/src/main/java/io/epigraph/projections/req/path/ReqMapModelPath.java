@@ -6,7 +6,6 @@ import io.epigraph.projections.gen.GenMapModelProjection;
 import io.epigraph.projections.req.ReqParams;
 import io.epigraph.types.MapType;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -33,11 +32,10 @@ public class ReqMapModelPath
       boolean required,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
-      @Nullable ReqMapModelPath metaProjection,
       @NotNull ReqPathKeyProjection key,
       @NotNull ReqVarPath valuesProjection,
       @NotNull TextLocation location) {
-    super(model, required, params, annotations, metaProjection, location);
+    super(model, required, params, annotations, location);
     this.key = key;
     this.valuesProjection = valuesProjection;
   }

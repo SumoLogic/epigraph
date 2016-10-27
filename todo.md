@@ -4,6 +4,7 @@
 # Framework
 - [ ] JSON unmarshaller
 - [ ] Format for parameter values in URL. Currently: GData with single quotes.
+- [ ] `*PsiParser` should accumulate errors in the context instead of throwing `PsiProcessingException`
 
 # Type system
 - [ ] Enums
@@ -27,9 +28,8 @@
 - [ ] Rename `epigraph-schema-compiler-gradle-plugin` to just `gradle-plugin`. Move it together with `common` to top level, to mimic maven plugins structure
 
 # Projections
-- [ ] ***see `operations.esc`, bring java classes in sync***
-- [ ] var projection: add `@Nullable getPathTagProjection`. Same for records and maps
-- [ ] unify tag/model projections?
+- [x] see `operations.esc`, bring java classes in sync
+- [x] var projection: add `@Nullable getPathTagProjection`. Same for records and maps
 - [ ] remove default tags from op projections. If var type has default tag (in schema), and operation can build this tag -- then it becomes an implicit default
 
 # Operations  

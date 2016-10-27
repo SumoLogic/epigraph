@@ -5,21 +5,15 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface IdlCustomOperationDef extends PsiElement {
+public interface IdlOpPathKeyProjectionBody extends PsiElement {
 
   @NotNull
-  List<IdlCustomOperationBodyPart> getCustomOperationBodyPartList();
+  List<IdlOpPathKeyProjectionPart> getOpPathKeyProjectionPartList();
 
   @NotNull
-  IdlOperationName getOperationName();
-
-  @Nullable
   PsiElement getCurlyLeft();
 
   @Nullable
   PsiElement getCurlyRight();
-
-  @NotNull
-  PsiElement getCustomOp();
 
 }

@@ -27,21 +27,15 @@ public class IdlOpPathKeyProjectionImpl extends ASTWrapperPsiElement implements 
   }
 
   @Override
-  @NotNull
-  public List<IdlOpPathKeyProjectionPart> getOpPathKeyProjectionPartList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, IdlOpPathKeyProjectionPart.class);
-  }
-
-  @Override
-  @NotNull
-  public PsiElement getCurlyLeft() {
-    return findNotNullChildByType(I_CURLY_LEFT);
-  }
-
-  @Override
   @Nullable
-  public PsiElement getCurlyRight() {
-    return findChildByType(I_CURLY_RIGHT);
+  public IdlOpPathKeyProjectionBody getOpPathKeyProjectionBody() {
+    return findChildByClass(IdlOpPathKeyProjectionBody.class);
+  }
+
+  @Override
+  @NotNull
+  public PsiElement getDot() {
+    return findNotNullChildByType(I_DOT);
   }
 
 }

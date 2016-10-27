@@ -6,7 +6,6 @@ import io.epigraph.projections.gen.GenMapModelProjection;
 import io.epigraph.projections.op.OpParams;
 import io.epigraph.types.MapType;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -32,11 +31,10 @@ public class OpDeleteMapModelProjection
       @NotNull MapType model,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
-      @Nullable OpDeleteMapModelProjection metaProjection,
       @NotNull OpDeleteKeyProjection keyProjection,
       @NotNull OpDeleteVarProjection valuesProjection,
       @NotNull TextLocation location) {
-    super(model, params, annotations, metaProjection, location);
+    super(model, params, annotations, location);
     this.itemsProjection = valuesProjection;
     this.keyProjection = keyProjection;
   }

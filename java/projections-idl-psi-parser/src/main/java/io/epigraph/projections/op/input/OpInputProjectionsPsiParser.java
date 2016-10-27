@@ -28,16 +28,16 @@ import static io.epigraph.projections.ProjectionPsiParserUtil.*;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpInputProjectionsPsiParser {
-  public static StepsAndProjection<OpInputVarProjection> parseTrunkVarProjection(
+
+  public static StepsAndProjection<OpInputVarProjection> parseVarProjection(
       @NotNull DataType dataType,
-      @NotNull IdlOpInputTrunkVarProjection psi,
+      @NotNull IdlOpInputVarProjection psi,
       @NotNull TypesResolver typesResolver) throws PsiProcessingException {
 
     final Type type = dataType.type;
     final LinkedHashMap<String, OpInputTagProjectionEntry> tagProjections;
-    final int steps;
 
-    @Nullable IdlOpInputTrunkSingleTagProjection singleTagProjectionPsi = psi.getOpInputTrunkSingleTagProjection();
+    @Nullable IdlOpInputSingleTagProjection singleTagProjectionPsi = psi.getOpInputSingleTagProjection();
     if (singleTagProjectionPsi != null) {
       tagProjections = new LinkedHashMap<>();
       final OpInputModelProjection<?, ?, ?> parsedModelProjection;
@@ -48,73 +48,11 @@ public class OpInputProjectionsPsiParser {
           singleTagProjectionPsi
       );
 
-      @Nullable IdlOpInputTrunkModelProjection modelProjection =
-          singleTagProjectionPsi.getOpInputTrunkModelProjection();
+      @Nullable IdlOpInputModelProjection modelProjection = singleTagProjectionPsi.getOpInputModelProjection();
       assert modelProjection != null; // todo when it can be null?
 
       @NotNull List<IdlOpInputModelProperty> modelPropertiesPsi = singleTagProjectionPsi.getOpInputModelPropertyList();
-
-      StepsAndProjection<? extends OpInputModelProjection<?, ?, ?>> stepsAndProjection = parseTrunkModelProjection(
-          tag.type,
-          singleTagProjectionPsi.getPlus() != null,
-          getModelDefaultValue(modelPropertiesPsi),
-          parseModelAnnotations(modelPropertiesPsi),
-          parseModelMetaProjection(tag.type, modelPropertiesPsi, typesResolver),
-          modelProjection, typesResolver
-      );
-
-      parsedModelProjection = stepsAndProjection.projection();
-      steps = stepsAndProjection.pathSteps() + 1;
-
-      tagProjections.put(
-          tag.name(),
-          new OpInputTagProjectionEntry(
-              tag,
-              parsedModelProjection,
-              EpigraphPsiUtil.getLocation(singleTagProjectionPsi)
-          )
-      );
-
-    } else {
-      @Nullable IdlOpInputComaMultiTagProjection multiTagProjection = psi.getOpInputComaMultiTagProjection();
-      assert multiTagProjection != null;
-      tagProjections = parseComaMultiTagProjection(dataType, multiTagProjection, typesResolver);
-      steps = 0;
-    }
-
-    final List<OpInputVarProjection> tails =
-        parseTails(dataType, psi.getOpInputVarPolymorphicTail(), typesResolver);
-
-    return new StepsAndProjection<>(
-        steps,
-        new OpInputVarProjection(type, tagProjections, tails, EpigraphPsiUtil.getLocation(psi))
-    );
-  }
-
-  public static StepsAndProjection<OpInputVarProjection> parseComaVarProjection(
-      @NotNull DataType dataType,
-      @NotNull IdlOpInputComaVarProjection psi,
-      @NotNull TypesResolver typesResolver) throws PsiProcessingException {
-
-    final Type type = dataType.type;
-    final LinkedHashMap<String, OpInputTagProjectionEntry> tagProjections;
-
-    @Nullable IdlOpInputComaSingleTagProjection singleTagProjectionPsi = psi.getOpInputComaSingleTagProjection();
-    if (singleTagProjectionPsi != null) {
-      tagProjections = new LinkedHashMap<>();
-      final OpInputModelProjection<?, ?, ?> parsedModelProjection;
-      final Type.Tag tag = getTag(
-          type,
-          singleTagProjectionPsi.getTagName(),
-          dataType.defaultTag,
-          singleTagProjectionPsi
-      );
-
-      @Nullable IdlOpInputComaModelProjection modelProjection = singleTagProjectionPsi.getOpInputComaModelProjection();
-      assert modelProjection != null; // todo when it can be null?
-
-      @NotNull List<IdlOpInputModelProperty> modelPropertiesPsi = singleTagProjectionPsi.getOpInputModelPropertyList();
-      parsedModelProjection = parseComaModelProjection(
+      parsedModelProjection = parseModelProjection(
           tag.type,
           singleTagProjectionPsi.getPlus() != null,
           getModelDefaultValue(modelPropertiesPsi),
@@ -133,9 +71,9 @@ public class OpInputProjectionsPsiParser {
       );
 
     } else {
-      @Nullable IdlOpInputComaMultiTagProjection multiTagProjection = psi.getOpInputComaMultiTagProjection();
+      @Nullable IdlOpInputMultiTagProjection multiTagProjection = psi.getOpInputMultiTagProjection();
       assert multiTagProjection != null;
-      tagProjections = parseComaMultiTagProjection(dataType, multiTagProjection, typesResolver);
+      tagProjections = parseMultiTagProjection(dataType, multiTagProjection, typesResolver);
     }
 
     final List<OpInputVarProjection> tails =
@@ -148,29 +86,29 @@ public class OpInputProjectionsPsiParser {
   }
 
   @NotNull
-  private static LinkedHashMap<String, OpInputTagProjectionEntry> parseComaMultiTagProjection(
+  private static LinkedHashMap<String, OpInputTagProjectionEntry> parseMultiTagProjection(
       @NotNull DataType dataType,
-      @NotNull IdlOpInputComaMultiTagProjection multiTagProjection,
+      @NotNull IdlOpInputMultiTagProjection multiTagProjection,
       @NotNull TypesResolver typesResolver) throws PsiProcessingException {
 
     final LinkedHashMap<String, OpInputTagProjectionEntry> tagProjections = new LinkedHashMap<>();
 
     // parse list of tags
-    @NotNull List<IdlOpInputComaMultiTagProjectionItem> tagProjectionPsiList =
-        multiTagProjection.getOpInputComaMultiTagProjectionItemList();
+    @NotNull List<IdlOpInputMultiTagProjectionItem> tagProjectionPsiList =
+        multiTagProjection.getOpInputMultiTagProjectionItemList();
 
-    for (IdlOpInputComaMultiTagProjectionItem tagProjectionPsi : tagProjectionPsiList) {
+    for (IdlOpInputMultiTagProjectionItem tagProjectionPsi : tagProjectionPsiList) {
       final Type.Tag tag =
           getTag(dataType.type, tagProjectionPsi.getTagName(), dataType.defaultTag, tagProjectionPsi);
 
       final OpInputModelProjection<?, ?, ?> parsedModelProjection;
 
       @NotNull DatumType tagType = tag.type;
-      @Nullable IdlOpInputComaModelProjection modelProjection = tagProjectionPsi.getOpInputComaModelProjection();
+      @Nullable IdlOpInputModelProjection modelProjection = tagProjectionPsi.getOpInputModelProjection();
       assert modelProjection != null; // todo when it can be null?
       @NotNull List<IdlOpInputModelProperty> modelPropertiesPsi = tagProjectionPsi.getOpInputModelPropertyList();
 
-      parsedModelProjection = parseComaModelProjection(
+      parsedModelProjection = parseModelProjection(
           tagType,
           tagProjectionPsi.getPlus() != null,
           getModelDefaultValue(modelPropertiesPsi),
@@ -206,7 +144,7 @@ public class OpInputProjectionsPsiParser {
       @Nullable IdlOpInputVarSingleTail singleTail = tailPsi.getOpInputVarSingleTail();
       if (singleTail != null) {
         @NotNull IdlTypeRef typeRefPsi = singleTail.getTypeRef();
-        @NotNull IdlOpInputComaVarProjection psiTailProjection = singleTail.getOpInputComaVarProjection();
+        @NotNull IdlOpInputVarProjection psiTailProjection = singleTail.getOpInputVarProjection();
         @NotNull OpInputVarProjection tailProjection =
             buildTailProjection(dataType, typeRefPsi, psiTailProjection, typesResolver);
         tails.add(tailProjection);
@@ -215,7 +153,7 @@ public class OpInputProjectionsPsiParser {
         assert multiTail != null;
         for (IdlOpInputVarMultiTailItem tailItem : multiTail.getOpInputVarMultiTailItemList()) {
           @NotNull IdlTypeRef tailTypeRef = tailItem.getTypeRef();
-          @NotNull IdlOpInputComaVarProjection psiTailProjection = tailItem.getOpInputComaVarProjection();
+          @NotNull IdlOpInputVarProjection psiTailProjection = tailItem.getOpInputVarProjection();
           @NotNull OpInputVarProjection tailProjection =
               buildTailProjection(dataType, tailTypeRef, psiTailProjection, typesResolver);
           tails.add(tailProjection);
@@ -282,8 +220,8 @@ public class OpInputProjectionsPsiParser {
           modelMetaPsi
       );
 
-      @NotNull IdlOpInputComaModelProjection metaProjectionPsi = modelMetaPsi.getOpInputComaModelProjection();
-      return parseComaModelProjection(
+      @NotNull IdlOpInputModelProjection metaProjectionPsi = modelMetaPsi.getOpInputModelProjection();
+      return parseModelProjection(
           metaType,
           modelMetaPsi.getPlus() != null,
           null, // TODO do we want to specify defaults for meta?
@@ -299,12 +237,12 @@ public class OpInputProjectionsPsiParser {
   private static OpInputVarProjection buildTailProjection(
       @NotNull DataType dataType,
       @NotNull IdlTypeRef tailTypeRefPsi,
-      IdlOpInputComaVarProjection psiTailProjection,
+      IdlOpInputVarProjection psiTailProjection,
       @NotNull TypesResolver typesResolver) throws PsiProcessingException {
 
     @NotNull TypeRef tailTypeRef = TypeRefs.fromPsi(tailTypeRefPsi);
     @NotNull Type tailType = getType(tailTypeRef, typesResolver, tailTypeRefPsi);
-    return parseComaVarProjection(
+    return parseVarProjection(
         new DataType(tailType, dataType.defaultTag),
         psiTailProjection,
         typesResolver
@@ -358,62 +296,19 @@ public class OpInputProjectionsPsiParser {
   }
 
   @NotNull
-  public static StepsAndProjection<? extends OpInputModelProjection<?, ?, ?>> parseTrunkModelProjection(
+  public static StepsAndProjection<? extends OpInputModelProjection<?, ?, ?>> parseModelProjection(
       @NotNull DatumType type,
       boolean required,
       @Nullable GDatum defaultValue,
       @NotNull Annotations annotations,
       @Nullable OpInputModelProjection<?, ?, ?> metaProjection,
-      @NotNull IdlOpInputTrunkModelProjection psi,
-      @NotNull TypesResolver typesResolver) throws PsiProcessingException {
-
-    if (type.kind() == TypeKind.RECORD) {
-      @Nullable IdlOpInputTrunkRecordModelProjection trunkRecordModelProjectionPsi =
-          psi.getOpInputTrunkRecordModelProjection();
-
-      if (trunkRecordModelProjectionPsi != null) {
-
-        GRecordDatum defaultRecordData = coerceDefault(defaultValue, GRecordDatum.class, psi);
-
-        return parseTrunkRecordModelProjection(
-            (RecordType) type,
-            required,
-            defaultRecordData,
-            annotations,
-            (OpInputRecordModelProjection) metaProjection,
-            trunkRecordModelProjectionPsi,
-            typesResolver
-        );
-      }
-    }
-
-    // else end of path
-
-    return parseComaModelProjection(
-        type,
-        required,
-        defaultValue,
-        annotations,
-        metaProjection,
-        psi,
-        typesResolver
-    );
-  }
-
-  @NotNull
-  public static StepsAndProjection<? extends OpInputModelProjection<?, ?, ?>> parseComaModelProjection(
-      @NotNull DatumType type,
-      boolean required,
-      @Nullable GDatum defaultValue,
-      @NotNull Annotations annotations,
-      @Nullable OpInputModelProjection<?, ?, ?> metaProjection,
-      @NotNull IdlOpInputComaModelProjection psi,
+      @NotNull IdlOpInputModelProjection psi,
       @NotNull TypesResolver typesResolver) throws PsiProcessingException {
 
     switch (type.kind()) {
       case RECORD:
-        @Nullable IdlOpInputComaRecordModelProjection recordModelProjectionPsi =
-            psi.getOpInputComaRecordModelProjection();
+        @Nullable IdlOpInputRecordModelProjection recordModelProjectionPsi =
+            psi.getOpInputRecordModelProjection();
 
         if (recordModelProjectionPsi == null)
           return new StepsAndProjection<>(
@@ -424,7 +319,7 @@ public class OpInputProjectionsPsiParser {
         ensureModelKind(psi, TypeKind.RECORD);
         GRecordDatum defaultRecordData = coerceDefault(defaultValue, GRecordDatum.class, psi);
 
-        return parseComaRecordModelProjection(
+        return parseRecordModelProjection(
             (RecordType) type,
             required,
             defaultRecordData,
@@ -435,7 +330,7 @@ public class OpInputProjectionsPsiParser {
         );
 
       case MAP:
-        @Nullable IdlOpInputComaMapModelProjection mapModelProjectionPsi = psi.getOpInputComaMapModelProjection();
+        @Nullable IdlOpInputMapModelProjection mapModelProjectionPsi = psi.getOpInputMapModelProjection();
 
         if (mapModelProjectionPsi == null)
           return new StepsAndProjection<>(
@@ -457,7 +352,7 @@ public class OpInputProjectionsPsiParser {
         );
 
       case LIST:
-        @Nullable IdlOpInputComaListModelProjection listModelProjectionPsi = psi.getOpInputComaListModelProjection();
+        @Nullable IdlOpInputListModelProjection listModelProjectionPsi = psi.getOpInputListModelProjection();
 
         if (listModelProjectionPsi == null)
           return new StepsAndProjection<>(
@@ -502,7 +397,7 @@ public class OpInputProjectionsPsiParser {
     }
   }
 
-  private static void ensureModelKind(@NotNull IdlOpInputComaModelProjection psi, @NotNull TypeKind expectedKind)
+  private static void ensureModelKind(@NotNull IdlOpInputModelProjection psi, @NotNull TypeKind expectedKind)
       throws PsiProcessingException {
 
     @Nullable TypeKind actualKind = findProjectionKind(psi);
@@ -515,10 +410,10 @@ public class OpInputProjectionsPsiParser {
   }
 
   @Nullable
-  private static TypeKind findProjectionKind(@NotNull IdlOpInputComaModelProjection psi) {
-    if (psi.getOpInputComaRecordModelProjection() != null) return TypeKind.RECORD;
-    if (psi.getOpInputComaMapModelProjection() != null) return TypeKind.MAP;
-    if (psi.getOpInputComaListModelProjection() != null) return TypeKind.LIST;
+  private static TypeKind findProjectionKind(@NotNull IdlOpInputModelProjection psi) {
+    if (psi.getOpInputRecordModelProjection() != null) return TypeKind.RECORD;
+    if (psi.getOpInputMapModelProjection() != null) return TypeKind.MAP;
+    if (psi.getOpInputListModelProjection() != null) return TypeKind.LIST;
     return null;
   }
 
@@ -631,13 +526,13 @@ public class OpInputProjectionsPsiParser {
   }
 
   @NotNull
-  public static StepsAndProjection<OpInputRecordModelProjection> parseTrunkRecordModelProjection(
+  public static StepsAndProjection<OpInputRecordModelProjection> parseRecordModelProjection(
       @NotNull RecordType type,
       boolean required,
       @Nullable GRecordDatum defaultValue,
       @NotNull Annotations annotations,
       @Nullable OpInputRecordModelProjection metaProjection,
-      @NotNull IdlOpInputTrunkRecordModelProjection psi,
+      @NotNull IdlOpInputRecordModelProjection psi,
       @NotNull TypesResolver resolver) throws PsiProcessingException {
 
     RecordDatum defaultDatum = null;
@@ -650,108 +545,9 @@ public class OpInputProjectionsPsiParser {
     }
 
     LinkedHashMap<String, OpInputFieldProjectionEntry> fieldProjections = new LinkedHashMap<>();
-    @Nullable IdlOpInputTrunkFieldProjection fieldProjectionPsi = psi.getOpInputTrunkFieldProjection();
+    @NotNull List<IdlOpInputFieldProjection> psiFieldProjections = psi.getOpInputFieldProjectionList();
 
-    if (fieldProjectionPsi == null)
-      throw new PsiProcessingException("Field not specified", psi);
-
-    final String fieldName = fieldProjectionPsi.getQid().getCanonicalName();
-    RecordType.Field field = type.fieldsMap().get(fieldName);
-    if (field == null)
-      throw new PsiProcessingException(
-          String.format("Can't build field projection for '%s', field '%s' not found", type.name(), fieldName),
-          fieldProjectionPsi
-      );
-
-    final boolean fieldRequired = fieldProjectionPsi.getPlus() != null;
-
-    @NotNull Annotations fieldAnnotations;
-    @Nullable Map<String, Annotation> fieldAnnotationsMap = null;
-    for (IdlOpInputFieldProjectionBodyPart fieldBodyPart : fieldProjectionPsi.getOpInputFieldProjectionBodyPartList()) {
-      fieldAnnotationsMap = parseAnnotation(fieldAnnotationsMap, fieldBodyPart.getAnnotation());
-    }
-    fieldAnnotations = fieldAnnotationsMap == null ? Annotations.EMPTY : new Annotations(fieldAnnotationsMap);
-
-    final int steps;
-
-    OpInputVarProjection varProjection;
-    @Nullable IdlOpInputTrunkVarProjection psiVarProjection = fieldProjectionPsi.getOpInputTrunkVarProjection();
-    if (psiVarProjection == null) {
-      @NotNull DataType fieldDataType = field.dataType();
-      @Nullable Type.Tag defaultFieldTag = fieldDataType.defaultTag;
-      if (defaultFieldTag == null)
-        throw new PsiProcessingException(String.format(
-            "Can't construct default projection for field '%s', as it's type '%s' has no default tag",
-            fieldName,
-            fieldDataType.name
-        ), fieldProjectionPsi);
-
-      varProjection =
-          createDefaultVarProjection(fieldDataType.type, defaultFieldTag, required, fieldProjectionPsi);
-      steps =
-          2; // first step = our field, second step = default var. default var projection is a trunk projection, default model projection is a coma projection
-    } else {
-      StepsAndProjection<OpInputVarProjection> stepsAndProjection =
-          parseTrunkVarProjection(field.dataType(), psiVarProjection, resolver);
-
-      varProjection = stepsAndProjection.projection();
-      steps = stepsAndProjection.pathSteps() + 1;
-    }
-
-    // introduce separate grammar rule for better fieldEntry/field TextLocation separation?
-    @NotNull final TextLocation fieldLocation = EpigraphPsiUtil.getLocation(fieldProjectionPsi);
-
-    fieldProjections.put(
-        fieldName,
-        new OpInputFieldProjectionEntry(
-            field,
-            new OpInputFieldProjection(
-                fieldAnnotations,
-                varProjection,
-                fieldRequired,
-                fieldLocation
-            ),
-            fieldLocation
-        )
-    );
-
-    return new StepsAndProjection<>(
-        steps,
-        new OpInputRecordModelProjection(
-            type,
-            required,
-            defaultDatum,
-            annotations,
-            metaProjection,
-            fieldProjections,
-            EpigraphPsiUtil.getLocation(psi)
-        )
-    );
-  }
-
-  @NotNull
-  public static StepsAndProjection<OpInputRecordModelProjection> parseComaRecordModelProjection(
-      @NotNull RecordType type,
-      boolean required,
-      @Nullable GRecordDatum defaultValue,
-      @NotNull Annotations annotations,
-      @Nullable OpInputRecordModelProjection metaProjection,
-      @NotNull IdlOpInputComaRecordModelProjection psi,
-      @NotNull TypesResolver resolver) throws PsiProcessingException {
-
-    RecordDatum defaultDatum = null;
-    if (defaultValue != null) {
-      try {
-        defaultDatum = GDataToData.transform(type, defaultValue, resolver);
-      } catch (GDataToData.ProcessingException e) {
-        throw new PsiProcessingException(e, psi);
-      }
-    }
-
-    LinkedHashMap<String, OpInputFieldProjectionEntry> fieldProjections = new LinkedHashMap<>();
-    @NotNull List<IdlOpInputComaFieldProjection> psiFieldProjections = psi.getOpInputComaFieldProjectionList();
-
-    for (IdlOpInputComaFieldProjection fieldProjectionPsi : psiFieldProjections) {
+    for (IdlOpInputFieldProjection fieldProjectionPsi : psiFieldProjections) {
       final String fieldName = fieldProjectionPsi.getQid().getCanonicalName();
       RecordType.Field field = type.fieldsMap().get(fieldName);
       if (field == null)
@@ -770,7 +566,7 @@ public class OpInputProjectionsPsiParser {
       fieldAnnotations = fieldAnnotationsMap == null ? Annotations.EMPTY : new Annotations(fieldAnnotationsMap);
 
       OpInputVarProjection varProjection;
-      @Nullable IdlOpInputComaVarProjection psiVarProjection = fieldProjectionPsi.getOpInputComaVarProjection();
+      @Nullable IdlOpInputVarProjection psiVarProjection = fieldProjectionPsi.getOpInputVarProjection();
       if (psiVarProjection == null) {
         @NotNull DataType fieldDataType = field.dataType();
         @Nullable Type.Tag defaultFieldTag = fieldDataType.defaultTag;
@@ -784,7 +580,7 @@ public class OpInputProjectionsPsiParser {
         varProjection =
             createDefaultVarProjection(fieldDataType.type, defaultFieldTag, required, fieldProjectionPsi);
       } else {
-        varProjection = parseComaVarProjection(field.dataType(), psiVarProjection, resolver).projection();
+        varProjection = parseVarProjection(field.dataType(), psiVarProjection, resolver).projection();
       }
 
       @NotNull final TextLocation fieldLocation = EpigraphPsiUtil.getLocation(fieldProjectionPsi);
@@ -826,7 +622,7 @@ public class OpInputProjectionsPsiParser {
       @Nullable GMapDatum defaultValue,
       @NotNull Annotations annotations,
       @Nullable OpInputMapModelProjection metaProjection,
-      @NotNull IdlOpInputComaMapModelProjection psi,
+      @NotNull IdlOpInputMapModelProjection psi,
       @NotNull TypesResolver resolver) throws PsiProcessingException {
 
     MapDatum defaultDatum = null;
@@ -838,9 +634,11 @@ public class OpInputProjectionsPsiParser {
       }
     }
 
-    @Nullable IdlOpInputComaVarProjection valueProjectionPsi = psi.getOpInputComaVarProjection();
+    @Nullable IdlOpInputVarProjection valueProjectionPsi = psi.getOpInputVarProjection();
     @NotNull OpInputVarProjection valueProjection =
-        parseComaVarProjection(type.valueType(), valueProjectionPsi, resolver).projection();
+        valueProjectionPsi == null ?
+        createDefaultVarProjection(type.valueType(), false, psi) :
+        parseVarProjection(type.valueType(), valueProjectionPsi, resolver).projection();
 
     return new StepsAndProjection<>(
         0,
@@ -863,7 +661,7 @@ public class OpInputProjectionsPsiParser {
       @Nullable GListDatum defaultValue,
       @NotNull Annotations annotations,
       @Nullable OpInputListModelProjection metaProjection,
-      @NotNull IdlOpInputComaListModelProjection psi,
+      @NotNull IdlOpInputListModelProjection psi,
       @NotNull TypesResolver resolver) throws PsiProcessingException {
 
     ListDatum defaultDatum = null;
@@ -876,11 +674,11 @@ public class OpInputProjectionsPsiParser {
     }
 
     OpInputVarProjection itemsProjection;
-    @Nullable IdlOpInputComaVarProjection opInputVarProjectionPsi = psi.getOpInputComaVarProjection();
+    @Nullable IdlOpInputVarProjection opInputVarProjectionPsi = psi.getOpInputVarProjection();
     if (opInputVarProjectionPsi == null)
       itemsProjection = createDefaultVarProjection(type, true, psi);
     else
-      itemsProjection = parseComaVarProjection(type.elementType(), opInputVarProjectionPsi, resolver).projection();
+      itemsProjection = parseVarProjection(type.elementType(), opInputVarProjectionPsi, resolver).projection();
 
 
     return new StepsAndProjection<>(
@@ -929,6 +727,7 @@ public class OpInputProjectionsPsiParser {
     );
   }
 
+  @SuppressWarnings("unchecked")
   @Nullable
   private static <D extends GDatum> D coerceDefault(
       @Nullable GDatum defaultValue,
@@ -938,7 +737,7 @@ public class OpInputProjectionsPsiParser {
 
     if (defaultValue == null) return null;
     if (defaultValue instanceof GNullDatum) return null;
-    if (defaultValue.getClass().equals(cls)) //noinspection unchecked
+    if (defaultValue.getClass().equals(cls))
       return (D) defaultValue;
     throw new PsiProcessingException(
         String.format("Invalid default value '%s', expected to get '%s'", defaultValue, cls.getName()),

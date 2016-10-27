@@ -57,10 +57,10 @@ public class OperationsPrettyPrinter<E extends Exception> {
     first = printInputType(operation, first);
     first = printInputProjection(operation, first);
 
-    first = printOutputType(operation, first);
-    first = printOutputProjection(operation, first);
+    first = printDeleteProjection(operation, first);
 
-    printDeleteProjection(operation, first);
+    first = printOutputType(operation, first);
+    printOutputProjection(operation, first);
 
     l.brk(1, -l.getDefaultIndentation()).end().print("}");
     l.end();
@@ -71,9 +71,11 @@ public class OperationsPrettyPrinter<E extends Exception> {
 
     if (path != null) {
       if (first) first = false;
-      else l.print(",").brk();
+      else l.print(",");
 
-      l.beginIInd();
+      l.brk();
+
+      l.beginIInd(10);
       l.print("path").brk();
       opPathPrinter.print(path, 0);
       l.end();
@@ -87,7 +89,9 @@ public class OperationsPrettyPrinter<E extends Exception> {
 
     if (inputType != null) {
       if (first) first = false;
-      else l.print(",").brk();
+      else l.print(",");
+
+      l.brk();
 
       l.beginIInd();
       l.print("inputType").brk();
@@ -103,7 +107,9 @@ public class OperationsPrettyPrinter<E extends Exception> {
 
     if (projection != null) {
       if (first) first = false;
-      else l.print(",").brk();
+      else l.print(",");
+
+      l.brk();
 
       l.beginIInd();
       l.print("inputProjection").brk();
@@ -119,7 +125,9 @@ public class OperationsPrettyPrinter<E extends Exception> {
 
     if (outputType != null) {
       if (first) first = false;
-      else l.print(",").brk();
+      else l.print(",");
+
+      l.brk();
 
       l.beginIInd();
       l.print("outputType").brk();
@@ -132,7 +140,9 @@ public class OperationsPrettyPrinter<E extends Exception> {
 
   private boolean printOutputProjection(@NotNull OperationIdl operation, boolean first) throws E {
     if (first) first = false;
-    else l.print(",").brk();
+    else l.print(",");
+
+    l.brk();
 
     l.beginIInd();
     l.print("outputProjection").brk();
@@ -147,7 +157,9 @@ public class OperationsPrettyPrinter<E extends Exception> {
       DeleteOperationIdl deleteOperation = (DeleteOperationIdl) operation;
 
       if (first) first = false;
-      else l.print(",").brk();
+      else l.print(",");
+
+      l.brk();
 
       l.beginIInd();
       l.print("deleteProjection").brk();

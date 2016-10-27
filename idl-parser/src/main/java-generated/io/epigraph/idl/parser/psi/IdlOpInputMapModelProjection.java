@@ -10,13 +10,13 @@ public interface IdlOpInputMapModelProjection extends PsiElement {
   @NotNull
   IdlOpInputKeyProjection getOpInputKeyProjection();
 
-  @NotNull
+  @Nullable
   IdlOpInputVarProjection getOpInputVarProjection();
 
-  @NotNull
+  @Nullable
   PsiElement getParenLeft();
 
-  @NotNull
+  @Nullable
   PsiElement getParenRight();
 
 }

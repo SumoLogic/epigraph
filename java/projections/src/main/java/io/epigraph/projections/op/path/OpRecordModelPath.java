@@ -37,10 +37,9 @@ public class OpRecordModelPath
       @NotNull RecordType model,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
-      @Nullable OpRecordModelPath metaProjection,
       @Nullable OpFieldPathEntry fieldProjection,
       @NotNull TextLocation location) {
-    super(model, params, annotations, metaProjection, location);
+    super(model, params, annotations, location);
 
     this.fieldProjections = fieldProjection == null ?
                             Collections.emptyMap() :

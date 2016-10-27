@@ -103,7 +103,7 @@ public abstract class OperationIdl {
       @NotNull List<IdlError> errors) {
 
     @NotNull Type outputType = resource.fieldType().type;
-    if (path != null) outputType = ProjectionUtils.tipType(path);
+    if (path != null) outputType = ProjectionUtils.tipType(path).type;
 
     final Type outputProjectionType = projection.type();
 

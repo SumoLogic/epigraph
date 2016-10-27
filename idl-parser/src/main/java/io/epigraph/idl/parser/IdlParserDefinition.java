@@ -42,12 +42,16 @@ public class IdlParserDefinition implements ParserDefinition {
       I_DEFAULT,
       I_RESOURCE,
       I_READ,
-      I_CREATE,
-      I_UPDATE,
-      I_DELETE,
-      I_CUSTOM,
-      I_INPUT,
-      I_OUTPUT
+      I_CREATE_OP,
+      I_UPDATE_OP,
+      I_DELETE_OP,
+      I_CUSTOM_OP,
+      I_PATH,
+      I_INPUT_TYPE,
+      I_INPUT_PROJECTION,
+      I_OUTPUT_TYPE,
+      I_OUTPUT_PROJECTION,
+      I_DELETE_PROJECTION
   );
 
   public final static TokenSet STRING_LITERALS = TokenSet.create(I_STRING);

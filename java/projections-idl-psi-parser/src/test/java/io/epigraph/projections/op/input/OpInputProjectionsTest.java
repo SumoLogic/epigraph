@@ -6,7 +6,7 @@ import de.uka.ilkd.pp.Layouter;
 import de.uka.ilkd.pp.NoExceptions;
 import de.uka.ilkd.pp.StringBackend;
 import io.epigraph.idl.parser.projections.IdlSubParserDefinitions;
-import io.epigraph.idl.parser.psi.IdlOpInputTrunkVarProjection;
+import io.epigraph.idl.parser.psi.IdlOpInputVarProjection;
 import io.epigraph.projections.StepsAndProjection;
 import io.epigraph.psi.EpigraphPsiUtil;
 import io.epigraph.psi.PsiProcessingException;
@@ -26,7 +26,6 @@ import static org.junit.Assert.fail;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpInputProjectionsTest {
-  // todo add map tests when codegen is ready
   @Test
   public void testParsing1() throws PsiProcessingException {
     String projectionStr = lines(
@@ -58,13 +57,13 @@ public class OpInputProjectionsTest {
   public void testParseEmpty() throws PsiProcessingException {
     testParsingVarProjection(
         new DataType(Person.type, Person.id),
-        "", ":id", 1
+        "", ":id"
     );
   }
 
   @Test
   public void testParseDefault() throws PsiProcessingException {
-    testParsingVarProjection(":id { default: 123 }", 1);
+    testParsingVarProjection(":id { default: 123 }");
   }
 
   @Test
@@ -77,7 +76,7 @@ public class OpInputProjectionsTest {
     testParsingVarProjection(
         new DataType(Person.type, Person.id),
         "~io.epigraph.tests.User :id",
-        ":id ~io.epigraph.tests.User :id", 1
+        ":id ~io.epigraph.tests.User :id"
     );
   }
 
@@ -86,74 +85,52 @@ public class OpInputProjectionsTest {
     testParsingVarProjection(
         new DataType(Person.type, Person.id),
         "~( io.epigraph.tests.User :id, io.epigraph.tests.Person :id )",
-        ":id ~( io.epigraph.tests.User :id, io.epigraph.tests.Person :id )",
-        1
+        ":id ~( io.epigraph.tests.User :id, io.epigraph.tests.Person :id )"
     );
   }
 
   @Test
   public void testParseCustomParams() throws PsiProcessingException {
-    testParsingVarProjection(":id { deprecated = true }", 1);
+    testParsingVarProjection(":id { deprecated = true }");
   }
 
   @Test
   public void testParseRecordDefaultFields() throws PsiProcessingException {
-    testParsingVarProjection(":record ( id, firstName )", 1);
+    testParsingVarProjection(":record ( id, firstName )");
   }
 
   @Test
   public void testParseRecordFieldsWithStructure() throws PsiProcessingException {
-    testParsingVarProjection(":record ( id, bestFriend :record ( id ) )", 1);
+    testParsingVarProjection(":record ( id, bestFriend :record ( id ) )");
   }
 
   @Test
   public void testParseRecordFieldsWithCustomParams() throws PsiProcessingException {
-    testParsingVarProjection(":record ( id, bestFriend { deprecated = true :record ( id ) } )", 1);
+    testParsingVarProjection(":record ( id, bestFriend { deprecated = true :record ( id ) } )");
   }
 
   @Test
   public void testParseList() throws PsiProcessingException {
-    testParsingVarProjection(":record ( friends *( :id ) )", 1);
+    testParsingVarProjection(":record ( friends *( :id ) )");
   }
 
   @Test
   public void testParseMap() throws PsiProcessingException {
-    testParsingVarProjection(":record ( friendsMap []( :id ) )", 1);
-  }
-
-  @Test
-  public void testSimplePath() throws PsiProcessingException {
-    testParsingVarProjection(":record / id", 3);
-  }
-
-  @Test
-  public void testLongPath() throws PsiProcessingException {
-    testParsingVarProjection(":record / bestFriend :record / bestFriend :record ( id, firstName )", 5);
+    testParsingVarProjection(":record ( friendsMap []( :id ) )");
   }
 
   private void testParsingVarProjection(String str) throws PsiProcessingException {
-    testParsingVarProjection(str, 0);
-  }
-
-  private void testParsingVarProjection(String str, int steps) throws PsiProcessingException {
     testParsingVarProjection(
         new DataType(Person.type, Person.id),
         str,
-        str, steps
+        str
     );
-
   }
 
-  private void testParsingVarProjection(DataType varDataType, String projectionString, String expected)
-      throws PsiProcessingException {
-
-    testParsingVarProjection(varDataType, projectionString, expected, 0);
-  }
-
-  private void testParsingVarProjection(DataType varDataType,
-                                        String projectionString,
-                                        String expected,
-                                        int expectedSteps)
+  private void testParsingVarProjection(
+      DataType varDataType,
+      String projectionString,
+      String expected)
       throws PsiProcessingException {
 
     TypesResolver resolver = new SimpleTypesResolver(
@@ -166,10 +143,10 @@ public class OpInputProjectionsTest {
 
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
-    IdlOpInputTrunkVarProjection psiVarProjection = EpigraphPsiUtil.parseText(
+    IdlOpInputVarProjection psiVarProjection = EpigraphPsiUtil.parseText(
         projectionString,
         IdlSubParserDefinitions.OP_INPUT_VAR_PROJECTION.rootElementType(),
-        IdlOpInputTrunkVarProjection.class,
+        IdlOpInputVarProjection.class,
         IdlSubParserDefinitions.OP_INPUT_VAR_PROJECTION,
         errorsAccumulator
     );
@@ -187,13 +164,13 @@ public class OpInputProjectionsTest {
     OpInputVarProjection varProjection = null;
     try {
       StepsAndProjection<OpInputVarProjection> stepsAndProjection =
-          OpInputProjectionsPsiParser.parseTrunkVarProjection(
+          OpInputProjectionsPsiParser.parseVarProjection(
               varDataType,
               psiVarProjection,
               resolver
           );
 
-      assertEquals(expectedSteps, stepsAndProjection.pathSteps());
+      assertEquals(0, stepsAndProjection.pathSteps());
       varProjection = stepsAndProjection.projection();
     } catch (PsiProcessingException e) {
       e.printStackTrace();
@@ -206,7 +183,7 @@ public class OpInputProjectionsTest {
     StringBackend sb = new StringBackend(120);
     Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
     OpInputProjectionsPrettyPrinter<NoExceptions> printer = new OpInputProjectionsPrettyPrinter<>(layouter);
-    printer.print(varProjection, expectedSteps);
+    printer.print(varProjection, 0);
     layouter.close();
     String actual = sb.getString();
 

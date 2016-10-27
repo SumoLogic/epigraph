@@ -7,6 +7,7 @@ import io.epigraph.idl.parser.psi.*;
 import io.epigraph.psi.EpigraphPsiUtil;
 import io.epigraph.psi.PsiProcessingException;
 import io.epigraph.refs.TypeRef;
+import io.epigraph.types.DatumType;
 import io.epigraph.types.Type;
 import io.epigraph.refs.TypesResolver;
 import org.jetbrains.annotations.NotNull;
@@ -54,15 +55,20 @@ public class ProjectionPsiParserUtil {
     final Type.Tag tag;
 
     if (tagName == null) {
-      // get default tag
-      if (defaultTag == null)
-        throw new PsiProcessingException(
-            String.format("Can't parse default tag projection for '%s', default tag not specified", type.name()),
-            location
-        );
+      if (defaultTag == null) {
 
-      tag = defaultTag;
-      verifyTag(type, tag, location);
+        if (type instanceof DatumType)
+          tag = ((DatumType) type).self;
+
+        else
+          throw new PsiProcessingException(
+              String.format("Can't parse default tag projection for '%s', default tag not specified", type.name()),
+              location
+          );
+      } else {
+        tag = defaultTag;
+        verifyTag(type, tag, location);
+      }
     } else tag = getTag(type, tagName, location);
     return tag;
   }
@@ -83,10 +89,11 @@ public class ProjectionPsiParserUtil {
       throws PsiProcessingException {
     if (!type.tags().contains(tag))
       throw new PsiProcessingException(
-          String.format("Tag '%s' doesn't belong to type '%s', known tags: {%s}",
-                        tag.name(),
-                        type.name(),
-                        listTags(type)
+          String.format(
+              "Tag '%s' doesn't belong to type '%s', known tags: {%s}",
+              tag.name(),
+              type.name(),
+              listTags(type)
           ), location);
   }
 
@@ -115,11 +122,13 @@ public class ProjectionPsiParserUtil {
       if (annotationValuePsi != null) {
         @NotNull String annotationName = annotationPsi.getQid().getCanonicalName();
         @NotNull GDataValue annotationValue = IdlGDataPsiParser.parseValue(annotationValuePsi);
-        annotationsMap.put(annotationName,
-                           new Annotation(annotationName,
-                                          annotationValue,
-                                          EpigraphPsiUtil.getLocation(annotationPsi)
-                           )
+        annotationsMap.put(
+            annotationName,
+            new Annotation(
+                annotationName,
+                annotationValue,
+                EpigraphPsiUtil.getLocation(annotationPsi)
+            )
         );
       }
     }
