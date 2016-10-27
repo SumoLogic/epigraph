@@ -23,7 +23,7 @@
   <dependencies>
 
     <dependency>
-      <groupId>${project.groupId}</groupId>
+      <groupId>${project.parent.groupId}</groupId>
       <artifactId>epigraph-schema-compiler</artifactId>
       <version>${project.parent.version}</version>
     </dependency>

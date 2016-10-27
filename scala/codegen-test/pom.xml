@@ -14,9 +14,9 @@
   <dependencies>
 
     <dependency>
-      <groupId>${project.groupId}</groupId>
+      <groupId>${project.parent.groupId}</groupId>
       <artifactId>epigraph-scala-core</artifactId>
-      <version>${project.version}</version>
+      <version>${project.parent.version}</version>
     </dependency>
 
   </dependencies>
@@ -31,9 +31,9 @@
       </plugin>
 
       <plugin>
-        <groupId>${project.groupId}</groupId>
+        <groupId>${project.parent.groupId}</groupId>
         <artifactId>epigraph-maven-plugin</artifactId>
-        <version>${project.version}</version>
+        <version>${project.parent.version}</version>
       </plugin>
 
     </plugins>

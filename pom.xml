@@ -419,7 +419,7 @@ mvn clean install -P maven-plugin-dependent
           </executions>
           <configuration>
             <mojoDependencies>
-              <mojoDependency>${project.groupId}:epigraph-maven-plugin-common</mojoDependency>
+              <mojoDependency>${project.parent.groupId}:epigraph-maven-plugin-common</mojoDependency>
             </mojoDependencies>
           </configuration>
         </plugin>

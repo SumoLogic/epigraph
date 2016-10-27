@@ -16,12 +16,12 @@
     <dependency>
       <groupId>com.sumologic.epigraph</groupId>
       <artifactId>epigraph-lang-common</artifactId>
-      <version>${project.version}</version>
+      <version>${project.parent.version}</version>
     </dependency>
     <dependency>
       <groupId>com.sumologic.epigraph</groupId>
       <artifactId>epigraph-light-psi</artifactId>
-      <version>${project.version}</version>
+      <version>${project.parent.version}</version>
     </dependency>
 
     <dependency>
