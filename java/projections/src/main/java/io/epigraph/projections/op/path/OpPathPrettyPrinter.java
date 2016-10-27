@@ -9,8 +9,7 @@ import io.epigraph.projections.op.OpParams;
 import io.epigraph.projections.op.input.OpInputModelProjection;
 import io.epigraph.projections.op.input.OpInputProjectionsPrettyPrinter;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Map;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -76,17 +75,15 @@ public class OpPathPrettyPrinter<E extends Exception>
   }
 
   private void print(@NotNull OpRecordModelPath mp) throws E {
-    Map<String, OpFieldPathEntry> fieldProjections = mp.fieldProjections();
+    @Nullable final OpFieldPathEntry entry = mp.pathFieldProjection();
 
-    l.print("(").beginCInd();
-    boolean first = true;
-    for (Map.Entry<String, OpFieldPathEntry> entry : fieldProjections.entrySet()) {
-      if (first) first = false;
-      else l.print(",");
-      l.brk();
+    if (entry != null) {
+      l.beginIInd();
+      l.print("/").brk();
 
-      @NotNull String fieldName = entry.getKey();
-      @NotNull OpFieldPath fieldProjection = entry.getValue().projection();
+      @NotNull String fieldName = entry.field().name();
+      @NotNull OpFieldPath fieldProjection = entry.projection();
+
       @NotNull OpVarPath fieldVarProjection = fieldProjection.projection();
       @NotNull OpParams fieldParams = fieldProjection.params();
       @NotNull Annotations fieldAnnotations = fieldProjection.annotations();
@@ -112,8 +109,8 @@ public class OpPathPrettyPrinter<E extends Exception>
         l.brk(1, -l.getDefaultIndentation()).end().print("}");
       }
 
+      l.end();
     }
-    l.brk(1, -l.getDefaultIndentation()).end().print(")");
   }
 
   private void print(OpMapModelPath mp) throws E {
@@ -124,6 +121,7 @@ public class OpPathPrettyPrinter<E extends Exception>
     @NotNull Annotations keyAnnotations = keyProjection.annotations();
 
     l.print("/").brk().print(".");
+
 
     if (!keyParams.isEmpty() || !keyAnnotations.isEmpty()) {
       l.beginCInd();
@@ -139,13 +137,11 @@ public class OpPathPrettyPrinter<E extends Exception>
       if (!keyAnnotations.isEmpty()) print(keyAnnotations, true, !commaNeeded);
 
       l.brk(1, -l.getDefaultIndentation()).end().print("}");
+    } else {
+      if (!isPrintoutEmpty(mp.itemsProjection())) l.brk();
     }
 
-    if (!isPrintoutEmpty(mp.itemsProjection())) {
-      l.print("(").brk();
-      print(mp.itemsProjection(), 0);
-      l.brk(1, -l.getDefaultIndentation()).end().print(")");
-    }
+    print(mp.itemsProjection(), 0);
 
     l.end();
   }
@@ -212,8 +208,7 @@ public class OpPathPrettyPrinter<E extends Exception>
   public boolean isPrintoutEmpty(@NotNull OpModelPath<?, ?> mp) {
     if (mp instanceof OpRecordModelPath) {
       OpRecordModelPath recordModelProjection = (OpRecordModelPath) mp;
-      Map<String, OpFieldPathEntry> fieldProjections = recordModelProjection.fieldProjections();
-      return fieldProjections.isEmpty();
+      return recordModelProjection.pathFieldProjection() == null;
     }
 
     if (mp instanceof OpMapModelPath) {

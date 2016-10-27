@@ -65,7 +65,6 @@ public class IdlTest {
 
   @Test
   public void testResource() throws Exception {
-    // todo test custom
     testParse(
         lines(
             "namespace test",
@@ -102,15 +101,15 @@ public class IdlTest {
             "    outputType Boolean",
             "    outputProjection", // empty projection
             "  }",
-//            "  customOp CUSTOM {",
-//            "    doc = \"dome doc string\"",
-//            "    ; authToken : String",
-//            "    path / . :record / bestFriend",
-//            "    inputType map[String,Person]",
-//            "    inputProjection []( :record ( firstName, lastName) )",
-//            "    outputType map[String,Person]",
-//            "    outputProjection [forbidden]( :id )",
-//            "  }",
+            "  customOp CUSTOM {",
+            "    doc = \"dome doc string\"",
+            "    ; authToken : String",
+            "    path / . :record / bestFriend",
+            "    inputType map[String,Person]",
+            "    inputProjection []( :record ( firstName, lastName) )",
+            "    outputType map[String,Person]",
+            "    outputProjection [forbidden]( :id )",
+            "  }",
             "}"
         ),
         lines(
@@ -160,16 +159,16 @@ public class IdlTest {
             "    deleteProjection [ forbidden ]( +:record ( firstName ) ),",
             "    outputType epigraph.Boolean,",
             "    outputProjection ", // empty projection
-//            "  }",
-//            "  customOp CUSTOM",
-//            "  {",
-//            "    doc = \"dome doc string\"",
-//            "    ; authToken : String",
-//            "    path / . :record / bestFriend",
-//            "    inputType map[epigraph.String,io.epigraph.tests.Person],",
-//            "    inputProjection []( :record ( firstName, lastName) )",
-//            "    outputType map[epigraph.String,io.epigraph.tests.Person],",
-//            "    outputProjection [forbidden]( :id )",
+            "  }",
+            "  customOp CUSTOM",
+            "  {",
+            "    ;authToken: epigraph.String,",
+            "    doc = \"dome doc string\",",
+            "    path / . :record / bestFriend,",
+            "    inputType map[epigraph.String,io.epigraph.tests.Person],",
+            "    inputProjection []( :record ( firstName, lastName ) ),",
+            "    outputType map[epigraph.String,io.epigraph.tests.Person],",
+            "    outputProjection [ forbidden ]( :id )",
             "  } }"
         )
     );
