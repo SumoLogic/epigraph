@@ -15,7 +15,7 @@ public interface GenFieldProjectionEntry<
     > {
   @NotNull RecordType.Field field();
 
-  @NotNull FP projection();
+  @NotNull FP projection(); // TODO rename to fieldProjection()?
 
   @NotNull TextLocation location();
 }

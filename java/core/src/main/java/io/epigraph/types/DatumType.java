@@ -16,7 +16,9 @@ import java.util.List;
 
 public abstract class DatumType extends Type {
 
-  public final @NotNull Tag self = new Tag("self", this); // TODO rename to tag?
+  public static final String MONO_TAG_NAME = "self"; // TODO better name (for the constant and the tag)
+
+  public final @NotNull Tag self = new Tag(MONO_TAG_NAME, this); // TODO rename to tag?
 
   private final @NotNull Collection<@NotNull ? extends Tag> immediateTags = Collections.singleton(self);
 

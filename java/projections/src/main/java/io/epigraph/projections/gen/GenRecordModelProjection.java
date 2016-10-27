@@ -1,5 +1,6 @@
 package io.epigraph.projections.gen;
 
+import io.epigraph.projections.req.output.ReqOutputFieldProjectionEntry;
 import io.epigraph.types.RecordType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -20,6 +21,8 @@ public interface GenRecordModelProjection<
     > extends GenModelProjection<RMP, M> {
 
   @NotNull Map<String, FPE> fieldProjections();
+
+  default @Nullable FPE fieldProjection(@NotNull String fieldName) { return fieldProjections().get(fieldName); }
 
   /**
    * @return single field projection if there's just one, {@code null} otherwise

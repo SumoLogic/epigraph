@@ -17,11 +17,13 @@ public interface FormatWriter<Exc extends Exception> {
 
   void writeDatum(@NotNull ReqOutputModelProjection projection, @Nullable Datum datum) throws Exc;
 
-  void writeData(@Nullable Data data) throws Exc; // TODO writeData
+  // FIXME take explicit type for all projectionless writes below (or add another set of methods that does):
 
-  void writeDatum(@Nullable Datum datum) throws Exc; // TODO writeDatum
+  void writeData(@Nullable Data data) throws Exc;
 
   void writeValue(@NotNull Val value) throws Exc;
+
+  void writeDatum(@Nullable Datum datum) throws Exc;
 
   void writeError(@NotNull ErrorValue error) throws Exc;
 

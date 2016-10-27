@@ -202,7 +202,7 @@ public interface Data { // TODO Var? Union? Values?
         return value == null ? null : value.getError();
       }
 
-      public void setValue(@NotNull Type.Tag tag, @Nullable Val value) {
+      public Data.Builder.Raw setValue(@NotNull Type.Tag tag, @Nullable Val value) {
         // TODO check tag compatibility with this.type
         if (value == null) {
           tagValues.remove(tag.name);
@@ -210,6 +210,7 @@ public interface Data { // TODO Var? Union? Values?
           // TODO check value compatibility with the tag
           tagValues.put(tag.name, value);
         }
+        return this;
       }
 
       public void setDatum(@NotNull Type.Tag tag, @Nullable Datum datum) {
