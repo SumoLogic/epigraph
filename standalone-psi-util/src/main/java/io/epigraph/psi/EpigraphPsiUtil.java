@@ -10,7 +10,11 @@ import com.intellij.mock.MockProjectEx;
 import com.intellij.mock.MockPsiManager;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.Trinity;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiErrorElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiInvalidElementAccessException;
+import com.intellij.psi.PsiRecursiveElementWalkingVisitor;
 import com.intellij.psi.impl.PsiFileFactoryImpl;
 import com.intellij.psi.impl.source.CharTableImpl;
 import com.intellij.psi.tree.IElementType;
@@ -19,8 +23,12 @@ import org.intellij.grammar.LightPsi;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -87,6 +95,28 @@ public class EpigraphPsiUtil {
     collectErrors(res, errorProcessor);
 
     return res;
+  }
+
+  public static @NotNull PsiFile parseResource(
+      @NotNull String resourcePath, // absolute if starts with '/', package-prefixed otherwise
+      @NotNull ParserDefinition parserDefinition,
+      @Nullable ErrorProcessor errorProcessor
+  ) throws IOException {
+    InputStream is = Object.class.getResourceAsStream(resourcePath); // TODO use EpigraphPsiUtil.class?
+    if (is == null) throw new IOException("Couldn't find '" + resourcePath + "' resource");
+    PsiFile res = LightPsi.parseFile(resourcePath, inputStreamToString(is, StandardCharsets.UTF_8), parserDefinition);
+    collectErrors(res, errorProcessor);
+    return res;
+  }
+
+  private static String inputStreamToString(@NotNull InputStream is, @NotNull Charset charset) throws IOException {
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    byte[] buffer = new byte[1024];
+    int count;
+    try {
+      while ((count = is.read(buffer)) != -1) baos.write(buffer, 0, count);
+      return baos.toString(charset.name());
+    } finally { is.close(); }
   }
 
   @NotNull

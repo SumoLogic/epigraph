@@ -10,6 +10,7 @@ import io.epigraph.data.Datum;
 import io.epigraph.idl.ResourceIdl;
 import io.epigraph.idl.operations.ReadOperationIdl;
 import io.epigraph.printers.DataPrinter;
+import io.epigraph.projections.Annotations;
 import io.epigraph.projections.StepsAndProjection;
 import io.epigraph.projections.op.output.OpOutputFieldProjection;
 import io.epigraph.projections.req.output.ReqOutputFieldProjection;
@@ -188,7 +189,7 @@ public class UndertowHandler implements HttpHandler {
         resourceDeclaration.fieldType(),
         new OpOutputFieldProjection(
             operationDeclaration.params(),
-            null,
+            Annotations.EMPTY,
             operationDeclaration.outputProjection(),
             true,
             resourceDeclaration.location()

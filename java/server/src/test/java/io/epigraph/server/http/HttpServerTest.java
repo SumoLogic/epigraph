@@ -28,7 +28,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -45,79 +44,11 @@ public class HttpServerTest {
       epigraph.String.type
   );
 
-  private static final String idlText = lines(
-      "namespace test",
-
-      "resource users: map[epigraph.String,io.epigraph.tests.Person] {",
-      "  READ {",
-      "    ; authToken : epigraph.String",
-//    "    output []( :(+id, record (+id, +firstName, +lastName, +bestFriend: (+id, record(+id, +firstName, +lastName)))) )",
-      "    outputProjection []( :( ",
-      "      id, ",
-      "      +record ( ",
-      "        +id, ",
-      "        +firstName, ",
-      "        +lastName, ",
-      "        +bestFriend:( ",
-      "          +id, ",
-      "          record( ",
-      "            +id, ",
-      "            +firstName, ",
-      "            +lastName, ",
-      "            +bestFriend:id ",
-      "            +worstEnemy ",
-      "          ) ",
-      "        )~io.epigraph.tests.User:( ",
-      "          +record( ",
-      "            +worstEnemy(+id, +firstName, +lastName, +profile) ",
-      "            +profile ",
-      "          ) ",
-      "        ) ",
-      "        +worstEnemy(+id, +firstName, +lastName) ",
-      "        +friends *(:(+id, record(+id, +firstName, +lastName))) ",
-      "      ) ",
-      "    )~io.epigraph.tests.User:(+id, record(+profile, +worstEnemy(profile))) ",
-      "    ) ",
-      "  } ",
-      "}",
-
-      "resource user: io.epigraph.tests.Person {",
-      "  READ { ",
-      "    outputProjection :( ",
-      "      +id, ",
-      "      record ( ",
-      "        +id, ",
-      "        +firstName, ",
-      "        +lastName, ",
-      "        +bestFriend:( ",
-      "          +id, ",
-      "          record( ",
-      "            +id, ",
-      "            +firstName, ",
-      "            +lastName, ",
-      "            +bestFriend:id ",
-      "            +worstEnemy ",
-      "          ) ",
-      "        )~io.epigraph.tests.User:( ",
-      "          +record( ",
-      "            +worstEnemy(+id, +firstName, +lastName, +profile) ",
-      "            +profile ",
-      "          ) ",
-      "        ) ",
-      "        +worstEnemy(+id, +firstName, +lastName) ",
-      "        +friends *(:(+id, record(+id, +firstName, +lastName))) ",
-      "      ) ",
-      "    )~io.epigraph.tests.User:(+id, record(+profile, +worstEnemy(profile))) ",
-      "  } ",
-
-      "}"
-  );
-
   private static final Idl idl;
 
   static {
     try {
-      idl = parseFile(idlText);
+      idl = parseIdlResource("/io/epigraph/server/http/testService.sdl");
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -311,19 +242,26 @@ public class HttpServerTest {
   }
 
   @NotNull
-  private static Idl parseFile(@NotNull String text) throws IOException {
-    EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
+  private static Idl parseIdlText(@NotNull String text) throws IOException {
+    EpigraphPsiUtil.ErrorsAccumulator errAcc = new EpigraphPsiUtil.ErrorsAccumulator();
+    IdlFile psiFile = (IdlFile) EpigraphPsiUtil.parseFile("dummy.idl", text, IdlParserDefinition.INSTANCE, errAcc);
+    return parseIdl(psiFile, errAcc);
+  }
 
-    @NotNull IdlFile psiFile =
-        (IdlFile) EpigraphPsiUtil.parseFile("idlTest.idl", text, IdlParserDefinition.INSTANCE, errorsAccumulator);
+  private static @NotNull Idl parseIdlResource(@NotNull String resourcePath) throws IOException {
+    EpigraphPsiUtil.ErrorsAccumulator errAcc = new EpigraphPsiUtil.ErrorsAccumulator();
+    IdlFile psiFile = (IdlFile) EpigraphPsiUtil.parseResource(resourcePath, IdlParserDefinition.INSTANCE, errAcc);
+    return parseIdl(psiFile, errAcc);
+  }
 
-    if (errorsAccumulator.hasErrors()) {
-      for (PsiErrorElement element : errorsAccumulator.errors()) {
+  private static @NotNull Idl parseIdl(@NotNull IdlFile psiFile, EpigraphPsiUtil.ErrorsAccumulator errAcc)
+      throws IOException {
+    if (errAcc.hasErrors()) {
+      for (PsiErrorElement element : errAcc.errors()) {
         System.err.println(element.getErrorDescription() + " at " + EpigraphPsiUtil.getLocation(element));
       }
       throw new RuntimeException(DebugUtil.psiTreeToString(psiFile, true));
     }
-
     try {
       return IdlPsiParser.parseIdl(psiFile, resolver);
     } catch (PsiProcessingException e) {
@@ -331,5 +269,4 @@ public class HttpServerTest {
     }
   }
 
-  private static String lines(String... lines) { return Arrays.stream(lines).collect(Collectors.joining("\n")); }
 }

@@ -1,0 +1,72 @@
+namespace test
+
+resource users: map[epigraph.String,io.epigraph.tests.Person] {
+
+  READ {
+    ; authToken : epigraph.String
+    outputProjection [](
+      :(
+        id,
+        +record(
+          +id,
+          +firstName,
+          +lastName,
+          +bestFriend:(
+            +id,
+            record( +id, +firstName, +lastName, +bestFriend:id, +worstEnemy )
+          )~io.epigraph.tests.User:(
+            +record(
+              +worstEnemy( +id, +firstName, +lastName, +profile )
+              +profile
+            )
+          )
+          +worstEnemy( +id, +firstName, +lastName )
+          +friends *(
+            :(
+              +id,
+              record( +id, +firstName, +lastName )
+            )
+          )
+        )
+      )~io.epigraph.tests.User:(
+        +id,
+        record( +profile, +worstEnemy( profile ) )
+      )
+    )
+  }
+
+}
+
+resource user: io.epigraph.tests.Person {
+
+  READ {
+    outputProjection :(
+      +id,
+      record(
+        +id,
+        +firstName,
+        +lastName,
+        +bestFriend:(
+          +id,
+          record( +id, +firstName, +lastName, +bestFriend:id, +worstEnemy )
+        )~io.epigraph.tests.User:(
+          +record(
+            +worstEnemy( +id, +firstName, +lastName, +profile )
+            +profile
+          )
+        )
+        +worstEnemy( +id, +firstName, +lastName )
+        +friends *(
+          :(
+            +id,
+            record( +id, +firstName, +lastName )
+          )
+        )
+      )
+    )~io.epigraph.tests.User:(
+      +id,
+      record( +profile, +worstEnemy( profile ) )
+    )
+  }
+
+}
