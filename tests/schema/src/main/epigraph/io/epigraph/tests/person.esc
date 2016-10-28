@@ -9,7 +9,8 @@ integer PersonId
 
 record PersonRecord {
   avroType = "Person"
-  id: PersonId { avroField = "personId" }
+  dbTable = "T_PERSONS"
+  id: PersonId { avroField = "personId", dbColumn = "ID", dbType = "BIGINT" }
   firstName: String
   lastName: String
   bestFriend: Person // default id
@@ -17,3 +18,5 @@ record PersonRecord {
   friends: list[Person]
   friendsMap: map[String, Person]
 }
+
+map[PersonId,Person] UsersResourceDummy

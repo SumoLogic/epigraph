@@ -152,7 +152,7 @@ public class UndertowHandler implements HttpHandler {
       @NotNull StepsAndProjection<ReqOutputFieldProjection> stepsAndProjection = requestUrl.fieldProjection();
 
       // run operation
-      CompletableFuture<ReadOperationResponse> future =
+      CompletableFuture<? extends ReadOperationResponse> future =
           operation.process(new ReadOperationRequest(stepsAndProjection.projection()));
 
       // send response back
@@ -205,7 +205,7 @@ public class UndertowHandler implements HttpHandler {
   private void handleReadResponse(
       final int pathSteps,
       @NotNull ReqOutputVarProjection reqProjection,
-      @NotNull CompletableFuture<ReadOperationResponse> responseFuture,
+      @NotNull CompletableFuture<? extends ReadOperationResponse> responseFuture,
       @NotNull final HttpServerExchange exchange
   ) {
     // todo set future timeout

@@ -22,5 +22,5 @@ public abstract class Operation<
   public Decl declaration() { return declaration; }
 
   @NotNull
-  public abstract CompletableFuture<Rsp> process(@NotNull Req request);
+  public abstract CompletableFuture<? extends Rsp> process(@NotNull Req request);
 }

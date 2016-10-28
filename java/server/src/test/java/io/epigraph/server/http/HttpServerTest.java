@@ -2,23 +2,16 @@ package io.epigraph.server.http;
 
 import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.impl.DebugUtil;
-import io.epigraph.errors.ErrorValue;
 import io.epigraph.idl.Idl;
 import io.epigraph.idl.IdlPsiParser;
-import io.epigraph.idl.ResourceIdl;
-import io.epigraph.idl.operations.ReadOperationIdl;
 import io.epigraph.idl.parser.IdlParserDefinition;
 import io.epigraph.idl.parser.psi.IdlFile;
 import io.epigraph.psi.EpigraphPsiUtil;
 import io.epigraph.psi.PsiProcessingException;
 import io.epigraph.refs.SimpleTypesResolver;
 import io.epigraph.refs.TypesResolver;
-import io.epigraph.service.Resource;
 import io.epigraph.service.Service;
 import io.epigraph.service.ServiceInitializationException;
-import io.epigraph.service.operations.ReadOperation;
-import io.epigraph.service.operations.ReadOperationRequest;
-import io.epigraph.service.operations.ReadOperationResponse;
 import io.epigraph.tests.*;
 import io.undertow.Undertow;
 import io.undertow.UndertowOptions;
@@ -26,8 +19,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -40,7 +31,7 @@ public class HttpServerTest {
       User.type,
       UserId.type,
       UserRecord.type,
-      String_Person_Map.type,
+      PersonId_Person_Map.type,
       epigraph.String.type
   );
 

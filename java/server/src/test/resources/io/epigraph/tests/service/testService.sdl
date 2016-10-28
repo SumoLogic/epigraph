@@ -1,9 +1,10 @@
 namespace io.epigraph.server.http
 
 import io.epigraph.tests.Person
+import io.epigraph.tests.PersonId
 import io.epigraph.tests.User
 
-resource users: map[String,Person] {
+resource users: map[PersonId,Person] {
 
   READ {
     ; authToken : epigraph.String

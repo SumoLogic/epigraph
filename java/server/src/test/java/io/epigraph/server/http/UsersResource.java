@@ -5,6 +5,8 @@ package io.epigraph.server.http;
 import io.epigraph.errors.ErrorValue;
 import io.epigraph.idl.ResourceIdl;
 import io.epigraph.idl.operations.ReadOperationIdl;
+import io.epigraph.projections.req.output.ReqOutputKeyProjection;
+import io.epigraph.projections.req.output.ReqOutputMapModelProjection;
 import io.epigraph.service.Resource;
 import io.epigraph.service.ServiceInitializationException;
 import io.epigraph.service.operations.ReadOperation;
@@ -14,6 +16,7 @@ import io.epigraph.tests.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class UsersResource extends Resource {
@@ -32,85 +35,144 @@ public class UsersResource extends Resource {
     private ReadOp(@NotNull ReadOperationIdl declaration) { super(declaration); }
 
     @Override
-    public @NotNull CompletableFuture<ReadOperationResponse> process(@NotNull ReadOperationRequest request) {
+    public @NotNull CompletableFuture<ReadOperationResponse<PersonId_Person_Map.Data>> process(@NotNull ReadOperationRequest request) {
+      PersonId_Person_Map.Builder map = PersonId_Person_Map.create();
 
-      String_Person_Map personMap = String_Person_Map.create()
+      ReqOutputMapModelProjection mapProjection = (ReqOutputMapModelProjection) request.outputProjection().projection()
+          .tagProjection(String_Person_Map.type.self.name()).projection();
 
-          .put$(epigraph.String.create("1").toImmutable(), User.create()
-              .setId(UserId.create(1))
-              .setRecord(UserRecord.create()
-                  .setId(PersonId.create(1))
-                  .setFirstName(epigraph.String.create("Alfred"))
-                  .setLastName(epigraph.String.create("Hitchcock"))
-                  .setProfile_Error(new ErrorValue(404, "Not Found", null))
-                  .setBestFriend$(User.create()
-                      .setId(UserId.create(2))
-                      .setRecord(UserRecord.create()
-                          .setId(PersonId.create(2))
-                          .setFirstName(epigraph.String.create("Bruce"))
-                          .setLastName(epigraph.String.create("Willis"))
-                          .setProfile(Url.create("http://google.com/"))
-                      )
-                  )
-                  .setWorstEnemy(UserRecord.create()
-                      .setId(PersonId.create(3))
-                      .setFirstName(epigraph.String.create("Chuck"))
-                      .setLastName(epigraph.String.create("Norris"))
-                      .setProfile(Url.create("http://bing.com/"))
-                  )
-                  .setFriends(Person_List.create()
-                      .add(User.create()
-                          .setId(UserId.create(2))
-                          .setRecord(UserRecord.create()
-                              .setId(PersonId.create(2))
-                              .setFirstName(epigraph.String.create("Bruce"))
-                              .setLastName(epigraph.String.create("Willis"))
-                              .setProfile(Url.create("http://google.com/"))
-                          )
-                      )
-                      .add(Person.create()
-                          .setId(PersonId.create(4))
-                          .setRecord(PersonRecord.create()
-                              .setId(PersonId.create(4))
-                              .setFirstName(epigraph.String.create("Douglas"))
-                              .setLastName(epigraph.String.create("Adams"))
-                          )
-                      )
-                  )
-              )
-          )
+      List<ReqOutputKeyProjection> keyProjections = mapProjection.keys();
+      if (keyProjections == null) {
+        for (int id = 1; id <= 10; ++id) {
+          PersonId pid = PersonId.create(id);
+          map.put$(pid, fetchPerson(pid));
+        }
+//        map
+//
+//            .put$(PersonId.create(1), User.create()
+//                .setId(UserId.create(1))
+//                .setRecord(UserRecord.create()
+//                    .setId(PersonId.create(1))
+//                    .setFirstName(epigraph.String.create("Alfred"))
+//                    .setLastName(epigraph.String.create("Hitchcock"))
+//                    .setProfile_Error(new ErrorValue(404, "Not Found", null))
+//                    .setBestFriend$(User.create()
+//                        .setId(UserId.create(2))
+//                        .setRecord(UserRecord.create()
+//                            .setId(PersonId.create(2))
+//                            .setFirstName(epigraph.String.create("Bruce"))
+//                            .setLastName(epigraph.String.create("Willis"))
+//                            .setProfile(Url.create("http://google.com/"))
+//                        )
+//                    )
+//                    .setWorstEnemy(UserRecord.create()
+//                        .setId(PersonId.create(3))
+//                        .setFirstName(epigraph.String.create("Chuck"))
+//                        .setLastName(epigraph.String.create("Norris"))
+//                        .setProfile(Url.create("http://bing.com/"))
+//                    )
+//                    .setFriends(Person_List.create()
+//                        .add(User.create()
+//                            .setId(UserId.create(2))
+//                            .setRecord(UserRecord.create()
+//                                .setId(PersonId.create(2))
+//                                .setFirstName(epigraph.String.create("Bruce"))
+//                                .setLastName(epigraph.String.create("Willis"))
+//                                .setProfile(Url.create("http://google.com/"))
+//                            )
+//                        )
+//                        .add(Person.create()
+//                            .setId(PersonId.create(4))
+//                            .setRecord(PersonRecord.create()
+//                                .setId(PersonId.create(4))
+//                                .setFirstName(epigraph.String.create("Douglas"))
+//                                .setLastName(epigraph.String.create("Adams"))
+//                            )
+//                        )
+//                    )
+//                )
+//            )
+//
+//            .put$(PersonId.create(2), Person
+//                .create()
+//                .setId(PersonId.create(2))
+//                .setRecord(
+//                    PersonRecord
+//                        .create()
+//                        .setId(PersonId.create(2))
+//                        .setFirstName(epigraph.String.create("Bruce"))
+//                        .setLastName(epigraph.String.create("Willis"))
+//                )
+//            )
+//
+//            .put$(PersonId.create(3), Person
+//                .create()
+//                .setId(PersonId.create(3))
+//                .setRecord_Error(
+//                    new ErrorValue(402, new Exception("Payment required to fetch user data"))
+//                )
+//            );
+      } else {
+        keyProjections.stream().map(kp -> (PersonId) kp.value()).forEach(pid -> {
+          map.put$(pid, fetchPerson(pid));
+        });
+      }
 
-          .put$(epigraph.String.create("2").toImmutable(), Person
-              .create()
-              .setId(PersonId.create(2))
-              .setRecord(
-                  PersonRecord
-                      .create()
-                      .setId(PersonId.create(2))
-                      .setFirstName(epigraph.String.create("Bruce"))
-                      .setLastName(epigraph.String.create("Willis"))
-              )
-          )
-
-          .put$(epigraph.String.create("3").toImmutable(), Person
-              .create()
-              .setId(PersonId.create(3))
-              .setRecord_Error(
-                  new ErrorValue(402, new Exception("Payment required to fetch user data"))
-              )
-          )
-
-          .toImmutable();
-
-      ///////////////
-
-      CompletableFuture<ReadOperationResponse> future = new CompletableFuture<>();
+      CompletableFuture<ReadOperationResponse<PersonId_Person_Map.Data>> future = new CompletableFuture<>();
       future.complete(
-          new ReadOperationResponse(
-              String_Person_Map.type.createDataBuilder().set(personMap)
+          new ReadOperationResponse<>(
+              PersonId_Person_Map.type.createDataBuilder().set(map)
           )
       );
       return future;
+    }
+
+    private Person fetchPerson(@NotNull PersonId pid) {
+      Integer id = pid.getVal();
+      return User
+          .create()
+          .setId(UserId.create(pid.getVal()))
+          .setRecord(UserRecord
+              .create()
+              .setId(pid)
+              .setFirstName(epigraph.String.create("First" + id))
+              .setLastName(epigraph.String.create("Last" + id))
+              .setProfile_Error(new ErrorValue(404, "Not Found", null))
+              .setBestFriend$(User.create()
+                  .setId(UserId.create(id + 1))
+                  .setRecord(UserRecord.create()
+                      .setId(PersonId.create(id + 1))
+                      .setFirstName(epigraph.String.create("First" + (id + 1)))
+                      .setLastName(epigraph.String.create("Last" + (id + 1)))
+                      .setProfile(Url.create("http://google.com/" + (id + 1)))
+                  )
+              )
+              .setWorstEnemy(UserRecord.create()
+                  .setId(PersonId.create(id + 2))
+                  .setFirstName(epigraph.String.create("First" + (id + 2)))
+                  .setLastName(epigraph.String.create("Last" + (id + 2)))
+                  .setProfile(Url.create("http://bing.com/" + (id + 2)))
+              )
+              .setFriends(Person_List.create()
+                  .add(User.create()
+                      .setId(UserId.create(id + 1))
+                      .setRecord(UserRecord.create()
+                          .setId(PersonId.create(id + 1))
+                          .setFirstName(epigraph.String.create("First" + (id + 1)))
+                          .setLastName(epigraph.String.create("Last" + (id + 1)))
+                          .setProfile(Url.create("http://google.com/" + (id + 1)))
+                      )
+                  )
+                  .add(Person.create()
+                      .setId(PersonId.create(id + 3))
+                      .setRecord(PersonRecord.create()
+                          .setId(PersonId.create(id + 3))
+                          .setFirstName(epigraph.String.create("First" + (id + 3)))
+                          .setLastName(epigraph.String.create("Last" + (id + 3)))
+                      )
+                  )
+              )
+          );
     }
 
   }
