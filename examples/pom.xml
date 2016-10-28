@@ -52,7 +52,7 @@
             <execution>
               <goals>
                 <goal>generate-sources</goal>
-                <goal>generate-test-sources</goal>
+                <!--<goal>generate-test-sources</goal>-->
               </goals>
             </execution>
           </executions>

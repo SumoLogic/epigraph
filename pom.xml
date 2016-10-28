@@ -296,21 +296,6 @@ mvn clean install -P maven-plugin-dependent
         <artifactId>maven-enforcer-plugin</artifactId>
       </plugin>
 
-      <!-- disable surefire plugin tests-->
-      <!--<plugin>-->
-      <!--<groupId>org.apache.maven.plugins</groupId>-->
-      <!--<artifactId>maven-surefire-plugin</artifactId>-->
-      <!--<configuration>-->
-      <!--<skipTests>true</skipTests>-->
-      <!--</configuration>-->
-      <!--</plugin>-->
-
-      <!-- enable scalatest plugin -->
-      <!--<plugin>-->
-      <!--<groupId>org.scalatest</groupId>-->
-      <!--<artifactId>scalatest-maven-plugin</artifactId>-->
-      <!--</plugin>-->
-
     </plugins>
 
     <pluginManagement>
@@ -339,7 +324,7 @@ mvn clean install -P maven-plugin-dependent
             <execution>
               <goals>
                 <goal>generate-sources</goal>
-                <goal>generate-test-sources</goal>
+                <!--<goal>generate-test-sources</goal>-->
               </goals>
             </execution>
           </executions>
