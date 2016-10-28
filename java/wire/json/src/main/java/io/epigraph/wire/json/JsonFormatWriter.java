@@ -238,9 +238,9 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
       if (valueData != null) {
         if (comma) out.write(',');
         else comma = true;
-        out.write("{\"key\":");
+        out.write("{\"" + JsonFormat.MAP_ENTRY_KEY_FIELD + "\":");
         writeDatum(key);
-        out.write(",\"value\":");
+        out.write(",\"" + JsonFormat.MAP_ENTRY_VALUE_FIELD + "\":");
         Deque<? extends ReqOutputVarProjection> flatValueProjections = polymorphicCache == null
             ? valueProjections
             : polymorphicCache.computeIfAbsent(valueData.type(), t -> flatten(new ArrayDeque<>(), valueProjections, t));

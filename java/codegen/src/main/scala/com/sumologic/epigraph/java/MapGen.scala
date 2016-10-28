@@ -359,14 +359,14 @@ ${t.effectiveDefaultValueTagName match { // default value tag (if defined) views
     }
 
     ${"/**"} Associates specified${vt(vt, s" default `$dtn` tag", "")} datum with specified key in this map. */
-    public @NotNull $ln.Builder put(@NotNull ${lqn(kt, t)}.Imm key, @Nullable ${lqn(tt(vtr, dtn), t)} datum) {
-      datas().put(key, ${lqn(vt, t)}.Type.instance().createDataBuilder().set${vt(vt, up(dtn), "")}(datum));
+    public @NotNull $ln.Builder put(@NotNull ${lqn(kt, t)} key, @Nullable ${lqn(tt(vtr, dtn), t)} datum) {
+      datas().put(key.toImmutable(), ${lqn(vt, t)}.Type.instance().createDataBuilder().set${vt(vt, up(dtn), "")}(datum));
       return this;
     }
 
     ${"/**"} Associates specified${vt(vt, s" default `$dtn` tag", "")} value with specified key in this map. */
-    public @NotNull $ln.Builder put_(@NotNull ${lqn(kt, t)}.Imm key, @Nullable ${lqn(tt(vtr, dtn), t)}.Value value) {
-      datas().put(key, ${lqn(vt, t)}.Type.instance().createDataBuilder().set${vt(vt, up(dtn), "")}_(value));
+    public @NotNull $ln.Builder put_(@NotNull ${lqn(kt, t)} key, @Nullable ${lqn(tt(vtr, dtn), t)}.Value value) {
+      datas().put(key.toImmutable(), ${lqn(vt, t)}.Type.instance().createDataBuilder().set${vt(vt, up(dtn), "")}_(value));
       return this;
     }
 """
@@ -382,8 +382,8 @@ ${vt match { // data view (for vartypes)
     }
 
     ${"/**"} Associates specified data with specified key in this map. */
-    public @NotNull $ln.Builder put$$(@NotNull ${lqn(kt, t)}.Imm key, @NotNull ${lqn(vt, t)} data) {
-      datas().put(key, data);
+    public @NotNull $ln.Builder put$$(@NotNull ${lqn(kt, t)} key, @NotNull ${lqn(vt, t)} data) {
+      datas().put(key.toImmutable(), data);
       return this;
     }
 ${

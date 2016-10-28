@@ -19,9 +19,9 @@ public class JsonFormat implements WireFormat {
 
   public static final @NotNull String POLYMORPHIC_VALUE_FIELD = "data";
 
-  public static final @NotNull String MAP_ENTRY_KEY_FIELD = "key";
+  public static final @NotNull String MAP_ENTRY_KEY_FIELD = "K";
 
-  public static final @NotNull String MAP_ENTRY_VALUE_FIELD = "value";
+  public static final @NotNull String MAP_ENTRY_VALUE_FIELD = "V";
 
   @Override
   public @NotNull String name() { return NAME; }
