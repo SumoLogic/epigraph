@@ -38,7 +38,7 @@
   * [x] Adding supertypes to existing data types
   * [x] Adding supertypes to existing var types
 
-#### 1.7. Structured data templates
+#### 1.7. Structured data templates (projections)
   * [ ] Request templates
   * [ ] Input data templates
   * [ ] Output templates
@@ -111,11 +111,7 @@
   * [ ] Mutable data
   * [ ] Data builders
 
-### 8. HTTP Service container
-  * [ ] Asynchronous
-  * [ ] Wire protocols:
-    * [ ] JSON(s)
-    * [ ] Binary
+### 8.
 
 ### 9. IDL
   * [ ] File extension (.sdl - Service Description Language? .scl - Service Contract Language?)
@@ -146,3 +142,9 @@
   * [ ] Custom binary
 
 ### 13. Federation / composition / orchestration library
+
+
+### 14. Service client bindings
+  * [ ] Java
+    * [ ] Generic request builders, response parsers
+    * [ ] Service/resource/operation specific generated code
