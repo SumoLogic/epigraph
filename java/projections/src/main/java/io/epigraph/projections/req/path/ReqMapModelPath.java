@@ -29,13 +29,12 @@ public class ReqMapModelPath
 
   public ReqMapModelPath(
       @NotNull MapType model,
-      boolean required,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
       @NotNull ReqPathKeyProjection key,
       @NotNull ReqVarPath valuesProjection,
       @NotNull TextLocation location) {
-    super(model, required, params, annotations, location);
+    super(model, params, annotations, location);
     this.key = key;
     this.valuesProjection = valuesProjection;
   }

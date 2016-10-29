@@ -7,6 +7,7 @@ import io.epigraph.projections.abs.AbstractProjectionsPrettyPrinter;
 import io.epigraph.projections.req.ReqParam;
 import io.epigraph.projections.req.ReqParams;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
@@ -25,6 +26,14 @@ public class ReqPathPrettyPrinter<E extends Exception>
   }
 
   @Override
+  protected void printVarOnly(@NotNull ReqVarPath p, int pathSteps) throws E {
+    // no tags = end of path
+    if (!p.tagProjections().isEmpty()) {
+      super.printVarOnly(p, pathSteps);
+    }
+  }
+
+  @Override
   public void print(@NotNull String tagName, @NotNull ReqTagPath tp, int pathSteps) throws E {
     ReqModelPath<?, ?> projection = tp.projection();
 
@@ -32,7 +41,6 @@ public class ReqPathPrettyPrinter<E extends Exception>
     Annotations annotations = projection.annotations();
 
     l.beginCInd();
-    if (projection.required()) l.print("+");
     l.print(tagName);
 
     printParams(params);
@@ -48,39 +56,28 @@ public class ReqPathPrettyPrinter<E extends Exception>
   @Override
   public void print(@NotNull ReqModelPath<?, ?> mp, int pathSteps) throws E {
     if (mp instanceof ReqRecordModelPath)
-      print((ReqRecordModelPath) mp, pathSteps);
+      print((ReqRecordModelPath) mp);
     else if (mp instanceof ReqMapModelPath)
-      print((ReqMapModelPath) mp, pathSteps);
+      print((ReqMapModelPath) mp);
   }
 
-  private void print(@NotNull ReqRecordModelPath mp, int pathSteps) throws E {
-    Map<String, ReqFieldPathEntry> fieldProjections = mp.fieldProjections();
+  private void print(@NotNull ReqRecordModelPath mp) throws E {
+    @Nullable final ReqFieldPathEntry fieldProjectionEntry = mp.pathFieldProjection();
 
-    if (pathSteps > 0) {
-      if (fieldProjections.isEmpty()) return;
-      if (fieldProjections.size() > 1) throw new IllegalArgumentException(
-          String.format("Encountered %d fields while still having %d path steps", fieldProjections.size(), pathSteps)
-      );
-
-      Map.Entry<String, ReqFieldPathEntry> entry = fieldProjections.entrySet().iterator().next();
+    if (fieldProjectionEntry != null) {
       l.beginIInd();
       l.print("/").brk();
-      print(entry.getKey(), entry.getValue().projection(), decSteps(pathSteps));
+      print(fieldProjectionEntry.field().name(), fieldProjectionEntry.projection());
       l.end();
-
-    } else {
-      throw new IllegalStateException();
     }
   }
 
-  public void print(@NotNull String fieldName, @NotNull ReqFieldPath fieldProjection, int pathSteps)
-      throws E {
+  public void print(@NotNull String fieldName, @NotNull ReqFieldPath fieldProjection) throws E {
 
     @NotNull ReqVarPath fieldVarProjection = fieldProjection.projection();
     @NotNull Annotations fieldAnnotations = fieldProjection.annotations();
 
     l.beginIInd();
-    if (fieldProjection.required()) l.print("+");
     l.print(fieldName);
 
     printParams(fieldProjection.reqParams());
@@ -88,28 +85,24 @@ public class ReqPathPrettyPrinter<E extends Exception>
 
     if (!isPrintoutEmpty(fieldVarProjection)) {
       l.brk();
-      print(fieldVarProjection, pathSteps);
+      print(fieldVarProjection, 1);
     }
     l.end();
   }
 
-  private void print(ReqMapModelPath mp, int pathSteps) throws E {
+  private void print(ReqMapModelPath mp) throws E {
     @NotNull final ReqPathKeyProjection key = mp.key();
 
-    if (pathSteps > 0) {
-      l.beginIInd();
-      l.print("/").brk();
+    l.beginIInd();
+    l.print("/").brk();
 
-      dataPrinter.print(key.value());
-      printParams(key.params());
-      printAnnotations(key.annotations());
+    dataPrinter.print(key.value());
+    printParams(key.params());
+    printAnnotations(key.annotations());
 
-      l.brk();
-      print(mp.itemsProjection(), decSteps(pathSteps));
-      l.end();
-    } else {
-      throw new IllegalStateException();
-    }
+    l.brk();
+    print(mp.itemsProjection(), 1);
+    l.end();
   }
 
   @Override
@@ -125,7 +118,6 @@ public class ReqPathPrettyPrinter<E extends Exception>
   }
 
   private void printParams(@NotNull ReqParams params) throws E { // move to req common?
-    l.beginCInd();
     if (!params.isEmpty()) {
       for (ReqParam param : params.params().values()) {
         l.brk().beginIInd();
@@ -134,11 +126,15 @@ public class ReqPathPrettyPrinter<E extends Exception>
         l.end();
       }
     }
-    l.end();
+  }
+
+  @Override
+  protected boolean isPrintoutEmpty(@NotNull ReqVarPath varPath) {
+    // no tags = end of path = empty printout
+    return varPath.tagProjections().isEmpty() || super.isPrintoutEmpty(varPath);
   }
 
   private void printAnnotations(@NotNull Annotations annotations) throws E {
-    l.beginCInd();
     if (!annotations.isEmpty()) {
       for (Annotation annotation : annotations.params().values()) {
         l.brk().beginIInd();
@@ -147,6 +143,5 @@ public class ReqPathPrettyPrinter<E extends Exception>
         l.end();
       }
     }
-    l.end();
   }
 }

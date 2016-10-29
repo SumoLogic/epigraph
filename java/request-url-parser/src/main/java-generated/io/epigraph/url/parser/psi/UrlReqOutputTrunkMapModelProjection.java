@@ -13,7 +13,7 @@ public interface UrlReqOutputTrunkMapModelProjection extends PsiElement {
   @NotNull
   List<UrlReqAnnotation> getReqAnnotationList();
 
-  @Nullable
+  @NotNull
   UrlReqOutputTrunkVarProjection getReqOutputTrunkVarProjection();
 
   @NotNull

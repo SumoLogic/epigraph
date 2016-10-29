@@ -3,6 +3,7 @@
 
 # Framework
 - [ ] JSON unmarshaller
+  -[ ] recursive data support?
 - [ ] Format for parameter values in URL. Currently: GData with single quotes.
 - [ ] `*PsiParser` should accumulate errors in the context instead of throwing `PsiProcessingException`
 
@@ -17,6 +18,7 @@
 - [ ] Annotations support. Should they be inherited? Annotations on annotations?
 - [ ] Verbose mode? (propagate it from gradle/maven)
 - [ ] (anonymous) types should be collected from `*.eidl` files too
+- [ ] Build an index of types in `META-INF`. Type name to schema file?
 
 # Maven plugin
 - [ ] Scan `*.eidl` files too
@@ -33,7 +35,9 @@
 # Projections
 - [x] see `operations.esc`, bring java classes in sync
 - [x] var projection: add `@Nullable getPathTagProjection`. Same for records and maps
+- [ ] remove `includeInDefault` from `Op*` projections, add '*' to request projections instead
 - [ ] remove default tags from op projections. If var type has default tag (in schema), and operation can build this tag -- then it becomes an implicit default
+- [ ] support for recursive projections
 
 # Operations  
 - [ ] ***see `operations.esc`, restructure operations accordingly***

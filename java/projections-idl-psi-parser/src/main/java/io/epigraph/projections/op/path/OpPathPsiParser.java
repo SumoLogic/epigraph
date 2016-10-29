@@ -28,7 +28,7 @@ import static io.epigraph.projections.op.OpParserUtil.parseParameter;
  */
 public class OpPathPsiParser {
 
-  public static OpVarPath parseVarProjection(
+  public static OpVarPath parseVarPath(
       @NotNull DataType dataType,
       @NotNull IdlOpVarPath psi,
       @NotNull TypesResolver typesResolver)
@@ -39,6 +39,9 @@ public class OpPathPsiParser {
     @Nullable IdlOpModelPath modelProjection = psi.getOpModelPath();
 
     if (isModelPathEmpty(modelProjection)) {
+      if (psi.getTagName() != null)
+        throw new PsiProcessingException("Path can't end with a tag", psi.getTagName());
+
       return new OpVarPath(
           type,
           null, // no tags = end of path
@@ -56,7 +59,7 @@ public class OpPathPsiParser {
     @NotNull List<IdlOpModelPathProperty> modelPropertiesPsi =
         psi.getOpModelPathPropertyList();
 
-    final OpModelPath<?, ?> parsedModelProjection = parseModelProjection(
+    final OpModelPath<?, ?> parsedModelProjection = parseModelPath(
         tag.type,
         parseModelParams(modelPropertiesPsi, typesResolver),
         parseModelAnnotations(modelPropertiesPsi),
@@ -104,7 +107,7 @@ public class OpPathPsiParser {
   }
 
   @NotNull
-  private static OpVarPath createDefaultVarProjection(
+  private static OpVarPath createDefaultVarPath(
       @NotNull Type type,
       @NotNull Type.Tag tag,
       @NotNull PsiElement locationPsi) throws PsiProcessingException {
@@ -112,7 +115,7 @@ public class OpPathPsiParser {
         type,
         new OpTagPath(
             tag,
-            createDefaultModelProjection(
+            createDefaultModelPath(
                 tag.type,
                 OpParams.EMPTY,
                 Annotations.EMPTY,
@@ -125,15 +128,15 @@ public class OpPathPsiParser {
   }
 
   @NotNull
-  private static OpVarPath createDefaultVarProjection(
+  private static OpVarPath createDefaultVarPath(
       @NotNull DatumType type,
       @NotNull PsiElement locationPsi)
       throws PsiProcessingException {
-    return createDefaultVarProjection(type, type.self, locationPsi);
+    return createDefaultVarPath(type, type.self, locationPsi);
   }
 
   @NotNull
-  private static OpVarPath createDefaultVarProjection(
+  private static OpVarPath createDefaultVarPath(
       @NotNull DataType type,
       @NotNull PsiElement locationPsi)
       throws PsiProcessingException {
@@ -144,7 +147,7 @@ public class OpPathPsiParser {
           String.format("Can't build default projection for '%s', default tag not specified", type.name), locationPsi
       );
 
-    return createDefaultVarProjection(type.type, defaultTag, locationPsi);
+    return createDefaultVarPath(type.type, defaultTag, locationPsi);
   }
 
   private static boolean isModelPathEmpty(@Nullable IdlOpModelPath pathPsi) {
@@ -155,7 +158,7 @@ public class OpPathPsiParser {
   }
 
   @NotNull
-  public static OpModelPath<?, ?> parseModelProjection(
+  public static OpModelPath<?, ?> parseModelPath(
       @NotNull DatumType type,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
@@ -167,9 +170,9 @@ public class OpPathPsiParser {
       case RECORD:
         @Nullable IdlOpRecordModelPath recordModelProjectionPsi = psi.getOpRecordModelPath();
         if (recordModelProjectionPsi == null)
-          return createDefaultModelProjection(type, params, annotations, psi);
+          return createDefaultModelPath(type, params, annotations, psi);
         ensureModelKind(psi, TypeKind.RECORD);
-        return parseRecordModelProjection(
+        return parseRecordModelPath(
             (RecordType) type,
             params,
             annotations,
@@ -179,10 +182,10 @@ public class OpPathPsiParser {
       case MAP:
         @Nullable IdlOpMapModelPath mapModelProjectionPsi = psi.getOpMapModelPath();
         if (mapModelProjectionPsi == null)
-          return createDefaultModelProjection(type, params, annotations, psi);
+          return createDefaultModelPath(type, params, annotations, psi);
         ensureModelKind(psi, TypeKind.MAP);
 
-        return parseMapModelProjection(
+        return parseMapModelPath(
             (MapType) type,
             params,
             annotations,
@@ -194,7 +197,7 @@ public class OpPathPsiParser {
       case ENUM:
         throw new PsiProcessingException("Unsupported type kind: " + type.kind(), psi);
       case PRIMITIVE:
-        return parsePrimitiveModelProjection(
+        return parsePrimitiveModelPath(
             (PrimitiveType) type,
             params,
             annotations,
@@ -227,7 +230,7 @@ public class OpPathPsiParser {
   }
 
   @NotNull
-  private static OpModelPath<?, ?> createDefaultModelProjection(
+  private static OpModelPath<?, ?> createDefaultModelPath(
       @NotNull DatumType type,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
@@ -263,7 +266,7 @@ public class OpPathPsiParser {
               valueType.name
           ), locationPsi);
 
-        final OpVarPath valueVarProjection = createDefaultVarProjection(
+        final OpVarPath valueVarProjection = createDefaultVarPath(
             valueType.type,
             defaultValuesTag,
             locationPsi
@@ -296,7 +299,7 @@ public class OpPathPsiParser {
   }
 
   @NotNull
-  public static OpRecordModelPath parseRecordModelProjection(
+  public static OpRecordModelPath parseRecordModelPath(
       @NotNull RecordType type,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
@@ -344,9 +347,9 @@ public class OpPathPsiParser {
         ), fieldProjectionPsi);
 
       varProjection =
-          createDefaultVarProjection(fieldDataType.type, defaultFieldTag, fieldProjectionPsi);
+          createDefaultVarPath(fieldDataType.type, defaultFieldTag, fieldProjectionPsi);
     } else {
-      varProjection = parseVarProjection(field.dataType(), psiVarProjection, typesResolver);
+      varProjection = parseVarPath(field.dataType(), psiVarProjection, typesResolver);
     }
 
     @NotNull final TextLocation fieldLocation = EpigraphPsiUtil.getLocation(fieldProjectionPsi);
@@ -372,7 +375,7 @@ public class OpPathPsiParser {
   }
 
   @NotNull
-  public static OpMapModelPath parseMapModelProjection(
+  public static OpMapModelPath parseMapModelPath(
       @NotNull MapType type,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
@@ -387,7 +390,7 @@ public class OpPathPsiParser {
     if (valueProjectionPsi == null)
       throw new PsiProcessingException("Map value projection not specified", psi);
 
-    @NotNull OpVarPath valueProjection = parseVarProjection(type.valueType(), valueProjectionPsi, resolver);
+    @NotNull OpVarPath valueProjection = parseVarPath(type.valueType(), valueProjectionPsi, resolver);
 
     return new OpMapModelPath(
         type,
@@ -428,7 +431,7 @@ public class OpPathPsiParser {
   }
 
   @NotNull
-  public static OpPrimitiveModelPath parsePrimitiveModelProjection(
+  public static OpPrimitiveModelPath parsePrimitiveModelPath(
       @NotNull PrimitiveType type,
       @NotNull OpParams params,
       @NotNull Annotations annotations,

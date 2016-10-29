@@ -16,10 +16,9 @@ public class ReqPrimitiveModelPath
 
   public ReqPrimitiveModelPath(
       @NotNull PrimitiveType model,
-      boolean required,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
       @NotNull TextLocation location) {
-    super(model, required, params, annotations, location);
+    super(model, params, annotations, location);
   }
 }

@@ -18,6 +18,11 @@ public class ReqParams {
     return params == null ? EMPTY : new ReqParams(params);
   }
 
+  @NotNull
+  public static ReqParams fromCollection(@Nullable Collection<ReqParam> params) {
+    return params == null ? EMPTY : new ReqParams(params);
+  }
+
   public ReqParams(@NotNull Map<String, ReqParam> params) {this.params = params;}
 
   public ReqParams(ReqParam... params) {

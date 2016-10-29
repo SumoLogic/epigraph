@@ -14,14 +14,11 @@ import org.jetbrains.annotations.NotNull;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class IdlSubParserDefinitions {
-  @NotNull
-  public static final IdlSubParserDefinitions.IdlSubParserDefinition OP_OUTPUT_VAR_PROJECTION =
-      new IdlSubParserDefinition(I_OP_OUTPUT_VAR_PROJECTION);
-  @NotNull
-  public static final IdlSubParserDefinitions.IdlSubParserDefinition OP_INPUT_VAR_PROJECTION =
-      new IdlSubParserDefinition(I_OP_INPUT_VAR_PROJECTION);
-  public static final IdlSubParserDefinitions.IdlSubParserDefinition OP_DELETE_VAR_PROJECTION =
-      new IdlSubParserDefinition(I_OP_DELETE_VAR_PROJECTION);
+  public static final IdlSubParserDefinition OP_VAR_PATH = new IdlSubParserDefinition(I_OP_VAR_PATH);
+  public static final IdlSubParserDefinition OP_OUTPUT_VAR_PROJECTION = new IdlSubParserDefinition(I_OP_OUTPUT_VAR_PROJECTION);
+  public static final IdlSubParserDefinition OP_INPUT_VAR_PROJECTION = new IdlSubParserDefinition(I_OP_INPUT_VAR_PROJECTION);
+  public static final IdlSubParserDefinition OP_DELETE_VAR_PROJECTION = new IdlSubParserDefinition(I_OP_DELETE_VAR_PROJECTION);
+
   @NotNull
   public static final IdlSubParserDefinitions.IdlSubParserDefinition DATA_VALUE =
       new IdlSubParserDefinition(I_DATA_VALUE);

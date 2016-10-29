@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class TypeRefs {
+public class TypeRefs { // todo create and move to url-psi-parser-common?
   @NotNull
   public static TypeRef fromPsi(@NotNull UrlTypeRef psi) throws PsiProcessingException {
     if (psi instanceof UrlQnTypeRef) {

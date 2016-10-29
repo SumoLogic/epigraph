@@ -39,9 +39,9 @@ public class UrlReqOutputTrunkMapModelProjectionImpl extends ASTWrapperPsiElemen
   }
 
   @Override
-  @Nullable
+  @NotNull
   public UrlReqOutputTrunkVarProjection getReqOutputTrunkVarProjection() {
-    return findChildByClass(UrlReqOutputTrunkVarProjection.class);
+    return findNotNullChildByClass(UrlReqOutputTrunkVarProjection.class);
   }
 
   @Override

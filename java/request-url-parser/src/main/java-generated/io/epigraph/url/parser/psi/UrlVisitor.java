@@ -79,6 +79,10 @@ public class UrlVisitor extends PsiElementVisitor {
     visitTypeRef(o);
   }
 
+  public void visitReadUrl(@NotNull UrlReadUrl o) {
+    visitPsiElement(o);
+  }
+
   public void visitRecordDatum(@NotNull UrlRecordDatum o) {
     visitDatum(o);
   }
@@ -88,6 +92,18 @@ public class UrlVisitor extends PsiElementVisitor {
   }
 
   public void visitReqAnnotation(@NotNull UrlReqAnnotation o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqFieldPath(@NotNull UrlReqFieldPath o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqMapModelPath(@NotNull UrlReqMapModelPath o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqModelPath(@NotNull UrlReqModelPath o) {
     visitPsiElement(o);
   }
 
@@ -180,6 +196,14 @@ public class UrlVisitor extends PsiElementVisitor {
   }
 
   public void visitReqParam(@NotNull UrlReqParam o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqRecordModelPath(@NotNull UrlReqRecordModelPath o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqVarPath(@NotNull UrlReqVarPath o) {
     visitPsiElement(o);
   }
 

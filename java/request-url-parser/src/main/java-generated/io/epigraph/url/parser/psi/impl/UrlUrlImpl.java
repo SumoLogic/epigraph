@@ -28,26 +28,8 @@ public class UrlUrlImpl extends ASTWrapperPsiElement implements UrlUrl {
 
   @Override
   @NotNull
-  public UrlQid getQid() {
-    return findNotNullChildByClass(UrlQid.class);
-  }
-
-  @Override
-  @NotNull
-  public UrlReqOutputTrunkFieldProjection getReqOutputTrunkFieldProjection() {
-    return findNotNullChildByClass(UrlReqOutputTrunkFieldProjection.class);
-  }
-
-  @Override
-  @NotNull
-  public List<UrlRequestParam> getRequestParamList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, UrlRequestParam.class);
-  }
-
-  @Override
-  @NotNull
-  public PsiElement getSlash() {
-    return findNotNullChildByType(U_SLASH);
+  public UrlReadUrl getReadUrl() {
+    return findNotNullChildByClass(UrlReadUrl.class);
   }
 
 }

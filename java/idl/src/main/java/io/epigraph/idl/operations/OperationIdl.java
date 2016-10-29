@@ -28,9 +28,9 @@ public abstract class OperationIdl {
   protected final OperationKind type;
   @Nullable
   protected final String name;
-  @Nullable
+  @NotNull
   protected final OpParams params;
-  @Nullable
+  @NotNull
   protected final Annotations annotations;
   @Nullable
   protected final OpVarPath path;
@@ -44,8 +44,8 @@ public abstract class OperationIdl {
   protected OperationIdl(
       @NotNull OperationKind type,
       @Nullable String name,
-      @Nullable OpParams params,
-      @Nullable Annotations annotations,
+      @NotNull OpParams params,
+      @NotNull Annotations annotations,
       @Nullable OpVarPath path,
       @Nullable OpInputModelProjection<?, ?, ?> inputProjection,
       @NotNull OpOutputVarProjection outputProjection,
@@ -68,10 +68,10 @@ public abstract class OperationIdl {
 
   public boolean isDefault() { return name == null; }
 
-  @Nullable
+  @NotNull
   public OpParams params() { return params; }
 
-  @Nullable
+  @NotNull
   public Annotations annotations() { return annotations; }
 
   @Nullable

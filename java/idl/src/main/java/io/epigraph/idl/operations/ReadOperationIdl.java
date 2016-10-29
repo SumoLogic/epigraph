@@ -18,8 +18,8 @@ import java.util.List;
 public class ReadOperationIdl extends OperationIdl {
   protected ReadOperationIdl(
       @Nullable String name,
-      @Nullable OpParams params,
-      @Nullable Annotations annotations,
+      @NotNull OpParams params,
+      @NotNull Annotations annotations,
       @Nullable OpVarPath path,
       @NotNull OpOutputVarProjection outputProjection,
       @NotNull TextLocation location) {

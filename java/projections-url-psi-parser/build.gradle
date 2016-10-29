@@ -1,0 +1,19 @@
+apply plugin: 'java'
+
+dependencies {
+  compile project(':epigraph-java-core')
+  compile project(':epigraph-java-gdata')
+  compile project(':epigraph-java-projections')
+  compile project(':epigraph-java-request-url-parser')
+  compile project(':epigraph-lang-common')
+  compile project(':epigraph-light-psi')
+  compile project(':epigraph-standalone-psi-util')
+
+  compile 'org.jetbrains:annotations'
+
+  testCompile project(':tests-schema-java')
+  testCompile project(':epigraph-java-projections-idl-psi-parser')
+  testCompile 'junit:junit'
+  testCompile 'org.slf4j:slf4j-nop'
+  testCompile 'com.io7m.jpplib:io7m-jpplib-core'
+}

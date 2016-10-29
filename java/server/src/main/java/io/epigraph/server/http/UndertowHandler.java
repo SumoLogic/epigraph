@@ -10,9 +10,7 @@ import io.epigraph.data.Datum;
 import io.epigraph.idl.ResourceIdl;
 import io.epigraph.idl.operations.ReadOperationIdl;
 import io.epigraph.printers.DataPrinter;
-import io.epigraph.projections.Annotations;
 import io.epigraph.projections.StepsAndProjection;
-import io.epigraph.projections.op.output.OpOutputFieldProjection;
 import io.epigraph.projections.req.output.ReqOutputFieldProjection;
 import io.epigraph.projections.req.output.ReqOutputVarProjection;
 import io.epigraph.psi.EpigraphPsiUtil;
@@ -22,17 +20,17 @@ import io.epigraph.service.*;
 import io.epigraph.service.operations.ReadOperation;
 import io.epigraph.service.operations.ReadOperationRequest;
 import io.epigraph.service.operations.ReadOperationResponse;
+import io.epigraph.url.ReadRequestUrl;
+import io.epigraph.url.ReadRequestUrlPsiParser;
 import io.epigraph.url.RequestUrl;
-import io.epigraph.url.RequestUrlPsiParser;
-import io.epigraph.url.parser.UrlParserDefinition;
-import io.epigraph.url.parser.psi.UrlFile;
+import io.epigraph.url.parser.projections.UrlSubParserDefinitions;
+import io.epigraph.url.parser.psi.UrlReadUrl;
 import io.epigraph.wire.json.JsonFormatWriter;
 import io.undertow.UndertowOptions;
 import io.undertow.io.Sender;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.*;
-import org.intellij.grammar.LightPsi;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -87,10 +85,10 @@ public class UndertowHandler implements HttpHandler {
       String resourceName = matcher.group(1);
       Resource resource = ResourceRouter.findResource(resourceName, service);
 
-      UrlFile urlFilePsi = parsePsi(decodedUri, exchange);
+      UrlReadUrl urlPsi = parseReadPsi(decodedUri, exchange);
 
       if (requestMethod.equals(Methods.GET)) {
-        handleReadRequest(resource, urlFilePsi, exchange);
+        handleReadRequest(resource, urlPsi, exchange);
         // todo handle the rest
       } else {
         badRequest("Unknown HTTP method '" + requestMethod + "'\n", TEXT, exchange);
@@ -133,9 +131,10 @@ public class UndertowHandler implements HttpHandler {
     );
   }
 
-  private void handleReadRequest(@NotNull Resource resource,
-                                 @NotNull UrlFile urlFilePsi,
-                                 @NotNull HttpServerExchange exchange)
+  private void handleReadRequest(
+      @NotNull Resource resource,
+      @NotNull UrlReadUrl urlPsi,
+      @NotNull HttpServerExchange exchange)
       throws ResourceNotFoundException, OperationNotFoundException, RequestFailedException {
 
     @Nullable String operationName = getOperationName(exchange.getQueryParameters());
@@ -146,20 +145,21 @@ public class UndertowHandler implements HttpHandler {
 
     try {
       @Nullable
-      final RequestUrl requestUrl = parseRequestUrl(urlFilePsi, resourceDeclaration, operationDeclaration);
+      final RequestUrl requestUrl = parseReadRequestUrl(urlPsi, resourceDeclaration, operationDeclaration);
 
       // parse output projection
-      @NotNull StepsAndProjection<ReqOutputFieldProjection> stepsAndProjection = requestUrl.fieldProjection();
+      @NotNull StepsAndProjection<ReqOutputFieldProjection> stepsAndProjection = requestUrl.outputProjection();
 
       // run operation
       CompletableFuture<? extends ReadOperationResponse> future =
           operation.process(new ReadOperationRequest(stepsAndProjection.projection()));
 
       // send response back
-      handleReadResponse(stepsAndProjection.pathSteps(),
-                         stepsAndProjection.projection().projection(),
-                         future,
-                         exchange
+      handleReadResponse(
+          stepsAndProjection.pathSteps(),
+          stepsAndProjection.projection().projection(),
+          future,
+          exchange
       );
     } catch (PsiProcessingException e) {
       StringBuilder sb = new StringBuilder();
@@ -168,11 +168,11 @@ public class UndertowHandler implements HttpHandler {
 
       if (htmlAccepted(exchange)) {
         appendHtmlErrorHeader(sb);
-        addPsiErrorHtml(sb, urlFilePsi.getText(), textRange, errorDescription);
+        addPsiErrorHtml(sb, urlPsi.getText(), textRange, errorDescription);
         appendHtmlErrorFooter(sb);
         badRequest(sb.toString(), HTML, exchange);
       } else {
-        addPsiErrorPlainText(sb, urlFilePsi.getText(), textRange, errorDescription);
+        addPsiErrorPlainText(sb, urlPsi.getText(), textRange, errorDescription);
         badRequest(sb.toString(), TEXT, exchange);
       }
 
@@ -181,20 +181,16 @@ public class UndertowHandler implements HttpHandler {
   }
 
   @NotNull
-  private RequestUrl parseRequestUrl(@NotNull UrlFile urlFilePsi,
-                                     ResourceIdl resourceDeclaration,
-                                     ReadOperationIdl operationDeclaration) throws PsiProcessingException {
+  private RequestUrl parseReadRequestUrl(
+      @NotNull UrlReadUrl urlPsi,
+      @NotNull ResourceIdl resourceDeclaration,
+      @NotNull ReadOperationIdl operationDeclaration) throws PsiProcessingException {
+
     @Nullable
-    final RequestUrl requestUrl = RequestUrlPsiParser.parseRequestUrl(
+    final ReadRequestUrl requestUrl = ReadRequestUrlPsiParser.parseReadRequestUrl(
         resourceDeclaration.fieldType(),
-        new OpOutputFieldProjection(
-            operationDeclaration.params(),
-            Annotations.EMPTY,
-            operationDeclaration.outputProjection(),
-            true,
-            resourceDeclaration.location()
-        ),
-        urlFilePsi,
+        operationDeclaration,
+        urlPsi,
         typesResolver
     );
 
@@ -228,10 +224,11 @@ public class UndertowHandler implements HttpHandler {
     });
   }
 
-  private void writeDataResponse(final int pathSteps,
-                                 @NotNull ReqOutputVarProjection reqProjection,
-                                 @Nullable Data data,
-                                 @NotNull HttpServerExchange exchange) {
+  private void writeDataResponse(
+      final int pathSteps,
+      @NotNull ReqOutputVarProjection reqProjection,
+      @Nullable Data data,
+      @NotNull HttpServerExchange exchange) {
 
     // todo validate response: e.g. all required parts must be present
 
@@ -276,9 +273,10 @@ public class UndertowHandler implements HttpHandler {
 
     } catch (DataPathRemover.AmbiguousPathException e) {
       serverError(
-          String.format("Can't remove %d path steps from data: \n%s\n",
-                        stepsToRemove,
-                        dataToString(trimmedData)
+          String.format(
+              "Can't remove %d path steps from data: \n%s\n",
+              stepsToRemove,
+              dataToString(trimmedData)
           ),
           TEXT,
           exchange
@@ -298,9 +296,10 @@ public class UndertowHandler implements HttpHandler {
     writeResponse(StatusCodes.BAD_REQUEST, message, contentType, exchange);
   }
 
-  private void serverError(@Nullable String message,
-                           @NotNull String contentType,
-                           @NotNull HttpServerExchange exchange) {
+  private void serverError(
+      @Nullable String message,
+      @NotNull String contentType,
+      @NotNull HttpServerExchange exchange) {
     writeResponse(StatusCodes.INTERNAL_SERVER_ERROR, message, contentType, exchange);
   }
 
@@ -360,14 +359,19 @@ public class UndertowHandler implements HttpHandler {
     return deque.iterator().next();
   }
 
-  private UrlFile parsePsi(
-      @NotNull String projectionString,
+  private UrlReadUrl parseReadPsi(
+      @NotNull String urlString,
       @NotNull HttpServerExchange exchange) throws RequestFailedException {
 
-    final UrlFile psiFile = (UrlFile) LightPsi.parseFile("url", projectionString, UrlParserDefinition.INSTANCE);
-
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
-    EpigraphPsiUtil.collectErrors(psiFile,errorsAccumulator);
+
+    UrlReadUrl urlPsi = EpigraphPsiUtil.parseText(
+        urlString,
+        UrlSubParserDefinitions.READ_URL.rootElementType(),
+        UrlReadUrl.class,
+        UrlSubParserDefinitions.READ_URL,
+        errorsAccumulator
+    );
 
     if (errorsAccumulator.hasErrors()) {
       // try to highlight errors
@@ -390,9 +394,9 @@ public class UndertowHandler implements HttpHandler {
         TextRange textRange = errorElement.getTextRange();
         String errorDescription = errorElement.getErrorDescription();
         if (htmlAccepted)
-          addPsiErrorHtml(sb, projectionString, textRange, errorDescription);
+          addPsiErrorHtml(sb, urlString, textRange, errorDescription);
         else
-          addPsiErrorPlainText(sb, projectionString, textRange, errorDescription);
+          addPsiErrorPlainText(sb, urlString, textRange, errorDescription);
       }
 
       if (htmlAccepted) {
@@ -406,14 +410,15 @@ public class UndertowHandler implements HttpHandler {
       throw RequestFailedException.INSTANCE;
     }
 
-    return psiFile;
+    return urlPsi;
   }
 
 
-  private void addPsiErrorPlainText(StringBuilder sb,
-                                    String projectionString,
-                                    TextRange textRange,
-                                    String errorDescription) {
+  private void addPsiErrorPlainText(
+      StringBuilder sb,
+      String projectionString,
+      TextRange textRange,
+      String errorDescription) {
 
     final int startOffset = textRange.getStartOffset();
     final int endOffset = textRange.getEndOffset();
@@ -442,10 +447,11 @@ public class UndertowHandler implements HttpHandler {
     }
   }
 
-  private void addPsiErrorHtml(StringBuilder sb,
-                               String projectionString,
-                               TextRange textRange,
-                               String errorDescription) {
+  private void addPsiErrorHtml(
+      StringBuilder sb,
+      String projectionString,
+      TextRange textRange,
+      String errorDescription) {
 
     int startOffset = textRange.getStartOffset();
     int endOffset = textRange.getEndOffset();

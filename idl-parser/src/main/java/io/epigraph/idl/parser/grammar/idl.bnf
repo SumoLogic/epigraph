@@ -253,9 +253,8 @@ private opParamBodyPart ::= annotation
 // :tag / field / * / field
 // :tag { ;foo:String } / field { ;foo:String } / * { ;foo:String }
 
-opVarPath ::= ( ':' tagName)? (opComplexTagPath | opSimpleTagPath )
-private opSimpleTagPath ::= opModelPath
-private opComplexTagPath ::= '{' (opModelPathProperty ','?)* opModelPath '}' {pin=1}
+opVarPath ::= ( ':' tagName)? opVarPathBody? opModelPath
+private opVarPathBody ::= '{' (opModelPathProperty ','?)* '}' {pin=1}
 
 opModelPathProperty ::= opParam | annotation
 
@@ -265,9 +264,8 @@ opModelPath ::= ( opRecordModelPath
 
 // op record path
 opRecordModelPath ::= '/' opFieldPath
-opFieldPath ::= qid (opComplexFieldPath | opSimpleFieldPath) {pin=1}
-private opComplexFieldPath ::= '{' (opFieldPathBodyPart ','? )* opVarPath? '}'
-private opSimpleFieldPath ::= opVarPath
+opFieldPath ::= qid opFieldPathBody? opVarPath {pin=1}
+private opFieldPathBody ::= '{' (opFieldPathBodyPart ','? )* '}'
 opFieldPathBodyPart ::= opParam | annotation
 
 // op map path

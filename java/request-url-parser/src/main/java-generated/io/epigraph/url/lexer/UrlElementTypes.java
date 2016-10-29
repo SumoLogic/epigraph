@@ -26,10 +26,14 @@ public interface UrlElementTypes {
   IElementType U_QN = new UrlElementType("U_QN");
   IElementType U_QN_SEGMENT = new UrlElementType("U_QN_SEGMENT");
   IElementType U_QN_TYPE_REF = new UrlElementType("U_QN_TYPE_REF");
+  IElementType U_READ_URL = new UrlElementType("U_READ_URL");
   IElementType U_RECORD_DATUM = new UrlElementType("U_RECORD_DATUM");
   IElementType U_RECORD_DATUM_ENTRY = new UrlElementType("U_RECORD_DATUM_ENTRY");
   IElementType U_REQUEST_PARAM = new UrlElementType("U_REQUEST_PARAM");
   IElementType U_REQ_ANNOTATION = new UrlElementType("U_REQ_ANNOTATION");
+  IElementType U_REQ_FIELD_PATH = new UrlElementType("U_REQ_FIELD_PATH");
+  IElementType U_REQ_MAP_MODEL_PATH = new UrlElementType("U_REQ_MAP_MODEL_PATH");
+  IElementType U_REQ_MODEL_PATH = new UrlElementType("U_REQ_MODEL_PATH");
   IElementType U_REQ_OUTPUT_COMA_FIELD_PROJECTION = new UrlElementType("U_REQ_OUTPUT_COMA_FIELD_PROJECTION");
   IElementType U_REQ_OUTPUT_COMA_KEYS_PROJECTION = new UrlElementType("U_REQ_OUTPUT_COMA_KEYS_PROJECTION");
   IElementType U_REQ_OUTPUT_COMA_KEY_PROJECTION = new UrlElementType("U_REQ_OUTPUT_COMA_KEY_PROJECTION");
@@ -53,6 +57,8 @@ public interface UrlElementTypes {
   IElementType U_REQ_OUTPUT_VAR_POLYMORPHIC_TAIL = new UrlElementType("U_REQ_OUTPUT_VAR_POLYMORPHIC_TAIL");
   IElementType U_REQ_OUTPUT_VAR_SINGLE_TAIL = new UrlElementType("U_REQ_OUTPUT_VAR_SINGLE_TAIL");
   IElementType U_REQ_PARAM = new UrlElementType("U_REQ_PARAM");
+  IElementType U_REQ_RECORD_MODEL_PATH = new UrlElementType("U_REQ_RECORD_MODEL_PATH");
+  IElementType U_REQ_VAR_PATH = new UrlElementType("U_REQ_VAR_PATH");
   IElementType U_TAG_NAME = new UrlElementType("U_TAG_NAME");
   IElementType U_TYPE_REF = new UrlElementType("U_TYPE_REF");
   IElementType U_URL = new UrlElementType("U_URL");
@@ -147,6 +153,9 @@ public interface UrlElementTypes {
       else if (type == U_QN_TYPE_REF) {
         return new UrlQnTypeRefImpl(node);
       }
+      else if (type == U_READ_URL) {
+        return new UrlReadUrlImpl(node);
+      }
       else if (type == U_RECORD_DATUM) {
         return new UrlRecordDatumImpl(node);
       }
@@ -158,6 +167,15 @@ public interface UrlElementTypes {
       }
       else if (type == U_REQ_ANNOTATION) {
         return new UrlReqAnnotationImpl(node);
+      }
+      else if (type == U_REQ_FIELD_PATH) {
+        return new UrlReqFieldPathImpl(node);
+      }
+      else if (type == U_REQ_MAP_MODEL_PATH) {
+        return new UrlReqMapModelPathImpl(node);
+      }
+      else if (type == U_REQ_MODEL_PATH) {
+        return new UrlReqModelPathImpl(node);
       }
       else if (type == U_REQ_OUTPUT_COMA_FIELD_PROJECTION) {
         return new UrlReqOutputComaFieldProjectionImpl(node);
@@ -227,6 +245,12 @@ public interface UrlElementTypes {
       }
       else if (type == U_REQ_PARAM) {
         return new UrlReqParamImpl(node);
+      }
+      else if (type == U_REQ_RECORD_MODEL_PATH) {
+        return new UrlReqRecordModelPathImpl(node);
+      }
+      else if (type == U_REQ_VAR_PATH) {
+        return new UrlReqVarPathImpl(node);
       }
       else if (type == U_TAG_NAME) {
         return new UrlTagNameImpl(node);

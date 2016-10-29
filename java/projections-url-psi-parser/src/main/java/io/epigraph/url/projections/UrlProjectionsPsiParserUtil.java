@@ -1,4 +1,4 @@
-package io.epigraph.url;
+package io.epigraph.url.projections;
 
 import com.intellij.psi.PsiElement;
 import io.epigraph.gdata.GDataValue;
@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class UrlPsiParserUtil {
+public class UrlProjectionsPsiParserUtil {
   @Nullable
   public static String getTagName(@Nullable UrlTagName tagNamePsi) {
     if (tagNamePsi == null) return null;

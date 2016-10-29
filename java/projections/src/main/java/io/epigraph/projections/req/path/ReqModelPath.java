@@ -17,22 +17,17 @@ public abstract class ReqModelPath<
     M extends DatumType>
     extends AbstractModelProjection<MP, M> {
 
-  protected final boolean required;
   @NotNull
   protected final ReqParams params;
 
   public ReqModelPath(
       @NotNull M model,
-      boolean required,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
       @NotNull TextLocation location) {
     super(model, null, annotations, location);
-    this.required = required;
     this.params = params;
   }
-
-  public boolean required() { return required; }
 
   @NotNull
   public ReqParams params() { return params; }
@@ -43,12 +38,11 @@ public abstract class ReqModelPath<
     if (o == null || getClass() != o.getClass()) return false;
     if (!super.equals(o)) return false;
     ReqModelPath<?, ?> that = (ReqModelPath<?, ?>) o;
-    return required == that.required &&
-           Objects.equals(params, that.params);
+    return Objects.equals(params, that.params);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(super.hashCode(), required, params);
+    return Objects.hash(super.hashCode(), params);
   }
 }

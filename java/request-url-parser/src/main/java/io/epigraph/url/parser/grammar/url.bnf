@@ -58,14 +58,11 @@
   ]
 }
 
-// TODO request URL format is different for different operations. see operations.esc
-// we must define different parsers:
-
-// read       '/' fieldName reqPath reqOutputTrunkFieldProjection requestParams
-// create     '/' fieldName reqPath '~' reqOutputTrunkFieldProjection requestParams
-// update     '/' fieldName reqPath reqUpdateVarProjection '~' reqOutputTrunkFieldProjection requestParams
-// delete     '/' fieldName reqPath reqDeleteVarProjection '~' reqOutputTrunkFieldProjection requestParams
-// custom     '/' fieldName reqPath '~' reqOutputTrunkFieldProjection requestParams
+// read       '/' fieldName reqVarPath reqOutputTrunkFieldProjection requestParams
+// create     '/' fieldName reqVarPath '~' reqOutputTrunkFieldProjection requestParams
+// update     '/' fieldName reqVarPath reqUpdateVarProjection '~' reqOutputTrunkFieldProjection requestParams
+// delete     '/' fieldName reqVarPath reqDeleteVarProjection '~' reqOutputTrunkFieldProjection requestParams
+// custom     '/' fieldName reqVarPath '~' reqOutputTrunkFieldProjection requestParams
 
 root ::= url
 
@@ -98,7 +95,8 @@ tagName ::= qid
 
 // ============= url =============
 
-url ::= '/' qid reqOutputTrunkFieldProjection requestParams
+url ::= readUrl
+
 private requestParams ::= requestParam*
 requestParam ::= ('?' | '&') PARAM_NAME '=' datum {  // ? vs & nonsense is sorted out in the UrlRequestPsiParser
   pin = 1
@@ -107,11 +105,33 @@ requestParam ::= ('?' | '&') PARAM_NAME '=' datum {  // ? vs & nonsense is sorte
 }
 private requestParamRecover ::= ! ( '?' | '&' )
 
+readUrl ::= '/' qid reqVarPath reqOutputTrunkFieldProjection requestParams
+
 // ============= req output projection =============
 
 reqParam ::= ';' qid '=' datum
 reqAnnotation ::= '!' annotation
 private reqParamsAndAnnotations ::= ( reqParam | reqAnnotation )* 
+
+// req path --------------------------------------------------------
+
+// no tails, no branching, no meta
+
+// :tag / field / 1 / field
+// :tag ;foo = 'abc' / field ;foo = 'cde' / 1 ;foo = 'def'
+
+reqVarPath ::= ( ':' tagName)? reqParamsAndAnnotations reqModelPath
+
+reqModelPath ::= ( reqRecordModelPath
+                 | reqMapModelPath
+                 )?
+
+// req record path
+reqRecordModelPath ::= '/' reqFieldPath {pin=2}
+reqFieldPath ::= qid reqParamsAndAnnotations reqVarPath {pin=1}
+
+// req map path
+reqMapModelPath ::= '/' reqOutputTrunkKeyProjection reqVarPath {pin=2}
 
 // req output --------------------------------------------------------
 // this is based on opInput from idl.bnf
@@ -145,8 +165,8 @@ reqOutputTrunkModelProjection ::= ( reqOutputTrunkRecordModelProjection
 reqOutputTrunkRecordModelProjection ::= '/' '+'? qid reqOutputTrunkFieldProjection {pin=3}
 reqOutputTrunkFieldProjection ::= reqParamsAndAnnotations reqOutputTrunkVarProjection
 
-reqOutputTrunkMapModelProjection ::= '/' reqOutputTrunkKeyProjection
-private reqOutputTrunkKeyProjection ::= datum reqParamsAndAnnotations reqOutputTrunkVarProjection {pin=2}
+reqOutputTrunkMapModelProjection ::= '/' reqOutputTrunkKeyProjection reqOutputTrunkVarProjection
+private reqOutputTrunkKeyProjection ::= datum reqParamsAndAnnotations {pin=2}
 
 // req output coma part
 

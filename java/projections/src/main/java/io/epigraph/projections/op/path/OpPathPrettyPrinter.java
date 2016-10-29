@@ -39,31 +39,25 @@ public class OpPathPrettyPrinter<E extends Exception>
     OpParams params = projection.params();
     Annotations annotations = projection.annotations();
 
-    if (params.isEmpty() && annotations.isEmpty()) {
-      l.beginCInd();
-      l.print(tagName);
+    l.print(tagName);
+    if (!params.isEmpty() || !annotations.isEmpty()) {
 
-      if (!isPrintoutEmpty(projection)) {
-        l.brk();
-        print(projection, 0);
-      }
-
-      l.end();
-    } else {
       l.beginCInd();
-      l.print(tagName);
       l.print(" {");
 
       if (!params.isEmpty()) print(params);
       if (!annotations.isEmpty()) print(annotations);
 
-      if (!isPrintoutEmpty(projection)) {
-        l.brk();
-        print(projection, 0);
-      }
-
       l.brk(1, -l.getDefaultIndentation()).end().print("}");
     }
+
+    if (!isPrintoutEmpty(projection)) {
+      l.beginCInd();
+      l.brk();
+      print(projection, 0);
+      l.end();
+    }
+
   }
 
   @Override
@@ -88,25 +82,18 @@ public class OpPathPrettyPrinter<E extends Exception>
       @NotNull OpParams fieldParams = fieldProjection.params();
       @NotNull Annotations fieldAnnotations = fieldProjection.annotations();
 
-      if (fieldParams.isEmpty() && fieldAnnotations.isEmpty()) {
-        l.beginIInd();
-        l.print(fieldName);
-        if (!isPrintoutEmpty(fieldVarProjection)) {
-          l.brk();
-          print(fieldVarProjection, 0);
-        }
-        l.end();
-      } else {
+      if (!fieldParams.isEmpty() || !fieldAnnotations.isEmpty()) {
         l.beginCInd();
         l.print(fieldName);
         l.print(" {");
         if (!fieldParams.isEmpty()) print(fieldParams);
         if (!fieldAnnotations.isEmpty()) print(fieldAnnotations);
-        if (!isPrintoutEmpty(fieldVarProjection)) {
-          l.brk();
-          print(fieldVarProjection, 0);
-        }
         l.brk(1, -l.getDefaultIndentation()).end().print("}");
+      } else l.print(fieldName);
+
+      if (!isPrintoutEmpty(fieldVarProjection)) {
+        l.brk();
+        print(fieldVarProjection, 0);
       }
 
       l.end();
@@ -121,7 +108,6 @@ public class OpPathPrettyPrinter<E extends Exception>
     @NotNull Annotations keyAnnotations = keyProjection.annotations();
 
     l.print("/").brk().print(".");
-
 
     if (!keyParams.isEmpty() || !keyAnnotations.isEmpty()) {
       l.beginCInd();
@@ -146,12 +132,11 @@ public class OpPathPrettyPrinter<E extends Exception>
     l.end();
   }
 
-  public void print(@NotNull OpParams p) throws E {
+  private void print(@NotNull OpParams p) throws E {
     print(p, false, true);
   }
 
-  public boolean print(@NotNull OpParams p, boolean needCommas, boolean first) throws E {
-    l.beginCInd(0);
+  private boolean print(@NotNull OpParams p, boolean needCommas, boolean first) throws E {
     for (OpParam param : p.params().values()) {
       if (needCommas) {
         if (first) first = false;
@@ -160,7 +145,6 @@ public class OpPathPrettyPrinter<E extends Exception>
       l.brk();
       print(param);
     }
-    l.end();
 
     return first;
   }

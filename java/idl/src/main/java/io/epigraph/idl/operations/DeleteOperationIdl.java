@@ -23,8 +23,8 @@ public class DeleteOperationIdl extends OperationIdl {
 
   protected DeleteOperationIdl(
       @Nullable String name,
-      @Nullable OpParams params,
-      @Nullable Annotations annotations,
+      @NotNull OpParams params,
+      @NotNull Annotations annotations,
       @Nullable OpVarPath path,
       @NotNull OpDeleteVarProjection deleteProjection,
       @NotNull OpOutputVarProjection outputProjection,

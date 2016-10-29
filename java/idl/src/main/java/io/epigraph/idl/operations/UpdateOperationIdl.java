@@ -15,8 +15,8 @@ import org.jetbrains.annotations.Nullable;
 public class UpdateOperationIdl extends OperationIdl {
   protected UpdateOperationIdl(
       @Nullable String name,
-      @Nullable OpParams params,
-      @Nullable Annotations annotations,
+      @NotNull OpParams params,
+      @NotNull Annotations annotations,
       @Nullable OpVarPath path,
       @NotNull OpInputModelProjection<?, ?, ?> inputProjection,
       @NotNull OpOutputVarProjection outputProjection,

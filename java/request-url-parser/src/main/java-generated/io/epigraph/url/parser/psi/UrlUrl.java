@@ -8,15 +8,6 @@ import com.intellij.psi.PsiElement;
 public interface UrlUrl extends PsiElement {
 
   @NotNull
-  UrlQid getQid();
-
-  @NotNull
-  UrlReqOutputTrunkFieldProjection getReqOutputTrunkFieldProjection();
-
-  @NotNull
-  List<UrlRequestParam> getRequestParamList();
-
-  @NotNull
-  PsiElement getSlash();
+  UrlReadUrl getReadUrl();
 
 }

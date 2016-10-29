@@ -1,6 +1,6 @@
 package io.epigraph.projections;
 
-import io.epigraph.projections.op.path.*;
+import io.epigraph.projections.gen.*;
 import io.epigraph.types.DataType;
 import io.epigraph.types.DatumType;
 import io.epigraph.types.RecordType;
@@ -46,7 +46,7 @@ public class ProjectionUtils {
    * @return {@code path} tip type
    */
   @NotNull
-  public static DataType tipType(@NotNull OpVarPath path) {
+  public static DataType tipType(@NotNull GenVarProjection<?, ?, ?> path) {
     DataType lastDataType;
 
     final Type type = path.type();
@@ -58,23 +58,26 @@ public class ProjectionUtils {
     }
 
     while (true) {
-      final OpTagPath tagProjection = path.pathTagProjection();
+      final GenTagProjectionEntry<?> tagProjection = path.pathTagProjection();
       if (tagProjection == null) break;
 
       lastDataType = tagProjection.tag().type.dataType();
 
-      final OpModelPath<?, ?> modelPath = tagProjection.projection();
+      final GenModelProjection<?, ?> modelPath = tagProjection.projection();
       final DatumType model = modelPath.model();
       switch (model.kind()) {
         case RECORD:
-          OpRecordModelPath recordPath = (OpRecordModelPath) modelPath;
-          OpFieldPathEntry fieldProjection = recordPath.pathFieldProjection();
+          GenRecordModelProjection<?, ?, ?, ?, ?, ?, ?> recordPath =
+              (GenRecordModelProjection<?, ?, ?, ?, ?, ?, ?>) modelPath;
+
+          GenFieldProjectionEntry<?, ?, ?, ?> fieldProjection = recordPath.pathFieldProjection();
           if (fieldProjection == null) break;
           lastDataType = fieldProjection.field().dataType();
           path = fieldProjection.projection().projection();
           break;
         case MAP:
-          OpMapModelPath mapPath = (OpMapModelPath) modelPath;
+          GenMapModelProjection<?, ?, ?, ?, ?> mapPath = (GenMapModelProjection<?, ?, ?, ?, ?>) modelPath;
+
           lastDataType = mapPath.model().valueType();
           path = mapPath.itemsProjection();
           break;
@@ -84,5 +87,39 @@ public class ProjectionUtils {
     }
 
     return lastDataType;
+  }
+
+  public static int pathLength(@NotNull GenVarProjection<?, ?, ?> path) {
+    int len = 0;
+
+    while (true) {
+      final GenTagProjectionEntry<?> tagProjection = path.pathTagProjection();
+      if (tagProjection == null) break;
+
+      len++;
+
+      final GenModelProjection<?, ?> modelPath = tagProjection.projection();
+      final DatumType model = modelPath.model();
+      switch (model.kind()) {
+        case RECORD:
+          GenRecordModelProjection<?, ?, ?, ?, ?, ?, ?> recordPath =
+              (GenRecordModelProjection<?, ?, ?, ?, ?, ?, ?>) modelPath;
+
+          GenFieldProjectionEntry<?, ?, ?, ?> fieldProjection = recordPath.pathFieldProjection();
+          if (fieldProjection == null) break;
+          len++;
+          path = fieldProjection.projection().projection();
+          break;
+        case MAP:
+          GenMapModelProjection<?, ?, ?, ?, ?> mapPath = (GenMapModelProjection<?, ?, ?, ?, ?>) modelPath;
+          len++;
+          path = mapPath.itemsProjection();
+          break;
+        default:
+          break;
+      }
+    }
+
+    return len;
   }
 }

@@ -16,8 +16,8 @@ public class CustomOperationIdl extends OperationIdl {
 
   protected CustomOperationIdl(
       @Nullable String name,
-      @Nullable OpParams params,
-      @Nullable Annotations annotations,
+      @NotNull OpParams params,
+      @NotNull Annotations annotations,
       @Nullable OpVarPath path,
       @Nullable OpInputModelProjection<?, ?, ?> inputProjection,
       @NotNull OpOutputVarProjection outputProjection,

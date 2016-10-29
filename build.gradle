@@ -27,7 +27,23 @@ subprojects {
     sourceCompatibility = javaVersion
     targetCompatibility = javaVersion
     options.encoding = 'UTF-8'
-    options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+    options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation" << "-Xdiags:verbose"
+  }
+
+  tasks.withType(ScalaCompile) {
+    sourceCompatibility = javaVersion
+    targetCompatibility = javaVersion
+
+    ScalaCompileOptions.metaClass.daemonServer = true
+    ScalaCompileOptions.metaClass.fork = true
+    ScalaCompileOptions.metaClass.useAnt = false
+    ScalaCompileOptions.metaClass.useCompileDaemon = false
+
+    options.encoding = 'UTF-8'
+    scalaCompileOptions.deprecation = true
+    scalaCompileOptions.unchecked = true
+
+    scalaCompileOptions.additionalParameters = ["-explaintypes"]
   }
 }
 

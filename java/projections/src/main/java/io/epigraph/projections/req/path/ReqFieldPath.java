@@ -18,23 +18,18 @@ public class ReqFieldPath extends AbstractFieldProjection<
     > {
   @NotNull
   private final ReqParams reqParams;
-  private final boolean required;
 
   public ReqFieldPath(
       @NotNull ReqParams reqParams,
       @NotNull Annotations annotations,
       @NotNull ReqVarPath projection,
-      boolean required,
       @NotNull TextLocation location) {
     super(annotations, projection, location);
     this.reqParams = reqParams;
-    this.required = required;
   }
 
   @NotNull
   public ReqParams reqParams() { return reqParams; }
-
-  public boolean required() { return required; }
 
   @Override
   public boolean equals(Object o) {
@@ -42,12 +37,11 @@ public class ReqFieldPath extends AbstractFieldProjection<
     if (o == null || getClass() != o.getClass()) return false;
     if (!super.equals(o)) return false;
     ReqFieldPath that = (ReqFieldPath) o;
-    return required == that.required &&
-           Objects.equals(reqParams, that.reqParams);
+    return Objects.equals(reqParams, that.reqParams);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(super.hashCode(), reqParams, required);
+    return Objects.hash(super.hashCode(), reqParams);
   }
 }

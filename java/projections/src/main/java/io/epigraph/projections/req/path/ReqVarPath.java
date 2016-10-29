@@ -7,7 +7,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
-import java.util.List;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -20,9 +19,13 @@ public class ReqVarPath extends AbstractVarProjection<
 
   public ReqVarPath(
       @NotNull Type type,
-      @NotNull ReqTagPath tagProjection,
-      @Nullable List<ReqVarPath> polymorphicTails,
+      @Nullable ReqTagPath tagProjection,
       @NotNull TextLocation location) {
-    super(type, Collections.singletonMap(tagProjection.tag().name(), tagProjection), polymorphicTails, location);
+    super(type,
+          tagProjection == null ? Collections.emptyMap()
+                                : Collections.singletonMap(tagProjection.tag().name(), tagProjection),
+          null,
+          location
+    );
   }
 }

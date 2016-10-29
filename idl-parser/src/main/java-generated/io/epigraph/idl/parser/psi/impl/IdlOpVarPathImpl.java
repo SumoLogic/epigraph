@@ -27,9 +27,9 @@ public class IdlOpVarPathImpl extends ASTWrapperPsiElement implements IdlOpVarPa
   }
 
   @Override
-  @Nullable
+  @NotNull
   public IdlOpModelPath getOpModelPath() {
-    return findChildByClass(IdlOpModelPath.class);
+    return findNotNullChildByClass(IdlOpModelPath.class);
   }
 
   @Override

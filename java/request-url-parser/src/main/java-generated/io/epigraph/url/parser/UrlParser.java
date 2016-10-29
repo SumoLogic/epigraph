@@ -77,6 +77,9 @@ public class UrlParser implements PsiParser, LightPsiParser {
     else if (t == U_QN_TYPE_REF) {
       r = qnTypeRef(b, 0);
     }
+    else if (t == U_READ_URL) {
+      r = readUrl(b, 0);
+    }
     else if (t == U_RECORD_DATUM) {
       r = recordDatum(b, 0);
     }
@@ -85,6 +88,15 @@ public class UrlParser implements PsiParser, LightPsiParser {
     }
     else if (t == U_REQ_ANNOTATION) {
       r = reqAnnotation(b, 0);
+    }
+    else if (t == U_REQ_FIELD_PATH) {
+      r = reqFieldPath(b, 0);
+    }
+    else if (t == U_REQ_MAP_MODEL_PATH) {
+      r = reqMapModelPath(b, 0);
+    }
+    else if (t == U_REQ_MODEL_PATH) {
+      r = reqModelPath(b, 0);
     }
     else if (t == U_REQ_OUTPUT_COMA_FIELD_PROJECTION) {
       r = reqOutputComaFieldProjection(b, 0);
@@ -154,6 +166,12 @@ public class UrlParser implements PsiParser, LightPsiParser {
     }
     else if (t == U_REQ_PARAM) {
       r = reqParam(b, 0);
+    }
+    else if (t == U_REQ_RECORD_MODEL_PATH) {
+      r = reqRecordModelPath(b, 0);
+    }
+    else if (t == U_REQ_VAR_PATH) {
+      r = reqVarPath(b, 0);
     }
     else if (t == U_REQUEST_PARAM) {
       r = requestParam(b, 0);
@@ -637,6 +655,22 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // '/' qid reqVarPath reqOutputTrunkFieldProjection requestParams
+  public static boolean readUrl(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "readUrl")) return false;
+    if (!nextTokenIs(b, U_SLASH)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, U_SLASH);
+    r = r && qid(b, l + 1);
+    r = r && reqVarPath(b, l + 1);
+    r = r && reqOutputTrunkFieldProjection(b, l + 1);
+    r = r && requestParams(b, l + 1);
+    exit_section_(b, m, U_READ_URL, r);
+    return r;
+  }
+
+  /* ********************************************************** */
   // dataTypeSpec? '{' recordDatumEntry* '}'
   public static boolean recordDatum(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "recordDatum")) return false;
@@ -702,6 +736,60 @@ public class UrlParser implements PsiParser, LightPsiParser {
     r = consumeToken(b, U_BANG);
     r = r && annotation(b, l + 1);
     exit_section_(b, m, U_REQ_ANNOTATION, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // qid reqParamsAndAnnotations reqVarPath
+  public static boolean reqFieldPath(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqFieldPath")) return false;
+    if (!nextTokenIs(b, U_ID)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, U_REQ_FIELD_PATH, null);
+    r = qid(b, l + 1);
+    p = r; // pin = 1
+    r = r && report_error_(b, reqParamsAndAnnotations(b, l + 1));
+    r = p && reqVarPath(b, l + 1) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  /* ********************************************************** */
+  // '/' reqOutputTrunkKeyProjection reqVarPath
+  public static boolean reqMapModelPath(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqMapModelPath")) return false;
+    if (!nextTokenIs(b, U_SLASH)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, U_REQ_MAP_MODEL_PATH, null);
+    r = consumeToken(b, U_SLASH);
+    r = r && reqOutputTrunkKeyProjection(b, l + 1);
+    p = r; // pin = 2
+    r = r && reqVarPath(b, l + 1);
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  /* ********************************************************** */
+  // ( reqRecordModelPath
+  //                  | reqMapModelPath
+  //                  )?
+  public static boolean reqModelPath(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqModelPath")) return false;
+    Marker m = enter_section_(b, l, _NONE_, U_REQ_MODEL_PATH, "<req model path>");
+    reqModelPath_0(b, l + 1);
+    exit_section_(b, l, m, true, false, null);
+    return true;
+  }
+
+  // reqRecordModelPath
+  //                  | reqMapModelPath
+  private static boolean reqModelPath_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqModelPath_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = reqRecordModelPath(b, l + 1);
+    if (!r) r = reqMapModelPath(b, l + 1);
+    exit_section_(b, m, null, r);
     return r;
   }
 
@@ -1132,21 +1220,19 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // datum reqParamsAndAnnotations reqOutputTrunkVarProjection
+  // datum reqParamsAndAnnotations
   static boolean reqOutputTrunkKeyProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqOutputTrunkKeyProjection")) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_);
+    boolean r;
+    Marker m = enter_section_(b);
     r = datum(b, l + 1);
     r = r && reqParamsAndAnnotations(b, l + 1);
-    p = r; // pin = 2
-    r = r && reqOutputTrunkVarProjection(b, l + 1);
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
+    exit_section_(b, m, null, r);
+    return r;
   }
 
   /* ********************************************************** */
-  // '/' reqOutputTrunkKeyProjection
+  // '/' reqOutputTrunkKeyProjection reqOutputTrunkVarProjection
   public static boolean reqOutputTrunkMapModelProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqOutputTrunkMapModelProjection")) return false;
     if (!nextTokenIs(b, U_SLASH)) return false;
@@ -1154,6 +1240,7 @@ public class UrlParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b);
     r = consumeToken(b, U_SLASH);
     r = r && reqOutputTrunkKeyProjection(b, l + 1);
+    r = r && reqOutputTrunkVarProjection(b, l + 1);
     exit_section_(b, m, U_REQ_OUTPUT_TRUNK_MAP_MODEL_PROJECTION, r);
     return r;
   }
@@ -1416,6 +1503,50 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // '/' reqFieldPath
+  public static boolean reqRecordModelPath(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqRecordModelPath")) return false;
+    if (!nextTokenIs(b, U_SLASH)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, U_SLASH);
+    r = r && reqFieldPath(b, l + 1);
+    exit_section_(b, m, U_REQ_RECORD_MODEL_PATH, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // ( ':' tagName)? reqParamsAndAnnotations reqModelPath
+  public static boolean reqVarPath(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqVarPath")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, U_REQ_VAR_PATH, "<req var path>");
+    r = reqVarPath_0(b, l + 1);
+    r = r && reqParamsAndAnnotations(b, l + 1);
+    r = r && reqModelPath(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // ( ':' tagName)?
+  private static boolean reqVarPath_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqVarPath_0")) return false;
+    reqVarPath_0_0(b, l + 1);
+    return true;
+  }
+
+  // ':' tagName
+  private static boolean reqVarPath_0_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqVarPath_0_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, U_COLON);
+    r = r && tagName(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
   // ('?' | '&') PARAM_NAME '=' datum
   public static boolean requestParam(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "requestParam")) return false;
@@ -1508,16 +1639,13 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '/' qid reqOutputTrunkFieldProjection requestParams
+  // readUrl
   public static boolean url(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "url")) return false;
     if (!nextTokenIs(b, U_SLASH)) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeToken(b, U_SLASH);
-    r = r && qid(b, l + 1);
-    r = r && reqOutputTrunkFieldProjection(b, l + 1);
-    r = r && requestParams(b, l + 1);
+    r = readUrl(b, l + 1);
     exit_section_(b, m, U_URL, r);
     return r;
   }

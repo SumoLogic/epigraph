@@ -2,7 +2,7 @@ namespace epigraph.projections.req
 
 /**
  * Request-time projections describing update operation body payload. Should be
- * synchronous with it's structure and provides additional information for it, e.g.
+ * synchronous with body structure and provides additional information for it, e.g.
  * parameters and which parts must be updated versus patched
  */
 

@@ -438,7 +438,7 @@ public class OperationsPsiParser {
     if (pathPsi != null) {
       @Nullable final IdlOpVarPath varPathPsi = pathPsi.getOpVarPath();
       if (varPathPsi == null) throw new PsiProcessingException("Path expression missing", pathPsi);
-      return OpPathPsiParser.parseVarProjection(type, varPathPsi, resolver);
+      return OpPathPsiParser.parseVarPath(type, varPathPsi, resolver);
     } else return null;
   }
 
