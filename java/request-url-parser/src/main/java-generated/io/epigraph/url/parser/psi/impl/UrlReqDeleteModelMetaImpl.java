@@ -11,14 +11,14 @@ import static io.epigraph.url.lexer.UrlElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import io.epigraph.url.parser.psi.*;
 
-public class UrlReadUrlImpl extends ASTWrapperPsiElement implements UrlReadUrl {
+public class UrlReqDeleteModelMetaImpl extends ASTWrapperPsiElement implements UrlReqDeleteModelMeta {
 
-  public UrlReadUrlImpl(ASTNode node) {
+  public UrlReqDeleteModelMetaImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull UrlVisitor visitor) {
-    visitor.visitReadUrl(this);
+    visitor.visitReqDeleteModelMeta(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -28,26 +28,20 @@ public class UrlReadUrlImpl extends ASTWrapperPsiElement implements UrlReadUrl {
 
   @Override
   @NotNull
-  public UrlQid getQid() {
-    return findNotNullChildByClass(UrlQid.class);
+  public UrlReqDeleteModelProjection getReqDeleteModelProjection() {
+    return findNotNullChildByClass(UrlReqDeleteModelProjection.class);
   }
 
   @Override
   @NotNull
-  public UrlReqOutputTrunkFieldProjection getReqOutputTrunkFieldProjection() {
-    return findNotNullChildByClass(UrlReqOutputTrunkFieldProjection.class);
+  public PsiElement getAt() {
+    return findNotNullChildByType(U_AT);
   }
 
   @Override
-  @NotNull
-  public List<UrlRequestParam> getRequestParamList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, UrlRequestParam.class);
-  }
-
-  @Override
-  @NotNull
-  public PsiElement getSlash() {
-    return findNotNullChildByType(U_SLASH);
+  @Nullable
+  public PsiElement getPlus() {
+    return findChildByType(U_PLUS);
   }
 
 }

@@ -11,14 +11,14 @@ import static io.epigraph.url.lexer.UrlElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import io.epigraph.url.parser.psi.*;
 
-public class UrlReadUrlImpl extends ASTWrapperPsiElement implements UrlReadUrl {
+public class UrlUpdateUrlImpl extends ASTWrapperPsiElement implements UrlUpdateUrl {
 
-  public UrlReadUrlImpl(ASTNode node) {
+  public UrlUpdateUrlImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull UrlVisitor visitor) {
-    visitor.visitReadUrl(this);
+    visitor.visitUpdateUrl(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -33,15 +33,39 @@ public class UrlReadUrlImpl extends ASTWrapperPsiElement implements UrlReadUrl {
   }
 
   @Override
-  @NotNull
+  @Nullable
   public UrlReqOutputTrunkFieldProjection getReqOutputTrunkFieldProjection() {
-    return findNotNullChildByClass(UrlReqOutputTrunkFieldProjection.class);
+    return findChildByClass(UrlReqOutputTrunkFieldProjection.class);
+  }
+
+  @Override
+  @Nullable
+  public UrlReqUpdateVarProjection getReqUpdateVarProjection() {
+    return findChildByClass(UrlReqUpdateVarProjection.class);
+  }
+
+  @Override
+  @NotNull
+  public UrlReqVarPath getReqVarPath() {
+    return findNotNullChildByClass(UrlReqVarPath.class);
   }
 
   @Override
   @NotNull
   public List<UrlRequestParam> getRequestParamList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, UrlRequestParam.class);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getAngleLeft() {
+    return findChildByType(U_ANGLE_LEFT);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getAngleRight() {
+    return findChildByType(U_ANGLE_RIGHT);
   }
 
   @Override

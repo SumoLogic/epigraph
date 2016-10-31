@@ -5,9 +5,15 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface UrlUrl extends PsiElement {
+public interface UrlReqDeleteModelMeta extends PsiElement {
 
   @NotNull
-  UrlReadUrl getReadUrl();
+  UrlReqDeleteModelProjection getReqDeleteModelProjection();
+
+  @NotNull
+  PsiElement getAt();
+
+  @Nullable
+  PsiElement getPlus();
 
 }

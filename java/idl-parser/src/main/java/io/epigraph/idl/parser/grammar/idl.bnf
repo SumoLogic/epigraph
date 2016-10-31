@@ -285,7 +285,7 @@ opOutputSingleTagProjection ::= ( ':' '+'? tagName)? (opOutputComplexTagProjecti
 opOutputMultiTagProjectionItem ::= '+'? tagName ( opOutputComplexTagProjection | opOutputSimpleTagProjection )
 
 private opOutputSimpleTagProjection ::= opOutputModelProjection
-private opOutputComplexTagProjection ::= '{' (opOutputModelProperty ','?)* opOutputModelProjection '}' {pin=1}
+private opOutputComplexTagProjection ::= '{' (opOutputModelProperty ','?)* opOutputModelProjection '}' {pin=1} // todo move projections out of bodies?
 
 //
 opOutputVarPolymorphicTail ::= opOutputVarSingleTail | opOutputVarMultiTail

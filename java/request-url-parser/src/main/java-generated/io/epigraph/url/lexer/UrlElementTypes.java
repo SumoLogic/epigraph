@@ -11,11 +11,14 @@ public interface UrlElementTypes {
   IElementType U_ANNOTATION = new UrlElementType("U_ANNOTATION");
   IElementType U_ANON_LIST = new UrlElementType("U_ANON_LIST");
   IElementType U_ANON_MAP = new UrlElementType("U_ANON_MAP");
+  IElementType U_CREATE_URL = new UrlElementType("U_CREATE_URL");
+  IElementType U_CUSTOM_URL = new UrlElementType("U_CUSTOM_URL");
   IElementType U_DATA = new UrlElementType("U_DATA");
   IElementType U_DATA_ENTRY = new UrlElementType("U_DATA_ENTRY");
   IElementType U_DATA_VALUE = new UrlElementType("U_DATA_VALUE");
   IElementType U_DATUM = new UrlElementType("U_DATUM");
   IElementType U_DEFAULT_OVERRIDE = new UrlElementType("U_DEFAULT_OVERRIDE");
+  IElementType U_DELETE_URL = new UrlElementType("U_DELETE_URL");
   IElementType U_ENUM_DATUM = new UrlElementType("U_ENUM_DATUM");
   IElementType U_LIST_DATUM = new UrlElementType("U_LIST_DATUM");
   IElementType U_MAP_DATUM = new UrlElementType("U_MAP_DATUM");
@@ -31,6 +34,22 @@ public interface UrlElementTypes {
   IElementType U_RECORD_DATUM_ENTRY = new UrlElementType("U_RECORD_DATUM_ENTRY");
   IElementType U_REQUEST_PARAM = new UrlElementType("U_REQUEST_PARAM");
   IElementType U_REQ_ANNOTATION = new UrlElementType("U_REQ_ANNOTATION");
+  IElementType U_REQ_DELETE_FIELD_PROJECTION = new UrlElementType("U_REQ_DELETE_FIELD_PROJECTION");
+  IElementType U_REQ_DELETE_KEYS_PROJECTION = new UrlElementType("U_REQ_DELETE_KEYS_PROJECTION");
+  IElementType U_REQ_DELETE_KEY_PROJECTION = new UrlElementType("U_REQ_DELETE_KEY_PROJECTION");
+  IElementType U_REQ_DELETE_LIST_MODEL_PROJECTION = new UrlElementType("U_REQ_DELETE_LIST_MODEL_PROJECTION");
+  IElementType U_REQ_DELETE_MAP_MODEL_PROJECTION = new UrlElementType("U_REQ_DELETE_MAP_MODEL_PROJECTION");
+  IElementType U_REQ_DELETE_MODEL_META = new UrlElementType("U_REQ_DELETE_MODEL_META");
+  IElementType U_REQ_DELETE_MODEL_PROJECTION = new UrlElementType("U_REQ_DELETE_MODEL_PROJECTION");
+  IElementType U_REQ_DELETE_MULTI_TAG_PROJECTION = new UrlElementType("U_REQ_DELETE_MULTI_TAG_PROJECTION");
+  IElementType U_REQ_DELETE_MULTI_TAG_PROJECTION_ITEM = new UrlElementType("U_REQ_DELETE_MULTI_TAG_PROJECTION_ITEM");
+  IElementType U_REQ_DELETE_RECORD_MODEL_PROJECTION = new UrlElementType("U_REQ_DELETE_RECORD_MODEL_PROJECTION");
+  IElementType U_REQ_DELETE_SINGLE_TAG_PROJECTION = new UrlElementType("U_REQ_DELETE_SINGLE_TAG_PROJECTION");
+  IElementType U_REQ_DELETE_VAR_MULTI_TAIL = new UrlElementType("U_REQ_DELETE_VAR_MULTI_TAIL");
+  IElementType U_REQ_DELETE_VAR_MULTI_TAIL_ITEM = new UrlElementType("U_REQ_DELETE_VAR_MULTI_TAIL_ITEM");
+  IElementType U_REQ_DELETE_VAR_POLYMORPHIC_TAIL = new UrlElementType("U_REQ_DELETE_VAR_POLYMORPHIC_TAIL");
+  IElementType U_REQ_DELETE_VAR_PROJECTION = new UrlElementType("U_REQ_DELETE_VAR_PROJECTION");
+  IElementType U_REQ_DELETE_VAR_SINGLE_TAIL = new UrlElementType("U_REQ_DELETE_VAR_SINGLE_TAIL");
   IElementType U_REQ_FIELD_PATH = new UrlElementType("U_REQ_FIELD_PATH");
   IElementType U_REQ_MAP_MODEL_PATH = new UrlElementType("U_REQ_MAP_MODEL_PATH");
   IElementType U_REQ_MODEL_PATH = new UrlElementType("U_REQ_MODEL_PATH");
@@ -58,10 +77,25 @@ public interface UrlElementTypes {
   IElementType U_REQ_OUTPUT_VAR_SINGLE_TAIL = new UrlElementType("U_REQ_OUTPUT_VAR_SINGLE_TAIL");
   IElementType U_REQ_PARAM = new UrlElementType("U_REQ_PARAM");
   IElementType U_REQ_RECORD_MODEL_PATH = new UrlElementType("U_REQ_RECORD_MODEL_PATH");
+  IElementType U_REQ_UPDATE_FIELD_PROJECTION = new UrlElementType("U_REQ_UPDATE_FIELD_PROJECTION");
+  IElementType U_REQ_UPDATE_KEYS_PROJECTION = new UrlElementType("U_REQ_UPDATE_KEYS_PROJECTION");
+  IElementType U_REQ_UPDATE_LIST_MODEL_PROJECTION = new UrlElementType("U_REQ_UPDATE_LIST_MODEL_PROJECTION");
+  IElementType U_REQ_UPDATE_MAP_MODEL_PROJECTION = new UrlElementType("U_REQ_UPDATE_MAP_MODEL_PROJECTION");
+  IElementType U_REQ_UPDATE_MODEL_META = new UrlElementType("U_REQ_UPDATE_MODEL_META");
+  IElementType U_REQ_UPDATE_MODEL_PROJECTION = new UrlElementType("U_REQ_UPDATE_MODEL_PROJECTION");
+  IElementType U_REQ_UPDATE_MULTI_TAG_PROJECTION = new UrlElementType("U_REQ_UPDATE_MULTI_TAG_PROJECTION");
+  IElementType U_REQ_UPDATE_MULTI_TAG_PROJECTION_ITEM = new UrlElementType("U_REQ_UPDATE_MULTI_TAG_PROJECTION_ITEM");
+  IElementType U_REQ_UPDATE_RECORD_MODEL_PROJECTION = new UrlElementType("U_REQ_UPDATE_RECORD_MODEL_PROJECTION");
+  IElementType U_REQ_UPDATE_SINGLE_TAG_PROJECTION = new UrlElementType("U_REQ_UPDATE_SINGLE_TAG_PROJECTION");
+  IElementType U_REQ_UPDATE_VAR_MULTI_TAIL = new UrlElementType("U_REQ_UPDATE_VAR_MULTI_TAIL");
+  IElementType U_REQ_UPDATE_VAR_MULTI_TAIL_ITEM = new UrlElementType("U_REQ_UPDATE_VAR_MULTI_TAIL_ITEM");
+  IElementType U_REQ_UPDATE_VAR_POLYMORPHIC_TAIL = new UrlElementType("U_REQ_UPDATE_VAR_POLYMORPHIC_TAIL");
+  IElementType U_REQ_UPDATE_VAR_PROJECTION = new UrlElementType("U_REQ_UPDATE_VAR_PROJECTION");
+  IElementType U_REQ_UPDATE_VAR_SINGLE_TAIL = new UrlElementType("U_REQ_UPDATE_VAR_SINGLE_TAIL");
   IElementType U_REQ_VAR_PATH = new UrlElementType("U_REQ_VAR_PATH");
   IElementType U_TAG_NAME = new UrlElementType("U_TAG_NAME");
   IElementType U_TYPE_REF = new UrlElementType("U_TYPE_REF");
-  IElementType U_URL = new UrlElementType("U_URL");
+  IElementType U_UPDATE_URL = new UrlElementType("U_UPDATE_URL");
   IElementType U_VALUE_TYPE_REF = new UrlElementType("U_VALUE_TYPE_REF");
   IElementType U_VAR_TAG_REF = new UrlElementType("U_VAR_TAG_REF");
 
@@ -111,6 +145,12 @@ public interface UrlElementTypes {
       else if (type == U_ANON_MAP) {
         return new UrlAnonMapImpl(node);
       }
+      else if (type == U_CREATE_URL) {
+        return new UrlCreateUrlImpl(node);
+      }
+      else if (type == U_CUSTOM_URL) {
+        return new UrlCustomUrlImpl(node);
+      }
       else if (type == U_DATA) {
         return new UrlDataImpl(node);
       }
@@ -122,6 +162,9 @@ public interface UrlElementTypes {
       }
       else if (type == U_DEFAULT_OVERRIDE) {
         return new UrlDefaultOverrideImpl(node);
+      }
+      else if (type == U_DELETE_URL) {
+        return new UrlDeleteUrlImpl(node);
       }
       else if (type == U_ENUM_DATUM) {
         return new UrlEnumDatumImpl(node);
@@ -167,6 +210,54 @@ public interface UrlElementTypes {
       }
       else if (type == U_REQ_ANNOTATION) {
         return new UrlReqAnnotationImpl(node);
+      }
+      else if (type == U_REQ_DELETE_FIELD_PROJECTION) {
+        return new UrlReqDeleteFieldProjectionImpl(node);
+      }
+      else if (type == U_REQ_DELETE_KEYS_PROJECTION) {
+        return new UrlReqDeleteKeysProjectionImpl(node);
+      }
+      else if (type == U_REQ_DELETE_KEY_PROJECTION) {
+        return new UrlReqDeleteKeyProjectionImpl(node);
+      }
+      else if (type == U_REQ_DELETE_LIST_MODEL_PROJECTION) {
+        return new UrlReqDeleteListModelProjectionImpl(node);
+      }
+      else if (type == U_REQ_DELETE_MAP_MODEL_PROJECTION) {
+        return new UrlReqDeleteMapModelProjectionImpl(node);
+      }
+      else if (type == U_REQ_DELETE_MODEL_META) {
+        return new UrlReqDeleteModelMetaImpl(node);
+      }
+      else if (type == U_REQ_DELETE_MODEL_PROJECTION) {
+        return new UrlReqDeleteModelProjectionImpl(node);
+      }
+      else if (type == U_REQ_DELETE_MULTI_TAG_PROJECTION) {
+        return new UrlReqDeleteMultiTagProjectionImpl(node);
+      }
+      else if (type == U_REQ_DELETE_MULTI_TAG_PROJECTION_ITEM) {
+        return new UrlReqDeleteMultiTagProjectionItemImpl(node);
+      }
+      else if (type == U_REQ_DELETE_RECORD_MODEL_PROJECTION) {
+        return new UrlReqDeleteRecordModelProjectionImpl(node);
+      }
+      else if (type == U_REQ_DELETE_SINGLE_TAG_PROJECTION) {
+        return new UrlReqDeleteSingleTagProjectionImpl(node);
+      }
+      else if (type == U_REQ_DELETE_VAR_MULTI_TAIL) {
+        return new UrlReqDeleteVarMultiTailImpl(node);
+      }
+      else if (type == U_REQ_DELETE_VAR_MULTI_TAIL_ITEM) {
+        return new UrlReqDeleteVarMultiTailItemImpl(node);
+      }
+      else if (type == U_REQ_DELETE_VAR_POLYMORPHIC_TAIL) {
+        return new UrlReqDeleteVarPolymorphicTailImpl(node);
+      }
+      else if (type == U_REQ_DELETE_VAR_PROJECTION) {
+        return new UrlReqDeleteVarProjectionImpl(node);
+      }
+      else if (type == U_REQ_DELETE_VAR_SINGLE_TAIL) {
+        return new UrlReqDeleteVarSingleTailImpl(node);
       }
       else if (type == U_REQ_FIELD_PATH) {
         return new UrlReqFieldPathImpl(node);
@@ -249,14 +340,59 @@ public interface UrlElementTypes {
       else if (type == U_REQ_RECORD_MODEL_PATH) {
         return new UrlReqRecordModelPathImpl(node);
       }
+      else if (type == U_REQ_UPDATE_FIELD_PROJECTION) {
+        return new UrlReqUpdateFieldProjectionImpl(node);
+      }
+      else if (type == U_REQ_UPDATE_KEYS_PROJECTION) {
+        return new UrlReqUpdateKeysProjectionImpl(node);
+      }
+      else if (type == U_REQ_UPDATE_LIST_MODEL_PROJECTION) {
+        return new UrlReqUpdateListModelProjectionImpl(node);
+      }
+      else if (type == U_REQ_UPDATE_MAP_MODEL_PROJECTION) {
+        return new UrlReqUpdateMapModelProjectionImpl(node);
+      }
+      else if (type == U_REQ_UPDATE_MODEL_META) {
+        return new UrlReqUpdateModelMetaImpl(node);
+      }
+      else if (type == U_REQ_UPDATE_MODEL_PROJECTION) {
+        return new UrlReqUpdateModelProjectionImpl(node);
+      }
+      else if (type == U_REQ_UPDATE_MULTI_TAG_PROJECTION) {
+        return new UrlReqUpdateMultiTagProjectionImpl(node);
+      }
+      else if (type == U_REQ_UPDATE_MULTI_TAG_PROJECTION_ITEM) {
+        return new UrlReqUpdateMultiTagProjectionItemImpl(node);
+      }
+      else if (type == U_REQ_UPDATE_RECORD_MODEL_PROJECTION) {
+        return new UrlReqUpdateRecordModelProjectionImpl(node);
+      }
+      else if (type == U_REQ_UPDATE_SINGLE_TAG_PROJECTION) {
+        return new UrlReqUpdateSingleTagProjectionImpl(node);
+      }
+      else if (type == U_REQ_UPDATE_VAR_MULTI_TAIL) {
+        return new UrlReqUpdateVarMultiTailImpl(node);
+      }
+      else if (type == U_REQ_UPDATE_VAR_MULTI_TAIL_ITEM) {
+        return new UrlReqUpdateVarMultiTailItemImpl(node);
+      }
+      else if (type == U_REQ_UPDATE_VAR_POLYMORPHIC_TAIL) {
+        return new UrlReqUpdateVarPolymorphicTailImpl(node);
+      }
+      else if (type == U_REQ_UPDATE_VAR_PROJECTION) {
+        return new UrlReqUpdateVarProjectionImpl(node);
+      }
+      else if (type == U_REQ_UPDATE_VAR_SINGLE_TAIL) {
+        return new UrlReqUpdateVarSingleTailImpl(node);
+      }
       else if (type == U_REQ_VAR_PATH) {
         return new UrlReqVarPathImpl(node);
       }
       else if (type == U_TAG_NAME) {
         return new UrlTagNameImpl(node);
       }
-      else if (type == U_URL) {
-        return new UrlUrlImpl(node);
+      else if (type == U_UPDATE_URL) {
+        return new UrlUpdateUrlImpl(node);
       }
       else if (type == U_VALUE_TYPE_REF) {
         return new UrlValueTypeRefImpl(node);

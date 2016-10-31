@@ -11,14 +11,14 @@ import static io.epigraph.url.lexer.UrlElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import io.epigraph.url.parser.psi.*;
 
-public class UrlReadUrlImpl extends ASTWrapperPsiElement implements UrlReadUrl {
+public class UrlReqDeleteVarMultiTailImpl extends ASTWrapperPsiElement implements UrlReqDeleteVarMultiTail {
 
-  public UrlReadUrlImpl(ASTNode node) {
+  public UrlReqDeleteVarMultiTailImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull UrlVisitor visitor) {
-    visitor.visitReadUrl(this);
+    visitor.visitReqDeleteVarMultiTail(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -28,26 +28,26 @@ public class UrlReadUrlImpl extends ASTWrapperPsiElement implements UrlReadUrl {
 
   @Override
   @NotNull
-  public UrlQid getQid() {
-    return findNotNullChildByClass(UrlQid.class);
+  public List<UrlReqDeleteVarMultiTailItem> getReqDeleteVarMultiTailItemList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, UrlReqDeleteVarMultiTailItem.class);
   }
 
   @Override
   @NotNull
-  public UrlReqOutputTrunkFieldProjection getReqOutputTrunkFieldProjection() {
-    return findNotNullChildByClass(UrlReqOutputTrunkFieldProjection.class);
+  public PsiElement getParenLeft() {
+    return findNotNullChildByType(U_PAREN_LEFT);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getParenRight() {
+    return findChildByType(U_PAREN_RIGHT);
   }
 
   @Override
   @NotNull
-  public List<UrlRequestParam> getRequestParamList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, UrlRequestParam.class);
-  }
-
-  @Override
-  @NotNull
-  public PsiElement getSlash() {
-    return findNotNullChildByType(U_SLASH);
+  public PsiElement getTilda() {
+    return findNotNullChildByType(U_TILDA);
   }
 
 }

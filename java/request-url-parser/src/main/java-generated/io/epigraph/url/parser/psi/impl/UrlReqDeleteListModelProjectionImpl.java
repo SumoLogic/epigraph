@@ -11,14 +11,14 @@ import static io.epigraph.url.lexer.UrlElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import io.epigraph.url.parser.psi.*;
 
-public class UrlUrlImpl extends ASTWrapperPsiElement implements UrlUrl {
+public class UrlReqDeleteListModelProjectionImpl extends ASTWrapperPsiElement implements UrlReqDeleteListModelProjection {
 
-  public UrlUrlImpl(ASTNode node) {
+  public UrlReqDeleteListModelProjectionImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull UrlVisitor visitor) {
-    visitor.visitUrl(this);
+    visitor.visitReqDeleteListModelProjection(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -27,9 +27,27 @@ public class UrlUrlImpl extends ASTWrapperPsiElement implements UrlUrl {
   }
 
   @Override
+  @Nullable
+  public UrlReqDeleteVarProjection getReqDeleteVarProjection() {
+    return findChildByClass(UrlReqDeleteVarProjection.class);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getParenLeft() {
+    return findChildByType(U_PAREN_LEFT);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getParenRight() {
+    return findChildByType(U_PAREN_RIGHT);
+  }
+
+  @Override
   @NotNull
-  public UrlReadUrl getReadUrl() {
-    return findNotNullChildByClass(UrlReadUrl.class);
+  public PsiElement getStar() {
+    return findNotNullChildByType(U_STAR);
   }
 
 }

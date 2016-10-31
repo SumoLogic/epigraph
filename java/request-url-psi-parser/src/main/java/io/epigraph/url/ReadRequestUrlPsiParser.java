@@ -44,10 +44,11 @@ public class ReadRequestUrlPsiParser {
     final ReqVarPath path;
 
     @Nullable final OpVarPath opPath = op.path();
-    if (opPath != null) {
+    //todo
+    /*if (opPath != null) {
       @NotNull final UrlReqVarPath pathPsi = psi.getReqVarPath();
       path = ReqPathPsiParser.parseVarPath(opPath, resourceType, pathPsi, typesResolver);
-    } else path = null;
+    } else*/ path = null;
 
     DataType pathTipType =
         path == null ? resourceType

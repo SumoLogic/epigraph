@@ -7,19 +7,20 @@ import io.epigraph.url.parser.UrlParserDefinition;
 import io.epigraph.url.parser.UrlSubParser;
 import org.jetbrains.annotations.NotNull;
 
-import static io.epigraph.url.lexer.UrlElementTypes.U_READ_URL;
-import static io.epigraph.url.lexer.UrlElementTypes.U_REQ_OUTPUT_TRUNK_VAR_PROJECTION;
-import static io.epigraph.url.lexer.UrlElementTypes.U_REQ_VAR_PATH;
+import static io.epigraph.url.lexer.UrlElementTypes.*;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class UrlSubParserDefinitions {
   public static final UrlSubParserDefinition READ_URL = new UrlSubParserDefinition(U_READ_URL);
+  public static final UrlSubParserDefinition CREATE_URL = new UrlSubParserDefinition(U_CREATE_URL);
+  public static final UrlSubParserDefinition UPDATE_URL = new UrlSubParserDefinition(U_UPDATE_URL);
+  public static final UrlSubParserDefinition DELETE_URL = new UrlSubParserDefinition(U_DELETE_URL);
+  public static final UrlSubParserDefinition CUSTOM_URL = new UrlSubParserDefinition(U_CUSTOM_URL);
 
   public static final UrlSubParserDefinition REQ_VAR_PATH = new UrlSubParserDefinition(U_REQ_VAR_PATH);
-  public static final UrlSubParserDefinition
-      REQ_OUTPUT_VAR_PROJECTION = new UrlSubParserDefinition(U_REQ_OUTPUT_TRUNK_VAR_PROJECTION);
+  public static final UrlSubParserDefinition REQ_OUTPUT_VAR_PROJECTION = new UrlSubParserDefinition(U_REQ_OUTPUT_TRUNK_VAR_PROJECTION);
 
   public static class UrlSubParserDefinition extends UrlParserDefinition {
     @NotNull

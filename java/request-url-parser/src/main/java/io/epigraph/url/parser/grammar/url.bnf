@@ -58,12 +58,6 @@
   ]
 }
 
-// read       '/' fieldName reqVarPath reqOutputTrunkFieldProjection requestParams
-// create     '/' fieldName reqVarPath '~' reqOutputTrunkFieldProjection requestParams
-// update     '/' fieldName reqVarPath reqUpdateVarProjection '~' reqOutputTrunkFieldProjection requestParams
-// delete     '/' fieldName reqVarPath reqDeleteVarProjection '~' reqOutputTrunkFieldProjection requestParams
-// custom     '/' fieldName reqVarPath '~' reqOutputTrunkFieldProjection requestParams
-
 root ::= url
 
 // either quoted or unquoted id
@@ -95,7 +89,15 @@ tagName ::= qid
 
 // ============= url =============
 
-url ::= readUrl
+// this one isn't used actually, sub-parsers for read/create/... are used instead
+private url ::= readUrl | createUrl | updateUrl | deleteUrl | customUrl
+
+// real entry points:
+readUrl ::= '/' qid reqOutputTrunkFieldProjection requestParams // reqVarPath is part of output projection, will be extracted by psi parser
+createUrl ::= '/' qid reqVarPath ('>' reqOutputTrunkFieldProjection)? requestParams
+updateUrl ::= '/' qid reqVarPath ('<' reqUpdateVarProjection)? ('>' reqOutputTrunkFieldProjection)? requestParams
+deleteUrl ::= '/' qid reqVarPath ('<' reqDeleteVarProjection)? ('>' reqOutputTrunkFieldProjection)? requestParams
+customUrl ::= '/' qid reqVarPath ('>' reqOutputTrunkFieldProjection)? requestParams
 
 private requestParams ::= requestParam*
 requestParam ::= ('?' | '&') PARAM_NAME '=' datum {  // ? vs & nonsense is sorted out in the UrlRequestPsiParser
@@ -105,7 +107,6 @@ requestParam ::= ('?' | '&') PARAM_NAME '=' datum {  // ? vs & nonsense is sorte
 }
 private requestParamRecover ::= ! ( '?' | '&' )
 
-readUrl ::= '/' qid reqVarPath reqOutputTrunkFieldProjection requestParams
 
 // ============= req output projection =============
 
@@ -193,6 +194,65 @@ reqOutputComaListModelProjection ::= '*' ( '(' reqOutputComaVarProjection ')' )?
 reqOutputComaMapModelProjection ::= reqOutputComaKeysProjection ( '(' reqOutputComaVarProjection ')' )?
 reqOutputComaKeysProjection ::= ( ( '[' ( reqOutputComaKeyProjection ','? )* ']' ) | ( '[' '*' ']' ) )
 reqOutputComaKeyProjection ::= datum reqParamsAndAnnotations
+
+// req update --------------------------------------------------------
+
+reqUpdateModelMeta ::= '@' reqUpdateModelProjection // no params/annotations on meta?
+
+reqUpdateVarPolymorphicTail ::= reqUpdateVarSingleTail | reqUpdateVarMultiTail
+reqUpdateVarSingleTail ::= '~' typeRef reqUpdateVarProjection
+reqUpdateVarMultiTail ::= '~' '(' (reqUpdateVarMultiTailItem ','?)* ')' {pin=2}
+reqUpdateVarMultiTailItem ::= typeRef reqUpdateVarProjection
+
+reqUpdateVarProjection ::= ( reqUpdateMultiTagProjection | reqUpdateSingleTagProjection ) reqUpdateVarPolymorphicTail?
+reqUpdateSingleTagProjection ::= ( ':' tagName)? reqUpdateTagProjectionItem
+reqUpdateMultiTagProjection ::= ':' '(' (reqUpdateMultiTagProjectionItem ','?)* ')' {pin=2}
+reqUpdateMultiTagProjectionItem ::= tagName reqUpdateTagProjectionItem
+private reqUpdateTagProjectionItem ::= reqParamsAndAnnotations reqUpdateModelProjection reqUpdateModelMeta?
+//
+
+reqUpdateModelProjection ::= ( reqUpdateRecordModelProjection
+                             | reqUpdateListModelProjection
+                             | reqUpdateMapModelProjection
+                             )?
+
+reqUpdateRecordModelProjection ::= '(' (reqUpdateFieldProjection ','?)* ')' { pin=1 }
+reqUpdateFieldProjection ::= qid reqParamsAndAnnotations reqUpdateVarProjection
+
+reqUpdateListModelProjection ::= '*' ( '(' reqUpdateVarProjection ')' )? { pin=1 }
+
+reqUpdateMapModelProjection ::= reqUpdateKeysProjection ( '(' reqUpdateVarProjection ')' )?
+reqUpdateKeysProjection ::= '[' '+'? ']'
+
+// req delete --------------------------------------------------------
+
+reqDeleteModelMeta ::= '@' '+'? reqDeleteModelProjection // no params/annotations on meta?
+
+reqDeleteVarPolymorphicTail ::= reqDeleteVarSingleTail | reqDeleteVarMultiTail
+reqDeleteVarSingleTail ::= '~' typeRef reqDeleteVarProjection
+reqDeleteVarMultiTail ::= '~' '(' (reqDeleteVarMultiTailItem ','?)* ')' {pin=2}
+reqDeleteVarMultiTailItem ::= typeRef reqDeleteVarProjection
+
+reqDeleteVarProjection ::= ( reqDeleteMultiTagProjection | reqDeleteSingleTagProjection ) reqDeleteVarPolymorphicTail?
+reqDeleteSingleTagProjection ::= ( ':' '+'? tagName)? reqDeleteTagProjectionItem
+reqDeleteMultiTagProjection ::= ':' '(' (reqDeleteMultiTagProjectionItem ','?)* ')' {pin=2}
+reqDeleteMultiTagProjectionItem ::= '+'? tagName reqDeleteTagProjectionItem
+private reqDeleteTagProjectionItem ::= reqParamsAndAnnotations reqDeleteModelProjection reqDeleteModelMeta?
+//
+
+reqDeleteModelProjection ::= ( reqDeleteRecordModelProjection
+                             | reqDeleteListModelProjection
+                             | reqDeleteMapModelProjection
+                             )?
+
+reqDeleteRecordModelProjection ::= '(' (reqDeleteFieldProjection ','?)* ')' { pin=1 }
+reqDeleteFieldProjection ::= qid reqParamsAndAnnotations reqDeleteVarProjection
+
+reqDeleteListModelProjection ::= '*' ( '(' reqDeleteVarProjection ')' )? { pin=1 }
+
+reqDeleteMapModelProjection ::= reqDeleteKeysProjection ( '(' reqDeleteVarProjection ')' )?
+reqDeleteKeysProjection ::= ( ( '[' ( reqDeleteKeyProjection ','? )* ']' ) | ( '[' '*' ']' ) )
+reqDeleteKeyProjection ::= datum reqParamsAndAnnotations
 
 // ============= data language =============
 // please keep in sync with data language from schema.bnf and idl.bnf

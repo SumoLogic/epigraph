@@ -5,18 +5,18 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface UrlReadUrl extends PsiElement {
+public interface UrlReqDeleteFieldProjection extends PsiElement {
 
   @NotNull
   UrlQid getQid();
 
   @NotNull
-  UrlReqOutputTrunkFieldProjection getReqOutputTrunkFieldProjection();
+  List<UrlReqAnnotation> getReqAnnotationList();
 
   @NotNull
-  List<UrlRequestParam> getRequestParamList();
+  UrlReqDeleteVarProjection getReqDeleteVarProjection();
 
   @NotNull
-  PsiElement getSlash();
+  List<UrlReqParam> getReqParamList();
 
 }
