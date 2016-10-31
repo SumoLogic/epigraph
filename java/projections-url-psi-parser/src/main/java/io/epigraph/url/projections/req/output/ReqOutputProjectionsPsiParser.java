@@ -240,7 +240,7 @@ public class ReqOutputProjectionsPsiParser {
           parseAnnotations(singleTagProjectionPsi.getReqAnnotationList()),
           parseModelMetaProjection(opModelProjection, singleTagProjectionPsi.getReqOutputModelMeta(), subResolver),
           modelProjectionPsi, subResolver
-      ).projection();
+      );
 
       tagProjections.put(
           tag.name(),
@@ -307,7 +307,7 @@ public class ReqOutputProjectionsPsiParser {
           parseAnnotations(tagProjectionPsi.getReqAnnotationList()),
           parseModelMetaProjection(opTagProjection, tagProjectionPsi.getReqOutputModelMeta(), subResolver),
           modelProjection, subResolver
-      ).projection();
+      );
 
       tagProjections.put(
           tag.name(),
@@ -390,12 +390,12 @@ public class ReqOutputProjectionsPsiParser {
     return parseComaModelProjection(
         metaOp,
         modelMetaPsi.getPlus() != null,
-        ReqParams.EMPTY, 
+        ReqParams.EMPTY,
         Annotations.EMPTY,
         null,
         modelMetaPsi.getReqOutputComaModelProjection(),
         addTypeNamespace(metaOp.model(), resolver)
-    ).projection();
+    );
   }
 
   @NotNull
@@ -593,12 +593,16 @@ public class ReqOutputProjectionsPsiParser {
     }
 
     // end of path
-    return parseComaModelProjection(op, required, params, annotations, metaProjection, psi, subResolver);
+    return
+        new StepsAndProjection<>(
+            0,
+            parseComaModelProjection(op, required, params, annotations, metaProjection, psi, subResolver)
+        );
 
   }
 
   @NotNull
-  public static StepsAndProjection<? extends ReqOutputModelProjection<?, ?>> parseComaModelProjection(
+  public static ReqOutputModelProjection<?, ?> parseComaModelProjection(
       @NotNull OpOutputModelProjection<?, ?> op,
       boolean required,
       @NotNull ReqParams params,
@@ -618,10 +622,7 @@ public class ReqOutputProjectionsPsiParser {
             psi.getReqOutputComaRecordModelProjection();
 
         if (recordModelProjectionPsi == null)
-          return new StepsAndProjection<>(
-              0,
-              createDefaultModelProjection(model, required, opRecord, params, annotations, psi)
-          );
+          return createDefaultModelProjection(model, required, opRecord, params, annotations, psi);
 
         ensureModelKind(psi, TypeKind.RECORD);
 
@@ -640,10 +641,7 @@ public class ReqOutputProjectionsPsiParser {
         @Nullable UrlReqOutputComaMapModelProjection mapModelProjectionPsi = psi.getReqOutputComaMapModelProjection();
 
         if (mapModelProjectionPsi == null)
-          return new StepsAndProjection<>(
-              0,
-              createDefaultModelProjection(model, required, opMap, params, annotations, psi)
-          );
+          return createDefaultModelProjection(model, required, opMap, params, annotations, psi);
 
         ensureModelKind(psi, TypeKind.MAP);
 
@@ -663,10 +661,7 @@ public class ReqOutputProjectionsPsiParser {
             psi.getReqOutputComaListModelProjection();
 
         if (listModelProjectionPsi == null)
-          return new StepsAndProjection<>(
-              0,
-              createDefaultModelProjection(model, required, opList, params, annotations, psi)
-          );
+          return createDefaultModelProjection(model, required, opList, params, annotations, psi);
 
         ensureModelKind(psi, TypeKind.LIST);
 
@@ -756,8 +751,8 @@ public class ReqOutputProjectionsPsiParser {
                   new ReqOutputFieldProjectionEntry(
                       field,
                       new ReqOutputFieldProjection(
-                          ReqParams.EMPTY, 
-                          Annotations.EMPTY, 
+                          ReqParams.EMPTY,
+                          Annotations.EMPTY,
                           createDefaultVarProjection(
                               field.dataType().type,
                               opFieldProjection.projection(),
@@ -1002,7 +997,7 @@ public class ReqOutputProjectionsPsiParser {
   }
 
   @NotNull
-  public static StepsAndProjection<ReqOutputRecordModelProjection> parseComaRecordModelProjection(
+  public static ReqOutputRecordModelProjection parseComaRecordModelProjection(
       @NotNull OpOutputRecordModelProjection op,
       boolean required,
       @NotNull ReqParams params,
@@ -1067,17 +1062,14 @@ public class ReqOutputProjectionsPsiParser {
       );
     }
 
-    return new StepsAndProjection<>(
-        0,
-        new ReqOutputRecordModelProjection(
-            op.model(),
-            required,
-            params,
-            annotations,
-            metaProjection,
-            fieldProjections,
-            EpigraphPsiUtil.getLocation(psi)
-        )
+    return new ReqOutputRecordModelProjection(
+        op.model(),
+        required,
+        params,
+        annotations,
+        metaProjection,
+        fieldProjections,
+        EpigraphPsiUtil.getLocation(psi)
     );
   }
 
@@ -1133,7 +1125,7 @@ public class ReqOutputProjectionsPsiParser {
   }
 
   @NotNull
-  public static StepsAndProjection<ReqOutputMapModelProjection> parseComaMapModelProjection(
+  public static ReqOutputMapModelProjection parseComaMapModelProjection(
       @NotNull OpOutputMapModelProjection op,
       boolean required,
       @NotNull ReqParams params,
@@ -1193,23 +1185,20 @@ public class ReqOutputProjectionsPsiParser {
     }
 
 
-    return new StepsAndProjection<>(
-        0,
-        new ReqOutputMapModelProjection(
-            op.model(),
-            required,
-            params,
-            annotations,
-            metaProjection,
-            keyProjections,
-            valueProjection,
-            EpigraphPsiUtil.getLocation(psi)
-        )
+    return new ReqOutputMapModelProjection(
+        op.model(),
+        required,
+        params,
+        annotations,
+        metaProjection,
+        keyProjections,
+        valueProjection,
+        EpigraphPsiUtil.getLocation(psi)
     );
   }
 
   @NotNull
-  public static StepsAndProjection<ReqOutputListModelProjection> parseListModelProjection(
+  public static ReqOutputListModelProjection parseListModelProjection(
       @NotNull OpOutputListModelProjection op,
       boolean required,
       @NotNull ReqParams params,
@@ -1232,22 +1221,19 @@ public class ReqOutputProjectionsPsiParser {
           ).projection();
 
 
-    return new StepsAndProjection<>(
-        0,
-        new ReqOutputListModelProjection(
-            op.model(),
-            required,
-            params,
-            annotations,
-            metaProjection,
-            itemsProjection,
-            EpigraphPsiUtil.getLocation(psi)
-        )
+    return new ReqOutputListModelProjection(
+        op.model(),
+        required,
+        params,
+        annotations,
+        metaProjection,
+        itemsProjection,
+        EpigraphPsiUtil.getLocation(psi)
     );
   }
 
   @NotNull
-  public static StepsAndProjection<ReqOutputPrimitiveModelProjection> parsePrimitiveModelProjection(
+  public static ReqOutputPrimitiveModelProjection parsePrimitiveModelProjection(
       @NotNull PrimitiveType type,
       boolean required,
       @NotNull ReqParams params,
@@ -1255,16 +1241,13 @@ public class ReqOutputProjectionsPsiParser {
       @Nullable ReqOutputPrimitiveModelProjection metaProjection,
       @NotNull PsiElement locationPsi) throws PsiProcessingException {
 
-    return new StepsAndProjection<>(
-        0,
-        new ReqOutputPrimitiveModelProjection(
-            type,
-            required,
-            params,
-            annotations,
-            metaProjection,
-            EpigraphPsiUtil.getLocation(locationPsi)
-        )
+    return new ReqOutputPrimitiveModelProjection(
+        type,
+        required,
+        params,
+        annotations,
+        metaProjection,
+        EpigraphPsiUtil.getLocation(locationPsi)
     );
   }
 
