@@ -3,9 +3,6 @@ apply plugin: 'java'
 dependencies {
   compile project(':epigraph-java-core')
   compile project(':epigraph-java-gdata')
-  compile project(':epigraph-java-gdata-idl-psi-parser')
-  compile project(':epigraph-java-projections')
-  compile project(':epigraph-lang-common')
   compile project(':epigraph-idl-parser')
   compile project(':epigraph-light-psi')
   compile project(':epigraph-standalone-psi-util')

@@ -4,16 +4,11 @@ sourceSets.main.java.srcDirs += file("$projectDir/src/main/java-generated")
 idea.module.generatedSourceDirs += file("$projectDir/src/main/java-generated")
 
 dependencies {
-  // todo are these needed?
   compile project(':epigraph-java-core')
-  compile project(':epigraph-java-gdata')
   compile project(':epigraph-light-psi')
   compile project(':epigraph-lang-common')
   compile project(':epigraph-standalone-psi-util')
 
   compile 'org.jetbrains:annotations'
   compile 'net.jcip:jcip-annotations'
-
-  testCompile 'junit:junit'
-  testCompile 'org.slf4j:slf4j-nop'
 }

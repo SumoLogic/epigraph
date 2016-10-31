@@ -17,8 +17,6 @@ import java.util.List;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class IdlGDataPsiParser {
-  // todo this class should belong to standalone version only (standalone idl parser, once extracted)
-
   @NotNull
   public static GDataValue parseValue(@NotNull IdlDataValue psi) throws PsiProcessingException {
     if (psi.getData() != null) return parseData(psi.getData());
