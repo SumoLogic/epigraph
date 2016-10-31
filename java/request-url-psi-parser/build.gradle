@@ -5,14 +5,14 @@ idea.module.generatedSourceDirs += file("$projectDir/src/main/java-generated")
 
 dependencies {
   compile project(':epigraph-java-core')
+  compile project(':epigraph-java-idl')
   compile project(':epigraph-java-projections')
   compile project(':epigraph-java-projections-url-psi-parser')
   compile project(':epigraph-java-request-url')
   compile project(':epigraph-java-request-url-parser')
-  compile project(':epigraph-java-idl')
+  compile project(':epigraph-java-standalone-psi-util')
   compile project(':epigraph-light-psi')
   compile project(':epigraph-lang-common')
-  compile project(':epigraph-standalone-psi-util')
 
   compile 'org.jetbrains:annotations'
   compile 'net.jcip:jcip-annotations'

@@ -77,7 +77,6 @@ mvn clean install -P maven-plugin-dependent
         <module>maven-plugin-common</module>
         <module>schema-compiler</module>
         <module>schema-parser</module>
-        <module>standalone-psi-util</module>
       </modules>
     </profile>
 

@@ -5,10 +5,10 @@ dependencies {
   compile project(':epigraph-java-gdata')
   compile project(':epigraph-java-gdata-idl-psi-parser')
   compile project(':epigraph-java-projections')
+  compile project(':epigraph-java-standalone-psi-util')
   compile project(':epigraph-lang-common')
   compile project(':epigraph-idl-parser')
   compile project(':epigraph-light-psi')
-  compile project(':epigraph-standalone-psi-util')
 
   compile 'org.jetbrains:annotations'
 
