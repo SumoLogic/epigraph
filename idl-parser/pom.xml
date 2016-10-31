@@ -33,11 +33,6 @@
       <artifactId>epigraph-light-psi</artifactId>
       <version>0.0-SNAPSHOT</version>
     </dependency>
-    <dependency>
-      <groupId>${project.parent.groupId}</groupId>
-      <artifactId>epigraph-standalone-psi-util</artifactId>
-      <version>${project.parent.version}</version>
-    </dependency>
 
     <dependency>
       <groupId>net.jcip</groupId>

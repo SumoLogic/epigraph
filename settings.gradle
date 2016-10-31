@@ -26,6 +26,7 @@ Map<String, String> modules = [
     'java/gradle-plugin'                   : 'epigraph-java-gradle-plugin',
     'java/idl'                             : 'epigraph-java-idl',
     'java/idl-psi-parser'                  : 'epigraph-java-idl-psi-parser',
+    'java/idl-psi-parser-common'           : 'epigraph-java-idl-psi-parser-common',
     'java/maven-plugin'                    : 'epigraph-java-maven-plugin',
     'java/projections'                     : 'epigraph-java-projections',
     'java/projections-idl-psi-parser'      : 'epigraph-java-projections-idl-psi-parser',

@@ -30,6 +30,11 @@
     </dependency>
     <dependency>
       <groupId>${project.parent.groupId}</groupId>
+      <artifactId>epigraph-java-idl-psi-parser-common</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.parent.groupId}</groupId>
       <artifactId>epigraph-java-projections</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
