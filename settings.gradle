@@ -31,6 +31,7 @@ Map<String, String> modules = [
     'java/projections'                     : 'epigraph-java-projections',
     'java/projections-idl-psi-parser'      : 'epigraph-java-projections-idl-psi-parser',
     'java/projections-url-psi-parser'      : 'epigraph-java-projections-url-psi-parser',
+    'java/schema-parser'                   : 'epigraph-java-schema-parser',
     'java/server'                          : 'epigraph-java-server',
     'java/service'                         : 'epigraph-java-service',
     'java/standalone-psi-util'             : 'epigraph-java-standalone-psi-util',
@@ -49,7 +50,6 @@ Map<String, String> modules = [
     'scala/core'                           : 'epigraph-scala-core',
     'scala/maven-plugin'                   : 'epigraph-scala-maven-plugin',
     'schema-compiler'                      : 'epigraph-schema-compiler',
-    'schema-parser'                        : 'epigraph-schema-parser',
 
     'schemas/builtin-types-schema'         : 'epigraph-builtin-types-schema',
     'schemas/data-schema'                  : 'epigraph-data-schema',

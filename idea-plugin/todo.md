@@ -33,7 +33,7 @@
 - Structure popup (ctrl-f12)
 - Auto insert matching quotes/backticks/parens/<> in parameters and data
 - Namespace declaration: inspection to warn about namespaces not matching folder structure
-- Rename projects to `epigraph-idea-plugin` and `epigraph-schema-parser(-common)` ?
+- Rename project to `epigraph-idea-plugin` ?
 - Type ref completion should suggest types from non-imported namespaces, automatically adding imports as needed
 - Custom attributes must reference fields in meta-schema (and respect renames, find usages etc)
 - Custom attribute values must be based (and validated against) meta-schema. Find usages/refactorings/completion must take it into account

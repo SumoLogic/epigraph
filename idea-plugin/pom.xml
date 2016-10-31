@@ -60,10 +60,10 @@
               <outputDirectory>${project.build.directory}/generated-sources/schema-parser-common.java</outputDirectory>
               <resources>
                 <resource>
-                  <directory>../schema-parser-common/src/main/java</directory>
+                  <directory>../java/schema-parser-common/src/main/java</directory>
                 </resource>
                 <resource>
-                  <directory>../schema-parser-common/src/main/java.generated</directory>
+                  <directory>../java/schema-parser-common/src/main/java.generated</directory>
                 </resource>
               </resources>
             </configuration>

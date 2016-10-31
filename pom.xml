@@ -75,7 +75,6 @@ mvn clean install -P maven-plugin-dependent
         <module>maven-plugin</module>
         <module>maven-plugin-common</module>
         <module>schema-compiler</module>
-        <module>schema-parser</module>
       </modules>
     </profile>
 

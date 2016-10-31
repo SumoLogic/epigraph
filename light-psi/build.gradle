@@ -29,7 +29,7 @@ configurations {
 
 dependencies {
   lightPsiTmp files("$buildDir/tmp/light-psi-tmp.jar") // this is where packageLightPsi puts it
-  fileList project(":epigraph-schema-parser")
+  fileList project(":epigraph-java-schema-parser")
 }
 
 ext.isFolder = { String path ->

@@ -57,14 +57,13 @@ idea {
 }
 
 // bootstrap: gradle -c settings-bootstrap.gradle publishGradlePlugins
-
 task publishGradlePlugins(dependsOn: [
     ':epigraph-scala-core:publishToMavenLocal',
     ':epigraph-java-codegen:publishToMavenLocal',
+    ':epigraph-java-schema-parser:publishToMavenLocal',
     ':epigraph-java-util:publishToMavenLocal',
     ':epigraph-lang-common:publishToMavenLocal',
     ':epigraph-light-psi:publishToMavenLocal',
-    ':epigraph-schema-parser:publishToMavenLocal',
     ':epigraph-gradle-plugins-common:publishToMavenLocal',
     ':epigraph-java-gradle-plugin:publishToMavenLocal',
     ':epigraph-schema-compiler:publishToMavenLocal',
@@ -72,3 +71,4 @@ task publishGradlePlugins(dependsOn: [
 ]) {
   description 'Bootstraps gradle build by installing necessary plugins. Usage: \n gradle -c settings-bootstrap.gradle publishGradlePlugins'
 }
+

@@ -13,11 +13,6 @@
 
   <dependencies>
 
-    <!--<dependency>-->
-      <!--<groupId>${project.parent.groupId}</groupId>-->
-      <!--<artifactId>epigraph-builtin-types-schema</artifactId>-->
-      <!--<version>${project.parent.version}</version>-->
-    <!--</dependency>-->
     <dependency>
       <groupId>${project.parent.groupId}</groupId>
       <artifactId>epigraph-scala-core</artifactId>
@@ -26,11 +21,6 @@
     <dependency>
       <groupId>${project.parent.groupId}</groupId>
       <artifactId>epigraph-schema-compiler</artifactId>
-      <version>${project.parent.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.parent.groupId}</groupId>
-      <artifactId>epigraph-schema-parser</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
     <dependency>

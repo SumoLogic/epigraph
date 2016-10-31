@@ -4,11 +4,11 @@ plugins {
 
 apply plugin: 'java'
 
-sourceSets.main.java.srcDirs += file('../schema-parser-common/src/main/java')
-sourceSets.main.java.srcDirs += file('../schema-parser-common/src/main/java.generated')
+sourceSets.main.java.srcDirs += file('../java/schema-parser-common/src/main/java')
+sourceSets.main.java.srcDirs += file('../java/schema-parser-common/src/main/java.generated')
 
-idea.module.sourceDirs += file('../schema-parser-common/src/main/java')
-idea.module.generatedSourceDirs += file('../schema-parser-common/src/main/java.generated')
+idea.module.sourceDirs += file('../java/schema-parser-common/src/main/java')
+idea.module.generatedSourceDirs += file('../java/schema-parser-common/src/main/java.generated')
 
 dependencies {
   compile project(':epigraph-java-core') // for ImportAwareTypesResolver
