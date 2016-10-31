@@ -81,7 +81,7 @@ public class ReqPathParserTest {
 //      String psiDump = DebugUtil.psiToString(psi, true, false).trim();
 //      System.err.println(psiDump);
       e.printStackTrace();
-      fail(e.getMessage() + " at " + EpigraphPsiUtil.getLocation(e.psi()));
+      fail(e.getMessage() + " at " + e.location());
     }
   }
 
@@ -141,8 +141,7 @@ public class ReqPathParserTest {
 
     } catch (PsiProcessingException e) {
       e.printStackTrace();
-      System.err.println(e.getMessage() + " at " +
-                         EpigraphPsiUtil.getLocation(e.psi()));
+      System.err.println(e.getMessage() + " at " + e.location());
       String psiDump = DebugUtil.psiToString(psiVarProjection, true, false).trim();
       fail(psiDump);
     }

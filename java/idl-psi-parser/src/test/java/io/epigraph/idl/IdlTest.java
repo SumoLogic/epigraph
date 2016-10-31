@@ -208,7 +208,7 @@ public class IdlTest {
       return IdlPsiParser.parseIdl(psiFile, resolver);
     } catch (PsiProcessingException e) {
       e.printStackTrace();
-      @NotNull final TextLocation location = EpigraphPsiUtil.getLocation(e.psi());
+      @NotNull final TextLocation location = e.location();
       System.err.println(e.getMessage() + " at " + location);
 
       System.err.print(text.substring(location.startOffset()));

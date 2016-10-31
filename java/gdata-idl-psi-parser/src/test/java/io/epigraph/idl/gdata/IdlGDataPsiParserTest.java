@@ -60,7 +60,7 @@ public class IdlGDataPsiParserTest {
       gDataValue = IdlGDataPsiParser.parseValue(dataValue);
     } catch (PsiProcessingException e) {
       e.printStackTrace();
-      System.err.println(e.getMessage() + " at " + EpigraphPsiUtil.getLocation(e.psi()));
+      System.err.println(e.getMessage() + " at " + e.location());
       fail();
     }
 

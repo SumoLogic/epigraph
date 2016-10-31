@@ -1,6 +1,5 @@
 package io.epigraph.server.http;
 
-import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiErrorElement;
 import de.uka.ilkd.pp.Layouter;
 import de.uka.ilkd.pp.NoExceptions;
@@ -9,6 +8,7 @@ import io.epigraph.data.Data;
 import io.epigraph.data.Datum;
 import io.epigraph.idl.ResourceIdl;
 import io.epigraph.idl.operations.ReadOperationIdl;
+import io.epigraph.lang.TextLocation;
 import io.epigraph.printers.DataPrinter;
 import io.epigraph.projections.StepsAndProjection;
 import io.epigraph.projections.req.output.ReqOutputFieldProjection;
@@ -163,7 +163,7 @@ public class UndertowHandler implements HttpHandler {
       );
     } catch (PsiProcessingException e) {
       StringBuilder sb = new StringBuilder();
-      TextRange textRange = e.psi().getTextRange();
+      @NotNull TextLocation textRange = e.location();
       String errorDescription = e.getMessage();
 
       if (htmlAccepted(exchange)) {
@@ -391,12 +391,12 @@ public class UndertowHandler implements HttpHandler {
           else sb.append('\n');
         }
 
-        TextRange textRange = errorElement.getTextRange();
+        TextLocation textLocation = EpigraphPsiUtil.getLocation(errorElement);
         String errorDescription = errorElement.getErrorDescription();
         if (htmlAccepted)
-          addPsiErrorHtml(sb, urlString, textRange, errorDescription);
+          addPsiErrorHtml(sb, urlString, textLocation, errorDescription);
         else
-          addPsiErrorPlainText(sb, urlString, textRange, errorDescription);
+          addPsiErrorPlainText(sb, urlString, textLocation, errorDescription);
       }
 
       if (htmlAccepted) {
@@ -417,11 +417,11 @@ public class UndertowHandler implements HttpHandler {
   private void addPsiErrorPlainText(
       StringBuilder sb,
       String projectionString,
-      TextRange textRange,
+      TextLocation textLocation,
       String errorDescription) {
 
-    final int startOffset = textRange.getStartOffset();
-    final int endOffset = textRange.getEndOffset();
+    final int startOffset = textLocation.startOffset();
+    final int endOffset = textLocation.endOffset();
 
     sb.append(errorDescription).append("\n\n");
 
@@ -450,11 +450,11 @@ public class UndertowHandler implements HttpHandler {
   private void addPsiErrorHtml(
       StringBuilder sb,
       String projectionString,
-      TextRange textRange,
+      TextLocation textLocation,
       String errorDescription) {
 
-    int startOffset = textRange.getStartOffset();
-    int endOffset = textRange.getEndOffset();
+    int startOffset = textLocation.startOffset();
+    int endOffset = textLocation.endOffset();
 
     sb.append(errorDescription).append("<br/><br/>");
 

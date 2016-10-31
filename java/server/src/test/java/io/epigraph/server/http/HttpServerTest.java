@@ -90,7 +90,7 @@ public class HttpServerTest {
     try {
       return IdlPsiParser.parseIdl(psiFile, resolver);
     } catch (PsiProcessingException e) {
-      throw new RuntimeException(e.getMessage() + " at " + EpigraphPsiUtil.getLocation(e.psi()), e);
+      throw new RuntimeException(e.getMessage() + " at " + e.location(), e);
     }
   }
 

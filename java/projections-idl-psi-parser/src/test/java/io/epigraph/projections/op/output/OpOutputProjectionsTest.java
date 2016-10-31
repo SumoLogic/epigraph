@@ -218,8 +218,7 @@ public class OpOutputProjectionsTest {
 
     } catch (PsiProcessingException e) {
       e.printStackTrace();
-      System.err.println(e.getMessage() + " at " +
-                         EpigraphPsiUtil.getLocation(e.psi()));
+      System.err.println(e.getMessage() + " at " + e.location());
       String psiDump = DebugUtil.psiToString(psiVarProjection, true, false).trim();
       fail(psiDump);
     }
