@@ -70,7 +70,6 @@ mvn clean install -P maven-plugin-dependent
       </activation>
       <modules>
         <module>scala</module>
-        <module>idl-parser</module>
         <module>java</module>
         <module>lang-common</module>
         <module>maven-plugin</module>
