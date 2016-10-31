@@ -19,7 +19,7 @@
     </dependency>
     <dependency>
       <groupId>${project.parent.groupId}</groupId>
-      <artifactId>epigraph-lang-common</artifactId>
+      <artifactId>epigraph-java-lang-common</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
 

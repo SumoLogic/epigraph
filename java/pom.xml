@@ -19,6 +19,7 @@
         <module>gdata</module>
         <module>idl</module>
         <module>idl-parser</module>
+        <module>lang-common</module>
         <module>maven-plugin</module>
         <!--<module>preprint</module>-->
         <module>projections</module>

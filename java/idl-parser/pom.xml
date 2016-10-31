@@ -20,12 +20,12 @@
     </dependency>
     <dependency>
       <groupId>${project.parent.groupId}</groupId>
-      <artifactId>epigraph-light-psi</artifactId>
+      <artifactId>epigraph-java-lang-common</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
     <dependency>
       <groupId>${project.parent.groupId}</groupId>
-      <artifactId>epigraph-lang-common</artifactId>
+      <artifactId>epigraph-light-psi</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
     <dependency>

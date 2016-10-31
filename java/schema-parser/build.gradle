@@ -7,8 +7,8 @@ sourceSets.main.java.srcDirs += file("$buildDir/generated-sources/schema-parser-
 idea.module.generatedSourceDirs += file("$buildDir/generated-sources/schema-parser-common.java")
 
 dependencies {
+  compile project(':epigraph-java-lang-common')
   compile project(':epigraph-light-psi')
-  compile project(':epigraph-lang-common')
 
   compile 'org.jetbrains:annotations'
   compile 'net.jcip:jcip-annotations'

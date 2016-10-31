@@ -15,13 +15,13 @@
 
     <dependency>
       <groupId>com.sumologic.epigraph</groupId>
-      <artifactId>epigraph-light-psi</artifactId>
+      <artifactId>epigraph-java-lang-common</artifactId>
       <version>0.0-SNAPSHOT</version>
     </dependency>
 
     <dependency>
       <groupId>com.sumologic.epigraph</groupId>
-      <artifactId>epigraph-lang-common</artifactId>
+      <artifactId>epigraph-light-psi</artifactId>
       <version>0.0-SNAPSHOT</version>
     </dependency>
 

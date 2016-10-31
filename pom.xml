@@ -71,7 +71,6 @@ mvn clean install -P maven-plugin-dependent
       <modules>
         <module>scala</module>
         <module>java</module>
-        <module>lang-common</module>
         <module>maven-plugin</module>
         <module>maven-plugin-common</module>
         <module>schema-compiler</module>
@@ -109,7 +108,7 @@ mvn clean install -P maven-plugin-dependent
       </activation>
       <modules>
         <module>idea-plugin</module>
-        <module>lang-common</module>
+        <module>java/lang-common</module>
       </modules>
     </profile>
 

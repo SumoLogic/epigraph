@@ -13,10 +13,10 @@ Map<String, String> modules = [
     'gradle-plugins/gradle-plugins-common' : 'epigraph-gradle-plugins-common',
     'gradle-plugins/schema-compiler-plugin': 'epigraph-schema-compiler-gradle-plugin',
     'java/codegen'                         : 'epigraph-java-codegen',
+    'java/gradle-plugin'                   : 'epigraph-java-gradle-plugin',
+    'java/lang-common'                     : 'epigraph-java-lang-common',
     'java/schema-parser'                   : 'epigraph-java-schema-parser',
     'java/util'                            : 'epigraph-java-util',
-    'java/gradle-plugin'                   : 'epigraph-java-gradle-plugin',
-    'lang-common'                          : 'epigraph-lang-common',
     'light-psi'                            : 'epigraph-light-psi',
     'scala/core'                           : 'epigraph-scala-core',
     'schema-compiler'                      : 'epigraph-schema-compiler'
