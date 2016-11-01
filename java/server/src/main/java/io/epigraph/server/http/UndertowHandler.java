@@ -152,7 +152,7 @@ public class UndertowHandler implements HttpHandler {
 
       // run operation
       CompletableFuture<? extends ReadOperationResponse> future =
-          operation.process(new ReadOperationRequest(stepsAndProjection.projection()));
+          operation.process(new ReadOperationRequest(null, stepsAndProjection.projection()));
 
       // send response back
       handleReadResponse(
