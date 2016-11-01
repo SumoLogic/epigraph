@@ -1,14 +1,14 @@
 package io.epigraph.service;
 
 import io.epigraph.idl.ResourceIdl;
+import io.epigraph.idl.operations.OperationIdl;
+import io.epigraph.projections.ProjectionUtils;
+import io.epigraph.projections.op.path.OpVarPath;
 import io.epigraph.service.operations.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -17,70 +17,181 @@ public class Resource {
   @NotNull
   private final ResourceIdl declaration;
 
-  @Nullable
+  @NotNull
   private final Operations<? extends ReadOperation> readOperations;
+  @NotNull
+  private final Operations<? extends CreateOperation> createOperations;
+  @NotNull
+  private final Operations<? extends UpdateOperation> updateOperations;
+  @NotNull
+  private final Operations<? extends DeleteOperation> deleteOperations;
+  @NotNull
+  private final Operations<? extends CustomOperation> customOperations;
 
   public Resource(
       @NotNull ResourceIdl declaration,
-      @Nullable Collection<? extends ReadOperation> readOperations
+      @NotNull Collection<? extends ReadOperation> readOperations,
+      @NotNull Collection<? extends CreateOperation> createOperations,
+      @NotNull Collection<? extends UpdateOperation> updateOperations,
+      @NotNull Collection<? extends DeleteOperation> deleteOperations,
+      @NotNull Collection<? extends CustomOperation> customOperations
   ) throws ServiceInitializationException {
 
     this.declaration = declaration;
     this.readOperations = new Operations<>(declaration.fieldName(), readOperations);
+    this.createOperations = new Operations<>(declaration.fieldName(), createOperations);
+    this.updateOperations = new Operations<>(declaration.fieldName(), updateOperations);
+    this.deleteOperations = new Operations<>(declaration.fieldName(), deleteOperations);
+    this.customOperations = new Operations<>(declaration.fieldName(), customOperations);
+
+    verifyCustomOpNameClashes(declaration, customOperations);
+  }
+
+  private void verifyCustomOpNameClashes(
+      final @NotNull ResourceIdl declaration,
+      final @NotNull Collection<? extends CustomOperation> customOperations) throws ServiceInitializationException {
+
+    // check that custom operations don't intersect with the others
+    for (final CustomOperation customOperation : customOperations) {
+      final OperationIdl customDecl = customOperation.declaration();
+      @Nullable final String customOpName = customDecl.name();
+      if (customOpName == null)
+        throw new ServiceInitializationException(
+            String.format(
+                "Resource '%s': custom operation without a name declared at: %s",
+                declaration.fieldName(),
+                customDecl.location()
+            )
+        );
+
+      final Operations<?> ops;
+      switch (customDecl.method()) {
+        case GET:
+          ops = this.readOperations;
+          break;
+        case POST:
+          ops = this.createOperations;
+          break;
+        case PUT:
+          ops = this.updateOperations;
+          break;
+        case DELETE:
+          ops = this.deleteOperations;
+          break;
+        default:
+          throw new ServiceInitializationException("Unknown HTTP method: " + customDecl.method());
+      }
+
+      final Operation<?, ?, ?> otherOp = ops.namedOperations.get(customOpName);
+      if (otherOp != null)
+        throw new ServiceInitializationException(
+            String.format(
+                "Custom operation '%s declared at: %s clashes with %s operation declared at %s",
+                customOpName,
+                customOperation.declaration().location(),
+                otherOp.declaration().kind(),
+                otherOp.declaration().location()
+            )
+        );
+    }
   }
 
   @NotNull
   public ResourceIdl declaration() { return declaration; }
 
-  @Nullable
-  public ReadOperation defaultReadOperation() {
-    return readOperations == null ? null : readOperations.defaultOperation;
+  /**
+   * @return unnamed read operations sorted by path length in descending order
+   */
+  public List<? extends ReadOperation> unnamedReadOperations() {
+    return readOperations.unnamedOperations;
   }
 
   @Nullable
   public ReadOperation namedReadOperation(@NotNull String name) {
-    return readOperations == null ? null : readOperations.namedOperations.get(name);
+    return readOperations.namedOperations.get(name);
+  }
+
+  /**
+   * @return unnamed create operations sorted by path length in descending order
+   */
+  public List<? extends CreateOperation> unnamedCreateOperations() {
+    return createOperations.unnamedOperations;
+  }
+
+  @Nullable
+  public CreateOperation namedCreateOperation(@NotNull String name) {
+    return createOperations.namedOperations.get(name);
+  }
+
+  /**
+   * @return unnamed update operations sorted by path length in descending order
+   */
+  public List<? extends UpdateOperation> unnamedUpdateOperations() {
+    return updateOperations.unnamedOperations;
+  }
+
+  @Nullable
+  public UpdateOperation namedUpdateOperation(@NotNull String name) {
+    return updateOperations.namedOperations.get(name);
+  }
+
+  /**
+   * @return unnamed delete operations sorted by path length in descending order
+   */
+  public List<? extends DeleteOperation> unnamedDeleteOperations() {
+    return deleteOperations.unnamedOperations;
+  }
+
+  @Nullable
+  public DeleteOperation namedDeleteOperation(@NotNull String name) {
+    return deleteOperations.namedOperations.get(name);
+  }
+  
+  @Nullable
+  public CustomOperation customOperation(@NotNull String name) {
+    return customOperations.namedOperations.get(name);
   }
 
   private static class Operations<O extends Operation<?, ?, ?>> {
-    @Nullable
-    final O defaultOperation;
+    @NotNull
+    final List<O> unnamedOperations;
     @NotNull
     final Map<String, O> namedOperations;
 
-    Operations(@NotNull String resourceName, @Nullable Collection<O> operations)
+    Operations(@NotNull String resourceName, @NotNull Collection<O> operations)
         throws ServiceInitializationException {
-      if (operations == null) {
-        defaultOperation = null;
-        namedOperations = Collections.emptyMap();
-      } else {
-        namedOperations = new HashMap<>();
-        @Nullable O defaultOperation = null;
 
-        for (O operation : operations) {
-          @Nullable String name = operation.declaration().name();
-          if (name == null) {
-            if (defaultOperation != null)
-              throw new ServiceInitializationException(
-                  String.format("Default %s operation specified twice for resource '%s'",
-                                operation.declaration().kind(), resourceName
-                  )
-              );
-            else defaultOperation = operation;
-          } else {
-            if (namedOperations.containsKey(name))
-              throw new ServiceInitializationException(
-                  String.format("%s operation '%s' specified twice for resource '%s'",
-                                operation.declaration().kind(), name, resourceName
-                  )
-              );
-            else namedOperations.put(name, operation);
-          }
+      unnamedOperations = new ArrayList<>();
+      namedOperations = new HashMap<>();
 
+      for (O operation : operations) {
+        @Nullable String name = operation.declaration().name();
+        if (name == null) {
+          unnamedOperations.add(operation);
+        } else {
+          if (namedOperations.containsKey(name))
+            throw new ServiceInitializationException(
+                String.format("%s operation '%s' specified twice for resource '%s'",
+                              operation.declaration().kind(), name, resourceName
+                )
+            );
+          else namedOperations.put(name, operation);
         }
-
-        this.defaultOperation = defaultOperation;
       }
+
+      // sort by path length, from longest to shortest
+
+      Collections.sort(unnamedOperations, (o1, o2) -> {
+        @Nullable final OpVarPath path1 = o1.declaration().path();
+        @Nullable final OpVarPath path2 = o2.declaration().path();
+
+        int path1Len = path1 == null ? 0 : ProjectionUtils.pathLength(path1);
+        int path2Len = path2 == null ? 0 : ProjectionUtils.pathLength(path2);
+
+        if (path1Len > path2Len) return -1;
+        if (path1Len < path2Len) return 1;
+        return 0;
+      });
     }
   }
 

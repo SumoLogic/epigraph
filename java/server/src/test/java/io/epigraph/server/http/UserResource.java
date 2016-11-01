@@ -14,6 +14,7 @@ import io.epigraph.tests.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.concurrent.CompletableFuture;
 
 public class UserResource extends Resource {
@@ -23,16 +24,20 @@ public class UserResource extends Resource {
         resourceIdl,
         Arrays.asList(
             new ReadOp(((ReadOperationIdl) resourceIdl.operations().get(0)))
-        )
+        ),
+        Collections.emptyList(),
+        Collections.emptyList(),
+        Collections.emptyList(),
+        Collections.emptyList()
     );
   }
 
-  private static class ReadOp extends ReadOperation {
+  private static class ReadOp extends ReadOperation<Person> {
 
     private ReadOp(@NotNull ReadOperationIdl declaration) { super(declaration); }
 
     @Override
-    public @NotNull CompletableFuture<ReadOperationResponse> process(@NotNull ReadOperationRequest request) {
+    public @NotNull CompletableFuture<ReadOperationResponse<Person>> process(@NotNull ReadOperationRequest request) {
 
       Person person = User.create()
           .setId(UserId.create(1))
@@ -77,8 +82,8 @@ public class UserResource extends Resource {
               )
           );
 
-      CompletableFuture<ReadOperationResponse> future = new CompletableFuture<>();
-      future.complete(new ReadOperationResponse(person));
+      CompletableFuture<ReadOperationResponse<Person>> future = new CompletableFuture<>();
+      future.complete(new ReadOperationResponse<>(person));
       return future;
     }
 

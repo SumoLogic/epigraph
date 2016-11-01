@@ -16,6 +16,7 @@ import io.epigraph.tests.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -26,11 +27,15 @@ public class UsersResource extends Resource {
         resourceIdl,
         Arrays.asList(
             new ReadOp(((ReadOperationIdl) resourceIdl.operations().get(0)))
-        )
+        ),
+        Collections.emptyList(),
+        Collections.emptyList(),
+        Collections.emptyList(),
+        Collections.emptyList()
     );
   }
 
-  private static class ReadOp extends ReadOperation {
+  private static class ReadOp extends ReadOperation<PersonId_Person_Map.Data> {
 
     private ReadOp(@NotNull ReadOperationIdl declaration) { super(declaration); }
 

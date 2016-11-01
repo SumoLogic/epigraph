@@ -10,11 +10,7 @@ import com.intellij.mock.MockProjectEx;
 import com.intellij.mock.MockPsiManager;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.Trinity;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiErrorElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiInvalidElementAccessException;
-import com.intellij.psi.PsiRecursiveElementWalkingVisitor;
+import com.intellij.psi.*;
 import com.intellij.psi.impl.PsiFileFactoryImpl;
 import com.intellij.psi.impl.source.CharTableImpl;
 import com.intellij.psi.tree.IElementType;
@@ -129,14 +125,30 @@ public class EpigraphPsiUtil {
       // any way to do this without try-catch?
     }
 
-    return new TextLocation(textRange.getStartOffset(),
-                            textRange.getEndOffset(),
-                            psiFile == null ? null : psiFile.getName()
+    // try to find the topmost psi element describing current file/contents
+    final PsiElement megaParent;
+    if (psiFile != null) megaParent = psiFile;
+    else {
+      PsiElement parent = psi;
+      while (parent.getParent() != null) {
+        if (parent instanceof PsiFile) break;
+        if (parent.getParent() instanceof PsiDirectory) break;
+        parent = parent.getParent();
+      }
+      megaParent = parent;
+    }
+
+    return new TextLocation(
+        textRange.getStartOffset(),
+        textRange.getEndOffset(),
+        psiFile == null ? null : psiFile.getName(),
+        megaParent.getText()
     );
   }
 
-  public static void collectErrors(@NotNull PsiElement element,
-                                    @Nullable final EpigraphPsiUtil.ErrorProcessor errorProcessor) {
+  public static void collectErrors(
+      @NotNull PsiElement element,
+      @Nullable final EpigraphPsiUtil.ErrorProcessor errorProcessor) {
     if (errorProcessor != null) {
       element.accept(new PsiRecursiveElementWalkingVisitor() {
         @Override

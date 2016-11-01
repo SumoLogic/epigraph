@@ -138,7 +138,7 @@ public class UndertowHandler implements HttpHandler {
       throws ResourceNotFoundException, OperationNotFoundException, RequestFailedException {
 
     @Nullable String operationName = getOperationName(exchange.getQueryParameters());
-    @NotNull ReadOperation operation = ResourceRouter.findReadOperation(operationName, resource);
+    @NotNull ReadOperation<?> operation = ResourceRouter.findReadOperation(operationName, resource);
 
     @NotNull ResourceIdl resourceDeclaration = resource.declaration();
     @NotNull ReadOperationIdl operationDeclaration = operation.declaration();

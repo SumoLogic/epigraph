@@ -17,11 +17,12 @@ public class ResourceRouter { // todo move to service?
     return resource;
   }
 
-  public static ReadOperation findReadOperation(@Nullable String operationName, @NotNull Resource resource)
+  @Deprecated
+  public static ReadOperation<?> findReadOperation(@Nullable String operationName, @NotNull Resource resource)
       throws ResourceNotFoundException, OperationNotFoundException {
 
     ReadOperation operation = operationName == null
-                              ? resource.defaultReadOperation()
+                              ? resource.unnamedReadOperations().iterator().next()
                               : resource.namedReadOperation(operationName);
 
     if (operation == null)
