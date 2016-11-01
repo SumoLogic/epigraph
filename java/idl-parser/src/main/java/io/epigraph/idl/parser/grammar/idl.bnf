@@ -25,11 +25,21 @@
     DEFAULT = 'default'
 
     RESOURCE = 'resource'
+
+    // http methods
+    GET = 'GET'
+    POST = 'POST'
+    PUT = 'PUT'
+    DELETE = 'DELETE'
+
+    // operation types
     READ = 'READ'
-    CREATE_OP = 'CREATE'
-    UPDATE_OP = 'UPDATE'
-    DELETE_OP = 'DELETE'
-    CUSTOM_OP = 'CUSTOM'
+    CREATE = 'CREATE'
+    UPDATE = 'UPDATE'
+    // DELETE = 'DELETE'
+    CUSTOM = 'CUSTOM'
+
+    METHOD = 'method'
     INPUT_TYPE = 'inputType'
     INPUT_PROJECTION = 'inputProjection'
     OUTPUT_TYPE = 'outputType'
@@ -170,6 +180,7 @@ resource users map[String,User] {
 
 // operation def parts
 operationName ::= 'default' | qid
+operationMethod ::= 'method' ('GET' | 'POST' | 'PUT' | 'DELETE') // add 'PATCH' too?
 operationPath ::= 'path' opVarPath {pin=1}
 operationInputType ::= 'inputType' typeRef {pin=2}
 operationInputProjection ::= 'inputProjection' opInputModelProjection {pin=2}
@@ -225,7 +236,8 @@ deleteOperationBodyPart ::= operationPath |
 
 customOperationDef ::= operationName 'CUSTOM' customOperationBody {pin=2} // todo specify verb?
 private customOperationBody ::= '{' (customOperationBodyPart ','?)* '}'
-customOperationBodyPart ::= operationPath |
+customOperationBodyPart ::= operationMethod |
+                            operationPath |
                             operationInputType |
                             operationInputProjection |
                             operationOutputType |
@@ -236,8 +248,8 @@ customOperationBodyPart ::= operationPath |
 }
 
 private operationBodyRecover ::= ! ( '}' | ',' | ';' |
-  'inputType' | 'inputProjection' | 'outputType' | 'outputProjection' | 'deleteProjection' | 'path' | (id '=') |
-  (id? ('READ' | 'CREATE' | 'UPDATE' | 'DELETE' | 'CUSTOM') ) )
+  'method' | 'inputType' | 'inputProjection' | 'outputType' | 'outputProjection' | 'deleteProjection' | 'path' |
+  (id '=') | (id? ('READ' | 'CREATE' | 'UPDATE' | 'DELETE' | 'CUSTOM') ) )
 
 // ============= op projections =============
 

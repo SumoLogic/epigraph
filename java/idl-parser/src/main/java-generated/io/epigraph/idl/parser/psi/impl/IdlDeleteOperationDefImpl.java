@@ -52,8 +52,8 @@ public class IdlDeleteOperationDefImpl extends ASTWrapperPsiElement implements I
 
   @Override
   @NotNull
-  public PsiElement getDeleteOp() {
-    return findNotNullChildByType(I_DELETE_OP);
+  public PsiElement getDelete() {
+    return findNotNullChildByType(I_DELETE);
   }
 
 }

@@ -22,7 +22,7 @@ public class CreateOperationIdl extends OperationIdl {
       @NotNull OpOutputVarProjection outputProjection,
       @NotNull TextLocation location) {
     super(
-        OperationKind.CREATE, name, params, annotations,
+        OperationKind.CREATE, HttpMethod.POST, name, params, annotations,
         path, inputProjection, outputProjection, location
     );
   }

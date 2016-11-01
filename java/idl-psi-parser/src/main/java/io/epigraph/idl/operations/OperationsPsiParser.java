@@ -120,9 +120,9 @@ public class OperationsPsiParser {
       annotations = ProjectionPsiParserUtil.parseAnnotation(annotations, part.getAnnotation());
 
       pathPsi = getPsiPart(pathPsi, part.getOperationPath(), "path");
-      inputTypePsi = getPsiPart(inputTypePsi, part.getOperationInputType(), "input type");
+      inputTypePsi = getPsiPart(inputTypePsi, part.getOperationInputType(), "input kind");
       inputProjectionPsi = getPsiPart(inputProjectionPsi, part.getOperationInputProjection(), "input projection");
-      outputTypePsi = getPsiPart(outputTypePsi, part.getOperationOutputType(), "output type");
+      outputTypePsi = getPsiPart(outputTypePsi, part.getOperationOutputType(), "output kind");
       outputProjectionPsi = getPsiPart(outputProjectionPsi, part.getOperationOutputProjection(), "output projection");
     }
 
@@ -132,7 +132,7 @@ public class OperationsPsiParser {
       throw new PsiProcessingException("Input projection must be specified", psi);
 
     if (outputTypePsi == null)
-      throw new PsiProcessingException("Output type must be specified", psi);
+      throw new PsiProcessingException("Output kind must be specified", psi);
 
     if (outputProjectionPsi == null)
       throw new PsiProcessingException("Output projection must be specified", psi);
@@ -180,9 +180,9 @@ public class OperationsPsiParser {
       annotations = ProjectionPsiParserUtil.parseAnnotation(annotations, part.getAnnotation());
 
       pathPsi = getPsiPart(pathPsi, part.getOperationPath(), "path");
-      inputTypePsi = getPsiPart(inputTypePsi, part.getOperationInputType(), "input type");
+      inputTypePsi = getPsiPart(inputTypePsi, part.getOperationInputType(), "input kind");
       inputProjectionPsi = getPsiPart(inputProjectionPsi, part.getOperationInputProjection(), "input projection");
-      outputTypePsi = getPsiPart(outputTypePsi, part.getOperationOutputType(), "output type");
+      outputTypePsi = getPsiPart(outputTypePsi, part.getOperationOutputType(), "output kind");
       outputProjectionPsi = getPsiPart(outputProjectionPsi, part.getOperationOutputProjection(), "output projection");
     }
 
@@ -237,7 +237,7 @@ public class OperationsPsiParser {
 
       pathPsi = getPsiPart(pathPsi, part.getOperationPath(), "path");
       deleteProjectionPsi = getPsiPart(deleteProjectionPsi, part.getOperationDeleteProjection(), "delete projection");
-      outputTypePsi = getPsiPart(outputTypePsi, part.getOperationOutputType(), "output type");
+      outputTypePsi = getPsiPart(outputTypePsi, part.getOperationOutputType(), "output kind");
       outputProjectionPsi = getPsiPart(outputProjectionPsi, part.getOperationOutputProjection(), "output projection");
     }
 
@@ -247,7 +247,7 @@ public class OperationsPsiParser {
       throw new PsiProcessingException("Delete projection must be specified", psi);
 
     if (outputTypePsi == null)
-      throw new PsiProcessingException("Output type must be specified", psi);
+      throw new PsiProcessingException("Output kind must be specified", psi);
 
     if (outputProjectionPsi == null)
       throw new PsiProcessingException("Output projection must be specified", psi);
@@ -280,6 +280,7 @@ public class OperationsPsiParser {
     List<OpParam> params = null;
     Map<String, Annotation> annotations = null;
 
+    IdlOperationMethod methodPsi = null;
     IdlOperationPath pathPsi = null;
     IdlOperationInputType inputTypePsi = null;
     IdlOperationInputProjection inputProjectionPsi = null;
@@ -290,19 +291,32 @@ public class OperationsPsiParser {
       params = parseParam(params, part.getOpParam(), resolver);
       annotations = ProjectionPsiParserUtil.parseAnnotation(annotations, part.getAnnotation());
 
+      methodPsi = getPsiPart(methodPsi, part.getOperationMethod(), "HTTP method");
       pathPsi = getPsiPart(pathPsi, part.getOperationPath(), "path");
-      inputTypePsi = getPsiPart(inputTypePsi, part.getOperationInputType(), "input type");
+      inputTypePsi = getPsiPart(inputTypePsi, part.getOperationInputType(), "input kind");
       inputProjectionPsi = getPsiPart(inputProjectionPsi, part.getOperationInputProjection(), "input projection");
-      outputTypePsi = getPsiPart(outputTypePsi, part.getOperationOutputType(), "output type");
+      outputTypePsi = getPsiPart(outputTypePsi, part.getOperationOutputType(), "output kind");
       outputProjectionPsi = getPsiPart(outputProjectionPsi, part.getOperationOutputProjection(), "output projection");
     }
 
-    OpVarPath varPath = parsePath(resourceType, pathPsi, resolver);
+    final HttpMethod method;
+    if (methodPsi == null)
+      throw new PsiProcessingException("HTTP method must be specified", psi);
+    else {
+      if (methodPsi.getGet() != null) method = HttpMethod.GET;
+      else if (methodPsi.getPost() != null) method = HttpMethod.POST;
+      else if (methodPsi.getPut() != null) method = HttpMethod.PUT;
+      else if (methodPsi.getDelete() != null) method = HttpMethod.DELETE;
+      else throw new PsiProcessingException("HTTP method must be specified", methodPsi);
+    }
 
     if (outputProjectionPsi == null)
       throw new PsiProcessingException("Output projection must be specified", psi);
 
+    OpVarPath varPath = parsePath(resourceType, pathPsi, resolver);
+
     return new CustomOperationIdl(
+        method,
         parseOperationName(psi.getOperationName()),
         OpParams.fromCollection(params),
         Annotations.fromMap(annotations),
@@ -368,7 +382,7 @@ public class OperationsPsiParser {
     @NotNull final IdlValueTypeRef typeRefPsi = outputTypePsi.getValueTypeRef();
     @NotNull final ValueTypeRef valueTypeRef = TypeRefs.fromPsi(typeRefPsi);
     @Nullable final DataType dataType = resolver.resolve(valueTypeRef);
-    if (dataType == null) throw new PsiProcessingException("Can't resolve output type", typeRefPsi);
+    if (dataType == null) throw new PsiProcessingException("Can't resolve output kind", typeRefPsi);
     return dataType;
   }
 
@@ -392,7 +406,7 @@ public class OperationsPsiParser {
 
         if (defaultTag == null)
           throw new PsiProcessingException(
-              "Neither input type nor operation path is specified, and resource type has no default tag",
+              "Neither input kind nor operation path is specified, and resource kind has no default tag",
               location
           );
         else return defaultTag.type;
@@ -408,7 +422,7 @@ public class OperationsPsiParser {
 
         if (defaultTag == null)
           throw new PsiProcessingException(
-              "Path tip type doesn't define default tag",
+              "Path tip kind doesn't define default tag",
               location
           );
         else return defaultTag.type;
@@ -416,7 +430,7 @@ public class OperationsPsiParser {
     }
     @NotNull final IdlTypeRef typeRefPsi = inputTypePsi.getTypeRef();
     @Nullable final DatumType datumType = TypeRefs.fromPsi(typeRefPsi).resolveDatumType(resolver);
-    if (datumType == null) throw new PsiProcessingException("Can't resolve input type", typeRefPsi);
+    if (datumType == null) throw new PsiProcessingException("Can't resolve input kind", typeRefPsi);
     return datumType;
   }
 

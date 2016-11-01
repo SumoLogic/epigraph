@@ -40,11 +40,13 @@ public class OperationsPrettyPrinter<E extends Exception> {
     if (!operation.isDefault())
       l.print(operation.name()).brk();
 
-    l.print(operation.type().toString());
+    l.print(operation.kind().toString());
     l.brk().print("{");
     l.beginCInd();
 
     boolean first = true;
+
+    first = printMethod(operation, first);
 
     @Nullable OpParams params = operation.params();
     if (params != null) first = opOutputPrinter.print(params, true, first);
@@ -66,6 +68,22 @@ public class OperationsPrettyPrinter<E extends Exception> {
     l.end();
   }
 
+  private boolean printMethod(@NotNull OperationIdl operation, boolean first) throws E {
+    if (operation.kind() != OperationKind.CUSTOM) return first;
+
+    if (first) first = false;
+    else l.print(",");
+
+    l.brk();
+
+    l.beginIInd();
+    l.print("method").brk();
+    l.print(operation.method().toString());
+    l.end();
+
+    return first;
+  }
+
   private boolean printPath(@NotNull OperationIdl operation, boolean first) throws E {
     @Nullable final OpVarPath path = operation.path();
 
@@ -75,7 +93,7 @@ public class OperationsPrettyPrinter<E extends Exception> {
 
       l.brk();
 
-      l.beginIInd(10);
+      l.beginIInd();
       l.print("path").brk();
       opPathPrinter.print(path, 0);
       l.end();

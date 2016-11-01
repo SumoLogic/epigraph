@@ -26,6 +26,8 @@ import java.util.Objects;
 public abstract class OperationIdl {
   @NotNull
   protected final OperationKind type;
+  @NotNull
+  protected final HttpMethod method;
   @Nullable
   protected final String name;
   @NotNull
@@ -43,6 +45,7 @@ public abstract class OperationIdl {
 
   protected OperationIdl(
       @NotNull OperationKind type,
+      @NotNull HttpMethod method,
       @Nullable String name,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
@@ -51,6 +54,7 @@ public abstract class OperationIdl {
       @NotNull OpOutputVarProjection outputProjection,
       @NotNull TextLocation location) {
     this.type = type;
+    this.method = method;
     this.name = name;
     this.params = params;
     this.annotations = annotations;
@@ -61,7 +65,10 @@ public abstract class OperationIdl {
   }
 
   @NotNull
-  public OperationKind type() { return type; }
+  public OperationKind kind() { return type; }
+
+  @NotNull
+  public HttpMethod method() { return method; }
 
   @Nullable
   public String name() { return name; }
@@ -113,7 +120,7 @@ public abstract class OperationIdl {
               resource,
               this,
               String.format(
-                  "Operation type '%s' != %s projection type '%s'",
+                  "Operation kind '%s' != %s projection kind '%s'",
                   outputType.name(),
                   projectionName,
                   outputProjectionType.name()

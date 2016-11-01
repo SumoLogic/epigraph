@@ -34,6 +34,7 @@ public interface IdlElementTypes {
   IElementType I_OPERATION_DELETE_PROJECTION = new IdlElementType("I_OPERATION_DELETE_PROJECTION");
   IElementType I_OPERATION_INPUT_PROJECTION = new IdlElementType("I_OPERATION_INPUT_PROJECTION");
   IElementType I_OPERATION_INPUT_TYPE = new IdlElementType("I_OPERATION_INPUT_TYPE");
+  IElementType I_OPERATION_METHOD = new IdlElementType("I_OPERATION_METHOD");
   IElementType I_OPERATION_NAME = new IdlElementType("I_OPERATION_NAME");
   IElementType I_OPERATION_OUTPUT_PROJECTION = new IdlElementType("I_OPERATION_OUTPUT_PROJECTION");
   IElementType I_OPERATION_OUTPUT_TYPE = new IdlElementType("I_OPERATION_OUTPUT_TYPE");
@@ -132,16 +133,17 @@ public interface IdlElementTypes {
   IElementType I_COLON = new IdlElementType(":");
   IElementType I_COMMA = new IdlElementType(",");
   IElementType I_COMMENT = new IdlElementType("comment");
-  IElementType I_CREATE_OP = new IdlElementType("CREATE");
+  IElementType I_CREATE = new IdlElementType("CREATE");
   IElementType I_CURLY_LEFT = new IdlElementType("{");
   IElementType I_CURLY_RIGHT = new IdlElementType("}");
-  IElementType I_CUSTOM_OP = new IdlElementType("CUSTOM");
+  IElementType I_CUSTOM = new IdlElementType("CUSTOM");
   IElementType I_DEFAULT = new IdlElementType("default");
-  IElementType I_DELETE_OP = new IdlElementType("DELETE");
+  IElementType I_DELETE = new IdlElementType("DELETE");
   IElementType I_DELETE_PROJECTION = new IdlElementType("deleteProjection");
   IElementType I_DOT = new IdlElementType(".");
   IElementType I_EQ = new IdlElementType("=");
   IElementType I_FORBIDDEN = new IdlElementType("forbidden");
+  IElementType I_GET = new IdlElementType("GET");
   IElementType I_HASH = new IdlElementType("#");
   IElementType I_ID = new IdlElementType("id");
   IElementType I_IMPORT = new IdlElementType("import");
@@ -150,6 +152,7 @@ public interface IdlElementTypes {
   IElementType I_LIST = new IdlElementType("list");
   IElementType I_MAP = new IdlElementType("map");
   IElementType I_META = new IdlElementType("meta");
+  IElementType I_METHOD = new IdlElementType("method");
   IElementType I_NAMESPACE = new IdlElementType("namespace");
   IElementType I_NULL = new IdlElementType("null");
   IElementType I_NUMBER = new IdlElementType("number");
@@ -159,6 +162,8 @@ public interface IdlElementTypes {
   IElementType I_PAREN_RIGHT = new IdlElementType(")");
   IElementType I_PATH = new IdlElementType("path");
   IElementType I_PLUS = new IdlElementType("+");
+  IElementType I_POST = new IdlElementType("POST");
+  IElementType I_PUT = new IdlElementType("PUT");
   IElementType I_READ = new IdlElementType("READ");
   IElementType I_REQUIRED = new IdlElementType("required");
   IElementType I_RESOURCE = new IdlElementType("resource");
@@ -168,7 +173,7 @@ public interface IdlElementTypes {
   IElementType I_STRING = new IdlElementType("string");
   IElementType I_TILDA = new IdlElementType("~");
   IElementType I_UNDERSCORE = new IdlElementType("_");
-  IElementType I_UPDATE_OP = new IdlElementType("UPDATE");
+  IElementType I_UPDATE = new IdlElementType("UPDATE");
 
   class Factory {
     public static PsiElement createElement(ASTNode node) {
@@ -247,6 +252,9 @@ public interface IdlElementTypes {
       }
       else if (type == I_OPERATION_INPUT_TYPE) {
         return new IdlOperationInputTypeImpl(node);
+      }
+      else if (type == I_OPERATION_METHOD) {
+        return new IdlOperationMethodImpl(node);
       }
       else if (type == I_OPERATION_NAME) {
         return new IdlOperationNameImpl(node);

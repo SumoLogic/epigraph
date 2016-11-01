@@ -102,6 +102,7 @@ public class IdlTest {
             "    outputProjection", // empty projection
             "  }",
             "  customOp CUSTOM {",
+            "    method POST",
             "    doc = \"dome doc string\"",
             "    ; authToken : String",
             "    path / . :record / bestFriend",
@@ -162,6 +163,7 @@ public class IdlTest {
             "  }",
             "  customOp CUSTOM",
             "  {",
+            "    method POST,",
             "    ;authToken: epigraph.String,",
             "    doc = \"dome doc string\",",
             "    path / . :record / bestFriend,",

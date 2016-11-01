@@ -89,11 +89,11 @@ public class IdlPsiParser {
     @Nullable DataType resourceType = resolver.resolve(valueTypeRef);
 
     if (resourceType == null) throw new PsiProcessingException(
-        String.format("Can't resolve resource '%s' type '%s'", fieldName, valueTypeRef),
+        String.format("Can't resolve resource '%s' kind '%s'", fieldName, valueTypeRef),
         resourceTypePsi
     );
 
-    // convert datum type to samovar
+    // convert datum kind to samovar
     @NotNull Type type = resourceType.type;
     if (resourceType.defaultTag == null && valueTypeRef.defaultOverride() == null && type instanceof DatumType) {
       resourceType = new DataType(type, ((DatumType) type).self);

@@ -22,7 +22,7 @@ public class UpdateOperationIdl extends OperationIdl {
       @NotNull OpOutputVarProjection outputProjection,
       @NotNull TextLocation location) {
 
-    super(OperationKind.UPDATE, name, params, annotations,
+    super(OperationKind.UPDATE, HttpMethod.PUT, name, params, annotations,
           path, inputProjection, outputProjection, location
     );
   }

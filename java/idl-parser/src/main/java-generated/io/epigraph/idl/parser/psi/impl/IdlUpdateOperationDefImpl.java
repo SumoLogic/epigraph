@@ -52,8 +52,8 @@ public class IdlUpdateOperationDefImpl extends ASTWrapperPsiElement implements I
 
   @Override
   @NotNull
-  public PsiElement getUpdateOp() {
-    return findNotNullChildByType(I_UPDATE_OP);
+  public PsiElement getUpdate() {
+    return findNotNullChildByType(I_UPDATE);
   }
 
 }

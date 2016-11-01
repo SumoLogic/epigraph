@@ -11,14 +11,14 @@ import static io.epigraph.idl.lexer.IdlElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import io.epigraph.idl.parser.psi.*;
 
-public class IdlCreateOperationDefImpl extends ASTWrapperPsiElement implements IdlCreateOperationDef {
+public class IdlOperationMethodImpl extends ASTWrapperPsiElement implements IdlOperationMethod {
 
-  public IdlCreateOperationDefImpl(ASTNode node) {
+  public IdlOperationMethodImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull IdlVisitor visitor) {
-    visitor.visitCreateOperationDef(this);
+    visitor.visitOperationMethod(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -27,33 +27,33 @@ public class IdlCreateOperationDefImpl extends ASTWrapperPsiElement implements I
   }
 
   @Override
+  @Nullable
+  public PsiElement getDelete() {
+    return findChildByType(I_DELETE);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getGet() {
+    return findChildByType(I_GET);
+  }
+
+  @Override
   @NotNull
-  public List<IdlCreateOperationBodyPart> getCreateOperationBodyPartList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, IdlCreateOperationBodyPart.class);
+  public PsiElement getMethod() {
+    return findNotNullChildByType(I_METHOD);
   }
 
   @Override
   @Nullable
-  public IdlOperationName getOperationName() {
-    return findChildByClass(IdlOperationName.class);
-  }
-
-  @Override
-  @NotNull
-  public PsiElement getCreate() {
-    return findNotNullChildByType(I_CREATE);
+  public PsiElement getPost() {
+    return findChildByType(I_POST);
   }
 
   @Override
   @Nullable
-  public PsiElement getCurlyLeft() {
-    return findChildByType(I_CURLY_LEFT);
-  }
-
-  @Override
-  @Nullable
-  public PsiElement getCurlyRight() {
-    return findChildByType(I_CURLY_RIGHT);
+  public PsiElement getPut() {
+    return findChildByType(I_PUT);
   }
 
 }

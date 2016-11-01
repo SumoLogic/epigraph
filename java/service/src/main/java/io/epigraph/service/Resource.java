@@ -63,7 +63,7 @@ public class Resource {
             if (defaultOperation != null)
               throw new ServiceInitializationException(
                   String.format("Default %s operation specified twice for resource '%s'",
-                                operation.declaration().type(), resourceName
+                                operation.declaration().kind(), resourceName
                   )
               );
             else defaultOperation = operation;
@@ -71,7 +71,7 @@ public class Resource {
             if (namedOperations.containsKey(name))
               throw new ServiceInitializationException(
                   String.format("%s operation '%s' specified twice for resource '%s'",
-                                operation.declaration().type(), name, resourceName
+                                operation.declaration().kind(), name, resourceName
                   )
               );
             else namedOperations.put(name, operation);

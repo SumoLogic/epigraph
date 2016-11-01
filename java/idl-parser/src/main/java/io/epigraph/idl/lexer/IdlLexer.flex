@@ -49,11 +49,15 @@ ID=([:letter:]([:letter:]|[:digit:])*)|(`[^`]*`)
   "required"           { return I_REQUIRED; }
   "default"            { return I_DEFAULT; }
   "resource"           { return I_RESOURCE; }
+  "GET"                { return I_GET; }
+  "POST"               { return I_POST; }
+  "PUT"                { return I_PUT; }
   "READ"               { return I_READ; }
-  "CREATE"             { return I_CREATE_OP; }
-  "UPDATE"             { return I_UPDATE_OP; }
-  "DELETE"             { return I_DELETE_OP; }
-  "CUSTOM"             { return I_CUSTOM_OP; }
+  "CREATE"             { return I_CREATE; }
+  "UPDATE"             { return I_UPDATE; }
+  "DELETE"             { return I_DELETE; }
+  "CUSTOM"             { return I_CUSTOM; }
+  "method"             { return I_METHOD; }
   "inputType"          { return I_INPUT_TYPE; }
   "inputProjection"    { return I_INPUT_PROJECTION; }
   "outputType"         { return I_OUTPUT_TYPE; }

@@ -15,6 +15,7 @@ import org.jetbrains.annotations.Nullable;
 public class CustomOperationIdl extends OperationIdl {
 
   protected CustomOperationIdl(
+      @NotNull HttpMethod method,
       @Nullable String name,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
@@ -23,7 +24,7 @@ public class CustomOperationIdl extends OperationIdl {
       @NotNull OpOutputVarProjection outputProjection,
       @NotNull TextLocation location) {
 
-    super(OperationKind.CUSTOM, name, params, annotations,
+    super(OperationKind.CUSTOM, method, name, params, annotations,
           path, inputProjection, outputProjection, location
     );
   }

@@ -20,6 +20,6 @@ public interface IdlDeleteOperationDef extends PsiElement {
   PsiElement getCurlyRight();
 
   @NotNull
-  PsiElement getDeleteOp();
+  PsiElement getDelete();
 
 }

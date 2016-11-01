@@ -24,7 +24,7 @@ public class ReadOperationIdl extends OperationIdl {
       @NotNull OpOutputVarProjection outputProjection,
       @NotNull TextLocation location) {
 
-    super(OperationKind.READ, name, params, annotations,
+    super(OperationKind.READ, HttpMethod.GET, name, params, annotations,
           path, null, outputProjection, location
     );
   }

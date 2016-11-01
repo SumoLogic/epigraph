@@ -293,6 +293,9 @@ public class IdlParser implements PsiParser, LightPsiParser {
     else if (t == I_OPERATION_INPUT_TYPE) {
       r = operationInputType(b, 0);
     }
+    else if (t == I_OPERATION_METHOD) {
+      r = operationMethod(b, 0);
+    }
     else if (t == I_OPERATION_NAME) {
       r = operationName(b, 0);
     }
@@ -499,7 +502,7 @@ public class IdlParser implements PsiParser, LightPsiParser {
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, I_CREATE_OPERATION_DEF, "<create operation def>");
     r = createOperationDef_0(b, l + 1);
-    r = r && consumeToken(b, I_CREATE_OP);
+    r = r && consumeToken(b, I_CREATE);
     p = r; // pin = 2
     r = r && createOperationBody(b, l + 1);
     exit_section_(b, l, m, r, p, null);
@@ -559,7 +562,8 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // operationPath |
+  // operationMethod |
+  //                             operationPath |
   //                             operationInputType |
   //                             operationInputProjection |
   //                             operationOutputType |
@@ -570,7 +574,8 @@ public class IdlParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(b, l, "customOperationBodyPart")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, I_CUSTOM_OPERATION_BODY_PART, "<custom operation body part>");
-    r = operationPath(b, l + 1);
+    r = operationMethod(b, l + 1);
+    if (!r) r = operationPath(b, l + 1);
     if (!r) r = operationInputType(b, l + 1);
     if (!r) r = operationInputProjection(b, l + 1);
     if (!r) r = operationOutputType(b, l + 1);
@@ -589,7 +594,7 @@ public class IdlParser implements PsiParser, LightPsiParser {
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, I_CUSTOM_OPERATION_DEF, "<custom operation def>");
     r = operationName(b, l + 1);
-    r = r && consumeToken(b, I_CUSTOM_OP);
+    r = r && consumeToken(b, I_CUSTOM);
     p = r; // pin = 2
     r = r && customOperationBody(b, l + 1);
     exit_section_(b, l, m, r, p, null);
@@ -800,7 +805,7 @@ public class IdlParser implements PsiParser, LightPsiParser {
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, I_DELETE_OPERATION_DEF, "<delete operation def>");
     r = deleteOperationDef_0(b, l + 1);
-    r = r && consumeToken(b, I_DELETE_OP);
+    r = r && consumeToken(b, I_DELETE);
     p = r; // pin = 2
     r = r && deleteOperationBody(b, l + 1);
     exit_section_(b, l, m, r, p, null);
@@ -3397,8 +3402,8 @@ public class IdlParser implements PsiParser, LightPsiParser {
 
   /* ********************************************************** */
   // ! ( '}' | ',' | ';' |
-  //   'inputType' | 'inputProjection' | 'outputType' | 'outputProjection' | 'deleteProjection' | 'path' | (id '=') |
-  //   (id? ('READ' | 'CREATE' | 'UPDATE' | 'DELETE' | 'CUSTOM') ) )
+  //   'method' | 'inputType' | 'inputProjection' | 'outputType' | 'outputProjection' | 'deleteProjection' | 'path' |
+  //   (id '=') | (id? ('READ' | 'CREATE' | 'UPDATE' | 'DELETE' | 'CUSTOM') ) )
   static boolean operationBodyRecover(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "operationBodyRecover")) return false;
     boolean r;
@@ -3409,8 +3414,8 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   // '}' | ',' | ';' |
-  //   'inputType' | 'inputProjection' | 'outputType' | 'outputProjection' | 'deleteProjection' | 'path' | (id '=') |
-  //   (id? ('READ' | 'CREATE' | 'UPDATE' | 'DELETE' | 'CUSTOM') )
+  //   'method' | 'inputType' | 'inputProjection' | 'outputType' | 'outputProjection' | 'deleteProjection' | 'path' |
+  //   (id '=') | (id? ('READ' | 'CREATE' | 'UPDATE' | 'DELETE' | 'CUSTOM') )
   private static boolean operationBodyRecover_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "operationBodyRecover_0")) return false;
     boolean r;
@@ -3418,21 +3423,22 @@ public class IdlParser implements PsiParser, LightPsiParser {
     r = consumeToken(b, I_CURLY_RIGHT);
     if (!r) r = consumeToken(b, I_COMMA);
     if (!r) r = consumeToken(b, I_SEMICOLON);
+    if (!r) r = consumeToken(b, I_METHOD);
     if (!r) r = consumeToken(b, I_INPUT_TYPE);
     if (!r) r = consumeToken(b, I_INPUT_PROJECTION);
     if (!r) r = consumeToken(b, I_OUTPUT_TYPE);
     if (!r) r = consumeToken(b, I_OUTPUT_PROJECTION);
     if (!r) r = consumeToken(b, I_DELETE_PROJECTION);
     if (!r) r = consumeToken(b, I_PATH);
-    if (!r) r = operationBodyRecover_0_9(b, l + 1);
     if (!r) r = operationBodyRecover_0_10(b, l + 1);
+    if (!r) r = operationBodyRecover_0_11(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
   // id '='
-  private static boolean operationBodyRecover_0_9(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "operationBodyRecover_0_9")) return false;
+  private static boolean operationBodyRecover_0_10(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "operationBodyRecover_0_10")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, I_ID);
@@ -3442,33 +3448,33 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   // id? ('READ' | 'CREATE' | 'UPDATE' | 'DELETE' | 'CUSTOM')
-  private static boolean operationBodyRecover_0_10(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "operationBodyRecover_0_10")) return false;
+  private static boolean operationBodyRecover_0_11(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "operationBodyRecover_0_11")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = operationBodyRecover_0_10_0(b, l + 1);
-    r = r && operationBodyRecover_0_10_1(b, l + 1);
+    r = operationBodyRecover_0_11_0(b, l + 1);
+    r = r && operationBodyRecover_0_11_1(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
   // id?
-  private static boolean operationBodyRecover_0_10_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "operationBodyRecover_0_10_0")) return false;
+  private static boolean operationBodyRecover_0_11_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "operationBodyRecover_0_11_0")) return false;
     consumeToken(b, I_ID);
     return true;
   }
 
   // 'READ' | 'CREATE' | 'UPDATE' | 'DELETE' | 'CUSTOM'
-  private static boolean operationBodyRecover_0_10_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "operationBodyRecover_0_10_1")) return false;
+  private static boolean operationBodyRecover_0_11_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "operationBodyRecover_0_11_1")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, I_READ);
-    if (!r) r = consumeToken(b, I_CREATE_OP);
-    if (!r) r = consumeToken(b, I_UPDATE_OP);
-    if (!r) r = consumeToken(b, I_DELETE_OP);
-    if (!r) r = consumeToken(b, I_CUSTOM_OP);
+    if (!r) r = consumeToken(b, I_CREATE);
+    if (!r) r = consumeToken(b, I_UPDATE);
+    if (!r) r = consumeToken(b, I_DELETE);
+    if (!r) r = consumeToken(b, I_CUSTOM);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -3524,6 +3530,32 @@ public class IdlParser implements PsiParser, LightPsiParser {
     r = consumeToken(b, I_INPUT_TYPE);
     r = r && typeRef(b, l + 1);
     exit_section_(b, m, I_OPERATION_INPUT_TYPE, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // 'method' ('GET' | 'POST' | 'PUT' | 'DELETE')
+  public static boolean operationMethod(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "operationMethod")) return false;
+    if (!nextTokenIs(b, I_METHOD)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, I_METHOD);
+    r = r && operationMethod_1(b, l + 1);
+    exit_section_(b, m, I_OPERATION_METHOD, r);
+    return r;
+  }
+
+  // 'GET' | 'POST' | 'PUT' | 'DELETE'
+  private static boolean operationMethod_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "operationMethod_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, I_GET);
+    if (!r) r = consumeToken(b, I_POST);
+    if (!r) r = consumeToken(b, I_PUT);
+    if (!r) r = consumeToken(b, I_DELETE);
+    exit_section_(b, m, null, r);
     return r;
   }
 
@@ -4087,7 +4119,7 @@ public class IdlParser implements PsiParser, LightPsiParser {
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, I_UPDATE_OPERATION_DEF, "<update operation def>");
     r = updateOperationDef_0(b, l + 1);
-    r = r && consumeToken(b, I_UPDATE_OP);
+    r = r && consumeToken(b, I_UPDATE);
     p = r; // pin = 2
     r = r && updateOperationBody(b, l + 1);
     exit_section_(b, l, m, r, p, null);
