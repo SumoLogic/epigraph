@@ -184,8 +184,7 @@ public class OpPathPrettyPrinter<E extends Exception>
 
   @Override
   protected boolean isPrintoutEmpty(@NotNull OpVarPath opVarPath) {
-    // no tags = end of path = empty printout
-    return opVarPath.tagProjections().isEmpty() || super.isPrintoutEmpty(opVarPath);
+    return OpVarPath.isEnd(opVarPath) || super.isPrintoutEmpty(opVarPath);
   }
 
   @Override

@@ -3,6 +3,7 @@ package io.epigraph.projections.op.path;
 import io.epigraph.lang.TextLocation;
 import io.epigraph.projections.abs.AbstractVarProjection;
 import io.epigraph.types.Type;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,5 +28,10 @@ public class OpVarPath extends AbstractVarProjection<
         null,
         location
     );
+  }
+
+  @Contract("null -> true")
+  public static boolean isEnd(@Nullable OpVarPath path) {
+    return path == null || path.tagProjections().isEmpty();
   }
 }

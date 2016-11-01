@@ -46,6 +46,8 @@ public class OpRecordModelPath
                             Collections.singletonMap(fieldProjection.field().name(), fieldProjection);
 
     ProjectionUtils.checkFieldsBelongsToModel(fieldProjections.keySet(), model);
+
+    if (pathFieldProjection() == null) throw new IllegalArgumentException("Path field must be present");
   }
 
   @NotNull

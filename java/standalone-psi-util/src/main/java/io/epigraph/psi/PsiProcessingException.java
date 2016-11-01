@@ -17,6 +17,7 @@ public class PsiProcessingException extends Exception {
   @NotNull
   private final List<PsiProcessingError> errors; // last item = this exception
 
+  @Deprecated
   public PsiProcessingException(@NotNull String message, @NotNull PsiElement psi) {
     this(message, psi, Collections.emptyList());
   }
@@ -35,6 +36,7 @@ public class PsiProcessingException extends Exception {
     }
   }
 
+  @Deprecated
   public PsiProcessingException(@NotNull Exception cause, @NotNull PsiElement psi) {
     super(cause);
     errors = Collections.singletonList(new PsiProcessingError(cause.getMessage(), EpigraphPsiUtil.getLocation(psi)));

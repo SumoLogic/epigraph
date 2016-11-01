@@ -34,6 +34,7 @@ public class OpMapModelPath
       @NotNull OpPathKeyProjection keyProjection,
       @NotNull OpVarPath valuesProjection,
       @NotNull TextLocation location) {
+
     super(model, params, annotations, location);
     this.itemsProjection = valuesProjection;
     this.keyProjection = keyProjection;

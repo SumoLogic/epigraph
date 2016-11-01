@@ -43,6 +43,8 @@ public class ReqRecordModelPath
 
     Collection<@NotNull ? extends RecordType.Field> fields = model.fields();
     ProjectionUtils.checkFieldsBelongsToModel(fieldProjections.keySet(), model);
+
+    if (pathFieldProjection() == null) throw new IllegalArgumentException("Path field must be present");
   }
 
   @NotNull

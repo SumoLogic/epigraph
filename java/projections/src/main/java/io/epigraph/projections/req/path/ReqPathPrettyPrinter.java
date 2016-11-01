@@ -100,7 +100,8 @@ public class ReqPathPrettyPrinter<E extends Exception>
     printParams(key.params());
     printAnnotations(key.annotations());
 
-    l.brk();
+    if (!isPrintoutEmpty(mp.itemsProjection())) l.brk();
+
     print(mp.itemsProjection(), 1);
     l.end();
   }
