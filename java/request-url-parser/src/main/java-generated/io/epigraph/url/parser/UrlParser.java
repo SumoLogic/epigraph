@@ -101,6 +101,9 @@ public class UrlParser implements PsiParser, LightPsiParser {
     else if (t == U_REQ_DELETE_FIELD_PROJECTION) {
       r = reqDeleteFieldProjection(b, 0);
     }
+    else if (t == U_REQ_DELETE_FIELD_PROJECTION_ENTRY) {
+      r = reqDeleteFieldProjectionEntry(b, 0);
+    }
     else if (t == U_REQ_DELETE_KEY_PROJECTION) {
       r = reqDeleteKeyProjection(b, 0);
     }
@@ -229,6 +232,9 @@ public class UrlParser implements PsiParser, LightPsiParser {
     }
     else if (t == U_REQ_UPDATE_FIELD_PROJECTION) {
       r = reqUpdateFieldProjection(b, 0);
+    }
+    else if (t == U_REQ_UPDATE_FIELD_PROJECTION_ENTRY) {
+      r = reqUpdateFieldProjectionEntry(b, 0);
     }
     else if (t == U_REQ_UPDATE_KEYS_PROJECTION) {
       r = reqUpdateKeysProjection(b, 0);
@@ -560,7 +566,7 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '/' qid reqVarPath ('<' reqDeleteVarProjection)? ('>' reqOutputTrunkFieldProjection)? requestParams
+  // '/' qid reqVarPath ('<' reqDeleteFieldProjection)? ('>' reqOutputTrunkFieldProjection)? requestParams
   public static boolean deleteUrl(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "deleteUrl")) return false;
     if (!nextTokenIs(b, U_SLASH)) return false;
@@ -576,20 +582,20 @@ public class UrlParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // ('<' reqDeleteVarProjection)?
+  // ('<' reqDeleteFieldProjection)?
   private static boolean deleteUrl_3(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "deleteUrl_3")) return false;
     deleteUrl_3_0(b, l + 1);
     return true;
   }
 
-  // '<' reqDeleteVarProjection
+  // '<' reqDeleteFieldProjection
   private static boolean deleteUrl_3_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "deleteUrl_3_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, U_ANGLE_LEFT);
-    r = r && reqDeleteVarProjection(b, l + 1);
+    r = r && reqDeleteFieldProjection(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -962,16 +968,27 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // qid reqParamsAndAnnotations reqDeleteVarProjection
+  // reqParamsAndAnnotations reqDeleteVarProjection
   public static boolean reqDeleteFieldProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqDeleteFieldProjection")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, U_REQ_DELETE_FIELD_PROJECTION, "<req delete field projection>");
+    r = reqParamsAndAnnotations(b, l + 1);
+    r = r && reqDeleteVarProjection(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // qid reqDeleteFieldProjection
+  public static boolean reqDeleteFieldProjectionEntry(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqDeleteFieldProjectionEntry")) return false;
     if (!nextTokenIs(b, U_ID)) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = qid(b, l + 1);
-    r = r && reqParamsAndAnnotations(b, l + 1);
-    r = r && reqDeleteVarProjection(b, l + 1);
-    exit_section_(b, m, U_REQ_DELETE_FIELD_PROJECTION, r);
+    r = r && reqDeleteFieldProjection(b, l + 1);
+    exit_section_(b, m, U_REQ_DELETE_FIELD_PROJECTION_ENTRY, r);
     return r;
   }
 
@@ -1235,7 +1252,7 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '(' (reqDeleteFieldProjection ','?)* ')'
+  // '(' (reqDeleteFieldProjectionEntry ','?)* ')'
   public static boolean reqDeleteRecordModelProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqDeleteRecordModelProjection")) return false;
     if (!nextTokenIs(b, U_PAREN_LEFT)) return false;
@@ -1249,7 +1266,7 @@ public class UrlParser implements PsiParser, LightPsiParser {
     return r || p;
   }
 
-  // (reqDeleteFieldProjection ','?)*
+  // (reqDeleteFieldProjectionEntry ','?)*
   private static boolean reqDeleteRecordModelProjection_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqDeleteRecordModelProjection_1")) return false;
     int c = current_position_(b);
@@ -1261,12 +1278,12 @@ public class UrlParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // reqDeleteFieldProjection ','?
+  // reqDeleteFieldProjectionEntry ','?
   private static boolean reqDeleteRecordModelProjection_1_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqDeleteRecordModelProjection_1_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = reqDeleteFieldProjection(b, l + 1);
+    r = reqDeleteFieldProjectionEntry(b, l + 1);
     r = r && reqDeleteRecordModelProjection_1_0_1(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
@@ -2229,16 +2246,27 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // qid reqParamsAndAnnotations reqUpdateVarProjection
+  // reqParamsAndAnnotations reqUpdateVarProjection
   public static boolean reqUpdateFieldProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqUpdateFieldProjection")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, U_REQ_UPDATE_FIELD_PROJECTION, "<req update field projection>");
+    r = reqParamsAndAnnotations(b, l + 1);
+    r = r && reqUpdateVarProjection(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // qid reqUpdateFieldProjection
+  public static boolean reqUpdateFieldProjectionEntry(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqUpdateFieldProjectionEntry")) return false;
     if (!nextTokenIs(b, U_ID)) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = qid(b, l + 1);
-    r = r && reqParamsAndAnnotations(b, l + 1);
-    r = r && reqUpdateVarProjection(b, l + 1);
-    exit_section_(b, m, U_REQ_UPDATE_FIELD_PROJECTION, r);
+    r = r && reqUpdateFieldProjection(b, l + 1);
+    exit_section_(b, m, U_REQ_UPDATE_FIELD_PROJECTION_ENTRY, r);
     return r;
   }
 
@@ -2428,7 +2456,7 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '(' (reqUpdateFieldProjection ','?)* ')'
+  // '(' (reqUpdateFieldProjectionEntry ','?)* ')'
   public static boolean reqUpdateRecordModelProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqUpdateRecordModelProjection")) return false;
     if (!nextTokenIs(b, U_PAREN_LEFT)) return false;
@@ -2442,7 +2470,7 @@ public class UrlParser implements PsiParser, LightPsiParser {
     return r || p;
   }
 
-  // (reqUpdateFieldProjection ','?)*
+  // (reqUpdateFieldProjectionEntry ','?)*
   private static boolean reqUpdateRecordModelProjection_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqUpdateRecordModelProjection_1")) return false;
     int c = current_position_(b);
@@ -2454,12 +2482,12 @@ public class UrlParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // reqUpdateFieldProjection ','?
+  // reqUpdateFieldProjectionEntry ','?
   private static boolean reqUpdateRecordModelProjection_1_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqUpdateRecordModelProjection_1_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = reqUpdateFieldProjection(b, l + 1);
+    r = reqUpdateFieldProjectionEntry(b, l + 1);
     r = r && reqUpdateRecordModelProjection_1_0_1(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
@@ -2761,7 +2789,7 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '/' qid reqVarPath ('<' reqUpdateVarProjection)? ('>' reqOutputTrunkFieldProjection)? requestParams
+  // '/' qid reqVarPath ('<' reqUpdateFieldProjection)? ('>' reqOutputTrunkFieldProjection)? requestParams
   public static boolean updateUrl(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "updateUrl")) return false;
     if (!nextTokenIs(b, U_SLASH)) return false;
@@ -2777,20 +2805,20 @@ public class UrlParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // ('<' reqUpdateVarProjection)?
+  // ('<' reqUpdateFieldProjection)?
   private static boolean updateUrl_3(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "updateUrl_3")) return false;
     updateUrl_3_0(b, l + 1);
     return true;
   }
 
-  // '<' reqUpdateVarProjection
+  // '<' reqUpdateFieldProjection
   private static boolean updateUrl_3_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "updateUrl_3_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, U_ANGLE_LEFT);
-    r = r && reqUpdateVarProjection(b, l + 1);
+    r = r && reqUpdateFieldProjection(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }

@@ -111,6 +111,10 @@ public class UrlVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitReqDeleteFieldProjectionEntry(@NotNull UrlReqDeleteFieldProjectionEntry o) {
+    visitPsiElement(o);
+  }
+
   public void visitReqDeleteKeyProjection(@NotNull UrlReqDeleteKeyProjection o) {
     visitPsiElement(o);
   }
@@ -280,6 +284,10 @@ public class UrlVisitor extends PsiElementVisitor {
   }
 
   public void visitReqUpdateFieldProjection(@NotNull UrlReqUpdateFieldProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqUpdateFieldProjectionEntry(@NotNull UrlReqUpdateFieldProjectionEntry o) {
     visitPsiElement(o);
   }
 

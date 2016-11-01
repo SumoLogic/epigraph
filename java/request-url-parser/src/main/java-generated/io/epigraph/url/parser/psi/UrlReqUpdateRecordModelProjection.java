@@ -8,7 +8,7 @@ import com.intellij.psi.PsiElement;
 public interface UrlReqUpdateRecordModelProjection extends PsiElement {
 
   @NotNull
-  List<UrlReqUpdateFieldProjection> getReqUpdateFieldProjectionList();
+  List<UrlReqUpdateFieldProjectionEntry> getReqUpdateFieldProjectionEntryList();
 
   @NotNull
   PsiElement getParenLeft();

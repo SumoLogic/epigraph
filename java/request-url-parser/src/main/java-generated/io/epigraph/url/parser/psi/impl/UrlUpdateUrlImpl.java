@@ -40,8 +40,8 @@ public class UrlUpdateUrlImpl extends ASTWrapperPsiElement implements UrlUpdateU
 
   @Override
   @Nullable
-  public UrlReqUpdateVarProjection getReqUpdateVarProjection() {
-    return findChildByClass(UrlReqUpdateVarProjection.class);
+  public UrlReqUpdateFieldProjection getReqUpdateFieldProjection() {
+    return findChildByClass(UrlReqUpdateFieldProjection.class);
   }
 
   @Override

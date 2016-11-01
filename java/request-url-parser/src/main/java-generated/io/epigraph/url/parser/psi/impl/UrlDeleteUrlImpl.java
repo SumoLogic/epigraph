@@ -34,8 +34,8 @@ public class UrlDeleteUrlImpl extends ASTWrapperPsiElement implements UrlDeleteU
 
   @Override
   @Nullable
-  public UrlReqDeleteVarProjection getReqDeleteVarProjection() {
-    return findChildByClass(UrlReqDeleteVarProjection.class);
+  public UrlReqDeleteFieldProjection getReqDeleteFieldProjection() {
+    return findChildByClass(UrlReqDeleteFieldProjection.class);
   }
 
   @Override

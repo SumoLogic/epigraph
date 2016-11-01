@@ -95,8 +95,8 @@ private url ::= readUrl | createUrl | updateUrl | deleteUrl | customUrl
 // real entry points:
 readUrl ::= '/' qid reqOutputTrunkFieldProjection requestParams // reqVarPath is part of output projection, will be extracted by psi parser
 createUrl ::= '/' qid reqVarPath ('>' reqOutputTrunkFieldProjection)? requestParams
-updateUrl ::= '/' qid reqVarPath ('<' reqUpdateVarProjection)? ('>' reqOutputTrunkFieldProjection)? requestParams
-deleteUrl ::= '/' qid reqVarPath ('<' reqDeleteVarProjection)? ('>' reqOutputTrunkFieldProjection)? requestParams
+updateUrl ::= '/' qid reqVarPath ('<' reqUpdateFieldProjection)? ('>' reqOutputTrunkFieldProjection)? requestParams
+deleteUrl ::= '/' qid reqVarPath ('<' reqDeleteFieldProjection)? ('>' reqOutputTrunkFieldProjection)? requestParams
 customUrl ::= '/' qid reqVarPath ('>' reqOutputTrunkFieldProjection)? requestParams
 
 private requestParams ::= requestParam*
@@ -216,8 +216,9 @@ reqUpdateModelProjection ::= ( reqUpdateRecordModelProjection
                              | reqUpdateMapModelProjection
                              )?
 
-reqUpdateRecordModelProjection ::= '(' (reqUpdateFieldProjection ','?)* ')' { pin=1 }
-reqUpdateFieldProjection ::= qid reqParamsAndAnnotations reqUpdateVarProjection
+reqUpdateRecordModelProjection ::= '(' (reqUpdateFieldProjectionEntry ','?)* ')' { pin=1 }
+reqUpdateFieldProjectionEntry ::= qid reqUpdateFieldProjection
+reqUpdateFieldProjection ::= reqParamsAndAnnotations reqUpdateVarProjection
 
 reqUpdateListModelProjection ::= '*' ( '(' reqUpdateVarProjection ')' )? { pin=1 }
 
@@ -245,8 +246,9 @@ reqDeleteModelProjection ::= ( reqDeleteRecordModelProjection
                              | reqDeleteMapModelProjection
                              )?
 
-reqDeleteRecordModelProjection ::= '(' (reqDeleteFieldProjection ','?)* ')' { pin=1 }
-reqDeleteFieldProjection ::= qid reqParamsAndAnnotations reqDeleteVarProjection
+reqDeleteRecordModelProjection ::= '(' (reqDeleteFieldProjectionEntry ','?)* ')' { pin=1 }
+reqDeleteFieldProjectionEntry ::= qid reqDeleteFieldProjection
+reqDeleteFieldProjection ::= reqParamsAndAnnotations reqDeleteVarProjection
 
 reqDeleteListModelProjection ::= '*' ( '(' reqDeleteVarProjection ')' )? { pin=1 }
 

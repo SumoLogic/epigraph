@@ -28,8 +28,8 @@ public class UrlReqDeleteRecordModelProjectionImpl extends ASTWrapperPsiElement 
 
   @Override
   @NotNull
-  public List<UrlReqDeleteFieldProjection> getReqDeleteFieldProjectionList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, UrlReqDeleteFieldProjection.class);
+  public List<UrlReqDeleteFieldProjectionEntry> getReqDeleteFieldProjectionEntryList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, UrlReqDeleteFieldProjectionEntry.class);
   }
 
   @Override

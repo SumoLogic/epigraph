@@ -14,7 +14,7 @@ public interface UrlUpdateUrl extends PsiElement {
   UrlReqOutputTrunkFieldProjection getReqOutputTrunkFieldProjection();
 
   @Nullable
-  UrlReqUpdateVarProjection getReqUpdateVarProjection();
+  UrlReqUpdateFieldProjection getReqUpdateFieldProjection();
 
   @NotNull
   UrlReqVarPath getReqVarPath();

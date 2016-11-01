@@ -11,14 +11,14 @@ import static io.epigraph.url.lexer.UrlElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import io.epigraph.url.parser.psi.*;
 
-public class UrlReqUpdateRecordModelProjectionImpl extends ASTWrapperPsiElement implements UrlReqUpdateRecordModelProjection {
+public class UrlReqUpdateFieldProjectionEntryImpl extends ASTWrapperPsiElement implements UrlReqUpdateFieldProjectionEntry {
 
-  public UrlReqUpdateRecordModelProjectionImpl(ASTNode node) {
+  public UrlReqUpdateFieldProjectionEntryImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull UrlVisitor visitor) {
-    visitor.visitReqUpdateRecordModelProjection(this);
+    visitor.visitReqUpdateFieldProjectionEntry(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -28,20 +28,14 @@ public class UrlReqUpdateRecordModelProjectionImpl extends ASTWrapperPsiElement 
 
   @Override
   @NotNull
-  public List<UrlReqUpdateFieldProjectionEntry> getReqUpdateFieldProjectionEntryList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, UrlReqUpdateFieldProjectionEntry.class);
+  public UrlQid getQid() {
+    return findNotNullChildByClass(UrlQid.class);
   }
 
   @Override
   @NotNull
-  public PsiElement getParenLeft() {
-    return findNotNullChildByType(U_PAREN_LEFT);
-  }
-
-  @Override
-  @Nullable
-  public PsiElement getParenRight() {
-    return findChildByType(U_PAREN_RIGHT);
+  public UrlReqUpdateFieldProjection getReqUpdateFieldProjection() {
+    return findNotNullChildByClass(UrlReqUpdateFieldProjection.class);
   }
 
 }

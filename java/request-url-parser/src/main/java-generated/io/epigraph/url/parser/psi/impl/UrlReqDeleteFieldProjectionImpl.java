@@ -28,12 +28,6 @@ public class UrlReqDeleteFieldProjectionImpl extends ASTWrapperPsiElement implem
 
   @Override
   @NotNull
-  public UrlQid getQid() {
-    return findNotNullChildByClass(UrlQid.class);
-  }
-
-  @Override
-  @NotNull
   public List<UrlReqAnnotation> getReqAnnotationList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, UrlReqAnnotation.class);
   }

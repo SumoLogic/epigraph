@@ -35,6 +35,7 @@ public interface UrlElementTypes {
   IElementType U_REQUEST_PARAM = new UrlElementType("U_REQUEST_PARAM");
   IElementType U_REQ_ANNOTATION = new UrlElementType("U_REQ_ANNOTATION");
   IElementType U_REQ_DELETE_FIELD_PROJECTION = new UrlElementType("U_REQ_DELETE_FIELD_PROJECTION");
+  IElementType U_REQ_DELETE_FIELD_PROJECTION_ENTRY = new UrlElementType("U_REQ_DELETE_FIELD_PROJECTION_ENTRY");
   IElementType U_REQ_DELETE_KEYS_PROJECTION = new UrlElementType("U_REQ_DELETE_KEYS_PROJECTION");
   IElementType U_REQ_DELETE_KEY_PROJECTION = new UrlElementType("U_REQ_DELETE_KEY_PROJECTION");
   IElementType U_REQ_DELETE_LIST_MODEL_PROJECTION = new UrlElementType("U_REQ_DELETE_LIST_MODEL_PROJECTION");
@@ -78,6 +79,7 @@ public interface UrlElementTypes {
   IElementType U_REQ_PARAM = new UrlElementType("U_REQ_PARAM");
   IElementType U_REQ_RECORD_MODEL_PATH = new UrlElementType("U_REQ_RECORD_MODEL_PATH");
   IElementType U_REQ_UPDATE_FIELD_PROJECTION = new UrlElementType("U_REQ_UPDATE_FIELD_PROJECTION");
+  IElementType U_REQ_UPDATE_FIELD_PROJECTION_ENTRY = new UrlElementType("U_REQ_UPDATE_FIELD_PROJECTION_ENTRY");
   IElementType U_REQ_UPDATE_KEYS_PROJECTION = new UrlElementType("U_REQ_UPDATE_KEYS_PROJECTION");
   IElementType U_REQ_UPDATE_LIST_MODEL_PROJECTION = new UrlElementType("U_REQ_UPDATE_LIST_MODEL_PROJECTION");
   IElementType U_REQ_UPDATE_MAP_MODEL_PROJECTION = new UrlElementType("U_REQ_UPDATE_MAP_MODEL_PROJECTION");
@@ -214,6 +216,9 @@ public interface UrlElementTypes {
       else if (type == U_REQ_DELETE_FIELD_PROJECTION) {
         return new UrlReqDeleteFieldProjectionImpl(node);
       }
+      else if (type == U_REQ_DELETE_FIELD_PROJECTION_ENTRY) {
+        return new UrlReqDeleteFieldProjectionEntryImpl(node);
+      }
       else if (type == U_REQ_DELETE_KEYS_PROJECTION) {
         return new UrlReqDeleteKeysProjectionImpl(node);
       }
@@ -342,6 +347,9 @@ public interface UrlElementTypes {
       }
       else if (type == U_REQ_UPDATE_FIELD_PROJECTION) {
         return new UrlReqUpdateFieldProjectionImpl(node);
+      }
+      else if (type == U_REQ_UPDATE_FIELD_PROJECTION_ENTRY) {
+        return new UrlReqUpdateFieldProjectionEntryImpl(node);
       }
       else if (type == U_REQ_UPDATE_KEYS_PROJECTION) {
         return new UrlReqUpdateKeysProjectionImpl(node);

@@ -8,7 +8,7 @@ import com.intellij.psi.PsiElement;
 public interface UrlReqDeleteRecordModelProjection extends PsiElement {
 
   @NotNull
-  List<UrlReqDeleteFieldProjection> getReqDeleteFieldProjectionList();
+  List<UrlReqDeleteFieldProjectionEntry> getReqDeleteFieldProjectionEntryList();
 
   @NotNull
   PsiElement getParenLeft();

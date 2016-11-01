@@ -8,9 +8,6 @@ import com.intellij.psi.PsiElement;
 public interface UrlReqDeleteFieldProjection extends PsiElement {
 
   @NotNull
-  UrlQid getQid();
-
-  @NotNull
   List<UrlReqAnnotation> getReqAnnotationList();
 
   @NotNull
