@@ -86,13 +86,13 @@ mvn clean install -P maven-plugin-dependent
         <module>examples</module>
         <module>java/codegen-test</module>
         <module>java/gdata-idl-psi-parser</module>
+        <module>java/http-server-undertow</module>
         <module>java/idl-psi-parser</module>
         <module>java/idl-psi-parser-common</module>
         <module>java/projections-idl-psi-parser</module>
         <module>java/projections-url-psi-parser</module>
         <module>java/request-url-parser</module>
         <module>java/request-url-psi-parser</module>
-        <module>java/server</module>
         <module>java/service</module>
         <module>java/wire</module>
         <module>scala/codegen-test</module>
