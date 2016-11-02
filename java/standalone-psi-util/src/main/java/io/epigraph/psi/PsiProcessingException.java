@@ -45,13 +45,16 @@ public class PsiProcessingException extends Exception {
   /**
    * @return list of errors, including this one (will be the last item)
    */
-  public List<PsiProcessingError> errors() {
-    return errors;
-  }
+  @NotNull
+  public List<PsiProcessingError> errors() { return errors; }
+
+  /**
+   * @return this exception converted to an error
+   */
+  @NotNull
+  public PsiProcessingError toError() { return errors.get(errors.size() - 1); }
 
   @NotNull
-  public TextLocation location() {
-    return errors.get(errors.size() - 1).location();
-  }
+  public TextLocation location() { return toError().location(); }
 
 }

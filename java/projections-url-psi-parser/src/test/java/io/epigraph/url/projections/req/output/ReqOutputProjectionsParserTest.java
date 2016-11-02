@@ -13,6 +13,7 @@ import io.epigraph.projections.op.output.OpOutputVarProjection;
 import io.epigraph.projections.req.output.ReqOutputProjectionsPrettyPrinter;
 import io.epigraph.projections.req.output.ReqOutputVarProjection;
 import io.epigraph.psi.EpigraphPsiUtil;
+import io.epigraph.psi.PsiProcessingError;
 import io.epigraph.psi.PsiProcessingException;
 import io.epigraph.refs.SimpleTypesResolver;
 import io.epigraph.refs.TypesResolver;
@@ -23,7 +24,9 @@ import io.epigraph.url.parser.psi.UrlReqOutputTrunkVarProjection;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
@@ -195,19 +198,30 @@ public class ReqOutputProjectionsParserTest {
       fail(psiDump);
     }
 
+    List<PsiProcessingError> errors = new ArrayList<>();
     OpOutputVarProjection varProjection = null;
     try {
       varProjection = OpOutputProjectionsPsiParser.parseVarProjection(
           varDataType,
           psiVarProjection,
-          resolver
+          resolver,
+          errors
       );
 
     } catch (PsiProcessingException e) {
-      e.printStackTrace();
-      System.err.println(e.getMessage() + " at " + e.location());
-      String psiDump = DebugUtil.psiToString(psiVarProjection, true, false).trim();
-      fail(psiDump);
+//      e.printStackTrace();
+//      System.err.println(e.getMessage() + " at " + e.location());
+//      String psiDump = DebugUtil.psiToString(psiVarProjection, true, false).trim();
+//      fail(psiDump);
+      errors = e.errors();
+    }
+
+    if (!errors.isEmpty()) {
+      for (final PsiProcessingError error : errors) {
+        System.err.print(error.message() + " at " + error.location());
+      }
+
+      fail();
     }
 
     return varProjection;

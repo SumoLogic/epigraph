@@ -6,6 +6,7 @@ import io.epigraph.idl.operations.OperationsPsiParser;
 import io.epigraph.idl.parser.psi.*;
 import io.epigraph.lang.Qn;
 import io.epigraph.psi.EpigraphPsiUtil;
+import io.epigraph.psi.PsiProcessingError;
 import io.epigraph.psi.PsiProcessingException;
 import io.epigraph.refs.ImportAwareTypesResolver;
 import io.epigraph.refs.TypesResolver;
@@ -24,15 +25,17 @@ import java.util.stream.Collectors;
  */
 public class IdlPsiParser {
   @NotNull
-  public static Idl parseIdl(@NotNull IdlFile idlPsi, @NotNull TypesResolver basicResolver)
-      throws PsiProcessingException {
+  public static Idl parseIdl(
+      @NotNull IdlFile idlPsi,
+      @NotNull TypesResolver basicResolver,
+      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
     @Nullable IdlNamespaceDecl namespaceDeclPsi = PsiTreeUtil.getChildOfType(idlPsi, IdlNamespaceDecl.class);
     if (namespaceDeclPsi == null)
-      throw new PsiProcessingException("namespace not specified", idlPsi);
+      throw new PsiProcessingException("namespace not specified", idlPsi, errors);
     @Nullable IdlQn namespaceFqnPsi = namespaceDeclPsi.getQn();
     if (namespaceFqnPsi == null)
-      throw new PsiProcessingException("namespace not specified", idlPsi);
+      throw new PsiProcessingException("namespace not specified", idlPsi, errors);
 
     Qn namespace = namespaceFqnPsi.getQn();
 
@@ -46,12 +49,16 @@ public class IdlPsiParser {
       resources = new HashMap<>();
       for (IdlResourceDef resourceDefPsi : resourceDefsPsi) {
         if (resourceDefPsi != null) {
-          ResourceIdl resource = parseResource(resourceDefPsi, resolver);
-          String fieldName = resource.fieldName();
-          if (resources.containsKey(fieldName))
-            throw new PsiProcessingException("Resource '" + fieldName + "' is already defined", resourceDefPsi);
-          else
-            resources.put(fieldName, resource);
+          try {
+            ResourceIdl resource = parseResource(resourceDefPsi, resolver, errors);
+            String fieldName = resource.fieldName();
+            if (resources.containsKey(fieldName))
+              errors.add(new PsiProcessingError("Resource '" + fieldName + "' is already defined", resourceDefPsi));
+            else
+              resources.put(fieldName, resource);
+          } catch (PsiProcessingException e) {
+            errors.add(e.toError());
+          }
         }
       }
     } else
@@ -78,8 +85,11 @@ public class IdlPsiParser {
         .collect(Collectors.toList());
   }
 
-  public static ResourceIdl parseResource(@NotNull IdlResourceDef psi, @NotNull TypesResolver resolver)
-      throws PsiProcessingException {
+  public static ResourceIdl parseResource(
+      @NotNull IdlResourceDef psi,
+      @NotNull TypesResolver resolver,
+      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
+
     final String fieldName = psi.getResourceName().getQid().getCanonicalName();
 
     @NotNull IdlResourceType resourceTypePsi = psi.getResourceType();
@@ -90,7 +100,8 @@ public class IdlPsiParser {
 
     if (resourceType == null) throw new PsiProcessingException(
         String.format("Can't resolve resource '%s' kind '%s'", fieldName, valueTypeRef),
-        resourceTypePsi
+        resourceTypePsi,
+        errors
     );
 
     // convert datum kind to samovar
@@ -103,7 +114,11 @@ public class IdlPsiParser {
 
     final List<OperationIdl> operations = new ArrayList<>(defsPsi.size());
     for (IdlOperationDef defPsi : defsPsi)
-      operations.add(OperationsPsiParser.parseOperation(resourceType, defPsi, resolver));
+      try {
+        operations.add(OperationsPsiParser.parseOperation(resourceType, defPsi, resolver, errors));
+      } catch (PsiProcessingException e) {
+        errors.add(e.toError());
+      }
 
     return new ResourceIdl(
         fieldName, resourceType, operations, EpigraphPsiUtil.getLocation(psi)

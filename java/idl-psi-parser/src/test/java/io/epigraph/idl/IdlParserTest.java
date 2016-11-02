@@ -7,8 +7,8 @@ import de.uka.ilkd.pp.NoExceptions;
 import de.uka.ilkd.pp.StringBackend;
 import io.epigraph.idl.parser.IdlParserDefinition;
 import io.epigraph.idl.parser.psi.IdlFile;
-import io.epigraph.lang.TextLocation;
 import io.epigraph.psi.EpigraphPsiUtil;
+import io.epigraph.psi.PsiProcessingError;
 import io.epigraph.psi.PsiProcessingException;
 import io.epigraph.refs.SimpleTypesResolver;
 import io.epigraph.refs.TypesResolver;
@@ -17,7 +17,9 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
@@ -209,21 +211,23 @@ public class IdlParserTest {
       fail(DebugUtil.psiTreeToString(psiFile, true));
     }
 
-    try {
-      return IdlPsiParser.parseIdl(psiFile, resolver);
-    } catch (PsiProcessingException e) {
-      e.printStackTrace();
-      @NotNull final TextLocation location = e.location();
-      System.err.println(e.getMessage() + " at " + location);
+    List<PsiProcessingError> errors = new ArrayList<>();
+    Idl idl = null;
 
-      System.err.print(text.substring(location.startOffset()));
-      System.err.print(">>>");
-      System.err.print(text.substring(location.startOffset(), location.endOffset()));
-      System.err.println("<<<");
+    try {
+      idl = IdlPsiParser.parseIdl(psiFile, resolver, errors);
+    } catch (PsiProcessingException e) {
+      errors = e.errors();
+    }
+
+    if (!errors.isEmpty()) {
+      for (final PsiProcessingError error : errors) {
+        System.err.print(error.message() + " at " + error.location());
+      }
       fail();
     }
 
-    throw new RuntimeException("Unreachable");
+    return idl;
   }
 
   private static String lines(String... lines) { return Arrays.stream(lines).collect(Collectors.joining("\n")); }

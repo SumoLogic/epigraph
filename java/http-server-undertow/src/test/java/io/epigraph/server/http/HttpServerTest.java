@@ -7,6 +7,7 @@ import io.epigraph.idl.IdlPsiParser;
 import io.epigraph.idl.parser.IdlParserDefinition;
 import io.epigraph.idl.parser.psi.IdlFile;
 import io.epigraph.psi.EpigraphPsiUtil;
+import io.epigraph.psi.PsiProcessingError;
 import io.epigraph.psi.PsiProcessingException;
 import io.epigraph.refs.SimpleTypesResolver;
 import io.epigraph.refs.TypesResolver;
@@ -18,7 +19,9 @@ import io.undertow.UndertowOptions;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -81,17 +84,32 @@ public class HttpServerTest {
 
   private static @NotNull Idl parseIdl(@NotNull IdlFile psiFile, EpigraphPsiUtil.ErrorsAccumulator errAcc)
       throws IOException {
+
     if (errAcc.hasErrors()) {
       for (PsiErrorElement element : errAcc.errors()) {
         System.err.println(element.getErrorDescription() + " at " + EpigraphPsiUtil.getLocation(element));
       }
       throw new RuntimeException(DebugUtil.psiTreeToString(psiFile, true));
     }
+
+    Idl idl = null;
+    List<PsiProcessingError> errors = new ArrayList<>();
     try {
-      return IdlPsiParser.parseIdl(psiFile, resolver);
+      idl = IdlPsiParser.parseIdl(psiFile, resolver, errors);
     } catch (PsiProcessingException e) {
-      throw new RuntimeException(e.getMessage() + " at " + e.location(), e);
+      errors = e.errors();
     }
+
+    if (!errors.isEmpty()) {
+      for (final PsiProcessingError error : errors) {
+        System.err.print(error.message() + " at " + error.location());
+      }
+
+      throw new RuntimeException("IDL errors detected");
+    }
+
+    assert idl != null;
+    return idl;
   }
 
 }
