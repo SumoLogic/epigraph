@@ -14,6 +14,7 @@ import io.epigraph.projections.StepsAndProjection;
 import io.epigraph.projections.req.output.ReqOutputFieldProjection;
 import io.epigraph.projections.req.output.ReqOutputVarProjection;
 import io.epigraph.psi.EpigraphPsiUtil;
+import io.epigraph.psi.PsiProcessingError;
 import io.epigraph.psi.PsiProcessingException;
 import io.epigraph.refs.TypesResolver;
 import io.epigraph.service.*;
@@ -37,7 +38,9 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Deque;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.regex.Matcher;
@@ -144,10 +147,12 @@ public class UndertowHandler implements HttpHandler {
     @NotNull ReadOperationIdl operationDeclaration = operation.declaration();
 
     try {
-      @Nullable
-      final RequestUrl requestUrl = parseReadRequestUrl(urlPsi, resourceDeclaration, operationDeclaration);
+      List<PsiProcessingError> errors = new ArrayList<>();
 
       // parse output projection
+      @Nullable
+      final RequestUrl requestUrl = parseReadRequestUrl(urlPsi, resourceDeclaration, operationDeclaration, errors);
+      reportPsiProcessingErrorsAndFail(urlPsi.getText(), errors, exchange);
       @NotNull StepsAndProjection<ReqOutputFieldProjection> stepsAndProjection = requestUrl.outputProjection();
 
       // run operation
@@ -184,14 +189,16 @@ public class UndertowHandler implements HttpHandler {
   private RequestUrl parseReadRequestUrl(
       @NotNull UrlReadUrl urlPsi,
       @NotNull ResourceIdl resourceDeclaration,
-      @NotNull ReadOperationIdl operationDeclaration) throws PsiProcessingException {
+      @NotNull ReadOperationIdl operationDeclaration,
+      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
     @Nullable
     final ReadRequestUrl requestUrl = ReadRequestUrlPsiParser.parseReadRequestUrl(
         resourceDeclaration.fieldType(),
         operationDeclaration,
         urlPsi,
-        typesResolver
+        typesResolver,
+        errors
     );
 
     assert requestUrl != null; // or else what?
@@ -413,6 +420,63 @@ public class UndertowHandler implements HttpHandler {
     return urlPsi;
   }
 
+  //////////////////////////////////////////////
+
+  private void reportPsiProcessingErrorsAndFail(
+      @NotNull String text,
+      @NotNull List<PsiProcessingError> errors,
+      @NotNull HttpServerExchange exchange) throws RequestFailedException {
+
+    if (!errors.isEmpty()) {
+      reportPsiProcessingErrors(text, errors, exchange);
+      throw RequestFailedException.INSTANCE;
+    }
+  }
+
+  private void reportPsiProcessingErrors(
+      @NotNull String text,
+      @NotNull List<PsiProcessingError> errors,
+      @NotNull HttpServerExchange exchange) {
+
+    StringBuilder sb = new StringBuilder();
+    boolean isHtml = htmlAccepted(exchange);
+
+    if (isHtml) appendHtmlErrorHeader(sb);
+
+    boolean first = true;
+    for (final PsiProcessingError error : errors) {
+      if (first) first = false;
+      else {
+        if (isHtml)
+          sb.append("<br/><hr/><br/>");
+        else
+          sb.append("\n---------------------------------------\n\n");
+      }
+
+      reportPsiProcessingError(text, error, isHtml, sb);
+    }
+
+
+    if (isHtml) appendHtmlErrorFooter(sb);
+
+    badRequest(sb.toString(), isHtml ? HTML : TEXT, exchange);
+  }
+
+  private void reportPsiProcessingError(
+      @NotNull String text,
+      @NotNull PsiProcessingError error,
+      boolean isHtml,
+      @NotNull StringBuilder sb) {
+
+    @NotNull TextLocation textRange = error.location();
+    String errorDescription = error.message();
+
+    if (isHtml)
+      addPsiErrorHtml(sb, text, textRange, errorDescription);
+    else
+      addPsiErrorPlainText(sb, text, textRange, errorDescription);
+
+  }
 
   private void addPsiErrorPlainText(
       StringBuilder sb,

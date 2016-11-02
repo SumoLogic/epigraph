@@ -9,6 +9,7 @@ import io.epigraph.projections.op.path.*;
 import io.epigraph.projections.req.ReqParams;
 import io.epigraph.projections.req.path.*;
 import io.epigraph.psi.EpigraphPsiUtil;
+import io.epigraph.psi.PsiProcessingError;
 import io.epigraph.psi.PsiProcessingException;
 import io.epigraph.refs.TypesResolver;
 import io.epigraph.types.*;
@@ -18,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.text.MessageFormat;
+import java.util.List;
 
 import static io.epigraph.url.projections.UrlProjectionsPsiParserUtil.getTag;
 
@@ -30,8 +32,8 @@ public class ReqPathPsiParser {
       @NotNull OpVarPath op,
       @NotNull DataType dataType,
       @NotNull UrlReqVarPath psi,
-      @NotNull TypesResolver typesResolver)
-      throws PsiProcessingException {
+      @NotNull TypesResolver typesResolver,
+      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
     final Type type = dataType.type;
 
@@ -43,7 +45,8 @@ public class ReqPathPsiParser {
       if (tagNamePsi != null)
         throw new PsiProcessingException(
             String.format("'%s' tags are not supported by the operation", dataType.name),
-            tagNamePsi
+            tagNamePsi,
+            errors
         );
 
       return new ReqVarPath(
@@ -69,7 +72,8 @@ public class ReqPathPsiParser {
     if (!reqTag.equals(opTag)) {
       throw new PsiProcessingException(
           String.format("'%s' tag is not supported by the operation, did you mean '%s'?", reqTag.name(), opTag.name()),
-          psi
+          psi,
+          errors
       );
     }
 
@@ -82,7 +86,8 @@ public class ReqPathPsiParser {
         ReqParserUtil.parseReqParams(psi.getReqParamList(), opModelPath.params(), typesResolver),
         ReqParserUtil.parseAnnotations(psi.getReqAnnotationList()),
         modelPathPsi,
-        typesResolver
+        typesResolver,
+        errors
     );
 
     return new ReqVarPath(
@@ -108,30 +113,32 @@ public class ReqPathPsiParser {
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
       @NotNull UrlReqModelPath psi,
-      @NotNull TypesResolver typesResolver)
+      @NotNull TypesResolver typesResolver,
+      @NotNull List<PsiProcessingError> errors)
       throws PsiProcessingException {
 
     switch (type.kind()) {
       case RECORD:
         @Nullable UrlReqRecordModelPath recordModelProjectionPsi = psi.getReqRecordModelPath();
         if (recordModelProjectionPsi == null)
-          throw new PsiProcessingException("Record path must be specified", psi);
+          throw new PsiProcessingException("Record path must be specified", psi, errors);
 
-        ensureModelKind(psi, TypeKind.RECORD);
+        ensureModelKind(psi, TypeKind.RECORD, errors);
         return parseRecordModelPath(
             (OpRecordModelPath) op,
             (RecordType) type,
             params,
             annotations,
             recordModelProjectionPsi,
-            typesResolver
+            typesResolver,
+            errors
         );
       case MAP:
         @Nullable UrlReqMapModelPath mapModelProjectionPsi = psi.getReqMapModelPath();
         if (mapModelProjectionPsi == null)
-          throw new PsiProcessingException("Map path must be specified", psi);
+          throw new PsiProcessingException("Map path must be specified", psi, errors);
 
-        ensureModelKind(psi, TypeKind.MAP);
+        ensureModelKind(psi, TypeKind.MAP, errors);
 
         return parseMapModelPath(
             (OpMapModelPath) op,
@@ -139,12 +146,13 @@ public class ReqPathPsiParser {
             params,
             annotations,
             mapModelProjectionPsi,
-            typesResolver
+            typesResolver,
+            errors
         );
       case LIST:
-        throw new PsiProcessingException("Unsupported type kind: " + type.kind(), psi);
+        throw new PsiProcessingException("Unsupported type kind: " + type.kind(), psi, errors);
       case ENUM:
-        throw new PsiProcessingException("Unsupported type kind: " + type.kind(), psi);
+        throw new PsiProcessingException("Unsupported type kind: " + type.kind(), psi, errors);
       case PRIMITIVE:
         return parsePrimitiveModelPath(
             (PrimitiveType) type,
@@ -153,14 +161,15 @@ public class ReqPathPsiParser {
             psi
         );
       case UNION:
-        throw new PsiProcessingException("Unsupported type kind: " + type.kind(), psi);
+        throw new PsiProcessingException("Unsupported type kind: " + type.kind(), psi, errors);
       default:
-        throw new PsiProcessingException("Unknown type kind: " + type.kind(), psi);
+        throw new PsiProcessingException("Unknown type kind: " + type.kind(), psi, errors);
     }
   }
 
-  private static void ensureModelKind(@NotNull UrlReqModelPath psi, @NotNull TypeKind expectedKind)
-      throws PsiProcessingException {
+  private static void ensureModelKind(
+      @NotNull UrlReqModelPath psi, @NotNull TypeKind expectedKind,
+      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
     @Nullable TypeKind actualKind = findProjectionKind(psi);
     if (!expectedKind.equals(actualKind))
@@ -168,7 +177,7 @@ public class ReqPathPsiParser {
           "Unexpected projection kind ''{0}'', expected ''{1}''",
           actualKind,
           expectedKind
-      ), psi);
+      ), psi, errors);
   }
 
   @Nullable
@@ -185,7 +194,8 @@ public class ReqPathPsiParser {
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
       @NotNull UrlReqRecordModelPath psi,
-      @NotNull TypesResolver typesResolver) throws PsiProcessingException {
+      @NotNull TypesResolver typesResolver,
+      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
     final @NotNull UrlReqFieldPathEntry fieldPathEntryPsi = psi.getReqFieldPathEntry();
 
@@ -200,7 +210,8 @@ public class ReqPathPsiParser {
               fieldName,
               ProjectionUtils.listFields(op.fieldProjections().keySet())
           ),
-          fieldPathEntryPsi.getQid()
+          fieldPathEntryPsi.getQid(),
+          errors
       );
 
     RecordType.Field field = opFieldEntry.field();
@@ -211,7 +222,8 @@ public class ReqPathPsiParser {
             field.dataType(),
             opFieldEntry.projection(),
             fieldPathEntryPsi.getReqFieldPath(),
-            typesResolver
+            typesResolver,
+            errors
         ),
         EpigraphPsiUtil.getLocation(fieldPathEntryPsi)
     );
@@ -230,7 +242,8 @@ public class ReqPathPsiParser {
       final @NotNull DataType fieldType,
       final @NotNull OpFieldPath op,
       final @NotNull UrlReqFieldPath psi,
-      final @NotNull TypesResolver typesResolver) throws PsiProcessingException {
+      final @NotNull TypesResolver typesResolver,
+      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
     @NotNull ReqParams fieldParams = ReqParserUtil.parseReqParams(psi.getReqParamList(), op.params(), typesResolver);
     @NotNull Annotations fieldAnnotations = ReqParserUtil.parseAnnotations(psi.getReqAnnotationList());
@@ -245,11 +258,11 @@ public class ReqPathPsiParser {
         throw new PsiProcessingException(String.format(
             "Can't construct default projection for type '%s' because it has no default tag",
             fieldType.name
-        ), psi);
+        ), psi, errors);
 
       varProjection = new ReqVarPath(fieldType.type, null, EpigraphPsiUtil.getLocation(psi));
     } else {
-      varProjection = parseVarPath(op.projection(), fieldType, fieldVarPathPsi, typesResolver);
+      varProjection = parseVarPath(op.projection(), fieldType, fieldVarPathPsi, typesResolver, errors);
     }
 
     final ReadReqPathParsingResult<ReqVarPath> fieldVarParsingResult;
@@ -271,23 +284,25 @@ public class ReqPathPsiParser {
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
       @NotNull UrlReqMapModelPath psi,
-      @NotNull TypesResolver resolver)
+      @NotNull TypesResolver resolver,
+      @NotNull List<PsiProcessingError> errors)
       throws PsiProcessingException {
 
     @NotNull ReqPathKeyProjection keyProjection = parseKeyProjection(
         op.keyProjection(),
         op.model().keyType(),
         psi,
-        resolver
+        resolver,
+        errors
     );
 
     @Nullable UrlReqVarPath valueProjectionPsi = psi.getReqVarPath();
 
     if (valueProjectionPsi == null)
-      throw new PsiProcessingException("Map value projection not specified", psi);
+      throw new PsiProcessingException("Map value projection not specified", psi, errors);
 
     @NotNull ReqVarPath valueProjection =
-        parseVarPath(op.itemsProjection(), type.valueType(), valueProjectionPsi, resolver);
+        parseVarPath(op.itemsProjection(), type.valueType(), valueProjectionPsi, resolver, errors);
 
     return new ReqMapModelPath(
         type,
@@ -304,7 +319,8 @@ public class ReqPathPsiParser {
       @NotNull OpPathKeyProjection op,
       @NotNull DatumType keyType,
       @NotNull UrlReqMapModelPath mapPathPsi,
-      @NotNull TypesResolver resolver) throws PsiProcessingException {
+      @NotNull TypesResolver resolver,
+      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
     @NotNull final ReqParams reqParams =
         ReqParserUtil.parseReqParams(mapPathPsi.getReqParamList(), op.params(), resolver);
@@ -314,7 +330,7 @@ public class ReqPathPsiParser {
     @Nullable final Datum keyValue =
         ReqParserUtil.getDatum(mapPathPsi.getDatum(), keyType, resolver, "Error processing map key: ");
 
-    if (keyValue == null) throw new PsiProcessingException("Null path keys not allowed", mapPathPsi.getDatum());
+    if (keyValue == null) throw new PsiProcessingException("Null path keys not allowed", mapPathPsi.getDatum(), errors);
 
     return new ReqPathKeyProjection(
         keyValue,

@@ -7,6 +7,7 @@ import io.epigraph.projections.StepsAndProjection;
 import io.epigraph.projections.op.path.OpFieldPath;
 import io.epigraph.projections.req.output.ReqOutputFieldProjection;
 import io.epigraph.projections.req.path.ReqVarPath;
+import io.epigraph.psi.PsiProcessingError;
 import io.epigraph.psi.PsiProcessingException;
 import io.epigraph.refs.TypesResolver;
 import io.epigraph.types.DataType;
@@ -17,6 +18,7 @@ import io.epigraph.url.projections.req.output.ReqOutputProjectionsPsiParser;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.Map;
 
 import static io.epigraph.url.projections.req.ReqParserUtil.parseRequestParams;
@@ -31,7 +33,8 @@ public class ReadRequestUrlPsiParser {
       @NotNull DataType resourceType,
       @NotNull ReadOperationIdl op,
       @NotNull UrlReadUrl psi,
-      @NotNull TypesResolver typesResolver) throws PsiProcessingException {
+      @NotNull TypesResolver typesResolver,
+      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
 //    @Nullable final UrlUrl urlPsi = PsiTreeUtil.getChildOfType(psi, UrlUrl.class);
 //    if (urlPsi == null) return null;
@@ -59,7 +62,8 @@ public class ReadRequestUrlPsiParser {
         ReqOutputProjectionsPsiParser.parseTrunkFieldProjection(
             true, resourceType,
             op.outputProjection(),
-            fieldProjectionPsi, newResolver
+            fieldProjectionPsi, newResolver,
+            errors
         );
 
     final Map<String, GDatum> requestParams = parseRequestParams(psi.getRequestParamList());
