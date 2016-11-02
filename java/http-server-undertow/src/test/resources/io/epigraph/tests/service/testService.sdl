@@ -7,7 +7,6 @@ import io.epigraph.tests.User
 resource users: map[PersonId,Person] {
 
   READ {
-    ; authToken : epigraph.String
     outputProjection [](
       :(
         id,
