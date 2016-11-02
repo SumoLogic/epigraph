@@ -10,7 +10,7 @@ public interface IdlOpInputFieldProjection extends PsiElement {
   @NotNull
   List<IdlOpInputFieldProjectionBodyPart> getOpInputFieldProjectionBodyPartList();
 
-  @Nullable
+  @NotNull
   IdlOpInputVarProjection getOpInputVarProjection();
 
   @NotNull

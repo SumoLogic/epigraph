@@ -13,9 +13,6 @@ public interface IdlOpFieldPath extends PsiElement {
   @Nullable
   IdlOpVarPath getOpVarPath();
 
-  @NotNull
-  IdlQid getQid();
-
   @Nullable
   PsiElement getCurlyLeft();
 

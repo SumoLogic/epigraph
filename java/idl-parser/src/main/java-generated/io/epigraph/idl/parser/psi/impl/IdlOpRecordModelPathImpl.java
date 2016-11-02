@@ -28,8 +28,8 @@ public class IdlOpRecordModelPathImpl extends ASTWrapperPsiElement implements Id
 
   @Override
   @NotNull
-  public IdlOpFieldPath getOpFieldPath() {
-    return findNotNullChildByClass(IdlOpFieldPath.class);
+  public IdlOpFieldPathEntry getOpFieldPathEntry() {
+    return findNotNullChildByClass(IdlOpFieldPathEntry.class);
   }
 
   @Override

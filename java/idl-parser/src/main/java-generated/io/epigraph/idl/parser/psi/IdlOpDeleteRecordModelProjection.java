@@ -8,7 +8,7 @@ import com.intellij.psi.PsiElement;
 public interface IdlOpDeleteRecordModelProjection extends PsiElement {
 
   @NotNull
-  List<IdlOpDeleteFieldProjection> getOpDeleteFieldProjectionList();
+  List<IdlOpDeleteFieldProjectionEntry> getOpDeleteFieldProjectionEntryList();
 
   @NotNull
   PsiElement getParenLeft();

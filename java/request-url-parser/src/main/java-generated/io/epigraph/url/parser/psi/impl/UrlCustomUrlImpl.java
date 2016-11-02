@@ -33,15 +33,15 @@ public class UrlCustomUrlImpl extends ASTWrapperPsiElement implements UrlCustomU
   }
 
   @Override
-  @Nullable
-  public UrlReqOutputTrunkFieldProjection getReqOutputTrunkFieldProjection() {
-    return findChildByClass(UrlReqOutputTrunkFieldProjection.class);
+  @NotNull
+  public UrlReqFieldPath getReqFieldPath() {
+    return findNotNullChildByClass(UrlReqFieldPath.class);
   }
 
   @Override
-  @NotNull
-  public UrlReqVarPath getReqVarPath() {
-    return findNotNullChildByClass(UrlReqVarPath.class);
+  @Nullable
+  public UrlReqOutputTrunkFieldProjection getReqOutputTrunkFieldProjection() {
+    return findChildByClass(UrlReqOutputTrunkFieldProjection.class);
   }
 
   @Override

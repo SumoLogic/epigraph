@@ -181,12 +181,12 @@ resource users map[String,User] {
 // operation def parts
 operationName ::= 'default' | qid
 operationMethod ::= 'method' ('GET' | 'POST' | 'PUT' | 'DELETE') // add 'PATCH' too?
-operationPath ::= 'path' opVarPath {pin=1}
+operationPath ::= 'path' opFieldPath {pin=1}
 operationInputType ::= 'inputType' typeRef {pin=2}
 operationInputProjection ::= 'inputProjection' opInputModelProjection {pin=2}
 operationOutputType ::= 'outputType' valueTypeRef {pin=2}
-operationOutputProjection ::= 'outputProjection' opOutputVarProjection {pin=2}
-operationDeleteProjection ::= 'deleteProjection' opDeleteVarProjection {pin=2}
+operationOutputProjection ::= 'outputProjection' opOutputFieldProjection {pin=2}
+operationDeleteProjection ::= 'deleteProjection' opDeleteFieldProjection {pin=2}
 
 operationDef ::= createOperationDef | readOperationDef | updateOperationDef | deleteOperationDef | customOperationDef
 
@@ -197,7 +197,6 @@ createOperationBodyPart ::= operationPath |
                             operationInputProjection |
                             operationOutputType |
                             operationOutputProjection |
-                            opParam |
                             annotation {
   recoverWhile = operationBodyRecover
 }
@@ -206,7 +205,6 @@ readOperationDef ::= operationName? 'READ' readOperationBody {pin=2}
 private readOperationBody ::= '{' (readOperationBodyPart ','?)* '}'
 readOperationBodyPart ::= operationPath |
                           operationOutputProjection |
-                          opParam |
                           annotation {
   recoverWhile = operationBodyRecover
 }
@@ -218,7 +216,6 @@ updateOperationBodyPart ::= operationPath |
                             operationInputProjection |
                             operationOutputType |
                             operationOutputProjection | 
-                            opParam | 
                             annotation {
   recoverWhile = operationBodyRecover
 }
@@ -229,7 +226,6 @@ deleteOperationBodyPart ::= operationPath |
                             operationDeleteProjection |
                             operationOutputType |
                             operationOutputProjection |
-                            opParam |
                             annotation {
   recoverWhile = operationBodyRecover
 }
@@ -242,20 +238,19 @@ customOperationBodyPart ::= operationMethod |
                             operationInputProjection |
                             operationOutputType |
                             operationOutputProjection |
-                            opParam |
                             annotation {
   recoverWhile = operationBodyRecover
 }
 
-private operationBodyRecover ::= ! ( '}' | ',' | ';' |
+private operationBodyRecover ::= ! ( '}' | ',' |
   'method' | 'inputType' | 'inputProjection' | 'outputType' | 'outputProjection' | 'deleteProjection' | 'path' |
   (id '=') | (id? ('READ' | 'CREATE' | 'UPDATE' | 'DELETE' | 'CUSTOM') ) )
 
 // ============= op projections =============
 
-opParam ::= ';' '+'? qid ':' typeRef opInputModelProjection opParamDefault? opParamBody? { pin = 1 }
+opParam ::= ';' '+'? qid ':' typeRef opParamDefault? opParamBody? { pin = 1 }
 private opParamDefault ::= '=' datum { pin=1 }
-private opParamBody ::= '{' ( opParamBodyPart ','? )* '}'
+private opParamBody ::= '{' ( opParamBodyPart ','? )* opInputModelProjection '}'
 private opParamBodyPart ::= annotation
 
 // op path --------------------------------------------------------
@@ -275,8 +270,9 @@ opModelPath ::= ( opRecordModelPath
                 )?
 
 // op record path
-opRecordModelPath ::= '/' opFieldPath
-opFieldPath ::= qid opFieldPathBody? opVarPath {pin=1}
+opRecordModelPath ::= '/' opFieldPathEntry
+opFieldPathEntry ::= qid opFieldPath
+opFieldPath ::= opFieldPathBody? opVarPath {pin=1}
 private opFieldPathBody ::= '{' (opFieldPathBodyPart ','? )* '}'
 opFieldPathBodyPart ::= opParam | annotation
 
@@ -313,9 +309,10 @@ opOutputModelProjection ::= ( opOutputRecordModelProjection
                             )?
 
 // op output record
-opOutputRecordModelProjection ::= '(' (opOutputFieldProjection ','?)* ')' { pin=1 }
-opOutputFieldProjection ::= '+'? qid (opOutputComplexFieldProjection | opOutputSimpleFieldProjection)
-private opOutputComplexFieldProjection ::= '{' (opOutputFieldProjectionBodyPart ','? )* opOutputVarProjection? '}'
+opOutputRecordModelProjection ::= '(' (opOutputFieldProjectionEntry ','?)* ')' { pin=1 }
+opOutputFieldProjectionEntry ::= '+'? qid opOutputFieldProjection
+opOutputFieldProjection ::= (opOutputComplexFieldProjection | opOutputSimpleFieldProjection)
+private opOutputComplexFieldProjection ::= '{' (opOutputFieldProjectionBodyPart ','? )* opOutputVarProjection '}'
 private opOutputSimpleFieldProjection ::= opOutputVarProjection
 opOutputFieldProjectionBodyPart ::= opParam | annotation
 
@@ -361,14 +358,14 @@ private opInputComplexTagProjection ::= '{' (opInputModelProperty ','?)* opInput
 //
 
 opInputModelProjection ::= ( opInputRecordModelProjection
-                               | opInputListModelProjection
-                               | opInputMapModelProjection
-                               )?
+                           | opInputListModelProjection
+                           | opInputMapModelProjection
+                           )?
 
 // op input record
 opInputRecordModelProjection ::= '(' (opInputFieldProjection ','?)* ')' { pin=1 }
 opInputFieldProjection ::= '+'? qid (opInputComplexFieldProjection | opInputSimpleFieldProjection)
-private opInputComplexFieldProjection ::= '{' (opInputFieldProjectionBodyPart ','? )* opInputVarProjection? '}'
+private opInputComplexFieldProjection ::= '{' (opInputFieldProjectionBodyPart ','? )* opInputVarProjection '}'
 private opInputSimpleFieldProjection ::= opInputVarProjection
 
 // op input list
@@ -409,9 +406,10 @@ opDeleteModelProjection ::= ( opDeleteRecordModelProjection
                             )?
 
 // op delete record
-opDeleteRecordModelProjection ::= '(' (opDeleteFieldProjection ','?)* ')' { pin=1 }
-opDeleteFieldProjection ::= qid (opDeleteComplexFieldProjection | opDeleteSimpleFieldProjection)
-private opDeleteComplexFieldProjection ::= '{' (opDeleteFieldProjectionBodyPart ','? )* opDeleteVarProjection? '}'
+opDeleteRecordModelProjection ::= '(' (opDeleteFieldProjectionEntry ','?)* ')' { pin=1 }
+opDeleteFieldProjectionEntry ::= qid opDeleteFieldProjection
+opDeleteFieldProjection ::= (opDeleteComplexFieldProjection | opDeleteSimpleFieldProjection)
+private opDeleteComplexFieldProjection ::= '{' (opDeleteFieldProjectionBodyPart ','? )* opDeleteVarProjection '}'
 private opDeleteSimpleFieldProjection ::= opDeleteVarProjection
 opDeleteFieldProjectionBodyPart ::= opParam | annotation
 

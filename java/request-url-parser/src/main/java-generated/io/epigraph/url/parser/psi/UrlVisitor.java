@@ -179,6 +179,10 @@ public class UrlVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitReqFieldPathEntry(@NotNull UrlReqFieldPathEntry o) {
+    visitPsiElement(o);
+  }
+
   public void visitReqMapModelPath(@NotNull UrlReqMapModelPath o) {
     visitPsiElement(o);
   }

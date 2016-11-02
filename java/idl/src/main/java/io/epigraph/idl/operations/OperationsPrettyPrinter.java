@@ -2,13 +2,14 @@ package io.epigraph.idl.operations;
 
 import de.uka.ilkd.pp.Layouter;
 import io.epigraph.projections.Annotations;
-import io.epigraph.projections.op.OpParams;
+import io.epigraph.projections.op.delete.OpDeleteFieldProjection;
 import io.epigraph.projections.op.delete.OpDeleteProjectionsPrettyPrinter;
 import io.epigraph.projections.op.input.OpInputModelProjection;
 import io.epigraph.projections.op.input.OpInputProjectionsPrettyPrinter;
+import io.epigraph.projections.op.output.OpOutputFieldProjection;
 import io.epigraph.projections.op.output.OpOutputProjectionsPrettyPrinter;
+import io.epigraph.projections.op.path.OpFieldPath;
 import io.epigraph.projections.op.path.OpPathPrettyPrinter;
-import io.epigraph.projections.op.path.OpVarPath;
 import io.epigraph.types.DatumType;
 import io.epigraph.types.Type;
 import org.jetbrains.annotations.NotNull;
@@ -48,9 +49,6 @@ public class OperationsPrettyPrinter<E extends Exception> {
 
     first = printMethod(operation, first);
 
-    @Nullable OpParams params = operation.params();
-    if (params != null) first = opOutputPrinter.print(params, true, first);
-
     @Nullable Annotations annotations = operation.annotations();
     if (annotations != null) first = opOutputPrinter.print(annotations, true, first);
 
@@ -85,7 +83,7 @@ public class OperationsPrettyPrinter<E extends Exception> {
   }
 
   private boolean printPath(@NotNull OperationIdl operation, boolean first) throws E {
-    @Nullable final OpVarPath path = operation.path();
+    final @Nullable OpFieldPath path = operation.path();
 
     if (path != null) {
       if (first) first = false;
@@ -95,7 +93,7 @@ public class OperationsPrettyPrinter<E extends Exception> {
 
       l.beginIInd();
       l.print("path").brk();
-      opPathPrinter.print(path, 0);
+      opPathPrinter.print(path);
       l.end();
     }
 
@@ -162,10 +160,7 @@ public class OperationsPrettyPrinter<E extends Exception> {
 
     l.brk();
 
-    l.beginIInd();
-    l.print("outputProjection").brk();
-    opOutputPrinter.print(operation.outputProjection(), 0);
-    l.end();
+    opOutputPrinter.print("outputProjection", operation.outputProjection());
 
     return first;
   }
@@ -179,13 +174,10 @@ public class OperationsPrettyPrinter<E extends Exception> {
 
       l.brk();
 
-      l.beginIInd();
-      l.print("deleteProjection").brk();
-      opDeletePrinter.print(deleteOperation.deleteProjection(), 0);
-      l.end();
-
+      opDeletePrinter.print("deleteProjection", deleteOperation.deleteProjection());
     }
 
     return first;
   }
+
 }

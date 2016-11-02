@@ -3,7 +3,7 @@ package io.epigraph.service.operations;
 import io.epigraph.data.Data;
 import io.epigraph.projections.req.delete.ReqDeleteFieldProjection;
 import io.epigraph.projections.req.output.ReqOutputFieldProjection;
-import io.epigraph.projections.req.path.ReqVarPath;
+import io.epigraph.projections.req.path.ReqFieldPath;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,7 +17,7 @@ public class DeleteOperationRequest extends OperationRequest {
   private final ReqDeleteFieldProjection DeleteProjection;
 
   public DeleteOperationRequest(
-      final @Nullable ReqVarPath path,
+      final @Nullable ReqFieldPath path,
       final @NotNull Data data,
       final @NotNull ReqDeleteFieldProjection DeleteProjection,
       final @NotNull ReqOutputFieldProjection outputProjection) {

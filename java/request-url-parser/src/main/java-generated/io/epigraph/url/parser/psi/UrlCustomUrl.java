@@ -10,11 +10,11 @@ public interface UrlCustomUrl extends PsiElement {
   @NotNull
   UrlQid getQid();
 
+  @NotNull
+  UrlReqFieldPath getReqFieldPath();
+
   @Nullable
   UrlReqOutputTrunkFieldProjection getReqOutputTrunkFieldProjection();
-
-  @NotNull
-  UrlReqVarPath getReqVarPath();
 
   @NotNull
   List<UrlRequestParam> getRequestParamList();

@@ -33,15 +33,9 @@ public class IdlOpOutputFieldProjectionImpl extends ASTWrapperPsiElement impleme
   }
 
   @Override
-  @Nullable
-  public IdlOpOutputVarProjection getOpOutputVarProjection() {
-    return findChildByClass(IdlOpOutputVarProjection.class);
-  }
-
-  @Override
   @NotNull
-  public IdlQid getQid() {
-    return findNotNullChildByClass(IdlQid.class);
+  public IdlOpOutputVarProjection getOpOutputVarProjection() {
+    return findNotNullChildByClass(IdlOpOutputVarProjection.class);
   }
 
   @Override
@@ -54,12 +48,6 @@ public class IdlOpOutputFieldProjectionImpl extends ASTWrapperPsiElement impleme
   @Nullable
   public PsiElement getCurlyRight() {
     return findChildByType(I_CURLY_RIGHT);
-  }
-
-  @Override
-  @Nullable
-  public PsiElement getPlus() {
-    return findChildByType(I_PLUS);
   }
 
 }

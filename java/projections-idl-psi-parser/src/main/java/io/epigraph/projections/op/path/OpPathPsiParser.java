@@ -306,61 +306,26 @@ public class OpPathPsiParser {
       @NotNull IdlOpRecordModelPath psi,
       @NotNull TypesResolver typesResolver) throws PsiProcessingException {
 
-    @NotNull final IdlOpFieldPath fieldProjectionPsi = psi.getOpFieldPath();
+    final @NotNull IdlOpFieldPathEntry fieldPathEntryPsi = psi.getOpFieldPathEntry();
 
-    final String fieldName = fieldProjectionPsi.getQid().getCanonicalName();
+    final String fieldName = fieldPathEntryPsi.getQid().getCanonicalName();
     RecordType.Field field = type.fieldsMap().get(fieldName);
     if (field == null)
       throw new PsiProcessingException(
           String.format("Can't field projection for '%s', field '%s' not found", type.name(), fieldName),
-          fieldProjectionPsi
+          fieldPathEntryPsi
       );
 
-    @NotNull OpParams fieldParams;
-    @NotNull Annotations fieldAnnotations;
+    @NotNull final IdlOpFieldPath fieldPathPsi = fieldPathEntryPsi.getOpFieldPath();
 
-    List<OpParam> fieldParamsList = null;
-    @Nullable Map<String, Annotation> fieldAnnotationsMap = null;
-    for (IdlOpFieldPathBodyPart fieldBodyPart : fieldProjectionPsi.getOpFieldPathBodyPartList()) {
-      @Nullable IdlOpParam fieldParamPsi = fieldBodyPart.getOpParam();
-      if (fieldParamPsi != null) {
-        if (fieldParamsList == null) fieldParamsList = new ArrayList<>(3);
-        fieldParamsList.add(parseParameter(fieldParamPsi, typesResolver));
-      }
-
-      fieldAnnotationsMap = parseAnnotation(fieldAnnotationsMap, fieldBodyPart.getAnnotation());
-    }
-
-    fieldParams = fieldParamsList == null ? OpParams.EMPTY : new OpParams(fieldParamsList);
-    fieldAnnotations = fieldAnnotationsMap == null ? Annotations.EMPTY : new Annotations(fieldAnnotationsMap);
-
-    OpVarPath varProjection;
-    @Nullable IdlOpVarPath psiVarProjection = fieldProjectionPsi.getOpVarPath();
-    if (psiVarProjection == null) {
-      @NotNull DataType fieldDataType = field.dataType();
-      @Nullable Type.Tag defaultFieldTag = fieldDataType.defaultTag;
-      if (defaultFieldTag == null)
-        throw new PsiProcessingException(String.format(
-            "Can't construct default projection for field '%s', as it's type '%s' has no default tag",
-            fieldName,
-            fieldDataType.name
-        ), fieldProjectionPsi);
-
-      varProjection =
-          createDefaultVarPath(fieldDataType.type, defaultFieldTag, fieldProjectionPsi);
-    } else {
-      varProjection = parseVarPath(field.dataType(), psiVarProjection, typesResolver);
-    }
-
-    @NotNull final TextLocation fieldLocation = EpigraphPsiUtil.getLocation(fieldProjectionPsi);
+    @NotNull final TextLocation fieldLocation = EpigraphPsiUtil.getLocation(fieldPathEntryPsi);
 
     final OpFieldPathEntry fieldProjection = new OpFieldPathEntry(
         field,
-        new OpFieldPath(
-            fieldParams,
-            fieldAnnotations,
-            varProjection,
-            fieldLocation
+        parseFieldPath(
+            field.dataType(),
+            fieldPathPsi,
+            typesResolver
         ),
         fieldLocation
     );
@@ -370,6 +335,56 @@ public class OpPathPsiParser {
         params,
         annotations,
         fieldProjection,
+        EpigraphPsiUtil.getLocation(psi)
+    );
+  }
+
+  @NotNull
+  public static OpFieldPath parseFieldPath(
+      @NotNull DataType fieldType,
+      @NotNull IdlOpFieldPath psi,
+      @NotNull TypesResolver resolver) throws PsiProcessingException {
+
+    @NotNull OpParams fieldParams;
+    @NotNull Annotations fieldAnnotations;
+
+    List<OpParam> fieldParamsList = null;
+    @Nullable Map<String, Annotation> fieldAnnotationsMap = null;
+    for (IdlOpFieldPathBodyPart fieldBodyPart : psi.getOpFieldPathBodyPartList()) {
+      @Nullable IdlOpParam fieldParamPsi = fieldBodyPart.getOpParam();
+      if (fieldParamPsi != null) {
+        if (fieldParamsList == null) fieldParamsList = new ArrayList<>(3);
+        fieldParamsList.add(parseParameter(fieldParamPsi, resolver));
+      }
+
+      fieldAnnotationsMap = parseAnnotation(fieldAnnotationsMap, fieldBodyPart.getAnnotation());
+    }
+
+    fieldParams = fieldParamsList == null ? OpParams.EMPTY : new OpParams(fieldParamsList);
+    fieldAnnotations = fieldAnnotationsMap == null ? Annotations.EMPTY : new Annotations(fieldAnnotationsMap);
+
+    final OpVarPath varProjection;
+
+    @Nullable IdlOpVarPath varPathPsi = psi.getOpVarPath();
+
+    if (varPathPsi == null) {
+      @Nullable Type.Tag defaultFieldTag = fieldType.defaultTag;
+      if (defaultFieldTag == null)
+        throw new PsiProcessingException(String.format(
+            "Can't construct default projection for type '%s' because it has no default tag",
+            fieldType.name
+        ), psi);
+
+      varProjection =
+          createDefaultVarPath(fieldType.type, defaultFieldTag, psi);
+    } else {
+      varProjection = parseVarPath(fieldType, varPathPsi, resolver);
+    }
+
+    return new OpFieldPath(
+        fieldParams,
+        fieldAnnotations,
+        varProjection,
         EpigraphPsiUtil.getLocation(psi)
     );
   }

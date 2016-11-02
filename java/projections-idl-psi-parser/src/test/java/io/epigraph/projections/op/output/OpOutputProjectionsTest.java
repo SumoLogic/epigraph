@@ -86,7 +86,7 @@ public class OpOutputProjectionsTest {
   @Test
   public void testParseParam() throws PsiProcessingException {
     testParsingVarProjection(
-        ":id { ;+param: map[epigraph.String,io.epigraph.tests.Person] []( :id ) = ( \"foo\": < id: 123 > ) { deprecated = true } }"
+        ":id { ;+param: map[epigraph.String,io.epigraph.tests.Person] = ( \"foo\": < id: 123 > ) { deprecated = true []( :id ) } }"
     );
   }
 

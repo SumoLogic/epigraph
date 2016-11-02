@@ -93,11 +93,11 @@ tagName ::= qid
 private url ::= readUrl | createUrl | updateUrl | deleteUrl | customUrl
 
 // real entry points:
-readUrl ::= '/' qid reqOutputTrunkFieldProjection requestParams // reqVarPath is part of output projection, will be extracted by psi parser
-createUrl ::= '/' qid reqVarPath ('>' reqOutputTrunkFieldProjection)? requestParams
-updateUrl ::= '/' qid reqVarPath ('<' reqUpdateFieldProjection)? ('>' reqOutputTrunkFieldProjection)? requestParams
-deleteUrl ::= '/' qid reqVarPath ('<' reqDeleteFieldProjection)? ('>' reqOutputTrunkFieldProjection)? requestParams
-customUrl ::= '/' qid reqVarPath ('>' reqOutputTrunkFieldProjection)? requestParams
+readUrl ::= '/' qid reqOutputTrunkFieldProjection requestParams // reqFieldPath is part of output projection, will be extracted by psi parser
+createUrl ::= '/' qid reqFieldPath ('>' reqOutputTrunkFieldProjection)? requestParams
+updateUrl ::= '/' qid reqFieldPath ('<' reqUpdateFieldProjection)? ('>' reqOutputTrunkFieldProjection)? requestParams
+deleteUrl ::= '/' qid reqFieldPath ('<' reqDeleteFieldProjection)? ('>' reqOutputTrunkFieldProjection)? requestParams
+customUrl ::= '/' qid reqFieldPath ('>' reqOutputTrunkFieldProjection)? requestParams
 
 private requestParams ::= requestParam*
 requestParam ::= ('?' | '&') PARAM_NAME '=' datum {  // ? vs & nonsense is sorted out in the UrlRequestPsiParser
@@ -128,8 +128,9 @@ reqModelPath ::= ( reqRecordModelPath
                  )?
 
 // req record path
-reqRecordModelPath ::= '/' reqFieldPath {pin=2}
-reqFieldPath ::= qid reqParamsAndAnnotations reqVarPath {pin=1}
+reqRecordModelPath ::= '/' reqFieldPathEntry {pin=2}
+reqFieldPathEntry ::= qid reqFieldPath
+reqFieldPath ::= reqParamsAndAnnotations reqVarPath {pin=1}
 
 // req map path
 reqMapModelPath ::= '/' reqOutputTrunkKeyProjection reqVarPath {pin=2}

@@ -28,8 +28,8 @@ public class IdlOpDeleteRecordModelProjectionImpl extends ASTWrapperPsiElement i
 
   @Override
   @NotNull
-  public List<IdlOpDeleteFieldProjection> getOpDeleteFieldProjectionList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, IdlOpDeleteFieldProjection.class);
+  public List<IdlOpDeleteFieldProjectionEntry> getOpDeleteFieldProjectionEntryList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, IdlOpDeleteFieldProjectionEntry.class);
   }
 
   @Override

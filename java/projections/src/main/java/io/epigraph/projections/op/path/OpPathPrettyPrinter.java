@@ -1,13 +1,10 @@
 package io.epigraph.projections.op.path;
 
 import de.uka.ilkd.pp.Layouter;
-import io.epigraph.data.Datum;
 import io.epigraph.projections.Annotations;
-import io.epigraph.projections.abs.AbstractProjectionsPrettyPrinter;
+import io.epigraph.projections.op.AbstractOpProjectionsPrettyPrinter;
 import io.epigraph.projections.op.OpParam;
 import io.epigraph.projections.op.OpParams;
-import io.epigraph.projections.op.input.OpInputModelProjection;
-import io.epigraph.projections.op.input.OpInputProjectionsPrettyPrinter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,10 +12,11 @@ import org.jetbrains.annotations.Nullable;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpPathPrettyPrinter<E extends Exception>
-    extends AbstractProjectionsPrettyPrinter<
+    extends AbstractOpProjectionsPrettyPrinter<
     OpVarPath,
     OpTagPath,
     OpModelPath<?, ?>,
+    OpFieldPath,
     E> {
 
   public OpPathPrettyPrinter(Layouter<E> layouter) {
@@ -75,29 +73,31 @@ public class OpPathPrettyPrinter<E extends Exception>
       l.beginIInd();
       l.print("/").brk();
 
-      @NotNull String fieldName = entry.field().name();
-      @NotNull OpFieldPath fieldProjection = entry.projection();
-
-      @NotNull OpVarPath fieldVarProjection = fieldProjection.projection();
-      @NotNull OpParams fieldParams = fieldProjection.params();
-      @NotNull Annotations fieldAnnotations = fieldProjection.annotations();
-
-      if (!fieldParams.isEmpty() || !fieldAnnotations.isEmpty()) {
-        l.beginCInd();
-        l.print(fieldName);
-        l.print(" {");
-        if (!fieldParams.isEmpty()) print(fieldParams);
-        if (!fieldAnnotations.isEmpty()) print(fieldAnnotations);
-        l.brk(1, -l.getDefaultIndentation()).end().print("}");
-      } else l.print(fieldName);
-
-      if (!isPrintoutEmpty(fieldVarProjection)) {
-        l.brk();
-        print(fieldVarProjection, 0);
-      }
-
+      print(entry.field().name(), entry.projection());
       l.end();
     }
+  }
+
+  public void print(@NotNull OpFieldPath fieldPath) throws E {
+    @NotNull OpVarPath fieldVarPath = fieldPath.projection();
+    @NotNull OpParams fieldParams = fieldPath.params();
+    @NotNull Annotations fieldAnnotations = fieldPath.annotations();
+
+    l.beginIInd(0);
+
+    if (!fieldParams.isEmpty() || !fieldAnnotations.isEmpty()) {
+      l.beginCInd();
+      l.print("{");
+      if (!fieldParams.isEmpty()) print(fieldParams);
+      if (!fieldAnnotations.isEmpty()) print(fieldAnnotations);
+      l.brk(1, -l.getDefaultIndentation()).end().print("}");
+
+      if (!isPrintoutEmpty(fieldVarPath)) l.brk();
+    }
+
+    print(fieldVarPath, 0);
+
+    l.end();
   }
 
   private void print(OpMapModelPath mp) throws E {
@@ -147,39 +147,6 @@ public class OpPathPrettyPrinter<E extends Exception>
     }
 
     return first;
-  }
-
-  public void print(@NotNull OpParam p) throws E {
-    OpInputModelProjection<?, ?, ?> projection = p.projection();
-
-    l.beginIInd();
-    l.print(";");
-    if (projection.required()) l.print("+");
-    l.print(p.name()).print(":").brk();
-    l.print(projection.model().name().toString());
-
-    OpInputProjectionsPrettyPrinter<E> ipp = new OpInputProjectionsPrettyPrinter<>(l);
-
-    if (!ipp.isPrintoutEmpty(projection)) {
-      l.brk();
-      ipp.print(projection, 0);
-    }
-
-    Datum defaultValue = projection.defaultValue();
-    if (defaultValue != null) {
-      l.brk().print("=").brk();
-      dataPrinter.print(defaultValue);
-    }
-
-    Annotations annotations = projection.annotations();
-    if (!annotations.isEmpty()) {
-      l.beginCInd();
-      l.print(" {");
-      print(annotations);
-      l.brk(1, -l.getDefaultIndentation()).end().print("}");
-    }
-
-    l.end();
   }
 
   @Override

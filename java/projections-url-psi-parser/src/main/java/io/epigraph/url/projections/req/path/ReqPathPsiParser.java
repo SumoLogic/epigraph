@@ -178,77 +178,6 @@ public class ReqPathPsiParser {
     return null;
   }
 
-  /*
-  @NotNull
-  private static ReqModelPath<?, ?> createDefaultModelProjection(
-      @NotNull DatumType type,
-      @NotNull ReqParams params,
-      @NotNull Annotations annotations,
-      @NotNull PsiElement locationPsi)
-      throws PsiProcessingException {
-
-    switch (type.kind()) {
-      case RECORD:
-        return new ReqRecordModelPath(
-            (RecordType) type,
-            params,
-            annotations,
-            null,
-            EpigraphPsiUtil.getLocation(locationPsi)
-        );
-      case MAP:
-        MapType mapType = (MapType) type;
-
-        final ReqPathKeyProjection keyProjection =
-            new ReqPathKeyProjection(
-                ReqParams.EMPTY,
-                Annotations.EMPTY,
-                EpigraphPsiUtil.getLocation(locationPsi)
-            );
-
-        @NotNull DataType valueType = mapType.valueType();
-        Type.@Nullable Tag defaultValuesTag = valueType.defaultTag;
-
-        if (defaultValuesTag == null)
-          throw new PsiProcessingException(String.format(
-              "Can't create default projection for map type '%s, as it's value type '%s' doesn't have a default tag",
-              type.name(),
-              valueType.name
-          ), locationPsi);
-
-        final ReqVarPath valueVarProjection = createDefaultVarProjection(
-            valueType.type,
-            defaultValuesTag,
-            locationPsi
-        );
-
-        return new ReqMapModelPath(
-            mapType,
-            params,
-            annotations,
-            keyProjection,
-            valueVarProjection,
-            EpigraphPsiUtil.getLocation(locationPsi)
-        );
-      case LIST:
-        throw new PsiProcessingException("Unsupported type kind: " + type.kind(), locationPsi);
-      case UNION:
-        throw new PsiProcessingException("Was expecting to get datum model kind, got: " + type.kind(), locationPsi);
-      case ENUM:
-        throw new PsiProcessingException("Unsupported type kind: " + type.kind(), locationPsi);
-      case PRIMITIVE:
-        return new ReqPrimitiveModelPath(
-            (PrimitiveType) type,
-            params,
-            annotations,
-            EpigraphPsiUtil.getLocation(locationPsi)
-        );
-      default:
-        throw new PsiProcessingException("Unknown type kind: " + type.kind(), locationPsi);
-    }
-  }
-  */
-
   @NotNull
   public static ReqRecordModelPath parseRecordModelPath(
       @NotNull OpRecordModelPath op,
@@ -258,9 +187,9 @@ public class ReqPathPsiParser {
       @NotNull UrlReqRecordModelPath psi,
       @NotNull TypesResolver typesResolver) throws PsiProcessingException {
 
-    @NotNull final UrlReqFieldPath fieldProjectionPsi = psi.getReqFieldPath();
+    final @NotNull UrlReqFieldPathEntry fieldPathEntryPsi = psi.getReqFieldPathEntry();
 
-    final String fieldName = fieldProjectionPsi.getQid().getCanonicalName();
+    final String fieldName = fieldPathEntryPsi.getQid().getCanonicalName();
 
     final OpFieldPathEntry opFieldEntry = op.fieldProjections().get(fieldName);
 
@@ -271,45 +200,20 @@ public class ReqPathPsiParser {
               fieldName,
               ProjectionUtils.listFields(op.fieldProjections().keySet())
           ),
-          fieldProjectionPsi.getQid()
+          fieldPathEntryPsi.getQid()
       );
 
     RecordType.Field field = opFieldEntry.field();
-    @NotNull final OpFieldPath opField = opFieldEntry.projection();
-
-    @NotNull ReqParams fieldParams =
-        ReqParserUtil.parseReqParams(fieldProjectionPsi.getReqParamList(), opField.params(), typesResolver);
-    @NotNull Annotations fieldAnnotations = ReqParserUtil.parseAnnotations(fieldProjectionPsi.getReqAnnotationList());
-
-    ReqVarPath varProjection;
-    @Nullable UrlReqVarPath fieldVarPathPsi = fieldProjectionPsi.getReqVarPath();
-    if (fieldVarPathPsi == null) {
-      @NotNull DataType fieldDataType = field.dataType();
-
-      @Nullable Type.Tag defaultFieldTag = fieldDataType.defaultTag;
-      if (defaultFieldTag == null)
-        throw new PsiProcessingException(String.format(
-            "Can't construct default projection for field '%s', as it's type '%s' has no default tag",
-            fieldName,
-            fieldDataType.name
-        ), fieldProjectionPsi);
-
-      varProjection = new ReqVarPath(fieldDataType.type, null, EpigraphPsiUtil.getLocation(fieldProjectionPsi));
-    } else {
-      varProjection = parseVarPath(opField.projection(), field.dataType(), fieldVarPathPsi, typesResolver);
-    }
-
-    @NotNull final TextLocation fieldLocation = EpigraphPsiUtil.getLocation(fieldProjectionPsi);
 
     final ReqFieldPathEntry fieldProjection = new ReqFieldPathEntry(
         field,
-        new ReqFieldPath(
-            fieldParams,
-            fieldAnnotations,
-            varProjection,
-            fieldLocation
+        parseFieldPath(
+            field.dataType(),
+            opFieldEntry.projection(),
+            fieldPathEntryPsi.getReqFieldPath(),
+            typesResolver
         ),
-        fieldLocation
+        EpigraphPsiUtil.getLocation(fieldPathEntryPsi)
     );
 
     return new ReqRecordModelPath(
@@ -318,6 +222,45 @@ public class ReqPathPsiParser {
         annotations,
         fieldProjection,
         EpigraphPsiUtil.getLocation(psi)
+    );
+  }
+
+  @NotNull
+  public static ReqFieldPath parseFieldPath(
+      final @NotNull DataType fieldType,
+      final @NotNull OpFieldPath op,
+      final @NotNull UrlReqFieldPath psi,
+      final @NotNull TypesResolver typesResolver) throws PsiProcessingException {
+
+    @NotNull ReqParams fieldParams = ReqParserUtil.parseReqParams(psi.getReqParamList(), op.params(), typesResolver);
+    @NotNull Annotations fieldAnnotations = ReqParserUtil.parseAnnotations(psi.getReqAnnotationList());
+
+    @Nullable UrlReqVarPath fieldVarPathPsi = psi.getReqVarPath();
+
+    final ReqVarPath varProjection;
+
+    if (fieldVarPathPsi == null) {
+      @Nullable Type.Tag defaultFieldTag = fieldType.defaultTag;
+      if (defaultFieldTag == null)
+        throw new PsiProcessingException(String.format(
+            "Can't construct default projection for type '%s' because it has no default tag",
+            fieldType.name
+        ), psi);
+
+      varProjection = new ReqVarPath(fieldType.type, null, EpigraphPsiUtil.getLocation(psi));
+    } else {
+      varProjection = parseVarPath(op.projection(), fieldType, fieldVarPathPsi, typesResolver);
+    }
+
+    final ReadReqPathParsingResult<ReqVarPath> fieldVarParsingResult;
+
+    @NotNull final TextLocation fieldLocation = EpigraphPsiUtil.getLocation(psi);
+
+    return new ReqFieldPath(
+        fieldParams,
+        fieldAnnotations,
+        varProjection,
+        fieldLocation
     );
   }
 

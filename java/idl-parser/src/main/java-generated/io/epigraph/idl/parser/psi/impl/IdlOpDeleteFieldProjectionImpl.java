@@ -33,15 +33,9 @@ public class IdlOpDeleteFieldProjectionImpl extends ASTWrapperPsiElement impleme
   }
 
   @Override
-  @Nullable
-  public IdlOpDeleteVarProjection getOpDeleteVarProjection() {
-    return findChildByClass(IdlOpDeleteVarProjection.class);
-  }
-
-  @Override
   @NotNull
-  public IdlQid getQid() {
-    return findNotNullChildByClass(IdlQid.class);
+  public IdlOpDeleteVarProjection getOpDeleteVarProjection() {
+    return findNotNullChildByClass(IdlOpDeleteVarProjection.class);
   }
 
   @Override

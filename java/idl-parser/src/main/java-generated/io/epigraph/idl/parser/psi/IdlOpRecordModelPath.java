@@ -8,7 +8,7 @@ import com.intellij.psi.PsiElement;
 public interface IdlOpRecordModelPath extends PsiElement {
 
   @NotNull
-  IdlOpFieldPath getOpFieldPath();
+  IdlOpFieldPathEntry getOpFieldPathEntry();
 
   @NotNull
   PsiElement getSlash();

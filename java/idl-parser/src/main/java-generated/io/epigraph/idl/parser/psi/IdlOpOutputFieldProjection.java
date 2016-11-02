@@ -10,19 +10,13 @@ public interface IdlOpOutputFieldProjection extends PsiElement {
   @NotNull
   List<IdlOpOutputFieldProjectionBodyPart> getOpOutputFieldProjectionBodyPartList();
 
-  @Nullable
-  IdlOpOutputVarProjection getOpOutputVarProjection();
-
   @NotNull
-  IdlQid getQid();
+  IdlOpOutputVarProjection getOpOutputVarProjection();
 
   @Nullable
   PsiElement getCurlyLeft();
 
   @Nullable
   PsiElement getCurlyRight();
-
-  @Nullable
-  PsiElement getPlus();
 
 }

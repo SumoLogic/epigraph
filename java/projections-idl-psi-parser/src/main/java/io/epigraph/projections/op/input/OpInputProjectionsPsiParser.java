@@ -418,7 +418,7 @@ public class OpInputProjectionsPsiParser {
   }
 
   @NotNull
-  private static OpInputModelProjection<?, ?, ?> createDefaultModelProjection(
+  public static OpInputModelProjection<?, ?, ?> createDefaultModelProjection(
       @NotNull DatumType type,
       boolean required,
       @Nullable GDatum defaultValue,

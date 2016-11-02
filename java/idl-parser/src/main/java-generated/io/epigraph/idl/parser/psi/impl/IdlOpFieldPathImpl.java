@@ -39,12 +39,6 @@ public class IdlOpFieldPathImpl extends ASTWrapperPsiElement implements IdlOpFie
   }
 
   @Override
-  @NotNull
-  public IdlQid getQid() {
-    return findNotNullChildByClass(IdlQid.class);
-  }
-
-  @Override
   @Nullable
   public PsiElement getCurlyLeft() {
     return findChildByType(I_CURLY_LEFT);

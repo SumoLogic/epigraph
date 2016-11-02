@@ -4,9 +4,8 @@ import io.epigraph.idl.IdlError;
 import io.epigraph.idl.ResourceIdl;
 import io.epigraph.lang.TextLocation;
 import io.epigraph.projections.Annotations;
-import io.epigraph.projections.op.OpParams;
-import io.epigraph.projections.op.output.OpOutputVarProjection;
-import io.epigraph.projections.op.path.OpVarPath;
+import io.epigraph.projections.op.output.OpOutputFieldProjection;
+import io.epigraph.projections.op.path.OpFieldPath;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,13 +17,12 @@ import java.util.List;
 public class ReadOperationIdl extends OperationIdl {
   protected ReadOperationIdl(
       @Nullable String name,
-      @NotNull OpParams params,
       @NotNull Annotations annotations,
-      @Nullable OpVarPath path,
-      @NotNull OpOutputVarProjection outputProjection,
+      @Nullable OpFieldPath path,
+      @NotNull OpOutputFieldProjection outputProjection,
       @NotNull TextLocation location) {
 
-    super(OperationKind.READ, HttpMethod.GET, name, params, annotations,
+    super(OperationKind.READ, HttpMethod.GET, name, annotations,
           path, null, outputProjection, location
     );
   }
@@ -35,7 +33,7 @@ public class ReadOperationIdl extends OperationIdl {
 
     ensureProjectionStartsWithResourceType(
         resource,
-        outputProjection(),
+        outputProjection().projection(),
         "output",
         errors
     );

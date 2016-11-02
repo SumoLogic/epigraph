@@ -8,7 +8,7 @@ import com.intellij.psi.PsiElement;
 public interface IdlOperationDeleteProjection extends PsiElement {
 
   @NotNull
-  IdlOpDeleteVarProjection getOpDeleteVarProjection();
+  IdlOpDeleteFieldProjection getOpDeleteFieldProjection();
 
   @NotNull
   PsiElement getDeleteProjection();

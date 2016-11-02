@@ -28,8 +28,8 @@ public class IdlOperationPathImpl extends ASTWrapperPsiElement implements IdlOpe
 
   @Override
   @Nullable
-  public IdlOpVarPath getOpVarPath() {
-    return findChildByClass(IdlOpVarPath.class);
+  public IdlOpFieldPath getOpFieldPath() {
+    return findChildByClass(IdlOpFieldPath.class);
   }
 
   @Override

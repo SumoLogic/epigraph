@@ -1,7 +1,7 @@
 package io.epigraph.service.operations;
 
 import io.epigraph.projections.req.output.ReqOutputFieldProjection;
-import io.epigraph.projections.req.path.ReqVarPath;
+import io.epigraph.projections.req.path.ReqFieldPath;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -10,12 +10,12 @@ import org.jetbrains.annotations.Nullable;
  */
 public abstract class OperationRequest {
   @Nullable
-  private final ReqVarPath path;
+  private final ReqFieldPath path;
   @NotNull
   private final ReqOutputFieldProjection outputProjection;
 
   protected OperationRequest(
-      final @Nullable ReqVarPath path,
+      final @Nullable ReqFieldPath path,
       final @NotNull ReqOutputFieldProjection outputProjection) {
 
     this.path = path;
@@ -23,7 +23,7 @@ public abstract class OperationRequest {
   }
 
   @Nullable
-  public ReqVarPath path() { return path; }
+  public ReqFieldPath path() { return path; }
 
   @NotNull
   public ReqOutputFieldProjection outputProjection() { return outputProjection; }

@@ -11,9 +11,6 @@ public interface IdlDeleteOperationBodyPart extends PsiElement {
   IdlAnnotation getAnnotation();
 
   @Nullable
-  IdlOpParam getOpParam();
-
-  @Nullable
   IdlOperationDeleteProjection getOperationDeleteProjection();
 
   @Nullable

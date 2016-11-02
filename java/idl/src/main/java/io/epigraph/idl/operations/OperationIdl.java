@@ -6,10 +6,9 @@ import io.epigraph.lang.TextLocation;
 import io.epigraph.projections.Annotations;
 import io.epigraph.projections.ProjectionUtils;
 import io.epigraph.projections.gen.GenVarProjection;
-import io.epigraph.projections.op.OpParams;
 import io.epigraph.projections.op.input.OpInputModelProjection;
-import io.epigraph.projections.op.output.OpOutputVarProjection;
-import io.epigraph.projections.op.path.OpVarPath;
+import io.epigraph.projections.op.output.OpOutputFieldProjection;
+import io.epigraph.projections.op.path.OpFieldPath;
 import io.epigraph.types.DatumType;
 import io.epigraph.types.Type;
 import org.jetbrains.annotations.NotNull;
@@ -31,15 +30,13 @@ public abstract class OperationIdl {
   @Nullable
   protected final String name;
   @NotNull
-  protected final OpParams params;
-  @NotNull
   protected final Annotations annotations;
   @Nullable
-  protected final OpVarPath path;
+  protected final OpFieldPath path;
   @Nullable
   protected final OpInputModelProjection<?, ?, ?> inputProjection;
   @NotNull
-  protected final OpOutputVarProjection outputProjection;
+  protected final OpOutputFieldProjection outputProjection;
   @NotNull
   protected final TextLocation location;
 
@@ -47,16 +44,14 @@ public abstract class OperationIdl {
       @NotNull OperationKind type,
       @NotNull HttpMethod method,
       @Nullable String name,
-      @NotNull OpParams params,
       @NotNull Annotations annotations,
-      @Nullable OpVarPath path,
+      @Nullable OpFieldPath path,
       @Nullable OpInputModelProjection<?, ?, ?> inputProjection,
-      @NotNull OpOutputVarProjection outputProjection,
+      @NotNull OpOutputFieldProjection outputProjection,
       @NotNull TextLocation location) {
     this.type = type;
     this.method = method;
     this.name = name;
-    this.params = params;
     this.annotations = annotations;
     this.path = path;
     this.inputProjection = inputProjection;
@@ -76,13 +71,10 @@ public abstract class OperationIdl {
   public boolean isDefault() { return name == null; }
 
   @NotNull
-  public OpParams params() { return params; }
-
-  @NotNull
   public Annotations annotations() { return annotations; }
 
   @Nullable
-  public OpVarPath path() { return path; }
+  public OpFieldPath path() { return path; }
 
   @Nullable
   public DatumType inputType() {
@@ -93,10 +85,10 @@ public abstract class OperationIdl {
   public OpInputModelProjection<?, ?, ?> inputProjection() { return inputProjection; }
 
   @NotNull
-  public Type outputType() { return outputProjection.type(); }
+  public Type outputType() { return outputProjection.projection().type(); }
 
   @NotNull
-  public OpOutputVarProjection outputProjection() { return outputProjection; }
+  public OpOutputFieldProjection outputProjection() { return outputProjection; }
 
   @NotNull
   public TextLocation location() { return location; }
@@ -110,7 +102,7 @@ public abstract class OperationIdl {
       @NotNull List<IdlError> errors) {
 
     @NotNull Type outputType = resource.fieldType().type;
-    if (path != null) outputType = ProjectionUtils.tipType(path).type;
+    if (path != null) outputType = ProjectionUtils.tipType(path.projection()).type;
 
     final Type outputProjectionType = projection.type();
 
@@ -137,7 +129,6 @@ public abstract class OperationIdl {
     OperationIdl that = (OperationIdl) o;
     return type == that.type &&
            Objects.equals(name, that.name) &&
-           Objects.equals(params, that.params) &&
            Objects.equals(annotations, that.annotations) &&
            Objects.equals(path, that.path) &&
            Objects.equals(inputProjection, that.inputProjection) &&
@@ -146,7 +137,7 @@ public abstract class OperationIdl {
 
   @Override
   public int hashCode() {
-    return Objects.hash(type, name, params, annotations, path, inputProjection, outputProjection);
+    return Objects.hash(type, name, annotations, path, inputProjection, outputProjection);
   }
 
   @Override

@@ -2,7 +2,7 @@ package io.epigraph.service.operations;
 
 import io.epigraph.data.Data;
 import io.epigraph.projections.req.output.ReqOutputFieldProjection;
-import io.epigraph.projections.req.path.ReqVarPath;
+import io.epigraph.projections.req.path.ReqFieldPath;
 import io.epigraph.projections.req.update.ReqUpdateFieldProjection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -17,7 +17,7 @@ public class UpdateOperationRequest extends OperationRequest {
   private final ReqUpdateFieldProjection updateProjection;
 
   protected UpdateOperationRequest(
-      final @Nullable ReqVarPath path,
+      final @Nullable ReqFieldPath path,
       final @NotNull Data data,
       final @NotNull ReqUpdateFieldProjection updateProjection,
       final @NotNull ReqOutputFieldProjection outputProjection) {

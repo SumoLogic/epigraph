@@ -3,7 +3,7 @@ package io.epigraph.service;
 import io.epigraph.idl.ResourceIdl;
 import io.epigraph.idl.operations.OperationIdl;
 import io.epigraph.projections.ProjectionUtils;
-import io.epigraph.projections.op.path.OpVarPath;
+import io.epigraph.projections.op.path.OpFieldPath;
 import io.epigraph.service.operations.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -182,11 +182,11 @@ public class Resource {
       // sort by path length, from longest to shortest
 
       Collections.sort(unnamedOperations, (o1, o2) -> {
-        @Nullable final OpVarPath path1 = o1.declaration().path();
-        @Nullable final OpVarPath path2 = o2.declaration().path();
+        final @Nullable OpFieldPath path1 = o1.declaration().path();
+        final @Nullable OpFieldPath path2 = o2.declaration().path();
 
-        int path1Len = path1 == null ? 0 : ProjectionUtils.pathLength(path1);
-        int path2Len = path2 == null ? 0 : ProjectionUtils.pathLength(path2);
+        int path1Len = path1 == null ? 0 : ProjectionUtils.pathLength(path1.projection());
+        int path2Len = path2 == null ? 0 : ProjectionUtils.pathLength(path2.projection());
 
         if (path1Len > path2Len) return -1;
         if (path1Len < path2Len) return 1;

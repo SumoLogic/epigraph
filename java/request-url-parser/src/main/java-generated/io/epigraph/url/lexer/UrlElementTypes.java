@@ -52,6 +52,7 @@ public interface UrlElementTypes {
   IElementType U_REQ_DELETE_VAR_PROJECTION = new UrlElementType("U_REQ_DELETE_VAR_PROJECTION");
   IElementType U_REQ_DELETE_VAR_SINGLE_TAIL = new UrlElementType("U_REQ_DELETE_VAR_SINGLE_TAIL");
   IElementType U_REQ_FIELD_PATH = new UrlElementType("U_REQ_FIELD_PATH");
+  IElementType U_REQ_FIELD_PATH_ENTRY = new UrlElementType("U_REQ_FIELD_PATH_ENTRY");
   IElementType U_REQ_MAP_MODEL_PATH = new UrlElementType("U_REQ_MAP_MODEL_PATH");
   IElementType U_REQ_MODEL_PATH = new UrlElementType("U_REQ_MODEL_PATH");
   IElementType U_REQ_OUTPUT_COMA_FIELD_PROJECTION = new UrlElementType("U_REQ_OUTPUT_COMA_FIELD_PROJECTION");
@@ -266,6 +267,9 @@ public interface UrlElementTypes {
       }
       else if (type == U_REQ_FIELD_PATH) {
         return new UrlReqFieldPathImpl(node);
+      }
+      else if (type == U_REQ_FIELD_PATH_ENTRY) {
+        return new UrlReqFieldPathEntryImpl(node);
       }
       else if (type == U_REQ_MAP_MODEL_PATH) {
         return new UrlReqMapModelPathImpl(node);

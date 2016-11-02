@@ -28,8 +28,8 @@ public class UrlReqRecordModelPathImpl extends ASTWrapperPsiElement implements U
 
   @Override
   @NotNull
-  public UrlReqFieldPath getReqFieldPath() {
-    return findNotNullChildByClass(UrlReqFieldPath.class);
+  public UrlReqFieldPathEntry getReqFieldPathEntry() {
+    return findNotNullChildByClass(UrlReqFieldPathEntry.class);
   }
 
   @Override

@@ -8,7 +8,7 @@ import com.intellij.psi.PsiElement;
 public interface IdlOperationPath extends PsiElement {
 
   @Nullable
-  IdlOpVarPath getOpVarPath();
+  IdlOpFieldPath getOpFieldPath();
 
   @NotNull
   PsiElement getPath();

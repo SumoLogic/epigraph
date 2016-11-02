@@ -13,11 +13,11 @@ public interface UrlDeleteUrl extends PsiElement {
   @Nullable
   UrlReqDeleteFieldProjection getReqDeleteFieldProjection();
 
+  @NotNull
+  UrlReqFieldPath getReqFieldPath();
+
   @Nullable
   UrlReqOutputTrunkFieldProjection getReqOutputTrunkFieldProjection();
-
-  @NotNull
-  UrlReqVarPath getReqVarPath();
 
   @NotNull
   List<UrlRequestParam> getRequestParamList();

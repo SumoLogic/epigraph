@@ -34,12 +34,6 @@ public class IdlDeleteOperationBodyPartImpl extends ASTWrapperPsiElement impleme
 
   @Override
   @Nullable
-  public IdlOpParam getOpParam() {
-    return findChildByClass(IdlOpParam.class);
-  }
-
-  @Override
-  @Nullable
   public IdlOperationDeleteProjection getOperationDeleteProjection() {
     return findChildByClass(IdlOperationDeleteProjection.class);
   }

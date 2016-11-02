@@ -34,12 +34,6 @@ public class IdlCreateOperationBodyPartImpl extends ASTWrapperPsiElement impleme
 
   @Override
   @Nullable
-  public IdlOpParam getOpParam() {
-    return findChildByClass(IdlOpParam.class);
-  }
-
-  @Override
-  @Nullable
   public IdlOperationInputProjection getOperationInputProjection() {
     return findChildByClass(IdlOperationInputProjection.class);
   }

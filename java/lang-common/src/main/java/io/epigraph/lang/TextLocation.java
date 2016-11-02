@@ -31,6 +31,7 @@ public class TextLocation {
   }
 
   public TextLocation(int startOffset, int endOffset, @Nullable String fileName, @NotNull String text) {
+    // todo capture columns if text doesn't contain tabs and special symbols
     this(
         startOffset,
         line(text, startOffset),
@@ -61,13 +62,23 @@ public class TextLocation {
   @Override
   public String toString() {
     String file = fileName() == null ? "unknown" : fileName();
-    return String.format(
-        "file '%s' lines %d:%d (offset %d:%d)",
-        file,
-        startLine(),
-        endLine(),
-        startOffset(),
-        endOffset()
-    );
+
+    if (startLine() != endLine())
+      return String.format(
+          "file '%s' lines %d-%d (offset %d-%d)",
+          file,
+          startLine(),
+          endLine(),
+          startOffset(),
+          endOffset()
+      );
+    else
+      return String.format(
+          "file '%s' line %d (offset %d-%d)",
+          file,
+          startLine(),
+          startOffset(),
+          endOffset()
+      );
   }
 }

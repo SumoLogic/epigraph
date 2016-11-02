@@ -28,8 +28,8 @@ public class IdlOperationOutputProjectionImpl extends ASTWrapperPsiElement imple
 
   @Override
   @NotNull
-  public IdlOpOutputVarProjection getOpOutputVarProjection() {
-    return findNotNullChildByClass(IdlOpOutputVarProjection.class);
+  public IdlOpOutputFieldProjection getOpOutputFieldProjection() {
+    return findNotNullChildByClass(IdlOpOutputFieldProjection.class);
   }
 
   @Override

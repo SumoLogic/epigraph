@@ -4,7 +4,6 @@ import epigraph.projections.Annotation
 import epigraph.projections.op.OpDeleteVarProjection
 import epigraph.projections.op.OpInputModelProjection
 import epigraph.projections.op.OpOutputVarProjection
-import epigraph.projections.op.OpParam
 import epigraph.projections.op.OpVarPath
 import epigraph.schema.DataTypeRef
 import epigraph.schema.Documented
@@ -21,7 +20,6 @@ record Resource extends Documented {
 
 abstract record Operation extends Documented {
   name: String { doc = "`null` means default operation" }
-  params: list[OpParam]
   annotations: list[Annotation]
 
   path: OpVarPath // starts with resource field type, ends with data type (var container)

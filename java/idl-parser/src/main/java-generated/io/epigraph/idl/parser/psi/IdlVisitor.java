@@ -103,6 +103,10 @@ public class IdlVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitOpDeleteFieldProjectionEntry(@NotNull IdlOpDeleteFieldProjectionEntry o) {
+    visitPsiElement(o);
+  }
+
   public void visitOpDeleteKeyProjection(@NotNull IdlOpDeleteKeyProjection o) {
     visitPsiElement(o);
   }
@@ -168,6 +172,10 @@ public class IdlVisitor extends PsiElementVisitor {
   }
 
   public void visitOpFieldPathBodyPart(@NotNull IdlOpFieldPathBodyPart o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpFieldPathEntry(@NotNull IdlOpFieldPathEntry o) {
     visitPsiElement(o);
   }
 
@@ -260,6 +268,10 @@ public class IdlVisitor extends PsiElementVisitor {
   }
 
   public void visitOpOutputFieldProjectionBodyPart(@NotNull IdlOpOutputFieldProjectionBodyPart o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpOutputFieldProjectionEntry(@NotNull IdlOpOutputFieldProjectionEntry o) {
     visitPsiElement(o);
   }
 

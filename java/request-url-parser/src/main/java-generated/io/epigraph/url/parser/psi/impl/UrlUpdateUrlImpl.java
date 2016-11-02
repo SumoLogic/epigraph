@@ -33,6 +33,12 @@ public class UrlUpdateUrlImpl extends ASTWrapperPsiElement implements UrlUpdateU
   }
 
   @Override
+  @NotNull
+  public UrlReqFieldPath getReqFieldPath() {
+    return findNotNullChildByClass(UrlReqFieldPath.class);
+  }
+
+  @Override
   @Nullable
   public UrlReqOutputTrunkFieldProjection getReqOutputTrunkFieldProjection() {
     return findChildByClass(UrlReqOutputTrunkFieldProjection.class);
@@ -42,12 +48,6 @@ public class UrlUpdateUrlImpl extends ASTWrapperPsiElement implements UrlUpdateU
   @Nullable
   public UrlReqUpdateFieldProjection getReqUpdateFieldProjection() {
     return findChildByClass(UrlReqUpdateFieldProjection.class);
-  }
-
-  @Override
-  @NotNull
-  public UrlReqVarPath getReqVarPath() {
-    return findNotNullChildByClass(UrlReqVarPath.class);
   }
 
   @Override

@@ -3,7 +3,6 @@ package io.epigraph.projections.op.delete;
 import com.intellij.psi.PsiElement;
 import io.epigraph.idl.TypeRefs;
 import io.epigraph.idl.parser.psi.*;
-import io.epigraph.lang.TextLocation;
 import io.epigraph.projections.Annotation;
 import io.epigraph.projections.Annotations;
 import io.epigraph.projections.ProjectionUtils;
@@ -428,62 +427,29 @@ public class OpDeleteProjectionsPsiParser {
       @NotNull TypesResolver typesResolver) throws PsiProcessingException {
 
     LinkedHashMap<String, OpDeleteFieldProjectionEntry> fieldProjections = new LinkedHashMap<>();
-    @NotNull List<IdlOpDeleteFieldProjection> psiFieldProjections = psi.getOpDeleteFieldProjectionList();
+    @NotNull List<IdlOpDeleteFieldProjectionEntry> fieldProjectionEntriesPsi =
+        psi.getOpDeleteFieldProjectionEntryList();
 
-    for (IdlOpDeleteFieldProjection fieldProjectionPsi : psiFieldProjections) {
-      final String fieldName = fieldProjectionPsi.getQid().getCanonicalName();
+    for (IdlOpDeleteFieldProjectionEntry fieldProjectionEntryPsi : fieldProjectionEntriesPsi) {
+      final String fieldName = fieldProjectionEntryPsi.getQid().getCanonicalName();
       RecordType.Field field = type.fieldsMap().get(fieldName);
+
       if (field == null)
         throw new PsiProcessingException(
             String.format("Can't field projection for '%s', field '%s' not found", type.name(), fieldName),
-            fieldProjectionPsi
+            fieldProjectionEntryPsi
         );
 
-      List<OpParam> fieldParamsList = null;
-      @Nullable Map<String, Annotation> fieldAnnotationsMap = null;
-      for (IdlOpDeleteFieldProjectionBodyPart fieldBodyPart : fieldProjectionPsi.getOpDeleteFieldProjectionBodyPartList()) {
-        @Nullable IdlOpParam fieldParamPsi = fieldBodyPart.getOpParam();
-        if (fieldParamPsi != null) {
-          if (fieldParamsList == null) fieldParamsList = new ArrayList<>(3);
-          fieldParamsList.add(parseParameter(fieldParamPsi, typesResolver));
-        }
-
-        fieldAnnotationsMap = parseAnnotation(fieldAnnotationsMap, fieldBodyPart.getAnnotation());
-      }
-
-      @NotNull OpParams fieldParams = OpParams.fromCollection(fieldParamsList);
-      @NotNull Annotations fieldAnnotations = Annotations.fromMap(fieldAnnotationsMap);
-
-      OpDeleteVarProjection varProjection;
-      @Nullable IdlOpDeleteVarProjection psiVarProjection = fieldProjectionPsi.getOpDeleteVarProjection();
-      if (psiVarProjection == null) {
-        @NotNull DataType fieldDataType = field.dataType();
-        @Nullable Type.Tag defaultFieldTag = fieldDataType.defaultTag;
-        if (defaultFieldTag == null)
-          throw new PsiProcessingException(String.format(
-              "Can't construct default projection for field '%s', as it's type '%s' has no default tag",
-              fieldName,
-              fieldDataType.name
-          ), fieldProjectionPsi);
-
-        varProjection =
-            createDefaultVarProjection(fieldDataType.type, defaultFieldTag, true, fieldProjectionPsi);
-      } else {
-        varProjection = parseVarProjection(field.dataType(), psiVarProjection, typesResolver);
-      }
-
-      @NotNull final TextLocation fieldLocation = EpigraphPsiUtil.getLocation(fieldProjectionPsi);
       fieldProjections.put(
           fieldName,
           new OpDeleteFieldProjectionEntry(
               field,
-              new OpDeleteFieldProjection(
-                  fieldParams,
-                  fieldAnnotations,
-                  varProjection,
-                  fieldLocation
+              parseFieldProjection(
+                  field.dataType(),
+                  fieldProjectionEntryPsi.getOpDeleteFieldProjection(),
+                  typesResolver
               ),
-              fieldLocation
+              EpigraphPsiUtil.getLocation(fieldProjectionEntryPsi)
           )
       );
     }
@@ -493,6 +459,56 @@ public class OpDeleteProjectionsPsiParser {
         params,
         annotations,
         fieldProjections,
+        EpigraphPsiUtil.getLocation(psi)
+    );
+  }
+
+  @NotNull
+  public static OpDeleteFieldProjection parseFieldProjection(
+      @NotNull DataType fieldType,
+      @NotNull IdlOpDeleteFieldProjection psi,
+      @NotNull TypesResolver resolver) throws PsiProcessingException {
+
+    @NotNull OpParams fieldParams;
+    @NotNull Annotations fieldAnnotations;
+
+    List<OpParam> fieldParamsList = null;
+    @Nullable Map<String, Annotation> fieldAnnotationsMap = null;
+    for (IdlOpDeleteFieldProjectionBodyPart fieldBodyPart : psi.getOpDeleteFieldProjectionBodyPartList()) {
+      @Nullable IdlOpParam fieldParamPsi = fieldBodyPart.getOpParam();
+      if (fieldParamPsi != null) {
+        if (fieldParamsList == null) fieldParamsList = new ArrayList<>(3);
+        fieldParamsList.add(parseParameter(fieldParamPsi, resolver));
+      }
+
+      fieldAnnotationsMap = parseAnnotation(fieldAnnotationsMap, fieldBodyPart.getAnnotation());
+    }
+
+    fieldParams = fieldParamsList == null ? OpParams.EMPTY : new OpParams(fieldParamsList);
+    fieldAnnotations = fieldAnnotationsMap == null ? Annotations.EMPTY : new Annotations(fieldAnnotationsMap);
+
+    final OpDeleteVarProjection varProjection;
+
+    @Nullable IdlOpDeleteVarProjection varProjectionPsi = psi.getOpDeleteVarProjection();
+
+    if (varProjectionPsi == null) {
+      @Nullable Type.Tag defaultFieldTag = fieldType.defaultTag;
+      if (defaultFieldTag == null)
+        throw new PsiProcessingException(String.format(
+            "Can't construct default projection for type '%s' because it has no default tag",
+            fieldType.name
+        ), psi);
+
+      varProjection =
+          createDefaultVarProjection(fieldType, true, psi);
+    } else {
+      varProjection = parseVarProjection(fieldType, varProjectionPsi, resolver);
+    }
+
+    return new OpDeleteFieldProjection(
+        fieldParams,
+        fieldAnnotations,
+        varProjection,
         EpigraphPsiUtil.getLocation(psi)
     );
   }

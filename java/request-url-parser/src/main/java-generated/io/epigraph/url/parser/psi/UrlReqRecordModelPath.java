@@ -8,7 +8,7 @@ import com.intellij.psi.PsiElement;
 public interface UrlReqRecordModelPath extends PsiElement {
 
   @NotNull
-  UrlReqFieldPath getReqFieldPath();
+  UrlReqFieldPathEntry getReqFieldPathEntry();
 
   @NotNull
   PsiElement getSlash();

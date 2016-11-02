@@ -44,8 +44,6 @@ public class OpParserUtil {
       );
 
     @Nullable IdlOpInputModelProjection paramModelProjectionPsi = paramPsi.getOpInputModelProjection();
-    if (paramModelProjectionPsi == null) // can this ever happen?
-      throw new PsiProcessingException(String.format("Parameter '%s' projection", paramName), paramPsi);
 
     @Nullable Map<String, Annotation> annotationMap = null;
     for (IdlAnnotation annotationPsi : paramPsi.getAnnotationList())
@@ -57,15 +55,27 @@ public class OpParserUtil {
                                     ? null
                                     : IdlGDataPsiParser.parseDatum(defaultValuePsi);
 
-    OpInputModelProjection<?, ?, ?> paramModelProjection = OpInputProjectionsPsiParser.parseModelProjection(
-        paramType,
-        paramPsi.getPlus() != null,
-        defaultValue,
-        annotations,
-        null, // TODO do we want to support metadata on parameters?
-        paramModelProjectionPsi,
-        resolver
-    ).projection();
+    final OpInputModelProjection<?, ?, ?> paramModelProjection;
+
+    if (paramModelProjectionPsi != null)
+      paramModelProjection = OpInputProjectionsPsiParser.parseModelProjection(
+          paramType,
+          paramPsi.getPlus() != null,
+          defaultValue,
+          annotations,
+          null, // TODO do we want to support metadata on parameters?
+          paramModelProjectionPsi,
+          resolver
+      ).projection();
+    else
+      paramModelProjection = OpInputProjectionsPsiParser.createDefaultModelProjection(
+          paramType,
+          paramPsi.getPlus() != null,
+          defaultValue,
+          annotations,
+          paramPsi,
+          resolver
+      );
 
     return new OpParam(paramName, paramModelProjection, EpigraphPsiUtil.getLocation(paramPsi));
   }

@@ -88,7 +88,14 @@ public class OpDeleteProjectionsTest {
   @Test
   public void testParseParam() throws PsiProcessingException {
     testParsingVarProjection(
-        ":id { ;+param: map[epigraph.String,io.epigraph.tests.Person] []( :id ) = ( \"foo\": < id: 123 > ) { deprecated = true } }"
+        ":id { ;+param: map[epigraph.String,io.epigraph.tests.Person] = ( \"foo\": < id: 123 > ) { deprecated = true []( :id ) } }"
+    );
+  }
+
+  @Test
+  public void testParseParam2() throws PsiProcessingException {
+    testParsingVarProjection(
+        ":id { ;+param: io.epigraph.tests.UserRecord = { id: 1 } }"
     );
   }
 

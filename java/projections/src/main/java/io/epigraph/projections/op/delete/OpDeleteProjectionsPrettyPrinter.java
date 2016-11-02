@@ -1,13 +1,10 @@
 package io.epigraph.projections.op.delete;
 
 import de.uka.ilkd.pp.Layouter;
-import io.epigraph.data.Datum;
 import io.epigraph.projections.Annotations;
-import io.epigraph.projections.abs.AbstractProjectionsPrettyPrinter;
+import io.epigraph.projections.op.AbstractOpProjectionsPrettyPrinter;
 import io.epigraph.projections.op.OpParam;
 import io.epigraph.projections.op.OpParams;
-import io.epigraph.projections.op.input.OpInputModelProjection;
-import io.epigraph.projections.op.input.OpInputProjectionsPrettyPrinter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -16,11 +13,12 @@ import java.util.Map;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpDeleteProjectionsPrettyPrinter<E extends Exception>
-    extends AbstractProjectionsPrettyPrinter<
-    OpDeleteVarProjection,
-    OpDeleteTagProjectionEntry,
-    OpDeleteModelProjection<?, ?>,
-    E> {
+    extends AbstractOpProjectionsPrettyPrinter<
+        OpDeleteVarProjection,
+        OpDeleteTagProjectionEntry,
+        OpDeleteModelProjection<?, ?>,
+        OpDeleteFieldProjection,
+        E> {
 
   public OpDeleteProjectionsPrettyPrinter(Layouter<E> layouter) {
     super(layouter);
@@ -91,35 +89,31 @@ public class OpDeleteProjectionsPrettyPrinter<E extends Exception>
       else l.print(",");
       l.brk();
 
-      @NotNull String fieldName = entry.getKey();
-      @NotNull OpDeleteFieldProjection fieldProjection = entry.getValue().projection();
-      @NotNull OpDeleteVarProjection fieldVarProjection = fieldProjection.projection();
-      @NotNull OpParams fieldParams = fieldProjection.params();
-      @NotNull Annotations fieldAnnotations = fieldProjection.annotations();
-
-      if (fieldParams.isEmpty() && fieldAnnotations.isEmpty()) {
-        l.beginIInd();
-        l.print(fieldName);
-        if (!isPrintoutEmpty(fieldVarProjection)) {
-          l.brk();
-          print(fieldVarProjection, 0);
-        }
-        l.end();
-      } else {
-        l.beginCInd();
-        l.print(fieldName);
-        l.print(" {");
-        if (!fieldParams.isEmpty()) print(fieldParams);
-        if (!fieldAnnotations.isEmpty()) print(fieldAnnotations);
-        if (!isPrintoutEmpty(fieldVarProjection)) {
-          l.brk();
-          print(fieldVarProjection, 0);
-        }
-        l.brk(1, -l.getDefaultIndentation()).end().print("}");
-      }
-
+      print(entry.getKey(), entry.getValue().projection());
     }
     l.brk(1, -l.getDefaultIndentation()).end().print(")");
+  }
+
+  public void print(@NotNull OpDeleteFieldProjection fieldProjection) throws E {
+    @NotNull OpDeleteVarProjection fieldVarProjection = fieldProjection.projection();
+    @NotNull OpParams fieldParams = fieldProjection.params();
+    @NotNull Annotations fieldAnnotations = fieldProjection.annotations();
+
+    if (fieldParams.isEmpty() && fieldAnnotations.isEmpty()) {
+      if (!isPrintoutEmpty(fieldVarProjection)) {
+        print(fieldVarProjection, 0);
+      }
+    } else {
+      l.beginCInd();
+      l.print("{");
+      if (!fieldParams.isEmpty()) print(fieldParams);
+      if (!fieldAnnotations.isEmpty()) print(fieldAnnotations);
+      if (!isPrintoutEmpty(fieldVarProjection)) {
+        l.brk();
+        print(fieldVarProjection, 0);
+      }
+      l.brk(1, -l.getDefaultIndentation()).end().print("}");
+    }
   }
 
   private void print(OpDeleteMapModelProjection mp) throws E {
@@ -186,38 +180,6 @@ public class OpDeleteProjectionsPrettyPrinter<E extends Exception>
     return first;
   }
 
-  public void print(@NotNull OpParam p) throws E {
-    OpInputModelProjection<?, ?, ?> projection = p.projection();
-
-    l.beginIInd();
-    l.print(";");
-    if (projection.required()) l.print("+");
-    l.print(p.name()).print(":").brk();
-    l.print(projection.model().name().toString());
-
-    OpInputProjectionsPrettyPrinter<E> ipp = new OpInputProjectionsPrettyPrinter<>(l);
-
-    if (!ipp.isPrintoutEmpty(projection)) {
-      l.brk();
-      ipp.print(projection, 0);
-    }
-
-    Datum defaultValue = projection.defaultValue();
-    if (defaultValue != null) {
-      l.brk().print("=").brk();
-      dataPrinter.print(defaultValue);
-    }
-
-    Annotations annotations = projection.annotations();
-    if (!annotations.isEmpty()) {
-      l.beginCInd();
-      l.print(" {");
-      print(annotations);
-      l.brk(1, -l.getDefaultIndentation()).end().print("}");
-    }
-
-    l.end();
-  }
 
   @Override
   protected boolean isPrintoutEmpty(@NotNull OpDeleteVarProjection opDeleteVarProjection) {

@@ -4,10 +4,9 @@ import io.epigraph.idl.IdlError;
 import io.epigraph.idl.ResourceIdl;
 import io.epigraph.lang.TextLocation;
 import io.epigraph.projections.Annotations;
-import io.epigraph.projections.op.OpParams;
-import io.epigraph.projections.op.delete.OpDeleteVarProjection;
-import io.epigraph.projections.op.output.OpOutputVarProjection;
-import io.epigraph.projections.op.path.OpVarPath;
+import io.epigraph.projections.op.delete.OpDeleteFieldProjection;
+import io.epigraph.projections.op.output.OpOutputFieldProjection;
+import io.epigraph.projections.op.path.OpFieldPath;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,26 +18,24 @@ import java.util.Objects;
  */
 public class DeleteOperationIdl extends OperationIdl {
   @NotNull
-  private final OpDeleteVarProjection deleteProjection;
+  private final OpDeleteFieldProjection deleteProjection;
 
   protected DeleteOperationIdl(
       @Nullable String name,
-      @NotNull OpParams params,
       @NotNull Annotations annotations,
-      @Nullable OpVarPath path,
-      @NotNull OpDeleteVarProjection deleteProjection,
-      @NotNull OpOutputVarProjection outputProjection,
+      @Nullable OpFieldPath path,
+      @NotNull OpDeleteFieldProjection deleteProjection,
+      @NotNull OpOutputFieldProjection outputProjection,
       @NotNull TextLocation location) {
 
-    super(OperationKind.DELETE, HttpMethod.DELETE, name, params, annotations,
+    super(OperationKind.DELETE, HttpMethod.DELETE, name, annotations,
           path, null, outputProjection, location
     );
 
     this.deleteProjection = deleteProjection;
   }
 
-  @NotNull
-  public OpDeleteVarProjection deleteProjection() { return deleteProjection; }
+  public @NotNull OpDeleteFieldProjection deleteProjection() { return deleteProjection; }
 
   @Override
   protected void validate(@NotNull ResourceIdl resource, @NotNull List<IdlError> errors) {
@@ -46,7 +43,7 @@ public class DeleteOperationIdl extends OperationIdl {
 
     ensureProjectionStartsWithResourceType(
         resource,
-        deleteProjection(),
+        deleteProjection().projection(),
         "delete",
         errors
     );

@@ -2,7 +2,7 @@ package io.epigraph.service.operations;
 
 import io.epigraph.data.Data;
 import io.epigraph.projections.req.output.ReqOutputFieldProjection;
-import io.epigraph.projections.req.path.ReqVarPath;
+import io.epigraph.projections.req.path.ReqFieldPath;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -14,7 +14,7 @@ public class CustomOperationRequest extends OperationRequest {
   private final Data data;
 
   public CustomOperationRequest(
-      final @Nullable ReqVarPath path,
+      final @Nullable ReqFieldPath path,
       final @NotNull Data data,
       final @NotNull ReqOutputFieldProjection outputProjection) {
     super(path, outputProjection);

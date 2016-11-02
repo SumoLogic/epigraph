@@ -300,38 +300,13 @@ public class ReadReqPathPsiParser {
         );
     }
 
-    @NotNull ReqParams fieldParams =
-        ReqParserUtil.parseReqParams(fieldProjectionPsi.getReqParamList(), opFieldPath.params(), typesResolver);
-    @NotNull Annotations fieldAnnotations = ReqParserUtil.parseAnnotations(fieldProjectionPsi.getReqAnnotationList());
-
-    @NotNull UrlReqOutputTrunkVarProjection fieldVarPathPsi = fieldProjectionPsi.getReqOutputTrunkVarProjection();
-
-    final ReadReqPathParsingResult<ReqVarPath> varParsingResult;
-    if (OpVarPath.isEnd(opFieldVarProjection)) {
-      varParsingResult = new ReadReqPathParsingResult<>(
-          new ReqVarPath(
-              field.dataType().type,
-              null,
-              EpigraphPsiUtil.getLocation(fieldVarPathPsi)
-          ),
-          fieldVarPathPsi,
-          null,
-          errors
-      );
-    } else
-      varParsingResult = parseVarPath(opFieldVarProjection, field.dataType(), fieldVarPathPsi, typesResolver, errors);
-
-    @NotNull final TextLocation fieldLocation = EpigraphPsiUtil.getLocation(fieldProjectionPsi);
+    final @NotNull ReadReqPathParsingResult<ReqFieldPath> reqFieldPathParsingResult =
+        parseFieldPath(field.dataType(), opFieldPath, fieldProjectionPsi, typesResolver, errors);
 
     final ReqFieldPathEntry fieldProjection = new ReqFieldPathEntry(
         field,
-        new ReqFieldPath(
-            fieldParams,
-            fieldAnnotations,
-            varParsingResult.path(),
-            fieldLocation
-        ),
-        fieldLocation
+        reqFieldPathParsingResult.path(),
+        reqFieldPathParsingResult.path().location()
     );
 
     return new ReadReqPathParsingResult<>(
@@ -342,8 +317,54 @@ public class ReadReqPathPsiParser {
             fieldProjection,
             EpigraphPsiUtil.getLocation(psi)
         ),
-        varParsingResult.trunkProjectionPsi(),
-        varParsingResult.comaProjectionPsi(),
+        reqFieldPathParsingResult.trunkProjectionPsi(),
+        reqFieldPathParsingResult.comaProjectionPsi(),
+        errors
+    );
+  }
+
+  @NotNull
+  public static ReadReqPathParsingResult<ReqFieldPath> parseFieldPath(
+      final @NotNull DataType fieldType,
+      final @NotNull OpFieldPath op,
+      final @NotNull UrlReqOutputTrunkFieldProjection psi,
+      final @NotNull TypesResolver typesResolver,
+      final @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
+
+    @NotNull ReqParams fieldParams = ReqParserUtil.parseReqParams(psi.getReqParamList(), op.params(), typesResolver);
+    @NotNull Annotations fieldAnnotations = ReqParserUtil.parseAnnotations(psi.getReqAnnotationList());
+
+    @NotNull UrlReqOutputTrunkVarProjection fieldVarPathPsi = psi.getReqOutputTrunkVarProjection();
+
+    final ReadReqPathParsingResult<ReqVarPath> fieldVarParsingResult;
+
+    if (OpVarPath.isEnd(op.projection())) {
+      fieldVarParsingResult = new ReadReqPathParsingResult<>(
+          new ReqVarPath(
+              fieldType.type,
+              null,
+              EpigraphPsiUtil.getLocation(fieldVarPathPsi)
+          ),
+          fieldVarPathPsi,
+          null,
+          errors
+      );
+    } else
+      fieldVarParsingResult =
+          parseVarPath(op.projection(), fieldType, fieldVarPathPsi, typesResolver, errors);
+
+    @NotNull final TextLocation fieldLocation = EpigraphPsiUtil.getLocation(psi);
+
+    return new ReadReqPathParsingResult<>(
+
+        new ReqFieldPath(
+            fieldParams,
+            fieldAnnotations,
+            fieldVarParsingResult.path(),
+            fieldLocation
+        ),
+        fieldVarParsingResult.trunkProjectionPsi(),
+        fieldVarParsingResult.comaProjectionPsi(),
         errors
     );
   }

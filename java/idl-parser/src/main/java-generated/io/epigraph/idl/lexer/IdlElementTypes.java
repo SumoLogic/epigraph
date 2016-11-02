@@ -41,6 +41,7 @@ public interface IdlElementTypes {
   IElementType I_OPERATION_PATH = new IdlElementType("I_OPERATION_PATH");
   IElementType I_OP_DELETE_FIELD_PROJECTION = new IdlElementType("I_OP_DELETE_FIELD_PROJECTION");
   IElementType I_OP_DELETE_FIELD_PROJECTION_BODY_PART = new IdlElementType("I_OP_DELETE_FIELD_PROJECTION_BODY_PART");
+  IElementType I_OP_DELETE_FIELD_PROJECTION_ENTRY = new IdlElementType("I_OP_DELETE_FIELD_PROJECTION_ENTRY");
   IElementType I_OP_DELETE_KEY_PROJECTION = new IdlElementType("I_OP_DELETE_KEY_PROJECTION");
   IElementType I_OP_DELETE_KEY_PROJECTION_PART = new IdlElementType("I_OP_DELETE_KEY_PROJECTION_PART");
   IElementType I_OP_DELETE_LIST_MODEL_PROJECTION = new IdlElementType("I_OP_DELETE_LIST_MODEL_PROJECTION");
@@ -58,6 +59,7 @@ public interface IdlElementTypes {
   IElementType I_OP_DELETE_VAR_SINGLE_TAIL = new IdlElementType("I_OP_DELETE_VAR_SINGLE_TAIL");
   IElementType I_OP_FIELD_PATH = new IdlElementType("I_OP_FIELD_PATH");
   IElementType I_OP_FIELD_PATH_BODY_PART = new IdlElementType("I_OP_FIELD_PATH_BODY_PART");
+  IElementType I_OP_FIELD_PATH_ENTRY = new IdlElementType("I_OP_FIELD_PATH_ENTRY");
   IElementType I_OP_INPUT_DEFAULT_VALUE = new IdlElementType("I_OP_INPUT_DEFAULT_VALUE");
   IElementType I_OP_INPUT_FIELD_PROJECTION = new IdlElementType("I_OP_INPUT_FIELD_PROJECTION");
   IElementType I_OP_INPUT_FIELD_PROJECTION_BODY_PART = new IdlElementType("I_OP_INPUT_FIELD_PROJECTION_BODY_PART");
@@ -81,6 +83,7 @@ public interface IdlElementTypes {
   IElementType I_OP_MODEL_PATH_PROPERTY = new IdlElementType("I_OP_MODEL_PATH_PROPERTY");
   IElementType I_OP_OUTPUT_FIELD_PROJECTION = new IdlElementType("I_OP_OUTPUT_FIELD_PROJECTION");
   IElementType I_OP_OUTPUT_FIELD_PROJECTION_BODY_PART = new IdlElementType("I_OP_OUTPUT_FIELD_PROJECTION_BODY_PART");
+  IElementType I_OP_OUTPUT_FIELD_PROJECTION_ENTRY = new IdlElementType("I_OP_OUTPUT_FIELD_PROJECTION_ENTRY");
   IElementType I_OP_OUTPUT_KEY_PROJECTION = new IdlElementType("I_OP_OUTPUT_KEY_PROJECTION");
   IElementType I_OP_OUTPUT_KEY_PROJECTION_PART = new IdlElementType("I_OP_OUTPUT_KEY_PROJECTION_PART");
   IElementType I_OP_OUTPUT_LIST_MODEL_PROJECTION = new IdlElementType("I_OP_OUTPUT_LIST_MODEL_PROJECTION");
@@ -274,6 +277,9 @@ public interface IdlElementTypes {
       else if (type == I_OP_DELETE_FIELD_PROJECTION_BODY_PART) {
         return new IdlOpDeleteFieldProjectionBodyPartImpl(node);
       }
+      else if (type == I_OP_DELETE_FIELD_PROJECTION_ENTRY) {
+        return new IdlOpDeleteFieldProjectionEntryImpl(node);
+      }
       else if (type == I_OP_DELETE_KEY_PROJECTION) {
         return new IdlOpDeleteKeyProjectionImpl(node);
       }
@@ -324,6 +330,9 @@ public interface IdlElementTypes {
       }
       else if (type == I_OP_FIELD_PATH_BODY_PART) {
         return new IdlOpFieldPathBodyPartImpl(node);
+      }
+      else if (type == I_OP_FIELD_PATH_ENTRY) {
+        return new IdlOpFieldPathEntryImpl(node);
       }
       else if (type == I_OP_INPUT_DEFAULT_VALUE) {
         return new IdlOpInputDefaultValueImpl(node);
@@ -393,6 +402,9 @@ public interface IdlElementTypes {
       }
       else if (type == I_OP_OUTPUT_FIELD_PROJECTION_BODY_PART) {
         return new IdlOpOutputFieldProjectionBodyPartImpl(node);
+      }
+      else if (type == I_OP_OUTPUT_FIELD_PROJECTION_ENTRY) {
+        return new IdlOpOutputFieldProjectionEntryImpl(node);
       }
       else if (type == I_OP_OUTPUT_KEY_PROJECTION) {
         return new IdlOpOutputKeyProjectionImpl(node);

@@ -10,11 +10,8 @@ public interface IdlOpDeleteFieldProjection extends PsiElement {
   @NotNull
   List<IdlOpDeleteFieldProjectionBodyPart> getOpDeleteFieldProjectionBodyPartList();
 
-  @Nullable
-  IdlOpDeleteVarProjection getOpDeleteVarProjection();
-
   @NotNull
-  IdlQid getQid();
+  IdlOpDeleteVarProjection getOpDeleteVarProjection();
 
   @Nullable
   PsiElement getCurlyLeft();
