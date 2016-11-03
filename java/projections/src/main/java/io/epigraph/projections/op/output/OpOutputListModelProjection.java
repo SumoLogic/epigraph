@@ -28,13 +28,12 @@ public class OpOutputListModelProjection
 
   public OpOutputListModelProjection(
       @NotNull ListType model,
-      boolean includeInDefault,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
       @Nullable OpOutputListModelProjection metaProjection,
       @NotNull OpOutputVarProjection itemsProjection,
       @NotNull TextLocation location) {
-    super(model, includeInDefault, params, annotations, metaProjection, location);
+    super(model, params, annotations, metaProjection, location);
     this.itemsProjection = itemsProjection;
   }
 

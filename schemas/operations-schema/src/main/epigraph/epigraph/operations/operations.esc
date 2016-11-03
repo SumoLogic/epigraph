@@ -10,8 +10,6 @@ import epigraph.schema.Documented
 import epigraph.schema.TypeRef
 import epigraph.schema.VarTypeRef
 
-// TODO this version is ahead of reality (Java classes)
-
 record Resource extends Documented {
   fieldName: String
   fieldType: VarTypeRef

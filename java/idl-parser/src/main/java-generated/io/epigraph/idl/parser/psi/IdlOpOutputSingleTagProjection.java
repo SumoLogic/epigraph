@@ -25,7 +25,4 @@ public interface IdlOpOutputSingleTagProjection extends PsiElement {
   @Nullable
   PsiElement getCurlyRight();
 
-  @Nullable
-  PsiElement getPlus();
-
 }

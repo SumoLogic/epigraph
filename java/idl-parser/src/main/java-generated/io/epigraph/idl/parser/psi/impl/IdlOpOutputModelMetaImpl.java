@@ -44,10 +44,4 @@ public class IdlOpOutputModelMetaImpl extends ASTWrapperPsiElement implements Id
     return findNotNullChildByType(I_META);
   }
 
-  @Override
-  @Nullable
-  public PsiElement getPlus() {
-    return findChildByType(I_PLUS);
-  }
-
 }

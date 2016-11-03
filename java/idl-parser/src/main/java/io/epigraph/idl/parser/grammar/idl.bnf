@@ -284,12 +284,12 @@ opPathKeyProjectionPart ::= opParam | annotation
 
 // output --------------------------------------------------------
 
-opOutputModelMeta ::= 'meta' ':' '+'? opOutputModelProjection
+opOutputModelMeta ::= 'meta' ':' opOutputModelProjection
 
 opOutputVarProjection ::= ( opOutputMultiTagProjection | opOutputSingleTagProjection ) opOutputVarPolymorphicTail?
 
 opOutputMultiTagProjection ::= ':' '(' (opOutputMultiTagProjectionItem ','?)* ')' {pin=2}
-opOutputSingleTagProjection ::= ( ':' '+'? tagName)? (opOutputComplexTagProjection | opOutputSimpleTagProjection )
+opOutputSingleTagProjection ::= ( ':' tagName)? (opOutputComplexTagProjection | opOutputSimpleTagProjection )
 opOutputMultiTagProjectionItem ::= '+'? tagName ( opOutputComplexTagProjection | opOutputSimpleTagProjection )
 
 private opOutputSimpleTagProjection ::= opOutputModelProjection
@@ -310,7 +310,7 @@ opOutputModelProjection ::= ( opOutputRecordModelProjection
 
 // op output record
 opOutputRecordModelProjection ::= '(' (opOutputFieldProjectionEntry ','?)* ')' { pin=1 }
-opOutputFieldProjectionEntry ::= '+'? qid opOutputFieldProjection
+opOutputFieldProjectionEntry ::= qid opOutputFieldProjection
 opOutputFieldProjection ::= (opOutputComplexFieldProjection | opOutputSimpleFieldProjection)
 private opOutputComplexFieldProjection ::= '{' (opOutputFieldProjectionBodyPart ','? )* '}' opOutputVarProjection
 private opOutputSimpleFieldProjection ::= opOutputVarProjection

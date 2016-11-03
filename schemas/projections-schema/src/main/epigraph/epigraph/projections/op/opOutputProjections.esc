@@ -20,12 +20,10 @@ record OpOutputVarProjection {
 record OpOutputTagProjectionEntry {
   tag: TypeMemberRef
   projection: OpOutputModelProjection
-  includeInDefault: Boolean
 }
 
 abstract record OpOutputModelProjection {
   model: DataTypeRef
-  includeInDefault: Boolean
   params: map[String, OpParam]
   annotations: map[String, Annotation]
   `meta`: OpOutputModelProjection
@@ -45,7 +43,6 @@ record OpOutputFieldProjection {
   params: map[String, OpParam]
   annotations: map[String, Annotation]
   varProjection: OpOutputVarProjection
-  includeInDefault: Boolean
 }
 
 record OpOutputMapModelProjection extends OpOutputModelProjection {

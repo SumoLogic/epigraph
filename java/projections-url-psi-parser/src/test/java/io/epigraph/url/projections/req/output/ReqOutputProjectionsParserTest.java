@@ -61,7 +61,7 @@ public class ReqOutputProjectionsParserTest {
           "        firstName",
           "      ),",
           "    ),",
-          "    friends *( :+id ),",
+          "    friends *( :id ),",
           "    friendsMap [;keyParam:epigraph.String]( :(id, record (id, firstName) ) )",
           "  )",
           ") ~io.epigraph.tests.User :record (profile)"

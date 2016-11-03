@@ -59,7 +59,6 @@ public class OpOutputProjectionsPsiParser {
 
       parsedModelProjection = parseModelProjection(
           tag.type,
-          isDatum || singleTagProjectionPsi.getPlus() != null,
           parseModelParams(modelPropertiesPsi, typesResolver),
           parseModelAnnotations(modelPropertiesPsi),
           parseModelMetaProjection(tag.type, modelPropertiesPsi, typesResolver, errors),
@@ -96,7 +95,6 @@ public class OpOutputProjectionsPsiParser {
 
         parsedModelProjection = parseModelProjection(
             tagType,
-            tagProjectionPsi.getPlus() != null,
             parseModelParams(modelPropertiesPsi, typesResolver),
             parseModelAnnotations(modelPropertiesPsi),
             parseModelMetaProjection(tagType, modelPropertiesPsi, typesResolver, errors),
@@ -207,7 +205,6 @@ public class OpOutputProjectionsPsiParser {
         @NotNull IdlOpOutputModelProjection metaProjectionPsi = modelMetaPsi.getOpOutputModelProjection();
         return parseModelProjection(
             metaType,
-            modelMetaPsi.getPlus() != null,
             null,
             null,
             null, // TODO what if meta-type has it's own meta-type? meta-meta-type projection should go here
@@ -242,7 +239,6 @@ public class OpOutputProjectionsPsiParser {
   private static OpOutputVarProjection createDefaultVarProjection(
       @NotNull Type type,
       @NotNull Type.Tag tag,
-      boolean includeInDefault,
       @NotNull PsiElement locationPsi,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
     return new OpOutputVarProjection(
@@ -253,7 +249,6 @@ public class OpOutputProjectionsPsiParser {
                 tag,
                 createDefaultModelProjection(
                     tag.type,
-                    includeInDefault,
                     OpParams.EMPTY,
                     Annotations.EMPTY,
                     locationPsi,
@@ -270,16 +265,14 @@ public class OpOutputProjectionsPsiParser {
   @NotNull
   private static OpOutputVarProjection createDefaultVarProjection(
       @NotNull DatumType type,
-      boolean includeInDefault,
       @NotNull PsiElement locationPsi,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
-    return createDefaultVarProjection(type, type.self, includeInDefault, locationPsi, errors);
+    return createDefaultVarProjection(type, type.self, locationPsi, errors);
   }
 
   @NotNull
   public static OpOutputVarProjection createDefaultVarProjection(
       @NotNull DataType type,
-      boolean includeInDefault,
       @NotNull PsiElement locationPsi,
       @NotNull List<PsiProcessingError> errors)
       throws PsiProcessingException {
@@ -299,13 +292,12 @@ public class OpOutputProjectionsPsiParser {
 
     }
 
-    return createDefaultVarProjection(type.type, defaultTag, includeInDefault, locationPsi, errors);
+    return createDefaultVarProjection(type.type, defaultTag,  locationPsi, errors);
   }
 
   @NotNull
   public static OpOutputModelProjection<?, ?> parseModelProjection(
       @NotNull DatumType type,
-      boolean includeInDefault,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
       @Nullable OpOutputModelProjection<?, ?> metaProjection,
@@ -318,11 +310,10 @@ public class OpOutputProjectionsPsiParser {
       case RECORD:
         @Nullable IdlOpOutputRecordModelProjection recordModelProjectionPsi = psi.getOpOutputRecordModelProjection();
         if (recordModelProjectionPsi == null)
-          return createDefaultModelProjection(type, includeInDefault, params, annotations, psi, errors);
+          return createDefaultModelProjection(type, params, annotations, psi, errors);
         ensureModelKind(psi, TypeKind.RECORD, errors);
         return parseRecordModelProjection(
             (RecordType) type,
-            includeInDefault,
             params,
             annotations,
             (OpOutputRecordModelProjection) metaProjection,
@@ -333,12 +324,11 @@ public class OpOutputProjectionsPsiParser {
       case MAP:
         @Nullable IdlOpOutputMapModelProjection mapModelProjectionPsi = psi.getOpOutputMapModelProjection();
         if (mapModelProjectionPsi == null)
-          return createDefaultModelProjection(type, includeInDefault, params, annotations, psi, errors);
+          return createDefaultModelProjection(type, params, annotations, psi, errors);
         ensureModelKind(psi, TypeKind.MAP, errors);
 
         return parseMapModelProjection(
             (MapType) type,
-            includeInDefault,
             params,
             annotations,
             (OpOutputMapModelProjection) metaProjection,
@@ -349,12 +339,11 @@ public class OpOutputProjectionsPsiParser {
       case LIST:
         @Nullable IdlOpOutputListModelProjection listModelProjectionPsi = psi.getOpOutputListModelProjection();
         if (listModelProjectionPsi == null)
-          return createDefaultModelProjection(type, includeInDefault, params, annotations, psi, errors);
+          return createDefaultModelProjection(type, params, annotations, psi, errors);
         ensureModelKind(psi, TypeKind.LIST, errors);
 
         return parseListModelProjection(
             (ListType) type,
-            includeInDefault,
             params,
             annotations,
             (OpOutputListModelProjection) metaProjection,
@@ -367,7 +356,6 @@ public class OpOutputProjectionsPsiParser {
       case PRIMITIVE:
         return parsePrimitiveModelProjection(
             (PrimitiveType) type,
-            includeInDefault,
             params,
             annotations,
             (OpOutputPrimitiveModelProjection) metaProjection,
@@ -405,7 +393,6 @@ public class OpOutputProjectionsPsiParser {
   @NotNull
   private static OpOutputModelProjection<?, ?> createDefaultModelProjection(
       @NotNull DatumType type,
-      boolean includeInDefault,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
       @NotNull PsiElement locationPsi,
@@ -416,7 +403,6 @@ public class OpOutputProjectionsPsiParser {
       case RECORD:
         return new OpOutputRecordModelProjection(
             (RecordType) type,
-            includeInDefault,
             params,
             annotations,
             null,
@@ -447,14 +433,12 @@ public class OpOutputProjectionsPsiParser {
         final OpOutputVarProjection valueVarProjection = createDefaultVarProjection(
             valueType.type,
             defaultValuesTag,
-            includeInDefault,
             locationPsi,
             errors
         );
 
         return new OpOutputMapModelProjection(
             mapType,
-            includeInDefault,
             params,
             annotations,
             null,
@@ -477,14 +461,12 @@ public class OpOutputProjectionsPsiParser {
         final OpOutputVarProjection itemVarProjection = createDefaultVarProjection(
             elementType.type,
             defaultElementsTag,
-            includeInDefault,
             locationPsi,
             errors
         );
 
         return new OpOutputListModelProjection(
             listType,
-            includeInDefault,
             params,
             annotations,
             null,
@@ -502,7 +484,6 @@ public class OpOutputProjectionsPsiParser {
       case PRIMITIVE:
         return new OpOutputPrimitiveModelProjection(
             (PrimitiveType) type,
-            includeInDefault,
             params,
             annotations,
             null,
@@ -516,7 +497,6 @@ public class OpOutputProjectionsPsiParser {
   @NotNull
   public static OpOutputRecordModelProjection parseRecordModelProjection(
       @NotNull RecordType type,
-      boolean includeInDefault,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
       @Nullable OpOutputRecordModelProjection metaProjection,
@@ -550,7 +530,6 @@ public class OpOutputProjectionsPsiParser {
 
       final OpOutputFieldProjection opOutputFieldProjection = parseFieldProjection(
           field.dataType(),
-          fieldProjectionEntryPsi.getPlus() != null,
           fieldProjectionPsi,
           typesResolver,
           errors
@@ -568,7 +547,6 @@ public class OpOutputProjectionsPsiParser {
 
     return new OpOutputRecordModelProjection(
         type,
-        includeInDefault,
         params,
         annotations,
         metaProjection,
@@ -580,7 +558,6 @@ public class OpOutputProjectionsPsiParser {
   @NotNull
   public static OpOutputFieldProjection parseFieldProjection(
       @NotNull DataType fieldType,
-      boolean includeInDefault,
       @NotNull IdlOpOutputFieldProjection psi,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
@@ -601,7 +578,6 @@ public class OpOutputProjectionsPsiParser {
         OpParams.fromCollection(fieldParamsList),
         Annotations.fromMap(fieldAnnotationsMap),
         parseVarProjection(fieldType, psi.getOpOutputVarProjection(), resolver, errors),
-        includeInDefault,
         EpigraphPsiUtil.getLocation(psi)
     );
   }
@@ -609,7 +585,6 @@ public class OpOutputProjectionsPsiParser {
   @NotNull
   public static OpOutputMapModelProjection parseMapModelProjection(
       @NotNull MapType type,
-      boolean includeInDefault,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
       @Nullable OpOutputMapModelProjection metaProjection,
@@ -625,7 +600,6 @@ public class OpOutputProjectionsPsiParser {
         valueProjectionPsi == null
         ? createDefaultVarProjection(
             type.valueType(),
-            keyProjection.presence() == OpOutputKeyProjection.Presence.REQUIRED,
             psi,
             errors
         )
@@ -633,7 +607,6 @@ public class OpOutputProjectionsPsiParser {
 
     return new OpOutputMapModelProjection(
         type,
-        includeInDefault,
         params,
         annotations,
         metaProjection,
@@ -681,7 +654,6 @@ public class OpOutputProjectionsPsiParser {
   @NotNull
   public static OpOutputListModelProjection parseListModelProjection(
       @NotNull ListType type,
-      boolean includeInDefault,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
       @Nullable OpOutputListModelProjection metaProjection,
@@ -693,14 +665,13 @@ public class OpOutputProjectionsPsiParser {
     OpOutputVarProjection itemsProjection;
     @Nullable IdlOpOutputVarProjection opOutputVarProjectionPsi = psi.getOpOutputVarProjection();
     if (opOutputVarProjectionPsi == null)
-      itemsProjection = createDefaultVarProjection(type, true, psi, errors);
+      itemsProjection = createDefaultVarProjection(type, psi, errors);
     else
       itemsProjection = parseVarProjection(type.elementType(), opOutputVarProjectionPsi, resolver, errors);
 
 
     return new OpOutputListModelProjection(
         type,
-        includeInDefault,
         params,
         annotations,
         metaProjection,
@@ -712,7 +683,6 @@ public class OpOutputProjectionsPsiParser {
   @NotNull
   public static OpOutputPrimitiveModelProjection parsePrimitiveModelProjection(
       @NotNull PrimitiveType type,
-      boolean includeInDefault,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
       @Nullable OpOutputPrimitiveModelProjection metaProjection,
@@ -720,7 +690,6 @@ public class OpOutputProjectionsPsiParser {
 
     return new OpOutputPrimitiveModelProjection(
         type,
-        includeInDefault,
         params,
         annotations,
         metaProjection,

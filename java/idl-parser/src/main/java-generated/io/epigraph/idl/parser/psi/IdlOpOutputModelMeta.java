@@ -16,7 +16,4 @@ public interface IdlOpOutputModelMeta extends PsiElement {
   @NotNull
   PsiElement getMeta();
 
-  @Nullable
-  PsiElement getPlus();
-
 }

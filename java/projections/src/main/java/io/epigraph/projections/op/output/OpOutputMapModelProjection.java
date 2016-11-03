@@ -30,14 +30,13 @@ public class OpOutputMapModelProjection
 
   public OpOutputMapModelProjection(
       @NotNull MapType model,
-      boolean includeInDefault,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
       @Nullable OpOutputMapModelProjection metaProjection,
       @NotNull OpOutputKeyProjection keyProjection,
       @NotNull OpOutputVarProjection valuesProjection,
       @NotNull TextLocation location) {
-    super(model, includeInDefault, params, annotations, metaProjection, location);
+    super(model, params, annotations, metaProjection, location);
     this.itemsProjection = valuesProjection;
     this.keyProjection = keyProjection;
   }

@@ -33,7 +33,6 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception>
 
     if (params.isEmpty() && annotations.isEmpty()) {
       l.beginCInd();
-      if (projection.includeInDefault()) l.print("+");
       l.print(tagName);
 
       if (!isPrintoutEmpty(projection)) {
@@ -44,7 +43,6 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception>
       l.end();
     } else {
       l.beginCInd();
-      if (projection.includeInDefault()) l.print("+");
       l.print(tagName);
       l.print(" {");
 
@@ -91,7 +89,6 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception>
       @NotNull String fieldName = entry.getKey();
       @NotNull OpOutputFieldProjection fieldProjection = entry.getValue().projection();
 
-      if (fieldProjection.includeInDefault()) l.print("+");
       print(fieldName, fieldProjection);
     }
     l.brk(1, -l.getDefaultIndentation()).end().print(")");

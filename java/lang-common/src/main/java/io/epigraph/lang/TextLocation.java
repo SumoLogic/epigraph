@@ -56,7 +56,7 @@ public class TextLocation {
   // todo port LineNumberUtil to Java
 
   private static int line(@NotNull String text, int offset) {
-    return text.substring(0, offset).split("\r\n|\r|\n").length;
+    return text.substring(0, offset).split("\r\n|\r|\n").length; // todo test
   }
 
   @Override

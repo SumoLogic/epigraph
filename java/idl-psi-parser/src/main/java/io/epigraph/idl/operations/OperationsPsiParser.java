@@ -376,13 +376,12 @@ public class OperationsPsiParser {
 
     if (outputProjectionPsi == null) {
       final @NotNull OpOutputVarProjection varProjection =
-          OpOutputProjectionsPsiParser.createDefaultVarProjection(outputType, true, location, errors);
+          OpOutputProjectionsPsiParser.createDefaultVarProjection(outputType, location, errors);
 
       return new OpOutputFieldProjection(
           OpParams.EMPTY,
           Annotations.EMPTY,
           varProjection,
-          true,
           EpigraphPsiUtil.getLocation(location)
       );
 
@@ -391,7 +390,6 @@ public class OperationsPsiParser {
 
     return OpOutputProjectionsPsiParser.parseFieldProjection(
         outputType,
-        true,
         outputProjectionPsi.getOpOutputFieldProjection(),
         resolver,
         errors

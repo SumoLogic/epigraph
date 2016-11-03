@@ -5,14 +5,14 @@
 - [ ] JSON unmarshaller
   -[ ] recursive data support?
 - [ ] Format for parameter values in URL. Currently: GData with single quotes.
-- [ ] `*PsiParser` should accumulate errors in the context instead of throwing `PsiProcessingException`
+- [x] `*PsiParser` should accumulate errors in the context instead of throwing `PsiProcessingException`
 
 # Type system
 - [ ] Enums
 - [ ] Rename Data/Var/Union type to some common name
 - [ ] Restrict map keys to exact declared type only (throw runtime exception - no static checks unfortunately, unless we introduce yet another data flavor that doesn't inherit from supertypes)
   - [ ] Alternatively, define equals for map keys to be declared type-scoped only, implement with wrapper over keys.
-- [ ] Allow supplementing Union types with any datum type (applies to all compatible tag types)
+- [ ] ~~Allow supplementing Union types with any datum type (applies to all compatible tag types)~~
 
 # Schema compiler
 - [ ] Annotations support. Should they be inherited? Annotations on annotations?
@@ -22,7 +22,7 @@
 
 # Maven plugin
 - [ ] Scan `*.eidl` files too
-- [ ] Produce a list of `EpigraphType`->`JavaClass` mappings artifact
+- [ ] Produce a list of `EpigraphType`->`JavaClass` mappings artifact (Duplicates task from `Schema compiler` list above)
 
 # Gradle plugin
 - [x] Don't auto-include built-in types (because versioning)
@@ -30,7 +30,7 @@
 - [x] create folder structure based on namespaces, then put original files inside
 - [ ] Scan `*.eidl` files too
 - [ ] Rename `epigraph-schema-compiler-gradle-plugin` to just `gradle-plugin`. Move it together with `common` to top level, to mimic maven plugins structure
-- [ ] Produce a list of `EpigraphType`->`JavaClass` mappings artifact
+- [ ] Produce a list of `EpigraphType`->`JavaClass` mappings artifact (Duplicates task from `Schema compiler` list above)
 
 # Projections
 - [x] see `operations.esc`, bring java classes in sync
@@ -40,7 +40,7 @@
 - [ ] support for recursive projections
 
 # Operations  
-- [ ] ***see `operations.esc`, restructure operations accordingly***
+- [x] see `operations.esc`, restructure operations accordingly
 
 # Service
 - [ ] ***see `operations.esc`, change routing accordingly***

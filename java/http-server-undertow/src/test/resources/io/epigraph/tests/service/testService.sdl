@@ -10,30 +10,30 @@ resource users: map[PersonId,Person] {
     outputProjection [](
       :(
         id,
-        +record(
-          +id,
-          +firstName,
-          +lastName,
-          +bestFriend:(
-            +id,
-            record( +id, +firstName, +lastName, +bestFriend:id, +worstEnemy )
+        record(
+          id,
+          firstName,
+          lastName,
+          bestFriend:(
+            id,
+            record( id, firstName, lastName, bestFriend:id, worstEnemy )
           )~io.epigraph.tests.User:(
-            +record(
-              +worstEnemy( +id, +firstName, +lastName, +profile )
-              +profile
+            record(
+              worstEnemy( id, firstName, lastName, profile )
+              profile
             )
           )
-          +worstEnemy( +id, +firstName, +lastName )
-          +friends *(
+          worstEnemy( id, firstName, lastName )
+          friends *(
             :(
-              +id,
-              record( +id, +firstName, +lastName )
+              id,
+              record( id, firstName, lastName )
             )
           )
         )
       )~User:(
-        +id,
-        record( +profile, +worstEnemy( profile ) )
+        id,
+        record( profile, worstEnemy( profile ) )
       )
     )
   }
@@ -44,31 +44,31 @@ resource user: Person {
 
   READ {
     outputProjection :(
-      +id,
+      id,
       record(
-        +id,
-        +firstName,
-        +lastName,
-        +bestFriend:(
-          +id,
-          record( +id, +firstName, +lastName, +bestFriend:id, +worstEnemy )
+        id,
+        firstName,
+        lastName,
+        bestFriend:(
+          id,
+          record( id, firstName, lastName, bestFriend:id, worstEnemy )
         )~io.epigraph.tests.User:(
-          +record(
-            +worstEnemy( +id, +firstName, +lastName, +profile )
-            +profile
+          record(
+            worstEnemy( id, firstName, lastName, profile )
+            profile
           )
         )
-        +worstEnemy( +id, +firstName, +lastName )
-        +friends *(
+        worstEnemy( id, firstName, lastName )
+        friends *(
           :(
-            +id,
-            record( +id, +firstName, +lastName )
+            id,
+            record( id, firstName, lastName )
           )
         )
       )
     )~User:(
-      +id,
-      record( +profile, +worstEnemy( profile ) )
+      id,
+      record( profile, worstEnemy( profile ) )
     )
   }
 

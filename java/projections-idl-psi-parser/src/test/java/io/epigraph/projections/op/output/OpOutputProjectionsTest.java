@@ -36,17 +36,17 @@ public class OpOutputProjectionsTest {
     // Make pretty-printed result consistent with grammar?
     String projectionStr = lines(
         ":(",
-        "  +id,",
+        "  id,",
         "  record (",
-        "    +id {",
+        "    id {",
         "      ; +param1 : epigraph.String = \"hello world\" { doc = \"some doc\" },",
         "    },",
-        "    +bestFriend :record (",
-        "      +id,",
+        "    bestFriend :record (",
+        "      id,",
         "      bestFriend: id",
         // todo get default tag from Person.type, once available
         "    ),",
-        "    friends *( :+id )",
+        "    friends *( :id )",
 //        "    friends *( :+id )",
 //        "    friends { *( :+id ) }",
 //        "    friends { { *( :+id {} ) } }",
@@ -59,12 +59,12 @@ public class OpOutputProjectionsTest {
 
     String expected = lines(
         ":(",
-        "  +id,",
+        "  id,",
         "  record",
         "    (",
-        "      +id { ;+param1: epigraph.String = \"hello world\" { doc = \"some doc\" } },",
-        "      +bestFriend :record ( +id, bestFriend :id ),",
-        "      friends *( :+id )",
+        "      id { ;+param1: epigraph.String = \"hello world\" { doc = \"some doc\" } },",
+        "      bestFriend :record ( id, bestFriend :id ),",
+        "      friends *( :id )",
         "    )",
         ") ~io.epigraph.tests.User :record ( profile )"
     );
