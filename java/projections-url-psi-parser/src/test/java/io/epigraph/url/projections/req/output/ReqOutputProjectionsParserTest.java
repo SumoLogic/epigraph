@@ -122,6 +122,7 @@ public class ReqOutputProjectionsParserTest {
 
   private void testParse(String expr, String expectedProjection, int steps) {
     UrlReqOutputTrunkVarProjection psi = getPsi(expr);
+    List<PsiProcessingError> errors = new ArrayList<>();
     try {
 
       @NotNull final StepsAndProjection<ReqOutputVarProjection> stepsAndProjection =
@@ -129,7 +130,8 @@ public class ReqOutputProjectionsParserTest {
               Person.type.dataType(null),
               personOpProjection,
               psi,
-              resolver
+              resolver,
+              errors
           );
 
       assertEquals(steps, stepsAndProjection.pathSteps());
@@ -143,8 +145,17 @@ public class ReqOutputProjectionsParserTest {
     } catch (PsiProcessingException e) {
 //      String psiDump = DebugUtil.psiToString(psi, true, false).trim();
 //      System.err.println(psiDump);
-      e.printStackTrace();
-      fail(e.getMessage() + " at " + e.location());
+//      e.printStackTrace();
+//      fail(e.getMessage() + " at " + e.location());
+      errors = e.errors();
+    }
+
+    if (!errors.isEmpty()) {
+      for (final PsiProcessingError error : errors) {
+        System.err.print(error.message() + " at " + error.location());
+      }
+
+      fail();
     }
   }
 

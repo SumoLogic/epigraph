@@ -13,6 +13,7 @@ import io.epigraph.projections.op.path.OpVarPath;
 import io.epigraph.projections.req.path.ReqPathPrettyPrinter;
 import io.epigraph.projections.req.path.ReqVarPath;
 import io.epigraph.psi.EpigraphPsiUtil;
+import io.epigraph.psi.PsiProcessingError;
 import io.epigraph.psi.PsiProcessingException;
 import io.epigraph.refs.SimpleTypesResolver;
 import io.epigraph.refs.TypesResolver;
@@ -22,7 +23,9 @@ import io.epigraph.url.parser.projections.UrlSubParserDefinitions;
 import io.epigraph.url.parser.psi.UrlReqVarPath;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
@@ -67,9 +70,10 @@ public class ReqPathParserTest {
 
   private void testParse(String expr, String expectedProjection) {
     UrlReqVarPath psi = getPsi(expr);
+    List<PsiProcessingError> errors = new ArrayList<>();
     try {
       final ReqVarPath reqVarPath =
-          ReqPathPsiParser.parseVarPath(personOpPath, Person.type.dataType(null), psi, resolver);
+          ReqPathPsiParser.parseVarPath(personOpPath, Person.type.dataType(null), psi, resolver, errors);
 
       String s = print(reqVarPath);
 
@@ -80,8 +84,17 @@ public class ReqPathParserTest {
     } catch (PsiProcessingException e) {
 //      String psiDump = DebugUtil.psiToString(psi, true, false).trim();
 //      System.err.println(psiDump);
-      e.printStackTrace();
-      fail(e.getMessage() + " at " + e.location());
+//      e.printStackTrace();
+//      fail(e.getMessage() + " at " + e.location());
+      errors = e.errors();
+    }
+
+    if (!errors.isEmpty()) {
+      for (final PsiProcessingError error : errors) {
+        System.err.print(error.message() + " at " + error.location());
+      }
+
+      fail();
     }
   }
 

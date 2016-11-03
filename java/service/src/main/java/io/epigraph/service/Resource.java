@@ -18,23 +18,23 @@ public class Resource {
   private final ResourceIdl declaration;
 
   @NotNull
-  private final Operations<? extends ReadOperation> readOperations;
+  private final Operations<? extends ReadOperation<?>> readOperations;
   @NotNull
-  private final Operations<? extends CreateOperation> createOperations;
+  private final Operations<? extends CreateOperation<?>> createOperations;
   @NotNull
-  private final Operations<? extends UpdateOperation> updateOperations;
+  private final Operations<? extends UpdateOperation<?>> updateOperations;
   @NotNull
-  private final Operations<? extends DeleteOperation> deleteOperations;
+  private final Operations<? extends DeleteOperation<?>> deleteOperations;
   @NotNull
-  private final Operations<? extends CustomOperation> customOperations;
+  private final Operations<? extends CustomOperation<?>> customOperations;
 
   public Resource(
       @NotNull ResourceIdl declaration,
-      @NotNull Collection<? extends ReadOperation> readOperations,
-      @NotNull Collection<? extends CreateOperation> createOperations,
-      @NotNull Collection<? extends UpdateOperation> updateOperations,
-      @NotNull Collection<? extends DeleteOperation> deleteOperations,
-      @NotNull Collection<? extends CustomOperation> customOperations
+      @NotNull Collection<? extends ReadOperation<?>> readOperations,
+      @NotNull Collection<? extends CreateOperation<?>> createOperations,
+      @NotNull Collection<? extends UpdateOperation<?>> updateOperations,
+      @NotNull Collection<? extends DeleteOperation<?>> deleteOperations,
+      @NotNull Collection<? extends CustomOperation<?>> customOperations
   ) throws ServiceInitializationException {
 
     this.declaration = declaration;
@@ -102,53 +102,53 @@ public class Resource {
   /**
    * @return unnamed read operations sorted by path length in descending order
    */
-  public List<? extends ReadOperation> unnamedReadOperations() {
+  public List<? extends ReadOperation<?>> unnamedReadOperations() {
     return readOperations.unnamedOperations;
   }
 
   @Nullable
-  public ReadOperation namedReadOperation(@NotNull String name) {
+  public ReadOperation<?> namedReadOperation(@NotNull String name) {
     return readOperations.namedOperations.get(name);
   }
 
   /**
    * @return unnamed create operations sorted by path length in descending order
    */
-  public List<? extends CreateOperation> unnamedCreateOperations() {
+  public List<? extends CreateOperation<?>> unnamedCreateOperations() {
     return createOperations.unnamedOperations;
   }
 
   @Nullable
-  public CreateOperation namedCreateOperation(@NotNull String name) {
+  public CreateOperation<?> namedCreateOperation(@NotNull String name) {
     return createOperations.namedOperations.get(name);
   }
 
   /**
    * @return unnamed update operations sorted by path length in descending order
    */
-  public List<? extends UpdateOperation> unnamedUpdateOperations() {
+  public List<? extends UpdateOperation<?>> unnamedUpdateOperations() {
     return updateOperations.unnamedOperations;
   }
 
   @Nullable
-  public UpdateOperation namedUpdateOperation(@NotNull String name) {
+  public UpdateOperation<?> namedUpdateOperation(@NotNull String name) {
     return updateOperations.namedOperations.get(name);
   }
 
   /**
    * @return unnamed delete operations sorted by path length in descending order
    */
-  public List<? extends DeleteOperation> unnamedDeleteOperations() {
+  public List<? extends DeleteOperation<?>> unnamedDeleteOperations() {
     return deleteOperations.unnamedOperations;
   }
 
   @Nullable
-  public DeleteOperation namedDeleteOperation(@NotNull String name) {
+  public DeleteOperation<?> namedDeleteOperation(@NotNull String name) {
     return deleteOperations.namedOperations.get(name);
   }
   
   @Nullable
-  public CustomOperation customOperation(@NotNull String name) {
+  public CustomOperation<?> customOperation(@NotNull String name) {
     return customOperations.namedOperations.get(name);
   }
 

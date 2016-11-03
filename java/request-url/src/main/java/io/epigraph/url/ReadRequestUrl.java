@@ -3,7 +3,7 @@ package io.epigraph.url;
 import io.epigraph.gdata.GDatum;
 import io.epigraph.projections.StepsAndProjection;
 import io.epigraph.projections.req.output.ReqOutputFieldProjection;
-import io.epigraph.projections.req.path.ReqVarPath;
+import io.epigraph.projections.req.path.ReqFieldPath;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,7 +15,7 @@ import java.util.Map;
 public class ReadRequestUrl extends RequestUrl {
   public ReadRequestUrl(
       @NotNull String fieldName,
-      @Nullable ReqVarPath path,
+      @Nullable ReqFieldPath path,
       @NotNull StepsAndProjection<ReqOutputFieldProjection> outputProjection,
       @NotNull Map<String, GDatum> parameters) {
     super(fieldName, path, outputProjection, parameters);

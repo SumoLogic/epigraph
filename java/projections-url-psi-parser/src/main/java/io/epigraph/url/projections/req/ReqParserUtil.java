@@ -15,6 +15,7 @@ import io.epigraph.projections.op.input.OpInputModelProjection;
 import io.epigraph.projections.req.ReqParam;
 import io.epigraph.projections.req.ReqParams;
 import io.epigraph.psi.EpigraphPsiUtil;
+import io.epigraph.psi.PsiProcessingError;
 import io.epigraph.psi.PsiProcessingException;
 import io.epigraph.refs.ImportAwareTypesResolver;
 import io.epigraph.refs.TypesResolver;
@@ -41,8 +42,10 @@ import static io.epigraph.url.projections.UrlProjectionsPsiParserUtil.parseAnnot
 public class ReqParserUtil {
 
   @NotNull
-  public static Map<String, GDatum> parseRequestParams(@NotNull List<UrlRequestParam> requestParamList)
-      throws PsiProcessingException {
+  public static Map<String, GDatum> parseRequestParams(
+      @NotNull List<UrlRequestParam> requestParamList,
+      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
+
     final Map<String, GDatum> requestParams;
 
     if (!requestParamList.isEmpty()) {
@@ -52,19 +55,25 @@ public class ReqParserUtil {
       for (UrlRequestParam requestParamPsi : requestParamList) {
         if (first) {
           @Nullable final PsiElement amp = requestParamPsi.getAmp();
-          if (amp != null) throw new PsiProcessingException("'?' expected, got '&'", amp);
+          if (amp != null) errors.add(new PsiProcessingError("'?' expected, got '&'", amp));
           first = false;
         } else {
           @Nullable final PsiElement qmark = requestParamPsi.getQmark();
-          if (qmark != null) throw new PsiProcessingException("'&' expected, got '?'", qmark);
+          if (qmark != null) errors.add(new PsiProcessingError("'&' expected, got '?'", qmark));
         }
 
         @Nullable final PsiElement paramNamePsi = requestParamPsi.getParamName();
-        if (paramNamePsi == null) throw new PsiProcessingException("Missing parameter name", requestParamPsi);
+        if (paramNamePsi == null) {
+          errors.add(new PsiProcessingError("Missing parameter name", requestParamPsi));
+          continue;
+        }
         String paramName = paramNamePsi.getText();
 
         @Nullable final UrlDatum paramValuePsi = requestParamPsi.getDatum();
-        if (paramValuePsi == null) throw new PsiProcessingException("Missing parameter value", requestParamPsi);
+        if (paramValuePsi == null) {
+          errors.add(new PsiProcessingError(String.format("Missing parameter '%s' value", paramName), requestParamPsi));
+          continue;
+        }
 
         @NotNull final GDatum paramValue = UrlGDataPsiParser.parseDatum(paramValuePsi);
 
@@ -91,17 +100,20 @@ public class ReqParserUtil {
   public static ReqParams parseReqParams(
       @NotNull List<UrlReqParam> reqParamsPsi,
       @Nullable OpParams opParams,
-      @NotNull TypesResolver resolver) throws PsiProcessingException {
+      @NotNull TypesResolver resolver,
+      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
     if (reqParamsPsi.isEmpty()) return ReqParams.EMPTY;
 
-    if (opParams == null)
-      throw new PsiProcessingException("Parameters are not supported here", reqParamsPsi.iterator().next());
+    if (opParams == null) {
+      errors.add(new PsiProcessingError("Parameters are not supported here", reqParamsPsi.iterator().next()));
+      return ReqParams.EMPTY;
+    }
 
     Map<String, ReqParam> paramMap = null;
 
     for (UrlReqParam reqParamPsi : reqParamsPsi)
-      paramMap = parseReqParam(paramMap, reqParamPsi, opParams, resolver);
+      paramMap = parseReqParam(paramMap, reqParamPsi, opParams, resolver, errors);
 
     return ReqParams.fromMap(paramMap);
   }
@@ -111,7 +123,8 @@ public class ReqParserUtil {
       @Nullable Map<String, ReqParam> reqParamsMap,
       @Nullable UrlReqParam reqParamPsi,
       @NotNull OpParams opParams,
-      @NotNull TypesResolver resolver) throws PsiProcessingException {
+      @NotNull TypesResolver resolver,
+      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
     if (reqParamPsi != null) {
       if (reqParamsMap == null) reqParamsMap = new HashMap<>();
@@ -119,22 +132,24 @@ public class ReqParserUtil {
       String name = reqParamPsi.getQid().getCanonicalName();
       OpParam opParam = opParams.params().get(name);
 
-      if (opParam == null)
-        throw new PsiProcessingException(
+      if (opParam == null) {
+        errors.add(new PsiProcessingError(
             String.format(
                 "Unsupported parameter '%s', supported parameters: {%s}",
                 name,
                 String.join(", ", opParams.params().keySet())
             ),
             reqParamPsi.getQid()
-        );
+        ));
+        return reqParamsMap;
+      }
 
       final String errorMsgPrefix = String.format("Error processing parameter '%s' value: ", name);
       OpInputModelProjection<?, ?, ?> projection = opParam.projection();
       final DatumType model = projection.model();
       @NotNull final TypesResolver subResolver = addTypeNamespace(model, resolver);
 
-      @Nullable Datum value = getDatum(reqParamPsi.getDatum(), model, subResolver, errorMsgPrefix);
+      @Nullable Datum value = getDatum(reqParamPsi.getDatum(), model, subResolver, errorMsgPrefix, errors);
       if (value == null) value = projection.defaultValue();
 
       // todo validate value against input projection
@@ -149,7 +164,8 @@ public class ReqParserUtil {
       @NotNull UrlDatum datumPsi,
       @NotNull DatumType model,
       @NotNull TypesResolver resolver,
-      @NotNull String errorMessagePrefix) throws PsiProcessingException {
+      @NotNull String errorMessagePrefix,
+      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
     @NotNull GDatum gDatum = UrlGDataPsiParser.parseDatum(datumPsi);
     @Nullable Datum value;
 
@@ -161,10 +177,8 @@ public class ReqParserUtil {
       PsiElement element = datumPsi.findElementAt(offset);
       if (element == null) element = datumPsi;
 
-      throw new PsiProcessingException(
-          errorMessagePrefix + e.getMessage(),
-          element
-      );
+      errors.add(new PsiProcessingError(errorMessagePrefix + e.getMessage(), element));
+      return null;
     }
     return value;
   }

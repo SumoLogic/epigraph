@@ -83,7 +83,7 @@ public class ReqPathPsiParser {
     final ReqModelPath<?, ?> parsedModelProjection = parseModelPath(
         opModelPath,
         opTag.type,
-        ReqParserUtil.parseReqParams(psi.getReqParamList(), opModelPath.params(), typesResolver),
+        ReqParserUtil.parseReqParams(psi.getReqParamList(), opModelPath.params(), typesResolver, errors),
         ReqParserUtil.parseAnnotations(psi.getReqAnnotationList()),
         modelPathPsi,
         typesResolver,
@@ -245,7 +245,9 @@ public class ReqPathPsiParser {
       final @NotNull TypesResolver typesResolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
-    @NotNull ReqParams fieldParams = ReqParserUtil.parseReqParams(psi.getReqParamList(), op.params(), typesResolver);
+    @NotNull ReqParams fieldParams =
+        ReqParserUtil.parseReqParams(psi.getReqParamList(), op.params(), typesResolver, errors);
+
     @NotNull Annotations fieldAnnotations = ReqParserUtil.parseAnnotations(psi.getReqAnnotationList());
 
     @Nullable UrlReqVarPath fieldVarPathPsi = psi.getReqVarPath();
@@ -323,12 +325,12 @@ public class ReqPathPsiParser {
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
     @NotNull final ReqParams reqParams =
-        ReqParserUtil.parseReqParams(mapPathPsi.getReqParamList(), op.params(), resolver);
+        ReqParserUtil.parseReqParams(mapPathPsi.getReqParamList(), op.params(), resolver, errors);
 
     @NotNull final Annotations annotations = ReqParserUtil.parseAnnotations(mapPathPsi.getReqAnnotationList());
 
     @Nullable final Datum keyValue =
-        ReqParserUtil.getDatum(mapPathPsi.getDatum(), keyType, resolver, "Error processing map key: ");
+        ReqParserUtil.getDatum(mapPathPsi.getDatum(), keyType, resolver, "Error processing map key: ", errors);
 
     if (keyValue == null) throw new PsiProcessingException("Null path keys not allowed", mapPathPsi.getDatum(), errors);
 

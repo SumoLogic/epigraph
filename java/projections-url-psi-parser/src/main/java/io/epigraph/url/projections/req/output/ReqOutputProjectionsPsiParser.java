@@ -72,7 +72,7 @@ public class ReqOutputProjectionsPsiParser {
       StepsAndProjection<? extends ReqOutputModelProjection<?, ?>> stepsAndProjection = parseTrunkModelProjection(
           opModelProjection,
           singleTagProjectionPsi.getPlus() != null,
-          parseReqParams(singleTagProjectionPsi.getReqParamList(), opModelProjection.params(), subResolver),
+          parseReqParams(singleTagProjectionPsi.getReqParamList(), opModelProjection.params(), subResolver, errors),
           parseAnnotations(singleTagProjectionPsi.getReqAnnotationList()),
           parseModelMetaProjection(
               opModelProjection,
@@ -255,7 +255,7 @@ public class ReqOutputProjectionsPsiParser {
       parsedModelProjection = parseComaModelProjection(
           opModelProjection,
           singleTagProjectionPsi.getPlus() != null,
-          parseReqParams(singleTagProjectionPsi.getReqParamList(), opModelProjection.params(), subResolver),
+          parseReqParams(singleTagProjectionPsi.getReqParamList(), opModelProjection.params(), subResolver, errors),
           parseAnnotations(singleTagProjectionPsi.getReqAnnotationList()),
           parseModelMetaProjection(
               opModelProjection,
@@ -329,7 +329,7 @@ public class ReqOutputProjectionsPsiParser {
         parsedModelProjection = parseComaModelProjection(
             opTagProjection,
             tagProjectionPsi.getPlus() != null,
-            parseReqParams(tagProjectionPsi.getReqParamList(), opTagProjection.params(), subResolver),
+            parseReqParams(tagProjectionPsi.getReqParamList(), opTagProjection.params(), subResolver, errors),
             parseAnnotations(tagProjectionPsi.getReqAnnotationList()),
             parseModelMetaProjection(opTagProjection, tagProjectionPsi.getReqOutputModelMeta(), subResolver, errors),
             modelProjection, subResolver, errors
@@ -1062,7 +1062,7 @@ public class ReqOutputProjectionsPsiParser {
     return new StepsAndProjection<>(
         steps,
         new ReqOutputFieldProjection(
-            parseReqParams(psi.getReqParamList(), opParams, resolver),
+            parseReqParams(psi.getReqParamList(), opParams, resolver, errors),
             parseAnnotations(psi.getReqAnnotationList()),
             varProjection,
             required,
@@ -1109,7 +1109,7 @@ public class ReqOutputProjectionsPsiParser {
         final boolean fieldRequired = fieldProjectionPsi.getPlus() != null;
 
         ReqParams fieldParams =
-            parseReqParams(fieldProjectionPsi.getReqParamList(), opFieldProjection.params(), resolver);
+            parseReqParams(fieldProjectionPsi.getReqParamList(), opFieldProjection.params(), resolver, errors);
 
         Annotations fieldAnnotations = parseAnnotations(fieldProjectionPsi.getReqAnnotationList());
 
@@ -1172,12 +1172,12 @@ public class ReqOutputProjectionsPsiParser {
       throw new PsiProcessingException("Map keys are forbidden", psi.getDatum(), errors);
 
     @NotNull UrlDatum valuePsi = psi.getDatum();
-    @Nullable Datum keyValue = getDatum(valuePsi, op.model().keyType(), resolver, "Error processing map key: ");
+    @Nullable Datum keyValue = getDatum(valuePsi, op.model().keyType(), resolver, "Error processing map key: ", errors);
     if (keyValue == null) throw new PsiProcessingException("Null keys are not allowed", valuePsi, errors);
 
     ReqOutputKeyProjection keyProjection = new ReqOutputKeyProjection(
         keyValue,
-        parseReqParams(psi.getReqParamList(), op.keyProjection().params(), resolver),
+        parseReqParams(psi.getReqParamList(), op.keyProjection().params(), resolver, errors),
         parseAnnotations(psi.getReqAnnotationList()),
         EpigraphPsiUtil.getLocation(psi)
     );
@@ -1237,13 +1237,15 @@ public class ReqOutputProjectionsPsiParser {
 
         try {
           @NotNull UrlDatum valuePsi = keyProjectionPsi.getDatum();
-          @Nullable Datum keyValue = getDatum(valuePsi, op.model().keyType(), resolver, "Error processing map key: ");
+          @Nullable Datum keyValue =
+              getDatum(valuePsi, op.model().keyType(), resolver, "Error processing map key: ", errors);
+          
           if (keyValue == null) throw new PsiProcessingException("Null keys are not allowed", valuePsi, errors);
 
           keyProjections.add(
               new ReqOutputKeyProjection(
                   keyValue,
-                  parseReqParams(keyProjectionPsi.getReqParamList(), opKeyProjection.params(), resolver),
+                  parseReqParams(keyProjectionPsi.getReqParamList(), opKeyProjection.params(), resolver, errors),
                   parseAnnotations(keyProjectionPsi.getReqAnnotationList()),
                   EpigraphPsiUtil.getLocation(keyProjectionPsi)
               )

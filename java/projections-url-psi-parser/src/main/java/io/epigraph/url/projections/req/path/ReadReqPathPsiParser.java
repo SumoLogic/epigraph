@@ -84,7 +84,7 @@ public class ReadReqPathPsiParser {
     final @Nullable ReadReqPathParsingResult<? extends ReqModelPath<?, ?>> parsedModelResult = parseModelPath(
         opModelPath,
         opTag.type,
-        ReqParserUtil.parseReqParams(singleTagProjectionPsi.getReqParamList(), opModelPath.params(), typesResolver),
+        ReqParserUtil.parseReqParams(singleTagProjectionPsi.getReqParamList(), opModelPath.params(), typesResolver, errors),
         ReqParserUtil.parseAnnotations(singleTagProjectionPsi.getReqAnnotationList()),
         modelPsi,
         typesResolver,
@@ -331,7 +331,9 @@ public class ReadReqPathPsiParser {
       final @NotNull TypesResolver typesResolver,
       final @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
-    @NotNull ReqParams fieldParams = ReqParserUtil.parseReqParams(psi.getReqParamList(), op.params(), typesResolver);
+    @NotNull ReqParams fieldParams =
+        ReqParserUtil.parseReqParams(psi.getReqParamList(), op.params(), typesResolver, errors);
+
     @NotNull Annotations fieldAnnotations = ReqParserUtil.parseAnnotations(psi.getReqAnnotationList());
 
     @NotNull UrlReqOutputTrunkVarProjection fieldVarPathPsi = psi.getReqOutputTrunkVarProjection();
@@ -417,12 +419,12 @@ public class ReadReqPathPsiParser {
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
     @NotNull final ReqParams reqParams =
-        ReqParserUtil.parseReqParams(mapPathPsi.getReqParamList(), op.params(), resolver);
+        ReqParserUtil.parseReqParams(mapPathPsi.getReqParamList(), op.params(), resolver, errors);
 
     @NotNull final Annotations annotations = ReqParserUtil.parseAnnotations(mapPathPsi.getReqAnnotationList());
 
     @Nullable final Datum keyValue =
-        ReqParserUtil.getDatum(mapPathPsi.getDatum(), keyType, resolver, "Error processing map key: ");
+        ReqParserUtil.getDatum(mapPathPsi.getDatum(), keyType, resolver, "Error processing map key: ", errors);
 
     if (keyValue == null) throw new PsiProcessingException("Null path keys not allowed", mapPathPsi.getDatum(), errors);
 

@@ -448,7 +448,7 @@ public class UndertowHandler implements HttpHandler {
       if (first) first = false;
       else {
         if (isHtml)
-          sb.append("<br/><hr/><br/>");
+          sb.append("<br/><hr width=\"90%\"/><br/>");
         else
           sb.append("\n---------------------------------------\n\n");
       }
