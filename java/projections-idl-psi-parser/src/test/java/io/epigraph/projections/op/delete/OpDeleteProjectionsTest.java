@@ -88,7 +88,7 @@ public class OpDeleteProjectionsTest {
   @Test
   public void testParseParam() throws PsiProcessingException {
     testParsingVarProjection(
-        ":id { ;+param: map[epigraph.String,io.epigraph.tests.Person] = ( \"foo\": < id: 123 > ) { deprecated = true []( :id ) } }"
+        ":id { ;+param: map[epigraph.String,io.epigraph.tests.Person] []( :id ) = ( \"foo\": < id: 123 > ) { deprecated = true } }"
     );
   }
 
@@ -123,7 +123,7 @@ public class OpDeleteProjectionsTest {
 
   @Test
   public void testParseRecordFieldsWithCustomParams() throws PsiProcessingException {
-    testParsingVarProjection(":record ( id, bestFriend { deprecated = true :record ( id ) } )");
+    testParsingVarProjection(":record ( id, bestFriend { deprecated = true } :record ( id ) )");
   }
 
   @Test

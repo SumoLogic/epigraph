@@ -57,12 +57,14 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception>
         l.end();
       }
 
+      l.brk(1, -l.getDefaultIndentation()).end().print("}");
+
       if (!isPrintoutEmpty(projection)) {
+        l.beginIInd();
         l.brk();
         print(projection, 0);
+        l.end();
       }
-
-      l.brk(1, -l.getDefaultIndentation()).end().print("}");
     }
   }
 
@@ -109,11 +111,13 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception>
       l.print("{");
       if (!fieldParams.isEmpty()) print(fieldParams);
       if (!fieldAnnotations.isEmpty()) print(fieldAnnotations);
+      l.brk(1, -l.getDefaultIndentation()).end().print("}");
       if (!isPrintoutEmpty(fieldVarProjection)) {
+        l.beginIInd();
         l.brk();
         print(fieldVarProjection, 0);
+        l.end();
       }
-      l.brk(1, -l.getDefaultIndentation()).end().print("}");
     }
 
   }

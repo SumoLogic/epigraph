@@ -34,8 +34,13 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
     l.print(p.name()).print(":").brk();
     l.print(projection.model().name().toString());
 
-    Annotations annotations = projection.annotations();
     OpInputProjectionsPrettyPrinter<E> ipp = new OpInputProjectionsPrettyPrinter<>(l);
+    if (!ipp.isPrintoutEmpty(projection)) {
+      l.brk();
+      ipp.print(projection, 0);
+    }
+
+    Annotations annotations = projection.annotations();
 
     Datum defaultValue = projection.defaultValue();
     if (defaultValue != null) {
@@ -43,15 +48,10 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
       dataPrinter.print(defaultValue);
     }
 
-    final boolean projectionPrintoutEmpty = ipp.isPrintoutEmpty(projection);
-    if (!projectionPrintoutEmpty || !annotations.isEmpty()) {
+    if (!annotations.isEmpty()) {
       l.beginCInd();
       l.print(" {");
       print(annotations);
-      if (!projectionPrintoutEmpty) {
-        l.brk();
-        ipp.print(projection, 0);
-      }
       l.brk(1, -l.getDefaultIndentation()).end().print("}");
     }
 
@@ -77,7 +77,7 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
     }
   }
 
-  protected boolean isPrintoutEmpty(@NotNull FP fieldProjection) {
+  public boolean isPrintoutEmpty(@NotNull FP fieldProjection) {
     @NotNull VP fieldVarProjection = fieldProjection.projection();
     @NotNull OpParams fieldParams = fieldProjection.params();
     @NotNull Annotations fieldAnnotations = fieldProjection.annotations();

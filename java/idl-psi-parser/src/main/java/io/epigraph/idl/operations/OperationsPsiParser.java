@@ -7,10 +7,12 @@ import io.epigraph.projections.Annotation;
 import io.epigraph.projections.Annotations;
 import io.epigraph.projections.ProjectionPsiParserUtil;
 import io.epigraph.projections.ProjectionUtils;
+import io.epigraph.projections.op.OpParams;
 import io.epigraph.projections.op.delete.OpDeleteProjectionsPsiParser;
 import io.epigraph.projections.op.input.OpInputProjectionsPsiParser;
 import io.epigraph.projections.op.output.OpOutputFieldProjection;
 import io.epigraph.projections.op.output.OpOutputProjectionsPsiParser;
+import io.epigraph.projections.op.output.OpOutputVarProjection;
 import io.epigraph.projections.op.path.OpFieldPath;
 import io.epigraph.projections.op.path.OpPathPsiParser;
 import io.epigraph.projections.op.path.OpVarPath;
@@ -81,16 +83,26 @@ public class OperationsPsiParser {
     @Nullable OpFieldPath fieldPath = parsePath(resourceType, pathPsi, resolver, errors);
     @Nullable OpVarPath varPath = fieldPath == null ? null : fieldPath.projection();
 
-    if (outputProjectionPsi == null)
-      throw new PsiProcessingException("Output projection must be specified", psi, errors);
-
-    OpOutputFieldProjection outputProjection = OpOutputProjectionsPsiParser.parseFieldProjection(
-        resolveOutputType(resourceType, varPath, null, resolver, errors),
-        true,
-        outputProjectionPsi.getOpOutputFieldProjection(),
-        resolver,
-        errors
+    final OpOutputFieldProjection outputProjection = parseOutputProjection(
+        resolveOutputType(
+            resourceType,
+            fieldPath == null ? null : fieldPath.projection(),
+            null,
+            resolver,
+            errors
+        ), outputProjectionPsi, resolver, psi, errors
     );
+
+//    if (outputProjectionPsi == null)
+//      throw new PsiProcessingException("Output projection must be specified", psi, errors);
+//
+//    OpOutputFieldProjection outputProjection = OpOutputProjectionsPsiParser.parseFieldProjection(
+//        resolveOutputType(resourceType, varPath, null, resolver, errors),
+//        true,
+//        outputProjectionPsi.getOpOutputFieldProjection(),
+//        resolver,
+//        errors
+//    );
 
     return new ReadOperationIdl(
         parseOperationName(psi.getOperationName()),
@@ -137,9 +149,6 @@ public class OperationsPsiParser {
     if (outputTypePsi == null)
       throw new PsiProcessingException("Output kind must be specified", psi, errors);
 
-    if (outputProjectionPsi == null)
-      throw new PsiProcessingException("Output projection must be specified", psi, errors);
-
     return new CreateOperationIdl(
         parseOperationName(psi.getOperationName()),
         Annotations.fromMap(annotations),
@@ -153,12 +162,14 @@ public class OperationsPsiParser {
             inputProjectionPsi.getOpInputModelProjection(),
             resolver
         ).projection(),
-        OpOutputProjectionsPsiParser.parseFieldProjection(
-            resolveOutputType(resourceType, varPath, outputTypePsi, resolver, errors),
-            true,
-            outputProjectionPsi.getOpOutputFieldProjection(),
-            resolver,
-            errors
+        parseOutputProjection(
+            resolveOutputType(
+                resourceType,
+                fieldPath == null ? null : fieldPath.projection(),
+                outputTypePsi,
+                resolver,
+                errors
+            ), outputProjectionPsi, resolver, psi, errors
         ),
         EpigraphPsiUtil.getLocation(psi)
     );
@@ -196,9 +207,6 @@ public class OperationsPsiParser {
     if (inputProjectionPsi == null)
       throw new PsiProcessingException("Input projection must be specified", psi, errors);
 
-    if (outputProjectionPsi == null)
-      throw new PsiProcessingException("Output projection must be specified", psi, errors);
-
     @Nullable final OpVarPath varPath = fieldPath == null ? null : fieldPath.projection();
 
     return new UpdateOperationIdl(
@@ -214,12 +222,14 @@ public class OperationsPsiParser {
             inputProjectionPsi.getOpInputModelProjection(),
             resolver
         ).projection(),
-        OpOutputProjectionsPsiParser.parseFieldProjection(
-            resolveOutputType(resourceType, varPath, outputTypePsi, resolver, errors),
-            true,
-            outputProjectionPsi.getOpOutputFieldProjection(),
-            resolver,
-            errors
+        parseOutputProjection(
+            resolveOutputType(
+                resourceType,
+                fieldPath == null ? null : fieldPath.projection(),
+                outputTypePsi,
+                resolver,
+                errors
+            ), outputProjectionPsi, resolver, psi, errors
         ),
         EpigraphPsiUtil.getLocation(psi)
     );
@@ -258,9 +268,6 @@ public class OperationsPsiParser {
     if (outputTypePsi == null)
       throw new PsiProcessingException("Output kind must be specified", psi, errors);
 
-    if (outputProjectionPsi == null)
-      throw new PsiProcessingException("Output projection must be specified", psi, errors);
-
     return new DeleteOperationIdl(
         parseOperationName(psi.getOperationName()),
         Annotations.fromMap(annotations),
@@ -270,18 +277,14 @@ public class OperationsPsiParser {
             deleteProjectionPsi.getOpDeleteFieldProjection(),
             resolver
         ),
-        OpOutputProjectionsPsiParser.parseFieldProjection(
+        parseOutputProjection(
             resolveOutputType(
                 resourceType,
                 fieldPath == null ? null : fieldPath.projection(),
                 outputTypePsi,
                 resolver,
                 errors
-            ),
-            true,
-            outputProjectionPsi.getOpOutputFieldProjection(),
-            resolver,
-            errors
+            ), outputProjectionPsi, resolver, psi, errors
         ),
         EpigraphPsiUtil.getLocation(psi)
     );
@@ -327,9 +330,6 @@ public class OperationsPsiParser {
       else throw new PsiProcessingException("HTTP method must be specified", methodPsi, errors);
     }
 
-    if (outputProjectionPsi == null)
-      throw new PsiProcessingException("Output projection must be specified", psi, errors);
-
     @Nullable OpFieldPath fieldPath = parsePath(resourceType, pathPsi, resolver, errors);
 
     return new CustomOperationIdl(
@@ -353,36 +353,50 @@ public class OperationsPsiParser {
             inputProjectionPsi.getOpInputModelProjection(),
             resolver
         ).projection(),
-        OpOutputProjectionsPsiParser.parseFieldProjection(
+        parseOutputProjection(
             resolveOutputType(
                 resourceType,
                 fieldPath == null ? null : fieldPath.projection(),
                 outputTypePsi,
                 resolver,
                 errors
-            ),
-            true,
-            outputProjectionPsi.getOpOutputFieldProjection(),
-            resolver,
-            errors
+            ), outputProjectionPsi, resolver, psi, errors
         ),
         EpigraphPsiUtil.getLocation(psi)
     );
   }
 
-//  @Nullable
-//  private static List<OpParam> parseParam(
-//      @Nullable List<OpParam> params,
-//      @Nullable IdlOpParam paramPsi,
-//      @NotNull TypesResolver resolver) throws PsiProcessingException {
-//
-//    if (paramPsi == null) return params;
-//    if (params == null) params = new ArrayList<>();
-//
-//    params.add(OpParserUtil.parseParameter(paramPsi, resolver));
-//
-//    return params;
-//  }
+  private static OpOutputFieldProjection parseOutputProjection(
+      final @NotNull DataType outputType,
+      final @Nullable IdlOperationOutputProjection outputProjectionPsi,
+      final @NotNull TypesResolver resolver,
+      final @NotNull PsiElement location,
+      final @NotNull List<PsiProcessingError> errors)
+      throws PsiProcessingException {
+
+    if (outputProjectionPsi == null) {
+      final @NotNull OpOutputVarProjection varProjection =
+          OpOutputProjectionsPsiParser.createDefaultVarProjection(outputType, true, location, errors);
+
+      return new OpOutputFieldProjection(
+          OpParams.EMPTY,
+          Annotations.EMPTY,
+          varProjection,
+          true,
+          EpigraphPsiUtil.getLocation(location)
+      );
+
+//      throw new PsiProcessingException("Output projection must be specified", location, errors);
+    }
+
+    return OpOutputProjectionsPsiParser.parseFieldProjection(
+        outputType,
+        true,
+        outputProjectionPsi.getOpOutputFieldProjection(),
+        resolver,
+        errors
+    );
+  }
 
   @Contract("null, !null, _, _ -> !null")
   @Nullable

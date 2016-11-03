@@ -38,13 +38,13 @@ public class OpOutputPathTest {
   @Test
   public void testParseParam() throws PsiProcessingException {
     testVarPathParsing(
-        ":record { ;foo: epigraph.String } / id { ;+param: map[epigraph.String,io.epigraph.tests.Person] = ( \"foo\": < id: 123 > ) { deprecated = true []( :id ) } }"
+        ":record { ;foo: epigraph.String } / id { ;+param: map[epigraph.String,io.epigraph.tests.Person] []( :id ) = ( \"foo\": < id: 123 > ) { deprecated = true } }"
         ,
         lines(
             ":record { ;foo: epigraph.String }",
             "  /",
             "    id {",
-            "      ;+param: map[epigraph.String,io.epigraph.tests.Person] = ( \"foo\": < id: 123 > ) { deprecated = true []( :id ) }",
+            "      ;+param: map[epigraph.String,io.epigraph.tests.Person] []( :id ) = ( \"foo\": < id: 123 > ) { deprecated = true }",
             "    }"
         )
     );

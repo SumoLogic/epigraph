@@ -277,7 +277,7 @@ public class OpOutputProjectionsPsiParser {
   }
 
   @NotNull
-  private static OpOutputVarProjection createDefaultVarProjection(
+  public static OpOutputVarProjection createDefaultVarProjection(
       @NotNull DataType type,
       boolean includeInDefault,
       @NotNull PsiElement locationPsi,
@@ -285,11 +285,19 @@ public class OpOutputProjectionsPsiParser {
       throws PsiProcessingException {
 
     @Nullable Type.Tag defaultTag = type.defaultTag;
-    if (defaultTag == null)
-      throw new PsiProcessingException(
-          String.format("Can't build default projection for '%s', default tag not specified", type.name), locationPsi,
-          errors
-      );
+    if (defaultTag == null) {
+
+      if (type.type instanceof DatumType) {
+        DatumType datumType = (DatumType) type.type;
+        defaultTag = datumType.self;
+      } else {
+        throw new PsiProcessingException(
+            String.format("Can't build default projection for '%s', default tag not specified", type.name), locationPsi,
+            errors
+        );
+      }
+
+    }
 
     return createDefaultVarProjection(type.type, defaultTag, includeInDefault, locationPsi, errors);
   }

@@ -2,11 +2,9 @@ package io.epigraph.idl.operations;
 
 import de.uka.ilkd.pp.Layouter;
 import io.epigraph.projections.Annotations;
-import io.epigraph.projections.op.delete.OpDeleteFieldProjection;
 import io.epigraph.projections.op.delete.OpDeleteProjectionsPrettyPrinter;
 import io.epigraph.projections.op.input.OpInputModelProjection;
 import io.epigraph.projections.op.input.OpInputProjectionsPrettyPrinter;
-import io.epigraph.projections.op.output.OpOutputFieldProjection;
 import io.epigraph.projections.op.output.OpOutputProjectionsPrettyPrinter;
 import io.epigraph.projections.op.path.OpFieldPath;
 import io.epigraph.projections.op.path.OpPathPrettyPrinter;
@@ -155,12 +153,16 @@ public class OperationsPrettyPrinter<E extends Exception> {
   }
 
   private boolean printOutputProjection(@NotNull OperationIdl operation, boolean first) throws E {
-    if (first) first = false;
-    else l.print(",");
+    if (!opOutputPrinter.isPrintoutEmpty(operation.outputProjection())) {
 
-    l.brk();
+      if (first) first = false;
+      else l.print(",");
 
-    opOutputPrinter.print("outputProjection", operation.outputProjection());
+      l.brk();
+
+      opOutputPrinter.print("outputProjection", operation.outputProjection());
+
+    }
 
     return first;
   }

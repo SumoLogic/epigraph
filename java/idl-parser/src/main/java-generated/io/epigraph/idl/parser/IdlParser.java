@@ -1084,7 +1084,7 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '{' (opDeleteFieldProjectionBodyPart ','? )* opDeleteVarProjection '}'
+  // '{' (opDeleteFieldProjectionBodyPart ','? )* '}' opDeleteVarProjection
   static boolean opDeleteComplexFieldProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opDeleteComplexFieldProjection")) return false;
     if (!nextTokenIs(b, I_CURLY_LEFT)) return false;
@@ -1092,8 +1092,8 @@ public class IdlParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b);
     r = consumeToken(b, I_CURLY_LEFT);
     r = r && opDeleteComplexFieldProjection_1(b, l + 1);
-    r = r && opDeleteVarProjection(b, l + 1);
     r = r && consumeToken(b, I_CURLY_RIGHT);
+    r = r && opDeleteVarProjection(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -1129,7 +1129,7 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '{' (opDeleteModelProperty ','?)* opDeleteModelProjection '}'
+  // '{' (opDeleteModelProperty ','?)* '}' opDeleteModelProjection
   static boolean opDeleteComplexTagProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opDeleteComplexTagProjection")) return false;
     if (!nextTokenIs(b, I_CURLY_LEFT)) return false;
@@ -1138,8 +1138,8 @@ public class IdlParser implements PsiParser, LightPsiParser {
     r = consumeToken(b, I_CURLY_LEFT);
     p = r; // pin = 1
     r = r && report_error_(b, opDeleteComplexTagProjection_1(b, l + 1));
-    r = p && report_error_(b, opDeleteModelProjection(b, l + 1)) && r;
-    r = p && consumeToken(b, I_CURLY_RIGHT) && r;
+    r = p && report_error_(b, consumeToken(b, I_CURLY_RIGHT)) && r;
+    r = p && opDeleteModelProjection(b, l + 1) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -2441,7 +2441,7 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '{' (opOutputFieldProjectionBodyPart ','? )* opOutputVarProjection '}'
+  // '{' (opOutputFieldProjectionBodyPart ','? )* '}' opOutputVarProjection
   static boolean opOutputComplexFieldProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opOutputComplexFieldProjection")) return false;
     if (!nextTokenIs(b, I_CURLY_LEFT)) return false;
@@ -2449,8 +2449,8 @@ public class IdlParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b);
     r = consumeToken(b, I_CURLY_LEFT);
     r = r && opOutputComplexFieldProjection_1(b, l + 1);
-    r = r && opOutputVarProjection(b, l + 1);
     r = r && consumeToken(b, I_CURLY_RIGHT);
+    r = r && opOutputVarProjection(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -2486,7 +2486,7 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '{' (opOutputModelProperty ','?)* opOutputModelProjection '}'
+  // '{' (opOutputModelProperty ','?)* '}' opOutputModelProjection
   static boolean opOutputComplexTagProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opOutputComplexTagProjection")) return false;
     if (!nextTokenIs(b, I_CURLY_LEFT)) return false;
@@ -2495,8 +2495,8 @@ public class IdlParser implements PsiParser, LightPsiParser {
     r = consumeToken(b, I_CURLY_LEFT);
     p = r; // pin = 1
     r = r && report_error_(b, opOutputComplexTagProjection_1(b, l + 1));
-    r = p && report_error_(b, opOutputModelProjection(b, l + 1)) && r;
-    r = p && consumeToken(b, I_CURLY_RIGHT) && r;
+    r = p && report_error_(b, consumeToken(b, I_CURLY_RIGHT)) && r;
+    r = p && opOutputModelProjection(b, l + 1) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -3115,7 +3115,7 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ';' '+'? qid ':' typeRef opParamDefault? opParamBody?
+  // ';' '+'? qid ':' typeRef opInputModelProjection opParamDefault? opParamBody?
   public static boolean opParam(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opParam")) return false;
     if (!nextTokenIs(b, I_SEMICOLON)) return false;
@@ -3127,8 +3127,9 @@ public class IdlParser implements PsiParser, LightPsiParser {
     r = p && report_error_(b, qid(b, l + 1)) && r;
     r = p && report_error_(b, consumeToken(b, I_COLON)) && r;
     r = p && report_error_(b, typeRef(b, l + 1)) && r;
-    r = p && report_error_(b, opParam_5(b, l + 1)) && r;
-    r = p && opParam_6(b, l + 1) && r;
+    r = p && report_error_(b, opInputModelProjection(b, l + 1)) && r;
+    r = p && report_error_(b, opParam_6(b, l + 1)) && r;
+    r = p && opParam_7(b, l + 1) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -3141,21 +3142,21 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   // opParamDefault?
-  private static boolean opParam_5(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opParam_5")) return false;
+  private static boolean opParam_6(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opParam_6")) return false;
     opParamDefault(b, l + 1);
     return true;
   }
 
   // opParamBody?
-  private static boolean opParam_6(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opParam_6")) return false;
+  private static boolean opParam_7(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opParam_7")) return false;
     opParamBody(b, l + 1);
     return true;
   }
 
   /* ********************************************************** */
-  // '{' ( opParamBodyPart ','? )* opInputModelProjection '}'
+  // '{' ( opParamBodyPart ','? )* '}'
   static boolean opParamBody(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opParamBody")) return false;
     if (!nextTokenIs(b, I_CURLY_LEFT)) return false;
@@ -3164,7 +3165,6 @@ public class IdlParser implements PsiParser, LightPsiParser {
     r = consumeToken(b, I_CURLY_LEFT);
     p = r; // pin = 1
     r = r && report_error_(b, opParamBody_1(b, l + 1));
-    r = p && report_error_(b, opInputModelProjection(b, l + 1)) && r;
     r = p && consumeToken(b, I_CURLY_RIGHT) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
