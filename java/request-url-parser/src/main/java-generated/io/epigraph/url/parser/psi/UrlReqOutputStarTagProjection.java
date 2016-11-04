@@ -5,18 +5,12 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface UrlReqOutputComaRecordModelProjection extends PsiElement {
+public interface UrlReqOutputStarTagProjection extends PsiElement {
 
   @NotNull
-  List<UrlReqOutputComaFieldProjection> getReqOutputComaFieldProjectionList();
+  PsiElement getColon();
 
   @NotNull
-  PsiElement getParenLeft();
-
-  @Nullable
-  PsiElement getParenRight();
-
-  @Nullable
   PsiElement getStar();
 
 }

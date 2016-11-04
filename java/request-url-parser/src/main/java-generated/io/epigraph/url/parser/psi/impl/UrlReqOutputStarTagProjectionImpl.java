@@ -11,14 +11,14 @@ import static io.epigraph.url.lexer.UrlElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import io.epigraph.url.parser.psi.*;
 
-public class UrlReqOutputComaRecordModelProjectionImpl extends ASTWrapperPsiElement implements UrlReqOutputComaRecordModelProjection {
+public class UrlReqOutputStarTagProjectionImpl extends ASTWrapperPsiElement implements UrlReqOutputStarTagProjection {
 
-  public UrlReqOutputComaRecordModelProjectionImpl(ASTNode node) {
+  public UrlReqOutputStarTagProjectionImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull UrlVisitor visitor) {
-    visitor.visitReqOutputComaRecordModelProjection(this);
+    visitor.visitReqOutputStarTagProjection(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -28,26 +28,14 @@ public class UrlReqOutputComaRecordModelProjectionImpl extends ASTWrapperPsiElem
 
   @Override
   @NotNull
-  public List<UrlReqOutputComaFieldProjection> getReqOutputComaFieldProjectionList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, UrlReqOutputComaFieldProjection.class);
+  public PsiElement getColon() {
+    return findNotNullChildByType(U_COLON);
   }
 
   @Override
   @NotNull
-  public PsiElement getParenLeft() {
-    return findNotNullChildByType(U_PAREN_LEFT);
-  }
-
-  @Override
-  @Nullable
-  public PsiElement getParenRight() {
-    return findChildByType(U_PAREN_RIGHT);
-  }
-
-  @Override
-  @Nullable
   public PsiElement getStar() {
-    return findChildByType(U_STAR);
+    return findNotNullChildByType(U_STAR);
   }
 
 }

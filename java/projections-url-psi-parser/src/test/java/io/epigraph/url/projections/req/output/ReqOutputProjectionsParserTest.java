@@ -114,6 +114,33 @@ public class ReqOutputProjectionsParserTest {
     );
   }
 
+  @Test
+  public void testStarTags() {
+    testParse(
+        ":*",
+        ":( id, record )",
+        0
+    );
+  }
+
+  @Test
+  public void testStarTags2() {
+    testParse(
+        ":record(bestFriend:*)",
+        ":record ( bestFriend :record )",
+        1
+    );
+  }
+
+  @Test
+  public void testStarFields() {
+    testParse(
+        ":record(*)",
+        ":record ( id, bestFriend :(), friends *( :() ), friendsMap [ * ]( :() ) )",
+        1
+    );
+  }
+
   // todo negative test cases too
 
   private void testParse(String expr, int steps) {

@@ -67,6 +67,7 @@ public interface UrlElementTypes {
   IElementType U_REQ_OUTPUT_COMA_SINGLE_TAG_PROJECTION = new UrlElementType("U_REQ_OUTPUT_COMA_SINGLE_TAG_PROJECTION");
   IElementType U_REQ_OUTPUT_COMA_VAR_PROJECTION = new UrlElementType("U_REQ_OUTPUT_COMA_VAR_PROJECTION");
   IElementType U_REQ_OUTPUT_MODEL_META = new UrlElementType("U_REQ_OUTPUT_MODEL_META");
+  IElementType U_REQ_OUTPUT_STAR_TAG_PROJECTION = new UrlElementType("U_REQ_OUTPUT_STAR_TAG_PROJECTION");
   IElementType U_REQ_OUTPUT_TRUNK_FIELD_PROJECTION = new UrlElementType("U_REQ_OUTPUT_TRUNK_FIELD_PROJECTION");
   IElementType U_REQ_OUTPUT_TRUNK_MAP_MODEL_PROJECTION = new UrlElementType("U_REQ_OUTPUT_TRUNK_MAP_MODEL_PROJECTION");
   IElementType U_REQ_OUTPUT_TRUNK_MODEL_PROJECTION = new UrlElementType("U_REQ_OUTPUT_TRUNK_MODEL_PROJECTION");
@@ -312,6 +313,9 @@ public interface UrlElementTypes {
       }
       else if (type == U_REQ_OUTPUT_MODEL_META) {
         return new UrlReqOutputModelMetaImpl(node);
+      }
+      else if (type == U_REQ_OUTPUT_STAR_TAG_PROJECTION) {
+        return new UrlReqOutputStarTagProjectionImpl(node);
       }
       else if (type == U_REQ_OUTPUT_TRUNK_FIELD_PROJECTION) {
         return new UrlReqOutputTrunkFieldProjectionImpl(node);

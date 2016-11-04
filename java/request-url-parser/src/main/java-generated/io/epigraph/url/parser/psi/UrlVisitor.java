@@ -239,6 +239,10 @@ public class UrlVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitReqOutputStarTagProjection(@NotNull UrlReqOutputStarTagProjection o) {
+    visitPsiElement(o);
+  }
+
   public void visitReqOutputTrunkFieldProjection(@NotNull UrlReqOutputTrunkFieldProjection o) {
     visitPsiElement(o);
   }

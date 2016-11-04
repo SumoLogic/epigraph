@@ -34,6 +34,12 @@ public class UrlReqOutputTrunkVarProjectionImpl extends ASTWrapperPsiElement imp
 
   @Override
   @Nullable
+  public UrlReqOutputStarTagProjection getReqOutputStarTagProjection() {
+    return findChildByClass(UrlReqOutputStarTagProjection.class);
+  }
+
+  @Override
+  @Nullable
   public UrlReqOutputTrunkSingleTagProjection getReqOutputTrunkSingleTagProjection() {
     return findChildByClass(UrlReqOutputTrunkSingleTagProjection.class);
   }

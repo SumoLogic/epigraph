@@ -40,6 +40,12 @@ public class UrlReqOutputComaVarProjectionImpl extends ASTWrapperPsiElement impl
 
   @Override
   @Nullable
+  public UrlReqOutputStarTagProjection getReqOutputStarTagProjection() {
+    return findChildByClass(UrlReqOutputStarTagProjection.class);
+  }
+
+  @Override
+  @Nullable
   public UrlReqOutputVarPolymorphicTail getReqOutputVarPolymorphicTail() {
     return findChildByClass(UrlReqOutputVarPolymorphicTail.class);
   }

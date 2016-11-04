@@ -11,6 +11,9 @@ public interface UrlReqOutputTrunkVarProjection extends PsiElement {
   UrlReqOutputComaMultiTagProjection getReqOutputComaMultiTagProjection();
 
   @Nullable
+  UrlReqOutputStarTagProjection getReqOutputStarTagProjection();
+
+  @Nullable
   UrlReqOutputTrunkSingleTagProjection getReqOutputTrunkSingleTagProjection();
 
   @Nullable

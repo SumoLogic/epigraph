@@ -35,8 +35,8 @@
 # Projections
 - [x] see `operations.esc`, bring java classes in sync
 - [x] var projection: add `@Nullable getPathTagProjection`. Same for records and maps
-- [ ] remove `includeInDefault` from `Op*` projections, add '*' to request projections instead
-- [ ] remove default tags from op projections. If var type has default tag (in schema), and operation can build this tag -- then it becomes an implicit default
+- [x] remove `includeInDefault` from `Op*` projections, add '*' to request projections instead
+- [x] remove default tags from op projections. If var type has default tag (in schema), and operation can build this tag -- then it becomes an implicit default
 - [ ] support for recursive projections
 
 # Operations  

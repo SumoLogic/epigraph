@@ -50,10 +50,16 @@ public class ReqOutputProjectionsPsiParser {
     final int steps;
     final boolean parenthesized;
 
+    @Nullable UrlReqOutputTrunkSingleTagProjection singleTagProjectionPsi = psi.getReqOutputTrunkSingleTagProjection();
     @NotNull final TypesResolver subResolver = addTypeNamespace(dataType.type, typesResolver);
 
-    @Nullable UrlReqOutputTrunkSingleTagProjection singleTagProjectionPsi = psi.getReqOutputTrunkSingleTagProjection();
-    if (singleTagProjectionPsi != null) {
+    if (psi.getReqOutputStarTagProjection() != null) {
+      steps = 0;
+      parenthesized = true;
+
+      tagProjections = new LinkedHashMap<>();
+      addStarTags(op, tagProjections, errors, psi);
+    } else if (singleTagProjectionPsi != null) {
       tagProjections = new LinkedHashMap<>();
 
       final ReqOutputModelProjection<?, ?> parsedModelProjection;
@@ -113,6 +119,37 @@ public class ReqOutputProjectionsPsiParser {
         steps,
         new ReqOutputVarProjection(type, tagProjections, tails, parenthesized, EpigraphPsiUtil.getLocation(psi))
     );
+  }
+
+  private static void addStarTags(
+      final @NotNull OpOutputVarProjection op,
+      final @NotNull LinkedHashMap<String, ReqOutputTagProjectionEntry> tagProjections,
+      final @NotNull List<PsiProcessingError> errors,
+      final @NotNull PsiElement locationPsi) throws PsiProcessingException {
+
+    TextLocation location = EpigraphPsiUtil.getLocation(locationPsi);
+
+    for (final Map.Entry<String, OpOutputTagProjectionEntry> entry : op.tagProjections().entrySet()) {
+      final Type.Tag tag = entry.getValue().tag();
+      final OpOutputModelProjection<?, ?> opModelProjection = entry.getValue().projection();
+
+      tagProjections.put(
+          entry.getKey(),
+          new ReqOutputTagProjectionEntry(
+              tag,
+              createDefaultModelProjection(
+                  tag.type,
+                  false,
+                  opModelProjection,
+                  ReqParams.EMPTY,
+                  Annotations.EMPTY,
+                  locationPsi,
+                  errors
+              ),
+              location
+          )
+      );
+    }
   }
 
   /**
@@ -221,9 +258,14 @@ public class ReqOutputProjectionsPsiParser {
     final boolean parenthesized;
 
     @NotNull final TypesResolver subResolver = addTypeNamespace(dataType.type, typesResolver);
-
     @Nullable UrlReqOutputComaSingleTagProjection singleTagProjectionPsi = psi.getReqOutputComaSingleTagProjection();
-    if (singleTagProjectionPsi != null) {
+
+    if (psi.getReqOutputStarTagProjection() != null) {
+      parenthesized = true;
+
+      tagProjections = new LinkedHashMap<>();
+      addStarTags(op, tagProjections, errors, psi);
+    } else if (singleTagProjectionPsi != null) {
       tagProjections = new LinkedHashMap<>();
       final ReqOutputModelProjection<?, ?> parsedModelProjection;
 
@@ -1064,60 +1106,92 @@ public class ReqOutputProjectionsPsiParser {
 
     Map<String, OpOutputFieldProjectionEntry> opFields = op.fieldProjections();
 
-    for (UrlReqOutputComaFieldProjection fieldProjectionPsi : psiFieldProjections) {
-      try {
-        final String fieldName = fieldProjectionPsi.getQid().getCanonicalName();
+    if (psi.getStar() != null) {
+      TextLocation location = EpigraphPsiUtil.getLocation(psi.getStar());
 
-        @Nullable OpOutputFieldProjectionEntry opFieldProjectionEntry = opFields.get(fieldName);
-
-        if (opFieldProjectionEntry == null)
-          throw new PsiProcessingException(
-              String.format(
-                  "Unsupported field '%s', supported fields: (%s)",
-                  fieldName,
-                  ProjectionUtils.listFields(opFields.keySet())
-              ),
-              fieldProjectionPsi,
-              errors
-          );
-
-        @NotNull final RecordType.Field field = opFieldProjectionEntry.field();
-        @NotNull final OpOutputFieldProjection opFieldProjection = opFieldProjectionEntry.projection();
-        final boolean fieldRequired = fieldProjectionPsi.getPlus() != null;
-
-        ReqParams fieldParams =
-            parseReqParams(fieldProjectionPsi.getReqParamList(), opFieldProjection.params(), resolver, errors);
-
-        Annotations fieldAnnotations = parseAnnotations(fieldProjectionPsi.getReqAnnotationList());
-
-        @Nullable UrlReqOutputComaVarProjection psiVarProjection = fieldProjectionPsi.getReqOutputComaVarProjection();
-        @NotNull ReqOutputVarProjection varProjection =
-            parseComaVarProjection(
-                field.dataType(),
-                opFieldProjection.projection(),
-                psiVarProjection,
-                resolver,
-                errors
-            ).projection();
-
-        @NotNull final TextLocation fieldLocation = EpigraphPsiUtil.getLocation(fieldProjectionPsi);
+      for (final Map.Entry<String, OpOutputFieldProjectionEntry> entry : opFields.entrySet()) {
+        final RecordType.Field field = entry.getValue().field();
+        @NotNull final OpOutputFieldProjection opFieldProjection = entry.getValue().projection();
 
         fieldProjections.put(
-            fieldName,
+            entry.getKey(),
             new ReqOutputFieldProjectionEntry(
                 field,
                 new ReqOutputFieldProjection(
-                    fieldParams,
-                    fieldAnnotations,
-                    varProjection,
-                    fieldRequired,
-                    fieldLocation
+                    ReqParams.EMPTY,
+                    Annotations.EMPTY,
+                    createDefaultVarProjection(
+                        field.dataType(),
+                        opFieldProjection.projection(),
+                        false,
+                        psi.getStar(),
+                        errors
+                    ),
+                    false,
+                    location
                 ),
-                fieldLocation
+                location
             )
         );
-      } catch (PsiProcessingException e) {
-        errors.add(e.toError());
+      }
+
+    } else {
+
+      for (UrlReqOutputComaFieldProjection fieldProjectionPsi : psiFieldProjections) {
+        try {
+          final String fieldName = fieldProjectionPsi.getQid().getCanonicalName();
+
+          @Nullable OpOutputFieldProjectionEntry opFieldProjectionEntry = opFields.get(fieldName);
+
+          if (opFieldProjectionEntry == null)
+            throw new PsiProcessingException(
+                String.format(
+                    "Unsupported field '%s', supported fields: (%s)",
+                    fieldName,
+                    ProjectionUtils.listFields(opFields.keySet())
+                ),
+                fieldProjectionPsi,
+                errors
+            );
+
+          @NotNull final RecordType.Field field = opFieldProjectionEntry.field();
+          @NotNull final OpOutputFieldProjection opFieldProjection = opFieldProjectionEntry.projection();
+          final boolean fieldRequired = fieldProjectionPsi.getPlus() != null;
+
+          ReqParams fieldParams =
+              parseReqParams(fieldProjectionPsi.getReqParamList(), opFieldProjection.params(), resolver, errors);
+
+          Annotations fieldAnnotations = parseAnnotations(fieldProjectionPsi.getReqAnnotationList());
+
+          @Nullable UrlReqOutputComaVarProjection psiVarProjection = fieldProjectionPsi.getReqOutputComaVarProjection();
+          @NotNull ReqOutputVarProjection varProjection =
+              parseComaVarProjection(
+                  field.dataType(),
+                  opFieldProjection.projection(),
+                  psiVarProjection,
+                  resolver,
+                  errors
+              ).projection();
+
+          @NotNull final TextLocation fieldLocation = EpigraphPsiUtil.getLocation(fieldProjectionPsi);
+
+          fieldProjections.put(
+              fieldName,
+              new ReqOutputFieldProjectionEntry(
+                  field,
+                  new ReqOutputFieldProjection(
+                      fieldParams,
+                      fieldAnnotations,
+                      varProjection,
+                      fieldRequired,
+                      fieldLocation
+                  ),
+                  fieldLocation
+              )
+          );
+        } catch (PsiProcessingException e) {
+          errors.add(e.toError());
+        }
       }
     }
 

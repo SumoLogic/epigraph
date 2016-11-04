@@ -197,6 +197,9 @@ public class UrlParser implements PsiParser, LightPsiParser {
     else if (t == U_REQ_OUTPUT_MODEL_META) {
       r = reqOutputModelMeta(b, 0);
     }
+    else if (t == U_REQ_OUTPUT_STAR_TAG_PROJECTION) {
+      r = reqOutputStarTagProjection(b, 0);
+    }
     else if (t == U_REQ_OUTPUT_TRUNK_FIELD_PROJECTION) {
       r = reqOutputTrunkFieldProjection(b, 0);
     }
@@ -1798,7 +1801,7 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '(' (reqOutputComaFieldProjection ','?)* ')'
+  // '(' ( '*' | ( (reqOutputComaFieldProjection ','?)* ) ) ')'
   public static boolean reqOutputComaRecordModelProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqOutputComaRecordModelProjection")) return false;
     if (!nextTokenIs(b, U_PAREN_LEFT)) return false;
@@ -1812,32 +1815,43 @@ public class UrlParser implements PsiParser, LightPsiParser {
     return r || p;
   }
 
-  // (reqOutputComaFieldProjection ','?)*
+  // '*' | ( (reqOutputComaFieldProjection ','?)* )
   private static boolean reqOutputComaRecordModelProjection_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqOutputComaRecordModelProjection_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, U_STAR);
+    if (!r) r = reqOutputComaRecordModelProjection_1_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // (reqOutputComaFieldProjection ','?)*
+  private static boolean reqOutputComaRecordModelProjection_1_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqOutputComaRecordModelProjection_1_1")) return false;
     int c = current_position_(b);
     while (true) {
-      if (!reqOutputComaRecordModelProjection_1_0(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "reqOutputComaRecordModelProjection_1", c)) break;
+      if (!reqOutputComaRecordModelProjection_1_1_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "reqOutputComaRecordModelProjection_1_1", c)) break;
       c = current_position_(b);
     }
     return true;
   }
 
   // reqOutputComaFieldProjection ','?
-  private static boolean reqOutputComaRecordModelProjection_1_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputComaRecordModelProjection_1_0")) return false;
+  private static boolean reqOutputComaRecordModelProjection_1_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqOutputComaRecordModelProjection_1_1_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = reqOutputComaFieldProjection(b, l + 1);
-    r = r && reqOutputComaRecordModelProjection_1_0_1(b, l + 1);
+    r = r && reqOutputComaRecordModelProjection_1_1_0_1(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
   // ','?
-  private static boolean reqOutputComaRecordModelProjection_1_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputComaRecordModelProjection_1_0_1")) return false;
+  private static boolean reqOutputComaRecordModelProjection_1_1_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqOutputComaRecordModelProjection_1_1_0_1")) return false;
     consumeToken(b, U_COMMA);
     return true;
   }
@@ -1901,7 +1915,10 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ( reqOutputComaMultiTagProjection | reqOutputComaSingleTagProjection ) reqOutputVarPolymorphicTail?
+  // ( reqOutputStarTagProjection
+  //                                | reqOutputComaMultiTagProjection
+  //                                | reqOutputComaSingleTagProjection
+  //                                ) reqOutputVarPolymorphicTail?
   public static boolean reqOutputComaVarProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqOutputComaVarProjection")) return false;
     boolean r;
@@ -1912,12 +1929,15 @@ public class UrlParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // reqOutputComaMultiTagProjection | reqOutputComaSingleTagProjection
+  // reqOutputStarTagProjection
+  //                                | reqOutputComaMultiTagProjection
+  //                                | reqOutputComaSingleTagProjection
   private static boolean reqOutputComaVarProjection_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqOutputComaVarProjection_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = reqOutputComaMultiTagProjection(b, l + 1);
+    r = reqOutputStarTagProjection(b, l + 1);
+    if (!r) r = reqOutputComaMultiTagProjection(b, l + 1);
     if (!r) r = reqOutputComaSingleTagProjection(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
@@ -1949,6 +1969,19 @@ public class UrlParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(b, l, "reqOutputModelMeta_1")) return false;
     consumeToken(b, U_PLUS);
     return true;
+  }
+
+  /* ********************************************************** */
+  // ':' '*'
+  public static boolean reqOutputStarTagProjection(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqOutputStarTagProjection")) return false;
+    if (!nextTokenIs(b, U_COLON)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, U_COLON);
+    r = r && consumeToken(b, U_STAR);
+    exit_section_(b, m, U_REQ_OUTPUT_STAR_TAG_PROJECTION, r);
+    return r;
   }
 
   /* ********************************************************** */
@@ -2093,7 +2126,10 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ( reqOutputComaMultiTagProjection | reqOutputTrunkSingleTagProjection ) reqOutputVarPolymorphicTail?
+  // ( reqOutputStarTagProjection
+  //                                 | reqOutputComaMultiTagProjection
+  //                                 | reqOutputTrunkSingleTagProjection
+  //                                 ) reqOutputVarPolymorphicTail?
   public static boolean reqOutputTrunkVarProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqOutputTrunkVarProjection")) return false;
     boolean r;
@@ -2104,12 +2140,15 @@ public class UrlParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // reqOutputComaMultiTagProjection | reqOutputTrunkSingleTagProjection
+  // reqOutputStarTagProjection
+  //                                 | reqOutputComaMultiTagProjection
+  //                                 | reqOutputTrunkSingleTagProjection
   private static boolean reqOutputTrunkVarProjection_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqOutputTrunkVarProjection_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = reqOutputComaMultiTagProjection(b, l + 1);
+    r = reqOutputStarTagProjection(b, l + 1);
+    if (!r) r = reqOutputComaMultiTagProjection(b, l + 1);
     if (!r) r = reqOutputTrunkSingleTagProjection(b, l + 1);
     exit_section_(b, m, null, r);
     return r;

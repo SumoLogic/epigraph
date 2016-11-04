@@ -138,6 +138,8 @@ reqMapModelPath ::= '/' reqOutputTrunkKeyProjection reqVarPath {pin=2}
 // req output --------------------------------------------------------
 // this is based on opInput from idl.bnf
 
+reqOutputStarTagProjection ::= ':' '*' // all tags with empty contents
+
 reqOutputModelMeta ::= '@' '+'? reqOutputComaModelProjection // no params/annotations on meta?
 
 reqOutputVarPolymorphicTail ::= reqOutputVarSingleTail | reqOutputVarMultiTail
@@ -150,7 +152,11 @@ reqOutputVarMultiTailItem ::= typeRef reqOutputComaVarProjection
 
 // req output trunk part
 
-reqOutputTrunkVarProjection ::= ( reqOutputComaMultiTagProjection | reqOutputTrunkSingleTagProjection ) reqOutputVarPolymorphicTail?
+reqOutputTrunkVarProjection ::= ( reqOutputStarTagProjection
+                                | reqOutputComaMultiTagProjection
+                                | reqOutputTrunkSingleTagProjection
+                                ) reqOutputVarPolymorphicTail?
+
 reqOutputTrunkSingleTagProjection ::= ( ':' '+'? tagName )? reqParamsAndAnnotations reqOutputTrunkModelProjection reqOutputModelMeta?
 
 //
@@ -172,7 +178,11 @@ private reqOutputTrunkKeyProjection ::= datum reqParamsAndAnnotations {pin=2}
 
 // req output coma part
 
-reqOutputComaVarProjection ::= ( reqOutputComaMultiTagProjection | reqOutputComaSingleTagProjection ) reqOutputVarPolymorphicTail?
+reqOutputComaVarProjection ::= ( reqOutputStarTagProjection
+                               | reqOutputComaMultiTagProjection
+                               | reqOutputComaSingleTagProjection
+                               ) reqOutputVarPolymorphicTail?
+
 reqOutputComaSingleTagProjection ::= ( ':' '+'? tagName)? reqOutputComaTagProjectionItem
 reqOutputComaMultiTagProjection ::= ':' '(' (reqOutputComaMultiTagProjectionItem ','?)* ')' {pin=2}
 reqOutputComaMultiTagProjectionItem ::= '+'? tagName reqOutputComaTagProjectionItem
@@ -185,7 +195,7 @@ reqOutputComaModelProjection ::= ( reqOutputComaRecordModelProjection
                                  )?
 
 // req output record
-reqOutputComaRecordModelProjection ::= '(' (reqOutputComaFieldProjection ','?)* ')' { pin=1 }
+reqOutputComaRecordModelProjection ::= '(' ( '*' | ( (reqOutputComaFieldProjection ','?)* ) ) ')' { pin=1 }
 reqOutputComaFieldProjection ::= '+'? qid reqParamsAndAnnotations reqOutputComaVarProjection
 
 // req output list
@@ -193,7 +203,7 @@ reqOutputComaListModelProjection ::= '*' ( '(' reqOutputComaVarProjection ')' )?
 
 // req output map
 reqOutputComaMapModelProjection ::= reqOutputComaKeysProjection ( '(' reqOutputComaVarProjection ')' )?
-reqOutputComaKeysProjection ::= ( ( '[' ( reqOutputComaKeyProjection ','? )* ']' ) | ( '[' '*' ']' ) )
+reqOutputComaKeysProjection ::= ( '[' ( reqOutputComaKeyProjection ','? )* ']' ) | ( '[' '*' ']' ) // todo fix
 reqOutputComaKeyProjection ::= datum reqParamsAndAnnotations
 
 // req update --------------------------------------------------------
