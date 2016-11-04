@@ -1,6 +1,6 @@
 package io.epigraph.gradle
 
-import com.sumologic.epigraph.schema.compiler.*
+import ws.epigraph.schema.compiler.*
 import org.gradle.api.GradleException
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.FileTree

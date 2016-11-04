@@ -2,7 +2,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.sumologic.epigraph.examples</groupId>
+  <groupId>ws.epigraph.examples</groupId>
   <artifactId>examples</artifactId>
   <version>0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
@@ -31,7 +31,7 @@
       <plugins>
 
         <plugin>
-          <groupId>com.sumologic.epigraph</groupId>
+          <groupId>ws.epigraph</groupId>
           <artifactId>epigraph-maven-plugin</artifactId>
           <version>0.0-SNAPSHOT</version>
           <executions>
@@ -45,7 +45,7 @@
         </plugin>
 
         <plugin>
-          <groupId>com.sumologic.epigraph</groupId>
+          <groupId>ws.epigraph</groupId>
           <artifactId>epigraph-java-maven-plugin</artifactId>
           <version>0.0-SNAPSHOT</version>
           <executions>
@@ -59,7 +59,7 @@
         </plugin>
 
         <plugin>
-          <groupId>com.sumologic.epigraph</groupId>
+          <groupId>ws.epigraph</groupId>
           <artifactId>epigraph-scala-maven-plugin</artifactId>
           <version>0.0-SNAPSHOT</version>
           <executions>

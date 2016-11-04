@@ -6,7 +6,7 @@
   <artifactId>epigraph-java-wire-common</artifactId>
 
   <parent>
-    <groupId>com.sumologic.epigraph</groupId>
+    <groupId>ws.epigraph</groupId>
     <artifactId>epigraph-java-wire</artifactId>
     <version>0.0-SNAPSHOT</version>
   </parent>

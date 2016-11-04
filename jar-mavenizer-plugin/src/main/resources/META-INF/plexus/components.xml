@@ -21,7 +21,7 @@
       <implementation>org.apache.maven.lifecycle.mapping.DefaultLifecycleMapping</implementation>
       <configuration>
         <phases>
-          <package>com.sumologic.epigraph:jar-mavenizer-plugin:package</package>
+          <package>ws.epigraph:jar-mavenizer-plugin:package</package>
           <install>org.apache.maven.plugins:maven-install-plugin:install</install>
           <deploy>org.apache.maven.plugins:maven-deploy-plugin:deploy</deploy>
         </phases>

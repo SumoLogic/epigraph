@@ -6,7 +6,7 @@
     <artifactId>examples-sumo-schema-java</artifactId>
 
     <parent>
-        <groupId>com.sumologic.epigraph.examples</groupId>
+        <groupId>ws.epigraph.examples</groupId>
         <artifactId>examples</artifactId>
         <version>0.0-SNAPSHOT</version>
     </parent>
@@ -20,7 +20,7 @@
         </dependency>
 
         <dependency>
-            <groupId>com.sumologic.epigraph</groupId>
+            <groupId>ws.epigraph</groupId>
             <artifactId>epigraph-java-core</artifactId>
             <version>0.0-SNAPSHOT</version>
         </dependency>
@@ -32,7 +32,7 @@
         <plugins>
 
             <plugin>
-                <groupId>com.sumologic.epigraph</groupId>
+                <groupId>ws.epigraph</groupId>
                 <artifactId>epigraph-java-maven-plugin</artifactId>
             </plugin>
 

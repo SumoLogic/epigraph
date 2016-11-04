@@ -1,6 +1,6 @@
 package io.epigraph.gradle.java
 
-import com.sumologic.epigraph.java.JavaSchemaGenerator
+import ws.epigraph.java.JavaSchemaGenerator
 import io.epigraph.gradle.EmptyFileTree
 import io.epigraph.gradle.EpigraphSchemaTaskBase
 import org.gradle.api.DefaultTask

@@ -6,7 +6,7 @@
   <packaging>pom</packaging>
 
   <parent>
-    <groupId>com.sumologic.epigraph.examples</groupId>
+    <groupId>ws.epigraph.examples</groupId>
     <artifactId>examples</artifactId>
     <version>0.0-SNAPSHOT</version>
   </parent>
