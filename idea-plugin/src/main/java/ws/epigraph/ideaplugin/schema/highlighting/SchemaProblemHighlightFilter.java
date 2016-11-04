@@ -8,7 +8,7 @@ import ws.epigraph.ideaplugin.schema.index.SchemaFileIndexUtil;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * @author <a href="mailto:konstantin.sobolev.com">Konstantin Sobolev</a>
+ * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class SchemaProblemHighlightFilter extends ProblemHighlightFilter {
   @Override

@@ -5,7 +5,7 @@ package ws.epigraph.scala
 import java.nio.file.Path
 
 import ws.epigraph.schema.compiler._
-import io.epigraph.lang.Qn
+import ws.epigraph.lang.Qn
 
 import scala.collection.GenTraversableOnce
 import scala.collection.JavaConversions._

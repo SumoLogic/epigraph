@@ -12,18 +12,18 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.util.containers.ContainerUtil;
-import io.epigraph.schema.parser.psi.*;
+import ws.epigraph.schema.parser.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Set;
 
-import static io.epigraph.schema.lexer.SchemaElementTypes.S_BLOCK_COMMENT;
-import static io.epigraph.schema.lexer.SchemaElementTypes.S_COMMENT;
+import static ws.epigraph.schema.lexer.SchemaElementTypes.S_BLOCK_COMMENT;
+import static ws.epigraph.schema.lexer.SchemaElementTypes.S_COMMENT;
 
 /**
- * @author <a href="mailto:konstantin.sobolev.com">Konstantin Sobolev</a>
+ * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class SchemaFoldingBuilder extends CustomFoldingBuilder implements DumbAware {
 

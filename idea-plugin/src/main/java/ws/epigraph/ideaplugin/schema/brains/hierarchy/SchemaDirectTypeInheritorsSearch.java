@@ -2,11 +2,11 @@ package ws.epigraph.ideaplugin.schema.brains.hierarchy;
 
 import com.intellij.util.Query;
 import com.intellij.util.QueryFactory;
-import io.epigraph.schema.parser.psi.SchemaTypeDef;
+import ws.epigraph.schema.parser.psi.SchemaTypeDef;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * @author <a href="mailto:konstantin.sobolev.com">Konstantin Sobolev</a>
+ * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class SchemaDirectTypeInheritorsSearch extends QueryFactory<SchemaTypeDef, SchemaDirectTypeInheritorsSearch.SearchParameters> {
   public static final SchemaDirectTypeInheritorsSearch INSTANCE = new SchemaDirectTypeInheritorsSearch();

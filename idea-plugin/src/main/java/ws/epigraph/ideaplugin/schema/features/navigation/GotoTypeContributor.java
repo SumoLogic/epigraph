@@ -5,12 +5,12 @@ import com.intellij.navigation.NavigationItem;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.search.GlobalSearchScope;
 import ws.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
-import io.epigraph.lang.Qn;
-import io.epigraph.schema.parser.psi.SchemaTypeDef;
+import ws.epigraph.lang.Qn;
+import ws.epigraph.schema.parser.psi.SchemaTypeDef;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * @author <a href="mailto:konstantin.sobolev.com">Konstantin Sobolev</a>
+ * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class GotoTypeContributor implements ChooseByNameContributor {
   @NotNull

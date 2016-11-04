@@ -1,12 +1,12 @@
 package ws.epigraph.schema.compiler
 
 import com.intellij.psi.{PsiErrorElement, PsiRecursiveElementWalkingVisitor}
-import io.epigraph.schema.parser.psi.SchemaFile
+import ws.epigraph.schema.parser.psi.SchemaFile
 
 import scala.collection.mutable
 
 /**
- * @author <a href="mailto:konstantin.sobolev.com">Konstantin Sobolev</a>
+ * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 object ParseErrorsDumper {
   // tweak to your liking

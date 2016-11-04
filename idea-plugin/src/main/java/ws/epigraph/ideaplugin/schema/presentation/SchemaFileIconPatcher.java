@@ -11,13 +11,13 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.LayeredIcon;
 import com.intellij.util.PlatformIcons;
 import ws.epigraph.ideaplugin.schema.index.SchemaFileIndexUtil;
-import io.epigraph.schema.parser.SchemaFileType;
+import ws.epigraph.schema.parser.SchemaFileType;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
 /**
- * @author <a href="mailto:konstantin.sobolev.com">Konstantin Sobolev</a>
+ * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class SchemaFileIconPatcher implements FileIconPatcher {
   @Override

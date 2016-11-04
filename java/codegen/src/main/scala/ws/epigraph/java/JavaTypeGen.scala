@@ -35,14 +35,14 @@ abstract class JavaTypeGen[Type >: Null <: CType](from: Type, ctx: CContext) ext
 //  def listSupplier: String = ctx.getAnonListOf(t).map { lt => sn"""\
 //
 //    @Override
-//    protected @NotNull java.util.function.Supplier<io.epigraph.types.ListType> listTypeSupplier() {
+//    protected @NotNull java.util.function.Supplier<ws.epigraph.types.ListType> listTypeSupplier() {
 //      return () -> ${lqn(lt, t)}.Type.instance();
 //    }
 //"""
 //  }.getOrElse("")
 
   def dataTypeExpr(dt: CDataType, lt: CType): String =
-    s"new io.epigraph.types.DataType(${lqrn(dt.typeRef, lt)}.Type.instance(), ${dt.effectiveDefaultTagName.map(dttr(dt, _, t)).getOrElse("null")})"
+    s"new ws.epigraph.types.DataType(${lqrn(dt.typeRef, lt)}.Type.instance(), ${dt.effectiveDefaultTagName.map(dttr(dt, _, t)).getOrElse("null")})"
 
   protected def vt(t: CType, yes: => String, no: => String): String = t match {
     case _: CVarTypeDef => yes

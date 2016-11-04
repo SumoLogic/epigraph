@@ -2,11 +2,11 @@ package ws.epigraph.ideaplugin.schema.index;
 
 import com.intellij.psi.stubs.StringStubIndexExtension;
 import com.intellij.psi.stubs.StubIndexKey;
-import io.epigraph.schema.parser.psi.SchemaSupplementDef;
+import ws.epigraph.schema.parser.psi.SchemaSupplementDef;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * @author <a href="mailto:konstantin.sobolev.com">Konstantin Sobolev</a>
+ * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class SchemaSupplementBySourceIndex extends StringStubIndexExtension<SchemaSupplementDef> {
   @NotNull

@@ -8,7 +8,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiNamedElement;
 import com.intellij.ui.SimpleColoredText;
 import ws.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
-import io.epigraph.schema.parser.psi.*;
+import ws.epigraph.schema.parser.psi.*;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;

@@ -16,7 +16,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import ws.epigraph.ideaplugin.schema.SchemaBundle;
 import ws.epigraph.ideaplugin.schema.brains.hierarchy.TypeMembers;
-import io.epigraph.schema.parser.psi.*;
+import ws.epigraph.schema.parser.psi.*;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

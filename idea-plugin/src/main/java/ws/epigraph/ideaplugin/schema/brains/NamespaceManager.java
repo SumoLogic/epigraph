@@ -5,11 +5,11 @@ import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import ws.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
-import io.epigraph.lang.Qn;
-import io.epigraph.schema.parser.psi.SchemaFile;
-import io.epigraph.schema.parser.psi.SchemaQn;
-import io.epigraph.schema.parser.psi.SchemaImportStatement;
-import io.epigraph.schema.parser.psi.SchemaNamespaceDecl;
+import ws.epigraph.lang.Qn;
+import ws.epigraph.schema.parser.psi.SchemaFile;
+import ws.epigraph.schema.parser.psi.SchemaQn;
+import ws.epigraph.schema.parser.psi.SchemaImportStatement;
+import ws.epigraph.schema.parser.psi.SchemaNamespaceDecl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * @author <a href="mailto:konstantin.sobolev.com">Konstantin Sobolev</a>
+ * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class NamespaceManager {
   public static Qn[] DEFAULT_NAMESPACES = new Qn[]{new Qn("epigraph")};

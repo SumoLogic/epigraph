@@ -5,7 +5,7 @@ package ws.epigraph.schema.compiler
 import java.util.concurrent.ConcurrentLinkedQueue
 
 import com.intellij.psi.PsiElement
-import io.epigraph.schema.parser.psi._
+import ws.epigraph.schema.parser.psi._
 import org.jetbrains.annotations.Nullable
 
 import scala.annotation.meta.getter

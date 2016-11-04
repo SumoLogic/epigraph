@@ -1,4 +1,4 @@
-namespace com.sumologic.epigraph.schema.compiler.tests
+namespace ws.epigraph.schema.compiler.tests
 
 integer A
 

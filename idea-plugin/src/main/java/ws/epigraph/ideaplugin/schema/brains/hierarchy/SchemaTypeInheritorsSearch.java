@@ -7,11 +7,11 @@ import com.intellij.psi.SmartPsiElementPointer;
 import com.intellij.util.Query;
 import com.intellij.util.QueryFactory;
 import com.intellij.util.containers.ContainerUtil;
-import io.epigraph.schema.parser.psi.SchemaTypeDef;
+import ws.epigraph.schema.parser.psi.SchemaTypeDef;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * @author <a href="mailto:konstantin.sobolev.com">Konstantin Sobolev</a>
+ * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class SchemaTypeInheritorsSearch extends QueryFactory<SchemaTypeDef, SchemaTypeInheritorsSearch.SearchParameters> {
   public static final SchemaTypeInheritorsSearch INSTANCE = new SchemaTypeInheritorsSearch();

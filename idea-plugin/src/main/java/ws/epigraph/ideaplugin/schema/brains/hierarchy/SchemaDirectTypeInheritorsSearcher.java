@@ -11,10 +11,10 @@ import com.intellij.util.QueryExecutor;
 import ws.epigraph.ideaplugin.schema.brains.hierarchy.SchemaDirectTypeInheritorsSearch.SearchParameters;
 import ws.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
 import ws.epigraph.ideaplugin.schema.index.SchemaSearchScopeUtil;
-import io.epigraph.schema.parser.psi.SchemaRecordTypeDef;
-import io.epigraph.schema.parser.psi.SchemaSupplementDef;
-import io.epigraph.schema.parser.psi.SchemaTypeDef;
-import io.epigraph.schema.parser.psi.SchemaVarTypeDef;
+import ws.epigraph.schema.parser.psi.SchemaRecordTypeDef;
+import ws.epigraph.schema.parser.psi.SchemaSupplementDef;
+import ws.epigraph.schema.parser.psi.SchemaTypeDef;
+import ws.epigraph.schema.parser.psi.SchemaVarTypeDef;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * @author <a href="mailto:konstantin.sobolev.com">Konstantin Sobolev</a>
+ * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class SchemaDirectTypeInheritorsSearcher implements QueryExecutor<SchemaTypeDef, SearchParameters> {
   @Override

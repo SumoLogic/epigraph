@@ -7,15 +7,15 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.tree.IElementType;
-import io.epigraph.schema.parser.SchemaLanguage;
-import io.epigraph.schema.parser.SchemaParserDefinition;
+import ws.epigraph.schema.parser.SchemaLanguage;
+import ws.epigraph.schema.parser.SchemaParserDefinition;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static io.epigraph.schema.lexer.SchemaElementTypes.*;
+import static ws.epigraph.schema.lexer.SchemaElementTypes.*;
 
 /**
- * @author <a href="mailto:konstantin.sobolev.com">Konstantin Sobolev</a>
+ * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class SchemaFormattingModelBuilder implements FormattingModelBuilder {
   @NotNull

@@ -15,7 +15,7 @@ class RecordGen(from: CRecordTypeDef, ctx: CContext) extends JavaTypeDefGen[CRec
 
 package ${pn(t)};
 
-import io.epigraph.types.RecordType.Field;
+import ws.epigraph.types.RecordType.Field;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -23,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Base (read) interface for `${t.name.name}` datum.
  */
-public interface $ln extends${withParents(t)} io.epigraph.data.RecordDatum.Static {
+public interface $ln extends${withParents(t)} ws.epigraph.data.RecordDatum.Static {
 
   @NotNull $ln.Type type = $ln.Type.instance();
 
@@ -68,7 +68,7 @@ ${  f.effectiveDefaultTagName match { // default tag accessors (implied or expli
   /**
    * Class for `${t.name.name}` datum type.
    */
-  class Type extends io.epigraph.types.RecordType.Static<
+  class Type extends ws.epigraph.types.RecordType.Static<
       $ln.Imm,
       $ln.Builder,
       $ln.Imm.Value,
@@ -83,7 +83,7 @@ ${  f.effectiveDefaultTagName match { // default tag accessors (implied or expli
 
     private Type() {
       super(
-          new io.epigraph.names.QualifiedTypeName(${qnameArgs(t.name.fqn).mkString("\"", "\", \"", "\"")}),
+          new ws.epigraph.names.QualifiedTypeName(${qnameArgs(t.name.fqn).mkString("\"", "\", \"", "\"")}),
           java.util.Arrays.asList(${t.linearizedParents.map(lqn(_, t, _ + ".Type.instance()")).mkString(", ")}),
           $ln.Builder::new,
           $ln.Imm.Value.Impl::new,
@@ -106,7 +106,7 @@ ${t.declaredFields.map { f => sn"""
   /**
    * Base interface for `${t.name.name}` value (holding a datum or an error).
    */
-  interface Value extends${withParents(".Value")} io.epigraph.data.Val.Static {
+  interface Value extends${withParents(".Value")} ws.epigraph.data.Val.Static {
 
     @Override
     @Nullable $ln getDatum();
@@ -119,7 +119,7 @@ ${t.declaredFields.map { f => sn"""
   /**
    * Base interface for `${t.name.name}` data (holding single default representation of the type).
    */
-  interface Data extends${withParents(".Data")} io.epigraph.data.Data.Static {
+  interface Data extends${withParents(".Data")} ws.epigraph.data.Data.Static {
 
     @Override
     @NotNull $ln.Imm.Data toImmutable();
@@ -133,7 +133,7 @@ ${t.declaredFields.map { f => sn"""
   /**
    * Immutable interface for `${t.name.name}` datum.
    */
-  interface Imm extends $ln,${withParents(".Imm")} io.epigraph.data.RecordDatum.Imm.Static {
+  interface Imm extends $ln,${withParents(".Imm")} ws.epigraph.data.RecordDatum.Imm.Static {
 ${t.effectiveFields.map { f => sn"""\
 ${  f.valueDataType.typeRef.resolved match { // data accessors (for union typed fields)
       case vartype: CVarTypeDef => sn"""\
@@ -165,9 +165,9 @@ ${  f.effectiveDefaultTagName match { // default tag accessors (implied or expli
 }\
 
     /** Private implementation of `$ln.Imm` interface. */
-    final class Impl extends io.epigraph.data.RecordDatum.Imm.Static.Impl<$ln.Imm, $ln.Imm.Value> implements $ln.Imm {
+    final class Impl extends ws.epigraph.data.RecordDatum.Imm.Static.Impl<$ln.Imm, $ln.Imm.Value> implements $ln.Imm {
 
-      private Impl(@NotNull io.epigraph.data.RecordDatum.Imm.Raw raw) { super($ln.Type.instance(), raw, $ln.Imm.Value.Impl::new); }
+      private Impl(@NotNull ws.epigraph.data.RecordDatum.Imm.Raw raw) { super($ln.Type.instance(), raw, $ln.Imm.Value.Impl::new); }
 ${t.effectiveFields.map { f => sn"""\
 ${  f.valueDataType.typeRef.resolved match { // data accessors (for union typed fields)
       case vartype: CVarTypeDef => sn"""\
@@ -189,7 +189,7 @@ ${  f.effectiveDefaultTagName match { // default tag accessors (implied or expli
         /** Returns immutable `${f.name}` field datum${vt(f.typeRef, s" for default `$dtn` tag", "")}. */
         @Override
         public @Nullable ${lqn(tt(f.typeRef, dtn), t)}.Imm get${up(f.name)}() {
-          return io.epigraph.util.Util.apply(get${up(f.name)}_(), ${lqn(tt(f.typeRef, dtn), t)}.Imm.Value::getDatum);
+          return ws.epigraph.util.Util.apply(get${up(f.name)}_(), ${lqn(tt(f.typeRef, dtn), t)}.Imm.Value::getDatum);
         }
 
         /** Returns immutable `${f.name}` field entry${vt(f.typeRef, s" for default `$dtn` tag", "")}. */
@@ -209,16 +209,16 @@ ${  f.effectiveDefaultTagName match { // default tag accessors (implied or expli
     /**
      * Immutable interface for `${t.name.name}` value (holding an immutable datum or an error).
      */
-    interface Value extends $ln.Value,${withParents(".Imm.Value")} io.epigraph.data.Val.Imm.Static {
+    interface Value extends $ln.Value,${withParents(".Imm.Value")} ws.epigraph.data.Val.Imm.Static {
 
       @Override
       @Nullable $ln.Imm getDatum();
 
       /** Private implementation of `$ln.Imm.Value` interface. */
-      final class Impl extends io.epigraph.data.Val.Imm.Static.Impl<$ln.Imm.Value, $ln.Imm>
+      final class Impl extends ws.epigraph.data.Val.Imm.Static.Impl<$ln.Imm.Value, $ln.Imm>
           implements $ln.Imm.Value {
 
-        public Impl(@NotNull io.epigraph.data.Val.Imm.Raw raw) { super(raw); }
+        public Impl(@NotNull ws.epigraph.data.Val.Imm.Raw raw) { super(raw); }
 
       }
 
@@ -227,7 +227,7 @@ ${  f.effectiveDefaultTagName match { // default tag accessors (implied or expli
     /**
      * Immutable interface for `${t.name.name}` data (holding single default representation of the type).
      */
-    interface Data extends $ln.Data,${withParents(".Imm.Data")} io.epigraph.data.Data.Imm.Static {
+    interface Data extends $ln.Data,${withParents(".Imm.Data")} ws.epigraph.data.Data.Imm.Static {
 
       @Override
       @Nullable $ln.Imm get();
@@ -236,10 +236,10 @@ ${  f.effectiveDefaultTagName match { // default tag accessors (implied or expli
       @Nullable $ln.Imm.Value get_();
 
       /** Private implementation of `$ln.Imm.Data` interface. */
-      final class Impl extends io.epigraph.data.Data.Imm.Static.Impl<$ln.Imm.Data>
+      final class Impl extends ws.epigraph.data.Data.Imm.Static.Impl<$ln.Imm.Data>
           implements $ln.Imm.Data {
 
-        protected Impl(@NotNull io.epigraph.data.Data.Imm.Raw raw) { super($ln.Type.instance(), raw); }
+        protected Impl(@NotNull ws.epigraph.data.Data.Imm.Raw raw) { super($ln.Type.instance(), raw); }
 
         @Override
         public @Nullable $ln.Imm get() {
@@ -260,9 +260,9 @@ ${  f.effectiveDefaultTagName match { // default tag accessors (implied or expli
   /**
    * Builder for `${t.name.name}` datum.
    */
-  final class Builder extends io.epigraph.data.RecordDatum.Builder.Static<$ln.Imm, $ln.Builder.Value> implements $ln {
+  final class Builder extends ws.epigraph.data.RecordDatum.Builder.Static<$ln.Imm, $ln.Builder.Value> implements $ln {
 
-    private Builder(@NotNull io.epigraph.data.RecordDatum.Builder.Raw raw) { super($ln.Type.instance(), raw, $ln.Imm.Impl::new, $ln.Builder.Value::new); }
+    private Builder(@NotNull ws.epigraph.data.RecordDatum.Builder.Raw raw) { super($ln.Type.instance(), raw, $ln.Imm.Impl::new, $ln.Builder.Value::new); }
 ${t.effectiveFields.map { f => // for each effective field
     sn"""\
 ${  f.valueDataType.typeRef.resolved match { // data accessors (for union typed fields)
@@ -289,7 +289,7 @@ ${  f.effectiveDefaultTagName match { // default tag (implied or explicit, if an
     /** Returns `${f.name}` field datum${vt(f.typeRef, s" for default `$dtn` tag", "")}. */
     @Override
     public @Nullable ${lqn(tt(f.typeRef, dtn), t)} get${up(f.name)}() {
-      return io.epigraph.util.Util.apply(get${up(f.name)}_(), ${lqn(tt(f.typeRef, dtn), t)}.Value::getDatum);
+      return ws.epigraph.util.Util.apply(get${up(f.name)}_(), ${lqn(tt(f.typeRef, dtn), t)}.Value::getDatum);
     }
 
     /** Sets `${f.name}` field to specified ${vt(f.typeRef, s"default `$dtn` tag ", "")}datum. */
@@ -299,7 +299,7 @@ ${  f.effectiveDefaultTagName match { // default tag (implied or explicit, if an
     }
 
     /** Sets `${f.name}` field to specified ${vt(f.typeRef, s"default `$dtn` tag ", "")}error. */
-    public @NotNull $ln.Builder set${up(f.name)}_Error(@NotNull io.epigraph.errors.ErrorValue error) {
+    public @NotNull $ln.Builder set${up(f.name)}_Error(@NotNull ws.epigraph.errors.ErrorValue error) {
       _raw().setData($ln.${jn(f.name)}, ${lqrn(f.typeRef, t)}.Type.instance().createDataBuilder().set${vt(f.typeRef, up(dtn), "")}_Error(error));
       return this;
     }

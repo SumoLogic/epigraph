@@ -2,7 +2,7 @@
 
 package ws.epigraph.schema.compiler
 
-import io.epigraph.schema.parser.psi.{SchemaAnonList, SchemaAnonMap, SchemaQnTypeRef, SchemaTypeRef}
+import ws.epigraph.schema.parser.psi.{SchemaAnonList, SchemaAnonMap, SchemaQnTypeRef, SchemaTypeRef}
 
 
 object CTypeRef {

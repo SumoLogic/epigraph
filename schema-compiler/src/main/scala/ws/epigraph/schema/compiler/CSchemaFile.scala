@@ -7,8 +7,8 @@ import java.util.function.BiFunction
 import java.util.regex.Pattern
 
 import com.intellij.psi.PsiElement
-import io.epigraph.lang.Qn
-import io.epigraph.schema.parser.psi._
+import ws.epigraph.lang.Qn
+import ws.epigraph.schema.parser.psi._
 import net.jcip.annotations.ThreadSafe
 import org.jetbrains.annotations.Nullable
 

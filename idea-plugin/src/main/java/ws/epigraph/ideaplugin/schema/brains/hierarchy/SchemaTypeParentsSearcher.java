@@ -12,13 +12,13 @@ import com.intellij.psi.PsiAnchor;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.Queue;
-import io.epigraph.schema.parser.psi.SchemaTypeDef;
+import ws.epigraph.schema.parser.psi.SchemaTypeDef;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
 /**
- * @author <a href="mailto:konstantin.sobolev.com">Konstantin Sobolev</a>
+ * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class SchemaTypeParentsSearcher extends QueryExecutorBase<SchemaTypeDef, SchemaTypeParentsSearch.SearchParameters> {
   @Override

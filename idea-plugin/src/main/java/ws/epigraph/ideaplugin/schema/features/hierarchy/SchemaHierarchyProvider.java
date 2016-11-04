@@ -7,13 +7,13 @@ import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
-import io.epigraph.schema.parser.psi.SchemaSupplementDef;
-import io.epigraph.schema.parser.psi.SchemaTypeDef;
+import ws.epigraph.schema.parser.psi.SchemaSupplementDef;
+import ws.epigraph.schema.parser.psi.SchemaTypeDef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * @author <a href="mailto:konstantin.sobolev.com">Konstantin Sobolev</a>
+ * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class SchemaHierarchyProvider implements HierarchyProvider {
   @Nullable

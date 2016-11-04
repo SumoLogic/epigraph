@@ -2,7 +2,7 @@
 
 package ws.epigraph.schema.compiler
 
-import io.epigraph.schema.parser.psi.{SchemaDefaultOverride, SchemaValueTypeRef}
+import ws.epigraph.schema.parser.psi.{SchemaDefaultOverride, SchemaValueTypeRef}
 import org.jetbrains.annotations.Nullable
 
 /**

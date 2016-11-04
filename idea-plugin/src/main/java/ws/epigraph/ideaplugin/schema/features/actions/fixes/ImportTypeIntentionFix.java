@@ -19,10 +19,10 @@ import ws.epigraph.ideaplugin.schema.features.actions.SchemaNamespaceRenderer;
 import ws.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
 import ws.epigraph.ideaplugin.schema.index.SchemaSearchScopeUtil;
 import ws.epigraph.ideaplugin.schema.options.SchemaSettings;
-import io.epigraph.lang.Qn;
-import io.epigraph.schema.parser.psi.SchemaFile;
-import io.epigraph.schema.parser.psi.SchemaQnTypeRef;
-import io.epigraph.schema.parser.psi.SchemaTypeDef;
+import ws.epigraph.lang.Qn;
+import ws.epigraph.schema.parser.psi.SchemaFile;
+import ws.epigraph.schema.parser.psi.SchemaQnTypeRef;
+import ws.epigraph.schema.parser.psi.SchemaTypeDef;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
@@ -32,7 +32,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
- * @author <a href="mailto:konstantin.sobolev.com">Konstantin Sobolev</a>
+ * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ImportTypeIntentionFix implements HintAction {
   // TODO(low) implement LocalQuickFix, see CreateNSDeclarationIntentionFix

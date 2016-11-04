@@ -1,10 +1,10 @@
 package ws.epigraph.ideaplugin.schema.brains;
 
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
-import io.epigraph.schema.parser.psi.SchemaFile;
+import ws.epigraph.schema.parser.psi.SchemaFile;
 
 /**
- * @author <a href="mailto:konstantin.sobolev.com">Konstantin Sobolev</a>
+ * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class RenameTest extends LightCodeInsightFixtureTestCase {
   @Override

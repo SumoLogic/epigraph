@@ -10,9 +10,9 @@ import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.search.GlobalSearchScope;
 import ws.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
 import ws.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
-import io.epigraph.lang.Qn;
-import io.epigraph.schema.parser.psi.SchemaFile;
-import io.epigraph.schema.parser.psi.SchemaTypeDef;
+import ws.epigraph.lang.Qn;
+import ws.epigraph.schema.parser.psi.SchemaFile;
+import ws.epigraph.schema.parser.psi.SchemaTypeDef;
 import org.jetbrains.annotations.Nullable;
 
 /**

@@ -15,12 +15,12 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import ws.epigraph.ideaplugin.schema.index.SchemaFileIndexUtil;
 import ws.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
-import io.epigraph.schema.parser.Common;
+import ws.epigraph.schema.parser.Common;
 
 import java.util.Map;
 
 /**
- * @author <a href="mailto:konstantin.sobolev.com">Konstantin Sobolev</a>
+ * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class CreateSchemaFileAction extends CreateFileFromTemplateAction implements DumbAware {
   public static final String NEW_SCHEMA_FILE = "New Epigraph Schema File";

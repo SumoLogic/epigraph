@@ -5,7 +5,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiNamedElement;
 import ws.epigraph.ideaplugin.schema.SchemaBundle;
 import ws.epigraph.ideaplugin.schema.brains.hierarchy.HierarchyCache;
-import io.epigraph.schema.parser.psi.SchemaTypeDef;
+import ws.epigraph.schema.parser.psi.SchemaTypeDef;
 
 import java.util.Comparator;
 import java.util.List;

@@ -9,20 +9,20 @@ import com.intellij.psi.PsiElement;
 import ws.epigraph.ideaplugin.schema.brains.hierarchy.HierarchyCache;
 import ws.epigraph.ideaplugin.schema.brains.hierarchy.TypeMembers;
 import ws.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
-import io.epigraph.schema.parser.psi.SchemaFieldDecl;
-import io.epigraph.schema.parser.psi.SchemaSupplementDef;
-import io.epigraph.schema.parser.psi.SchemaTypeDef;
-import io.epigraph.schema.parser.psi.SchemaVarTagDecl;
+import ws.epigraph.schema.parser.psi.SchemaFieldDecl;
+import ws.epigraph.schema.parser.psi.SchemaSupplementDef;
+import ws.epigraph.schema.parser.psi.SchemaTypeDef;
+import ws.epigraph.schema.parser.psi.SchemaVarTagDecl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.List;
 
-import static io.epigraph.schema.lexer.SchemaElementTypes.S_QID;
+import static ws.epigraph.schema.lexer.SchemaElementTypes.S_QID;
 
 /**
- * @author <a href="mailto:konstantin.sobolev.com">Konstantin Sobolev</a>
+ * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class SchemaLineMarkerProvider extends RelatedItemLineMarkerProvider {
   @Nullable

@@ -5,14 +5,14 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.usages.impl.rules.UsageType;
 import com.intellij.usages.impl.rules.UsageTypeProvider;
-import io.epigraph.schema.parser.psi.SchemaFile;
-import io.epigraph.schema.parser.psi.SchemaQnSegment;
-import io.epigraph.schema.parser.psi.SchemaImportStatement;
-import io.epigraph.schema.parser.psi.SchemaVarTagRef;
+import ws.epigraph.schema.parser.psi.SchemaFile;
+import ws.epigraph.schema.parser.psi.SchemaQnSegment;
+import ws.epigraph.schema.parser.psi.SchemaImportStatement;
+import ws.epigraph.schema.parser.psi.SchemaVarTagRef;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * @author <a href="mailto:konstantin.sobolev.com">Konstantin Sobolev</a>
+ * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class SchemaUsageTypeProvider implements UsageTypeProvider {
   @Nullable

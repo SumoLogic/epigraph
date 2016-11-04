@@ -10,8 +10,8 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IconUtil;
 import ws.epigraph.ideaplugin.schema.brains.NamespaceManager;
 import ws.epigraph.ideaplugin.schema.brains.VirtualFileUtil;
-import io.epigraph.lang.Qn;
-import io.epigraph.schema.parser.psi.*;
+import ws.epigraph.lang.Qn;
+import ws.epigraph.schema.parser.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,7 +19,7 @@ import javax.swing.*;
 import java.util.List;
 
 /**
- * @author <a href="mailto:konstantin.sobolev.com">Konstantin Sobolev</a>
+ * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class SchemaPresentationUtil {
   private static final String OVERLAY = "§";

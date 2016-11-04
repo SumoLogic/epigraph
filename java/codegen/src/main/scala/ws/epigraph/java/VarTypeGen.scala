@@ -14,7 +14,7 @@ class VarTypeGen(from: CVarTypeDef, ctx: CContext) extends JavaTypeDefGen[CVarTy
 
 package ${pn(t)};
 
-import io.epigraph.types.Type.Tag;
+import ws.epigraph.types.Type.Tag;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -22,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Base (read) interface for `${t.name.name}` data.
  */
-public interface $ln extends${withParents(t)} io.epigraph.data.Data.Static {
+public interface $ln extends${withParents(t)} ws.epigraph.data.Data.Static {
 
   @NotNull $ln.Type type = $ln.Type.instance();
 
@@ -45,7 +45,7 @@ ${t.effectiveTags.map { tag => sn"""\
   ${"/**"}
    * Class for `${t.name.name}` type.
    */
-  final class Type extends io.epigraph.types.UnionType.Static<$ln.Imm, $ln.Builder> {
+  final class Type extends ws.epigraph.types.UnionType.Static<$ln.Imm, $ln.Builder> {
 
     private static final class Holder { public static $ln.Type instance = new $ln.Type(); }
 
@@ -53,7 +53,7 @@ ${t.effectiveTags.map { tag => sn"""\
 
     private Type() {
       super(
-          new io.epigraph.names.QualifiedTypeName(${qnameArgs(t.name.fqn).mkString("\"", "\", \"", "\"")}),
+          new ws.epigraph.names.QualifiedTypeName(${qnameArgs(t.name.fqn).mkString("\"", "\", \"", "\"")}),
           java.util.Arrays.asList(${t.linearizedParents.map(lqn(_, t, _ + ".Type.instance()")).mkString(", ")}),
           $ln.Builder::new
       );
@@ -74,7 +74,7 @@ ${t.declaredTags.map { tag => sn"""
   /**
    * Immutable interface for `${t.name.name}` data.
    */
-  interface Imm extends $ln,${withParents(".Imm")} io.epigraph.data.Data.Imm.Static {
+  interface Imm extends $ln,${withParents(".Imm")} ws.epigraph.data.Data.Imm.Static {
 ${t.effectiveTags.map { tag => sn"""\
 
     ${"/**"} Returns immutable `${tag.name}` tag datum. */
@@ -89,15 +89,15 @@ ${t.effectiveTags.map { tag => sn"""\
 }\
 
     /** Private implementation of `$ln.Imm` interface. */
-    final class Impl extends io.epigraph.data.Data.Imm.Static.Impl<$ln.Imm> implements $ln.Imm {
+    final class Impl extends ws.epigraph.data.Data.Imm.Static.Impl<$ln.Imm> implements $ln.Imm {
 
-      private Impl(@NotNull io.epigraph.data.Data.Imm.Raw raw) { super($ln.Type.instance(), raw); }
+      private Impl(@NotNull ws.epigraph.data.Data.Imm.Raw raw) { super($ln.Type.instance(), raw); }
 ${t.effectiveTags.map { tag => sn"""\
 
       ${"/**"} Returns immutable `${tag.name}` tag datum. */
       @Override
       public @Nullable ${lqrn(tag.typeRef, t)}.Imm get${up(tag.name)}() {
-        return io.epigraph.util.Util.apply(get${up(tag.name)}_(), ${lqrn(tag.typeRef, t)}.Imm.Value::getDatum);
+        return ws.epigraph.util.Util.apply(get${up(tag.name)}_(), ${lqrn(tag.typeRef, t)}.Imm.Value::getDatum);
       }
 
       ${"/**"} Returns immutable `${tag.name}` tag value. */
@@ -116,16 +116,16 @@ ${t.effectiveTags.map { tag => sn"""\
   /**
    * Builder for `${t.name.name}` data.
    */
-  final class Builder extends io.epigraph.data.Data.Builder.Static<$ln.Imm> implements $ln {
+  final class Builder extends ws.epigraph.data.Data.Builder.Static<$ln.Imm> implements $ln {
 
-    private Builder(@NotNull io.epigraph.data.Data.Builder.Raw raw) { super($ln.Type.instance(), raw, $ln.Imm.Impl::new); }
+    private Builder(@NotNull ws.epigraph.data.Data.Builder.Raw raw) { super($ln.Type.instance(), raw, $ln.Imm.Impl::new); }
 ${t.effectiveTags.map { tag => // for each effective tag
     sn"""\
 
     ${"/**"} Returns `${tag.name}` tag datum. */
     @Override
     public @Nullable ${lqrn(tag.typeRef, t)} get${up(tag.name)}() {
-      return io.epigraph.util.Util.apply(get${up(tag.name)}_(), ${lqrn(tag.typeRef, t)}.Value::getDatum);
+      return ws.epigraph.util.Util.apply(get${up(tag.name)}_(), ${lqrn(tag.typeRef, t)}.Value::getDatum);
     }
 
     ${"/**"} Sets `${tag.name}` tag datum. */
@@ -134,7 +134,7 @@ ${t.effectiveTags.map { tag => // for each effective tag
     }
 
     ${"/**"} Sets `${tag.name}` tag error. */
-    public @NotNull $ln.Builder set${up(tag.name)}_Error(@NotNull io.epigraph.errors.ErrorValue error) {
+    public @NotNull $ln.Builder set${up(tag.name)}_Error(@NotNull ws.epigraph.errors.ErrorValue error) {
       _raw().setError($ln.${jn(tag.name)}, error); return this;
     }
 

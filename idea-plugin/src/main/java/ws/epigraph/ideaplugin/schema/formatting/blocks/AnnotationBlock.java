@@ -9,10 +9,10 @@ import ws.epigraph.ideaplugin.schema.formatting.SchemaBlock;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static io.epigraph.schema.lexer.SchemaElementTypes.S_ID;
+import static ws.epigraph.schema.lexer.SchemaElementTypes.S_ID;
 
 /**
- * @author <a href="mailto:konstantin.sobolev.com">Konstantin Sobolev</a>
+ * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class AnnotationBlock extends SchemaBlock {
   public AnnotationBlock(@NotNull ASTNode node, @Nullable Wrap wrap, @Nullable Alignment alignment, @Nullable Indent indent, SpacingBuilder spacingBuilder) {

@@ -5,7 +5,7 @@ import com.intellij.ide.util.gotoByName.GotoClassModel2;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiNamedElement;
 import ws.epigraph.ideaplugin.schema.SchemaBundle;
-import io.epigraph.schema.parser.SchemaLanguage;
+import ws.epigraph.schema.parser.SchemaLanguage;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;

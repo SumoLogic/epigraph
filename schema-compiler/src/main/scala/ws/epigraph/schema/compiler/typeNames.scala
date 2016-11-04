@@ -5,8 +5,8 @@ package ws.epigraph.schema.compiler
 import java.util.regex.Pattern
 
 import com.intellij.psi.PsiElement
-import io.epigraph.lang.Qn
-import io.epigraph.schema.parser.psi.{SchemaQnTypeRef, SchemaTypeDef}
+import ws.epigraph.lang.Qn
+import ws.epigraph.schema.parser.psi.{SchemaQnTypeRef, SchemaTypeDef}
 import org.jetbrains.annotations.Nullable
 
 

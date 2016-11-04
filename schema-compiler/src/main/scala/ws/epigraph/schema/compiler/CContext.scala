@@ -4,7 +4,7 @@ package ws.epigraph.schema.compiler
 
 import java.util.concurrent.{ConcurrentHashMap, ConcurrentLinkedQueue}
 
-import io.epigraph.lang.Qn
+import ws.epigraph.lang.Qn
 
 
 class CContext(val tabWidth: Int = 2) {

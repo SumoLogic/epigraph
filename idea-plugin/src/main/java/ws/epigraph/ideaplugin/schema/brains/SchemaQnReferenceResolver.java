@@ -7,9 +7,9 @@ import com.intellij.psi.ResolveResult;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.ArrayUtil;
 import ws.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
-import io.epigraph.lang.Qn;
-import io.epigraph.schema.parser.psi.SchemaNamespaceDecl;
-import io.epigraph.schema.parser.psi.SchemaTypeDef;
+import ws.epigraph.lang.Qn;
+import ws.epigraph.schema.parser.psi.SchemaNamespaceDecl;
+import ws.epigraph.schema.parser.psi.SchemaTypeDef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,7 +19,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
- * @author <a href="mailto:konstantin.sobolev.com">Konstantin Sobolev</a>
+ * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class SchemaQnReferenceResolver {
   @NotNull

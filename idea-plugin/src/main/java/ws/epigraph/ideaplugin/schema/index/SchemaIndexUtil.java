@@ -3,10 +3,10 @@ package ws.epigraph.ideaplugin.schema.index;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.search.GlobalSearchScope;
-import io.epigraph.lang.Qn;
-import io.epigraph.schema.parser.psi.SchemaNamespaceDecl;
-import io.epigraph.schema.parser.psi.SchemaSupplementDef;
-import io.epigraph.schema.parser.psi.SchemaTypeDef;
+import ws.epigraph.lang.Qn;
+import ws.epigraph.schema.parser.psi.SchemaNamespaceDecl;
+import ws.epigraph.schema.parser.psi.SchemaSupplementDef;
+import ws.epigraph.schema.parser.psi.SchemaTypeDef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,7 +16,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * @author <a href="mailto:konstantin.sobolev.com">Konstantin Sobolev</a>
+ * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class SchemaIndexUtil {
   @NotNull

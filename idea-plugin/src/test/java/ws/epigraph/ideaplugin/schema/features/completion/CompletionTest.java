@@ -2,13 +2,13 @@ package ws.epigraph.ideaplugin.schema.features.completion;
 
 import com.intellij.psi.impl.DebugUtil;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
-import io.epigraph.schema.parser.SchemaFileType;
+import ws.epigraph.schema.parser.SchemaFileType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
 /**
- * @author <a href="mailto:konstantin.sobolev.com">Konstantin Sobolev</a>
+ * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class CompletionTest extends LightCodeInsightFixtureTestCase {
   private final List<String> TOP_LEVEL = Arrays.asList(

@@ -12,12 +12,12 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
 import ws.epigraph.ideaplugin.schema.features.imports.SchemaImportOptimizer;
-import io.epigraph.schema.parser.psi.SchemaFile;
+import ws.epigraph.schema.parser.psi.SchemaFile;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * @author <a href="mailto:konstantin.sobolev.com">Konstantin Sobolev</a>
+ * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OptimizeImportsQuickFix implements LocalQuickFix, IntentionAction, HighPriorityAction {
   public static final OptimizeImportsQuickFix INSTANCE = new OptimizeImportsQuickFix();

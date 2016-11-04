@@ -5,18 +5,18 @@ import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.fileTypes.SyntaxHighlighterBase;
 import com.intellij.psi.tree.IElementType;
-import io.epigraph.schema.parser.SchemaParserDefinition;
-import io.epigraph.schema.lexer.SchemaFlexAdapter;
+import ws.epigraph.schema.parser.SchemaParserDefinition;
+import ws.epigraph.schema.lexer.SchemaFlexAdapter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static io.epigraph.schema.lexer.SchemaElementTypes.*;
+import static ws.epigraph.schema.lexer.SchemaElementTypes.*;
 
 
 /**
- * @author <a href="mailto:konstantin.sobolev.com">Konstantin Sobolev</a>
+ * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class SchemaSyntaxHighlighter extends SyntaxHighlighterBase {
   // TODO provide customizable color scheme?

@@ -4,10 +4,10 @@ import com.intellij.diagram.AbstractDiagramNodeContentManager;
 import com.intellij.diagram.DiagramCategory;
 import com.intellij.diagram.presentation.DiagramState;
 import ws.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
-import io.epigraph.schema.parser.psi.SchemaAnnotation;
-import io.epigraph.schema.parser.psi.SchemaEnumMemberDecl;
-import io.epigraph.schema.parser.psi.SchemaFieldDecl;
-import io.epigraph.schema.parser.psi.SchemaVarTagDecl;
+import ws.epigraph.schema.parser.psi.SchemaAnnotation;
+import ws.epigraph.schema.parser.psi.SchemaEnumMemberDecl;
+import ws.epigraph.schema.parser.psi.SchemaFieldDecl;
+import ws.epigraph.schema.parser.psi.SchemaVarTagDecl;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>

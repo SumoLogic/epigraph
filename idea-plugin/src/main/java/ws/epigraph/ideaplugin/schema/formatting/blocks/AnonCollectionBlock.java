@@ -9,11 +9,11 @@ import ws.epigraph.ideaplugin.schema.formatting.SchemaBlock;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static io.epigraph.schema.lexer.SchemaElementTypes.S_LIST;
-import static io.epigraph.schema.lexer.SchemaElementTypes.S_MAP;
+import static ws.epigraph.schema.lexer.SchemaElementTypes.S_LIST;
+import static ws.epigraph.schema.lexer.SchemaElementTypes.S_MAP;
 
 /**
- * @author <a href="mailto:konstantin.sobolev.com">Konstantin Sobolev</a>
+ * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class AnonCollectionBlock extends SchemaBlock {
   public AnonCollectionBlock(@NotNull ASTNode node, @Nullable Wrap wrap, @Nullable Alignment alignment, @Nullable Indent indent, SpacingBuilder spacingBuilder) {

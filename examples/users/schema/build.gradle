@@ -1,8 +1,8 @@
 plugins {
-  id 'io.epigraph.schema' version "0.0"
+  id 'ws.epigraph.schema' version "0.0"
 }
 
-group = 'com.sumologic.epigraph.examples'
+group = 'ws.epigraph.examples'
 
 dependencies {
   compile project(':epigraph-builtin-types-schema')

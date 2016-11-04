@@ -15,20 +15,20 @@ import ws.epigraph.ideaplugin.schema.features.actions.fixes.ImportTypeIntentionF
 import ws.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
 import ws.epigraph.ideaplugin.schema.index.SchemaSearchScopeUtil;
 import ws.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
-import io.epigraph.lang.Qn;
-import io.epigraph.lang.NamingConventions;
-import io.epigraph.schema.parser.psi.*;
+import ws.epigraph.lang.Qn;
+import ws.epigraph.lang.NamingConventions;
+import ws.epigraph.schema.parser.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static io.epigraph.lang.DefaultImports.DEFAULT_IMPORTS_LIST;
-import static io.epigraph.schema.lexer.SchemaElementTypes.S_QN_TYPE_REF;
+import static ws.epigraph.lang.DefaultImports.DEFAULT_IMPORTS_LIST;
+import static ws.epigraph.schema.lexer.SchemaElementTypes.S_QN_TYPE_REF;
 
 /**
- * @author <a href="mailto:konstantin.sobolev.com">Konstantin Sobolev</a>
+ * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class SchemaAnnotator implements Annotator {
   // TODO change most of annotations to inspections? See http://www.jetbrains.org/intellij/sdk/docs/reference_guide/custom_language_support/code_inspections_and_intentions.html

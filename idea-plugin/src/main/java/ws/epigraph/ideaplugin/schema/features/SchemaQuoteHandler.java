@@ -2,10 +2,10 @@ package ws.epigraph.ideaplugin.schema.features;
 
 import com.intellij.codeInsight.editorActions.SimpleTokenSetQuoteHandler;
 
-import static io.epigraph.schema.lexer.SchemaElementTypes.*;
+import static ws.epigraph.schema.lexer.SchemaElementTypes.*;
 
 /**
- * @author <a href="mailto:konstantin.sobolev.com">Konstantin Sobolev</a>
+ * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class SchemaQuoteHandler extends SimpleTokenSetQuoteHandler {
   public SchemaQuoteHandler() {

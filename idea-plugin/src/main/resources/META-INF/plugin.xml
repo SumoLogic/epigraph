@@ -28,7 +28,7 @@
   <extensions defaultExtensionNs="com.intellij">
     <fileTypeFactory implementation="ws.epigraph.ideaplugin.schema.SchemaFileTypeFactory"/>
     <internalFileTemplate name="Epigraph Schema"/>
-    <stubElementTypeHolder class="io.epigraph.schema.parser.psi.stubs.SchemaStubElementTypes"/>
+    <stubElementTypeHolder class="ws.epigraph.schema.parser.psi.stubs.SchemaStubElementTypes"/>
 
     <!-- indices -->
     <stubIndex implementation="ws.epigraph.ideaplugin.schema.index.SchemaShortTypeNameIndex"/>
@@ -48,7 +48,7 @@
     <lang.syntaxHighlighterFactory language="epigraph_schema"
                                    implementationClass="ws.epigraph.ideaplugin.schema.highlighting.SchemaSyntaxHighlighterFactory"/>
     <lang.parserDefinition language="epigraph_schema"
-                           implementationClass="io.epigraph.schema.parser.SchemaParserDefinition"/>
+                           implementationClass="ws.epigraph.schema.parser.SchemaParserDefinition"/>
 
     <completion.contributor language="epigraph_schema"
                             implementationClass="ws.epigraph.ideaplugin.schema.features.completion.SchemaCompletionContributor"/>

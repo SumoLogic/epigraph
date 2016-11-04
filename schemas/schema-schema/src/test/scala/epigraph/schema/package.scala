@@ -2,7 +2,7 @@
 
 package epigraph
 
-import com.sumologic.epigraph.names
+import ws.epigraph.names
 
 package object schema {
 

@@ -21,7 +21,7 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xdebugger.ui.DebuggerColors;
 import ws.epigraph.ideaplugin.schema.brains.hierarchy.TypeMembers;
 import ws.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
-import io.epigraph.schema.parser.psi.*;
+import ws.epigraph.schema.parser.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

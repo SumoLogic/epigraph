@@ -3,10 +3,10 @@ package ws.epigraph.ideaplugin.schema.diagram;
 import com.intellij.diagram.extras.providers.DiagramDnDProvider;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiNamedElement;
-import io.epigraph.schema.parser.psi.SchemaDefs;
-import io.epigraph.schema.parser.psi.SchemaFile;
-import io.epigraph.schema.parser.psi.SchemaTypeDef;
-import io.epigraph.schema.parser.psi.SchemaTypeDefWrapper;
+import ws.epigraph.schema.parser.psi.SchemaDefs;
+import ws.epigraph.schema.parser.psi.SchemaFile;
+import ws.epigraph.schema.parser.psi.SchemaTypeDef;
+import ws.epigraph.schema.parser.psi.SchemaTypeDefWrapper;
 import org.jetbrains.annotations.Nullable;
 
 /**

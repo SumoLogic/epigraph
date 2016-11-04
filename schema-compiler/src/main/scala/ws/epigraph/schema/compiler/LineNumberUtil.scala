@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Nullable
 import scala.collection.mutable
 
 /**
- * @author <a href="mailto:konstantin.sobolev.com">Konstantin Sobolev</a>
+ * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class LineNumberUtil(text: String, tabWidth: Int = 2) {
 

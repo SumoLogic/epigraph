@@ -2,14 +2,14 @@ package ws.epigraph.ideaplugin.schema.features;
 
 import com.intellij.lang.refactoring.RefactoringSupportProvider;
 import com.intellij.psi.PsiElement;
-import io.epigraph.schema.parser.psi.SchemaQnSegment;
-import io.epigraph.schema.parser.psi.SchemaTypeDef;
-import io.epigraph.schema.parser.psi.SchemaVarTagDecl;
+import ws.epigraph.schema.parser.psi.SchemaQnSegment;
+import ws.epigraph.schema.parser.psi.SchemaTypeDef;
+import ws.epigraph.schema.parser.psi.SchemaVarTagDecl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * @author <a href="mailto:konstantin.sobolev.com">Konstantin Sobolev</a>
+ * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class SchemaRefactoringSupportProvider extends RefactoringSupportProvider {
   @Override

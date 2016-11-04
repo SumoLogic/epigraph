@@ -3,7 +3,7 @@ package ws.epigraph.schema.compiler
 import org.scalatest.{FlatSpec, Matchers}
 
 /**
- * @author <a href="mailto:konstantin.sobolev.com">Konstantin Sobolev</a>
+ * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class LineNumberUtilSpec extends FlatSpec with Matchers {
   "LineNumberUtil" should "count line and column numbers" in {

@@ -3,11 +3,11 @@ package ws.epigraph.ideaplugin.schema.presentation;
 import com.intellij.openapi.fileEditor.impl.EditorTabTitleProvider;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import io.epigraph.schema.parser.Common;
+import ws.epigraph.schema.parser.Common;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * @author <a href="mailto:konstantin.sobolev.com">Konstantin Sobolev</a>
+ * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class SchemaEditorTabTitleProvider implements EditorTabTitleProvider {
   @Nullable

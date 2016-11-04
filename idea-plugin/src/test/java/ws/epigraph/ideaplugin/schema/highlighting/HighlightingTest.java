@@ -7,7 +7,7 @@ import ws.epigraph.ideaplugin.schema.features.inspections.UnnecessaryImportInspe
 import ws.epigraph.ideaplugin.schema.features.inspections.UnusedImportInspection;
 
 /**
- * @author <a href="mailto:konstantin.sobolev.com">Konstantin Sobolev</a>
+ * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class HighlightingTest extends LightCodeInsightFixtureTestCase {
   @Override

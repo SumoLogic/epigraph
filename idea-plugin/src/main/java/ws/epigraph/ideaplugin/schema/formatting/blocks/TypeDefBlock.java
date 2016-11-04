@@ -11,10 +11,10 @@ import ws.epigraph.ideaplugin.schema.formatting.SchemaBlock;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static io.epigraph.schema.lexer.SchemaElementTypes.*;
+import static ws.epigraph.schema.lexer.SchemaElementTypes.*;
 
 /**
- * @author <a href="mailto:konstantin.sobolev.com">Konstantin Sobolev</a>
+ * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class TypeDefBlock extends SchemaBlock {
   private static final TokenSet noIndentTokenSet = TokenSet.create(

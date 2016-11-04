@@ -6,9 +6,9 @@ import com.intellij.diagram.DiagramRelationshipInfoAdapter;
 import com.intellij.diagram.DiagramRelationshipManager;
 import com.intellij.diagram.presentation.DiagramLineType;
 import com.intellij.psi.PsiNamedElement;
-import io.epigraph.schema.parser.psi.SchemaQnTypeRef;
-import io.epigraph.schema.parser.psi.SchemaMetaDecl;
-import io.epigraph.schema.parser.psi.SchemaTypeDef;
+import ws.epigraph.schema.parser.psi.SchemaQnTypeRef;
+import ws.epigraph.schema.parser.psi.SchemaMetaDecl;
+import ws.epigraph.schema.parser.psi.SchemaTypeDef;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;

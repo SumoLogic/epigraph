@@ -7,12 +7,12 @@ import com.intellij.formatting.Wrap;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.tree.IElementType;
 import ws.epigraph.ideaplugin.schema.formatting.SchemaBlock;
-import io.epigraph.schema.parser.SchemaParserDefinition;
+import ws.epigraph.schema.parser.SchemaParserDefinition;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * @author <a href="mailto:konstantin.sobolev.com">Konstantin Sobolev</a>
+ * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class TypeDefBodyBlock extends SchemaBlock {
   public TypeDefBodyBlock(@NotNull ASTNode node, @Nullable Wrap wrap, @Nullable Alignment alignment, @Nullable Indent indent, SpacingBuilder spacingBuilder) {

@@ -1,8 +1,8 @@
 plugins {
-  id 'io.epigraph.java' version "0.0"
+  id 'ws.epigraph.java' version "0.0"
 }
 
-group = 'com.sumologic.epigraph.examples'
+group = 'ws.epigraph.examples'
 
 dependencies {
   epigraphSchema project(':examples-users-schema')

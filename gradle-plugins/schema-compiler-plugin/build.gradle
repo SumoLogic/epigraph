@@ -3,7 +3,7 @@ plugins {
   id 'maven-publish'
 }
 
-group = 'io.epigraph'
+group = 'ws.epigraph'
 version = '0.0' // snapshot versions not supported in local repo
 
 description = """
@@ -35,8 +35,8 @@ plugins.withType(JavaPlugin) {
 gradlePlugin {
   plugins {
     epigraph {
-      id = 'io.epigraph.schema'
-      implementationClass = 'io.epigraph.gradle.schema.EpigraphSchemaCompilerPlugin'
+      id = 'ws.epigraph.schema'
+      implementationClass = 'ws.epigraph.gradle.schema.EpigraphSchemaCompilerPlugin'
     }
   }
 }

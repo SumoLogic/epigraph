@@ -10,21 +10,21 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
 import ws.epigraph.ideaplugin.schema.brains.hierarchy.TypeMembers;
 import ws.epigraph.ideaplugin.schema.psi.SchemaPsiUtil;
-import io.epigraph.lang.Qn;
-import io.epigraph.schema.parser.SchemaLanguage;
-import io.epigraph.schema.parser.SchemaParserDefinition;
-import io.epigraph.schema.parser.psi.*;
-import io.epigraph.schema.parser.psi.impl.SchemaPsiImplUtil;
+import ws.epigraph.lang.Qn;
+import ws.epigraph.schema.parser.SchemaLanguage;
+import ws.epigraph.schema.parser.SchemaParserDefinition;
+import ws.epigraph.schema.parser.psi.*;
+import ws.epigraph.schema.parser.psi.impl.SchemaPsiImplUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
 import static com.intellij.patterns.PlatformPatterns.psiElement;
-import static io.epigraph.schema.lexer.SchemaElementTypes.*;
+import static ws.epigraph.schema.lexer.SchemaElementTypes.*;
 
 /**
- * @author <a href="mailto:konstantin.sobolev.com">Konstantin Sobolev</a>
+ * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class SchemaCompletionContributor extends CompletionContributor {
   // TODO default` doesn't show up in auto-complete/suggestions after `vartype Foo `

@@ -15,11 +15,11 @@ import com.intellij.util.containers.ContainerUtil;
 import ws.epigraph.ideaplugin.schema.SchemaBundle;
 import ws.epigraph.ideaplugin.schema.brains.hierarchy.SchemaDirectTypeParentsSearch;
 import ws.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
-import io.epigraph.schema.parser.psi.SchemaFieldDecl;
-import io.epigraph.schema.parser.psi.SchemaRecordTypeBody;
-import io.epigraph.schema.parser.psi.SchemaRecordTypeDef;
-import io.epigraph.schema.parser.psi.SchemaTypeDef;
-import io.epigraph.schema.parser.psi.impl.SchemaElementFactory;
+import ws.epigraph.schema.parser.psi.SchemaFieldDecl;
+import ws.epigraph.schema.parser.psi.SchemaRecordTypeBody;
+import ws.epigraph.schema.parser.psi.SchemaRecordTypeDef;
+import ws.epigraph.schema.parser.psi.SchemaTypeDef;
+import ws.epigraph.schema.parser.psi.impl.SchemaElementFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,7 +29,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
- * @author <a href="mailto:konstantin.sobolev.com">Konstantin Sobolev</a>
+ * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class SchemaRenameUtil {
   private static final Set<PsiNamedElement> superMembersToRename = new HashSet<>();

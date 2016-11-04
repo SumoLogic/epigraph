@@ -6,10 +6,10 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.util.containers.MultiMap;
 import ws.epigraph.ideaplugin.schema.brains.ImportsManager;
 import ws.epigraph.ideaplugin.schema.features.actions.fixes.OptimizeImportsQuickFix;
-import io.epigraph.lang.Qn;
-import io.epigraph.schema.parser.psi.SchemaImportStatement;
-import io.epigraph.schema.parser.psi.SchemaImports;
-import io.epigraph.schema.parser.psi.SchemaVisitor;
+import ws.epigraph.lang.Qn;
+import ws.epigraph.schema.parser.psi.SchemaImportStatement;
+import ws.epigraph.schema.parser.psi.SchemaImports;
+import ws.epigraph.schema.parser.psi.SchemaVisitor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * @author <a href="mailto:konstantin.sobolev.com">Konstantin Sobolev</a>
+ * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ConflictingImportInspection extends LocalInspectionTool {
   @NotNull

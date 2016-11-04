@@ -285,7 +285,7 @@ class FileListProducer {
                           'org/jetbrains/annotations',
                           'org/jetbrains/jps',
 //                          'org/jetbrains/org',
-                          'io/epigraph', 'com/sumologic']
+                          'ws/epigraph']
     return { String cn -> filterPrefixes.find { cn.startsWith(it) } == null }
   }
 

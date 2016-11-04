@@ -2,10 +2,10 @@
 
 package epigraph.schema
 
-import com.sumologic.epigraph.xp.data.immutable._
-import com.sumologic.epigraph.xp.data.mutable._
-import com.sumologic.epigraph.xp.data.{RecordDatum, StringDatum}
-import com.sumologic.epigraph.xp.types.{Field, RecordType, StringType}
+import ws.epigraph.xp.data.immutable._
+import ws.epigraph.xp.data.mutable._
+import ws.epigraph.xp.data.{RecordDatum, StringDatum}
+import ws.epigraph.xp.types.{Field, RecordType, StringType}
 
 trait Name extends StringDatum[Name]
 

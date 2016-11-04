@@ -8,19 +8,19 @@ import com.intellij.psi.impl.source.resolve.ResolveCache;
 import com.intellij.util.IncorrectOperationException;
 import ws.epigraph.ideaplugin.schema.brains.hierarchy.TypeMembers;
 import ws.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
-import io.epigraph.lang.NamingConventions;
-import io.epigraph.schema.parser.SchemaParserDefinition;
-import io.epigraph.schema.parser.psi.SchemaQid;
-import io.epigraph.schema.parser.psi.SchemaVarTagDecl;
-import io.epigraph.schema.parser.psi.SchemaVarTypeDef;
-import io.epigraph.schema.parser.psi.impl.SchemaElementFactory;
+import ws.epigraph.lang.NamingConventions;
+import ws.epigraph.schema.parser.SchemaParserDefinition;
+import ws.epigraph.schema.parser.psi.SchemaQid;
+import ws.epigraph.schema.parser.psi.SchemaVarTagDecl;
+import ws.epigraph.schema.parser.psi.SchemaVarTypeDef;
+import ws.epigraph.schema.parser.psi.impl.SchemaElementFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 /**
- * @author <a href="mailto:konstantin.sobolev.com">Konstantin Sobolev</a>
+ * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class SchemaVarTagReference extends PsiReferenceBase<PsiElement> implements PsiPolyVariantReference {
   /**

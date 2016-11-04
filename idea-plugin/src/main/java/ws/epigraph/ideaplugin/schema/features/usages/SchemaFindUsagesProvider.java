@@ -6,16 +6,16 @@ import com.intellij.lang.findUsages.FindUsagesProvider;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
 import ws.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
-import io.epigraph.schema.parser.SchemaParserDefinition;
-import io.epigraph.schema.lexer.SchemaFlexAdapter;
-import io.epigraph.schema.parser.psi.SchemaQnSegment;
-import io.epigraph.schema.parser.psi.SchemaTypeDef;
-import io.epigraph.schema.parser.psi.SchemaVarTagDecl;
+import ws.epigraph.schema.parser.SchemaParserDefinition;
+import ws.epigraph.schema.lexer.SchemaFlexAdapter;
+import ws.epigraph.schema.parser.psi.SchemaQnSegment;
+import ws.epigraph.schema.parser.psi.SchemaTypeDef;
+import ws.epigraph.schema.parser.psi.SchemaVarTagDecl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * @author <a href="mailto:konstantin.sobolev.com">Konstantin Sobolev</a>
+ * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class SchemaFindUsagesProvider implements FindUsagesProvider {
   @Nullable

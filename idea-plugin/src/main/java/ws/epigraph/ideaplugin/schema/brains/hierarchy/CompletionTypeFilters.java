@@ -3,17 +3,17 @@ package ws.epigraph.ideaplugin.schema.brains.hierarchy;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import ws.epigraph.ideaplugin.schema.psi.SchemaPsiUtil;
-import io.epigraph.schema.parser.psi.*;
+import ws.epigraph.schema.parser.psi.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
 
-import static io.epigraph.schema.lexer.SchemaElementTypes.S_WITH;
+import static ws.epigraph.schema.lexer.SchemaElementTypes.S_WITH;
 
 /**
- * @author <a href="mailto:konstantin.sobolev.com">Konstantin Sobolev</a>
+ * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public abstract class CompletionTypeFilters {
   // TODO check for correct collection types, e.g. List[Foo] can't extend List[Bar] unless Foo extends Bar

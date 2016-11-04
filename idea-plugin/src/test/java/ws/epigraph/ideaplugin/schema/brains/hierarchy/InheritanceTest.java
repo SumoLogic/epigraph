@@ -3,14 +3,14 @@ package ws.epigraph.ideaplugin.schema.brains.hierarchy;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import ws.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
-import io.epigraph.lang.Qn;
-import io.epigraph.schema.parser.psi.SchemaTypeDef;
+import ws.epigraph.lang.Qn;
+import ws.epigraph.schema.parser.psi.SchemaTypeDef;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * @author <a href="mailto:konstantin.sobolev.com">Konstantin Sobolev</a>
+ * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class InheritanceTest extends LightCodeInsightFixtureTestCase {
   @Override

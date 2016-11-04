@@ -7,21 +7,21 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.containers.MultiMap;
 import ws.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
 import ws.epigraph.ideaplugin.schema.index.SchemaSearchScopeUtil;
-import io.epigraph.lang.Qn;
-import io.epigraph.schema.parser.psi.*;
-import io.epigraph.schema.parser.psi.impl.SchemaElementFactory;
-import io.epigraph.schema.parser.psi.impl.SchemaPsiImplUtil;
+import ws.epigraph.lang.Qn;
+import ws.epigraph.schema.parser.psi.*;
+import ws.epigraph.schema.parser.psi.impl.SchemaElementFactory;
+import ws.epigraph.schema.parser.psi.impl.SchemaPsiImplUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static io.epigraph.lang.DefaultImports.DEFAULT_IMPORTS;
-import static io.epigraph.lang.DefaultImports.DEFAULT_IMPORTS_LIST;
+import static ws.epigraph.lang.DefaultImports.DEFAULT_IMPORTS;
+import static ws.epigraph.lang.DefaultImports.DEFAULT_IMPORTS_LIST;
 
 /**
- * @author <a href="mailto:konstantin.sobolev.com">Konstantin Sobolev</a>
+ * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ImportsManager {
   public static void addImport(@NotNull SchemaFile file, @NotNull String importToAdd) {

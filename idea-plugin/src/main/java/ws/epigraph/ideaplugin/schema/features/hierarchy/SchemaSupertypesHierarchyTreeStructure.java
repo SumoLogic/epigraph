@@ -6,13 +6,13 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.ArrayUtil;
 import ws.epigraph.ideaplugin.schema.brains.hierarchy.HierarchyCache;
-import io.epigraph.schema.parser.psi.SchemaTypeDef;
+import ws.epigraph.schema.parser.psi.SchemaTypeDef;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 
 /**
- * @author <a href="mailto:konstantin.sobolev.com">Konstantin Sobolev</a>
+ * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class SchemaSupertypesHierarchyTreeStructure extends HierarchyTreeStructure {
   SchemaSupertypesHierarchyTreeStructure(Project project, SchemaTypeDef typeDef) {

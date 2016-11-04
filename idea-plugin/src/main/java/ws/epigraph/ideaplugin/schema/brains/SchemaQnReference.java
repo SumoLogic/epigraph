@@ -15,8 +15,8 @@ import ws.epigraph.ideaplugin.schema.brains.hierarchy.CompletionTypeFilters;
 import ws.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
 import ws.epigraph.ideaplugin.schema.index.SchemaSearchScopeUtil;
 import ws.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
-import io.epigraph.lang.Qn;
-import io.epigraph.schema.parser.psi.*;
+import ws.epigraph.lang.Qn;
+import ws.epigraph.schema.parser.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,10 +26,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static io.epigraph.lang.DefaultImports.DEFAULT_IMPORTS;
+import static ws.epigraph.lang.DefaultImports.DEFAULT_IMPORTS;
 
 /**
- * @author <a href="mailto:konstantin.sobolev.com">Konstantin Sobolev</a>
+ * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  * @see <a href="https://github.com/SumoLogic/epigraph/wiki/References%20implementation#reference-resolution-algorithm">Reference resolution algorithm</a>
  */
 public class SchemaQnReference extends PsiReferenceBase<SchemaQnSegment> implements PsiPolyVariantReference {

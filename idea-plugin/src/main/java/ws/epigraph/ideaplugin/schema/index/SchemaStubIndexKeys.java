@@ -1,12 +1,12 @@
 package ws.epigraph.ideaplugin.schema.index;
 
 import com.intellij.psi.stubs.StubIndexKey;
-import io.epigraph.schema.parser.psi.SchemaNamespaceDecl;
-import io.epigraph.schema.parser.psi.SchemaSupplementDef;
-import io.epigraph.schema.parser.psi.SchemaTypeDef;
+import ws.epigraph.schema.parser.psi.SchemaNamespaceDecl;
+import ws.epigraph.schema.parser.psi.SchemaSupplementDef;
+import ws.epigraph.schema.parser.psi.SchemaTypeDef;
 
 /**
- * @author <a href="mailto:konstantin.sobolev.com">Konstantin Sobolev</a>
+ * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class SchemaStubIndexKeys {
   public static final StubIndexKey<String, SchemaTypeDef> TYPE_SHORT_NAMES = StubIndexKey.createIndexKey("epigraph.schema.type.shortname");

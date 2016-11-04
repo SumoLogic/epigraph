@@ -3,11 +3,11 @@ package ws.epigraph.ideaplugin.schema.brains.hierarchy;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
-import io.epigraph.schema.parser.psi.SchemaFieldDecl;
-import io.epigraph.schema.parser.psi.SchemaVarTagDecl;
+import ws.epigraph.schema.parser.psi.SchemaFieldDecl;
+import ws.epigraph.schema.parser.psi.SchemaVarTagDecl;
 
 /**
- * @author <a href="mailto:konstantin.sobolev.com">Konstantin Sobolev</a>
+ * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OverridesTest extends LightCodeInsightFixtureTestCase {
   @Override

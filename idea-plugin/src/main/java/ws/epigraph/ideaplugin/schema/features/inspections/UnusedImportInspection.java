@@ -6,16 +6,16 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElementVisitor;
 import ws.epigraph.ideaplugin.schema.brains.ImportsManager;
 import ws.epigraph.ideaplugin.schema.features.actions.fixes.OptimizeImportsQuickFix;
-import io.epigraph.schema.parser.psi.SchemaFile;
-import io.epigraph.schema.parser.psi.SchemaImportStatement;
-import io.epigraph.schema.parser.psi.SchemaImports;
-import io.epigraph.schema.parser.psi.SchemaVisitor;
+import ws.epigraph.schema.parser.psi.SchemaFile;
+import ws.epigraph.schema.parser.psi.SchemaImportStatement;
+import ws.epigraph.schema.parser.psi.SchemaImports;
+import ws.epigraph.schema.parser.psi.SchemaVisitor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
 /**
- * @author <a href="mailto:konstantin.sobolev.com">Konstantin Sobolev</a>
+ * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class UnusedImportInspection extends LocalInspectionTool {
   @NotNull

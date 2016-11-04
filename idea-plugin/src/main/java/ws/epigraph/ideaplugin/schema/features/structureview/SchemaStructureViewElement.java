@@ -5,7 +5,7 @@ import com.intellij.ide.util.treeView.smartTree.TreeElement;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.psi.NavigatablePsiElement;
 import com.intellij.psi.PsiElement;
-import io.epigraph.schema.parser.psi.*;
+import ws.epigraph.schema.parser.psi.*;
 import ws.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
 import ws.epigraph.ideaplugin.schema.presentation.StaticItemPresentation;
 import org.jetbrains.annotations.NotNull;
@@ -15,7 +15,7 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 
 /**
- * @author <a href="mailto:konstantin.sobolev.com">Konstantin Sobolev</a>
+ * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class SchemaStructureViewElement implements StructureViewTreeElement {
   private final NavigatablePsiElement element;

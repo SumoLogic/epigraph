@@ -8,11 +8,11 @@ import com.intellij.psi.SmartPsiElementPointer;
 import com.intellij.util.Query;
 import com.intellij.util.QueryFactory;
 import com.intellij.util.containers.ContainerUtil;
-import io.epigraph.schema.parser.psi.SchemaTypeDef;
+import ws.epigraph.schema.parser.psi.SchemaTypeDef;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * @author <a href="mailto:konstantin.sobolev.com">Konstantin Sobolev</a>
+ * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class SchemaTypeParentsSearch extends QueryFactory<SchemaTypeDef, SchemaTypeParentsSearch.SearchParameters> {
   public static final SchemaTypeParentsSearch INSTANCE = new SchemaTypeParentsSearch();

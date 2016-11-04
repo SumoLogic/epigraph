@@ -2,9 +2,9 @@
 
 package epigraph.schema
 
-import com.sumologic.epigraph.names
-import com.sumologic.epigraph.xp.data.{ListDatum, RecordDatum, Var}
-import com.sumologic.epigraph.xp.types.{MultiVarType, RecordType}
+import ws.epigraph.names
+import ws.epigraph.xp.data.{ListDatum, RecordDatum, Var}
+import ws.epigraph.xp.types.{MultiVarType, RecordType}
 import epigraph._
 
 /**

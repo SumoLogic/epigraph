@@ -13,13 +13,13 @@ import com.intellij.psi.PsiNamedElement;
 import com.intellij.ui.LayeredIcon;
 import ws.epigraph.ideaplugin.schema.brains.NamespaceManager;
 import ws.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
-import io.epigraph.schema.parser.psi.SchemaTypeDef;
+import ws.epigraph.schema.parser.psi.SchemaTypeDef;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 
 /**
- * @author <a href="mailto:konstantin.sobolev.com">Konstantin Sobolev</a>
+ * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class SchemaHierarchyNodeDescriptor extends HierarchyNodeDescriptor {
   protected SchemaHierarchyNodeDescriptor(@NotNull Project project, NodeDescriptor parentDescriptor, @NotNull PsiElement element, boolean isBase) {

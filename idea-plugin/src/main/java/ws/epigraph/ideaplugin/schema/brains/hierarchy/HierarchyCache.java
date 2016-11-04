@@ -5,7 +5,7 @@ import com.intellij.openapi.util.Key;
 import com.intellij.psi.*;
 import com.intellij.psi.util.*;
 import ws.epigraph.ideaplugin.schema.brains.ModificationTrackerImpl;
-import io.epigraph.schema.parser.psi.*;
+import ws.epigraph.schema.parser.psi.*;
 import ws.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -15,7 +15,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * @author <a href="mailto:konstantin.sobolev.com">Konstantin Sobolev</a>
+ * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class HierarchyCache {
   private final Key<ParameterizedCachedValue<List<SchemaTypeDef>, SchemaTypeDef>> TYPE_PARENTS_KEY = Key.create("TYPE_PARENTS");

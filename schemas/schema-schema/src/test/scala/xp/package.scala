@@ -1,6 +1,6 @@
 /* Created by yegor on 5/19/16. */
 
-import com.sumologic.epigraph.names
+import ws.epigraph.names
 
 package object xp {
 

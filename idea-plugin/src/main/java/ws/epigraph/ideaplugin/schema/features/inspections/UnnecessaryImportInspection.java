@@ -7,20 +7,20 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.util.containers.MultiMap;
 import ws.epigraph.ideaplugin.schema.brains.ImportsManager;
 import ws.epigraph.ideaplugin.schema.features.actions.fixes.OptimizeImportsQuickFix;
-import io.epigraph.lang.Qn;
-import io.epigraph.schema.parser.psi.SchemaImportStatement;
-import io.epigraph.schema.parser.psi.SchemaImports;
-import io.epigraph.schema.parser.psi.SchemaVisitor;
+import ws.epigraph.lang.Qn;
+import ws.epigraph.schema.parser.psi.SchemaImportStatement;
+import ws.epigraph.schema.parser.psi.SchemaImports;
+import ws.epigraph.schema.parser.psi.SchemaVisitor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import static io.epigraph.lang.DefaultImports.DEFAULT_IMPORTS_LIST;
+import static ws.epigraph.lang.DefaultImports.DEFAULT_IMPORTS_LIST;
 
 /**
- * @author <a href="mailto:konstantin.sobolev.com">Konstantin Sobolev</a>
+ * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class UnnecessaryImportInspection extends LocalInspectionTool {
   @NotNull

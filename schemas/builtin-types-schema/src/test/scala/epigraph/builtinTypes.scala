@@ -2,10 +2,10 @@
 
 package epigraph
 
-import com.sumologic.epigraph.xp.data._
-import com.sumologic.epigraph.xp.data.immutable._
-import com.sumologic.epigraph.xp.data.mutable._
-import com.sumologic.epigraph.xp.types.{BooleanType, DoubleType, IntegerType, LongType, StringType}
+import ws.epigraph.xp.data._
+import ws.epigraph.xp.data.immutable._
+import ws.epigraph.xp.data.mutable._
+import ws.epigraph.xp.types.{BooleanType, DoubleType, IntegerType, LongType, StringType}
 
 trait StringPrimitive extends StringDatum[StringPrimitive]
 

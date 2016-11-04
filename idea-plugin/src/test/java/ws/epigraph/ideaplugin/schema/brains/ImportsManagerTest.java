@@ -1,15 +1,15 @@
 package ws.epigraph.ideaplugin.schema.brains;
 
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
-import io.epigraph.lang.Qn;
-import io.epigraph.schema.parser.psi.SchemaFile;
-import io.epigraph.schema.parser.psi.SchemaImportStatement;
+import ws.epigraph.lang.Qn;
+import ws.epigraph.schema.parser.psi.SchemaFile;
+import ws.epigraph.schema.parser.psi.SchemaImportStatement;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * @author <a href="mailto:konstantin.sobolev.com">Konstantin Sobolev</a>
+ * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ImportsManagerTest extends LightCodeInsightFixtureTestCase {
   @Override

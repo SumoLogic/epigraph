@@ -4,12 +4,12 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
 import com.intellij.refactoring.rename.RenamePsiElementProcessor;
-import io.epigraph.schema.parser.psi.SchemaFieldDecl;
+import ws.epigraph.schema.parser.psi.SchemaFieldDecl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * @author <a href="mailto:konstantin.sobolev.com">Konstantin Sobolev</a>
+ * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class RenameSchemaFieldProcessor extends RenamePsiElementProcessor {
   @Override
