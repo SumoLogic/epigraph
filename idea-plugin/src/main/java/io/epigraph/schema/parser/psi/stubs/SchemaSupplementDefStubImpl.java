@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 /**
- * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
+ * @author <a href="mailto:konstantin.sobolev.com">Konstantin Sobolev</a>
  */
 public class SchemaSupplementDefStubImpl extends StubBase<SchemaSupplementDef> implements SchemaSupplementDefStub {
   private final SerializedFqnTypeRef sourceTypeRef;

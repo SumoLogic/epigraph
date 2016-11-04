@@ -2,11 +2,11 @@ package io.epigraph.schema.parser.psi;
 
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.sumologic.epigraph.ideaplugin.schema.brains.NamespaceManager;
-import com.sumologic.epigraph.ideaplugin.schema.brains.SchemaQnReference;
-import com.sumologic.epigraph.ideaplugin.schema.brains.SchemaQnReferenceResolver;
-import com.sumologic.epigraph.ideaplugin.schema.brains.SchemaVarTagReference;
-import com.sumologic.epigraph.ideaplugin.schema.index.SchemaSearchScopeUtil;
+import ws.epigraph.ideaplugin.schema.brains.NamespaceManager;
+import ws.epigraph.ideaplugin.schema.brains.SchemaQnReference;
+import ws.epigraph.ideaplugin.schema.brains.SchemaQnReferenceResolver;
+import ws.epigraph.ideaplugin.schema.brains.SchemaVarTagReference;
+import ws.epigraph.ideaplugin.schema.index.SchemaSearchScopeUtil;
 import io.epigraph.lang.Qn;
 import io.epigraph.refs.ImportAwareTypesResolver;
 import org.jetbrains.annotations.NotNull;
@@ -15,10 +15,10 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.sumologic.epigraph.ideaplugin.schema.brains.NamespaceManager.getNamespace;
+import static ws.epigraph.ideaplugin.schema.brains.NamespaceManager.getNamespace;
 
 /**
- * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
+ * @author <a href="mailto:konstantin.sobolev.com">Konstantin Sobolev</a>
  * @see <a href="https://github.com/SumoLogic/epigraph/wiki/References%20implementation#reference-resolution-algorithm">Reference resolution algorithm</a>
  */
 public class SchemaReferenceFactory {

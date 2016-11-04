@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
+ * @author <a href="mailto:konstantin.sobolev.com">Konstantin Sobolev</a>
  */
 public class StubSerializerUtil {
   interface Serializer<T> {

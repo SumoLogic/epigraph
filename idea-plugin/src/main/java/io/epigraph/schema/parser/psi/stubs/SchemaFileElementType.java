@@ -8,7 +8,7 @@ import com.intellij.psi.stubs.StubInputStream;
 import com.intellij.psi.stubs.StubOutputStream;
 import com.intellij.psi.tree.IStubFileElementType;
 import com.intellij.util.io.StringRef;
-import com.sumologic.epigraph.ideaplugin.schema.brains.NamespaceManager;
+import ws.epigraph.ideaplugin.schema.brains.NamespaceManager;
 import io.epigraph.lang.Qn;
 import io.epigraph.schema.parser.SchemaLanguage;
 import io.epigraph.schema.parser.psi.SchemaFile;
@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 
 /**
- * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
+ * @author <a href="mailto:konstantin.sobolev.com">Konstantin Sobolev</a>
  */
 public class SchemaFileElementType extends IStubFileElementType<SchemaFileStub> {
   public SchemaFileElementType() {

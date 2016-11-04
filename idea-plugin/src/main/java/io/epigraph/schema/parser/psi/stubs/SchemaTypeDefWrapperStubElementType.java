@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 
 /**
- * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
+ * @author <a href="mailto:konstantin.sobolev.com">Konstantin Sobolev</a>
  */
 public class SchemaTypeDefWrapperStubElementType extends IStubElementType<SchemaTypeDefWrapperStub, SchemaTypeDefWrapper> {
   public SchemaTypeDefWrapperStubElementType(@NotNull @NonNls String debugName) {

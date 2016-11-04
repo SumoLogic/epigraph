@@ -7,7 +7,7 @@ import io.epigraph.schema.lexer.SchemaElementTypes;
 import io.epigraph.schema.parser.psi.SchemaTypeDefWrapper;
 
 /**
- * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
+ * @author <a href="mailto:konstantin.sobolev.com">Konstantin Sobolev</a>
  */
 class SchemaTypeDefWrapperStubImpl extends StubBase<SchemaTypeDefWrapper> implements SchemaTypeDefWrapperStub {
   SchemaTypeDefWrapperStubImpl(StubElement parent) {

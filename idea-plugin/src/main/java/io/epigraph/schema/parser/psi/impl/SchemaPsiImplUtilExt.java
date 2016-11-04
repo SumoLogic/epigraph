@@ -3,8 +3,8 @@ package io.epigraph.schema.parser.psi.impl;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.sumologic.epigraph.ideaplugin.schema.index.SchemaSearchScopeUtil;
-import com.sumologic.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
+import ws.epigraph.ideaplugin.schema.index.SchemaSearchScopeUtil;
+import ws.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
 import io.epigraph.schema.parser.psi.stubs.*;
 import io.epigraph.schema.parser.psi.*;
 import org.jetbrains.annotations.Contract;
@@ -20,7 +20,7 @@ import static io.epigraph.schema.parser.psi.impl.SchemaPsiImplUtil.sourceRef;
 import static io.epigraph.schema.parser.psi.impl.SchemaPsiImplUtil.supplementedRefs;
 
 /**
- * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
+ * @author <a href="mailto:konstantin.sobolev.com">Konstantin Sobolev</a>
  */
 class SchemaPsiImplUtilExt {
 

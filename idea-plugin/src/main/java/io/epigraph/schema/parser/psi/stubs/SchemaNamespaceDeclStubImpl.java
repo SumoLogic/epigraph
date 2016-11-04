@@ -8,7 +8,7 @@ import io.epigraph.schema.lexer.SchemaElementTypes;
 import io.epigraph.schema.parser.psi.SchemaNamespaceDecl;
 
 /**
- * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
+ * @author <a href="mailto:konstantin.sobolev.com">Konstantin Sobolev</a>
  */
 public class SchemaNamespaceDeclStubImpl extends StubBase<SchemaNamespaceDecl> implements SchemaNamespaceDeclStub {
   private final Qn fqn;

@@ -1,5 +1,5 @@
 <idea-plugin url="http://www.jetbrains.com/idea">
   <extensions xmlns="com.intellij">
-    <diagram.Provider implementation="com.sumologic.epigraph.ideaplugin.schema.diagram.SchemaDiagramProvider"/>
+    <diagram.Provider implementation="ws.epigraph.ideaplugin.schema.diagram.SchemaDiagramProvider"/>
   </extensions>
 </idea-plugin>

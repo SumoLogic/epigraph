@@ -6,9 +6,9 @@ import com.intellij.navigation.ItemPresentation;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.util.IncorrectOperationException;
-import com.sumologic.epigraph.ideaplugin.schema.brains.NamespaceManager;
-import com.sumologic.epigraph.ideaplugin.schema.index.SchemaSearchScopeUtil;
-import com.sumologic.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
+import ws.epigraph.ideaplugin.schema.brains.NamespaceManager;
+import ws.epigraph.ideaplugin.schema.index.SchemaSearchScopeUtil;
+import ws.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
 import io.epigraph.lang.Qn;
 import io.epigraph.schema.parser.psi.*;
 import io.epigraph.schema.parser.psi.stubs.SchemaTypeDefStubBase;
@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 import static io.epigraph.schema.lexer.SchemaElementTypes.*;
 
 /**
- * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
+ * @author <a href="mailto:konstantin.sobolev.com">Konstantin Sobolev</a>
  */
 public abstract class SchemaTypeDefImplBase<S extends SchemaTypeDefStubBase<T>, T extends SchemaTypeDef>
     extends StubBasedPsiElementBase<S> implements SchemaTypeDef {

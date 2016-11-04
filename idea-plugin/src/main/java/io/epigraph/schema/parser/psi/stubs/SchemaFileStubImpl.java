@@ -6,7 +6,7 @@ import com.intellij.util.io.StringRef;
 import io.epigraph.schema.parser.psi.SchemaFile;
 
 /**
- * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
+ * @author <a href="mailto:konstantin.sobolev.com">Konstantin Sobolev</a>
  */
 public class SchemaFileStubImpl extends PsiFileStubImpl<SchemaFile> implements SchemaFileStub {
   private final StringRef namespace;

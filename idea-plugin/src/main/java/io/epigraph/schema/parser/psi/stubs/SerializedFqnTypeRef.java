@@ -6,8 +6,8 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.StubInputStream;
 import com.intellij.psi.stubs.StubOutputStream;
 import com.intellij.util.io.StringRef;
-import com.sumologic.epigraph.ideaplugin.schema.brains.SchemaQnReference;
-import com.sumologic.epigraph.ideaplugin.schema.brains.SchemaQnReferenceResolver;
+import ws.epigraph.ideaplugin.schema.brains.SchemaQnReference;
+import ws.epigraph.ideaplugin.schema.brains.SchemaQnReferenceResolver;
 import io.epigraph.lang.Qn;
 import io.epigraph.schema.parser.psi.SchemaQnTypeRef;
 import io.epigraph.schema.parser.psi.SchemaTypeDef;
@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
+ * @author <a href="mailto:konstantin.sobolev.com">Konstantin Sobolev</a>
  */
 public final class SerializedFqnTypeRef {
   @Nullable

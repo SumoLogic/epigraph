@@ -5,7 +5,7 @@ import io.epigraph.lang.Qn;
 import io.epigraph.schema.parser.psi.SchemaNamespaceDecl;
 
 /**
- * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
+ * @author <a href="mailto:konstantin.sobolev.com">Konstantin Sobolev</a>
  */
 public interface SchemaNamespaceDeclStub extends StubElement<SchemaNamespaceDecl> {
   Qn getFqn();

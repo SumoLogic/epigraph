@@ -1,14 +1,14 @@
 package io.epigraph.schema.parser;
 
 import com.intellij.openapi.fileTypes.LanguageFileType;
-import com.sumologic.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
+import ws.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
 /**
- * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
+ * @author <a href="mailto:konstantin.sobolev.com">Konstantin Sobolev</a>
  */
 public class SchemaFileType extends LanguageFileType {
   public static final SchemaFileType INSTANCE = new SchemaFileType();

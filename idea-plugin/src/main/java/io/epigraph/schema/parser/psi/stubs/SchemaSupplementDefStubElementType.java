@@ -1,7 +1,7 @@
 package io.epigraph.schema.parser.psi.stubs;
 
 import com.intellij.psi.stubs.*;
-import com.sumologic.epigraph.ideaplugin.schema.index.SchemaStubIndexKeys;
+import ws.epigraph.ideaplugin.schema.index.SchemaStubIndexKeys;
 import io.epigraph.lang.Qn;
 import io.epigraph.schema.parser.SchemaLanguage;
 import io.epigraph.schema.parser.psi.SchemaSupplementDef;
@@ -15,7 +15,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
- * @author <a href="mailto:konstantin@sumologic.com">Konstantin Sobolev</a>
+ * @author <a href="mailto:konstantin.sobolev.com">Konstantin Sobolev</a>
  */
 public class SchemaSupplementDefStubElementType extends IStubElementType<SchemaSupplementDefStub, SchemaSupplementDef> {
   public SchemaSupplementDefStubElementType(@NotNull @NonNls String debugName) {
