@@ -1,7 +1,6 @@
 package io.epigraph.server.http;
 
 import io.epigraph.gdata.GDatum;
-import io.epigraph.gdata.GPrimitiveDatum;
 import io.epigraph.projections.StepsAndProjection;
 import io.epigraph.projections.req.output.ReqOutputFieldProjection;
 import io.epigraph.projections.req.path.ReqFieldPath;
@@ -14,7 +13,6 @@ import io.epigraph.types.DataType;
 import io.epigraph.url.ReadRequestUrl;
 import io.epigraph.url.ReadRequestUrlPsiParser;
 import io.epigraph.url.parser.psi.UrlReadUrl;
-import io.epigraph.url.projections.req.ReqParserUtil;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -27,12 +25,11 @@ import java.util.*;
 public class ReadOperationRouter {
   @NotNull
   public static ReadOperationSearchResult findReadOperation(
+      @Nullable String operationName,
       @NotNull UrlReadUrl urlPsi,
       @NotNull Resource resource,
-      @NotNull TypesResolver resolver,
-      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
+      @NotNull TypesResolver resolver) throws PsiProcessingException {
 
-    final @Nullable String operationName = getOperationName(urlPsi, errors);
     final @NotNull DataType resourceFieldType = resource.declaration().fieldType();
 
     if (operationName != null) {
@@ -93,36 +90,6 @@ public class ReadOperationRouter {
         );
 
     }
-  }
-
-  @Nullable
-  private static String getOperationName(
-      final @NotNull UrlReadUrl urlPsi,
-      final @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
-
-    final @Nullable String operationName;
-
-    @NotNull final Map<String, GDatum> requestParams =
-        ReqParserUtil.parseRequestParams(urlPsi.getRequestParamList(), errors);
-    final GDatum operationNameDatum = requestParams.get(RequestParameters.OPERATION_NAME);
-    if (operationNameDatum == null) operationName = null;
-    else {
-      if (operationNameDatum instanceof GPrimitiveDatum) {
-        GPrimitiveDatum primitiveDatum = (GPrimitiveDatum) operationNameDatum;
-        operationName = primitiveDatum.value().toString();
-      } else {
-        errors.add(
-            new PsiProcessingError(
-                String.format(
-                    "Parameter '%s' value must be a string", RequestParameters.OPERATION_NAME
-                ), operationNameDatum.location()
-            )
-        );
-        operationName = null;
-      }
-    }
-
-    return operationName;
   }
 
   public interface ReadOperationSearchResult {}

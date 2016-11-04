@@ -98,6 +98,8 @@ createUrl ::= '/' qid reqFieldPath ('>' reqOutputTrunkFieldProjection)? requestP
 updateUrl ::= '/' qid reqFieldPath ('<' reqUpdateFieldProjection)? ('>' reqOutputTrunkFieldProjection)? requestParams
 deleteUrl ::= '/' qid reqFieldPath ('<' reqDeleteFieldProjection)? ('>' reqOutputTrunkFieldProjection)? requestParams
 customUrl ::= '/' qid reqFieldPath ('>' reqOutputTrunkFieldProjection)? requestParams
+// todo should be:
+// customUrl ::= '/' qid reqFieldPath ('<' reqInputFieldProjection)? ('>' reqOutputTrunkFieldProjection)? requestParams
 
 private requestParams ::= requestParam*
 requestParam ::= ('?' | '&') PARAM_NAME '=' datum {  // ? vs & nonsense is sorted out in the UrlRequestPsiParser

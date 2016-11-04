@@ -179,7 +179,8 @@ public class Resource {
         }
       }
 
-      // sort by path length, from longest to shortest
+      // sort by path length, from longest to shortest. This is stable sort: operations with the same
+      // path length stay in the order of declaration
 
       Collections.sort(unnamedOperations, (o1, o2) -> {
         final @Nullable OpFieldPath path1 = o1.declaration().path();
