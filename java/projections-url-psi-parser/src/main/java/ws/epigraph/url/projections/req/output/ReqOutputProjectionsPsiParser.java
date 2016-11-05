@@ -1,6 +1,7 @@
 package ws.epigraph.url.projections.req.output;
 
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.util.PsiTreeUtil;
 import ws.epigraph.data.Datum;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
@@ -60,6 +61,9 @@ public class ReqOutputProjectionsPsiParser {
       tagProjections = new LinkedHashMap<>();
       addStarTags(op, tagProjections, errors, psi);
     } else if (singleTagProjectionPsi != null) {
+      // try to improve error reporting: singleTagProjectionPsi may be empty
+      PsiElement tagLocation = getSingleTagLocation(singleTagProjectionPsi);
+
       tagProjections = new LinkedHashMap<>();
 
       final ReqOutputModelProjection<?, ?> parsedModelProjection;
@@ -67,9 +71,9 @@ public class ReqOutputProjectionsPsiParser {
 
       @NotNull final Type.Tag tag;
 
-      tag = findTagOrDefaultTag(type, tagNamePsi, op, singleTagProjectionPsi, errors);
+      tag = findTagOrDefaultTag(type, tagNamePsi, op, tagLocation, errors);
       @NotNull OpOutputTagProjectionEntry opTagProjection =
-          findTagProjection(tag.name(), op, singleTagProjectionPsi, errors);
+          findTagProjection(tag.name(), op, tagLocation, errors);
 
       @NotNull OpOutputModelProjection<?, ?> opModelProjection = opTagProjection.projection();
       @NotNull UrlReqOutputTrunkModelProjection modelProjectionPsi =
@@ -99,7 +103,7 @@ public class ReqOutputProjectionsPsiParser {
           new ReqOutputTagProjectionEntry(
               tag,
               parsedModelProjection,
-              EpigraphPsiUtil.getLocation(singleTagProjectionPsi)
+              EpigraphPsiUtil.getLocation(tagLocation)
           )
       );
       parenthesized = false;
@@ -119,6 +123,24 @@ public class ReqOutputProjectionsPsiParser {
         steps,
         new ReqOutputVarProjection(type, tagProjections, tails, parenthesized, EpigraphPsiUtil.getLocation(psi))
     );
+  }
+
+  @NotNull
+  private static PsiElement getSingleTagLocation(@NotNull final UrlReqOutputTrunkSingleTagProjection singleTagProjectionPsi) {
+    PsiElement tagLocation = singleTagProjectionPsi;
+    if (tagLocation.getText().length() == 0) {
+      @Nullable final UrlReqOutputComaFieldProjection fieldProjectionPsi =
+          PsiTreeUtil.getParentOfType(tagLocation, UrlReqOutputComaFieldProjection.class);
+      if (fieldProjectionPsi != null) {
+        tagLocation = fieldProjectionPsi.getQid();
+      } else {
+        @Nullable final UrlReqOutputTrunkRecordModelProjection recordProjectionPsi =
+            PsiTreeUtil.getParentOfType(tagLocation, UrlReqOutputTrunkRecordModelProjection.class);
+        if (recordProjectionPsi != null)
+          tagLocation = recordProjectionPsi.getQid();
+      }
+    }
+    return tagLocation;
   }
 
   private static void addStarTags(
@@ -173,7 +195,11 @@ public class ReqOutputProjectionsPsiParser {
       if (defaultTag != null) return defaultTag;
 
       throw new PsiProcessingException(
-          String.format("Can't build projection for type '%s': no tags supported", type.name()),
+          String.format(
+              "Can't build projection for type '%s': no tags specified. Supported tags: {%s}",
+              type.name(),
+              listTags(opOutputVarProjection)
+          ),
           location,
           errors
       );
@@ -225,25 +251,6 @@ public class ReqOutputProjectionsPsiParser {
 
   private static String listTags(@NotNull OpOutputVarProjection op) {
     return op.tagProjections().keySet().stream().collect(Collectors.joining(", "));
-  }
-
-  @NotNull
-  private static Type.Tag findTag(
-      @NotNull Type type, @NotNull String tagName, @NotNull PsiElement location,
-      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
-
-    final Map<@NotNull String, @NotNull ? extends Type.Tag> tagsMap = type.tagsMap();
-    final Type.Tag tag = tagsMap.get(tagName);
-    if (tag == null)
-      throw new PsiProcessingException(
-          String.format("Can't find tag '%s' in type '%s'; known tags: {%s}",
-                        tagName, type.name(), String.join(", ", tagsMap.keySet())
-          ),
-          location,
-          errors
-      );
-
-    return tag;
   }
 
   public static StepsAndProjection<ReqOutputVarProjection> parseComaVarProjection(
@@ -604,17 +611,6 @@ public class ReqOutputProjectionsPsiParser {
   }
 
   @NotNull
-  private static ReqOutputVarProjection createDefaultVarProjection(
-      @NotNull DatumType type,
-      @NotNull OpOutputVarProjection op,
-      boolean required,
-      @NotNull PsiElement locationPsi,
-      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
-
-    return createDefaultVarProjection(type, Collections.singletonList(type.self), op, required, locationPsi, errors);
-  }
-
-  @NotNull
   public static StepsAndProjection<? extends ReqOutputModelProjection<?, ?>> parseTrunkModelProjection(
       @NotNull OpOutputModelProjection<?, ?> op,
       boolean required,
@@ -816,9 +812,9 @@ public class ReqOutputProjectionsPsiParser {
         } else {
           fields = new LinkedHashMap<>();
 
-          for (Map.Entry<String, OpOutputFieldProjectionEntry> entry : opFields.entrySet()) {
-            final OpOutputFieldProjectionEntry opFieldProjectionEntry = entry.getValue();
-            @NotNull final OpOutputFieldProjection opFieldProjection = opFieldProjectionEntry.projection();
+//          for (Map.Entry<String, OpOutputFieldProjectionEntry> entry : opFields.entrySet()) {
+//            final OpOutputFieldProjectionEntry opFieldProjectionEntry = entry.getValue();
+//            @NotNull final OpOutputFieldProjection opFieldProjection = opFieldProjectionEntry.projection();
 
 //            if (opFieldProjection.includeInDefault()) {
 //              final String fieldName = entry.getKey();
@@ -845,7 +841,7 @@ public class ReqOutputProjectionsPsiParser {
 //                  )
 //              );
 //            }
-          }
+//          }
         }
 
         return new ReqOutputRecordModelProjection(
@@ -1216,8 +1212,6 @@ public class ReqOutputProjectionsPsiParser {
       @NotNull UrlReqOutputTrunkMapModelProjection psi,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
-
-    final List<ReqOutputKeyProjection> keyProjections;
 
     if (op.keyProjection().presence() == OpOutputKeyProjection.Presence.FORBIDDEN)
       throw new PsiProcessingException("Map keys are forbidden", psi.getDatum(), errors);

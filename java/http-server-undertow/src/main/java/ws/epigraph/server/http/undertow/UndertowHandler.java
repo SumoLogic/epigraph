@@ -1,8 +1,5 @@
 package ws.epigraph.server.http.undertow;
 
-import de.uka.ilkd.pp.Layouter;
-import de.uka.ilkd.pp.NoExceptions;
-import de.uka.ilkd.pp.StringBackend;
 import io.undertow.io.Sender;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
@@ -14,13 +11,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Data;
 import ws.epigraph.data.Datum;
-import ws.epigraph.idl.ResourceIdl;
 import ws.epigraph.idl.operations.OperationKind;
-import ws.epigraph.idl.operations.ReadOperationIdl;
-import ws.epigraph.printers.DataPrinter;
+import ws.epigraph.projections.req.output.ReqOutputModelProjection;
 import ws.epigraph.projections.req.output.ReqOutputVarProjection;
 import ws.epigraph.psi.EpigraphPsiUtil;
-import ws.epigraph.psi.PsiProcessingError;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.server.http.RequestHeaders;
@@ -29,16 +23,12 @@ import ws.epigraph.service.*;
 import ws.epigraph.service.operations.ReadOperation;
 import ws.epigraph.service.operations.ReadOperationRequest;
 import ws.epigraph.service.operations.ReadOperationResponse;
-import ws.epigraph.url.ReadRequestUrl;
-import ws.epigraph.url.ReadRequestUrlPsiParser;
-import ws.epigraph.url.RequestUrl;
 import ws.epigraph.url.parser.projections.UrlSubParserDefinitions;
 import ws.epigraph.url.parser.psi.UrlReadUrl;
 import ws.epigraph.wire.json.JsonFormatWriter;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -67,14 +57,10 @@ public class UndertowHandler implements HttpHandler {
   public void handleRequest(HttpServerExchange exchange) throws Exception {
     final Sender sender = exchange.getResponseSender();
 
-//    HeaderMap responseHeaders = exchange.getResponseHeaders();
-//    responseHeaders.put(Headers.CONTENT_TYPE, "text/plain"); // todo
-
     try {
 
       String decodedUri = getDecodedRequestString(exchange);
       String resourceName = getResourceName(decodedUri, exchange);
-      String operationName = getOperationName(exchange);
 
       Resource resource = ResourceRouter.findResource(resourceName, service);
 
@@ -90,7 +76,7 @@ public class UndertowHandler implements HttpHandler {
 
     } catch (ResourceNotFoundException | OperationNotFoundException e) {
       badRequest(e.getMessage(), TEXT, exchange);
-    } catch (RequestFailedException ignored) {
+    } catch (RequestFailedException ignored) { // already handled
     } catch (Exception e) {
       // todo log, sanitize etc
 
@@ -183,25 +169,6 @@ public class UndertowHandler implements HttpHandler {
     return ((OperationSearchSuccess<ReadOperation<?>>) searchResult);
   }
 
-  @NotNull
-  private RequestUrl parseReadRequestUrl(
-      @NotNull UrlReadUrl urlPsi,
-      @NotNull ResourceIdl resourceDeclaration,
-      @NotNull ReadOperationIdl operationDeclaration,
-      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
-
-    @Nullable
-    final ReadRequestUrl requestUrl = ReadRequestUrlPsiParser.parseReadRequestUrl(
-        resourceDeclaration.fieldType(),
-        operationDeclaration,
-        urlPsi,
-        typesResolver,
-        errors
-    );
-
-    return requestUrl;
-  }
-
   private void handleReadResponse(
       final int pathSteps,
       @NotNull ReqOutputVarProjection reqProjection,
@@ -237,7 +204,6 @@ public class UndertowHandler implements HttpHandler {
     // todo validate response: e.g. all required parts must be present
 
     Data trimmedData = data == null ? null : ProjectionDataTrimmer.trimData(data, reqProjection);
-    int stepsToRemove = pathSteps == 0 ? 0 : pathSteps - 1; // last segment of path = our data, so keep it
 
     String contentType = JSON; // todo should depend on marshaller
     int statusCode = 200;
@@ -247,39 +213,43 @@ public class UndertowHandler implements HttpHandler {
       if (trimmedData == null) {
         responseText = getNullResponse();
       } else {
-        DataPathRemover.PathRemovalResult noPathData = DataPathRemover.removePath(trimmedData, stepsToRemove);
+        DataPathRemover.PathRemovalResult noPathData = DataPathRemover.removePath(trimmedData, pathSteps);
 
-        // todo marshal to proper json or whatever
-        if (stepsToRemove <= 1) { // FIXME - use path-traversed projection always
-          responseText = dataToString(reqProjection, data);
+        if (noPathData.error != null) {
+          contentType = "text/plain"; // todo report errors in json too?
+          statusCode = noPathData.error.statusCode();
+          responseText = noPathData.error.message();
+
+          @Nullable final Exception cause = noPathData.error.cause;
+          if (cause != null) {
+            responseText = responseText + "\ncaused by: " + cause.toString();
+            //add stacktrace too?
+          }
         } else {
-          if (noPathData.data != null) {
-            responseText = dataToString(noPathData.data);
-          } else if (noPathData.datum != null) {
-            responseText = datumToString(noPathData.datum);
-          } else if (noPathData.error != null) {
-            contentType = "text/plain"; // todo report errors in json too?
-            statusCode = noPathData.error.statusCode();
-            responseText = noPathData.error.message();
+          final OutputProjectionPathRemover.PathRemovalResult noPathProjection =
+              OutputProjectionPathRemover.removePath(reqProjection, pathSteps);
 
-            @Nullable final Exception cause = noPathData.error.cause;
-            if (cause != null) {
-              responseText = responseText + "\ncaused by: " + cause.toString();
-              //add stacktrace too?
-            }
+          @Nullable final ReqOutputVarProjection varProjection = noPathProjection.varProjection();
+          @Nullable final ReqOutputModelProjection<?, ?> modelProjection = noPathProjection.modelProjection();
+
+          if (varProjection != null) {
+            responseText = dataToString(varProjection, noPathData.data);
+          } else if (modelProjection != null) {
+            responseText = datumToString(modelProjection, noPathData.datum);
           } else {
             responseText = getNullResponse();
           }
         }
+
       }
 
       writeResponse(statusCode, responseText + "\n", contentType, exchange);
 
-    } catch (DataPathRemover.AmbiguousPathException e) {
+    } catch (AmbiguousPathException e) {
       serverError(
           String.format(
               "Can't remove %d path steps from data: \n%s\n",
-              stepsToRemove,
+              pathSteps == 0 ? 0 : pathSteps - 1,
               dataToString(trimmedData)
           ),
           TEXT,
@@ -308,26 +278,28 @@ public class UndertowHandler implements HttpHandler {
     return sw.toString();
   }
 
-  @Deprecated
   @NotNull
-  private String dataToString(@Nullable Data data) {
-    StringBackend sb = new StringBackend(80);
-    Layouter<NoExceptions> l = new Layouter<>(sb, 2);
-    DataPrinter<NoExceptions> dp = new DataPrinter<>(l);
-    dp.print(data);
-    l.close();
-    return sb.getString();
+  private String datumToString(@NotNull ReqOutputModelProjection<?, ?> projection, @Nullable Datum datum) {
+    StringWriter sw = new StringWriter();
+    JsonFormatWriter fw = new JsonFormatWriter(sw);
+    try {
+      fw.writeDatum(projection, datum);
+    } catch (IOException e) {
+      return e.toString();
+    }
+    return sw.toString();
   }
 
-  @Deprecated
   @NotNull
-  private String datumToString(@Nullable Datum datum) {
-    StringBackend sb = new StringBackend(80);
-    Layouter<NoExceptions> l = new Layouter<>(sb, 2);
-    DataPrinter<NoExceptions> dp = new DataPrinter<>(l);
-    dp.print(datum);
-    l.close();
-    return sb.getString();
+  private String dataToString(@Nullable Data data) {
+    StringWriter sw = new StringWriter();
+    JsonFormatWriter fw = new JsonFormatWriter(sw);
+    try {
+      fw.writeData(data);
+    } catch (IOException e) {
+      return e.toString();
+    }
+    return sw.toString();
   }
 
   @NotNull
@@ -353,7 +325,5 @@ public class UndertowHandler implements HttpHandler {
 
     return urlPsi;
   }
-
-  //////////////////////////////////////////////
 
 }

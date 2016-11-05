@@ -62,8 +62,6 @@ public class DataPathRemover { // todo move somewhere?
     throw new AmbiguousPathException(); // don't know how to drill into anything else
   }
 
-  public static class AmbiguousPathException extends Exception {} // todo provide details if needed
-
   public static class PathRemovalResult {
     public static final PathRemovalResult NULL = new PathRemovalResult(null, null, null);
 
