@@ -118,14 +118,21 @@ public class EpigraphPsiUtil {
   @NotNull
   public static TextLocation getLocation(@NotNull PsiElement psi) {
     TextRange textRange = psi.getTextRange();
-    PsiFile psiFile = null;
-    try {
-      psiFile = psi.getContainingFile();
-    } catch (PsiInvalidElementAccessException ignored) {
-      // any way to do this without try-catch?
-    }
+    PsiFile psiFile = getPsiFile(psi);
+    final PsiElement megaParent = findTopmostParent(psi);
 
-    // try to find the topmost psi element describing current file/contents
+    return new TextLocation(
+        textRange.getStartOffset(),
+        textRange.getEndOffset(),
+        psiFile == null ? null : psiFile.getName(),
+        megaParent.getText()
+    );
+  }
+
+  @NotNull
+  public static PsiElement findTopmostParent(final @NotNull PsiElement psi) {
+    PsiFile psiFile = getPsiFile(psi);
+
     final PsiElement megaParent;
     if (psiFile != null) megaParent = psiFile;
     else {
@@ -137,13 +144,19 @@ public class EpigraphPsiUtil {
       }
       megaParent = parent;
     }
+    return megaParent;
 
-    return new TextLocation(
-        textRange.getStartOffset(),
-        textRange.getEndOffset(),
-        psiFile == null ? null : psiFile.getName(),
-        megaParent.getText()
-    );
+  }
+
+  @Nullable
+  private static PsiFile getPsiFile(final @NotNull PsiElement psi) {
+    PsiFile psiFile = null;
+    try {
+      psiFile = psi.getContainingFile();
+    } catch (PsiInvalidElementAccessException ignored) {
+      // any way to do this without try-catch?
+    }
+    return psiFile;
   }
 
   public static void collectErrors(

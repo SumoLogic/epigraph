@@ -15,6 +15,8 @@ import java.util.List;
  */
 public class PsiProcessingException extends Exception {
   @NotNull
+  private final PsiElement psi;
+  @NotNull
   private final List<PsiProcessingError> errors; // last item = this exception
 
   @Deprecated
@@ -28,6 +30,7 @@ public class PsiProcessingException extends Exception {
       @NotNull List<PsiProcessingError> precedingErrors) {
 
     super(message);
+    this.psi = psi;
     if (precedingErrors.isEmpty())
       errors = Collections.singletonList(new PsiProcessingError(message, EpigraphPsiUtil.getLocation(psi)));
     else {
@@ -39,8 +42,12 @@ public class PsiProcessingException extends Exception {
   @Deprecated
   public PsiProcessingException(@NotNull Exception cause, @NotNull PsiElement psi) {
     super(cause);
+    this.psi = psi;
     errors = Collections.singletonList(new PsiProcessingError(cause.getMessage(), EpigraphPsiUtil.getLocation(psi)));
   }
+
+  @NotNull
+  public PsiElement psi() { return psi; }
 
   /**
    * @return list of errors, including this one (will be the last item)

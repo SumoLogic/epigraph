@@ -96,6 +96,7 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
     writeDatum(projections, datum);
   }
 
+  @SuppressWarnings("unchecked")
   private void writeDatum(@NotNull Deque<? extends ReqOutputModelProjection> projections, @Nullable Datum datum)
       throws IOException {
     if (datum == null) {
