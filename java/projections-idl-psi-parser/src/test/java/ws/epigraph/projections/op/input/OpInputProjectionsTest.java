@@ -37,6 +37,7 @@ import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import static ws.epigraph.test.TestUtil.lines;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -204,9 +205,5 @@ public class OpInputProjectionsTest {
 
     assertEquals("\n" + actual, expected, actual);
 //    assertEquals(expected.trim(), actual.trim());
-  }
-
-  private static String lines(String... lines) {
-    return Arrays.stream(lines).collect(Collectors.joining("\n"));
   }
 }

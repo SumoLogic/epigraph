@@ -248,6 +248,7 @@ public class UndertowHandler implements HttpHandler {
           @Nullable final ReqOutputVarProjection varProjection = noPathProjection.varProjection();
           @Nullable final ReqOutputModelProjection<?, ?> modelProjection = noPathProjection.modelProjection();
 
+          // todo this must be streaming
           if (varProjection != null) {
             responseText = dataToString(varProjection, noPathData.data);
           } else if (modelProjection != null) {

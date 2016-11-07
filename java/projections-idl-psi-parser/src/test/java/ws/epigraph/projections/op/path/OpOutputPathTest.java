@@ -16,26 +16,17 @@
 
 package ws.epigraph.projections.op.path;
 
-import com.intellij.psi.PsiErrorElement;
-import com.intellij.psi.impl.DebugUtil;
-import de.uka.ilkd.pp.Layouter;
-import de.uka.ilkd.pp.NoExceptions;
-import de.uka.ilkd.pp.StringBackend;
-import ws.epigraph.idl.parser.projections.IdlSubParserDefinitions;
-import ws.epigraph.idl.parser.psi.IdlOpVarPath;
-import ws.epigraph.psi.EpigraphPsiUtil;
+import org.junit.Test;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.SimpleTypesResolver;
 import ws.epigraph.refs.TypesResolver;
+import ws.epigraph.test.TestUtil;
 import ws.epigraph.tests.*;
 import ws.epigraph.types.DataType;
-import org.junit.Test;
-
-import java.util.Arrays;
-import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import static ws.epigraph.test.TestUtil.lines;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -117,7 +108,7 @@ public class OpOutputPathTest {
 
     OpVarPath varPath = parseOpVarPath(varDataType, projectionString);
 
-    String actual = print(varPath);
+    String actual = TestUtil.printOpVarPath(varPath);
 
     assertEquals("\n" + actual, expected, actual);
 //    assertEquals(expected.trim(), actual.trim());
@@ -136,54 +127,7 @@ public class OpOutputPathTest {
         epigraph.String.type
     );
 
-    EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
-
-    IdlOpVarPath psiVarProjection = EpigraphPsiUtil.parseText(
-        projectionString,
-        IdlSubParserDefinitions.OP_VAR_PATH.rootElementType(),
-        IdlOpVarPath.class,
-        IdlSubParserDefinitions.OP_VAR_PATH,
-        errorsAccumulator
-    );
-
-    if (errorsAccumulator.hasErrors()) {
-      for (PsiErrorElement element : errorsAccumulator.errors()) {
-        System.err.println(element.getErrorDescription() + " at " +
-                           EpigraphPsiUtil.getLocation(element));
-      }
-      String psiDump = DebugUtil.psiToString(psiVarProjection, true, false).trim();
-      fail(psiDump);
-    }
-
-    OpVarPath varPath;
-//    try {
-    varPath = OpPathPsiParser.parseVarPath(
-        varDataType,
-        psiVarProjection,
-        resolver
-    );
-
-//    } catch (PsiProcessingException e) {
-//      e.printStackTrace();
-//      System.err.println(e.getMessage() + " at " +
-//                         EpigraphPsiUtil.getLocation(e.psi()));
-//      String psiDump = DebugUtil.psiToString(psiVarProjection, true, false).trim();
-//      fail(psiDump);
-//    }
-    return varPath;
-  }
-
-  private String print(OpVarPath path) {
-    StringBackend sb = new StringBackend(120);
-    Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
-    OpPathPrettyPrinter<NoExceptions> printer = new OpPathPrettyPrinter<>(layouter);
-    printer.print(path, 0);
-    layouter.close();
-    return sb.getString();
-  }
-
-  private static String lines(String... lines) {
-    return Arrays.stream(lines).collect(Collectors.joining("\n"));
+    return TestUtil.parseOpVarPath(varDataType, projectionString, false, resolver);
   }
 
 }

@@ -175,7 +175,7 @@ mvn clean install -P maven-plugin-dependent
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
         <version>4.12</version>
-        <scope>test</scope>
+        <!--<scope>test</scope>--> <!-- used by java/test-util -->
       </dependency>
 
       <dependency>

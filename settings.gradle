@@ -37,6 +37,7 @@ Map<String, String> modules = [
     'java/schema-parser'                   : 'epigraph-java-schema-parser',
     'java/service'                         : 'epigraph-java-service',
     'java/standalone-psi-util'             : 'epigraph-java-standalone-psi-util',
+    'java/test-util'                       : 'epigraph-java-test-util',
     'java/request-url'                     : 'epigraph-java-request-url',
     'java/request-url-parser'              : 'epigraph-java-request-url-parser',
     'java/request-url-psi-parser'          : 'epigraph-java-request-url-psi-parser',

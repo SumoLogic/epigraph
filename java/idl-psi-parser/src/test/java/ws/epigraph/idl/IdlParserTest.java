@@ -16,30 +16,19 @@
 
 package ws.epigraph.idl;
 
-import com.intellij.psi.PsiErrorElement;
-import com.intellij.psi.impl.DebugUtil;
 import de.uka.ilkd.pp.Layouter;
 import de.uka.ilkd.pp.NoExceptions;
 import de.uka.ilkd.pp.StringBackend;
-import ws.epigraph.idl.parser.IdlParserDefinition;
-import ws.epigraph.idl.parser.psi.IdlFile;
-import ws.epigraph.psi.EpigraphPsiUtil;
-import ws.epigraph.psi.PsiProcessingError;
-import ws.epigraph.psi.PsiProcessingException;
+import org.junit.Test;
 import ws.epigraph.refs.SimpleTypesResolver;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.tests.*;
-import org.jetbrains.annotations.NotNull;
-import org.junit.Test;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static ws.epigraph.test.TestUtil.lines;
+import static ws.epigraph.test.TestUtil.parseIdl;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -196,7 +185,7 @@ public class IdlParserTest {
   }
 
   private void testParse(String idlStr, String expected) throws IOException {
-    Idl idl = parseFile(idlStr);
+    Idl idl = parseIdl(idlStr, resolver);
 
     StringBackend sb = new StringBackend(80);
     Layouter<NoExceptions> l = new Layouter<>(sb, 2);
@@ -208,37 +197,4 @@ public class IdlParserTest {
     assertEquals(expected, s);
   }
 
-  private Idl parseFile(String text) throws IOException {
-    EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
-
-    @NotNull IdlFile psiFile =
-        (IdlFile) EpigraphPsiUtil.parseFile("idlTest.idl", text, IdlParserDefinition.INSTANCE, errorsAccumulator);
-
-    if (errorsAccumulator.hasErrors()) {
-      for (PsiErrorElement element : errorsAccumulator.errors()) {
-        System.err.println(element.getErrorDescription() + " at " + EpigraphPsiUtil.getLocation(element));
-      }
-      fail(DebugUtil.psiTreeToString(psiFile, true));
-    }
-
-    List<PsiProcessingError> errors = new ArrayList<>();
-    Idl idl = null;
-
-    try {
-      idl = IdlPsiParser.parseIdl(psiFile, resolver, errors);
-    } catch (PsiProcessingException e) {
-      errors = e.errors();
-    }
-
-    if (!errors.isEmpty()) {
-      for (final PsiProcessingError error : errors) {
-        System.err.print(error.message() + " at " + error.location());
-      }
-      fail();
-    }
-
-    return idl;
-  }
-
-  private static String lines(String... lines) { return Arrays.stream(lines).collect(Collectors.joining("\n")); }
 }

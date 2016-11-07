@@ -16,36 +16,26 @@
 
 package ws.epigraph.url.projections.req.path;
 
-import com.intellij.psi.PsiErrorElement;
-import com.intellij.psi.impl.DebugUtil;
-import de.uka.ilkd.pp.Layouter;
-import de.uka.ilkd.pp.NoExceptions;
-import de.uka.ilkd.pp.StringBackend;
-import ws.epigraph.idl.parser.projections.IdlSubParserDefinitions;
-import ws.epigraph.idl.parser.psi.IdlOpVarPath;
-import ws.epigraph.projections.ProjectionUtils;
-import ws.epigraph.projections.op.path.OpPathPsiParser;
+import org.junit.Test;
 import ws.epigraph.projections.op.path.OpVarPath;
-import ws.epigraph.projections.req.path.ReqPathPrettyPrinter;
 import ws.epigraph.projections.req.path.ReqVarPath;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingError;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.SimpleTypesResolver;
 import ws.epigraph.refs.TypesResolver;
+import ws.epigraph.test.TestUtil;
 import ws.epigraph.tests.*;
 import ws.epigraph.types.DataType;
 import ws.epigraph.url.parser.projections.UrlSubParserDefinitions;
 import ws.epigraph.url.parser.psi.UrlReqVarPath;
-import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import static ws.epigraph.test.TestUtil.lines;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -91,7 +81,7 @@ public class ReqPathParserTest {
       final ReqVarPath reqVarPath =
           ReqPathPsiParser.parseVarPath(personOpPath, Person.type.dataType(null), psi, resolver, errors);
 
-      String s = print(reqVarPath);
+      String s = TestUtil.printReqVarPath(reqVarPath);
 
       final String actual =
           s.replaceAll("\"", "'"); // pretty printer outputs double quotes, we use single quotes in URLs
@@ -125,14 +115,7 @@ public class ReqPathParserTest {
         errorsAccumulator
     );
 
-    if (errorsAccumulator.hasErrors()) {
-      for (PsiErrorElement element : errorsAccumulator.errors()) {
-        System.err.println(element.getErrorDescription() + " at " +
-                           EpigraphPsiUtil.getLocation(element));
-      }
-      String psiDump = DebugUtil.psiToString(psiVarPath, true, false).trim();
-      fail(psiDump);
-    }
+    TestUtil.failIfHasErrors(psiVarPath, errorsAccumulator);
 
 //    String psiDump = DebugUtil.psiToString(psiVarProjection, true, false).trim();
 //    System.out.println(psiDump);
@@ -141,54 +124,7 @@ public class ReqPathParserTest {
   }
 
   private OpVarPath parseOpVarPath(String projectionString) {
-    return parseOpVarPath(dataType, projectionString);
+    return TestUtil.parseOpVarPath(dataType, projectionString, resolver);
   }
 
-  private OpVarPath parseOpVarPath(DataType varDataType, String projectionString) {
-    EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
-
-    IdlOpVarPath psiVarProjection = EpigraphPsiUtil.parseText(
-        projectionString,
-        IdlSubParserDefinitions.OP_VAR_PATH.rootElementType(),
-        IdlOpVarPath.class,
-        IdlSubParserDefinitions.OP_VAR_PATH,
-        errorsAccumulator
-    );
-
-    if (errorsAccumulator.hasErrors()) {
-      for (PsiErrorElement element : errorsAccumulator.errors()) {
-        System.err.println(element.getErrorDescription() + " at " +
-                           EpigraphPsiUtil.getLocation(element));
-      }
-      String psiDump = DebugUtil.psiToString(psiVarProjection, true, false).trim();
-      fail(psiDump);
-    }
-
-    OpVarPath varPath = null;
-    try {
-      varPath = OpPathPsiParser.parseVarPath(varDataType, psiVarProjection, resolver);
-
-    } catch (PsiProcessingException e) {
-      e.printStackTrace();
-      System.err.println(e.getMessage() + " at " + e.location());
-      String psiDump = DebugUtil.psiToString(psiVarProjection, true, false).trim();
-      fail(psiDump);
-    }
-
-    return varPath;
-  }
-
-  private String print(ReqVarPath path) {
-    StringBackend sb = new StringBackend(120);
-    Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
-    ReqPathPrettyPrinter<NoExceptions> printer = new ReqPathPrettyPrinter<>(layouter);
-    int len = ProjectionUtils.pathLength(path);
-    printer.print(path, len);
-    layouter.close();
-    return sb.getString();
-  }
-
-  private static String lines(String... lines) {
-    return Arrays.stream(lines).collect(Collectors.joining("\n"));
-  }
 }

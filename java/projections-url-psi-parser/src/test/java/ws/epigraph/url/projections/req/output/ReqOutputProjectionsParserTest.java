@@ -18,35 +18,30 @@ package ws.epigraph.url.projections.req.output;
 
 import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.impl.DebugUtil;
-import de.uka.ilkd.pp.Layouter;
-import de.uka.ilkd.pp.NoExceptions;
-import de.uka.ilkd.pp.StringBackend;
-import ws.epigraph.idl.parser.projections.IdlSubParserDefinitions;
-import ws.epigraph.idl.parser.psi.IdlOpOutputVarProjection;
+import org.jetbrains.annotations.NotNull;
+import org.junit.Test;
 import ws.epigraph.projections.StepsAndProjection;
-import ws.epigraph.projections.op.output.OpOutputProjectionsPsiParser;
 import ws.epigraph.projections.op.output.OpOutputVarProjection;
-import ws.epigraph.projections.req.output.ReqOutputProjectionsPrettyPrinter;
 import ws.epigraph.projections.req.output.ReqOutputVarProjection;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingError;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.SimpleTypesResolver;
 import ws.epigraph.refs.TypesResolver;
+import ws.epigraph.test.TestUtil;
 import ws.epigraph.tests.*;
 import ws.epigraph.types.DataType;
 import ws.epigraph.url.parser.projections.UrlSubParserDefinitions;
 import ws.epigraph.url.parser.psi.UrlReqOutputTrunkVarProjection;
-import org.jetbrains.annotations.NotNull;
-import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import static ws.epigraph.test.TestUtil.failIfHasErrors;
+import static ws.epigraph.test.TestUtil.lines;
+import static ws.epigraph.test.TestUtil.parseOpOutputVarProjection;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -179,7 +174,7 @@ public class ReqOutputProjectionsParserTest {
 
       assertEquals(steps, stepsAndProjection.pathSteps());
 
-      String s = print(stepsAndProjection.projection(), steps);
+      String s = TestUtil.printReqOutputVarProjection(stepsAndProjection.projection(), steps);
 
       final String actual =
           s.replaceAll("\"", "'"); // pretty printer outputs double quotes, we use single quotes in URLs
@@ -213,14 +208,7 @@ public class ReqOutputProjectionsParserTest {
         errorsAccumulator
     );
 
-    if (errorsAccumulator.hasErrors()) {
-      for (PsiErrorElement element : errorsAccumulator.errors()) {
-        System.err.println(element.getErrorDescription() + " at " +
-                           EpigraphPsiUtil.getLocation(element));
-      }
-      String psiDump = DebugUtil.psiToString(psiVarProjection, true, false).trim();
-      fail(psiDump);
-    }
+    failIfHasErrors(psiVarProjection, errorsAccumulator);
 
 //    String psiDump = DebugUtil.psiToString(psiVarProjection, true, false).trim();
 //    System.out.println(psiDump);
@@ -228,69 +216,9 @@ public class ReqOutputProjectionsParserTest {
     return psiVarProjection;
   }
 
-  private OpOutputVarProjection parsePersonOpOutputVarProjection(String projectionString) {
-    return parseOpOutputVarProjection(dataType, projectionString);
+  @NotNull
+  private OpOutputVarProjection parsePersonOpOutputVarProjection(@NotNull String projectionString) {
+    return parseOpOutputVarProjection(dataType, projectionString, resolver);
   }
 
-  private OpOutputVarProjection parseOpOutputVarProjection(DataType varDataType, String projectionString) {
-    EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
-
-    IdlOpOutputVarProjection psiVarProjection = EpigraphPsiUtil.parseText(
-        projectionString,
-        IdlSubParserDefinitions.OP_OUTPUT_VAR_PROJECTION.rootElementType(),
-        IdlOpOutputVarProjection.class,
-        IdlSubParserDefinitions.OP_OUTPUT_VAR_PROJECTION,
-        errorsAccumulator
-    );
-
-    if (errorsAccumulator.hasErrors()) {
-      for (PsiErrorElement element : errorsAccumulator.errors()) {
-        System.err.println(element.getErrorDescription() + " at " +
-                           EpigraphPsiUtil.getLocation(element));
-      }
-      String psiDump = DebugUtil.psiToString(psiVarProjection, true, false).trim();
-      fail(psiDump);
-    }
-
-    List<PsiProcessingError> errors = new ArrayList<>();
-    OpOutputVarProjection varProjection = null;
-    try {
-      varProjection = OpOutputProjectionsPsiParser.parseVarProjection(
-          varDataType,
-          psiVarProjection,
-          resolver,
-          errors
-      );
-
-    } catch (PsiProcessingException e) {
-//      e.printStackTrace();
-//      System.err.println(e.getMessage() + " at " + e.location());
-//      String psiDump = DebugUtil.psiToString(psiVarProjection, true, false).trim();
-//      fail(psiDump);
-      errors = e.errors();
-    }
-
-    if (!errors.isEmpty()) {
-      for (final PsiProcessingError error : errors) {
-        System.err.print(error.message() + " at " + error.location());
-      }
-
-      fail();
-    }
-
-    return varProjection;
-  }
-
-  private String print(ReqOutputVarProjection projection, int pathSteps) {
-    StringBackend sb = new StringBackend(120);
-    Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
-    ReqOutputProjectionsPrettyPrinter<NoExceptions> printer = new ReqOutputProjectionsPrettyPrinter<>(layouter);
-    printer.print(projection, pathSteps);
-    layouter.close();
-    return sb.getString();
-  }
-
-  private static String lines(String... lines) {
-    return Arrays.stream(lines).collect(Collectors.joining("\n"));
-  }
 }
