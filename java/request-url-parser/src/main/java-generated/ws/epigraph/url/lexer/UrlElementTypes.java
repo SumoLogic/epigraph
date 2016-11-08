@@ -100,6 +100,7 @@ public interface UrlElementTypes {
   IElementType U_TAG_NAME = new UrlElementType("U_TAG_NAME");
   IElementType U_TYPE_REF = new UrlElementType("U_TYPE_REF");
   IElementType U_UPDATE_URL = new UrlElementType("U_UPDATE_URL");
+  IElementType U_URL = new UrlElementType("U_URL");
   IElementType U_VALUE_TYPE_REF = new UrlElementType("U_VALUE_TYPE_REF");
   IElementType U_VAR_TAG_REF = new UrlElementType("U_VAR_TAG_REF");
 

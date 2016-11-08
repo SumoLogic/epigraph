@@ -8,10 +8,9 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static ws.epigraph.url.lexer.UrlElementTypes.*;
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import ws.epigraph.url.parser.psi.*;
 
-public class UrlDeleteUrlImpl extends ASTWrapperPsiElement implements UrlDeleteUrl {
+public class UrlDeleteUrlImpl extends UrlUrlImpl implements UrlDeleteUrl {
 
   public UrlDeleteUrlImpl(ASTNode node) {
     super(node);

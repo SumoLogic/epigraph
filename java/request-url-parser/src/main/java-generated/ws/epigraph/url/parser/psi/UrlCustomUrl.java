@@ -5,7 +5,7 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface UrlCustomUrl extends PsiElement {
+public interface UrlCustomUrl extends UrlUrl {
 
   @NotNull
   UrlQid getQid();

@@ -20,11 +20,11 @@ public class UrlVisitor extends PsiElementVisitor {
   }
 
   public void visitCreateUrl(@NotNull UrlCreateUrl o) {
-    visitPsiElement(o);
+    visitUrl(o);
   }
 
   public void visitCustomUrl(@NotNull UrlCustomUrl o) {
-    visitPsiElement(o);
+    visitUrl(o);
   }
 
   public void visitData(@NotNull UrlData o) {
@@ -48,7 +48,7 @@ public class UrlVisitor extends PsiElementVisitor {
   }
 
   public void visitDeleteUrl(@NotNull UrlDeleteUrl o) {
-    visitPsiElement(o);
+    visitUrl(o);
   }
 
   public void visitEnumDatum(@NotNull UrlEnumDatum o) {
@@ -92,7 +92,7 @@ public class UrlVisitor extends PsiElementVisitor {
   }
 
   public void visitReadUrl(@NotNull UrlReadUrl o) {
-    visitPsiElement(o);
+    visitUrl(o);
   }
 
   public void visitRecordDatum(@NotNull UrlRecordDatum o) {
@@ -372,6 +372,10 @@ public class UrlVisitor extends PsiElementVisitor {
   }
 
   public void visitUpdateUrl(@NotNull UrlUpdateUrl o) {
+    visitUrl(o);
+  }
+
+  public void visitUrl(@NotNull UrlUrl o) {
     visitPsiElement(o);
   }
 

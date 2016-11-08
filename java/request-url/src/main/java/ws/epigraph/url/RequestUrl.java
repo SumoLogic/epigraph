@@ -16,16 +16,19 @@
 
 package ws.epigraph.url;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.gdata.GDatum;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.req.output.ReqOutputFieldProjection;
 import ws.epigraph.projections.req.path.ReqFieldPath;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
+import java.util.Objects;
 
 /**
+ * Fully parsed request URL
+ *
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public abstract class RequestUrl {
@@ -60,4 +63,20 @@ public abstract class RequestUrl {
 
   @NotNull
   public Map<String, GDatum> parameters() { return parameters; }
+
+  @Override
+  public boolean equals(final Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    final RequestUrl url = (RequestUrl) o;
+    return Objects.equals(fieldName, url.fieldName) &&
+           Objects.equals(path, url.path) &&
+           Objects.equals(outputProjection, url.outputProjection) &&
+           Objects.equals(parameters, url.parameters);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(fieldName, path, outputProjection, parameters);
+  }
 }

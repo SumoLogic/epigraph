@@ -106,16 +106,28 @@ tagName ::= qid
 // ============= url =============
 
 // this one isn't used actually, sub-parsers for read/create/... are used instead
-private url ::= readUrl | createUrl | updateUrl | deleteUrl | customUrl
+url ::= readUrl | createUrl | updateUrl | deleteUrl | customUrl
 
 // real entry points:
-readUrl ::= '/' qid reqOutputTrunkFieldProjection requestParams // reqFieldPath is part of output projection, will be extracted by psi parser
-createUrl ::= '/' qid reqFieldPath ('>' reqOutputTrunkFieldProjection)? requestParams
-updateUrl ::= '/' qid reqFieldPath ('<' reqUpdateFieldProjection)? ('>' reqOutputTrunkFieldProjection)? requestParams
-deleteUrl ::= '/' qid reqFieldPath ('<' reqDeleteFieldProjection)? ('>' reqOutputTrunkFieldProjection)? requestParams
-customUrl ::= '/' qid reqFieldPath ('>' reqOutputTrunkFieldProjection)? requestParams
+readUrl ::= '/' qid reqOutputTrunkFieldProjection requestParams { // reqFieldPath is part of output projection, will be extracted by psi parser
+  extends = "url"
+}
+createUrl ::= '/' qid reqFieldPath ('>' reqOutputTrunkFieldProjection)? requestParams {
+  extends = "url"
+}
+updateUrl ::= '/' qid reqFieldPath ('<' reqUpdateFieldProjection)? ('>' reqOutputTrunkFieldProjection)? requestParams {
+  extends = "url"
+}
+deleteUrl ::= '/' qid reqFieldPath ('<' reqDeleteFieldProjection)? ('>' reqOutputTrunkFieldProjection)? requestParams {
+  extends = "url"
+}
+customUrl ::= '/' qid reqFieldPath ('>' reqOutputTrunkFieldProjection)? requestParams {
+  extends = "url"
+}
+
 // todo should be:
 // customUrl ::= '/' qid reqFieldPath ('<' reqInputFieldProjection)? ('>' reqOutputTrunkFieldProjection)? requestParams
+
 
 private requestParams ::= requestParam*
 requestParam ::= ('?' | '&') PARAM_NAME '=' datum {  // ? vs & nonsense is sorted out in the UrlRequestPsiParser

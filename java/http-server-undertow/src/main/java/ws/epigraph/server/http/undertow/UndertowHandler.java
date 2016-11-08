@@ -63,6 +63,8 @@ public class UndertowHandler implements HttpHandler {
   private final Service service;
   @NotNull
   private final TypesResolver typesResolver;
+  @NotNull
+  private final ReadOperationRouter readOperationRouter = new ReadOperationRouter();
 
   public UndertowHandler(@NotNull Service service, @NotNull TypesResolver typesResolver) {
     this.service = service;
@@ -172,7 +174,7 @@ public class UndertowHandler implements HttpHandler {
       throws PsiProcessingException, OperationNotFoundException, RequestFailedException {
 
     final OperationSearchResult searchResult =
-        ReadOperationRouter.findReadOperation(operationName, urlPsi, resource, typesResolver);
+        readOperationRouter.findOperation(operationName, urlPsi, resource, typesResolver);
 
     if (searchResult instanceof OperationNotFound<?>)
       throw new OperationNotFoundException(resource.declaration().fieldName(), OperationKind.READ, operationName);

@@ -8,10 +8,9 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static ws.epigraph.url.lexer.UrlElementTypes.*;
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import ws.epigraph.url.parser.psi.*;
 
-public class UrlUpdateUrlImpl extends ASTWrapperPsiElement implements UrlUpdateUrl {
+public class UrlUpdateUrlImpl extends UrlUrlImpl implements UrlUpdateUrl {
 
   public UrlUpdateUrlImpl(ASTNode node) {
     super(node);

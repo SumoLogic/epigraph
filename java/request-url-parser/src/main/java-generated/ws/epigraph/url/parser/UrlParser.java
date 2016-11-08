@@ -299,6 +299,9 @@ public class UrlParser implements PsiParser, LightPsiParser {
     else if (t == U_UPDATE_URL) {
       r = updateUrl(b, 0);
     }
+    else if (t == U_URL) {
+      r = url(b, 0);
+    }
     else if (t == U_VALUE_TYPE_REF) {
       r = valueTypeRef(b, 0);
     }
@@ -318,6 +321,8 @@ public class UrlParser implements PsiParser, LightPsiParser {
   public static final TokenSet[] EXTENDS_SETS_ = new TokenSet[] {
     create_token_set_(U_REQ_OUTPUT_COMA_MODEL_PROJECTION, U_REQ_OUTPUT_TRUNK_MODEL_PROJECTION),
     create_token_set_(U_ANON_LIST, U_ANON_MAP, U_QN_TYPE_REF, U_TYPE_REF),
+    create_token_set_(U_CREATE_URL, U_CUSTOM_URL, U_DELETE_URL, U_READ_URL,
+      U_UPDATE_URL, U_URL),
     create_token_set_(U_DATUM, U_ENUM_DATUM, U_LIST_DATUM, U_MAP_DATUM,
       U_NULL_DATUM, U_PRIMITIVE_DATUM, U_RECORD_DATUM),
   };
@@ -2896,17 +2901,17 @@ public class UrlParser implements PsiParser, LightPsiParser {
 
   /* ********************************************************** */
   // readUrl | createUrl | updateUrl | deleteUrl | customUrl
-  static boolean url(PsiBuilder b, int l) {
+  public static boolean url(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "url")) return false;
     if (!nextTokenIs(b, U_SLASH)) return false;
     boolean r;
-    Marker m = enter_section_(b);
+    Marker m = enter_section_(b, l, _COLLAPSE_, U_URL, null);
     r = readUrl(b, l + 1);
     if (!r) r = createUrl(b, l + 1);
     if (!r) r = updateUrl(b, l + 1);
     if (!r) r = deleteUrl(b, l + 1);
     if (!r) r = customUrl(b, l + 1);
-    exit_section_(b, m, null, r);
+    exit_section_(b, l, m, r, false, null);
     return r;
   }
 
