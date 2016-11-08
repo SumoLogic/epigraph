@@ -97,7 +97,7 @@ public class OperationsPsiParser {
     }
 
     @Nullable OpFieldPath fieldPath = parsePath(resourceType, pathPsi, resolver, errors);
-    @Nullable OpVarPath varPath = fieldPath == null ? null : fieldPath.projection();
+//    @Nullable OpVarPath varPath = fieldPath == null ? null : fieldPath.projection();
 
     final OpOutputFieldProjection outputProjection = parseOutputProjection(
         resolveOutputType(
@@ -346,17 +346,17 @@ public class OperationsPsiParser {
       else throw new PsiProcessingException("HTTP method must be specified", methodPsi, errors);
     }
 
-    @Nullable OpFieldPath fieldPath = parsePath(resourceType, pathPsi, resolver, errors);
+    @Nullable OpFieldPath opPath = parsePath(resourceType, pathPsi, resolver, errors);
 
     return new CustomOperationIdl(
         method,
         parseOperationName(psi.getOperationName()),
         Annotations.fromMap(annotations),
-        fieldPath,
+        opPath,
         inputProjectionPsi == null ? null : OpInputProjectionsPsiParser.parseModelProjection(
             resolveInputType(
                 resourceType,
-                fieldPath == null ? null : fieldPath.projection(),
+                opPath == null ? null : opPath.projection(),
                 inputTypePsi,
                 resolver,
                 psi,
@@ -372,7 +372,7 @@ public class OperationsPsiParser {
         parseOutputProjection(
             resolveOutputType(
                 resourceType,
-                fieldPath == null ? null : fieldPath.projection(),
+                opPath == null ? null : opPath.projection(),
                 outputTypePsi,
                 resolver,
                 errors
@@ -382,6 +382,7 @@ public class OperationsPsiParser {
     );
   }
 
+  @NotNull
   private static OpOutputFieldProjection parseOutputProjection(
       final @NotNull DataType outputType,
       final @Nullable IdlOperationOutputProjection outputProjectionPsi,
@@ -436,16 +437,16 @@ public class OperationsPsiParser {
   private static DataType resolveOutputType(
       @NotNull DataType resourceType,
       @Nullable OpVarPath opVarPath,
-      @Nullable IdlOperationOutputType outputTypePsi,
+      @Nullable IdlOperationOutputType declaredOutputTypePsi,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
-    if (outputTypePsi == null) {
+    if (declaredOutputTypePsi == null) {
       if (opVarPath == null) return resourceType;
       else return ProjectionUtils.tipType(opVarPath);
     }
 
-    @NotNull final IdlValueTypeRef typeRefPsi = outputTypePsi.getValueTypeRef();
+    @NotNull final IdlValueTypeRef typeRefPsi = declaredOutputTypePsi.getValueTypeRef();
     @NotNull final ValueTypeRef valueTypeRef = TypeRefs.fromPsi(typeRefPsi);
     @Nullable final DataType dataType = resolver.resolve(valueTypeRef);
     if (dataType == null) throw new PsiProcessingException("Can't resolve output kind", typeRefPsi, errors);

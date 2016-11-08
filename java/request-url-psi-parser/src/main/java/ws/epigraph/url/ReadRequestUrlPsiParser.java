@@ -75,9 +75,11 @@ public class ReadRequestUrlPsiParser {
   @NotNull
   private static ReadRequestUrl parseReadRequestUrlWithPath(
       final @NotNull DataType resourceType,
-      final Map<String, GDatum> requestParams, final @NotNull ReadOperationIdl op,
-      final OpFieldPath opPath,
-      final @NotNull UrlReadUrl psi, final @NotNull TypesResolver typesResolver,
+      final @NotNull Map<String, GDatum> requestParams,
+      final @NotNull ReadOperationIdl op,
+      final @NotNull OpFieldPath opPath,
+      final @NotNull UrlReadUrl psi,
+      final @NotNull TypesResolver typesResolver,
       final @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
     @NotNull ReadReqPathParsingResult<ReqFieldPath> pathParsingResult = ReadReqPathPsiParser.parseFieldPath(
@@ -153,7 +155,8 @@ public class ReadRequestUrlPsiParser {
   @NotNull
   private static ReadRequestUrl parseReadRequestUrlWithoutPath(
       final @NotNull DataType resourceType,
-      final Map<String, GDatum> requestParams, final @NotNull ReadOperationIdl op,
+      final Map<String, GDatum> requestParams,
+      final @NotNull ReadOperationIdl op,
       final @NotNull UrlReadUrl psi,
       final @NotNull TypesResolver typesResolver,
       final @NotNull List<PsiProcessingError> errors)

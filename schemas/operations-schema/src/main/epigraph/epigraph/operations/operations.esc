@@ -3,12 +3,12 @@ namespace epigraph.operations
 import epigraph.projections.Annotation
 import epigraph.projections.op.OpDeleteVarProjection
 import epigraph.projections.op.OpInputModelProjection
-import epigraph.projections.op.OpOutputVarProjection
 import epigraph.projections.op.OpVarPath
 import epigraph.schema.DataTypeRef
 import epigraph.schema.Documented
 import epigraph.schema.TypeRef
 import epigraph.schema.VarTypeRef
+import epigraph.projections.op.OpOutputFieldProjection
 
 record Resource extends Documented {
   fieldName: String
@@ -26,7 +26,7 @@ abstract record Operation extends Documented {
   inputProjection: OpInputModelProjection // starts from `inputType` (can be different from resource field type)
 
   outputType: TypeRef // type `outputProjection` starts with
-  outputProjection: OpOutputVarProjection // todo OpOutputFieldProjection = params + annotations + varProjection
+  outputProjection: OpOutputFieldProjection
 }
 
 // routing:
@@ -66,8 +66,9 @@ record UpdateOperation extends Operation {
 
   // inputType (if not specified) = path tip type, or resource fieldType if path is null
   // outputType (if not specified) = path tip type, or resource fieldType if path is null
+  // outputProjection (if not specified) = default empty projection for `outputType`
 
-  // can be specified: path?, inputType?, inputProjection, outputType?, outputProjection
+  // can be specified: path?, inputType?, inputProjection, outputType?, outputProjection?
 }
 
 record DeleteOperation extends Operation {
@@ -98,6 +99,7 @@ record CustomOperation extends Operation {
 
   // inputType (if not specified) = path tip type, or resource fieldType if path is null
   // outputType (if not specified) = path tip type, or resource fieldType if path is null
+  // outputProjection (if not specified) = default empty projection for `outputType`
 
-  // can be specified: path?, inputType?, inputProjection, outputType?, outputProjection
+  // can be specified: path?, inputType?, inputProjection, outputType?, outputProjection?
 }
