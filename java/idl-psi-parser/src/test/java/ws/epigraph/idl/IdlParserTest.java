@@ -180,10 +180,6 @@ public class IdlParserTest {
     );
   }
 
-  private void testParse(String str) throws IOException {
-    testParse(str, str);
-  }
-
   private void testParse(String idlStr, String expected) throws IOException {
     Idl idl = parseIdl(idlStr, resolver);
 

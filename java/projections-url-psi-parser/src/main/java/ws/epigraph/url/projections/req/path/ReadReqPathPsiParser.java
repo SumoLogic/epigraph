@@ -51,7 +51,16 @@ public class ReadReqPathPsiParser {
       throws PsiProcessingException {
 
     if (OpVarPath.isEnd(op))
-      throw new IllegalArgumentException("This method should not be called for empty op paths");
+      return new ReadReqPathParsingResult<>(
+          new ReqVarPath(
+              dataType.type,
+              null,
+              EpigraphPsiUtil.getLocation(psi)
+          ),
+          psi,
+          null,
+          errors
+      );
 
     @Nullable final OpTagPath opTagPath = op.pathTagProjection();
     assert opTagPath != null;

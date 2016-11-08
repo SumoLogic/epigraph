@@ -77,27 +77,35 @@ public class ReadOperationRouter {
       final @Nullable ReadOperation<?> operation,
       final @NotNull DataType resourceFieldType,
       final @NotNull UrlReadUrl urlPsi,
-      final @NotNull TypesResolver resolver) throws PsiProcessingException {
+      final @NotNull TypesResolver resolver) {
 
     if (operation == null)
       return OperationNotFound.instance();
     else {
       List<PsiProcessingError> operationErrors = new ArrayList<>();
-      @NotNull final ReadRequestUrl readRequestUrl = ReadRequestUrlPsiParser.parseReadRequestUrl(
-          resourceFieldType,
-          operation.declaration(),
-          urlPsi,
-          resolver,
-          operationErrors
-      );
 
-      if (operationErrors.isEmpty())
+      ReadRequestUrl readRequestUrl = null;
+
+      try {
+        readRequestUrl = ReadRequestUrlPsiParser.parseReadRequestUrl(
+            resourceFieldType,
+            operation.declaration(),
+            urlPsi,
+            resolver,
+            operationErrors
+        );
+      } catch (PsiProcessingException e) {
+        operationErrors = e.errors();
+      }
+
+      if (operationErrors.isEmpty()) {
+        assert readRequestUrl != null;
         return new OperationSearchSuccess<>(
             operation, readRequestUrl.parameters(),
             readRequestUrl.path(),
             readRequestUrl.outputProjection()
         );
-      else
+      } else
         return new OperationSearchFailure<>(
             Collections.singletonMap(operation, operationErrors)
         );

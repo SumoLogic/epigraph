@@ -45,6 +45,8 @@ import ws.epigraph.psi.PsiProcessingError;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.types.DataType;
+import ws.epigraph.url.parser.projections.UrlSubParserDefinitions;
+import ws.epigraph.url.parser.psi.UrlReadUrl;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -192,6 +194,23 @@ public class TestUtil {
     }
 
     return varPath;
+  }
+
+  @NotNull
+  public static UrlReadUrl parseReadUrl(@NotNull String url, @NotNull TypesResolver resolver) {
+    EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
+
+    UrlReadUrl urlPsi = EpigraphPsiUtil.parseText(
+        url,
+        UrlSubParserDefinitions.READ_URL.rootElementType(),
+        UrlReadUrl.class,
+        UrlSubParserDefinitions.READ_URL,
+        errorsAccumulator
+    );
+
+    failIfHasErrors(urlPsi, errorsAccumulator);
+
+    return urlPsi;
   }
 
   public static void failIfHasErrors(

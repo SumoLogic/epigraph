@@ -51,6 +51,13 @@
     <!-- test dependencies -->
 
     <dependency>
+      <groupId>${project.parent.groupId}</groupId>
+      <artifactId>epigraph-java-test-util</artifactId>
+      <version>${project.parent.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
       <groupId>ws.epigraph.tests</groupId>
       <artifactId>tests-schema-java</artifactId>
       <version>0.0-SNAPSHOT</version>
