@@ -92,7 +92,9 @@ public class UndertowHandler implements HttpHandler {
         throw RequestFailedException.INSTANCE;
       }
 
-    } catch (ResourceNotFoundException | OperationNotFoundException e) {
+    } catch (ResourceNotFoundException e) {
+      badRequest(e.getMessage() + ". Supported resources: {" + listSupportedResources(service) + "}", TEXT, exchange);
+    } catch (OperationNotFoundException e) {
       badRequest(e.getMessage(), TEXT, exchange);
     } catch (RequestFailedException ignored) { // already handled
     } catch (Exception e) {
@@ -118,7 +120,12 @@ public class UndertowHandler implements HttpHandler {
     Matcher matcher = RESOURCE_PATTERN.matcher(url);
 
     if (!matcher.matches()) {
-      badRequest("Bad URL format\n", TEXT, exchange);
+      badRequest(
+          String.format(
+              "Bad URL format. Supported resources: {%s}\n",
+              Util.listSupportedResources(service)
+          )
+          , TEXT, exchange);
       throw RequestFailedException.INSTANCE;
     }
 

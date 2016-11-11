@@ -28,6 +28,7 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.psi.PsiProcessingError;
 import ws.epigraph.server.http.routing.OperationSearchFailure;
+import ws.epigraph.service.Service;
 import ws.epigraph.service.operations.Operation;
 
 import java.nio.charset.StandardCharsets;
@@ -60,6 +61,11 @@ public class Util {
         false,
         new StringBuilder()
     );
+  }
+
+  @NotNull
+  static String listSupportedResources(@NotNull Service service) {
+    return service.resources().keySet().stream().map(n -> "/" + n).collect(Collectors.joining(", "));
   }
 
   static void badRequest(@Nullable String message, @NotNull String contentType, @NotNull HttpServerExchange exchange) {
