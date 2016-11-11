@@ -1,6 +1,6 @@
 #Horizon 1
 - [x] add correct errors propagation support to the rest of psi parsers
-- [x] operation op input projections must be field, not model projections
+- [x] operation input projections must be field, not model projections
 - [ ] ~~invert 'requried', introduce 'optional' instead?~~
   - [x] ~~op input projections (undone)~~
   - [ ] ~~req output projections~~
@@ -10,7 +10,7 @@
 - [x] data structures for req input projections
 - [ ] psi parser for req input projections
 - [ ] add input (projection) support to custom operations
-- [ ] add optional input projection support to create operations ?
+- [ ] add optional input projection support to create operations
 - [ ] url parsers
   - [x] read
   - [ ] create
@@ -41,3 +41,9 @@
 - [ ] Standalone IDL verifier/compiler
   - [ ] Maven plugin
   - [ ] Gradle plugin
+  
+# See also
+- See [General todo] (todo.md)
+- See [IDEA plugin todo](idea-plugin/todo.md)
+- See [IDEA plugin bugs](idea-plugin/bugs.md)
+- See `**/issues.md`
