@@ -25,6 +25,7 @@ import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.op.OpParam;
 import ws.epigraph.projections.op.OpParams;
 import ws.epigraph.psi.EpigraphPsiUtil;
+import ws.epigraph.psi.PsiProcessingError;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypeRef;
 import ws.epigraph.refs.TypesResolver;
@@ -35,8 +36,11 @@ import org.jetbrains.annotations.Nullable;
 import java.text.MessageFormat;
 import java.util.*;
 
-import static ws.epigraph.projections.ProjectionPsiParserUtil.*;
+import static ws.epigraph.projections.IdlProjectionPsiParserUtil.*;
+import static ws.epigraph.projections.ProjectionsParsingUtil.getType;
+import static ws.epigraph.projections.op.OpParserUtil.parseAnnotations;
 import static ws.epigraph.projections.op.OpParserUtil.parseParameter;
+import static ws.epigraph.projections.op.OpParserUtil.parseParams;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -46,8 +50,8 @@ public class OpDeleteProjectionsPsiParser {
   public static OpDeleteVarProjection parseVarProjection(
       @NotNull DataType dataType,
       @NotNull IdlOpDeleteVarProjection psi,
-      @NotNull TypesResolver typesResolver)
-      throws PsiProcessingException {
+      @NotNull TypesResolver typesResolver,
+      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
     final Type type = dataType.type;
     final LinkedHashMap<String, OpDeleteTagProjectionEntry> tagProjections = new LinkedHashMap<>();
@@ -56,14 +60,15 @@ public class OpDeleteProjectionsPsiParser {
     @Nullable IdlOpDeleteSingleTagProjection singleTagProjectionPsi = psi.getOpDeleteSingleTagProjection();
 
     if (singleTagProjectionPsi != null) {
-      boolean isDatum = type.kind() != TypeKind.UNION;
+//      boolean isDatum = type.kind() != TypeKind.UNION;
 
       final OpDeleteModelProjection<?, ?> parsedModelProjection;
       final Type.Tag tag = getTag(
           type,
           singleTagProjectionPsi.getTagName(),
           dataType.defaultTag,
-          singleTagProjectionPsi
+          singleTagProjectionPsi,
+          errors
       );
 
       @Nullable IdlOpDeleteModelProjection modelProjection = singleTagProjectionPsi.getOpDeleteModelProjection();
@@ -74,10 +79,11 @@ public class OpDeleteProjectionsPsiParser {
 
       parsedModelProjection = parseModelProjection(
           tag.type,
-          parseModelParams(modelPropertiesPsi, typesResolver),
-          parseModelAnnotations(modelPropertiesPsi),
+          parseModelParams(modelPropertiesPsi, typesResolver, errors),
+          parseModelAnnotations(modelPropertiesPsi, errors),
           modelProjection,
-          typesResolver
+          typesResolver,
+          errors
       );
 
       tagProjections.put(
@@ -96,7 +102,7 @@ public class OpDeleteProjectionsPsiParser {
           multiTagProjection.getOpDeleteMultiTagProjectionItemList();
 
       for (IdlOpDeleteMultiTagProjectionItem tagProjectionPsi : tagProjectionPsiList) {
-        final Type.Tag tag = getTag(type, tagProjectionPsi.getTagName(), dataType.defaultTag, tagProjectionPsi);
+        final Type.Tag tag = getTag(type, tagProjectionPsi.getTagName(), dataType.defaultTag, tagProjectionPsi, errors);
 
         final OpDeleteModelProjection<?, ?> parsedModelProjection;
 
@@ -108,10 +114,11 @@ public class OpDeleteProjectionsPsiParser {
 
         parsedModelProjection = parseModelProjection(
             tagType,
-            parseModelParams(modelPropertiesPsi, typesResolver),
-            parseModelAnnotations(modelPropertiesPsi),
+            parseModelParams(modelPropertiesPsi, typesResolver, errors),
+            parseModelAnnotations(modelPropertiesPsi, errors),
             modelProjection,
-            typesResolver
+            typesResolver,
+            errors
         );
 
         tagProjections.put(
@@ -136,7 +143,7 @@ public class OpDeleteProjectionsPsiParser {
         @NotNull IdlTypeRef tailTypeRef = singleTail.getTypeRef();
         @NotNull IdlOpDeleteVarProjection psiTailProjection = singleTail.getOpDeleteVarProjection();
         @NotNull OpDeleteVarProjection tailProjection =
-            buildTailProjection(dataType, tailTypeRef, psiTailProjection, typesResolver);
+            buildTailProjection(dataType, tailTypeRef, psiTailProjection, typesResolver, errors);
         tails.add(tailProjection);
       } else {
         @Nullable IdlOpDeleteVarMultiTail multiTail = psiTail.getOpDeleteVarMultiTail();
@@ -145,7 +152,7 @@ public class OpDeleteProjectionsPsiParser {
           @NotNull IdlTypeRef tailTypeRef = tailItem.getTypeRef();
           @NotNull IdlOpDeleteVarProjection psiTailProjection = tailItem.getOpDeleteVarProjection();
           @NotNull OpDeleteVarProjection tailProjection =
-              buildTailProjection(dataType, tailTypeRef, psiTailProjection, typesResolver);
+              buildTailProjection(dataType, tailTypeRef, psiTailProjection, typesResolver, errors);
           tails.add(tailProjection);
         }
       }
@@ -158,31 +165,26 @@ public class OpDeleteProjectionsPsiParser {
   @NotNull
   private static OpParams parseModelParams(
       @NotNull List<IdlOpDeleteModelProperty> modelProperties,
-      @NotNull TypesResolver resolver) throws PsiProcessingException {
+      @NotNull TypesResolver resolver,
+      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
-    List<OpParam> paramList = null;
+    return parseParams(
+        modelProperties.stream().map(IdlOpDeleteModelProperty::getOpParam),
+        resolver,
+        errors
+    );
 
-    for (IdlOpDeleteModelProperty modelProperty : modelProperties) {
-      @Nullable IdlOpParam paramPsi = modelProperty.getOpParam();
-      if (paramPsi != null) {
-        if (paramList == null) paramList = new ArrayList<>(3);
-        paramList.add(parseParameter(paramPsi, resolver));
-      }
-    }
-
-    return paramList == null ? OpParams.EMPTY : new OpParams(paramList);
   }
 
   @NotNull
-  private static Annotations parseModelAnnotations(@NotNull List<IdlOpDeleteModelProperty> modelProperties)
-      throws PsiProcessingException {
+  private static Annotations parseModelAnnotations(
+      @NotNull List<IdlOpDeleteModelProperty> modelProperties,
+      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
-    @Nullable Map<String, Annotation> annotationsMap = null;
-
-    for (IdlOpDeleteModelProperty modelProperty : modelProperties)
-      annotationsMap = parseAnnotation(annotationsMap, modelProperty.getAnnotation());
-
-    return annotationsMap == null ? Annotations.EMPTY : new Annotations(annotationsMap);
+    return parseAnnotations(
+        modelProperties.stream().map(IdlOpDeleteModelProperty::getAnnotation),
+        errors
+    );
   }
 
   @NotNull
@@ -190,14 +192,16 @@ public class OpDeleteProjectionsPsiParser {
       @NotNull DataType dataType,
       @NotNull IdlTypeRef tailTypeRefPsi,
       @NotNull IdlOpDeleteVarProjection psiTailProjection,
-      @NotNull TypesResolver typesResolver) throws PsiProcessingException {
+      @NotNull TypesResolver typesResolver,
+      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
     @NotNull TypeRef tailTypeRef = TypeRefs.fromPsi(tailTypeRefPsi);
-    @NotNull Type tailType = getType(tailTypeRef, typesResolver, tailTypeRefPsi);
+    @NotNull Type tailType = getType(tailTypeRef, typesResolver, tailTypeRefPsi, errors);
     return parseVarProjection(
         new DataType(tailType, dataType.defaultTag),
         psiTailProjection,
-        typesResolver
+        typesResolver,
+        errors
     );
   }
 
@@ -206,7 +210,9 @@ public class OpDeleteProjectionsPsiParser {
       @NotNull Type type,
       @NotNull Type.Tag tag,
       boolean canDelete,
-      @NotNull PsiElement locationPsi) throws PsiProcessingException {
+      @NotNull PsiElement locationPsi,
+      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
+
     return new OpDeleteVarProjection(
         type,
         canDelete,
@@ -218,7 +224,8 @@ public class OpDeleteProjectionsPsiParser {
                     tag.type,
                     OpParams.EMPTY,
                     Annotations.EMPTY,
-                    locationPsi
+                    locationPsi,
+                    errors
                 ),
                 EpigraphPsiUtil.getLocation(locationPsi)
             )
@@ -232,25 +239,27 @@ public class OpDeleteProjectionsPsiParser {
   private static OpDeleteVarProjection createDefaultVarProjection(
       @NotNull DatumType type,
       boolean canDelete,
-      @NotNull PsiElement locationPsi)
-      throws PsiProcessingException {
-    return createDefaultVarProjection(type, type.self, canDelete, locationPsi);
+      @NotNull PsiElement locationPsi,
+      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
+    return createDefaultVarProjection(type, type.self, canDelete, locationPsi, errors);
   }
 
   @NotNull
   private static OpDeleteVarProjection createDefaultVarProjection(
       @NotNull DataType type,
       boolean canDelete,
-      @NotNull PsiElement locationPsi)
-      throws PsiProcessingException {
+      @NotNull PsiElement locationPsi,
+      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
     @Nullable Type.Tag defaultTag = type.defaultTag;
     if (defaultTag == null)
       throw new PsiProcessingException(
-          String.format("Can't build default projection for '%s', default tag not specified", type.name), locationPsi
+          String.format("Can't build default projection for '%s', default tag not specified", type.name),
+          locationPsi,
+          errors
       );
 
-    return createDefaultVarProjection(type.type, defaultTag, canDelete, locationPsi);
+    return createDefaultVarProjection(type.type, defaultTag, canDelete, locationPsi, errors);
   }
 
   @NotNull
@@ -259,50 +268,53 @@ public class OpDeleteProjectionsPsiParser {
       @NotNull OpParams params,
       @NotNull Annotations annotations,
       @NotNull IdlOpDeleteModelProjection psi,
-      @NotNull TypesResolver typesResolver)
-      throws PsiProcessingException {
+      @NotNull TypesResolver typesResolver,
+      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
     switch (type.kind()) {
       case RECORD:
         @Nullable IdlOpDeleteRecordModelProjection recordModelProjectionPsi = psi.getOpDeleteRecordModelProjection();
         if (recordModelProjectionPsi == null)
-          return createDefaultModelProjection(type, params, annotations, psi);
-        ensureModelKind(psi, TypeKind.RECORD);
+          return createDefaultModelProjection(type, params, annotations, psi, errors);
+        ensureModelKind(psi, TypeKind.RECORD, errors);
         return parseRecordModelProjection(
             (RecordType) type,
             params,
             annotations,
             recordModelProjectionPsi,
-            typesResolver
+            typesResolver,
+            errors
         );
       case MAP:
         @Nullable IdlOpDeleteMapModelProjection mapModelProjectionPsi = psi.getOpDeleteMapModelProjection();
         if (mapModelProjectionPsi == null)
-          return createDefaultModelProjection(type, params, annotations, psi);
-        ensureModelKind(psi, TypeKind.MAP);
+          return createDefaultModelProjection(type, params, annotations, psi, errors);
+        ensureModelKind(psi, TypeKind.MAP, errors);
 
         return parseMapModelProjection(
             (MapType) type,
             params,
             annotations,
             mapModelProjectionPsi,
-            typesResolver
+            typesResolver,
+            errors
         );
       case LIST:
         @Nullable IdlOpDeleteListModelProjection listModelProjectionPsi = psi.getOpDeleteListModelProjection();
         if (listModelProjectionPsi == null)
-          return createDefaultModelProjection(type, params, annotations, psi);
-        ensureModelKind(psi, TypeKind.LIST);
+          return createDefaultModelProjection(type, params, annotations, psi, errors);
+        ensureModelKind(psi, TypeKind.LIST, errors);
 
         return parseListModelProjection(
             (ListType) type,
             params,
             annotations,
             listModelProjectionPsi,
-            typesResolver
+            typesResolver,
+            errors
         );
       case ENUM:
-        throw new PsiProcessingException("Unsupported type kind: " + type.kind(), psi);
+        throw new PsiProcessingException("Unsupported type kind: " + type.kind(), psi, errors);
       case PRIMITIVE:
         return parsePrimitiveModelProjection(
             (PrimitiveType) type,
@@ -311,14 +323,16 @@ public class OpDeleteProjectionsPsiParser {
             psi
         );
       case UNION:
-        throw new PsiProcessingException("Unsupported type kind: " + type.kind(), psi);
+        throw new PsiProcessingException("Unsupported type kind: " + type.kind(), psi, errors);
       default:
-        throw new PsiProcessingException("Unknown type kind: " + type.kind(), psi);
+        throw new PsiProcessingException("Unknown type kind: " + type.kind(), psi, errors);
     }
   }
 
-  private static void ensureModelKind(@NotNull IdlOpDeleteModelProjection psi, @NotNull TypeKind expectedKind)
-      throws PsiProcessingException {
+  private static void ensureModelKind(
+      @NotNull IdlOpDeleteModelProjection psi,
+      @NotNull TypeKind expectedKind,
+      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
     // todo move to common
     @Nullable TypeKind actualKind = findProjectionKind(psi);
@@ -327,7 +341,7 @@ public class OpDeleteProjectionsPsiParser {
           "Unexpected projection kind ''{0}'', expected ''{1}''",
           actualKind,
           expectedKind
-      ), psi);
+      ), psi, errors);
   }
 
   @Nullable
@@ -344,8 +358,8 @@ public class OpDeleteProjectionsPsiParser {
       @NotNull DatumType type,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
-      @NotNull PsiElement locationPsi)
-      throws PsiProcessingException {
+      @NotNull PsiElement locationPsi,
+      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
     switch (type.kind()) {
       case RECORD:
@@ -375,13 +389,14 @@ public class OpDeleteProjectionsPsiParser {
               "Can't create default projection for map type '%s, as it's value type '%s' doesn't have a default tag",
               type.name(),
               valueType.name
-          ), locationPsi);
+          ), locationPsi, errors);
 
         final OpDeleteVarProjection valueVarProjection = createDefaultVarProjection(
             valueType.type,
             defaultValuesTag,
             false,
-            locationPsi
+            locationPsi,
+            errors
         );
 
         return new OpDeleteMapModelProjection(
@@ -402,13 +417,14 @@ public class OpDeleteProjectionsPsiParser {
               "Can't create default projection for list type '%s, as it's element type '%s' doesn't have a default tag",
               type.name(),
               elementType.name
-          ), locationPsi);
+          ), locationPsi, errors);
 
         final OpDeleteVarProjection itemVarProjection = createDefaultVarProjection(
             elementType.type,
             defaultElementsTag,
             false,
-            locationPsi
+            locationPsi,
+            errors
         );
 
         return new OpDeleteListModelProjection(
@@ -419,9 +435,13 @@ public class OpDeleteProjectionsPsiParser {
             EpigraphPsiUtil.getLocation(locationPsi)
         );
       case UNION:
-        throw new PsiProcessingException("Was expecting to get datum model kind, got: " + type.kind(), locationPsi);
+        throw new PsiProcessingException(
+            "Was expecting to get datum model kind, got: " + type.kind(),
+            locationPsi,
+            errors
+        );
       case ENUM:
-        throw new PsiProcessingException("Unsupported type kind: " + type.kind(), locationPsi);
+        throw new PsiProcessingException("Unsupported type kind: " + type.kind(), locationPsi, errors);
       case PRIMITIVE:
         return new OpDeletePrimitiveModelProjection(
             (PrimitiveType) type,
@@ -430,7 +450,7 @@ public class OpDeleteProjectionsPsiParser {
             EpigraphPsiUtil.getLocation(locationPsi)
         );
       default:
-        throw new PsiProcessingException("Unknown type kind: " + type.kind(), locationPsi);
+        throw new PsiProcessingException("Unknown type kind: " + type.kind(), locationPsi, errors);
     }
   }
 
@@ -440,7 +460,8 @@ public class OpDeleteProjectionsPsiParser {
       @NotNull OpParams params,
       @NotNull Annotations annotations,
       @NotNull IdlOpDeleteRecordModelProjection psi,
-      @NotNull TypesResolver typesResolver) throws PsiProcessingException {
+      @NotNull TypesResolver typesResolver,
+      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
     LinkedHashMap<String, OpDeleteFieldProjectionEntry> fieldProjections = new LinkedHashMap<>();
     @NotNull List<IdlOpDeleteFieldProjectionEntry> fieldProjectionEntriesPsi =
@@ -453,7 +474,8 @@ public class OpDeleteProjectionsPsiParser {
       if (field == null)
         throw new PsiProcessingException(
             String.format("Can't field projection for '%s', field '%s' not found", type.name(), fieldName),
-            fieldProjectionEntryPsi
+            fieldProjectionEntryPsi,
+            errors
         );
 
       fieldProjections.put(
@@ -463,7 +485,8 @@ public class OpDeleteProjectionsPsiParser {
               parseFieldProjection(
                   field.dataType(),
                   fieldProjectionEntryPsi.getOpDeleteFieldProjection(),
-                  typesResolver
+                  typesResolver,
+                  errors
               ),
               EpigraphPsiUtil.getLocation(fieldProjectionEntryPsi)
           )
@@ -483,7 +506,8 @@ public class OpDeleteProjectionsPsiParser {
   public static OpDeleteFieldProjection parseFieldProjection(
       @NotNull DataType fieldType,
       @NotNull IdlOpDeleteFieldProjection psi,
-      @NotNull TypesResolver resolver) throws PsiProcessingException {
+      @NotNull TypesResolver resolver,
+      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
     @NotNull OpParams fieldParams;
     @NotNull Annotations fieldAnnotations;
@@ -494,37 +518,19 @@ public class OpDeleteProjectionsPsiParser {
       @Nullable IdlOpParam fieldParamPsi = fieldBodyPart.getOpParam();
       if (fieldParamPsi != null) {
         if (fieldParamsList == null) fieldParamsList = new ArrayList<>(3);
-        fieldParamsList.add(parseParameter(fieldParamPsi, resolver));
+        fieldParamsList.add(parseParameter(fieldParamPsi, resolver, errors));
       }
 
-      fieldAnnotationsMap = parseAnnotation(fieldAnnotationsMap, fieldBodyPart.getAnnotation());
+      fieldAnnotationsMap = parseAnnotation(fieldAnnotationsMap, fieldBodyPart.getAnnotation(), errors);
     }
 
     fieldParams = fieldParamsList == null ? OpParams.EMPTY : new OpParams(fieldParamsList);
     fieldAnnotations = fieldAnnotationsMap == null ? Annotations.EMPTY : new Annotations(fieldAnnotationsMap);
 
-    final OpDeleteVarProjection varProjection;
-
-    @Nullable IdlOpDeleteVarProjection varProjectionPsi = psi.getOpDeleteVarProjection();
-
-    if (varProjectionPsi == null) {
-      @Nullable Type.Tag defaultFieldTag = fieldType.defaultTag;
-      if (defaultFieldTag == null)
-        throw new PsiProcessingException(String.format(
-            "Can't construct default projection for type '%s' because it has no default tag",
-            fieldType.name
-        ), psi);
-
-      varProjection =
-          createDefaultVarProjection(fieldType, true, psi);
-    } else {
-      varProjection = parseVarProjection(fieldType, varProjectionPsi, resolver);
-    }
-
     return new OpDeleteFieldProjection(
         fieldParams,
         fieldAnnotations,
-        varProjection,
+        parseVarProjection(fieldType, psi.getOpDeleteVarProjection(), resolver, errors),
         EpigraphPsiUtil.getLocation(psi)
     );
   }
@@ -535,10 +541,10 @@ public class OpDeleteProjectionsPsiParser {
       @NotNull OpParams params,
       @NotNull Annotations annotations,
       @NotNull IdlOpDeleteMapModelProjection psi,
-      @NotNull TypesResolver resolver)
-      throws PsiProcessingException {
+      @NotNull TypesResolver resolver,
+      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
-    @NotNull OpDeleteKeyProjection keyProjection = parseKeyProjection(psi.getOpDeleteKeyProjection(), resolver);
+    @NotNull OpDeleteKeyProjection keyProjection = parseKeyProjection(psi.getOpDeleteKeyProjection(), resolver, errors);
 
     @Nullable IdlOpDeleteVarProjection valueProjectionPsi = psi.getOpDeleteVarProjection();
     @NotNull OpDeleteVarProjection valueProjection =
@@ -546,9 +552,10 @@ public class OpDeleteProjectionsPsiParser {
         ? createDefaultVarProjection(
             type.valueType(),
             keyProjection.presence() == OpDeleteKeyProjection.Presence.REQUIRED,
-            psi
+            psi,
+            errors
         )
-        : parseVarProjection(type.valueType(), valueProjectionPsi, resolver);
+        : parseVarProjection(type.valueType(), valueProjectionPsi, resolver, errors);
 
     return new OpDeleteMapModelProjection(
         type,
@@ -563,7 +570,8 @@ public class OpDeleteProjectionsPsiParser {
   @NotNull
   private static OpDeleteKeyProjection parseKeyProjection(
       @NotNull IdlOpDeleteKeyProjection keyProjectionPsi,
-      @NotNull TypesResolver resolver) throws PsiProcessingException {
+      @NotNull TypesResolver resolver,
+      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
     final OpDeleteKeyProjection.Presence presence;
 
@@ -581,10 +589,10 @@ public class OpDeleteProjectionsPsiParser {
       @Nullable IdlOpParam paramPsi = keyPart.getOpParam();
       if (paramPsi != null) {
         if (params == null) params = new ArrayList<>(3);
-        params.add(parseParameter(paramPsi, resolver));
+        params.add(parseParameter(paramPsi, resolver, errors));
       }
 
-      annotationsMap = parseAnnotation(annotationsMap, keyPart.getAnnotation());
+      annotationsMap = parseAnnotation(annotationsMap, keyPart.getAnnotation(), errors);
     }
 
     return new OpDeleteKeyProjection(
@@ -601,15 +609,15 @@ public class OpDeleteProjectionsPsiParser {
       @NotNull OpParams params,
       @NotNull Annotations annotations,
       @NotNull IdlOpDeleteListModelProjection psi,
-      @NotNull TypesResolver resolver)
-      throws PsiProcessingException {
+      @NotNull TypesResolver resolver,
+      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
     OpDeleteVarProjection itemsProjection;
     @Nullable IdlOpDeleteVarProjection opDeleteVarProjectionPsi = psi.getOpDeleteVarProjection();
     if (opDeleteVarProjectionPsi == null)
-      itemsProjection = createDefaultVarProjection(type, true, psi);
+      itemsProjection = createDefaultVarProjection(type, true, psi, errors);
     else
-      itemsProjection = parseVarProjection(type.elementType(), opDeleteVarProjectionPsi, resolver);
+      itemsProjection = parseVarProjection(type.elementType(), opDeleteVarProjectionPsi, resolver, errors);
 
 
     return new OpDeleteListModelProjection(

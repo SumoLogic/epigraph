@@ -21,6 +21,7 @@ import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.gen.GenRecordModelProjection;
+import ws.epigraph.projections.op.OpParams;
 import ws.epigraph.types.RecordType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -52,12 +53,13 @@ public class OpInputRecordModelProjection
       @NotNull RecordType model,
       boolean required,
       @Nullable RecordDatum defaultValue,
+      @NotNull OpParams params,
       @NotNull Annotations annotations,
       @Nullable OpInputRecordModelProjection metaProjection,
       @NotNull Map<String, OpInputFieldProjectionEntry> fieldProjections,
       @NotNull TextLocation location) {
 
-    super(model, required, defaultValue, annotations, metaProjection, location);
+    super(model, required, defaultValue, params, annotations, metaProjection, location);
     this.fieldProjections = fieldProjections;
 
     ProjectionUtils.checkFieldsBelongsToModel(fieldProjections.keySet(), model);

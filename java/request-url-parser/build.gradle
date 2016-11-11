@@ -5,6 +5,7 @@ idea.module.generatedSourceDirs += file("$projectDir/src/main/java-generated")
 
 dependencies {
   compile project(':epigraph-java-lang-common')
+  compile project(':epigraph-java-standalone-psi-util')
   compile project(':epigraph-light-psi')
 
   compile 'org.jetbrains:annotations'

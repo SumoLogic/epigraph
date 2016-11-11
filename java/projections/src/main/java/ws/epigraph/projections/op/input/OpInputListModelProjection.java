@@ -20,6 +20,7 @@ import ws.epigraph.data.ListDatum;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenListModelProjection;
+import ws.epigraph.projections.op.OpParams;
 import ws.epigraph.types.ListType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -46,11 +47,12 @@ public class OpInputListModelProjection
       @NotNull ListType model,
       boolean required,
       @Nullable ListDatum defaultValue,
+      @NotNull OpParams params,
       @NotNull Annotations annotations,
       @Nullable OpInputListModelProjection metaProjection,
       @NotNull OpInputVarProjection itemsProjection,
       @NotNull TextLocation location) {
-    super(model, required, defaultValue, annotations, metaProjection, location);
+    super(model, required, defaultValue, params, annotations, metaProjection, location);
     this.itemsProjection = itemsProjection;
   }
 

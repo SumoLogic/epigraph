@@ -36,8 +36,6 @@ public class ReqUpdateProjectionsPrettyPrinter<E extends Exception>
     ReqUpdateModelProjection<?, ?>,
     E> {
 
-  // todo: take var projection's 'parenthesized' into account
-
   public ReqUpdateProjectionsPrettyPrinter(Layouter<E> layouter) {
     super(layouter);
   }
@@ -45,7 +43,6 @@ public class ReqUpdateProjectionsPrettyPrinter<E extends Exception>
   @Override
   public void print(@NotNull String tagName, @NotNull ReqUpdateTagProjectionEntry tp, int pathSteps) throws E {
     ReqUpdateModelProjection<?, ?> projection = tp.projection();
-    ReqUpdateModelProjection<?, ?> metaProjection = projection.metaProjection(); // todo print meta projection
 
     ReqParams params = projection.params();
     Annotations annotations = projection.annotations();
@@ -133,7 +130,7 @@ public class ReqUpdateProjectionsPrettyPrinter<E extends Exception>
       l.print("/").brk();
 
       if (keys.update()) l.print("+");
-      l.print("*");
+//      l.print("*");
 
       l.brk();
       print(mp.itemsProjection(), decSteps(pathSteps));
@@ -143,7 +140,7 @@ public class ReqUpdateProjectionsPrettyPrinter<E extends Exception>
       l.print("[").brk();
 
       if (keys.update()) l.print("+"); // todo check with others if this goes inside or outside of []
-      l.print("*");
+//      l.print("*");
 
       l.brk().print("](");
 

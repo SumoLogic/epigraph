@@ -39,12 +39,6 @@ public class UrlReqUpdateMultiTagProjectionItemImpl extends ASTWrapperPsiElement
   }
 
   @Override
-  @Nullable
-  public UrlReqUpdateModelMeta getReqUpdateModelMeta() {
-    return findChildByClass(UrlReqUpdateModelMeta.class);
-  }
-
-  @Override
   @NotNull
   public UrlReqUpdateModelProjection getReqUpdateModelProjection() {
     return findNotNullChildByClass(UrlReqUpdateModelProjection.class);
@@ -54,6 +48,12 @@ public class UrlReqUpdateMultiTagProjectionItemImpl extends ASTWrapperPsiElement
   @NotNull
   public UrlTagName getTagName() {
     return findNotNullChildByClass(UrlTagName.class);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getPlus() {
+    return findChildByType(U_PLUS);
   }
 
 }

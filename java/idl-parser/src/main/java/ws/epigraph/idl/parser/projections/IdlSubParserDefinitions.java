@@ -25,37 +25,48 @@ import ws.epigraph.idl.parser.IdlSubParser;
 import static ws.epigraph.idl.lexer.IdlElementTypes.*;
 
 import org.jetbrains.annotations.NotNull;
+import ws.epigraph.idl.parser.psi.*;
+import ws.epigraph.psi.SubParserDefinition;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class IdlSubParserDefinitions {
-  public static final IdlSubParserDefinition OP_VAR_PATH = new IdlSubParserDefinition(I_OP_VAR_PATH);
-  public static final IdlSubParserDefinition OP_OUTPUT_VAR_PROJECTION = new IdlSubParserDefinition(I_OP_OUTPUT_VAR_PROJECTION);
-  public static final IdlSubParserDefinition OP_INPUT_VAR_PROJECTION = new IdlSubParserDefinition(I_OP_INPUT_VAR_PROJECTION);
-  public static final IdlSubParserDefinition OP_DELETE_VAR_PROJECTION = new IdlSubParserDefinition(I_OP_DELETE_VAR_PROJECTION);
+  public static final IdlSubParserDefinition<IdlOpVarPath> OP_VAR_PATH =
+      new IdlSubParserDefinition<>(I_OP_VAR_PATH, IdlOpVarPath.class);
 
-  @NotNull
-  public static final IdlSubParserDefinitions.IdlSubParserDefinition DATA_VALUE =
-      new IdlSubParserDefinition(I_DATA_VALUE);
+  public static final IdlSubParserDefinition<IdlOpOutputVarProjection> OP_OUTPUT_VAR_PROJECTION =
+      new IdlSubParserDefinition<>(I_OP_OUTPUT_VAR_PROJECTION, IdlOpOutputVarProjection.class);
 
-  public static class IdlSubParserDefinition extends IdlParserDefinition {
+  public static final IdlSubParserDefinition<IdlOpInputVarProjection> OP_INPUT_VAR_PROJECTION =
+      new IdlSubParserDefinition<>(I_OP_INPUT_VAR_PROJECTION, IdlOpInputVarProjection.class);
+
+  public static final IdlSubParserDefinition<IdlOpDeleteVarProjection> OP_DELETE_VAR_PROJECTION =
+      new IdlSubParserDefinition<>(I_OP_DELETE_VAR_PROJECTION, IdlOpDeleteVarProjection.class);
+
+  public static final IdlSubParserDefinition<IdlDataValue> DATA_VALUE =
+      new IdlSubParserDefinition<>(I_DATA_VALUE, IdlDataValue.class);
+
+  public static class IdlSubParserDefinition<T> extends IdlParserDefinition implements SubParserDefinition<T> {
+    @NotNull
+    private final Class<T> rootElementClass;
 
     @NotNull
     private final IElementType rootElementType;
 
-    private IdlSubParserDefinition(@NotNull IElementType rootElementType) {
+    private IdlSubParserDefinition(@NotNull IElementType rootElementType, final @NotNull Class<T> rootElementClass) {
       this.rootElementType = rootElementType;
+      this.rootElementClass = rootElementClass;
     }
 
     @Override
-    public PsiParser createParser(Project project) {
-      return new IdlSubParser(rootElementType);
-    }
+    public PsiParser createParser(Project project) { return new IdlSubParser(rootElementType); }
 
     @NotNull
-    public IElementType rootElementType() {
-      return rootElementType;
-    }
+    public IElementType rootElementType() { return rootElementType; }
+
+    @NotNull
+    @Override
+    public Class<T> rootElementClass() { return rootElementClass; }
   }
 }

@@ -24,7 +24,7 @@ import ws.epigraph.service.Resource;
 import ws.epigraph.service.operations.ReadOperation;
 import ws.epigraph.types.DataType;
 import ws.epigraph.url.ReadRequestUrl;
-import ws.epigraph.url.ReadRequestUrlPsiParser;
+import ws.epigraph.url.parser.ReadRequestUrlPsiParser;
 import ws.epigraph.url.parser.psi.UrlReadUrl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

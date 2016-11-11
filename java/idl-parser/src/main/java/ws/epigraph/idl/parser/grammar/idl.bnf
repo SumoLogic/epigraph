@@ -196,13 +196,13 @@ resource users map[String,User] {
 
 // operation def parts
 operationName ::= 'default' | qid
-operationMethod ::= 'method' ('GET' | 'POST' | 'PUT' | 'DELETE') // add 'PATCH' too?
+operationMethod ::= 'method' ('GET' | 'POST' | 'PUT' | 'DELETE') {pin=1}// add 'PATCH' too?
 operationPath ::= 'path' opFieldPath {pin=1}
-operationInputType ::= 'inputType' typeRef {pin=2}
-operationInputProjection ::= 'inputProjection' opInputModelProjection {pin=2}
-operationOutputType ::= 'outputType' valueTypeRef {pin=2}
-operationOutputProjection ::= 'outputProjection' opOutputFieldProjection {pin=2}
-operationDeleteProjection ::= 'deleteProjection' opDeleteFieldProjection {pin=2}
+operationInputType ::= 'inputType' typeRef {pin=1}
+operationInputProjection ::= 'inputProjection' opInputFieldProjection {pin=1}
+operationOutputType ::= 'outputType' valueTypeRef {pin=1}
+operationOutputProjection ::= 'outputProjection' opOutputFieldProjection {pin=1}
+operationDeleteProjection ::= 'deleteProjection' opDeleteFieldProjection {pin=1}
 
 operationDef ::= createOperationDef | readOperationDef | updateOperationDef | deleteOperationDef | customOperationDef
 
@@ -267,7 +267,7 @@ private operationBodyRecover ::= ! ( '}' | ',' |
 opParam ::= ';' '+'? qid ':' typeRef opInputModelProjection opParamDefault? opParamBody? { pin = 1 }
 private opParamDefault ::= '=' datum { pin=1 }
 private opParamBody ::= '{' ( opParamBodyPart ','? )* '}'
-private opParamBodyPart ::= annotation
+private opParamBodyPart ::= opParam | annotation
 
 // op path --------------------------------------------------------
 
@@ -346,7 +346,9 @@ private opOutputKeyProjectionRecover ::= ! ( ']' )
 
 // input --------------------------------------------------------
 
-opInputModelProperty ::= opInputDefaultValue | annotation | opInputModelMeta {recoverWhile = opInputModelPropertyRecover}
+opInputModelProperty ::= opInputDefaultValue | opParam | annotation | opInputModelMeta {
+  recoverWhile = opInputModelPropertyRecover
+}
 private opInputModelPropertyRecover ::= ! ( '}' )
 opInputDefaultValue ::= 'default' ':' datum {pin=1}
 
@@ -360,7 +362,7 @@ opInputVarMultiTailItem ::= typeRef opInputVarProjection // {recoverWhile = opIn
 //private opInputVarMultiTailItemRecover ::= ! ( ')' )
 
 // todo: recovery. Commented out one breaks parsing tests
-opInputFieldProjectionBodyPart ::= annotation // {recoverWhile=opInputFieldProjectionBodyPartRecover}
+opInputFieldProjectionBodyPart ::= opParam | annotation // {recoverWhile=opInputFieldProjectionBodyPartRecover}
 //private opInputFieldProjectionBodyPartRecover ::= ! ( '}' )
 
 
@@ -370,7 +372,7 @@ opInputSingleTagProjection ::= ( ':' '+'? tagName)? (opInputComplexTagProjection
 opInputMultiTagProjectionItem ::= '+'? tagName ( opInputComplexTagProjection | opInputSimpleTagProjection )
 
 private opInputSimpleTagProjection ::= opInputModelProjection
-private opInputComplexTagProjection ::= '{' (opInputModelProperty ','?)* opInputModelProjection '}' {pin=1}
+private opInputComplexTagProjection ::= '{' (opInputModelProperty ','?)* '}' opInputModelProjection {pin=1}
 //
 
 opInputModelProjection ::= ( opInputRecordModelProjection
@@ -379,9 +381,10 @@ opInputModelProjection ::= ( opInputRecordModelProjection
                            )?
 
 // op input record
-opInputRecordModelProjection ::= '(' (opInputFieldProjection ','?)* ')' { pin=1 }
-opInputFieldProjection ::= '+'? qid (opInputComplexFieldProjection | opInputSimpleFieldProjection)
-private opInputComplexFieldProjection ::= '{' (opInputFieldProjectionBodyPart ','? )* opInputVarProjection '}'
+opInputRecordModelProjection ::= '(' (opInputFieldProjectionEntry ','?)* ')' { pin=1 }
+opInputFieldProjectionEntry ::= '+'? qid opInputFieldProjection // '+' means that field itself must be present
+opInputFieldProjection ::= opInputComplexFieldProjection | opInputSimpleFieldProjection
+private opInputComplexFieldProjection ::= '{' (opInputFieldProjectionBodyPart ','? )* '}' opInputVarProjection
 private opInputSimpleFieldProjection ::= opInputVarProjection
 
 // op input list
@@ -424,7 +427,7 @@ opDeleteModelProjection ::= ( opDeleteRecordModelProjection
 // op delete record
 opDeleteRecordModelProjection ::= '(' (opDeleteFieldProjectionEntry ','?)* ')' { pin=1 }
 opDeleteFieldProjectionEntry ::= qid opDeleteFieldProjection
-opDeleteFieldProjection ::= (opDeleteComplexFieldProjection | opDeleteSimpleFieldProjection)
+opDeleteFieldProjection ::= opDeleteComplexFieldProjection | opDeleteSimpleFieldProjection
 private opDeleteComplexFieldProjection ::= '{' (opDeleteFieldProjectionBodyPart ','? )* '}' opDeleteVarProjection
 private opDeleteSimpleFieldProjection ::= opDeleteVarProjection
 opDeleteFieldProjectionBodyPart ::= opParam | annotation

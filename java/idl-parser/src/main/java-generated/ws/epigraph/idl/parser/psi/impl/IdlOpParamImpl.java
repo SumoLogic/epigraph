@@ -45,6 +45,12 @@ public class IdlOpParamImpl extends ASTWrapperPsiElement implements IdlOpParam {
   }
 
   @Override
+  @NotNull
+  public List<IdlOpParam> getOpParamList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, IdlOpParam.class);
+  }
+
+  @Override
   @Nullable
   public IdlQid getQid() {
     return findChildByClass(IdlQid.class);

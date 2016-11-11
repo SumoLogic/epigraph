@@ -16,13 +16,13 @@
 
 package ws.epigraph.idl.operations;
 
-import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.Annotations;
-import ws.epigraph.projections.op.input.OpInputModelProjection;
-import ws.epigraph.projections.op.output.OpOutputFieldProjection;
-import ws.epigraph.projections.op.path.OpFieldPath;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.lang.TextLocation;
+import ws.epigraph.projections.Annotations;
+import ws.epigraph.projections.op.input.OpInputFieldProjection;
+import ws.epigraph.projections.op.output.OpOutputFieldProjection;
+import ws.epigraph.projections.op.path.OpFieldPath;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -34,7 +34,7 @@ public class CustomOperationIdl extends OperationIdl {
       @Nullable String name,
       @NotNull Annotations annotations,
       @Nullable OpFieldPath path,
-      @Nullable OpInputModelProjection<?, ?, ?> inputProjection,
+      @Nullable OpInputFieldProjection inputProjection,
       @NotNull OpOutputFieldProjection outputProjection,
       @NotNull TextLocation location) {
 

@@ -16,6 +16,8 @@
 
 package ws.epigraph.projections.op;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.gdata.GDatum;
 import ws.epigraph.idl.TypeRefs;
 import ws.epigraph.idl.gdata.IdlGDataPsiParser;
@@ -25,51 +27,82 @@ import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.op.input.OpInputModelProjection;
 import ws.epigraph.projections.op.input.OpInputProjectionsPsiParser;
 import ws.epigraph.psi.EpigraphPsiUtil;
+import ws.epigraph.psi.PsiProcessingError;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypeRef;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.types.DatumType;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import static ws.epigraph.projections.ProjectionPsiParserUtil.parseAnnotation;
+import static ws.epigraph.projections.IdlProjectionPsiParserUtil.parseAnnotation;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpParserUtil {
   @NotNull
+  public static OpParams parseParams(
+      @NotNull Stream<IdlOpParam> paramsPsi,
+      @NotNull TypesResolver resolver,
+      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
+
+    return parseParams(paramsPsi.collect(Collectors.toList()), resolver, errors);
+  }
+
+  @NotNull
+  public static OpParams parseParams(
+      @NotNull Collection<IdlOpParam> paramsPsi,
+      @NotNull TypesResolver resolver,
+      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
+
+    List<OpParam> params = null;
+
+    for (final IdlOpParam param : paramsPsi) {
+      if (param != null) {
+        if (params == null ) params = new ArrayList<>();
+
+        params.add(parseParameter(param, resolver, errors));
+      }
+    }
+
+    return OpParams.fromCollection(params);
+  }
+
+  @NotNull
   public static OpParam parseParameter(
       @NotNull IdlOpParam paramPsi,
-      @NotNull TypesResolver resolver) throws PsiProcessingException {
+      @NotNull TypesResolver resolver,
+      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
     @Nullable IdlQid qid = paramPsi.getQid();
-    if (qid == null) throw new PsiProcessingException("Parameter name not specified", paramPsi);
+    if (qid == null) throw new PsiProcessingException("Parameter name not specified", paramPsi, errors);
     @NotNull String paramName = qid.getCanonicalName();
 
     @Nullable IdlTypeRef typeRef = paramPsi.getTypeRef();
     if (typeRef == null)
-      throw new PsiProcessingException(String.format("Parameter '%s' type not specified", paramName), paramPsi);
+      throw new PsiProcessingException(String.format("Parameter '%s' type not specified", paramName), paramPsi, errors);
     @NotNull TypeRef paramTypeRef = TypeRefs.fromPsi(typeRef);
     @Nullable DatumType paramType = paramTypeRef.resolveDatumType(resolver);
 
     if (paramType == null)
       throw new PsiProcessingException(
-          String.format("Can't resolve parameter '%s' data type '%s'", paramName, paramTypeRef), paramPsi
+          String.format("Can't resolve parameter '%s' data type '%s'", paramName, paramTypeRef), paramPsi, errors
       );
 
     @Nullable IdlOpInputModelProjection paramModelProjectionPsi = paramPsi.getOpInputModelProjection();
 
-    @Nullable Map<String, Annotation> annotationMap = null;
-    for (IdlAnnotation annotationPsi : paramPsi.getAnnotationList())
-      annotationMap = parseAnnotation(annotationMap, annotationPsi);
-    @NotNull Annotations annotations = annotationMap == null ? Annotations.EMPTY : new Annotations(annotationMap);
+    @NotNull final OpParams params = parseParams(paramPsi.getOpParamList(), resolver, errors);
+    @NotNull Annotations annotations = parseAnnotations(paramPsi.getAnnotationList(), errors);
 
     @Nullable IdlDatum defaultValuePsi = paramPsi.getDatum();
     @Nullable GDatum defaultValue = defaultValuePsi == null
                                     ? null
-                                    : IdlGDataPsiParser.parseDatum(defaultValuePsi);
+                                    : IdlGDataPsiParser.parseDatum(defaultValuePsi, errors);
 
     final OpInputModelProjection<?, ?, ?> paramModelProjection;
 
@@ -78,21 +111,46 @@ public class OpParserUtil {
           paramType,
           paramPsi.getPlus() != null,
           defaultValue,
+          params,
           annotations,
           null, // TODO do we want to support metadata on parameters?
           paramModelProjectionPsi,
-          resolver
+          resolver,
+          errors
       ).projection();
     else
       paramModelProjection = OpInputProjectionsPsiParser.createDefaultModelProjection(
           paramType,
           paramPsi.getPlus() != null,
           defaultValue,
+          params,
           annotations,
           paramPsi,
-          resolver
+          resolver,
+          errors
       );
 
     return new OpParam(paramName, paramModelProjection, EpigraphPsiUtil.getLocation(paramPsi));
+  }
+
+  @NotNull
+  public static Annotations parseAnnotations(
+      @NotNull Stream<IdlAnnotation> annotationsPsi,
+      @NotNull List<PsiProcessingError> errors
+  ) throws PsiProcessingException {
+    return parseAnnotations(annotationsPsi.collect(Collectors.toList()), errors);
+  }
+
+  @NotNull
+  public static Annotations parseAnnotations(
+      @NotNull Collection<IdlAnnotation> annotationsPsi,
+      @NotNull List<PsiProcessingError> errors
+  ) throws PsiProcessingException {
+    @Nullable Map<String, Annotation> annotationMap = null;
+    for (final IdlAnnotation annotationPsi : annotationsPsi) {
+      annotationMap = parseAnnotation(annotationMap, annotationPsi, errors);
+    }
+
+    return Annotations.fromMap(annotationMap);
   }
 }

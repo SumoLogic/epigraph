@@ -39,6 +39,7 @@
 - [x] remove `includeInDefault` from `Op*` projections, add '*' to request projections instead
 - [x] remove default tags from op projections. If var type has default tag (in schema), and operation can build this tag -- then it becomes an implicit default
 - [ ] add req input projection (for custom operation)
+- [ ] `*` support in projections improvement: allow `*` to be present along with other fields (currently it's either `*` or fields list)
 - [ ] support for recursive projections
 
 # Operations  
@@ -49,6 +50,7 @@
 - [ ] ***see `operations.esc`, change routing accordingly***
 
 # Other
+- See [Short-term todo list] (todo-short-term.md)
 - See [IDEA plugin todo](idea-plugin/todo.md)
 - See [IDEA plugin bugs](idea-plugin/bugs.md)
 - See `**/issues.md`

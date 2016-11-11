@@ -16,32 +16,21 @@
 
 package ws.epigraph.url.projections.req.output;
 
-import com.intellij.psi.PsiErrorElement;
-import com.intellij.psi.impl.DebugUtil;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.op.output.OpOutputVarProjection;
 import ws.epigraph.projections.req.output.ReqOutputVarProjection;
-import ws.epigraph.psi.EpigraphPsiUtil;
-import ws.epigraph.psi.PsiProcessingError;
-import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.SimpleTypesResolver;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.test.TestUtil;
 import ws.epigraph.tests.*;
 import ws.epigraph.types.DataType;
-import ws.epigraph.url.parser.projections.UrlSubParserDefinitions;
-import ws.epigraph.url.parser.psi.UrlReqOutputTrunkVarProjection;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-import static ws.epigraph.test.TestUtil.failIfHasErrors;
 import static ws.epigraph.test.TestUtil.lines;
-import static ws.epigraph.test.TestUtil.parseOpOutputVarProjection;
+import static ws.epigraph.url.projections.req.ReqTestUtil.parseOpOutputVarProjection;
+import static ws.epigraph.url.projections.req.ReqTestUtil.parseReqOutputVarProjection;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -159,61 +148,16 @@ public class ReqOutputProjectionsParserTest {
   }
 
   private void testParse(String expr, String expectedProjection, int steps) {
-    UrlReqOutputTrunkVarProjection psi = getPsi(expr);
-    List<PsiProcessingError> errors = new ArrayList<>();
-    try {
+    @NotNull final StepsAndProjection<ReqOutputVarProjection> stepsAndProjection =
+        parseReqOutputVarProjection(dataType, personOpProjection, expr, resolver);
 
-      @NotNull final StepsAndProjection<ReqOutputVarProjection> stepsAndProjection =
-          ReqOutputProjectionsPsiParser.parseTrunkVarProjection(
-              Person.type.dataType(null),
-              personOpProjection,
-              psi,
-              resolver,
-              errors
-          );
+    assertEquals(steps, stepsAndProjection.pathSteps());
 
-      assertEquals(steps, stepsAndProjection.pathSteps());
+    String s = TestUtil.printReqOutputVarProjection(stepsAndProjection.projection(), steps);
 
-      String s = TestUtil.printReqOutputVarProjection(stepsAndProjection.projection(), steps);
-
-      final String actual =
-          s.replaceAll("\"", "'"); // pretty printer outputs double quotes, we use single quotes in URLs
-      assertEquals(expectedProjection, actual);
-
-    } catch (PsiProcessingException e) {
-//      String psiDump = DebugUtil.psiToString(psi, true, false).trim();
-//      System.err.println(psiDump);
-//      e.printStackTrace();
-//      fail(e.getMessage() + " at " + e.location());
-      errors = e.errors();
-    }
-
-    if (!errors.isEmpty()) {
-      for (final PsiProcessingError error : errors) {
-        System.err.print(error.message() + " at " + error.location());
-      }
-
-      fail();
-    }
-  }
-
-  private UrlReqOutputTrunkVarProjection getPsi(String projectionString) {
-    EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
-
-    UrlReqOutputTrunkVarProjection psiVarProjection = EpigraphPsiUtil.parseText(
-        projectionString,
-        UrlSubParserDefinitions.REQ_OUTPUT_VAR_PROJECTION.rootElementType(),
-        UrlReqOutputTrunkVarProjection.class,
-        UrlSubParserDefinitions.REQ_OUTPUT_VAR_PROJECTION,
-        errorsAccumulator
-    );
-
-    failIfHasErrors(psiVarProjection, errorsAccumulator);
-
-//    String psiDump = DebugUtil.psiToString(psiVarProjection, true, false).trim();
-//    System.out.println(psiDump);
-
-    return psiVarProjection;
+    final String actual =
+        s.replaceAll("\"", "'"); // pretty printer outputs double quotes, we use single quotes in URLs
+    assertEquals(expectedProjection, actual);
   }
 
   @NotNull

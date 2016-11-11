@@ -22,10 +22,9 @@ import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.gen.GenVarProjection;
-import ws.epigraph.projections.op.input.OpInputModelProjection;
+import ws.epigraph.projections.op.input.OpInputFieldProjection;
 import ws.epigraph.projections.op.output.OpOutputFieldProjection;
 import ws.epigraph.projections.op.path.OpFieldPath;
-import ws.epigraph.types.DatumType;
 import ws.epigraph.types.Type;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -50,7 +49,7 @@ public abstract class OperationIdl {
   @Nullable
   protected final OpFieldPath path;
   @Nullable
-  protected final OpInputModelProjection<?, ?, ?> inputProjection;
+  protected final OpInputFieldProjection inputProjection;
   @NotNull
   protected final OpOutputFieldProjection outputProjection;
   @NotNull
@@ -62,7 +61,7 @@ public abstract class OperationIdl {
       @Nullable String name,
       @NotNull Annotations annotations,
       @Nullable OpFieldPath path,
-      @Nullable OpInputModelProjection<?, ?, ?> inputProjection,
+      @Nullable OpInputFieldProjection inputProjection,
       @NotNull OpOutputFieldProjection outputProjection,
       @NotNull TextLocation location) {
     this.type = type;
@@ -93,12 +92,11 @@ public abstract class OperationIdl {
   public OpFieldPath path() { return path; }
 
   @Nullable
-  public DatumType inputType() {
-    return inputProjection == null ? null : inputProjection.model();
+  public Type inputType() {
+    return inputProjection == null ? null : inputProjection.projection().type();
   }
 
-  @Nullable
-  public OpInputModelProjection<?, ?, ?> inputProjection() { return inputProjection; }
+  public @Nullable OpInputFieldProjection inputProjection() { return inputProjection; }
 
   @NotNull
   public Type outputType() { return outputProjection.projection().type(); }

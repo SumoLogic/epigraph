@@ -13,9 +13,6 @@ public interface UrlReqUpdateSingleTagProjection extends PsiElement {
   @NotNull
   List<UrlReqParam> getReqParamList();
 
-  @Nullable
-  UrlReqUpdateModelMeta getReqUpdateModelMeta();
-
   @NotNull
   UrlReqUpdateModelProjection getReqUpdateModelProjection();
 
@@ -24,5 +21,8 @@ public interface UrlReqUpdateSingleTagProjection extends PsiElement {
 
   @Nullable
   PsiElement getColon();
+
+  @Nullable
+  PsiElement getPlus();
 
 }

@@ -17,17 +17,16 @@
 package ws.epigraph.idl.operations;
 
 import de.uka.ilkd.pp.Layouter;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.op.delete.OpDeleteProjectionsPrettyPrinter;
-import ws.epigraph.projections.op.input.OpInputModelProjection;
+import ws.epigraph.projections.op.input.OpInputFieldProjection;
 import ws.epigraph.projections.op.input.OpInputProjectionsPrettyPrinter;
 import ws.epigraph.projections.op.output.OpOutputProjectionsPrettyPrinter;
 import ws.epigraph.projections.op.path.OpFieldPath;
 import ws.epigraph.projections.op.path.OpPathPrettyPrinter;
-import ws.epigraph.types.DatumType;
 import ws.epigraph.types.Type;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -115,7 +114,7 @@ public class OperationsPrettyPrinter<E extends Exception> {
   }
 
   private boolean printInputType(@NotNull OperationIdl operation, boolean first) throws E {
-    final @Nullable DatumType inputType = operation.inputType();
+    final @Nullable Type inputType = operation.inputType();
 
     if (inputType != null) {
       if (first) first = false;
@@ -133,7 +132,7 @@ public class OperationsPrettyPrinter<E extends Exception> {
   }
 
   private boolean printInputProjection(@NotNull OperationIdl operation, boolean first) throws E {
-    OpInputModelProjection<?, ?, ?> projection = operation.inputProjection();
+    @Nullable OpInputFieldProjection projection = operation.inputProjection();
 
     if (projection != null) {
       if (first) first = false;
@@ -143,7 +142,7 @@ public class OperationsPrettyPrinter<E extends Exception> {
 
       l.beginIInd();
       l.print("inputProjection").brk();
-      opInputPrinter.print(projection, 0);
+      opInputPrinter.print(projection);
       l.end();
     }
 

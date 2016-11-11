@@ -16,11 +16,7 @@
 
 package ws.epigraph.projections.op.delete;
 
-import com.intellij.psi.PsiErrorElement;
-import com.intellij.psi.impl.DebugUtil;
-import de.uka.ilkd.pp.Layouter;
-import de.uka.ilkd.pp.NoExceptions;
-import de.uka.ilkd.pp.StringBackend;
+import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 import ws.epigraph.idl.parser.projections.IdlSubParserDefinitions;
 import ws.epigraph.idl.parser.psi.IdlOpDeleteVarProjection;
@@ -32,8 +28,7 @@ import ws.epigraph.tests.*;
 import ws.epigraph.types.DataType;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-import static ws.epigraph.test.TestUtil.lines;
+import static ws.epigraph.test.TestUtil.*;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -164,7 +159,7 @@ public class OpDeleteProjectionsTest {
 
     OpDeleteVarProjection varProjection = parseOpDeleteVarProjection(varDataType, projectionString);
 
-    String actual = print(varProjection);
+    String actual = printOpDeleteVarProjection(varProjection);
 
     assertEquals("\n" + actual, expected, actual);
 //    assertEquals(expected.trim(), actual.trim());
@@ -182,49 +177,31 @@ public class OpDeleteProjectionsTest {
         epigraph.String.type
     );
 
+    return parseOpDeleteVarProjection(varDataType, projectionString, resolver);
+  }
+
+  public static OpDeleteVarProjection parseOpDeleteVarProjection(
+      @NotNull DataType varDataType,
+      @NotNull String projectionString,
+      @NotNull TypesResolver resolver) {
+
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
     IdlOpDeleteVarProjection psiVarProjection = EpigraphPsiUtil.parseText(
         projectionString,
-        IdlSubParserDefinitions.OP_DELETE_VAR_PROJECTION.rootElementType(),
-        IdlOpDeleteVarProjection.class,
         IdlSubParserDefinitions.OP_DELETE_VAR_PROJECTION,
         errorsAccumulator
     );
 
-    if (errorsAccumulator.hasErrors()) {
-      for (PsiErrorElement element : errorsAccumulator.errors()) {
-        System.err.println(element.getErrorDescription() + " at " +
-                           EpigraphPsiUtil.getLocation(element));
-      }
-      String psiDump = DebugUtil.psiToString(psiVarProjection, true, false).trim();
-      fail(psiDump);
-    }
+    failIfHasErrors(psiVarProjection, errorsAccumulator);
 
-    OpDeleteVarProjection varProjection = null;
-    try {
-      varProjection = OpDeleteProjectionsPsiParser.parseVarProjection(
-          varDataType,
-          psiVarProjection,
-          resolver
-      );
+    return runPsiParser(errors -> OpDeleteProjectionsPsiParser.parseVarProjection(
+        varDataType,
+        psiVarProjection,
+        resolver,
+        errors
+    ));
 
-    } catch (PsiProcessingException e) {
-      e.printStackTrace();
-      System.err.println(e.getMessage() + " at " + e.location());
-      String psiDump = DebugUtil.psiToString(psiVarProjection, true, false).trim();
-      fail(psiDump);
-    }
-    return varProjection;
-  }
-
-  private String print(OpDeleteVarProjection projection) {
-    StringBackend sb = new StringBackend(120);
-    Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
-    OpDeleteProjectionsPrettyPrinter<NoExceptions> printer = new OpDeleteProjectionsPrettyPrinter<>(layouter);
-    printer.print(projection, 0);
-    layouter.close();
-    return sb.getString();
   }
 
 }

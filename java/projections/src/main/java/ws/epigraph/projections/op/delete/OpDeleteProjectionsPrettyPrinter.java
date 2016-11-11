@@ -30,11 +30,13 @@ import java.util.Map;
  */
 public class OpDeleteProjectionsPrettyPrinter<E extends Exception>
     extends AbstractOpProjectionsPrettyPrinter<
-        OpDeleteVarProjection,
-        OpDeleteTagProjectionEntry,
-        OpDeleteModelProjection<?, ?>,
-        OpDeleteFieldProjection,
-        E> {
+    OpDeleteVarProjection,
+    OpDeleteTagProjectionEntry,
+    OpDeleteModelProjection<?, ?>,
+    OpDeleteRecordModelProjection,
+    OpDeleteFieldProjectionEntry,
+    OpDeleteFieldProjection,
+    E> {
 
   public OpDeleteProjectionsPrettyPrinter(Layouter<E> layouter) {
     super(layouter);
@@ -95,46 +97,6 @@ public class OpDeleteProjectionsPrettyPrinter<E extends Exception>
       print((OpDeleteMapModelProjection) mp);
     else if (mp instanceof OpDeleteListModelProjection)
       print((OpDeleteListModelProjection) mp);
-  }
-
-  private void print(@NotNull OpDeleteRecordModelProjection mp) throws E {
-    Map<String, OpDeleteFieldProjectionEntry> fieldProjections = mp.fieldProjections();
-
-    l.print("(").beginCInd();
-    boolean first = true;
-    for (Map.Entry<String, OpDeleteFieldProjectionEntry> entry : fieldProjections.entrySet()) {
-      if (first) first = false;
-      else l.print(",");
-      l.brk();
-
-      print(entry.getKey(), entry.getValue().projection());
-    }
-    l.brk(1, -l.getDefaultIndentation()).end().print(")");
-  }
-
-  public void print(@NotNull OpDeleteFieldProjection fieldProjection) throws E {
-    @NotNull OpDeleteVarProjection fieldVarProjection = fieldProjection.projection();
-    @NotNull OpParams fieldParams = fieldProjection.params();
-    @NotNull Annotations fieldAnnotations = fieldProjection.annotations();
-
-    if (fieldParams.isEmpty() && fieldAnnotations.isEmpty()) {
-      if (!isPrintoutEmpty(fieldVarProjection)) {
-        print(fieldVarProjection, 0);
-      }
-    } else {
-      l.beginCInd();
-      l.print("{");
-      if (!fieldParams.isEmpty()) print(fieldParams);
-      if (!fieldAnnotations.isEmpty()) print(fieldAnnotations);
-      l.brk(1, -l.getDefaultIndentation()).end().print("}");
-
-      if (!isPrintoutEmpty(fieldVarProjection)) {
-        l.beginIInd();
-        l.brk();
-        print(fieldVarProjection, 0);
-        l.end();
-      }
-    }
   }
 
   private void print(OpDeleteMapModelProjection mp) throws E {

@@ -13,4 +13,7 @@ public interface UrlReqUpdateFieldProjectionEntry extends PsiElement {
   @NotNull
   UrlReqUpdateFieldProjection getReqUpdateFieldProjection();
 
+  @Nullable
+  PsiElement getPlus();
+
 }

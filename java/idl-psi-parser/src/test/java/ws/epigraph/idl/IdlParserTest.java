@@ -16,10 +16,12 @@
 
 package ws.epigraph.idl;
 
-import de.uka.ilkd.pp.Layouter;
-import de.uka.ilkd.pp.NoExceptions;
-import de.uka.ilkd.pp.StringBackend;
+import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
+import ws.epigraph.idl.parser.IdlParserDefinition;
+import ws.epigraph.idl.parser.IdlPsiParser;
+import ws.epigraph.idl.parser.psi.IdlFile;
+import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.refs.SimpleTypesResolver;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.tests.*;
@@ -27,8 +29,7 @@ import ws.epigraph.tests.*;
 import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
-import static ws.epigraph.test.TestUtil.lines;
-import static ws.epigraph.test.TestUtil.parseIdl;
+import static ws.epigraph.test.TestUtil.*;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -182,15 +183,19 @@ public class IdlParserTest {
 
   private void testParse(String idlStr, String expected) throws IOException {
     Idl idl = parseIdl(idlStr, resolver);
+    assertEquals(expected, printIdl(idl));
+  }
 
-    StringBackend sb = new StringBackend(80);
-    Layouter<NoExceptions> l = new Layouter<>(sb, 2);
-    IdlPrettyPrinter<NoExceptions> pp = new IdlPrettyPrinter<>(l);
-    pp.print(idl);
-    l.close();
+  @NotNull
+  private static Idl parseIdl(@NotNull String text, @NotNull TypesResolver resolver) throws IOException {
+    EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
-    String s = sb.getString();
-    assertEquals(expected, s);
+    @NotNull IdlFile psiFile =
+        (IdlFile) EpigraphPsiUtil.parseFile("test.idl", text, IdlParserDefinition.INSTANCE, errorsAccumulator);
+
+    failIfHasErrors(psiFile, errorsAccumulator);
+
+    return runPsiParser(errors -> IdlPsiParser.parseIdl(psiFile, resolver, errors));
   }
 
 }

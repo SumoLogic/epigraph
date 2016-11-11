@@ -16,19 +16,19 @@
 
 package ws.epigraph.projections.op.output;
 
-import de.uka.ilkd.pp.Layouter;
-import de.uka.ilkd.pp.NoExceptions;
-import de.uka.ilkd.pp.StringBackend;
+import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
+import ws.epigraph.idl.parser.projections.IdlSubParserDefinitions;
+import ws.epigraph.idl.parser.psi.IdlOpOutputVarProjection;
+import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.SimpleTypesResolver;
 import ws.epigraph.refs.TypesResolver;
-import ws.epigraph.test.TestUtil;
 import ws.epigraph.tests.*;
 import ws.epigraph.types.DataType;
 
 import static org.junit.Assert.assertEquals;
-import static ws.epigraph.test.TestUtil.lines;
+import static ws.epigraph.test.TestUtil.*;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -180,7 +180,7 @@ public class OpOutputProjectionsTest {
 
     OpOutputVarProjection varProjection = parseOpOutputVarProjection(varDataType, projectionString);
 
-    String actual = print(varProjection);
+    String actual = printOpOutputVarProjection(varProjection);
 
     assertEquals("\n" + actual, expected, actual);
 //    assertEquals(expected.trim(), actual.trim());
@@ -198,16 +198,31 @@ public class OpOutputProjectionsTest {
         epigraph.String.type
     );
 
-    return TestUtil.parseOpOutputVarProjection(varDataType, projectionString, resolver);
+    return parseOpOutputVarProjection(varDataType, projectionString, resolver);
   }
 
-  private String print(OpOutputVarProjection projection) {
-    StringBackend sb = new StringBackend(120);
-    Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
-    OpOutputProjectionsPrettyPrinter<NoExceptions> printer = new OpOutputProjectionsPrettyPrinter<>(layouter);
-    printer.print(projection, 0);
-    layouter.close();
-    return sb.getString();
+  @NotNull
+  public static OpOutputVarProjection parseOpOutputVarProjection(
+      @NotNull DataType varDataType,
+      @NotNull String projectionString,
+      @NotNull TypesResolver resolver) {
+
+    EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
+
+    IdlOpOutputVarProjection psiVarProjection = EpigraphPsiUtil.parseText(
+        projectionString,
+        IdlSubParserDefinitions.OP_OUTPUT_VAR_PROJECTION,
+        errorsAccumulator
+    );
+
+    failIfHasErrors(psiVarProjection, errorsAccumulator);
+
+    return runPsiParser(errors -> OpOutputProjectionsPsiParser.parseVarProjection(
+        varDataType,
+        psiVarProjection,
+        resolver,
+        errors
+    ));
   }
 
 }

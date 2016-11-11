@@ -16,18 +16,16 @@
 
 package ws.epigraph.idl.gdata;
 
-import com.intellij.psi.PsiErrorElement;
-import com.intellij.psi.impl.DebugUtil;
+import org.jetbrains.annotations.NotNull;
+import org.junit.Test;
 import ws.epigraph.gdata.GDataValue;
 import ws.epigraph.idl.parser.projections.IdlSubParserDefinitions;
 import ws.epigraph.idl.parser.psi.IdlDataValue;
 import ws.epigraph.psi.EpigraphPsiUtil;
-import ws.epigraph.psi.PsiProcessingException;
-import org.jetbrains.annotations.NotNull;
-import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static ws.epigraph.test.TestUtil.failIfHasErrors;
+import static ws.epigraph.test.TestUtil.runPsiParser;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -54,32 +52,21 @@ public class IdlGDataPsiParserTest {
   }
 
   private void testParse(String dataStr, String expectedToString) {
+    GDataValue gDataValue = parseGDataValue(dataStr);
+    assertEquals(expectedToString, gDataValue.toString());
+  }
+
+  public static GDataValue parseGDataValue(String dataStr) {
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
     @NotNull IdlDataValue dataValue = EpigraphPsiUtil.parseText(
         dataStr,
-        IdlSubParserDefinitions.DATA_VALUE.rootElementType(),
-        IdlDataValue.class,
         IdlSubParserDefinitions.DATA_VALUE,
         errorsAccumulator
     );
 
-    if (errorsAccumulator.hasErrors()) {
-      for (PsiErrorElement element : errorsAccumulator.errors()) {
-        System.err.println(element.getErrorDescription() + " at " + EpigraphPsiUtil.getLocation(element));
-      }
-      fail(DebugUtil.psiTreeToString(dataValue, true));
-    }
+    failIfHasErrors(dataValue, errorsAccumulator);
 
-    GDataValue gDataValue = null;
-    try {
-      gDataValue = IdlGDataPsiParser.parseValue(dataValue);
-    } catch (PsiProcessingException e) {
-      e.printStackTrace();
-      System.err.println(e.getMessage() + " at " + e.location());
-      fail();
-    }
-
-    assertEquals(expectedToString, gDataValue.toString());
+    return runPsiParser(errors -> IdlGDataPsiParser.parseValue(dataValue, errors));
   }
 }

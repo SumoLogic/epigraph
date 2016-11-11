@@ -33,12 +33,6 @@ public class UrlReqDeleteSingleTagProjectionImpl extends ASTWrapperPsiElement im
   }
 
   @Override
-  @Nullable
-  public UrlReqDeleteModelMeta getReqDeleteModelMeta() {
-    return findChildByClass(UrlReqDeleteModelMeta.class);
-  }
-
-  @Override
   @NotNull
   public UrlReqDeleteModelProjection getReqDeleteModelProjection() {
     return findNotNullChildByClass(UrlReqDeleteModelProjection.class);
@@ -60,12 +54,6 @@ public class UrlReqDeleteSingleTagProjectionImpl extends ASTWrapperPsiElement im
   @Nullable
   public PsiElement getColon() {
     return findChildByType(U_COLON);
-  }
-
-  @Override
-  @Nullable
-  public PsiElement getPlus() {
-    return findChildByType(U_PLUS);
   }
 
 }

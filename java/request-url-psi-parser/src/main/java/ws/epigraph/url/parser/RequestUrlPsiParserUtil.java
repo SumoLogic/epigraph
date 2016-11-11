@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ws.epigraph.url;
+package ws.epigraph.url.parser;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

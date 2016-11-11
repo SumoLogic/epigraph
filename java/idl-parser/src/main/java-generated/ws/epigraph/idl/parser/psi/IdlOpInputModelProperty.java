@@ -16,4 +16,7 @@ public interface IdlOpInputModelProperty extends PsiElement {
   @Nullable
   IdlOpInputModelMeta getOpInputModelMeta();
 
+  @Nullable
+  IdlOpParam getOpParam();
+
 }

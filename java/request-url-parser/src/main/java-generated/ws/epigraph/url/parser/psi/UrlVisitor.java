@@ -131,10 +131,6 @@ public class UrlVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitReqDeleteModelMeta(@NotNull UrlReqDeleteModelMeta o) {
-    visitPsiElement(o);
-  }
-
   public void visitReqDeleteModelProjection(@NotNull UrlReqDeleteModelProjection o) {
     visitPsiElement(o);
   }
@@ -308,10 +304,6 @@ public class UrlVisitor extends PsiElementVisitor {
   }
 
   public void visitReqUpdateMapModelProjection(@NotNull UrlReqUpdateMapModelProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqUpdateModelMeta(@NotNull UrlReqUpdateModelMeta o) {
     visitPsiElement(o);
   }
 

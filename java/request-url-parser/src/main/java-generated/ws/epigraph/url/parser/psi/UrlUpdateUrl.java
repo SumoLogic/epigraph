@@ -28,6 +28,9 @@ public interface UrlUpdateUrl extends UrlUrl {
   @Nullable
   PsiElement getAngleRight();
 
+  @Nullable
+  PsiElement getPlus();
+
   @NotNull
   PsiElement getSlash();
 

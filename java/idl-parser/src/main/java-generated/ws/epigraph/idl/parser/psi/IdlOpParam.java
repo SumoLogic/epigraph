@@ -16,6 +16,9 @@ public interface IdlOpParam extends PsiElement {
   @Nullable
   IdlOpInputModelProjection getOpInputModelProjection();
 
+  @NotNull
+  List<IdlOpParam> getOpParamList();
+
   @Nullable
   IdlQid getQid();
 

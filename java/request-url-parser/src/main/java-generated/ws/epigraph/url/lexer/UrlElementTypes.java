@@ -40,7 +40,6 @@ public interface UrlElementTypes {
   IElementType U_REQ_DELETE_KEY_PROJECTION = new UrlElementType("U_REQ_DELETE_KEY_PROJECTION");
   IElementType U_REQ_DELETE_LIST_MODEL_PROJECTION = new UrlElementType("U_REQ_DELETE_LIST_MODEL_PROJECTION");
   IElementType U_REQ_DELETE_MAP_MODEL_PROJECTION = new UrlElementType("U_REQ_DELETE_MAP_MODEL_PROJECTION");
-  IElementType U_REQ_DELETE_MODEL_META = new UrlElementType("U_REQ_DELETE_MODEL_META");
   IElementType U_REQ_DELETE_MODEL_PROJECTION = new UrlElementType("U_REQ_DELETE_MODEL_PROJECTION");
   IElementType U_REQ_DELETE_MULTI_TAG_PROJECTION = new UrlElementType("U_REQ_DELETE_MULTI_TAG_PROJECTION");
   IElementType U_REQ_DELETE_MULTI_TAG_PROJECTION_ITEM = new UrlElementType("U_REQ_DELETE_MULTI_TAG_PROJECTION_ITEM");
@@ -85,7 +84,6 @@ public interface UrlElementTypes {
   IElementType U_REQ_UPDATE_KEYS_PROJECTION = new UrlElementType("U_REQ_UPDATE_KEYS_PROJECTION");
   IElementType U_REQ_UPDATE_LIST_MODEL_PROJECTION = new UrlElementType("U_REQ_UPDATE_LIST_MODEL_PROJECTION");
   IElementType U_REQ_UPDATE_MAP_MODEL_PROJECTION = new UrlElementType("U_REQ_UPDATE_MAP_MODEL_PROJECTION");
-  IElementType U_REQ_UPDATE_MODEL_META = new UrlElementType("U_REQ_UPDATE_MODEL_META");
   IElementType U_REQ_UPDATE_MODEL_PROJECTION = new UrlElementType("U_REQ_UPDATE_MODEL_PROJECTION");
   IElementType U_REQ_UPDATE_MULTI_TAG_PROJECTION = new UrlElementType("U_REQ_UPDATE_MULTI_TAG_PROJECTION");
   IElementType U_REQ_UPDATE_MULTI_TAG_PROJECTION_ITEM = new UrlElementType("U_REQ_UPDATE_MULTI_TAG_PROJECTION_ITEM");
@@ -234,9 +232,6 @@ public interface UrlElementTypes {
       else if (type == U_REQ_DELETE_MAP_MODEL_PROJECTION) {
         return new UrlReqDeleteMapModelProjectionImpl(node);
       }
-      else if (type == U_REQ_DELETE_MODEL_META) {
-        return new UrlReqDeleteModelMetaImpl(node);
-      }
       else if (type == U_REQ_DELETE_MODEL_PROJECTION) {
         return new UrlReqDeleteModelProjectionImpl(node);
       }
@@ -368,9 +363,6 @@ public interface UrlElementTypes {
       }
       else if (type == U_REQ_UPDATE_MAP_MODEL_PROJECTION) {
         return new UrlReqUpdateMapModelProjectionImpl(node);
-      }
-      else if (type == U_REQ_UPDATE_MODEL_META) {
-        return new UrlReqUpdateModelMetaImpl(node);
       }
       else if (type == U_REQ_UPDATE_MODEL_PROJECTION) {
         return new UrlReqUpdateModelProjectionImpl(node);

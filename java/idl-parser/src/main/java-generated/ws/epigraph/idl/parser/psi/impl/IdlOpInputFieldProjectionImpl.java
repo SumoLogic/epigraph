@@ -39,12 +39,6 @@ public class IdlOpInputFieldProjectionImpl extends ASTWrapperPsiElement implemen
   }
 
   @Override
-  @NotNull
-  public IdlQid getQid() {
-    return findNotNullChildByClass(IdlQid.class);
-  }
-
-  @Override
   @Nullable
   public PsiElement getCurlyLeft() {
     return findChildByType(I_CURLY_LEFT);
@@ -54,12 +48,6 @@ public class IdlOpInputFieldProjectionImpl extends ASTWrapperPsiElement implemen
   @Nullable
   public PsiElement getCurlyRight() {
     return findChildByType(I_CURLY_RIGHT);
-  }
-
-  @Override
-  @Nullable
-  public PsiElement getPlus() {
-    return findChildByType(I_PLUS);
   }
 
 }

@@ -115,7 +115,7 @@ readUrl ::= '/' qid reqOutputTrunkFieldProjection requestParams { // reqFieldPat
 createUrl ::= '/' qid reqFieldPath ('>' reqOutputTrunkFieldProjection)? requestParams {
   extends = "url"
 }
-updateUrl ::= '/' qid reqFieldPath ('<' reqUpdateFieldProjection)? ('>' reqOutputTrunkFieldProjection)? requestParams {
+updateUrl ::= '/' qid reqFieldPath ('<' '+'? reqUpdateFieldProjection)? ('>' reqOutputTrunkFieldProjection)? requestParams {
   extends = "url"
 }
 deleteUrl ::= '/' qid reqFieldPath ('<' reqDeleteFieldProjection)? ('>' reqOutputTrunkFieldProjection)? requestParams {
@@ -127,6 +127,7 @@ customUrl ::= '/' qid reqFieldPath ('>' reqOutputTrunkFieldProjection)? requestP
 
 // todo should be:
 // customUrl ::= '/' qid reqFieldPath ('<' reqInputFieldProjection)? ('>' reqOutputTrunkFieldProjection)? requestParams
+// requires req input projections implemented
 
 
 private requestParams ::= requestParam*
@@ -140,7 +141,7 @@ private requestParamRecover ::= ! ( '?' | '&' )
 
 // ============= req output projection =============
 
-reqParam ::= ';' qid '=' datum
+reqParam ::= ';' qid '=' datum // todo attach reqInputProjection too?
 reqAnnotation ::= '!' annotation
 private reqParamsAndAnnotations ::= ( reqParam | reqAnnotation )* 
 
@@ -238,7 +239,7 @@ reqOutputComaKeyProjection ::= datum reqParamsAndAnnotations
 
 // req update --------------------------------------------------------
 
-reqUpdateModelMeta ::= '@' reqUpdateModelProjection // no params/annotations on meta?
+//reqUpdateModelMeta ::= '@' reqUpdateModelProjection // no params/annotations on meta?
 
 reqUpdateVarPolymorphicTail ::= reqUpdateVarSingleTail | reqUpdateVarMultiTail
 reqUpdateVarSingleTail ::= '~' typeRef reqUpdateVarProjection
@@ -246,19 +247,19 @@ reqUpdateVarMultiTail ::= '~' '(' (reqUpdateVarMultiTailItem ','?)* ')' {pin=2}
 reqUpdateVarMultiTailItem ::= typeRef reqUpdateVarProjection
 
 reqUpdateVarProjection ::= ( reqUpdateMultiTagProjection | reqUpdateSingleTagProjection ) reqUpdateVarPolymorphicTail?
-reqUpdateSingleTagProjection ::= ( ':' tagName)? reqUpdateTagProjectionItem
+reqUpdateSingleTagProjection ::= ( ':' '+'? tagName)? reqUpdateTagProjectionItem
 reqUpdateMultiTagProjection ::= ':' '(' (reqUpdateMultiTagProjectionItem ','?)* ')' {pin=2}
-reqUpdateMultiTagProjectionItem ::= tagName reqUpdateTagProjectionItem
-private reqUpdateTagProjectionItem ::= reqParamsAndAnnotations reqUpdateModelProjection reqUpdateModelMeta?
+reqUpdateMultiTagProjectionItem ::= '+'? tagName reqUpdateTagProjectionItem
+private reqUpdateTagProjectionItem ::= reqParamsAndAnnotations reqUpdateModelProjection // reqUpdateModelMeta?
 //
 
 reqUpdateModelProjection ::= ( reqUpdateRecordModelProjection
-                             | reqUpdateListModelProjection
                              | reqUpdateMapModelProjection
+                             | reqUpdateListModelProjection
                              )?
 
 reqUpdateRecordModelProjection ::= '(' (reqUpdateFieldProjectionEntry ','?)* ')' { pin=1 }
-reqUpdateFieldProjectionEntry ::= qid reqUpdateFieldProjection
+reqUpdateFieldProjectionEntry ::= '+'? qid reqUpdateFieldProjection
 reqUpdateFieldProjection ::= reqParamsAndAnnotations reqUpdateVarProjection
 
 reqUpdateListModelProjection ::= '*' ( '(' reqUpdateVarProjection ')' )? { pin=1 }
@@ -268,7 +269,7 @@ reqUpdateKeysProjection ::= '[' '+'? ']'
 
 // req delete --------------------------------------------------------
 
-reqDeleteModelMeta ::= '@' '+'? reqDeleteModelProjection // no params/annotations on meta?
+// reqDeleteModelMeta ::= '@' '+'? reqDeleteModelProjection // no params/annotations on meta?
 
 reqDeleteVarPolymorphicTail ::= reqDeleteVarSingleTail | reqDeleteVarMultiTail
 reqDeleteVarSingleTail ::= '~' typeRef reqDeleteVarProjection
@@ -276,10 +277,10 @@ reqDeleteVarMultiTail ::= '~' '(' (reqDeleteVarMultiTailItem ','?)* ')' {pin=2}
 reqDeleteVarMultiTailItem ::= typeRef reqDeleteVarProjection
 
 reqDeleteVarProjection ::= ( reqDeleteMultiTagProjection | reqDeleteSingleTagProjection ) reqDeleteVarPolymorphicTail?
-reqDeleteSingleTagProjection ::= ( ':' '+'? tagName)? reqDeleteTagProjectionItem
+reqDeleteSingleTagProjection ::= ( ':' tagName)? reqDeleteTagProjectionItem
 reqDeleteMultiTagProjection ::= ':' '(' (reqDeleteMultiTagProjectionItem ','?)* ')' {pin=2}
-reqDeleteMultiTagProjectionItem ::= '+'? tagName reqDeleteTagProjectionItem
-private reqDeleteTagProjectionItem ::= reqParamsAndAnnotations reqDeleteModelProjection reqDeleteModelMeta?
+reqDeleteMultiTagProjectionItem ::= tagName reqDeleteTagProjectionItem
+private reqDeleteTagProjectionItem ::= reqParamsAndAnnotations reqDeleteModelProjection // reqDeleteModelMeta?
 //
 
 reqDeleteModelProjection ::= ( reqDeleteRecordModelProjection

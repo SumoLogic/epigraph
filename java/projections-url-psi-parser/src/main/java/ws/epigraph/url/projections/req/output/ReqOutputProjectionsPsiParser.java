@@ -18,6 +18,9 @@ package ws.epigraph.url.projections.req.output;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Datum;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
@@ -35,14 +38,12 @@ import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.types.*;
 import ws.epigraph.url.TypeRefs;
 import ws.epigraph.url.parser.psi.*;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
-import static ws.epigraph.url.projections.UrlProjectionsPsiParserUtil.getTag;
-import static ws.epigraph.url.projections.UrlProjectionsPsiParserUtil.getType;
+import static ws.epigraph.projections.ProjectionsParsingUtil.*;
+import static ws.epigraph.url.projections.UrlProjectionsPsiParserUtil.findTag;
+import static ws.epigraph.url.projections.UrlProjectionsPsiParserUtil.findTagOrDefaultTag;
 import static ws.epigraph.url.projections.req.ReqParserUtil.*;
 
 /**
@@ -190,84 +191,6 @@ public class ReqOutputProjectionsPsiParser {
     }
   }
 
-  /**
-   * Finds supported tag with a given name in type {@code type} if {@code idlTagName} is not null.
-   * <p>
-   * Otherwise gets {@link #findDefaultTag(Type, OpOutputVarProjection, PsiElement, List)}  default tag} and, if
-   * not {@code null}, returns it; otherwise fails.
-   */
-  @NotNull
-  private static Type.Tag findTagOrDefaultTag(
-      @NotNull Type type,
-      @Nullable UrlTagName idlTagName,
-      @NotNull OpOutputVarProjection opOutputVarProjection,
-      @NotNull PsiElement location,
-      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
-
-    if (idlTagName != null) return findTag(type, idlTagName, opOutputVarProjection, location, errors);
-    else {
-      final Type.@Nullable Tag defaultTag = findDefaultTag(type, opOutputVarProjection, location, errors);
-
-      if (defaultTag != null) return defaultTag;
-
-      throw new PsiProcessingException(
-          String.format(
-              "Can't build projection for type '%s': no tags specified. Supported tags: {%s}",
-              type.name(),
-              listTags(opOutputVarProjection)
-          ),
-          location,
-          errors
-      );
-    }
-  }
-
-  /**
-   * Finds supported tag with a given name in type {@code type}
-   */
-  @NotNull
-  private static Type.Tag findTag(
-      @NotNull Type type,
-      @NotNull UrlTagName idlTagName,
-      @NotNull OpOutputVarProjection opOutputVarProjection,
-      @NotNull PsiElement location,
-      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
-    final Type.Tag tag;
-
-    @Nullable final UrlQid qid = idlTagName.getQid();
-
-    String tagName = qid.getCanonicalName();
-    tag = getTag(type, tagName, location);
-
-    if (!opOutputVarProjection.tagProjections().containsKey(tag.name()))
-      throw new PsiProcessingException(
-          String.format("Tag '%s' is not supported by the operation. Supported tags: {%s}",
-                        tagName, listTags(opOutputVarProjection)
-          ),
-          location,
-          errors
-      );
-
-    return tag;
-  }
-
-  @NotNull
-  private static OpOutputTagProjectionEntry findTagProjection(
-      @NotNull String tagName,
-      @NotNull OpOutputVarProjection op,
-      @NotNull PsiElement location,
-      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
-    @Nullable final OpOutputTagProjectionEntry tagProjection = op.tagProjection(tagName);
-    if (tagProjection == null) {
-      throw new PsiProcessingException(
-          String.format("Tag '%s' is unsupported, supported tags: {%s}", tagName, listTags(op)), location, errors);
-    }
-    return tagProjection;
-  }
-
-  private static String listTags(@NotNull OpOutputVarProjection op) {
-    return op.tagProjections().keySet().stream().collect(Collectors.joining(", "));
-  }
 
   public static StepsAndProjection<ReqOutputVarProjection> parseComaVarProjection(
       @NotNull DataType dataType,
@@ -367,7 +290,7 @@ public class ReqOutputProjectionsPsiParser {
 
     for (UrlReqOutputComaMultiTagProjectionItem tagProjectionPsi : tagProjectionPsiList) {
       try {
-        @NotNull Type.Tag tag = findTag(dataType.type, tagProjectionPsi.getTagName(), op, tagProjectionPsi, errors);
+        @NotNull Type.Tag tag = findTag(tagProjectionPsi.getTagName(), op, tagProjectionPsi, errors);
         @NotNull OpOutputTagProjectionEntry opTag = findTagProjection(tag.name(), op, tagProjectionPsi, errors);
 
         OpOutputModelProjection<?, ?> opTagProjection = opTag.projection();
@@ -453,6 +376,7 @@ public class ReqOutputProjectionsPsiParser {
   }
 
 
+  @Contract("_, null, _, _ -> null")
   @Nullable
   private static ReqOutputModelProjection<?, ?> parseModelMetaProjection(
       @NotNull OpOutputModelProjection<?, ?> op,
@@ -498,7 +422,7 @@ public class ReqOutputProjectionsPsiParser {
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
     @NotNull TypeRef tailTypeRef = TypeRefs.fromPsi(tailTypeRefPsi);
-    @NotNull Type tailType = getType(tailTypeRef, typesResolver, tailTypeRefPsi);
+    @NotNull Type tailType = getType(tailTypeRef, typesResolver, tailTypeRefPsi, errors);
 
     @Nullable OpOutputVarProjection opTail = mergeOpTails(op, tailType);
     if (opTail == null)
@@ -592,28 +516,6 @@ public class ReqOutputProjectionsPsiParser {
     return createDefaultVarProjection(type, tags, op, required, locationPsi, errors);
   }
 
-  /**
-   * Finds default tags for a given {@code type}
-   * <p>
-   * If it's a {@code DatumType}, then default tag is {@code self}, provided that {@code op} contains it.
-   * If it's a {@code UnionType}, then all default tags from {@code op} are included.
-   */
-  @Nullable
-  private static Type.Tag findDefaultTag(
-      @NotNull Type type,
-      @NotNull OpOutputVarProjection op,
-      @NotNull PsiElement locationPsi,
-      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
-
-    if (type.kind() != TypeKind.UNION) {
-      DatumType datumType = (DatumType) type;
-      final Type.@NotNull Tag self = datumType.self;
-      findTagProjection(self.name(), op, locationPsi, errors); // check that op contains it
-      return self;
-    }
-
-    return null;
-  }
 
   @NotNull
   private static ReqOutputVarProjection createDefaultVarProjection(
@@ -708,7 +610,7 @@ public class ReqOutputProjectionsPsiParser {
         if (recordModelProjectionPsi == null)
           return createDefaultModelProjection(model, required, opRecord, params, annotations, psi, errors);
 
-        ensureModelKind(psi, TypeKind.RECORD, errors);
+        ensureModelKind(findProjectionKind(psi), TypeKind.RECORD, psi, errors);
 
         return parseComaRecordModelProjection(
             opRecord,
@@ -728,7 +630,7 @@ public class ReqOutputProjectionsPsiParser {
         if (mapModelProjectionPsi == null)
           return createDefaultModelProjection(model, required, opMap, params, annotations, psi, errors);
 
-        ensureModelKind(psi, TypeKind.MAP, errors);
+        ensureModelKind(findProjectionKind(psi), TypeKind.MAP, psi, errors);
 
         return parseComaMapModelProjection(
             opMap,
@@ -749,7 +651,7 @@ public class ReqOutputProjectionsPsiParser {
         if (listModelProjectionPsi == null)
           return createDefaultModelProjection(model, required, opList, params, annotations, psi, errors);
 
-        ensureModelKind(psi, TypeKind.LIST, errors);
+        ensureModelKind(findProjectionKind(psi), TypeKind.LIST, psi, errors);
 
         return parseListModelProjection(
             opList,
@@ -783,18 +685,6 @@ public class ReqOutputProjectionsPsiParser {
     }
   }
 
-  private static void ensureModelKind(
-      @NotNull UrlReqOutputComaModelProjection psi, @NotNull TypeKind expectedKind,
-      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
-
-    @Nullable TypeKind actualKind = findProjectionKind(psi);
-    if (!expectedKind.equals(actualKind))
-      throw new PsiProcessingException(
-          String.format("Unexpected projection kind '%s', expected '%s'", actualKind, expectedKind),
-          psi,
-          errors
-      );
-  }
 
   @Nullable
   private static TypeKind findProjectionKind(@NotNull UrlReqOutputComaModelProjection psi) {
@@ -1150,59 +1040,60 @@ public class ReqOutputProjectionsPsiParser {
     } else {
 
       for (UrlReqOutputComaFieldProjection fieldProjectionPsi : psiFieldProjections) {
-        try {
-          final String fieldName = fieldProjectionPsi.getQid().getCanonicalName();
+        final String fieldName = fieldProjectionPsi.getQid().getCanonicalName();
 
-          @Nullable OpOutputFieldProjectionEntry opFieldProjectionEntry = opFields.get(fieldName);
+        @Nullable OpOutputFieldProjectionEntry opFieldProjectionEntry = opFields.get(fieldName);
 
-          if (opFieldProjectionEntry == null)
-            throw new PsiProcessingException(
-                String.format(
-                    "Unsupported field '%s', supported fields: (%s)",
-                    fieldName,
-                    ProjectionUtils.listFields(opFields.keySet())
-                ),
-                fieldProjectionPsi,
-                errors
+        if (opFieldProjectionEntry == null)
+          errors.add(new PsiProcessingError(
+              String.format(
+                  "Unsupported field '%s', supported fields: (%s)",
+                  fieldName,
+                  ProjectionUtils.listFields(opFields.keySet())
+              ),
+              fieldProjectionPsi
+          ));
+        else {
+          try {
+            @NotNull final RecordType.Field field = opFieldProjectionEntry.field();
+            @NotNull final OpOutputFieldProjection opFieldProjection = opFieldProjectionEntry.projection();
+            final boolean fieldRequired = fieldProjectionPsi.getPlus() != null;
+
+            ReqParams fieldParams =
+                parseReqParams(fieldProjectionPsi.getReqParamList(), opFieldProjection.params(), resolver, errors);
+
+            Annotations fieldAnnotations = parseAnnotations(fieldProjectionPsi.getReqAnnotationList());
+
+            @Nullable UrlReqOutputComaVarProjection psiVarProjection =
+                fieldProjectionPsi.getReqOutputComaVarProjection();
+            @NotNull ReqOutputVarProjection varProjection =
+                parseComaVarProjection(
+                    field.dataType(),
+                    opFieldProjection.projection(),
+                    psiVarProjection,
+                    resolver,
+                    errors
+                ).projection();
+
+            @NotNull final TextLocation fieldLocation = EpigraphPsiUtil.getLocation(fieldProjectionPsi);
+
+            fieldProjections.put(
+                fieldName,
+                new ReqOutputFieldProjectionEntry(
+                    field,
+                    new ReqOutputFieldProjection(
+                        fieldParams,
+                        fieldAnnotations,
+                        varProjection,
+                        fieldRequired,
+                        fieldLocation
+                    ),
+                    fieldLocation
+                )
             );
-
-          @NotNull final RecordType.Field field = opFieldProjectionEntry.field();
-          @NotNull final OpOutputFieldProjection opFieldProjection = opFieldProjectionEntry.projection();
-          final boolean fieldRequired = fieldProjectionPsi.getPlus() != null;
-
-          ReqParams fieldParams =
-              parseReqParams(fieldProjectionPsi.getReqParamList(), opFieldProjection.params(), resolver, errors);
-
-          Annotations fieldAnnotations = parseAnnotations(fieldProjectionPsi.getReqAnnotationList());
-
-          @Nullable UrlReqOutputComaVarProjection psiVarProjection = fieldProjectionPsi.getReqOutputComaVarProjection();
-          @NotNull ReqOutputVarProjection varProjection =
-              parseComaVarProjection(
-                  field.dataType(),
-                  opFieldProjection.projection(),
-                  psiVarProjection,
-                  resolver,
-                  errors
-              ).projection();
-
-          @NotNull final TextLocation fieldLocation = EpigraphPsiUtil.getLocation(fieldProjectionPsi);
-
-          fieldProjections.put(
-              fieldName,
-              new ReqOutputFieldProjectionEntry(
-                  field,
-                  new ReqOutputFieldProjection(
-                      fieldParams,
-                      fieldAnnotations,
-                      varProjection,
-                      fieldRequired,
-                      fieldLocation
-                  ),
-                  fieldLocation
-              )
-          );
-        } catch (PsiProcessingException e) {
-          errors.add(e.toError());
+          } catch (PsiProcessingException e) {
+            errors.add(e.toError());
+          }
         }
       }
     }

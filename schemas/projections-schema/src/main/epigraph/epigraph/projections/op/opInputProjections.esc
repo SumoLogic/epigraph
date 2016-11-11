@@ -32,8 +32,9 @@ abstract record OpInputModelProjection {
   model: DataTypeRef
   required: Boolean
   defaultValue: Datum
+  params: map[String, OpParam]
   annotations: map[String, Annotation]
-  `meta`: OpInputModelProjection
+  // `meta`: OpInputModelProjection
 }
 
 record OpInputRecordModelProjection extends OpInputModelProjection {
@@ -49,6 +50,7 @@ record OpInputFieldProjectionEntry {
 
 record OpInputFieldProjection {
   required: Boolean
+  params: map[String, OpParam]
   annotations: map[String, Annotation]
   varProjection: OpInputVarProjection
 }
@@ -69,6 +71,7 @@ record OpInputMapModelProjection extends OpInputModelProjection {
 record OpInputKeyProjection {
   forbidden: Boolean
   required: Boolean
+  params: map[String, OpParam]
   annotations: map[String, Annotation]
 }
 

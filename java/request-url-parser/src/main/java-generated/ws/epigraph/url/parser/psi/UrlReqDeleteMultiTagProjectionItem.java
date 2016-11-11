@@ -10,9 +10,6 @@ public interface UrlReqDeleteMultiTagProjectionItem extends PsiElement {
   @NotNull
   List<UrlReqAnnotation> getReqAnnotationList();
 
-  @Nullable
-  UrlReqDeleteModelMeta getReqDeleteModelMeta();
-
   @NotNull
   UrlReqDeleteModelProjection getReqDeleteModelProjection();
 
@@ -21,8 +18,5 @@ public interface UrlReqDeleteMultiTagProjectionItem extends PsiElement {
 
   @NotNull
   UrlTagName getTagName();
-
-  @Nullable
-  PsiElement getPlus();
 
 }

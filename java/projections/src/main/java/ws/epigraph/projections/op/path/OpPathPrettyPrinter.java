@@ -19,7 +19,6 @@ package ws.epigraph.projections.op.path;
 import de.uka.ilkd.pp.Layouter;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.op.AbstractOpProjectionsPrettyPrinter;
-import ws.epigraph.projections.op.OpParam;
 import ws.epigraph.projections.op.OpParams;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -32,6 +31,8 @@ public class OpPathPrettyPrinter<E extends Exception>
     OpVarPath,
     OpTagPath,
     OpModelPath<?, ?>,
+    OpRecordModelPath,
+    OpFieldPathEntry,
     OpFieldPath,
     E> {
 
@@ -82,7 +83,8 @@ public class OpPathPrettyPrinter<E extends Exception>
       print((OpMapModelPath) mp);
   }
 
-  private void print(@NotNull OpRecordModelPath mp) throws E {
+  @Override
+  public void print(@NotNull OpRecordModelPath mp) throws E {
     @Nullable final OpFieldPathEntry entry = mp.pathFieldProjection();
 
     if (entry != null) {
@@ -92,28 +94,6 @@ public class OpPathPrettyPrinter<E extends Exception>
       print(entry.field().name(), entry.projection());
       l.end();
     }
-  }
-
-  public void print(@NotNull OpFieldPath fieldPath) throws E {
-    @NotNull OpVarPath fieldVarPath = fieldPath.projection();
-    @NotNull OpParams fieldParams = fieldPath.params();
-    @NotNull Annotations fieldAnnotations = fieldPath.annotations();
-
-    l.beginIInd(0);
-
-    if (!fieldParams.isEmpty() || !fieldAnnotations.isEmpty()) {
-      l.beginCInd();
-      l.print("{");
-      if (!fieldParams.isEmpty()) print(fieldParams);
-      if (!fieldAnnotations.isEmpty()) print(fieldAnnotations);
-      l.brk(1, -l.getDefaultIndentation()).end().print("}");
-
-      if (!isPrintoutEmpty(fieldVarPath)) l.brk();
-    }
-
-    print(fieldVarPath, 0);
-
-    l.end();
   }
 
   private void print(OpMapModelPath mp) throws E {
@@ -148,45 +128,29 @@ public class OpPathPrettyPrinter<E extends Exception>
     l.end();
   }
 
-  private void print(@NotNull OpParams p) throws E {
-    print(p, false, true);
-  }
-
-  private boolean print(@NotNull OpParams p, boolean needCommas, boolean first) throws E {
-    for (OpParam param : p.params().values()) {
-      if (needCommas) {
-        if (first) first = false;
-        else l.print(",");
-      }
-      l.brk();
-      print(param);
-    }
-
-    return first;
-  }
-
   @Override
   protected boolean isPrintoutEmpty(@NotNull OpVarPath opVarPath) {
-    return OpVarPath.isEnd(opVarPath) || super.isPrintoutEmpty(opVarPath);
+    return OpVarPath.isEnd(opVarPath) /*|| super.isPrintoutEmpty(opVarPath)*/;
   }
 
   @Override
   public boolean isPrintoutEmpty(@NotNull OpModelPath<?, ?> mp) {
-    if (mp instanceof OpRecordModelPath) {
-      OpRecordModelPath recordModelProjection = (OpRecordModelPath) mp;
-      return recordModelProjection.pathFieldProjection() == null;
-    }
-
-    if (mp instanceof OpMapModelPath) {
-      OpMapModelPath mapModelProjection = (OpMapModelPath) mp;
-      @NotNull OpPathKeyProjection keyProjection = mapModelProjection.keyProjection();
-
-      if (!keyProjection.params().isEmpty()) return false;
-      if (!keyProjection.annotations().isEmpty()) return false;
-
-      return isPrintoutEmpty(mapModelProjection.itemsProjection());
-    }
-
-    return true;
+//    if (mp instanceof OpRecordModelPath) {
+//      OpRecordModelPath recordModelProjection = (OpRecordModelPath) mp;
+//      return recordModelProjection.pathFieldProjection() == null;
+//    }
+//
+//    if (mp instanceof OpMapModelPath) {
+//      OpMapModelPath mapModelProjection = (OpMapModelPath) mp;
+//      @NotNull OpPathKeyProjection keyProjection = mapModelProjection.keyProjection();
+//
+//      if (!keyProjection.params().isEmpty()) return false;
+//      if (!keyProjection.annotations().isEmpty()) return false;
+//
+//      return isPrintoutEmpty(mapModelProjection.itemsProjection());
+//    }
+//
+//    return true;
+    return false;
   }
 }

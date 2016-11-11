@@ -17,19 +17,23 @@
 package ws.epigraph.projections.op.input;
 
 import de.uka.ilkd.pp.Layouter;
-import ws.epigraph.projections.Annotations;
-import ws.epigraph.projections.abs.AbstractProjectionsPrettyPrinter;
 import org.jetbrains.annotations.NotNull;
+import ws.epigraph.projections.Annotations;
+import ws.epigraph.projections.op.AbstractOpProjectionsPrettyPrinter;
+import ws.epigraph.projections.op.OpParams;
 
 import java.util.Map;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class OpInputProjectionsPrettyPrinter<E extends Exception> extends AbstractProjectionsPrettyPrinter<
+public class OpInputProjectionsPrettyPrinter<E extends Exception> extends AbstractOpProjectionsPrettyPrinter<
     OpInputVarProjection,
     OpInputTagProjectionEntry,
     OpInputModelProjection<?, ?, ?>,
+    OpInputRecordModelProjection,
+    OpInputFieldProjectionEntry,
+    OpInputFieldProjection,
     E> {
 
   public OpInputProjectionsPrettyPrinter(Layouter<E> layouter) {
@@ -40,9 +44,10 @@ public class OpInputProjectionsPrettyPrinter<E extends Exception> extends Abstra
   public void print(@NotNull String tagName, @NotNull OpInputTagProjectionEntry tp, int pathSteps) throws E {
     OpInputModelProjection<?, ?, ?> projection = tp.projection();
     OpInputModelProjection<?, ?, ?> metaProjection = projection.metaProjection();
-    Annotations annotations = projection.annotations();
+    final OpParams params = projection.params();
+    final Annotations annotations = projection.annotations();
 
-    if (projection.defaultValue() == null && annotations.isEmpty() &&
+    if (projection.defaultValue() == null && annotations.isEmpty() && params.isEmpty() &&
         metaProjection == null) {
 
       l.beginCInd();
@@ -72,14 +77,17 @@ public class OpInputProjectionsPrettyPrinter<E extends Exception> extends Abstra
         l.end();
       }
 
+      if (!params.isEmpty()) print(params);
       if (!annotations.isEmpty()) print(annotations);
 
-      if (!isPrintoutEmpty(projection)) {
-        l.brk();
-        print(projection, pathSteps);
-      }
-
       l.brk(1, -l.getDefaultIndentation()).end().print("}");
+
+      if (!isPrintoutEmpty(projection)) {
+        l.beginIInd();
+        l.brk();
+        print(projection, 0);
+        l.end();
+      }
     }
   }
 
@@ -105,33 +113,29 @@ public class OpInputProjectionsPrettyPrinter<E extends Exception> extends Abstra
       Map.Entry<String, OpInputFieldProjectionEntry> entry = fieldProjections.entrySet().iterator().next();
       l.beginIInd();
       l.print("/").brk();
-      print(entry.getKey(), entry.getValue().projection(), decSteps(pathSteps));
+      print(entry.getKey(), entry.getValue(), decSteps(pathSteps));
       l.end();
 
     } else {
-
-      l.print("(").beginCInd();
-      boolean first = true;
-      for (Map.Entry<String, OpInputFieldProjectionEntry> entry : fieldProjections.entrySet()) {
-        if (first) first = false;
-        else l.print(",");
-        l.brk();
-
-        print(entry.getKey(), entry.getValue().projection(), 0);
-
-      }
-      l.brk(1, -l.getDefaultIndentation()).end().print(")");
+      print(mp);
     }
   }
 
-  private void print(@NotNull String fieldName, @NotNull OpInputFieldProjection fieldProjection, int pathSteps)
+  @Override
+  protected String fieldNamePrefix(@NotNull final OpInputFieldProjectionEntry fieldEntry) {
+    return fieldEntry.projection().required() ? "+" : "";
+  }
+
+  private void print(@NotNull String fieldName, @NotNull OpInputFieldProjectionEntry fieldProjectionEntry, int pathSteps)
       throws E {
+
+    @NotNull final OpInputFieldProjection fieldProjection = fieldProjectionEntry.projection();
     @NotNull OpInputVarProjection fieldVarProjection = fieldProjection.projection();
     @NotNull Annotations fieldAnnotations = fieldProjection.annotations();
 
     if (fieldAnnotations.isEmpty()) {
       l.beginIInd();
-      if (fieldProjection.required()) l.print("+");
+      l.print(fieldNamePrefix(fieldProjectionEntry));
       l.print(fieldName);
       if (!isPrintoutEmpty(fieldVarProjection)) {
         l.brk();
@@ -140,7 +144,7 @@ public class OpInputProjectionsPrettyPrinter<E extends Exception> extends Abstra
       l.end();
     } else {
       l.beginCInd();
-      if (fieldProjection.required()) l.print("+");
+      l.print(fieldNamePrefix(fieldProjectionEntry));
       l.print(fieldName);
       l.print(" {");
       print(fieldAnnotations);
@@ -193,4 +197,5 @@ public class OpInputProjectionsPrettyPrinter<E extends Exception> extends Abstra
 
     return true;
   }
+
 }

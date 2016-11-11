@@ -23,7 +23,7 @@ import java.util.Objects;
  */
 public class ReqUpdateKeysProjection {
   public static final ReqUpdateKeysProjection UPDATE_KEYS = new ReqUpdateKeysProjection(true);
-  public static final ReqUpdateKeysProjection REPLACE_KEYS = new ReqUpdateKeysProjection(false);
+  public static final ReqUpdateKeysProjection PATCH_KEYS = new ReqUpdateKeysProjection(false);
 
   private final boolean update;
 

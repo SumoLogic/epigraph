@@ -13,16 +13,10 @@ public interface IdlOpInputFieldProjection extends PsiElement {
   @NotNull
   IdlOpInputVarProjection getOpInputVarProjection();
 
-  @NotNull
-  IdlQid getQid();
-
   @Nullable
   PsiElement getCurlyLeft();
 
   @Nullable
   PsiElement getCurlyRight();
-
-  @Nullable
-  PsiElement getPlus();
 
 }

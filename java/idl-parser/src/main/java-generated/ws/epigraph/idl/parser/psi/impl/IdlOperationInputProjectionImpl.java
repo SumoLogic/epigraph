@@ -27,9 +27,9 @@ public class IdlOperationInputProjectionImpl extends ASTWrapperPsiElement implem
   }
 
   @Override
-  @NotNull
-  public IdlOpInputModelProjection getOpInputModelProjection() {
-    return findNotNullChildByClass(IdlOpInputModelProjection.class);
+  @Nullable
+  public IdlOpInputFieldProjection getOpInputFieldProjection() {
+    return findChildByClass(IdlOpInputFieldProjection.class);
   }
 
   @Override

@@ -68,6 +68,12 @@ public class UrlUpdateUrlImpl extends UrlUrlImpl implements UrlUpdateUrl {
   }
 
   @Override
+  @Nullable
+  public PsiElement getPlus() {
+    return findChildByType(U_PLUS);
+  }
+
+  @Override
   @NotNull
   public PsiElement getSlash() {
     return findNotNullChildByType(U_SLASH);

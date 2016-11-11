@@ -17,11 +17,10 @@
 package ws.epigraph.projections.op.output;
 
 import de.uka.ilkd.pp.Layouter;
+import org.jetbrains.annotations.NotNull;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.op.AbstractOpProjectionsPrettyPrinter;
-import ws.epigraph.projections.op.OpParam;
 import ws.epigraph.projections.op.OpParams;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
@@ -33,6 +32,8 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception>
     OpOutputVarProjection,
     OpOutputTagProjectionEntry,
     OpOutputModelProjection<?, ?>,
+    OpOutputRecordModelProjection,
+    OpOutputFieldProjectionEntry,
     OpOutputFieldProjection,
     E> {
 
@@ -92,49 +93,6 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception>
       print((OpOutputListModelProjection) mp);
   }
 
-  private void print(@NotNull OpOutputRecordModelProjection mp) throws E {
-    Map<String, OpOutputFieldProjectionEntry> fieldProjections = mp.fieldProjections();
-
-    l.print("(").beginCInd();
-    boolean first = true;
-    for (Map.Entry<String, OpOutputFieldProjectionEntry> entry : fieldProjections.entrySet()) {
-      if (first) first = false;
-      else l.print(",");
-      l.brk();
-
-      @NotNull String fieldName = entry.getKey();
-      @NotNull OpOutputFieldProjection fieldProjection = entry.getValue().projection();
-
-      print(fieldName, fieldProjection);
-    }
-    l.brk(1, -l.getDefaultIndentation()).end().print(")");
-  }
-
-  public void print(@NotNull OpOutputFieldProjection fieldProjection) throws E {
-    @NotNull OpOutputVarProjection fieldVarProjection = fieldProjection.projection();
-    @NotNull OpParams fieldParams = fieldProjection.params();
-    @NotNull Annotations fieldAnnotations = fieldProjection.annotations();
-
-    if (fieldParams.isEmpty() && fieldAnnotations.isEmpty()) {
-      if (!isPrintoutEmpty(fieldVarProjection)) {
-        print(fieldVarProjection, 0);
-      }
-    } else {
-      l.beginCInd();
-      l.print("{");
-      if (!fieldParams.isEmpty()) print(fieldParams);
-      if (!fieldAnnotations.isEmpty()) print(fieldAnnotations);
-      l.brk(1, -l.getDefaultIndentation()).end().print("}");
-      if (!isPrintoutEmpty(fieldVarProjection)) {
-        l.beginIInd();
-        l.brk();
-        print(fieldVarProjection, 0);
-        l.end();
-      }
-    }
-
-  }
-
   private void print(OpOutputMapModelProjection mp) throws E {
     l.beginIInd();
 
@@ -180,24 +138,6 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception>
     l.brk(1, -l.getDefaultIndentation()).end().print(")");
   }
 
-  public void print(@NotNull OpParams p) throws E {
-    print(p, false, true);
-  }
-
-  public boolean print(@NotNull OpParams p, boolean needCommas, boolean first) throws E {
-    for (OpParam param : p.params().values()) {
-      if (needCommas) {
-        if (first) first = false;
-        else l.print(",");
-      }
-      l.brk();
-      l.beginCInd(0);
-      print(param);
-      l.end();
-    }
-
-    return first;
-  }
 
   @Override
   public boolean isPrintoutEmpty(@NotNull OpOutputModelProjection<?, ?> mp) {

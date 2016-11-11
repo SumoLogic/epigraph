@@ -16,13 +16,14 @@
 
 package ws.epigraph.projections.op.input;
 
-import ws.epigraph.data.Datum;
-import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.abs.AbstractModelProjection;
-import ws.epigraph.projections.Annotations;
-import ws.epigraph.types.DatumType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.data.Datum;
+import ws.epigraph.lang.TextLocation;
+import ws.epigraph.projections.Annotations;
+import ws.epigraph.projections.op.AbstractOpModelProjection;
+import ws.epigraph.projections.op.OpParams;
+import ws.epigraph.types.DatumType;
 
 import java.util.Objects;
 
@@ -33,7 +34,7 @@ public abstract class OpInputModelProjection<
     MP extends OpInputModelProjection</*MP*/?, M, D>,
     M extends DatumType,
     D extends Datum>
-    extends AbstractModelProjection<MP, M> {
+    extends AbstractOpModelProjection<MP, M> {
 
   protected final boolean required;
   @Nullable
@@ -43,10 +44,11 @@ public abstract class OpInputModelProjection<
       @NotNull M model,
       boolean required,
       @Nullable D defaultValue,
+      @NotNull OpParams params,
       @NotNull Annotations annotations,
       @Nullable MP metaProjection,
       @NotNull TextLocation location) {
-    super(model, metaProjection, annotations, location);
+    super(model, metaProjection, params, annotations, location);
     this.required = required;
     this.defaultValue = defaultValue;
   }

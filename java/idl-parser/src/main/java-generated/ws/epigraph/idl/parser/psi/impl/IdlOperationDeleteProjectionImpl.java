@@ -27,9 +27,9 @@ public class IdlOperationDeleteProjectionImpl extends ASTWrapperPsiElement imple
   }
 
   @Override
-  @NotNull
+  @Nullable
   public IdlOpDeleteFieldProjection getOpDeleteFieldProjection() {
-    return findNotNullChildByClass(IdlOpDeleteFieldProjection.class);
+    return findChildByClass(IdlOpDeleteFieldProjection.class);
   }
 
   @Override

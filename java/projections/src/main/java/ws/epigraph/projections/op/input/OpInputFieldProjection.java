@@ -16,17 +16,18 @@
 
 package ws.epigraph.projections.op.input;
 
+import org.jetbrains.annotations.NotNull;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
-import ws.epigraph.projections.abs.AbstractFieldProjection;
-import org.jetbrains.annotations.NotNull;
+import ws.epigraph.projections.op.AbstractOpFieldProjection;
+import ws.epigraph.projections.op.OpParams;
 
 import java.util.Objects;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class OpInputFieldProjection extends AbstractFieldProjection<
+public class OpInputFieldProjection extends AbstractOpFieldProjection<
     OpInputVarProjection,
     OpInputTagProjectionEntry,
     OpInputModelProjection<?, ?, ?>
@@ -35,11 +36,12 @@ public class OpInputFieldProjection extends AbstractFieldProjection<
   private final boolean required;
 
   public OpInputFieldProjection(
+      @NotNull OpParams params,
       @NotNull Annotations annotations,
       @NotNull OpInputVarProjection projection,
       boolean required,
       @NotNull TextLocation location) {
-    super(annotations, projection, location);
+    super(params, annotations, projection, location);
     this.required = required;
   }
 

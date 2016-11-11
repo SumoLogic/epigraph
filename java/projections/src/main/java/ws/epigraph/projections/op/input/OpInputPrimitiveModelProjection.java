@@ -20,6 +20,7 @@ import ws.epigraph.data.PrimitiveDatum;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenPrimitiveModelProjection;
+import ws.epigraph.projections.op.OpParams;
 import ws.epigraph.types.PrimitiveType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -35,9 +36,10 @@ public class OpInputPrimitiveModelProjection
       @NotNull PrimitiveType model,
       boolean required,
       @Nullable PrimitiveDatum<?> defaultValue,
+      @NotNull OpParams params,
       @NotNull Annotations annotations,
       @Nullable OpInputPrimitiveModelProjection metaProjection,
       @NotNull TextLocation location) {
-    super(model, required, defaultValue, annotations, metaProjection, location);
+    super(model, required, defaultValue, params, annotations, metaProjection, location);
   }
 }

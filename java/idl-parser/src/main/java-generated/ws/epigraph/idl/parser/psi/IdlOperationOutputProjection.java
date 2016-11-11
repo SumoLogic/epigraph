@@ -7,7 +7,7 @@ import com.intellij.psi.PsiElement;
 
 public interface IdlOperationOutputProjection extends PsiElement {
 
-  @NotNull
+  @Nullable
   IdlOpOutputFieldProjection getOpOutputFieldProjection();
 
   @NotNull

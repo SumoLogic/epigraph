@@ -27,9 +27,9 @@ public class IdlOperationOutputTypeImpl extends ASTWrapperPsiElement implements 
   }
 
   @Override
-  @NotNull
+  @Nullable
   public IdlValueTypeRef getValueTypeRef() {
-    return findNotNullChildByClass(IdlValueTypeRef.class);
+    return findChildByClass(IdlValueTypeRef.class);
   }
 
   @Override

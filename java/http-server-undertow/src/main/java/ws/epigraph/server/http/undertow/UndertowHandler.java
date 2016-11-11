@@ -39,7 +39,7 @@ import ws.epigraph.service.*;
 import ws.epigraph.service.operations.ReadOperation;
 import ws.epigraph.service.operations.ReadOperationRequest;
 import ws.epigraph.service.operations.ReadOperationResponse;
-import ws.epigraph.url.parser.projections.UrlSubParserDefinitions;
+import ws.epigraph.url.parser.UrlSubParserDefinitions;
 import ws.epigraph.url.parser.psi.UrlReadUrl;
 import ws.epigraph.wire.json.JsonFormatWriter;
 

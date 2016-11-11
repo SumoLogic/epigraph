@@ -21,7 +21,7 @@ import ws.epigraph.idl.TypeRefs;
 import ws.epigraph.idl.parser.psi.*;
 import ws.epigraph.projections.Annotation;
 import ws.epigraph.projections.Annotations;
-import ws.epigraph.projections.ProjectionPsiParserUtil;
+import ws.epigraph.projections.IdlProjectionPsiParserUtil;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.op.OpParams;
 import ws.epigraph.projections.op.delete.OpDeleteProjectionsPsiParser;
@@ -89,7 +89,7 @@ public class OperationsPsiParser {
     IdlOperationOutputProjection outputProjectionPsi = null;
 
     for (IdlReadOperationBodyPart part : psi.getReadOperationBodyPartList()) {
-      annotations = ProjectionPsiParserUtil.parseAnnotation(annotations, part.getAnnotation());
+      annotations = IdlProjectionPsiParserUtil.parseAnnotation(annotations, part.getAnnotation(), errors);
 
       pathPsi = getPsiPart(pathPsi, part.getOperationPath(), "path", errors);
       outputProjectionPsi =
@@ -145,7 +145,7 @@ public class OperationsPsiParser {
     IdlOperationOutputProjection outputProjectionPsi = null;
 
     for (IdlCreateOperationBodyPart part : psi.getCreateOperationBodyPartList()) {
-      annotations = ProjectionPsiParserUtil.parseAnnotation(annotations, part.getAnnotation());
+      annotations = IdlProjectionPsiParserUtil.parseAnnotation(annotations, part.getAnnotation(), errors);
 
       pathPsi = getPsiPart(pathPsi, part.getOperationPath(), "path", errors);
       inputTypePsi = getPsiPart(inputTypePsi, part.getOperationInputType(), "input kind", errors);
@@ -169,15 +169,13 @@ public class OperationsPsiParser {
         parseOperationName(psi.getOperationName()),
         Annotations.fromMap(annotations),
         fieldPath,
-        OpInputProjectionsPsiParser.parseModelProjection(
+        OpInputProjectionsPsiParser.parseFieldProjection(
             resolveInputType(resourceType, varPath, inputTypePsi, resolver, psi, errors),
             true,
-            null,
-            Annotations.EMPTY,
-            null,
-            inputProjectionPsi.getOpInputModelProjection(),
-            resolver
-        ).projection(),
+            inputProjectionPsi.getOpInputFieldProjection(),
+            resolver,
+            errors
+        ),
         parseOutputProjection(
             resolveOutputType(
                 resourceType,
@@ -207,7 +205,7 @@ public class OperationsPsiParser {
     IdlOperationOutputProjection outputProjectionPsi = null;
 
     for (IdlUpdateOperationBodyPart part : psi.getUpdateOperationBodyPartList()) {
-      annotations = ProjectionPsiParserUtil.parseAnnotation(annotations, part.getAnnotation());
+      annotations = IdlProjectionPsiParserUtil.parseAnnotation(annotations, part.getAnnotation(), errors);
 
       pathPsi = getPsiPart(pathPsi, part.getOperationPath(), "path", errors);
       inputTypePsi = getPsiPart(inputTypePsi, part.getOperationInputType(), "input kind", errors);
@@ -229,15 +227,13 @@ public class OperationsPsiParser {
         parseOperationName(psi.getOperationName()),
         Annotations.fromMap(annotations),
         fieldPath,
-        OpInputProjectionsPsiParser.parseModelProjection(
+        OpInputProjectionsPsiParser.parseFieldProjection(
             resolveInputType(resourceType, varPath, inputTypePsi, resolver, psi, errors),
             true,
-            null,
-            Annotations.EMPTY,
-            null,
-            inputProjectionPsi.getOpInputModelProjection(),
-            resolver
-        ).projection(),
+            inputProjectionPsi.getOpInputFieldProjection(),
+            resolver,
+            errors
+        ),
         parseOutputProjection(
             resolveOutputType(
                 resourceType,
@@ -266,7 +262,7 @@ public class OperationsPsiParser {
     IdlOperationOutputProjection outputProjectionPsi = null;
 
     for (IdlDeleteOperationBodyPart part : psi.getDeleteOperationBodyPartList()) {
-      annotations = ProjectionPsiParserUtil.parseAnnotation(annotations, part.getAnnotation());
+      annotations = IdlProjectionPsiParserUtil.parseAnnotation(annotations, part.getAnnotation(), errors);
 
       pathPsi = getPsiPart(pathPsi, part.getOperationPath(), "path", errors);
       deleteProjectionPsi =
@@ -291,7 +287,8 @@ public class OperationsPsiParser {
         OpDeleteProjectionsPsiParser.parseFieldProjection(
             resolveDeleteType(resourceType, fieldPath == null ? null : fieldPath.projection()),
             deleteProjectionPsi.getOpDeleteFieldProjection(),
-            resolver
+            resolver,
+            errors
         ),
         parseOutputProjection(
             resolveOutputType(
@@ -323,7 +320,7 @@ public class OperationsPsiParser {
     IdlOperationOutputProjection outputProjectionPsi = null;
 
     for (IdlCustomOperationBodyPart part : psi.getCustomOperationBodyPartList()) {
-      annotations = ProjectionPsiParserUtil.parseAnnotation(annotations, part.getAnnotation());
+      annotations = IdlProjectionPsiParserUtil.parseAnnotation(annotations, part.getAnnotation(), errors);
 
       methodPsi = getPsiPart(methodPsi, part.getOperationMethod(), "HTTP method", errors);
       pathPsi = getPsiPart(pathPsi, part.getOperationPath(), "path", errors);
@@ -353,7 +350,7 @@ public class OperationsPsiParser {
         parseOperationName(psi.getOperationName()),
         Annotations.fromMap(annotations),
         opPath,
-        inputProjectionPsi == null ? null : OpInputProjectionsPsiParser.parseModelProjection(
+        inputProjectionPsi == null ? null : OpInputProjectionsPsiParser.parseFieldProjection(
             resolveInputType(
                 resourceType,
                 opPath == null ? null : opPath.projection(),
@@ -363,12 +360,10 @@ public class OperationsPsiParser {
                 errors
             ),
             true,
-            null,
-            Annotations.EMPTY,
-            null,
-            inputProjectionPsi.getOpInputModelProjection(),
-            resolver
-        ).projection(),
+            inputProjectionPsi.getOpInputFieldProjection(),
+            resolver,
+            errors
+        ),
         parseOutputProjection(
             resolveOutputType(
                 resourceType,
@@ -454,7 +449,7 @@ public class OperationsPsiParser {
   }
 
   @NotNull
-  private static DatumType resolveInputType(
+  private static DataType resolveInputType(
       @NotNull DataType resourceType,
       @Nullable OpVarPath path,
       @Nullable IdlOperationInputType inputTypePsi,
@@ -467,7 +462,7 @@ public class OperationsPsiParser {
 
         @NotNull Type rtt = resourceType.type;
 
-        if (rtt instanceof DatumType) return (DatumType) rtt;
+        if (rtt instanceof DatumType) return ((DatumType) rtt).dataType();
 
         @Nullable
         final Type.Tag defaultTag = resourceType.defaultTag;
@@ -478,13 +473,14 @@ public class OperationsPsiParser {
               location,
               errors
           );
-        else return defaultTag.type;
+        else return defaultTag.type.dataType();
+
       } else {
         @NotNull final DataType tipType = ProjectionUtils.tipType(path);
 
         @NotNull final Type ttt = tipType.type;
 
-        if (ttt instanceof DatumType) return (DatumType) ttt;
+        if (ttt instanceof DatumType) return ((DatumType) ttt).dataType();
 
         @Nullable
         final Type.Tag defaultTag = tipType.defaultTag;
@@ -495,14 +491,14 @@ public class OperationsPsiParser {
               location,
               errors
           );
-        else return defaultTag.type;
+        else return defaultTag.type.dataType();
       }
     }
     @NotNull final IdlTypeRef typeRefPsi = inputTypePsi.getTypeRef();
     @Nullable final DatumType datumType = TypeRefs.fromPsi(typeRefPsi).resolveDatumType(resolver);
     if (datumType == null)
       throw new PsiProcessingException("Can't resolve input kind", typeRefPsi, errors);
-    return datumType;
+    return datumType.dataType();
   }
 
   @NotNull
@@ -527,7 +523,7 @@ public class OperationsPsiParser {
         errors.add(new PsiProcessingError("Path expression missing", pathPsi));
         return null;
       }
-      return OpPathPsiParser.parseFieldPath(type, varPathPsi, resolver);
+      return OpPathPsiParser.parseFieldPath(type, varPathPsi, resolver, errors);
     } else return null;
   }
 

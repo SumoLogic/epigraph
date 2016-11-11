@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ws.epigraph.url;
+package ws.epigraph.url.parser;
 
 import ws.epigraph.gdata.GDatum;
 import ws.epigraph.idl.operations.ReadOperationIdl;
@@ -32,6 +32,7 @@ import ws.epigraph.psi.PsiProcessingError;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.types.DataType;
+import ws.epigraph.url.ReadRequestUrl;
 import ws.epigraph.url.parser.psi.UrlReadUrl;
 import ws.epigraph.url.parser.psi.UrlReqOutputComaVarProjection;
 import ws.epigraph.url.parser.psi.UrlReqOutputTrunkFieldProjection;

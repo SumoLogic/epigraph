@@ -8,7 +8,7 @@ import com.intellij.psi.PsiElement;
 public interface IdlOpInputRecordModelProjection extends PsiElement {
 
   @NotNull
-  List<IdlOpInputFieldProjection> getOpInputFieldProjectionList();
+  List<IdlOpInputFieldProjectionEntry> getOpInputFieldProjectionEntryList();
 
   @NotNull
   PsiElement getParenLeft();

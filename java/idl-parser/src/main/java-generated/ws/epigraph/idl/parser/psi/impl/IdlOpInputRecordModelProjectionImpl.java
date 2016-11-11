@@ -28,8 +28,8 @@ public class IdlOpInputRecordModelProjectionImpl extends ASTWrapperPsiElement im
 
   @Override
   @NotNull
-  public List<IdlOpInputFieldProjection> getOpInputFieldProjectionList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, IdlOpInputFieldProjection.class);
+  public List<IdlOpInputFieldProjectionEntry> getOpInputFieldProjectionEntryList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, IdlOpInputFieldProjectionEntry.class);
   }
 
   @Override

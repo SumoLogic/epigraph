@@ -55,6 +55,7 @@ public abstract class AbstractProjectionsPrettyPrinter<
     gdataPrettyPrinter = new GDataPrettyPrinter<>(l);
   }
 
+  // todo figure out recursive projections syntax
   public final void print(@NotNull VP p, int pathSteps) throws E {
     if (varsStack.contains(p)) {
       // handle recursive projections

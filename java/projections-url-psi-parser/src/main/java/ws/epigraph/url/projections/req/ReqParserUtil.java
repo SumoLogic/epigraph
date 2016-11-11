@@ -37,6 +37,7 @@ import ws.epigraph.refs.ImportAwareTypesResolver;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.types.DatumType;
 import ws.epigraph.types.Type;
+import ws.epigraph.types.TypeKind;
 import ws.epigraph.url.gdata.UrlGDataPsiParser;
 import ws.epigraph.url.parser.psi.UrlDatum;
 import ws.epigraph.url.parser.psi.UrlReqAnnotation;
@@ -225,6 +226,18 @@ public class ReqParserUtil {
     }
 
     return null;
+  }
+
+  public static void ensureModelKind(
+      @Nullable TypeKind actualKind, @NotNull TypeKind expectedKind, @NotNull PsiElement locationPsi,
+      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
+
+    if (!expectedKind.equals(actualKind))
+      throw new PsiProcessingException(
+          String.format("Unexpected projection kind '%s', expected '%s'", actualKind, expectedKind),
+          locationPsi,
+          errors
+      );
   }
 
 }

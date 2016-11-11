@@ -34,34 +34,39 @@
       <artifactId>epigraph-java-idl</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
+    <!--<dependency>-->
+    <!--<groupId>${project.parent.groupId}</groupId>-->
+    <!--<artifactId>epigraph-java-idl-parser</artifactId>-->
+    <!--<version>${project.parent.version}</version>-->
+    <!--</dependency>-->
+    <!--<dependency>-->
+    <!--<groupId>${project.parent.groupId}</groupId>-->
+    <!--<artifactId>epigraph-java-idl-psi-parser</artifactId>-->
+    <!--<version>${project.parent.version}</version>-->
+    <!--</dependency>-->
+    <!--<dependency>-->
+    <!--<groupId>${project.parent.groupId}</groupId>-->
+    <!--<artifactId>epigraph-java-request-url</artifactId>-->
+    <!--<version>${project.parent.version}</version>-->
+    <!--</dependency>-->
+    <!--<dependency>-->
+    <!--<groupId>${project.parent.groupId}</groupId>-->
+    <!--<artifactId>epigraph-java-request-url-parser</artifactId>-->
+    <!--<version>${project.parent.version}</version>-->
+    <!--</dependency>-->
+    <!--<dependency>-->
+    <!--<groupId>${project.parent.groupId}</groupId>-->
+    <!--<artifactId>epigraph-java-request-url-psi-parser</artifactId>-->
+    <!--<version>${project.parent.version}</version>-->
+    <!--</dependency>-->
     <dependency>
       <groupId>${project.parent.groupId}</groupId>
-      <artifactId>epigraph-java-idl-parser</artifactId>
+      <artifactId>epigraph-java-projections</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
     <dependency>
       <groupId>${project.parent.groupId}</groupId>
-      <artifactId>epigraph-java-idl-psi-parser</artifactId>
-      <version>${project.parent.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.parent.groupId}</groupId>
-      <artifactId>epigraph-java-request-url</artifactId>
-      <version>${project.parent.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.parent.groupId}</groupId>
-      <artifactId>epigraph-java-request-url-parser</artifactId>
-      <version>${project.parent.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.parent.groupId}</groupId>
-      <artifactId>epigraph-java-request-url-psi-parser</artifactId>
-      <version>${project.parent.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.parent.groupId}</groupId>
-      <artifactId>epigraph-java-standalone-psi-util </artifactId>
+      <artifactId>epigraph-java-standalone-psi-util</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
 

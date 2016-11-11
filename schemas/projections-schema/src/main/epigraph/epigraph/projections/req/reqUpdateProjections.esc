@@ -34,7 +34,7 @@ abstract record ReqUpdateModelProjection {
   update: Boolean // update or patch?
   params: map[String, ReqParam]
   annotations: map[String, Annotation]
-  `meta`: ReqUpdateModelProjection
+//  `meta`: ReqUpdateModelProjection
 }
 
 record ReqUpdateRecordModelProjection extends ReqUpdateModelProjection {
@@ -47,6 +47,7 @@ record ReqUpdateFieldProjectionEntry {
 }
 
 record ReqUpdateFieldProjection {
+  update: Boolean // update or patch entity?
   field: FieldRef
   params: map[String, ReqParam]
   annotations: map[String, Annotation]
@@ -65,7 +66,7 @@ record ReqUpdateMapModelProjection extends ReqUpdateModelProjection {
 }
 
 record ReqUpdateKeysProjection {
-  update: Boolean // update or patch? applies to all keys
+  update: Boolean // update or patch entities? applies to all keys
   // actual key values are part of the payload (request body)
 }
 

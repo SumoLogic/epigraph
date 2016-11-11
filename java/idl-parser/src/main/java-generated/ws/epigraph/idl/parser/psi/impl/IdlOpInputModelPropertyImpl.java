@@ -44,4 +44,10 @@ public class IdlOpInputModelPropertyImpl extends ASTWrapperPsiElement implements
     return findChildByClass(IdlOpInputModelMeta.class);
   }
 
+  @Override
+  @Nullable
+  public IdlOpParam getOpParam() {
+    return findChildByClass(IdlOpParam.class);
+  }
+
 }

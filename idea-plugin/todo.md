@@ -1,5 +1,6 @@
 ### High
 - Add support for `*.eidl` files
+- `goto class` should not point to files not under source roots, e.g. from `taget` or `classes`
 
 ### Medium
 - Errors on duplicate fields/tags

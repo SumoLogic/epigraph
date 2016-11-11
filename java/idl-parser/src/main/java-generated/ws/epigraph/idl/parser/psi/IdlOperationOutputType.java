@@ -7,7 +7,7 @@ import com.intellij.psi.PsiElement;
 
 public interface IdlOperationOutputType extends PsiElement {
 
-  @NotNull
+  @Nullable
   IdlValueTypeRef getValueTypeRef();
 
   @NotNull

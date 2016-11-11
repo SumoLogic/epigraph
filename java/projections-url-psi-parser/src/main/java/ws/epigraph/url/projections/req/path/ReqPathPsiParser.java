@@ -82,7 +82,7 @@ public class ReqPathPsiParser {
       );
     }
 
-    final Type.@NotNull Tag reqTag = getTag(type, tagNamePsi, dataType.defaultTag, psi);
+    final Type.@NotNull Tag reqTag = getTag(type, tagNamePsi, dataType.defaultTag, psi, errors);
     final Type.Tag opTag = opTagPath.tag();
 
     if (!reqTag.equals(opTag)) {
@@ -115,12 +115,12 @@ public class ReqPathPsiParser {
     );
   }
 
-  private static boolean isModelPathEmpty(@Nullable UrlReqModelPath pathPsi) {
-    return pathPsi == null || (
-        pathPsi.getReqRecordModelPath() == null &&
-        pathPsi.getReqMapModelPath() == null
-    );
-  }
+//  private static boolean isModelPathEmpty(@Nullable UrlReqModelPath pathPsi) {
+//    return pathPsi == null || (
+//        pathPsi.getReqRecordModelPath() == null &&
+//        pathPsi.getReqMapModelPath() == null
+//    );
+//  }
 
   @NotNull
   public static ReqModelPath<?, ?> parseModelPath(
@@ -283,7 +283,7 @@ public class ReqPathPsiParser {
       varProjection = parseVarPath(op.projection(), fieldType, fieldVarPathPsi, typesResolver, errors);
     }
 
-    final ReadReqPathParsingResult<ReqVarPath> fieldVarParsingResult;
+//    final ReadReqPathParsingResult<ReqVarPath> fieldVarParsingResult;
 
     @NotNull final TextLocation fieldLocation = EpigraphPsiUtil.getLocation(psi);
 

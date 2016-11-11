@@ -25,9 +25,13 @@ import ws.epigraph.idl.Idl;
 import ws.epigraph.idl.ResourceIdl;
 import ws.epigraph.idl.operations.OperationIdl;
 import ws.epigraph.idl.operations.ReadOperationIdl;
+import ws.epigraph.idl.parser.IdlParserDefinition;
+import ws.epigraph.idl.parser.IdlPsiParser;
+import ws.epigraph.idl.parser.psi.IdlFile;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.req.output.ReqOutputFieldProjection;
 import ws.epigraph.projections.req.path.ReqFieldPath;
+import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.SimpleTypesResolver;
 import ws.epigraph.refs.TypesResolver;
@@ -38,6 +42,8 @@ import ws.epigraph.service.operations.ReadOperationRequest;
 import ws.epigraph.service.operations.ReadOperationResponse;
 import ws.epigraph.test.TestUtil;
 import ws.epigraph.tests.*;
+import ws.epigraph.url.parser.UrlSubParserDefinitions;
+import ws.epigraph.url.parser.psi.UrlReadUrl;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -176,7 +182,7 @@ public class ReadOperationRouterTest {
   private OperationSearchSuccess<?> getTargetOpId(@NotNull final String url) throws PsiProcessingException {
     @NotNull final OperationSearchResult<ReadOperation<?>> oss = router.findOperation(
         null,
-        parseReadUrl(url, resolver),
+        parseReadUrl(url),
         resource, resolver
     );
     assertTrue(oss instanceof OperationSearchSuccess<?>);
@@ -205,4 +211,30 @@ public class ReadOperationRouterTest {
     }
   }
 
+  @NotNull
+  public static UrlReadUrl parseReadUrl(@NotNull String url) {
+    EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
+
+    UrlReadUrl urlPsi = EpigraphPsiUtil.parseText(
+        url,
+        UrlSubParserDefinitions.READ_URL,
+        errorsAccumulator
+    );
+
+    failIfHasErrors(urlPsi, errorsAccumulator);
+
+    return urlPsi;
+  }
+
+  @NotNull
+  public static Idl parseIdl(@NotNull String text, @NotNull TypesResolver resolver) throws IOException {
+    EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
+
+    @NotNull IdlFile psiFile =
+        (IdlFile) EpigraphPsiUtil.parseFile("test.idl", text, IdlParserDefinition.INSTANCE, errorsAccumulator);
+
+    failIfHasErrors(psiFile, errorsAccumulator);
+
+    return runPsiParser(errors -> IdlPsiParser.parseIdl(psiFile, resolver, errors));
+  }
 }

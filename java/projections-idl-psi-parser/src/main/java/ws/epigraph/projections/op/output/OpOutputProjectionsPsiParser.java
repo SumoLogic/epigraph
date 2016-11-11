@@ -36,8 +36,11 @@ import org.jetbrains.annotations.Nullable;
 import java.text.MessageFormat;
 import java.util.*;
 
-import static ws.epigraph.projections.ProjectionPsiParserUtil.*;
+import static ws.epigraph.projections.IdlProjectionPsiParserUtil.*;
+import static ws.epigraph.projections.ProjectionsParsingUtil.getType;
+import static ws.epigraph.projections.op.OpParserUtil.parseAnnotations;
 import static ws.epigraph.projections.op.OpParserUtil.parseParameter;
+import static ws.epigraph.projections.op.OpParserUtil.parseParams;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -57,14 +60,15 @@ public class OpOutputProjectionsPsiParser {
     @Nullable IdlOpOutputSingleTagProjection singleTagProjectionPsi = psi.getOpOutputSingleTagProjection();
 
     if (singleTagProjectionPsi != null) {
-      boolean isDatum = type.kind() != TypeKind.UNION;
+//      boolean isDatum = type.kind() != TypeKind.UNION;
 
       final OpOutputModelProjection<?, ?> parsedModelProjection;
       final Type.Tag tag = getTag(
           type,
           singleTagProjectionPsi.getTagName(),
           dataType.defaultTag,
-          singleTagProjectionPsi
+          singleTagProjectionPsi,
+          errors
       );
 
       @Nullable IdlOpOutputModelProjection modelProjection = singleTagProjectionPsi.getOpOutputModelProjection();
@@ -75,8 +79,8 @@ public class OpOutputProjectionsPsiParser {
 
       parsedModelProjection = parseModelProjection(
           tag.type,
-          parseModelParams(modelPropertiesPsi, typesResolver),
-          parseModelAnnotations(modelPropertiesPsi),
+          parseModelParams(modelPropertiesPsi, typesResolver, errors),
+          parseModelAnnotations(modelPropertiesPsi, errors),
           parseModelMetaProjection(tag.type, modelPropertiesPsi, typesResolver, errors),
           modelProjection,
           typesResolver,
@@ -99,7 +103,7 @@ public class OpOutputProjectionsPsiParser {
           multiTagProjection.getOpOutputMultiTagProjectionItemList();
 
       for (IdlOpOutputMultiTagProjectionItem tagProjectionPsi : tagProjectionPsiList) {
-        final Type.Tag tag = getTag(type, tagProjectionPsi.getTagName(), dataType.defaultTag, tagProjectionPsi);
+        final Type.Tag tag = getTag(type, tagProjectionPsi.getTagName(), dataType.defaultTag, tagProjectionPsi, errors);
 
         final OpOutputModelProjection<?, ?> parsedModelProjection;
 
@@ -111,8 +115,8 @@ public class OpOutputProjectionsPsiParser {
 
         parsedModelProjection = parseModelProjection(
             tagType,
-            parseModelParams(modelPropertiesPsi, typesResolver),
-            parseModelAnnotations(modelPropertiesPsi),
+            parseModelParams(modelPropertiesPsi, typesResolver, errors),
+            parseModelAnnotations(modelPropertiesPsi, errors),
             parseModelMetaProjection(tagType, modelPropertiesPsi, typesResolver, errors),
             modelProjection,
             typesResolver,
@@ -164,31 +168,26 @@ public class OpOutputProjectionsPsiParser {
   @NotNull
   private static OpParams parseModelParams(
       @NotNull List<IdlOpOutputModelProperty> modelProperties,
-      @NotNull TypesResolver resolver) throws PsiProcessingException {
+      @NotNull TypesResolver resolver,
+      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
-    List<OpParam> paramList = null;
 
-    for (IdlOpOutputModelProperty modelProperty : modelProperties) {
-      @Nullable IdlOpParam paramPsi = modelProperty.getOpParam();
-      if (paramPsi != null) {
-        if (paramList == null) paramList = new ArrayList<>(3);
-        paramList.add(parseParameter(paramPsi, resolver));
-      }
-    }
-
-    return paramList == null ? OpParams.EMPTY : new OpParams(paramList);
+    return parseParams(
+        modelProperties.stream().map(IdlOpOutputModelProperty::getOpParam),
+        resolver,
+        errors
+    );
   }
 
   @NotNull
-  private static Annotations parseModelAnnotations(@NotNull List<IdlOpOutputModelProperty> modelProperties)
-      throws PsiProcessingException {
+  private static Annotations parseModelAnnotations(
+      @NotNull List<IdlOpOutputModelProperty> modelProperties,
+      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
-    @Nullable Map<String, Annotation> annotationsMap = null;
-
-    for (IdlOpOutputModelProperty modelProperty : modelProperties)
-      annotationsMap = parseAnnotation(annotationsMap, modelProperty.getAnnotation());
-
-    return annotationsMap == null ? Annotations.EMPTY : new Annotations(annotationsMap);
+    return parseAnnotations(
+        modelProperties.stream().map(IdlOpOutputModelProperty::getAnnotation),
+        errors
+    );
   }
 
   @Nullable
@@ -241,7 +240,7 @@ public class OpOutputProjectionsPsiParser {
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
     @NotNull TypeRef tailTypeRef = TypeRefs.fromPsi(tailTypeRefPsi);
-    @NotNull Type tailType = getType(tailTypeRef, typesResolver, tailTypeRefPsi);
+    @NotNull Type tailType = getType(tailTypeRef, typesResolver, tailTypeRefPsi, errors);
     return parseVarProjection(
         new DataType(tailType, dataType.defaultTag),
         psiTailProjection,
@@ -308,7 +307,7 @@ public class OpOutputProjectionsPsiParser {
 
     }
 
-    return createDefaultVarProjection(type.type, defaultTag,  locationPsi, errors);
+    return createDefaultVarProjection(type.type, defaultTag, locationPsi, errors);
   }
 
   @NotNull
@@ -584,10 +583,10 @@ public class OpOutputProjectionsPsiParser {
       @Nullable IdlOpParam fieldParamPsi = fieldBodyPart.getOpParam();
       if (fieldParamPsi != null) {
         if (fieldParamsList == null) fieldParamsList = new ArrayList<>(3);
-        fieldParamsList.add(parseParameter(fieldParamPsi, resolver));
+        fieldParamsList.add(parseParameter(fieldParamPsi, resolver, errors));
       }
 
-      fieldAnnotationsMap = parseAnnotation(fieldAnnotationsMap, fieldBodyPart.getAnnotation());
+      fieldAnnotationsMap = parseAnnotation(fieldAnnotationsMap, fieldBodyPart.getAnnotation(), errors);
     }
 
     return new OpOutputFieldProjection(
@@ -609,7 +608,7 @@ public class OpOutputProjectionsPsiParser {
       @NotNull List<PsiProcessingError> errors)
       throws PsiProcessingException {
 
-    @NotNull OpOutputKeyProjection keyProjection = parseKeyProjection(psi.getOpOutputKeyProjection(), resolver);
+    @NotNull OpOutputKeyProjection keyProjection = parseKeyProjection(psi.getOpOutputKeyProjection(), resolver, errors);
 
     @Nullable IdlOpOutputVarProjection valueProjectionPsi = psi.getOpOutputVarProjection();
     @NotNull OpOutputVarProjection valueProjection =
@@ -635,7 +634,8 @@ public class OpOutputProjectionsPsiParser {
   @NotNull
   private static OpOutputKeyProjection parseKeyProjection(
       @NotNull IdlOpOutputKeyProjection keyProjectionPsi,
-      @NotNull TypesResolver resolver) throws PsiProcessingException {
+      @NotNull TypesResolver resolver,
+      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
     final OpOutputKeyProjection.Presence presence;
 
@@ -653,10 +653,10 @@ public class OpOutputProjectionsPsiParser {
       @Nullable IdlOpParam paramPsi = keyPart.getOpParam();
       if (paramPsi != null) {
         if (params == null) params = new ArrayList<>(3);
-        params.add(parseParameter(paramPsi, resolver));
+        params.add(parseParameter(paramPsi, resolver, errors));
       }
 
-      annotationsMap = parseAnnotation(annotationsMap, keyPart.getAnnotation());
+      annotationsMap = parseAnnotation(annotationsMap, keyPart.getAnnotation(), errors);
     }
 
     return new OpOutputKeyProjection(

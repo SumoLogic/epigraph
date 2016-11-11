@@ -19,7 +19,7 @@ package ws.epigraph.server.http;
 import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.impl.DebugUtil;
 import ws.epigraph.idl.Idl;
-import ws.epigraph.idl.IdlPsiParser;
+import ws.epigraph.idl.parser.IdlPsiParser;
 import ws.epigraph.idl.parser.IdlParserDefinition;
 import ws.epigraph.idl.parser.psi.IdlFile;
 import ws.epigraph.psi.EpigraphPsiUtil;

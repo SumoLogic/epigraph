@@ -20,6 +20,7 @@ import ws.epigraph.gdata.*;
 import ws.epigraph.idl.TypeRefs;
 import ws.epigraph.idl.parser.psi.*;
 import ws.epigraph.psi.EpigraphPsiUtil;
+import ws.epigraph.psi.PsiProcessingError;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypeRef;
 import org.jetbrains.annotations.NotNull;
@@ -34,92 +35,99 @@ import java.util.List;
  */
 public class IdlGDataPsiParser {
   @NotNull
-  public static GDataValue parseValue(@NotNull IdlDataValue psi) throws PsiProcessingException {
-    if (psi.getData() != null) return parseData(psi.getData());
-    else if (psi.getDatum() != null) return parseDatum(psi.getDatum());
-    else throw new PsiProcessingException("Neither data nor datum is set", psi);
+  public static GDataValue parseValue(@NotNull IdlDataValue psi, @NotNull List<PsiProcessingError> errors)
+      throws PsiProcessingException {
+    if (psi.getData() != null) return parseData(psi.getData(), errors);
+    else if (psi.getDatum() != null) return parseDatum(psi.getDatum(), errors);
+    else throw new PsiProcessingException("Neither data nor datum is set", psi, errors);
   }
 
   @NotNull
-  public static GData parseData(@NotNull IdlData psi) throws PsiProcessingException {
+  public static GData parseData(@NotNull IdlData psi, @NotNull List<PsiProcessingError> errors)
+      throws PsiProcessingException {
     @Nullable IdlTypeRef typeRef = psi.getTypeRef();
 
     LinkedHashMap<String, GDatum> tags = new LinkedHashMap<>();
     for (IdlDataEntry entry : psi.getDataEntryList()) {
       @Nullable IdlDatum value = entry.getDatum();
       if (value != null)
-        tags.put(entry.getQid().getCanonicalName(), parseDatum(value));
+        tags.put(entry.getQid().getCanonicalName(), parseDatum(value, errors));
       else
         throw new PsiProcessingException(
-            String.format("Got 'null' value for tag '%s'", entry.getQid().getCanonicalName()), psi
+            String.format("Got 'null' value for tag '%s'", entry.getQid().getCanonicalName()), psi, errors
         );
     }
-
 
     return new GData(getTypeRef(typeRef), tags, EpigraphPsiUtil.getLocation(psi));
   }
 
   @NotNull
-  public static GDatum parseDatum(@NotNull IdlDatum psi) throws PsiProcessingException {
+  public static GDatum parseDatum(@NotNull IdlDatum psi, @NotNull List<PsiProcessingError> errors)
+      throws PsiProcessingException {
+
     if (psi instanceof IdlRecordDatum)
-      return parseRecord((IdlRecordDatum) psi);
+      return parseRecord((IdlRecordDatum) psi, errors);
     else if (psi instanceof IdlMapDatum)
-      return parseMap((IdlMapDatum) psi);
+      return parseMap((IdlMapDatum) psi, errors);
     else if (psi instanceof IdlListDatum)
-      return parseList((IdlListDatum) psi);
+      return parseList((IdlListDatum) psi, errors);
     else if (psi instanceof IdlEnumDatum)
       return parseEnum((IdlEnumDatum) psi);
     else if (psi instanceof IdlPrimitiveDatum)
-      return parsePrimitive((IdlPrimitiveDatum) psi);
+      return parsePrimitive((IdlPrimitiveDatum) psi, errors);
     else if (psi instanceof IdlNullDatum)
       return parseNull((IdlNullDatum) psi);
-    else throw new PsiProcessingException("Unknown value element", psi);
+    else throw new PsiProcessingException("Unknown value element", psi, errors);
   }
 
   @NotNull
-  public static GRecordDatum parseRecord(@NotNull IdlRecordDatum psi) throws PsiProcessingException {
+  public static GRecordDatum parseRecord(@NotNull IdlRecordDatum psi, @NotNull List<PsiProcessingError> errors)
+      throws PsiProcessingException {
     @Nullable IdlTypeRef typeRef = psi.getTypeRef();
 
     LinkedHashMap<String, GDataValue> fields = new LinkedHashMap<>();
     for (IdlRecordDatumEntry entry : psi.getRecordDatumEntryList()) {
       @Nullable IdlDataValue value = entry.getDataValue();
       if (value != null)
-        fields.put(entry.getQid().getCanonicalName(), parseValue(value));
+        fields.put(entry.getQid().getCanonicalName(), parseValue(value, errors));
       else
-        throw new PsiProcessingException(
+        errors.add(new PsiProcessingError(
             String.format("Got 'null' value for field '%s'", entry.getQid().getCanonicalName()), psi
-        );
+        ));
     }
 
     return new GRecordDatum(getTypeRef(typeRef), fields, EpigraphPsiUtil.getLocation(psi));
   }
 
   @NotNull
-  public static GMapDatum parseMap(@NotNull IdlMapDatum psi) throws PsiProcessingException {
+  public static GMapDatum parseMap(@NotNull IdlMapDatum psi, @NotNull List<PsiProcessingError> errors)
+      throws PsiProcessingException {
     @Nullable IdlTypeRef typeRef = psi.getTypeRef();
 
     LinkedHashMap<GDatum, GDataValue> map = new LinkedHashMap<>();
     for (IdlMapDatumEntry entry : psi.getMapDatumEntryList()) {
       @Nullable IdlDataValue dataValue = entry.getDataValue();
       if (dataValue != null)
-        map.put(parseDatum(entry.getDatum()), parseValue(dataValue));
+        map.put(parseDatum(entry.getDatum(), errors), parseValue(dataValue, errors));
       else
-        throw new PsiProcessingException(
+        errors.add(new PsiProcessingError(
             String.format("Got 'null' value for key '%s'", entry.getDataValue().getText()), psi
-        );
+        ));
     }
 
     return new GMapDatum(getTypeRef(typeRef), map, EpigraphPsiUtil.getLocation(psi));
   }
 
   @NotNull
-  public static GListDatum parseList(@NotNull IdlListDatum psi) throws PsiProcessingException {
+  public static GListDatum parseList(@NotNull IdlListDatum psi, @NotNull List<PsiProcessingError> errors)
+      throws PsiProcessingException {
+
     @Nullable IdlTypeRef typeRef = psi.getTypeRef();
 
     final List<GDataValue> items = new ArrayList<>();
 
     for (IdlDataValue value : psi.getDataValueList())
-      items.add(parseValue(value));
+      items.add(parseValue(value, errors));
 
     return new GListDatum(getTypeRef(typeRef), items, EpigraphPsiUtil.getLocation(psi));
   }
@@ -130,7 +138,9 @@ public class IdlGDataPsiParser {
   }
 
   @NotNull
-  public static GPrimitiveDatum parsePrimitive(@NotNull IdlPrimitiveDatum psi) throws PsiProcessingException {
+  public static GPrimitiveDatum parsePrimitive(@NotNull IdlPrimitiveDatum psi, @NotNull List<PsiProcessingError> errors)
+      throws PsiProcessingException {
+
     @Nullable IdlTypeRef typeRef = psi.getTypeRef();
 
     final Object value;
@@ -145,7 +155,11 @@ public class IdlGDataPsiParser {
       if (text.contains(".")) value = Double.valueOf(text);
       else value = Long.valueOf(text);
     } else
-      throw new PsiProcessingException(String.format("Don't know how to handle primitive '%s'", psi.getText()), psi);
+      throw new PsiProcessingException(
+          String.format("Don't know how to handle primitive '%s'", psi.getText()),
+          psi,
+          errors
+      );
 
     return new GPrimitiveDatum(getTypeRef(typeRef), value, EpigraphPsiUtil.getLocation(psi));
   }

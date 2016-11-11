@@ -38,4 +38,10 @@ public class UrlReqUpdateFieldProjectionEntryImpl extends ASTWrapperPsiElement i
     return findNotNullChildByClass(UrlReqUpdateFieldProjection.class);
   }
 
+  @Override
+  @Nullable
+  public PsiElement getPlus() {
+    return findChildByType(U_PLUS);
+  }
+
 }

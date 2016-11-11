@@ -10,9 +10,6 @@ public interface UrlReqDeleteSingleTagProjection extends PsiElement {
   @NotNull
   List<UrlReqAnnotation> getReqAnnotationList();
 
-  @Nullable
-  UrlReqDeleteModelMeta getReqDeleteModelMeta();
-
   @NotNull
   UrlReqDeleteModelProjection getReqDeleteModelProjection();
 
@@ -24,8 +21,5 @@ public interface UrlReqDeleteSingleTagProjection extends PsiElement {
 
   @Nullable
   PsiElement getColon();
-
-  @Nullable
-  PsiElement getPlus();
 
 }

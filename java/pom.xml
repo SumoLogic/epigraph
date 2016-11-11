@@ -26,7 +26,6 @@
         <module>request-url</module>
         <module>schema-parser</module>
         <module>standalone-psi-util</module>
-        <module>test-util</module>
         <!--<module>server</module>-->
         <!--<module>service</module>-->
         <module>util</module>

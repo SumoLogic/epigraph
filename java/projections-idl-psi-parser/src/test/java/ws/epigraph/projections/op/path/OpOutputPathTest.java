@@ -16,7 +16,11 @@
 
 package ws.epigraph.projections.op.path;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
+import ws.epigraph.idl.parser.projections.IdlSubParserDefinitions;
+import ws.epigraph.idl.parser.psi.IdlOpVarPath;
+import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.SimpleTypesResolver;
 import ws.epigraph.refs.TypesResolver;
@@ -26,7 +30,7 @@ import ws.epigraph.types.DataType;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
-import static ws.epigraph.test.TestUtil.lines;
+import static ws.epigraph.test.TestUtil.*;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -127,7 +131,30 @@ public class OpOutputPathTest {
         epigraph.String.type
     );
 
-    return TestUtil.parseOpVarPath(varDataType, projectionString, false, resolver);
+    return parseOpVarPath(varDataType, projectionString, false, resolver);
+  }
+
+  @NotNull
+  public static OpVarPath parseOpVarPath(
+      @NotNull DataType varDataType,
+      @NotNull String projectionString,
+      boolean catchPsiErrors,
+      @NotNull TypesResolver resolver) throws PsiProcessingException {
+
+    EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
+
+    IdlOpVarPath psiVarProjection = EpigraphPsiUtil.parseText(
+        projectionString,
+        IdlSubParserDefinitions.OP_VAR_PATH,
+        errorsAccumulator
+    );
+
+    failIfHasErrors(psiVarProjection, errorsAccumulator);
+
+    final TestUtil.PsiParserClosure<OpVarPath> closure =
+        errors -> OpPathPsiParser.parseVarPath(varDataType, psiVarProjection, resolver, errors);
+
+    return catchPsiErrors ? runPsiParser(closure) : runPsiParserNotCatchingErrors(closure);
   }
 
 }

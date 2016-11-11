@@ -22,20 +22,21 @@ import org.junit.Test;
 import ws.epigraph.projections.op.path.OpVarPath;
 import ws.epigraph.projections.req.path.ReqVarPath;
 import ws.epigraph.psi.EpigraphPsiUtil;
-import ws.epigraph.psi.PsiProcessingError;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.SimpleTypesResolver;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.test.TestUtil;
 import ws.epigraph.tests.*;
 import ws.epigraph.types.DataType;
-import ws.epigraph.url.parser.projections.UrlSubParserDefinitions;
+import ws.epigraph.url.parser.UrlSubParserDefinitions;
 import ws.epigraph.url.parser.psi.UrlReqOutputComaVarProjection;
 import ws.epigraph.url.parser.psi.UrlReqOutputTrunkVarProjection;
+import ws.epigraph.url.projections.req.ReqTestUtil;
 
 import java.util.ArrayList;
 
 import static org.junit.Assert.*;
+import static ws.epigraph.test.TestUtil.failIfHasErrors;
 import static ws.epigraph.test.TestUtil.lines;
 
 /**
@@ -138,52 +139,46 @@ public class ReadReqPathParserTest {
   }
 
   private void testParse(OpVarPath opPath, String expr, String expectedPath, @Nullable String expectedPsiRemainder) {
-    try {
 
-      UrlReqOutputTrunkVarProjection psi = getPsi(expr);
-      final ReadReqPathParsingResult<ReqVarPath> result =
-          ReadReqPathPsiParser.parseVarPath(opPath, Person.type.dataType(null), psi, resolver, new ArrayList<>());
+    UrlReqOutputTrunkVarProjection psi = getPsi(expr);
+    final ReadReqPathParsingResult<ReqVarPath> result =
+        TestUtil.runPsiParser(
+            errors ->
+                ReadReqPathPsiParser.parseVarPath(
+                    opPath,
+                    Person.type.dataType(null),
+                    psi,
+                    resolver,
+                    errors
+                ));
 
-      if (!result.errors().isEmpty()) {
-        for (PsiProcessingError error : result.errors()) {
-          System.out.println(error.message() + " at " + error.location());
-        }
-        fail();
+    String s = TestUtil.printReqVarPath(result.path());
+
+    final String actual =
+        s.replaceAll("\"", "'"); // pretty printer outputs double quotes, we use single quotes in URLs
+    assertEquals(expectedPath, actual);
+
+    final UrlReqOutputTrunkVarProjection trunkProjectionPsi = result.trunkProjectionPsi();
+    final UrlReqOutputComaVarProjection comaProjectionPsi = result.comaProjectionPsi();
+
+    if (expectedPsiRemainder == null) {
+      if (trunkProjectionPsi != null) {
+        // should be empty
+        assertEquals("", trunkProjectionPsi.getText());
       }
 
-      String s = TestUtil.printReqVarPath(result.path());
-
-      final String actual =
-          s.replaceAll("\"", "'"); // pretty printer outputs double quotes, we use single quotes in URLs
-      assertEquals(expectedPath, actual);
-
-      final UrlReqOutputTrunkVarProjection trunkProjectionPsi = result.trunkProjectionPsi();
-      final UrlReqOutputComaVarProjection comaProjectionPsi = result.comaProjectionPsi();
-
-      if (expectedPsiRemainder == null) {
-        if (trunkProjectionPsi != null) {
-          // should be empty
-          assertEquals("", trunkProjectionPsi.getText());
-        }
-
-        if (comaProjectionPsi != null) {
-          assertEquals("", comaProjectionPsi.getText());
-        }
-
-      } else {
-        PsiElement remPsi = trunkProjectionPsi;
-        if (remPsi == null) remPsi = comaProjectionPsi;
-        assertNotNull(remPsi);
-
-        assertEquals(expectedPsiRemainder, remPsi.getText());
+      if (comaProjectionPsi != null) {
+        assertEquals("", comaProjectionPsi.getText());
       }
 
-    } catch (PsiProcessingException e) {
-//      String psiDump = DebugUtil.psiToString(psi, true, false).trim();
-//      System.err.println(psiDump);
-      e.printStackTrace();
-      fail(e.getMessage() + " at " + e.location());
+    } else {
+      PsiElement remPsi = trunkProjectionPsi;
+      if (remPsi == null) remPsi = comaProjectionPsi;
+      assertNotNull(remPsi);
+
+      assertEquals(expectedPsiRemainder, remPsi.getText());
     }
+
   }
 
   private UrlReqOutputTrunkVarProjection getPsi(String projectionString) {
@@ -191,23 +186,17 @@ public class ReadReqPathParserTest {
 
     UrlReqOutputTrunkVarProjection psiVarPath = EpigraphPsiUtil.parseText(
         projectionString,
-        UrlSubParserDefinitions.REQ_OUTPUT_VAR_PROJECTION.rootElementType(),
-        UrlReqOutputTrunkVarProjection.class,
         UrlSubParserDefinitions.REQ_OUTPUT_VAR_PROJECTION,
         errorsAccumulator
     );
 
-    TestUtil.failIfHasErrors(psiVarPath, errorsAccumulator);
-
-//    String psiDump = DebugUtil.psiToString(psiVarProjection, true, false).trim();
-//    System.out.println(psiDump);
+    failIfHasErrors(psiVarPath, errorsAccumulator);
 
     return psiVarPath;
   }
 
   private OpVarPath parseOpVarPath(String projectionString) {
-    return TestUtil.parseOpVarPath(dataType, projectionString, resolver);
+    return ReqTestUtil.parseOpVarPath(dataType, projectionString, resolver);
   }
-
 
 }

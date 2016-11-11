@@ -13,13 +13,13 @@ public interface UrlReqUpdateMultiTagProjectionItem extends PsiElement {
   @NotNull
   List<UrlReqParam> getReqParamList();
 
-  @Nullable
-  UrlReqUpdateModelMeta getReqUpdateModelMeta();
-
   @NotNull
   UrlReqUpdateModelProjection getReqUpdateModelProjection();
 
   @NotNull
   UrlTagName getTagName();
+
+  @Nullable
+  PsiElement getPlus();
 
 }

@@ -17,32 +17,94 @@
 package ws.epigraph.url.projections;
 
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.gdata.GDataValue;
 import ws.epigraph.projections.Annotation;
+import ws.epigraph.projections.ProjectionsParsingUtil;
+import ws.epigraph.projections.gen.GenModelProjection;
+import ws.epigraph.projections.gen.GenTagProjectionEntry;
+import ws.epigraph.projections.gen.GenVarProjection;
 import ws.epigraph.psi.EpigraphPsiUtil;
+import ws.epigraph.psi.PsiProcessingError;
 import ws.epigraph.psi.PsiProcessingException;
-import ws.epigraph.refs.TypeRef;
-import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.types.Type;
 import ws.epigraph.url.gdata.UrlGDataPsiParser;
 import ws.epigraph.url.parser.psi.UrlAnnotation;
 import ws.epigraph.url.parser.psi.UrlDataValue;
 import ws.epigraph.url.parser.psi.UrlTagName;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+
+import static ws.epigraph.projections.ProjectionsParsingUtil.findDefaultTag;
+import static ws.epigraph.projections.ProjectionsParsingUtil.findTagProjection;
+import static ws.epigraph.projections.ProjectionsParsingUtil.listTags;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class UrlProjectionsPsiParserUtil {
-  @Nullable
-  public static String getTagName(@Nullable UrlTagName tagNamePsi) {
-    if (tagNamePsi == null) return null;
-    return tagNamePsi.getQid().getCanonicalName();
+//  @Contract("null -> null; !null -> !null")
+//  @Nullable
+//  public static String getTagName(@Nullable UrlTagName tagNamePsi) {
+//    if (tagNamePsi == null) return null;
+//    return tagNamePsi.getQid().getCanonicalName();
+//  }
+
+  /**
+   * Finds supported tag with a given name in type {@code type} if {@code idlTagName} is not null.
+   * <p>
+   * Otherwise gets {@link ProjectionsParsingUtil#findDefaultTag(Type, GenVarProjection, PsiElement, List)}
+   * default tag} and, if not {@code null}, returns it; otherwise fails.
+   */
+  @NotNull
+  public static <
+      MP extends GenModelProjection<?, ?>,
+      TP extends GenTagProjectionEntry<MP>,
+      VP extends GenVarProjection<VP, TP, MP>>
+  Type.Tag findTagOrDefaultTag(
+      @NotNull Type type,
+      @Nullable UrlTagName idlTagName,
+      @NotNull VP opOutputVarProjection,
+      @NotNull PsiElement location,
+      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
+
+    if (idlTagName != null) return findTag(idlTagName, opOutputVarProjection, location, errors);
+    else {
+      final Type.@Nullable Tag defaultTag = findDefaultTag(type, opOutputVarProjection, location, errors);
+
+      if (defaultTag != null) return defaultTag;
+
+      throw new PsiProcessingException(
+          String.format(
+              "Can't build projection for type '%s': no tags specified. Supported tags: {%s}",
+              type.name(),
+              listTags(opOutputVarProjection)
+          ),
+          location,
+          errors
+      );
+    }
+  }
+
+
+  /**
+   * Finds supported tag with a given name in type {@code type}
+   */
+  @NotNull
+  public static <
+      MP extends GenModelProjection<?, ?>,
+      TP extends GenTagProjectionEntry<MP>,
+      VP extends GenVarProjection<VP, TP, MP>>
+  Type.Tag findTag(
+      @NotNull UrlTagName idlTagName,
+      @NotNull VP varProjection,
+      @NotNull PsiElement location,
+      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
+
+    return findTagProjection(idlTagName.getQid().getCanonicalName(), varProjection, location, errors).tag();
   }
 
   @NotNull
@@ -50,74 +112,17 @@ public class UrlProjectionsPsiParserUtil {
       @NotNull Type type,
       @Nullable UrlTagName tagName,
       @Nullable Type.Tag defaultTag,
-      @NotNull PsiElement location) throws PsiProcessingException {
+      @NotNull PsiElement location,
+      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
     String tagNameStr = null;
 
     if (tagName != null)
       tagNameStr = tagName.getQid().getCanonicalName();
 
-    return getTag(type, tagNameStr, defaultTag, location);
+    return ProjectionsParsingUtil.getTag(type, tagNameStr, defaultTag, location, errors);
   }
 
-  @NotNull
-  public static Type.Tag getTag(
-      @NotNull Type type,
-      @Nullable String tagName,
-      @Nullable Type.Tag defaultTag,
-      @NotNull PsiElement location) throws PsiProcessingException {
-
-    final Type.Tag tag;
-
-    if (tagName == null) {
-      // get default tag
-      if (defaultTag == null)
-        throw new PsiProcessingException(
-            String.format("Can't parse default tag projection for '%s', default tag not specified", type.name()),
-            location
-        );
-
-      tag = defaultTag;
-      verifyTag(type, tag, location);
-    } else tag = getTag(type, tagName, location);
-    return tag;
-  }
-
-  @NotNull
-  public static Type.Tag getTag(@NotNull Type type, @NotNull String tagName, @NotNull PsiElement location)
-      throws PsiProcessingException {
-    Type.Tag tag = type.tagsMap().get(tagName);
-    if (tag == null)
-      throw new PsiProcessingException(
-          String.format("Unknown tag '%s' in type '%s', known tags: (%s)", tagName, type.name(), listTags(type)),
-          location
-      );
-    return tag;
-  }
-
-  public static void verifyTag(@NotNull Type type, @NotNull Type.Tag tag, @NotNull PsiElement location)
-      throws PsiProcessingException {
-    if (!type.tags().contains(tag))
-      throw new PsiProcessingException(
-          String.format("Tag '%s' doesn't belong to type '%s', known tags: (%s)",
-                        tag.name(),
-                        type.name(),
-                        listTags(type)
-          ), location);
-  }
-
-  private static String listTags(@NotNull Type type) {
-    return type.tags().stream().map(Type.Tag::name).collect(Collectors.joining(","));
-  }
-
-  @NotNull
-  public static Type getType(@NotNull TypeRef typeRef, @NotNull TypesResolver resolver, @NotNull PsiElement location)
-      throws PsiProcessingException {
-    @Nullable Type type = typeRef.resolve(resolver);
-    if (type == null)
-      throw new PsiProcessingException(String.format("Can't find type '%s'", typeRef.toString()), location);
-    return type;
-  }
 
   @Nullable
   public static Map<String, Annotation> parseAnnotation(
@@ -131,11 +136,13 @@ public class UrlProjectionsPsiParserUtil {
       if (annotationValuePsi != null) {
         @NotNull String annotationName = annotationPsi.getQid().getCanonicalName();
         @NotNull GDataValue annotationValue = UrlGDataPsiParser.parseValue(annotationValuePsi);
-        annotationsMap.put(annotationName,
-                           new Annotation(annotationName,
-                                          annotationValue,
-                                          EpigraphPsiUtil.getLocation(annotationPsi)
-                           )
+        annotationsMap.put(
+            annotationName,
+            new Annotation(
+                annotationName,
+                annotationValue,
+                EpigraphPsiUtil.getLocation(annotationPsi)
+            )
         );
       }
     }

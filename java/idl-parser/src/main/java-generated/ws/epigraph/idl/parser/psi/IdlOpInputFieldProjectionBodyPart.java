@@ -7,7 +7,10 @@ import com.intellij.psi.PsiElement;
 
 public interface IdlOpInputFieldProjectionBodyPart extends PsiElement {
 
-  @NotNull
+  @Nullable
   IdlAnnotation getAnnotation();
+
+  @Nullable
+  IdlOpParam getOpParam();
 
 }

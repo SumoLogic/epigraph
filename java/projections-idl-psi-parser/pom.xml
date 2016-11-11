@@ -45,6 +45,11 @@
     </dependency>
     <dependency>
       <groupId>${project.parent.groupId}</groupId>
+      <artifactId>epigraph-java-projections-psi-parser-util</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.parent.groupId}</groupId>
       <artifactId>epigraph-java-standalone-psi-util </artifactId>
       <version>${project.parent.version}</version>
     </dependency>

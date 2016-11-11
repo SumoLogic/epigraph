@@ -20,12 +20,12 @@ import de.uka.ilkd.pp.Layouter;
 import ws.epigraph.data.Datum;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.abs.AbstractProjectionsPrettyPrinter;
-import ws.epigraph.projections.gen.GenModelProjection;
-import ws.epigraph.projections.gen.GenTagProjectionEntry;
-import ws.epigraph.projections.gen.GenVarProjection;
+import ws.epigraph.projections.gen.*;
 import ws.epigraph.projections.op.input.OpInputModelProjection;
 import ws.epigraph.projections.op.input.OpInputProjectionsPrettyPrinter;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Map;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -34,11 +34,32 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
     VP extends GenVarProjection<VP, TP, MP>,
     TP extends GenTagProjectionEntry<MP>,
     MP extends GenModelProjection</*MP*/?, ?>,
+    RP extends GenRecordModelProjection<VP, TP, MP, RP, FPE, FP, ?>,
+    FPE extends GenFieldProjectionEntry<VP, TP, MP, FP>,
     FP extends AbstractOpFieldProjection<VP, TP, MP>,
     E extends Exception> extends AbstractProjectionsPrettyPrinter<VP, TP, MP, E> {
 
   protected AbstractOpProjectionsPrettyPrinter(final Layouter<E> layouter) {
     super(layouter);
+  }
+
+  public void print(@NotNull OpParams p) throws E {
+    print(p, false, true);
+  }
+
+  public boolean print(@NotNull OpParams p, boolean needCommas, boolean first) throws E {
+    for (OpParam param : p.params().values()) {
+      if (needCommas) {
+        if (first) first = false;
+        else l.print(",");
+      }
+      l.brk();
+      l.beginCInd(0);
+      print(param);
+      l.end();
+    }
+
+    return first;
   }
 
   public void print(@NotNull OpParam p) throws E {
@@ -74,7 +95,49 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
     l.end();
   }
 
-  public abstract void print(@NotNull FP fieldProjection) throws E;
+  public void print(@NotNull RP recordProjection) throws E {
+    Map<String, FPE> fieldProjections = recordProjection.fieldProjections(); // todo why is it unchecked?
+
+    l.print("(").beginCInd();
+    boolean first = true;
+    for (Map.Entry<String, FPE> entry : fieldProjections.entrySet()) {
+      if (first) first = false;
+      else l.print(",");
+      l.brk();
+
+      @NotNull String prefix = fieldNamePrefix(entry.getValue());
+      @NotNull FP fieldProjection = entry.getValue().projection();
+
+      print(prefix + entry.getKey(), fieldProjection);
+    }
+    l.brk(1, -l.getDefaultIndentation()).end().print(")");
+  }
+
+  protected String fieldNamePrefix(@NotNull FPE fieldEntry) { return ""; }
+
+  public void print(@NotNull FP fieldProjection) throws E {
+    @NotNull VP fieldVarProjection = fieldProjection.projection();
+    @NotNull OpParams fieldParams = fieldProjection.params();
+    @NotNull Annotations fieldAnnotations = fieldProjection.annotations();
+
+    if (fieldParams.isEmpty() && fieldAnnotations.isEmpty()) {
+      if (!isPrintoutEmpty(fieldVarProjection)) {
+        print(fieldVarProjection, 0);
+      }
+    } else {
+      l.beginCInd();
+      l.print("{");
+      if (!fieldParams.isEmpty()) print(fieldParams);
+      if (!fieldAnnotations.isEmpty()) print(fieldAnnotations);
+      l.brk(1, -l.getDefaultIndentation()).end().print("}");
+      if (!isPrintoutEmpty(fieldVarProjection)) {
+        l.beginIInd();
+        l.brk();
+        print(fieldVarProjection, 0);
+        l.end();
+      }
+    }
+  }
 
   public void print(@NotNull String prefix, @NotNull FP fieldProjection) throws E {
     if (isPrintoutEmpty(fieldProjection)) {

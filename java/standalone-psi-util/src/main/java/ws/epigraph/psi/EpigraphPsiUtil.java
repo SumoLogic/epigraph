@@ -51,6 +51,21 @@ public class EpigraphPsiUtil {
   @NotNull
   public static <T extends PsiElement> T parseText(
       @NotNull String text,
+      @NotNull SubParserDefinition<T> parserDefinition,
+      @Nullable ErrorProcessor errorProcessor) {
+
+    return parseText(
+        text,
+        parserDefinition.rootElementType(),
+        parserDefinition.rootElementClass(),
+        parserDefinition,
+        errorProcessor
+    );
+  }
+
+  @NotNull
+  public static <T extends PsiElement> T parseText(
+      @NotNull String text,
       @NotNull IElementType rootElementType,
       @NotNull Class<T> rootElementClass,
       @NotNull ParserDefinition parserDefinition,
