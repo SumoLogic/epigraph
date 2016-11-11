@@ -2,11 +2,11 @@
 - [x] add correct errors propagation support to the rest of psi parsers
 - [x] operation op input projections must be field, not model projections
 - [ ] ~~invert 'requried', introduce 'optional' instead?~~
-  - ~~[x] op input projections (undone)~~
+  - [x] ~~op input projections (undone)~~
   - [ ] ~~req output projections~~
 - [x] add params to op input projections
 - [x] psi parser for req update projections
-- [ ] psi parser for req delete projections
+- [x] psi parser for req delete projections
 - [x] data structures for req input projections
 - [ ] psi parser for req input projections
 - [ ] add input (projection) support to custom operations

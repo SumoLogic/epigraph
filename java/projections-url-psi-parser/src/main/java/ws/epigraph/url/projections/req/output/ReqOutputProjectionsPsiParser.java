@@ -42,9 +42,7 @@ import ws.epigraph.url.parser.psi.*;
 import java.util.*;
 
 import static ws.epigraph.projections.ProjectionsParsingUtil.*;
-import static ws.epigraph.url.projections.UrlProjectionsPsiParserUtil.findTag;
-import static ws.epigraph.url.projections.UrlProjectionsPsiParserUtil.findTagOrDefaultTag;
-import static ws.epigraph.url.projections.req.ReqParserUtil.*;
+import static ws.epigraph.url.projections.UrlProjectionsPsiParserUtil.*;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -1192,16 +1190,18 @@ public class ReqOutputProjectionsPsiParser {
           @Nullable Datum keyValue =
               getDatum(valuePsi, op.model().keyType(), resolver, "Error processing map key: ", errors);
 
-          if (keyValue == null) throw new PsiProcessingException("Null keys are not allowed", valuePsi, errors);
+          if (keyValue == null) errors.add(new PsiProcessingError("Null keys are not allowed", valuePsi));
+          else {
+            keyProjections.add(
+                new ReqOutputKeyProjection(
+                    keyValue,
+                    parseReqParams(keyProjectionPsi.getReqParamList(), opKeyProjection.params(), resolver, errors),
+                    parseAnnotations(keyProjectionPsi.getReqAnnotationList()),
+                    EpigraphPsiUtil.getLocation(keyProjectionPsi)
+                )
+            );
+          }
 
-          keyProjections.add(
-              new ReqOutputKeyProjection(
-                  keyValue,
-                  parseReqParams(keyProjectionPsi.getReqParamList(), opKeyProjection.params(), resolver, errors),
-                  parseAnnotations(keyProjectionPsi.getReqAnnotationList()),
-                  EpigraphPsiUtil.getLocation(keyProjectionPsi)
-              )
-          );
         } catch (PsiProcessingException e) {
           errors.add(e.toError());
         }

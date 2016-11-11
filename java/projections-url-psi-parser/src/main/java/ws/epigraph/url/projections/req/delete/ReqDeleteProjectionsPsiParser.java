@@ -14,17 +14,18 @@
  * limitations under the License.
  */
 
-package ws.epigraph.url.projections.req.update;
+package ws.epigraph.url.projections.req.delete;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.data.Datum;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
-import ws.epigraph.projections.op.input.*;
+import ws.epigraph.projections.op.delete.*;
 import ws.epigraph.projections.req.ReqParams;
-import ws.epigraph.projections.req.update.*;
+import ws.epigraph.projections.req.delete.*;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingError;
 import ws.epigraph.psi.PsiProcessingException;
@@ -42,21 +43,21 @@ import static ws.epigraph.url.projections.UrlProjectionsPsiParserUtil.*;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class ReqUpdateProjectionsPsiParser {
+public class ReqDeleteProjectionsPsiParser {
 
   @NotNull
-  public static ReqUpdateVarProjection parseVarProjection(
+  public static ReqDeleteVarProjection parseVarProjection(
       @NotNull DataType dataType,
-      @NotNull OpInputVarProjection op,
-      @NotNull UrlReqUpdateVarProjection psi,
+      @NotNull OpDeleteVarProjection op,
+      @NotNull UrlReqDeleteVarProjection psi,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
 
     final Type type = dataType.type;
-    final LinkedHashMap<String, ReqUpdateTagProjectionEntry> tagProjections;
+    final LinkedHashMap<String, ReqDeleteTagProjectionEntry> tagProjections;
 
-    @Nullable UrlReqUpdateSingleTagProjection singleTagProjectionPsi = psi.getReqUpdateSingleTagProjection();
+    @Nullable UrlReqDeleteSingleTagProjection singleTagProjectionPsi = psi.getReqDeleteSingleTagProjection();
     @NotNull final TypesResolver subResolver = addTypeNamespace(dataType.type, resolver);
 
     if (singleTagProjectionPsi != null) {
@@ -65,21 +66,20 @@ public class ReqUpdateProjectionsPsiParser {
 
       tagProjections = new LinkedHashMap<>();
 
-      final ReqUpdateModelProjection<?, ?> parsedModelProjection;
+      final ReqDeleteModelProjection<?, ?> parsedModelProjection;
       @Nullable final UrlTagName tagNamePsi = singleTagProjectionPsi.getTagName();
 
       @NotNull final Type.Tag tag;
 
       tag = findTagOrDefaultTag(type, tagNamePsi, op, tagLocation, errors);
-      @NotNull OpInputTagProjectionEntry opTagProjection =
+      @NotNull OpDeleteTagProjectionEntry opTagProjection =
           findTagProjection(tag.name(), op, tagLocation, errors);
 
-      @NotNull OpInputModelProjection<?, ?, ?> opModelProjection = opTagProjection.projection();
-      @NotNull UrlReqUpdateModelProjection modelProjectionPsi = singleTagProjectionPsi.getReqUpdateModelProjection();
+      @NotNull OpDeleteModelProjection<?, ?> opModelProjection = opTagProjection.projection();
+      @NotNull UrlReqDeleteModelProjection modelProjectionPsi = singleTagProjectionPsi.getReqDeleteModelProjection();
 
       parsedModelProjection = parseModelProjection(
           opModelProjection,
-          singleTagProjectionPsi.getPlus() != null,
           parseReqParams(singleTagProjectionPsi.getReqParamList(), opModelProjection.params(), subResolver, errors),
           parseAnnotations(singleTagProjectionPsi.getReqAnnotationList()),
           modelProjectionPsi,
@@ -89,7 +89,7 @@ public class ReqUpdateProjectionsPsiParser {
 
       tagProjections.put(
           tag.name(),
-          new ReqUpdateTagProjectionEntry(
+          new ReqDeleteTagProjectionEntry(
               tag,
               parsedModelProjection,
               EpigraphPsiUtil.getLocation(tagLocation)
@@ -97,24 +97,24 @@ public class ReqUpdateProjectionsPsiParser {
       );
 
     } else {
-      @Nullable UrlReqUpdateMultiTagProjection multiTagProjection = psi.getReqUpdateMultiTagProjection();
+      @Nullable UrlReqDeleteMultiTagProjection multiTagProjection = psi.getReqDeleteMultiTagProjection();
       assert multiTagProjection != null;
       tagProjections = parseMultiTagProjection(dataType, op, multiTagProjection, subResolver, errors);
     }
 
-    final List<ReqUpdateVarProjection> tails =
-        parseTails(dataType, op, psi.getReqUpdateVarPolymorphicTail(), subResolver, errors);
+    final List<ReqDeleteVarProjection> tails =
+        parseTails(dataType, op, psi.getReqDeleteVarPolymorphicTail(), subResolver, errors);
 
     return
-        new ReqUpdateVarProjection(type, tagProjections, tails, EpigraphPsiUtil.getLocation(psi));
+        new ReqDeleteVarProjection(type, tagProjections, tails, EpigraphPsiUtil.getLocation(psi));
   }
 
   @NotNull
-  private static PsiElement getSingleTagLocation(@NotNull final UrlReqUpdateSingleTagProjection singleTagProjectionPsi) {
+  private static PsiElement getSingleTagLocation(@NotNull final UrlReqDeleteSingleTagProjection singleTagProjectionPsi) {
     PsiElement tagLocation = singleTagProjectionPsi;
     if (tagLocation.getText().length() == 0) {
-      @Nullable final UrlReqUpdateFieldProjectionEntry fieldProjectionPsi =
-          PsiTreeUtil.getParentOfType(tagLocation, UrlReqUpdateFieldProjectionEntry.class);
+      @Nullable final UrlReqDeleteFieldProjectionEntry fieldProjectionPsi =
+          PsiTreeUtil.getParentOfType(tagLocation, UrlReqDeleteFieldProjectionEntry.class);
       if (fieldProjectionPsi != null) {
         tagLocation = fieldProjectionPsi.getQid();
       }
@@ -123,10 +123,10 @@ public class ReqUpdateProjectionsPsiParser {
   }
 
   @NotNull
-  private static LinkedHashMap<String, ReqUpdateTagProjectionEntry> parseMultiTagProjection(
+  private static LinkedHashMap<String, ReqDeleteTagProjectionEntry> parseMultiTagProjection(
       @NotNull DataType dataType,
-      @NotNull OpInputVarProjection op,
-      @NotNull UrlReqUpdateMultiTagProjection psi,
+      @NotNull OpDeleteVarProjection op,
+      @NotNull UrlReqDeleteMultiTagProjection psi,
       @NotNull TypesResolver typesResolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
@@ -139,26 +139,25 @@ public class ReqUpdateProjectionsPsiParser {
 
     @NotNull final TypesResolver subResolver = addTypeNamespace(dataType.type, typesResolver);
 
-    final LinkedHashMap<String, ReqUpdateTagProjectionEntry> tagProjections = new LinkedHashMap<>();
+    final LinkedHashMap<String, ReqDeleteTagProjectionEntry> tagProjections = new LinkedHashMap<>();
 
     // parse list of tags
-    @NotNull List<UrlReqUpdateMultiTagProjectionItem> tagProjectionPsiList =
-        psi.getReqUpdateMultiTagProjectionItemList();
+    @NotNull List<UrlReqDeleteMultiTagProjectionItem> tagProjectionPsiList =
+        psi.getReqDeleteMultiTagProjectionItemList();
 
-    for (UrlReqUpdateMultiTagProjectionItem tagProjectionPsi : tagProjectionPsiList) {
+    for (UrlReqDeleteMultiTagProjectionItem tagProjectionPsi : tagProjectionPsiList) {
       try {
         @NotNull Type.Tag tag = findTag(tagProjectionPsi.getTagName(), op, tagProjectionPsi, errors);
-        @NotNull OpInputTagProjectionEntry opTag = findTagProjection(tag.name(), op, tagProjectionPsi, errors);
+        @NotNull OpDeleteTagProjectionEntry opTag = findTagProjection(tag.name(), op, tagProjectionPsi, errors);
 
-        OpInputModelProjection<?, ?, ?> opTagProjection = opTag.projection();
+        OpDeleteModelProjection<?, ?> opTagProjection = opTag.projection();
 
-        final ReqUpdateModelProjection<?, ?> parsedModelProjection;
+        final ReqDeleteModelProjection<?, ?> parsedModelProjection;
 
-        @NotNull UrlReqUpdateModelProjection modelProjection = tagProjectionPsi.getReqUpdateModelProjection();
+        @NotNull UrlReqDeleteModelProjection modelProjection = tagProjectionPsi.getReqDeleteModelProjection();
 
         parsedModelProjection = parseModelProjection(
             opTagProjection,
-            tagProjectionPsi.getPlus() != null,
             parseReqParams(tagProjectionPsi.getReqParamList(), opTagProjection.params(), subResolver, errors),
             parseAnnotations(tagProjectionPsi.getReqAnnotationList()),
             modelProjection, subResolver, errors
@@ -166,7 +165,7 @@ public class ReqUpdateProjectionsPsiParser {
 
         tagProjections.put(
             tag.name(),
-            new ReqUpdateTagProjectionEntry(
+            new ReqDeleteTagProjectionEntry(
                 tag,
                 parsedModelProjection,
                 EpigraphPsiUtil.getLocation(tagProjectionPsi)
@@ -181,10 +180,10 @@ public class ReqUpdateProjectionsPsiParser {
   }
 
   @NotNull
-  private static ReqUpdateVarProjection getDefaultVarProjection(
+  private static ReqDeleteVarProjection getDefaultVarProjection(
       @NotNull final Type type,
       final @NotNull PsiElement psi) {
-    return new ReqUpdateVarProjection(
+    return new ReqDeleteVarProjection(
         type,
         Collections.emptyMap(),
         null,
@@ -193,14 +192,14 @@ public class ReqUpdateProjectionsPsiParser {
   }
 
   @Nullable
-  private static List<ReqUpdateVarProjection> parseTails(
+  private static List<ReqDeleteVarProjection> parseTails(
       @NotNull DataType dataType,
-      @NotNull OpInputVarProjection op,
-      @Nullable UrlReqUpdateVarPolymorphicTail tailPsi,
+      @NotNull OpDeleteVarProjection op,
+      @Nullable UrlReqDeleteVarPolymorphicTail tailPsi,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
-    final List<ReqUpdateVarProjection> tails;
+    final List<ReqDeleteVarProjection> tails;
 
     @NotNull TypesResolver subResolver = addTypeNamespace(dataType.type, resolver);
 
@@ -208,26 +207,26 @@ public class ReqUpdateProjectionsPsiParser {
 
       tails = new ArrayList<>();
 
-      @Nullable UrlReqUpdateVarSingleTail singleTail = tailPsi.getReqUpdateVarSingleTail();
+      @Nullable UrlReqDeleteVarSingleTail singleTail = tailPsi.getReqDeleteVarSingleTail();
       if (singleTail != null) {
         @NotNull UrlTypeRef tailTypeRef = singleTail.getTypeRef();
-        @NotNull UrlReqUpdateVarProjection psiTailProjection = singleTail.getReqUpdateVarProjection();
-        @NotNull ReqUpdateVarProjection tailProjection =
+        @NotNull UrlReqDeleteVarProjection psiTailProjection = singleTail.getReqDeleteVarProjection();
+        @NotNull ReqDeleteVarProjection tailProjection =
             buildTailProjection(dataType, op, tailTypeRef, psiTailProjection, subResolver, errors);
         tails.add(tailProjection);
       } else {
-        @Nullable UrlReqUpdateVarMultiTail multiTail = tailPsi.getReqUpdateVarMultiTail();
+        @Nullable UrlReqDeleteVarMultiTail multiTail = tailPsi.getReqDeleteVarMultiTail();
         assert multiTail != null;
         Type prevTailType = null;
 
-        for (UrlReqUpdateVarMultiTailItem tailItem : multiTail.getReqUpdateVarMultiTailItemList()) {
+        for (UrlReqDeleteVarMultiTailItem tailItem : multiTail.getReqDeleteVarMultiTailItemList()) {
           try {
             if (prevTailType != null)
               subResolver = addTypeNamespace(prevTailType, resolver);
 
             @NotNull UrlTypeRef tailTypeRef = tailItem.getTypeRef();
-            @NotNull UrlReqUpdateVarProjection psiTailProjection = tailItem.getReqUpdateVarProjection();
-            @NotNull ReqUpdateVarProjection tailProjection =
+            @NotNull UrlReqDeleteVarProjection psiTailProjection = tailItem.getReqDeleteVarProjection();
+            @NotNull ReqDeleteVarProjection tailProjection =
                 buildTailProjection(dataType, op, tailTypeRef, psiTailProjection, subResolver, errors);
             tails.add(tailProjection);
 
@@ -244,18 +243,18 @@ public class ReqUpdateProjectionsPsiParser {
   }
 
   @NotNull
-  private static ReqUpdateVarProjection buildTailProjection(
+  private static ReqDeleteVarProjection buildTailProjection(
       @NotNull DataType dataType,
-      @NotNull OpInputVarProjection op,
+      @NotNull OpDeleteVarProjection op,
       @NotNull UrlTypeRef tailTypeRefPsi,
-      @NotNull UrlReqUpdateVarProjection tailProjectionPsi,
+      @NotNull UrlReqDeleteVarProjection tailProjectionPsi,
       @NotNull TypesResolver typesResolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
     @NotNull TypeRef tailTypeRef = TypeRefs.fromPsi(tailTypeRefPsi);
     @NotNull Type tailType = getType(tailTypeRef, typesResolver, tailTypeRefPsi, errors);
 
-    @Nullable OpInputVarProjection opTail = mergeOpTails(op, tailType);
+    @Nullable OpDeleteVarProjection opTail = mergeOpTails(op, tailType);
     if (opTail == null)
       throw new PsiProcessingException(
           String.format("Polymorphic tail for type '%s' is not supported", tailType.name()),
@@ -273,8 +272,8 @@ public class ReqUpdateProjectionsPsiParser {
   }
 
   @Nullable
-  private static OpInputVarProjection mergeOpTails(@NotNull OpInputVarProjection op, @NotNull Type tailType) {
-    List<OpInputVarProjection> opTails = op.polymorphicTails();
+  private static OpDeleteVarProjection mergeOpTails(@NotNull OpDeleteVarProjection op, @NotNull Type tailType) {
+    List<OpDeleteVarProjection> opTails = op.polymorphicTails();
     if (opTails == null) return null;
     // TODO a deep merge of op projections wrt to tailType is needed here, probably moved into a separate class
     // we simply look for the first fully matching tail for now
@@ -282,7 +281,7 @@ public class ReqUpdateProjectionsPsiParser {
     // if found: merge all op tails up the stack into one mega-op-var-projection: squash all tags/fields/params together. Should be OK since they all are supertypes of tailType
     // else null
 
-    for (OpInputVarProjection opTail : opTails) {
+    for (OpDeleteVarProjection opTail : opTails) {
       if (opTail.type().equals(tailType)) return opTail;
     }
 
@@ -290,12 +289,11 @@ public class ReqUpdateProjectionsPsiParser {
   }
 
   @NotNull
-  public static ReqUpdateModelProjection<?, ?> parseModelProjection(
-      @NotNull OpInputModelProjection<?, ?, ?> op,
-      boolean update,
+  public static ReqDeleteModelProjection<?, ?> parseModelProjection(
+      @NotNull OpDeleteModelProjection<?, ?> op,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
-      @NotNull UrlReqUpdateModelProjection psi,
+      @NotNull UrlReqDeleteModelProjection psi,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
@@ -304,19 +302,18 @@ public class ReqUpdateProjectionsPsiParser {
 
     switch (model.kind()) {
       case RECORD:
-        final OpInputRecordModelProjection opRecord = (OpInputRecordModelProjection) op;
+        final OpDeleteRecordModelProjection opRecord = (OpDeleteRecordModelProjection) op;
 
-        @Nullable UrlReqUpdateRecordModelProjection recordModelProjectionPsi =
-            psi.getReqUpdateRecordModelProjection();
+        @Nullable UrlReqDeleteRecordModelProjection recordModelProjectionPsi =
+            psi.getReqDeleteRecordModelProjection();
 
         if (recordModelProjectionPsi == null)
-          return createDefaultModelProjection(model, update, opRecord, params, annotations, psi, errors);
+          return createDefaultModelProjection(model, opRecord, params, annotations, psi, errors);
 
         ensureModelKind(findProjectionKind(psi), TypeKind.RECORD, psi, errors);
 
         return parseRecordModelProjection(
             opRecord,
-            update,
             params,
             annotations,
             recordModelProjectionPsi,
@@ -325,17 +322,16 @@ public class ReqUpdateProjectionsPsiParser {
         );
 
       case MAP:
-        final OpInputMapModelProjection opMap = (OpInputMapModelProjection) op;
-        @Nullable UrlReqUpdateMapModelProjection mapModelProjectionPsi = psi.getReqUpdateMapModelProjection();
+        final OpDeleteMapModelProjection opMap = (OpDeleteMapModelProjection) op;
+        @Nullable UrlReqDeleteMapModelProjection mapModelProjectionPsi = psi.getReqDeleteMapModelProjection();
 
         if (mapModelProjectionPsi == null)
-          return createDefaultModelProjection(model, update, opMap, params, annotations, psi, errors);
+          return createDefaultModelProjection(model, opMap, params, annotations, psi, errors);
 
         ensureModelKind(findProjectionKind(psi), TypeKind.MAP, psi, errors);
 
         return parseMapModelProjection(
             opMap,
-            update,
             params,
             annotations,
             mapModelProjectionPsi,
@@ -344,18 +340,17 @@ public class ReqUpdateProjectionsPsiParser {
         );
 
       case LIST:
-        final OpInputListModelProjection opList = (OpInputListModelProjection) op;
-        @Nullable UrlReqUpdateListModelProjection listModelProjectionPsi =
-            psi.getReqUpdateListModelProjection();
+        final OpDeleteListModelProjection opList = (OpDeleteListModelProjection) op;
+        @Nullable UrlReqDeleteListModelProjection listModelProjectionPsi =
+            psi.getReqDeleteListModelProjection();
 
         if (listModelProjectionPsi == null)
-          return createDefaultModelProjection(model, update, opList, params, annotations, psi, errors);
+          return createDefaultModelProjection(model, opList, params, annotations, psi, errors);
 
         ensureModelKind(findProjectionKind(psi), TypeKind.LIST, psi, errors);
 
         return parseListModelProjection(
             opList,
-            update,
             params,
             annotations,
             listModelProjectionPsi,
@@ -368,7 +363,7 @@ public class ReqUpdateProjectionsPsiParser {
 
       case PRIMITIVE:
         return parsePrimitiveModelProjection(
-            (OpInputPrimitiveModelProjection) op,
+            (OpDeletePrimitiveModelProjection) op,
             params,
             annotations,
             psi
@@ -384,10 +379,9 @@ public class ReqUpdateProjectionsPsiParser {
   }
 
   @NotNull
-  private static ReqUpdateModelProjection<?, ?> createDefaultModelProjection(
+  private static ReqDeleteModelProjection<?, ?> createDefaultModelProjection(
       @NotNull DatumType type,
-      boolean update,
-      @NotNull OpInputModelProjection<?, ?, ?> op,
+      @NotNull OpDeleteModelProjection<?, ?> op,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
       @NotNull PsiElement locationPsi,
@@ -397,10 +391,10 @@ public class ReqUpdateProjectionsPsiParser {
 
     switch (type.kind()) {
       case RECORD:
-        OpInputRecordModelProjection opRecord = (OpInputRecordModelProjection) op;
-        final Map<String, OpInputFieldProjectionEntry> opFields = opRecord.fieldProjections();
+        OpDeleteRecordModelProjection opRecord = (OpDeleteRecordModelProjection) op;
+        final Map<String, OpDeleteFieldProjectionEntry> opFields = opRecord.fieldProjections();
 
-        @NotNull final Map<String, ReqUpdateFieldProjectionEntry> fields;
+        @NotNull final Map<String, ReqDeleteFieldProjectionEntry> fields;
 
         if (opFields.isEmpty()) {
           fields = Collections.emptyMap();
@@ -409,50 +403,45 @@ public class ReqUpdateProjectionsPsiParser {
 
         }
 
-        return new ReqUpdateRecordModelProjection(
+        return new ReqDeleteRecordModelProjection(
             (RecordType) type,
-            update,
             params,
             annotations,
             fields,
             location
         );
       case MAP:
-        OpInputMapModelProjection opMap = (OpInputMapModelProjection) op;
+        OpDeleteMapModelProjection opMap = (OpDeleteMapModelProjection) op;
 
         MapType mapType = (MapType) type;
-        final ReqUpdateVarProjection valueVarProjection = createDefaultVarProjection(
+        final ReqDeleteVarProjection valueVarProjection = createDefaultVarProjection(
             mapType.valueType(),
             opMap.itemsProjection(),
-            update,
             locationPsi,
             errors
         );
 
-        return new ReqUpdateMapModelProjection(
+        return new ReqDeleteMapModelProjection(
             mapType,
-            update,
             params,
             annotations,
-            ReqUpdateKeysProjection.UPDATE_KEYS,
+            null,
             valueVarProjection,
             location
         );
       case LIST:
-        OpInputListModelProjection opList = (OpInputListModelProjection) op;
+        OpDeleteListModelProjection opList = (OpDeleteListModelProjection) op;
         ListType listType = (ListType) type;
 
-        final ReqUpdateVarProjection itemVarProjection = createDefaultVarProjection(
+        final ReqDeleteVarProjection itemVarProjection = createDefaultVarProjection(
             listType.elementType(),
             opList.itemsProjection(),
-            update,
             locationPsi,
             errors
         );
 
-        return new ReqUpdateListModelProjection(
+        return new ReqDeleteListModelProjection(
             listType,
-            update,
             params,
             annotations,
             itemVarProjection,
@@ -468,7 +457,7 @@ public class ReqUpdateProjectionsPsiParser {
         // todo
         throw new PsiProcessingException("Unsupported type kind: " + type.kind(), locationPsi, errors);
       case PRIMITIVE:
-        return new ReqUpdatePrimitiveModelProjection(
+        return new ReqDeletePrimitiveModelProjection(
             (PrimitiveType) type,
             params,
             annotations,
@@ -480,21 +469,19 @@ public class ReqUpdateProjectionsPsiParser {
   }
 
   @NotNull
-  private static ReqUpdateVarProjection createDefaultVarProjection(
+  private static ReqDeleteVarProjection createDefaultVarProjection(
       @NotNull DataType type,
-      @NotNull OpInputVarProjection op,
-      boolean required,
+      @NotNull OpDeleteVarProjection op,
       @NotNull PsiElement locationPsi,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
-    return createDefaultVarProjection(type.type, op, required, locationPsi, errors);
+    return createDefaultVarProjection(type.type, op, locationPsi, errors);
   }
 
   @NotNull
-  private static ReqUpdateVarProjection createDefaultVarProjection(
+  private static ReqDeleteVarProjection createDefaultVarProjection(
       @NotNull Type type,
-      @NotNull OpInputVarProjection op,
-      boolean required,
+      @NotNull OpDeleteVarProjection op,
       @NotNull PsiElement locationPsi,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
@@ -502,32 +489,31 @@ public class ReqUpdateProjectionsPsiParser {
     List<Type.Tag> tags = defaultTag == null ?
                           Collections.emptyList() :
                           Collections.singletonList(defaultTag);
-    return createDefaultVarProjection(type, tags, op, required, locationPsi, errors);
+    return createDefaultVarProjection(type, tags, op, locationPsi, errors);
   }
 
   /**
    * Creates default var projection with explicitly specified list of tags
    */
-  private static ReqUpdateVarProjection createDefaultVarProjection(
+  private static ReqDeleteVarProjection createDefaultVarProjection(
       @NotNull Type type,
       @NotNull List<Type.Tag> tags,
-      @NotNull OpInputVarProjection op, boolean required,
+      @NotNull OpDeleteVarProjection op,
       @NotNull PsiElement locationPsi,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
-    LinkedHashMap<String, ReqUpdateTagProjectionEntry> tagProjections = new LinkedHashMap<>();
+    LinkedHashMap<String, ReqDeleteTagProjectionEntry> tagProjections = new LinkedHashMap<>();
 
     for (Type.Tag tag : tags) {
-      final OpInputTagProjectionEntry opInputTagProjection = op.tagProjections().get(tag.name());
-      if (opInputTagProjection != null) {
+      final OpDeleteTagProjectionEntry opDeleteTagProjection = op.tagProjections().get(tag.name());
+      if (opDeleteTagProjection != null) {
         tagProjections.put(
             tag.name(),
-            new ReqUpdateTagProjectionEntry(
+            new ReqDeleteTagProjectionEntry(
                 tag,
                 createDefaultModelProjection(
                     tag.type,
-                    required,
-                    opInputTagProjection.projection(),
+                    opDeleteTagProjection.projection(),
                     ReqParams.EMPTY,
                     Annotations.EMPTY,
                     locationPsi,
@@ -539,7 +525,7 @@ public class ReqUpdateProjectionsPsiParser {
       }
     }
 
-    return new ReqUpdateVarProjection(
+    return new ReqDeleteVarProjection(
         type,
         tagProjections,
         null,
@@ -548,29 +534,28 @@ public class ReqUpdateProjectionsPsiParser {
   }
 
   @Nullable
-  private static TypeKind findProjectionKind(@NotNull UrlReqUpdateModelProjection psi) {
-    if (psi.getReqUpdateRecordModelProjection() != null) return TypeKind.RECORD;
-    if (psi.getReqUpdateMapModelProjection() != null) return TypeKind.MAP;
-    if (psi.getReqUpdateListModelProjection() != null) return TypeKind.LIST;
+  private static TypeKind findProjectionKind(@NotNull UrlReqDeleteModelProjection psi) {
+    if (psi.getReqDeleteRecordModelProjection() != null) return TypeKind.RECORD;
+    if (psi.getReqDeleteMapModelProjection() != null) return TypeKind.MAP;
+    if (psi.getReqDeleteListModelProjection() != null) return TypeKind.LIST;
     return null;
   }
 
   @NotNull
-  public static ReqUpdateRecordModelProjection parseRecordModelProjection(
-      @NotNull OpInputRecordModelProjection op,
-      boolean update,
+  public static ReqDeleteRecordModelProjection parseRecordModelProjection(
+      @NotNull OpDeleteRecordModelProjection op,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
-      @NotNull UrlReqUpdateRecordModelProjection psi,
+      @NotNull UrlReqDeleteRecordModelProjection psi,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
-    final Map<String, ReqUpdateFieldProjectionEntry> fieldProjections = new HashMap<>();
+    final Map<String, ReqDeleteFieldProjectionEntry> fieldProjections = new HashMap<>();
 
-    for (final UrlReqUpdateFieldProjectionEntry entryPsi : psi.getReqUpdateFieldProjectionEntryList()) {
+    for (final UrlReqDeleteFieldProjectionEntry entryPsi : psi.getReqDeleteFieldProjectionEntryList()) {
       @NotNull final String fieldName = entryPsi.getQid().getCanonicalName();
 
-      @Nullable final OpInputFieldProjectionEntry opFieldProjectionEntry = op.fieldProjection(fieldName);
+      @Nullable final OpDeleteFieldProjectionEntry opFieldProjectionEntry = op.fieldProjection(fieldName);
       if (opFieldProjectionEntry == null) {
         errors.add(
             new PsiProcessingError(
@@ -584,14 +569,13 @@ public class ReqUpdateProjectionsPsiParser {
       } else {
         try {
           final RecordType.Field field = opFieldProjectionEntry.field();
-          @NotNull final OpInputFieldProjection opFieldProjection = opFieldProjectionEntry.projection();
-          @NotNull final UrlReqUpdateFieldProjection fieldProjectionPsi = entryPsi.getReqUpdateFieldProjection();
+          @NotNull final OpDeleteFieldProjection opFieldProjection = opFieldProjectionEntry.projection();
+          @NotNull final UrlReqDeleteFieldProjection fieldProjectionPsi = entryPsi.getReqDeleteFieldProjection();
           @NotNull final DataType fieldType = field.dataType();
 
-          final ReqUpdateFieldProjection fieldProjection =
+          final ReqDeleteFieldProjection fieldProjection =
               parseFieldProjection(
                   fieldType,
-                  entryPsi.getPlus() != null,
                   opFieldProjection,
                   fieldProjectionPsi,
                   resolver,
@@ -600,7 +584,7 @@ public class ReqUpdateProjectionsPsiParser {
 
           fieldProjections.put(
               fieldName,
-              new ReqUpdateFieldProjectionEntry(
+              new ReqDeleteFieldProjectionEntry(
                   field,
                   fieldProjection,
                   EpigraphPsiUtil.getLocation(fieldProjectionPsi)
@@ -612,9 +596,8 @@ public class ReqUpdateProjectionsPsiParser {
       }
     }
 
-    return new ReqUpdateRecordModelProjection(
+    return new ReqDeleteRecordModelProjection(
         op.model(),
-        update,
         params,
         annotations,
         fieldProjections,
@@ -623,11 +606,10 @@ public class ReqUpdateProjectionsPsiParser {
   }
 
   @NotNull
-  public static ReqUpdateFieldProjection parseFieldProjection(
+  public static ReqDeleteFieldProjection parseFieldProjection(
       final DataType fieldType,
-      boolean update,
-      final @NotNull OpInputFieldProjection op,
-      final @NotNull UrlReqUpdateFieldProjection psi,
+      final @NotNull OpDeleteFieldProjection op,
+      final @NotNull UrlReqDeleteFieldProjection psi,
       final @NotNull TypesResolver resolver, final @NotNull List<PsiProcessingError> errors)
       throws PsiProcessingException {
 
@@ -635,8 +617,8 @@ public class ReqUpdateProjectionsPsiParser {
 
     Annotations fieldAnnotations = parseAnnotations(psi.getReqAnnotationList());
 
-    @NotNull UrlReqUpdateVarProjection psiVarProjection = psi.getReqUpdateVarProjection();
-    @NotNull ReqUpdateVarProjection varProjection =
+    @NotNull UrlReqDeleteVarProjection psiVarProjection = psi.getReqDeleteVarProjection();
+    @NotNull ReqDeleteVarProjection varProjection =
         parseVarProjection(
             fieldType,
             op.projection(),
@@ -645,29 +627,54 @@ public class ReqUpdateProjectionsPsiParser {
             errors
         );
 
-    return new ReqUpdateFieldProjection(
+    return new ReqDeleteFieldProjection(
         fieldParams,
         fieldAnnotations,
         varProjection,
-        update,
         EpigraphPsiUtil.getLocation(psi)
     );
   }
 
   @NotNull
-  public static ReqUpdateMapModelProjection parseMapModelProjection(
-      @NotNull OpInputMapModelProjection op,
-      boolean update,
+  public static ReqDeleteMapModelProjection parseMapModelProjection(
+      @NotNull OpDeleteMapModelProjection op,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
-      @NotNull UrlReqUpdateMapModelProjection psi,
+      @NotNull UrlReqDeleteMapModelProjection psi,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
-    @Nullable final UrlReqUpdateVarProjection elementsVarProjectionPsi = psi.getReqUpdateVarProjection();
 
-    @NotNull final ReqUpdateVarProjection elementsVarProjection;
+    final List<ReqDeleteKeyProjection> keyProjections;
+    if (psi.getReqDeleteKeysProjection().getStar() != null) keyProjections = null;
+    else {
+      @NotNull final List<UrlReqDeleteKeyProjection> keyProjectionsPsi =
+          psi.getReqDeleteKeysProjection().getReqDeleteKeyProjectionList();
 
+      keyProjections = new ArrayList<>(keyProjectionsPsi.size());
+
+      for (final UrlReqDeleteKeyProjection keyProjectionPsi : keyProjectionsPsi) {
+        @NotNull final UrlDatum keyValuePsi = keyProjectionPsi.getDatum();
+        final @Nullable Datum keyValue =
+            getDatum(keyValuePsi, op.model().keyType(), resolver, "Error processing map key:", errors);
+
+        if (keyValue == null) errors.add(new PsiProcessingError("Null keys are not allowed", keyValuePsi));
+        else {
+          keyProjections.add(
+              new ReqDeleteKeyProjection(
+                  keyValue,
+                  parseReqParams(keyProjectionPsi.getReqParamList(), op.keyProjection().params(), resolver, errors),
+                  parseAnnotations(keyProjectionPsi.getReqAnnotationList()),
+                  EpigraphPsiUtil.getLocation(keyProjectionPsi)
+              )
+          );
+        }
+
+      }
+    }
+
+    @Nullable final UrlReqDeleteVarProjection elementsVarProjectionPsi = psi.getReqDeleteVarProjection();
+    @NotNull final ReqDeleteVarProjection elementsVarProjection;
     if (elementsVarProjectionPsi == null) {
       @NotNull final Type type = op.model().valueType.type;
       elementsVarProjection = getDefaultVarProjection(type, psi);
@@ -681,32 +688,28 @@ public class ReqUpdateProjectionsPsiParser {
       );
     }
 
-    return new ReqUpdateMapModelProjection(
+    return new ReqDeleteMapModelProjection(
         op.model(),
-        update,
         params,
         annotations,
-        psi.getReqUpdateKeysProjection().getPlus() == null
-        ? ReqUpdateKeysProjection.PATCH_KEYS
-        : ReqUpdateKeysProjection.UPDATE_KEYS,
+        keyProjections,
         elementsVarProjection,
         EpigraphPsiUtil.getLocation(psi)
     );
   }
 
   @NotNull
-  public static ReqUpdateListModelProjection parseListModelProjection(
-      @NotNull OpInputListModelProjection op,
-      boolean update,
+  public static ReqDeleteListModelProjection parseListModelProjection(
+      @NotNull OpDeleteListModelProjection op,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
-      @NotNull UrlReqUpdateListModelProjection psi,
+      @NotNull UrlReqDeleteListModelProjection psi,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
-    @Nullable final UrlReqUpdateVarProjection elementsVarProjectionPsi = psi.getReqUpdateVarProjection();
+    @Nullable final UrlReqDeleteVarProjection elementsVarProjectionPsi = psi.getReqDeleteVarProjection();
 
-    @NotNull final ReqUpdateVarProjection elementsVarProjection;
+    @NotNull final ReqDeleteVarProjection elementsVarProjection;
     if (elementsVarProjectionPsi == null) {
       @NotNull final Type type = op.model().elementType().type;
       elementsVarProjection = getDefaultVarProjection(type, psi);
@@ -720,9 +723,8 @@ public class ReqUpdateProjectionsPsiParser {
       );
     }
 
-    return new ReqUpdateListModelProjection(
+    return new ReqDeleteListModelProjection(
         op.model(),
-        update,
         params,
         annotations,
         elementsVarProjection,
@@ -731,13 +733,13 @@ public class ReqUpdateProjectionsPsiParser {
   }
 
   @NotNull
-  public static ReqUpdatePrimitiveModelProjection parsePrimitiveModelProjection(
-      @NotNull OpInputPrimitiveModelProjection op,
+  public static ReqDeletePrimitiveModelProjection parsePrimitiveModelProjection(
+      @NotNull OpDeletePrimitiveModelProjection op,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
       @NotNull PsiElement locationPsi) throws PsiProcessingException {
 
-    return new ReqUpdatePrimitiveModelProjection(
+    return new ReqDeletePrimitiveModelProjection(
         op.model(),
         params,
         annotations,

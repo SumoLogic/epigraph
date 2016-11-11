@@ -37,7 +37,6 @@ import ws.epigraph.url.parser.psi.UrlReadUrl;
 import ws.epigraph.url.parser.psi.UrlReqOutputComaVarProjection;
 import ws.epigraph.url.parser.psi.UrlReqOutputTrunkFieldProjection;
 import ws.epigraph.url.parser.psi.UrlReqOutputTrunkVarProjection;
-import ws.epigraph.url.projections.req.ReqParserUtil;
 import ws.epigraph.url.projections.req.output.ReqOutputProjectionsPsiParser;
 import ws.epigraph.url.projections.req.path.ReadReqPathParsingResult;
 import ws.epigraph.url.projections.req.path.ReadReqPathPsiParser;
@@ -48,7 +47,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static ws.epigraph.url.projections.req.ReqParserUtil.parseRequestParams;
+import static ws.epigraph.url.projections.UrlProjectionsPsiParserUtil.addTypeNamespace;
+import static ws.epigraph.url.projections.UrlProjectionsPsiParserUtil.parseRequestParams;
+
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -93,7 +94,7 @@ public class ReadRequestUrlPsiParser {
 
     @NotNull ReqFieldPath reqPath = pathParsingResult.path();
     DataType pathTipType = ProjectionUtils.tipType(reqPath.projection());
-    TypesResolver newResolver = ReqParserUtil.addTypeNamespace(pathTipType.type, typesResolver);
+    TypesResolver newResolver = addTypeNamespace(pathTipType.type, typesResolver);
 
     final UrlReqOutputTrunkVarProjection trunkVarProjection = pathParsingResult.trunkProjectionPsi();
     final UrlReqOutputComaVarProjection comaVarProjection = pathParsingResult.comaProjectionPsi();
@@ -164,7 +165,7 @@ public class ReadRequestUrlPsiParser {
       throws PsiProcessingException {
 
     final @NotNull UrlReqOutputTrunkFieldProjection fieldProjectionPsi = psi.getReqOutputTrunkFieldProjection();
-    TypesResolver newResolver = ReqParserUtil.addTypeNamespace(resourceType.type, typesResolver);
+    TypesResolver newResolver = addTypeNamespace(resourceType.type, typesResolver);
 
     @NotNull final StepsAndProjection<ReqOutputFieldProjection> stepsAndProjection =
         ReqOutputProjectionsPsiParser.parseTrunkFieldProjection(

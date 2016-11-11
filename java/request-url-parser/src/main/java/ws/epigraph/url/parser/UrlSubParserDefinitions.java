@@ -52,6 +52,9 @@ public class UrlSubParserDefinitions {
 
   public static final UrlSubParserDefinition<UrlReqUpdateVarProjection> REQ_UPDATE_VAR_PROJECTION =
       new UrlSubParserDefinition<>(U_REQ_UPDATE_VAR_PROJECTION, UrlReqUpdateVarProjection.class);
+  
+  public static final UrlSubParserDefinition<UrlReqDeleteVarProjection> REQ_DELETE_VAR_PROJECTION =
+      new UrlSubParserDefinition<>(U_REQ_DELETE_VAR_PROJECTION, UrlReqDeleteVarProjection.class);
 
   public static class UrlSubParserDefinition<T> extends UrlParserDefinition implements SubParserDefinition<T> {
     @NotNull

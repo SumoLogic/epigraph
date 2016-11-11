@@ -34,14 +34,14 @@ import ws.epigraph.url.UpdateRequestUrl;
 import ws.epigraph.url.parser.psi.UrlReqOutputTrunkFieldProjection;
 import ws.epigraph.url.parser.psi.UrlReqUpdateFieldProjection;
 import ws.epigraph.url.parser.psi.UrlUpdateUrl;
-import ws.epigraph.url.projections.req.ReqParserUtil;
 import ws.epigraph.url.projections.req.path.ReqPathPsiParser;
 import ws.epigraph.url.projections.req.update.ReqUpdateProjectionsPsiParser;
 
 import java.util.List;
 import java.util.Map;
 
-import static ws.epigraph.url.projections.req.ReqParserUtil.parseRequestParams;
+import static ws.epigraph.url.projections.UrlProjectionsPsiParserUtil.addTypeNamespace;
+import static ws.epigraph.url.projections.UrlProjectionsPsiParserUtil.parseRequestParams;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -82,7 +82,7 @@ public class UpdateRequestUrlParser {
     final @NotNull Type opOutputType = op.outputType(); // already calculated based on outputType/path declared in idl
     final @NotNull Type opInputType = op.inputType();
 
-    TypesResolver newResolver = ReqParserUtil.addTypeNamespace(opOutputType, typesResolver);
+    TypesResolver newResolver = addTypeNamespace(opOutputType, typesResolver);
     @NotNull DataType outputDataType = new DataType(opOutputType, null);
     @NotNull DataType inputDataType = new DataType(opInputType, null);
 
@@ -128,7 +128,7 @@ public class UpdateRequestUrlParser {
       throws PsiProcessingException {
 
     final @Nullable UrlReqOutputTrunkFieldProjection fieldProjectionPsi = psi.getReqOutputTrunkFieldProjection();
-    TypesResolver newResolver = ReqParserUtil.addTypeNamespace(resourceType.type, typesResolver);
+    TypesResolver newResolver = addTypeNamespace(resourceType.type, typesResolver);
     final @Nullable UrlReqUpdateFieldProjection updateProjectionPsi = psi.getReqUpdateFieldProjection();
 
     final ReqUpdateFieldProjection updateProjection =

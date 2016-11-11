@@ -18,16 +18,20 @@ package ws.epigraph.url.projections.req;
 
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.idl.parser.projections.IdlSubParserDefinitions;
+import ws.epigraph.idl.parser.psi.IdlOpDeleteVarProjection;
 import ws.epigraph.idl.parser.psi.IdlOpInputVarProjection;
 import ws.epigraph.idl.parser.psi.IdlOpOutputVarProjection;
 import ws.epigraph.idl.parser.psi.IdlOpVarPath;
 import ws.epigraph.projections.StepsAndProjection;
+import ws.epigraph.projections.op.delete.OpDeleteProjectionsPsiParser;
+import ws.epigraph.projections.op.delete.OpDeleteVarProjection;
 import ws.epigraph.projections.op.input.OpInputProjectionsPsiParser;
 import ws.epigraph.projections.op.input.OpInputVarProjection;
 import ws.epigraph.projections.op.output.OpOutputProjectionsPsiParser;
 import ws.epigraph.projections.op.output.OpOutputVarProjection;
 import ws.epigraph.projections.op.path.OpPathPsiParser;
 import ws.epigraph.projections.op.path.OpVarPath;
+import ws.epigraph.projections.req.delete.ReqDeleteVarProjection;
 import ws.epigraph.projections.req.output.ReqOutputVarProjection;
 import ws.epigraph.projections.req.update.ReqUpdateVarProjection;
 import ws.epigraph.psi.EpigraphPsiUtil;
@@ -36,8 +40,10 @@ import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.test.TestUtil;
 import ws.epigraph.types.DataType;
 import ws.epigraph.url.parser.UrlSubParserDefinitions;
+import ws.epigraph.url.parser.psi.UrlReqDeleteVarProjection;
 import ws.epigraph.url.parser.psi.UrlReqOutputTrunkVarProjection;
 import ws.epigraph.url.parser.psi.UrlReqUpdateVarProjection;
+import ws.epigraph.url.projections.req.delete.ReqDeleteProjectionsPsiParser;
 import ws.epigraph.url.projections.req.output.ReqOutputProjectionsPsiParser;
 import ws.epigraph.url.projections.req.update.ReqUpdateProjectionsPsiParser;
 
@@ -162,6 +168,32 @@ public class ReqTestUtil {
         errors
     ));
   }
+  @NotNull
+  
+  public static ReqDeleteVarProjection parseReqDeleteVarProjection(
+      @NotNull DataType type,
+      @NotNull OpDeleteVarProjection op,
+      @NotNull String projectionString,
+      @NotNull TypesResolver resolver) {
+
+    EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
+
+    UrlReqDeleteVarProjection psi = EpigraphPsiUtil.parseText(
+        projectionString,
+        UrlSubParserDefinitions.REQ_DELETE_VAR_PROJECTION,
+        errorsAccumulator
+    );
+
+    failIfHasErrors(psi, errorsAccumulator);
+
+    return runPsiParser(errors -> ReqDeleteProjectionsPsiParser.parseVarProjection(
+        type,
+        op,
+        psi,
+        resolver,
+        errors
+    ));
+  }
 
   public static StepsAndProjection<OpInputVarProjection> parseOpInputVarProjection(
       @NotNull DataType varDataType,
@@ -179,6 +211,30 @@ public class ReqTestUtil {
     failIfHasErrors(psiVarProjection, errorsAccumulator);
 
     return runPsiParser(errors -> OpInputProjectionsPsiParser.parseVarProjection(
+        varDataType,
+        psiVarProjection,
+        resolver,
+        errors
+    ));
+
+  }
+
+  public static OpDeleteVarProjection parseOpDeleteVarProjection(
+      @NotNull DataType varDataType,
+      @NotNull String projectionString,
+      @NotNull TypesResolver resolver) {
+
+    EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
+
+    IdlOpDeleteVarProjection psiVarProjection = EpigraphPsiUtil.parseText(
+        projectionString,
+        IdlSubParserDefinitions.OP_DELETE_VAR_PROJECTION,
+        errorsAccumulator
+    );
+
+    failIfHasErrors(psiVarProjection, errorsAccumulator);
+
+    return runPsiParser(errors -> OpDeleteProjectionsPsiParser.parseVarProjection(
         varDataType,
         psiVarProjection,
         resolver,

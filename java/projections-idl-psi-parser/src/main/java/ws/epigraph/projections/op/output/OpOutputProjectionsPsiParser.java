@@ -38,9 +38,6 @@ import java.util.*;
 
 import static ws.epigraph.projections.IdlProjectionPsiParserUtil.*;
 import static ws.epigraph.projections.ProjectionsParsingUtil.getType;
-import static ws.epigraph.projections.op.OpParserUtil.parseAnnotations;
-import static ws.epigraph.projections.op.OpParserUtil.parseParameter;
-import static ws.epigraph.projections.op.OpParserUtil.parseParams;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>

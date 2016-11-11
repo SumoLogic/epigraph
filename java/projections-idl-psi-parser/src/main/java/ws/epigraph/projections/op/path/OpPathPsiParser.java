@@ -37,11 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static ws.epigraph.projections.IdlProjectionPsiParserUtil.getTag;
-import static ws.epigraph.projections.IdlProjectionPsiParserUtil.parseAnnotation;
-import static ws.epigraph.projections.op.OpParserUtil.parseAnnotations;
-import static ws.epigraph.projections.op.OpParserUtil.parseParameter;
-import static ws.epigraph.projections.op.OpParserUtil.parseParams;
+import static ws.epigraph.projections.IdlProjectionPsiParserUtil.*;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>

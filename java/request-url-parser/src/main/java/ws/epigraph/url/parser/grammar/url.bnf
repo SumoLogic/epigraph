@@ -295,7 +295,7 @@ reqDeleteFieldProjection ::= reqParamsAndAnnotations reqDeleteVarProjection
 reqDeleteListModelProjection ::= '*' ( '(' reqDeleteVarProjection ')' )? { pin=1 }
 
 reqDeleteMapModelProjection ::= reqDeleteKeysProjection ( '(' reqDeleteVarProjection ')' )?
-reqDeleteKeysProjection ::= ( ( '[' ( reqDeleteKeyProjection ','? )* ']' ) | ( '[' '*' ']' ) )
+reqDeleteKeysProjection ::= ( ( '[' ( reqDeleteKeyProjection ','? )* ']' ) | ( '[' '*' ']' ) ) // todo fix
 reqDeleteKeyProjection ::= datum reqParamsAndAnnotations
 
 // ============= data language =============

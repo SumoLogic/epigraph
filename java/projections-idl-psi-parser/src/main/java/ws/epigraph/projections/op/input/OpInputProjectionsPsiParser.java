@@ -43,9 +43,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 import static ws.epigraph.projections.IdlProjectionPsiParserUtil.getTag;
+import static ws.epigraph.projections.IdlProjectionPsiParserUtil.parseAnnotations;
+import static ws.epigraph.projections.IdlProjectionPsiParserUtil.parseParams;
 import static ws.epigraph.projections.ProjectionsParsingUtil.getType;
-import static ws.epigraph.projections.op.OpParserUtil.parseAnnotations;
-import static ws.epigraph.projections.op.OpParserUtil.parseParams;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
