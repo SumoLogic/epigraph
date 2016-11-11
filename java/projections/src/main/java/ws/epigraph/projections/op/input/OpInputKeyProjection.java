@@ -14,24 +14,21 @@
  * limitations under the License.
  */
 
-package ws.epigraph.projections.req.delete;
+package ws.epigraph.projections.op.input;
 
 import org.jetbrains.annotations.NotNull;
-import ws.epigraph.data.Datum;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
-import ws.epigraph.projections.req.ReqKeyProjection;
-import ws.epigraph.projections.req.ReqParams;
+import ws.epigraph.projections.op.OpKeyProjection;
+import ws.epigraph.projections.op.OpParams;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class ReqDeleteKeyProjection extends ReqKeyProjection{
-  public ReqDeleteKeyProjection(
-      @NotNull final Datum value,
-      @NotNull final ReqParams params,
-      @NotNull final Annotations annotations,
-      @NotNull final TextLocation location) {
-    super(value, params, annotations, location);
+public class OpInputKeyProjection extends OpKeyProjection {
+  public OpInputKeyProjection(
+      @NotNull final OpParams params,
+      @NotNull final Annotations annotations, @NotNull final TextLocation location) {
+    super(params, annotations, location);
   }
 }

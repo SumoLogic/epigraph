@@ -597,6 +597,11 @@ public class OpInputProjectionsPsiParser {
             params,
             annotations,
             null,
+            new OpInputKeyProjection(
+                OpParams.EMPTY,
+                Annotations.EMPTY,
+                location
+            ),
             valueVarProjection,
             location
         );
@@ -694,7 +699,13 @@ public class OpInputProjectionsPsiParser {
         final boolean fieldRequired = fieldProjectionPsi.getPlus() != null;
 
         final OpInputFieldProjection fieldProjection =
-            parseFieldProjection(fieldType, fieldRequired, fieldProjectionPsi.getOpInputFieldProjection(), resolver, errors);
+            parseFieldProjection(
+                fieldType,
+                fieldRequired,
+                fieldProjectionPsi.getOpInputFieldProjection(),
+                resolver,
+                errors
+            );
 
         fieldProjections.put(
             fieldName,
@@ -782,6 +793,14 @@ public class OpInputProjectionsPsiParser {
       }
     }
 
+    final @NotNull List<IdlOpInputKeyProjectionPart> keyPartsPsi =
+        psi.getOpInputKeyProjection().getOpInputKeyProjectionPartList();
+
+    @NotNull final OpParams keyParams =
+        parseParams(keyPartsPsi.stream().map(IdlOpInputKeyProjectionPart::getOpParam), resolver, errors);
+    @NotNull final Annotations keyAnnotations =
+        parseAnnotations(keyPartsPsi.stream().map(IdlOpInputKeyProjectionPart::getAnnotation), errors);
+
     @Nullable IdlOpInputVarProjection valueProjectionPsi = psi.getOpInputVarProjection();
     @NotNull OpInputVarProjection valueProjection =
         valueProjectionPsi == null ?
@@ -797,6 +816,11 @@ public class OpInputProjectionsPsiParser {
             params,
             annotations,
             metaProjection,
+            new OpInputKeyProjection(
+                keyParams,
+                keyAnnotations,
+                EpigraphPsiUtil.getLocation(psi.getOpInputKeyProjection())
+            ),
             valueProjection,
             EpigraphPsiUtil.getLocation(psi)
         )

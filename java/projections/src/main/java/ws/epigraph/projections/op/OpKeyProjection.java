@@ -14,45 +14,51 @@
  * limitations under the License.
  */
 
-package ws.epigraph.projections.op.delete;
+package ws.epigraph.projections.op;
 
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
-import ws.epigraph.projections.op.OpKeyPresence;
-import ws.epigraph.projections.op.OpKeyProjection;
-import ws.epigraph.projections.op.OpParams;
 
 import java.util.Objects;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class OpDeleteKeyProjection extends OpKeyProjection {
+public class OpKeyProjection {
   @NotNull
-  private final OpKeyPresence presence;
+  private final OpParams params;
+  @NotNull
+  private final Annotations annotations;
+  @NotNull
+  private final TextLocation location;
 
-  @NotNull
-  public OpDeleteKeyProjection(
-      final @NotNull OpKeyPresence presence, @NotNull final OpParams params,
-      @NotNull final Annotations annotations, @NotNull final TextLocation location) {
-    super(params, annotations, location);
-    this.presence = presence;
+  public OpKeyProjection(@NotNull OpParams params, @NotNull Annotations annotations, @NotNull TextLocation location) {
+    this.params = params;
+    this.annotations = annotations;
+    this.location = location;
   }
 
-  public OpKeyPresence presence() { return presence; }
+  @NotNull
+  public OpParams params() { return params; }
+
+  @NotNull
+  public Annotations annotations() { return annotations; }
+
+  @NotNull
+  public TextLocation location() { return location; }
 
   @Override
   public boolean equals(final Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-    if (!super.equals(o)) return false;
-    final OpDeleteKeyProjection that = (OpDeleteKeyProjection) o;
-    return presence == that.presence;
+    final OpKeyProjection that = (OpKeyProjection) o;
+    return Objects.equals(params, that.params) &&
+           Objects.equals(annotations, that.annotations);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(super.hashCode(), presence);
+    return Objects.hash(params, annotations);
   }
 }

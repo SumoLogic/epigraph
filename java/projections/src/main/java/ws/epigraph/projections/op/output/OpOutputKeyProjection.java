@@ -18,6 +18,8 @@ package ws.epigraph.projections.op.output;
 
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
+import ws.epigraph.projections.op.OpKeyPresence;
+import ws.epigraph.projections.op.OpKeyProjection;
 import ws.epigraph.projections.op.OpParams;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,50 +28,31 @@ import java.util.Objects;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class OpOutputKeyProjection {
-  public enum Presence {OPTIONAL, REQUIRED, FORBIDDEN}
+public class OpOutputKeyProjection extends OpKeyProjection {
+  @NotNull
+  private final OpKeyPresence presence;
 
   @NotNull
-  private final Presence presence;
-  @NotNull
-  private final OpParams params;
-  @NotNull
-  private final Annotations annotations;
-  @NotNull
-  private final TextLocation location;
-
-  public OpOutputKeyProjection(@NotNull Presence presence,
-                               @NotNull OpParams params,
-                               @NotNull Annotations annotations,
-                               @NotNull TextLocation location) {
+  public OpOutputKeyProjection(
+      final @NotNull OpKeyPresence presence, @NotNull final OpParams params,
+      @NotNull final Annotations annotations, @NotNull final TextLocation location) {
+    super(params, annotations, location);
     this.presence = presence;
-    this.params = params;
-    this.annotations = annotations;
-    this.location = location;
   }
 
-  @NotNull
-  public Presence presence() { return presence; }
-
-  @NotNull
-  public OpParams params() { return params; }
-
-  @NotNull
-  public Annotations annotations() { return annotations; }
-
-  @NotNull
-  public TextLocation location() { return location; }
+  public OpKeyPresence presence() { return presence; }
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(final Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-    OpOutputKeyProjection that = (OpOutputKeyProjection) o;
-    return presence == that.presence && Objects.equals(annotations, that.annotations);
+    if (!super.equals(o)) return false;
+    final OpOutputKeyProjection that = (OpOutputKeyProjection) o;
+    return presence == that.presence;
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(presence, annotations);
+    return Objects.hash(super.hashCode(), presence);
   }
 }

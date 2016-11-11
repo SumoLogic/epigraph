@@ -23,6 +23,7 @@ import ws.epigraph.projections.req.ReqParams;
 import ws.epigraph.types.MapType;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -38,8 +39,9 @@ public class ReqUpdateMapModelProjection
     MapType
     > {
 
+  private final boolean updateKeys;
   @NotNull
-  private final ReqUpdateKeysProjection keys;
+  private final List<ReqUpdateKeyProjection> keys;
   @NotNull
   private final ReqUpdateVarProjection valuesProjection;
 
@@ -48,10 +50,12 @@ public class ReqUpdateMapModelProjection
       boolean update,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
-      @NotNull ReqUpdateKeysProjection keys,
+      boolean updateKeys,
+      @NotNull List<ReqUpdateKeyProjection> keys,
       @NotNull ReqUpdateVarProjection valuesProjection,
       @NotNull TextLocation location) {
     super(model, update, params, annotations, location);
+    this.updateKeys = updateKeys;
     this.keys = keys;
     this.valuesProjection = valuesProjection;
   }
@@ -59,19 +63,21 @@ public class ReqUpdateMapModelProjection
   @NotNull
   public ReqUpdateVarProjection itemsProjection() { return valuesProjection; }
 
-  @NotNull
-  public ReqUpdateKeysProjection keys() { return keys; }
+  public boolean updateKeys() { return updateKeys; }
+
+  public @NotNull List<ReqUpdateKeyProjection> keys() { return keys; }
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(final Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     if (!super.equals(o)) return false;
-    ReqUpdateMapModelProjection that = (ReqUpdateMapModelProjection) o;
-    return Objects.equals(keys, that.keys) &&
+    final ReqUpdateMapModelProjection that = (ReqUpdateMapModelProjection) o;
+    return updateKeys == that.updateKeys &&
+           Objects.equals(keys, that.keys) &&
            Objects.equals(valuesProjection, that.valuesProjection);
   }
 
   @Override
-  public int hashCode() { return Objects.hash(super.hashCode(), keys, valuesProjection); }
+  public int hashCode() { return Objects.hash(super.hashCode(), updateKeys, keys, valuesProjection); }
 }

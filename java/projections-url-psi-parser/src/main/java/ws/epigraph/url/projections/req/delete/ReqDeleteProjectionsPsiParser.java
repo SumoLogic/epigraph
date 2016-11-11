@@ -654,22 +654,25 @@ public class ReqDeleteProjectionsPsiParser {
       keyProjections = new ArrayList<>(keyProjectionsPsi.size());
 
       for (final UrlReqDeleteKeyProjection keyProjectionPsi : keyProjectionsPsi) {
-        @NotNull final UrlDatum keyValuePsi = keyProjectionPsi.getDatum();
-        final @Nullable Datum keyValue =
-            getDatum(keyValuePsi, op.model().keyType(), resolver, "Error processing map key:", errors);
+        try {
+          @NotNull final UrlDatum keyValuePsi = keyProjectionPsi.getDatum();
+          final @Nullable Datum keyValue =
+              getDatum(keyValuePsi, op.model().keyType(), resolver, "Error processing map key:", errors);
 
-        if (keyValue == null) errors.add(new PsiProcessingError("Null keys are not allowed", keyValuePsi));
-        else {
-          keyProjections.add(
-              new ReqDeleteKeyProjection(
-                  keyValue,
-                  parseReqParams(keyProjectionPsi.getReqParamList(), op.keyProjection().params(), resolver, errors),
-                  parseAnnotations(keyProjectionPsi.getReqAnnotationList()),
-                  EpigraphPsiUtil.getLocation(keyProjectionPsi)
-              )
-          );
+          if (keyValue == null) errors.add(new PsiProcessingError("Null keys are not allowed", keyValuePsi));
+          else {
+            keyProjections.add(
+                new ReqDeleteKeyProjection(
+                    keyValue,
+                    parseReqParams(keyProjectionPsi.getReqParamList(), op.keyProjection().params(), resolver, errors),
+                    parseAnnotations(keyProjectionPsi.getReqAnnotationList()),
+                    EpigraphPsiUtil.getLocation(keyProjectionPsi)
+                )
+            );
+          }
+        } catch (PsiProcessingException e) {
+          errors.add(e.toError());
         }
-
       }
     }
 

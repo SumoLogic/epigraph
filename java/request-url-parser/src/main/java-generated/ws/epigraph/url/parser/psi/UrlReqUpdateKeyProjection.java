@@ -5,18 +5,15 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface UrlReqUpdateKeysProjection extends PsiElement {
+public interface UrlReqUpdateKeyProjection extends PsiElement {
 
   @NotNull
-  List<UrlReqUpdateKeyProjection> getReqUpdateKeyProjectionList();
+  UrlDatum getDatum();
 
   @NotNull
-  PsiElement getBracketLeft();
+  List<UrlReqAnnotation> getReqAnnotationList();
 
   @NotNull
-  PsiElement getBracketRight();
-
-  @Nullable
-  PsiElement getPlus();
+  List<UrlReqParam> getReqParamList();
 
 }

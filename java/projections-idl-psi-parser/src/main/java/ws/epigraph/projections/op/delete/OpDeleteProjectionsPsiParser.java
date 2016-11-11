@@ -22,6 +22,7 @@ import ws.epigraph.idl.parser.psi.*;
 import ws.epigraph.projections.Annotation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.ProjectionUtils;
+import ws.epigraph.projections.op.OpKeyPresence;
 import ws.epigraph.projections.op.OpParam;
 import ws.epigraph.projections.op.OpParams;
 import ws.epigraph.psi.EpigraphPsiUtil;
@@ -372,7 +373,7 @@ public class OpDeleteProjectionsPsiParser {
 
         final OpDeleteKeyProjection keyProjection =
             new OpDeleteKeyProjection(
-                OpDeleteKeyProjection.Presence.OPTIONAL,
+                OpKeyPresence.OPTIONAL,
                 OpParams.EMPTY,
                 Annotations.EMPTY,
                 EpigraphPsiUtil.getLocation(locationPsi)
@@ -548,7 +549,7 @@ public class OpDeleteProjectionsPsiParser {
         valueProjectionPsi == null
         ? createDefaultVarProjection(
             type.valueType(),
-            keyProjection.presence() == OpDeleteKeyProjection.Presence.REQUIRED,
+            keyProjection.presence() == OpKeyPresence.REQUIRED,
             psi,
             errors
         )
@@ -570,14 +571,14 @@ public class OpDeleteProjectionsPsiParser {
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
-    final OpDeleteKeyProjection.Presence presence;
+    final OpKeyPresence presence;
 
     if (keyProjectionPsi.getForbidden() != null)
-      presence = OpDeleteKeyProjection.Presence.FORBIDDEN;
+      presence = OpKeyPresence.FORBIDDEN;
     else if (keyProjectionPsi.getRequired() != null)
-      presence = OpDeleteKeyProjection.Presence.REQUIRED;
+      presence = OpKeyPresence.REQUIRED;
     else
-      presence = OpDeleteKeyProjection.Presence.OPTIONAL;
+      presence = OpKeyPresence.OPTIONAL;
 
     List<OpParam> params = null;
     @Nullable Map<String, Annotation> annotationsMap = null;

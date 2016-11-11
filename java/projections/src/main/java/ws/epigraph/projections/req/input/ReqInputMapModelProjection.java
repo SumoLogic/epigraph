@@ -14,67 +14,64 @@
  * limitations under the License.
  */
 
-package ws.epigraph.projections.op.output;
+package ws.epigraph.projections.req.input;
 
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenMapModelProjection;
-import ws.epigraph.projections.op.OpParams;
+import ws.epigraph.projections.req.ReqParams;
 import ws.epigraph.types.MapType;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class OpOutputMapModelProjection
-    extends OpOutputModelProjection<OpOutputMapModelProjection, MapType>
+public class ReqInputMapModelProjection
+    extends ReqInputModelProjection<ReqInputMapModelProjection, MapType>
     implements GenMapModelProjection<
-    OpOutputVarProjection,
-    OpOutputTagProjectionEntry,
-    OpOutputModelProjection<?, ?>,
-    OpOutputMapModelProjection,
+    ReqInputVarProjection,
+    ReqInputTagProjectionEntry,
+    ReqInputModelProjection<?, ?>,
+    ReqInputMapModelProjection,
     MapType
     > {
 
   @NotNull
-  private final OpOutputKeyProjection keyProjection;
+  private final List<ReqInputKeyProjection> keys;
   @NotNull
-  private final OpOutputVarProjection itemsProjection;
+  private final ReqInputVarProjection valuesProjection;
 
-  public OpOutputMapModelProjection(
+  public ReqInputMapModelProjection(
       @NotNull MapType model,
-      @NotNull OpParams params,
+      boolean update,
+      @NotNull ReqParams params,
       @NotNull Annotations annotations,
-      @Nullable OpOutputMapModelProjection metaProjection,
-      @NotNull OpOutputKeyProjection keyProjection,
-      @NotNull OpOutputVarProjection itemsProjection,
+      @NotNull List<ReqInputKeyProjection> keys,
+      @NotNull ReqInputVarProjection valuesProjection,
       @NotNull TextLocation location) {
-    super(model, params, annotations, metaProjection, location);
-    this.itemsProjection = itemsProjection;
-    this.keyProjection = keyProjection;
+    super(model, update, params, annotations, location);
+    this.keys = keys;
+    this.valuesProjection = valuesProjection;
   }
 
   @NotNull
-  public OpOutputKeyProjection keyProjection() { return keyProjection; }
+  public ReqInputVarProjection itemsProjection() { return valuesProjection; }
 
-  @NotNull
-  public OpOutputVarProjection itemsProjection() { return itemsProjection; }
+  public @NotNull List<ReqInputKeyProjection> keys() { return keys; }
 
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     if (!super.equals(o)) return false;
-    OpOutputMapModelProjection that = (OpOutputMapModelProjection) o;
-    return Objects.equals(itemsProjection, that.itemsProjection) &&
-           Objects.equals(keyProjection, that.keyProjection);
+    ReqInputMapModelProjection that = (ReqInputMapModelProjection) o;
+    return Objects.equals(keys, that.keys) &&
+           Objects.equals(valuesProjection, that.valuesProjection);
   }
 
   @Override
-  public int hashCode() {
-    return Objects.hash(super.hashCode(), itemsProjection, keyProjection);
-  }
+  public int hashCode() { return Objects.hash(super.hashCode(), keys, valuesProjection); }
 }

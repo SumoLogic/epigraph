@@ -239,6 +239,9 @@ public class UrlParser implements PsiParser, LightPsiParser {
     else if (t == U_REQ_UPDATE_FIELD_PROJECTION_ENTRY) {
       r = reqUpdateFieldProjectionEntry(b, 0);
     }
+    else if (t == U_REQ_UPDATE_KEY_PROJECTION) {
+      r = reqUpdateKeyProjection(b, 0);
+    }
     else if (t == U_REQ_UPDATE_KEYS_PROJECTION) {
       r = reqUpdateKeysProjection(b, 0);
     }
@@ -1529,70 +1532,58 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ( '[' ( reqOutputComaKeyProjection ','? )* ']' ) | ( '[' '*' ']' )
+  // '[' ( '*' | ( ( reqOutputComaKeyProjection ','? )* ) ) ']'
   public static boolean reqOutputComaKeysProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqOutputComaKeysProjection")) return false;
     if (!nextTokenIs(b, U_BRACKET_LEFT)) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = reqOutputComaKeysProjection_0(b, l + 1);
-    if (!r) r = reqOutputComaKeysProjection_1(b, l + 1);
+    r = consumeToken(b, U_BRACKET_LEFT);
+    r = r && reqOutputComaKeysProjection_1(b, l + 1);
+    r = r && consumeToken(b, U_BRACKET_RIGHT);
     exit_section_(b, m, U_REQ_OUTPUT_COMA_KEYS_PROJECTION, r);
     return r;
   }
 
-  // '[' ( reqOutputComaKeyProjection ','? )* ']'
-  private static boolean reqOutputComaKeysProjection_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputComaKeysProjection_0")) return false;
+  // '*' | ( ( reqOutputComaKeyProjection ','? )* )
+  private static boolean reqOutputComaKeysProjection_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqOutputComaKeysProjection_1")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeToken(b, U_BRACKET_LEFT);
-    r = r && reqOutputComaKeysProjection_0_1(b, l + 1);
-    r = r && consumeToken(b, U_BRACKET_RIGHT);
+    r = consumeToken(b, U_STAR);
+    if (!r) r = reqOutputComaKeysProjection_1_1(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
   // ( reqOutputComaKeyProjection ','? )*
-  private static boolean reqOutputComaKeysProjection_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputComaKeysProjection_0_1")) return false;
+  private static boolean reqOutputComaKeysProjection_1_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqOutputComaKeysProjection_1_1")) return false;
     int c = current_position_(b);
     while (true) {
-      if (!reqOutputComaKeysProjection_0_1_0(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "reqOutputComaKeysProjection_0_1", c)) break;
+      if (!reqOutputComaKeysProjection_1_1_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "reqOutputComaKeysProjection_1_1", c)) break;
       c = current_position_(b);
     }
     return true;
   }
 
   // reqOutputComaKeyProjection ','?
-  private static boolean reqOutputComaKeysProjection_0_1_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputComaKeysProjection_0_1_0")) return false;
+  private static boolean reqOutputComaKeysProjection_1_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqOutputComaKeysProjection_1_1_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = reqOutputComaKeyProjection(b, l + 1);
-    r = r && reqOutputComaKeysProjection_0_1_0_1(b, l + 1);
+    r = r && reqOutputComaKeysProjection_1_1_0_1(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
   // ','?
-  private static boolean reqOutputComaKeysProjection_0_1_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputComaKeysProjection_0_1_0_1")) return false;
+  private static boolean reqOutputComaKeysProjection_1_1_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqOutputComaKeysProjection_1_1_0_1")) return false;
     consumeToken(b, U_COMMA);
     return true;
-  }
-
-  // '[' '*' ']'
-  private static boolean reqOutputComaKeysProjection_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputComaKeysProjection_1")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, U_BRACKET_LEFT);
-    r = r && consumeToken(b, U_STAR);
-    r = r && consumeToken(b, U_BRACKET_RIGHT);
-    exit_section_(b, m, null, r);
-    return r;
   }
 
   /* ********************************************************** */
@@ -2286,23 +2277,66 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '[' '+'? ']'
+  // datum reqParamsAndAnnotations
+  public static boolean reqUpdateKeyProjection(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqUpdateKeyProjection")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, U_REQ_UPDATE_KEY_PROJECTION, "<req update key projection>");
+    r = datum(b, l + 1);
+    r = r && reqParamsAndAnnotations(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // '+'? '[' ( reqUpdateKeyProjection ','? )* ']'
   public static boolean reqUpdateKeysProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqUpdateKeysProjection")) return false;
-    if (!nextTokenIs(b, U_BRACKET_LEFT)) return false;
+    if (!nextTokenIs(b, "<req update keys projection>", U_PLUS, U_BRACKET_LEFT)) return false;
     boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, U_BRACKET_LEFT);
-    r = r && reqUpdateKeysProjection_1(b, l + 1);
+    Marker m = enter_section_(b, l, _NONE_, U_REQ_UPDATE_KEYS_PROJECTION, "<req update keys projection>");
+    r = reqUpdateKeysProjection_0(b, l + 1);
+    r = r && consumeToken(b, U_BRACKET_LEFT);
+    r = r && reqUpdateKeysProjection_2(b, l + 1);
     r = r && consumeToken(b, U_BRACKET_RIGHT);
-    exit_section_(b, m, U_REQ_UPDATE_KEYS_PROJECTION, r);
+    exit_section_(b, l, m, r, false, null);
     return r;
   }
 
   // '+'?
-  private static boolean reqUpdateKeysProjection_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateKeysProjection_1")) return false;
+  private static boolean reqUpdateKeysProjection_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqUpdateKeysProjection_0")) return false;
     consumeToken(b, U_PLUS);
+    return true;
+  }
+
+  // ( reqUpdateKeyProjection ','? )*
+  private static boolean reqUpdateKeysProjection_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqUpdateKeysProjection_2")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!reqUpdateKeysProjection_2_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "reqUpdateKeysProjection_2", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
+  // reqUpdateKeyProjection ','?
+  private static boolean reqUpdateKeysProjection_2_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqUpdateKeysProjection_2_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = reqUpdateKeyProjection(b, l + 1);
+    r = r && reqUpdateKeysProjection_2_0_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // ','?
+  private static boolean reqUpdateKeysProjection_2_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqUpdateKeysProjection_2_0_1")) return false;
+    consumeToken(b, U_COMMA);
     return true;
   }
 
@@ -2343,12 +2377,12 @@ public class UrlParser implements PsiParser, LightPsiParser {
   // reqUpdateKeysProjection ( '(' reqUpdateVarProjection ')' )?
   public static boolean reqUpdateMapModelProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqUpdateMapModelProjection")) return false;
-    if (!nextTokenIs(b, U_BRACKET_LEFT)) return false;
+    if (!nextTokenIs(b, "<req update map model projection>", U_PLUS, U_BRACKET_LEFT)) return false;
     boolean r;
-    Marker m = enter_section_(b);
+    Marker m = enter_section_(b, l, _NONE_, U_REQ_UPDATE_MAP_MODEL_PROJECTION, "<req update map model projection>");
     r = reqUpdateKeysProjection(b, l + 1);
     r = r && reqUpdateMapModelProjection_1(b, l + 1);
-    exit_section_(b, m, U_REQ_UPDATE_MAP_MODEL_PROJECTION, r);
+    exit_section_(b, l, m, r, false, null);
     return r;
   }
 

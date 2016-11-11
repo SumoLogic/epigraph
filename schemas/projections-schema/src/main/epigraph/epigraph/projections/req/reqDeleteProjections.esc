@@ -61,15 +61,11 @@ record ReqDeleteMapModelProjection extends ReqDeleteModelProjection {
 }
 
 record ReqDeleteKeysProjection {
-  keys: list[ReqDeleteKey]
-}
-
-record ReqDeleteKey {
-  value: Datum { doc = "of appropriate (enclosing map key) type"}
-  projection: ReqDeleteKeyProjection
+  keys: list[ReqDeleteKeyProjection]
 }
 
 record ReqDeleteKeyProjection {
+  value: Datum { doc = "of appropriate (enclosing map key) type"}
   params: map[String, ReqParam]
   annotations: map[String, Annotation]
 }

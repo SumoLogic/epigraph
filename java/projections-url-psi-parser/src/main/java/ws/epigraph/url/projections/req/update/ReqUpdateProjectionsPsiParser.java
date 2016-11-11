@@ -20,6 +20,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.data.Datum;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.op.input.*;
@@ -434,7 +435,8 @@ public class ReqUpdateProjectionsPsiParser {
             update,
             params,
             annotations,
-            ReqUpdateKeysProjection.UPDATE_KEYS,
+            false,
+            Collections.emptyList(),
             valueVarProjection,
             location
         );
@@ -664,16 +666,44 @@ public class ReqUpdateProjectionsPsiParser {
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
-    @Nullable final UrlReqUpdateVarProjection elementsVarProjectionPsi = psi.getReqUpdateVarProjection();
+    @NotNull final MapType model = op.model();
 
+    @NotNull final List<UrlReqUpdateKeyProjection> keysPsi =
+        psi.getReqUpdateKeysProjection().getReqUpdateKeyProjectionList();
+
+    List<ReqUpdateKeyProjection> keys = new ArrayList<>(keysPsi.size());
+
+    for (final UrlReqUpdateKeyProjection keyPsi : keysPsi) {
+      try {
+        final @Nullable Datum keyValue =
+            getDatum(keyPsi.getDatum(), model.keyType(), resolver, "Error processing map key: ", errors);
+
+        if (keyValue == null) {
+          errors.add(new PsiProcessingError("Null keys are not allowed", keyPsi));
+        } else {
+          keys.add(
+              new ReqUpdateKeyProjection(
+                  keyValue,
+                  parseReqParams(keyPsi.getReqParamList(), op.keyProjection().params(), resolver, errors),
+                  parseAnnotations(keyPsi.getReqAnnotationList()),
+                  EpigraphPsiUtil.getLocation(keyPsi)
+              )
+          );
+        }
+      } catch (PsiProcessingException e) {
+        errors.add(e.toError());
+      }
+    }
+
+    @Nullable final UrlReqUpdateVarProjection elementsVarProjectionPsi = psi.getReqUpdateVarProjection();
     @NotNull final ReqUpdateVarProjection elementsVarProjection;
 
     if (elementsVarProjectionPsi == null) {
-      @NotNull final Type type = op.model().valueType.type;
+      @NotNull final Type type = model.valueType.type;
       elementsVarProjection = getDefaultVarProjection(type, psi);
     } else {
       elementsVarProjection = parseVarProjection(
-          op.model().valueType,
+          model.valueType,
           op.itemsProjection(),
           elementsVarProjectionPsi,
           resolver,
@@ -682,13 +712,12 @@ public class ReqUpdateProjectionsPsiParser {
     }
 
     return new ReqUpdateMapModelProjection(
-        op.model(),
+        model,
         update,
         params,
         annotations,
-        psi.getReqUpdateKeysProjection().getPlus() == null
-        ? ReqUpdateKeysProjection.PATCH_KEYS
-        : ReqUpdateKeysProjection.UPDATE_KEYS,
+        psi.getReqUpdateKeysProjection().getPlus() != null,
+        keys,
         elementsVarProjection,
         EpigraphPsiUtil.getLocation(psi)
     );

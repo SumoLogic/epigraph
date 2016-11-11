@@ -17,13 +17,11 @@
 package ws.epigraph.projections.req.output;
 
 import de.uka.ilkd.pp.Layouter;
-import ws.epigraph.projections.Annotation;
-import ws.epigraph.projections.Annotations;
-import ws.epigraph.projections.abs.AbstractProjectionsPrettyPrinter;
-import ws.epigraph.projections.req.ReqParam;
-import ws.epigraph.projections.req.ReqParams;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.projections.Annotations;
+import ws.epigraph.projections.req.AbstractReqProjectionsPrettyPrinter;
+import ws.epigraph.projections.req.ReqParams;
 
 import java.util.List;
 import java.util.Map;
@@ -32,11 +30,11 @@ import java.util.Map;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
-    extends AbstractProjectionsPrettyPrinter<
-    ReqOutputVarProjection,
-    ReqOutputTagProjectionEntry,
-    ReqOutputModelProjection<?, ?>,
-    E> {
+    extends AbstractReqProjectionsPrettyPrinter<
+        ReqOutputVarProjection,
+        ReqOutputTagProjectionEntry,
+        ReqOutputModelProjection<?, ?>,
+        E> {
 
   // todo: take var projection's 'parenthesized' into account
 
@@ -137,10 +135,7 @@ public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
 //      if (mp.keysRequired()) l.print("+");
 
       if (keys != null && keys.size() == 1) {
-        ReqOutputKeyProjection key = keys.iterator().next();
-        dataPrinter.print(key.value());
-        printParams(key.params());
-        printAnnotations(key.annotations());
+        printReqKey(keys.iterator().next());
       } else
         throw new IllegalArgumentException(
             String.format(
@@ -166,9 +161,7 @@ public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
           if (first) first = false;
           else l.print(", ");
 
-          dataPrinter.print(key.value());
-          printParams(key.params());
-          printAnnotations(key.annotations());
+          printReqKey(key);
         }
       }
 
@@ -216,29 +209,4 @@ public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
     return true;
   }
 
-  private void printParams(@NotNull ReqParams params) throws E { // move to req common?
-    l.beginCInd();
-    if (!params.isEmpty()) {
-      for (ReqParam param : params.params().values()) {
-        l.brk().beginIInd();
-        l.print(";").print(param.name()).brk().print("=").brk();
-        dataPrinter.print(param.value());
-        l.end();
-      }
-    }
-    l.end();
-  }
-
-  private void printAnnotations(@NotNull Annotations annotations) throws E {
-    l.beginCInd();
-    if (!annotations.isEmpty()) {
-      for (Annotation annotation : annotations.params().values()) {
-        l.brk().beginIInd();
-        l.print("!").print(annotation.name()).brk().print("=").brk();
-        gdataPrettyPrinter.print(annotation.value());
-        l.end();
-      }
-    }
-    l.end();
-  }
 }

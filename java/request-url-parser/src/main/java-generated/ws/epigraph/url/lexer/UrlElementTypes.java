@@ -82,6 +82,7 @@ public interface UrlElementTypes {
   IElementType U_REQ_UPDATE_FIELD_PROJECTION = new UrlElementType("U_REQ_UPDATE_FIELD_PROJECTION");
   IElementType U_REQ_UPDATE_FIELD_PROJECTION_ENTRY = new UrlElementType("U_REQ_UPDATE_FIELD_PROJECTION_ENTRY");
   IElementType U_REQ_UPDATE_KEYS_PROJECTION = new UrlElementType("U_REQ_UPDATE_KEYS_PROJECTION");
+  IElementType U_REQ_UPDATE_KEY_PROJECTION = new UrlElementType("U_REQ_UPDATE_KEY_PROJECTION");
   IElementType U_REQ_UPDATE_LIST_MODEL_PROJECTION = new UrlElementType("U_REQ_UPDATE_LIST_MODEL_PROJECTION");
   IElementType U_REQ_UPDATE_MAP_MODEL_PROJECTION = new UrlElementType("U_REQ_UPDATE_MAP_MODEL_PROJECTION");
   IElementType U_REQ_UPDATE_MODEL_PROJECTION = new UrlElementType("U_REQ_UPDATE_MODEL_PROJECTION");
@@ -357,6 +358,9 @@ public interface UrlElementTypes {
       }
       else if (type == U_REQ_UPDATE_KEYS_PROJECTION) {
         return new UrlReqUpdateKeysProjectionImpl(node);
+      }
+      else if (type == U_REQ_UPDATE_KEY_PROJECTION) {
+        return new UrlReqUpdateKeyProjectionImpl(node);
       }
       else if (type == U_REQ_UPDATE_LIST_MODEL_PROJECTION) {
         return new UrlReqUpdateListModelProjectionImpl(node);

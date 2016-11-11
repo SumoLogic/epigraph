@@ -65,6 +65,7 @@ public interface IdlElementTypes {
   IElementType I_OP_INPUT_FIELD_PROJECTION_BODY_PART = new IdlElementType("I_OP_INPUT_FIELD_PROJECTION_BODY_PART");
   IElementType I_OP_INPUT_FIELD_PROJECTION_ENTRY = new IdlElementType("I_OP_INPUT_FIELD_PROJECTION_ENTRY");
   IElementType I_OP_INPUT_KEY_PROJECTION = new IdlElementType("I_OP_INPUT_KEY_PROJECTION");
+  IElementType I_OP_INPUT_KEY_PROJECTION_PART = new IdlElementType("I_OP_INPUT_KEY_PROJECTION_PART");
   IElementType I_OP_INPUT_LIST_MODEL_PROJECTION = new IdlElementType("I_OP_INPUT_LIST_MODEL_PROJECTION");
   IElementType I_OP_INPUT_MAP_MODEL_PROJECTION = new IdlElementType("I_OP_INPUT_MAP_MODEL_PROJECTION");
   IElementType I_OP_INPUT_MODEL_META = new IdlElementType("I_OP_INPUT_MODEL_META");
@@ -349,6 +350,9 @@ public interface IdlElementTypes {
       }
       else if (type == I_OP_INPUT_KEY_PROJECTION) {
         return new IdlOpInputKeyProjectionImpl(node);
+      }
+      else if (type == I_OP_INPUT_KEY_PROJECTION_PART) {
+        return new IdlOpInputKeyProjectionPartImpl(node);
       }
       else if (type == I_OP_INPUT_LIST_MODEL_PROJECTION) {
         return new IdlOpInputListModelProjectionImpl(node);

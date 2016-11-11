@@ -11,14 +11,14 @@ import static ws.epigraph.url.lexer.UrlElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import ws.epigraph.url.parser.psi.*;
 
-public class UrlReqUpdateKeysProjectionImpl extends ASTWrapperPsiElement implements UrlReqUpdateKeysProjection {
+public class UrlReqUpdateKeyProjectionImpl extends ASTWrapperPsiElement implements UrlReqUpdateKeyProjection {
 
-  public UrlReqUpdateKeysProjectionImpl(ASTNode node) {
+  public UrlReqUpdateKeyProjectionImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull UrlVisitor visitor) {
-    visitor.visitReqUpdateKeysProjection(this);
+    visitor.visitReqUpdateKeyProjection(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -28,26 +28,20 @@ public class UrlReqUpdateKeysProjectionImpl extends ASTWrapperPsiElement impleme
 
   @Override
   @NotNull
-  public List<UrlReqUpdateKeyProjection> getReqUpdateKeyProjectionList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, UrlReqUpdateKeyProjection.class);
+  public UrlDatum getDatum() {
+    return findNotNullChildByClass(UrlDatum.class);
   }
 
   @Override
   @NotNull
-  public PsiElement getBracketLeft() {
-    return findNotNullChildByType(U_BRACKET_LEFT);
+  public List<UrlReqAnnotation> getReqAnnotationList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, UrlReqAnnotation.class);
   }
 
   @Override
   @NotNull
-  public PsiElement getBracketRight() {
-    return findNotNullChildByType(U_BRACKET_RIGHT);
-  }
-
-  @Override
-  @Nullable
-  public PsiElement getPlus() {
-    return findChildByType(U_PLUS);
+  public List<UrlReqParam> getReqParamList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, UrlReqParam.class);
   }
 
 }

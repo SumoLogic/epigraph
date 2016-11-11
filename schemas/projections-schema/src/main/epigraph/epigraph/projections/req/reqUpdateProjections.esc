@@ -67,15 +67,11 @@ record ReqUpdateMapModelProjection extends ReqUpdateModelProjection {
 
 record ReqUpdateKeysProjection {
   update: Boolean // update or patch entities? applies to all keys
-  // actual key values are part of the payload (request body)
-}
-
-record ReqUpdateKey {
-  value: Datum { doc = "of appropriate (enclosing map key) type"}
-  projection: ReqUpdateKeyProjection
+  keys: list[ReqUpdateKeyProjection]
 }
 
 record ReqUpdateKeyProjection {
+  value: Datum { doc = "of appropriate (enclosing map key) type"}
   params: map[String, ReqParam]
   annotations: map[String, Annotation]
 }

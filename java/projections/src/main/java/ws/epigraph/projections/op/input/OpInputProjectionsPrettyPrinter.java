@@ -94,82 +94,22 @@ public class OpInputProjectionsPrettyPrinter<E extends Exception> extends Abstra
   @Override
   public void print(@NotNull OpInputModelProjection<?, ?, ?> mp, int pathSteps) throws E {
     if (mp instanceof OpInputRecordModelProjection)
-      print((OpInputRecordModelProjection) mp, pathSteps);
+      print((OpInputRecordModelProjection) mp);
     else if (mp instanceof OpInputMapModelProjection)
-      print((OpInputMapModelProjection) mp, pathSteps);
+      print((OpInputMapModelProjection) mp);
     else if (mp instanceof OpInputListModelProjection)
-      print((OpInputListModelProjection) mp, pathSteps);
+      print((OpInputListModelProjection) mp);
   }
-
-  private void print(@NotNull OpInputRecordModelProjection mp, int pathSteps) throws E {
-    Map<String, OpInputFieldProjectionEntry> fieldProjections = mp.fieldProjections();
-
-    if (pathSteps > 0) {
-      if (fieldProjections.isEmpty()) return;
-      if (fieldProjections.size() > 1) throw new IllegalArgumentException(
-          String.format("Encountered %d fields while still having %d path steps", fieldProjections.size(), pathSteps)
-      );
-
-      Map.Entry<String, OpInputFieldProjectionEntry> entry = fieldProjections.entrySet().iterator().next();
-      l.beginIInd();
-      l.print("/").brk();
-      print(entry.getKey(), entry.getValue(), decSteps(pathSteps));
-      l.end();
-
-    } else {
-      print(mp);
-    }
-  }
-
   @Override
   protected String fieldNamePrefix(@NotNull final OpInputFieldProjectionEntry fieldEntry) {
     return fieldEntry.projection().required() ? "+" : "";
   }
 
-  private void print(@NotNull String fieldName, @NotNull OpInputFieldProjectionEntry fieldProjectionEntry, int pathSteps)
-      throws E {
-
-    @NotNull final OpInputFieldProjection fieldProjection = fieldProjectionEntry.projection();
-    @NotNull OpInputVarProjection fieldVarProjection = fieldProjection.projection();
-    @NotNull Annotations fieldAnnotations = fieldProjection.annotations();
-
-    if (fieldAnnotations.isEmpty()) {
-      l.beginIInd();
-      l.print(fieldNamePrefix(fieldProjectionEntry));
-      l.print(fieldName);
-      if (!isPrintoutEmpty(fieldVarProjection)) {
-        l.brk();
-        print(fieldVarProjection, pathSteps);
-      }
-      l.end();
-    } else {
-      l.beginCInd();
-      l.print(fieldNamePrefix(fieldProjectionEntry));
-      l.print(fieldName);
-      l.print(" {");
-      print(fieldAnnotations);
-      if (!isPrintoutEmpty(fieldVarProjection)) {
-        l.brk();
-        print(fieldVarProjection, pathSteps);
-      }
-      l.brk(1, -l.getDefaultIndentation()).end().print("}");
-    }
+  private void print(OpInputMapModelProjection mp) throws E {
+    printMapModelProjection(null, mp.keyProjection(), mp.itemsProjection());
   }
 
-  private void print(OpInputMapModelProjection mp, int pathSteps) throws E {
-    if (pathSteps > 0) throw new IllegalArgumentException(
-        String.format("Encountered map projection while still having %d path steps", pathSteps)
-    );
-    l.beginIInd();
-    l.print("[](").brk();
-    print(mp.itemsProjection(), 0);
-    l.brk(1, -l.getDefaultIndentation()).end().print(")");
-  }
-
-  private void print(OpInputListModelProjection mp, int pathSteps) throws E {
-    if (pathSteps > 0) throw new IllegalArgumentException(
-        String.format("Encountered list projection while still having %d path steps", pathSteps)
-    );
+  private void print(OpInputListModelProjection mp) throws E {
     l.beginIInd();
     l.print("*(").brk();
     print(mp.itemsProjection(), 0);

@@ -8,6 +8,8 @@
 - [x] psi parser for req update projections
 - [x] psi parser for req delete projections
 - [x] data structures for req input projections
+- [x] fix op input projections: map keys must have keys and parameters
+- [x] fix req update projections: actual key values for maps must be specified
 - [ ] psi parser for req input projections
 - [ ] add input (projection) support to custom operations
 - [ ] add optional input projection support to create operations
@@ -41,6 +43,10 @@
 - [ ] Standalone IDL verifier/compiler
   - [ ] Maven plugin
   - [ ] Gradle plugin
+
+#Low priority
+- [ ] Unify req projections pretty printers, there's lots of code duplication
+- [ ] Unify op projections pretty printers, there's lots of code duplication
   
 # See also
 - See [General todo] (todo.md)

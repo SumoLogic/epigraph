@@ -20,6 +20,7 @@ import de.uka.ilkd.pp.Layouter;
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.op.AbstractOpProjectionsPrettyPrinter;
+import ws.epigraph.projections.op.OpKeyPresence;
 import ws.epigraph.projections.op.OpParams;
 
 import java.util.Map;
@@ -94,41 +95,8 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception>
   }
 
   private void print(OpOutputMapModelProjection mp) throws E {
-    l.beginIInd();
-
-    { // keys
-      @NotNull OpOutputKeyProjection keyProjection = mp.keyProjection();
-
-      l.beginCInd();
-      l.print("[");
-      boolean commaNeeded = false;
-
-      if (keyProjection.presence() == OpOutputKeyProjection.Presence.FORBIDDEN) {
-        l.brk().print("forbidden");
-        commaNeeded = true;
-      }
-
-      if (keyProjection.presence() == OpOutputKeyProjection.Presence.REQUIRED) {
-        if (commaNeeded) l.print(",");
-        l.brk().print("required");
-        commaNeeded = true;
-      }
-
-      @NotNull OpParams keyParams = keyProjection.params();
-      if (!keyParams.isEmpty()) {
-        print(keyParams, true, !commaNeeded);
-        commaNeeded = !keyParams.isEmpty();
-      }
-
-      @NotNull Annotations keyAnnotations = keyProjection.annotations();
-      if (!keyAnnotations.isEmpty()) print(keyAnnotations, true, !commaNeeded);
-
-      l.brk(1, -l.getDefaultIndentation()).end().print("]");
-    }
-
-    l.print("(").brk();
-    print(mp.itemsProjection(), 0);
-    l.brk(1, -l.getDefaultIndentation()).end().print(")");
+    @NotNull OpOutputKeyProjection keyProjection = mp.keyProjection();
+    printMapModelProjection(keyProjection.presence().getPrettyPrinterString(), keyProjection, mp.itemsProjection());
   }
 
   private void print(OpOutputListModelProjection mp) throws E {
@@ -137,7 +105,6 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception>
     print(mp.itemsProjection(), 0);
     l.brk(1, -l.getDefaultIndentation()).end().print(")");
   }
-
 
   @Override
   public boolean isPrintoutEmpty(@NotNull OpOutputModelProjection<?, ?> mp) {
@@ -151,7 +118,7 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception>
       OpOutputMapModelProjection mapModelProjection = (OpOutputMapModelProjection) mp;
       @NotNull OpOutputKeyProjection keyProjection = mapModelProjection.keyProjection();
 
-      if (keyProjection.presence() != OpOutputKeyProjection.Presence.OPTIONAL) return false;
+      if (keyProjection.presence() != OpKeyPresence.OPTIONAL) return false;
       if (!keyProjection.params().isEmpty()) return false;
       if (!keyProjection.annotations().isEmpty()) return false;
 

@@ -338,11 +338,11 @@ opOutputListModelProjection ::= '*' '(' opOutputVarProjection ')' { pin=1 }
 // op output map
 opOutputMapModelProjection ::= opOutputKeyProjection '(' opOutputVarProjection ')' { pin=1 }
 opOutputKeyProjection ::= '[' opOutputKeyProjectionInt ']' {pin=1}
-private opOutputKeyProjectionInt ::= ('required' ','?| 'forbidden' ','?)? (opOutputKeyProjectionPart ','?)* {
+private opOutputKeyProjectionInt ::= ('required' ','?| 'forbidden' ','?)? (opOutputKeyProjectionPart ','?)*
+opOutputKeyProjectionPart ::= opParam | annotation {
   recoverWhile = opOutputKeyProjectionRecover
 }
-opOutputKeyProjectionPart ::= opParam | annotation
-private opOutputKeyProjectionRecover ::= ! ( ']' )
+private opOutputKeyProjectionRecover ::= ! ( ']' | ',' )
 
 // input --------------------------------------------------------
 
@@ -392,7 +392,11 @@ opInputListModelProjection ::= '*' '(' opInputVarProjection ')' { pin=1 }
 
 // op input map
 opInputMapModelProjection ::= opInputKeyProjection '(' opInputVarProjection ')' { pin=1 }
-opInputKeyProjection ::= '[' ']' {pin=1}
+opInputKeyProjection ::= '[' (opInputKeyProjectionPart ','?)* ']' {pin=1}
+opInputKeyProjectionPart ::= opParam | annotation {
+  recoverWhile = opInputKeyProjectionRecover
+}
+private opInputKeyProjectionRecover ::= ! ( ']' | ',' )
 
 // delete --------------------------------------------------------
 
@@ -438,11 +442,11 @@ opDeleteListModelProjection ::= '*' '(' opDeleteVarProjection ')' { pin=1 }
 // op delete map
 opDeleteMapModelProjection ::= opDeleteKeyProjection '(' opDeleteVarProjection ')' { pin=1 }
 opDeleteKeyProjection ::= '[' opDeleteKeyProjectionInt ']' {pin=1}
-private opDeleteKeyProjectionInt ::= ('required' ','?| 'forbidden' ','?)? (opDeleteKeyProjectionPart ','?)* {
+private opDeleteKeyProjectionInt ::= ('required' ','?| 'forbidden' ','?)? (opDeleteKeyProjectionPart ','?)*
+opDeleteKeyProjectionPart ::= opParam | annotation {
   recoverWhile = opDeleteKeyProjectionRecover
 }
-opDeleteKeyProjectionPart ::= opParam | annotation
-private opDeleteKeyProjectionRecover ::= ! ( ']' )
+private opDeleteKeyProjectionRecover ::= ! ( ']' | ',' )
 
 // ============= req projections =============
 

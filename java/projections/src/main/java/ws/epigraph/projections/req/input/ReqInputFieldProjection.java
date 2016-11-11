@@ -14,45 +14,51 @@
  * limitations under the License.
  */
 
-package ws.epigraph.projections.op.delete;
+package ws.epigraph.projections.req.input;
 
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
-import ws.epigraph.projections.op.OpKeyPresence;
-import ws.epigraph.projections.op.OpKeyProjection;
-import ws.epigraph.projections.op.OpParams;
+import ws.epigraph.projections.abs.AbstractFieldProjection;
+import ws.epigraph.projections.req.ReqParams;
 
 import java.util.Objects;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class OpDeleteKeyProjection extends OpKeyProjection {
+public class ReqInputFieldProjection extends AbstractFieldProjection<
+    ReqInputVarProjection,
+    ReqInputTagProjectionEntry,
+    ReqInputModelProjection<?, ?>
+    > {
   @NotNull
-  private final OpKeyPresence presence;
+  private final ReqParams reqParams;
 
-  @NotNull
-  public OpDeleteKeyProjection(
-      final @NotNull OpKeyPresence presence, @NotNull final OpParams params,
-      @NotNull final Annotations annotations, @NotNull final TextLocation location) {
-    super(params, annotations, location);
-    this.presence = presence;
+  public ReqInputFieldProjection(
+      @NotNull ReqParams reqParams,
+      @NotNull Annotations annotations,
+      @NotNull ReqInputVarProjection projection,
+      @NotNull TextLocation location) {
+    super(annotations, projection, location);
+    this.reqParams = reqParams;
   }
 
-  public OpKeyPresence presence() { return presence; }
+  @NotNull
+  public ReqParams reqParams() { return reqParams; }
+
 
   @Override
-  public boolean equals(final Object o) {
+  public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     if (!super.equals(o)) return false;
-    final OpDeleteKeyProjection that = (OpDeleteKeyProjection) o;
-    return presence == that.presence;
+    ReqInputFieldProjection that = (ReqInputFieldProjection) o;
+    return Objects.equals(reqParams, that.reqParams);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(super.hashCode(), presence);
+    return Objects.hash(super.hashCode(), reqParams );
   }
 }

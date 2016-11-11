@@ -1,0 +1,82 @@
+namespace epigraph.projections.req
+
+/**
+ * Request-time projections describing custom operation body payload. Should be
+ * synchronous with body structure and provides additional information for it, e.g.
+ * parameters and annotations
+ */
+
+import epigraph.projections.Annotation
+import epigraph.schema.DataTypeRef
+import epigraph.schema.EnumTypeRef
+import epigraph.schema.FieldRef
+import epigraph.schema.ListTypeRef
+import epigraph.schema.MapTypeRef
+import epigraph.schema.PrimitiveTypeRef
+import epigraph.schema.RecordTypeRef
+import epigraph.schema.TypeMemberRef
+import epigraph.schema.TypeRef
+import epigraph.data.Datum
+
+record ReqInputVarProjection {
+  type: TypeRef
+  tagProjections: map[String, ReqInputTagProjectionEntry]
+  polymorphicTail: list[ReqInputVarProjection]
+}
+
+record ReqInputTagProjectionEntry {
+  tag: TypeMemberRef
+  projection: ReqInputModelProjection
+}
+
+abstract record ReqInputModelProjection {
+  model: DataTypeRef
+  params: map[String, ReqParam]
+  annotations: map[String, Annotation]
+//  `meta`: ReqInputModelProjection
+}
+
+record ReqInputRecordModelProjection extends ReqInputModelProjection {
+  override model: RecordTypeRef
+  fieldProjections: list[ReqInputFieldProjectionEntry]
+}
+record ReqInputFieldProjectionEntry {
+  field: FieldRef
+  projection: ReqInputFieldProjection
+}
+
+record ReqInputFieldProjection {
+  field: FieldRef
+  params: map[String, ReqParam]
+  annotations: map[String, Annotation]
+  varProjection: ReqInputVarProjection
+}
+
+record ReqInputListModelProjection extends ReqInputModelProjection {
+  override model: ListTypeRef
+  varProjection: ReqInputVarProjection
+}
+
+record ReqInputMapModelProjection extends ReqInputModelProjection {
+  override model: MapTypeRef
+  keysProjection: ReqInputKeysProjection
+  varProjection: ReqInputVarProjection
+}
+
+record ReqInputKeysProjection {
+  keys: list[ReqInputKeyProjection]
+}
+
+record ReqInputKeyProjection {
+  value: Datum { doc = "of appropriate (enclosing map key) type"}
+  params: map[String, ReqParam]
+  annotations: map[String, Annotation]
+}
+
+record ReqInputEnumModelProjection extends ReqInputModelProjection {
+  override model: EnumTypeRef
+}
+
+record ReqInputPrimitiveModelProjection extends ReqInputModelProjection {
+  override model: PrimitiveTypeRef
+}

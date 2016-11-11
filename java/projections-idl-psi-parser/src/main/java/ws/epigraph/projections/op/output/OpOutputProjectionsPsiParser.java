@@ -22,6 +22,7 @@ import ws.epigraph.idl.parser.psi.*;
 import ws.epigraph.projections.Annotation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.ProjectionUtils;
+import ws.epigraph.projections.op.OpKeyPresence;
 import ws.epigraph.projections.op.OpParam;
 import ws.epigraph.projections.op.OpParams;
 import ws.epigraph.psi.EpigraphPsiUtil;
@@ -426,7 +427,7 @@ public class OpOutputProjectionsPsiParser {
 
         final OpOutputKeyProjection keyProjection =
             new OpOutputKeyProjection(
-                OpOutputKeyProjection.Presence.OPTIONAL,
+                OpKeyPresence.OPTIONAL,
                 OpParams.EMPTY,
                 Annotations.EMPTY,
                 EpigraphPsiUtil.getLocation(locationPsi)
@@ -634,14 +635,14 @@ public class OpOutputProjectionsPsiParser {
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
-    final OpOutputKeyProjection.Presence presence;
+    final OpKeyPresence presence;
 
     if (keyProjectionPsi.getForbidden() != null)
-      presence = OpOutputKeyProjection.Presence.FORBIDDEN;
+      presence = OpKeyPresence.FORBIDDEN;
     else if (keyProjectionPsi.getRequired() != null)
-      presence = OpOutputKeyProjection.Presence.REQUIRED;
+      presence = OpKeyPresence.REQUIRED;
     else
-      presence = OpOutputKeyProjection.Presence.OPTIONAL;
+      presence = OpKeyPresence.OPTIONAL;
 
     List<OpParam> params = null;
     @Nullable Map<String, Annotation> annotationsMap = null;

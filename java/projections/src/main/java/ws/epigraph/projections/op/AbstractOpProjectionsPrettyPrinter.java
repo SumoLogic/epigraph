@@ -17,6 +17,7 @@
 package ws.epigraph.projections.op;
 
 import de.uka.ilkd.pp.Layouter;
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Datum;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.abs.AbstractProjectionsPrettyPrinter;
@@ -95,6 +96,7 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
     l.end();
   }
 
+  // todo port to AbstractReqProjectionsPrettyPrinter too
   public void print(@NotNull RP recordProjection) throws E {
     Map<String, FPE> fieldProjections = recordProjection.fieldProjections(); // todo why is it unchecked?
 
@@ -137,6 +139,39 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
         l.end();
       }
     }
+  }
+
+  protected void printMapModelProjection(
+      @Nullable String keysProjectionPrefix,
+      @NotNull OpKeyProjection keyProjection,
+      VP itemsProjection) throws E {
+
+    l.beginIInd();
+    { // keys
+      l.beginCInd();
+      l.print("[");
+      boolean commaNeeded = false;
+
+      if (keysProjectionPrefix != null) {
+        l.brk().print(keysProjectionPrefix);
+        commaNeeded = true;
+      }
+
+      @NotNull OpParams keyParams = keyProjection.params();
+      if (!keyParams.isEmpty()) {
+        print(keyParams, true, !commaNeeded);
+        commaNeeded = !keyParams.isEmpty();
+      }
+
+      @NotNull Annotations keyAnnotations = keyProjection.annotations();
+      if (!keyAnnotations.isEmpty()) print(keyAnnotations, true, !commaNeeded);
+
+      if (commaNeeded) l.brk(1, -l.getDefaultIndentation());
+      l.end().print("]");
+    }
+    l.print("(").brk();
+    print(itemsProjection, 0);
+    l.brk(1, -l.getDefaultIndentation()).end().print(")");
   }
 
   public void print(@NotNull String prefix, @NotNull FP fieldProjection) throws E {

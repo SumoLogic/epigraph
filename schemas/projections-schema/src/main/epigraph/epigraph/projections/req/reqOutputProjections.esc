@@ -83,16 +83,12 @@ record ReqOutputMapModelProjection extends ReqOutputModelProjection {
 }
 
 record ReqOutputKeysProjection {
-  keys: list[ReqOutputKey]
-}
-
-record ReqOutputKey {
-  value: Datum { doc = "of appropriate (enclosing map key) type"}
-  projection: ReqOutputKeyProjection
+  keys: list[ReqOutputKeyProjection]
 }
 
 record ReqOutputKeyProjection {
   // required is specified once for all keys
+  value: Datum { doc = "of appropriate (enclosing map key) type"}
   params: map[String, ReqParam]
   annotations: map[String, Annotation]
 }

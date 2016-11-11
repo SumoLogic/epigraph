@@ -14,40 +14,39 @@
  * limitations under the License.
  */
 
-package ws.epigraph.projections.req.delete;
+package ws.epigraph.projections.req.input;
 
 import de.uka.ilkd.pp.Layouter;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.req.AbstractReqProjectionsPrettyPrinter;
 import ws.epigraph.projections.req.ReqParams;
 
-import java.util.List;
 import java.util.Map;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class ReqDeleteProjectionsPrettyPrinter<E extends Exception>
+public class ReqInputProjectionsPrettyPrinter<E extends Exception>
     extends AbstractReqProjectionsPrettyPrinter<
-    ReqDeleteVarProjection,
-    ReqDeleteTagProjectionEntry,
-    ReqDeleteModelProjection<?, ?>,
+    ReqInputVarProjection,
+    ReqInputTagProjectionEntry,
+    ReqInputModelProjection<?, ?>,
     E> {
 
-  public ReqDeleteProjectionsPrettyPrinter(Layouter<E> layouter) {
+  public ReqInputProjectionsPrettyPrinter(Layouter<E> layouter) {
     super(layouter);
   }
 
   @Override
-  public void print(@NotNull String tagName, @NotNull ReqDeleteTagProjectionEntry tp, int pathSteps) throws E {
-    ReqDeleteModelProjection<?, ?> projection = tp.projection();
+  public void print(@NotNull String tagName, @NotNull ReqInputTagProjectionEntry tp, int pathSteps) throws E {
+    ReqInputModelProjection<?, ?> projection = tp.projection();
 
     ReqParams params = projection.params();
     Annotations annotations = projection.annotations();
 
     l.beginCInd();
+    if (projection.update()) l.print("+");
     l.print(tagName);
 
     printParams(params);
@@ -61,21 +60,21 @@ public class ReqDeleteProjectionsPrettyPrinter<E extends Exception>
   }
 
   @Override
-  public void print(@NotNull ReqDeleteModelProjection<?, ?> mp, int pathSteps) throws E {
-    if (mp instanceof ReqDeleteRecordModelProjection)
-      print((ReqDeleteRecordModelProjection) mp);
-    else if (mp instanceof ReqDeleteMapModelProjection)
-      print((ReqDeleteMapModelProjection) mp);
-    else if (mp instanceof ReqDeleteListModelProjection)
-      print((ReqDeleteListModelProjection) mp, pathSteps);
+  public void print(@NotNull ReqInputModelProjection<?, ?> mp, int pathSteps) throws E {
+    if (mp instanceof ReqInputRecordModelProjection)
+      print((ReqInputRecordModelProjection) mp);
+    else if (mp instanceof ReqInputMapModelProjection)
+      print((ReqInputMapModelProjection) mp);
+    else if (mp instanceof ReqInputListModelProjection)
+      print((ReqInputListModelProjection) mp, pathSteps);
   }
 
-  private void print(@NotNull ReqDeleteRecordModelProjection mp) throws E {
-    Map<String, ReqDeleteFieldProjectionEntry> fieldProjections = mp.fieldProjections();
+  private void print(@NotNull ReqInputRecordModelProjection mp) throws E {
+    Map<String, ReqInputFieldProjectionEntry> fieldProjections = mp.fieldProjections();
 
     l.print("(").beginCInd();
     boolean first = true;
-    for (Map.Entry<String, ReqDeleteFieldProjectionEntry> entry : fieldProjections.entrySet()) {
+    for (Map.Entry<String, ReqInputFieldProjectionEntry> entry : fieldProjections.entrySet()) {
       if (first) first = false;
       else l.print(",");
       l.brk();
@@ -86,10 +85,10 @@ public class ReqDeleteProjectionsPrettyPrinter<E extends Exception>
     l.brk(1, -l.getDefaultIndentation()).end().print(")");
   }
 
-  public void print(@NotNull String fieldName, @NotNull ReqDeleteFieldProjection fieldProjection, int pathSteps)
+  public void print(@NotNull String fieldName, @NotNull ReqInputFieldProjection fieldProjection, int pathSteps)
       throws E {
 
-    @NotNull ReqDeleteVarProjection fieldVarProjection = fieldProjection.projection();
+    @NotNull ReqInputVarProjection fieldVarProjection = fieldProjection.projection();
     @NotNull Annotations fieldAnnotations = fieldProjection.annotations();
 
     l.beginIInd();
@@ -105,11 +104,11 @@ public class ReqDeleteProjectionsPrettyPrinter<E extends Exception>
     l.end();
   }
 
-  private void print(ReqDeleteMapModelProjection mp) throws E {
+  private void print(ReqInputMapModelProjection mp) throws E {
     printMapModelProjection(mp.keys(), mp.itemsProjection());
   }
 
-  private void print(ReqDeleteListModelProjection mp, int pathSteps) throws E {
+  private void print(ReqInputListModelProjection mp, int pathSteps) throws E {
     if (pathSteps > 0) throw new IllegalArgumentException(
         String.format("Encountered list projection while still having %d path steps", pathSteps)
     );
@@ -121,22 +120,21 @@ public class ReqDeleteProjectionsPrettyPrinter<E extends Exception>
 
 
   @Override
-  public boolean isPrintoutEmpty(@NotNull ReqDeleteModelProjection<?, ?> mp) {
-    if (mp instanceof ReqDeleteRecordModelProjection) {
-      ReqDeleteRecordModelProjection recordModelProjection = (ReqDeleteRecordModelProjection) mp;
-      Map<String, ReqDeleteFieldProjectionEntry> fieldProjections =
+  public boolean isPrintoutEmpty(@NotNull ReqInputModelProjection<?, ?> mp) {
+    if (mp instanceof ReqInputRecordModelProjection) {
+      ReqInputRecordModelProjection recordModelProjection = (ReqInputRecordModelProjection) mp;
+      Map<String, ReqInputFieldProjectionEntry> fieldProjections =
           recordModelProjection.fieldProjections();
       return fieldProjections.isEmpty();
     }
 
-    if (mp instanceof ReqDeleteMapModelProjection) {
-      ReqDeleteMapModelProjection mapModelProjection = (ReqDeleteMapModelProjection) mp;
-      @Nullable List<ReqDeleteKeyProjection> keys = mapModelProjection.keys();
-      return keys == null && isPrintoutEmpty(mapModelProjection.itemsProjection());
+    if (mp instanceof ReqInputMapModelProjection) {
+      ReqInputMapModelProjection mapModelProjection = (ReqInputMapModelProjection) mp;
+      return isPrintoutEmpty(mapModelProjection.itemsProjection());
     }
 
-    if (mp instanceof ReqDeleteListModelProjection) {
-      ReqDeleteListModelProjection inputListModelProjection = (ReqDeleteListModelProjection) mp;
+    if (mp instanceof ReqInputListModelProjection) {
+      ReqInputListModelProjection inputListModelProjection = (ReqInputListModelProjection) mp;
       return isPrintoutEmpty(inputListModelProjection.itemsProjection());
     }
 

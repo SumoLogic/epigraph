@@ -39,8 +39,11 @@ public class OpInputMapModelProjection
     OpInputMapModelProjection,
     MapType
     > {
+
   @NotNull
-  private final OpInputVarProjection valuesProjection;
+  private final OpInputKeyProjection keyProjection;
+  @NotNull
+  private final OpInputVarProjection itemsProjection;
 
   public OpInputMapModelProjection(
       @NotNull MapType model,
@@ -49,26 +52,31 @@ public class OpInputMapModelProjection
       @NotNull OpParams params,
       @NotNull Annotations annotations,
       @Nullable OpInputMapModelProjection metaProjection,
-      @NotNull OpInputVarProjection valuesProjection,
+      @NotNull OpInputKeyProjection keyProjection,
+      @NotNull OpInputVarProjection itemsProjection,
       @NotNull TextLocation location) {
     super(model, required, defaultValue, params, annotations, metaProjection, location);
-    this.valuesProjection = valuesProjection;
+    this.keyProjection = keyProjection;
+    this.itemsProjection = itemsProjection;
   }
 
+  public @NotNull OpInputKeyProjection keyProjection() { return keyProjection; }
+
   @NotNull
-  public OpInputVarProjection itemsProjection() { return valuesProjection; }
+  public OpInputVarProjection itemsProjection() { return itemsProjection; }
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(final Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     if (!super.equals(o)) return false;
-    OpInputMapModelProjection that = (OpInputMapModelProjection) o;
-    return Objects.equals(valuesProjection, that.valuesProjection);
+    final OpInputMapModelProjection that = (OpInputMapModelProjection) o;
+    return Objects.equals(keyProjection, that.keyProjection) &&
+           Objects.equals(itemsProjection, that.itemsProjection);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(super.hashCode(), valuesProjection);
+    return Objects.hash(super.hashCode(), keyProjection, itemsProjection);
   }
 }

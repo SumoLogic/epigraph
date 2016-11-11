@@ -125,7 +125,7 @@ public class OpInputProjectionsTest {
 
   @Test
   public void testParseMap() throws PsiProcessingException {
-    testParsingVarProjection(":record ( friendsMap []( :id ) )");
+    testParsingVarProjection(":record ( friendsMap [ ;param: epigraph.String, doc = \"bla\" ]( :id ) )");
   }
 
   private void testParsingVarProjection(String str) throws PsiProcessingException {
@@ -147,7 +147,8 @@ public class OpInputProjectionsTest {
         Person.type,
         User.type,
         UserId.type,
-        UserRecord.type
+        UserRecord.type,
+        epigraph.String.type
     );
 
     final StepsAndProjection<OpInputVarProjection> stepsAndProjection = parseOpInputVarProjection(

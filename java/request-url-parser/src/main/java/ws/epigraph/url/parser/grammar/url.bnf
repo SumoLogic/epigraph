@@ -234,7 +234,7 @@ reqOutputComaListModelProjection ::= '*' ( '(' reqOutputComaVarProjection ')' )?
 
 // req output map
 reqOutputComaMapModelProjection ::= reqOutputComaKeysProjection ( '(' reqOutputComaVarProjection ')' )?
-reqOutputComaKeysProjection ::= ( '[' ( reqOutputComaKeyProjection ','? )* ']' ) | ( '[' '*' ']' ) // todo fix
+reqOutputComaKeysProjection ::= '[' ( '*' | ( ( reqOutputComaKeyProjection ','? )* ) ) ']'
 reqOutputComaKeyProjection ::= datum reqParamsAndAnnotations
 
 // req update --------------------------------------------------------
@@ -265,7 +265,8 @@ reqUpdateFieldProjection ::= reqParamsAndAnnotations reqUpdateVarProjection
 reqUpdateListModelProjection ::= '*' ( '(' reqUpdateVarProjection ')' )? { pin=1 }
 
 reqUpdateMapModelProjection ::= reqUpdateKeysProjection ( '(' reqUpdateVarProjection ')' )?
-reqUpdateKeysProjection ::= '[' '+'? ']'
+reqUpdateKeysProjection ::= '+'? '[' ( reqUpdateKeyProjection ','? )* ']'
+reqUpdateKeyProjection ::= datum reqParamsAndAnnotations
 
 // req delete --------------------------------------------------------
 

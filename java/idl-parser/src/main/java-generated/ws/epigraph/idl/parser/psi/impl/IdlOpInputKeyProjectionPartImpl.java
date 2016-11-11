@@ -11,14 +11,14 @@ import static ws.epigraph.idl.lexer.IdlElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import ws.epigraph.idl.parser.psi.*;
 
-public class IdlOpInputKeyProjectionImpl extends ASTWrapperPsiElement implements IdlOpInputKeyProjection {
+public class IdlOpInputKeyProjectionPartImpl extends ASTWrapperPsiElement implements IdlOpInputKeyProjectionPart {
 
-  public IdlOpInputKeyProjectionImpl(ASTNode node) {
+  public IdlOpInputKeyProjectionPartImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull IdlVisitor visitor) {
-    visitor.visitOpInputKeyProjection(this);
+    visitor.visitOpInputKeyProjectionPart(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -27,21 +27,15 @@ public class IdlOpInputKeyProjectionImpl extends ASTWrapperPsiElement implements
   }
 
   @Override
-  @NotNull
-  public List<IdlOpInputKeyProjectionPart> getOpInputKeyProjectionPartList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, IdlOpInputKeyProjectionPart.class);
-  }
-
-  @Override
-  @NotNull
-  public PsiElement getBracketLeft() {
-    return findNotNullChildByType(I_BRACKET_LEFT);
+  @Nullable
+  public IdlAnnotation getAnnotation() {
+    return findChildByClass(IdlAnnotation.class);
   }
 
   @Override
   @Nullable
-  public PsiElement getBracketRight() {
-    return findChildByType(I_BRACKET_RIGHT);
+  public IdlOpParam getOpParam() {
+    return findChildByClass(IdlOpParam.class);
   }
 
 }

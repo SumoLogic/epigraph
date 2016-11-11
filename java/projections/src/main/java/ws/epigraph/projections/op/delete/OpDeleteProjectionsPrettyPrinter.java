@@ -19,6 +19,7 @@ package ws.epigraph.projections.op.delete;
 import de.uka.ilkd.pp.Layouter;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.op.AbstractOpProjectionsPrettyPrinter;
+import ws.epigraph.projections.op.OpKeyPresence;
 import ws.epigraph.projections.op.OpParam;
 import ws.epigraph.projections.op.OpParams;
 import org.jetbrains.annotations.NotNull;
@@ -100,41 +101,8 @@ public class OpDeleteProjectionsPrettyPrinter<E extends Exception>
   }
 
   private void print(OpDeleteMapModelProjection mp) throws E {
-    l.beginIInd();
-
-    { // keys
-      @NotNull OpDeleteKeyProjection keyProjection = mp.keyProjection();
-
-      l.beginCInd();
-      l.print("[");
-      boolean commaNeeded = false;
-
-      if (keyProjection.presence() == OpDeleteKeyProjection.Presence.FORBIDDEN) {
-        l.brk().print("forbidden");
-        commaNeeded = true;
-      }
-
-      if (keyProjection.presence() == OpDeleteKeyProjection.Presence.REQUIRED) {
-        if (commaNeeded) l.print(",");
-        l.brk().print("required");
-        commaNeeded = true;
-      }
-
-      @NotNull OpParams keyParams = keyProjection.params();
-      if (!keyParams.isEmpty()) {
-        print(keyParams, true, !commaNeeded);
-        commaNeeded = !keyParams.isEmpty();
-      }
-
-      @NotNull Annotations keyAnnotations = keyProjection.annotations();
-      if (!keyAnnotations.isEmpty()) print(keyAnnotations, true, !commaNeeded);
-
-      l.brk(1, -l.getDefaultIndentation()).end().print("]");
-    }
-
-    l.print("(").brk();
-    print(mp.itemsProjection(), 0);
-    l.brk(1, -l.getDefaultIndentation()).end().print(")");
+    @NotNull OpDeleteKeyProjection keyProjection = mp.keyProjection();
+    printMapModelProjection(keyProjection.presence().getPrettyPrinterString(), keyProjection, mp.itemsProjection());
   }
 
   private void print(OpDeleteListModelProjection mp) throws E {
@@ -181,7 +149,7 @@ public class OpDeleteProjectionsPrettyPrinter<E extends Exception>
       OpDeleteMapModelProjection mapModelProjection = (OpDeleteMapModelProjection) mp;
       @NotNull OpDeleteKeyProjection keyProjection = mapModelProjection.keyProjection();
 
-      if (keyProjection.presence() != OpDeleteKeyProjection.Presence.OPTIONAL) return false;
+      if (keyProjection.presence() != OpKeyPresence.OPTIONAL) return false;
       if (!keyProjection.params().isEmpty()) return false;
       if (!keyProjection.annotations().isEmpty()) return false;
 

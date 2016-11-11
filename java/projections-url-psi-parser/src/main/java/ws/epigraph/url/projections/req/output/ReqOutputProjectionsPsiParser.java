@@ -26,6 +26,7 @@ import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.StepsAndProjection;
+import ws.epigraph.projections.op.OpKeyPresence;
 import ws.epigraph.projections.op.OpParams;
 import ws.epigraph.projections.op.output.*;
 import ws.epigraph.projections.req.ReqParams;
@@ -760,7 +761,7 @@ public class ReqOutputProjectionsPsiParser {
       case MAP:
         OpOutputMapModelProjection opMap = (OpOutputMapModelProjection) op;
 
-        if (opMap.keyProjection().presence() == OpOutputKeyProjection.Presence.REQUIRED)
+        if (opMap.keyProjection().presence() == OpKeyPresence.REQUIRED)
           throw new PsiProcessingException(
               String.format("Can't build default projection for '%s': keys are required", type.name()),
               locationPsi,
@@ -1118,7 +1119,7 @@ public class ReqOutputProjectionsPsiParser {
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
-    if (op.keyProjection().presence() == OpOutputKeyProjection.Presence.FORBIDDEN)
+    if (op.keyProjection().presence() == OpKeyPresence.FORBIDDEN)
       throw new PsiProcessingException("Map keys are forbidden", psi.getDatum(), errors);
 
     @NotNull UrlDatum valuePsi = psi.getDatum();
@@ -1175,10 +1176,10 @@ public class ReqOutputProjectionsPsiParser {
 
     if (keysProjectionPsi.getStar() != null) {
       keyProjections = null;
-      if (opKeyProjection.presence() == OpOutputKeyProjection.Presence.REQUIRED)
+      if (opKeyProjection.presence() == OpKeyPresence.REQUIRED)
         throw new PsiProcessingException("Map keys are required", keysProjectionPsi.getStar(), errors);
     } else {
-      if (opKeyProjection.presence() == OpOutputKeyProjection.Presence.FORBIDDEN)
+      if (opKeyProjection.presence() == OpKeyPresence.FORBIDDEN)
         throw new PsiProcessingException("Map keys are forbidden", keysProjectionPsi, errors);
 
       final int keysSize = keysProjectionPsi.getReqOutputComaKeyProjectionList().size();

@@ -16,59 +16,22 @@
 
 package ws.epigraph.projections.req.output;
 
+import org.jetbrains.annotations.NotNull;
 import ws.epigraph.data.Datum;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
+import ws.epigraph.projections.req.ReqKeyProjection;
 import ws.epigraph.projections.req.ReqParams;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Objects;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class ReqOutputKeyProjection {
-  @NotNull
-  private final Datum value;
-  @NotNull
-  private final ReqParams params;
-  @NotNull
-  private final Annotations annotations;
-  @NotNull
-  private final TextLocation location;
-
-  public ReqOutputKeyProjection(@NotNull Datum value,
-                                @NotNull ReqParams params,
-                                @NotNull Annotations annotations,
-                                @NotNull TextLocation location) {
-    this.value = value;
-    this.params = params;
-    this.annotations = annotations;
-    this.location = location;
+public class ReqOutputKeyProjection extends ReqKeyProjection {
+  public ReqOutputKeyProjection(
+      @NotNull final Datum value,
+      @NotNull final ReqParams params,
+      @NotNull final Annotations annotations,
+      @NotNull final TextLocation location) {
+    super(value, params, annotations, location);
   }
-
-  @NotNull
-  public Datum value() { return value; }
-
-  @NotNull
-  public ReqParams params() { return params; }
-
-  @NotNull
-  public Annotations annotations() { return annotations; }
-
-  @NotNull
-  public TextLocation location() { return location; }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    ReqOutputKeyProjection that = (ReqOutputKeyProjection) o;
-    return Objects.equals(value, that.value) &&
-           Objects.equals(params, that.params) &&
-           Objects.equals(annotations, that.annotations);
-  }
-
-  @Override
-  public int hashCode() { return Objects.hash(value, params, annotations); }
 }

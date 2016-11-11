@@ -60,7 +60,7 @@ public class ReqUpdateProjectionsParserTest {
           "      ),",
           "    ),",
           "    friends *( :id ),",
-          "    friendsMap []( :(id, record (id, firstName) ) )",
+          "    friendsMap [ ;param: epigraph.String ]( :(id, record (id, firstName) ) )",
           "  )",
           ") ~ws.epigraph.tests.User :record (profile)"
       )
@@ -88,7 +88,7 @@ public class ReqUpdateProjectionsParserTest {
 
   @Test
   public void testParseMap() {
-    testParse(":record ( friendsMap [ + ]( :+id ) )");
+    testParse(":record ( friendsMap +[ '1' ;param = 'foo', '2' !ann = true ]( :+id ) )");
   }
 
   @Test

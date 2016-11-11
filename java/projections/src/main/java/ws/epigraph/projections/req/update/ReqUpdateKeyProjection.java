@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ws.epigraph.projections.req.delete;
+package ws.epigraph.projections.req.update;
 
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.data.Datum;
@@ -26,8 +26,8 @@ import ws.epigraph.projections.req.ReqParams;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class ReqDeleteKeyProjection extends ReqKeyProjection{
-  public ReqDeleteKeyProjection(
+public class ReqUpdateKeyProjection extends ReqKeyProjection {
+  public ReqUpdateKeyProjection(
       @NotNull final Datum value,
       @NotNull final ReqParams params,
       @NotNull final Annotations annotations,

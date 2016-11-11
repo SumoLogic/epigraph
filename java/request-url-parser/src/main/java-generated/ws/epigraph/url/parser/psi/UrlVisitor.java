@@ -295,6 +295,10 @@ public class UrlVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitReqUpdateKeyProjection(@NotNull UrlReqUpdateKeyProjection o) {
+    visitPsiElement(o);
+  }
+
   public void visitReqUpdateKeysProjection(@NotNull UrlReqUpdateKeysProjection o) {
     visitPsiElement(o);
   }
