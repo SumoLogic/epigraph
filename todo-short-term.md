@@ -10,7 +10,7 @@
 - [x] data structures for req input projections
 - [x] fix op input projections: map keys must have keys and parameters
 - [x] fix req update projections: actual key values for maps must be specified
-- [ ] psi parser for req input projections
+- [x] psi parser for req input projections
 - [ ] add input (projection) support to custom operations
 - [ ] add optional input projection support to create operations
 - [ ] url parsers

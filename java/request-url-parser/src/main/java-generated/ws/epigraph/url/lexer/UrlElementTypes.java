@@ -52,6 +52,22 @@ public interface UrlElementTypes {
   IElementType U_REQ_DELETE_VAR_SINGLE_TAIL = new UrlElementType("U_REQ_DELETE_VAR_SINGLE_TAIL");
   IElementType U_REQ_FIELD_PATH = new UrlElementType("U_REQ_FIELD_PATH");
   IElementType U_REQ_FIELD_PATH_ENTRY = new UrlElementType("U_REQ_FIELD_PATH_ENTRY");
+  IElementType U_REQ_INPUT_FIELD_PROJECTION = new UrlElementType("U_REQ_INPUT_FIELD_PROJECTION");
+  IElementType U_REQ_INPUT_FIELD_PROJECTION_ENTRY = new UrlElementType("U_REQ_INPUT_FIELD_PROJECTION_ENTRY");
+  IElementType U_REQ_INPUT_KEYS_PROJECTION = new UrlElementType("U_REQ_INPUT_KEYS_PROJECTION");
+  IElementType U_REQ_INPUT_KEY_PROJECTION = new UrlElementType("U_REQ_INPUT_KEY_PROJECTION");
+  IElementType U_REQ_INPUT_LIST_MODEL_PROJECTION = new UrlElementType("U_REQ_INPUT_LIST_MODEL_PROJECTION");
+  IElementType U_REQ_INPUT_MAP_MODEL_PROJECTION = new UrlElementType("U_REQ_INPUT_MAP_MODEL_PROJECTION");
+  IElementType U_REQ_INPUT_MODEL_PROJECTION = new UrlElementType("U_REQ_INPUT_MODEL_PROJECTION");
+  IElementType U_REQ_INPUT_MULTI_TAG_PROJECTION = new UrlElementType("U_REQ_INPUT_MULTI_TAG_PROJECTION");
+  IElementType U_REQ_INPUT_MULTI_TAG_PROJECTION_ITEM = new UrlElementType("U_REQ_INPUT_MULTI_TAG_PROJECTION_ITEM");
+  IElementType U_REQ_INPUT_RECORD_MODEL_PROJECTION = new UrlElementType("U_REQ_INPUT_RECORD_MODEL_PROJECTION");
+  IElementType U_REQ_INPUT_SINGLE_TAG_PROJECTION = new UrlElementType("U_REQ_INPUT_SINGLE_TAG_PROJECTION");
+  IElementType U_REQ_INPUT_VAR_MULTI_TAIL = new UrlElementType("U_REQ_INPUT_VAR_MULTI_TAIL");
+  IElementType U_REQ_INPUT_VAR_MULTI_TAIL_ITEM = new UrlElementType("U_REQ_INPUT_VAR_MULTI_TAIL_ITEM");
+  IElementType U_REQ_INPUT_VAR_POLYMORPHIC_TAIL = new UrlElementType("U_REQ_INPUT_VAR_POLYMORPHIC_TAIL");
+  IElementType U_REQ_INPUT_VAR_PROJECTION = new UrlElementType("U_REQ_INPUT_VAR_PROJECTION");
+  IElementType U_REQ_INPUT_VAR_SINGLE_TAIL = new UrlElementType("U_REQ_INPUT_VAR_SINGLE_TAIL");
   IElementType U_REQ_MAP_MODEL_PATH = new UrlElementType("U_REQ_MAP_MODEL_PATH");
   IElementType U_REQ_MODEL_PATH = new UrlElementType("U_REQ_MODEL_PATH");
   IElementType U_REQ_OUTPUT_COMA_FIELD_PROJECTION = new UrlElementType("U_REQ_OUTPUT_COMA_FIELD_PROJECTION");
@@ -268,6 +284,54 @@ public interface UrlElementTypes {
       }
       else if (type == U_REQ_FIELD_PATH_ENTRY) {
         return new UrlReqFieldPathEntryImpl(node);
+      }
+      else if (type == U_REQ_INPUT_FIELD_PROJECTION) {
+        return new UrlReqInputFieldProjectionImpl(node);
+      }
+      else if (type == U_REQ_INPUT_FIELD_PROJECTION_ENTRY) {
+        return new UrlReqInputFieldProjectionEntryImpl(node);
+      }
+      else if (type == U_REQ_INPUT_KEYS_PROJECTION) {
+        return new UrlReqInputKeysProjectionImpl(node);
+      }
+      else if (type == U_REQ_INPUT_KEY_PROJECTION) {
+        return new UrlReqInputKeyProjectionImpl(node);
+      }
+      else if (type == U_REQ_INPUT_LIST_MODEL_PROJECTION) {
+        return new UrlReqInputListModelProjectionImpl(node);
+      }
+      else if (type == U_REQ_INPUT_MAP_MODEL_PROJECTION) {
+        return new UrlReqInputMapModelProjectionImpl(node);
+      }
+      else if (type == U_REQ_INPUT_MODEL_PROJECTION) {
+        return new UrlReqInputModelProjectionImpl(node);
+      }
+      else if (type == U_REQ_INPUT_MULTI_TAG_PROJECTION) {
+        return new UrlReqInputMultiTagProjectionImpl(node);
+      }
+      else if (type == U_REQ_INPUT_MULTI_TAG_PROJECTION_ITEM) {
+        return new UrlReqInputMultiTagProjectionItemImpl(node);
+      }
+      else if (type == U_REQ_INPUT_RECORD_MODEL_PROJECTION) {
+        return new UrlReqInputRecordModelProjectionImpl(node);
+      }
+      else if (type == U_REQ_INPUT_SINGLE_TAG_PROJECTION) {
+        return new UrlReqInputSingleTagProjectionImpl(node);
+      }
+      else if (type == U_REQ_INPUT_VAR_MULTI_TAIL) {
+        return new UrlReqInputVarMultiTailImpl(node);
+      }
+      else if (type == U_REQ_INPUT_VAR_MULTI_TAIL_ITEM) {
+        return new UrlReqInputVarMultiTailItemImpl(node);
+      }
+      else if (type == U_REQ_INPUT_VAR_POLYMORPHIC_TAIL) {
+        return new UrlReqInputVarPolymorphicTailImpl(node);
+      }
+      else if (type == U_REQ_INPUT_VAR_PROJECTION) {
+        return new UrlReqInputVarProjectionImpl(node);
+      }
+      else if (type == U_REQ_INPUT_VAR_SINGLE_TAIL) {
+        return new UrlReqInputVarSingleTailImpl(node);
       }
       else if (type == U_REQ_MAP_MODEL_PATH) {
         return new UrlReqMapModelPathImpl(node);

@@ -121,14 +121,9 @@ updateUrl ::= '/' qid reqFieldPath ('<' '+'? reqUpdateFieldProjection)? ('>' req
 deleteUrl ::= '/' qid reqFieldPath ('<' reqDeleteFieldProjection)? ('>' reqOutputTrunkFieldProjection)? requestParams {
   extends = "url"
 }
-customUrl ::= '/' qid reqFieldPath ('>' reqOutputTrunkFieldProjection)? requestParams {
+customUrl ::= '/' qid reqFieldPath ('<' reqInputFieldProjection)? ('>' reqOutputTrunkFieldProjection)? requestParams {
   extends = "url"
 }
-
-// todo should be:
-// customUrl ::= '/' qid reqFieldPath ('<' reqInputFieldProjection)? ('>' reqOutputTrunkFieldProjection)? requestParams
-// requires req input projections implemented
-
 
 private requestParams ::= requestParam*
 requestParam ::= ('?' | '&') PARAM_NAME '=' datum {  // ? vs & nonsense is sorted out in the UrlRequestPsiParser
@@ -296,8 +291,39 @@ reqDeleteFieldProjection ::= reqParamsAndAnnotations reqDeleteVarProjection
 reqDeleteListModelProjection ::= '*' ( '(' reqDeleteVarProjection ')' )? { pin=1 }
 
 reqDeleteMapModelProjection ::= reqDeleteKeysProjection ( '(' reqDeleteVarProjection ')' )?
-reqDeleteKeysProjection ::= ( ( '[' ( reqDeleteKeyProjection ','? )* ']' ) | ( '[' '*' ']' ) ) // todo fix
+reqDeleteKeysProjection ::= '['( '*' | ( ( reqDeleteKeyProjection ','? )* ) ) ']'
 reqDeleteKeyProjection ::= datum reqParamsAndAnnotations
+
+// req input --------------------------------------------------------
+
+// reqInputModelMeta ::= '@' '+'? reqInputModelProjection // no params/annotations on meta?
+
+reqInputVarPolymorphicTail ::= reqInputVarSingleTail | reqInputVarMultiTail
+reqInputVarSingleTail ::= '~' typeRef reqInputVarProjection
+reqInputVarMultiTail ::= '~' '(' (reqInputVarMultiTailItem ','?)* ')' {pin=2}
+reqInputVarMultiTailItem ::= typeRef reqInputVarProjection
+
+reqInputVarProjection ::= ( reqInputMultiTagProjection | reqInputSingleTagProjection ) reqInputVarPolymorphicTail?
+reqInputSingleTagProjection ::= ( ':' tagName)? reqInputTagProjectionItem
+reqInputMultiTagProjection ::= ':' '(' (reqInputMultiTagProjectionItem ','?)* ')' {pin=2}
+reqInputMultiTagProjectionItem ::= tagName reqInputTagProjectionItem
+private reqInputTagProjectionItem ::= reqParamsAndAnnotations reqInputModelProjection // reqInputModelMeta?
+//
+
+reqInputModelProjection ::= ( reqInputRecordModelProjection
+                             | reqInputListModelProjection
+                             | reqInputMapModelProjection
+                             )?
+
+reqInputRecordModelProjection ::= '(' (reqInputFieldProjectionEntry ','?)* ')' { pin=1 }
+reqInputFieldProjectionEntry ::= qid reqInputFieldProjection
+reqInputFieldProjection ::= reqParamsAndAnnotations reqInputVarProjection
+
+reqInputListModelProjection ::= '*' ( '(' reqInputVarProjection ')' )? { pin=1 }
+
+reqInputMapModelProjection ::= reqInputKeysProjection ( '(' reqInputVarProjection ')' )?
+reqInputKeysProjection ::= '['( '*' | ( ( reqInputKeyProjection ','? )* ) ) ']'
+reqInputKeyProjection ::= datum reqParamsAndAnnotations
 
 // ============= data language =============
 // please keep in sync with data language from schema.bnf and idl.bnf

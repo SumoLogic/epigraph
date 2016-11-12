@@ -16,6 +16,7 @@
 
 package ws.epigraph.projections.req.input;
 
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenMapModelProjection;
@@ -39,20 +40,19 @@ public class ReqInputMapModelProjection
     MapType
     > {
 
-  @NotNull
+  @Nullable
   private final List<ReqInputKeyProjection> keys;
   @NotNull
   private final ReqInputVarProjection valuesProjection;
 
   public ReqInputMapModelProjection(
       @NotNull MapType model,
-      boolean update,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
-      @NotNull List<ReqInputKeyProjection> keys,
+      @Nullable List<ReqInputKeyProjection> keys,
       @NotNull ReqInputVarProjection valuesProjection,
       @NotNull TextLocation location) {
-    super(model, update, params, annotations, location);
+    super(model, params, annotations, location);
     this.keys = keys;
     this.valuesProjection = valuesProjection;
   }
@@ -60,7 +60,7 @@ public class ReqInputMapModelProjection
   @NotNull
   public ReqInputVarProjection itemsProjection() { return valuesProjection; }
 
-  public @NotNull List<ReqInputKeyProjection> keys() { return keys; }
+  public @Nullable List<ReqInputKeyProjection> keys() { return keys; }
 
   @Override
   public boolean equals(Object o) {

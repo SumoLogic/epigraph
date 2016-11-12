@@ -49,12 +49,11 @@ public class ReqInputRecordModelProjection
 
   public ReqInputRecordModelProjection(
       @NotNull RecordType model,
-      boolean update,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
       @NotNull Map<String, ReqInputFieldProjectionEntry> fieldProjections,
       @NotNull TextLocation location) {
-    super(model, update, params, annotations, location);
+    super(model, params, annotations, location);
     this.fieldProjections = fieldProjections;
 
     ProjectionUtils.checkFieldsBelongsToModel(fieldProjections.keySet(), model);

@@ -16,12 +16,12 @@
 
 package ws.epigraph.projections.req.input;
 
+import org.jetbrains.annotations.NotNull;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.abs.AbstractModelProjection;
 import ws.epigraph.projections.req.ReqParams;
 import ws.epigraph.types.DatumType;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
@@ -33,25 +33,17 @@ public abstract class ReqInputModelProjection<
     M extends DatumType>
     extends AbstractModelProjection<MP, M> {
 
-  protected final boolean update;
   @NotNull
   protected final ReqParams params;
 
   public ReqInputModelProjection(
       @NotNull M model,
-      boolean update,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
       @NotNull TextLocation location) {
     super(model, null, annotations, location);
-    this.update = update;
     this.params = params;
   }
-
-  /**
-   * @return {@code true} if this model must be updated (replaced), {@code false} if it must be patched
-   */
-  public boolean update() { return update; }
 
   @NotNull
   public ReqParams params() { return params; }
@@ -62,12 +54,9 @@ public abstract class ReqInputModelProjection<
     if (o == null || getClass() != o.getClass()) return false;
     if (!super.equals(o)) return false;
     ReqInputModelProjection<?, ?> that = (ReqInputModelProjection<?, ?>) o;
-    return update == that.update &&
-           Objects.equals(params, that.params);
+    return Objects.equals(params, that.params);
   }
 
   @Override
-  public int hashCode() {
-    return Objects.hash(super.hashCode(), update, params);
-  }
+  public int hashCode() { return Objects.hash(super.hashCode(), params); }
 }

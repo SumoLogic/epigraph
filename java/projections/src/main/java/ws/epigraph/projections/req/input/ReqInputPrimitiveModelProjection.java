@@ -35,6 +35,6 @@ public class ReqInputPrimitiveModelProjection
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
       @NotNull TextLocation location) {
-    super(model, true, params, annotations, location);
+    super(model, params, annotations, location);
   }
 }

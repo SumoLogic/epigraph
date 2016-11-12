@@ -56,6 +56,9 @@ public class UrlSubParserDefinitions {
   public static final UrlSubParserDefinition<UrlReqDeleteVarProjection> REQ_DELETE_VAR_PROJECTION =
       new UrlSubParserDefinition<>(U_REQ_DELETE_VAR_PROJECTION, UrlReqDeleteVarProjection.class);
 
+  public static final UrlSubParserDefinition<UrlReqInputVarProjection> REQ_INPUT_VAR_PROJECTION =
+      new UrlSubParserDefinition<>(U_REQ_INPUT_VAR_PROJECTION, UrlReqInputVarProjection.class);
+
   public static class UrlSubParserDefinition<T> extends UrlParserDefinition implements SubParserDefinition<T> {
     @NotNull
     private final Class<T> rootElementClass;

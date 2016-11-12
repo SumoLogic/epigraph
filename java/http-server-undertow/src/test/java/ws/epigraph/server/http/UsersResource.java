@@ -18,11 +18,11 @@
 
 package ws.epigraph.server.http;
 
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.errors.ErrorValue;
 import ws.epigraph.idl.ResourceIdl;
 import ws.epigraph.idl.operations.ReadOperationIdl;
-import ws.epigraph.projections.req.output.ReqOutputKeyProjection;
-import ws.epigraph.projections.req.output.ReqOutputMapModelProjection;
+import ws.epigraph.projections.req.output.*;
 import ws.epigraph.service.Resource;
 import ws.epigraph.service.ServiceInitializationException;
 import ws.epigraph.service.operations.ReadOperation;

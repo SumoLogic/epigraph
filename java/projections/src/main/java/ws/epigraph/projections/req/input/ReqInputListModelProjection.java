@@ -42,12 +42,11 @@ public class ReqInputListModelProjection
 
   public ReqInputListModelProjection(
       @NotNull ListType model,
-      boolean update,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
       @NotNull ReqInputVarProjection itemsProjection,
       @NotNull TextLocation location) {
-    super(model, update, params, annotations, location);
+    super(model, params, annotations, location);
     this.itemsProjection = itemsProjection;
   }
 

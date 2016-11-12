@@ -36,6 +36,8 @@ import ws.epigraph.projections.op.path.OpPathPrettyPrinter;
 import ws.epigraph.projections.op.path.OpVarPath;
 import ws.epigraph.projections.req.delete.ReqDeleteProjectionsPrettyPrinter;
 import ws.epigraph.projections.req.delete.ReqDeleteVarProjection;
+import ws.epigraph.projections.req.input.ReqInputProjectionsPrettyPrinter;
+import ws.epigraph.projections.req.input.ReqInputVarProjection;
 import ws.epigraph.projections.req.output.ReqOutputProjectionsPrettyPrinter;
 import ws.epigraph.projections.req.output.ReqOutputVarProjection;
 import ws.epigraph.projections.req.path.ReqPathPrettyPrinter;
@@ -308,6 +310,16 @@ public class TestUtil {
     StringBackend sb = new StringBackend(120);
     Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
     ReqUpdateProjectionsPrettyPrinter<NoExceptions> printer = new ReqUpdateProjectionsPrettyPrinter<>(layouter);
+    printer.print(projection, 0);
+    layouter.close();
+    return sb.getString();
+  }
+
+  @NotNull
+  public static String printReqInputVarProjection(@NotNull ReqInputVarProjection projection) {
+    StringBackend sb = new StringBackend(120);
+    Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
+    ReqInputProjectionsPrettyPrinter<NoExceptions> printer = new ReqInputProjectionsPrettyPrinter<>(layouter);
     printer.print(projection, 0);
     layouter.close();
     return sb.getString();

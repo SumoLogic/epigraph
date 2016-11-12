@@ -179,6 +179,70 @@ public class UrlVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitReqInputFieldProjection(@NotNull UrlReqInputFieldProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqInputFieldProjectionEntry(@NotNull UrlReqInputFieldProjectionEntry o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqInputKeyProjection(@NotNull UrlReqInputKeyProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqInputKeysProjection(@NotNull UrlReqInputKeysProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqInputListModelProjection(@NotNull UrlReqInputListModelProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqInputMapModelProjection(@NotNull UrlReqInputMapModelProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqInputModelProjection(@NotNull UrlReqInputModelProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqInputMultiTagProjection(@NotNull UrlReqInputMultiTagProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqInputMultiTagProjectionItem(@NotNull UrlReqInputMultiTagProjectionItem o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqInputRecordModelProjection(@NotNull UrlReqInputRecordModelProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqInputSingleTagProjection(@NotNull UrlReqInputSingleTagProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqInputVarMultiTail(@NotNull UrlReqInputVarMultiTail o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqInputVarMultiTailItem(@NotNull UrlReqInputVarMultiTailItem o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqInputVarPolymorphicTail(@NotNull UrlReqInputVarPolymorphicTail o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqInputVarProjection(@NotNull UrlReqInputVarProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqInputVarSingleTail(@NotNull UrlReqInputVarSingleTail o) {
+    visitPsiElement(o);
+  }
+
   public void visitReqMapModelPath(@NotNull UrlReqMapModelPath o) {
     visitPsiElement(o);
   }

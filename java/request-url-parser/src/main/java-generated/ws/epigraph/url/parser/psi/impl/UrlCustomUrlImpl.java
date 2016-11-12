@@ -39,6 +39,12 @@ public class UrlCustomUrlImpl extends UrlUrlImpl implements UrlCustomUrl {
 
   @Override
   @Nullable
+  public UrlReqInputFieldProjection getReqInputFieldProjection() {
+    return findChildByClass(UrlReqInputFieldProjection.class);
+  }
+
+  @Override
+  @Nullable
   public UrlReqOutputTrunkFieldProjection getReqOutputTrunkFieldProjection() {
     return findChildByClass(UrlReqOutputTrunkFieldProjection.class);
   }
@@ -47,6 +53,12 @@ public class UrlCustomUrlImpl extends UrlUrlImpl implements UrlCustomUrl {
   @NotNull
   public List<UrlRequestParam> getRequestParamList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, UrlRequestParam.class);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getAngleLeft() {
+    return findChildByType(U_ANGLE_LEFT);
   }
 
   @Override

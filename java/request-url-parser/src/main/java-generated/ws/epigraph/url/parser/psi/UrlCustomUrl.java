@@ -14,10 +14,16 @@ public interface UrlCustomUrl extends UrlUrl {
   UrlReqFieldPath getReqFieldPath();
 
   @Nullable
+  UrlReqInputFieldProjection getReqInputFieldProjection();
+
+  @Nullable
   UrlReqOutputTrunkFieldProjection getReqOutputTrunkFieldProjection();
 
   @NotNull
   List<UrlRequestParam> getRequestParamList();
+
+  @Nullable
+  PsiElement getAngleLeft();
 
   @Nullable
   PsiElement getAngleRight();

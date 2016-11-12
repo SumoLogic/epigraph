@@ -46,7 +46,6 @@ public class ReqInputProjectionsPrettyPrinter<E extends Exception>
     Annotations annotations = projection.annotations();
 
     l.beginCInd();
-    if (projection.update()) l.print("+");
     l.print(tagName);
 
     printParams(params);

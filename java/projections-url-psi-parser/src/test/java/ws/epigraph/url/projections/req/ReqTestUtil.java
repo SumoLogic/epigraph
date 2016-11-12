@@ -32,6 +32,7 @@ import ws.epigraph.projections.op.output.OpOutputVarProjection;
 import ws.epigraph.projections.op.path.OpPathPsiParser;
 import ws.epigraph.projections.op.path.OpVarPath;
 import ws.epigraph.projections.req.delete.ReqDeleteVarProjection;
+import ws.epigraph.projections.req.input.ReqInputVarProjection;
 import ws.epigraph.projections.req.output.ReqOutputVarProjection;
 import ws.epigraph.projections.req.update.ReqUpdateVarProjection;
 import ws.epigraph.psi.EpigraphPsiUtil;
@@ -41,9 +42,11 @@ import ws.epigraph.test.TestUtil;
 import ws.epigraph.types.DataType;
 import ws.epigraph.url.parser.UrlSubParserDefinitions;
 import ws.epigraph.url.parser.psi.UrlReqDeleteVarProjection;
+import ws.epigraph.url.parser.psi.UrlReqInputVarProjection;
 import ws.epigraph.url.parser.psi.UrlReqOutputTrunkVarProjection;
 import ws.epigraph.url.parser.psi.UrlReqUpdateVarProjection;
 import ws.epigraph.url.projections.req.delete.ReqDeleteProjectionsPsiParser;
+import ws.epigraph.url.projections.req.input.ReqInputProjectionsPsiParser;
 import ws.epigraph.url.projections.req.output.ReqOutputProjectionsPsiParser;
 import ws.epigraph.url.projections.req.update.ReqUpdateProjectionsPsiParser;
 
@@ -168,8 +171,34 @@ public class ReqTestUtil {
         errors
     ));
   }
+
   @NotNull
-  
+
+  public static ReqInputVarProjection parseReqInputVarProjection(
+      @NotNull DataType type,
+      @NotNull OpInputVarProjection op,
+      @NotNull String projectionString,
+      @NotNull TypesResolver resolver) {
+
+    EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
+
+    UrlReqInputVarProjection psi = EpigraphPsiUtil.parseText(
+        projectionString,
+        UrlSubParserDefinitions.REQ_INPUT_VAR_PROJECTION,
+        errorsAccumulator
+    );
+
+    failIfHasErrors(psi, errorsAccumulator);
+
+    return runPsiParser(errors -> ReqInputProjectionsPsiParser.parseVarProjection(
+        type,
+        op,
+        psi,
+        resolver,
+        errors
+    ));
+  }
+
   public static ReqDeleteVarProjection parseReqDeleteVarProjection(
       @NotNull DataType type,
       @NotNull OpDeleteVarProjection op,
