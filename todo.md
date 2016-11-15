@@ -3,6 +3,7 @@
 - [ ] gradle/maven build: add verification that all files have apache license headers
 
 # Framework
+- [ ] Fix tails support in JSON output. Data trimmer must be fixed?
 - [ ] JSON unmarshaller
   -[ ] recursive data support?
 - [ ] Format for parameter values in URL. Currently: GData with single quotes.
