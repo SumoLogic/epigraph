@@ -422,7 +422,7 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '/' qid reqFieldPath ('>' reqOutputTrunkFieldProjection)? requestParams
+  // '/' qid reqFieldPath ('<' reqInputFieldProjection)? ('>' reqOutputTrunkFieldProjection)? requestParams
   public static boolean createUrl(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "createUrl")) return false;
     if (!nextTokenIs(b, U_SLASH)) return false;
@@ -432,21 +432,40 @@ public class UrlParser implements PsiParser, LightPsiParser {
     r = r && qid(b, l + 1);
     r = r && reqFieldPath(b, l + 1);
     r = r && createUrl_3(b, l + 1);
+    r = r && createUrl_4(b, l + 1);
     r = r && requestParams(b, l + 1);
     exit_section_(b, m, U_CREATE_URL, r);
     return r;
   }
 
-  // ('>' reqOutputTrunkFieldProjection)?
+  // ('<' reqInputFieldProjection)?
   private static boolean createUrl_3(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "createUrl_3")) return false;
     createUrl_3_0(b, l + 1);
     return true;
   }
 
-  // '>' reqOutputTrunkFieldProjection
+  // '<' reqInputFieldProjection
   private static boolean createUrl_3_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "createUrl_3_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, U_ANGLE_LEFT);
+    r = r && reqInputFieldProjection(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // ('>' reqOutputTrunkFieldProjection)?
+  private static boolean createUrl_4(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "createUrl_4")) return false;
+    createUrl_4_0(b, l + 1);
+    return true;
+  }
+
+  // '>' reqOutputTrunkFieldProjection
+  private static boolean createUrl_4_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "createUrl_4_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, U_ANGLE_RIGHT);

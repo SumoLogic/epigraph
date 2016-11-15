@@ -112,7 +112,7 @@ url ::= readUrl | createUrl | updateUrl | deleteUrl | customUrl
 readUrl ::= '/' qid reqOutputTrunkFieldProjection requestParams { // reqFieldPath is part of output projection, will be extracted by psi parser
   extends = "url"
 }
-createUrl ::= '/' qid reqFieldPath ('>' reqOutputTrunkFieldProjection)? requestParams {
+createUrl ::= '/' qid reqFieldPath ('<' reqInputFieldProjection)? ('>' reqOutputTrunkFieldProjection)? requestParams {
   extends = "url"
 }
 updateUrl ::= '/' qid reqFieldPath ('<' '+'? reqUpdateFieldProjection)? ('>' reqOutputTrunkFieldProjection)? requestParams {

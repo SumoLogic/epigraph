@@ -47,8 +47,9 @@ abstract record Operation extends Documented {
 record CreateOperation extends Operation {
   // HTTP POST /people ~ *(status) <<< [ { user1 }, { user2 } ]
   // inputType (if not specified) = path tip type, or resource fieldType if path is null
+  // inputProjection: body is parsed against op projection if not specified
 
-  // can be specified: path?, inputType?, inputProjection, outputType, outputProjection
+  // can be specified: path?, inputType?, inputProjection?, outputType, outputProjection
 }
 
 record ReadOperation extends Operation {
@@ -100,6 +101,7 @@ record CustomOperation extends Operation {
   // inputType (if not specified) = path tip type, or resource fieldType if path is null
   // outputType (if not specified) = path tip type, or resource fieldType if path is null
   // outputProjection (if not specified) = default empty projection for `outputType`
+  // inputProjection: body is parsed against op projection if not specified
 
   // can be specified: path?, inputType?, inputProjection?, outputType?, outputProjection?
 }
