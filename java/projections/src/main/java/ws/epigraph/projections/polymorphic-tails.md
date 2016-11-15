@@ -1,7 +1,10 @@
 # Polymorphic tails
 
-Polymorphic tails is a list of type handling specifications. They are attached to var types and allow to elaborate how
-a value must be processed if it happens to be of some specific type. 
+Since Epigraph type system supports polymorphism, there must be a way to change object projection depending on
+what type it actually is, similar to type-based pattern matching.
+
+Polymorphic tails is a mechanism to to this. They are lists of type handling specifications attached to var types and
+allow to elaborate how corresponding value must be processed if it happens to be of some specific type. 
 
 For example `(a,b)~C(d)` request projection tells to include fields `a` and `b`, but if data is of type `C` (or a 
 subtype of `C`), then field `d` should also be included.
@@ -11,15 +14,14 @@ Multiple tail projections can be specified. For instance request projection
 :(id,record(a))~(B:record(b),C:record(c))
 ```
 tells that
-- tags `id` and `record` must be returned
-- `record` model must include field `a`
-- if actual data instance is a subtype of `B`, then `record` must also include field `b`
-- else if actual data instance is a subtype of `C`, then `record` must also include `c`
+- tags `id` and `record` should be returned
+- `record` model should include field `a`
+- if actual data instance is a subtype of `B`, then `record` should also include field `b`
+- else if actual data instance is a subtype of `C`, then `record` should also include `c`
 
 Notice that only one of `B` or `C` can win. Even if actual instance happen to be of some type `D` which extends
 both `B` and `C`, then only `B` branch will be taken into account since it comes first. 
-This makes sense if polymorphic tails are treated
-as type-based pattern matching.
+This makes sense if polymorphic tails are treated as type-based pattern matching.
 
 Tails may also be recursive, for example
 ```
@@ -34,21 +36,19 @@ Most specific fields should be processed first and be properly merged with less 
 ```
 (someField;auth=TokenX)~Foo(someField;auth=TokenY)
 ```
-overrides authentication token passed for `someField` if type happens to be an instance of `Foo`. This also means that
-in the previous example fields will be reversed when an instance of `C` is serialized: `c` is written first, then `b`
-and then `a` (processed from most to least specific).
+overrides authentication token passed for `someField` if type happens to be an instance of `Foo`.
 
 Another example:
 ```
 ( a(b)~X(x) ) ~B( a(c)~Y(y) )
 ```
-if data is an instance of `B` then this translates into `a(c, b) ~( Y(y), X(x) )`. Notice what happened to `X` and `Y`.
+if data is an instance of `B`, then this translates into `a(c, b) ~( Y(y), X(x) )`. Notice what happened to `X` and `Y`.
 
 ## Data processing pattern
 
 Epigraph code dealing with data and projections usually follows the same pattern:
 ```
-processVarData(type: DataType, data:Data, projection:VarProjection) {
+processVarData(type: DataType, data: Data, projection: VarProjection) {
   foreach (tag, modelProjection) in projection: {
     processModelData(tag.type, data.get(tag), modelProjection)
   }
@@ -96,17 +96,17 @@ If data type extends `C121`, then linearized tail is `~A1~B12~C121`, the rest is
 Effective type is the most specific type of the linearized tail, `C121` in this case.
 
 Linearization algorithm is essentially depth-first traversal without backtracking:
-1. init: set `tailsStack = []`
+1. init: set `tailsList = []`
 1. given a list of tails `T1...Tn` and type `X` find first tail `Ti` such that type `X` is `Ti` or is a subtype of `Ti`
     - if such tail can't be found: stop
-    - else `tailsStack.push(Ti)`. If `Ti` defines (recursive) tails `K1..Km` then repeat step 2 for them.
+    - else `tailsList.add(Ti)`. If `Ti` defines (recursive) tails `K1..Km` then repeat step 2 for them.
 
-In the end `tailsStack` will contain linearized tails and it's last element will be the effective type.
+In the end `tailsList` will contain linearized tails and it's last element will be the effective type.
 
 ### Data processing
 All the data processing functions now receive lists of projections instead of singular projection. Elements are
-sorted from most specific to least specific and must be processed in that order. Projection items (fields, tags, keys)
-may be present in more than one projection and must be carefully merged, with those coming first taking priority.
+sorted from most specific to least specific and should be processed in that order. Projection items (fields, tags, keys)
+may be present in more than one projection and should be carefully merged, with those coming first taking priority.
 
 ### Var data processing
 `processVarData` now has to start by linearizing `VarProjection` tails with regard to passed `type`. If result is empty,
@@ -140,10 +140,10 @@ processVarData(type: DataType, data:Data, projections:List[VarProjection]) {
 
 ### Model data processing
 Functions processing model data will now be receiving lists of model projections instead of single projection. They
-must be processed as if merged together, with elements coming first taking priority (since they're coming from more
+should be processed as if merged together, with elements coming first taking priority (since they're coming from more
 specific tails).
 
-For example `processRecordModelData` may receive the following arguments:
+For example, `processRecordModelData` may receive the following arguments:
 - `type` is `T`
 - `data` is `{a: {x: X, y: Y}, b:B, c:C}`
 - `projections` is `[(a(x), b;param1=v1), (a(y), b;param1=v2, c), (c;param2=v3)]`
@@ -151,7 +151,7 @@ For example `processRecordModelData` may receive the following arguments:
 This tells that `data` must be treated as having type `T`, and output should be `{a: {x: X, y: Y}, b, c}`.
 Note that
 
-- `a` projection is `(x, y)`, due to `processVarData` receiving two projections for `a`
+- `a` projection is `(x, y)`, due to `processVarData` receiving two projections for `a` field value
 - `b` is built with `param1 = v1` which takes priority over `v2`
 - `c` is built with `param2 = v3`
 
