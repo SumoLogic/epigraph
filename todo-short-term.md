@@ -1,16 +1,4 @@
 #Horizon 1
-- [x] add correct errors propagation support to the rest of psi parsers
-- [x] operation input projections must be field, not model projections
-- [ ] ~~invert 'requried', introduce 'optional' instead?~~
-  - [x] ~~op input projections (undone)~~
-  - [ ] ~~req output projections~~
-- [x] add params to op input projections
-- [x] psi parser for req update projections
-- [x] psi parser for req delete projections
-- [x] data structures for req input projections
-- [x] fix op input projections: map keys must have keys and parameters
-- [x] fix req update projections: actual key values for maps must be specified
-- [x] psi parser for req input projections
 - [ ] add input (projection) support to custom operations
 - [ ] add optional input projection support to create operations
 - [ ] url parsers
@@ -25,7 +13,6 @@
   - [ ] create
   - [ ] update
   - [ ] delete
-- [x] op input projections: move model projection out of complex tag projection body to make syntax consistent
 
 #Horizon 2
 - [ ] Unmarshallers for create/update/custom body
