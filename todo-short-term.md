@@ -1,5 +1,5 @@
 #Horizon 1
-- [ ] add input (projection) support to custom operations
+- [x] add input (projection) support to custom operations
 - [ ] add optional input projection support to create operations
 - [ ] url parsers
   - [x] read

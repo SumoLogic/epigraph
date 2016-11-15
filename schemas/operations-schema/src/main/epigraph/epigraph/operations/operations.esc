@@ -101,5 +101,5 @@ record CustomOperation extends Operation {
   // outputType (if not specified) = path tip type, or resource fieldType if path is null
   // outputProjection (if not specified) = default empty projection for `outputType`
 
-  // can be specified: path?, inputType?, inputProjection, outputType?, outputProjection?
+  // can be specified: path?, inputType?, inputProjection?, outputType?, outputProjection?
 }

@@ -44,7 +44,7 @@ public class UpdateOperationRequest extends OperationRequest {
   }
 
   @NotNull
-  public ReqUpdateFieldProjection getUpdateProjection() { return updateProjection; }
+  public ReqUpdateFieldProjection updateProjection() { return updateProjection; }
 
   @NotNull
   public Data data() { return data; }

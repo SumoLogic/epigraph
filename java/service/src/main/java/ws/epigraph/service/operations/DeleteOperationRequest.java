@@ -44,7 +44,7 @@ public class DeleteOperationRequest extends OperationRequest {
   }
 
   @NotNull
-  public ReqDeleteFieldProjection getDeleteProjection() { return DeleteProjection; }
+  public ReqDeleteFieldProjection deleteProjection() { return DeleteProjection; }
 
   @NotNull
   public Data data() { return data; }
