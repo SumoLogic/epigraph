@@ -39,13 +39,14 @@
 - [x] var projection: add `@Nullable getPathTagProjection`. Same for records and maps
 - [x] remove `includeInDefault` from `Op*` projections, add '*' to request projections instead
 - [x] remove default tags from op projections. If var type has default tag (in schema), and operation can build this tag -- then it becomes an implicit default
-- [ ] add req input projection (for custom operation)
+- [x] add req input projection (for custom operation)
 - [ ] `*` support in projections improvement: allow `*` to be present along with other fields (currently it's either `*` or fields list)
 - [ ] support for recursive projections
+- [ ] Generate projections for specific types
 
 # Operations  
 - [x] see `operations.esc`, restructure operations accordingly
-- [ ] custom operations must support input data
+- [x] custom operations must support input data
 
 # Service
 - [ ] ***see `operations.esc`, change routing accordingly***

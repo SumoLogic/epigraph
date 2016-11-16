@@ -1,12 +1,12 @@
 #Horizon 1
 - [x] add input (projection) support to custom operations
 - [x] add optional input projection support to create operations
-- [ ] url parsers
+- [x] url parsers
   - [x] read
   - [x] create
   - [x] udpate
   - [x] delete
-  - [ ] custom
+  - [x] custom
 - [ ] new routing algorithm
   - [x] generic
   - [x] reads
