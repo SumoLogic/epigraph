@@ -71,15 +71,7 @@ public class ReqPathPsiParser {
       );
     }
 
-    @Nullable UrlReqModelPath modelPathPsi = psi.getReqModelPath();
-
-    if (tagNamePsi == null && type.kind() == TypeKind.UNION) {
-      return new ReqVarPath(
-          type,
-          null, // no tags = end of path
-          EpigraphPsiUtil.getLocation(psi)
-      );
-    }
+    @NotNull UrlReqModelPath modelPathPsi = psi.getReqModelPath();
 
     final Type.@NotNull Tag reqTag = getTag(type, tagNamePsi, dataType.defaultTag, psi, errors);
     final Type.Tag opTag = opTagPath.tag();
@@ -269,6 +261,18 @@ public class ReqPathPsiParser {
     final ReqVarPath varProjection;
 
     if (fieldVarPathPsi == null) {
+      @Nullable final OpTagPath opTagPath = op.projection().pathTagProjection();
+
+      if (opTagPath != null)
+        throw new PsiProcessingException(
+            String.format(
+                "Request path doesn't match operation path, expected to get '%s' tag projection",
+                opTagPath.tag().name()
+            ),
+            psi,
+            errors
+        );
+
       @Nullable Type.Tag defaultFieldTag = fieldType.defaultTag;
       if (defaultFieldTag == null)
         throw new PsiProcessingException(String.format(

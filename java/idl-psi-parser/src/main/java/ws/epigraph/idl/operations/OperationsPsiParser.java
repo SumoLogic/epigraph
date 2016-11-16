@@ -480,16 +480,17 @@ public class OperationsPsiParser {
 
         if (rtt instanceof DatumType) return ((DatumType) rtt).dataType();
 
-        @Nullable
-        final Type.Tag defaultTag = resourceType.defaultTag;
-
-        if (defaultTag == null)
-          throw new PsiProcessingException(
-              "Neither input type nor operation path is specified, and resource type has no default tag",
-              location,
-              errors
-          );
-        else return defaultTag.type.dataType();
+        return resourceType;
+//        @Nullable
+//        final Type.Tag defaultTag = resourceType.defaultTag;
+//
+//        if (defaultTag == null)
+//          throw new PsiProcessingException(
+//              "Neither input type nor operation path is specified, and resource type has no default tag",
+//              location,
+//              errors
+//          );
+//        else return defaultTag.type.dataType();
 
       } else {
         @NotNull final DataType tipType = ProjectionUtils.tipType(path);
@@ -498,16 +499,18 @@ public class OperationsPsiParser {
 
         if (ttt instanceof DatumType) return ((DatumType) ttt).dataType();
 
-        @Nullable
-        final Type.Tag defaultTag = tipType.defaultTag;
-
-        if (defaultTag == null)
-          throw new PsiProcessingException(
-              "Path tip type doesn't define default tag",
-              location,
-              errors
-          );
-        else return defaultTag.type.dataType();
+        return tipType;
+//
+//        @Nullable
+//        final Type.Tag defaultTag = tipType.defaultTag;
+//
+//        if (defaultTag == null)
+//          throw new PsiProcessingException(
+//              "Input type not specified and path tip type can't be used because it doesn't define default tag",
+//              location,
+//              errors
+//          );
+//        else return defaultTag.type.dataType();
       }
     }
     @Nullable final DatumType datumType = TypeRefs.fromPsi(typeRefPsi).resolveDatumType(resolver);

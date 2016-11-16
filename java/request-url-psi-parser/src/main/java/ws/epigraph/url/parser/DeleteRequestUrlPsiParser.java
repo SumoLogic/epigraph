@@ -19,11 +19,10 @@ package ws.epigraph.url.parser;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.gdata.GDatum;
-import ws.epigraph.idl.operations.CreateOperationIdl;
+import ws.epigraph.idl.operations.DeleteOperationIdl;
 import ws.epigraph.projections.StepsAndProjection;
-import ws.epigraph.projections.op.input.OpInputFieldProjection;
 import ws.epigraph.projections.op.path.OpFieldPath;
-import ws.epigraph.projections.req.input.ReqInputFieldProjection;
+import ws.epigraph.projections.req.delete.ReqDeleteFieldProjection;
 import ws.epigraph.projections.req.output.ReqOutputFieldProjection;
 import ws.epigraph.projections.req.path.ReqFieldPath;
 import ws.epigraph.psi.PsiProcessingError;
@@ -31,11 +30,11 @@ import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.types.DataType;
 import ws.epigraph.types.Type;
-import ws.epigraph.url.CreateRequestUrl;
-import ws.epigraph.url.parser.psi.UrlCreateUrl;
-import ws.epigraph.url.parser.psi.UrlReqInputFieldProjection;
+import ws.epigraph.url.DeleteRequestUrl;
+import ws.epigraph.url.parser.psi.UrlDeleteUrl;
+import ws.epigraph.url.parser.psi.UrlReqDeleteFieldProjection;
 import ws.epigraph.url.parser.psi.UrlReqOutputTrunkFieldProjection;
-import ws.epigraph.url.projections.req.input.ReqInputProjectionsPsiParser;
+import ws.epigraph.url.projections.req.delete.ReqDeleteProjectionsPsiParser;
 import ws.epigraph.url.projections.req.path.ReqPathPsiParser;
 
 import java.util.List;
@@ -47,13 +46,13 @@ import static ws.epigraph.url.projections.UrlProjectionsPsiParserUtil.parseReque
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class CreateRequestUrlParser {
+public class DeleteRequestUrlPsiParser {
 
   @NotNull
-  public static CreateRequestUrl parseCreateRequestUrl(
+  public static DeleteRequestUrl parseDeleteRequestUrl(
       @NotNull DataType resourceType,
-      @NotNull CreateOperationIdl op,
-      @NotNull UrlCreateUrl psi,
+      @NotNull DeleteOperationIdl op,
+      @NotNull UrlDeleteUrl psi,
       @NotNull TypesResolver typesResolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
@@ -62,18 +61,18 @@ public class CreateRequestUrlParser {
     final Map<String, GDatum> requestParams = parseRequestParams(psi.getRequestParamList(), errors);
 
     if (opPath != null)
-      return parseCreateRequestUrlWithPath(resourceType, requestParams, op, opPath, psi, typesResolver, errors);
+      return parseDeleteRequestUrlWithPath(resourceType, requestParams, op, opPath, psi, typesResolver, errors);
     else
-      return parseCreateRequestUrlWithoutPath(resourceType, requestParams, op, psi, typesResolver, errors);
+      return parseDeleteRequestUrlWithoutPath(resourceType, requestParams, op, psi, typesResolver, errors);
   }
 
   @NotNull
-  private static CreateRequestUrl parseCreateRequestUrlWithPath(
+  private static DeleteRequestUrl parseDeleteRequestUrlWithPath(
       final @NotNull DataType resourceType,
       final @NotNull Map<String, GDatum> requestParams,
-      final @NotNull CreateOperationIdl op,
+      final @NotNull DeleteOperationIdl op,
       final @NotNull OpFieldPath opPath,
-      final @NotNull UrlCreateUrl psi,
+      final @NotNull UrlDeleteUrl psi,
       final @NotNull TypesResolver typesResolver,
       final @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
@@ -81,7 +80,9 @@ public class CreateRequestUrlParser {
         ReqPathPsiParser.parseFieldPath(resourceType, opPath, psi.getReqFieldPath(), typesResolver, errors);
 
     final @NotNull Type opOutputType = op.outputType(); // already calculated based on outputType/path declared in idl
+
     TypesResolver newResolver = addTypeNamespace(opOutputType, typesResolver);
+    @NotNull DataType deleteDataType = resourceType;
     @NotNull DataType outputDataType = new DataType(opOutputType, null);
 
     @NotNull final StepsAndProjection<ReqOutputFieldProjection> outputStepsAndProjection =
@@ -93,75 +94,58 @@ public class CreateRequestUrlParser {
             errors
         );
 
-    return new CreateRequestUrl(
+    final @Nullable UrlReqDeleteFieldProjection deleteProjectionPsi = psi.getReqDeleteFieldProjection();
+
+    final ReqDeleteFieldProjection deleteProjection =
+        deleteProjectionPsi == null ? null : ReqDeleteProjectionsPsiParser.parseFieldProjection(
+            deleteDataType,
+            op.deleteProjection(),
+            deleteProjectionPsi,
+            typesResolver,
+            errors
+        );
+
+    return new DeleteRequestUrl(
         psi.getQid().getCanonicalName(),
         reqPath,
-        getInputProjection(op, psi, typesResolver, errors),
+        deleteProjection,
         outputStepsAndProjection,
         requestParams
     );
 
   }
 
-  @Nullable
-  private static ReqInputFieldProjection getInputProjection(
-      final @NotNull CreateOperationIdl op,
-      final @NotNull UrlCreateUrl psi,
-      final @NotNull TypesResolver typesResolver,
-      final @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
-    final ReqInputFieldProjection inputProjection;
-    final @Nullable UrlReqInputFieldProjection inputProjectionPsi = psi.getReqInputFieldProjection();
-    if (inputProjectionPsi == null) inputProjection = null;
-    else {
-      final @Nullable OpInputFieldProjection opInputProjection = op.inputProjection();
-      if (opInputProjection == null)
-        throw new PsiProcessingException(
-            "Input projection is not supported by the operation",
-            inputProjectionPsi,
-            errors
-        );
-
-      final Type inputType = op.inputType();
-      assert inputType != null;
-
-      inputProjection = ReqInputProjectionsPsiParser.parseFieldProjection(
-          new DataType(inputType, null),
-          opInputProjection,
-          inputProjectionPsi,
-          typesResolver,
-          errors
-      );
-    }
-    return inputProjection;
-  }
-
   @NotNull
-  private static CreateRequestUrl parseCreateRequestUrlWithoutPath(
+  private static DeleteRequestUrl parseDeleteRequestUrlWithoutPath(
       final @NotNull DataType resourceType,
       final Map<String, GDatum> requestParams,
-      final @NotNull CreateOperationIdl op,
-      final @NotNull UrlCreateUrl psi,
+      final @NotNull DeleteOperationIdl op,
+      final @NotNull UrlDeleteUrl psi,
       final @NotNull TypesResolver typesResolver,
       final @NotNull List<PsiProcessingError> errors)
       throws PsiProcessingException {
 
     final @Nullable UrlReqOutputTrunkFieldProjection fieldProjectionPsi = psi.getReqOutputTrunkFieldProjection();
     TypesResolver newResolver = addTypeNamespace(resourceType.type, typesResolver);
+    final @Nullable UrlReqDeleteFieldProjection deleteProjectionPsi = psi.getReqDeleteFieldProjection();
 
-    final StepsAndProjection<ReqOutputFieldProjection> stepsAndProjection =
-        RequestUrlPsiParserUtil.parseOutputProjection(
+    final ReqDeleteFieldProjection deleteProjection =
+        deleteProjectionPsi == null ? null : ReqDeleteProjectionsPsiParser.parseFieldProjection(
             resourceType,
-            op.outputProjection(),
-            fieldProjectionPsi,
-            newResolver,
+            op.deleteProjection(),
+            deleteProjectionPsi,
+            typesResolver,
             errors
         );
 
-    return new CreateRequestUrl(
+    final StepsAndProjection<ReqOutputFieldProjection> outputStepsAndProjection =
+        RequestUrlPsiParserUtil.parseOutputProjection(resourceType, op.outputProjection(), fieldProjectionPsi, newResolver, errors);
+
+    return new DeleteRequestUrl(
         psi.getQid().getCanonicalName(),
         null,
-        getInputProjection(op, psi, typesResolver, errors),
-        stepsAndProjection,
+        deleteProjection,
+        outputStepsAndProjection,
         requestParams
     );
   }

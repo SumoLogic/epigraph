@@ -21,11 +21,11 @@ import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 import ws.epigraph.idl.Idl;
 import ws.epigraph.idl.ResourceIdl;
-import ws.epigraph.idl.operations.CustomOperationIdl;
 import ws.epigraph.idl.operations.OperationIdl;
+import ws.epigraph.idl.operations.DeleteOperationIdl;
 import ws.epigraph.projections.StepsAndProjection;
-import ws.epigraph.projections.req.input.ReqInputFieldProjection;
 import ws.epigraph.projections.req.output.ReqOutputFieldProjection;
+import ws.epigraph.projections.req.delete.ReqDeleteFieldProjection;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingError;
 import ws.epigraph.psi.PsiProcessingException;
@@ -33,8 +33,8 @@ import ws.epigraph.refs.SimpleTypesResolver;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.tests.*;
 import ws.epigraph.types.DataType;
-import ws.epigraph.url.CustomRequestUrl;
-import ws.epigraph.url.parser.psi.UrlCustomUrl;
+import ws.epigraph.url.DeleteRequestUrl;
+import ws.epigraph.url.parser.psi.UrlDeleteUrl;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -43,13 +43,13 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static ws.epigraph.test.TestUtil.*;
-import static ws.epigraph.url.parser.RequestUrlParserUtil.parseIdl;
-import static ws.epigraph.url.parser.RequestUrlParserUtil.printParameters;
+import static ws.epigraph.url.parser.RequestUrlPsiParserTestUtil.parseIdl;
+import static ws.epigraph.url.parser.RequestUrlPsiParserTestUtil.printParameters;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class CustomRequestUrlParserTest {
+public class DeleteRequestUrlPsiParserTest {
   private TypesResolver resolver = new SimpleTypesResolver(
       PersonId.type,
       Person.type,
@@ -66,16 +66,14 @@ public class CustomRequestUrlParserTest {
       "import ws.epigraph.tests.Person",
       "import ws.epigraph.tests.UserRecord",
       "resource users : map[String,Person] {",
-      "  myCustomOp CUSTOM {",
-      "    method POST",
-      "    inputType UserRecord",
-      "    inputProjection (id, firstName)",
+      "  DELETE {",
+      "    deleteProjection [required]( :record (id, firstName) )",
       "    outputProjection [required]( :record (id, firstName) )",
       "  }",
       "}"
   );
 
-  private CustomOperationIdl customIdl1;
+  private DeleteOperationIdl deleteIdl1;
   private DataType resourceType = String_Person_Map.type.dataType();
 
   {
@@ -84,7 +82,7 @@ public class CustomRequestUrlParserTest {
       ResourceIdl resourceIdl = idl.resources().get("users");
 
       final @NotNull List<OperationIdl> operationIdls = resourceIdl.operations();
-      customIdl1 = (CustomOperationIdl) operationIdls.get(0);
+      deleteIdl1 = (DeleteOperationIdl) operationIdls.get(0);
 
     } catch (IOException e) {
       throw new RuntimeException(e);
@@ -94,28 +92,28 @@ public class CustomRequestUrlParserTest {
   @Test
   public void testParsing1() throws IOException, PsiProcessingException {
     test(
-        customIdl1,
-        "/users<(id)>/123:record(id)?format='json'&verbose=true",
+        deleteIdl1,
+        "/users<[123](:record(id))>/123:record(id)?format='json'&verbose=true",
         "users",
         3,
-        "( id )",
+        "[ \"123\" ]( :record ( id ) )",
         "+users / \"123\" :record ( id )",
         "{format = \"json\", verbose = true}"
     );
   }
 
   private void test(
-      CustomOperationIdl op,
+      DeleteOperationIdl op,
       String url,
       String expectedResource,
       int expectedSteps,
-      String expectedInputProjection,
+      String expectedDeleteProjection,
       String expectedOutputProjection,
       String expectedParams)
       throws IOException, PsiProcessingException {
 
     List<PsiProcessingError> errors = new ArrayList<>();
-    final @NotNull CustomRequestUrl requestUrl = CustomRequestUrlParser.parseCustomRequestUrl(
+    final @NotNull DeleteRequestUrl requestUrl = DeleteRequestUrlPsiParser.parseDeleteRequestUrl(
         resourceType,
         op,
         parseUrlPsi(url),
@@ -127,9 +125,9 @@ public class CustomRequestUrlParserTest {
 
     assertEquals(expectedResource, requestUrl.fieldName());
 
-    final @Nullable ReqInputFieldProjection inputProjection = requestUrl.inputProjection();
-    if (inputProjection == null) assertNull(expectedInputProjection);
-    else assertEquals(expectedInputProjection, printReqInputVarProjection(inputProjection.projection()));
+    final @Nullable ReqDeleteFieldProjection deleteProjection = requestUrl.deleteProjection();
+    if (deleteProjection == null) assertNull(expectedDeleteProjection);
+    else assertEquals(expectedDeleteProjection, printReqDeleteVarProjection(deleteProjection.projection()));
 
     final @NotNull StepsAndProjection<ReqOutputFieldProjection> stepsAndProjection = requestUrl.outputProjection();
     assertEquals(expectedSteps, stepsAndProjection.pathSteps());
@@ -142,11 +140,11 @@ public class CustomRequestUrlParserTest {
   }
 
 
-  private static UrlCustomUrl parseUrlPsi(@NotNull String text) throws IOException {
+  private static UrlDeleteUrl parseUrlPsi(@NotNull String text) throws IOException {
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
-    @NotNull UrlCustomUrl urlPsi =
-        EpigraphPsiUtil.parseText(text, UrlSubParserDefinitions.CUSTOM_URL, errorsAccumulator);
+    @NotNull UrlDeleteUrl urlPsi =
+        EpigraphPsiUtil.parseText(text, UrlSubParserDefinitions.DELETE_URL, errorsAccumulator);
 
     failIfHasErrors(urlPsi, errorsAccumulator);
 

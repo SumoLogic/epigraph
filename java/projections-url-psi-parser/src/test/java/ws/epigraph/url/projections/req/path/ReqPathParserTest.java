@@ -21,6 +21,7 @@ import org.junit.Test;
 import ws.epigraph.projections.op.path.OpVarPath;
 import ws.epigraph.projections.req.path.ReqVarPath;
 import ws.epigraph.psi.EpigraphPsiUtil;
+import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.SimpleTypesResolver;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.test.TestUtil;
@@ -31,6 +32,7 @@ import ws.epigraph.url.parser.psi.UrlReqVarPath;
 import ws.epigraph.url.projections.req.ReqTestUtil;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import static ws.epigraph.test.TestUtil.lines;
 
 /**
@@ -65,6 +67,26 @@ public class ReqPathParserTest {
   @Test
   public void testParseParam() {
     testParse(":record ;p1 = 'a' / friendsMap ;p2 = 'b' / 'John' ;p3 = 'c' :record ;p4 = 'd' / id ;p5 = 'e'");
+  }
+
+  @Test
+  public void testShortPathNotMatching() {
+    String expr = ":record / friendsMap / 'John' ;p3 = 'foo' :record";
+    UrlReqVarPath psi = getPsi(expr);
+
+    try {
+      TestUtil.runPsiParserNotCatchingErrors(
+          errors ->
+              ReqPathPsiParser.parseVarPath(
+                  personOpPath,
+                  Person.type.dataType(null),
+                  psi,
+                  resolver,
+                  errors
+              ));
+      fail();
+    } catch (PsiProcessingException ignored) {
+    }
   }
 
   private void testParse(String expr) {

@@ -31,6 +31,16 @@ import ws.epigraph.url.parser.psi.UrlUrl;
 import java.util.*;
 
 /**
+ * Generic operations router, responsible for picking operation based on the URL.
+ * <p/>
+ * Algorithm description:
+ * <p/>
+ * If operation name is provided (by using {@code Epigraph-Operation} HTTP header), then operation is looked up by name.
+ * <p/>
+ * Else operations are sorted by op path length in descending order and are tried one by one. The first operation
+ * such that URL can be parsed against it's declaration (for instance path, input projection, output projection) wins.
+ *
+ * @see "operations.esc"
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public abstract class AbstractOperationRouter<
@@ -116,9 +126,7 @@ public abstract class AbstractOperationRouter<
         assert request != null;
         return new OperationSearchSuccess<>(
             operation,
-            request.parameters(),
-            request.path(),
-            request.outputProjection()
+            request
         );
       } else
         return new OperationSearchFailure<>(

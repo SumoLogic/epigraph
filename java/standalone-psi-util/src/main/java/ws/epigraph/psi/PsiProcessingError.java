@@ -43,4 +43,9 @@ public class PsiProcessingError {
 
   @NotNull
   public TextLocation location() { return location; }
+
+  @Override
+  public String toString() {
+    return message() + " at " + location();
+  }
 }

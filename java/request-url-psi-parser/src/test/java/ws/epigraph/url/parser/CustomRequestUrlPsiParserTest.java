@@ -21,11 +21,11 @@ import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 import ws.epigraph.idl.Idl;
 import ws.epigraph.idl.ResourceIdl;
+import ws.epigraph.idl.operations.CustomOperationIdl;
 import ws.epigraph.idl.operations.OperationIdl;
-import ws.epigraph.idl.operations.UpdateOperationIdl;
 import ws.epigraph.projections.StepsAndProjection;
+import ws.epigraph.projections.req.input.ReqInputFieldProjection;
 import ws.epigraph.projections.req.output.ReqOutputFieldProjection;
-import ws.epigraph.projections.req.update.ReqUpdateFieldProjection;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingError;
 import ws.epigraph.psi.PsiProcessingException;
@@ -33,8 +33,8 @@ import ws.epigraph.refs.SimpleTypesResolver;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.tests.*;
 import ws.epigraph.types.DataType;
-import ws.epigraph.url.UpdateRequestUrl;
-import ws.epigraph.url.parser.psi.UrlUpdateUrl;
+import ws.epigraph.url.CustomRequestUrl;
+import ws.epigraph.url.parser.psi.UrlCustomUrl;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -43,13 +43,13 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static ws.epigraph.test.TestUtil.*;
-import static ws.epigraph.url.parser.RequestUrlParserUtil.parseIdl;
-import static ws.epigraph.url.parser.RequestUrlParserUtil.printParameters;
+import static ws.epigraph.url.parser.RequestUrlPsiParserTestUtil.parseIdl;
+import static ws.epigraph.url.parser.RequestUrlPsiParserTestUtil.printParameters;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class UpdateRequestUrlParserTest {
+public class CustomRequestUrlPsiParserTest {
   private TypesResolver resolver = new SimpleTypesResolver(
       PersonId.type,
       Person.type,
@@ -66,7 +66,8 @@ public class UpdateRequestUrlParserTest {
       "import ws.epigraph.tests.Person",
       "import ws.epigraph.tests.UserRecord",
       "resource users : map[String,Person] {",
-      "  UPDATE {",
+      "  myCustomOp CUSTOM {",
+      "    method POST",
       "    inputType UserRecord",
       "    inputProjection (id, firstName)",
       "    outputProjection [required]( :record (id, firstName) )",
@@ -74,7 +75,7 @@ public class UpdateRequestUrlParserTest {
       "}"
   );
 
-  private UpdateOperationIdl updateIdl1;
+  private CustomOperationIdl customIdl1;
   private DataType resourceType = String_Person_Map.type.dataType();
 
   {
@@ -83,7 +84,7 @@ public class UpdateRequestUrlParserTest {
       ResourceIdl resourceIdl = idl.resources().get("users");
 
       final @NotNull List<OperationIdl> operationIdls = resourceIdl.operations();
-      updateIdl1 = (UpdateOperationIdl) operationIdls.get(0);
+      customIdl1 = (CustomOperationIdl) operationIdls.get(0);
 
     } catch (IOException e) {
       throw new RuntimeException(e);
@@ -93,18 +94,18 @@ public class UpdateRequestUrlParserTest {
   @Test
   public void testParsing1() throws IOException, PsiProcessingException {
     test(
-        updateIdl1,
-        "/users<+(+id)>/123:record(id)?format='json'&verbose=true",
+        customIdl1,
+        "/users<(id)>/123:record(id)?format='json'&verbose=true",
         "users",
         3,
-        "( +id )",
+        "( id )",
         "+users / \"123\" :record ( id )",
         "{format = \"json\", verbose = true}"
     );
   }
 
   private void test(
-      UpdateOperationIdl op,
+      CustomOperationIdl op,
       String url,
       String expectedResource,
       int expectedSteps,
@@ -114,7 +115,7 @@ public class UpdateRequestUrlParserTest {
       throws IOException, PsiProcessingException {
 
     List<PsiProcessingError> errors = new ArrayList<>();
-    final @NotNull UpdateRequestUrl requestUrl = UpdateRequestUrlParser.parseUpdateRequestUrl(
+    final @NotNull CustomRequestUrl requestUrl = CustomRequestUrlPsiParser.parseCustomRequestUrl(
         resourceType,
         op,
         parseUrlPsi(url),
@@ -126,9 +127,9 @@ public class UpdateRequestUrlParserTest {
 
     assertEquals(expectedResource, requestUrl.fieldName());
 
-    final @Nullable ReqUpdateFieldProjection inputProjection = requestUrl.updateProjection();
+    final @Nullable ReqInputFieldProjection inputProjection = requestUrl.inputProjection();
     if (inputProjection == null) assertNull(expectedInputProjection);
-    else assertEquals(expectedInputProjection, printReqUpdateVarProjection(inputProjection.projection()));
+    else assertEquals(expectedInputProjection, printReqInputVarProjection(inputProjection.projection()));
 
     final @NotNull StepsAndProjection<ReqOutputFieldProjection> stepsAndProjection = requestUrl.outputProjection();
     assertEquals(expectedSteps, stepsAndProjection.pathSteps());
@@ -141,11 +142,11 @@ public class UpdateRequestUrlParserTest {
   }
 
 
-  private static UrlUpdateUrl parseUrlPsi(@NotNull String text) throws IOException {
+  private static UrlCustomUrl parseUrlPsi(@NotNull String text) throws IOException {
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
-    @NotNull UrlUpdateUrl urlPsi =
-        EpigraphPsiUtil.parseText(text, UrlSubParserDefinitions.UPDATE_URL, errorsAccumulator);
+    @NotNull UrlCustomUrl urlPsi =
+        EpigraphPsiUtil.parseText(text, UrlSubParserDefinitions.CUSTOM_URL, errorsAccumulator);
 
     failIfHasErrors(urlPsi, errorsAccumulator);
 

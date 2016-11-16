@@ -92,6 +92,11 @@ public class ReqInputProjectionsParserTest {
   }
 
   @Test
+  public void testParseMapEmptyKeys() {
+    testParse(":record ( friendsMap []( :id ) )");
+  }
+
+  @Test
   public void testParseList() {
     testParse(":record ( friends *( :id ) )");
   }

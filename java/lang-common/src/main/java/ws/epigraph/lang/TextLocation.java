@@ -77,24 +77,14 @@ public class TextLocation {
 
   @Override
   public String toString() {
-    String file = fileName() == null ? "unknown" : fileName();
+    String file = fileName() == null ? "<unknown>" : "file '" + fileName() + "'";
+    String lines = startLine() == endLine() ?
+                   "line " + startLine() :
+                   "lines " + startLine() + "-" + endLine();
+    String offset = startOffset() == endOffset() ?
+                    "offset " + startOffset() :
+                    "offset range " + startOffset() + "-" + endOffset();
 
-    if (startLine() != endLine())
-      return String.format(
-          "file '%s' lines %d-%d (offset %d-%d)",
-          file,
-          startLine(),
-          endLine(),
-          startOffset(),
-          endOffset()
-      );
-    else
-      return String.format(
-          "file '%s' line %d (offset %d-%d)",
-          file,
-          startLine(),
-          startOffset(),
-          endOffset()
-      );
+    return String.format("%s %s (%s)", file, lines, offset);
   }
 }

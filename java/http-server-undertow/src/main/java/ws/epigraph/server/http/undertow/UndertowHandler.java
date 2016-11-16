@@ -28,6 +28,8 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Data;
 import ws.epigraph.data.Datum;
 import ws.epigraph.idl.operations.OperationKind;
+import ws.epigraph.projections.StepsAndProjection;
+import ws.epigraph.projections.req.output.ReqOutputFieldProjection;
 import ws.epigraph.projections.req.output.ReqOutputModelProjection;
 import ws.epigraph.projections.req.output.ReqOutputVarProjection;
 import ws.epigraph.psi.EpigraphPsiUtil;
@@ -39,6 +41,7 @@ import ws.epigraph.service.*;
 import ws.epigraph.service.operations.ReadOperation;
 import ws.epigraph.service.operations.ReadOperationRequest;
 import ws.epigraph.service.operations.ReadOperationResponse;
+import ws.epigraph.url.ReadRequestUrl;
 import ws.epigraph.url.parser.UrlSubParserDefinitions;
 import ws.epigraph.url.parser.psi.UrlReadUrl;
 import ws.epigraph.wire.json.JsonFormatWriter;
@@ -146,24 +149,28 @@ public class UndertowHandler implements HttpHandler {
 
     try {
       // find operation
-      OperationSearchSuccess<ReadOperation<?>> operationSearchResult = findReadOperation(
+      OperationSearchSuccess<ReadOperation<?>, ReadRequestUrl> operationSearchResult = findReadOperation(
           resource,
           getOperationName(exchange),
           urlPsi,
           exchange
       );
 
+      @NotNull final ReadRequestUrl readRequestUrl = operationSearchResult.requestUrl();
+      final @NotNull StepsAndProjection<ReqOutputFieldProjection> outputProjection = readRequestUrl.outputProjection();
+
       // run operation
+
       CompletableFuture<? extends ReadOperationResponse> future = operationSearchResult.operation().process(
           new ReadOperationRequest(
-              operationSearchResult.path(),
-              operationSearchResult.stepsAndProjection().projection()
+              readRequestUrl.path(),
+              outputProjection.projection()
           ));
 
       // send response back
       handleReadResponse(
-          operationSearchResult.stepsAndProjection().pathSteps(),
-          operationSearchResult.stepsAndProjection().projection().projection(),
+          outputProjection.pathSteps(),
+          outputProjection.projection().projection(),
           future,
           exchange
       );
@@ -173,7 +180,7 @@ public class UndertowHandler implements HttpHandler {
   }
 
   @SuppressWarnings("unchecked")
-  private OperationSearchSuccess<ReadOperation<?>> findReadOperation(
+  private OperationSearchSuccess<ReadOperation<?>, ReadRequestUrl> findReadOperation(
       final @NotNull Resource resource,
       final @Nullable String operationName,
       final @NotNull UrlReadUrl urlPsi,
@@ -191,7 +198,7 @@ public class UndertowHandler implements HttpHandler {
     }
 
     assert searchResult instanceof OperationSearchSuccess;
-    return ((OperationSearchSuccess<ReadOperation<?>>) searchResult);
+    return (OperationSearchSuccess<ReadOperation<?>, ReadRequestUrl>) searchResult;
   }
 
   private void handleReadResponse(

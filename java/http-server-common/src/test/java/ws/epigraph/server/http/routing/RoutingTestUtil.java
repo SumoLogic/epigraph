@@ -14,40 +14,30 @@
  * limitations under the License.
  */
 
-package ws.epigraph.url.parser;
+package ws.epigraph.server.http.routing;
 
 import org.jetbrains.annotations.NotNull;
-import ws.epigraph.gdata.GDatum;
 import ws.epigraph.idl.Idl;
 import ws.epigraph.idl.parser.IdlParserDefinition;
 import ws.epigraph.idl.parser.IdlPsiParser;
 import ws.epigraph.idl.parser.psi.IdlFile;
 import ws.epigraph.psi.EpigraphPsiUtil;
+import ws.epigraph.psi.PsiProcessingError;
 import ws.epigraph.refs.TypesResolver;
+import ws.epigraph.service.operations.Operation;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
-import static ws.epigraph.test.TestUtil.*;
+import static org.junit.Assert.fail;
+import static ws.epigraph.test.TestUtil.failIfHasErrors;
+import static ws.epigraph.test.TestUtil.runPsiParser;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class RequestUrlParserUtil {
-  @NotNull
-  static String printParameters(final Map<String, GDatum> parameters) {
-    TreeMap<String, GDatum> sortedParams = new TreeMap<>(parameters);
-    StringBuilder sb = new StringBuilder();
-    for (final Map.Entry<String, GDatum> entry : sortedParams.entrySet()) {
-      sb.append(sb.length() == 0 ? "{" : ", ");
-      sb.append(entry.getKey());
-      sb.append(" = ");
-      sb.append(printGDatum(entry.getValue()));
-    }
-    if (sb.length() > 0) sb.append("}");
-    return sb.toString();
-  }
+public class RoutingTestUtil {
 
   @NotNull
   static Idl parseIdl(@NotNull String text, @NotNull TypesResolver resolver) throws IOException {
@@ -59,5 +49,22 @@ public class RequestUrlParserUtil {
     failIfHasErrors(psiFile, errorsAccumulator);
 
     return runPsiParser(errors -> IdlPsiParser.parseIdl(psiFile, resolver, errors));
+  }
+
+  static void failIfSearchFailure(final OperationSearchResult<? extends Operation<?, ?, ?>> oss) {
+    if (oss instanceof OperationSearchFailure) {
+      StringBuilder msg = new StringBuilder("Operation matching failed.\n");
+
+      OperationSearchFailure<? extends Operation> failure = (OperationSearchFailure<? extends Operation>) oss;
+      for (final Map.Entry<? extends Operation, List<PsiProcessingError>> entry : failure.errors().entrySet()) {
+        final Operation op = entry.getKey();
+        msg.append("\nOperation defined at ").append(op.declaration().location()).append(" errors:\n");
+        for (final PsiProcessingError error : entry.getValue()) {
+          msg.append(error).append("\n");
+        }
+      }
+
+      fail(msg.toString());
+    }
   }
 }

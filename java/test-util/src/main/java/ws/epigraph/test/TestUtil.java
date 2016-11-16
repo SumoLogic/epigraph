@@ -19,6 +19,7 @@ package ws.epigraph.test;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.impl.DebugUtil;
+import com.intellij.psi.util.PsiUtil;
 import de.uka.ilkd.pp.Layouter;
 import de.uka.ilkd.pp.NoExceptions;
 import de.uka.ilkd.pp.StringBackend;
@@ -416,7 +417,7 @@ public class TestUtil {
 
   public static void failIfHasErrors(final List<PsiProcessingError> errors) {
     if (!errors.isEmpty()) {
-      for (final PsiProcessingError error : errors) System.err.print(error.message() + " at " + error.location());
+      for (final PsiProcessingError error : errors) System.err.println(error.message() + " at " + error.location());
 
       fail();
     }
@@ -460,7 +461,7 @@ public class TestUtil {
 
     R r = closure.runParser(errors);
 
-    failIfHasErrors(errors);
+    if (!errors.isEmpty()) throw new PsiProcessingException("got parsing errors", PsiUtil.NULL_PSI_ELEMENT, errors);
 
     assert r != null;
     return r;
