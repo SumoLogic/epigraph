@@ -22,7 +22,4 @@ public interface IdlOpOutputMultiTagProjectionItem extends PsiElement {
   @Nullable
   PsiElement getCurlyRight();
 
-  @Nullable
-  PsiElement getPlus();
-
 }

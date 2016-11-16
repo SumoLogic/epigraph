@@ -212,7 +212,7 @@ public class ReadOperationRouterTest {
   }
 
   @NotNull
-  public static UrlReadUrl parseReadUrl(@NotNull String url) {
+  private static UrlReadUrl parseReadUrl(@NotNull String url) {
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
     UrlReadUrl urlPsi = EpigraphPsiUtil.parseText(
@@ -227,7 +227,7 @@ public class ReadOperationRouterTest {
   }
 
   @NotNull
-  public static Idl parseIdl(@NotNull String text, @NotNull TypesResolver resolver) throws IOException {
+  private static Idl parseIdl(@NotNull String text, @NotNull TypesResolver resolver) throws IOException {
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
     @NotNull IdlFile psiFile =

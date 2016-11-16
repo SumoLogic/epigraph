@@ -2921,28 +2921,21 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '+'? tagName ( opOutputComplexTagProjection | opOutputSimpleTagProjection )
+  // tagName ( opOutputComplexTagProjection | opOutputSimpleTagProjection )
   public static boolean opOutputMultiTagProjectionItem(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opOutputMultiTagProjectionItem")) return false;
+    if (!nextTokenIs(b, "<op output multi tag projection item>", I_UNDERSCORE, I_ID)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, I_OP_OUTPUT_MULTI_TAG_PROJECTION_ITEM, "<op output multi tag projection item>");
-    r = opOutputMultiTagProjectionItem_0(b, l + 1);
-    r = r && tagName(b, l + 1);
-    r = r && opOutputMultiTagProjectionItem_2(b, l + 1);
+    r = tagName(b, l + 1);
+    r = r && opOutputMultiTagProjectionItem_1(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
 
-  // '+'?
-  private static boolean opOutputMultiTagProjectionItem_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opOutputMultiTagProjectionItem_0")) return false;
-    consumeToken(b, I_PLUS);
-    return true;
-  }
-
   // opOutputComplexTagProjection | opOutputSimpleTagProjection
-  private static boolean opOutputMultiTagProjectionItem_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opOutputMultiTagProjectionItem_2")) return false;
+  private static boolean opOutputMultiTagProjectionItem_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opOutputMultiTagProjectionItem_1")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = opOutputComplexTagProjection(b, l + 1);

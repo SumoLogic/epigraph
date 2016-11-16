@@ -17,7 +17,9 @@ dependencies {
   compile 'org.jetbrains:annotations'
   compile 'net.jcip:jcip-annotations'
 
+  testCompile project(':epigraph-java-idl-psi-parser')
   testCompile project(':epigraph-java-projections-idl-psi-parser')
+  testCompile project(':epigraph-java-test-util')
   testCompile project(':tests-schema-java')
   testCompile 'junit:junit'
   testCompile 'org.slf4j:slf4j-nop'

@@ -17,6 +17,9 @@
 package ws.epigraph.idl.operations;
 
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.idl.TypeRefs;
 import ws.epigraph.idl.parser.psi.*;
 import ws.epigraph.projections.Annotation;
@@ -40,9 +43,6 @@ import ws.epigraph.refs.ValueTypeRef;
 import ws.epigraph.types.DataType;
 import ws.epigraph.types.DatumType;
 import ws.epigraph.types.Type;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
@@ -148,10 +148,10 @@ public class OperationsPsiParser {
       annotations = IdlProjectionPsiParserUtil.parseAnnotation(annotations, part.getAnnotation(), errors);
 
       pathPsi = getPsiPart(pathPsi, part.getOperationPath(), "path", errors);
-      inputTypePsi = getPsiPart(inputTypePsi, part.getOperationInputType(), "input kind", errors);
+      inputTypePsi = getPsiPart(inputTypePsi, part.getOperationInputType(), "input type", errors);
       inputProjectionPsi =
           getPsiPart(inputProjectionPsi, part.getOperationInputProjection(), "input projection", errors);
-      outputTypePsi = getPsiPart(outputTypePsi, part.getOperationOutputType(), "output kind", errors);
+      outputTypePsi = getPsiPart(outputTypePsi, part.getOperationOutputType(), "output type", errors);
       outputProjectionPsi =
           getPsiPart(outputProjectionPsi, part.getOperationOutputProjection(), "output projection", errors);
     }
@@ -162,8 +162,9 @@ public class OperationsPsiParser {
     if (inputProjectionPsi == null)
       throw new PsiProcessingException("Input projection must be specified", psi, errors);
 
-    if (outputTypePsi == null)
-      throw new PsiProcessingException("Output kind must be specified", psi, errors);
+    @Nullable final IdlOpInputFieldProjection inputFieldProjectionPsi = inputProjectionPsi.getOpInputFieldProjection();
+    if (inputFieldProjectionPsi == null)
+      throw new PsiProcessingException("Input projection must be specified", inputProjectionPsi, errors);
 
     return new CreateOperationIdl(
         parseOperationName(psi.getOperationName()),
@@ -172,7 +173,7 @@ public class OperationsPsiParser {
         OpInputProjectionsPsiParser.parseFieldProjection(
             resolveInputType(resourceType, varPath, inputTypePsi, resolver, psi, errors),
             true,
-            inputProjectionPsi.getOpInputFieldProjection(),
+            inputFieldProjectionPsi,
             resolver,
             errors
         ),
@@ -208,10 +209,10 @@ public class OperationsPsiParser {
       annotations = IdlProjectionPsiParserUtil.parseAnnotation(annotations, part.getAnnotation(), errors);
 
       pathPsi = getPsiPart(pathPsi, part.getOperationPath(), "path", errors);
-      inputTypePsi = getPsiPart(inputTypePsi, part.getOperationInputType(), "input kind", errors);
+      inputTypePsi = getPsiPart(inputTypePsi, part.getOperationInputType(), "input type", errors);
       inputProjectionPsi =
           getPsiPart(inputProjectionPsi, part.getOperationInputProjection(), "input projection", errors);
-      outputTypePsi = getPsiPart(outputTypePsi, part.getOperationOutputType(), "output kind", errors);
+      outputTypePsi = getPsiPart(outputTypePsi, part.getOperationOutputType(), "output type", errors);
       outputProjectionPsi =
           getPsiPart(outputProjectionPsi, part.getOperationOutputProjection(), "output projection", errors);
     }
@@ -220,6 +221,10 @@ public class OperationsPsiParser {
 
     if (inputProjectionPsi == null)
       throw new PsiProcessingException("Input projection must be specified", psi, errors);
+
+    @Nullable final IdlOpInputFieldProjection inputFieldProjectionPsi = inputProjectionPsi.getOpInputFieldProjection();
+    if (inputFieldProjectionPsi == null)
+      throw new PsiProcessingException("Input projection must be specified", inputProjectionPsi, errors);
 
     @Nullable final OpVarPath varPath = fieldPath == null ? null : fieldPath.projection();
 
@@ -230,7 +235,7 @@ public class OperationsPsiParser {
         OpInputProjectionsPsiParser.parseFieldProjection(
             resolveInputType(resourceType, varPath, inputTypePsi, resolver, psi, errors),
             true,
-            inputProjectionPsi.getOpInputFieldProjection(),
+            inputFieldProjectionPsi,
             resolver,
             errors
         ),
@@ -267,7 +272,7 @@ public class OperationsPsiParser {
       pathPsi = getPsiPart(pathPsi, part.getOperationPath(), "path", errors);
       deleteProjectionPsi =
           getPsiPart(deleteProjectionPsi, part.getOperationDeleteProjection(), "delete projection", errors);
-      outputTypePsi = getPsiPart(outputTypePsi, part.getOperationOutputType(), "output kind", errors);
+      outputTypePsi = getPsiPart(outputTypePsi, part.getOperationOutputType(), "output type", errors);
       outputProjectionPsi =
           getPsiPart(outputProjectionPsi, part.getOperationOutputProjection(), "output projection", errors);
     }
@@ -277,8 +282,10 @@ public class OperationsPsiParser {
     if (deleteProjectionPsi == null)
       throw new PsiProcessingException("Delete projection must be specified", psi, errors);
 
-    if (outputTypePsi == null)
-      throw new PsiProcessingException("Output kind must be specified", psi, errors);
+    @Nullable final IdlOpDeleteFieldProjection deleteFieldProjectionPsi =
+        deleteProjectionPsi.getOpDeleteFieldProjection();
+    if (deleteFieldProjectionPsi == null)
+      throw new PsiProcessingException("Delete projection must be specified", psi, errors);
 
     return new DeleteOperationIdl(
         parseOperationName(psi.getOperationName()),
@@ -286,7 +293,7 @@ public class OperationsPsiParser {
         fieldPath,
         OpDeleteProjectionsPsiParser.parseFieldProjection(
             resolveDeleteType(resourceType, fieldPath == null ? null : fieldPath.projection()),
-            deleteProjectionPsi.getOpDeleteFieldProjection(),
+            deleteFieldProjectionPsi,
             resolver,
             errors
         ),
@@ -324,10 +331,10 @@ public class OperationsPsiParser {
 
       methodPsi = getPsiPart(methodPsi, part.getOperationMethod(), "HTTP method", errors);
       pathPsi = getPsiPart(pathPsi, part.getOperationPath(), "path", errors);
-      inputTypePsi = getPsiPart(inputTypePsi, part.getOperationInputType(), "input kind", errors);
+      inputTypePsi = getPsiPart(inputTypePsi, part.getOperationInputType(), "input type", errors);
       inputProjectionPsi =
           getPsiPart(inputProjectionPsi, part.getOperationInputProjection(), "input projection", errors);
-      outputTypePsi = getPsiPart(outputTypePsi, part.getOperationOutputType(), "output kind", errors);
+      outputTypePsi = getPsiPart(outputTypePsi, part.getOperationOutputType(), "output type", errors);
       outputProjectionPsi =
           getPsiPart(outputProjectionPsi, part.getOperationOutputProjection(), "output projection", errors);
     }
@@ -343,6 +350,9 @@ public class OperationsPsiParser {
       else throw new PsiProcessingException("HTTP method must be specified", methodPsi, errors);
     }
 
+    @Nullable final IdlOpInputFieldProjection inputFieldProjectionPsi =
+        inputProjectionPsi == null ? null : inputProjectionPsi.getOpInputFieldProjection();
+
     @Nullable OpFieldPath opPath = parsePath(resourceType, pathPsi, resolver, errors);
 
     return new CustomOperationIdl(
@@ -350,7 +360,7 @@ public class OperationsPsiParser {
         parseOperationName(psi.getOperationName()),
         Annotations.fromMap(annotations),
         opPath,
-        inputProjectionPsi == null ? null : OpInputProjectionsPsiParser.parseFieldProjection(
+        inputFieldProjectionPsi == null ? null : OpInputProjectionsPsiParser.parseFieldProjection(
             resolveInputType(
                 resourceType,
                 opPath == null ? null : opPath.projection(),
@@ -360,7 +370,7 @@ public class OperationsPsiParser {
                 errors
             ),
             true,
-            inputProjectionPsi.getOpInputFieldProjection(),
+            inputFieldProjectionPsi,
             resolver,
             errors
         ),
@@ -386,7 +396,10 @@ public class OperationsPsiParser {
       final @NotNull List<PsiProcessingError> errors)
       throws PsiProcessingException {
 
-    if (outputProjectionPsi == null) {
+    @Nullable final IdlOpOutputFieldProjection outputFieldProjectionPsi =
+        outputProjectionPsi == null ? null : outputProjectionPsi.getOpOutputFieldProjection();
+
+    if (outputProjectionPsi == null || outputFieldProjectionPsi == null) {
       final @NotNull OpOutputVarProjection varProjection =
           OpOutputProjectionsPsiParser.createDefaultVarProjection(outputType, location, errors);
 
@@ -402,7 +415,7 @@ public class OperationsPsiParser {
 
     return OpOutputProjectionsPsiParser.parseFieldProjection(
         outputType,
-        outputProjectionPsi.getOpOutputFieldProjection(),
+        outputFieldProjectionPsi,
         resolver,
         errors
     );
@@ -436,15 +449,17 @@ public class OperationsPsiParser {
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
-    if (declaredOutputTypePsi == null) {
+    @Nullable final IdlValueTypeRef typeRefPsi =
+        declaredOutputTypePsi == null ? null : declaredOutputTypePsi.getValueTypeRef();
+
+    if (declaredOutputTypePsi == null || typeRefPsi == null) {
       if (opVarPath == null) return resourceType;
       else return ProjectionUtils.tipType(opVarPath);
     }
 
-    @NotNull final IdlValueTypeRef typeRefPsi = declaredOutputTypePsi.getValueTypeRef();
     @NotNull final ValueTypeRef valueTypeRef = TypeRefs.fromPsi(typeRefPsi);
     @Nullable final DataType dataType = resolver.resolve(valueTypeRef);
-    if (dataType == null) throw new PsiProcessingException("Can't resolve output kind", typeRefPsi, errors);
+    if (dataType == null) throw new PsiProcessingException("Can't resolve output type", typeRefPsi, errors);
     return dataType;
   }
 
@@ -457,7 +472,8 @@ public class OperationsPsiParser {
       @NotNull PsiElement location,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
-    if (inputTypePsi == null) {
+    @Nullable final IdlTypeRef typeRefPsi = inputTypePsi == null ? null : inputTypePsi.getTypeRef();
+    if (inputTypePsi == null || typeRefPsi == null) {
       if (path == null) {
 
         @NotNull Type rtt = resourceType.type;
@@ -469,7 +485,7 @@ public class OperationsPsiParser {
 
         if (defaultTag == null)
           throw new PsiProcessingException(
-              "Neither input kind nor operation path is specified, and resource kind has no default tag",
+              "Neither input type nor operation path is specified, and resource type has no default tag",
               location,
               errors
           );
@@ -487,17 +503,16 @@ public class OperationsPsiParser {
 
         if (defaultTag == null)
           throw new PsiProcessingException(
-              "Path tip kind doesn't define default tag",
+              "Path tip type doesn't define default tag",
               location,
               errors
           );
         else return defaultTag.type.dataType();
       }
     }
-    @NotNull final IdlTypeRef typeRefPsi = inputTypePsi.getTypeRef();
     @Nullable final DatumType datumType = TypeRefs.fromPsi(typeRefPsi).resolveDatumType(resolver);
     if (datumType == null)
-      throw new PsiProcessingException("Can't resolve input kind", typeRefPsi, errors);
+      throw new PsiProcessingException("Can't resolve input type", typeRefPsi, errors);
     return datumType.dataType();
   }
 

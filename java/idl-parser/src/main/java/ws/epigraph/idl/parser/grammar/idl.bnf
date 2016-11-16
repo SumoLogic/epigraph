@@ -306,7 +306,7 @@ opOutputVarProjection ::= ( opOutputMultiTagProjection | opOutputSingleTagProjec
 
 opOutputMultiTagProjection ::= ':' '(' (opOutputMultiTagProjectionItem ','?)* ')' {pin=2}
 opOutputSingleTagProjection ::= ( ':' tagName)? (opOutputComplexTagProjection | opOutputSimpleTagProjection )
-opOutputMultiTagProjectionItem ::= '+'? tagName ( opOutputComplexTagProjection | opOutputSimpleTagProjection )
+opOutputMultiTagProjectionItem ::= tagName ( opOutputComplexTagProjection | opOutputSimpleTagProjection )
 
 private opOutputSimpleTagProjection ::= opOutputModelProjection
 private opOutputComplexTagProjection ::= '{' (opOutputModelProperty ','?)* '}' opOutputModelProjection {pin=1}

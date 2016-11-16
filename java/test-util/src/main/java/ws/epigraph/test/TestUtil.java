@@ -23,6 +23,8 @@ import de.uka.ilkd.pp.Layouter;
 import de.uka.ilkd.pp.NoExceptions;
 import de.uka.ilkd.pp.StringBackend;
 import org.jetbrains.annotations.NotNull;
+import ws.epigraph.gdata.GDataPrettyPrinter;
+import ws.epigraph.gdata.GDatum;
 import ws.epigraph.idl.Idl;
 import ws.epigraph.idl.IdlPrettyPrinter;
 import ws.epigraph.projections.ProjectionUtils;
@@ -36,8 +38,10 @@ import ws.epigraph.projections.op.path.OpPathPrettyPrinter;
 import ws.epigraph.projections.op.path.OpVarPath;
 import ws.epigraph.projections.req.delete.ReqDeleteProjectionsPrettyPrinter;
 import ws.epigraph.projections.req.delete.ReqDeleteVarProjection;
+import ws.epigraph.projections.req.input.ReqInputFieldProjection;
 import ws.epigraph.projections.req.input.ReqInputProjectionsPrettyPrinter;
 import ws.epigraph.projections.req.input.ReqInputVarProjection;
+import ws.epigraph.projections.req.output.ReqOutputFieldProjection;
 import ws.epigraph.projections.req.output.ReqOutputProjectionsPrettyPrinter;
 import ws.epigraph.projections.req.output.ReqOutputVarProjection;
 import ws.epigraph.projections.req.path.ReqPathPrettyPrinter;
@@ -296,6 +300,20 @@ public class TestUtil {
   }
 
   @NotNull
+  public static String printReqOutputFieldProjection(
+      String fieldName,
+      @NotNull ReqOutputFieldProjection projection,
+      int pathSteps) {
+
+    StringBackend sb = new StringBackend(120);
+    Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
+    ReqOutputProjectionsPrettyPrinter<NoExceptions> printer = new ReqOutputProjectionsPrettyPrinter<>(layouter);
+    printer.print(fieldName, projection, pathSteps);
+    layouter.close();
+    return sb.getString();
+  }
+
+  @NotNull
   public static String printReqOutputVarProjection(@NotNull ReqOutputVarProjection projection, int pathSteps) {
     StringBackend sb = new StringBackend(120);
     Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
@@ -316,6 +334,16 @@ public class TestUtil {
   }
 
   @NotNull
+  public static String printReqInputFieldProjection(String fieldName, @NotNull ReqInputFieldProjection projection) {
+    StringBackend sb = new StringBackend(120);
+    Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
+    ReqInputProjectionsPrettyPrinter<NoExceptions> printer = new ReqInputProjectionsPrettyPrinter<>(layouter);
+    printer.print(fieldName, projection, 0);
+    layouter.close();
+    return sb.getString();
+  }
+
+  @NotNull
   public static String printReqInputVarProjection(@NotNull ReqInputVarProjection projection) {
     StringBackend sb = new StringBackend(120);
     Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
@@ -324,7 +352,7 @@ public class TestUtil {
     layouter.close();
     return sb.getString();
   }
-  
+
   @NotNull
   public static String printReqDeleteVarProjection(@NotNull ReqDeleteVarProjection projection) {
     StringBackend sb = new StringBackend(120);
@@ -344,7 +372,7 @@ public class TestUtil {
     layouter.close();
     return sb.getString();
   }
-  
+
   @NotNull
   public static String printOpOutputVarProjection(@NotNull OpOutputVarProjection projection) {
     StringBackend sb = new StringBackend(120);
@@ -366,6 +394,16 @@ public class TestUtil {
   }
 
   @NotNull
+  public static String printGDatum(GDatum gd) {
+    StringBackend sb = new StringBackend(120);
+    Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
+    GDataPrettyPrinter<NoExceptions> printer = new GDataPrettyPrinter<>(layouter);
+    printer.print(gd);
+    layouter.close();
+    return sb.getString();
+  }
+
+  @NotNull
   public static String printIdl(Idl idl) {
     StringBackend sb = new StringBackend(80);
     Layouter<NoExceptions> l = new Layouter<>(sb, 2);
@@ -376,7 +414,7 @@ public class TestUtil {
     return sb.getString();
   }
 
-  private static void failIfHasErrors(final List<PsiProcessingError> errors) {
+  public static void failIfHasErrors(final List<PsiProcessingError> errors) {
     if (!errors.isEmpty()) {
       for (final PsiProcessingError error : errors) System.err.print(error.message() + " at " + error.location());
 

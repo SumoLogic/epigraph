@@ -92,4 +92,8 @@ public class PsiProcessingException extends Exception {
   @NotNull
   public TextLocation location() { return toError().location(); }
 
+  @Override
+  public String toString() {
+    return super.toString() + " at " + location();
+  }
 }

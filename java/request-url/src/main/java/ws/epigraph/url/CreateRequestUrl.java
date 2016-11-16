@@ -20,20 +20,44 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.gdata.GDatum;
 import ws.epigraph.projections.StepsAndProjection;
+import ws.epigraph.projections.req.input.ReqInputFieldProjection;
 import ws.epigraph.projections.req.output.ReqOutputFieldProjection;
 import ws.epigraph.projections.req.path.ReqFieldPath;
 
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class CreateRequestUrl extends RequestUrl {
+  @Nullable
+  private final ReqInputFieldProjection inputProjection;
+
   public CreateRequestUrl(
       @NotNull final String fieldName,
       @Nullable final ReqFieldPath path,
+      @Nullable ReqInputFieldProjection inputProjection,
       @NotNull final StepsAndProjection<ReqOutputFieldProjection> outputProjection,
       @NotNull final Map<String, GDatum> parameters) {
     super(fieldName, path, outputProjection, parameters);
+    this.inputProjection = inputProjection;
+  }
+
+  @Nullable
+  public ReqInputFieldProjection inputProjection() { return inputProjection; }
+
+  @Override
+  public boolean equals(final Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    if (!super.equals(o)) return false;
+    final CreateRequestUrl url = (CreateRequestUrl) o;
+    return Objects.equals(inputProjection, url.inputProjection);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(super.hashCode(), inputProjection);
   }
 }

@@ -56,10 +56,4 @@ public class IdlOpOutputMultiTagProjectionItemImpl extends ASTWrapperPsiElement 
     return findChildByType(I_CURLY_RIGHT);
   }
 
-  @Override
-  @Nullable
-  public PsiElement getPlus() {
-    return findChildByType(I_PLUS);
-  }
-
 }
