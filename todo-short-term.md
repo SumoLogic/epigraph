@@ -5,7 +5,7 @@
   - [x] read
   - [x] create
   - [x] udpate
-  - [ ] delete
+  - [x] delete
   - [ ] custom
 - [ ] new routing algorithm
   - [x] generic
