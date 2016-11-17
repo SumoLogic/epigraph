@@ -118,7 +118,7 @@ createUrl ::= '/' qid reqFieldPath ('<' reqInputFieldProjection)? ('>' reqOutput
 updateUrl ::= '/' qid reqFieldPath ('<' '+'? reqUpdateFieldProjection)? ('>' reqOutputTrunkFieldProjection)? requestParams {
   extends = "url"
 }
-deleteUrl ::= '/' qid reqFieldPath ('<' reqDeleteFieldProjection)? ('>' reqOutputTrunkFieldProjection)? requestParams {
+deleteUrl ::= '/' qid reqFieldPath '<' reqDeleteFieldProjection ('>' reqOutputTrunkFieldProjection)? requestParams {
   extends = "url"
 }
 customUrl ::= '/' qid reqFieldPath ('<' reqInputFieldProjection)? ('>' reqOutputTrunkFieldProjection)? requestParams {

@@ -20,6 +20,7 @@ import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.gen.GenModelProjection;
 import ws.epigraph.projections.gen.GenTagProjectionEntry;
 import ws.epigraph.projections.gen.GenVarProjection;
+import ws.epigraph.types.DatumType;
 import ws.epigraph.types.Type;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -58,8 +59,33 @@ public abstract class AbstractVarProjection<
     this.polymorphicTails = polymorphicTails;
     this.location = location;
 
-    // todo validate tag types == tag projection models
+    validateTags();
     // todo validate tails (should be subtypes of `type`)
+  }
+
+  private void validateTags() {
+    for (final Map.Entry<String, TP> entry : tagProjections.entrySet()) {
+      final String tagName = entry.getKey();
+
+      final TP tagProjection = entry.getValue();
+      final @NotNull DatumType tagType = tagProjection.tag().type;
+      final DatumType tagProjectionModel = tagProjection.projection().model();
+
+      if (!type.tagsMap().containsKey(tagName))
+        throw new IllegalArgumentException(
+            String.format("Tag '%s' does not belong to var type '%s'",
+                          tagName, type.name()
+            )
+        );
+
+      if (!tagType.isAssignableFrom(tagProjectionModel))
+        throw new IllegalArgumentException(
+            String.format("Tag '%s' projection type '%s' is not a subtype of tag type '%s'",
+                          tagName, tagProjectionModel.name(), tagType.name()
+            )
+        );
+
+    }
   }
 
   @NotNull

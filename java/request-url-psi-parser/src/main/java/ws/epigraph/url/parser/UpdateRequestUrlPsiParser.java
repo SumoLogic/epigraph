@@ -127,13 +127,11 @@ public class UpdateRequestUrlPsiParser {
       final @NotNull List<PsiProcessingError> errors)
       throws PsiProcessingException {
 
-    final @Nullable UrlReqOutputTrunkFieldProjection fieldProjectionPsi = psi.getReqOutputTrunkFieldProjection();
-    TypesResolver newResolver = addTypeNamespace(resourceType.type, typesResolver);
     final @Nullable UrlReqUpdateFieldProjection updateProjectionPsi = psi.getReqUpdateFieldProjection();
 
     final ReqUpdateFieldProjection updateProjection =
         updateProjectionPsi == null ? null : ReqUpdateProjectionsPsiParser.parseFieldProjection(
-            resourceType,
+            new DataType(op.inputType(), null),
             psi.getPlus() != null,
             op.inputProjection(),
             updateProjectionPsi,
@@ -141,8 +139,11 @@ public class UpdateRequestUrlPsiParser {
             errors
         );
 
+    TypesResolver outputResolver = addTypeNamespace(resourceType.type, typesResolver);
+    final @Nullable UrlReqOutputTrunkFieldProjection outputProjectionPsi = psi.getReqOutputTrunkFieldProjection();
     final StepsAndProjection<ReqOutputFieldProjection> outputStepsAndProjection =
-        RequestUrlPsiParserUtil.parseOutputProjection(resourceType, op.outputProjection(), fieldProjectionPsi, newResolver, errors);
+        RequestUrlPsiParserUtil.parseOutputProjection(resourceType, op.outputProjection(),
+                                                      outputProjectionPsi, outputResolver, errors);
 
     return new UpdateRequestUrl(
         psi.getQid().getCanonicalName(),

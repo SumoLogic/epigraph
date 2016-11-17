@@ -143,6 +143,7 @@ public class CustomRequestUrlPsiParser {
       final @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
     final ReqInputFieldProjection inputProjection;
 
+    // todo unify with same code from `CreateRequestUrlParser`
     final @Nullable UrlReqInputFieldProjection inputProjectionPsi = psi.getReqInputFieldProjection();
     final @Nullable OpInputFieldProjection opInputProjection = op.inputProjection();
     if (inputProjectionPsi == null) inputProjection = null;

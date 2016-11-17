@@ -7,22 +7,24 @@
   - [x] udpate
   - [x] delete
   - [x] custom
-- [ ] new routing algorithm
+- [x] new routing algorithm
   - [x] generic
   - [x] reads
   - [x] create
-  - [ ] update
-  - [ ] delete
+  - [x] update
+  - [x] delete
 - [x] Req input projections parsing: raise errors if `required` parts are missing
+- [ ] Introduce `AbstractRecordModelProjection`, with proper checks
 - [ ] Remove remaining usages of deprecated `PsiProcessingException` constructor
 - [ ] figure out all `mergeOpTails`
+- [ ] surround all places where var projection instances are created with `try..catch(IAE)` and translate `IAE` to `PsiParsingException`
 
 #Horizon 2
 - [ ] Unmarshallers for create/update/custom body
   - [ ] must be guidable by op input projection
   - [ ] must be guidable by req input projection
   - [ ] must be guidable by req update projection
-  - [ ] must be guidable by req delete projection
+  - [ ] ~~must be guidable by req delete projection~~
 - [ ] Undertow handler must support all operations
   - [ ] add support for create
   - [ ] add support for update

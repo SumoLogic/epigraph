@@ -32,9 +32,9 @@ public class UrlDeleteUrlImpl extends UrlUrlImpl implements UrlDeleteUrl {
   }
 
   @Override
-  @Nullable
+  @NotNull
   public UrlReqDeleteFieldProjection getReqDeleteFieldProjection() {
-    return findChildByClass(UrlReqDeleteFieldProjection.class);
+    return findNotNullChildByClass(UrlReqDeleteFieldProjection.class);
   }
 
   @Override
@@ -56,9 +56,9 @@ public class UrlDeleteUrlImpl extends UrlUrlImpl implements UrlDeleteUrl {
   }
 
   @Override
-  @Nullable
+  @NotNull
   public PsiElement getAngleLeft() {
-    return findChildByType(U_ANGLE_LEFT);
+    return findNotNullChildByType(U_ANGLE_LEFT);
   }
 
   @Override

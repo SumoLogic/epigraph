@@ -16,7 +16,6 @@
 
 package ws.epigraph.projections.gen;
 
-import ws.epigraph.projections.req.output.ReqOutputFieldProjectionEntry;
 import ws.epigraph.types.RecordType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

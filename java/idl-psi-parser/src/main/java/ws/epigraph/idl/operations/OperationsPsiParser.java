@@ -171,7 +171,7 @@ public class OperationsPsiParser {
         Annotations.fromMap(annotations),
         fieldPath,
         OpInputProjectionsPsiParser.parseFieldProjection(
-            resolveInputType(resourceType, varPath, inputTypePsi, resolver, psi, errors),
+            resolveInputType(resourceType, varPath, inputTypePsi, resolver, errors),
             true,
             inputFieldProjectionPsi,
             resolver,
@@ -233,7 +233,7 @@ public class OperationsPsiParser {
         Annotations.fromMap(annotations),
         fieldPath,
         OpInputProjectionsPsiParser.parseFieldProjection(
-            resolveInputType(resourceType, varPath, inputTypePsi, resolver, psi, errors),
+            resolveInputType(resourceType, varPath, inputTypePsi, resolver, errors),
             true,
             inputFieldProjectionPsi,
             resolver,
@@ -285,7 +285,7 @@ public class OperationsPsiParser {
     @Nullable final IdlOpDeleteFieldProjection deleteFieldProjectionPsi =
         deleteProjectionPsi.getOpDeleteFieldProjection();
     if (deleteFieldProjectionPsi == null)
-      throw new PsiProcessingException("Delete projection must be specified", psi, errors);
+      throw new PsiProcessingException("Delete projection must be specified", deleteProjectionPsi, errors);
 
     return new DeleteOperationIdl(
         parseOperationName(psi.getOperationName()),
@@ -366,7 +366,6 @@ public class OperationsPsiParser {
                 opPath == null ? null : opPath.projection(),
                 inputTypePsi,
                 resolver,
-                psi,
                 errors
             ),
             true,
@@ -469,7 +468,6 @@ public class OperationsPsiParser {
       @Nullable OpVarPath path,
       @Nullable IdlOperationInputType inputTypePsi,
       @NotNull TypesResolver resolver,
-      @NotNull PsiElement location,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
     @Nullable final IdlTypeRef typeRefPsi = inputTypePsi == null ? null : inputTypePsi.getTypeRef();
@@ -481,18 +479,9 @@ public class OperationsPsiParser {
         if (rtt instanceof DatumType) return ((DatumType) rtt).dataType();
 
         return resourceType;
-//        @Nullable
-//        final Type.Tag defaultTag = resourceType.defaultTag;
-//
-//        if (defaultTag == null)
-//          throw new PsiProcessingException(
-//              "Neither input type nor operation path is specified, and resource type has no default tag",
-//              location,
-//              errors
-//          );
-//        else return defaultTag.type.dataType();
 
       } else {
+
         @NotNull final DataType tipType = ProjectionUtils.tipType(path);
 
         @NotNull final Type ttt = tipType.type;
@@ -500,17 +489,6 @@ public class OperationsPsiParser {
         if (ttt instanceof DatumType) return ((DatumType) ttt).dataType();
 
         return tipType;
-//
-//        @Nullable
-//        final Type.Tag defaultTag = tipType.defaultTag;
-//
-//        if (defaultTag == null)
-//          throw new PsiProcessingException(
-//              "Input type not specified and path tip type can't be used because it doesn't define default tag",
-//              location,
-//              errors
-//          );
-//        else return defaultTag.type.dataType();
       }
     }
     @Nullable final DatumType datumType = TypeRefs.fromPsi(typeRefPsi).resolveDatumType(resolver);

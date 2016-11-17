@@ -660,7 +660,7 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '/' qid reqFieldPath ('<' reqDeleteFieldProjection)? ('>' reqOutputTrunkFieldProjection)? requestParams
+  // '/' qid reqFieldPath '<' reqDeleteFieldProjection ('>' reqOutputTrunkFieldProjection)? requestParams
   public static boolean deleteUrl(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "deleteUrl")) return false;
     if (!nextTokenIs(b, U_SLASH)) return false;
@@ -669,41 +669,24 @@ public class UrlParser implements PsiParser, LightPsiParser {
     r = consumeToken(b, U_SLASH);
     r = r && qid(b, l + 1);
     r = r && reqFieldPath(b, l + 1);
-    r = r && deleteUrl_3(b, l + 1);
-    r = r && deleteUrl_4(b, l + 1);
+    r = r && consumeToken(b, U_ANGLE_LEFT);
+    r = r && reqDeleteFieldProjection(b, l + 1);
+    r = r && deleteUrl_5(b, l + 1);
     r = r && requestParams(b, l + 1);
     exit_section_(b, m, U_DELETE_URL, r);
     return r;
   }
 
-  // ('<' reqDeleteFieldProjection)?
-  private static boolean deleteUrl_3(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "deleteUrl_3")) return false;
-    deleteUrl_3_0(b, l + 1);
-    return true;
-  }
-
-  // '<' reqDeleteFieldProjection
-  private static boolean deleteUrl_3_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "deleteUrl_3_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, U_ANGLE_LEFT);
-    r = r && reqDeleteFieldProjection(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
   // ('>' reqOutputTrunkFieldProjection)?
-  private static boolean deleteUrl_4(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "deleteUrl_4")) return false;
-    deleteUrl_4_0(b, l + 1);
+  private static boolean deleteUrl_5(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "deleteUrl_5")) return false;
+    deleteUrl_5_0(b, l + 1);
     return true;
   }
 
   // '>' reqOutputTrunkFieldProjection
-  private static boolean deleteUrl_4_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "deleteUrl_4_0")) return false;
+  private static boolean deleteUrl_5_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "deleteUrl_5_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, U_ANGLE_RIGHT);

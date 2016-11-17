@@ -22,7 +22,6 @@ import ws.epigraph.gdata.GDatum;
 import ws.epigraph.idl.operations.DeleteOperationIdl;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.op.path.OpFieldPath;
-import ws.epigraph.projections.req.delete.ReqDeleteFieldProjection;
 import ws.epigraph.projections.req.output.ReqOutputFieldProjection;
 import ws.epigraph.projections.req.path.ReqFieldPath;
 import ws.epigraph.psi.PsiProcessingError;
@@ -82,7 +81,7 @@ public class DeleteRequestUrlPsiParser {
     final @NotNull Type opOutputType = op.outputType(); // already calculated based on outputType/path declared in idl
 
     TypesResolver newResolver = addTypeNamespace(opOutputType, typesResolver);
-    @NotNull DataType deleteDataType = resourceType;
+    @NotNull DataType deleteDataType = new DataType(op.deleteProjection().projection().type(), null);
     @NotNull DataType outputDataType = new DataType(opOutputType, null);
 
     @NotNull final StepsAndProjection<ReqOutputFieldProjection> outputStepsAndProjection =
@@ -96,19 +95,16 @@ public class DeleteRequestUrlPsiParser {
 
     final @Nullable UrlReqDeleteFieldProjection deleteProjectionPsi = psi.getReqDeleteFieldProjection();
 
-    final ReqDeleteFieldProjection deleteProjection =
-        deleteProjectionPsi == null ? null : ReqDeleteProjectionsPsiParser.parseFieldProjection(
+    return new DeleteRequestUrl(
+        psi.getQid().getCanonicalName(),
+        reqPath,
+        ReqDeleteProjectionsPsiParser.parseFieldProjection(
             deleteDataType,
             op.deleteProjection(),
             deleteProjectionPsi,
             typesResolver,
             errors
-        );
-
-    return new DeleteRequestUrl(
-        psi.getQid().getCanonicalName(),
-        reqPath,
-        deleteProjection,
+        ),
         outputStepsAndProjection,
         requestParams
     );
@@ -129,22 +125,25 @@ public class DeleteRequestUrlPsiParser {
     TypesResolver newResolver = addTypeNamespace(resourceType.type, typesResolver);
     final @Nullable UrlReqDeleteFieldProjection deleteProjectionPsi = psi.getReqDeleteFieldProjection();
 
-    final ReqDeleteFieldProjection deleteProjection =
-        deleteProjectionPsi == null ? null : ReqDeleteProjectionsPsiParser.parseFieldProjection(
+    final StepsAndProjection<ReqOutputFieldProjection> outputStepsAndProjection =
+        RequestUrlPsiParserUtil.parseOutputProjection(
+            resourceType,
+            op.outputProjection(),
+            fieldProjectionPsi,
+            newResolver,
+            errors
+        );
+
+    return new DeleteRequestUrl(
+        psi.getQid().getCanonicalName(),
+        null,
+        ReqDeleteProjectionsPsiParser.parseFieldProjection(
             resourceType,
             op.deleteProjection(),
             deleteProjectionPsi,
             typesResolver,
             errors
-        );
-
-    final StepsAndProjection<ReqOutputFieldProjection> outputStepsAndProjection =
-        RequestUrlPsiParserUtil.parseOutputProjection(resourceType, op.outputProjection(), fieldProjectionPsi, newResolver, errors);
-
-    return new DeleteRequestUrl(
-        psi.getQid().getCanonicalName(),
-        null,
-        deleteProjection,
+        ),
         outputStepsAndProjection,
         requestParams
     );

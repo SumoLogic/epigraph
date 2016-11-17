@@ -10,7 +10,7 @@ public interface UrlDeleteUrl extends UrlUrl {
   @NotNull
   UrlQid getQid();
 
-  @Nullable
+  @NotNull
   UrlReqDeleteFieldProjection getReqDeleteFieldProjection();
 
   @NotNull
@@ -22,7 +22,7 @@ public interface UrlDeleteUrl extends UrlUrl {
   @NotNull
   List<UrlRequestParam> getRequestParamList();
 
-  @Nullable
+  @NotNull
   PsiElement getAngleLeft();
 
   @Nullable
