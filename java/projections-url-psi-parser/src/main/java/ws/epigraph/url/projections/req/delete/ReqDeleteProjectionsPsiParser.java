@@ -550,7 +550,7 @@ public class ReqDeleteProjectionsPsiParser {
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
-    final Map<String, ReqDeleteFieldProjectionEntry> fieldProjections = new HashMap<>();
+    final Map<String, ReqDeleteFieldProjectionEntry> fieldProjections = new LinkedHashMap<>();
 
     for (final UrlReqDeleteFieldProjectionEntry entryPsi : psi.getReqDeleteFieldProjectionEntryList()) {
       @NotNull final String fieldName = entryPsi.getQid().getCanonicalName();

@@ -10,7 +10,7 @@
 - [ ] new routing algorithm
   - [x] generic
   - [x] reads
-  - [ ] create
+  - [x] create
   - [ ] update
   - [ ] delete
 - [x] Req input projections parsing: raise errors if `required` parts are missing

@@ -89,7 +89,7 @@ public class ReqInputProjectionsParserTest {
 
   @Test
   public void testParseRecord() {
-    testParse(":record ( id ;param1 = 'foo' )");
+    testParse(":record ( id ;param1 = 'foo', friends *( :id ) )");
   }
 
   @Test

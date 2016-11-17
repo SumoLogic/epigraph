@@ -99,6 +99,13 @@ public class CreateOperationRouterTest {
       "    id = \"path.2\"",
       "    path /.:record/bestFriend",
       "    inputType UserRecord",
+      "    inputProjection (id, +firstName )",
+      "    outputProjection :record (id, firstName)",
+      "  }",
+      "  CREATE {",
+      "    id = \"path.3\"",
+      "    path /.:record/bestFriend",
+      "    inputType UserRecord",
       "    inputProjection (id, firstName )",
       "    outputProjection :record (id, firstName)",
       "  }",
@@ -215,8 +222,20 @@ public class CreateOperationRouterTest {
   @Test
   public void testPath2WithInput() throws PsiProcessingException {
     testRouting(
-        "/users/1:record/bestFriend<(id)>:record(id)",
+        "/users/1:record/bestFriend<(id,firstName)>:record(id)",
         "path.2",
+        "/ \"1\" :record / bestFriend",
+        "( id, firstName )",
+        1,
+        ":record ( id )"
+    );
+  }
+
+  @Test
+  public void testPath3WithInput() throws PsiProcessingException {
+    testRouting(
+        "/users/1:record/bestFriend<(id)>:record(id)",
+        "path.3", // should not select path.2 because required field is missing from input projection
         "/ \"1\" :record / bestFriend",
         "( id )",
         1,

@@ -558,7 +558,7 @@ public class ReqInputProjectionsPsiParser {
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
-    final Map<String, ReqInputFieldProjectionEntry> fieldProjections = new HashMap<>();
+    final Map<String, ReqInputFieldProjectionEntry> fieldProjections = new LinkedHashMap<>();
 
     for (final UrlReqInputFieldProjectionEntry entryPsi : psi.getReqInputFieldProjectionEntryList()) {
       @NotNull final String fieldName = entryPsi.getQid().getCanonicalName();
