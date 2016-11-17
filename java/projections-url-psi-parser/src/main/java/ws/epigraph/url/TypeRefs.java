@@ -16,18 +16,21 @@
 
 package ws.epigraph.url;
 
+import ws.epigraph.psi.PsiProcessingError;
 import ws.epigraph.url.parser.psi.*;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class TypeRefs { // todo create and move to url-psi-parser-common?
   @NotNull
-  public static TypeRef fromPsi(@NotNull UrlTypeRef psi) throws PsiProcessingException {
+  public static TypeRef fromPsi(@NotNull UrlTypeRef psi, @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
     if (psi instanceof UrlQnTypeRef) {
       UrlQnTypeRef fqnTypeRefPsi = (UrlQnTypeRef) psi;
       return new QnTypeRef(fqnTypeRefPsi.getQn().getQn());
@@ -36,29 +39,29 @@ public class TypeRefs { // todo create and move to url-psi-parser-common?
     if (psi instanceof UrlAnonList) {
       UrlAnonList anonListPsi = (UrlAnonList) psi;
       @Nullable UrlValueTypeRef valueTypeRefPsi = anonListPsi.getValueTypeRef();
-      if (valueTypeRefPsi == null) throw new PsiProcessingException("List item type not specified", psi);
-      return new AnonListRef(fromPsi(valueTypeRefPsi));
+      if (valueTypeRefPsi == null) throw new PsiProcessingException("List item type not specified", psi, errors);
+      return new AnonListRef(fromPsi(valueTypeRefPsi, errors));
     }
 
     if (psi instanceof UrlAnonMap) {
       UrlAnonMap anonMapPsi = (UrlAnonMap) psi;
 
       @Nullable UrlTypeRef keyTypeRefPsi = anonMapPsi.getTypeRef();
-      if (keyTypeRefPsi == null) throw new PsiProcessingException("Map key type not specified", psi);
-      TypeRef keyTypeRef = fromPsi(keyTypeRefPsi);
+      if (keyTypeRefPsi == null) throw new PsiProcessingException("Map key type not specified", psi, errors);
+      TypeRef keyTypeRef = fromPsi(keyTypeRefPsi, errors);
 
       @Nullable UrlValueTypeRef valueTypeRefPsi = anonMapPsi.getValueTypeRef();
-      if (valueTypeRefPsi == null) throw new PsiProcessingException("Map value type not specified", psi);
-      ValueTypeRef valueTypeRef = fromPsi(valueTypeRefPsi);
+      if (valueTypeRefPsi == null) throw new PsiProcessingException("Map value type not specified", psi, errors);
+      ValueTypeRef valueTypeRef = fromPsi(valueTypeRefPsi, errors);
 
       return new AnonMapRef(keyTypeRef, valueTypeRef);
     }
 
-    throw new PsiProcessingException("Unknown reference type: " + psi.getClass().getName(), psi);
+    throw new PsiProcessingException("Unknown reference type: " + psi.getClass().getName(), psi, errors);
   }
 
   @NotNull
-  public static ValueTypeRef fromPsi(@NotNull UrlValueTypeRef psi) throws PsiProcessingException {
+  public static ValueTypeRef fromPsi(@NotNull UrlValueTypeRef psi, @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
     @Nullable UrlDefaultOverride defaultOverridePsi = psi.getDefaultOverride();
 
     @Nullable final String overrideTagName;
@@ -68,6 +71,6 @@ public class TypeRefs { // todo create and move to url-psi-parser-common?
       overrideTagName = varTagRef == null ? null : varTagRef.getQid().getCanonicalName();
     }
 
-    return new ValueTypeRef(fromPsi(psi.getTypeRef()), overrideTagName);
+    return new ValueTypeRef(fromPsi(psi.getTypeRef(), errors), overrideTagName);
   }
 }

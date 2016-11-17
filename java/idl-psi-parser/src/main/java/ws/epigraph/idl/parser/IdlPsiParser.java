@@ -114,7 +114,7 @@ public class IdlPsiParser {
     @NotNull IdlResourceType resourceTypePsi = psi.getResourceType();
 
     @NotNull IdlValueTypeRef valueTypeRefPsi = resourceTypePsi.getValueTypeRef();
-    @NotNull ValueTypeRef valueTypeRef = TypeRefs.fromPsi(valueTypeRefPsi);
+    @NotNull ValueTypeRef valueTypeRef = TypeRefs.fromPsi(valueTypeRefPsi, errors);
     @Nullable DataType resourceType = resolver.resolve(valueTypeRef);
 
     if (resourceType == null) throw new PsiProcessingException(

@@ -301,7 +301,7 @@ public class OpInputProjectionsPsiParser {
       @NotNull TypesResolver typesResolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
-    @NotNull TypeRef tailTypeRef = TypeRefs.fromPsi(tailTypeRefPsi);
+    @NotNull TypeRef tailTypeRef = TypeRefs.fromPsi(tailTypeRefPsi, errors);
     @NotNull Type tailType = getType(tailTypeRef, typesResolver, tailTypeRefPsi, errors);
     return parseVarProjection(
         new DataType(tailType, dataType.defaultTag),

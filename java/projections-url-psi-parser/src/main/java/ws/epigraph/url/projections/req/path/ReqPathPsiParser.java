@@ -91,7 +91,7 @@ public class ReqPathPsiParser {
         opModelPath,
         opTag.type,
         parseReqParams(psi.getReqParamList(), opModelPath.params(), typesResolver, errors),
-        parseAnnotations(psi.getReqAnnotationList()),
+        parseAnnotations(psi.getReqAnnotationList(), errors),
         modelPathPsi,
         typesResolver,
         errors
@@ -254,7 +254,7 @@ public class ReqPathPsiParser {
 
     @NotNull ReqParams fieldParams = parseReqParams(psi.getReqParamList(), op.params(), typesResolver, errors);
 
-    @NotNull Annotations fieldAnnotations = parseAnnotations(psi.getReqAnnotationList());
+    @NotNull Annotations fieldAnnotations = parseAnnotations(psi.getReqAnnotationList(), errors);
 
     @Nullable UrlReqVarPath fieldVarPathPsi = psi.getReqVarPath();
 
@@ -343,7 +343,7 @@ public class ReqPathPsiParser {
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
     @NotNull final ReqParams reqParams = parseReqParams(mapPathPsi.getReqParamList(), op.params(), resolver, errors);
-    @NotNull final Annotations annotations = parseAnnotations(mapPathPsi.getReqAnnotationList());
+    @NotNull final Annotations annotations = parseAnnotations(mapPathPsi.getReqAnnotationList(), errors);
 
     @Nullable final Datum keyValue =
         getDatum(mapPathPsi.getDatum(), keyType, resolver, "Error processing map key: ", errors);

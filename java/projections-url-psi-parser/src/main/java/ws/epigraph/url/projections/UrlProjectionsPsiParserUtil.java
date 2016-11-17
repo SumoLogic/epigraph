@@ -140,15 +140,15 @@ public class UrlProjectionsPsiParserUtil {
   @Nullable
   public static Map<String, Annotation> parseAnnotation(
       @Nullable Map<String, Annotation> annotationsMap,
-      @Nullable UrlAnnotation annotationPsi)
-      throws PsiProcessingException {
+      @Nullable UrlAnnotation annotationPsi,
+      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
     if (annotationPsi != null) {
       if (annotationsMap == null) annotationsMap = new HashMap<>();
       @Nullable UrlDataValue annotationValuePsi = annotationPsi.getDataValue();
       if (annotationValuePsi != null) {
         @NotNull String annotationName = annotationPsi.getQid().getCanonicalName();
-        @NotNull GDataValue annotationValue = UrlGDataPsiParser.parseValue(annotationValuePsi);
+        @NotNull GDataValue annotationValue = UrlGDataPsiParser.parseValue(annotationValuePsi, errors);
         annotationsMap.put(
             annotationName,
             new Annotation(
@@ -170,7 +170,7 @@ public class UrlProjectionsPsiParserUtil {
       @NotNull String errorMessagePrefix,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
-    @NotNull GDatum gDatum = UrlGDataPsiParser.parseDatum(datumPsi);
+    @NotNull GDatum gDatum = UrlGDataPsiParser.parseDatum(datumPsi, errors);
     @Nullable Datum value;
 
     try {
@@ -221,7 +221,7 @@ public class UrlProjectionsPsiParserUtil {
           continue;
         }
 
-        @NotNull final GDatum paramValue = UrlGDataPsiParser.parseDatum(paramValuePsi);
+        @NotNull final GDatum paramValue = UrlGDataPsiParser.parseDatum(paramValuePsi, errors);
 
         requestParams.put(paramName, paramValue);
       }
@@ -231,12 +231,17 @@ public class UrlProjectionsPsiParserUtil {
   }
 
   @NotNull
-  public static Annotations parseAnnotations(@NotNull List<UrlReqAnnotation> annotationsPsi)
-      throws PsiProcessingException {
+  public static Annotations parseAnnotations(
+      @NotNull List<UrlReqAnnotation> annotationsPsi,
+      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
     Map<String, Annotation> paramMap = null;
 
     for (UrlReqAnnotation annotation : annotationsPsi) {
-      paramMap = parseAnnotation(paramMap, annotation.getAnnotation());
+      try {
+        paramMap = parseAnnotation(paramMap, annotation.getAnnotation(), errors);
+      } catch (PsiProcessingException e) {
+        errors = e.errors();
+      }
     }
 
     return Annotations.fromMap(paramMap);

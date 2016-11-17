@@ -35,11 +35,6 @@ public class PsiProcessingException extends Exception {
   @NotNull
   private final List<PsiProcessingError> errors; // last item = this exception
 
-  @Deprecated
-  public PsiProcessingException(@NotNull String message, @NotNull PsiElement psi) {
-    this(message, psi, Collections.emptyList());
-  }
-
   public PsiProcessingException(
       @NotNull String message,
       @NotNull PsiElement psi,

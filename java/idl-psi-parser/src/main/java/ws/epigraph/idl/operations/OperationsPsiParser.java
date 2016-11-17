@@ -456,7 +456,7 @@ public class OperationsPsiParser {
       else return ProjectionUtils.tipType(opVarPath);
     }
 
-    @NotNull final ValueTypeRef valueTypeRef = TypeRefs.fromPsi(typeRefPsi);
+    @NotNull final ValueTypeRef valueTypeRef = TypeRefs.fromPsi(typeRefPsi, errors);
     @Nullable final DataType dataType = resolver.resolve(valueTypeRef);
     if (dataType == null) throw new PsiProcessingException("Can't resolve output type", typeRefPsi, errors);
     return dataType;
@@ -491,7 +491,7 @@ public class OperationsPsiParser {
         return tipType;
       }
     }
-    @Nullable final DatumType datumType = TypeRefs.fromPsi(typeRefPsi).resolveDatumType(resolver);
+    @Nullable final DatumType datumType = TypeRefs.fromPsi(typeRefPsi, errors).resolveDatumType(resolver);
     if (datumType == null)
       throw new PsiProcessingException("Can't resolve input type", typeRefPsi, errors);
     return datumType.dataType();

@@ -136,7 +136,7 @@ public class IdlProjectionPsiParserUtil {
     @Nullable IdlTypeRef typeRef = paramPsi.getTypeRef();
     if (typeRef == null)
       throw new PsiProcessingException(String.format("Parameter '%s' type not specified", paramName), paramPsi, errors);
-    @NotNull TypeRef paramTypeRef = TypeRefs.fromPsi(typeRef);
+    @NotNull TypeRef paramTypeRef = TypeRefs.fromPsi(typeRef, errors);
     @Nullable DatumType paramType = paramTypeRef.resolveDatumType(resolver);
 
     if (paramType == null)

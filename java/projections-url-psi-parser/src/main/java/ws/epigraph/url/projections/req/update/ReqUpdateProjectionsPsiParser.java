@@ -82,7 +82,7 @@ public class ReqUpdateProjectionsPsiParser {
           opModelProjection,
           singleTagProjectionPsi.getPlus() != null,
           parseReqParams(singleTagProjectionPsi.getReqParamList(), opModelProjection.params(), subResolver, errors),
-          parseAnnotations(singleTagProjectionPsi.getReqAnnotationList()),
+          parseAnnotations(singleTagProjectionPsi.getReqAnnotationList(), errors),
           modelProjectionPsi,
           subResolver,
           errors
@@ -169,7 +169,7 @@ public class ReqUpdateProjectionsPsiParser {
             opTagProjection,
             tagProjectionPsi.getPlus() != null,
             parseReqParams(tagProjectionPsi.getReqParamList(), opTagProjection.params(), subResolver, errors),
-            parseAnnotations(tagProjectionPsi.getReqAnnotationList()),
+            parseAnnotations(tagProjectionPsi.getReqAnnotationList(), errors),
             modelProjection, subResolver, errors
         );
 
@@ -261,7 +261,7 @@ public class ReqUpdateProjectionsPsiParser {
       @NotNull TypesResolver typesResolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
-    @NotNull TypeRef tailTypeRef = TypeRefs.fromPsi(tailTypeRefPsi);
+    @NotNull TypeRef tailTypeRef = TypeRefs.fromPsi(tailTypeRefPsi, errors);
     @NotNull Type tailType = getType(tailTypeRef, typesResolver, tailTypeRefPsi, errors);
 
     @Nullable OpInputVarProjection opTail = mergeOpTails(op, tailType);
@@ -652,7 +652,7 @@ public class ReqUpdateProjectionsPsiParser {
 
     ReqParams fieldParams = parseReqParams(psi.getReqParamList(), op.params(), resolver, errors);
 
-    Annotations fieldAnnotations = parseAnnotations(psi.getReqAnnotationList());
+    Annotations fieldAnnotations = parseAnnotations(psi.getReqAnnotationList(), errors);
 
     @NotNull UrlReqUpdateVarProjection psiVarProjection = psi.getReqUpdateVarProjection();
     @NotNull ReqUpdateVarProjection varProjection =
@@ -702,7 +702,7 @@ public class ReqUpdateProjectionsPsiParser {
               new ReqUpdateKeyProjection(
                   keyValue,
                   parseReqParams(keyPsi.getReqParamList(), op.keyProjection().params(), resolver, errors),
-                  parseAnnotations(keyPsi.getReqAnnotationList()),
+                  parseAnnotations(keyPsi.getReqAnnotationList(), errors),
                   EpigraphPsiUtil.getLocation(keyPsi)
               )
           );
