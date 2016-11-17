@@ -15,6 +15,7 @@
   - [ ] delete
 - [x] Req input projections parsing: raise errors if `required` parts are missing
 - [ ] Remove remaining usages of deprecated `PsiProcessingException` constructor
+- [ ] figure out all `mergeOpTails`
 
 #Horizon 2
 - [ ] Unmarshallers for create/update/custom body
