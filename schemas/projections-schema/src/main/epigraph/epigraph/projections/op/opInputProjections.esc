@@ -70,7 +70,7 @@ record OpInputMapModelProjection extends OpInputModelProjection {
 
 record OpInputKeyProjection {
   forbidden: Boolean
-  required: Boolean
+  required: Boolean // todo: not implemented
   params: map[String, OpParam]
   annotations: map[String, Annotation]
 }

@@ -148,16 +148,20 @@ public class EpigraphPsiUtil {
 
   @NotNull
   public static TextLocation getLocation(@NotNull PsiElement psi) {
-    TextRange textRange = psi.getTextRange();
-    PsiFile psiFile = getPsiFile(psi);
-    final PsiElement megaParent = findTopmostParent(psi);
+    try {
+      TextRange textRange = psi.getTextRange();
+      PsiFile psiFile = getPsiFile(psi);
+      final PsiElement megaParent = findTopmostParent(psi);
 
-    return new TextLocation(
-        textRange.getStartOffset(),
-        textRange.getEndOffset(),
-        psiFile == null ? null : psiFile.getName(),
-        megaParent.getText()
-    );
+      return new TextLocation(
+          textRange.getStartOffset(),
+          textRange.getEndOffset(),
+          psiFile == null ? null : psiFile.getName(),
+          megaParent.getText()
+      );
+    } catch (PsiInvalidElementAccessException e) {
+      return TextLocation.UNKNOWN; // thrown in unit tests, when using NULL_PSI_ELEMENT
+    }
   }
 
   @NotNull

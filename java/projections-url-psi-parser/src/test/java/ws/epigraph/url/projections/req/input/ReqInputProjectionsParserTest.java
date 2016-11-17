@@ -20,14 +20,20 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 import ws.epigraph.projections.op.input.OpInputVarProjection;
 import ws.epigraph.projections.req.input.ReqInputVarProjection;
+import ws.epigraph.psi.EpigraphPsiUtil;
+import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.SimpleTypesResolver;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.test.TestUtil;
 import ws.epigraph.tests.*;
 import ws.epigraph.types.DataType;
+import ws.epigraph.url.parser.UrlSubParserDefinitions;
+import ws.epigraph.url.parser.psi.UrlReqInputVarProjection;
 import ws.epigraph.url.projections.req.ReqTestUtil;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+import static ws.epigraph.test.TestUtil.failIfHasErrors;
 import static ws.epigraph.test.TestUtil.lines;
 
 /**
@@ -52,13 +58,13 @@ public class ReqInputProjectionsParserTest {
           "    id {",
           "      ;param1 : epigraph.String = \"hello world\" { doc = \"some doc\" },",
           "    },",
-          "    bestFriend :record (",
-          "      id,",
+          "    bestFriend :(+id, record (",
+          "      +id,",
           "      bestFriend :record (",
           "        id,",
           "        firstName",
           "      ),",
-          "    ),",
+          "    )),",
           "    friends *( :id ),",
           "    friendsMap []( :(id, record (id, firstName) ) )",
           "  )",
@@ -109,8 +115,49 @@ public class ReqInputProjectionsParserTest {
     );
   }
 
+  // negative cases
+
+  @Test
+  public void testRequiredTag() {
+    testParseFail(":record(bestFriend:record(id))");
+  }
+
+  @Test
+  public void testRequiredField() {
+    testParseFail(":record(bestFriend:(id,record()))");
+  }
+
+  @Test
+  public void testRequiredPresent() {
+    testParse(":record ( bestFriend :( id, record ( id ) ) )");
+  }
+
   private void testParse(String expr) {
     testParse(expr, expr);
+  }
+
+  private void testParseFail(String expr) {
+    EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
+
+    UrlReqInputVarProjection psi = EpigraphPsiUtil.parseText(
+        expr,
+        UrlSubParserDefinitions.REQ_INPUT_VAR_PROJECTION,
+        errorsAccumulator
+    );
+
+    failIfHasErrors(psi, errorsAccumulator);
+
+    try {
+      TestUtil.runPsiParserNotCatchingErrors(errors -> ReqInputProjectionsPsiParser.parseVarProjection(
+          dataType,
+          personOpProjection,
+          psi,
+          resolver,
+          errors
+      ));
+      fail();
+    } catch (PsiProcessingException ignored) {
+    }
   }
 
   private void testParse(String expr, String expectedProjection) {

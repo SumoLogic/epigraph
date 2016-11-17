@@ -13,7 +13,7 @@
   - [ ] create
   - [ ] update
   - [ ] delete
-- [ ] Req input projections parsing: raise errors if `required` parts are missing
+- [x] Req input projections parsing: raise errors if `required` parts are missing
 - [ ] Remove remaining usages of deprecated `PsiProcessingException` constructor
 
 #Horizon 2

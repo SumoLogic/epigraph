@@ -41,6 +41,7 @@
 - [x] remove default tags from op projections. If var type has default tag (in schema), and operation can build this tag -- then it becomes an implicit default
 - [x] add req input projection (for custom operation)
 - [ ] `*` support in projections improvement: allow `*` to be present along with other fields (currently it's either `*` or fields list)
+- [ ] OpInputKey projections should support the notion of required/forbidden/optional keys, and ReqInput parser should respect/validate it
 - [ ] support for recursive projections
 - [ ] Generate projections for specific types
 

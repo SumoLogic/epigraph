@@ -102,6 +102,14 @@ public class ReqInputProjectionsPsiParser {
       tagProjections = parseMultiTagProjection(dataType, op, multiTagProjection, subResolver, errors);
     }
 
+    // check that all required tags are present
+    for (final Map.Entry<String, OpInputTagProjectionEntry> entry : op.tagProjections().entrySet()) {
+      if (entry.getValue().projection().required() && !tagProjections.containsKey(entry.getKey()))
+        errors.add(
+            new PsiProcessingError(String.format("Required tag '%s' is missing", entry.getKey()), psi)
+        );
+    }
+
     final List<ReqInputVarProjection> tails =
         parseTails(dataType, op, psi.getReqInputVarPolymorphicTail(), subResolver, errors);
 
@@ -596,6 +604,15 @@ public class ReqInputProjectionsPsiParser {
       }
     }
 
+    // check that all required fields are specified
+    for (final Map.Entry<String, OpInputFieldProjectionEntry> entry : op.fieldProjections().entrySet()) {
+      if (entry.getValue().projection().required() && !fieldProjections.containsKey(entry.getKey())) {
+        errors.add(
+            new PsiProcessingError(String.format("Required field '%s' is missing", entry.getKey()), psi)
+        );
+      }
+    }
+
     return new ReqInputRecordModelProjection(
         op.model(),
         params,
@@ -646,8 +663,10 @@ public class ReqInputProjectionsPsiParser {
 
 
     final List<ReqInputKeyProjection> keyProjections;
-    if (psi.getReqInputKeysProjection().getStar() != null) keyProjections = null;
-    else {
+    if (psi.getReqInputKeysProjection().getStar() != null) {
+      // todo check if op keys are required. Add this notion to op input projection first
+      keyProjections = null;
+    } else {
       @NotNull final List<UrlReqInputKeyProjection> keyProjectionsPsi =
           psi.getReqInputKeysProjection().getReqInputKeyProjectionList();
 
