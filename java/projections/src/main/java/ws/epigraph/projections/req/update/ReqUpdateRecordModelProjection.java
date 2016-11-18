@@ -18,7 +18,7 @@ package ws.epigraph.projections.req.update;
 
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
-import ws.epigraph.projections.ProjectionUtils;
+import ws.epigraph.projections.RecordModelProjectionHelper;
 import ws.epigraph.projections.gen.GenRecordModelProjection;
 import ws.epigraph.projections.req.ReqParams;
 import ws.epigraph.types.RecordType;
@@ -41,8 +41,6 @@ public class ReqUpdateRecordModelProjection
     ReqUpdateFieldProjection,
     RecordType
     > {
-  private static final ThreadLocal<IdentityHashMap<ReqUpdateRecordModelProjection, ReqUpdateRecordModelProjection>>
-      equalsVisited = new ThreadLocal<>();
 
   @NotNull
   private Map<String, ReqUpdateFieldProjectionEntry> fieldProjections;
@@ -57,7 +55,7 @@ public class ReqUpdateRecordModelProjection
     super(model, update, params, annotations, location);
     this.fieldProjections = fieldProjections;
 
-    ProjectionUtils.checkFieldsBelongsToModel(fieldProjections.keySet(), model);
+    RecordModelProjectionHelper.checkFieldsBelongsToModel(fieldProjections.keySet(), model);
   }
 
   @NotNull
@@ -70,24 +68,8 @@ public class ReqUpdateRecordModelProjection
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
     if (!super.equals(o)) return false;
-    ReqUpdateRecordModelProjection that = (ReqUpdateRecordModelProjection) o;
-
-    IdentityHashMap<ReqUpdateRecordModelProjection, ReqUpdateRecordModelProjection> visitedMap = equalsVisited.get();
-    boolean mapWasNull = visitedMap == null;
-    if (mapWasNull) {
-      visitedMap = new IdentityHashMap<>();
-      equalsVisited.set(visitedMap);
-    } else {
-      if (that == visitedMap.get(this)) return true;
-      if (visitedMap.containsKey(this)) return false;
-    }
-    visitedMap.put(this, that);
-    boolean res = Objects.equals(fieldProjections, that.fieldProjections);
-    if (mapWasNull) equalsVisited.remove();
-    return res;
+    return RecordModelProjectionHelper.equals(this, o);
   }
 
   @Override

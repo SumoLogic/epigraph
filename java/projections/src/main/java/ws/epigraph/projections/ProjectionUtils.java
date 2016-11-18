@@ -39,19 +39,6 @@ public class ProjectionUtils {
     return res;
   }
 
-  public static void checkFieldsBelongsToModel(@NotNull Collection<String> fieldNames, @NotNull RecordType model) {
-    final Set<String> modelFieldNames = model.fieldsMap().keySet();
-    for (String fieldName : fieldNames) {
-      if (!modelFieldNames.contains(fieldName))
-        throw new IllegalArgumentException(
-            String.format("Field '%s' does not belong to record model '%s'. Known fields: %s",
-                          fieldName, model.name(), listFields(modelFieldNames)
-            )
-        );
-    }
-
-  }
-
   @NotNull
   public static String listFields(@Nullable Collection<String> fieldNames) {
     if (fieldNames == null) return "<none>";

@@ -14,7 +14,7 @@
   - [x] update
   - [x] delete
 - [x] Req input projections parsing: raise errors if `required` parts are missing
-- [ ] Introduce `AbstractRecordModelProjection`, with proper checks
+- [x] Introduce `AbstractRecordModelProjection`, with proper checks
 - [x] Remove remaining usages of deprecated `PsiProcessingException` constructor
 - [ ] figure out all `mergeOpTails`
 - [ ] surround all places where var projection instances are created with `try..catch(IAE)` and translate `IAE` to `PsiParsingException`
