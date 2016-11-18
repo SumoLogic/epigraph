@@ -105,8 +105,11 @@ public class ReqDeleteProjectionsPsiParser {
     final List<ReqDeleteVarProjection> tails =
         parseTails(dataType, op, psi.getReqDeleteVarPolymorphicTail(), subResolver, errors);
 
-    return
-        new ReqDeleteVarProjection(type, tagProjections, tails, EpigraphPsiUtil.getLocation(psi));
+    try {
+      return new ReqDeleteVarProjection(type, tagProjections, tails, EpigraphPsiUtil.getLocation(psi));
+    } catch (Exception e) {
+      throw new PsiProcessingException(e, psi, errors);
+    }
   }
 
   @NotNull

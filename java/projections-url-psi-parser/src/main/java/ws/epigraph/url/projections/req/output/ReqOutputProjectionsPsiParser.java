@@ -135,10 +135,14 @@ public class ReqOutputProjectionsPsiParser {
     final List<ReqOutputVarProjection> tails =
         parseTails(dataType, op, psi.getReqOutputVarPolymorphicTail(), subResolver, errors);
 
-    return new StepsAndProjection<>(
-        steps,
-        new ReqOutputVarProjection(type, tagProjections, tails, parenthesized, EpigraphPsiUtil.getLocation(psi))
-    );
+    try {
+      return new StepsAndProjection<>(
+          steps,
+          new ReqOutputVarProjection(type, tagProjections, tails, parenthesized, EpigraphPsiUtil.getLocation(psi))
+      );
+    } catch (Exception e) {
+      throw new PsiProcessingException(e, psi, errors);
+    }
   }
 
   @NotNull
@@ -258,10 +262,14 @@ public class ReqOutputProjectionsPsiParser {
     final List<ReqOutputVarProjection> tails =
         parseTails(dataType, op, psi.getReqOutputVarPolymorphicTail(), subResolver, errors);
 
-    return new StepsAndProjection<>(
-        0,
-        new ReqOutputVarProjection(type, tagProjections, tails, parenthesized, EpigraphPsiUtil.getLocation(psi))
-    );
+    try {
+      return new StepsAndProjection<>(
+          0,
+          new ReqOutputVarProjection(type, tagProjections, tails, parenthesized, EpigraphPsiUtil.getLocation(psi))
+      );
+    } catch (Exception e) {
+      throw new PsiProcessingException(e, psi, errors);
+    }
   }
 
   @NotNull

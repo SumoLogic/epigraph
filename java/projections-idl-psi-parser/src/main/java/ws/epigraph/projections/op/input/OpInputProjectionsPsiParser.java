@@ -107,10 +107,14 @@ public class OpInputProjectionsPsiParser {
     final List<OpInputVarProjection> tails =
         parseTails(dataType, psi.getOpInputVarPolymorphicTail(), typesResolver, errors);
 
-    return new StepsAndProjection<>(
-        0,
-        new OpInputVarProjection(type, tagProjections, tails, EpigraphPsiUtil.getLocation(psi))
-    );
+    try {
+      return new StepsAndProjection<>(
+          0,
+          new OpInputVarProjection(type, tagProjections, tails, EpigraphPsiUtil.getLocation(psi))
+      );
+    } catch (Exception e) {
+      throw new PsiProcessingException(e, psi, errors);
+    }
   }
 
   @NotNull

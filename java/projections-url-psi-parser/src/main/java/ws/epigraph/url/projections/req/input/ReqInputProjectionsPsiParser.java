@@ -113,8 +113,11 @@ public class ReqInputProjectionsPsiParser {
     final List<ReqInputVarProjection> tails =
         parseTails(dataType, op, psi.getReqInputVarPolymorphicTail(), subResolver, errors);
 
-    return
-        new ReqInputVarProjection(type, tagProjections, tails, EpigraphPsiUtil.getLocation(psi));
+    try {
+      return new ReqInputVarProjection(type, tagProjections, tails, EpigraphPsiUtil.getLocation(psi));
+    } catch (Exception e) {
+      throw new PsiProcessingException(e, psi, errors);
+    }
   }
 
   @NotNull

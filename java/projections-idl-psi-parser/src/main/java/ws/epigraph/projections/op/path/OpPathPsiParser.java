@@ -86,13 +86,17 @@ public class OpPathPsiParser {
         errors
     );
 
-    return new OpVarPath(
-        type,
-        new OpTagPath(
-            tag, parsedModelProjection, EpigraphPsiUtil.getLocation(modelProjection)
-        ),
-        EpigraphPsiUtil.getLocation(psi)
-    );
+    try {
+      return new OpVarPath(
+          type,
+          new OpTagPath(
+              tag, parsedModelProjection, EpigraphPsiUtil.getLocation(modelProjection)
+          ),
+          EpigraphPsiUtil.getLocation(psi)
+      );
+    } catch (Exception e) {
+      throw new PsiProcessingException(e, psi, errors);
+    }
   }
 
 

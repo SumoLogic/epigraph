@@ -114,8 +114,11 @@ public class ReqUpdateProjectionsPsiParser {
     final List<ReqUpdateVarProjection> tails =
         parseTails(dataType, op, psi.getReqUpdateVarPolymorphicTail(), subResolver, errors);
 
-    return
-        new ReqUpdateVarProjection(type, tagProjections, tails, EpigraphPsiUtil.getLocation(psi));
+    try {
+      return new ReqUpdateVarProjection(type, tagProjections, tails, EpigraphPsiUtil.getLocation(psi));
+    } catch (Exception e) {
+      throw new PsiProcessingException(e, psi, errors);
+    }
   }
 
   @NotNull

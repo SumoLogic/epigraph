@@ -33,6 +33,7 @@ public class OpInputVarProjection extends AbstractVarProjection<
     OpInputTagProjectionEntry,
     OpInputModelProjection<?, ?, ?>
     > {
+
   public OpInputVarProjection(
       @NotNull Type type,
       @NotNull LinkedHashMap<String, OpInputTagProjectionEntry> tagProjections,

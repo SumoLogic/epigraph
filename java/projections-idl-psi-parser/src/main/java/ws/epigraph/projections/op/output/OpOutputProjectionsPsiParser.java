@@ -159,7 +159,11 @@ public class OpOutputProjectionsPsiParser {
 
     } else tails = null;
 
-    return new OpOutputVarProjection(type, tagProjections, tails, EpigraphPsiUtil.getLocation(psi));
+    try {
+      return new OpOutputVarProjection(type, tagProjections, tails, EpigraphPsiUtil.getLocation(psi));
+    } catch (Exception e) {
+      throw new PsiProcessingException(e, psi, errors);
+    }
   }
 
 

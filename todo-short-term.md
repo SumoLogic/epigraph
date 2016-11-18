@@ -17,7 +17,7 @@
 - [x] Introduce `AbstractRecordModelProjection`, with proper checks
 - [x] Remove remaining usages of deprecated `PsiProcessingException` constructor
 - [ ] figure out all `mergeOpTails`
-- [ ] surround all places where var projection instances are created with `try..catch(IAE)` and translate `IAE` to `PsiParsingException`
+- [x] surround all places where var projection instances are created with `try..catch(IAE)` and translate `IAE` to `PsiParsingException`
 
 #Horizon 2
 - [ ] Unmarshallers for create/update/custom body

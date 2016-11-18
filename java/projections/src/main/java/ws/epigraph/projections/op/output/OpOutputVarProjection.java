@@ -33,6 +33,7 @@ public class OpOutputVarProjection extends AbstractVarProjection<
     OpOutputTagProjectionEntry,
     OpOutputModelProjection<?, ?>
     > {
+
   public OpOutputVarProjection(
       @NotNull Type type,
       @NotNull LinkedHashMap<String, OpOutputTagProjectionEntry> tagProjections,

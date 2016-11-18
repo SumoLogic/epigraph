@@ -97,13 +97,17 @@ public class ReqPathPsiParser {
         errors
     );
 
-    return new ReqVarPath(
-        type,
-        new ReqTagPath(
-            opTag, parsedModelProjection, EpigraphPsiUtil.getLocation(modelPathPsi)
-        ),
-        EpigraphPsiUtil.getLocation(psi)
-    );
+    try {
+      return new ReqVarPath(
+          type,
+          new ReqTagPath(
+              opTag, parsedModelProjection, EpigraphPsiUtil.getLocation(modelPathPsi)
+          ),
+          EpigraphPsiUtil.getLocation(psi)
+      );
+    } catch (Exception e) {
+      throw new PsiProcessingException(e, psi, errors);
+    }
   }
 
 //  private static boolean isModelPathEmpty(@Nullable UrlReqModelPath pathPsi) {

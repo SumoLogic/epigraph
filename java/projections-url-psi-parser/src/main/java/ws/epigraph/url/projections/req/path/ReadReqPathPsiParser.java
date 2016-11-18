@@ -132,20 +132,24 @@ public class ReadReqPathPsiParser {
 //      );
 //    }
 
-    return new ReadReqPathParsingResult<>(
-        new ReqVarPath(
-            type,
-            new ReqTagPath(
-                opTag,
-                parsedModelResult.path(),
-                EpigraphPsiUtil.getLocation(modelPsi)
-            ),
-            EpigraphPsiUtil.getLocation(psi)
-        ),
-        parsedModelResult.trunkProjectionPsi(),
-        parsedModelResult.comaProjectionPsi(),
-        errors
-    );
+    try {
+      return new ReadReqPathParsingResult<>(
+          new ReqVarPath(
+              type,
+              new ReqTagPath(
+                  opTag,
+                  parsedModelResult.path(),
+                  EpigraphPsiUtil.getLocation(modelPsi)
+              ),
+              EpigraphPsiUtil.getLocation(psi)
+          ),
+          parsedModelResult.trunkProjectionPsi(),
+          parsedModelResult.comaProjectionPsi(),
+          errors
+      );
+    } catch (Exception e) {
+      throw new PsiProcessingException(e, psi, errors);
+    }
   }
 
   @NotNull
@@ -292,31 +296,36 @@ public class ReadReqPathPsiParser {
 
     if (fieldProjectionPsi == null) {
       if (OpVarPath.isEnd(opFieldVarProjection)) {
-        return new ReadReqPathParsingResult<>(
-            new ReqRecordModelPath(
-                type,
-                ReqParams.EMPTY,
-                Annotations.EMPTY,
-                new ReqFieldPathEntry(
-                    field,
-                    new ReqFieldPath(
-                        ReqParams.EMPTY,
-                        Annotations.EMPTY,
-                        new ReqVarPath(
-                            field.dataType().type,
-                            null,
-                            EpigraphPsiUtil.getLocation(psi.getQid())
-                        ),
-                        EpigraphPsiUtil.getLocation(psi.getQid())
-                    ),
-                    EpigraphPsiUtil.getLocation(psi.getQid())
-                ),
-                EpigraphPsiUtil.getLocation(psi)
-            ),
-            null,
-            null,
-            errors
-        );
+        @NotNull final TextLocation qidLocation = EpigraphPsiUtil.getLocation(psi.getQid());
+        try {
+          return new ReadReqPathParsingResult<>(
+              new ReqRecordModelPath(
+                  type,
+                  ReqParams.EMPTY,
+                  Annotations.EMPTY,
+                  new ReqFieldPathEntry(
+                      field,
+                      new ReqFieldPath(
+                          ReqParams.EMPTY,
+                          Annotations.EMPTY,
+                          new ReqVarPath(
+                              field.dataType().type,
+                              null,
+                              qidLocation
+                          ),
+                          qidLocation
+                      ),
+                      qidLocation
+                  ),
+                  EpigraphPsiUtil.getLocation(psi)
+              ),
+              null,
+              null,
+              errors
+          );
+        } catch (Exception e) {
+          throw new PsiProcessingException(e, psi, errors);
+        }
       } else
         throw new PathNotMatchedException(
             String.format(
