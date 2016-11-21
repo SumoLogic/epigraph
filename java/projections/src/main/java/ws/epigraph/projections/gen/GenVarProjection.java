@@ -49,5 +49,13 @@ public interface GenVarProjection<
 
   @Nullable List<VP> polymorphicTails();
 
+  @Nullable
+  default VP tailByType(@NotNull Type tailType) {
+    // not too efficient if there are many tails.. change List to LinkedHashMap?
+    List<VP> tails = polymorphicTails();
+    if (tails == null) return null;
+    return tails.stream().filter(t -> t.type().equals(tailType)).findFirst().orElse(null);
+  }
+
   @NotNull TextLocation location();
 }
