@@ -27,7 +27,7 @@ import java.util.Map;
  */
 public interface GenRecordModelProjection<
     VP extends GenVarProjection<VP, TP, MP>,
-    TP extends GenTagProjectionEntry<MP>,
+    TP extends GenTagProjectionEntry<TP, MP>,
     MP extends GenModelProjection</*MP*/?, ?>,
     RMP extends GenRecordModelProjection<VP, TP, MP, RMP, FPE, FP, M>,
     FPE extends GenFieldProjectionEntry<VP, TP, MP, FP>,

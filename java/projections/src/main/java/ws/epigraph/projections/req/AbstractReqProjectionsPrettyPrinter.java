@@ -33,7 +33,7 @@ import java.util.List;
  */
 public abstract class AbstractReqProjectionsPrettyPrinter<
     VP extends GenVarProjection<VP, TP, MP>,
-    TP extends GenTagProjectionEntry<MP>,
+    TP extends GenTagProjectionEntry<TP, MP>,
     MP extends GenModelProjection</*MP*/?, ?>,
     E extends Exception> extends AbstractProjectionsPrettyPrinter<VP, TP, MP, E> {
 

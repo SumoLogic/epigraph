@@ -20,14 +20,19 @@ import ws.epigraph.lang.TextLocation;
 import ws.epigraph.types.Type;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public interface GenTagProjectionEntry<MP extends GenModelProjection</*MP*/?, ?>> {
+public interface GenTagProjectionEntry<TP extends GenTagProjectionEntry<TP, MP>, MP extends GenModelProjection</*MP*/?, ?>> {
 
   @NotNull Type.Tag tag();
 
   @NotNull MP projection();
+
+  @NotNull
+  /*static*/ TP mergeTags(@NotNull Type varType, @NotNull List<TP> tags);
 
   @NotNull TextLocation location();
 }

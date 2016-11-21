@@ -16,17 +16,15 @@
 
 package ws.epigraph.projections;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.projections.gen.*;
 import ws.epigraph.types.DataType;
 import ws.epigraph.types.DatumType;
-import ws.epigraph.types.RecordType;
 import ws.epigraph.types.Type;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
-import java.util.Set;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -61,7 +59,7 @@ public class ProjectionUtils {
     }
 
     while (true) {
-      final GenTagProjectionEntry<?> tagProjection = path.pathTagProjection();
+      final GenTagProjectionEntry<?, ?> tagProjection = path.pathTagProjection();
       if (tagProjection == null) break;
 
       lastDataType = tagProjection.tag().type.dataType();
@@ -96,7 +94,7 @@ public class ProjectionUtils {
     int len = 0;
 
     while (true) {
-      final GenTagProjectionEntry<?> tagProjection = path.pathTagProjection();
+      final GenTagProjectionEntry<?, ?> tagProjection = path.pathTagProjection();
       if (tagProjection == null) break;
 
       len++;

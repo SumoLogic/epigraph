@@ -25,16 +25,15 @@ import ws.epigraph.types.Type;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public abstract class AbstractVarProjection<
     VP extends AbstractVarProjection<VP, TP, MP>,
-    TP extends GenTagProjectionEntry<MP>,
+    TP extends GenTagProjectionEntry<TP, MP>,
     MP extends GenModelProjection</*MP*/?, ?>
     > implements GenVarProjection<VP, TP, MP> {
 
@@ -112,6 +111,108 @@ public abstract class AbstractVarProjection<
                                            .max()
                                            .orElse(0);
     return polymorphicDepth;
+  }
+
+  @NotNull
+  @Override
+  public VP normalizedForType(@NotNull final Type type, @NotNull Type topLevelType, @NotNull List<VP> varProjections) {
+
+    final Stream<AbstractVarProjection<VP, TP, MP>> allTails =
+        varProjections.stream()
+                      .flatMap(v -> {
+                        List<VP> x = v.polymorphicTails();
+                        return x == null
+                               ? Stream.empty()
+                               : x.stream();
+                      });
+
+    final Deque<AbstractVarProjection<VP, TP, MP>> linearizedTails = linearizeTails(type, allTails);
+
+    final Type effectiveType = linearizedTails.isEmpty() ? topLevelType : linearizedTails.getFirst().type();
+
+    List<AbstractVarProjection<VP, TP, MP>> effectiveProjections = new ArrayList<>(linearizedTails);
+    effectiveProjections.addAll(varProjections); // remove from wiki too?
+//    Collection<AbstractVarProjection<VP, TP, MP>> effectiveProjections = linearizedTails;
+
+    // collect all tags in proper order
+    Set<String> tags = new LinkedHashSet<>();
+
+    for (final AbstractVarProjection<VP, TP, MP> projection : effectiveProjections)
+      projection.tagProjections().keySet().stream().filter(tag -> !tags.contains(tag)).forEach(tags::add);
+
+    LinkedHashMap<String, TP> mergedTags = new LinkedHashMap<>();
+
+    for (final String tag : tags) {
+      List<TP> tagProjections = new ArrayList<>();
+      for (final AbstractVarProjection<VP, TP, MP> projection : effectiveProjections) {
+        final @Nullable TP tagProjection = projection.tagProjection(tag);
+        if (tagProjection != null)
+          tagProjections.add(tagProjection);
+      }
+
+      if (!tagProjections.isEmpty()) {
+        final @NotNull TP mergedTag = tagProjections.get(0).mergeTags(effectiveType, tagProjections);
+        mergedTags.put(tag, mergedTag);
+      }
+    }
+
+    return mergeNoTails(effectiveType, mergedTags, varProjections);
+  }
+
+  @NotNull
+  private Deque<AbstractVarProjection<VP, TP, MP>> linearizeTails(
+      @NotNull Type t,
+      @NotNull Stream<? extends AbstractVarProjection<VP, TP, MP>> tails) {
+
+//    if (tails.isEmpty()) return Collections.emptyList();
+//    if (tails.size() == 1) {
+//      if (t.isAssignableFrom(tails.get(0).type()))
+//        return tails;
+//      else
+//        return Collections.emptyList();
+//    } else {
+    return linearizeTails(t, tails, new LinkedList<>());
+//    }
+  }
+
+  @NotNull
+  private Deque<AbstractVarProjection<VP, TP, MP>> linearizeTails(
+      @NotNull Type type,
+      @NotNull Stream<? extends AbstractVarProjection<VP, TP, MP>> tails,
+      @NotNull Deque<AbstractVarProjection<VP, TP, MP>> linearizedTails) {
+
+    final Optional<? extends AbstractVarProjection<VP, TP, MP>> matchingTailOpt =
+        tails.filter(tail -> tail.type().isAssignableFrom(type)).findFirst();
+
+    if (matchingTailOpt.isPresent()) {
+      final AbstractVarProjection<VP, TP, MP> matchingTail = matchingTailOpt.get();
+      linearizedTails.addFirst(stripTails(matchingTail));
+
+      final List<VP> tails2 = matchingTail.polymorphicTails();
+      if (tails2 != null)
+        linearizeTails(type, tails2.stream(), linearizedTails);
+
+    }
+
+    return linearizedTails;
+  }
+
+  @NotNull
+  /* static */ protected VP mergeNoTails(
+      @NotNull Type type,
+      @NotNull LinkedHashMap<String, TP> mergedTags,
+      @NotNull List<VP> varProjections) {
+    throw new RuntimeException("not implemented"); // todo make abstract
+  }
+
+  @NotNull
+  protected AbstractVarProjection<VP, TP, MP> stripTails(@NotNull AbstractVarProjection<VP, TP, MP> vp) {
+    return new AbstractVarProjection<VP, TP, MP>(
+        vp.type(),
+        vp.tagProjections(),
+        Collections.emptyList(),
+        vp.location()
+    ) {};
   }
 
   @NotNull

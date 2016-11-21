@@ -24,8 +24,10 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class ReqUpdateTagProjectionEntry extends AbstractTagProjectionEntry<ReqUpdateModelProjection<?, ?>> {
+public class ReqUpdateTagProjectionEntry
+    extends AbstractTagProjectionEntry<ReqUpdateTagProjectionEntry, ReqUpdateModelProjection<?, ?>> {
   public ReqUpdateTagProjectionEntry(
+
       @NotNull Type.Tag tag,
       @NotNull ReqUpdateModelProjection<?, ?> projection,
       @NotNull TextLocation location) {

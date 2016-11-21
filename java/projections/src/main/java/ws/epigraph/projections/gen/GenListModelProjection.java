@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface GenListModelProjection<
     VP extends GenVarProjection<VP, TP, MP>,
-    TP extends GenTagProjectionEntry<MP>,
+    TP extends GenTagProjectionEntry<TP, MP>,
     MP extends GenModelProjection</*MP*/?, ?>,
     LMP extends GenListModelProjection<VP, TP, MP, LMP, M>,
     M extends ListType

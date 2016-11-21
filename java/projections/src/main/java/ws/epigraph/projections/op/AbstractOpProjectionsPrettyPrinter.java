@@ -33,7 +33,7 @@ import java.util.Map;
  */
 public abstract class AbstractOpProjectionsPrettyPrinter<
     VP extends GenVarProjection<VP, TP, MP>,
-    TP extends GenTagProjectionEntry<MP>,
+    TP extends GenTagProjectionEntry<TP, MP>,
     MP extends GenModelProjection</*MP*/?, ?>,
     RP extends GenRecordModelProjection<VP, TP, MP, RP, FPE, FP, ?>,
     FPE extends GenFieldProjectionEntry<VP, TP, MP, FP>,

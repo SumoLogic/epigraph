@@ -24,7 +24,9 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class OpDeleteTagProjectionEntry extends AbstractTagProjectionEntry<OpDeleteModelProjection<?, ?>> {
+public class OpDeleteTagProjectionEntry
+    extends AbstractTagProjectionEntry<OpDeleteTagProjectionEntry, OpDeleteModelProjection<?, ?>> {
+
   public OpDeleteTagProjectionEntry(
       @NotNull Type.Tag tag,
       @NotNull OpDeleteModelProjection<?, ?> projection,

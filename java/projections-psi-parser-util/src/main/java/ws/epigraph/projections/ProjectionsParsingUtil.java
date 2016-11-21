@@ -126,7 +126,7 @@ public class ProjectionsParsingUtil {
   @NotNull
   public static <
       MP extends GenModelProjection<?, ?>,
-      TP extends GenTagProjectionEntry<MP>,
+      TP extends GenTagProjectionEntry<TP, MP>,
       VP extends GenVarProjection<VP, TP, MP>
       > TP findTagProjection(
       @NotNull String tagName,
@@ -150,7 +150,7 @@ public class ProjectionsParsingUtil {
   @Nullable
   public static <
       MP extends GenModelProjection<?, ?>,
-      TP extends GenTagProjectionEntry<MP>,
+      TP extends GenTagProjectionEntry<TP, MP>,
       VP extends GenVarProjection<VP, TP, MP>
       > Type.Tag findDefaultTag(
       @NotNull Type type,

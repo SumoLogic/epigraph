@@ -31,7 +31,7 @@ import java.util.Objects;
  */
 public abstract class AbstractOpFieldProjection<
     VP extends GenVarProjection<VP, TP, MP>,
-    TP extends GenTagProjectionEntry<MP>,
+    TP extends GenTagProjectionEntry<TP, MP>,
     MP extends GenModelProjection</*MP*/?, ?>
     > extends AbstractFieldProjection<VP, TP, MP> {
 

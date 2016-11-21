@@ -21,13 +21,16 @@ import ws.epigraph.projections.gen.GenTagProjectionEntry;
 import ws.epigraph.types.Type;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public abstract class AbstractTagProjectionEntry<MP extends AbstractModelProjection</*MP*/?, ?>>
-    implements GenTagProjectionEntry<MP> {
+public abstract class AbstractTagProjectionEntry<
+    TP extends AbstractTagProjectionEntry<TP, MP>,
+    MP extends AbstractModelProjection</*MP*/?, ?>> implements GenTagProjectionEntry<TP, MP> {
+
   @NotNull
   private final Type.Tag tag;
   @NotNull
@@ -39,6 +42,15 @@ public abstract class AbstractTagProjectionEntry<MP extends AbstractModelProject
     this.tag = tag;
     this.projection = projection;
     this.location = location;
+
+    if (!tag.type.isAssignableFrom(projection.model()))
+      throw new IllegalArgumentException(
+          String.format(
+              "Tag '%s' type '%s' is not compatible with '%s' projection",
+              tag.name(), tag.type, projection().model().name()
+          )
+      );
+
   }
 
   @NotNull
@@ -46,6 +58,12 @@ public abstract class AbstractTagProjectionEntry<MP extends AbstractModelProject
 
   @NotNull
   public MP projection() { return projection; }
+
+  @NotNull
+  @Override
+  public TP mergeTags(@NotNull final Type varType, @NotNull final List<TP> tags) {
+    throw new RuntimeException("Unsupported operation"); // todo remove this method from here
+  }
 
   @NotNull
   public TextLocation location() { return location; }

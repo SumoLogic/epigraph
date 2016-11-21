@@ -75,7 +75,7 @@ public class UrlProjectionsPsiParserUtil {
   @NotNull
   public static <
       MP extends GenModelProjection<?, ?>,
-      TP extends GenTagProjectionEntry<MP>,
+      TP extends GenTagProjectionEntry<TP, MP>,
       VP extends GenVarProjection<VP, TP, MP>>
   Type.Tag findTagOrDefaultTag(
       @NotNull Type type,
@@ -109,7 +109,7 @@ public class UrlProjectionsPsiParserUtil {
   @NotNull
   public static <
       MP extends GenModelProjection<?, ?>,
-      TP extends GenTagProjectionEntry<MP>,
+      TP extends GenTagProjectionEntry<TP, MP>,
       VP extends GenVarProjection<VP, TP, MP>>
   Type.Tag findTag(
       @NotNull UrlTagName idlTagName,

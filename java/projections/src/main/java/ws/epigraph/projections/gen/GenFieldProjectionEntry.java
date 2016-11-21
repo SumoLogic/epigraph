@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface GenFieldProjectionEntry<
     VP extends GenVarProjection<VP, TP, MP>,
-    TP extends GenTagProjectionEntry<MP>,
+    TP extends GenTagProjectionEntry<TP, MP>,
     MP extends GenModelProjection</*MP*/?, ?>,
     FP extends GenFieldProjection<VP, TP, MP>
     > {

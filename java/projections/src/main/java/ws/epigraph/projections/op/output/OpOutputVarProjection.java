@@ -16,11 +16,11 @@
 
 package ws.epigraph.projections.op.output;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.abs.AbstractVarProjection;
 import ws.epigraph.types.Type;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -40,5 +40,15 @@ public class OpOutputVarProjection extends AbstractVarProjection<
       @Nullable List<OpOutputVarProjection> polymorphicTails,
       @NotNull TextLocation location) {
     super(type, tagProjections, polymorphicTails, location);
+  }
+
+  @NotNull
+  @Override
+  protected OpOutputVarProjection mergeNoTails(
+      @NotNull final Type type,
+      @NotNull final LinkedHashMap<String, OpOutputTagProjectionEntry> mergedTags,
+      @NotNull final List<OpOutputVarProjection> varProjections) {
+
+    return new OpOutputVarProjection(type, mergedTags, null, TextLocation.UNKNOWN);
   }
 }

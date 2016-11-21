@@ -21,6 +21,7 @@ import ws.epigraph.types.Type;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -29,7 +30,7 @@ import java.util.Map;
  */
 public interface GenVarProjection<
     VP extends GenVarProjection<VP, TP, MP>,
-    TP extends GenTagProjectionEntry<MP>,
+    TP extends GenTagProjectionEntry<TP, MP>,
     MP extends GenModelProjection</*MP*/?, ?>
     > {
 
@@ -48,6 +49,16 @@ public interface GenVarProjection<
   }
 
   @Nullable List<VP> polymorphicTails();
+
+  // should become `x=tailByType(type); return x==null?this:x;` for normalized projections
+  @SuppressWarnings("unchecked")
+  @NotNull
+  default VP normalizedForType(@NotNull Type type) {
+    return normalizedForType(type, this.type(), Collections.singletonList((VP) this));
+  }
+
+  @NotNull
+  /* static */ VP normalizedForType(@NotNull Type type, @NotNull Type topLevelType, @NotNull List<VP> varProjections);
 
   @Nullable
   default VP tailByType(@NotNull Type tailType) {
