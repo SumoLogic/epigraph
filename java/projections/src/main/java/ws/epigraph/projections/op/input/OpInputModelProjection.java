@@ -31,7 +31,7 @@ import java.util.Objects;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public abstract class OpInputModelProjection<
-    MP extends OpInputModelProjection</*MP*/?, M, D>,
+    MP extends OpInputModelProjection</*MP*/?, ?, D>,
     M extends DatumType,
     D extends Datum>
     extends AbstractOpModelProjection<MP, M> {

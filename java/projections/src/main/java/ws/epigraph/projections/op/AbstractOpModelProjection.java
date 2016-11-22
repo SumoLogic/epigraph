@@ -29,7 +29,7 @@ import java.util.Objects;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public abstract class AbstractOpModelProjection<MP extends GenModelProjection</*MP*/?, M>, M extends DatumType>
+public abstract class AbstractOpModelProjection<MP extends GenModelProjection</*MP*/?, ?>, M extends DatumType>
     extends AbstractModelProjection<MP, M> {
   @NotNull
   protected final OpParams params;

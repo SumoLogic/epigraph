@@ -28,7 +28,7 @@ import java.util.Objects;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public abstract class AbstractModelProjection<MP extends GenModelProjection</*MP*/?, M>, M extends DatumType>
+public abstract class AbstractModelProjection<MP extends GenModelProjection</*MP*/?, ?>, M extends DatumType>
     implements GenModelProjection<MP, M> {
   @NotNull
   protected final M model;

@@ -25,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public interface GenModelProjection<MP extends GenModelProjection</*MP*/?, M>, M extends DatumType> {
+public interface GenModelProjection<MP extends GenModelProjection</*MP*/?, ?>, M extends DatumType> {
 
   @NotNull M model();
 

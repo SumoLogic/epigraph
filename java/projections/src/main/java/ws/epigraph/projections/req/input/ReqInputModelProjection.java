@@ -29,7 +29,7 @@ import java.util.Objects;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public abstract class ReqInputModelProjection<
-    MP extends ReqInputModelProjection</*MP*/?, M>,
+    MP extends ReqInputModelProjection</*MP*/?, ?>,
     M extends DatumType>
     extends AbstractModelProjection<MP, M> {
 
