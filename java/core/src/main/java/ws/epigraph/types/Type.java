@@ -24,11 +24,7 @@ import ws.epigraph.util.Unmodifiable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 public abstract class Type { // TODO split into interface and impl
@@ -148,6 +144,18 @@ public abstract class Type { // TODO split into interface and impl
 
     public @NotNull String name() { return name; }
 
+    @Override
+    public boolean equals(final Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+      final Tag tag = (Tag) o;
+      return Objects.equals(name, tag.name);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(name);
+    }
   }
 
 

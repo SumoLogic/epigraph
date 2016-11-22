@@ -281,14 +281,14 @@ public class UrlProjectionsPsiParserUtil {
       if (reqParamsMap == null) reqParamsMap = new HashMap<>();
 
       String name = reqParamPsi.getQid().getCanonicalName();
-      OpParam opParam = opParams.params().get(name);
+      OpParam opParam = opParams.asMap().get(name);
 
       if (opParam == null) {
         errors.add(new PsiProcessingError(
             String.format(
                 "Unsupported parameter '%s', supported parameters: {%s}",
                 name,
-                String.join(", ", opParams.params().keySet())
+                String.join(", ", opParams.asMap().keySet())
             ),
             reqParamPsi.getQid()
         ));

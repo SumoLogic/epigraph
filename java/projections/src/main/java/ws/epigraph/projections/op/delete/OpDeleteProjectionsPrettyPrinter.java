@@ -118,7 +118,7 @@ public class OpDeleteProjectionsPrettyPrinter<E extends Exception>
 
   public boolean print(@NotNull OpParams p, boolean needCommas, boolean first) throws E {
     l.beginCInd(0);
-    for (OpParam param : p.params().values()) {
+    for (OpParam param : p.asMap().values()) {
       if (needCommas) {
         if (first) first = false;
         else l.print(",");

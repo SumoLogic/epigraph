@@ -24,6 +24,8 @@ import ws.epigraph.projections.abs.AbstractModelProjection;
 import ws.epigraph.projections.gen.GenModelProjection;
 import ws.epigraph.types.DatumType;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -46,6 +48,41 @@ public abstract class AbstractOpModelProjection<MP extends GenModelProjection</*
 
   @NotNull
   public OpParams params() { return params; }
+
+  @Nullable
+  @Override
+  protected MP merge(
+      @NotNull final DatumType model,
+      @NotNull final List<? extends GenModelProjection<?, ?>> modelProjections,
+      @NotNull final Annotations mergedAnnotations,
+      final MP mergedMetaProjection) {
+
+    if (modelProjections.isEmpty()) return null;
+
+    List<OpParams> paramsList = new ArrayList<>();
+
+    for (final GenModelProjection<?, ?> projection : modelProjections) {
+      AbstractOpModelProjection<?, ?> mp = (AbstractOpModelProjection<?, ?>) projection;
+      paramsList.add(mp.params());
+    }
+
+    return merge(
+        model,
+        modelProjections, mergedMetaProjection,
+        mergedAnnotations,
+        OpParams.merge(paramsList)
+    );
+  }
+
+  protected MP merge(
+      @NotNull final DatumType model,
+      @NotNull final List<? extends GenModelProjection<?, ?>> modelProjections,
+      @Nullable MP mergedMetaProjection,
+      @NotNull Annotations mergedAnnotations,
+      @NotNull OpParams mergedParams) {
+
+    throw new RuntimeException("not implemented"); // todo
+  }
 
   @Override
   public boolean equals(final Object o) {

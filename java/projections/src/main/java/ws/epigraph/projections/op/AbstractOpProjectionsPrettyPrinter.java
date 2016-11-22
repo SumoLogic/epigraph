@@ -49,7 +49,7 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
   }
 
   public boolean print(@NotNull OpParams p, boolean needCommas, boolean first) throws E {
-    for (OpParam param : p.params().values()) {
+    for (OpParam param : p.asMap().values()) {
       if (needCommas) {
         if (first) first = false;
         else l.print(",");

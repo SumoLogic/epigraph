@@ -62,7 +62,24 @@ public class OpParams {
   public OpParam get(@NotNull String key) { return params.get(key); }
 
   @NotNull
-  public Map<String, OpParam> params() { return params; }
+  public Map<String, OpParam> asMap() { return params; }
+
+  @NotNull
+  public static OpParams merge(@NotNull Collection<OpParams> OpParamsCollection) {
+    if (OpParamsCollection.isEmpty()) return EMPTY;
+
+    Map<String, OpParam> entries = new HashMap<>();
+
+    for (final OpParams OpParams : OpParamsCollection) {
+      for (final Map.Entry<String, OpParam> entry : OpParams.asMap().entrySet()) {
+        String key = entry.getKey();
+        if (!entries.containsKey(key))
+          entries.put(key, entry.getValue());
+      }
+    }
+
+    return new OpParams(entries);
+  }
 
   @Override
   public boolean equals(Object o) {

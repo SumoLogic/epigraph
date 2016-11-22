@@ -16,7 +16,9 @@
 
 package ws.epigraph.projections.gen;
 
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
+import ws.epigraph.types.DatumType;
 import ws.epigraph.types.Type;
 import org.jetbrains.annotations.NotNull;
 
@@ -31,8 +33,8 @@ public interface GenTagProjectionEntry<TP extends GenTagProjectionEntry<TP, MP>,
 
   @NotNull MP projection();
 
-  @NotNull
-  /*static*/ TP mergeTags(@NotNull Type varType, @NotNull List<TP> tags);
+  @Nullable
+  /*static*/ TP mergeTags(@NotNull Type.Tag tag, @NotNull List<TP> tagEntries);
 
   @NotNull TextLocation location();
 }

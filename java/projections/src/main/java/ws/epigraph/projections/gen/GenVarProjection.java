@@ -58,7 +58,7 @@ public interface GenVarProjection<
   }
 
   @NotNull
-  /* static */ VP normalizedForType(@NotNull Type type, @NotNull Type topLevelType, @NotNull List<VP> varProjections);
+  /* static */ VP normalizedForType(@NotNull Type targetType, @NotNull Type fallbackType, @NotNull List<VP> varProjections);
 
   @Nullable
   default VP tailByType(@NotNull Type tailType) {

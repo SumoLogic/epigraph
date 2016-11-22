@@ -22,6 +22,8 @@ import ws.epigraph.types.DatumType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
@@ -30,6 +32,11 @@ public interface GenModelProjection<MP extends GenModelProjection</*MP*/?, ?>, M
   @NotNull M model();
 
   @Nullable MP metaProjection();
+
+  @Nullable
+  /* static */ MP merge(
+      @NotNull /*M*/ DatumType model,
+      @NotNull List<? extends/*MP*/ GenModelProjection<?, ?>> modelProjections);
 
   @NotNull Annotations annotations();
 

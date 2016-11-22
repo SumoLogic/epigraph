@@ -153,7 +153,7 @@ public class ReqPathPrettyPrinter<E extends Exception>
 
   private void printAnnotations(@NotNull Annotations annotations) throws E {
     if (!annotations.isEmpty()) {
-      for (Annotation annotation : annotations.params().values()) {
+      for (Annotation annotation : annotations.asMap().values()) {
         l.brk().beginIInd();
         l.print("!").print(annotation.name()).brk().print("=").brk();
         gdataPrettyPrinter.print(annotation.value());

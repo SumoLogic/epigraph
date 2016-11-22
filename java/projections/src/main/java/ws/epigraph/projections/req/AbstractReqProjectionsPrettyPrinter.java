@@ -57,7 +57,7 @@ public abstract class AbstractReqProjectionsPrettyPrinter<
   protected void printAnnotations(@NotNull Annotations annotations) throws E {
     l.beginCInd();
     if (!annotations.isEmpty()) {
-      for (Annotation annotation : annotations.params().values()) {
+      for (Annotation annotation : annotations.asMap().values()) {
         l.brk().beginIInd();
         l.print("!").print(annotation.name()).brk().print("=").brk();
         gdataPrettyPrinter.print(annotation.value());

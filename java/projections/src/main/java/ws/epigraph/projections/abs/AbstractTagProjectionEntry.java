@@ -16,13 +16,15 @@
 
 package ws.epigraph.projections.abs;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.gen.GenTagProjectionEntry;
 import ws.epigraph.types.Type;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -59,9 +61,21 @@ public abstract class AbstractTagProjectionEntry<
   @NotNull
   public MP projection() { return projection; }
 
-  @NotNull
+  @Nullable
   @Override
-  public TP mergeTags(@NotNull final Type varType, @NotNull final List<TP> tags) {
+  public TP mergeTags(@NotNull final Type.Tag tag, @NotNull final List<TP> tagEntries) {
+    if (tagEntries.isEmpty()) return null;
+
+    final List<@NotNull MP> models =
+        tagEntries.stream().map(AbstractTagProjectionEntry::projection).collect(Collectors.toList());
+
+    MP mergedModel = (MP) models.get(0).merge(tag.type, models);
+
+    return mergedModel == null ? null : mergeTags(tag, tagEntries, mergedModel);
+  }
+
+  @Nullable
+  protected TP mergeTags(@NotNull final Type.Tag tag, @NotNull final List<TP> tagsEntries, @NotNull MP mergedModel) {
     throw new RuntimeException("Unsupported operation"); // todo remove this method from here
   }
 

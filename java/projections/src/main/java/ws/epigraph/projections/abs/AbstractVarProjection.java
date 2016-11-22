@@ -115,7 +115,7 @@ public abstract class AbstractVarProjection<
 
   @NotNull
   @Override
-  public VP normalizedForType(@NotNull final Type type, @NotNull Type topLevelType, @NotNull List<VP> varProjections) {
+  public VP normalizedForType(@NotNull final Type targetType, @NotNull Type fallbackType, @NotNull List<VP> varProjections) {
 
     final Stream<AbstractVarProjection<VP, TP, MP>> allTails =
         varProjections.stream()
@@ -126,33 +126,34 @@ public abstract class AbstractVarProjection<
                                : x.stream();
                       });
 
-    final Deque<AbstractVarProjection<VP, TP, MP>> linearizedTails = linearizeTails(type, allTails);
+    final Deque<AbstractVarProjection<VP, TP, MP>> linearizedTails = linearizeTails(targetType, allTails);
 
-    final Type effectiveType = linearizedTails.isEmpty() ? topLevelType : linearizedTails.getFirst().type();
+    final Type effectiveType = linearizedTails.isEmpty() ? fallbackType : linearizedTails.getFirst().type();
 
     List<AbstractVarProjection<VP, TP, MP>> effectiveProjections = new ArrayList<>(linearizedTails);
     effectiveProjections.addAll(varProjections); // remove from wiki too?
 //    Collection<AbstractVarProjection<VP, TP, MP>> effectiveProjections = linearizedTails;
 
     // collect all tags in proper order
-    Set<String> tags = new LinkedHashSet<>();
+    Set<Type.Tag> tags = new LinkedHashSet<>();
 
     for (final AbstractVarProjection<VP, TP, MP> projection : effectiveProjections)
-      projection.tagProjections().keySet().stream().filter(tag -> !tags.contains(tag)).forEach(tags::add);
+      projection.tagProjections().values().stream().map(GenTagProjectionEntry::tag).forEach(tags::add);
 
     LinkedHashMap<String, TP> mergedTags = new LinkedHashMap<>();
 
-    for (final String tag : tags) {
+    for (final Type.Tag tag : tags) {
       List<TP> tagProjections = new ArrayList<>();
       for (final AbstractVarProjection<VP, TP, MP> projection : effectiveProjections) {
-        final @Nullable TP tagProjection = projection.tagProjection(tag);
+        final @Nullable TP tagProjection = projection.tagProjection(tag.name());
         if (tagProjection != null)
           tagProjections.add(tagProjection);
       }
 
       if (!tagProjections.isEmpty()) {
-        final @NotNull TP mergedTag = tagProjections.get(0).mergeTags(effectiveType, tagProjections);
-        mergedTags.put(tag, mergedTag);
+        final @Nullable TP mergedTag = tagProjections.get(0).mergeTags(tag, tagProjections);
+        if (mergedTag != null)
+          mergedTags.put(tag.name(), mergedTag);
       }
     }
 

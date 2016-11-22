@@ -19,11 +19,16 @@ package ws.epigraph.projections.op.output;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenListModelProjection;
+import ws.epigraph.projections.gen.GenModelProjection;
 import ws.epigraph.projections.op.OpParams;
+import ws.epigraph.types.DatumType;
 import ws.epigraph.types.ListType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.types.Type;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -55,6 +60,37 @@ public class OpOutputListModelProjection
 
   @NotNull
   public OpOutputVarProjection itemsProjection() { return itemsProjection; }
+
+  @Override
+  protected OpOutputListModelProjection merge(
+      @NotNull final DatumType model,
+      @NotNull final List<? extends GenModelProjection<?, ?>> modelProjections,
+      @Nullable final OpOutputListModelProjection mergedMetaProjection,
+      @NotNull final Annotations mergedAnnotations,
+      @NotNull final OpParams mergedParams) {
+
+    ListType listType = (ListType) model;
+
+    List<OpOutputVarProjection> itemProjections = new ArrayList<>();
+
+    for (final GenModelProjection<?, ?> modelProjection : modelProjections) {
+      OpOutputListModelProjection lmp = (OpOutputListModelProjection) modelProjection;
+      itemProjections.add(lmp.itemsProjection);
+    }
+
+    final @NotNull Type elementsType = listType.elementType().type;
+    @NotNull final OpOutputVarProjection mergedItemsVarType =
+        itemProjections.get(0).normalizedForType(elementsType, elementsType, itemProjections);
+
+    return new OpOutputListModelProjection(
+        listType,
+        mergedParams,
+        mergedAnnotations,
+        mergedMetaProjection,
+        mergedItemsVarType,
+        TextLocation.UNKNOWN
+    );
+  }
 
   @Override
   public boolean equals(Object o) {

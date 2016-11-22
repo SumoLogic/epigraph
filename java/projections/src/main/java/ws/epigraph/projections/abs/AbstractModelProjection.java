@@ -16,13 +16,15 @@
 
 package ws.epigraph.projections.abs;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenModelProjection;
 import ws.epigraph.types.DatumType;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -59,6 +61,50 @@ public abstract class AbstractModelProjection<MP extends GenModelProjection</*MP
 
   @NotNull
   public Annotations annotations() { return annotations; }
+
+  @SuppressWarnings("unchecked")
+  @Nullable
+  @Override
+  public MP merge(
+      @NotNull final DatumType model,
+      @NotNull final List<? extends GenModelProjection<?, ?>> modelProjections) {
+
+    if (modelProjections.isEmpty()) return null;
+
+    List<Annotations> annotationsList = new ArrayList<>();
+    List<MP> metaProjectionsList = new ArrayList<>();
+
+    for (final GenModelProjection<?, ?> p : modelProjections) {
+      AbstractModelProjection<MP, ?> mp = (AbstractModelProjection<MP, ?>) p;
+      annotationsList.add(mp.annotations());
+      metaProjectionsList.add(mp.metaProjection());
+    }
+
+    final MP mergedMetaProjection;
+    if (metaProjectionsList.isEmpty()) mergedMetaProjection = null;
+    else {
+      final MP mp = metaProjectionsList.get(0);
+      DatumType metaModel = model/*.metaModel()*/; // TODO should get meta-model type here
+      mergedMetaProjection = (MP) mp.merge(metaModel, metaProjectionsList);
+    }
+
+    return merge(
+        model,
+        modelProjections,
+        Annotations.merge(annotationsList),
+        mergedMetaProjection
+    );
+  }
+
+  @Nullable
+  protected MP merge(
+      @NotNull final DatumType model,
+      @NotNull final List<? extends GenModelProjection<?, ?>> modelProjections,
+      @NotNull Annotations mergedAnnotations,
+      @Nullable MP mergedMetaProjection) {
+
+    throw new RuntimeException("unimplemented"); // todo
+  }
 
   @NotNull
   public TextLocation location() { return location; }

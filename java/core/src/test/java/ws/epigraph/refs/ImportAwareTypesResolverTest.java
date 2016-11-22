@@ -188,6 +188,7 @@ public class ImportAwareTypesResolverTest {
         new QualifiedTypeName(localName, namespaceNames),
         Collections.emptyList()
     ) {
+      @NotNull
       @Override
       public Data.Builder createDataBuilder() { return null; }
 

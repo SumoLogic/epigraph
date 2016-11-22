@@ -20,10 +20,7 @@ import ws.epigraph.gdata.GDataValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -47,8 +44,6 @@ public class Annotations {
     this(annotations.stream().collect(Collectors.toMap(Annotation::name, Function.identity())));
   }
 
-  public boolean hasParam(@NotNull String name) { return entries.containsKey(name); }
-
   public boolean isEmpty() { return entries.isEmpty(); }
 
   @Nullable
@@ -58,7 +53,24 @@ public class Annotations {
   }
 
   @NotNull
-  public Map<String, Annotation> params() { return entries; }
+  public Map<String, Annotation> asMap() { return entries; }
+
+  @NotNull
+  public static Annotations merge(@NotNull Collection<Annotations> annotationsCollection) {
+    if (annotationsCollection.isEmpty()) return EMPTY;
+
+    Map<String, Annotation> entries = new HashMap<>();
+
+    for (final Annotations annotations : annotationsCollection) {
+      for (final Map.Entry<String, Annotation> entry : annotations.asMap().entrySet()) {
+        String key = entry.getKey();
+        if (!entries.containsKey(key))
+          entries.put(key, entry.getValue());
+      }
+    }
+
+    return new Annotations(entries);
+  }
 
   @Override
   public boolean equals(Object o) {

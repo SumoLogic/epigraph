@@ -146,7 +146,7 @@ public abstract class AbstractProjectionsPrettyPrinter<
   }
 
   public boolean print(@NotNull Annotations cp, boolean needCommas, boolean first) throws E {
-    for (Map.Entry<String, Annotation> entry : cp.params().entrySet()) {
+    for (Map.Entry<String, Annotation> entry : cp.asMap().entrySet()) {
       if (needCommas) {
         if (first) first = false;
         else l.print(",");
