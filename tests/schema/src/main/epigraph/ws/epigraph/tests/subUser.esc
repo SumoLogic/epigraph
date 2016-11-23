@@ -1,0 +1,13 @@
+namespace ws.epigraph.tests
+
+vartype SubUser extends User {
+  override id: SubUserId
+  override `record`: SubUserRecord
+}
+
+integer SubUserId extends UserId
+
+record SubUserRecord extends UserRecord {
+  profile: Url
+  override worstEnemy: SubUserRecord
+}

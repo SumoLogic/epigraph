@@ -1,0 +1,12 @@
+namespace ws.epigraph.tests
+
+vartype User2 extends Person {
+  override id: UserId2
+  override `record`: UserRecord2
+}
+
+integer UserId2 extends PersonId
+
+record UserRecord2 extends PersonRecord {
+  override worstEnemy: UserRecord2
+}
