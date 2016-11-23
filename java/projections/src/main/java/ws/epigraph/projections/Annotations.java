@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -56,20 +57,26 @@ public class Annotations {
   public Map<String, Annotation> asMap() { return entries; }
 
   @NotNull
-  public static Annotations merge(@NotNull Collection<Annotations> annotationsCollection) {
-    if (annotationsCollection.isEmpty()) return EMPTY;
-
+  public static Annotations merge(@NotNull Stream<Annotations> annotationsToMerge) {
     Map<String, Annotation> entries = new HashMap<>();
 
-    for (final Annotations annotations : annotationsCollection) {
+    annotationsToMerge.forEach(annotations -> {
       for (final Map.Entry<String, Annotation> entry : annotations.asMap().entrySet()) {
         String key = entry.getKey();
         if (!entries.containsKey(key))
           entries.put(key, entry.getValue());
       }
-    }
+    });
 
     return new Annotations(entries);
+  }
+
+  @NotNull
+  public static Annotations merge(@NotNull Collection<Annotations> annotationsToMerge) {
+    if (annotationsToMerge.isEmpty()) return EMPTY;
+    if (annotationsToMerge.size() == 1) return annotationsToMerge.iterator().next();
+
+    return merge(annotationsToMerge.stream());
   }
 
   @Override

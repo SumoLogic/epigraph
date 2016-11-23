@@ -21,6 +21,9 @@ import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.op.AbstractOpFieldProjection;
 import ws.epigraph.projections.op.OpParams;
 import org.jetbrains.annotations.NotNull;
+import ws.epigraph.types.DataType;
+
+import java.util.List;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -38,5 +41,22 @@ public class OpOutputFieldProjection extends AbstractOpFieldProjection<
       @NotNull OpOutputVarProjection projection,
       @NotNull TextLocation location) {
     super(params, annotations, projection, location);
+  }
+
+  @NotNull
+  @Override
+  protected OpOutputFieldProjection merge(
+      @NotNull final DataType type,
+      @NotNull final List<OpOutputFieldProjection> fieldProjections,
+      @NotNull final OpParams mergedParams,
+      @NotNull final Annotations mergedAnnotations,
+      @NotNull final OpOutputVarProjection mergedVarProjection) {
+
+    return new OpOutputFieldProjection(
+        mergedParams,
+        mergedAnnotations,
+        mergedVarProjection,
+        TextLocation.UNKNOWN
+    );
   }
 }

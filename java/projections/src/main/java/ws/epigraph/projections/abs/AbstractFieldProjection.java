@@ -23,8 +23,11 @@ import ws.epigraph.projections.gen.GenModelProjection;
 import ws.epigraph.projections.gen.GenTagProjectionEntry;
 import ws.epigraph.projections.gen.GenVarProjection;
 import org.jetbrains.annotations.NotNull;
+import ws.epigraph.types.DataType;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -61,6 +64,36 @@ public abstract class AbstractFieldProjection<
   @NotNull
   @Override
   public VP varProjection() { return projection; }
+
+  @NotNull
+  @Override
+  public FP merge(@NotNull final DataType type, @NotNull final List<FP> fieldProjections) {
+    if (fieldProjections.isEmpty()) throw new IllegalArgumentException("Can't merge empty list");
+    if (fieldProjections.size() == 1) return fieldProjections.get(0);
+
+    final List<@NotNull VP> varProjections =
+        fieldProjections.stream().map(GenFieldProjection::varProjection).collect(Collectors.toList());
+
+    assert varProjections.size() >= 1;
+
+    final @NotNull VP mergedVarProjection = varProjections.get(0).merge(varProjections);
+
+    return merge(
+        type,
+        fieldProjections,
+        Annotations.merge(fieldProjections.stream().map(GenFieldProjection::annotations)),
+        mergedVarProjection
+    );
+  }
+
+  protected FP merge(
+      @NotNull DataType type,
+      @NotNull List<FP> fieldProjections,
+      @NotNull Annotations mergedAnnotations,
+      @NotNull VP mergedVarProjection) {
+
+    throw new RuntimeException("not implemented"); // todo make abstract
+  }
 
   @NotNull
   @Override

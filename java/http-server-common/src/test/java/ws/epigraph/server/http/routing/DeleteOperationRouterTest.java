@@ -223,6 +223,7 @@ public class DeleteOperationRouterTest {
     );
   }
 
+  @SuppressWarnings("unchecked")
   private OperationSearchSuccess<? extends DeleteOperation<?>, DeleteRequestUrl> getTargetOpId(@NotNull final String url)
       throws PsiProcessingException {
     @NotNull final OperationSearchResult<DeleteOperation<?>> oss = router.findOperation(

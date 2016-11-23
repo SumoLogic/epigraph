@@ -282,6 +282,7 @@ public class CreateOperationRouterTest {
     );
   }
 
+  @SuppressWarnings("unchecked")
   private OperationSearchSuccess<? extends CreateOperation<?>, CreateRequestUrl> getTargetOpId(@NotNull final String url)
       throws PsiProcessingException {
     @NotNull final OperationSearchResult<CreateOperation<?>> oss = router.findOperation(

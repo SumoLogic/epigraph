@@ -16,14 +16,16 @@
 
 package ws.epigraph.projections.op;
 
+import org.jetbrains.annotations.NotNull;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.abs.AbstractFieldProjection;
 import ws.epigraph.projections.gen.GenModelProjection;
 import ws.epigraph.projections.gen.GenTagProjectionEntry;
 import ws.epigraph.projections.gen.GenVarProjection;
-import org.jetbrains.annotations.NotNull;
+import ws.epigraph.types.DataType;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -52,6 +54,33 @@ public abstract class AbstractOpFieldProjection<
 
   @NotNull
   public OpParams params() { return params; }
+
+  @Override
+  protected FP merge(
+      @NotNull final DataType type,
+      @NotNull final List<FP> fieldProjections,
+      @NotNull final Annotations mergedAnnotations,
+      @NotNull final VP mergedVarProjection) {
+
+    return merge(
+        type,
+        fieldProjections,
+        OpParams.merge(fieldProjections.stream().map(AbstractOpFieldProjection::params)),
+        mergedAnnotations,
+        mergedVarProjection
+    );
+  }
+
+  @NotNull
+  protected FP merge(
+      @NotNull final DataType type,
+      @NotNull final List<FP> fieldProjections,
+      @NotNull final OpParams mergedParams,
+      @NotNull final Annotations mergedAnnotations,
+      @NotNull final VP mergedVarProjection) {
+
+    throw new RuntimeException("not implemented"); // todo make abstract
+  }
 
   @Override
   public boolean equals(final Object o) {

@@ -181,6 +181,7 @@ public class ReadOperationRouterTest {
     );
   }
 
+  @SuppressWarnings("unchecked")
   private OperationSearchSuccess<?, ReadRequestUrl> getTargetOpId(@NotNull final String url) throws PsiProcessingException {
     @NotNull final OperationSearchResult<ReadOperation<?>> oss = router.findOperation(
         null,

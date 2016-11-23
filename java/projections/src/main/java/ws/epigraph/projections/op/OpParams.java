@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -65,20 +66,28 @@ public class OpParams {
   public Map<String, OpParam> asMap() { return params; }
 
   @NotNull
-  public static OpParams merge(@NotNull Collection<OpParams> OpParamsCollection) {
-    if (OpParamsCollection.isEmpty()) return EMPTY;
+  public static OpParams merge(@NotNull Stream<OpParams> paramsToMerge) {
+    // using `reduce` would produce too much garbage
 
     Map<String, OpParam> entries = new HashMap<>();
 
-    for (final OpParams OpParams : OpParamsCollection) {
-      for (final Map.Entry<String, OpParam> entry : OpParams.asMap().entrySet()) {
+    paramsToMerge.forEach(params -> {
+      for (final Map.Entry<String, OpParam> entry : params.asMap().entrySet()) {
         String key = entry.getKey();
         if (!entries.containsKey(key))
           entries.put(key, entry.getValue());
       }
-    }
+    });
 
     return new OpParams(entries);
+  }
+
+  @NotNull
+  public static OpParams merge(@NotNull Collection<OpParams> paramsToMerge) {
+    if (paramsToMerge.isEmpty()) return EMPTY;
+    if (paramsToMerge.size() == 1) return paramsToMerge.iterator().next();
+
+    return merge(paramsToMerge.stream());
   }
 
   @Override

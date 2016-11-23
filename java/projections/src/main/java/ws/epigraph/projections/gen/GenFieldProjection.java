@@ -16,9 +16,12 @@
 
 package ws.epigraph.projections.gen;
 
+import org.jetbrains.annotations.NotNull;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
-import org.jetbrains.annotations.NotNull;
+import ws.epigraph.types.DataType;
+
+import java.util.List;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -32,6 +35,21 @@ public interface GenFieldProjection<
   @NotNull Annotations annotations();
 
   @NotNull VP varProjection();
+
+  /**
+   * Merges a list of field projections together
+   * <p/>
+   * Should work as a 'static' method: current object should not be merged (most probably it is going
+   * to be the first item of the list anyways). Such design allows for easier implementations that have to
+   * iterate over all the items being merged.
+   *
+   * @param type             resulting field type
+   * @param fieldProjections field projections to merge, guaranteed to contain at least one element
+   * @return merged field projections
+   */
+  @NotNull
+  /* static */
+  FP merge(@NotNull DataType type, @NotNull List<FP> fieldProjections);
 
   @NotNull TextLocation location();
 }
