@@ -18,7 +18,6 @@ package ws.epigraph.projections.op.output;
 
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
-import ws.epigraph.projections.gen.GenModelProjection;
 import ws.epigraph.projections.gen.GenPrimitiveModelProjection;
 import ws.epigraph.projections.op.OpParams;
 import ws.epigraph.types.PrimitiveType;
@@ -46,7 +45,7 @@ public class OpOutputPrimitiveModelProjection
   @Override
   protected OpOutputPrimitiveModelProjection merge(
       @NotNull final PrimitiveType<?> model,
-      @NotNull final List<? extends GenModelProjection<?, ?>> modelProjections,
+      @NotNull final List<OpOutputPrimitiveModelProjection> modelProjections,
       @NotNull final OpParams mergedParams,
       @NotNull final Annotations mergedAnnotations,
       @Nullable final OpOutputPrimitiveModelProjection mergedMetaProjection) {

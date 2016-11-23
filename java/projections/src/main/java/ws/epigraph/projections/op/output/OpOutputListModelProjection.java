@@ -21,13 +21,12 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenListModelProjection;
-import ws.epigraph.projections.gen.GenModelProjection;
 import ws.epigraph.projections.op.OpParams;
 import ws.epigraph.types.ListType;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -63,17 +62,15 @@ public class OpOutputListModelProjection
   @Override
   protected OpOutputListModelProjection merge(
       @NotNull final ListType model,
-      @NotNull final List<? extends GenModelProjection<?, ?>> modelProjections,
+      @NotNull final List<OpOutputListModelProjection> modelProjections,
       @NotNull final OpParams mergedParams,
       @NotNull final Annotations mergedAnnotations,
       @Nullable final OpOutputListModelProjection mergedMetaProjection) {
 
-    List<OpOutputVarProjection> itemProjections = new ArrayList<>(modelProjections.size());
-
-    for (final GenModelProjection<?, ?> modelProjection : modelProjections) {
-      OpOutputListModelProjection lmp = (OpOutputListModelProjection) modelProjection;
-      itemProjections.add(lmp.itemsProjection);
-    }
+    List<OpOutputVarProjection> itemProjections =
+        modelProjections.stream()
+                        .map(OpOutputListModelProjection::itemsProjection)
+                        .collect(Collectors.toList());
 
     @NotNull final OpOutputVarProjection mergedItemsVarType = itemProjections.get(0).merge(itemProjections);
 

@@ -51,8 +51,8 @@ public abstract class AbstractOpModelProjection<MP extends GenModelProjection</*
 
   @Override
   protected MP merge(
-      final M model,
-      @NotNull final List<? extends GenModelProjection<?, ?>> modelProjections,
+      @NotNull final M model,
+      @NotNull final List<MP> modelProjections,
       @NotNull final Annotations mergedAnnotations,
       final MP mergedMetaProjection) {
 
@@ -74,7 +74,7 @@ public abstract class AbstractOpModelProjection<MP extends GenModelProjection</*
   /* static */
   protected MP merge(
       @NotNull M model,
-      @NotNull final List<? extends GenModelProjection<?, ?>> modelProjections,
+      @NotNull List<MP> modelProjections,
       @NotNull OpParams mergedParams, @NotNull Annotations mergedAnnotations,
       @Nullable MP mergedMetaProjection) {
 

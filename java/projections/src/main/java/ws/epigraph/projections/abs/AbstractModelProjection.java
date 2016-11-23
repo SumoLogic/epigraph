@@ -63,15 +63,14 @@ public abstract class AbstractModelProjection<MP extends GenModelProjection</*MP
   public Annotations annotations() { return annotations; }
 
   @SuppressWarnings("unchecked")
-  @Nullable
   @Override
   /* static */
   public MP merge(
       @NotNull final M model,
-      @NotNull final List<? extends GenModelProjection<?, ?>> modelProjections) {
+      @NotNull final List<MP> modelProjections) {
 
     if (modelProjections.isEmpty()) return null;
-    if (modelProjections.size() == 1) return (MP) modelProjections.get(0);
+    if (modelProjections.size() == 1) return modelProjections.get(0);
 
     List<Annotations> annotationsList = new ArrayList<>();
     List<MP> metaProjectionsList = new ArrayList<>();
@@ -100,7 +99,7 @@ public abstract class AbstractModelProjection<MP extends GenModelProjection</*MP
 
   protected MP merge(
       @NotNull M model,
-      @NotNull List<? extends GenModelProjection<?, ?>> modelProjections,
+      @NotNull List<MP> modelProjections,
       @NotNull Annotations mergedAnnotations,
       @Nullable MP mergedMetaProjection) {
 

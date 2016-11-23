@@ -40,14 +40,13 @@ public interface GenModelProjection<MP extends GenModelProjection</*MP*/?, ?>, M
    * to be the first item of the list anyways). Such design allows for easier implementations that have to
    * iterate over all the items being merged.
    *
-   * @param model            resulting model's type, guaranteed to be of type {@code M}.
-   * @param modelProjections models to merge, guaranteed to be of type {@code MP}.
+   * @param model            resulting model's type
+   * @param modelProjections models to merge
    *
    * @return merged models or {@code null} if {@code modelProjections} is empty
    */
-  @Nullable
   /* static */
-  MP merge(@NotNull M model, @NotNull List<? extends/*MP*/ GenModelProjection<?, ?>> modelProjections); // todo try to generify properly
+  MP merge(@NotNull M model, @NotNull List<MP> modelProjections);
 
   @NotNull Annotations annotations();
 

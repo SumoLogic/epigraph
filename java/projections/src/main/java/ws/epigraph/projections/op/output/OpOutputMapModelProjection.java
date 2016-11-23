@@ -16,15 +16,14 @@
 
 package ws.epigraph.projections.op.output;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenMapModelProjection;
-import ws.epigraph.projections.gen.GenModelProjection;
 import ws.epigraph.projections.op.OpKeyPresence;
 import ws.epigraph.projections.op.OpParams;
 import ws.epigraph.types.MapType;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,7 +70,7 @@ public class OpOutputMapModelProjection
   @Override
   protected OpOutputMapModelProjection merge(
       @NotNull final MapType model,
-      @NotNull final List<? extends GenModelProjection<?, ?>> modelProjections,
+      @NotNull final List<OpOutputMapModelProjection> modelProjections,
       @NotNull final OpParams mergedParams,
       @NotNull final Annotations mergedAnnotations,
       @Nullable final OpOutputMapModelProjection mergedMetaProjection) {
@@ -82,10 +81,9 @@ public class OpOutputMapModelProjection
     List<OpOutputVarProjection> itemsProjectionsToMerge = new ArrayList<>(modelProjections.size());
 
     OpOutputMapModelProjection prevProjection = null;
-    for (final GenModelProjection<?, ?> projection : modelProjections) {
-      OpOutputMapModelProjection mmp = (OpOutputMapModelProjection) projection;
+    for (final OpOutputMapModelProjection projection : modelProjections) {
 
-      @NotNull final OpOutputKeyProjection keyProjection = mmp.keyProjection();
+      @NotNull final OpOutputKeyProjection keyProjection = projection.keyProjection();
       keysParams.add(keyProjection.params());
       keysAnnotations.add(keyProjection.annotations());
       final OpKeyPresence presence = keyProjection.presence();
@@ -98,15 +96,15 @@ public class OpOutputMapModelProjection
               String.format(
                   "Can't merge key projection defined at %s and key projection defined at %s: incompatible keys presence modes",
                   prevProjection.location(),
-                  mmp.location()
+                  projection.location()
               )
           );
         mergedKeysPresence = newKeysPresence;
       }
 
-      itemsProjectionsToMerge.add(mmp.itemsProjection());
+      itemsProjectionsToMerge.add(projection.itemsProjection());
 
-      prevProjection = mmp;
+      prevProjection = projection;
     }
 
     assert mergedKeysPresence != null; // modelProjections should have at least one element
