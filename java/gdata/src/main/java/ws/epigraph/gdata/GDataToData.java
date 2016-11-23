@@ -204,6 +204,7 @@ public class GDataToData {
 
   // todo enum
 
+  @SuppressWarnings("unchecked")
   public static PrimitiveDatum<?> transform(@NotNull PrimitiveType<?> type,
                                             @NotNull GPrimitiveDatum gdata,
                                             @NotNull TypesResolver resolver) throws ProcessingException {
@@ -224,13 +225,13 @@ public class GDataToData {
     }
 
     try {
-      //noinspection unchecked
       return ((PrimitiveType<Object>) type).createBuilder(n);
     } catch (ClassCastException e) {
       throw new ProcessingException("Can't convert '" + n + "' to '" + type.name() + "'", gdata.location());
     }
   }
 
+  @SuppressWarnings("unchecked")
   private static <T extends Type> T resolveType(@NotNull TypeRef ref,
                                                 @NotNull Class<T> expectedClass,
                                                 @NotNull TypesResolver resolver,
@@ -239,7 +240,6 @@ public class GDataToData {
     if (type == null) throw new ProcessingException("Can't resolve type '" + ref + "'", location);
 
     if (expectedClass.isAssignableFrom(type.getClass()))
-      //noinspection unchecked
       return (T) type;
     else
       throw new ProcessingException(String.format(
@@ -250,13 +250,13 @@ public class GDataToData {
       ), location);
   }
 
-  public static Val.Imm transform(@NotNull DatumType type,
-                                  @NotNull GNullDatum gdata,
-                                  @NotNull TypesResolver resolver) throws ProcessingException {
-    @Nullable TypeRef typeRef = gdata.typeRef();
-    if (typeRef != null) type = resolveType(typeRef, RecordType.class, resolver, gdata.location());
-    return type.createValue(null);
-  }
+//  public static Val.Imm transform(@NotNull DatumType type,
+//                                  @NotNull GNullDatum gdata,
+//                                  @NotNull TypesResolver resolver) throws ProcessingException {
+//    @Nullable TypeRef typeRef = gdata.typeRef();
+//    if (typeRef != null) type = resolveType(typeRef, RecordType.class, resolver, gdata.location());
+//    return type.createValue(null);
+//  }
 
   @NotNull
   private static Val.Imm toVal(@NotNull Datum datum) {
