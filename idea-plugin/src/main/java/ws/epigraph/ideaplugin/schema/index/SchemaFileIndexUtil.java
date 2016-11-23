@@ -21,6 +21,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.model.java.JavaModuleSourceRootTypes;
@@ -29,6 +30,7 @@ import org.jetbrains.jps.model.java.JavaModuleSourceRootTypes;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class SchemaFileIndexUtil {
+  @Contract("_, null -> false")
   public static boolean isSchemaSourceFile(@NotNull Project project, @Nullable VirtualFile file) {
     if (file == null) return false;
     FileTypeManager fileTypeManager = FileTypeManager.getInstance();
