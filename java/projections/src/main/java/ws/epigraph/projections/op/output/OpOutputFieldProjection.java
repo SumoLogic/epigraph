@@ -28,7 +28,8 @@ import org.jetbrains.annotations.NotNull;
 public class OpOutputFieldProjection extends AbstractOpFieldProjection<
     OpOutputVarProjection,
     OpOutputTagProjectionEntry,
-    OpOutputModelProjection<?, ?>
+    OpOutputModelProjection<?, ?>,
+    OpOutputFieldProjection
     > {
 
   public OpOutputFieldProjection(

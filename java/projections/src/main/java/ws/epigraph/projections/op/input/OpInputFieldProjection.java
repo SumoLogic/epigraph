@@ -30,7 +30,8 @@ import java.util.Objects;
 public class OpInputFieldProjection extends AbstractOpFieldProjection<
     OpInputVarProjection,
     OpInputTagProjectionEntry,
-    OpInputModelProjection<?, ?, ?>
+    OpInputModelProjection<?, ?, ?>,
+    OpInputFieldProjection
     > {
 
   private final boolean required;

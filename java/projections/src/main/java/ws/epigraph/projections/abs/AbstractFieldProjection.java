@@ -32,8 +32,9 @@ import java.util.Objects;
 public abstract class AbstractFieldProjection<
     VP extends GenVarProjection<VP, TP, MP>,
     TP extends GenTagProjectionEntry<TP, MP>,
-    MP extends GenModelProjection</*MP*/?, ?>
-    > implements GenFieldProjection<VP, TP, MP> {
+    MP extends GenModelProjection</*MP*/?, ?>,
+    FP extends GenFieldProjection<VP, TP, MP, FP>
+    > implements GenFieldProjection<VP, TP, MP, FP> {
 
   @NotNull
   private final Annotations annotations;
@@ -69,7 +70,7 @@ public abstract class AbstractFieldProjection<
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-    AbstractFieldProjection<?, ?, ?> that = (AbstractFieldProjection<?, ?, ?>) o;
+    AbstractFieldProjection<?, ?, ?, ?> that = (AbstractFieldProjection<?, ?, ?, ?>) o;
     return Objects.equals(annotations, that.annotations) &&
            Objects.equals(projection, that.projection);
   }

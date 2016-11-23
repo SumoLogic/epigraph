@@ -30,7 +30,8 @@ import java.util.Objects;
 public class ReqOutputFieldProjection extends AbstractFieldProjection<
     ReqOutputVarProjection,
     ReqOutputTagProjectionEntry,
-    ReqOutputModelProjection<?, ?>
+    ReqOutputModelProjection<?, ?>,
+    ReqOutputFieldProjection
     > {
   @NotNull
   private final ReqParams reqParams;

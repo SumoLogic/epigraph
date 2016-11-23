@@ -32,8 +32,11 @@ import java.util.Objects;
 public abstract class AbstractOpFieldProjection<
     VP extends GenVarProjection<VP, TP, MP>,
     TP extends GenTagProjectionEntry<TP, MP>,
-    MP extends GenModelProjection</*MP*/?, ?>
-    > extends AbstractFieldProjection<VP, TP, MP> {
+    MP extends GenModelProjection</*MP*/?, ?>,
+    FP extends AbstractOpFieldProjection<VP, TP, MP, FP>
+    > extends AbstractFieldProjection<VP, TP, MP, FP> {
+
+  // todo introduce AbstractReqFieldProjection with ReqParams
 
   @NotNull
   private final OpParams params;
@@ -55,7 +58,7 @@ public abstract class AbstractOpFieldProjection<
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     if (!super.equals(o)) return false;
-    final AbstractOpFieldProjection<?, ?, ?> that = (AbstractOpFieldProjection<?, ?, ?>) o;
+    final AbstractOpFieldProjection<?, ?, ?, ?> that = (AbstractOpFieldProjection<?, ?, ?, ?>) o;
     return Objects.equals(params, that.params);
   }
 

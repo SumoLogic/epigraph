@@ -30,7 +30,8 @@ import java.util.Objects;
 public class ReqFieldPath extends AbstractFieldProjection<
     ReqVarPath,
     ReqTagPath,
-    ReqModelPath<?, ?>
+    ReqModelPath<?, ?>,
+    ReqFieldPath
     > {
   @NotNull
   private final ReqParams reqParams;

@@ -27,7 +27,7 @@ public interface GenFieldProjectionEntry<
     VP extends GenVarProjection<VP, TP, MP>,
     TP extends GenTagProjectionEntry<TP, MP>,
     MP extends GenModelProjection</*MP*/?, ?>,
-    FP extends GenFieldProjection<VP, TP, MP>
+    FP extends GenFieldProjection<VP, TP, MP, FP>
     > {
   @NotNull RecordType.Field field();
 

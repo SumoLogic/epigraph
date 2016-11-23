@@ -63,6 +63,7 @@ public abstract class AbstractTagProjectionEntry<
 
   @Nullable
   @Override
+  @SuppressWarnings("unchecked")
   public TP mergeTags(@NotNull final Type.Tag tag, @NotNull final List<TP> tagEntries) {
     if (tagEntries.isEmpty()) return null;
 

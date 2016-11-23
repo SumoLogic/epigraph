@@ -30,7 +30,7 @@ public abstract class AbstractFieldProjectionEntry<
     VP extends GenVarProjection<VP, TP, MP>,
     TP extends GenTagProjectionEntry<TP, MP>,
     MP extends GenModelProjection</*MP*/?, ?>,
-    FP extends GenFieldProjection<VP, TP, MP>
+    FP extends GenFieldProjection<VP, TP, MP, FP>
     > implements GenFieldProjectionEntry<VP, TP, MP, FP> {
 
   @NotNull

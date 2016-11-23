@@ -37,7 +37,7 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
     MP extends GenModelProjection</*MP*/?, ?>,
     RP extends GenRecordModelProjection<VP, TP, MP, RP, FPE, FP, ?>,
     FPE extends GenFieldProjectionEntry<VP, TP, MP, FP>,
-    FP extends AbstractOpFieldProjection<VP, TP, MP>,
+    FP extends AbstractOpFieldProjection<VP, TP, MP, FP>,
     E extends Exception> extends AbstractProjectionsPrettyPrinter<VP, TP, MP, E> {
 
   protected AbstractOpProjectionsPrettyPrinter(final Layouter<E> layouter) {

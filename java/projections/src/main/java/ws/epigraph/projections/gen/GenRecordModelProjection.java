@@ -31,7 +31,7 @@ public interface GenRecordModelProjection<
     MP extends GenModelProjection</*MP*/?, ?>,
     RMP extends GenRecordModelProjection<VP, TP, MP, RMP, FPE, FP, M>,
     FPE extends GenFieldProjectionEntry<VP, TP, MP, FP>,
-    FP extends GenFieldProjection<VP, TP, MP>,
+    FP extends GenFieldProjection<VP, TP, MP, FP>,
     M extends RecordType
     > extends GenModelProjection<RMP, M> {
 

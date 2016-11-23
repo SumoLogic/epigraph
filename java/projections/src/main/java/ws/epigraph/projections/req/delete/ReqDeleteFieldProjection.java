@@ -30,7 +30,8 @@ import java.util.Objects;
 public class ReqDeleteFieldProjection extends AbstractFieldProjection<
     ReqDeleteVarProjection,
     ReqDeleteTagProjectionEntry,
-    ReqDeleteModelProjection<?, ?>
+    ReqDeleteModelProjection<?, ?>,
+    ReqDeleteFieldProjection
     > {
   @NotNull
   private final ReqParams reqParams;

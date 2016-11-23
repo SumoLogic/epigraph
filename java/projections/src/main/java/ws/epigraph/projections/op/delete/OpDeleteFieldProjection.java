@@ -28,7 +28,8 @@ import org.jetbrains.annotations.NotNull;
 public class OpDeleteFieldProjection extends AbstractOpFieldProjection<
     OpDeleteVarProjection,
     OpDeleteTagProjectionEntry,
-    OpDeleteModelProjection<?, ?>
+    OpDeleteModelProjection<?, ?>,
+    OpDeleteFieldProjection
     > {
 
   public OpDeleteFieldProjection(
