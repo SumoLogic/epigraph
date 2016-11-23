@@ -26,6 +26,7 @@ import ws.epigraph.refs.SimpleTypesResolver;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.tests.*;
 import ws.epigraph.types.DataType;
+import ws.epigraph.types.Type;
 
 import static org.junit.Assert.assertEquals;
 import static ws.epigraph.test.TestUtil.*;
@@ -34,6 +35,7 @@ import static ws.epigraph.test.TestUtil.*;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpOutputProjectionsTest {
+  private final DataType dataType = new DataType(Person.type, Person.id);
   // todo add map tests when codegen is ready
 
   @Test
@@ -76,7 +78,7 @@ public class OpOutputProjectionsTest {
     );
 
     testParsingVarProjection(
-        new DataType(Person.type, Person.id),
+        dataType,
         projectionStr,
         expected
     );
@@ -85,7 +87,7 @@ public class OpOutputProjectionsTest {
   @Test
   public void testParseEmpty() throws PsiProcessingException {
     testParsingVarProjection(
-        new DataType(Person.type, Person.id),
+        dataType,
         ""
         ,
         ":id"
@@ -109,7 +111,6 @@ public class OpOutputProjectionsTest {
   @Test
   public void testParseTail() throws PsiProcessingException {
     testParsingVarProjection(
-        new DataType(Person.type, Person.id),
         "~ws.epigraph.tests.User :id"
         ,
         ":id ~ws.epigraph.tests.User :id"
@@ -119,7 +120,7 @@ public class OpOutputProjectionsTest {
   @Test
   public void testParseDoubleTail() throws PsiProcessingException {
     testParsingVarProjection(
-        new DataType(Person.type, Person.id),
+        dataType,
         "~ws.epigraph.tests.User :id ~ws.epigraph.tests.Person :id"
         ,
         ":id ~ws.epigraph.tests.User :id ~ws.epigraph.tests.Person :id"
@@ -129,7 +130,6 @@ public class OpOutputProjectionsTest {
   @Test
   public void testParseTails() throws PsiProcessingException {
     testParsingVarProjection(
-        new DataType(Person.type, Person.id),
         "~( ws.epigraph.tests.User :id, ws.epigraph.tests.Person :id )"
         ,
         ":id ~( ws.epigraph.tests.User :id, ws.epigraph.tests.Person :id )"
@@ -166,13 +166,28 @@ public class OpOutputProjectionsTest {
     testParsingVarProjection(":record ( friendsMap [ forbidden, ;+param: epigraph.String, doc = \"no keys\" ]( :id ) )");
   }
 
-  private void testParsingVarProjection(String str) throws PsiProcessingException {
-    testParsingVarProjection(
-        new DataType(Person.type, Person.id),
-        str
-        ,
-        str
+  @Test
+  public void testSingleTailsNormalization() throws PsiProcessingException {
+    testTailsNormalization(
+        ":record(id)~ws.epigraph.tests.User :record(firstName)",
+        User.type,
+        ":record ( firstName, id )"
     );
+  }
+
+  private void testTailsNormalization(String str, Type type, String expected) throws PsiProcessingException {
+    OpOutputVarProjection varProjection = parseOpOutputVarProjection(dataType, str);
+    @NotNull final OpOutputVarProjection normalized = varProjection.normalizedForType(type);
+    String actual = printOpOutputVarProjection(normalized);
+    assertEquals(expected, actual);
+  }
+
+  private void testParsingVarProjection(String str) throws PsiProcessingException {
+    testParsingVarProjection(str, str);
+  }
+
+  private void testParsingVarProjection(String str, String expected) throws PsiProcessingException {
+    testParsingVarProjection(dataType, str, expected);
   }
 
   private void testParsingVarProjection(DataType varDataType, String projectionString, String expected)

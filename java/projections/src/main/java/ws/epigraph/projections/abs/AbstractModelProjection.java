@@ -78,7 +78,8 @@ public abstract class AbstractModelProjection<MP extends GenModelProjection</*MP
     for (final GenModelProjection<?, ?> p : modelProjections) {
       AbstractModelProjection<MP, ?> mp = (AbstractModelProjection<MP, ?>) p;
       annotationsList.add(mp.annotations());
-      metaProjectionsList.add(mp.metaProjection());
+      final @Nullable MP meta = mp.metaProjection();
+      if (meta != null) metaProjectionsList.add(meta);
     }
 
     final MP mergedMetaProjection;
