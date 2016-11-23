@@ -1,6 +1,6 @@
 # Epigraph
 
-Under contrcution
+Under construction
 
 - [Roadmap](roadmap.md)
 - [Todo](todo.md)
