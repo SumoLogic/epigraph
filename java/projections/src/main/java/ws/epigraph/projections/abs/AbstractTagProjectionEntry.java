@@ -19,7 +19,9 @@ package ws.epigraph.projections.abs;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
+import ws.epigraph.projections.gen.GenModelProjection;
 import ws.epigraph.projections.gen.GenTagProjectionEntry;
+import ws.epigraph.types.DatumType;
 import ws.epigraph.types.Type;
 
 import java.util.List;
@@ -70,7 +72,9 @@ public abstract class AbstractTagProjectionEntry<
     final List<@NotNull MP> models =
         tagEntries.stream().map(AbstractTagProjectionEntry::projection).collect(Collectors.toList());
 
-    MP mergedModel = (MP) models.get(0).merge(tag.type, models);
+    final @NotNull MP mp = models.get(0);
+    final @NotNull DatumType type = tag.type;
+    MP mergedModel = ((GenModelProjection<MP, DatumType>) mp).merge(type, models);
 
     return mergedModel == null ? null : mergeTags(tag, tagEntries, mergedModel);
   }

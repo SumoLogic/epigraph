@@ -47,7 +47,7 @@ public interface GenModelProjection<MP extends GenModelProjection</*MP*/?, ?>, M
    */
   @Nullable
   /* static */
-  MP merge(@NotNull /*M*/ DatumType model, @NotNull List<? extends/*MP*/ GenModelProjection<?, ?>> modelProjections); // todo try to generify properly
+  MP merge(@NotNull M model, @NotNull List<? extends/*MP*/ GenModelProjection<?, ?>> modelProjections); // todo try to generify properly
 
   @NotNull Annotations annotations();
 

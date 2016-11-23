@@ -21,7 +21,6 @@ import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenModelProjection;
 import ws.epigraph.projections.gen.GenPrimitiveModelProjection;
 import ws.epigraph.projections.op.OpParams;
-import ws.epigraph.types.DatumType;
 import ws.epigraph.types.PrimitiveType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -46,14 +45,14 @@ public class OpOutputPrimitiveModelProjection
 
   @Override
   protected OpOutputPrimitiveModelProjection merge(
-      @NotNull final DatumType model,
+      @NotNull final PrimitiveType<?> model,
       @NotNull final List<? extends GenModelProjection<?, ?>> modelProjections,
       @NotNull final OpParams mergedParams,
       @NotNull final Annotations mergedAnnotations,
       @Nullable final OpOutputPrimitiveModelProjection mergedMetaProjection) {
 
     return new OpOutputPrimitiveModelProjection(
-        (PrimitiveType) model,
+        model,
         mergedParams,
         mergedAnnotations,
         mergedMetaProjection,

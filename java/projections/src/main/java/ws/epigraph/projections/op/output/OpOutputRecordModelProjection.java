@@ -21,11 +21,13 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.RecordModelProjectionHelper;
+import ws.epigraph.projections.gen.GenModelProjection;
 import ws.epigraph.projections.gen.GenRecordModelProjection;
 import ws.epigraph.projections.op.OpParams;
+import ws.epigraph.types.DatumType;
 import ws.epigraph.types.RecordType;
 
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -60,6 +62,26 @@ public class OpOutputRecordModelProjection
 
   @NotNull
   public Map<String, OpOutputFieldProjectionEntry> fieldProjections() { return fieldProjections; }
+
+  /*
+  @Override
+  protected OpOutputRecordModelProjection merge(
+      @NotNull final DatumType model,
+      @NotNull final List<? extends GenModelProjection<?, ?>> modelProjections,
+      @NotNull final OpParams mergedParams,
+      @NotNull final Annotations mergedAnnotations,
+      @Nullable final OpOutputRecordModelProjection mergedMetaProjection) {
+
+    Set<RecordType.Field> collectedFields = new LinkedHashSet<>();
+    for (final GenModelProjection<?, ?> projection : modelProjections) {
+
+    }
+
+
+    Map<String, OpOutputFieldProjectionEntry> mergedFields = new LinkedHashMap<>();
+
+  }
+  */
 
   @Override
   public boolean equals(Object o) {

@@ -23,7 +23,6 @@ import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenListModelProjection;
 import ws.epigraph.projections.gen.GenModelProjection;
 import ws.epigraph.projections.op.OpParams;
-import ws.epigraph.types.DatumType;
 import ws.epigraph.types.ListType;
 
 import java.util.ArrayList;
@@ -63,13 +62,11 @@ public class OpOutputListModelProjection
   /* static */
   @Override
   protected OpOutputListModelProjection merge(
-      @NotNull final DatumType model,
+      @NotNull final ListType model,
       @NotNull final List<? extends GenModelProjection<?, ?>> modelProjections,
       @NotNull final OpParams mergedParams,
       @NotNull final Annotations mergedAnnotations,
       @Nullable final OpOutputListModelProjection mergedMetaProjection) {
-
-    ListType listType = (ListType) model;
 
     List<OpOutputVarProjection> itemProjections = new ArrayList<>(modelProjections.size());
 
@@ -81,7 +78,7 @@ public class OpOutputListModelProjection
     @NotNull final OpOutputVarProjection mergedItemsVarType = itemProjections.get(0).merge(itemProjections);
 
     return new OpOutputListModelProjection(
-        listType,
+        model,
         mergedParams,
         mergedAnnotations,
         mergedMetaProjection,

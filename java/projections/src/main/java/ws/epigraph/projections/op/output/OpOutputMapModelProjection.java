@@ -22,7 +22,6 @@ import ws.epigraph.projections.gen.GenMapModelProjection;
 import ws.epigraph.projections.gen.GenModelProjection;
 import ws.epigraph.projections.op.OpKeyPresence;
 import ws.epigraph.projections.op.OpParams;
-import ws.epigraph.types.DatumType;
 import ws.epigraph.types.MapType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -71,13 +70,11 @@ public class OpOutputMapModelProjection
   /* static */
   @Override
   protected OpOutputMapModelProjection merge(
-      @NotNull final DatumType model,
+      @NotNull final MapType model,
       @NotNull final List<? extends GenModelProjection<?, ?>> modelProjections,
       @NotNull final OpParams mergedParams,
       @NotNull final Annotations mergedAnnotations,
       @Nullable final OpOutputMapModelProjection mergedMetaProjection) {
-
-    MapType mapType = (MapType) model;
 
     List<OpParams> keysParams = new ArrayList<>(modelProjections.size());
     List<Annotations> keysAnnotations = new ArrayList<>(modelProjections.size());
@@ -116,7 +113,7 @@ public class OpOutputMapModelProjection
     assert !itemsProjectionsToMerge.isEmpty();
 
     return new OpOutputMapModelProjection(
-        mapType,
+        model,
         mergedParams,
         mergedAnnotations,
         mergedMetaProjection,

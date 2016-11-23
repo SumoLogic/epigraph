@@ -67,7 +67,7 @@ public abstract class AbstractModelProjection<MP extends GenModelProjection</*MP
   @Override
   /* static */
   public MP merge(
-      @NotNull final DatumType model,
+      @NotNull final M model,
       @NotNull final List<? extends GenModelProjection<?, ?>> modelProjections) {
 
     if (modelProjections.isEmpty()) return null;
@@ -87,7 +87,7 @@ public abstract class AbstractModelProjection<MP extends GenModelProjection</*MP
     else {
       final MP mp = metaProjectionsList.get(0);
       DatumType metaModel = model/*.metaModel()*/; // TODO should get meta-model type here
-      mergedMetaProjection = (MP) mp.merge(metaModel, metaProjectionsList);
+      mergedMetaProjection = ((GenModelProjection<MP, M>) mp).merge((M) metaModel, metaProjectionsList);
     }
 
     return merge(
@@ -98,10 +98,9 @@ public abstract class AbstractModelProjection<MP extends GenModelProjection</*MP
     );
   }
 
-  @Nullable
   protected MP merge(
-      @NotNull final DatumType model,
-      @NotNull final List<? extends GenModelProjection<?, ?>> modelProjections,
+      @NotNull M model,
+      @NotNull List<? extends GenModelProjection<?, ?>> modelProjections,
       @NotNull Annotations mergedAnnotations,
       @Nullable MP mergedMetaProjection) {
 
