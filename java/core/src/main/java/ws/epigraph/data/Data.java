@@ -152,6 +152,7 @@ public interface Data { // TODO Var? Union? Values?
           this.raw = raw;
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public @NotNull MyImmData toImmutable() { return (MyImmData) this; } // TODO make abstract, override in subclasses?
 

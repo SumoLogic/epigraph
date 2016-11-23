@@ -139,6 +139,7 @@ public interface StringDatum extends PrimitiveDatum<String> {
         @Override
         public @NotNull String getVal() { return raw.getVal(); }
 
+        @SuppressWarnings("unchecked")
         @Override
         public @NotNull MyImmDatum toImmutable() { return (MyImmDatum) this; }
 

@@ -138,6 +138,7 @@ public interface IntegerDatum extends PrimitiveDatum<Integer> {
         @Override
         public @NotNull Integer getVal() { return raw.getVal(); }
 
+        @SuppressWarnings("unchecked")
         @Override
         public @NotNull MyImmDatum toImmutable() { return (MyImmDatum) this; }
 

@@ -138,6 +138,7 @@ public interface LongDatum extends PrimitiveDatum<Long> {
         @Override
         public @NotNull Long getVal() { return raw.getVal(); }
 
+        @SuppressWarnings("unchecked")
         @Override
         public @NotNull MyImmDatum toImmutable() { return (MyImmDatum) this; }
 

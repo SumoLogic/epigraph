@@ -64,6 +64,7 @@ public interface Val { // TODO rename to TagEntry?
 
       public Impl(@NotNull MyRaw raw) { this.raw = raw; }
 
+      @SuppressWarnings("unchecked")
       @Override
       public final @Nullable MyDatum getDatum() { return (MyDatum) raw.getDatum(); }
 
@@ -191,6 +192,7 @@ public interface Val { // TODO rename to TagEntry?
 
         public Impl(@NotNull Val.Imm.Raw raw) { super(raw); }
 
+        @SuppressWarnings("unchecked")
         @Override
         public @NotNull MyImmVal toImmutable() { return (MyImmVal) this; }
 

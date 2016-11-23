@@ -175,6 +175,7 @@ public interface RecordDatum extends Datum {
           this.value = immValConstructor.apply(new Val.Imm.Raw.DatumVal(this));
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public @NotNull MyImmDatum toImmutable() { return (MyImmDatum) this; } // TODO this could be violated - make abstract?..
 

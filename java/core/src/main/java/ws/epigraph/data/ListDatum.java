@@ -150,6 +150,7 @@ public interface ListDatum extends Datum {
         @Override
         public int size() { return raw.size(); }
 
+        @SuppressWarnings("unchecked")
         @Override
         public @NotNull MyImmDatum toImmutable() { return (MyImmDatum) this; }  // TODO or make abstract and implement in final static impl?
 

@@ -138,6 +138,7 @@ public interface BooleanDatum extends PrimitiveDatum<Boolean> {
         @Override
         public @NotNull Boolean getVal() { return raw.getVal(); }
 
+        @SuppressWarnings("unchecked")
         @Override
         public @NotNull MyImmDatum toImmutable() { return (MyImmDatum) this; }
 
