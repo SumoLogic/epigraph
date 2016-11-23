@@ -17,13 +17,13 @@
 package ws.epigraph.projections;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import ws.epigraph.projections.gen.GenFieldProjection;
+import ws.epigraph.projections.gen.GenFieldProjectionEntry;
 import ws.epigraph.projections.gen.GenRecordModelProjection;
 import ws.epigraph.types.RecordType;
 
-import java.util.Collection;
-import java.util.IdentityHashMap;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Helper class for {@link ws.epigraph.projections.gen.GenRecordModelProjection} implementations.
@@ -50,8 +50,7 @@ public class RecordModelProjectionHelper {
    * </code></pre></blockquote>
    *
    * @param rmp {@code this} class
-   * @param o object to compare to
-   *
+   * @param o   object to compare to
    * @return {@code true} iff equals
    */
   public static boolean equals(GenRecordModelProjection<?, ?, ?, ?, ?, ?, ?> rmp, Object o) {
@@ -86,6 +85,43 @@ public class RecordModelProjectionHelper {
             )
         );
     }
+  }
 
+  @SuppressWarnings("unchecked") // just for IDEA, code is OK actually
+  public static <RMP extends GenRecordModelProjection<?, ?, ?, RMP, FPE, FP, ?>,
+      FPE extends GenFieldProjectionEntry<?, ?, ?, FP>,
+      FP extends GenFieldProjection<?, ?, ?, FP>>
+
+  Map<RecordType.Field, FP> mergeFieldProjections(List<RMP> recordProjections) {
+
+    Set<RecordType.Field> collectedFields = new LinkedHashSet<>();
+    for (final RMP projection : recordProjections)
+      for (final FPE entry : projection.fieldProjections().values())
+        collectedFields.add(entry.field());
+
+    Map<RecordType.Field, FP> mergedFields = new LinkedHashMap<>();
+
+    List<FP> fieldProjectionsToMerge = new ArrayList<>();
+
+    for (RecordType.Field field : collectedFields) {
+      String fieldName = field.name();
+      fieldProjectionsToMerge.clear();
+
+      for (RMP projection : recordProjections) {
+        @Nullable final FPE fieldProjectionEntry = projection.fieldProjection(fieldName);
+        if (fieldProjectionEntry != null) fieldProjectionsToMerge.add(fieldProjectionEntry.fieldProjection());
+      }
+
+      assert !fieldProjectionsToMerge.isEmpty();
+      @NotNull final FP mergedFieldProjections =
+          fieldProjectionsToMerge.get(0).merge(field.dataType(), fieldProjectionsToMerge);
+
+      mergedFields.put(
+          field,
+          mergedFieldProjections
+      );
+    }
+
+    return mergedFields;
   }
 }

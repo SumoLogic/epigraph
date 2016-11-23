@@ -21,10 +21,8 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.RecordModelProjectionHelper;
-import ws.epigraph.projections.gen.GenModelProjection;
 import ws.epigraph.projections.gen.GenRecordModelProjection;
 import ws.epigraph.projections.op.OpParams;
-import ws.epigraph.types.DatumType;
 import ws.epigraph.types.RecordType;
 
 import java.util.*;
@@ -63,25 +61,38 @@ public class OpOutputRecordModelProjection
   @NotNull
   public Map<String, OpOutputFieldProjectionEntry> fieldProjections() { return fieldProjections; }
 
-  /*
   @Override
   protected OpOutputRecordModelProjection merge(
-      @NotNull final DatumType model,
-      @NotNull final List<? extends GenModelProjection<?, ?>> modelProjections,
+      @NotNull final RecordType model,
+      @NotNull final List<OpOutputRecordModelProjection> modelProjections,
       @NotNull final OpParams mergedParams,
       @NotNull final Annotations mergedAnnotations,
       @Nullable final OpOutputRecordModelProjection mergedMetaProjection) {
 
-    Set<RecordType.Field> collectedFields = new LinkedHashSet<>();
-    for (final GenModelProjection<?, ?> projection : modelProjections) {
+    Map<RecordType.Field, OpOutputFieldProjection> mergedFieldProjections =
+        RecordModelProjectionHelper.mergeFieldProjections(modelProjections);
 
+    Map<String, OpOutputFieldProjectionEntry> mergedFieldEntries = new LinkedHashMap<>();
+    for (final Map.Entry<RecordType.Field, OpOutputFieldProjection> entry : mergedFieldProjections.entrySet()) {
+      mergedFieldEntries.put(
+          entry.getKey().name(),
+          new OpOutputFieldProjectionEntry(
+              entry.getKey(),
+              entry.getValue(),
+              TextLocation.UNKNOWN
+          )
+      );
     }
 
-
-    Map<String, OpOutputFieldProjectionEntry> mergedFields = new LinkedHashMap<>();
-
+    return new OpOutputRecordModelProjection(
+        model,
+        mergedParams,
+        mergedAnnotations,
+        mergedMetaProjection,
+        mergedFieldEntries,
+        TextLocation.UNKNOWN
+    );
   }
-  */
 
   @Override
   public boolean equals(Object o) {
