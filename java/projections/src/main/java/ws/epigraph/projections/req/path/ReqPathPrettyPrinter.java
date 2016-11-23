@@ -83,14 +83,14 @@ public class ReqPathPrettyPrinter<E extends Exception>
     if (fieldProjectionEntry != null) {
       l.beginIInd();
       l.print("/").brk();
-      print(fieldProjectionEntry.field().name(), fieldProjectionEntry.projection());
+      print(fieldProjectionEntry.field().name(), fieldProjectionEntry.fieldProjection());
       l.end();
     }
   }
 
   public void print(@NotNull String fieldName, @NotNull ReqFieldPath fieldProjection) throws E {
 
-    @NotNull ReqVarPath fieldVarProjection = fieldProjection.projection();
+    @NotNull ReqVarPath fieldVarProjection = fieldProjection.varProjection();
     @NotNull Annotations fieldAnnotations = fieldProjection.annotations();
 
     l.beginIInd();

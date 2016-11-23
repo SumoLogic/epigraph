@@ -231,7 +231,7 @@ public class ReqPathPsiParser {
         field,
         parseFieldPath(
             field.dataType(),
-            opFieldEntry.projection(),
+            opFieldEntry.fieldProjection(),
             fieldPathEntryPsi.getReqFieldPath(),
             typesResolver,
             errors
@@ -265,7 +265,7 @@ public class ReqPathPsiParser {
     final ReqVarPath varProjection;
 
     if (fieldVarPathPsi == null) {
-      @Nullable final OpTagPath opTagPath = op.projection().pathTagProjection();
+      @Nullable final OpTagPath opTagPath = op.varProjection().pathTagProjection();
 
       if (opTagPath != null)
         throw new PsiProcessingException(
@@ -286,7 +286,7 @@ public class ReqPathPsiParser {
 
       varProjection = new ReqVarPath(fieldType.type, null, EpigraphPsiUtil.getLocation(psi));
     } else {
-      varProjection = parseVarPath(op.projection(), fieldType, fieldVarPathPsi, typesResolver, errors);
+      varProjection = parseVarPath(op.varProjection(), fieldType, fieldVarPathPsi, typesResolver, errors);
     }
 
 //    final ReadReqPathParsingResult<ReqVarPath> fieldVarParsingResult;

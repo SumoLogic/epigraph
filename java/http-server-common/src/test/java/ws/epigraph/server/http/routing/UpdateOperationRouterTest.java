@@ -262,7 +262,7 @@ public class UpdateOperationRouterTest {
       assertNull(path);
     else {
       assertNotNull(path);
-      assertEquals(expectedPath, TestUtil.printReqVarPath(path.projection()));
+      assertEquals(expectedPath, TestUtil.printReqVarPath(path.varProjection()));
     }
 
     final @Nullable ReqUpdateFieldProjection inputProjection = updateRequestUrl.updateProjection();
@@ -270,7 +270,7 @@ public class UpdateOperationRouterTest {
       assertNull(inputProjection);
     else {
       assertNotNull(inputProjection);
-      assertEquals(expectedInputProjection, TestUtil.printReqUpdateVarProjection(inputProjection.projection()));
+      assertEquals(expectedInputProjection, TestUtil.printReqUpdateVarProjection(inputProjection.varProjection()));
     }
 
     final StepsAndProjection<ReqOutputFieldProjection> stepsAndProjection = updateRequestUrl.outputProjection();
@@ -278,7 +278,7 @@ public class UpdateOperationRouterTest {
     assertEquals(expectedOutputSteps, stepsAndProjection.pathSteps());
     assertEquals(
         expectedOutputProjection,
-        TestUtil.printReqOutputVarProjection(stepsAndProjection.projection().projection(), expectedOutputSteps)
+        TestUtil.printReqOutputVarProjection(stepsAndProjection.projection().varProjection(), expectedOutputSteps)
     );
   }
 

@@ -56,7 +56,7 @@ public class OutputProjectionPathRemover { // todo move somewhere
         
         if (fieldProjection == null) return PathRemovalResult.NULL;
 
-        return removePath(fieldProjection.projection().projection(), steps - 1);
+        return removePath(fieldProjection.fieldProjection().varProjection(), steps - 1);
       
       case MAP:
         ReqOutputMapModelProjection mmp = (ReqOutputMapModelProjection) projection;

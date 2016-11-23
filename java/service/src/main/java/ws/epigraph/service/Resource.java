@@ -202,8 +202,8 @@ public class Resource {
         final @Nullable OpFieldPath path1 = o1.declaration().path();
         final @Nullable OpFieldPath path2 = o2.declaration().path();
 
-        int path1Len = path1 == null ? 0 : ProjectionUtils.pathLength(path1.projection());
-        int path2Len = path2 == null ? 0 : ProjectionUtils.pathLength(path2.projection());
+        int path1Len = path1 == null ? 0 : ProjectionUtils.pathLength(path1.varProjection());
+        int path2Len = path2 == null ? 0 : ProjectionUtils.pathLength(path2.varProjection());
 
         if (path1Len > path2Len) return -1;
         if (path1Len < path2Len) return 1;

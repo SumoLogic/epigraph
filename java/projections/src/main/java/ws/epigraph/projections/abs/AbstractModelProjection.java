@@ -71,6 +71,7 @@ public abstract class AbstractModelProjection<MP extends GenModelProjection</*MP
       @NotNull final List<? extends GenModelProjection<?, ?>> modelProjections) {
 
     if (modelProjections.isEmpty()) return null;
+    if (modelProjections.size() == 1) return (MP) modelProjections.get(0);
 
     List<Annotations> annotationsList = new ArrayList<>();
     List<MP> metaProjectionsList = new ArrayList<>();

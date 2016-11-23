@@ -203,7 +203,7 @@ public class DeleteOperationRouterTest {
       assertNull(path);
     else {
       assertNotNull(path);
-      assertEquals(expectedPath, TestUtil.printReqVarPath(path.projection()));
+      assertEquals(expectedPath, TestUtil.printReqVarPath(path.varProjection()));
     }
 
     final @Nullable ReqDeleteFieldProjection deleteProjection = deleteRequestUrl.deleteProjection();
@@ -211,7 +211,7 @@ public class DeleteOperationRouterTest {
       assertNull(deleteProjection);
     else {
       assertNotNull(deleteProjection);
-      assertEquals(expectedDeleteProjection, TestUtil.printReqDeleteVarProjection(deleteProjection.projection()));
+      assertEquals(expectedDeleteProjection, TestUtil.printReqDeleteVarProjection(deleteProjection.varProjection()));
     }
 
     final StepsAndProjection<ReqOutputFieldProjection> stepsAndProjection = deleteRequestUrl.outputProjection();
@@ -219,7 +219,7 @@ public class DeleteOperationRouterTest {
     assertEquals(expectedOutputSteps, stepsAndProjection.pathSteps());
     assertEquals(
         expectedOutputProjection,
-        TestUtil.printReqOutputVarProjection(stepsAndProjection.projection().projection(), expectedOutputSteps)
+        TestUtil.printReqOutputVarProjection(stepsAndProjection.projection().varProjection(), expectedOutputSteps)
     );
   }
 

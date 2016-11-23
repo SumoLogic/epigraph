@@ -102,7 +102,7 @@ public class OperationsPsiParser {
     final OpOutputFieldProjection outputProjection = parseOutputProjection(
         resolveOutputType(
             resourceType,
-            fieldPath == null ? null : fieldPath.projection(),
+            fieldPath == null ? null : fieldPath.varProjection(),
             null,
             resolver,
             errors
@@ -157,7 +157,7 @@ public class OperationsPsiParser {
     }
 
     @Nullable OpFieldPath fieldPath = parsePath(resourceType, pathPsi, resolver, errors);
-    OpVarPath varPath = fieldPath == null ? null : fieldPath.projection();
+    OpVarPath varPath = fieldPath == null ? null : fieldPath.varProjection();
 
     if (inputProjectionPsi == null)
       throw new PsiProcessingException("Input projection must be specified", psi, errors);
@@ -180,7 +180,7 @@ public class OperationsPsiParser {
         parseOutputProjection(
             resolveOutputType(
                 resourceType,
-                fieldPath == null ? null : fieldPath.projection(),
+                fieldPath == null ? null : fieldPath.varProjection(),
                 outputTypePsi,
                 resolver,
                 errors
@@ -226,7 +226,7 @@ public class OperationsPsiParser {
     if (inputFieldProjectionPsi == null)
       throw new PsiProcessingException("Input projection must be specified", inputProjectionPsi, errors);
 
-    @Nullable final OpVarPath varPath = fieldPath == null ? null : fieldPath.projection();
+    @Nullable final OpVarPath varPath = fieldPath == null ? null : fieldPath.varProjection();
 
     return new UpdateOperationIdl(
         parseOperationName(psi.getOperationName()),
@@ -242,7 +242,7 @@ public class OperationsPsiParser {
         parseOutputProjection(
             resolveOutputType(
                 resourceType,
-                fieldPath == null ? null : fieldPath.projection(),
+                fieldPath == null ? null : fieldPath.varProjection(),
                 outputTypePsi,
                 resolver,
                 errors
@@ -292,7 +292,7 @@ public class OperationsPsiParser {
         Annotations.fromMap(annotations),
         fieldPath,
         OpDeleteProjectionsPsiParser.parseFieldProjection(
-            resolveDeleteType(resourceType, fieldPath == null ? null : fieldPath.projection()),
+            resolveDeleteType(resourceType, fieldPath == null ? null : fieldPath.varProjection()),
             deleteFieldProjectionPsi,
             resolver,
             errors
@@ -300,7 +300,7 @@ public class OperationsPsiParser {
         parseOutputProjection(
             resolveOutputType(
                 resourceType,
-                fieldPath == null ? null : fieldPath.projection(),
+                fieldPath == null ? null : fieldPath.varProjection(),
                 outputTypePsi,
                 resolver,
                 errors
@@ -363,7 +363,7 @@ public class OperationsPsiParser {
         inputFieldProjectionPsi == null ? null : OpInputProjectionsPsiParser.parseFieldProjection(
             resolveInputType(
                 resourceType,
-                opPath == null ? null : opPath.projection(),
+                opPath == null ? null : opPath.varProjection(),
                 inputTypePsi,
                 resolver,
                 errors
@@ -376,7 +376,7 @@ public class OperationsPsiParser {
         parseOutputProjection(
             resolveOutputType(
                 resourceType,
-                opPath == null ? null : opPath.projection(),
+                opPath == null ? null : opPath.varProjection(),
                 outputTypePsi,
                 resolver,
                 errors

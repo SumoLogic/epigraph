@@ -127,7 +127,7 @@ public class DeleteRequestUrlPsiParserTest {
 
     final @Nullable ReqDeleteFieldProjection deleteProjection = requestUrl.deleteProjection();
     if (deleteProjection == null) assertNull(expectedDeleteProjection);
-    else assertEquals(expectedDeleteProjection, printReqDeleteVarProjection(deleteProjection.projection()));
+    else assertEquals(expectedDeleteProjection, printReqDeleteVarProjection(deleteProjection.varProjection()));
 
     final @NotNull StepsAndProjection<ReqOutputFieldProjection> stepsAndProjection = requestUrl.outputProjection();
     assertEquals(expectedSteps, stepsAndProjection.pathSteps());

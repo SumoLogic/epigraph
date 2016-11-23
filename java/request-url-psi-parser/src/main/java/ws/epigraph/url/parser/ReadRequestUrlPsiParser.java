@@ -93,7 +93,7 @@ public class ReadRequestUrlPsiParser {
     );
 
     @NotNull ReqFieldPath reqPath = pathParsingResult.path();
-    DataType pathTipType = ProjectionUtils.tipType(reqPath.projection());
+    DataType pathTipType = ProjectionUtils.tipType(reqPath.varProjection());
     TypesResolver newResolver = addTypeNamespace(pathTipType.type, typesResolver);
 
     final UrlReqOutputTrunkVarProjection trunkVarProjection = pathParsingResult.trunkProjectionPsi();
@@ -106,7 +106,7 @@ public class ReadRequestUrlPsiParser {
     if (trunkVarProjection != null) {
       @NotNull StepsAndProjection<ReqOutputVarProjection> r = ReqOutputProjectionsPsiParser.parseTrunkVarProjection(
           pathTipType,
-          op.outputProjection().projection(),
+          op.outputProjection().varProjection(),
           trunkVarProjection,
           newResolver,
           errors
@@ -117,7 +117,7 @@ public class ReadRequestUrlPsiParser {
     } else if (comaVarProjection != null) {
       StepsAndProjection<ReqOutputVarProjection> r = ReqOutputProjectionsPsiParser.parseComaVarProjection(
           pathTipType,
-          op.outputProjection().projection(),
+          op.outputProjection().varProjection(),
           comaVarProjection,
           newResolver,
           errors

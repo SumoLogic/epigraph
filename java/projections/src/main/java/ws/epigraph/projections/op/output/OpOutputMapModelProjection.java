@@ -31,8 +31,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static ws.epigraph.util.Util.tail;
-
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
@@ -128,7 +126,7 @@ public class OpOutputMapModelProjection
             Annotations.merge(keysAnnotations),
             TextLocation.UNKNOWN
         ),
-        itemsProjectionsToMerge.get(0).mergeWith(tail(itemsProjectionsToMerge)),
+        itemsProjectionsToMerge.get(0).merge(itemsProjectionsToMerge),
         TextLocation.UNKNOWN
     );
   }

@@ -33,9 +33,21 @@ public interface GenModelProjection<MP extends GenModelProjection</*MP*/?, ?>, M
 
   @Nullable MP metaProjection();
 
+  /**
+   * Merges a list of models together
+   * <p/>
+   * Should work as a 'static' method: current object should not be merged (most probably it is going
+   * to be the first item of the list anyways). Such design allows for easier implementations that have to
+   * iterate over all the items being merged.
+   *
+   * @param model            resulting model's type, guaranteed to be of type {@code M}.
+   * @param modelProjections models to merge, guaranteed to be of type {@code MP}.
+   *
+   * @return merged models or {@code null} if {@code modelProjections} is empty
+   */
   @Nullable
   /* static */
-  MP merge(@NotNull /*M*/ DatumType model, @NotNull List<? extends/*MP*/ GenModelProjection<?, ?>> modelProjections);
+  MP merge(@NotNull /*M*/ DatumType model, @NotNull List<? extends/*MP*/ GenModelProjection<?, ?>> modelProjections); // todo try to generify properly
 
   @NotNull Annotations annotations();
 

@@ -59,7 +59,7 @@ public class DeleteOperationIdl extends OperationIdl {
 
     ensureProjectionStartsWithResourceType(
         resource,
-        deleteProjection().projection(),
+        deleteProjection().varProjection(),
         "delete",
         errors
     );

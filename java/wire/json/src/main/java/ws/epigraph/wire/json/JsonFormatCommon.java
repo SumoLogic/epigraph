@@ -123,7 +123,7 @@ public abstract class JsonFormatCommon {
       ReqOutputFieldProjectionEntry fieldProjectionEntry = mp.fieldProjection(field.name());
       if (fieldProjectionEntry != null) {
         if (varProjections == null) varProjections = collSupplier.get();
-        varProjections.add(fieldProjectionEntry.projection().projection());
+        varProjections.add(fieldProjectionEntry.fieldProjection().varProjection());
       }
     }
     return varProjections;

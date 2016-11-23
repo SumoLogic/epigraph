@@ -80,7 +80,7 @@ public class ReqDeleteProjectionsPrettyPrinter<E extends Exception>
       else l.print(",");
       l.brk();
 
-      print(entry.getKey(), entry.getValue().projection(), 0);
+      print(entry.getKey(), entry.getValue().fieldProjection(), 0);
 
     }
     l.brk(1, -l.getDefaultIndentation()).end().print(")");
@@ -89,7 +89,7 @@ public class ReqDeleteProjectionsPrettyPrinter<E extends Exception>
   public void print(@NotNull String fieldName, @NotNull ReqDeleteFieldProjection fieldProjection, int pathSteps)
       throws E {
 
-    @NotNull ReqDeleteVarProjection fieldVarProjection = fieldProjection.projection();
+    @NotNull ReqDeleteVarProjection fieldVarProjection = fieldProjection.varProjection();
     @NotNull Annotations fieldAnnotations = fieldProjection.annotations();
 
     l.beginIInd();

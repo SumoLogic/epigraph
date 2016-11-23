@@ -170,7 +170,7 @@ public class UndertowHandler implements HttpHandler {
       // send response back
       handleReadResponse(
           outputProjection.pathSteps(),
-          outputProjection.projection().projection(),
+          outputProjection.projection().varProjection(),
           future,
           exchange
       );

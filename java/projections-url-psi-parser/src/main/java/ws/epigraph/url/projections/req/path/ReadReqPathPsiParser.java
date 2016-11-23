@@ -289,8 +289,8 @@ public class ReadReqPathPsiParser {
       );
 
     RecordType.Field field = opFieldEntry.field();
-    @NotNull final OpFieldPath opFieldPath = opFieldEntry.projection();
-    @NotNull final OpVarPath opFieldVarProjection = opFieldPath.projection();
+    @NotNull final OpFieldPath opFieldPath = opFieldEntry.fieldProjection();
+    @NotNull final OpVarPath opFieldVarProjection = opFieldPath.varProjection();
 
     @Nullable final UrlReqOutputTrunkFieldProjection fieldProjectionPsi = psi.getReqOutputTrunkFieldProjection();
 
@@ -375,7 +375,7 @@ public class ReadReqPathPsiParser {
 
     final ReadReqPathParsingResult<ReqVarPath> fieldVarParsingResult;
 
-    if (OpVarPath.isEnd(op.projection())) {
+    if (OpVarPath.isEnd(op.varProjection())) {
       fieldVarParsingResult = new ReadReqPathParsingResult<>(
           new ReqVarPath(
               fieldType.type,
@@ -388,7 +388,7 @@ public class ReadReqPathPsiParser {
       );
     } else
       fieldVarParsingResult =
-          parseVarPath(op.projection(), fieldType, fieldVarPathPsi, typesResolver, errors);
+          parseVarPath(op.varProjection(), fieldType, fieldVarPathPsi, typesResolver, errors);
 
     @NotNull final TextLocation fieldLocation = EpigraphPsiUtil.getLocation(psi);
 

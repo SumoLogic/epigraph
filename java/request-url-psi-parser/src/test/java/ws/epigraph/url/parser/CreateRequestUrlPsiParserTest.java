@@ -128,7 +128,7 @@ public class CreateRequestUrlPsiParserTest {
 
     final @Nullable ReqInputFieldProjection inputProjection = requestUrl.inputProjection();
     if (inputProjection == null) assertNull(expectedInputProjection);
-    else assertEquals(expectedInputProjection, printReqInputVarProjection(inputProjection.projection()));
+    else assertEquals(expectedInputProjection, printReqInputVarProjection(inputProjection.varProjection()));
 
     final @NotNull StepsAndProjection<ReqOutputFieldProjection> stepsAndProjection = requestUrl.outputProjection();
     assertEquals(expectedSteps, stepsAndProjection.pathSteps());

@@ -223,19 +223,16 @@ public abstract class AbstractVarProjection<
 
   @NotNull
   @Override
-  public VP mergeWith(@NotNull final List<VP> siblings) {
-    if (siblings.isEmpty()) return self();
+  public VP merge(@NotNull final List<VP> varProjections) {
+    if (varProjections.isEmpty()) throw new IllegalArgumentException("empty list of projections to merge");
+    if (varProjections.size() == 1) return varProjections.get(0);
 
-    List<VP> all = new ArrayList<>(siblings.size() + 1);
-    all.addAll(siblings);
-    all.add(self());
+    @NotNull final Set<Type.Tag> tags = collectTags(varProjections);
 
-    @NotNull final Set<Type.Tag> tags = collectTags(all);
+    @NotNull final Map<String, TP> mergedTags = mergeTags(tags, varProjections);
+    @Nullable final List<VP> mergedTails = mergeTails(varProjections);
 
-    @NotNull final Map<String, TP> mergedTags = mergeTags(tags, all);
-    @Nullable final List<VP> mergedTails = mergeTails(all);
-
-    return merge(type(), all, mergedTags, mergedTails);
+    return merge(type(), varProjections, mergedTags, mergedTails);
   }
 
   /* static */

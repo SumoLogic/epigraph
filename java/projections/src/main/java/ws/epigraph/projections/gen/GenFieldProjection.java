@@ -30,7 +30,7 @@ public interface GenFieldProjection<
     > {
   @NotNull Annotations annotations();
 
-  @NotNull VP projection(); // TODO rename to varProjection()?
+  @NotNull VP varProjection();
 
   @NotNull TextLocation location();
 }

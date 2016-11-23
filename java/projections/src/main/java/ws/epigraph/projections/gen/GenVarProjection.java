@@ -52,7 +52,18 @@ public interface GenVarProjection<
   // should become `x=tailByType(type); return x==null?this:x;` for fully normalized projections
   @NotNull VP normalizedForType(@NotNull Type type);
 
-  @NotNull VP mergeWith(@NotNull List<VP> siblings);
+  /**
+   * Merges var projections together.
+   * <p/>
+   * Should work as a 'static' method: current object should not be merged (most probably it is going
+   * to be the first item of the list anyways). Such design allows for easier implementations that have to
+   * iterate over all the items being merged.
+   *
+   * @param varProjections var projections to merge, guaranteed to contain at least one element
+   * @return merged var projection
+   */
+  /* static */
+  @NotNull VP merge(@NotNull List<VP> varProjections);
 
   @Nullable
   default VP tailByType(@NotNull Type tailType) {

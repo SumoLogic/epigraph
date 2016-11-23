@@ -102,7 +102,7 @@ public class OpInputProjectionsPrettyPrinter<E extends Exception> extends Abstra
   }
   @Override
   protected String fieldNamePrefix(@NotNull final OpInputFieldProjectionEntry fieldEntry) {
-    return fieldEntry.projection().required() ? "+" : "";
+    return fieldEntry.fieldProjection().required() ? "+" : "";
   }
 
   private void print(OpInputMapModelProjection mp) throws E {

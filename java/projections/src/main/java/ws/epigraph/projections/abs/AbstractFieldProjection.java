@@ -59,7 +59,7 @@ public abstract class AbstractFieldProjection<
 
   @NotNull
   @Override
-  public VP projection() { return projection; }
+  public VP varProjection() { return projection; }
 
   @NotNull
   @Override

@@ -81,7 +81,7 @@ public class DeleteRequestUrlPsiParser {
     final @NotNull Type opOutputType = op.outputType(); // already calculated based on outputType/path declared in idl
 
     TypesResolver newResolver = addTypeNamespace(opOutputType, typesResolver);
-    @NotNull DataType deleteDataType = new DataType(op.deleteProjection().projection().type(), null);
+    @NotNull DataType deleteDataType = new DataType(op.deleteProjection().varProjection().type(), null);
     @NotNull DataType outputDataType = new DataType(opOutputType, null);
 
     @NotNull final StepsAndProjection<ReqOutputFieldProjection> outputStepsAndProjection =

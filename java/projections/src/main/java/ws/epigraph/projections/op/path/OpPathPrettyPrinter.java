@@ -91,7 +91,7 @@ public class OpPathPrettyPrinter<E extends Exception>
       l.beginIInd();
       l.print("/").brk();
 
-      print(entry.field().name(), entry.projection());
+      print(entry.field().name(), entry.fieldProjection());
       l.end();
     }
   }

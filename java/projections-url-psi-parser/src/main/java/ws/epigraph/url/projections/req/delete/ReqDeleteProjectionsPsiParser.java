@@ -572,7 +572,7 @@ public class ReqDeleteProjectionsPsiParser {
       } else {
         try {
           final RecordType.Field field = opFieldProjectionEntry.field();
-          @NotNull final OpDeleteFieldProjection opFieldProjection = opFieldProjectionEntry.projection();
+          @NotNull final OpDeleteFieldProjection opFieldProjection = opFieldProjectionEntry.fieldProjection();
           @NotNull final UrlReqDeleteFieldProjection fieldProjectionPsi = entryPsi.getReqDeleteFieldProjection();
           @NotNull final DataType fieldType = field.dataType();
 
@@ -624,7 +624,7 @@ public class ReqDeleteProjectionsPsiParser {
     @NotNull ReqDeleteVarProjection varProjection =
         parseVarProjection(
             fieldType,
-            op.projection(),
+            op.varProjection(),
             psiVarProjection,
             resolver,
             errors

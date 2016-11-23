@@ -108,7 +108,7 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
       l.brk();
 
       @NotNull String prefix = fieldNamePrefix(entry.getValue());
-      @NotNull FP fieldProjection = entry.getValue().projection();
+      @NotNull FP fieldProjection = entry.getValue().fieldProjection();
 
       print(prefix + entry.getKey(), fieldProjection);
     }
@@ -118,7 +118,7 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
   protected String fieldNamePrefix(@NotNull FPE fieldEntry) { return ""; }
 
   public void print(@NotNull FP fieldProjection) throws E {
-    @NotNull VP fieldVarProjection = fieldProjection.projection();
+    @NotNull VP fieldVarProjection = fieldProjection.varProjection();
     @NotNull OpParams fieldParams = fieldProjection.params();
     @NotNull Annotations fieldAnnotations = fieldProjection.annotations();
 
@@ -192,7 +192,7 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
   }
 
   public boolean isPrintoutEmpty(@NotNull FP fieldProjection) {
-    @NotNull VP fieldVarProjection = fieldProjection.projection();
+    @NotNull VP fieldVarProjection = fieldProjection.varProjection();
     @NotNull OpParams fieldParams = fieldProjection.params();
     @NotNull Annotations fieldAnnotations = fieldProjection.annotations();
 

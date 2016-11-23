@@ -74,7 +74,7 @@ public class ProjectionUtils {
           GenFieldProjectionEntry<?, ?, ?, ?> fieldProjection = recordPath.pathFieldProjection();
           if (fieldProjection == null) break;
           lastDataType = fieldProjection.field().dataType();
-          path = fieldProjection.projection().projection();
+          path = fieldProjection.fieldProjection().varProjection();
           break;
         case MAP:
           GenMapModelProjection<?, ?, ?, ?, ?> mapPath = (GenMapModelProjection<?, ?, ?, ?, ?>) modelPath;
@@ -109,7 +109,7 @@ public class ProjectionUtils {
           GenFieldProjectionEntry<?, ?, ?, ?> fieldProjection = recordPath.pathFieldProjection();
           if (fieldProjection == null) break;
           len++;
-          path = fieldProjection.projection().projection();
+          path = fieldProjection.fieldProjection().varProjection();
           break;
         case MAP:
           GenMapModelProjection<?, ?, ?, ?, ?> mapPath = (GenMapModelProjection<?, ?, ?, ?, ?>) modelPath;

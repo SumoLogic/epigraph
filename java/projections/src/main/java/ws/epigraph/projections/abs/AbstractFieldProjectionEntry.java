@@ -54,7 +54,7 @@ public abstract class AbstractFieldProjectionEntry<
   public RecordType.Field field() { return field; }
 
   @NotNull
-  public FP projection() { return projection; }
+  public FP fieldProjection() { return projection; }
 
   @NotNull
   public TextLocation location() { return location; }

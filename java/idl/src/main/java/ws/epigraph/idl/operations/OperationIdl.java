@@ -93,13 +93,13 @@ public abstract class OperationIdl {
 
   @Nullable
   public Type inputType() {
-    return inputProjection == null ? null : inputProjection.projection().type();
+    return inputProjection == null ? null : inputProjection.varProjection().type();
   }
 
   public @Nullable OpInputFieldProjection inputProjection() { return inputProjection; }
 
   @NotNull
-  public Type outputType() { return outputProjection.projection().type(); }
+  public Type outputType() { return outputProjection.varProjection().type(); }
 
   @NotNull
   public OpOutputFieldProjection outputProjection() { return outputProjection; }
@@ -116,7 +116,7 @@ public abstract class OperationIdl {
       @NotNull List<IdlError> errors) {
 
     @NotNull Type outputType = resource.fieldType().type;
-    if (path != null) outputType = ProjectionUtils.tipType(path.projection()).type;
+    if (path != null) outputType = ProjectionUtils.tipType(path.varProjection()).type;
 
     final Type outputProjectionType = projection.type();
 

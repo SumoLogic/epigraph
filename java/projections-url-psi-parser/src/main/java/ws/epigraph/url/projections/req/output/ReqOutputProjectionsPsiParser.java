@@ -870,7 +870,7 @@ public class ReqOutputProjectionsPsiParser {
     }
 
     @NotNull final RecordType.Field field = opFieldProjectionEntry.field();
-    @NotNull final OpOutputFieldProjection opFieldProjection = opFieldProjectionEntry.projection();
+    @NotNull final OpOutputFieldProjection opFieldProjection = opFieldProjectionEntry.fieldProjection();
 
     @NotNull DataType fieldType = field.dataType();
 
@@ -893,7 +893,7 @@ public class ReqOutputProjectionsPsiParser {
 
       @NotNull ReqOutputVarProjection varProjection = createDefaultVarProjection(
           fieldType.type,
-          opFieldProjection.projection(),
+          opFieldProjection.varProjection(),
           required,
           psi,
           errors
@@ -963,7 +963,7 @@ public class ReqOutputProjectionsPsiParser {
       @NotNull List<PsiProcessingError> errors
   ) throws PsiProcessingException {
 
-    return parseTrunkFieldProjection(required, fieldType, op.params(), op.projection(), psi, resolver, errors);
+    return parseTrunkFieldProjection(required, fieldType, op.params(), op.varProjection(), psi, resolver, errors);
   }
 
   @NotNull
@@ -1020,7 +1020,7 @@ public class ReqOutputProjectionsPsiParser {
 
       for (final Map.Entry<String, OpOutputFieldProjectionEntry> entry : opFields.entrySet()) {
         final RecordType.Field field = entry.getValue().field();
-        @NotNull final OpOutputFieldProjection opFieldProjection = entry.getValue().projection();
+        @NotNull final OpOutputFieldProjection opFieldProjection = entry.getValue().fieldProjection();
 
         fieldProjections.put(
             entry.getKey(),
@@ -1031,7 +1031,7 @@ public class ReqOutputProjectionsPsiParser {
                     Annotations.EMPTY,
                     createDefaultVarProjection(
                         field.dataType(),
-                        opFieldProjection.projection(),
+                        opFieldProjection.varProjection(),
                         false,
                         psi.getStar(),
                         errors
@@ -1063,7 +1063,7 @@ public class ReqOutputProjectionsPsiParser {
         else {
           try {
             @NotNull final RecordType.Field field = opFieldProjectionEntry.field();
-            @NotNull final OpOutputFieldProjection opFieldProjection = opFieldProjectionEntry.projection();
+            @NotNull final OpOutputFieldProjection opFieldProjection = opFieldProjectionEntry.fieldProjection();
             final boolean fieldRequired = fieldProjectionPsi.getPlus() != null;
 
             ReqParams fieldParams =
@@ -1076,7 +1076,7 @@ public class ReqOutputProjectionsPsiParser {
             @NotNull ReqOutputVarProjection varProjection =
                 parseComaVarProjection(
                     field.dataType(),
-                    opFieldProjection.projection(),
+                    opFieldProjection.varProjection(),
                     psiVarProjection,
                     resolver,
                     errors

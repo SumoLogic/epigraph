@@ -18,7 +18,6 @@
 
 package ws.epigraph.server.http;
 
-import org.jetbrains.annotations.Nullable;
 import ws.epigraph.errors.ErrorValue;
 import ws.epigraph.idl.ResourceIdl;
 import ws.epigraph.idl.operations.ReadOperationIdl;
@@ -59,7 +58,7 @@ public class UsersResource extends Resource {
     public @NotNull CompletableFuture<ReadOperationResponse<PersonId_Person_Map.Data>> process(@NotNull ReadOperationRequest request) {
       PersonId_Person_Map.Builder map = PersonId_Person_Map.create();
 
-      ReqOutputMapModelProjection mapProjection = (ReqOutputMapModelProjection) request.outputProjection().projection()
+      ReqOutputMapModelProjection mapProjection = (ReqOutputMapModelProjection) request.outputProjection().varProjection()
           .tagProjection(String_Person_Map.type.self.name()).projection();
 
       List<ReqOutputKeyProjection> keyProjections = mapProjection.keys();

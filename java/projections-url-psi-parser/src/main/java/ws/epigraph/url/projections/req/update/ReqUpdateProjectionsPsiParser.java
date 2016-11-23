@@ -597,7 +597,7 @@ public class ReqUpdateProjectionsPsiParser {
       } else {
         try {
           final RecordType.Field field = opFieldProjectionEntry.field();
-          @NotNull final OpInputFieldProjection opFieldProjection = opFieldProjectionEntry.projection();
+          @NotNull final OpInputFieldProjection opFieldProjection = opFieldProjectionEntry.fieldProjection();
           @NotNull final UrlReqUpdateFieldProjection fieldProjectionPsi = entryPsi.getReqUpdateFieldProjection();
           @NotNull final DataType fieldType = field.dataType();
 
@@ -627,7 +627,7 @@ public class ReqUpdateProjectionsPsiParser {
 
     // check that all required fields are specified
     for (final Map.Entry<String, OpInputFieldProjectionEntry> entry : op.fieldProjections().entrySet()) {
-      if (entry.getValue().projection().required() && !fieldProjections.containsKey(entry.getKey())) {
+      if (entry.getValue().fieldProjection().required() && !fieldProjections.containsKey(entry.getKey())) {
         errors.add(
             new PsiProcessingError(String.format("Required field '%s' is missing", entry.getKey()), psi)
         );
@@ -661,7 +661,7 @@ public class ReqUpdateProjectionsPsiParser {
     @NotNull ReqUpdateVarProjection varProjection =
         parseVarProjection(
             fieldType,
-            op.projection(),
+            op.varProjection(),
             psiVarProjection,
             resolver,
             errors

@@ -89,7 +89,7 @@ public class ProjectionDataTrimmer { // todo move somewhere else? Generify?
       final RecordType.Field field = fieldProjectionEntry.field();
       @Nullable final Data data = raw.getData(field);
 
-      if (data != null) b.setData(field, trimData(data, fieldProjectionEntry.projection().projection()));
+      if (data != null) b.setData(field, trimData(data, fieldProjectionEntry.fieldProjection().varProjection()));
     }
 
     return b;

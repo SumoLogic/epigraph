@@ -86,7 +86,7 @@ public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
       Map.Entry<String, ReqOutputFieldProjectionEntry> entry = fieldProjections.entrySet().iterator().next();
       l.beginIInd();
       l.print("/").brk();
-      print(entry.getKey(), entry.getValue().projection(), decSteps(pathSteps));
+      print(entry.getKey(), entry.getValue().fieldProjection(), decSteps(pathSteps));
       l.end();
 
     } else {
@@ -98,7 +98,7 @@ public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
         else l.print(",");
         l.brk();
 
-        print(entry.getKey(), entry.getValue().projection(), 0);
+        print(entry.getKey(), entry.getValue().fieldProjection(), 0);
 
       }
       l.brk(1, -l.getDefaultIndentation()).end().print(")");
@@ -108,7 +108,7 @@ public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
   public void print(@NotNull String fieldName, @NotNull ReqOutputFieldProjection fieldProjection, int pathSteps)
       throws E {
 
-    @NotNull ReqOutputVarProjection fieldVarProjection = fieldProjection.projection();
+    @NotNull ReqOutputVarProjection fieldVarProjection = fieldProjection.varProjection();
     @NotNull Annotations fieldAnnotations = fieldProjection.annotations();
 
     l.beginIInd();

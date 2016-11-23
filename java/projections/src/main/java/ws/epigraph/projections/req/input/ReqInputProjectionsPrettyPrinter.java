@@ -78,7 +78,7 @@ public class ReqInputProjectionsPrettyPrinter<E extends Exception>
       else l.print(",");
       l.brk();
 
-      print(entry.getKey(), entry.getValue().projection(), 0);
+      print(entry.getKey(), entry.getValue().fieldProjection(), 0);
 
     }
     l.brk(1, -l.getDefaultIndentation()).end().print(")");
@@ -87,7 +87,7 @@ public class ReqInputProjectionsPrettyPrinter<E extends Exception>
   public void print(@NotNull String fieldName, @NotNull ReqInputFieldProjection fieldProjection, int pathSteps)
       throws E {
 
-    @NotNull ReqInputVarProjection fieldVarProjection = fieldProjection.projection();
+    @NotNull ReqInputVarProjection fieldVarProjection = fieldProjection.varProjection();
     @NotNull Annotations fieldAnnotations = fieldProjection.annotations();
 
     l.beginIInd();

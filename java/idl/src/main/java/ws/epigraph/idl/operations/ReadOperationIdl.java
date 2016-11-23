@@ -49,7 +49,7 @@ public class ReadOperationIdl extends OperationIdl {
 
     ensureProjectionStartsWithResourceType(
         resource,
-        outputProjection().projection(),
+        outputProjection().varProjection(),
         "output",
         errors
     );
