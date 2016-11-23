@@ -65,6 +65,7 @@ public abstract class AbstractModelProjection<MP extends GenModelProjection</*MP
   @SuppressWarnings("unchecked")
   @Nullable
   @Override
+  /* static */
   public MP merge(
       @NotNull final DatumType model,
       @NotNull final List<? extends GenModelProjection<?, ?>> modelProjections) {

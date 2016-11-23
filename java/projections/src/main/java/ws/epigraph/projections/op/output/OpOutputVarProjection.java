@@ -22,8 +22,8 @@ import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.abs.AbstractVarProjection;
 import ws.epigraph.types.Type;
 
-import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -36,19 +36,19 @@ public class OpOutputVarProjection extends AbstractVarProjection<
 
   public OpOutputVarProjection(
       @NotNull Type type,
-      @NotNull LinkedHashMap<String, OpOutputTagProjectionEntry> tagProjections,
+      @NotNull Map<String, OpOutputTagProjectionEntry> tagProjections,
       @Nullable List<OpOutputVarProjection> polymorphicTails,
       @NotNull TextLocation location) {
     super(type, tagProjections, polymorphicTails, location);
   }
 
-  @NotNull
   @Override
-  protected OpOutputVarProjection mergeNoTails(
+  protected OpOutputVarProjection merge(
       @NotNull final Type type,
-      @NotNull final LinkedHashMap<String, OpOutputTagProjectionEntry> mergedTags,
-      @NotNull final List<OpOutputVarProjection> varProjections) {
+      @NotNull final List<OpOutputVarProjection> varProjections,
+      @NotNull final Map<String, OpOutputTagProjectionEntry> mergedTags,
+      final List<OpOutputVarProjection> mergedTails) {
 
-    return new OpOutputVarProjection(type, mergedTags, null, TextLocation.UNKNOWN);
+    return new OpOutputVarProjection(type, mergedTags, mergedTails, TextLocation.UNKNOWN);
   }
 }

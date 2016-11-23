@@ -16,6 +16,8 @@
 
 package ws.epigraph.projections.op.output;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenListModelProjection;
@@ -23,13 +25,12 @@ import ws.epigraph.projections.gen.GenModelProjection;
 import ws.epigraph.projections.op.OpParams;
 import ws.epigraph.types.DatumType;
 import ws.epigraph.types.ListType;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import ws.epigraph.types.Type;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import static ws.epigraph.util.Util.tail;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -61,26 +62,25 @@ public class OpOutputListModelProjection
   @NotNull
   public OpOutputVarProjection itemsProjection() { return itemsProjection; }
 
+  /* static */
   @Override
   protected OpOutputListModelProjection merge(
       @NotNull final DatumType model,
       @NotNull final List<? extends GenModelProjection<?, ?>> modelProjections,
-      @Nullable final OpOutputListModelProjection mergedMetaProjection,
+      @NotNull final OpParams mergedParams,
       @NotNull final Annotations mergedAnnotations,
-      @NotNull final OpParams mergedParams) {
+      @Nullable final OpOutputListModelProjection mergedMetaProjection) {
 
     ListType listType = (ListType) model;
 
-    List<OpOutputVarProjection> itemProjections = new ArrayList<>();
+    List<OpOutputVarProjection> itemProjections = new ArrayList<>(modelProjections.size());
 
     for (final GenModelProjection<?, ?> modelProjection : modelProjections) {
       OpOutputListModelProjection lmp = (OpOutputListModelProjection) modelProjection;
       itemProjections.add(lmp.itemsProjection);
     }
 
-    final @NotNull Type elementsType = listType.elementType().type;
-    @NotNull final OpOutputVarProjection mergedItemsVarType =
-        itemProjections.get(0).normalizedForType(elementsType, elementsType, itemProjections);
+    @NotNull final OpOutputVarProjection mergedItemsVarType = itemProjections.get(0).mergeWith(tail(itemProjections));
 
     return new OpOutputListModelProjection(
         listType,

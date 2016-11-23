@@ -18,11 +18,15 @@ package ws.epigraph.projections.op.output;
 
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
+import ws.epigraph.projections.gen.GenModelProjection;
 import ws.epigraph.projections.gen.GenPrimitiveModelProjection;
 import ws.epigraph.projections.op.OpParams;
+import ws.epigraph.types.DatumType;
 import ws.epigraph.types.PrimitiveType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -38,5 +42,22 @@ public class OpOutputPrimitiveModelProjection
       @Nullable OpOutputPrimitiveModelProjection metaProjection,
       @NotNull TextLocation location) {
     super(model, params, annotations, metaProjection, location);
+  }
+
+  @Override
+  protected OpOutputPrimitiveModelProjection merge(
+      @NotNull final DatumType model,
+      @NotNull final List<? extends GenModelProjection<?, ?>> modelProjections,
+      @NotNull final OpParams mergedParams,
+      @NotNull final Annotations mergedAnnotations,
+      @Nullable final OpOutputPrimitiveModelProjection mergedMetaProjection) {
+
+    return new OpOutputPrimitiveModelProjection(
+        (PrimitiveType) model,
+        mergedParams,
+        mergedAnnotations,
+        mergedMetaProjection,
+        TextLocation.UNKNOWN
+    );
   }
 }

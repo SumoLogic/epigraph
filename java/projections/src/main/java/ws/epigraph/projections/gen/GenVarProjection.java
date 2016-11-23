@@ -16,12 +16,11 @@
 
 package ws.epigraph.projections.gen;
 
-import ws.epigraph.lang.TextLocation;
-import ws.epigraph.types.Type;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.lang.TextLocation;
+import ws.epigraph.types.Type;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -50,15 +49,10 @@ public interface GenVarProjection<
 
   @Nullable List<VP> polymorphicTails();
 
-  // should become `x=tailByType(type); return x==null?this:x;` for normalized projections
-  @SuppressWarnings("unchecked")
-  @NotNull
-  default VP normalizedForType(@NotNull Type type) {
-    return normalizedForType(type, this.type(), Collections.singletonList((VP) this));
-  }
+  // should become `x=tailByType(type); return x==null?this:x;` for fully normalized projections
+  @NotNull VP normalizedForType(@NotNull Type type);
 
-  @NotNull
-  /* static */ VP normalizedForType(@NotNull Type targetType, @NotNull Type fallbackType, @NotNull List<VP> varProjections);
+  @NotNull VP mergeWith(@NotNull List<VP> siblings);
 
   @Nullable
   default VP tailByType(@NotNull Type tailType) {

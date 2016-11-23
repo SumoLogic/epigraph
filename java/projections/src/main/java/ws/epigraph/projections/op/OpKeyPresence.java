@@ -32,4 +32,13 @@ public enum OpKeyPresence {
     if (this == FORBIDDEN) return "forbidden";
     return null;
   }
+
+  @Nullable
+  public static OpKeyPresence merge(OpKeyPresence p1, OpKeyPresence p2) {
+    if (p1 == OPTIONAL) return p2;
+    if (p2 == OPTIONAL) return p1;
+    if (p1 == p2) return p1;
+
+    return null; // not compatible
+  }
 }

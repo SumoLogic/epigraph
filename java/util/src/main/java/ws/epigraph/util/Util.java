@@ -76,9 +76,8 @@ public interface Util {
   }
 
   @NotNull
-  static <T, K> List<K> mapNotNull(@NotNull List<T> l, @NotNull Function<T, K> f) {
-    return l.isEmpty()
-           ? Collections.emptyList()
-           : l.stream().map(f).filter(Objects::nonNull).collect(Collectors.toList());
+  static <V> List<V> tail(@NotNull List<V> list) {
+    if (list.isEmpty()) throw new IllegalArgumentException("Can't remove head from an empty list");
+    return list.subList(1, list.size());
   }
 }

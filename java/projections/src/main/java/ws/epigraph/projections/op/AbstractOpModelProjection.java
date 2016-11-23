@@ -68,18 +68,16 @@ public abstract class AbstractOpModelProjection<MP extends GenModelProjection</*
 
     return merge(
         model,
-        modelProjections, mergedMetaProjection,
-        mergedAnnotations,
-        OpParams.merge(paramsList)
+        modelProjections, OpParams.merge(paramsList), mergedAnnotations, mergedMetaProjection
     );
   }
 
+  /* static */
   protected MP merge(
       @NotNull final DatumType model,
       @NotNull final List<? extends GenModelProjection<?, ?>> modelProjections,
-      @Nullable MP mergedMetaProjection,
-      @NotNull Annotations mergedAnnotations,
-      @NotNull OpParams mergedParams) {
+      @NotNull OpParams mergedParams, @NotNull Annotations mergedAnnotations,
+      @Nullable MP mergedMetaProjection) {
 
     throw new RuntimeException("not implemented"); // todo
   }

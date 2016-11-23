@@ -19,12 +19,19 @@ package ws.epigraph.projections.op.output;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenMapModelProjection;
+import ws.epigraph.projections.gen.GenModelProjection;
+import ws.epigraph.projections.op.OpKeyPresence;
 import ws.epigraph.projections.op.OpParams;
+import ws.epigraph.types.DatumType;
 import ws.epigraph.types.MapType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+
+import static ws.epigraph.util.Util.tail;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -62,6 +69,69 @@ public class OpOutputMapModelProjection
 
   @NotNull
   public OpOutputVarProjection itemsProjection() { return itemsProjection; }
+
+  /* static */
+  @Override
+  protected OpOutputMapModelProjection merge(
+      @NotNull final DatumType model,
+      @NotNull final List<? extends GenModelProjection<?, ?>> modelProjections,
+      @NotNull final OpParams mergedParams,
+      @NotNull final Annotations mergedAnnotations,
+      @Nullable final OpOutputMapModelProjection mergedMetaProjection) {
+
+    MapType mapType = (MapType) model;
+
+    List<OpParams> keysParams = new ArrayList<>(modelProjections.size());
+    List<Annotations> keysAnnotations = new ArrayList<>(modelProjections.size());
+    OpKeyPresence mergedKeysPresence = null;
+    List<OpOutputVarProjection> itemsProjectionsToMerge = new ArrayList<>(modelProjections.size());
+
+    OpOutputMapModelProjection prevProjection = null;
+    for (final GenModelProjection<?, ?> projection : modelProjections) {
+      OpOutputMapModelProjection mmp = (OpOutputMapModelProjection) projection;
+
+      @NotNull final OpOutputKeyProjection keyProjection = mmp.keyProjection();
+      keysParams.add(keyProjection.params());
+      keysAnnotations.add(keyProjection.annotations());
+      final OpKeyPresence presence = keyProjection.presence();
+
+      if (mergedKeysPresence == null) mergedKeysPresence = presence;
+      else {
+        @Nullable OpKeyPresence newKeysPresence = OpKeyPresence.merge(mergedKeysPresence, presence);
+        if (newKeysPresence == null)
+          throw new IllegalArgumentException(
+              String.format(
+                  "Can't merge key projection defined at %s and key projection defined at %s: incompatible keys presence modes",
+                  prevProjection.location(),
+                  mmp.location()
+              )
+          );
+        mergedKeysPresence = newKeysPresence;
+      }
+
+      itemsProjectionsToMerge.add(mmp.itemsProjection());
+
+      prevProjection = mmp;
+    }
+
+    assert mergedKeysPresence != null; // modelProjections should have at least one element
+    assert !itemsProjectionsToMerge.isEmpty();
+
+    return new OpOutputMapModelProjection(
+        mapType,
+        mergedParams,
+        mergedAnnotations,
+        mergedMetaProjection,
+        new OpOutputKeyProjection(
+            mergedKeysPresence,
+            OpParams.merge(keysParams),
+            Annotations.merge(keysAnnotations),
+            TextLocation.UNKNOWN
+        ),
+        itemsProjectionsToMerge.get(0).mergeWith(tail(itemsProjectionsToMerge)),
+        TextLocation.UNKNOWN
+    );
+  }
 
   @Override
   public boolean equals(Object o) {
