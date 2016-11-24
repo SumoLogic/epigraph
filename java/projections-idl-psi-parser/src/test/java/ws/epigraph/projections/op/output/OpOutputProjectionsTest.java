@@ -120,9 +120,9 @@ public class OpOutputProjectionsTest {
   public void testParseDoubleTail() throws PsiProcessingException {
     testParsingVarProjection(
         dataType,
-        "~ws.epigraph.tests.User :id ~ws.epigraph.tests.Person :id"
+        "~ws.epigraph.tests.User :id ~ws.epigraph.tests.SubUser :id"
         ,
-        ":id ~ws.epigraph.tests.User :id ~ws.epigraph.tests.Person :id"
+        ":id ~ws.epigraph.tests.User :id ~ws.epigraph.tests.SubUser :id"
     );
   }
 

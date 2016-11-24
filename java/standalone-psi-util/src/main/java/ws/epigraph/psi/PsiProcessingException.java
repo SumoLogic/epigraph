@@ -42,6 +42,7 @@ public class PsiProcessingException extends Exception {
 
     super(message);
     this.psi = psi;
+
     if (precedingErrors.isEmpty())
       errors = Collections.singletonList(new PsiProcessingError(message, EpigraphPsiUtil.getLocation(psi)));
     else {
@@ -57,7 +58,14 @@ public class PsiProcessingException extends Exception {
 
     super(cause);
     this.psi = psi;
-    this.errors = precedingErrors;
+    final String message = cause.getMessage();
+
+    if (precedingErrors.isEmpty())
+      errors = Collections.singletonList(new PsiProcessingError(message, EpigraphPsiUtil.getLocation(psi)));
+    else {
+      this.errors = new ArrayList<>(precedingErrors);
+      errors.add(new PsiProcessingError(message, EpigraphPsiUtil.getLocation(psi)));
+    }
   }
 
   @NotNull

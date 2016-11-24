@@ -58,7 +58,7 @@ public abstract class AbstractVarProjection<
     this.location = location;
 
     validateTags();
-    // todo validate tails (should be subtypes of `type`)
+    validateTails();
   }
 
   private void validateTags() {
@@ -83,6 +83,24 @@ public abstract class AbstractVarProjection<
             )
         );
 
+    }
+  }
+
+  private void validateTails() {
+    @Nullable final List<VP> tails = polymorphicTails();
+    if (tails != null) {
+      for (final VP tail : tails) {
+        if (!type().isAssignableFrom(tail.type())) { // warn about useless cases when tail.type == type?
+          throw new IllegalArgumentException(
+              String.format(
+                  "Tail type '%s' is not a sub-type of var type '%s. Tail defined at %s",
+                  tail.type().name(),
+                  type().name(),
+                  tail.location()
+              )
+          );
+        }
+      }
     }
   }
 
