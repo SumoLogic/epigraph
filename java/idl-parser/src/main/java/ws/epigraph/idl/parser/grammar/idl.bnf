@@ -246,7 +246,7 @@ deleteOperationBodyPart ::= operationPath |
   recoverWhile = operationBodyRecover
 }
 
-customOperationDef ::= operationName 'CUSTOM' customOperationBody {pin=2} // todo specify verb?
+customOperationDef ::= operationName 'CUSTOM' customOperationBody {pin=2}
 private customOperationBody ::= '{' (customOperationBodyPart ','?)* '}'
 customOperationBodyPart ::= operationMethod |
                             operationPath |

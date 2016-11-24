@@ -122,8 +122,7 @@ public abstract class AbstractVarProjection<
     final List<VP> linearizedTails = linearizeTails(targetType, polymorphicTails);
 
     if (linearizedTails.isEmpty())
-      return self();
-//      return merge(type(), Collections.emptyList(), new LinkedHashMap<>(), null); // empty var
+      return stripTails(self());
 
     final Type effectiveType = linearizedTails.get(0).type();
 
@@ -191,13 +190,18 @@ public abstract class AbstractVarProjection<
 
     if (tails.isEmpty()) return Collections.emptyList();
     if (tails.size() == 1) {
-      if (t.isAssignableFrom(tails.get(0).type()))
-        return tails;
-      else
+      final VP tail = tails.get(0);
+      final List<VP> tailTails = tail.polymorphicTails();
+
+      if (tail.type().isAssignableFrom(t)) {
+        if (tailTails == null || tailTails.isEmpty())
+          return tails;
+        // else run full linearizeTails below
+      } else
         return Collections.emptyList();
-    } else {
-      return linearizeTails(t, tails, new LinkedList<>());
     }
+
+    return linearizeTails(t, tails, new LinkedList<>());
   }
 
   @NotNull

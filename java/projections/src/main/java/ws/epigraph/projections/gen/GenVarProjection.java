@@ -54,7 +54,7 @@ public interface GenVarProjection<
    * Builds normalized view of this var projection for a given type
    *
    * @param type target type
-   * @return normalized projection without any polymorphic tails
+   * @return normalized projection without any polymorphic tails. Projection type will be new effective type.
    * @see <a href="https://github.com/SumoLogic/epigraph/wiki/polymorphic%20tails#normalized-projections">normalized projections</a>
    */
   @NotNull VP normalizedForType(@NotNull Type type); // should become `x=tailByType(type); return x==null?this:x;` for fully normalized projections

@@ -1,23 +1,5 @@
 #Horizon 1
-- [x] add input (projection) support to custom operations
-- [x] add optional input projection support to create operations
-- [x] url parsers
-  - [x] read
-  - [x] create
-  - [x] udpate
-  - [x] delete
-  - [x] custom
-- [x] new routing algorithm
-  - [x] generic
-  - [x] reads
-  - [x] create
-  - [x] update
-  - [x] delete
-- [x] Req input projections parsing: raise errors if `required` parts are missing
-- [x] Introduce `AbstractRecordModelProjection`, with proper checks
-- [x] Remove remaining usages of deprecated `PsiProcessingException` constructor
-- [ ] figure out all `mergeOpTails`
-- [x] surround all places where var projection instances are created with `try..catch(IAE)` and translate `IAE` to `PsiParsingException`
+All done!
 
 #Horizon 2
 - [ ] Unmarshallers for create/update/custom body
@@ -36,10 +18,6 @@
   - [ ] Maven plugin
   - [ ] Gradle plugin
 
-#Low priority
-- [ ] Unify req projections pretty printers, there's lots of code duplication
-- [ ] Unify op projections pretty printers, there's lots of code duplication
-  
 # See also
 - See [General todo] (todo.md)
 - See [IDEA plugin todo](idea-plugin/todo.md)

@@ -41,4 +41,5 @@
 - File drag&drop: treat as move refactoring (fix namespaces)
 - Auto insert imports on paste?
 - Remove 'No default vartype member specified' warning on data types (field value, list element, map value)
+- GoTo symbol contributor
 

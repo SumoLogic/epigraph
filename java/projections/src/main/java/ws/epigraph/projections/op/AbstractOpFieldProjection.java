@@ -38,8 +38,6 @@ public abstract class AbstractOpFieldProjection<
     FP extends AbstractOpFieldProjection<VP, TP, MP, FP>
     > extends AbstractFieldProjection<VP, TP, MP, FP> {
 
-  // todo introduce AbstractReqFieldProjection with ReqParams
-
   @NotNull
   private final OpParams params;
 

@@ -30,6 +30,7 @@
 - [x] Don't auto-include built-in types (because versioning)
 - [x] package compiled schemas under `epigraph$artifacts` zip entry (see maven plugin)
 - [x] create folder structure based on namespaces, then put original files inside
+- [ ] **java generator doesn't detect changes in schema**
 - [ ] Scan `*.eidl` files too
 - [ ] Rename `epigraph-schema-compiler-gradle-plugin` to just `gradle-plugin`. Move it together with `common` to top level, to mimic maven plugins structure
 - [ ] Produce a list of `EpigraphType`->`JavaClass` mappings artifact (Duplicates task from `Schema compiler` list above)
@@ -43,7 +44,15 @@
 - [ ] `*` support in projections improvement: allow `*` to be present along with other fields (currently it's either `*` or fields list)
 - [ ] OpInputKey projections should support the notion of required/forbidden/optional keys, and ReqInput parser should respect/validate it
 - [ ] support for recursive projections
-- [ ] Generate projections for specific types
+- [ ] Generate projection classes for specific types
+- [ ] figure out remaining `mergeOpTails` (done for output projections, so should be easy)
+  - [ ] update parser
+  - [ ] input parser
+  - [ ] delete parser
+- [ ] Perform full tails normalization in parsers
+- [ ] introduce `AbstractReqFieldProjection` with `ReqParams`, similar to `AbstractOpFieldProjection`
+- [ ] Unify req projections pretty printers, there's lots of code duplication
+- [ ] Unify op projections pretty printers, there's lots of code duplication
 
 # Operations  
 - [x] see `operations.esc`, restructure operations accordingly

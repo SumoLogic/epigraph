@@ -533,8 +533,8 @@ public class OpOutputProjectionsPsiParser {
         errors.add(new PsiProcessingError(
             String.format(
                 "Unknown field '%s' in type '%s'; known fields: {%s}",
-                type.name(),
                 fieldName,
+                type.name(),
                 String.join(", ", type.fieldsMap().keySet())
             ),
             fieldProjectionEntryPsi

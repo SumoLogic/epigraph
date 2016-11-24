@@ -431,13 +431,7 @@ public class ReqOutputProjectionsPsiParser {
     @NotNull TypeRef tailTypeRef = TypeRefs.fromPsi(tailTypeRefPsi, errors);
     @NotNull Type tailType = getType(tailTypeRef, typesResolver, tailTypeRefPsi, errors);
 
-    @Nullable OpOutputVarProjection opTail = mergeOpTails(op, tailType);
-    if (opTail == null)
-      throw new PsiProcessingException(
-          String.format("Polymorphic tail for type '%s' is not supported", tailType.name()),
-          tailProjectionPsi,
-          errors
-      );
+    @NotNull OpOutputVarProjection opTail = op.normalizedForType(tailType);
 
     return parseComaVarProjection(
         new DataType(tailType, dataType.defaultTag),
@@ -446,23 +440,6 @@ public class ReqOutputProjectionsPsiParser {
         typesResolver,
         errors
     ).projection();
-  }
-
-  @Nullable
-  private static OpOutputVarProjection mergeOpTails(@NotNull OpOutputVarProjection op, @NotNull Type tailType) {
-    List<OpOutputVarProjection> opTails = op.polymorphicTails();
-    if (opTails == null) return null;
-    // TODO a deep merge of op projections wrt to tailType is needed here, probably moved into a separate class
-    // we simply look for the first fully matching tail for now
-    // algo should be: DFS on tails, look for exact match on tailType
-    // if found: merge all op tails up the stack into one mega-op-var-projection: squash all tags/fields/params together. Should be OK since they all are supertypes of tailType
-    // else null
-
-    for (OpOutputVarProjection opTail : opTails) {
-      if (opTail.type().equals(tailType)) return opTail;
-    }
-
-    return null;
   }
 
   /**
