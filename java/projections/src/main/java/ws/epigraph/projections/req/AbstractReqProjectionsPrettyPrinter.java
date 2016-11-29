@@ -22,11 +22,10 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.projections.Annotation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.abs.AbstractProjectionsPrettyPrinter;
-import ws.epigraph.projections.gen.GenModelProjection;
-import ws.epigraph.projections.gen.GenTagProjectionEntry;
-import ws.epigraph.projections.gen.GenVarProjection;
+import ws.epigraph.projections.gen.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -35,6 +34,9 @@ public abstract class AbstractReqProjectionsPrettyPrinter<
     VP extends GenVarProjection<VP, TP, MP>,
     TP extends GenTagProjectionEntry<TP, MP>,
     MP extends GenModelProjection</*MP*/?, ?>,
+    RP extends GenRecordModelProjection<VP, TP, MP, RP, FPE, FP, ?>,
+    FPE extends GenFieldProjectionEntry<VP, TP, MP, FP>,
+    FP extends AbstractReqFieldProjection<VP, TP, MP, FP>,
     E extends Exception> extends AbstractProjectionsPrettyPrinter<VP, TP, MP, E> {
 
   protected AbstractReqProjectionsPrettyPrinter(final Layouter<E> layouter) {
@@ -65,6 +67,65 @@ public abstract class AbstractReqProjectionsPrettyPrinter<
       }
     }
     l.end();
+  }
+
+  public void print(@NotNull RP recordProjection, int pathSteps) throws E {
+    Map<String, FPE> fieldProjections = recordProjection.fieldProjections();
+
+    if (pathSteps > 0) {
+      if (fieldProjections.isEmpty()) return;
+      if (fieldProjections.size() > 1) throw new IllegalArgumentException(
+          String.format("Encountered %d fields while still having %d path steps", fieldProjections.size(), pathSteps)
+      );
+
+      Map.Entry<String, FPE> entry = fieldProjections.entrySet().iterator().next();
+      l.beginIInd();
+      l.print("/").brk();
+      print(entry.getKey(), entry.getValue().fieldProjection(), decSteps(pathSteps));
+      l.end();
+
+    } else {
+
+      l.print("(").beginCInd();
+      boolean first = true;
+      for (Map.Entry<String, FPE> entry : fieldProjections.entrySet()) {
+        if (first) first = false;
+        else l.print(",");
+        l.brk();
+
+        print(entry.getKey(), entry.getValue().fieldProjection(), 0);
+
+      }
+      l.brk(1, -l.getDefaultIndentation()).end().print(")");
+    }
+  }
+
+  protected String fieldNamePrefix(@NotNull FP fieldProjection) { return ""; }
+
+  public void print(@NotNull String fieldName, @NotNull FP fieldProjection, int pathSteps) throws E {
+    @NotNull VP fieldVarProjection = fieldProjection.varProjection();
+    @NotNull Annotations fieldAnnotations = fieldProjection.annotations();
+
+    l.beginIInd();
+    l.print(fieldNamePrefix(fieldProjection));
+    l.print(fieldName);
+
+    printParams(fieldProjection.params());
+    printAnnotations(fieldAnnotations);
+
+    if (!isPrintoutEmpty(fieldVarProjection)) {
+      l.brk();
+      print(fieldVarProjection, pathSteps);
+    }
+    l.end();
+  }
+
+  public boolean isPrintoutEmpty(@NotNull FP fieldProjection) {
+    @NotNull VP fieldVarProjection = fieldProjection.varProjection();
+    @NotNull ReqParams fieldParams = fieldProjection.params();
+    @NotNull Annotations fieldAnnotations = fieldProjection.annotations();
+
+    return fieldParams.isEmpty() && fieldAnnotations.isEmpty() && isPrintoutEmpty(fieldVarProjection);
   }
 
   protected void printReqKey(final ReqKeyProjection key) throws E {

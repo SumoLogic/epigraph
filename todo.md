@@ -50,7 +50,7 @@
   - [ ] input parser
   - [ ] delete parser
 - [ ] Perform full tails normalization in parsers
-- [ ] introduce `AbstractReqFieldProjection` with `ReqParams`, similar to `AbstractOpFieldProjection`
+- [x] introduce `AbstractReqFieldProjection` with `ReqParams`, similar to `AbstractOpFieldProjection`
 - [ ] Unify req projections pretty printers, there's lots of code duplication
 - [ ] Unify op projections pretty printers, there's lots of code duplication
 

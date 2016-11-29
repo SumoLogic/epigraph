@@ -34,6 +34,9 @@ public class ReqDeleteProjectionsPrettyPrinter<E extends Exception>
     ReqDeleteVarProjection,
     ReqDeleteTagProjectionEntry,
     ReqDeleteModelProjection<?, ?>,
+    ReqDeleteRecordModelProjection,
+    ReqDeleteFieldProjectionEntry,
+    ReqDeleteFieldProjection,
     E> {
 
   public ReqDeleteProjectionsPrettyPrinter(Layouter<E> layouter) {
@@ -63,46 +66,11 @@ public class ReqDeleteProjectionsPrettyPrinter<E extends Exception>
   @Override
   public void print(@NotNull ReqDeleteModelProjection<?, ?> mp, int pathSteps) throws E {
     if (mp instanceof ReqDeleteRecordModelProjection)
-      print((ReqDeleteRecordModelProjection) mp);
+      print((ReqDeleteRecordModelProjection) mp, 0);
     else if (mp instanceof ReqDeleteMapModelProjection)
       print((ReqDeleteMapModelProjection) mp);
     else if (mp instanceof ReqDeleteListModelProjection)
       print((ReqDeleteListModelProjection) mp, pathSteps);
-  }
-
-  private void print(@NotNull ReqDeleteRecordModelProjection mp) throws E {
-    Map<String, ReqDeleteFieldProjectionEntry> fieldProjections = mp.fieldProjections();
-
-    l.print("(").beginCInd();
-    boolean first = true;
-    for (Map.Entry<String, ReqDeleteFieldProjectionEntry> entry : fieldProjections.entrySet()) {
-      if (first) first = false;
-      else l.print(",");
-      l.brk();
-
-      print(entry.getKey(), entry.getValue().fieldProjection(), 0);
-
-    }
-    l.brk(1, -l.getDefaultIndentation()).end().print(")");
-  }
-
-  public void print(@NotNull String fieldName, @NotNull ReqDeleteFieldProjection fieldProjection, int pathSteps)
-      throws E {
-
-    @NotNull ReqDeleteVarProjection fieldVarProjection = fieldProjection.varProjection();
-    @NotNull Annotations fieldAnnotations = fieldProjection.annotations();
-
-    l.beginIInd();
-    l.print(fieldName);
-
-    printParams(fieldProjection.params());
-    printAnnotations(fieldAnnotations);
-
-    if (!isPrintoutEmpty(fieldVarProjection)) {
-      l.brk();
-      print(fieldVarProjection, pathSteps);
-    }
-    l.end();
   }
 
   private void print(ReqDeleteMapModelProjection mp) throws E {

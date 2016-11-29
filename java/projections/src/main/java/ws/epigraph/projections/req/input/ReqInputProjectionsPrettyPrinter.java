@@ -32,6 +32,9 @@ public class ReqInputProjectionsPrettyPrinter<E extends Exception>
     ReqInputVarProjection,
     ReqInputTagProjectionEntry,
     ReqInputModelProjection<?, ?>,
+    ReqInputRecordModelProjection,
+    ReqInputFieldProjectionEntry,
+    ReqInputFieldProjection,
     E> {
 
   public ReqInputProjectionsPrettyPrinter(Layouter<E> layouter) {
@@ -61,46 +64,11 @@ public class ReqInputProjectionsPrettyPrinter<E extends Exception>
   @Override
   public void print(@NotNull ReqInputModelProjection<?, ?> mp, int pathSteps) throws E {
     if (mp instanceof ReqInputRecordModelProjection)
-      print((ReqInputRecordModelProjection) mp);
+      print((ReqInputRecordModelProjection) mp, 0);
     else if (mp instanceof ReqInputMapModelProjection)
       print((ReqInputMapModelProjection) mp);
     else if (mp instanceof ReqInputListModelProjection)
       print((ReqInputListModelProjection) mp, pathSteps);
-  }
-
-  private void print(@NotNull ReqInputRecordModelProjection mp) throws E {
-    Map<String, ReqInputFieldProjectionEntry> fieldProjections = mp.fieldProjections();
-
-    l.print("(").beginCInd();
-    boolean first = true;
-    for (Map.Entry<String, ReqInputFieldProjectionEntry> entry : fieldProjections.entrySet()) {
-      if (first) first = false;
-      else l.print(",");
-      l.brk();
-
-      print(entry.getKey(), entry.getValue().fieldProjection(), 0);
-
-    }
-    l.brk(1, -l.getDefaultIndentation()).end().print(")");
-  }
-
-  public void print(@NotNull String fieldName, @NotNull ReqInputFieldProjection fieldProjection, int pathSteps)
-      throws E {
-
-    @NotNull ReqInputVarProjection fieldVarProjection = fieldProjection.varProjection();
-    @NotNull Annotations fieldAnnotations = fieldProjection.annotations();
-
-    l.beginIInd();
-    l.print(fieldName);
-
-    printParams(fieldProjection.params());
-    printAnnotations(fieldAnnotations);
-
-    if (!isPrintoutEmpty(fieldVarProjection)) {
-      l.brk();
-      print(fieldVarProjection, pathSteps);
-    }
-    l.end();
   }
 
   private void print(ReqInputMapModelProjection mp) throws E {

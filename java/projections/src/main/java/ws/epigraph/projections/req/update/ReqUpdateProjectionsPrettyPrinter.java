@@ -32,6 +32,9 @@ public class ReqUpdateProjectionsPrettyPrinter<E extends Exception>
     ReqUpdateVarProjection,
     ReqUpdateTagProjectionEntry,
     ReqUpdateModelProjection<?, ?>,
+    ReqUpdateRecordModelProjection,
+    ReqUpdateFieldProjectionEntry,
+    ReqUpdateFieldProjection,
     E> {
 
   public ReqUpdateProjectionsPrettyPrinter(Layouter<E> layouter) {
@@ -85,24 +88,9 @@ public class ReqUpdateProjectionsPrettyPrinter<E extends Exception>
     l.brk(1, -l.getDefaultIndentation()).end().print(")");
   }
 
-  public void print(@NotNull String fieldName, @NotNull ReqUpdateFieldProjection fieldProjection, int pathSteps)
-      throws E {
-
-    @NotNull ReqUpdateVarProjection fieldVarProjection = fieldProjection.varProjection();
-    @NotNull Annotations fieldAnnotations = fieldProjection.annotations();
-
-    l.beginIInd();
-    if (fieldProjection.update()) l.print("+");
-    l.print(fieldName);
-
-    printParams(fieldProjection.params());
-    printAnnotations(fieldAnnotations);
-
-    if (!isPrintoutEmpty(fieldVarProjection)) {
-      l.brk();
-      print(fieldVarProjection, pathSteps);
-    }
-    l.end();
+  @Override
+  protected String fieldNamePrefix(@NotNull final ReqUpdateFieldProjection fieldProjection) {
+    return fieldProjection.update() ? "+" : "";
   }
 
   private void print(ReqUpdateMapModelProjection mp) throws E {

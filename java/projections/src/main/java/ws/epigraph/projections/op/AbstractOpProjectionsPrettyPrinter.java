@@ -96,7 +96,6 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
     l.end();
   }
 
-  // todo port to AbstractReqProjectionsPrettyPrinter too
   public void print(@NotNull RP recordProjection) throws E {
     Map<String, FPE> fieldProjections = recordProjection.fieldProjections();
 

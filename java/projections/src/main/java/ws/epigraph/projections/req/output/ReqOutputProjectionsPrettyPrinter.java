@@ -31,10 +31,13 @@ import java.util.Map;
  */
 public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
     extends AbstractReqProjectionsPrettyPrinter<
-        ReqOutputVarProjection,
-        ReqOutputTagProjectionEntry,
-        ReqOutputModelProjection<?, ?>,
-        E> {
+    ReqOutputVarProjection,
+    ReqOutputTagProjectionEntry,
+    ReqOutputModelProjection<?, ?>,
+    ReqOutputRecordModelProjection,
+    ReqOutputFieldProjectionEntry,
+    ReqOutputFieldProjection,
+    E> {
 
   // todo: take var projection's 'parenthesized' into account
 
@@ -74,55 +77,9 @@ public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
       print((ReqOutputListModelProjection) mp, pathSteps);
   }
 
-  private void print(@NotNull ReqOutputRecordModelProjection mp, int pathSteps) throws E {
-    Map<String, ReqOutputFieldProjectionEntry> fieldProjections = mp.fieldProjections();
-
-    if (pathSteps > 0) {
-      if (fieldProjections.isEmpty()) return;
-      if (fieldProjections.size() > 1) throw new IllegalArgumentException(
-          String.format("Encountered %d fields while still having %d path steps", fieldProjections.size(), pathSteps)
-      );
-
-      Map.Entry<String, ReqOutputFieldProjectionEntry> entry = fieldProjections.entrySet().iterator().next();
-      l.beginIInd();
-      l.print("/").brk();
-      print(entry.getKey(), entry.getValue().fieldProjection(), decSteps(pathSteps));
-      l.end();
-
-    } else {
-
-      l.print("(").beginCInd();
-      boolean first = true;
-      for (Map.Entry<String, ReqOutputFieldProjectionEntry> entry : fieldProjections.entrySet()) {
-        if (first) first = false;
-        else l.print(",");
-        l.brk();
-
-        print(entry.getKey(), entry.getValue().fieldProjection(), 0);
-
-      }
-      l.brk(1, -l.getDefaultIndentation()).end().print(")");
-    }
-  }
-
-  public void print(@NotNull String fieldName, @NotNull ReqOutputFieldProjection fieldProjection, int pathSteps)
-      throws E {
-
-    @NotNull ReqOutputVarProjection fieldVarProjection = fieldProjection.varProjection();
-    @NotNull Annotations fieldAnnotations = fieldProjection.annotations();
-
-    l.beginIInd();
-    if (fieldProjection.required()) l.print("+");
-    l.print(fieldName);
-
-    printParams(fieldProjection.params());
-    printAnnotations(fieldAnnotations);
-
-    if (!isPrintoutEmpty(fieldVarProjection)) {
-      l.brk();
-      print(fieldVarProjection, pathSteps);
-    }
-    l.end();
+  @Override
+  protected String fieldNamePrefix(@NotNull final ReqOutputFieldProjection fieldProjection) {
+    return fieldProjection.required() ? "+" : "";
   }
 
   private void print(ReqOutputMapModelProjection mp, int pathSteps) throws E {
