@@ -23,8 +23,7 @@ import ws.epigraph.types.DataType;
 import ws.epigraph.types.DatumType;
 import ws.epigraph.types.Type;
 
-import java.util.Collection;
-import java.util.LinkedHashMap;
+import java.util.*;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -122,5 +121,46 @@ public class ProjectionUtils {
     }
 
     return len;
+  }
+
+  public static <VP extends GenVarProjection<VP, ?, ?>> List<VP> linearizeTails(
+      @NotNull Type t,
+      @NotNull List<VP> tails) {
+
+    if (tails.isEmpty()) return Collections.emptyList();
+    if (tails.size() == 1) {
+      final VP tail = tails.get(0);
+      final List<VP> tailTails = tail.polymorphicTails();
+
+      if (tail.type().isAssignableFrom(t)) {
+        if (tailTails == null || tailTails.isEmpty())
+          return tails;
+        // else run full linearizeTails below
+      } else
+        return Collections.emptyList();
+    }
+
+    return linearizeTails(t, tails, new LinkedList<>());
+  }
+
+  public static <VP extends GenVarProjection<VP, ?, ?>> List<VP> linearizeTails(
+      @NotNull Type type,
+      @NotNull List<VP> tails,
+      @NotNull LinkedList<VP> linearizedTails) {
+
+    final Optional<VP> matchingTailOpt = tails.stream().filter(tail -> tail.type().isAssignableFrom(type)).findFirst();
+
+    if (matchingTailOpt.isPresent()) {
+      final VP matchingTail = matchingTailOpt.get();
+      linearizedTails.addFirst(matchingTail);
+//      linearizedTails.addFirst(stripTails(matchingTail));
+
+      final List<VP> tails2 = matchingTail.polymorphicTails();
+      if (tails2 != null)
+        linearizeTails(type, tails2, linearizedTails);
+
+    }
+
+    return linearizedTails;
   }
 }

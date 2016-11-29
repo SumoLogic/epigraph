@@ -27,6 +27,8 @@ import ws.epigraph.types.Type;
 
 import java.util.*;
 
+import static ws.epigraph.projections.ProjectionUtils.linearizeTails;
+
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
@@ -204,48 +206,6 @@ public abstract class AbstractVarProjection<
     }
 
     return mergedTails;
-  }
-
-  @NotNull
-  private List<VP> linearizeTails(@NotNull Type t, @NotNull List<VP> tails) {
-    // todo move to common utils
-
-    if (tails.isEmpty()) return Collections.emptyList();
-    if (tails.size() == 1) {
-      final VP tail = tails.get(0);
-      final List<VP> tailTails = tail.polymorphicTails();
-
-      if (tail.type().isAssignableFrom(t)) {
-        if (tailTails == null || tailTails.isEmpty())
-          return tails;
-        // else run full linearizeTails below
-      } else
-        return Collections.emptyList();
-    }
-
-    return linearizeTails(t, tails, new LinkedList<>());
-  }
-
-  @NotNull
-  private List<VP> linearizeTails(
-      @NotNull Type type,
-      @NotNull List<VP> tails,
-      @NotNull LinkedList<VP> linearizedTails) {
-
-    final Optional<VP> matchingTailOpt = tails.stream().filter(tail -> tail.type().isAssignableFrom(type)).findFirst();
-
-    if (matchingTailOpt.isPresent()) {
-      final VP matchingTail = matchingTailOpt.get();
-      linearizedTails.addFirst(matchingTail);
-//      linearizedTails.addFirst(stripTails(matchingTail));
-
-      final List<VP> tails2 = matchingTail.polymorphicTails();
-      if (tails2 != null)
-        linearizeTails(type, tails2, linearizedTails);
-
-    }
-
-    return linearizedTails;
   }
 
   @NotNull
