@@ -21,7 +21,9 @@ import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.req.AbstractReqFieldProjection;
 import ws.epigraph.projections.req.ReqParams;
+import ws.epigraph.types.DataType;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -47,6 +49,23 @@ public class ReqOutputFieldProjection extends AbstractReqFieldProjection<
   }
 
   public boolean required() { return required; }
+
+  @Override
+  protected ReqOutputFieldProjection merge(
+      @NotNull final DataType type,
+      @NotNull final List<ReqOutputFieldProjection> fieldProjections,
+      @NotNull final ReqParams mergedParams,
+      @NotNull final Annotations mergedAnnotations,
+      @NotNull final ReqOutputVarProjection mergedVarProjection) {
+
+    return new ReqOutputFieldProjection(
+        mergedParams,
+        mergedAnnotations,
+        mergedVarProjection,
+        fieldProjections.stream().anyMatch(ReqOutputFieldProjection::required),
+        TextLocation.UNKNOWN
+    );
+  }
 
   @Override
   public boolean equals(final Object o) {

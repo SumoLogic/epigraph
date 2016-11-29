@@ -24,7 +24,9 @@ import ws.epigraph.types.ListType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -38,6 +40,7 @@ public class ReqOutputListModelProjection
     ReqOutputListModelProjection,
     ListType
     > {
+
   @NotNull
   private ReqOutputVarProjection itemsProjection;
 
@@ -55,6 +58,34 @@ public class ReqOutputListModelProjection
 
   @NotNull
   public ReqOutputVarProjection itemsProjection() { return itemsProjection; }
+
+  /* static */
+  @Override
+  protected ReqOutputListModelProjection merge(
+      @NotNull final ListType model,
+      final boolean mergedRequired,
+      @NotNull final List<ReqOutputListModelProjection> modelProjections,
+      @NotNull final ReqParams mergedParams,
+      @NotNull final Annotations mergedAnnotations,
+      @Nullable final ReqOutputListModelProjection mergedMetaProjection) {
+
+    List<ReqOutputVarProjection> itemProjections =
+        modelProjections.stream()
+                        .map(ReqOutputListModelProjection::itemsProjection)
+                        .collect(Collectors.toList());
+
+    @NotNull final ReqOutputVarProjection mergedItemsVarType = itemProjections.get(0).merge(itemProjections);
+
+    return new ReqOutputListModelProjection(
+        model,
+        mergedRequired,
+        mergedParams,
+        mergedAnnotations,
+        mergedMetaProjection,
+        mergedItemsVarType,
+        TextLocation.UNKNOWN
+    );
+  }
 
   @Override
   public boolean equals(Object o) {

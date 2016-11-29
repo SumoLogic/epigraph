@@ -1,9 +1,9 @@
 /*
- * Copyright 2016 Sumo Logic
+ * CReqyright 2016 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * You may obtain a cReqy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -65,6 +65,42 @@ public class ReqOutputRecordModelProjection
   @Nullable
   public ReqOutputFieldProjectionEntry fieldProjection(@NotNull String fieldName) {
     return fieldProjections.get(fieldName);
+  }
+
+  @Override
+  protected ReqOutputRecordModelProjection merge(
+      @NotNull final RecordType model,
+      final boolean mergedRequired,
+      @NotNull final List<ReqOutputRecordModelProjection> modelProjections,
+      @NotNull final ReqParams mergedParams,
+      @NotNull final Annotations mergedAnnotations,
+      @Nullable final ReqOutputRecordModelProjection mergedMetaProjection) {
+
+
+    Map<RecordType.Field, ReqOutputFieldProjection> mergedFieldProjections =
+        RecordModelProjectionHelper.mergeFieldProjections(modelProjections);
+
+    Map<String, ReqOutputFieldProjectionEntry> mergedFieldEntries = new LinkedHashMap<>();
+    for (final Map.Entry<RecordType.Field, ReqOutputFieldProjection> entry : mergedFieldProjections.entrySet()) {
+      mergedFieldEntries.put(
+          entry.getKey().name(),
+          new ReqOutputFieldProjectionEntry(
+              entry.getKey(),
+              entry.getValue(),
+              TextLocation.UNKNOWN
+          )
+      );
+    }
+
+    return new ReqOutputRecordModelProjection(
+        model,
+        mergedRequired,
+        mergedParams,
+        mergedAnnotations,
+        mergedMetaProjection,
+        mergedFieldEntries,
+        TextLocation.UNKNOWN
+    );
   }
 
   @Override

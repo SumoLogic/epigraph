@@ -16,10 +16,13 @@
 
 package ws.epigraph.projections.req.output;
 
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.abs.AbstractTagProjectionEntry;
 import ws.epigraph.types.Type;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -32,5 +35,19 @@ public class ReqOutputTagProjectionEntry
       @NotNull ReqOutputModelProjection<?, ?> projection,
       @NotNull TextLocation location) {
     super(tag, projection, location);
+  }
+
+  @Nullable
+  @Override
+  protected ReqOutputTagProjectionEntry mergeTags(
+      @NotNull final Type.Tag tag,
+      @NotNull final List<ReqOutputTagProjectionEntry> tagsEntries,
+      @NotNull final ReqOutputModelProjection<?, ?> mergedModel) {
+
+    return new ReqOutputTagProjectionEntry(
+        tag,
+        mergedModel,
+        TextLocation.UNKNOWN
+    );
   }
 }

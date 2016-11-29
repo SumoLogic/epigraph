@@ -21,14 +21,16 @@ import org.junit.Test;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.op.output.OpOutputVarProjection;
 import ws.epigraph.projections.req.output.ReqOutputVarProjection;
+import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.SimpleTypesResolver;
 import ws.epigraph.refs.TypesResolver;
-import ws.epigraph.test.TestUtil;
 import ws.epigraph.tests.*;
 import ws.epigraph.types.DataType;
+import ws.epigraph.types.Type;
 
 import static org.junit.Assert.assertEquals;
 import static ws.epigraph.test.TestUtil.lines;
+import static ws.epigraph.test.TestUtil.printReqOutputVarProjection;
 import static ws.epigraph.url.projections.req.ReqTestUtil.parseOpOutputVarProjection;
 import static ws.epigraph.url.projections.req.ReqTestUtil.parseReqOutputVarProjection;
 
@@ -60,6 +62,7 @@ public class ReqOutputProjectionsParserTest {
           "    id {",
           "      ;param1 : epigraph.String = \"hello world\" { doc = \"some doc\" },",
           "    },",
+          "    firstName{;param:epigraph.String},",
           "    bestFriend :record (",
           "      id,",
           "      bestFriend :record (",
@@ -67,7 +70,7 @@ public class ReqOutputProjectionsParserTest {
           "        firstName",
           "      ),",
           "    ),",
-          "    friends *( :id ),",
+          "    friends *( :(id,record(id)) ),",
           "    friendsMap [;keyParam:epigraph.String]( :(id, record (id, firstName) ) )",
           "  )",
           ") ~(",
@@ -155,12 +158,70 @@ public class ReqOutputProjectionsParserTest {
   public void testStarFields() {
     testParse(
         ":record(*)",
-        ":record ( id, bestFriend :(), friends *( :() ), friendsMap [ * ]( :() ) )",
+        ":record ( id, firstName, bestFriend :(), friends *( :() ), friendsMap [ * ]( :() ) )",
         1
     );
   }
 
+  @Test
+  public void testTailsNormalization() throws PsiProcessingException {
+    testTailsNormalization(
+        ":record(id)~ws.epigraph.tests.User :record(firstName)",
+        User.type,
+        ":record ( firstName, id )"
+    );
+
+    // parameters merging
+    testTailsNormalization(
+        ":record(id,firstName;param='foo')~ws.epigraph.tests.User :record(firstName;param='bar')",
+        User.type,
+        ":record ( firstName ;param = \"bar\", id )"
+    );
+
+    // annotations merging
+    testTailsNormalization(
+        ":record(id,firstName!doc='doc1')~ws.epigraph.tests.User :record(firstName!doc='doc2')",
+        User.type,
+        ":record ( firstName !doc = \"doc2\", id )"
+    );
+  }
+
+  @Test
+  public void testListTailsNormalization() throws PsiProcessingException {
+    testTailsNormalization(
+        ":record(friends*(:id))~ws.epigraph.tests.User :record(friends*(:record(id)))",
+        User.type,
+        ":record ( friends *( :( record ( id ), id ) ) )"
+    );
+  }
+
+  @Test
+  public void testMapTailsNormalization() throws PsiProcessingException {
+    testTailsNormalization(
+        ":record(friendsMap[1](:id))~ws.epigraph.tests.User :record(friendsMap[2 ;keyParam='foo'](:record(id)))",
+        User.type,
+        ":record ( friendsMap [ \"2\" ;keyParam = \"foo\", \"1\" ]( :( record ( id ), id ) ) )"
+    );
+
+    testTailsNormalization(
+        ":record(friendsMap[2 ;keyParam='bar'](:id))~ws.epigraph.tests.User :record(friendsMap[2 ;keyParam='foo'](:record(id)))",
+        User.type,
+        ":record ( friendsMap [ \"2\" ;keyParam = \"foo\" ]( :( record ( id ), id ) ) )"
+    );
+  }
+
   // todo negative test cases too
+
+  private void testTailsNormalization(String str, Type type, String expected) throws PsiProcessingException {
+    @NotNull final StepsAndProjection<ReqOutputVarProjection> stepsAndProjection =
+        parseReqOutputVarProjection(dataType, personOpProjection, str, resolver);
+
+    ReqOutputVarProjection varProjection = stepsAndProjection.projection();
+    @NotNull final ReqOutputVarProjection normalized = varProjection.normalizedForType(type);
+
+    String actual = printReqOutputVarProjection(normalized, stepsAndProjection.pathSteps());
+    assertEquals(expected, actual);
+  }
 
   private void testParse(String expr, int steps) {
     testParse(expr, expr, steps);
@@ -172,7 +233,7 @@ public class ReqOutputProjectionsParserTest {
 
     assertEquals(steps, stepsAndProjection.pathSteps());
 
-    String s = TestUtil.printReqOutputVarProjection(stepsAndProjection.projection(), steps);
+    String s = printReqOutputVarProjection(stepsAndProjection.projection(), steps);
 
     final String actual =
         s.replaceAll("\"", "'"); // pretty printer outputs double quotes, we use single quotes in URLs

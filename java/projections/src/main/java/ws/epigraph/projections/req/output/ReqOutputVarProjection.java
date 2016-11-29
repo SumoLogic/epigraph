@@ -35,7 +35,7 @@ public class ReqOutputVarProjection extends AbstractVarProjection<
     ReqOutputModelProjection<?, ?>
     > {
   private final boolean parenthesized;
-      // if parens were present, e.g. `:(id, ...)`. Tells marshaller if to use multi- or single-var
+  // if parens were present, e.g. `:(id)` vs `:id`. Tells marshaller if to use multi- or single-var
 
   public ReqOutputVarProjection(
       @NotNull Type type,
@@ -56,6 +56,22 @@ public class ReqOutputVarProjection extends AbstractVarProjection<
     if (!super.equals(o)) return false;
     ReqOutputVarProjection that = (ReqOutputVarProjection) o;
     return parenthesized == that.parenthesized;
+  }
+
+  @Override
+  protected ReqOutputVarProjection merge(
+      @NotNull final Type type,
+      @NotNull final List<ReqOutputVarProjection> varProjections,
+      @NotNull final Map<String, ReqOutputTagProjectionEntry> mergedTags,
+      final List<ReqOutputVarProjection> mergedTails) {
+
+    return new ReqOutputVarProjection(
+        type,
+        mergedTags,
+        mergedTails,
+        varProjections.stream().anyMatch(ReqOutputVarProjection::parenthesized),
+        TextLocation.UNKNOWN
+    );
   }
 
   @Override

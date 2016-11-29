@@ -24,6 +24,7 @@ import ws.epigraph.projections.req.AbstractReqModelProjection;
 import ws.epigraph.projections.req.ReqParams;
 import ws.epigraph.types.DatumType;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -48,6 +49,35 @@ public abstract class ReqOutputModelProjection<
   }
 
   public boolean required() { return required; }
+
+  @Override
+  protected MP merge(
+      @NotNull final M model,
+      @NotNull final List<MP> modelProjections,
+      @NotNull final ReqParams mergedParams,
+      @NotNull final Annotations mergedAnnotations,
+      @Nullable final MP mergedMetaProjection) {
+
+    return merge(
+        model,
+        modelProjections.stream().anyMatch(ReqOutputModelProjection::required),
+        modelProjections,
+        mergedParams,
+        mergedAnnotations,
+        mergedMetaProjection
+    );
+  }
+
+  protected MP merge(
+      @NotNull final M model,
+      final boolean mergedRequired,
+      @NotNull final List<MP> modelProjections,
+      @NotNull final ReqParams mergedParams,
+      @NotNull final Annotations mergedAnnotations,
+      @Nullable final MP mergedMetaProjection) {
+
+    throw new RuntimeException("not implemented"); // todo make abstract
+  }
 
   @Override
   public boolean equals(final Object o) {

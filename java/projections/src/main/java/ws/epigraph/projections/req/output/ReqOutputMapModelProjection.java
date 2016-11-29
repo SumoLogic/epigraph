@@ -16,16 +16,18 @@
 
 package ws.epigraph.projections.req.output;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenMapModelProjection;
+import ws.epigraph.projections.req.ReqKeyProjection;
 import ws.epigraph.projections.req.ReqParams;
 import ws.epigraph.types.MapType;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -64,6 +66,48 @@ public class ReqOutputMapModelProjection
 
   @Nullable
   public List<ReqOutputKeyProjection> keys() { return keys; }
+
+  @Override
+  protected ReqOutputMapModelProjection merge(
+      @NotNull final MapType model,
+      final boolean mergedRequired,
+      @NotNull final List<ReqOutputMapModelProjection> modelProjections,
+      @NotNull final ReqParams mergedParams,
+      @NotNull final Annotations mergedAnnotations,
+      @Nullable final ReqOutputMapModelProjection mergedMetaProjection) {
+
+
+    final List<ReqOutputKeyProjection> mergedKeys;
+
+    if (modelProjections.stream().map(ReqOutputMapModelProjection::keys).anyMatch(Objects::isNull)) {
+      mergedKeys = null;
+    } else {
+      //noinspection ConstantConditions
+      mergedKeys = ReqKeyProjection.merge(
+          modelProjections.stream().flatMap(projection -> projection.keys().stream()),
+          (keysToMerge, value, mergedKeyParams, mergedKeyAnnotations) ->
+              new ReqOutputKeyProjection(value, mergedKeyParams, mergedKeyAnnotations, TextLocation.UNKNOWN)
+      );
+    }
+
+    List<ReqOutputVarProjection> itemProjections =
+        modelProjections.stream()
+                        .map(ReqOutputMapModelProjection::itemsProjection)
+                        .collect(Collectors.toList());
+
+    @NotNull final ReqOutputVarProjection mergedItemsVarType = itemProjections.get(0).merge(itemProjections);
+
+    return new ReqOutputMapModelProjection(
+        model,
+        mergedRequired,
+        mergedParams,
+        mergedAnnotations,
+        mergedMetaProjection,
+        mergedKeys,
+        mergedItemsVarType,
+        TextLocation.UNKNOWN
+    );
+  }
 
   @Override
   public boolean equals(Object o) {

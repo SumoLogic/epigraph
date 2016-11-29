@@ -24,6 +24,8 @@ import ws.epigraph.types.PrimitiveType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
@@ -39,5 +41,25 @@ public class ReqOutputPrimitiveModelProjection
       @Nullable ReqOutputPrimitiveModelProjection metaProjection,
       @NotNull TextLocation location) {
     super(model, required, params, annotations, metaProjection, location);
+  }
+
+  /* static */
+  @Override
+  protected ReqOutputPrimitiveModelProjection merge(
+      @NotNull final PrimitiveType<?> model,
+      final boolean mergedRequired,
+      @NotNull final List<ReqOutputPrimitiveModelProjection> modelProjections,
+      @NotNull final ReqParams mergedParams,
+      @NotNull final Annotations mergedAnnotations,
+      @Nullable final ReqOutputPrimitiveModelProjection mergedMetaProjection) {
+
+    return new ReqOutputPrimitiveModelProjection(
+        model,
+        mergedRequired,
+        mergedParams,
+        mergedAnnotations,
+        mergedMetaProjection,
+        TextLocation.UNKNOWN
+    );
   }
 }

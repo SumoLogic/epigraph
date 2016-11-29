@@ -21,7 +21,8 @@ import ws.epigraph.data.Datum;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -36,10 +37,11 @@ public class ReqKeyProjection {
   @NotNull
   private final TextLocation location;
 
-  public ReqKeyProjection(@NotNull Datum value,
-                          @NotNull ReqParams params,
-                          @NotNull Annotations annotations,
-                          @NotNull TextLocation location) {
+  public ReqKeyProjection(
+      @NotNull Datum value,
+      @NotNull ReqParams params,
+      @NotNull Annotations annotations,
+      @NotNull TextLocation location) {
     this.value = value;
     this.params = params;
     this.annotations = annotations;
@@ -70,4 +72,48 @@ public class ReqKeyProjection {
 
   @Override
   public int hashCode() { return Objects.hash(value, params, annotations); }
+
+  public static <RKP extends ReqKeyProjection> List<RKP> merge(
+      @NotNull Stream<RKP> keysToMerge,
+      @NotNull MergedReqKeyFactory<RKP> factory) {
+
+//    if (keysToMerge.size() < 2) return keysToMerge;
+
+    Map<Datum, List<RKP>> groupedKeysToMerge = new LinkedHashMap<>();
+    keysToMerge.forEach(key -> {
+      @NotNull final Datum keyValue = key.value();
+      List<RKP> group = groupedKeysToMerge.get(keyValue);
+
+      if (group == null) {
+        group = new ArrayList<>();
+        groupedKeysToMerge.put(keyValue, group);
+      }
+
+      group.add(key);
+    });
+
+    List<RKP> mergedKeys = new ArrayList<>(groupedKeysToMerge.size());
+    for (final Map.Entry<Datum, List<RKP>> entry : groupedKeysToMerge.entrySet()) {
+      Datum keyValue = entry.getKey();
+      List<RKP> group = entry.getValue();
+      mergedKeys.add(
+          factory.create(
+              group,
+              keyValue,
+              ReqParams.merge(group.stream().map(ReqKeyProjection::params)),
+              Annotations.merge(group.stream().map(ReqKeyProjection::annotations))
+          )
+      );
+    }
+
+    return mergedKeys;
+  }
+
+  public interface MergedReqKeyFactory<RKP extends ReqKeyProjection> {
+    RKP create(
+        @NotNull List<RKP> keysToMerge,
+        @NotNull Datum value,
+        @NotNull ReqParams mergedParams,
+        @NotNull Annotations mergedAnnotations);
+  }
 }
