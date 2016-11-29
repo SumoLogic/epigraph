@@ -18,6 +18,7 @@
 
 package ws.epigraph.server.http;
 
+import epigraph.String;
 import ws.epigraph.errors.ErrorValue;
 import ws.epigraph.idl.ResourceIdl;
 import ws.epigraph.idl.operations.ReadOperationIdl;
@@ -58,8 +59,9 @@ public class UsersResource extends Resource {
     public @NotNull CompletableFuture<ReadOperationResponse<PersonId_Person_Map.Data>> process(@NotNull ReadOperationRequest request) {
       PersonId_Person_Map.Builder map = PersonId_Person_Map.create();
 
-      ReqOutputMapModelProjection mapProjection = (ReqOutputMapModelProjection) request.outputProjection().varProjection()
-          .tagProjection(String_Person_Map.type.self.name()).projection();
+      ReqOutputMapModelProjection mapProjection =
+          (ReqOutputMapModelProjection) request.outputProjection().varProjection()
+              .tagProjection(String_Person_Map.type.self.name()).projection();
 
       List<ReqOutputKeyProjection> keyProjections = mapProjection.keys();
       if (keyProjections == null) {
@@ -149,6 +151,19 @@ public class UsersResource extends Resource {
 
     private Person fetchPerson(@NotNull PersonId pid) {
       Integer id = pid.getVal();
+
+      final Person bestFriend;
+      final UserRecord.@NotNull Builder bestFriendRecord = UserRecord.create()
+          .setId(PersonId.create(id + 1))
+          .setFirstName(String.create("First" + (id + 1)))
+          .setLastName(String.create("Last" + (id + 1)))
+          .setProfile(Url.create("http://google.com/" + (id + 1)));
+
+      if (id % 5 == 0)
+        bestFriend = Person.create().setId(PersonId.create(id + 1)).setRecord(bestFriendRecord);
+      else
+        bestFriend = User.create().setId(UserId.create(id + 1)).setRecord(bestFriendRecord);
+
       return User
           .create()
           .setId(UserId.create(pid.getVal()))
@@ -158,14 +173,7 @@ public class UsersResource extends Resource {
               .setFirstName(epigraph.String.create("First" + id))
               .setLastName(epigraph.String.create("Last" + id))
               .setProfile_Error(new ErrorValue(404, "Not Found", null))
-              .setBestFriend$(User.create()
-                  .setId(UserId.create(id + 1))
-                  .setRecord(UserRecord.create()
-                      .setId(PersonId.create(id + 1))
-                      .setFirstName(epigraph.String.create("First" + (id + 1)))
-                      .setLastName(epigraph.String.create("Last" + (id + 1)))
-                      .setProfile(Url.create("http://google.com/" + (id + 1)))
-                  )
+              .setBestFriend$(bestFriend
               )
               .setWorstEnemy(UserRecord.create()
                   .setId(PersonId.create(id + 2))

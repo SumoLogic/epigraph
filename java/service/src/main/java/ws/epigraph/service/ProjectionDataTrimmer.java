@@ -37,9 +37,11 @@ public class ProjectionDataTrimmer { // todo move somewhere else? Generify?
     @NotNull final Data.Raw raw = data._raw();
     @NotNull final Data.Builder.Raw b = data.type().createDataBuilder()._raw();
 
-    for (Map.Entry<String, ReqOutputTagProjectionEntry> entry : projection.tagProjections().entrySet()) {
+    ReqOutputVarProjection normalizedProjection = projection.normalizedForType(data.type());
+
+    for (Map.Entry<String, ReqOutputTagProjectionEntry> entry : normalizedProjection.tagProjections().entrySet()) {
       final String tagName = entry.getKey();
-      final Type.Tag tag = projection.type().tagsMap().get(tagName);
+      final Type.Tag tag = normalizedProjection.type().tagsMap().get(tagName);
 
       @Nullable final Val val = raw.getValue(tag);
       if (val != null) {
@@ -50,8 +52,6 @@ public class ProjectionDataTrimmer { // todo move somewhere else? Generify?
         if (datum != null) b.setDatum(tag, trimDatum(datum, entry.getValue().projection()));
       }
     }
-
-    // todo deal with tails
 
     return b;
   }

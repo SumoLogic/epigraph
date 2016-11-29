@@ -212,18 +212,24 @@ public class UndertowHandler implements HttpHandler {
     responseFuture.whenComplete((readOperationResponse, throwable) -> {
       Sender sender = exchange.getResponseSender();
 
-      if (throwable == null) {
+      try {
+        if (throwable == null) {
 
-        @Nullable Data data = readOperationResponse.getData();
-        writeDataResponse(pathSteps, reqProjection, data, exchange);
+          @Nullable Data data = readOperationResponse.getData();
+          writeDataResponse(pathSteps, reqProjection, data, exchange);
 
-      } else {
-        // todo this can be a non-500
+        } else {
+          // todo this can be a non-500
 
-        serverError(throwable.getMessage(), TEXT, exchange);
+          serverError(throwable.getMessage(), TEXT, exchange);
+        }
+      } catch (Exception e) {
+        e.printStackTrace();
+        serverError(e.getMessage(), TEXT, exchange);
+      } finally {
+        sender.close();
       }
 
-      sender.close();
     });
   }
 

@@ -18,21 +18,14 @@
 
 package ws.epigraph.wire.json;
 
-import ws.epigraph.projections.abs.AbstractVarProjection;
-import ws.epigraph.projections.req.output.ReqOutputFieldProjectionEntry;
-import ws.epigraph.projections.req.output.ReqOutputModelProjection;
-import ws.epigraph.projections.req.output.ReqOutputRecordModelProjection;
-import ws.epigraph.projections.req.output.ReqOutputTagProjectionEntry;
-import ws.epigraph.projections.req.output.ReqOutputVarProjection;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import ws.epigraph.projections.req.output.*;
 import ws.epigraph.types.RecordType.Field;
 import ws.epigraph.types.Type;
 import ws.epigraph.types.Type.Tag;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
-import java.util.List;
-import java.util.ListIterator;
 import java.util.function.Supplier;
 
 public abstract class JsonFormatCommon {
@@ -62,21 +55,21 @@ public abstract class JsonFormatCommon {
     return acc;
   }
 
-  // todo remove, use AbstractVarProjection#linearizeTails instead
-  public static @NotNull Type mostSpecificType(
-      @NotNull List<? extends AbstractVarProjection> projections // non-empty, polymorphic tails ignored
-  ) {
-    Type type = null;
-    for (
-        ListIterator<? extends AbstractVarProjection> it = projections.listIterator(projections.size());
-        it.hasPrevious();
-        ) {
-      Type vpType = it.previous().type();
-      if (type == null || type.isAssignableFrom(vpType)) type = vpType;
-    }
-    assert type != null : "empty projections";
-    return type;
-  }
+//
+//  public static @NotNull Type mostSpecificType(
+//      @NotNull List<? extends AbstractVarProjection> projections // non-empty, polymorphic tails ignored
+//  ) {
+//    Type type = null;
+//    for (
+//        ListIterator<? extends AbstractVarProjection> it = projections.listIterator(projections.size());
+//        it.hasPrevious();
+//        ) {
+//      Type vpType = it.previous().type();
+//      if (type == null || type.isAssignableFrom(vpType)) type = vpType;
+//    }
+//    assert type != null : "empty projections";
+//    return type;
+//  }
 
   @Deprecated // use monoTag(projections) == null
   public static boolean needMultiRendering(@NotNull Iterable<? extends ReqOutputVarProjection> projections) {

@@ -20,6 +20,7 @@ package ws.epigraph.wire.json;
 
 import ws.epigraph.data.*;
 import ws.epigraph.errors.ErrorValue;
+import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.req.output.*;
 import ws.epigraph.types.DatumType;
 import ws.epigraph.types.RecordType;
@@ -62,11 +63,13 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
 
   private void writeData(
       boolean renderPoly,
-      @NotNull Deque<? extends ReqOutputVarProjection> projections, // non-empty, polymorphic tails ignored
+      @NotNull Deque<ReqOutputVarProjection> projections, // non-empty, polymorphic tails ignored
       @NotNull Data data
   ) throws IOException {
-    Type type = projections.peekLast()
-        .type(); // use deepest match type from here on // TODO use JsonFormatCommon.mostSpecificType()
+//    Type type = projections.peekLast()
+//        .type(); // use deepest match type from here on
+    final List<ReqOutputVarProjection> linearizedTails = ProjectionUtils.linearizeTails(data.type(), projections);
+    Type type = linearizedTails.get(0).type();
     // TODO check all projections (not just the ones that matched actual data type)?
     boolean renderMulti = type.kind() == TypeKind.UNION && needMultiRendering(projections);
     if (renderPoly) {
@@ -77,7 +80,7 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
     if (renderMulti) out.write('{');
     boolean comma = false;
     for (Tag tag : type.tags()) {
-      Deque<? extends ReqOutputModelProjection> tagModelProjections =
+      Deque<ReqOutputModelProjection> tagModelProjections =
           tagModelProjections(tag, projections, () -> new ArrayDeque<>(projections.size()));
       if (tagModelProjections != null) { // if this tag was mentioned in at least one projection
         if (renderMulti) {
@@ -94,7 +97,7 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
     if (renderPoly) out.write('}');
   }
 
-  private void writeValue(@NotNull Deque<? extends ReqOutputModelProjection> projections, @Nullable Val value)
+  private void writeValue(@NotNull Deque<ReqOutputModelProjection> projections, @Nullable Val value)
       throws IOException {
     if (value == null) { // TODO in case of null value we should probably render NO_VALUE error?
       out.write("null");
@@ -121,19 +124,19 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
       DatumType model = projections.peekLast().model();
       switch (model.kind()) {
         case RECORD:
-          writeRecord((Deque<? extends ReqOutputRecordModelProjection>) projections, (RecordDatum) datum);
+          writeRecord((Deque<ReqOutputRecordModelProjection>) projections, (RecordDatum) datum);
           break;
         case MAP:
-          writeMap((Deque<? extends ReqOutputMapModelProjection>) projections, (MapDatum) datum);
+          writeMap((Deque<ReqOutputMapModelProjection>) projections, (MapDatum) datum);
           break;
         case LIST:
-          writeList((Deque<? extends ReqOutputListModelProjection>) projections, (ListDatum) datum);
+          writeList((Deque<ReqOutputListModelProjection>) projections, (ListDatum) datum);
           break;
         case PRIMITIVE:
-          writePrimitive((Deque<? extends ReqOutputPrimitiveModelProjection>) projections, (PrimitiveDatum) datum);
+          writePrimitive((Deque<ReqOutputPrimitiveModelProjection>) projections, (PrimitiveDatum) datum);
           break;
         case ENUM:
-//            writeEnum((Deque<? extends ReqOutputEnumModelProjection>) modelProjections, (EnumDatum) datum);
+//            writeEnum((Deque<ReqOutputEnumModelProjection>) modelProjections, (EnumDatum) datum);
 //            break;
         case UNION:
         default:
@@ -152,7 +155,7 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
   }
 
   private void writeRecord(
-      @NotNull Deque<? extends ReqOutputRecordModelProjection> projections, // non-empty
+      @NotNull Deque<ReqOutputRecordModelProjection> projections, // non-empty
       @NotNull RecordDatum datum
   ) throws IOException {
     out.write('{');
@@ -160,7 +163,7 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
     RecordType type = projections.peekLast().model();
     boolean comma = false;
     for (Field field : type.fields()) {
-      Deque<? extends ReqOutputVarProjection> varProjections =
+      Deque<ReqOutputVarProjection> varProjections =
           fieldVarProjections(projections, field, () -> new ArrayDeque<>(projections.size()));
       if (varProjections != null) { // if this field was mentioned in at least one projection
         Data fieldData = datum._raw().getData(field);
@@ -182,17 +185,17 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
   }
 
   private void writeMap(
-      @NotNull Deque<? extends ReqOutputMapModelProjection> projections, // non-empty
+      @NotNull Deque<ReqOutputMapModelProjection> projections, // non-empty
       @NotNull MapDatum datum
   ) throws IOException {
     out.write("[");
-    List<? extends ReqOutputKeyProjection> keyProjections = keyProjections(projections);
-    Deque<? extends ReqOutputVarProjection> valueProjections = subProjections(
+    List<ReqOutputKeyProjection> keyProjections = keyProjections(projections);
+    Deque<ReqOutputVarProjection> valueProjections = subProjections(
         projections,
         ReqOutputMapModelProjection::itemsProjection
     );
     boolean polymorphicValue = valueProjections.stream().anyMatch(vp -> vp.polymorphicTails() != null);
-    Map<Type, Deque<? extends ReqOutputVarProjection>> polymorphicCache = polymorphicValue ? new HashMap<>() : null;
+    Map<Type, Deque<ReqOutputVarProjection>> polymorphicCache = polymorphicValue ? new HashMap<>() : null;
     if (keyProjections == null) writeMapEntries(
         valueProjections,
         polymorphicCache,
@@ -211,8 +214,8 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
   }
 
   /** Builds a superset of all key projections. `null` is treated as wildcard and yields wildcard result immediately. */
-  private static @Nullable List<? extends ReqOutputKeyProjection> keyProjections(
-      @NotNull Deque<? extends ReqOutputMapModelProjection> projections // non-empty
+  private static @Nullable List<ReqOutputKeyProjection> keyProjections(
+      @NotNull Deque<ReqOutputMapModelProjection> projections // non-empty
   ) {
     switch (projections.size()) {
       case 0:
@@ -222,7 +225,7 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
       default:
         List<ReqOutputKeyProjection> keys = null;
         for (ReqOutputMapModelProjection projection : projections) {
-          List<? extends ReqOutputKeyProjection> projectionKeys = projection.keys();
+          List<ReqOutputKeyProjection> projectionKeys = projection.keys();
           if (projectionKeys == null) return null;
           if (keys == null) keys = new ArrayList<>(projectionKeys);
           else keys.addAll(projectionKeys);
@@ -231,7 +234,7 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
     }
   }
 
-  private static <P> @NotNull Deque<? extends ReqOutputVarProjection> subProjections(
+  private static <P> @NotNull Deque<ReqOutputVarProjection> subProjections(
       @NotNull Deque<? extends P> projections, // non-empty
       @NotNull Function<P, ReqOutputVarProjection> varFunc
   ) {
@@ -242,8 +245,8 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
   }
 
   private <E> void writeMapEntries(
-      @NotNull Deque<? extends ReqOutputVarProjection> valueProjections,
-      @Nullable Map<Type, Deque<? extends ReqOutputVarProjection>> polymorphicCache,
+      @NotNull Deque<ReqOutputVarProjection> valueProjections,
+      @Nullable Map<Type, Deque<ReqOutputVarProjection>> polymorphicCache,
       @NotNull Iterable<E> entries,
       @NotNull Function<E, @NotNull Datum> keyFunc,
       @NotNull Function<E, @Nullable Data> valueFunc
@@ -258,7 +261,7 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
         out.write("{\"" + JsonFormat.MAP_ENTRY_KEY_FIELD + "\":");
         writeDatum(key);
         out.write(",\"" + JsonFormat.MAP_ENTRY_VALUE_FIELD + "\":");
-        Deque<? extends ReqOutputVarProjection> flatValueProjections = polymorphicCache == null
+        Deque<ReqOutputVarProjection> flatValueProjections = polymorphicCache == null
             ? valueProjections
             : polymorphicCache.computeIfAbsent(valueData.type(), t -> flatten(new ArrayDeque<>(), valueProjections, t));
         writeData(polymorphicCache != null, flatValueProjections, valueData);
@@ -267,21 +270,21 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
     }
   }
 
-  private void writeList(@NotNull Deque<? extends ReqOutputListModelProjection> projections, @NotNull ListDatum datum)
+  private void writeList(@NotNull Deque<ReqOutputListModelProjection> projections, @NotNull ListDatum datum)
       throws IOException {
     out.write('[');
-    Deque<? extends ReqOutputVarProjection> elementProjections = subProjections(
+    Deque<ReqOutputVarProjection> elementProjections = subProjections(
         projections,
         ReqOutputListModelProjection::itemsProjection
     );
     // TODO extract following to separate method and re-use in maps, too?
     boolean polymorphicValue = elementProjections.stream().anyMatch(vp -> vp.polymorphicTails() != null);
-    Map<Type, Deque<? extends ReqOutputVarProjection>> polymorphicCache = polymorphicValue ? new HashMap<>() : null;
+    Map<Type, Deque<ReqOutputVarProjection>> polymorphicCache = polymorphicValue ? new HashMap<>() : null;
     boolean comma = false;
     for (Data element : datum._raw().elements()) {
       if (comma) out.write(',');
       else comma = true;
-      Deque<? extends ReqOutputVarProjection> flatElementProjections = polymorphicCache == null
+      Deque<ReqOutputVarProjection> flatElementProjections = polymorphicCache == null
           ? elementProjections
           : polymorphicCache.computeIfAbsent(element.type(), t -> flatten(new ArrayDeque<>(), elementProjections, t));
       writeData(polymorphicCache != null, flatElementProjections, element);
@@ -290,11 +293,11 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
   }
 
   private void writePrimitive(
-      @NotNull Deque<? extends ReqOutputPrimitiveModelProjection> projections,
+      @NotNull Deque<ReqOutputPrimitiveModelProjection> projections,
       @NotNull PrimitiveDatum datum
   ) throws IOException { writePrimitive(datum); }
 
-  private static @NotNull Deque<? extends ReqOutputVarProjection> varProjections(
+  private static @NotNull Deque<ReqOutputVarProjection> varProjections(
       @NotNull ReqOutputVarProjection projection,
       @NotNull Type varType
   ) { return append(new ArrayDeque<>(projection.polymorphicDepth() + 1), projection, varType); }

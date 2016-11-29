@@ -125,6 +125,13 @@ public class ProjectionUtils {
 
   public static <VP extends GenVarProjection<VP, ?, ?>> List<VP> linearizeTails(
       @NotNull Type t,
+      @NotNull Deque<VP> tails) {
+
+    return linearizeTails(t, tails, new LinkedList<>());
+  }
+
+  public static <VP extends GenVarProjection<VP, ?, ?>> List<VP> linearizeTails(
+      @NotNull Type t,
       @NotNull List<VP> tails) {
 
     if (tails.isEmpty()) return Collections.emptyList();
@@ -145,7 +152,7 @@ public class ProjectionUtils {
 
   public static <VP extends GenVarProjection<VP, ?, ?>> List<VP> linearizeTails(
       @NotNull Type type,
-      @NotNull List<VP> tails,
+      @NotNull Collection<VP> tails,
       @NotNull LinkedList<VP> linearizedTails) {
 
     final Optional<VP> matchingTailOpt = tails.stream().filter(tail -> tail.type().isAssignableFrom(type)).findFirst();
