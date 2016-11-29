@@ -95,7 +95,7 @@ public class ReqUpdateProjectionsPrettyPrinter<E extends Exception>
     if (fieldProjection.update()) l.print("+");
     l.print(fieldName);
 
-    printParams(fieldProjection.reqParams());
+    printParams(fieldProjection.params());
     printAnnotations(fieldAnnotations);
 
     if (!isPrintoutEmpty(fieldVarProjection)) {

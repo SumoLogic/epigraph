@@ -44,7 +44,7 @@ public abstract class AbstractReqProjectionsPrettyPrinter<
   protected void printParams(@NotNull ReqParams params) throws E { // move to req common?
     l.beginCInd();
     if (!params.isEmpty()) {
-      for (ReqParam param : params.params().values()) {
+      for (ReqParam param : params.asMap().values()) {
         l.brk().beginIInd();
         l.print(";").print(param.name()).brk().print("=").brk();
         dataPrinter.print(param.value());

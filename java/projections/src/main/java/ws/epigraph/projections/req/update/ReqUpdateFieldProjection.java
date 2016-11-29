@@ -16,25 +16,23 @@
 
 package ws.epigraph.projections.req.update;
 
+import org.jetbrains.annotations.NotNull;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
-import ws.epigraph.projections.abs.AbstractFieldProjection;
+import ws.epigraph.projections.req.AbstractReqFieldProjection;
 import ws.epigraph.projections.req.ReqParams;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class ReqUpdateFieldProjection extends AbstractFieldProjection<
+public class ReqUpdateFieldProjection extends AbstractReqFieldProjection<
     ReqUpdateVarProjection,
     ReqUpdateTagProjectionEntry,
     ReqUpdateModelProjection<?, ?>,
     ReqUpdateFieldProjection
     > {
-  @NotNull
-  private final ReqParams reqParams;
   private final boolean update;
 
   public ReqUpdateFieldProjection(
@@ -43,28 +41,23 @@ public class ReqUpdateFieldProjection extends AbstractFieldProjection<
       @NotNull ReqUpdateVarProjection projection,
       boolean update,
       @NotNull TextLocation location) {
-    super(annotations, projection, location);
-    this.reqParams = reqParams;
+    super(reqParams, annotations, projection, location);
     this.update = update;
   }
-
-  @NotNull
-  public ReqParams reqParams() { return reqParams; }
 
   public boolean update() { return update; }
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(final Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     if (!super.equals(o)) return false;
-    ReqUpdateFieldProjection that = (ReqUpdateFieldProjection) o;
-    return update == that.update &&
-           Objects.equals(reqParams, that.reqParams);
+    final ReqUpdateFieldProjection that = (ReqUpdateFieldProjection) o;
+    return update == that.update;
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(super.hashCode(), reqParams, update);
+    return Objects.hash(super.hashCode(), update);
   }
 }

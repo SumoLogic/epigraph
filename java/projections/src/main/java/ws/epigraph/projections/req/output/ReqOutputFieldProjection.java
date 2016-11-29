@@ -16,25 +16,24 @@
 
 package ws.epigraph.projections.req.output;
 
+import org.jetbrains.annotations.NotNull;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
-import ws.epigraph.projections.abs.AbstractFieldProjection;
+import ws.epigraph.projections.req.AbstractReqFieldProjection;
 import ws.epigraph.projections.req.ReqParams;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class ReqOutputFieldProjection extends AbstractFieldProjection<
+public class ReqOutputFieldProjection extends AbstractReqFieldProjection<
     ReqOutputVarProjection,
     ReqOutputTagProjectionEntry,
     ReqOutputModelProjection<?, ?>,
     ReqOutputFieldProjection
     > {
-  @NotNull
-  private final ReqParams reqParams;
+
   private final boolean required;
 
   public ReqOutputFieldProjection(
@@ -43,28 +42,23 @@ public class ReqOutputFieldProjection extends AbstractFieldProjection<
       @NotNull ReqOutputVarProjection projection,
       boolean required,
       @NotNull TextLocation location) {
-    super(annotations, projection, location);
-    this.reqParams = reqParams;
+    super(reqParams, annotations, projection, location);
     this.required = required;
   }
-
-  @NotNull
-  public ReqParams reqParams() { return reqParams; }
 
   public boolean required() { return required; }
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(final Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     if (!super.equals(o)) return false;
-    ReqOutputFieldProjection that = (ReqOutputFieldProjection) o;
-    return required == that.required &&
-           Objects.equals(reqParams, that.reqParams);
+    final ReqOutputFieldProjection that = (ReqOutputFieldProjection) o;
+    return required == that.required;
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(super.hashCode(), reqParams, required);
+    return Objects.hash(super.hashCode(), required);
   }
 }

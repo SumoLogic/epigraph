@@ -98,7 +98,7 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
 
   // todo port to AbstractReqProjectionsPrettyPrinter too
   public void print(@NotNull RP recordProjection) throws E {
-    Map<String, FPE> fieldProjections = recordProjection.fieldProjections(); // todo why is it unchecked?
+    Map<String, FPE> fieldProjections = recordProjection.fieldProjections();
 
     l.print("(").beginCInd();
     boolean first = true;

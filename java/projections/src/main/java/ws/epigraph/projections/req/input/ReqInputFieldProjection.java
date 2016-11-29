@@ -19,47 +19,24 @@ package ws.epigraph.projections.req.input;
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
-import ws.epigraph.projections.abs.AbstractFieldProjection;
+import ws.epigraph.projections.req.AbstractReqFieldProjection;
 import ws.epigraph.projections.req.ReqParams;
-
-import java.util.Objects;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class ReqInputFieldProjection extends AbstractFieldProjection<
+public class ReqInputFieldProjection extends AbstractReqFieldProjection<
     ReqInputVarProjection,
     ReqInputTagProjectionEntry,
     ReqInputModelProjection<?, ?>,
     ReqInputFieldProjection
     > {
-  @NotNull
-  private final ReqParams reqParams;
 
   public ReqInputFieldProjection(
       @NotNull ReqParams reqParams,
       @NotNull Annotations annotations,
       @NotNull ReqInputVarProjection projection,
       @NotNull TextLocation location) {
-    super(annotations, projection, location);
-    this.reqParams = reqParams;
-  }
-
-  @NotNull
-  public ReqParams reqParams() { return reqParams; }
-
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    if (!super.equals(o)) return false;
-    ReqInputFieldProjection that = (ReqInputFieldProjection) o;
-    return Objects.equals(reqParams, that.reqParams);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(super.hashCode(), reqParams );
+    super(reqParams, annotations, projection, location);
   }
 }

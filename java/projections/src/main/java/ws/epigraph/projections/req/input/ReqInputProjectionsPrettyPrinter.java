@@ -93,7 +93,7 @@ public class ReqInputProjectionsPrettyPrinter<E extends Exception>
     l.beginIInd();
     l.print(fieldName);
 
-    printParams(fieldProjection.reqParams());
+    printParams(fieldProjection.params());
     printAnnotations(fieldAnnotations);
 
     if (!isPrintoutEmpty(fieldVarProjection)) {

@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -61,7 +62,30 @@ public class ReqParams {
   public ReqParam get(@NotNull String key) { return params.get(key); }
 
   @NotNull
-  public Map<String, ReqParam> params() { return params; }
+  public Map<String, ReqParam> asMap() { return params; }
+
+  @NotNull
+  public static ReqParams merge(@NotNull Stream<ReqParams> paramsToMerge) {
+    Map<String,ReqParam> entries = new HashMap<>();
+    
+    paramsToMerge.forEach(params -> {
+      for (final Map.Entry<String, ReqParam> entry : params.asMap().entrySet()) {
+        String key = entry.getKey();
+        if (!entries.containsKey(key))
+          entries.put(key, entry.getValue());
+      }
+    });
+
+    return new ReqParams(entries);
+  }
+  
+  @NotNull
+  public static ReqParams merge(@NotNull Collection<ReqParams> paramsToMerge) {
+    if (paramsToMerge.isEmpty()) return EMPTY;
+    if (paramsToMerge.size() == 1) return paramsToMerge.iterator().next();
+
+    return merge(paramsToMerge.stream());
+  }
 
   @Override
   public boolean equals(Object o) {
