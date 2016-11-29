@@ -28,7 +28,11 @@ import ws.epigraph.tests.*;
 import ws.epigraph.types.DataType;
 import ws.epigraph.types.Type;
 
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static ws.epigraph.test.TestUtil.*;
 
 /**
@@ -118,12 +122,25 @@ public class OpOutputProjectionsTest {
 
   @Test
   public void testParseDoubleTail() throws PsiProcessingException {
-    testParsingVarProjection(
+    final OpOutputVarProjection projection = testParsingVarProjection(
         dataType,
         "~ws.epigraph.tests.User :id ~ws.epigraph.tests.SubUser :id"
         ,
         ":id ~ws.epigraph.tests.User :id ~ws.epigraph.tests.SubUser :id"
     );
+
+    List<OpOutputVarProjection> tails = projection.polymorphicTails();
+    assertNotNull(tails);
+    assertEquals(1, tails.size());
+    OpOutputVarProjection tail = tails.get(0);
+
+    tails = tail.polymorphicTails();
+    assertNotNull(tails);
+    assertEquals(1, tails.size());
+    tail = tails.get(0);
+
+    tails = tail.polymorphicTails();
+    assertNull(tails);
   }
 
   @Test
@@ -190,31 +207,31 @@ public class OpOutputProjectionsTest {
     testTailsNormalization(
         ":record(id)~ws.epigraph.tests.User :record(firstName) ~ws.epigraph.tests.SubUser :record(lastName)",
         User.type,
-        ":record ( firstName, id )"
+        ":record ( firstName, id ) ~ws.epigraph.tests.SubUser :record ( lastName )"
     );
 
     testTailsNormalization(
         ":record(id)~ws.epigraph.tests.User :record(firstName) ~ws.epigraph.tests.SubUser :record(lastName)",
         SubUser.type,
-        ":record ( lastName, firstName, id )"
+        ":record ( lastName, firstName, id ) ~ws.epigraph.tests.SubUser :record ( lastName )"
     );
 
     testTailsNormalization(
         ":record(id)~ws.epigraph.tests.User :record(firstName) ~ws.epigraph.tests.SubUser :record(lastName)",
         User2.type,
-        ":record ( id )"
+        ":record ( id ) ~ws.epigraph.tests.User :record ( firstName ) ~ws.epigraph.tests.SubUser :record ( lastName )"
     );
 
     testTailsNormalization(
         ":record(id)~(ws.epigraph.tests.User :record(firstName) ~ws.epigraph.tests.SubUser :record(lastName), ws.epigraph.tests.User2 :record(bestFriend:id))",
         User.type,
-        ":record ( firstName, id )"
+        ":record ( firstName, id ) ~ws.epigraph.tests.SubUser :record ( lastName )"
     );
 
     testTailsNormalization(
         ":record(id)~(ws.epigraph.tests.User :record(firstName) ~ws.epigraph.tests.SubUser :record(lastName), ws.epigraph.tests.User2 :record(bestFriend:id))",
         SubUser.type,
-        ":record ( lastName, firstName, id )"
+        ":record ( lastName, firstName, id ) ~ws.epigraph.tests.SubUser :record ( lastName )"
     );
 
     testTailsNormalization(
@@ -257,7 +274,7 @@ public class OpOutputProjectionsTest {
     testParsingVarProjection(dataType, str, expected);
   }
 
-  private void testParsingVarProjection(DataType varDataType, String projectionString, String expected)
+  private OpOutputVarProjection testParsingVarProjection(DataType varDataType, String projectionString, String expected)
       throws PsiProcessingException {
 
     OpOutputVarProjection varProjection = parseOpOutputVarProjection(varDataType, projectionString);
@@ -266,6 +283,8 @@ public class OpOutputProjectionsTest {
 
     assertEquals("\n" + actual, expected, actual);
 //    assertEquals(expected.trim(), actual.trim());
+
+    return varProjection;
   }
 
   private OpOutputVarProjection parseOpOutputVarProjection(DataType varDataType, String projectionString) {

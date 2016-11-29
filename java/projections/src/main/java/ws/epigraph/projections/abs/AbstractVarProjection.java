@@ -140,17 +140,20 @@ public abstract class AbstractVarProjection<
     final List<VP> linearizedTails = linearizeTails(targetType, polymorphicTails);
 
     if (linearizedTails.isEmpty())
-      return stripTails(self());
+      return self();
+//    return stripTails(self());
 
     final Type effectiveType = linearizedTails.get(0).type();
 
     final List<VP> effectiveProjections = new ArrayList<>(linearizedTails);
+    @Nullable final List<VP> mergedTails = mergeTails(effectiveProjections);
+
     effectiveProjections.add(self()); //we're the least specific projection
 
     final Set<Type.Tag> tags = collectTags(effectiveProjections);
     final LinkedHashMap<String, TP> mergedTags = mergeTags(tags, effectiveProjections);
 
-    return merge(effectiveType, effectiveProjections, mergedTags, null);
+    return merge(effectiveType, effectiveProjections, mergedTags, mergedTails);
   }
 
   @NotNull
@@ -205,6 +208,7 @@ public abstract class AbstractVarProjection<
 
   @NotNull
   private List<VP> linearizeTails(@NotNull Type t, @NotNull List<VP> tails) {
+    // todo move to common utils
 
     if (tails.isEmpty()) return Collections.emptyList();
     if (tails.size() == 1) {
@@ -232,7 +236,8 @@ public abstract class AbstractVarProjection<
 
     if (matchingTailOpt.isPresent()) {
       final VP matchingTail = matchingTailOpt.get();
-      linearizedTails.addFirst(stripTails(matchingTail));
+      linearizedTails.addFirst(matchingTail);
+//      linearizedTails.addFirst(stripTails(matchingTail));
 
       final List<VP> tails2 = matchingTail.polymorphicTails();
       if (tails2 != null)
@@ -265,11 +270,11 @@ public abstract class AbstractVarProjection<
       final @Nullable List<VP> mergedTails) {
     throw new RuntimeException("not implemented"); // todo make abstract
   }
-
-  @NotNull
-  protected VP stripTails(@NotNull VP vp) {
-    return merge(vp.type(), Collections.singletonList(vp), vp.tagProjections(), null);
-  }
+//
+//  @NotNull
+//  protected VP stripTails(@NotNull VP vp) {
+//    return merge(vp.type(), Collections.singletonList(vp), vp.tagProjections(), null);
+//  }
 
   @SuppressWarnings("unchecked")
   @NotNull

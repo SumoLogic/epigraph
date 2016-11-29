@@ -335,7 +335,7 @@ public class ReqOutputProjectionsPsiParser {
   private static List<ReqOutputVarProjection> parseTails(
       @NotNull DataType dataType,
       @NotNull OpOutputVarProjection op,
-      @Nullable UrlReqOutputVarPolymorphicTail tailPsi,
+      @Nullable UrlReqOutputVarPolymorphicTail psi,
       @NotNull TypesResolver typesResolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
@@ -343,11 +343,11 @@ public class ReqOutputProjectionsPsiParser {
 
     @NotNull TypesResolver subResolver = addTypeNamespace(dataType.type, typesResolver);
 
-    if (tailPsi != null) {
+    if (psi != null) {
 
       tails = new ArrayList<>();
 
-      @Nullable UrlReqOutputVarSingleTail singleTail = tailPsi.getReqOutputVarSingleTail();
+      @Nullable UrlReqOutputVarSingleTail singleTail = psi.getReqOutputVarSingleTail();
       if (singleTail != null) {
         @NotNull UrlTypeRef tailTypeRef = singleTail.getTypeRef();
         @NotNull UrlReqOutputComaVarProjection psiTailProjection = singleTail.getReqOutputComaVarProjection();
@@ -355,7 +355,7 @@ public class ReqOutputProjectionsPsiParser {
             buildTailProjection(dataType, op, tailTypeRef, psiTailProjection, subResolver, errors);
         tails.add(tailProjection);
       } else {
-        @Nullable UrlReqOutputVarMultiTail multiTail = tailPsi.getReqOutputVarMultiTail();
+        @Nullable UrlReqOutputVarMultiTail multiTail = psi.getReqOutputVarMultiTail();
         assert multiTail != null;
         Type prevTailType = null;
 

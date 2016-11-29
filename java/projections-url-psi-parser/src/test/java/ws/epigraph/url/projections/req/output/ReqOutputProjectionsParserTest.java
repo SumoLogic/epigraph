@@ -43,6 +43,12 @@ public class ReqOutputProjectionsParserTest {
       User.type,
       UserId.type,
       UserRecord.type,
+      User2.type,
+      UserId2.type,
+      UserRecord2.type,
+      SubUser.type,
+      SubUserId.type,
+      SubUserRecord.type,
       epigraph.String.type
   );
 
@@ -64,7 +70,11 @@ public class ReqOutputProjectionsParserTest {
           "    friends *( :id ),",
           "    friendsMap [;keyParam:epigraph.String]( :(id, record (id, firstName) ) )",
           "  )",
-          ") ~ws.epigraph.tests.User :record (profile)"
+          ") ~(",
+          "      ws.epigraph.tests.User :record (profile)",
+          "        ~ws.epigraph.tests.SubUser :record (worstEnemy(id)),",
+          "      ws.epigraph.tests.User2 :record (worstEnemy(id))",
+          ")"
       )
   );
 
@@ -115,6 +125,15 @@ public class ReqOutputProjectionsParserTest {
   }
 
   @Test
+  public void testParseDoubleTail() {
+    testParse(
+        ":id ~User :record ( profile ) ~SubUser :record (worstEnemy(id))",
+        ":id ~ws.epigraph.tests.User :record ( profile ) ~ws.epigraph.tests.SubUser :record ( worstEnemy ( id ) )",
+        1
+    );
+  }
+
+  @Test
   public void testStarTags() {
     testParse(
         ":*",
@@ -147,7 +166,7 @@ public class ReqOutputProjectionsParserTest {
     testParse(expr, expr, steps);
   }
 
-  private void testParse(String expr, String expectedProjection, int steps) {
+  private ReqOutputVarProjection testParse(String expr, String expectedProjection, int steps) {
     @NotNull final StepsAndProjection<ReqOutputVarProjection> stepsAndProjection =
         parseReqOutputVarProjection(dataType, personOpProjection, expr, resolver);
 
@@ -158,6 +177,8 @@ public class ReqOutputProjectionsParserTest {
     final String actual =
         s.replaceAll("\"", "'"); // pretty printer outputs double quotes, we use single quotes in URLs
     assertEquals(expectedProjection, actual);
+
+    return stepsAndProjection.projection();
   }
 
   @NotNull

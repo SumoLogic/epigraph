@@ -2,6 +2,10 @@
 All done!
 
 #Horizon 2
+- [ ] Marshaller for output data
+  - [ ] Code clean up
+  - [x] Add unit tests
+  - [ ] Make more generic?
 - [ ] Unmarshallers for create/update/custom body
   - [ ] must be guidable by op input projection
   - [ ] must be guidable by req input projection

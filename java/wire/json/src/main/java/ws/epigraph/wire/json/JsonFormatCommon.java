@@ -62,6 +62,7 @@ public abstract class JsonFormatCommon {
     return acc;
   }
 
+  // todo remove, use AbstractVarProjection#linearizeTails instead
   public static @NotNull Type mostSpecificType(
       @NotNull List<? extends AbstractVarProjection> projections // non-empty, polymorphic tails ignored
   ) {
