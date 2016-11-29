@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package ws.epigraph.projections.req.output;
+package ws.epigraph.projections.req;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
-import ws.epigraph.projections.req.AbstractReqModelProjection;
-import ws.epigraph.projections.req.ReqParams;
+import ws.epigraph.projections.abs.AbstractModelProjection;
 import ws.epigraph.types.DatumType;
 
 import java.util.Objects;
@@ -29,37 +28,39 @@ import java.util.Objects;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public abstract class ReqOutputModelProjection<
-    MP extends ReqOutputModelProjection</*MP*/?, ?>,
+public abstract class AbstractReqModelProjection<
+    MP extends AbstractReqModelProjection</*MP*/?, ?>,
     M extends DatumType>
-    extends AbstractReqModelProjection<MP, M> {
+    extends AbstractModelProjection<MP, M> {
 
-  protected final boolean required;
+  @NotNull
+  protected final ReqParams params;
 
-  public ReqOutputModelProjection(
-      @NotNull M model,
-      boolean required,
+  public AbstractReqModelProjection(
+      @NotNull final M model,
       @NotNull ReqParams params,
-      @NotNull Annotations annotations,
-      @Nullable MP metaProjection,
-      @NotNull TextLocation location) {
-    super(model, params, metaProjection, annotations, location);
-    this.required = required;
+      @Nullable final MP metaProjection,
+      @NotNull final Annotations annotations,
+      @NotNull final TextLocation location) {
+
+    super(model, metaProjection, annotations, location);
+    this.params = params;
   }
 
-  public boolean required() { return required; }
+  @NotNull
+  public ReqParams params() { return params; }
 
   @Override
   public boolean equals(final Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     if (!super.equals(o)) return false;
-    final ReqOutputModelProjection<?, ?> that = (ReqOutputModelProjection<?, ?>) o;
-    return required == that.required;
+    final AbstractReqModelProjection<?, ?> that = (AbstractReqModelProjection<?, ?>) o;
+    return Objects.equals(params, that.params);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(super.hashCode(), required);
+    return Objects.hash(super.hashCode(), params);
   }
 }

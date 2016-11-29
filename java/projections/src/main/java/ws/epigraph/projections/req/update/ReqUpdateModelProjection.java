@@ -16,12 +16,12 @@
 
 package ws.epigraph.projections.req.update;
 
+import org.jetbrains.annotations.NotNull;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
-import ws.epigraph.projections.abs.AbstractModelProjection;
+import ws.epigraph.projections.req.AbstractReqModelProjection;
 import ws.epigraph.projections.req.ReqParams;
 import ws.epigraph.types.DatumType;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
@@ -31,11 +31,9 @@ import java.util.Objects;
 public abstract class ReqUpdateModelProjection<
     MP extends ReqUpdateModelProjection</*MP*/?, ?>,
     M extends DatumType>
-    extends AbstractModelProjection<MP, M> {
+    extends AbstractReqModelProjection<MP, M> {
 
   protected final boolean update;
-  @NotNull
-  protected final ReqParams params;
 
   public ReqUpdateModelProjection(
       @NotNull M model,
@@ -43,9 +41,8 @@ public abstract class ReqUpdateModelProjection<
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
       @NotNull TextLocation location) {
-    super(model, null, annotations, location);
+    super(model, params, null, annotations, location);
     this.update = update;
-    this.params = params;
   }
 
   /**
@@ -53,21 +50,17 @@ public abstract class ReqUpdateModelProjection<
    */
   public boolean update() { return update; }
 
-  @NotNull
-  public ReqParams params() { return params; }
-
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(final Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     if (!super.equals(o)) return false;
-    ReqUpdateModelProjection<?, ?> that = (ReqUpdateModelProjection<?, ?>) o;
-    return update == that.update &&
-           Objects.equals(params, that.params);
+    final ReqUpdateModelProjection<?, ?> that = (ReqUpdateModelProjection<?, ?>) o;
+    return update == that.update;
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(super.hashCode(), update, params);
+    return Objects.hash(super.hashCode(), update);
   }
 }
