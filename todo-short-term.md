@@ -4,10 +4,12 @@
   - [ ] ~~Make more generic?~~
   
 - [ ] Unmarshallers for create/update/custom body
-  - [ ] must be guidable by op input projection
-  - [ ] must be guidable by req input projection
-  - [ ] must be guidable by req update projection
-  - [ ] ~~must be guidable by req delete projection~~
+  - [x] abstract generic version
+  - [x] guided by req output projection
+  - [ ] guided by op input projection
+  - [ ] guided by req input projection
+  - [ ] guided by req update projection
+  - [ ] ~~guided by req delete projection~~
   
 - [ ] Undertow handler must support all operations
   - [ ] add support for create

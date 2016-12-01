@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-/* Created by yegor on 10/20/16. */
-
-package ws.epigraph.wire.json;
+package ws.epigraph.wire.json.reader;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
@@ -26,11 +24,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.*;
 import ws.epigraph.errors.ErrorValue;
-import ws.epigraph.projections.abs.AbstractVarProjection;
-import ws.epigraph.projections.req.output.*;
+import ws.epigraph.projections.gen.*;
 import ws.epigraph.types.*;
 import ws.epigraph.types.Type.Tag;
 import ws.epigraph.wire.FormatReader;
+import ws.epigraph.wire.json.JsonFormat;
 
 import java.io.IOException;
 import java.util.*;
@@ -41,7 +39,7 @@ import static ws.epigraph.wire.json.JsonFormatCommon.*;
 
 
 /**
- * JSON data reader
+ * Abstract projection-driven JSON data reader
  * <p/>
  * Format grammar (some quotes omitted):<p/>
  * <p>
@@ -65,15 +63,24 @@ import static ws.epigraph.wire.json.JsonFormatCommon.*;
  * @author Yegor Borovikov
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class JsonFormatReader implements FormatReader<IOException> {
+abstract class AbstractJsonFormatReader<
+    VP extends GenVarProjection<VP, TP, MP>,
+    TP extends GenTagProjectionEntry<TP, MP>,
+    MP extends GenModelProjection</*MP*/?, ?>,
+    RMP extends GenRecordModelProjection<VP, TP, MP, RMP, FPE, FP, ?>,
+    FPE extends GenFieldProjectionEntry<VP, TP, MP, FP>,
+    FP extends GenFieldProjection<VP, TP, MP, FP>,
+    MMP extends GenMapModelProjection<VP, TP, MP, MMP, ?>,
+    LMP extends GenListModelProjection<VP, TP, MP, LMP, ?>
+    //,PMP extends GenPrimitiveModelProjection<PMP, ?>
+    >
+    implements FormatReader<VP, MP, IOException> {
 
   private final @NotNull JsonParser in;
 
-//  private final @NotNull Map<String, Type> cachedTypes = new HashMap<>();
+  protected AbstractJsonFormatReader(@NotNull JsonParser jsonParser) { this.in = jsonParser; }
 
-  public JsonFormatReader(@NotNull JsonParser jsonParser) { this.in = jsonParser; }
-
-  public @NotNull Data readData(@NotNull ReqOutputVarProjection projection) throws IOException {
+  public @NotNull Data readData(@NotNull VP projection) throws IOException {
 //    Data data = readData(projection.type(), Collections.singletonList(projection));
     Data data = readData(Collections.singletonList(projection));
     stepOver(null, "EOF");
@@ -82,7 +89,7 @@ public class JsonFormatReader implements FormatReader<IOException> {
 
   // DATA ::= POLYDATA or MONODATA
   private @NotNull Data readData(
-      @NotNull List<? extends ReqOutputVarProjection> projections // non-empty, polymorphic tails respected
+      @NotNull List<? extends VP> projections // non-empty, polymorphic tails respected
   ) throws IOException {
 
     nextNonEof();
@@ -90,7 +97,7 @@ public class JsonFormatReader implements FormatReader<IOException> {
   }
 
   private @NotNull Data finishReadingData(
-      @NotNull List<? extends ReqOutputVarProjection> projections // non-empty, polymorphic tails respected
+      @NotNull List<? extends VP> projections // non-empty, polymorphic tails respected
   ) throws IOException {
     assert !projections.isEmpty();
 
@@ -110,7 +117,7 @@ public class JsonFormatReader implements FormatReader<IOException> {
     }
 
     // read MONODATA
-    List<? extends ReqOutputVarProjection> flattened = flatten(new ArrayList<>(), projections, type);
+    List<? extends VP> flattened = flatten(new ArrayList<>(), projections, type);
 
     String monoTagName = type.kind() == TypeKind.UNION ? monoTag(flattened) : DatumType.MONO_TAG_NAME;
     if (monoTagName == null) { // MULTIDATA ::= { "tag": VALUE, ... }
@@ -118,7 +125,7 @@ public class JsonFormatReader implements FormatReader<IOException> {
     } else { // VALUE ::= ERROR or DATUM or null
       Tag tag = type.tagsMap().get(monoTagName);
       assert tag != null : "invalid tag";
-      Collection<? extends ReqOutputModelProjection> tagModelProjections =
+      Collection<? extends MP> tagModelProjections =
           tagModelProjections(tag, flattened, () -> new ArrayList<>(projections.size()));
       assert tagModelProjections != null : "missing mono tag";
       data = type.createDataBuilder()._raw().setValue(tag, finishReadingValue(tag, tagModelProjections));
@@ -128,10 +135,13 @@ public class JsonFormatReader implements FormatReader<IOException> {
     return data;
   }
 
+  // return 'tag' if all projections are of the form ':tag(...)'
+  protected abstract @Nullable String monoTag(@NotNull Iterable<? extends VP> projections);
+
   // MULTIDATA ::= { "tag": VALUE, ... }
-  private @NotNull Data finishReadingMultiData(
+  protected  @NotNull Data finishReadingMultiData(
       @NotNull Type effectiveType,
-      @NotNull List<? extends ReqOutputVarProjection> projections // non-empty, polymorphic tails ignored
+      @NotNull List<? extends VP> projections // non-empty, polymorphic tails ignored
   ) throws IOException {
 
     assert !projections.isEmpty();
@@ -146,7 +156,7 @@ public class JsonFormatReader implements FormatReader<IOException> {
       if (tag == null)
         throw error("Unknown tag '" + tagName + "' in type '" + effectiveType.name().toString() + "'");
 
-      Collection<? extends ReqOutputModelProjection> tagModelProjections =
+      Collection<? extends MP> tagModelProjections =
           tagModelProjections(tag, projections, () -> new ArrayList<>(projections.size()));
       if (tagModelProjections == null) { // the tag was not requested in projection
         throw error("Unexpected tag '" + tagName + "'");
@@ -157,20 +167,13 @@ public class JsonFormatReader implements FormatReader<IOException> {
     }
     ensure(token, JsonToken.END_OBJECT);
 
-    for (final ReqOutputVarProjection projection : projections) {
-      for (final ReqOutputTagProjectionEntry tagProjectionEntry : projection.tagProjections().values()) {
-        if (tagProjectionEntry.projection().required() && data._raw().getValue(tagProjectionEntry.tag()) == null)
-          throw error("Missing data for required tag '" + tagProjectionEntry.tag().name() + "'");
-      }
-    }
-
     return data;
   }
 
   // VALUE ::= ERROR or DATUM or null
   private @NotNull Val readValue(
       @NotNull Tag tag,
-      @NotNull Collection<? extends ReqOutputModelProjection> tagModelProjections // non-empty
+      @NotNull Collection<? extends MP> tagModelProjections // non-empty
   ) throws IOException {
     nextNonEof(); // read first token
     return finishReadingValue(tag, tagModelProjections);
@@ -179,7 +182,7 @@ public class JsonFormatReader implements FormatReader<IOException> {
   // VALUE ::= ERROR or DATUM or null
   private @NotNull Val finishReadingValue(
       @NotNull Tag tag,
-      @NotNull Collection<? extends ReqOutputModelProjection> tagModelProjections // non-empty
+      @NotNull Collection<? extends MP> tagModelProjections // non-empty
   ) throws IOException {
 
     JsonToken token = in.currentToken();
@@ -202,7 +205,7 @@ public class JsonFormatReader implements FormatReader<IOException> {
   @SuppressWarnings("unchecked")
   private Datum finishReadingDatum(
       final String firstFieldName,
-      final @NotNull Collection<? extends ReqOutputModelProjection> tagModelProjections,
+      final @NotNull Collection<? extends MP> tagModelProjections,
       final DatumType type) throws IOException {
 
     final @NotNull Datum datum;
@@ -211,28 +214,28 @@ public class JsonFormatReader implements FormatReader<IOException> {
         datum = finishReadingRecord(
             firstFieldName,
             (RecordType) type,
-            (Collection<? extends ReqOutputRecordModelProjection>) tagModelProjections
+            (Collection<? extends RMP>) tagModelProjections
         );
         break;
       case MAP:
         if (firstFieldName != null) throw expected("'['");
         datum = finishReadingMap(
             (MapType) type,
-            (Collection<? extends ReqOutputMapModelProjection>) tagModelProjections
+            (Collection<? extends MMP>) tagModelProjections
         );
         break;
       case LIST:
         if (firstFieldName != null) throw expected("'['");
         datum = finishReadingList(
             (ListType) type,
-            (Collection<? extends ReqOutputListModelProjection>) tagModelProjections
+            (Collection<? extends LMP>) tagModelProjections
         );
         break;
       case PRIMITIVE:
         if (firstFieldName != null) throw expected("primitive value");
         datum = finishReadingPrimitive(
             (PrimitiveType) type
-            // (Collection<? extends ReqOutputPrimitiveModelProjection>) tagModelProjections
+            // (Collection<? extends PMP>) tagModelProjections
         );
         break;
 //    case ENUM: // TODO once enums are supported
@@ -262,12 +265,11 @@ public class JsonFormatReader implements FormatReader<IOException> {
   }
 
   // `}` or `: DATA, "field": DATA, ... }`
-  private @NotNull RecordDatum finishReadingRecord(
+  protected @NotNull RecordDatum finishReadingRecord(
       @Nullable String fieldName,
       @NotNull RecordType type,
-      @NotNull Collection<? extends ReqOutputRecordModelProjection> projections // non-empty
+      @NotNull Collection<? extends RMP> projections // non-empty
   ) throws IOException {
-
 
     RecordDatum.Builder datum = type.createBuilder();
     if (fieldName == null) { // empty record?
@@ -279,7 +281,7 @@ public class JsonFormatReader implements FormatReader<IOException> {
         if (field == null) throw error(
             "Unknown field '" + fieldName + "' in record type '" + type.name().toString() + "'"
         );
-        List<? extends ReqOutputVarProjection> varProjections =
+        List<? extends VP> varProjections =
             fieldVarProjections(projections, field, () -> new ArrayList<>(projections.size()));
         if (varProjections == null) throw error("Unexpected field '" + fieldName + "'");
         Data fieldData = readData(varProjections);
@@ -291,16 +293,14 @@ public class JsonFormatReader implements FormatReader<IOException> {
         else throw expected("field name or '}'");
       }
     }
-    // todo ensure all required fields are present
     return datum;
   }
-
 
   // `]` or ` MAP_ENTRY , MAP ENTRY ... ]`
   // MAP_ENTRY ::= '{' "key" ':' DATUM ',' "value" ':' DATA '}'
   private @NotNull MapDatum finishReadingMap(
       @NotNull MapType type,
-      @NotNull Collection<? extends ReqOutputMapModelProjection> projections // non-empty
+      @NotNull Collection<? extends MMP> projections // non-empty
   ) throws IOException {
 
     JsonToken token = in.currentToken();
@@ -309,8 +309,7 @@ public class JsonFormatReader implements FormatReader<IOException> {
     @NotNull final DatumType keyType = type.keyType();
     final MapDatum.@NotNull Builder datum = type.createBuilder();
     @Nullable final Set<Datum> expectedKeys = getExpectedKeys(projections);
-    final List<ReqOutputVarProjection> itemProjections =
-        projections.stream().map(ReqOutputMapModelProjection::itemsProjection).collect(Collectors.toList());
+    final List<VP> itemProjections = projections.stream().map(MMP::itemsProjection).collect(Collectors.toList());
 
     while (true) {
       token = nextNonEof();
@@ -337,33 +336,18 @@ public class JsonFormatReader implements FormatReader<IOException> {
   }
 
   @Nullable
-  private Set<Datum> getExpectedKeys(
-      @NotNull Collection<? extends ReqOutputMapModelProjection> projections) {
-
-    Set<Datum> expectedKeys = null;
-
-    for (final ReqOutputMapModelProjection projection : projections) {
-      @Nullable final List<ReqOutputKeyProjection> keyProjections = projection.keys();
-      if (keyProjections == null) return null; // '*' : all keys allowed
-
-      if (expectedKeys == null) expectedKeys = new HashSet<>();
-      expectedKeys.addAll(keyProjections.stream().map(ReqOutputKeyProjection::value).collect(Collectors.toList()));
-    }
-
-    return expectedKeys;
-  }
+  protected abstract Set<Datum> getExpectedKeys(@NotNull Collection<? extends MMP> projections);
 
   private @NotNull ListDatum finishReadingList(
       @NotNull ListType type,
-      @NotNull Collection<? extends ReqOutputListModelProjection> projections // non-empty
+      @NotNull Collection<? extends LMP> projections // non-empty
   ) throws IOException {
 
     JsonToken token = in.currentToken();
     ensure(token, JsonToken.START_ARRAY);
 
     final ListDatum.@NotNull Builder datum = type.createBuilder();
-    final List<ReqOutputVarProjection> itemProjections =
-        projections.stream().map(ReqOutputListModelProjection::itemsProjection).collect(Collectors.toList());
+    final List<VP> itemProjections = projections.stream().map(LMP::itemsProjection).collect(Collectors.toList());
 
     while (true) {
       token = nextNonEof();
@@ -402,24 +386,8 @@ public class JsonFormatReader implements FormatReader<IOException> {
     return ((PrimitiveType) type).createBuilder(nativeValue);
   }
 
-//  private @Nullable Data readMonoData(@NotNull ReqOutputVarProjection projection) throws IOException {
-//    projection.type();
-//    projection.
-//    final Val value;
-//    switch (in.nextToken()) {
-//      case VALUE_NULL:
-//        value = pronull;
-//        break;
-//      case START_OBJECT: // record or error
-//        value = readRecordOrError(projection);
-//
-//      default:
-//        throw new IllegalArgumentException("Expected null or object at " + in.getTokenLocation());
-//    }
-//  }
-
   private @NotNull Type readType(
-      @NotNull Collection<? extends AbstractVarProjection<?, ?, ?>> projections // polymorphic tails respected
+      @NotNull Collection<? extends VP> projections // polymorphic tails respected
   ) throws IOException {
     stepOver(JsonFormat.POLYMORPHIC_TYPE_FIELD);
     stepOver(JsonToken.VALUE_STRING, "string value");
@@ -431,27 +399,11 @@ public class JsonFormatReader implements FormatReader<IOException> {
   }
 
   private @Nullable Type resolveType(
-      @NotNull Collection<? extends AbstractVarProjection<?, ?, ?>> projections, // polymorphic tails respected
-      @NotNull String typeName
-  ) {
-    /*
-    // TODO get rid of the cache and search every time (to assert type is valid for specific projections)?
-    // TODO or use local identity cache with projections collection as key?
-    Type type = cachedTypes.get(typeName);
-    if (type == null && (type = findType(projections, typeName)) != null) cachedTypes.put(typeName, type);
-    return type;
-    */
-
-    return findType(projections, typeName); // KS: removed caching
-  }
-
-  @SuppressWarnings("unchecked")
-  private @Nullable Type findType(
-      @Nullable Collection<? extends AbstractVarProjection<?, ?, ?>> projections, // polymorphic tails respected
+      @NotNull Collection<? extends VP> projections, // polymorphic tails respected
       @NotNull String typeName
   ) {
     if (projections == null) return null;
-    for (AbstractVarProjection vp : projections) {
+    for (VP vp : projections) {
       Type type = vp.type();
       if (typeName.equals(type.name().toString())) return type;
       type = findType(vp.polymorphicTails(), typeName); // dfs
@@ -460,34 +412,20 @@ public class JsonFormatReader implements FormatReader<IOException> {
     return null;
   }
 
-//  @Deprecated
-//  private @NotNull Type readType(@NotNull ReqOutputVarProjection projection) throws IOException {
-//    stepOver(JsonFormat.POLYMORPHIC_TYPE_FIELD);
-//    stepOver(JsonToken.VALUE_STRING, "string value");
-//    String typeName = in.getText();
-//    Type type = resolveType(projection, typeName);
-//    if (type == null)
-//      throw new IllegalArgumentException("Invalid type '" + typeName + "' at " + in.getCurrentLocation());
-//    return type;
-//  }
-//
-//  @Deprecated
-//  private @Nullable Type resolveType(@NotNull ReqOutputVarProjection projection, @NotNull String typeName) {
-//    Type type = cachedTypes.get(typeName);
-//    if (type == null && (type = findType(projection, typeName)) != null) cachedTypes.put(typeName, type);
-//    return type;
-//  }
-//
-//  @Deprecated
-//  private @Nullable Type findType(@NotNull ReqOutputVarProjection projection, @NotNull String typeName) {
-//    Type type = projection.type();
-//    if (!typeName.equals(type.name().toString())) {
-//      type = null;
-//      Iterable<? extends ReqOutputVarProjection> tail = projection.polymorphicTails();
-//      if (tail != null) for (ReqOutputVarProjection vp : tail) if ((type = findType(vp, typeName)) != null) break;
-//    }
-//    return type;
-//  }
+  @SuppressWarnings("unchecked")
+  private @Nullable Type findType(
+      @Nullable Collection<? extends VP> projections, // polymorphic tails respected
+      @NotNull String typeName
+  ) {
+    if (projections == null) return null;
+    for (VP vp : projections) {
+      Type type = vp.type();
+      if (typeName.equals(type.name().toString())) return type;
+      type = findType(vp.polymorphicTails(), typeName); // dfs
+      if (type != null) return type;
+    }
+    return null;
+  }
 
   public @Nullable Data readData(@NotNull DataType dataType) throws IOException {
     JsonToken token = nextNonEof();
@@ -539,7 +477,8 @@ public class JsonFormatReader implements FormatReader<IOException> {
     return datum.asValue();
   }
 
-  public @Nullable Datum readDatum(@NotNull ReqOutputModelProjection projection) throws IOException {
+  @Override
+  public @Nullable Datum readDatum(@NotNull MP projection) throws IOException {
     @NotNull final JsonToken token = nextNonEof();
 
     final @Nullable String firstFieldName;
@@ -712,30 +651,9 @@ public class JsonFormatReader implements FormatReader<IOException> {
   /**
    * Returns `true` iff at least one of projections has polymorphic tails.
    */
-  private static boolean isPolymorphic(Collection<? extends AbstractVarProjection<?, ?, ?>> projections) {
+  private boolean isPolymorphic(Collection<? extends VP> projections) {
     return projections.stream().anyMatch(vp -> vp.polymorphicTails() != null);
   }
-
-//  private static Type mostSpecificType(Collection<? extends AbstractVarProjection<?, ?, ?>> projections) {
-//    return projections.stream()
-//        .map(AbstractVarProjection::type)
-//        .max((o1, o2) -> {
-//          if (o1.isAssignableFrom(o2)) return -1;
-//          if (o2.isAssignableFrom(o1)) return 1;
-//          return 0;
-//        })
-//        .orElseThrow(RuntimeException::new); // can't happen, projections should contain at least one element
-//  }
-
-//  private static <P> @NotNull Deque<? extends ReqOutputVarProjection> varProjections(
-//      @NotNull Collection<? extends P> projections, // non-empty
-//      @NotNull Function<P, ReqOutputVarProjection> varFunc
-//  ) {
-//    assert !projections.isEmpty() : "no projection(s)";
-//    ArrayDeque<ReqOutputVarProjection> subProjections = new ArrayDeque<>(projections.size());
-//    for (P projection : projections) subProjections.add(varFunc.apply(projection));
-//    return subProjections;
-//  }
 
   @NotNull
   private JsonToken nextNonEof() throws IOException {return checkEof(in.nextToken());}
@@ -745,13 +663,6 @@ public class JsonFormatReader implements FormatReader<IOException> {
     if (token == null) throw new IllegalArgumentException("Unexpected EOF at " + in.getTokenLocation());
     return token;
   }
-
-//  private @NotNull JsonToken next(@NotNull JsonToken expected, @NotNull String expectedText)
-//      throws IOException, IllegalArgumentException {
-//    JsonToken token = in.nextToken();
-//    ensure(token, expectedText, expected);
-//    return token;
-//  }
 
   private void ensure(@Nullable JsonToken actual, @NotNull JsonToken... expected) throws IOException {
     String expectedString =
@@ -789,7 +700,7 @@ public class JsonFormatReader implements FormatReader<IOException> {
     return error("Expected " + expected + " but got " + str(in.getText()));
   }
 
-  private IllegalArgumentException error(@NotNull String message) {
+  protected IllegalArgumentException error(@NotNull String message) {
     return new IllegalArgumentException(message + " at " + in.getCurrentLocation());
   }
 

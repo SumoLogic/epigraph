@@ -18,22 +18,25 @@
 
 package ws.epigraph.wire;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Data;
 import ws.epigraph.data.Datum;
 import ws.epigraph.data.Val;
 import ws.epigraph.errors.ErrorValue;
-import ws.epigraph.projections.req.output.ReqOutputModelProjection;
-import ws.epigraph.projections.req.output.ReqOutputVarProjection;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import ws.epigraph.projections.gen.GenModelProjection;
+import ws.epigraph.projections.gen.GenVarProjection;
 import ws.epigraph.types.DataType;
 import ws.epigraph.types.DatumType;
 
-public interface FormatReader<Exc extends Exception> {
+public interface FormatReader<
+    VP extends GenVarProjection<VP, ?, ?>,
+    MP extends GenModelProjection</*MP*/?, ?>,
+    Exc extends Exception> {
 
-  @NotNull Data readData(@NotNull ReqOutputVarProjection projection) throws Exc;
+  @NotNull Data readData(@NotNull VP projection) throws Exc;
 
-  @Nullable Datum readDatum(@NotNull ReqOutputModelProjection projection) throws Exc;
+  @Nullable Datum readDatum(@NotNull MP projection) throws Exc;
 
   @Nullable Data readData(@NotNull DataType type) throws Exc;
 

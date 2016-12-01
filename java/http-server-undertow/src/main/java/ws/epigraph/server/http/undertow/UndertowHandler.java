@@ -44,7 +44,7 @@ import ws.epigraph.service.operations.ReadOperationResponse;
 import ws.epigraph.url.ReadRequestUrl;
 import ws.epigraph.url.parser.UrlSubParserDefinitions;
 import ws.epigraph.url.parser.psi.UrlReadUrl;
-import ws.epigraph.wire.json.JsonFormatWriter;
+import ws.epigraph.wire.json.writer.JsonFormatWriter;
 
 import java.io.IOException;
 import java.io.StringWriter;

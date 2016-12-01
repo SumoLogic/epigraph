@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
-package ws.epigraph.wire.json;
+package ws.epigraph.wire.json.reader;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 import ws.epigraph.data.Data;
 import ws.epigraph.projections.op.output.OpOutputVarProjection;
@@ -25,11 +28,13 @@ import ws.epigraph.refs.SimpleTypesResolver;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.tests.*;
 import ws.epigraph.types.DataType;
+import ws.epigraph.wire.json.writer.JsonFormatWriter;
 
 import java.io.IOException;
 import java.io.StringWriter;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static ws.epigraph.test.TestUtil.lines;
 import static ws.epigraph.wire.WireTestUtil.parseOpOutputVarProjection;
 import static ws.epigraph.wire.WireTestUtil.parseReqOutputVarProjection;
@@ -37,7 +42,7 @@ import static ws.epigraph.wire.WireTestUtil.parseReqOutputVarProjection;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class JsonFormatWriterTest {
+public class ReqOutputJsonFormatReaderTest {
   private DataType dataType = new DataType(Person.type, Person.id);
   private TypesResolver resolver = new SimpleTypesResolver(
       PersonId.type,
@@ -83,37 +88,33 @@ public class JsonFormatWriterTest {
   );
 
   @Test
-  public void testRenderEmpty() throws IOException {
+  public void testReadEmpty() throws IOException {
+    final Person.@NotNull Imm person = Person.create().toImmutable();
+    testRead(":()", "{}", person);
+  }
+
+  @Test
+  public void testReadId() throws IOException {
     final Person.@NotNull Imm person =
         Person.create()
             .setId(PersonId.create(1))
             .toImmutable();
 
-    testRender(":()", person, "{}");
+    testRead(":id", "1", person);
   }
 
   @Test
-  public void testRenderId() throws IOException {
+  public void testReadIdParens() throws IOException {
     final Person.@NotNull Imm person =
         Person.create()
             .setId(PersonId.create(1))
             .toImmutable();
 
-    testRender(":id", person, "1");
+    testRead(":(id)", "{\"id\":1}", person);
   }
 
   @Test
-  public void testRenderIdParens() throws IOException {
-    final Person.@NotNull Imm person =
-        Person.create()
-            .setId(PersonId.create(1))
-            .toImmutable();
-
-    testRender(":(id)", person, "{\"id\":1}");
-  }
-
-  @Test
-  public void testRenderIdAndRecord() throws IOException {
+  public void testReadIdAndRecord() throws IOException {
     final Person.@NotNull Imm person =
         Person.create()
             .setId(PersonId.create(1))
@@ -123,11 +124,11 @@ public class JsonFormatWriterTest {
             )
             .toImmutable();
 
-    testRender(":(id,record(id))", person, "{\"id\":1,\"record\":{\"id\":1}}");
+    testRead(":(id,record(id))", "{\"id\":1,\"record\":{\"id\":1}}", person);
   }
 
   @Test
-  public void testRenderRecordWithMissingId() throws IOException {
+  public void testReadRecordWithMissingId() throws IOException {
     final Person.@NotNull Imm person =
         Person.create()
             .setRecord(
@@ -136,11 +137,11 @@ public class JsonFormatWriterTest {
             )
             .toImmutable();
 
-    testRender(":(id,record(id))", person, "{\"id\":null,\"record\":{\"id\":1}}");
+    testRead(":(id,record(id))", "{\"record\":{\"id\":1}}", person);
   }
 
   @Test
-  public void testRenderRecordWithId() throws IOException {
+  public void testReadRecordWithId() throws IOException {
     final Person.@NotNull Imm person =
         Person.create()
             .setRecord(
@@ -149,11 +150,11 @@ public class JsonFormatWriterTest {
             )
             .toImmutable();
 
-    testRender(":record(id)", person, "{\"id\":1}");
+    testRead(":record(id)", "{\"id\":1}", person);
   }
 
   @Test
-  public void testRenderList() throws IOException {
+  public void testReadList() throws IOException {
     final Person.@NotNull Imm person =
         Person.create()
             .setRecord(
@@ -167,11 +168,11 @@ public class JsonFormatWriterTest {
             )
             .toImmutable();
 
-    testRender(":record(friends*(:id))", person, "{\"friends\":[2,3,4]}");
+    testRead(":record(friends*(:id))", "{\"friends\":[2,3,4]}", person);
   }
 
   @Test
-  public void testRenderMap() throws IOException {
+  public void testReadMap() throws IOException {
     final Person.@NotNull Imm person =
         Person.create()
             .setRecord(
@@ -194,52 +195,40 @@ public class JsonFormatWriterTest {
             )
             .toImmutable();
 
-    testRender(
+    testRead(
         ":record(friendsMap['key1','key2','key3'](:id))",
-        person,
-        "{\"friendsMap\":[{\"K\":\"key1\",\"V\":1},{\"K\":\"key2\",\"V\":2},{\"K\":\"key3\",\"V\":3}]}"
+        "{\"friendsMap\":[{\"K\":\"key1\",\"V\":1},{\"K\":\"key2\",\"V\":2},{\"K\":\"key3\",\"V\":3}]}", person
     );
   }
 
   @Test
-  public void testRenderTailNoMatch() throws IOException {
-    final Person.@NotNull Imm person =
-        Person.create()
-            .setRecord(
-                UserRecord.create() // should not match even though this is a UserRecord
-                    .setId(PersonId.create(1))
-                    .setProfile(Url.create("http://foo"))
-            )
-            .toImmutable();
-
-    testRender(
+  public void testReadTailNoMatch() throws IOException {
+    testReadFail(
         ":record(id)~ws.epigraph.tests.User :record(profile)",
-        person,
-        "{\"type\":\"ws.epigraph.tests.Person\",\"data\":{\"id\":1}}"
+        "{\"type\":\"ws.epigraph.tests.Person\",\"data\":{\"id\":1,\"record\":{\"profile\":\"http://foo\"}}}",
+        "Unknown field 'record' in record type 'ws.epigraph.tests.PersonRecord'"
     );
   }
 
   @Test
-  public void testRenderSimpleTail() throws IOException {
+  public void testReadSimpleTail() throws IOException {
     final Person.@NotNull Imm person =
         User.create()
             .setId(UserId.create(1))
             .setRecord(
                 UserRecord.create()
-                    .setId(PersonId.create(1))
                     .setProfile(Url.create("http://foo"))
             )
             .toImmutable();
 
-    testRender(
+    testRead(
         ":id~ws.epigraph.tests.User :record(profile)",
-        person,
-        "{\"type\":\"ws.epigraph.tests.User\",\"data\":{\"id\":1,\"record\":{\"profile\":\"http://foo\"}}}"
+        "{\"type\":\"ws.epigraph.tests.User\",\"data\":{\"id\":1,\"record\":{\"profile\":\"http://foo\"}}}", person
     );
   }
 
   @Test
-  public void testRenderSubTail() throws IOException {
+  public void testReadSubTail() throws IOException {
     final Person.@NotNull Imm person =
         SubUser.create()
             .setRecord(
@@ -249,24 +238,60 @@ public class JsonFormatWriterTest {
             )
             .toImmutable();
 
-    testRender(
+    testRead(
         ":record(id)~ws.epigraph.tests.User :record(profile) ~ws.epigraph.tests.SubUser :record(worstEnemy(id))",
-        person,
-        "{\"type\":\"ws.epigraph.tests.SubUser\",\"data\":{\"id\":1,\"worstEnemy\":{\"id\":1}}}"
+        "{\"type\":\"ws.epigraph.tests.SubUser\",\"data\":{\"id\":1,\"worstEnemy\":{\"id\":1}}}", person
     );
   }
 
-  private void testRender(@NotNull String reqProjectionStr, @NotNull Data data, @NotNull String expectedJson)
+  private void testRead(
+      @NotNull String reqProjectionStr,
+      @NotNull String json,
+      @NotNull Data expectedData)
       throws IOException {
+
     final @NotNull ReqOutputVarProjection reqProjection =
         parseReqOutputVarProjection(dataType, personOpProjection, reqProjectionStr, resolver).projection();
 
-    final StringWriter writer = new StringWriter();
-    final JsonFormatWriter jsonWriter = new JsonFormatWriter(writer);
+    JsonParser parser = new JsonFactory().createParser(json);
+    ReqOutputJsonFormatReader jsonReader = new ReqOutputJsonFormatReader(parser);
 
-    jsonWriter.writeData(reqProjection, data);
+    @NotNull final Data data = jsonReader.readData(reqProjection);
 
-    assertEquals(expectedJson, writer.toString());
+    if (!expectedData.equals(data)) {
+      StringWriter writer = new StringWriter();
+      JsonFormatWriter jsonWriter = new JsonFormatWriter(writer);
+      jsonWriter.writeData(data);
+      String dataStr = writer.toString();
+
+      writer = new StringWriter();
+      jsonWriter = new JsonFormatWriter(writer);
+      jsonWriter.writeData(expectedData);
+      String expectedDataStr = writer.toString();
+
+      fail("\nexpected:\n" + expectedDataStr + "\nactual:\n" + dataStr);
+    }
+  }
+
+  private void testReadFail(
+      @NotNull String reqProjectionStr,
+      @NotNull String json,
+      @Nullable String errorMessageSubstring)
+      throws IOException {
+
+    final @NotNull ReqOutputVarProjection reqProjection =
+        parseReqOutputVarProjection(dataType, personOpProjection, reqProjectionStr, resolver).projection();
+
+    JsonParser parser = new JsonFactory().createParser(json);
+    ReqOutputJsonFormatReader jsonReader = new ReqOutputJsonFormatReader(parser);
+
+    try {
+      jsonReader.readData(reqProjection);
+      fail();
+    } catch (IllegalArgumentException e) {
+      if (errorMessageSubstring != null)
+        assertTrue(e.getMessage().contains(errorMessageSubstring));
+    }
   }
 
   @NotNull

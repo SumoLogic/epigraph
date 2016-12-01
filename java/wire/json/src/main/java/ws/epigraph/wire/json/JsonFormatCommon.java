@@ -20,6 +20,7 @@ package ws.epigraph.wire.json;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.projections.gen.*;
 import ws.epigraph.projections.req.output.*;
 import ws.epigraph.types.RecordType.Field;
 import ws.epigraph.types.Type;
@@ -36,27 +37,27 @@ public abstract class JsonFormatCommon {
    * Recursively traverse all {@code projections}, including tails, and collect those applicable to {@code type},
    * with most specific one being last
    */
-  public static <Acc extends Collection<ReqOutputVarProjection>> @NotNull Acc flatten(
+  public static <VP extends GenVarProjection<VP, ?, ?>, Acc extends Collection<VP>> @NotNull Acc flatten(
       @NotNull Acc acc,
-      @NotNull Collection<? extends ReqOutputVarProjection> projections,
+      @NotNull Collection<? extends VP> projections,
       @NotNull Type type
   ) {
     // TODO more careful ordering of projections might be needed to ensure last one is the most precise in complex cases
-    for (ReqOutputVarProjection projection : projections) append(acc, projection, type);
+    for (VP projection : projections) append(acc, projection, type);
     return acc;
   }
 
-  public static <Acc extends Collection<ReqOutputVarProjection>> Acc append(
+  public static <VP extends GenVarProjection<VP, ?, ?>, Acc extends Collection<VP>> Acc append(
       @NotNull Acc acc,
-      @NotNull ReqOutputVarProjection varProjection,
+      @NotNull VP varProjection,
       @NotNull Type type
   ) {
     // effectively this is
     // Collections.reverse(ProjectionUtils.linearizeTails(type, Collections.singleton(varProjection).stream()));
 
     if (varProjection.type().isAssignableFrom(type)) acc.add(varProjection);
-    Iterable<ReqOutputVarProjection> tails = varProjection.polymorphicTails();
-    if (tails != null) for (ReqOutputVarProjection tail : tails) {
+    Iterable<VP> tails = varProjection.polymorphicTails();
+    if (tails != null) for (VP tail : tails) {
       if (tail.type().isAssignableFrom(type)) return append(acc, tail, type); // dfs
     }
     return acc;
@@ -78,11 +79,6 @@ public abstract class JsonFormatCommon {
 //    return type;
 //  }
 
-  @Deprecated // use monoTag(projections) == null
-  public static boolean needMultiRendering(@NotNull Iterable<? extends ReqOutputVarProjection> projections) {
-    return monoTag(projections) == null;
-  }
-
   // return 'tag' if all projections are of the form ':tag(...)'
   public static @Nullable String monoTag(@NotNull Iterable<? extends ReqOutputVarProjection> projections) {
     String tagName = null;
@@ -100,14 +96,20 @@ public abstract class JsonFormatCommon {
   /**
    * @return non-empty collection or `null`
    */
-  public static <Coll extends Collection<ReqOutputModelProjection>> @Nullable Coll tagModelProjections(
+  public static <
+      VP extends GenVarProjection<VP, TP, MP>,
+      TP extends GenTagProjectionEntry<TP, MP>,
+      MP extends GenModelProjection</*MP*/?, ?>,
+      Coll extends Collection<MP>>
+
+  @Nullable Coll tagModelProjections(
       @NotNull Tag tag,
-      @NotNull Iterable<? extends ReqOutputVarProjection> projections, // non-empty, polymorphic tails ignored
+      @NotNull Iterable<? extends VP> projections, // non-empty, polymorphic tails ignored
       @NotNull Supplier<@NotNull Coll> collSupplier
   ) {
     Coll tagModelProjections = null;
-    for (ReqOutputVarProjection vp : projections) {
-      ReqOutputTagProjectionEntry tagProjection = vp.tagProjection(tag.name());
+    for (VP vp : projections) {
+      TP tagProjection = vp.tagProjections().get(tag.name());
       if (tagProjection != null) {
         if (tagModelProjections == null) tagModelProjections = collSupplier.get();
         tagModelProjections.add(tagProjection.projection());
@@ -119,14 +121,19 @@ public abstract class JsonFormatCommon {
   /**
    * @return non-empty collection or `null`
    */
-  public static <Coll extends Collection<ReqOutputVarProjection>> @Nullable Coll fieldVarProjections(
-      @NotNull Iterable<? extends ReqOutputRecordModelProjection> projections, // non-empty
+  public static <
+      VP extends GenVarProjection<VP, ?, ?>,
+      RMP extends GenRecordModelProjection<VP, ?, ?, RMP, FPE, ?, ?>,
+      FPE extends GenFieldProjectionEntry<VP, ?, ?, ?>,
+      Coll extends Collection<VP>>
+  @Nullable Coll fieldVarProjections(
+      @NotNull Iterable<? extends RMP> projections, // non-empty
       @NotNull Field field,
       @NotNull Supplier<@NotNull Coll> collSupplier
   ) {
     Coll varProjections = null;
-    for (ReqOutputRecordModelProjection mp : projections) {
-      ReqOutputFieldProjectionEntry fieldProjectionEntry = mp.fieldProjection(field.name());
+    for (RMP mp : projections) {
+      FPE fieldProjectionEntry = mp.fieldProjection(field.name());
       if (fieldProjectionEntry != null) {
         if (varProjections == null) varProjections = collSupplier.get();
         varProjections.add(fieldProjectionEntry.fieldProjection().varProjection());

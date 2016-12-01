@@ -16,7 +16,7 @@
 
 /* Created by yegor on 10/8/16. */
 
-package ws.epigraph.wire.json;
+package ws.epigraph.wire.json.writer;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,6 +30,7 @@ import ws.epigraph.types.Type;
 import ws.epigraph.types.Type.Tag;
 import ws.epigraph.types.TypeKind;
 import ws.epigraph.wire.FormatWriter;
+import ws.epigraph.wire.json.JsonFormat;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -62,7 +63,7 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
   ) throws IOException {
     Type type = projections.peekLast().type(); // use deepest match type from here on
     // TODO check all projections (not just the ones that matched actual data type)?
-    boolean renderMulti = type.kind() == TypeKind.UNION && needMultiRendering(projections);
+    boolean renderMulti = type.kind() == TypeKind.UNION && monoTag(projections) == null;
     if (renderPoly) {
       out.write("{\"" + JsonFormat.POLYMORPHIC_TYPE_FIELD + "\":\"");
       out.write(type.name().toString()); // TODO use (potentially short) type name used in request projection?
@@ -71,7 +72,7 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
     if (renderMulti) out.write('{');
     boolean comma = false;
     for (Tag tag : type.tags()) {
-      Deque<ReqOutputModelProjection> tagModelProjections =
+      Deque<ReqOutputModelProjection<?, ?>> tagModelProjections =
           tagModelProjections(tag, projections, () -> new ArrayDeque<>(projections.size()));
       if (tagModelProjections != null) { // if this tag was mentioned in at least one projection
         if (renderMulti) {
@@ -88,7 +89,7 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
     if (renderPoly) out.write('}');
   }
 
-  private void writeValue(@NotNull Deque<ReqOutputModelProjection> projections, @Nullable Val value)
+  private void writeValue(@NotNull Deque<ReqOutputModelProjection<?, ?>> projections, @Nullable Val value)
       throws IOException {
     if (value == null) { // TODO in case of null value we should probably render NO_VALUE error?
       out.write("null");
@@ -204,7 +205,9 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
     out.write("]");
   }
 
-  /** Builds a superset of all key projections. `null` is treated as wildcard and yields wildcard result immediately. */
+  /**
+   * Builds a superset of all key projections. `null` is treated as wildcard and yields wildcard result immediately.
+   */
   private static @Nullable List<ReqOutputKeyProjection> keyProjections(
       @NotNull Deque<ReqOutputMapModelProjection> projections // non-empty
   ) {
@@ -253,8 +256,11 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
         writeDatum(key);
         out.write(",\"" + JsonFormat.MAP_ENTRY_VALUE_FIELD + "\":");
         Deque<ReqOutputVarProjection> flatValueProjections = polymorphicCache == null
-            ? valueProjections
-            : polymorphicCache.computeIfAbsent(valueData.type(), t -> flatten(new ArrayDeque<>(), valueProjections, t));
+                                                             ? valueProjections
+                                                             : polymorphicCache.computeIfAbsent(
+                                                                 valueData.type(),
+                                                                 t -> flatten(new ArrayDeque<>(), valueProjections, t)
+                                                             );
         writeData(polymorphicCache != null, flatValueProjections, valueData);
         out.write('}');
       }
@@ -276,8 +282,11 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
       if (comma) out.write(',');
       else comma = true;
       Deque<ReqOutputVarProjection> flatElementProjections = polymorphicCache == null
-          ? elementProjections
-          : polymorphicCache.computeIfAbsent(element.type(), t -> flatten(new ArrayDeque<>(), elementProjections, t));
+                                                             ? elementProjections
+                                                             : polymorphicCache.computeIfAbsent(
+                                                                 element.type(),
+                                                                 t -> flatten(new ArrayDeque<>(), elementProjections, t)
+                                                             );
       writeData(polymorphicCache != null, flatElementProjections, element);
     }
     out.write(']');
@@ -411,13 +420,17 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
     else out.write(datum.getVal().toString());
   }
 
-  /** See https://tools.ietf.org/html/rfc7159#section-6. */
+  /**
+   * See https://tools.ietf.org/html/rfc7159#section-6.
+   */
   private void writeDouble(@NotNull Double d) throws IOException {
     if (d.isInfinite() || d.isNaN()) out.write("null"); // TODO render ErrorValue(500) instead?
     else out.write(d.toString()); // TODO more compact representation / better rfc compliance?
   }
 
-  /** See https://tools.ietf.org/html/rfc7159#section-7. */
+  /**
+   * See https://tools.ietf.org/html/rfc7159#section-7.
+   */
   private void writeString(@Nullable String s) throws IOException {
     if (s == null) {
       out.write("null");
