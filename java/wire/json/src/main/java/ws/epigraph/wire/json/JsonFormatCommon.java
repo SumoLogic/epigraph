@@ -33,31 +33,31 @@ public abstract class JsonFormatCommon {
   private JsonFormatCommon() {}
 
   /**
-   * Recursively traverse all {@code projections}, including tails, and collect those applicable to {@code varType},
+   * Recursively traverse all {@code projections}, including tails, and collect those applicable to {@code type},
    * with most specific one being last
    */
   public static <Acc extends Collection<ReqOutputVarProjection>> @NotNull Acc flatten(
       @NotNull Acc acc,
       @NotNull Collection<? extends ReqOutputVarProjection> projections,
-      @NotNull Type varType
+      @NotNull Type type
   ) {
     // TODO more careful ordering of projections might be needed to ensure last one is the most precise in complex cases
-    for (ReqOutputVarProjection projection : projections) append(acc, projection, varType);
+    for (ReqOutputVarProjection projection : projections) append(acc, projection, type);
     return acc;
   }
 
   public static <Acc extends Collection<ReqOutputVarProjection>> Acc append(
       @NotNull Acc acc,
       @NotNull ReqOutputVarProjection varProjection,
-      @NotNull Type actualType
+      @NotNull Type type
   ) {
     // effectively this is
-    // Collections.reverse(ProjectionUtils.linearizeTails(actualType, Collections.singleton(varProjection).stream()));
+    // Collections.reverse(ProjectionUtils.linearizeTails(type, Collections.singleton(varProjection).stream()));
 
-    if (varProjection.type().isAssignableFrom(actualType)) acc.add(varProjection);
+    if (varProjection.type().isAssignableFrom(type)) acc.add(varProjection);
     Iterable<ReqOutputVarProjection> tails = varProjection.polymorphicTails();
     if (tails != null) for (ReqOutputVarProjection tail : tails) {
-      if (tail.type().isAssignableFrom(actualType)) return append(acc, tail, actualType); // dfs
+      if (tail.type().isAssignableFrom(type)) return append(acc, tail, type); // dfs
     }
     return acc;
   }

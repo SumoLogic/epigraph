@@ -82,35 +82,46 @@ public class JsonFormatReader implements FormatReader<IOException> {
 
   // DATA ::= POLYDATA or MONODATA
   private @NotNull Data readData(
-//      @NotNull Type effectiveType,
       @NotNull List<? extends ReqOutputVarProjection> projections // non-empty, polymorphic tails respected
   ) throws IOException {
 
+    nextNonEof();
+    return finishReadingData(projections);
+  }
+
+  private @NotNull Data finishReadingData(
+      @NotNull List<? extends ReqOutputVarProjection> projections // non-empty, polymorphic tails respected
+  ) throws IOException {
     assert !projections.isEmpty();
 
+    JsonToken token = in.currentToken();
     final Data data;
-    JsonToken token = nextNonEof();
     boolean readPoly = isPolymorphic(projections); // at least one projection has poly tail
 
     final Type type;
     if (readPoly) { // { "type": "list[epigraph.String]", "data": MONODATA }
       ensure(token, JsonToken.START_OBJECT);
       type = readType(projections);
-      stepOver(JsonFormat.POLYMORPHIC_VALUE_FIELD);
-    } else type = projections.get(projections.size() - 1).type(); // effectiveType; // mostSpecificType(projections);
+      stepOver(JsonFormat.POLYMORPHIC_VALUE_FIELD); // "data"
+      nextNonEof(); // position parser on first MONODATA token
+    } else {
+      type = projections.get(projections.size() - 1).type(); // effectiveType; // mostSpecificType(projections);
+      // current token is first MONODATA token
+    }
 
+    // read MONODATA
     List<? extends ReqOutputVarProjection> flattened = flatten(new ArrayList<>(), projections, type);
 
-    String monoTagName = type.kind() == TypeKind.UNION ? monoTag(projections) : DatumType.MONO_TAG_NAME;
+    String monoTagName = type.kind() == TypeKind.UNION ? monoTag(flattened) : DatumType.MONO_TAG_NAME;
     if (monoTagName == null) { // MULTIDATA ::= { "tag": VALUE, ... }
-      data = readMultiData(type, flatten(new ArrayList<>(), projections, type));
+      data = finishReadingMultiData(type, flattened);
     } else { // VALUE ::= ERROR or DATUM or null
       Tag tag = type.tagsMap().get(monoTagName);
       assert tag != null : "invalid tag";
       Collection<? extends ReqOutputModelProjection> tagModelProjections =
           tagModelProjections(tag, flattened, () -> new ArrayList<>(projections.size()));
       assert tagModelProjections != null : "missing mono tag";
-      data = type.createDataBuilder()._raw().setValue(tag, readValue(tag, tagModelProjections));
+      data = type.createDataBuilder()._raw().setValue(tag, finishReadingValue(tag, tagModelProjections));
     }
 
     if (readPoly) stepOver(JsonToken.END_OBJECT); // TODO verify it's not already consumed (by invoked code)
@@ -118,16 +129,17 @@ public class JsonFormatReader implements FormatReader<IOException> {
   }
 
   // MULTIDATA ::= { "tag": VALUE, ... }
-  private @NotNull Data readMultiData(
+  private @NotNull Data finishReadingMultiData(
       @NotNull Type effectiveType,
       @NotNull List<? extends ReqOutputVarProjection> projections // non-empty, polymorphic tails ignored
   ) throws IOException {
 
     assert !projections.isEmpty();
 
+    JsonToken token = in.currentToken();
     Data.Builder data = effectiveType.createDataBuilder();
-    stepOver(JsonToken.START_OBJECT);
-    JsonToken token;
+    ensure(token, JsonToken.START_OBJECT);
+
     while ((token = in.nextToken()) == JsonToken.FIELD_NAME) {
       String tagName = in.getCurrentName();
       Tag tag = effectiveType.tagsMap().get(tagName);
@@ -160,11 +172,20 @@ public class JsonFormatReader implements FormatReader<IOException> {
       @NotNull Tag tag,
       @NotNull Collection<? extends ReqOutputModelProjection> tagModelProjections // non-empty
   ) throws IOException {
+    nextNonEof(); // read first token
+    return finishReadingValue(tag, tagModelProjections);
+  }
 
+  // VALUE ::= ERROR or DATUM or null
+  private @NotNull Val finishReadingValue(
+      @NotNull Tag tag,
+      @NotNull Collection<? extends ReqOutputModelProjection> tagModelProjections // non-empty
+  ) throws IOException {
+
+    JsonToken token = in.currentToken();
     assert !tagModelProjections.isEmpty();
 
     DatumType type = tag.type;
-    @NotNull JsonToken token = nextNonEof();
     // null?
     if (token == JsonToken.VALUE_NULL) return type.createValue(null);
     // error?
@@ -174,14 +195,12 @@ public class JsonFormatReader implements FormatReader<IOException> {
       if (JsonFormat.ERROR_CODE_FIELD.equals(firstFieldName)) return type.createValue(finishReadingError());
     } else firstFieldName = null;
     // datum
-    final @NotNull Datum datum = finishReadingDatum(token, firstFieldName, tagModelProjections, type);
+    final @NotNull Datum datum = finishReadingDatum(firstFieldName, tagModelProjections, type);
     return datum.asValue();
   }
 
   @SuppressWarnings("unchecked")
-  @NotNull
   private Datum finishReadingDatum(
-      final JsonToken token,
       final String firstFieldName,
       final @NotNull Collection<? extends ReqOutputModelProjection> tagModelProjections,
       final DatumType type) throws IOException {
@@ -190,7 +209,6 @@ public class JsonFormatReader implements FormatReader<IOException> {
     switch (type.kind()) {
       case RECORD:
         datum = finishReadingRecord(
-            token,
             firstFieldName,
             (RecordType) type,
             (Collection<? extends ReqOutputRecordModelProjection>) tagModelProjections
@@ -199,7 +217,6 @@ public class JsonFormatReader implements FormatReader<IOException> {
       case MAP:
         if (firstFieldName != null) throw expected("'['");
         datum = finishReadingMap(
-            token,
             (MapType) type,
             (Collection<? extends ReqOutputMapModelProjection>) tagModelProjections
         );
@@ -207,7 +224,6 @@ public class JsonFormatReader implements FormatReader<IOException> {
       case LIST:
         if (firstFieldName != null) throw expected("'['");
         datum = finishReadingList(
-            token,
             (ListType) type,
             (Collection<? extends ReqOutputListModelProjection>) tagModelProjections
         );
@@ -215,7 +231,6 @@ public class JsonFormatReader implements FormatReader<IOException> {
       case PRIMITIVE:
         if (firstFieldName != null) throw expected("primitive value");
         datum = finishReadingPrimitive(
-            token,
             (PrimitiveType) type
             // (Collection<? extends ReqOutputPrimitiveModelProjection>) tagModelProjections
         );
@@ -248,13 +263,12 @@ public class JsonFormatReader implements FormatReader<IOException> {
 
   // `}` or `: DATA, "field": DATA, ... }`
   private @NotNull RecordDatum finishReadingRecord(
-      @NotNull JsonToken token,
       @Nullable String fieldName,
       @NotNull RecordType type,
       @NotNull Collection<? extends ReqOutputRecordModelProjection> projections // non-empty
   ) throws IOException {
 
-    ensure(token, JsonToken.START_OBJECT);
+
     RecordDatum.Builder datum = type.createBuilder();
     if (fieldName == null) { // empty record?
       ensureCurr(JsonToken.END_OBJECT, "field name or '}'");
@@ -271,7 +285,7 @@ public class JsonFormatReader implements FormatReader<IOException> {
         Data fieldData = readData(varProjections);
         datum._raw().setData(field, fieldData);
 
-        token = nextNonEof();
+        JsonToken token = nextNonEof();
         if (token == JsonToken.END_OBJECT) break;
         if (token == JsonToken.FIELD_NAME) fieldName = in.getCurrentName();
         else throw expected("field name or '}'");
@@ -285,11 +299,11 @@ public class JsonFormatReader implements FormatReader<IOException> {
   // `]` or ` MAP_ENTRY , MAP ENTRY ... ]`
   // MAP_ENTRY ::= '{' "key" ':' DATUM ',' "value" ':' DATA '}'
   private @NotNull MapDatum finishReadingMap(
-      @NotNull JsonToken token,
       @NotNull MapType type,
       @NotNull Collection<? extends ReqOutputMapModelProjection> projections // non-empty
   ) throws IOException {
 
+    JsonToken token = in.currentToken();
     ensure(token, JsonToken.START_ARRAY);
 
     @NotNull final DatumType keyType = type.keyType();
@@ -315,6 +329,7 @@ public class JsonFormatReader implements FormatReader<IOException> {
 
         @NotNull final Data value = readData(itemProjections);
         datum._raw().elements().put(keyValue.toImmutable(), value);
+        stepOver(JsonToken.END_OBJECT);
       } else throw expected("'{' or ']");
     }
 
@@ -339,11 +354,11 @@ public class JsonFormatReader implements FormatReader<IOException> {
   }
 
   private @NotNull ListDatum finishReadingList(
-      @NotNull JsonToken token,
       @NotNull ListType type,
       @NotNull Collection<? extends ReqOutputListModelProjection> projections // non-empty
   ) throws IOException {
 
+    JsonToken token = in.currentToken();
     ensure(token, JsonToken.START_ARRAY);
 
     final ListDatum.@NotNull Builder datum = type.createBuilder();
@@ -353,19 +368,18 @@ public class JsonFormatReader implements FormatReader<IOException> {
     while (true) {
       token = nextNonEof();
       if (token == JsonToken.END_ARRAY) break;
-      @NotNull final Data value = readData(itemProjections);
+      @NotNull final Data value = finishReadingData(itemProjections);
       datum._raw().elements().add(value);
     }
 
     return datum;
   }
 
+  @NotNull
   @SuppressWarnings("unchecked")
-  private @NotNull PrimitiveDatum<?> finishReadingPrimitive(
-      @NotNull JsonToken token,
-      @NotNull PrimitiveType<?> type
-  ) throws IOException {
+  private PrimitiveDatum<?> finishReadingPrimitive(@NotNull PrimitiveType<?> type) throws IOException {
 
+    JsonToken token = in.currentToken();
     final Object nativeValue;
 
     if (type instanceof StringType) {
@@ -405,7 +419,7 @@ public class JsonFormatReader implements FormatReader<IOException> {
 //  }
 
   private @NotNull Type readType(
-      @NotNull Collection<? extends AbstractVarProjection<?, ?, ?>> projections // polymorphic tails ignored
+      @NotNull Collection<? extends AbstractVarProjection<?, ?, ?>> projections // polymorphic tails respected
   ) throws IOException {
     stepOver(JsonFormat.POLYMORPHIC_TYPE_FIELD);
     stepOver(JsonToken.VALUE_STRING, "string value");
@@ -417,7 +431,7 @@ public class JsonFormatReader implements FormatReader<IOException> {
   }
 
   private @Nullable Type resolveType(
-      @NotNull Collection<? extends AbstractVarProjection<?, ?, ?>> projections, // polymorphic tails ignored
+      @NotNull Collection<? extends AbstractVarProjection<?, ?, ?>> projections, // polymorphic tails respected
       @NotNull String typeName
   ) {
     /*
@@ -431,16 +445,19 @@ public class JsonFormatReader implements FormatReader<IOException> {
     return findType(projections, typeName); // KS: removed caching
   }
 
+  @SuppressWarnings("unchecked")
   private @Nullable Type findType(
-      @NotNull Collection<? extends AbstractVarProjection<?, ?, ?>> projections, // polymorphic tails ignored
+      @Nullable Collection<? extends AbstractVarProjection<?, ?, ?>> projections, // polymorphic tails respected
       @NotNull String typeName
   ) {
+    if (projections == null) return null;
     for (AbstractVarProjection vp : projections) {
       Type type = vp.type();
       if (typeName.equals(type.name().toString())) return type;
+      type = findType(vp.polymorphicTails(), typeName); // dfs
+      if (type != null) return type;
     }
     return null;
-//  return projections.stream().map(AbstractVarProjection::type).filter(vpt -> typeName.equals(vpt.name().toString())).findAny().orElse(null);
   }
 
 //  @Deprecated
@@ -489,7 +506,7 @@ public class JsonFormatReader implements FormatReader<IOException> {
         if (tag == null)
           throw error("Unknown tag '" + tagName + "' in type '" + type.name().toString() + "'");
 
-        Val value = readValue(tag);
+        Val value = finishReadingValue(tag);
         data._raw().setValue(tag, value);
       }
       ensure(token, JsonToken.END_OBJECT);
@@ -497,7 +514,7 @@ public class JsonFormatReader implements FormatReader<IOException> {
       DatumType datumType = (DatumType) type;
       @NotNull final Tag selfTag = datumType.self;
 
-      @NotNull Val val = readValue(selfTag);
+      @NotNull Val val = finishReadingValue(selfTag);
       data._raw().setValue(selfTag, val);
     }
 
@@ -505,7 +522,7 @@ public class JsonFormatReader implements FormatReader<IOException> {
   }
 
   // VALUE ::= ERROR or DATUM or null
-  private @NotNull Val readValue( @NotNull Tag tag ) throws IOException {
+  private @NotNull Val finishReadingValue(@NotNull Tag tag) throws IOException {
 
     DatumType type = tag.type;
     @NotNull JsonToken token = nextNonEof();
@@ -530,7 +547,7 @@ public class JsonFormatReader implements FormatReader<IOException> {
       firstFieldName = in.nextFieldName();
     else firstFieldName = null;
 
-    return finishReadingDatum(token, firstFieldName, Collections.singleton(projection), projection.model());
+    return finishReadingDatum(firstFieldName, Collections.singleton(projection), projection.model());
   }
 
   public @Nullable Datum readDatum(@NotNull DatumType type) throws IOException {
@@ -592,7 +609,6 @@ public class JsonFormatReader implements FormatReader<IOException> {
       case PRIMITIVE:
         if (firstFieldName != null) throw expected("primitive value");
         datum = finishReadingPrimitive(
-            token,
             (PrimitiveType) type
         );
         break;
