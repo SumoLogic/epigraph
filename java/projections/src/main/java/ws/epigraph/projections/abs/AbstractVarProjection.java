@@ -143,7 +143,6 @@ public abstract class AbstractVarProjection<
 
     if (linearizedTails.isEmpty())
       return self();
-//    return stripTails(self());
 
     final Type effectiveType = linearizedTails.get(0).type();
 
@@ -230,11 +229,6 @@ public abstract class AbstractVarProjection<
       final @Nullable List<VP> mergedTails) {
     throw new RuntimeException("not implemented"); // todo make abstract
   }
-//
-//  @NotNull
-//  protected VP stripTails(@NotNull VP vp) {
-//    return merge(vp.type(), Collections.singletonList(vp), vp.tagProjections(), null);
-//  }
 
   @SuppressWarnings("unchecked")
   @NotNull

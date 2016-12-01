@@ -45,6 +45,9 @@ public class ReqOutputVarProjection extends AbstractVarProjection<
       @NotNull TextLocation location) {
     super(type, tagProjections, polymorphicTails, location);
     this.parenthesized = parenthesized;
+
+    if (tagProjections.size() > 1 && !parenthesized)
+      throw new IllegalArgumentException("'parenthesized' must be 'true' for a multi-tag projection");
   }
 
   public boolean parenthesized() { return parenthesized; }
@@ -69,7 +72,7 @@ public class ReqOutputVarProjection extends AbstractVarProjection<
         type,
         mergedTags,
         mergedTails,
-        varProjections.stream().anyMatch(ReqOutputVarProjection::parenthesized),
+        mergedTags.size() > 1 || varProjections.stream().anyMatch(ReqOutputVarProjection::parenthesized),
         TextLocation.UNKNOWN
     );
   }

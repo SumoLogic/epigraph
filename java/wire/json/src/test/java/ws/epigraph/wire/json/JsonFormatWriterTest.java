@@ -86,8 +86,8 @@ public class JsonFormatWriterTest {
   public void testRenderEmpty() throws IOException {
     final Person.@NotNull Imm person =
         Person.create()
-              .setId(PersonId.create(1))
-              .toImmutable();
+            .setId(PersonId.create(1))
+            .toImmutable();
 
     testRender(":()", person, "{}");
   }
@@ -96,8 +96,8 @@ public class JsonFormatWriterTest {
   public void testRenderId() throws IOException {
     final Person.@NotNull Imm person =
         Person.create()
-              .setId(PersonId.create(1))
-              .toImmutable();
+            .setId(PersonId.create(1))
+            .toImmutable();
 
     testRender(":id", person, "1");
   }
@@ -106,8 +106,8 @@ public class JsonFormatWriterTest {
   public void testRenderIdParens() throws IOException {
     final Person.@NotNull Imm person =
         Person.create()
-              .setId(PersonId.create(1))
-              .toImmutable();
+            .setId(PersonId.create(1))
+            .toImmutable();
 
     testRender(":(id)", person, "{\"id\":1}");
   }
@@ -116,12 +116,12 @@ public class JsonFormatWriterTest {
   public void testRenderIdAndRecord() throws IOException {
     final Person.@NotNull Imm person =
         Person.create()
-              .setId(PersonId.create(1))
-              .setRecord(
-                  PersonRecord.create()
-                              .setId(PersonId.create(1))
-              )
-              .toImmutable();
+            .setId(PersonId.create(1))
+            .setRecord(
+                PersonRecord.create()
+                    .setId(PersonId.create(1))
+            )
+            .toImmutable();
 
     testRender(":(id,record(id))", person, "{\"id\":1,\"record\":{\"id\":1}}");
   }
@@ -130,11 +130,11 @@ public class JsonFormatWriterTest {
   public void testRenderRecordWithMissingId() throws IOException {
     final Person.@NotNull Imm person =
         Person.create()
-              .setRecord(
-                  PersonRecord.create()
-                              .setId(PersonId.create(1))
-              )
-              .toImmutable();
+            .setRecord(
+                PersonRecord.create()
+                    .setId(PersonId.create(1))
+            )
+            .toImmutable();
 
     testRender(":(id,record(id))", person, "{\"id\":null,\"record\":{\"id\":1}}");
   }
@@ -143,11 +143,11 @@ public class JsonFormatWriterTest {
   public void testRenderRecordWithId() throws IOException {
     final Person.@NotNull Imm person =
         Person.create()
-              .setRecord(
-                  PersonRecord.create()
-                              .setId(PersonId.create(1))
-              )
-              .toImmutable();
+            .setRecord(
+                PersonRecord.create()
+                    .setId(PersonId.create(1))
+            )
+            .toImmutable();
 
     testRender(":record(id)", person, "{\"id\":1}");
   }
@@ -156,16 +156,16 @@ public class JsonFormatWriterTest {
   public void testRenderList() throws IOException {
     final Person.@NotNull Imm person =
         Person.create()
-              .setRecord(
-                  PersonRecord.create()
-                              .setFriends(
-                                  Person_List.create()
-                                             .add(Person.create().setId(PersonId.create(2)))
-                                             .add(Person.create().setId(PersonId.create(3)))
-                                             .add(Person.create().setId(PersonId.create(4)))
-                              )
-              )
-              .toImmutable();
+            .setRecord(
+                PersonRecord.create()
+                    .setFriends(
+                        Person_List.create()
+                            .add(Person.create().setId(PersonId.create(2)))
+                            .add(Person.create().setId(PersonId.create(3)))
+                            .add(Person.create().setId(PersonId.create(4)))
+                    )
+            )
+            .toImmutable();
 
     testRender(":record(friends*(:id))", person, "{\"friends\":[2,3,4]}");
   }
@@ -174,25 +174,25 @@ public class JsonFormatWriterTest {
   public void testRenderMap() throws IOException {
     final Person.@NotNull Imm person =
         Person.create()
-              .setRecord(
-                  PersonRecord.create()
-                              .setFriendsMap(
-                                  String_Person_Map.create()
-                                                   .put$(
-                                                       epigraph.String.create("key1"),
-                                                       Person.create().setId(PersonId.create(1))
-                                                   )
-                                                   .put$(
-                                                       epigraph.String.create("key2"),
-                                                       Person.create().setId(PersonId.create(2))
-                                                   )
-                                                   .put$(
-                                                       epigraph.String.create("key3"),
-                                                       Person.create().setId(PersonId.create(3))
-                                                   )
-                              )
-              )
-              .toImmutable();
+            .setRecord(
+                PersonRecord.create()
+                    .setFriendsMap(
+                        String_Person_Map.create()
+                            .put$(
+                                epigraph.String.create("key1"),
+                                Person.create().setId(PersonId.create(1))
+                            )
+                            .put$(
+                                epigraph.String.create("key2"),
+                                Person.create().setId(PersonId.create(2))
+                            )
+                            .put$(
+                                epigraph.String.create("key3"),
+                                Person.create().setId(PersonId.create(3))
+                            )
+                    )
+            )
+            .toImmutable();
 
     testRender(
         ":record(friendsMap['key1','key2','key3'](:id))",
@@ -205,12 +205,12 @@ public class JsonFormatWriterTest {
   public void testRenderTailNoMatch() throws IOException {
     final Person.@NotNull Imm person =
         Person.create()
-              .setRecord(
-                  UserRecord.create() // should not match even though this is a UserRecord
-                            .setId(PersonId.create(1))
-                            .setProfile(Url.create("http://foo"))
-              )
-              .toImmutable();
+            .setRecord(
+                UserRecord.create() // should not match even though this is a UserRecord
+                    .setId(PersonId.create(1))
+                    .setProfile(Url.create("http://foo"))
+            )
+            .toImmutable();
 
     testRender(
         ":record(id)~ws.epigraph.tests.User :record(profile)",
@@ -223,17 +223,18 @@ public class JsonFormatWriterTest {
   public void testRenderSimpleTail() throws IOException {
     final Person.@NotNull Imm person =
         User.create()
+            .setId(UserId.create(1))
             .setRecord(
                 UserRecord.create()
-                          .setId(PersonId.create(1))
-                          .setProfile(Url.create("http://foo"))
+                    .setId(PersonId.create(1))
+                    .setProfile(Url.create("http://foo"))
             )
             .toImmutable();
 
     testRender(
-        ":record(id)~ws.epigraph.tests.User :record(profile)",
+        ":id~ws.epigraph.tests.User :record(profile)",
         person,
-        "{\"type\":\"ws.epigraph.tests.User\",\"data\":{\"id\":1,\"profile\":\"http://foo\"}}"
+        "{\"type\":\"ws.epigraph.tests.User\",\"data\":{\"id\":1,\"record\":{\"profile\":\"http://foo\"}}}"
     );
   }
 
@@ -241,12 +242,12 @@ public class JsonFormatWriterTest {
   public void testRenderSubTail() throws IOException {
     final Person.@NotNull Imm person =
         SubUser.create()
-               .setRecord(
-                   SubUserRecord.create()
-                                .setId(PersonId.create(1))
-                   .setWorstEnemy(SubUserRecord.create().setId(PersonId.create(1)))
-               )
-               .toImmutable();
+            .setRecord(
+                SubUserRecord.create()
+                    .setId(PersonId.create(1))
+                    .setWorstEnemy(SubUserRecord.create().setId(PersonId.create(1)))
+            )
+            .toImmutable();
 
     testRender(
         ":record(id)~ws.epigraph.tests.User :record(profile) ~ws.epigraph.tests.SubUser :record(worstEnemy(id))",

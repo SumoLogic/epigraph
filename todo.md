@@ -4,8 +4,12 @@
 
 # Framework
 - [x] Fix tails support in JSON output. Data trimmer must be fixed?
-- [ ] JSON unmarshaller
-  -[ ] recursive data support?
+- JSON marshaller
+  -[ ] metadata support
+  -[ ] recursive data support
+- JSON unmarshaller
+  -[ ] metadata support
+  -[ ] recursive data support
 - [ ] Format for parameter values in URL. Currently: GData with single quotes.
 - [x] `*PsiParser` should accumulate errors in the context instead of throwing `PsiProcessingException`
 
@@ -30,7 +34,7 @@
 - [x] Don't auto-include built-in types (because versioning)
 - [x] package compiled schemas under `epigraph$artifacts` zip entry (see maven plugin)
 - [x] create folder structure based on namespaces, then put original files inside
-- [ ] **java generator doesn't detect changes in schema**
+- [ ] **High: java generator doesn't detect changes in schema**
 - [ ] Scan `*.eidl` files too
 - [ ] Rename `epigraph-schema-compiler-gradle-plugin` to just `gradle-plugin`. Move it together with `common` to top level, to mimic maven plugins structure
 - [ ] Produce a list of `EpigraphType`->`JavaClass` mappings artifact (Duplicates task from `Schema compiler` list above)

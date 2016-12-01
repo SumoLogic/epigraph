@@ -26,6 +26,8 @@ import ws.epigraph.projections.req.output.ReqOutputModelProjection;
 import ws.epigraph.projections.req.output.ReqOutputVarProjection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.types.DataType;
+import ws.epigraph.types.DatumType;
 
 public interface FormatReader<Exc extends Exception> {
 
@@ -33,11 +35,11 @@ public interface FormatReader<Exc extends Exception> {
 
   @Nullable Datum readDatum(@NotNull ReqOutputModelProjection projection) throws Exc;
 
-  @Nullable Data readData() throws Exc;
+  @Nullable Data readData(@NotNull DataType type) throws Exc;
 
-  @Nullable Datum readDatum() throws Exc;
+  @Nullable Datum readDatum(@NotNull DatumType type) throws Exc;
 
-  @NotNull Val readValue() throws Exc;
+  @NotNull Val readValue(@NotNull DatumType type) throws Exc;
 
   @NotNull ErrorValue readError() throws Exc;
 

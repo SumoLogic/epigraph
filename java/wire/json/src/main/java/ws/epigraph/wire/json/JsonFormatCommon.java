@@ -32,6 +32,10 @@ public abstract class JsonFormatCommon {
 
   private JsonFormatCommon() {}
 
+  /**
+   * Recursively traverse all {@code projections}, including tails, and collect those applicable to {@code varType},
+   * with most specific one being last
+   */
   public static <Acc extends Collection<ReqOutputVarProjection>> @NotNull Acc flatten(
       @NotNull Acc acc,
       @NotNull Collection<? extends ReqOutputVarProjection> projections,
@@ -47,7 +51,10 @@ public abstract class JsonFormatCommon {
       @NotNull ReqOutputVarProjection varProjection,
       @NotNull Type actualType
   ) {
-    acc.add(varProjection);
+    // effectively this is
+    // Collections.reverse(ProjectionUtils.linearizeTails(actualType, Collections.singleton(varProjection).stream()));
+
+    if (varProjection.type().isAssignableFrom(actualType)) acc.add(varProjection);
     Iterable<ReqOutputVarProjection> tails = varProjection.polymorphicTails();
     if (tails != null) for (ReqOutputVarProjection tail : tails) {
       if (tail.type().isAssignableFrom(actualType)) return append(acc, tail, actualType); // dfs
@@ -76,6 +83,7 @@ public abstract class JsonFormatCommon {
     return monoTag(projections) == null;
   }
 
+  // return 'tag' if all projections are of the form ':tag(...)'
   public static @Nullable String monoTag(@NotNull Iterable<? extends ReqOutputVarProjection> projections) {
     String tagName = null;
     for (ReqOutputVarProjection vp : projections) {
@@ -89,7 +97,9 @@ public abstract class JsonFormatCommon {
     return tagName; // non-null if there was exactly one tag and no parenthesized projections
   }
 
-  /** @return non-empty collection or `null` */
+  /**
+   * @return non-empty collection or `null`
+   */
   public static <Coll extends Collection<ReqOutputModelProjection>> @Nullable Coll tagModelProjections(
       @NotNull Tag tag,
       @NotNull Iterable<? extends ReqOutputVarProjection> projections, // non-empty, polymorphic tails ignored
@@ -106,7 +116,9 @@ public abstract class JsonFormatCommon {
     return tagModelProjections;
   }
 
-  /** @return non-empty collection or `null` */
+  /**
+   * @return non-empty collection or `null`
+   */
   public static <Coll extends Collection<ReqOutputVarProjection>> @Nullable Coll fieldVarProjections(
       @NotNull Iterable<? extends ReqOutputRecordModelProjection> projections, // non-empty
       @NotNull Field field,

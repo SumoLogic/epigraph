@@ -5,6 +5,7 @@ dependencies {
   compile project(':epigraph-java-projections')
   compile project(':epigraph-java-wire-common')
 
+  compile 'com.fasterxml.jackson.core:jackson-core'
   compile 'org.jetbrains:annotations'
 
   testCompile project(':epigraph-java-projections-idl-psi-parser')

@@ -18,9 +18,10 @@
 
 package ws.epigraph.wire.json;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.*;
 import ws.epigraph.errors.ErrorValue;
-import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.req.output.*;
 import ws.epigraph.types.DatumType;
 import ws.epigraph.types.RecordType;
@@ -29,17 +30,10 @@ import ws.epigraph.types.Type;
 import ws.epigraph.types.Type.Tag;
 import ws.epigraph.types.TypeKind;
 import ws.epigraph.wire.FormatWriter;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 import static ws.epigraph.wire.json.JsonFormatCommon.*;
@@ -66,10 +60,7 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
       @NotNull Deque<ReqOutputVarProjection> projections, // non-empty, polymorphic tails ignored
       @NotNull Data data
   ) throws IOException {
-//    Type type = projections.peekLast()
-//        .type(); // use deepest match type from here on
-    final List<ReqOutputVarProjection> linearizedTails = ProjectionUtils.linearizeTails(data.type(), projections);
-    Type type = linearizedTails.get(0).type();
+    Type type = projections.peekLast().type(); // use deepest match type from here on
     // TODO check all projections (not just the ones that matched actual data type)?
     boolean renderMulti = type.kind() == TypeKind.UNION && needMultiRendering(projections);
     if (renderPoly) {
@@ -121,7 +112,7 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
     if (datum == null) {
       out.write("null");
     } else {
-      DatumType model = projections.peekLast().model();
+      DatumType model = projections.peekLast().model(); // todo pass explicitly
       switch (model.kind()) {
         case RECORD:
           writeRecord((Deque<ReqOutputRecordModelProjection>) projections, (RecordDatum) datum);

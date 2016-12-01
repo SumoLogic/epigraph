@@ -24,6 +24,7 @@ import ws.epigraph.types.DatumType;
 import ws.epigraph.types.Type;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -123,9 +124,19 @@ public class ProjectionUtils {
     return len;
   }
 
+//  public static <VP extends GenVarProjection<VP, ?, ?>> List<VP> linearizeTailsFromProjections(
+//      @NotNull Type t,
+//      @NotNull Stream<VP> projections) {
+//
+//    final Stream<VP> tails =
+//        projections.map(vp -> vp.polymorphicTails()).filter(Objects::nonNull).flatMap(Collection::stream);
+//
+//    return linearizeTails(t, tails);
+//  }
+
   public static <VP extends GenVarProjection<VP, ?, ?>> List<VP> linearizeTails(
       @NotNull Type t,
-      @NotNull Deque<VP> tails) {
+      @NotNull Stream<VP> tails) {
 
     return linearizeTails(t, tails, new LinkedList<>());
   }
@@ -147,15 +158,15 @@ public class ProjectionUtils {
         return Collections.emptyList();
     }
 
-    return linearizeTails(t, tails, new LinkedList<>());
+    return linearizeTails(t, tails.stream(), new LinkedList<>());
   }
 
   public static <VP extends GenVarProjection<VP, ?, ?>> List<VP> linearizeTails(
       @NotNull Type type,
-      @NotNull Collection<VP> tails,
+      @NotNull Stream<VP> tails,
       @NotNull LinkedList<VP> linearizedTails) {
 
-    final Optional<VP> matchingTailOpt = tails.stream().filter(tail -> tail.type().isAssignableFrom(type)).findFirst();
+    final Optional<VP> matchingTailOpt = tails.filter(tail -> tail.type().isAssignableFrom(type)).findFirst();
 
     if (matchingTailOpt.isPresent()) {
       final VP matchingTail = matchingTailOpt.get();
@@ -164,7 +175,7 @@ public class ProjectionUtils {
 
       final List<VP> tails2 = matchingTail.polymorphicTails();
       if (tails2 != null)
-        linearizeTails(type, tails2, linearizedTails);
+        linearizeTails(type, tails2.stream(), linearizedTails);
 
     }
 
