@@ -37,8 +37,9 @@ public class ReqUpdateVarProjection extends AbstractVarProjection<
   public ReqUpdateVarProjection(
       @NotNull Type type,
       @NotNull Map<String, ReqUpdateTagProjectionEntry> tagProjections,
+      boolean parenthesized,
       @Nullable List<ReqUpdateVarProjection> polymorphicTails,
       @NotNull TextLocation location) {
-    super(type, tagProjections, polymorphicTails, location);
+    super(type, tagProjections, parenthesized, polymorphicTails, location);
   }
 }

@@ -37,8 +37,9 @@ public class OpInputVarProjection extends AbstractVarProjection<
   public OpInputVarProjection(
       @NotNull Type type,
       @NotNull LinkedHashMap<String, OpInputTagProjectionEntry> tagProjections,
+      boolean parenthesized,
       @Nullable List<OpInputVarProjection> polymorphicTails,
       @NotNull TextLocation location) {
-    super(type, tagProjections, polymorphicTails, location);
+    super(type, tagProjections, parenthesized, polymorphicTails, location);
   }
 }

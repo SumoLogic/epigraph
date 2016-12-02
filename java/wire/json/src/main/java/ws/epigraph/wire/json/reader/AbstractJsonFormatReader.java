@@ -29,6 +29,7 @@ import ws.epigraph.types.*;
 import ws.epigraph.types.Type.Tag;
 import ws.epigraph.wire.FormatReader;
 import ws.epigraph.wire.json.JsonFormat;
+import ws.epigraph.wire.json.JsonFormatCommon;
 
 import java.io.IOException;
 import java.util.*;
@@ -119,7 +120,7 @@ abstract class AbstractJsonFormatReader<
     // read MONODATA
     List<? extends VP> flattened = flatten(new ArrayList<>(), projections, type);
 
-    String monoTagName = type.kind() == TypeKind.UNION ? monoTag(flattened) : DatumType.MONO_TAG_NAME;
+    String monoTagName = type.kind() == TypeKind.UNION ? JsonFormatCommon.monoTag(flattened) : DatumType.MONO_TAG_NAME;
     if (monoTagName == null) { // MULTIDATA ::= { "tag": VALUE, ... }
       data = finishReadingMultiData(type, flattened);
     } else { // VALUE ::= ERROR or DATUM or null
@@ -134,9 +135,6 @@ abstract class AbstractJsonFormatReader<
     if (readPoly) stepOver(JsonToken.END_OBJECT); // TODO verify it's not already consumed (by invoked code)
     return data;
   }
-
-  // return 'tag' if all projections are of the form ':tag(...)'
-  protected abstract @Nullable String monoTag(@NotNull Iterable<? extends VP> projections);
 
   // MULTIDATA ::= { "tag": VALUE, ... }
   private @NotNull Data finishReadingMultiData(

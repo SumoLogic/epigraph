@@ -12,8 +12,9 @@
   - [ ] ~~guided by req delete projection~~
   
 - [x] Move `ReqOutputVarProjection.parenthesized` to `GenVarProjection`
-  - [ ] Update parsers
-  - [ ] Update unmarshallers
+  - [x] Update parsers
+  - [x] Update pretty printers
+  - [x] Update unmarshallers
   
 - [ ] Undertow handler must support all operations
   - [ ] add support for create

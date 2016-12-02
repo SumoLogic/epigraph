@@ -51,13 +51,14 @@ public class ReqOutputVarProjection extends AbstractVarProjection<
       @NotNull final Type type,
       @NotNull final List<ReqOutputVarProjection> varProjections,
       @NotNull final Map<String, ReqOutputTagProjectionEntry> mergedTags,
+      final boolean mergedParenthesized,
       final List<ReqOutputVarProjection> mergedTails) {
 
     return new ReqOutputVarProjection(
         type,
         mergedTags,
         mergedTails,
-        mergedTags.size() > 1 || varProjections.stream().anyMatch(ReqOutputVarProjection::parenthesized),
+        mergedParenthesized,
         TextLocation.UNKNOWN
     );
   }

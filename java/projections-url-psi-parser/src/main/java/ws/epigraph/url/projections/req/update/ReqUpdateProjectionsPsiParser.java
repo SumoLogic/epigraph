@@ -115,7 +115,13 @@ public class ReqUpdateProjectionsPsiParser {
         parseTails(dataType, op, psi.getReqUpdateVarPolymorphicTail(), subResolver, errors);
 
     try {
-      return new ReqUpdateVarProjection(type, tagProjections, tails, EpigraphPsiUtil.getLocation(psi));
+      return new ReqUpdateVarProjection(
+          type,
+          tagProjections,
+          singleTagProjectionPsi == null,
+          tails,
+          EpigraphPsiUtil.getLocation(psi)
+      );
     } catch (Exception e) {
       throw new PsiProcessingException(e, psi, errors);
     }
@@ -199,6 +205,7 @@ public class ReqUpdateProjectionsPsiParser {
     return new ReqUpdateVarProjection(
         type,
         Collections.emptyMap(),
+        true,
         null,
         EpigraphPsiUtil.getLocation(psi)
     );
@@ -555,6 +562,7 @@ public class ReqUpdateProjectionsPsiParser {
     return new ReqUpdateVarProjection(
         type,
         tagProjections,
+        op.parenthesized() || tagProjections.size() != 1,
         null,
         EpigraphPsiUtil.getLocation(locationPsi)
     );

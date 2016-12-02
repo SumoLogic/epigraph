@@ -80,9 +80,11 @@ public abstract class JsonFormatCommon {
 //  }
 
   // return 'tag' if all projections are of the form ':tag(...)'
-  public static @Nullable String monoTag(@NotNull Iterable<? extends ReqOutputVarProjection> projections) {
+  @Nullable
+  public static <VP extends GenVarProjection<VP, ?, ?>>
+  String monoTag(@NotNull Iterable<? extends VP> projections) {
     String tagName = null;
-    for (ReqOutputVarProjection vp : projections) {
+    for (VP vp : projections) {
       // TODO confirm multi-tag projection yields parenthesized=true (even if built from defaults)
       if (vp.parenthesized()) return null;
       for (String vpTagName : vp.tagProjections().keySet()) {

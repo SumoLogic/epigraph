@@ -55,10 +55,6 @@ public class OpInputJsonFormatReader extends AbstractJsonFormatReader<
 
   @Nullable
   @Override
-  protected String monoTag(@NotNull final Iterable<? extends OpInputVarProjection> projections) { return null; }
-
-  @Nullable
-  @Override
   protected Set<Datum> getExpectedKeys(@NotNull final Collection<? extends OpInputMapModelProjection> projections) {
     return null;
   }

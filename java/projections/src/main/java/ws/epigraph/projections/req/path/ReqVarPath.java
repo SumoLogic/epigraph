@@ -38,6 +38,7 @@ public class ReqVarPath extends AbstractVarProjection<ReqVarPath, ReqTagPath, Re
         type,
         tagProjection == null ? Collections.emptyMap()
                               : Collections.singletonMap(tagProjection.tag().name(), tagProjection),
+        tagProjection == null,
         null,
         location
     );

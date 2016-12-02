@@ -59,12 +59,6 @@ public class ReqOutputJsonFormatReader extends AbstractJsonFormatReader<
 
   @Nullable
   @Override
-  protected String monoTag(@NotNull final Iterable<? extends ReqOutputVarProjection> projections) {
-    return JsonFormatCommon.monoTag(projections);
-  }
-
-  @Nullable
-  @Override
   protected Set<Datum> getExpectedKeys(@NotNull final Collection<? extends ReqOutputMapModelProjection> projections) {
     Set<Datum> expectedKeys = null;
 

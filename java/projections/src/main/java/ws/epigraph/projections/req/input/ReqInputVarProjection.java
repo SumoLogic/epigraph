@@ -37,8 +37,9 @@ public class ReqInputVarProjection extends AbstractVarProjection<
   public ReqInputVarProjection(
       @NotNull Type type,
       @NotNull Map<String, ReqInputTagProjectionEntry> tagProjections,
+      boolean parenthesized,
       @Nullable List<ReqInputVarProjection> polymorphicTails,
       @NotNull TextLocation location) {
-    super(type, tagProjections, polymorphicTails, location);
+    super(type, tagProjections, parenthesized, polymorphicTails, location);
   }
 }

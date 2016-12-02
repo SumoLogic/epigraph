@@ -149,7 +149,7 @@ public class ReqOutputProjectionsParserTest {
   public void testStarTags2() {
     testParse(
         ":record(bestFriend:*)",
-        ":record ( bestFriend :record )",
+        ":record ( bestFriend :( record ) )",
         1
     );
   }

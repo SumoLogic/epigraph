@@ -110,7 +110,13 @@ public class OpInputProjectionsPsiParser {
     try {
       return new StepsAndProjection<>(
           0,
-          new OpInputVarProjection(type, tagProjections, tails, EpigraphPsiUtil.getLocation(psi))
+          new OpInputVarProjection(
+              type,
+              tagProjections,
+              singleTagProjectionPsi == null,
+              tails,
+              EpigraphPsiUtil.getLocation(psi)
+          )
       );
     } catch (Exception e) {
       throw new PsiProcessingException(e, psi, errors);
@@ -342,6 +348,7 @@ public class OpInputProjectionsPsiParser {
                 EpigraphPsiUtil.getLocation(locationPsi)
             )
         ),
+        false,
         null,
         EpigraphPsiUtil.getLocation(locationPsi)
     );
@@ -750,16 +757,16 @@ public class OpInputProjectionsPsiParser {
 
     @NotNull OpParams fieldParams = parseParams(
         psi.getOpInputFieldProjectionBodyPartList()
-           .stream()
-           .map(IdlOpInputFieldProjectionBodyPart::getOpParam),
+            .stream()
+            .map(IdlOpInputFieldProjectionBodyPart::getOpParam),
         resolver,
         errors
     );
 
     @NotNull Annotations fieldAnnotations = parseAnnotations(
         psi.getOpInputFieldProjectionBodyPartList()
-           .stream()
-           .map(IdlOpInputFieldProjectionBodyPart::getAnnotation),
+            .stream()
+            .map(IdlOpInputFieldProjectionBodyPart::getAnnotation),
         errors
     );
 

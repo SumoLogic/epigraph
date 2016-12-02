@@ -158,7 +158,14 @@ public class OpDeleteProjectionsPsiParser {
     } else tails = null;
 
     try {
-      return new OpDeleteVarProjection(type, canDelete, tagProjections, tails, EpigraphPsiUtil.getLocation(psi));
+      return new OpDeleteVarProjection(
+          type,
+          canDelete,
+          tagProjections,
+          singleTagProjectionPsi == null,
+          tails,
+          EpigraphPsiUtil.getLocation(psi)
+      );
     } catch (IllegalArgumentException e) {
       throw new PsiProcessingException(e, psi, errors);
     }
@@ -232,6 +239,7 @@ public class OpDeleteProjectionsPsiParser {
                 EpigraphPsiUtil.getLocation(locationPsi)
             )
         ),
+        false,
         null,
         EpigraphPsiUtil.getLocation(locationPsi)
     );

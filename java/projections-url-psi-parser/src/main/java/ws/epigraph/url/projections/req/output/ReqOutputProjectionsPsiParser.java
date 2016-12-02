@@ -480,7 +480,7 @@ public class ReqOutputProjectionsPsiParser {
         type,
         tagProjections,
         null,
-        tagProjections.size() > 1,
+        op.parenthesized() || tagProjections.size() != 1,
         EpigraphPsiUtil.getLocation(locationPsi)
     );
   }

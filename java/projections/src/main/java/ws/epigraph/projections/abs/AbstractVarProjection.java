@@ -42,7 +42,7 @@ public abstract class AbstractVarProjection<
   private final Type type;
   @NotNull
   private final Map<String, TP> tagProjections;
-  private final boolean parenthesized;
+  private final boolean parenthesized; // todo merge
   @Nullable
   private final List<VP> polymorphicTails;
 
@@ -66,17 +66,14 @@ public abstract class AbstractVarProjection<
     validateTails();
   }
 
-  @Deprecated
-  public AbstractVarProjection(
-      @NotNull Type type,
-      @NotNull Map<String, TP> tagProjections,
-      @Nullable List<VP> polymorphicTails,
-      @NotNull TextLocation location) {
-
-    this(type, tagProjections, false, polymorphicTails, location);
-  }
-
   private void validateTags() {
+    if (!parenthesized && tagProjections().size() != 1)
+      throw new IllegalArgumentException(
+          String.format(
+              "Non-parenthesized var projection can only contain one tag; was passed %d tags",
+              tagProjections().size()
+          ));
+
     for (final Map.Entry<String, TP> entry : tagProjections.entrySet()) {
       final String tagName = entry.getKey();
 
@@ -87,14 +84,14 @@ public abstract class AbstractVarProjection<
       if (!type.tagsMap().containsKey(tagName))
         throw new IllegalArgumentException(
             String.format("Tag '%s' does not belong to var type '%s'",
-                          tagName, type.name()
+                tagName, type.name()
             )
         );
 
       if (!tagType.isAssignableFrom(tagProjectionModel))
         throw new IllegalArgumentException(
             String.format("Tag '%s' projection type '%s' is not a subtype of tag type '%s'",
-                          tagName, tagProjectionModel.name(), tagType.name()
+                tagName, tagProjectionModel.name(), tagType.name()
             )
         );
 
@@ -142,9 +139,9 @@ public abstract class AbstractVarProjection<
       polymorphicDepth = polymorphicTails == null
                          ? 0
                          : polymorphicTails.stream()
-                                           .mapToInt(AbstractVarProjection::polymorphicDepth)
-                                           .max()
-                                           .orElse(0);
+                             .mapToInt(AbstractVarProjection::polymorphicDepth)
+                             .max()
+                             .orElse(0);
     return polymorphicDepth;
   }
 
@@ -170,7 +167,9 @@ public abstract class AbstractVarProjection<
     final Set<Type.Tag> tags = collectTags(effectiveProjections);
     final LinkedHashMap<String, TP> mergedTags = mergeTags(tags, effectiveProjections);
 
-    return merge(effectiveType, effectiveProjections, mergedTags, mergedTails);
+    final boolean mergedParenthesized = mergeParenthesized(effectiveProjections, mergedTags);
+
+    return merge(effectiveType, effectiveProjections, mergedTags, mergedParenthesized, mergedTails);
   }
 
   @NotNull
@@ -206,6 +205,13 @@ public abstract class AbstractVarProjection<
     return mergedTags;
   }
 
+  private boolean mergeParenthesized(
+      final @NotNull List<VP> varProjections,
+      final @NotNull Map<String, TP> mergedTags) {
+
+    return mergedTags.size() != 1 || varProjections.stream().anyMatch(GenVarProjection::parenthesized);
+  }
+
   @Nullable
   private List<VP> mergeTails(
       final @NotNull List<? extends AbstractVarProjection<VP, TP, MP>> sources) {
@@ -232,9 +238,10 @@ public abstract class AbstractVarProjection<
     @NotNull final Set<Type.Tag> tags = collectTags(varProjections);
 
     @NotNull final Map<String, TP> mergedTags = mergeTags(tags, varProjections);
+    boolean mergedParenthesized = mergeParenthesized(varProjections, mergedTags);
     @Nullable final List<VP> mergedTails = mergeTails(varProjections);
 
-    return merge(type(), varProjections, mergedTags, mergedTails);
+    return merge(type(), varProjections, mergedTags, mergedParenthesized, mergedTails);
   }
 
   /* static */
@@ -242,6 +249,7 @@ public abstract class AbstractVarProjection<
       final @NotNull Type type,
       final @NotNull List<VP> varProjections,
       final @NotNull Map<String, TP> mergedTags,
+      final boolean mergedParenthesized,
       final @Nullable List<VP> mergedTails) {
     throw new RuntimeException("not implemented"); // todo make abstract
   }
@@ -262,12 +270,11 @@ public abstract class AbstractVarProjection<
     AbstractVarProjection that = (AbstractVarProjection) o;
     return Objects.equals(type, that.type) &&
            Objects.equals(tagProjections, that.tagProjections) &&
-           parenthesized == that.parenthesized &&
            Objects.equals(polymorphicTails, that.polymorphicTails);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(type, tagProjections, parenthesized, polymorphicTails);
+    return Objects.hash(type, tagProjections, polymorphicTails);
   }
 }

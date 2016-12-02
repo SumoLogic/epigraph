@@ -37,9 +37,10 @@ public class ReqDeleteVarProjection extends AbstractVarProjection<
   public ReqDeleteVarProjection(
       @NotNull Type type,
       @NotNull Map<String, ReqDeleteTagProjectionEntry> tagProjections,
+      boolean parenthesized,
       @Nullable List<ReqDeleteVarProjection> polymorphicTails,
       @NotNull TextLocation location) {
-    super(type, tagProjections, polymorphicTails, location);
+    super(type, tagProjections, parenthesized, polymorphicTails, location);
   }
 
 }

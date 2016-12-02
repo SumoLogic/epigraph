@@ -114,7 +114,13 @@ public class ReqInputProjectionsPsiParser {
         parseTails(dataType, op, psi.getReqInputVarPolymorphicTail(), subResolver, errors);
 
     try {
-      return new ReqInputVarProjection(type, tagProjections, tails, EpigraphPsiUtil.getLocation(psi));
+      return new ReqInputVarProjection(
+          type,
+          tagProjections,
+          singleTagProjectionPsi == null,
+          tails,
+          EpigraphPsiUtil.getLocation(psi)
+      );
     } catch (Exception e) {
       throw new PsiProcessingException(e, psi, errors);
     }
@@ -197,6 +203,7 @@ public class ReqInputProjectionsPsiParser {
     return new ReqInputVarProjection(
         type,
         Collections.emptyMap(),
+        true,
         null,
         EpigraphPsiUtil.getLocation(psi)
     );
@@ -539,6 +546,7 @@ public class ReqInputProjectionsPsiParser {
     return new ReqInputVarProjection(
         type,
         tagProjections,
+        op.parenthesized() || tagProjections.size() != 1,
         null,
         EpigraphPsiUtil.getLocation(locationPsi)
     );

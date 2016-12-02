@@ -84,7 +84,7 @@ public abstract class AbstractProjectionsPrettyPrinter<
     if (p.type().kind() != TypeKind.UNION) {
       // samovar
       print(tagProjections.values().iterator().next().projection(), decSteps(pathSteps));
-    } else if (tagProjections.size() == 1) {
+    } else if (!p.parenthesized()) {
       Map.Entry<String, TP> entry = tagProjections.entrySet().iterator().next();
       l.print(":");
       print(entry.getKey(), entry.getValue(), decSteps(pathSteps));
@@ -92,7 +92,12 @@ public abstract class AbstractProjectionsPrettyPrinter<
       l.print(":()");
     } else {
       if (pathSteps > 0) throw new IllegalArgumentException(
-          String.format("found %d var tags while path still contains %d steps", tagProjections.size(), pathSteps)
+          String.format(
+              "found %d var tags and parenthesized = %b while path still contains %d steps",
+              tagProjections.size(),
+              p.parenthesized(),
+              pathSteps
+          )
       );
       l.beginCInd();
       l.print(":(");

@@ -37,9 +37,10 @@ public class OpOutputVarProjection extends AbstractVarProjection<
   public OpOutputVarProjection(
       @NotNull Type type,
       @NotNull Map<String, OpOutputTagProjectionEntry> tagProjections,
+      boolean parenthesized,
       @Nullable List<OpOutputVarProjection> polymorphicTails,
       @NotNull TextLocation location) {
-    super(type, tagProjections, polymorphicTails, location);
+    super(type, tagProjections, parenthesized, polymorphicTails, location);
   }
 
   @Override
@@ -47,8 +48,9 @@ public class OpOutputVarProjection extends AbstractVarProjection<
       @NotNull final Type type,
       @NotNull final List<OpOutputVarProjection> varProjections,
       @NotNull final Map<String, OpOutputTagProjectionEntry> mergedTags,
+      final boolean mergedParenthesized,
       final List<OpOutputVarProjection> mergedTails) {
 
-    return new OpOutputVarProjection(type, mergedTags, mergedTails, TextLocation.UNKNOWN);
+    return new OpOutputVarProjection(type, mergedTags, mergedParenthesized, mergedTails, TextLocation.UNKNOWN);
   }
 }

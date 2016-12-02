@@ -55,7 +55,7 @@ public interface GenVarProjection<
    * and<br/>
    * <code>:(tag tag_projection)</code><br/>
    * Semantically they are the same, but sometimes this information can be taken into account.
-   * <b>Note</b> that it still should be taken into account by the {@code equals/hashCode} implementation.
+   * <b>Note</b> that it should not be taken into account by the {@code equals/hashCode} implementation.
    *
    * @return {@code false} iff there's exactly one tag projection and it was not in parenthesis.
    */
@@ -85,13 +85,13 @@ public interface GenVarProjection<
   /* static */
   @NotNull VP merge(@NotNull List<VP> varProjections);
 
-  @Nullable
-  default VP tailByType(@NotNull Type tailType) {
-    // not too efficient if there are many tails.. change List to LinkedHashMap?
-    List<VP> tails = polymorphicTails();
-    if (tails == null) return null;
-    return tails.stream().filter(t -> t.type().equals(tailType)).findFirst().orElse(null);
-  }
+//  @Nullable
+//  default VP tailByType(@NotNull Type tailType) {
+//    // not too efficient if there are many tails.. change List to LinkedHashMap?
+//    List<VP> tails = polymorphicTails();
+//    if (tails == null) return null;
+//    return tails.stream().filter(t -> t.type().equals(tailType)).findFirst().orElse(null);
+//  }
 
   @NotNull TextLocation location();
 }

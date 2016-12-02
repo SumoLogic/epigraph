@@ -54,10 +54,6 @@ public class ReqInputJsonFormatReader extends AbstractJsonFormatReader<
 
   @Nullable
   @Override
-  protected String monoTag(@NotNull final Iterable<? extends ReqInputVarProjection> projections) { return null; }
-
-  @Nullable
-  @Override
   protected Set<Datum> getExpectedKeys(@NotNull final Collection<? extends ReqInputMapModelProjection> projections) {
     Set<Datum> expectedKeys = null;
 

@@ -41,9 +41,10 @@ public class OpDeleteVarProjection extends AbstractVarProjection<
       @NotNull Type type,
       boolean canDelete,
       @NotNull LinkedHashMap<String, OpDeleteTagProjectionEntry> tagProjections,
+      boolean parenthesized,
       @Nullable List<OpDeleteVarProjection> polymorphicTails,
       @NotNull TextLocation location) {
-    super(type, tagProjections, polymorphicTails, location);
+    super(type, tagProjections, parenthesized, polymorphicTails, location);
     this.canDelete = canDelete;
   }
 

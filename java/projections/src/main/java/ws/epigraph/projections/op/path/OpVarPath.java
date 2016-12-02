@@ -39,6 +39,7 @@ public class OpVarPath extends AbstractVarProjection<OpVarPath, OpTagPath, OpMod
         type,
         tagProjection == null ? Collections.emptyMap()
                               : Collections.singletonMap(tagProjection.tag().name(), tagProjection),
+        tagProjection == null,
         null,
         location
     );
