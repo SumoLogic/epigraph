@@ -24,7 +24,6 @@ import ws.epigraph.types.Type;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -34,8 +33,6 @@ public class ReqOutputVarProjection extends AbstractVarProjection<
     ReqOutputTagProjectionEntry,
     ReqOutputModelProjection<?, ?>
     > {
-  private final boolean parenthesized;
-  // if parens were present, e.g. `:(id)` vs `:id`. Tells marshaller if to use multi- or single-var
 
   public ReqOutputVarProjection(
       @NotNull Type type,
@@ -43,22 +40,10 @@ public class ReqOutputVarProjection extends AbstractVarProjection<
       @Nullable List<ReqOutputVarProjection> polymorphicTails,
       boolean parenthesized,
       @NotNull TextLocation location) {
-    super(type, tagProjections, polymorphicTails, location);
-    this.parenthesized = parenthesized;
+    super(type, tagProjections, parenthesized, polymorphicTails, location);
 
     if (tagProjections.size() > 1 && !parenthesized)
       throw new IllegalArgumentException("'parenthesized' must be 'true' for a multi-tag projection");
-  }
-
-  public boolean parenthesized() { return parenthesized; }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    if (!super.equals(o)) return false;
-    ReqOutputVarProjection that = (ReqOutputVarProjection) o;
-    return parenthesized == that.parenthesized;
   }
 
   @Override
@@ -77,8 +62,4 @@ public class ReqOutputVarProjection extends AbstractVarProjection<
     );
   }
 
-  @Override
-  public int hashCode() {
-    return Objects.hash(super.hashCode(), parenthesized);
-  }
 }

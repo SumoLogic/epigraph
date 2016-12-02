@@ -42,6 +42,7 @@ public abstract class AbstractVarProjection<
   private final Type type;
   @NotNull
   private final Map<String, TP> tagProjections;
+  private final boolean parenthesized;
   @Nullable
   private final List<VP> polymorphicTails;
 
@@ -52,15 +53,27 @@ public abstract class AbstractVarProjection<
   public AbstractVarProjection(
       @NotNull Type type,
       @NotNull Map<String, TP> tagProjections,
+      boolean parenthesized,
       @Nullable List<VP> polymorphicTails,
       @NotNull TextLocation location) {
     this.type = type;
     this.tagProjections = tagProjections;
+    this.parenthesized = parenthesized;
     this.polymorphicTails = polymorphicTails;
     this.location = location;
 
     validateTags();
     validateTails();
+  }
+
+  @Deprecated
+  public AbstractVarProjection(
+      @NotNull Type type,
+      @NotNull Map<String, TP> tagProjections,
+      @Nullable List<VP> polymorphicTails,
+      @NotNull TextLocation location) {
+
+    this(type, tagProjections, false, polymorphicTails, location);
   }
 
   private void validateTags() {
@@ -114,6 +127,9 @@ public abstract class AbstractVarProjection<
 
   @Nullable
   public TP tagProjection(@NotNull String tagName) { return tagProjections.get(tagName); }
+
+  @Override
+  public boolean parenthesized() { return parenthesized; }
 
   @Nullable
   public List<VP> polymorphicTails() { return polymorphicTails; }
@@ -246,11 +262,12 @@ public abstract class AbstractVarProjection<
     AbstractVarProjection that = (AbstractVarProjection) o;
     return Objects.equals(type, that.type) &&
            Objects.equals(tagProjections, that.tagProjections) &&
+           parenthesized == that.parenthesized &&
            Objects.equals(polymorphicTails, that.polymorphicTails);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(type, tagProjections, polymorphicTails);
+    return Objects.hash(type, tagProjections, parenthesized, polymorphicTails);
   }
 }

@@ -47,8 +47,21 @@ public interface GenVarProjection<
     else return null;
   }
 
-  @Nullable List<VP> polymorphicTails();
+  /**
+   * Tells if projection is parenthesized or not.
+   * <p/>
+   * There are two forms to write down a single tag projection:<br/>
+   * <code>:tag tag_projection</code><br/>
+   * and<br/>
+   * <code>:(tag tag_projection)</code><br/>
+   * Semantically they are the same, but sometimes this information can be taken into account.
+   * <b>Note</b> that it still should be taken into account by the {@code equals/hashCode} implementation.
+   *
+   * @return {@code false} iff there's exactly one tag projection and it was not in parenthesis.
+   */
+  boolean parenthesized();
 
+  @Nullable List<VP> polymorphicTails();
 
   /**
    * Builds normalized view of this var projection for a given type
