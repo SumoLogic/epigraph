@@ -53,7 +53,7 @@ import static ws.epigraph.wire.json.JsonFormatCommon.*;
  * ERROR ::= '{' "ERROR": INTEGER ',' "message": STRING '}'
  * DATUM ::= RECORD | MAP | LIST | PRIMITIVE | ENUM
  * RECORD ::= { (( "field" ':' DATA ',' )* "field ':' DATA )* '}'        // 0 or more comma-separated entries
- * MAP ::= '[' (( MAP_ENTRY ',' )* MAP_ENTRY )? ]                    // 0 or more comma-separated entries
+ * MAP ::= '[' (( MAP_ENTRY ',' )* MAP_ENTRY )? ]                        // 0 or more comma-separated entries
  * MAP_ENTRY ::= '{' "key" ':' DATUM ',' "value" ':' DATA '}'
  * LIST ::= '[' (( DATA ',' )* DATA )? ']'                               // 0 or more comma-separated entries
  * PRIMITIVE ::= STRING | INTEGER | LONG | DOUBLE | BOOLEAN
@@ -139,7 +139,7 @@ abstract class AbstractJsonFormatReader<
   protected abstract @Nullable String monoTag(@NotNull Iterable<? extends VP> projections);
 
   // MULTIDATA ::= { "tag": VALUE, ... }
-  protected  @NotNull Data finishReadingMultiData(
+  private @NotNull Data finishReadingMultiData(
       @NotNull Type effectiveType,
       @NotNull List<? extends VP> projections // non-empty, polymorphic tails ignored
   ) throws IOException {
@@ -167,8 +167,17 @@ abstract class AbstractJsonFormatReader<
     }
     ensure(token, JsonToken.END_OBJECT);
 
+    for (final VP projection : projections) {
+      for (final TP tagProjectionEntry : projection.tagProjections().values()) {
+        if (tagRequired(tagProjectionEntry) && data._raw().getValue(tagProjectionEntry.tag()) == null)
+          throw error("Missing data for required tag '" + tagProjectionEntry.tag().name() + "'");
+      }
+    }
+
     return data;
   }
+
+  protected boolean tagRequired(@NotNull TP tagProjection) { return false; }
 
   // VALUE ::= ERROR or DATUM or null
   private @NotNull Val readValue(
@@ -265,7 +274,8 @@ abstract class AbstractJsonFormatReader<
   }
 
   // `}` or `: DATA, "field": DATA, ... }`
-  protected @NotNull RecordDatum finishReadingRecord(
+  @NotNull
+  private RecordDatum finishReadingRecord(
       @Nullable String fieldName,
       @NotNull RecordType type,
       @NotNull Collection<? extends RMP> projections // non-empty
@@ -293,8 +303,16 @@ abstract class AbstractJsonFormatReader<
         else throw expected("field name or '}'");
       }
     }
+
+    for (RMP projection : projections)
+      for (final Map.Entry<String, FPE> entry : projection.fieldProjections().entrySet())
+        if (fieldRequired(entry.getValue()) && datum._raw().getData(entry.getValue().field()) == null)
+          throw error("Required field '" + entry.getKey() + "' is missing");
+
     return datum;
   }
+
+  protected boolean fieldRequired(@NotNull FPE fieldEntry) { return false; }
 
   // `]` or ` MAP_ENTRY , MAP ENTRY ... ]`
   // MAP_ENTRY ::= '{' "key" ':' DATUM ',' "value" ':' DATA '}'
@@ -398,22 +416,8 @@ abstract class AbstractJsonFormatReader<
     return type;
   }
 
+  @Contract("null, _ -> null")
   private @Nullable Type resolveType(
-      @NotNull Collection<? extends VP> projections, // polymorphic tails respected
-      @NotNull String typeName
-  ) {
-    if (projections == null) return null;
-    for (VP vp : projections) {
-      Type type = vp.type();
-      if (typeName.equals(type.name().toString())) return type;
-      type = findType(vp.polymorphicTails(), typeName); // dfs
-      if (type != null) return type;
-    }
-    return null;
-  }
-
-  @SuppressWarnings("unchecked")
-  private @Nullable Type findType(
       @Nullable Collection<? extends VP> projections, // polymorphic tails respected
       @NotNull String typeName
   ) {
@@ -421,7 +425,7 @@ abstract class AbstractJsonFormatReader<
     for (VP vp : projections) {
       Type type = vp.type();
       if (typeName.equals(type.name().toString())) return type;
-      type = findType(vp.polymorphicTails(), typeName); // dfs
+      type = resolveType(vp.polymorphicTails(), typeName); // dfs
       if (type != null) return type;
     }
     return null;

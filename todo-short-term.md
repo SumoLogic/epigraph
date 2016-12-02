@@ -3,12 +3,12 @@
   - [x] Add unit tests
   - [ ] ~~Make more generic?~~
   
-- [ ] Unmarshallers for create/update/custom body
+- [x] Unmarshallers for create/update/custom body
   - [x] abstract generic version
   - [x] guided by req output projection
-  - [ ] guided by op input projection
-  - [ ] guided by req input projection
-  - [ ] guided by req update projection
+  - [x] guided by op input projection (for operations called without explicit request projection)
+  - [x] guided by req input projection
+  - [x] guided by req update projection
   - [ ] ~~guided by req delete projection~~
   
 - [ ] Undertow handler must support all operations
