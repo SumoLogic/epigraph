@@ -60,9 +60,9 @@ import static ws.epigraph.test.TestUtil.lines;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class CreateOperationRouterTest {
-  private CreateOperationRouter router = new CreateOperationRouter();
+  private final CreateOperationRouter router = new CreateOperationRouter();
 
-  private TypesResolver resolver = new SimpleTypesResolver(
+  private final TypesResolver resolver = new SimpleTypesResolver(
       PersonId.type,
       Person.type,
       User.type,
@@ -73,7 +73,7 @@ public class CreateOperationRouterTest {
       epigraph.Boolean.type
   );
 
-  private String idlText = lines(
+  private final String idlText = lines(
       "namespace test",
       "import ws.epigraph.tests.Person",
       "import ws.epigraph.tests.UserRecord",
@@ -112,7 +112,7 @@ public class CreateOperationRouterTest {
       "}"
   );
 
-  private Resource resource;
+  private final Resource resource;
 
   {
     try {
@@ -255,7 +255,7 @@ public class CreateOperationRouterTest {
     final OpImpl op = (OpImpl) s.operation();
     assertEquals(expectedId, op.getId());
 
-    @NotNull final CreateRequestUrl createRequestUrl = s.requestUrl();
+    final @NotNull CreateRequestUrl createRequestUrl = s.requestUrl();
     final ReqFieldPath path = createRequestUrl.path();
 
     if (expectedPath == null)
@@ -283,9 +283,9 @@ public class CreateOperationRouterTest {
   }
 
   @SuppressWarnings("unchecked")
-  private OperationSearchSuccess<? extends CreateOperation<?>, CreateRequestUrl> getTargetOpId(@NotNull final String url)
-      throws PsiProcessingException {
-    @NotNull final OperationSearchResult<CreateOperation<?>> oss = router.findOperation(
+  private OperationSearchSuccess<? extends CreateOperation<?>, CreateRequestUrl>
+  getTargetOpId(final @NotNull String url) throws PsiProcessingException {
+    final @NotNull OperationSearchResult<CreateOperation<?>> oss = router.findOperation(
         null,
         parseCreateUrl(url),
         resource, resolver
@@ -302,24 +302,21 @@ public class CreateOperationRouterTest {
       super(declaration);
     }
 
-    @Nullable
-    public String getId() {
+    public @Nullable String getId() {
       final @Nullable GDataValue value = declaration().annotations().get("id");
       if (value instanceof GPrimitiveDatum)
         return ((GPrimitiveDatum) value).value().toString();
       return null;
     }
 
-    @NotNull
     @Override
-    public CompletableFuture<? extends ReadOperationResponse<PersonId_Person_Map.Data>> process(
-        @NotNull final CreateOperationRequest request) {
+    public @NotNull CompletableFuture<ReadOperationResponse<PersonId_Person_Map.Data>> process(
+        final @NotNull CreateOperationRequest request) {
       throw new RuntimeException("unreachable");
     }
   }
 
-  @NotNull
-  private static UrlCreateUrl parseCreateUrl(@NotNull String url) {
+  private static @NotNull UrlCreateUrl parseCreateUrl(@NotNull String url) {
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
     UrlCreateUrl urlPsi = EpigraphPsiUtil.parseText(

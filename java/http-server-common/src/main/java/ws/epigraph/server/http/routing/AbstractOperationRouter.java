@@ -50,20 +50,17 @@ public abstract class AbstractOperationRouter<
     R extends RequestUrl>
     implements OperationRouter<U, O> {
 
-  @NotNull
   @Override
-  public OperationSearchResult<O> findOperation(
+  public @NotNull OperationSearchResult<O> findOperation(
       final String operationName,
-      @NotNull final U urlPsi,
-      @NotNull final Resource resource,
-      @NotNull final TypesResolver resolver)
+      final @NotNull U urlPsi,
+      final @NotNull Resource resource,
+      final @NotNull TypesResolver resolver)
       throws PsiProcessingException {
 
     final @NotNull DataType resourceFieldType = resource.declaration().fieldType();
-    if (operationName != null) {
-      final @Nullable O operation = namedOperation(operationName, resource);
-      return matchOperation(operation, resourceFieldType, urlPsi, resolver);
-    } else {
+
+    if (operationName == null) {
       final Map<O, List<PsiProcessingError>> matchingErrors = new HashMap<>();
 
       for (final O operation : unnamedOperations(resource)) {
@@ -82,21 +79,20 @@ public abstract class AbstractOperationRouter<
 
       }
 
-      if (matchingErrors.isEmpty())
-        return OperationNotFound.instance();
-      else
-        return new OperationSearchFailure<>(matchingErrors);
+      return matchingErrors.isEmpty() ?
+             OperationNotFound.instance() :
+             new OperationSearchFailure<>(matchingErrors);
+    } else {
+      final @Nullable O operation = namedOperation(operationName, resource);
+      return matchOperation(operation, resourceFieldType, urlPsi, resolver);
     }
   }
 
-  @Nullable
-  protected abstract O namedOperation(@NotNull String name, @NotNull Resource resource);
+  protected abstract @Nullable O namedOperation(@NotNull String name, @NotNull Resource resource);
 
-  @NotNull
-  protected abstract Collection<? extends O> unnamedOperations(@NotNull Resource resource);
+  protected abstract @NotNull Collection<? extends O> unnamedOperations(@NotNull Resource resource);
 
-  @NotNull
-  private OperationSearchResult<O> matchOperation(
+  private @NotNull OperationSearchResult<O> matchOperation(
       @Nullable O operation,
       @NotNull DataType resourceType,
       @NotNull U urlPsi,
@@ -135,8 +131,7 @@ public abstract class AbstractOperationRouter<
     }
   }
 
-  @NotNull
-  protected abstract R parseUrl(
+  protected abstract @NotNull R parseUrl(
       @NotNull DataType resourceType,
       @NotNull D opDecl,
       @NotNull U urlPsi,

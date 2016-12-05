@@ -14,8 +14,10 @@ dependencies {
 
   compile 'io.undertow:undertow-core'
   compile 'org.jetbrains:annotations'
+  compile 'org.slf4j:slf4j-api'
 
   testCompile project(':tests-schema-java')
+  testCompile 'com.mashape.unirest:unirest-java'
   testCompile 'junit:junit'
-  testCompile 'org.slf4j:slf4j-nop'
+  testCompile 'org.slf4j:slf4j-simple'
 }

@@ -21,6 +21,7 @@
   - [ ] add support for update
   - [ ] add support for delete
   - [ ] add support for custom
+  - [ ] update test server to support/demo all operations
   
 - [ ] Standalone IDL verifier/compiler
   - [ ] Maven plugin

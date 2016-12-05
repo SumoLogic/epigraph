@@ -37,26 +37,23 @@ import java.util.*;
 public class ReadOperationRouter
     extends AbstractOperationRouter<UrlReadUrl, ReadOperationIdl, ReadOperation<?>, ReadRequestUrl> {
 
-  @Nullable
   @Override
-  protected ReadOperation<?> namedOperation(@NotNull final String name, @NotNull final Resource resource) {
+  protected @Nullable ReadOperation<?> namedOperation(final @NotNull String name, final @NotNull Resource resource) {
     return resource.namedReadOperation(name);
   }
 
-  @NotNull
   @Override
-  protected Collection<? extends ReadOperation<?>> unnamedOperations(@NotNull final Resource resource) {
+  protected @NotNull Collection<? extends ReadOperation<?>> unnamedOperations(final @NotNull Resource resource) {
     return resource.unnamedReadOperations();
   }
 
-  @NotNull
   @Override
-  protected ReadRequestUrl parseUrl(
-      @NotNull final DataType resourceType,
-      @NotNull final ReadOperationIdl opDecl,
-      @NotNull final UrlReadUrl urlPsi,
-      @NotNull final TypesResolver resolver,
-      @NotNull final List<PsiProcessingError> errors) throws PsiProcessingException {
+  protected @NotNull ReadRequestUrl parseUrl(
+      final @NotNull DataType resourceType,
+      final @NotNull ReadOperationIdl opDecl,
+      final @NotNull UrlReadUrl urlPsi,
+      final @NotNull TypesResolver resolver,
+      final @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
     return ReadRequestUrlPsiParser.parseReadRequestUrl(
         resourceType,
         opDecl,

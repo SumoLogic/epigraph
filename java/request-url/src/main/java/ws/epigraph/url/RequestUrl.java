@@ -32,16 +32,12 @@ import java.util.Objects;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public abstract class RequestUrl {
-  @NotNull
-  private final String fieldName;
-  @Nullable
-  private final ReqFieldPath path;
-  @NotNull
-  private final StepsAndProjection<ReqOutputFieldProjection> outputProjection;
-  @NotNull
-  private final Map<String, GDatum> parameters;
+  private final @NotNull String fieldName;
+  private final @Nullable ReqFieldPath path;
+  private final @NotNull StepsAndProjection<ReqOutputFieldProjection> outputProjection;
+  private final @NotNull Map<String, GDatum> parameters;
 
-  public RequestUrl(
+  protected RequestUrl(
       @NotNull String fieldName,
       @Nullable ReqFieldPath path,
       @NotNull StepsAndProjection<ReqOutputFieldProjection> outputProjection,
@@ -53,16 +49,13 @@ public abstract class RequestUrl {
     this.parameters = parameters;
   }
 
-  @NotNull
-  public String fieldName() { return fieldName; }
+  public @NotNull String fieldName() { return fieldName; }
 
   public @Nullable ReqFieldPath path() { return path; }
 
-  @NotNull
-  public StepsAndProjection<ReqOutputFieldProjection> outputProjection() { return outputProjection; }
+  public @NotNull StepsAndProjection<ReqOutputFieldProjection> outputProjection() { return outputProjection; }
 
-  @NotNull
-  public Map<String, GDatum> parameters() { return parameters; }
+  public @NotNull Map<String, GDatum> parameters() { return parameters; }
 
   @Override
   public boolean equals(final Object o) {

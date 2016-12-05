@@ -58,9 +58,9 @@ import static ws.epigraph.test.TestUtil.lines;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ReadOperationRouterTest {
-  private ReadOperationRouter router = new ReadOperationRouter();
+  private final ReadOperationRouter router = new ReadOperationRouter();
 
-  private TypesResolver resolver = new SimpleTypesResolver(
+  private final TypesResolver resolver = new SimpleTypesResolver(
       PersonId.type,
       Person.type,
       User.type,
@@ -71,7 +71,7 @@ public class ReadOperationRouterTest {
       epigraph.Boolean.type
   );
 
-  private String idlText = lines(
+  private final String idlText = lines(
       "namespace test",
       "import ws.epigraph.tests.Person",
       "import ws.epigraph.tests.UserRecord",
@@ -97,7 +97,7 @@ public class ReadOperationRouterTest {
       "}"
   );
 
-  private Resource resource;
+  private final Resource resource;
 
   {
     try {
@@ -136,7 +136,7 @@ public class ReadOperationRouterTest {
 
   @Test
   public void testPath1() throws PsiProcessingException {
-    testRouting("/users/1:record(id)", "path.1","/ \"1\"", 1, ":record ( id )");
+    testRouting("/users/1:record(id)", "path.1", "/ \"1\"", 1, ":record ( id )");
   }
 
   @Test
@@ -146,7 +146,7 @@ public class ReadOperationRouterTest {
 
   @Test
   public void testPath2() throws PsiProcessingException {
-    testRouting("/users/1:record/bestFriend:record(id)", "path.2","/ \"1\" :record / bestFriend", 1, ":record ( id )");
+    testRouting("/users/1:record/bestFriend:record(id)", "path.2", "/ \"1\" :record / bestFriend", 1, ":record ( id )");
   }
 
   // todo test routing based on input projection
@@ -162,7 +162,7 @@ public class ReadOperationRouterTest {
     final OpImpl op = (OpImpl) s.operation();
     assertEquals(expectedId, op.getId());
 
-    @NotNull final ReadRequestUrl readRequestUrl = s.requestUrl();
+    final @NotNull ReadRequestUrl readRequestUrl = s.requestUrl();
     final ReqFieldPath path = readRequestUrl.path();
 
     if (expectedPath == null)
@@ -182,8 +182,9 @@ public class ReadOperationRouterTest {
   }
 
   @SuppressWarnings("unchecked")
-  private OperationSearchSuccess<?, ReadRequestUrl> getTargetOpId(@NotNull final String url) throws PsiProcessingException {
-    @NotNull final OperationSearchResult<ReadOperation<?>> oss = router.findOperation(
+  private OperationSearchSuccess<?, ReadRequestUrl>
+  getTargetOpId(final @NotNull String url) throws PsiProcessingException {
+    final @NotNull OperationSearchResult<ReadOperation<?>> oss = router.findOperation(
         null,
         parseReadUrl(url),
         resource, resolver
@@ -205,16 +206,14 @@ public class ReadOperationRouterTest {
       return null;
     }
 
-    @NotNull
     @Override
-    public CompletableFuture<? extends ReadOperationResponse<PersonId_Person_Map.Data>> process(
-        @NotNull final ReadOperationRequest request) {
+    public @NotNull CompletableFuture<ReadOperationResponse<PersonId_Person_Map.Data>> process(
+        final @NotNull ReadOperationRequest request) {
       throw new RuntimeException("unreachable");
     }
   }
 
-  @NotNull
-  private static UrlReadUrl parseReadUrl(@NotNull String url) {
+  private static @NotNull UrlReadUrl parseReadUrl(@NotNull String url) {
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
     UrlReadUrl urlPsi = EpigraphPsiUtil.parseText(

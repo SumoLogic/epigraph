@@ -60,9 +60,9 @@ import static ws.epigraph.test.TestUtil.lines;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class DeleteOperationRouterTest {
-  private DeleteOperationRouter router = new DeleteOperationRouter();
+  private final DeleteOperationRouter router = new DeleteOperationRouter();
 
-  private TypesResolver resolver = new SimpleTypesResolver(
+  private final TypesResolver resolver = new SimpleTypesResolver(
       PersonId.type,
       Person.type,
       User.type,
@@ -73,7 +73,7 @@ public class DeleteOperationRouterTest {
       epigraph.Boolean.type
   );
 
-  private String idlText = lines(
+  private final String idlText = lines(
       "namespace test",
       "import ws.epigraph.tests.Person",
       "import ws.epigraph.tests.UserRecord",
@@ -103,7 +103,7 @@ public class DeleteOperationRouterTest {
       "}"
   );
 
-  private Resource resource;
+  private final Resource resource;
 
   {
     try {
@@ -196,7 +196,7 @@ public class DeleteOperationRouterTest {
     final OpImpl op = (OpImpl) s.operation();
     assertEquals(expectedId, op.getId());
 
-    @NotNull final DeleteRequestUrl deleteRequestUrl = s.requestUrl();
+    final @NotNull DeleteRequestUrl deleteRequestUrl = s.requestUrl();
     final ReqFieldPath path = deleteRequestUrl.path();
 
     if (expectedPath == null)
@@ -224,9 +224,9 @@ public class DeleteOperationRouterTest {
   }
 
   @SuppressWarnings("unchecked")
-  private OperationSearchSuccess<? extends DeleteOperation<?>, DeleteRequestUrl> getTargetOpId(@NotNull final String url)
+  private OperationSearchSuccess<? extends DeleteOperation<?>, DeleteRequestUrl> getTargetOpId(final @NotNull String url)
       throws PsiProcessingException {
-    @NotNull final OperationSearchResult<DeleteOperation<?>> oss = router.findOperation(
+    final @NotNull OperationSearchResult<DeleteOperation<?>> oss = router.findOperation(
         null,
         parseDeleteUrl(url),
         resource, resolver
@@ -243,24 +243,21 @@ public class DeleteOperationRouterTest {
       super(declaration);
     }
 
-    @Nullable
-    public String getId() {
+    public @Nullable String getId() {
       final @Nullable GDataValue value = declaration().annotations().get("id");
       if (value instanceof GPrimitiveDatum)
         return ((GPrimitiveDatum) value).value().toString();
       return null;
     }
 
-    @NotNull
     @Override
-    public CompletableFuture<? extends ReadOperationResponse<PersonId_Person_Map.Data>> process(
-        @NotNull final DeleteOperationRequest request) {
+    public @NotNull CompletableFuture<ReadOperationResponse<PersonId_Person_Map.Data>> process(
+        final @NotNull DeleteOperationRequest request) {
       throw new RuntimeException("unreachable");
     }
   }
 
-  @NotNull
-  private static UrlDeleteUrl parseDeleteUrl(@NotNull String url) {
+  private static @NotNull UrlDeleteUrl parseDeleteUrl(@NotNull String url) {
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
     UrlDeleteUrl urlPsi = EpigraphPsiUtil.parseText(

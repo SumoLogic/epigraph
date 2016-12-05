@@ -29,14 +29,11 @@ public abstract class Operation<
     Req extends OperationRequest,
     Rsp extends OperationResponse> {
 
-  @NotNull
-  private final Decl declaration;
+  private final @NotNull Decl declaration;
 
   protected Operation(@NotNull Decl declaration) {this.declaration = declaration;}
 
-  @NotNull
-  public Decl declaration() { return declaration; }
+  public @NotNull Decl declaration() { return declaration; }
 
-  @NotNull
-  public abstract CompletableFuture<? extends Rsp> process(@NotNull Req request);
+  public abstract @NotNull CompletableFuture<Rsp> process(@NotNull Req request);
 }
