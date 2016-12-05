@@ -235,6 +235,7 @@ mvn clean install -P maven-plugin-dependent
         <groupId>org.jetbrains</groupId>
         <artifactId>annotations</artifactId>
         <version>15.0</version>
+        <scope>provided</scope>
       </dependency>
 
       <dependency>
