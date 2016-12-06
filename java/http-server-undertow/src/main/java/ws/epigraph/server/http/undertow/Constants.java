@@ -20,7 +20,7 @@ package ws.epigraph.server.http.undertow;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public interface Constants {
-  String TEXT = "text/plain";
-  String JSON = "application/json";
-  String HTML = "text/html";
+  String CONTENT_TYPE_TEXT = "text/plain";
+  String CONTENT_TYPE_JSON = "application/json";
+  String CONTENT_TYPE_HTML = "text/html";
 }

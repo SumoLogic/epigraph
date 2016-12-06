@@ -26,13 +26,11 @@ import java.util.Map;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class Service {
-  @NotNull
-  private final String name;
+  private final @NotNull String name;
 
-  @NotNull
-  private final Map<String, Resource> resources;
+  private final @NotNull Map<String, Resource> resources;
 
-  public Service(@NotNull String name, @NotNull Collection<Resource> resources) throws ServiceInitializationException {
+  public Service(@NotNull String name, @NotNull Iterable<Resource> resources) throws ServiceInitializationException {
     this.name = name;
 
     this.resources = new HashMap<>();
@@ -46,9 +44,7 @@ public class Service {
     }
   }
 
-  @NotNull
-  public String name() { return name; }
+  public @NotNull String name() { return name; }
 
-  @NotNull
-  public Map<String, Resource> resources() { return resources; }
+  public @NotNull Map<String, Resource> resources() { return resources; }
 }

@@ -17,6 +17,7 @@
 package ws.epigraph.service;
 
 import ws.epigraph.idl.ResourceIdl;
+import ws.epigraph.idl.operations.HttpMethod;
 import ws.epigraph.idl.operations.OperationIdl;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.op.path.OpFieldPath;
@@ -25,6 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -36,7 +38,11 @@ public class Resource {
   private final @NotNull Operations<? extends CreateOperation<?>> createOperations;
   private final @NotNull Operations<? extends UpdateOperation<?>> updateOperations;
   private final @NotNull Operations<? extends DeleteOperation<?>> deleteOperations;
-  private final @NotNull Operations<? extends CustomOperation<?>> customOperations;
+
+  private final @NotNull Operations<? extends CustomOperation<?>> customGetOperations;
+  private final @NotNull Operations<? extends CustomOperation<?>> customPostOperations;
+  private final @NotNull Operations<? extends CustomOperation<?>> customPutOperations;
+  private final @NotNull Operations<? extends CustomOperation<?>> customDeleteOperations;
 
   public Resource(
       @NotNull ResourceIdl declaration,
@@ -52,17 +58,44 @@ public class Resource {
     this.createOperations = new Operations<>(declaration.fieldName(), createOperations);
     this.updateOperations = new Operations<>(declaration.fieldName(), updateOperations);
     this.deleteOperations = new Operations<>(declaration.fieldName(), deleteOperations);
-    this.customOperations = new Operations<>(declaration.fieldName(), customOperations);
+
+    this.customGetOperations = new Operations<>(
+        declaration.fieldName(),
+        customOperations.stream()
+            .filter(o -> o.declaration().method() == HttpMethod.GET)
+            .collect(Collectors.toList())
+    );
+
+    this.customPostOperations = new Operations<>(
+        declaration.fieldName(),
+        customOperations.stream()
+            .filter(o -> o.declaration().method() == HttpMethod.POST)
+            .collect(Collectors.toList())
+    );
+
+    this.customPutOperations = new Operations<>(
+        declaration.fieldName(),
+        customOperations.stream()
+            .filter(o -> o.declaration().method() == HttpMethod.PUT)
+            .collect(Collectors.toList())
+    );
+
+    this.customDeleteOperations = new Operations<>(
+        declaration.fieldName(),
+        customOperations.stream()
+            .filter(o -> o.declaration().method() == HttpMethod.DELETE)
+            .collect(Collectors.toList())
+    );
 
     verifyCustomOpNameClashes(declaration, customOperations);
   }
 
   private void verifyCustomOpNameClashes(
       final @NotNull ResourceIdl declaration,
-      final @NotNull Collection<? extends CustomOperation> customOperations) throws ServiceInitializationException {
+      final @NotNull Iterable<? extends CustomOperation<?>> customOperations) throws ServiceInitializationException {
 
     // check that custom operations don't intersect with the others
-    for (final CustomOperation customOperation : customOperations) {
+    for (final CustomOperation<?> customOperation : customOperations) {
       final OperationIdl customDecl = customOperation.declaration();
       final @Nullable String customOpName = customDecl.name();
       if (customOpName == null)
@@ -151,16 +184,33 @@ public class Resource {
   public @Nullable DeleteOperation<?> namedDeleteOperation(@NotNull String name) {
     return deleteOperations.namedOperations.get(name);
   }
-  
-  public @Nullable CustomOperation<?> customOperation(@NotNull String name) {
-    return customOperations.namedOperations.get(name);
+
+  public @Nullable CustomOperation<?> customOperation(@NotNull HttpMethod method, @NotNull String name) {
+    final Operations<? extends CustomOperation<?>> ops;
+    switch (method) {
+      case GET:
+        ops = this.customGetOperations;
+        break;
+      case POST:
+        ops = this.customPostOperations;
+        break;
+      case PUT:
+        ops = this.customPutOperations;
+        break;
+      case DELETE:
+        ops = this.customDeleteOperations;
+        break;
+      default:
+        throw new IllegalArgumentException("Unknown HTTP method: " + method);
+    }
+    return ops.namedOperations.get(name);
   }
 
   private static class Operations<O extends Operation<?, ?, ?>> {
     final @NotNull List<O> unnamedOperations;
     final @NotNull Map<String, O> namedOperations;
 
-    Operations(@NotNull String resourceName, @NotNull Collection<O> operations)
+    Operations(@NotNull String resourceName, @NotNull Iterable<O> operations)
         throws ServiceInitializationException {
 
       unnamedOperations = new ArrayList<>();
@@ -174,7 +224,7 @@ public class Resource {
           if (namedOperations.containsKey(name))
             throw new ServiceInitializationException(
                 String.format("%s operation '%s' specified twice for resource '%s'",
-                              operation.declaration().kind(), name, resourceName
+                    operation.declaration().kind(), name, resourceName
                 )
             );
           else namedOperations.put(name, operation);
@@ -184,7 +234,7 @@ public class Resource {
       // sort by path length, from longest to shortest. This is stable sort: operations with the same
       // path length stay in the order of declaration
 
-      Collections.sort(unnamedOperations, (o1, o2) -> {
+      unnamedOperations.sort((o1, o2) -> {
         final @Nullable OpFieldPath path1 = o1.declaration().path();
         final @Nullable OpFieldPath path2 = o2.declaration().path();
 

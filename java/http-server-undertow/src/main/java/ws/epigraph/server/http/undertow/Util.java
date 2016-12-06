@@ -36,8 +36,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static ws.epigraph.server.http.undertow.Constants.HTML;
-import static ws.epigraph.server.http.undertow.Constants.TEXT;
+import static ws.epigraph.server.http.undertow.Constants.CONTENT_TYPE_HTML;
+import static ws.epigraph.server.http.undertow.Constants.CONTENT_TYPE_TEXT;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -121,7 +121,7 @@ public final class Util {
         reportPsiProcessingErrors(text, errors, exchange);
       }
 
-      badRequest(sb.toString(), isHtml ? HTML : TEXT, exchange);
+      badRequest(sb.toString(), isHtml ? CONTENT_TYPE_HTML : CONTENT_TYPE_TEXT, exchange);
     }
 
     throw RequestFailedException.INSTANCE;
@@ -162,7 +162,7 @@ public final class Util {
 
     if (isHtml) appendHtmlErrorFooter(sb);
 
-    badRequest(sb.toString(), isHtml ? HTML : TEXT, exchange);
+    badRequest(sb.toString(), isHtml ? CONTENT_TYPE_HTML : CONTENT_TYPE_TEXT, exchange);
   }
 
   static void reportPsiProcessingError(
@@ -290,7 +290,7 @@ public final class Util {
   static boolean htmlAccepted(@NotNull HttpServerExchange exchange) {
     final HeaderValues contentTypeHeader = exchange.getRequestHeaders().get(Headers.ACCEPT);
     if (contentTypeHeader == null) return false;
-    for (String header : contentTypeHeader) if (header.toLowerCase().contains(HTML)) return true;
+    for (String header : contentTypeHeader) if (header.toLowerCase().contains(CONTENT_TYPE_HTML)) return true;
     return false;
   }
 

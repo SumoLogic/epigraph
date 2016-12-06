@@ -32,8 +32,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ws.epigraph.data.Data;
 import ws.epigraph.data.Datum;
+import ws.epigraph.idl.operations.HttpMethod;
 import ws.epigraph.idl.operations.OperationKind;
 import ws.epigraph.projections.StepsAndProjection;
+import ws.epigraph.projections.op.input.OpInputFieldProjection;
 import ws.epigraph.projections.req.delete.ReqDeleteFieldProjection;
 import ws.epigraph.projections.req.input.ReqInputFieldProjection;
 import ws.epigraph.projections.req.output.ReqOutputFieldProjection;
@@ -41,6 +43,7 @@ import ws.epigraph.projections.req.output.ReqOutputModelProjection;
 import ws.epigraph.projections.req.output.ReqOutputVarProjection;
 import ws.epigraph.projections.req.update.ReqUpdateFieldProjection;
 import ws.epigraph.psi.EpigraphPsiUtil;
+import ws.epigraph.psi.PsiProcessingError;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.server.http.RequestHeaders;
@@ -48,6 +51,7 @@ import ws.epigraph.server.http.routing.*;
 import ws.epigraph.service.*;
 import ws.epigraph.service.operations.*;
 import ws.epigraph.url.*;
+import ws.epigraph.url.parser.CustomRequestUrlPsiParser;
 import ws.epigraph.url.parser.UrlSubParserDefinitions;
 import ws.epigraph.url.parser.psi.*;
 import ws.epigraph.wire.json.reader.OpInputJsonFormatReader;
@@ -58,6 +62,8 @@ import ws.epigraph.wire.json.writer.JsonFormatWriter;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
@@ -66,8 +72,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static ws.epigraph.server.http.undertow.Constants.JSON;
-import static ws.epigraph.server.http.undertow.Constants.TEXT;
+import static ws.epigraph.server.http.undertow.Constants.CONTENT_TYPE_JSON;
+import static ws.epigraph.server.http.undertow.Constants.CONTENT_TYPE_TEXT;
 import static ws.epigraph.server.http.undertow.Util.*;
 
 /**
@@ -95,31 +101,43 @@ public class UndertowHandler implements HttpHandler {
       String resourceName = getResourceName(decodedUri, exchange);
 
       Resource resource = ResourceRouter.findResource(resourceName, service);
+      String operationName = getOperationName(exchange);
 
-      // todo support custom operations
-      HttpString requestMethod = getMethod(exchange);
-      if (requestMethod.equals(Methods.GET)) {
+      @NotNull HttpMethod requestMethod = getMethod(exchange);
+
+      if (operationName != null) {
+        final CustomOperation<?> customOperation = resource.customOperation(requestMethod, operationName);
+        if (customOperation != null) {
+          UrlCustomUrl urlPsi = parseCustomUrlPsi(decodedUri, exchange);
+          handleCustomRequest(resource, urlPsi, customOperation, exchange);
+          return;
+        }
+      }
+
+      if (requestMethod == HttpMethod.GET) {
         UrlReadUrl urlPsi = parseReadUrlPsi(decodedUri, exchange);
-        handleReadRequest(resource, urlPsi, exchange);
-      } else if (requestMethod.equals(Methods.POST)) {
+        handleReadRequest(resource, operationName, urlPsi, exchange);
+      } else if (requestMethod == HttpMethod.POST) {
         UrlCreateUrl urlPsi = parseCreateUrlPsi(decodedUri, exchange);
-        handleCreateRequest(resource, urlPsi, exchange);
-      } else if (requestMethod.equals(Methods.PUT)) {
+        handleCreateRequest(resource, operationName, urlPsi, exchange);
+      } else if (requestMethod == HttpMethod.PUT) {
         UrlUpdateUrl urlPsi = parseUpdateUrlPsi(decodedUri, exchange);
-        handleUpdateRequest(resource, urlPsi, exchange);
-      } else if (requestMethod.equals(Methods.DELETE)) {
+        handleUpdateRequest(resource, operationName, urlPsi, exchange);
+      } else if (requestMethod == HttpMethod.DELETE) {
         UrlDeleteUrl urlPsi = parseDeleteUrlPsi(decodedUri, exchange);
-        handleDeleteRequest(resource, urlPsi, exchange);
+        handleDeleteRequest(resource, operationName, urlPsi, exchange);
       } else {
-        badRequest("Unsupported HTTP method '" + requestMethod + "'\n", TEXT, exchange);
+        badRequest("Unsupported HTTP method '" + requestMethod + "'\n", CONTENT_TYPE_TEXT, exchange);
         //noinspection ThrowCaughtLocally
         throw RequestFailedException.INSTANCE;
       }
 
     } catch (ResourceNotFoundException e) {
-      badRequest(e.getMessage() + ". Supported resources: {" + listSupportedResources(service) + "}", TEXT, exchange);
+      badRequest(e.getMessage() + ". Supported resources: {" + listSupportedResources(service) + "}",
+          CONTENT_TYPE_TEXT, exchange
+      );
     } catch (OperationNotFoundException e) {
-      badRequest(e.getMessage(), TEXT, exchange);
+      badRequest(e.getMessage(), CONTENT_TYPE_TEXT, exchange);
     } catch (RequestFailedException ignored) { // already handled
     } catch (Exception e) {
       LOG.error("Internal exception", e);
@@ -131,8 +149,16 @@ public class UndertowHandler implements HttpHandler {
   }
 
   @Contract(pure = true)
-  private @NotNull HttpString getMethod(final @NotNull HttpServerExchange exchange) {
-    return exchange.getRequestMethod();
+  private @NotNull HttpMethod getMethod(final @NotNull HttpServerExchange exchange) throws RequestFailedException {
+    final HttpString methodString = exchange.getRequestMethod();
+    if (methodString.equals(Methods.GET)) return HttpMethod.GET;
+    if (methodString.equals(Methods.PUT)) return HttpMethod.PUT;
+    if (methodString.equals(Methods.POST)) return HttpMethod.POST;
+    if (methodString.equals(Methods.DELETE)) return HttpMethod.DELETE;
+
+    badRequest("Unsupported HTTP method '" + methodString + "'\n", CONTENT_TYPE_TEXT, exchange);
+    //noinspection ThrowCaughtLocally
+    throw RequestFailedException.INSTANCE;
   }
 
   private @NotNull String getResourceName(
@@ -147,7 +173,7 @@ public class UndertowHandler implements HttpHandler {
               "Bad URL format. Supported resources: {%s}\n",
               Util.listSupportedResources(service)
           )
-          , TEXT, exchange);
+          , CONTENT_TYPE_TEXT, exchange);
       throw RequestFailedException.INSTANCE;
     }
 
@@ -158,7 +184,6 @@ public class UndertowHandler implements HttpHandler {
     final HeaderValues headerValues = exchange.getRequestHeaders().get(RequestHeaders.OPERATION_NAME);
     return headerValues == null ? null : headerValues.getFirst(); // warn if more than one?
   }
-
 
   @SuppressWarnings("unchecked")
   private <
@@ -200,7 +225,7 @@ public class UndertowHandler implements HttpHandler {
 
     Data trimmedData = data == null ? null : ProjectionDataTrimmer.trimData(data, reqProjection);
 
-    String contentType = JSON; // todo should depend on marshaller
+    String contentType = CONTENT_TYPE_JSON; // todo should depend on marshaller
     int statusCode = 200;
     @NotNull String responseText;
 
@@ -248,13 +273,13 @@ public class UndertowHandler implements HttpHandler {
               pathSteps == 0 ? 0 : pathSteps - 1,
               dataToString(trimmedData)
           ),
-          TEXT,
+          CONTENT_TYPE_TEXT,
           exchange
       );
     } catch (Exception e) {
       LOG.error("Error writing response", e);
       final String message = e.getMessage();
-      serverError(message == null ? null : message + "\n", TEXT, exchange);
+      serverError(message == null ? null : message + "\n", CONTENT_TYPE_TEXT, exchange);
     } finally {
       exchange.getResponseSender().close();
     }
@@ -293,9 +318,9 @@ public class UndertowHandler implements HttpHandler {
     return findOperation(resource, operationName, urlPsi, ReadOperationRouter.INSTANCE, OperationKind.READ, exchange);
   }
 
-  // todo generify. Tuned out to be pretty hard..
   private void handleReadRequest(
       @NotNull Resource resource,
+      @Nullable String operationName,
       @NotNull UrlReadUrl urlPsi,
       @NotNull HttpServerExchange exchange) throws OperationNotFoundException, RequestFailedException {
 
@@ -303,7 +328,7 @@ public class UndertowHandler implements HttpHandler {
       // find operation
       OperationSearchSuccess<ReadOperation<?>, ReadRequestUrl> operationSearchResult = findReadOperation(
           resource,
-          getOperationName(exchange),
+          operationName,
           urlPsi,
           exchange
       );
@@ -345,7 +370,7 @@ public class UndertowHandler implements HttpHandler {
         writeDataResponse(pathSteps, reqProjection, data, exchange);
       } catch (Exception e) {
         LOG.error("Error processing request", e);
-        serverError(e.getMessage(), TEXT, exchange);
+        serverError(e.getMessage(), CONTENT_TYPE_TEXT, exchange);
       } finally {
         sender.close();
       }
@@ -353,7 +378,7 @@ public class UndertowHandler implements HttpHandler {
     };
 
     final Function<Throwable, Void> failureConsumer = throwable -> {
-      serverError(throwable.getMessage(), TEXT, exchange);
+      serverError(throwable.getMessage(), CONTENT_TYPE_TEXT, exchange);
       return null;
     };
 
@@ -407,6 +432,7 @@ public class UndertowHandler implements HttpHandler {
 
   private void handleCreateRequest(
       @NotNull Resource resource,
+      @Nullable String operationName,
       @NotNull UrlCreateUrl urlPsi,
       @NotNull HttpServerExchange exchange) throws OperationNotFoundException, RequestFailedException, IOException {
 
@@ -414,7 +440,7 @@ public class UndertowHandler implements HttpHandler {
       // find operation
       OperationSearchSuccess<CreateOperation<?>, CreateRequestUrl> operationSearchResult = findCreateOperation(
           resource,
-          getOperationName(exchange),
+          operationName,
           urlPsi,
           exchange
       );
@@ -500,6 +526,7 @@ public class UndertowHandler implements HttpHandler {
 
   private void handleUpdateRequest(
       @NotNull Resource resource,
+      @Nullable String operationName,
       @NotNull UrlUpdateUrl urlPsi,
       @NotNull HttpServerExchange exchange) throws OperationNotFoundException, RequestFailedException, IOException {
 
@@ -507,7 +534,7 @@ public class UndertowHandler implements HttpHandler {
       // find operation
       OperationSearchSuccess<UpdateOperation<?>, UpdateRequestUrl> operationSearchResult = findUpdateOperation(
           resource,
-          getOperationName(exchange),
+          operationName,
           urlPsi,
           exchange
       );
@@ -517,7 +544,7 @@ public class UndertowHandler implements HttpHandler {
       final @Nullable ReqUpdateFieldProjection updateProjection = updateRequestUrl.updateProjection();
 
       if (updateProjection == null) {
-        badRequest("Update projection must be specified", TEXT, exchange);
+        badRequest("Update projection must be specified", CONTENT_TYPE_TEXT, exchange);
         throw RequestFailedException.INSTANCE;
       }
 
@@ -592,6 +619,7 @@ public class UndertowHandler implements HttpHandler {
 
   private void handleDeleteRequest(
       @NotNull Resource resource,
+      @Nullable String operationName,
       @NotNull UrlDeleteUrl urlPsi,
       @NotNull HttpServerExchange exchange) throws OperationNotFoundException, RequestFailedException {
 
@@ -599,7 +627,7 @@ public class UndertowHandler implements HttpHandler {
       // find operation
       OperationSearchSuccess<DeleteOperation<?>, DeleteRequestUrl> operationSearchResult = findDeleteOperation(
           resource,
-          getOperationName(exchange),
+          operationName,
           urlPsi,
           exchange
       );
@@ -629,6 +657,93 @@ public class UndertowHandler implements HttpHandler {
     } catch (PsiProcessingException e) {
       reportPsiProcessingErrorsAndFail(urlPsi.getText(), e.errors(), exchange);
     }
+  }
+
+  // custom ------------------------------------------------------------------------------------------------------------
+
+  private UrlCustomUrl parseCustomUrlPsi(
+      @NotNull String urlString,
+      @NotNull HttpServerExchange exchange) throws RequestFailedException {
+
+    EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
+
+    UrlCustomUrl urlPsi = EpigraphPsiUtil.parseText(
+        urlString,
+        UrlSubParserDefinitions.CUSTOM_URL.rootElementType(),
+        UrlCustomUrl.class,
+        UrlSubParserDefinitions.CUSTOM_URL,
+        errorsAccumulator
+    );
+
+    if (errorsAccumulator.hasErrors())
+      reportPsiProcessingErrorsAndFail(urlString, psiErrorsToPsiProcessingErrors(errorsAccumulator.errors()), exchange);
+
+    return urlPsi;
+  }
+
+  private void handleCustomRequest(
+      @NotNull Resource resource,
+      @NotNull UrlCustomUrl urlPsi,
+      @NotNull CustomOperation<?> operation,
+      @NotNull HttpServerExchange exchange) throws RequestFailedException, IOException {
+
+    CustomRequestUrl customRequestUrl = null;
+    List<PsiProcessingError> urlParsingErrors = new ArrayList<>();
+    try {
+      customRequestUrl = CustomRequestUrlPsiParser.parseCustomRequestUrl(
+          resource.declaration().fieldType(),
+          operation.declaration(),
+          urlPsi,
+          typesResolver,
+          urlParsingErrors
+      );
+    } catch (PsiProcessingException e) {
+      urlParsingErrors = e.errors();
+    }
+
+    if (!urlParsingErrors.isEmpty()) {
+      reportPsiProcessingErrorsAndFail(urlPsi.getText(), urlParsingErrors, exchange);
+    }
+
+    assert customRequestUrl != null;
+
+    final @Nullable ReqInputFieldProjection inputProjection = customRequestUrl.inputProjection();
+
+    // read body
+    final Data body;
+    JsonParser bodyParser = new JsonFactory().createParser(exchange.getInputStream());
+    if (inputProjection == null) {
+      final OpInputFieldProjection opInputProjection = operation.declaration().inputProjection();
+      if (opInputProjection == null)
+        body = null;
+      else {
+        OpInputJsonFormatReader bodyReader = new OpInputJsonFormatReader(bodyParser);
+        body = bodyReader.readData(opInputProjection.varProjection());
+      }
+    } else {
+      ReqInputJsonFormatReader bodyReader = new ReqInputJsonFormatReader(bodyParser);
+      body = bodyReader.readData(inputProjection.varProjection());
+    }
+
+    // run operation
+    final @NotNull StepsAndProjection<ReqOutputFieldProjection> outputProjection =
+        customRequestUrl.outputProjection();
+
+    CompletionStage<? extends ReadOperationResponse<?>> future = operation.process(
+        new CustomOperationRequest(
+            customRequestUrl.path(),
+            body,
+            inputProjection,
+            outputProjection.projection()
+        ));
+
+    // send response back
+    handleReadResponse(
+        outputProjection.pathSteps(),
+        outputProjection.projection().varProjection(),
+        future,
+        exchange
+    );
   }
 
   // util --------------------------------------------------------------------------------------------------------------
