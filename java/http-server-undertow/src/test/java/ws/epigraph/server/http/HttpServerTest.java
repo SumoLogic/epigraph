@@ -87,7 +87,7 @@ public class HttpServerTest {
         "users",
         Arrays.asList(
             new UserResource(idl.resources().get("user")),
-            new UsersResource(idl.resources().get("users"))
+            new UsersResource(idl.resources().get("users"), new UsersStorage())
         )
     );
   }
