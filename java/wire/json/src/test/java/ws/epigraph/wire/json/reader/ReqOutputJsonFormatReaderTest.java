@@ -43,8 +43,8 @@ import static ws.epigraph.wire.WireTestUtil.parseReqOutputVarProjection;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ReqOutputJsonFormatReaderTest {
-  private DataType dataType = new DataType(Person.type, Person.id);
-  private TypesResolver resolver = new SimpleTypesResolver(
+  private final DataType dataType = new DataType(Person.type, Person.id);
+  private final TypesResolver resolver = new SimpleTypesResolver(
       PersonId.type,
       Person.type,
       User.type,
@@ -61,7 +61,7 @@ public class ReqOutputJsonFormatReaderTest {
       epigraph.Boolean.type
   );
 
-  private OpOutputVarProjection personOpProjection = parsePersonOpOutputVarProjection(
+  private final OpOutputVarProjection personOpProjection = parsePersonOpOutputVarProjection(
       lines(
           ":(",
           "  id,",
@@ -256,7 +256,7 @@ public class ReqOutputJsonFormatReaderTest {
     JsonParser parser = new JsonFactory().createParser(json);
     ReqOutputJsonFormatReader jsonReader = new ReqOutputJsonFormatReader(parser);
 
-    @NotNull final Data data = jsonReader.readData(reqProjection);
+    final @NotNull Data data = jsonReader.readData(reqProjection);
 
     if (!expectedData.equals(data)) {
       StringWriter writer = new StringWriter();
@@ -294,8 +294,7 @@ public class ReqOutputJsonFormatReaderTest {
     }
   }
 
-  @NotNull
-  private OpOutputVarProjection parsePersonOpOutputVarProjection(@NotNull String projectionString) {
+  private @NotNull OpOutputVarProjection parsePersonOpOutputVarProjection(@NotNull String projectionString) {
     return parseOpOutputVarProjection(dataType, projectionString, resolver);
   }
 }

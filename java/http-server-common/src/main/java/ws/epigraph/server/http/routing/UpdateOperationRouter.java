@@ -35,29 +35,30 @@ import java.util.List;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class UpdateOperationRouter
+public final class UpdateOperationRouter
     extends AbstractOperationRouter<UrlUpdateUrl, UpdateOperationIdl, UpdateOperation<?>, UpdateRequestUrl> {
 
-  @Nullable
+  public static final UpdateOperationRouter INSTANCE = new UpdateOperationRouter();
+
+  private UpdateOperationRouter() {}
+
   @Override
-  protected UpdateOperation<?> namedOperation(@NotNull final String name, @NotNull final Resource resource) {
+  protected @Nullable UpdateOperation<?> namedOperation(final @NotNull String name, final @NotNull Resource resource) {
     return resource.namedUpdateOperation(name);
   }
 
-  @NotNull
   @Override
-  protected Collection<? extends UpdateOperation<?>> unnamedOperations(@NotNull final Resource resource) {
+  protected @NotNull Collection<? extends UpdateOperation<?>> unnamedOperations(final @NotNull Resource resource) {
     return resource.unnamedUpdateOperations();
   }
 
-  @NotNull
   @Override
-  protected UpdateRequestUrl parseUrl(
-      @NotNull final DataType resourceType,
-      @NotNull final UpdateOperationIdl opDecl,
-      @NotNull final UrlUpdateUrl urlPsi,
-      @NotNull final TypesResolver resolver,
-      @NotNull final List<PsiProcessingError> errors) throws PsiProcessingException {
+  protected @NotNull UpdateRequestUrl parseUrl(
+      final @NotNull DataType resourceType,
+      final @NotNull UpdateOperationIdl opDecl,
+      final @NotNull UrlUpdateUrl urlPsi,
+      final @NotNull TypesResolver resolver,
+      final @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
     return UpdateRequestUrlPsiParser.parseUpdateRequestUrl(
         resourceType,
         opDecl,

@@ -32,7 +32,7 @@ public class CreateOperationRequest extends OperationRequest {
   @Nullable
   private final ReqInputFieldProjection inputProjection;
 
-  protected CreateOperationRequest(
+  public CreateOperationRequest(
       final @Nullable ReqFieldPath path,
       final @NotNull Data data,
       final @Nullable ReqInputFieldProjection inputProjection,

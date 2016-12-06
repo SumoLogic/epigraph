@@ -16,6 +16,8 @@
 
 package ws.epigraph.server.http.undertow;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
 import io.undertow.io.Sender;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
@@ -32,24 +34,25 @@ import ws.epigraph.data.Data;
 import ws.epigraph.data.Datum;
 import ws.epigraph.idl.operations.OperationKind;
 import ws.epigraph.projections.StepsAndProjection;
+import ws.epigraph.projections.req.delete.ReqDeleteFieldProjection;
+import ws.epigraph.projections.req.input.ReqInputFieldProjection;
 import ws.epigraph.projections.req.output.ReqOutputFieldProjection;
 import ws.epigraph.projections.req.output.ReqOutputModelProjection;
 import ws.epigraph.projections.req.output.ReqOutputVarProjection;
+import ws.epigraph.projections.req.update.ReqUpdateFieldProjection;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.server.http.RequestHeaders;
 import ws.epigraph.server.http.routing.*;
 import ws.epigraph.service.*;
-import ws.epigraph.service.operations.Operation;
-import ws.epigraph.service.operations.ReadOperation;
-import ws.epigraph.service.operations.ReadOperationRequest;
-import ws.epigraph.service.operations.ReadOperationResponse;
-import ws.epigraph.url.ReadRequestUrl;
-import ws.epigraph.url.RequestUrl;
+import ws.epigraph.service.operations.*;
+import ws.epigraph.url.*;
 import ws.epigraph.url.parser.UrlSubParserDefinitions;
-import ws.epigraph.url.parser.psi.UrlReadUrl;
-import ws.epigraph.url.parser.psi.UrlUrl;
+import ws.epigraph.url.parser.psi.*;
+import ws.epigraph.wire.json.reader.OpInputJsonFormatReader;
+import ws.epigraph.wire.json.reader.ReqInputJsonFormatReader;
+import ws.epigraph.wire.json.reader.ReqUpdateJsonFormatReader;
 import ws.epigraph.wire.json.writer.JsonFormatWriter;
 
 import java.io.IOException;
@@ -76,7 +79,6 @@ public class UndertowHandler implements HttpHandler {
   private final @NotNull Service service;
   private final @NotNull TypesResolver typesResolver;
   private final long responseTimeout;
-  private final @NotNull ReadOperationRouter readOperationRouter = new ReadOperationRouter();
 
   public UndertowHandler(@NotNull Service service, @NotNull TypesResolver typesResolver, long responseTimeout) {
     this.service = service;
@@ -94,12 +96,21 @@ public class UndertowHandler implements HttpHandler {
 
       Resource resource = ResourceRouter.findResource(resourceName, service);
 
+      // todo support custom operations
       HttpString requestMethod = getMethod(exchange);
       if (requestMethod.equals(Methods.GET)) {
         UrlReadUrl urlPsi = parseReadUrlPsi(decodedUri, exchange);
         handleReadRequest(resource, urlPsi, exchange);
+      } else if (requestMethod.equals(Methods.POST)) {
+        UrlCreateUrl urlPsi = parseCreateUrlPsi(decodedUri, exchange);
+        handleCreateRequest(resource, urlPsi, exchange);
+      } else if (requestMethod.equals(Methods.PUT)) {
+        UrlUpdateUrl urlPsi = parseUpdateUrlPsi(decodedUri, exchange);
+        handleUpdateRequest(resource, urlPsi, exchange);
+      } else if (requestMethod.equals(Methods.DELETE)) {
+        UrlDeleteUrl urlPsi = parseDeleteUrlPsi(decodedUri, exchange);
+        handleDeleteRequest(resource, urlPsi, exchange);
       } else {
-        // todo handle the rest
         badRequest("Unsupported HTTP method '" + requestMethod + "'\n", TEXT, exchange);
         //noinspection ThrowCaughtLocally
         throw RequestFailedException.INSTANCE;
@@ -148,47 +159,6 @@ public class UndertowHandler implements HttpHandler {
     return headerValues == null ? null : headerValues.getFirst(); // warn if more than one?
   }
 
-  private <
-      U extends RequestUrl,
-      UP extends UrlUrl,
-      R extends AbstractOperationRouter<UP, ?, ?, U>
-      >
-  void handleRequest(
-      @NotNull Resource resource,
-      @NotNull UrlReadUrl urlPsi,
-      @NotNull HttpServerExchange exchange)
-      throws ResourceNotFoundException, OperationNotFoundException, PsiProcessingException, RequestFailedException {
-
-    try {
-      // find operation
-      OperationSearchSuccess<ReadOperation<?>, ReadRequestUrl> operationSearchResult = findReadOperation(
-          resource,
-          getOperationName(exchange),
-          urlPsi,
-          exchange
-      );
-
-      final @NotNull ReadRequestUrl readRequestUrl = operationSearchResult.requestUrl();
-      final @NotNull StepsAndProjection<ReqOutputFieldProjection> outputProjection = readRequestUrl.outputProjection();
-
-      // run operation
-      CompletableFuture<? extends ReadOperationResponse<?>> future = operationSearchResult.operation().process(
-          new ReadOperationRequest(
-              readRequestUrl.path(),
-              outputProjection.projection()
-          ));
-
-      // send response back
-      handleReadResponse(
-          outputProjection.pathSteps(),
-          outputProjection.projection().varProjection(),
-          future,
-          exchange
-      );
-    } catch (PsiProcessingException e) {
-      reportPsiProcessingErrorsAndFail(urlPsi.getText(), e.errors(), exchange);
-    }
-  }
 
   @SuppressWarnings("unchecked")
   private <
@@ -292,7 +262,6 @@ public class UndertowHandler implements HttpHandler {
 
   // read --------------------------------------------------------------------------------------------------------------
 
-
   private UrlReadUrl parseReadUrlPsi(
       @NotNull String urlString,
       @NotNull HttpServerExchange exchange) throws RequestFailedException {
@@ -307,9 +276,8 @@ public class UndertowHandler implements HttpHandler {
         errorsAccumulator
     );
 
-    if (errorsAccumulator.hasErrors()) {
+    if (errorsAccumulator.hasErrors())
       reportPsiProcessingErrorsAndFail(urlString, psiErrorsToPsiProcessingErrors(errorsAccumulator.errors()), exchange);
-    }
 
     return urlPsi;
   }
@@ -322,16 +290,44 @@ public class UndertowHandler implements HttpHandler {
       final @NotNull HttpServerExchange exchange)
       throws PsiProcessingException, OperationNotFoundException, RequestFailedException {
 
-    return findOperation(resource, operationName, urlPsi, readOperationRouter, OperationKind.READ, exchange);
+    return findOperation(resource, operationName, urlPsi, ReadOperationRouter.INSTANCE, OperationKind.READ, exchange);
   }
 
+  // todo generify. Tuned out to be pretty hard..
   private void handleReadRequest(
       @NotNull Resource resource,
       @NotNull UrlReadUrl urlPsi,
-      @NotNull HttpServerExchange exchange)
-      throws ResourceNotFoundException, OperationNotFoundException, PsiProcessingException, RequestFailedException {
+      @NotNull HttpServerExchange exchange) throws OperationNotFoundException, RequestFailedException {
 
-    handleRequest(resource, urlPsi, exchange);
+    try {
+      // find operation
+      OperationSearchSuccess<ReadOperation<?>, ReadRequestUrl> operationSearchResult = findReadOperation(
+          resource,
+          getOperationName(exchange),
+          urlPsi,
+          exchange
+      );
+
+      final @NotNull ReadRequestUrl readRequestUrl = operationSearchResult.requestUrl();
+      final @NotNull StepsAndProjection<ReqOutputFieldProjection> outputProjection = readRequestUrl.outputProjection();
+
+      // run operation
+      CompletableFuture<? extends ReadOperationResponse<?>> future = operationSearchResult.operation().process(
+          new ReadOperationRequest(
+              readRequestUrl.path(),
+              outputProjection.projection()
+          ));
+
+      // send response back
+      handleReadResponse(
+          outputProjection.pathSteps(),
+          outputProjection.projection().varProjection(),
+          future,
+          exchange
+      );
+    } catch (PsiProcessingException e) {
+      reportPsiProcessingErrorsAndFail(urlPsi.getText(), e.errors(), exchange);
+    }
   }
 
   private <R extends ReadOperationResponse<?>> void handleReadResponse(
@@ -369,8 +365,273 @@ public class UndertowHandler implements HttpHandler {
     }
   }
 
-  // util --------------------------------------------------------------------------------------------------------------
+  // create ------------------------------------------------------------------------------------------------------------
 
+  private UrlCreateUrl parseCreateUrlPsi(
+      @NotNull String urlString,
+      @NotNull HttpServerExchange exchange) throws RequestFailedException {
+
+    EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
+
+    UrlCreateUrl urlPsi = EpigraphPsiUtil.parseText(
+        urlString,
+        UrlSubParserDefinitions.CREATE_URL.rootElementType(),
+        UrlCreateUrl.class,
+        UrlSubParserDefinitions.CREATE_URL,
+        errorsAccumulator
+    );
+
+    if (errorsAccumulator.hasErrors())
+      reportPsiProcessingErrorsAndFail(urlString, psiErrorsToPsiProcessingErrors(errorsAccumulator.errors()), exchange);
+
+    return urlPsi;
+  }
+
+  @SuppressWarnings("unchecked")
+  private OperationSearchSuccess<CreateOperation<?>, CreateRequestUrl> findCreateOperation(
+      final @NotNull Resource resource,
+      final @Nullable String operationName,
+      final @NotNull UrlCreateUrl urlPsi,
+      final @NotNull HttpServerExchange exchange)
+      throws PsiProcessingException, OperationNotFoundException, RequestFailedException {
+
+    return findOperation(
+        resource,
+        operationName,
+        urlPsi,
+        CreateOperationRouter.INSTANCE,
+        OperationKind.CREATE,
+        exchange
+    );
+  }
+
+  private void handleCreateRequest(
+      @NotNull Resource resource,
+      @NotNull UrlCreateUrl urlPsi,
+      @NotNull HttpServerExchange exchange) throws OperationNotFoundException, RequestFailedException, IOException {
+
+    try {
+      // find operation
+      OperationSearchSuccess<CreateOperation<?>, CreateRequestUrl> operationSearchResult = findCreateOperation(
+          resource,
+          getOperationName(exchange),
+          urlPsi,
+          exchange
+      );
+
+      final @NotNull CreateOperation<?> operation = operationSearchResult.operation();
+      final @NotNull CreateRequestUrl createRequestUrl = operationSearchResult.requestUrl();
+      final @Nullable ReqInputFieldProjection inputProjection = createRequestUrl.inputProjection();
+
+      // read body
+      final Data body;
+      JsonParser bodyParser = new JsonFactory().createParser(exchange.getInputStream());
+      if (inputProjection == null) {
+        OpInputJsonFormatReader bodyReader = new OpInputJsonFormatReader(bodyParser);
+        body = bodyReader.readData(operation.declaration().inputProjection().varProjection());
+      } else {
+        ReqInputJsonFormatReader bodyReader = new ReqInputJsonFormatReader(bodyParser);
+        body = bodyReader.readData(inputProjection.varProjection());
+      }
+
+      // run operation
+      final @NotNull StepsAndProjection<ReqOutputFieldProjection> outputProjection =
+          createRequestUrl.outputProjection();
+
+      CompletionStage<? extends ReadOperationResponse<?>> future = operation.process(
+          new CreateOperationRequest(
+              createRequestUrl.path(),
+              body,
+              inputProjection,
+              outputProjection.projection()
+          ));
+
+      // send response back
+      handleReadResponse(
+          outputProjection.pathSteps(),
+          outputProjection.projection().varProjection(),
+          future,
+          exchange
+      );
+    } catch (PsiProcessingException e) {
+      reportPsiProcessingErrorsAndFail(urlPsi.getText(), e.errors(), exchange);
+    }
+  }
+
+  // update ------------------------------------------------------------------------------------------------------------
+
+  private UrlUpdateUrl parseUpdateUrlPsi(
+      @NotNull String urlString,
+      @NotNull HttpServerExchange exchange) throws RequestFailedException {
+
+    EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
+
+    UrlUpdateUrl urlPsi = EpigraphPsiUtil.parseText(
+        urlString,
+        UrlSubParserDefinitions.UPDATE_URL.rootElementType(),
+        UrlUpdateUrl.class,
+        UrlSubParserDefinitions.UPDATE_URL,
+        errorsAccumulator
+    );
+
+    if (errorsAccumulator.hasErrors())
+      reportPsiProcessingErrorsAndFail(urlString, psiErrorsToPsiProcessingErrors(errorsAccumulator.errors()), exchange);
+
+    return urlPsi;
+  }
+
+  @SuppressWarnings("unchecked")
+  private OperationSearchSuccess<UpdateOperation<?>, UpdateRequestUrl> findUpdateOperation(
+      final @NotNull Resource resource,
+      final @Nullable String operationName,
+      final @NotNull UrlUpdateUrl urlPsi,
+      final @NotNull HttpServerExchange exchange)
+      throws PsiProcessingException, OperationNotFoundException, RequestFailedException {
+
+    return findOperation(
+        resource,
+        operationName,
+        urlPsi,
+        UpdateOperationRouter.INSTANCE,
+        OperationKind.UPDATE,
+        exchange
+    );
+  }
+
+  private void handleUpdateRequest(
+      @NotNull Resource resource,
+      @NotNull UrlUpdateUrl urlPsi,
+      @NotNull HttpServerExchange exchange) throws OperationNotFoundException, RequestFailedException, IOException {
+
+    try {
+      // find operation
+      OperationSearchSuccess<UpdateOperation<?>, UpdateRequestUrl> operationSearchResult = findUpdateOperation(
+          resource,
+          getOperationName(exchange),
+          urlPsi,
+          exchange
+      );
+
+      final @NotNull UpdateOperation<?> operation = operationSearchResult.operation();
+      final @NotNull UpdateRequestUrl updateRequestUrl = operationSearchResult.requestUrl();
+      final @Nullable ReqUpdateFieldProjection updateProjection = updateRequestUrl.updateProjection();
+
+      if (updateProjection == null) {
+        badRequest("Update projection must be specified", TEXT, exchange);
+        throw RequestFailedException.INSTANCE;
+      }
+
+      // read body
+      final JsonParser bodyParser = new JsonFactory().createParser(exchange.getInputStream());
+      final ReqUpdateJsonFormatReader bodyReader = new ReqUpdateJsonFormatReader(bodyParser);
+      final Data body = bodyReader.readData(updateProjection.varProjection());
+
+      // run operation
+      final @NotNull StepsAndProjection<ReqOutputFieldProjection> outputProjection =
+          updateRequestUrl.outputProjection();
+
+      CompletionStage<? extends ReadOperationResponse<?>> future = operation.process(
+          new UpdateOperationRequest(
+              updateRequestUrl.path(),
+              body,
+              updateProjection,
+              outputProjection.projection()
+          ));
+
+      // send response back
+      handleReadResponse(
+          outputProjection.pathSteps(),
+          outputProjection.projection().varProjection(),
+          future,
+          exchange
+      );
+    } catch (PsiProcessingException e) {
+      reportPsiProcessingErrorsAndFail(urlPsi.getText(), e.errors(), exchange);
+    }
+  }
+
+  // delete ------------------------------------------------------------------------------------------------------------
+
+  private UrlDeleteUrl parseDeleteUrlPsi(
+      @NotNull String urlString,
+      @NotNull HttpServerExchange exchange) throws RequestFailedException {
+
+    EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
+
+    UrlDeleteUrl urlPsi = EpigraphPsiUtil.parseText(
+        urlString,
+        UrlSubParserDefinitions.DELETE_URL.rootElementType(),
+        UrlDeleteUrl.class,
+        UrlSubParserDefinitions.DELETE_URL,
+        errorsAccumulator
+    );
+
+    if (errorsAccumulator.hasErrors())
+      reportPsiProcessingErrorsAndFail(urlString, psiErrorsToPsiProcessingErrors(errorsAccumulator.errors()), exchange);
+
+    return urlPsi;
+  }
+
+  @SuppressWarnings("unchecked")
+  private OperationSearchSuccess<DeleteOperation<?>, DeleteRequestUrl> findDeleteOperation(
+      final @NotNull Resource resource,
+      final @Nullable String operationName,
+      final @NotNull UrlDeleteUrl urlPsi,
+      final @NotNull HttpServerExchange exchange)
+      throws PsiProcessingException, OperationNotFoundException, RequestFailedException {
+
+    return findOperation(
+        resource,
+        operationName,
+        urlPsi,
+        DeleteOperationRouter.INSTANCE,
+        OperationKind.DELETE,
+        exchange
+    );
+  }
+
+  private void handleDeleteRequest(
+      @NotNull Resource resource,
+      @NotNull UrlDeleteUrl urlPsi,
+      @NotNull HttpServerExchange exchange) throws OperationNotFoundException, RequestFailedException {
+
+    try {
+      // find operation
+      OperationSearchSuccess<DeleteOperation<?>, DeleteRequestUrl> operationSearchResult = findDeleteOperation(
+          resource,
+          getOperationName(exchange),
+          urlPsi,
+          exchange
+      );
+
+      final @NotNull DeleteOperation<?> operation = operationSearchResult.operation();
+      final @NotNull DeleteRequestUrl deleteRequestUrl = operationSearchResult.requestUrl();
+      final @NotNull ReqDeleteFieldProjection deleteProjection = deleteRequestUrl.deleteProjection();
+
+      // run operation
+      final @NotNull StepsAndProjection<ReqOutputFieldProjection> outputProjection =
+          deleteRequestUrl.outputProjection();
+
+      CompletionStage<? extends ReadOperationResponse<?>> future = operation.process(
+          new DeleteOperationRequest(
+              deleteRequestUrl.path(),
+              deleteProjection,
+              outputProjection.projection()
+          ));
+
+      // send response back
+      handleReadResponse(
+          outputProjection.pathSteps(),
+          outputProjection.projection().varProjection(),
+          future,
+          exchange
+      );
+    } catch (PsiProcessingException e) {
+      reportPsiProcessingErrorsAndFail(urlPsi.getText(), e.errors(), exchange);
+    }
+  }
+
+  // util --------------------------------------------------------------------------------------------------------------
 
   // async timeouts support. Use `onTimeout` instead once on JDK9
   private static final ThreadFactory threadFactory = new ThreadFactory() {

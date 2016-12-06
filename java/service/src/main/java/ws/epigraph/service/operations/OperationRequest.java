@@ -25,10 +25,8 @@ import org.jetbrains.annotations.Nullable;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public abstract class OperationRequest {
-  @Nullable
-  private final ReqFieldPath path;
-  @NotNull
-  private final ReqOutputFieldProjection outputProjection;
+  private final @Nullable ReqFieldPath path;
+  private final @NotNull ReqOutputFieldProjection outputProjection;
 
   protected OperationRequest(
       final @Nullable ReqFieldPath path,
@@ -38,9 +36,7 @@ public abstract class OperationRequest {
     this.outputProjection = outputProjection;
   }
 
-  @Nullable
-  public ReqFieldPath path() { return path; }
+  public @Nullable ReqFieldPath path() { return path; }
 
-  @NotNull
-  public ReqOutputFieldProjection outputProjection() { return outputProjection; }
+  public @NotNull ReqOutputFieldProjection outputProjection() { return outputProjection; }
 }

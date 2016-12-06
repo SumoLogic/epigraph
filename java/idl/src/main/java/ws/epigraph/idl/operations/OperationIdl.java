@@ -38,22 +38,14 @@ import java.util.Objects;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public abstract class OperationIdl {
-  @NotNull
-  protected final OperationKind type;
-  @NotNull
-  protected final HttpMethod method;
-  @Nullable
-  protected final String name;
-  @NotNull
-  protected final Annotations annotations;
-  @Nullable
-  protected final OpFieldPath path;
-  @Nullable
-  protected final OpInputFieldProjection inputProjection;
-  @NotNull
-  protected final OpOutputFieldProjection outputProjection;
-  @NotNull
-  protected final TextLocation location;
+  protected final @NotNull OperationKind type;
+  protected final @NotNull HttpMethod method;
+  protected final @Nullable String name;
+  protected final @NotNull Annotations annotations;
+  protected final @Nullable OpFieldPath path;
+  protected final @Nullable OpInputFieldProjection inputProjection;
+  protected final @NotNull OpOutputFieldProjection outputProjection;
+  protected final @NotNull TextLocation location;
 
   protected OperationIdl(
       @NotNull OperationKind type,
@@ -74,38 +66,29 @@ public abstract class OperationIdl {
     this.location = location;
   }
 
-  @NotNull
-  public OperationKind kind() { return type; }
+  public @NotNull OperationKind kind() { return type; }
 
-  @NotNull
-  public HttpMethod method() { return method; }
+  public @NotNull HttpMethod method() { return method; }
 
-  @Nullable
-  public String name() { return name; }
+  public @Nullable String name() { return name; }
 
   public boolean isDefault() { return name == null; }
 
-  @NotNull
-  public Annotations annotations() { return annotations; }
+  public @NotNull Annotations annotations() { return annotations; }
 
-  @Nullable
-  public OpFieldPath path() { return path; }
+  public @Nullable OpFieldPath path() { return path; }
 
-  @Nullable
-  public Type inputType() {
+  public @Nullable Type inputType() {
     return inputProjection == null ? null : inputProjection.varProjection().type();
   }
 
   public @Nullable OpInputFieldProjection inputProjection() { return inputProjection; }
 
-  @NotNull
-  public Type outputType() { return outputProjection.varProjection().type(); }
+  public @NotNull Type outputType() { return outputProjection.varProjection().type(); }
 
-  @NotNull
-  public OpOutputFieldProjection outputProjection() { return outputProjection; }
+  public @NotNull OpOutputFieldProjection outputProjection() { return outputProjection; }
 
-  @NotNull
-  public TextLocation location() { return location; }
+  public @NotNull TextLocation location() { return location; }
 
   protected void validate(@NotNull ResourceIdl resource, @NotNull List<IdlError> errors) { }
 

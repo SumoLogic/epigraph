@@ -52,11 +52,11 @@ public class ReqOutputFieldProjection extends AbstractReqFieldProjection<
 
   @Override
   protected ReqOutputFieldProjection merge(
-      @NotNull final DataType type,
-      @NotNull final List<ReqOutputFieldProjection> fieldProjections,
-      @NotNull final ReqParams mergedParams,
-      @NotNull final Annotations mergedAnnotations,
-      @NotNull final ReqOutputVarProjection mergedVarProjection) {
+      final @NotNull DataType type,
+      final @NotNull List<ReqOutputFieldProjection> fieldProjections,
+      final @NotNull ReqParams mergedParams,
+      final @NotNull Annotations mergedAnnotations,
+      final @NotNull ReqOutputVarProjection mergedVarProjection) {
 
     return new ReqOutputFieldProjection(
         mergedParams,

@@ -42,9 +42,10 @@ import static ws.epigraph.server.http.undertow.Constants.TEXT;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class Util {
-  @NotNull
-  static String getDecodedRequestString(@NotNull HttpServerExchange exchange) {
+public final class Util {
+  private Util() {}
+
+  static @NotNull String getDecodedRequestString(@NotNull HttpServerExchange exchange) {
     // any way to disable request parsing in Undertow? we don't really need it..
 
     final String uri = exchange.getRequestURI(); // this doesn't include query params?!
@@ -63,8 +64,7 @@ public class Util {
     );
   }
 
-  @NotNull
-  static String listSupportedResources(@NotNull Service service) {
+  static @NotNull String listSupportedResources(@NotNull Service service) {
     return service.resources().keySet().stream().map(n -> "/" + n).collect(Collectors.joining(", "));
   }
 
@@ -107,12 +107,12 @@ public class Util {
       nl(sb, 2, isHtml);
 
       boolean first = true;
-      for (final Map.Entry<? extends Operation<?, ?, ?>, List<PsiProcessingError>> entry : failedOperations.entrySet()) {
+      for (final Map.Entry<? extends Operation<?, ?, ?>, List<PsiProcessingError>> e : failedOperations.entrySet()) {
         if (first) first = false;
         else sep(sb, isHtml);
 
-        final Operation<?, ?, ?> operation = entry.getKey();
-        final List<PsiProcessingError> errors = entry.getValue();
+        final Operation<?, ?, ?> operation = e.getKey();
+        final List<PsiProcessingError> errors = e.getValue();
 
         sb.append("Operation declared at ").append(operation.declaration().location());
         sb.append(" was not picked because of the following errors:");
@@ -127,8 +127,7 @@ public class Util {
     throw RequestFailedException.INSTANCE;
   }
 
-  @NotNull
-  static List<PsiProcessingError> psiErrorsToPsiProcessingErrors(@NotNull List<PsiErrorElement> errors) {
+  static @NotNull List<PsiProcessingError> psiErrorsToPsiProcessingErrors(@NotNull List<PsiErrorElement> errors) {
     return errors.stream().map(e -> new PsiProcessingError(e.getErrorDescription(), e)).collect(Collectors.toList());
   }
 

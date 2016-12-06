@@ -39,14 +39,11 @@ public abstract class AbstractFieldProjection<
     FP extends GenFieldProjection<VP, TP, MP, FP>
     > implements GenFieldProjection<VP, TP, MP, FP> {
 
-  @NotNull
-  private final Annotations annotations;
+  private final @NotNull Annotations annotations;
 
-  @NotNull
-  private final VP projection;
+  private final @NotNull VP projection;
 
-  @NotNull
-  private final TextLocation location;
+  private final @NotNull TextLocation location;
 
   protected AbstractFieldProjection(
       @NotNull Annotations annotations,
@@ -57,17 +54,14 @@ public abstract class AbstractFieldProjection<
     this.location = location;
   }
 
-  @NotNull
   @Override
-  public Annotations annotations() { return annotations; }
+  public @NotNull Annotations annotations() { return annotations; }
 
-  @NotNull
   @Override
-  public VP varProjection() { return projection; }
+  public @NotNull VP varProjection() { return projection; }
 
-  @NotNull
   @Override
-  public FP merge(@NotNull final DataType type, @NotNull final List<FP> fieldProjections) {
+  public @NotNull FP merge(final @NotNull DataType type, final @NotNull List<FP> fieldProjections) {
     if (fieldProjections.isEmpty()) throw new IllegalArgumentException("Can't merge empty list");
     if (fieldProjections.size() == 1) return fieldProjections.get(0);
 
@@ -95,9 +89,8 @@ public abstract class AbstractFieldProjection<
     throw new RuntimeException("not implemented"); // todo make abstract
   }
 
-  @NotNull
   @Override
-  public TextLocation location() { return location; }
+  public @NotNull TextLocation location() { return location; }
 
   @Override
   public boolean equals(Object o) {

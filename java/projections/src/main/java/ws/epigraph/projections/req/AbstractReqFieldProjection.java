@@ -38,27 +38,25 @@ public abstract class AbstractReqFieldProjection<
     FP extends AbstractReqFieldProjection<VP, TP, MP, FP>
     > extends AbstractFieldProjection<VP, TP, MP, FP> {
 
-  @NotNull
-  private final ReqParams params;
+  private final @NotNull ReqParams params;
 
   protected AbstractReqFieldProjection(
-      @NotNull final ReqParams params,
-      @NotNull final Annotations annotations,
-      @NotNull final VP projection,
-      @NotNull final TextLocation location) {
+      final @NotNull ReqParams params,
+      final @NotNull Annotations annotations,
+      final @NotNull VP projection,
+      final @NotNull TextLocation location) {
     super(annotations, projection, location);
     this.params = params;
   }
 
-  @NotNull
-  public ReqParams params() { return params; }
+  public @NotNull ReqParams params() { return params; }
 
   @Override
   protected FP merge(
-      @NotNull final DataType type,
-      @NotNull final List<FP> fieldProjections,
-      @NotNull final Annotations mergedAnnotations,
-      @NotNull final VP mergedVarProjection) {
+      final @NotNull DataType type,
+      final @NotNull List<FP> fieldProjections,
+      final @NotNull Annotations mergedAnnotations,
+      final @NotNull VP mergedVarProjection) {
 
     return merge(
         type,
@@ -70,11 +68,11 @@ public abstract class AbstractReqFieldProjection<
   }
 
   protected FP merge(
-      @NotNull final DataType type,
-      @NotNull final List<FP> fieldProjections,
-      @NotNull final ReqParams mergedParams,
-      @NotNull final Annotations mergedAnnotations,
-      @NotNull final VP mergedVarProjection) {
+      final @NotNull DataType type,
+      final @NotNull List<FP> fieldProjections,
+      final @NotNull ReqParams mergedParams,
+      final @NotNull Annotations mergedAnnotations,
+      final @NotNull VP mergedVarProjection) {
 
     throw new RuntimeException("not implemented"); // todo make abstract
   }

@@ -30,19 +30,13 @@ import java.util.*;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class Resource {
-  @NotNull
-  private final ResourceIdl declaration;
+  private final @NotNull ResourceIdl declaration;
 
-  @NotNull
-  private final Operations<? extends ReadOperation<?>> readOperations;
-  @NotNull
-  private final Operations<? extends CreateOperation<?>> createOperations;
-  @NotNull
-  private final Operations<? extends UpdateOperation<?>> updateOperations;
-  @NotNull
-  private final Operations<? extends DeleteOperation<?>> deleteOperations;
-  @NotNull
-  private final Operations<? extends CustomOperation<?>> customOperations;
+  private final @NotNull Operations<? extends ReadOperation<?>> readOperations;
+  private final @NotNull Operations<? extends CreateOperation<?>> createOperations;
+  private final @NotNull Operations<? extends UpdateOperation<?>> updateOperations;
+  private final @NotNull Operations<? extends DeleteOperation<?>> deleteOperations;
+  private final @NotNull Operations<? extends CustomOperation<?>> customOperations;
 
   public Resource(
       @NotNull ResourceIdl declaration,
@@ -70,7 +64,7 @@ public class Resource {
     // check that custom operations don't intersect with the others
     for (final CustomOperation customOperation : customOperations) {
       final OperationIdl customDecl = customOperation.declaration();
-      @Nullable final String customOpName = customDecl.name();
+      final @Nullable String customOpName = customDecl.name();
       if (customOpName == null)
         throw new ServiceInitializationException(
             String.format(
@@ -112,8 +106,7 @@ public class Resource {
     }
   }
 
-  @NotNull
-  public ResourceIdl declaration() { return declaration; }
+  public @NotNull ResourceIdl declaration() { return declaration; }
 
   /**
    * @return unnamed read operations sorted by path length in descending order
@@ -122,8 +115,7 @@ public class Resource {
     return readOperations.unnamedOperations;
   }
 
-  @Nullable
-  public ReadOperation<?> namedReadOperation(@NotNull String name) {
+  public @Nullable ReadOperation<?> namedReadOperation(@NotNull String name) {
     return readOperations.namedOperations.get(name);
   }
 
@@ -134,8 +126,7 @@ public class Resource {
     return createOperations.unnamedOperations;
   }
 
-  @Nullable
-  public CreateOperation<?> namedCreateOperation(@NotNull String name) {
+  public @Nullable CreateOperation<?> namedCreateOperation(@NotNull String name) {
     return createOperations.namedOperations.get(name);
   }
 
@@ -146,8 +137,7 @@ public class Resource {
     return updateOperations.unnamedOperations;
   }
 
-  @Nullable
-  public UpdateOperation<?> namedUpdateOperation(@NotNull String name) {
+  public @Nullable UpdateOperation<?> namedUpdateOperation(@NotNull String name) {
     return updateOperations.namedOperations.get(name);
   }
 
@@ -158,21 +148,17 @@ public class Resource {
     return deleteOperations.unnamedOperations;
   }
 
-  @Nullable
-  public DeleteOperation<?> namedDeleteOperation(@NotNull String name) {
+  public @Nullable DeleteOperation<?> namedDeleteOperation(@NotNull String name) {
     return deleteOperations.namedOperations.get(name);
   }
   
-  @Nullable
-  public CustomOperation<?> customOperation(@NotNull String name) {
+  public @Nullable CustomOperation<?> customOperation(@NotNull String name) {
     return customOperations.namedOperations.get(name);
   }
 
   private static class Operations<O extends Operation<?, ?, ?>> {
-    @NotNull
-    final List<O> unnamedOperations;
-    @NotNull
-    final Map<String, O> namedOperations;
+    final @NotNull List<O> unnamedOperations;
+    final @NotNull Map<String, O> namedOperations;
 
     Operations(@NotNull String resourceName, @NotNull Collection<O> operations)
         throws ServiceInitializationException {

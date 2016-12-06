@@ -27,12 +27,10 @@ import org.jetbrains.annotations.Nullable;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class UpdateOperationRequest extends OperationRequest {
-  @NotNull
-  private final Data data;
-  @NotNull
-  private final ReqUpdateFieldProjection updateProjection;
+  private final @NotNull Data data;
+  private final @NotNull ReqUpdateFieldProjection updateProjection;
 
-  protected UpdateOperationRequest(
+  public UpdateOperationRequest(
       final @Nullable ReqFieldPath path,
       final @NotNull Data data,
       final @NotNull ReqUpdateFieldProjection updateProjection,
@@ -43,9 +41,7 @@ public class UpdateOperationRequest extends OperationRequest {
     this.updateProjection = updateProjection;
   }
 
-  @NotNull
-  public ReqUpdateFieldProjection updateProjection() { return updateProjection; }
+  public @NotNull ReqUpdateFieldProjection updateProjection() { return updateProjection; }
 
-  @NotNull
-  public Data data() { return data; }
+  public @NotNull Data data() { return data; }
 }

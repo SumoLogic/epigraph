@@ -58,8 +58,6 @@ import static ws.epigraph.test.TestUtil.lines;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ReadOperationRouterTest {
-  private final ReadOperationRouter router = new ReadOperationRouter();
-
   private final TypesResolver resolver = new SimpleTypesResolver(
       PersonId.type,
       Person.type,
@@ -184,7 +182,7 @@ public class ReadOperationRouterTest {
   @SuppressWarnings("unchecked")
   private OperationSearchSuccess<?, ReadRequestUrl>
   getTargetOpId(final @NotNull String url) throws PsiProcessingException {
-    final @NotNull OperationSearchResult<ReadOperation<?>> oss = router.findOperation(
+    final @NotNull OperationSearchResult<ReadOperation<?>> oss = ReadOperationRouter.INSTANCE.findOperation(
         null,
         parseReadUrl(url),
         resource, resolver

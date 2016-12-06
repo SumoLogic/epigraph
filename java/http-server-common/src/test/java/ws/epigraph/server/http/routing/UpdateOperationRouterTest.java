@@ -60,8 +60,6 @@ import static ws.epigraph.test.TestUtil.lines;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class UpdateOperationRouterTest {
-  private final UpdateOperationRouter router = new UpdateOperationRouter();
-
   private final TypesResolver resolver = new SimpleTypesResolver(
       PersonId.type,
       Person.type,
@@ -285,7 +283,7 @@ public class UpdateOperationRouterTest {
   @SuppressWarnings("unchecked")
   private OperationSearchSuccess<? extends UpdateOperation<?>, UpdateRequestUrl>
   getTargetOpId(final @NotNull String url) throws PsiProcessingException {
-    final @NotNull OperationSearchResult<UpdateOperation<?>> oss = router.findOperation(
+    final @NotNull OperationSearchResult<UpdateOperation<?>> oss = UpdateOperationRouter.INSTANCE.findOperation(
         null,
         parseUpdateUrl(url),
         resource, resolver

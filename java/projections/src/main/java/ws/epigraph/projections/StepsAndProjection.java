@@ -26,8 +26,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class StepsAndProjection<P> {
   private final int pathSteps;
-  @NotNull
-  private final P projection;
+  private final @NotNull P projection;
 
   public StepsAndProjection(int pathSteps, @NotNull P projection) {
     this.pathSteps = pathSteps;
@@ -38,8 +37,7 @@ public class StepsAndProjection<P> {
     return pathSteps;
   }
 
-  @NotNull
-  public P projection() {
+  public @NotNull P projection() {
     return projection;
   }
 }

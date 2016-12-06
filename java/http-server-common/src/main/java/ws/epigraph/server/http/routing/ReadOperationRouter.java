@@ -34,10 +34,15 @@ import java.util.*;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class ReadOperationRouter
+public final class ReadOperationRouter
     extends AbstractOperationRouter<UrlReadUrl, ReadOperationIdl, ReadOperation<?>, ReadRequestUrl> {
 
+  public static final ReadOperationRouter INSTANCE = new ReadOperationRouter();
+
+  private ReadOperationRouter() {}
+
   @Override
+
   protected @Nullable ReadOperation<?> namedOperation(final @NotNull String name, final @NotNull Resource resource) {
     return resource.namedReadOperation(name);
   }

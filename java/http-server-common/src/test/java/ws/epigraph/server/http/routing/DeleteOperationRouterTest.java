@@ -60,8 +60,6 @@ import static ws.epigraph.test.TestUtil.lines;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class DeleteOperationRouterTest {
-  private final DeleteOperationRouter router = new DeleteOperationRouter();
-
   private final TypesResolver resolver = new SimpleTypesResolver(
       PersonId.type,
       Person.type,
@@ -226,7 +224,7 @@ public class DeleteOperationRouterTest {
   @SuppressWarnings("unchecked")
   private OperationSearchSuccess<? extends DeleteOperation<?>, DeleteRequestUrl> getTargetOpId(final @NotNull String url)
       throws PsiProcessingException {
-    final @NotNull OperationSearchResult<DeleteOperation<?>> oss = router.findOperation(
+    final @NotNull OperationSearchResult<DeleteOperation<?>> oss = DeleteOperationRouter.INSTANCE.findOperation(
         null,
         parseDeleteUrl(url),
         resource, resolver

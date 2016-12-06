@@ -23,6 +23,7 @@ import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.op.input.OpInputFieldProjection;
 import ws.epigraph.projections.op.output.OpOutputFieldProjection;
 import ws.epigraph.projections.op.path.OpFieldPath;
+import ws.epigraph.types.Type;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -39,5 +40,21 @@ public class CreateOperationIdl extends OperationIdl {
         OperationKind.CREATE, HttpMethod.POST, name, annotations,
         path, inputProjection, outputProjection, location
     );
+  }
+
+  @Override
+  public @NotNull OpInputFieldProjection inputProjection() {
+    final OpInputFieldProjection projection = super.inputProjection();
+    assert projection != null;
+    return projection;
+
+
+  }
+
+  @Override
+  public @NotNull Type inputType() {
+    final Type inputType = super.inputType();
+    assert inputType != null;
+    return inputType;
   }
 }

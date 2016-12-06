@@ -35,29 +35,30 @@ import java.util.List;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class DeleteOperationRouter
+public final class DeleteOperationRouter
     extends AbstractOperationRouter<UrlDeleteUrl, DeleteOperationIdl, DeleteOperation<?>, DeleteRequestUrl> {
 
-  @Nullable
+  public static final DeleteOperationRouter INSTANCE = new DeleteOperationRouter();
+
+  private DeleteOperationRouter() {}
+
   @Override
-  protected DeleteOperation<?> namedOperation(@NotNull final String name, @NotNull final Resource resource) {
+  protected @Nullable DeleteOperation<?> namedOperation(final @NotNull String name, final @NotNull Resource resource) {
     return resource.namedDeleteOperation(name);
   }
 
-  @NotNull
   @Override
-  protected Collection<? extends DeleteOperation<?>> unnamedOperations(@NotNull final Resource resource) {
+  protected @NotNull Collection<? extends DeleteOperation<?>> unnamedOperations(final @NotNull Resource resource) {
     return resource.unnamedDeleteOperations();
   }
 
-  @NotNull
   @Override
-  protected DeleteRequestUrl parseUrl(
-      @NotNull final DataType resourceType,
-      @NotNull final DeleteOperationIdl opDecl,
-      @NotNull final UrlDeleteUrl urlPsi,
-      @NotNull final TypesResolver resolver,
-      @NotNull final List<PsiProcessingError> errors) throws PsiProcessingException {
+  protected @NotNull DeleteRequestUrl parseUrl(
+      final @NotNull DataType resourceType,
+      final @NotNull DeleteOperationIdl opDecl,
+      final @NotNull UrlDeleteUrl urlPsi,
+      final @NotNull TypesResolver resolver,
+      final @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
     return DeleteRequestUrlPsiParser.parseDeleteRequestUrl(
         resourceType,
         opDecl,

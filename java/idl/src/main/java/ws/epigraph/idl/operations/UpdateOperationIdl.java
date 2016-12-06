@@ -51,7 +51,7 @@ public class UpdateOperationIdl extends OperationIdl {
 
   @Override
   public @NotNull Type inputType() {
-    @Nullable final Type inputType = super.inputType();
+    final @Nullable Type inputType = super.inputType();
     assert inputType != null; // because `inputProjection` can't be null
     return inputType;
   }

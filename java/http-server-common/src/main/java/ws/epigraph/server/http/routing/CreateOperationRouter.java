@@ -35,29 +35,30 @@ import java.util.List;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class CreateOperationRouter
+public final class CreateOperationRouter
     extends AbstractOperationRouter<UrlCreateUrl, CreateOperationIdl, CreateOperation<?>, CreateRequestUrl> {
 
-  @Nullable
+  public static final CreateOperationRouter INSTANCE = new CreateOperationRouter();
+
+  private CreateOperationRouter() {}
+
   @Override
-  protected CreateOperation<?> namedOperation(@NotNull final String name, @NotNull final Resource resource) {
+  protected @Nullable CreateOperation<?> namedOperation(final @NotNull String name, final @NotNull Resource resource) {
     return resource.namedCreateOperation(name);
   }
 
-  @NotNull
   @Override
-  protected Collection<? extends CreateOperation<?>> unnamedOperations(@NotNull final Resource resource) {
+  protected @NotNull Collection<? extends CreateOperation<?>> unnamedOperations(final @NotNull Resource resource) {
     return resource.unnamedCreateOperations();
   }
 
-  @NotNull
   @Override
-  protected CreateRequestUrl parseUrl(
-      @NotNull final DataType resourceType,
-      @NotNull final CreateOperationIdl opDecl,
-      @NotNull final UrlCreateUrl urlPsi,
-      @NotNull final TypesResolver resolver,
-      @NotNull final List<PsiProcessingError> errors) throws PsiProcessingException {
+  protected @NotNull CreateRequestUrl parseUrl(
+      final @NotNull DataType resourceType,
+      final @NotNull CreateOperationIdl opDecl,
+      final @NotNull UrlCreateUrl urlPsi,
+      final @NotNull TypesResolver resolver,
+      final @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
     return CreateRequestUrlPsiParser.parseCreateRequestUrl(
         resourceType,
         opDecl,
