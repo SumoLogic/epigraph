@@ -17,11 +17,15 @@
   - [x] Update unmarshallers
   
 - [ ] Undertow handler must support all operations
-  - [ ] add support for create
-  - [ ] add support for update
-  - [ ] add support for delete
-  - [ ] add support for custom
+  - [x] add support for create
+  - [x] add support for update
+  - [x] add support for delete
+  - [x] add support for custom
   - [ ] update test server to support/demo all operations
+  
+- Important items from [general todo] (todo.md)
+  - [ ] Add `type.createBuilder(data)` similar to `toImmutable`
+  - [ ] Gradle plugin: java generator doesn't detect changes in schema
   
 - [ ] Standalone IDL verifier/compiler
   - [ ] Maven plugin

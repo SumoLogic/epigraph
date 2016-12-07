@@ -31,12 +31,9 @@ import java.util.stream.Collectors;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ImportAwareTypesResolver implements TypesResolver {
-  @NotNull
-  private final Qn currentNamespace;
-  @NotNull
-  private final List<Qn> imports;
-  @NotNull
-  private final TypesResolver childResolver;
+  private final @NotNull Qn currentNamespace;
+  private final @NotNull List<Qn> imports;
+  private final @NotNull TypesResolver childResolver;
 
   public ImportAwareTypesResolver(@NotNull Qn currentNamespace,
                                   @NotNull List<Qn> imports,
@@ -46,13 +43,11 @@ public class ImportAwareTypesResolver implements TypesResolver {
     this.childResolver = childResolver;
   }
 
-  @NotNull
-  public TypesResolver childResolver() { return childResolver; }
+  public @NotNull TypesResolver childResolver() { return childResolver; }
 
-  @Nullable
   @Override
-  public Type resolve(@NotNull QnTypeRef reference) {
-    @NotNull final Qn qn = reference.qn();
+  public @Nullable Type resolve(@NotNull QnTypeRef reference) {
+    final @NotNull Qn qn = reference.qn();
 
     List<Qn> prefixes = calculateResolutionPrefixes(qn, currentNamespace, imports, false);
     if (prefixes == null) return null;
@@ -65,11 +60,10 @@ public class ImportAwareTypesResolver implements TypesResolver {
                    .orElse(null);
   }
 
-  @Nullable
-  public static List<Qn> calculateResolutionPrefixes(@NotNull Qn reference,
-                                                     @Nullable Qn currentNamespace,
-                                                     @NotNull List<Qn> imports,
-                                                     boolean deduplicate) {
+  public static @Nullable List<Qn> calculateResolutionPrefixes(@NotNull Qn reference,
+                                                               @Nullable Qn currentNamespace,
+                                                               @NotNull List<Qn> imports,
+                                                               boolean deduplicate) {
 
     // see https://github.com/SumoLogic/epigraph/wiki/References%20implementation
 
@@ -113,20 +107,18 @@ public class ImportAwareTypesResolver implements TypesResolver {
     return prefixes;
   }
 
-  @Nullable
   @Override
-  public Type resolve(@NotNull AnonListRef reference) {
+  public @Nullable Type resolve(@NotNull AnonListRef reference) {
     @NotNull ValueTypeRef itemTypeRef = reference.itemsType();
     @Nullable DataType itemType = resolve(itemTypeRef);
     if (itemType == null) return null;
 
-    @NotNull final AnonListRef normalizedRef = TypeReferenceFactory.createAnonListReference(itemType);
+    final @NotNull AnonListRef normalizedRef = TypeReferenceFactory.createAnonListReference(itemType);
     return childResolver.resolve(normalizedRef);
   }
 
-  @Nullable
   @Override
-  public Type resolve(@NotNull AnonMapRef reference) {
+  public @Nullable Type resolve(@NotNull AnonMapRef reference) {
     @NotNull ValueTypeRef valueTypeRef = reference.itemsType();
     @Nullable DataType valueType = resolve(valueTypeRef);
     if (valueType == null) return null;
@@ -134,7 +126,7 @@ public class ImportAwareTypesResolver implements TypesResolver {
     @Nullable Type keyType = reference.keysType().resolve(this);
     if (keyType instanceof DatumType) {
       DatumType keyDatumType = (DatumType) keyType;
-      @NotNull final AnonMapRef normalizedRef = TypeReferenceFactory.createAnonMapReference(keyDatumType, valueType);
+      final @NotNull AnonMapRef normalizedRef = TypeReferenceFactory.createAnonMapReference(keyDatumType, valueType);
       return childResolver.resolve(normalizedRef);
     } else return null;
   }

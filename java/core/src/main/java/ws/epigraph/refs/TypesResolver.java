@@ -17,9 +17,11 @@
 package ws.epigraph.refs;
 
 import ws.epigraph.types.DataType;
+import ws.epigraph.types.DatumType;
 import ws.epigraph.types.Type;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.types.TypeKind;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -34,18 +36,18 @@ public interface TypesResolver {
   @Nullable
   Type resolve(@NotNull AnonMapRef reference);
 
-  @Nullable
-  default DataType resolve(@NotNull ValueTypeRef valueTypeRef) {
+  default @Nullable DataType resolve(@NotNull ValueTypeRef valueTypeRef) {
     @Nullable Type type = valueTypeRef.typeRef().resolve(this);
     if (type == null) return null;
 
     final Type.Tag defaultTag;
     @Nullable String defaultTagOverride = valueTypeRef.defaultOverride();
-    if (defaultTagOverride != null) {
+    if (defaultTagOverride == null) {
+      if (type.kind() == TypeKind.UNION) defaultTag = null;
+      else defaultTag = ((DatumType) type).self;
+    } else {
       defaultTag = type.tagsMap().get(defaultTagOverride);
       if (defaultTag == null) return null;
-    } else {
-        defaultTag = null;
     }
 
     return new DataType(type, defaultTag);

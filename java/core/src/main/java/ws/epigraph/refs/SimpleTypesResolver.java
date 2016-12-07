@@ -61,23 +61,20 @@ public class SimpleTypesResolver implements TypesResolver {
     }
   }
 
-  @Nullable
   @Override
-  public Type resolve(@NotNull QnTypeRef reference) {
+  public @Nullable Type resolve(@NotNull QnTypeRef reference) {
     return types.get(reference.qn());
   }
 
-  @Nullable
   @Override
-  public Type resolve(@NotNull AnonListRef reference) {
+  public @Nullable Type resolve(@NotNull AnonListRef reference) {
     @NotNull ValueTypeRef itemTypeRef = reference.itemsType();
     @Nullable DataType itemType = resolve(itemTypeRef);
     return itemType == null ? null : anonLists.get(itemType);
   }
 
-  @Nullable
   @Override
-  public Type resolve(@NotNull AnonMapRef reference) {
+  public @Nullable Type resolve(@NotNull AnonMapRef reference) {
     @NotNull ValueTypeRef valueTypeRef = reference.itemsType();
     @Nullable DataType valueType = resolve(valueTypeRef);
     if (valueType == null) return null;

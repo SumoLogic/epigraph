@@ -44,15 +44,17 @@ import ws.epigraph.types.DataType;
 import ws.epigraph.types.DatumType;
 import ws.epigraph.types.Type;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class OperationsPsiParser {
-  @NotNull
-  public static OperationIdl parseOperation(
+public final class OperationsPsiParser {
+  private OperationsPsiParser() {}
+
+  public static @NotNull OperationIdl parseOperation(
       @NotNull DataType resourceType,
       @NotNull IdlOperationDef psi,
       @NotNull TypesResolver resolver,
@@ -76,8 +78,7 @@ public class OperationsPsiParser {
     throw new PsiProcessingException("Incomplete operation statement", psi, errors);
   }
 
-  @NotNull
-  private static ReadOperationIdl parseRead(
+  private static @NotNull ReadOperationIdl parseRead(
       @NotNull DataType resourceType,
       @NotNull IdlReadOperationDef psi,
       @NotNull TypesResolver resolver,
@@ -129,8 +130,7 @@ public class OperationsPsiParser {
     );
   }
 
-  @NotNull
-  private static CreateOperationIdl parseCreate(
+  private static @NotNull CreateOperationIdl parseCreate(
       @NotNull DataType resourceType,
       @NotNull IdlCreateOperationDef psi,
       @NotNull TypesResolver resolver,
@@ -162,7 +162,7 @@ public class OperationsPsiParser {
     if (inputProjectionPsi == null)
       throw new PsiProcessingException("Input projection must be specified", psi, errors);
 
-    @Nullable final IdlOpInputFieldProjection inputFieldProjectionPsi = inputProjectionPsi.getOpInputFieldProjection();
+    final @Nullable IdlOpInputFieldProjection inputFieldProjectionPsi = inputProjectionPsi.getOpInputFieldProjection();
     if (inputFieldProjectionPsi == null)
       throw new PsiProcessingException("Input projection must be specified", inputProjectionPsi, errors);
 
@@ -190,8 +190,7 @@ public class OperationsPsiParser {
     );
   }
 
-  @NotNull
-  private static UpdateOperationIdl parseUpdate(
+  private static @NotNull UpdateOperationIdl parseUpdate(
       @NotNull DataType resourceType,
       @NotNull IdlUpdateOperationDef psi,
       @NotNull TypesResolver resolver,
@@ -222,11 +221,11 @@ public class OperationsPsiParser {
     if (inputProjectionPsi == null)
       throw new PsiProcessingException("Input projection must be specified", psi, errors);
 
-    @Nullable final IdlOpInputFieldProjection inputFieldProjectionPsi = inputProjectionPsi.getOpInputFieldProjection();
+    final @Nullable IdlOpInputFieldProjection inputFieldProjectionPsi = inputProjectionPsi.getOpInputFieldProjection();
     if (inputFieldProjectionPsi == null)
       throw new PsiProcessingException("Input projection must be specified", inputProjectionPsi, errors);
 
-    @Nullable final OpVarPath varPath = fieldPath == null ? null : fieldPath.varProjection();
+    final @Nullable OpVarPath varPath = fieldPath == null ? null : fieldPath.varProjection();
 
     return new UpdateOperationIdl(
         parseOperationName(psi.getOperationName()),
@@ -252,8 +251,7 @@ public class OperationsPsiParser {
     );
   }
 
-  @NotNull
-  private static DeleteOperationIdl parseDelete(
+  private static @NotNull DeleteOperationIdl parseDelete(
       @NotNull DataType resourceType,
       @NotNull IdlDeleteOperationDef psi,
       @NotNull TypesResolver resolver,
@@ -282,7 +280,7 @@ public class OperationsPsiParser {
     if (deleteProjectionPsi == null)
       throw new PsiProcessingException("Delete projection must be specified", psi, errors);
 
-    @Nullable final IdlOpDeleteFieldProjection deleteFieldProjectionPsi =
+    final @Nullable IdlOpDeleteFieldProjection deleteFieldProjectionPsi =
         deleteProjectionPsi.getOpDeleteFieldProjection();
     if (deleteFieldProjectionPsi == null)
       throw new PsiProcessingException("Delete projection must be specified", deleteProjectionPsi, errors);
@@ -310,8 +308,7 @@ public class OperationsPsiParser {
     );
   }
 
-  @NotNull
-  private static CustomOperationIdl parseCustom(
+  private static @NotNull CustomOperationIdl parseCustom(
       @NotNull DataType resourceType,
       @NotNull IdlCustomOperationDef psi,
       @NotNull TypesResolver resolver,
@@ -350,7 +347,7 @@ public class OperationsPsiParser {
       else throw new PsiProcessingException("HTTP method must be specified", methodPsi, errors);
     }
 
-    @Nullable final IdlOpInputFieldProjection inputFieldProjectionPsi =
+    final @Nullable IdlOpInputFieldProjection inputFieldProjectionPsi =
         inputProjectionPsi == null ? null : inputProjectionPsi.getOpInputFieldProjection();
 
     @Nullable OpFieldPath opPath = parsePath(resourceType, pathPsi, resolver, errors);
@@ -386,8 +383,7 @@ public class OperationsPsiParser {
     );
   }
 
-  @NotNull
-  private static OpOutputFieldProjection parseOutputProjection(
+  private static @NotNull OpOutputFieldProjection parseOutputProjection(
       final @NotNull DataType outputType,
       final @Nullable IdlOperationOutputProjection outputProjectionPsi,
       final @NotNull TypesResolver resolver,
@@ -395,7 +391,7 @@ public class OperationsPsiParser {
       final @NotNull List<PsiProcessingError> errors)
       throws PsiProcessingException {
 
-    @Nullable final IdlOpOutputFieldProjection outputFieldProjectionPsi =
+    final @Nullable IdlOpOutputFieldProjection outputFieldProjectionPsi =
         outputProjectionPsi == null ? null : outputProjectionPsi.getOpOutputFieldProjection();
 
     if (outputProjectionPsi == null || outputFieldProjectionPsi == null) {
@@ -421,13 +417,11 @@ public class OperationsPsiParser {
   }
 
   @Contract("null, !null, _, _ -> !null")
-  @Nullable
-  private static <T extends PsiElement> T getPsiPart(
+  private static @Nullable <T extends PsiElement> T getPsiPart(
       @Nullable T prev,
       @Nullable T cur,
       @NotNull String name,
-      @NotNull List<PsiProcessingError> errors)
-      throws PsiProcessingException {
+      @NotNull Collection<PsiProcessingError> errors) {
 
     if (cur != null) {
       if (prev != null) {
@@ -440,15 +434,14 @@ public class OperationsPsiParser {
     return prev;
   }
 
-  @NotNull
-  private static DataType resolveOutputType(
+  private static @NotNull DataType resolveOutputType(
       @NotNull DataType resourceType,
       @Nullable OpVarPath opVarPath,
       @Nullable IdlOperationOutputType declaredOutputTypePsi,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
-    @Nullable final IdlValueTypeRef typeRefPsi =
+    final @Nullable IdlValueTypeRef typeRefPsi =
         declaredOutputTypePsi == null ? null : declaredOutputTypePsi.getValueTypeRef();
 
     if (declaredOutputTypePsi == null || typeRefPsi == null) {
@@ -456,21 +449,20 @@ public class OperationsPsiParser {
       else return ProjectionUtils.tipType(opVarPath);
     }
 
-    @NotNull final ValueTypeRef valueTypeRef = TypeRefs.fromPsi(typeRefPsi, errors);
-    @Nullable final DataType dataType = resolver.resolve(valueTypeRef);
+    final @NotNull ValueTypeRef valueTypeRef = TypeRefs.fromPsi(typeRefPsi, errors);
+    final @Nullable DataType dataType = resolver.resolve(valueTypeRef);
     if (dataType == null) throw new PsiProcessingException("Can't resolve output type", typeRefPsi, errors);
     return dataType;
   }
 
-  @NotNull
-  private static DataType resolveInputType(
+  private static @NotNull DataType resolveInputType(
       @NotNull DataType resourceType,
       @Nullable OpVarPath path,
       @Nullable IdlOperationInputType inputTypePsi,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
-    @Nullable final IdlTypeRef typeRefPsi = inputTypePsi == null ? null : inputTypePsi.getTypeRef();
+    final @Nullable IdlTypeRef typeRefPsi = inputTypePsi == null ? null : inputTypePsi.getTypeRef();
     if (inputTypePsi == null || typeRefPsi == null) {
       if (path == null) {
 
@@ -482,49 +474,47 @@ public class OperationsPsiParser {
 
       } else {
 
-        @NotNull final DataType tipType = ProjectionUtils.tipType(path);
+        final @NotNull DataType tipType = ProjectionUtils.tipType(path);
 
-        @NotNull final Type ttt = tipType.type;
+        final @NotNull Type ttt = tipType.type;
 
         if (ttt instanceof DatumType) return ((DatumType) ttt).dataType();
 
         return tipType;
       }
     }
-    @Nullable final DatumType datumType = TypeRefs.fromPsi(typeRefPsi, errors).resolveDatumType(resolver);
+    final @Nullable DatumType datumType = TypeRefs.fromPsi(typeRefPsi, errors).resolveDatumType(resolver);
     if (datumType == null)
-      throw new PsiProcessingException("Can't resolve input type", typeRefPsi, errors);
+      throw new PsiProcessingException("Can't resolve input type '" + typeRefPsi.getText() + "'", typeRefPsi, errors);
     return datumType.dataType();
   }
 
-  @NotNull
-  private static DataType resolveDeleteType(
+  private static @NotNull DataType resolveDeleteType(
       @NotNull DataType resourceType,
-      @Nullable OpVarPath opVarPath) throws PsiProcessingException {
+      @Nullable OpVarPath opVarPath) {
 
     if (opVarPath == null) return resourceType;
     else return ProjectionUtils.tipType(opVarPath);
   }
 
-  @Nullable
-  private static OpFieldPath parsePath(
+  private static @Nullable OpFieldPath parsePath(
       @NotNull DataType type,
       @Nullable IdlOperationPath pathPsi,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
-    if (pathPsi != null) {
+    if (pathPsi == null) return null;
+    else {
       final @Nullable IdlOpFieldPath varPathPsi = pathPsi.getOpFieldPath();
       if (varPathPsi == null) {
         errors.add(new PsiProcessingError("Path expression missing", pathPsi));
         return null;
       }
       return OpPathPsiParser.parseFieldPath(type, varPathPsi, resolver, errors);
-    } else return null;
+    }
   }
 
-  @Nullable
-  private static String parseOperationName(@Nullable IdlOperationName namePsi) {
+  private static @Nullable String parseOperationName(@Nullable IdlOperationName namePsi) {
     if (namePsi == null) return null;
     @Nullable IdlQid qid = namePsi.getQid();
     if (qid == null) return null;

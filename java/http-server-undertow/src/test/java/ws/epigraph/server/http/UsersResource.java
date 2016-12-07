@@ -20,13 +20,14 @@ package ws.epigraph.server.http;
 
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.idl.ResourceIdl;
+import ws.epigraph.idl.operations.CreateOperationIdl;
 import ws.epigraph.idl.operations.ReadOperationIdl;
 import ws.epigraph.service.Resource;
 import ws.epigraph.service.ServiceInitializationException;
-import ws.epigraph.service.operations.ReadOperation;
-import ws.epigraph.service.operations.ReadOperationRequest;
-import ws.epigraph.service.operations.ReadOperationResponse;
+import ws.epigraph.service.operations.*;
 import ws.epigraph.tests.PersonId_Person_Map;
+import ws.epigraph.tests.PersonRecord;
+import ws.epigraph.tests.PersonRecord_List;
 
 import java.util.Collections;
 import java.util.concurrent.CompletableFuture;
@@ -40,7 +41,9 @@ public class UsersResource extends Resource {
         Collections.singletonList(
             new ReadOp(((ReadOperationIdl) resourceIdl.operations().get(0)), storage)
         ),
-        Collections.emptyList(),
+        Collections.singletonList(
+            new CreateOp(((CreateOperationIdl) resourceIdl.operations().get(1)), storage)
+        ),
         Collections.emptyList(),
         Collections.emptyList(),
         Collections.emptyList()
@@ -60,16 +63,52 @@ public class UsersResource extends Resource {
     @Override
     public @NotNull CompletableFuture<ReadOperationResponse<PersonId_Person_Map.Data>>
     process(@NotNull ReadOperationRequest request) {
-      CompletableFuture<ReadOperationResponse<PersonId_Person_Map.Data>> future = new CompletableFuture<>();
-      future.complete(
+      return toFuture(
           new ReadOperationResponse<>(
               PersonId_Person_Map.type.createDataBuilder().set(storage.users())
           )
       );
-      return future;
+    }
+  }
+
+  private static final class CreateOp extends CreateOperation<epigraph.String.Data> {
+    private final @NotNull UsersStorage storage;
+
+    protected CreateOp(final CreateOperationIdl declaration, final @NotNull UsersStorage storage) {
+      super(declaration);
+      this.storage = storage;
     }
 
+    @Override
+    public @NotNull CompletableFuture<ReadOperationResponse<epigraph.String.Data>>
+    process(final @NotNull CreateOperationRequest request) {
+      // todo operation stubs must be generated
+      final PersonRecord_List recordList =
+          (PersonRecord_List) request.data()._raw().getDatum(PersonRecord_List.type.self);
 
+      final String status;
+      if (recordList == null) {
+        status = "no data provided";
+      } else {
+        for (final PersonRecord record : recordList.datums()) {
+          // we know it's a builder by implementation. Todo: add `toBuilder`!
+          final PersonRecord.Builder builder = (PersonRecord.Builder) record;
+          storage.insertPerson(builder);
+        }
+
+        status = "inserted " + recordList.size() + " items";
+      }
+
+      return toFuture(new ReadOperationResponse<>(
+          epigraph.String.type.createDataBuilder().set(epigraph.String.create(status)))
+      );
+    }
+  }
+
+  private static @NotNull <T> CompletableFuture<T> toFuture(@NotNull T value) {
+    CompletableFuture<T> f = new CompletableFuture<>();
+    f.complete(value);
+    return f;
   }
 
 }

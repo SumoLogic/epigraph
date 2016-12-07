@@ -29,15 +29,13 @@ public interface TypeRef {
   @Nullable
   Type resolve(@NotNull TypesResolver resolver);
 
-  @Nullable
-  default DatumType resolveDatumType(@NotNull TypesResolver resolver) {
+  default @Nullable DatumType resolveDatumType(@NotNull TypesResolver resolver) {
     Type t = resolve(resolver);
     if (t instanceof DatumType) return (DatumType) t;
     else return null; // or throw if it has wrong kind?
   }
 
-  @Nullable
-  default UnionType resolveVarType(@NotNull TypesResolver resolver) {
+  default @Nullable UnionType resolveVarType(@NotNull TypesResolver resolver) {
     Type t = resolve(resolver);
     if (t instanceof UnionType) return (UnionType) t;
     else return null; // or throw if it has wrong kind?

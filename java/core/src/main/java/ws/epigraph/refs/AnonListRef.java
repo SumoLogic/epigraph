@@ -26,19 +26,16 @@ import java.util.Objects;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class AnonListRef implements TypeRef {
-  @NotNull
-  private final ValueTypeRef itemsType;
+  private final @NotNull ValueTypeRef itemsType;
 
   public AnonListRef(@NotNull ValueTypeRef itemsType) {this.itemsType = itemsType;}
 
-  @NotNull
-  public ValueTypeRef itemsType() {
+  public @NotNull ValueTypeRef itemsType() {
     return itemsType;
   }
 
-  @Nullable
   @Override
-  public Type resolve(@NotNull TypesResolver resolver) {
+  public @Nullable Type resolve(@NotNull TypesResolver resolver) {
     return resolver.resolve(this);
   }
 

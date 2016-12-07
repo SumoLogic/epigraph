@@ -2,6 +2,7 @@ namespace ws.epigraph.server.http
 
 import ws.epigraph.tests.Person
 import ws.epigraph.tests.PersonId
+import ws.epigraph.tests.PersonRecord
 import ws.epigraph.tests.User
 
 resource users: map[PersonId,Person] {
@@ -36,6 +37,32 @@ resource users: map[PersonId,Person] {
         record( profile, worstEnemy( profile ) )
       )
     )
+  }
+
+  CREATE {
+    inputType list[PersonRecord]
+    inputProjection *((
+      firstName,
+      lastName,
+      bestFriend:(
+        id,
+        record( id, firstName, lastName, bestFriend:id, worstEnemy )
+      )~ws.epigraph.tests.User:(
+        record(
+          worstEnemy( id, firstName, lastName, profile )
+          profile
+        )
+      )
+      worstEnemy( id, firstName, lastName )
+      friends *(
+        :(
+          id,
+          record( id, firstName, lastName )
+        )
+      )
+    ))
+
+    outputType String
   }
 
 }

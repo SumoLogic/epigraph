@@ -19,6 +19,7 @@
 - [ ] Restrict map keys to exact declared type only (throw runtime exception - no static checks unfortunately, unless we introduce yet another data flavor that doesn't inherit from supertypes)
   - [ ] Alternatively, define equals for map keys to be declared type-scoped only, implement with wrapper over keys.
 - [ ] ~~Allow supplementing Union types with any datum type (applies to all compatible tag types)~~
+- [ ] Add `type.createBuilder(data)` similar to `toImmutable`
 
 # Schema compiler
 - [ ] Annotations support. Should they be inherited? Annotations on annotations?

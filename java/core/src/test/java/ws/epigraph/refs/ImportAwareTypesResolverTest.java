@@ -126,7 +126,7 @@ public class ImportAwareTypesResolverTest {
 
   @Test
   public void testAnonList() {
-    Type t1 = createType("T1", "foo", "bar");
+    DatumType t1 = createType("T1", "foo", "bar");
     AnonListType lt = createAnonListType(t1);
 
     SimpleTypesResolver simpleResolver = new SimpleTypesResolver(
@@ -155,7 +155,7 @@ public class ImportAwareTypesResolverTest {
   @Test
   public void testAnonMap() {
     DatumType t1 = createType("T1", "foo", "bar");
-    Type t2 = createType("T2", "foo", "bar");
+    DatumType t2 = createType("T2", "foo", "bar");
 
     AnonMapType mt = createAnonMapType(t1, t2);
 
@@ -183,29 +183,27 @@ public class ImportAwareTypesResolverTest {
     );
   }
 
-  private static DatumType createType(String localName, String... namespaceNames) {
+  private static @NotNull DatumType createType(@NotNull String localName, String... namespaceNames) {
     return new PrimitiveType<String>(
         new QualifiedTypeName(localName, namespaceNames),
         Collections.emptyList()
     ) {
-      @NotNull
       @Override
-      public Data.Builder createDataBuilder() { return null; }
+      public @NotNull Data.Builder createDataBuilder() { return null; }
 
       @Override
       public Val.Imm createValue(@Nullable ErrorValue errorOrNull) { return null; }
 
-      @NotNull
       @Override
-      public PrimitiveDatum.Builder<String> createBuilder(String val) { return null; }
+      public @NotNull PrimitiveDatum.Builder<String> createBuilder(String val) { return null; }
     };
   }
 
-  private static AnonListType createAnonListType(Type elementType) {
-    return new AnonListType.Raw(new DataType(elementType, null));
+  private static AnonListType createAnonListType(DatumType elementType) {
+    return new AnonListType.Raw(new DataType(elementType, elementType.self));
   }
 
-  private static AnonMapType createAnonMapType(DatumType keyType, Type itemType) {
-    return new AnonMapType.Raw(keyType, new DataType(itemType, null));
+  private static AnonMapType createAnonMapType(DatumType keyType, DatumType itemType) {
+    return new AnonMapType.Raw(keyType, new DataType(itemType, itemType.self));
   }
 }

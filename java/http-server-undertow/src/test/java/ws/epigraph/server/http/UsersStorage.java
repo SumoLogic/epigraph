@@ -21,11 +21,16 @@ import org.jetbrains.annotations.NotNull;
 import ws.epigraph.errors.ErrorValue;
 import ws.epigraph.tests.*;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 /**
+ * Sample service backend. Not thread safe, so one request at a time please.
+ *
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class UsersStorage {
   private final PersonId_Person_Map.Builder storage;
+  private final AtomicInteger nextId = new AtomicInteger();
 
   public UsersStorage() {
     storage = PersonId_Person_Map.create();
@@ -35,10 +40,19 @@ public class UsersStorage {
       PersonId pid = PersonId.create(id);
       storage.put$(pid, createPerson(pid));
     }
+
+    nextId.set(11);
   }
 
   public @NotNull PersonId_Person_Map.Builder users() {
     return storage;
+  }
+
+  public @NotNull PersonId insertPerson(@NotNull PersonRecord.Builder personRecord) {
+    PersonId id = PersonId.create(nextId.incrementAndGet());
+    personRecord.setId(id);
+    storage.put$(id, Person.create().setId(id).setRecord(personRecord));
+    return id;
   }
 
   private static @NotNull Person createPerson(@NotNull PersonId pid) {

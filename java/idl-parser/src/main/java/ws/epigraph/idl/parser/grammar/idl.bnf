@@ -179,7 +179,7 @@ private resourceDefBody ::= '{' (resourceDefPart ','?)* '}'
 private resourceDefPart ::= operationDef { recoverWhile = operationBodyRecover }
 
 /*
-resource users map[String,User] {
+resource users map[UserId,User] {
   CREATE {
     ; foo : String = "sf"
     doc = "sdf"

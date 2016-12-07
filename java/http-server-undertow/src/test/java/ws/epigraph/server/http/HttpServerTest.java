@@ -21,13 +21,15 @@ import com.intellij.psi.impl.DebugUtil;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
-import org.jetbrains.annotations.Contract;
+import io.undertow.Undertow;
+import io.undertow.UndertowOptions;
+import org.jetbrains.annotations.NotNull;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import ws.epigraph.idl.Idl;
-import ws.epigraph.idl.parser.IdlPsiParser;
 import ws.epigraph.idl.parser.IdlParserDefinition;
+import ws.epigraph.idl.parser.IdlPsiParser;
 import ws.epigraph.idl.parser.psi.IdlFile;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingError;
@@ -38,9 +40,6 @@ import ws.epigraph.server.http.undertow.UndertowHandler;
 import ws.epigraph.service.Service;
 import ws.epigraph.service.ServiceInitializationException;
 import ws.epigraph.tests.*;
-import io.undertow.Undertow;
-import io.undertow.UndertowOptions;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -62,10 +61,12 @@ public class HttpServerTest {
   private static final TypesResolver resolver = new SimpleTypesResolver(
       PersonId.type,
       Person.type,
+      PersonRecord.type,
       User.type,
       UserId.type,
       UserRecord.type,
       PersonId_Person_Map.type,
+      PersonRecord_List.type,
       epigraph.String.type
   );
 
@@ -81,8 +82,7 @@ public class HttpServerTest {
     }
   }
 
-  @Contract(" -> !null")
-  private static Service buildUsersService() throws ServiceInitializationException {
+  private static @NotNull Service buildUsersService() throws ServiceInitializationException {
     return new Service(
         "users",
         Arrays.asList(

@@ -19,4 +19,6 @@ record PersonRecord {
   friendsMap: map[String, Person]
 }
 
+// todo this should be removed once we have proper idl/types compiler
 map[PersonId,Person] UsersResourceDummy
+list[PersonRecord] UsersResourceDummy2

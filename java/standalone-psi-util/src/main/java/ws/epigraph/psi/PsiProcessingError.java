@@ -24,10 +24,8 @@ import org.jetbrains.annotations.NotNull;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class PsiProcessingError {
-  @NotNull
-  private final String message;
-  @NotNull
-  private final TextLocation location;
+  private final @NotNull String message;
+  private final @NotNull TextLocation location;
 
   public PsiProcessingError(@NotNull String message, @NotNull TextLocation location) {
     this.message = message;
@@ -38,11 +36,9 @@ public class PsiProcessingError {
     this(message, EpigraphPsiUtil.getLocation(psi));
   }
 
-  @NotNull
-  public String message() { return message; }
+  public @NotNull String message() { return message; }
 
-  @NotNull
-  public TextLocation location() { return location; }
+  public @NotNull TextLocation location() { return location; }
 
   @Override
   public String toString() {
