@@ -47,10 +47,11 @@ import static ws.epigraph.url.projections.UrlProjectionsPsiParserUtil.parseReque
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class CustomRequestUrlPsiParser {
+public final class CustomRequestUrlPsiParser {
 
-  @NotNull
-  public static CustomRequestUrl parseCustomRequestUrl(
+  private CustomRequestUrlPsiParser() {}
+
+  public static @NotNull CustomRequestUrl parseCustomRequestUrl(
       @NotNull DataType resourceType,
       @NotNull CustomOperationIdl op,
       @NotNull UrlCustomUrl psi,
@@ -61,14 +62,13 @@ public class CustomRequestUrlPsiParser {
 
     final Map<String, GDatum> requestParams = parseRequestParams(psi.getRequestParamList(), errors);
 
-    if (opPath != null)
-      return parseCustomRequestUrlWithPath(resourceType, requestParams, op, opPath, psi, typesResolver, errors);
-    else
+    if (opPath == null)
       return parseCustomRequestUrlWithoutPath(resourceType, requestParams, op, psi, typesResolver, errors);
+    else
+      return parseCustomRequestUrlWithPath(resourceType, requestParams, op, opPath, psi, typesResolver, errors);
   }
 
-  @NotNull
-  private static CustomRequestUrl parseCustomRequestUrlWithPath(
+  private static @NotNull CustomRequestUrl parseCustomRequestUrlWithPath(
       final @NotNull DataType resourceType,
       final @NotNull Map<String, GDatum> requestParams,
       final @NotNull CustomOperationIdl op,
@@ -77,17 +77,16 @@ public class CustomRequestUrlPsiParser {
       final @NotNull TypesResolver typesResolver,
       final @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
-    @NotNull final ReqFieldPath reqPath =
+    final @NotNull ReqFieldPath reqPath =
         ReqPathPsiParser.parseFieldPath(resourceType, opPath, psi.getReqFieldPath(), typesResolver, errors);
 
     final @NotNull Type opOutputType = op.outputType(); // already calculated based on outputType/path declared in idl
 
     TypesResolver newResolver = addTypeNamespace(opOutputType, typesResolver);
-    @NotNull DataType outputDataType = new DataType(opOutputType, null);
 
-    @NotNull final StepsAndProjection<ReqOutputFieldProjection> outputStepsAndProjection =
+    final @NotNull StepsAndProjection<ReqOutputFieldProjection> outputStepsAndProjection =
         RequestUrlPsiParserUtil.parseOutputProjection(
-            outputDataType,
+            new DataType(opOutputType, null),
             op.outputProjection(),
             psi.getReqOutputTrunkFieldProjection(),
             newResolver,
@@ -104,8 +103,7 @@ public class CustomRequestUrlPsiParser {
 
   }
 
-  @NotNull
-  private static CustomRequestUrl parseCustomRequestUrlWithoutPath(
+  private static @NotNull CustomRequestUrl parseCustomRequestUrlWithoutPath(
       final @NotNull DataType resourceType,
       final Map<String, GDatum> requestParams,
       final @NotNull CustomOperationIdl op,
@@ -119,7 +117,7 @@ public class CustomRequestUrlPsiParser {
 
     final StepsAndProjection<ReqOutputFieldProjection> outputStepsAndProjection =
         RequestUrlPsiParserUtil.parseOutputProjection(
-            resourceType,
+            new DataType(op.outputType(), null),
             op.outputProjection(),
             fieldProjectionPsi,
             newResolver,
@@ -135,8 +133,7 @@ public class CustomRequestUrlPsiParser {
     );
   }
 
-  @Nullable
-  private static ReqInputFieldProjection getInputProjection(
+  private static @Nullable ReqInputFieldProjection getInputProjection(
       final @NotNull CustomOperationIdl op,
       final @NotNull UrlCustomUrl psi,
       final @NotNull TypesResolver typesResolver,

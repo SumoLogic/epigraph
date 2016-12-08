@@ -35,8 +35,7 @@ public class TextLocation {
   private final int startLine;
   private final int endLine;
 
-  @Nullable
-  private final String fileName;
+  private final @Nullable String fileName;
 
   public TextLocation(int startOffset, int startLine, int endOffset, int endLine, @Nullable String fileName) {
     this.startOffset = startOffset;
@@ -65,8 +64,7 @@ public class TextLocation {
 
   public int endLine() { return endLine; }
 
-  @Nullable
-  public String fileName() { return fileName; }
+  public @Nullable String fileName() { return fileName; }
 
   // todo helper methods to convert offsets to lines/columns
   // todo port LineNumberUtil to Java

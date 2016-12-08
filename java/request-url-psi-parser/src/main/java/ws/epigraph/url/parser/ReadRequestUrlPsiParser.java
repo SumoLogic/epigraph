@@ -54,10 +54,11 @@ import static ws.epigraph.url.projections.UrlProjectionsPsiParserUtil.parseReque
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class ReadRequestUrlPsiParser {
+public final class ReadRequestUrlPsiParser {
 
-  @NotNull
-  public static ReadRequestUrl parseReadRequestUrl(
+  private ReadRequestUrlPsiParser() {}
+
+  public static @NotNull ReadRequestUrl parseReadRequestUrl(
       @NotNull DataType resourceType,
       @NotNull ReadOperationIdl op,
       @NotNull UrlReadUrl psi,
@@ -68,14 +69,13 @@ public class ReadRequestUrlPsiParser {
 
     final Map<String, GDatum> requestParams = parseRequestParams(psi.getRequestParamList(), errors);
 
-    if (opPath != null)
-      return parseReadRequestUrlWithPath(resourceType, requestParams, op, opPath, psi, typesResolver, errors);
-    else
+    if (opPath == null)
       return parseReadRequestUrlWithoutPath(resourceType, requestParams, op, psi, typesResolver, errors);
+    else
+      return parseReadRequestUrlWithPath(resourceType, requestParams, op, opPath, psi, typesResolver, errors);
   }
 
-  @NotNull
-  private static ReadRequestUrl parseReadRequestUrlWithPath(
+  private static @NotNull ReadRequestUrl parseReadRequestUrlWithPath(
       final @NotNull DataType resourceType,
       final @NotNull Map<String, GDatum> requestParams,
       final @NotNull ReadOperationIdl op,
@@ -100,8 +100,8 @@ public class ReadRequestUrlPsiParser {
     final UrlReqOutputComaVarProjection comaVarProjection = pathParsingResult.comaProjectionPsi();
 
     final int steps;
-    @NotNull final ReqOutputVarProjection varProjection;
-    @NotNull final TextLocation fieldLocation;
+    final @NotNull ReqOutputVarProjection varProjection;
+    final @NotNull TextLocation fieldLocation;
 
     if (trunkVarProjection != null) {
       @NotNull StepsAndProjection<ReqOutputVarProjection> r = ReqOutputProjectionsPsiParser.parseTrunkVarProjection(
@@ -154,8 +154,7 @@ public class ReadRequestUrlPsiParser {
     );
   }
 
-  @NotNull
-  private static ReadRequestUrl parseReadRequestUrlWithoutPath(
+  private static @NotNull ReadRequestUrl parseReadRequestUrlWithoutPath(
       final @NotNull DataType resourceType,
       final Map<String, GDatum> requestParams,
       final @NotNull ReadOperationIdl op,
@@ -167,7 +166,7 @@ public class ReadRequestUrlPsiParser {
     final @NotNull UrlReqOutputTrunkFieldProjection fieldProjectionPsi = psi.getReqOutputTrunkFieldProjection();
     TypesResolver newResolver = addTypeNamespace(resourceType.type, typesResolver);
 
-    @NotNull final StepsAndProjection<ReqOutputFieldProjection> stepsAndProjection =
+    final @NotNull StepsAndProjection<ReqOutputFieldProjection> stepsAndProjection =
         ReqOutputProjectionsPsiParser.parseTrunkFieldProjection(
             true, resourceType,
             op.outputProjection(),

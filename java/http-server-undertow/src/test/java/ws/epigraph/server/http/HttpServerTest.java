@@ -116,6 +116,12 @@ public class HttpServerTest {
     );
   }
 
+  @Test
+  public void testCreateNoProjection() throws UnirestException {
+    // todo create op should return back an array of id's and correct status code
+    testCreateRequest("users", "[{'firstName':'Alfred'}]", 200, "\"inserted 1 items\"");
+  }
+
 
   public static void main(String[] args) throws ServiceInitializationException {
     start();
@@ -139,6 +145,16 @@ public class HttpServerTest {
 
   private void testReadRequest(String request, int expectedStatus, String expectedBody) throws UnirestException {
     final HttpResponse<String> response = Unirest.get(URL_PREFIX + request).asString();
+    final String actualBody = response.getBody().trim();
+    assertEquals(actualBody, expectedStatus, response.getStatus());
+    assertEquals(expectedBody.replace("'", "\""), actualBody);
+  }
+
+  private void testCreateRequest(String requestUrl, String requestBody, int expectedStatus, String expectedBody)
+      throws UnirestException {
+
+    final HttpResponse<String> response =
+        Unirest.post(URL_PREFIX + requestUrl).body(requestBody.replaceAll("'", "\"")).asString();
     final String actualBody = response.getBody().trim();
     assertEquals(actualBody, expectedStatus, response.getStatus());
     assertEquals(expectedBody.replace("'", "\""), actualBody);

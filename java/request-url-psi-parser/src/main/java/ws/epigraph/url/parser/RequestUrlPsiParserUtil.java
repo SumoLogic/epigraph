@@ -16,6 +16,7 @@
 
 package ws.epigraph.url.parser;
 
+import com.intellij.psi.util.PsiUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
@@ -24,7 +25,6 @@ import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.op.output.OpOutputFieldProjection;
 import ws.epigraph.projections.req.ReqParams;
 import ws.epigraph.projections.req.output.ReqOutputFieldProjection;
-import ws.epigraph.projections.req.output.ReqOutputVarProjection;
 import ws.epigraph.psi.PsiProcessingError;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypesResolver;
@@ -32,17 +32,17 @@ import ws.epigraph.types.DataType;
 import ws.epigraph.url.parser.psi.UrlReqOutputTrunkFieldProjection;
 import ws.epigraph.url.projections.req.output.ReqOutputProjectionsPsiParser;
 
-import java.util.Collections;
 import java.util.List;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class RequestUrlPsiParserUtil {
+public final class RequestUrlPsiParserUtil {
 
-  @NotNull
-  static StepsAndProjection<ReqOutputFieldProjection> parseOutputProjection(
-      final @NotNull DataType type,
+  private RequestUrlPsiParserUtil() {}
+
+  static @NotNull StepsAndProjection<ReqOutputFieldProjection> parseOutputProjection(
+      final @NotNull DataType dataType,
       final @NotNull OpOutputFieldProjection op,
       final @Nullable UrlReqOutputTrunkFieldProjection psi,
       final @NotNull TypesResolver resolver,
@@ -56,12 +56,12 @@ public class RequestUrlPsiParserUtil {
           new ReqOutputFieldProjection(
               ReqParams.EMPTY,
               Annotations.EMPTY,
-              new ReqOutputVarProjection(
-                  type.type,
-                  Collections.emptyMap(),
-                  Collections.emptyList(),
+              ReqOutputProjectionsPsiParser.createDefaultVarProjection(
+                  dataType,
+                  op.varProjection(),
                   false,
-                  TextLocation.UNKNOWN
+                  PsiUtil.NULL_PSI_ELEMENT,
+                  errors
               ),
               false,
               TextLocation.UNKNOWN
@@ -70,7 +70,7 @@ public class RequestUrlPsiParserUtil {
     } else {
       final StepsAndProjection<ReqOutputFieldProjection> fieldStepsAndProjection =
           ReqOutputProjectionsPsiParser.parseTrunkFieldProjection(
-              true, type,
+              true, dataType,
               op,
               psi,
               resolver,

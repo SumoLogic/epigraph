@@ -31,21 +31,19 @@ import java.util.Objects;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class CreateRequestUrl extends RequestUrl {
-  @Nullable
-  private final ReqInputFieldProjection inputProjection;
+  private final @Nullable ReqInputFieldProjection inputProjection;
 
   public CreateRequestUrl(
-      @NotNull final String fieldName,
-      @Nullable final ReqFieldPath path,
+      final @NotNull String fieldName,
+      final @Nullable ReqFieldPath path,
       @Nullable ReqInputFieldProjection inputProjection,
-      @NotNull final StepsAndProjection<ReqOutputFieldProjection> outputProjection,
-      @NotNull final Map<String, GDatum> parameters) {
+      final @NotNull StepsAndProjection<ReqOutputFieldProjection> outputProjection,
+      final @NotNull Map<String, GDatum> parameters) {
     super(fieldName, path, outputProjection, parameters);
     this.inputProjection = inputProjection;
   }
 
-  @Nullable
-  public ReqInputFieldProjection inputProjection() { return inputProjection; }
+  public @Nullable ReqInputFieldProjection inputProjection() { return inputProjection; }
 
   @Override
   public boolean equals(final Object o) {

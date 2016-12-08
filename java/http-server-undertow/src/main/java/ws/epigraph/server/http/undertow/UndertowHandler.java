@@ -94,6 +94,13 @@ public class UndertowHandler implements HttpHandler {
 
   @Override
   public void handleRequest(HttpServerExchange exchange) {
+    // dispatch to a worker thread so we can go to blocking mode and enable streaming
+    if (exchange.isInIoThread()) {
+      exchange.dispatch(this);
+      return;
+    }
+    exchange.startBlocking();
+
     final Sender sender = exchange.getResponseSender();
 
     try {

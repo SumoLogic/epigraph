@@ -47,9 +47,10 @@ import java.util.List;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class EpigraphPsiUtil {
-  @NotNull
-  public static <T extends PsiElement> T parseText(
+public final class EpigraphPsiUtil {
+  private EpigraphPsiUtil() {}
+
+  public static @NotNull <T extends PsiElement> T parseText(
       @NotNull String text,
       @NotNull SubParserDefinition<T> parserDefinition,
       @Nullable ErrorProcessor errorProcessor) {
@@ -63,8 +64,7 @@ public class EpigraphPsiUtil {
     );
   }
 
-  @NotNull
-  public static <T extends PsiElement> T parseText(
+  public static @NotNull <T extends PsiElement> T parseText(
       @NotNull String text,
       @NotNull IElementType rootElementType,
       @NotNull Class<T> rootElementClass,
@@ -99,8 +99,7 @@ public class EpigraphPsiUtil {
     return res;
   }
 
-  @NotNull
-  public static PsiFile parseFile(
+  public static @NotNull PsiFile parseFile(
       @NotNull File file,
       @NotNull ParserDefinition parserDefinition,
       @Nullable ErrorProcessor errorProcessor) throws IOException {
@@ -111,12 +110,11 @@ public class EpigraphPsiUtil {
     return res;
   }
 
-  @NotNull
-  public static PsiFile parseFile(
+  public static @NotNull PsiFile parseFile(
       @NotNull String name,
       @NotNull String text,
       @NotNull ParserDefinition parserDefinition,
-      @Nullable ErrorProcessor errorProcessor) throws IOException {
+      @Nullable ErrorProcessor errorProcessor) {
 
     PsiFile res = LightPsi.parseFile(name, text, parserDefinition);
     collectErrors(res, errorProcessor);
@@ -146,8 +144,7 @@ public class EpigraphPsiUtil {
     } finally { is.close(); }
   }
 
-  @NotNull
-  public static TextLocation getLocation(@NotNull PsiElement psi) {
+  public static @NotNull TextLocation getLocation(@NotNull PsiElement psi) {
     try {
       TextRange textRange = psi.getTextRange();
       PsiFile psiFile = getPsiFile(psi);
@@ -159,18 +156,16 @@ public class EpigraphPsiUtil {
           psiFile == null ? null : psiFile.getName(),
           megaParent.getText()
       );
-    } catch (PsiInvalidElementAccessException e) {
+    } catch (PsiInvalidElementAccessException ignored) {
       return TextLocation.UNKNOWN; // thrown in unit tests, when using NULL_PSI_ELEMENT
     }
   }
 
-  @NotNull
-  public static PsiElement findTopmostParent(final @NotNull PsiElement psi) {
+  public static @NotNull PsiElement findTopmostParent(final @NotNull PsiElement psi) {
     PsiFile psiFile = getPsiFile(psi);
 
     final PsiElement megaParent;
-    if (psiFile != null) megaParent = psiFile;
-    else {
+    if (psiFile == null) {
       PsiElement parent = psi;
       while (parent.getParent() != null) {
         if (parent instanceof PsiFile) break;
@@ -178,13 +173,12 @@ public class EpigraphPsiUtil {
         parent = parent.getParent();
       }
       megaParent = parent;
-    }
+    } else megaParent = psiFile;
     return megaParent;
 
   }
 
-  @Nullable
-  private static PsiFile getPsiFile(final @NotNull PsiElement psi) {
+  private static @Nullable PsiFile getPsiFile(final @NotNull PsiElement psi) {
     PsiFile psiFile = null;
     try {
       psiFile = psi.getContainingFile();
@@ -196,7 +190,7 @@ public class EpigraphPsiUtil {
 
   public static void collectErrors(
       @NotNull PsiElement element,
-      @Nullable final EpigraphPsiUtil.ErrorProcessor errorProcessor) {
+      final @Nullable EpigraphPsiUtil.ErrorProcessor errorProcessor) {
     if (errorProcessor != null) {
       element.accept(new PsiRecursiveElementWalkingVisitor() {
         @Override

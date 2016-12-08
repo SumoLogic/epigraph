@@ -22,10 +22,17 @@
   - [x] add support for delete
   - [x] add support for custom
   - [ ] update test server to support/demo all operations
+  - [ ] enable real streaming
   
 - Important items from [general todo] (todo.md)
   - [ ] Add `type.createBuilder(data)` similar to `toImmutable`
   - [ ] Gradle plugin: java generator doesn't detect changes in schema
+
+- Docs
+  - Operations
+    - [ ] Overview
+    - [ ] IDL
+    - [ ] Routing
   
 - [ ] Standalone IDL verifier/compiler
   - [ ] Maven plugin

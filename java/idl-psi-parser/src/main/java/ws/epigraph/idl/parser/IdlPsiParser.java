@@ -42,9 +42,10 @@ import java.util.stream.Collectors;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class IdlPsiParser {
-  @NotNull
-  public static Idl parseIdl(
+public final class IdlPsiParser {
+  private IdlPsiParser() {}
+
+  public static @NotNull Idl parseIdl(
       @NotNull IdlFile idlPsi,
       @NotNull TypesResolver basicResolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
@@ -64,7 +65,8 @@ public class IdlPsiParser {
 
     final Map<String, ResourceIdl> resources;
 
-    if (resourceDefsPsi != null) {
+    if (resourceDefsPsi == null) resources = Collections.emptyMap();
+    else {
       resources = new HashMap<>();
       for (IdlResourceDef resourceDefPsi : resourceDefsPsi) {
         if (resourceDefPsi != null) {
@@ -80,18 +82,16 @@ public class IdlPsiParser {
           }
         }
       }
-    } else
-      resources = Collections.emptyMap();
+    }
 
     return new Idl(namespace, resources);
   }
 
-  @NotNull
-  private static List<Qn> parseImports(@NotNull IdlFile idlPsi) {
-    @Nullable final IdlImports importsPsi = PsiTreeUtil.getChildOfType(idlPsi, IdlImports.class);
+  private static @NotNull List<Qn> parseImports(@NotNull IdlFile idlPsi) {
+    final @Nullable IdlImports importsPsi = PsiTreeUtil.getChildOfType(idlPsi, IdlImports.class);
     if (importsPsi == null) return Collections.emptyList();
 
-    @NotNull final List<IdlImportStatement> importStatementsPsi = importsPsi.getImportStatementList();
+    final @NotNull List<IdlImportStatement> importStatementsPsi = importsPsi.getImportStatementList();
 
     if (importStatementsPsi.isEmpty()) return Collections.emptyList();
 

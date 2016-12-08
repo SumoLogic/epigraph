@@ -19,6 +19,7 @@
 package ws.epigraph.server.http;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.idl.ResourceIdl;
 import ws.epigraph.idl.operations.CreateOperationIdl;
 import ws.epigraph.idl.operations.ReadOperationIdl;
@@ -30,6 +31,7 @@ import ws.epigraph.tests.PersonRecord;
 import ws.epigraph.tests.PersonRecord_List;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class UsersResource extends Resource {
@@ -90,6 +92,9 @@ public class UsersResource extends Resource {
       if (recordList == null) {
         status = "no data provided";
       } else {
+        final List<@Nullable ? extends PersonRecord> datums = recordList.datums();
+        final Object o = datums.get(0);
+        System.out.println(o);
         for (final PersonRecord record : recordList.datums()) {
           // we know it's a builder by implementation. Todo: add `toBuilder`!
           final PersonRecord.Builder builder = (PersonRecord.Builder) record;

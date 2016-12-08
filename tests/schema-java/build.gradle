@@ -8,4 +8,6 @@ dependencies {
   epigraphSchema project(':tests-schema')
 
   compile project(':epigraph-java-core')
+
+  testCompile 'junit:junit'
 }

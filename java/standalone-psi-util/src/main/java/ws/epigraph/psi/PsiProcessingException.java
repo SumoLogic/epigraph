@@ -30,10 +30,8 @@ import java.util.List;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class PsiProcessingException extends Exception {
-  @NotNull
-  private final PsiElement psi;
-  @NotNull
-  private final List<PsiProcessingError> errors; // last item = this exception
+  private final @NotNull PsiElement psi;
+  private final @NotNull List<PsiProcessingError> errors; // last item = this exception
 
   public PsiProcessingException(
       @NotNull String message,
@@ -68,23 +66,19 @@ public class PsiProcessingException extends Exception {
     }
   }
 
-  @NotNull
-  public PsiElement psi() { return psi; }
+  public @NotNull PsiElement psi() { return psi; }
 
   /**
    * @return list of errors, including this one (will be the last item)
    */
-  @NotNull
-  public List<PsiProcessingError> errors() { return errors; }
+  public @NotNull List<PsiProcessingError> errors() { return errors; }
 
   /**
    * @return this exception converted to an error
    */
-  @NotNull
-  public PsiProcessingError toError() { return errors.get(errors.size() - 1); }
+  public @NotNull PsiProcessingError toError() { return errors.get(errors.size() - 1); }
 
-  @NotNull
-  public TextLocation location() { return toError().location(); }
+  public @NotNull TextLocation location() { return toError().location(); }
 
   @Override
   public String toString() {

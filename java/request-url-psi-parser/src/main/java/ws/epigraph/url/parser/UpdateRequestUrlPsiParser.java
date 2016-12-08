@@ -46,10 +46,11 @@ import static ws.epigraph.url.projections.UrlProjectionsPsiParserUtil.parseReque
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class UpdateRequestUrlPsiParser {
+public final class UpdateRequestUrlPsiParser {
 
-  @NotNull
-  public static UpdateRequestUrl parseUpdateRequestUrl(
+  private UpdateRequestUrlPsiParser() {}
+
+  public static @NotNull UpdateRequestUrl parseUpdateRequestUrl(
       @NotNull DataType resourceType,
       @NotNull UpdateOperationIdl op,
       @NotNull UrlUpdateUrl psi,
@@ -60,14 +61,13 @@ public class UpdateRequestUrlPsiParser {
 
     final Map<String, GDatum> requestParams = parseRequestParams(psi.getRequestParamList(), errors);
 
-    if (opPath != null)
-      return parseUpdateRequestUrlWithPath(resourceType, requestParams, op, opPath, psi, typesResolver, errors);
-    else
+    if (opPath == null)
       return parseUpdateRequestUrlWithoutPath(resourceType, requestParams, op, psi, typesResolver, errors);
+    else
+      return parseUpdateRequestUrlWithPath(resourceType, requestParams, op, opPath, psi, typesResolver, errors);
   }
 
-  @NotNull
-  private static UpdateRequestUrl parseUpdateRequestUrlWithPath(
+  private static @NotNull UpdateRequestUrl parseUpdateRequestUrlWithPath(
       final @NotNull DataType resourceType,
       final @NotNull Map<String, GDatum> requestParams,
       final @NotNull UpdateOperationIdl op,
@@ -76,19 +76,18 @@ public class UpdateRequestUrlPsiParser {
       final @NotNull TypesResolver typesResolver,
       final @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
-    @NotNull final ReqFieldPath reqPath =
+    final @NotNull ReqFieldPath reqPath =
         ReqPathPsiParser.parseFieldPath(resourceType, opPath, psi.getReqFieldPath(), typesResolver, errors);
 
     final @NotNull Type opOutputType = op.outputType(); // already calculated based on outputType/path declared in idl
     final @NotNull Type opInputType = op.inputType();
 
     TypesResolver newResolver = addTypeNamespace(opOutputType, typesResolver);
-    @NotNull DataType outputDataType = new DataType(opOutputType, null);
     @NotNull DataType inputDataType = new DataType(opInputType, null);
 
-    @NotNull final StepsAndProjection<ReqOutputFieldProjection> outputStepsAndProjection =
+    final @NotNull StepsAndProjection<ReqOutputFieldProjection> outputStepsAndProjection =
         RequestUrlPsiParserUtil.parseOutputProjection(
-            outputDataType,
+            new DataType(opOutputType, null),
             op.outputProjection(),
             psi.getReqOutputTrunkFieldProjection(),
             newResolver,
@@ -117,8 +116,7 @@ public class UpdateRequestUrlPsiParser {
 
   }
 
-  @NotNull
-  private static UpdateRequestUrl parseUpdateRequestUrlWithoutPath(
+  private static @NotNull UpdateRequestUrl parseUpdateRequestUrlWithoutPath(
       final @NotNull DataType resourceType,
       final Map<String, GDatum> requestParams,
       final @NotNull UpdateOperationIdl op,
@@ -142,8 +140,13 @@ public class UpdateRequestUrlPsiParser {
     TypesResolver outputResolver = addTypeNamespace(resourceType.type, typesResolver);
     final @Nullable UrlReqOutputTrunkFieldProjection outputProjectionPsi = psi.getReqOutputTrunkFieldProjection();
     final StepsAndProjection<ReqOutputFieldProjection> outputStepsAndProjection =
-        RequestUrlPsiParserUtil.parseOutputProjection(resourceType, op.outputProjection(),
-                                                      outputProjectionPsi, outputResolver, errors);
+        RequestUrlPsiParserUtil.parseOutputProjection(
+            new DataType(op.outputType(), null),
+            op.outputProjection(),
+            outputProjectionPsi,
+            outputResolver,
+            errors
+        );
 
     return new UpdateRequestUrl(
         psi.getQid().getCanonicalName(),
