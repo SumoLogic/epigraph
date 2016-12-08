@@ -58,6 +58,7 @@
 - [x] introduce `AbstractReqFieldProjection` with `ReqParams`, similar to `AbstractOpFieldProjection`
 - [ ] Unify req projections pretty printers, there's lots of code duplication
 - [ ] Unify op projections pretty printers, there's lots of code duplication
+- [ ] Allow to use optional `(``)` parenthesis around var projections for disambiguation; don't require these for collection element projections
 
 # Operations  
 - [x] see `operations.esc`, restructure operations accordingly
