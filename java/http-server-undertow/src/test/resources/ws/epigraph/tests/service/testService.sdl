@@ -62,7 +62,7 @@ resource users: map[PersonId,Person] {
       )
     ))
 
-    outputType String
+    outputType list[PersonId]
   }
 
 }

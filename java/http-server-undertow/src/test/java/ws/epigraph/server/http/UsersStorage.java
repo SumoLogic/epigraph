@@ -49,7 +49,7 @@ public class UsersStorage {
   }
 
   public @NotNull PersonId insertPerson(@NotNull PersonRecord.Builder personRecord) {
-    PersonId id = PersonId.create(nextId.incrementAndGet());
+    PersonId id = PersonId.create(nextId.getAndIncrement());
     personRecord.setId(id);
     storage.put$(id, Person.create().setId(id).setRecord(personRecord));
     return id;

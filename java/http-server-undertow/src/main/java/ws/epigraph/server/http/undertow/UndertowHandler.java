@@ -59,8 +59,8 @@ import ws.epigraph.wire.json.reader.ReqInputJsonFormatReader;
 import ws.epigraph.wire.json.reader.ReqUpdateJsonFormatReader;
 import ws.epigraph.wire.json.writer.JsonFormatWriter;
 
-import java.io.IOException;
-import java.io.StringWriter;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
@@ -223,6 +223,7 @@ public class UndertowHandler implements HttpHandler {
   }
 
   private void writeDataResponse(
+      int statusCode,
       final int pathSteps,
       @NotNull ReqOutputVarProjection reqProjection,
       @Nullable Data data,
@@ -233,8 +234,7 @@ public class UndertowHandler implements HttpHandler {
     Data trimmedData = data == null ? null : ProjectionDataTrimmer.trimData(data, reqProjection);
 
     String contentType = CONTENT_TYPE_JSON; // todo should depend on marshaller
-    int statusCode = 200;
-    @NotNull String responseText;
+    String responseText = null;
 
     try {
       if (trimmedData == null) {
@@ -249,16 +249,17 @@ public class UndertowHandler implements HttpHandler {
           final @Nullable ReqOutputVarProjection varProjection = noPathProjection.varProjection();
           final @Nullable ReqOutputModelProjection<?, ?> modelProjection = noPathProjection.modelProjection();
 
-          // todo this must be streaming
           if (varProjection != null) {
-            responseText = dataToString(varProjection, noPathData.data);
+            exchange.setStatusCode(statusCode);
+            writeData(varProjection, noPathData.data, exchange.getOutputStream());
           } else if (modelProjection != null) {
-            responseText = datumToString(modelProjection, noPathData.datum);
+            exchange.setStatusCode(statusCode);
+            writeDatum(modelProjection, noPathData.datum, exchange.getOutputStream());
           } else {
             responseText = getNullResponse();
           }
         } else {
-          contentType = "text/plain"; // todo report errors in json too?
+          contentType = CONTENT_TYPE_TEXT; // todo report errors in json too?
           statusCode = noPathData.error.statusCode();
           responseText = noPathData.error.message();
 
@@ -271,7 +272,8 @@ public class UndertowHandler implements HttpHandler {
 
       }
 
-      writeResponse(statusCode, responseText + "\n", contentType, exchange);
+      if (responseText != null)
+        writeResponse(statusCode, responseText + "\n", contentType, exchange);
 
     } catch (AmbiguousPathException ignored) {
       serverError(
@@ -352,6 +354,7 @@ public class UndertowHandler implements HttpHandler {
 
       // send response back
       handleReadResponse(
+          StatusCodes.OK,
           outputProjection.pathSteps(),
           outputProjection.projection().varProjection(),
           future,
@@ -363,6 +366,7 @@ public class UndertowHandler implements HttpHandler {
   }
 
   private <R extends ReadOperationResponse<?>> void handleReadResponse(
+      final int statusCode,
       final int pathSteps,
       @NotNull ReqOutputVarProjection reqProjection,
       @NotNull CompletionStage<R> responseFuture,
@@ -374,7 +378,7 @@ public class UndertowHandler implements HttpHandler {
 
       try {
         @Nullable Data data = readOperationResponse.getData();
-        writeDataResponse(pathSteps, reqProjection, data, exchange);
+        writeDataResponse(statusCode, pathSteps, reqProjection, data, exchange);
       } catch (Exception e) {
         LOG.error("Error processing request", e);
         serverError(e.getMessage(), CONTENT_TYPE_TEXT, exchange);
@@ -481,6 +485,7 @@ public class UndertowHandler implements HttpHandler {
 
       // send response back
       handleReadResponse(
+          StatusCodes.CREATED,
           outputProjection.pathSteps(),
           outputProjection.projection().varProjection(),
           future,
@@ -574,6 +579,7 @@ public class UndertowHandler implements HttpHandler {
 
       // send response back
       handleReadResponse(
+          StatusCodes.OK,
           outputProjection.pathSteps(),
           outputProjection.projection().varProjection(),
           future,
@@ -656,6 +662,7 @@ public class UndertowHandler implements HttpHandler {
 
       // send response back
       handleReadResponse(
+          StatusCodes.OK,
           outputProjection.pathSteps(),
           outputProjection.projection().varProjection(),
           future,
@@ -746,6 +753,7 @@ public class UndertowHandler implements HttpHandler {
 
     // send response back
     handleReadResponse(
+        StatusCodes.OK,
         outputProjection.pathSteps(),
         outputProjection.projection().varProjection(),
         future,
@@ -778,26 +786,27 @@ public class UndertowHandler implements HttpHandler {
     return promise;
   }
 
-  private @NotNull String dataToString(@NotNull ReqOutputVarProjection projection, @Nullable Data data) {
-    StringWriter sw = new StringWriter();
-    JsonFormatWriter fw = new JsonFormatWriter(sw);
-    try {
-      fw.writeData(projection, data);
-    } catch (IOException e) {
-      return e.toString();
-    }
-    return sw.toString();
+  private void writeData(
+      @NotNull ReqOutputVarProjection projection,
+      @Nullable Data data,
+      @NotNull OutputStream stream) throws IOException {
+
+    final Writer writer = createWriter(stream);
+    JsonFormatWriter fw = new JsonFormatWriter(writer);
+    fw.writeData(projection, data);
+    writer.close();
   }
 
-  private @NotNull String datumToString(@NotNull ReqOutputModelProjection<?, ?> projection, @Nullable Datum datum) {
-    StringWriter sw = new StringWriter();
-    JsonFormatWriter fw = new JsonFormatWriter(sw);
-    try {
-      fw.writeDatum(projection, datum);
-    } catch (IOException e) {
-      return e.toString();
-    }
-    return sw.toString();
+
+  private void writeDatum(
+      @NotNull ReqOutputModelProjection<?, ?> projection,
+      @Nullable Datum datum,
+      @NotNull OutputStream outputStream) throws IOException {
+
+    final Writer writer = createWriter(outputStream);
+    JsonFormatWriter fw = new JsonFormatWriter(writer);
+    fw.writeDatum(projection, datum);
+    writer.close();
   }
 
   private @NotNull String dataToString(@Nullable Data data) {
@@ -809,6 +818,10 @@ public class UndertowHandler implements HttpHandler {
       return e.toString();
     }
     return sw.toString();
+  }
+
+  private @NotNull Writer createWriter(final @NotNull OutputStream stream) {
+    return new BufferedWriter(new OutputStreamWriter(stream, StandardCharsets.UTF_8));
   }
 
   @Contract(pure = true)

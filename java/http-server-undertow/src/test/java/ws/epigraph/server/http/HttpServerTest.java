@@ -67,6 +67,7 @@ public class HttpServerTest {
       UserRecord.type,
       PersonId_Person_Map.type,
       PersonRecord_List.type,
+      PersonId_List.type,
       epigraph.String.type
   );
 
@@ -118,8 +119,7 @@ public class HttpServerTest {
 
   @Test
   public void testCreateNoProjection() throws UnirestException {
-    // todo create op should return back an array of id's and correct status code
-    testCreateRequest("users", "[{'firstName':'Alfred'}]", 200, "\"inserted 1 items\"");
+    testCreateRequest("users", "[{'firstName':'Alfred'}]", 201, "[11]");
   }
 
 

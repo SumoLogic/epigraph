@@ -19,19 +19,15 @@
 package ws.epigraph.server.http;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import ws.epigraph.idl.ResourceIdl;
 import ws.epigraph.idl.operations.CreateOperationIdl;
 import ws.epigraph.idl.operations.ReadOperationIdl;
 import ws.epigraph.service.Resource;
 import ws.epigraph.service.ServiceInitializationException;
 import ws.epigraph.service.operations.*;
-import ws.epigraph.tests.PersonId_Person_Map;
-import ws.epigraph.tests.PersonRecord;
-import ws.epigraph.tests.PersonRecord_List;
+import ws.epigraph.tests.*;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class UsersResource extends Resource {
@@ -73,7 +69,7 @@ public class UsersResource extends Resource {
     }
   }
 
-  private static final class CreateOp extends CreateOperation<epigraph.String.Data> {
+  private static final class CreateOp extends CreateOperation<PersonId_List.Data> {
     private final @NotNull UsersStorage storage;
 
     protected CreateOp(final CreateOperationIdl declaration, final @NotNull UsersStorage storage) {
@@ -82,31 +78,24 @@ public class UsersResource extends Resource {
     }
 
     @Override
-    public @NotNull CompletableFuture<ReadOperationResponse<epigraph.String.Data>>
+    public @NotNull CompletableFuture<ReadOperationResponse<PersonId_List.Data>>
     process(final @NotNull CreateOperationRequest request) {
       // todo operation stubs must be generated
       final PersonRecord_List recordList =
           (PersonRecord_List) request.data()._raw().getDatum(PersonRecord_List.type.self);
 
-      final String status;
-      if (recordList == null) {
-        status = "no data provided";
-      } else {
-        final List<@Nullable ? extends PersonRecord> datums = recordList.datums();
-        final Object o = datums.get(0);
-        System.out.println(o);
+      final PersonId_List.Builder result = PersonId_List.create();
+
+      if (recordList != null) {
         for (final PersonRecord record : recordList.datums()) {
           // we know it's a builder by implementation. Todo: add `toBuilder`!
           final PersonRecord.Builder builder = (PersonRecord.Builder) record;
-          storage.insertPerson(builder);
+          final PersonId id = storage.insertPerson(builder);
+          result.add(id);
         }
-
-        status = "inserted " + recordList.size() + " items";
       }
 
-      return toFuture(new ReadOperationResponse<>(
-          epigraph.String.type.createDataBuilder().set(epigraph.String.create(status)))
-      );
+      return toFuture(new ReadOperationResponse<>(PersonId_List.type.createDataBuilder().set(result)));
     }
   }
 

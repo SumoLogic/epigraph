@@ -22,3 +22,4 @@ record PersonRecord {
 // todo this should be removed once we have proper idl/types compiler
 map[PersonId,Person] UsersResourceDummy
 list[PersonRecord] UsersResourceDummy2
+list[PersonId] UsersResourceDummy3
