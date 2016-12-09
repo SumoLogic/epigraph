@@ -36,10 +36,29 @@ import java.util.stream.Collectors;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class ProjectionsParsingUtil {
+public final class ProjectionsParsingUtil {
 
-  @NotNull
-  public static Type.Tag getTag(
+  private ProjectionsParsingUtil() {}
+
+  public static @NotNull Type.Tag getTag(
+      @NotNull Type type,
+      @Nullable String tagName,
+      @Nullable Type.Tag defaultTag,
+      @NotNull PsiElement location,
+      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
+
+    final Type.Tag tag = findTag(type, tagName, defaultTag, location, errors);
+
+    if (tag == null)
+      throw new PsiProcessingException(
+          String.format("Can't parse default tag projection for '%s', default tag not specified", type.name()),
+          location,
+          errors
+      );
+    return tag;
+  }
+
+  public static @Nullable Type.Tag findTag(
       @NotNull Type type,
       @Nullable String tagName,
       @Nullable Type.Tag defaultTag,
@@ -54,11 +73,7 @@ public class ProjectionsParsingUtil {
         defaultTag = findDefaultTag(type, null, location, errors);
 
         if (defaultTag == null)
-          throw new PsiProcessingException(
-              String.format("Can't parse default tag projection for '%s', default tag not specified", type.name()),
-              location,
-              errors
-          );
+          return null;
       }
 
       tag = defaultTag;
@@ -67,8 +82,7 @@ public class ProjectionsParsingUtil {
     return tag;
   }
 
-  @NotNull
-  public static Type.Tag getTag(
+  public static @NotNull Type.Tag getTag(
       @NotNull Type type,
       @NotNull String tagName,
       @NotNull PsiElement location,
@@ -107,8 +121,7 @@ public class ProjectionsParsingUtil {
     return String.join(", ", op.tagProjections().keySet());
   }
 
-  @NotNull
-  public static Type getType(
+  public static @NotNull Type getType(
       @NotNull TypeRef typeRef,
       @NotNull TypesResolver resolver,
       @NotNull PsiElement location,
@@ -123,8 +136,7 @@ public class ProjectionsParsingUtil {
   /**
    * Finds tag projection by tag name
    */
-  @NotNull
-  public static <
+  public static @NotNull <
       MP extends GenModelProjection<?, ?>,
       TP extends GenTagProjectionEntry<TP, MP>,
       VP extends GenVarProjection<VP, TP, MP>
@@ -147,8 +159,7 @@ public class ProjectionsParsingUtil {
    * If it's a {@code DatumType}, then default tag is {@code self}, provided that {@code op} contains it.
    * If it's a {@code UnionType}, then all default tags from {@code op} are included.
    */
-  @Nullable
-  public static <
+  public static @Nullable <
       MP extends GenModelProjection<?, ?>,
       TP extends GenTagProjectionEntry<TP, MP>,
       VP extends GenVarProjection<VP, TP, MP>

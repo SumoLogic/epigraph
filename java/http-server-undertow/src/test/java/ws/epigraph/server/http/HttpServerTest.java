@@ -21,6 +21,7 @@ import com.intellij.psi.impl.DebugUtil;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
+import epigraph.PersonId_Error_Map;
 import io.undertow.Undertow;
 import io.undertow.UndertowOptions;
 import org.jetbrains.annotations.NotNull;
@@ -67,7 +68,9 @@ public class HttpServerTest {
       UserRecord.type,
       PersonId_Person_Map.type,
       PersonRecord_List.type,
+      PersonId_Error_Map.type,
       PersonId_List.type,
+      epigraph.Error.type,
       epigraph.String.type
   );
 
@@ -118,8 +121,14 @@ public class HttpServerTest {
   }
 
   @Test
-  public void testCreateNoProjection() throws UnirestException {
+  public void testCreateReadDelete() throws UnirestException {
     testCreateRequest("users", "[{'firstName':'Alfred'}]", 201, "[11]");
+    testReadRequest("users/11:record(firstName)", 200, "{'firstName':'Alfred'}");
+    testDeleteRequest(
+        "users<[11,12]>[*]((code,message))", // todo get rid of second pair of ()
+        200,
+        "[{\"K\":12,\"V\":{\"code\":404,\"message\":\"Item with id 12 doesn't exist\"}}]"
+    );
   }
 
 
@@ -160,6 +169,15 @@ public class HttpServerTest {
     assertEquals(expectedBody.replace("'", "\""), actualBody);
   }
 
+  private void testDeleteRequest(String requestUrl, int expectedStatus, String expectedBody)
+      throws UnirestException {
+
+    final HttpResponse<String> response = Unirest.delete(URL_PREFIX + requestUrl).asString();
+    final String actualBody = response.getBody().trim();
+    assertEquals(actualBody, expectedStatus, response.getStatus());
+    assertEquals(expectedBody/*.replace("'", "\"")*/, actualBody);
+  }
+
 //  private static @NotNull Idl parseIdlText(@NotNull String text) throws IOException {
 //    EpigraphPsiUtil.ErrorsAccumulator errAcc = new EpigraphPsiUtil.ErrorsAccumulator();
 //    IdlFile psiFile = (IdlFile) EpigraphPsiUtil.parseFile("dummy.idl", text, IdlParserDefinition.INSTANCE, errAcc);
@@ -191,7 +209,7 @@ public class HttpServerTest {
 
     if (!errors.isEmpty()) {
       for (final PsiProcessingError error : errors) {
-        System.err.print(error.message() + " at " + error.location());
+        System.err.println(error.message() + " at " + error.location());
       }
 
       throw new RuntimeException("IDL errors detected");

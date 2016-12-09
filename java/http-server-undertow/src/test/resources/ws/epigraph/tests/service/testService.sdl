@@ -3,6 +3,7 @@ namespace ws.epigraph.server.http
 import ws.epigraph.tests.Person
 import ws.epigraph.tests.PersonId
 import ws.epigraph.tests.PersonRecord
+import ws.epigraph.tests.PersonCreateResult
 import ws.epigraph.tests.User
 
 resource users: map[PersonId,Person] {
@@ -62,7 +63,14 @@ resource users: map[PersonId,Person] {
       )
     ))
 
-    outputType list[PersonId]
+    outputType list[PersonId] // todo list[PersonId throws epigraph.Error]
+  }
+
+  DELETE {
+    deleteProjection [ required ] ( + )
+
+    outputType map[PersonId, epigraph.Error]
+    outputProjection [] ( (code, message) ) // todo get rid of second pair of ()
   }
 
 }

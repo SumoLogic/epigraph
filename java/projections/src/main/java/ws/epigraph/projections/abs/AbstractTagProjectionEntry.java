@@ -35,14 +35,11 @@ public abstract class AbstractTagProjectionEntry<
     TP extends AbstractTagProjectionEntry<TP, MP>,
     MP extends AbstractModelProjection</*MP*/?, ?>> implements GenTagProjectionEntry<TP, MP> {
 
-  @NotNull
-  private final Type.Tag tag;
-  @NotNull
-  private final MP projection;
-  @NotNull
-  private final TextLocation location;
+  private final @NotNull Type.Tag tag;
+  private final @NotNull MP projection;
+  private final @NotNull TextLocation location;
 
-  public AbstractTagProjectionEntry(@NotNull Type.Tag tag, @NotNull MP projection, @NotNull TextLocation location) {
+  protected AbstractTagProjectionEntry(@NotNull Type.Tag tag, @NotNull MP projection, @NotNull TextLocation location) {
     this.tag = tag;
     this.projection = projection;
     this.location = location;
@@ -57,16 +54,15 @@ public abstract class AbstractTagProjectionEntry<
 
   }
 
-  @NotNull
-  public Type.Tag tag() { return tag; }
-
-  @NotNull
-  public MP projection() { return projection; }
-
-  @Nullable
   @Override
+  public @NotNull Type.Tag tag() { return tag; }
+
+  @Override
+  public @NotNull MP projection() { return projection; }
+
   @SuppressWarnings("unchecked")
-  public TP mergeTags(@NotNull final Type.Tag tag, @NotNull final List<TP> tagEntries) {
+  @Override
+  public @Nullable TP mergeTags(final @NotNull Type.Tag tag, final @NotNull List<TP> tagEntries) {
     if (tagEntries.isEmpty()) return null;
 
     final List<@NotNull MP> models =
@@ -79,19 +75,22 @@ public abstract class AbstractTagProjectionEntry<
     return mergedModel == null ? null : mergeTags(tag, tagEntries, mergedModel);
   }
 
-  @Nullable
-  protected TP mergeTags(@NotNull final Type.Tag tag, @NotNull final List<TP> tagsEntries, @NotNull MP mergedModel) {
+  protected @Nullable TP mergeTags(
+      final @NotNull Type.Tag tag,
+      final @NotNull List<TP> tagsEntries,
+      @NotNull MP mergedModel) {
+
     throw new RuntimeException("Unsupported operation"); // todo remove this method from here
   }
 
-  @NotNull
-  public TextLocation location() { return location; }
+  @Override
+  public @NotNull TextLocation location() { return location; }
 
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-    AbstractTagProjectionEntry that = (AbstractTagProjectionEntry) o;
+    AbstractTagProjectionEntry<?, ?> that = (AbstractTagProjectionEntry<?, ?>) o;
     return Objects.equals(tag.name(), that.tag.name()) && Objects.equals(projection, that.projection);
   }
 

@@ -38,19 +38,15 @@ public abstract class AbstractVarProjection<
     MP extends GenModelProjection</*MP*/?, ?>
     > implements GenVarProjection<VP, TP, MP> {
 
-  @NotNull
-  private final Type type;
-  @NotNull
-  private final Map<String, TP> tagProjections;
+  private final @NotNull Type type;
+  private final @NotNull Map<String, TP> tagProjections;
   private final boolean parenthesized; // todo merge
-  @Nullable
-  private final List<VP> polymorphicTails;
+  private final @Nullable List<VP> polymorphicTails;
 
   private int polymorphicDepth = -1;
-  @NotNull
-  private final TextLocation location;
+  private final @NotNull TextLocation location;
 
-  public AbstractVarProjection(
+  protected AbstractVarProjection(
       @NotNull Type type,
       @NotNull Map<String, TP> tagProjections,
       boolean parenthesized,
@@ -99,7 +95,7 @@ public abstract class AbstractVarProjection<
   }
 
   private void validateTails() {
-    @Nullable final List<VP> tails = polymorphicTails();
+    final @Nullable List<VP> tails = polymorphicTails();
     if (tails != null) {
       for (final VP tail : tails) {
         if (!type().isAssignableFrom(tail.type())) { // warn about useless cases when tail.type == type?
@@ -116,20 +112,19 @@ public abstract class AbstractVarProjection<
     }
   }
 
-  @NotNull
-  public Type type() { return type; }
+  @Override
+  public @NotNull Type type() { return type; }
 
-  @NotNull
-  public Map<String, TP> tagProjections() { return tagProjections; }
+  @Override
+  public @NotNull Map<String, TP> tagProjections() { return tagProjections; }
 
-  @Nullable
-  public TP tagProjection(@NotNull String tagName) { return tagProjections.get(tagName); }
+  public @Nullable TP tagProjection(@NotNull String tagName) { return tagProjections.get(tagName); }
 
   @Override
   public boolean parenthesized() { return parenthesized; }
 
-  @Nullable
-  public List<VP> polymorphicTails() { return polymorphicTails; }
+  @Override
+  public @Nullable List<VP> polymorphicTails() { return polymorphicTails; }
 
   /**
    * Max polymorphic tail depth.
@@ -145,11 +140,10 @@ public abstract class AbstractVarProjection<
     return polymorphicDepth;
   }
 
-  @NotNull
   @Override
-  public VP normalizedForType(@NotNull final Type targetType) {
+  public @NotNull VP normalizedForType(final @NotNull Type targetType) {
 
-    @Nullable final List<VP> polymorphicTails = polymorphicTails();
+    final @Nullable List<VP> polymorphicTails = polymorphicTails();
     if (polymorphicTails == null || polymorphicTails.isEmpty()) return self();
 
     final List<VP> linearizedTails = linearizeTails(targetType, polymorphicTails);
@@ -160,7 +154,7 @@ public abstract class AbstractVarProjection<
     final Type effectiveType = linearizedTails.get(0).type();
 
     final List<VP> effectiveProjections = new ArrayList<>(linearizedTails);
-    @Nullable final List<VP> mergedTails = mergeTails(effectiveProjections);
+    final @Nullable List<VP> mergedTails = mergeTails(effectiveProjections);
 
     effectiveProjections.add(self()); //we're the least specific projection
 
@@ -172,8 +166,7 @@ public abstract class AbstractVarProjection<
     return merge(effectiveType, effectiveProjections, mergedTags, mergedParenthesized, mergedTails);
   }
 
-  @NotNull
-  private Set<Type.Tag> collectTags(final List<? extends AbstractVarProjection<VP, TP, MP>> effectiveProjections) {
+  private @NotNull Set<Type.Tag> collectTags(final List<? extends AbstractVarProjection<VP, TP, MP>> effectiveProjections) {
     Set<Type.Tag> tags = new LinkedHashSet<>();
 
     for (final AbstractVarProjection<VP, TP, MP> projection : effectiveProjections)
@@ -181,8 +174,7 @@ public abstract class AbstractVarProjection<
     return tags;
   }
 
-  @NotNull
-  private LinkedHashMap<String, TP> mergeTags(
+  private @NotNull LinkedHashMap<String, TP> mergeTags(
       final @NotNull Set<Type.Tag> tags,
       final @NotNull List<? extends AbstractVarProjection<VP, TP, MP>> sources) {
 
@@ -212,8 +204,7 @@ public abstract class AbstractVarProjection<
     return mergedTags.size() != 1 || varProjections.stream().anyMatch(GenVarProjection::parenthesized);
   }
 
-  @Nullable
-  private List<VP> mergeTails(
+  private @Nullable List<VP> mergeTails(
       final @NotNull List<? extends AbstractVarProjection<VP, TP, MP>> sources) {
 
     List<VP> mergedTails = null;
@@ -229,17 +220,16 @@ public abstract class AbstractVarProjection<
     return mergedTails;
   }
 
-  @NotNull
   @Override
-  public VP merge(@NotNull final List<VP> varProjections) {
+  public @NotNull VP merge(final @NotNull List<VP> varProjections) {
     if (varProjections.isEmpty()) throw new IllegalArgumentException("empty list of projections to merge");
     if (varProjections.size() == 1) return varProjections.get(0);
 
-    @NotNull final Set<Type.Tag> tags = collectTags(varProjections);
+    final @NotNull Set<Type.Tag> tags = collectTags(varProjections);
 
-    @NotNull final Map<String, TP> mergedTags = mergeTags(tags, varProjections);
+    final @NotNull Map<String, TP> mergedTags = mergeTags(tags, varProjections);
     boolean mergedParenthesized = mergeParenthesized(varProjections, mergedTags);
-    @Nullable final List<VP> mergedTails = mergeTails(varProjections);
+    final @Nullable List<VP> mergedTails = mergeTails(varProjections);
 
     return merge(type(), varProjections, mergedTags, mergedParenthesized, mergedTails);
   }
@@ -255,11 +245,10 @@ public abstract class AbstractVarProjection<
   }
 
   @SuppressWarnings("unchecked")
-  @NotNull
-  private VP self() { return (VP) this; }
+  private @NotNull VP self() { return (VP) this; }
 
-  @NotNull
-  public TextLocation location() {
+  @Override
+  public @NotNull TextLocation location() {
     return location;
   }
 
@@ -267,7 +256,7 @@ public abstract class AbstractVarProjection<
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-    AbstractVarProjection that = (AbstractVarProjection) o;
+    AbstractVarProjection<?, ?, ?> that = (AbstractVarProjection<?, ?, ?>) o;
     return Objects.equals(type, that.type) &&
            Objects.equals(tagProjections, that.tagProjections) &&
            Objects.equals(polymorphicTails, that.polymorphicTails);

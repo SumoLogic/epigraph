@@ -26,8 +26,7 @@ import ws.epigraph.projections.req.path.ReqFieldPath;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class DeleteOperationRequest extends OperationRequest {
-  @NotNull
-  private final ReqDeleteFieldProjection DeleteProjection;
+  private final @NotNull ReqDeleteFieldProjection DeleteProjection;
 
   public DeleteOperationRequest(
       final @Nullable ReqFieldPath path,
@@ -38,6 +37,5 @@ public class DeleteOperationRequest extends OperationRequest {
     this.DeleteProjection = DeleteProjection;
   }
 
-  @NotNull
-  public ReqDeleteFieldProjection deleteProjection() { return DeleteProjection; }
+  public @NotNull ReqDeleteFieldProjection deleteProjection() { return DeleteProjection; }
 }

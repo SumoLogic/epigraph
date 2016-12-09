@@ -394,6 +394,7 @@ public final class OperationsPsiParser {
     final @Nullable IdlOpOutputFieldProjection outputFieldProjectionPsi =
         outputProjectionPsi == null ? null : outputProjectionPsi.getOpOutputFieldProjection();
 
+    // todo add context
     if (outputProjectionPsi == null || outputFieldProjectionPsi == null) {
       final @NotNull OpOutputVarProjection varProjection =
           OpOutputProjectionsPsiParser.createDefaultVarProjection(outputType, location, errors);
@@ -451,7 +452,12 @@ public final class OperationsPsiParser {
 
     final @NotNull ValueTypeRef valueTypeRef = TypeRefs.fromPsi(typeRefPsi, errors);
     final @Nullable DataType dataType = resolver.resolve(valueTypeRef);
-    if (dataType == null) throw new PsiProcessingException("Can't resolve output type", typeRefPsi, errors);
+    if (dataType == null)
+      throw new PsiProcessingException(
+          String.format("Can't resolve output type '%s'", typeRefPsi.getText()),
+          typeRefPsi,
+          errors
+      );
     return dataType;
   }
 

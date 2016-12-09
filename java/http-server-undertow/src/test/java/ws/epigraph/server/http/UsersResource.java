@@ -18,16 +18,27 @@
 
 package ws.epigraph.server.http;
 
+import epigraph.Error;
+import epigraph.PersonId_Error_Map;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import ws.epigraph.errors.ErrorValue;
 import ws.epigraph.idl.ResourceIdl;
 import ws.epigraph.idl.operations.CreateOperationIdl;
+import ws.epigraph.idl.operations.DeleteOperationIdl;
 import ws.epigraph.idl.operations.ReadOperationIdl;
+import ws.epigraph.projections.req.delete.ReqDeleteFieldProjection;
+import ws.epigraph.projections.req.delete.ReqDeleteKeyProjection;
+import ws.epigraph.projections.req.delete.ReqDeleteMapModelProjection;
+import ws.epigraph.projections.req.delete.ReqDeleteTagProjectionEntry;
 import ws.epigraph.service.Resource;
 import ws.epigraph.service.ServiceInitializationException;
 import ws.epigraph.service.operations.*;
 import ws.epigraph.tests.*;
+import ws.epigraph.types.DatumType;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class UsersResource extends Resource {
@@ -43,7 +54,9 @@ public class UsersResource extends Resource {
             new CreateOp(((CreateOperationIdl) resourceIdl.operations().get(1)), storage)
         ),
         Collections.emptyList(),
-        Collections.emptyList(),
+        Collections.singletonList(
+            new DeleteOp(((DeleteOperationIdl) resourceIdl.operations().get(2)), storage)
+        ),
         Collections.emptyList()
     );
 
@@ -61,11 +74,9 @@ public class UsersResource extends Resource {
     @Override
     public @NotNull CompletableFuture<ReadOperationResponse<PersonId_Person_Map.Data>>
     process(@NotNull ReadOperationRequest request) {
-      return toFuture(
-          new ReadOperationResponse<>(
-              PersonId_Person_Map.type.createDataBuilder().set(storage.users())
-          )
-      );
+      return CompletableFuture.completedFuture(new ReadOperationResponse<>(
+          PersonId_Person_Map.type.createDataBuilder().set(storage.users())
+      ));
     }
   }
 
@@ -95,14 +106,56 @@ public class UsersResource extends Resource {
         }
       }
 
-      return toFuture(new ReadOperationResponse<>(PersonId_List.type.createDataBuilder().set(result)));
+      return CompletableFuture.completedFuture(
+          new ReadOperationResponse<>(PersonId_List.type.createDataBuilder().set(result))
+      );
     }
   }
 
-  private static @NotNull <T> CompletableFuture<T> toFuture(@NotNull T value) {
-    CompletableFuture<T> f = new CompletableFuture<>();
-    f.complete(value);
-    return f;
+  // todo figure out return type
+  private static final class DeleteOp extends DeleteOperation<PersonId_Error_Map.Data> {
+    private final @NotNull UsersStorage storage;
+
+    protected DeleteOp(final DeleteOperationIdl declaration, final @NotNull UsersStorage storage) {
+      super(declaration);
+      this.storage = storage;
+    }
+
+    @Override
+    public @NotNull CompletableFuture<ReadOperationResponse<PersonId_Error_Map.Data>>
+    process(final @NotNull DeleteOperationRequest request) {
+      final PersonId_Error_Map.Builder.Data builder = PersonId_Error_Map.type.createDataBuilder();
+
+      final @NotNull ReqDeleteFieldProjection fieldProjection = request.deleteProjection();
+      final ReqDeleteTagProjectionEntry tpe = fieldProjection.varProjection().tagProjection(DatumType.MONO_TAG_NAME);
+
+      if (tpe == null) {
+        builder.set_Error(new ErrorValue(400, "keys not specified")); // can never happen?
+      } else {
+        final PersonId_Error_Map.Builder mapBuilder = PersonId_Error_Map.create();
+        builder.set(mapBuilder);
+
+        final @NotNull ReqDeleteMapModelProjection mmp = (ReqDeleteMapModelProjection) tpe.projection();
+        final List<ReqDeleteKeyProjection> keys = mmp.keys();
+        assert keys != null; // guaranteed by op projection
+
+        for (final ReqDeleteKeyProjection key : keys) {
+          PersonId.Imm keyValue = (PersonId.Imm) key.value().toImmutable();
+          final @Nullable Person removedPerson = storage.users().datas().remove(keyValue);
+          //noinspection ConstantConditions why?
+          if (removedPerson == null)
+            mapBuilder.put(
+                keyValue,
+                Error.create()
+                    .setCode(epigraph.Integer.create(404))
+                    .setMessage(epigraph.String.create("Item with id " + keyValue.getVal() + " doesn't exist"))
+            );
+
+        }
+      }
+
+      return CompletableFuture.completedFuture(new ReadOperationResponse<>(builder));
+    }
   }
 
 }

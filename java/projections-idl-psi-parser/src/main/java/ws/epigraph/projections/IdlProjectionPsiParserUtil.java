@@ -43,7 +43,8 @@ import java.util.stream.Stream;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class IdlProjectionPsiParserUtil {
+public final class IdlProjectionPsiParserUtil {
+  private IdlProjectionPsiParserUtil() {}
 //  @Nullable
 //  public static String getTagName(@Nullable IdlTagName tagNamePsi) {
 //    if (tagNamePsi == null) return null;
@@ -52,14 +53,27 @@ public class IdlProjectionPsiParserUtil {
 //    return qid.getCanonicalName();
 //  }
 
-  @NotNull
-  public static Type.Tag getTag(
+  public static @NotNull Type.Tag getTag(
       @NotNull Type type,
       @Nullable IdlTagName tagName,
       @Nullable Type.Tag defaultTag,
       @NotNull PsiElement location,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
+    return ProjectionsParsingUtil.getTag(type, getTagNameString(tagName), defaultTag, location, errors);
+  }
+
+  public static @Nullable Type.Tag findTag(
+      @NotNull Type type,
+      @Nullable IdlTagName tagName,
+      @Nullable Type.Tag defaultTag,
+      @NotNull PsiElement location,
+      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
+
+    return ProjectionsParsingUtil.findTag(type, getTagNameString(tagName), defaultTag, location, errors);
+  }
+
+  private static @Nullable String getTagNameString(final @Nullable IdlTagName tagName) {
     String tagNameStr = null;
 
     if (tagName != null) {
@@ -67,12 +81,10 @@ public class IdlProjectionPsiParserUtil {
       if (qid != null)
         tagNameStr = qid.getCanonicalName();
     }
-
-    return ProjectionsParsingUtil.getTag(type, tagNameStr, defaultTag, location, errors);
+    return tagNameStr;
   }
 
-  @Nullable
-  public static Map<String, Annotation> parseAnnotation(
+  public static @Nullable Map<String, Annotation> parseAnnotation(
       @Nullable Map<String, Annotation> annotationsMap,
       @Nullable IdlAnnotation annotationPsi,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
@@ -96,8 +108,7 @@ public class IdlProjectionPsiParserUtil {
     return annotationsMap;
   }
 
-  @NotNull
-  public static OpParams parseParams(
+  public static @NotNull OpParams parseParams(
       @NotNull Stream<IdlOpParam> paramsPsi,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
@@ -105,13 +116,12 @@ public class IdlProjectionPsiParserUtil {
     return parseParams(paramsPsi.collect(Collectors.toList()), resolver, errors);
   }
 
-  @NotNull
-  public static OpParams parseParams(
-      @NotNull Collection<IdlOpParam> paramsPsi,
+  public static @NotNull OpParams parseParams(
+      @NotNull Iterable<IdlOpParam> paramsPsi,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
-    List<OpParam> params = null;
+    Collection<OpParam> params = null;
 
     for (final IdlOpParam param : paramsPsi) {
       if (param != null) {
@@ -124,8 +134,7 @@ public class IdlProjectionPsiParserUtil {
     return OpParams.fromCollection(params);
   }
 
-  @NotNull
-  public static OpParam parseParameter(
+  public static @NotNull OpParam parseParameter(
       @NotNull IdlOpParam paramPsi,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
@@ -146,7 +155,7 @@ public class IdlProjectionPsiParserUtil {
 
     @Nullable IdlOpInputModelProjection paramModelProjectionPsi = paramPsi.getOpInputModelProjection();
 
-    @NotNull final OpParams params = parseParams(paramPsi.getOpParamList(), resolver, errors);
+    final @NotNull OpParams params = parseParams(paramPsi.getOpParamList(), resolver, errors);
     @NotNull Annotations annotations = parseAnnotations(paramPsi.getAnnotationList(), errors);
 
     @Nullable IdlDatum defaultValuePsi = paramPsi.getDatum();
@@ -156,19 +165,7 @@ public class IdlProjectionPsiParserUtil {
 
     final OpInputModelProjection<?, ?, ?> paramModelProjection;
 
-    if (paramModelProjectionPsi != null)
-      paramModelProjection = OpInputProjectionsPsiParser.parseModelProjection(
-          paramType,
-          paramPsi.getPlus() != null,
-          defaultValue,
-          params,
-          annotations,
-          null, // TODO do we want to support metadata on parameters?
-          paramModelProjectionPsi,
-          resolver,
-          errors
-      ).projection();
-    else
+    if (paramModelProjectionPsi == null)
       paramModelProjection = OpInputProjectionsPsiParser.createDefaultModelProjection(
           paramType,
           paramPsi.getPlus() != null,
@@ -179,21 +176,30 @@ public class IdlProjectionPsiParserUtil {
           resolver,
           errors
       );
+    else paramModelProjection = OpInputProjectionsPsiParser.parseModelProjection(
+        paramType,
+        paramPsi.getPlus() != null,
+        defaultValue,
+        params,
+        annotations,
+        null, // TODO do we want to support metadata on parameters?
+        paramModelProjectionPsi,
+        resolver,
+        errors
+    ).projection();
 
     return new OpParam(paramName, paramModelProjection, EpigraphPsiUtil.getLocation(paramPsi));
   }
 
-  @NotNull
-  public static Annotations parseAnnotations(
+  public static @NotNull Annotations parseAnnotations(
       @NotNull Stream<IdlAnnotation> annotationsPsi,
       @NotNull List<PsiProcessingError> errors
   ) throws PsiProcessingException {
     return parseAnnotations(annotationsPsi.collect(Collectors.toList()), errors);
   }
 
-  @NotNull
-  public static Annotations parseAnnotations(
-      @NotNull Collection<IdlAnnotation> annotationsPsi,
+  public static @NotNull Annotations parseAnnotations(
+      @NotNull Iterable<IdlAnnotation> annotationsPsi,
       @NotNull List<PsiProcessingError> errors
   ) throws PsiProcessingException {
     @Nullable Map<String, Annotation> annotationMap = null;

@@ -101,14 +101,14 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
   }
 
   @Override
-  public void writeDatum(@Nullable ReqOutputModelProjection projection, @Nullable Datum datum) throws IOException {
-    ArrayDeque<ReqOutputModelProjection> projections = new ArrayDeque<>(1);
+  public void writeDatum(@Nullable ReqOutputModelProjection<?,?> projection, @Nullable Datum datum) throws IOException {
+    ArrayDeque<ReqOutputModelProjection<?,?>> projections = new ArrayDeque<>(1);
     projections.add(projection);
     writeDatum(projections, datum);
   }
 
   @SuppressWarnings("unchecked")
-  private void writeDatum(@NotNull Deque<? extends ReqOutputModelProjection> projections, @Nullable Datum datum)
+  private void writeDatum(@NotNull Deque<? extends ReqOutputModelProjection<?,?>> projections, @Nullable Datum datum)
       throws IOException {
     if (datum == null) {
       out.write("null");
@@ -125,7 +125,7 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
           writeList((Deque<ReqOutputListModelProjection>) projections, (ListDatum) datum);
           break;
         case PRIMITIVE:
-          writePrimitive((Deque<ReqOutputPrimitiveModelProjection>) projections, (PrimitiveDatum) datum);
+          writePrimitive((Deque<ReqOutputPrimitiveModelProjection>) projections, (PrimitiveDatum<?>) datum);
           break;
         case ENUM:
 //            writeEnum((Deque<ReqOutputEnumModelProjection>) modelProjections, (EnumDatum) datum);
@@ -138,6 +138,7 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
 
   }
 
+  @Override
   public void writeError(@NotNull ErrorValue error) throws IOException {
     out.write("{\"" + JsonFormat.ERROR_CODE_FIELD + "\":");
     out.write(error.statusCode().toString());
@@ -294,7 +295,7 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
 
   private void writePrimitive(
       @NotNull Deque<ReqOutputPrimitiveModelProjection> projections,
-      @NotNull PrimitiveDatum datum
+      @NotNull PrimitiveDatum<?> datum
   ) throws IOException { writePrimitive(datum); }
 
   private static @NotNull Deque<ReqOutputVarProjection> varProjections(
@@ -335,6 +336,7 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
 
   private static final ErrorValue NO_VALUE = new ErrorValue(500, "No value", null);
 
+  @Override
   public void writeValue(@NotNull Val value) throws IOException {
     ErrorValue error = value.getError();
     if (error == null) writeDatum(value.getDatum());
@@ -359,7 +361,7 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
           writeList((ListDatum) datum);
           break;
         case PRIMITIVE:
-          writePrimitive((PrimitiveDatum) datum);
+          writePrimitive((PrimitiveDatum<?>) datum);
           break;
         case ENUM:
 //        writeEnum((EnumDatum) datum);
@@ -414,7 +416,7 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
     out.write(']');
   }
 
-  private void writePrimitive(@NotNull PrimitiveDatum datum) throws IOException {
+  private void writePrimitive(@NotNull PrimitiveDatum<?> datum) throws IOException {
     if (datum instanceof StringDatum) writeString(((StringDatum) datum).getVal());
     else if (datum instanceof DoubleDatum) writeDouble(((DoubleDatum) datum).getVal());
     else out.write(datum.getVal().toString());

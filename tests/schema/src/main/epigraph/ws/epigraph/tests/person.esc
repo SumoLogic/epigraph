@@ -20,6 +20,7 @@ record PersonRecord {
 }
 
 // todo this should be removed once we have proper idl/types compiler
-map[PersonId,Person] UsersResourceDummy
-list[PersonRecord] UsersResourceDummy2
-list[PersonId] UsersResourceDummy3
+map[PersonId,Person] UsersResourceDummy0 // read output
+list[PersonRecord] UserResourceDummy1 // create input
+list[PersonId] UsersResourceDummy2 // create output
+map[PersonId,epigraph.Error] UsersResourceDummy3 // update, delete

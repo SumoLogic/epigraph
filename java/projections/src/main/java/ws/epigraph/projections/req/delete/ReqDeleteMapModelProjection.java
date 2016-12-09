@@ -40,10 +40,8 @@ public class ReqDeleteMapModelProjection
     MapType
     > {
 
-  @Nullable
-  private final List<ReqDeleteKeyProjection> keys;
-  @NotNull
-  private final ReqDeleteVarProjection valuesProjection;
+  private final @Nullable List<ReqDeleteKeyProjection> keys;
+  private final @NotNull ReqDeleteVarProjection valuesProjection;
 
   public ReqDeleteMapModelProjection(
       @NotNull MapType model,
@@ -57,11 +55,10 @@ public class ReqDeleteMapModelProjection
     this.valuesProjection = valuesProjection;
   }
 
-  @NotNull
-  public ReqDeleteVarProjection itemsProjection() { return valuesProjection; }
+  @Override
+  public @NotNull ReqDeleteVarProjection itemsProjection() { return valuesProjection; }
 
-  @Nullable
-  public List<ReqDeleteKeyProjection> keys() { return keys; }
+  public @Nullable List<ReqDeleteKeyProjection> keys() { return keys; }
 
   @Override
   public boolean equals(Object o) {

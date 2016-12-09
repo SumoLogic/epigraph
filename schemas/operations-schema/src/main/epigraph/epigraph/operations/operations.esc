@@ -83,13 +83,15 @@ record DeleteOperation extends Operation {
   deleteProjection: OpDeleteVarProjection // starts at the tip of `path`
 
   // inputType = inputProjection = null
+  // outputType (if not specified) = path tip type, or resource fieldType if path is null
+  // outputProjection (if not specified) = default empty projection for `outputType`
 
   // HTTP DELETE  /people[1,2,3]
   //              ^^^^^^^
   //              path   ^^^^^^^
   //                     ReqDeleteProjection (parsed against deleteProjection)
 
-  // can be specified: path?, deleteProjection, outputType, outputProjection
+  // can be specified: path?, deleteProjection, outputType?, outputProjection?
 }
 
 record CustomOperation extends Operation {

@@ -12,6 +12,8 @@
   -[ ] recursive data support
 - [ ] Format for parameter values in URL. Currently: GData with single quotes.
 - [x] `*PsiParser` should accumulate errors in the context instead of throwing `PsiProcessingException`
+- [ ] `ReqDelete` psi parser must ensure that leaf items have `op.canDelete` set to `true`
+- [ ] Replace `List<PsiProcessingError>` by `PsiProcessingContext`, so we caontext informatio // todo get rid of second pair of ()n there
 
 # Type system
 - [ ] Enums
@@ -20,6 +22,7 @@
   - [ ] Alternatively, define equals for map keys to be declared type-scoped only, implement with wrapper over keys.
 - [ ] ~~Allow supplementing Union types with any datum type (applies to all compatible tag types)~~
 - [ ] Add `type.createBuilder(data)` similar to `toImmutable`
+- [ ] Introduce real epigraph (record?) type for holding error values
 
 # Schema compiler
 - [ ] Annotations support. Should they be inherited? Annotations on annotations?
@@ -46,7 +49,7 @@
 - [x] remove `includeInDefault` from `Op*` projections, add '*' to request projections instead
 - [x] remove default tags from op projections. If var type has default tag (in schema), and operation can build this tag -- then it becomes an implicit default
 - [x] add req input projection (for custom operation)
-- [ ] `*` support in projections improvement: allow `*` to be present along with other fields (currently it's either `*` or fields list)
+- [ ] `*` support in projections improvemlow `*` to be pre // todo get rid of second pair of ()sent along with other fields (currently it's either `*` or fields list)
 - [ ] OpInputKey projections should support the notion of required/forbidden/optional keys, and ReqInput parser should respect/validate it
 - [ ] support for recursive projections
 - [ ] Generate projection classes for specific types
@@ -59,13 +62,15 @@
 - [ ] Unify req projections pretty printers, there's lots of code duplication
 - [ ] Unify op projections pretty printers, there's lots of code duplication
 - [ ] Allow to use optional `(``)` parenthesis around var projections for disambiguation; don't require these for collection element projections
+- [ ] Add `throws` to op projections: `someField throws ( Error(message) ~MyError(code) )`
+- [ ] Add `catch` to req projections: `someField throws ( Error(message) ~MyError(code) )`
 
 # Operations  
 - [x] see `operations.esc`, restructure operations accordingly
 - [x] custom operations must support input data
 
 # Service
-- [ ] ***see `operations.esc`, change routing accordingly***
+- [x] see `operations.esc`, change routing accordingly
 
 # Other
 - See [Short-term todo list] (todo-short-term.md)

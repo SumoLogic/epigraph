@@ -43,6 +43,10 @@ public class ErrorValue { // TODO rename to DatumError (to avoid clash with java
     this(statusCode, causeMessage(cause), cause);
   }
 
+  public ErrorValue(@NotNull Integer statusCode, @NotNull String message) {
+    this(statusCode, message, null);
+  }
+
   private static @NotNull String causeMessage(@NotNull Exception cause) {
     String message = cause.getMessage();
     return message == null ? cause.toString() : message;

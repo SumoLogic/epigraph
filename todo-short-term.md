@@ -25,7 +25,7 @@
     - [x] read
     - [x] create
     - [ ] update
-    - [ ] delete
+    - [x] delete
     - [ ] custom
   - [x] enable real streaming
   
@@ -33,6 +33,7 @@
   - [ ] Add `type.createBuilder(data)` similar to `toImmutable`
     - [ ] Update demo service
   - [ ] Gradle plugin: java generator doesn't detect changes in schema
+  - [ ] fix `equals` on tags
 
 - Docs
   - Operations

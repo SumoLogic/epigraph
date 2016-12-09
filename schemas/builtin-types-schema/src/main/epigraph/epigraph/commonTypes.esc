@@ -1,0 +1,10 @@
+namespace epigraph
+
+list[String] Text
+
+record Error {
+  code: Integer
+  message: String
+  trace: Text
+  cause: Error
+}
