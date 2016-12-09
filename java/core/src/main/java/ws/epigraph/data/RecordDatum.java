@@ -59,7 +59,7 @@ public interface RecordDatum extends Datum {
     /**
      * @return Unmodifiable mapping of field names to their data. The data could be modifiable.
      */
-    @NotNull Map<String, ? extends Data> fieldsData();
+    @NotNull Map<@NotNull String, @NotNull ? extends Data> fieldsData();
 
     @Nullable Data getData(@NotNull Field field);
 
@@ -88,7 +88,7 @@ public interface RecordDatum extends Datum {
 
     final class Raw extends RecordDatum.Impl implements RecordDatum.Imm, RecordDatum.Raw, Datum.Imm.Raw {
 
-      private final Map<String, ? extends Data.Imm> fieldsData;
+      private final Map<@NotNull String, @NotNull ? extends Data.Imm> fieldsData;
 
       private final @NotNull Val.Imm.Raw value = new Val.Imm.Raw.DatumVal(this);
 
@@ -107,7 +107,7 @@ public interface RecordDatum extends Datum {
       public @NotNull RecordDatum.Imm.Raw _raw() { return this; }
 
       @Override
-      public @NotNull Map<String, ? extends Data.Imm> fieldsData() { return fieldsData; }
+      public @NotNull Map<@NotNull String, @NotNull ? extends Data.Imm> fieldsData() { return fieldsData; }
 
       @Override
       public @Nullable Data.Imm getData(@NotNull Field field) {
@@ -210,11 +210,21 @@ public interface RecordDatum extends Datum {
 
     public static final class Raw extends RecordDatum.Builder implements RecordDatum.Raw, Datum.Builder.Raw {
 
-      private final Map<String, Data> fieldsData = new HashMap<>();
+      private final Map<@NotNull String, @NotNull Data> fieldsData = new HashMap<>();
+
+      private final Map<@NotNull String, @NotNull ? extends Data> unmodifiableFieldsData = Unmodifiable.map(fieldsData);
 
       private final @NotNull Val.Builder.Raw value = new Val.Builder.Raw.DatumVal(this);
 
       public Raw(@NotNull RecordType type) { super(type); }
+
+      private Raw(@NotNull RecordType type, @NotNull RecordDatum.Raw prototype) { // wip/experimental
+        this(type.checkAssignable(prototype.type()));
+        for (Map.Entry<String, ? extends Data> fieldEntry : prototype.fieldsData().entrySet()) {
+          String fieldName = fieldEntry.getKey();
+          if (type.fieldsMap().containsKey(fieldName)) fieldsData.put(fieldName, fieldEntry.getValue());
+        }
+      }
 
       @Override
       public @NotNull RecordDatum.Imm.Raw toImmutable() { return new RecordDatum.Imm.Raw(this); }
@@ -225,8 +235,8 @@ public interface RecordDatum extends Datum {
       @Override
       public @NotNull Val.Builder.Raw asValue() { return value; }
 
-      @Override // TODO wrap into type-checking write-through map
-      public @NotNull Map<String, ? extends Data> fieldsData() { return fieldsData; }
+      @Override
+      public @NotNull Map<@NotNull String, @NotNull ? extends Data> fieldsData() { return unmodifiableFieldsData; }
 
       @Override
       public @Nullable Data getData(@NotNull Field field) {
@@ -276,7 +286,7 @@ public interface RecordDatum extends Datum {
 
 
     // base for generated mutable record impl classes
-    public static abstract class Static<
+    public abstract static class Static<
         MyImmDatum extends RecordDatum.Imm.Static,
         MyBuilderVal extends Val.Builder.Static
         > extends RecordDatum.Builder implements RecordDatum.Static, Datum.Builder.Static<MyImmDatum> {

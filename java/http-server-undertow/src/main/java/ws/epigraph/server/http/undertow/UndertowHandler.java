@@ -231,6 +231,7 @@ public class UndertowHandler implements HttpHandler {
 
     // todo validate response: e.g. all required parts must be present
 
+    // FIXME change path removers so there's no need for pre-marshalling trimming
     Data trimmedData = data == null ? null : ProjectionDataTrimmer.trimData(data, reqProjection);
 
     String contentType = CONTENT_TYPE_JSON; // todo should depend on marshaller

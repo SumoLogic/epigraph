@@ -104,12 +104,11 @@ public abstract class RecordType extends DatumType {
     // TODO use asserts?
     if (knownField == null) throw new IllegalArgumentException("Unknown field '" + field.name + "'");
     // FIXME check vs known's overridden fields instead?
-    // FIXME this check is for reading, writing requires different rules
-    if (!field.type.isAssignableFrom(knownField.type)) throw new IllegalArgumentException(String.format(
+    if (!knownField.type.isAssignableFrom(field.type)) throw new IllegalArgumentException(String.format(
         "Incompatible type for field '%s': expected '%s', actual '%s'",
         field.name,
-        field.type.name(),
-        knownField.type.name()
+        knownField.type.name(),
+        field.type.name()
     ));
     return field;
   }

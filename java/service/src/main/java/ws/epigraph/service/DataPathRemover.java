@@ -28,65 +28,41 @@ import java.util.Map;
  */
 public class DataPathRemover { // todo move somewhere?
 
-  @NotNull
-  public static PathRemovalResult removePath(@NotNull Data data, int steps) throws AmbiguousPathException {
+  public static @NotNull PathRemovalResult removePath(@NotNull Data data, int steps) throws AmbiguousPathException {
     if (steps == 0) return new PathRemovalResult(data);
-
     final Map<@NotNull String, @NotNull ? extends Val> tagValues = data._raw().tagValues();
-    if (tagValues.size() == 0) return PathRemovalResult.NULL;
-    if (tagValues.size() > 1) throw new AmbiguousPathException();
-
-    final Val val = tagValues.values().iterator().next();
-    return removePath(val, steps - 1);
+    switch (tagValues.size()) {
+      case 0:return PathRemovalResult.NULL;
+      case 1:return removePath(tagValues.values().iterator().next(), steps - 1);
+      default: throw new AmbiguousPathException();
+    }
   }
 
-  @NotNull
-  public static PathRemovalResult removePath(@NotNull Val val, int steps) throws AmbiguousPathException {
+  public static @NotNull PathRemovalResult removePath(@NotNull Val val, int steps) throws AmbiguousPathException {
     if (val.getError() != null) return new PathRemovalResult(val.getError()); // error on any segment = fail?
     @Nullable final Datum datum = val.getDatum();
-    if (datum == null) return PathRemovalResult.NULL;
-
-    return removePath(datum, steps);
+    return (datum == null) ? PathRemovalResult.NULL : removePath(datum, steps);
   }
 
-  @NotNull
-  public static PathRemovalResult removePath(@NotNull Datum datum, int steps) throws AmbiguousPathException {
+  public static @NotNull PathRemovalResult removePath(@NotNull Datum datum, int steps) throws AmbiguousPathException {
     if (steps == 0) return new PathRemovalResult(datum);
-
-    if (datum instanceof RecordDatum) {
-      RecordDatum record = (RecordDatum) datum;
-
-      final Map<String, ? extends Data> fields = record._raw().fieldsData();
-      if (fields.size() == 0) return PathRemovalResult.NULL;
-      if (fields.size() > 1) throw new AmbiguousPathException();
-
-      final Data data = fields.values().iterator().next();
-      return removePath(data, steps - 1);
+    final Map<?, @NotNull ? extends Data> map;
+    if (datum instanceof RecordDatum) map = ((RecordDatum) datum)._raw().fieldsData();
+    else if (datum instanceof MapDatum) map = ((MapDatum) datum)._raw().elements();
+    else throw new AmbiguousPathException(); // don't know how to drill into anything else // TODO better exception
+    switch (map.size()) {
+      case 0: return PathRemovalResult.NULL;
+      case 1: return removePath(map.values().iterator().next(), steps - 1);
+      default: throw new AmbiguousPathException();
     }
-
-    if (datum instanceof MapDatum) {
-      MapDatum map = (MapDatum) datum;
-
-      final Map<Datum.Imm, @NotNull ? extends Data> elements = map._raw().elements();
-      if (elements.size() == 0) return PathRemovalResult.NULL;
-      if (elements.size() > 1) throw new AmbiguousPathException();
-
-      final Data data = elements.values().iterator().next();
-      return removePath(data, steps - 1);
-    }
-
-    throw new AmbiguousPathException(); // don't know how to drill into anything else
   }
 
-  public static class PathRemovalResult {
+  public static class PathRemovalResult { // TODO use inheritance instead of null members
     public static final PathRemovalResult NULL = new PathRemovalResult(null, null, null);
 
-    @Nullable
-    public final Data data;
-    @Nullable
-    public final Datum datum;
-    @Nullable
-    public final ErrorValue error;
+    public final @Nullable Data data;
+    public final @Nullable Datum datum;
+    public final @Nullable ErrorValue error;
 
     public PathRemovalResult(@Nullable Data data, @Nullable Datum datum, @Nullable ErrorValue error) {
       this.data = data;
