@@ -29,6 +29,7 @@ public interface Datum {
 
   @NotNull DatumType type();
 
+  // do we need this?
   static @Nullable Datum.Imm toImmutable(@Nullable Datum datum) { return datum == null ? null : datum.toImmutable(); }
 
   @NotNull Datum.Raw _raw();

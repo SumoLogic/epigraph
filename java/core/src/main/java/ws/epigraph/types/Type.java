@@ -144,6 +144,7 @@ public abstract class Type { // TODO split into interface and impl
 
     public @NotNull String name() { return name; }
 
+    // FIXME .equals() and .hashCode() should account for both name and type
     @Override
     public boolean equals(final Object o) {
       if (this == o) return true;
