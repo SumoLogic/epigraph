@@ -33,7 +33,7 @@
   - [ ] Add `type.createBuilder(data)` similar to `toImmutable`
     - [ ] Update demo service
   - [ ] Gradle plugin: java generator doesn't detect changes in schema
-  - [ ] fix `equals` on tags
+  - [x] fix `equals` on tags
 
 - Docs
   - Operations

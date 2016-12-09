@@ -37,7 +37,7 @@ public abstract class ReqOutputModelProjection<
 
   protected final boolean required;
 
-  public ReqOutputModelProjection(
+  protected ReqOutputModelProjection(
       @NotNull M model,
       boolean required,
       @NotNull ReqParams params,
@@ -52,11 +52,11 @@ public abstract class ReqOutputModelProjection<
 
   @Override
   protected MP merge(
-      @NotNull final M model,
-      @NotNull final List<MP> modelProjections,
-      @NotNull final ReqParams mergedParams,
-      @NotNull final Annotations mergedAnnotations,
-      @Nullable final MP mergedMetaProjection) {
+      final @NotNull M model,
+      final @NotNull List<MP> modelProjections,
+      final @NotNull ReqParams mergedParams,
+      final @NotNull Annotations mergedAnnotations,
+      final @Nullable MP mergedMetaProjection) {
 
     return merge(
         model,
@@ -69,12 +69,12 @@ public abstract class ReqOutputModelProjection<
   }
 
   protected MP merge(
-      @NotNull final M model,
+      final @NotNull M model,
       final boolean mergedRequired,
-      @NotNull final List<MP> modelProjections,
-      @NotNull final ReqParams mergedParams,
-      @NotNull final Annotations mergedAnnotations,
-      @Nullable final MP mergedMetaProjection) {
+      final @NotNull List<MP> modelProjections,
+      final @NotNull ReqParams mergedParams,
+      final @NotNull Annotations mergedAnnotations,
+      final @Nullable MP mergedMetaProjection) {
 
     throw new RuntimeException("not implemented"); // todo make abstract
   }

@@ -25,6 +25,7 @@ import ws.epigraph.projections.gen.GenModelProjection;
 import ws.epigraph.types.DatumType;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
@@ -33,32 +34,30 @@ import java.util.Objects;
  */
 public abstract class AbstractOpModelProjection<MP extends GenModelProjection</*MP*/?, ?>, M extends DatumType>
     extends AbstractModelProjection<MP, M> {
-  @NotNull
-  protected final OpParams params;
+  protected final @NotNull OpParams params;
 
-  public AbstractOpModelProjection(
-      @NotNull final M model,
-      @Nullable final MP metaProjection,
-      @NotNull final OpParams params,
-      @NotNull final Annotations annotations,
-      @NotNull final TextLocation location) {
+  protected AbstractOpModelProjection(
+      final @NotNull M model,
+      final @Nullable MP metaProjection,
+      final @NotNull OpParams params,
+      final @NotNull Annotations annotations,
+      final @NotNull TextLocation location) {
     super(model, metaProjection, annotations, location);
     this.params = params;
   }
 
-  @NotNull
-  public OpParams params() { return params; }
+  public @NotNull OpParams params() { return params; }
 
   @Override
   protected MP merge(
-      @NotNull final M model,
-      @NotNull final List<MP> modelProjections,
-      @NotNull final Annotations mergedAnnotations,
+      final @NotNull M model,
+      final @NotNull List<MP> modelProjections,
+      final @NotNull Annotations mergedAnnotations,
       final MP mergedMetaProjection) {
 
     if (modelProjections.isEmpty()) return null;
 
-    List<OpParams> paramsList = new ArrayList<>();
+    Collection<OpParams> paramsList = new ArrayList<>();
 
     for (final GenModelProjection<?, ?> projection : modelProjections) {
       AbstractOpModelProjection<?, ?> mp = (AbstractOpModelProjection<?, ?>) projection;

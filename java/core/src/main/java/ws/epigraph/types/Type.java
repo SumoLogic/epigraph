@@ -144,18 +144,18 @@ public abstract class Type { // TODO split into interface and impl
 
     public @NotNull String name() { return name; }
 
-    // FIXME .equals() and .hashCode() should account for both name and type
     @Override
     public boolean equals(final Object o) {
       if (this == o) return true;
       if (o == null || getClass() != o.getClass()) return false;
       final Tag tag = (Tag) o;
-      return Objects.equals(name, tag.name);
+      return Objects.equals(name, tag.name) &&
+             Objects.equals(type, tag.type);
     }
 
     @Override
     public int hashCode() {
-      return Objects.hash(name);
+      return Objects.hash(name, type);
     }
   }
 

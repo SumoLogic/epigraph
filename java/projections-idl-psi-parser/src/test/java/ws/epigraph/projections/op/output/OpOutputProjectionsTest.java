@@ -185,9 +185,9 @@ public class OpOutputProjectionsTest {
   @Test
   public void testTailsNormalization() throws PsiProcessingException {
     testTailsNormalization(
-        ":record(id)~ws.epigraph.tests.User :record(firstName)",
+        ":record(id)~ws.epigraph.tests.User :record(profile)",
         User.type,
-        ":record ( firstName, id )"
+        ":record ( profile, id )"
     );
 
     // parameters merging
@@ -259,23 +259,22 @@ public class OpOutputProjectionsTest {
     );
   }
 
-  private void testTailsNormalization(String str, Type type, String expected) throws PsiProcessingException {
+  private void testTailsNormalization(String str, Type type, String expected) {
     OpOutputVarProjection varProjection = parseOpOutputVarProjection(dataType, str);
-    @NotNull final OpOutputVarProjection normalized = varProjection.normalizedForType(type);
+    final @NotNull OpOutputVarProjection normalized = varProjection.normalizedForType(type);
     String actual = printOpOutputVarProjection(normalized);
     assertEquals(expected, actual);
   }
 
-  private void testParsingVarProjection(String str) throws PsiProcessingException {
+  private void testParsingVarProjection(String str) {
     testParsingVarProjection(str, str);
   }
 
-  private void testParsingVarProjection(String str, String expected) throws PsiProcessingException {
+  private void testParsingVarProjection(String str, String expected) {
     testParsingVarProjection(dataType, str, expected);
   }
 
-  private OpOutputVarProjection testParsingVarProjection(DataType varDataType, String projectionString, String expected)
-      throws PsiProcessingException {
+  private OpOutputVarProjection testParsingVarProjection(DataType varDataType, String projectionString, String expected) {
 
     OpOutputVarProjection varProjection = parseOpOutputVarProjection(varDataType, projectionString);
 
@@ -309,8 +308,7 @@ public class OpOutputProjectionsTest {
     return parseOpOutputVarProjection(varDataType, projectionString, resolver);
   }
 
-  @NotNull
-  public static OpOutputVarProjection parseOpOutputVarProjection(
+  private static @NotNull OpOutputVarProjection parseOpOutputVarProjection(
       @NotNull DataType varDataType,
       @NotNull String projectionString,
       @NotNull TypesResolver resolver) {

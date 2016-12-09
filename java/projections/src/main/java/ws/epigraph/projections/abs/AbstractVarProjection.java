@@ -158,7 +158,7 @@ public abstract class AbstractVarProjection<
 
     effectiveProjections.add(self()); //we're the least specific projection
 
-    final Set<Type.Tag> tags = collectTags(effectiveProjections);
+    final Map<String, Type.Tag> tags = collectTags(effectiveProjections);
     final LinkedHashMap<String, TP> mergedTags = mergeTags(tags, effectiveProjections);
 
     final boolean mergedParenthesized = mergeParenthesized(effectiveProjections, mergedTags);
@@ -166,21 +166,25 @@ public abstract class AbstractVarProjection<
     return merge(effectiveType, effectiveProjections, mergedTags, mergedParenthesized, mergedTails);
   }
 
-  private @NotNull Set<Type.Tag> collectTags(final List<? extends AbstractVarProjection<VP, TP, MP>> effectiveProjections) {
-    Set<Type.Tag> tags = new LinkedHashSet<>();
+  private @NotNull Map<String, Type.Tag>
+  collectTags(final Iterable<? extends AbstractVarProjection<VP, TP, MP>> effectiveProjections) {
+    Map<String, Type.Tag> tags = new LinkedHashMap<>();
 
     for (final AbstractVarProjection<VP, TP, MP> projection : effectiveProjections)
-      projection.tagProjections().values().stream().map(GenTagProjectionEntry::tag).forEach(tags::add);
+      projection.tagProjections().values()
+          .stream()
+          .map(GenTagProjectionEntry::tag)
+          .forEach(t -> {if (!tags.containsKey(t.name())) tags.put(t.name(), t);});
     return tags;
   }
 
   private @NotNull LinkedHashMap<String, TP> mergeTags(
-      final @NotNull Set<Type.Tag> tags,
-      final @NotNull List<? extends AbstractVarProjection<VP, TP, MP>> sources) {
+      final @NotNull Map<String, Type.Tag> tags,
+      final @NotNull Iterable<? extends AbstractVarProjection<VP, TP, MP>> sources) {
 
     LinkedHashMap<String, TP> mergedTags = new LinkedHashMap<>();
 
-    for (final Type.Tag tag : tags) {
+    for (final Type.Tag tag : tags.values()) {
       List<TP> tagProjections = new ArrayList<>();
       for (final AbstractVarProjection<VP, TP, MP> projection : sources) {
         final @Nullable TP tagProjection = projection.tagProjection(tag.name());
@@ -225,7 +229,7 @@ public abstract class AbstractVarProjection<
     if (varProjections.isEmpty()) throw new IllegalArgumentException("empty list of projections to merge");
     if (varProjections.size() == 1) return varProjections.get(0);
 
-    final @NotNull Set<Type.Tag> tags = collectTags(varProjections);
+    final @NotNull Map<String, Type.Tag> tags = collectTags(varProjections);
 
     final @NotNull Map<String, TP> mergedTags = mergeTags(tags, varProjections);
     boolean mergedParenthesized = mergeParenthesized(varProjections, mergedTags);
