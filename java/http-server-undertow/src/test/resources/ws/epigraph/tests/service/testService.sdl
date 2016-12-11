@@ -42,7 +42,7 @@ resource users: map[PersonId,Person] {
 
   CREATE {
     inputType list[PersonRecord]
-    inputProjection *((
+    inputProjection *(
       firstName,
       lastName,
       bestFriend:(
@@ -61,9 +61,23 @@ resource users: map[PersonId,Person] {
           record( id, firstName, lastName )
         )
       )
-    ))
+    )
 
     outputType list[PersonId] // todo list[PersonId throws epigraph.Error]
+  }
+
+  UPDATE {
+    inputProjection [ /* required */ ]( // todo support forbidden/required
+      :(
+        record(
+          firstName,
+          lastName,
+        )
+      )
+    )
+
+    outputType map[PersonId, epigraph.Error]
+    outputProjection [] (code, message)
   }
 
   DELETE {

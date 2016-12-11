@@ -121,9 +121,11 @@ public class HttpServerTest {
   }
 
   @Test
-  public void testCreateReadDelete() throws UnirestException {
+  public void testCreateReadUpdateDelete() throws UnirestException {
     testCreateRequest("users", "[{'firstName':'Alfred'}]", 201, "[11]");
     testReadRequest("users/11:record(firstName)", 200, "{'firstName':'Alfred'}");
+    testUpdateRequest("users<[11]:record(firstName)", "[{'K':11,'V':{'firstName':'Bruce'}}]", 200, "[]");
+    testReadRequest("users/11:record(firstName)", 200, "{'firstName':'Bruce'}");
     testDeleteRequest(
         "users<[11,12]>[*](code,message)",
         200,
@@ -164,6 +166,16 @@ public class HttpServerTest {
 
     final HttpResponse<String> response =
         Unirest.post(URL_PREFIX + requestUrl).body(requestBody.replaceAll("'", "\"")).asString();
+    final String actualBody = response.getBody().trim();
+    assertEquals(actualBody, expectedStatus, response.getStatus());
+    assertEquals(expectedBody.replace("'", "\""), actualBody);
+  }
+
+  private void testUpdateRequest(String requestUrl, String requestBody, int expectedStatus, String expectedBody)
+      throws UnirestException {
+
+    final HttpResponse<String> response =
+        Unirest.put(URL_PREFIX + requestUrl).body(requestBody.replaceAll("'", "\"")).asString();
     final String actualBody = response.getBody().trim();
     assertEquals(actualBody, expectedStatus, response.getStatus());
     assertEquals(expectedBody.replace("'", "\""), actualBody);

@@ -24,7 +24,7 @@
   - [ ] update test server to support/demo all operations
     - [x] read
     - [x] create
-    - [ ] update
+    - [x] update
     - [x] delete
     - [ ] custom
   - [x] enable real streaming
@@ -32,8 +32,9 @@
 - Important items from [general todo] (todo.md)
   - [ ] Add `type.createBuilder(data)` similar to `toImmutable`
     - [ ] Update demo service
-  - [ ] Gradle plugin: java generator doesn't detect changes in schema
   - [x] fix `equals` on tags
+  - [ ] OpInputKey projections should support the notion of required/forbidden/optional keys, and ReqInput parser should respect/validate it
+  - [ ] Gradle plugin: java generator doesn't detect changes in schema
 
 - Docs
   - Operations

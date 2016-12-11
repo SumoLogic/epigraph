@@ -27,6 +27,7 @@ import ws.epigraph.idl.ResourceIdl;
 import ws.epigraph.idl.operations.CreateOperationIdl;
 import ws.epigraph.idl.operations.DeleteOperationIdl;
 import ws.epigraph.idl.operations.ReadOperationIdl;
+import ws.epigraph.idl.operations.UpdateOperationIdl;
 import ws.epigraph.projections.req.delete.ReqDeleteFieldProjection;
 import ws.epigraph.projections.req.delete.ReqDeleteKeyProjection;
 import ws.epigraph.projections.req.delete.ReqDeleteMapModelProjection;
@@ -39,6 +40,7 @@ import ws.epigraph.types.DatumType;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 public class UsersResource extends Resource {
@@ -53,9 +55,11 @@ public class UsersResource extends Resource {
         Collections.singletonList(
             new CreateOp(((CreateOperationIdl) resourceIdl.operations().get(1)), storage)
         ),
-        Collections.emptyList(),
         Collections.singletonList(
-            new DeleteOp(((DeleteOperationIdl) resourceIdl.operations().get(2)), storage)
+            new UpdateOp(((UpdateOperationIdl) resourceIdl.operations().get(2)), storage)
+        ),
+        Collections.singletonList(
+            new DeleteOp(((DeleteOperationIdl) resourceIdl.operations().get(3)), storage)
         ),
         Collections.emptyList()
     );
@@ -92,27 +96,85 @@ public class UsersResource extends Resource {
     public @NotNull CompletableFuture<ReadOperationResponse<PersonId_List.Data>>
     process(final @NotNull CreateOperationRequest request) {
       // todo operation stubs must be generated
-      final PersonRecord_List recordList =
+      final PersonRecord_List inputList =
           (PersonRecord_List) request.data()._raw().getDatum(PersonRecord_List.type.self);
 
-      final PersonId_List.Builder result = PersonId_List.create();
+      final PersonId_List.Builder.Data resultListDataBuilder = PersonId_List.type.createDataBuilder();
 
-      if (recordList != null) {
-        for (final PersonRecord record : recordList.datums()) {
+      if (inputList == null) {
+        resultListDataBuilder.set_Error(new ErrorValue(400, "Input data not specified"));
+      } else {
+        final PersonId_List.Builder resultListBuilder = PersonId_List.create();
+        resultListDataBuilder.set(resultListBuilder);
+
+        for (final PersonRecord record : inputList.datums()) {
           // we know it's a builder by implementation. Todo: add `toBuilder`!
           final PersonRecord.Builder builder = (PersonRecord.Builder) record;
           final PersonId id = storage.insertPerson(builder);
-          result.add(id);
+          resultListBuilder.add(id);
         }
       }
 
-      return CompletableFuture.completedFuture(
-          new ReadOperationResponse<>(PersonId_List.type.createDataBuilder().set(result))
-      );
+      return CompletableFuture.completedFuture(new ReadOperationResponse<>(resultListDataBuilder));
     }
   }
 
-  // todo figure out return type
+  private static class UpdateOp extends UpdateOperation<PersonId_Error_Map.Data> {
+    private final @NotNull UsersStorage storage;
+
+    protected UpdateOp(final UpdateOperationIdl declaration, final @NotNull UsersStorage storage) {
+      super(declaration);
+      this.storage = storage;
+    }
+
+    @Override
+    public @NotNull CompletableFuture<ReadOperationResponse<PersonId_Error_Map.Data>>
+    process(final @NotNull UpdateOperationRequest request) {
+      final PersonId_Person_Map inputMap =
+          (PersonId_Person_Map) request.data()._raw().getDatum(PersonId_Person_Map.type.self);
+
+      final PersonId_Error_Map.Builder.Data resultMapDataBuilder = PersonId_Error_Map.type.createDataBuilder();
+
+      if (inputMap == null) {
+        resultMapDataBuilder.set_Error(new ErrorValue(400, "Input data not specified"));
+      } else {
+        final PersonId_Error_Map.Builder resultMapBuilder = PersonId_Error_Map.create();
+        resultMapDataBuilder.set(resultMapBuilder);
+
+        for (final Map.Entry<? extends PersonId.Imm, ? extends Person> entry : inputMap.datas().entrySet()) {
+          // do we want to treat puts for non-existent keys as creates or as errors?
+          // treating as creates for now
+
+          final Person.Builder currentPerson =
+              (Person.Builder) storage.users().datas().get(entry.getKey()); // todo toBuilder
+          final Person personUpdate = entry.getValue();
+
+          storage.users().put$(entry.getKey(), update(currentPerson, personUpdate));
+        }
+      }
+
+      return CompletableFuture.completedFuture(new ReadOperationResponse<>(resultMapDataBuilder));
+    }
+
+    private Person update(@Nullable Person.Builder current, @NotNull Person update) {
+      if (current == null) return update;
+
+      final PersonRecord.Builder currentRecord = (PersonRecord.Builder) current.getRecord(); // toBuilder
+      if (currentRecord == null) return update; // or fail?
+
+      final PersonRecord updateRecord = update.getRecord();
+      if (updateRecord == null) return current;
+
+      if (updateRecord.getFirstName_() != null)
+        currentRecord.setFirstName(updateRecord.getFirstName());
+
+      if (updateRecord.getLastName_() != null)
+        currentRecord.setLastName(updateRecord.getLastName());
+
+      return current;
+    }
+  }
+
   private static final class DeleteOp extends DeleteOperation<PersonId_Error_Map.Data> {
     private final @NotNull UsersStorage storage;
 
@@ -124,16 +186,16 @@ public class UsersResource extends Resource {
     @Override
     public @NotNull CompletableFuture<ReadOperationResponse<PersonId_Error_Map.Data>>
     process(final @NotNull DeleteOperationRequest request) {
-      final PersonId_Error_Map.Builder.Data builder = PersonId_Error_Map.type.createDataBuilder();
+      final PersonId_Error_Map.Builder.Data resultBuilder = PersonId_Error_Map.type.createDataBuilder();
 
       final @NotNull ReqDeleteFieldProjection fieldProjection = request.deleteProjection();
       final ReqDeleteTagProjectionEntry tpe = fieldProjection.varProjection().tagProjection(DatumType.MONO_TAG_NAME);
 
       if (tpe == null) {
-        builder.set_Error(new ErrorValue(400, "keys not specified")); // can never happen?
+        resultBuilder.set_Error(new ErrorValue(400, "keys not specified")); // can never happen?
       } else {
-        final PersonId_Error_Map.Builder mapBuilder = PersonId_Error_Map.create();
-        builder.set(mapBuilder);
+        final PersonId_Error_Map.Builder resultMapBuilder = PersonId_Error_Map.create();
+        resultBuilder.set(resultMapBuilder);
 
         final @NotNull ReqDeleteMapModelProjection mmp = (ReqDeleteMapModelProjection) tpe.projection();
         final List<ReqDeleteKeyProjection> keys = mmp.keys();
@@ -144,7 +206,7 @@ public class UsersResource extends Resource {
           final @Nullable Person removedPerson = storage.users().datas().remove(keyValue);
           //noinspection ConstantConditions why?
           if (removedPerson == null)
-            mapBuilder.put(
+            resultMapBuilder.put(
                 keyValue,
                 Error.create()
                     .setCode(epigraph.Integer.create(404))
@@ -154,7 +216,7 @@ public class UsersResource extends Resource {
         }
       }
 
-      return CompletableFuture.completedFuture(new ReadOperationResponse<>(builder));
+      return CompletableFuture.completedFuture(new ReadOperationResponse<>(resultBuilder));
     }
   }
 
