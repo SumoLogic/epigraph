@@ -394,10 +394,9 @@ public class UrlParser implements PsiParser, LightPsiParser {
     if (!nextTokenIs(b, U_LIST)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, U_ANON_LIST, null);
-    r = consumeToken(b, U_LIST);
+    r = consumeTokens(b, 1, U_LIST, U_BRACKET_LEFT);
     p = r; // pin = 1
-    r = r && report_error_(b, consumeToken(b, U_BRACKET_LEFT));
-    r = p && report_error_(b, valueTypeRef(b, l + 1)) && r;
+    r = r && report_error_(b, valueTypeRef(b, l + 1));
     r = p && consumeToken(b, U_BRACKET_RIGHT) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
@@ -410,10 +409,9 @@ public class UrlParser implements PsiParser, LightPsiParser {
     if (!nextTokenIs(b, U_MAP)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, U_ANON_MAP, null);
-    r = consumeToken(b, U_MAP);
+    r = consumeTokens(b, 1, U_MAP, U_BRACKET_LEFT);
     p = r; // pin = 1
-    r = r && report_error_(b, consumeToken(b, U_BRACKET_LEFT));
-    r = p && report_error_(b, typeRef(b, l + 1)) && r;
+    r = r && report_error_(b, typeRef(b, l + 1));
     r = p && report_error_(b, consumeToken(b, U_COMMA)) && r;
     r = p && report_error_(b, valueTypeRef(b, l + 1)) && r;
     r = p && consumeToken(b, U_BRACKET_RIGHT) && r;
@@ -1045,6 +1043,20 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // '(' reqDeleteVarProjection ')'
+  static boolean reqDeleteBracedVarProjection(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqDeleteBracedVarProjection")) return false;
+    if (!nextTokenIs(b, U_PAREN_LEFT)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, U_PAREN_LEFT);
+    r = r && reqDeleteVarProjection(b, l + 1);
+    r = r && consumeToken(b, U_PAREN_RIGHT);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
   // reqParamsAndAnnotations reqDeleteVarProjection
   public static boolean reqDeleteFieldProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqDeleteFieldProjection")) return false;
@@ -1137,7 +1149,7 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '*' ( '(' reqDeleteVarProjection ')' )?
+  // '*' ( ( reqDeleteBracedVarProjection | reqDeleteVarProjection ) )?
   public static boolean reqDeleteListModelProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqDeleteListModelProjection")) return false;
     if (!nextTokenIs(b, U_STAR)) return false;
@@ -1150,27 +1162,26 @@ public class UrlParser implements PsiParser, LightPsiParser {
     return r || p;
   }
 
-  // ( '(' reqDeleteVarProjection ')' )?
+  // ( ( reqDeleteBracedVarProjection | reqDeleteVarProjection ) )?
   private static boolean reqDeleteListModelProjection_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqDeleteListModelProjection_1")) return false;
     reqDeleteListModelProjection_1_0(b, l + 1);
     return true;
   }
 
-  // '(' reqDeleteVarProjection ')'
+  // reqDeleteBracedVarProjection | reqDeleteVarProjection
   private static boolean reqDeleteListModelProjection_1_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqDeleteListModelProjection_1_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeToken(b, U_PAREN_LEFT);
-    r = r && reqDeleteVarProjection(b, l + 1);
-    r = r && consumeToken(b, U_PAREN_RIGHT);
+    r = reqDeleteBracedVarProjection(b, l + 1);
+    if (!r) r = reqDeleteVarProjection(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
   /* ********************************************************** */
-  // reqDeleteKeysProjection ( '(' reqDeleteVarProjection ')' )?
+  // reqDeleteKeysProjection ( ( reqDeleteBracedVarProjection | reqDeleteVarProjection ) )?
   public static boolean reqDeleteMapModelProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqDeleteMapModelProjection")) return false;
     if (!nextTokenIs(b, U_BRACKET_LEFT)) return false;
@@ -1182,21 +1193,20 @@ public class UrlParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // ( '(' reqDeleteVarProjection ')' )?
+  // ( ( reqDeleteBracedVarProjection | reqDeleteVarProjection ) )?
   private static boolean reqDeleteMapModelProjection_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqDeleteMapModelProjection_1")) return false;
     reqDeleteMapModelProjection_1_0(b, l + 1);
     return true;
   }
 
-  // '(' reqDeleteVarProjection ')'
+  // reqDeleteBracedVarProjection | reqDeleteVarProjection
   private static boolean reqDeleteMapModelProjection_1_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqDeleteMapModelProjection_1_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeToken(b, U_PAREN_LEFT);
-    r = r && reqDeleteVarProjection(b, l + 1);
-    r = r && consumeToken(b, U_PAREN_RIGHT);
+    r = reqDeleteBracedVarProjection(b, l + 1);
+    if (!r) r = reqDeleteVarProjection(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -1235,8 +1245,7 @@ public class UrlParser implements PsiParser, LightPsiParser {
     if (!nextTokenIs(b, U_COLON)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, U_REQ_DELETE_MULTI_TAG_PROJECTION, null);
-    r = consumeToken(b, U_COLON);
-    r = r && consumeToken(b, U_PAREN_LEFT);
+    r = consumeTokens(b, 2, U_COLON, U_PAREN_LEFT);
     p = r; // pin = 2
     r = r && report_error_(b, reqDeleteMultiTagProjection_2(b, l + 1));
     r = p && consumeToken(b, U_PAREN_RIGHT) && r;
@@ -1381,8 +1390,7 @@ public class UrlParser implements PsiParser, LightPsiParser {
     if (!nextTokenIs(b, U_TILDA)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, U_REQ_DELETE_VAR_MULTI_TAIL, null);
-    r = consumeToken(b, U_TILDA);
-    r = r && consumeToken(b, U_PAREN_LEFT);
+    r = consumeTokens(b, 2, U_TILDA, U_PAREN_LEFT);
     p = r; // pin = 2
     r = r && report_error_(b, reqDeleteVarMultiTail_2(b, l + 1));
     r = p && consumeToken(b, U_PAREN_RIGHT) && r;
@@ -1516,6 +1524,20 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // '(' reqInputVarProjection ')'
+  static boolean reqInputBracedVarProjection(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqInputBracedVarProjection")) return false;
+    if (!nextTokenIs(b, U_PAREN_LEFT)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, U_PAREN_LEFT);
+    r = r && reqInputVarProjection(b, l + 1);
+    r = r && consumeToken(b, U_PAREN_RIGHT);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
   // reqParamsAndAnnotations reqInputVarProjection
   public static boolean reqInputFieldProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqInputFieldProjection")) return false;
@@ -1608,7 +1630,7 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '*' ( '(' reqInputVarProjection ')' )?
+  // '*' ( ( reqInputBracedVarProjection | reqInputVarProjection ) )?
   public static boolean reqInputListModelProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqInputListModelProjection")) return false;
     if (!nextTokenIs(b, U_STAR)) return false;
@@ -1621,27 +1643,26 @@ public class UrlParser implements PsiParser, LightPsiParser {
     return r || p;
   }
 
-  // ( '(' reqInputVarProjection ')' )?
+  // ( ( reqInputBracedVarProjection | reqInputVarProjection ) )?
   private static boolean reqInputListModelProjection_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqInputListModelProjection_1")) return false;
     reqInputListModelProjection_1_0(b, l + 1);
     return true;
   }
 
-  // '(' reqInputVarProjection ')'
+  // reqInputBracedVarProjection | reqInputVarProjection
   private static boolean reqInputListModelProjection_1_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqInputListModelProjection_1_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeToken(b, U_PAREN_LEFT);
-    r = r && reqInputVarProjection(b, l + 1);
-    r = r && consumeToken(b, U_PAREN_RIGHT);
+    r = reqInputBracedVarProjection(b, l + 1);
+    if (!r) r = reqInputVarProjection(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
   /* ********************************************************** */
-  // reqInputKeysProjection ( '(' reqInputVarProjection ')' )?
+  // reqInputKeysProjection ( ( reqInputBracedVarProjection |  reqInputVarProjection ) )?
   public static boolean reqInputMapModelProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqInputMapModelProjection")) return false;
     if (!nextTokenIs(b, U_BRACKET_LEFT)) return false;
@@ -1653,21 +1674,20 @@ public class UrlParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // ( '(' reqInputVarProjection ')' )?
+  // ( ( reqInputBracedVarProjection |  reqInputVarProjection ) )?
   private static boolean reqInputMapModelProjection_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqInputMapModelProjection_1")) return false;
     reqInputMapModelProjection_1_0(b, l + 1);
     return true;
   }
 
-  // '(' reqInputVarProjection ')'
+  // reqInputBracedVarProjection |  reqInputVarProjection
   private static boolean reqInputMapModelProjection_1_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqInputMapModelProjection_1_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeToken(b, U_PAREN_LEFT);
-    r = r && reqInputVarProjection(b, l + 1);
-    r = r && consumeToken(b, U_PAREN_RIGHT);
+    r = reqInputBracedVarProjection(b, l + 1);
+    if (!r) r = reqInputVarProjection(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -1706,8 +1726,7 @@ public class UrlParser implements PsiParser, LightPsiParser {
     if (!nextTokenIs(b, U_COLON)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, U_REQ_INPUT_MULTI_TAG_PROJECTION, null);
-    r = consumeToken(b, U_COLON);
-    r = r && consumeToken(b, U_PAREN_LEFT);
+    r = consumeTokens(b, 2, U_COLON, U_PAREN_LEFT);
     p = r; // pin = 2
     r = r && report_error_(b, reqInputMultiTagProjection_2(b, l + 1));
     r = p && consumeToken(b, U_PAREN_RIGHT) && r;
@@ -1852,8 +1871,7 @@ public class UrlParser implements PsiParser, LightPsiParser {
     if (!nextTokenIs(b, U_TILDA)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, U_REQ_INPUT_VAR_MULTI_TAIL, null);
-    r = consumeToken(b, U_TILDA);
-    r = r && consumeToken(b, U_PAREN_LEFT);
+    r = consumeTokens(b, 2, U_TILDA, U_PAREN_LEFT);
     p = r; // pin = 2
     r = r && report_error_(b, reqInputVarMultiTail_2(b, l + 1));
     r = p && consumeToken(b, U_PAREN_RIGHT) && r;
@@ -2000,6 +2018,20 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // '(' reqOutputComaVarProjection ')'
+  static boolean reqOutputBracedComaVarProjection(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqOutputBracedComaVarProjection")) return false;
+    if (!nextTokenIs(b, U_PAREN_LEFT)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, U_PAREN_LEFT);
+    r = r && reqOutputComaVarProjection(b, l + 1);
+    r = r && consumeToken(b, U_PAREN_RIGHT);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
   // '+'? qid reqParamsAndAnnotations reqOutputComaVarProjection
   public static boolean reqOutputComaFieldProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqOutputComaFieldProjection")) return false;
@@ -2089,7 +2121,7 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '*' ( '(' reqOutputComaVarProjection ')' )?
+  // '*' ( ( reqOutputBracedComaVarProjection | reqOutputComaVarProjection ) )?
   public static boolean reqOutputComaListModelProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqOutputComaListModelProjection")) return false;
     if (!nextTokenIs(b, U_STAR)) return false;
@@ -2102,27 +2134,26 @@ public class UrlParser implements PsiParser, LightPsiParser {
     return r || p;
   }
 
-  // ( '(' reqOutputComaVarProjection ')' )?
+  // ( ( reqOutputBracedComaVarProjection | reqOutputComaVarProjection ) )?
   private static boolean reqOutputComaListModelProjection_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqOutputComaListModelProjection_1")) return false;
     reqOutputComaListModelProjection_1_0(b, l + 1);
     return true;
   }
 
-  // '(' reqOutputComaVarProjection ')'
+  // reqOutputBracedComaVarProjection | reqOutputComaVarProjection
   private static boolean reqOutputComaListModelProjection_1_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqOutputComaListModelProjection_1_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeToken(b, U_PAREN_LEFT);
-    r = r && reqOutputComaVarProjection(b, l + 1);
-    r = r && consumeToken(b, U_PAREN_RIGHT);
+    r = reqOutputBracedComaVarProjection(b, l + 1);
+    if (!r) r = reqOutputComaVarProjection(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
   /* ********************************************************** */
-  // reqOutputComaKeysProjection ( '(' reqOutputComaVarProjection ')' )?
+  // reqOutputComaKeysProjection ( ( reqOutputBracedComaVarProjection | reqOutputComaVarProjection ) )?
   public static boolean reqOutputComaMapModelProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqOutputComaMapModelProjection")) return false;
     if (!nextTokenIs(b, U_BRACKET_LEFT)) return false;
@@ -2134,21 +2165,20 @@ public class UrlParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // ( '(' reqOutputComaVarProjection ')' )?
+  // ( ( reqOutputBracedComaVarProjection | reqOutputComaVarProjection ) )?
   private static boolean reqOutputComaMapModelProjection_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqOutputComaMapModelProjection_1")) return false;
     reqOutputComaMapModelProjection_1_0(b, l + 1);
     return true;
   }
 
-  // '(' reqOutputComaVarProjection ')'
+  // reqOutputBracedComaVarProjection | reqOutputComaVarProjection
   private static boolean reqOutputComaMapModelProjection_1_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqOutputComaMapModelProjection_1_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeToken(b, U_PAREN_LEFT);
-    r = r && reqOutputComaVarProjection(b, l + 1);
-    r = r && consumeToken(b, U_PAREN_RIGHT);
+    r = reqOutputBracedComaVarProjection(b, l + 1);
+    if (!r) r = reqOutputComaVarProjection(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -2187,8 +2217,7 @@ public class UrlParser implements PsiParser, LightPsiParser {
     if (!nextTokenIs(b, U_COLON)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, U_REQ_OUTPUT_COMA_MULTI_TAG_PROJECTION, null);
-    r = consumeToken(b, U_COLON);
-    r = r && consumeToken(b, U_PAREN_LEFT);
+    r = consumeTokens(b, 2, U_COLON, U_PAREN_LEFT);
     p = r; // pin = 2
     r = r && report_error_(b, reqOutputComaMultiTagProjection_2(b, l + 1));
     r = p && consumeToken(b, U_PAREN_RIGHT) && r;
@@ -2425,8 +2454,7 @@ public class UrlParser implements PsiParser, LightPsiParser {
     if (!nextTokenIs(b, U_COLON)) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeToken(b, U_COLON);
-    r = r && consumeToken(b, U_STAR);
+    r = consumeTokens(b, 0, U_COLON, U_STAR);
     exit_section_(b, m, U_REQ_OUTPUT_STAR_TAG_PROJECTION, r);
     return r;
   }
@@ -2615,8 +2643,7 @@ public class UrlParser implements PsiParser, LightPsiParser {
     if (!nextTokenIs(b, U_TILDA)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, U_REQ_OUTPUT_VAR_MULTI_TAIL, null);
-    r = consumeToken(b, U_TILDA);
-    r = r && consumeToken(b, U_PAREN_LEFT);
+    r = consumeTokens(b, 2, U_TILDA, U_PAREN_LEFT);
     p = r; // pin = 2
     r = r && report_error_(b, reqOutputVarMultiTail_2(b, l + 1));
     r = p && consumeToken(b, U_PAREN_RIGHT) && r;
@@ -2746,6 +2773,20 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // '(' reqUpdateVarProjection ')'
+  static boolean reqUpdateBracedVarProjection(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqUpdateBracedVarProjection")) return false;
+    if (!nextTokenIs(b, U_PAREN_LEFT)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, U_PAREN_LEFT);
+    r = r && reqUpdateVarProjection(b, l + 1);
+    r = r && consumeToken(b, U_PAREN_RIGHT);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
   // reqParamsAndAnnotations reqUpdateVarProjection
   public static boolean reqUpdateFieldProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqUpdateFieldProjection")) return false;
@@ -2843,7 +2884,7 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '*' ( '(' reqUpdateVarProjection ')' )?
+  // '*' ( ( reqUpdateBracedVarProjection | reqUpdateVarProjection ) )?
   public static boolean reqUpdateListModelProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqUpdateListModelProjection")) return false;
     if (!nextTokenIs(b, U_STAR)) return false;
@@ -2856,27 +2897,26 @@ public class UrlParser implements PsiParser, LightPsiParser {
     return r || p;
   }
 
-  // ( '(' reqUpdateVarProjection ')' )?
+  // ( ( reqUpdateBracedVarProjection | reqUpdateVarProjection ) )?
   private static boolean reqUpdateListModelProjection_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqUpdateListModelProjection_1")) return false;
     reqUpdateListModelProjection_1_0(b, l + 1);
     return true;
   }
 
-  // '(' reqUpdateVarProjection ')'
+  // reqUpdateBracedVarProjection | reqUpdateVarProjection
   private static boolean reqUpdateListModelProjection_1_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqUpdateListModelProjection_1_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeToken(b, U_PAREN_LEFT);
-    r = r && reqUpdateVarProjection(b, l + 1);
-    r = r && consumeToken(b, U_PAREN_RIGHT);
+    r = reqUpdateBracedVarProjection(b, l + 1);
+    if (!r) r = reqUpdateVarProjection(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
   /* ********************************************************** */
-  // reqUpdateKeysProjection ( '(' reqUpdateVarProjection ')' )?
+  // reqUpdateKeysProjection ( ( reqUpdateBracedVarProjection | reqUpdateVarProjection ) )?
   public static boolean reqUpdateMapModelProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqUpdateMapModelProjection")) return false;
     if (!nextTokenIs(b, "<req update map model projection>", U_PLUS, U_BRACKET_LEFT)) return false;
@@ -2888,21 +2928,20 @@ public class UrlParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // ( '(' reqUpdateVarProjection ')' )?
+  // ( ( reqUpdateBracedVarProjection | reqUpdateVarProjection ) )?
   private static boolean reqUpdateMapModelProjection_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqUpdateMapModelProjection_1")) return false;
     reqUpdateMapModelProjection_1_0(b, l + 1);
     return true;
   }
 
-  // '(' reqUpdateVarProjection ')'
+  // reqUpdateBracedVarProjection | reqUpdateVarProjection
   private static boolean reqUpdateMapModelProjection_1_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqUpdateMapModelProjection_1_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeToken(b, U_PAREN_LEFT);
-    r = r && reqUpdateVarProjection(b, l + 1);
-    r = r && consumeToken(b, U_PAREN_RIGHT);
+    r = reqUpdateBracedVarProjection(b, l + 1);
+    if (!r) r = reqUpdateVarProjection(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -2941,8 +2980,7 @@ public class UrlParser implements PsiParser, LightPsiParser {
     if (!nextTokenIs(b, U_COLON)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, U_REQ_UPDATE_MULTI_TAG_PROJECTION, null);
-    r = consumeToken(b, U_COLON);
-    r = r && consumeToken(b, U_PAREN_LEFT);
+    r = consumeTokens(b, 2, U_COLON, U_PAREN_LEFT);
     p = r; // pin = 2
     r = r && report_error_(b, reqUpdateMultiTagProjection_2(b, l + 1));
     r = p && consumeToken(b, U_PAREN_RIGHT) && r;
@@ -3103,8 +3141,7 @@ public class UrlParser implements PsiParser, LightPsiParser {
     if (!nextTokenIs(b, U_TILDA)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, U_REQ_UPDATE_VAR_MULTI_TAIL, null);
-    r = consumeToken(b, U_TILDA);
-    r = r && consumeToken(b, U_PAREN_LEFT);
+    r = consumeTokens(b, 2, U_TILDA, U_PAREN_LEFT);
     p = r; // pin = 2
     r = r && report_error_(b, reqUpdateVarMultiTail_2(b, l + 1));
     r = p && consumeToken(b, U_PAREN_RIGHT) && r;
@@ -3250,8 +3287,7 @@ public class UrlParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b, l, _NONE_, U_REQUEST_PARAM, "<request parameter>");
     r = requestParam_0(b, l + 1);
     p = r; // pin = 1
-    r = r && report_error_(b, consumeToken(b, U_PARAM_NAME));
-    r = p && report_error_(b, consumeToken(b, U_EQ)) && r;
+    r = r && report_error_(b, consumeTokens(b, -1, U_PARAM_NAME, U_EQ));
     r = p && datum(b, l + 1) && r;
     exit_section_(b, l, m, r, p, requestParamRecover_parser_);
     return r || p;

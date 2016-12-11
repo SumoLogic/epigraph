@@ -13,14 +13,16 @@ record PersonRecord {
   id: PersonId { avroField = "personId", dbColumn = "ID", dbType = "BIGINT" }
   firstName: String
   lastName: String
-  bestFriend: Person // default id
+  bestFriend: Person
   worstEnemy: PersonRecord
   friends: list[Person]
+  friendRecords: list[PersonRecord]
   friendsMap: map[String, Person]
+  friendRecordMap: map[String, PersonRecord]
 }
 
 // todo this should be removed once we have proper idl/types compiler
-map[PersonId,Person] UsersResourceDummy0 // read output
+map[PersonId, Person] UsersResourceDummy0 // read output
 list[PersonRecord] UserResourceDummy1 // create input
 list[PersonId] UsersResourceDummy2 // create output
-map[PersonId,epigraph.Error] UsersResourceDummy3 // update, delete
+map[PersonId, epigraph.Error] UsersResourceDummy3 // update, delete

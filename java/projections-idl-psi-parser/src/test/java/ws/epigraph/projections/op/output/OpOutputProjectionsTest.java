@@ -178,6 +178,16 @@ public class OpOutputProjectionsTest {
   }
 
   @Test
+  public void testParseList2() throws PsiProcessingException {
+    testParsingVarProjection(":record ( friends * :id )", ":record ( friends *( :id ) )");
+  }
+
+  @Test
+  public void testParseList3() throws PsiProcessingException {
+    testParsingVarProjection(":record ( friends * :record ( id ) )", ":record ( friends *( :record ( id ) ) )");
+  }
+
+  @Test
   public void testParseMap() throws PsiProcessingException {
     testParsingVarProjection(":record ( friendsMap [ forbidden, ;+param: epigraph.String, doc = \"no keys\" ]( :id ) )");
   }

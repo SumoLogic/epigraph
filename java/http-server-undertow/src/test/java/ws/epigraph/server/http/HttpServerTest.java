@@ -125,7 +125,7 @@ public class HttpServerTest {
     testCreateRequest("users", "[{'firstName':'Alfred'}]", 201, "[11]");
     testReadRequest("users/11:record(firstName)", 200, "{'firstName':'Alfred'}");
     testDeleteRequest(
-        "users<[11,12]>[*]((code,message))", // todo get rid of second pair of ()
+        "users<[11,12]>[*](code,message)",
         200,
         "[{\"K\":12,\"V\":{\"code\":404,\"message\":\"Item with id 12 doesn't exist\"}}]"
     );

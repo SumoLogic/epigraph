@@ -38,8 +38,8 @@ import static ws.epigraph.url.projections.req.ReqTestUtil.parseReqOutputVarProje
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ReqOutputProjectionsParserTest {
-  private DataType dataType = new DataType(Person.type, Person.id);
-  private TypesResolver resolver = new SimpleTypesResolver(
+  private final DataType dataType = new DataType(Person.type, Person.id);
+  private final TypesResolver resolver = new SimpleTypesResolver(
       PersonId.type,
       Person.type,
       User.type,
@@ -54,7 +54,7 @@ public class ReqOutputProjectionsParserTest {
       epigraph.String.type
   );
 
-  private OpOutputVarProjection personOpProjection = parsePersonOpOutputVarProjection(
+  private final OpOutputVarProjection personOpProjection = parsePersonOpOutputVarProjection(
       lines(
           ":(",
           "  id,",
@@ -71,7 +71,9 @@ public class ReqOutputProjectionsParserTest {
           "      ),",
           "    ),",
           "    friends *( :(id,record(id)) ),",
+          "    friendRecords * (id),",
           "    friendsMap [;keyParam:epigraph.String]( :(id, record (id, firstName) ) )",
+          "    friendRecordMap [] (id, firstName)",
           "  )",
           ") ~(",
           "      ws.epigraph.tests.User :record (profile)",
@@ -96,6 +98,16 @@ public class ReqOutputProjectionsParserTest {
   @Test
   public void testParseMap() {
     testParse(":record / friendsMap [ 'Alice', 'Bob' !sla = 100 ]( :id )", 3);
+    testParse(
+        ":record / friendsMap [ 'Alice', 'Bob' !sla = 100 ] :id",
+        ":record / friendsMap [ 'Alice', 'Bob' !sla = 100 ]( :id )",
+        3
+    );
+    testParse(
+        ":record / friendRecordMap [ ] ( id )",
+        ":record / friendRecordMap [ ]( ( id ) )",
+        3
+    );
   }
 
   @Test
@@ -106,6 +118,8 @@ public class ReqOutputProjectionsParserTest {
   @Test
   public void testParseList() {
     testParse(":record / friends *( :id )", 3);
+    testParse(":record / friends * :id", ":record / friends *( :id )", 3);
+    testParse(":record / friendRecords * (id)", ":record / friendRecords *( ( id ) )", 3);
   }
 
   @Test
@@ -158,7 +172,7 @@ public class ReqOutputProjectionsParserTest {
   public void testStarFields() {
     testParse(
         ":record(*)",
-        ":record ( id, firstName, bestFriend :(), friends *( :() ), friendsMap [ * ]( :() ) )",
+        ":record ( id, firstName, bestFriend :(), friends *( :() ), friendRecords, friendsMap [ * ]( :() ), friendRecordMap )",
         1
     );
   }
@@ -212,12 +226,12 @@ public class ReqOutputProjectionsParserTest {
 
   // todo negative test cases too
 
-  private void testTailsNormalization(String str, Type type, String expected) throws PsiProcessingException {
-    @NotNull final StepsAndProjection<ReqOutputVarProjection> stepsAndProjection =
+  private void testTailsNormalization(String str, Type type, String expected) {
+    final @NotNull StepsAndProjection<ReqOutputVarProjection> stepsAndProjection =
         parseReqOutputVarProjection(dataType, personOpProjection, str, resolver);
 
     ReqOutputVarProjection varProjection = stepsAndProjection.projection();
-    @NotNull final ReqOutputVarProjection normalized = varProjection.normalizedForType(type);
+    final @NotNull ReqOutputVarProjection normalized = varProjection.normalizedForType(type);
 
     String actual = printReqOutputVarProjection(normalized, stepsAndProjection.pathSteps());
     assertEquals(expected, actual);
@@ -228,7 +242,7 @@ public class ReqOutputProjectionsParserTest {
   }
 
   private ReqOutputVarProjection testParse(String expr, String expectedProjection, int steps) {
-    @NotNull final StepsAndProjection<ReqOutputVarProjection> stepsAndProjection =
+    final @NotNull StepsAndProjection<ReqOutputVarProjection> stepsAndProjection =
         parseReqOutputVarProjection(dataType, personOpProjection, expr, resolver);
 
     assertEquals(steps, stepsAndProjection.pathSteps());
@@ -242,8 +256,7 @@ public class ReqOutputProjectionsParserTest {
     return stepsAndProjection.projection();
   }
 
-  @NotNull
-  private OpOutputVarProjection parsePersonOpOutputVarProjection(@NotNull String projectionString) {
+  private @NotNull OpOutputVarProjection parsePersonOpOutputVarProjection(@NotNull String projectionString) {
     return parseOpOutputVarProjection(dataType, projectionString, resolver);
   }
 

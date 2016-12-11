@@ -303,6 +303,7 @@ opPathKeyProjectionPart ::= opParam | annotation
 opOutputModelMeta ::= 'meta' ':' opOutputModelProjection
 
 opOutputVarProjection ::= ( opOutputMultiTagProjection | opOutputSingleTagProjection ) opOutputVarPolymorphicTail?
+private opOutputBracedVarProjection ::= '(' opOutputVarProjection ')'
 
 opOutputMultiTagProjection ::= ':' '(' (opOutputMultiTagProjectionItem ','?)* ')' {pin=2}
 opOutputSingleTagProjection ::= ( ':' tagName)? (opOutputComplexTagProjection | opOutputSimpleTagProjection )
@@ -333,10 +334,10 @@ private opOutputSimpleFieldProjection ::= opOutputVarProjection
 opOutputFieldProjectionBodyPart ::= opParam | annotation
 
 // op output list
-opOutputListModelProjection ::= '*' '(' opOutputVarProjection ')' { pin=1 }
+opOutputListModelProjection ::= '*' ( opOutputBracedVarProjection | opOutputVarProjection ) { pin=1 }
 
 // op output map
-opOutputMapModelProjection ::= opOutputKeyProjection '(' opOutputVarProjection ')' { pin=1 }
+opOutputMapModelProjection ::= opOutputKeyProjection ( opOutputBracedVarProjection | opOutputVarProjection )  { pin=1 }
 opOutputKeyProjection ::= '[' opOutputKeyProjectionInt ']' {pin=1}
 private opOutputKeyProjectionInt ::= ('required' ','?| 'forbidden' ','?)? (opOutputKeyProjectionPart ','?)*
 opOutputKeyProjectionPart ::= opParam | annotation {
@@ -367,6 +368,8 @@ opInputFieldProjectionBodyPart ::= opParam | annotation // {recoverWhile=opInput
 
 
 opInputVarProjection ::= ( opInputMultiTagProjection | opInputSingleTagProjection ) opInputVarPolymorphicTail?
+private opInputBracedVarProjection ::= '(' opInputVarProjection ')'
+
 opInputMultiTagProjection ::= ':' '(' (opInputMultiTagProjectionItem ','?)* ')' {pin=2}
 opInputSingleTagProjection ::= ( ':' '+'? tagName)? (opInputComplexTagProjection | opInputSimpleTagProjection )
 opInputMultiTagProjectionItem ::= '+'? tagName ( opInputComplexTagProjection | opInputSimpleTagProjection )
@@ -388,10 +391,10 @@ private opInputComplexFieldProjection ::= '{' (opInputFieldProjectionBodyPart ',
 private opInputSimpleFieldProjection ::= opInputVarProjection
 
 // op input list
-opInputListModelProjection ::= '*' '(' opInputVarProjection ')' { pin=1 }
+opInputListModelProjection ::= '*' ( opInputBracedVarProjection | opInputVarProjection ) { pin=1 }
 
 // op input map
-opInputMapModelProjection ::= opInputKeyProjection '(' opInputVarProjection ')' { pin=1 }
+opInputMapModelProjection ::= opInputKeyProjection ( opInputBracedVarProjection | opInputVarProjection ) { pin=1 }
 opInputKeyProjection ::= '[' (opInputKeyProjectionPart ','?)* ']' {pin=1} // todo add required|forbidden as in delete projection
 opInputKeyProjectionPart ::= opParam | annotation {
   recoverWhile = opInputKeyProjectionRecover
@@ -407,6 +410,7 @@ private opInputKeyProjectionRecover ::= ! ( ']' | ',' )
 // + :record ( bestFriend + )
 
 opDeleteVarProjection ::= '+'? ( opDeleteMultiTagProjection | opDeleteSingleTagProjection ) opDeleteVarPolymorphicTail?
+private opDeleteBracedVarProjection ::= '(' opDeleteVarProjection ')'
 
 opDeleteMultiTagProjection ::= ':' '(' (opDeleteMultiTagProjectionItem ','?)* ')' {pin=2}
 opDeleteSingleTagProjection ::= ( ':' tagName)? (opDeleteComplexTagProjection | opDeleteSimpleTagProjection )
@@ -437,10 +441,10 @@ private opDeleteSimpleFieldProjection ::= opDeleteVarProjection
 opDeleteFieldProjectionBodyPart ::= opParam | annotation
 
 // op delete list
-opDeleteListModelProjection ::= '*' '(' opDeleteVarProjection ')' { pin=1 }
+opDeleteListModelProjection ::= '*' ( opDeleteBracedVarProjection | opDeleteVarProjection ) { pin=1 }
 
 // op delete map
-opDeleteMapModelProjection ::= opDeleteKeyProjection '(' opDeleteVarProjection ')' { pin=1 }
+opDeleteMapModelProjection ::= opDeleteKeyProjection ( opDeleteBracedVarProjection | opDeleteVarProjection ) { pin=1 }
 opDeleteKeyProjection ::= '[' opDeleteKeyProjectionInt ']' {pin=1}
 private opDeleteKeyProjectionInt ::= ('required' ','?| 'forbidden' ','?)? (opDeleteKeyProjectionPart ','?)*
 opDeleteKeyProjectionPart ::= opParam | annotation {

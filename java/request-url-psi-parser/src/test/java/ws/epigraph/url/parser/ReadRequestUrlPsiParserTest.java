@@ -47,7 +47,7 @@ import static ws.epigraph.url.parser.RequestUrlPsiParserTestUtil.printParameters
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ReadRequestUrlPsiParserTest {
-  private TypesResolver resolver = new SimpleTypesResolver(
+  private final TypesResolver resolver = new SimpleTypesResolver(
       PersonId.type,
       Person.type,
       User.type,
@@ -58,7 +58,7 @@ public class ReadRequestUrlPsiParserTest {
       epigraph.Boolean.type
   );
 
-  private String idlText = lines(
+  private final String idlText = lines(
       "namespace test",
       "import ws.epigraph.tests.Person",
       "import ws.epigraph.tests.UserRecord",
@@ -80,8 +80,8 @@ public class ReadRequestUrlPsiParserTest {
       "}"
   );
 
-  private ReadOperationIdl readIdl1;
-  private DataType resourceType = String_Person_Map.type.dataType();
+  private final ReadOperationIdl readIdl1;
+  private final DataType resourceType = String_Person_Map.type.dataType();
 
   {
     try {
@@ -115,7 +115,7 @@ public class ReadRequestUrlPsiParserTest {
       int expectedSteps,
       String expectedProjection,
       String expectedParams)
-      throws IOException, PsiProcessingException {
+      throws PsiProcessingException {
 
     List<PsiProcessingError> errors = new ArrayList<>();
     final @NotNull ReadRequestUrl requestUrl = ReadRequestUrlPsiParser.parseReadRequestUrl(
@@ -141,7 +141,7 @@ public class ReadRequestUrlPsiParserTest {
   }
 
 
-  private static UrlReadUrl parseUrlPsi(@NotNull String text) throws IOException {
+  private static UrlReadUrl parseUrlPsi(@NotNull String text) {
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
     @NotNull UrlReadUrl urlPsi =

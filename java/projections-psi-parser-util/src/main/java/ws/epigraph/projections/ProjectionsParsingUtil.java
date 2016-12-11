@@ -140,7 +140,8 @@ public final class ProjectionsParsingUtil {
       MP extends GenModelProjection<?, ?>,
       TP extends GenTagProjectionEntry<TP, MP>,
       VP extends GenVarProjection<VP, TP, MP>
-      > TP findTagProjection(
+      >
+  TP getTagProjection(
       @NotNull String tagName,
       @NotNull VP op,
       @NotNull PsiElement location,
@@ -157,13 +158,13 @@ public final class ProjectionsParsingUtil {
    * Finds default tags for a given {@code type}
    * <p>
    * If it's a {@code DatumType}, then default tag is {@code self}, provided that {@code op} contains it.
-   * If it's a {@code UnionType}, then all default tags from {@code op} are included.
    */
   public static @Nullable <
       MP extends GenModelProjection<?, ?>,
       TP extends GenTagProjectionEntry<TP, MP>,
       VP extends GenVarProjection<VP, TP, MP>
-      > Type.Tag findDefaultTag(
+      >
+  Type.Tag findDefaultTag(
       @NotNull Type type,
       @Nullable VP op,
       @NotNull PsiElement locationPsi,
@@ -172,7 +173,7 @@ public final class ProjectionsParsingUtil {
     if (type.kind() != TypeKind.UNION) {
       DatumType datumType = (DatumType) type;
       final Type.@NotNull Tag self = datumType.self;
-      if (op != null) findTagProjection(self.name(), op, locationPsi, errors); // check that op contains it
+      if (op != null) getTagProjection(self.name(), op, locationPsi, errors); // check that op contains it
       return self;
     }
 

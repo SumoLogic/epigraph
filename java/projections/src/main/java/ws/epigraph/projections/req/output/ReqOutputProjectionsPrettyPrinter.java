@@ -78,7 +78,7 @@ public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
   }
 
   @Override
-  protected String fieldNamePrefix(@NotNull final ReqOutputFieldProjection fieldProjection) {
+  protected String fieldNamePrefix(final @NotNull ReqOutputFieldProjection fieldProjection) {
     return fieldProjection.required() ? "+" : "";
   }
 
@@ -108,15 +108,17 @@ public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
     } else {
       l.beginIInd();
 //      if (mp.keysRequired()) l.print("+");
-      l.print("[").brk();
+      l.print("[");
 
       if (keys == null) {
-        l.print("*");
+        l.brk().print("*");
       } else {
         boolean first = true;
         for (ReqOutputKeyProjection key : keys) {
-          if (first) first = false;
-          else l.print(", ");
+          if (first) {
+            l.brk();
+            first = false;
+          } else l.print(", ");
 
           printReqKey(key);
         }

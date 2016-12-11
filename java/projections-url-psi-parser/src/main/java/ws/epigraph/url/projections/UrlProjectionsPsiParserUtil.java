@@ -58,7 +58,8 @@ import static ws.epigraph.projections.ProjectionsParsingUtil.*;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class UrlProjectionsPsiParserUtil {
+public final class UrlProjectionsPsiParserUtil {
+  private UrlProjectionsPsiParserUtil() {}
 //  @Contract("null -> null; !null -> !null")
 //  @Nullable
 //  public static String getTagName(@Nullable UrlTagName tagNamePsi) {
@@ -72,24 +73,19 @@ public class UrlProjectionsPsiParserUtil {
    * Otherwise gets {@link ProjectionsParsingUtil#findDefaultTag(Type, GenVarProjection, PsiElement, List)}
    * default tag} and, if not {@code null}, returns it; otherwise fails.
    */
-  @NotNull
-  public static <
+  public static @NotNull <
       MP extends GenModelProjection<?, ?>,
       TP extends GenTagProjectionEntry<TP, MP>,
       VP extends GenVarProjection<VP, TP, MP>>
-  Type.Tag findTagOrDefaultTag(
+  Type.Tag getTagOrDefaultTag(
       @NotNull Type type,
       @Nullable UrlTagName idlTagName,
       @NotNull VP opOutputVarProjection,
       @NotNull PsiElement location,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
-    if (idlTagName != null) return findTag(idlTagName, opOutputVarProjection, location, errors);
-    else {
-      final Type.@Nullable Tag defaultTag = findDefaultTag(type, opOutputVarProjection, location, errors);
-
-      if (defaultTag != null) return defaultTag;
-
+    Type.Tag tag = findTagOrDefaultTag(type, idlTagName, opOutputVarProjection, location, errors);
+    if (tag == null)
       throw new PsiProcessingException(
           String.format(
               "Can't build projection for type '%s': no tags specified. Supported tags: {%s}",
@@ -99,46 +95,74 @@ public class UrlProjectionsPsiParserUtil {
           location,
           errors
       );
-    }
+
+    return tag;
+  }
+
+  /**
+   * Finds supported tag with a given name in type {@code type} if {@code idlTagName} is not null.
+   * <p>
+   * Otherwise gets {@link ProjectionsParsingUtil#findDefaultTag(Type, GenVarProjection, PsiElement, List)}
+   * default tag} and, if not {@code null}, returns it; otherwise returns {@code null}.
+   */
+  public static @Nullable <
+      MP extends GenModelProjection<?, ?>,
+      TP extends GenTagProjectionEntry<TP, MP>,
+      VP extends GenVarProjection<VP, TP, MP>>
+
+  Type.Tag findTagOrDefaultTag(
+      @NotNull Type type,
+      @Nullable UrlTagName idlTagName,
+      @NotNull VP opOutputVarProjection,
+      @NotNull PsiElement location,
+      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
+
+    if (idlTagName == null) {
+      final Type.@Nullable Tag defaultTag = findDefaultTag(type, opOutputVarProjection, location, errors);
+
+      return defaultTag == null ? null : defaultTag;
+    } else return getTag(idlTagName, opOutputVarProjection, location, errors);
   }
 
 
   /**
    * Finds supported tag with a given name in type {@code type}
    */
-  @NotNull
-  public static <
+  public static @NotNull <
       MP extends GenModelProjection<?, ?>,
       TP extends GenTagProjectionEntry<TP, MP>,
       VP extends GenVarProjection<VP, TP, MP>>
-  Type.Tag findTag(
+  Type.Tag getTag(
       @NotNull UrlTagName idlTagName,
       @NotNull VP varProjection,
       @NotNull PsiElement location,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
-    return findTagProjection(idlTagName.getQid().getCanonicalName(), varProjection, location, errors).tag();
+    return getTagProjection(idlTagName.getQid().getCanonicalName(), varProjection, location, errors).tag();
   }
 
-  @NotNull
-  public static Type.Tag getTag(
+  public static @NotNull Type.Tag getTag(
       @NotNull Type type,
       @Nullable UrlTagName tagName,
       @Nullable Type.Tag defaultTag,
       @NotNull PsiElement location,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
+    return ProjectionsParsingUtil.getTag(type, getTagNameString(tagName), defaultTag, location, errors);
+  }
+
+  private static @Nullable String getTagNameString(final @Nullable UrlTagName tagName) {
     String tagNameStr = null;
 
-    if (tagName != null)
-      tagNameStr = tagName.getQid().getCanonicalName();
-
-    return ProjectionsParsingUtil.getTag(type, tagNameStr, defaultTag, location, errors);
+    if (tagName != null) {
+      final @Nullable UrlQid qid = tagName.getQid();
+      tagNameStr = qid.getCanonicalName();
+    }
+    return tagNameStr;
   }
 
 
-  @Nullable
-  public static Map<String, Annotation> parseAnnotation(
+  public static @Nullable Map<String, Annotation> parseAnnotation(
       @Nullable Map<String, Annotation> annotationsMap,
       @Nullable UrlAnnotation annotationPsi,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
@@ -162,8 +186,7 @@ public class UrlProjectionsPsiParserUtil {
     return annotationsMap;
   }
 
-  @Nullable
-  public static Datum getDatum(
+  public static @Nullable Datum getDatum(
       @NotNull UrlDatum datumPsi,
       @NotNull DatumType model,
       @NotNull TypesResolver resolver,
@@ -187,53 +210,52 @@ public class UrlProjectionsPsiParserUtil {
     return value;
   }
 
-  @NotNull
-  public static Map<String, GDatum> parseRequestParams(
+  public static @NotNull Map<String, GDatum> parseRequestParams(
       @NotNull List<UrlRequestParam> requestParamList,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
     final Map<String, GDatum> requestParams;
 
-    if (!requestParamList.isEmpty()) {
+    if (requestParamList.isEmpty()) requestParams = Collections.emptyMap();
+    else {
       boolean first = true;
       requestParams = new HashMap<>();
 
       for (UrlRequestParam requestParamPsi : requestParamList) {
         if (first) {
-          @Nullable final PsiElement amp = requestParamPsi.getAmp();
+          final @Nullable PsiElement amp = requestParamPsi.getAmp();
           if (amp != null) errors.add(new PsiProcessingError("'?' expected, got '&'", amp));
           first = false;
         } else {
-          @Nullable final PsiElement qmark = requestParamPsi.getQmark();
+          final @Nullable PsiElement qmark = requestParamPsi.getQmark();
           if (qmark != null) errors.add(new PsiProcessingError("'&' expected, got '?'", qmark));
         }
 
-        @Nullable final PsiElement paramNamePsi = requestParamPsi.getParamName();
+        final @Nullable PsiElement paramNamePsi = requestParamPsi.getParamName();
         if (paramNamePsi == null) {
           errors.add(new PsiProcessingError("Missing parameter name", requestParamPsi));
           continue;
         }
         String paramName = paramNamePsi.getText();
 
-        @Nullable final UrlDatum paramValuePsi = requestParamPsi.getDatum();
+        final @Nullable UrlDatum paramValuePsi = requestParamPsi.getDatum();
         if (paramValuePsi == null) {
           errors.add(new PsiProcessingError(String.format("Missing parameter '%s' value", paramName), requestParamPsi));
           continue;
         }
 
-        @NotNull final GDatum paramValue = UrlGDataPsiParser.parseDatum(paramValuePsi, errors);
+        final @NotNull GDatum paramValue = UrlGDataPsiParser.parseDatum(paramValuePsi, errors);
 
         requestParams.put(paramName, paramValue);
       }
-    } else requestParams = Collections.emptyMap();
+    }
 
     return requestParams;
   }
 
-  @NotNull
-  public static Annotations parseAnnotations(
+  public static @NotNull Annotations parseAnnotations(
       @NotNull List<UrlReqAnnotation> annotationsPsi,
-      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
+      @NotNull List<PsiProcessingError> errors) {
     Map<String, Annotation> paramMap = null;
 
     for (UrlReqAnnotation annotation : annotationsPsi) {
@@ -247,8 +269,7 @@ public class UrlProjectionsPsiParserUtil {
     return Annotations.fromMap(paramMap);
   }
 
-  @NotNull
-  public static ReqParams parseReqParams(
+  public static @NotNull ReqParams parseReqParams(
       @NotNull List<UrlReqParam> reqParamsPsi,
       @Nullable OpParams opParams,
       @NotNull TypesResolver resolver,
@@ -269,8 +290,7 @@ public class UrlProjectionsPsiParserUtil {
     return ReqParams.fromMap(paramMap);
   }
 
-  @Nullable
-  public static Map<String, ReqParam> parseReqParam(
+  public static @Nullable Map<String, ReqParam> parseReqParam(
       @Nullable Map<String, ReqParam> reqParamsMap,
       @Nullable UrlReqParam reqParamPsi,
       @NotNull OpParams opParams,
@@ -298,7 +318,7 @@ public class UrlProjectionsPsiParserUtil {
       final String errorMsgPrefix = String.format("Error processing parameter '%s' value: ", name);
       OpInputModelProjection<?, ?, ?> projection = opParam.projection();
       final DatumType model = projection.model();
-      @NotNull final TypesResolver subResolver = addTypeNamespace(model, resolver);
+      final @NotNull TypesResolver subResolver = addTypeNamespace(model, resolver);
 
       @Nullable Datum value = getDatum(reqParamPsi.getDatum(), model, subResolver, errorMsgPrefix, errors);
       if (value == null) value = projection.defaultValue();
@@ -311,9 +331,8 @@ public class UrlProjectionsPsiParserUtil {
   }
 
 
-  @NotNull
-  public static TypesResolver addTypeNamespace(@NotNull Type type, @NotNull TypesResolver resolver) {
-    @Nullable final Qn namespace = getTypeNamespace(type);
+  public static @NotNull TypesResolver addTypeNamespace(@NotNull Type type, @NotNull TypesResolver resolver) {
+    final @Nullable Qn namespace = getTypeNamespace(type);
 
     if (namespace == null) return resolver;
     else {
@@ -327,9 +346,8 @@ public class UrlProjectionsPsiParserUtil {
     }
   }
 
-  @Nullable
-  public static Qn getTypeNamespace(@NotNull Type type) {
-    @NotNull final TypeName name = type.name();
+  public static @Nullable Qn getTypeNamespace(@NotNull Type type) {
+    final @NotNull TypeName name = type.name();
 
     if (name instanceof QualifiedTypeName) {
       QualifiedTypeName qualifiedTypeName = (QualifiedTypeName) name;
@@ -343,7 +361,7 @@ public class UrlProjectionsPsiParserUtil {
       @Nullable TypeKind actualKind, @NotNull TypeKind expectedKind, @NotNull PsiElement locationPsi,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
-    if (!expectedKind.equals(actualKind))
+    if (expectedKind != actualKind)
       throw new PsiProcessingException(
           String.format("Unexpected projection kind '%s', expected '%s'", actualKind, expectedKind),
           locationPsi,

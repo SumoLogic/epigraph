@@ -70,7 +70,7 @@ resource users: map[PersonId,Person] {
     deleteProjection [ required ] ( + )
 
     outputType map[PersonId, epigraph.Error]
-    outputProjection [] ( (code, message) ) // todo get rid of second pair of ()
+    outputProjection [] (code, message)
   }
 
 }
