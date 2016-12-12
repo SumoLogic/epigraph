@@ -159,6 +159,8 @@ public class HttpServerTest {
         200,
         "[]"
     );
+    Person p = Person.create();
+    p.toImmutable();
   }
 
   public static void main(String[] args) throws ServiceInitializationException {

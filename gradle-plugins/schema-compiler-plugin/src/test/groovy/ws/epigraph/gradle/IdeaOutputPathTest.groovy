@@ -44,7 +44,7 @@ plugins {
   id 'ws.epigraph.schema' version '0.0'
 }
 
-task q << {
+task q { doLast {
   def module = project.idea.module
   if (module == null) throw new Exception('IDEA module not found')
 
@@ -59,7 +59,7 @@ task q << {
 
   if (outputDir == testOutputDir)
     throw new Exception('IDEA module output dir == test output dir')
-}
+} }
 
 """
 

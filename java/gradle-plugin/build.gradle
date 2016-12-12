@@ -16,7 +16,7 @@ apply plugin: 'groovy'
 
 dependencies {
   compile project(':epigraph-java-codegen')
-  compile project(':epigraph-gradle-plugins-common')
+  compile project(':epigraph-gradle-plugin-common')
   compile project(':epigraph-schema-compiler')
 
   compile gradleApi()

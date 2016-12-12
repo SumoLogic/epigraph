@@ -14,7 +14,7 @@ Map<String, String> modules = [
     'examples/users/schema-java'           : 'examples-users-schema-java',
 //  'examples/users/schema-scala'          : 'examples-users-schema-scala',
 //  'examples/users/service'               : 'examples-users-service',
-    'gradle-plugins/gradle-plugins-common' : 'epigraph-gradle-plugins-common',
+    'gradle-plugin-common'                 : 'epigraph-gradle-plugin-common',
     'gradle-plugins/schema-compiler-plugin': 'epigraph-schema-compiler-gradle-plugin',
     'idea-plugin'                          : 'idea-plugin',
 

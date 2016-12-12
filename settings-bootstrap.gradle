@@ -10,7 +10,7 @@ rootProject.name = theName
 
 
 Map<String, String> modules = [
-    'gradle-plugins/gradle-plugins-common' : 'epigraph-gradle-plugins-common',
+    'gradle-plugin-common'                 : 'epigraph-gradle-plugin-common',
     'gradle-plugins/schema-compiler-plugin': 'epigraph-schema-compiler-gradle-plugin',
     'java/codegen'                         : 'epigraph-java-codegen',
     'java/gradle-plugin'                   : 'epigraph-java-gradle-plugin',

@@ -30,21 +30,21 @@
   - [x] enable real streaming
   
 - Important items from [general todo] (todo.md)
-  - [ ] Add `type.createBuilder(data)` similar to `toImmutable`
+  - [ ] Add `type.createBuilder(data)` similar to `toImmutable` (postponed till there are more use cases)
     - [ ] Update demo service
   - [x] fix `equals` on tags
   - [x] OpInputKey projections should support the notion of required/forbidden/optional keys, and ReqInput parser should respect/validate it
   - [ ] Gradle plugin: java generator doesn't detect changes in schema
+
+- [ ] Standalone IDL verifier/compiler
+  - [ ] Maven plugin
+  - [ ] Gradle plugin
 
 - Docs
   - Operations
     - [ ] Overview
     - [ ] IDL
     - [ ] Routing
-  
-- [ ] Standalone IDL verifier/compiler
-  - [ ] Maven plugin
-  - [ ] Gradle plugin
 
 # See also
 - See [General todo] (todo.md)
