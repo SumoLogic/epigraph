@@ -43,8 +43,6 @@ import static ws.epigraph.gradle.GradleUtils.isMainSourceSet
 import static ws.epigraph.gradle.GradleUtils.isTestSourceSet
 
 class EpigraphSchemaCompilerPlugin implements Plugin<ProjectInternal> {
-  private static final String EPIGRAPH_PACKAGING_TYPE = 'epigraph-schema'
-
   private final SourceDirectorySetFactory sourceDirectorySetFactory
   private final Instantiator instantiator
 

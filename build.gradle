@@ -66,8 +66,8 @@ task publishGradlePlugins(dependsOn: [
     ':epigraph-light-psi:publishToMavenLocal',
     ':epigraph-gradle-plugin-common:publishToMavenLocal',
     ':epigraph-java-gradle-plugin:publishToMavenLocal',
-    ':epigraph-schema-compiler:publishToMavenLocal',
-    ':epigraph-schema-compiler-gradle-plugin:publishToMavenLocal'
+    ':epigraph-gradle-plugin:publishToMavenLocal',
+    ':epigraph-schema-compiler:publishToMavenLocal'
 ]) {
   description 'Bootstraps gradle build by installing necessary plugins. Usage: \n gradle -c settings-bootstrap.gradle publishGradlePlugins'
 }
