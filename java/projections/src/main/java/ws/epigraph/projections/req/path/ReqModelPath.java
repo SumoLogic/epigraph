@@ -31,7 +31,7 @@ public abstract class ReqModelPath<
     M extends DatumType>
     extends AbstractReqModelProjection<MP, M> {
 
-  public ReqModelPath(
+  protected ReqModelPath(
       @NotNull M model,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,

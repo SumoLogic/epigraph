@@ -87,6 +87,17 @@ resource users: map[PersonId,Person] {
     outputProjection [] (code, message)
   }
 
+  capitalize CUSTOM {
+    method POST
+    path /.              // only applicable to a single map key
+
+    inputType PersonRecord
+    inputProjection (firstName, lastName)
+
+    outputType PersonRecord
+    outputProjection (firstName, lastName)
+  }
+
 }
 
 resource user: Person {

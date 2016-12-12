@@ -466,10 +466,14 @@ public class UndertowHandler implements HttpHandler {
       JsonParser bodyParser = new JsonFactory().createParser(exchange.getInputStream());
       if (inputProjection == null) {
         OpInputJsonFormatReader bodyReader = new OpInputJsonFormatReader(bodyParser);
-        body = bodyReader.readData(operation.declaration().inputProjection().varProjection());
+        body = wrapIAE(exchange, "Error reading request body", () ->
+            bodyReader.readData(operation.declaration().inputProjection().varProjection())
+        );
       } else {
         ReqInputJsonFormatReader bodyReader = new ReqInputJsonFormatReader(bodyParser);
-        body = bodyReader.readData(inputProjection.varProjection());
+        body = wrapIAE(exchange, "Error reading request body", () ->
+            bodyReader.readData(inputProjection.varProjection())
+        );
       }
 
       // run operation
@@ -564,7 +568,9 @@ public class UndertowHandler implements HttpHandler {
       // read body
       final JsonParser bodyParser = new JsonFactory().createParser(exchange.getInputStream());
       final ReqUpdateJsonFormatReader bodyReader = new ReqUpdateJsonFormatReader(bodyParser);
-      final Data body = bodyReader.readData(updateProjection.varProjection());
+      final Data body = wrapIAE(exchange, "Error reading request body", () ->
+          bodyReader.readData(updateProjection.varProjection())
+      );
 
       // run operation
       final @NotNull StepsAndProjection<ReqOutputFieldProjection> outputProjection =
@@ -733,11 +739,15 @@ public class UndertowHandler implements HttpHandler {
         body = null;
       else {
         OpInputJsonFormatReader bodyReader = new OpInputJsonFormatReader(bodyParser);
-        body = bodyReader.readData(opInputProjection.varProjection());
+        body = wrapIAE(exchange, "Error reading request body", () ->
+            bodyReader.readData(opInputProjection.varProjection())
+        );
       }
     } else {
       ReqInputJsonFormatReader bodyReader = new ReqInputJsonFormatReader(bodyParser);
-      body = bodyReader.readData(inputProjection.varProjection());
+      body = wrapIAE(exchange, "Error reading request body", () ->
+          bodyReader.readData(inputProjection.varProjection())
+      );
     }
 
     // run operation
@@ -785,6 +795,24 @@ public class UndertowHandler implements HttpHandler {
       return promise.completeExceptionally(ex);
     }, duration.toMillis(), MILLISECONDS);
     return promise;
+  }
+
+  private static <T> T wrapIAE(
+      final @NotNull HttpServerExchange exchange,
+      final @NotNull String errorMessage,
+      final @NotNull Callable<T> closure) throws RequestFailedException {
+
+    try {
+      return closure.call();
+    } catch (IllegalArgumentException e) {
+      LOG.info(errorMessage, e);
+      badRequest(errorMessage + " : " + e.getMessage(), CONTENT_TYPE_TEXT, exchange);
+      throw RequestFailedException.INSTANCE;
+    } catch (Exception e) {
+      LOG.info(errorMessage, e);
+      serverError(errorMessage + " : " + e.getMessage(), CONTENT_TYPE_TEXT, exchange);
+      throw RequestFailedException.INSTANCE;
+    }
   }
 
   private void writeData(

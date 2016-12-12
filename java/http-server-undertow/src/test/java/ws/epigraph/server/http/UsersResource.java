@@ -20,18 +20,19 @@ package ws.epigraph.server.http;
 
 import epigraph.Error;
 import epigraph.PersonId_Error_Map;
+import epigraph.String;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.errors.ErrorValue;
 import ws.epigraph.idl.ResourceIdl;
-import ws.epigraph.idl.operations.CreateOperationIdl;
-import ws.epigraph.idl.operations.DeleteOperationIdl;
-import ws.epigraph.idl.operations.ReadOperationIdl;
-import ws.epigraph.idl.operations.UpdateOperationIdl;
+import ws.epigraph.idl.operations.*;
 import ws.epigraph.projections.req.delete.ReqDeleteFieldProjection;
 import ws.epigraph.projections.req.delete.ReqDeleteKeyProjection;
 import ws.epigraph.projections.req.delete.ReqDeleteMapModelProjection;
 import ws.epigraph.projections.req.delete.ReqDeleteTagProjectionEntry;
+import ws.epigraph.projections.req.input.ReqInputFieldProjection;
+import ws.epigraph.projections.req.input.ReqInputRecordModelProjection;
+import ws.epigraph.projections.req.path.ReqMapModelPath;
 import ws.epigraph.service.Resource;
 import ws.epigraph.service.ServiceInitializationException;
 import ws.epigraph.service.operations.*;
@@ -61,7 +62,9 @@ public class UsersResource extends Resource {
         Collections.singletonList(
             new DeleteOp(((DeleteOperationIdl) resourceIdl.operations().get(3)), storage)
         ),
-        Collections.emptyList()
+        Collections.singletonList(
+            new CapitalizeOp(((CustomOperationIdl) resourceIdl.operations().get(4)), storage)
+        )
     );
 
   }
@@ -181,7 +184,7 @@ public class UsersResource extends Resource {
   private static final class DeleteOp extends DeleteOperation<PersonId_Error_Map.Data> {
     private final @NotNull UsersStorage storage;
 
-    protected DeleteOp(final DeleteOperationIdl declaration, final @NotNull UsersStorage storage) {
+    DeleteOp(final DeleteOperationIdl declaration, final @NotNull UsersStorage storage) {
       super(declaration);
       this.storage = storage;
     }
@@ -218,6 +221,63 @@ public class UsersResource extends Resource {
 
         }
       }
+
+      return CompletableFuture.completedFuture(new ReadOperationResponse<>(resultBuilder));
+    }
+  }
+
+  private static final class CapitalizeOp extends CustomOperation<PersonRecord.Data> {
+    private final @NotNull UsersStorage storage;
+
+    protected CapitalizeOp(final CustomOperationIdl declaration, final @NotNull UsersStorage storage) {
+      super(declaration);
+      this.storage = storage;
+    }
+
+    @Override
+    public @NotNull CompletableFuture<ReadOperationResponse<PersonRecord.Data>>
+    process(final @NotNull CustomOperationRequest request) {
+      PersonRecord.Builder.Data resultBuilder = PersonRecord.type.createDataBuilder();
+
+      // todo: use generated projections
+      // todo: generated server stubs should make 'key' directly accessible
+      @SuppressWarnings("ConstantConditions")
+      ReqMapModelPath mapPath =
+          (ReqMapModelPath) request.path().varProjection().tagProjection(DatumType.MONO_TAG_NAME).projection();
+      PersonId key = (PersonId) mapPath.key().value();
+
+      final Person.Builder person = (Person.Builder) storage.users().datas().get(key.toImmutable());
+      if (person == null) {
+        resultBuilder.set_Error(new ErrorValue(404, "Person with id " + key.getVal() + " not found"));
+      } else {
+        PersonRecord.Builder personRecord = (PersonRecord.Builder) person.getRecord();
+        if (personRecord != null) {
+          final ReqInputFieldProjection inputFieldProjection = request.inputProjection();
+          if (inputFieldProjection != null) {
+            ReqInputRecordModelProjection inputProjection = (ReqInputRecordModelProjection) inputFieldProjection
+                .varProjection()
+                .tagProjection(DatumType.MONO_TAG_NAME)
+                .projection();
+
+            if (inputProjection.fieldProjection(PersonRecord.firstName.name()) != null) {
+              final String firstName = personRecord.getFirstName();
+              if (firstName != null) {
+                personRecord.setFirstName(epigraph.String.create(firstName.getVal().toUpperCase()));
+              }
+            }
+
+            if (inputProjection.fieldProjection(PersonRecord.lastName.name()) != null) {
+              final String lastName = personRecord.getFirstName();
+              if (lastName != null) {
+                personRecord.setFirstName(epigraph.String.create(lastName.getVal().toUpperCase()));
+              }
+            }
+
+            resultBuilder.set(personRecord);
+          }
+        }
+      }
+
 
       return CompletableFuture.completedFuture(new ReadOperationResponse<>(resultBuilder));
     }

@@ -21,6 +21,8 @@ import com.intellij.psi.impl.DebugUtil;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
+import com.mashape.unirest.request.BaseRequest;
+import com.mashape.unirest.request.HttpRequestWithBody;
 import epigraph.PersonId_Error_Map;
 import io.undertow.Undertow;
 import io.undertow.UndertowOptions;
@@ -46,8 +48,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertTrue;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -98,17 +103,17 @@ public class HttpServerTest {
 
   @Test
   public void testEmptyRequest() throws UnirestException {
-    testReadRequest("", 400, "Bad URL format. Supported resources: {/user, /users}");
+    get("", 400, "Bad URL format. Supported resources: {/user, /users}");
   }
 
   @Test
   public void testSimpleGet() throws UnirestException {
-    testReadRequest("/users/1:record(id,firstName)", 200, "{'id':1,'firstName':'First1'}");
+    get("/users/1:record(id,firstName)", 200, "{'id':1,'firstName':'First1'}");
   }
 
   @Test
   public void testPolymorphicGet() throws UnirestException {
-    testReadRequest(
+    get(
         "users[4,5](:record(id,firstName,lastName,bestFriend:record(id)~User:record(profile)))",
         200,
         "[{'K':4,'V':" +
@@ -122,17 +127,39 @@ public class HttpServerTest {
 
   @Test
   public void testCreateReadUpdateDelete() throws UnirestException {
-    testCreateRequest("users", "[{'firstName':'Alfred'}]", 201, "[11]");
-    testReadRequest("users/11:record(firstName)", 200, "{'firstName':'Alfred'}");
-    testUpdateRequest("users<[11]:record(firstName)", "[{'K':11,'V':{'firstName':'Bruce'}}]", 200, "[]");
-    testReadRequest("users/11:record(firstName)", 200, "{'firstName':'Bruce'}");
-    testDeleteRequest(
-        "users<[11,12]>[*](code,message)",
+    Integer id = Integer.parseInt(post(null, "users", "[{'firstName':'Alfred'}]", 201, "\\[(\\d+)\\]").group(1));
+    int nextId = id + 1;
+
+    get("users/" + id + ":record(firstName)", 200, "{'firstName':'Alfred'}");
+    put("users<[" + id + "]:record(firstName)", "[{'K':11,'V':{'firstName':'Bruce'}}]", 200, "[]");
+    get("users/" + id + ":record(firstName)", 200, "{'firstName':'Bruce'}");
+    delete(
+        "users<[" + id + "," + nextId + "]>[*](code,message)",
         200,
-        "[{\"K\":12,\"V\":{\"code\":404,\"message\":\"Item with id 12 doesn't exist\"}}]"
+        "[{\"K\":" + nextId + ",\"V\":{\"code\":404,\"message\":\"Item with id " + nextId + " doesn't exist\"}}]"
     );
   }
 
+  @Test
+  public void testCustom() throws UnirestException {
+    Integer id = Integer.parseInt(post(null, "users", "[{'firstName':'Alfred'}]", 201, "\\[(\\d+)\\]").group(1));
+    int nextId = id + 1;
+
+    post(
+        "capitalize",
+        "users/" + nextId,
+        "{'firstName':'Alfred'}",
+        200,
+        "\\{'ERROR':404,'message':'Person with id " + nextId + " not found'\\}"
+    );
+
+    post("capitalize", "users/" + id + "<(firstName)>(firstName,lastName)", null, 200, "\\{'firstName':'ALFRED'\\}");
+    delete(
+        "users<[" + id + "]>[*](code,message)",
+        200,
+        "[]"
+    );
+  }
 
   public static void main(String[] args) throws ServiceInitializationException {
     start();
@@ -154,24 +181,39 @@ public class HttpServerTest {
     server.stop();
   }
 
-  private void testReadRequest(String request, int expectedStatus, String expectedBody) throws UnirestException {
+  private void get(String request, int expectedStatus, String expectedBody) throws UnirestException {
     final HttpResponse<String> response = Unirest.get(URL_PREFIX + request).asString();
     final String actualBody = response.getBody().trim();
     assertEquals(actualBody, expectedStatus, response.getStatus());
     assertEquals(expectedBody.replace("'", "\""), actualBody);
   }
 
-  private void testCreateRequest(String requestUrl, String requestBody, int expectedStatus, String expectedBody)
+  private Matcher post(
+      String operationName,
+      String requestUrl,
+      String requestBody,
+      int expectedStatus,
+      String expectedBodyRegex)
       throws UnirestException {
 
-    final HttpResponse<String> response =
-        Unirest.post(URL_PREFIX + requestUrl).body(requestBody.replaceAll("'", "\"")).asString();
+    HttpRequestWithBody requestWithBody = Unirest.post(URL_PREFIX + requestUrl);
+    if (operationName != null)
+      requestWithBody = requestWithBody.header(RequestHeaders.OPERATION_NAME, operationName);
+
+    final BaseRequest request =
+        requestBody == null ? requestWithBody : requestWithBody.body(requestBody.replaceAll("'", "\""));
+
+    final HttpResponse<String> response = request.asString();
+
     final String actualBody = response.getBody().trim();
     assertEquals(actualBody, expectedStatus, response.getStatus());
-    assertEquals(expectedBody.replace("'", "\""), actualBody);
+    Pattern p = Pattern.compile(expectedBodyRegex.replace("'", "\""));
+    final Matcher matcher = p.matcher(actualBody);
+    assertTrue(matcher.matches());
+    return matcher;
   }
 
-  private void testUpdateRequest(String requestUrl, String requestBody, int expectedStatus, String expectedBody)
+  private void put(String requestUrl, String requestBody, int expectedStatus, String expectedBody)
       throws UnirestException {
 
     final HttpResponse<String> response =
@@ -181,7 +223,7 @@ public class HttpServerTest {
     assertEquals(expectedBody.replace("'", "\""), actualBody);
   }
 
-  private void testDeleteRequest(String requestUrl, int expectedStatus, String expectedBody)
+  private void delete(String requestUrl, int expectedStatus, String expectedBody)
       throws UnirestException {
 
     final HttpResponse<String> response = Unirest.delete(URL_PREFIX + requestUrl).asString();

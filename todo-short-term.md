@@ -16,17 +16,17 @@
   - [x] Update pretty printers
   - [x] Update unmarshallers
   
-- [ ] Undertow handler must support all operations
+- [x] Undertow handler must support all operations
   - [x] add support for create
   - [x] add support for update
   - [x] add support for delete
   - [x] add support for custom
-  - [ ] update test server to support/demo all operations
+  - [x] update test server to support/demo all operations
     - [x] read
     - [x] create
     - [x] update
     - [x] delete
-    - [ ] custom
+    - [x] custom
   - [x] enable real streaming
   
 - Important items from [general todo] (todo.md)

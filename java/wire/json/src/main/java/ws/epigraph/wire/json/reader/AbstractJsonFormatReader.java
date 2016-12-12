@@ -82,19 +82,18 @@ abstract class AbstractJsonFormatReader<
   protected AbstractJsonFormatReader(@NotNull JsonParser jsonParser) { this.in = jsonParser; }
 
   @Override
-  public @NotNull Data readData(@NotNull VP projection) throws IOException {
-//    Data data = readData(projection.type(), Collections.singletonList(projection));
+  public @Nullable Data readData(@NotNull VP projection) throws IOException {
     Data data = readData(Collections.singletonList(projection));
     stepOver(null, "EOF");
     return data;
   }
 
   // DATA ::= POLYDATA or MONODATA
-  private @NotNull Data readData(
+  private @Nullable Data readData(
       @NotNull List<? extends VP> projections // non-empty, polymorphic tails respected
   ) throws IOException {
 
-    nextNonEof();
+    if (in.nextToken() == null) return null;
     return finishReadingData(projections);
   }
 

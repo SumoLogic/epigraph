@@ -34,7 +34,7 @@ public interface FormatReader<
     MP extends GenModelProjection</*MP*/?, ?>,
     Exc extends Exception> {
 
-  @NotNull Data readData(@NotNull VP projection) throws Exc;
+  @Nullable Data readData(@NotNull VP projection) throws Exc;
 
   @Nullable Datum readDatum(@NotNull MP projection) throws Exc;
 
