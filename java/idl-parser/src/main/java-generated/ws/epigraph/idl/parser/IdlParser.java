@@ -2011,7 +2011,7 @@ public class IdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '[' (opInputKeyProjectionPart ','?)* ']'
+  // '[' opInputKeyProjectionInt ']'
   public static boolean opInputKeyProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opInputKeyProjection")) return false;
     if (!nextTokenIs(b, I_BRACKET_LEFT)) return false;
@@ -2019,38 +2019,104 @@ public class IdlParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b, l, _NONE_, I_OP_INPUT_KEY_PROJECTION, null);
     r = consumeToken(b, I_BRACKET_LEFT);
     p = r; // pin = 1
-    r = r && report_error_(b, opInputKeyProjection_1(b, l + 1));
+    r = r && report_error_(b, opInputKeyProjectionInt(b, l + 1));
     r = p && consumeToken(b, I_BRACKET_RIGHT) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
 
+  /* ********************************************************** */
+  // ('required' ','?| 'forbidden' ','?)? (opInputKeyProjectionPart ','?)*
+  static boolean opInputKeyProjectionInt(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opInputKeyProjectionInt")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = opInputKeyProjectionInt_0(b, l + 1);
+    r = r && opInputKeyProjectionInt_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // ('required' ','?| 'forbidden' ','?)?
+  private static boolean opInputKeyProjectionInt_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opInputKeyProjectionInt_0")) return false;
+    opInputKeyProjectionInt_0_0(b, l + 1);
+    return true;
+  }
+
+  // 'required' ','?| 'forbidden' ','?
+  private static boolean opInputKeyProjectionInt_0_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opInputKeyProjectionInt_0_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = opInputKeyProjectionInt_0_0_0(b, l + 1);
+    if (!r) r = opInputKeyProjectionInt_0_0_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // 'required' ','?
+  private static boolean opInputKeyProjectionInt_0_0_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opInputKeyProjectionInt_0_0_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, I_REQUIRED);
+    r = r && opInputKeyProjectionInt_0_0_0_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // ','?
+  private static boolean opInputKeyProjectionInt_0_0_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opInputKeyProjectionInt_0_0_0_1")) return false;
+    consumeToken(b, I_COMMA);
+    return true;
+  }
+
+  // 'forbidden' ','?
+  private static boolean opInputKeyProjectionInt_0_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opInputKeyProjectionInt_0_0_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, I_FORBIDDEN);
+    r = r && opInputKeyProjectionInt_0_0_1_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // ','?
+  private static boolean opInputKeyProjectionInt_0_0_1_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opInputKeyProjectionInt_0_0_1_1")) return false;
+    consumeToken(b, I_COMMA);
+    return true;
+  }
+
   // (opInputKeyProjectionPart ','?)*
-  private static boolean opInputKeyProjection_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opInputKeyProjection_1")) return false;
+  private static boolean opInputKeyProjectionInt_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opInputKeyProjectionInt_1")) return false;
     int c = current_position_(b);
     while (true) {
-      if (!opInputKeyProjection_1_0(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "opInputKeyProjection_1", c)) break;
+      if (!opInputKeyProjectionInt_1_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "opInputKeyProjectionInt_1", c)) break;
       c = current_position_(b);
     }
     return true;
   }
 
   // opInputKeyProjectionPart ','?
-  private static boolean opInputKeyProjection_1_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opInputKeyProjection_1_0")) return false;
+  private static boolean opInputKeyProjectionInt_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opInputKeyProjectionInt_1_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = opInputKeyProjectionPart(b, l + 1);
-    r = r && opInputKeyProjection_1_0_1(b, l + 1);
+    r = r && opInputKeyProjectionInt_1_0_1(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
   // ','?
-  private static boolean opInputKeyProjection_1_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opInputKeyProjection_1_0_1")) return false;
+  private static boolean opInputKeyProjectionInt_1_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opInputKeyProjectionInt_1_0_1")) return false;
     consumeToken(b, I_COMMA);
     return true;
   }

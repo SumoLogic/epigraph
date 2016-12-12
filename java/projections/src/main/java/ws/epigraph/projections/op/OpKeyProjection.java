@@ -26,12 +26,9 @@ import java.util.Objects;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpKeyProjection {
-  @NotNull
-  private final OpParams params;
-  @NotNull
-  private final Annotations annotations;
-  @NotNull
-  private final TextLocation location;
+  private final @NotNull OpParams params;
+  private final @NotNull Annotations annotations;
+  private final @NotNull TextLocation location;
 
   public OpKeyProjection(@NotNull OpParams params, @NotNull Annotations annotations, @NotNull TextLocation location) {
     this.params = params;
@@ -39,14 +36,11 @@ public class OpKeyProjection {
     this.location = location;
   }
 
-  @NotNull
-  public OpParams params() { return params; }
+  public @NotNull OpParams params() { return params; }
 
-  @NotNull
-  public Annotations annotations() { return annotations; }
+  public @NotNull Annotations annotations() { return annotations; }
 
-  @NotNull
-  public TextLocation location() { return location; }
+  public @NotNull TextLocation location() { return location; }
 
   @Override
   public boolean equals(final Object o) {

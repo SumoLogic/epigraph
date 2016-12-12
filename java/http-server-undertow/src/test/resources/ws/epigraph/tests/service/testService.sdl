@@ -67,7 +67,7 @@ resource users: map[PersonId,Person] {
   }
 
   UPDATE {
-    inputProjection [ /* required */ ]( // todo support forbidden/required
+    inputProjection [ required ](
       :(
         record(
           firstName,

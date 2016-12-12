@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Datum;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
+import ws.epigraph.projections.op.OpKeyPresence;
 import ws.epigraph.projections.op.input.*;
 import ws.epigraph.projections.req.ReqParams;
 import ws.epigraph.projections.req.input.*;
@@ -418,6 +419,13 @@ public final class ReqInputProjectionsPsiParser {
       case MAP:
         OpInputMapModelProjection opMap = (OpInputMapModelProjection) op;
 
+        if (opMap.keyProjection().presence() == OpKeyPresence.REQUIRED)
+          throw new PsiProcessingException(
+              String.format("Can't build default projection for '%s': keys are required", type.name()),
+              locationPsi,
+              errors
+          );
+
         MapType mapType = (MapType) type;
         final ReqInputVarProjection valueVarProjection = createDefaultVarProjection(
             mapType.valueType(),
@@ -653,11 +661,17 @@ public final class ReqInputProjectionsPsiParser {
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
+    final UrlReqInputKeysProjection keysProjectionPsi = psi.getReqInputKeysProjection();
 
+    final OpInputKeyProjection opKeyProjection = op.keyProjection();
     final List<ReqInputKeyProjection> keyProjections;
-    if (psi.getReqInputKeysProjection().getStar() == null) {
+
+    if (keysProjectionPsi.getStar() == null) {
+      if (opKeyProjection.presence() == OpKeyPresence.FORBIDDEN)
+        throw new PsiProcessingException("Map keys are forbidden", keysProjectionPsi, errors);
+
       final @NotNull Collection<UrlReqInputKeyProjection> keyProjectionsPsi =
-          psi.getReqInputKeysProjection().getReqInputKeyProjectionList();
+          keysProjectionPsi.getReqInputKeyProjectionList();
 
       keyProjections = new ArrayList<>(keyProjectionsPsi.size());
 
@@ -672,7 +686,7 @@ public final class ReqInputProjectionsPsiParser {
             keyProjections.add(
                 new ReqInputKeyProjection(
                     keyValue,
-                    parseReqParams(keyProjectionPsi.getReqParamList(), op.keyProjection().params(), resolver, errors),
+                    parseReqParams(keyProjectionPsi.getReqParamList(), opKeyProjection.params(), resolver, errors),
                     parseAnnotations(keyProjectionPsi.getReqAnnotationList(), errors),
                     EpigraphPsiUtil.getLocation(keyProjectionPsi)
                 )
@@ -683,8 +697,9 @@ public final class ReqInputProjectionsPsiParser {
         }
       }
     } else {
-      // todo check if op keys are required. Add this notion to op input projection first
       keyProjections = null;
+      if (opKeyProjection.presence() == OpKeyPresence.REQUIRED)
+        throw new PsiProcessingException("Map keys are required", keysProjectionPsi.getStar(), errors);
     }
 
     final @Nullable UrlReqInputVarProjection elementsVarProjectionPsi = psi.getReqInputVarProjection();

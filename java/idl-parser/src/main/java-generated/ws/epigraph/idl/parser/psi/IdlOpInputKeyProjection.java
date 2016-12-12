@@ -16,4 +16,10 @@ public interface IdlOpInputKeyProjection extends PsiElement {
   @Nullable
   PsiElement getBracketRight();
 
+  @Nullable
+  PsiElement getForbidden();
+
+  @Nullable
+  PsiElement getRequired();
+
 }

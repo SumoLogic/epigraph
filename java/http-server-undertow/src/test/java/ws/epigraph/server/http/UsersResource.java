@@ -66,6 +66,9 @@ public class UsersResource extends Resource {
 
   }
 
+  // todo create/update/delete should only take :id model for bestFriend/worstEnemy/friends*
+  // read should use correctly construct them my making separate calls to the 'backend'
+  // it's probably better to implement this once we have generated projection classes
 
   private static final class ReadOp extends ReadOperation<PersonId_Person_Map.Data> {
     private final @NotNull UsersStorage storage;

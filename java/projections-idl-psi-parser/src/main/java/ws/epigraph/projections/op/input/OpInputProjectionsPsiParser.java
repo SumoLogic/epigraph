@@ -28,6 +28,7 @@ import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.StepsAndProjection;
+import ws.epigraph.projections.op.OpKeyPresence;
 import ws.epigraph.projections.op.OpParams;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingError;
@@ -607,6 +608,7 @@ public final class OpInputProjectionsPsiParser {
             annotations,
             null,
             new OpInputKeyProjection(
+                OpKeyPresence.OPTIONAL,
                 OpParams.EMPTY,
                 Annotations.EMPTY,
                 location
@@ -801,13 +803,7 @@ public final class OpInputProjectionsPsiParser {
       }
     }
 
-    final @NotNull List<IdlOpInputKeyProjectionPart> keyPartsPsi =
-        psi.getOpInputKeyProjection().getOpInputKeyProjectionPartList();
-
-    final @NotNull OpParams keyParams =
-        parseParams(keyPartsPsi.stream().map(IdlOpInputKeyProjectionPart::getOpParam), resolver, errors);
-    final @NotNull Annotations keyAnnotations =
-        parseAnnotations(keyPartsPsi.stream().map(IdlOpInputKeyProjectionPart::getAnnotation), errors);
+    @NotNull OpInputKeyProjection keyProjection = parseKeyProjection(psi.getOpInputKeyProjection(), resolver, errors);
 
     @Nullable IdlOpInputVarProjection valueProjectionPsi = psi.getOpInputVarProjection();
     @NotNull OpInputVarProjection valueProjection =
@@ -824,14 +820,40 @@ public final class OpInputProjectionsPsiParser {
             params,
             annotations,
             metaProjection,
-            new OpInputKeyProjection(
-                keyParams,
-                keyAnnotations,
-                EpigraphPsiUtil.getLocation(psi.getOpInputKeyProjection())
-            ),
+            keyProjection,
             valueProjection,
             EpigraphPsiUtil.getLocation(psi)
         )
+    );
+  }
+  
+  private static @NotNull OpInputKeyProjection parseKeyProjection(
+      @NotNull IdlOpInputKeyProjection keyProjectionPsi,
+      @NotNull TypesResolver resolver,
+      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
+
+    final OpKeyPresence presence;
+
+    if (keyProjectionPsi.getForbidden() != null)
+      presence = OpKeyPresence.FORBIDDEN;
+    else if (keyProjectionPsi.getRequired() != null)
+      presence = OpKeyPresence.REQUIRED;
+    else
+      presence = OpKeyPresence.OPTIONAL;
+
+    final @NotNull List<IdlOpInputKeyProjectionPart> keyPartsPsi =
+        keyProjectionPsi.getOpInputKeyProjectionPartList();
+
+    final @NotNull OpParams keyParams =
+        parseParams(keyPartsPsi.stream().map(IdlOpInputKeyProjectionPart::getOpParam), resolver, errors);
+    final @NotNull Annotations keyAnnotations =
+        parseAnnotations(keyPartsPsi.stream().map(IdlOpInputKeyProjectionPart::getAnnotation), errors);
+
+    return new OpInputKeyProjection(
+        presence,
+        keyParams,
+        keyAnnotations,
+        EpigraphPsiUtil.getLocation(keyProjectionPsi)
     );
   }
 

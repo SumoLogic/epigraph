@@ -29,13 +29,11 @@ import java.util.Objects;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpOutputKeyProjection extends OpKeyProjection {
-  @NotNull
-  private final OpKeyPresence presence;
+  private final @NotNull OpKeyPresence presence;
 
-  @NotNull
-  public OpOutputKeyProjection(
-      final @NotNull OpKeyPresence presence, @NotNull final OpParams params,
-      @NotNull final Annotations annotations, @NotNull final TextLocation location) {
+  public @NotNull OpOutputKeyProjection(
+      final @NotNull OpKeyPresence presence, final @NotNull OpParams params,
+      final @NotNull Annotations annotations, final @NotNull TextLocation location) {
     super(params, annotations, location);
     this.presence = presence;
   }

@@ -69,8 +69,7 @@ record OpInputMapModelProjection extends OpInputModelProjection {
 }
 
 record OpInputKeyProjection {
-  forbidden: Boolean
-  required: Boolean // todo: not implemented
+  required: Boolean { doc = "if `null` - keys are not accepted" }
   params: map[String, OpParam]
   annotations: map[String, Annotation]
 }

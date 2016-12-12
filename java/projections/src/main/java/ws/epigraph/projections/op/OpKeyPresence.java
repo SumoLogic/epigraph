@@ -26,15 +26,14 @@ public enum OpKeyPresence {
   OPTIONAL, REQUIRED, FORBIDDEN;
 
   @Contract(pure = true)
-  @Nullable
-  public String getPrettyPrinterString() {
+  public @Nullable String getPrettyPrinterString() {
     if (this == REQUIRED) return "required";
     if (this == FORBIDDEN) return "forbidden";
     return null;
   }
 
-  @Nullable
-  public static OpKeyPresence merge(OpKeyPresence p1, OpKeyPresence p2) {
+  @Contract(pure = true)
+  public static @Nullable OpKeyPresence merge(OpKeyPresence p1, OpKeyPresence p2) {
     if (p1 == OPTIONAL) return p2;
     if (p2 == OPTIONAL) return p1;
     if (p1 == p2) return p1;

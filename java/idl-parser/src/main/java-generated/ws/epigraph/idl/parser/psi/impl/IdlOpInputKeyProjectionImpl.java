@@ -44,4 +44,16 @@ public class IdlOpInputKeyProjectionImpl extends ASTWrapperPsiElement implements
     return findChildByType(I_BRACKET_RIGHT);
   }
 
+  @Override
+  @Nullable
+  public PsiElement getForbidden() {
+    return findChildByType(I_FORBIDDEN);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getRequired() {
+    return findChildByType(I_REQUIRED);
+  }
+
 }

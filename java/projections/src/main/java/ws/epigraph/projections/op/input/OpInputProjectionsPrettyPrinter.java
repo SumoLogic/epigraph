@@ -100,13 +100,19 @@ public class OpInputProjectionsPrettyPrinter<E extends Exception> extends Abstra
     else if (mp instanceof OpInputListModelProjection)
       print((OpInputListModelProjection) mp);
   }
+
   @Override
-  protected String fieldNamePrefix(@NotNull final OpInputFieldProjectionEntry fieldEntry) {
+  protected String fieldNamePrefix(final @NotNull OpInputFieldProjectionEntry fieldEntry) {
     return fieldEntry.fieldProjection().required() ? "+" : "";
   }
 
   private void print(OpInputMapModelProjection mp) throws E {
-    printMapModelProjection(null, mp.keyProjection(), mp.itemsProjection());
+    @NotNull OpInputKeyProjection keyProjection = mp.keyProjection();
+    printMapModelProjection(
+        keyProjection.presence().getPrettyPrinterString(),
+        mp.keyProjection(),
+        mp.itemsProjection()
+    );
   }
 
   private void print(OpInputListModelProjection mp) throws E {

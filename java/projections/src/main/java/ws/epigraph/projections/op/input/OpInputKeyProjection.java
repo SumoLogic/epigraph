@@ -19,16 +19,38 @@ package ws.epigraph.projections.op.input;
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
+import ws.epigraph.projections.op.OpKeyPresence;
 import ws.epigraph.projections.op.OpKeyProjection;
 import ws.epigraph.projections.op.OpParams;
+
+import java.util.Objects;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpInputKeyProjection extends OpKeyProjection {
+  private final @NotNull OpKeyPresence presence;
+
   public OpInputKeyProjection(
-      @NotNull final OpParams params,
-      @NotNull final Annotations annotations, @NotNull final TextLocation location) {
+      final @NotNull OpKeyPresence presence, final @NotNull OpParams params,
+      final @NotNull Annotations annotations, final @NotNull TextLocation location) {
     super(params, annotations, location);
+    this.presence = presence;
+  }
+
+  public OpKeyPresence presence() { return presence; }
+
+  @Override
+  public boolean equals(final Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    if (!super.equals(o)) return false;
+    final OpInputKeyProjection that = (OpInputKeyProjection) o;
+    return presence == that.presence;
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(super.hashCode(), presence);
   }
 }

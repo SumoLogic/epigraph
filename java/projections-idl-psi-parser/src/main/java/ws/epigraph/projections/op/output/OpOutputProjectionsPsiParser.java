@@ -653,23 +653,18 @@ public final class OpOutputProjectionsPsiParser {
     else
       presence = OpKeyPresence.OPTIONAL;
 
-    List<OpParam> params = null;
-    @Nullable Map<String, Annotation> annotationsMap = null;
+    final @NotNull List<IdlOpOutputKeyProjectionPart> keyPartsPsi =
+        keyProjectionPsi.getOpOutputKeyProjectionPartList();
 
-    for (IdlOpOutputKeyProjectionPart keyPart : keyProjectionPsi.getOpOutputKeyProjectionPartList()) {
-      @Nullable IdlOpParam paramPsi = keyPart.getOpParam();
-      if (paramPsi != null) {
-        if (params == null) params = new ArrayList<>(3);
-        params.add(parseParameter(paramPsi, resolver, errors));
-      }
-
-      annotationsMap = parseAnnotation(annotationsMap, keyPart.getAnnotation(), errors);
-    }
+    final @NotNull OpParams keyParams =
+        parseParams(keyPartsPsi.stream().map(IdlOpOutputKeyProjectionPart::getOpParam), resolver, errors);
+    final @NotNull Annotations keyAnnotations =
+        parseAnnotations(keyPartsPsi.stream().map(IdlOpOutputKeyProjectionPart::getAnnotation), errors);
 
     return new OpOutputKeyProjection(
         presence,
-        params == null ? OpParams.EMPTY : new OpParams(params),
-        annotationsMap == null ? Annotations.EMPTY : new Annotations(annotationsMap),
+        keyParams,
+        keyAnnotations,
         EpigraphPsiUtil.getLocation(keyProjectionPsi)
     );
   }

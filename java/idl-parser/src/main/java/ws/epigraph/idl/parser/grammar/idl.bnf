@@ -395,7 +395,8 @@ opInputListModelProjection ::= '*' ( opInputBracedVarProjection | opInputVarProj
 
 // op input map
 opInputMapModelProjection ::= opInputKeyProjection ( opInputBracedVarProjection | opInputVarProjection ) { pin=1 }
-opInputKeyProjection ::= '[' (opInputKeyProjectionPart ','?)* ']' {pin=1} // todo add required|forbidden as in delete projection
+opInputKeyProjection ::= '[' opInputKeyProjectionInt ']' {pin=1} // todo add required|forbidden as in delete projection
+private opInputKeyProjectionInt ::= ('required' ','?| 'forbidden' ','?)? (opInputKeyProjectionPart ','?)*
 opInputKeyProjectionPart ::= opParam | annotation {
   recoverWhile = opInputKeyProjectionRecover
 }
