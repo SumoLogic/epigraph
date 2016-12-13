@@ -125,7 +125,7 @@ public interface Val { // TODO rename to TagEntry?
 
         private final @NotNull Datum.Imm datum;
 
-        public DatumVal(@NotNull Datum.Imm datum) { this.datum = datum; }
+        DatumVal(@NotNull Datum.Imm datum) { this.datum = datum; }
 
         @Override
         public @NotNull Datum.Imm getDatum() { return datum; }
@@ -161,7 +161,7 @@ public interface Val { // TODO rename to TagEntry?
 
         private final @NotNull ErrorValue error;
 
-        public ErrorVal(@NotNull ErrorValue error) { this.error = error; }
+        ErrorVal(@NotNull ErrorValue error) { this.error = error; }
 
         @Override
         public @Nullable Datum.Imm getDatum() { return null; }
@@ -226,7 +226,7 @@ public interface Val { // TODO rename to TagEntry?
 
         private final @NotNull Datum.Builder datum;
 
-        public DatumVal(@NotNull Datum.Builder datum) { this.datum = datum; }
+        DatumVal(@NotNull Datum.Builder datum) { this.datum = datum; }
 
         @Override
         public @NotNull Datum.Builder getDatum() { return datum; }
@@ -264,7 +264,7 @@ public interface Val { // TODO rename to TagEntry?
 
         private final @NotNull ErrorValue error;
 
-        public ErrorVal(@NotNull ErrorValue error) { this.error = error; }
+        ErrorVal(@NotNull ErrorValue error) { this.error = error; }
 
         @Override
         public @Nullable Datum.Imm getDatum() { return null; }

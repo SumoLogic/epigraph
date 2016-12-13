@@ -76,7 +76,7 @@ public final class MapView<K, OV, V> extends AbstractMap<K, V> {
 
     private final Map.Entry<@NotNull K, @NotNull OV> original;
 
-    public Entry(@NotNull Map.Entry<@NotNull K, @NotNull OV> original) { this.original = original; }
+    Entry(@NotNull Map.Entry<@NotNull K, @NotNull OV> original) { this.original = original; }
 
     @Override
     public @NotNull K getKey() { return original.getKey(); }

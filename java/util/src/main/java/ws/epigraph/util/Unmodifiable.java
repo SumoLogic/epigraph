@@ -28,7 +28,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-public class Unmodifiable {
+public final class Unmodifiable {
 
   private static final Class<?> UnmodifiableCollectionClass =
       Collections.unmodifiableCollection(Collections.emptySet()).getClass();
@@ -50,6 +50,8 @@ public class Unmodifiable {
 //
 //  private static final Collection<Class<?>> UnmodifiableSetClasses =
 //      Collections.unmodifiableCollection(Arrays.asList(UnmodifiableSetClass, SingletonSetClass, EmptySetClass));
+
+  private Unmodifiable() {}
 
   @Contract(pure = true)
   public static @NotNull <E> Collection<? extends E> collection(@NotNull Collection<? extends E> collection) {
@@ -235,7 +237,7 @@ public class Unmodifiable {
 
       private final Map.Entry<? extends K, ? extends OV> original;
 
-      public Entry(@NotNull Map.Entry<? extends K, ? extends OV> original) { this.original = original; }
+      Entry(@NotNull Map.Entry<? extends K, ? extends OV> original) { this.original = original; }
 
       @Override
       public K getKey() { return original.getKey(); }

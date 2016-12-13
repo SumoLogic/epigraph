@@ -226,7 +226,7 @@ public interface ListDatum extends Datum {
 
         private final @NotNull ListType listType;
 
-        public DataList(@NotNull ListType listType) { this.listType = listType; }
+        DataList(@NotNull ListType listType) { this.listType = listType; }
 
         @Override
         public E get(int index) { return list.get(index); }

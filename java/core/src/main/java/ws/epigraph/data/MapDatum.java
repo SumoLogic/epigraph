@@ -233,7 +233,7 @@ public interface MapDatum extends Datum {
 
         private final @NotNull MapType mapType;
 
-        public DataMap(@NotNull MapType mapType) { this.mapType = mapType; }
+        DataMap(@NotNull MapType mapType) { this.mapType = mapType; }
 
         @Override // TODO safeguard entry.setValue() as well
         public @NotNull Set<Map.@NotNull Entry<@NotNull K, @NotNull V>> entrySet() { return map.entrySet(); }
