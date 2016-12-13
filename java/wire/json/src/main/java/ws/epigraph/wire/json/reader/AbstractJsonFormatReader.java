@@ -213,7 +213,7 @@ abstract class AbstractJsonFormatReader<
 
   @SuppressWarnings("unchecked")
   private Datum finishReadingDatum(
-      final String firstFieldName,
+      final @Nullable String firstFieldName,
       final @NotNull Collection<? extends MP> tagModelProjections,
       final DatumType type) throws IOException {
 
@@ -343,7 +343,7 @@ abstract class AbstractJsonFormatReader<
 
         stepOver(JsonFormat.MAP_ENTRY_VALUE_FIELD);
 
-        final @NotNull Data value = readData(itemProjections);
+        final @NotNull Data value = readData(itemProjections); // FIXME comment why this is not null?
         datum._raw().elements().put(keyValue.toImmutable(), value);
         stepOver(JsonToken.END_OBJECT);
       } else throw expected("'{' or ']");
@@ -382,7 +382,7 @@ abstract class AbstractJsonFormatReader<
     JsonToken token = in.currentToken();
     final Object nativeValue;
 
-    if (type instanceof StringType) {
+    if (type instanceof StringType) { // TODO introduce PrimitiveType.primitiveKind(): PrimitiveType.Kind; use switch
       ensure(token, JsonToken.VALUE_STRING);
       nativeValue = in.getValueAsString();
     } else if (type instanceof BooleanType) {
@@ -483,13 +483,7 @@ abstract class AbstractJsonFormatReader<
 
   @Override
   public @Nullable Datum readDatum(@NotNull MP projection) throws IOException {
-    final @NotNull JsonToken token = nextNonEof();
-
-    final @Nullable String firstFieldName;
-    if (token == JsonToken.START_OBJECT)
-      firstFieldName = in.nextFieldName();
-    else firstFieldName = null;
-
+    String firstFieldName = nextNonEof() == JsonToken.START_OBJECT ? in.nextFieldName() : null;
     return finishReadingDatum(firstFieldName, Collections.singleton(projection), projection.model());
   }
 

@@ -49,6 +49,7 @@ public abstract class LongType extends PrimitiveType<Long> {
     return (Collection<? extends LongType>) super.supertypes();
   }
 
+  @Override
   public abstract @NotNull LongDatum.Builder createBuilder(@NotNull Long val);
 
 

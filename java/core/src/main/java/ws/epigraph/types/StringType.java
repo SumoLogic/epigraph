@@ -49,6 +49,7 @@ public abstract class StringType extends PrimitiveType<String> {
     return (Collection<? extends StringType>) super.supertypes();
   }
 
+  @Override
   public abstract @NotNull StringDatum.Builder createBuilder(@NotNull String val);
 
 

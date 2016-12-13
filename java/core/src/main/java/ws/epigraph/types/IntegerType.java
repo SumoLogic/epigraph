@@ -49,6 +49,7 @@ public abstract class IntegerType extends PrimitiveType<Integer> {
     return (Collection<? extends IntegerType>) super.supertypes();
   }
 
+  @Override
   public abstract @NotNull IntegerDatum.Builder createBuilder(@NotNull Integer val);
 
 

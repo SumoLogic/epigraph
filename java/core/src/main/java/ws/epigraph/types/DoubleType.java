@@ -49,6 +49,7 @@ public abstract class DoubleType extends PrimitiveType<Double> {
     return (Collection<? extends DoubleType>) super.supertypes();
   }
 
+  @Override
   public abstract @NotNull DoubleDatum.Builder createBuilder(@NotNull Double val);
 
 
