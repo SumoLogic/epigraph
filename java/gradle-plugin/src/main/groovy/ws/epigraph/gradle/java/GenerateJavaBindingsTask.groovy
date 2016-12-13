@@ -18,7 +18,7 @@ package ws.epigraph.gradle.java
 
 import ws.epigraph.java.JavaSchemaGenerator
 import ws.epigraph.gradle.EmptyFileTree
-import ws.epigraph.gradle.EpigraphSchemaTaskBase
+import ws.epigraph.gradle.EpigraphCompileTaskBase
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.file.FileTree
@@ -28,7 +28,7 @@ import org.gradle.api.tasks.ParallelizableTask
 import org.gradle.api.tasks.TaskAction
 
 @ParallelizableTask
-class GenerateJavaBindingsTask extends DefaultTask implements EpigraphSchemaTaskBase {
+class GenerateJavaBindingsTask extends DefaultTask implements EpigraphCompileTaskBase {
   private String sourceSetName
   private File destinationDir
 
@@ -38,7 +38,7 @@ class GenerateJavaBindingsTask extends DefaultTask implements EpigraphSchemaTask
   public void run() {
     destinationDir.mkdirs()
 
-    def context = compileSchemaFiles();
+    def context = compileFiles();
     if (!context.errors().isEmpty())
       throw new GradleException('Epigraph schema compilation failed with errors')
 

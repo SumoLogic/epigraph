@@ -14,10 +14,8 @@
  * limitations under the License.
  */
 
-package ws.epigraph.gradle.schema
+package ws.epigraph.gradle
 
-import ws.epigraph.gradle.DefaultEpigraphSourceSet
-import ws.epigraph.gradle.EpigraphPluginConvention
 import org.gradle.api.Action
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -42,12 +40,12 @@ import javax.inject.Inject
 import static ws.epigraph.gradle.GradleUtils.isMainSourceSet
 import static ws.epigraph.gradle.GradleUtils.isTestSourceSet
 
-class EpigraphSchemaCompilerPlugin implements Plugin<ProjectInternal> {
+class EpigraphCompilerPlugin implements Plugin<ProjectInternal> {
   private final SourceDirectorySetFactory sourceDirectorySetFactory
   private final Instantiator instantiator
 
   @Inject
-  public EpigraphSchemaCompilerPlugin(SourceDirectorySetFactory sourceDirectorySetFactory, Instantiator instantiator) {
+  public EpigraphCompilerPlugin(SourceDirectorySetFactory sourceDirectorySetFactory, Instantiator instantiator) {
     this.sourceDirectorySetFactory = sourceDirectorySetFactory
     this.instantiator = instantiator
   }
@@ -81,7 +79,7 @@ class EpigraphSchemaCompilerPlugin implements Plugin<ProjectInternal> {
 
     sourceSets.all { SourceSet sourceSet ->
       String displayName = sourceSet.getDisplayName()
-      project.getLogger().debug("Epigraph schema compiler: configuring $displayName")
+      project.getLogger().debug("Epigraph compiler: configuring $displayName")
       Convention sourceSetConvention = sourceSet.convention
       DefaultEpigraphSourceSet epigraphSourceSet = new DefaultEpigraphSourceSet(displayName, sourceDirectorySetFactory)
       sourceSetConvention.getPlugins().put('epigraph', epigraphSourceSet)
@@ -91,29 +89,29 @@ class EpigraphSchemaCompilerPlugin implements Plugin<ProjectInternal> {
 
       sourceSet.getAllSource().source(epigraphDirectorySet)
 
-      // create compile schema task for this source set
+      // create compile artifacts task for this source set
       def classesDir = new File(new File(buildDir, "classes"), sourceSet.name) // any way to get it from standard code?
 //      def classesDir = sourceSet.getOutput().classesDir // this is null
       sourceSet.getOutput().classesDir = classesDir
 
-      String compileTaskName = sourceSet.getCompileTaskName('EpigraphSchema')
-      CompileSchemaTask compileSchemaTask = tasks.create(compileTaskName, CompileSchemaTask.class)
-      compileSchemaTask.setDescription("Process $sourceSet.name Epigraph schemas.")
-      compileSchemaTask.setGroup(BasePlugin.BUILD_GROUP)
-      compileSchemaTask.setSource(epigraphDirectorySet)
-      compileSchemaTask.setDestinationDir(classesDir)
-      compileSchemaTask.outputs.dir classesDir
+      String compileTaskName = sourceSet.getCompileTaskName('Epigraph')
+      CompileTask compileTask = tasks.create(compileTaskName, CompileTask.class)
+      compileTask.setDescription("Process $sourceSet.name Epigraph resources.")
+      compileTask.setGroup(BasePlugin.BUILD_GROUP)
+      compileTask.setSource(epigraphDirectorySet)
+      compileTask.setDestinationDir(classesDir)
+      compileTask.outputs.dir classesDir
 
       // create compile configuration
       def compileConfiguration = createCompileConfiguration(project, sourceSet)
       project.getLogger().info("Created configuration '${compileConfiguration.name}'")
 
-      compileSchemaTask.setConfiguration(compileConfiguration)
-      compileSchemaTask.dependsOn compileConfiguration
+      compileTask.setConfiguration(compileConfiguration)
+      compileTask.dependsOn compileConfiguration
 
       configureIdeaModule(project, sourceSet, srcDir)
 
-      def jarTask = createJarTask(project, sourceSet, compileConfiguration, compileSchemaTask)
+      def jarTask = createJarTask(project, sourceSet, compileConfiguration, compileTask)
 
       if (isMainSourceSet(sourceSet)) {
         project.configurations.default.extendsFrom(compileConfiguration)
@@ -135,14 +133,14 @@ class EpigraphSchemaCompilerPlugin implements Plugin<ProjectInternal> {
     TaskContainer tasks = project.tasks
     def test = tasks.create('test')
     test.setGroup(LifecycleBasePlugin.VERIFICATION_GROUP)
-    test.setDescription('Checks that test schemas compile')
+    test.setDescription('Checks that test resources compile')
 
     tasks.findByPath('check').dependsOn(test)
 
     SourceSetContainer sourceSets = project.sourceSets
     sourceSets.each { ss ->
       if (isTestSourceSet(ss)) {
-        String compileTaskName = ss.getCompileTaskName('EpigraphSchema')
+        String compileTaskName = ss.getCompileTaskName('Epigraph')
         test.dependsOn(tasks.findByName(compileTaskName))
       }
     }
@@ -213,7 +211,7 @@ class EpigraphSchemaCompilerPlugin implements Plugin<ProjectInternal> {
   }
 
   private
-  static Jar createJarTask(Project project, SourceSet sourceSet, Configuration configuration, CompileSchemaTask compileSchemaTask) {
+  static Jar createJarTask(Project project, SourceSet sourceSet, Configuration configuration, CompileTask compileTask) {
     TaskContainer tasks = project.getTasks()
     String jarTaskName = sourceSet.getJarTaskName()
 
@@ -221,11 +219,11 @@ class EpigraphSchemaCompilerPlugin implements Plugin<ProjectInternal> {
       def jarTask = tasks.create(jarTaskName, Jar.class, new Action<Jar>() {
         @Override
         void execute(Jar jar) {
-          jar.description = "Assembles a jar archive for $sourceSet.name Epigraph schema"
+          jar.description = "Assembles a jar archive for $sourceSet.name Epigraph resources"
           jar.group = BasePlugin.BUILD_GROUP
-          jar.from(compileSchemaTask.destinationDir)
+          jar.from(compileTask.destinationDir)
 
-          jar.dependsOn(compileSchemaTask)
+          jar.dependsOn(compileTask)
         }
       })
 

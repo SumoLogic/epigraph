@@ -16,7 +16,6 @@
 
 package ws.epigraph.gradle
 
-import ws.epigraph.schema.compiler.*
 import org.gradle.api.GradleException
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.FileTree
@@ -24,6 +23,7 @@ import org.gradle.api.logging.Logger
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.ParallelizableTask
+import ws.epigraph.schema.compiler.*
 
 import java.nio.charset.StandardCharsets
 import java.util.jar.JarFile
@@ -32,7 +32,7 @@ import static EpigraphConstants.SCHEMA_FILE_EXTENSION
 import static EpigraphConstants.SCHEMA_FILE_PATH_PATTERN
 
 @ParallelizableTask
-trait EpigraphSchemaTaskBase {
+trait EpigraphCompileTaskBase {
   // implementations decide on their own if they want to extend `DefaultTask` or `SourceTask`
 
   private Configuration configuration;
@@ -41,7 +41,7 @@ trait EpigraphSchemaTaskBase {
     this.configuration = configuration
   }
 
-  public CContext compileSchemaFiles() {
+  public CContext compileFiles() {
     Collection<Source> sources = getFileSources()
 
     Collection<Source> dependencySources = new ArrayList<>()
@@ -90,7 +90,7 @@ trait EpigraphSchemaTaskBase {
       SchemaCompiler compiler = new SchemaCompiler(sources, dependencySources)
       return compiler.compile()
     } catch (SchemaCompilerException e) {
-      throw new GradleException('Epigraph schema compilation failed', e);
+      throw new GradleException('Epigraph resources compilation failed', e);
     }
   }
 }

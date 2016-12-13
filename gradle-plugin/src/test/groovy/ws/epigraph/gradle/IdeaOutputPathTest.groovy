@@ -41,7 +41,7 @@ class IdeaOutputPathTest extends Specification {
     buildFile << """
 plugins {
   id 'idea'
-  id 'ws.epigraph.schema' version '0.0'
+  id 'ws.epigraph' version '0.0'
 }
 
 task q { doLast {

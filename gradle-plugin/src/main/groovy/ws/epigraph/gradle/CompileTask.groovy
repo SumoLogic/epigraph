@@ -14,10 +14,8 @@
  * limitations under the License.
  */
 
-package ws.epigraph.gradle.schema
+package ws.epigraph.gradle
 
-import ws.epigraph.gradle.EpigraphConstants
-import ws.epigraph.gradle.EpigraphSchemaTaskBase
 import org.gradle.api.GradleException
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.ParallelizableTask
@@ -28,10 +26,10 @@ import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 
 @ParallelizableTask
-class CompileSchemaTask extends SourceTask implements EpigraphSchemaTaskBase {
+class CompileTask extends SourceTask implements EpigraphCompileTaskBase {
   private File destinationDir;
 
-  CompileSchemaTask() {}
+  CompileTask() {}
 
   /**
    * Returns the directory to put verified files into.
@@ -49,7 +47,7 @@ class CompileSchemaTask extends SourceTask implements EpigraphSchemaTaskBase {
 
   @TaskAction
   public void run() {
-    def context = compileSchemaFiles();
+    def context = compileFiles();
 
     if (!context.errors().isEmpty())
       throw new GradleException('Epigraph schema compilation failed with errors')

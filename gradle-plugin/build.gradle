@@ -35,8 +35,8 @@ plugins.withType(JavaPlugin) {
 gradlePlugin {
   plugins {
     epigraph {
-      id = 'ws.epigraph.schema'
-      implementationClass = 'ws.epigraph.gradle.schema.EpigraphSchemaCompilerPlugin'
+      id = 'ws.epigraph'
+      implementationClass = 'ws.epigraph.gradle.EpigraphCompilerPlugin'
     }
   }
 }

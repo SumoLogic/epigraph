@@ -1,5 +1,5 @@
 plugins {
-  id 'ws.epigraph.schema' version "0.0"
+  id 'ws.epigraph' version "0.0"
 }
 
 dependencies {
