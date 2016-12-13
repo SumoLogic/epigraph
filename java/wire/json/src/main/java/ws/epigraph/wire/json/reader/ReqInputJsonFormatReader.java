@@ -53,18 +53,16 @@ public class ReqInputJsonFormatReader extends AbstractJsonFormatReader<
   protected boolean fieldRequired(final @NotNull ReqInputFieldProjectionEntry fieldEntry) { return true; }
 
   @Override
-  protected @Nullable Set<Datum>
-  getExpectedKeys(final @NotNull Collection<? extends ReqInputMapModelProjection> projections) {
+  protected @Nullable Set<Datum> getExpectedKeys(
+      final @NotNull Collection<@NotNull ? extends ReqInputMapModelProjection> projections
+  ) {
     Set<Datum> expectedKeys = null;
-
     for (final ReqInputMapModelProjection projection : projections) {
-      final @Nullable List<ReqInputKeyProjection> keyProjections = projection.keys();
-      if (keyProjections == null) return null; // '*' : all keys allowed
-
+      @Nullable Iterable<ReqInputKeyProjection> keyProjections = projection.keys();
+      if (keyProjections == null) return null; // '*': all keys allowed
       if (expectedKeys == null) expectedKeys = new HashSet<>();
-      expectedKeys.addAll(keyProjections.stream().map(ReqInputKeyProjection::value).collect(Collectors.toList()));
+      for (ReqInputKeyProjection keyProjection : keyProjections) { expectedKeys.add(keyProjection.value()); }
     }
-
     return expectedKeys;
   }
 

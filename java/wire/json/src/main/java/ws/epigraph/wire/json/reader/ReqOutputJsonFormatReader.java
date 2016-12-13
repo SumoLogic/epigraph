@@ -48,28 +48,26 @@ public class ReqOutputJsonFormatReader extends AbstractJsonFormatReader<
   public ReqOutputJsonFormatReader(@NotNull JsonParser jsonParser) { super(jsonParser); }
 
   @Override
-  protected boolean tagRequired(@NotNull final ReqOutputTagProjectionEntry tagProjection) {
+  protected boolean tagRequired(@NotNull ReqOutputTagProjectionEntry tagProjection) {
     return tagProjection.projection().required();
   }
 
   @Override
-  protected boolean fieldRequired(@NotNull final ReqOutputFieldProjectionEntry fieldEntry) {
+  protected boolean fieldRequired(@NotNull ReqOutputFieldProjectionEntry fieldEntry) {
     return fieldEntry.fieldProjection().required();
   }
 
-  @Nullable
   @Override
-  protected Set<Datum> getExpectedKeys(@NotNull final Collection<? extends ReqOutputMapModelProjection> projections) {
+  protected @Nullable Set<Datum> getExpectedKeys(
+      @NotNull Collection<@NotNull ? extends ReqOutputMapModelProjection> projections
+  ) {
     Set<Datum> expectedKeys = null;
-
     for (final ReqOutputMapModelProjection projection : projections) {
-      @Nullable final List<ReqOutputKeyProjection> keyProjections = projection.keys();
-      if (keyProjections == null) return null; // '*' : all keys allowed
-
+      final @Nullable List<ReqOutputKeyProjection> keyProjections = projection.keys();
+      if (keyProjections == null) return null; //'*' : all keys allowed
       if (expectedKeys == null) expectedKeys = new HashSet<>();
-      expectedKeys.addAll(keyProjections.stream().map(ReqOutputKeyProjection::value).collect(Collectors.toList()));
+      for (ReqOutputKeyProjection keyProjection : keyProjections) { expectedKeys.add(keyProjection.value()); }
     }
-
     return expectedKeys;
   }
 

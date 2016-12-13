@@ -60,8 +60,8 @@ public class ReqUpdateMapModelProjection
     this.valuesProjection = valuesProjection;
   }
 
-  @NotNull
-  public ReqUpdateVarProjection itemsProjection() { return valuesProjection; }
+  @Override
+  public @NotNull ReqUpdateVarProjection itemsProjection() { return valuesProjection; }
 
   public boolean updateKeys() { return updateKeys; }
 

@@ -47,23 +47,21 @@ public class ReqUpdateJsonFormatReader extends AbstractJsonFormatReader<
   public ReqUpdateJsonFormatReader(@NotNull JsonParser jsonParser) { super(jsonParser); }
 
   @Override
-  protected boolean tagRequired(@NotNull final ReqUpdateTagProjectionEntry tagProjection) { return true; }
+  protected boolean tagRequired(@NotNull ReqUpdateTagProjectionEntry tagProjection) { return true; }
 
   @Override
-  protected boolean fieldRequired(@NotNull final ReqUpdateFieldProjectionEntry fieldEntry) { return true; }
+  protected boolean fieldRequired(@NotNull ReqUpdateFieldProjectionEntry fieldEntry) { return true; }
 
-  @Nullable
   @Override
-  protected Set<Datum> getExpectedKeys(@NotNull final Collection<? extends ReqUpdateMapModelProjection> projections) {
+  protected @Nullable Set<Datum> getExpectedKeys(
+      @NotNull Collection<@NotNull ? extends ReqUpdateMapModelProjection> projections
+  ) {
     Set<Datum> expectedKeys = null;
-
     for (final ReqUpdateMapModelProjection projection : projections) {
-      @Nullable final List<ReqUpdateKeyProjection> keyProjections = projection.keys();
-
+      final @Nullable Iterable<ReqUpdateKeyProjection> keyProjections = projection.keys();
       if (expectedKeys == null) expectedKeys = new HashSet<>();
-      expectedKeys.addAll(keyProjections.stream().map(ReqUpdateKeyProjection::value).collect(Collectors.toList()));
+      for (ReqUpdateKeyProjection keyProjection : keyProjections) { expectedKeys.add(keyProjection.value()); }
     }
-
     return expectedKeys;
   }
 
