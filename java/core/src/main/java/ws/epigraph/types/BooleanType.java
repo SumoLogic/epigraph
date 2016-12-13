@@ -49,6 +49,7 @@ public abstract class BooleanType extends PrimitiveType<Boolean> {
     return (Collection<? extends BooleanType>) super.supertypes();
   }
 
+  @Override
   public abstract @NotNull BooleanDatum.Builder createBuilder(@NotNull Boolean val);
 
 
@@ -75,7 +76,7 @@ public abstract class BooleanType extends PrimitiveType<Boolean> {
   }
 
 
-  public static abstract class Static< // TODO MyType extends Type.Static<MyType>?
+  public abstract static class Static< // TODO MyType extends Type.Static<MyType>?
       MyImmDatum extends BooleanDatum.Imm.Static,
       MyDatumBuilder extends BooleanDatum.Builder.Static<MyImmDatum, MyBuilderVal>,
       MyImmVal extends Val.Imm.Static,

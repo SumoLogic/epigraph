@@ -36,6 +36,7 @@ public interface LongDatum extends PrimitiveDatum<Long> {
   @Override
   @NotNull LongDatum.Imm toImmutable();
 
+  @Override
   @NotNull Long getVal();
 
 

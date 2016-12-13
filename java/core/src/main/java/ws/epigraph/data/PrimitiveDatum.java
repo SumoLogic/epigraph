@@ -27,18 +27,19 @@ import org.jetbrains.annotations.NotNull;
 public interface PrimitiveDatum<Native> extends Datum {
 
   @Override
-  @NotNull PrimitiveType type();
+  @NotNull PrimitiveType<Native> type();
 
   @Override
-  @NotNull PrimitiveDatum.Raw _raw();
+  @NotNull PrimitiveDatum.Raw<Native> _raw();
 
   @Override
-  @NotNull PrimitiveDatum.Imm toImmutable();
+  @NotNull PrimitiveDatum.Imm<Native> toImmutable();
 
   @NotNull Native getVal();
 
 
-  abstract class Impl<Native, PT extends PrimitiveType> extends Datum.Impl<PT> implements PrimitiveDatum<Native> {
+  abstract class Impl<Native, PT extends PrimitiveType<Native>> extends Datum.Impl<PT>
+      implements PrimitiveDatum<Native> {
 
     protected Impl(@NotNull PT type) { super(type); }
 
@@ -51,7 +52,7 @@ public interface PrimitiveDatum<Native> extends Datum {
   interface Raw<Native> extends PrimitiveDatum<Native>, Datum.Raw {
 
     @Override
-    @NotNull PrimitiveDatum.Imm.Raw toImmutable();
+    @NotNull PrimitiveDatum.Imm.Raw<Native> toImmutable();
 
   }
 
@@ -59,7 +60,7 @@ public interface PrimitiveDatum<Native> extends Datum {
   interface Static<Native> extends PrimitiveDatum<Native>, Datum.Static {
 
     @Override
-    @NotNull PrimitiveDatum.Imm.Static toImmutable();
+    @NotNull PrimitiveDatum.Imm.Static<Native> toImmutable();
 
   }
 
@@ -67,13 +68,13 @@ public interface PrimitiveDatum<Native> extends Datum {
   interface Imm<Native> extends PrimitiveDatum<Native>, Datum.Imm {
 
     @Override
-    @NotNull PrimitiveDatum.Imm.Raw _raw();
+    @NotNull PrimitiveDatum.Imm.Raw<Native> _raw();
 
 
     interface Raw<Native> extends PrimitiveDatum.Imm<Native>, PrimitiveDatum.Raw<Native>, Datum.Imm.Raw {
 
       @Override
-      @NotNull PrimitiveDatum.Imm.Raw _raw();
+      @NotNull PrimitiveDatum.Imm.Raw<Native> _raw();
 
     }
 
@@ -81,10 +82,10 @@ public interface PrimitiveDatum<Native> extends Datum {
     interface Static<Native> extends PrimitiveDatum.Imm<Native>, PrimitiveDatum.Static<Native>, Datum.Imm.Static {
 
       @Override
-      @NotNull PrimitiveDatum.Imm.Static toImmutable();
+      @NotNull PrimitiveDatum.Imm.Static<Native> toImmutable();
 
       @Override
-      @NotNull PrimitiveDatum.Imm.Raw _raw();
+      @NotNull PrimitiveDatum.Imm.Raw<Native> _raw();
 
     }
 
@@ -97,7 +98,7 @@ public interface PrimitiveDatum<Native> extends Datum {
     void setVal(@NotNull Native val);
 
     @Override
-    @NotNull PrimitiveDatum.Builder.Raw _raw();
+    @NotNull PrimitiveDatum.Builder.Raw<Native> _raw();
 
 
     interface Raw<Native> extends PrimitiveDatum.Builder<Native>, PrimitiveDatum.Raw<Native>, Datum.Builder.Raw {}
@@ -115,7 +116,7 @@ public interface PrimitiveDatum<Native> extends Datum {
     void setVal(@NotNull Native val);
 
     @Override
-    @NotNull PrimitiveDatum.Mut.Raw _raw();
+    @NotNull PrimitiveDatum.Mut.Raw<Native> _raw();
 
 
     interface Raw<Native> extends PrimitiveDatum.Mut<Native>, PrimitiveDatum.Raw<Native>, Datum.Mut.Raw {}

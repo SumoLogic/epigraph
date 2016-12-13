@@ -141,7 +141,7 @@ public interface Val { // TODO rename to TagEntry?
 
       static final class NullVal extends Val.Imm.Raw {
 
-        public static @NotNull NullVal instance = new NullVal();
+        public static final @NotNull NullVal instance = new NullVal();
 
         private NullVal() {}
 
