@@ -50,7 +50,7 @@ object ParseErrorsDumper {
 
     val visitor = new PsiRecursiveElementWalkingVisitor() {
       override def visitErrorElement(element: PsiErrorElement): Unit = {
-        errors += new CError(fileName, lineNumberUtil.pos(element), element.getErrorDescription)
+        errors += CError(fileName, lineNumberUtil.pos(element), element.getErrorDescription)
       }
     }
     sf.accept(visitor)
