@@ -34,7 +34,7 @@
     - [ ] Update demo service
   - [x] fix `equals` on tags
   - [x] OpInputKey projections should support the notion of required/forbidden/optional keys, and ReqInput parser should respect/validate it
-  - [ ] Gradle plugin: java generator doesn't detect changes in schema
+  - [x] Gradle plugin: java generator doesn't detect changes in schema
 
 - [ ] Standalone IDL verifier/compiler
   - [ ] Maven plugin

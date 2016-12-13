@@ -36,7 +36,7 @@ import static ws.epigraph.gradle.GradleUtils.isTestSourceSet
 
 class EpigraphJavaPlugin implements Plugin<ProjectInternal> {
   private final Instantiator instantiator
-  private Configuration schemasConfiguration
+  private Configuration epigraphConfiguration
 
   @Inject
   EpigraphJavaPlugin(Instantiator instantiator) {
@@ -55,7 +55,7 @@ class EpigraphJavaPlugin implements Plugin<ProjectInternal> {
     EpigraphPluginConvention epigraphConvention = new EpigraphPluginConvention(project, instantiator)
     project.getConvention().getPlugins().put(EpigraphPluginConvention.NAME, epigraphConvention)
 
-    schemasConfiguration = project.configurations.create('epigraphSchema')
+    epigraphConfiguration = project.configurations.create('epigraph')
 
     configureSourceSets(project)
   }
@@ -84,8 +84,8 @@ class EpigraphJavaPlugin implements Plugin<ProjectInternal> {
           compileJavaTask.source destinationDir
         }
 
-        task.setConfiguration(schemasConfiguration)
-        task.dependsOn schemasConfiguration
+        task.setConfiguration(epigraphConfiguration)
+        task.dependsOn epigraphConfiguration
 
         if (project.hasProperty('idea')) {
           def ideaModule = project.idea.module

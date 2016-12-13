@@ -5,7 +5,7 @@ plugins {
 group = 'ws.epigraph.tests'
 
 dependencies {
-  epigraphSchema project(':tests-schema')
+  epigraph project(':tests-schema')
 
   compile project(':epigraph-java-core')
 

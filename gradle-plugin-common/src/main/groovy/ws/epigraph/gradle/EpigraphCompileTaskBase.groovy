@@ -18,6 +18,7 @@ package ws.epigraph.gradle
 
 import org.gradle.api.GradleException
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileTree
 import org.gradle.api.logging.Logger
 import org.gradle.api.tasks.InputFiles
@@ -35,7 +36,7 @@ import static EpigraphConstants.SCHEMA_FILE_PATH_PATTERN
 trait EpigraphCompileTaskBase {
   // implementations decide on their own if they want to extend `DefaultTask` or `SourceTask`
 
-  private Configuration configuration;
+  private Configuration configuration
 
   void setConfiguration(Configuration configuration) {
     this.configuration = configuration
@@ -50,7 +51,6 @@ trait EpigraphCompileTaskBase {
     return compileFiles(sources, dependencySources)
   }
 
-
   @Internal
   List<FileSource> getFileSources() {
     getSource().files.collect { new FileSource(it) }
@@ -62,18 +62,22 @@ trait EpigraphCompileTaskBase {
   @InputFiles
   public abstract FileTree getSource();
 
+  @InputFiles
+  public FileCollection getDependencies() {
+    getLogger().debug("Getting dependencies from ${configuration}")
+    return configuration
+  }
+
   @Internal
   private Collection<Source> getDependencySources() {
-    getLogger().debug("Getting dependencies from ${configuration}")
-    if (configuration == null) return Collections.emptyList()
+    def dependencies = getDependencies()
+    if (dependencies == null) return Collections.emptyList()
 
     Collection<Source> dependencySources = new ArrayList<>()
 
-    configuration.files.each {
-      // TODO take charset from build props
-
-      getLogger().debug("Adding $it")
+    dependencies.files.each {
       if (it.name.endsWith('.jar')) {
+        // TODO take charset from build props
         JarSource.allFiles(new JarFile(it), SCHEMA_FILE_PATH_PATTERN, StandardCharsets.UTF_8).each {
           dependencySources.add(it)
         }
@@ -90,7 +94,7 @@ trait EpigraphCompileTaskBase {
       SchemaCompiler compiler = new SchemaCompiler(sources, dependencySources)
       return compiler.compile()
     } catch (SchemaCompilerException e) {
-      throw new GradleException('Epigraph resources compilation failed', e);
+      throw new GradleException('Epigraph resources compilation failed', e)
     }
   }
 }
