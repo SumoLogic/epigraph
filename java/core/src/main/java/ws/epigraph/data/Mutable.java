@@ -21,4 +21,4 @@ package ws.epigraph.data;
 /**
  * Marker interface for all mutable data structures.
  */
-public interface Mutable {}
+public interface Mutable {} // TODO not sure we need this interface

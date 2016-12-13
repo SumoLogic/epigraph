@@ -192,10 +192,10 @@ public class ImportAwareTypesResolverTest {
       public @NotNull Data.Builder createDataBuilder() { return null; }
 
       @Override
-      public Val.Imm createValue(@Nullable ErrorValue errorOrNull) { return null; }
+      public @NotNull Val.Imm createValue(@Nullable ErrorValue errorOrNull) { return null; }
 
       @Override
-      public @NotNull PrimitiveDatum.Builder<String> createBuilder(String val) { return null; }
+      public @NotNull PrimitiveDatum.Builder<String> createBuilder(@NotNull String val) { return null; }
     };
   }
 
