@@ -28,6 +28,12 @@ public class SchemaDefsImpl extends ASTWrapperPsiElement implements SchemaDefs {
 
   @Override
   @NotNull
+  public List<SchemaResourceDef> getResourceDefList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaResourceDef.class);
+  }
+
+  @Override
+  @NotNull
   public List<SchemaSupplementDef> getSupplementDefList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaSupplementDef.class);
   }

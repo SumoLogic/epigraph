@@ -18,8 +18,8 @@ public class SchemaRecordTypeDefImpl extends SchemaRecordTypeDefImplBase impleme
     super(node);
   }
 
-  public SchemaRecordTypeDefImpl(SchemaRecordTypeDefStub stub, IStubElementType nodeType) {
-    super(stub, nodeType);
+  public SchemaRecordTypeDefImpl(SchemaRecordTypeDefStub stub, IStubElementType type) {
+    super(stub, type);
   }
 
   public void accept(@NotNull SchemaVisitor visitor) {

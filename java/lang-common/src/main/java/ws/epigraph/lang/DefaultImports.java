@@ -24,13 +24,16 @@ import java.util.List;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public final class DefaultImports {
-
-  public static final List<? extends Qn> DEFAULT_IMPORTS_LIST = Collections.unmodifiableList(Arrays.asList(
+  public static final Qn[] DEFAULT_IMPORTS = {
       new Qn("epigraph", "String"),
       new Qn("epigraph", "Integer"),
       new Qn("epigraph", "Long"),
       new Qn("epigraph", "Double"),
       new Qn("epigraph", "Boolean")
+  };
+
+  public static final List<? extends Qn> DEFAULT_IMPORTS_LIST = Collections.unmodifiableList(Arrays.asList(
+      DEFAULT_IMPORTS
   ));
 
   private DefaultImports() {}

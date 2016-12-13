@@ -11,7 +11,7 @@ import static ws.epigraph.schema.lexer.SchemaElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import ws.epigraph.schema.parser.psi.*;
 
-public class SchemaTypeRefImpl extends ASTWrapperPsiElement implements SchemaTypeRef {
+public abstract class SchemaTypeRefImpl extends ASTWrapperPsiElement implements SchemaTypeRef {
 
   public SchemaTypeRefImpl(ASTNode node) {
     super(node);

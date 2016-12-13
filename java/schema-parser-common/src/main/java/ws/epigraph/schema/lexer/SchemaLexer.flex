@@ -44,6 +44,7 @@ ID=([:letter:]([:letter:]|[:digit:])*)|(`[^`]*`)
   "import"             { return S_IMPORT; }
   "namespace"          { return S_NAMESPACE; }
   "default"            { return S_DEFAULT; }
+  "resource"           { return S_RESOURCE; }
   "nodefault"          { return S_NODEFAULT; }
   "map"                { return S_MAP; }
   "list"               { return S_LIST; }
@@ -65,11 +66,15 @@ ID=([:letter:]([:letter:]|[:digit:])*)|(`[^`]*`)
   ":"                  { return S_COLON; }
   "."                  { return S_DOT; }
   ","                  { return S_COMMA; }
+  ";"                  { return S_SEMICOLON; }
   "="                  { return S_EQ; }
   "{"                  { return S_CURLY_LEFT; }
   "}"                  { return S_CURLY_RIGHT; }
   "["                  { return S_BRACKET_LEFT; }
   "]"                  { return S_BRACKET_RIGHT; }
+  "~"                  { return S_TILDA; }
+  "*"                  { return S_STAR; }
+  "+"                  { return S_PLUS; }
   "("                  { return S_PAREN_LEFT; }
   ")"                  { return S_PAREN_RIGHT; }
   "<"                  { return S_ANGLE_LEFT; }
@@ -77,6 +82,28 @@ ID=([:letter:]([:letter:]|[:digit:])*)|(`[^`]*`)
   "/"                  { return S_SLASH; }
   "@"                  { return S_AT; }
   "#"                  { return S_HASH; }
+  "_"                  { return S_UNDERSCORE; }
+  "!"                  { return S_BANG; }
+
+  // idl - specific
+  "forbidden"          { return S_FORBIDDEN; }
+  "required"           { return S_REQUIRED; }
+  "default"            { return S_DEFAULT; }
+  "GET"                { return S_GET; }
+  "POST"               { return S_POST; }
+  "PUT"                { return S_PUT; }
+  "READ"               { return S_READ; }
+  "CREATE"             { return S_CREATE; }
+  "UPDATE"             { return S_UPDATE; }
+  "DELETE"             { return S_DELETE; }
+  "CUSTOM"             { return S_CUSTOM; }
+  "method"             { return S_METHOD; }
+  "inputType"          { return S_INPUT_TYPE; }
+  "inputProjection"    { return S_INPUT_PROJECTION; }
+  "outputType"         { return S_OUTPUT_TYPE; }
+  "outputProjection"   { return S_OUTPUT_PROJECTION; }
+  "deleteProjection"   { return S_DELETE_PROJECTION; }
+  "path"               { return S_PATH; }
 
   {STRING}             { return S_STRING; }
   {NUMBER}             { return S_NUMBER; }

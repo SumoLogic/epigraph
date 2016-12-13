@@ -11,7 +11,7 @@ import static ws.epigraph.schema.lexer.SchemaElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import ws.epigraph.schema.parser.psi.*;
 
-public class SchemaDatumImpl extends ASTWrapperPsiElement implements SchemaDatum {
+public abstract class SchemaDatumImpl extends ASTWrapperPsiElement implements SchemaDatum {
 
   public SchemaDatumImpl(ASTNode node) {
     super(node);

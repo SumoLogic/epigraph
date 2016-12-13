@@ -12,19 +12,21 @@ import com.intellij.extapi.psi.StubBasedPsiElementBase;
 import ws.epigraph.schema.parser.psi.stubs.SchemaNamespaceDeclStub;
 import ws.epigraph.schema.parser.psi.*;
 import ws.epigraph.lang.Qn;
+import com.intellij.psi.stubs.IStubElementType;
+import com.intellij.psi.tree.IElementType;
 
 public class SchemaNamespaceDeclImpl extends StubBasedPsiElementBase<SchemaNamespaceDeclStub> implements SchemaNamespaceDecl {
 
-  public SchemaNamespaceDeclImpl(SchemaNamespaceDeclStub stub, com.intellij.psi.stubs.IStubElementType nodeType) {
-    super(stub, nodeType);
+  public SchemaNamespaceDeclImpl(SchemaNamespaceDeclStub stub, IStubElementType type) {
+    super(stub, type);
   }
 
   public SchemaNamespaceDeclImpl(ASTNode node) {
     super(node);
   }
 
-  public SchemaNamespaceDeclImpl(SchemaNamespaceDeclStub stub, com.intellij.psi.tree.IElementType nodeType, ASTNode node) {
-    super(stub, nodeType, node);
+  public SchemaNamespaceDeclImpl(SchemaNamespaceDeclStub stub, IElementType type, ASTNode node) {
+    super(stub, type, node);
   }
 
   public void accept(@NotNull SchemaVisitor visitor) {

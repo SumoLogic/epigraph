@@ -18,8 +18,8 @@ public class SchemaListTypeDefImpl extends SchemaListTypeDefImplBase implements 
     super(node);
   }
 
-  public SchemaListTypeDefImpl(SchemaListTypeDefStub stub, IStubElementType nodeType) {
-    super(stub, nodeType);
+  public SchemaListTypeDefImpl(SchemaListTypeDefStub stub, IStubElementType type) {
+    super(stub, type);
   }
 
   public void accept(@NotNull SchemaVisitor visitor) {

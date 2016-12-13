@@ -18,8 +18,8 @@ public class SchemaEnumTypeDefImpl extends SchemaEnumTypeDefImplBase implements 
     super(node);
   }
 
-  public SchemaEnumTypeDefImpl(SchemaEnumTypeDefStub stub, IStubElementType nodeType) {
-    super(stub, nodeType);
+  public SchemaEnumTypeDefImpl(SchemaEnumTypeDefStub stub, IStubElementType type) {
+    super(stub, type);
   }
 
   public void accept(@NotNull SchemaVisitor visitor) {

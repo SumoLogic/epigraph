@@ -18,8 +18,8 @@ public class SchemaPrimitiveTypeDefImpl extends SchemaPrimitiveTypeDefImplBase i
     super(node);
   }
 
-  public SchemaPrimitiveTypeDefImpl(SchemaPrimitiveTypeDefStub stub, IStubElementType nodeType) {
-    super(stub, nodeType);
+  public SchemaPrimitiveTypeDefImpl(SchemaPrimitiveTypeDefStub stub, IStubElementType type) {
+    super(stub, type);
   }
 
   public void accept(@NotNull SchemaVisitor visitor) {

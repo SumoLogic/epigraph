@@ -34,7 +34,9 @@ import java.util.List;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class SchemaIndexUtil {
+public final class SchemaIndexUtil {
+  private SchemaIndexUtil() {}
+
   @NotNull
   public static List<SchemaTypeDef> findTypeDefs(@NotNull Project project,
                                                  @Nullable Collection<Qn> namespaces,
@@ -69,36 +71,17 @@ public class SchemaIndexUtil {
                                     @NotNull GlobalSearchScope searchScope,
                                     @NotNull Processor<SchemaTypeDef, R> processor) {
 
-    if (namespaces != null) {
-      if (suffix != null) {
-        SchemaFullTypeNameIndex index = SchemaFullTypeNameIndex.EP_NAME.findExtension(SchemaFullTypeNameIndex.class);
-        assert index != null;
-
-        for (Qn namespace : namespaces) {
-          String fqn = namespace.append(suffix).toString();
-          Collection<SchemaTypeDef> typeDefs = index.get(fqn, project, searchScope);
-          if (!processor.process(typeDefs)) break;
-        }
-      } else {
-        SchemaTypesByNamespaceIndex index = SchemaTypesByNamespaceIndex.EP_NAME.findExtension(SchemaTypesByNamespaceIndex.class);
-        assert index != null;
-
-        for (Qn namespace : namespaces) {
-          Collection<SchemaTypeDef> typeDefs = index.get(namespace.toString(), project, searchScope);
-          if (!processor.process(typeDefs)) break;
-        }
-      }
-    } else {
+    if (namespaces == null) {
       if (suffix == null || suffix.size() == 1) {
         SchemaShortTypeNameIndex index = SchemaShortTypeNameIndex.EP_NAME.findExtension(SchemaShortTypeNameIndex.class);
         assert index != null;
 
         Collection<String> shortNames;
 
-        if (suffix != null) {
-          shortNames = Collections.singleton(suffix.toString());
-        } else {
+        if (suffix == null) {
           shortNames = index.getAllKeys(project);
+        } else {
+          shortNames = Collections.singleton(suffix.toString());
         }
 
         for (String name : shortNames) {
@@ -117,6 +100,26 @@ public class SchemaIndexUtil {
         }
       }
 
+    } else {
+      if (suffix == null) {
+        SchemaTypesByNamespaceIndex index =
+            SchemaTypesByNamespaceIndex.EP_NAME.findExtension(SchemaTypesByNamespaceIndex.class);
+        assert index != null;
+
+        for (Qn namespace : namespaces) {
+          Collection<SchemaTypeDef> typeDefs = index.get(namespace.toString(), project, searchScope);
+          if (!processor.process(typeDefs)) break;
+        }
+      } else {
+        SchemaFullTypeNameIndex index = SchemaFullTypeNameIndex.EP_NAME.findExtension(SchemaFullTypeNameIndex.class);
+        assert index != null;
+
+        for (Qn namespace : namespaces) {
+          String fqn = namespace.append(suffix).toString();
+          Collection<SchemaTypeDef> typeDefs = index.get(fqn, project, searchScope);
+          if (!processor.process(typeDefs)) break;
+        }
+      }
     }
 
     return processor.result();

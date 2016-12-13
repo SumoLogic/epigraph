@@ -74,6 +74,7 @@ public class SchemaQnReference extends PsiReferenceBase<SchemaQnSegment> impleme
     return resolver;
   }
 
+  @Override
   @Nullable
   public final PsiElement resolve() {
     return ResolveCache.getInstance(myElement.getProject()).resolveWithCaching(this, cachedResolver, false, false);
@@ -182,7 +183,7 @@ public class SchemaQnReference extends PsiReferenceBase<SchemaQnSegment> impleme
     Set<String> namespaceElements = Qn.getMatchingWithPrefixRemoved(namespaceFqns, inputPrefix)
                                       .stream()
                                       .map(Qn::first) // only leave next segment after removing matching prefix
-                                      .filter(s -> s != null && s.length() > 0)
+                                      .filter(s -> s != null && !s.isEmpty())
                                       .collect(Collectors.toSet());
 
     @SuppressWarnings("UnnecessaryLocalVariable")

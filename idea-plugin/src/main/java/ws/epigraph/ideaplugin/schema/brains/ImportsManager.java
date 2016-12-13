@@ -39,7 +39,9 @@ import static ws.epigraph.lang.DefaultImports.DEFAULT_IMPORTS_LIST;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class ImportsManager {
+public final class ImportsManager {
+  private ImportsManager() {}
+
   public static void addImport(@NotNull SchemaFile file, @NotNull String importToAdd) {
     // TODO this should return false if this would be a clashing import
 
@@ -105,8 +107,8 @@ public class ImportsManager {
         })
         .map(st -> st.getQn().getQn());
 
-    Stream<Qn> implicitImports = DEFAULT_IMPORTS_LIST.stream()
-                                                     .filter(qn -> qn.endsWith(suffix));
+    Stream<? extends Qn> implicitImports =
+        DEFAULT_IMPORTS_LIST.stream().filter(qn -> qn.endsWith(suffix));
 
     return Stream.concat(explicitImports, implicitImports).collect(Collectors.toList());
   }
@@ -148,8 +150,8 @@ public class ImportsManager {
               assert inputFirstSegment != null;
 
               importsByQn.entrySet().stream()
-                         .filter(entry -> inputFirstSegment.equals(entry.getKey().last()))
-                         .forEach(entry -> res.removeAll(entry.getValue()));
+                  .filter(entry -> inputFirstSegment.equals(entry.getKey().last()))
+                  .forEach(entry -> res.removeAll(entry.getValue()));
             }
           }
         }
@@ -185,11 +187,11 @@ public class ImportsManager {
   static List<Qn> getOptimizedImports(@NotNull SchemaFile file) {
     // de-duplicated imports without implicits
     Set<Qn> qns = file.getImportStatements().stream()
-                      .map(SchemaImportStatement::getQn)
-                      .filter(sqn -> sqn != null)
-                      .map(SchemaQn::getQn)
-                      .filter(qn -> !DEFAULT_IMPORTS_LIST.contains(qn))
-                      .collect(Collectors.toSet());
+        .map(SchemaImportStatement::getQn)
+        .filter(Objects::nonNull)
+        .map(SchemaQn::getQn)
+        .filter(qn -> !DEFAULT_IMPORTS_LIST.contains(qn))
+        .collect(Collectors.toSet());
 
     //noinspection ConstantConditions
     findUnusedImports(file).forEach(is -> qns.remove(is.getQn().getQn()));

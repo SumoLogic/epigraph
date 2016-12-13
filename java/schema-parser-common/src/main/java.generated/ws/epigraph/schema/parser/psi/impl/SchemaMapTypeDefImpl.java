@@ -18,8 +18,8 @@ public class SchemaMapTypeDefImpl extends SchemaMapTypeDefImplBase implements Sc
     super(node);
   }
 
-  public SchemaMapTypeDefImpl(SchemaMapTypeDefStub stub, IStubElementType nodeType) {
-    super(stub, nodeType);
+  public SchemaMapTypeDefImpl(SchemaMapTypeDefStub stub, IStubElementType type) {
+    super(stub, type);
   }
 
   public void accept(@NotNull SchemaVisitor visitor) {

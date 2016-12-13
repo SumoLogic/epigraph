@@ -18,8 +18,8 @@ public class SchemaVarTypeDefImpl extends SchemaVarTypeDefImplBase implements Sc
     super(node);
   }
 
-  public SchemaVarTypeDefImpl(SchemaVarTypeDefStub stub, IStubElementType nodeType) {
-    super(stub, nodeType);
+  public SchemaVarTypeDefImpl(SchemaVarTypeDefStub stub, IStubElementType type) {
+    super(stub, type);
   }
 
   public void accept(@NotNull SchemaVisitor visitor) {

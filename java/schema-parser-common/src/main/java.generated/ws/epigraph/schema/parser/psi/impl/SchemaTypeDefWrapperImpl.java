@@ -11,19 +11,21 @@ import static ws.epigraph.schema.lexer.SchemaElementTypes.*;
 import com.intellij.extapi.psi.StubBasedPsiElementBase;
 import ws.epigraph.schema.parser.psi.stubs.SchemaTypeDefWrapperStub;
 import ws.epigraph.schema.parser.psi.*;
+import com.intellij.psi.stubs.IStubElementType;
+import com.intellij.psi.tree.IElementType;
 
 public class SchemaTypeDefWrapperImpl extends StubBasedPsiElementBase<SchemaTypeDefWrapperStub> implements SchemaTypeDefWrapper {
 
-  public SchemaTypeDefWrapperImpl(SchemaTypeDefWrapperStub stub, com.intellij.psi.stubs.IStubElementType nodeType) {
-    super(stub, nodeType);
+  public SchemaTypeDefWrapperImpl(SchemaTypeDefWrapperStub stub, IStubElementType type) {
+    super(stub, type);
   }
 
   public SchemaTypeDefWrapperImpl(ASTNode node) {
     super(node);
   }
 
-  public SchemaTypeDefWrapperImpl(SchemaTypeDefWrapperStub stub, com.intellij.psi.tree.IElementType nodeType, ASTNode node) {
-    super(stub, nodeType, node);
+  public SchemaTypeDefWrapperImpl(SchemaTypeDefWrapperStub stub, IElementType type, ASTNode node) {
+    super(stub, type, node);
   }
 
   public void accept(@NotNull SchemaVisitor visitor) {
