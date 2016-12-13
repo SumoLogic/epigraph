@@ -389,7 +389,7 @@ abstract class AbstractJsonFormatReader<
       ensure(token, JsonToken.VALUE_TRUE, JsonToken.VALUE_FALSE);
       nativeValue = in.getValueAsBoolean();
     } else if (type instanceof DoubleType) {
-      ensure(token, JsonToken.VALUE_NUMBER_FLOAT);
+      ensure(token, JsonToken.VALUE_NUMBER_FLOAT); // FIXME VALUE_NUMBER_INT is ok here, too (add test)
       nativeValue = in.getValueAsDouble();
     } else if (type instanceof LongType) {
       ensure(token, JsonToken.VALUE_NUMBER_INT);
@@ -670,6 +670,8 @@ abstract class AbstractJsonFormatReader<
   }
 
   private void ensure(@Nullable JsonToken actual, @NotNull JsonToken... expected) throws IOException {
+    // FIXME premature error message construction + .toString() is bad here (enum constant names)
+    // TODO remove this method and pass hand-written expectedText to `ensure(JsonToken, String, JsonToken...)`
     String expectedString =
         Arrays.stream(expected).map(token -> "'" + token.toString() + "'").collect(Collectors.joining(", "));
     ensure(actual, expectedString, expected);
