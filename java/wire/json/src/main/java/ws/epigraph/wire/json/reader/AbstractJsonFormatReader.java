@@ -691,7 +691,7 @@ abstract class AbstractJsonFormatReader<
     ensure(in.currentToken(), expectedText, expected);
   }
 
-  private void stepOver(@NotNull JsonToken expected) throws IOException {
+  private void stepOver(@NotNull JsonToken expected) throws IOException { // FIXME use `stepOver(JsonToken, String)`
     stepOver(expected, "'" + expected.toString() + "'");
   }
 
