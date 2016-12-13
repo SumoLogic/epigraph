@@ -439,10 +439,9 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
     } else {
       out.write('"');
       int length = s.length(), from = 0;
-      char c;
       String escape = null;
       for (int i = 0; i < length; ++i) {
-        c = s.charAt(i);
+        char c = s.charAt(i);
         switch (c) {
           case '\b':
             escape = "\\b";

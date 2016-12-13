@@ -45,18 +45,18 @@ import static ws.epigraph.wire.json.JsonFormatCommon.*;
  * Format grammar (some quotes omitted):<p/>
  * <p>
  * <code> <pre>
- * DATA ::= POLYDATA | MONODATA                                          // triggered by projection (polymorphic tails presence)
+ * DATA ::= POLYDATA | MONODATA                                        // triggered by projection (polymorphic tails presence)
  * POLYDATA ::= '{' "type" ':' TYPE, "data" ':' MONODATA '}'
- * TYPE ::= '"' ( STRING '.' )* STRING '"'                               // enquoted dot-separated type FQN string
- * MONODATA ::= MULTIDATA | VALUE                                        // triggered by projection (parenthesized flag)
- * MULTIDATA ::= '{' (( "tag" ':' VALUE ',' )* "tag" ':' VALUE )? '}'    // 0 or more comma-separated entries
+ * TYPE ::= '"' ( STRING '.' )* STRING '"'                             // enquoted dot-separated type FQN string
+ * MONODATA ::= MULTIDATA | VALUE                                      // triggered by projection (parenthesized flag)
+ * MULTIDATA ::= '{' (( "tag" ':' VALUE ',' )* "tag" ':' VALUE )? '}'  // 0 or more comma-separated entries
  * VALUE ::= ERROR | DATUM | 'null'
  * ERROR ::= '{' "ERROR": INTEGER ',' "message": STRING '}'
  * DATUM ::= RECORD | MAP | LIST | PRIMITIVE | ENUM
- * RECORD ::= { (( "field" ':' DATA ',' )* "field ':' DATA )* '}'        // 0 or more comma-separated entries
- * MAP ::= '[' (( MAP_ENTRY ',' )* MAP_ENTRY )? ]                        // 0 or more comma-separated entries
+ * RECORD ::= { (( "field" ':' DATA ',' )* "field ':' DATA )* '}'      // 0 or more comma-separated entries
+ * MAP ::= '[' (( MAP_ENTRY ',' )* MAP_ENTRY )? ]                      // 0 or more comma-separated entries
  * MAP_ENTRY ::= '{' "key" ':' DATUM ',' "value" ':' DATA '}'
- * LIST ::= '[' (( DATA ',' )* DATA )? ']'                               // 0 or more comma-separated entries
+ * LIST ::= '[' (( DATA ',' )* DATA )? ']'                             // 0 or more comma-separated entries
  * PRIMITIVE ::= STRING | INTEGER | LONG | DOUBLE | BOOLEAN
  * ENUM ::= STRING // ? TODO
  * </pre></code>
@@ -103,7 +103,6 @@ abstract class AbstractJsonFormatReader<
     assert !projections.isEmpty();
 
     JsonToken token = in.currentToken();
-    final Data data;
     boolean readPoly = isPolymorphic(projections); // at least one projection has poly tail
 
     final Type type;
@@ -121,6 +120,7 @@ abstract class AbstractJsonFormatReader<
     List<? extends VP> flattened = flatten(new ArrayList<>(), projections, type);
 
     String monoTagName = type.kind() == TypeKind.UNION ? JsonFormatCommon.monoTag(flattened) : DatumType.MONO_TAG_NAME;
+    final Data data;
     if (monoTagName == null) { // MULTIDATA ::= { "tag": VALUE, ... }
       data = finishReadingMultiData(type, flattened);
     } else { // VALUE ::= ERROR or DATUM or null
@@ -489,13 +489,8 @@ abstract class AbstractJsonFormatReader<
 
   @Override
   public @Nullable Datum readDatum(@NotNull DatumType type) throws IOException {
-    final @NotNull JsonToken token = nextNonEof();
-
-    final @Nullable String firstFieldName;
-    if (token == JsonToken.START_OBJECT)
-      firstFieldName = in.nextFieldName();
-    else firstFieldName = null;
-
+    @NotNull JsonToken token = nextNonEof();
+    @Nullable String firstFieldName = token == JsonToken.START_OBJECT ? in.nextFieldName() : null;
     return finishReadingDatum(token, firstFieldName, type);
   }
 
