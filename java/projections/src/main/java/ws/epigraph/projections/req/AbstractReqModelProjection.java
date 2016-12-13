@@ -37,13 +37,13 @@ public abstract class AbstractReqModelProjection<
   @NotNull
   protected final ReqParams params;
 
-  public AbstractReqModelProjection(
+  protected AbstractReqModelProjection(
       @NotNull final M model,
       @NotNull ReqParams params,
       @Nullable final MP metaProjection,
       @NotNull final Annotations annotations,
-      @NotNull final TextLocation location) {
-
+      @NotNull final TextLocation location
+  ) {
     super(model, metaProjection, annotations, location);
     this.params = params;
   }

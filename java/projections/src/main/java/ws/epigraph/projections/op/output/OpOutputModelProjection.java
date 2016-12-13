@@ -32,12 +32,13 @@ public abstract class OpOutputModelProjection<
     M extends DatumType
     > extends AbstractOpModelProjection<MP, M> {
 
-  public OpOutputModelProjection(
+  protected OpOutputModelProjection(
       @NotNull M model,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
       @Nullable MP metaProjection,
-      @NotNull TextLocation location) {
+      @NotNull TextLocation location
+  ) {
     super(model, metaProjection, params, annotations, location);
   }
 }

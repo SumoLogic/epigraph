@@ -13,7 +13,7 @@ import ws.epigraph.url.parser.psi.*;
 
 public abstract class UrlUrlImpl extends ASTWrapperPsiElement implements UrlUrl {
 
-  public UrlUrlImpl(ASTNode node) {
+  protected UrlUrlImpl(ASTNode node) {
     super(node);
   }
 

@@ -31,11 +31,12 @@ public abstract class ReqInputModelProjection<
     M extends DatumType>
     extends AbstractReqModelProjection<MP, M> {
 
-  public ReqInputModelProjection(
+  protected ReqInputModelProjection(
       @NotNull M model,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
-      @NotNull TextLocation location) {
+      @NotNull TextLocation location
+  ) {
     super(model, params, null, annotations, location);
   }
 }

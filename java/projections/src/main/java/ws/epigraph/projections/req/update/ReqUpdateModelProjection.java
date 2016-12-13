@@ -35,12 +35,13 @@ public abstract class ReqUpdateModelProjection<
 
   protected final boolean update;
 
-  public ReqUpdateModelProjection(
+  protected ReqUpdateModelProjection(
       @NotNull M model,
       boolean update,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
-      @NotNull TextLocation location) {
+      @NotNull TextLocation location
+  ) {
     super(model, params, null, annotations, location);
     this.update = update;
   }

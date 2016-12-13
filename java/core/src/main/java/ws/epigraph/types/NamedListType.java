@@ -25,7 +25,7 @@ import java.util.List;
 
 public abstract class NamedListType extends ListType {
 
-  public NamedListType(
+  protected NamedListType(
       @NotNull QualifiedTypeName name,
       @NotNull List<@NotNull ? extends NamedListType> immediateNamedSupertypes,
       @NotNull DataType elementType

@@ -37,7 +37,7 @@ public abstract class RecordType extends DatumType {
 
   private @Nullable Map<@NotNull String, @NotNull ? extends Field> fieldsMap = null;
 
-  public RecordType(
+  protected RecordType(
       @NotNull QualifiedTypeName name,
       @NotNull List<@NotNull ? extends RecordType> immediateSupertypes
   ) { super(name, immediateSupertypes); }

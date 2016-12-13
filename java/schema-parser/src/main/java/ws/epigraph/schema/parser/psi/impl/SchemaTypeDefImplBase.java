@@ -42,11 +42,11 @@ public abstract class SchemaTypeDefImplBase<S extends SchemaTypeDefStubBase<T>, 
 
 //  private final static Logger LOG = Logger.getInstance(SchemaTypeDefImplBase.class);
 
-  public SchemaTypeDefImplBase(@NotNull ASTNode node) {
+  protected SchemaTypeDefImplBase(@NotNull ASTNode node) {
     super(node);
   }
 
-  public SchemaTypeDefImplBase(@NotNull S stub, @NotNull IStubElementType nodeType) {
+  protected SchemaTypeDefImplBase(@NotNull S stub, @NotNull IStubElementType nodeType) {
     super(stub, nodeType);
   }
 

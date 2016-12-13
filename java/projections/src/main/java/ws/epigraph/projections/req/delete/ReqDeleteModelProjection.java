@@ -31,11 +31,12 @@ public abstract class ReqDeleteModelProjection<
     M extends DatumType>
     extends AbstractReqModelProjection<MP, M> {
 
-  public ReqDeleteModelProjection(
+  protected ReqDeleteModelProjection(
       @NotNull M model,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
-      @NotNull TextLocation location) {
+      @NotNull TextLocation location
+  ) {
     super(model, params, null, annotations, location);
   }
 }

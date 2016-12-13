@@ -13,7 +13,7 @@ import ws.epigraph.idl.parser.psi.*;
 
 public abstract class IdlTypeRefImpl extends ASTWrapperPsiElement implements IdlTypeRef {
 
-  public IdlTypeRefImpl(ASTNode node) {
+  protected IdlTypeRefImpl(ASTNode node) {
     super(node);
   }
 

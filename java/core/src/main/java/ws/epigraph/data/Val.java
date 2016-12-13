@@ -62,7 +62,7 @@ public interface Val { // TODO rename to TagEntry?
 
       protected final MyRaw raw;
 
-      public Impl(@NotNull MyRaw raw) { this.raw = raw; }
+      protected Impl(@NotNull MyRaw raw) { this.raw = raw; }
 
       @SuppressWarnings("unchecked")
       @Override
@@ -190,7 +190,7 @@ public interface Val { // TODO rename to TagEntry?
       abstract class Impl<MyImmVal extends Val.Imm.Static, MyImmDatum extends Datum.Imm.Static>
           extends Val.Static.Impl<Val.Imm.Raw, MyImmVal, MyImmDatum> implements Val.Imm.Static {
 
-        public Impl(@NotNull Val.Imm.Raw raw) { super(raw); }
+        protected Impl(@NotNull Val.Imm.Raw raw) { super(raw); }
 
         @SuppressWarnings("unchecked")
         @Override
@@ -290,7 +290,7 @@ public interface Val { // TODO rename to TagEntry?
 
       private final @NotNull Function<Val.Imm.Raw, MyImmVal> immutableConstructor;
 
-      public Static(@NotNull Val.Builder.Raw raw, @NotNull Function<Val.Imm.Raw, MyImmVal> immutableConstructor) {
+      protected Static(@NotNull Val.Builder.Raw raw, @NotNull Function<Val.Imm.Raw, MyImmVal> immutableConstructor) {
         super(raw);
         this.immutableConstructor = immutableConstructor;
       }

@@ -13,7 +13,7 @@ import ws.epigraph.idl.parser.psi.*;
 
 public abstract class IdlDatumImpl extends ASTWrapperPsiElement implements IdlDatum {
 
-  public IdlDatumImpl(ASTNode node) {
+  protected IdlDatumImpl(ASTNode node) {
     super(node);
   }
 

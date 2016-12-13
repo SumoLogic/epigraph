@@ -31,11 +31,12 @@ public abstract class OpModelPath<
     M extends DatumType
     > extends AbstractOpModelProjection<MP, M> {
 
-  public OpModelPath(
+  protected OpModelPath(
       @NotNull M model,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
-      @NotNull TextLocation location) {
+      @NotNull TextLocation location
+  ) {
     super(model, null, params, annotations, location);
   }
 

@@ -32,7 +32,7 @@ public abstract class SchemaTypeDefStubElementTypeBase<S extends SchemaTypeDefSt
 
   private final String externalId;
 
-  public SchemaTypeDefStubElementTypeBase(@NotNull @NonNls String debugName, String externalNameSuffix) {
+  protected SchemaTypeDefStubElementTypeBase(@NotNull @NonNls String debugName, String externalNameSuffix) {
     super(debugName, SchemaLanguage.INSTANCE);
     externalId = "epigraph_schema." + externalNameSuffix;
   }

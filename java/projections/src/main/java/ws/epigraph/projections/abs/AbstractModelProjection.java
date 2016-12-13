@@ -41,11 +41,12 @@ public abstract class AbstractModelProjection<MP extends GenModelProjection</*MP
   @NotNull
   private final TextLocation location;
 
-  public AbstractModelProjection(
+  protected AbstractModelProjection(
       @NotNull M model,
       @Nullable MP metaProjection,
       @NotNull Annotations annotations,
-      @NotNull TextLocation location) {
+      @NotNull TextLocation location
+  ) {
     this.model = model;
     this.metaProjection = metaProjection;
     this.annotations = annotations;

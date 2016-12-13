@@ -40,11 +40,11 @@ public abstract class AbstractFieldProjectionEntry<
   @NotNull
   private final TextLocation location;
 
-  public AbstractFieldProjectionEntry(
+  protected AbstractFieldProjectionEntry(
       @NotNull RecordType.Field field,
       @NotNull FP projection,
-      @NotNull TextLocation location) {
-
+      @NotNull TextLocation location
+  ) {
     this.field = field;
     this.projection = projection;
     this.location = location;

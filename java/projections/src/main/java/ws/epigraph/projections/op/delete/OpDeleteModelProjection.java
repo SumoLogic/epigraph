@@ -36,11 +36,12 @@ public abstract class OpDeleteModelProjection<
   @NotNull
   protected final OpParams params;
 
-  public OpDeleteModelProjection(
+  protected OpDeleteModelProjection(
       @NotNull M model,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
-      @NotNull TextLocation location) {
+      @NotNull TextLocation location
+  ) {
     super(model, null, annotations, location);
     this.params = params;
   }

@@ -40,14 +40,15 @@ public abstract class OpInputModelProjection<
   @Nullable
   protected final D defaultValue;
 
-  public OpInputModelProjection(
+  protected OpInputModelProjection(
       @NotNull M model,
       boolean required,
       @Nullable D defaultValue,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
       @Nullable MP metaProjection,
-      @NotNull TextLocation location) {
+      @NotNull TextLocation location
+  ) {
     super(model, metaProjection, params, annotations, location);
     this.required = required;
     this.defaultValue = defaultValue;
