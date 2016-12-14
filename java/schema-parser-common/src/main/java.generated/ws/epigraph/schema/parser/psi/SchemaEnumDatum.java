@@ -7,7 +7,7 @@ import com.intellij.psi.PsiElement;
 
 public interface SchemaEnumDatum extends SchemaDatum {
 
-  @NotNull
+  @Nullable
   SchemaQid getQid();
 
   @NotNull

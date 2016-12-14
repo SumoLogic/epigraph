@@ -37,11 +37,11 @@
       <artifactId>epigraph-java-projections</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
-    <dependency>
-      <groupId>${project.parent.groupId}</groupId>
-      <artifactId>epigraph-java-projections-idl-psi-parser</artifactId>
-      <version>${project.parent.version}</version>
-    </dependency>
+    <!--<dependency>-->
+      <!--<groupId>${project.parent.groupId}</groupId>-->
+      <!--<artifactId>epigraph-java-projections-idl-psi-parser</artifactId>-->
+      <!--<version>${project.parent.version}</version>-->
+    <!--</dependency>-->
     <dependency>
       <groupId>${project.parent.groupId}</groupId>
       <artifactId>epigraph-java-request-url</artifactId>

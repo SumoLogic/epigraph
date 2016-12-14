@@ -24,7 +24,7 @@ import ws.epigraph.idl.TypeRefs;
 import ws.epigraph.idl.parser.psi.*;
 import ws.epigraph.projections.Annotation;
 import ws.epigraph.projections.Annotations;
-import ws.epigraph.projections.IdlProjectionPsiParserUtil;
+import ws.epigraph.projections.EdlProjectionPsiParserUtil;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.op.OpParams;
 import ws.epigraph.projections.op.delete.OpDeleteProjectionsPsiParser;
@@ -90,7 +90,7 @@ public final class OperationsPsiParser {
     IdlOperationOutputProjection outputProjectionPsi = null;
 
     for (IdlReadOperationBodyPart part : psi.getReadOperationBodyPartList()) {
-      annotations = IdlProjectionPsiParserUtil.parseAnnotation(annotations, part.getAnnotation(), errors);
+      annotations = EdlProjectionPsiParserUtil.parseAnnotation(annotations, part.getAnnotation(), errors);
 
       pathPsi = getPsiPart(pathPsi, part.getOperationPath(), "path", errors);
       outputProjectionPsi =
@@ -145,7 +145,7 @@ public final class OperationsPsiParser {
     IdlOperationOutputProjection outputProjectionPsi = null;
 
     for (IdlCreateOperationBodyPart part : psi.getCreateOperationBodyPartList()) {
-      annotations = IdlProjectionPsiParserUtil.parseAnnotation(annotations, part.getAnnotation(), errors);
+      annotations = EdlProjectionPsiParserUtil.parseAnnotation(annotations, part.getAnnotation(), errors);
 
       pathPsi = getPsiPart(pathPsi, part.getOperationPath(), "path", errors);
       inputTypePsi = getPsiPart(inputTypePsi, part.getOperationInputType(), "input type", errors);
@@ -205,7 +205,7 @@ public final class OperationsPsiParser {
     IdlOperationOutputProjection outputProjectionPsi = null;
 
     for (IdlUpdateOperationBodyPart part : psi.getUpdateOperationBodyPartList()) {
-      annotations = IdlProjectionPsiParserUtil.parseAnnotation(annotations, part.getAnnotation(), errors);
+      annotations = EdlProjectionPsiParserUtil.parseAnnotation(annotations, part.getAnnotation(), errors);
 
       pathPsi = getPsiPart(pathPsi, part.getOperationPath(), "path", errors);
       inputTypePsi = getPsiPart(inputTypePsi, part.getOperationInputType(), "input type", errors);
@@ -265,7 +265,7 @@ public final class OperationsPsiParser {
     IdlOperationOutputProjection outputProjectionPsi = null;
 
     for (IdlDeleteOperationBodyPart part : psi.getDeleteOperationBodyPartList()) {
-      annotations = IdlProjectionPsiParserUtil.parseAnnotation(annotations, part.getAnnotation(), errors);
+      annotations = EdlProjectionPsiParserUtil.parseAnnotation(annotations, part.getAnnotation(), errors);
 
       pathPsi = getPsiPart(pathPsi, part.getOperationPath(), "path", errors);
       deleteProjectionPsi =
@@ -324,7 +324,7 @@ public final class OperationsPsiParser {
     IdlOperationOutputProjection outputProjectionPsi = null;
 
     for (IdlCustomOperationBodyPart part : psi.getCustomOperationBodyPartList()) {
-      annotations = IdlProjectionPsiParserUtil.parseAnnotation(annotations, part.getAnnotation(), errors);
+      annotations = EdlProjectionPsiParserUtil.parseAnnotation(annotations, part.getAnnotation(), errors);
 
       methodPsi = getPsiPart(methodPsi, part.getOperationMethod(), "HTTP method", errors);
       pathPsi = getPsiPart(pathPsi, part.getOperationPath(), "path", errors);

@@ -26,9 +26,9 @@ public class SchemaEnumDatumImpl extends SchemaDatumImpl implements SchemaEnumDa
   }
 
   @Override
-  @NotNull
+  @Nullable
   public SchemaQid getQid() {
-    return notNullChild(PsiTreeUtil.getChildOfType(this, SchemaQid.class));
+    return PsiTreeUtil.getChildOfType(this, SchemaQid.class);
   }
 
   @Override

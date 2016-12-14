@@ -51,7 +51,7 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception>
 
     if (params.isEmpty() && annotations.isEmpty()) {
       l.beginCInd();
-      l.print(tagName);
+      l.print(escape(tagName));
 
       if (!isPrintoutEmpty(projection)) {
         l.brk();
@@ -61,7 +61,7 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception>
       l.end();
     } else {
       l.beginCInd();
-      l.print(tagName);
+      l.print(escape(tagName));
       l.print(" {");
 
       if (!params.isEmpty()) print(params);

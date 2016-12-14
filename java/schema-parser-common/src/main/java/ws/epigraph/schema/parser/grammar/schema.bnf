@@ -15,6 +15,7 @@
  */
 
 {
+// todo rename to `ws.epigraph.dl.parser.EdlParser, change prefixes to E_, Edl
   parserClass="ws.epigraph.schema.parser.SchemaParser"
 
   elementTypeHolderClass="ws.epigraph.schema.lexer.SchemaElementTypes"
@@ -609,7 +610,7 @@ listDatum ::= dataTypeSpec? '[' (dataValue ','?)* ']' {pin=2 extends=datum}
 
 primitiveDatum ::= (dataTypeSpec '@')? (string | number | boolean) {extends=datum}
 
-enumDatum ::= '#' qid {extends=datum}
+enumDatum ::= '#' qid {extends=datum pin=1}
 
 nullDatum ::= (dataTypeSpec '@')? 'null' {extends=datum}
 

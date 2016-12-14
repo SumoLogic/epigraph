@@ -8,6 +8,7 @@ idea.module.generatedSourceDirs += file("$buildDir/generated-sources/schema-pars
 
 dependencies {
   compile project(':epigraph-java-lang-common')
+  compile project(':epigraph-java-standalone-psi-util')
   compile project(':epigraph-light-psi')
 
   compile 'org.jetbrains:annotations'

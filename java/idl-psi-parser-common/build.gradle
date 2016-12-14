@@ -1,9 +1,0 @@
-apply plugin: 'java'
-
-dependencies {
-  compile project(':epigraph-java-idl-parser')
-  compile project(':epigraph-java-standalone-psi-util')
-  compile project(':epigraph-light-psi')
-
-  compile 'org.jetbrains:annotations'
-}

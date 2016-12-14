@@ -18,6 +18,7 @@ package ws.epigraph.projections.abs;
 
 import de.uka.ilkd.pp.Layouter;
 import ws.epigraph.gdata.GDataPrettyPrinter;
+import ws.epigraph.lang.Keywords;
 import ws.epigraph.printers.DataPrinter;
 import ws.epigraph.projections.Annotation;
 import ws.epigraph.projections.Annotations;
@@ -38,16 +39,13 @@ public abstract class AbstractProjectionsPrettyPrinter<
     MP extends GenModelProjection</*MP*/?, ?>,
     E extends Exception> {
 
-  @NotNull
-  protected final Layouter<E> l;
-  @NotNull
-  protected DataPrinter<E> dataPrinter;
-  @NotNull
-  protected GDataPrettyPrinter<E> gdataPrettyPrinter;
+  protected final @NotNull Layouter<E> l;
+  protected @NotNull DataPrinter<E> dataPrinter;
+  protected @NotNull GDataPrettyPrinter<E> gdataPrettyPrinter;
 
   private int nextRefNumber = 1;
-  private Map<VP, Integer> varRefs = new HashMap<>();
-  private Stack<VP> varsStack = new Stack<>();
+  private final Map<VP, Integer> varRefs = new HashMap<>();
+  private final Stack<VP> varsStack = new Stack<>();
 
   protected AbstractProjectionsPrettyPrinter(@NotNull Layouter<E> layouter) {
     l = layouter;
@@ -114,8 +112,8 @@ public abstract class AbstractProjectionsPrettyPrinter<
 
   protected void printVarDecoration(@NotNull VP p) throws E { }
 
-  protected void printTailsOnly(@NotNull VP p) throws E {
-    List<VP> polymorphicTails = p.polymorphicTails();
+  private void printTailsOnly(@NotNull VP p) throws E {
+    Collection<VP> polymorphicTails = p.polymorphicTails();
 
     if (polymorphicTails != null && !polymorphicTails.isEmpty()) {
       l.beginIInd();
@@ -168,7 +166,7 @@ public abstract class AbstractProjectionsPrettyPrinter<
 
   protected boolean isPrintoutEmpty(@NotNull VP vp) {
 
-    List<VP> tails = vp.polymorphicTails();
+    Collection<VP> tails = vp.polymorphicTails();
     if (tails != null && !tails.isEmpty()) return false;
     if (vp.type().kind() == TypeKind.UNION) return false; // non-samovar always prints something
 
@@ -177,6 +175,8 @@ public abstract class AbstractProjectionsPrettyPrinter<
 
     return true;
   }
+
+  protected @NotNull String escape(@NotNull String s) { return Keywords.EDL.escape(s); }
 
   public abstract boolean isPrintoutEmpty(@NotNull MP mp);
 

@@ -26,8 +26,7 @@ import org.jetbrains.annotations.NotNull;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class IdlSubParser extends IdlParser {
-  @NotNull
-  private final IElementType entryElementType;
+  private final @NotNull IElementType entryElementType;
 
   public IdlSubParser(@NotNull IElementType rootElementType) {
     this.entryElementType = rootElementType;

@@ -85,12 +85,12 @@ mvn clean install -P maven-plugin-dependent
       <modules>
         <module>examples</module>
         <module>java/codegen-test</module>
-        <module>java/gdata-idl-psi-parser</module>
+        <module>java/edl-psi-parser-common</module>
+        <module>java/gdata-edl-psi-parser</module>
         <module>java/http-server-common</module>
         <module>java/http-server-undertow</module>
         <module>java/idl-psi-parser</module>
-        <module>java/idl-psi-parser-common</module>
-        <module>java/projections-idl-psi-parser</module>
+        <module>java/projections-edl-psi-parser</module>
         <module>java/projections-psi-parser-util</module>
         <module>java/projections-url-psi-parser</module>
         <module>java/request-url-parser</module>

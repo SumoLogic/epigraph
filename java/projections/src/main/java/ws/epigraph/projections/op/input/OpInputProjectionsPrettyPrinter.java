@@ -52,7 +52,7 @@ public class OpInputProjectionsPrettyPrinter<E extends Exception> extends Abstra
 
       l.beginCInd();
       if (projection.required()) l.print("+");
-      l.print(tagName);
+      l.print(escape(tagName));
 
       if (!isPrintoutEmpty(projection)) {
         l.brk();
@@ -62,7 +62,7 @@ public class OpInputProjectionsPrettyPrinter<E extends Exception> extends Abstra
     } else {
       l.beginCInd();
       if (projection.required()) l.print("+");
-      l.print(tagName);
+      l.print(escape(tagName));
       l.print(" {");
 
       if (projection.defaultValue() != null) {

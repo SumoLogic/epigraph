@@ -69,7 +69,7 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
     l.beginIInd();
     l.print(";");
     if (projection.required()) l.print("+");
-    l.print(p.name()).print(":").brk();
+    l.print(escape(p.name())).print(":").brk();
     l.print(projection.model().name().toString());
 
     OpInputProjectionsPrettyPrinter<E> ipp = new OpInputProjectionsPrettyPrinter<>(l);
@@ -109,7 +109,7 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
       @NotNull String prefix = fieldNamePrefix(entry.getValue());
       @NotNull FP fieldProjection = entry.getValue().fieldProjection();
 
-      print(prefix + entry.getKey(), fieldProjection);
+      print(prefix + escape(entry.getKey()), fieldProjection);
     }
     l.brk(1, -l.getDefaultIndentation()).end().print(")");
   }

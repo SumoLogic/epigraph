@@ -31,7 +31,7 @@ import ws.epigraph.psi.SubParserDefinition;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class IdlSubParserDefinitions {
+public final class IdlSubParserDefinitions {
   public static final IdlSubParserDefinition<IdlOpVarPath> OP_VAR_PATH =
       new IdlSubParserDefinition<>(I_OP_VAR_PATH, IdlOpVarPath.class);
 
@@ -47,12 +47,12 @@ public class IdlSubParserDefinitions {
   public static final IdlSubParserDefinition<IdlDataValue> DATA_VALUE =
       new IdlSubParserDefinition<>(I_DATA_VALUE, IdlDataValue.class);
 
-  public static class IdlSubParserDefinition<T> extends IdlParserDefinition implements SubParserDefinition<T> {
-    @NotNull
-    private final Class<T> rootElementClass;
+  private IdlSubParserDefinitions() {}
 
-    @NotNull
-    private final IElementType rootElementType;
+  public static final class IdlSubParserDefinition<T> extends IdlParserDefinition implements SubParserDefinition<T> {
+    private final @NotNull Class<T> rootElementClass;
+
+    private final @NotNull IElementType rootElementType;
 
     private IdlSubParserDefinition(@NotNull IElementType rootElementType, final @NotNull Class<T> rootElementClass) {
       this.rootElementType = rootElementType;
@@ -62,11 +62,10 @@ public class IdlSubParserDefinitions {
     @Override
     public PsiParser createParser(Project project) { return new IdlSubParser(rootElementType); }
 
-    @NotNull
-    public IElementType rootElementType() { return rootElementType; }
-
-    @NotNull
     @Override
-    public Class<T> rootElementClass() { return rootElementClass; }
+    public @NotNull IElementType rootElementType() { return rootElementType; }
+
+    @Override
+    public @NotNull Class<T> rootElementClass() { return rootElementClass; }
   }
 }

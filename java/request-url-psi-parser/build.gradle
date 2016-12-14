@@ -18,7 +18,7 @@ dependencies {
   compile 'net.jcip:jcip-annotations'
 
   testCompile project(':epigraph-java-idl-psi-parser')
-  testCompile project(':epigraph-java-projections-idl-psi-parser')
+  testCompile project(':epigraph-java-projections-edl-psi-parser')
   testCompile project(':epigraph-java-test-util')
   testCompile project(':tests-schema-java')
   testCompile 'junit:junit'

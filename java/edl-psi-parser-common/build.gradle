@@ -1,0 +1,10 @@
+apply plugin: 'java'
+
+dependencies {
+  compile project(':epigraph-java-core')
+  compile project(':epigraph-java-schema-parser')
+  compile project(':epigraph-java-standalone-psi-util')
+  compile project(':epigraph-light-psi')
+
+  compile 'org.jetbrains:annotations'
+}

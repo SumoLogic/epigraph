@@ -54,7 +54,7 @@ public class OpPathPrettyPrinter<E extends Exception>
     OpParams params = projection.params();
     Annotations annotations = projection.annotations();
 
-    l.print(tagName);
+    l.print(escape(tagName));
     if (!params.isEmpty() || !annotations.isEmpty()) {
 
       l.beginCInd();
@@ -85,7 +85,7 @@ public class OpPathPrettyPrinter<E extends Exception>
 
   @Override
   public void print(@NotNull OpRecordModelPath mp) throws E {
-    @Nullable final OpFieldPathEntry entry = mp.pathFieldProjection();
+    final @Nullable OpFieldPathEntry entry = mp.pathFieldProjection();
 
     if (entry != null) {
       l.beginIInd();
