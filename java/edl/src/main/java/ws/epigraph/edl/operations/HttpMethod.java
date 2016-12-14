@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ws.epigraph.idl.operations;
+package ws.epigraph.edl.operations;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>

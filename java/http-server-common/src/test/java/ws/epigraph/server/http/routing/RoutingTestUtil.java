@@ -17,8 +17,8 @@
 package ws.epigraph.server.http.routing;
 
 import org.jetbrains.annotations.NotNull;
-import ws.epigraph.idl.Edl;
-import ws.epigraph.idl.parser.EdlPsiParser;
+import ws.epigraph.edl.Edl;
+import ws.epigraph.edl.parser.EdlPsiParser;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingError;
 import ws.epigraph.refs.TypesResolver;

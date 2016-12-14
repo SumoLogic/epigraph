@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ws.epigraph.idl.operations;
+package ws.epigraph.edl.operations;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -28,31 +28,31 @@ import ws.epigraph.types.Type;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class CreateOperationDeclaration extends OperationDeclaration {
-  protected CreateOperationDeclaration(
+public class UpdateOperationDeclaration extends OperationDeclaration {
+  protected UpdateOperationDeclaration(
       @Nullable String name,
       @NotNull Annotations annotations,
       @Nullable OpFieldPath path,
       @NotNull OpInputFieldProjection inputProjection,
       @NotNull OpOutputFieldProjection outputProjection,
       @NotNull TextLocation location) {
-    super(
-        OperationKind.CREATE, HttpMethod.POST, name, annotations,
-        path, inputProjection, outputProjection, location
+
+    super(OperationKind.UPDATE, HttpMethod.PUT, name, annotations,
+          path, inputProjection, outputProjection, location
     );
   }
 
   @Override
   public @NotNull OpInputFieldProjection inputProjection() {
-    final OpInputFieldProjection projection = super.inputProjection();
+    final @Nullable OpInputFieldProjection projection = super.inputProjection();
     assert projection != null;
     return projection;
   }
 
   @Override
   public @NotNull Type inputType() {
-    final Type inputType = super.inputType();
-    assert inputType != null;
+    final @Nullable Type inputType = super.inputType();
+    assert inputType != null; // because `inputProjection` can't be null
     return inputType;
   }
 }

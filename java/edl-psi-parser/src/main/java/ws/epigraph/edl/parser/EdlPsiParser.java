@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package ws.epigraph.idl.parser;
+package ws.epigraph.edl.parser;
 
 import com.intellij.psi.util.PsiTreeUtil;
-import ws.epigraph.idl.Edl;
-import ws.epigraph.idl.ResourceDeclaration;
-import ws.epigraph.idl.TypeRefs;
-import ws.epigraph.idl.operations.OperationDeclaration;
-import ws.epigraph.idl.operations.OperationsPsiParser;
+import ws.epigraph.edl.Edl;
+import ws.epigraph.edl.ResourceDeclaration;
+import ws.epigraph.edl.TypeRefs;
+import ws.epigraph.edl.operations.OperationDeclaration;
+import ws.epigraph.edl.operations.OperationsPsiParser;
 import ws.epigraph.schema.parser.psi.*;
 import ws.epigraph.lang.Qn;
 import ws.epigraph.psi.EpigraphPsiUtil;

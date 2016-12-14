@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package ws.epigraph.idl.operations;
+package ws.epigraph.edl.operations;
 
-import ws.epigraph.idl.ResourceDeclarationError;
-import ws.epigraph.idl.ResourceDeclaration;
+import ws.epigraph.edl.ResourceDeclarationError;
+import ws.epigraph.edl.ResourceDeclaration;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.ProjectionUtils;

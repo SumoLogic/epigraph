@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ws.epigraph.idl.operations;
+package ws.epigraph.edl.operations;
 
 import de.uka.ilkd.pp.Layouter;
 import org.jetbrains.annotations.NotNull;

@@ -17,7 +17,7 @@
 package ws.epigraph.service.operations;
 
 import ws.epigraph.data.Data;
-import ws.epigraph.idl.operations.UpdateOperationDeclaration;
+import ws.epigraph.edl.operations.UpdateOperationDeclaration;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>

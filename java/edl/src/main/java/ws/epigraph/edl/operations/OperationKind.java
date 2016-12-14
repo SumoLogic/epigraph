@@ -14,27 +14,15 @@
  * limitations under the License.
  */
 
-package ws.epigraph.idl;
-
-import ws.epigraph.lang.Qn;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Map;
+package ws.epigraph.edl.operations;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class Edl {
-  private final @NotNull Qn namespace;
-  // todo should contain TypesResolver too?
-  private final @NotNull Map<String, ResourceDeclaration> resources;
-
-  public Edl(@NotNull Qn namespace, @NotNull Map<String, ResourceDeclaration> resources) {
-    this.namespace = namespace;
-    this.resources = resources;
-  }
-
-  public @NotNull Qn namespace() { return namespace; }
-
-  public @NotNull Map<String, ResourceDeclaration> resources() { return resources; }
+public enum OperationKind {
+  READ,
+  CREATE,
+  UPDATE,
+  DELETE,
+  CUSTOM
 }

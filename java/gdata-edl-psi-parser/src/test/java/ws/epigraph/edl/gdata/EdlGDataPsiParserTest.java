@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ws.epigraph.idl.gdata;
+package ws.epigraph.edl.gdata;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;

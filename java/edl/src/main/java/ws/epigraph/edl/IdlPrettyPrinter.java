@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package ws.epigraph.idl;
+package ws.epigraph.edl;
 
 import de.uka.ilkd.pp.Layouter;
-import ws.epigraph.idl.operations.OperationDeclaration;
-import ws.epigraph.idl.operations.OperationsPrettyPrinter;
+import ws.epigraph.edl.operations.OperationDeclaration;
+import ws.epigraph.edl.operations.OperationsPrettyPrinter;
 import ws.epigraph.types.DataType;
 import ws.epigraph.types.DatumType;
 import ws.epigraph.types.Type;

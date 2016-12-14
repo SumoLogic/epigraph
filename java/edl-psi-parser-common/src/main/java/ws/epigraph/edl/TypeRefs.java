@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ws.epigraph.idl;
+package ws.epigraph.edl;
 
 import ws.epigraph.schema.parser.psi.*;
 import ws.epigraph.psi.PsiProcessingError;

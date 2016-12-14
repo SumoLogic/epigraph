@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ws.epigraph.idl.operations;
+package ws.epigraph.edl.operations;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -23,36 +23,23 @@ import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.op.input.OpInputFieldProjection;
 import ws.epigraph.projections.op.output.OpOutputFieldProjection;
 import ws.epigraph.projections.op.path.OpFieldPath;
-import ws.epigraph.types.Type;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class UpdateOperationDeclaration extends OperationDeclaration {
-  protected UpdateOperationDeclaration(
+public class CustomOperationDeclaration extends OperationDeclaration {
+
+  protected CustomOperationDeclaration(
+      @NotNull HttpMethod method,
       @Nullable String name,
       @NotNull Annotations annotations,
       @Nullable OpFieldPath path,
-      @NotNull OpInputFieldProjection inputProjection,
+      @Nullable OpInputFieldProjection inputProjection,
       @NotNull OpOutputFieldProjection outputProjection,
       @NotNull TextLocation location) {
 
-    super(OperationKind.UPDATE, HttpMethod.PUT, name, annotations,
+    super(OperationKind.CUSTOM, method, name, annotations,
           path, inputProjection, outputProjection, location
     );
-  }
-
-  @Override
-  public @NotNull OpInputFieldProjection inputProjection() {
-    final @Nullable OpInputFieldProjection projection = super.inputProjection();
-    assert projection != null;
-    return projection;
-  }
-
-  @Override
-  public @NotNull Type inputType() {
-    final @Nullable Type inputType = super.inputType();
-    assert inputType != null; // because `inputProjection` can't be null
-    return inputType;
   }
 }

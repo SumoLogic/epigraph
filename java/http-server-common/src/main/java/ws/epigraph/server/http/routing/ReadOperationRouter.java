@@ -16,7 +16,7 @@
 
 package ws.epigraph.server.http.routing;
 
-import ws.epigraph.idl.operations.ReadOperationDeclaration;
+import ws.epigraph.edl.operations.ReadOperationDeclaration;
 import ws.epigraph.psi.PsiProcessingError;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypesResolver;

@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package ws.epigraph.idl.gdata;
+package ws.epigraph.edl.gdata;
 
 import org.jetbrains.annotations.Contract;
 import ws.epigraph.gdata.*;
-import ws.epigraph.idl.TypeRefs;
+import ws.epigraph.edl.TypeRefs;
 import ws.epigraph.schema.parser.psi.*;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingError;

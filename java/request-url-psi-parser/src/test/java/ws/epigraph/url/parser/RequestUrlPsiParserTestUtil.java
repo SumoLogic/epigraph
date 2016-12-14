@@ -18,8 +18,8 @@ package ws.epigraph.url.parser;
 
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.gdata.GDatum;
-import ws.epigraph.idl.Edl;
-import ws.epigraph.idl.parser.EdlPsiParser;
+import ws.epigraph.edl.Edl;
+import ws.epigraph.edl.parser.EdlPsiParser;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.schema.parser.SchemaParserDefinition;

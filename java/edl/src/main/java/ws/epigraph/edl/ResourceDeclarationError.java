@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package ws.epigraph.idl;
+package ws.epigraph.edl;
 
-import ws.epigraph.idl.operations.OperationDeclaration;
+import ws.epigraph.edl.operations.OperationDeclaration;
 import ws.epigraph.lang.TextLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

@@ -14,32 +14,45 @@
  * limitations under the License.
  */
 
-package ws.epigraph.idl.operations;
+package ws.epigraph.edl.operations;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import ws.epigraph.edl.ResourceDeclarationError;
+import ws.epigraph.edl.ResourceDeclaration;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
-import ws.epigraph.projections.op.input.OpInputFieldProjection;
 import ws.epigraph.projections.op.output.OpOutputFieldProjection;
 import ws.epigraph.projections.op.path.OpFieldPath;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class CustomOperationDeclaration extends OperationDeclaration {
-
-  protected CustomOperationDeclaration(
-      @NotNull HttpMethod method,
+public class ReadOperationDeclaration extends OperationDeclaration {
+  protected ReadOperationDeclaration(
       @Nullable String name,
       @NotNull Annotations annotations,
       @Nullable OpFieldPath path,
-      @Nullable OpInputFieldProjection inputProjection,
       @NotNull OpOutputFieldProjection outputProjection,
       @NotNull TextLocation location) {
 
-    super(OperationKind.CUSTOM, method, name, annotations,
-          path, inputProjection, outputProjection, location
+    super(OperationKind.READ, HttpMethod.GET, name, annotations,
+          path, null, outputProjection, location
     );
+  }
+
+  @Override
+  protected void validate(@NotNull ResourceDeclaration resource, @NotNull List<ResourceDeclarationError> errors) {
+    super.validate(resource, errors);
+
+    ensureProjectionStartsWithResourceType(
+        resource,
+        outputProjection().varProjection(),
+        "output",
+        errors
+    );
+
   }
 }

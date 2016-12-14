@@ -16,9 +16,9 @@
 
 package ws.epigraph.service;
 
-import ws.epigraph.idl.ResourceDeclaration;
-import ws.epigraph.idl.operations.HttpMethod;
-import ws.epigraph.idl.operations.OperationDeclaration;
+import ws.epigraph.edl.ResourceDeclaration;
+import ws.epigraph.edl.operations.HttpMethod;
+import ws.epigraph.edl.operations.OperationDeclaration;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.op.path.OpFieldPath;
 import ws.epigraph.service.operations.*;

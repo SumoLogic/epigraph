@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package ws.epigraph.idl;
+package ws.epigraph.edl;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
-import ws.epigraph.idl.parser.EdlPsiParser;
+import ws.epigraph.edl.parser.EdlPsiParser;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.refs.SimpleTypesResolver;
 import ws.epigraph.refs.TypesResolver;

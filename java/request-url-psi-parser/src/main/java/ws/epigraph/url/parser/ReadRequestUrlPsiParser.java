@@ -17,7 +17,7 @@
 package ws.epigraph.url.parser;
 
 import ws.epigraph.gdata.GDatum;
-import ws.epigraph.idl.operations.ReadOperationDeclaration;
+import ws.epigraph.edl.operations.ReadOperationDeclaration;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.ProjectionUtils;
