@@ -3,8 +3,8 @@ apply plugin: 'application'
 
 mainClassName = 'ws.epigraph.schema.parser.Main'
 
-sourceSets.main.java.srcDirs += file("$buildDir/generated-sources/schema-parser-common.java")
-idea.module.generatedSourceDirs += file("$buildDir/generated-sources/schema-parser-common.java")
+sourceSets.main.java.srcDirs += file("$buildDir/generated-sources/edl-parser-common.java")
+idea.module.generatedSourceDirs += file("$buildDir/generated-sources/edl-parser-common.java")
 
 dependencies {
   compile project(':epigraph-java-lang-common')
@@ -19,11 +19,11 @@ dependencies {
 
 task copySources {
   doLast {
-    delete { "$buildDir/generated-sources/schema-parser-common.java" }
+    delete { "$buildDir/generated-sources/edl-parser-common.java" }
     copy {
-      from('../schema-parser-common/src/main/java') { include '**/*.java' }
-      from('../schema-parser-common/src/main/java.generated') { include '**/*.java' }
-      into "$buildDir/generated-sources/schema-parser-common.java"
+      from('../edl-parser-common/src/main/java') { include '**/*.java' }
+      from('../edl-parser-common/src/main/java.generated') { include '**/*.java' }
+      into "$buildDir/generated-sources/edl-parser-common.java"
     }
   }
 }
