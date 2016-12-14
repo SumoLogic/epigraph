@@ -20,7 +20,7 @@
     </dependency>
     <dependency>
       <groupId>${project.parent.groupId}</groupId>
-      <artifactId>epigraph-java-schema-parser</artifactId>
+      <artifactId>epigraph-java-edl-parser</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
     <dependency>

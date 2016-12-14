@@ -4,7 +4,7 @@ dependencies {
   compile project(':epigraph-java-core')
   compile project(':epigraph-java-gdata')
   compile project(':epigraph-java-edl-psi-parser-common')
-  compile project(':epigraph-java-schema-parser')
+  compile project(':epigraph-java-edl-parser')
   compile project(':epigraph-java-standalone-psi-util')
   compile project(':epigraph-light-psi')
 

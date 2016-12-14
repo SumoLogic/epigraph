@@ -23,7 +23,7 @@
         <!--<module>preprint</module>-->
         <module>projections</module>
         <module>request-url</module>
-        <module>schema-parser</module>
+        <module>edl-parser</module>
         <module>standalone-psi-util</module>
         <!--<module>server</module>-->
         <!--<module>service</module>-->
