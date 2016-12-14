@@ -29,7 +29,6 @@ import ws.epigraph.test.TestUtil;
 import ws.epigraph.tests.*;
 import ws.epigraph.types.DataType;
 import ws.epigraph.url.parser.UrlSubParserDefinitions;
-import ws.epigraph.url.parser.psi.UrlReqOutputComaVarProjection;
 import ws.epigraph.url.parser.psi.UrlReqOutputTrunkVarProjection;
 import ws.epigraph.url.projections.req.ReqTestUtil;
 
@@ -43,8 +42,8 @@ import static ws.epigraph.test.TestUtil.lines;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ReadReqPathParserTest {
-  private DataType dataType = new DataType(Person.type, Person.id);
-  private TypesResolver resolver = new SimpleTypesResolver(
+  private final DataType dataType = new DataType(Person.type, Person.id);
+  private final TypesResolver resolver = new SimpleTypesResolver(
       PersonId.type,
       Person.type,
       User.type,
@@ -53,12 +52,12 @@ public class ReadReqPathParserTest {
       epigraph.String.type
   );
 
-  private OpVarPath personOpPath = parseOpVarPath(
+  private final OpVarPath personOpPath = parseOpVarPath(
       lines(
-          ":record { ;p1:epigraph.String }",
+          ":`record` { ;p1:epigraph.String }",
           "  / friendsMap { ;p2:epigraph.String }",
           "    / . { ;p3:epigraph.String }",
-          "      :record { ;p4:epigraph.String }",
+          "      :`record` { ;p4:epigraph.String }",
           "        / bestFriend { ;p5:epigraph.String }"
       )
   );
@@ -158,8 +157,8 @@ public class ReadReqPathParserTest {
         s.replaceAll("\"", "'"); // pretty printer outputs double quotes, we use single quotes in URLs
     assertEquals(expectedPath, actual);
 
-    final UrlReqOutputTrunkVarProjection trunkProjectionPsi = result.trunkProjectionPsi();
-    final UrlReqOutputComaVarProjection comaProjectionPsi = result.comaProjectionPsi();
+    final PsiElement trunkProjectionPsi = result.trunkProjectionPsi();
+    final PsiElement comaProjectionPsi = result.comaProjectionPsi();
 
     if (expectedPsiRemainder == null) {
       if (trunkProjectionPsi != null) {

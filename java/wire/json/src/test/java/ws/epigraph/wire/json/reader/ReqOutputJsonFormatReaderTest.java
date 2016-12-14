@@ -65,24 +65,24 @@ public class ReqOutputJsonFormatReaderTest {
       lines(
           ":(",
           "  id,",
-          "  record (",
+          "  `record` (",
           "    id {",
           "      ;param1 : epigraph.String = \"hello world\" { doc = \"some doc\" },",
           "    },",
-          "    bestFriend :record (",
+          "    bestFriend :`record` (",
           "      id,",
-          "      bestFriend :record (",
+          "      bestFriend :`record` (",
           "        id,",
           "        firstName",
           "      ),",
           "    ),",
           "    friends *( :id ),",
-          "    friendsMap [;keyParam:epigraph.String]( :(id, record (id, firstName) ) )",
+          "    friendsMap [;keyParam:epigraph.String]( :(id, `record` (id, firstName) ) )",
           "  )",
           ") ~(",
-          "      ws.epigraph.tests.User :record (profile)",
-          "        ~ws.epigraph.tests.SubUser :record (worstEnemy(id)),",
-          "      ws.epigraph.tests.User2 :record (worstEnemy(id))",
+          "      ws.epigraph.tests.User :`record` (profile)",
+          "        ~ws.epigraph.tests.SubUser :`record` (worstEnemy(id)),",
+          "      ws.epigraph.tests.User2 :`record` (worstEnemy(id))",
           ")"
       )
   );
@@ -256,7 +256,7 @@ public class ReqOutputJsonFormatReaderTest {
     JsonParser parser = new JsonFactory().createParser(json);
     ReqOutputJsonFormatReader jsonReader = new ReqOutputJsonFormatReader(parser);
 
-    final @NotNull Data data = jsonReader.readData(reqProjection);
+    final Data data = jsonReader.readData(reqProjection);
 
     if (!expectedData.equals(data)) {
       StringWriter writer = new StringWriter();
@@ -276,8 +276,7 @@ public class ReqOutputJsonFormatReaderTest {
   private void testReadFail(
       @NotNull String reqProjectionStr,
       @NotNull String json,
-      @Nullable String errorMessageSubstring)
-      throws IOException {
+      @Nullable String errorMessageSubstring) throws IOException {
 
     final @NotNull ReqOutputVarProjection reqProjection =
         parseReqOutputVarProjection(dataType, personOpProjection, reqProjectionStr, resolver).projection();

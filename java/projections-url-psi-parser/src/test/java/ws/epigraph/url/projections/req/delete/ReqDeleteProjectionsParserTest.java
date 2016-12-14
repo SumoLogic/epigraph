@@ -34,8 +34,8 @@ import static ws.epigraph.test.TestUtil.lines;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ReqDeleteProjectionsParserTest {
-  private DataType dataType = new DataType(Person.type, Person.id);
-  private TypesResolver resolver = new SimpleTypesResolver(
+  private final DataType dataType = new DataType(Person.type, Person.id);
+  private final TypesResolver resolver = new SimpleTypesResolver(
       PersonId.type,
       Person.type,
       User.type,
@@ -44,25 +44,25 @@ public class ReqDeleteProjectionsParserTest {
       epigraph.String.type
   );
 
-  private OpDeleteVarProjection personOpProjection = parsePersonOpDeleteVarProjection(
+  private final OpDeleteVarProjection personOpProjection = parsePersonOpDeleteVarProjection(
       lines(
           ":(",
           "  id,",
-          "  record (",
+          "  `record` (",
           "    id {",
           "      ;param1 : epigraph.String = \"hello world\" { doc = \"some doc\" },",
           "    },",
-          "    bestFriend :record (",
+          "    bestFriend :`record` (",
           "      id,",
-          "      bestFriend :record (",
+          "      bestFriend :`record` (",
           "        id,",
           "        firstName",
           "      ),",
           "    ),",
           "    friends *( :id ),",
-          "    friendsMap []( :(id, record (id, firstName) ) )",
+          "    friendsMap []( :(id, `record` (id, firstName) ) )",
           "  )",
-          ") ~ws.epigraph.tests.User :record (profile)"
+          ") ~ws.epigraph.tests.User :`record` (profile)"
       )
   );
 
@@ -120,8 +120,7 @@ public class ReqDeleteProjectionsParserTest {
     assertEquals(expectedProjection, actual);
   }
 
-  @NotNull
-  private OpDeleteVarProjection parsePersonOpDeleteVarProjection(@NotNull String projectionString) {
+  private @NotNull OpDeleteVarProjection parsePersonOpDeleteVarProjection(@NotNull String projectionString) {
     return ReqTestUtil.parseOpDeleteVarProjection(dataType, projectionString, resolver);
   }
 }

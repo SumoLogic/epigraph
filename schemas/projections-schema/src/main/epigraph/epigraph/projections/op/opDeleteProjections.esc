@@ -58,7 +58,7 @@ record OpDeleteMapModelProjection extends OpDeleteModelProjection {
 }
 
 record OpDeleteKeyProjection {
-  required: Boolean { doc = "if `null` - keys are not accepted" }
+  `required`: Boolean { doc = "if `null` - keys are not accepted" }
   params: map[String, OpParam]
   annotations: map[String, Annotation]
 }

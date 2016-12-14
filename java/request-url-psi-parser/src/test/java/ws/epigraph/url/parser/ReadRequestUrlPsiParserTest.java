@@ -64,18 +64,18 @@ public class ReadRequestUrlPsiParserTest {
       "import ws.epigraph.tests.UserRecord",
       "resource users : map[String,Person] {",
       "  READ {",
-      "    outputProjection [required]( :record (id, firstName) )",
+      "    outputProjection [required]( :`record` (id, firstName) )",
       "  }",
       "  READ {",
-      "    outputProjection [required]( :record (id, firstName, lastName) )",
+      "    outputProjection [required]( :`record` (id, firstName, lastName) )",
       "  }",
       "  READ {",
       "    path /.",
-      "    outputProjection :record (id, firstName, bestFriend :record (id, firstName) )",
+      "    outputProjection :`record` (id, firstName, bestFriend :`record` (id, firstName) )",
       "  }",
       "  READ {",
-      "    path /.:record/bestFriend",
-      "    outputProjection :record (id, firstName)",
+      "    path /.:`record`/bestFriend",
+      "    outputProjection :`record` (id, firstName)",
       "  }",
       "}"
   );
@@ -84,16 +84,12 @@ public class ReadRequestUrlPsiParserTest {
   private final DataType resourceType = String_Person_Map.type.dataType();
 
   {
-    try {
-      Edl edl = parseIdl(idlText, resolver);
-      ResourceDeclaration resourceDeclaration = edl.resources().get("users");
+    Edl edl = parseIdl(idlText, resolver);
+    ResourceDeclaration resourceDeclaration = edl.resources().get("users");
 
-      final @NotNull List<OperationDeclaration> operationDeclarations = resourceDeclaration.operations();
-      readIdl1 = (ReadOperationDeclaration) operationDeclarations.get(0);
+    final @NotNull List<OperationDeclaration> operationDeclarations = resourceDeclaration.operations();
+    readIdl1 = (ReadOperationDeclaration) operationDeclarations.get(0);
 
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
   }
 
   @Test

@@ -20,13 +20,13 @@ abstract record Operation extends Documented {
   name: String { doc = "`null` means default operation" }
   annotations: list[Annotation]
 
-  path: OpVarPath // starts with resource field type, ends with data type (var container)
+  `path`: OpVarPath // starts with resource field type, ends with data type (var container)
 
-  inputType: DataTypeRef
-  inputProjection: OpInputModelProjection // starts from `inputType` (can be different from resource field type)
+  `inputType`: DataTypeRef
+  `inputProjection`: OpInputModelProjection // starts from `inputType` (can be different from resource field type)
 
-  outputType: TypeRef // type `outputProjection` starts with
-  outputProjection: OpOutputFieldProjection
+  `outputType`: TypeRef // type `outputProjection` starts with
+  `outputProjection`: OpOutputFieldProjection
 }
 
 // routing:
@@ -80,7 +80,7 @@ record DeleteOperation extends Operation {
   // HTTP DELETE /people/123
   // HTTP DELETE /people/123/firstName
 
-  deleteProjection: OpDeleteVarProjection // starts at the tip of `path`
+  `deleteProjection`: OpDeleteVarProjection // starts at the tip of `path`
 
   // inputType = inputProjection = null
   // outputType (if not specified) = path tip type, or resource fieldType if path is null

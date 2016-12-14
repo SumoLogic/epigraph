@@ -30,7 +30,7 @@ record OpInputTagProjectionEntry {
 
 abstract record OpInputModelProjection {
   model: DataTypeRef
-  required: Boolean
+  `required`: Boolean
   defaultValue: Datum
   params: map[String, OpParam]
   annotations: map[String, Annotation]
@@ -49,7 +49,7 @@ record OpInputFieldProjectionEntry {
 }
 
 record OpInputFieldProjection {
-  required: Boolean
+  `required`: Boolean
   params: map[String, OpParam]
   annotations: map[String, Annotation]
   varProjection: OpInputVarProjection
@@ -69,7 +69,7 @@ record OpInputMapModelProjection extends OpInputModelProjection {
 }
 
 record OpInputKeyProjection {
-  required: Boolean { doc = "if `null` - keys are not accepted" }
+  `required`: Boolean { doc = "if `null` - keys are not accepted" }
   params: map[String, OpParam]
   annotations: map[String, Annotation]
 }

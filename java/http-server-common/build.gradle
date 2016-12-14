@@ -9,8 +9,7 @@ dependencies {
 
   compile 'org.jetbrains:annotations'
 
-  testCompile project(':epigraph-java-idl-parser')
-  testCompile project(':epigraph-java-idl-psi-parser')
+  testCompile project(':epigraph-java-edl-psi-parser')
   testCompile project(':epigraph-java-test-util')
   testCompile project(':tests-schema-java')
   testCompile 'junit:junit'

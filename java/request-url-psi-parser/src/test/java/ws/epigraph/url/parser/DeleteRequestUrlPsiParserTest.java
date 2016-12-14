@@ -41,7 +41,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 import static ws.epigraph.test.TestUtil.*;
 import static ws.epigraph.url.parser.RequestUrlPsiParserTestUtil.parseIdl;
 import static ws.epigraph.url.parser.RequestUrlPsiParserTestUtil.printParameters;
@@ -50,7 +49,7 @@ import static ws.epigraph.url.parser.RequestUrlPsiParserTestUtil.printParameters
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class DeleteRequestUrlPsiParserTest {
-  private TypesResolver resolver = new SimpleTypesResolver(
+  private final TypesResolver resolver = new SimpleTypesResolver(
       PersonId.type,
       Person.type,
       User.type,
@@ -61,32 +60,28 @@ public class DeleteRequestUrlPsiParserTest {
       epigraph.Boolean.type
   );
 
-  private String idlText = lines(
+  private final String idlText = lines(
       "namespace test",
       "import ws.epigraph.tests.Person",
       "import ws.epigraph.tests.UserRecord",
       "resource users : map[String,Person] {",
       "  DELETE {",
-      "    deleteProjection [required]( :record (id, firstName) )",
-      "    outputProjection [required]( :record (id, firstName) )",
+      "    deleteProjection [required]( :`record` (id, firstName) )",
+      "    outputProjection [required]( :`record` (id, firstName) )",
       "  }",
       "}"
   );
 
-  private DeleteOperationDeclaration deleteIdl1;
-  private DataType resourceType = String_Person_Map.type.dataType();
+  private final DeleteOperationDeclaration deleteIdl1;
+  private final DataType resourceType = String_Person_Map.type.dataType();
 
   {
-    try {
-      Edl edl = parseIdl(idlText, resolver);
-      ResourceDeclaration resourceDeclaration = edl.resources().get("users");
+    Edl edl = parseIdl(idlText, resolver);
+    ResourceDeclaration resourceDeclaration = edl.resources().get("users");
 
-      final @NotNull List<OperationDeclaration> operationDeclarations = resourceDeclaration.operations();
-      deleteIdl1 = (DeleteOperationDeclaration) operationDeclarations.get(0);
+    final @NotNull List<OperationDeclaration> operationDeclarations = resourceDeclaration.operations();
+    deleteIdl1 = (DeleteOperationDeclaration) operationDeclarations.get(0);
 
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
   }
 
   @Test
@@ -110,7 +105,7 @@ public class DeleteRequestUrlPsiParserTest {
       String expectedDeleteProjection,
       String expectedOutputProjection,
       String expectedParams)
-      throws IOException, PsiProcessingException {
+      throws PsiProcessingException {
 
     List<PsiProcessingError> errors = new ArrayList<>();
     final @NotNull DeleteRequestUrl requestUrl = DeleteRequestUrlPsiParser.parseDeleteRequestUrl(
@@ -126,8 +121,7 @@ public class DeleteRequestUrlPsiParserTest {
     assertEquals(expectedResource, requestUrl.fieldName());
 
     final @Nullable ReqDeleteFieldProjection deleteProjection = requestUrl.deleteProjection();
-    if (deleteProjection == null) assertNull(expectedDeleteProjection);
-    else assertEquals(expectedDeleteProjection, printReqDeleteVarProjection(deleteProjection.varProjection()));
+    assertEquals(expectedDeleteProjection, printReqDeleteVarProjection(deleteProjection.varProjection()));
 
     final @NotNull StepsAndProjection<ReqOutputFieldProjection> stepsAndProjection = requestUrl.outputProjection();
     assertEquals(expectedSteps, stepsAndProjection.pathSteps());
@@ -140,7 +134,7 @@ public class DeleteRequestUrlPsiParserTest {
   }
 
 
-  private static UrlDeleteUrl parseUrlPsi(@NotNull String text) throws IOException {
+  private static UrlDeleteUrl parseUrlPsi(@NotNull String text) {
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
     @NotNull UrlDeleteUrl urlPsi =

@@ -86,7 +86,7 @@
 
     <dependency>
       <groupId>${project.parent.groupId}</groupId>
-      <artifactId>epigraph-java-idl-psi-parser</artifactId>
+      <artifactId>epigraph-java-edl-psi-parser</artifactId>
       <version>${project.parent.version}</version>
       <scope>test</scope>
     </dependency>

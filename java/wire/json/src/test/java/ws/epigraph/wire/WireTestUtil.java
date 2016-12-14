@@ -17,14 +17,14 @@
 package ws.epigraph.wire;
 
 import org.jetbrains.annotations.NotNull;
-import ws.epigraph.idl.parser.projections.IdlSubParserDefinitions;
-import ws.epigraph.idl.parser.psi.IdlOpOutputVarProjection;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.op.output.OpOutputProjectionsPsiParser;
 import ws.epigraph.projections.op.output.OpOutputVarProjection;
 import ws.epigraph.projections.req.output.ReqOutputVarProjection;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.refs.TypesResolver;
+import ws.epigraph.schema.parser.EdlSubParserDefinitions;
+import ws.epigraph.schema.parser.psi.SchemaOpOutputVarProjection;
 import ws.epigraph.types.DataType;
 import ws.epigraph.url.parser.UrlSubParserDefinitions;
 import ws.epigraph.url.parser.psi.UrlReqOutputTrunkVarProjection;
@@ -36,18 +36,19 @@ import static ws.epigraph.test.TestUtil.runPsiParser;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class WireTestUtil {
-  @NotNull
-  public static OpOutputVarProjection parseOpOutputVarProjection(
+public final class WireTestUtil {
+  private WireTestUtil() {}
+
+  public static @NotNull OpOutputVarProjection parseOpOutputVarProjection(
       @NotNull DataType varDataType,
       @NotNull String projectionString,
       @NotNull TypesResolver resolver) {
 
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
-    IdlOpOutputVarProjection psiVarProjection = EpigraphPsiUtil.parseText(
+    SchemaOpOutputVarProjection psiVarProjection = EpigraphPsiUtil.parseText(
         projectionString,
-        IdlSubParserDefinitions.OP_OUTPUT_VAR_PROJECTION,
+        EdlSubParserDefinitions.OP_OUTPUT_VAR_PROJECTION,
         errorsAccumulator
     );
 
@@ -61,8 +62,7 @@ public class WireTestUtil {
     ));
   }
 
-  @NotNull
-  public static StepsAndProjection<ReqOutputVarProjection> parseReqOutputVarProjection(
+  public static @NotNull StepsAndProjection<ReqOutputVarProjection> parseReqOutputVarProjection(
       @NotNull DataType type,
       @NotNull OpOutputVarProjection op,
       @NotNull String projectionString,

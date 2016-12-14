@@ -8,7 +8,7 @@ import epigraph.schema.Documented
 import epigraph.schema.Named
 
 record OpParam extends Named, Documented {
-  required: Boolean
+  `required`: Boolean
   override name: ParamName
   modelProjection: OpInputModelProjection
   `default`: Datum

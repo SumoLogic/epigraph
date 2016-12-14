@@ -52,7 +52,7 @@ record OpOutputMapModelProjection extends OpOutputModelProjection {
 }
 
 record OpOutputKeyProjection {
-  required: Boolean { doc = "if `null` - keys are not accepted" }
+  `required`: Boolean { doc = "if `null` - keys are not accepted" }
   params: map[String, OpParam]
   annotations: map[String, Annotation]
 }

@@ -63,9 +63,11 @@ import static org.junit.Assert.fail;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class TestUtil {
-  @NotNull
-  public static String lines(@NotNull String... lines) {
+@SuppressWarnings("UseOfSystemOutOrSystemErr")
+public final class TestUtil {
+  private TestUtil() {}
+
+  public static @NotNull String lines(@NotNull String... lines) {
     return Arrays.stream(lines).collect(Collectors.joining("\n"));
   }
 
@@ -279,8 +281,7 @@ public class TestUtil {
 
 */
 
-  @NotNull
-  public static String printOpVarPath(@NotNull OpVarPath path) {
+  public static @NotNull String printOpVarPath(@NotNull OpVarPath path) {
     StringBackend sb = new StringBackend(120);
     Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
     OpPathPrettyPrinter<NoExceptions> printer = new OpPathPrettyPrinter<>(layouter);
@@ -289,8 +290,7 @@ public class TestUtil {
     return sb.getString();
   }
 
-  @NotNull
-  public static String printReqVarPath(@NotNull ReqVarPath path) {
+  public static @NotNull String printReqVarPath(@NotNull ReqVarPath path) {
     StringBackend sb = new StringBackend(120);
     Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
     ReqPathPrettyPrinter<NoExceptions> printer = new ReqPathPrettyPrinter<>(layouter);
@@ -300,8 +300,7 @@ public class TestUtil {
     return sb.getString();
   }
 
-  @NotNull
-  public static String printReqOutputFieldProjection(
+  public static @NotNull String printReqOutputFieldProjection(
       String fieldName,
       @NotNull ReqOutputFieldProjection projection,
       int pathSteps) {
@@ -314,8 +313,7 @@ public class TestUtil {
     return sb.getString();
   }
 
-  @NotNull
-  public static String printReqOutputVarProjection(@NotNull ReqOutputVarProjection projection, int pathSteps) {
+  public static @NotNull String printReqOutputVarProjection(@NotNull ReqOutputVarProjection projection, int pathSteps) {
     StringBackend sb = new StringBackend(120);
     Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
     ReqOutputProjectionsPrettyPrinter<NoExceptions> printer = new ReqOutputProjectionsPrettyPrinter<>(layouter);
@@ -324,8 +322,7 @@ public class TestUtil {
     return sb.getString();
   }
 
-  @NotNull
-  public static String printReqUpdateVarProjection(@NotNull ReqUpdateVarProjection projection) {
+  public static @NotNull String printReqUpdateVarProjection(@NotNull ReqUpdateVarProjection projection) {
     StringBackend sb = new StringBackend(120);
     Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
     ReqUpdateProjectionsPrettyPrinter<NoExceptions> printer = new ReqUpdateProjectionsPrettyPrinter<>(layouter);
@@ -334,8 +331,7 @@ public class TestUtil {
     return sb.getString();
   }
 
-  @NotNull
-  public static String printReqInputFieldProjection(String fieldName, @NotNull ReqInputFieldProjection projection) {
+  public static @NotNull String printReqInputFieldProjection(String fieldName, @NotNull ReqInputFieldProjection projection) {
     StringBackend sb = new StringBackend(120);
     Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
     ReqInputProjectionsPrettyPrinter<NoExceptions> printer = new ReqInputProjectionsPrettyPrinter<>(layouter);
@@ -344,8 +340,7 @@ public class TestUtil {
     return sb.getString();
   }
 
-  @NotNull
-  public static String printReqInputVarProjection(@NotNull ReqInputVarProjection projection) {
+  public static @NotNull String printReqInputVarProjection(@NotNull ReqInputVarProjection projection) {
     StringBackend sb = new StringBackend(120);
     Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
     ReqInputProjectionsPrettyPrinter<NoExceptions> printer = new ReqInputProjectionsPrettyPrinter<>(layouter);
@@ -354,8 +349,7 @@ public class TestUtil {
     return sb.getString();
   }
 
-  @NotNull
-  public static String printReqDeleteVarProjection(@NotNull ReqDeleteVarProjection projection) {
+  public static @NotNull String printReqDeleteVarProjection(@NotNull ReqDeleteVarProjection projection) {
     StringBackend sb = new StringBackend(120);
     Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
     ReqDeleteProjectionsPrettyPrinter<NoExceptions> printer = new ReqDeleteProjectionsPrettyPrinter<>(layouter);
@@ -364,8 +358,7 @@ public class TestUtil {
     return sb.getString();
   }
 
-  @NotNull
-  public static String printOpInputVarProjection(@NotNull OpInputVarProjection projection, int pathSteps) {
+  public static @NotNull String printOpInputVarProjection(@NotNull OpInputVarProjection projection, int pathSteps) {
     StringBackend sb = new StringBackend(120);
     Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
     OpInputProjectionsPrettyPrinter<NoExceptions> printer = new OpInputProjectionsPrettyPrinter<>(layouter);
@@ -374,8 +367,7 @@ public class TestUtil {
     return sb.getString();
   }
 
-  @NotNull
-  public static String printOpOutputVarProjection(@NotNull OpOutputVarProjection projection) {
+  public static @NotNull String printOpOutputVarProjection(@NotNull OpOutputVarProjection projection) {
     StringBackend sb = new StringBackend(120);
     Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
     OpOutputProjectionsPrettyPrinter<NoExceptions> printer = new OpOutputProjectionsPrettyPrinter<>(layouter);
@@ -384,8 +376,7 @@ public class TestUtil {
     return sb.getString();
   }
 
-  @NotNull
-  public static String printOpDeleteVarProjection(OpDeleteVarProjection projection) {
+  public static @NotNull String printOpDeleteVarProjection(OpDeleteVarProjection projection) {
     StringBackend sb = new StringBackend(120);
     Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
     OpDeleteProjectionsPrettyPrinter<NoExceptions> printer = new OpDeleteProjectionsPrettyPrinter<>(layouter);
@@ -394,8 +385,7 @@ public class TestUtil {
     return sb.getString();
   }
 
-  @NotNull
-  public static String printGDatum(GDatum gd) {
+  public static @NotNull String printGDatum(GDatum gd) {
     StringBackend sb = new StringBackend(120);
     Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
     GDataPrettyPrinter<NoExceptions> printer = new GDataPrettyPrinter<>(layouter);
@@ -404,8 +394,7 @@ public class TestUtil {
     return sb.getString();
   }
 
-  @NotNull
-  public static String printIdl(Edl edl) {
+  public static @NotNull String printEdl(Edl edl) {
     StringBackend sb = new StringBackend(80);
     Layouter<NoExceptions> l = new Layouter<>(sb, 2);
     IdlPrettyPrinter<NoExceptions> pp = new IdlPrettyPrinter<>(l);
@@ -437,8 +426,7 @@ public class TestUtil {
     }
   }
 
-  @NotNull
-  public static <R> R runPsiParser(@NotNull TestUtil.PsiParserClosure<R> closure) {
+  public static @NotNull <R> R runPsiParser(@NotNull TestUtil.PsiParserClosure<R> closure) {
     List<PsiProcessingError> errors = new ArrayList<>();
     R r = null;
 
@@ -454,8 +442,7 @@ public class TestUtil {
     return r;
   }
 
-  @NotNull
-  public static <R> R runPsiParserNotCatchingErrors(@NotNull TestUtil.PsiParserClosure<R> closure)
+  public static @NotNull <R> R runPsiParserNotCatchingErrors(@NotNull TestUtil.PsiParserClosure<R> closure)
       throws PsiProcessingException {
     List<PsiProcessingError> errors = new ArrayList<>();
 

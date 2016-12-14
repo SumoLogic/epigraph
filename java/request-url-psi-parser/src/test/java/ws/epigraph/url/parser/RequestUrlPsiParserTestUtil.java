@@ -19,13 +19,12 @@ package ws.epigraph.url.parser;
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.gdata.GDatum;
 import ws.epigraph.idl.Edl;
-import ws.epigraph.idl.parser.IdlParserDefinition;
-import ws.epigraph.idl.parser.IdlPsiParser;
-import ws.epigraph.idl.parser.psi.IdlFile;
+import ws.epigraph.idl.parser.EdlPsiParser;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.refs.TypesResolver;
+import ws.epigraph.schema.parser.SchemaParserDefinition;
+import ws.epigraph.schema.parser.psi.SchemaFile;
 
-import java.io.IOException;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -34,9 +33,10 @@ import static ws.epigraph.test.TestUtil.*;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class RequestUrlPsiParserTestUtil {
-  @NotNull
-  static String printParameters(final Map<String, GDatum> parameters) {
+public final class RequestUrlPsiParserTestUtil {
+  private RequestUrlPsiParserTestUtil() {}
+
+  static @NotNull String printParameters(final Map<String, GDatum> parameters) {
     TreeMap<String, GDatum> sortedParams = new TreeMap<>(parameters);
     StringBuilder sb = new StringBuilder();
     for (final Map.Entry<String, GDatum> entry : sortedParams.entrySet()) {
@@ -49,15 +49,14 @@ public class RequestUrlPsiParserTestUtil {
     return sb.toString();
   }
 
-  @NotNull
-  static Edl parseIdl(@NotNull String text, @NotNull TypesResolver resolver) throws IOException {
+  static @NotNull Edl parseIdl(@NotNull String text, @NotNull TypesResolver resolver) {
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
-    @NotNull IdlFile psiFile =
-        (IdlFile) EpigraphPsiUtil.parseFile("test.idl", text, IdlParserDefinition.INSTANCE, errorsAccumulator);
+    @NotNull SchemaFile psiFile =
+        (SchemaFile) EpigraphPsiUtil.parseFile("test.idl", text, SchemaParserDefinition.INSTANCE, errorsAccumulator);
 
     failIfHasErrors(psiFile, errorsAccumulator);
 
-    return runPsiParser(errors -> IdlPsiParser.parseIdl(psiFile, resolver, errors));
+    return runPsiParser(errors -> EdlPsiParser.parseEdl(psiFile, resolver, errors));
   }
 }

@@ -31,22 +31,20 @@ import java.util.Objects;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class DeleteRequestUrl extends RequestUrl {
-  @NotNull
-  private final ReqDeleteFieldProjection deleteProjection;
+  private final @NotNull ReqDeleteFieldProjection deleteProjection;
 
   public DeleteRequestUrl(
-      @NotNull final String fieldName,
-      @Nullable final ReqFieldPath path,
+      final @NotNull String fieldName,
+      final @Nullable ReqFieldPath path,
       @NotNull ReqDeleteFieldProjection deleteProjection,
-      @NotNull final StepsAndProjection<ReqOutputFieldProjection> outputProjection,
-      @NotNull final Map<String, GDatum> parameters) {
+      final @NotNull StepsAndProjection<ReqOutputFieldProjection> outputProjection,
+      final @NotNull Map<String, GDatum> parameters) {
     super(fieldName, path, outputProjection, parameters);
 
     this.deleteProjection = deleteProjection;
   }
 
-  @NotNull
-  public ReqDeleteFieldProjection deleteProjection() { return deleteProjection; }
+  public @NotNull ReqDeleteFieldProjection deleteProjection() { return deleteProjection; }
 
   @Override
   public boolean equals(final Object o) {

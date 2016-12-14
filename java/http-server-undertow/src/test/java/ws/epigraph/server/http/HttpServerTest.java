@@ -31,14 +31,14 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import ws.epigraph.idl.Edl;
-import ws.epigraph.idl.parser.IdlParserDefinition;
-import ws.epigraph.idl.parser.IdlPsiParser;
-import ws.epigraph.idl.parser.psi.IdlFile;
+import ws.epigraph.idl.parser.EdlPsiParser;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingError;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.SimpleTypesResolver;
 import ws.epigraph.refs.TypesResolver;
+import ws.epigraph.schema.parser.SchemaParserDefinition;
+import ws.epigraph.schema.parser.psi.SchemaFile;
 import ws.epigraph.server.http.undertow.UndertowHandler;
 import ws.epigraph.service.Service;
 import ws.epigraph.service.ServiceInitializationException;
@@ -85,7 +85,7 @@ public class HttpServerTest {
 
   static {
     try {
-      edl = parseIdlResource("/ws/epigraph/tests/service/testService.sdl");
+      edl = parseIdlResource("/ws/epigraph/tests/service/testService.esc");
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -242,11 +242,12 @@ public class HttpServerTest {
 
   private static @NotNull Edl parseIdlResource(@NotNull String resourcePath) throws IOException {
     EpigraphPsiUtil.ErrorsAccumulator errAcc = new EpigraphPsiUtil.ErrorsAccumulator();
-    IdlFile psiFile = (IdlFile) EpigraphPsiUtil.parseResource(resourcePath, IdlParserDefinition.INSTANCE, errAcc);
-    return parseIdl(psiFile, errAcc);
+    SchemaFile psiFile =
+        (SchemaFile) EpigraphPsiUtil.parseResource(resourcePath, SchemaParserDefinition.INSTANCE, errAcc);
+    return parseEdl(psiFile, errAcc);
   }
 
-  private static @NotNull Edl parseIdl(@NotNull IdlFile psiFile, EpigraphPsiUtil.ErrorsAccumulator errAcc) {
+  private static @NotNull Edl parseEdl(@NotNull SchemaFile psiFile, EpigraphPsiUtil.ErrorsAccumulator errAcc) {
 
     if (errAcc.hasErrors()) {
       for (PsiErrorElement element : errAcc.errors()) {
@@ -258,7 +259,7 @@ public class HttpServerTest {
     Edl edl = null;
     List<PsiProcessingError> errors = new ArrayList<>();
     try {
-      edl = IdlPsiParser.parseIdl(psiFile, resolver, errors);
+      edl = EdlPsiParser.parseEdl(psiFile, resolver, errors);
     } catch (PsiProcessingException e) {
       errors = e.errors();
     }

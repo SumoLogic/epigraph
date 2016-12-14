@@ -122,7 +122,7 @@ case class ThirdPartyLocator( serviceType: CollectionServiceType.CollectionServi
 */
 record ThirdPartyLocator {
   serviceType: CollectionServiceType
-  path: ThirdPartyPath,
+  `path`: ThirdPartyPath,
   authentication: ThirdPartyAuth
 }
 

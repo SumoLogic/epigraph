@@ -38,8 +38,8 @@ import static ws.epigraph.wire.WireTestUtil.parseReqOutputVarProjection;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class JsonFormatWriterTest {
-  private DataType dataType = new DataType(Person.type, Person.id);
-  private TypesResolver resolver = new SimpleTypesResolver(
+  private final DataType dataType = new DataType(Person.type, Person.id);
+  private final TypesResolver resolver = new SimpleTypesResolver(
       PersonId.type,
       Person.type,
       User.type,
@@ -56,28 +56,28 @@ public class JsonFormatWriterTest {
       epigraph.Boolean.type
   );
 
-  private OpOutputVarProjection personOpProjection = parsePersonOpOutputVarProjection(
+  private final OpOutputVarProjection personOpProjection = parsePersonOpOutputVarProjection(
       lines(
           ":(",
           "  id,",
-          "  record (",
+          "  `record` (",
           "    id {",
           "      ;param1 : epigraph.String = \"hello world\" { doc = \"some doc\" },",
           "    },",
-          "    bestFriend :record (",
+          "    bestFriend :`record` (",
           "      id,",
-          "      bestFriend :record (",
+          "      bestFriend :`record` (",
           "        id,",
           "        firstName",
           "      ),",
           "    ),",
           "    friends *( :id ),",
-          "    friendsMap [;keyParam:epigraph.String]( :(id, record (id, firstName) ) )",
+          "    friendsMap [;keyParam:epigraph.String]( :(id, `record` (id, firstName) ) )",
           "  )",
           ") ~(",
-          "      ws.epigraph.tests.User :record (profile)",
-          "        ~ws.epigraph.tests.SubUser :record (worstEnemy(id)),",
-          "      ws.epigraph.tests.User2 :record (worstEnemy(id))",
+          "      ws.epigraph.tests.User :`record` (profile)",
+          "        ~ws.epigraph.tests.SubUser :`record` (worstEnemy(id)),",
+          "      ws.epigraph.tests.User2 :`record` (worstEnemy(id))",
           ")"
       )
   );
@@ -269,8 +269,7 @@ public class JsonFormatWriterTest {
     assertEquals(expectedJson, writer.toString());
   }
 
-  @NotNull
-  private OpOutputVarProjection parsePersonOpOutputVarProjection(@NotNull String projectionString) {
+  private @NotNull OpOutputVarProjection parsePersonOpOutputVarProjection(@NotNull String projectionString) {
     return parseOpOutputVarProjection(dataType, projectionString, resolver);
   }
 }

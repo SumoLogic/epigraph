@@ -39,12 +39,13 @@ import static ws.epigraph.schema.lexer.SchemaElementTypes.*;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class SchemaParserDefinition implements ParserDefinition {
-//  public static final SchemaParserDefinition INSTANCE = new SchemaParserDefinition();
-  public final static TokenSet WHITESPACES = TokenSet.create(TokenType.WHITE_SPACE);
-  public final static TokenSet IDENTIFIERS = TokenSet.create(S_ID);
-  public final static TokenSet COMMENTS = TokenSet.create(S_COMMENT, S_BLOCK_COMMENT);
-  public final static TokenSet CURLY_BRACES = TokenSet.create(S_CURLY_LEFT, S_CURLY_RIGHT);
-  public final static TokenSet KEYWORDS = TokenSet.create(
+  public static final SchemaParserDefinition INSTANCE = new SchemaParserDefinition();
+
+  public static final TokenSet WHITESPACES = TokenSet.create(TokenType.WHITE_SPACE);
+  public static final TokenSet IDENTIFIERS = TokenSet.create(S_ID);
+  public static final TokenSet COMMENTS = TokenSet.create(S_COMMENT, S_BLOCK_COMMENT);
+  public static final TokenSet CURLY_BRACES = TokenSet.create(S_CURLY_LEFT, S_CURLY_RIGHT);
+  public static final TokenSet KEYWORDS = TokenSet.create(
       S_NAMESPACE,
       S_IMPORT,
       S_MAP,
@@ -66,11 +67,29 @@ public class SchemaParserDefinition implements ParserDefinition {
       S_DOUBLE_T,
       S_BOOLEAN_T,
       S_STRING_T,
-      S_NULL // or is it a LITERAL?
+      S_NULL, // or is it a LITERAL?
+      S_FORBIDDEN,
+      S_REQUIRED,
+      S_RESOURCE,
+      S_GET,
+      S_POST,
+      S_PUT,
+      S_READ,
+      S_CREATE,
+      S_UPDATE,
+      S_DELETE,
+      S_CUSTOM,
+      S_METHOD,
+      S_PATH,
+      S_INPUT_TYPE,
+      S_INPUT_PROJECTION,
+      S_OUTPUT_TYPE,
+      S_OUTPUT_PROJECTION,
+      S_DELETE_PROJECTION
   );
-  public final static TokenSet STRING_LITERALS = TokenSet.create(S_STRING);
-  public final static TokenSet LITERALS = TokenSet.andSet(STRING_LITERALS, TokenSet.create(S_NUMBER, S_BOOLEAN));
-  public final static TokenSet TYPE_KINDS = TokenSet.create(S_VARTYPE, S_RECORD, S_MAP, S_LIST, S_ENUM,
+  public static final TokenSet STRING_LITERALS = TokenSet.create(S_STRING);
+  public static final TokenSet LITERALS = TokenSet.andSet(STRING_LITERALS, TokenSet.create(S_NUMBER, S_BOOLEAN));
+  public static final TokenSet TYPE_KINDS = TokenSet.create(S_VARTYPE, S_RECORD, S_MAP, S_LIST, S_ENUM,
       S_STRING_T, S_INTEGER_T, S_LONG_T, S_DOUBLE_T, S_BOOLEAN_T);
 
   @NotNull

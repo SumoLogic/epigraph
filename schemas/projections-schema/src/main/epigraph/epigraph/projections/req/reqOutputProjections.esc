@@ -48,7 +48,7 @@ record ReqOutputTagProjectionEntry {
 
 abstract record ReqOutputModelProjection {
   model: DataTypeRef
-  required: Boolean
+  `required`: Boolean
   params: map[String, ReqParam]
   annotations: map[String, Annotation]
   `meta`: ReqOutputModelProjection

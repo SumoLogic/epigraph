@@ -44,7 +44,6 @@ import ws.epigraph.url.DeleteRequestUrl;
 import ws.epigraph.url.parser.UrlSubParserDefinitions;
 import ws.epigraph.url.parser.psi.UrlDeleteUrl;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -78,25 +77,25 @@ public class DeleteOperationRouterTest {
       "resource users : map[String,Person] {",
       "  DELETE {",
       "    id = \"pathless.1\"",
-      "    deleteProjection []( :record (id, firstName) )",
-      "    outputProjection [required]( :record (id, firstName) )",
+      "    deleteProjection []( :`record` (id, firstName) )",
+      "    outputProjection [required]( :`record` (id, firstName) )",
       "  }",
       "  DELETE {",
       "    id = \"pathless.2\"",
-      "    deleteProjection []( :record (id, firstName, lastName) )",
-      "    outputProjection [required]( :record (id, firstName, lastName) )",
+      "    deleteProjection []( :`record` (id, firstName, lastName) )",
+      "    outputProjection [required]( :`record` (id, firstName, lastName) )",
       "  }",
       "  DELETE {",
       "    id = \"path.1\"",
       "    path /.",
-      "    deleteProjection :record (id, firstName, bestFriend :record (id, firstName) )",
-      "    outputProjection :record (id, firstName, bestFriend :record (id, firstName) )",
+      "    deleteProjection :`record` (id, firstName, bestFriend :`record` (id, firstName) )",
+      "    outputProjection :`record` (id, firstName, bestFriend :`record` (id, firstName) )",
       "  }",
       "  DELETE {",
       "    id = \"path.2\"",
-      "    path /.:record/bestFriend",
-      "    deleteProjection :record (id, firstName)",
-      "    outputProjection :record (id, firstName)",
+      "    path /.:`record`/bestFriend",
+      "    deleteProjection :`record` (id, firstName)",
+      "    outputProjection :`record` (id, firstName)",
       "  }",
       "}"
   );
@@ -123,7 +122,7 @@ public class DeleteOperationRouterTest {
           Collections.emptyList()
 
       );
-    } catch (IOException | ServiceInitializationException e) {
+    } catch (ServiceInitializationException e) {
       throw new RuntimeException(e);
     }
   }

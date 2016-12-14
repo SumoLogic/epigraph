@@ -4,6 +4,6 @@ import epigraph.projections.op.OpParamRef
 import epigraph.data.Datum
 
 record ReqParam {
-  opParam: OpParamRef default name
+  opParam: OpParamRef
   value: Datum
 }

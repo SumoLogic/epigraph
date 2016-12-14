@@ -44,7 +44,6 @@ import ws.epigraph.url.CreateRequestUrl;
 import ws.epigraph.url.parser.UrlSubParserDefinitions;
 import ws.epigraph.url.parser.psi.UrlCreateUrl;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -78,34 +77,34 @@ public class CreateOperationRouterTest {
       "resource users : map[String,Person] {",
       "  CREATE {",
       "    id = \"pathless.1\"",
-      "    inputProjection []( :record (id, firstName) )",
-      "    outputProjection [required]( :record (id, firstName) )",
+      "    inputProjection []( :`record` (id, firstName) )",
+      "    outputProjection [required]( :`record` (id, firstName) )",
       "  }",
       "  CREATE {",
       "    id = \"pathless.2\"",
-      "    inputProjection []( :record (id, firstName, lastName) )",
-      "    outputProjection [required]( :record (id, firstName, lastName) )",
+      "    inputProjection []( :`record` (id, firstName, lastName) )",
+      "    outputProjection [required]( :`record` (id, firstName, lastName) )",
       "  }",
       "  CREATE {",
       "    id = \"path.1\"",
       "    path /.",
       "    inputType UserRecord",
       "    inputProjection (id, firstName )",
-      "    outputProjection :record (id, firstName, bestFriend :record (id, firstName) )",
+      "    outputProjection :`record` (id, firstName, bestFriend :`record` (id, firstName) )",
       "  }",
       "  CREATE {",
       "    id = \"path.2\"",
-      "    path /.:record/bestFriend",
+      "    path /.:`record`/bestFriend",
       "    inputType UserRecord",
       "    inputProjection (id, +firstName )",
-      "    outputProjection :record (id, firstName)",
+      "    outputProjection :`record` (id, firstName)",
       "  }",
       "  CREATE {",
       "    id = \"path.3\"",
-      "    path /.:record/bestFriend",
+      "    path /.:`record`/bestFriend",
       "    inputType UserRecord",
       "    inputProjection (id, firstName )",
-      "    outputProjection :record (id, firstName)",
+      "    outputProjection :`record` (id, firstName)",
       "  }",
       "}"
   );
@@ -132,7 +131,7 @@ public class CreateOperationRouterTest {
           Collections.emptyList()
 
       );
-    } catch (IOException | ServiceInitializationException e) {
+    } catch (ServiceInitializationException e) {
       throw new RuntimeException(e);
     }
   }
@@ -296,11 +295,11 @@ public class CreateOperationRouterTest {
 
   private class OpImpl extends CreateOperation<PersonId_Person_Map.Data> {
 
-    protected OpImpl(final CreateOperationDeclaration declaration) {
+    OpImpl(final CreateOperationDeclaration declaration) {
       super(declaration);
     }
 
-    public @Nullable String getId() {
+    @Nullable String getId() {
       final @Nullable GDataValue value = declaration().annotations().get("id");
       if (value instanceof GPrimitiveDatum)
         return ((GPrimitiveDatum) value).value().toString();

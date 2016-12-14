@@ -43,7 +43,6 @@ import ws.epigraph.url.ReadRequestUrl;
 import ws.epigraph.url.parser.UrlSubParserDefinitions;
 import ws.epigraph.url.parser.psi.UrlReadUrl;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -76,21 +75,21 @@ public class ReadOperationRouterTest {
       "resource users : map[String,Person] {",
       "  READ {",
       "    id = \"pathless.1\"",
-      "    outputProjection [required]( :record (id, firstName) )",
+      "    outputProjection [required]( :`record` (id, firstName) )",
       "  }",
       "  READ {",
       "    id = \"pathless.2\"",
-      "    outputProjection [required]( :record (id, firstName, lastName) )",
+      "    outputProjection [required]( :`record` (id, firstName, lastName) )",
       "  }",
       "  READ {",
       "    id = \"path.1\"",
       "    path /.",
-      "    outputProjection :record (id, firstName, bestFriend :record (id, firstName) )",
+      "    outputProjection :`record` (id, firstName, bestFriend :`record` (id, firstName) )",
       "  }",
       "  READ {",
       "    id = \"path.2\"",
-      "    path /.:record/bestFriend",
-      "    outputProjection :record (id, firstName)",
+      "    path /.:`record`/bestFriend",
+      "    outputProjection :`record` (id, firstName)",
       "  }",
       "}"
   );
@@ -117,7 +116,7 @@ public class ReadOperationRouterTest {
           Collections.emptyList()
 
       );
-    } catch (IOException | ServiceInitializationException e) {
+    } catch (ServiceInitializationException e) {
       throw new RuntimeException(e);
     }
   }

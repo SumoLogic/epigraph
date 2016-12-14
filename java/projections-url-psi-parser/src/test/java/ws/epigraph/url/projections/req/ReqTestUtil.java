@@ -17,11 +17,6 @@
 package ws.epigraph.url.projections.req;
 
 import org.jetbrains.annotations.NotNull;
-import ws.epigraph.idl.parser.projections.IdlSubParserDefinitions;
-import ws.epigraph.idl.parser.psi.IdlOpDeleteVarProjection;
-import ws.epigraph.idl.parser.psi.IdlOpInputVarProjection;
-import ws.epigraph.idl.parser.psi.IdlOpOutputVarProjection;
-import ws.epigraph.idl.parser.psi.IdlOpVarPath;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.op.delete.OpDeleteProjectionsPsiParser;
 import ws.epigraph.projections.op.delete.OpDeleteVarProjection;
@@ -38,6 +33,11 @@ import ws.epigraph.projections.req.update.ReqUpdateVarProjection;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypesResolver;
+import ws.epigraph.schema.parser.EdlSubParserDefinitions;
+import ws.epigraph.schema.parser.psi.SchemaOpDeleteVarProjection;
+import ws.epigraph.schema.parser.psi.SchemaOpInputVarProjection;
+import ws.epigraph.schema.parser.psi.SchemaOpOutputVarProjection;
+import ws.epigraph.schema.parser.psi.SchemaOpVarPath;
 import ws.epigraph.test.TestUtil;
 import ws.epigraph.types.DataType;
 import ws.epigraph.url.parser.UrlSubParserDefinitions;
@@ -56,18 +56,20 @@ import static ws.epigraph.test.TestUtil.*;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class ReqTestUtil {
-  @NotNull
-  public static OpOutputVarProjection parseOpOutputVarProjection(
+@SuppressWarnings("CallToPrintStackTrace")
+public final class ReqTestUtil {
+  private ReqTestUtil() {}
+
+  public static @NotNull OpOutputVarProjection parseOpOutputVarProjection(
       @NotNull DataType varDataType,
       @NotNull String projectionString,
       @NotNull TypesResolver resolver) {
 
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
-    IdlOpOutputVarProjection psiVarProjection = EpigraphPsiUtil.parseText(
+    SchemaOpOutputVarProjection psiVarProjection = EpigraphPsiUtil.parseText(
         projectionString,
-        IdlSubParserDefinitions.OP_OUTPUT_VAR_PROJECTION,
+        EdlSubParserDefinitions.OP_OUTPUT_VAR_PROJECTION,
         errorsAccumulator
     );
 
@@ -81,8 +83,7 @@ public class ReqTestUtil {
     ));
   }
 
-  @NotNull
-  public static StepsAndProjection<ReqOutputVarProjection> parseReqOutputVarProjection(
+  public static @NotNull StepsAndProjection<ReqOutputVarProjection> parseReqOutputVarProjection(
       @NotNull DataType type,
       @NotNull OpOutputVarProjection op,
       @NotNull String projectionString,
@@ -107,8 +108,7 @@ public class ReqTestUtil {
     ));
   }
 
-  @NotNull
-  public static OpVarPath parseOpVarPath(
+  public static @NotNull OpVarPath parseOpVarPath(
       @NotNull DataType varDataType,
       @NotNull String projectionString,
       @NotNull TypesResolver resolver) {
@@ -123,8 +123,7 @@ public class ReqTestUtil {
     throw new RuntimeException("unreachable");
   }
 
-  @NotNull
-  public static OpVarPath parseOpVarPath(
+  public static @NotNull OpVarPath parseOpVarPath(
       @NotNull DataType varDataType,
       @NotNull String projectionString,
       boolean catchPsiErrors,
@@ -132,9 +131,9 @@ public class ReqTestUtil {
 
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
-    IdlOpVarPath psiVarProjection = EpigraphPsiUtil.parseText(
+    SchemaOpVarPath psiVarProjection = EpigraphPsiUtil.parseText(
         projectionString,
-        IdlSubParserDefinitions.OP_VAR_PATH,
+        EdlSubParserDefinitions.OP_VAR_PATH,
         errorsAccumulator
     );
 
@@ -146,8 +145,7 @@ public class ReqTestUtil {
     return catchPsiErrors ? runPsiParser(closure) : runPsiParserNotCatchingErrors(closure);
   }
 
-  @NotNull
-  public static ReqUpdateVarProjection parseReqUpdateVarProjection(
+  public static @NotNull ReqUpdateVarProjection parseReqUpdateVarProjection(
       @NotNull DataType type,
       @NotNull OpInputVarProjection op,
       @NotNull String projectionString,
@@ -172,9 +170,7 @@ public class ReqTestUtil {
     ));
   }
 
-  @NotNull
-
-  public static ReqInputVarProjection parseReqInputVarProjection(
+  public static @NotNull ReqInputVarProjection parseReqInputVarProjection(
       @NotNull DataType type,
       @NotNull OpInputVarProjection op,
       @NotNull String projectionString,
@@ -231,9 +227,9 @@ public class ReqTestUtil {
 
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
-    IdlOpInputVarProjection psiVarProjection = EpigraphPsiUtil.parseText(
+    SchemaOpInputVarProjection psiVarProjection = EpigraphPsiUtil.parseText(
         projectionString,
-        IdlSubParserDefinitions.OP_INPUT_VAR_PROJECTION,
+        EdlSubParserDefinitions.OP_INPUT_VAR_PROJECTION,
         errorsAccumulator
     );
 
@@ -255,9 +251,9 @@ public class ReqTestUtil {
 
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
-    IdlOpDeleteVarProjection psiVarProjection = EpigraphPsiUtil.parseText(
+    SchemaOpDeleteVarProjection psiVarProjection = EpigraphPsiUtil.parseText(
         projectionString,
-        IdlSubParserDefinitions.OP_DELETE_VAR_PROJECTION,
+        EdlSubParserDefinitions.OP_DELETE_VAR_PROJECTION,
         errorsAccumulator
     );
 

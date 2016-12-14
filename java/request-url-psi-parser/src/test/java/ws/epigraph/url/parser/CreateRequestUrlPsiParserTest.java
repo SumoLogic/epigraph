@@ -50,7 +50,7 @@ import static ws.epigraph.url.parser.RequestUrlPsiParserTestUtil.printParameters
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class CreateRequestUrlPsiParserTest {
-  private TypesResolver resolver = new SimpleTypesResolver(
+  private final TypesResolver resolver = new SimpleTypesResolver(
       PersonId.type,
       Person.type,
       User.type,
@@ -61,7 +61,7 @@ public class CreateRequestUrlPsiParserTest {
       epigraph.Boolean.type
   );
 
-  private String idlText = lines(
+  private final String idlText = lines(
       "namespace test",
       "import ws.epigraph.tests.Person",
       "import ws.epigraph.tests.UserRecord",
@@ -69,25 +69,21 @@ public class CreateRequestUrlPsiParserTest {
       "  CREATE {",
       "    inputType UserRecord",
       "    inputProjection (id, firstName)",
-      "    outputProjection [required]( :record (id, firstName) )",
+      "    outputProjection [required]( :`record` (id, firstName) )",
       "  }",
       "}"
   );
 
-  private CreateOperationDeclaration createIdl1;
-  private DataType resourceType = String_Person_Map.type.dataType();
+  private final CreateOperationDeclaration createIdl1;
+  private final DataType resourceType = String_Person_Map.type.dataType();
 
   {
-    try {
-      Edl edl = parseIdl(idlText, resolver);
-      ResourceDeclaration resourceDeclaration = edl.resources().get("users");
+    Edl edl = parseIdl(idlText, resolver);
+    ResourceDeclaration resourceDeclaration = edl.resources().get("users");
 
-      final @NotNull List<OperationDeclaration> operationDeclarations = resourceDeclaration.operations();
-      createIdl1 = (CreateOperationDeclaration) operationDeclarations.get(0);
+    final @NotNull List<OperationDeclaration> operationDeclarations = resourceDeclaration.operations();
+    createIdl1 = (CreateOperationDeclaration) operationDeclarations.get(0);
 
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
   }
 
   @Test
@@ -111,7 +107,7 @@ public class CreateRequestUrlPsiParserTest {
       String expectedInputProjection,
       String expectedOutputProjection,
       String expectedParams)
-      throws IOException, PsiProcessingException {
+      throws PsiProcessingException {
 
     List<PsiProcessingError> errors = new ArrayList<>();
     final @NotNull CreateRequestUrl requestUrl = CreateRequestUrlPsiParser.parseCreateRequestUrl(
@@ -141,7 +137,7 @@ public class CreateRequestUrlPsiParserTest {
   }
 
 
-  private static UrlCreateUrl parseUrlPsi(@NotNull String text) throws IOException {
+  private static UrlCreateUrl parseUrlPsi(@NotNull String text) {
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
     @NotNull UrlCreateUrl urlPsi =

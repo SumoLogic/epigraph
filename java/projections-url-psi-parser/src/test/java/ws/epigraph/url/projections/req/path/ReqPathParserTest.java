@@ -39,8 +39,8 @@ import static ws.epigraph.test.TestUtil.lines;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ReqPathParserTest {
-  private DataType dataType = new DataType(Person.type, Person.id);
-  private TypesResolver resolver = new SimpleTypesResolver(
+  private final DataType dataType = new DataType(Person.type, Person.id);
+  private final TypesResolver resolver = new SimpleTypesResolver(
       PersonId.type,
       Person.type,
       User.type,
@@ -49,12 +49,12 @@ public class ReqPathParserTest {
       epigraph.String.type
   );
 
-  private OpVarPath personOpPath = parseOpVarPath(
+  private final OpVarPath personOpPath = parseOpVarPath(
       lines(
-          ":record { ;p1:epigraph.String }",
+          ":`record` { ;p1:epigraph.String }",
           "  / friendsMap { ;p2:epigraph.String }",
           "    / . { ;p3:epigraph.String }",
-          "      :record { ;p4:epigraph.String }",
+          "      :`record` { ;p4:epigraph.String }",
           "        / id { ;p5:epigraph.String }"
       )
   );
@@ -96,7 +96,7 @@ public class ReqPathParserTest {
   private void testParse(String expr, String expectedProjection) {
     UrlReqVarPath psi = getPsi(expr);
 
-    @NotNull final ReqVarPath path = TestUtil.runPsiParser(
+    final @NotNull ReqVarPath path = TestUtil.runPsiParser(
         errors ->
             ReqPathPsiParser.parseVarPath(
                 personOpPath,
@@ -126,8 +126,7 @@ public class ReqPathParserTest {
     return psiVarPath;
   }
 
-  @NotNull
-  private OpVarPath parseOpVarPath(String projectionString) {
+  private @NotNull OpVarPath parseOpVarPath(String projectionString) {
     return ReqTestUtil.parseOpVarPath(dataType, projectionString, resolver);
   }
 

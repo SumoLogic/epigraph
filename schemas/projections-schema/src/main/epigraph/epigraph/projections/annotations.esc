@@ -5,7 +5,7 @@ import epigraph.schema.Documented
 import epigraph.schema.Named
 
 record Annotation extends Named, Documented {
-  required: Boolean
+  `required`: Boolean
   override name: ParamName
   value: Datum
 }

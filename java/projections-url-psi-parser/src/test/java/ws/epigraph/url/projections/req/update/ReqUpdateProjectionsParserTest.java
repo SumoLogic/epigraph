@@ -40,8 +40,8 @@ import static ws.epigraph.test.TestUtil.lines;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ReqUpdateProjectionsParserTest {
-  private DataType dataType = new DataType(Person.type, Person.id);
-  private TypesResolver resolver = new SimpleTypesResolver(
+  private final DataType dataType = new DataType(Person.type, Person.id);
+  private final TypesResolver resolver = new SimpleTypesResolver(
       PersonId.type,
       Person.type,
       User.type,
@@ -50,25 +50,25 @@ public class ReqUpdateProjectionsParserTest {
       epigraph.String.type
   );
 
-  private OpInputVarProjection personOpProjection = parsePersonOpInputVarProjection(
+  private final OpInputVarProjection personOpProjection = parsePersonOpInputVarProjection(
       lines(
           ":(",
           "  id,",
-          "  record (",
+          "  `record` (",
           "    id {",
           "      ;param1 : epigraph.String = \"hello world\" { doc = \"some doc\" },",
           "    },",
-          "    bestFriend :(+id, record (",
+          "    bestFriend :(+id, `record` (",
           "      +id,",
-          "      bestFriend :record (",
+          "      bestFriend :`record` (",
           "        id,",
           "        firstName",
           "      ),",
           "    )),",
           "    friends *( :id ),",
-          "    friendsMap [ ;param: epigraph.String ]( :(id, record (id, firstName) ) )",
+          "    friendsMap [ ;param: epigraph.String ]( :(id, `record` (id, firstName) ) )",
           "  )",
-          ") ~ws.epigraph.tests.User :record (profile)"
+          ") ~ws.epigraph.tests.User :`record` (profile)"
       )
   );
 
@@ -166,8 +166,7 @@ public class ReqUpdateProjectionsParserTest {
     assertEquals(expectedProjection, actual);
   }
 
-  @NotNull
-  private OpInputVarProjection parsePersonOpInputVarProjection(@NotNull String projectionString) {
+  private @NotNull OpInputVarProjection parsePersonOpInputVarProjection(@NotNull String projectionString) {
     return ReqTestUtil.parseOpInputVarProjection(dataType, projectionString, resolver).projection();
   }
 }
