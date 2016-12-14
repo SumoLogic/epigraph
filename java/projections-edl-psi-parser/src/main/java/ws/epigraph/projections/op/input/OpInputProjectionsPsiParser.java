@@ -23,7 +23,7 @@ import ws.epigraph.data.*;
 import ws.epigraph.gdata.*;
 import ws.epigraph.edl.TypeRefs;
 import ws.epigraph.edl.gdata.EdlGDataPsiParser;
-import ws.epigraph.schema.parser.psi.*;
+import ws.epigraph.edl.parser.psi.*;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.ProjectionUtils;

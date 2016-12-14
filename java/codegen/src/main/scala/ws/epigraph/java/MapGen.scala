@@ -22,7 +22,7 @@ package ws.epigraph.java
 import java.nio.file.Path
 
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
-import ws.epigraph.schema.compiler.{CAnonMapType, CContext, CMapType, CVarTypeDef}
+import ws.epigraph.edl.compiler.{CAnonMapType, CContext, CMapType, CVarTypeDef}
 
 abstract class MapGen[Type >: Null <: CMapType](from: Type, ctx: CContext) extends JavaTypeGen[Type](from, ctx)
     with DatumTypeJavaGen {

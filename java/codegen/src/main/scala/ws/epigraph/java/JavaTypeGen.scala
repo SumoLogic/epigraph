@@ -20,7 +20,7 @@ package ws.epigraph.java
 
 import java.nio.file.Path
 
-import ws.epigraph.schema.compiler.{CContext, CDataType, CType, CTypeRef, CVarTypeDef}
+import ws.epigraph.edl.compiler.{CContext, CDataType, CType, CTypeRef, CVarTypeDef}
 
 import scala.collection.JavaConversions._
 

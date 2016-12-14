@@ -19,7 +19,7 @@
 package ws.epigraph.scala.mojo;
 
 import ws.epigraph.scala.ScalaSchemaGenerator;
-import ws.epigraph.schema.compiler.*;
+import ws.epigraph.edl.compiler.*;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;

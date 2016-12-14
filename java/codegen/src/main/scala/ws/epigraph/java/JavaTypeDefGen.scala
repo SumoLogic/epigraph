@@ -18,7 +18,7 @@
 
 package ws.epigraph.java
 
-import ws.epigraph.schema.compiler.{CContext, CTypeDef}
+import ws.epigraph.edl.compiler.{CContext, CTypeDef}
 
 abstract class JavaTypeDefGen[TypeDef >: Null <: CTypeDef](from: TypeDef, ctx: CContext)
     extends JavaTypeGen[TypeDef](from, ctx)

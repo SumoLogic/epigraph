@@ -18,7 +18,7 @@
 
 package ws.epigraph.scala
 
-import ws.epigraph.schema.compiler._
+import ws.epigraph.edl.compiler._
 
 class RecordGen(from: CRecordTypeDef) extends TypeScalaGen[CRecordTypeDef](from) {
 

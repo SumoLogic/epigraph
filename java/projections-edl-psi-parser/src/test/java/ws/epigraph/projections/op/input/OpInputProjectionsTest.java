@@ -23,8 +23,8 @@ import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.SimpleTypesResolver;
 import ws.epigraph.refs.TypesResolver;
-import ws.epigraph.schema.parser.EdlSubParserDefinitions;
-import ws.epigraph.schema.parser.psi.SchemaOpInputVarProjection;
+import ws.epigraph.edl.parser.EdlSubParserDefinitions;
+import ws.epigraph.edl.parser.psi.SchemaOpInputVarProjection;
 import ws.epigraph.tests.*;
 import ws.epigraph.types.DataType;
 

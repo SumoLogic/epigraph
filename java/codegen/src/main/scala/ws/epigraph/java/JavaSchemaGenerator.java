@@ -18,7 +18,7 @@
 
 package ws.epigraph.java;
 
-import ws.epigraph.schema.compiler.*;
+import ws.epigraph.edl.compiler.*;
 import scala.collection.JavaConversions;
 
 import java.io.File;

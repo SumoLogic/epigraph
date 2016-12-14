@@ -22,8 +22,8 @@ import ws.epigraph.edl.parser.EdlPsiParser;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.refs.SimpleTypesResolver;
 import ws.epigraph.refs.TypesResolver;
-import ws.epigraph.schema.parser.SchemaParserDefinition;
-import ws.epigraph.schema.parser.psi.SchemaFile;
+import ws.epigraph.edl.parser.SchemaParserDefinition;
+import ws.epigraph.edl.parser.psi.SchemaFile;
 import ws.epigraph.tests.*;
 
 import java.io.IOException;

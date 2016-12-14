@@ -22,7 +22,7 @@ import ws.epigraph.edl.ResourceDeclaration;
 import ws.epigraph.edl.TypeRefs;
 import ws.epigraph.edl.operations.OperationDeclaration;
 import ws.epigraph.edl.operations.OperationsPsiParser;
-import ws.epigraph.schema.parser.psi.*;
+import ws.epigraph.edl.parser.psi.*;
 import ws.epigraph.lang.Qn;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingError;

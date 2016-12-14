@@ -23,7 +23,7 @@ import ws.epigraph.gdata.GDataValue;
 import ws.epigraph.gdata.GDatum;
 import ws.epigraph.edl.TypeRefs;
 import ws.epigraph.edl.gdata.EdlGDataPsiParser;
-import ws.epigraph.schema.parser.psi.*;
+import ws.epigraph.edl.parser.psi.*;
 import ws.epigraph.projections.op.OpParam;
 import ws.epigraph.projections.op.OpParams;
 import ws.epigraph.projections.op.input.OpInputModelProjection;

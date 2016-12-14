@@ -19,7 +19,7 @@ package ws.epigraph.edl.gdata;
 import org.jetbrains.annotations.Contract;
 import ws.epigraph.gdata.*;
 import ws.epigraph.edl.TypeRefs;
-import ws.epigraph.schema.parser.psi.*;
+import ws.epigraph.edl.parser.psi.*;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingError;
 import ws.epigraph.psi.PsiProcessingException;

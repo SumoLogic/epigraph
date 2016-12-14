@@ -19,7 +19,7 @@
 package ws.epigraph.java
 
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
-import ws.epigraph.schema.compiler.{CContext, CListType, CVarTypeDef}
+import ws.epigraph.edl.compiler.{CContext, CListType, CVarTypeDef}
 
 abstract class ListGen[Type >: Null <: CListType](from: Type, ctx: CContext) extends JavaTypeGen[Type](from, ctx)
     with DatumTypeJavaGen {

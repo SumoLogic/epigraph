@@ -20,7 +20,7 @@ package ws.epigraph.scala
 
 import java.nio.file.Path
 
-import ws.epigraph.schema.compiler.CTypeDef
+import ws.epigraph.edl.compiler.CTypeDef
 
 abstract class TypeScalaGen[TypeDef >: Null <: CTypeDef](from: TypeDef) extends ScalaGen[TypeDef](from) {
 

@@ -330,7 +330,7 @@ reqInputKeysProjection ::= '['( '*' | ( ( reqInputKeyProjection ','? )* ) ) ']'
 reqInputKeyProjection ::= datum reqParamsAndAnnotations
 
 // ============= data language =============
-// please keep in sync with data language from schema.bnf and idl.bnf
+// please keep in sync with data language from schema.bnf
 
 dataValue ::= data | datum
 private dataTypeSpec ::= typeRef

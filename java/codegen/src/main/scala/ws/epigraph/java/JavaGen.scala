@@ -20,7 +20,7 @@ package ws.epigraph.java
 
 import java.nio.file.Path
 
-import ws.epigraph.schema.compiler._
+import ws.epigraph.edl.compiler._
 import ws.epigraph.lang.Qn
 import ws.epigraph.util.JavaNames
 

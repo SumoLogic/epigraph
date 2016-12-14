@@ -20,7 +20,7 @@ package ws.epigraph.scala
 
 import java.nio.file.Path
 
-import ws.epigraph.schema.compiler._
+import ws.epigraph.edl.compiler._
 import ws.epigraph.lang.Qn
 
 import scala.collection.GenTraversableOnce

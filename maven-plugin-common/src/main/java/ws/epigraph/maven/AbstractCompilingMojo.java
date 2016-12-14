@@ -18,7 +18,7 @@
 
 package ws.epigraph.maven;
 
-import ws.epigraph.schema.compiler.*;
+import ws.epigraph.edl.compiler.*;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.plugin.AbstractMojo;

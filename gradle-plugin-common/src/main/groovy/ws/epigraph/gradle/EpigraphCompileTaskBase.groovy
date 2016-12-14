@@ -24,7 +24,7 @@ import org.gradle.api.logging.Logger
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.ParallelizableTask
-import ws.epigraph.schema.compiler.*
+import ws.epigraph.edl.compiler.*
 
 import java.nio.charset.StandardCharsets
 import java.util.jar.JarFile

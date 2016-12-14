@@ -19,8 +19,8 @@ package ws.epigraph.edl.gdata;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 import ws.epigraph.gdata.GDataValue;
-import ws.epigraph.schema.parser.EdlSubParserDefinitions;
-import ws.epigraph.schema.parser.psi.SchemaDataValue;
+import ws.epigraph.edl.parser.EdlSubParserDefinitions;
+import ws.epigraph.edl.parser.psi.SchemaDataValue;
 import ws.epigraph.psi.EpigraphPsiUtil;
 
 import static org.junit.Assert.assertEquals;

@@ -19,7 +19,7 @@
 package ws.epigraph.java
 
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
-import ws.epigraph.schema.compiler._
+import ws.epigraph.edl.compiler._
 
 class RecordGen(from: CRecordTypeDef, ctx: CContext) extends JavaTypeDefGen[CRecordTypeDef](from, ctx)
     with DatumTypeJavaGen {

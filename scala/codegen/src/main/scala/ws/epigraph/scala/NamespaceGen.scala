@@ -20,7 +20,7 @@ package ws.epigraph.scala
 
 import java.nio.file.Path
 
-import ws.epigraph.schema.compiler.CNamespace
+import ws.epigraph.edl.compiler.CNamespace
 import org.jetbrains.annotations.Nullable
 
 import NewlineStringInterpolator.NewlineHelper

@@ -16,7 +16,7 @@
 
 package ws.epigraph.edl;
 
-import ws.epigraph.schema.parser.psi.*;
+import ws.epigraph.edl.parser.psi.*;
 import ws.epigraph.psi.PsiProcessingError;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.*;

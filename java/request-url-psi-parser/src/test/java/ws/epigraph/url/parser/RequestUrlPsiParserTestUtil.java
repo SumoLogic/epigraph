@@ -22,8 +22,8 @@ import ws.epigraph.edl.Edl;
 import ws.epigraph.edl.parser.EdlPsiParser;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.refs.TypesResolver;
-import ws.epigraph.schema.parser.SchemaParserDefinition;
-import ws.epigraph.schema.parser.psi.SchemaFile;
+import ws.epigraph.edl.parser.SchemaParserDefinition;
+import ws.epigraph.edl.parser.psi.SchemaFile;
 
 import java.util.Map;
 import java.util.TreeMap;
