@@ -14,7 +14,7 @@
   <dependencies>
     <dependency>
       <groupId>${project.parent.groupId}</groupId>
-      <artifactId>epigraph-java-idl</artifactId>
+      <artifactId>epigraph-java-edl</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
     <dependency>

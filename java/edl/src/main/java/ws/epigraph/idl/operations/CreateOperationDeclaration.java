@@ -28,8 +28,8 @@ import ws.epigraph.types.Type;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class CreateOperationIdl extends OperationIdl {
-  protected CreateOperationIdl(
+public class CreateOperationDeclaration extends OperationDeclaration {
+  protected CreateOperationDeclaration(
       @Nullable String name,
       @NotNull Annotations annotations,
       @Nullable OpFieldPath path,
@@ -47,8 +47,6 @@ public class CreateOperationIdl extends OperationIdl {
     final OpInputFieldProjection projection = super.inputProjection();
     assert projection != null;
     return projection;
-
-
   }
 
   @Override

@@ -19,10 +19,10 @@ package ws.epigraph.url.parser;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
-import ws.epigraph.idl.Idl;
-import ws.epigraph.idl.ResourceIdl;
-import ws.epigraph.idl.operations.OperationIdl;
-import ws.epigraph.idl.operations.DeleteOperationIdl;
+import ws.epigraph.idl.Edl;
+import ws.epigraph.idl.ResourceDeclaration;
+import ws.epigraph.idl.operations.OperationDeclaration;
+import ws.epigraph.idl.operations.DeleteOperationDeclaration;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.req.output.ReqOutputFieldProjection;
 import ws.epigraph.projections.req.delete.ReqDeleteFieldProjection;
@@ -73,16 +73,16 @@ public class DeleteRequestUrlPsiParserTest {
       "}"
   );
 
-  private DeleteOperationIdl deleteIdl1;
+  private DeleteOperationDeclaration deleteIdl1;
   private DataType resourceType = String_Person_Map.type.dataType();
 
   {
     try {
-      Idl idl = parseIdl(idlText, resolver);
-      ResourceIdl resourceIdl = idl.resources().get("users");
+      Edl edl = parseIdl(idlText, resolver);
+      ResourceDeclaration resourceDeclaration = edl.resources().get("users");
 
-      final @NotNull List<OperationIdl> operationIdls = resourceIdl.operations();
-      deleteIdl1 = (DeleteOperationIdl) operationIdls.get(0);
+      final @NotNull List<OperationDeclaration> operationDeclarations = resourceDeclaration.operations();
+      deleteIdl1 = (DeleteOperationDeclaration) operationDeclarations.get(0);
 
     } catch (IOException e) {
       throw new RuntimeException(e);
@@ -103,7 +103,7 @@ public class DeleteRequestUrlPsiParserTest {
   }
 
   private void test(
-      DeleteOperationIdl op,
+      DeleteOperationDeclaration op,
       String url,
       String expectedResource,
       int expectedSteps,

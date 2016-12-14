@@ -20,12 +20,17 @@
     </dependency>
     <dependency>
       <groupId>${project.parent.groupId}</groupId>
-      <artifactId>epigraph-java-gdata</artifactId>
+      <artifactId>epigraph-java-edl</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
     <dependency>
       <groupId>${project.parent.groupId}</groupId>
-      <artifactId>epigraph-java-idl</artifactId>
+      <artifactId>epigraph-java-edl-psi-parser-common</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.parent.groupId}</groupId>
+      <artifactId>epigraph-java-gdata</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
     <!--<dependency>-->
@@ -33,11 +38,6 @@
       <!--<artifactId>epigraph-java-idl-parser</artifactId>-->
       <!--<version>${project.parent.version}</version>-->
     <!--</dependency>-->
-    <dependency>
-      <groupId>${project.parent.groupId}</groupId>
-      <artifactId>epigraph-java-edl-psi-parser-common</artifactId>
-      <version>${project.parent.version}</version>
-    </dependency>
     <dependency>
       <groupId>${project.parent.groupId}</groupId>
       <artifactId>epigraph-java-lang-common</artifactId>

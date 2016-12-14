@@ -17,7 +17,7 @@
         <module>codegen</module>
         <module>core</module>
         <module>gdata</module>
-        <module>idl</module>
+        <module>edl</module>
         <module>idl-parser</module>
         <module>lang-common</module>
         <module>maven-plugin</module>

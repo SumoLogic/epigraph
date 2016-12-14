@@ -16,7 +16,7 @@
 
 package ws.epigraph.service.operations;
 
-import ws.epigraph.idl.operations.OperationIdl;
+import ws.epigraph.idl.operations.OperationDeclaration;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.CompletableFuture;
@@ -25,7 +25,7 @@ import java.util.concurrent.CompletableFuture;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public abstract class Operation<
-    Decl extends OperationIdl,
+    Decl extends OperationDeclaration,
     Req extends OperationRequest,
     Rsp extends OperationResponse> {
 

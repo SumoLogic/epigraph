@@ -16,8 +16,8 @@
 
 package ws.epigraph.idl.operations;
 
-import ws.epigraph.idl.IdlError;
-import ws.epigraph.idl.ResourceIdl;
+import ws.epigraph.idl.ResourceDeclarationError;
+import ws.epigraph.idl.ResourceDeclaration;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.ProjectionUtils;
@@ -33,11 +33,11 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Abstract operation definition. See {@code operations.esc}.
+ * Abstract operation declaration. See {@code operations.esc}.
  *
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public abstract class OperationIdl {
+public abstract class OperationDeclaration {
   protected final @NotNull OperationKind type;
   protected final @NotNull HttpMethod method;
   protected final @Nullable String name;
@@ -47,7 +47,7 @@ public abstract class OperationIdl {
   protected final @NotNull OpOutputFieldProjection outputProjection;
   protected final @NotNull TextLocation location;
 
-  protected OperationIdl(
+  protected OperationDeclaration(
       @NotNull OperationKind type,
       @NotNull HttpMethod method,
       @Nullable String name,
@@ -90,13 +90,13 @@ public abstract class OperationIdl {
 
   public @NotNull TextLocation location() { return location; }
 
-  protected void validate(@NotNull ResourceIdl resource, @NotNull List<IdlError> errors) { }
+  protected void validate(@NotNull ResourceDeclaration resource, @NotNull List<ResourceDeclarationError> errors) { }
 
   protected void ensureProjectionStartsWithResourceType(
-      @NotNull ResourceIdl resource,
+      @NotNull ResourceDeclaration resource,
       @NotNull GenVarProjection<?, ?, ?> projection,
       @NotNull String projectionName,
-      @NotNull List<IdlError> errors) {
+      @NotNull List<ResourceDeclarationError> errors) {
 
     @NotNull Type outputType = resource.fieldType().type;
     if (path != null) outputType = ProjectionUtils.tipType(path.varProjection()).type;
@@ -105,7 +105,7 @@ public abstract class OperationIdl {
 
     if (!outputType.equals(outputProjectionType))
       errors.add(
-          new IdlError(
+          new ResourceDeclarationError(
               resource,
               this,
               String.format(
@@ -123,7 +123,7 @@ public abstract class OperationIdl {
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-    OperationIdl that = (OperationIdl) o;
+    OperationDeclaration that = (OperationDeclaration) o;
     return type == that.type &&
            Objects.equals(name, that.name) &&
            Objects.equals(annotations, that.annotations) &&

@@ -48,7 +48,7 @@ public class OperationsPrettyPrinter<E extends Exception> {
     opDeletePrinter = new OpDeleteProjectionsPrettyPrinter<>(l);
   }
 
-  public void printOperation(@NotNull OperationIdl operation) throws E {
+  public void printOperation(@NotNull OperationDeclaration operation) throws E {
     l.beginIInd(0);
 
     if (!operation.isDefault())
@@ -79,7 +79,7 @@ public class OperationsPrettyPrinter<E extends Exception> {
     l.end();
   }
 
-  private boolean printMethod(@NotNull OperationIdl operation, boolean first) throws E {
+  private boolean printMethod(@NotNull OperationDeclaration operation, boolean first) throws E {
     if (operation.kind() != OperationKind.CUSTOM) return first;
 
     if (first) first = false;
@@ -95,7 +95,7 @@ public class OperationsPrettyPrinter<E extends Exception> {
     return first;
   }
 
-  private boolean printPath(@NotNull OperationIdl operation, boolean first) throws E {
+  private boolean printPath(@NotNull OperationDeclaration operation, boolean first) throws E {
     final @Nullable OpFieldPath path = operation.path();
 
     if (path != null) {
@@ -113,7 +113,7 @@ public class OperationsPrettyPrinter<E extends Exception> {
     return first;
   }
 
-  private boolean printInputType(@NotNull OperationIdl operation, boolean first) throws E {
+  private boolean printInputType(@NotNull OperationDeclaration operation, boolean first) throws E {
     final @Nullable Type inputType = operation.inputType();
 
     if (inputType != null) {
@@ -131,7 +131,7 @@ public class OperationsPrettyPrinter<E extends Exception> {
     return first;
   }
 
-  private boolean printInputProjection(@NotNull OperationIdl operation, boolean first) throws E {
+  private boolean printInputProjection(@NotNull OperationDeclaration operation, boolean first) throws E {
     @Nullable OpInputFieldProjection projection = operation.inputProjection();
 
     if (projection != null) {
@@ -149,7 +149,7 @@ public class OperationsPrettyPrinter<E extends Exception> {
     return first;
   }
 
-  private boolean printOutputType(@NotNull OperationIdl operation, boolean first) throws E {
+  private boolean printOutputType(@NotNull OperationDeclaration operation, boolean first) throws E {
     final @NotNull Type outputType = operation.outputType();
 
     if (outputType != null) {
@@ -167,7 +167,7 @@ public class OperationsPrettyPrinter<E extends Exception> {
     return first;
   }
 
-  private boolean printOutputProjection(@NotNull OperationIdl operation, boolean first) throws E {
+  private boolean printOutputProjection(@NotNull OperationDeclaration operation, boolean first) throws E {
     if (!opOutputPrinter.isPrintoutEmpty(operation.outputProjection())) {
 
       if (first) first = false;
@@ -182,9 +182,9 @@ public class OperationsPrettyPrinter<E extends Exception> {
     return first;
   }
 
-  private boolean printDeleteProjection(@NotNull OperationIdl operation, boolean first) throws E {
-    if (operation instanceof DeleteOperationIdl) {
-      DeleteOperationIdl deleteOperation = (DeleteOperationIdl) operation;
+  private boolean printDeleteProjection(@NotNull OperationDeclaration operation, boolean first) throws E {
+    if (operation instanceof DeleteOperationDeclaration) {
+      DeleteOperationDeclaration deleteOperation = (DeleteOperationDeclaration) operation;
 
       if (first) first = false;
       else l.print(",");

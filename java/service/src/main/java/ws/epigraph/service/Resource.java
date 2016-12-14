@@ -16,9 +16,9 @@
 
 package ws.epigraph.service;
 
-import ws.epigraph.idl.ResourceIdl;
+import ws.epigraph.idl.ResourceDeclaration;
 import ws.epigraph.idl.operations.HttpMethod;
-import ws.epigraph.idl.operations.OperationIdl;
+import ws.epigraph.idl.operations.OperationDeclaration;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.op.path.OpFieldPath;
 import ws.epigraph.service.operations.*;
@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class Resource {
-  private final @NotNull ResourceIdl declaration;
+  private final @NotNull ResourceDeclaration declaration;
 
   private final @NotNull Operations<? extends ReadOperation<?>> readOperations;
   private final @NotNull Operations<? extends CreateOperation<?>> createOperations;
@@ -45,7 +45,7 @@ public class Resource {
   private final @NotNull Operations<? extends CustomOperation<?>> customDeleteOperations;
 
   public Resource(
-      @NotNull ResourceIdl declaration,
+      @NotNull ResourceDeclaration declaration,
       @NotNull Collection<? extends ReadOperation<?>> readOperations,
       @NotNull Collection<? extends CreateOperation<?>> createOperations,
       @NotNull Collection<? extends UpdateOperation<?>> updateOperations,
@@ -91,12 +91,12 @@ public class Resource {
   }
 
   private void verifyCustomOpNameClashes(
-      final @NotNull ResourceIdl declaration,
+      final @NotNull ResourceDeclaration declaration,
       final @NotNull Iterable<? extends CustomOperation<?>> customOperations) throws ServiceInitializationException {
 
     // check that custom operations don't intersect with the others
     for (final CustomOperation<?> customOperation : customOperations) {
-      final OperationIdl customDecl = customOperation.declaration();
+      final OperationDeclaration customDecl = customOperation.declaration();
       final @Nullable String customOpName = customDecl.name();
       if (customOpName == null)
         throw new ServiceInitializationException(
@@ -139,7 +139,7 @@ public class Resource {
     }
   }
 
-  public @NotNull ResourceIdl declaration() { return declaration; }
+  public @NotNull ResourceDeclaration declaration() { return declaration; }
 
   /**
    * @return unnamed read operations sorted by path length in descending order

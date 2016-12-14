@@ -16,7 +16,7 @@
 
 package ws.epigraph.server.http.routing;
 
-import ws.epigraph.idl.operations.ReadOperationIdl;
+import ws.epigraph.idl.operations.ReadOperationDeclaration;
 import ws.epigraph.psi.PsiProcessingError;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypesResolver;
@@ -35,7 +35,7 @@ import java.util.*;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public final class ReadOperationRouter
-    extends AbstractOperationRouter<UrlReadUrl, ReadOperationIdl, ReadOperation<?>, ReadRequestUrl> {
+    extends AbstractOperationRouter<UrlReadUrl, ReadOperationDeclaration, ReadOperation<?>, ReadRequestUrl> {
 
   public static final ReadOperationRouter INSTANCE = new ReadOperationRouter();
 
@@ -55,7 +55,7 @@ public final class ReadOperationRouter
   @Override
   protected @NotNull ReadRequestUrl parseUrl(
       final @NotNull DataType resourceType,
-      final @NotNull ReadOperationIdl opDecl,
+      final @NotNull ReadOperationDeclaration opDecl,
       final @NotNull UrlReadUrl urlPsi,
       final @NotNull TypesResolver resolver,
       final @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {

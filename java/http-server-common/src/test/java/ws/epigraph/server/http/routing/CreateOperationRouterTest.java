@@ -21,10 +21,10 @@ import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 import ws.epigraph.gdata.GDataValue;
 import ws.epigraph.gdata.GPrimitiveDatum;
-import ws.epigraph.idl.Idl;
-import ws.epigraph.idl.ResourceIdl;
-import ws.epigraph.idl.operations.CreateOperationIdl;
-import ws.epigraph.idl.operations.OperationIdl;
+import ws.epigraph.idl.Edl;
+import ws.epigraph.idl.ResourceDeclaration;
+import ws.epigraph.idl.operations.CreateOperationDeclaration;
+import ws.epigraph.idl.operations.OperationDeclaration;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.req.input.ReqInputFieldProjection;
 import ws.epigraph.projections.req.output.ReqOutputFieldProjection;
@@ -114,17 +114,17 @@ public class CreateOperationRouterTest {
 
   {
     try {
-      Idl idl = parseIdl(idlText, resolver);
-      ResourceIdl resourceIdl = idl.resources().get("users");
-      assertNotNull(resourceIdl);
+      Edl edl = parseIdl(idlText, resolver);
+      ResourceDeclaration resourceDeclaration = edl.resources().get("users");
+      assertNotNull(resourceDeclaration);
 
       final List<OpImpl> createOps = new ArrayList<>();
 
-      for (final OperationIdl operationIdl : resourceIdl.operations())
-        createOps.add(new OpImpl((CreateOperationIdl) operationIdl));
+      for (final OperationDeclaration operationDeclaration : resourceDeclaration.operations())
+        createOps.add(new OpImpl((CreateOperationDeclaration) operationDeclaration));
 
       resource = new Resource(
-          resourceIdl,
+          resourceDeclaration,
           Collections.emptyList(),
           createOps,
           Collections.emptyList(),
@@ -296,7 +296,7 @@ public class CreateOperationRouterTest {
 
   private class OpImpl extends CreateOperation<PersonId_Person_Map.Data> {
 
-    protected OpImpl(final CreateOperationIdl declaration) {
+    protected OpImpl(final CreateOperationDeclaration declaration) {
       super(declaration);
     }
 

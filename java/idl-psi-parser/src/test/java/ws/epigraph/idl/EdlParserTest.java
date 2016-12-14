@@ -34,7 +34,7 @@ import static ws.epigraph.test.TestUtil.*;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class IdlParserTest {
+public class EdlParserTest {
   private final TypesResolver resolver = new SimpleTypesResolver(
       PersonId.type,
       Person.type,
@@ -182,12 +182,12 @@ public class IdlParserTest {
   }
 
   private void testParse(String idlStr, String expected) throws IOException {
-    Idl idl = parseIdl(idlStr, resolver);
-    assertEquals(expected, printIdl(idl));
+    Edl edl = parseIdl(idlStr, resolver);
+    assertEquals(expected, printIdl(edl));
   }
 
   @NotNull
-  private static Idl parseIdl(@NotNull String text, @NotNull TypesResolver resolver) throws IOException {
+  private static Edl parseIdl(@NotNull String text, @NotNull TypesResolver resolver) throws IOException {
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
     @NotNull IdlFile psiFile =

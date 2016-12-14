@@ -17,7 +17,7 @@
 package ws.epigraph.idl;
 
 import de.uka.ilkd.pp.Layouter;
-import ws.epigraph.idl.operations.OperationIdl;
+import ws.epigraph.idl.operations.OperationDeclaration;
 import ws.epigraph.idl.operations.OperationsPrettyPrinter;
 import ws.epigraph.types.DataType;
 import ws.epigraph.types.DatumType;
@@ -39,20 +39,20 @@ public class IdlPrettyPrinter<E extends Exception> {
     operationsPrettyPrinter = new OperationsPrettyPrinter<>(l);
   }
 
-  public void print(@NotNull Idl idl) throws E {
+  public void print(@NotNull Edl edl) throws E {
     // should we try to preserve imports?
 
     l.beginCInd(0);
-    l.print("namespace ").print(idl.namespace().toString());
-    if (!idl.resources().isEmpty()) l.nl();
+    l.print("namespace ").print(edl.namespace().toString());
+    if (!edl.resources().isEmpty()) l.nl();
 
-    for (ResourceIdl resource : idl.resources().values())
+    for (ResourceDeclaration resource : edl.resources().values())
       printResource(resource);
 
     l.end();
   }
 
-  public void printResource(@NotNull ResourceIdl resource) throws E {
+  public void printResource(@NotNull ResourceDeclaration resource) throws E {
     l.beginIInd(0);
     l.print("resource").brk();
     l.print(resource.fieldName()).print(":").brk();
@@ -69,7 +69,7 @@ public class IdlPrettyPrinter<E extends Exception> {
     l.print("{");
     l.beginIInd();
 
-    for (OperationIdl operation : resource.operations()) {
+    for (OperationDeclaration operation : resource.operations()) {
       l.brk();
       operationsPrettyPrinter.printOperation(operation);
     }

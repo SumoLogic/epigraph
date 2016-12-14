@@ -18,7 +18,7 @@ package ws.epigraph.url.parser;
 
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.gdata.GDatum;
-import ws.epigraph.idl.Idl;
+import ws.epigraph.idl.Edl;
 import ws.epigraph.idl.parser.IdlParserDefinition;
 import ws.epigraph.idl.parser.IdlPsiParser;
 import ws.epigraph.idl.parser.psi.IdlFile;
@@ -50,7 +50,7 @@ public class RequestUrlPsiParserTestUtil {
   }
 
   @NotNull
-  static Idl parseIdl(@NotNull String text, @NotNull TypesResolver resolver) throws IOException {
+  static Edl parseIdl(@NotNull String text, @NotNull TypesResolver resolver) throws IOException {
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
     @NotNull IdlFile psiFile =

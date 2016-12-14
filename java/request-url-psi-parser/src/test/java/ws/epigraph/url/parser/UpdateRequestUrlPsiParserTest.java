@@ -19,10 +19,10 @@ package ws.epigraph.url.parser;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
-import ws.epigraph.idl.Idl;
-import ws.epigraph.idl.ResourceIdl;
-import ws.epigraph.idl.operations.OperationIdl;
-import ws.epigraph.idl.operations.UpdateOperationIdl;
+import ws.epigraph.idl.Edl;
+import ws.epigraph.idl.ResourceDeclaration;
+import ws.epigraph.idl.operations.OperationDeclaration;
+import ws.epigraph.idl.operations.UpdateOperationDeclaration;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.req.output.ReqOutputFieldProjection;
 import ws.epigraph.projections.req.update.ReqUpdateFieldProjection;
@@ -74,16 +74,16 @@ public class UpdateRequestUrlPsiParserTest {
       "}"
   );
 
-  private UpdateOperationIdl updateIdl1;
+  private UpdateOperationDeclaration updateIdl1;
   private DataType resourceType = String_Person_Map.type.dataType();
 
   {
     try {
-      Idl idl = parseIdl(idlText, resolver);
-      ResourceIdl resourceIdl = idl.resources().get("users");
+      Edl edl = parseIdl(idlText, resolver);
+      ResourceDeclaration resourceDeclaration = edl.resources().get("users");
 
-      final @NotNull List<OperationIdl> operationIdls = resourceIdl.operations();
-      updateIdl1 = (UpdateOperationIdl) operationIdls.get(0);
+      final @NotNull List<OperationDeclaration> operationDeclarations = resourceDeclaration.operations();
+      updateIdl1 = (UpdateOperationDeclaration) operationDeclarations.get(0);
 
     } catch (IOException e) {
       throw new RuntimeException(e);
@@ -104,7 +104,7 @@ public class UpdateRequestUrlPsiParserTest {
   }
 
   private void test(
-      UpdateOperationIdl op,
+      UpdateOperationDeclaration op,
       String url,
       String expectedResource,
       int expectedSteps,

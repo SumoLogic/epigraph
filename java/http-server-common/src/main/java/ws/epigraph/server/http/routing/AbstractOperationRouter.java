@@ -18,7 +18,7 @@ package ws.epigraph.server.http.routing;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ws.epigraph.idl.operations.OperationIdl;
+import ws.epigraph.idl.operations.OperationDeclaration;
 import ws.epigraph.psi.PsiProcessingError;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypesResolver;
@@ -45,7 +45,7 @@ import java.util.*;
  */
 public abstract class AbstractOperationRouter<
     U extends UrlUrl,
-    D extends OperationIdl,
+    D extends OperationDeclaration,
     O extends Operation<D, ?, ?>,
     R extends RequestUrl>
     implements OperationRouter<U, O> {

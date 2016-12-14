@@ -19,7 +19,7 @@ package ws.epigraph.url.parser;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.gdata.GDatum;
-import ws.epigraph.idl.operations.UpdateOperationIdl;
+import ws.epigraph.idl.operations.UpdateOperationDeclaration;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.op.path.OpFieldPath;
 import ws.epigraph.projections.req.output.ReqOutputFieldProjection;
@@ -52,7 +52,7 @@ public final class UpdateRequestUrlPsiParser {
 
   public static @NotNull UpdateRequestUrl parseUpdateRequestUrl(
       @NotNull DataType resourceType,
-      @NotNull UpdateOperationIdl op,
+      @NotNull UpdateOperationDeclaration op,
       @NotNull UrlUpdateUrl psi,
       @NotNull TypesResolver typesResolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
@@ -70,7 +70,7 @@ public final class UpdateRequestUrlPsiParser {
   private static @NotNull UpdateRequestUrl parseUpdateRequestUrlWithPath(
       final @NotNull DataType resourceType,
       final @NotNull Map<String, GDatum> requestParams,
-      final @NotNull UpdateOperationIdl op,
+      final @NotNull UpdateOperationDeclaration op,
       final @NotNull OpFieldPath opPath,
       final @NotNull UrlUpdateUrl psi,
       final @NotNull TypesResolver typesResolver,
@@ -119,7 +119,7 @@ public final class UpdateRequestUrlPsiParser {
   private static @NotNull UpdateRequestUrl parseUpdateRequestUrlWithoutPath(
       final @NotNull DataType resourceType,
       final Map<String, GDatum> requestParams,
-      final @NotNull UpdateOperationIdl op,
+      final @NotNull UpdateOperationDeclaration op,
       final @NotNull UrlUpdateUrl psi,
       final @NotNull TypesResolver typesResolver,
       final @NotNull List<PsiProcessingError> errors)

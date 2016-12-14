@@ -17,7 +17,7 @@
 package ws.epigraph.url.parser;
 
 import ws.epigraph.gdata.GDatum;
-import ws.epigraph.idl.operations.ReadOperationIdl;
+import ws.epigraph.idl.operations.ReadOperationDeclaration;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.ProjectionUtils;
@@ -60,7 +60,7 @@ public final class ReadRequestUrlPsiParser {
 
   public static @NotNull ReadRequestUrl parseReadRequestUrl(
       @NotNull DataType resourceType,
-      @NotNull ReadOperationIdl op,
+      @NotNull ReadOperationDeclaration op,
       @NotNull UrlReadUrl psi,
       @NotNull TypesResolver typesResolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
@@ -78,7 +78,7 @@ public final class ReadRequestUrlPsiParser {
   private static @NotNull ReadRequestUrl parseReadRequestUrlWithPath(
       final @NotNull DataType resourceType,
       final @NotNull Map<String, GDatum> requestParams,
-      final @NotNull ReadOperationIdl op,
+      final @NotNull ReadOperationDeclaration op,
       final @NotNull OpFieldPath opPath,
       final @NotNull UrlReadUrl psi,
       final @NotNull TypesResolver typesResolver,
@@ -157,7 +157,7 @@ public final class ReadRequestUrlPsiParser {
   private static @NotNull ReadRequestUrl parseReadRequestUrlWithoutPath(
       final @NotNull DataType resourceType,
       final Map<String, GDatum> requestParams,
-      final @NotNull ReadOperationIdl op,
+      final @NotNull ReadOperationDeclaration op,
       final @NotNull UrlReadUrl psi,
       final @NotNull TypesResolver typesResolver,
       final @NotNull List<PsiProcessingError> errors)

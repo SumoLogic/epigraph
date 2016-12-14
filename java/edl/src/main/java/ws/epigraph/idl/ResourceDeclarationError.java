@@ -16,7 +16,7 @@
 
 package ws.epigraph.idl;
 
-import ws.epigraph.idl.operations.OperationIdl;
+import ws.epigraph.idl.operations.OperationDeclaration;
 import ws.epigraph.lang.TextLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -26,19 +26,15 @@ import java.util.Objects;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class IdlError {
-  @Nullable
-  private final ResourceIdl resource;
-  @Nullable
-  private final OperationIdl operation;
-  @NotNull
-  private final String message;
-  @NotNull
-  private final TextLocation location;
+public class ResourceDeclarationError {
+  private final @Nullable ResourceDeclaration resource;
+  private final @Nullable OperationDeclaration operation;
+  private final @NotNull String message;
+  private final @NotNull TextLocation location;
 
-  public IdlError(
-      @Nullable ResourceIdl resource,
-      @Nullable OperationIdl operation,
+  public ResourceDeclarationError(
+      @Nullable ResourceDeclaration resource,
+      @Nullable OperationDeclaration operation,
       @NotNull String message,
       @NotNull TextLocation location) {
 
@@ -48,26 +44,22 @@ public class IdlError {
     this.location = location;
   }
 
-  @Nullable
-  public ResourceIdl resource() { return resource; }
+  public @Nullable ResourceDeclaration resource() { return resource; }
 
-  @Nullable
-  public OperationIdl operation() { return operation; }
+  public @Nullable OperationDeclaration operation() { return operation; }
 
-  @NotNull
-  public String message() { return message; }
+  public @NotNull String message() { return message; }
 
-  @NotNull
-  public TextLocation location() { return location; }
+  public @NotNull TextLocation location() { return location; }
 
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-    IdlError idlError = (IdlError) o;
-    return Objects.equals(resource, idlError.resource) &&
-           Objects.equals(operation, idlError.operation) &&
-           Objects.equals(message, idlError.message);
+    ResourceDeclarationError resourceDeclarationError = (ResourceDeclarationError) o;
+    return Objects.equals(resource, resourceDeclarationError.resource) &&
+           Objects.equals(operation, resourceDeclarationError.operation) &&
+           Objects.equals(message, resourceDeclarationError.message);
   }
 
   @Override

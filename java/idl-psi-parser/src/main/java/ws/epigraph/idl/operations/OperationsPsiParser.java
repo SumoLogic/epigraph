@@ -54,7 +54,7 @@ import java.util.Map;
 public final class OperationsPsiParser {
   private OperationsPsiParser() {}
 
-  public static @NotNull OperationIdl parseOperation(
+  public static @NotNull OperationDeclaration parseOperation(
       @NotNull DataType resourceType,
       @NotNull IdlOperationDef psi,
       @NotNull TypesResolver resolver,
@@ -78,7 +78,7 @@ public final class OperationsPsiParser {
     throw new PsiProcessingException("Incomplete operation statement", psi, errors);
   }
 
-  private static @NotNull ReadOperationIdl parseRead(
+  private static @NotNull ReadOperationDeclaration parseRead(
       @NotNull DataType resourceType,
       @NotNull IdlReadOperationDef psi,
       @NotNull TypesResolver resolver,
@@ -121,7 +121,7 @@ public final class OperationsPsiParser {
 //        errors
 //    );
 
-    return new ReadOperationIdl(
+    return new ReadOperationDeclaration(
         parseOperationName(psi.getOperationName()),
         Annotations.fromMap(annotations),
         fieldPath,
@@ -130,7 +130,7 @@ public final class OperationsPsiParser {
     );
   }
 
-  private static @NotNull CreateOperationIdl parseCreate(
+  private static @NotNull CreateOperationDeclaration parseCreate(
       @NotNull DataType resourceType,
       @NotNull IdlCreateOperationDef psi,
       @NotNull TypesResolver resolver,
@@ -166,7 +166,7 @@ public final class OperationsPsiParser {
     if (inputFieldProjectionPsi == null)
       throw new PsiProcessingException("Input projection must be specified", inputProjectionPsi, errors);
 
-    return new CreateOperationIdl(
+    return new CreateOperationDeclaration(
         parseOperationName(psi.getOperationName()),
         Annotations.fromMap(annotations),
         fieldPath,
@@ -190,7 +190,7 @@ public final class OperationsPsiParser {
     );
   }
 
-  private static @NotNull UpdateOperationIdl parseUpdate(
+  private static @NotNull UpdateOperationDeclaration parseUpdate(
       @NotNull DataType resourceType,
       @NotNull IdlUpdateOperationDef psi,
       @NotNull TypesResolver resolver,
@@ -227,7 +227,7 @@ public final class OperationsPsiParser {
 
     final @Nullable OpVarPath varPath = fieldPath == null ? null : fieldPath.varProjection();
 
-    return new UpdateOperationIdl(
+    return new UpdateOperationDeclaration(
         parseOperationName(psi.getOperationName()),
         Annotations.fromMap(annotations),
         fieldPath,
@@ -251,7 +251,7 @@ public final class OperationsPsiParser {
     );
   }
 
-  private static @NotNull DeleteOperationIdl parseDelete(
+  private static @NotNull DeleteOperationDeclaration parseDelete(
       @NotNull DataType resourceType,
       @NotNull IdlDeleteOperationDef psi,
       @NotNull TypesResolver resolver,
@@ -285,7 +285,7 @@ public final class OperationsPsiParser {
     if (deleteFieldProjectionPsi == null)
       throw new PsiProcessingException("Delete projection must be specified", deleteProjectionPsi, errors);
 
-    return new DeleteOperationIdl(
+    return new DeleteOperationDeclaration(
         parseOperationName(psi.getOperationName()),
         Annotations.fromMap(annotations),
         fieldPath,
@@ -308,7 +308,7 @@ public final class OperationsPsiParser {
     );
   }
 
-  private static @NotNull CustomOperationIdl parseCustom(
+  private static @NotNull CustomOperationDeclaration parseCustom(
       @NotNull DataType resourceType,
       @NotNull IdlCustomOperationDef psi,
       @NotNull TypesResolver resolver,
@@ -352,7 +352,7 @@ public final class OperationsPsiParser {
 
     @Nullable OpFieldPath opPath = parsePath(resourceType, pathPsi, resolver, errors);
 
-    return new CustomOperationIdl(
+    return new CustomOperationDeclaration(
         method,
         parseOperationName(psi.getOperationName()),
         Annotations.fromMap(annotations),

@@ -19,7 +19,7 @@ package ws.epigraph.url.parser;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.gdata.GDatum;
-import ws.epigraph.idl.operations.CustomOperationIdl;
+import ws.epigraph.idl.operations.CustomOperationDeclaration;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.op.input.OpInputFieldProjection;
 import ws.epigraph.projections.op.path.OpFieldPath;
@@ -53,7 +53,7 @@ public final class CustomRequestUrlPsiParser {
 
   public static @NotNull CustomRequestUrl parseCustomRequestUrl(
       @NotNull DataType resourceType,
-      @NotNull CustomOperationIdl op,
+      @NotNull CustomOperationDeclaration op,
       @NotNull UrlCustomUrl psi,
       @NotNull TypesResolver typesResolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
@@ -71,7 +71,7 @@ public final class CustomRequestUrlPsiParser {
   private static @NotNull CustomRequestUrl parseCustomRequestUrlWithPath(
       final @NotNull DataType resourceType,
       final @NotNull Map<String, GDatum> requestParams,
-      final @NotNull CustomOperationIdl op,
+      final @NotNull CustomOperationDeclaration op,
       final @NotNull OpFieldPath opPath,
       final @NotNull UrlCustomUrl psi,
       final @NotNull TypesResolver typesResolver,
@@ -106,7 +106,7 @@ public final class CustomRequestUrlPsiParser {
   private static @NotNull CustomRequestUrl parseCustomRequestUrlWithoutPath(
       final @NotNull DataType resourceType,
       final Map<String, GDatum> requestParams,
-      final @NotNull CustomOperationIdl op,
+      final @NotNull CustomOperationDeclaration op,
       final @NotNull UrlCustomUrl psi,
       final @NotNull TypesResolver typesResolver,
       final @NotNull List<PsiProcessingError> errors)
@@ -134,7 +134,7 @@ public final class CustomRequestUrlPsiParser {
   }
 
   private static @Nullable ReqInputFieldProjection getInputProjection(
-      final @NotNull CustomOperationIdl op,
+      final @NotNull CustomOperationDeclaration op,
       final @NotNull UrlCustomUrl psi,
       final @NotNull TypesResolver typesResolver,
       final @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {

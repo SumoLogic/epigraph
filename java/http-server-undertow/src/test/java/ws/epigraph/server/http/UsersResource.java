@@ -24,7 +24,7 @@ import epigraph.String;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.errors.ErrorValue;
-import ws.epigraph.idl.ResourceIdl;
+import ws.epigraph.idl.ResourceDeclaration;
 import ws.epigraph.idl.operations.*;
 import ws.epigraph.projections.req.delete.ReqDeleteFieldProjection;
 import ws.epigraph.projections.req.delete.ReqDeleteKeyProjection;
@@ -45,25 +45,25 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 public class UsersResource extends Resource {
-  public UsersResource(@NotNull ResourceIdl resourceIdl, @NotNull UsersStorage storage)
+  public UsersResource(@NotNull ResourceDeclaration resourceDeclaration, @NotNull UsersStorage storage)
       throws ServiceInitializationException {
 
     super(
-        resourceIdl,
+        resourceDeclaration,
         Collections.singletonList(
-            new ReadOp(((ReadOperationIdl) resourceIdl.operations().get(0)), storage)
+            new ReadOp(((ReadOperationDeclaration) resourceDeclaration.operations().get(0)), storage)
         ),
         Collections.singletonList(
-            new CreateOp(((CreateOperationIdl) resourceIdl.operations().get(1)), storage)
+            new CreateOp(((CreateOperationDeclaration) resourceDeclaration.operations().get(1)), storage)
         ),
         Collections.singletonList(
-            new UpdateOp(((UpdateOperationIdl) resourceIdl.operations().get(2)), storage)
+            new UpdateOp(((UpdateOperationDeclaration) resourceDeclaration.operations().get(2)), storage)
         ),
         Collections.singletonList(
-            new DeleteOp(((DeleteOperationIdl) resourceIdl.operations().get(3)), storage)
+            new DeleteOp(((DeleteOperationDeclaration) resourceDeclaration.operations().get(3)), storage)
         ),
         Collections.singletonList(
-            new CapitalizeOp(((CustomOperationIdl) resourceIdl.operations().get(4)), storage)
+            new CapitalizeOp(((CustomOperationDeclaration) resourceDeclaration.operations().get(4)), storage)
         )
     );
 
@@ -76,7 +76,7 @@ public class UsersResource extends Resource {
   private static final class ReadOp extends ReadOperation<PersonId_Person_Map.Data> {
     private final @NotNull UsersStorage storage;
 
-    ReadOp(@NotNull ReadOperationIdl declaration, @NotNull UsersStorage storage) {
+    ReadOp(@NotNull ReadOperationDeclaration declaration, @NotNull UsersStorage storage) {
       super(declaration);
       this.storage = storage;
     }
@@ -93,7 +93,7 @@ public class UsersResource extends Resource {
   private static final class CreateOp extends CreateOperation<PersonId_List.Data> {
     private final @NotNull UsersStorage storage;
 
-    protected CreateOp(final CreateOperationIdl declaration, final @NotNull UsersStorage storage) {
+    protected CreateOp(final CreateOperationDeclaration declaration, final @NotNull UsersStorage storage) {
       super(declaration);
       this.storage = storage;
     }
@@ -128,7 +128,7 @@ public class UsersResource extends Resource {
   private static class UpdateOp extends UpdateOperation<PersonId_Error_Map.Data> {
     private final @NotNull UsersStorage storage;
 
-    protected UpdateOp(final UpdateOperationIdl declaration, final @NotNull UsersStorage storage) {
+    protected UpdateOp(final UpdateOperationDeclaration declaration, final @NotNull UsersStorage storage) {
       super(declaration);
       this.storage = storage;
     }
@@ -184,7 +184,7 @@ public class UsersResource extends Resource {
   private static final class DeleteOp extends DeleteOperation<PersonId_Error_Map.Data> {
     private final @NotNull UsersStorage storage;
 
-    DeleteOp(final DeleteOperationIdl declaration, final @NotNull UsersStorage storage) {
+    DeleteOp(final DeleteOperationDeclaration declaration, final @NotNull UsersStorage storage) {
       super(declaration);
       this.storage = storage;
     }
@@ -229,7 +229,7 @@ public class UsersResource extends Resource {
   private static final class CapitalizeOp extends CustomOperation<PersonRecord.Data> {
     private final @NotNull UsersStorage storage;
 
-    protected CapitalizeOp(final CustomOperationIdl declaration, final @NotNull UsersStorage storage) {
+    protected CapitalizeOp(final CustomOperationDeclaration declaration, final @NotNull UsersStorage storage) {
       super(declaration);
       this.storage = storage;
     }

@@ -26,7 +26,7 @@ import de.uka.ilkd.pp.StringBackend;
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.gdata.GDataPrettyPrinter;
 import ws.epigraph.gdata.GDatum;
-import ws.epigraph.idl.Idl;
+import ws.epigraph.idl.Edl;
 import ws.epigraph.idl.IdlPrettyPrinter;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.op.delete.OpDeleteProjectionsPrettyPrinter;
@@ -405,11 +405,11 @@ public class TestUtil {
   }
 
   @NotNull
-  public static String printIdl(Idl idl) {
+  public static String printIdl(Edl edl) {
     StringBackend sb = new StringBackend(80);
     Layouter<NoExceptions> l = new Layouter<>(sb, 2);
     IdlPrettyPrinter<NoExceptions> pp = new IdlPrettyPrinter<>(l);
-    pp.print(idl);
+    pp.print(edl);
     l.close();
 
     return sb.getString();

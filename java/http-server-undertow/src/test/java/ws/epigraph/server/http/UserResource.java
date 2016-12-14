@@ -19,8 +19,8 @@
 package ws.epigraph.server.http;
 
 import ws.epigraph.errors.ErrorValue;
-import ws.epigraph.idl.ResourceIdl;
-import ws.epigraph.idl.operations.ReadOperationIdl;
+import ws.epigraph.idl.ResourceDeclaration;
+import ws.epigraph.idl.operations.ReadOperationDeclaration;
 import ws.epigraph.service.Resource;
 import ws.epigraph.service.ServiceInitializationException;
 import ws.epigraph.service.operations.ReadOperation;
@@ -29,17 +29,16 @@ import ws.epigraph.service.operations.ReadOperationResponse;
 import ws.epigraph.tests.*;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.concurrent.CompletableFuture;
 
 public class UserResource extends Resource {
 
-  public UserResource(@NotNull ResourceIdl resourceIdl) throws ServiceInitializationException {
+  public UserResource(@NotNull ResourceDeclaration resourceDeclaration) throws ServiceInitializationException {
     super(
-        resourceIdl,
-        Arrays.asList(
-            new ReadOp(((ReadOperationIdl) resourceIdl.operations().get(0)))
+        resourceDeclaration,
+        Collections.singletonList(
+            new ReadOp(((ReadOperationDeclaration) resourceDeclaration.operations().get(0)))
         ),
         Collections.emptyList(),
         Collections.emptyList(),
@@ -48,9 +47,9 @@ public class UserResource extends Resource {
     );
   }
 
-  private static class ReadOp extends ReadOperation<Person> {
+  private static final class ReadOp extends ReadOperation<Person> {
 
-    private ReadOp(@NotNull ReadOperationIdl declaration) { super(declaration); }
+    private ReadOp(@NotNull ReadOperationDeclaration declaration) { super(declaration); }
 
     @Override
     public @NotNull CompletableFuture<ReadOperationResponse<Person>> process(@NotNull ReadOperationRequest request) {

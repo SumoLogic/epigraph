@@ -30,7 +30,7 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import ws.epigraph.idl.Idl;
+import ws.epigraph.idl.Edl;
 import ws.epigraph.idl.parser.IdlParserDefinition;
 import ws.epigraph.idl.parser.IdlPsiParser;
 import ws.epigraph.idl.parser.psi.IdlFile;
@@ -79,13 +79,13 @@ public class HttpServerTest {
       epigraph.String.type
   );
 
-  private static final Idl idl;
+  private static final Edl edl;
 
   private static Undertow server;
 
   static {
     try {
-      idl = parseIdlResource("/ws/epigraph/tests/service/testService.sdl");
+      edl = parseIdlResource("/ws/epigraph/tests/service/testService.sdl");
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -95,8 +95,8 @@ public class HttpServerTest {
     return new Service(
         "users",
         Arrays.asList(
-            new UserResource(idl.resources().get("user")),
-            new UsersResource(idl.resources().get("users"), new UsersStorage())
+            new UserResource(edl.resources().get("user")),
+            new UsersResource(edl.resources().get("users"), new UsersStorage())
         )
     );
   }
@@ -240,13 +240,13 @@ public class HttpServerTest {
 //    return parseIdl(psiFile, errAcc);
 //  }
 
-  private static @NotNull Idl parseIdlResource(@NotNull String resourcePath) throws IOException {
+  private static @NotNull Edl parseIdlResource(@NotNull String resourcePath) throws IOException {
     EpigraphPsiUtil.ErrorsAccumulator errAcc = new EpigraphPsiUtil.ErrorsAccumulator();
     IdlFile psiFile = (IdlFile) EpigraphPsiUtil.parseResource(resourcePath, IdlParserDefinition.INSTANCE, errAcc);
     return parseIdl(psiFile, errAcc);
   }
 
-  private static @NotNull Idl parseIdl(@NotNull IdlFile psiFile, EpigraphPsiUtil.ErrorsAccumulator errAcc) {
+  private static @NotNull Edl parseIdl(@NotNull IdlFile psiFile, EpigraphPsiUtil.ErrorsAccumulator errAcc) {
 
     if (errAcc.hasErrors()) {
       for (PsiErrorElement element : errAcc.errors()) {
@@ -255,10 +255,10 @@ public class HttpServerTest {
       throw new RuntimeException(DebugUtil.psiTreeToString(psiFile, true));
     }
 
-    Idl idl = null;
+    Edl edl = null;
     List<PsiProcessingError> errors = new ArrayList<>();
     try {
-      idl = IdlPsiParser.parseIdl(psiFile, resolver, errors);
+      edl = IdlPsiParser.parseIdl(psiFile, resolver, errors);
     } catch (PsiProcessingException e) {
       errors = e.errors();
     }
@@ -271,8 +271,8 @@ public class HttpServerTest {
       throw new RuntimeException("IDL errors detected");
     }
 
-    assert idl != null;
-    return idl;
+    assert edl != null;
+    return edl;
   }
 
 }

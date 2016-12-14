@@ -19,7 +19,7 @@ package ws.epigraph.url.parser;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.gdata.GDatum;
-import ws.epigraph.idl.operations.CreateOperationIdl;
+import ws.epigraph.idl.operations.CreateOperationDeclaration;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.op.input.OpInputFieldProjection;
 import ws.epigraph.projections.op.path.OpFieldPath;
@@ -53,7 +53,7 @@ public final class CreateRequestUrlPsiParser {
 
   public static @NotNull CreateRequestUrl parseCreateRequestUrl(
       @NotNull DataType resourceType,
-      @NotNull CreateOperationIdl op,
+      @NotNull CreateOperationDeclaration op,
       @NotNull UrlCreateUrl psi,
       @NotNull TypesResolver typesResolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
@@ -71,7 +71,7 @@ public final class CreateRequestUrlPsiParser {
   private static @NotNull CreateRequestUrl parseCreateRequestUrlWithPath(
       final @NotNull DataType resourceType,
       final @NotNull Map<String, GDatum> requestParams,
-      final @NotNull CreateOperationIdl op,
+      final @NotNull CreateOperationDeclaration op,
       final @NotNull OpFieldPath opPath,
       final @NotNull UrlCreateUrl psi,
       final @NotNull TypesResolver typesResolver,
@@ -103,7 +103,7 @@ public final class CreateRequestUrlPsiParser {
   }
 
   private static @Nullable ReqInputFieldProjection getInputProjection(
-      final @NotNull CreateOperationIdl op,
+      final @NotNull CreateOperationDeclaration op,
       final @NotNull UrlCreateUrl psi,
       final @NotNull TypesResolver typesResolver,
       final @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
@@ -129,7 +129,7 @@ public final class CreateRequestUrlPsiParser {
   private static @NotNull CreateRequestUrl parseCreateRequestUrlWithoutPath(
       final @NotNull DataType resourceType,
       final Map<String, GDatum> requestParams,
-      final @NotNull CreateOperationIdl op,
+      final @NotNull CreateOperationDeclaration op,
       final @NotNull UrlCreateUrl psi,
       final @NotNull TypesResolver typesResolver,
       final @NotNull List<PsiProcessingError> errors)

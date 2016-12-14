@@ -19,7 +19,7 @@ package ws.epigraph.url.parser;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.gdata.GDatum;
-import ws.epigraph.idl.operations.DeleteOperationIdl;
+import ws.epigraph.idl.operations.DeleteOperationDeclaration;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.op.path.OpFieldPath;
 import ws.epigraph.projections.req.output.ReqOutputFieldProjection;
@@ -51,7 +51,7 @@ public final class DeleteRequestUrlPsiParser {
 
   public static @NotNull DeleteRequestUrl parseDeleteRequestUrl(
       @NotNull DataType resourceType,
-      @NotNull DeleteOperationIdl op,
+      @NotNull DeleteOperationDeclaration op,
       @NotNull UrlDeleteUrl psi,
       @NotNull TypesResolver typesResolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
@@ -69,7 +69,7 @@ public final class DeleteRequestUrlPsiParser {
   private static @NotNull DeleteRequestUrl parseDeleteRequestUrlWithPath(
       final @NotNull DataType resourceType,
       final @NotNull Map<String, GDatum> requestParams,
-      final @NotNull DeleteOperationIdl op,
+      final @NotNull DeleteOperationDeclaration op,
       final @NotNull OpFieldPath opPath,
       final @NotNull UrlDeleteUrl psi,
       final @NotNull TypesResolver typesResolver,
@@ -113,7 +113,7 @@ public final class DeleteRequestUrlPsiParser {
   private static @NotNull DeleteRequestUrl parseDeleteRequestUrlWithoutPath(
       final @NotNull DataType resourceType,
       final Map<String, GDatum> requestParams,
-      final @NotNull DeleteOperationIdl op,
+      final @NotNull DeleteOperationDeclaration op,
       final @NotNull UrlDeleteUrl psi,
       final @NotNull TypesResolver typesResolver,
       final @NotNull List<PsiProcessingError> errors)

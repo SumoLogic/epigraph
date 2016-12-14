@@ -5,7 +5,7 @@ idea.module.generatedSourceDirs += file("$projectDir/src/main/java-generated")
 
 dependencies {
   compile project(':epigraph-java-core')
-  compile project(':epigraph-java-idl')
+  compile project(':epigraph-java-edl')
   compile project(':epigraph-java-lang-common')
   compile project(':epigraph-java-projections')
   compile project(':epigraph-java-projections-url-psi-parser')

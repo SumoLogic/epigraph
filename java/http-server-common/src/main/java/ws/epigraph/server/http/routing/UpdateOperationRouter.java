@@ -18,7 +18,7 @@ package ws.epigraph.server.http.routing;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ws.epigraph.idl.operations.UpdateOperationIdl;
+import ws.epigraph.idl.operations.UpdateOperationDeclaration;
 import ws.epigraph.psi.PsiProcessingError;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypesResolver;
@@ -36,7 +36,7 @@ import java.util.List;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public final class UpdateOperationRouter
-    extends AbstractOperationRouter<UrlUpdateUrl, UpdateOperationIdl, UpdateOperation<?>, UpdateRequestUrl> {
+    extends AbstractOperationRouter<UrlUpdateUrl, UpdateOperationDeclaration, UpdateOperation<?>, UpdateRequestUrl> {
 
   public static final UpdateOperationRouter INSTANCE = new UpdateOperationRouter();
 
@@ -55,7 +55,7 @@ public final class UpdateOperationRouter
   @Override
   protected @NotNull UpdateRequestUrl parseUrl(
       final @NotNull DataType resourceType,
-      final @NotNull UpdateOperationIdl opDecl,
+      final @NotNull UpdateOperationDeclaration opDecl,
       final @NotNull UrlUpdateUrl urlPsi,
       final @NotNull TypesResolver resolver,
       final @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {

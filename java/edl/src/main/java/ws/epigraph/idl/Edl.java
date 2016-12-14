@@ -24,16 +24,17 @@ import java.util.Map;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class Idl {
+public class Edl {
   private final @NotNull Qn namespace;
-  private final @NotNull Map<String, ResourceIdl> resources;
+  // todo should contain TypesResolver too?
+  private final @NotNull Map<String, ResourceDeclaration> resources;
 
-  public Idl(@NotNull Qn namespace, @NotNull Map<String, ResourceIdl> resources) {
+  public Edl(@NotNull Qn namespace, @NotNull Map<String, ResourceDeclaration> resources) {
     this.namespace = namespace;
     this.resources = resources;
   }
 
   public @NotNull Qn namespace() { return namespace; }
 
-  public @NotNull Map<String, ResourceIdl> resources() { return resources; }
+  public @NotNull Map<String, ResourceDeclaration> resources() { return resources; }
 }

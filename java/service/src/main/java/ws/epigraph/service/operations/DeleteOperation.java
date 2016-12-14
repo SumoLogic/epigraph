@@ -17,17 +17,17 @@
 package ws.epigraph.service.operations;
 
 import ws.epigraph.data.Data;
-import ws.epigraph.idl.operations.DeleteOperationIdl;
+import ws.epigraph.idl.operations.DeleteOperationDeclaration;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public abstract class DeleteOperation<D extends Data> extends Operation<
-    DeleteOperationIdl,
+    DeleteOperationDeclaration,
     DeleteOperationRequest,
     ReadOperationResponse<D>> {
 
-  protected DeleteOperation(final DeleteOperationIdl declaration) {
+  protected DeleteOperation(final DeleteOperationDeclaration declaration) {
     super(declaration);
   }
 }

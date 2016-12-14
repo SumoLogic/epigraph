@@ -17,7 +17,7 @@
 package ws.epigraph.server.http.routing;
 
 import org.jetbrains.annotations.NotNull;
-import ws.epigraph.idl.Idl;
+import ws.epigraph.idl.Edl;
 import ws.epigraph.idl.parser.IdlParserDefinition;
 import ws.epigraph.idl.parser.IdlPsiParser;
 import ws.epigraph.idl.parser.psi.IdlFile;
@@ -40,7 +40,7 @@ import static ws.epigraph.test.TestUtil.runPsiParser;
 public class RoutingTestUtil {
 
   @NotNull
-  static Idl parseIdl(@NotNull String text, @NotNull TypesResolver resolver) throws IOException {
+  static Edl parseIdl(@NotNull String text, @NotNull TypesResolver resolver) throws IOException {
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
     @NotNull IdlFile psiFile =

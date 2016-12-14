@@ -17,17 +17,17 @@
 package ws.epigraph.service.operations;
 
 import ws.epigraph.data.Data;
-import ws.epigraph.idl.operations.ReadOperationIdl;
+import ws.epigraph.idl.operations.ReadOperationDeclaration;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public abstract class ReadOperation<D extends Data> extends Operation<
-    ReadOperationIdl,
+    ReadOperationDeclaration,
     ReadOperationRequest,
     ReadOperationResponse<D>> {
 
-  protected ReadOperation(ReadOperationIdl declaration) {
+  protected ReadOperation(ReadOperationDeclaration declaration) {
     super(declaration);
   }
 }

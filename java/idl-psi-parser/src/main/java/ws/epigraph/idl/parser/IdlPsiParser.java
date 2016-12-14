@@ -17,10 +17,10 @@
 package ws.epigraph.idl.parser;
 
 import com.intellij.psi.util.PsiTreeUtil;
-import ws.epigraph.idl.Idl;
-import ws.epigraph.idl.ResourceIdl;
+import ws.epigraph.idl.Edl;
+import ws.epigraph.idl.ResourceDeclaration;
 import ws.epigraph.idl.TypeRefs;
-import ws.epigraph.idl.operations.OperationIdl;
+import ws.epigraph.idl.operations.OperationDeclaration;
 import ws.epigraph.idl.operations.OperationsPsiParser;
 import ws.epigraph.idl.parser.psi.*;
 import ws.epigraph.lang.Qn;
@@ -45,7 +45,7 @@ import java.util.stream.Collectors;
 public final class IdlPsiParser {
   private IdlPsiParser() {}
 
-  public static @NotNull Idl parseIdl(
+  public static @NotNull Edl parseIdl(
       @NotNull IdlFile idlPsi,
       @NotNull TypesResolver basicResolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
@@ -63,7 +63,7 @@ public final class IdlPsiParser {
 
     @Nullable IdlResourceDef[] resourceDefsPsi = PsiTreeUtil.getChildrenOfType(idlPsi, IdlResourceDef.class);
 
-    final Map<String, ResourceIdl> resources;
+    final Map<String, ResourceDeclaration> resources;
 
     if (resourceDefsPsi == null) resources = Collections.emptyMap();
     else {
@@ -71,7 +71,7 @@ public final class IdlPsiParser {
       for (IdlResourceDef resourceDefPsi : resourceDefsPsi) {
         if (resourceDefPsi != null) {
           try {
-            ResourceIdl resource = parseResource(resourceDefPsi, resolver, errors);
+            ResourceDeclaration resource = parseResource(resourceDefPsi, resolver, errors);
             String fieldName = resource.fieldName();
             if (resources.containsKey(fieldName))
               errors.add(new PsiProcessingError("Resource '" + fieldName + "' is already defined", resourceDefPsi));
@@ -84,7 +84,7 @@ public final class IdlPsiParser {
       }
     }
 
-    return new Idl(namespace, resources);
+    return new Edl(namespace, resources);
   }
 
   private static @NotNull List<Qn> parseImports(@NotNull IdlFile idlPsi) {
@@ -104,7 +104,7 @@ public final class IdlPsiParser {
         .collect(Collectors.toList());
   }
 
-  public static ResourceIdl parseResource(
+  public static ResourceDeclaration parseResource(
       @NotNull IdlResourceDef psi,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
@@ -131,7 +131,7 @@ public final class IdlPsiParser {
 
     @NotNull List<IdlOperationDef> defsPsi = psi.getOperationDefList();
 
-    final List<OperationIdl> operations = new ArrayList<>(defsPsi.size());
+    final List<OperationDeclaration> operations = new ArrayList<>(defsPsi.size());
     for (IdlOperationDef defPsi : defsPsi)
       try {
         operations.add(OperationsPsiParser.parseOperation(resourceType, defPsi, resolver, errors));
@@ -139,7 +139,7 @@ public final class IdlPsiParser {
         errors.add(e.toError());
       }
 
-    return new ResourceIdl(
+    return new ResourceDeclaration(
         fieldName, resourceType, operations, EpigraphPsiUtil.getLocation(psi)
     );
   }
