@@ -107,7 +107,7 @@
 
     <dependency>
       <groupId>ws.epigraph.tests</groupId>
-      <artifactId>tests-schema-java</artifactId>
+      <artifactId>tests-edl-java</artifactId>
       <version>0.0-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>

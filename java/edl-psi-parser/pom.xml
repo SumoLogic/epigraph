@@ -81,7 +81,7 @@
 
     <dependency>
       <groupId>ws.epigraph.tests</groupId>
-      <artifactId>tests-schema-java</artifactId>
+      <artifactId>tests-edl-java</artifactId>
       <version>${project.parent.version}</version>
       <scope>test</scope>
     </dependency>
