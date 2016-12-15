@@ -21,14 +21,14 @@ import com.intellij.formatting.Indent;
 import com.intellij.formatting.SpacingBuilder;
 import com.intellij.formatting.Wrap;
 import com.intellij.lang.ASTNode;
-import ws.epigraph.ideaplugin.edl.formatting.SchemaBlock;
+import ws.epigraph.ideaplugin.edl.formatting.EdlBlock;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class SupplementsBlock extends SchemaBlock {
+public class SupplementsBlock extends EdlBlock {
   public SupplementsBlock(@NotNull ASTNode node, @Nullable Wrap wrap, @Nullable Alignment alignment, @Nullable Indent indent, SpacingBuilder spacingBuilder) {
     super(node, wrap, alignment, indent, spacingBuilder);
   }

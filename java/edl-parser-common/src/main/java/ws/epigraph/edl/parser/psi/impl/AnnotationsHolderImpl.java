@@ -19,7 +19,7 @@ package ws.epigraph.edl.parser.psi.impl;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import ws.epigraph.edl.parser.psi.AnnotationsHolder;
-import ws.epigraph.edl.parser.psi.SchemaAnnotation;
+import ws.epigraph.edl.parser.psi.EdlAnnotation;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -34,7 +34,7 @@ public class AnnotationsHolderImpl extends ASTWrapperPsiElement implements Annot
 
   @NotNull
   @Override
-  public List<SchemaAnnotation> getAnnotationList() {
+  public List<EdlAnnotation> getAnnotationList() {
     throw new RuntimeException("Should never happen: " + getClass().getName());
   }
 }

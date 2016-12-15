@@ -23,31 +23,31 @@ import org.jetbrains.annotations.NotNull;
 import ws.epigraph.psi.SubParserDefinition;
 import ws.epigraph.edl.parser.psi.*;
 
-import static ws.epigraph.edl.lexer.SchemaElementTypes.*;
+import static ws.epigraph.edl.lexer.EdlElementTypes.*;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public final class EdlSubParserDefinitions {
 
-  public static final EdlSubParserDefinition<SchemaOpVarPath> OP_VAR_PATH =
-      new EdlSubParserDefinition<>(S_OP_VAR_PATH, SchemaOpVarPath.class);
+  public static final EdlSubParserDefinition<EdlOpVarPath> OP_VAR_PATH =
+      new EdlSubParserDefinition<>(S_OP_VAR_PATH, EdlOpVarPath.class);
 
-  public static final EdlSubParserDefinition<SchemaOpOutputVarProjection> OP_OUTPUT_VAR_PROJECTION =
-      new EdlSubParserDefinition<>(S_OP_OUTPUT_VAR_PROJECTION, SchemaOpOutputVarProjection.class);
+  public static final EdlSubParserDefinition<EdlOpOutputVarProjection> OP_OUTPUT_VAR_PROJECTION =
+      new EdlSubParserDefinition<>(S_OP_OUTPUT_VAR_PROJECTION, EdlOpOutputVarProjection.class);
 
-  public static final EdlSubParserDefinition<SchemaOpInputVarProjection> OP_INPUT_VAR_PROJECTION =
-      new EdlSubParserDefinition<>(S_OP_INPUT_VAR_PROJECTION, SchemaOpInputVarProjection.class);
+  public static final EdlSubParserDefinition<EdlOpInputVarProjection> OP_INPUT_VAR_PROJECTION =
+      new EdlSubParserDefinition<>(S_OP_INPUT_VAR_PROJECTION, EdlOpInputVarProjection.class);
 
-  public static final EdlSubParserDefinition<SchemaOpDeleteVarProjection> OP_DELETE_VAR_PROJECTION =
-      new EdlSubParserDefinition<>(S_OP_DELETE_VAR_PROJECTION, SchemaOpDeleteVarProjection.class);
+  public static final EdlSubParserDefinition<EdlOpDeleteVarProjection> OP_DELETE_VAR_PROJECTION =
+      new EdlSubParserDefinition<>(S_OP_DELETE_VAR_PROJECTION, EdlOpDeleteVarProjection.class);
 
-  public static final EdlSubParserDefinition<SchemaDataValue> DATA_VALUE =
-      new EdlSubParserDefinition<>(S_DATA_VALUE, SchemaDataValue.class);
+  public static final EdlSubParserDefinition<EdlDataValue> DATA_VALUE =
+      new EdlSubParserDefinition<>(S_DATA_VALUE, EdlDataValue.class);
 
   private EdlSubParserDefinitions() {}
 
-  public static final class EdlSubParserDefinition<T> extends SchemaParserDefinition implements SubParserDefinition<T> {
+  public static final class EdlSubParserDefinition<T> extends EdlParserDefinition implements SubParserDefinition<T> {
     private final @NotNull Class<T> rootElementClass;
 
     private final @NotNull IElementType rootElementType;

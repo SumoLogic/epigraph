@@ -20,7 +20,7 @@ package ws.epigraph.mojo;
 
 import ws.epigraph.maven.AbstractCompilingMojo;
 import ws.epigraph.edl.compiler.CContext;
-import ws.epigraph.edl.compiler.CSchemaFile;
+import ws.epigraph.edl.compiler.CEdlFile;
 import ws.epigraph.edl.compiler.FileSource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.shared.utils.StringUtils;
@@ -45,8 +45,8 @@ public abstract class BaseCompileMojo extends AbstractCompilingMojo {
       File mojoOutputDirectory = new File(getOutputDirectory(), ARTIFACTS_PATH_PREFIX).getCanonicalFile();
       for (FileSource source : sources) {
         String sourceFilename = source.name();
-        CSchemaFile schemaFile = ctx.schemaFiles().get(sourceFilename); // schema files are mapped by their source names
-        String relativeFilePath = StringUtils.join(schemaFile.namespace().fqn().segments, File.separator);
+        CEdlFile edlFile = ctx.edlFiles().get(sourceFilename); // edl files are mapped by their source names
+        String relativeFilePath = StringUtils.join(edlFile.namespace().fqn().segments, File.separator);
         FileUtils.copyFileToDirectory(new File(sourceFilename), new File(mojoOutputDirectory, relativeFilePath));
         // TODO there might be collisions (foo/bar.esc and baz/bar.esc moved to the save namespace/bar.esc)...
       }

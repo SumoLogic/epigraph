@@ -17,7 +17,7 @@
 package ws.epigraph.ideaplugin.edl.brains;
 
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
-import ws.epigraph.edl.parser.psi.SchemaFile;
+import ws.epigraph.edl.parser.psi.EdlFile;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -34,6 +34,6 @@ public class RenameTest extends LightCodeInsightFixtureTestCase {
     myFixture.checkResultByFile("TypeRename-after.esc", false);
     // also check manually
     //noinspection ConstantConditions
-    assertEquals("GGG", ((SchemaFile) (myFixture.getFile())).getDefs().getTypeDefWrapperList().get(0).getRecordTypeDef().getName());
+    assertEquals("GGG", ((EdlFile) (myFixture.getFile())).getDefs().getTypeDefWrapperList().get(0).getRecordTypeDef().getName());
   }
 }

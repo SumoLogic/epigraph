@@ -30,8 +30,8 @@ class CContext(val tabWidth: Int = 2) {
   /** Accumulated compile errors */
   val errors: ConcurrentLinkedQueue[CError] = new java.util.concurrent.ConcurrentLinkedQueue
 
-  /** Schema files being processed by compiler */
-  val schemaFiles: ConcurrentHashMap[String, CSchemaFile] = new java.util.concurrent.ConcurrentHashMap
+  /** EDL files being processed by compiler */
+  val edlFiles: ConcurrentHashMap[String, CEdlFile] = new java.util.concurrent.ConcurrentHashMap
 
   /** Accumulated namespaces */
   val namespaces: ConcurrentHashMap[String, CNamespace] = new java.util.concurrent.ConcurrentHashMap

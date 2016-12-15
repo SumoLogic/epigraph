@@ -22,8 +22,8 @@ import ws.epigraph.edl.parser.EdlPsiParser;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingError;
 import ws.epigraph.refs.TypesResolver;
-import ws.epigraph.edl.parser.SchemaParserDefinition;
-import ws.epigraph.edl.parser.psi.SchemaFile;
+import ws.epigraph.edl.parser.EdlParserDefinition;
+import ws.epigraph.edl.parser.psi.EdlFile;
 import ws.epigraph.service.operations.Operation;
 
 import java.util.List;
@@ -43,11 +43,11 @@ public final class RoutingTestUtil {
   static @NotNull Edl parseIdl(@NotNull String text, @NotNull TypesResolver resolver) {
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
-    @NotNull SchemaFile psiFile =
-        (SchemaFile) EpigraphPsiUtil.parseFile(
+    @NotNull EdlFile psiFile =
+        (EdlFile) EpigraphPsiUtil.parseFile(
             "test.epigraph",
             text,
-            SchemaParserDefinition.INSTANCE,
+            EdlParserDefinition.INSTANCE,
             errorsAccumulator
         );
 

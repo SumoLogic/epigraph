@@ -50,7 +50,7 @@ public final class OpOutputProjectionsPsiParser {
 
   public static OpOutputVarProjection parseVarProjection(
       @NotNull DataType dataType,
-      @NotNull SchemaOpOutputVarProjection psi,
+      @NotNull EdlOpOutputVarProjection psi,
       @NotNull TypesResolver typesResolver,
       @NotNull List<PsiProcessingError> errors)
       throws PsiProcessingException {
@@ -58,25 +58,25 @@ public final class OpOutputProjectionsPsiParser {
     final Type type = dataType.type;
     final LinkedHashMap<String, OpOutputTagProjectionEntry> tagProjections = new LinkedHashMap<>();
 
-    @Nullable SchemaOpOutputSingleTagProjection singleTagProjectionPsi = psi.getOpOutputSingleTagProjection();
+    @Nullable EdlOpOutputSingleTagProjection singleTagProjectionPsi = psi.getOpOutputSingleTagProjection();
 
     if (singleTagProjectionPsi == null) {
-      @Nullable SchemaOpOutputMultiTagProjection multiTagProjection = psi.getOpOutputMultiTagProjection();
+      @Nullable EdlOpOutputMultiTagProjection multiTagProjection = psi.getOpOutputMultiTagProjection();
       assert multiTagProjection != null;
       // parse list of tags
-      @NotNull List<SchemaOpOutputMultiTagProjectionItem> tagProjectionPsiList =
+      @NotNull List<EdlOpOutputMultiTagProjectionItem> tagProjectionPsiList =
           multiTagProjection.getOpOutputMultiTagProjectionItemList();
 
-      for (SchemaOpOutputMultiTagProjectionItem tagProjectionPsi : tagProjectionPsiList) {
+      for (EdlOpOutputMultiTagProjectionItem tagProjectionPsi : tagProjectionPsiList) {
         final Type.Tag tag = getTag(type, tagProjectionPsi.getTagName(), dataType.defaultTag, tagProjectionPsi, errors);
 
         final OpOutputModelProjection<?, ?> parsedModelProjection;
 
         @NotNull DatumType tagType = tag.type;
-        @Nullable SchemaOpOutputModelProjection modelProjection = tagProjectionPsi.getOpOutputModelProjection();
+        @Nullable EdlOpOutputModelProjection modelProjection = tagProjectionPsi.getOpOutputModelProjection();
         assert modelProjection != null; // todo when it can be null?
 
-        @NotNull List<SchemaOpOutputModelProperty> modelPropertiesPsi = tagProjectionPsi.getOpOutputModelPropertyList();
+        @NotNull List<EdlOpOutputModelProperty> modelPropertiesPsi = tagProjectionPsi.getOpOutputModelPropertyList();
 
         parsedModelProjection = parseModelProjection(
             tagType,
@@ -116,10 +116,10 @@ public final class OpOutputProjectionsPsiParser {
               errors
           );
 
-        @Nullable SchemaOpOutputModelProjection modelProjection = singleTagProjectionPsi.getOpOutputModelProjection();
+        @Nullable EdlOpOutputModelProjection modelProjection = singleTagProjectionPsi.getOpOutputModelProjection();
         assert modelProjection != null; // todo when it can be null?
 
-        @NotNull List<SchemaOpOutputModelProperty> modelPropertiesPsi =
+        @NotNull List<EdlOpOutputModelProperty> modelPropertiesPsi =
             singleTagProjectionPsi.getOpOutputModelPropertyList();
 
         parsedModelProjection = parseModelProjection(
@@ -145,25 +145,25 @@ public final class OpOutputProjectionsPsiParser {
 
     // parse tails
     final List<OpOutputVarProjection> tails;
-    @Nullable SchemaOpOutputVarPolymorphicTail psiTail = psi.getOpOutputVarPolymorphicTail();
+    @Nullable EdlOpOutputVarPolymorphicTail psiTail = psi.getOpOutputVarPolymorphicTail();
     if (psiTail == null) tails = null;
     else {
       tails = new ArrayList<>();
 
-      @Nullable SchemaOpOutputVarSingleTail singleTail = psiTail.getOpOutputVarSingleTail();
+      @Nullable EdlOpOutputVarSingleTail singleTail = psiTail.getOpOutputVarSingleTail();
       if (singleTail == null) {
-        @Nullable SchemaOpOutputVarMultiTail multiTail = psiTail.getOpOutputVarMultiTail();
+        @Nullable EdlOpOutputVarMultiTail multiTail = psiTail.getOpOutputVarMultiTail();
         assert multiTail != null;
-        for (SchemaOpOutputVarMultiTailItem tailItem : multiTail.getOpOutputVarMultiTailItemList()) {
-          @NotNull SchemaTypeRef tailTypeRef = tailItem.getTypeRef();
-          @NotNull SchemaOpOutputVarProjection psiTailProjection = tailItem.getOpOutputVarProjection();
+        for (EdlOpOutputVarMultiTailItem tailItem : multiTail.getOpOutputVarMultiTailItemList()) {
+          @NotNull EdlTypeRef tailTypeRef = tailItem.getTypeRef();
+          @NotNull EdlOpOutputVarProjection psiTailProjection = tailItem.getOpOutputVarProjection();
           @NotNull OpOutputVarProjection tailProjection =
               buildTailProjection(dataType, tailTypeRef, psiTailProjection, typesResolver, errors);
           tails.add(tailProjection);
         }
       } else {
-        @NotNull SchemaTypeRef tailTypeRef = singleTail.getTypeRef();
-        @NotNull SchemaOpOutputVarProjection psiTailProjection = singleTail.getOpOutputVarProjection();
+        @NotNull EdlTypeRef tailTypeRef = singleTail.getTypeRef();
+        @NotNull EdlOpOutputVarProjection psiTailProjection = singleTail.getOpOutputVarProjection();
         @NotNull OpOutputVarProjection tailProjection =
             buildTailProjection(dataType, tailTypeRef, psiTailProjection, typesResolver, errors);
         tails.add(tailProjection);
@@ -186,38 +186,38 @@ public final class OpOutputProjectionsPsiParser {
 
 
   private static @NotNull OpParams parseModelParams(
-      @NotNull List<SchemaOpOutputModelProperty> modelProperties,
+      @NotNull List<EdlOpOutputModelProperty> modelProperties,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
 
     return parseParams(
-        modelProperties.stream().map(SchemaOpOutputModelProperty::getOpParam),
+        modelProperties.stream().map(EdlOpOutputModelProperty::getOpParam),
         resolver,
         errors
     );
   }
 
   private static @NotNull Annotations parseModelAnnotations(
-      @NotNull List<SchemaOpOutputModelProperty> modelProperties,
+      @NotNull List<EdlOpOutputModelProperty> modelProperties,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
     return parseAnnotations(
-        modelProperties.stream().map(SchemaOpOutputModelProperty::getAnnotation),
+        modelProperties.stream().map(EdlOpOutputModelProperty::getAnnotation),
         errors
     );
   }
 
   private static @Nullable OpOutputModelProjection<?, ?> parseModelMetaProjection(
       @NotNull DatumType type,
-      @NotNull List<SchemaOpOutputModelProperty> modelProperties,
+      @NotNull List<EdlOpOutputModelProperty> modelProperties,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors
   ) throws PsiProcessingException {
 
-    @Nullable SchemaOpOutputModelMeta modelMetaPsi = null;
+    @Nullable EdlOpOutputModelMeta modelMetaPsi = null;
 
-    for (SchemaOpOutputModelProperty modelProperty : modelProperties) {
+    for (EdlOpOutputModelProperty modelProperty : modelProperties) {
       if (modelMetaPsi != null)
         errors.add(new PsiProcessingError("Metadata projection should be specified only once", modelProperty));
 
@@ -235,7 +235,7 @@ public final class OpOutputProjectionsPsiParser {
         return null;
       } else {
 
-        @NotNull SchemaOpOutputModelProjection metaProjectionPsi = modelMetaPsi.getOpOutputModelProjection();
+        @NotNull EdlOpOutputModelProjection metaProjectionPsi = modelMetaPsi.getOpOutputModelProjection();
         return parseModelProjection(
             metaType,
             OpParams.EMPTY,
@@ -251,8 +251,8 @@ public final class OpOutputProjectionsPsiParser {
 
   private static @NotNull OpOutputVarProjection buildTailProjection(
       @NotNull DataType dataType,
-      @NotNull SchemaTypeRef tailTypeRefPsi,
-      @NotNull SchemaOpOutputVarProjection psiTailProjection,
+      @NotNull EdlTypeRef tailTypeRefPsi,
+      @NotNull EdlOpOutputVarProjection psiTailProjection,
       @NotNull TypesResolver typesResolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
@@ -330,14 +330,14 @@ public final class OpOutputProjectionsPsiParser {
       @NotNull OpParams params,
       @NotNull Annotations annotations,
       @Nullable OpOutputModelProjection<?, ?> metaProjection,
-      @NotNull SchemaOpOutputModelProjection psi,
+      @NotNull EdlOpOutputModelProjection psi,
       @NotNull TypesResolver typesResolver,
       @NotNull List<PsiProcessingError> errors)
       throws PsiProcessingException {
 
     switch (type.kind()) {
       case RECORD:
-        @Nullable SchemaOpOutputRecordModelProjection recordModelProjectionPsi = psi.getOpOutputRecordModelProjection();
+        @Nullable EdlOpOutputRecordModelProjection recordModelProjectionPsi = psi.getOpOutputRecordModelProjection();
         if (recordModelProjectionPsi == null)
           return createDefaultModelProjection(type, params, annotations, psi, errors);
         ensureModelKind(psi, TypeKind.RECORD, errors);
@@ -351,7 +351,7 @@ public final class OpOutputProjectionsPsiParser {
             errors
         );
       case MAP:
-        @Nullable SchemaOpOutputMapModelProjection mapModelProjectionPsi = psi.getOpOutputMapModelProjection();
+        @Nullable EdlOpOutputMapModelProjection mapModelProjectionPsi = psi.getOpOutputMapModelProjection();
         if (mapModelProjectionPsi == null)
           return createDefaultModelProjection(type, params, annotations, psi, errors);
         ensureModelKind(psi, TypeKind.MAP, errors);
@@ -366,7 +366,7 @@ public final class OpOutputProjectionsPsiParser {
             errors
         );
       case LIST:
-        @Nullable SchemaOpOutputListModelProjection listModelProjectionPsi = psi.getOpOutputListModelProjection();
+        @Nullable EdlOpOutputListModelProjection listModelProjectionPsi = psi.getOpOutputListModelProjection();
         if (listModelProjectionPsi == null)
           return createDefaultModelProjection(type, params, annotations, psi, errors);
         ensureModelKind(psi, TypeKind.LIST, errors);
@@ -398,7 +398,7 @@ public final class OpOutputProjectionsPsiParser {
   }
 
   private static void ensureModelKind(
-      @NotNull SchemaOpOutputModelProjection psi,
+      @NotNull EdlOpOutputModelProjection psi,
       @NotNull TypeKind expectedKind,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
@@ -411,7 +411,7 @@ public final class OpOutputProjectionsPsiParser {
       ), psi, errors);
   }
 
-  private static @Nullable TypeKind findProjectionKind(@NotNull SchemaOpOutputModelProjection psi) {
+  private static @Nullable TypeKind findProjectionKind(@NotNull EdlOpOutputModelProjection psi) {
     if (psi.getOpOutputRecordModelProjection() != null) return TypeKind.RECORD;
     if (psi.getOpOutputMapModelProjection() != null) return TypeKind.MAP;
     if (psi.getOpOutputListModelProjection() != null) return TypeKind.LIST;
@@ -526,15 +526,15 @@ public final class OpOutputProjectionsPsiParser {
       @NotNull OpParams params,
       @NotNull Annotations annotations,
       @Nullable OpOutputRecordModelProjection metaProjection,
-      @NotNull SchemaOpOutputRecordModelProjection psi,
+      @NotNull EdlOpOutputRecordModelProjection psi,
       @NotNull TypesResolver typesResolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
     LinkedHashMap<String, OpOutputFieldProjectionEntry> fieldProjections = new LinkedHashMap<>();
-    @NotNull List<SchemaOpOutputFieldProjectionEntry> fieldProjectionEntriesPsi =
+    @NotNull List<EdlOpOutputFieldProjectionEntry> fieldProjectionEntriesPsi =
         psi.getOpOutputFieldProjectionEntryList();
 
-    for (SchemaOpOutputFieldProjectionEntry fieldProjectionEntryPsi : fieldProjectionEntriesPsi) {
+    for (EdlOpOutputFieldProjectionEntry fieldProjectionEntryPsi : fieldProjectionEntriesPsi) {
       final String fieldName = fieldProjectionEntryPsi.getQid().getCanonicalName();
       RecordType.Field field = type.fieldsMap().get(fieldName);
 
@@ -551,7 +551,7 @@ public final class OpOutputProjectionsPsiParser {
         continue;
       }
 
-      final @NotNull SchemaOpOutputFieldProjection fieldProjectionPsi =
+      final @NotNull EdlOpOutputFieldProjection fieldProjectionPsi =
           fieldProjectionEntryPsi.getOpOutputFieldProjection();
 
       final OpOutputFieldProjection opOutputFieldProjection = parseFieldProjection(
@@ -583,14 +583,14 @@ public final class OpOutputProjectionsPsiParser {
 
   public static @NotNull OpOutputFieldProjection parseFieldProjection(
       @NotNull DataType fieldType,
-      @NotNull SchemaOpOutputFieldProjection psi,
+      @NotNull EdlOpOutputFieldProjection psi,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
     List<OpParam> fieldParamsList = null;
     @Nullable Map<String, Annotation> fieldAnnotationsMap = null;
-    for (SchemaOpOutputFieldProjectionBodyPart fieldBodyPart : psi.getOpOutputFieldProjectionBodyPartList()) {
-      @Nullable SchemaOpParam fieldParamPsi = fieldBodyPart.getOpParam();
+    for (EdlOpOutputFieldProjectionBodyPart fieldBodyPart : psi.getOpOutputFieldProjectionBodyPartList()) {
+      @Nullable EdlOpParam fieldParamPsi = fieldBodyPart.getOpParam();
       if (fieldParamPsi != null) {
         if (fieldParamsList == null) fieldParamsList = new ArrayList<>(3);
         fieldParamsList.add(parseParameter(fieldParamPsi, resolver, errors));
@@ -612,14 +612,14 @@ public final class OpOutputProjectionsPsiParser {
       @NotNull OpParams params,
       @NotNull Annotations annotations,
       @Nullable OpOutputMapModelProjection metaProjection,
-      @NotNull SchemaOpOutputMapModelProjection psi,
+      @NotNull EdlOpOutputMapModelProjection psi,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors)
       throws PsiProcessingException {
 
     @NotNull OpOutputKeyProjection keyProjection = parseKeyProjection(psi.getOpOutputKeyProjection(), resolver, errors);
 
-    @Nullable SchemaOpOutputVarProjection valueProjectionPsi = psi.getOpOutputVarProjection();
+    @Nullable EdlOpOutputVarProjection valueProjectionPsi = psi.getOpOutputVarProjection();
     @NotNull OpOutputVarProjection valueProjection =
         valueProjectionPsi == null
         ? createDefaultVarProjection(
@@ -641,7 +641,7 @@ public final class OpOutputProjectionsPsiParser {
   }
 
   private static @NotNull OpOutputKeyProjection parseKeyProjection(
-      @NotNull SchemaOpOutputKeyProjection keyProjectionPsi,
+      @NotNull EdlOpOutputKeyProjection keyProjectionPsi,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
@@ -654,13 +654,13 @@ public final class OpOutputProjectionsPsiParser {
     else
       presence = OpKeyPresence.OPTIONAL;
 
-    final @NotNull List<SchemaOpOutputKeyProjectionPart> keyPartsPsi =
+    final @NotNull List<EdlOpOutputKeyProjectionPart> keyPartsPsi =
         keyProjectionPsi.getOpOutputKeyProjectionPartList();
 
     final @NotNull OpParams keyParams =
-        parseParams(keyPartsPsi.stream().map(SchemaOpOutputKeyProjectionPart::getOpParam), resolver, errors);
+        parseParams(keyPartsPsi.stream().map(EdlOpOutputKeyProjectionPart::getOpParam), resolver, errors);
     final @NotNull Annotations keyAnnotations =
-        parseAnnotations(keyPartsPsi.stream().map(SchemaOpOutputKeyProjectionPart::getAnnotation), errors);
+        parseAnnotations(keyPartsPsi.stream().map(EdlOpOutputKeyProjectionPart::getAnnotation), errors);
 
     return new OpOutputKeyProjection(
         presence,
@@ -675,13 +675,13 @@ public final class OpOutputProjectionsPsiParser {
       @NotNull OpParams params,
       @NotNull Annotations annotations,
       @Nullable OpOutputListModelProjection metaProjection,
-      @NotNull SchemaOpOutputListModelProjection psi,
+      @NotNull EdlOpOutputListModelProjection psi,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors)
       throws PsiProcessingException {
 
     OpOutputVarProjection itemsProjection;
-    @Nullable SchemaOpOutputVarProjection opOutputVarProjectionPsi = psi.getOpOutputVarProjection();
+    @Nullable EdlOpOutputVarProjection opOutputVarProjectionPsi = psi.getOpOutputVarProjection();
     if (opOutputVarProjectionPsi == null)
       itemsProjection = createDefaultVarProjection(type, psi, errors);
     else

@@ -50,7 +50,7 @@ class CompileTask extends SourceTask implements EpigraphCompileTaskBase {
     def context = compileFiles();
 
     if (!context.errors().isEmpty())
-      throw new GradleException('Epigraph schema compilation failed with errors')
+      throw new GradleException('EDL compilation failed with errors')
 
     def artifactsDir = new File(destinationDir, EpigraphConstants.ARTIFACTS_PATH_PREFIX).getCanonicalFile()
     artifactsDir.delete()
@@ -59,10 +59,10 @@ class CompileTask extends SourceTask implements EpigraphCompileTaskBase {
     getFileSources().each { fileSource ->
       def sourceFileName = fileSource.name() // this is full path actually
       def sourceFile = new File(sourceFileName)
-      def schemaFile = context.edlFiles().get(sourceFileName)
-      assert schemaFile != null
+      def edlFile = context.edlFiles().get(sourceFileName)
+      assert edlFile != null
 
-      def relativePath = schemaFile.namespace().fqn().segments.join(File.separator)
+      def relativePath = edlFile.namespace().fqn().segments.join(File.separator)
       def targetDir = new File(artifactsDir, relativePath)
 
       targetDir.mkdirs()

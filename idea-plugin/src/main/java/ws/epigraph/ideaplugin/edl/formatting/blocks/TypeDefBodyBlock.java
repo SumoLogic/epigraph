@@ -22,15 +22,15 @@ import com.intellij.formatting.SpacingBuilder;
 import com.intellij.formatting.Wrap;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.tree.IElementType;
-import ws.epigraph.ideaplugin.edl.formatting.SchemaBlock;
-import ws.epigraph.edl.parser.SchemaParserDefinition;
+import ws.epigraph.ideaplugin.edl.formatting.EdlBlock;
+import ws.epigraph.edl.parser.EdlParserDefinition;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class TypeDefBodyBlock extends SchemaBlock {
+public class TypeDefBodyBlock extends EdlBlock {
   public TypeDefBodyBlock(@NotNull ASTNode node, @Nullable Wrap wrap, @Nullable Alignment alignment, @Nullable Indent indent, SpacingBuilder spacingBuilder) {
     super(node, wrap, alignment, indent, spacingBuilder);
   }
@@ -39,7 +39,7 @@ public class TypeDefBodyBlock extends SchemaBlock {
   protected Indent getChildIndent(ASTNode child) {
     IElementType childElementType = child.getElementType();
 
-    if (SchemaParserDefinition.CURLY_BRACES.contains(childElementType)) {
+    if (EdlParserDefinition.CURLY_BRACES.contains(childElementType)) {
       return Indent.getNoneIndent();
     }
 

@@ -75,7 +75,7 @@ abstract class CType(implicit val ctx: CContext) {self =>
 }
 
 
-abstract class CTypeDef protected(val csf: CSchemaFile, val psi: SchemaTypeDef, override val kind: CTypeKind)
+abstract class CTypeDef protected(val csf: CEdlFile, val psi: EdlTypeDef, override val kind: CTypeKind)
     (implicit ctx: CContext) extends CType {self =>
 
   //override type Super >: self.type <: CType {type Super <: self.Super} // idea scala bug
@@ -86,13 +86,13 @@ abstract class CTypeDef protected(val csf: CSchemaFile, val psi: SchemaTypeDef, 
 
   /** References to types this type supplements (injects itself into). */
   val supplementedTypeRefs: Seq[CTypeDefRef] = {
-    @Nullable val ssd: SchemaSupplementsDecl = psi.getSupplementsDecl
+    @Nullable val ssd: EdlSupplementsDecl = psi.getSupplementsDecl
     if (ssd == null) Nil else ssd.getQnTypeRefList.map(CTypeRef(csf, _))
   }
 
   /** References to types this type explicitly extends. */
   val extendedTypeRefs: Seq[CTypeDefRef] = {
-    @Nullable val sed: SchemaExtendsDecl = psi.getExtendsDecl
+    @Nullable val sed: EdlExtendsDecl = psi.getExtendsDecl
     if (sed == null) Nil else sed.getQnTypeRefList.map(CTypeRef(csf, _))
   }
 
@@ -164,17 +164,17 @@ abstract class CTypeDef protected(val csf: CSchemaFile, val psi: SchemaTypeDef, 
 
 object CTypeDef {
 
-  def apply(csf: CSchemaFile, stdw: SchemaTypeDefWrapper)(implicit ctx: CContext): CTypeDef = stdw.getElement match {
-    case typeDef: SchemaVarTypeDef => new CVarTypeDef(csf, typeDef)
-    case typeDef: SchemaRecordTypeDef => new CRecordTypeDef(csf, typeDef)
-    case typeDef: SchemaMapTypeDef => new CMapTypeDef(csf, typeDef)
-    case typeDef: SchemaListTypeDef => new CListTypeDef(csf, typeDef)
-    case typeDef: SchemaEnumTypeDef => new CEnumTypeDef(csf, typeDef)
-    case typeDef: SchemaPrimitiveTypeDef => new CPrimitiveTypeDef(csf, typeDef)
+  def apply(csf: CEdlFile, stdw: EdlTypeDefWrapper)(implicit ctx: CContext): CTypeDef = stdw.getElement match {
+    case typeDef: EdlVarTypeDef => new CVarTypeDef(csf, typeDef)
+    case typeDef: EdlRecordTypeDef => new CRecordTypeDef(csf, typeDef)
+    case typeDef: EdlMapTypeDef => new CMapTypeDef(csf, typeDef)
+    case typeDef: EdlListTypeDef => new CListTypeDef(csf, typeDef)
+    case typeDef: EdlEnumTypeDef => new CEnumTypeDef(csf, typeDef)
+    case typeDef: EdlPrimitiveTypeDef => new CPrimitiveTypeDef(csf, typeDef)
     case unknown => throw new UnsupportedOperationException(unknown.toString)
   }
 
-  def declaredDefaultTagName(@Nullable sdo: SchemaDefaultOverride): Option[Option[String]] = {
+  def declaredDefaultTagName(@Nullable sdo: EdlDefaultOverride): Option[Option[String]] = {
     if (sdo == null) {
       None
     } else {
@@ -190,7 +190,7 @@ object CTypeDef {
 }
 
 
-class CVarTypeDef(csf: CSchemaFile, override val psi: SchemaVarTypeDef)(implicit ctx: CContext) extends CTypeDef(
+class CVarTypeDef(csf: CEdlFile, override val psi: EdlVarTypeDef)(implicit ctx: CContext) extends CTypeDef(
   csf, psi, CTypeKind.VARTYPE
 ) {
 
@@ -263,9 +263,9 @@ class CVarTypeDef(csf: CSchemaFile, override val psi: SchemaVarTypeDef)(implicit
 
 }
 
-class CTag(val csf: CSchemaFile, val name: String, val typeRef: CTypeRef, @Nullable val psi: PsiElement) {
+class CTag(val csf: CEdlFile, val name: String, val typeRef: CTypeRef, @Nullable val psi: PsiElement) {
 
-  def this(csf: CSchemaFile, psi: SchemaVarTagDecl)(implicit ctx: CContext) =
+  def this(csf: CEdlFile, psi: EdlVarTagDecl)(implicit ctx: CContext) =
     this(csf, psi.getQid.getCanonicalName, CTypeRef(csf, psi.getTypeRef), psi)
 
   def compatibleWith(st: CTag): Boolean = st.typeRef.resolved.isAssignableFrom(typeRef.resolved)
@@ -276,7 +276,7 @@ trait CDatumType extends CType {self =>
 
   override type Super >: self.type <: CDatumType {type Super <: self.Super}
 
-  protected val csf: CSchemaFile
+  protected val csf: CEdlFile
 
   @(Nullable@getter)
   @Nullable protected val psi: PsiElement
@@ -294,7 +294,7 @@ object CDatumType {
 }
 
 
-class CRecordTypeDef(csf: CSchemaFile, override val psi: SchemaRecordTypeDef)(implicit ctx: CContext) extends CTypeDef(
+class CRecordTypeDef(csf: CEdlFile, override val psi: EdlRecordTypeDef)(implicit ctx: CContext) extends CTypeDef(
   csf, psi, CTypeKind.RECORD
 ) with CDatumType {
 
@@ -357,7 +357,7 @@ class CRecordTypeDef(csf: CSchemaFile, override val psi: SchemaRecordTypeDef)(im
 
 }
 
-class CField(val csf: CSchemaFile, val psi: SchemaFieldDecl, val host: CRecordTypeDef)(implicit val ctx: CContext) {
+class CField(val csf: CEdlFile, val psi: EdlFieldDecl, val host: CRecordTypeDef)(implicit val ctx: CContext) {
 
   // TODO fields with override modifier should check they have superfield(s)
 
@@ -453,7 +453,7 @@ class CAnonMapType(override val name: CAnonMapTypeName)(implicit ctx: CContext) 
 
   override type Super = CAnonMapType
 
-  override protected val csf: CSchemaFile = valueDataType.csf
+  override protected val csf: CEdlFile = valueDataType.csf
 
   @Nullable override protected val psi: PsiElement = null
 
@@ -511,7 +511,7 @@ class CAnonMapType(override val name: CAnonMapTypeName)(implicit ctx: CContext) 
 
 }
 
-class CMapTypeDef(csf: CSchemaFile, override val psi: SchemaMapTypeDef)(implicit ctx: CContext) extends {
+class CMapTypeDef(csf: CEdlFile, override val psi: EdlMapTypeDef)(implicit ctx: CContext) extends {
 
   val valueDataType: CDataType = new CDataType(csf, psi.getAnonMap.getValueTypeRef)
 
@@ -574,7 +574,7 @@ class CAnonListType(override val name: CAnonListTypeName)(implicit ctx: CContext
 
   override type Super = CAnonListType
 
-  override protected val csf: CSchemaFile = elementDataType.csf
+  override protected val csf: CEdlFile = elementDataType.csf
 
   @Nullable override protected val psi: PsiElement = null
 
@@ -631,7 +631,7 @@ class CAnonListType(override val name: CAnonListTypeName)(implicit ctx: CContext
 }
 
 
-class CListTypeDef(csf: CSchemaFile, override val psi: SchemaListTypeDef)(implicit ctx: CContext) extends {
+class CListTypeDef(csf: CEdlFile, override val psi: EdlListTypeDef)(implicit ctx: CContext) extends {
 
   override val elementDataType: CDataType = new CDataType(csf, psi.getAnonList.getValueTypeRef)
 
@@ -663,7 +663,7 @@ class CListTypeDef(csf: CSchemaFile, override val psi: SchemaListTypeDef)(implic
 }
 
 
-class CEnumTypeDef(csf: CSchemaFile, psi: SchemaEnumTypeDef)(implicit ctx: CContext) extends CTypeDef(
+class CEnumTypeDef(csf: CEdlFile, psi: EdlEnumTypeDef)(implicit ctx: CContext) extends CTypeDef(
   csf, psi, CTypeKind.ENUM
 ) with CDatumType {
 
@@ -676,14 +676,14 @@ class CEnumTypeDef(csf: CSchemaFile, psi: SchemaEnumTypeDef)(implicit ctx: CCont
 
 }
 
-class CEnumValue(csf: CSchemaFile, psi: SchemaEnumMemberDecl)(implicit val ctx: CContext) {
+class CEnumValue(csf: CEdlFile, psi: EdlEnumMemberDecl)(implicit val ctx: CContext) {
 
   val name: String = psi.getQid.getCanonicalName
 
 }
 
 
-class CPrimitiveTypeDef(csf: CSchemaFile, override val psi: SchemaPrimitiveTypeDef)(implicit ctx: CContext)
+class CPrimitiveTypeDef(csf: CEdlFile, override val psi: EdlPrimitiveTypeDef)(implicit ctx: CContext)
     extends CTypeDef(
       csf, psi, CTypeKind.forKeyword(psi.getPrimitiveTypeKind.name)
     ) with CDatumType {
@@ -693,7 +693,7 @@ class CPrimitiveTypeDef(csf: CSchemaFile, override val psi: SchemaPrimitiveTypeD
 }
 
 
-class CSupplement(csf: CSchemaFile, val psi: SchemaSupplementDef)(implicit val ctx: CContext) {
+class CSupplement(csf: CEdlFile, val psi: EdlSupplementDef)(implicit val ctx: CContext) {
 
   val sourceRef: CTypeDefRef = CTypeRef(csf, psi.sourceRef)
 

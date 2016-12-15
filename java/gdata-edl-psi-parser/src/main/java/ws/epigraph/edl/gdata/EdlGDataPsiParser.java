@@ -37,20 +37,20 @@ import java.util.List;
 public final class EdlGDataPsiParser {
   private EdlGDataPsiParser() {}
 
-  public static @NotNull GDataValue parseValue(@NotNull SchemaDataValue psi, @NotNull List<PsiProcessingError> errors)
+  public static @NotNull GDataValue parseValue(@NotNull EdlDataValue psi, @NotNull List<PsiProcessingError> errors)
       throws PsiProcessingException {
     if (psi.getData() != null) return parseData(psi.getData(), errors);
     else if (psi.getDatum() != null) return parseDatum(psi.getDatum(), errors);
     else throw new PsiProcessingException("Neither data nor datum is set", psi, errors);
   }
 
-  public static @NotNull GData parseData(@NotNull SchemaData psi, @NotNull List<PsiProcessingError> errors)
+  public static @NotNull GData parseData(@NotNull EdlData psi, @NotNull List<PsiProcessingError> errors)
       throws PsiProcessingException {
-    @Nullable SchemaTypeRef typeRef = psi.getTypeRef();
+    @Nullable EdlTypeRef typeRef = psi.getTypeRef();
 
     LinkedHashMap<String, GDatum> tags = new LinkedHashMap<>();
-    for (SchemaDataEntry entry : psi.getDataEntryList()) {
-      @Nullable SchemaDatum value = entry.getDatum();
+    for (EdlDataEntry entry : psi.getDataEntryList()) {
+      @Nullable EdlDatum value = entry.getDatum();
       if (value == null) throw new PsiProcessingException(
           String.format("Got 'null' value for tag '%s'", entry.getQid().getCanonicalName()), psi, errors
       );
@@ -60,32 +60,32 @@ public final class EdlGDataPsiParser {
     return new GData(getTypeRef(typeRef, errors), tags, EpigraphPsiUtil.getLocation(psi));
   }
 
-  public static @NotNull GDatum parseDatum(@NotNull SchemaDatum psi, @NotNull List<PsiProcessingError> errors)
+  public static @NotNull GDatum parseDatum(@NotNull EdlDatum psi, @NotNull List<PsiProcessingError> errors)
       throws PsiProcessingException {
 
-    if (psi instanceof SchemaRecordDatum)
-      return parseRecord((SchemaRecordDatum) psi, errors);
-    else if (psi instanceof SchemaMapDatum)
-      return parseMap((SchemaMapDatum) psi, errors);
-    else if (psi instanceof SchemaListDatum)
-      return parseList((SchemaListDatum) psi, errors);
-    else if (psi instanceof SchemaEnumDatum)
-      return parseEnum((SchemaEnumDatum) psi);
-    else if (psi instanceof SchemaPrimitiveDatum)
-      return parsePrimitive((SchemaPrimitiveDatum) psi, errors);
-    else if (psi instanceof SchemaNullDatum)
-      return parseNull((SchemaNullDatum) psi, errors);
+    if (psi instanceof EdlRecordDatum)
+      return parseRecord((EdlRecordDatum) psi, errors);
+    else if (psi instanceof EdlMapDatum)
+      return parseMap((EdlMapDatum) psi, errors);
+    else if (psi instanceof EdlListDatum)
+      return parseList((EdlListDatum) psi, errors);
+    else if (psi instanceof EdlEnumDatum)
+      return parseEnum((EdlEnumDatum) psi);
+    else if (psi instanceof EdlPrimitiveDatum)
+      return parsePrimitive((EdlPrimitiveDatum) psi, errors);
+    else if (psi instanceof EdlNullDatum)
+      return parseNull((EdlNullDatum) psi, errors);
     else throw new PsiProcessingException("Unknown value element", psi, errors);
   }
 
-  public static @NotNull GRecordDatum parseRecord(@NotNull SchemaRecordDatum psi, @NotNull List<PsiProcessingError> errors)
+  public static @NotNull GRecordDatum parseRecord(@NotNull EdlRecordDatum psi, @NotNull List<PsiProcessingError> errors)
       throws PsiProcessingException {
-    @Nullable SchemaTypeRef typeRef = psi.getTypeRef();
+    @Nullable EdlTypeRef typeRef = psi.getTypeRef();
 
     LinkedHashMap<String, GDataValue> fields = new LinkedHashMap<>();
-    for (SchemaRecordDatumEntry entry : psi.getRecordDatumEntryList()) {
+    for (EdlRecordDatumEntry entry : psi.getRecordDatumEntryList()) {
       try {
-        @Nullable SchemaDataValue value = entry.getDataValue();
+        @Nullable EdlDataValue value = entry.getDataValue();
         if (value == null) errors.add(new PsiProcessingError(
             String.format("Got 'null' value for field '%s'", entry.getQid().getCanonicalName()), psi
         ));
@@ -98,14 +98,14 @@ public final class EdlGDataPsiParser {
     return new GRecordDatum(getTypeRef(typeRef, errors), fields, EpigraphPsiUtil.getLocation(psi));
   }
 
-  public static @NotNull GMapDatum parseMap(@NotNull SchemaMapDatum psi, @NotNull List<PsiProcessingError> errors)
+  public static @NotNull GMapDatum parseMap(@NotNull EdlMapDatum psi, @NotNull List<PsiProcessingError> errors)
       throws PsiProcessingException {
-    @Nullable SchemaTypeRef typeRef = psi.getTypeRef();
+    @Nullable EdlTypeRef typeRef = psi.getTypeRef();
 
     LinkedHashMap<GDatum, GDataValue> map = new LinkedHashMap<>();
-    for (SchemaMapDatumEntry entry : psi.getMapDatumEntryList()) {
+    for (EdlMapDatumEntry entry : psi.getMapDatumEntryList()) {
       try {
-        @Nullable SchemaDataValue dataValue = entry.getDataValue();
+        @Nullable EdlDataValue dataValue = entry.getDataValue();
         if (dataValue == null) errors.add(new PsiProcessingError(
             String.format("Got 'null' value for key '%s'", entry.getDataValue().getText()), psi
         ));
@@ -118,14 +118,14 @@ public final class EdlGDataPsiParser {
     return new GMapDatum(getTypeRef(typeRef, errors), map, EpigraphPsiUtil.getLocation(psi));
   }
 
-  public static @NotNull GListDatum parseList(@NotNull SchemaListDatum psi, @NotNull List<PsiProcessingError> errors)
+  public static @NotNull GListDatum parseList(@NotNull EdlListDatum psi, @NotNull List<PsiProcessingError> errors)
       throws PsiProcessingException {
 
-    @Nullable SchemaTypeRef typeRef = psi.getTypeRef();
+    @Nullable EdlTypeRef typeRef = psi.getTypeRef();
 
     final List<GDataValue> items = new ArrayList<>();
 
-    for (SchemaDataValue value : psi.getDataValueList())
+    for (EdlDataValue value : psi.getDataValueList())
       try {
         items.add(parseValue(value, errors));
       } catch (PsiProcessingException e) {
@@ -135,14 +135,14 @@ public final class EdlGDataPsiParser {
     return new GListDatum(getTypeRef(typeRef, errors), items, EpigraphPsiUtil.getLocation(psi));
   }
 
-  public static @NotNull GDataEnum parseEnum(@NotNull SchemaEnumDatum psi) {
+  public static @NotNull GDataEnum parseEnum(@NotNull EdlEnumDatum psi) {
     return new GDataEnum(psi.getQid().getCanonicalName(), EpigraphPsiUtil.getLocation(psi));
   }
 
-  public static @NotNull GPrimitiveDatum parsePrimitive(@NotNull SchemaPrimitiveDatum psi, @NotNull List<PsiProcessingError> errors)
+  public static @NotNull GPrimitiveDatum parsePrimitive(@NotNull EdlPrimitiveDatum psi, @NotNull List<PsiProcessingError> errors)
       throws PsiProcessingException {
 
-    @Nullable SchemaTypeRef typeRef = psi.getTypeRef();
+    @Nullable EdlTypeRef typeRef = psi.getTypeRef();
 
     final Object value;
     if (psi.getString() != null) {
@@ -165,14 +165,14 @@ public final class EdlGDataPsiParser {
     return new GPrimitiveDatum(getTypeRef(typeRef, errors), value, EpigraphPsiUtil.getLocation(psi));
   }
 
-  public static @NotNull GNullDatum parseNull(@NotNull SchemaNullDatum psi, @NotNull List<PsiProcessingError> errors)
+  public static @NotNull GNullDatum parseNull(@NotNull EdlNullDatum psi, @NotNull List<PsiProcessingError> errors)
       throws PsiProcessingException {
-    @Nullable SchemaTypeRef typeRef = psi.getTypeRef();
+    @Nullable EdlTypeRef typeRef = psi.getTypeRef();
     return new GNullDatum(getTypeRef(typeRef, errors), EpigraphPsiUtil.getLocation(psi));
   }
 
   @Contract("null, _ -> null; !null, _ -> !null")
-  private static @Nullable TypeRef getTypeRef(SchemaTypeRef typeRef, @NotNull List<PsiProcessingError> errors)
+  private static @Nullable TypeRef getTypeRef(EdlTypeRef typeRef, @NotNull List<PsiProcessingError> errors)
       throws PsiProcessingException {
     return typeRef == null ? null : TypeRefs.fromPsi(typeRef, errors);
   }

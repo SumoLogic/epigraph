@@ -20,12 +20,12 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
-import ws.epigraph.ideaplugin.edl.index.SchemaIndexUtil;
+import ws.epigraph.ideaplugin.edl.index.EdlIndexUtil;
 import ws.epigraph.lang.Qn;
-import ws.epigraph.edl.parser.psi.SchemaFile;
-import ws.epigraph.edl.parser.psi.SchemaQn;
-import ws.epigraph.edl.parser.psi.SchemaImportStatement;
-import ws.epigraph.edl.parser.psi.SchemaNamespaceDecl;
+import ws.epigraph.edl.parser.psi.EdlFile;
+import ws.epigraph.edl.parser.psi.EdlQn;
+import ws.epigraph.edl.parser.psi.EdlImportStatement;
+import ws.epigraph.edl.parser.psi.EdlNamespaceDecl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -43,7 +43,7 @@ public class NamespaceManager {
 //  public static List<Qn> DEFAULT_NAMESPACES_LIST = Collections.unmodifiableList(Arrays.asList(DEFAULT_NAMESPACES));
 
   private final Project project;
-  private Collection<SchemaNamespaceDecl> allNamespaces;
+  private Collection<EdlNamespaceDecl> allNamespaces;
 
   public NamespaceManager(@NotNull Project project) {
     this.project = project;
@@ -55,8 +55,8 @@ public class NamespaceManager {
   }
 
   @NotNull
-  public Collection<SchemaNamespaceDecl> getAllNamespaces(@NotNull GlobalSearchScope searchScope) {
-    Collection<SchemaNamespaceDecl> res = allNamespaces;
+  public Collection<EdlNamespaceDecl> getAllNamespaces(@NotNull GlobalSearchScope searchScope) {
+    Collection<EdlNamespaceDecl> res = allNamespaces;
     if (res != null) return res;
 
     res = getNamespacesByPrefix(project, null, false, searchScope);
@@ -66,14 +66,14 @@ public class NamespaceManager {
 
   @Nullable
   public static Qn getNamespace(@NotNull PsiElement element) {
-    SchemaFile schemaFile = getSchemaFile(element);
+    EdlFile edlFile = getEdlFile(element);
 
-    if (schemaFile == null) return null;
+    if (edlFile == null) return null;
 
-    SchemaNamespaceDecl namespaceDecl = schemaFile.getNamespaceDecl();
+    EdlNamespaceDecl namespaceDecl = edlFile.getNamespaceDecl();
     if (namespaceDecl == null) return null;
 
-    SchemaQn namespaceDeclQn = namespaceDecl.getQn();
+    EdlQn namespaceDeclQn = namespaceDecl.getQn();
     if (namespaceDeclQn == null) return null;
 
     return namespaceDeclQn.getQn();
@@ -81,14 +81,14 @@ public class NamespaceManager {
 
   @NotNull
   public static List<Qn> getImportedNamespaces(@NotNull PsiElement element) {
-    SchemaFile schemaFile = getSchemaFile(element);
-    if (schemaFile == null) return Collections.emptyList();
+    EdlFile edlFile = getEdlFile(element);
+    if (edlFile == null) return Collections.emptyList();
 
     List<Qn> res = new ArrayList<>();
 
-    List<SchemaImportStatement> importStatements = schemaFile.getImportStatements();
-    for (SchemaImportStatement importStatement : importStatements) {
-      SchemaQn importQn = importStatement.getQn();
+    List<EdlImportStatement> importStatements = edlFile.getImportStatements();
+    for (EdlImportStatement importStatement : importStatements) {
+      EdlQn importQn = importStatement.getQn();
       if (importQn != null) res.add(importQn.getQn());
     }
     return res;
@@ -105,16 +105,16 @@ public class NamespaceManager {
    * @return collection of matching namespaces.
    */
   @NotNull
-  public static List<SchemaNamespaceDecl> getNamespacesByPrefix(@NotNull Project project,
+  public static List<EdlNamespaceDecl> getNamespacesByPrefix(@NotNull Project project,
                                                                 @Nullable Qn prefix,
                                                                 boolean returnSingleExactMatch,
                                                                 @NotNull GlobalSearchScope searchScope) {
     String prefixStr = prefix == null ? null : prefix.toString();
     if (returnSingleExactMatch && prefix != null) {
       assert prefixStr != null;
-      List<SchemaNamespaceDecl> namespaces = SchemaIndexUtil.findNamespaces(project, prefixStr, searchScope);
+      List<EdlNamespaceDecl> namespaces = EdlIndexUtil.findNamespaces(project, prefixStr, searchScope);
       // try to find a namespace which is exactly our prefix
-      for (SchemaNamespaceDecl namespace : namespaces) {
+      for (EdlNamespaceDecl namespace : namespaces) {
         //noinspection ConstantConditions
         if (prefix.equals(namespace.getFqn()))
           return Collections.singletonList(namespace);
@@ -127,14 +127,14 @@ public class NamespaceManager {
       return namespaces.stream().filter(ns -> ns.getFqn().startsWith(prefix)).collect(Collectors.toList());
     } else {
       String prefixWithDot = prefix == null ? null : prefix.isEmpty() ? prefix.toString() : prefix.toString() + '.';
-      return SchemaIndexUtil.findNamespaces(project, prefixWithDot, searchScope);
+      return EdlIndexUtil.findNamespaces(project, prefixWithDot, searchScope);
     }
   }
 
   @Nullable
-  private static SchemaFile getSchemaFile(@NotNull PsiElement element) {
-    return element instanceof SchemaFile ? (SchemaFile) element :
-        PsiTreeUtil.getParentOfType(element, SchemaFile.class);
+  private static EdlFile getEdlFile(@NotNull PsiElement element) {
+    return element instanceof EdlFile ? (EdlFile) element :
+        PsiTreeUtil.getParentOfType(element, EdlFile.class);
   }
 
   // --------------------------------
@@ -180,12 +180,12 @@ public class NamespaceManager {
       if (child instanceof PsiWhiteSpace) return;
 
       // namespace changed
-      if (PsiTreeUtil.getParentOfType(child, SchemaNamespaceDecl.class) != null) {
+      if (PsiTreeUtil.getParentOfType(child, EdlNamespaceDecl.class) != null) {
         invalidate = true;
       }
 
       // file added/removed
-      if (child instanceof SchemaFile) {
+      if (child instanceof EdlFile) {
         invalidate = true;
       }
 

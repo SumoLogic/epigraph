@@ -22,8 +22,8 @@ import ws.epigraph.edl.Edl;
 import ws.epigraph.edl.parser.EdlPsiParser;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.refs.TypesResolver;
-import ws.epigraph.edl.parser.SchemaParserDefinition;
-import ws.epigraph.edl.parser.psi.SchemaFile;
+import ws.epigraph.edl.parser.EdlParserDefinition;
+import ws.epigraph.edl.parser.psi.EdlFile;
 
 import java.util.Map;
 import java.util.TreeMap;
@@ -52,8 +52,8 @@ public final class RequestUrlPsiParserTestUtil {
   static @NotNull Edl parseIdl(@NotNull String text, @NotNull TypesResolver resolver) {
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
-    @NotNull SchemaFile psiFile =
-        (SchemaFile) EpigraphPsiUtil.parseFile("test.idl", text, SchemaParserDefinition.INSTANCE, errorsAccumulator);
+    @NotNull EdlFile psiFile =
+        (EdlFile) EpigraphPsiUtil.parseFile("test.idl", text, EdlParserDefinition.INSTANCE, errorsAccumulator);
 
     failIfHasErrors(psiFile, errorsAccumulator);
 

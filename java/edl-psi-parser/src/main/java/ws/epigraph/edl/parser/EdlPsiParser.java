@@ -46,14 +46,14 @@ public final class EdlPsiParser {
   private EdlPsiParser() {}
 
   public static @NotNull Edl parseEdl(
-      @NotNull SchemaFile psi,
+      @NotNull EdlFile psi,
       @NotNull TypesResolver basicResolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
-    @Nullable SchemaNamespaceDecl namespaceDeclPsi = PsiTreeUtil.getChildOfType(psi, SchemaNamespaceDecl.class);
+    @Nullable EdlNamespaceDecl namespaceDeclPsi = PsiTreeUtil.getChildOfType(psi, EdlNamespaceDecl.class);
     if (namespaceDeclPsi == null)
       throw new PsiProcessingException("namespace not specified", psi, errors);
-    @Nullable SchemaQn namespaceFqnPsi = namespaceDeclPsi.getQn();
+    @Nullable EdlQn namespaceFqnPsi = namespaceDeclPsi.getQn();
     if (namespaceFqnPsi == null)
       throw new PsiProcessingException("namespace not specified", psi, errors);
 
@@ -61,13 +61,13 @@ public final class EdlPsiParser {
 
     TypesResolver resolver = new ImportAwareTypesResolver(namespace, parseImports(psi), basicResolver);
 
-    final SchemaDefs defs = psi.getDefs();
+    final EdlDefs defs = psi.getDefs();
 
     final Map<String, ResourceDeclaration> resources;
     if (defs == null) resources = Collections.emptyMap();
     else {
       resources = new HashMap<>();
-      for (SchemaResourceDef resourceDefPsi : defs.getResourceDefList()) {
+      for (EdlResourceDef resourceDefPsi : defs.getResourceDefList()) {
         if (resourceDefPsi != null) {
           try {
             ResourceDeclaration resource = parseResource(resourceDefPsi, resolver, errors);
@@ -86,33 +86,33 @@ public final class EdlPsiParser {
     return new Edl(namespace, resources);
   }
 
-  private static @NotNull List<Qn> parseImports(@NotNull SchemaFile idlPsi) {
-    final @Nullable SchemaImports importsPsi = PsiTreeUtil.getChildOfType(idlPsi, SchemaImports.class);
+  private static @NotNull List<Qn> parseImports(@NotNull EdlFile idlPsi) {
+    final @Nullable EdlImports importsPsi = PsiTreeUtil.getChildOfType(idlPsi, EdlImports.class);
     if (importsPsi == null) return Collections.emptyList();
 
-    final @NotNull List<SchemaImportStatement> importStatementsPsi = importsPsi.getImportStatementList();
+    final @NotNull List<EdlImportStatement> importStatementsPsi = importsPsi.getImportStatementList();
 
     if (importStatementsPsi.isEmpty()) return Collections.emptyList();
 
     return importStatementsPsi
         .stream()
         .filter(Objects::nonNull)
-        .map(SchemaImportStatement::getQn)
+        .map(EdlImportStatement::getQn)
         .filter(Objects::nonNull)
-        .map(SchemaQn::getQn)
+        .map(EdlQn::getQn)
         .collect(Collectors.toList());
   }
 
   public static ResourceDeclaration parseResource(
-      @NotNull SchemaResourceDef psi,
+      @NotNull EdlResourceDef psi,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
     final String fieldName = psi.getResourceName().getQid().getCanonicalName();
 
-    @NotNull SchemaResourceType resourceTypePsi = psi.getResourceType();
+    @NotNull EdlResourceType resourceTypePsi = psi.getResourceType();
 
-    @NotNull SchemaValueTypeRef valueTypeRefPsi = resourceTypePsi.getValueTypeRef();
+    @NotNull EdlValueTypeRef valueTypeRefPsi = resourceTypePsi.getValueTypeRef();
     @NotNull ValueTypeRef valueTypeRef = TypeRefs.fromPsi(valueTypeRefPsi, errors);
     @Nullable DataType resourceType = resolver.resolve(valueTypeRef);
 
@@ -128,10 +128,10 @@ public final class EdlPsiParser {
       resourceType = new DataType(type, ((DatumType) type).self);
     }
 
-    @NotNull List<SchemaOperationDef> defsPsi = psi.getOperationDefList();
+    @NotNull List<EdlOperationDef> defsPsi = psi.getOperationDefList();
 
     final List<OperationDeclaration> operations = new ArrayList<>(defsPsi.size());
-    for (SchemaOperationDef defPsi : defsPsi)
+    for (EdlOperationDef defPsi : defsPsi)
       try {
         operations.add(OperationsPsiParser.parseOperation(resourceType, defPsi, resolver, errors));
       } catch (PsiProcessingException e) {

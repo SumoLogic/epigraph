@@ -46,16 +46,16 @@ import java.util.stream.Stream;
 public final class EdlProjectionPsiParserUtil {
   private EdlProjectionPsiParserUtil() {}
 //  @Nullable
-//  public static String getTagName(@Nullable SchemaTagName tagNamePsi) {
+//  public static String getTagName(@Nullable EdlTagName tagNamePsi) {
 //    if (tagNamePsi == null) return null;
-//    @Nullable SchemaQid qid = tagNamePsi.getQid();
+//    @Nullable EdlQid qid = tagNamePsi.getQid();
 //    if (qid == null) return null;
 //    return qid.getCanonicalName();
 //  }
 
   public static @NotNull Type.Tag getTag(
       @NotNull Type type,
-      @Nullable SchemaTagName tagName,
+      @Nullable EdlTagName tagName,
       @Nullable Type.Tag defaultTag,
       @NotNull PsiElement location,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
@@ -65,7 +65,7 @@ public final class EdlProjectionPsiParserUtil {
 
   public static @Nullable Type.Tag findTag(
       @NotNull Type type,
-      @Nullable SchemaTagName tagName,
+      @Nullable EdlTagName tagName,
       @Nullable Type.Tag defaultTag,
       @NotNull PsiElement location,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
@@ -73,11 +73,11 @@ public final class EdlProjectionPsiParserUtil {
     return ProjectionsParsingUtil.findTag(type, getTagNameString(tagName), defaultTag, location, errors);
   }
 
-  private static @Nullable String getTagNameString(final @Nullable SchemaTagName tagName) {
+  private static @Nullable String getTagNameString(final @Nullable EdlTagName tagName) {
     String tagNameStr = null;
 
     if (tagName != null) {
-      final @Nullable SchemaQid qid = tagName.getQid();
+      final @Nullable EdlQid qid = tagName.getQid();
       if (qid != null)
         tagNameStr = qid.getCanonicalName();
     }
@@ -86,12 +86,12 @@ public final class EdlProjectionPsiParserUtil {
 
   public static @Nullable Map<String, Annotation> parseAnnotation(
       @Nullable Map<String, Annotation> annotationsMap,
-      @Nullable SchemaAnnotation annotationPsi,
+      @Nullable EdlAnnotation annotationPsi,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
     if (annotationPsi != null) {
       if (annotationsMap == null) annotationsMap = new HashMap<>();
-      @Nullable SchemaDataValue annotationValuePsi = annotationPsi.getDataValue();
+      @Nullable EdlDataValue annotationValuePsi = annotationPsi.getDataValue();
       if (annotationValuePsi != null) {
         @NotNull String annotationName = annotationPsi.getQid().getCanonicalName();
         @NotNull GDataValue annotationValue = EdlGDataPsiParser.parseValue(annotationValuePsi, errors);
@@ -109,7 +109,7 @@ public final class EdlProjectionPsiParserUtil {
   }
 
   public static @NotNull OpParams parseParams(
-      @NotNull Stream<SchemaOpParam> paramsPsi,
+      @NotNull Stream<EdlOpParam> paramsPsi,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
@@ -117,13 +117,13 @@ public final class EdlProjectionPsiParserUtil {
   }
 
   public static @NotNull OpParams parseParams(
-      @NotNull Iterable<SchemaOpParam> paramsPsi,
+      @NotNull Iterable<EdlOpParam> paramsPsi,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
     Collection<OpParam> params = null;
 
-    for (final SchemaOpParam param : paramsPsi) {
+    for (final EdlOpParam param : paramsPsi) {
       if (param != null) {
         if (params == null ) params = new ArrayList<>();
 
@@ -135,14 +135,14 @@ public final class EdlProjectionPsiParserUtil {
   }
 
   public static @NotNull OpParam parseParameter(
-      @NotNull SchemaOpParam paramPsi,
+      @NotNull EdlOpParam paramPsi,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
-    @Nullable SchemaQid qid = paramPsi.getQid();
+    @Nullable EdlQid qid = paramPsi.getQid();
     if (qid == null) throw new PsiProcessingException("Parameter name not specified", paramPsi, errors);
     @NotNull String paramName = qid.getCanonicalName();
 
-    @Nullable SchemaTypeRef typeRef = paramPsi.getTypeRef();
+    @Nullable EdlTypeRef typeRef = paramPsi.getTypeRef();
     if (typeRef == null)
       throw new PsiProcessingException(String.format("Parameter '%s' type not specified", paramName), paramPsi, errors);
     @NotNull TypeRef paramTypeRef = TypeRefs.fromPsi(typeRef, errors);
@@ -153,12 +153,12 @@ public final class EdlProjectionPsiParserUtil {
           String.format("Can't resolve parameter '%s' data type '%s'", paramName, paramTypeRef), paramPsi, errors
       );
 
-    @Nullable SchemaOpInputModelProjection paramModelProjectionPsi = paramPsi.getOpInputModelProjection();
+    @Nullable EdlOpInputModelProjection paramModelProjectionPsi = paramPsi.getOpInputModelProjection();
 
     final @NotNull OpParams params = parseParams(paramPsi.getOpParamList(), resolver, errors);
     @NotNull Annotations annotations = parseAnnotations(paramPsi.getAnnotationList(), errors);
 
-    @Nullable SchemaDatum defaultValuePsi = paramPsi.getDatum();
+    @Nullable EdlDatum defaultValuePsi = paramPsi.getDatum();
     @Nullable GDatum defaultValue = defaultValuePsi == null
                                     ? null
                                     : EdlGDataPsiParser.parseDatum(defaultValuePsi, errors);
@@ -192,18 +192,18 @@ public final class EdlProjectionPsiParserUtil {
   }
 
   public static @NotNull Annotations parseAnnotations(
-      @NotNull Stream<SchemaAnnotation> annotationsPsi,
+      @NotNull Stream<EdlAnnotation> annotationsPsi,
       @NotNull List<PsiProcessingError> errors
   ) throws PsiProcessingException {
     return parseAnnotations(annotationsPsi.collect(Collectors.toList()), errors);
   }
 
   public static @NotNull Annotations parseAnnotations(
-      @NotNull Iterable<SchemaAnnotation> annotationsPsi,
+      @NotNull Iterable<EdlAnnotation> annotationsPsi,
       @NotNull List<PsiProcessingError> errors
   ) throws PsiProcessingException {
     @Nullable Map<String, Annotation> annotationMap = null;
-    for (final SchemaAnnotation annotationPsi : annotationsPsi) {
+    for (final EdlAnnotation annotationPsi : annotationsPsi) {
       annotationMap = parseAnnotation(annotationMap, annotationPsi, errors);
     }
 

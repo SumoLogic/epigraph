@@ -22,7 +22,7 @@ import com.intellij.psi.*;
 import com.intellij.psi.util.*;
 import ws.epigraph.ideaplugin.edl.brains.ModificationTrackerImpl;
 import ws.epigraph.edl.parser.psi.*;
-import ws.epigraph.ideaplugin.edl.index.SchemaIndexUtil;
+import ws.epigraph.ideaplugin.edl.index.EdlIndexUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,11 +34,11 @@ import java.util.List;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class HierarchyCache {
-  private final Key<ParameterizedCachedValue<List<SchemaTypeDef>, SchemaTypeDef>> TYPE_PARENTS_KEY = Key.create("TYPE_PARENTS");
-  private final Key<ParameterizedCachedValue<List<SchemaTypeDef>, SchemaTypeDef>> DIRECT_TYPE_PARENTS_KEY = Key.create("DIRECT_TYPE_PARENTS");
-  private final Key<ParameterizedCachedValue<List<SchemaTypeDef>, SchemaTypeDef>> TYPE_INHERITORS_KEY = Key.create("TYPE_INHERITORS");
-  private final Key<ParameterizedCachedValue<List<SchemaTypeDef>, SchemaTypeDef>> DIRECT_TYPE_INHERITORS_KEY = Key.create("DIRECT_TYPE_INHERITORS");
-  private final Key<ParameterizedCachedValue<List<SchemaSupplementDef>, SchemaTypeDef>> SUPPLEMENTS_BY_SUPPLEMENTED_KEY = Key.create("SUPPLEMENTS_BY_SUPPLEMENTED");
+  private final Key<ParameterizedCachedValue<List<EdlTypeDef>, EdlTypeDef>> TYPE_PARENTS_KEY = Key.create("TYPE_PARENTS");
+  private final Key<ParameterizedCachedValue<List<EdlTypeDef>, EdlTypeDef>> DIRECT_TYPE_PARENTS_KEY = Key.create("DIRECT_TYPE_PARENTS");
+  private final Key<ParameterizedCachedValue<List<EdlTypeDef>, EdlTypeDef>> TYPE_INHERITORS_KEY = Key.create("TYPE_INHERITORS");
+  private final Key<ParameterizedCachedValue<List<EdlTypeDef>, EdlTypeDef>> DIRECT_TYPE_INHERITORS_KEY = Key.create("DIRECT_TYPE_INHERITORS");
+  private final Key<ParameterizedCachedValue<List<EdlSupplementDef>, EdlTypeDef>> SUPPLEMENTS_BY_SUPPLEMENTED_KEY = Key.create("SUPPLEMENTS_BY_SUPPLEMENTED");
 
   private final Project project;
   private final ModificationTrackerImpl hierarchyModificationTracker = new ModificationTrackerImpl();
@@ -57,7 +57,7 @@ public class HierarchyCache {
    * Builds transitive type parents, ordered by distance (closest first)
    */
   @NotNull
-  public List<SchemaTypeDef> getTypeParents(@NotNull SchemaTypeDef typeDef) {
+  public List<EdlTypeDef> getTypeParents(@NotNull EdlTypeDef typeDef) {
     CachedValuesManager cachedValuesManager = CachedValuesManager.getManager(project);
     return cachedValuesManager.getParameterizedCachedValue(
         typeDef,
@@ -69,7 +69,7 @@ public class HierarchyCache {
   }
 
   @NotNull
-  public List<SchemaTypeDef> getDirectTypeParents(@NotNull SchemaTypeDef typeDef) {
+  public List<EdlTypeDef> getDirectTypeParents(@NotNull EdlTypeDef typeDef) {
     CachedValuesManager cachedValuesManager = CachedValuesManager.getManager(project);
     return cachedValuesManager.getParameterizedCachedValue(
         typeDef,
@@ -81,7 +81,7 @@ public class HierarchyCache {
   }
 
   @NotNull
-  public List<SchemaTypeDef> getTypeInheritors(@NotNull SchemaTypeDef typeDef) {
+  public List<EdlTypeDef> getTypeInheritors(@NotNull EdlTypeDef typeDef) {
     CachedValuesManager cachedValuesManager = CachedValuesManager.getManager(project);
     return cachedValuesManager.getParameterizedCachedValue(
         typeDef,
@@ -93,7 +93,7 @@ public class HierarchyCache {
   }
 
   @NotNull
-  public List<SchemaSupplementDef> getSupplementsBySupplemented(@NotNull SchemaTypeDef typeDef) {
+  public List<EdlSupplementDef> getSupplementsBySupplemented(@NotNull EdlTypeDef typeDef) {
     CachedValuesManager cachedValuesManager = CachedValuesManager.getManager(project);
     return cachedValuesManager.getParameterizedCachedValue(
         typeDef,
@@ -105,7 +105,7 @@ public class HierarchyCache {
   }
 
   @NotNull
-  public List<SchemaTypeDef> getDirectTypeInheritors(@NotNull SchemaTypeDef typeDef) {
+  public List<EdlTypeDef> getDirectTypeInheritors(@NotNull EdlTypeDef typeDef) {
     CachedValuesManager cachedValuesManager = CachedValuesManager.getManager(project);
     return cachedValuesManager.getParameterizedCachedValue(
         typeDef,
@@ -116,11 +116,11 @@ public class HierarchyCache {
     );
   }
 
-  private class TypeParentsProvider implements ParameterizedCachedValueProvider<List<SchemaTypeDef>, SchemaTypeDef> {
+  private class TypeParentsProvider implements ParameterizedCachedValueProvider<List<EdlTypeDef>, EdlTypeDef> {
     @Nullable
     @Override
-    public CachedValueProvider.Result<List<SchemaTypeDef>> compute(SchemaTypeDef typeDef) {
-      Collection<SchemaTypeDef> parents = SchemaTypeParentsSearch.search(typeDef).findAll();
+    public CachedValueProvider.Result<List<EdlTypeDef>> compute(EdlTypeDef typeDef) {
+      Collection<EdlTypeDef> parents = EdlTypeParentsSearch.search(typeDef).findAll();
       return new CachedValueProvider.Result<>(
           new ArrayList<>(parents),
           hierarchyModificationTracker
@@ -128,11 +128,11 @@ public class HierarchyCache {
     }
   }
 
-  private class DirectTypeParentsProvider implements ParameterizedCachedValueProvider<List<SchemaTypeDef>, SchemaTypeDef> {
+  private class DirectTypeParentsProvider implements ParameterizedCachedValueProvider<List<EdlTypeDef>, EdlTypeDef> {
     @Nullable
     @Override
-    public CachedValueProvider.Result<List<SchemaTypeDef>> compute(SchemaTypeDef typeDef) {
-      Collection<SchemaTypeDef> parents = SchemaDirectTypeParentsSearch.search(typeDef).findAll();
+    public CachedValueProvider.Result<List<EdlTypeDef>> compute(EdlTypeDef typeDef) {
+      Collection<EdlTypeDef> parents = EdlDirectTypeParentsSearch.search(typeDef).findAll();
       return new CachedValueProvider.Result<>(
           new ArrayList<>(parents),
           hierarchyModificationTracker
@@ -140,11 +140,11 @@ public class HierarchyCache {
     }
   }
 
-  private class TypeInheritorsProvider implements ParameterizedCachedValueProvider<List<SchemaTypeDef>, SchemaTypeDef> {
+  private class TypeInheritorsProvider implements ParameterizedCachedValueProvider<List<EdlTypeDef>, EdlTypeDef> {
     @Nullable
     @Override
-    public CachedValueProvider.Result<List<SchemaTypeDef>> compute(SchemaTypeDef typeDef) {
-      Collection<SchemaTypeDef> inheritors = SchemaTypeInheritorsSearch.search(typeDef).findAll();
+    public CachedValueProvider.Result<List<EdlTypeDef>> compute(EdlTypeDef typeDef) {
+      Collection<EdlTypeDef> inheritors = EdlTypeInheritorsSearch.search(typeDef).findAll();
       return new CachedValueProvider.Result<>(
           new ArrayList<>(inheritors),
           hierarchyModificationTracker
@@ -152,11 +152,11 @@ public class HierarchyCache {
     }
   }
 
-  private class DirectTypeInheritorsProvider implements ParameterizedCachedValueProvider<List<SchemaTypeDef>, SchemaTypeDef> {
+  private class DirectTypeInheritorsProvider implements ParameterizedCachedValueProvider<List<EdlTypeDef>, EdlTypeDef> {
     @Nullable
     @Override
-    public CachedValueProvider.Result<List<SchemaTypeDef>> compute(SchemaTypeDef typeDef) {
-      Collection<SchemaTypeDef> inheritors = SchemaDirectTypeInheritorsSearch.search(typeDef).findAll();
+    public CachedValueProvider.Result<List<EdlTypeDef>> compute(EdlTypeDef typeDef) {
+      Collection<EdlTypeDef> inheritors = EdlDirectTypeInheritorsSearch.search(typeDef).findAll();
       return new CachedValueProvider.Result<>(
           new ArrayList<>(inheritors),
           hierarchyModificationTracker
@@ -164,11 +164,11 @@ public class HierarchyCache {
     }
   }
 
-  private class SupplementsBySupplementedProvider implements ParameterizedCachedValueProvider<List<SchemaSupplementDef>, SchemaTypeDef> {
+  private class SupplementsBySupplementedProvider implements ParameterizedCachedValueProvider<List<EdlSupplementDef>, EdlTypeDef> {
     @Nullable
     @Override
-    public CachedValueProvider.Result<List<SchemaSupplementDef>> compute(SchemaTypeDef typeDef) {
-      List<SchemaSupplementDef> supplements = SchemaIndexUtil.findSupplementsBySupplemented(project, typeDef);
+    public CachedValueProvider.Result<List<EdlSupplementDef>> compute(EdlTypeDef typeDef) {
+      List<EdlSupplementDef> supplements = EdlIndexUtil.findSupplementsBySupplemented(project, typeDef);
       return new CachedValueProvider.Result<>(
           supplements,
           hierarchyModificationTracker
@@ -217,32 +217,32 @@ public class HierarchyCache {
       if (child instanceof PsiWhiteSpace) return;
 
       // imports changed
-      if (PsiTreeUtil.getParentOfType(child, SchemaImports.class) != null) {
+      if (PsiTreeUtil.getParentOfType(child, EdlImports.class) != null) {
         invalidate = true;
       }
 
       // types added/removed/replaced
-      if (child instanceof SchemaTypeDefWrapper || parent instanceof SchemaDefs) {
+      if (child instanceof EdlTypeDefWrapper || parent instanceof EdlDefs) {
         invalidate = true;
       }
 
       // supplements added/removed/replaced
-      if (child instanceof SchemaSupplementDef || parent instanceof SchemaDefs) {
+      if (child instanceof EdlSupplementDef || parent instanceof EdlDefs) {
         invalidate = true;
       }
 
       // "extends" clause changed
-      if ((element instanceof SchemaExtendsDecl) || PsiTreeUtil.getParentOfType(child, SchemaExtendsDecl.class) != null) {
+      if ((element instanceof EdlExtendsDecl) || PsiTreeUtil.getParentOfType(child, EdlExtendsDecl.class) != null) {
         invalidate = true;
       }
 
       // "supplements" clause changed
-      if ((element instanceof SchemaSupplementDef) || PsiTreeUtil.getParentOfType(child, SchemaSupplementDef.class) != null) {
+      if ((element instanceof EdlSupplementDef) || PsiTreeUtil.getParentOfType(child, EdlSupplementDef.class) != null) {
         invalidate = true;
       }
 
       // file added/removed
-      if (child instanceof SchemaFile) {
+      if (child instanceof EdlFile) {
         invalidate = true;
       }
 

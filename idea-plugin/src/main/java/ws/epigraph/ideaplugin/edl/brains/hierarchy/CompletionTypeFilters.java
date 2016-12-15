@@ -18,7 +18,7 @@ package ws.epigraph.ideaplugin.edl.brains.hierarchy;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
-import ws.epigraph.ideaplugin.edl.psi.SchemaPsiUtil;
+import ws.epigraph.ideaplugin.edl.psi.EdlPsiUtil;
 import ws.epigraph.edl.parser.psi.*;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,7 +26,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
 
-import static ws.epigraph.edl.lexer.SchemaElementTypes.S_WITH;
+import static ws.epigraph.edl.lexer.EdlElementTypes.S_WITH;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -57,7 +57,7 @@ public abstract class CompletionTypeFilters {
   );
 
   @NotNull
-  public static Predicate<SchemaTypeDef> combined(@NotNull PsiElement element) {
+  public static Predicate<EdlTypeDef> combined(@NotNull PsiElement element) {
     return typeDef -> {
       for (CompletionTypeFilter filter : FILTERS) if (!filter.include(typeDef, element)) return false;
       return true;
@@ -72,170 +72,170 @@ public abstract class CompletionTypeFilters {
      * @param element element completion was invoked on
      * @return {@code true} iff {@code typeDef} should stay included
      */
-    boolean include(@NotNull SchemaTypeDef typeDef, @NotNull PsiElement element);
+    boolean include(@NotNull EdlTypeDef typeDef, @NotNull PsiElement element);
   }
 
   interface ExtendsCompletionFilter extends CompletionTypeFilter {
     @Override
-    default boolean include(@NotNull SchemaTypeDef typeDef, @NotNull PsiElement element) {
-      SchemaTypeDef host = PsiTreeUtil.getParentOfType(element, SchemaTypeDef.class);
+    default boolean include(@NotNull EdlTypeDef typeDef, @NotNull PsiElement element) {
+      EdlTypeDef host = PsiTreeUtil.getParentOfType(element, EdlTypeDef.class);
       if (host == null) return true;
 
-      SchemaExtendsDecl extendsDecl = PsiTreeUtil.getParentOfType(element, SchemaExtendsDecl.class);
+      EdlExtendsDecl extendsDecl = PsiTreeUtil.getParentOfType(element, EdlExtendsDecl.class);
       if (extendsDecl == null) return true;
 
       return include(typeDef, host, extendsDecl);
     }
 
-    boolean include(@NotNull SchemaTypeDef typeDef, @NotNull SchemaTypeDef host, @NotNull SchemaExtendsDecl extendsDecl);
+    boolean include(@NotNull EdlTypeDef typeDef, @NotNull EdlTypeDef host, @NotNull EdlExtendsDecl extendsDecl);
   }
 
   interface SupplementsCompletionFilter extends CompletionTypeFilter {
     @Override
-    default boolean include(@NotNull SchemaTypeDef typeDef, @NotNull PsiElement element) {
-      SchemaTypeDef host = PsiTreeUtil.getParentOfType(element, SchemaTypeDef.class);
+    default boolean include(@NotNull EdlTypeDef typeDef, @NotNull PsiElement element) {
+      EdlTypeDef host = PsiTreeUtil.getParentOfType(element, EdlTypeDef.class);
       if (host == null) return true;
 
-      SchemaSupplementsDecl supplementsDecl = PsiTreeUtil.getParentOfType(element, SchemaSupplementsDecl.class);
+      EdlSupplementsDecl supplementsDecl = PsiTreeUtil.getParentOfType(element, EdlSupplementsDecl.class);
       if (supplementsDecl == null) return true;
 
       return include(typeDef, host, supplementsDecl);
     }
 
-    boolean include(@NotNull SchemaTypeDef typeDef, @NotNull SchemaTypeDef host, @NotNull SchemaSupplementsDecl supplementsDecl);
+    boolean include(@NotNull EdlTypeDef typeDef, @NotNull EdlTypeDef host, @NotNull EdlSupplementsDecl supplementsDecl);
   }
 
   interface SupplementTargetCompletionFilter extends CompletionTypeFilter {
     @Override
-    default boolean include(@NotNull SchemaTypeDef typeDef, @NotNull PsiElement element) {
-      SchemaSupplementDef host = PsiTreeUtil.getParentOfType(element, SchemaSupplementDef.class);
+    default boolean include(@NotNull EdlTypeDef typeDef, @NotNull PsiElement element) {
+      EdlSupplementDef host = PsiTreeUtil.getParentOfType(element, EdlSupplementDef.class);
       if (host == null) return true;
-      if (SchemaPsiUtil.hasPrevSibling(element.getParent().getParent(), S_WITH)) return true; // we're completing source
+      if (EdlPsiUtil.hasPrevSibling(element.getParent().getParent(), S_WITH)) return true; // we're completing source
 
       return includeInTarget(typeDef, host);
     }
 
-    boolean includeInTarget(@NotNull SchemaTypeDef typeDef, @NotNull SchemaSupplementDef host);
+    boolean includeInTarget(@NotNull EdlTypeDef typeDef, @NotNull EdlSupplementDef host);
   }
 
   interface SupplementSourceCompletionFilter extends CompletionTypeFilter {
     @Override
-    default boolean include(@NotNull SchemaTypeDef typeDef, @NotNull PsiElement element) {
-      SchemaSupplementDef host = PsiTreeUtil.getParentOfType(element, SchemaSupplementDef.class);
+    default boolean include(@NotNull EdlTypeDef typeDef, @NotNull PsiElement element) {
+      EdlSupplementDef host = PsiTreeUtil.getParentOfType(element, EdlSupplementDef.class);
       if (host == null) return true;
-      if (!SchemaPsiUtil.hasPrevSibling(element.getParent().getParent(), S_WITH))
+      if (!EdlPsiUtil.hasPrevSibling(element.getParent().getParent(), S_WITH))
         return true; // we're completing target
 
       return includeInSource(typeDef, host);
     }
 
-    boolean includeInSource(@NotNull SchemaTypeDef typeDef, @NotNull SchemaSupplementDef host);
+    boolean includeInSource(@NotNull EdlTypeDef typeDef, @NotNull EdlSupplementDef host);
   }
 
   // ---------------------- common
 
   private static abstract class SameTypeFilterBase {
-    private boolean notSameType(@NotNull SchemaTypeDef typeDef, @NotNull SchemaTypeDef host) {
+    private boolean notSameType(@NotNull EdlTypeDef typeDef, @NotNull EdlTypeDef host) {
       return !host.equals(typeDef);
     }
 
-    public boolean include(@NotNull SchemaTypeDef typeDef, @NotNull SchemaTypeDef host, @NotNull SchemaExtendsDecl extendsDecl) {
+    public boolean include(@NotNull EdlTypeDef typeDef, @NotNull EdlTypeDef host, @NotNull EdlExtendsDecl extendsDecl) {
       return notSameType(typeDef, host);
     }
 
-    public boolean include(@NotNull SchemaTypeDef typeDef, @NotNull SchemaTypeDef host, @NotNull SchemaSupplementsDecl supplementsDecl) {
+    public boolean include(@NotNull EdlTypeDef typeDef, @NotNull EdlTypeDef host, @NotNull EdlSupplementsDecl supplementsDecl) {
       return notSameType(typeDef, host);
     }
 
-    private boolean includeInSupplement(@NotNull SchemaTypeDef typeDef, @NotNull SchemaSupplementDef host, boolean checkSource) {
+    private boolean includeInSupplement(@NotNull EdlTypeDef typeDef, @NotNull EdlSupplementDef host, boolean checkSource) {
       if (checkSource && typeDef.equals(host.source())) return false;
 
-      for (SchemaQnTypeRef targetRef : host.supplementedRefs()) {
-        SchemaTypeDef target = targetRef.resolve();
+      for (EdlQnTypeRef targetRef : host.supplementedRefs()) {
+        EdlTypeDef target = targetRef.resolve();
         if (target != null && typeDef.equals(target)) return false;
       }
 
       return true;
     }
 
-    public boolean includeInTarget(@NotNull SchemaTypeDef typeDef, @NotNull SchemaSupplementDef host) {
+    public boolean includeInTarget(@NotNull EdlTypeDef typeDef, @NotNull EdlSupplementDef host) {
       return includeInSupplement(typeDef, host, true);
     }
 
-    public boolean includeInSource(@NotNull SchemaTypeDef typeDef, @NotNull SchemaSupplementDef host) {
+    public boolean includeInSource(@NotNull EdlTypeDef typeDef, @NotNull EdlSupplementDef host) {
       return includeInSupplement(typeDef, host, false);
     }
   }
 
   private static abstract class SameKindFilterBase {
-    public boolean include(@NotNull SchemaTypeDef typeDef, @NotNull SchemaTypeDef host, @NotNull SchemaExtendsDecl extendsDecl) {
+    public boolean include(@NotNull EdlTypeDef typeDef, @NotNull EdlTypeDef host, @NotNull EdlExtendsDecl extendsDecl) {
       return isSameKind(typeDef, host);
     }
 
-    public boolean include(@NotNull SchemaTypeDef typeDef, @NotNull SchemaTypeDef host, @NotNull SchemaSupplementsDecl supplementsDecl) {
+    public boolean include(@NotNull EdlTypeDef typeDef, @NotNull EdlTypeDef host, @NotNull EdlSupplementsDecl supplementsDecl) {
       return isSameKind(typeDef, host);
     }
 
-    private boolean isSameKind(@NotNull SchemaTypeDef typeDef, @NotNull SchemaTypeDef host) {
+    private boolean isSameKind(@NotNull EdlTypeDef typeDef, @NotNull EdlTypeDef host) {
       return typeDef.getKind() == host.getKind();
     }
 
-    private boolean includeInSupplement(@NotNull SchemaTypeDef typeDef, @NotNull SchemaSupplementDef host, boolean checkSource) {
+    private boolean includeInSupplement(@NotNull EdlTypeDef typeDef, @NotNull EdlSupplementDef host, boolean checkSource) {
       if (checkSource) {
-        SchemaTypeDef source = host.source();
+        EdlTypeDef source = host.source();
         if (source != null && typeDef.getKind() != source.getKind()) return false;
       }
 
-      for (SchemaQnTypeRef targetRef : host.supplementedRefs()) {
-        SchemaTypeDef target = targetRef.resolve();
+      for (EdlQnTypeRef targetRef : host.supplementedRefs()) {
+        EdlTypeDef target = targetRef.resolve();
         if (target != null && typeDef.getKind() != target.getKind()) return false;
       }
 
       return true;
     }
 
-    public boolean includeInTarget(@NotNull SchemaTypeDef typeDef, @NotNull SchemaSupplementDef host) {
+    public boolean includeInTarget(@NotNull EdlTypeDef typeDef, @NotNull EdlSupplementDef host) {
       return includeInSupplement(typeDef, host, true);
     }
 
-    public boolean includeInSource(@NotNull SchemaTypeDef typeDef, @NotNull SchemaSupplementDef host) {
+    public boolean includeInSource(@NotNull EdlTypeDef typeDef, @NotNull EdlSupplementDef host) {
       return includeInSupplement(typeDef, host, false);
     }
   }
 
   private abstract static class WrongPrimitiveKindFilterBase {
-    public boolean include(@NotNull SchemaTypeDef typeDef, @NotNull SchemaTypeDef host, @NotNull SchemaExtendsDecl extendsDecl) {
+    public boolean include(@NotNull EdlTypeDef typeDef, @NotNull EdlTypeDef host, @NotNull EdlExtendsDecl extendsDecl) {
       return isSamePrimitiveKind(typeDef, host);
     }
 
-    public boolean include(@NotNull SchemaTypeDef typeDef, @NotNull SchemaTypeDef host, @NotNull SchemaSupplementsDecl supplementsDecl) {
+    public boolean include(@NotNull EdlTypeDef typeDef, @NotNull EdlTypeDef host, @NotNull EdlSupplementsDecl supplementsDecl) {
       return isSamePrimitiveKind(typeDef, host);
     }
 
-    private boolean isSamePrimitiveKind(@NotNull SchemaTypeDef typeDef, @NotNull SchemaTypeDef host) {
+    private boolean isSamePrimitiveKind(@NotNull EdlTypeDef typeDef, @NotNull EdlTypeDef host) {
       if (host.getKind() != TypeKind.PRIMITIVE) return true;
       if (typeDef.getKind() != TypeKind.PRIMITIVE) return false;
 
-      return ((SchemaPrimitiveTypeDef) host).getPrimitiveTypeKind() ==
-          ((SchemaPrimitiveTypeDef) typeDef).getPrimitiveTypeKind();
+      return ((EdlPrimitiveTypeDef) host).getPrimitiveTypeKind() ==
+          ((EdlPrimitiveTypeDef) typeDef).getPrimitiveTypeKind();
     }
 
-    private boolean includeInSupplement(@NotNull SchemaTypeDef typeDef, @NotNull SchemaSupplementDef host, boolean checkSource) {
+    private boolean includeInSupplement(@NotNull EdlTypeDef typeDef, @NotNull EdlSupplementDef host, boolean checkSource) {
       if (typeDef.getKind() != TypeKind.PRIMITIVE) return true;
-      PrimitiveTypeKind primitiveTypeKind = ((SchemaPrimitiveTypeDef) typeDef).getPrimitiveTypeKind();
+      PrimitiveTypeKind primitiveTypeKind = ((EdlPrimitiveTypeDef) typeDef).getPrimitiveTypeKind();
 
       if (checkSource) {
-        SchemaTypeDef source = host.source();
+        EdlTypeDef source = host.source();
         if (source != null) {
           if (source.getKind() != TypeKind.PRIMITIVE) return false;
-          if (((SchemaPrimitiveTypeDef) source).getPrimitiveTypeKind() != primitiveTypeKind) return false;
+          if (((EdlPrimitiveTypeDef) source).getPrimitiveTypeKind() != primitiveTypeKind) return false;
         }
       }
 
-      for (SchemaQnTypeRef targetRef : host.supplementedRefs()) {
-        SchemaTypeDef target = targetRef.resolve();
-        if (target instanceof SchemaPrimitiveTypeDef) {
-          SchemaPrimitiveTypeDef primitiveTarget = (SchemaPrimitiveTypeDef) target;
+      for (EdlQnTypeRef targetRef : host.supplementedRefs()) {
+        EdlTypeDef target = targetRef.resolve();
+        if (target instanceof EdlPrimitiveTypeDef) {
+          EdlPrimitiveTypeDef primitiveTarget = (EdlPrimitiveTypeDef) target;
           if (primitiveTarget.getPrimitiveTypeKind() != primitiveTypeKind) return false;
         }
       }
@@ -243,11 +243,11 @@ public abstract class CompletionTypeFilters {
       return true;
     }
 
-    public boolean includeInTarget(@NotNull SchemaTypeDef typeDef, @NotNull SchemaSupplementDef host) {
+    public boolean includeInTarget(@NotNull EdlTypeDef typeDef, @NotNull EdlSupplementDef host) {
       return includeInSupplement(typeDef, host, true);
     }
 
-    public boolean includeInSource(@NotNull SchemaTypeDef typeDef, @NotNull SchemaSupplementDef host) {
+    public boolean includeInSource(@NotNull EdlTypeDef typeDef, @NotNull EdlSupplementDef host) {
       return includeInSupplement(typeDef, host, false);
     }
   }
@@ -262,11 +262,11 @@ public abstract class CompletionTypeFilters {
 
   private static class TypeAlreadyExtendedFilter implements ExtendsCompletionFilter {
     @Override
-    public boolean include(@NotNull SchemaTypeDef typeDef, @NotNull SchemaTypeDef host, @NotNull SchemaExtendsDecl extendsDecl) {
+    public boolean include(@NotNull EdlTypeDef typeDef, @NotNull EdlTypeDef host, @NotNull EdlExtendsDecl extendsDecl) {
       HierarchyCache hierarchyCache = HierarchyCache.getHierarchyCache(host.getProject());
 
-      for (SchemaQnTypeRef qnTypeRef : extendsDecl.getQnTypeRefList()) {
-        SchemaTypeDef parent = qnTypeRef.resolve();
+      for (EdlQnTypeRef qnTypeRef : extendsDecl.getQnTypeRefList()) {
+        EdlTypeDef parent = qnTypeRef.resolve();
         if (parent != null) {
           if (parent.equals(typeDef) || hierarchyCache.getTypeParents(parent).contains(typeDef)) return false;
         }
@@ -286,15 +286,15 @@ public abstract class CompletionTypeFilters {
 
   private static class TypeAlreadySupplementedFilter implements SupplementsCompletionFilter {
     @Override
-    public boolean include(@NotNull SchemaTypeDef typeDef, @NotNull SchemaTypeDef host, @NotNull SchemaSupplementsDecl supplementsDecl) {
-      List<SchemaQnTypeRef> supplementsList = supplementsDecl.getQnTypeRefList();
+    public boolean include(@NotNull EdlTypeDef typeDef, @NotNull EdlTypeDef host, @NotNull EdlSupplementsDecl supplementsDecl) {
+      List<EdlQnTypeRef> supplementsList = supplementsDecl.getQnTypeRefList();
       if (supplementsList.isEmpty()) return true;
 
       HierarchyCache hierarchyCache = HierarchyCache.getHierarchyCache(host.getProject());
-      List<SchemaTypeDef> typeParents = hierarchyCache.getTypeParents(typeDef);
+      List<EdlTypeDef> typeParents = hierarchyCache.getTypeParents(typeDef);
 
-      for (SchemaQnTypeRef qnTypeRef : supplementsList) {
-        SchemaTypeDef child = qnTypeRef.resolve();
+      for (EdlQnTypeRef qnTypeRef : supplementsList) {
+        EdlTypeDef child = qnTypeRef.resolve();
         if (child != null && child.equals(typeDef) || typeParents.contains(child)) return false;
       }
 
@@ -312,20 +312,20 @@ public abstract class CompletionTypeFilters {
 
   private static class TypeAlreadySupplementedTargetFilter implements SupplementTargetCompletionFilter {
     @Override
-    public boolean includeInTarget(@NotNull SchemaTypeDef typeDef, @NotNull SchemaSupplementDef host) {
+    public boolean includeInTarget(@NotNull EdlTypeDef typeDef, @NotNull EdlSupplementDef host) {
       HierarchyCache hierarchyCache = HierarchyCache.getHierarchyCache(host.getProject());
 
-      SchemaTypeDef source = host.source();
+      EdlTypeDef source = host.source();
       // if candidate is a parent of source then we have a circular inheritance
       if (source != null && hierarchyCache.getTypeParents(source).contains(typeDef)) return false;
 
-      List<SchemaTypeDef> typeParents = hierarchyCache.getTypeParents(typeDef);
+      List<EdlTypeDef> typeParents = hierarchyCache.getTypeParents(typeDef);
 
       // if candidate is a child if source then it's a useless supplement
       if (source != null && typeParents.contains(source)) return false;
 
-      for (SchemaQnTypeRef supplementedTypeRef : host.supplementedRefs()) {
-        SchemaTypeDef supplemented = supplementedTypeRef.resolve();
+      for (EdlQnTypeRef supplementedTypeRef : host.supplementedRefs()) {
+        EdlTypeDef supplemented = supplementedTypeRef.resolve();
         if (supplemented != null && supplemented.equals(typeDef) || typeParents.contains(supplemented)) return false;
       }
 
@@ -343,15 +343,15 @@ public abstract class CompletionTypeFilters {
 
   private static class TypeAlreadySupplementedSourceFilter implements SupplementSourceCompletionFilter {
     @Override
-    public boolean includeInSource(@NotNull SchemaTypeDef typeDef, @NotNull SchemaSupplementDef host) {
-      List<SchemaTypeDef> supplementedList = host.supplemented();
+    public boolean includeInSource(@NotNull EdlTypeDef typeDef, @NotNull EdlSupplementDef host) {
+      List<EdlTypeDef> supplementedList = host.supplemented();
       if (supplementedList.isEmpty()) return true;
 
       HierarchyCache hierarchyCache = HierarchyCache.getHierarchyCache(host.getProject());
-      List<SchemaTypeDef> typeParents = hierarchyCache.getTypeParents(typeDef);
+      List<EdlTypeDef> typeParents = hierarchyCache.getTypeParents(typeDef);
 
       boolean allTargetsExtendSource = true;
-      for (SchemaTypeDef supplemented : supplementedList) {
+      for (EdlTypeDef supplemented : supplementedList) {
         if (supplemented != null) {
           if (supplemented.equals(typeDef)) return false; // don't supplement self
           if (typeParents.contains(supplemented)) return false; // circular inheritance

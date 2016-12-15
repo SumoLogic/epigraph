@@ -21,5 +21,5 @@ package ws.epigraph.edl.parser;
  */
 public class Common {
   public static final String FILE_EXTENSION = "esc";
-  public static final String DESCRIPTION = "Epigraph Schema";
+  public static final String DESCRIPTION = "Epigraph Edl";
 }

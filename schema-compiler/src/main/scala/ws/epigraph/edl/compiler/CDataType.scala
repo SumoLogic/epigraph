@@ -18,19 +18,19 @@
 
 package ws.epigraph.edl.compiler
 
-import ws.epigraph.edl.parser.psi.{SchemaDefaultOverride, SchemaValueTypeRef}
+import ws.epigraph.edl.parser.psi.{EdlDefaultOverride, EdlValueTypeRef}
 import org.jetbrains.annotations.Nullable
 
 /**
  * Container (field value, list element, or map value) data type.
  */
 final class CDataType( // TODO split into CVarDataType and CDatumDataType?
-    val csf: CSchemaFile,
+    val csf: CEdlFile,
     val typeRef: CTypeRef,
     private val defaultTagNameDecl: Option[String]
 )(implicit val ctx: CContext) {
 
-  def this(csf: CSchemaFile, psi: SchemaValueTypeRef)(implicit ctx: CContext) = this(
+  def this(csf: CEdlFile, psi: EdlValueTypeRef)(implicit ctx: CContext) = this(
     csf, CTypeRef(csf, psi.getTypeRef), CDataType.defaultTagName(psi.getDefaultOverride)
   )
 
@@ -89,7 +89,7 @@ final class CDataType( // TODO split into CVarDataType and CDatumDataType?
 
 object CDataType {
 
-  def defaultTagName(@Nullable psi: SchemaDefaultOverride): Option[String] =
+  def defaultTagName(@Nullable psi: EdlDefaultOverride): Option[String] =
     if (psi == null) None else Option(psi.getVarTagRef).map(_.getQid.getCanonicalName)
 
 }

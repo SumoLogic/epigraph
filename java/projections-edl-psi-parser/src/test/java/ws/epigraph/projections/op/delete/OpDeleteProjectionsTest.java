@@ -23,7 +23,7 @@ import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.SimpleTypesResolver;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.edl.parser.EdlSubParserDefinitions;
-import ws.epigraph.edl.parser.psi.SchemaOpDeleteVarProjection;
+import ws.epigraph.edl.parser.psi.EdlOpDeleteVarProjection;
 import ws.epigraph.tests.*;
 import ws.epigraph.types.DataType;
 
@@ -186,7 +186,7 @@ public class OpDeleteProjectionsTest {
 
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
-    SchemaOpDeleteVarProjection psiVarProjection = EpigraphPsiUtil.parseText(
+    EdlOpDeleteVarProjection psiVarProjection = EpigraphPsiUtil.parseText(
         projectionString,
         EdlSubParserDefinitions.OP_DELETE_VAR_PROJECTION,
         errorsAccumulator

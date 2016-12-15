@@ -29,7 +29,7 @@ import ws.epigraph.edl.compiler.*
 import java.nio.charset.StandardCharsets
 import java.util.jar.JarFile
 
-import static EpigraphConstants.SCHEMA_FILE_EXTENSION
+import static EpigraphConstants.EDL_FILE_EXTENSION
 import static EpigraphConstants.SCHEMA_FILE_PATH_PATTERN
 
 @ParallelizableTask
@@ -81,7 +81,7 @@ trait EpigraphCompileTaskBase {
         JarSource.allFiles(new JarFile(it), SCHEMA_FILE_PATH_PATTERN, StandardCharsets.UTF_8).each {
           dependencySources.add(it)
         }
-      } else if (it.name.endsWith(SCHEMA_FILE_EXTENSION)) { // there may be direct dependencies on files, see examples/users/schema/build.gradle
+      } else if (it.name.endsWith(EDL_FILE_EXTENSION)) { // there may be direct dependencies on files, see examples/users/schema/build.gradle
         dependencySources.add(new FileSource(it))
       } else throw new GradleException("Don't know how to handle dependency: '$it'")
     }
@@ -91,9 +91,9 @@ trait EpigraphCompileTaskBase {
 
   public CContext compileFiles(Collection<Source> sources, Collection<Source> dependencySources) {
     try {
-      SchemaCompiler compiler = new SchemaCompiler(sources, dependencySources)
+      EdlCompiler compiler = new EdlCompiler(sources, dependencySources)
       return compiler.compile()
-    } catch (SchemaCompilerException e) {
+    } catch (EdlCompilerException e) {
       throw new GradleException('Epigraph resources compilation failed', e)
     }
   }

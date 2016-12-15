@@ -1,0 +1,41 @@
+// This is a generated file. Not intended for manual editing.
+package ws.epigraph.edl.parser.psi.impl;
+
+import java.util.List;
+import org.jetbrains.annotations.*;
+import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.util.PsiTreeUtil;
+import static ws.epigraph.edl.lexer.EdlElementTypes.*;
+import com.intellij.extapi.psi.ASTWrapperPsiElement;
+import ws.epigraph.edl.parser.psi.*;
+
+public class EdlMetaDeclImpl extends ASTWrapperPsiElement implements EdlMetaDecl {
+
+  public EdlMetaDeclImpl(ASTNode node) {
+    super(node);
+  }
+
+  public void accept(@NotNull EdlVisitor visitor) {
+    visitor.visitMetaDecl(this);
+  }
+
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof EdlVisitor) accept((EdlVisitor)visitor);
+    else super.accept(visitor);
+  }
+
+  @Override
+  @Nullable
+  public EdlQnTypeRef getQnTypeRef() {
+    return PsiTreeUtil.getChildOfType(this, EdlQnTypeRef.class);
+  }
+
+  @Override
+  @NotNull
+  public PsiElement getMeta() {
+    return notNullChild(findChildByType(S_META));
+  }
+
+}

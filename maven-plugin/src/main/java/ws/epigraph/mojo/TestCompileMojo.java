@@ -58,7 +58,7 @@ public class TestCompileMojo extends BaseCompileMojo {
    * <code>**&#47;*.esc</code> is used to select epigraph schema files.
    */
   @Parameter
-  private String[] testIncludes = new String[]{SCHEMA_FILE_ANT_PATTERN};
+  private String[] testIncludes = new String[]{EDL_FILE_ANT_PATTERN};
 
   /**
    * A set of Ant-like exclusion patterns used to prevent certain files from

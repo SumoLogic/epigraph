@@ -23,16 +23,16 @@ import com.intellij.formatting.Wrap;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
-import ws.epigraph.ideaplugin.edl.formatting.SchemaBlock;
+import ws.epigraph.ideaplugin.edl.formatting.EdlBlock;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static ws.epigraph.edl.lexer.SchemaElementTypes.*;
+import static ws.epigraph.edl.lexer.EdlElementTypes.*;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class TypeDefBlock extends SchemaBlock {
+public class TypeDefBlock extends EdlBlock {
   private static final TokenSet noIndentTokenSet = TokenSet.create(
       S_RECORD_TYPE_BODY,
       S_ENUM_TYPE_BODY, S_VAR_TYPE_BODY,

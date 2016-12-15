@@ -29,16 +29,16 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.ui.components.JBList;
 import com.intellij.util.IncorrectOperationException;
-import ws.epigraph.ideaplugin.edl.SchemaBundle;
+import ws.epigraph.ideaplugin.edl.EdlBundle;
 import ws.epigraph.ideaplugin.edl.features.actions.ImportTypeAction;
-import ws.epigraph.ideaplugin.edl.features.actions.SchemaNamespaceRenderer;
-import ws.epigraph.ideaplugin.edl.index.SchemaIndexUtil;
-import ws.epigraph.ideaplugin.edl.index.SchemaSearchScopeUtil;
-import ws.epigraph.ideaplugin.edl.options.SchemaSettings;
+import ws.epigraph.ideaplugin.edl.features.actions.EdlNamespaceRenderer;
+import ws.epigraph.ideaplugin.edl.index.EdlIndexUtil;
+import ws.epigraph.ideaplugin.edl.index.EdlSearchScopeUtil;
+import ws.epigraph.ideaplugin.edl.options.EdlSettings;
 import ws.epigraph.lang.Qn;
-import ws.epigraph.edl.parser.psi.SchemaFile;
-import ws.epigraph.edl.parser.psi.SchemaQnTypeRef;
-import ws.epigraph.edl.parser.psi.SchemaTypeDef;
+import ws.epigraph.edl.parser.psi.EdlFile;
+import ws.epigraph.edl.parser.psi.EdlQnTypeRef;
+import ws.epigraph.edl.parser.psi.EdlTypeDef;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
@@ -53,22 +53,22 @@ import java.util.stream.Collectors;
 public class ImportTypeIntentionFix implements HintAction {
   // TODO(low) implement LocalQuickFix, see CreateNSDeclarationIntentionFix
 
-  private final SchemaQnTypeRef typeRef;
+  private final EdlQnTypeRef typeRef;
 
-  public ImportTypeIntentionFix(SchemaQnTypeRef typeRef) {
+  public ImportTypeIntentionFix(EdlQnTypeRef typeRef) {
     this.typeRef = typeRef;
   }
 
   @Override
   public boolean showHint(@NotNull Editor editor) {
-    if (!SchemaSettings.getInstance().SHOW_EPIGRAPH_SCHEMA_ADD_IMPORT_HINTS) return false;
+    if (!EdlSettings.getInstance().SHOW_EDL_ADD_IMPORT_HINTS) return false;
     if (typeRef.resolve() != null) return false;
 
     List<String> importOptions = calculateImportOptions();
     if (importOptions.isEmpty()) return false;
 
     final String message = ShowAutoImportPass.getMessage(importOptions.size() > 1, importOptions.get(0));
-    final ImportTypeAction action = new ImportTypeAction((SchemaFile) typeRef.getContainingFile(), importOptions, editor);
+    final ImportTypeAction action = new ImportTypeAction((EdlFile) typeRef.getContainingFile(), importOptions, editor);
     HintManager.getInstance().showQuestionHint(editor, message,
         typeRef.getTextOffset(),
         typeRef.getTextRange().getEndOffset(), action);
@@ -80,7 +80,7 @@ public class ImportTypeIntentionFix implements HintAction {
   @NotNull
   @Override
   public String getText() {
-    return SchemaBundle.message("actions.import.namespace");
+    return EdlBundle.message("actions.import.namespace");
   }
 
   @Nls
@@ -106,7 +106,7 @@ public class ImportTypeIntentionFix implements HintAction {
 
     if (importOptions.size() > 1) {
       final JList list = new JBList(importOptions);
-      list.setCellRenderer(SchemaNamespaceRenderer.INSTANCE);
+      list.setCellRenderer(EdlNamespaceRenderer.INSTANCE);
 
       Runnable runnable = () -> {
         final int index = list.getSelectedIndex();
@@ -115,19 +115,19 @@ public class ImportTypeIntentionFix implements HintAction {
 
         CommandProcessor.getInstance().executeCommand(project, () ->
                 ApplicationManager.getApplication().runWriteAction(() ->
-                    ImportTypeAction.addImport((SchemaFile) file, importOptions.get(index))
+                    ImportTypeAction.addImport((EdlFile) file, importOptions.get(index))
                 ),
             getText(), getFamilyName()
         );
       };
 
       new PopupChooserBuilder(list).
-          setTitle(SchemaBundle.message("actions.select.namespace.to.import")).
+          setTitle(EdlBundle.message("actions.select.namespace.to.import")).
           setItemChoosenCallback(runnable).
           createPopup().
           showInBestPositionFor(editor);
     } else {
-      ImportTypeAction.addImport((SchemaFile) file, importOptions.get(0));
+      ImportTypeAction.addImport((EdlFile) file, importOptions.get(0));
     }
   }
 
@@ -142,8 +142,8 @@ public class ImportTypeIntentionFix implements HintAction {
     final Qn typeRefQn = typeRef.getQn().getQn();
     final int tailSegmentsToRemove = typeRefQn.size() == 1 ? 0 : typeRefQn.size() - 1;
 
-    return SchemaIndexUtil.findTypeDefs(typeRef.getProject(), null, typeRefQn, SchemaSearchScopeUtil.getSearchScope(typeRef)).stream()
-        .map(SchemaTypeDef::getQn)
+    return EdlIndexUtil.findTypeDefs(typeRef.getProject(), null, typeRefQn, EdlSearchScopeUtil.getSearchScope(typeRef)).stream()
+        .map(EdlTypeDef::getQn)
         .filter(Objects::nonNull)
         .map(qn -> qn.removeTailSegments(tailSegmentsToRemove).toString())
         .sorted()

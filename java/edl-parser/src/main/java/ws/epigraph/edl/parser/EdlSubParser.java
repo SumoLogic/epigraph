@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class EdlSubParser extends SchemaParser {
+public class EdlSubParser extends EdlParser {
   private final @NotNull IElementType entryElementType;
 
   public EdlSubParser(@NotNull IElementType rootElementType) {

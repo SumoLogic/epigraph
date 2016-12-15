@@ -18,8 +18,8 @@ package ws.epigraph.ideaplugin.edl.brains;
 
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import ws.epigraph.lang.Qn;
-import ws.epigraph.edl.parser.psi.SchemaFile;
-import ws.epigraph.edl.parser.psi.SchemaImportStatement;
+import ws.epigraph.edl.parser.psi.EdlFile;
+import ws.epigraph.edl.parser.psi.EdlImportStatement;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -35,15 +35,15 @@ public class ImportsManagerTest extends LightCodeInsightFixtureTestCase {
 
   public void testFindUnusedImports() {
     myFixture.configureByFiles("UnusedImports.esc", "foo.esc", "foobar.esc");
-    Set<SchemaImportStatement> unusedImports = ImportsManager.findUnusedImports((SchemaFile) myFixture.getFile());
+    Set<EdlImportStatement> unusedImports = ImportsManager.findUnusedImports((EdlFile) myFixture.getFile());
 
-    Set<String> strings = unusedImports.stream().map(SchemaImportStatement::getText).collect(Collectors.toSet());
+    Set<String> strings = unusedImports.stream().map(EdlImportStatement::getText).collect(Collectors.toSet());
     assertEquals(new HashSet<>(Arrays.asList("import foo", "import foo.Y", "import foo.Z")), strings);
   }
 
   public void testOptimizeImports() {
     myFixture.configureByFiles("UnusedImports.esc", "foo.esc", "foobar.esc");
-    List<Qn> optimizedImports = ImportsManager.getOptimizedImports((SchemaFile) myFixture.getFile());
+    List<Qn> optimizedImports = ImportsManager.getOptimizedImports((EdlFile) myFixture.getFile());
 
     assertEquals(Arrays.asList(
         new Qn[]{

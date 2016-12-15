@@ -22,8 +22,8 @@ import ws.epigraph.edl.parser.EdlPsiParser;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.refs.SimpleTypesResolver;
 import ws.epigraph.refs.TypesResolver;
-import ws.epigraph.edl.parser.SchemaParserDefinition;
-import ws.epigraph.edl.parser.psi.SchemaFile;
+import ws.epigraph.edl.parser.EdlParserDefinition;
+import ws.epigraph.edl.parser.psi.EdlFile;
 import ws.epigraph.tests.*;
 
 import java.io.IOException;
@@ -189,8 +189,8 @@ public class EdlParserTest {
   private static @NotNull Edl parseEdl(@NotNull String text, @NotNull TypesResolver resolver) {
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
-    @NotNull SchemaFile psiFile =
-        (SchemaFile) EpigraphPsiUtil.parseFile("test.epigraph", text, SchemaParserDefinition.INSTANCE, errorsAccumulator);
+    @NotNull EdlFile psiFile =
+        (EdlFile) EpigraphPsiUtil.parseFile("test.epigraph", text, EdlParserDefinition.INSTANCE, errorsAccumulator);
 
     failIfHasErrors(psiFile, errorsAccumulator);
 

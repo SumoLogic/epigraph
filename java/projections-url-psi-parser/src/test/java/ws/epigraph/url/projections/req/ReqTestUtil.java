@@ -34,10 +34,10 @@ import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.edl.parser.EdlSubParserDefinitions;
-import ws.epigraph.edl.parser.psi.SchemaOpDeleteVarProjection;
-import ws.epigraph.edl.parser.psi.SchemaOpInputVarProjection;
-import ws.epigraph.edl.parser.psi.SchemaOpOutputVarProjection;
-import ws.epigraph.edl.parser.psi.SchemaOpVarPath;
+import ws.epigraph.edl.parser.psi.EdlOpDeleteVarProjection;
+import ws.epigraph.edl.parser.psi.EdlOpInputVarProjection;
+import ws.epigraph.edl.parser.psi.EdlOpOutputVarProjection;
+import ws.epigraph.edl.parser.psi.EdlOpVarPath;
 import ws.epigraph.test.TestUtil;
 import ws.epigraph.types.DataType;
 import ws.epigraph.url.parser.UrlSubParserDefinitions;
@@ -67,7 +67,7 @@ public final class ReqTestUtil {
 
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
-    SchemaOpOutputVarProjection psiVarProjection = EpigraphPsiUtil.parseText(
+    EdlOpOutputVarProjection psiVarProjection = EpigraphPsiUtil.parseText(
         projectionString,
         EdlSubParserDefinitions.OP_OUTPUT_VAR_PROJECTION,
         errorsAccumulator
@@ -131,7 +131,7 @@ public final class ReqTestUtil {
 
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
-    SchemaOpVarPath psiVarProjection = EpigraphPsiUtil.parseText(
+    EdlOpVarPath psiVarProjection = EpigraphPsiUtil.parseText(
         projectionString,
         EdlSubParserDefinitions.OP_VAR_PATH,
         errorsAccumulator
@@ -227,7 +227,7 @@ public final class ReqTestUtil {
 
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
-    SchemaOpInputVarProjection psiVarProjection = EpigraphPsiUtil.parseText(
+    EdlOpInputVarProjection psiVarProjection = EpigraphPsiUtil.parseText(
         projectionString,
         EdlSubParserDefinitions.OP_INPUT_VAR_PROJECTION,
         errorsAccumulator
@@ -251,7 +251,7 @@ public final class ReqTestUtil {
 
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
-    SchemaOpDeleteVarProjection psiVarProjection = EpigraphPsiUtil.parseText(
+    EdlOpDeleteVarProjection psiVarProjection = EpigraphPsiUtil.parseText(
         projectionString,
         EdlSubParserDefinitions.OP_DELETE_VAR_PROJECTION,
         errorsAccumulator

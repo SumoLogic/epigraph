@@ -18,7 +18,7 @@ package ws.epigraph.ideaplugin.edl.features.completion;
 
 import com.intellij.psi.impl.DebugUtil;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
-import ws.epigraph.edl.parser.SchemaFileType;
+import ws.epigraph.edl.parser.EdlFileType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -327,7 +327,7 @@ public class CompletionTest extends LightCodeInsightFixtureTestCase {
   }
 
   private void configureByText(@NotNull String text) {
-    myFixture.configureByText(SchemaFileType.INSTANCE, text);
+    myFixture.configureByText(EdlFileType.INSTANCE, text);
   }
 
   @NotNull

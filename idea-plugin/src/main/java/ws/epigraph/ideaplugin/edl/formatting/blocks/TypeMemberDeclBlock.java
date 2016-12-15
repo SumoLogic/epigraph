@@ -22,17 +22,17 @@ import com.intellij.formatting.SpacingBuilder;
 import com.intellij.formatting.Wrap;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.tree.IElementType;
-import ws.epigraph.ideaplugin.edl.formatting.SchemaBlock;
-import ws.epigraph.edl.parser.SchemaParserDefinition;
+import ws.epigraph.ideaplugin.edl.formatting.EdlBlock;
+import ws.epigraph.edl.parser.EdlParserDefinition;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static ws.epigraph.edl.lexer.SchemaElementTypes.S_ANNOTATION;
+import static ws.epigraph.edl.lexer.EdlElementTypes.S_ANNOTATION;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class TypeMemberDeclBlock extends SchemaBlock {
+public class TypeMemberDeclBlock extends EdlBlock {
   public TypeMemberDeclBlock(@NotNull ASTNode node, @Nullable Wrap wrap, @Nullable Alignment alignment, @Nullable Indent indent, SpacingBuilder spacingBuilder) {
     super(node, wrap, alignment, indent, spacingBuilder);
   }
@@ -42,7 +42,7 @@ public class TypeMemberDeclBlock extends SchemaBlock {
     IElementType type = child.getElementType();
 
     if (child.getPsi().getPrevSibling() == null) return Indent.getNoneIndent();
-    if (SchemaParserDefinition.CURLY_BRACES.contains(type)) return Indent.getNoneIndent();
+    if (EdlParserDefinition.CURLY_BRACES.contains(type)) return Indent.getNoneIndent();
     if (type == S_ANNOTATION) return Indent.getNormalIndent();
     return Indent.getContinuationIndent();
   }

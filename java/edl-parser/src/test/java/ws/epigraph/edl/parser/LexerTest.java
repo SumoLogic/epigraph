@@ -18,7 +18,7 @@ package ws.epigraph.edl.parser;
 
 import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;
-import ws.epigraph.edl.lexer.SchemaLexer;
+import ws.epigraph.edl.lexer.EdlLexer;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -26,7 +26,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static ws.epigraph.edl.lexer.SchemaElementTypes.*;
+import static ws.epigraph.edl.lexer.EdlElementTypes.*;
 
 /**
  * Todo add doc
@@ -85,8 +85,8 @@ public class LexerTest {
   }
 
   private void testInput(String input, IElementType... expected) throws IOException {
-    SchemaLexer lex = new SchemaLexer();
-    lex.reset(input, 0, input.length(), SchemaLexer.YYINITIAL);
+    EdlLexer lex = new EdlLexer();
+    lex.reset(input, 0, input.length(), EdlLexer.YYINITIAL);
 
     List<IElementType> actual = new ArrayList<>();
 

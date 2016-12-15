@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 import ws.epigraph.gdata.GDataValue;
 import ws.epigraph.edl.parser.EdlSubParserDefinitions;
-import ws.epigraph.edl.parser.psi.SchemaDataValue;
+import ws.epigraph.edl.parser.psi.EdlDataValue;
 import ws.epigraph.psi.EpigraphPsiUtil;
 
 import static org.junit.Assert.assertEquals;
@@ -59,7 +59,7 @@ public class EdlGDataPsiParserTest {
   public static GDataValue parseGDataValue(String dataStr) {
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
-    @NotNull SchemaDataValue dataValue = EpigraphPsiUtil.parseText(
+    @NotNull EdlDataValue dataValue = EpigraphPsiUtil.parseText(
         dataStr,
         EdlSubParserDefinitions.DATA_VALUE,
         errorsAccumulator

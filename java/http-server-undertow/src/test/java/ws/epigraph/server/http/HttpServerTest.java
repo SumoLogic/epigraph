@@ -37,8 +37,8 @@ import ws.epigraph.psi.PsiProcessingError;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.SimpleTypesResolver;
 import ws.epigraph.refs.TypesResolver;
-import ws.epigraph.edl.parser.SchemaParserDefinition;
-import ws.epigraph.edl.parser.psi.SchemaFile;
+import ws.epigraph.edl.parser.EdlParserDefinition;
+import ws.epigraph.edl.parser.psi.EdlFile;
 import ws.epigraph.server.http.undertow.UndertowHandler;
 import ws.epigraph.service.Service;
 import ws.epigraph.service.ServiceInitializationException;
@@ -242,12 +242,12 @@ public class HttpServerTest {
 
   private static @NotNull Edl parseIdlResource(@NotNull String resourcePath) throws IOException {
     EpigraphPsiUtil.ErrorsAccumulator errAcc = new EpigraphPsiUtil.ErrorsAccumulator();
-    SchemaFile psiFile =
-        (SchemaFile) EpigraphPsiUtil.parseResource(resourcePath, SchemaParserDefinition.INSTANCE, errAcc);
+    EdlFile psiFile =
+        (EdlFile) EpigraphPsiUtil.parseResource(resourcePath, EdlParserDefinition.INSTANCE, errAcc);
     return parseEdl(psiFile, errAcc);
   }
 
-  private static @NotNull Edl parseEdl(@NotNull SchemaFile psiFile, EpigraphPsiUtil.ErrorsAccumulator errAcc) {
+  private static @NotNull Edl parseEdl(@NotNull EdlFile psiFile, EpigraphPsiUtil.ErrorsAccumulator errAcc) {
 
     if (errAcc.hasErrors()) {
       for (PsiErrorElement element : errAcc.errors()) {

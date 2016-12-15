@@ -31,29 +31,29 @@ import java.util.List;
 public final class TypeRefs {
   private TypeRefs() {}
 
-  public static @NotNull TypeRef fromPsi(@NotNull SchemaTypeRef psi, @NotNull List<PsiProcessingError> errors)
+  public static @NotNull TypeRef fromPsi(@NotNull EdlTypeRef psi, @NotNull List<PsiProcessingError> errors)
       throws PsiProcessingException {
 
-    if (psi instanceof SchemaQnTypeRef) {
-      SchemaQnTypeRef fqnTypeRefPsi = (SchemaQnTypeRef) psi;
+    if (psi instanceof EdlQnTypeRef) {
+      EdlQnTypeRef fqnTypeRefPsi = (EdlQnTypeRef) psi;
       return new QnTypeRef(fqnTypeRefPsi.getQn().getQn());
     }
 
-    if (psi instanceof SchemaAnonList) {
-      SchemaAnonList anonListPsi = (SchemaAnonList) psi;
-      @Nullable SchemaValueTypeRef valueTypeRefPsi = anonListPsi.getValueTypeRef();
+    if (psi instanceof EdlAnonList) {
+      EdlAnonList anonListPsi = (EdlAnonList) psi;
+      @Nullable EdlValueTypeRef valueTypeRefPsi = anonListPsi.getValueTypeRef();
       if (valueTypeRefPsi == null) throw new PsiProcessingException("List item type not specified", psi, errors);
       return new AnonListRef(fromPsi(valueTypeRefPsi, errors));
     }
 
-    if (psi instanceof SchemaAnonMap) {
-      SchemaAnonMap anonMapPsi = (SchemaAnonMap) psi;
+    if (psi instanceof EdlAnonMap) {
+      EdlAnonMap anonMapPsi = (EdlAnonMap) psi;
 
-      @Nullable SchemaTypeRef keyTypeRefPsi = anonMapPsi.getTypeRef();
+      @Nullable EdlTypeRef keyTypeRefPsi = anonMapPsi.getTypeRef();
       if (keyTypeRefPsi == null) throw new PsiProcessingException("Map key type not specified", psi, errors);
       TypeRef keyTypeRef = fromPsi(keyTypeRefPsi, errors);
 
-      @Nullable SchemaValueTypeRef valueTypeRefPsi = anonMapPsi.getValueTypeRef();
+      @Nullable EdlValueTypeRef valueTypeRefPsi = anonMapPsi.getValueTypeRef();
       if (valueTypeRefPsi == null) throw new PsiProcessingException("Map value type not specified", psi, errors);
       ValueTypeRef valueTypeRef = fromPsi(valueTypeRefPsi, errors);
 
@@ -63,9 +63,9 @@ public final class TypeRefs {
     throw new PsiProcessingException("Unknown reference type: " + psi.getClass().getName(), psi, errors);
   }
 
-  public static @NotNull ValueTypeRef fromPsi(@NotNull SchemaValueTypeRef psi, @NotNull List<PsiProcessingError> errors)
+  public static @NotNull ValueTypeRef fromPsi(@NotNull EdlValueTypeRef psi, @NotNull List<PsiProcessingError> errors)
       throws PsiProcessingException {
-    @Nullable SchemaDefaultOverride defaultOverridePsi = psi.getDefaultOverride();
+    @Nullable EdlDefaultOverride defaultOverridePsi = psi.getDefaultOverride();
     return new ValueTypeRef(
         fromPsi(psi.getTypeRef(), errors),
         defaultOverridePsi == null ? null : defaultOverridePsi.getVarTagRef().getQid().getCanonicalName()

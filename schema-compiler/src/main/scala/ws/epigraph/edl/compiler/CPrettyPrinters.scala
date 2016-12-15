@@ -45,9 +45,9 @@ object CPrettyPrinters {
   implicit val CErrorPrint: PPrint[CError] = PPrint(CErrorPrinter)
 
 
-  implicit object CSchemaFilePrinter extends PPrinter[CSchemaFile] {
+  implicit object CEdlFilePrinter extends PPrinter[CEdlFile] {
 
-    override def render0(t: CSchemaFile, c: Config): Iterator[String] = {
+    override def render0(t: CEdlFile, c: Config): Iterator[String] = {
       pprint.Internals.handleChunks(
         t.filename, c, (c: Config) => Iterator( // TODO PPrint[CNamespace]
           implicitly[PPrint[CNamespace]].pprinter.render(t.namespace, c),
@@ -59,7 +59,7 @@ object CPrettyPrinters {
     }
   }
 
-  implicit val CSchemaFilePrint: PPrint[CSchemaFile] = PPrint(CSchemaFilePrinter)
+  implicit val CEdlFilePrint: PPrint[CEdlFile] = PPrint(CEdlFilePrinter)
 
 
   implicit object CTypeRefPrinter extends PPrinter[CTypeRef] {

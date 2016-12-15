@@ -22,12 +22,12 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.StubInputStream;
 import com.intellij.psi.stubs.StubOutputStream;
 import com.intellij.util.io.StringRef;
-import ws.epigraph.ideaplugin.edl.brains.SchemaQnReference;
-import ws.epigraph.ideaplugin.edl.brains.SchemaQnReferenceResolver;
+import ws.epigraph.ideaplugin.edl.brains.EdlQnReference;
+import ws.epigraph.ideaplugin.edl.brains.EdlQnReferenceResolver;
 import ws.epigraph.lang.Qn;
-import ws.epigraph.edl.parser.psi.SchemaQnTypeRef;
-import ws.epigraph.edl.parser.psi.SchemaTypeDef;
-import ws.epigraph.edl.parser.psi.impl.SchemaPsiImplUtil;
+import ws.epigraph.edl.parser.psi.EdlQnTypeRef;
+import ws.epigraph.edl.parser.psi.EdlTypeDef;
+import ws.epigraph.edl.parser.psi.impl.EdlPsiImplUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -44,22 +44,22 @@ public final class SerializedFqnTypeRef {
   private List<Qn> namespacesToSearch;
   // OR
   @Nullable
-  private SchemaQnTypeRef typeRef;
+  private EdlQnTypeRef typeRef;
 
   public SerializedFqnTypeRef(@Nullable Qn shortName, @Nullable List<Qn> namespacesToSearch) {
     this.namespacesToSearch = namespacesToSearch;
     this.shortName = shortName;
   }
 
-  public SerializedFqnTypeRef(@Nullable SchemaQnTypeRef typeRef) {
+  public SerializedFqnTypeRef(@Nullable EdlQnTypeRef typeRef) {
     this.typeRef = typeRef; // do the rest lazily
   }
 
   private void initFromTypeRef() {
     if ((shortName == null || namespacesToSearch == null) && typeRef != null) {
-      SchemaQnReference ref = (SchemaQnReference) SchemaPsiImplUtil.getReference(typeRef);
+      EdlQnReference ref = (EdlQnReference) EdlPsiImplUtil.getReference(typeRef);
       if (ref != null) {
-        SchemaQnReferenceResolver resolver = ref.getResolver();
+        EdlQnReferenceResolver resolver = ref.getResolver();
         shortName = resolver.getSuffix();
         namespacesToSearch = resolver.getPrefixes();
       }
@@ -86,14 +86,14 @@ public final class SerializedFqnTypeRef {
     List<Qn> namespacesToSearch = getNamespacesToSearch();
     Qn shortName = getShortName();
     if (namespacesToSearch == null || shortName == null) return null;
-    SchemaQnReferenceResolver resolver = new SchemaQnReferenceResolver(namespacesToSearch, shortName, searchScope);
+    EdlQnReferenceResolver resolver = new EdlQnReferenceResolver(namespacesToSearch, shortName, searchScope);
     return resolver.resolve(project);
   }
 
   @Nullable
-  public SchemaTypeDef resolveTypeDef(@NotNull Project project, @NotNull GlobalSearchScope searchScope) {
+  public EdlTypeDef resolveTypeDef(@NotNull Project project, @NotNull GlobalSearchScope searchScope) {
     PsiElement element = resolve(project, searchScope);
-    if (element instanceof SchemaTypeDef) return (SchemaTypeDef) element;
+    if (element instanceof EdlTypeDef) return (EdlTypeDef) element;
     return null;
   }
 

@@ -17,7 +17,7 @@
 package ws.epigraph.edl.compiler
 
 import com.intellij.psi.{PsiErrorElement, PsiRecursiveElementWalkingVisitor}
-import ws.epigraph.edl.parser.psi.SchemaFile
+import ws.epigraph.edl.parser.psi.EdlFile
 
 import scala.collection.mutable
 
@@ -27,7 +27,7 @@ import scala.collection.mutable
 object ParseErrorsDumper {
   // tweak to your liking
 
-  def printParseErrors(file: SchemaFile): Unit = {
+  def printParseErrors(file: EdlFile): Unit = {
     val fileName = file.getName
     lazy val lineNumberUtil = new LineNumberUtil(file.getText, 2)
 
@@ -43,7 +43,7 @@ object ParseErrorsDumper {
     file.accept(visitor)
   }
 
-  def collectParseErrors(sf: SchemaFile, tabWidth: Int = 2): Seq[CError] = {
+  def collectParseErrors(sf: EdlFile, tabWidth: Int = 2): Seq[CError] = {
     val errors = mutable.Buffer[CError]()
     val fileName = sf.getName
     lazy val lineNumberUtil = new LineNumberUtil(sf.getText, tabWidth)

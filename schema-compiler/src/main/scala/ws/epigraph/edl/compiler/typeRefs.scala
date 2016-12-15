@@ -18,25 +18,25 @@
 
 package ws.epigraph.edl.compiler
 
-import ws.epigraph.edl.parser.psi.{SchemaAnonList, SchemaAnonMap, SchemaQnTypeRef, SchemaTypeRef}
+import ws.epigraph.edl.parser.psi.{EdlAnonList, EdlAnonMap, EdlQnTypeRef, EdlTypeRef}
 
 
 object CTypeRef {
 
-  def apply(csf: CSchemaFile, psi: SchemaTypeRef)(implicit ctx: CContext): CTypeRef = psi match {
-    case psi: SchemaQnTypeRef => apply(csf, psi)
-    case psi: SchemaAnonList => apply(csf, psi)
-    case psi: SchemaAnonMap => apply(csf, psi)
+  def apply(csf: CEdlFile, psi: EdlTypeRef)(implicit ctx: CContext): CTypeRef = psi match {
+    case psi: EdlQnTypeRef => apply(csf, psi)
+    case psi: EdlAnonList => apply(csf, psi)
+    case psi: EdlAnonMap => apply(csf, psi)
     case unknown => throw new UnsupportedOperationException(unknown.toString)
   }
 
-  def apply(csf: CSchemaFile, psi: SchemaQnTypeRef)(implicit ctx: CContext): CTypeDefRef =
+  def apply(csf: CEdlFile, psi: EdlQnTypeRef)(implicit ctx: CContext): CTypeDefRef =
     new CTypeDefRef(csf, psi)
 
-  def apply(csf: CSchemaFile, psi: SchemaAnonList)(implicit ctx: CContext): CAnonListTypeRef =
+  def apply(csf: CEdlFile, psi: EdlAnonList)(implicit ctx: CContext): CAnonListTypeRef =
     new CAnonListTypeRef(csf, psi)
 
-  def apply(csf: CSchemaFile, psi: SchemaAnonMap)(implicit ctx: CContext): CAnonMapTypeRef =
+  def apply(csf: CEdlFile, psi: EdlAnonMap)(implicit ctx: CContext): CAnonMapTypeRef =
     new CAnonMapTypeRef(csf, psi)
 
   def apply(ctype: CType)(implicit ctx: CContext): CTypeRef = ctype match {
@@ -47,7 +47,7 @@ object CTypeRef {
 
 }
 
-abstract class CTypeRef protected(val csf: CSchemaFile)(implicit val ctx: CContext) {
+abstract class CTypeRef protected(val csf: CEdlFile)(implicit val ctx: CContext) {
 
   type Name <: CTypeName
 
@@ -83,9 +83,9 @@ abstract class CTypeRef protected(val csf: CSchemaFile)(implicit val ctx: CConte
 }
 
 
-class CTypeDefRef(csf: CSchemaFile, override val name: CTypeFqn)(implicit ctx: CContext) extends CTypeRef(csf) {
+class CTypeDefRef(csf: CEdlFile, override val name: CTypeFqn)(implicit ctx: CContext) extends CTypeRef(csf) {
 
-  def this(csf: CSchemaFile, psi: SchemaQnTypeRef)(implicit ctx: CContext) = this(csf, csf.qualifyLocalTypeRef(psi))
+  def this(csf: CEdlFile, psi: EdlQnTypeRef)(implicit ctx: CContext) = this(csf, csf.qualifyLocalTypeRef(psi))
 
   final override type Name = CTypeFqn
 
@@ -96,7 +96,7 @@ class CTypeDefRef(csf: CSchemaFile, override val name: CTypeFqn)(implicit ctx: C
 
 class CAnonListTypeRef(val elementDataType: CDataType)(implicit ctx: CContext) extends CTypeRef(elementDataType.csf) {
 
-  def this(csf: CSchemaFile, psi: SchemaAnonList)(implicit ctx: CContext) =
+  def this(csf: CEdlFile, psi: EdlAnonList)(implicit ctx: CContext) =
     this(new CDataType(csf, psi.getValueTypeRef))
 
   final override type Name = CAnonListTypeName
@@ -111,7 +111,7 @@ class CAnonListTypeRef(val elementDataType: CDataType)(implicit ctx: CContext) e
 class CAnonMapTypeRef(val keyTypeRef: CTypeRef, val valueDataType: CDataType)(implicit ctx: CContext)
     extends CTypeRef(valueDataType.csf) {
 
-  def this(csf: CSchemaFile, psi: SchemaAnonMap)(implicit ctx: CContext) =
+  def this(csf: CEdlFile, psi: EdlAnonMap)(implicit ctx: CContext) =
     this(CTypeRef(csf, psi.getTypeRef), new CDataType(csf, psi.getValueTypeRef))
 
   final override type Name = CAnonMapTypeName
