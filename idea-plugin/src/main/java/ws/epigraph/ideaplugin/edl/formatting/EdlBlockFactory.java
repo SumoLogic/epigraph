@@ -16,10 +16,7 @@
 
 package ws.epigraph.ideaplugin.edl.formatting;
 
-import com.intellij.formatting.Alignment;
-import com.intellij.formatting.Indent;
-import com.intellij.formatting.SpacingBuilder;
-import com.intellij.formatting.Wrap;
+import com.intellij.formatting.*;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.util.containers.ContainerUtil;
@@ -68,15 +65,22 @@ interface EdlBlockFactory {
 
           .build();
 
-  EdlBlock create(@NotNull ASTNode node, @Nullable Wrap wrap, @Nullable Alignment alignment, @Nullable Indent indent, SpacingBuilder spacingBuilder);
+  Block create(
+      @NotNull ASTNode node,
+      @Nullable Wrap wrap,
+      @Nullable Alignment alignment,
+      @Nullable Indent indent,
+      SpacingBuilder spacingBuilder);
 
-  static EdlBlock createBlock(
+  static Block createBlock(
       ASTNode node,
       Wrap wrap,
       Alignment alignment,
       Indent indent,
       SpacingBuilder spacingBuilder
   ) {
+    if (node.getElementType() == E_RESOURCE_DEF) return new ResourceBlock(node);
+
     EdlBlockFactory factory = factories.get(node.getElementType());
     if (factory == null) {
       factory = EdlBlock::new;

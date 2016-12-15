@@ -37,8 +37,8 @@ import java.util.List;
  */
 public class EdlBlock extends AbstractBlock implements BlockEx {
 
-  private SpacingBuilder spacingBuilder;
-  private Indent indent;
+  private final SpacingBuilder spacingBuilder;
+  private final Indent indent;
 
   protected EdlBlock(@NotNull ASTNode node, @Nullable Wrap wrap, @Nullable Alignment alignment,
                         @Nullable Indent indent, SpacingBuilder spacingBuilder) {
