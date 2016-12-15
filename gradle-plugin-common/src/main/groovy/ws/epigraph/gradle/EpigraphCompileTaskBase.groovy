@@ -91,7 +91,7 @@ trait EpigraphCompileTaskBase {
 
   public CContext compileFiles(Collection<Source> sources, Collection<Source> dependencySources) {
     try {
-      Compiler compiler = new Compiler(sources, dependencySources)
+      EpigraphCompiler compiler = new EpigraphCompiler(sources, dependencySources)
       return compiler.compile()
     } catch (EpigraphCompilerException e) {
       throw new GradleException('Epigraph resources compilation failed', e)
