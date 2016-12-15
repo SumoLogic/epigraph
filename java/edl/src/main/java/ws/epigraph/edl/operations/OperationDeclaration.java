@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Abstract operation declaration. See {@code operations.esc}.
+ * Abstract operation declaration. See {@code operations.epigraph}.
  *
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */

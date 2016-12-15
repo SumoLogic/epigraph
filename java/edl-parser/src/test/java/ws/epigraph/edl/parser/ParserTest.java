@@ -33,12 +33,12 @@ import java.nio.file.Paths;
 public class ParserTest {
   @Test
   public void testParserSimple() throws IOException {
-    testParse("ParsingTestData.esc", "ParsingTestData.txt", false);
+    testParse("ParsingTestData.epigraph", "ParsingTestData.txt", false);
   }
 
   @Test
   public void testParserRecover1() throws IOException {
-    testParse("ParsingRecover1.esc", "ParsingRecover1.txt", true);
+    testParse("ParsingRecover1.epigraph", "ParsingRecover1.txt", true);
   }
 
   private void testParse(String inputFile, String expectedOutputFile, boolean withRanges) throws IOException {

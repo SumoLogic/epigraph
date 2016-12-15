@@ -38,127 +38,127 @@ public class CompletionTest extends LightCodeInsightFixtureTestCase {
   }
 
   public void testStaticImportCompletion() {
-    myFixture.testCompletion("CompletionWithStaticImport.esc", "CompletionWithStaticImport-after.esc", "zzz.esc");
+    myFixture.testCompletion("CompletionWithStaticImport.epigraph", "CompletionWithStaticImport-after.epigraph", "zzz.epigraph");
   }
 
   public void testImportCompletion() {
-    myFixture.configureByFiles("ImportCompletion.esc", "foo.esc", "foobar.esc");
+    myFixture.configureByFiles("ImportCompletion.epigraph", "foo.epigraph", "foobar.epigraph");
     checkCompletionVariants("Foo", "bar");
 
-    myFixture.configureByFiles("ImportCompletion2.esc", "foo.esc", "foobar.esc");
+    myFixture.configureByFiles("ImportCompletion2.epigraph", "foo.epigraph", "foobar.epigraph");
     checkCompletionVariants("bar"); // but not "*" or "Foo", same namespace
 
-    myFixture.configureByFiles("ImportCompletion3.esc", "foo.esc", "foobar.esc", "zzz.esc", "builtin.esc");
+    myFixture.configureByFiles("ImportCompletion3.epigraph", "foo.epigraph", "foobar.epigraph", "zzz.epigraph", "builtin.epigraph");
     checkCompletionVariants("foo", "zzz", "epigraph"); // but not "foo.bar" or "some" or "epigraph.Boolean"
   }
 
   public void testTypeRefCompletion() {
-    myFixture.configureByFiles("TypeRefCompletion.esc", "foo.esc", "foobar.esc");
+    myFixture.configureByFiles("TypeRefCompletion.epigraph", "foo.epigraph", "foobar.epigraph");
     checkCompletionVariants("bar", "Foo"); // foo.bar has not been imported but foo.bar.Baz still makes a valid reference
 
-    myFixture.testCompletion("TypeRefCompletion2.esc", "TypeRefCompletion2-after.esc", "foo.esc", "foobar.esc");
+    myFixture.testCompletion("TypeRefCompletion2.epigraph", "TypeRefCompletion2-after.epigraph", "foo.epigraph", "foobar.epigraph");
   }
 
   public void testTopLevelCompletion() {
-    myFixture.configureByFile("TopLevelCompletion.esc");
+    myFixture.configureByFile("TopLevelCompletion.epigraph");
     checkCompletionVariants(TOP_LEVEL);
   }
 
   public void testNamespaceOnlyTopLevelCompletion() {
-    myFixture.configureByFile("NamespaceOnlyTopLevelCompletion.esc");
+    myFixture.configureByFile("NamespaceOnlyTopLevelCompletion.epigraph");
     checkCompletionVariants(TOP_LEVEL, "import ");
   }
 
   public void testBuiltinTypeCompletion() {
-    myFixture.testCompletion("BuiltinTypeCompletion.esc", "BuiltinTypeCompletion-after.esc", "builtin.esc");
+    myFixture.testCompletion("BuiltinTypeCompletion.epigraph", "BuiltinTypeCompletion-after.epigraph", "builtin.epigraph");
   }
 
   public void testCompletionAfterAbstract() {
-    myFixture.configureByFile("CompletionAfterAbstract.esc");
+    myFixture.configureByFile("CompletionAfterAbstract.epigraph");
     checkCompletionVariants("record ", "map", "list", "string ", "double ", "integer ", "long ", "boolean ");
   }
 
   public void testCompletionAfterRecordName() {
-    myFixture.configureByFile("CompletionAfterRecordName.esc");
+    myFixture.configureByFile("CompletionAfterRecordName.epigraph");
     checkCompletionVariants(TOP_LEVEL, "extends ", "meta ", "supplements ");
   }
 
   public void testCompletionAfterRecordNameBeforeBlock() {
-    myFixture.configureByFile("CompletionAfterRecordNameBeforeBlock.esc");
+    myFixture.configureByFile("CompletionAfterRecordNameBeforeBlock.epigraph");
     checkCompletionVariants("extends ", "meta ", "supplements ");
   }
 
   public void testCompletionAfterListName() {
-    myFixture.configureByFile("CompletionAfterListName.esc");
+    myFixture.configureByFile("CompletionAfterListName.epigraph");
     checkCompletionVariants(TOP_LEVEL, "extends ", "meta ");
   }
 
   public void testUndefinedTypeNameCompletion() {
-    myFixture.configureByFile("UndefinedTypeNameCompletion.esc");
+    myFixture.configureByFile("UndefinedTypeNameCompletion.epigraph");
     checkCompletionVariants("Bar", "Baz");
   }
 
   // TODO(low) add later, too advanced for now
 //  public void testUndefinedTypeNameCompletion2() {
-//    myFixture.configureByFile("UndefinedTypeNameCompletion2.esc");
+//    myFixture.configureByFile("UndefinedTypeNameCompletion2.epigraph");
 //    checkCompletionVariants("Bar", "Baz"); // but not Baq, incompatible kinds
 //  }
 
   public void testUndefinedTypeNameCompletion3() {
-    myFixture.configureByFile("UndefinedTypeNameCompletion2.esc");
+    myFixture.configureByFile("UndefinedTypeNameCompletion2.epigraph");
     checkCompletionVariants("Bar", "Baz", "Baq");
   }
 
   public void testFieldTypeCompletion() {
-    myFixture.configureByFile("FieldTypeCompletion.esc");
+    myFixture.configureByFile("FieldTypeCompletion.epigraph");
     checkCompletionVariants("Bar", "Baz");
   }
 
   public void testWithCompletion() {
-    myFixture.testCompletion("CompleteWith.esc", "CompleteWith-after.esc");
+    myFixture.testCompletion("CompleteWith.epigraph", "CompleteWith-after.epigraph");
   }
 
   public void testVarTagCompletion() {
-    myFixture.configureByFile("VarTagCompletion.esc");
+    myFixture.configureByFile("VarTagCompletion.epigraph");
     checkCompletionVariants("`string`", "foo");
   }
 
   public void testNamespaceCompletionDoesntIncludeTypes() {
-    myFixture.configureByFiles("NamespaceCompletion.esc", "foo.esc", "foobar.esc");
+    myFixture.configureByFiles("NamespaceCompletion.epigraph", "foo.epigraph", "foobar.epigraph");
     checkCompletionVariants("bar");
   }
 
   // ------------- extends
 
   public void testProperKindCompletionExt1() {
-    myFixture.configureByFile("TypeRefKindCompletionExt1.esc");
+    myFixture.configureByFile("TypeRefKindCompletionExt1.epigraph");
     checkCompletionVariants("LL1", "LL2"); // but not LL3
   }
 
   public void testProperKindCompletionExt2() {
-    myFixture.configureByFile("TypeRefKindCompletionExt2.esc");
+    myFixture.configureByFile("TypeRefKindCompletionExt2.epigraph");
     checkCompletionVariants("LL3", "LL4");
   }
 
   public void testProperKindCompletionExt3() {
-    myFixture.configureByFile("TypeRefKindCompletionExt3.esc");
+    myFixture.configureByFile("TypeRefKindCompletionExt3.epigraph");
     checkCompletionVariants("S1", "S2");
   }
 
   // ------------- supplements
 
   public void testProperKindCompletionSup1() {
-    myFixture.configureByFile("TypeRefKindCompletionSup1.esc");
+    myFixture.configureByFile("TypeRefKindCompletionSup1.epigraph");
     checkCompletionVariants("LL1", "LL2"); // but not LL3
   }
 
   public void testProperKindCompletionSup2() {
-    myFixture.configureByFile("TypeRefKindCompletionSup2.esc");
+    myFixture.configureByFile("TypeRefKindCompletionSup2.epigraph");
     checkCompletionVariants("LL1", "LL4");
   }
 
   public void testProperKindCompletionSup3() {
-    myFixture.configureByFile("TypeRefKindCompletionSup3.esc");
+    myFixture.configureByFile("TypeRefKindCompletionSup3.epigraph");
     checkCompletionVariants("S1", "S2");
 
   }
@@ -167,61 +167,61 @@ public class CompletionTest extends LightCodeInsightFixtureTestCase {
   // target, no `with`
 
   public void testProperKindCompletionSupT1() {
-    myFixture.configureByFile("TypeRefKindCompletionSupT1.esc");
+    myFixture.configureByFile("TypeRefKindCompletionSupT1.epigraph");
     checkCompletionVariants("LL2", "LL3");
   }
 
   public void testProperKindCompletionSupT2() {
-    myFixture.configureByFile("TypeRefKindCompletionSupT2.esc");
+    myFixture.configureByFile("TypeRefKindCompletionSupT2.epigraph");
     checkCompletionVariants("LL1", "LL4");
   }
 
   public void testProperKindCompletionSupT3() {
-    myFixture.configureByFile("TypeRefKindCompletionSupT3.esc");
+    myFixture.configureByFile("TypeRefKindCompletionSupT3.epigraph");
     checkCompletionVariants("S2", "S3");
   }
 
   // target, with `with`
 
   public void testProperKindCompletionSupT4() {
-    myFixture.configureByFile("TypeRefKindCompletionSupT4.esc");
+    myFixture.configureByFile("TypeRefKindCompletionSupT4.epigraph");
     checkCompletionVariants("LL1", "LL2");
   }
 
   public void testProperKindCompletionSupT5() {
-    myFixture.configureByFile("TypeRefKindCompletionSupT5.esc");
+    myFixture.configureByFile("TypeRefKindCompletionSupT5.epigraph");
     checkCompletionVariants("LL4", "LL5"); // LL1 would create circular ref, L2 already there, L3 extends L2
   }
 
   public void testProperKindCompletionSupT6() {
-    myFixture.configureByFile("TypeRefKindCompletionSupT6.esc");
+    myFixture.configureByFile("TypeRefKindCompletionSupT6.epigraph");
     checkCompletionVariants("S2", "S3");
   }
 
   // source
 
   public void testProperKindCompletionSupS1() {
-    myFixture.configureByFile("TypeRefKindCompletionSupS1.esc");
+    myFixture.configureByFile("TypeRefKindCompletionSupS1.epigraph");
     checkCompletionVariants("LL1", "LL2");
   }
 
   public void testProperKindCompletionSupS2() {
-    myFixture.configureByFile("TypeRefKindCompletionSupS2.esc");
+    myFixture.configureByFile("TypeRefKindCompletionSupS2.epigraph");
     checkCompletionVariants("LL4", "LL5"); // LL1 would create circular ref, L2 already there, L3 extends L2
   }
 
   public void testProperKindCompletionSupS3() {
-    myFixture.configureByFile("TypeRefKindCompletionSupS3.esc");
+    myFixture.configureByFile("TypeRefKindCompletionSupS3.epigraph");
     checkCompletionVariants("S2", "S3");
   }
 
   public void testProperKindCompletionSupS4() {
-    myFixture.configureByFile("TypeRefKindCompletionSupS4.esc");
+    myFixture.configureByFile("TypeRefKindCompletionSupS4.epigraph");
     checkCompletionVariants("R2"); // R3 extends R2, but R1 doesn't
   }
 
   public void testProperKindCompletionSupS5() {
-    myFixture.configureByFile("TypeRefKindCompletionSupS5.esc");
+    myFixture.configureByFile("TypeRefKindCompletionSupS5.epigraph");
     checkCompletionVariants();
   }
 

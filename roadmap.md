@@ -39,12 +39,12 @@
   * [x] Adding supertypes to existing var types
 
 #### 1.7. Structured data templates (projections)
-  * [ ] Request templates
-  * [ ] Input data templates
-  * [ ] Output templates
-  * [ ] Parameters
-    * [ ] On fields / tags
-    * [ ] On data types
+  * [x] Request templates
+  * [x] Input data templates
+  * [x] Output templates
+  * [x] Parameters
+    * [x] On fields / tags
+    * [x] On data types
 
 #### 1.8. Metadata
 
@@ -75,7 +75,7 @@
     * [x] Type members (tags)
 
 ### 3. Schema authoring plugin(s)
-  * [ ] File extension (.esc - EpigraphSChema? .epigraph?)
+  * [ ] File extension (.epigraph - EpigraphSChema? .epigraph?)
   * [x] IntelliJ IDEA Plugin
     * [x] Schema syntax highlighting and validation
     * [x] Embedded data language highlighting and validation
@@ -113,30 +113,30 @@
 
 ### 8.
 
-### 9. IDL
-  * [ ] File extension (.sdl - Service Description Language? .scl - Service Contract Language?)
-  * [ ] Resources
-  * [ ] Operations
-    * [ ] Read
-    * [ ] Create
-    * [ ] Update
-    * [ ] Delete
-    * [ ] Custom actions
+### 9. IDL (Merged with schema = EDL, Epigraph Declaration Language)
+  * [ ] ~~File extension (.sdl - Service Description Language? .scl - Service Contract Language?)~~
+  * [x] Resources
+  * [x] Operations
+    * [x] Read
+    * [x] Create
+    * [x] Update
+    * [x] Delete
+    * [x] Custom actions
 
-### 10. IDL-driven code generation
+### 10. EDL-driven code generation
   * [ ] Serivice stubs
   * [ ] Resource stubs
   * [ ] Operation interfaces
 
 ### 11. HTTP Service
-  * [ ] Undertow
+  * [x] Undertow
   * [ ] Servlet
     * [ ] Async Servlet
 
 ### 12. Wire/serialization formats
   * [x] JSON
     * [x] Streaming Writer
-    * [ ] Streaming Reader
+    * [x] Streaming Reader
   * [ ] MessagePack?
   * [ ] Avro?
   * [ ] Custom binary

@@ -24,7 +24,7 @@ import java.util.regex.Pattern
 class EpigraphConstants {
   // keep this stuff in sync with maven's AbstractCompilingMojo.java
 
-  public static final String EDL_FILE_EXTENSION = 'esc'
+  public static final String EDL_FILE_EXTENSION = 'epigraph'
 //  public static final Pattern EDL_FILE_NAME_PATTERN = Pattern.compile(".+\\." + EDL_FILE_EXTENSION);
 
   public static final String ARTIFACTS_PATH_PREFIX = 'epigraph$artifacts';

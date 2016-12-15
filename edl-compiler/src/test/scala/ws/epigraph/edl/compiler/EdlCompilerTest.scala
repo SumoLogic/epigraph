@@ -30,7 +30,7 @@ class EdlCompilerTest extends FlatSpec with Matchers {
   "EdlCompiler" should "detect incompatible overridden fields" in {
     val compiler = new EdlCompiler(
       Collections.singleton(
-        new ResourceSource("/ws/epigraph/edl/compiler/tests/incompatibleFields.esc")
+        new ResourceSource("/ws/epigraph/edl/compiler/tests/incompatibleFields.epigraph")
       )
     )
     intercept[EdlCompilerException](compiler.compile()).errors shouldNot be('empty)

@@ -85,7 +85,7 @@ public class HttpServerTest {
 
   static {
     try {
-      edl = parseIdlResource("/ws/epigraph/tests/service/testService.esc");
+      edl = parseIdlResource("/ws/epigraph/tests/service/testService.epigraph");
     } catch (IOException e) {
       throw new RuntimeException(e);
     }

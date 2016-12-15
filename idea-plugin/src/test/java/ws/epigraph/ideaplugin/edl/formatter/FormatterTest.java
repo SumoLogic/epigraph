@@ -30,7 +30,7 @@ public class FormatterTest extends LightCodeInsightFixtureTestCase {
   }
 
   public void testFormatter() {
-    myFixture.configureByFile("FormatterTest.esc");
+    myFixture.configureByFile("FormatterTest.epigraph");
 //    String psiDump = DebugUtil.psiToString(myFixture.getFile(), true, false).trim();
 //    System.out.println(psiDump);
 
@@ -41,6 +41,6 @@ public class FormatterTest extends LightCodeInsightFixtureTestCase {
       }
     }.execute();
 
-    myFixture.checkResultByFile("FormatterTest-out.esc");
+    myFixture.checkResultByFile("FormatterTest-out.epigraph");
   }
 }

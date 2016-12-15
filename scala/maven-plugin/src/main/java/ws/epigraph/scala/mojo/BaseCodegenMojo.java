@@ -41,10 +41,10 @@ import java.util.regex.Pattern;
  * Base for Epigraph Codegen Mojos.
  */
 public abstract class BaseCodegenMojo extends AbstractMojo {
-  private static final Pattern EDL_FILENAME_PATTERN = Pattern.compile(".+\\.esc");
+  private static final Pattern EDL_FILENAME_PATTERN = Pattern.compile(".+\\.epigraph");
 
   /**
-   * The source directory of Epigraph schema files. This directory is added to the
+   * The source directory of Epigraph EDL files. This directory is added to the
    * classpath at schema compiling time. All files can therefore be referenced
    * as classpath resources following the directory structure under the
    * source directory.
@@ -84,8 +84,8 @@ public abstract class BaseCodegenMojo extends AbstractMojo {
   }
 
   private void addImpliedDependencies(Collection<Source> dependencySources) {
-    if (getClass().getResource("/epigraph/builtinTypes.esc") != null) {
-      Source builtinTypes = new ResourceSource("/epigraph/builtinTypes.esc"); // TODO use url.openStream?
+    if (getClass().getResource("/epigraph/builtinTypes.epigraph") != null) {
+      Source builtinTypes = new ResourceSource("/epigraph/builtinTypes.epigraph"); // TODO use url.openStream?
       dependencySources.add(builtinTypes);
     }
   }

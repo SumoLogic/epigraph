@@ -34,40 +34,40 @@ public class ReferenceTest extends LightCodeInsightFixtureTestCase {
   }
 
   public void testSameNamespaceRef() {
-    myFixture.configureByFile("SameNsTypeRef.esc");
+    myFixture.configureByFile("SameNsTypeRef.epigraph");
     PsiElement element = myFixture.getFile().findElementAt(myFixture.getCaretOffset());
     //noinspection ConstantConditions
-    checkReference(element.getParent().getParent().getReference(), "Bar", "SameNsTypeRef.esc");
+    checkReference(element.getParent().getParent().getReference(), "Bar", "SameNsTypeRef.epigraph");
   }
 
   public void testBuiltinRef() {
-    myFixture.configureByFiles("BuiltinImport.esc", "builtin.esc");
+    myFixture.configureByFiles("BuiltinImport.epigraph", "builtin.epigraph");
     PsiElement element = myFixture.getFile().findElementAt(myFixture.getCaretOffset());
     //noinspection ConstantConditions
-    checkReference(element.getParent().getParent().getReference(), "Long", "builtin.esc");
+    checkReference(element.getParent().getParent().getReference(), "Long", "builtin.epigraph");
   }
 
   public void testFqnImportRef() {
-    myFixture.configureByFiles("FqnImportTypeRef.esc", "TargetNs.esc");
+    myFixture.configureByFiles("FqnImportTypeRef.epigraph", "TargetNs.epigraph");
     PsiElement element = myFixture.getFile().findElementAt(myFixture.getCaretOffset());
     //noinspection ConstantConditions
     PsiReference reference = element.getParent().getParent().getReference();
     assertNotNull(reference);
-    checkReference(reference, "ZZLong", "TargetNs.esc"); // not same file!
+    checkReference(reference, "ZZLong", "TargetNs.epigraph"); // not same file!
     Object[] variants = reference.getVariants();
     assertEquals(Arrays.toString(variants), 4, variants.length); // "ZZLong", "ZZLong", "R", "target"
   }
 
   public void testNsSegmentInTypeRef() {
-    myFixture.configureByFile("NamespaceSegmentInTypeRef.esc");
+    myFixture.configureByFile("NamespaceSegmentInTypeRef.epigraph");
     PsiElement element = myFixture.getFile().findElementAt(myFixture.getCaretOffset());
     //noinspection ConstantConditions
-    checkReference(element.getParent().getParent().getReference(), "namespace foo", "NamespaceSegmentInTypeRef.esc");
+    checkReference(element.getParent().getParent().getReference(), "namespace foo", "NamespaceSegmentInTypeRef.epigraph");
   }
 
   @SuppressWarnings("ConstantConditions")
   public void testMultiNsRef() {
-    myFixture.configureByFiles("MultiNamespaceRef.esc", "foobar.esc", "foobaz.esc");
+    myFixture.configureByFiles("MultiNamespaceRef.epigraph", "foobar.epigraph", "foobaz.epigraph");
     PsiElement element = myFixture.getFile().findElementAt(myFixture.getCaretOffset());
     PsiPolyVariantReference reference = (PsiPolyVariantReference) element.getParent().getParent().getReference();
     assertEquals(null, reference.resolve());
@@ -84,46 +84,46 @@ public class ReferenceTest extends LightCodeInsightFixtureTestCase {
   }
 
   public void testQuotedRef() {
-    myFixture.configureByFile("QuotedRefTest.esc");
+    myFixture.configureByFile("QuotedRefTest.epigraph");
     PsiElement element = myFixture.getFile().findElementAt(myFixture.getCaretOffset());
     //noinspection ConstantConditions
-    checkReference(element.getParent().getParent().getReference(), "Bar", "QuotedRefTest.esc");
+    checkReference(element.getParent().getParent().getReference(), "Bar", "QuotedRefTest.epigraph");
   }
 
   public void testQuotedTargetRef() {
-    myFixture.configureByFile("QuotedTargetRefTest.esc");
+    myFixture.configureByFile("QuotedTargetRefTest.epigraph");
     PsiElement element = myFixture.getFile().findElementAt(myFixture.getCaretOffset());
     //noinspection ConstantConditions
-    checkReference(element.getParent().getParent().getReference(), "Bar", "QuotedTargetRefTest.esc");
+    checkReference(element.getParent().getParent().getReference(), "Bar", "QuotedTargetRefTest.epigraph");
   }
 
   public void testQuotedSourceRef() {
-    myFixture.configureByFile("QuotedSourceRefTest.esc");
+    myFixture.configureByFile("QuotedSourceRefTest.epigraph");
     PsiElement element = myFixture.getFile().findElementAt(myFixture.getCaretOffset());
     //noinspection ConstantConditions
-    checkReference(element.getParent().getParent().getReference(), "Bar", "QuotedSourceRefTest.esc");
+    checkReference(element.getParent().getParent().getReference(), "Bar", "QuotedSourceRefTest.epigraph");
   }
 
   public void testVarTagRef() {
-    PsiReference reference = myFixture.getReferenceAtCaretPosition("VarTagRef.esc");
-    checkReference(reference, "tag1", "VarTagRef.esc");
+    PsiReference reference = myFixture.getReferenceAtCaretPosition("VarTagRef.epigraph");
+    checkReference(reference, "tag1", "VarTagRef.epigraph");
 
-    reference = myFixture.getReferenceAtCaretPosition("VarTagRef2.esc");
-    checkReference(reference, "tag1", "VarTagRef2.esc");
+    reference = myFixture.getReferenceAtCaretPosition("VarTagRef2.epigraph");
+    checkReference(reference, "tag1", "VarTagRef2.epigraph");
   }
 
   public void testQuotedVarTag() {
-    PsiReference reference = myFixture.getReferenceAtCaretPosition("VarTagRef3.esc");
-    checkReference(reference, "`string`", "VarTagRef3.esc");
+    PsiReference reference = myFixture.getReferenceAtCaretPosition("VarTagRef3.epigraph");
+    checkReference(reference, "`string`", "VarTagRef3.epigraph");
   }
 
   @SuppressWarnings("ConstantConditions")
   public void testReferenceAfterRename() {
-    myFixture.configureByFile("SameNsTypeRef.esc");
+    myFixture.configureByFile("SameNsTypeRef.epigraph");
     PsiElement element = myFixture.getFile().findElementAt(myFixture.getCaretOffset());
     PsiElement parent = element.getParent().getParent();
 
-    checkReference(parent.getReference(), "Bar", "SameNsTypeRef.esc");
+    checkReference(parent.getReference(), "Bar", "SameNsTypeRef.epigraph");
 
     myFixture.renameElementAtCaret("Baz");
     // first check that it actually got renamed
@@ -132,7 +132,7 @@ public class ReferenceTest extends LightCodeInsightFixtureTestCase {
         ((EdlFile) (myFixture.getFile())).getDefs().getTypeDefWrapperList().get(0).getRecordTypeDef().getName()
     );
 
-    checkReference(parent.getReference(), "Baz", "SameNsTypeRef.esc");
+    checkReference(parent.getReference(), "Baz", "SameNsTypeRef.epigraph");
   }
 
   ////////////////////////////////

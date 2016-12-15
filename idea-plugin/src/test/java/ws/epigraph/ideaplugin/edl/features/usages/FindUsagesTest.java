@@ -31,12 +31,12 @@ public class FindUsagesTest extends LightCodeInsightFixtureTestCase {
   }
 
   public void testFindTypeUsages() {
-    Collection<UsageInfo> usageInfos = myFixture.testFindUsages("FindTypeUsagesTestData.esc");
+    Collection<UsageInfo> usageInfos = myFixture.testFindUsages("FindTypeUsagesTestData.epigraph");
     assertEquals(2, usageInfos.size());
   }
 
   public void testFindVarTagUsages() {
-    Collection<UsageInfo> usageInfos = myFixture.testFindUsages("FindVarTagUsagesTestData.esc");
+    Collection<UsageInfo> usageInfos = myFixture.testFindUsages("FindVarTagUsagesTestData.epigraph");
     assertEquals(1, usageInfos.size());
   }
 }

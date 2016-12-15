@@ -1,7 +1,7 @@
 namespace epigraph.projections.req
 
 /**
- * Request-time projections specifying which parts of the object should be deleted. See operations.esc/DeleteOperation
+ * Request-time projections specifying which parts of the object should be deleted. See operations.epigraph/DeleteOperation
  */
 
 import epigraph.projections.Annotation

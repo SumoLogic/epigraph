@@ -30,7 +30,7 @@ import java.io.IOException;
 import java.util.Collection;
 
 /**
- * Compile Epigraph schema source files (.esc).
+ * Compile Epigraph EDL source files (.epigraph).
  */
 @Mojo(
     name = "testCompile",
@@ -55,7 +55,7 @@ public class TestCompileMojo extends BaseCompileMojo {
   /**
    * A set of Ant-like inclusion patterns used to select files from the source
    * directory for processing. By default, the pattern
-   * <code>**&#47;*.esc</code> is used to select epigraph schema files.
+   * <code>**&#47;*.epigraph</code> is used to select epigraph EDL files.
    */
   @Parameter
   private String[] testIncludes = new String[]{EDL_FILE_ANT_PATTERN};

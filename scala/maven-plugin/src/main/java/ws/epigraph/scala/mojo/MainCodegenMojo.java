@@ -27,7 +27,7 @@ import org.apache.maven.project.MavenProject;
 import java.io.File;
 
 /**
- * Compile Epigraph source files (.esc)
+ * Compile Epigraph source files (.epigraph)
  */
 @Mojo(
     name = "generate-sources",
@@ -40,10 +40,10 @@ public class MainCodegenMojo extends BaseCodegenMojo {
   /**
    * A set of Ant-like inclusion patterns used to select files from the source
    * directory for processing. By default, the pattern
-   * <code>**&#47;*.esc</code> is used to select epigraph schema files.
+   * <code>**&#47;*.epigraph</code> is used to select epigraph EDL files.
    */
   @Parameter
-  private String[] includes = new String[]{"**/*.esc"};
+  private String[] includes = new String[]{"**/*.epigraph"};
 
   /**
    * A set of Ant-like exclusion patterns used to prevent certain files from

@@ -46,7 +46,7 @@ import java.util.regex.Pattern;
  */
 public abstract class AbstractCompilingMojo extends AbstractMojo {
 
-  public static final String EDL_FILE_EXTENSION = "esc";
+  public static final String EDL_FILE_EXTENSION = "epigraph";
 
   public static final String EDL_FILE_ANT_PATTERN = "**/*." + EDL_FILE_EXTENSION;
 

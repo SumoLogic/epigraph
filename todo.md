@@ -44,7 +44,7 @@
 - [ ] Produce a list of `EpigraphType`->`JavaClass` mappings artifact (Duplicates task from `Schema compiler` list above)
 
 # Projections
-- [x] see `operations.esc`, bring java classes in sync
+- [x] see `operations.epigraph`, bring java classes in sync
 - [x] var projection: add `@Nullable getPathTagProjection`. Same for records and maps
 - [x] remove `includeInDefault` from `Op*` projections, add '*' to request projections instead
 - [x] remove default tags from op projections. If var type has default tag (in schema), and operation can build this tag -- then it becomes an implicit default
@@ -66,11 +66,11 @@
 - [ ] Add `catch` to req projections: `someField throws ( Error(message) ~MyError(code) )`
 
 # Operations  
-- [x] see `operations.esc`, restructure operations accordingly
+- [x] see `operations.epigraph`, restructure operations accordingly
 - [x] custom operations must support input data
 
 # Service
-- [x] see `operations.esc`, change routing accordingly
+- [x] see `operations.epigraph`, change routing accordingly
 
 # Other
 - See [Short-term todo list] (todo-short-term.md)

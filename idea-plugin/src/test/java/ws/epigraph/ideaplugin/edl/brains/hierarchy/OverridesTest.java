@@ -32,7 +32,7 @@ public class OverridesTest extends LightCodeInsightFixtureTestCase {
   }
 
   public void testQuotedVarTagOverride() {
-    myFixture.configureByFile("QuotedTagOverride.esc");
+    myFixture.configureByFile("QuotedTagOverride.epigraph");
     PsiElement element = myFixture.getFile().findElementAt(myFixture.getCaretOffset());
     EdlVarTagDecl tagDecl = PsiTreeUtil.getParentOfType(element, EdlVarTagDecl.class);
     assertNotNull(tagDecl);
@@ -40,7 +40,7 @@ public class OverridesTest extends LightCodeInsightFixtureTestCase {
   }
 
   public void testQuotedFieldOverride() {
-    myFixture.configureByFile("QuotedFieldOverride.esc");
+    myFixture.configureByFile("QuotedFieldOverride.epigraph");
     PsiElement element = myFixture.getFile().findElementAt(myFixture.getCaretOffset());
     EdlFieldDecl fieldDecl = PsiTreeUtil.getParentOfType(element, EdlFieldDecl.class);
     assertNotNull(fieldDecl);

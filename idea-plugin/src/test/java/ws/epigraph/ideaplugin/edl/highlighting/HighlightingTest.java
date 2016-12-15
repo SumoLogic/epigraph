@@ -32,7 +32,7 @@ public class HighlightingTest extends LightCodeInsightFixtureTestCase {
   }
 
   public void testInvalid1() {
-    myFixture.configureByFiles("Invalid1.esc", "other.esc", "builtin.esc", "foo.esc", "bar.esc");
+    myFixture.configureByFiles("Invalid1.epigraph", "other.epigraph", "builtin.epigraph", "foo.epigraph", "bar.epigraph");
     myFixture.enableInspections(new DuplicateImportInspection());
     myFixture.enableInspections(new UnnecessaryImportInspection());
     myFixture.enableInspections(new UnusedImportInspection());
@@ -41,7 +41,7 @@ public class HighlightingTest extends LightCodeInsightFixtureTestCase {
   }
 
   public void testAmbiguousReference() {
-    myFixture.configureByFiles("stringfoo.esc", "builtin.esc", "string.esc");
+    myFixture.configureByFiles("stringfoo.epigraph", "builtin.epigraph", "string.epigraph");
     myFixture.checkHighlighting(true, false, true);
   }
 }

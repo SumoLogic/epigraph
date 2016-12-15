@@ -34,7 +34,7 @@ public class ImportsManagerTest extends LightCodeInsightFixtureTestCase {
   }
 
   public void testFindUnusedImports() {
-    myFixture.configureByFiles("UnusedImports.esc", "foo.esc", "foobar.esc");
+    myFixture.configureByFiles("UnusedImports.epigraph", "foo.epigraph", "foobar.epigraph");
     Set<EdlImportStatement> unusedImports = ImportsManager.findUnusedImports((EdlFile) myFixture.getFile());
 
     Set<String> strings = unusedImports.stream().map(EdlImportStatement::getText).collect(Collectors.toSet());
@@ -42,7 +42,7 @@ public class ImportsManagerTest extends LightCodeInsightFixtureTestCase {
   }
 
   public void testOptimizeImports() {
-    myFixture.configureByFiles("UnusedImports.esc", "foo.esc", "foobar.esc");
+    myFixture.configureByFiles("UnusedImports.epigraph", "foo.epigraph", "foobar.epigraph");
     List<Qn> optimizedImports = ImportsManager.getOptimizedImports((EdlFile) myFixture.getFile());
 
     assertEquals(Arrays.asList(

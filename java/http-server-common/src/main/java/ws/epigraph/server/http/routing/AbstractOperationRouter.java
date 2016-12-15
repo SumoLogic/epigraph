@@ -40,7 +40,7 @@ import java.util.*;
  * Else operations are sorted by op path length in descending order and are tried one by one. The first operation
  * such that URL can be parsed against it's declaration (for instance path, input projection, output projection) wins.
  *
- * @see "operations.esc"
+ * @see "operations.epigraph"
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public abstract class AbstractOperationRouter<

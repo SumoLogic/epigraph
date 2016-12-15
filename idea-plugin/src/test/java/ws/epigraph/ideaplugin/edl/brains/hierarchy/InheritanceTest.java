@@ -35,7 +35,7 @@ public class InheritanceTest extends LightCodeInsightFixtureTestCase {
   }
 
   public void testDirectInheritors() {
-    myFixture.configureByFile("InheritanceSearch.esc");
+    myFixture.configureByFile("InheritanceSearch.epigraph");
     EdlTypeDef typeDef = findTypeDef("R1");
     Collection<EdlTypeDef> directInheritors = EdlDirectTypeInheritorsSearch.search(typeDef).findAll();
     assertEquals(1, directInheritors.size());
@@ -44,14 +44,14 @@ public class InheritanceTest extends LightCodeInsightFixtureTestCase {
   }
 
   public void testInheritors() {
-    myFixture.configureByFile("InheritanceSearch.esc");
+    myFixture.configureByFile("InheritanceSearch.epigraph");
     EdlTypeDef typeDef = findTypeDef("R1");
     Collection<EdlTypeDef> inheritors = EdlTypeInheritorsSearch.search(typeDef).findAll();
     checkResults(inheritors, "R2", "R3", "R4");
   }
 
   public void testSupplements() {
-    myFixture.configureByFile("InheritanceSearch2.esc");
+    myFixture.configureByFile("InheritanceSearch2.epigraph");
     EdlTypeDef r4 = findTypeDef("R4");
     Collection<EdlTypeDef> inheritors = EdlTypeInheritorsSearch.search(r4).findAll();
     checkUnorderedResults(inheritors, "R3", "R2", "R1"); // Do we need ordering for transitive inheritors?
@@ -69,7 +69,7 @@ public class InheritanceTest extends LightCodeInsightFixtureTestCase {
   }
 
   public void testDirectParents() {
-    myFixture.configureByFile("InheritanceSearch.esc");
+    myFixture.configureByFile("InheritanceSearch.epigraph");
     EdlTypeDef typeDef = findTypeDef("R2");
     Collection<EdlTypeDef> directInheritors = EdlDirectTypeParentsSearch.search(typeDef).findAll();
     assertEquals(1, directInheritors.size());
@@ -78,21 +78,21 @@ public class InheritanceTest extends LightCodeInsightFixtureTestCase {
   }
 
   public void testParents() {
-    myFixture.configureByFile("InheritanceSearch.esc");
+    myFixture.configureByFile("InheritanceSearch.epigraph");
     EdlTypeDef r3 = findTypeDef("R4");
     Collection<EdlTypeDef> parents = EdlTypeParentsSearch.search(r3).findAll();
     checkResults(parents, "R3", "R2", "R1");
   }
 
   public void testCircularInheritors() {
-    myFixture.configureByFile("Circular.esc");
+    myFixture.configureByFile("Circular.epigraph");
     EdlTypeDef typeDef = findTypeDef("R1");
     Collection<EdlTypeDef> inheritors = EdlTypeInheritorsSearch.search(typeDef).findAll();
     checkResults(inheritors, "R2", "R3", "R1");
   }
 
   public void testCircularParents() {
-    myFixture.configureByFile("Circular.esc");
+    myFixture.configureByFile("Circular.epigraph");
     EdlTypeDef typeDef = findTypeDef("R1");
     Collection<EdlTypeDef> inheritors = EdlTypeParentsSearch.search(typeDef).findAll();
     checkResults(inheritors, "R3", "R2", "R1");

@@ -48,7 +48,7 @@ public abstract class BaseCompileMojo extends AbstractCompilingMojo {
         CEdlFile edlFile = ctx.edlFiles().get(sourceFilename); // edl files are mapped by their source names
         String relativeFilePath = StringUtils.join(edlFile.namespace().fqn().segments, File.separator);
         FileUtils.copyFileToDirectory(new File(sourceFilename), new File(mojoOutputDirectory, relativeFilePath));
-        // TODO there might be collisions (foo/bar.esc and baz/bar.esc moved to the save namespace/bar.esc)...
+        // TODO there might be collisions (foo/bar.epigraph and baz/bar.epigraph moved to the save namespace/bar.epigraph)...
       }
     } catch (IOException e) {
       throw new MojoExecutionException("Error compiling sources to " + outputDirectory, e);
