@@ -48,7 +48,7 @@ public class EdlCompletionContributor extends CompletionContributor {
   private static final String[] TOP_LEVEL_COMPLETIONS = {
       "abstract ", "record ", "map", "list", "vartype ", "enum ",
       "integer ", "long ", "double ", "boolean ", "string ",
-      "supplement "
+      "supplement ", "resource "
   };
 
   // items from TOP_LEVEL_COMPLETIONS that can't follow 'abstract' keyword
@@ -57,17 +57,17 @@ public class EdlCompletionContributor extends CompletionContributor {
   ));
 
   // which types can have 'extends' clause
-  private static final Set<IElementType> DEFE_SUPPORTING_EXTENDS = new HashSet<>(Arrays.asList(
+  private static final Set<IElementType> DEFS_SUPPORTING_EXTENDS = new HashSet<>(Arrays.asList(
       E_VAR_TYPE_DEF, E_RECORD_TYPE_DEF, E_LIST_TYPE_DEF, E_MAP_TYPE_DEF, E_PRIMITIVE_TYPE_DEF
   ));
 
   // which types can have 'meta' clause
-  private static final Set<IElementType> DEFE_SUPPORTING_META = new HashSet<>(Arrays.asList(
+  private static final Set<IElementType> DEFS_SUPPORTING_META = new HashSet<>(Arrays.asList(
       E_VAR_TYPE_DEF, E_RECORD_TYPE_DEF, E_LIST_TYPE_DEF, E_MAP_TYPE_DEF, E_ENUM_TYPE_DEF, E_PRIMITIVE_TYPE_DEF
   ));
 
   // which types can have 'supplements' clause
-  private static final Set<IElementType> DEFE_SUPPORTING_SUPPLEMENTS = new HashSet<>(Arrays.asList(
+  private static final Set<IElementType> DEFS_SUPPORTING_SUPPLEMENTS = new HashSet<>(Arrays.asList(
       E_VAR_TYPE_DEF, E_RECORD_TYPE_DEF
   ));
 
@@ -77,17 +77,26 @@ public class EdlCompletionContributor extends CompletionContributor {
         psiElement().withLanguage(EdlLanguage.INSTANCE),
         new CompletionProvider<CompletionParameters>() {
           @Override
-          protected void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context, @NotNull CompletionResultSet result) {
+          protected void addCompletions(
+              @NotNull CompletionParameters parameters,
+              ProcessingContext context,
+              @NotNull CompletionResultSet result) {
             PsiElement position = parameters.getPosition();
             completeTopLevelKeywords(position, result);     // complete top-level edl keywords
             completeExtendsKeyword(position, result);       // complete `extends` in type defs
             completeMetaKeyword(position, result);          // complete `meta` in type defs
             completeSupplementsKeyword(position, result);   // complete `supplements` in type defs
             completeWith(position, result);                 // complete `with` inside `supplements`
-            completeNewTypeName(position, result);          // complete new type names using unresolved references in current file
+            completeNewTypeName(
+                position,
+                result
+            );          // complete new type names using unresolved references in current file
             completeOverride(position, result);             // complete `override` in field/tag decls
             completeOverrideMember(position, result);       // complete type name after `override`
             completeDefault(position, result);              // complete `default` keyword in `valueTypeRef`
+
+            completeResourceKeywords(position, result);     // complete top-level keywords for resource defs
+            completeOperationKeywords(position, result);    // complete top-level keywords for operation defs
           }
         }
     );
@@ -103,7 +112,6 @@ public class EdlCompletionContributor extends CompletionContributor {
 
     PsiElement parent = position.getParent();
     if (parent != null) {
-      IElementType parentElementType = parent.getNode().getElementType();
       if (parent instanceof EdlTypeDef || parent instanceof EdlSupplementDef) return;
 
       PsiElement grandParent = parent.getParent();
@@ -120,8 +128,9 @@ public class EdlCompletionContributor extends CompletionContributor {
           PsiElement nextParentSibling = EdlPsiUtil.nextNonWhitespaceSibling(parent);
           // don't initiate new type completion if we're followed by anything but a new def, e.g. when we're followed by a {..} dummy block
           completeTypeDef = nextParentSibling == null
-              || nextParentSibling instanceof EdlTypeDefWrapper
-              || nextParentSibling instanceof EdlSupplementDef;
+                            || nextParentSibling instanceof EdlTypeDefWrapper
+                            || nextParentSibling instanceof EdlSupplementDef
+                            || nextParentSibling instanceof EdlResourceDef;
 
         } else if (grandParentElementType == E_IMPORT_STATEMENT) {
           if (!EdlPsiUtil.hasNextSibling(grandParent, E_IMPORT_STATEMENT)) {
@@ -169,10 +178,11 @@ public class EdlCompletionContributor extends CompletionContributor {
 
     completeInnerTypedefKeyword(
         position,
-        new EdlPsiUtil.ElementTypeQualifier(DEFE_SUPPORTING_EXTENDS),
+        new EdlPsiUtil.ElementTypeQualifier(DEFS_SUPPORTING_EXTENDS),
         extendsPresent,
         "extends ",
-        result);
+        result
+    );
   }
 
   private void completeMetaKeyword(@NotNull PsiElement position, @NotNull CompletionResultSet result) {
@@ -186,10 +196,11 @@ public class EdlCompletionContributor extends CompletionContributor {
 
     completeInnerTypedefKeyword(
         position,
-        new EdlPsiUtil.ElementTypeQualifier(DEFE_SUPPORTING_META),
+        new EdlPsiUtil.ElementTypeQualifier(DEFS_SUPPORTING_META),
         metaOrExtendsPresent,
         "meta ",
-        result);
+        result
+    );
   }
 
   private void completeSupplementsKeyword(@NotNull PsiElement position, @NotNull CompletionResultSet result) {
@@ -209,17 +220,19 @@ public class EdlCompletionContributor extends CompletionContributor {
 
     completeInnerTypedefKeyword(
         position,
-        new EdlPsiUtil.ElementTypeQualifier(DEFE_SUPPORTING_SUPPLEMENTS),
+        new EdlPsiUtil.ElementTypeQualifier(DEFS_SUPPORTING_SUPPLEMENTS),
         metaOrExtendsOrSupplementsPresent,
         "supplements ",
-        result);
+        result
+    );
   }
 
-  private void completeInnerTypedefKeyword(@NotNull PsiElement position,
-                                           @NotNull EdlPsiUtil.ElementQualifier canHaveQualifier,
-                                           @NotNull EdlPsiUtil.ElementQualifier negativeBeforeQualifier,
-                                           @NotNull String completion,
-                                           @NotNull CompletionResultSet result) {
+  private void completeInnerTypedefKeyword(
+      @NotNull PsiElement position,
+      @NotNull EdlPsiUtil.ElementQualifier canHaveQualifier,
+      @NotNull EdlPsiUtil.ElementQualifier negativeBeforeQualifier,
+      @NotNull String completion,
+      @NotNull CompletionResultSet result) {
 
     PsiElement parent = position.getParent();
     if (parent == null) return;
@@ -428,9 +441,7 @@ public class EdlCompletionContributor extends CompletionContributor {
   private void completeDefault(@NotNull PsiElement position, @NotNull final CompletionResultSet result) {
     EdlValueTypeRef valueTypeRef = PsiTreeUtil.getParentOfType(position, EdlValueTypeRef.class);
     // there is a value type ref and no 'default' in it yet
-    if (valueTypeRef != null) {
-      completeDefault(valueTypeRef, result);
-    } else {
+    if (valueTypeRef == null) {
       PsiElement prevVisibleLeaf = PsiTreeUtil.prevVisibleLeaf(position);
       if (prevVisibleLeaf != null) {
         EdlFieldDecl fieldDecl = PsiTreeUtil.getParentOfType(prevVisibleLeaf, EdlFieldDecl.class);
@@ -438,6 +449,8 @@ public class EdlCompletionContributor extends CompletionContributor {
           completeDefault(fieldDecl.getValueTypeRef(), result);
         }
       }
+    } else {
+      completeDefault(valueTypeRef, result);
     }
   }
 
@@ -457,6 +470,16 @@ public class EdlCompletionContributor extends CompletionContributor {
         }
       }
     }
+  }
+
+  // service declarations ----------------------------------------------------------------------------------------------
+
+  private void completeResourceKeywords(@NotNull PsiElement position, @NotNull CompletionResultSet result) {
+    // todo
+  }
+
+  private void completeOperationKeywords(@NotNull PsiElement position, @NotNull CompletionResultSet result) {
+    // todo
   }
 
 }

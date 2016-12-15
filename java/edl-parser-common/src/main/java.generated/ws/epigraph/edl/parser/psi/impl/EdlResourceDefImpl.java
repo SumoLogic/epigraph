@@ -33,21 +33,21 @@ public class EdlResourceDefImpl extends ASTWrapperPsiElement implements EdlResou
   }
 
   @Override
-  @NotNull
+  @Nullable
   public EdlResourceName getResourceName() {
-    return notNullChild(PsiTreeUtil.getChildOfType(this, EdlResourceName.class));
+    return PsiTreeUtil.getChildOfType(this, EdlResourceName.class);
   }
 
   @Override
-  @NotNull
+  @Nullable
   public EdlResourceType getResourceType() {
-    return notNullChild(PsiTreeUtil.getChildOfType(this, EdlResourceType.class));
+    return PsiTreeUtil.getChildOfType(this, EdlResourceType.class);
   }
 
   @Override
-  @NotNull
+  @Nullable
   public PsiElement getCurlyLeft() {
-    return notNullChild(findChildByType(E_CURLY_LEFT));
+    return findChildByType(E_CURLY_LEFT);
   }
 
   @Override

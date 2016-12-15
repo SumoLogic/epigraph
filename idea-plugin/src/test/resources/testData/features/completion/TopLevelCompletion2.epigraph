@@ -1,0 +1,9 @@
+namespace some
+
+import bar
+
+vartype V extends V {}
+
+<caret>
+
+resource Foo : V {}

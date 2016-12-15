@@ -29,7 +29,7 @@ import java.util.*;
 public class CompletionTest extends LightCodeInsightFixtureTestCase {
   private final List<String> TOP_LEVEL = Arrays.asList(
       "abstract ", "vartype ", "record ", "map", "list", "enum ",
-      "string ", "double ", "integer ", "long ", "boolean ", "supplement "
+      "string ", "double ", "integer ", "long ", "boolean ", "supplement ", "resource "
   );
 
   @Override
@@ -64,6 +64,11 @@ public class CompletionTest extends LightCodeInsightFixtureTestCase {
     checkCompletionVariants(TOP_LEVEL);
   }
 
+  public void testTopLevelCompletion2() {
+    myFixture.configureByFile("TopLevelCompletion2.epigraph");
+    checkCompletionVariants(TOP_LEVEL);
+  }
+
   public void testNamespaceOnlyTopLevelCompletion() {
     myFixture.configureByFile("NamespaceOnlyTopLevelCompletion.epigraph");
     checkCompletionVariants(TOP_LEVEL, "import ");
@@ -75,7 +80,7 @@ public class CompletionTest extends LightCodeInsightFixtureTestCase {
 
   public void testCompletionAfterAbstract() {
     myFixture.configureByFile("CompletionAfterAbstract.epigraph");
-    checkCompletionVariants("record ", "map", "list", "string ", "double ", "integer ", "long ", "boolean ");
+    checkCompletionVariants("record ", "map", "list", "string ", "double ", "integer ", "long ", "boolean ", "resource ");
   }
 
   public void testCompletionAfterRecordName() {

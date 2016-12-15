@@ -135,9 +135,6 @@ qid ::= id {
   methods=[getName setName getCanonicalName]
 }
 
-imports ::= importStatement*
-importStatement ::= 'import' qn {pin=1 recoverWhile="importRecover"}
-
 namespaceDecl ::= 'namespace' qn namespaceBody? {
   methods=[getFqn toString]
   stubClass="ws.epigraph.edl.parser.psi.stubs.EdlNamespaceDeclStub"
@@ -145,9 +142,17 @@ namespaceDecl ::= 'namespace' qn namespaceBody? {
   pin=1
   recoverWhile="namespaceDeclRecover"
 }
+private namespaceDeclRecover ::= ! ('import' | 'namespace' | 'abstract' | 'record' | ',' |
+                           'map' | 'list' | 'vartype' | 'enum' | 'supplement'|
+                           'string' | 'integer' | 'long' | 'double' | 'boolean' | 'resource')
 
 private namespaceBody ::= '{' namespaceBodyPart* '}'
 private namespaceBodyPart ::= annotation // | ...
+
+imports ::= importStatement*
+importStatement ::= 'import' qn {pin=1 recoverWhile="importRecover"}
+private importRecover ::= namespaceDeclRecover
+
 
 qnSegment ::= qid {
   implements="com.intellij.psi.PsiNameIdentifierOwner"
@@ -166,7 +171,7 @@ varTagRef ::= qid {
 /// defs
 
 defs ::= def*
-private def ::= typeDefWrapper | supplementDef | resourceDef {recoverWhile="declRecover"}
+private def ::= typeDefWrapper | supplementDef | resourceDef {recoverWhile="defRecover"}
 
 // ============= schema language =============
 
@@ -208,8 +213,11 @@ varTypeDef ::= typeDefModifiers 'vartype' typeName extendsDecl? supplementsDecl?
   stubClass="ws.epigraph.edl.parser.psi.stubs.EdlVarTypeDefStub"
   elementTypeClass="ws.epigraph.edl.parser.psi.stubs.EdlVarTypeDefStubElementType"
   pin=2
+  //recoverWhile=defRecover
 }
-varTypeBody ::= '{' (varTypeBodyPart ','?)* '}'
+varTypeBody ::= '{' (varTypeBodyPart ','?)* '}' {
+//  recoverWhile = defRecover
+}
 private varTypeBodyPart ::= varTagDecl | annotation
 varTagDecl ::= typeMemberModifiers qid ':' typeRef varTypeMemberBody? {
   implements=["ws.epigraph.edl.parser.psi.AnnotationsHolder" "com.intellij.psi.PsiNamedElement"]
@@ -228,8 +236,11 @@ recordTypeDef ::= typeDefModifiers 'record' typeName extendsDecl? metaDecl? supp
   stubClass="ws.epigraph.edl.parser.psi.stubs.EdlRecordTypeDefStub"
   elementTypeClass="ws.epigraph.edl.parser.psi.stubs.EdlRecordTypeDefStubElementType"
   pin=2
+  //recoverWhile=defRecover
 }
-recordTypeBody ::= '{' (recordBodyPart ','?)* '}'
+recordTypeBody ::= '{' (recordBodyPart ','?)* '}' {
+//  recoverWhile = defRecover
+}
 private recordBodyPart ::= fieldDecl | annotation
 fieldDecl ::= typeMemberModifiers qid ':' valueTypeRef fieldBody? {
   implements=["ws.epigraph.edl.parser.psi.AnnotationsHolder" "com.intellij.psi.PsiNamedElement"]
@@ -248,8 +259,11 @@ listTypeDef ::= typeDefModifiers anonList typeName extendsDecl? metaDecl? supple
   stubClass="ws.epigraph.edl.parser.psi.stubs.EdlListTypeDefStub"
   elementTypeClass="ws.epigraph.edl.parser.psi.stubs.EdlListTypeDefStubElementType"
   pin=2
+  //recoverWhile=defRecover
 }
-listTypeBody ::= '{' (listTypeBodyPart ','?)* '}'
+listTypeBody ::= '{' (listTypeBodyPart ','?)* '}' {
+//  recoverWhile = defRecover
+}
 private listTypeBodyPart ::= annotation
 
 /// map
@@ -259,8 +273,11 @@ mapTypeDef ::= typeDefModifiers anonMap typeName extendsDecl? metaDecl? suppleme
   stubClass="ws.epigraph.edl.parser.psi.stubs.EdlMapTypeDefStub"
   elementTypeClass="ws.epigraph.edl.parser.psi.stubs.EdlMapTypeDefStubElementType"
   pin=2
+  //recoverWhile=defRecover
 }
-mapTypeBody ::= '{' (mapTypeBodyPart ','?)* '}'
+mapTypeBody ::= '{' (mapTypeBodyPart ','?)* '}' {
+//  recoverWhile = defRecover
+}
 private mapTypeBodyPart ::= annotation
 
 /// enum
@@ -271,8 +288,11 @@ enumTypeDef ::= 'enum' typeName metaDecl? enumTypeBody { // extends?
   stubClass="ws.epigraph.edl.parser.psi.stubs.EdlEnumTypeDefStub"
   elementTypeClass="ws.epigraph.edl.parser.psi.stubs.EdlEnumTypeDefStubElementType"
   pin=1
+  //recoverWhile=defRecover
 }
-enumTypeBody ::= '{' (enumTypeBodyPart ','?)* '}'
+enumTypeBody ::= '{' (enumTypeBodyPart ','?)* '}' {
+//  recoverWhile = defRecover
+}
 private enumTypeBodyPart ::= annotation | enumMemberDecl { recoverWhile = enumPartRecover }
 enumMemberDecl ::= qid enumMemberBody? {
   implements=["ws.epigraph.edl.parser.psi.AnnotationsHolder" "com.intellij.psi.PsiNamedElement"]
@@ -293,9 +313,12 @@ primitiveTypeDef ::= typeDefModifiers primitiveKind typeName extendsDecl? metaDe
   stubClass="ws.epigraph.edl.parser.psi.stubs.EdlPrimitiveTypeDefStub"
   elementTypeClass="ws.epigraph.edl.parser.psi.stubs.EdlPrimitiveTypeDefStubElementType"
   pin=2
+  //recoverWhile=defRecover
 }
 private primitiveKind ::= 'string' | 'integer' | 'long' | 'double' | 'boolean'
-primitiveTypeBody ::= '{' (primitiveBodyPart ','?)* '}'
+primitiveTypeBody ::= '{' (primitiveBodyPart ','?)* '}' {
+//  recoverWhile = defRecover
+}
 private primitiveBodyPart ::= annotation
 
 supplementDef ::= 'supplement' qnTypeRef (',' qnTypeRef)* 'with' qnTypeRef {
@@ -303,19 +326,13 @@ supplementDef ::= 'supplement' qnTypeRef (',' qnTypeRef)* 'with' qnTypeRef {
   stubClass="ws.epigraph.edl.parser.psi.stubs.EdlSupplementDefStub"
   elementTypeClass="ws.epigraph.edl.parser.psi.stubs.EdlSupplementDefStubElementType"
   pin=1
+  //recoverWhile=defRecover
 }
 
-private namespaceDeclRecover ::= ! ('import' | 'namespace' | 'abstract' | 'record' | ',' |
+private defRecover ::= ! ('import' | 'namespace' | 'abstract' | 'record' | ',' | '}' |
                            'map' | 'list' | 'vartype' | 'enum' | 'supplement'|
                            'string' | 'integer' | 'long' | 'double' | 'boolean' | 'resource')
 
-private importRecover ::= namespaceDeclRecover
-private declRecover ::= namespaceDeclRecover
-//private declRecover ::= ! ('import' | 'namespace' | 'record' | ',' |
-//                           'vartype' | 'enum' | 'supplement'|
-//                           'string' | 'integer' | 'long' | 'double' | 'boolean')
-
-// todo fixme - take idl into account
 private partRecover ::= ! ('}' | qid '=' | qid ':' | 'abstract' | 'override' | ',' )
 //private partRecover ::= ! ('}' | qid | 'abstract' | 'override' | ',' )
 
@@ -323,16 +340,17 @@ private partRecover ::= ! ('}' | qid '=' | qid ':' | 'abstract' | 'override' | '
 
 tagName ::= qid | '_' // `_` is default tag
 
-resourceDef ::= 'resource' resourceName resourceType resourceDefBody
+resourceDef ::= 'resource' resourceName resourceType resourceDefBody {
+  pin = 1
+  //recoverWhile = defRecover
+}
+
 resourceName ::= qid
 resourceType ::= ':' valueTypeRef
 
-private resourceDefBody ::= '{' (resourceDefPart ','?)* '}'
-private resourceDefPart ::= operationDef { recoverWhile = operationBodyRecover }
-
-private operationBodyRecover ::= ! ( '}' | ',' |
-  'method' | 'inputType' | 'inputProjection' | 'outputType' | 'outputProjection' | 'deleteProjection' | 'path' |
-  (id '=') | (id? ('READ' | 'CREATE' | 'UPDATE' | 'DELETE' | 'CUSTOM') ) )
+private resourceDefBody ::= '{' (operationDef ','?)* '}' {
+  recoverWhile = defRecover
+}
 
 // operation def parts
 operationName ::= 'default' | qid
@@ -344,7 +362,17 @@ operationOutputType ::= 'outputType' valueTypeRef {pin=1}
 operationOutputProjection ::= 'outputProjection' opOutputFieldProjection {pin=1}
 operationDeleteProjection ::= 'deleteProjection' opDeleteFieldProjection {pin=1}
 
-operationDef ::= createOperationDef | readOperationDef | updateOperationDef | deleteOperationDef | customOperationDef
+operationDef ::= createOperationDef | readOperationDef | updateOperationDef | deleteOperationDef | customOperationDef {
+  name = "Operation declaration"
+  recoverWhile = operationDefRecover
+}
+
+private operationDefRecover ::= ! ( '}' | ',' | qid '=' | (qid? ('READ' | 'CREATE' | 'UPDATE' | 'DELETE' | 'CUSTOM') ) )
+
+private operationBodyRecover ::= ! ( '}' | ',' |
+  'method' | 'inputType' | 'inputProjection' | 'outputType' | 'outputProjection' | 'deleteProjection' | 'path' |
+  (qid '=') | (qid? ('READ' | 'CREATE' | 'UPDATE' | 'DELETE' | 'CUSTOM') ) )
+
 
 createOperationDef ::= operationName? 'CREATE' createOperationBody {pin=2}
 private createOperationBody ::= '{' (createOperationBodyPart ','?)* '}'

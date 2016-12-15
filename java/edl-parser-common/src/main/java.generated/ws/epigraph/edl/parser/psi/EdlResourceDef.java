@@ -10,13 +10,13 @@ public interface EdlResourceDef extends PsiElement {
   @NotNull
   List<EdlOperationDef> getOperationDefList();
 
-  @NotNull
+  @Nullable
   EdlResourceName getResourceName();
 
-  @NotNull
+  @Nullable
   EdlResourceType getResourceType();
 
-  @NotNull
+  @Nullable
   PsiElement getCurlyLeft();
 
   @Nullable

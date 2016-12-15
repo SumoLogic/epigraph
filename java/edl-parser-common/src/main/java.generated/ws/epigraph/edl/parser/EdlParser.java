@@ -794,12 +794,6 @@ public class EdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // namespaceDeclRecover
-  static boolean declRecover(PsiBuilder b, int l) {
-    return namespaceDeclRecover(b, l + 1);
-  }
-
-  /* ********************************************************** */
   // typeDefWrapper | supplementDef | resourceDef
   static boolean def(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "def")) return false;
@@ -808,7 +802,48 @@ public class EdlParser implements PsiParser, LightPsiParser {
     r = typeDefWrapper(b, l + 1);
     if (!r) r = supplementDef(b, l + 1);
     if (!r) r = resourceDef(b, l + 1);
-    exit_section_(b, l, m, r, false, declRecover_parser_);
+    exit_section_(b, l, m, r, false, defRecover_parser_);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // ! ('import' | 'namespace' | 'abstract' | 'record' | ',' | '}' |
+  //                            'map' | 'list' | 'vartype' | 'enum' | 'supplement'|
+  //                            'string' | 'integer' | 'long' | 'double' | 'boolean' | 'resource')
+  static boolean defRecover(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "defRecover")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NOT_);
+    r = !defRecover_0(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // 'import' | 'namespace' | 'abstract' | 'record' | ',' | '}' |
+  //                            'map' | 'list' | 'vartype' | 'enum' | 'supplement'|
+  //                            'string' | 'integer' | 'long' | 'double' | 'boolean' | 'resource'
+  private static boolean defRecover_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "defRecover_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, E_IMPORT);
+    if (!r) r = consumeToken(b, E_NAMESPACE);
+    if (!r) r = consumeToken(b, E_ABSTRACT);
+    if (!r) r = consumeToken(b, E_RECORD);
+    if (!r) r = consumeToken(b, E_COMMA);
+    if (!r) r = consumeToken(b, E_CURLY_RIGHT);
+    if (!r) r = consumeToken(b, E_MAP);
+    if (!r) r = consumeToken(b, E_LIST);
+    if (!r) r = consumeToken(b, E_VARTYPE);
+    if (!r) r = consumeToken(b, E_ENUM);
+    if (!r) r = consumeToken(b, E_SUPPLEMENT);
+    if (!r) r = consumeToken(b, E_STRING_T);
+    if (!r) r = consumeToken(b, E_INTEGER_T);
+    if (!r) r = consumeToken(b, E_LONG_T);
+    if (!r) r = consumeToken(b, E_DOUBLE_T);
+    if (!r) r = consumeToken(b, E_BOOLEAN_T);
+    if (!r) r = consumeToken(b, E_RESOURCE);
+    exit_section_(b, m, null, r);
     return r;
   }
 
@@ -1035,7 +1070,9 @@ public class EdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '{' (enumTypeBodyPart ','?)* '}'
+  // '{' (enumTypeBodyPart ','?)* '}' {
+  // //  recoverWhile = defRecover
+  // }
   public static boolean enumTypeBody(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "enumTypeBody")) return false;
     if (!nextTokenIs(b, E_CURLY_LEFT)) return false;
@@ -1044,7 +1081,8 @@ public class EdlParser implements PsiParser, LightPsiParser {
     r = consumeToken(b, E_CURLY_LEFT);
     p = r; // pin = 1
     r = r && report_error_(b, enumTypeBody_1(b, l + 1));
-    r = p && consumeToken(b, E_CURLY_RIGHT) && r;
+    r = p && report_error_(b, consumeToken(b, E_CURLY_RIGHT)) && r;
+    r = p && enumTypeBody_3(b, l + 1) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -1076,6 +1114,13 @@ public class EdlParser implements PsiParser, LightPsiParser {
   private static boolean enumTypeBody_1_0_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "enumTypeBody_1_0_1")) return false;
     consumeToken(b, E_COMMA);
+    return true;
+  }
+
+  // {
+  // //  recoverWhile = defRecover
+  // }
+  private static boolean enumTypeBody_3(PsiBuilder b, int l) {
     return true;
   }
 
@@ -1318,7 +1363,9 @@ public class EdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '{' (listTypeBodyPart ','?)* '}'
+  // '{' (listTypeBodyPart ','?)* '}' {
+  // //  recoverWhile = defRecover
+  // }
   public static boolean listTypeBody(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "listTypeBody")) return false;
     if (!nextTokenIs(b, E_CURLY_LEFT)) return false;
@@ -1327,7 +1374,8 @@ public class EdlParser implements PsiParser, LightPsiParser {
     r = consumeToken(b, E_CURLY_LEFT);
     p = r; // pin = 1
     r = r && report_error_(b, listTypeBody_1(b, l + 1));
-    r = p && consumeToken(b, E_CURLY_RIGHT) && r;
+    r = p && report_error_(b, consumeToken(b, E_CURLY_RIGHT)) && r;
+    r = p && listTypeBody_3(b, l + 1) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -1359,6 +1407,13 @@ public class EdlParser implements PsiParser, LightPsiParser {
   private static boolean listTypeBody_1_0_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "listTypeBody_1_0_1")) return false;
     consumeToken(b, E_COMMA);
+    return true;
+  }
+
+  // {
+  // //  recoverWhile = defRecover
+  // }
+  private static boolean listTypeBody_3(PsiBuilder b, int l) {
     return true;
   }
 
@@ -1477,7 +1532,9 @@ public class EdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '{' (mapTypeBodyPart ','?)* '}'
+  // '{' (mapTypeBodyPart ','?)* '}' {
+  // //  recoverWhile = defRecover
+  // }
   public static boolean mapTypeBody(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "mapTypeBody")) return false;
     if (!nextTokenIs(b, E_CURLY_LEFT)) return false;
@@ -1486,7 +1543,8 @@ public class EdlParser implements PsiParser, LightPsiParser {
     r = consumeToken(b, E_CURLY_LEFT);
     p = r; // pin = 1
     r = r && report_error_(b, mapTypeBody_1(b, l + 1));
-    r = p && consumeToken(b, E_CURLY_RIGHT) && r;
+    r = p && report_error_(b, consumeToken(b, E_CURLY_RIGHT)) && r;
+    r = p && mapTypeBody_3(b, l + 1) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -1518,6 +1576,13 @@ public class EdlParser implements PsiParser, LightPsiParser {
   private static boolean mapTypeBody_1_0_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "mapTypeBody_1_0_1")) return false;
     consumeToken(b, E_COMMA);
+    return true;
+  }
+
+  // {
+  // //  recoverWhile = defRecover
+  // }
+  private static boolean mapTypeBody_3(PsiBuilder b, int l) {
     return true;
   }
 
@@ -4218,7 +4283,7 @@ public class EdlParser implements PsiParser, LightPsiParser {
   /* ********************************************************** */
   // ! ( '}' | ',' |
   //   'method' | 'inputType' | 'inputProjection' | 'outputType' | 'outputProjection' | 'deleteProjection' | 'path' |
-  //   (id '=') | (id? ('READ' | 'CREATE' | 'UPDATE' | 'DELETE' | 'CUSTOM') ) )
+  //   (qid '=') | (qid? ('READ' | 'CREATE' | 'UPDATE' | 'DELETE' | 'CUSTOM') ) )
   static boolean operationBodyRecover(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "operationBodyRecover")) return false;
     boolean r;
@@ -4230,7 +4295,7 @@ public class EdlParser implements PsiParser, LightPsiParser {
 
   // '}' | ',' |
   //   'method' | 'inputType' | 'inputProjection' | 'outputType' | 'outputProjection' | 'deleteProjection' | 'path' |
-  //   (id '=') | (id? ('READ' | 'CREATE' | 'UPDATE' | 'DELETE' | 'CUSTOM') )
+  //   (qid '=') | (qid? ('READ' | 'CREATE' | 'UPDATE' | 'DELETE' | 'CUSTOM') )
   private static boolean operationBodyRecover_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "operationBodyRecover_0")) return false;
     boolean r;
@@ -4250,17 +4315,18 @@ public class EdlParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // id '='
+  // qid '='
   private static boolean operationBodyRecover_0_9(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "operationBodyRecover_0_9")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeTokens(b, 0, E_ID, E_EQ);
+    r = qid(b, l + 1);
+    r = r && consumeToken(b, E_EQ);
     exit_section_(b, m, null, r);
     return r;
   }
 
-  // id? ('READ' | 'CREATE' | 'UPDATE' | 'DELETE' | 'CUSTOM')
+  // qid? ('READ' | 'CREATE' | 'UPDATE' | 'DELETE' | 'CUSTOM')
   private static boolean operationBodyRecover_0_10(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "operationBodyRecover_0_10")) return false;
     boolean r;
@@ -4271,10 +4337,10 @@ public class EdlParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // id?
+  // qid?
   private static boolean operationBodyRecover_0_10_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "operationBodyRecover_0_10_0")) return false;
-    consumeToken(b, E_ID);
+    qid(b, l + 1);
     return true;
   }
 
@@ -4297,13 +4363,80 @@ public class EdlParser implements PsiParser, LightPsiParser {
   public static boolean operationDef(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "operationDef")) return false;
     boolean r;
-    Marker m = enter_section_(b, l, _NONE_, E_OPERATION_DEF, "<operation def>");
+    Marker m = enter_section_(b, l, _NONE_, E_OPERATION_DEF, "<Operation declaration>");
     r = createOperationDef(b, l + 1);
     if (!r) r = readOperationDef(b, l + 1);
     if (!r) r = updateOperationDef(b, l + 1);
     if (!r) r = deleteOperationDef(b, l + 1);
     if (!r) r = customOperationDef(b, l + 1);
+    exit_section_(b, l, m, r, false, operationDefRecover_parser_);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // ! ( '}' | ',' | qid '=' | (qid? ('READ' | 'CREATE' | 'UPDATE' | 'DELETE' | 'CUSTOM') ) )
+  static boolean operationDefRecover(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "operationDefRecover")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NOT_);
+    r = !operationDefRecover_0(b, l + 1);
     exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // '}' | ',' | qid '=' | (qid? ('READ' | 'CREATE' | 'UPDATE' | 'DELETE' | 'CUSTOM') )
+  private static boolean operationDefRecover_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "operationDefRecover_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, E_CURLY_RIGHT);
+    if (!r) r = consumeToken(b, E_COMMA);
+    if (!r) r = operationDefRecover_0_2(b, l + 1);
+    if (!r) r = operationDefRecover_0_3(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // qid '='
+  private static boolean operationDefRecover_0_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "operationDefRecover_0_2")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = qid(b, l + 1);
+    r = r && consumeToken(b, E_EQ);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // qid? ('READ' | 'CREATE' | 'UPDATE' | 'DELETE' | 'CUSTOM')
+  private static boolean operationDefRecover_0_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "operationDefRecover_0_3")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = operationDefRecover_0_3_0(b, l + 1);
+    r = r && operationDefRecover_0_3_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // qid?
+  private static boolean operationDefRecover_0_3_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "operationDefRecover_0_3_0")) return false;
+    qid(b, l + 1);
+    return true;
+  }
+
+  // 'READ' | 'CREATE' | 'UPDATE' | 'DELETE' | 'CUSTOM'
+  private static boolean operationDefRecover_0_3_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "operationDefRecover_0_3_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, E_READ);
+    if (!r) r = consumeToken(b, E_CREATE);
+    if (!r) r = consumeToken(b, E_UPDATE);
+    if (!r) r = consumeToken(b, E_DELETE);
+    if (!r) r = consumeToken(b, E_CUSTOM);
+    exit_section_(b, m, null, r);
     return r;
   }
 
@@ -4548,7 +4681,9 @@ public class EdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '{' (primitiveBodyPart ','?)* '}'
+  // '{' (primitiveBodyPart ','?)* '}' {
+  // //  recoverWhile = defRecover
+  // }
   public static boolean primitiveTypeBody(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "primitiveTypeBody")) return false;
     if (!nextTokenIs(b, E_CURLY_LEFT)) return false;
@@ -4557,7 +4692,8 @@ public class EdlParser implements PsiParser, LightPsiParser {
     r = consumeToken(b, E_CURLY_LEFT);
     p = r; // pin = 1
     r = r && report_error_(b, primitiveTypeBody_1(b, l + 1));
-    r = p && consumeToken(b, E_CURLY_RIGHT) && r;
+    r = p && report_error_(b, consumeToken(b, E_CURLY_RIGHT)) && r;
+    r = p && primitiveTypeBody_3(b, l + 1) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -4589,6 +4725,13 @@ public class EdlParser implements PsiParser, LightPsiParser {
   private static boolean primitiveTypeBody_1_0_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "primitiveTypeBody_1_0_1")) return false;
     consumeToken(b, E_COMMA);
+    return true;
+  }
+
+  // {
+  // //  recoverWhile = defRecover
+  // }
+  private static boolean primitiveTypeBody_3(PsiBuilder b, int l) {
     return true;
   }
 
@@ -4860,7 +5003,9 @@ public class EdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '{' (recordBodyPart ','?)* '}'
+  // '{' (recordBodyPart ','?)* '}' {
+  // //  recoverWhile = defRecover
+  // }
   public static boolean recordTypeBody(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "recordTypeBody")) return false;
     if (!nextTokenIs(b, E_CURLY_LEFT)) return false;
@@ -4869,7 +5014,8 @@ public class EdlParser implements PsiParser, LightPsiParser {
     r = consumeToken(b, E_CURLY_LEFT);
     p = r; // pin = 1
     r = r && report_error_(b, recordTypeBody_1(b, l + 1));
-    r = p && consumeToken(b, E_CURLY_RIGHT) && r;
+    r = p && report_error_(b, consumeToken(b, E_CURLY_RIGHT)) && r;
+    r = p && recordTypeBody_3(b, l + 1) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -4901,6 +5047,13 @@ public class EdlParser implements PsiParser, LightPsiParser {
   private static boolean recordTypeBody_1_0_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "recordTypeBody_1_0_1")) return false;
     consumeToken(b, E_COMMA);
+    return true;
+  }
+
+  // {
+  // //  recoverWhile = defRecover
+  // }
+  private static boolean recordTypeBody_3(PsiBuilder b, int l) {
     return true;
   }
 
@@ -4956,32 +5109,32 @@ public class EdlParser implements PsiParser, LightPsiParser {
   public static boolean resourceDef(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "resourceDef")) return false;
     if (!nextTokenIs(b, E_RESOURCE)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, E_RESOURCE_DEF, null);
     r = consumeToken(b, E_RESOURCE);
-    r = r && resourceName(b, l + 1);
-    r = r && resourceType(b, l + 1);
-    r = r && resourceDefBody(b, l + 1);
-    exit_section_(b, m, E_RESOURCE_DEF, r);
-    return r;
+    p = r; // pin = 1
+    r = r && report_error_(b, resourceName(b, l + 1));
+    r = p && report_error_(b, resourceType(b, l + 1)) && r;
+    r = p && resourceDefBody(b, l + 1) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   /* ********************************************************** */
-  // '{' (resourceDefPart ','?)* '}'
+  // '{' (operationDef ','?)* '}'
   static boolean resourceDefBody(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "resourceDefBody")) return false;
-    if (!nextTokenIs(b, E_CURLY_LEFT)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_);
     r = consumeToken(b, E_CURLY_LEFT);
     p = r; // pin = 1
     r = r && report_error_(b, resourceDefBody_1(b, l + 1));
     r = p && consumeToken(b, E_CURLY_RIGHT) && r;
-    exit_section_(b, l, m, r, p, null);
+    exit_section_(b, l, m, r, p, defRecover_parser_);
     return r || p;
   }
 
-  // (resourceDefPart ','?)*
+  // (operationDef ','?)*
   private static boolean resourceDefBody_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "resourceDefBody_1")) return false;
     int c = current_position_(b);
@@ -4993,12 +5146,12 @@ public class EdlParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // resourceDefPart ','?
+  // operationDef ','?
   private static boolean resourceDefBody_1_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "resourceDefBody_1_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = resourceDefPart(b, l + 1);
+    r = operationDef(b, l + 1);
     r = r && resourceDefBody_1_0_1(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
@@ -5009,17 +5162,6 @@ public class EdlParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(b, l, "resourceDefBody_1_0_1")) return false;
     consumeToken(b, E_COMMA);
     return true;
-  }
-
-  /* ********************************************************** */
-  // operationDef
-  static boolean resourceDefPart(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "resourceDefPart")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NONE_);
-    r = operationDef(b, l + 1);
-    exit_section_(b, l, m, r, false, operationBodyRecover_parser_);
-    return r;
   }
 
   /* ********************************************************** */
@@ -5363,7 +5505,9 @@ public class EdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '{' (varTypeBodyPart ','?)* '}'
+  // '{' (varTypeBodyPart ','?)* '}' {
+  // //  recoverWhile = defRecover
+  // }
   public static boolean varTypeBody(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "varTypeBody")) return false;
     if (!nextTokenIs(b, E_CURLY_LEFT)) return false;
@@ -5372,7 +5516,8 @@ public class EdlParser implements PsiParser, LightPsiParser {
     r = consumeToken(b, E_CURLY_LEFT);
     p = r; // pin = 1
     r = r && report_error_(b, varTypeBody_1(b, l + 1));
-    r = p && consumeToken(b, E_CURLY_RIGHT) && r;
+    r = p && report_error_(b, consumeToken(b, E_CURLY_RIGHT)) && r;
+    r = p && varTypeBody_3(b, l + 1) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -5404,6 +5549,13 @@ public class EdlParser implements PsiParser, LightPsiParser {
   private static boolean varTypeBody_1_0_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "varTypeBody_1_0_1")) return false;
     consumeToken(b, E_COMMA);
+    return true;
+  }
+
+  // {
+  // //  recoverWhile = defRecover
+  // }
+  private static boolean varTypeBody_3(PsiBuilder b, int l) {
     return true;
   }
 
@@ -5519,9 +5671,9 @@ public class EdlParser implements PsiParser, LightPsiParser {
       return dataValueRecover(b, l + 1);
     }
   };
-  final static Parser declRecover_parser_ = new Parser() {
+  final static Parser defRecover_parser_ = new Parser() {
     public boolean parse(PsiBuilder b, int l) {
-      return declRecover(b, l + 1);
+      return defRecover(b, l + 1);
     }
   };
   final static Parser enumPartRecover_parser_ = new Parser() {
@@ -5562,6 +5714,11 @@ public class EdlParser implements PsiParser, LightPsiParser {
   final static Parser operationBodyRecover_parser_ = new Parser() {
     public boolean parse(PsiBuilder b, int l) {
       return operationBodyRecover(b, l + 1);
+    }
+  };
+  final static Parser operationDefRecover_parser_ = new Parser() {
+    public boolean parse(PsiBuilder b, int l) {
+      return operationDefRecover(b, l + 1);
     }
   };
   final static Parser partRecover_parser_ = new Parser() {
