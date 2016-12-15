@@ -34,13 +34,13 @@ public class EdlNullDatumImpl extends EdlDatumImpl implements EdlNullDatum {
   @Override
   @Nullable
   public PsiElement getAt() {
-    return findChildByType(S_AT);
+    return findChildByType(E_AT);
   }
 
   @Override
   @NotNull
   public PsiElement getNull() {
-    return notNullChild(findChildByType(S_NULL));
+    return notNullChild(findChildByType(E_NULL));
   }
 
 }

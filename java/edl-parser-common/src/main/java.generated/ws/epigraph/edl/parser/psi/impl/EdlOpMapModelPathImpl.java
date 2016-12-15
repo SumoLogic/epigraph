@@ -41,7 +41,7 @@ public class EdlOpMapModelPathImpl extends ASTWrapperPsiElement implements EdlOp
   @Override
   @NotNull
   public PsiElement getSlash() {
-    return notNullChild(findChildByType(S_SLASH));
+    return notNullChild(findChildByType(E_SLASH));
   }
 
 }

@@ -35,7 +35,7 @@ public class EdlOperationOutputProjectionImpl extends ASTWrapperPsiElement imple
   @Override
   @NotNull
   public PsiElement getOutputProjection() {
-    return notNullChild(findChildByType(S_OUTPUT_PROJECTION));
+    return notNullChild(findChildByType(E_OUTPUT_PROJECTION));
   }
 
 }

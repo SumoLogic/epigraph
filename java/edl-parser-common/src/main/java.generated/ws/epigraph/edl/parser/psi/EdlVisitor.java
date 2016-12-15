@@ -572,16 +572,16 @@ public class EdlVisitor extends PsiElementVisitor {
     visitElement(o);
   }
 
+  public void visitTypeDef(@NotNull EdlTypeDef o) {
+    visitPsiElement(o);
+  }
+
   public void visitPsiNameIdentifierOwner(@NotNull PsiNameIdentifierOwner o) {
     visitElement(o);
   }
 
   public void visitPsiNamedElement(@NotNull PsiNamedElement o) {
     visitElement(o);
-  }
-
-  public void visitTypeDef(@NotNull EdlTypeDef o) {
-    visitPsiElement(o);
   }
 
   public void visitPsiElement(@NotNull PsiElement o) {

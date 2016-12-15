@@ -35,19 +35,19 @@ public class EdlOpInputModelMetaImpl extends ASTWrapperPsiElement implements Edl
   @Override
   @NotNull
   public PsiElement getColon() {
-    return notNullChild(findChildByType(S_COLON));
+    return notNullChild(findChildByType(E_COLON));
   }
 
   @Override
   @NotNull
   public PsiElement getMeta() {
-    return notNullChild(findChildByType(S_META));
+    return notNullChild(findChildByType(E_META));
   }
 
   @Override
   @Nullable
   public PsiElement getPlus() {
-    return findChildByType(S_PLUS);
+    return findChildByType(E_PLUS);
   }
 
 }

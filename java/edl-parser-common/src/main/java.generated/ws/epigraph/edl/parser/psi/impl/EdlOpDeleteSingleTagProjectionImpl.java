@@ -47,19 +47,19 @@ public class EdlOpDeleteSingleTagProjectionImpl extends ASTWrapperPsiElement imp
   @Override
   @Nullable
   public PsiElement getColon() {
-    return findChildByType(S_COLON);
+    return findChildByType(E_COLON);
   }
 
   @Override
   @Nullable
   public PsiElement getCurlyLeft() {
-    return findChildByType(S_CURLY_LEFT);
+    return findChildByType(E_CURLY_LEFT);
   }
 
   @Override
   @Nullable
   public PsiElement getCurlyRight() {
-    return findChildByType(S_CURLY_RIGHT);
+    return findChildByType(E_CURLY_RIGHT);
   }
 
 }

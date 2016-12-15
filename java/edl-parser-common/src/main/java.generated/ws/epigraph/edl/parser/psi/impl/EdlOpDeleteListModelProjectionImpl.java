@@ -35,19 +35,19 @@ public class EdlOpDeleteListModelProjectionImpl extends ASTWrapperPsiElement imp
   @Override
   @Nullable
   public PsiElement getParenLeft() {
-    return findChildByType(S_PAREN_LEFT);
+    return findChildByType(E_PAREN_LEFT);
   }
 
   @Override
   @Nullable
   public PsiElement getParenRight() {
-    return findChildByType(S_PAREN_RIGHT);
+    return findChildByType(E_PAREN_RIGHT);
   }
 
   @Override
   @NotNull
   public PsiElement getStar() {
-    return notNullChild(findChildByType(S_STAR));
+    return notNullChild(findChildByType(E_STAR));
   }
 
 }

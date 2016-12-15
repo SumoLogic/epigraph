@@ -70,7 +70,7 @@ public class EdlMapTypeDefImpl extends EdlMapTypeDefImplBase implements EdlMapTy
   @Override
   @Nullable
   public PsiElement getAbstract() {
-    return findChildByType(S_ABSTRACT);
+    return findChildByType(E_ABSTRACT);
   }
 
 }

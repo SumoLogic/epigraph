@@ -35,7 +35,7 @@ public class EdlExtendsDeclImpl extends ASTWrapperPsiElement implements EdlExten
   @Override
   @NotNull
   public PsiElement getExtends() {
-    return notNullChild(findChildByType(S_EXTENDS));
+    return notNullChild(findChildByType(E_EXTENDS));
   }
 
 }

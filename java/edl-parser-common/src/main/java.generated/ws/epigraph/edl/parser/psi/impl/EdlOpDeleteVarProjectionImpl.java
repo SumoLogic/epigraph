@@ -47,7 +47,7 @@ public class EdlOpDeleteVarProjectionImpl extends ASTWrapperPsiElement implement
   @Override
   @Nullable
   public PsiElement getPlus() {
-    return findChildByType(S_PLUS);
+    return findChildByType(E_PLUS);
   }
 
 }

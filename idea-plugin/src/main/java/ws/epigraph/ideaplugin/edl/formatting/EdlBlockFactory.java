@@ -37,34 +37,34 @@ import static ws.epigraph.edl.lexer.EdlElementTypes.*;
 interface EdlBlockFactory {
   Map<IElementType, EdlBlockFactory> factories =
       new ContainerUtil.ImmutableMapBuilder<IElementType, EdlBlockFactory>()
-          .put(S_RECORD_TYPE_DEF, TypeDefBlock::new)
-          .put(S_VAR_TYPE_DEF, TypeDefBlock::new)
-          .put(S_ENUM_TYPE_DEF, TypeDefBlock::new)
-          .put(S_PRIMITIVE_TYPE_DEF, TypeDefBlock::new)
-          .put(S_LIST_TYPE_DEF, TypeDefBlock::new)
-          .put(S_MAP_TYPE_DEF, TypeDefBlock::new)
+          .put(E_RECORD_TYPE_DEF, TypeDefBlock::new)
+          .put(E_VAR_TYPE_DEF, TypeDefBlock::new)
+          .put(E_ENUM_TYPE_DEF, TypeDefBlock::new)
+          .put(E_PRIMITIVE_TYPE_DEF, TypeDefBlock::new)
+          .put(E_LIST_TYPE_DEF, TypeDefBlock::new)
+          .put(E_MAP_TYPE_DEF, TypeDefBlock::new)
 
-          .put(S_VAR_TYPE_BODY, TypeDefBodyBlock::new)
-          .put(S_RECORD_TYPE_BODY, TypeDefBodyBlock::new)
-          .put(S_ENUM_TYPE_BODY, TypeDefBodyBlock::new)
-          .put(S_PRIMITIVE_TYPE_BODY, TypeDefBodyBlock::new)
+          .put(E_VAR_TYPE_BODY, TypeDefBodyBlock::new)
+          .put(E_RECORD_TYPE_BODY, TypeDefBodyBlock::new)
+          .put(E_ENUM_TYPE_BODY, TypeDefBodyBlock::new)
+          .put(E_PRIMITIVE_TYPE_BODY, TypeDefBodyBlock::new)
 
-          .put(S_FIELD_DECL, TypeMemberDeclBlock::new)
-          .put(S_VAR_TAG_DECL, TypeMemberDeclBlock::new)
-          .put(S_ENUM_MEMBER_DECL, TypeMemberDeclBlock::new)
+          .put(E_FIELD_DECL, TypeMemberDeclBlock::new)
+          .put(E_VAR_TAG_DECL, TypeMemberDeclBlock::new)
+          .put(E_ENUM_MEMBER_DECL, TypeMemberDeclBlock::new)
 
-          .put(S_EXTENDS_DECL, ExtendsBlock::new)
-          .put(S_META_DECL, MetaBlock::new)
-          .put(S_SUPPLEMENTS_DECL, SupplementsBlock::new)
+          .put(E_EXTENDS_DECL, ExtendsBlock::new)
+          .put(E_META_DECL, MetaBlock::new)
+          .put(E_SUPPLEMENTS_DECL, SupplementsBlock::new)
 
-          .put(S_DEFAULT_OVERRIDE, DefaultOverrideBlock::new)
+          .put(E_DEFAULT_OVERRIDE, DefaultOverrideBlock::new)
 
-          .put(S_ANON_LIST, AnonCollectionBlock::new)
-          .put(S_ANON_MAP, AnonCollectionBlock::new)
+          .put(E_ANON_LIST, AnonCollectionBlock::new)
+          .put(E_ANON_MAP, AnonCollectionBlock::new)
 
-//          .put(S_ANNOTATION, CustomParamBlock::new)
+//          .put(E_ANNOTATION, CustomParamBlock::new)
 
-          .put(S_COMMENT, LineCommentBlock::new)
+          .put(E_COMMENT, LineCommentBlock::new)
 
           .build();
 

@@ -41,7 +41,7 @@ public class EdlOpInputFieldProjectionEntryImpl extends ASTWrapperPsiElement imp
   @Override
   @Nullable
   public PsiElement getPlus() {
-    return findChildByType(S_PLUS);
+    return findChildByType(E_PLUS);
   }
 
 }

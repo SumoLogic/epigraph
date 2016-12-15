@@ -42,6 +42,7 @@ public class EdlSyntaxHighlighter extends SyntaxHighlighterBase {
 
   public static final TextAttributesKey ID = DefaultLanguageHighlighterColors.IDENTIFIER;
   public static final TextAttributesKey COMMA = DefaultLanguageHighlighterColors.COMMA;
+  public static final TextAttributesKey DOT = DefaultLanguageHighlighterColors.DOT;
   public static final TextAttributesKey PLUS = DefaultLanguageHighlighterColors.OPERATION_SIGN; // ??
   public static final TextAttributesKey LINE_COMMENT = DefaultLanguageHighlighterColors.LINE_COMMENT;
   public static final TextAttributesKey BLOCK_COMMENT = DefaultLanguageHighlighterColors.BLOCK_COMMENT;
@@ -66,13 +67,14 @@ public class EdlSyntaxHighlighter extends SyntaxHighlighterBase {
 
   static {
     keys = new HashMap<>();
-    keys.put(S_ID, ID);
-    keys.put(S_COMMA, COMMA);
-    keys.put(S_COMMENT, LINE_COMMENT);
-    keys.put(S_BLOCK_COMMENT, BLOCK_COMMENT);
-    keys.put(S_STRING, STRING_DATA);
-    keys.put(S_NUMBER, NUMERIC_DATA);
-    add(BRACKETS, S_BRACKET_LEFT, S_BRACKET_RIGHT);
+    keys.put(E_ID, ID);
+    keys.put(E_COMMA, COMMA);
+    keys.put(E_DOT, DOT);
+    keys.put(E_COMMENT, LINE_COMMENT);
+    keys.put(E_BLOCK_COMMENT, BLOCK_COMMENT);
+    keys.put(E_STRING, STRING_DATA);
+    keys.put(E_NUMBER, NUMERIC_DATA);
+    add(BRACKETS, E_BRACKET_LEFT, E_BRACKET_RIGHT);
     add(CURLY_BR, EdlParserDefinition.CURLY_BRACES.getTypes());
     add(KEYWORDS, EdlParserDefinition.KEYWORDS.getTypes());
   }

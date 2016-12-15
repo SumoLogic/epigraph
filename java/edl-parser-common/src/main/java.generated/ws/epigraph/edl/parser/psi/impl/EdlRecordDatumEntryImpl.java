@@ -41,13 +41,13 @@ public class EdlRecordDatumEntryImpl extends ASTWrapperPsiElement implements Edl
   @Override
   @NotNull
   public PsiElement getColon() {
-    return notNullChild(findChildByType(S_COLON));
+    return notNullChild(findChildByType(E_COLON));
   }
 
   @Override
   @Nullable
   public PsiElement getComma() {
-    return findChildByType(S_COMMA);
+    return findChildByType(E_COMMA);
   }
 
 }

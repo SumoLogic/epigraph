@@ -45,7 +45,7 @@ import static ws.epigraph.edl.lexer.EdlElementTypes.*;
 public class EdlCompletionContributor extends CompletionContributor {
   // TODO default` doesn't show up in auto-complete/suggestions after `vartype Foo `
 
-  private static final String[] TOP_LEVEL_COMPLETIONS = new String[]{
+  private static final String[] TOP_LEVEL_COMPLETIONS = {
       "abstract ", "record ", "map", "list", "vartype ", "enum ",
       "integer ", "long ", "double ", "boolean ", "string ",
       "supplement "
@@ -57,18 +57,18 @@ public class EdlCompletionContributor extends CompletionContributor {
   ));
 
   // which types can have 'extends' clause
-  private static final Set<IElementType> DEFS_SUPPORTING_EXTENDS = new HashSet<>(Arrays.asList(
-      S_VAR_TYPE_DEF, S_RECORD_TYPE_DEF, S_LIST_TYPE_DEF, S_MAP_TYPE_DEF, S_PRIMITIVE_TYPE_DEF
+  private static final Set<IElementType> DEFE_SUPPORTING_EXTENDS = new HashSet<>(Arrays.asList(
+      E_VAR_TYPE_DEF, E_RECORD_TYPE_DEF, E_LIST_TYPE_DEF, E_MAP_TYPE_DEF, E_PRIMITIVE_TYPE_DEF
   ));
 
   // which types can have 'meta' clause
-  private static final Set<IElementType> DEFS_SUPPORTING_META = new HashSet<>(Arrays.asList(
-      S_VAR_TYPE_DEF, S_RECORD_TYPE_DEF, S_LIST_TYPE_DEF, S_MAP_TYPE_DEF, S_ENUM_TYPE_DEF, S_PRIMITIVE_TYPE_DEF
+  private static final Set<IElementType> DEFE_SUPPORTING_META = new HashSet<>(Arrays.asList(
+      E_VAR_TYPE_DEF, E_RECORD_TYPE_DEF, E_LIST_TYPE_DEF, E_MAP_TYPE_DEF, E_ENUM_TYPE_DEF, E_PRIMITIVE_TYPE_DEF
   ));
 
   // which types can have 'supplements' clause
-  private static final Set<IElementType> DEFS_SUPPORTING_SUPPLEMENTS = new HashSet<>(Arrays.asList(
-      S_VAR_TYPE_DEF, S_RECORD_TYPE_DEF
+  private static final Set<IElementType> DEFE_SUPPORTING_SUPPLEMENTS = new HashSet<>(Arrays.asList(
+      E_VAR_TYPE_DEF, E_RECORD_TYPE_DEF
   ));
 
   public EdlCompletionContributor() {
@@ -111,24 +111,24 @@ public class EdlCompletionContributor extends CompletionContributor {
       boolean completeTypeDef = false;
       boolean completeImport = false;
       boolean completeNamespace = false;
-      boolean afterAbstract = EdlPsiUtil.hasPrevSibling(parent, S_ABSTRACT);
+      boolean afterAbstract = EdlPsiUtil.hasPrevSibling(parent, E_ABSTRACT);
 
       if (grandParent != null) {
         IElementType grandParentElementType = grandParent.getNode().getElementType();
 
-        if (grandParentElementType == S_DEFS) {
+        if (grandParentElementType == E_DEFS) {
           PsiElement nextParentSibling = EdlPsiUtil.nextNonWhitespaceSibling(parent);
           // don't initiate new type completion if we're followed by anything but a new def, e.g. when we're followed by a {..} dummy block
           completeTypeDef = nextParentSibling == null
               || nextParentSibling instanceof EdlTypeDefWrapper
               || nextParentSibling instanceof EdlSupplementDef;
 
-        } else if (grandParentElementType == S_IMPORT_STATEMENT) {
-          if (!EdlPsiUtil.hasNextSibling(grandParent, S_IMPORT_STATEMENT)) {
+        } else if (grandParentElementType == E_IMPORT_STATEMENT) {
+          if (!EdlPsiUtil.hasNextSibling(grandParent, E_IMPORT_STATEMENT)) {
             completeTypeDef = true;
           }
           completeImport = true;
-        } else if (grandParentElementType == S_NAMESPACE_DECL) {
+        } else if (grandParentElementType == E_NAMESPACE_DECL) {
           // check if we're between 'namespace' and 'import'
           EdlImports edlTypeImports = PsiTreeUtil.getNextSiblingOfType(grandParent, EdlImports.class);
           if (edlTypeImports == null || edlTypeImports.getFirstChild() == null) {
@@ -136,8 +136,8 @@ public class EdlCompletionContributor extends CompletionContributor {
             completeTypeDef = true;
           }
           completeImport = true;
-        } else if (grandParent instanceof EdlFile /* && !EdlPsiUtil.hasNextSibling(grandParent, S_NAMESPACE_DECL) */) {
-          completeNamespace = !EdlPsiUtil.hasPrevSibling(position, S_TYPE_DEF_WRAPPER);
+        } else if (grandParent instanceof EdlFile /* && !EdlPsiUtil.hasNextSibling(grandParent, E_NAMESPACE_DECL) */) {
+          completeNamespace = !EdlPsiUtil.hasPrevSibling(position, E_TYPE_DEF_WRAPPER);
         }
       }
 
@@ -169,7 +169,7 @@ public class EdlCompletionContributor extends CompletionContributor {
 
     completeInnerTypedefKeyword(
         position,
-        new EdlPsiUtil.ElementTypeQualifier(DEFS_SUPPORTING_EXTENDS),
+        new EdlPsiUtil.ElementTypeQualifier(DEFE_SUPPORTING_EXTENDS),
         extendsPresent,
         "extends ",
         result);
@@ -186,7 +186,7 @@ public class EdlCompletionContributor extends CompletionContributor {
 
     completeInnerTypedefKeyword(
         position,
-        new EdlPsiUtil.ElementTypeQualifier(DEFS_SUPPORTING_META),
+        new EdlPsiUtil.ElementTypeQualifier(DEFE_SUPPORTING_META),
         metaOrExtendsPresent,
         "meta ",
         result);
@@ -209,7 +209,7 @@ public class EdlCompletionContributor extends CompletionContributor {
 
     completeInnerTypedefKeyword(
         position,
-        new EdlPsiUtil.ElementTypeQualifier(DEFS_SUPPORTING_SUPPLEMENTS),
+        new EdlPsiUtil.ElementTypeQualifier(DEFE_SUPPORTING_SUPPLEMENTS),
         metaOrExtendsOrSupplementsPresent,
         "supplements ",
         result);
@@ -247,9 +247,9 @@ public class EdlCompletionContributor extends CompletionContributor {
       if (qnTypeRef != null) {
         PsiElement prevSibling = EdlPsiUtil.prevNonWhitespaceSibling(qnTypeRef);
         if (prevSibling != null
-            && prevSibling.getNode().getElementType() != S_COMMA
-            && prevSibling.getNode().getElementType() != S_SUPPLEMENT
-            && !EdlPsiUtil.hasPrevSibling(qnTypeRef, S_WITH)) {
+            && prevSibling.getNode().getElementType() != E_COMMA
+            && prevSibling.getNode().getElementType() != E_SUPPLEMENT
+            && !EdlPsiUtil.hasPrevSibling(qnTypeRef, E_WITH)) {
           result.addElement(LookupElementBuilder.create("with "));
         }
       }
@@ -383,7 +383,7 @@ public class EdlCompletionContributor extends CompletionContributor {
     EdlVarTypeDef varTypeDef = null;
 
     PsiElement element = PsiTreeUtil.prevVisibleLeaf(position);
-    if (element == null || element.getNode().getElementType() != S_OVERRIDE) return;
+    if (element == null || element.getNode().getElementType() != E_OVERRIDE) return;
 
 
 //
@@ -401,12 +401,12 @@ public class EdlCompletionContributor extends CompletionContributor {
     if (elementParent == null) return;
 
     recordTypeDef = PsiTreeUtil.getParentOfType(element, EdlRecordTypeDef.class);
-    if (recordTypeDef == null && elementParent.getNode().getElementType() == S_DEFS) {
+    if (recordTypeDef == null && elementParent.getNode().getElementType() == E_DEFS) {
       recordTypeDef = PsiTreeUtil.getParentOfType(PsiTreeUtil.prevVisibleLeaf(element), EdlRecordTypeDef.class);
     }
 
     varTypeDef = PsiTreeUtil.getParentOfType(element, EdlVarTypeDef.class);
-    if (varTypeDef == null && elementParent.getNode().getElementType() == S_DEFS) {
+    if (varTypeDef == null && elementParent.getNode().getElementType() == E_DEFS) {
       varTypeDef = PsiTreeUtil.getParentOfType(PsiTreeUtil.prevVisibleLeaf(element), EdlVarTypeDef.class);
     }
 
@@ -451,7 +451,7 @@ public class EdlCompletionContributor extends CompletionContributor {
         EdlTypeDef typeDef = qnTypeRef.resolve();
         if (typeDef instanceof EdlVarTypeDef) {
           PsiElement prevSibling = EdlPsiUtil.prevNonWhitespaceSibling(valueTypeRef);
-          if (prevSibling != null && prevSibling.getNode().getElementType() == S_COLON) {
+          if (prevSibling != null && prevSibling.getNode().getElementType() == E_COLON) {
             result.addElement(LookupElementBuilder.create("default "));
           }
         }

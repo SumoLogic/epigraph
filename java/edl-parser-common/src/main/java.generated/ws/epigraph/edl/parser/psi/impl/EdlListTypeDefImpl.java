@@ -70,7 +70,7 @@ public class EdlListTypeDefImpl extends EdlListTypeDefImplBase implements EdlLis
   @Override
   @Nullable
   public PsiElement getAbstract() {
-    return findChildByType(S_ABSTRACT);
+    return findChildByType(E_ABSTRACT);
   }
 
 }

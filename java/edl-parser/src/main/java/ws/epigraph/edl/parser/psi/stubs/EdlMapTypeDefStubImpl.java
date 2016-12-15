@@ -26,6 +26,6 @@ import ws.epigraph.edl.parser.psi.EdlMapTypeDef;
  */
 public class EdlMapTypeDefStubImpl extends EdlTypeDefStubBaseImpl<EdlMapTypeDef> implements EdlMapTypeDefStub {
   EdlMapTypeDefStubImpl(StubElement parent) {
-    super(parent, (IStubElementType) EdlElementTypes.S_MAP_TYPE_DEF);
+    super(parent, (IStubElementType) EdlElementTypes.E_MAP_TYPE_DEF);
   }
 }

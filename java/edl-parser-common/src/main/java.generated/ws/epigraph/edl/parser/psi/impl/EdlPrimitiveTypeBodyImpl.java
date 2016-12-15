@@ -34,13 +34,13 @@ public class EdlPrimitiveTypeBodyImpl extends AnnotationsHolderImpl implements E
   @Override
   @NotNull
   public PsiElement getCurlyLeft() {
-    return notNullChild(findChildByType(S_CURLY_LEFT));
+    return notNullChild(findChildByType(E_CURLY_LEFT));
   }
 
   @Override
   @Nullable
   public PsiElement getCurlyRight() {
-    return findChildByType(S_CURLY_RIGHT);
+    return findChildByType(E_CURLY_RIGHT);
   }
 
 }

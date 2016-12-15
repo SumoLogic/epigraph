@@ -27,7 +27,7 @@ import ws.epigraph.edl.parser.EdlParserDefinition;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static ws.epigraph.edl.lexer.EdlElementTypes.S_ANNOTATION;
+import static ws.epigraph.edl.lexer.EdlElementTypes.E_ANNOTATION;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -43,7 +43,7 @@ public class TypeMemberDeclBlock extends EdlBlock {
 
     if (child.getPsi().getPrevSibling() == null) return Indent.getNoneIndent();
     if (EdlParserDefinition.CURLY_BRACES.contains(type)) return Indent.getNoneIndent();
-    if (type == S_ANNOTATION) return Indent.getNormalIndent();
+    if (type == E_ANNOTATION) return Indent.getNormalIndent();
     return Indent.getContinuationIndent();
   }
 

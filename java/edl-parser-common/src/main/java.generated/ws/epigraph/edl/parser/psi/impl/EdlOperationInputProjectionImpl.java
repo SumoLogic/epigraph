@@ -35,7 +35,7 @@ public class EdlOperationInputProjectionImpl extends ASTWrapperPsiElement implem
   @Override
   @NotNull
   public PsiElement getInputProjection() {
-    return notNullChild(findChildByType(S_INPUT_PROJECTION));
+    return notNullChild(findChildByType(E_INPUT_PROJECTION));
   }
 
 }

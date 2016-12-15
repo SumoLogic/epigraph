@@ -34,7 +34,7 @@ public class EdlEnumDatumImpl extends EdlDatumImpl implements EdlEnumDatum {
   @Override
   @NotNull
   public PsiElement getHash() {
-    return notNullChild(findChildByType(S_HASH));
+    return notNullChild(findChildByType(E_HASH));
   }
 
 }

@@ -35,7 +35,7 @@ public class EdlResourceTypeImpl extends ASTWrapperPsiElement implements EdlReso
   @Override
   @NotNull
   public PsiElement getColon() {
-    return notNullChild(findChildByType(S_COLON));
+    return notNullChild(findChildByType(E_COLON));
   }
 
 }

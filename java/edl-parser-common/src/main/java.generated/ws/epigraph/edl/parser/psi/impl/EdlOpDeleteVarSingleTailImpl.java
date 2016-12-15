@@ -41,7 +41,7 @@ public class EdlOpDeleteVarSingleTailImpl extends ASTWrapperPsiElement implement
   @Override
   @NotNull
   public PsiElement getTilda() {
-    return notNullChild(findChildByType(S_TILDA));
+    return notNullChild(findChildByType(E_TILDA));
   }
 
 }

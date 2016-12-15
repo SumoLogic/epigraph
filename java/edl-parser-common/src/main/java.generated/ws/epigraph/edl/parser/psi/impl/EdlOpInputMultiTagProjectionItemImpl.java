@@ -47,19 +47,19 @@ public class EdlOpInputMultiTagProjectionItemImpl extends ASTWrapperPsiElement i
   @Override
   @Nullable
   public PsiElement getCurlyLeft() {
-    return findChildByType(S_CURLY_LEFT);
+    return findChildByType(E_CURLY_LEFT);
   }
 
   @Override
   @Nullable
   public PsiElement getCurlyRight() {
-    return findChildByType(S_CURLY_RIGHT);
+    return findChildByType(E_CURLY_RIGHT);
   }
 
   @Override
   @Nullable
   public PsiElement getPlus() {
-    return findChildByType(S_PLUS);
+    return findChildByType(E_PLUS);
   }
 
 }

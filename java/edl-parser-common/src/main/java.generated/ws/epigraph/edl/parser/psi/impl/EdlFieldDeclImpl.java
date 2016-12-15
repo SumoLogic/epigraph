@@ -47,31 +47,31 @@ public class EdlFieldDeclImpl extends AnnotationsHolderImpl implements EdlFieldD
   @Override
   @Nullable
   public PsiElement getAbstract() {
-    return findChildByType(S_ABSTRACT);
+    return findChildByType(E_ABSTRACT);
   }
 
   @Override
   @NotNull
   public PsiElement getColon() {
-    return notNullChild(findChildByType(S_COLON));
+    return notNullChild(findChildByType(E_COLON));
   }
 
   @Override
   @Nullable
   public PsiElement getCurlyLeft() {
-    return findChildByType(S_CURLY_LEFT);
+    return findChildByType(E_CURLY_LEFT);
   }
 
   @Override
   @Nullable
   public PsiElement getCurlyRight() {
-    return findChildByType(S_CURLY_RIGHT);
+    return findChildByType(E_CURLY_RIGHT);
   }
 
   @Override
   @Nullable
   public PsiElement getOverride() {
-    return findChildByType(S_OVERRIDE);
+    return findChildByType(E_OVERRIDE);
   }
 
   @Nullable

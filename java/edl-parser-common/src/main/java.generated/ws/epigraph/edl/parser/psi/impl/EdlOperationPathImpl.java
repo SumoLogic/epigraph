@@ -35,7 +35,7 @@ public class EdlOperationPathImpl extends ASTWrapperPsiElement implements EdlOpe
   @Override
   @NotNull
   public PsiElement getPath() {
-    return notNullChild(findChildByType(S_PATH));
+    return notNullChild(findChildByType(E_PATH));
   }
 
 }

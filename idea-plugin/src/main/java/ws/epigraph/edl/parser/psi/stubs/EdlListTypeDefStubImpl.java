@@ -32,6 +32,6 @@ public class EdlListTypeDefStubImpl extends EdlTypeDefStubBaseImpl<EdlListTypeDe
                             String name,
                             String namespace,
                             @Nullable final List<SerializedFqnTypeRef> extendsTypeRefs) {
-    super(parent, (IStubElementType) EdlElementTypes.S_LIST_TYPE_DEF, name, namespace, extendsTypeRefs);
+    super(parent, (IStubElementType) EdlElementTypes.E_LIST_TYPE_DEF, name, namespace, extendsTypeRefs);
   }
 }

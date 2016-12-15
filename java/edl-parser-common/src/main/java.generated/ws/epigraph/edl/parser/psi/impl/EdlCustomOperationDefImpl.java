@@ -41,19 +41,19 @@ public class EdlCustomOperationDefImpl extends ASTWrapperPsiElement implements E
   @Override
   @Nullable
   public PsiElement getCurlyLeft() {
-    return findChildByType(S_CURLY_LEFT);
+    return findChildByType(E_CURLY_LEFT);
   }
 
   @Override
   @Nullable
   public PsiElement getCurlyRight() {
-    return findChildByType(S_CURLY_RIGHT);
+    return findChildByType(E_CURLY_RIGHT);
   }
 
   @Override
   @NotNull
   public PsiElement getCustom() {
-    return notNullChild(findChildByType(S_CUSTOM));
+    return notNullChild(findChildByType(E_CUSTOM));
   }
 
 }

@@ -64,13 +64,13 @@ public class EdlRecordTypeDefImpl extends EdlRecordTypeDefImplBase implements Ed
   @Override
   @Nullable
   public PsiElement getAbstract() {
-    return findChildByType(S_ABSTRACT);
+    return findChildByType(E_ABSTRACT);
   }
 
   @Override
   @NotNull
   public PsiElement getRecord() {
-    return notNullChild(findChildByType(S_RECORD));
+    return notNullChild(findChildByType(E_RECORD));
   }
 
   @NotNull

@@ -35,7 +35,7 @@ public class EdlVarTypeDefStubImpl extends EdlTypeDefStubBaseImpl<EdlVarTypeDef>
                            String namespace,
                            @Nullable final List<SerializedFqnTypeRef> extendsTypeRefs,
                            @Nullable final List<SerializedFqnTypeRef> supplementedTypeRefs) {
-    super(parent, (IStubElementType) EdlElementTypes.S_VAR_TYPE_DEF, name, namespace, extendsTypeRefs);
+    super(parent, (IStubElementType) EdlElementTypes.E_VAR_TYPE_DEF, name, namespace, extendsTypeRefs);
     this.supplementedTypeRefs = supplementedTypeRefs;
   }
 

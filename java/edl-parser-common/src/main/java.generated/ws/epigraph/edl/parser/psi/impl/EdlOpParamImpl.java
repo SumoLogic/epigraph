@@ -65,37 +65,37 @@ public class EdlOpParamImpl extends ASTWrapperPsiElement implements EdlOpParam {
   @Override
   @Nullable
   public PsiElement getColon() {
-    return findChildByType(S_COLON);
+    return findChildByType(E_COLON);
   }
 
   @Override
   @Nullable
   public PsiElement getCurlyLeft() {
-    return findChildByType(S_CURLY_LEFT);
+    return findChildByType(E_CURLY_LEFT);
   }
 
   @Override
   @Nullable
   public PsiElement getCurlyRight() {
-    return findChildByType(S_CURLY_RIGHT);
+    return findChildByType(E_CURLY_RIGHT);
   }
 
   @Override
   @Nullable
   public PsiElement getEq() {
-    return findChildByType(S_EQ);
+    return findChildByType(E_EQ);
   }
 
   @Override
   @Nullable
   public PsiElement getPlus() {
-    return findChildByType(S_PLUS);
+    return findChildByType(E_PLUS);
   }
 
   @Override
   @NotNull
   public PsiElement getSemicolon() {
-    return notNullChild(findChildByType(S_SEMICOLON));
+    return notNullChild(findChildByType(E_SEMICOLON));
   }
 
 }

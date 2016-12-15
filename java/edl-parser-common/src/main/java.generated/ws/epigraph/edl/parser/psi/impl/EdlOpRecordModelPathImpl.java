@@ -35,7 +35,7 @@ public class EdlOpRecordModelPathImpl extends ASTWrapperPsiElement implements Ed
   @Override
   @NotNull
   public PsiElement getSlash() {
-    return notNullChild(findChildByType(S_SLASH));
+    return notNullChild(findChildByType(E_SLASH));
   }
 
 }

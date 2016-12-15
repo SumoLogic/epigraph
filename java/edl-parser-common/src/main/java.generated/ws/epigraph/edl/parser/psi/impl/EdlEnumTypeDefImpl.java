@@ -52,7 +52,7 @@ public class EdlEnumTypeDefImpl extends EdlEnumTypeDefImplBase implements EdlEnu
   @Override
   @NotNull
   public PsiElement getEnum() {
-    return notNullChild(findChildByType(S_ENUM));
+    return notNullChild(findChildByType(E_ENUM));
   }
 
 }

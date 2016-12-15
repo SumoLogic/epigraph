@@ -46,47 +46,43 @@ public abstract class EdlTypeDefImplBase<S extends EdlTypeDefStubBase<T>, T exte
     super(node);
   }
 
-  protected EdlTypeDefImplBase(@NotNull S stub, @NotNull IStubElementType nodeType) {
+  protected EdlTypeDefImplBase(@NotNull S stub, @NotNull IStubElementType<?, ?> nodeType) {
     super(stub, nodeType);
   }
 
   @Override
-  @Nullable
-  public EdlExtendsDecl getExtendsDecl() {
+  public @Nullable EdlExtendsDecl getExtendsDecl() {
     return findChildByClass(EdlExtendsDecl.class);
   }
 
   @Override
-  @Nullable
-  public EdlSupplementsDecl getSupplementsDecl() {
+  public @Nullable EdlSupplementsDecl getSupplementsDecl() {
     return findChildByClass(EdlSupplementsDecl.class);
   }
 
   @Override
-  @Nullable
-  public EdlMetaDecl getMetaDecl() {
+  public @Nullable EdlMetaDecl getMetaDecl() {
     return findChildByClass(EdlMetaDecl.class);
   }
 
-  @Nullable
-  public PsiElement getAbstract() {
-    return findChildByType(S_ABSTRACT);
+  @Override
+  public @Nullable PsiElement getAbstract() {
+    return findChildByType(E_ABSTRACT);
   }
 
   @Override
-  @Nullable
-  public EdlQid getQid() {
-    return findChildByType(S_QID);
+  public @Nullable EdlQid getQid() {
+    return findChildByType(E_QID);
   }
 
-  @Nullable
-  public String getName() {
+  @Override
+  public @Nullable String getName() {
     EdlQid id = getQid();
     return id == null ? null : id.getCanonicalName();
   }
 
-  @Nullable
-  public PsiElement setName(@NotNull String name) {
+  @Override
+  public @Nullable PsiElement setName(@NotNull String name) {
     PsiElement id = getQid();
     if (id == null) return null;
     else {
@@ -96,20 +92,18 @@ public abstract class EdlTypeDefImplBase<S extends EdlTypeDefStubBase<T>, T exte
     }
   }
 
-  @Nullable
-  public PsiElement getNameIdentifier() {
+  @Override
+  public @Nullable PsiElement getNameIdentifier() {
     return getQid();
   }
 
-  @Nullable
   @Override
-  public Qn getNamespace() {
+  public @Nullable Qn getNamespace() {
     throw new UnsupportedOperationException();
   }
 
-  @Nullable
   @Override
-  public Qn getQn() {
+  public @Nullable Qn getQn() {
     String name = getName();
     if (name == null) return null;
     Qn namespace = getNamespace();
@@ -117,14 +111,16 @@ public abstract class EdlTypeDefImplBase<S extends EdlTypeDefStubBase<T>, T exte
     return namespace.append(name);
   }
 
+  @Override
   public int getTextOffset() {
     PsiElement nameIdentifier = getNameIdentifier();
     return nameIdentifier == null ? 0 : nameIdentifier.getTextOffset();
   }
 
-  @NotNull
-  public abstract TypeKind getKind();
+  @Override
+  public abstract @NotNull TypeKind getKind();
 
+  @Override
   public Icon getIcon(int flags) {
     throw new UnsupportedOperationException();
   }
@@ -134,8 +130,8 @@ public abstract class EdlTypeDefImplBase<S extends EdlTypeDefStubBase<T>, T exte
     getParent().delete();
   }
 
-  @NotNull
-  public List<EdlTypeDef> extendsParents() {
+  @Override
+  public @NotNull List<EdlTypeDef> extendsParents() {
     EdlExtendsDecl extendsDecl = getExtendsDecl();
     if (extendsDecl == null) return Collections.emptyList();
     List<EdlQnTypeRef> typeRefList = extendsDecl.getQnTypeRefList();

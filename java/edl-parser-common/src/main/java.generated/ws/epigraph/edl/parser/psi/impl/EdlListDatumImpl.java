@@ -40,13 +40,13 @@ public class EdlListDatumImpl extends EdlDatumImpl implements EdlListDatum {
   @Override
   @NotNull
   public PsiElement getBracketLeft() {
-    return notNullChild(findChildByType(S_BRACKET_LEFT));
+    return notNullChild(findChildByType(E_BRACKET_LEFT));
   }
 
   @Override
   @Nullable
   public PsiElement getBracketRight() {
-    return findChildByType(S_BRACKET_RIGHT);
+    return findChildByType(E_BRACKET_RIGHT);
   }
 
 }

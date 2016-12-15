@@ -49,14 +49,15 @@ public abstract class EdlTypeDefImplBase<S extends EdlTypeDefStubBase<T>, T exte
 
 //  private final static Logger LOG = Logger.getInstance(EdlTypeDefImplBase.class);
 
-  public EdlTypeDefImplBase(@NotNull ASTNode node) {
+  protected EdlTypeDefImplBase(@NotNull ASTNode node) {
     super(node);
   }
 
-  public EdlTypeDefImplBase(@NotNull S stub, @NotNull IStubElementType nodeType) {
+  protected EdlTypeDefImplBase(@NotNull S stub, @NotNull IStubElementType<?, ?> nodeType) {
     super(stub, nodeType);
   }
 
+  @Override
   public ItemPresentation getPresentation() {
     return EdlPresentationUtil.getPresentation(this, false);
   }
@@ -79,17 +80,19 @@ public abstract class EdlTypeDefImplBase<S extends EdlTypeDefStubBase<T>, T exte
     return findChildByClass(EdlMetaDecl.class);
   }
 
+  @Override
   @Nullable
   public PsiElement getAbstract() {
-    return findChildByType(S_ABSTRACT);
+    return findChildByType(E_ABSTRACT);
   }
 
   @Override
   @Nullable
   public EdlQid getQid() {
-    return findChildByType(S_QID);
+    return findChildByType(E_QID);
   }
 
+  @Override
   @Nullable
   public String getName() {
     S stub = getStub();
@@ -101,6 +104,7 @@ public abstract class EdlTypeDefImplBase<S extends EdlTypeDefStubBase<T>, T exte
     return id == null ? null : id.getCanonicalName();
   }
 
+  @Override
   @Nullable
   public PsiElement setName(@NotNull String name) {
     EdlQid id = getQid();
@@ -111,6 +115,7 @@ public abstract class EdlTypeDefImplBase<S extends EdlTypeDefStubBase<T>, T exte
     }
   }
 
+  @Override
   @Nullable
   public PsiElement getNameIdentifier() {
     EdlQid qid = getQid();
@@ -138,14 +143,17 @@ public abstract class EdlTypeDefImplBase<S extends EdlTypeDefStubBase<T>, T exte
     return namespace.append(name);
   }
 
+  @Override
   public int getTextOffset() {
     PsiElement nameIdentifier = getNameIdentifier();
     return nameIdentifier == null ? 0 : nameIdentifier.getTextOffset();
   }
 
+  @Override
   @NotNull
   public abstract TypeKind getKind();
 
+  @Override
   public Icon getIcon(int flags) {
     return EdlPresentationUtil.getIcon(this);
   }
@@ -155,6 +163,7 @@ public abstract class EdlTypeDefImplBase<S extends EdlTypeDefStubBase<T>, T exte
     getParent().delete();
   }
 
+  @Override
   @NotNull
   public List<EdlTypeDef> extendsParents() {
     S stub = getStub();

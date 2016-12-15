@@ -32,11 +32,12 @@ import ws.epigraph.edl.parser.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import static ws.epigraph.edl.lexer.EdlElementTypes.S_BLOCK_COMMENT;
-import static ws.epigraph.edl.lexer.EdlElementTypes.S_COMMENT;
+import static ws.epigraph.edl.lexer.EdlElementTypes.E_BLOCK_COMMENT;
+import static ws.epigraph.edl.lexer.EdlElementTypes.E_COMMENT;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -50,7 +51,7 @@ public class EdlFoldingBuilder extends CustomFoldingBuilder implements DumbAware
     } else if (element instanceof PsiFile) {
       return "/.../";
     } else if (element instanceof PsiComment) {
-      if (((PsiComment) element).getTokenType() == S_BLOCK_COMMENT)
+      if (((PsiComment) element).getTokenType() == E_BLOCK_COMMENT)
         return "/*..*/";
       else
         return "//...";
@@ -105,16 +106,16 @@ public class EdlFoldingBuilder extends CustomFoldingBuilder implements DumbAware
     if (range.getStartOffset() < 0 || range.getEndOffset() > fileRange.getEndOffset()) {
       return false;
     }
-    if (!allowOneLiners) { // TODO: do we need this setting?
-      int startLine = document.getLineNumber(range.getStartOffset());
-      int endLine = document.getLineNumber(range.getEndOffset() - 1);
-      if (startLine < endLine && range.getLength() > 1) {
+    if (allowOneLiners) {
+      if (range.getLength() > getPlaceholderText(elementToFold).length()) {
         list.add(new FoldingDescriptor(elementToFold, range));
         return true;
       }
       return false;
-    } else {
-      if (range.getLength() > getPlaceholderText(elementToFold).length()) {
+    } else { // TODO: do we need this setting?
+      int startLine = document.getLineNumber(range.getStartOffset());
+      int endLine = document.getLineNumber(range.getEndOffset() - 1);
+      if (startLine < endLine && range.getLength() > 1) {
         list.add(new FoldingDescriptor(elementToFold, range));
         return true;
       }
@@ -139,9 +140,9 @@ public class EdlFoldingBuilder extends CustomFoldingBuilder implements DumbAware
    *                          skip processing when current method is called for the second getElement
    * @param foldElements      fold descriptors holder to store newly created descriptor (if any)
    */
-  private static void addCommentFolds(@NotNull PsiComment comment, @NotNull Set<PsiElement> processedComments,
+  private static void addCommentFolds(@NotNull PsiComment comment, @NotNull Collection<PsiElement> processedComments,
                                       @NotNull List<FoldingDescriptor> foldElements) {
-    if (processedComments.contains(comment) || comment.getTokenType() != S_COMMENT) {
+    if (processedComments.contains(comment) || comment.getTokenType() != E_COMMENT) {
       return;
     }
 
@@ -153,7 +154,7 @@ public class EdlFoldingBuilder extends CustomFoldingBuilder implements DumbAware
         break;
       }
       IElementType elementType = node.getElementType();
-      if (elementType == S_COMMENT) {
+      if (elementType == E_COMMENT) {
         end = current;
         // We don't want to process, say, the second comment in case of three subsequent comments when it's being examined
         // during all elements traversal. I.e. we expect to start from the first comment and grab as many subsequent
@@ -195,9 +196,9 @@ public class EdlFoldingBuilder extends CustomFoldingBuilder implements DumbAware
       final Set<PsiElement> seenComments = ContainerUtil.newHashSet();
 
       PsiTreeUtil.processElements(file, element -> {
-        if (element.getNode().getElementType().equals(S_BLOCK_COMMENT)) {
+        if (element.getNode().getElementType().equals(E_BLOCK_COMMENT)) {
           descriptors.add(new FoldingDescriptor(element, element.getTextRange()));
-        } else if (element.getNode().getElementType().equals(S_COMMENT)) {
+        } else if (element.getNode().getElementType().equals(E_COMMENT)) {
           addCommentFolds((PsiComment) element, seenComments, descriptors);
         }
         return true;

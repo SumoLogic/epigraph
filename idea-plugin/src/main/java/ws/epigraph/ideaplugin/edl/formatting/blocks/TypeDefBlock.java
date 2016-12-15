@@ -34,19 +34,19 @@ import static ws.epigraph.edl.lexer.EdlElementTypes.*;
  */
 public class TypeDefBlock extends EdlBlock {
   private static final TokenSet noIndentTokenSet = TokenSet.create(
-      S_RECORD_TYPE_BODY,
-      S_ENUM_TYPE_BODY, S_VAR_TYPE_BODY,
-      S_PRIMITIVE_TYPE_BODY, S_MAP_TYPE_BODY, S_LIST_TYPE_BODY,
+      E_RECORD_TYPE_BODY,
+      E_ENUM_TYPE_BODY, E_VAR_TYPE_BODY,
+      E_PRIMITIVE_TYPE_BODY, E_MAP_TYPE_BODY, E_LIST_TYPE_BODY,
 
-      S_ABSTRACT,
-      S_ID, S_RECORD, S_VARTYPE, S_ENUM,
-      S_ANON_LIST, S_ANON_MAP,
-      S_STRING_T, S_INTEGER_T, S_LONG_T, S_DOUBLE_T, S_BOOLEAN_T
+      E_ABSTRACT,
+      E_ID, E_RECORD, E_VARTYPE, E_ENUM,
+      E_ANON_LIST, E_ANON_MAP,
+      E_STRING_T, E_INTEGER_T, E_LONG_T, E_DOUBLE_T, E_BOOLEAN_T
   );
 
   private static final TokenSet continuationTokenSet =
       TokenSet.create(
-          S_EXTENDS_DECL, S_META_DECL, S_SUPPLEMENTS_DECL
+          E_EXTENDS_DECL, E_META_DECL, E_SUPPLEMENTS_DECL
       );
 
   public TypeDefBlock(@NotNull ASTNode node, @Nullable Wrap wrap, @Nullable Alignment alignment, @Nullable Indent indent, SpacingBuilder spacingBuilder) {
@@ -61,25 +61,25 @@ public class TypeDefBlock extends EdlBlock {
 //        AlignmentStrategy.wrap( // align type name with braces
 //            Alignment.createAlignment(),
 //            false,
-//            S_RECORD, S_RECORD_TYPE_BODY,
-//            S_UNION, S_UNION_TYPE_BODY,
-//            S_MULTI, S_MULTI_TYPE_BODY,
-//            S_ENUM, S_ENUM_TYPE_BODY
+//            E_RECORD, E_RECORD_TYPE_BODY,
+//            E_UNION, E_UNION_TYPE_BODY,
+//            E_MULTI, E_MULTI_TYPE_BODY,
+//            E_ENUM, E_ENUM_TYPE_BODY
 //        ),
         AlignmentStrategy.wrap( // align additional decls with type name? Alternatively use continuation..
             Alignment.createAlignment(),
             false,
-            S_NEW_TYPE_NAME, S_EXTENDS_DECL, S_META_DECL, S_RECORD_SUPPLEMENTS_DECL
+            E_NEW_TYPE_NAME, E_EXTENDE_DECL, E_META_DECL, E_RECORD_SUPPLEMENTE_DECL
         )
 //        ,
 //        AlignmentStrategy.wrap( // align members
 //            Alignment.createAlignment(),
 //            false,
-//            S_ANNOTATION,
-//            S_MULTI_MEMBER_DECL,
-//            S_FIELD_DECL,
-//            S_TAG_DECL,
-//            S_ENUM_MEMBER_DECL
+//            E_ANNOTATION,
+//            E_MULTI_MEMBER_DECL,
+//            E_FIELD_DECL,
+//            E_TAG_DECL,
+//            E_ENUM_MEMBER_DECL
 //        )
     );
   }

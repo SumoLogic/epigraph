@@ -41,13 +41,13 @@ public class EdlOpInputMapModelProjectionImpl extends ASTWrapperPsiElement imple
   @Override
   @Nullable
   public PsiElement getParenLeft() {
-    return findChildByType(S_PAREN_LEFT);
+    return findChildByType(E_PAREN_LEFT);
   }
 
   @Override
   @Nullable
   public PsiElement getParenRight() {
-    return findChildByType(S_PAREN_RIGHT);
+    return findChildByType(E_PAREN_RIGHT);
   }
 
 }

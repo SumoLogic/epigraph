@@ -35,13 +35,13 @@ public class EdlOpInputRecordModelProjectionImpl extends ASTWrapperPsiElement im
   @Override
   @NotNull
   public PsiElement getParenLeft() {
-    return notNullChild(findChildByType(S_PAREN_LEFT));
+    return notNullChild(findChildByType(E_PAREN_LEFT));
   }
 
   @Override
   @Nullable
   public PsiElement getParenRight() {
-    return findChildByType(S_PAREN_RIGHT);
+    return findChildByType(E_PAREN_RIGHT);
   }
 
 }

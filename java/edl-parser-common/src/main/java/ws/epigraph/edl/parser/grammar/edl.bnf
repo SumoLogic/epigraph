@@ -19,7 +19,7 @@
   parserClass="ws.epigraph.edl.parser.EdlParser"
 
   elementTypeHolderClass="ws.epigraph.edl.lexer.EdlElementTypes"
-  elementTypePrefix="S_"
+  elementTypePrefix="E_"
   elementTypeClass="ws.epigraph.edl.lexer.EdlElementType"
   tokenTypeClass="ws.epigraph.edl.lexer.EdlElementType"
 

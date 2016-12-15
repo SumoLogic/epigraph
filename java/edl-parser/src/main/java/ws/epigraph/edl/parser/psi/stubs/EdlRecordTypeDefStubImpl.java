@@ -27,7 +27,7 @@ import ws.epigraph.edl.parser.psi.EdlRecordTypeDef;
 public class EdlRecordTypeDefStubImpl extends EdlTypeDefStubBaseImpl<EdlRecordTypeDef> implements EdlRecordTypeDefStub {
 
   EdlRecordTypeDefStubImpl(StubElement parent) {
-    super(parent, (IStubElementType) EdlElementTypes.S_RECORD_TYPE_DEF);
+    super(parent, (IStubElementType) EdlElementTypes.E_RECORD_TYPE_DEF);
   }
 
 }

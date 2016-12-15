@@ -26,6 +26,6 @@ import ws.epigraph.edl.parser.psi.EdlPrimitiveTypeDef;
  */
 public class EdlPrimitiveTypeDefStubImpl extends EdlTypeDefStubBaseImpl<EdlPrimitiveTypeDef> implements EdlPrimitiveTypeDefStub {
   EdlPrimitiveTypeDefStubImpl(StubElement parent) {
-    super(parent, (IStubElementType) EdlElementTypes.S_PRIMITIVE_TYPE_DEF);
+    super(parent, (IStubElementType) EdlElementTypes.E_PRIMITIVE_TYPE_DEF);
   }
 }

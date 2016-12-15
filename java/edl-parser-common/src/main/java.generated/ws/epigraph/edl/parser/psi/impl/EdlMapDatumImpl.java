@@ -40,13 +40,13 @@ public class EdlMapDatumImpl extends EdlDatumImpl implements EdlMapDatum {
   @Override
   @NotNull
   public PsiElement getParenLeft() {
-    return notNullChild(findChildByType(S_PAREN_LEFT));
+    return notNullChild(findChildByType(E_PAREN_LEFT));
   }
 
   @Override
   @Nullable
   public PsiElement getParenRight() {
-    return findChildByType(S_PAREN_RIGHT);
+    return findChildByType(E_PAREN_RIGHT);
   }
 
 }

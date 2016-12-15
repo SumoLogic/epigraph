@@ -47,13 +47,13 @@ public class EdlSupplementDefImpl extends StubBasedPsiElementBase<EdlSupplementD
   @Override
   @NotNull
   public PsiElement getSupplement() {
-    return notNullChild(findChildByType(S_SUPPLEMENT));
+    return notNullChild(findChildByType(E_SUPPLEMENT));
   }
 
   @Override
   @Nullable
   public PsiElement getWith() {
-    return findChildByType(S_WITH);
+    return findChildByType(E_WITH);
   }
 
   @Nullable

@@ -29,11 +29,11 @@ import static ws.epigraph.edl.lexer.EdlElementTypes.*;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class EdlBraceMatcher implements PairedBraceMatcher {
-  private static final BracePair[] pairs = new BracePair[]{
-      new BracePair(S_CURLY_LEFT, S_CURLY_RIGHT, true),
-      new BracePair(S_BRACKET_LEFT, S_BRACKET_RIGHT, false),
-      new BracePair(S_ANGLE_LEFT, S_ANGLE_RIGHT, false),
-      new BracePair(S_PAREN_LEFT, S_PAREN_RIGHT, false)
+  private static final BracePair[] pairs = {
+      new BracePair(E_CURLY_LEFT, E_CURLY_RIGHT, true),
+      new BracePair(E_BRACKET_LEFT, E_BRACKET_RIGHT, false),
+      new BracePair(E_ANGLE_LEFT, E_ANGLE_RIGHT, false),
+      new BracePair(E_PAREN_LEFT, E_PAREN_RIGHT, false)
   };
 
   @Override

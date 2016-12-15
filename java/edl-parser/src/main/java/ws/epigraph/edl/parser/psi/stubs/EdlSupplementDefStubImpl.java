@@ -27,6 +27,6 @@ import ws.epigraph.edl.parser.psi.EdlSupplementDef;
  */
 public class EdlSupplementDefStubImpl extends StubBase<EdlSupplementDef> implements EdlSupplementDefStub {
   protected EdlSupplementDefStubImpl(StubElement parent) {
-    super(parent, (IStubElementType) EdlElementTypes.S_SUPPLEMENT_DEF);
+    super(parent, (IStubElementType) EdlElementTypes.E_SUPPLEMENT_DEF);
   }
 }

@@ -27,9 +27,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
 
-import static ws.epigraph.edl.lexer.EdlElementTypes.S_DEFS;
-import static ws.epigraph.edl.lexer.EdlElementTypes.S_IMPORTS;
-import static ws.epigraph.edl.lexer.EdlElementTypes.S_NAMESPACE_DECL;
+import static ws.epigraph.edl.lexer.EdlElementTypes.E_DEFS;
+import static ws.epigraph.edl.lexer.EdlElementTypes.E_IMPORTS;
+import static ws.epigraph.edl.lexer.EdlElementTypes.E_NAMESPACE_DECL;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -47,12 +47,12 @@ public class EdlFile extends PsiFileBase {
 
   @Nullable
   public EdlDefs getDefs() {
-    return (EdlDefs) calcTreeElement().findPsiChildByType(S_DEFS);
+    return (EdlDefs) calcTreeElement().findPsiChildByType(E_DEFS);
   }
 
   @Nullable
   public EdlImports getImportsStatement() {
-    return (EdlImports) calcTreeElement().findPsiChildByType(S_IMPORTS);
+    return (EdlImports) calcTreeElement().findPsiChildByType(E_IMPORTS);
   }
 
   @NotNull
@@ -65,7 +65,7 @@ public class EdlFile extends PsiFileBase {
 
   @Nullable
   public EdlNamespaceDecl getNamespaceDecl() {
-    return (EdlNamespaceDecl) calcTreeElement().findPsiChildByType(S_NAMESPACE_DECL);
+    return (EdlNamespaceDecl) calcTreeElement().findPsiChildByType(E_NAMESPACE_DECL);
   }
 
   @Override
