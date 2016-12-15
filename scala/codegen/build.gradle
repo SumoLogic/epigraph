@@ -1,9 +1,9 @@
 apply plugin: 'scala'
 
 dependencies {
+  compile project(':epigraph-edl-compiler')
   compile project(':epigraph-java-lang-common')
   compile project(':epigraph-scala-core')
-  compile project(':epigraph-schema-compiler')
 
   compile 'org.jetbrains:annotations'
   compile "org.scalameta:trees_$scalaVersionMajorMinor"

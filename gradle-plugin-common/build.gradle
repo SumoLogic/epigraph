@@ -1,7 +1,7 @@
 apply plugin: 'groovy'
 
 dependencies {
-  compile project(':epigraph-schema-compiler')
+  compile project(':epigraph-edl-compiler')
 
   compile gradleApi()
   compile localGroovy()

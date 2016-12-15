@@ -10,6 +10,7 @@ rootProject.name = theName
 
 
 Map<String, String> modules = [
+    'edl-compiler'             : 'epigraph-edl-compiler',
     'gradle-plugin'            : 'epigraph-gradle-plugin',
     'gradle-plugin-common'     : 'epigraph-gradle-plugin-common',
     'java/codegen'             : 'epigraph-java-codegen',
@@ -19,8 +20,7 @@ Map<String, String> modules = [
     'java/standalone-psi-util' : 'epigraph-java-standalone-psi-util',
     'java/util'                : 'epigraph-java-util',
     'light-psi'                : 'epigraph-light-psi',
-    'scala/core'               : 'epigraph-scala-core',
-    'schema-compiler'          : 'epigraph-schema-compiler'
+    'scala/core'               : 'epigraph-scala-core'
 ]
 
 modules.each { dir, name ->

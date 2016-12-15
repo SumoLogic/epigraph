@@ -15,17 +15,17 @@
 
     <dependency>
       <groupId>${project.parent.groupId}</groupId>
+      <artifactId>epigraph-edl-compiler</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.parent.groupId}</groupId>
       <artifactId>epigraph-java-lang-common</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
     <dependency>
       <groupId>${project.parent.groupId}</groupId>
       <artifactId>epigraph-scala-core</artifactId>
-      <version>${project.parent.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.parent.groupId}</groupId>
-      <artifactId>epigraph-schema-compiler</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
     <dependency>

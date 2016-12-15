@@ -69,11 +69,11 @@ mvn clean install -P maven-plugin-dependent
         <activeByDefault>true</activeByDefault>
       </activation>
       <modules>
+        <module>edl-compiler</module>
         <module>scala</module>
         <module>java</module>
         <module>maven-plugin</module>
         <module>maven-plugin-common</module>
-        <module>schema-compiler</module>
       </modules>
     </profile>
 

@@ -1,7 +1,7 @@
 apply plugin: 'java'
 
 dependencies {
-  compile project(':epigraph-schema-compiler')
+  compile project(':epigraph-edl-compiler')
 
   compile 'org.apache.maven:maven-core'
   compile 'org.apache.maven:maven-plugin-api'

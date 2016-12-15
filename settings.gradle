@@ -18,10 +18,11 @@ Map<String, String> modules = [
     'gradle-plugin-common'             : 'epigraph-gradle-plugin-common',
     'idea-plugin'                      : 'idea-plugin',
 
+    'edl-compiler'                     : 'epigraph-edl-compiler',
     'java/codegen'                     : 'epigraph-java-codegen',
     'java/core'                        : 'epigraph-java-core',
     'java/edl'                         : 'epigraph-java-edl',
-    'java/edl-parser'               : 'epigraph-java-edl-parser',
+    'java/edl-parser'                  : 'epigraph-java-edl-parser',
     'java/edl-psi-parser'              : 'epigraph-java-edl-psi-parser',
     'java/edl-psi-parser-common'       : 'epigraph-java-edl-psi-parser-common',
     'java/gdata'                       : 'epigraph-java-gdata',
@@ -51,7 +52,6 @@ Map<String, String> modules = [
     'scala/codegen'                    : 'epigraph-scala-codegen',
     'scala/core'                       : 'epigraph-scala-core',
     'scala/maven-plugin'               : 'epigraph-scala-maven-plugin',
-    'schema-compiler'                  : 'epigraph-schema-compiler',
 
     'schemas/builtin-types-schema'     : 'epigraph-builtin-types-schema',
     'schemas/data-schema'              : 'epigraph-data-schema',

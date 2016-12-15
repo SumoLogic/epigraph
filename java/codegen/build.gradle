@@ -1,9 +1,9 @@
 apply plugin: 'scala'
 
 dependencies {
+  compile project(':epigraph-edl-compiler')
   compile project(':epigraph-java-lang-common')
   compile project(':epigraph-java-util')
-  compile project(':epigraph-schema-compiler')
 
   compile 'org.scala-lang:scala-library'
 }

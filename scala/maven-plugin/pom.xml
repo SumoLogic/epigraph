@@ -31,13 +31,13 @@
 
     <dependency>
       <groupId>${project.parent.groupId}</groupId>
-      <artifactId>epigraph-scala-codegen</artifactId>
+      <artifactId>epigraph-edl-compiler</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
 
     <dependency>
       <groupId>${project.parent.groupId}</groupId>
-      <artifactId>epigraph-schema-compiler</artifactId>
+      <artifactId>epigraph-scala-codegen</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
 
