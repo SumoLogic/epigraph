@@ -18,7 +18,7 @@
 
 package ws.epigraph.maven;
 
-import ws.epigraph.edl.compiler.*;
+import ws.epigraph.compiler.*;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.plugin.AbstractMojo;
@@ -163,10 +163,10 @@ public abstract class AbstractCompilingMojo extends AbstractMojo {
       Collection<? extends Source> dependencySources
   ) throws MojoFailureException {
     // TODO catch and sort compiler exceptions into MojoExecutionException (abnormal) and MojoFailureException (normal failure)
-    EdlCompiler compiler = new EdlCompiler(sources, dependencySources);
+    EpigraphCompiler compiler = new EpigraphCompiler(sources, dependencySources);
     try {
       return compiler.compile();
-    } catch (EdlCompilerException failure) {
+    } catch (EpigraphCompilerException failure) {
       StringBuilder sb = new StringBuilder();
       for (CError err : compiler.ctx().errors()) {
         CErrorPosition pos = err.position(); // TODO skip :line:colon, line text, and ^ if NA

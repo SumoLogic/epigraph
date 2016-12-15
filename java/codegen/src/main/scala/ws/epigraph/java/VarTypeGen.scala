@@ -19,7 +19,7 @@
 package ws.epigraph.java
 
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
-import ws.epigraph.edl.compiler._
+import ws.epigraph.compiler._
 
 class VarTypeGen(from: CVarTypeDef, ctx: CContext) extends JavaTypeDefGen[CVarTypeDef](from, ctx) {
 

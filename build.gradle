@@ -58,7 +58,7 @@ idea {
 
 // bootstrap: gradle -c settings-bootstrap.gradle publishGradlePlugins
 task publishGradlePlugins(dependsOn: [
-    ':epigraph-edl-compiler:publishToMavenLocal',
+    ':epigraph-compiler:publishToMavenLocal',
     ':epigraph-gradle-plugin:publishToMavenLocal',
     ':epigraph-gradle-plugin-common:publishToMavenLocal',
     ':epigraph-java-edl-parser:publishToMavenLocal',

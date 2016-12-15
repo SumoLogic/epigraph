@@ -19,7 +19,7 @@
 package ws.epigraph.java
 
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
-import ws.epigraph.edl.compiler.{CContext, CPrimitiveTypeDef, CTypeKind}
+import ws.epigraph.compiler.{CContext, CPrimitiveTypeDef, CTypeKind}
 
 class PrimitiveGen(from: CPrimitiveTypeDef, ctx: CContext) extends JavaTypeDefGen[CPrimitiveTypeDef](from, ctx)
     with DatumTypeJavaGen {

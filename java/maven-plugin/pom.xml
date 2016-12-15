@@ -36,7 +36,7 @@
 
     <dependency>
       <groupId>${project.parent.groupId}</groupId>
-      <artifactId>epigraph-edl-compiler</artifactId>
+      <artifactId>epigraph-compiler</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
 

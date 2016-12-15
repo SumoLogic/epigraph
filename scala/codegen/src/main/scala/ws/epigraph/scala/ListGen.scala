@@ -18,7 +18,7 @@
 
 package ws.epigraph.scala
 
-import ws.epigraph.edl.compiler.CListTypeDef
+import ws.epigraph.compiler.CListTypeDef
 
 class ListGen(from: CListTypeDef) extends TypeScalaGen[CListTypeDef](from) {
 

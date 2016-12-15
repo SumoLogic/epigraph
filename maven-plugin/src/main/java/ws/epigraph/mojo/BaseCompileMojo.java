@@ -19,9 +19,9 @@
 package ws.epigraph.mojo;
 
 import ws.epigraph.maven.AbstractCompilingMojo;
-import ws.epigraph.edl.compiler.CContext;
-import ws.epigraph.edl.compiler.CEdlFile;
-import ws.epigraph.edl.compiler.FileSource;
+import ws.epigraph.compiler.CContext;
+import ws.epigraph.compiler.CEdlFile;
+import ws.epigraph.compiler.FileSource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.shared.utils.StringUtils;
 import org.apache.maven.shared.utils.io.FileUtils;

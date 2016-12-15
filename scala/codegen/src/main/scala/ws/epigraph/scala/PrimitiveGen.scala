@@ -18,7 +18,7 @@
 
 package ws.epigraph.scala
 
-import ws.epigraph.edl.compiler.{CPrimitiveTypeDef, CTypeKind}
+import ws.epigraph.compiler.{CPrimitiveTypeDef, CTypeKind}
 
 class PrimitiveGen(from: CPrimitiveTypeDef) extends TypeScalaGen[CPrimitiveTypeDef](from) {
 

@@ -20,8 +20,8 @@ package ws.epigraph.java.mojo;
 
 import ws.epigraph.java.JavaEdlGenerator;
 import ws.epigraph.maven.AbstractCompilingMojo;
-import ws.epigraph.edl.compiler.CContext;
-import ws.epigraph.edl.compiler.FileSource;
+import ws.epigraph.compiler.CContext;
+import ws.epigraph.compiler.FileSource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;

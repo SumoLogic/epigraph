@@ -15,7 +15,7 @@ todo full description here
 apply plugin: 'groovy'
 
 dependencies {
-  compile project(':epigraph-edl-compiler')
+  compile project(':epigraph-compiler')
   compile project(':epigraph-java-codegen')
   compile project(':epigraph-gradle-plugin-common')
 

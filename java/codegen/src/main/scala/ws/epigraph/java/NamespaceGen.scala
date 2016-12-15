@@ -20,7 +20,7 @@ package ws.epigraph.java
 
 import java.nio.file.Path
 
-import ws.epigraph.edl.compiler.{CContext, CNamespace}
+import ws.epigraph.compiler.{CContext, CNamespace}
 import org.jetbrains.annotations.Nullable
 import NewlineStringInterpolator.NewlineHelper
 

@@ -18,6 +18,6 @@
 
 package ws.epigraph.java
 
-import ws.epigraph.edl.compiler.{CAnonListType, CContext}
+import ws.epigraph.compiler.{CAnonListType, CContext}
 
 class AnonListGen(from: CAnonListType, ctx: CContext) extends ListGen[CAnonListType](from, ctx)

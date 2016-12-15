@@ -18,8 +18,8 @@
 
 package ws.epigraph.scala.mojo;
 
+import ws.epigraph.compiler.*;
 import ws.epigraph.scala.ScalaEdlGenerator;
-import ws.epigraph.edl.compiler.*;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -179,10 +179,10 @@ public abstract class BaseCodegenMojo extends AbstractMojo {
   private CContext doCompile(File outputDirectory, Collection<Source> sources, Collection<Source> dependencySources)
       throws IOException, MojoFailureException {
     // TODO catch and sort compiler exceptions into MojoExecutionException (abnormal) and MojoFailureException (normal failure)
-    final EdlCompiler compiler = new EdlCompiler(sources, dependencySources);
+    final EpigraphCompiler compiler = new EpigraphCompiler(sources, dependencySources);
     try {
       return compiler.compile();
-    } catch (EdlCompilerException failure) {
+    } catch (EpigraphCompilerException failure) {
       StringBuilder sb = new StringBuilder();
       for (CError err : compiler.ctx().errors()) {
         final CErrorPosition pos = err.position(); // TODO skip :line:colon, line text, and ^ if NA

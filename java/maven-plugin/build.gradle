@@ -3,7 +3,7 @@ apply plugin: 'java'
 dependencies {
   compile project(':epigraph-maven-plugin-common')
 
-  compile project(':epigraph-edl-compiler')
+  compile project(':epigraph-compiler')
   compile project(':epigraph-java-codegen')
 
   compile 'org.apache.maven:maven-core'

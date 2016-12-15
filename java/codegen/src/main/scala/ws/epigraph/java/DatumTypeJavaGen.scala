@@ -19,7 +19,7 @@
 package ws.epigraph.java
 
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
-import ws.epigraph.edl.compiler.CType
+import ws.epigraph.compiler.CType
 
 trait DatumTypeJavaGen {this: JavaTypeGen[_ >: Null <: CType] =>
 

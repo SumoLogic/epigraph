@@ -20,7 +20,7 @@ Map<String, String> modules = [
     'gradle-plugin-common'             : 'epigraph-gradle-plugin-common',
     'idea-plugin'                      : 'idea-plugin',
 
-    'edl-compiler'                     : 'epigraph-edl-compiler',
+    'compiler'                     : 'epigraph-compiler',
     'java/codegen'                     : 'epigraph-java-codegen',
     'java/core'                        : 'epigraph-java-core',
     'java/edl'                         : 'epigraph-java-edl',
