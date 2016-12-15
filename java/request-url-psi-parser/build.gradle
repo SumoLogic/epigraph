@@ -20,7 +20,7 @@ dependencies {
   testCompile project(':epigraph-java-edl-psi-parser')
   testCompile project(':epigraph-java-projections-edl-psi-parser')
   testCompile project(':epigraph-java-test-util')
-  testCompile project(':tests-schema-java')
+  testCompile project(':tests-edl-java')
   testCompile 'junit:junit'
   testCompile 'org.slf4j:slf4j-nop'
   testCompile 'com.io7m.jpplib:io7m-jpplib-core'

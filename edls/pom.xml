@@ -2,20 +2,23 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>examples-users</artifactId>
+  <artifactId>epigraph-edls</artifactId>
   <packaging>pom</packaging>
 
   <parent>
-    <groupId>ws.epigraph.examples</groupId>
-    <artifactId>examples</artifactId>
+    <groupId>ws.epigraph</groupId>
+    <artifactId>epigraph</artifactId>
     <version>0.0-SNAPSHOT</version>
   </parent>
 
+  <description>Epigraph EDLs</description>
+
   <modules>
-    <module>edl</module>
-    <module>edl-java</module>
-    <!--<module>edl-scala</module>-->
-    <module>service</module>
+    <module>builtin-types-edl</module>
+    <module>data-edl</module>
+    <module>operations-edl</module>
+    <module>projections-edl</module>
+    <module>edl-edl</module>
   </modules>
 
 </project>

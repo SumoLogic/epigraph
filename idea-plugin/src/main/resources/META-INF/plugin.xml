@@ -1,5 +1,5 @@
 <idea-plugin version="2">
-  <id>ws.epigraph.ideaplugin.schema</id>
+  <id>ws.epigraph.ideaplugin.edl</id>
   <name>Epigraph</name>
   <version>1.0</version>
   <vendor email="support@sumologic.com" url="http://www.sumologic.com">Sumo Logic</vendor>

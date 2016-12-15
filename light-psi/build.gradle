@@ -85,12 +85,12 @@ task locateGrammarKit {
 
 task updateFileList2(dependsOn: [locateIdeaHome, locateGrammarKit]) {
   doLast {
-    def schemaParserJar = project.configurations.fileList.find { it.name.contains('edl-parser') }
-    if (schemaParserJar == null) throw new GradleException('Can\'t locate edl-parser jar, did you build it?')
+    def edlParserJar = project.configurations.fileList.find { it.name.contains('edl-parser') }
+    if (edlParserJar == null) throw new GradleException('Can\'t locate edl-parser jar, did you build it?')
 
-    def producer = new FileListProducer(project.logger, project.ext.ideaHome, new File(project.ext.grammarKit), schemaParserJar)
+    def producer = new FileListProducer(project.logger, project.ext.ideaHome, new File(project.ext.grammarKit), edlParserJar)
 
-    producer.traverseAllClasses(schemaParserJar)
+    producer.traverseAllClasses(edlParserJar)
     // extra classes (accessed via reflection?)
 //  producer.traverse('com/intellij/openapi/vfs/encoding/EncodingManagerImpl')
 

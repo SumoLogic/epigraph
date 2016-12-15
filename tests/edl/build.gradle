@@ -1,0 +1,9 @@
+plugins {
+  id 'ws.epigraph' version "0.0"
+}
+
+group = 'ws.epigraph.tests'
+
+dependencies {
+  compile project(':epigraph-builtin-types-edl')
+}

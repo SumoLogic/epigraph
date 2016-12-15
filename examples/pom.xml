@@ -8,8 +8,8 @@
   <packaging>pom</packaging>
 
   <modules>
-    <module>sumo-schema</module>
-    <module>sumo-schema-java</module>
+    <module>sumo-edl</module>
+    <module>sumo-edl-java</module>
     <module>users</module>
   </modules>
 

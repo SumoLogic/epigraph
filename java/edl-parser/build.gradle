@@ -1,7 +1,7 @@
 apply plugin: 'java'
 apply plugin: 'application'
 
-mainClassName = 'ws.epigraph.schema.parser.Main'
+mainClassName = 'ws.epigraph.edl.parser.Main'
 
 sourceSets.main.java.srcDirs += file("$buildDir/generated-sources/edl-parser-common.java")
 idea.module.generatedSourceDirs += file("$buildDir/generated-sources/edl-parser-common.java")

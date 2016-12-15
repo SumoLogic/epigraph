@@ -14,8 +14,8 @@
   </parent>
 
   <modules>
-    <module>schema</module>
-    <module>schema-java</module>
+    <module>edl</module>
+    <module>edl-java</module>
   </modules>
 
 </project>

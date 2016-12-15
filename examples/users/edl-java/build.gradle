@@ -1,0 +1,11 @@
+plugins {
+  id 'ws.epigraph.java' version "0.0"
+}
+
+group = 'ws.epigraph.examples'
+
+dependencies {
+  epigraph project(':examples-users-edl')
+
+  compile project(':epigraph-java-core')
+}

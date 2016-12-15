@@ -29,7 +29,7 @@
     </dependency>
     <!--<dependency>-->
     <!--<groupId>${project.parent.groupId}</groupId>-->
-    <!--<artifactId>epigraph-builtin-types-schema</artifactId>-->
+    <!--<artifactId>epigraph-builtin-types-edl</artifactId>-->
     <!--<version>${project.parent.version}</version>-->
     <!--<scope>runtime</scope>-->
     <!--</dependency>-->

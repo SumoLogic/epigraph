@@ -13,7 +13,7 @@
   </parent>
 
   <name>Epigraph Maven Plugin</name>
-  <description>Maven plugin for Epigraph Schema</description>
+  <description>Maven plugin for Epigraph EDL</description>
   <url>https://github.com/SumoLogic/epigraph</url>
 
   <properties>
@@ -32,13 +32,6 @@
       <artifactId>epigraph-maven-plugin-common</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
-    <!--<dependency>-->
-    <!--<groupId>${project.parent.groupId}</groupId>-->
-    <!--<artifactId>epigraph-builtin-types-schema</artifactId>-->
-    <!--<version>${project.parent.version}</version>-->
-    <!--<type>epigraph-schema-schema</type>-->
-    <!--<scope>runtime</scope>-->
-    <!--</dependency>-->
 
     <dependency>
       <groupId>${project.parent.groupId}</groupId>
