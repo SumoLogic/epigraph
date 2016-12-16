@@ -39,12 +39,6 @@ public class EdlCreateOperationDefImpl extends ASTWrapperPsiElement implements E
   }
 
   @Override
-  @NotNull
-  public PsiElement getCreate() {
-    return notNullChild(findChildByType(E_CREATE));
-  }
-
-  @Override
   @Nullable
   public PsiElement getCurlyLeft() {
     return findChildByType(E_CURLY_LEFT);
@@ -54,6 +48,12 @@ public class EdlCreateOperationDefImpl extends ASTWrapperPsiElement implements E
   @Nullable
   public PsiElement getCurlyRight() {
     return findChildByType(E_CURLY_RIGHT);
+  }
+
+  @Override
+  @NotNull
+  public PsiElement getOpCreate() {
+    return notNullChild(findChildByType(E_OP_CREATE));
   }
 
 }

@@ -65,7 +65,7 @@ public class DeleteRequestUrlPsiParserTest {
       "import ws.epigraph.tests.Person",
       "import ws.epigraph.tests.UserRecord",
       "resource users : map[String,Person] {",
-      "  DELETE {",
+      "  delete {",
       "    deleteProjection [required]( :`record` (id, firstName) )",
       "    outputProjection [required]( :`record` (id, firstName) )",
       "  }",

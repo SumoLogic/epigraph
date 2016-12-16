@@ -66,7 +66,7 @@ public class CreateRequestUrlPsiParserTest {
       "import ws.epigraph.tests.Person",
       "import ws.epigraph.tests.UserRecord",
       "resource users : map[String,Person] {",
-      "  CREATE {",
+      "  create {",
       "    inputType UserRecord",
       "    inputProjection (id, firstName)",
       "    outputProjection [required]( :`record` (id, firstName) )",

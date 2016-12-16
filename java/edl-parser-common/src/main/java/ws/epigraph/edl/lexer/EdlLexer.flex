@@ -92,11 +92,12 @@ ID=([:letter:]([:letter:]|[:digit:])*)|(`[^`]*`)
   "GET"                { return E_GET; }
   "POST"               { return E_POST; }
   "PUT"                { return E_PUT; }
-  "READ"               { return E_READ; }
-  "CREATE"             { return E_CREATE; }
-  "UPDATE"             { return E_UPDATE; }
   "DELETE"             { return E_DELETE; }
-  "CUSTOM"             { return E_CUSTOM; }
+  "read"               { return E_OP_READ; }
+  "create"             { return E_OP_CREATE; }
+  "update"             { return E_OP_UPDATE; }
+  "delete"             { return E_OP_DELETE; }
+  "custom"             { return E_OP_CUSTOM; }
   "method"             { return E_METHOD; }
   "inputType"          { return E_INPUT_TYPE; }
   "inputProjection"    { return E_INPUT_PROJECTION; }

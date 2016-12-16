@@ -13,13 +13,13 @@ public interface EdlCreateOperationDef extends PsiElement {
   @Nullable
   EdlOperationName getOperationName();
 
-  @NotNull
-  PsiElement getCreate();
-
   @Nullable
   PsiElement getCurlyLeft();
 
   @Nullable
   PsiElement getCurlyRight();
+
+  @NotNull
+  PsiElement getOpCreate();
 
 }

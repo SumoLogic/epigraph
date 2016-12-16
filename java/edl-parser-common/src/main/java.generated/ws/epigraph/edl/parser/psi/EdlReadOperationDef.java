@@ -20,6 +20,6 @@ public interface EdlReadOperationDef extends PsiElement {
   PsiElement getCurlyRight();
 
   @NotNull
-  PsiElement getRead();
+  PsiElement getOpRead();
 
 }

@@ -10,7 +10,7 @@ public interface EdlCustomOperationDef extends PsiElement {
   @NotNull
   List<EdlCustomOperationBodyPart> getCustomOperationBodyPartList();
 
-  @NotNull
+  @Nullable
   EdlOperationName getOperationName();
 
   @Nullable
@@ -20,6 +20,6 @@ public interface EdlCustomOperationDef extends PsiElement {
   PsiElement getCurlyRight();
 
   @NotNull
-  PsiElement getCustom();
+  PsiElement getOpCustom();
 
 }

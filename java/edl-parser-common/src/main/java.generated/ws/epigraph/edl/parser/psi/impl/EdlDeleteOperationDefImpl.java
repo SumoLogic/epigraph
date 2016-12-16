@@ -52,8 +52,8 @@ public class EdlDeleteOperationDefImpl extends ASTWrapperPsiElement implements E
 
   @Override
   @NotNull
-  public PsiElement getDelete() {
-    return notNullChild(findChildByType(E_DELETE));
+  public PsiElement getOpDelete() {
+    return notNullChild(findChildByType(E_OP_DELETE));
   }
 
 }

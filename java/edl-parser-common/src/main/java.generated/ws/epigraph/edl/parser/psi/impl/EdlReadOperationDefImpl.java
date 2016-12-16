@@ -52,8 +52,8 @@ public class EdlReadOperationDefImpl extends ASTWrapperPsiElement implements Edl
 
   @Override
   @NotNull
-  public PsiElement getRead() {
-    return notNullChild(findChildByType(E_READ));
+  public PsiElement getOpRead() {
+    return notNullChild(findChildByType(E_OP_READ));
   }
 
 }

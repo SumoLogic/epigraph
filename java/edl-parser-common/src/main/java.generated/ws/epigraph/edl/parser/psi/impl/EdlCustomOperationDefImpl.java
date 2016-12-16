@@ -33,9 +33,9 @@ public class EdlCustomOperationDefImpl extends ASTWrapperPsiElement implements E
   }
 
   @Override
-  @NotNull
+  @Nullable
   public EdlOperationName getOperationName() {
-    return notNullChild(PsiTreeUtil.getChildOfType(this, EdlOperationName.class));
+    return PsiTreeUtil.getChildOfType(this, EdlOperationName.class);
   }
 
   @Override
@@ -52,8 +52,8 @@ public class EdlCustomOperationDefImpl extends ASTWrapperPsiElement implements E
 
   @Override
   @NotNull
-  public PsiElement getCustom() {
-    return notNullChild(findChildByType(E_CUSTOM));
+  public PsiElement getOpCustom() {
+    return notNullChild(findChildByType(E_OP_CUSTOM));
   }
 
 }

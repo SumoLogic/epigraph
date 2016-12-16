@@ -20,6 +20,6 @@ public interface EdlDeleteOperationDef extends PsiElement {
   PsiElement getCurlyRight();
 
   @NotNull
-  PsiElement getDelete();
+  PsiElement getOpDelete();
 
 }

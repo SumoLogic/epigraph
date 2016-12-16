@@ -66,12 +66,13 @@
     POST = 'POST'
     PUT = 'PUT'
     DELETE = 'DELETE'
-    // operation types // todo: change to lower case
-    READ = 'READ'
-    CREATE = 'CREATE'
-    UPDATE = 'UPDATE'
-    // DELETE = 'DELETE'
-    CUSTOM = 'CUSTOM'
+    // operation types
+    OP_READ = 'read'
+    OP_CREATE = 'create'
+    OP_UPDATE = 'update'
+    OP_DELETE = 'delete'
+    OP_CUSTOM = 'custom'
+    //
     METHOD = 'method'
     INPUT_TYPE = 'inputType'
     INPUT_PROJECTION = 'inputProjection'
@@ -367,14 +368,14 @@ operationDef ::= createOperationDef | readOperationDef | updateOperationDef | de
   recoverWhile = operationDefRecover
 }
 
-private operationDefRecover ::= ! ( '}' | ',' | qid '=' | (qid? ('READ' | 'CREATE' | 'UPDATE' | 'DELETE' | 'CUSTOM') ) )
+private operationDefRecover ::= ! ( '}' | ',' | qid '=' | 'read' | 'create' | 'update' | 'delete' | 'custom' )
 
 private operationBodyRecover ::= ! ( '}' | ',' |
   'method' | 'inputType' | 'inputProjection' | 'outputType' | 'outputProjection' | 'deleteProjection' | 'path' |
-  (qid '=') | (qid? ('READ' | 'CREATE' | 'UPDATE' | 'DELETE' | 'CUSTOM') ) )
+  (qid '=') | 'read' | 'create' | 'update' | 'delete' | 'custom' )
 
 
-createOperationDef ::= operationName? 'CREATE' createOperationBody {pin=2}
+createOperationDef ::= 'create' operationName? createOperationBody {pin=1}
 private createOperationBody ::= '{' (createOperationBodyPart ','?)* '}'
 createOperationBodyPart ::= operationPath |
                             operationInputType |
@@ -385,7 +386,7 @@ createOperationBodyPart ::= operationPath |
   recoverWhile = operationBodyRecover
 }
 
-readOperationDef ::= operationName? 'READ' readOperationBody {pin=2}
+readOperationDef ::= 'read' operationName? readOperationBody {pin=1}
 private readOperationBody ::= '{' (readOperationBodyPart ','?)* '}'
 readOperationBodyPart ::= operationPath |
                           operationOutputProjection |
@@ -393,7 +394,7 @@ readOperationBodyPart ::= operationPath |
   recoverWhile = operationBodyRecover
 }
 
-updateOperationDef ::= operationName? 'UPDATE' updateOperationBody {pin=2}
+updateOperationDef ::= 'update' operationName? updateOperationBody {pin=1}
 private updateOperationBody ::= '{' (updateOperationBodyPart ','?)* '}'
 updateOperationBodyPart ::= operationPath |
                             operationInputType |
@@ -404,7 +405,7 @@ updateOperationBodyPart ::= operationPath |
   recoverWhile = operationBodyRecover
 }
 
-deleteOperationDef ::= operationName? 'DELETE' deleteOperationBody {pin=2}
+deleteOperationDef ::= 'delete' operationName? deleteOperationBody {pin=1}
 private deleteOperationBody ::= '{' (deleteOperationBodyPart ','?)* '}'
 deleteOperationBodyPart ::= operationPath |
                             operationDeleteProjection |
@@ -414,7 +415,7 @@ deleteOperationBodyPart ::= operationPath |
   recoverWhile = operationBodyRecover
 }
 
-customOperationDef ::= operationName 'CUSTOM' customOperationBody {pin=2}
+customOperationDef ::= 'custom' operationName customOperationBody {pin=1}
 private customOperationBody ::= '{' (customOperationBodyPart ','?)* '}'
 customOperationBodyPart ::= operationMethod |
                             operationPath |

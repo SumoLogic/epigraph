@@ -52,8 +52,8 @@ public class EdlUpdateOperationDefImpl extends ASTWrapperPsiElement implements E
 
   @Override
   @NotNull
-  public PsiElement getUpdate() {
-    return notNullChild(findChildByType(E_UPDATE));
+  public PsiElement getOpUpdate() {
+    return notNullChild(findChildByType(E_OP_UPDATE));
   }
 
 }

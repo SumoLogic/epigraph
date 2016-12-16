@@ -66,7 +66,7 @@ public class CustomRequestUrlPsiParserTest {
       "import ws.epigraph.tests.Person",
       "import ws.epigraph.tests.UserRecord",
       "resource users : map[String,Person] {",
-      "  myCustomOp CUSTOM {",
+      "  custom myCustomOp {",
       "    method POST",
       "    inputType UserRecord",
       "    inputProjection (id, firstName)",

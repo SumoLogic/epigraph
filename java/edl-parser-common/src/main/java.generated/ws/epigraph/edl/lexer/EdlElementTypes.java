@@ -170,10 +170,8 @@ public interface EdlElementTypes {
   IElementType E_COLON = new EdlElementType(":");
   IElementType E_COMMA = new EdlElementType(",");
   IElementType E_COMMENT = new EdlElementType("comment");
-  IElementType E_CREATE = new EdlElementType("CREATE");
   IElementType E_CURLY_LEFT = new EdlElementType("{");
   IElementType E_CURLY_RIGHT = new EdlElementType("}");
-  IElementType E_CUSTOM = new EdlElementType("CUSTOM");
   IElementType E_DEFAULT = new EdlElementType("default");
   IElementType E_DELETE = new EdlElementType("DELETE");
   IElementType E_DELETE_PROJECTION = new EdlElementType("deleteProjection");
@@ -199,6 +197,11 @@ public interface EdlElementTypes {
   IElementType E_NODEFAULT = new EdlElementType("nodefault");
   IElementType E_NULL = new EdlElementType("null");
   IElementType E_NUMBER = new EdlElementType("number");
+  IElementType E_OP_CREATE = new EdlElementType("create");
+  IElementType E_OP_CUSTOM = new EdlElementType("custom");
+  IElementType E_OP_DELETE = new EdlElementType("delete");
+  IElementType E_OP_READ = new EdlElementType("read");
+  IElementType E_OP_UPDATE = new EdlElementType("update");
   IElementType E_OUTPUT_PROJECTION = new EdlElementType("outputProjection");
   IElementType E_OUTPUT_TYPE = new EdlElementType("outputType");
   IElementType E_OVERRIDE = new EdlElementType("override");
@@ -208,7 +211,6 @@ public interface EdlElementTypes {
   IElementType E_PLUS = new EdlElementType("+");
   IElementType E_POST = new EdlElementType("POST");
   IElementType E_PUT = new EdlElementType("PUT");
-  IElementType E_READ = new EdlElementType("READ");
   IElementType E_RECORD = new EdlElementType("record");
   IElementType E_REQUIRED = new EdlElementType("required");
   IElementType E_RESOURCE = new EdlElementType("resource");
@@ -221,7 +223,6 @@ public interface EdlElementTypes {
   IElementType E_SUPPLEMENTS = new EdlElementType("supplements");
   IElementType E_TILDA = new EdlElementType("~");
   IElementType E_UNDERSCORE = new EdlElementType("_");
-  IElementType E_UPDATE = new EdlElementType("UPDATE");
   IElementType E_VARTYPE = new EdlElementType("vartype");
   IElementType E_WITH = new EdlElementType("with");
 

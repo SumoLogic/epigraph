@@ -1,14 +1,13 @@
-namespace ws.epigraph.server.http
+namespace ws.epigraph.tests
 
 import ws.epigraph.tests.Person
 import ws.epigraph.tests.PersonId
 import ws.epigraph.tests.PersonRecord
-import ws.epigraph.tests.PersonCreateResult
 import ws.epigraph.tests.User
 
 resource users: map[PersonId,Person] {
 
-  READ {
+  read {
     outputProjection [](
       :(
         id,
@@ -40,7 +39,7 @@ resource users: map[PersonId,Person] {
     )
   }
 
-  CREATE {
+  create {
     inputType list[PersonRecord]
     inputProjection *(
       firstName,
@@ -66,7 +65,7 @@ resource users: map[PersonId,Person] {
     outputType list[PersonId] // todo list[PersonId throws epigraph.Error]
   }
 
-  UPDATE {
+  update {
     inputProjection [ required ](
       :(
         `record`(
@@ -80,14 +79,14 @@ resource users: map[PersonId,Person] {
     outputProjection [] (code, message)
   }
 
-  DELETE {
+  delete {
     deleteProjection [ required ] ( + )
 
     outputType map[PersonId, epigraph.Error]
     outputProjection [] (code, message)
   }
 
-  capitalize CUSTOM {
+  custom capitalize {
     method POST
     path /.              // only applicable to a single map key
 
@@ -102,7 +101,7 @@ resource users: map[PersonId,Person] {
 
 resource user: Person {
 
-  READ {
+  read {
     outputProjection :(
       id,
       `record`(

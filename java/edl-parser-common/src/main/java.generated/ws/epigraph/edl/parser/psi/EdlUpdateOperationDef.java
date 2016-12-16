@@ -20,6 +20,6 @@ public interface EdlUpdateOperationDef extends PsiElement {
   PsiElement getCurlyRight();
 
   @NotNull
-  PsiElement getUpdate();
+  PsiElement getOpUpdate();
 
 }

@@ -27,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import ws.epigraph.gdata.GDataPrettyPrinter;
 import ws.epigraph.gdata.GDatum;
 import ws.epigraph.edl.Edl;
-import ws.epigraph.edl.IdlPrettyPrinter;
+import ws.epigraph.edl.EdlPrettyPrinter;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.op.delete.OpDeleteProjectionsPrettyPrinter;
 import ws.epigraph.projections.op.delete.OpDeleteVarProjection;
@@ -397,7 +397,7 @@ public final class TestUtil {
   public static @NotNull String printEdl(Edl edl) {
     StringBackend sb = new StringBackend(80);
     Layouter<NoExceptions> l = new Layouter<>(sb, 2);
-    IdlPrettyPrinter<NoExceptions> pp = new IdlPrettyPrinter<>(l);
+    EdlPrettyPrinter<NoExceptions> pp = new EdlPrettyPrinter<>(l);
     pp.print(edl);
     l.close();
 

@@ -570,22 +570,23 @@ public class EdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // operationName? 'CREATE' createOperationBody
+  // 'create' operationName? createOperationBody
   public static boolean createOperationDef(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "createOperationDef")) return false;
+    if (!nextTokenIs(b, E_OP_CREATE)) return false;
     boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, E_CREATE_OPERATION_DEF, "<create operation def>");
-    r = createOperationDef_0(b, l + 1);
-    r = r && consumeToken(b, E_CREATE);
-    p = r; // pin = 2
-    r = r && createOperationBody(b, l + 1);
+    Marker m = enter_section_(b, l, _NONE_, E_CREATE_OPERATION_DEF, null);
+    r = consumeToken(b, E_OP_CREATE);
+    p = r; // pin = 1
+    r = r && report_error_(b, createOperationDef_1(b, l + 1));
+    r = p && createOperationBody(b, l + 1) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
 
   // operationName?
-  private static boolean createOperationDef_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "createOperationDef_0")) return false;
+  private static boolean createOperationDef_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "createOperationDef_1")) return false;
     operationName(b, l + 1);
     return true;
   }
@@ -659,16 +660,16 @@ public class EdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // operationName 'CUSTOM' customOperationBody
+  // 'custom' operationName customOperationBody
   public static boolean customOperationDef(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "customOperationDef")) return false;
-    if (!nextTokenIs(b, "<custom operation def>", E_DEFAULT, E_ID)) return false;
+    if (!nextTokenIs(b, E_OP_CUSTOM)) return false;
     boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, E_CUSTOM_OPERATION_DEF, "<custom operation def>");
-    r = operationName(b, l + 1);
-    r = r && consumeToken(b, E_CUSTOM);
-    p = r; // pin = 2
-    r = r && customOperationBody(b, l + 1);
+    Marker m = enter_section_(b, l, _NONE_, E_CUSTOM_OPERATION_DEF, null);
+    r = consumeToken(b, E_OP_CUSTOM);
+    p = r; // pin = 1
+    r = r && report_error_(b, operationName(b, l + 1));
+    r = p && customOperationBody(b, l + 1) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -940,22 +941,23 @@ public class EdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // operationName? 'DELETE' deleteOperationBody
+  // 'delete' operationName? deleteOperationBody
   public static boolean deleteOperationDef(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "deleteOperationDef")) return false;
+    if (!nextTokenIs(b, E_OP_DELETE)) return false;
     boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, E_DELETE_OPERATION_DEF, "<delete operation def>");
-    r = deleteOperationDef_0(b, l + 1);
-    r = r && consumeToken(b, E_DELETE);
-    p = r; // pin = 2
-    r = r && deleteOperationBody(b, l + 1);
+    Marker m = enter_section_(b, l, _NONE_, E_DELETE_OPERATION_DEF, null);
+    r = consumeToken(b, E_OP_DELETE);
+    p = r; // pin = 1
+    r = r && report_error_(b, deleteOperationDef_1(b, l + 1));
+    r = p && deleteOperationBody(b, l + 1) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
 
   // operationName?
-  private static boolean deleteOperationDef_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "deleteOperationDef_0")) return false;
+  private static boolean deleteOperationDef_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "deleteOperationDef_1")) return false;
     operationName(b, l + 1);
     return true;
   }
@@ -4283,7 +4285,7 @@ public class EdlParser implements PsiParser, LightPsiParser {
   /* ********************************************************** */
   // ! ( '}' | ',' |
   //   'method' | 'inputType' | 'inputProjection' | 'outputType' | 'outputProjection' | 'deleteProjection' | 'path' |
-  //   (qid '=') | (qid? ('READ' | 'CREATE' | 'UPDATE' | 'DELETE' | 'CUSTOM') ) )
+  //   (qid '=') | 'read' | 'create' | 'update' | 'delete' | 'custom' )
   static boolean operationBodyRecover(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "operationBodyRecover")) return false;
     boolean r;
@@ -4295,7 +4297,7 @@ public class EdlParser implements PsiParser, LightPsiParser {
 
   // '}' | ',' |
   //   'method' | 'inputType' | 'inputProjection' | 'outputType' | 'outputProjection' | 'deleteProjection' | 'path' |
-  //   (qid '=') | (qid? ('READ' | 'CREATE' | 'UPDATE' | 'DELETE' | 'CUSTOM') )
+  //   (qid '=') | 'read' | 'create' | 'update' | 'delete' | 'custom'
   private static boolean operationBodyRecover_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "operationBodyRecover_0")) return false;
     boolean r;
@@ -4310,7 +4312,11 @@ public class EdlParser implements PsiParser, LightPsiParser {
     if (!r) r = consumeToken(b, E_DELETE_PROJECTION);
     if (!r) r = consumeToken(b, E_PATH);
     if (!r) r = operationBodyRecover_0_9(b, l + 1);
-    if (!r) r = operationBodyRecover_0_10(b, l + 1);
+    if (!r) r = consumeToken(b, E_OP_READ);
+    if (!r) r = consumeToken(b, E_OP_CREATE);
+    if (!r) r = consumeToken(b, E_OP_UPDATE);
+    if (!r) r = consumeToken(b, E_OP_DELETE);
+    if (!r) r = consumeToken(b, E_OP_CUSTOM);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -4322,38 +4328,6 @@ public class EdlParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b);
     r = qid(b, l + 1);
     r = r && consumeToken(b, E_EQ);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // qid? ('READ' | 'CREATE' | 'UPDATE' | 'DELETE' | 'CUSTOM')
-  private static boolean operationBodyRecover_0_10(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "operationBodyRecover_0_10")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = operationBodyRecover_0_10_0(b, l + 1);
-    r = r && operationBodyRecover_0_10_1(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // qid?
-  private static boolean operationBodyRecover_0_10_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "operationBodyRecover_0_10_0")) return false;
-    qid(b, l + 1);
-    return true;
-  }
-
-  // 'READ' | 'CREATE' | 'UPDATE' | 'DELETE' | 'CUSTOM'
-  private static boolean operationBodyRecover_0_10_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "operationBodyRecover_0_10_1")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, E_READ);
-    if (!r) r = consumeToken(b, E_CREATE);
-    if (!r) r = consumeToken(b, E_UPDATE);
-    if (!r) r = consumeToken(b, E_DELETE);
-    if (!r) r = consumeToken(b, E_CUSTOM);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -4374,7 +4348,7 @@ public class EdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ! ( '}' | ',' | qid '=' | (qid? ('READ' | 'CREATE' | 'UPDATE' | 'DELETE' | 'CUSTOM') ) )
+  // ! ( '}' | ',' | qid '=' | 'read' | 'create' | 'update' | 'delete' | 'custom' )
   static boolean operationDefRecover(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "operationDefRecover")) return false;
     boolean r;
@@ -4384,7 +4358,7 @@ public class EdlParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // '}' | ',' | qid '=' | (qid? ('READ' | 'CREATE' | 'UPDATE' | 'DELETE' | 'CUSTOM') )
+  // '}' | ',' | qid '=' | 'read' | 'create' | 'update' | 'delete' | 'custom'
   private static boolean operationDefRecover_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "operationDefRecover_0")) return false;
     boolean r;
@@ -4392,7 +4366,11 @@ public class EdlParser implements PsiParser, LightPsiParser {
     r = consumeToken(b, E_CURLY_RIGHT);
     if (!r) r = consumeToken(b, E_COMMA);
     if (!r) r = operationDefRecover_0_2(b, l + 1);
-    if (!r) r = operationDefRecover_0_3(b, l + 1);
+    if (!r) r = consumeToken(b, E_OP_READ);
+    if (!r) r = consumeToken(b, E_OP_CREATE);
+    if (!r) r = consumeToken(b, E_OP_UPDATE);
+    if (!r) r = consumeToken(b, E_OP_DELETE);
+    if (!r) r = consumeToken(b, E_OP_CUSTOM);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -4404,38 +4382,6 @@ public class EdlParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b);
     r = qid(b, l + 1);
     r = r && consumeToken(b, E_EQ);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // qid? ('READ' | 'CREATE' | 'UPDATE' | 'DELETE' | 'CUSTOM')
-  private static boolean operationDefRecover_0_3(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "operationDefRecover_0_3")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = operationDefRecover_0_3_0(b, l + 1);
-    r = r && operationDefRecover_0_3_1(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // qid?
-  private static boolean operationDefRecover_0_3_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "operationDefRecover_0_3_0")) return false;
-    qid(b, l + 1);
-    return true;
-  }
-
-  // 'READ' | 'CREATE' | 'UPDATE' | 'DELETE' | 'CUSTOM'
-  private static boolean operationDefRecover_0_3_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "operationDefRecover_0_3_1")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, E_READ);
-    if (!r) r = consumeToken(b, E_CREATE);
-    if (!r) r = consumeToken(b, E_UPDATE);
-    if (!r) r = consumeToken(b, E_DELETE);
-    if (!r) r = consumeToken(b, E_CUSTOM);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -4914,22 +4860,23 @@ public class EdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // operationName? 'READ' readOperationBody
+  // 'read' operationName? readOperationBody
   public static boolean readOperationDef(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "readOperationDef")) return false;
+    if (!nextTokenIs(b, E_OP_READ)) return false;
     boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, E_READ_OPERATION_DEF, "<read operation def>");
-    r = readOperationDef_0(b, l + 1);
-    r = r && consumeToken(b, E_READ);
-    p = r; // pin = 2
-    r = r && readOperationBody(b, l + 1);
+    Marker m = enter_section_(b, l, _NONE_, E_READ_OPERATION_DEF, null);
+    r = consumeToken(b, E_OP_READ);
+    p = r; // pin = 1
+    r = r && report_error_(b, readOperationDef_1(b, l + 1));
+    r = p && readOperationBody(b, l + 1) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
 
   // operationName?
-  private static boolean readOperationDef_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "readOperationDef_0")) return false;
+  private static boolean readOperationDef_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "readOperationDef_1")) return false;
     operationName(b, l + 1);
     return true;
   }
@@ -5430,22 +5377,23 @@ public class EdlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // operationName? 'UPDATE' updateOperationBody
+  // 'update' operationName? updateOperationBody
   public static boolean updateOperationDef(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "updateOperationDef")) return false;
+    if (!nextTokenIs(b, E_OP_UPDATE)) return false;
     boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, E_UPDATE_OPERATION_DEF, "<update operation def>");
-    r = updateOperationDef_0(b, l + 1);
-    r = r && consumeToken(b, E_UPDATE);
-    p = r; // pin = 2
-    r = r && updateOperationBody(b, l + 1);
+    Marker m = enter_section_(b, l, _NONE_, E_UPDATE_OPERATION_DEF, null);
+    r = consumeToken(b, E_OP_UPDATE);
+    p = r; // pin = 1
+    r = r && report_error_(b, updateOperationDef_1(b, l + 1));
+    r = p && updateOperationBody(b, l + 1) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
 
   // operationName?
-  private static boolean updateOperationDef_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "updateOperationDef_0")) return false;
+  private static boolean updateOperationDef_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "updateOperationDef_1")) return false;
     operationName(b, l + 1);
     return true;
   }

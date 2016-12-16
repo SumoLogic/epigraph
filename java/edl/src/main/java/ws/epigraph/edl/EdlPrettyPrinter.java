@@ -28,13 +28,12 @@ import org.jetbrains.annotations.Nullable;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class IdlPrettyPrinter<E extends Exception> {
-  @NotNull
-  private final Layouter<E> l;
+public class EdlPrettyPrinter<E extends Exception> {
+  private final @NotNull Layouter<E> l;
 
   private final OperationsPrettyPrinter<E> operationsPrettyPrinter;
 
-  public IdlPrettyPrinter(@NotNull Layouter<E> l) {
+  public EdlPrettyPrinter(@NotNull Layouter<E> l) {
     this.l = l;
     operationsPrettyPrinter = new OperationsPrettyPrinter<>(l);
   }

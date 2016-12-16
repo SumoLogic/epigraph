@@ -33,8 +33,7 @@ import ws.epigraph.types.Type;
  */
 @SuppressWarnings("ConstantConditions")
 public class OperationsPrettyPrinter<E extends Exception> {
-  @NotNull
-  private final Layouter<E> l;
+  private final @NotNull Layouter<E> l;
   private final OpPathPrettyPrinter<E> opPathPrinter;
   private final OpOutputProjectionsPrettyPrinter<E> opOutputPrinter;
   private final OpInputProjectionsPrettyPrinter<E> opInputPrinter;
@@ -51,11 +50,12 @@ public class OperationsPrettyPrinter<E extends Exception> {
   public void printOperation(@NotNull OperationDeclaration operation) throws E {
     l.beginIInd(0);
 
+    l.print(operation.kind().toString().toLowerCase()).brk();
+
     if (!operation.isDefault())
       l.print(operation.name()).brk();
 
-    l.print(operation.kind().toString());
-    l.brk().print("{");
+    l.print("{");
     l.beginCInd();
 
     boolean first = true;

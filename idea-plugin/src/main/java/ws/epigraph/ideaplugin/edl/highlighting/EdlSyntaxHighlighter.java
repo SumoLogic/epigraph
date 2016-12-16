@@ -20,12 +20,11 @@ import com.intellij.lexer.Lexer;
 import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.editor.markup.EffectType;
-import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.fileTypes.SyntaxHighlighterBase;
 import com.intellij.psi.tree.IElementType;
-import ws.epigraph.edl.parser.EdlParserDefinition;
-import ws.epigraph.edl.lexer.EdlFlexAdapter;
 import org.jetbrains.annotations.NotNull;
+import ws.epigraph.edl.lexer.EdlFlexAdapter;
+import ws.epigraph.edl.parser.EdlParserDefinition;
 
 import java.util.HashMap;
 import java.util.Map;

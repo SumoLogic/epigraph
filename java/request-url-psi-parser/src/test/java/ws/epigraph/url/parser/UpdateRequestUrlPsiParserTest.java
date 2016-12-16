@@ -66,7 +66,7 @@ public class UpdateRequestUrlPsiParserTest {
       "import ws.epigraph.tests.Person",
       "import ws.epigraph.tests.UserRecord",
       "resource users : map[String,Person] {",
-      "  UPDATE {",
+      "  update {",
       "    inputType UserRecord",
       "    inputProjection (id, firstName)",
       "    outputProjection [required]( :`record` (id, firstName) )",
