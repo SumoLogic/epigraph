@@ -1,44 +1,12 @@
-- [x] Marshaller for output data
-  - [x] Code clean up
-  - [x] Add unit tests
-  - [ ] ~~Make more generic?~~
-  
-- [x] Unmarshallers for create/update/custom body
-  - [x] abstract generic version
-  - [x] guided by req output projection
-  - [x] guided by op input projection (for operations called without explicit request projection)
-  - [x] guided by req input projection
-  - [x] guided by req update projection
-  - [ ] ~~guided by req delete projection~~
-  
-- [x] Move `ReqOutputVarProjection.parenthesized` to `GenVarProjection`
-  - [x] Update parsers
-  - [x] Update pretty printers
-  - [x] Update unmarshallers
-  
-- [x] Undertow handler must support all operations
-  - [x] add support for create
-  - [x] add support for update
-  - [x] add support for delete
-  - [x] add support for custom
-  - [x] update test server to support/demo all operations
-    - [x] read
-    - [x] create
-    - [x] update
-    - [x] delete
-    - [x] custom
-  - [x] enable real streaming
-  
+- [ ] EDL compiler should extract type information from resource declarations
+- [ ] Java codegen should build a `type name -> java class name` index in `META-INF`
+- [ ] `TypesResolver` implementation based on the above index file
+- [ ] Java codegen should generate instances of `ResourceDeclaration` for all resources (even from dependencies)
+- [ ] Java codegen should generate (abstract? empty?) `Resource` implementations for all resources except for dependencies
+
 - Important items from [general todo] (todo.md)
   - [ ] Add `type.createBuilder(data)` similar to `toImmutable` (postponed till there are more use cases)
     - [ ] Update demo service
-  - [x] fix `equals` on tags
-  - [x] OpInputKey projections should support the notion of required/forbidden/optional keys, and ReqInput parser should respect/validate it
-  - [x] Gradle plugin: java generator doesn't detect changes in schema
-
-- [ ] Standalone IDL verifier/compiler
-  - [ ] Maven plugin
-  - [ ] Gradle plugin
 
 - Docs
   - Operations
