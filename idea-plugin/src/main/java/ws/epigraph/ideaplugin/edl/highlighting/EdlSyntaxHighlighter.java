@@ -19,6 +19,8 @@ package ws.epigraph.ideaplugin.edl.highlighting;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
+import com.intellij.openapi.editor.markup.EffectType;
+import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.fileTypes.SyntaxHighlighterBase;
 import com.intellij.psi.tree.IElementType;
 import ws.epigraph.edl.parser.EdlParserDefinition;
@@ -51,7 +53,6 @@ public class EdlSyntaxHighlighter extends SyntaxHighlighterBase {
   public static final TextAttributesKey KEYWORDS = DefaultLanguageHighlighterColors.KEYWORD;
 
   public static final TextAttributesKey FIELD = DefaultLanguageHighlighterColors.INSTANCE_FIELD;
-  public static final TextAttributesKey TAG = DefaultLanguageHighlighterColors.INSTANCE_FIELD;
   public static final TextAttributesKey VAR_MEMBER = DefaultLanguageHighlighterColors.INSTANCE_FIELD;
 
   public static final TextAttributesKey DECL_TYPE_NAME = DefaultLanguageHighlighterColors.CLASS_NAME;
@@ -66,6 +67,8 @@ public class EdlSyntaxHighlighter extends SyntaxHighlighterBase {
 
 
   static {
+    VAR_MEMBER.getDefaultAttributes().setEffectType(EffectType.LINE_UNDERSCORE);
+
     keys = new HashMap<>();
     keys.put(E_ID, ID);
     keys.put(E_COMMA, COMMA);
