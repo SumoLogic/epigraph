@@ -1,0 +1,134 @@
+namespace ws.epigraph.tests
+
+import ws.epigraph.tests.Person
+import ws.epigraph.tests.PersonId
+import ws.epigraph.tests.PersonRecord
+import ws.epigraph.tests.User
+
+resource users: map[PersonId,Person] {
+
+  read {
+    outputProjection [](
+      :(
+        id,
+        `record`(
+          id,
+          firstName,
+          lastName,
+          bestFriend:(
+            id,
+            `record`( id, firstName, lastName, bestFriend:id, worstEnemy )
+          )~User:(
+            `record`(
+              worstEnemy( id, firstName, lastName, profile )
+              profile
+            )
+          )
+          worstEnemy( id, firstName, lastName )
+          friends *(
+            :(
+              id,
+              `record`( id, firstName, lastName )
+            )
+          )
+        )
+      )~User:(
+        id,
+        `record`( profile, worstEnemy( profile ) )
+      )
+    )
+  }
+
+  create {
+    inputType list[PersonRecord]
+    inputProjection *(
+      firstName,
+      lastName,
+      bestFriend:(
+        id,
+        `record`( id, firstName, lastName, bestFriend:id, worstEnemy )
+      )~User:(
+        `record`(
+          worstEnemy( id, firstName, lastName, profile )
+          profile
+        )
+      )
+      worstEnemy( id, firstName, lastName )
+      friends *(
+        :(
+          id,
+          `record`( id, firstName, lastName )
+        )
+      )
+    )
+
+    outputType list[PersonId] // todo list[PersonId throws epigraph.Error]
+  }
+
+  update {
+    inputProjection [ required ](
+      :(
+        `record`(
+          firstName,
+          lastName,
+        )
+      )
+    )
+
+    outputType map[PersonId, epigraph.Error]
+    outputProjection [] (code, message)
+  }
+
+  delete {
+    deleteProjection [ required ] ( + )
+
+    outputType map[PersonId, epigraph.Error]
+    outputProjection [] (code, message)
+  }
+
+  custom capitalize {
+    method POST
+    path /.              // only applicable to a single map key
+
+    inputType PersonRecord
+    inputProjection (firstName, lastName)
+
+    outputType PersonRecord
+    outputProjection (firstName, lastName)
+  }
+
+}
+
+resource user: Person {
+
+  read {
+    outputProjection :(
+      id,
+      `record`(
+        id,
+        firstName,
+        lastName,
+        bestFriend:(
+          id,
+          `record`( id, firstName, lastName, bestFriend:id, worstEnemy )
+        )~ws.epigraph.tests.User:(
+          `record`(
+            worstEnemy( id, firstName, lastName, profile )
+            profile
+          )
+        )
+        worstEnemy( id, firstName, lastName )
+        friends *(
+          :(
+            id,
+            `record`( id, firstName, lastName )
+          )
+        )
+      )
+    )~User:(
+      id,
+      `record`( profile, worstEnemy( profile ) )
+    )
+  }
+
+}
