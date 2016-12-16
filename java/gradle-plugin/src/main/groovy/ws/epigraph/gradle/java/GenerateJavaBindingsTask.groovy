@@ -16,7 +16,7 @@
 
 package ws.epigraph.gradle.java
 
-import ws.epigraph.java.JavaEdlGenerator
+import ws.epigraph.java.EpigraphJavaGenerator
 import ws.epigraph.gradle.EmptyFileTree
 import ws.epigraph.gradle.EpigraphCompileTaskBase
 import org.gradle.api.DefaultTask
@@ -43,7 +43,7 @@ class GenerateJavaBindingsTask extends DefaultTask implements EpigraphCompileTas
       throw new GradleException('EDL compilation failed with errors')
 
     getLogger().info("Generating Java bindings to '${getDestinationDir()}'")
-    new JavaEdlGenerator(context, getDestinationDir()).generate()
+    new EpigraphJavaGenerator(context, getDestinationDir()).generate()
   }
 
   @Override
