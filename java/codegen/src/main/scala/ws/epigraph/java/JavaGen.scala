@@ -27,7 +27,7 @@ import ws.epigraph.util.JavaNames
 import scala.collection.GenTraversableOnce
 import scala.collection.JavaConversions._
 
-abstract class JavaGen[From >: Null <: AnyRef](protected val from: From, protected val ctx: CContext) {
+abstract class JavaGen[From >: Null <: AnyRef](protected val ctx: GenContext) {
 
   protected def relativeFilePath: Path
 

@@ -20,4 +20,4 @@ package ws.epigraph.java
 
 import ws.epigraph.compiler.{CContext, CListTypeDef}
 
-class NamedListGen(from: CListTypeDef, ctx: CContext) extends ListGen[CListTypeDef](from, ctx) with DatumTypeJavaGen
+class NamedListGen(from: CListTypeDef, ctx: GenContext) extends ListGen[CListTypeDef](from, ctx) with DatumTypeJavaGen

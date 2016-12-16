@@ -20,5 +20,5 @@ package ws.epigraph.java
 
 import ws.epigraph.compiler.{CContext, CTypeDef}
 
-abstract class JavaTypeDefGen[TypeDef >: Null <: CTypeDef](from: TypeDef, ctx: CContext)
+abstract class JavaTypeDefGen[TypeDef >: Null <: CTypeDef](from: TypeDef, ctx: GenContext)
     extends JavaTypeGen[TypeDef](from, ctx)

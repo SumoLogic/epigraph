@@ -21,7 +21,7 @@ package ws.epigraph.java
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 import ws.epigraph.compiler.{CContext, CPrimitiveTypeDef, CTypeKind}
 
-class PrimitiveGen(from: CPrimitiveTypeDef, ctx: CContext) extends JavaTypeDefGen[CPrimitiveTypeDef](from, ctx)
+class PrimitiveGen(from: CPrimitiveTypeDef, ctx: GenContext) extends JavaTypeDefGen[CPrimitiveTypeDef](from, ctx)
     with DatumTypeJavaGen {
 
   protected override def generate: String = /*@formatter:off*/sn"""\

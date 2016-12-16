@@ -39,6 +39,19 @@ abstract class CTypeName protected(val name: String)(implicit val ctx: CContext)
 
 }
 
+//// TODO type name ordering (fqn < list[fqn] < map[k0, fqn] < map[k1, fqn] )
+//object CTypeName {
+//
+//  implicit val CTypeNameOrdering = Ordering.by { ctn: CTypeName =>
+//    ctn match {
+//      case fqn: CTypeFqn => (fqn, null, null)
+//      case aln: CAnonListTypeName => (aln.elementTypeRef.name, "list", null)
+//      case amn: CAnonMapTypeName => (amn.valueTypeRef.name, "map", amn.keyTypeRef.name)
+//    }
+//  }
+//
+//}
+
 
 class CTypeFqn private(csf: CEdlFile, val fqn: Qn, val psi: PsiElement)(implicit ctx: CContext)
     extends CTypeName(fqn.toString) {

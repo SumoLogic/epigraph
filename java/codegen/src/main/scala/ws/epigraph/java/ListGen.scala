@@ -21,7 +21,7 @@ package ws.epigraph.java
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 import ws.epigraph.compiler.{CContext, CListType, CVarTypeDef}
 
-abstract class ListGen[Type >: Null <: CListType](from: Type, ctx: CContext) extends JavaTypeGen[Type](from, ctx)
+abstract class ListGen[Type >: Null <: CListType](from: Type, ctx: GenContext) extends JavaTypeGen[Type](from, ctx)
     with DatumTypeJavaGen {
 
   /** element value type */
@@ -33,7 +33,7 @@ abstract class ListGen[Type >: Null <: CListType](from: Type, ctx: CContext) ext
   /** element type */
   private val et = etr.resolved
 
-  override def generate: String = /*@formatter:off*/sn"""\
+    override def generate: String = /*@formatter:off*/sn"""\
 package ${pn(t)};
 
 import org.jetbrains.annotations.NotNull;

@@ -24,11 +24,14 @@ import ws.epigraph.compiler.{CContext, CDataType, CType, CTypeRef, CVarTypeDef}
 
 import scala.collection.JavaConversions._
 
-abstract class JavaTypeGen[Type >: Null <: CType](from: Type, ctx: CContext) extends JavaGen[Type](from, ctx) {
+abstract class JavaTypeGen[Type >: Null <: CType](protected val t: Type, ctx: GenContext) extends JavaGen[Type](ctx) {
 
-  protected val t: Type = from
+  ctx.generatedTypes.put(t.name, typeExpression)
 
-  // TODO respect annotations changing namespace/type names for scala
+  /** java code for expression yielding generated type object */
+  protected def typeExpression: String = s"${pn(t)}.${ln(t)}.Type.instance()"
+
+  // TODO respect annotations changing namespace/type names for java
   protected override def relativeFilePath: Path =
   JavaGenUtils.fqnToPath(getNamedTypeComponent(t).name.fqn.removeLastSegment()).resolve(ln(t) + ".java")
 

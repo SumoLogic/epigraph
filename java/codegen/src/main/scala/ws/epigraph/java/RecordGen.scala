@@ -21,7 +21,7 @@ package ws.epigraph.java
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 import ws.epigraph.compiler._
 
-class RecordGen(from: CRecordTypeDef, ctx: CContext) extends JavaTypeDefGen[CRecordTypeDef](from, ctx)
+class RecordGen(from: CRecordTypeDef, ctx: GenContext) extends JavaTypeDefGen[CRecordTypeDef](from, ctx)
     with DatumTypeJavaGen {
 
   protected def generate: String = /*@formatter:off*/sn"""\

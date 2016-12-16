@@ -20,4 +20,4 @@ package ws.epigraph.java
 
 import ws.epigraph.compiler.{CAnonMapType, CContext}
 
-class AnonMapGen(from: CAnonMapType, ctx: CContext) extends MapGen[CAnonMapType](from, ctx) with DatumTypeJavaGen
+class AnonMapGen(from: CAnonMapType, ctx: GenContext) extends MapGen[CAnonMapType](from, ctx) with DatumTypeJavaGen

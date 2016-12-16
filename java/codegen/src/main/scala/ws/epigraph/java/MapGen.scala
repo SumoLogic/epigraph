@@ -24,7 +24,7 @@ import java.nio.file.Path
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 import ws.epigraph.compiler.{CAnonMapType, CContext, CMapType, CVarTypeDef}
 
-abstract class MapGen[Type >: Null <: CMapType](from: Type, ctx: CContext) extends JavaTypeGen[Type](from, ctx)
+abstract class MapGen[Type >: Null <: CMapType](from: Type, ctx: GenContext) extends JavaTypeGen[Type](from, ctx)
     with DatumTypeJavaGen {
 
   /** key type ref */

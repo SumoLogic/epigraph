@@ -18,7 +18,7 @@
 
 package ws.epigraph.java.mojo;
 
-import ws.epigraph.java.JavaEdlGenerator;
+import ws.epigraph.java.EpigraphJavaGenerator;
 import ws.epigraph.maven.AbstractCompilingMojo;
 import ws.epigraph.compiler.CContext;
 import ws.epigraph.compiler.FileSource;
@@ -43,7 +43,7 @@ public abstract class BaseCodegenMojo extends AbstractCompilingMojo {
       @NotNull CContext ctx
   ) throws MojoExecutionException, MojoFailureException {
     try {
-      new JavaEdlGenerator(ctx, outputDirectory).generate();
+      new EpigraphJavaGenerator(ctx, outputDirectory).generate();
       addResultsToProject(project, outputDirectory.getCanonicalPath());
     } catch (IOException e) {
       throw new MojoExecutionException("Error generating sources to " + outputDirectory, e);

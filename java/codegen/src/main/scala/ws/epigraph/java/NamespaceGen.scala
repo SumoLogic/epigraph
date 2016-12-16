@@ -26,7 +26,7 @@ import NewlineStringInterpolator.NewlineHelper
 
 import scala.language.implicitConversions
 
-class NamespaceGen(from: CNamespace, ctx: CContext) extends JavaGen[CNamespace](from, ctx) {
+class NamespaceGen(from: CNamespace, ctx: GenContext) extends JavaGen[CNamespace](ctx) {
 
   // TODO respect annotations changing namespace names for scala
 

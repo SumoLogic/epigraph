@@ -25,18 +25,20 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 
-public class JavaEdlGenerator {
+public class EpigraphJavaGenerator {
 
-  private final CContext ctx;
+  private final CContext cctx;
+
+  private final GenContext ctx = new GenContext();
 
   private final Path outputRoot;
 
-  public JavaEdlGenerator(CContext ctx, Path outputRoot) {
-    this.ctx = ctx;
+  public EpigraphJavaGenerator(CContext ctx, Path outputRoot) {
+    this.cctx = ctx;
     this.outputRoot = outputRoot;
   }
 
-  public JavaEdlGenerator(CContext ctx, File outputRoot) { this(ctx, outputRoot.toPath()); }
+  public EpigraphJavaGenerator(CContext ctx, File outputRoot) { this(ctx, outputRoot.toPath()); }
 
   public void generate() throws IOException {
 
@@ -46,7 +48,9 @@ public class JavaEdlGenerator {
 //      new NamespaceGen(namespace, ctx).writeUnder(tmpRoot);
 //    }
 
-    for (CEdlFile edlFile : ctx.edlFiles().values()) {
+    // TODO parallelize all these?
+
+    for (CEdlFile edlFile : cctx.edlFiles().values()) {
       for (CTypeDef typeDef : JavaConversions.asJavaIterable(edlFile.typeDefs())) {
 
         switch (typeDef.kind()) {
@@ -84,12 +88,12 @@ public class JavaEdlGenerator {
       }
     }
     
-    for (CAnonListType alt : ctx.anonListTypes().values()) {
+    for (CAnonListType alt : cctx.anonListTypes().values()) {
       //System.out.println(alt.name().name());
       new AnonListGen(alt, ctx).writeUnder(tmpRoot);
     }
 
-    for (CAnonMapType amt : ctx.anonMapTypes().values()) {
+    for (CAnonMapType amt : cctx.anonMapTypes().values()) {
       //System.out.println(amt.name().name());
       new AnonMapGen(amt, ctx).writeUnder(tmpRoot);
     }
@@ -102,12 +106,14 @@ public class JavaEdlGenerator {
 //      new AnonBaseMapGen(valueType, ctx).writeUnder(tmpRoot);
 //    }
 
+    new IndexGen(ctx).writeUnder(tmpRoot);
+
     JavaGenUtils.move(tmpRoot, outputRoot, outputRoot.getParent()); // move new root to final location
 
   }
 
 //  public static void main(String... args) throws IOException {
-//    new JavaEdlGenerator(
+//    new EpigraphJavaGenerator(
 //        EdlCompiler.testcompile(),
 //        Paths.get("java/codegen-test/src/main/java")
 //    ).generate();

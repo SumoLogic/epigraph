@@ -20,4 +20,4 @@ package ws.epigraph.java
 
 import ws.epigraph.compiler.{CContext, CMapTypeDef}
 
-class NamedMapGen(from: CMapTypeDef, ctx: CContext) extends MapGen[CMapTypeDef](from, ctx) with DatumTypeJavaGen
+class NamedMapGen(from: CMapTypeDef, ctx: GenContext) extends MapGen[CMapTypeDef](from, ctx) with DatumTypeJavaGen
