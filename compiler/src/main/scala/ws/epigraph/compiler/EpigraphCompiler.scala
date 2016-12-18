@@ -23,19 +23,19 @@ import java.util
 import java.util.Collections
 
 import com.intellij.lang.ParserDefinition
-import com.intellij.psi.PsiFile
+import com.intellij.psi.{PsiElement, PsiFile, PsiRecursiveElementWalkingVisitor}
 import org.intellij.grammar.LightPsi
 import org.jetbrains.annotations.Nullable
 import ws.epigraph.edl.parser.EdlParserDefinition
-import ws.epigraph.edl.parser.psi.EdlFile
+import ws.epigraph.edl.parser.psi._
 
 import scala.collection.JavaConversions._
 import scala.collection.{GenTraversableOnce, mutable}
 
 class EpigraphCompiler(
-    private val sources: util.Collection[_ <: Source],
-    private val dependencies: util.Collection[_ <: Source] = Collections.emptyList()
-) {
+                        private val sources: util.Collection[_ <: Source],
+                        private val dependencies: util.Collection[_ <: Source] = Collections.emptyList()
+                      ) {
 
   println(sources.map(_.name).mkString("Sources: [\n", ",\n", "\n]")) // TODO use log or remove
   println(dependencies.map(_.name).mkString("Dependencies: [\n", ",\n", "\n]")) // TODO use log or remove
@@ -111,7 +111,7 @@ class EpigraphCompiler(
 
   private def parseSourceFiles(sources: util.Collection[Source]): Seq[EdlFile] = {
 
-    val edlFiles: Seq[EdlFile] = sources.par.flatMap { source =>
+    val edlFiles: Seq[EdlFile] = sources.par.flatMap{ source =>
       try {
         parseFile(source, spd) match {
           case sf: EdlFile =>
@@ -127,7 +127,7 @@ class EpigraphCompiler(
       }
     }(collection.breakOut)
 
-    edlFiles.foreach { sf => ctx.errors.addAll(ParseErrorsDumper.collectParseErrors(sf)) }
+    edlFiles.foreach{ sf => ctx.errors.addAll(ParseErrorsDumper.collectParseErrors(sf)) }
 
     edlFiles
   }
@@ -148,6 +148,14 @@ class EpigraphCompiler(
           )
         )
       }
+
+      // extra pass of registering all type refs, should pick up all stuff from resource declarations
+      csf.psi.accept(new PsiRecursiveElementWalkingVisitor() {
+        override def visitElement(element: PsiElement): Unit = element match {
+          case etr: EdlTypeRef => CTypeRef(csf, etr)
+          case e => super.visitElement(e)
+        }
+      })
     }
   }
 
@@ -212,7 +220,7 @@ class EpigraphCompiler(
 
 
 class EpigraphCompilerException(
-    message: String,
-    val errors: util.Collection[CError],
-    cause: Throwable = null
-) extends RuntimeException(message, cause)
+                                 message: String,
+                                 val errors: util.Collection[CError],
+                                 cause: Throwable = null
+                               ) extends RuntimeException(message, cause)

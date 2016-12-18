@@ -94,7 +94,7 @@
 
     <!-- annotator -->
     <annotator language="epigraph_edl"
-               implementationClass="ws.epigraph.ideaplugin.edl.highlighting.EdlSchemaAnnotator"/>
+               implementationClass="ws.epigraph.ideaplugin.edl.highlighting.EdlAnnotator"/>
     <annotator language="epigraph_edl"
                implementationClass="ws.epigraph.ideaplugin.edl.highlighting.EdlOpOutputProjectionsAnnotator"/>
     <!-- highlight errors in parents even if there are errors in children -->

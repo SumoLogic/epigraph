@@ -1,5 +1,5 @@
-- [ ] EDL compiler should extract type information from resource declarations
-- [ ] Java codegen should build a `type name -> java class name` index in `META-INF`
+- [x] EDL compiler should extract type information from resource declarations
+- [x] Java codegen should build a `type name -> java class name` index in `META-INF`
 - [ ] `TypesResolver` implementation based on the above index file
 - [ ] Java codegen should generate instances of `ResourceDeclaration` for all resources (even from dependencies)
 - [ ] Java codegen should generate (abstract? empty?) `Resource` implementations for all resources except for dependencies

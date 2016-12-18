@@ -24,7 +24,7 @@ import ws.epigraph.edl.parser.psi.*;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class EdlOpOutputProjectionsAnnotator extends EdlAnnotator {
+public class EdlOpOutputProjectionsAnnotator extends EdlAnnotatorBase {
   @Override
   public void annotate(
       @NotNull final PsiElement element, @NotNull final AnnotationHolder holder) {

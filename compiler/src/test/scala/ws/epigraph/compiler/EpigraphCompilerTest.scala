@@ -26,14 +26,31 @@ import org.scalatest.{FlatSpec, Matchers}
 
 @RunWith(classOf[JUnitRunner])
 class EpigraphCompilerTest extends FlatSpec with Matchers {
+  behavior of "Epigraph Compiler"
 
-  "EdlCompiler" should "detect incompatible overridden fields" in {
+  System.setProperty("junit.mode", "true")
+
+  it should "detect incompatible overridden fields" in {
     val compiler = new EpigraphCompiler(
       Collections.singleton(
-        new ResourceSource("/ws/epigraph/edl/compiler/tests/incompatibleFields.epigraph")
+        new ResourceSource("/ws/epigraph/compiler/tests/incompatibleFields.epigraph")
       )
     )
-    intercept[EpigraphCompilerException](compiler.compile()).errors shouldNot be('empty)
+    val errors = intercept[EpigraphCompilerException](compiler.compile()).errors
+    errors.size() shouldBe 1
+    errors.iterator().next().toString should include("is not a subtype")
+  }
+
+  it should "collect types from resources" in {
+    val compiler = new EpigraphCompiler(
+      Collections.singleton(
+        new ResourceSource("/ws/epigraph/compiler/tests/typesAndResources.epigraph")
+      )
+    )
+    val cc = compiler.compile()
+    cc.errors shouldBe empty
+    cc.anonListTypes.size() shouldBe 2
+
   }
 
 }

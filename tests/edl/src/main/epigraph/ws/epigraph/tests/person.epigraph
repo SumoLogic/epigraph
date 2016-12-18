@@ -20,9 +20,3 @@ record PersonRecord {
   friendsMap: map[String, Person]
   friendRecordMap: map[String, PersonRecord]
 }
-
-// todo this should be removed once we have proper idl/types compiler
-map[PersonId, Person] UsersResourceDummy0 // read output
-list[PersonRecord] UserResourceDummy1 // create input
-list[PersonId] UsersResourceDummy2 // create output
-map[PersonId, epigraph.Error] UsersResourceDummy3 // update, delete

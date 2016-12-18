@@ -1,0 +1,10 @@
+namespace ws.epigraph.schema.compiler.tests
+
+string MyString
+long MyLong
+
+resource MyResource : list[MyString] {
+  update {
+    inputType list[MyLong]
+  }
+}
