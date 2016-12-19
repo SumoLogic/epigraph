@@ -52,7 +52,7 @@ abstract class CTypeName protected(val name: String)(implicit val ctx: CContext)
 //
 //}
 
-
+// NB: update `IndexBasedTypesResolver.name` if making changes to `.name`
 class CTypeFqn private(csf: CSchemaFile, val fqn: Qn, val psi: PsiElement)(implicit ctx: CContext)
     extends CTypeName(fqn.toString) {
 

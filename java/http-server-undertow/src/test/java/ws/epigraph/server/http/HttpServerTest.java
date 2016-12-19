@@ -30,6 +30,7 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import ws.epigraph.refs.IndexBasedTypesResolver;
 import ws.epigraph.schema.Schema;
 import ws.epigraph.schema.parser.SchemaPsiParser;
 import ws.epigraph.psi.EpigraphPsiUtil;
@@ -64,20 +65,7 @@ public class HttpServerTest {
 
   private static final String URL_PREFIX = "http://" + HOST + ":" + PORT + "/";
 
-  private static final TypesResolver resolver = new SimpleTypesResolver(
-      PersonId.type,
-      Person.type,
-      PersonRecord.type,
-      User.type,
-      UserId.type,
-      UserRecord.type,
-      PersonId_Person_Map.type,
-      PersonRecord_List.type,
-      PersonId_Error_Map.type,
-      PersonId_List.type,
-      epigraph.Error.type,
-      epigraph.String.type
-  );
+  private static final TypesResolver resolver = IndexBasedTypesResolver.INSTANCE;
 
   private static final Schema schema;
 
@@ -269,7 +257,7 @@ public class HttpServerTest {
         System.err.println(error.message() + " at " + error.location());
       }
 
-      throw new RuntimeException("IDL errors detected");
+      throw new RuntimeException("Schema errors detected");
     }
 
     assert schema != null;

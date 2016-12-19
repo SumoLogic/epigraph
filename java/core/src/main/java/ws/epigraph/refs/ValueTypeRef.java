@@ -25,23 +25,19 @@ import java.util.Objects;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ValueTypeRef {
-  @NotNull
-  private final TypeRef typeRef;
-  @Nullable
-  private final String defaultOverride;
+  private final @NotNull TypeRef typeRef;
+  private final @Nullable String defaultOverride;
 
   public ValueTypeRef(@NotNull TypeRef typeRef, @Nullable String defaultOverride) {
     this.typeRef = typeRef;
     this.defaultOverride = defaultOverride;
   }
 
-  @NotNull
-  public TypeRef typeRef() {
+  public @NotNull TypeRef typeRef() {
     return typeRef;
   }
 
-  @Nullable
-  public String defaultOverride() {
+  public @Nullable String defaultOverride() {
     return defaultOverride;
   }
 

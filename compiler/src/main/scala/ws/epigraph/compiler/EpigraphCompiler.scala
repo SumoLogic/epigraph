@@ -33,9 +33,9 @@ import scala.collection.JavaConversions._
 import scala.collection.{GenTraversableOnce, mutable}
 
 class EpigraphCompiler(
-                        private val sources: util.Collection[_ <: Source],
-                        private val dependencies: util.Collection[_ <: Source] = Collections.emptyList()
-                      ) {
+  private val sources: util.Collection[_ <: Source],
+  private val dependencies: util.Collection[_ <: Source] = Collections.emptyList()
+) {
 
   println(sources.map(_.name).mkString("Sources: [\n", ",\n", "\n]")) // TODO use log or remove
   println(dependencies.map(_.name).mkString("Dependencies: [\n", ",\n", "\n]")) // TODO use log or remove
@@ -220,7 +220,7 @@ class EpigraphCompiler(
 
 
 class EpigraphCompilerException(
-                                 message: String,
-                                 val errors: util.Collection[CError],
-                                 cause: Throwable = null
-                               ) extends RuntimeException(message, cause)
+  message: String,
+  val errors: util.Collection[CError],
+  cause: Throwable = null
+) extends RuntimeException(message, cause)
