@@ -28,8 +28,6 @@ import org.scalatest.{FlatSpec, Matchers}
 class EpigraphCompilerTest extends FlatSpec with Matchers {
   behavior of "Epigraph Compiler"
 
-  System.setProperty("junit.mode", "true")
-
   it should "detect incompatible overridden fields" in {
     val compiler = new EpigraphCompiler(
       Collections.singleton(

@@ -105,9 +105,6 @@ class ResourceSource(private val resourcePath: String) extends Source {
   override def text: String = {
     var stream = getClass.getResourceAsStream(resourcePath)
 
-    if (stream == null && System.getProperty("junit.mode") == "true") // workaround for tests run from IDEA
-      stream = getClass.getResourceAsStream(new File(".").getAbsolutePath + "/src/test/resources" + resourcePath)
-
     if (stream == null) throw new IOException(s"Resource '$resourcePath' not found")
 
     inputStreamToString(stream)
