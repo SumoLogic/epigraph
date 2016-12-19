@@ -14,9 +14,11 @@ class IndexGen(ctx: GenContext) extends JavaGen[Iterable[CType]](ctx) {
 
     private val IndexClassName: String = "TypesIndex" // TODO take from published (in java-core?) constant? parameter?
 
-    override protected def relativeFilePath: Path = Paths.get(s"$IndexClassName.java") // TODO better package/name
+    override protected def relativeFilePath: Path = Paths.get(s"epigraph/java/$IndexClassName.java") // TODO better package/name
 
     override protected def generate: String = /*@formatter:off*/sn"""\
+package epigraph.java;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.types.Type;
