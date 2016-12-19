@@ -10,8 +10,8 @@ rootProject.name = theName
 
 // map from module (sub-project) path to full module name (maven artifact id)
 Map<String, String> modules = [
-    'examples/sumo/schema'                : 'examples-sumo-schema',
-    'examples/sumo/schema-java'           : 'examples-sumo-schema-java',
+    'examples/sumo-schema'                : 'examples-sumo-schema',
+    'examples/sumo-schema-java'           : 'examples-sumo-schema-java',
     'examples/users/schema'               : 'examples-users-schema',
     'examples/users/schema-java'          : 'examples-users-schema-java',
 //  'examples/users/schema-scala'         : 'examples-users-schema-scala',
