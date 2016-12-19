@@ -18,9 +18,9 @@ package ws.epigraph.ideaplugin.schema.brains.hierarchy;
 
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
-import ws.epigraph.ideaplugin.schema.index.EdlIndexUtil;
+import ws.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
 import ws.epigraph.lang.Qn;
-import ws.epigraph.schema.parser.psi.EdlTypeDef;
+import ws.epigraph.schema.parser.psi.SchemaTypeDef;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -36,70 +36,70 @@ public class InheritanceTest extends LightCodeInsightFixtureTestCase {
 
   public void testDirectInheritors() {
     myFixture.configureByFile("InheritanceSearch.epigraph");
-    EdlTypeDef typeDef = findTypeDef("R1");
-    Collection<EdlTypeDef> directInheritors = EdlDirectTypeInheritorsSearch.search(typeDef).findAll();
+    SchemaTypeDef typeDef = findTypeDef("R1");
+    Collection<SchemaTypeDef> directInheritors = SchemaDirectTypeInheritorsSearch.search(typeDef).findAll();
     assertEquals(1, directInheritors.size());
-    EdlTypeDef r2 = directInheritors.iterator().next();
+    SchemaTypeDef r2 = directInheritors.iterator().next();
     assertEquals("R2", r2.getName());
   }
 
   public void testInheritors() {
     myFixture.configureByFile("InheritanceSearch.epigraph");
-    EdlTypeDef typeDef = findTypeDef("R1");
-    Collection<EdlTypeDef> inheritors = EdlTypeInheritorsSearch.search(typeDef).findAll();
+    SchemaTypeDef typeDef = findTypeDef("R1");
+    Collection<SchemaTypeDef> inheritors = SchemaTypeInheritorsSearch.search(typeDef).findAll();
     checkResults(inheritors, "R2", "R3", "R4");
   }
 
   public void testSupplements() {
     myFixture.configureByFile("InheritanceSearch2.epigraph");
-    EdlTypeDef r4 = findTypeDef("R4");
-    Collection<EdlTypeDef> inheritors = EdlTypeInheritorsSearch.search(r4).findAll();
+    SchemaTypeDef r4 = findTypeDef("R4");
+    Collection<SchemaTypeDef> inheritors = SchemaTypeInheritorsSearch.search(r4).findAll();
     checkUnorderedResults(inheritors, "R3", "R2", "R1"); // Do we need ordering for transitive inheritors?
 
-    EdlTypeDef r1 = findTypeDef("R1");
-    Collection<EdlTypeDef> parents = EdlDirectTypeParentsSearch.search(r1).findAll();
+    SchemaTypeDef r1 = findTypeDef("R1");
+    Collection<SchemaTypeDef> parents = SchemaDirectTypeParentsSearch.search(r1).findAll();
     checkResults(parents, "R3");
 
-    EdlTypeDef r3 = findTypeDef("R3");
-    parents = EdlDirectTypeParentsSearch.search(r3).findAll();
+    SchemaTypeDef r3 = findTypeDef("R3");
+    parents = SchemaDirectTypeParentsSearch.search(r3).findAll();
     checkResults(parents, "R4");
 
-    inheritors = EdlDirectTypeInheritorsSearch.search(r4).findAll();
+    inheritors = SchemaDirectTypeInheritorsSearch.search(r4).findAll();
     checkResults(inheritors, "R3");
   }
 
   public void testDirectParents() {
     myFixture.configureByFile("InheritanceSearch.epigraph");
-    EdlTypeDef typeDef = findTypeDef("R2");
-    Collection<EdlTypeDef> directInheritors = EdlDirectTypeParentsSearch.search(typeDef).findAll();
+    SchemaTypeDef typeDef = findTypeDef("R2");
+    Collection<SchemaTypeDef> directInheritors = SchemaDirectTypeParentsSearch.search(typeDef).findAll();
     assertEquals(1, directInheritors.size());
-    EdlTypeDef r2 = directInheritors.iterator().next();
+    SchemaTypeDef r2 = directInheritors.iterator().next();
     assertEquals("R1", r2.getName());
   }
 
   public void testParents() {
     myFixture.configureByFile("InheritanceSearch.epigraph");
-    EdlTypeDef r3 = findTypeDef("R4");
-    Collection<EdlTypeDef> parents = EdlTypeParentsSearch.search(r3).findAll();
+    SchemaTypeDef r3 = findTypeDef("R4");
+    Collection<SchemaTypeDef> parents = SchemaTypeParentsSearch.search(r3).findAll();
     checkResults(parents, "R3", "R2", "R1");
   }
 
   public void testCircularInheritors() {
     myFixture.configureByFile("Circular.epigraph");
-    EdlTypeDef typeDef = findTypeDef("R1");
-    Collection<EdlTypeDef> inheritors = EdlTypeInheritorsSearch.search(typeDef).findAll();
+    SchemaTypeDef typeDef = findTypeDef("R1");
+    Collection<SchemaTypeDef> inheritors = SchemaTypeInheritorsSearch.search(typeDef).findAll();
     checkResults(inheritors, "R2", "R3", "R1");
   }
 
   public void testCircularParents() {
     myFixture.configureByFile("Circular.epigraph");
-    EdlTypeDef typeDef = findTypeDef("R1");
-    Collection<EdlTypeDef> inheritors = EdlTypeParentsSearch.search(typeDef).findAll();
+    SchemaTypeDef typeDef = findTypeDef("R1");
+    Collection<SchemaTypeDef> inheritors = SchemaTypeParentsSearch.search(typeDef).findAll();
     checkResults(inheritors, "R3", "R2", "R1");
   }
 
-  private EdlTypeDef findTypeDef(String name) {
-    EdlTypeDef typeDef = EdlIndexUtil.findTypeDef(
+  private SchemaTypeDef findTypeDef(String name) {
+    SchemaTypeDef typeDef = SchemaIndexUtil.findTypeDef(
         myFixture.getProject(),
         Collections.singleton(new Qn("x")),
         new Qn(name),
@@ -108,14 +108,14 @@ public class InheritanceTest extends LightCodeInsightFixtureTestCase {
     return typeDef;
   }
 
-  private void checkResults(Collection<EdlTypeDef> result, String... expected) {
-    List<String> names = result.stream().map(EdlTypeDef::getName).collect(Collectors.toList());
+  private void checkResults(Collection<SchemaTypeDef> result, String... expected) {
+    List<String> names = result.stream().map(SchemaTypeDef::getName).collect(Collectors.toList());
     List<String> expectedNames = Arrays.asList(expected);
     assertEquals(expectedNames, names);
   }
 
-  private void checkUnorderedResults(Collection<EdlTypeDef> result, String... expected) {
-    Set<String> names = result.stream().map(EdlTypeDef::getName).collect(Collectors.toSet());
+  private void checkUnorderedResults(Collection<SchemaTypeDef> result, String... expected) {
+    Set<String> names = result.stream().map(SchemaTypeDef::getName).collect(Collectors.toSet());
     Set<String> expectedNames = new HashSet<>(Arrays.asList(expected));
     assertEquals(expectedNames, names);
   }

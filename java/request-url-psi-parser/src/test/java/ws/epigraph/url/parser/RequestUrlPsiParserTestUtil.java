@@ -18,12 +18,12 @@ package ws.epigraph.url.parser;
 
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.gdata.GDatum;
-import ws.epigraph.schema.Edl;
-import ws.epigraph.schema.parser.EdlPsiParser;
+import ws.epigraph.schema.Schema;
+import ws.epigraph.schema.parser.SchemaPsiParser;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.refs.TypesResolver;
-import ws.epigraph.schema.parser.EdlParserDefinition;
-import ws.epigraph.schema.parser.psi.EdlFile;
+import ws.epigraph.schema.parser.SchemaParserDefinition;
+import ws.epigraph.schema.parser.psi.SchemaFile;
 
 import java.util.Map;
 import java.util.TreeMap;
@@ -49,14 +49,14 @@ public final class RequestUrlPsiParserTestUtil {
     return sb.toString();
   }
 
-  static @NotNull Edl parseIdl(@NotNull String text, @NotNull TypesResolver resolver) {
+  static @NotNull Schema parseIdl(@NotNull String text, @NotNull TypesResolver resolver) {
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
-    @NotNull EdlFile psiFile =
-        (EdlFile) EpigraphPsiUtil.parseFile("test.idl", text, EdlParserDefinition.INSTANCE, errorsAccumulator);
+    @NotNull SchemaFile psiFile =
+        (SchemaFile) EpigraphPsiUtil.parseFile("test.idl", text, SchemaParserDefinition.INSTANCE, errorsAccumulator);
 
     failIfHasErrors(psiFile, errorsAccumulator);
 
-    return runPsiParser(errors -> EdlPsiParser.parseEdl(psiFile, resolver, errors));
+    return runPsiParser(errors -> SchemaPsiParser.parseSchema(psiFile, resolver, errors));
   }
 }

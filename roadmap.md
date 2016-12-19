@@ -113,7 +113,7 @@
 
 ### 8.
 
-### 9. IDL (Merged with schema = EDL, Epigraph Declaration Language)
+### 9. IDL (Merged with Schema)
   * [ ] ~~File extension (.sdl - Service Description Language? .scl - Service Contract Language?)~~
   * [x] Resources
   * [x] Operations
@@ -123,7 +123,7 @@
     * [x] Delete
     * [x] Custom actions
 
-### 10. EDL-driven code generation
+### 10. Schema-driven code generation
   * [ ] Serivice stubs
   * [ ] Resource stubs
   * [ ] Operation interfaces

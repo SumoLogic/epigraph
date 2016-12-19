@@ -22,7 +22,7 @@ import java.util.regex.Pattern
 
 import com.intellij.psi.PsiElement
 import ws.epigraph.lang.Qn
-import ws.epigraph.schema.parser.psi.{EdlQnTypeRef, EdlTypeDef}
+import ws.epigraph.schema.parser.psi.{SchemaQnTypeRef, SchemaTypeDef}
 import org.jetbrains.annotations.Nullable
 
 
@@ -53,18 +53,18 @@ abstract class CTypeName protected(val name: String)(implicit val ctx: CContext)
 //}
 
 
-class CTypeFqn private(csf: CEdlFile, val fqn: Qn, val psi: PsiElement)(implicit ctx: CContext)
+class CTypeFqn private(csf: CSchemaFile, val fqn: Qn, val psi: PsiElement)(implicit ctx: CContext)
     extends CTypeName(fqn.toString) {
 
   val local: String = validate(fqn.last())
 
   @Nullable val namespace: String = if (fqn.size == 1) null else fqn.removeLastSegment().toString
 
-  def this(csf: CEdlFile, parentNs: Qn, lqn: EdlQnTypeRef)(implicit ctx: CContext) = this(
+  def this(csf: CSchemaFile, parentNs: Qn, lqn: SchemaQnTypeRef)(implicit ctx: CContext) = this(
     csf, parentNs.append(lqn.getQn.getQn), lqn: PsiElement
   )
 
-  def this(csf: CEdlFile, parentNs: Qn, typeDef: EdlTypeDef)(implicit ctx: CContext) = this(
+  def this(csf: CSchemaFile, parentNs: Qn, typeDef: SchemaTypeDef)(implicit ctx: CContext) = this(
     csf, parentNs.append(typeDef.getQid.getCanonicalName), typeDef.getQid.getId: PsiElement
   )
 

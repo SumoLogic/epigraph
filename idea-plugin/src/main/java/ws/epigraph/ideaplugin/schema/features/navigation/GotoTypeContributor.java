@@ -22,10 +22,10 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.GlobalSearchScope;
-import ws.epigraph.ideaplugin.schema.index.EdlFileIndexUtil;
-import ws.epigraph.ideaplugin.schema.index.EdlIndexUtil;
+import ws.epigraph.ideaplugin.schema.index.SchemaFileIndexUtil;
+import ws.epigraph.ideaplugin.schema.index.SchemaIndexUtil;
 import ws.epigraph.lang.Qn;
-import ws.epigraph.schema.parser.psi.EdlTypeDef;
+import ws.epigraph.schema.parser.psi.SchemaTypeDef;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -39,10 +39,10 @@ public class GotoTypeContributor implements ChooseByNameContributor {
                               ? GlobalSearchScope.allScope(project)
                               : GlobalSearchScope.projectScope(project);
 
-    return EdlIndexUtil.findTypeDefs(project, null, null, scope)
+    return SchemaIndexUtil.findTypeDefs(project, null, null, scope)
                           .stream()
                           .filter(def -> shouldInclude(project, def))
-                          .map(EdlTypeDef::getName)
+                          .map(SchemaTypeDef::getName)
                           .toArray(String[]::new);
   }
 
@@ -53,17 +53,17 @@ public class GotoTypeContributor implements ChooseByNameContributor {
                               ? GlobalSearchScope.allScope(project)
                               : GlobalSearchScope.projectScope(project);
 
-    return EdlIndexUtil.findTypeDefs(project, null, Qn.fromDotSeparated(name), scope)
+    return SchemaIndexUtil.findTypeDefs(project, null, Qn.fromDotSeparated(name), scope)
                           .stream()
                           .filter(def -> shouldInclude(project, def))
                           .toArray(NavigationItem[]::new);
   }
 
-  private static boolean shouldInclude(@NotNull Project project, @NotNull EdlTypeDef def) {
+  private static boolean shouldInclude(@NotNull Project project, @NotNull SchemaTypeDef def) {
     final PsiFile file = def.getContainingFile();
     if (file == null) return false;
     final VirtualFile virtualFile = file.getVirtualFile();
     if (virtualFile == null) return false;
-    return EdlFileIndexUtil.isEdlSourceFile(project, virtualFile);
+    return SchemaFileIndexUtil.isSchemaSourceFile(project, virtualFile);
   }
 }

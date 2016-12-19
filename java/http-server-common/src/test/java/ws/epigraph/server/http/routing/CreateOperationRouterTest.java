@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 import ws.epigraph.gdata.GDataValue;
 import ws.epigraph.gdata.GPrimitiveDatum;
-import ws.epigraph.schema.Edl;
+import ws.epigraph.schema.Schema;
 import ws.epigraph.schema.ResourceDeclaration;
 import ws.epigraph.schema.operations.CreateOperationDeclaration;
 import ws.epigraph.schema.operations.OperationDeclaration;
@@ -113,8 +113,8 @@ public class CreateOperationRouterTest {
 
   {
     try {
-      Edl edl = parseIdl(idlText, resolver);
-      ResourceDeclaration resourceDeclaration = edl.resources().get("users");
+      Schema schema = parseIdl(idlText, resolver);
+      ResourceDeclaration resourceDeclaration = schema.resources().get("users");
       assertNotNull(resourceDeclaration);
 
       final List<OpImpl> createOps = new ArrayList<>();

@@ -98,9 +98,9 @@ trait RawData extends gen.GenData {this: gen.GenNames with gen.GenTypes =>
 
 }
 
-import ws.epigraph.schema.RawEdlEdl
+import ws.epigraph.schema.RawSchemaSchema
 
-object RawDataMain extends RawEdlEdl with RawData {
+object RawDataMain extends RawSchemaSchema with RawData {
 
   def main(args: Array[String]) {
     val r = new RecordDatum(TypeType, Map.empty)

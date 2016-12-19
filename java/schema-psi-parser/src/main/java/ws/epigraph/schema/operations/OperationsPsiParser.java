@@ -24,7 +24,7 @@ import ws.epigraph.schema.TypeRefs;
 import ws.epigraph.schema.parser.psi.*;
 import ws.epigraph.projections.Annotation;
 import ws.epigraph.projections.Annotations;
-import ws.epigraph.projections.EdlProjectionPsiParserUtil;
+import ws.epigraph.projections.SchemaProjectionPsiParserUtil;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.op.OpParams;
 import ws.epigraph.projections.op.delete.OpDeleteProjectionsPsiParser;
@@ -56,23 +56,23 @@ public final class OperationsPsiParser {
 
   public static @NotNull OperationDeclaration parseOperation(
       @NotNull DataType resourceType,
-      @NotNull EdlOperationDef psi,
+      @NotNull SchemaOperationDef psi,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
-    @Nullable EdlReadOperationDef readOperationDef = psi.getReadOperationDef();
+    @Nullable SchemaReadOperationDef readOperationDef = psi.getReadOperationDef();
     if (readOperationDef != null) return parseRead(resourceType, readOperationDef, resolver, errors);
 
-    @Nullable EdlCreateOperationDef createOperationDef = psi.getCreateOperationDef();
+    @Nullable SchemaCreateOperationDef createOperationDef = psi.getCreateOperationDef();
     if (createOperationDef != null) return parseCreate(resourceType, createOperationDef, resolver, errors);
 
-    @Nullable EdlUpdateOperationDef updateOperationDef = psi.getUpdateOperationDef();
+    @Nullable SchemaUpdateOperationDef updateOperationDef = psi.getUpdateOperationDef();
     if (updateOperationDef != null) return parseUpdate(resourceType, updateOperationDef, resolver, errors);
 
-    @Nullable EdlDeleteOperationDef deleteOperationDef = psi.getDeleteOperationDef();
+    @Nullable SchemaDeleteOperationDef deleteOperationDef = psi.getDeleteOperationDef();
     if (deleteOperationDef != null) return parseDelete(resourceType, deleteOperationDef, resolver, errors);
 
-    @Nullable EdlCustomOperationDef customOperationDef = psi.getCustomOperationDef();
+    @Nullable SchemaCustomOperationDef customOperationDef = psi.getCustomOperationDef();
     if (customOperationDef != null) return parseCustom(resourceType, customOperationDef, resolver, errors);
 
     throw new PsiProcessingException("Incomplete operation statement", psi, errors);
@@ -80,17 +80,17 @@ public final class OperationsPsiParser {
 
   private static @NotNull ReadOperationDeclaration parseRead(
       @NotNull DataType resourceType,
-      @NotNull EdlReadOperationDef psi,
+      @NotNull SchemaReadOperationDef psi,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
     Map<String, Annotation> annotations = null;
 
-    EdlOperationPath pathPsi = null;
-    EdlOperationOutputProjection outputProjectionPsi = null;
+    SchemaOperationPath pathPsi = null;
+    SchemaOperationOutputProjection outputProjectionPsi = null;
 
-    for (EdlReadOperationBodyPart part : psi.getReadOperationBodyPartList()) {
-      annotations = EdlProjectionPsiParserUtil.parseAnnotation(annotations, part.getAnnotation(), errors);
+    for (SchemaReadOperationBodyPart part : psi.getReadOperationBodyPartList()) {
+      annotations = SchemaProjectionPsiParserUtil.parseAnnotation(annotations, part.getAnnotation(), errors);
 
       pathPsi = getPsiPart(pathPsi, part.getOperationPath(), "path", errors);
       outputProjectionPsi =
@@ -132,20 +132,20 @@ public final class OperationsPsiParser {
 
   private static @NotNull CreateOperationDeclaration parseCreate(
       @NotNull DataType resourceType,
-      @NotNull EdlCreateOperationDef psi,
+      @NotNull SchemaCreateOperationDef psi,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
     Map<String, Annotation> annotations = null;
 
-    EdlOperationPath pathPsi = null;
-    EdlOperationInputType inputTypePsi = null;
-    EdlOperationInputProjection inputProjectionPsi = null;
-    EdlOperationOutputType outputTypePsi = null;
-    EdlOperationOutputProjection outputProjectionPsi = null;
+    SchemaOperationPath pathPsi = null;
+    SchemaOperationInputType inputTypePsi = null;
+    SchemaOperationInputProjection inputProjectionPsi = null;
+    SchemaOperationOutputType outputTypePsi = null;
+    SchemaOperationOutputProjection outputProjectionPsi = null;
 
-    for (EdlCreateOperationBodyPart part : psi.getCreateOperationBodyPartList()) {
-      annotations = EdlProjectionPsiParserUtil.parseAnnotation(annotations, part.getAnnotation(), errors);
+    for (SchemaCreateOperationBodyPart part : psi.getCreateOperationBodyPartList()) {
+      annotations = SchemaProjectionPsiParserUtil.parseAnnotation(annotations, part.getAnnotation(), errors);
 
       pathPsi = getPsiPart(pathPsi, part.getOperationPath(), "path", errors);
       inputTypePsi = getPsiPart(inputTypePsi, part.getOperationInputType(), "input type", errors);
@@ -162,7 +162,7 @@ public final class OperationsPsiParser {
     if (inputProjectionPsi == null)
       throw new PsiProcessingException("Input projection must be specified", psi, errors);
 
-    final @Nullable EdlOpInputFieldProjection inputFieldProjectionPsi =
+    final @Nullable SchemaOpInputFieldProjection inputFieldProjectionPsi =
         inputProjectionPsi.getOpInputFieldProjection();
     if (inputFieldProjectionPsi == null)
       throw new PsiProcessingException("Input projection must be specified", inputProjectionPsi, errors);
@@ -193,20 +193,20 @@ public final class OperationsPsiParser {
 
   private static @NotNull UpdateOperationDeclaration parseUpdate(
       @NotNull DataType resourceType,
-      @NotNull EdlUpdateOperationDef psi,
+      @NotNull SchemaUpdateOperationDef psi,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
     Map<String, Annotation> annotations = null;
 
-    EdlOperationPath pathPsi = null;
-    EdlOperationInputType inputTypePsi = null;
-    EdlOperationInputProjection inputProjectionPsi = null;
-    EdlOperationOutputType outputTypePsi = null;
-    EdlOperationOutputProjection outputProjectionPsi = null;
+    SchemaOperationPath pathPsi = null;
+    SchemaOperationInputType inputTypePsi = null;
+    SchemaOperationInputProjection inputProjectionPsi = null;
+    SchemaOperationOutputType outputTypePsi = null;
+    SchemaOperationOutputProjection outputProjectionPsi = null;
 
-    for (EdlUpdateOperationBodyPart part : psi.getUpdateOperationBodyPartList()) {
-      annotations = EdlProjectionPsiParserUtil.parseAnnotation(annotations, part.getAnnotation(), errors);
+    for (SchemaUpdateOperationBodyPart part : psi.getUpdateOperationBodyPartList()) {
+      annotations = SchemaProjectionPsiParserUtil.parseAnnotation(annotations, part.getAnnotation(), errors);
 
       pathPsi = getPsiPart(pathPsi, part.getOperationPath(), "path", errors);
       inputTypePsi = getPsiPart(inputTypePsi, part.getOperationInputType(), "input type", errors);
@@ -222,7 +222,7 @@ public final class OperationsPsiParser {
     if (inputProjectionPsi == null)
       throw new PsiProcessingException("Input projection must be specified", psi, errors);
 
-    final @Nullable EdlOpInputFieldProjection inputFieldProjectionPsi =
+    final @Nullable SchemaOpInputFieldProjection inputFieldProjectionPsi =
         inputProjectionPsi.getOpInputFieldProjection();
     if (inputFieldProjectionPsi == null)
       throw new PsiProcessingException("Input projection must be specified", inputProjectionPsi, errors);
@@ -255,19 +255,19 @@ public final class OperationsPsiParser {
 
   private static @NotNull DeleteOperationDeclaration parseDelete(
       @NotNull DataType resourceType,
-      @NotNull EdlDeleteOperationDef psi,
+      @NotNull SchemaDeleteOperationDef psi,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
     Map<String, Annotation> annotations = null;
 
-    EdlOperationPath pathPsi = null;
-    EdlOperationDeleteProjection deleteProjectionPsi = null;
-    EdlOperationOutputType outputTypePsi = null;
-    EdlOperationOutputProjection outputProjectionPsi = null;
+    SchemaOperationPath pathPsi = null;
+    SchemaOperationDeleteProjection deleteProjectionPsi = null;
+    SchemaOperationOutputType outputTypePsi = null;
+    SchemaOperationOutputProjection outputProjectionPsi = null;
 
-    for (EdlDeleteOperationBodyPart part : psi.getDeleteOperationBodyPartList()) {
-      annotations = EdlProjectionPsiParserUtil.parseAnnotation(annotations, part.getAnnotation(), errors);
+    for (SchemaDeleteOperationBodyPart part : psi.getDeleteOperationBodyPartList()) {
+      annotations = SchemaProjectionPsiParserUtil.parseAnnotation(annotations, part.getAnnotation(), errors);
 
       pathPsi = getPsiPart(pathPsi, part.getOperationPath(), "path", errors);
       deleteProjectionPsi =
@@ -282,7 +282,7 @@ public final class OperationsPsiParser {
     if (deleteProjectionPsi == null)
       throw new PsiProcessingException("Delete projection must be specified", psi, errors);
 
-    final @Nullable EdlOpDeleteFieldProjection deleteFieldProjectionPsi =
+    final @Nullable SchemaOpDeleteFieldProjection deleteFieldProjectionPsi =
         deleteProjectionPsi.getOpDeleteFieldProjection();
     if (deleteFieldProjectionPsi == null)
       throw new PsiProcessingException("Delete projection must be specified", deleteProjectionPsi, errors);
@@ -312,21 +312,21 @@ public final class OperationsPsiParser {
 
   private static @NotNull CustomOperationDeclaration parseCustom(
       @NotNull DataType resourceType,
-      @NotNull EdlCustomOperationDef psi,
+      @NotNull SchemaCustomOperationDef psi,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
     Map<String, Annotation> annotations = null;
 
-    EdlOperationMethod methodPsi = null;
-    EdlOperationPath pathPsi = null;
-    EdlOperationInputType inputTypePsi = null;
-    EdlOperationInputProjection inputProjectionPsi = null;
-    EdlOperationOutputType outputTypePsi = null;
-    EdlOperationOutputProjection outputProjectionPsi = null;
+    SchemaOperationMethod methodPsi = null;
+    SchemaOperationPath pathPsi = null;
+    SchemaOperationInputType inputTypePsi = null;
+    SchemaOperationInputProjection inputProjectionPsi = null;
+    SchemaOperationOutputType outputTypePsi = null;
+    SchemaOperationOutputProjection outputProjectionPsi = null;
 
-    for (EdlCustomOperationBodyPart part : psi.getCustomOperationBodyPartList()) {
-      annotations = EdlProjectionPsiParserUtil.parseAnnotation(annotations, part.getAnnotation(), errors);
+    for (SchemaCustomOperationBodyPart part : psi.getCustomOperationBodyPartList()) {
+      annotations = SchemaProjectionPsiParserUtil.parseAnnotation(annotations, part.getAnnotation(), errors);
 
       methodPsi = getPsiPart(methodPsi, part.getOperationMethod(), "HTTP method", errors);
       pathPsi = getPsiPart(pathPsi, part.getOperationPath(), "path", errors);
@@ -349,7 +349,7 @@ public final class OperationsPsiParser {
       else throw new PsiProcessingException("HTTP method must be specified", methodPsi, errors);
     }
 
-    final @Nullable EdlOpInputFieldProjection inputFieldProjectionPsi =
+    final @Nullable SchemaOpInputFieldProjection inputFieldProjectionPsi =
         inputProjectionPsi == null ? null : inputProjectionPsi.getOpInputFieldProjection();
 
     @Nullable OpFieldPath opPath = parsePath(resourceType, pathPsi, resolver, errors);
@@ -387,13 +387,13 @@ public final class OperationsPsiParser {
 
   private static @NotNull OpOutputFieldProjection parseOutputProjection(
       final @NotNull DataType outputType,
-      final @Nullable EdlOperationOutputProjection outputProjectionPsi,
+      final @Nullable SchemaOperationOutputProjection outputProjectionPsi,
       final @NotNull TypesResolver resolver,
       final @NotNull PsiElement location,
       final @NotNull List<PsiProcessingError> errors)
       throws PsiProcessingException {
 
-    final @Nullable EdlOpOutputFieldProjection outputFieldProjectionPsi =
+    final @Nullable SchemaOpOutputFieldProjection outputFieldProjectionPsi =
         outputProjectionPsi == null ? null : outputProjectionPsi.getOpOutputFieldProjection();
 
     // todo add context
@@ -440,11 +440,11 @@ public final class OperationsPsiParser {
   private static @NotNull DataType resolveOutputType(
       @NotNull DataType resourceType,
       @Nullable OpVarPath opVarPath,
-      @Nullable EdlOperationOutputType declaredOutputTypePsi,
+      @Nullable SchemaOperationOutputType declaredOutputTypePsi,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
-    final @Nullable EdlValueTypeRef typeRefPsi =
+    final @Nullable SchemaValueTypeRef typeRefPsi =
         declaredOutputTypePsi == null ? null : declaredOutputTypePsi.getValueTypeRef();
 
     if (declaredOutputTypePsi == null || typeRefPsi == null) {
@@ -465,11 +465,11 @@ public final class OperationsPsiParser {
   private static @NotNull DataType resolveInputType(
       @NotNull DataType resourceType,
       @Nullable OpVarPath path,
-      @Nullable EdlOperationInputType inputTypePsi,
+      @Nullable SchemaOperationInputType inputTypePsi,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
-    final @Nullable EdlTypeRef typeRefPsi = inputTypePsi == null ? null : inputTypePsi.getTypeRef();
+    final @Nullable SchemaTypeRef typeRefPsi = inputTypePsi == null ? null : inputTypePsi.getTypeRef();
     if (inputTypePsi == null || typeRefPsi == null) {
       if (path == null) {
 
@@ -503,13 +503,13 @@ public final class OperationsPsiParser {
   @Contract("_, null, _, _ -> null")
   private static @Nullable OpFieldPath parsePath(
       @NotNull DataType type,
-      @Nullable EdlOperationPath pathPsi,
+      @Nullable SchemaOperationPath pathPsi,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
     if (pathPsi == null) return null;
     else {
-      final @Nullable EdlOpFieldPath varPathPsi = pathPsi.getOpFieldPath();
+      final @Nullable SchemaOpFieldPath varPathPsi = pathPsi.getOpFieldPath();
       if (varPathPsi == null) {
         errors.add(new PsiProcessingError("Path expression missing", pathPsi));
         return null;
@@ -519,9 +519,9 @@ public final class OperationsPsiParser {
   }
 
   @Contract("null -> null")
-  private static @Nullable String parseOperationName(@Nullable EdlOperationName namePsi) {
+  private static @Nullable String parseOperationName(@Nullable SchemaOperationName namePsi) {
     if (namePsi == null) return null;
-    @Nullable EdlQid qid = namePsi.getQid();
+    @Nullable SchemaQid qid = namePsi.getQid();
     if (qid == null) return null;
     return qid.getCanonicalName();
   }

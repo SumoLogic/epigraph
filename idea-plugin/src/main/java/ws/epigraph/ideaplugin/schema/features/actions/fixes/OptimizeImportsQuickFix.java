@@ -27,8 +27,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
-import ws.epigraph.ideaplugin.schema.features.imports.EdlImportOptimizer;
-import ws.epigraph.schema.parser.psi.EdlFile;
+import ws.epigraph.ideaplugin.schema.features.imports.SchemaImportOptimizer;
+import ws.epigraph.schema.parser.psi.SchemaFile;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
@@ -61,12 +61,12 @@ public class OptimizeImportsQuickFix implements LocalQuickFix, IntentionAction, 
 
   @Override
   public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
-    return file instanceof EdlFile;
+    return file instanceof SchemaFile;
   }
 
   @Override
   public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
-    optimizeImports(project, (EdlFile) file);
+    optimizeImports(project, (SchemaFile) file);
   }
 
   @Override
@@ -81,11 +81,11 @@ public class OptimizeImportsQuickFix implements LocalQuickFix, IntentionAction, 
       return;
     }
     final PsiFile file = element.getContainingFile();
-    optimizeImports(project, (EdlFile) file);
+    optimizeImports(project, (SchemaFile) file);
   }
 
-  private void optimizeImports(final Project project, final EdlFile file) {
-    ImportOptimizer optimizer = new EdlImportOptimizer();
+  private void optimizeImports(final Project project, final SchemaFile file) {
+    ImportOptimizer optimizer = new SchemaImportOptimizer();
 
     final Runnable runnable = optimizer.processFile(file);
     new WriteCommandAction.Simple(project, getFamilyName(), file) {

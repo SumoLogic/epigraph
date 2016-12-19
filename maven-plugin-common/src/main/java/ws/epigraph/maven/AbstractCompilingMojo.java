@@ -46,14 +46,14 @@ import java.util.regex.Pattern;
  */
 public abstract class AbstractCompilingMojo extends AbstractMojo {
 
-  public static final String EDL_FILE_EXTENSION = "epigraph";
+  public static final String SCHEMA_FILE_EXTENSION = "epigraph";
 
-  public static final String EDL_FILE_ANT_PATTERN = "**/*." + EDL_FILE_EXTENSION;
+  public static final String SCHEMA_FILE_ANT_PATTERN = "**/*." + SCHEMA_FILE_EXTENSION;
 
   public static final String ARTIFACTS_PATH_PREFIX = "epigraph$artifacts";
 
-  private static final Pattern EDL_FILE_PATH_PATTERN = Pattern.compile( // TODO use Predicate?
-      Pattern.quote(ARTIFACTS_PATH_PREFIX + '/') + ".+\\." + Pattern.quote(EDL_FILE_EXTENSION)
+  private static final Pattern SCHEMA_FILE_PATH_PATTERN = Pattern.compile( // TODO use Predicate?
+      Pattern.quote(ARTIFACTS_PATH_PREFIX + '/') + ".+\\." + Pattern.quote(SCHEMA_FILE_EXTENSION)
   );
 
   /**
@@ -154,7 +154,7 @@ public abstract class AbstractCompilingMojo extends AbstractMojo {
 
   private void addSourcesFromJar(@NotNull File file, @NotNull Collection<Source> sources) throws IOException {
     final JarFile jarFile = new JarFile(file);
-    Iterator<JarSource> jarSources = JarSource.allFiles(jarFile, EDL_FILE_PATH_PATTERN, Charset.forName("UTF-8"));
+    Iterator<JarSource> jarSources = JarSource.allFiles(jarFile, SCHEMA_FILE_PATH_PATTERN, Charset.forName("UTF-8"));
     while (jarSources.hasNext()) sources.add(jarSources.next());
   }
 
@@ -178,7 +178,7 @@ public abstract class AbstractCompilingMojo extends AbstractMojo {
           sb.append('\177').append(String.format("%" + (pos.column()) + "s", "^")).append('\n');
         }
       }
-      throw new MojoFailureException(this, "EDL compilation failed", sb.toString());
+      throw new MojoFailureException(this, "Schema compilation failed", sb.toString());
     }
 
   }

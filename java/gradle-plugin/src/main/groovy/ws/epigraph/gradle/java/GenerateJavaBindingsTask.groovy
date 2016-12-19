@@ -40,7 +40,7 @@ class GenerateJavaBindingsTask extends DefaultTask implements EpigraphCompileTas
 
     def context = compileFiles();
     if (!context.errors().isEmpty())
-      throw new GradleException('EDL compilation failed with errors')
+      throw new GradleException('Schema compilation failed with errors')
 
     getLogger().info("Generating Java bindings to '${getDestinationDir()}'")
     new EpigraphJavaGenerator(context, getDestinationDir()).generate()

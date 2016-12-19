@@ -30,7 +30,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
-import ws.epigraph.ideaplugin.schema.EdlBundle;
+import ws.epigraph.ideaplugin.schema.SchemaBundle;
 import ws.epigraph.ideaplugin.schema.brains.hierarchy.TypeMembers;
 import ws.epigraph.schema.parser.psi.*;
 import org.jetbrains.annotations.Nls;
@@ -45,7 +45,7 @@ public class AddDefaultAction extends PsiElementBaseIntentionAction implements L
   @NotNull
   @Override
   public String getText() {
-    return EdlBundle.message("actions.add.default");
+    return SchemaBundle.message("actions.add.default");
   }
 
   @Nls
@@ -59,7 +59,7 @@ public class AddDefaultAction extends PsiElementBaseIntentionAction implements L
   public void invoke(@NotNull Project project, Editor editor, @NotNull PsiElement element) throws IncorrectOperationException {
     if (element.getNode().getElementType() == TokenType.WHITE_SPACE) element = PsiTreeUtil.prevVisibleLeaf(element);
 
-    EdlValueTypeRef valueTypeRef = PsiTreeUtil.getParentOfType(element, EdlValueTypeRef.class);
+    SchemaValueTypeRef valueTypeRef = PsiTreeUtil.getParentOfType(element, SchemaValueTypeRef.class);
     if (valueTypeRef != null) {
       int endOffset = valueTypeRef.getNode().getTextRange().getEndOffset();
       editor.getCaretModel().moveToOffset(endOffset);
@@ -78,20 +78,20 @@ public class AddDefaultAction extends PsiElementBaseIntentionAction implements L
   public boolean isAvailable(@NotNull Project project, Editor editor, @NotNull PsiElement element) {
     if (element.getNode().getElementType() == TokenType.WHITE_SPACE) element = PsiTreeUtil.prevVisibleLeaf(element);
 
-    EdlValueTypeRef valueTypeRef = PsiTreeUtil.getParentOfType(element, EdlValueTypeRef.class);
-    EdlVarTypeDef varTypeDef = findVarTypeDef(valueTypeRef);
+    SchemaValueTypeRef valueTypeRef = PsiTreeUtil.getParentOfType(element, SchemaValueTypeRef.class);
+    SchemaVarTypeDef varTypeDef = findVarTypeDef(valueTypeRef);
 
     return varTypeDef != null && !TypeMembers.getVarTagDecls(varTypeDef, null).isEmpty();
   }
 
-  private EdlVarTypeDef findVarTypeDef(@Nullable EdlValueTypeRef valueTypeRef) {
+  private SchemaVarTypeDef findVarTypeDef(@Nullable SchemaValueTypeRef valueTypeRef) {
     if (valueTypeRef != null && valueTypeRef.getDefaultOverride() == null) {
-      EdlTypeRef typeRef = valueTypeRef.getTypeRef();
-      if (typeRef instanceof EdlQnTypeRef) {
-        EdlQnTypeRef fqnTypeRef = (EdlQnTypeRef) typeRef;
-        EdlTypeDef typeDef = fqnTypeRef.resolve();
-        if (typeDef instanceof EdlVarTypeDef) {
-          return (EdlVarTypeDef) typeDef;
+      SchemaTypeRef typeRef = valueTypeRef.getTypeRef();
+      if (typeRef instanceof SchemaQnTypeRef) {
+        SchemaQnTypeRef fqnTypeRef = (SchemaQnTypeRef) typeRef;
+        SchemaTypeDef typeDef = fqnTypeRef.resolve();
+        if (typeDef instanceof SchemaVarTypeDef) {
+          return (SchemaVarTypeDef) typeDef;
         }
       }
     }

@@ -23,8 +23,8 @@ import ws.epigraph.projections.op.output.OpOutputVarProjection;
 import ws.epigraph.projections.req.output.ReqOutputVarProjection;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.refs.TypesResolver;
-import ws.epigraph.schema.parser.EdlSubParserDefinitions;
-import ws.epigraph.schema.parser.psi.EdlOpOutputVarProjection;
+import ws.epigraph.schema.parser.SchemaSubParserDefinitions;
+import ws.epigraph.schema.parser.psi.SchemaOpOutputVarProjection;
 import ws.epigraph.types.DataType;
 import ws.epigraph.url.parser.UrlSubParserDefinitions;
 import ws.epigraph.url.parser.psi.UrlReqOutputTrunkVarProjection;
@@ -46,9 +46,9 @@ public final class WireTestUtil {
 
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
-    EdlOpOutputVarProjection psiVarProjection = EpigraphPsiUtil.parseText(
+    SchemaOpOutputVarProjection psiVarProjection = EpigraphPsiUtil.parseText(
         projectionString,
-        EdlSubParserDefinitions.OP_OUTPUT_VAR_PROJECTION,
+        SchemaSubParserDefinitions.OP_OUTPUT_VAR_PROJECTION,
         errorsAccumulator
     );
 

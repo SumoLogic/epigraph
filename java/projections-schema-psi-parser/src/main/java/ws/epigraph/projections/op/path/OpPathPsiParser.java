@@ -39,7 +39,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import static ws.epigraph.projections.EdlProjectionPsiParserUtil.*;
+import static ws.epigraph.projections.SchemaProjectionPsiParserUtil.*;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -50,14 +50,14 @@ public final class OpPathPsiParser {
 
   public static OpVarPath parseVarPath(
       @NotNull DataType dataType,
-      @NotNull EdlOpVarPath psi,
+      @NotNull SchemaOpVarPath psi,
       @NotNull TypesResolver typesResolver,
       @NotNull List<PsiProcessingError> errors)
       throws PsiProcessingException {
 
     final Type type = dataType.type;
 
-    @Nullable EdlOpModelPath modelProjection = psi.getOpModelPath();
+    @Nullable SchemaOpModelPath modelProjection = psi.getOpModelPath();
 
     if (isModelPathEmpty(modelProjection)) {
       if (psi.getTagName() != null)
@@ -78,7 +78,7 @@ public final class OpPathPsiParser {
         errors
     );
 
-    @NotNull Collection<EdlOpModelPathProperty> modelPropertiesPsi = psi.getOpModelPathPropertyList();
+    @NotNull Collection<SchemaOpModelPathProperty> modelPropertiesPsi = psi.getOpModelPathPropertyList();
 
     final OpModelPath<?, ?> parsedModelProjection = parseModelPath(
         tag.type,
@@ -104,24 +104,24 @@ public final class OpPathPsiParser {
 
 
   private static @NotNull OpParams parseModelParams(
-      @NotNull Collection<EdlOpModelPathProperty> modelProperties,
+      @NotNull Collection<SchemaOpModelPathProperty> modelProperties,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
 
     return parseParams(
-        modelProperties.stream().map(EdlOpModelPathProperty::getOpParam),
+        modelProperties.stream().map(SchemaOpModelPathProperty::getOpParam),
         resolver,
         errors
     );
   }
 
   private static @NotNull Annotations parseModelAnnotations(
-      @NotNull Collection<EdlOpModelPathProperty> modelProperties,
+      @NotNull Collection<SchemaOpModelPathProperty> modelProperties,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
     return parseAnnotations(
-        modelProperties.stream().map(EdlOpModelPathProperty::getAnnotation),
+        modelProperties.stream().map(SchemaOpModelPathProperty::getAnnotation),
         errors
     );
   }
@@ -150,7 +150,7 @@ public final class OpPathPsiParser {
   }
 
   @Contract("null -> true")
-  private static boolean isModelPathEmpty(@Nullable EdlOpModelPath pathPsi) {
+  private static boolean isModelPathEmpty(@Nullable SchemaOpModelPath pathPsi) {
     return pathPsi == null || (
         pathPsi.getOpRecordModelPath() == null &&
         pathPsi.getOpMapModelPath() == null
@@ -161,13 +161,13 @@ public final class OpPathPsiParser {
       @NotNull DatumType type,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
-      @NotNull EdlOpModelPath psi,
+      @NotNull SchemaOpModelPath psi,
       @NotNull TypesResolver typesResolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
     switch (type.kind()) {
       case RECORD:
-        @Nullable EdlOpRecordModelPath recordModelProjectionPsi = psi.getOpRecordModelPath();
+        @Nullable SchemaOpRecordModelPath recordModelProjectionPsi = psi.getOpRecordModelPath();
         if (recordModelProjectionPsi == null)
           return createDefaultModelPath(type, params, annotations, psi, errors);
         ensureModelKind(psi, TypeKind.RECORD, errors);
@@ -180,7 +180,7 @@ public final class OpPathPsiParser {
             errors
         );
       case MAP:
-        @Nullable EdlOpMapModelPath mapModelProjectionPsi = psi.getOpMapModelPath();
+        @Nullable SchemaOpMapModelPath mapModelProjectionPsi = psi.getOpMapModelPath();
         if (mapModelProjectionPsi == null)
           return createDefaultModelPath(type, params, annotations, psi, errors);
         ensureModelKind(psi, TypeKind.MAP, errors);
@@ -212,7 +212,7 @@ public final class OpPathPsiParser {
   }
 
   private static void ensureModelKind(
-      @NotNull EdlOpModelPath psi,
+      @NotNull SchemaOpModelPath psi,
       @NotNull TypeKind expectedKind,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
@@ -225,7 +225,7 @@ public final class OpPathPsiParser {
       ), psi, errors);
   }
 
-  private static @Nullable TypeKind findProjectionKind(@NotNull EdlOpModelPath psi) {
+  private static @Nullable TypeKind findProjectionKind(@NotNull SchemaOpModelPath psi) {
     if (psi.getOpRecordModelPath() != null) return TypeKind.RECORD;
     if (psi.getOpMapModelPath() != null) return TypeKind.MAP;
     return null;
@@ -307,11 +307,11 @@ public final class OpPathPsiParser {
       @NotNull RecordType type,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
-      @NotNull EdlOpRecordModelPath psi,
+      @NotNull SchemaOpRecordModelPath psi,
       @NotNull TypesResolver typesResolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
-    final @NotNull EdlOpFieldPathEntry fieldPathEntryPsi = psi.getOpFieldPathEntry();
+    final @NotNull SchemaOpFieldPathEntry fieldPathEntryPsi = psi.getOpFieldPathEntry();
 
     final String fieldName = fieldPathEntryPsi.getQid().getCanonicalName();
     RecordType.Field field = type.fieldsMap().get(fieldName);
@@ -322,7 +322,7 @@ public final class OpPathPsiParser {
           errors
       );
 
-    final @NotNull EdlOpFieldPath fieldPathPsi = fieldPathEntryPsi.getOpFieldPath();
+    final @NotNull SchemaOpFieldPath fieldPathPsi = fieldPathEntryPsi.getOpFieldPath();
 
     final @NotNull TextLocation fieldLocation = EpigraphPsiUtil.getLocation(fieldPathEntryPsi);
 
@@ -348,15 +348,15 @@ public final class OpPathPsiParser {
 
   public static @NotNull OpFieldPath parseFieldPath(
       @NotNull DataType fieldType,
-      @NotNull EdlOpFieldPath psi,
+      @NotNull SchemaOpFieldPath psi,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
     Collection<OpParam> fieldParamsList = null;
     @Nullable Map<String, Annotation> fieldAnnotationsMap = null;
 
-    for (EdlOpFieldPathBodyPart fieldBodyPart : psi.getOpFieldPathBodyPartList()) {
-      @Nullable EdlOpParam fieldParamPsi = fieldBodyPart.getOpParam();
+    for (SchemaOpFieldPathBodyPart fieldBodyPart : psi.getOpFieldPathBodyPartList()) {
+      @Nullable SchemaOpParam fieldParamPsi = fieldBodyPart.getOpParam();
       if (fieldParamPsi != null) {
         if (fieldParamsList == null) fieldParamsList = new ArrayList<>(3);
         fieldParamsList.add(parseParameter(fieldParamPsi, resolver, errors));
@@ -367,7 +367,7 @@ public final class OpPathPsiParser {
 
     final OpVarPath varProjection;
 
-    @Nullable EdlOpVarPath varPathPsi = psi.getOpVarPath();
+    @Nullable SchemaOpVarPath varPathPsi = psi.getOpVarPath();
 
     if (varPathPsi == null) {
       @Nullable Type.Tag defaultFieldTag = fieldType.defaultTag;
@@ -394,13 +394,13 @@ public final class OpPathPsiParser {
       @NotNull MapType type,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
-      @NotNull EdlOpMapModelPath psi,
+      @NotNull SchemaOpMapModelPath psi,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
     @NotNull OpPathKeyProjection keyProjection = parseKeyProjection(psi.getOpPathKeyProjection(), resolver, errors);
 
-    @Nullable EdlOpVarPath valueProjectionPsi = psi.getOpVarPath();
+    @Nullable SchemaOpVarPath valueProjectionPsi = psi.getOpVarPath();
 
     if (valueProjectionPsi == null)
       throw new PsiProcessingException("Map value projection not specified", psi, errors);
@@ -418,17 +418,17 @@ public final class OpPathPsiParser {
   }
 
   private static @NotNull OpPathKeyProjection parseKeyProjection(
-      @NotNull EdlOpPathKeyProjection keyProjectionPsi,
+      @NotNull SchemaOpPathKeyProjection keyProjectionPsi,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
     Collection<OpParam> params = null;
     @Nullable Map<String, Annotation> annotationsMap = null;
 
-    final @Nullable EdlOpPathKeyProjectionBody body = keyProjectionPsi.getOpPathKeyProjectionBody();
+    final @Nullable SchemaOpPathKeyProjectionBody body = keyProjectionPsi.getOpPathKeyProjectionBody();
     if (body != null) {
-      for (EdlOpPathKeyProjectionPart keyPart : body.getOpPathKeyProjectionPartList()) {
-        @Nullable EdlOpParam paramPsi = keyPart.getOpParam();
+      for (SchemaOpPathKeyProjectionPart keyPart : body.getOpPathKeyProjectionPartList()) {
+        @Nullable SchemaOpParam paramPsi = keyPart.getOpParam();
         if (paramPsi != null) {
           if (params == null) params = new ArrayList<>(3);
           params.add(parseParameter(paramPsi, resolver, errors));

@@ -21,16 +21,16 @@ import com.intellij.formatting.Indent;
 import com.intellij.formatting.SpacingBuilder;
 import com.intellij.formatting.Wrap;
 import com.intellij.lang.ASTNode;
-import ws.epigraph.ideaplugin.schema.formatting.EdlBlock;
+import ws.epigraph.ideaplugin.schema.formatting.SchemaBlock;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static ws.epigraph.schema.lexer.EdlElementTypes.S_ID;
+import static ws.epigraph.schema.lexer.SchemaElementTypes.S_ID;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class AnnotationBlock extends EdlBlock {
+public class AnnotationBlock extends SchemaBlock {
   public AnnotationBlock(@NotNull ASTNode node, @Nullable Wrap wrap, @Nullable Alignment alignment, @Nullable Indent indent, SpacingBuilder spacingBuilder) {
     super(node, wrap, alignment, indent, spacingBuilder);
   }

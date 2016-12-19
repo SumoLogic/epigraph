@@ -45,7 +45,7 @@ public class ParserTest {
     File dir = new File("src/test/resources/testData/parser");
     File input = new File(dir, inputFile);
 
-    PsiFile psi = LightPsi.parseFile(input, new EdlParserDefinition());
+    PsiFile psi = LightPsi.parseFile(input, new SchemaParserDefinition());
     String psiDump = DebugUtil.psiToString(psi, true, withRanges).trim();
 //    System.out.println("psiDump = " + psiDump);
 

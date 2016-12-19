@@ -26,8 +26,8 @@ import de.uka.ilkd.pp.StringBackend;
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.gdata.GDataPrettyPrinter;
 import ws.epigraph.gdata.GDatum;
-import ws.epigraph.schema.Edl;
-import ws.epigraph.schema.EdlPrettyPrinter;
+import ws.epigraph.schema.Schema;
+import ws.epigraph.schema.SchemaPrettyPrinter;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.op.delete.OpDeleteProjectionsPrettyPrinter;
 import ws.epigraph.projections.op.delete.OpDeleteVarProjection;
@@ -394,11 +394,11 @@ public final class TestUtil {
     return sb.getString();
   }
 
-  public static @NotNull String printEdl(Edl edl) {
+  public static @NotNull String printSchema(Schema schema) {
     StringBackend sb = new StringBackend(80);
     Layouter<NoExceptions> l = new Layouter<>(sb, 2);
-    EdlPrettyPrinter<NoExceptions> pp = new EdlPrettyPrinter<>(l);
-    pp.print(edl);
+    SchemaPrettyPrinter<NoExceptions> pp = new SchemaPrettyPrinter<>(l);
+    pp.print(schema);
     l.close();
 
     return sb.getString();

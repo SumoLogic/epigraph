@@ -18,7 +18,7 @@ package ws.epigraph.ideaplugin.schema.brains;
 
 import com.intellij.psi.*;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
-import ws.epigraph.schema.parser.psi.EdlFile;
+import ws.epigraph.schema.parser.psi.SchemaFile;
 
 import java.util.Arrays;
 import java.util.List;
@@ -129,7 +129,7 @@ public class ReferenceTest extends LightCodeInsightFixtureTestCase {
     // first check that it actually got renamed
     assertEquals(
         "Baz",
-        ((EdlFile) (myFixture.getFile())).getDefs().getTypeDefWrapperList().get(0).getRecordTypeDef().getName()
+        ((SchemaFile) (myFixture.getFile())).getDefs().getTypeDefWrapperList().get(0).getRecordTypeDef().getName()
     );
 
     checkReference(parent.getReference(), "Baz", "SameNsTypeRef.epigraph");

@@ -26,7 +26,7 @@ import java.util.Set;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public interface Keywords {
-  Keywords EDL = new Edl();
+  Keywords schema = new Schema();
 
   boolean isKeyword(@NotNull String s);
 
@@ -34,7 +34,7 @@ public interface Keywords {
     return isKeyword(s) ? "`" + s + "`" : s;
   }
 
-  final class Edl implements Keywords {
+  final class Schema implements Keywords {
     private static final Set<String> keywords = new HashSet<>(
         Arrays.asList(
             "namespace",

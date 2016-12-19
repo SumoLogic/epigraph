@@ -22,8 +22,8 @@ import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.SimpleTypesResolver;
 import ws.epigraph.refs.TypesResolver;
-import ws.epigraph.schema.parser.EdlSubParserDefinitions;
-import ws.epigraph.schema.parser.psi.EdlOpOutputVarProjection;
+import ws.epigraph.schema.parser.SchemaSubParserDefinitions;
+import ws.epigraph.schema.parser.psi.SchemaOpOutputVarProjection;
 import ws.epigraph.tests.*;
 import ws.epigraph.types.DataType;
 import ws.epigraph.types.Type;
@@ -325,9 +325,9 @@ public class OpOutputProjectionsTest {
 
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
-    EdlOpOutputVarProjection psiVarProjection = EpigraphPsiUtil.parseText(
+    SchemaOpOutputVarProjection psiVarProjection = EpigraphPsiUtil.parseText(
         projectionString,
-        EdlSubParserDefinitions.OP_OUTPUT_VAR_PROJECTION,
+        SchemaSubParserDefinitions.OP_OUTPUT_VAR_PROJECTION,
         errorsAccumulator
     );
 

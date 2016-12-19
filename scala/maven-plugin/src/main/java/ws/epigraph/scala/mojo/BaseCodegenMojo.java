@@ -19,7 +19,7 @@
 package ws.epigraph.scala.mojo;
 
 import ws.epigraph.compiler.*;
-import ws.epigraph.scala.ScalaEdlGenerator;
+import ws.epigraph.scala.ScalaSchemaGenerator;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -41,10 +41,10 @@ import java.util.regex.Pattern;
  * Base for Epigraph Codegen Mojos.
  */
 public abstract class BaseCodegenMojo extends AbstractMojo {
-  private static final Pattern EDL_FILENAME_PATTERN = Pattern.compile(".+\\.epigraph");
+  private static final Pattern SCHEMA_FILENAME_PATTERN = Pattern.compile(".+\\.epigraph");
 
   /**
-   * The source directory of Epigraph EDL files. This directory is added to the
+   * The source directory of Epigraph Schema files. This directory is added to the
    * classpath at schema compiling time. All files can therefore be referenced
    * as classpath resources following the directory structure under the
    * source directory.
@@ -106,8 +106,8 @@ public abstract class BaseCodegenMojo extends AbstractMojo {
 
   protected Collection<Source> getDependencySources() throws MojoExecutionException {
     Collection<Source> sources = new ArrayList<>();
-    List<Artifact> epigraphEdlArtifacts = typedArtifacts(project.getArtifacts(), "epigraph-edl");
-    for (Artifact artifact : epigraphEdlArtifacts) {
+    List<Artifact> epigraphSchemaArtifacts = typedArtifacts(project.getArtifacts(), "epigraph-schema");
+    for (Artifact artifact : epigraphSchemaArtifacts) {
       File artifactFile = artifact.getFile();
       try {
         System.out.println("Adding sources from " + artifactFile);
@@ -146,7 +146,7 @@ public abstract class BaseCodegenMojo extends AbstractMojo {
   private void addSourcesFromJar(File file, Collection<Source> sources) throws IOException {
     final JarFile jarFile = new JarFile(file);
     // TODO? source encoding like: compiler.setOutputCharacterEncoding(project.getProperties().getProperty("project.build.sourceEncoding"));
-    JarSource.allFiles(jarFile, EDL_FILENAME_PATTERN, StandardCharsets.UTF_8).forEachRemaining(sources::add);
+    JarSource.allFiles(jarFile, SCHEMA_FILENAME_PATTERN, StandardCharsets.UTF_8).forEachRemaining(sources::add);
   }
 
   private String[] getIncludedFiles(String absPath, String[] excludes, String[] includes) {
@@ -162,7 +162,7 @@ public abstract class BaseCodegenMojo extends AbstractMojo {
   private void generateSources(File outputDirectory, Collection<Source> sources, Collection<Source> dependencySources) throws MojoExecutionException, MojoFailureException {
     CContext ctx = compileFiles(outputDirectory, sources, dependencySources);
     try {
-      new ScalaEdlGenerator(ctx, outputDirectory).generate();
+      new ScalaSchemaGenerator(ctx, outputDirectory).generate();
     } catch (IOException e) {
       throw new MojoExecutionException("Error generating sources to " + outputDirectory, e);
     }
@@ -194,7 +194,7 @@ public abstract class BaseCodegenMojo extends AbstractMojo {
           sb.append(String.format("%" + (pos.column()) + "s", "^").replace(" ", ".")).append('\n');
         }
       }
-      throw new MojoFailureException(this, "EDL compilation failed", sb.toString());
+      throw new MojoFailureException(this, "Schema compilation failed", sb.toString());
     }
   }
 

@@ -23,9 +23,9 @@ import com.intellij.util.containers.MultiMap;
 import ws.epigraph.ideaplugin.schema.brains.ImportsManager;
 import ws.epigraph.ideaplugin.schema.features.actions.fixes.OptimizeImportsQuickFix;
 import ws.epigraph.lang.Qn;
-import ws.epigraph.schema.parser.psi.EdlImportStatement;
-import ws.epigraph.schema.parser.psi.EdlImports;
-import ws.epigraph.schema.parser.psi.EdlVisitor;
+import ws.epigraph.schema.parser.psi.SchemaImportStatement;
+import ws.epigraph.schema.parser.psi.SchemaImports;
+import ws.epigraph.schema.parser.psi.SchemaVisitor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -39,16 +39,16 @@ public class DuplicateImportInspection extends LocalInspectionTool {
   @NotNull
   @Override
   public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly) {
-    return new EdlVisitor() {
+    return new SchemaVisitor() {
       @Override
-      public void visitImports(@NotNull EdlImports edlTypeImports) {
-        super.visitImports(edlTypeImports);
+      public void visitImports(@NotNull SchemaImports schemaTypeImports) {
+        super.visitImports(schemaTypeImports);
 
-        List<EdlImportStatement> imports = edlTypeImports.getImportStatementList();
+        List<SchemaImportStatement> imports = schemaTypeImports.getImportStatementList();
 
-        MultiMap<Qn, EdlImportStatement> importsByQn = ImportsManager.getImportsByQn(imports);
+        MultiMap<Qn, SchemaImportStatement> importsByQn = ImportsManager.getImportsByQn(imports);
 
-        for (Map.Entry<Qn, Collection<EdlImportStatement>> entry : importsByQn.entrySet()) {
+        for (Map.Entry<Qn, Collection<SchemaImportStatement>> entry : importsByQn.entrySet()) {
           entry.getValue().stream()
               .filter(is -> entry.getValue().size() > 1)
               .forEach(is -> holder.registerProblem(is,

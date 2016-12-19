@@ -18,7 +18,7 @@ package ws.epigraph.url.parser;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
-import ws.epigraph.schema.Edl;
+import ws.epigraph.schema.Schema;
 import ws.epigraph.schema.ResourceDeclaration;
 import ws.epigraph.schema.operations.OperationDeclaration;
 import ws.epigraph.schema.operations.ReadOperationDeclaration;
@@ -84,8 +84,8 @@ public class ReadRequestUrlPsiParserTest {
   private final DataType resourceType = String_Person_Map.type.dataType();
 
   {
-    Edl edl = parseIdl(idlText, resolver);
-    ResourceDeclaration resourceDeclaration = edl.resources().get("users");
+    Schema schema = parseIdl(idlText, resolver);
+    ResourceDeclaration resourceDeclaration = schema.resources().get("users");
 
     final @NotNull List<OperationDeclaration> operationDeclarations = resourceDeclaration.operations();
     readIdl1 = (ReadOperationDeclaration) operationDeclarations.get(0);

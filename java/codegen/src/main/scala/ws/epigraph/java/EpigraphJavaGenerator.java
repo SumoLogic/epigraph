@@ -50,8 +50,8 @@ public class EpigraphJavaGenerator {
 
     // TODO parallelize all these?
 
-    for (CEdlFile edlFile : cctx.edlFiles().values()) {
-      for (CTypeDef typeDef : JavaConversions.asJavaIterable(edlFile.typeDefs())) {
+    for (CSchemaFile schemaFile : cctx.schemaFiles().values()) {
+      for (CTypeDef typeDef : JavaConversions.asJavaIterable(schemaFile.typeDefs())) {
 
         switch (typeDef.kind()) {
 
@@ -114,7 +114,7 @@ public class EpigraphJavaGenerator {
 
 //  public static void main(String... args) throws IOException {
 //    new EpigraphJavaGenerator(
-//        EdlCompiler.testcompile(),
+//        SchemaCompiler.testcompile(),
 //        Paths.get("java/codegen-test/src/main/java")
 //    ).generate();
 //  }

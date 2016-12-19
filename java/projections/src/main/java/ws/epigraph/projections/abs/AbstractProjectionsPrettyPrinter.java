@@ -176,7 +176,7 @@ public abstract class AbstractProjectionsPrettyPrinter<
     return true;
   }
 
-  protected @NotNull String escape(@NotNull String s) { return Keywords.EDL.escape(s); }
+  protected @NotNull String escape(@NotNull String s) { return Keywords.schema.escape(s); }
 
   public abstract boolean isPrintoutEmpty(@NotNull MP mp);
 

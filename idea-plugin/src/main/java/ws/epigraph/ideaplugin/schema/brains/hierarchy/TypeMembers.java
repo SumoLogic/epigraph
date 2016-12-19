@@ -36,79 +36,79 @@ import java.util.stream.Stream;
  */
 public class TypeMembers {
   @NotNull
-  public static List<EdlFieldDecl> getOverridenFields(@NotNull EdlFieldDecl fieldDecl) {
+  public static List<SchemaFieldDecl> getOverridenFields(@NotNull SchemaFieldDecl fieldDecl) {
     Project project = fieldDecl.getProject();
     return getSameNameFields(fieldDecl, HierarchyCache.getHierarchyCache(project).getTypeParents(fieldDecl.getRecordTypeDef()));
   }
 
   @NotNull
-  public static List<EdlFieldDecl> getOverridingFields(@NotNull EdlFieldDecl fieldDecl) {
+  public static List<SchemaFieldDecl> getOverridingFields(@NotNull SchemaFieldDecl fieldDecl) {
     final HierarchyCache hierarchyCache = HierarchyCache.getHierarchyCache(fieldDecl.getProject());
     return getSameNameFields(fieldDecl, hierarchyCache.getTypeInheritors(fieldDecl.getRecordTypeDef()));
   }
 
   @NotNull
-  public static List<EdlFieldDecl> getOverridableFields(@NotNull EdlRecordTypeDef recordTypeDef) {
+  public static List<SchemaFieldDecl> getOverridableFields(@NotNull SchemaRecordTypeDef recordTypeDef) {
     final HierarchyCache hierarchyCache = HierarchyCache.getHierarchyCache(recordTypeDef.getProject());
-    List<EdlFieldDecl> allFieldDecls = getFieldDecls(recordTypeDef, null);
-    List<EdlFieldDecl> existingFieldDecls = getFieldDecls(null, Collections.singletonList(recordTypeDef));
+    List<SchemaFieldDecl> allFieldDecls = getFieldDecls(recordTypeDef, null);
+    List<SchemaFieldDecl> existingFieldDecls = getFieldDecls(null, Collections.singletonList(recordTypeDef));
     allFieldDecls.removeAll(existingFieldDecls);
     return allFieldDecls;
   }
 
   @NotNull
-  public static List<EdlVarTagDecl> getOverridenTags(@NotNull EdlVarTagDecl varTagDecl) {
+  public static List<SchemaVarTagDecl> getOverridenTags(@NotNull SchemaVarTagDecl varTagDecl) {
     final HierarchyCache hierarchyCache = HierarchyCache.getHierarchyCache(varTagDecl.getProject());
     return getSameNameTags(varTagDecl, hierarchyCache.getTypeParents(varTagDecl.getVarTypeDef()));
   }
 
   @NotNull
-  public static List<EdlVarTagDecl> getOverridingTags(@NotNull EdlVarTagDecl varTagDecl) {
+  public static List<SchemaVarTagDecl> getOverridingTags(@NotNull SchemaVarTagDecl varTagDecl) {
     Project project = varTagDecl.getProject();
     return getSameNameTags(varTagDecl, HierarchyCache.getHierarchyCache(project).getTypeInheritors(varTagDecl.getVarTypeDef()));
   }
 
   @NotNull
-  public static List<EdlVarTagDecl> getOverridableTags(@NotNull EdlVarTypeDef varTypeDef) {
+  public static List<SchemaVarTagDecl> getOverridableTags(@NotNull SchemaVarTypeDef varTypeDef) {
     final HierarchyCache hierarchyCache = HierarchyCache.getHierarchyCache(varTypeDef.getProject());
-    List<EdlVarTagDecl> allTagDecls = getVarTagDecls(varTypeDef, null);
-    List<EdlVarTagDecl> existingFieldDecls = getVarTagDecls(null, Collections.singletonList(varTypeDef));
+    List<SchemaVarTagDecl> allTagDecls = getVarTagDecls(varTypeDef, null);
+    List<SchemaVarTagDecl> existingFieldDecls = getVarTagDecls(null, Collections.singletonList(varTypeDef));
     allTagDecls.removeAll(existingFieldDecls);
     return allTagDecls;
   }
 
   @NotNull
-  public static List<EdlFieldDecl> getFieldDecls(@NotNull EdlTypeDef hostType, @Nullable String fieldName) {
+  public static List<SchemaFieldDecl> getFieldDecls(@NotNull SchemaTypeDef hostType, @Nullable String fieldName) {
     return getFieldDecls(fieldName, getTypeAndParents(hostType));
   }
 
   @NotNull
-  public static List<EdlVarTagDecl> getVarTagDecls(@NotNull EdlTypeDef hostType, @Nullable String tagName) {
+  public static List<SchemaVarTagDecl> getVarTagDecls(@NotNull SchemaTypeDef hostType, @Nullable String tagName) {
     return getVarTagDecls(tagName, getTypeAndParents(hostType));
   }
 
-  public static boolean canHaveDefault(@NotNull EdlValueTypeRef valueTypeRef) {
-    EdlTypeRef typeRef = valueTypeRef.getTypeRef();
-    if (typeRef instanceof EdlQnTypeRef) {
-      EdlQnTypeRef fqnTypeRef = (EdlQnTypeRef) typeRef;
-      EdlTypeDef typeDef = fqnTypeRef.resolve();
+  public static boolean canHaveDefault(@NotNull SchemaValueTypeRef valueTypeRef) {
+    SchemaTypeRef typeRef = valueTypeRef.getTypeRef();
+    if (typeRef instanceof SchemaQnTypeRef) {
+      SchemaQnTypeRef fqnTypeRef = (SchemaQnTypeRef) typeRef;
+      SchemaTypeDef typeDef = fqnTypeRef.resolve();
 
-      return typeDef instanceof EdlVarTypeDef;
+      return typeDef instanceof SchemaVarTypeDef;
     } else return false;
   }
 
   @Nullable
-  public static EdlVarTagDecl getEffectiveDefault(@NotNull EdlValueTypeRef valueTypeRef) {
+  public static SchemaVarTagDecl getEffectiveDefault(@NotNull SchemaValueTypeRef valueTypeRef) {
     if (!canHaveDefault(valueTypeRef)) return null;
 
-    EdlVarTagDecl defaultTag = getDefaultTag(valueTypeRef);
+    SchemaVarTagDecl defaultTag = getDefaultTag(valueTypeRef);
     if (defaultTag != null) return defaultTag;
 
-    EdlFieldDecl fieldDecl = PsiTreeUtil.getParentOfType(valueTypeRef, EdlFieldDecl.class);
+    SchemaFieldDecl fieldDecl = PsiTreeUtil.getParentOfType(valueTypeRef, SchemaFieldDecl.class);
     if (fieldDecl != null) {
-      List<EdlFieldDecl> overridenFields = getOverridenFields(fieldDecl);
+      List<SchemaFieldDecl> overridenFields = getOverridenFields(fieldDecl);
 
-      for (EdlFieldDecl overridenField : overridenFields) {
+      for (SchemaFieldDecl overridenField : overridenFields) {
         ProgressManager.checkCanceled();
         defaultTag = getDefaultTag(overridenField.getValueTypeRef());
         if (defaultTag != null) return defaultTag;
@@ -120,53 +120,53 @@ public class TypeMembers {
   }
 
   @Nullable
-  private static EdlVarTagDecl getDefaultTag(@Nullable EdlValueTypeRef valueTypeRef) {
+  private static SchemaVarTagDecl getDefaultTag(@Nullable SchemaValueTypeRef valueTypeRef) {
     if (valueTypeRef == null) return null;
 
-    EdlDefaultOverride defaultOverride = valueTypeRef.getDefaultOverride();
+    SchemaDefaultOverride defaultOverride = valueTypeRef.getDefaultOverride();
     if (defaultOverride != null) {
-      EdlVarTagRef varTagRef = defaultOverride.getVarTagRef();
+      SchemaVarTagRef varTagRef = defaultOverride.getVarTagRef();
       PsiReference reference = varTagRef.getReference();
-      return reference == null ? null : (EdlVarTagDecl) reference.resolve();
+      return reference == null ? null : (SchemaVarTagDecl) reference.resolve();
     }
     return null;
   }
 
   // =========================
 
-  private static List<EdlTypeDef> getTypeAndParents(@NotNull EdlTypeDef typeDef) {
+  private static List<SchemaTypeDef> getTypeAndParents(@NotNull SchemaTypeDef typeDef) {
     final HierarchyCache hierarchyCache = HierarchyCache.getHierarchyCache(typeDef.getProject());
-    List<EdlTypeDef> parents = hierarchyCache.getTypeParents(typeDef);
+    List<SchemaTypeDef> parents = hierarchyCache.getTypeParents(typeDef);
     if (parents.isEmpty()) return Collections.singletonList(typeDef);
-    final ArrayList<EdlTypeDef> res = new ArrayList<>(parents.size() + 1);
+    final ArrayList<SchemaTypeDef> res = new ArrayList<>(parents.size() + 1);
     res.add(typeDef);
     res.addAll(parents);
     return res;
   }
 
   @NotNull
-  private static List<EdlFieldDecl> getSameNameFields(@NotNull EdlFieldDecl fieldDecl,
-                                                         @NotNull List<EdlTypeDef> types) {
+  private static List<SchemaFieldDecl> getSameNameFields(@NotNull SchemaFieldDecl fieldDecl,
+                                                         @NotNull List<SchemaTypeDef> types) {
     final String fieldName = fieldDecl.getQid().getCanonicalName();
 
     PsiElement body = fieldDecl.getParent();
     if (body == null) return Collections.emptyList();
 
-    EdlTypeDef typeDef = (EdlTypeDef) body.getParent();
+    SchemaTypeDef typeDef = (SchemaTypeDef) body.getParent();
     if (typeDef == null) return Collections.emptyList();
 
     return getFieldDecls(fieldName, types);
   }
 
-  private static List<EdlFieldDecl> getFieldDecls(@Nullable String fieldName,
-                                                     @NotNull List<EdlTypeDef> typeAndParents) {
+  private static List<SchemaFieldDecl> getFieldDecls(@Nullable String fieldName,
+                                                     @NotNull List<SchemaTypeDef> typeAndParents) {
     if (typeAndParents.isEmpty()) return Collections.emptyList();
 
     return typeAndParents.stream()
-        .filter(type -> type instanceof EdlRecordTypeDef)
+        .filter(type -> type instanceof SchemaRecordTypeDef)
         .flatMap(type -> {
-          EdlRecordTypeDef recordTypeDef = (EdlRecordTypeDef) type;
-          EdlRecordTypeBody recordTypeBody = recordTypeDef.getRecordTypeBody();
+          SchemaRecordTypeDef recordTypeDef = (SchemaRecordTypeDef) type;
+          SchemaRecordTypeBody recordTypeBody = recordTypeDef.getRecordTypeBody();
           if (recordTypeBody != null) {
             return recordTypeBody.getFieldDeclList().stream().filter(f -> fieldName == null || fieldName.equals(f.getQid().getCanonicalName()));
           } else {
@@ -177,28 +177,28 @@ public class TypeMembers {
   }
 
   @NotNull
-  private static List<EdlVarTagDecl> getSameNameTags(@NotNull EdlVarTagDecl varTagDecl,
-                                                        @NotNull List<EdlTypeDef> types) {
+  private static List<SchemaVarTagDecl> getSameNameTags(@NotNull SchemaVarTagDecl varTagDecl,
+                                                        @NotNull List<SchemaTypeDef> types) {
     final String varTypeMemberName = varTagDecl.getQid().getCanonicalName();
 
     PsiElement body = varTagDecl.getParent();
     if (body == null) return Collections.emptyList();
 
-    EdlTypeDef typeDef = (EdlTypeDef) body.getParent();
+    SchemaTypeDef typeDef = (SchemaTypeDef) body.getParent();
     if (typeDef == null) return Collections.emptyList();
 
     return getVarTagDecls(varTypeMemberName, types);
   }
 
-  private static List<EdlVarTagDecl> getVarTagDecls(@Nullable String varTagName,
-                                                       @NotNull List<EdlTypeDef> typeAndParents) {
+  private static List<SchemaVarTagDecl> getVarTagDecls(@Nullable String varTagName,
+                                                       @NotNull List<SchemaTypeDef> typeAndParents) {
     if (typeAndParents.isEmpty()) return Collections.emptyList();
 
     return typeAndParents.stream()
-        .filter(type -> type instanceof EdlVarTypeDef)
+        .filter(type -> type instanceof SchemaVarTypeDef)
         .flatMap(type -> {
-          EdlVarTypeDef varTypeDef = (EdlVarTypeDef) type;
-          EdlVarTypeBody varTypeBody = varTypeDef.getVarTypeBody();
+          SchemaVarTypeDef varTypeDef = (SchemaVarTypeDef) type;
+          SchemaVarTypeBody varTypeBody = varTypeDef.getVarTypeBody();
           if (varTypeBody != null) {
             return varTypeBody.getVarTagDeclList().stream().filter(f -> varTagName == null || varTagName.equals(f.getQid().getCanonicalName()));
           } else {

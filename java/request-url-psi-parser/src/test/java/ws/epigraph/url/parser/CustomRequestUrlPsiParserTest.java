@@ -19,7 +19,7 @@ package ws.epigraph.url.parser;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
-import ws.epigraph.schema.Edl;
+import ws.epigraph.schema.Schema;
 import ws.epigraph.schema.ResourceDeclaration;
 import ws.epigraph.schema.operations.CustomOperationDeclaration;
 import ws.epigraph.schema.operations.OperationDeclaration;
@@ -79,8 +79,8 @@ public class CustomRequestUrlPsiParserTest {
   private final DataType resourceType = String_Person_Map.type.dataType();
 
   {
-    Edl edl = parseIdl(idlText, resolver);
-    ResourceDeclaration resourceDeclaration = edl.resources().get("users");
+    Schema schema = parseIdl(idlText, resolver);
+    ResourceDeclaration resourceDeclaration = schema.resources().get("users");
 
     final @NotNull List<OperationDeclaration> operationDeclarations = resourceDeclaration.operations();
     customIdl1 = (CustomOperationDeclaration) operationDeclarations.get(0);

@@ -30,7 +30,7 @@ import org.jetbrains.annotations.Nullable
 
 import scala.collection.JavaConversions._
 
-class CEdlFile(val psi: EdlFile)(implicit val ctx: CContext) {
+class CSchemaFile(val psi: SchemaFile)(implicit val ctx: CContext) {
 
   val filename: String = psi.getName
 
@@ -50,15 +50,15 @@ class CEdlFile(val psi: EdlFile)(implicit val ctx: CContext) {
 
   val importedAliases: Map[String, Qn] = ctx.implicitImports ++ imports.map { case (alias, ci) => (alias, ci.fqn) }
 
-  @Nullable private val defs: EdlDefs = psi.getDefs
+  @Nullable private val defs: SchemaDefs = psi.getDefs
 
   val typeDefs: Seq[CTypeDef] = if (defs == null) Nil else defs.getTypeDefWrapperList.map(CTypeDef.apply(this, _))
 
   val supplements: Seq[CSupplement] = if (defs == null) Nil else defs.getSupplementDefList.map(new CSupplement(this, _))
 
-  ctx.edlFiles.put(filename, this)
+  ctx.schemaFiles.put(filename, this)
 
-  def qualifyLocalTypeRef(sftr: EdlQnTypeRef): CTypeFqn = {
+  def qualifyLocalTypeRef(sftr: SchemaQnTypeRef): CTypeFqn = {
     val alias = sftr.getQn.getQn.first
     val parentNamespace = importedAliases.get(alias) match {
       case Some(fqn) => fqn.removeLastSegment() // typeref starting with imported alias
@@ -82,7 +82,7 @@ class CEdlFile(val psi: EdlFile)(implicit val ctx: CContext) {
 
 }
 
-class CNamespace(val csf: CEdlFile, val psi: EdlNamespaceDecl)(implicit val ctx: CContext) {
+class CNamespace(val csf: CSchemaFile, val psi: SchemaNamespaceDecl)(implicit val ctx: CContext) {
 
   val fqn: Qn = psi.getFqn
 
@@ -115,7 +115,7 @@ object CNamespace {
 
 }
 
-class CImport(@Nullable val psi: EdlImportStatement)(implicit val ctx: CContext) {
+class CImport(@Nullable val psi: SchemaImportStatement)(implicit val ctx: CContext) {
 
   val fqn: Qn = psi.getQn.getQn
 

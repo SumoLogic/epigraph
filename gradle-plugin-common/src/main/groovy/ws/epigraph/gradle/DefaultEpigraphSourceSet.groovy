@@ -24,8 +24,8 @@ class DefaultEpigraphSourceSet implements EpigraphSourceSet {
   private final SourceDirectorySet epigraph
 
   DefaultEpigraphSourceSet(String displayName, SourceDirectorySetFactory sourceDirectorySetFactory) {
-    epigraph = sourceDirectorySetFactory.create(displayName + ' Epigraph EDL source')
-    epigraph.getFilter().include('**/*.' + EpigraphConstants.EDL_FILE_EXTENSION)
+    epigraph = sourceDirectorySetFactory.create(displayName + ' Epigraph Schema source')
+    epigraph.getFilter().include('**/*.' + EpigraphConstants.SCHEMA_FILE_EXTENSION)
   }
 
   @Override

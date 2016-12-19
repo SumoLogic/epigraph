@@ -40,7 +40,7 @@ public class MainCodegenMojo extends BaseCodegenMojo {
   /**
    * A set of Ant-like inclusion patterns used to select files from the source
    * directory for processing. By default, the pattern
-   * <code>**&#47;*.epigraph</code> is used to select epigraph EDL files.
+   * <code>**&#47;*.epigraph</code> is used to select epigraph Schema files.
    */
   @Parameter
   private String[] includes = new String[]{"**/*.epigraph"};

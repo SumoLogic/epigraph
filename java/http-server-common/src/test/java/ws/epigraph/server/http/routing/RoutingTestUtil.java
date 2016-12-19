@@ -17,13 +17,13 @@
 package ws.epigraph.server.http.routing;
 
 import org.jetbrains.annotations.NotNull;
-import ws.epigraph.schema.Edl;
-import ws.epigraph.schema.parser.EdlPsiParser;
+import ws.epigraph.schema.Schema;
+import ws.epigraph.schema.parser.SchemaPsiParser;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingError;
 import ws.epigraph.refs.TypesResolver;
-import ws.epigraph.schema.parser.EdlParserDefinition;
-import ws.epigraph.schema.parser.psi.EdlFile;
+import ws.epigraph.schema.parser.SchemaParserDefinition;
+import ws.epigraph.schema.parser.psi.SchemaFile;
 import ws.epigraph.service.operations.Operation;
 
 import java.util.List;
@@ -40,20 +40,20 @@ public final class RoutingTestUtil {
 
   private RoutingTestUtil() {}
 
-  static @NotNull Edl parseIdl(@NotNull String text, @NotNull TypesResolver resolver) {
+  static @NotNull Schema parseIdl(@NotNull String text, @NotNull TypesResolver resolver) {
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
-    @NotNull EdlFile psiFile =
-        (EdlFile) EpigraphPsiUtil.parseFile(
+    @NotNull SchemaFile psiFile =
+        (SchemaFile) EpigraphPsiUtil.parseFile(
             "test.epigraph",
             text,
-            EdlParserDefinition.INSTANCE,
+            SchemaParserDefinition.INSTANCE,
             errorsAccumulator
         );
 
     failIfHasErrors(psiFile, errorsAccumulator);
 
-    return runPsiParser(errors -> EdlPsiParser.parseEdl(psiFile, resolver, errors));
+    return runPsiParser(errors -> SchemaPsiParser.parseSchema(psiFile, resolver, errors));
   }
 
   static void failIfSearchFailure(final OperationSearchResult<? extends Operation<?, ?, ?>> oss) {

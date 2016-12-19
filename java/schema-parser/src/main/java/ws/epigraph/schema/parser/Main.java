@@ -45,13 +45,13 @@ public class Main {
 
   public static void main(String[] args) throws ClassNotFoundException {
     String source = args.length == 0 ? DEFAULT_SOURCE : args[0];
-    PsiFile psi = LightPsi.parseFile("dummy", source, new EdlParserDefinition());
+    PsiFile psi = LightPsi.parseFile("dummy", source, new SchemaParserDefinition());
     String psiDump = DebugUtil.psiToString(psi, true, false).trim();
     System.out.println(psiDump);
 
     // load file parsing related classes
     try {
-      LightPsi.parseFile(new File("."), new EdlParserDefinition());
+      LightPsi.parseFile(new File("."), new SchemaParserDefinition());
     } catch (IOException e) {
 //      e.printStackTrace();
     }

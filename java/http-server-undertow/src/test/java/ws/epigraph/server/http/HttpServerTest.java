@@ -30,15 +30,15 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import ws.epigraph.schema.Edl;
-import ws.epigraph.schema.parser.EdlPsiParser;
+import ws.epigraph.schema.Schema;
+import ws.epigraph.schema.parser.SchemaPsiParser;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingError;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.SimpleTypesResolver;
 import ws.epigraph.refs.TypesResolver;
-import ws.epigraph.schema.parser.EdlParserDefinition;
-import ws.epigraph.schema.parser.psi.EdlFile;
+import ws.epigraph.schema.parser.SchemaParserDefinition;
+import ws.epigraph.schema.parser.psi.SchemaFile;
 import ws.epigraph.server.http.undertow.UndertowHandler;
 import ws.epigraph.service.Service;
 import ws.epigraph.service.ServiceInitializationException;
@@ -79,13 +79,13 @@ public class HttpServerTest {
       epigraph.String.type
   );
 
-  private static final Edl edl;
+  private static final Schema schema;
 
   private static Undertow server;
 
   static {
     try {
-      edl = parseIdlResource("/ws/epigraph/tests/service/testService.epigraph");
+      schema = parseIdlResource("/ws/epigraph/tests/service/testService.epigraph");
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -95,8 +95,8 @@ public class HttpServerTest {
     return new Service(
         "users",
         Arrays.asList(
-            new UserResource(edl.resources().get("user")),
-            new UsersResource(edl.resources().get("users"), new UsersStorage())
+            new UserResource(schema.resources().get("user")),
+            new UsersResource(schema.resources().get("users"), new UsersStorage())
         )
     );
   }
@@ -240,14 +240,14 @@ public class HttpServerTest {
 //    return parseIdl(psiFile, errAcc);
 //  }
 
-  private static @NotNull Edl parseIdlResource(@NotNull String resourcePath) throws IOException {
+  private static @NotNull Schema parseIdlResource(@NotNull String resourcePath) throws IOException {
     EpigraphPsiUtil.ErrorsAccumulator errAcc = new EpigraphPsiUtil.ErrorsAccumulator();
-    EdlFile psiFile =
-        (EdlFile) EpigraphPsiUtil.parseResource(resourcePath, EdlParserDefinition.INSTANCE, errAcc);
-    return parseEdl(psiFile, errAcc);
+    SchemaFile psiFile =
+        (SchemaFile) EpigraphPsiUtil.parseResource(resourcePath, SchemaParserDefinition.INSTANCE, errAcc);
+    return parseSchema(psiFile, errAcc);
   }
 
-  private static @NotNull Edl parseEdl(@NotNull EdlFile psiFile, EpigraphPsiUtil.ErrorsAccumulator errAcc) {
+  private static @NotNull Schema parseSchema(@NotNull SchemaFile psiFile, EpigraphPsiUtil.ErrorsAccumulator errAcc) {
 
     if (errAcc.hasErrors()) {
       for (PsiErrorElement element : errAcc.errors()) {
@@ -256,10 +256,10 @@ public class HttpServerTest {
       throw new RuntimeException(DebugUtil.psiTreeToString(psiFile, true));
     }
 
-    Edl edl = null;
+    Schema schema = null;
     List<PsiProcessingError> errors = new ArrayList<>();
     try {
-      edl = EdlPsiParser.parseEdl(psiFile, resolver, errors);
+      schema = SchemaPsiParser.parseSchema(psiFile, resolver, errors);
     } catch (PsiProcessingException e) {
       errors = e.errors();
     }
@@ -272,8 +272,8 @@ public class HttpServerTest {
       throw new RuntimeException("IDL errors detected");
     }
 
-    assert edl != null;
-    return edl;
+    assert schema != null;
+    return schema;
   }
 
 }

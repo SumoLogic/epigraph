@@ -30,7 +30,7 @@ import java.io.IOException;
 import java.util.Collection;
 
 /**
- * Generate Java bindings for Epigraph EDL source files (.epigraph).
+ * Generate Java bindings for Epigraph Schema source files (.epigraph).
  */
 @Mojo(
     name = "generate-sources", // TODO generateSources?
@@ -41,7 +41,7 @@ import java.util.Collection;
 public class MainCodegenMojo extends BaseCodegenMojo {
 
   /**
-   * The source directory of Epigraph EDL files. This directory is added to the
+   * The source directory of Epigraph Schema files. This directory is added to the
    * classpath at schema compiling time. All files can therefore be referenced
    * as classpath resources following the directory structure under the
    * source directory.
@@ -58,10 +58,10 @@ public class MainCodegenMojo extends BaseCodegenMojo {
   /**
    * A set of Ant-like inclusion patterns used to select files from the source
    * directory for processing. By default, the pattern
-   * <code>**&#47;*.epigraph</code> is used to select epigraph EDL files.
+   * <code>**&#47;*.epigraph</code> is used to select epigraph Schema files.
    */
   @Parameter
-  private String[] includes = new String[]{EDL_FILE_ANT_PATTERN};
+  private String[] includes = new String[]{SCHEMA_FILE_ANT_PATTERN};
 
   /**
    * A set of Ant-like exclusion patterns used to prevent certain files from

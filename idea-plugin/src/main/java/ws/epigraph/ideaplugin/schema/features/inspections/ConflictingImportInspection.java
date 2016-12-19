@@ -23,9 +23,9 @@ import com.intellij.util.containers.MultiMap;
 import ws.epigraph.ideaplugin.schema.brains.ImportsManager;
 import ws.epigraph.ideaplugin.schema.features.actions.fixes.OptimizeImportsQuickFix;
 import ws.epigraph.lang.Qn;
-import ws.epigraph.schema.parser.psi.EdlImportStatement;
-import ws.epigraph.schema.parser.psi.EdlImports;
-import ws.epigraph.schema.parser.psi.EdlVisitor;
+import ws.epigraph.schema.parser.psi.SchemaImportStatement;
+import ws.epigraph.schema.parser.psi.SchemaImports;
+import ws.epigraph.schema.parser.psi.SchemaVisitor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -40,25 +40,25 @@ public class ConflictingImportInspection extends LocalInspectionTool {
   @NotNull
   @Override
   public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly) {
-    return new EdlVisitor() {
+    return new SchemaVisitor() {
       @Override
-      public void visitImports(@NotNull EdlImports edlTypeImports) {
-        super.visitImports(edlTypeImports);
+      public void visitImports(@NotNull SchemaImports schemaTypeImports) {
+        super.visitImports(schemaTypeImports);
 
-        List<EdlImportStatement> imports = edlTypeImports.getImportStatementList();
-        MultiMap<Qn, EdlImportStatement> importsByQn = ImportsManager.getImportsByQn(imports);
+        List<SchemaImportStatement> imports = schemaTypeImports.getImportStatementList();
+        MultiMap<Qn, SchemaImportStatement> importsByQn = ImportsManager.getImportsByQn(imports);
 
-        MultiMap<String, EdlImportStatement> importsByLastSegment = new MultiMap<>(importsByQn.size(), 0.75f);
-        for (Map.Entry<Qn, Collection<EdlImportStatement>> entry : importsByQn.entrySet()) {
+        MultiMap<String, SchemaImportStatement> importsByLastSegment = new MultiMap<>(importsByQn.size(), 0.75f);
+        for (Map.Entry<Qn, Collection<SchemaImportStatement>> entry : importsByQn.entrySet()) {
           String lastSegment = entry.getKey().last();
           assert lastSegment != null;
           importsByLastSegment.putValue(lastSegment, entry.getValue().iterator().next()); // take only first one so we don't report duplicate imports as conflicts
         }
 
-        for (Map.Entry<String, Collection<EdlImportStatement>> entry : importsByLastSegment.entrySet()) {
-          Collection<EdlImportStatement> conflictingImports = entry.getValue();
+        for (Map.Entry<String, Collection<SchemaImportStatement>> entry : importsByLastSegment.entrySet()) {
+          Collection<SchemaImportStatement> conflictingImports = entry.getValue();
           if (conflictingImports.size() > 1) {
-            for (EdlImportStatement conflictingImport : conflictingImports) {
+            for (SchemaImportStatement conflictingImport : conflictingImports) {
               String conflictingImportsString = conflictingImports.stream()
                   .filter(i -> i != conflictingImport)
                   .map(i -> "'" + i.getText() + "'")

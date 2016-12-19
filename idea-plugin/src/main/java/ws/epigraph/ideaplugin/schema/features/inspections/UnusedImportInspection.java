@@ -22,10 +22,10 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElementVisitor;
 import ws.epigraph.ideaplugin.schema.brains.ImportsManager;
 import ws.epigraph.ideaplugin.schema.features.actions.fixes.OptimizeImportsQuickFix;
-import ws.epigraph.schema.parser.psi.EdlFile;
-import ws.epigraph.schema.parser.psi.EdlImportStatement;
-import ws.epigraph.schema.parser.psi.EdlImports;
-import ws.epigraph.schema.parser.psi.EdlVisitor;
+import ws.epigraph.schema.parser.psi.SchemaFile;
+import ws.epigraph.schema.parser.psi.SchemaImportStatement;
+import ws.epigraph.schema.parser.psi.SchemaImports;
+import ws.epigraph.schema.parser.psi.SchemaVisitor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -37,13 +37,13 @@ public class UnusedImportInspection extends LocalInspectionTool {
   @NotNull
   @Override
   public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly) {
-    return new EdlVisitor() {
+    return new SchemaVisitor() {
       @Override
-      public void visitImports(@NotNull EdlImports edlTypeImports) {
-        super.visitImports(edlTypeImports);
+      public void visitImports(@NotNull SchemaImports schemaTypeImports) {
+        super.visitImports(schemaTypeImports);
 
-        Set<EdlImportStatement> unusedImports = ImportsManager.findUnusedImports((EdlFile) edlTypeImports.getContainingFile());
-        for (EdlImportStatement unusedImport : unusedImports) {
+        Set<SchemaImportStatement> unusedImports = ImportsManager.findUnusedImports((SchemaFile) schemaTypeImports.getContainingFile());
+        for (SchemaImportStatement unusedImport : unusedImports) {
           holder.registerProblem(unusedImport,
               InspectionBundle.message("import.unused.problem.descriptor"),
               ProblemHighlightType.LIKE_UNUSED_SYMBOL,

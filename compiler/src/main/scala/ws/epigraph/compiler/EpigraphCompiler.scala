@@ -26,7 +26,7 @@ import com.intellij.lang.ParserDefinition
 import com.intellij.psi.{PsiElement, PsiFile, PsiRecursiveElementWalkingVisitor}
 import org.intellij.grammar.LightPsi
 import org.jetbrains.annotations.Nullable
-import ws.epigraph.schema.parser.EdlParserDefinition
+import ws.epigraph.schema.parser.SchemaParserDefinition
 import ws.epigraph.schema.parser.psi._
 
 import scala.collection.JavaConversions._
@@ -40,7 +40,7 @@ class EpigraphCompiler(
   println(sources.map(_.name).mkString("Sources: [\n", ",\n", "\n]")) // TODO use log or remove
   println(dependencies.map(_.name).mkString("Dependencies: [\n", ",\n", "\n]")) // TODO use log or remove
 
-  private val spd = new EdlParserDefinition
+  private val spd = new SchemaParserDefinition
 
   implicit val ctx: CContext = new CContext
 
@@ -59,7 +59,7 @@ class EpigraphCompiler(
 
     ctx.phase(PARSE)
 
-    val edlFiles: Seq[EdlFile] = parseSourceFiles(sources ++ dependencies)
+    val schemaFiles: Seq[SchemaFile] = parseSourceFiles(sources ++ dependencies)
 
     handleErrors(1)
 
@@ -68,7 +68,7 @@ class EpigraphCompiler(
 
     ctx.phase(RESOLVE_TYPEREFS)
 
-    edlFiles.map(new CEdlFile(_)) // compiler edl file adds itself to ctx
+    schemaFiles.map(new CSchemaFile(_)) // compiler schema file adds itself to ctx
     registerDefinedTypes()
 
     handleErrors(2)
@@ -103,18 +103,18 @@ class EpigraphCompiler(
     handleErrors(5)
 
 
-    //printEdlFiles(ctx.edlFiles.values)
+    //printSchemaFiles(ctx.schemaFiles.values)
 
     ctx
 
   }
 
-  private def parseSourceFiles(sources: util.Collection[Source]): Seq[EdlFile] = {
+  private def parseSourceFiles(sources: util.Collection[Source]): Seq[SchemaFile] = {
 
-    val edlFiles: Seq[EdlFile] = sources.par.flatMap{ source =>
+    val schemaFiles: Seq[SchemaFile] = sources.par.flatMap{ source =>
       try {
         parseFile(source, spd) match {
-          case sf: EdlFile =>
+          case sf: SchemaFile =>
             Seq(sf)
           case _ =>
             ctx.errors.add(CError(source.name, CErrorPosition.NA, "Couldn't parse"))
@@ -127,9 +127,9 @@ class EpigraphCompiler(
       }
     }(collection.breakOut)
 
-    edlFiles.foreach{ sf => ctx.errors.addAll(ParseErrorsDumper.collectParseErrors(sf)) }
+    schemaFiles.foreach{ sf => ctx.errors.addAll(ParseErrorsDumper.collectParseErrors(sf)) }
 
-    edlFiles
+    schemaFiles
   }
 
   @throws[IOException]
@@ -137,7 +137,7 @@ class EpigraphCompiler(
     LightPsi.parseFile(source.name, source.text, parserDefinition)
 
   private def registerDefinedTypes(): Unit = {
-    ctx.edlFiles.values.par foreach { csf =>
+    ctx.schemaFiles.values.par foreach { csf =>
       csf.typeDefs foreach { ct =>
         val old: CTypeDef = ctx.typeDefs.putIfAbsent(ct.name, ct)
         if (old != null) ctx.errors.add(
@@ -152,14 +152,14 @@ class EpigraphCompiler(
       // extra pass of registering all type refs, should pick up all stuff from resource declarations
       csf.psi.accept(new PsiRecursiveElementWalkingVisitor() {
         override def visitElement(element: PsiElement): Unit = element match {
-          case etr: EdlTypeRef => CTypeRef(csf, etr)
+          case etr: SchemaTypeRef => CTypeRef(csf, etr)
           case e => super.visitElement(e)
         }
       })
     }
   }
 
-  private def resolveTypeRefs(): Unit = ctx.edlFiles.values.par foreach { csf =>
+  private def resolveTypeRefs(): Unit = ctx.schemaFiles.values.par foreach { csf =>
     csf.typerefs foreach {
       case ctr: CTypeDefRef =>
         @Nullable val refType = ctx.typeDefs.get(ctr.name)
@@ -181,7 +181,7 @@ class EpigraphCompiler(
     }
   }
 
-  private def applySupplements(): Unit = ctx.edlFiles.values foreach { csf =>
+  private def applySupplements(): Unit = ctx.schemaFiles.values foreach { csf =>
     csf.supplements foreach { supplement =>
       val sup = supplement.sourceRef.resolved
       supplement.targetRefs foreach (_.resolved.injectedTypes.add(sup))
@@ -196,7 +196,7 @@ class EpigraphCompiler(
     ctx.anonMapTypes.values() foreach (anonMapType => anonMapType.linearizedParents)
   }
 
-  private def validateTagRefs(): Unit = ctx.edlFiles.values foreach { csf =>
+  private def validateTagRefs(): Unit = ctx.schemaFiles.values foreach { csf =>
     csf.dataTypes foreach { cdt => cdt.effectiveDefaultTagName }
     // TODO: list element, map value, and field value tags?
   }
@@ -214,7 +214,7 @@ class EpigraphCompiler(
 
   private def renderErrors(ctx: CContext): Unit = ctx.errors foreach pprint.pprintln
 
-  private def printEdlFiles(edlFiles: GenTraversableOnce[CEdlFile]): Unit = edlFiles foreach pprint.pprintln
+  private def printSchemaFiles(schemaFiles: GenTraversableOnce[CSchemaFile]): Unit = schemaFiles foreach pprint.pprintln
 
 }
 
