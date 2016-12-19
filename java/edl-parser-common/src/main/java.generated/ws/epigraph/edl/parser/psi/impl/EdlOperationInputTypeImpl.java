@@ -35,7 +35,7 @@ public class EdlOperationInputTypeImpl extends ASTWrapperPsiElement implements E
   @Override
   @NotNull
   public PsiElement getInputType() {
-    return notNullChild(findChildByType(E_INPUT_TYPE));
+    return notNullChild(findChildByType(S_INPUT_TYPE));
   }
 
 }

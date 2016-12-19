@@ -35,7 +35,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 import java.util.List;
 
-import static ws.epigraph.edl.lexer.EdlElementTypes.E_QID;
+import static ws.epigraph.edl.lexer.EdlElementTypes.S_QID;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -50,7 +50,7 @@ public class EdlLineMarkerProvider extends RelatedItemLineMarkerProvider {
   @Override
   protected void collectNavigationMarkers(@NotNull PsiElement element, Collection<? super RelatedItemLineMarkerInfo> result) {
     Project project = element.getProject();
-    if (element.getNode().getElementType() != E_QID) return;
+    if (element.getNode().getElementType() != S_QID) return;
 
     PsiElement parent = element.getParent();
 

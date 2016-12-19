@@ -30,7 +30,7 @@ public class EdlNamespaceDeclStubImpl extends StubBase<EdlNamespaceDecl> impleme
   private final Qn fqn;
 
   protected EdlNamespaceDeclStubImpl(StubElement parent, Qn fqn) {
-    super(parent, (IStubElementType) EdlElementTypes.E_NAMESPACE_DECL);
+    super(parent, (IStubElementType) EdlElementTypes.S_NAMESPACE_DECL);
     this.fqn = fqn;
   }
 

@@ -35,19 +35,19 @@ public class EdlOpDeleteVarMultiTailImpl extends ASTWrapperPsiElement implements
   @Override
   @NotNull
   public PsiElement getParenLeft() {
-    return notNullChild(findChildByType(E_PAREN_LEFT));
+    return notNullChild(findChildByType(S_PAREN_LEFT));
   }
 
   @Override
   @Nullable
   public PsiElement getParenRight() {
-    return findChildByType(E_PAREN_RIGHT);
+    return findChildByType(S_PAREN_RIGHT);
   }
 
   @Override
   @NotNull
   public PsiElement getTilda() {
-    return notNullChild(findChildByType(E_TILDA));
+    return notNullChild(findChildByType(S_TILDA));
   }
 
 }

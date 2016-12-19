@@ -41,19 +41,19 @@ public class EdlDeleteOperationDefImpl extends ASTWrapperPsiElement implements E
   @Override
   @Nullable
   public PsiElement getCurlyLeft() {
-    return findChildByType(E_CURLY_LEFT);
+    return findChildByType(S_CURLY_LEFT);
   }
 
   @Override
   @Nullable
   public PsiElement getCurlyRight() {
-    return findChildByType(E_CURLY_RIGHT);
+    return findChildByType(S_CURLY_RIGHT);
   }
 
   @Override
   @NotNull
   public PsiElement getOpDelete() {
-    return notNullChild(findChildByType(E_OP_DELETE));
+    return notNullChild(findChildByType(S_OP_DELETE));
   }
 
 }

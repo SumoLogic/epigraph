@@ -909,275 +909,275 @@ public class EdlLexer implements FlexLexer {
             }
           case 72: break;
           case 3: 
-            { return E_SLASH;
+            { return S_SLASH;
             }
           case 73: break;
           case 4: 
-            { return E_STAR;
+            { return S_STAR;
             }
           case 74: break;
           case 5: 
-            { return E_ID;
+            { return S_ID;
             }
           case 75: break;
           case 6: 
-            { return E_NUMBER;
+            { return S_NUMBER;
             }
           case 76: break;
           case 7: 
-            { return E_DOT;
+            { return S_DOT;
             }
           case 77: break;
           case 8: 
-            { return E_COLON;
+            { return S_COLON;
             }
           case 78: break;
           case 9: 
-            { return E_COMMA;
+            { return S_COMMA;
             }
           case 79: break;
           case 10: 
-            { return E_SEMICOLON;
+            { return S_SEMICOLON;
             }
           case 80: break;
           case 11: 
-            { return E_EQ;
+            { return S_EQ;
             }
           case 81: break;
           case 12: 
-            { return E_CURLY_LEFT;
+            { return S_CURLY_LEFT;
             }
           case 82: break;
           case 13: 
-            { return E_CURLY_RIGHT;
+            { return S_CURLY_RIGHT;
             }
           case 83: break;
           case 14: 
-            { return E_BRACKET_LEFT;
+            { return S_BRACKET_LEFT;
             }
           case 84: break;
           case 15: 
-            { return E_BRACKET_RIGHT;
+            { return S_BRACKET_RIGHT;
             }
           case 85: break;
           case 16: 
-            { return E_TILDA;
+            { return S_TILDA;
             }
           case 86: break;
           case 17: 
-            { return E_PLUS;
+            { return S_PLUS;
             }
           case 87: break;
           case 18: 
-            { return E_PAREN_LEFT;
+            { return S_PAREN_LEFT;
             }
           case 88: break;
           case 19: 
-            { return E_PAREN_RIGHT;
+            { return S_PAREN_RIGHT;
             }
           case 89: break;
           case 20: 
-            { return E_ANGLE_LEFT;
+            { return S_ANGLE_LEFT;
             }
           case 90: break;
           case 21: 
-            { return E_ANGLE_RIGHT;
+            { return S_ANGLE_RIGHT;
             }
           case 91: break;
           case 22: 
-            { return E_AT;
+            { return S_AT;
             }
           case 92: break;
           case 23: 
-            { return E_HASH;
+            { return S_HASH;
             }
           case 93: break;
           case 24: 
-            { return E_UNDERSCORE;
+            { return S_UNDERSCORE;
             }
           case 94: break;
           case 25: 
-            { return E_BANG;
+            { return S_BANG;
             }
           case 95: break;
           case 26: 
-            { return E_COMMENT;
+            { return S_COMMENT;
             }
           case 96: break;
           case 27: 
-            { return E_BLOCK_COMMENT;
+            { return S_BLOCK_COMMENT;
             }
           case 97: break;
           case 28: 
-            { return E_STRING;
+            { return S_STRING;
             }
           case 98: break;
           case 29: 
-            { return E_MAP;
+            { return S_MAP;
             }
           case 99: break;
           case 30: 
-            { return E_GET;
+            { return S_GET;
             }
           case 100: break;
           case 31: 
-            { return E_PUT;
+            { return S_PUT;
             }
           case 101: break;
           case 32: 
-            { return E_META;
+            { return S_META;
             }
           case 102: break;
           case 33: 
-            { return E_PATH;
+            { return S_PATH;
             }
           case 103: break;
           case 34: 
-            { return E_OP_READ;
+            { return S_OP_READ;
             }
           case 104: break;
           case 35: 
-            { return E_BOOLEAN;
+            { return S_BOOLEAN;
             }
           case 105: break;
           case 36: 
-            { return E_NULL;
+            { return S_NULL;
             }
           case 106: break;
           case 37: 
-            { return E_ENUM;
+            { return S_ENUM;
             }
           case 107: break;
           case 38: 
-            { return E_LIST;
+            { return S_LIST;
             }
           case 108: break;
           case 39: 
-            { return E_LONG_T;
+            { return S_LONG_T;
             }
           case 109: break;
           case 40: 
-            { return E_WITH;
+            { return S_WITH;
             }
           case 110: break;
           case 41: 
-            { return E_POST;
+            { return S_POST;
             }
           case 111: break;
           case 42: 
-            { return E_OP_UPDATE;
+            { return S_OP_UPDATE;
             }
           case 112: break;
           case 43: 
-            { return E_IMPORT;
+            { return S_IMPORT;
             }
           case 113: break;
           case 44: 
-            { return E_METHOD;
+            { return S_METHOD;
             }
           case 114: break;
           case 45: 
-            { return E_RECORD;
+            { return S_RECORD;
             }
           case 115: break;
           case 46: 
-            { return E_STRING_T;
+            { return S_STRING_T;
             }
           case 116: break;
           case 47: 
-            { return E_OP_CUSTOM;
+            { return S_OP_CUSTOM;
             }
           case 117: break;
           case 48: 
-            { return E_OP_CREATE;
+            { return S_OP_CREATE;
             }
           case 118: break;
           case 49: 
-            { return E_DOUBLE_T;
+            { return S_DOUBLE_T;
             }
           case 119: break;
           case 50: 
-            { return E_OP_DELETE;
+            { return S_OP_DELETE;
             }
           case 120: break;
           case 51: 
-            { return E_DELETE;
+            { return S_DELETE;
             }
           case 121: break;
           case 52: 
-            { return E_BOOLEAN_T;
+            { return S_BOOLEAN_T;
             }
           case 122: break;
           case 53: 
-            { return E_INTEGER_T;
+            { return S_INTEGER_T;
             }
           case 123: break;
           case 54: 
-            { return E_EXTENDS;
+            { return S_EXTENDS;
             }
           case 124: break;
           case 55: 
-            { return E_DEFAULT;
+            { return S_DEFAULT;
             }
           case 125: break;
           case 56: 
-            { return E_VARTYPE;
+            { return S_VARTYPE;
             }
           case 126: break;
           case 57: 
-            { return E_OVERRIDE;
+            { return S_OVERRIDE;
             }
           case 127: break;
           case 58: 
-            { return E_RESOURCE;
+            { return S_RESOURCE;
             }
           case 128: break;
           case 59: 
-            { return E_REQUIRED;
+            { return S_REQUIRED;
             }
           case 129: break;
           case 60: 
-            { return E_ABSTRACT;
+            { return S_ABSTRACT;
             }
           case 130: break;
           case 61: 
-            { return E_INPUT_TYPE;
+            { return S_INPUT_TYPE;
             }
           case 131: break;
           case 62: 
-            { return E_NODEFAULT;
+            { return S_NODEFAULT;
             }
           case 132: break;
           case 63: 
-            { return E_NAMESPACE;
+            { return S_NAMESPACE;
             }
           case 133: break;
           case 64: 
-            { return E_FORBIDDEN;
+            { return S_FORBIDDEN;
             }
           case 134: break;
           case 65: 
-            { return E_OUTPUT_TYPE;
+            { return S_OUTPUT_TYPE;
             }
           case 135: break;
           case 66: 
-            { return E_SUPPLEMENT;
+            { return S_SUPPLEMENT;
             }
           case 136: break;
           case 67: 
-            { return E_SUPPLEMENTS;
+            { return S_SUPPLEMENTS;
             }
           case 137: break;
           case 68: 
-            { return E_INPUT_PROJECTION;
+            { return S_INPUT_PROJECTION;
             }
           case 138: break;
           case 69: 
-            { return E_OUTPUT_PROJECTION;
+            { return S_OUTPUT_PROJECTION;
             }
           case 139: break;
           case 70: 
-            { return E_DELETE_PROJECTION;
+            { return S_DELETE_PROJECTION;
             }
           case 140: break;
           default:

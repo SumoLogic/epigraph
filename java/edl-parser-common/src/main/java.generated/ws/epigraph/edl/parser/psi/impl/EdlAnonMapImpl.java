@@ -40,25 +40,25 @@ public class EdlAnonMapImpl extends EdlTypeRefImpl implements EdlAnonMap {
   @Override
   @Nullable
   public PsiElement getBracketLeft() {
-    return findChildByType(E_BRACKET_LEFT);
+    return findChildByType(S_BRACKET_LEFT);
   }
 
   @Override
   @Nullable
   public PsiElement getBracketRight() {
-    return findChildByType(E_BRACKET_RIGHT);
+    return findChildByType(S_BRACKET_RIGHT);
   }
 
   @Override
   @Nullable
   public PsiElement getComma() {
-    return findChildByType(E_COMMA);
+    return findChildByType(S_COMMA);
   }
 
   @Override
   @NotNull
   public PsiElement getMap() {
-    return notNullChild(findChildByType(E_MAP));
+    return notNullChild(findChildByType(S_MAP));
   }
 
 }

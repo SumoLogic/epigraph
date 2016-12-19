@@ -29,31 +29,31 @@ public class EdlOperationMethodImpl extends ASTWrapperPsiElement implements EdlO
   @Override
   @Nullable
   public PsiElement getDelete() {
-    return findChildByType(E_DELETE);
+    return findChildByType(S_DELETE);
   }
 
   @Override
   @Nullable
   public PsiElement getGet() {
-    return findChildByType(E_GET);
+    return findChildByType(S_GET);
   }
 
   @Override
   @NotNull
   public PsiElement getMethod() {
-    return notNullChild(findChildByType(E_METHOD));
+    return notNullChild(findChildByType(S_METHOD));
   }
 
   @Override
   @Nullable
   public PsiElement getPost() {
-    return findChildByType(E_POST);
+    return findChildByType(S_POST);
   }
 
   @Override
   @Nullable
   public PsiElement getPut() {
-    return findChildByType(E_PUT);
+    return findChildByType(S_PUT);
   }
 
 }

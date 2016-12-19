@@ -36,22 +36,22 @@ import static ws.epigraph.edl.lexer.EdlElementTypes.*;
 public class LexerTest {
   @Test
   public void testId() throws IOException {
-    testInput("id", E_ID);
-//    testInput("_record", E_ID);
-    testInput("Foo", E_ID);
+    testInput("id", S_ID);
+//    testInput("_record", S_ID);
+    testInput("Foo", S_ID);
   }
 
   @Test
   public void testKeywords() throws IOException {
-    testInput("record", E_RECORD);
+    testInput("record", S_RECORD);
     testInput("record { record } record",
-        E_RECORD, E_CURLY_LEFT, E_RECORD, E_CURLY_RIGHT, E_RECORD);
+        S_RECORD, S_CURLY_LEFT, S_RECORD, S_CURLY_RIGHT, S_RECORD);
   }
 
   @Test
   public void testBlockComment() throws IOException {
-    testInput("id /* foo */ id", E_ID, E_BLOCK_COMMENT, E_ID);
-    testInput("/* foo ", E_BLOCK_COMMENT);
+    testInput("id /* foo */ id", S_ID, S_BLOCK_COMMENT, S_ID);
+    testInput("/* foo ", S_BLOCK_COMMENT);
   }
 
   @Test
@@ -69,16 +69,16 @@ public class LexerTest {
         "}";
 
     IElementType[] expected = {
-        E_NAMESPACE, E_ID, E_DOT, E_ID,
-        E_INTEGER_T, E_ID,
-        E_RECORD, E_ID, E_EXTENDS, E_ID, E_DOT, E_ID, E_CURLY_LEFT,
-        E_ID, E_EQ, E_PAREN_LEFT, E_STRING, E_COLON, E_NUMBER, E_COMMA, E_STRING, E_COLON, E_NULL, E_PAREN_RIGHT,
-        E_ID, E_EQ, E_PAREN_LEFT, E_ID, E_DOT, E_ID, E_SLASH, E_ID, E_COLON, E_ID, E_PAREN_RIGHT,
-        E_ID, E_COLON, E_ID,
-        E_CURLY_RIGHT,
-        E_VARTYPE, E_ID, E_CURLY_LEFT,
-        E_ID, E_COLON, E_ID,
-        E_CURLY_RIGHT
+        S_NAMESPACE, S_ID, S_DOT, S_ID,
+        S_INTEGER_T, S_ID,
+        S_RECORD, S_ID, S_EXTENDS, S_ID, S_DOT, S_ID, S_CURLY_LEFT,
+        S_ID, S_EQ, S_PAREN_LEFT, S_STRING, S_COLON, S_NUMBER, S_COMMA, S_STRING, S_COLON, S_NULL, S_PAREN_RIGHT,
+        S_ID, S_EQ, S_PAREN_LEFT, S_ID, S_DOT, S_ID, S_SLASH, S_ID, S_COLON, S_ID, S_PAREN_RIGHT,
+        S_ID, S_COLON, S_ID,
+        S_CURLY_RIGHT,
+        S_VARTYPE, S_ID, S_CURLY_LEFT,
+        S_ID, S_COLON, S_ID,
+        S_CURLY_RIGHT
     };
 
     testInput(input, expected);

@@ -41,19 +41,19 @@ public class EdlReadOperationDefImpl extends ASTWrapperPsiElement implements Edl
   @Override
   @Nullable
   public PsiElement getCurlyLeft() {
-    return findChildByType(E_CURLY_LEFT);
+    return findChildByType(S_CURLY_LEFT);
   }
 
   @Override
   @Nullable
   public PsiElement getCurlyRight() {
-    return findChildByType(E_CURLY_RIGHT);
+    return findChildByType(S_CURLY_RIGHT);
   }
 
   @Override
   @NotNull
   public PsiElement getOpRead() {
-    return notNullChild(findChildByType(E_OP_READ));
+    return notNullChild(findChildByType(S_OP_READ));
   }
 
 }

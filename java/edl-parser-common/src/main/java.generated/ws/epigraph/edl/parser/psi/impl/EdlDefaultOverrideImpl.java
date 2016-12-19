@@ -35,7 +35,7 @@ public class EdlDefaultOverrideImpl extends ASTWrapperPsiElement implements EdlD
   @Override
   @NotNull
   public PsiElement getDefault() {
-    return notNullChild(findChildByType(E_DEFAULT));
+    return notNullChild(findChildByType(S_DEFAULT));
   }
 
 }

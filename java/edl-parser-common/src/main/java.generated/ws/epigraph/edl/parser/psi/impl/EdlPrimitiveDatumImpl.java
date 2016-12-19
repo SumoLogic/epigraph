@@ -34,25 +34,25 @@ public class EdlPrimitiveDatumImpl extends EdlDatumImpl implements EdlPrimitiveD
   @Override
   @Nullable
   public PsiElement getAt() {
-    return findChildByType(E_AT);
+    return findChildByType(S_AT);
   }
 
   @Override
   @Nullable
   public PsiElement getBoolean() {
-    return findChildByType(E_BOOLEAN);
+    return findChildByType(S_BOOLEAN);
   }
 
   @Override
   @Nullable
   public PsiElement getNumber() {
-    return findChildByType(E_NUMBER);
+    return findChildByType(S_NUMBER);
   }
 
   @Override
   @Nullable
   public PsiElement getString() {
-    return findChildByType(E_STRING);
+    return findChildByType(S_STRING);
   }
 
 }

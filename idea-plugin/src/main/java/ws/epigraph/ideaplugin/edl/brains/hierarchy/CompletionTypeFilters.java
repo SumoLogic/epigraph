@@ -26,7 +26,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
 
-import static ws.epigraph.edl.lexer.EdlElementTypes.E_WITH;
+import static ws.epigraph.edl.lexer.EdlElementTypes.S_WITH;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -110,7 +110,7 @@ public abstract class CompletionTypeFilters {
     default boolean include(@NotNull EdlTypeDef typeDef, @NotNull PsiElement element) {
       EdlSupplementDef host = PsiTreeUtil.getParentOfType(element, EdlSupplementDef.class);
       if (host == null) return true;
-      if (EdlPsiUtil.hasPrevSibling(element.getParent().getParent(), E_WITH)) return true; // we're completing source
+      if (EdlPsiUtil.hasPrevSibling(element.getParent().getParent(), S_WITH)) return true; // we're completing source
 
       return includeInTarget(typeDef, host);
     }
@@ -123,7 +123,7 @@ public abstract class CompletionTypeFilters {
     default boolean include(@NotNull EdlTypeDef typeDef, @NotNull PsiElement element) {
       EdlSupplementDef host = PsiTreeUtil.getParentOfType(element, EdlSupplementDef.class);
       if (host == null) return true;
-      if (!EdlPsiUtil.hasPrevSibling(element.getParent().getParent(), E_WITH))
+      if (!EdlPsiUtil.hasPrevSibling(element.getParent().getParent(), S_WITH))
         return true; // we're completing target
 
       return includeInSource(typeDef, host);
@@ -134,7 +134,7 @@ public abstract class CompletionTypeFilters {
 
   // ---------------------- common
 
-  private abstract static class SameTypeFilterBase {
+  private static abstract class SameTypeFilterBase {
     private boolean notSameType(@NotNull EdlTypeDef typeDef, @NotNull EdlTypeDef host) {
       return !host.equals(typeDef);
     }

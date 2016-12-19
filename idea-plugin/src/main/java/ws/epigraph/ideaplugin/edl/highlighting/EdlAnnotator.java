@@ -38,7 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static ws.epigraph.lang.DefaultImports.DEFAULT_IMPORTS_LIST;
-import static ws.epigraph.edl.lexer.EdlElementTypes.E_QN_TYPE_REF;
+import static ws.epigraph.edl.lexer.EdlElementTypes.S_QN_TYPE_REF;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -208,7 +208,7 @@ public class EdlAnnotator extends EdlAnnotatorBase {
       public void visitQn(@NotNull EdlQn qn) {
         PsiElement parent = qn.getParent();
         // TODO don't check ref in the namespace decl?
-        if (parent.getNode().getElementType() != E_QN_TYPE_REF) {
+        if (parent.getNode().getElementType() != S_QN_TYPE_REF) {
           highlightQn(qn, holder, null);
         }
       }

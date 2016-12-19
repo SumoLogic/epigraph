@@ -26,6 +26,6 @@ import ws.epigraph.edl.parser.psi.EdlEnumTypeDef;
  */
 public class EdlEnumTypeDefStubImpl extends EdlTypeDefStubBaseImpl<EdlEnumTypeDef> implements EdlEnumTypeDefStub {
   EdlEnumTypeDefStubImpl(StubElement parent) {
-    super(parent, (IStubElementType) EdlElementTypes.E_ENUM_TYPE_DEF);
+    super(parent, (IStubElementType) EdlElementTypes.S_ENUM_TYPE_DEF);
   }
 }

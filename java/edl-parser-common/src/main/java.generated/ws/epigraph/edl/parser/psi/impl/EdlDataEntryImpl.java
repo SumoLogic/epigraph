@@ -41,13 +41,13 @@ public class EdlDataEntryImpl extends ASTWrapperPsiElement implements EdlDataEnt
   @Override
   @NotNull
   public PsiElement getColon() {
-    return notNullChild(findChildByType(E_COLON));
+    return notNullChild(findChildByType(S_COLON));
   }
 
   @Override
   @Nullable
   public PsiElement getComma() {
-    return findChildByType(E_COMMA);
+    return findChildByType(S_COMMA);
   }
 
 }

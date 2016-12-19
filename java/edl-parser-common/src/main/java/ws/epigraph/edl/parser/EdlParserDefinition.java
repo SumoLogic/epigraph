@@ -42,56 +42,56 @@ public class EdlParserDefinition implements ParserDefinition {
   public static final EdlParserDefinition INSTANCE = new EdlParserDefinition();
 
   public static final TokenSet WHITESPACES = TokenSet.create(TokenType.WHITE_SPACE);
-  public static final TokenSet IDENTIFIERS = TokenSet.create(E_ID);
-  public static final TokenSet COMMENTS = TokenSet.create(E_COMMENT, E_BLOCK_COMMENT);
-  public static final TokenSet CURLY_BRACES = TokenSet.create(E_CURLY_LEFT, E_CURLY_RIGHT);
+  public static final TokenSet IDENTIFIERS = TokenSet.create(S_ID);
+  public static final TokenSet COMMENTS = TokenSet.create(S_COMMENT, S_BLOCK_COMMENT);
+  public static final TokenSet CURLY_BRACES = TokenSet.create(S_CURLY_LEFT, S_CURLY_RIGHT);
   public static final TokenSet KEYWORDS = TokenSet.create(
-      E_NAMESPACE,
-      E_IMPORT,
-      E_MAP,
-      E_DEFAULT,
-      E_NODEFAULT,
-      E_LIST,
-      E_RECORD,
-      E_EXTENDS,
-      E_VARTYPE,
-      E_ENUM,
-      E_META,
-      E_SUPPLEMENT,
-      E_SUPPLEMENTS,
-      E_WITH,
-      E_ABSTRACT,
-      E_OVERRIDE,
-      E_INTEGER_T,
-      E_LONG_T,
-      E_DOUBLE_T,
-      E_BOOLEAN_T,
-      E_STRING_T,
-      E_NULL, // or is it a LITERAL?
-      E_FORBIDDEN,
-      E_REQUIRED,
-      E_RESOURCE,
-      E_GET,
-      E_POST,
-      E_PUT,
-      E_DELETE,
-      E_OP_READ,
-      E_OP_CREATE,
-      E_OP_UPDATE,
-      E_OP_DELETE,
-      E_OP_CUSTOM,
-      E_METHOD,
-      E_PATH,
-      E_INPUT_TYPE,
-      E_INPUT_PROJECTION,
-      E_OUTPUT_TYPE,
-      E_OUTPUT_PROJECTION,
-      E_DELETE_PROJECTION
+      S_NAMESPACE,
+      S_IMPORT,
+      S_MAP,
+      S_DEFAULT,
+      S_NODEFAULT,
+      S_LIST,
+      S_RECORD,
+      S_EXTENDS,
+      S_VARTYPE,
+      S_ENUM,
+      S_META,
+      S_SUPPLEMENT,
+      S_SUPPLEMENTS,
+      S_WITH,
+      S_ABSTRACT,
+      S_OVERRIDE,
+      S_INTEGER_T,
+      S_LONG_T,
+      S_DOUBLE_T,
+      S_BOOLEAN_T,
+      S_STRING_T,
+      S_NULL, // or is it a LITERAL?
+      S_FORBIDDEN,
+      S_REQUIRED,
+      S_RESOURCE,
+      S_GET,
+      S_POST,
+      S_PUT,
+      S_DELETE,
+      S_OP_READ,
+      S_OP_CREATE,
+      S_OP_UPDATE,
+      S_OP_DELETE,
+      S_OP_CUSTOM,
+      S_METHOD,
+      S_PATH,
+      S_INPUT_TYPE,
+      S_INPUT_PROJECTION,
+      S_OUTPUT_TYPE,
+      S_OUTPUT_PROJECTION,
+      S_DELETE_PROJECTION
   );
-  public static final TokenSet STRING_LITERALS = TokenSet.create(E_STRING);
-  public static final TokenSet LITERALS = TokenSet.andSet(STRING_LITERALS, TokenSet.create(E_NUMBER, E_BOOLEAN));
-  public static final TokenSet TYPE_KINDS = TokenSet.create(E_VARTYPE, E_RECORD, E_MAP, E_LIST, E_ENUM,
-      E_STRING_T, E_INTEGER_T, E_LONG_T, E_DOUBLE_T, E_BOOLEAN_T);
+  public static final TokenSet STRING_LITERALS = TokenSet.create(S_STRING);
+  public static final TokenSet LITERALS = TokenSet.andSet(STRING_LITERALS, TokenSet.create(S_NUMBER, S_BOOLEAN));
+  public static final TokenSet TYPE_KINDS = TokenSet.create(S_VARTYPE, S_RECORD, S_MAP, S_LIST, S_ENUM,
+      S_STRING_T, S_INTEGER_T, S_LONG_T, S_DOUBLE_T, S_BOOLEAN_T);
 
   @NotNull
   @Override

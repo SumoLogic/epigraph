@@ -31,19 +31,19 @@ import static ws.epigraph.edl.lexer.EdlElementTypes.*;
 public final class EdlSubParserDefinitions {
 
   public static final EdlSubParserDefinition<EdlOpVarPath> OP_VAR_PATH =
-      new EdlSubParserDefinition<>(E_OP_VAR_PATH, EdlOpVarPath.class);
+      new EdlSubParserDefinition<>(S_OP_VAR_PATH, EdlOpVarPath.class);
 
   public static final EdlSubParserDefinition<EdlOpOutputVarProjection> OP_OUTPUT_VAR_PROJECTION =
-      new EdlSubParserDefinition<>(E_OP_OUTPUT_VAR_PROJECTION, EdlOpOutputVarProjection.class);
+      new EdlSubParserDefinition<>(S_OP_OUTPUT_VAR_PROJECTION, EdlOpOutputVarProjection.class);
 
   public static final EdlSubParserDefinition<EdlOpInputVarProjection> OP_INPUT_VAR_PROJECTION =
-      new EdlSubParserDefinition<>(E_OP_INPUT_VAR_PROJECTION, EdlOpInputVarProjection.class);
+      new EdlSubParserDefinition<>(S_OP_INPUT_VAR_PROJECTION, EdlOpInputVarProjection.class);
 
   public static final EdlSubParserDefinition<EdlOpDeleteVarProjection> OP_DELETE_VAR_PROJECTION =
-      new EdlSubParserDefinition<>(E_OP_DELETE_VAR_PROJECTION, EdlOpDeleteVarProjection.class);
+      new EdlSubParserDefinition<>(S_OP_DELETE_VAR_PROJECTION, EdlOpDeleteVarProjection.class);
 
   public static final EdlSubParserDefinition<EdlDataValue> DATA_VALUE =
-      new EdlSubParserDefinition<>(E_DATA_VALUE, EdlDataValue.class);
+      new EdlSubParserDefinition<>(S_DATA_VALUE, EdlDataValue.class);
 
   private EdlSubParserDefinitions() {}
 

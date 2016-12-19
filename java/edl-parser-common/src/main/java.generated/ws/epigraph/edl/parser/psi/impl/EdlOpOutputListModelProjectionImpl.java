@@ -35,19 +35,19 @@ public class EdlOpOutputListModelProjectionImpl extends ASTWrapperPsiElement imp
   @Override
   @Nullable
   public PsiElement getParenLeft() {
-    return findChildByType(E_PAREN_LEFT);
+    return findChildByType(S_PAREN_LEFT);
   }
 
   @Override
   @Nullable
   public PsiElement getParenRight() {
-    return findChildByType(E_PAREN_RIGHT);
+    return findChildByType(S_PAREN_RIGHT);
   }
 
   @Override
   @NotNull
   public PsiElement getStar() {
-    return notNullChild(findChildByType(E_STAR));
+    return notNullChild(findChildByType(S_STAR));
   }
 
 }

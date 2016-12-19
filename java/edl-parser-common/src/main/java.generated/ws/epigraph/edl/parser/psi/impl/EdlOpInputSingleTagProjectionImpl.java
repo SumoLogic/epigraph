@@ -47,25 +47,25 @@ public class EdlOpInputSingleTagProjectionImpl extends ASTWrapperPsiElement impl
   @Override
   @Nullable
   public PsiElement getColon() {
-    return findChildByType(E_COLON);
+    return findChildByType(S_COLON);
   }
 
   @Override
   @Nullable
   public PsiElement getCurlyLeft() {
-    return findChildByType(E_CURLY_LEFT);
+    return findChildByType(S_CURLY_LEFT);
   }
 
   @Override
   @Nullable
   public PsiElement getCurlyRight() {
-    return findChildByType(E_CURLY_RIGHT);
+    return findChildByType(S_CURLY_RIGHT);
   }
 
   @Override
   @Nullable
   public PsiElement getPlus() {
-    return findChildByType(E_PLUS);
+    return findChildByType(S_PLUS);
   }
 
 }

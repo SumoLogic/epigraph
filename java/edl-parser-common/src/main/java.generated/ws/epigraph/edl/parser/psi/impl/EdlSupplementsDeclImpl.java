@@ -35,7 +35,7 @@ public class EdlSupplementsDeclImpl extends ASTWrapperPsiElement implements EdlS
   @Override
   @NotNull
   public PsiElement getSupplements() {
-    return notNullChild(findChildByType(E_SUPPLEMENTS));
+    return notNullChild(findChildByType(S_SUPPLEMENTS));
   }
 
 }

@@ -35,19 +35,19 @@ public class EdlOpInputMultiTagProjectionImpl extends ASTWrapperPsiElement imple
   @Override
   @NotNull
   public PsiElement getColon() {
-    return notNullChild(findChildByType(E_COLON));
+    return notNullChild(findChildByType(S_COLON));
   }
 
   @Override
   @NotNull
   public PsiElement getParenLeft() {
-    return notNullChild(findChildByType(E_PAREN_LEFT));
+    return notNullChild(findChildByType(S_PAREN_LEFT));
   }
 
   @Override
   @Nullable
   public PsiElement getParenRight() {
-    return findChildByType(E_PAREN_RIGHT);
+    return findChildByType(S_PAREN_RIGHT);
   }
 
 }

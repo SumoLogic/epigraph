@@ -35,7 +35,7 @@ public class EdlOperationNameImpl extends ASTWrapperPsiElement implements EdlOpe
   @Override
   @Nullable
   public PsiElement getDefault() {
-    return findChildByType(E_DEFAULT);
+    return findChildByType(S_DEFAULT);
   }
 
 }

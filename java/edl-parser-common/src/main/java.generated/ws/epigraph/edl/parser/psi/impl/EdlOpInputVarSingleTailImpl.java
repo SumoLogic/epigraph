@@ -41,7 +41,7 @@ public class EdlOpInputVarSingleTailImpl extends ASTWrapperPsiElement implements
   @Override
   @NotNull
   public PsiElement getTilda() {
-    return notNullChild(findChildByType(E_TILDA));
+    return notNullChild(findChildByType(S_TILDA));
   }
 
 }

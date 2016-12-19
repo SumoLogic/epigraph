@@ -25,8 +25,8 @@ import ws.epigraph.ideaplugin.edl.formatting.EdlBlock;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static ws.epigraph.edl.lexer.EdlElementTypes.E_LIST;
-import static ws.epigraph.edl.lexer.EdlElementTypes.E_MAP;
+import static ws.epigraph.edl.lexer.EdlElementTypes.S_LIST;
+import static ws.epigraph.edl.lexer.EdlElementTypes.S_MAP;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -38,7 +38,7 @@ public class AnonCollectionBlock extends EdlBlock {
 
   @Override
   protected Indent getChildIndent(ASTNode child) {
-    if (child.getElementType() == E_LIST || child.getElementType() == E_MAP)
+    if (child.getElementType() == S_LIST || child.getElementType() == S_MAP)
       return Indent.getNoneIndent();
 
     return Indent.getContinuationIndent();

@@ -35,7 +35,7 @@ public class EdlMetaDeclImpl extends ASTWrapperPsiElement implements EdlMetaDecl
   @Override
   @NotNull
   public PsiElement getMeta() {
-    return notNullChild(findChildByType(E_META));
+    return notNullChild(findChildByType(S_META));
   }
 
 }

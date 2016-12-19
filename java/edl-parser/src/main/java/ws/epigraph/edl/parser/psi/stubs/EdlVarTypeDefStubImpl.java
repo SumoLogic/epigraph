@@ -26,6 +26,6 @@ import ws.epigraph.edl.parser.psi.EdlVarTypeDef;
  */
 public class EdlVarTypeDefStubImpl extends EdlTypeDefStubBaseImpl<EdlVarTypeDef> implements EdlVarTypeDefStub {
   EdlVarTypeDefStubImpl(StubElement parent) {
-    super(parent, (IStubElementType) EdlElementTypes.E_VAR_TYPE_DEF);
+    super(parent, (IStubElementType) EdlElementTypes.S_VAR_TYPE_DEF);
   }
 }

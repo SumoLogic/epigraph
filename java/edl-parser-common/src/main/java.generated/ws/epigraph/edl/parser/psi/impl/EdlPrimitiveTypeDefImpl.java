@@ -64,37 +64,37 @@ public class EdlPrimitiveTypeDefImpl extends EdlPrimitiveTypeDefImplBase impleme
   @Override
   @Nullable
   public PsiElement getAbstract() {
-    return findChildByType(E_ABSTRACT);
+    return findChildByType(S_ABSTRACT);
   }
 
   @Override
   @Nullable
   public PsiElement getBooleanT() {
-    return findChildByType(E_BOOLEAN_T);
+    return findChildByType(S_BOOLEAN_T);
   }
 
   @Override
   @Nullable
   public PsiElement getDoubleT() {
-    return findChildByType(E_DOUBLE_T);
+    return findChildByType(S_DOUBLE_T);
   }
 
   @Override
   @Nullable
   public PsiElement getIntegerT() {
-    return findChildByType(E_INTEGER_T);
+    return findChildByType(S_INTEGER_T);
   }
 
   @Override
   @Nullable
   public PsiElement getLongT() {
-    return findChildByType(E_LONG_T);
+    return findChildByType(S_LONG_T);
   }
 
   @Override
   @Nullable
   public PsiElement getStringT() {
-    return findChildByType(E_STRING_T);
+    return findChildByType(S_STRING_T);
   }
 
   @NotNull

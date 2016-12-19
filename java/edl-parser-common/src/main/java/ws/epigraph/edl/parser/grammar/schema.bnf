@@ -15,11 +15,10 @@
  */
 
 {
-// todo rename to `ws.epigraph.dl.parser.EdlParser, change prefixes to E_, Edl
   parserClass="ws.epigraph.edl.parser.EdlParser"
 
   elementTypeHolderClass="ws.epigraph.edl.lexer.EdlElementTypes"
-  elementTypePrefix="E_"
+  elementTypePrefix="S_"
   elementTypeClass="ws.epigraph.edl.lexer.EdlElementType"
   tokenTypeClass="ws.epigraph.edl.lexer.EdlElementType"
 

@@ -32,6 +32,6 @@ public class EdlMapTypeDefStubImpl extends EdlTypeDefStubBaseImpl<EdlMapTypeDef>
                            String name,
                            String namespace,
                            @Nullable final List<SerializedFqnTypeRef> extendsTypeRefs) {
-    super(parent, (IStubElementType) EdlElementTypes.E_MAP_TYPE_DEF, name, namespace, extendsTypeRefs);
+    super(parent, (IStubElementType) EdlElementTypes.S_MAP_TYPE_DEF, name, namespace, extendsTypeRefs);
   }
 }

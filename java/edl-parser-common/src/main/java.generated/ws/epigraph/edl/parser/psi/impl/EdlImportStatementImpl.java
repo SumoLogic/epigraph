@@ -35,7 +35,7 @@ public class EdlImportStatementImpl extends ASTWrapperPsiElement implements EdlI
   @Override
   @NotNull
   public PsiElement getImport() {
-    return notNullChild(findChildByType(E_IMPORT));
+    return notNullChild(findChildByType(S_IMPORT));
   }
 
 }

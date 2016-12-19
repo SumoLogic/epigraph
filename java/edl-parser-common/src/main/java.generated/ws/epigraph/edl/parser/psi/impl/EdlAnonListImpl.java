@@ -34,19 +34,19 @@ public class EdlAnonListImpl extends EdlTypeRefImpl implements EdlAnonList {
   @Override
   @Nullable
   public PsiElement getBracketLeft() {
-    return findChildByType(E_BRACKET_LEFT);
+    return findChildByType(S_BRACKET_LEFT);
   }
 
   @Override
   @Nullable
   public PsiElement getBracketRight() {
-    return findChildByType(E_BRACKET_RIGHT);
+    return findChildByType(S_BRACKET_RIGHT);
   }
 
   @Override
   @NotNull
   public PsiElement getList() {
-    return notNullChild(findChildByType(E_LIST));
+    return notNullChild(findChildByType(S_LIST));
   }
 
 }

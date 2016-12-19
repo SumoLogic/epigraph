@@ -35,7 +35,7 @@ public class EdlOperationOutputTypeImpl extends ASTWrapperPsiElement implements 
   @Override
   @NotNull
   public PsiElement getOutputType() {
-    return notNullChild(findChildByType(E_OUTPUT_TYPE));
+    return notNullChild(findChildByType(S_OUTPUT_TYPE));
   }
 
 }

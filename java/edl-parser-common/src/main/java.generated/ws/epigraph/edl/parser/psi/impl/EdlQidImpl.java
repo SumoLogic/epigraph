@@ -29,7 +29,7 @@ public class EdlQidImpl extends ASTWrapperPsiElement implements EdlQid {
   @Override
   @NotNull
   public PsiElement getId() {
-    return notNullChild(findChildByType(E_ID));
+    return notNullChild(findChildByType(S_ID));
   }
 
   @NotNull

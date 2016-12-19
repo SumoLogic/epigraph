@@ -35,7 +35,7 @@ public class EdlOperationDeleteProjectionImpl extends ASTWrapperPsiElement imple
   @Override
   @NotNull
   public PsiElement getDeleteProjection() {
-    return notNullChild(findChildByType(E_DELETE_PROJECTION));
+    return notNullChild(findChildByType(S_DELETE_PROJECTION));
   }
 
 }

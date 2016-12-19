@@ -25,7 +25,7 @@ import static ws.epigraph.edl.lexer.EdlElementTypes.*;
  */
 public class EdlQuoteHandler extends SimpleTokenSetQuoteHandler {
   public EdlQuoteHandler() {
-    super(E_ID, E_STRING, E_NUMBER, E_NULL);
+    super(S_ID, S_STRING, S_NUMBER, S_NULL);
   }
   // TODO more elaborate implementation. Only insert `` around IDs and "" around strings
   // see TypedHandler:441

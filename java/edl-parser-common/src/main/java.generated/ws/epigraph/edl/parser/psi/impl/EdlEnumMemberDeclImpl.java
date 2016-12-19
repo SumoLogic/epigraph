@@ -40,13 +40,13 @@ public class EdlEnumMemberDeclImpl extends AnnotationsHolderImpl implements EdlE
   @Override
   @Nullable
   public PsiElement getCurlyLeft() {
-    return findChildByType(E_CURLY_LEFT);
+    return findChildByType(S_CURLY_LEFT);
   }
 
   @Override
   @Nullable
   public PsiElement getCurlyRight() {
-    return findChildByType(E_CURLY_RIGHT);
+    return findChildByType(S_CURLY_RIGHT);
   }
 
   @Nullable

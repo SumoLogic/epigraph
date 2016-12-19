@@ -35,13 +35,13 @@ public class EdlOpInputDefaultValueImpl extends ASTWrapperPsiElement implements 
   @Override
   @Nullable
   public PsiElement getColon() {
-    return findChildByType(E_COLON);
+    return findChildByType(S_COLON);
   }
 
   @Override
   @NotNull
   public PsiElement getDefault() {
-    return notNullChild(findChildByType(E_DEFAULT));
+    return notNullChild(findChildByType(S_DEFAULT));
   }
 
 }

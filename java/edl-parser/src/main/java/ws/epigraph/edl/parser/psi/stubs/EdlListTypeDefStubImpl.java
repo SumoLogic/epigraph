@@ -26,6 +26,6 @@ import ws.epigraph.edl.parser.psi.EdlListTypeDef;
  */
 public class EdlListTypeDefStubImpl extends EdlTypeDefStubBaseImpl<EdlListTypeDef> implements EdlListTypeDefStub {
   EdlListTypeDefStubImpl(StubElement parent) {
-    super(parent, (IStubElementType) EdlElementTypes.E_LIST_TYPE_DEF);
+    super(parent, (IStubElementType) EdlElementTypes.S_LIST_TYPE_DEF);
   }
 }

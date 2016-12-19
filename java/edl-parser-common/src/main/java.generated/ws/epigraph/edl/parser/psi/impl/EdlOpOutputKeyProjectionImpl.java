@@ -35,25 +35,25 @@ public class EdlOpOutputKeyProjectionImpl extends ASTWrapperPsiElement implement
   @Override
   @NotNull
   public PsiElement getBracketLeft() {
-    return notNullChild(findChildByType(E_BRACKET_LEFT));
+    return notNullChild(findChildByType(S_BRACKET_LEFT));
   }
 
   @Override
   @Nullable
   public PsiElement getBracketRight() {
-    return findChildByType(E_BRACKET_RIGHT);
+    return findChildByType(S_BRACKET_RIGHT);
   }
 
   @Override
   @Nullable
   public PsiElement getForbidden() {
-    return findChildByType(E_FORBIDDEN);
+    return findChildByType(S_FORBIDDEN);
   }
 
   @Override
   @Nullable
   public PsiElement getRequired() {
-    return findChildByType(E_REQUIRED);
+    return findChildByType(S_REQUIRED);
   }
 
 }

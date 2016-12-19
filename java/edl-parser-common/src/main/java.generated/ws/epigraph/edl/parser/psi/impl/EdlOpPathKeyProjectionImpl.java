@@ -35,7 +35,7 @@ public class EdlOpPathKeyProjectionImpl extends ASTWrapperPsiElement implements 
   @Override
   @NotNull
   public PsiElement getDot() {
-    return notNullChild(findChildByType(E_DOT));
+    return notNullChild(findChildByType(S_DOT));
   }
 
 }

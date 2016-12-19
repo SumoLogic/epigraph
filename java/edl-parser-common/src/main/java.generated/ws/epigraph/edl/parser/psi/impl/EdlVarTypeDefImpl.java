@@ -58,13 +58,13 @@ public class EdlVarTypeDefImpl extends EdlVarTypeDefImplBase implements EdlVarTy
   @Override
   @Nullable
   public PsiElement getAbstract() {
-    return findChildByType(E_ABSTRACT);
+    return findChildByType(S_ABSTRACT);
   }
 
   @Override
   @NotNull
   public PsiElement getVartype() {
-    return notNullChild(findChildByType(E_VARTYPE));
+    return notNullChild(findChildByType(S_VARTYPE));
   }
 
   @NotNull

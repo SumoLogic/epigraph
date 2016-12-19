@@ -33,7 +33,7 @@ public class EdlSupplementDefStubImpl extends StubBase<EdlSupplementDef> impleme
   private final List<SerializedFqnTypeRef> supplementedTypeRefs;
 
   protected EdlSupplementDefStubImpl(StubElement parent, SerializedFqnTypeRef sourceTypeRef, List<SerializedFqnTypeRef> supplementedTypeRefs) {
-    super(parent, (IStubElementType) EdlElementTypes.E_SUPPLEMENT_DEF);
+    super(parent, (IStubElementType) EdlElementTypes.S_SUPPLEMENT_DEF);
     this.sourceTypeRef = sourceTypeRef;
     this.supplementedTypeRefs = supplementedTypeRefs;
   }

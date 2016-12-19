@@ -47,19 +47,19 @@ public class EdlResourceDefImpl extends ASTWrapperPsiElement implements EdlResou
   @Override
   @Nullable
   public PsiElement getCurlyLeft() {
-    return findChildByType(E_CURLY_LEFT);
+    return findChildByType(S_CURLY_LEFT);
   }
 
   @Override
   @Nullable
   public PsiElement getCurlyRight() {
-    return findChildByType(E_CURLY_RIGHT);
+    return findChildByType(S_CURLY_RIGHT);
   }
 
   @Override
   @NotNull
   public PsiElement getResource() {
-    return notNullChild(findChildByType(E_RESOURCE));
+    return notNullChild(findChildByType(S_RESOURCE));
   }
 
 }

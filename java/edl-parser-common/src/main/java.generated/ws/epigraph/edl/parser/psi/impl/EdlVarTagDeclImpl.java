@@ -47,31 +47,31 @@ public class EdlVarTagDeclImpl extends AnnotationsHolderImpl implements EdlVarTa
   @Override
   @Nullable
   public PsiElement getAbstract() {
-    return findChildByType(E_ABSTRACT);
+    return findChildByType(S_ABSTRACT);
   }
 
   @Override
   @NotNull
   public PsiElement getColon() {
-    return notNullChild(findChildByType(E_COLON));
+    return notNullChild(findChildByType(S_COLON));
   }
 
   @Override
   @Nullable
   public PsiElement getCurlyLeft() {
-    return findChildByType(E_CURLY_LEFT);
+    return findChildByType(S_CURLY_LEFT);
   }
 
   @Override
   @Nullable
   public PsiElement getCurlyRight() {
-    return findChildByType(E_CURLY_RIGHT);
+    return findChildByType(S_CURLY_RIGHT);
   }
 
   @Override
   @Nullable
   public PsiElement getOverride() {
-    return findChildByType(E_OVERRIDE);
+    return findChildByType(S_OVERRIDE);
   }
 
   @Nullable

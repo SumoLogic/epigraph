@@ -27,6 +27,6 @@ import ws.epigraph.edl.parser.psi.EdlTypeDefWrapper;
  */
 class EdlTypeDefWrapperStubImpl extends StubBase<EdlTypeDefWrapper> implements EdlTypeDefWrapperStub {
   EdlTypeDefWrapperStubImpl(StubElement parent) {
-    super(parent, (IStubElementType) EdlElementTypes.E_TYPE_DEF_WRAPPER);
+    super(parent, (IStubElementType) EdlElementTypes.S_TYPE_DEF_WRAPPER);
   }
 }

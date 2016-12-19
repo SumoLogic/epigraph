@@ -35,7 +35,7 @@ public class EdlTagNameImpl extends ASTWrapperPsiElement implements EdlTagName {
   @Override
   @Nullable
   public PsiElement getUnderscore() {
-    return findChildByType(E_UNDERSCORE);
+    return findChildByType(S_UNDERSCORE);
   }
 
 }

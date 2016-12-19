@@ -25,7 +25,7 @@ import ws.epigraph.ideaplugin.edl.formatting.EdlBlock;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static ws.epigraph.edl.lexer.EdlElementTypes.E_ID;
+import static ws.epigraph.edl.lexer.EdlElementTypes.S_ID;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -37,7 +37,7 @@ public class AnnotationBlock extends EdlBlock {
 
   @Override
   protected Indent getChildIndent(ASTNode child) {
-    if (child.getElementType() == E_ID) return Indent.getNoneIndent();
+    if (child.getElementType() == S_ID) return Indent.getNoneIndent();
     return Indent.getContinuationIndent();
   }
 

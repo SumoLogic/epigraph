@@ -32,16 +32,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
-import static ws.epigraph.edl.lexer.EdlElementTypes.E_WITH;
+import static ws.epigraph.edl.lexer.EdlElementTypes.S_WITH;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public final class EdlPsiImplUtil {
-  private EdlPsiImplUtil() {}
+public class EdlPsiImplUtil {
 //  private static final EdlTypeDef[] EMPTY_TYPE_DEFS = new EdlTypeDef[0];
 
   // namespace --------------------------------------------
@@ -85,7 +83,7 @@ public final class EdlPsiImplUtil {
   @Contract(pure = true)
   @NotNull
   public static Qn getQn(EdlQn e) {
-    Collection<EdlQnSegment> fqnSegmentList = e.getQnSegmentList();
+    List<EdlQnSegment> fqnSegmentList = e.getQnSegmentList();
     String[] segments = new String[fqnSegmentList.size()];
     int idx = 0;
 
@@ -221,7 +219,7 @@ public final class EdlPsiImplUtil {
     List<EdlQnTypeRef> result = new ArrayList<>();
 
     for (PsiElement element = supplementDef.getSupplement();
-         element != null && element.getNode().getElementType() != E_WITH;
+         element != null && element.getNode().getElementType() != S_WITH;
          element = element.getNextSibling()) {
 
       if (element instanceof EdlQnTypeRef) result.add((EdlQnTypeRef) element);
@@ -267,7 +265,7 @@ public final class EdlPsiImplUtil {
     EdlQn edlQn = (EdlQn) e.getParent();
     assert edlQn != null;
 
-    Collection<EdlQnSegment> fqnSegmentList = edlQn.getQnSegmentList();
+    List<EdlQnSegment> fqnSegmentList = edlQn.getQnSegmentList();
     List<String> segments = new ArrayList<>(fqnSegmentList.size());
 
     for (EdlQnSegment segment : fqnSegmentList) {

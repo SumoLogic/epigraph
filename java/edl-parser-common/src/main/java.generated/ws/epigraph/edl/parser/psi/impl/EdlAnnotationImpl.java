@@ -41,7 +41,7 @@ public class EdlAnnotationImpl extends ASTWrapperPsiElement implements EdlAnnota
   @Override
   @NotNull
   public PsiElement getEq() {
-    return notNullChild(findChildByType(E_EQ));
+    return notNullChild(findChildByType(S_EQ));
   }
 
   @Nullable

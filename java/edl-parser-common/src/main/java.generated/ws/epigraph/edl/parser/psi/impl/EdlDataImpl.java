@@ -41,13 +41,13 @@ public class EdlDataImpl extends ASTWrapperPsiElement implements EdlData {
   @Override
   @NotNull
   public PsiElement getAngleLeft() {
-    return notNullChild(findChildByType(E_ANGLE_LEFT));
+    return notNullChild(findChildByType(S_ANGLE_LEFT));
   }
 
   @Override
   @Nullable
   public PsiElement getAngleRight() {
-    return findChildByType(E_ANGLE_RIGHT);
+    return findChildByType(S_ANGLE_RIGHT);
   }
 
 }

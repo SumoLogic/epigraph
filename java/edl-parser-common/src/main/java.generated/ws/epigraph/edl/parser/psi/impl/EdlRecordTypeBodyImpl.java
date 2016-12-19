@@ -40,13 +40,13 @@ public class EdlRecordTypeBodyImpl extends AnnotationsHolderImpl implements EdlR
   @Override
   @NotNull
   public PsiElement getCurlyLeft() {
-    return notNullChild(findChildByType(E_CURLY_LEFT));
+    return notNullChild(findChildByType(S_CURLY_LEFT));
   }
 
   @Override
   @Nullable
   public PsiElement getCurlyRight() {
-    return findChildByType(E_CURLY_RIGHT);
+    return findChildByType(S_CURLY_RIGHT);
   }
 
 }
