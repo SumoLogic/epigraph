@@ -1,9 +1,0 @@
-plugins {
-  id 'ws.epigraph' version "0.0"
-}
-
-dependencies {
-  compile project(':epigraph-builtin-types-edl')
-  compile project(':epigraph-edl-edl')
-  compile project(':epigraph-data-edl')
-}

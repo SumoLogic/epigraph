@@ -12,9 +12,9 @@
   </parent>
 
   <modules>
-    <module>edl</module>
-    <module>edl-java</module>
-    <!--<module>edl-scala</module>-->
+    <module>schema</module>
+    <module>schema-java</module>
+    <!--<module>schema-scala</module>-->
     <module>service</module>
   </modules>
 

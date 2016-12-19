@@ -14,7 +14,7 @@ dependencies {
   compile 'org.jetbrains:annotations'
 
   testCompile project(':epigraph-java-test-util')
-  testCompile project(':tests-edl-java')
+  testCompile project(':tests-schema-java')
   testCompile 'junit:junit'
   testCompile 'org.slf4j:slf4j-nop'
   testCompile 'com.io7m.jpplib:io7m-jpplib-core'

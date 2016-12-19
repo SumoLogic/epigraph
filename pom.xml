@@ -83,7 +83,7 @@ mvn clean install -P maven-plugin-dependent
         <activeByDefault>true</activeByDefault>
       </activation>
       <modules>
-        <module>edls</module>
+        <module>schemas</module>
         <module>examples</module>
         <module>java/codegen-test</module>
         <module>java/edl-psi-parser</module>

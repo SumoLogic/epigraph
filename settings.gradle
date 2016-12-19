@@ -10,11 +10,11 @@ rootProject.name = theName
 
 // map from module (sub-project) path to full module name (maven artifact id)
 Map<String, String> modules = [
-    'examples/sumo/edl'                : 'examples-sumo-edl',
-    'examples/sumo/edl-java'           : 'examples-sumo-edl-java',
-    'examples/users/edl'               : 'examples-users-edl',
-    'examples/users/edl-java'          : 'examples-users-edl-java',
-//  'examples/users/edl-scala'         : 'examples-users-edl-scala',
+    'examples/sumo/schema'             : 'examples-sumo-schema',
+    'examples/sumo/schema-java'        : 'examples-sumo-schema-java',
+    'examples/users/schema'            : 'examples-users-schema',
+    'examples/users/schema-java'       : 'examples-users-schema-java',
+//  'examples/users/schema-scala'      : 'examples-users-schema-scala',
 //  'examples/users/service'           : 'examples-users-service',
     'gradle-plugin'                    : 'epigraph-gradle-plugin',
     'gradle-plugin-common'             : 'epigraph-gradle-plugin-common',
@@ -55,14 +55,14 @@ Map<String, String> modules = [
     'scala/core'                       : 'epigraph-scala-core',
     'scala/maven-plugin'               : 'epigraph-scala-maven-plugin',
 
-    'edls/builtin-types-edl'           : 'epigraph-builtin-types-edl',
-    'edls/data-edl'                    : 'epigraph-data-edl',
-    'edls/operations-edl'              : 'epigraph-operations-edl',
-    'edls/projections-edl'             : 'epigraph-projections-edl',
-    'edls/edl-edl'                     : 'epigraph-edl-edl',
+    'schemas/builtin-types-schema'     : 'epigraph-builtin-types-schema',
+    'schemas/data-schema'              : 'epigraph-data-schema',
+    'schemas/operations-schema'        : 'epigraph-operations-schema',
+    'schemas/projections-schema'       : 'epigraph-projections-schema',
+    'schemas/schema-schema'            : 'epigraph-schema-schema',
 
-    'tests/edl'                        : 'tests-edl',
-    'tests/edl-java'                   : 'tests-edl-java'
+    'tests/schema'                     : 'tests-schema',
+    'tests/schema-java'                : 'tests-schema-java'
 ]
 
 modules.each { dir, name ->
