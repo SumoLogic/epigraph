@@ -17,8 +17,8 @@
 package ws.epigraph.projections.op.delete;
 
 import com.intellij.psi.PsiElement;
-import ws.epigraph.edl.TypeRefs;
-import ws.epigraph.edl.parser.psi.*;
+import ws.epigraph.schema.TypeRefs;
+import ws.epigraph.schema.parser.psi.*;
 import ws.epigraph.projections.Annotation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.ProjectionUtils;

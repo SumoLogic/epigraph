@@ -19,8 +19,8 @@
 package ws.epigraph.server.http;
 
 import ws.epigraph.errors.ErrorValue;
-import ws.epigraph.edl.ResourceDeclaration;
-import ws.epigraph.edl.operations.ReadOperationDeclaration;
+import ws.epigraph.schema.ResourceDeclaration;
+import ws.epigraph.schema.operations.ReadOperationDeclaration;
 import ws.epigraph.service.Resource;
 import ws.epigraph.service.ServiceInitializationException;
 import ws.epigraph.service.operations.ReadOperation;

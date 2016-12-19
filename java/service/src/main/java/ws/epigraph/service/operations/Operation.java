@@ -16,7 +16,7 @@
 
 package ws.epigraph.service.operations;
 
-import ws.epigraph.edl.operations.OperationDeclaration;
+import ws.epigraph.schema.operations.OperationDeclaration;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.CompletableFuture;

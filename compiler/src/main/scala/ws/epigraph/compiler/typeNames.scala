@@ -22,7 +22,7 @@ import java.util.regex.Pattern
 
 import com.intellij.psi.PsiElement
 import ws.epigraph.lang.Qn
-import ws.epigraph.edl.parser.psi.{EdlQnTypeRef, EdlTypeDef}
+import ws.epigraph.schema.parser.psi.{EdlQnTypeRef, EdlTypeDef}
 import org.jetbrains.annotations.Nullable
 
 

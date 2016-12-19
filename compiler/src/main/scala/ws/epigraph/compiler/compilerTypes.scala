@@ -21,7 +21,7 @@ package ws.epigraph.compiler
 import java.util.concurrent.ConcurrentLinkedQueue
 
 import com.intellij.psi.PsiElement
-import ws.epigraph.edl.parser.psi._
+import ws.epigraph.schema.parser.psi._
 import org.jetbrains.annotations.Nullable
 
 import scala.annotation.meta.getter

@@ -24,7 +24,7 @@ import java.util.regex.Pattern
 
 import com.intellij.psi.PsiElement
 import ws.epigraph.lang.Qn
-import ws.epigraph.edl.parser.psi._
+import ws.epigraph.schema.parser.psi._
 import net.jcip.annotations.ThreadSafe
 import org.jetbrains.annotations.Nullable
 

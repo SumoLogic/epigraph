@@ -18,7 +18,7 @@
 
 package ws.epigraph.compiler
 
-import ws.epigraph.edl.parser.psi.{EdlDefaultOverride, EdlValueTypeRef}
+import ws.epigraph.schema.parser.psi.{EdlDefaultOverride, EdlValueTypeRef}
 import org.jetbrains.annotations.Nullable
 
 /**

@@ -17,7 +17,7 @@
 package ws.epigraph.compiler
 
 import com.intellij.psi.{PsiErrorElement, PsiRecursiveElementWalkingVisitor}
-import ws.epigraph.edl.parser.psi.EdlFile
+import ws.epigraph.schema.parser.psi.EdlFile
 
 import scala.collection.mutable
 

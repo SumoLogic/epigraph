@@ -16,7 +16,7 @@
 
 package ws.epigraph.service;
 
-import ws.epigraph.edl.operations.OperationKind;
+import ws.epigraph.schema.operations.OperationKind;
 import ws.epigraph.service.operations.ReadOperation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

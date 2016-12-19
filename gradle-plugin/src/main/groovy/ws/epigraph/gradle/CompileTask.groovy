@@ -59,7 +59,7 @@ class CompileTask extends SourceTask implements EpigraphCompileTaskBase {
     getFileSources().each { fileSource ->
       def sourceFileName = fileSource.name() // this is full path actually
       def sourceFile = new File(sourceFileName)
-      def edlFile = context.edlFiles().get(sourceFileName)
+      def edlFile = context.schemaFiles().get(sourceFileName)
       assert edlFile != null
 
       def relativePath = edlFile.namespace().fqn().segments.join(File.separator)

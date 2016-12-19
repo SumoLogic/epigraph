@@ -22,8 +22,8 @@
 //import com.intellij.psi.PsiElement;
 //import org.jetbrains.annotations.NotNull;
 //import org.jetbrains.annotations.Nullable;
-//import ws.epigraph.edl.TypeRefs;
-//import ws.epigraph.edl.parser.psi.*;
+//import ws.epigraph.schema.TypeRefs;
+//import ws.epigraph.schema.parser.psi.*;
 //import ws.epigraph.projections.Annotation;
 //import ws.epigraph.projections.Annotations;
 //import ws.epigraph.projections.ProjectionUtils;

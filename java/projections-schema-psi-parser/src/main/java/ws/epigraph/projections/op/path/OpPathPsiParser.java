@@ -18,7 +18,7 @@ package ws.epigraph.projections.op.path;
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.Contract;
-import ws.epigraph.edl.parser.psi.*;
+import ws.epigraph.schema.parser.psi.*;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotation;
 import ws.epigraph.projections.Annotations;

@@ -18,7 +18,7 @@ package ws.epigraph.server.http.routing;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ws.epigraph.edl.operations.UpdateOperationDeclaration;
+import ws.epigraph.schema.operations.UpdateOperationDeclaration;
 import ws.epigraph.psi.PsiProcessingError;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypesResolver;

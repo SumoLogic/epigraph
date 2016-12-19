@@ -26,101 +26,101 @@
   -->
 
   <extensions defaultExtensionNs="com.intellij">
-    <fileTypeFactory implementation="ws.epigraph.ideaplugin.edl.EdlFileTypeFactory"/>
+    <fileTypeFactory implementation="ws.epigraph.ideaplugin.schema.EdlFileTypeFactory"/>
     <internalFileTemplate name="Epigraph EDL"/>
-    <stubElementTypeHolder class="ws.epigraph.edl.parser.psi.stubs.EdlStubElementTypes"/>
+    <stubElementTypeHolder class="ws.epigraph.schema.parser.psi.stubs.EdlStubElementTypes"/>
 
     <!-- indices -->
-    <stubIndex implementation="ws.epigraph.ideaplugin.edl.index.EdlShortTypeNameIndex"/>
-    <stubIndex implementation="ws.epigraph.ideaplugin.edl.index.EdlFullTypeNameIndex"/>
-    <stubIndex implementation="ws.epigraph.ideaplugin.edl.index.EdlTypesByNamespaceIndex"/>
-    <stubIndex implementation="ws.epigraph.ideaplugin.edl.index.EdlNamespaceByNameIndex"/>
-    <stubIndex implementation="ws.epigraph.ideaplugin.edl.index.EdlSupplementBySourceIndex"/>
-    <stubIndex implementation="ws.epigraph.ideaplugin.edl.index.EdlSupplementBySupplementedIndex"/>
+    <stubIndex implementation="ws.epigraph.ideaplugin.schema.index.EdlShortTypeNameIndex"/>
+    <stubIndex implementation="ws.epigraph.ideaplugin.schema.index.EdlFullTypeNameIndex"/>
+    <stubIndex implementation="ws.epigraph.ideaplugin.schema.index.EdlTypesByNamespaceIndex"/>
+    <stubIndex implementation="ws.epigraph.ideaplugin.schema.index.EdlNamespaceByNameIndex"/>
+    <stubIndex implementation="ws.epigraph.ideaplugin.schema.index.EdlSupplementBySourceIndex"/>
+    <stubIndex implementation="ws.epigraph.ideaplugin.schema.index.EdlSupplementBySupplementedIndex"/>
 
     <!-- remove file extension in editor tabs -->
     <editorTabTitleProvider
-        implementation="ws.epigraph.ideaplugin.edl.presentation.EdlEditorTabTitleProvider"/>
+        implementation="ws.epigraph.ideaplugin.schema.presentation.EdlEditorTabTitleProvider"/>
 
     <!-- change icon if schema file is not under the source root -->
-    <fileIconPatcher implementation="ws.epigraph.ideaplugin.edl.presentation.EdlFileIconPatcher"/>
+    <fileIconPatcher implementation="ws.epigraph.ideaplugin.schema.presentation.EdlFileIconPatcher"/>
 
     <lang.syntaxHighlighterFactory language="epigraph_edl"
-                                   implementationClass="ws.epigraph.ideaplugin.edl.highlighting.EdlSyntaxHighlighterFactory"/>
+                                   implementationClass="ws.epigraph.ideaplugin.schema.highlighting.EdlSyntaxHighlighterFactory"/>
     <lang.parserDefinition language="epigraph_edl"
-                           implementationClass="ws.epigraph.edl.parser.EdlParserDefinition"/>
+                           implementationClass="ws.epigraph.schema.parser.EdlParserDefinition"/>
 
     <completion.contributor language="epigraph_edl"
-                            implementationClass="ws.epigraph.ideaplugin.edl.features.completion.EdlCompletionContributor"/>
+                            implementationClass="ws.epigraph.ideaplugin.schema.features.completion.EdlCompletionContributor"/>
 
     <lang.formatter language="epigraph_edl"
-                    implementationClass="ws.epigraph.ideaplugin.edl.formatting.EdlFormattingModelBuilder"/>
+                    implementationClass="ws.epigraph.ideaplugin.schema.formatting.EdlFormattingModelBuilder"/>
     <langCodeStyleSettingsProvider
-        implementation="ws.epigraph.ideaplugin.edl.formatting.codeStyle.EdlLanguageCodeStyleSettingsProvider"/>
+        implementation="ws.epigraph.ideaplugin.schema.formatting.codeStyle.EdlLanguageCodeStyleSettingsProvider"/>
     <codeStyleSettingsProvider
-        implementation="ws.epigraph.ideaplugin.edl.formatting.codeStyle.EdlCodeStyleSettingsProvider"/>
+        implementation="ws.epigraph.ideaplugin.schema.formatting.codeStyle.EdlCodeStyleSettingsProvider"/>
 
     <lang.findUsagesProvider language="epigraph_edl"
-                             implementationClass="ws.epigraph.ideaplugin.edl.features.usages.EdlFindUsagesProvider"/>
+                             implementationClass="ws.epigraph.ideaplugin.schema.features.usages.EdlFindUsagesProvider"/>
     <elementDescriptionProvider
-        implementation="ws.epigraph.ideaplugin.edl.features.usages.EdlElementDescriptionProvider"/>
+        implementation="ws.epigraph.ideaplugin.schema.features.usages.EdlElementDescriptionProvider"/>
     <usageTypeProvider
-        implementation="ws.epigraph.ideaplugin.edl.features.usages.EdlUsageTypeProvider"/>
+        implementation="ws.epigraph.ideaplugin.schema.features.usages.EdlUsageTypeProvider"/>
 
     <lang.namesValidator language="epigraph_edl"
-                         implementationClass="ws.epigraph.ideaplugin.edl.features.EdlNamesValidator"/>
+                         implementationClass="ws.epigraph.ideaplugin.schema.features.EdlNamesValidator"/>
 
     <lang.braceMatcher language="epigraph_edl"
-                       implementationClass="ws.epigraph.ideaplugin.edl.features.EdlBraceMatcher"/>
+                       implementationClass="ws.epigraph.ideaplugin.schema.features.EdlBraceMatcher"/>
     <lang.foldingBuilder language="epigraph_edl"
-                         implementationClass="ws.epigraph.ideaplugin.edl.features.EdlFoldingBuilder"/>
+                         implementationClass="ws.epigraph.ideaplugin.schema.features.EdlFoldingBuilder"/>
     <lang.commenter language="epigraph_edl"
-                    implementationClass="ws.epigraph.ideaplugin.edl.features.EdlCommenter"/>
+                    implementationClass="ws.epigraph.ideaplugin.schema.features.EdlCommenter"/>
     <lang.psiStructureViewFactory language="epigraph_edl"
-                                  implementationClass="ws.epigraph.ideaplugin.edl.features.structureview.EdlStructureViewFactory"/>
-    <statementUpDownMover implementation="ws.epigraph.ideaplugin.edl.features.EdlLineMover"/>
+                                  implementationClass="ws.epigraph.ideaplugin.schema.features.structureview.EdlStructureViewFactory"/>
+    <statementUpDownMover implementation="ws.epigraph.ideaplugin.schema.features.EdlLineMover"/>
     <quoteHandler fileType="epigraph_edl"
-                  className="ws.epigraph.ideaplugin.edl.features.EdlQuoteHandler"/>
+                  className="ws.epigraph.ideaplugin.schema.features.EdlQuoteHandler"/>
     <gotoClassContributor
-        implementation="ws.epigraph.ideaplugin.edl.features.navigation.GotoTypeContributor"/>
+        implementation="ws.epigraph.ideaplugin.schema.features.navigation.GotoTypeContributor"/>
     <!--TODO <gotoSymbolContributor implementation=""-->
     <codeInsight.lineMarkerProvider
         language="epigraph_edl"
-        implementationClass="ws.epigraph.ideaplugin.edl.features.hierarchy.EdlLineMarkerProvider"/>
+        implementationClass="ws.epigraph.ideaplugin.schema.features.hierarchy.EdlLineMarkerProvider"/>
 
     <typeHierarchyProvider language="epigraph_edl"
-                           implementationClass="ws.epigraph.ideaplugin.edl.features.hierarchy.EdlHierarchyProvider"/>
+                           implementationClass="ws.epigraph.ideaplugin.schema.features.hierarchy.EdlHierarchyProvider"/>
 
 
     <!-- annotator -->
     <annotator language="epigraph_edl"
-               implementationClass="ws.epigraph.ideaplugin.edl.highlighting.EdlAnnotator"/>
+               implementationClass="ws.epigraph.ideaplugin.schema.highlighting.EdlAnnotator"/>
     <annotator language="epigraph_edl"
-               implementationClass="ws.epigraph.ideaplugin.edl.highlighting.EdlOpOutputProjectionsAnnotator"/>
+               implementationClass="ws.epigraph.ideaplugin.schema.highlighting.EdlOpOutputProjectionsAnnotator"/>
     <!-- highlight errors in parents even if there are errors in children -->
     <highlightRangeExtension
-        implementation="ws.epigraph.ideaplugin.edl.highlighting.EdlHighlightRangeExtension"/>
+        implementation="ws.epigraph.ideaplugin.schema.highlighting.EdlHighlightRangeExtension"/>
 
     <!-- highlighting filters -->
     <problemFileHighlightFilter
-        implementation="ws.epigraph.ideaplugin.edl.highlighting.EdlProblemFileHighlightFilter"/>
+        implementation="ws.epigraph.ideaplugin.schema.highlighting.EdlProblemFileHighlightFilter"/>
     <problemHighlightFilter
-        implementation="ws.epigraph.ideaplugin.edl.highlighting.EdlProblemHighlightFilter"/>
+        implementation="ws.epigraph.ideaplugin.schema.highlighting.EdlProblemHighlightFilter"/>
 
     <!-- refactoring -->
     <lang.refactoringSupport language="epigraph_edl"
-                             implementationClass="ws.epigraph.ideaplugin.edl.features.EdlRefactoringSupportProvider"/>
+                             implementationClass="ws.epigraph.ideaplugin.schema.features.EdlRefactoringSupportProvider"/>
     <renamePsiElementProcessor
-        implementation="ws.epigraph.ideaplugin.edl.features.rename.RenameEdlFieldProcessor"/>
+        implementation="ws.epigraph.ideaplugin.schema.features.rename.RenameEdlFieldProcessor"/>
 
     <!-- imports optimizer -->
     <autoImportOptionsProvider
-        instance="ws.epigraph.ideaplugin.edl.options.EdlAutoImportOptionsProvider"/>
+        instance="ws.epigraph.ideaplugin.schema.options.EdlAutoImportOptionsProvider"/>
     <lang.importOptimizer language="epigraph_edl"
-                          implementationClass="ws.epigraph.ideaplugin.edl.features.imports.EdlImportOptimizer"/>
+                          implementationClass="ws.epigraph.ideaplugin.schema.features.imports.EdlImportOptimizer"/>
 
     <!-- line painter for default tags on -->
-    <editor.linePainter implementation="ws.epigraph.ideaplugin.edl.features.linepainter.EdlDefaultTagLinePainter"/>
+    <editor.linePainter implementation="ws.epigraph.ideaplugin.schema.features.linepainter.EdlDefaultTagLinePainter"/>
 
     <!-- inspections -->
     <!-- imports -->
@@ -132,7 +132,7 @@
         groupName="Imports"
         enabledByDefault="true"
         level="WARNING"
-        implementationClass="ws.epigraph.ideaplugin.edl.features.inspections.DuplicateImportInspection"/>
+        implementationClass="ws.epigraph.ideaplugin.schema.features.inspections.DuplicateImportInspection"/>
     <localInspection
         language="epigraph_edl"
         shortName="UnnecessaryImport"
@@ -141,7 +141,7 @@
         groupName="Imports"
         enabledByDefault="true"
         level="WARNING"
-        implementationClass="ws.epigraph.ideaplugin.edl.features.inspections.UnnecessaryImportInspection"/>
+        implementationClass="ws.epigraph.ideaplugin.schema.features.inspections.UnnecessaryImportInspection"/>
     <localInspection
         language="epigraph_edl"
         shortName="UnusedImport"
@@ -150,7 +150,7 @@
         groupName="Imports"
         enabledByDefault="true"
         level="WARNING"
-        implementationClass="ws.epigraph.ideaplugin.edl.features.inspections.UnusedImportInspection"/>
+        implementationClass="ws.epigraph.ideaplugin.schema.features.inspections.UnusedImportInspection"/>
     <localInspection
         language="epigraph_edl"
         shortName="ConflictingImport"
@@ -159,20 +159,20 @@
         groupName="Imports"
         enabledByDefault="true"
         level="ERROR"
-        implementationClass="ws.epigraph.ideaplugin.edl.features.inspections.ConflictingImportInspection"/>
+        implementationClass="ws.epigraph.ideaplugin.schema.features.inspections.ConflictingImportInspection"/>
 
     <!-- services -->
-    <applicationService serviceImplementation="ws.epigraph.ideaplugin.edl.options.EdlSettings"/>
+    <applicationService serviceImplementation="ws.epigraph.ideaplugin.schema.options.EdlSettings"/>
 
     <!-- intentions -->
     <intentionAction>
       <category>Epigraph/Edl</category>
-      <className>ws.epigraph.ideaplugin.edl.features.actions.fixes.AddDefaultAction</className>
+      <className>ws.epigraph.ideaplugin.schema.features.actions.fixes.AddDefaultAction</className>
     </intentionAction>
   </extensions>
 
   <actions>
-    <action class="ws.epigraph.ideaplugin.edl.features.actions.CreateEdlFileAction"
+    <action class="ws.epigraph.ideaplugin.schema.features.actions.CreateEdlFileAction"
             id="Epigraph.NewEdlFile"
             text="Epigraph EDL" description="Create new Epigraph Declarations file">
       <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFile"/>
@@ -182,12 +182,12 @@
   <project-components>
     <component>
       <implementation-class>
-        ws.epigraph.ideaplugin.edl.brains.hierarchy.HierarchyCache
+        ws.epigraph.ideaplugin.schema.brains.hierarchy.HierarchyCache
       </implementation-class>
     </component>
     <component>
       <implementation-class>
-        ws.epigraph.ideaplugin.edl.brains.NamespaceManager
+        ws.epigraph.ideaplugin.schema.brains.NamespaceManager
       </implementation-class>
     </component>
   </project-components>

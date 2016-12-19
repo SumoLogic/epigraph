@@ -98,7 +98,7 @@ trait RawData extends gen.GenData {this: gen.GenNames with gen.GenTypes =>
 
 }
 
-import ws.epigraph.edl.RawEdlEdl
+import ws.epigraph.schema.RawEdlEdl
 
 object RawDataMain extends RawEdlEdl with RawData {
 

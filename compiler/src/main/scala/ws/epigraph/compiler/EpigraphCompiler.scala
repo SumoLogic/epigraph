@@ -26,8 +26,8 @@ import com.intellij.lang.ParserDefinition
 import com.intellij.psi.{PsiElement, PsiFile, PsiRecursiveElementWalkingVisitor}
 import org.intellij.grammar.LightPsi
 import org.jetbrains.annotations.Nullable
-import ws.epigraph.edl.parser.EdlParserDefinition
-import ws.epigraph.edl.parser.psi._
+import ws.epigraph.schema.parser.EdlParserDefinition
+import ws.epigraph.schema.parser.psi._
 
 import scala.collection.JavaConversions._
 import scala.collection.{GenTraversableOnce, mutable}

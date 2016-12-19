@@ -18,7 +18,7 @@
 
 package ws.epigraph.compiler
 
-import ws.epigraph.edl.parser.psi.{EdlAnonList, EdlAnonMap, EdlQnTypeRef, EdlTypeRef}
+import ws.epigraph.schema.parser.psi.{EdlAnonList, EdlAnonMap, EdlQnTypeRef, EdlTypeRef}
 
 
 object CTypeRef {

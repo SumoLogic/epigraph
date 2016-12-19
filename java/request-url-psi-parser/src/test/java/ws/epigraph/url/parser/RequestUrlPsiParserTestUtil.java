@@ -18,12 +18,12 @@ package ws.epigraph.url.parser;
 
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.gdata.GDatum;
-import ws.epigraph.edl.Edl;
-import ws.epigraph.edl.parser.EdlPsiParser;
+import ws.epigraph.schema.Edl;
+import ws.epigraph.schema.parser.EdlPsiParser;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.refs.TypesResolver;
-import ws.epigraph.edl.parser.EdlParserDefinition;
-import ws.epigraph.edl.parser.psi.EdlFile;
+import ws.epigraph.schema.parser.EdlParserDefinition;
+import ws.epigraph.schema.parser.psi.EdlFile;
 
 import java.util.Map;
 import java.util.TreeMap;
