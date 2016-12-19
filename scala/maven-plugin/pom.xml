@@ -13,7 +13,7 @@
   </parent>
 
   <name>Epigraph Scala Maven Plugin</name>
-  <description>Maven plugin for generating Scala bindings for Epigraph EDL</description>
+  <description>Maven plugin for generating Scala bindings for Epigraph schema</description>
   <url>https://github.com/SumoLogic/epigraph</url>
 
   <prerequisites>

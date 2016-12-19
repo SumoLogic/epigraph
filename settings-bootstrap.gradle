@@ -10,17 +10,17 @@ rootProject.name = theName
 
 
 Map<String, String> modules = [
-    'compiler'                 : 'epigraph-compiler',
-    'gradle-plugin'            : 'epigraph-gradle-plugin',
-    'gradle-plugin-common'     : 'epigraph-gradle-plugin-common',
-    'java/codegen'             : 'epigraph-java-codegen',
-    'java/edl-parser'          : 'epigraph-java-edl-parser',
-    'java/gradle-plugin'       : 'epigraph-java-gradle-plugin',
-    'java/lang-common'         : 'epigraph-java-lang-common',
-    'java/standalone-psi-util' : 'epigraph-java-standalone-psi-util',
-    'java/util'                : 'epigraph-java-util',
-    'light-psi'                : 'epigraph-light-psi',
-    'scala/core'               : 'epigraph-scala-core'
+    'compiler'                    : 'epigraph-compiler',
+    'gradle-plugin'               : 'epigraph-gradle-plugin',
+    'gradle-plugin-common'        : 'epigraph-gradle-plugin-common',
+    'java/codegen'                : 'epigraph-java-codegen',
+    'java/gradle-plugin'          : 'epigraph-java-gradle-plugin',
+    'java/lang-common'            : 'epigraph-java-lang-common',
+    'java/schema-parser'          : 'epigraph-java-schema-parser',
+    'java/standalone-psi-util'    : 'epigraph-java-standalone-psi-util',
+    'java/util'                   : 'epigraph-java-util',
+    'light-psi'                   : 'epigraph-light-psi',
+    'scala/core'                  : 'epigraph-scala-core'
 ]
 
 modules.each { dir, name ->

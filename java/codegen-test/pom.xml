@@ -21,7 +21,7 @@
 
     <dependency>
       <groupId>ws.epigraph</groupId>
-      <artifactId>epigraph-builtin-types-edl</artifactId>
+      <artifactId>epigraph-builtin-types-schema</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
 

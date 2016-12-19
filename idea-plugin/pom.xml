@@ -62,13 +62,13 @@
               <goal>copy-resources</goal>
             </goals>
             <configuration>
-              <outputDirectory>${project.build.directory}/generated-sources/edl-parser-common.java</outputDirectory>
+              <outputDirectory>${project.build.directory}/generated-sources/schema-parser-common.java</outputDirectory>
               <resources>
                 <resource>
-                  <directory>../java/edl-parser-common/src/main/java</directory>
+                  <directory>../java/schema-parser-common/src/main/java</directory>
                 </resource>
                 <resource>
-                  <directory>../java/edl-parser-common/src/main/java.generated</directory>
+                  <directory>../java/schema-parser-common/src/main/java.generated</directory>
                 </resource>
               </resources>
             </configuration>
@@ -87,7 +87,7 @@
             </goals>
             <configuration>
               <sources>
-                <source>${project.build.directory}/generated-sources/edl-parser-common.java</source>
+                <source>${project.build.directory}/generated-sources/schema-parser-common.java</source>
               </sources>
             </configuration>
           </execution>

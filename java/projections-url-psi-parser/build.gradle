@@ -12,7 +12,7 @@ dependencies {
 
   compile 'org.jetbrains:annotations'
 
-  testCompile project(':epigraph-java-projections-edl-psi-parser')
+  testCompile project(':epigraph-java-projections-schema-psi-parser')
   testCompile project(':epigraph-java-test-util')
   testCompile project(':tests-schema-java')
 

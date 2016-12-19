@@ -3,7 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>epigraph-java-edl-parser</artifactId>
+  <artifactId>epigraph-java-schema-parser</artifactId>
 
   <parent>
     <groupId>ws.epigraph</groupId>
@@ -63,13 +63,13 @@
               <goal>copy-resources</goal>
             </goals>
             <configuration>
-              <outputDirectory>${project.build.directory}/generated-sources/edl-parser-common.java</outputDirectory>
+              <outputDirectory>${project.build.directory}/generated-sources/schema-parser-common.java</outputDirectory>
               <resources>
                 <resource>
-                  <directory>../edl-parser-common/src/main/java</directory>
+                  <directory>../schema-parser-common/src/main/java</directory>
                 </resource>
                 <resource>
-                  <directory>../edl-parser-common/src/main/java.generated</directory>
+                  <directory>../schema-parser-common/src/main/java.generated</directory>
                 </resource>
               </resources>
             </configuration>
@@ -88,7 +88,7 @@
             </goals>
             <configuration>
               <sources>
-                <source>${project.build.directory}/generated-sources/edl-parser-common.java</source>
+                <source>${project.build.directory}/generated-sources/schema-parser-common.java</source>
               </sources>
             </configuration>
           </execution>

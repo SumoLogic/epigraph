@@ -5,7 +5,7 @@ plugins {
 apply plugin: 'scala'
 
 dependencies {
-  compile project(':epigraph-java-edl-parser')
+  compile project(':epigraph-java-schema-parser')
   compile project(':epigraph-java-lang-common')
   compile project(':epigraph-scala-core')
 

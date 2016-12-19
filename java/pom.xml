@@ -17,13 +17,13 @@
         <module>codegen</module>
         <module>core</module>
         <module>gdata</module>
-        <module>edl</module>
+        <module>schema</module>
         <module>lang-common</module>
         <module>maven-plugin</module>
         <!--<module>preprint</module>-->
         <module>projections</module>
         <module>request-url</module>
-        <module>edl-parser</module>
+        <module>schema-parser</module>
         <module>standalone-psi-util</module>
         <!--<module>server</module>-->
         <!--<module>service</module>-->

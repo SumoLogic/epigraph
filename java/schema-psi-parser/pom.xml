@@ -3,7 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>epigraph-java-edl-psi-parser</artifactId>
+  <artifactId>epigraph-java-schema-psi-parser</artifactId>
 
   <parent>
     <groupId>ws.epigraph</groupId>
@@ -20,12 +20,12 @@
     </dependency>
     <dependency>
       <groupId>${project.parent.groupId}</groupId>
-      <artifactId>epigraph-java-edl</artifactId>
+      <artifactId>epigraph-java-schema</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
     <dependency>
       <groupId>${project.parent.groupId}</groupId>
-      <artifactId>epigraph-java-edl-psi-parser-common</artifactId>
+      <artifactId>epigraph-java-schema-psi-parser-common</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
     <dependency>
@@ -45,12 +45,12 @@
     </dependency>
     <dependency>
       <groupId>${project.parent.groupId}</groupId>
-      <artifactId>epigraph-java-projections-edl-psi-parser</artifactId>
+      <artifactId>epigraph-java-projections-schema-psi-parser</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
     <dependency>
       <groupId>${project.parent.groupId}</groupId>
-      <artifactId>epigraph-java-edl-parser</artifactId>
+      <artifactId>epigraph-java-schema-parser</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
     <dependency>

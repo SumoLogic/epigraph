@@ -3,11 +3,8 @@ apply plugin: 'java'
 dependencies {
   compile project(':epigraph-java-core')
   compile project(':epigraph-java-gdata')
-  compile project(':epigraph-java-gdata-edl-psi-parser')
-  compile project(':epigraph-java-lang-common')
-  compile project(':epigraph-java-projections')
-  compile project(':epigraph-java-projections-psi-parser-util')
-  compile project(':epigraph-java-edl-parser')
+  compile project(':epigraph-java-schema-psi-parser-common')
+  compile project(':epigraph-java-schema-parser')
   compile project(':epigraph-java-standalone-psi-util')
   compile project(':epigraph-light-psi')
 
@@ -15,6 +12,7 @@ dependencies {
 
   testCompile project(':epigraph-java-test-util')
   testCompile project(':tests-schema-java')
+
   testCompile 'junit:junit'
   testCompile 'org.slf4j:slf4j-nop'
   testCompile 'com.io7m.jpplib:io7m-jpplib-core'
