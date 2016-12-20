@@ -27,16 +27,14 @@ import java.util.Objects;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class GPrimitiveDatum extends GDatum {
-  @NotNull
-  private final Object value;
+  private final @NotNull Object value;
 
   public GPrimitiveDatum(@Nullable TypeRef typeRef, @NotNull Object value, @NotNull TextLocation location) {
     super(typeRef, location);
     this.value = value;
   }
 
-  @NotNull
-  public Object value() { return value; }
+  public @NotNull Object value() { return value; }
 
   @Override
   public boolean equals(Object o) {

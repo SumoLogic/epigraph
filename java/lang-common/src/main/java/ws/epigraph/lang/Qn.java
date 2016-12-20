@@ -35,8 +35,7 @@ public class Qn implements Comparable<Qn> {
 
   public static final Qn EMPTY = new Qn();
 
-  @NotNull
-  public final String[] segments;
+  public final @NotNull String[] segments;
 
   public Qn(@NotNull String... segments) {
     this.segments = new String[segments.length];
@@ -51,14 +50,12 @@ public class Qn implements Comparable<Qn> {
     this(segments.toArray(new String[segments.size()]));
   }
 
-  @NotNull
-  public static Qn fromDotSeparated(@NotNull String fqn) {
+  public static @NotNull Qn fromDotSeparated(@NotNull String fqn) {
     // todo will break if dot is inside back-ticks..
     return new Qn(fqn.split("\\."));
   }
 
-  @Nullable
-  public static Qn fromNullableDotSeparated(@Nullable String fqn) {
+  public static @Nullable Qn fromNullableDotSeparated(@Nullable String fqn) {
     return fqn == null ? null : fromDotSeparated(fqn);
   }
 
@@ -70,30 +67,25 @@ public class Qn implements Comparable<Qn> {
     return size() == 0;
   }
 
-  @Nullable
-  public String first() {
+  public @Nullable String first() {
     if (isEmpty()) return null;
     return segments[0];
   }
 
-  @Nullable
-  public String last() {
+  public @Nullable String last() {
     if (isEmpty()) return null;
     return segments[size() - 1];
   }
 
-  @NotNull
-  public Qn removeLastSegment() {
+  public @NotNull Qn removeLastSegment() {
     return removeTailSegments(1);
   }
 
-  @NotNull
-  public Qn removeFirstSegment() {
+  public @NotNull Qn removeFirstSegment() {
     return removeHeadSegments(1);
   }
 
-  @NotNull
-  public Qn removeHeadSegments(int n) {
+  public @NotNull Qn removeHeadSegments(int n) {
     if (size() < n) throw new IllegalArgumentException("Can't remove " + n + " segments from '" + toString() + "'");
     if (size() == n) return EMPTY;
 
@@ -102,8 +94,7 @@ public class Qn implements Comparable<Qn> {
     return new Qn(f);
   }
 
-  @NotNull
-  public Qn removeTailSegments(int n) {
+  public @NotNull Qn removeTailSegments(int n) {
     if (size() < n) throw new IllegalArgumentException("Can't remove " + n + " segments from '" + toString() + "'");
     if (size() == n) return EMPTY;
 
@@ -112,8 +103,7 @@ public class Qn implements Comparable<Qn> {
     return new Qn(f);
   }
 
-  @NotNull
-  public Qn append(@NotNull Qn suffix) {
+  public @NotNull Qn append(@NotNull Qn suffix) {
     if (isEmpty()) return suffix;
     if (suffix.isEmpty()) return this;
 
@@ -123,8 +113,7 @@ public class Qn implements Comparable<Qn> {
     return new Qn(f);
   }
 
-  @NotNull
-  public Qn append(@NotNull String segment) {
+  public @NotNull Qn append(@NotNull String segment) {
     String[] f = new String[size() + 1];
     System.arraycopy(segments, 0, f, 0, size());
     f[size()] = NamingConventions.unquote(segment);
@@ -154,6 +143,7 @@ public class Qn implements Comparable<Qn> {
     return true;
   }
 
+  @Override
   public String toString() {
     StringBuilder r = new StringBuilder();
     for (String segment : segments) {
@@ -179,8 +169,7 @@ public class Qn implements Comparable<Qn> {
     return Arrays.hashCode(segments);
   }
 
-  @Nullable
-  public static String toNullableString(@Nullable Qn fqn) {
+  public static @Nullable String toNullableString(@Nullable Qn fqn) {
     return fqn == null ? null : fqn.toString();
   }
 

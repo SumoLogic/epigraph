@@ -27,13 +27,11 @@ import java.util.Objects;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class QnTypeRef implements TypeRef {
-  @NotNull
-  private final Qn qn;
+  private final @NotNull Qn qn;
 
   public QnTypeRef(@NotNull Qn qn) {this.qn = qn;}
 
-  @NotNull
-  public Qn qn() { return qn; }
+  public @NotNull Qn qn() { return qn; }
 
   @Override
   public @Nullable Type resolve(@NotNull TypesResolver resolver) {

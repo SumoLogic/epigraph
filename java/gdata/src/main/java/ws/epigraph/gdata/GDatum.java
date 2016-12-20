@@ -27,8 +27,7 @@ import java.util.Objects;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public abstract class GDatum extends GDataValue {
-  @Nullable
-  private final TypeRef typeRef;
+  private final @Nullable TypeRef typeRef;
 
   protected GDatum(@Nullable TypeRef typeRef, @NotNull TextLocation location) {
     super(location);

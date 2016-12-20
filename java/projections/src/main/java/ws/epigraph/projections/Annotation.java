@@ -26,12 +26,9 @@ import java.util.Objects;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class Annotation {
-  @NotNull
-  private final String name;
-  @NotNull
-  private final GDataValue value;
-  @NotNull
-  private final TextLocation location;
+  private final @NotNull String name;
+  private final @NotNull GDataValue value;
+  private final @NotNull TextLocation location;
 
   public Annotation(@NotNull String name, @NotNull GDataValue value, @NotNull TextLocation location) {
     this.name = name;
@@ -39,14 +36,11 @@ public class Annotation {
     this.location = location;
   }
 
-  @NotNull
-  public String name() { return name; }
+  public @NotNull String name() { return name; }
 
-  @NotNull
-  public GDataValue value() { return value; }
+  public @NotNull GDataValue value() { return value; }
 
-  @NotNull
-  public TextLocation location() { return location; }
+  public @NotNull TextLocation location() { return location; }
 
   @Override
   public boolean equals(Object o) {

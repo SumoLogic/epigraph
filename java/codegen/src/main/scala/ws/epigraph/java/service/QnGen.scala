@@ -14,17 +14,15 @@
  * limitations under the License.
  */
 
-package ws.epigraph.gen;
+package ws.epigraph.java.service
+
+import ws.epigraph.lang.Qn
 
 /**
- * Constants used by Java code generator
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public interface Constants {
-  int indent = 2;
-
-  interface TypesIndex {
-    String namespace = "epigraph.java";
-    String className = "TypesIndex";
-  }
+class QnGen(private val qn: Qn) extends ServiceObjectGen[Qn](qn) {
+  override protected def generateObjectNoIndent(ctx: ServiceGenContext): String =
+    "Qn.fromDotSeparated(\"%s\")".format(qn.toString)
+  // s"Qn.fromDotSeparated(\"${qn.toString}\")" by some reason this breaks scalac
 }

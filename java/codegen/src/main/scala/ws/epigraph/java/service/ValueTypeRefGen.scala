@@ -14,17 +14,19 @@
  * limitations under the License.
  */
 
-package ws.epigraph.gen;
+package ws.epigraph.java.service
+
+import ws.epigraph.refs.ValueTypeRef
 
 /**
- * Constants used by Java code generator
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public interface Constants {
-  int indent = 2;
+class ValueTypeRefGen(ref: ValueTypeRef) extends ServiceObjectGen[ValueTypeRef](ref) {
 
-  interface TypesIndex {
-    String namespace = "epigraph.java";
-    String className = "TypesIndex";
+  override protected def generateObjectNoIndent(ctx: ServiceGenContext): String = {
+    val o = ref.defaultOverride()
+    val os = if (o == null) "null" else "\"$o\""
+    s"new ValueTypeRef(${new TypeRefGen(ref.typeRef()).generate(ctx)}, $os)"
   }
+
 }

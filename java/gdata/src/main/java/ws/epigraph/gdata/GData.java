@@ -29,25 +29,22 @@ import java.util.stream.Collectors;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class GData extends GDataValue {
-  @Nullable
-  private final TypeRef typeRef;
-  @NotNull
-  private final LinkedHashMap<String, GDatum> tags;
+  private final @Nullable TypeRef typeRef;
+  private final @NotNull LinkedHashMap<String, GDatum> tags;
 
-  public GData(@Nullable TypeRef typeRef,
-               @NotNull LinkedHashMap<String, GDatum> tags,
-               @NotNull TextLocation location) {
+  public GData(
+      @Nullable TypeRef typeRef,
+      @NotNull LinkedHashMap<String, GDatum> tags,
+      @NotNull TextLocation location) {
 
     super(location);
     this.typeRef = typeRef;
     this.tags = tags;
   }
 
-  @Nullable
-  public TypeRef typeRef() { return typeRef; }
+  public @Nullable TypeRef typeRef() { return typeRef; }
 
-  @NotNull
-  public LinkedHashMap<String, GDatum> tags() { return tags; }
+  public @NotNull LinkedHashMap<String, GDatum> tags() { return tags; }
 
   @Override
   public boolean equals(Object o) {
@@ -67,9 +64,9 @@ public class GData extends GDataValue {
     if (typeRef() != null) sb.append(typeRef());
     sb.append('<');
     sb.append(tags.entrySet()
-                  .stream()
-                  .map(e -> e.getKey() + ": " + e.getValue())
-                  .collect(Collectors.joining(", ")));
+        .stream()
+        .map(e -> e.getKey() + ": " + e.getValue())
+        .collect(Collectors.joining(", ")));
     sb.append('>');
     return sb.toString();
   }

@@ -27,25 +27,20 @@ import java.util.Objects;
  */
 public class AnonMapRef implements TypeRef {
 
-  @NotNull
-  private final TypeRef keysType;
-  @NotNull
-  private final ValueTypeRef valuesType;
+  private final @NotNull TypeRef keysType;
+  private final @NotNull ValueTypeRef valuesType;
 
   public AnonMapRef(@NotNull TypeRef keysType, @NotNull ValueTypeRef valuesType) {
     this.keysType = keysType;
     this.valuesType = valuesType;
   }
 
-  @NotNull
-  public TypeRef keysType() { return keysType; }
+  public @NotNull TypeRef keysType() { return keysType; }
 
-  @NotNull
-  public ValueTypeRef itemsType() { return valuesType; }
+  public @NotNull ValueTypeRef itemsType() { return valuesType; }
 
-  @Nullable
   @Override
-  public Type resolve(@NotNull TypesResolver resolver) {
+  public @Nullable Type resolve(@NotNull TypesResolver resolver) {
     return resolver.resolve(this);
   }
 

@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package ws.epigraph.gen;
+package ws.epigraph.java.service
+
+import scala.collection.mutable
 
 /**
- * Constants used by Java code generator
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public interface Constants {
-  int indent = 2;
+class ServiceGenContext {
+  private val _imports = new mutable.HashSet[String]()
 
-  interface TypesIndex {
-    String namespace = "epigraph.java";
-    String className = "TypesIndex";
-  }
+  def addImport(i: String) {_imports.add(i)}
+
+  def imports: List[String] = _imports.toList.sorted
 }

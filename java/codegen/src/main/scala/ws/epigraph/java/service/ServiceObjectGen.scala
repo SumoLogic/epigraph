@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package ws.epigraph.gen;
+package ws.epigraph.java.service
 
 /**
- * Constants used by Java code generator
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public interface Constants {
-  int indent = 2;
+abstract class ServiceObjectGen[T](val obj: T) extends AbstractServiceGen {
 
-  interface TypesIndex {
-    String namespace = "epigraph.java";
-    String className = "TypesIndex";
+  override protected def generateNoIndent(ctx: ServiceGenContext) : String = {
+    ctx.addImport(obj.getClass.getCanonicalName)
+    generateObjectNoIndent(ctx)
   }
+
+  protected def generateObjectNoIndent(ctx: ServiceGenContext) : String
 }
