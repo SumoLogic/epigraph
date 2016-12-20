@@ -2,6 +2,7 @@ apply plugin: 'scala'
 
 dependencies {
   compile project(':epigraph-compiler')
+  compile project(':epigraph-java-core')
   compile project(':epigraph-java-lang-common')
   compile project(':epigraph-java-util')
 

@@ -18,6 +18,7 @@ package ws.epigraph.refs;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.gen.Constants;
 import ws.epigraph.types.DatumType;
 import ws.epigraph.types.Type;
 
@@ -31,8 +32,7 @@ import java.util.Objects;
 public final class IndexBasedTypesResolver implements TypesResolver {
   public static final TypesResolver INSTANCE = new IndexBasedTypesResolver();
 
-  // todo move to some constant and make `IndexGen` use it too
-  public static final String INDEX_CLASS_NAME = "epigraph.java.TypesIndex";
+  public static final String INDEX_CLASS_NAME = Constants.TypesIndex.namespace + "." + Constants.TypesIndex.className;
 
   private static final Map<@NotNull String, @NotNull ? extends Type> index;
 

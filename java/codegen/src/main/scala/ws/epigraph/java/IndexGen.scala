@@ -3,6 +3,7 @@ package ws.epigraph.java
 import java.nio.file.{Path, Paths}
 
 import ws.epigraph.compiler.CType
+import ws.epigraph.gen.Constants
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 
 import scala.collection.JavaConverters._
@@ -12,9 +13,10 @@ import scala.collection.JavaConverters._
  */
 class IndexGen(ctx: GenContext) extends JavaGen[Iterable[CType]](ctx) {
 
-    private val IndexClassName: String = "TypesIndex" // TODO take from published (in java-core?) constant? parameter?
+    private val IndexClassName: String = Constants.TypesIndex.className
 
-    override protected def relativeFilePath: Path = Paths.get(s"epigraph/java/$IndexClassName.java") // TODO better package/name
+    override protected def relativeFilePath: Path =
+      Paths.get(s"${Constants.TypesIndex.namespace.replaceAll("\\.", "/")}/$IndexClassName.java")
 
     override protected def generate: String = /*@formatter:off*/sn"""\
 package epigraph.java;

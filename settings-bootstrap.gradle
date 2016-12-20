@@ -14,6 +14,7 @@ Map<String, String> modules = [
     'gradle-plugin'               : 'epigraph-gradle-plugin',
     'gradle-plugin-common'        : 'epigraph-gradle-plugin-common',
     'java/codegen'                : 'epigraph-java-codegen',
+    'java/core'                   : 'epigraph-java-core',
     'java/gradle-plugin'          : 'epigraph-java-gradle-plugin',
     'java/lang-common'            : 'epigraph-java-lang-common',
     'java/schema-parser'          : 'epigraph-java-schema-parser',
