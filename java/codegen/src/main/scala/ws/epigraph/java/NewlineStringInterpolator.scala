@@ -35,9 +35,9 @@ object NewlineStringInterpolator {
   private def indentTexts(sc: StringContext, args: Seq[Any]): Seq[Any] =
     if (args.exists{ _.isInstanceOf[TextToIndent] }) {
 
-      def getIndent(s: String) = s.lines.toStream.last.length // this is crude, improve as needed
+      def getIndent(s: String) = s.lines.toStream.last // this is crude, improve as needed
 
-      def indentText(t: TextToIndent, i: Int) = JavaGenUtils.indentButFirstLine(t.s, i)
+      def indentText(t: TextToIndent, i: String) = JavaGenUtils.indentButFirstLine(t.s, i)
 
       sc.parts.zip(args).map{
         case (s: String, t: TextToIndent) => indentText(t, getIndent(s))

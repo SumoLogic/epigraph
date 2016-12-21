@@ -41,7 +41,7 @@ object ServiceGenUtils {
   def genLinkedMap(
     keyType: String,
     valueType: String,
-    entries: Seq[(String, String)],
+    entries: Iterable[(String, String)],
     ctx: ServiceGenContext): String = {
 
     ctx.addImport("java.util.LinkedHashMap")

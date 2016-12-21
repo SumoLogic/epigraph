@@ -17,10 +17,11 @@
 package ws.epigraph.java.service.gdata
 
 import ws.epigraph.gdata._
-import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
-import ws.epigraph.java.NewlineStringInterpolator.i
+import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i}
 import ws.epigraph.java.service.ServiceObjectGen.gen
 import ws.epigraph.java.service.{ServiceGenContext, ServiceGenUtils, ServiceObjectGen}
+
+import scala.collection.JavaConversions._
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -36,20 +37,29 @@ class GDatumGen(datum: GDatum) extends ServiceObjectGen[GDatum](datum) {
     case _ => throw new IllegalArgumentException("Unknown data type: " + datum.getClass.getName)
   }
 
-  private def generateRecord(rd: GRecordDatum, ctx: ServiceGenContext): String = ???
+  private def generateRecord(rd: GRecordDatum, ctx: ServiceGenContext): String =
+  /*@formatter:off*/sn"""\
+new GenMapDatum(
+  ${gen(rd.typeRef(), ctx)},
+  ${i(ServiceGenUtils.genLinkedMap("String", "GDataValue", rd.fields().entrySet().map{e => (gen(e.getKey, ctx), gen(e.getValue, ctx))}, ctx))},
+  ${gen(rd.location(), ctx)}
+)"""/*@formatter:on*/
 
-  private def generateMap(md: GMapDatum, ctx: ServiceGenContext): String = ???
+  private def generateMap(md: GMapDatum, ctx: ServiceGenContext): String =
+  /*@formatter:off*/sn"""\
+new GenMapDatum(
+  ${gen(md.typeRef(), ctx)},
+  ${i(ServiceGenUtils.genLinkedMap("GDatum", "GDataValue", md.entries().entrySet().map{e => (gen(e.getKey, ctx), gen(e.getValue, ctx))}, ctx))},
+  ${gen(md.location(), ctx)}
+)"""/*@formatter:on*/
 
-  private def generateList(ld: GListDatum, ctx: ServiceGenContext): String = {
-    import scala.collection.JavaConversions._
-    val generatedValues = ServiceGenUtils.genList(ld.values().map(gen(_, ctx)), ctx)
+  private def generateList(ld: GListDatum, ctx: ServiceGenContext): String =
     /*@formatter:off*/sn"""\
 new GenListDatum(
   ${gen(ld.typeRef(), ctx)},
-  ${i(generatedValues)},
+  ${i(ServiceGenUtils.genList(ld.values().map(gen(_, ctx)), ctx))},
   ${gen(ld.location(), ctx)}
 )"""/*@formatter:on*/
-  }
 
   private def generatePrimitive(pd: GPrimitiveDatum, ctx: ServiceGenContext): String =
     s"new GPrimitiveDatum(${gen(pd.typeRef(), ctx)}, ${gen(pd.value(), ctx)}, ${gen(pd.location(), ctx)})"

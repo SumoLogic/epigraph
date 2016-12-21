@@ -31,12 +31,15 @@ import java.util.Map;
  *
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class GDataToData {
+public final class GDataToData {
   // todo attach location info to GData instances and propagate it to ProcessingExceptions
 
-  public static Data transform(@NotNull Type type,
-                               @NotNull GDataValue gdata,
-                               @NotNull TypesResolver resolver) throws ProcessingException {
+  private GDataToData() {}
+
+  public static Data transform(
+      @NotNull Type type,
+      @NotNull GDataValue gdata,
+      @NotNull TypesResolver resolver) throws ProcessingException {
 
     if (gdata instanceof GData) {
       GData gData = (GData) gdata;
@@ -79,19 +82,19 @@ public class GDataToData {
     } else throw new IllegalArgumentException(gdata.getClass().getName());
   }
 
-  @NotNull
-  public static Val transform(@NotNull DatumType type,
-                              @NotNull GDatum gdata,
-                              @NotNull TypesResolver resolver) throws ProcessingException {
+  public static @NotNull Val transform(
+      @NotNull DatumType type,
+      @NotNull GDatum gdata,
+      @NotNull TypesResolver resolver) throws ProcessingException {
     @Nullable Datum datum = transformDatum(type, gdata, resolver);
     if (datum == null) return type.createValue(null);
     else return toVal(datum);
   }
 
-  @Nullable
-  public static Datum transformDatum(@NotNull DatumType type,
-                                     @NotNull GDatum gdata,
-                                     @NotNull TypesResolver resolver) throws ProcessingException {
+  public static @Nullable Datum transformDatum(
+      @NotNull DatumType type,
+      @NotNull GDatum gdata,
+      @NotNull TypesResolver resolver) throws ProcessingException {
 
     if (gdata instanceof GNullDatum) {
       return null;
@@ -129,17 +132,18 @@ public class GDataToData {
       return transform((ListType) type, (GListDatum) gdata, resolver);
     } else {
       // TODO Enum
-      throw new ProcessingException(String.format("Don't know how to handle '%s'", type.getClass().getName()),
-                                    gdata.location()
+      throw new ProcessingException(
+          String.format("Don't know how to handle '%s'", type.getClass().getName()),
+          gdata.location()
       );
     }
   }
 
 
-  @NotNull
-  public static RecordDatum transform(@NotNull RecordType type,
-                                      @NotNull GRecordDatum gdata,
-                                      @NotNull TypesResolver resolver) throws ProcessingException {
+  public static @NotNull RecordDatum transform(
+      @NotNull RecordType type,
+      @NotNull GRecordDatum gdata,
+      @NotNull TypesResolver resolver) throws ProcessingException {
     @Nullable TypeRef typeRef = gdata.typeRef();
     if (typeRef != null) type = resolveType(typeRef, RecordType.class, resolver, gdata.location());
 
@@ -150,8 +154,9 @@ public class GDataToData {
       RecordType.Field field = type.fieldsMap().get(fieldName);
 
       if (field == null)
-        throw new ProcessingException(String.format("Can't find field '%s' in type '%s'", fieldName, type.name()),
-                                      gdata.location()
+        throw new ProcessingException(
+            String.format("Can't find field '%s' in type '%s'", fieldName, type.name()),
+            gdata.location()
         );
 
       Data fieldData = transform(field.dataType.type, entry.getValue(), resolver);
@@ -162,9 +167,10 @@ public class GDataToData {
     return builder;
   }
 
-  public static MapDatum transform(@NotNull MapType type,
-                                   @NotNull GMapDatum gdata,
-                                   @NotNull TypesResolver resolver) throws ProcessingException {
+  public static MapDatum transform(
+      @NotNull MapType type,
+      @NotNull GMapDatum gdata,
+      @NotNull TypesResolver resolver) throws ProcessingException {
     @Nullable TypeRef typeRef = gdata.typeRef();
     if (typeRef != null) type = resolveType(typeRef, MapType.class, resolver, gdata.location());
 
@@ -185,9 +191,10 @@ public class GDataToData {
     return builder;
   }
 
-  public static ListDatum transform(@NotNull ListType type,
-                                    @NotNull GListDatum gdata,
-                                    @NotNull TypesResolver resolver) throws ProcessingException {
+  public static ListDatum transform(
+      @NotNull ListType type,
+      @NotNull GListDatum gdata,
+      @NotNull TypesResolver resolver) throws ProcessingException {
     @Nullable TypeRef typeRef = gdata.typeRef();
     if (typeRef != null) type = resolveType(typeRef, ListType.class, resolver, gdata.location());
 
@@ -205,9 +212,10 @@ public class GDataToData {
   // todo enum
 
   @SuppressWarnings("unchecked")
-  public static PrimitiveDatum<?> transform(@NotNull PrimitiveType<?> type,
-                                            @NotNull GPrimitiveDatum gdata,
-                                            @NotNull TypesResolver resolver) throws ProcessingException {
+  public static PrimitiveDatum<?> transform(
+      @NotNull PrimitiveType<?> type,
+      @NotNull GPrimitiveDatum gdata,
+      @NotNull TypesResolver resolver) throws ProcessingException {
     @Nullable TypeRef typeRef = gdata.typeRef();
     if (typeRef != null) type = resolveType(typeRef, PrimitiveType.class, resolver, gdata.location());
 
@@ -226,16 +234,17 @@ public class GDataToData {
 
     try {
       return ((PrimitiveType<Object>) type).createBuilder(n);
-    } catch (ClassCastException e) {
+    } catch (ClassCastException ignored) {
       throw new ProcessingException("Can't convert '" + n + "' to '" + type.name() + "'", gdata.location());
     }
   }
 
   @SuppressWarnings("unchecked")
-  private static <T extends Type> T resolveType(@NotNull TypeRef ref,
-                                                @NotNull Class<T> expectedClass,
-                                                @NotNull TypesResolver resolver,
-                                                @NotNull TextLocation location) throws ProcessingException {
+  private static <T extends Type> T resolveType(
+      @NotNull TypeRef ref,
+      @NotNull Class<T> expectedClass,
+      @NotNull TypesResolver resolver,
+      @NotNull TextLocation location) throws ProcessingException {
     @Nullable Type type = ref.resolve(resolver);
     if (type == null) throw new ProcessingException("Can't resolve type '" + ref + "'", location);
 
@@ -258,22 +267,19 @@ public class GDataToData {
 //    return type.createValue(null);
 //  }
 
-  @NotNull
-  private static Val.Imm toVal(@NotNull Datum datum) {
+  private static @NotNull Val.Imm toVal(@NotNull Datum datum) {
     return datum.toImmutable().asValue();
   }
 
   public static class ProcessingException extends Exception {
-    @NotNull
-    private final TextLocation location;
+    private final @NotNull TextLocation location;
 
     ProcessingException(String message, @NotNull TextLocation location) {
       super(message);
       this.location = location;
     }
 
-    @NotNull
-    public TextLocation location() {
+    public @NotNull TextLocation location() {
       return location;
     }
   }

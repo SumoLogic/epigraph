@@ -33,9 +33,11 @@ object JavaGenUtils {
 
   def spaces(i: Int): String = spacesCache.getOrElseUpdate(i, " " * i)
 
-  def indentButFirstLine(s: String, indent: Int): String =
-    if (indent == 0) s
-    else s.lines.zipWithIndex.map{ case (l, i) => if (i == 0) l else spaces(indent) + l }.mkString("\n")
+  def indentButFirstLine(s: String, indent: Int): String = indentButFirstLine(s, spaces(indent))
+
+  def indentButFirstLine(s: String, indent: String): String =
+    if (indent.isEmpty || !s.contains('\n')) s
+    else s.lines.zipWithIndex.map{ case (l, i) => if (i == 0) l else indent + l }.mkString("\n")
 
   def indent(s: String, indent: Int): String =
     if (indent == 0) s
