@@ -28,10 +28,7 @@ object NewlineStringInterpolator {
 
   implicit class NewlineHelper(private val sc: StringContext) extends AnyVal {
 
-    def sn(args: Any*): String = sc.standardInterpolator(
-      treatEscapesWithNewline,
-      indentTexts(sc, args)
-    )
+    def sn(args: Any*): String = sc.standardInterpolator(treatEscapesWithNewline, indentTexts(sc, args))
 
   }
 
@@ -42,11 +39,10 @@ object NewlineStringInterpolator {
 
       def indentText(t: TextToIndent, i: Int) = JavaGenUtils.indentButFirstLine(t.s, i)
 
-      val r = sc.parts.zip(args).map{
+      sc.parts.zip(args).map{
         case (s: String, t: TextToIndent) => indentText(t, getIndent(s))
         case (_, x) => x
       }
-      r
     } else args
 
   private def treatEscapesWithNewline(str: String): String = {
