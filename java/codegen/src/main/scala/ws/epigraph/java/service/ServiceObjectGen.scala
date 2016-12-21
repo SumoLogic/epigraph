@@ -16,9 +16,11 @@
 
 package ws.epigraph.java.service
 
-import ws.epigraph.gdata.GDatum
-import ws.epigraph.java.service.gdata.GDatumGen
+import ws.epigraph.gdata.{GData, GDatum}
+import ws.epigraph.java.service.gdata.{GDataGen, GDatumGen}
+import ws.epigraph.java.service.projections.{AnnotationGen, AnnotationsGen}
 import ws.epigraph.lang.{Qn, TextLocation}
+import ws.epigraph.projections.{Annotation, Annotations}
 import ws.epigraph.refs.{TypeRef, ValueTypeRef}
 
 /**
@@ -45,7 +47,10 @@ object ServiceObjectGen {
       case tr: TypeRef => new TypeRefGen(tr).generate(ctx)
       case vtr: ValueTypeRef => new ValueTypeRefGen(vtr).generate(ctx)
       case tl: TextLocation => new TextLocationGen(tl).generate(ctx)
+      case gdata: GData => new GDataGen(gdata).generate(ctx)
       case gdatum: GDatum => new GDatumGen(gdatum).generate(ctx)
+      case ann: Annotation => new AnnotationGen(ann).generate(ctx)
+      case anns: Annotations => new AnnotationsGen(anns).generate(ctx)
       case _ =>
         try {
           new NativePrimitiveGen(obj).generate(ctx)

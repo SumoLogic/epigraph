@@ -26,12 +26,9 @@ import java.util.*;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpParam {
-  @NotNull
-  private final String name;
-  @NotNull
-  private final OpInputModelProjection<?, ?, ?> projection;
-  @NotNull
-  private final TextLocation location;
+  private final @NotNull String name;
+  private final @NotNull OpInputModelProjection<?, ?, ?> projection;
+  private final @NotNull TextLocation location;
 
   public OpParam(@NotNull String name,
                  @NotNull OpInputModelProjection<?, ?, ?> projection,
@@ -43,14 +40,11 @@ public class OpParam {
 
   // note: annotations are on the model projection
 
-  @NotNull
-  public String name() { return name; }
+  public @NotNull String name() { return name; }
 
-  @NotNull
-  public OpInputModelProjection<?, ?, ?> projection() { return projection; }
+  public @NotNull OpInputModelProjection<?, ?, ?> projection() { return projection; }
 
-  @NotNull
-  public TextLocation location() { return location; }
+  public @NotNull TextLocation location() { return location; }
 
   @Override
   public boolean equals(Object o) {

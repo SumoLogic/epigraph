@@ -28,16 +28,13 @@ import java.util.stream.Stream;
 public class OpParams {
   public static final OpParams EMPTY = new OpParams(Collections.emptyMap());
 
-  @NotNull
-  private final Map<String, OpParam> params;
+  private final @NotNull Map<String, OpParam> params;
 
-  @NotNull
-  public static OpParams fromMap(@Nullable Map<String, OpParam> params) {
+  public static @NotNull OpParams fromMap(@Nullable Map<String, OpParam> params) {
     return params == null ? EMPTY : new OpParams(params);
   }
 
-  @NotNull
-  public static OpParams fromCollection(@Nullable Collection<OpParam> params) {
+  public static @NotNull OpParams fromCollection(@Nullable Collection<OpParam> params) {
     return params == null ? EMPTY : new OpParams(params);
   }
 
@@ -59,14 +56,11 @@ public class OpParams {
 
   public boolean isEmpty() { return params.isEmpty(); }
 
-  @Nullable
-  public OpParam get(@NotNull String key) { return params.get(key); }
+  public @Nullable OpParam get(@NotNull String key) { return params.get(key); }
 
-  @NotNull
-  public Map<String, OpParam> asMap() { return params; }
+  public @NotNull Map<String, OpParam> asMap() { return params; }
 
-  @NotNull
-  public static OpParams merge(@NotNull Stream<OpParams> paramsToMerge) {
+  public static @NotNull OpParams merge(@NotNull Stream<OpParams> paramsToMerge) {
     // using `reduce` would produce too much garbage
 
     Map<String, OpParam> entries = new HashMap<>();
@@ -82,8 +76,7 @@ public class OpParams {
     return new OpParams(entries);
   }
 
-  @NotNull
-  public static OpParams merge(@NotNull Collection<OpParams> paramsToMerge) {
+  public static @NotNull OpParams merge(@NotNull Collection<OpParams> paramsToMerge) {
     if (paramsToMerge.isEmpty()) return EMPTY;
     if (paramsToMerge.size() == 1) return paramsToMerge.iterator().next();
 

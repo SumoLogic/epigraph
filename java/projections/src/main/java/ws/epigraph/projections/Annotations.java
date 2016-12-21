@@ -31,11 +31,9 @@ import java.util.stream.Stream;
 public class Annotations {
   public static final Annotations EMPTY = new Annotations(Collections.emptyMap());
 
-  @NotNull
-  private final Map<String, Annotation> entries;
+  private final @NotNull Map<String, Annotation> entries;
 
-  @NotNull
-  public static Annotations fromMap(@Nullable Map<String, Annotation> entries) {
+  public static @NotNull Annotations fromMap(@Nullable Map<String, Annotation> entries) {
     return entries == null ? EMPTY : new Annotations(entries);
   }
 
@@ -47,17 +45,14 @@ public class Annotations {
 
   public boolean isEmpty() { return entries.isEmpty(); }
 
-  @Nullable
-  public GDataValue get(@NotNull String key) {
+  public @Nullable GDataValue get(@NotNull String key) {
     Annotation annotation = entries.get(key);
     return annotation == null ? null : annotation.value();
   }
 
-  @NotNull
-  public Map<String, Annotation> asMap() { return entries; }
+  public @NotNull Map<String, Annotation> asMap() { return entries; }
 
-  @NotNull
-  public static Annotations merge(@NotNull Stream<Annotations> annotationsToMerge) {
+  public static @NotNull Annotations merge(@NotNull Stream<Annotations> annotationsToMerge) {
     Map<String, Annotation> entries = new HashMap<>();
 
     annotationsToMerge.forEach(annotations -> {
@@ -71,8 +66,7 @@ public class Annotations {
     return new Annotations(entries);
   }
 
-  @NotNull
-  public static Annotations merge(@NotNull Collection<Annotations> annotationsToMerge) {
+  public static @NotNull Annotations merge(@NotNull Collection<Annotations> annotationsToMerge) {
     if (annotationsToMerge.isEmpty()) return EMPTY;
     if (annotationsToMerge.size() == 1) return annotationsToMerge.iterator().next();
 

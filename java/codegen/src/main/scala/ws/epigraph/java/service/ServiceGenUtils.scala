@@ -42,11 +42,24 @@ object ServiceGenUtils {
     keyType: String,
     valueType: String,
     entries: Iterable[(String, String)],
+    ctx: ServiceGenContext): String = genMap("LinkedHashMap", keyType, valueType, entries, ctx)
+
+  def genHashMap(
+    keyType: String,
+    valueType: String,
+    entries: Iterable[(String, String)],
+    ctx: ServiceGenContext): String = genMap("HashMap", keyType, valueType, entries, ctx)
+
+  def genMap(
+    mapClass: String,
+    keyType: String,
+    valueType: String,
+    entries: Iterable[(String, String)],
     ctx: ServiceGenContext): String = {
 
-    ctx.addImport("java.util.LinkedHashMap")
+    ctx.addImport(s"java.util.$mapClass")
 
-    if (entries.isEmpty) s"new LinkedHashMap<$keyType, $valueType>()"
+    if (entries.isEmpty) s"new $mapClass<$keyType, $valueType>()"
     else {
       ctx.addImport("java.util.AbstractMap")
       ctx.addImport("java.util.Map")
@@ -58,7 +71,7 @@ object ServiceGenUtils {
       generatedEntries.mkString(
         s"Stream.<AbstractMap.Entry<$keyType, $valueType>>of(\n",
         ",\n",
-        "\n).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (x, y) -> y, LinkedHashMap::new))"
+        s"\n).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (x, y) -> y, $mapClass::new))"
       )
     }
   }

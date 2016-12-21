@@ -5,6 +5,7 @@ dependencies {
   compile project(':epigraph-java-core')
   compile project(':epigraph-java-gdata')
   compile project(':epigraph-java-lang-common')
+  compile project(':epigraph-java-projections')
   compile project(':epigraph-java-util')
 
   compile 'org.scala-lang:scala-library'
