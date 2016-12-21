@@ -1,4 +1,4 @@
-Epigraph Declarations file(0,96)
+Epigraph Schema file(0,96)
   SchemaNamespaceDeclImpl(S_NAMESPACE_DECL)(0,13)
     PsiElement(namespace)('namespace')(0,9)
     SchemaQnImpl(S_QN)(10,13)

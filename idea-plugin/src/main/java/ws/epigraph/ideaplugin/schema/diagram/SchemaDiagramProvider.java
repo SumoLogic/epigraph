@@ -75,7 +75,7 @@ public class SchemaDiagramProvider extends DiagramProvider<PsiNamedElement> {
 
   @Override
   public String getPresentableName() {
-    return "Epigraph Declarations Diagram";
+    return "Epigraph Schema Diagram";
   }
 
   @NotNull

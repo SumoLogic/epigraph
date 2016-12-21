@@ -40,8 +40,7 @@ public class OpInputListModelProjection
     ListType
     > {
 
-  @NotNull
-  private OpInputVarProjection itemsProjection;
+  private final @NotNull OpInputVarProjection itemsProjection;
 
   public OpInputListModelProjection(
       @NotNull ListType model,
@@ -56,8 +55,8 @@ public class OpInputListModelProjection
     this.itemsProjection = itemsProjection;
   }
 
-  @NotNull
-  public OpInputVarProjection itemsProjection() { return itemsProjection; }
+  @Override
+  public @NotNull OpInputVarProjection itemsProjection() { return itemsProjection; }
 
   @Override
   public boolean equals(Object o) {

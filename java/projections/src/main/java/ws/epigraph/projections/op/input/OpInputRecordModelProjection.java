@@ -45,8 +45,7 @@ public class OpInputRecordModelProjection
     RecordType
     > {
 
-  @NotNull
-  private Map<String, OpInputFieldProjectionEntry> fieldProjections;
+  private final @NotNull Map<String, OpInputFieldProjectionEntry> fieldProjections;
 
   public OpInputRecordModelProjection(
       @NotNull RecordType model,
@@ -64,13 +63,12 @@ public class OpInputRecordModelProjection
     RecordModelProjectionHelper.checkFieldsBelongsToModel(fieldProjections.keySet(), model);
   }
 
-  @NotNull
-  public static LinkedHashSet<OpInputFieldProjectionEntry> fields(OpInputFieldProjectionEntry... fieldProjections) {
+  public static @NotNull LinkedHashSet<OpInputFieldProjectionEntry> fields(OpInputFieldProjectionEntry... fieldProjections) {
     return new LinkedHashSet<>(Arrays.asList(fieldProjections));
   }
 
-  @NotNull
-  public Map<String, OpInputFieldProjectionEntry> fieldProjections() { return fieldProjections; }
+  @Override
+  public @NotNull Map<String, OpInputFieldProjectionEntry> fieldProjections() { return fieldProjections; }
 
   public void addFieldProjectionEntry(@NotNull OpInputFieldProjectionEntry fieldProjection) {
     fieldProjections.put(fieldProjection.field().name(), fieldProjection);

@@ -21,7 +21,7 @@ package ws.epigraph.schema.parser;
  */
 public final class Common {
   public static final String FILE_EXTENSION = "epigraph";
-  public static final String DESCRIPTION = "Epigraph Declarations";
+  public static final String DESCRIPTION = "Epigraph Schema";
 
   private Common() {}
 }

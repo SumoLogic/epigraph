@@ -40,10 +40,8 @@ public class OpInputMapModelProjection
     MapType
     > {
 
-  @NotNull
-  private final OpInputKeyProjection keyProjection;
-  @NotNull
-  private final OpInputVarProjection itemsProjection;
+  private final @NotNull OpInputKeyProjection keyProjection;
+  private final @NotNull OpInputVarProjection itemsProjection;
 
   public OpInputMapModelProjection(
       @NotNull MapType model,
@@ -62,8 +60,8 @@ public class OpInputMapModelProjection
 
   public @NotNull OpInputKeyProjection keyProjection() { return keyProjection; }
 
-  @NotNull
-  public OpInputVarProjection itemsProjection() { return itemsProjection; }
+  @Override
+  public @NotNull OpInputVarProjection itemsProjection() { return itemsProjection; }
 
   @Override
   public boolean equals(final Object o) {

@@ -14,27 +14,18 @@
  * limitations under the License.
  */
 
-package ws.epigraph.projections.op.input;
+package ws.epigraph.java.service.projections.op
 
-import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.abs.AbstractFieldProjectionEntry;
-import ws.epigraph.types.RecordType;
-import org.jetbrains.annotations.NotNull;
+import ws.epigraph.java.service.{ServiceGenContext, ServiceObjectGen}
+import ws.epigraph.projections.op.OpKeyPresence
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class OpInputFieldProjectionEntry extends AbstractFieldProjectionEntry<
-    OpInputVarProjection,
-    OpInputTagProjectionEntry,
-    OpInputModelProjection<?, ?,?>,
-    OpInputFieldProjection
-    > {
-
-  public OpInputFieldProjectionEntry(
-      @NotNull RecordType.Field field,
-      @NotNull OpInputFieldProjection projection,
-      @NotNull TextLocation location) {
-    super(field, projection, location);
+class OpKeyPresenceGen(kp: OpKeyPresence) extends ServiceObjectGen[OpKeyPresence](kp) {
+  override protected def generateObject(ctx: ServiceGenContext): String = kp match {
+    case OpKeyPresence.REQUIRED => "OpKeyPresence.REQUIRED"
+    case OpKeyPresence.FORBIDDEN => "OpKeyPresence.FORBIDDEN"
+    case _ => "OpKeyPresence.OPTIONAL"
   }
 }

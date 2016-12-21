@@ -32,8 +32,11 @@ public class OpInputKeyProjection extends OpKeyProjection {
   private final @NotNull OpKeyPresence presence;
 
   public OpInputKeyProjection(
-      final @NotNull OpKeyPresence presence, final @NotNull OpParams params,
-      final @NotNull Annotations annotations, final @NotNull TextLocation location) {
+      final @NotNull OpKeyPresence presence,
+      final @NotNull OpParams params,
+      final @NotNull Annotations annotations,
+      final @NotNull TextLocation location) {
+
     super(params, annotations, location);
     this.presence = presence;
   }

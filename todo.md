@@ -49,7 +49,12 @@
 - [ ] Add `throws` to op projections: `someField throws ( Error(message) ~MyError(code) )`
 - [ ] Add `catch` to req projections: `someField throws ( Error(message) ~MyError(code) )`
 
-# Operations  
+# Operations
+-[ ] Operations code gen
+  -[ ] Op input projections code gen
+    -[ ] Add support for defaults
+  -[ ] Op output projections code gen
+  -[ ] Op delete projections code gen
 
 # Service
 

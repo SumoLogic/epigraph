@@ -37,8 +37,7 @@ public abstract class OpInputModelProjection<
     extends AbstractOpModelProjection<MP, M> {
 
   protected final boolean required;
-  @Nullable
-  protected final D defaultValue;
+  protected final @Nullable D defaultValue;
 
   protected OpInputModelProjection(
       @NotNull M model,
@@ -56,8 +55,7 @@ public abstract class OpInputModelProjection<
 
   public boolean required() { return required; }
 
-  @Nullable
-  public D defaultValue() { return defaultValue; }
+  public @Nullable D defaultValue() { return defaultValue; }
 
   @Override
   public boolean equals(Object o) {

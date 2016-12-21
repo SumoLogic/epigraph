@@ -18,8 +18,12 @@ package ws.epigraph.java.service
 
 import ws.epigraph.gdata.{GData, GDatum}
 import ws.epigraph.java.service.gdata.{GDataGen, GDatumGen}
+import ws.epigraph.java.service.projections.op.input._
+import ws.epigraph.java.service.projections.op.{OpKeyPresenceGen, OpParamGen, OpParamsGen}
 import ws.epigraph.java.service.projections.{AnnotationGen, AnnotationsGen}
 import ws.epigraph.lang.{Qn, TextLocation}
+import ws.epigraph.projections.op.input._
+import ws.epigraph.projections.op.{OpKeyPresence, OpParam, OpParams}
 import ws.epigraph.projections.{Annotation, Annotations}
 import ws.epigraph.refs.{TypeRef, ValueTypeRef}
 
@@ -43,14 +47,30 @@ object ServiceObjectGen {
   def gen(obj: Any, ctx: ServiceGenContext): String =
     if (obj == null) "null"
     else obj match {
+
       case qn: Qn => new QnGen(qn).generate(ctx)
       case tr: TypeRef => new TypeRefGen(tr).generate(ctx)
       case vtr: ValueTypeRef => new ValueTypeRefGen(vtr).generate(ctx)
       case tl: TextLocation => new TextLocationGen(tl).generate(ctx)
+
       case gdata: GData => new GDataGen(gdata).generate(ctx)
       case gdatum: GDatum => new GDatumGen(gdatum).generate(ctx)
+
       case ann: Annotation => new AnnotationGen(ann).generate(ctx)
       case anns: Annotations => new AnnotationsGen(anns).generate(ctx)
+
+      case param: OpParam => new OpParamGen(param).generate(ctx)
+      case params: OpParams => new OpParamsGen(params).generate(ctx)
+      case kp: OpKeyPresence => new OpKeyPresenceGen(kp).generate(ctx)
+
+      case oivp: OpInputVarProjection => new OpInputVarProjectionGen(oivp).generate(ctx)
+      case oirmp: OpInputRecordModelProjection => new OpInputRecordModelProjectionGen(oirmp).generate(ctx)
+      case oifp: OpInputFieldProjection => new OpInputFieldProjectionGen(oifp).generate(ctx)
+      case oimmp: OpInputMapModelProjection => new OpInputMapModelProjectionGen(oimmp).generate(ctx)
+      case oikp: OpInputKeyProjection => new OpInputKeyProjectionGen(oikp).generate(ctx)
+      case oilmp: OpInputListModelProjection => new OpInputListModelProjectionGen(oilmp).generate(ctx)
+      case oipmp: OpInputPrimitiveModelProjection => new OpInputPrimitiveModelProjectionGen(oipmp).generate(ctx)
+
       case _ =>
         try {
           new NativePrimitiveGen(obj).generate(ctx)

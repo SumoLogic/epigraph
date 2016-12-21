@@ -33,7 +33,7 @@ public class OpInputPrimitiveModelProjection
     implements GenPrimitiveModelProjection<OpInputPrimitiveModelProjection, PrimitiveType<?>> {
 
   public OpInputPrimitiveModelProjection(
-      @NotNull PrimitiveType model,
+      @NotNull PrimitiveType<?> model,
       boolean required,
       @Nullable PrimitiveDatum<?> defaultValue,
       @NotNull OpParams params,

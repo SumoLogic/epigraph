@@ -25,9 +25,10 @@ import org.jetbrains.annotations.Nullable;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class TypeReferenceFactory {
-  @NotNull
-  public static TypeRef createReference(@NotNull Type type) {
+public final class TypeReferenceFactory {
+  private TypeReferenceFactory() {}
+
+  public static @NotNull TypeRef createReference(@NotNull Type type) {
     if (type instanceof AnonListType) {
       final AnonListType anonListType = (AnonListType) type;
       return createAnonListReference(anonListType.elementType());
@@ -35,12 +36,12 @@ public class TypeReferenceFactory {
 
     if (type instanceof AnonMapType) {
       final AnonMapType anonMapType = (AnonMapType) type;
-      @NotNull final DatumType keyType = anonMapType.keyType();
-      @NotNull final DataType valueType = anonMapType.valueType();
+      final @NotNull DatumType keyType = anonMapType.keyType();
+      final @NotNull DataType valueType = anonMapType.valueType();
       return createAnonMapReference(keyType, valueType);
     }
 
-    @NotNull final TypeName typeName = type.name();
+    final @NotNull TypeName typeName = type.name();
     if (typeName instanceof QualifiedTypeName) {
       QualifiedTypeName qualifiedTypeName = (QualifiedTypeName) typeName;
       return new QnTypeRef(qualifiedTypeName.toFqn());
@@ -48,29 +49,25 @@ public class TypeReferenceFactory {
       throw new IllegalArgumentException("Don't know how to handle " + type.getClass().getName());
   }
 
-  @NotNull
-  public static AnonListRef createAnonListReference(@NotNull DataType itemType) {
+  public static @NotNull AnonListRef createAnonListReference(@NotNull DataType itemType) {
     return new AnonListRef(
       createValueTypeReference(itemType)
     );
   }
 
-  @NotNull
-  public static AnonMapRef createAnonMapReference(@NotNull DatumType keyType, @NotNull DataType valueType) {
+  public static @NotNull AnonMapRef createAnonMapReference(@NotNull DatumType keyType, @NotNull DataType valueType) {
     return new AnonMapRef(
         createReference(keyType),
         createValueTypeReference(valueType)
     );
   }
 
-  @NotNull
-  public static ValueTypeRef createValueTypeReference(@NotNull DataType dataType) {
-    @Nullable
-    final Type.Tag defaultTag = dataType.defaultTag;
+  public static @NotNull ValueTypeRef createValueTypeReference(@NotNull DataType dataType) {
+    final @Nullable Type.Tag defaultTag = dataType.defaultTag;
     final String defaultTagName = defaultTag == null ? null : defaultTag.name();
 
-    @NotNull final Type type = dataType.type;
-    @NotNull final TypeRef typeRef = createReference(type);
+    final @NotNull Type type = dataType.type;
+    final @NotNull TypeRef typeRef = createReference(type);
 
     return new ValueTypeRef(typeRef, defaultTagName);
   }

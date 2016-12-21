@@ -70,6 +70,6 @@ public class SchemaFile extends PsiFileBase {
 
   @Override
   public String toString() {
-    return "Epigraph Declarations file";
+    return "Epigraph Schema file";
   }
 }

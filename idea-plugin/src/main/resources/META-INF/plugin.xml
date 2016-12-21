@@ -128,7 +128,7 @@
         language="epigraph_schema"
         shortName="DuplicateImport"
         displayName="Duplicate imports"
-        groupPath="Epigraph, SCHEMA"
+        groupPath="Epigraph, Schema"
         groupName="Imports"
         enabledByDefault="true"
         level="WARNING"
@@ -137,7 +137,7 @@
         language="epigraph_schema"
         shortName="UnnecessaryImport"
         displayName="Unnecessary imports"
-        groupPath="Epigraph, SCHEMA"
+        groupPath="Epigraph, Schema"
         groupName="Imports"
         enabledByDefault="true"
         level="WARNING"
@@ -146,7 +146,7 @@
         language="epigraph_schema"
         shortName="UnusedImport"
         displayName="Unused imports"
-        groupPath="Epigraph, SCHEMA"
+        groupPath="Epigraph, Schema"
         groupName="Imports"
         enabledByDefault="true"
         level="WARNING"
@@ -155,7 +155,7 @@
         language="epigraph_schema"
         shortName="ConflictingImport"
         displayName="Conflicting imports"
-        groupPath="Epigraph, SCHEMA"
+        groupPath="Epigraph, Schema"
         groupName="Imports"
         enabledByDefault="true"
         level="ERROR"
@@ -174,7 +174,7 @@
   <actions>
     <action class="ws.epigraph.ideaplugin.schema.features.actions.CreateSchemaFileAction"
             id="Epigraph.NewSchemaFile"
-            text="Epigraph SCHEMA" description="Create new Epigraph Declarations file">
+            text="Epigraph Schema" description="Create new Epigraph Schema file">
       <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFile"/>
     </action>
   </actions>
