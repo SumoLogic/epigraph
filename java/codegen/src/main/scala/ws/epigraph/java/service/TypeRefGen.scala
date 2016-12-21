@@ -16,6 +16,7 @@
 
 package ws.epigraph.java.service
 
+import ws.epigraph.java.service.ServiceObjectGen.gen
 import ws.epigraph.refs.{AnonListRef, AnonMapRef, QnTypeRef, TypeRef}
 
 /**
@@ -23,15 +24,15 @@ import ws.epigraph.refs.{AnonListRef, AnonMapRef, QnTypeRef, TypeRef}
  */
 class TypeRefGen(ref: TypeRef) extends ServiceObjectGen[TypeRef](ref) {
 
-  override protected def generateObjectNoIndent(ctx: ServiceGenContext): String = ref match {
+  override protected def generateObject(ctx: ServiceGenContext): String = ref match {
     case qr: QnTypeRef =>
-      s"new QnTypeRef(${new QnGen(qr.qn()).generate(ctx)})"
+      s"new QnTypeRef(${gen(qr.qn(), ctx)})"
 
     case lr: AnonListRef =>
-      s"new AnonListRef(${new ValueTypeRefGen(lr.itemsType()).generate(ctx)})"
+      s"new AnonListRef(${gen(lr.itemsType(), ctx)})"
 
     case mr: AnonMapRef =>
-      s"new AnonMapRef(${new TypeRefGen(mr.keysType()).generate(ctx)}, ${new ValueTypeRefGen(mr.itemsType()).generate(ctx)})"
+      s"new AnonMapRef(${gen(mr.keysType(), ctx)}, ${gen(mr.itemsType(), ctx)})"
 
     case _ => throw new IllegalArgumentException("Unknown ref type: " + ref.getClass.getName)
   }

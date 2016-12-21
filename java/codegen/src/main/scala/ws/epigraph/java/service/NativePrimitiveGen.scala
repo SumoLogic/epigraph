@@ -16,18 +16,16 @@
 
 package ws.epigraph.java.service
 
-import ws.epigraph.java.service.ServiceObjectGen.gen
-import ws.epigraph.refs.ValueTypeRef
-
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-class ValueTypeRefGen(ref: ValueTypeRef) extends ServiceObjectGen[ValueTypeRef](ref) {
-
-  override protected def generateObject(ctx: ServiceGenContext): String = {
-    val o = ref.defaultOverride()
-    val os = if (o == null) "null" else "\"$o\""
-    s"new ValueTypeRef(${gen(ref.typeRef(), ctx)}, $os)"
+class NativePrimitiveGen(obj: Any) extends AbstractServiceGen {
+  override def generate(ctx: ServiceGenContext): String = obj match {
+    case s: java.lang.String => s"""$s"""
+    case i: java.lang.Integer => s"Integer.valueOf($i)"
+    case l: java.lang.Long => s"Long.valueOf($l)"
+    case f: java.lang.Float => s"Float.valueOf(d)"
+    case d: java.lang.Double => s"Double.valueOf(d)"
+    case _ => throw new IllegalArgumentException("Unsupported native primitive kind: " + obj.getClass.getName)
   }
-
 }

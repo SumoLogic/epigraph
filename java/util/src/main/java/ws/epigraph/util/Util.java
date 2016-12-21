@@ -75,8 +75,7 @@ public interface Util {
     return (Map<? extends K, ? extends V>) map;
   }
 
-  @NotNull
-  static <V> List<V> tail(@NotNull List<V> list) {
+  static @NotNull <V> List<V> tail(@NotNull List<V> list) {
     if (list.isEmpty()) throw new IllegalArgumentException("Can't remove head from an empty list");
     return list.subList(1, list.size());
   }

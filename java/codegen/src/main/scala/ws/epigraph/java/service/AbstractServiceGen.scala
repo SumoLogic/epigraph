@@ -20,20 +20,5 @@ package ws.epigraph.java.service
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 trait AbstractServiceGen {
-  protected def generateNoIndent(ctx: ServiceGenContext): String
-
-  final def generate(ctx: ServiceGenContext): String = generate(0, ctx)
-
-  final def generate(indent: Int, ctx: ServiceGenContext): String = {
-    val g = generateNoIndent(ctx)
-    if (indent == 0) g
-    // assuming current line is already properly indented
-    else g.lines.zipWithIndex.map{ case (l, i) => if (i == 0) l else AbstractServiceGen.spaces(indent) }.mkString("\n")
-  }
-}
-
-object AbstractServiceGen {
-  private val spacesCache = new scala.collection.mutable.HashMap[Int, String]
-
-  def spaces(i: Int): String = spacesCache.getOrElseUpdate(i, " " * i)
+  def generate(ctx: ServiceGenContext): String
 }

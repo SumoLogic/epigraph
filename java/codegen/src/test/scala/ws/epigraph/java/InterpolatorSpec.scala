@@ -14,20 +14,36 @@
  * limitations under the License.
  */
 
-package ws.epigraph.java.service
+package ws.epigraph.java
 
-import ws.epigraph.java.service.ServiceObjectGen.gen
-import ws.epigraph.refs.ValueTypeRef
+import org.scalatest.{FlatSpec, Matchers}
+import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
+import ws.epigraph.java.NewlineStringInterpolator.i
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-class ValueTypeRefGen(ref: ValueTypeRef) extends ServiceObjectGen[ValueTypeRef](ref) {
+class InterpolatorSpec extends FlatSpec with Matchers {
+  "NS Interpolator" should "correctly treat new lines" in {
+//    val s = /*@formatter:off*/sn"""\
+//foo
+//bar
+//""" //@formatter:on
+//    s shouldEqual "foo\nbar\n"
+  }
 
-  override protected def generateObject(ctx: ServiceGenContext): String = {
-    val o = ref.defaultOverride()
-    val os = if (o == null) "null" else "\"$o\""
-    s"new ValueTypeRef(${gen(ref.typeRef(), ctx)}, $os)"
+  it should "insert proper indents" in {
+    val s = /*@formatter:off*/sn"""\
+foo
+  bar
+""" //@formatter:on
+
+    val w = /*@formatter:off*/sn"""\
+  baz
+  ${i(s)}
+""" //@formatter:on
+
+    w shouldEqual "  baz\n  foo\n    bar\n"
   }
 
 }

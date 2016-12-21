@@ -3,8 +3,12 @@ apply plugin: 'scala'
 dependencies {
   compile project(':epigraph-compiler')
   compile project(':epigraph-java-core')
+  compile project(':epigraph-java-gdata')
   compile project(':epigraph-java-lang-common')
   compile project(':epigraph-java-util')
 
   compile 'org.scala-lang:scala-library'
+
+  testCompile "org.scalatest:scalatest_$scalaVersionMajorMinor"
+  testCompile 'junit:junit'
 }

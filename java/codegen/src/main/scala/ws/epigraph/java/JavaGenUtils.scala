@@ -19,7 +19,7 @@
 package ws.epigraph.java
 
 import java.io.{BufferedWriter, OutputStream, OutputStreamWriter}
-import java.nio.charset.{Charset, CharsetEncoder, StandardCharsets}
+import java.nio.charset.{CharsetEncoder, StandardCharsets}
 import java.nio.file.{Files, Path, Paths, StandardOpenOption}
 
 import ws.epigraph.lang.Qn
@@ -27,8 +27,20 @@ import ws.epigraph.lang.Qn
 import scala.collection.JavaConversions._
 
 object JavaGenUtils {
+  private val spacesCache = new scala.collection.mutable.HashMap[Int, String]
 
   val EmptyPath: Path = Paths.get("")
+
+  def spaces(i: Int): String = spacesCache.getOrElseUpdate(i, " " * i)
+
+  def indentButFirstLine(s: String, indent: Int): String =
+    if (indent == 0) s
+    else s.lines.zipWithIndex.map{ case (l, i) => if (i == 0) l else spaces(indent) + l }.mkString("\n")
+
+  def indent(s: String, indent: Int): String =
+    if (indent == 0) s
+    else s.lines.map{ l => spaces(indent) + l }.mkString("\n")
+
 
   def fqnToPath(fqn: Qn): Path = if (fqn.isEmpty) EmptyPath else Paths.get(fqn.first, fqn.segments.tail: _*)
 

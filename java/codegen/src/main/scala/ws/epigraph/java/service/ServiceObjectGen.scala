@@ -16,15 +16,42 @@
 
 package ws.epigraph.java.service
 
+import ws.epigraph.gdata.GDatum
+import ws.epigraph.java.service.gdata.GDatumGen
+import ws.epigraph.lang.{Qn, TextLocation}
+import ws.epigraph.refs.{TypeRef, ValueTypeRef}
+
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 abstract class ServiceObjectGen[T](val obj: T) extends AbstractServiceGen {
 
-  override protected def generateNoIndent(ctx: ServiceGenContext) : String = {
-    ctx.addImport(obj.getClass.getCanonicalName)
-    generateObjectNoIndent(ctx)
+  override def generate(ctx: ServiceGenContext): String = {
+    if (obj == null) "null"
+    else {
+      ctx.addImport(obj.getClass.getCanonicalName)
+      generateObject(ctx)
+    }
   }
 
-  protected def generateObjectNoIndent(ctx: ServiceGenContext) : String
+  protected def generateObject(ctx: ServiceGenContext): String
+}
+
+object ServiceObjectGen {
+  def gen(obj: Any, ctx: ServiceGenContext): String =
+    if (obj == null) "null"
+    else obj match {
+      case qn: Qn => new QnGen(qn).generate(ctx)
+      case tr: TypeRef => new TypeRefGen(tr).generate(ctx)
+      case vtr: ValueTypeRef => new ValueTypeRefGen(vtr).generate(ctx)
+      case tl: TextLocation => new TextLocationGen(tl).generate(ctx)
+      case gdatum: GDatum => new GDatumGen(gdatum).generate(ctx)
+      case _ =>
+        try {
+          new NativePrimitiveGen(obj).generate(ctx)
+        } catch {
+          case iae: IllegalArgumentException =>
+            throw new IllegalArgumentException("Unsupported object kind: " + obj.getClass.getName)
+        }
+    }
 }

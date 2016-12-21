@@ -132,8 +132,8 @@ public class UrlGDataPsiParser {
   }
 
   @NotNull
-  public static GDataEnum parseEnum(@NotNull UrlEnumDatum psi) {
-    return new GDataEnum(psi.getQid().getCanonicalName(), EpigraphPsiUtil.getLocation(psi));
+  public static GEnumDatum parseEnum(@NotNull UrlEnumDatum psi) {
+    return new GEnumDatum(psi.getQid().getCanonicalName(), EpigraphPsiUtil.getLocation(psi));
   }
 
   @NotNull

@@ -135,8 +135,8 @@ public final class SchemaGDataPsiParser {
     return new GListDatum(getTypeRef(typeRef, errors), items, EpigraphPsiUtil.getLocation(psi));
   }
 
-  public static @NotNull GDataEnum parseEnum(@NotNull SchemaEnumDatum psi) {
-    return new GDataEnum(psi.getQid().getCanonicalName(), EpigraphPsiUtil.getLocation(psi));
+  public static @NotNull GEnumDatum parseEnum(@NotNull SchemaEnumDatum psi) {
+    return new GEnumDatum(psi.getQid().getCanonicalName(), EpigraphPsiUtil.getLocation(psi));
   }
 
   public static @NotNull GPrimitiveDatum parsePrimitive(@NotNull SchemaPrimitiveDatum psi, @NotNull List<PsiProcessingError> errors)

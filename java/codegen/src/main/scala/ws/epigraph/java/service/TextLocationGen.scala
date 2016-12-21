@@ -16,18 +16,17 @@
 
 package ws.epigraph.java.service
 
-import ws.epigraph.java.service.ServiceObjectGen.gen
-import ws.epigraph.refs.ValueTypeRef
+import ws.epigraph.lang.TextLocation
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-class ValueTypeRefGen(ref: ValueTypeRef) extends ServiceObjectGen[ValueTypeRef](ref) {
+class TextLocationGen(loc: TextLocation) extends ServiceObjectGen[TextLocation](loc) {
+  override protected def generateObject(ctx: ServiceGenContext): String =
+    if (loc.equals(TextLocation.UNKNOWN)) "TextLocation.UNKNOWN"
+    else
+      s"new TextLocation(${normalize(loc.startOffset())}, ${normalize(loc.startLine())}, ${normalize(loc.endOffset())}, ${normalize(loc.endLine())}, ${loc.fileName()})"
 
-  override protected def generateObject(ctx: ServiceGenContext): String = {
-    val o = ref.defaultOverride()
-    val os = if (o == null) "null" else "\"$o\""
-    s"new ValueTypeRef(${gen(ref.typeRef(), ctx)}, $os)"
-  }
-
+  private def normalize(pos: Int): String =
+    if (pos == TextLocation.UNKNOWN_POSITION) "TextLocation.UNKNOWN_POSITION" else pos.toString
 }

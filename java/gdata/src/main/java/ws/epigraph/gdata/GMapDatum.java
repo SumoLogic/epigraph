@@ -29,8 +29,7 @@ import java.util.stream.Collectors;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class GMapDatum extends GDatum {
-  @NotNull
-  private final LinkedHashMap<GDatum, GDataValue> entries;
+  private final @NotNull LinkedHashMap<GDatum, GDataValue> entries;
 
   public GMapDatum(@Nullable TypeRef typeRef,
                    @NotNull LinkedHashMap<GDatum, GDataValue> entries,
@@ -40,8 +39,7 @@ public class GMapDatum extends GDatum {
     this.entries = entries;
   }
 
-  @NotNull
-  public LinkedHashMap<GDatum, GDataValue> entries() { return entries; }
+  public @NotNull LinkedHashMap<GDatum, GDataValue> entries() { return entries; }
 
   @Override
   public boolean equals(Object o) {

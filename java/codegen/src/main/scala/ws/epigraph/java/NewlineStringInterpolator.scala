@@ -22,11 +22,32 @@ import scala.annotation.tailrec
 
 object NewlineStringInterpolator {
 
+  final class TextToIndent(val s: String)
+
+  def i(s: String) = new TextToIndent(s)
+
   implicit class NewlineHelper(private val sc: StringContext) extends AnyVal {
 
-    def sn(args: Any*): String = sc.standardInterpolator(treatEscapesWithNewline, args)
+    def sn(args: Any*): String = sc.standardInterpolator(
+      treatEscapesWithNewline,
+      indentTexts(sc, args)
+    )
 
   }
+
+  private def indentTexts(sc: StringContext, args: Seq[Any]): Seq[Any] =
+    if (args.exists{ _.isInstanceOf[TextToIndent] }) {
+
+      def getIndent(s: String) = s.lines.toStream.last.length // this is crude, improve as needed
+
+      def indentText(t: TextToIndent, i: Int) = JavaGenUtils.indentButFirstLine(t.s, i)
+
+      val r = sc.parts.zip(args).map{
+        case (s: String, t: TextToIndent) => indentText(t, getIndent(s))
+        case (_, x) => x
+      }
+      r
+    } else args
 
   private def treatEscapesWithNewline(str: String): String = {
 

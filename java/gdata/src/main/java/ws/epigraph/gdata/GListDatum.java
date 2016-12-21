@@ -21,24 +21,24 @@ import ws.epigraph.refs.TypeRef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.function.BinaryOperator;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class GListDatum extends GDatum {
-  @NotNull
-  private final List<GDataValue> values;
+  private final @NotNull List<GDataValue> values;
 
   public GListDatum(@Nullable TypeRef typeRef, @NotNull List<GDataValue> values, @NotNull TextLocation location) {
     super(typeRef, location);
     this.values = values;
   }
 
-  @NotNull
-  public List<GDataValue> values() { return values; }
+  public @NotNull List<GDataValue> values() { return values; }
 
   @Override
   public boolean equals(Object o) {
@@ -47,6 +47,15 @@ public class GListDatum extends GDatum {
     if (!super.equals(o)) return false;
     GListDatum gListDatum = (GListDatum) o;
     return Objects.equals(values, gListDatum.values);
+  }
+
+  void foo() {
+    LinkedHashMap<String, Long> map =
+        Stream.<AbstractMap.Entry<String, Long>>of(
+            new AbstractMap.SimpleEntry<>("", 1L),
+            new AbstractMap.SimpleEntry<>("", 1L)
+        ).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (x, y) -> y, LinkedHashMap::new));
+
   }
 
   @Override

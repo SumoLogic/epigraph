@@ -22,7 +22,6 @@ import ws.epigraph.lang.Qn
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class QnGen(private val qn: Qn) extends ServiceObjectGen[Qn](qn) {
-  override protected def generateObjectNoIndent(ctx: ServiceGenContext): String =
-    "Qn.fromDotSeparated(\"%s\")".format(qn.toString)
-  // s"Qn.fromDotSeparated(\"${qn.toString}\")" by some reason this breaks scalac
+  override protected def generateObject(ctx: ServiceGenContext): String =
+    s"""Qn.fromDotSeparated("${qn.toString}")"""
 }
