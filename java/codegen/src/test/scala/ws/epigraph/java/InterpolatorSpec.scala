@@ -25,11 +25,11 @@ import ws.epigraph.java.NewlineStringInterpolator.i
  */
 class InterpolatorSpec extends FlatSpec with Matchers {
   "NS Interpolator" should "correctly treat new lines" in {
-//    val s = /*@formatter:off*/sn"""\
-//foo
-//bar
-//""" //@formatter:on
-//    s shouldEqual "foo\nbar\n"
+    val s = /*@formatter:off*/sn"""\
+foo
+bar
+""" //@formatter:on
+    s shouldEqual "foo\nbar\n"
   }
 
   it should "insert proper indents" in {
