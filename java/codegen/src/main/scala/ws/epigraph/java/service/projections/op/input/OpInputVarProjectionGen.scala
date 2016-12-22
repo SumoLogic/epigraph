@@ -35,9 +35,9 @@ class OpInputVarProjectionGen(p: OpInputVarProjection)
   /*@formatter:off*/sn"""\
 new OpInputVarProjection(
   ${genType(null, p.`type`(), ctx)},
-  ${i(genLinkedMap("String", "OpInputTagProjectionEntry", p.tagProjections().entrySet().map{e => (e.getKey, genTagProjectionEntry(p.`type`(), e.getValue, ctx))}, ctx))}
+  ${i(genLinkedMap("String", "OpInputTagProjectionEntry", p.tagProjections().entrySet().map{e => ("\"" + e.getKey + "\"", genTagProjectionEntry(p.`type`(), e.getValue, ctx))}, ctx))},
   ${p.parenthesized().toString},
-  ${if (p.polymorphicTails() == null) "null" else genList(p.polymorphicTails().map(gen(_, ctx)),ctx)}
+  ${if (p.polymorphicTails() == null) "null" else genList(p.polymorphicTails().map(gen(_, ctx)),ctx)},
   ${gen(p.location(), ctx)}
 )"""/*@formatter:on*/
 

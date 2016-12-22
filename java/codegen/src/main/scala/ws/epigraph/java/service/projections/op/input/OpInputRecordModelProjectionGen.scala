@@ -33,8 +33,10 @@ class OpInputRecordModelProjectionGen(p: OpInputRecordModelProjection)
 
   // todo generate default value
 
-  override protected def generateObject(ctx: ServiceGenContext): String =
-  /*@formatter:off*/sn"""\
+  override protected def generateObject(ctx: ServiceGenContext): String = {
+    ctx.addImport(classOf[RecordType].getName)
+
+    /*@formatter:off*/sn"""\
 new OpInputRecordModelProjection(
   ${genType("RecordType",p.model(), ctx)},
   ${p.required().toString},
@@ -42,9 +44,10 @@ new OpInputRecordModelProjection(
   ${i(gen(p.params(), ctx))},
   ${i(gen(p.annotations(), ctx))},
   ${i(gen(p.metaProjection(), ctx))},
-  ${i(genLinkedMap("String", "OpInputFieldProjectionEntry", p.fieldProjections().entrySet().map{e => (e.getKey, genFieldProjectionEntry(p.model(), e.getValue, ctx))}, ctx))}
+  ${i(genLinkedMap("String", "OpInputFieldProjectionEntry", p.fieldProjections().entrySet().map{e => ("\"" + e.getKey + "\"", genFieldProjectionEntry(p.model(), e.getValue, ctx))}, ctx))},
   ${gen(p.location(), ctx)}
 )"""/*@formatter:on*/
+  }
 
   private def genFieldProjectionEntry(t: RecordType,
     fpe: OpInputFieldProjectionEntry,

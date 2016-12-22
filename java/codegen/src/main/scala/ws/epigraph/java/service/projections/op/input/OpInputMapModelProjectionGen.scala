@@ -21,6 +21,7 @@ import ws.epigraph.java.service.ServiceGenUtils.genType
 import ws.epigraph.java.service.ServiceObjectGen.gen
 import ws.epigraph.java.service.{ServiceGenContext, ServiceObjectGen}
 import ws.epigraph.projections.op.input.OpInputMapModelProjection
+import ws.epigraph.types.MapType
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -30,8 +31,10 @@ class OpInputMapModelProjectionGen(p: OpInputMapModelProjection)
 
   // todo generate default value
 
-  override protected def generateObject(ctx: ServiceGenContext): String =
-  /*@formatter:off*/sn"""\
+  override protected def generateObject(ctx: ServiceGenContext): String = {
+    ctx.addImport(classOf[MapType].getName)
+
+    /*@formatter:off*/sn"""\
 new OpInputMapModelProjection(
   ${genType("MapType",p.model(), ctx)},
   ${p.required().toString},
@@ -43,4 +46,5 @@ new OpInputMapModelProjection(
   ${i(gen(p.itemsProjection(), ctx))},
   ${gen(p.location(), ctx)}
 )"""/*@formatter:on*/
+  }
 }

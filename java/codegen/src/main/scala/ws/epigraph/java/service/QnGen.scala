@@ -17,11 +17,12 @@
 package ws.epigraph.java.service
 
 import ws.epigraph.lang.Qn
+import scala.collection.JavaConversions._
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class QnGen(private val qn: Qn) extends ServiceObjectGen[Qn](qn) {
   override protected def generateObject(ctx: ServiceGenContext): String =
-    s"""Qn.fromDotSeparated("${qn.toString}")"""
+    s"""new Qn(${qn.segments.mkString("\"", "\", \"", "\"")})"""
 }

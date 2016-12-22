@@ -21,6 +21,7 @@ import ws.epigraph.java.service.ServiceGenUtils.genType
 import ws.epigraph.java.service.ServiceObjectGen.gen
 import ws.epigraph.java.service.{ServiceGenContext, ServiceObjectGen}
 import ws.epigraph.projections.op.input.OpInputPrimitiveModelProjection
+import ws.epigraph.types.PrimitiveType
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -30,10 +31,12 @@ class OpInputPrimitiveModelProjectionGen(p: OpInputPrimitiveModelProjection)
 
   // todo generate default value
 
-  override protected def generateObject(ctx: ServiceGenContext): String =
-  /*@formatter:off*/sn"""\
+  override protected def generateObject(ctx: ServiceGenContext): String = {
+    ctx.addImport(classOf[PrimitiveType[_]].getName)
+
+    /*@formatter:off*/sn"""\
 new OpInputPrimitiveModelProjection(
-  ${genType("PrimitiveType",p.model(), ctx)},
+  ${genType("PrimitiveType", p.model(), ctx)},
   ${p.required().toString},
   null,  // todo default values generation is not implemented yet
   ${i(gen(p.params(), ctx))},
@@ -41,4 +44,5 @@ new OpInputPrimitiveModelProjection(
   ${i(gen(p.metaProjection(), ctx))},
   ${gen(p.location(), ctx)}
 )"""/*@formatter:on*/
+  }
 }
