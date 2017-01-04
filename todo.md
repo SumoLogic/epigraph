@@ -48,6 +48,7 @@
 - [ ] Unify op projections pretty printers, there's lots of code duplication
 - [ ] Add `throws` to op projections: `someField throws ( Error(message) ~MyError(code) )`
 - [ ] Add `catch` to req projections: `someField throws ( Error(message) ~MyError(code) )`
+- [ ] Bug: meta-projection type should be `ModelProjection` (currently it's map for maps, list for lists etc)
 
 # Operations
 -[ ] Operations code gen

@@ -101,7 +101,7 @@ public abstract class AbstractVarProjection<
         if (!type().isAssignableFrom(tail.type())) { // warn about useless cases when tail.type == type?
           throw new IllegalArgumentException(
               String.format(
-                  "Tail type '%s' is not a sub-type of var type '%s. Tail defined at %s",
+                  "Tail type '%s' is not a sub-type of var type '%s'. Tail defined at %s",
                   tail.type().name(),
                   type().name(),
                   tail.location()
