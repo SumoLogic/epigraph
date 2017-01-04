@@ -16,13 +16,14 @@
 
 package ws.epigraph.compiler.projections
 
-import ws.epigraph.compiler.CType
+import ws.epigraph.compiler._
 import ws.epigraph.lang.TextLocation
+import scala.collection.Map
 
 abstract class CDataValue(val location: TextLocation)
 
 class CData(
-  val `type`: CType,
+  val `type`: Option[CDataType],
   val tags: Map[String, CDatum],
   location: TextLocation
 ) extends CDataValue(location) {
@@ -41,7 +42,7 @@ class CData(
 }
 
 abstract class CDatum(
-  val `type`: CType,
+  val `type`: Option[CDatumType],
   location: TextLocation
 ) extends CDataValue(location) {
 
@@ -59,7 +60,7 @@ abstract class CDatum(
 }
 
 class CRecordDatum(
-  `type`: CType,
+  `type`: Option[CRecordTypeDef],
   val fields: Map[String, CDataValue],
   location: TextLocation
 ) extends CDatum(`type`, location) {
@@ -78,7 +79,7 @@ class CRecordDatum(
 }
 
 class CMapDatum(
-  `type`: CType,
+  `type`: Option[CMapType],
   val entries: Map[CDatum, CDataValue],
   location: TextLocation
 ) extends CDatum(`type`, location) {
@@ -97,7 +98,7 @@ class CMapDatum(
 }
 
 class CListDatum(
-  `type`: CType,
+  `type`: Option[CListType],
   val values: List[CDataValue],
   location: TextLocation
 ) extends CDatum(`type`, location) {
@@ -116,7 +117,7 @@ class CListDatum(
 }
 
 class CPrimitiveDatum(
-  `type`: CType,
+  `type`: Option[CPrimitiveTypeDef],
   val value: Any,
   location: TextLocation
 ) extends CDatum(`type`, location) {
@@ -135,6 +136,6 @@ class CPrimitiveDatum(
 }
 
 class CNullDatum(
-  `type`: CType,
+  `type`: Option[CDatumType],
   location: TextLocation
 ) extends CDatum(`type`, location)
