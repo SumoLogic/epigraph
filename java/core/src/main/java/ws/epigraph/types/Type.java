@@ -27,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 
-public abstract class Type { // TODO split into interface and impl
+public abstract class Type implements TypeApi {
 
   private final @NotNull TypeName name;
 
@@ -46,8 +46,10 @@ public abstract class Type { // TODO split into interface and impl
       throw new IllegalArgumentException();
   }
 
+  @Override
   public abstract @NotNull TypeKind kind();
 
+  @Override
   public @NotNull TypeName name() { return name; }
 
   /**
@@ -60,6 +62,7 @@ public abstract class Type { // TODO split into interface and impl
   /**
    * @return linearized supertypes of this type, in order of decreasing priority
    */
+  @Override
   public @NotNull Collection<@NotNull ? extends Type> supertypes() {
     if (supertypes == null) { // TODO move initialization to constructor?
       LinkedList<Type> acc = new LinkedList<>();
@@ -74,9 +77,6 @@ public abstract class Type { // TODO split into interface and impl
     return supertypes;
   }
 
-  /** @see Class#isAssignableFrom(Class) */
-  public boolean isAssignableFrom(@NotNull Type type) { return type.equals(this) || type.supertypes().contains(this); }
-
   /** @see Class#isInstance(Object) */
   public boolean isInstance(@Nullable Data data) { return data != null && isAssignableFrom(data.type()); }
 
@@ -84,6 +84,7 @@ public abstract class Type { // TODO split into interface and impl
 
   public abstract @NotNull Data.Builder createDataBuilder();
 
+  @Override
   public final @NotNull Collection<@NotNull ? extends Tag> tags() {
     // TODO produce better ordering of the tags (i.e. supertypes first, in the order of supertypes and their tags declaration)
     if (tags == null) { // TODO move initialization to constructor (if possible?)
@@ -99,6 +100,7 @@ public abstract class Type { // TODO split into interface and impl
     return tags;
   }
 
+  @Override
   public final @NotNull Map<@NotNull String, @NotNull ? extends Tag> tagsMap() {
     if (tagsMap == null) tagsMap = Unmodifiable.map(tags(), t -> t.name, t -> t);
     return tagsMap;
@@ -131,7 +133,7 @@ public abstract class Type { // TODO split into interface and impl
   }
 
 
-  public static class Tag {
+  public static class Tag implements TagApi {
 
     public final @NotNull String name;
 
@@ -142,7 +144,11 @@ public abstract class Type { // TODO split into interface and impl
       this.type = type;
     }
 
+    @Override
     public @NotNull String name() { return name; }
+
+    @Override
+    public @NotNull DatumTypeApi type() { return type; }
 
     @Override
     public boolean equals(final Object o) {

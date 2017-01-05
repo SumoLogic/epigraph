@@ -31,7 +31,7 @@ import java.util.*;
 import java.util.function.Function;
 
 
-public abstract class RecordType extends DatumType {
+public abstract class RecordType extends DatumType implements RecordTypeApi {
 
   private @Nullable Collection<@NotNull ? extends Field> fields = null;
 
@@ -63,6 +63,7 @@ public abstract class RecordType extends DatumType {
   public abstract @NotNull RecordDatum.Builder createBuilder();
 
 
+  @Override
   public final @NotNull Collection<@NotNull ? extends Field> fields() {
     // TODO produce better ordering of the fields (i.e. supertypes first, in the order of supertypes and their fields declaration)
     if (fields == null) { // TODO move initialization to constructor (if possible?) - NO, not possible
@@ -80,6 +81,7 @@ public abstract class RecordType extends DatumType {
     return fields;
   }
 
+  @Override
   public final @NotNull Map<@NotNull String, @NotNull ? extends Field> fieldsMap() {
     if (fieldsMap == null) fieldsMap = Unmodifiable.map(fields(), f -> f.name, f -> f);
     return fieldsMap;
@@ -114,7 +116,7 @@ public abstract class RecordType extends DatumType {
   }
 
 
-  public static class Field { // TODO move out
+  public static class Field implements FieldApi { // TODO move out
 
     public final @NotNull String name;
 
@@ -132,8 +134,10 @@ public abstract class RecordType extends DatumType {
       this.type = dataType.type;
     }
 
+    @Override
     public @NotNull String name() { return name; }
 
+    @Override
     public @NotNull DataType dataType() { return dataType; }
 
     @Override
@@ -151,7 +155,7 @@ public abstract class RecordType extends DatumType {
   }
 
 
-  public static abstract class Raw extends RecordType implements DatumType.Raw {
+  public abstract static class Raw extends RecordType implements DatumType.Raw {
 
     protected Raw(
         @NotNull QualifiedTypeName name,
@@ -172,7 +176,7 @@ public abstract class RecordType extends DatumType {
   }
 
 
-  public static abstract class Static<
+  public abstract static class Static<
       MyImmDatum extends RecordDatum.Imm.Static,
       MyDatumBuilder extends RecordDatum.Builder.Static<MyImmDatum, MyBuilderVal>,
       MyImmVal extends Val.Imm.Static,

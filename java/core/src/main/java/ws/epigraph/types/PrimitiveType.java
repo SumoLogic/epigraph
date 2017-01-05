@@ -27,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.List;
 
-public abstract class PrimitiveType<Native> extends DatumType {
+public abstract class PrimitiveType<Native> extends DatumType implements PrimitiveTypeApi {
 
   protected PrimitiveType(
       @NotNull QualifiedTypeName name,

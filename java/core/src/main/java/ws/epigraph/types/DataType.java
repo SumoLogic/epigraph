@@ -29,7 +29,7 @@ import java.util.Objects;
 /**
  * Declares type of data held by container type components (record fields, list elements, map values).
  */
-public final class DataType {
+public final class DataType implements DataTypeApi {
 
   public final @NotNull Type type;
 
@@ -43,9 +43,14 @@ public final class DataType {
     this.name = new DataTypeName(type.name(), defaultTag == null ? null : defaultTag.name);
   }
 
-//  public @NotNull Type type() { return type; }
-//
-//  public @Nullable Tag defaultTag() { return defaultTag; }
+  @Override
+  public @NotNull Type type() { return type; }
+
+  @Override
+  public @Nullable Tag defaultTag() { return defaultTag; }
+
+  @Override
+  public @NotNull DataTypeName name() { return name; }
 
   public <D extends Data> D checkAssignable(@NotNull D data) throws IllegalArgumentException {
     return type.checkAssignable(data);

@@ -27,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.List;
 
-public abstract class ListType extends DatumType {
+public abstract class ListType extends DatumType implements ListTypeApi {
 
   public final @NotNull DataType elementType; // TODO rename to elementDataType
 
@@ -84,6 +84,7 @@ public abstract class ListType extends DatumType {
     return (Collection<? extends ListType>) super.supertypes();
   }
 
+  @Override
   public @NotNull DataType elementType() { return elementType; }
 
   public abstract @NotNull ListDatum.Builder createBuilder();

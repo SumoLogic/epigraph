@@ -30,9 +30,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public abstract class DatumType extends Type {
-
-  public static final String MONO_TAG_NAME = "self"; // TODO better name (for the constant and the tag)
+public abstract class DatumType extends Type implements DatumTypeApi {
 
   public final @NotNull Tag self = new Tag(MONO_TAG_NAME, this); // TODO rename to tag?
 
@@ -66,6 +64,7 @@ public abstract class DatumType extends Type {
     return datum;
   }
 
+  @Override
   public @NotNull DataType dataType() { return new DataType(this, self); } // TODO cache
 
   public abstract @NotNull Val.Imm createValue(@Nullable ErrorValue errorOrNull);

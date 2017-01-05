@@ -28,7 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.List;
 
-public abstract class MapType extends DatumType {
+public abstract class MapType extends DatumType implements MapTypeApi {
 
   public final @NotNull DatumType keyType;
   public final @NotNull DataType valueType;
@@ -59,8 +59,10 @@ public abstract class MapType extends DatumType {
     return (Collection<? extends MapType>) super.supertypes();
   }
 
+  @Override
   public @NotNull DatumType keyType() { return keyType; }
 
+  @Override
   public @NotNull DataType valueType() { return valueType; }
 
   public abstract @NotNull MapDatum.Builder createBuilder();
