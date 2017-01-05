@@ -20,7 +20,7 @@ import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenMapModelProjection;
 import ws.epigraph.projections.op.OpParams;
-import ws.epigraph.types.MapType;
+import ws.epigraph.types.MapTypeApi;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -29,22 +29,20 @@ import java.util.Objects;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpDeleteMapModelProjection
-    extends OpDeleteModelProjection<OpDeleteMapModelProjection, MapType>
+    extends OpDeleteModelProjection<OpDeleteMapModelProjection, MapTypeApi>
     implements GenMapModelProjection<
     OpDeleteVarProjection,
     OpDeleteTagProjectionEntry,
     OpDeleteModelProjection<?, ?>,
     OpDeleteMapModelProjection,
-    MapType
+    MapTypeApi
     > {
 
-  @NotNull
-  private final OpDeleteVarProjection itemsProjection;
-  @NotNull
-  private final OpDeleteKeyProjection keyProjection;
+  private final @NotNull OpDeleteVarProjection itemsProjection;
+  private final @NotNull OpDeleteKeyProjection keyProjection;
 
   public OpDeleteMapModelProjection(
-      @NotNull MapType model,
+      @NotNull MapTypeApi model,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
       @NotNull OpDeleteKeyProjection keyProjection,
@@ -55,11 +53,10 @@ public class OpDeleteMapModelProjection
     this.keyProjection = keyProjection;
   }
 
-  @NotNull
-  public OpDeleteVarProjection itemsProjection() { return itemsProjection; }
+  @Override
+  public @NotNull OpDeleteVarProjection itemsProjection() { return itemsProjection; }
 
-  @NotNull
-  public OpDeleteKeyProjection keyProjection() { return keyProjection; }
+  public @NotNull OpDeleteKeyProjection keyProjection() { return keyProjection; }
 
   @Override
   public boolean equals(Object o) {

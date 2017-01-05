@@ -20,7 +20,7 @@ import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenListModelProjection;
 import ws.epigraph.projections.op.OpParams;
-import ws.epigraph.types.ListType;
+import ws.epigraph.types.ListTypeApi;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -29,20 +29,19 @@ import java.util.Objects;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpDeleteListModelProjection
-    extends OpDeleteModelProjection<OpDeleteListModelProjection, ListType>
+    extends OpDeleteModelProjection<OpDeleteListModelProjection, ListTypeApi>
     implements GenListModelProjection<
     OpDeleteVarProjection,
     OpDeleteTagProjectionEntry,
     OpDeleteModelProjection<?, ?>,
     OpDeleteListModelProjection,
-    ListType
+    ListTypeApi
     > {
 
-  @NotNull
-  private OpDeleteVarProjection itemsProjection;
+  private final @NotNull OpDeleteVarProjection itemsProjection;
 
   public OpDeleteListModelProjection(
-      @NotNull ListType model,
+      @NotNull ListTypeApi model,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
       @NotNull OpDeleteVarProjection itemsProjection,
@@ -51,8 +50,8 @@ public class OpDeleteListModelProjection
     this.itemsProjection = itemsProjection;
   }
 
-  @NotNull
-  public OpDeleteVarProjection itemsProjection() { return itemsProjection; }
+  @Override
+  public @NotNull OpDeleteVarProjection itemsProjection() { return itemsProjection; }
 
   @Override
   public boolean equals(Object o) {

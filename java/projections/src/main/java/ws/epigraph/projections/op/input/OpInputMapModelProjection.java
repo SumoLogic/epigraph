@@ -23,7 +23,7 @@ import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenMapModelProjection;
 import ws.epigraph.projections.op.OpParams;
-import ws.epigraph.types.MapType;
+import ws.epigraph.types.MapTypeApi;
 
 import java.util.Objects;
 
@@ -31,20 +31,20 @@ import java.util.Objects;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpInputMapModelProjection
-    extends OpInputModelProjection<OpInputMapModelProjection, MapType, GMapDatum>
+    extends OpInputModelProjection<OpInputMapModelProjection, MapTypeApi, GMapDatum>
     implements GenMapModelProjection<
     OpInputVarProjection,
     OpInputTagProjectionEntry,
     OpInputModelProjection<?, ?, ?>,
     OpInputMapModelProjection,
-    MapType
+    MapTypeApi
     > {
 
   private final @NotNull OpInputKeyProjection keyProjection;
   private final @NotNull OpInputVarProjection itemsProjection;
 
   public OpInputMapModelProjection(
-      @NotNull MapType model,
+      @NotNull MapTypeApi model,
       boolean required,
       @Nullable GMapDatum defaultValue,
       @NotNull OpParams params,

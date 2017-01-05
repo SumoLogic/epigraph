@@ -19,9 +19,10 @@ package ws.epigraph.projections;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.projections.gen.*;
-import ws.epigraph.types.DataType;
-import ws.epigraph.types.DatumType;
-import ws.epigraph.types.Type;
+import ws.epigraph.types.DataTypeApi;
+import ws.epigraph.types.DatumTypeApi;
+import ws.epigraph.types.TypeApi;
+import ws.epigraph.types.UnionTypeApi;
 
 import java.util.*;
 import java.util.stream.Stream;
@@ -29,16 +30,16 @@ import java.util.stream.Stream;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class ProjectionUtils {
-  @NotNull
-  public static <K, V> LinkedHashMap<K, V> singletonLinkedHashMap(@NotNull K key, @NotNull V value) {
+public final class ProjectionUtils {
+  private ProjectionUtils() {}
+
+  public static @NotNull <K, V> LinkedHashMap<K, V> singletonLinkedHashMap(@NotNull K key, @NotNull V value) {
     final LinkedHashMap<K, V> res = new LinkedHashMap<>();
     res.put(key, value);
     return res;
   }
 
-  @NotNull
-  public static String listFields(@Nullable Collection<String> fieldNames) {
+  public static @NotNull String listFields(@Nullable Collection<String> fieldNames) {
     if (fieldNames == null) return "<none>";
     return String.join(",", fieldNames);
   }
@@ -46,26 +47,25 @@ public class ProjectionUtils {
   /**
    * @return {@code path} tip type
    */
-  @NotNull
-  public static DataType tipType(@NotNull GenVarProjection<?, ?, ?> path) {
-    DataType lastDataType;
+  public static @NotNull DataTypeApi tipType(@NotNull GenVarProjection<?, ?, ?> path) {
+    DataTypeApi lastDataType;
 
-    final Type type = path.type();
-    if (type instanceof DatumType) {
-      DatumType datumType = (DatumType) type;
+    final TypeApi type = path.type();
+    if (type instanceof DatumTypeApi) {
+      DatumTypeApi datumType = (DatumTypeApi) type;
       lastDataType = datumType.dataType();
     } else {
-      lastDataType = new DataType(type, null);
+      lastDataType = ((UnionTypeApi) type).dataType(null);
     }
 
     while (true) {
       final GenTagProjectionEntry<?, ?> tagProjection = path.pathTagProjection();
       if (tagProjection == null) break;
 
-      lastDataType = tagProjection.tag().type.dataType();
+      lastDataType = tagProjection.tag().type().dataType();
 
       final GenModelProjection<?, ?> modelPath = tagProjection.projection();
-      final DatumType model = modelPath.model();
+      final DatumTypeApi model = modelPath.model();
       switch (model.kind()) {
         case RECORD:
           GenRecordModelProjection<?, ?, ?, ?, ?, ?, ?> recordPath =
@@ -100,7 +100,7 @@ public class ProjectionUtils {
       len++;
 
       final GenModelProjection<?, ?> modelPath = tagProjection.projection();
-      final DatumType model = modelPath.model();
+      final DatumTypeApi model = modelPath.model();
       switch (model.kind()) {
         case RECORD:
           GenRecordModelProjection<?, ?, ?, ?, ?, ?, ?> recordPath =
@@ -124,31 +124,21 @@ public class ProjectionUtils {
     return len;
   }
 
-//  public static <VP extends GenVarProjection<VP, ?, ?>> List<VP> linearizeTailsFromProjections(
-//      @NotNull Type t,
-//      @NotNull Stream<VP> projections) {
-//
-//    final Stream<VP> tails =
-//        projections.map(vp -> vp.polymorphicTails()).filter(Objects::nonNull).flatMap(Collection::stream);
-//
-//    return linearizeTails(t, tails);
-//  }
-
   public static <VP extends GenVarProjection<VP, ?, ?>> List<VP> linearizeTails(
-      @NotNull Type t,
+      @NotNull TypeApi t,
       @NotNull Stream<VP> tails) {
 
     return linearizeTails(t, tails, new LinkedList<>());
   }
 
   public static <VP extends GenVarProjection<VP, ?, ?>> List<VP> linearizeTails(
-      @NotNull Type t,
+      @NotNull TypeApi t,
       @NotNull List<VP> tails) {
 
     if (tails.isEmpty()) return Collections.emptyList();
     if (tails.size() == 1) {
       final VP tail = tails.get(0);
-      final List<VP> tailTails = tail.polymorphicTails();
+      final Collection<VP> tailTails = tail.polymorphicTails();
 
       if (tail.type().isAssignableFrom(t)) {
         if (tailTails == null || tailTails.isEmpty())
@@ -162,7 +152,7 @@ public class ProjectionUtils {
   }
 
   public static <VP extends GenVarProjection<VP, ?, ?>> List<VP> linearizeTails(
-      @NotNull Type type,
+      @NotNull TypeApi type,
       @NotNull Stream<VP> tails,
       @NotNull LinkedList<VP> linearizedTails) {
 

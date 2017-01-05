@@ -18,7 +18,7 @@ package ws.epigraph.projections.req.path;
 
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.abs.AbstractVarProjection;
-import ws.epigraph.types.Type;
+import ws.epigraph.types.TypeApi;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,7 +30,7 @@ import java.util.Collections;
 public class ReqVarPath extends AbstractVarProjection<ReqVarPath, ReqTagPath, ReqModelPath<?, ?>> {
 
   public ReqVarPath(
-      @NotNull Type type,
+      @NotNull TypeApi type,
       @Nullable ReqTagPath tagProjection,
       @NotNull TextLocation location) {
 

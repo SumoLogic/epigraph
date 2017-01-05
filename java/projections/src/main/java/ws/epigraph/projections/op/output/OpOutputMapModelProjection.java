@@ -23,7 +23,7 @@ import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenMapModelProjection;
 import ws.epigraph.projections.op.OpKeyPresence;
 import ws.epigraph.projections.op.OpParams;
-import ws.epigraph.types.MapType;
+import ws.epigraph.types.MapTypeApi;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,22 +33,20 @@ import java.util.Objects;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpOutputMapModelProjection
-    extends OpOutputModelProjection<OpOutputMapModelProjection, MapType>
+    extends OpOutputModelProjection<OpOutputMapModelProjection, MapTypeApi>
     implements GenMapModelProjection<
     OpOutputVarProjection,
     OpOutputTagProjectionEntry,
     OpOutputModelProjection<?, ?>,
     OpOutputMapModelProjection,
-    MapType
+    MapTypeApi
     > {
 
-  @NotNull
-  private final OpOutputKeyProjection keyProjection;
-  @NotNull
-  private final OpOutputVarProjection itemsProjection;
+  private final @NotNull OpOutputKeyProjection keyProjection;
+  private final @NotNull OpOutputVarProjection itemsProjection;
 
   public OpOutputMapModelProjection(
-      @NotNull MapType model,
+      @NotNull MapTypeApi model,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
       @Nullable OpOutputMapModelProjection metaProjection,
@@ -60,20 +58,19 @@ public class OpOutputMapModelProjection
     this.keyProjection = keyProjection;
   }
 
-  @NotNull
-  public OpOutputKeyProjection keyProjection() { return keyProjection; }
+  public @NotNull OpOutputKeyProjection keyProjection() { return keyProjection; }
 
-  @NotNull
-  public OpOutputVarProjection itemsProjection() { return itemsProjection; }
+  @Override
+  public @NotNull OpOutputVarProjection itemsProjection() { return itemsProjection; }
 
   /* static */
   @Override
   protected OpOutputMapModelProjection merge(
-      @NotNull final MapType model,
-      @NotNull final List<OpOutputMapModelProjection> modelProjections,
-      @NotNull final OpParams mergedParams,
-      @NotNull final Annotations mergedAnnotations,
-      @Nullable final OpOutputMapModelProjection mergedMetaProjection) {
+      final @NotNull MapTypeApi model,
+      final @NotNull List<OpOutputMapModelProjection> modelProjections,
+      final @NotNull OpParams mergedParams,
+      final @NotNull Annotations mergedAnnotations,
+      final @Nullable OpOutputMapModelProjection mergedMetaProjection) {
 
     List<OpParams> keysParams = new ArrayList<>(modelProjections.size());
     List<Annotations> keysAnnotations = new ArrayList<>(modelProjections.size());
@@ -83,7 +80,7 @@ public class OpOutputMapModelProjection
     OpOutputMapModelProjection prevProjection = null;
     for (final OpOutputMapModelProjection projection : modelProjections) {
 
-      @NotNull final OpOutputKeyProjection keyProjection = projection.keyProjection();
+      final @NotNull OpOutputKeyProjection keyProjection = projection.keyProjection();
       keysParams.add(keyProjection.params());
       keysAnnotations.add(keyProjection.annotations());
       final OpKeyPresence presence = keyProjection.presence();

@@ -21,7 +21,8 @@ import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.RecordModelProjectionHelper;
 import ws.epigraph.projections.gen.GenRecordModelProjection;
 import ws.epigraph.projections.req.ReqParams;
-import ws.epigraph.types.RecordType;
+import ws.epigraph.types.FieldApi;
+import ws.epigraph.types.RecordTypeApi;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -31,7 +32,7 @@ import java.util.*;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ReqOutputRecordModelProjection
-    extends ReqOutputModelProjection<ReqOutputRecordModelProjection, RecordType>
+    extends ReqOutputModelProjection<ReqOutputRecordModelProjection, RecordTypeApi>
     implements GenRecordModelProjection<
     ReqOutputVarProjection,
     ReqOutputTagProjectionEntry,
@@ -39,14 +40,13 @@ public class ReqOutputRecordModelProjection
     ReqOutputRecordModelProjection,
     ReqOutputFieldProjectionEntry,
     ReqOutputFieldProjection,
-    RecordType
+    RecordTypeApi
     > {
 
-  @NotNull
-  private Map<String, ReqOutputFieldProjectionEntry> fieldProjections;
+  private final @NotNull Map<String, ReqOutputFieldProjectionEntry> fieldProjections;
 
   public ReqOutputRecordModelProjection(
-      @NotNull RecordType model,
+      @NotNull RecordTypeApi model,
       boolean required,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
@@ -59,29 +59,29 @@ public class ReqOutputRecordModelProjection
     RecordModelProjectionHelper.checkFieldsBelongsToModel(fieldProjections.keySet(), model);
   }
 
-  @NotNull
-  public Map<String, ReqOutputFieldProjectionEntry> fieldProjections() { return fieldProjections; }
+  @Override
+  public @NotNull Map<String, ReqOutputFieldProjectionEntry> fieldProjections() { return fieldProjections; }
 
-  @Nullable
-  public ReqOutputFieldProjectionEntry fieldProjection(@NotNull String fieldName) {
+  @Override
+  public @Nullable ReqOutputFieldProjectionEntry fieldProjection(@NotNull String fieldName) {
     return fieldProjections.get(fieldName);
   }
 
   @Override
   protected ReqOutputRecordModelProjection merge(
-      @NotNull final RecordType model,
+      final @NotNull RecordTypeApi model,
       final boolean mergedRequired,
-      @NotNull final List<ReqOutputRecordModelProjection> modelProjections,
-      @NotNull final ReqParams mergedParams,
-      @NotNull final Annotations mergedAnnotations,
-      @Nullable final ReqOutputRecordModelProjection mergedMetaProjection) {
+      final @NotNull List<ReqOutputRecordModelProjection> modelProjections,
+      final @NotNull ReqParams mergedParams,
+      final @NotNull Annotations mergedAnnotations,
+      final @Nullable ReqOutputRecordModelProjection mergedMetaProjection) {
 
 
-    Map<RecordType.Field, ReqOutputFieldProjection> mergedFieldProjections =
+    Map<FieldApi, ReqOutputFieldProjection> mergedFieldProjections =
         RecordModelProjectionHelper.mergeFieldProjections(modelProjections);
 
     Map<String, ReqOutputFieldProjectionEntry> mergedFieldEntries = new LinkedHashMap<>();
-    for (final Map.Entry<RecordType.Field, ReqOutputFieldProjection> entry : mergedFieldProjections.entrySet()) {
+    for (final Map.Entry<FieldApi, ReqOutputFieldProjection> entry : mergedFieldProjections.entrySet()) {
       mergedFieldEntries.put(
           entry.getKey().name(),
           new ReqOutputFieldProjectionEntry(
@@ -105,8 +105,7 @@ public class ReqOutputRecordModelProjection
 
   @Override
   public boolean equals(Object o) {
-    if (!super.equals(o)) return false;
-    return RecordModelProjectionHelper.equals(this, o);
+    return super.equals(o) && RecordModelProjectionHelper.equals(this, o);
   }
 
   @Override

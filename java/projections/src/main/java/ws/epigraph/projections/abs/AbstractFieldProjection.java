@@ -23,7 +23,7 @@ import ws.epigraph.projections.gen.GenModelProjection;
 import ws.epigraph.projections.gen.GenTagProjectionEntry;
 import ws.epigraph.projections.gen.GenVarProjection;
 import org.jetbrains.annotations.NotNull;
-import ws.epigraph.types.DataType;
+import ws.epigraph.types.DataTypeApi;
 
 import java.util.List;
 import java.util.Objects;
@@ -61,7 +61,7 @@ public abstract class AbstractFieldProjection<
   public @NotNull VP varProjection() { return projection; }
 
   @Override
-  public @NotNull FP merge(final @NotNull DataType type, final @NotNull List<FP> fieldProjections) {
+  public @NotNull FP merge(final @NotNull DataTypeApi type, final @NotNull List<FP> fieldProjections) {
     if (fieldProjections.isEmpty()) throw new IllegalArgumentException("Can't merge empty list");
     if (fieldProjections.size() == 1) return fieldProjections.get(0);
 
@@ -81,7 +81,7 @@ public abstract class AbstractFieldProjection<
   }
 
   protected FP merge(
-      @NotNull DataType type,
+      @NotNull DataTypeApi type,
       @NotNull List<FP> fieldProjections,
       @NotNull Annotations mergedAnnotations,
       @NotNull VP mergedVarProjection) {

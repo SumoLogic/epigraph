@@ -20,7 +20,7 @@ import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenListModelProjection;
 import ws.epigraph.projections.req.ReqParams;
-import ws.epigraph.types.ListType;
+import ws.epigraph.types.ListTypeApi;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,20 +32,19 @@ import java.util.stream.Collectors;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ReqOutputListModelProjection
-    extends ReqOutputModelProjection<ReqOutputListModelProjection, ListType>
+    extends ReqOutputModelProjection<ReqOutputListModelProjection, ListTypeApi>
     implements GenListModelProjection<
     ReqOutputVarProjection,
     ReqOutputTagProjectionEntry,
     ReqOutputModelProjection<?, ?>,
     ReqOutputListModelProjection,
-    ListType
+    ListTypeApi
     > {
 
-  @NotNull
-  private ReqOutputVarProjection itemsProjection;
+  private final @NotNull ReqOutputVarProjection itemsProjection;
 
   public ReqOutputListModelProjection(
-      @NotNull ListType model,
+      @NotNull ListTypeApi model,
       boolean required,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
@@ -56,25 +55,25 @@ public class ReqOutputListModelProjection
     this.itemsProjection = itemsProjection;
   }
 
-  @NotNull
-  public ReqOutputVarProjection itemsProjection() { return itemsProjection; }
+  @Override
+  public @NotNull ReqOutputVarProjection itemsProjection() { return itemsProjection; }
 
   /* static */
   @Override
   protected ReqOutputListModelProjection merge(
-      @NotNull final ListType model,
+      final @NotNull ListTypeApi model,
       final boolean mergedRequired,
-      @NotNull final List<ReqOutputListModelProjection> modelProjections,
-      @NotNull final ReqParams mergedParams,
-      @NotNull final Annotations mergedAnnotations,
-      @Nullable final ReqOutputListModelProjection mergedMetaProjection) {
+      final @NotNull List<ReqOutputListModelProjection> modelProjections,
+      final @NotNull ReqParams mergedParams,
+      final @NotNull Annotations mergedAnnotations,
+      final @Nullable ReqOutputListModelProjection mergedMetaProjection) {
 
     List<ReqOutputVarProjection> itemProjections =
         modelProjections.stream()
                         .map(ReqOutputListModelProjection::itemsProjection)
                         .collect(Collectors.toList());
 
-    @NotNull final ReqOutputVarProjection mergedItemsVarType = itemProjections.get(0).merge(itemProjections);
+    final @NotNull ReqOutputVarProjection mergedItemsVarType = itemProjections.get(0).merge(itemProjections);
 
     return new ReqOutputListModelProjection(
         model,

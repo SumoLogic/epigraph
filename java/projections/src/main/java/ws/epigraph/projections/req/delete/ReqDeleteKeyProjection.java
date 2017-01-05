@@ -28,10 +28,10 @@ import ws.epigraph.projections.req.ReqParams;
  */
 public class ReqDeleteKeyProjection extends ReqKeyProjection{
   public ReqDeleteKeyProjection(
-      @NotNull final Datum value,
-      @NotNull final ReqParams params,
-      @NotNull final Annotations annotations,
-      @NotNull final TextLocation location) {
+      final @NotNull Datum value,
+      final @NotNull ReqParams params,
+      final @NotNull Annotations annotations,
+      final @NotNull TextLocation location) {
     super(value, params, annotations, location);
   }
 }

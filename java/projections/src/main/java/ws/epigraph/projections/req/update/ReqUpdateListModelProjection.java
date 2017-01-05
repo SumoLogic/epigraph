@@ -20,7 +20,7 @@ import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenListModelProjection;
 import ws.epigraph.projections.req.ReqParams;
-import ws.epigraph.types.ListType;
+import ws.epigraph.types.ListTypeApi;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -29,19 +29,19 @@ import java.util.Objects;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ReqUpdateListModelProjection
-    extends ReqUpdateModelProjection<ReqUpdateListModelProjection, ListType>
+    extends ReqUpdateModelProjection<ReqUpdateListModelProjection, ListTypeApi>
     implements GenListModelProjection<
     ReqUpdateVarProjection,
     ReqUpdateTagProjectionEntry,
     ReqUpdateModelProjection<?, ?>,
     ReqUpdateListModelProjection,
-    ListType
+    ListTypeApi
     > {
-  @NotNull
-  private ReqUpdateVarProjection itemsProjection;
+
+  private final @NotNull ReqUpdateVarProjection itemsProjection;
 
   public ReqUpdateListModelProjection(
-      @NotNull ListType model,
+      @NotNull ListTypeApi model,
       boolean update,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
@@ -51,8 +51,8 @@ public class ReqUpdateListModelProjection
     this.itemsProjection = itemsProjection;
   }
 
-  @NotNull
-  public ReqUpdateVarProjection itemsProjection() { return itemsProjection; }
+  @Override
+  public @NotNull ReqUpdateVarProjection itemsProjection() { return itemsProjection; }
 
   @Override
   public boolean equals(Object o) {

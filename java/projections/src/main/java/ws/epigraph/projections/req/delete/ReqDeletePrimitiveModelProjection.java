@@ -20,18 +20,18 @@ import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenPrimitiveModelProjection;
 import ws.epigraph.projections.req.ReqParams;
-import ws.epigraph.types.PrimitiveType;
+import ws.epigraph.types.PrimitiveTypeApi;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ReqDeletePrimitiveModelProjection
-    extends ReqDeleteModelProjection<ReqDeletePrimitiveModelProjection, PrimitiveType<?>>
-    implements GenPrimitiveModelProjection<ReqDeletePrimitiveModelProjection, PrimitiveType<?>> {
+    extends ReqDeleteModelProjection<ReqDeletePrimitiveModelProjection, PrimitiveTypeApi>
+    implements GenPrimitiveModelProjection<ReqDeletePrimitiveModelProjection, PrimitiveTypeApi> {
 
   public ReqDeletePrimitiveModelProjection(
-      @NotNull PrimitiveType model,
+      @NotNull PrimitiveTypeApi model,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
       @NotNull TextLocation location) {

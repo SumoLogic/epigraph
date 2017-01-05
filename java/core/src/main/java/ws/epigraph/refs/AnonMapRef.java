@@ -16,9 +16,9 @@
 
 package ws.epigraph.refs;
 
-import ws.epigraph.types.Type;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.types.TypeApi;
 
 import java.util.Objects;
 
@@ -40,7 +40,7 @@ public class AnonMapRef implements TypeRef {
   public @NotNull ValueTypeRef itemsType() { return valuesType; }
 
   @Override
-  public @Nullable Type resolve(@NotNull TypesResolver resolver) {
+  public @Nullable TypeApi resolve(@NotNull TypesResolver resolver) {
     return resolver.resolve(this);
   }
 

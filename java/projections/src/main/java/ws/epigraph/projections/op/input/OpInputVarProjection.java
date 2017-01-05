@@ -18,7 +18,7 @@ package ws.epigraph.projections.op.input;
 
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.abs.AbstractVarProjection;
-import ws.epigraph.types.Type;
+import ws.epigraph.types.TypeApi;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -35,7 +35,7 @@ public class OpInputVarProjection extends AbstractVarProjection<
     > {
 
   public OpInputVarProjection(
-      @NotNull Type type,
+      @NotNull TypeApi type,
       @NotNull LinkedHashMap<String, OpInputTagProjectionEntry> tagProjections,
       boolean parenthesized,
       @Nullable List<OpInputVarProjection> polymorphicTails,

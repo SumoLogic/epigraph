@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.abs.AbstractVarProjection;
-import ws.epigraph.types.Type;
+import ws.epigraph.types.TypeApi;
 
 import java.util.List;
 import java.util.Map;
@@ -35,7 +35,7 @@ public class ReqOutputVarProjection extends AbstractVarProjection<
     > {
 
   public ReqOutputVarProjection(
-      @NotNull Type type,
+      @NotNull TypeApi type,
       @NotNull Map<String, ReqOutputTagProjectionEntry> tagProjections,
       @Nullable List<ReqOutputVarProjection> polymorphicTails,
       boolean parenthesized,
@@ -48,7 +48,7 @@ public class ReqOutputVarProjection extends AbstractVarProjection<
 
   @Override
   protected ReqOutputVarProjection merge(
-      final @NotNull Type type,
+      final @NotNull TypeApi type,
       final @NotNull List<ReqOutputVarProjection> varProjections,
       final @NotNull Map<String, ReqOutputTagProjectionEntry> mergedTags,
       final boolean mergedParenthesized,

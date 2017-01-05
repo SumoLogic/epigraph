@@ -16,7 +16,7 @@
 
 package ws.epigraph.projections.gen;
 
-import ws.epigraph.types.MapType;
+import ws.epigraph.types.MapTypeApi;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -27,7 +27,7 @@ public interface GenMapModelProjection<
     TP extends GenTagProjectionEntry<TP, MP>,
     MP extends GenModelProjection</*MP*/?, ?>,
     MMP extends GenMapModelProjection<VP, TP, MP, MMP, M>,
-    M extends MapType
+    M extends MapTypeApi
     > extends GenModelProjection<MMP, M> {
 
   @NotNull VP itemsProjection();

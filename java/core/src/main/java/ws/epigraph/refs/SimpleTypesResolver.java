@@ -33,8 +33,8 @@ public class SimpleTypesResolver implements TypesResolver {
   // todo add support for imports?
 
   private final Map<Qn, Type> types;
-  private final Map<DataType, AnonListType> anonLists;
-  private final Map<DataType, Map<DatumType, AnonMapType>> anonMaps;
+  private final Map<DataTypeApi, AnonListType> anonLists;
+  private final Map<DataTypeApi, Map<DatumType, AnonMapType>> anonMaps;
 
   public SimpleTypesResolver(Type... types) {
     this.types = new HashMap<>();
@@ -67,21 +67,21 @@ public class SimpleTypesResolver implements TypesResolver {
   }
 
   @Override
-  public @Nullable Type resolve(@NotNull AnonListRef reference) {
+  public @Nullable TypeApi resolve(@NotNull AnonListRef reference) {
     @NotNull ValueTypeRef itemTypeRef = reference.itemsType();
-    @Nullable DataType itemType = resolve(itemTypeRef);
+    @Nullable DataTypeApi itemType = resolve(itemTypeRef);
     return itemType == null ? null : anonLists.get(itemType);
   }
 
   @Override
   public @Nullable Type resolve(@NotNull AnonMapRef reference) {
     @NotNull ValueTypeRef valueTypeRef = reference.itemsType();
-    @Nullable DataType valueType = resolve(valueTypeRef);
+    @Nullable DataTypeApi valueType = resolve(valueTypeRef);
     if (valueType == null) return null;
     Map<DatumType, AnonMapType> mapsByKey = anonMaps.get(valueType);
     if (mapsByKey == null) return null;
 
-    @Nullable Type keyType = reference.keysType().resolve(this);
+    @Nullable TypeApi keyType = reference.keysType().resolve(this);
     if (keyType instanceof DatumType) {
       DatumType keyDatumType = (DatumType) keyType;
       return mapsByKey.get(keyDatumType);

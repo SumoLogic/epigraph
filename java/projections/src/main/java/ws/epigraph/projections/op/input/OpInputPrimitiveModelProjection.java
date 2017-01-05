@@ -23,17 +23,17 @@ import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenPrimitiveModelProjection;
 import ws.epigraph.projections.op.OpParams;
-import ws.epigraph.types.PrimitiveType;
+import ws.epigraph.types.PrimitiveTypeApi;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpInputPrimitiveModelProjection
-    extends OpInputModelProjection<OpInputPrimitiveModelProjection, PrimitiveType<?>, GPrimitiveDatum>
-    implements GenPrimitiveModelProjection<OpInputPrimitiveModelProjection, PrimitiveType<?>> {
+    extends OpInputModelProjection<OpInputPrimitiveModelProjection, PrimitiveTypeApi, GPrimitiveDatum>
+    implements GenPrimitiveModelProjection<OpInputPrimitiveModelProjection, PrimitiveTypeApi> {
 
   public OpInputPrimitiveModelProjection(
-      @NotNull PrimitiveType<?> model,
+      @NotNull PrimitiveTypeApi model,
       boolean required,
       @Nullable GPrimitiveDatum defaultValue,
       @NotNull OpParams params,

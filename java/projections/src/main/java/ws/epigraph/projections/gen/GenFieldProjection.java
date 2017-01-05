@@ -19,7 +19,7 @@ package ws.epigraph.projections.gen;
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
-import ws.epigraph.types.DataType;
+import ws.epigraph.types.DataTypeApi;
 
 import java.util.List;
 
@@ -49,7 +49,7 @@ public interface GenFieldProjection<
    */
   @NotNull
   /* static */
-  FP merge(@NotNull DataType type, @NotNull List<FP> fieldProjections);
+  FP merge(@NotNull DataTypeApi type, @NotNull List<FP> fieldProjections);
 
   @NotNull TextLocation location();
 }

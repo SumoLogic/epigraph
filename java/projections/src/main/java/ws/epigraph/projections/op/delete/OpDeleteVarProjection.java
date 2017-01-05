@@ -18,7 +18,7 @@ package ws.epigraph.projections.op.delete;
 
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.abs.AbstractVarProjection;
-import ws.epigraph.types.Type;
+import ws.epigraph.types.TypeApi;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,7 +38,7 @@ public class OpDeleteVarProjection extends AbstractVarProjection<
   private final boolean canDelete;
 
   public OpDeleteVarProjection(
-      @NotNull Type type,
+      @NotNull TypeApi type,
       boolean canDelete,
       @NotNull LinkedHashMap<String, OpDeleteTagProjectionEntry> tagProjections,
       boolean parenthesized,

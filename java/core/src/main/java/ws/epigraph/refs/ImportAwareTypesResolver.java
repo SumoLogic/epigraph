@@ -18,9 +18,7 @@ package ws.epigraph.refs;
 
 import ws.epigraph.lang.DefaultImports;
 import ws.epigraph.lang.Qn;
-import ws.epigraph.types.DataType;
-import ws.epigraph.types.DatumType;
-import ws.epigraph.types.Type;
+import ws.epigraph.types.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -46,7 +44,7 @@ public class ImportAwareTypesResolver implements TypesResolver {
   public @NotNull TypesResolver childResolver() { return childResolver; }
 
   @Override
-  public @Nullable Type resolve(@NotNull QnTypeRef reference) {
+  public @Nullable TypeApi resolve(@NotNull QnTypeRef reference) {
     final @NotNull Qn qn = reference.qn();
 
     List<Qn> prefixes = calculateResolutionPrefixes(qn, currentNamespace, imports, false);
@@ -108,9 +106,9 @@ public class ImportAwareTypesResolver implements TypesResolver {
   }
 
   @Override
-  public @Nullable Type resolve(@NotNull AnonListRef reference) {
+  public @Nullable TypeApi resolve(@NotNull AnonListRef reference) {
     @NotNull ValueTypeRef itemTypeRef = reference.itemsType();
-    @Nullable DataType itemType = resolve(itemTypeRef);
+    @Nullable DataTypeApi itemType = resolve(itemTypeRef);
     if (itemType == null) return null;
 
     final @NotNull AnonListRef normalizedRef = TypeReferenceFactory.createAnonListReference(itemType);
@@ -118,12 +116,12 @@ public class ImportAwareTypesResolver implements TypesResolver {
   }
 
   @Override
-  public @Nullable Type resolve(@NotNull AnonMapRef reference) {
+  public @Nullable TypeApi resolve(@NotNull AnonMapRef reference) {
     @NotNull ValueTypeRef valueTypeRef = reference.itemsType();
-    @Nullable DataType valueType = resolve(valueTypeRef);
+    @Nullable DataTypeApi valueType = resolve(valueTypeRef);
     if (valueType == null) return null;
 
-    @Nullable Type keyType = reference.keysType().resolve(this);
+    @Nullable TypeApi keyType = reference.keysType().resolve(this);
     if (keyType instanceof DatumType) {
       DatumType keyDatumType = (DatumType) keyType;
       final @NotNull AnonMapRef normalizedRef = TypeReferenceFactory.createAnonMapReference(keyDatumType, valueType);

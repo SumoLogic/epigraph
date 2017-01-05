@@ -23,7 +23,7 @@ import ws.epigraph.projections.abs.AbstractFieldProjection;
 import ws.epigraph.projections.gen.GenModelProjection;
 import ws.epigraph.projections.gen.GenTagProjectionEntry;
 import ws.epigraph.projections.gen.GenVarProjection;
-import ws.epigraph.types.DataType;
+import ws.epigraph.types.DataTypeApi;
 
 import java.util.List;
 import java.util.Objects;
@@ -53,7 +53,7 @@ public abstract class AbstractReqFieldProjection<
 
   @Override
   protected FP merge(
-      final @NotNull DataType type,
+      final @NotNull DataTypeApi type,
       final @NotNull List<FP> fieldProjections,
       final @NotNull Annotations mergedAnnotations,
       final @NotNull VP mergedVarProjection) {
@@ -68,7 +68,7 @@ public abstract class AbstractReqFieldProjection<
   }
 
   protected FP merge(
-      final @NotNull DataType type,
+      final @NotNull DataTypeApi type,
       final @NotNull List<FP> fieldProjections,
       final @NotNull ReqParams mergedParams,
       final @NotNull Annotations mergedAnnotations,

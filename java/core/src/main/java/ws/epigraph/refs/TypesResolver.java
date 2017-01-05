@@ -16,41 +16,48 @@
 
 package ws.epigraph.refs;
 
-import ws.epigraph.types.DataType;
-import ws.epigraph.types.DatumType;
-import ws.epigraph.types.Type;
+import ws.epigraph.types.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ws.epigraph.types.TypeKind;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public interface TypesResolver {
   @Nullable
-  Type resolve(@NotNull QnTypeRef reference);
+  TypeApi resolve(@NotNull QnTypeRef reference);
 
   @Nullable
-  Type resolve(@NotNull AnonListRef reference);
+  TypeApi resolve(@NotNull AnonListRef reference);
 
   @Nullable
-  Type resolve(@NotNull AnonMapRef reference);
+  TypeApi resolve(@NotNull AnonMapRef reference);
 
-  default @Nullable DataType resolve(@NotNull ValueTypeRef valueTypeRef) {
-    @Nullable Type type = valueTypeRef.typeRef().resolve(this);
+  default @Nullable DataTypeApi resolve(@NotNull ValueTypeRef valueTypeRef) {
+    @Nullable TypeApi type = valueTypeRef.typeRef().resolve(this);
     if (type == null) return null;
 
-    final Type.Tag defaultTag;
+    final TagApi defaultTag;
     @Nullable String defaultTagOverride = valueTypeRef.defaultOverride();
     if (defaultTagOverride == null) {
       if (type.kind() == TypeKind.UNION) defaultTag = null;
-      else defaultTag = ((DatumType) type).self;
+      else defaultTag = ((DatumTypeApi) type).self();
     } else {
       defaultTag = type.tagsMap().get(defaultTagOverride);
       if (defaultTag == null) return null;
     }
 
-    return new DataType(type, defaultTag);
+    if (type instanceof UnionTypeApi) {
+      UnionTypeApi unionTypeApi = (UnionTypeApi) type;
+      return unionTypeApi.dataType(defaultTag);
+    }
+
+    if (type instanceof DatumTypeApi) {
+      DatumTypeApi datumTypeApi = (DatumTypeApi) type;
+      return datumTypeApi.dataType();
+    }
+
+    throw new RuntimeException("Unknown type: " + type.getClass().getName());
   }
 
 }

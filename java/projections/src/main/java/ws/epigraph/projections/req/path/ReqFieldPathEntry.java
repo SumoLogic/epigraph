@@ -18,7 +18,7 @@ package ws.epigraph.projections.req.path;
 
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.abs.AbstractFieldProjectionEntry;
-import ws.epigraph.types.RecordType;
+import ws.epigraph.types.FieldApi;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -31,7 +31,7 @@ public class ReqFieldPathEntry extends AbstractFieldProjectionEntry<
     ReqFieldPath
     > {
   public ReqFieldPathEntry(
-      @NotNull RecordType.Field field,
+      @NotNull FieldApi field,
       @NotNull ReqFieldPath projection,
       @NotNull TextLocation location) {
     super(field, projection, location);

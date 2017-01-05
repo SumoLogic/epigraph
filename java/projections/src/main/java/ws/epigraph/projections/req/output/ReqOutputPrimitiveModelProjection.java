@@ -20,7 +20,7 @@ import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenPrimitiveModelProjection;
 import ws.epigraph.projections.req.ReqParams;
-import ws.epigraph.types.PrimitiveType;
+import ws.epigraph.types.PrimitiveTypeApi;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,11 +30,11 @@ import java.util.List;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ReqOutputPrimitiveModelProjection
-    extends ReqOutputModelProjection<ReqOutputPrimitiveModelProjection, PrimitiveType<?>>
-    implements GenPrimitiveModelProjection<ReqOutputPrimitiveModelProjection, PrimitiveType<?>> {
+    extends ReqOutputModelProjection<ReqOutputPrimitiveModelProjection, PrimitiveTypeApi>
+    implements GenPrimitiveModelProjection<ReqOutputPrimitiveModelProjection, PrimitiveTypeApi> {
 
   public ReqOutputPrimitiveModelProjection(
-      @NotNull PrimitiveType model,
+      @NotNull PrimitiveTypeApi model,
       boolean required,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
@@ -46,12 +46,12 @@ public class ReqOutputPrimitiveModelProjection
   /* static */
   @Override
   protected ReqOutputPrimitiveModelProjection merge(
-      @NotNull final PrimitiveType<?> model,
+      final @NotNull PrimitiveTypeApi model,
       final boolean mergedRequired,
-      @NotNull final List<ReqOutputPrimitiveModelProjection> modelProjections,
-      @NotNull final ReqParams mergedParams,
-      @NotNull final Annotations mergedAnnotations,
-      @Nullable final ReqOutputPrimitiveModelProjection mergedMetaProjection) {
+      final @NotNull List<ReqOutputPrimitiveModelProjection> modelProjections,
+      final @NotNull ReqParams mergedParams,
+      final @NotNull Annotations mergedAnnotations,
+      final @Nullable ReqOutputPrimitiveModelProjection mergedMetaProjection) {
 
     return new ReqOutputPrimitiveModelProjection(
         model,

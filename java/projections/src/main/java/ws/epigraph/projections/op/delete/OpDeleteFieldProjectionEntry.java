@@ -18,7 +18,7 @@ package ws.epigraph.projections.op.delete;
 
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.abs.AbstractFieldProjectionEntry;
-import ws.epigraph.types.RecordType;
+import ws.epigraph.types.FieldApi;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -31,7 +31,7 @@ public class OpDeleteFieldProjectionEntry extends AbstractFieldProjectionEntry<
     OpDeleteFieldProjection
     > {
   public OpDeleteFieldProjectionEntry(
-      @NotNull RecordType.Field field,
+      @NotNull FieldApi field,
       @NotNull OpDeleteFieldProjection projection,
       @NotNull TextLocation location) {
     super(field, projection, location);

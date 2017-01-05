@@ -16,7 +16,7 @@
 
 package ws.epigraph.projections.gen;
 
-import ws.epigraph.types.RecordType;
+import ws.epigraph.types.RecordTypeApi;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,7 +32,7 @@ public interface GenRecordModelProjection<
     RMP extends GenRecordModelProjection<VP, TP, MP, RMP, FPE, FP, M>,
     FPE extends GenFieldProjectionEntry<VP, TP, MP, FP>,
     FP extends GenFieldProjection<VP, TP, MP, FP>,
-    M extends RecordType
+    M extends RecordTypeApi
     > extends GenModelProjection<RMP, M> {
 
   @NotNull Map<String, FPE> fieldProjections();
@@ -42,9 +42,8 @@ public interface GenRecordModelProjection<
   /**
    * @return single field projection if there's just one, {@code null} otherwise
    */
-  @Nullable
-  default FPE pathFieldProjection() {
-    @NotNull final Map<String, FPE> fieldProjections = fieldProjections();
+  default @Nullable FPE pathFieldProjection() {
+    final @NotNull Map<String, FPE> fieldProjections = fieldProjections();
     if (fieldProjections.size() == 1) return fieldProjections.values().iterator().next();
     else return null;
   }

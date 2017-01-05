@@ -16,9 +16,7 @@
 
 package ws.epigraph.refs;
 
-import ws.epigraph.types.DatumType;
-import ws.epigraph.types.Type;
-import ws.epigraph.types.UnionType;
+import ws.epigraph.types.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,17 +25,17 @@ import org.jetbrains.annotations.Nullable;
  */
 public interface TypeRef {
   @Nullable
-  Type resolve(@NotNull TypesResolver resolver);
+  TypeApi resolve(@NotNull TypesResolver resolver);
 
-  default @Nullable DatumType resolveDatumType(@NotNull TypesResolver resolver) {
-    Type t = resolve(resolver);
-    if (t instanceof DatumType) return (DatumType) t;
+  default @Nullable DatumTypeApi resolveDatumType(@NotNull TypesResolver resolver) {
+    TypeApi t = resolve(resolver);
+    if (t instanceof DatumTypeApi) return (DatumTypeApi) t;
     else return null; // or throw if it has wrong kind?
   }
 
-  default @Nullable UnionType resolveVarType(@NotNull TypesResolver resolver) {
-    Type t = resolve(resolver);
-    if (t instanceof UnionType) return (UnionType) t;
+  default @Nullable UnionTypeApi resolveVarType(@NotNull TypesResolver resolver) {
+    TypeApi t = resolve(resolver);
+    if (t instanceof UnionTypeApi) return (UnionTypeApi) t;
     else return null; // or throw if it has wrong kind?
   }
 }

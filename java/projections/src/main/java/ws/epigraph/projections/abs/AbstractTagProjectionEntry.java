@@ -21,8 +21,8 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.gen.GenModelProjection;
 import ws.epigraph.projections.gen.GenTagProjectionEntry;
-import ws.epigraph.types.DatumType;
-import ws.epigraph.types.Type;
+import ws.epigraph.types.DatumTypeApi;
+import ws.epigraph.types.TagApi;
 
 import java.util.List;
 import java.util.Objects;
@@ -35,48 +35,48 @@ public abstract class AbstractTagProjectionEntry<
     TP extends AbstractTagProjectionEntry<TP, MP>,
     MP extends AbstractModelProjection</*MP*/?, ?>> implements GenTagProjectionEntry<TP, MP> {
 
-  private final @NotNull Type.Tag tag;
+  private final @NotNull TagApi tag;
   private final @NotNull MP projection;
   private final @NotNull TextLocation location;
 
-  protected AbstractTagProjectionEntry(@NotNull Type.Tag tag, @NotNull MP projection, @NotNull TextLocation location) {
+  protected AbstractTagProjectionEntry(@NotNull TagApi tag, @NotNull MP projection, @NotNull TextLocation location) {
     this.tag = tag;
     this.projection = projection;
     this.location = location;
 
-    if (!tag.type.isAssignableFrom(projection.model()))
+    if (!tag.type().isAssignableFrom(projection.model()))
       throw new IllegalArgumentException(
           String.format(
               "Tag '%s' type '%s' is not compatible with '%s' projection",
-              tag.name(), tag.type, projection().model().name()
+              tag.name(), tag.type(), projection().model().name()
           )
       );
 
   }
 
   @Override
-  public @NotNull Type.Tag tag() { return tag; }
+  public @NotNull TagApi tag() { return tag; }
 
   @Override
   public @NotNull MP projection() { return projection; }
 
   @SuppressWarnings("unchecked")
   @Override
-  public @Nullable TP mergeTags(final @NotNull Type.Tag tag, final @NotNull List<TP> tagEntries) {
+  public @Nullable TP mergeTags(final @NotNull TagApi tag, final @NotNull List<TP> tagEntries) {
     if (tagEntries.isEmpty()) return null;
 
     final List<@NotNull MP> models =
         tagEntries.stream().map(AbstractTagProjectionEntry::projection).collect(Collectors.toList());
 
     final @NotNull MP mp = models.get(0);
-    final @NotNull DatumType type = tag.type;
-    MP mergedModel = ((GenModelProjection<MP, DatumType>) mp).merge(type, models);
+    final @NotNull DatumTypeApi type = tag.type();
+    MP mergedModel = ((GenModelProjection<MP, DatumTypeApi>) mp).merge(type, models);
 
     return mergedModel == null ? null : mergeTags(tag, tagEntries, mergedModel);
   }
 
   protected @Nullable TP mergeTags(
-      final @NotNull Type.Tag tag,
+      final @NotNull TagApi tag,
       final @NotNull List<TP> tagsEntries,
       @NotNull MP mergedModel) {
 

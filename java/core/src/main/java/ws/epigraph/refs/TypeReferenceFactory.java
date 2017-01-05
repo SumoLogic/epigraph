@@ -28,7 +28,7 @@ import org.jetbrains.annotations.Nullable;
 public final class TypeReferenceFactory {
   private TypeReferenceFactory() {}
 
-  public static @NotNull TypeRef createReference(@NotNull Type type) {
+  public static @NotNull TypeRef createReference(@NotNull TypeApi type) {
     if (type instanceof AnonListType) {
       final AnonListType anonListType = (AnonListType) type;
       return createAnonListReference(anonListType.elementType());
@@ -49,24 +49,24 @@ public final class TypeReferenceFactory {
       throw new IllegalArgumentException("Don't know how to handle " + type.getClass().getName());
   }
 
-  public static @NotNull AnonListRef createAnonListReference(@NotNull DataType itemType) {
+  public static @NotNull AnonListRef createAnonListReference(@NotNull DataTypeApi itemType) {
     return new AnonListRef(
       createValueTypeReference(itemType)
     );
   }
 
-  public static @NotNull AnonMapRef createAnonMapReference(@NotNull DatumType keyType, @NotNull DataType valueType) {
+  public static @NotNull AnonMapRef createAnonMapReference(@NotNull DatumTypeApi keyType, @NotNull DataTypeApi valueType) {
     return new AnonMapRef(
         createReference(keyType),
         createValueTypeReference(valueType)
     );
   }
 
-  public static @NotNull ValueTypeRef createValueTypeReference(@NotNull DataType dataType) {
-    final @Nullable Type.Tag defaultTag = dataType.defaultTag;
+  public static @NotNull ValueTypeRef createValueTypeReference(@NotNull DataTypeApi dataType) {
+    final @Nullable TagApi defaultTag = dataType.defaultTag();
     final String defaultTagName = defaultTag == null ? null : defaultTag.name();
 
-    final @NotNull Type type = dataType.type;
+    final @NotNull TypeApi type = dataType.type();
     final @NotNull TypeRef typeRef = createReference(type);
 
     return new ValueTypeRef(typeRef, defaultTagName);

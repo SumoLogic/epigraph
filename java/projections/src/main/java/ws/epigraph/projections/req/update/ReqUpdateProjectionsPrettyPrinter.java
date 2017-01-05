@@ -89,7 +89,7 @@ public class ReqUpdateProjectionsPrettyPrinter<E extends Exception>
   }
 
   @Override
-  protected String fieldNamePrefix(@NotNull final ReqUpdateFieldProjection fieldProjection) {
+  protected String fieldNamePrefix(final @NotNull ReqUpdateFieldProjection fieldProjection) {
     return fieldProjection.update() ? "+" : "";
   }
 

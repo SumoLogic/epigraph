@@ -18,13 +18,12 @@ package ws.epigraph.projections.op.input;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ws.epigraph.data.Datum;
 import ws.epigraph.gdata.GDatum;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.op.AbstractOpModelProjection;
 import ws.epigraph.projections.op.OpParams;
-import ws.epigraph.types.DatumType;
+import ws.epigraph.types.DatumTypeApi;
 
 import java.util.Objects;
 
@@ -33,7 +32,7 @@ import java.util.Objects;
  */
 public abstract class OpInputModelProjection<
     MP extends OpInputModelProjection</*MP*/?, ?, D>,
-    M extends DatumType,
+    M extends DatumTypeApi,
     D extends GDatum>
     extends AbstractOpModelProjection<MP, M> {
 

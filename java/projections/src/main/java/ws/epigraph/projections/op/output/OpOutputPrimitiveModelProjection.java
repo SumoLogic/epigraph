@@ -20,7 +20,7 @@ import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenPrimitiveModelProjection;
 import ws.epigraph.projections.op.OpParams;
-import ws.epigraph.types.PrimitiveType;
+import ws.epigraph.types.PrimitiveTypeApi;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,11 +30,11 @@ import java.util.List;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpOutputPrimitiveModelProjection
-    extends OpOutputModelProjection<OpOutputPrimitiveModelProjection, PrimitiveType<?>>
-    implements GenPrimitiveModelProjection<OpOutputPrimitiveModelProjection, PrimitiveType<?>> {
+    extends OpOutputModelProjection<OpOutputPrimitiveModelProjection, PrimitiveTypeApi>
+    implements GenPrimitiveModelProjection<OpOutputPrimitiveModelProjection, PrimitiveTypeApi> {
 
   public OpOutputPrimitiveModelProjection(
-      @NotNull PrimitiveType model,
+      @NotNull PrimitiveTypeApi model,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
       @Nullable OpOutputPrimitiveModelProjection metaProjection,
@@ -44,11 +44,11 @@ public class OpOutputPrimitiveModelProjection
 
   @Override
   protected OpOutputPrimitiveModelProjection merge(
-      @NotNull final PrimitiveType<?> model,
-      @NotNull final List<OpOutputPrimitiveModelProjection> modelProjections,
-      @NotNull final OpParams mergedParams,
-      @NotNull final Annotations mergedAnnotations,
-      @Nullable final OpOutputPrimitiveModelProjection mergedMetaProjection) {
+      final @NotNull PrimitiveTypeApi model,
+      final @NotNull List<OpOutputPrimitiveModelProjection> modelProjections,
+      final @NotNull OpParams mergedParams,
+      final @NotNull Annotations mergedAnnotations,
+      final @Nullable OpOutputPrimitiveModelProjection mergedMetaProjection) {
 
     return new OpOutputPrimitiveModelProjection(
         model,

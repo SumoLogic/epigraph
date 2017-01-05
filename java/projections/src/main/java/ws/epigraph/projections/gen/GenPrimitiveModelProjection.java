@@ -16,13 +16,13 @@
 
 package ws.epigraph.projections.gen;
 
-import ws.epigraph.types.PrimitiveType;
+import ws.epigraph.types.PrimitiveTypeApi;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public interface GenPrimitiveModelProjection<
     PMP extends GenPrimitiveModelProjection</*PMP*/?, ?>,
-    M extends PrimitiveType<?>
+    M extends PrimitiveTypeApi
     > extends GenModelProjection<PMP, M> {
 }

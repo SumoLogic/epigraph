@@ -22,7 +22,7 @@ import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenListModelProjection;
 import ws.epigraph.projections.op.OpParams;
-import ws.epigraph.types.ListType;
+import ws.epigraph.types.ListTypeApi;
 
 import java.util.List;
 import java.util.Objects;
@@ -32,20 +32,19 @@ import java.util.stream.Collectors;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpOutputListModelProjection
-    extends OpOutputModelProjection<OpOutputListModelProjection, ListType>
+    extends OpOutputModelProjection<OpOutputListModelProjection, ListTypeApi>
     implements GenListModelProjection<
     OpOutputVarProjection,
     OpOutputTagProjectionEntry,
     OpOutputModelProjection<?, ?>,
     OpOutputListModelProjection,
-    ListType
+    ListTypeApi
     > {
 
-  @NotNull
-  private OpOutputVarProjection itemsProjection;
+  private final @NotNull OpOutputVarProjection itemsProjection;
 
   public OpOutputListModelProjection(
-      @NotNull ListType model,
+      @NotNull ListTypeApi model,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
       @Nullable OpOutputListModelProjection metaProjection,
@@ -55,24 +54,24 @@ public class OpOutputListModelProjection
     this.itemsProjection = itemsProjection;
   }
 
-  @NotNull
-  public OpOutputVarProjection itemsProjection() { return itemsProjection; }
+  @Override
+  public @NotNull OpOutputVarProjection itemsProjection() { return itemsProjection; }
 
   /* static */
   @Override
   protected OpOutputListModelProjection merge(
-      @NotNull final ListType model,
-      @NotNull final List<OpOutputListModelProjection> modelProjections,
-      @NotNull final OpParams mergedParams,
-      @NotNull final Annotations mergedAnnotations,
-      @Nullable final OpOutputListModelProjection mergedMetaProjection) {
+      final @NotNull ListTypeApi model,
+      final @NotNull List<OpOutputListModelProjection> modelProjections,
+      final @NotNull OpParams mergedParams,
+      final @NotNull Annotations mergedAnnotations,
+      final @Nullable OpOutputListModelProjection mergedMetaProjection) {
 
     List<OpOutputVarProjection> itemProjections =
         modelProjections.stream()
                         .map(OpOutputListModelProjection::itemsProjection)
                         .collect(Collectors.toList());
 
-    @NotNull final OpOutputVarProjection mergedItemsVarType = itemProjections.get(0).merge(itemProjections);
+    final @NotNull OpOutputVarProjection mergedItemsVarType = itemProjections.get(0).merge(itemProjections);
 
     return new OpOutputListModelProjection(
         model,

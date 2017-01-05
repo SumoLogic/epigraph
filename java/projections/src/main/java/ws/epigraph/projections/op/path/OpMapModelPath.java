@@ -20,7 +20,7 @@ import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenMapModelProjection;
 import ws.epigraph.projections.op.OpParams;
-import ws.epigraph.types.MapType;
+import ws.epigraph.types.MapTypeApi;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -29,22 +29,20 @@ import java.util.Objects;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpMapModelPath
-    extends OpModelPath<OpMapModelPath, MapType>
+    extends OpModelPath<OpMapModelPath, MapTypeApi>
     implements GenMapModelProjection<
     OpVarPath,
     OpTagPath,
     OpModelPath<?, ?>,
     OpMapModelPath,
-    MapType
+    MapTypeApi
     > {
 
-  @NotNull
-  private final OpVarPath itemsProjection;
-  @NotNull
-  private final OpPathKeyProjection keyProjection;
+  private final @NotNull OpVarPath itemsProjection;
+  private final @NotNull OpPathKeyProjection keyProjection;
 
   public OpMapModelPath(
-      @NotNull MapType model,
+      @NotNull MapTypeApi model,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
       @NotNull OpPathKeyProjection keyProjection,
@@ -56,11 +54,10 @@ public class OpMapModelPath
     this.keyProjection = keyProjection;
   }
 
-  @NotNull
-  public OpVarPath itemsProjection() { return itemsProjection; }
+  @Override
+  public @NotNull OpVarPath itemsProjection() { return itemsProjection; }
 
-  @NotNull
-  public OpPathKeyProjection keyProjection() { return keyProjection; }
+  public @NotNull OpPathKeyProjection keyProjection() { return keyProjection; }
 
   @Override
   public boolean equals(Object o) {

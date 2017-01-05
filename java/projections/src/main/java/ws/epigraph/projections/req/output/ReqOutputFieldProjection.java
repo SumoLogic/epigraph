@@ -21,7 +21,7 @@ import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.req.AbstractReqFieldProjection;
 import ws.epigraph.projections.req.ReqParams;
-import ws.epigraph.types.DataType;
+import ws.epigraph.types.DataTypeApi;
 
 import java.util.List;
 import java.util.Objects;
@@ -52,7 +52,7 @@ public class ReqOutputFieldProjection extends AbstractReqFieldProjection<
 
   @Override
   protected ReqOutputFieldProjection merge(
-      final @NotNull DataType type,
+      final @NotNull DataTypeApi type,
       final @NotNull List<ReqOutputFieldProjection> fieldProjections,
       final @NotNull ReqParams mergedParams,
       final @NotNull Annotations mergedAnnotations,

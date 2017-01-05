@@ -22,7 +22,7 @@ import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.req.AbstractReqModelProjection;
 import ws.epigraph.projections.req.ReqParams;
-import ws.epigraph.types.DatumType;
+import ws.epigraph.types.DatumTypeApi;
 
 import java.util.List;
 import java.util.Objects;
@@ -32,7 +32,7 @@ import java.util.Objects;
  */
 public abstract class ReqOutputModelProjection<
     MP extends ReqOutputModelProjection</*MP*/?, ?>,
-    M extends DatumType>
+    M extends DatumTypeApi>
     extends AbstractReqModelProjection<MP, M> {
 
   protected final boolean required;

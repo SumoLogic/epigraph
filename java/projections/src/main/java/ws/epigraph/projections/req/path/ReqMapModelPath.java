@@ -20,7 +20,7 @@ import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenMapModelProjection;
 import ws.epigraph.projections.req.ReqParams;
-import ws.epigraph.types.MapType;
+import ws.epigraph.types.MapTypeApi;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -29,22 +29,20 @@ import java.util.Objects;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ReqMapModelPath
-    extends ReqModelPath<ReqMapModelPath, MapType>
+    extends ReqModelPath<ReqMapModelPath, MapTypeApi>
     implements GenMapModelProjection<
     ReqVarPath,
     ReqTagPath,
     ReqModelPath<?, ?>,
     ReqMapModelPath,
-    MapType
+    MapTypeApi
     > {
 
-  @NotNull
-  private final ReqPathKeyProjection key;
-  @NotNull
-  private final ReqVarPath valuesProjection;
+  private final @NotNull ReqPathKeyProjection key;
+  private final @NotNull ReqVarPath valuesProjection;
 
   public ReqMapModelPath(
-      @NotNull MapType model,
+      @NotNull MapTypeApi model,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
       @NotNull ReqPathKeyProjection key,
@@ -56,11 +54,10 @@ public class ReqMapModelPath
     this.valuesProjection = valuesProjection;
   }
 
-  @NotNull
-  public ReqVarPath itemsProjection() { return valuesProjection; }
+  @Override
+  public @NotNull ReqVarPath itemsProjection() { return valuesProjection; }
 
-  @NotNull
-  public ReqPathKeyProjection key() { return key; }
+  public @NotNull ReqPathKeyProjection key() { return key; }
 
   @Override
   public boolean equals(Object o) {

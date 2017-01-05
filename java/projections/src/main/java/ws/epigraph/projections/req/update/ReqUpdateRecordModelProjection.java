@@ -21,7 +21,7 @@ import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.RecordModelProjectionHelper;
 import ws.epigraph.projections.gen.GenRecordModelProjection;
 import ws.epigraph.projections.req.ReqParams;
-import ws.epigraph.types.RecordType;
+import ws.epigraph.types.RecordTypeApi;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -31,7 +31,7 @@ import java.util.*;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ReqUpdateRecordModelProjection
-    extends ReqUpdateModelProjection<ReqUpdateRecordModelProjection, RecordType>
+    extends ReqUpdateModelProjection<ReqUpdateRecordModelProjection, RecordTypeApi>
     implements GenRecordModelProjection<
     ReqUpdateVarProjection,
     ReqUpdateTagProjectionEntry,
@@ -39,14 +39,13 @@ public class ReqUpdateRecordModelProjection
     ReqUpdateRecordModelProjection,
     ReqUpdateFieldProjectionEntry,
     ReqUpdateFieldProjection,
-    RecordType
+    RecordTypeApi
     > {
 
-  @NotNull
-  private Map<String, ReqUpdateFieldProjectionEntry> fieldProjections;
+  private final @NotNull Map<String, ReqUpdateFieldProjectionEntry> fieldProjections;
 
   public ReqUpdateRecordModelProjection(
-      @NotNull RecordType model,
+      @NotNull RecordTypeApi model,
       boolean update,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
@@ -58,18 +57,17 @@ public class ReqUpdateRecordModelProjection
     RecordModelProjectionHelper.checkFieldsBelongsToModel(fieldProjections.keySet(), model);
   }
 
-  @NotNull
-  public Map<String, ReqUpdateFieldProjectionEntry> fieldProjections() { return fieldProjections; }
+  @Override
+  public @NotNull Map<String, ReqUpdateFieldProjectionEntry> fieldProjections() { return fieldProjections; }
 
-  @Nullable
-  public ReqUpdateFieldProjectionEntry fieldProjection(@NotNull String fieldName) {
+  @Override
+  public @Nullable ReqUpdateFieldProjectionEntry fieldProjection(@NotNull String fieldName) {
     return fieldProjections.get(fieldName);
   }
 
   @Override
   public boolean equals(Object o) {
-    if (!super.equals(o)) return false;
-    return RecordModelProjectionHelper.equals(this, o);
+    return super.equals(o) && RecordModelProjectionHelper.equals(this, o);
   }
 
   @Override

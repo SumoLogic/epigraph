@@ -18,7 +18,8 @@ package ws.epigraph.projections.abs;
 
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.gen.*;
-import ws.epigraph.types.RecordType;
+import ws.epigraph.types.FieldApi;
+import ws.epigraph.types.RecordTypeApi;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -33,15 +34,12 @@ public abstract class AbstractFieldProjectionEntry<
     FP extends GenFieldProjection<VP, TP, MP, FP>
     > implements GenFieldProjectionEntry<VP, TP, MP, FP> {
 
-  @NotNull
-  private final RecordType.Field field;
-  @NotNull
-  private final FP projection;
-  @NotNull
-  private final TextLocation location;
+  private final @NotNull FieldApi field;
+  private final @NotNull FP projection;
+  private final @NotNull TextLocation location;
 
   protected AbstractFieldProjectionEntry(
-      @NotNull RecordType.Field field,
+      @NotNull FieldApi field,
       @NotNull FP projection,
       @NotNull TextLocation location
   ) {
@@ -50,20 +48,21 @@ public abstract class AbstractFieldProjectionEntry<
     this.location = location;
   }
 
-  @NotNull
-  public RecordType.Field field() { return field; }
+  @Override
+  public @NotNull FieldApi field() { return field; }
 
-  @NotNull
-  public FP fieldProjection() { return projection; }
+  @Override
+  public @NotNull FP fieldProjection() { return projection; }
 
-  @NotNull
-  public TextLocation location() { return location; }
+  @Override
+  public @NotNull TextLocation location() { return location; }
 
+  @SuppressWarnings("unchecked")
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-    AbstractFieldProjectionEntry that = (AbstractFieldProjectionEntry) o;
+    AbstractFieldProjectionEntry<VP, TP, MP, FP> that = (AbstractFieldProjectionEntry<VP, TP, MP, FP>) o;
     return Objects.equals(field.name(), that.field.name()) &&
            Objects.equals(projection, that.projection);
   }

@@ -18,7 +18,7 @@ package ws.epigraph.projections.req.update;
 
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.abs.AbstractVarProjection;
-import ws.epigraph.types.Type;
+import ws.epigraph.types.TypeApi;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -35,7 +35,7 @@ public class ReqUpdateVarProjection extends AbstractVarProjection<
     > {
 
   public ReqUpdateVarProjection(
-      @NotNull Type type,
+      @NotNull TypeApi type,
       @NotNull Map<String, ReqUpdateTagProjectionEntry> tagProjections,
       boolean parenthesized,
       @Nullable List<ReqUpdateVarProjection> polymorphicTails,

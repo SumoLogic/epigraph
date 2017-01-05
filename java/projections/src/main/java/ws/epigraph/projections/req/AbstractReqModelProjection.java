@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.abs.AbstractModelProjection;
-import ws.epigraph.types.DatumType;
+import ws.epigraph.types.DatumTypeApi;
 
 import java.util.List;
 import java.util.Objects;
@@ -31,7 +31,7 @@ import java.util.Objects;
  */
 public abstract class AbstractReqModelProjection<
     MP extends AbstractReqModelProjection</*MP*/?, ?>,
-    M extends DatumType>
+    M extends DatumTypeApi>
     extends AbstractModelProjection<MP, M> {
 
   @NotNull

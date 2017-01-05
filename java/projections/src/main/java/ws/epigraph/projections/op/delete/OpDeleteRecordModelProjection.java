@@ -22,7 +22,7 @@ import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.RecordModelProjectionHelper;
 import ws.epigraph.projections.gen.GenRecordModelProjection;
 import ws.epigraph.projections.op.OpParams;
-import ws.epigraph.types.RecordType;
+import ws.epigraph.types.RecordTypeApi;
 
 import java.util.Map;
 
@@ -30,7 +30,7 @@ import java.util.Map;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpDeleteRecordModelProjection
-    extends OpDeleteModelProjection<OpDeleteRecordModelProjection, RecordType>
+    extends OpDeleteModelProjection<OpDeleteRecordModelProjection, RecordTypeApi>
     implements GenRecordModelProjection<
     OpDeleteVarProjection,
     OpDeleteTagProjectionEntry,
@@ -38,14 +38,13 @@ public class OpDeleteRecordModelProjection
     OpDeleteRecordModelProjection,
     OpDeleteFieldProjectionEntry,
     OpDeleteFieldProjection,
-    RecordType
+    RecordTypeApi
     > {
 
-  @NotNull
-  private Map<String, OpDeleteFieldProjectionEntry> fieldProjections;
+  private final @NotNull Map<String, OpDeleteFieldProjectionEntry> fieldProjections;
 
   public OpDeleteRecordModelProjection(
-      @NotNull RecordType model,
+      @NotNull RecordTypeApi model,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
       @NotNull Map<String, OpDeleteFieldProjectionEntry> fieldProjections,
@@ -56,13 +55,12 @@ public class OpDeleteRecordModelProjection
     RecordModelProjectionHelper.checkFieldsBelongsToModel(fieldProjections.keySet(), model);
   }
 
-  @NotNull
-  public Map<String, OpDeleteFieldProjectionEntry> fieldProjections() { return fieldProjections; }
+  @Override
+  public @NotNull Map<String, OpDeleteFieldProjectionEntry> fieldProjections() { return fieldProjections; }
 
   @Override
   public boolean equals(Object o) {
-    if (!super.equals(o)) return false;
-    return RecordModelProjectionHelper.equals(this, o);
+    return super.equals(o) && RecordModelProjectionHelper.equals(this, o);
   }
 
   @Override

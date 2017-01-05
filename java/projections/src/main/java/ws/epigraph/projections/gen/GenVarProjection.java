@@ -19,7 +19,7 @@ package ws.epigraph.projections.gen;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.types.Type;
+import ws.epigraph.types.TypeApi;
 
 import java.util.List;
 import java.util.Map;
@@ -33,16 +33,15 @@ public interface GenVarProjection<
     MP extends GenModelProjection</*MP*/?, ?>
     > {
 
-  @NotNull Type type();
+  @NotNull TypeApi type();
 
   @NotNull Map<String, TP> tagProjections();
 
   /**
    * @return single tag if there's just one; {@code null} otherwise
    */
-  @Nullable
-  default TP pathTagProjection() {
-    @NotNull final Map<String, TP> tagProjections = tagProjections();
+  default @Nullable TP pathTagProjection() {
+    final @NotNull Map<String, TP> tagProjections = tagProjections();
     if (tagProjections.size() == 1) return tagProjections.values().iterator().next();
     else return null;
   }
@@ -70,7 +69,7 @@ public interface GenVarProjection<
    * @return normalized projection without any polymorphic tails. Projection type will be new effective type.
    * @see <a href="https://github.com/SumoLogic/epigraph/wiki/polymorphic%20tails#normalized-projections">normalized projections</a>
    */
-  @NotNull VP normalizedForType(@NotNull Type type); // should become `x=tailByType(type); return x==null?this:x;` for fully normalized projections
+  @NotNull VP normalizedForType(@NotNull TypeApi type); // should become `x=tailByType(type); return x==null?this:x;` for fully normalized projections
 
   /**
    * Merges var projections together.
@@ -86,7 +85,7 @@ public interface GenVarProjection<
   @NotNull VP merge(@NotNull List<VP> varProjections);
 
 //  @Nullable
-//  default VP tailByType(@NotNull Type tailType) {
+//  default VP tailByType(@NotNull TypeApi tailType) {
 //    // not too efficient if there are many tails.. change List to LinkedHashMap?
 //    List<VP> tails = polymorphicTails();
 //    if (tails == null) return null;

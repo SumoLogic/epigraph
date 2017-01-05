@@ -24,7 +24,7 @@ import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.RecordModelProjectionHelper;
 import ws.epigraph.projections.gen.GenRecordModelProjection;
 import ws.epigraph.projections.op.OpParams;
-import ws.epigraph.types.RecordType;
+import ws.epigraph.types.RecordTypeApi;
 
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -34,7 +34,7 @@ import java.util.Map;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpInputRecordModelProjection
-    extends OpInputModelProjection<OpInputRecordModelProjection, RecordType, GRecordDatum>
+    extends OpInputModelProjection<OpInputRecordModelProjection, RecordTypeApi, GRecordDatum>
     implements GenRecordModelProjection<
     OpInputVarProjection,
     OpInputTagProjectionEntry,
@@ -42,13 +42,13 @@ public class OpInputRecordModelProjection
     OpInputRecordModelProjection,
     OpInputFieldProjectionEntry,
     OpInputFieldProjection,
-    RecordType
+    RecordTypeApi
     > {
 
   private final @NotNull Map<String, OpInputFieldProjectionEntry> fieldProjections;
 
   public OpInputRecordModelProjection(
-      @NotNull RecordType model,
+      @NotNull RecordTypeApi model,
       boolean required,
       @Nullable GRecordDatum defaultValue,
       @NotNull OpParams params,

@@ -240,12 +240,12 @@ public final class GDataToData {
   }
 
   @SuppressWarnings("unchecked")
-  private static <T extends Type> T resolveType(
+  private static <T extends TypeApi> T resolveType(
       @NotNull TypeRef ref,
       @NotNull Class<T> expectedClass,
       @NotNull TypesResolver resolver,
       @NotNull TextLocation location) throws ProcessingException {
-    @Nullable Type type = ref.resolve(resolver);
+    @Nullable TypeApi type = ref.resolve(resolver);
     if (type == null) throw new ProcessingException("Can't resolve type '" + ref + "'", location);
 
     if (expectedClass.isAssignableFrom(type.getClass()))

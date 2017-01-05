@@ -18,7 +18,7 @@ package ws.epigraph.projections.req.update;
 
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.abs.AbstractTagProjectionEntry;
-import ws.epigraph.types.Type;
+import ws.epigraph.types.TagApi;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -26,9 +26,9 @@ import org.jetbrains.annotations.NotNull;
  */
 public class ReqUpdateTagProjectionEntry
     extends AbstractTagProjectionEntry<ReqUpdateTagProjectionEntry, ReqUpdateModelProjection<?, ?>> {
-  public ReqUpdateTagProjectionEntry(
 
-      @NotNull Type.Tag tag,
+  public ReqUpdateTagProjectionEntry(
+      @NotNull TagApi tag,
       @NotNull ReqUpdateModelProjection<?, ?> projection,
       @NotNull TextLocation location) {
     super(tag, projection, location);

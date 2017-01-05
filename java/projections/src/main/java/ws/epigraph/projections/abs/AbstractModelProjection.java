@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenModelProjection;
-import ws.epigraph.types.DatumType;
+import ws.epigraph.types.DatumTypeApi;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,16 +30,12 @@ import java.util.Objects;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public abstract class AbstractModelProjection<MP extends GenModelProjection</*MP*/?, ?>, M extends DatumType>
+public abstract class AbstractModelProjection<MP extends GenModelProjection</*MP*/?, ?>, M extends DatumTypeApi>
     implements GenModelProjection<MP, M> {
-  @NotNull
-  protected final M model;
-  @Nullable
-  protected final MP metaProjection;
-  @NotNull
-  protected final Annotations annotations;
-  @NotNull
-  private final TextLocation location;
+  protected final @NotNull M model;
+  protected final @Nullable MP metaProjection;
+  protected final @NotNull Annotations annotations;
+  private final @NotNull TextLocation location;
 
   protected AbstractModelProjection(
       @NotNull M model,
@@ -53,22 +49,21 @@ public abstract class AbstractModelProjection<MP extends GenModelProjection</*MP
     this.location = location;
   }
 
-  @NotNull
-  public M model() { return model; }
-
-  @Nullable
   @Override
-  public MP metaProjection() { return metaProjection; }
+  public @NotNull M model() { return model; }
 
-  @NotNull
-  public Annotations annotations() { return annotations; }
+  @Override
+  public @Nullable MP metaProjection() { return metaProjection; }
+
+  @Override
+  public @NotNull Annotations annotations() { return annotations; }
 
   @SuppressWarnings("unchecked")
   @Override
   /* static */
   public MP merge(
-      @NotNull final M model,
-      @NotNull final List<MP> modelProjections) {
+      final @NotNull M model,
+      final @NotNull List<MP> modelProjections) {
 
     if (modelProjections.isEmpty()) return null;
     if (modelProjections.size() == 1) return modelProjections.get(0);
@@ -87,7 +82,7 @@ public abstract class AbstractModelProjection<MP extends GenModelProjection</*MP
     if (metaProjectionsList.isEmpty()) mergedMetaProjection = null;
     else {
       final MP mp = metaProjectionsList.get(0);
-      DatumType metaModel = model/*.metaModel()*/; // TODO should get meta-model type here
+      DatumTypeApi metaModel = model/*.metaModel()*/; // TODO should get meta-model type here
       mergedMetaProjection = ((GenModelProjection<MP, M>) mp).merge((M) metaModel, metaProjectionsList);
     }
 
@@ -108,8 +103,8 @@ public abstract class AbstractModelProjection<MP extends GenModelProjection</*MP
     throw new RuntimeException("unimplemented"); // todo
   }
 
-  @NotNull
-  public TextLocation location() { return location; }
+  @Override
+  public @NotNull TextLocation location() { return location; }
 
   @Override
   public boolean equals(Object o) {

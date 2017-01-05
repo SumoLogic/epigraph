@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.gen.Constants;
 import ws.epigraph.types.DatumType;
 import ws.epigraph.types.Type;
+import ws.epigraph.types.TypeApi;
 
 import java.util.Map;
 import java.util.Objects;
@@ -48,17 +49,17 @@ public final class IndexBasedTypesResolver implements TypesResolver {
   private IndexBasedTypesResolver() {}
 
   @Override
-  public @Nullable Type resolve(final @NotNull QnTypeRef reference) {
+  public @Nullable TypeApi resolve(final @NotNull QnTypeRef reference) {
     return index.get(name(reference));
   }
 
   @Override
-  public @Nullable Type resolve(final @NotNull AnonListRef reference) {
+  public @Nullable TypeApi resolve(final @NotNull AnonListRef reference) {
     return index.get(name(reference));
   }
 
   @Override
-  public @Nullable Type resolve(final @NotNull AnonMapRef reference) {
+  public @Nullable TypeApi resolve(final @NotNull AnonMapRef reference) {
     return index.get(name(reference));
   }
 

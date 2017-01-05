@@ -20,7 +20,7 @@ import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenListModelProjection;
 import ws.epigraph.projections.req.ReqParams;
-import ws.epigraph.types.ListType;
+import ws.epigraph.types.ListTypeApi;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -29,19 +29,19 @@ import java.util.Objects;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ReqDeleteListModelProjection
-    extends ReqDeleteModelProjection<ReqDeleteListModelProjection, ListType>
+    extends ReqDeleteModelProjection<ReqDeleteListModelProjection, ListTypeApi>
     implements GenListModelProjection<
     ReqDeleteVarProjection,
     ReqDeleteTagProjectionEntry,
     ReqDeleteModelProjection<?, ?>,
     ReqDeleteListModelProjection,
-    ListType
+    ListTypeApi
     > {
-  @NotNull
-  private ReqDeleteVarProjection itemsProjection;
+
+  private final @NotNull ReqDeleteVarProjection itemsProjection;
 
   public ReqDeleteListModelProjection(
-      @NotNull ListType model,
+      @NotNull ListTypeApi model,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
       @NotNull ReqDeleteVarProjection itemsProjection,
@@ -50,8 +50,8 @@ public class ReqDeleteListModelProjection
     this.itemsProjection = itemsProjection;
   }
 
-  @NotNull
-  public ReqDeleteVarProjection itemsProjection() { return itemsProjection; }
+  @Override
+  public @NotNull ReqDeleteVarProjection itemsProjection() { return itemsProjection; }
 
   @Override
   public boolean equals(Object o) {

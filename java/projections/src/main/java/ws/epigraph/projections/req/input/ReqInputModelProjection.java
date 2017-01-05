@@ -21,14 +21,14 @@ import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.req.AbstractReqModelProjection;
 import ws.epigraph.projections.req.ReqParams;
-import ws.epigraph.types.DatumType;
+import ws.epigraph.types.DatumTypeApi;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public abstract class ReqInputModelProjection<
     MP extends ReqInputModelProjection</*MP*/?, ?>,
-    M extends DatumType>
+    M extends DatumTypeApi>
     extends AbstractReqModelProjection<MP, M> {
 
   protected ReqInputModelProjection(

@@ -22,7 +22,7 @@ import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.abs.AbstractModelProjection;
 import ws.epigraph.projections.gen.GenModelProjection;
-import ws.epigraph.types.DatumType;
+import ws.epigraph.types.DatumTypeApi;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -32,7 +32,7 @@ import java.util.Objects;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public abstract class AbstractOpModelProjection<MP extends GenModelProjection</*MP*/?, ?>, M extends DatumType>
+public abstract class AbstractOpModelProjection<MP extends GenModelProjection</*MP*/?, ?>, M extends DatumTypeApi>
     extends AbstractModelProjection<MP, M> {
   protected final @NotNull OpParams params;
 

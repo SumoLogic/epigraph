@@ -16,9 +16,9 @@
 
 package ws.epigraph.projections.gen;
 
-import ws.epigraph.lang.TextLocation;
-import ws.epigraph.types.RecordType;
 import org.jetbrains.annotations.NotNull;
+import ws.epigraph.lang.TextLocation;
+import ws.epigraph.types.FieldApi;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -29,7 +29,7 @@ public interface GenFieldProjectionEntry<
     MP extends GenModelProjection</*MP*/?, ?>,
     FP extends GenFieldProjection<VP, TP, MP, FP>
     > {
-  @NotNull RecordType.Field field();
+  @NotNull FieldApi field();
 
   @NotNull FP fieldProjection();
 

@@ -18,7 +18,7 @@ package ws.epigraph.projections.op.path;
 
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.abs.AbstractVarProjection;
-import ws.epigraph.types.Type;
+import ws.epigraph.types.TypeApi;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -31,7 +31,7 @@ import java.util.Collections;
 public class OpVarPath extends AbstractVarProjection<OpVarPath, OpTagPath, OpModelPath<?, ?>> {
 
   public OpVarPath(
-      @NotNull Type type,
+      @NotNull TypeApi type,
       @Nullable OpTagPath tagProjection,
       @NotNull TextLocation location) {
 

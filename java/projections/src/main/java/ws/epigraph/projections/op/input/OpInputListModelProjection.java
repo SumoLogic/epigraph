@@ -23,7 +23,7 @@ import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenListModelProjection;
 import ws.epigraph.projections.op.OpParams;
-import ws.epigraph.types.ListType;
+import ws.epigraph.types.ListTypeApi;
 
 import java.util.Objects;
 
@@ -31,19 +31,19 @@ import java.util.Objects;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpInputListModelProjection
-    extends OpInputModelProjection<OpInputListModelProjection, ListType, GListDatum>
+    extends OpInputModelProjection<OpInputListModelProjection, ListTypeApi, GListDatum>
     implements GenListModelProjection<
     OpInputVarProjection,
     OpInputTagProjectionEntry,
     OpInputModelProjection<?, ?, ?>,
     OpInputListModelProjection,
-    ListType
+    ListTypeApi
     > {
 
   private final @NotNull OpInputVarProjection itemsProjection;
 
   public OpInputListModelProjection(
-      @NotNull ListType model,
+      @NotNull ListTypeApi model,
       boolean required,
       @Nullable GListDatum defaultValue,
       @NotNull OpParams params,

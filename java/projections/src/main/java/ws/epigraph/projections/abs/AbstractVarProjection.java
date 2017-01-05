@@ -22,8 +22,9 @@ import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.gen.GenModelProjection;
 import ws.epigraph.projections.gen.GenTagProjectionEntry;
 import ws.epigraph.projections.gen.GenVarProjection;
-import ws.epigraph.types.DatumType;
-import ws.epigraph.types.Type;
+import ws.epigraph.types.DatumTypeApi;
+import ws.epigraph.types.TagApi;
+import ws.epigraph.types.TypeApi;
 
 import java.util.*;
 
@@ -38,7 +39,7 @@ public abstract class AbstractVarProjection<
     MP extends GenModelProjection</*MP*/?, ?>
     > implements GenVarProjection<VP, TP, MP> {
 
-  private final @NotNull Type type;
+  private final @NotNull TypeApi type;
   private final @NotNull Map<String, TP> tagProjections;
   private final boolean parenthesized; // todo merge
   private final @Nullable List<VP> polymorphicTails;
@@ -47,7 +48,7 @@ public abstract class AbstractVarProjection<
   private final @NotNull TextLocation location;
 
   protected AbstractVarProjection(
-      @NotNull Type type,
+      @NotNull TypeApi type,
       @NotNull Map<String, TP> tagProjections,
       boolean parenthesized,
       @Nullable List<VP> polymorphicTails,
@@ -74,8 +75,8 @@ public abstract class AbstractVarProjection<
       final String tagName = entry.getKey();
 
       final TP tagProjection = entry.getValue();
-      final @NotNull DatumType tagType = tagProjection.tag().type;
-      final DatumType tagProjectionModel = tagProjection.projection().model();
+      final @NotNull DatumTypeApi tagType = tagProjection.tag().type();
+      final DatumTypeApi tagProjectionModel = tagProjection.projection().model();
 
       if (!type.tagsMap().containsKey(tagName))
         throw new IllegalArgumentException(
@@ -113,7 +114,7 @@ public abstract class AbstractVarProjection<
   }
 
   @Override
-  public @NotNull Type type() { return type; }
+  public @NotNull TypeApi type() { return type; }
 
   @Override
   public @NotNull Map<String, TP> tagProjections() { return tagProjections; }
@@ -141,7 +142,7 @@ public abstract class AbstractVarProjection<
   }
 
   @Override
-  public @NotNull VP normalizedForType(final @NotNull Type targetType) {
+  public @NotNull VP normalizedForType(final @NotNull TypeApi targetType) {
 
     final @Nullable List<VP> polymorphicTails = polymorphicTails();
     if (polymorphicTails == null || polymorphicTails.isEmpty()) return self();
@@ -151,14 +152,14 @@ public abstract class AbstractVarProjection<
     if (linearizedTails.isEmpty())
       return self();
 
-    final Type effectiveType = linearizedTails.get(0).type();
+    final TypeApi effectiveType = linearizedTails.get(0).type();
 
     final List<VP> effectiveProjections = new ArrayList<>(linearizedTails);
     final @Nullable List<VP> mergedTails = mergeTails(effectiveProjections);
 
     effectiveProjections.add(self()); //we're the least specific projection
 
-    final Map<String, Type.Tag> tags = collectTags(effectiveProjections);
+    final Map<String, TagApi> tags = collectTags(effectiveProjections);
     final LinkedHashMap<String, TP> mergedTags = mergeTags(tags, effectiveProjections);
 
     final boolean mergedParenthesized = mergeParenthesized(effectiveProjections, mergedTags);
@@ -166,9 +167,9 @@ public abstract class AbstractVarProjection<
     return merge(effectiveType, effectiveProjections, mergedTags, mergedParenthesized, mergedTails);
   }
 
-  private @NotNull Map<String, Type.Tag>
+  private @NotNull Map<String, TagApi>
   collectTags(final Iterable<? extends AbstractVarProjection<VP, TP, MP>> effectiveProjections) {
-    Map<String, Type.Tag> tags = new LinkedHashMap<>();
+    Map<String, TagApi> tags = new LinkedHashMap<>();
 
     for (final AbstractVarProjection<VP, TP, MP> projection : effectiveProjections)
       projection.tagProjections().values()
@@ -179,12 +180,12 @@ public abstract class AbstractVarProjection<
   }
 
   private @NotNull LinkedHashMap<String, TP> mergeTags(
-      final @NotNull Map<String, Type.Tag> tags,
+      final @NotNull Map<String, TagApi> tags,
       final @NotNull Iterable<? extends AbstractVarProjection<VP, TP, MP>> sources) {
 
     LinkedHashMap<String, TP> mergedTags = new LinkedHashMap<>();
 
-    for (final Type.Tag tag : tags.values()) {
+    for (final TagApi tag : tags.values()) {
       List<TP> tagProjections = new ArrayList<>();
       for (final AbstractVarProjection<VP, TP, MP> projection : sources) {
         final @Nullable TP tagProjection = projection.tagProjection(tag.name());
@@ -229,7 +230,7 @@ public abstract class AbstractVarProjection<
     if (varProjections.isEmpty()) throw new IllegalArgumentException("empty list of projections to merge");
     if (varProjections.size() == 1) return varProjections.get(0);
 
-    final @NotNull Map<String, Type.Tag> tags = collectTags(varProjections);
+    final @NotNull Map<String, TagApi> tags = collectTags(varProjections);
 
     final @NotNull Map<String, TP> mergedTags = mergeTags(tags, varProjections);
     boolean mergedParenthesized = mergeParenthesized(varProjections, mergedTags);
@@ -240,7 +241,7 @@ public abstract class AbstractVarProjection<
 
   /* static */
   protected VP merge(
-      final @NotNull Type type,
+      final @NotNull TypeApi type,
       final @NotNull List<VP> varProjections,
       final @NotNull Map<String, TP> mergedTags,
       final boolean mergedParenthesized,

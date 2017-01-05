@@ -20,7 +20,7 @@ import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenMapModelProjection;
 import ws.epigraph.projections.req.ReqParams;
-import ws.epigraph.types.MapType;
+import ws.epigraph.types.MapTypeApi;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -30,23 +30,21 @@ import java.util.Objects;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ReqUpdateMapModelProjection
-    extends ReqUpdateModelProjection<ReqUpdateMapModelProjection, MapType>
+    extends ReqUpdateModelProjection<ReqUpdateMapModelProjection, MapTypeApi>
     implements GenMapModelProjection<
     ReqUpdateVarProjection,
     ReqUpdateTagProjectionEntry,
     ReqUpdateModelProjection<?, ?>,
     ReqUpdateMapModelProjection,
-    MapType
+    MapTypeApi
     > {
 
   private final boolean updateKeys;
-  @NotNull
-  private final List<ReqUpdateKeyProjection> keys;
-  @NotNull
-  private final ReqUpdateVarProjection valuesProjection;
+  private final @NotNull List<ReqUpdateKeyProjection> keys;
+  private final @NotNull ReqUpdateVarProjection valuesProjection;
 
   public ReqUpdateMapModelProjection(
-      @NotNull MapType model,
+      @NotNull MapTypeApi model,
       boolean update,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,

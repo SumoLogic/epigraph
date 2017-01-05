@@ -20,7 +20,7 @@ import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenMapModelProjection;
 import ws.epigraph.projections.req.ReqParams;
-import ws.epigraph.types.MapType;
+import ws.epigraph.types.MapTypeApi;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -31,20 +31,20 @@ import java.util.Objects;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ReqDeleteMapModelProjection
-    extends ReqDeleteModelProjection<ReqDeleteMapModelProjection, MapType>
+    extends ReqDeleteModelProjection<ReqDeleteMapModelProjection, MapTypeApi>
     implements GenMapModelProjection<
     ReqDeleteVarProjection,
     ReqDeleteTagProjectionEntry,
     ReqDeleteModelProjection<?, ?>,
     ReqDeleteMapModelProjection,
-    MapType
+    MapTypeApi
     > {
 
   private final @Nullable List<ReqDeleteKeyProjection> keys;
   private final @NotNull ReqDeleteVarProjection valuesProjection;
 
   public ReqDeleteMapModelProjection(
-      @NotNull MapType model,
+      @NotNull MapTypeApi model,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
       @Nullable List<ReqDeleteKeyProjection> keys,

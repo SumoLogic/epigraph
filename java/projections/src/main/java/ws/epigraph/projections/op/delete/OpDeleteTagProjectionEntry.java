@@ -18,7 +18,7 @@ package ws.epigraph.projections.op.delete;
 
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.abs.AbstractTagProjectionEntry;
-import ws.epigraph.types.Type;
+import ws.epigraph.types.TagApi;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -28,7 +28,7 @@ public class OpDeleteTagProjectionEntry
     extends AbstractTagProjectionEntry<OpDeleteTagProjectionEntry, OpDeleteModelProjection<?, ?>> {
 
   public OpDeleteTagProjectionEntry(
-      @NotNull Type.Tag tag,
+      @NotNull TagApi tag,
       @NotNull OpDeleteModelProjection<?, ?> projection,
       @NotNull TextLocation location) {
     super(tag, projection, location);

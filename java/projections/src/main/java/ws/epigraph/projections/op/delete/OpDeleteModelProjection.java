@@ -20,7 +20,7 @@ import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.abs.AbstractModelProjection;
 import ws.epigraph.projections.op.OpParams;
-import ws.epigraph.types.DatumType;
+import ws.epigraph.types.DatumTypeApi;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -30,11 +30,10 @@ import java.util.Objects;
  */
 public abstract class OpDeleteModelProjection<
     MP extends OpDeleteModelProjection</*MP*/?, ?>,
-    M extends DatumType
+    M extends DatumTypeApi
     > extends AbstractModelProjection<MP, M> {
 
-  @NotNull
-  protected final OpParams params;
+  protected final @NotNull OpParams params;
 
   protected OpDeleteModelProjection(
       @NotNull M model,
@@ -46,8 +45,7 @@ public abstract class OpDeleteModelProjection<
     this.params = params;
   }
 
-  @NotNull
-  public OpParams params() { return params; }
+  public @NotNull OpParams params() { return params; }
 
   @Override
   public boolean equals(Object o) {

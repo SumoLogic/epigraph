@@ -54,6 +54,9 @@ public abstract class DatumType extends Type implements DatumTypeApi {
   }
 
   @Override
+  public @NotNull TagApi self() { return self; }
+
+  @Override
   public @NotNull Collection<@NotNull ? extends Tag> immediateTags() { return immediateTags; }
 
   /** @see Class#isInstance(Object) */

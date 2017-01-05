@@ -18,8 +18,7 @@ package ws.epigraph.projections.gen;
 
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.types.DatumType;
-import ws.epigraph.types.Type;
+import ws.epigraph.types.TagApi;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -29,12 +28,12 @@ import java.util.List;
  */
 public interface GenTagProjectionEntry<TP extends GenTagProjectionEntry<TP, MP>, MP extends GenModelProjection</*MP*/?, ?>> {
 
-  @NotNull Type.Tag tag();
+  @NotNull TagApi tag();
 
   @NotNull MP projection();
 
   @Nullable
-  /*static*/ TP mergeTags(@NotNull Type.Tag tag, @NotNull List<TP> tagEntries);
+  /*static*/ TP mergeTags(@NotNull TagApi tag, @NotNull List<TP> tagEntries);
 
   @NotNull TextLocation location();
 }

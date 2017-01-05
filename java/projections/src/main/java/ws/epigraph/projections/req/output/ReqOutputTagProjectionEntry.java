@@ -19,7 +19,7 @@ package ws.epigraph.projections.req.output;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.abs.AbstractTagProjectionEntry;
-import ws.epigraph.types.Type;
+import ws.epigraph.types.TagApi;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -31,18 +31,17 @@ public class ReqOutputTagProjectionEntry
     extends AbstractTagProjectionEntry<ReqOutputTagProjectionEntry, ReqOutputModelProjection<?, ?>> {
 
   public ReqOutputTagProjectionEntry(
-      @NotNull Type.Tag tag,
+      @NotNull TagApi tag,
       @NotNull ReqOutputModelProjection<?, ?> projection,
       @NotNull TextLocation location) {
     super(tag, projection, location);
   }
 
-  @Nullable
   @Override
-  protected ReqOutputTagProjectionEntry mergeTags(
-      @NotNull final Type.Tag tag,
-      @NotNull final List<ReqOutputTagProjectionEntry> tagsEntries,
-      @NotNull final ReqOutputModelProjection<?, ?> mergedModel) {
+  protected @Nullable ReqOutputTagProjectionEntry mergeTags(
+      final @NotNull TagApi tag,
+      final @NotNull List<ReqOutputTagProjectionEntry> tagsEntries,
+      final @NotNull ReqOutputModelProjection<?, ?> mergedModel) {
 
     return new ReqOutputTagProjectionEntry(
         tag,

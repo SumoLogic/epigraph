@@ -18,7 +18,7 @@ package ws.epigraph.projections.req.input;
 
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.abs.AbstractTagProjectionEntry;
-import ws.epigraph.types.Type;
+import ws.epigraph.types.TagApi;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -28,7 +28,7 @@ public class ReqInputTagProjectionEntry
     extends AbstractTagProjectionEntry<ReqInputTagProjectionEntry, ReqInputModelProjection<?, ?>> {
 
   public ReqInputTagProjectionEntry(
-      @NotNull Type.Tag tag,
+      @NotNull TagApi tag,
       @NotNull ReqInputModelProjection<?, ?> projection,
       @NotNull TextLocation location) {
     super(tag, projection, location);

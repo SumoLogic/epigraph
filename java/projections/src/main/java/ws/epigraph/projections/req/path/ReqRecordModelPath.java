@@ -23,7 +23,7 @@ import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.RecordModelProjectionHelper;
 import ws.epigraph.projections.gen.GenRecordModelProjection;
 import ws.epigraph.projections.req.ReqParams;
-import ws.epigraph.types.RecordType;
+import ws.epigraph.types.RecordTypeApi;
 
 import java.util.Collections;
 import java.util.Map;
@@ -32,7 +32,7 @@ import java.util.Map;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ReqRecordModelPath
-    extends ReqModelPath<ReqRecordModelPath, RecordType>
+    extends ReqModelPath<ReqRecordModelPath, RecordTypeApi>
     implements GenRecordModelProjection<
     ReqVarPath,
     ReqTagPath,
@@ -40,14 +40,13 @@ public class ReqRecordModelPath
     ReqRecordModelPath,
     ReqFieldPathEntry,
     ReqFieldPath,
-    RecordType
+    RecordTypeApi
     > {
 
-  @NotNull
-  private Map<String, ReqFieldPathEntry> fieldProjections;
+  private final @NotNull Map<String, ReqFieldPathEntry> fieldProjections;
 
   public ReqRecordModelPath(
-      @NotNull RecordType model,
+      @NotNull RecordTypeApi model,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
       @NotNull ReqFieldPathEntry fieldProjection,
@@ -60,18 +59,17 @@ public class ReqRecordModelPath
     if (pathFieldProjection() == null) throw new IllegalArgumentException("Path field must be present");
   }
 
-  @NotNull
-  public Map<String, ReqFieldPathEntry> fieldProjections() { return fieldProjections; }
+  @Override
+  public @NotNull Map<String, ReqFieldPathEntry> fieldProjections() { return fieldProjections; }
 
-  @Nullable
-  public ReqFieldPathEntry fieldProjection(@NotNull String fieldName) {
+  @Override
+  public @Nullable ReqFieldPathEntry fieldProjection(@NotNull String fieldName) {
     return fieldProjections.get(fieldName);
   }
 
   @Override
   public boolean equals(Object o) {
-    if (!super.equals(o)) return false;
-    return RecordModelProjectionHelper.equals(this, o);
+    return super.equals(o) && RecordModelProjectionHelper.equals(this, o);
   }
 
   @Override

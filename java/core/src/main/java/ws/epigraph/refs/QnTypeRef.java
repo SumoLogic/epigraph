@@ -16,10 +16,10 @@
 
 package ws.epigraph.refs;
 
-import ws.epigraph.lang.Qn;
-import ws.epigraph.types.Type;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.lang.Qn;
+import ws.epigraph.types.TypeApi;
 
 import java.util.Objects;
 
@@ -34,7 +34,7 @@ public class QnTypeRef implements TypeRef {
   public @NotNull Qn qn() { return qn; }
 
   @Override
-  public @Nullable Type resolve(@NotNull TypesResolver resolver) {
+  public @Nullable TypeApi resolve(@NotNull TypesResolver resolver) {
     return resolver.resolve(this);
   }
 

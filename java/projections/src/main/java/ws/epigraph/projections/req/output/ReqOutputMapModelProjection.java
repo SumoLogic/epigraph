@@ -23,7 +23,7 @@ import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenMapModelProjection;
 import ws.epigraph.projections.req.ReqKeyProjection;
 import ws.epigraph.projections.req.ReqParams;
-import ws.epigraph.types.MapType;
+import ws.epigraph.types.MapTypeApi;
 
 import java.util.List;
 import java.util.Objects;
@@ -33,22 +33,20 @@ import java.util.stream.Collectors;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ReqOutputMapModelProjection
-    extends ReqOutputModelProjection<ReqOutputMapModelProjection, MapType>
+    extends ReqOutputModelProjection<ReqOutputMapModelProjection, MapTypeApi>
     implements GenMapModelProjection<
     ReqOutputVarProjection,
     ReqOutputTagProjectionEntry,
     ReqOutputModelProjection<?, ?>,
     ReqOutputMapModelProjection,
-    MapType
+    MapTypeApi
     > {
 
-  @Nullable
-  private final List<ReqOutputKeyProjection> keys;
-  @NotNull
-  private final ReqOutputVarProjection valuesProjection;
+  private final @Nullable List<ReqOutputKeyProjection> keys;
+  private final @NotNull ReqOutputVarProjection valuesProjection;
 
   public ReqOutputMapModelProjection(
-      @NotNull MapType model,
+      @NotNull MapTypeApi model,
       boolean required,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
@@ -61,20 +59,19 @@ public class ReqOutputMapModelProjection
     this.valuesProjection = valuesProjection;
   }
 
-  @NotNull
-  public ReqOutputVarProjection itemsProjection() { return valuesProjection; }
+  @Override
+  public @NotNull ReqOutputVarProjection itemsProjection() { return valuesProjection; }
 
-  @Nullable
-  public List<ReqOutputKeyProjection> keys() { return keys; }
+  public @Nullable List<ReqOutputKeyProjection> keys() { return keys; }
 
   @Override
   protected ReqOutputMapModelProjection merge(
-      @NotNull final MapType model,
+      final @NotNull MapTypeApi model,
       final boolean mergedRequired,
-      @NotNull final List<ReqOutputMapModelProjection> modelProjections,
-      @NotNull final ReqParams mergedParams,
-      @NotNull final Annotations mergedAnnotations,
-      @Nullable final ReqOutputMapModelProjection mergedMetaProjection) {
+      final @NotNull List<ReqOutputMapModelProjection> modelProjections,
+      final @NotNull ReqParams mergedParams,
+      final @NotNull Annotations mergedAnnotations,
+      final @Nullable ReqOutputMapModelProjection mergedMetaProjection) {
 
 
     final List<ReqOutputKeyProjection> mergedKeys;
@@ -95,7 +92,7 @@ public class ReqOutputMapModelProjection
                         .map(ReqOutputMapModelProjection::itemsProjection)
                         .collect(Collectors.toList());
 
-    @NotNull final ReqOutputVarProjection mergedItemsVarType = itemProjections.get(0).merge(itemProjections);
+    final @NotNull ReqOutputVarProjection mergedItemsVarType = itemProjections.get(0).merge(itemProjections);
 
     return new ReqOutputMapModelProjection(
         model,

@@ -21,7 +21,7 @@ import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenMapModelProjection;
 import ws.epigraph.projections.req.ReqParams;
-import ws.epigraph.types.MapType;
+import ws.epigraph.types.MapTypeApi;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -31,22 +31,20 @@ import java.util.Objects;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ReqInputMapModelProjection
-    extends ReqInputModelProjection<ReqInputMapModelProjection, MapType>
+    extends ReqInputModelProjection<ReqInputMapModelProjection, MapTypeApi>
     implements GenMapModelProjection<
     ReqInputVarProjection,
     ReqInputTagProjectionEntry,
     ReqInputModelProjection<?, ?>,
     ReqInputMapModelProjection,
-    MapType
+    MapTypeApi
     > {
 
-  @Nullable
-  private final List<ReqInputKeyProjection> keys;
-  @NotNull
-  private final ReqInputVarProjection valuesProjection;
+  private final @Nullable List<ReqInputKeyProjection> keys;
+  private final @NotNull ReqInputVarProjection valuesProjection;
 
   public ReqInputMapModelProjection(
-      @NotNull MapType model,
+      @NotNull MapTypeApi model,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
       @Nullable List<ReqInputKeyProjection> keys,
@@ -57,8 +55,8 @@ public class ReqInputMapModelProjection
     this.valuesProjection = valuesProjection;
   }
 
-  @NotNull
-  public ReqInputVarProjection itemsProjection() { return valuesProjection; }
+  @Override
+  public @NotNull ReqInputVarProjection itemsProjection() { return valuesProjection; }
 
   public @Nullable List<ReqInputKeyProjection> keys() { return keys; }
 

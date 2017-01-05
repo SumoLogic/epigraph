@@ -23,7 +23,7 @@ import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.RecordModelProjectionHelper;
 import ws.epigraph.projections.gen.GenRecordModelProjection;
 import ws.epigraph.projections.op.OpParams;
-import ws.epigraph.types.RecordType;
+import ws.epigraph.types.RecordTypeApi;
 
 import java.util.Collections;
 import java.util.Map;
@@ -32,7 +32,7 @@ import java.util.Map;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpRecordModelPath
-    extends OpModelPath<OpRecordModelPath, RecordType>
+    extends OpModelPath<OpRecordModelPath, RecordTypeApi>
     implements GenRecordModelProjection<
     OpVarPath,
     OpTagPath,
@@ -40,14 +40,13 @@ public class OpRecordModelPath
     OpRecordModelPath,
     OpFieldPathEntry,
     OpFieldPath,
-    RecordType
+    RecordTypeApi
     > {
 
-  @NotNull
-  private Map<String, OpFieldPathEntry> fieldProjections;
+  private final @NotNull Map<String, OpFieldPathEntry> fieldProjections;
 
   public OpRecordModelPath(
-      @NotNull RecordType model,
+      @NotNull RecordTypeApi model,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
       @Nullable OpFieldPathEntry fieldProjection,
@@ -63,13 +62,12 @@ public class OpRecordModelPath
     if (pathFieldProjection() == null) throw new IllegalArgumentException("Path field must be present");
   }
 
-  @NotNull
-  public Map<String, OpFieldPathEntry> fieldProjections() { return fieldProjections; }
+  @Override
+  public @NotNull Map<String, OpFieldPathEntry> fieldProjections() { return fieldProjections; }
 
   @Override
   public boolean equals(Object o) {
-    if (!super.equals(o)) return false;
-    return RecordModelProjectionHelper.equals(this, o);
+    return super.equals(o) && RecordModelProjectionHelper.equals(this, o);
   }
 
   @Override

@@ -18,16 +18,16 @@ package ws.epigraph.projections.gen;
 
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
-import ws.epigraph.types.DatumType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.types.DatumTypeApi;
 
 import java.util.List;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public interface GenModelProjection<MP extends GenModelProjection</*MP*/?, ?>, M extends DatumType> {
+public interface GenModelProjection<MP extends GenModelProjection</*MP*/?, ?>, M extends DatumTypeApi> {
 
   @NotNull M model();
 

@@ -21,14 +21,14 @@ import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.op.AbstractOpModelProjection;
 import ws.epigraph.projections.op.OpParams;
-import ws.epigraph.types.DatumType;
+import ws.epigraph.types.DatumTypeApi;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public abstract class OpModelPath<
     MP extends OpModelPath</*MP*/?, ?>,
-    M extends DatumType
+    M extends DatumTypeApi
     > extends AbstractOpModelProjection<MP, M> {
 
   protected OpModelPath(

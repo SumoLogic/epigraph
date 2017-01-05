@@ -23,7 +23,7 @@ import ws.epigraph.projections.abs.AbstractFieldProjection;
 import ws.epigraph.projections.gen.GenModelProjection;
 import ws.epigraph.projections.gen.GenTagProjectionEntry;
 import ws.epigraph.projections.gen.GenVarProjection;
-import ws.epigraph.types.DataType;
+import ws.epigraph.types.DataTypeApi;
 
 import java.util.List;
 import java.util.Objects;
@@ -38,27 +38,25 @@ public abstract class AbstractOpFieldProjection<
     FP extends AbstractOpFieldProjection<VP, TP, MP, FP>
     > extends AbstractFieldProjection<VP, TP, MP, FP> {
 
-  @NotNull
-  private final OpParams params;
+  private final @NotNull OpParams params;
 
   protected AbstractOpFieldProjection(
       @NotNull OpParams params,
-      @NotNull final Annotations annotations,
-      @NotNull final VP projection,
-      @NotNull final TextLocation location) {
+      final @NotNull Annotations annotations,
+      final @NotNull VP projection,
+      final @NotNull TextLocation location) {
     super(annotations, projection, location);
     this.params = params;
   }
 
-  @NotNull
-  public OpParams params() { return params; }
+  public @NotNull OpParams params() { return params; }
 
   @Override
   protected FP merge(
-      @NotNull final DataType type,
-      @NotNull final List<FP> fieldProjections,
-      @NotNull final Annotations mergedAnnotations,
-      @NotNull final VP mergedVarProjection) {
+      final @NotNull DataTypeApi type,
+      final @NotNull List<FP> fieldProjections,
+      final @NotNull Annotations mergedAnnotations,
+      final @NotNull VP mergedVarProjection) {
 
     return merge(
         type,
@@ -69,13 +67,12 @@ public abstract class AbstractOpFieldProjection<
     );
   }
 
-  @NotNull
-  protected FP merge(
-      @NotNull final DataType type,
-      @NotNull final List<FP> fieldProjections,
-      @NotNull final OpParams mergedParams,
-      @NotNull final Annotations mergedAnnotations,
-      @NotNull final VP mergedVarProjection) {
+  protected @NotNull FP merge(
+      final @NotNull DataTypeApi type,
+      final @NotNull List<FP> fieldProjections,
+      final @NotNull OpParams mergedParams,
+      final @NotNull Annotations mergedAnnotations,
+      final @NotNull VP mergedVarProjection) {
 
     throw new RuntimeException("not implemented"); // todo make abstract
   }

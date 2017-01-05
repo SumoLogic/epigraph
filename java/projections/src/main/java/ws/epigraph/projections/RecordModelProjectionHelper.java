@@ -21,7 +21,8 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.projections.gen.GenFieldProjection;
 import ws.epigraph.projections.gen.GenFieldProjectionEntry;
 import ws.epigraph.projections.gen.GenRecordModelProjection;
-import ws.epigraph.types.RecordType;
+import ws.epigraph.types.FieldApi;
+import ws.epigraph.types.RecordTypeApi;
 
 import java.util.*;
 
@@ -30,13 +31,15 @@ import java.util.*;
  *
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class RecordModelProjectionHelper {
+public final class RecordModelProjectionHelper {
   // this ought to be an abstract base class, but Java doesn't support multiple inheritance.
   // Concrete implementation would have to extend both abstract record model class and model projection base class
 
   private static final
   ThreadLocal<IdentityHashMap<GenRecordModelProjection<?, ?, ?, ?, ?, ?, ?>, GenRecordModelProjection<?, ?, ?, ?, ?, ?, ?>>>
       equalsVisited = new ThreadLocal<>();
+
+  private RecordModelProjectionHelper() {}
 
   /**
    * Recursion-aware helper for implementing {@code equals}.
@@ -75,7 +78,7 @@ public class RecordModelProjectionHelper {
     return res;
   }
 
-  public static void checkFieldsBelongsToModel(@NotNull Collection<String> fieldNames, @NotNull RecordType model) {
+  public static void checkFieldsBelongsToModel(@NotNull Collection<String> fieldNames, @NotNull RecordTypeApi model) {
     final Set<String> modelFieldNames = model.fieldsMap().keySet();
     for (String fieldName : fieldNames) {
       if (!modelFieldNames.contains(fieldName))
@@ -92,28 +95,28 @@ public class RecordModelProjectionHelper {
       FPE extends GenFieldProjectionEntry<?, ?, ?, FP>,
       FP extends GenFieldProjection<?, ?, ?, FP>>
 
-  Map<RecordType.Field, FP> mergeFieldProjections(List<RMP> recordProjections) {
+  Map<FieldApi, FP> mergeFieldProjections(List<RMP> recordProjections) {
 
-    Set<RecordType.Field> collectedFields = new LinkedHashSet<>();
+    Set<FieldApi> collectedFields = new LinkedHashSet<>();
     for (final RMP projection : recordProjections)
       for (final FPE entry : projection.fieldProjections().values())
         collectedFields.add(entry.field());
 
-    Map<RecordType.Field, FP> mergedFields = new LinkedHashMap<>();
+    Map<FieldApi, FP> mergedFields = new LinkedHashMap<>();
 
     List<FP> fieldProjectionsToMerge = new ArrayList<>();
 
-    for (RecordType.Field field : collectedFields) {
+    for (FieldApi field : collectedFields) {
       String fieldName = field.name();
       fieldProjectionsToMerge.clear();
 
       for (RMP projection : recordProjections) {
-        @Nullable final FPE fieldProjectionEntry = projection.fieldProjection(fieldName);
+        final @Nullable FPE fieldProjectionEntry = projection.fieldProjection(fieldName);
         if (fieldProjectionEntry != null) fieldProjectionsToMerge.add(fieldProjectionEntry.fieldProjection());
       }
 
       assert !fieldProjectionsToMerge.isEmpty();
-      @NotNull final FP mergedFieldProjections =
+      final @NotNull FP mergedFieldProjections =
           fieldProjectionsToMerge.get(0).merge(field.dataType(), fieldProjectionsToMerge);
 
       mergedFields.put(

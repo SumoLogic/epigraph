@@ -18,7 +18,7 @@ package ws.epigraph.projections.op.path;
 
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.abs.AbstractTagProjectionEntry;
-import ws.epigraph.types.Type;
+import ws.epigraph.types.TagApi;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -26,7 +26,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class OpTagPath extends AbstractTagProjectionEntry<OpTagPath, OpModelPath<?, ?>> {
   public OpTagPath(
-      @NotNull Type.Tag tag,
+      @NotNull TagApi tag,
       @NotNull OpModelPath<?, ?> projection,
       @NotNull TextLocation location) {
     super(tag, projection, location);
