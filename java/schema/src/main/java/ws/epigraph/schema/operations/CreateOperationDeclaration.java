@@ -23,7 +23,7 @@ import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.op.input.OpInputFieldProjection;
 import ws.epigraph.projections.op.output.OpOutputFieldProjection;
 import ws.epigraph.projections.op.path.OpFieldPath;
-import ws.epigraph.types.Type;
+import ws.epigraph.types.TypeApi;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -50,8 +50,8 @@ public class CreateOperationDeclaration extends OperationDeclaration {
   }
 
   @Override
-  public @NotNull Type inputType() {
-    final Type inputType = super.inputType();
+  public @NotNull TypeApi inputType() {
+    final TypeApi inputType = super.inputType();
     assert inputType != null;
     return inputType;
   }

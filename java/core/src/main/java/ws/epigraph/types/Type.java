@@ -106,6 +106,9 @@ public abstract class Type implements TypeApi {
     return tagsMap;
   }
 
+  @Override
+  public @NotNull DataTypeApi dataType() { return new DataType(this, null); }
+
   public <D extends Data> D checkAssignable(@NotNull D data) throws IllegalArgumentException { // TODO accept nulls?
     if (!isInstance(data)) throw new IllegalArgumentException("TODO");
     return data;

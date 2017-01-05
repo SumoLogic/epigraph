@@ -23,12 +23,9 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.*;
 import ws.epigraph.errors.ErrorValue;
 import ws.epigraph.projections.req.output.*;
-import ws.epigraph.types.DatumType;
-import ws.epigraph.types.RecordType;
+import ws.epigraph.types.*;
 import ws.epigraph.types.RecordType.Field;
-import ws.epigraph.types.Type;
 import ws.epigraph.types.Type.Tag;
-import ws.epigraph.types.TypeKind;
 import ws.epigraph.wire.FormatWriter;
 import ws.epigraph.wire.json.JsonFormat;
 
@@ -50,8 +47,8 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
     if (data == null) {
       out.write("null");
     } else {
-      Type type = data.type();
-      projection.type().checkAssignable(type); // TODO assert instead?
+      TypeApi type = data.type();
+      assert projection.type().isAssignableFrom(type);
       writeData(projection.polymorphicTails() != null, varProjections(projection, type), data);
     }
   }
@@ -61,7 +58,7 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
       @NotNull Deque<ReqOutputVarProjection> projections, // non-empty, polymorphic tails ignored
       @NotNull Data data
   ) throws IOException {
-    Type type = projections.peekLast().type(); // use deepest match type from here on
+    TypeApi type = projections.peekLast().type(); // use deepest match type from here on
     // TODO check all projections (not just the ones that matched actual data type)?
     boolean renderMulti = type.kind() == TypeKind.UNION && monoTag(projections) == null;
     if (renderPoly) {
@@ -71,7 +68,7 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
     }
     if (renderMulti) out.write('{');
     boolean comma = false;
-    for (Tag tag : type.tags()) {
+    for (TagApi tag : type.tags()) {
       Deque<ReqOutputModelProjection<?, ?>> tagModelProjections =
           tagModelProjections(tag, projections, () -> new ArrayDeque<>(projections.size()));
       if (tagModelProjections != null) { // if this tag was mentioned in at least one projection
@@ -82,7 +79,7 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
           out.write(tag.name());
           out.write("\":");
         }
-        writeValue(tagModelProjections, data._raw().getValue(tag));
+        writeValue(tagModelProjections, data._raw().getValue((Tag) tag));
       }
     } // TODO if we're not rendering multi and zero tags were requested (projection error) - render error instead
     if (renderMulti) out.write('}');
@@ -113,7 +110,7 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
     if (datum == null) {
       out.write("null");
     } else {
-      DatumType model = projections.peekLast().model(); // todo pass explicitly
+      DatumTypeApi model = projections.peekLast().model(); // todo pass explicitly
       switch (model.kind()) {
         case RECORD:
           writeRecord((Deque<ReqOutputRecordModelProjection>) projections, (RecordDatum) datum);
@@ -153,13 +150,13 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
   ) throws IOException {
     out.write('{');
     // TODO take type from announced type tag (same for other datum kinds)?
-    RecordType type = projections.peekLast().model();
+    RecordTypeApi type = projections.peekLast().model();
     boolean comma = false;
-    for (Field field : type.fields()) {
+    for (FieldApi field : type.fields()) {
       Deque<ReqOutputVarProjection> varProjections =
           fieldVarProjections(projections, field, () -> new ArrayDeque<>(projections.size()));
       if (varProjections != null) { // if this field was mentioned in at least one projection
-        Data fieldData = datum._raw().getData(field);
+        Data fieldData = datum._raw().getData((Field) field);
         if (fieldData != null) {
           if (comma) out.write(',');
           else comma = true;
@@ -300,7 +297,7 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
 
   private static @NotNull Deque<ReqOutputVarProjection> varProjections(
       @NotNull ReqOutputVarProjection projection,
-      @NotNull Type varType
+      @NotNull TypeApi varType
   ) { return append(new ArrayDeque<>(projection.polymorphicDepth() + 1), projection, varType); }
 
   // FIXME take explicit type for all projectionless writes below

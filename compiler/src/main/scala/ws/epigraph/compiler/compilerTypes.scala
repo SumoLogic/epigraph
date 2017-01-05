@@ -40,6 +40,8 @@ abstract class CType(implicit val ctx: CContext) {self =>
 
   lazy val selfRef: CTypeRef = CTypeRef(this)
 
+  protected val csf: CSchemaFile
+
   /** All (valid) supertypes of this type. After [[CPhase.RESOLVE_TYPEREFS]]. */
   def supertypes: Seq[Super]
 
@@ -71,6 +73,8 @@ abstract class CType(implicit val ctx: CContext) {self =>
 
   /** After [[CPhase.COMPUTE_SUPERTYPES]]. */
   final def isAssignableFrom(subtype: CType): Boolean = subtype.kind == kind && subtype.linearization.contains(this)
+
+  def dataType: CDataType = new CDataType(csf, selfRef, None)
 
 }
 
@@ -283,7 +287,7 @@ trait CDatumType extends CType {self =>
 
   val impliedTag: CTag = new CTag(csf, CDatumType.ImpliedDefaultTagName, selfRef, psi)
 
-  def dataType: CDataType = new CDataType(csf, selfRef, None)
+  override def dataType: CDataType = new CDataType(csf, selfRef, None)
 
 }
 

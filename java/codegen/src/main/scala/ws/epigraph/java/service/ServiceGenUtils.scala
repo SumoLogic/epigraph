@@ -18,7 +18,7 @@ package ws.epigraph.java.service
 
 import ws.epigraph.java.JavaGenUtils
 import ws.epigraph.refs.TypeReferenceFactory
-import ws.epigraph.types.{RecordType, Type}
+import ws.epigraph.types._
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -78,19 +78,19 @@ object ServiceGenUtils {
     }
   }
 
-  def genType(typeClass: String, t: Type, ctx: ServiceGenContext): String = {
+  def genType(typeClass: String, t: TypeApi, ctx: ServiceGenContext): String = {
     val ref = TypeReferenceFactory.createReference(t)
     val tg = s"typesResolver.resolve(${ServiceObjectGen.gen(ref, ctx)})"
     if (typeClass == null) tg else s"($typeClass) $tg"
   }
 
-  def genField(t: RecordType, f : RecordType.Field, ctx: ServiceGenContext): String = {
+  def genField(t: RecordTypeApi, f : FieldApi, ctx: ServiceGenContext): String = {
     ctx.addImport(classOf[RecordType].getName)
     s"""(${ServiceGenUtils.genType("RecordType", t, ctx)}).fieldsMap().get("${f.name()}")"""
   }
 
-  def genTag(t: Type, tag : Type.Tag, ctx: ServiceGenContext): String = {
-    ctx.addImport(classOf[Type].getName)
+  def genTag(t: TypeApi, tag : TagApi, ctx: ServiceGenContext): String = {
+    ctx.addImport(classOf[TypeApi].getName)
     s"""(${ServiceGenUtils.genType(null, t, ctx)}).tagsMap().get("${tag.name()}")"""
   }
 }

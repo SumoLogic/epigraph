@@ -26,7 +26,7 @@ import ws.epigraph.projections.op.input.OpInputProjectionsPrettyPrinter;
 import ws.epigraph.projections.op.output.OpOutputProjectionsPrettyPrinter;
 import ws.epigraph.projections.op.path.OpFieldPath;
 import ws.epigraph.projections.op.path.OpPathPrettyPrinter;
-import ws.epigraph.types.Type;
+import ws.epigraph.types.TypeApi;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -114,7 +114,7 @@ public class OperationsPrettyPrinter<E extends Exception> {
   }
 
   private boolean printInputType(@NotNull OperationDeclaration operation, boolean first) throws E {
-    final @Nullable Type inputType = operation.inputType();
+    final @Nullable TypeApi inputType = operation.inputType();
 
     if (inputType != null) {
       if (first) first = false;
@@ -150,7 +150,7 @@ public class OperationsPrettyPrinter<E extends Exception> {
   }
 
   private boolean printOutputType(@NotNull OperationDeclaration operation, boolean first) throws E {
-    final @NotNull Type outputType = operation.outputType();
+    final @NotNull TypeApi outputType = operation.outputType();
 
     if (outputType != null) {
       if (first) first = false;

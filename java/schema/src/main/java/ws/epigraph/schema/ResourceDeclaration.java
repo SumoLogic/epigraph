@@ -18,8 +18,8 @@ package ws.epigraph.schema;
 
 import ws.epigraph.schema.operations.OperationDeclaration;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.types.DataType;
 import org.jetbrains.annotations.NotNull;
+import ws.epigraph.types.DataTypeApi;
 
 import java.util.List;
 
@@ -28,12 +28,12 @@ import java.util.List;
  */
 public class ResourceDeclaration {
   private final @NotNull String fieldName;
-  private final @NotNull DataType fieldType;
+  private final @NotNull DataTypeApi fieldType;
   private final @NotNull List<OperationDeclaration> operations;
   private final @NotNull TextLocation location;
 
   public ResourceDeclaration(@NotNull String fieldName,
-                             @NotNull DataType fieldType,
+                             @NotNull DataTypeApi fieldType,
                              @NotNull List<OperationDeclaration> operations,
                              @NotNull TextLocation location) {
     this.fieldName = fieldName;
@@ -44,7 +44,7 @@ public class ResourceDeclaration {
 
   public @NotNull String fieldName() { return fieldName; }
 
-  public @NotNull DataType fieldType() { return fieldType; }
+  public @NotNull DataTypeApi fieldType() { return fieldType; }
 
   public @NotNull List<OperationDeclaration> operations() { return operations; }
 

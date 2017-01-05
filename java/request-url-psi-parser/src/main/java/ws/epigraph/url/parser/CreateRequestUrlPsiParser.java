@@ -19,7 +19,6 @@ package ws.epigraph.url.parser;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.gdata.GDatum;
-import ws.epigraph.schema.operations.CreateOperationDeclaration;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.op.input.OpInputFieldProjection;
 import ws.epigraph.projections.op.path.OpFieldPath;
@@ -29,8 +28,9 @@ import ws.epigraph.projections.req.path.ReqFieldPath;
 import ws.epigraph.psi.PsiProcessingError;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypesResolver;
-import ws.epigraph.types.DataType;
-import ws.epigraph.types.Type;
+import ws.epigraph.schema.operations.CreateOperationDeclaration;
+import ws.epigraph.types.DataTypeApi;
+import ws.epigraph.types.TypeApi;
 import ws.epigraph.url.CreateRequestUrl;
 import ws.epigraph.url.parser.psi.UrlCreateUrl;
 import ws.epigraph.url.parser.psi.UrlReqInputFieldProjection;
@@ -52,7 +52,7 @@ public final class CreateRequestUrlPsiParser {
   private CreateRequestUrlPsiParser() {}
 
   public static @NotNull CreateRequestUrl parseCreateRequestUrl(
-      @NotNull DataType resourceType,
+      @NotNull DataTypeApi resourceType,
       @NotNull CreateOperationDeclaration op,
       @NotNull UrlCreateUrl psi,
       @NotNull TypesResolver typesResolver,
@@ -69,7 +69,7 @@ public final class CreateRequestUrlPsiParser {
   }
 
   private static @NotNull CreateRequestUrl parseCreateRequestUrlWithPath(
-      final @NotNull DataType resourceType,
+      final @NotNull DataTypeApi resourceType,
       final @NotNull Map<String, GDatum> requestParams,
       final @NotNull CreateOperationDeclaration op,
       final @NotNull OpFieldPath opPath,
@@ -80,12 +80,12 @@ public final class CreateRequestUrlPsiParser {
     final @NotNull ReqFieldPath reqPath =
         ReqPathPsiParser.parseFieldPath(resourceType, opPath, psi.getReqFieldPath(), typesResolver, errors);
 
-    final @NotNull Type opOutputType = op.outputType(); // already calculated based on outputType/path declared in idl
+    final @NotNull TypeApi opOutputType = op.outputType(); // already calculated based on outputType/path declared in idl
     TypesResolver newResolver = addTypeNamespace(opOutputType, typesResolver);
 
     final @NotNull StepsAndProjection<ReqOutputFieldProjection> outputStepsAndProjection =
         RequestUrlPsiParserUtil.parseOutputProjection(
-            new DataType(opOutputType, null),
+            opOutputType.dataType(),
             op.outputProjection(),
             psi.getReqOutputTrunkFieldProjection(),
             newResolver,
@@ -113,10 +113,10 @@ public final class CreateRequestUrlPsiParser {
     else {
       final @Nullable OpInputFieldProjection opInputProjection = op.inputProjection();
 
-      final Type inputType = op.inputType();
+      final TypeApi inputType = op.inputType();
 
       inputProjection = ReqInputProjectionsPsiParser.parseFieldProjection(
-          new DataType(inputType, null),
+          inputType.dataType(),
           opInputProjection,
           inputProjectionPsi,
           typesResolver,
@@ -127,7 +127,7 @@ public final class CreateRequestUrlPsiParser {
   }
 
   private static @NotNull CreateRequestUrl parseCreateRequestUrlWithoutPath(
-      final @NotNull DataType resourceType,
+      final @NotNull DataTypeApi resourceType,
       final Map<String, GDatum> requestParams,
       final @NotNull CreateOperationDeclaration op,
       final @NotNull UrlCreateUrl psi,
@@ -136,11 +136,11 @@ public final class CreateRequestUrlPsiParser {
       throws PsiProcessingException {
 
     final @Nullable UrlReqOutputTrunkFieldProjection fieldProjectionPsi = psi.getReqOutputTrunkFieldProjection();
-    TypesResolver newResolver = addTypeNamespace(resourceType.type, typesResolver);
+    TypesResolver newResolver = addTypeNamespace(resourceType.type(), typesResolver);
 
     final StepsAndProjection<ReqOutputFieldProjection> outputStepsAndProjection =
         RequestUrlPsiParserUtil.parseOutputProjection(
-            new DataType(op.outputType(), null),
+            op.outputType().dataType(),
             op.outputProjection(),
             fieldProjectionPsi,
             newResolver,

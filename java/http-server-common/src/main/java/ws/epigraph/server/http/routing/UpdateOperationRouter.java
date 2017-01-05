@@ -24,7 +24,7 @@ import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.service.Resource;
 import ws.epigraph.service.operations.UpdateOperation;
-import ws.epigraph.types.DataType;
+import ws.epigraph.types.DataTypeApi;
 import ws.epigraph.url.UpdateRequestUrl;
 import ws.epigraph.url.parser.UpdateRequestUrlPsiParser;
 import ws.epigraph.url.parser.psi.UrlUpdateUrl;
@@ -54,7 +54,7 @@ public final class UpdateOperationRouter
 
   @Override
   protected @NotNull UpdateRequestUrl parseUrl(
-      final @NotNull DataType resourceType,
+      final @NotNull DataTypeApi resourceType,
       final @NotNull UpdateOperationDeclaration opDecl,
       final @NotNull UrlUpdateUrl urlPsi,
       final @NotNull TypesResolver resolver,

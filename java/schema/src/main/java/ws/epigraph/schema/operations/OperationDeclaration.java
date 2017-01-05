@@ -25,7 +25,7 @@ import ws.epigraph.projections.gen.GenVarProjection;
 import ws.epigraph.projections.op.input.OpInputFieldProjection;
 import ws.epigraph.projections.op.output.OpOutputFieldProjection;
 import ws.epigraph.projections.op.path.OpFieldPath;
-import ws.epigraph.types.Type;
+import ws.epigraph.types.TypeApi;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -78,13 +78,13 @@ public abstract class OperationDeclaration {
 
   public @Nullable OpFieldPath path() { return path; }
 
-  public @Nullable Type inputType() {
+  public @Nullable TypeApi inputType() {
     return inputProjection == null ? null : inputProjection.varProjection().type();
   }
 
   public @Nullable OpInputFieldProjection inputProjection() { return inputProjection; }
 
-  public @NotNull Type outputType() { return outputProjection.varProjection().type(); }
+  public @NotNull TypeApi outputType() { return outputProjection.varProjection().type(); }
 
   public @NotNull OpOutputFieldProjection outputProjection() { return outputProjection; }
 
@@ -98,10 +98,10 @@ public abstract class OperationDeclaration {
       @NotNull String projectionName,
       @NotNull List<ResourceDeclarationError> errors) {
 
-    @NotNull Type outputType = resource.fieldType().type;
-    if (path != null) outputType = ProjectionUtils.tipType(path.varProjection()).type;
+    @NotNull TypeApi outputType = resource.fieldType().type();
+    if (path != null) outputType = ProjectionUtils.tipType(path.varProjection()).type();
 
-    final Type outputProjectionType = projection.type();
+    final TypeApi outputProjectionType = projection.type();
 
     if (!outputType.equals(outputProjectionType))
       errors.add(

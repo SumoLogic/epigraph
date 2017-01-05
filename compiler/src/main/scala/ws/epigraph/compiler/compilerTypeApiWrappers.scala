@@ -46,6 +46,8 @@ trait CTypeApiWrapper extends TypeApi {
   override val supertypes: util.Collection[_ <: TypeApi] = cType.supertypes.map(_.asInstanceOf[TypeApi])
 
   override def isAssignableFrom(`type`: TypeApi): Boolean = cType.isAssignableFrom(`type`.asInstanceOf)
+
+  override def dataType(): DataTypeApi = new CDataTypeApiWrapper(cType.dataType)
 }
 
 object CTypeApiWrapper {

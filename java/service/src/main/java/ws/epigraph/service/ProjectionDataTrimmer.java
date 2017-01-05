@@ -30,25 +30,26 @@ import java.util.Map;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class ProjectionDataTrimmer { // todo move somewhere else? Generify?
+public final class ProjectionDataTrimmer {
 
-  @NotNull
-  public static Data trimData(@NotNull Data data, @NotNull ReqOutputVarProjection projection) {
-    @NotNull final Data.Raw raw = data._raw();
-    @NotNull final Data.Builder.Raw b = data.type().createDataBuilder()._raw();
+  private ProjectionDataTrimmer() {} // todo move somewhere else? Generify?
+
+  public static @NotNull Data trimData(@NotNull Data data, @NotNull ReqOutputVarProjection projection) {
+    final @NotNull Data.Raw raw = data._raw();
+    final @NotNull Data.Builder.Raw b = data.type().createDataBuilder()._raw();
 
     ReqOutputVarProjection normalizedProjection = projection.normalizedForType(data.type());
 
     for (Map.Entry<String, ReqOutputTagProjectionEntry> entry : normalizedProjection.tagProjections().entrySet()) {
       final String tagName = entry.getKey();
-      final Type.Tag tag = normalizedProjection.type().tagsMap().get(tagName);
+      final Type.Tag tag = (Type.Tag) normalizedProjection.type().tagsMap().get(tagName);
 
-      @Nullable final Val val = raw.getValue(tag);
+      final @Nullable Val val = raw.getValue(tag);
       if (val != null) {
-        @Nullable final ErrorValue error = val.getError();
+        final @Nullable ErrorValue error = val.getError();
         if (error != null) b.setError(tag, error);
 
-        @Nullable final Datum datum = val.getDatum();
+        final @Nullable Datum datum = val.getDatum();
         if (datum != null) b.setDatum(tag, trimDatum(datum, entry.getValue().projection()));
       }
     }
@@ -56,8 +57,7 @@ public class ProjectionDataTrimmer { // todo move somewhere else? Generify?
     return b;
   }
 
-  @NotNull
-  public static Datum trimDatum(@NotNull Datum datum, @NotNull ReqOutputModelProjection<?, ?> projection) {
+  public static @NotNull Datum trimDatum(@NotNull Datum datum, @NotNull ReqOutputModelProjection<?, ?> projection) {
     switch (datum.type().kind()) {
       case RECORD:
         return trimRecordDatum((RecordDatum) datum, (ReqOutputRecordModelProjection) projection);
@@ -66,7 +66,7 @@ public class ProjectionDataTrimmer { // todo move somewhere else? Generify?
       case LIST:
         return trimListDatum((ListDatum) datum, (ReqOutputListModelProjection) projection);
       case PRIMITIVE:
-        return trimPrimitiveDatum((PrimitiveDatum) datum, (ReqOutputPrimitiveModelProjection) projection);
+        return trimPrimitiveDatum((PrimitiveDatum<?>) datum, (ReqOutputPrimitiveModelProjection) projection);
       case ENUM:
         throw new RuntimeException("Unsupported kind kind: " + datum.type().kind());
       case UNION:
@@ -76,18 +76,17 @@ public class ProjectionDataTrimmer { // todo move somewhere else? Generify?
     }
   }
 
-  @NotNull
-  public static Datum trimRecordDatum(@NotNull RecordDatum datum, @NotNull ReqOutputRecordModelProjection projection) {
-    @NotNull final RecordDatum.Raw raw = datum._raw();
-    @NotNull final RecordDatum.Builder.Raw b = datum.type().createBuilder()._raw();
+  public static @NotNull Datum trimRecordDatum(@NotNull RecordDatum datum, @NotNull ReqOutputRecordModelProjection projection) {
+    final @NotNull RecordDatum.Raw raw = datum._raw();
+    final @NotNull RecordDatum.Builder.Raw b = datum.type().createBuilder()._raw();
 
     @NotNull
     Map<String, ReqOutputFieldProjectionEntry> fieldProjections = projection.fieldProjections();
 
     for (Map.Entry<String, ReqOutputFieldProjectionEntry> entry : fieldProjections.entrySet()) {
       final ReqOutputFieldProjectionEntry fieldProjectionEntry = entry.getValue();
-      final RecordType.Field field = fieldProjectionEntry.field();
-      @Nullable final Data data = raw.getData(field);
+      final RecordType.Field field = (RecordType.Field) fieldProjectionEntry.field();
+      final @Nullable Data data = raw.getData(field);
 
       if (data != null) b.setData(field, trimData(data, fieldProjectionEntry.fieldProjection().varProjection()));
     }
@@ -95,25 +94,24 @@ public class ProjectionDataTrimmer { // todo move somewhere else? Generify?
     return b;
   }
 
-  @NotNull
-  public static Datum trimMapDatum(@NotNull MapDatum datum, @NotNull ReqOutputMapModelProjection projection) {
+  public static @NotNull Datum trimMapDatum(@NotNull MapDatum datum, @NotNull ReqOutputMapModelProjection projection) {
 
-    @NotNull final MapDatum.Raw raw = datum._raw();
-    @NotNull final MapDatum.Builder.Raw b = datum.type().createBuilder()._raw();
+    final @NotNull MapDatum.Raw raw = datum._raw();
+    final @NotNull MapDatum.Builder.Raw b = datum.type().createBuilder()._raw();
 
-    @Nullable final List<ReqOutputKeyProjection> keyProjections = projection.keys();
+    final @Nullable List<ReqOutputKeyProjection> keyProjections = projection.keys();
 
-    if (keyProjections != null) {
-      for (ReqOutputKeyProjection keyProjection : keyProjections) {
-        @NotNull final Datum.Imm keyValue = keyProjection.value().toImmutable();
-        @Nullable final Data data = raw.elements().get(keyValue);
+    if (keyProjections == null) {
+      for (Map.Entry<Datum.Imm, ? extends Data> entry : raw.elements().entrySet()) {
+        final Datum.Imm keyValue = entry.getKey();
+        final Data data = entry.getValue();
 
         if (data != null) b.elements().put(keyValue, trimData(data, projection.itemsProjection()));
       }
     } else {
-      for (Map.Entry<Datum.Imm, ? extends Data> entry : raw.elements().entrySet()) {
-        final Datum.Imm keyValue = entry.getKey();
-        final Data data = entry.getValue();
+      for (ReqOutputKeyProjection keyProjection : keyProjections) {
+        final @NotNull Datum.Imm keyValue = keyProjection.value().toImmutable();
+        final @Nullable Data data = raw.elements().get(keyValue);
 
         if (data != null) b.elements().put(keyValue, trimData(data, projection.itemsProjection()));
       }
@@ -122,15 +120,13 @@ public class ProjectionDataTrimmer { // todo move somewhere else? Generify?
     return b;
   }
 
-  @NotNull
-  public static Datum trimListDatum(@NotNull ListDatum datum, @NotNull ReqOutputListModelProjection projection) {
+  public static @NotNull Datum trimListDatum(@NotNull ListDatum datum, @NotNull ReqOutputListModelProjection projection) {
     // nothing to trim
     return datum;
   }
 
-  @NotNull
-  public static Datum trimPrimitiveDatum(@NotNull PrimitiveDatum datum,
-                                         @NotNull ReqOutputPrimitiveModelProjection projection) {
+  public static @NotNull Datum trimPrimitiveDatum(@NotNull PrimitiveDatum<?> datum,
+                                                  @NotNull ReqOutputPrimitiveModelProjection projection) {
     // nothing to trim
     return datum;
   }

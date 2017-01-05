@@ -30,9 +30,7 @@ import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.ImportAwareTypesResolver;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.refs.ValueTypeRef;
-import ws.epigraph.types.DataType;
-import ws.epigraph.types.DatumType;
-import ws.epigraph.types.Type;
+import ws.epigraph.types.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -108,13 +106,22 @@ public final class SchemaPsiParser {
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
-    final String fieldName = psi.getResourceName().getQid().getCanonicalName();
+    final SchemaResourceName resourceName = psi.getResourceName();
+    if (resourceName == null) throw new PsiProcessingException(
+        "Resource name not specified", psi, errors
+    );
 
-    @NotNull SchemaResourceType resourceTypePsi = psi.getResourceType();
+    final String fieldName = resourceName.getQid().getCanonicalName();
+
+    SchemaResourceType resourceTypePsi = psi.getResourceType();
+    if (resourceTypePsi == null) throw new PsiProcessingException(
+        String.format("Resource '%s' type not specified", fieldName),
+        psi, errors
+    );
 
     @NotNull SchemaValueTypeRef valueTypeRefPsi = resourceTypePsi.getValueTypeRef();
     @NotNull ValueTypeRef valueTypeRef = TypeRefs.fromPsi(valueTypeRefPsi, errors);
-    @Nullable DataType resourceType = resolver.resolve(valueTypeRef);
+    @Nullable DataTypeApi resourceType = resolver.resolve(valueTypeRef);
 
     if (resourceType == null) throw new PsiProcessingException(
         String.format("Can't resolve resource '%s' kind '%s'", fieldName, valueTypeRef),
@@ -123,9 +130,9 @@ public final class SchemaPsiParser {
     );
 
     // convert datum kind to samovar
-    @NotNull Type type = resourceType.type;
-    if (resourceType.defaultTag == null && valueTypeRef.defaultOverride() == null && type instanceof DatumType) {
-      resourceType = new DataType(type, ((DatumType) type).self);
+    @NotNull TypeApi type = resourceType.type();
+    if (resourceType.defaultTag() == null && valueTypeRef.defaultOverride() == null && type instanceof DatumTypeApi) {
+      resourceType = type.dataType();
     }
 
     @NotNull List<SchemaOperationDef> defsPsi = psi.getOperationDefList();

@@ -26,9 +26,7 @@ import ws.epigraph.psi.PsiProcessingError;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypeRef;
 import ws.epigraph.refs.TypesResolver;
-import ws.epigraph.types.DatumType;
-import ws.epigraph.types.Type;
-import ws.epigraph.types.TypeKind;
+import ws.epigraph.types.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -40,14 +38,14 @@ public final class ProjectionsParsingUtil {
 
   private ProjectionsParsingUtil() {}
 
-  public static @NotNull Type.Tag getTag(
-      @NotNull Type type,
+  public static @NotNull TagApi getTag(
+      @NotNull TypeApi type,
       @Nullable String tagName,
-      @Nullable Type.Tag defaultTag,
+      @Nullable TagApi defaultTag,
       @NotNull PsiElement location,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
-    final Type.Tag tag = findTag(type, tagName, defaultTag, location, errors);
+    final TagApi tag = findTag(type, tagName, defaultTag, location, errors);
 
     if (tag == null)
       throw new PsiProcessingException(
@@ -58,14 +56,14 @@ public final class ProjectionsParsingUtil {
     return tag;
   }
 
-  public static @Nullable Type.Tag findTag(
-      @NotNull Type type,
+  public static @Nullable TagApi findTag(
+      @NotNull TypeApi type,
       @Nullable String tagName,
-      @Nullable Type.Tag defaultTag,
+      @Nullable TagApi defaultTag,
       @NotNull PsiElement location,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
-    final Type.Tag tag;
+    final TagApi tag;
 
     if (tagName == null) {
       // get default tag
@@ -82,13 +80,13 @@ public final class ProjectionsParsingUtil {
     return tag;
   }
 
-  public static @NotNull Type.Tag getTag(
-      @NotNull Type type,
+  public static @NotNull TagApi getTag(
+      @NotNull TypeApi type,
       @NotNull String tagName,
       @NotNull PsiElement location,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
-    Type.Tag tag = type.tagsMap().get(tagName);
+    TagApi tag = type.tagsMap().get(tagName);
     if (tag == null)
       throw new PsiProcessingException(
           String.format("Unknown tag '%s' in type '%s', known tags: (%s)", tagName, type.name(), listTags(type)),
@@ -98,8 +96,8 @@ public final class ProjectionsParsingUtil {
   }
 
   public static void verifyTag(
-      @NotNull Type type,
-      @NotNull Type.Tag tag,
+      @NotNull TypeApi type,
+      @NotNull TagApi tag,
       @NotNull PsiElement location,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
@@ -113,24 +111,41 @@ public final class ProjectionsParsingUtil {
           ), location, errors);
   }
 
-  private static String listTags(@NotNull Type type) {
-    return type.tags().stream().map(Type.Tag::name).collect(Collectors.joining(","));
+  private static String listTags(@NotNull TypeApi type) {
+    return type.tags().stream().map(TagApi::name).collect(Collectors.joining(","));
   }
 
   public static <VP extends GenVarProjection<?, ?, ?>> String listTags(@NotNull VP op) {
     return String.join(", ", op.tagProjections().keySet());
   }
 
-  public static @NotNull Type getType(
+  public static @NotNull TypeApi getType(
       @NotNull TypeRef typeRef,
       @NotNull TypesResolver resolver,
       @NotNull PsiElement location,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
-    @Nullable Type type = typeRef.resolve(resolver);
+    @Nullable TypeApi type = typeRef.resolve(resolver);
     if (type == null)
       throw new PsiProcessingException(String.format("Can't find type '%s'", typeRef.toString()), location, errors);
     return type;
+  }
+
+
+  public static @NotNull UnionTypeApi getUnionType(
+      @NotNull TypeRef typeRef,
+      @NotNull TypesResolver resolver,
+      @NotNull PsiElement location,
+      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
+
+    TypeApi type = getType(typeRef, resolver, location, errors);
+    if (type instanceof UnionTypeApi)
+      return (UnionTypeApi) type;
+
+    throw new PsiProcessingException(
+        String.format("Expected '%s' to be a var type, but actual kind is '%s'",
+            type.name().toString(), type.kind().toString()
+        ), location, errors);
   }
 
   /**
@@ -164,15 +179,15 @@ public final class ProjectionsParsingUtil {
       TP extends GenTagProjectionEntry<TP, MP>,
       VP extends GenVarProjection<VP, TP, MP>
       >
-  Type.Tag findDefaultTag(
-      @NotNull Type type,
+  TagApi findDefaultTag(
+      @NotNull TypeApi type,
       @Nullable VP op,
       @NotNull PsiElement locationPsi,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
     if (type.kind() != TypeKind.UNION) {
-      DatumType datumType = (DatumType) type;
-      final Type.@NotNull Tag self = datumType.self;
+      DatumTypeApi datumType = (DatumTypeApi) type;
+      final @NotNull TagApi self = datumType.self();
       if (op != null) getTagProjection(self.name(), op, locationPsi, errors); // check that op contains it
       return self;
     }

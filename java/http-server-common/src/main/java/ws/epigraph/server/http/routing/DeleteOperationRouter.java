@@ -24,7 +24,7 @@ import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.service.Resource;
 import ws.epigraph.service.operations.DeleteOperation;
-import ws.epigraph.types.DataType;
+import ws.epigraph.types.DataTypeApi;
 import ws.epigraph.url.DeleteRequestUrl;
 import ws.epigraph.url.parser.DeleteRequestUrlPsiParser;
 import ws.epigraph.url.parser.psi.UrlDeleteUrl;
@@ -54,7 +54,7 @@ public final class DeleteOperationRouter
 
   @Override
   protected @NotNull DeleteRequestUrl parseUrl(
-      final @NotNull DataType resourceType,
+      final @NotNull DataTypeApi resourceType,
       final @NotNull DeleteOperationDeclaration opDecl,
       final @NotNull UrlDeleteUrl urlPsi,
       final @NotNull TypesResolver resolver,

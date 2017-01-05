@@ -19,9 +19,7 @@ package ws.epigraph.schema;
 import de.uka.ilkd.pp.Layouter;
 import ws.epigraph.schema.operations.OperationDeclaration;
 import ws.epigraph.schema.operations.OperationsPrettyPrinter;
-import ws.epigraph.types.DataType;
-import ws.epigraph.types.DatumType;
-import ws.epigraph.types.Type;
+import ws.epigraph.types.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -56,11 +54,11 @@ public class SchemaPrettyPrinter<E extends Exception> {
     l.print("resource").brk();
     l.print(resource.fieldName()).print(":").brk();
 
-    @NotNull DataType fieldType = resource.fieldType();
-    l.print(fieldType.type.name().toString()).brk();
+    @NotNull DataTypeApi fieldType = resource.fieldType();
+    l.print(fieldType.type().name().toString()).brk();
 
-    @Nullable Type.Tag defaultTag = fieldType.defaultTag;
-    if (defaultTag != null && !(fieldType.type instanceof DatumType)) {
+    @Nullable TagApi defaultTag = fieldType.defaultTag();
+    if (defaultTag != null && !(fieldType.type() instanceof DatumType)) {
       l.print("default").brk();
       l.print(defaultTag.name()).brk();
     }

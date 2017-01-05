@@ -21,7 +21,7 @@ import ws.epigraph.java.service.ServiceGenUtils.{genLinkedMap, genList, genTag, 
 import ws.epigraph.java.service.ServiceObjectGen.gen
 import ws.epigraph.java.service.{ServiceGenContext, ServiceObjectGen}
 import ws.epigraph.projections.op.input.{OpInputTagProjectionEntry, OpInputVarProjection}
-import ws.epigraph.types.Type
+import ws.epigraph.types.TypeApi
 
 import scala.collection.JavaConversions._
 
@@ -41,7 +41,8 @@ new OpInputVarProjection(
   ${gen(p.location(), ctx)}
 )"""/*@formatter:on*/
 
-  private def genTagProjectionEntry(t: Type,
+  private def genTagProjectionEntry(
+    t: TypeApi,
     tpe: OpInputTagProjectionEntry,
     ctx: ServiceGenContext): String = {
 

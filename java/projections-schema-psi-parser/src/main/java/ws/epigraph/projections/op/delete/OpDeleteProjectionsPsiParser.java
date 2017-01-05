@@ -38,8 +38,8 @@ import ws.epigraph.types.TypeKind;
 import java.text.MessageFormat;
 import java.util.*;
 
+import static ws.epigraph.projections.ProjectionsParsingUtil.getUnionType;
 import static ws.epigraph.projections.SchemaProjectionPsiParserUtil.*;
-import static ws.epigraph.projections.ProjectionsParsingUtil.getType;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -49,12 +49,12 @@ public final class OpDeleteProjectionsPsiParser {
   private OpDeleteProjectionsPsiParser() {}
 
   public static OpDeleteVarProjection parseVarProjection(
-      @NotNull DataType dataType,
+      @NotNull DataTypeApi dataType,
       @NotNull SchemaOpDeleteVarProjection psi,
       @NotNull TypesResolver typesResolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
-    final Type type = dataType.type;
+    final TypeApi type = dataType.type();
     final LinkedHashMap<String, OpDeleteTagProjectionEntry> tagProjections = new LinkedHashMap<>();
 
     boolean canDelete = psi.getPlus() != null;
@@ -68,9 +68,9 @@ public final class OpDeleteProjectionsPsiParser {
           multiTagProjection.getOpDeleteMultiTagProjectionItemList();
 
       for (SchemaOpDeleteMultiTagProjectionItem tagProjectionPsi : tagProjectionPsiList) {
-        final Type.Tag tag = getTag(type, tagProjectionPsi.getTagName(), dataType.defaultTag, tagProjectionPsi, errors);
+        final TagApi tag = getTag(type, tagProjectionPsi.getTagName(), dataType.defaultTag(), tagProjectionPsi, errors);
 
-        @NotNull DatumType tagType = tag.type;
+        @NotNull DatumTypeApi tagType = tag.type();
         @Nullable SchemaOpDeleteModelProjection modelProjection = tagProjectionPsi.getOpDeleteModelProjection();
         assert modelProjection != null; // todo when it can be null?
 
@@ -95,10 +95,10 @@ public final class OpDeleteProjectionsPsiParser {
         );
       }
     } else {
-      Type.Tag tag = findTag(
+      TagApi tag = findTag(
           type,
           singleTagProjectionPsi.getTagName(),
-          dataType.defaultTag,
+          dataType.defaultTag(),
           singleTagProjectionPsi,
           errors
       );
@@ -107,7 +107,7 @@ public final class OpDeleteProjectionsPsiParser {
           tag = getTag(
               type,
               singleTagProjectionPsi.getTagName(),
-              dataType.defaultTag,
+              dataType.defaultTag(),
               singleTagProjectionPsi,
               errors
           );
@@ -119,7 +119,7 @@ public final class OpDeleteProjectionsPsiParser {
             singleTagProjectionPsi.getOpDeleteModelPropertyList();
 
         final OpDeleteModelProjection<?, ?> parsedModelProjection = parseModelProjection(
-            tag.type,
+            tag.type(),
             parseModelParams(modelPropertiesPsi, typesResolver, errors),
             parseModelAnnotations(modelPropertiesPsi, errors),
             modelProjection,
@@ -204,16 +204,16 @@ public final class OpDeleteProjectionsPsiParser {
   }
 
   private static @NotNull OpDeleteVarProjection buildTailProjection(
-      @NotNull DataType dataType,
+      @NotNull DataTypeApi dataType,
       @NotNull SchemaTypeRef tailTypeRefPsi,
       @NotNull SchemaOpDeleteVarProjection psiTailProjection,
       @NotNull TypesResolver typesResolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
     @NotNull TypeRef tailTypeRef = TypeRefs.fromPsi(tailTypeRefPsi, errors);
-    @NotNull Type tailType = getType(tailTypeRef, typesResolver, tailTypeRefPsi, errors);
+    @NotNull UnionTypeApi tailType = getUnionType(tailTypeRef, typesResolver, tailTypeRefPsi, errors);
     return parseVarProjection(
-        new DataType(tailType, dataType.defaultTag),
+        tailType.dataType(dataType.defaultTag()),
         psiTailProjection,
         typesResolver,
         errors
@@ -221,8 +221,8 @@ public final class OpDeleteProjectionsPsiParser {
   }
 
   private static @NotNull OpDeleteVarProjection createDefaultVarProjection(
-      @NotNull Type type,
-      @NotNull Type.Tag tag,
+      @NotNull TypeApi type,
+      @NotNull TagApi tag,
       boolean canDelete,
       @NotNull PsiElement locationPsi,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
@@ -235,7 +235,7 @@ public final class OpDeleteProjectionsPsiParser {
             new OpDeleteTagProjectionEntry(
                 tag,
                 createDefaultModelProjection(
-                    tag.type,
+                    tag.type(),
                     OpParams.EMPTY,
                     Annotations.EMPTY,
                     locationPsi,
@@ -251,32 +251,32 @@ public final class OpDeleteProjectionsPsiParser {
   }
 
   private static @NotNull OpDeleteVarProjection createDefaultVarProjection(
-      @NotNull DatumType type,
+      @NotNull DatumTypeApi type,
       boolean canDelete,
       @NotNull PsiElement locationPsi,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
-    return createDefaultVarProjection(type, type.self, canDelete, locationPsi, errors);
+    return createDefaultVarProjection(type, type.self(), canDelete, locationPsi, errors);
   }
 
   private static @NotNull OpDeleteVarProjection createDefaultVarProjection(
-      @NotNull DataType type,
+      @NotNull DataTypeApi type,
       boolean canDelete,
       @NotNull PsiElement locationPsi,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
-    @Nullable Type.Tag defaultTag = type.defaultTag;
+    @Nullable TagApi defaultTag = type.defaultTag();
     if (defaultTag == null)
       throw new PsiProcessingException(
-          String.format("Can't build default projection for '%s', default tag not specified", type.name),
+          String.format("Can't build default projection for '%s', default tag not specified", type.name()),
           locationPsi,
           errors
       );
 
-    return createDefaultVarProjection(type.type, defaultTag, canDelete, locationPsi, errors);
+    return createDefaultVarProjection(type.type(), defaultTag, canDelete, locationPsi, errors);
   }
 
   public static @NotNull OpDeleteModelProjection<?, ?> parseModelProjection(
-      @NotNull DatumType type,
+      @NotNull DatumTypeApi type,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
       @NotNull SchemaOpDeleteModelProjection psi,
@@ -290,7 +290,7 @@ public final class OpDeleteProjectionsPsiParser {
           return createDefaultModelProjection(type, params, annotations, psi, errors);
         ensureModelKind(psi, TypeKind.RECORD, errors);
         return parseRecordModelProjection(
-            (RecordType) type,
+            (RecordTypeApi) type,
             params,
             annotations,
             recordModelProjectionPsi,
@@ -304,7 +304,7 @@ public final class OpDeleteProjectionsPsiParser {
         ensureModelKind(psi, TypeKind.MAP, errors);
 
         return parseMapModelProjection(
-            (MapType) type,
+            (MapTypeApi) type,
             params,
             annotations,
             mapModelProjectionPsi,
@@ -318,7 +318,7 @@ public final class OpDeleteProjectionsPsiParser {
         ensureModelKind(psi, TypeKind.LIST, errors);
 
         return parseListModelProjection(
-            (ListType) type,
+            (ListTypeApi) type,
             params,
             annotations,
             listModelProjectionPsi,
@@ -329,7 +329,7 @@ public final class OpDeleteProjectionsPsiParser {
         throw new PsiProcessingException("Unsupported type kind: " + type.kind(), psi, errors);
       case PRIMITIVE:
         return parsePrimitiveModelProjection(
-            (PrimitiveType<?>) type,
+            (PrimitiveTypeApi) type,
             params,
             annotations,
             psi
@@ -365,7 +365,7 @@ public final class OpDeleteProjectionsPsiParser {
   }
 
   private static @NotNull OpDeleteModelProjection<?, ?> createDefaultModelProjection(
-      @NotNull DatumType type,
+      @NotNull DatumTypeApi type,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
       @NotNull PsiElement locationPsi,
@@ -374,14 +374,14 @@ public final class OpDeleteProjectionsPsiParser {
     switch (type.kind()) {
       case RECORD:
         return new OpDeleteRecordModelProjection(
-            (RecordType) type,
+            (RecordTypeApi) type,
             params,
             annotations,
             Collections.emptyMap(),
             EpigraphPsiUtil.getLocation(locationPsi)
         );
       case MAP:
-        MapType mapType = (MapType) type;
+        MapTypeApi mapType = (MapTypeApi) type;
 
         final OpDeleteKeyProjection keyProjection =
             new OpDeleteKeyProjection(
@@ -391,18 +391,18 @@ public final class OpDeleteProjectionsPsiParser {
                 EpigraphPsiUtil.getLocation(locationPsi)
             );
 
-        @NotNull DataType valueType = mapType.valueType();
-        Type.@Nullable Tag defaultValuesTag = valueType.defaultTag;
+        @NotNull DataTypeApi valueType = mapType.valueType();
+        @Nullable TagApi defaultValuesTag = valueType.defaultTag();
 
         if (defaultValuesTag == null)
           throw new PsiProcessingException(String.format(
               "Can't create default projection for map type '%s, as it's value type '%s' doesn't have a default tag",
               type.name(),
-              valueType.name
+              valueType.name()
           ), locationPsi, errors);
 
         final OpDeleteVarProjection valueVarProjection = createDefaultVarProjection(
-            valueType.type,
+            valueType.type(),
             defaultValuesTag,
             false,
             locationPsi,
@@ -418,19 +418,19 @@ public final class OpDeleteProjectionsPsiParser {
             EpigraphPsiUtil.getLocation(locationPsi)
         );
       case LIST:
-        ListType listType = (ListType) type;
-        @NotNull DataType elementType = listType.elementType();
-        Type.@Nullable Tag defaultElementsTag = elementType.defaultTag;
+        ListTypeApi listType = (ListTypeApi) type;
+        @NotNull DataTypeApi elementType = listType.elementType();
+        @Nullable TagApi defaultElementsTag = elementType.defaultTag();
 
         if (defaultElementsTag == null)
           throw new PsiProcessingException(String.format(
               "Can't create default projection for list type '%s, as it's element type '%s' doesn't have a default tag",
               type.name(),
-              elementType.name
+              elementType.name()
           ), locationPsi, errors);
 
         final OpDeleteVarProjection itemVarProjection = createDefaultVarProjection(
-            elementType.type,
+            elementType.type(),
             defaultElementsTag,
             false,
             locationPsi,
@@ -454,7 +454,7 @@ public final class OpDeleteProjectionsPsiParser {
         throw new PsiProcessingException("Unsupported type kind: " + type.kind(), locationPsi, errors);
       case PRIMITIVE:
         return new OpDeletePrimitiveModelProjection(
-            (PrimitiveType<?>) type,
+            (PrimitiveTypeApi) type,
             params,
             annotations,
             EpigraphPsiUtil.getLocation(locationPsi)
@@ -465,7 +465,7 @@ public final class OpDeleteProjectionsPsiParser {
   }
 
   public static @NotNull OpDeleteRecordModelProjection parseRecordModelProjection(
-      @NotNull RecordType type,
+      @NotNull RecordTypeApi type,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
       @NotNull SchemaOpDeleteRecordModelProjection psi,
@@ -478,7 +478,7 @@ public final class OpDeleteProjectionsPsiParser {
 
     for (SchemaOpDeleteFieldProjectionEntry fieldProjectionEntryPsi : fieldProjectionEntriesPsi) {
       final String fieldName = fieldProjectionEntryPsi.getQid().getCanonicalName();
-      RecordType.Field field = type.fieldsMap().get(fieldName);
+      FieldApi field = type.fieldsMap().get(fieldName);
 
       if (field == null)
         throw new PsiProcessingException(
@@ -512,7 +512,7 @@ public final class OpDeleteProjectionsPsiParser {
   }
 
   public static @NotNull OpDeleteFieldProjection parseFieldProjection(
-      @NotNull DataType fieldType,
+      @NotNull DataTypeApi fieldType,
       @NotNull SchemaOpDeleteFieldProjection psi,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
@@ -538,7 +538,7 @@ public final class OpDeleteProjectionsPsiParser {
   }
 
   public static @NotNull OpDeleteMapModelProjection parseMapModelProjection(
-      @NotNull MapType type,
+      @NotNull MapTypeApi type,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
       @NotNull SchemaOpDeleteMapModelProjection psi,
@@ -604,7 +604,7 @@ public final class OpDeleteProjectionsPsiParser {
   }
 
   public static @NotNull OpDeleteListModelProjection parseListModelProjection(
-      @NotNull ListType type,
+      @NotNull ListTypeApi type,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
       @NotNull SchemaOpDeleteListModelProjection psi,
@@ -629,7 +629,7 @@ public final class OpDeleteProjectionsPsiParser {
   }
 
   public static @NotNull OpDeletePrimitiveModelProjection parsePrimitiveModelProjection(
-      @NotNull PrimitiveType<?> type,
+      @NotNull PrimitiveTypeApi type,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
       @NotNull PsiElement locationPsi) {

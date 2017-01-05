@@ -42,9 +42,7 @@ import ws.epigraph.psi.PsiProcessingError;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.ImportAwareTypesResolver;
 import ws.epigraph.refs.TypesResolver;
-import ws.epigraph.types.DatumType;
-import ws.epigraph.types.Type;
-import ws.epigraph.types.TypeKind;
+import ws.epigraph.types.*;
 import ws.epigraph.url.gdata.UrlGDataPsiParser;
 import ws.epigraph.url.parser.psi.*;
 
@@ -70,21 +68,21 @@ public final class UrlProjectionsPsiParserUtil {
   /**
    * Finds supported tag with a given name in type {@code type} if {@code idlTagName} is not null.
    * <p>
-   * Otherwise gets {@link ProjectionsParsingUtil#findDefaultTag(Type, GenVarProjection, PsiElement, List)}
+   * Otherwise gets {@link ProjectionsParsingUtil#findDefaultTag(TypeApi, GenVarProjection, PsiElement, List)}
    * default tag} and, if not {@code null}, returns it; otherwise fails.
    */
   public static @NotNull <
       MP extends GenModelProjection<?, ?>,
       TP extends GenTagProjectionEntry<TP, MP>,
       VP extends GenVarProjection<VP, TP, MP>>
-  Type.Tag getTagOrDefaultTag(
-      @NotNull Type type,
+  TagApi getTagOrDefaultTag(
+      @NotNull TypeApi type,
       @Nullable UrlTagName idlTagName,
       @NotNull VP opOutputVarProjection,
       @NotNull PsiElement location,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
-    Type.Tag tag = findTagOrDefaultTag(type, idlTagName, opOutputVarProjection, location, errors);
+    TagApi tag = findTagOrDefaultTag(type, idlTagName, opOutputVarProjection, location, errors);
     if (tag == null)
       throw new PsiProcessingException(
           String.format(
@@ -102,7 +100,7 @@ public final class UrlProjectionsPsiParserUtil {
   /**
    * Finds supported tag with a given name in type {@code type} if {@code idlTagName} is not null.
    * <p>
-   * Otherwise gets {@link ProjectionsParsingUtil#findDefaultTag(Type, GenVarProjection, PsiElement, List)}
+   * Otherwise gets {@link ProjectionsParsingUtil#findDefaultTag(TypeApi, GenVarProjection, PsiElement, List)}
    * default tag} and, if not {@code null}, returns it; otherwise returns {@code null}.
    */
   public static @Nullable <
@@ -110,15 +108,15 @@ public final class UrlProjectionsPsiParserUtil {
       TP extends GenTagProjectionEntry<TP, MP>,
       VP extends GenVarProjection<VP, TP, MP>>
 
-  Type.Tag findTagOrDefaultTag(
-      @NotNull Type type,
+  TagApi findTagOrDefaultTag(
+      @NotNull TypeApi type,
       @Nullable UrlTagName idlTagName,
       @NotNull VP opOutputVarProjection,
       @NotNull PsiElement location,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
     if (idlTagName == null) {
-      final Type.@Nullable Tag defaultTag = findDefaultTag(type, opOutputVarProjection, location, errors);
+      final @Nullable TagApi defaultTag = findDefaultTag(type, opOutputVarProjection, location, errors);
 
       return defaultTag == null ? null : defaultTag;
     } else return getTag(idlTagName, opOutputVarProjection, location, errors);
@@ -132,7 +130,7 @@ public final class UrlProjectionsPsiParserUtil {
       MP extends GenModelProjection<?, ?>,
       TP extends GenTagProjectionEntry<TP, MP>,
       VP extends GenVarProjection<VP, TP, MP>>
-  Type.Tag getTag(
+  TagApi getTag(
       @NotNull UrlTagName idlTagName,
       @NotNull VP varProjection,
       @NotNull PsiElement location,
@@ -141,10 +139,10 @@ public final class UrlProjectionsPsiParserUtil {
     return getTagProjection(idlTagName.getQid().getCanonicalName(), varProjection, location, errors).tag();
   }
 
-  public static @NotNull Type.Tag getTag(
-      @NotNull Type type,
+  public static @NotNull TagApi getTag(
+      @NotNull TypeApi type,
       @Nullable UrlTagName tagName,
-      @Nullable Type.Tag defaultTag,
+      @Nullable TagApi defaultTag,
       @NotNull PsiElement location,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
@@ -188,7 +186,7 @@ public final class UrlProjectionsPsiParserUtil {
 
   public static @Nullable Datum getDatum(
       @NotNull UrlDatum datumPsi,
-      @NotNull DatumType model,
+      @NotNull DatumTypeApi model,
       @NotNull TypesResolver resolver,
       @NotNull String errorMessagePrefix,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
@@ -197,7 +195,7 @@ public final class UrlProjectionsPsiParserUtil {
     @Nullable Datum value;
 
     try {
-      value = GDataToData.transform(model, gDatum, resolver).getDatum();
+      value = GDataToData.transform((DatumType) model, gDatum, resolver).getDatum();
     } catch (GDataToData.ProcessingException e) {
       // try to find element by offset
       int offset = e.location().startOffset() - datumPsi.getTextRange().getStartOffset();
@@ -317,7 +315,7 @@ public final class UrlProjectionsPsiParserUtil {
 
       final String errorMsgPrefix = String.format("Error processing parameter '%s' value: ", name);
       OpInputModelProjection<?, ?, ?> projection = opParam.projection();
-      final DatumType model = projection.model();
+      final DatumTypeApi model = projection.model();
       final @NotNull TypesResolver subResolver = addTypeNamespace(model, resolver);
 
       @Nullable Datum value = getDatum(reqParamPsi.getDatum(), model, subResolver, errorMsgPrefix, errors);
@@ -325,7 +323,7 @@ public final class UrlProjectionsPsiParserUtil {
         final GDatum gDatum = projection.defaultValue();
         if (gDatum != null)
           try {
-            value = (Datum) GDataToData.transform(projection.model(), gDatum, resolver);
+            value = (Datum) GDataToData.transform((DatumType) projection.model(), gDatum, resolver);
           } catch (GDataToData.ProcessingException e) {
             throw new PsiProcessingException(e, reqParamPsi, errors);
           }
@@ -339,7 +337,7 @@ public final class UrlProjectionsPsiParserUtil {
   }
 
 
-  public static @NotNull TypesResolver addTypeNamespace(@NotNull Type type, @NotNull TypesResolver resolver) {
+  public static @NotNull TypesResolver addTypeNamespace(@NotNull TypeApi type, @NotNull TypesResolver resolver) {
     final @Nullable Qn namespace = getTypeNamespace(type);
 
     if (namespace == null) return resolver;
@@ -354,7 +352,7 @@ public final class UrlProjectionsPsiParserUtil {
     }
   }
 
-  public static @Nullable Qn getTypeNamespace(@NotNull Type type) {
+  public static @Nullable Qn getTypeNamespace(@NotNull TypeApi type) {
     final @NotNull TypeName name = type.name();
 
     if (name instanceof QualifiedTypeName) {

@@ -24,7 +24,7 @@ import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.service.Resource;
 import ws.epigraph.service.operations.Operation;
-import ws.epigraph.types.DataType;
+import ws.epigraph.types.DataTypeApi;
 import ws.epigraph.url.RequestUrl;
 import ws.epigraph.url.parser.psi.UrlUrl;
 
@@ -58,7 +58,7 @@ public abstract class AbstractOperationRouter<
       final @NotNull TypesResolver resolver)
       throws PsiProcessingException {
 
-    final @NotNull DataType resourceFieldType = resource.declaration().fieldType();
+    final @NotNull DataTypeApi resourceFieldType = resource.declaration().fieldType();
 
     if (operationName == null) {
       final Map<O, List<PsiProcessingError>> matchingErrors = new HashMap<>();
@@ -94,7 +94,7 @@ public abstract class AbstractOperationRouter<
 
   private @NotNull OperationSearchResult<O> matchOperation(
       @Nullable O operation,
-      @NotNull DataType resourceType,
+      @NotNull DataTypeApi resourceType,
       @NotNull U urlPsi,
       @NotNull TypesResolver resolver
   ) {
@@ -132,7 +132,7 @@ public abstract class AbstractOperationRouter<
   }
 
   protected abstract @NotNull R parseUrl(
-      @NotNull DataType resourceType,
+      @NotNull DataTypeApi resourceType,
       @NotNull D opDecl,
       @NotNull U urlPsi,
       @NotNull TypesResolver resolver,

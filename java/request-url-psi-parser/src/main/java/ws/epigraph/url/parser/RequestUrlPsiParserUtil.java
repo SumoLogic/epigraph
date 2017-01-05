@@ -28,7 +28,7 @@ import ws.epigraph.projections.req.output.ReqOutputFieldProjection;
 import ws.epigraph.psi.PsiProcessingError;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypesResolver;
-import ws.epigraph.types.DataType;
+import ws.epigraph.types.DataTypeApi;
 import ws.epigraph.url.parser.psi.UrlReqOutputTrunkFieldProjection;
 import ws.epigraph.url.projections.req.output.ReqOutputProjectionsPsiParser;
 
@@ -42,7 +42,7 @@ public final class RequestUrlPsiParserUtil {
   private RequestUrlPsiParserUtil() {}
 
   static @NotNull StepsAndProjection<ReqOutputFieldProjection> parseOutputProjection(
-      final @NotNull DataType dataType,
+      final @NotNull DataTypeApi dataType,
       final @NotNull OpOutputFieldProjection op,
       final @Nullable UrlReqOutputTrunkFieldProjection psi,
       final @NotNull TypesResolver resolver,

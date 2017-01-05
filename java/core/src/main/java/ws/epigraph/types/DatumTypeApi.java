@@ -25,6 +25,4 @@ public interface DatumTypeApi extends TypeApi {
   String MONO_TAG_NAME = "self"; // TODO better name (for the constant and the tag)
 
   @NotNull TagApi self();
-
-  @NotNull DataTypeApi dataType();
 }

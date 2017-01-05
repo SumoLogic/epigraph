@@ -49,18 +49,18 @@ public final class ReqUpdateProjectionsPsiParser {
   private ReqUpdateProjectionsPsiParser() {}
 
   public static @NotNull ReqUpdateVarProjection parseVarProjection(
-      @NotNull DataType dataType,
+      @NotNull DataTypeApi dataType,
       @NotNull OpInputVarProjection op,
       @NotNull UrlReqUpdateVarProjection psi,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
 
-    final Type type = dataType.type;
+    final TypeApi type = dataType.type();
     final LinkedHashMap<String, ReqUpdateTagProjectionEntry> tagProjections;
 
     @Nullable UrlReqUpdateSingleTagProjection singleTagProjectionPsi = psi.getReqUpdateSingleTagProjection();
-    final @NotNull TypesResolver subResolver = addTypeNamespace(dataType.type, resolver);
+    final @NotNull TypesResolver subResolver = addTypeNamespace(dataType.type(), resolver);
 
     if (singleTagProjectionPsi == null) {
       @Nullable UrlReqUpdateMultiTagProjection multiTagProjection = psi.getReqUpdateMultiTagProjection();
@@ -72,7 +72,7 @@ public final class ReqUpdateProjectionsPsiParser {
       tagProjections = new LinkedHashMap<>();
       final @Nullable UrlTagName tagNamePsi = singleTagProjectionPsi.getTagName();
 
-      Type.Tag tag = findTagOrDefaultTag(type, tagNamePsi, op, tagLocation, errors);
+      TagApi tag = findTagOrDefaultTag(type, tagNamePsi, op, tagLocation, errors);
       if (tag != null || !singleTagProjectionPsi.getText().isEmpty()) {
         if (tag == null) tag = getTagOrDefaultTag(type, null, op, tagLocation, errors); // will throw proper error
         @NotNull OpInputTagProjectionEntry opTagProjection =
@@ -140,20 +140,20 @@ public final class ReqUpdateProjectionsPsiParser {
   }
 
   private static @NotNull LinkedHashMap<String, ReqUpdateTagProjectionEntry> parseMultiTagProjection(
-      @NotNull DataType dataType,
+      @NotNull DataTypeApi dataType,
       @NotNull OpInputVarProjection op,
       @NotNull UrlReqUpdateMultiTagProjection psi,
       @NotNull TypesResolver typesResolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
-    if (!(dataType.type.equals(op.type())))
+    if (!(dataType.type().equals(op.type())))
       throw new PsiProcessingException(
-          String.format("Inconsistent arguments. data type: '%s', op type: '%s'", dataType.name, op.type().name()),
+          String.format("Inconsistent arguments. data type: '%s', op type: '%s'", dataType.name(), op.type().name()),
           psi,
           errors
       );
 
-    final @NotNull TypesResolver subResolver = addTypeNamespace(dataType.type, typesResolver);
+    final @NotNull TypesResolver subResolver = addTypeNamespace(dataType.type(), typesResolver);
 
     final LinkedHashMap<String, ReqUpdateTagProjectionEntry> tagProjections = new LinkedHashMap<>();
 
@@ -163,7 +163,7 @@ public final class ReqUpdateProjectionsPsiParser {
 
     for (UrlReqUpdateMultiTagProjectionItem tagProjectionPsi : tagProjectionPsiList) {
       try {
-        @NotNull Type.Tag tag =
+        @NotNull TagApi tag =
             UrlProjectionsPsiParserUtil.getTag(tagProjectionPsi.getTagName(), op, tagProjectionPsi, errors);
         @NotNull OpInputTagProjectionEntry opTag = getTagProjection(tag.name(), op, tagProjectionPsi, errors);
 
@@ -196,7 +196,7 @@ public final class ReqUpdateProjectionsPsiParser {
   }
 
   private static @NotNull ReqUpdateVarProjection getDefaultVarProjection(
-      final @NotNull Type type,
+      final @NotNull TypeApi type,
       final @NotNull PsiElement psi) {
     return new ReqUpdateVarProjection(
         type,
@@ -208,7 +208,7 @@ public final class ReqUpdateProjectionsPsiParser {
   }
 
   private static @Nullable List<ReqUpdateVarProjection> parseTails(
-      @NotNull DataType dataType,
+      @NotNull DataTypeApi dataType,
       @NotNull OpInputVarProjection op,
       @Nullable UrlReqUpdateVarPolymorphicTail tailPsi,
       @NotNull TypesResolver resolver,
@@ -216,7 +216,7 @@ public final class ReqUpdateProjectionsPsiParser {
 
     final List<ReqUpdateVarProjection> tails;
 
-    @NotNull TypesResolver subResolver = addTypeNamespace(dataType.type, resolver);
+    @NotNull TypesResolver subResolver = addTypeNamespace(dataType.type(), resolver);
 
     if (tailPsi == null) tails = null;
     else {
@@ -226,7 +226,7 @@ public final class ReqUpdateProjectionsPsiParser {
       if (singleTail == null) {
         @Nullable UrlReqUpdateVarMultiTail multiTail = tailPsi.getReqUpdateVarMultiTail();
         assert multiTail != null;
-        Type prevTailType = null;
+        TypeApi prevTailType = null;
 
         for (UrlReqUpdateVarMultiTailItem tailItem : multiTail.getReqUpdateVarMultiTailItemList()) {
           try {
@@ -258,7 +258,7 @@ public final class ReqUpdateProjectionsPsiParser {
   }
 
   private static @NotNull ReqUpdateVarProjection buildTailProjection(
-      @NotNull DataType dataType,
+      @NotNull DataTypeApi dataType,
       @NotNull OpInputVarProjection op,
       @NotNull UrlTypeRef tailTypeRefPsi,
       @NotNull UrlReqUpdateVarProjection tailProjectionPsi,
@@ -266,7 +266,7 @@ public final class ReqUpdateProjectionsPsiParser {
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
     @NotNull TypeRef tailTypeRef = TypeRefs.fromPsi(tailTypeRefPsi, errors);
-    @NotNull Type tailType = getType(tailTypeRef, typesResolver, tailTypeRefPsi, errors);
+    @NotNull UnionTypeApi tailType = getUnionType(tailTypeRef, typesResolver, tailTypeRefPsi, errors);
 
     @Nullable OpInputVarProjection opTail = mergeOpTails(op, tailType);
     if (opTail == null)
@@ -277,7 +277,7 @@ public final class ReqUpdateProjectionsPsiParser {
       );
 
     return parseVarProjection(
-        new DataType(tailType, dataType.defaultTag),
+        tailType.dataType(dataType.defaultTag()),
         opTail,
         tailProjectionPsi,
         typesResolver,
@@ -285,10 +285,10 @@ public final class ReqUpdateProjectionsPsiParser {
     );
   }
 
-  private static @Nullable OpInputVarProjection mergeOpTails(@NotNull OpInputVarProjection op, @NotNull Type tailType) {
+  private static @Nullable OpInputVarProjection mergeOpTails(@NotNull OpInputVarProjection op, @NotNull TypeApi tailType) {
     Iterable<OpInputVarProjection> opTails = op.polymorphicTails();
     if (opTails == null) return null;
-    // TODO a deep merge of op projections wrt to tailType is needed here, probably moved into a separate class
+    // TODO a deep merge of op projections wrt to tailTypeApi is needed here, probably moved into a separate class
     // we simply look for the first fully matching tail for now
     // algo should be: DFS on tails, look for exact match on tailType
     // if found: merge all op tails up the stack into one mega-op-var-projection: squash all tags/fields/params together. Should be OK since they all are supertypes of tailType
@@ -310,7 +310,7 @@ public final class ReqUpdateProjectionsPsiParser {
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
-    DatumType model = op.model();
+    DatumTypeApi model = op.model();
     final @NotNull TypesResolver subResolver = addTypeNamespace(model, resolver);
 
     switch (model.kind()) {
@@ -395,7 +395,7 @@ public final class ReqUpdateProjectionsPsiParser {
   }
 
   private static @NotNull ReqUpdateModelProjection<?, ?> createDefaultModelProjection(
-      @NotNull DatumType type,
+      @NotNull DatumTypeApi type,
       boolean update,
       @NotNull OpInputModelProjection<?, ?, ?> op,
       @NotNull ReqParams params,
@@ -415,7 +415,7 @@ public final class ReqUpdateProjectionsPsiParser {
         fields = opFields.isEmpty() ? Collections.emptyMap() : new LinkedHashMap<>();
 
         return new ReqUpdateRecordModelProjection(
-            (RecordType) type,
+            (RecordTypeApi) type,
             update,
             params,
             annotations,
@@ -425,7 +425,7 @@ public final class ReqUpdateProjectionsPsiParser {
       case MAP:
         OpInputMapModelProjection opMap = (OpInputMapModelProjection) op;
 
-        MapType mapType = (MapType) type;
+        MapTypeApi mapType = (MapTypeApi) type;
         final ReqUpdateVarProjection valueVarProjection = createDefaultVarProjection(
             mapType.valueType(),
             opMap.itemsProjection(),
@@ -446,7 +446,7 @@ public final class ReqUpdateProjectionsPsiParser {
         );
       case LIST:
         OpInputListModelProjection opList = (OpInputListModelProjection) op;
-        ListType listType = (ListType) type;
+        ListTypeApi listType = (ListTypeApi) type;
 
         final ReqUpdateVarProjection itemVarProjection = createDefaultVarProjection(
             listType.elementType(),
@@ -475,7 +475,7 @@ public final class ReqUpdateProjectionsPsiParser {
         throw new PsiProcessingException("Unsupported type kind: " + type.kind(), locationPsi, errors);
       case PRIMITIVE:
         return new ReqUpdatePrimitiveModelProjection(
-            (PrimitiveType<?>) type,
+            (PrimitiveTypeApi) type,
             params,
             annotations,
             location
@@ -486,24 +486,24 @@ public final class ReqUpdateProjectionsPsiParser {
   }
 
   private static @NotNull ReqUpdateVarProjection createDefaultVarProjection(
-      @NotNull DataType type,
+      @NotNull DataTypeApi type,
       @NotNull OpInputVarProjection op,
       boolean required,
       @NotNull PsiElement locationPsi,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
-    return createDefaultVarProjection(type.type, op, required, locationPsi, errors);
+    return createDefaultVarProjection(type.type(), op, required, locationPsi, errors);
   }
 
   private static @NotNull ReqUpdateVarProjection createDefaultVarProjection(
-      @NotNull Type type,
+      @NotNull TypeApi type,
       @NotNull OpInputVarProjection op,
       boolean required,
       @NotNull PsiElement locationPsi,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
-    Type.@Nullable Tag defaultTag = findDefaultTag(type, op, locationPsi, errors);
-    List<Type.Tag> tags = defaultTag == null ?
+    @Nullable TagApi defaultTag = findDefaultTag(type, op, locationPsi, errors);
+    List<TagApi> tags = defaultTag == null ?
                           Collections.emptyList() :
                           Collections.singletonList(defaultTag);
     return createDefaultVarProjection(type, tags, op, required, locationPsi, errors);
@@ -513,8 +513,8 @@ public final class ReqUpdateProjectionsPsiParser {
    * Creates default var projection with explicitly specified list of tags
    */
   private static ReqUpdateVarProjection createDefaultVarProjection(
-      @NotNull Type type,
-      @NotNull Iterable<Type.Tag> tags,
+      @NotNull TypeApi type,
+      @NotNull Iterable<TagApi> tags,
       @NotNull OpInputVarProjection op,
       boolean required,
       @NotNull PsiElement locationPsi,
@@ -522,7 +522,7 @@ public final class ReqUpdateProjectionsPsiParser {
 
     LinkedHashMap<String, ReqUpdateTagProjectionEntry> tagProjections = new LinkedHashMap<>();
 
-    for (Type.Tag tag : tags) {
+    for (TagApi tag : tags) {
       final OpInputTagProjectionEntry opInputTagProjection = op.tagProjections().get(tag.name());
       if (opInputTagProjection != null) {
         tagProjections.put(
@@ -530,7 +530,7 @@ public final class ReqUpdateProjectionsPsiParser {
             new ReqUpdateTagProjectionEntry(
                 tag,
                 createDefaultModelProjection(
-                    tag.type,
+                    tag.type(),
                     required,
                     opInputTagProjection.projection(),
                     ReqParams.EMPTY,
@@ -587,10 +587,10 @@ public final class ReqUpdateProjectionsPsiParser {
         );
       } else {
         try {
-          final RecordType.Field field = opFieldProjectionEntry.field();
+          final FieldApi field = opFieldProjectionEntry.field();
           final @NotNull OpInputFieldProjection opFieldProjection = opFieldProjectionEntry.fieldProjection();
           final @NotNull UrlReqUpdateFieldProjection fieldProjectionPsi = entryPsi.getReqUpdateFieldProjection();
-          final @NotNull DataType fieldType = field.dataType();
+          final @NotNull DataTypeApi fieldType = field.dataType();
 
           final ReqUpdateFieldProjection fieldProjection =
               parseFieldProjection(
@@ -636,7 +636,7 @@ public final class ReqUpdateProjectionsPsiParser {
   }
 
   public static @NotNull ReqUpdateFieldProjection parseFieldProjection(
-      final DataType fieldType,
+      final DataTypeApi fieldType,
       boolean update,
       final @NotNull OpInputFieldProjection op,
       final @NotNull UrlReqUpdateFieldProjection psi,
@@ -675,7 +675,7 @@ public final class ReqUpdateProjectionsPsiParser {
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
-    final @NotNull MapType model = op.model();
+    final @NotNull MapTypeApi model = op.model();
 
     final @NotNull Collection<UrlReqUpdateKeyProjection> keysPsi =
         psi.getReqUpdateKeysProjection().getReqUpdateKeyProjectionList();
@@ -708,11 +708,11 @@ public final class ReqUpdateProjectionsPsiParser {
     final @NotNull ReqUpdateVarProjection elementsVarProjection;
 
     if (elementsVarProjectionPsi == null) {
-      final @NotNull Type type = model.valueType.type;
+      final @NotNull TypeApi type = model.valueType().type();
       elementsVarProjection = getDefaultVarProjection(type, psi);
     } else {
       elementsVarProjection = parseVarProjection(
-          model.valueType,
+          model.valueType(),
           op.itemsProjection(),
           elementsVarProjectionPsi,
           resolver,
@@ -745,11 +745,11 @@ public final class ReqUpdateProjectionsPsiParser {
 
     final @NotNull ReqUpdateVarProjection elementsVarProjection;
     if (elementsVarProjectionPsi == null) {
-      final @NotNull Type type = op.model().elementType().type;
+      final @NotNull TypeApi type = op.model().elementType().type();
       elementsVarProjection = getDefaultVarProjection(type, psi);
     } else {
       elementsVarProjection = parseVarProjection(
-          op.model().elementType,
+          op.model().elementType(),
           op.itemsProjection(),
           elementsVarProjectionPsi,
           resolver,

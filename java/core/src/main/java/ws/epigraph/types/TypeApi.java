@@ -43,4 +43,7 @@ public interface TypeApi {
   @NotNull Collection<@NotNull ? extends TagApi> tags();
 
   @NotNull Map<@NotNull String, @NotNull ? extends TagApi> tagsMap();
+
+  /** Create data type without default tag */
+  @NotNull DataTypeApi dataType();
 }

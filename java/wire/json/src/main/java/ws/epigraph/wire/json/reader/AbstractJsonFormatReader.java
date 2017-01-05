@@ -112,7 +112,7 @@ abstract class AbstractJsonFormatReader<
       stepOver(JsonFormat.POLYMORPHIC_VALUE_FIELD); // "data"
       nextNonEof(); // position parser on first MONODATA token
     } else {
-      type = projections.get(projections.size() - 1).type(); // effectiveType; // mostSpecificType(projections);
+      type = (Type) projections.get(projections.size() - 1).type(); // effectiveType; // mostSpecificType(projections);
       // current token is first MONODATA token
     }
 
@@ -169,7 +169,7 @@ abstract class AbstractJsonFormatReader<
 
     for (final VP projection : projections) {
       for (final TP tagProjectionEntry : projection.tagProjections().values()) {
-        if (tagRequired(tagProjectionEntry) && data._raw().getValue(tagProjectionEntry.tag()) == null)
+        if (tagRequired(tagProjectionEntry) && data._raw().getValue((Type.Tag) tagProjectionEntry.tag()) == null)
           throw error("Missing data for required tag '" + tagProjectionEntry.tag().name() + "'");
       }
     }
@@ -305,7 +305,7 @@ abstract class AbstractJsonFormatReader<
 
     for (RMP projection : projections)
       for (final Map.Entry<String, FPE> entry : projection.fieldProjections().entrySet())
-        if (fieldRequired(entry.getValue()) && datum._raw().getData(entry.getValue().field()) == null)
+        if (fieldRequired(entry.getValue()) && datum._raw().getData((Field) entry.getValue().field()) == null)
           throw error("Required field '" + entry.getKey() + "' is missing");
 
     return datum;
@@ -422,7 +422,7 @@ abstract class AbstractJsonFormatReader<
   ) {
     if (projections == null) return null;
     for (VP vp : projections) {
-      Type type = vp.type();
+      Type type = (Type) vp.type();
       if (typeName.equals(type.name().toString())) return type;
       type = resolveType(vp.polymorphicTails(), typeName); // dfs
       if (type != null) return type;
@@ -484,7 +484,7 @@ abstract class AbstractJsonFormatReader<
   @Override
   public @Nullable Datum readDatum(@NotNull MP projection) throws IOException {
     String firstFieldName = nextNonEof() == JsonToken.START_OBJECT ? in.nextFieldName() : null;
-    return finishReadingDatum(firstFieldName, Collections.singleton(projection), projection.model());
+    return finishReadingDatum(firstFieldName, Collections.singleton(projection), (DatumType) projection.model());
   }
 
   @Override

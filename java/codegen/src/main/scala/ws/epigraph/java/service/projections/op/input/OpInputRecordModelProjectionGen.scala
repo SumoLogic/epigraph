@@ -21,7 +21,7 @@ import ws.epigraph.java.service.ServiceGenUtils.{genField, genLinkedMap, genType
 import ws.epigraph.java.service.ServiceObjectGen.gen
 import ws.epigraph.java.service.{ServiceGenContext, ServiceObjectGen}
 import ws.epigraph.projections.op.input.{OpInputFieldProjectionEntry, OpInputRecordModelProjection}
-import ws.epigraph.types.RecordType
+import ws.epigraph.types.{RecordType, RecordTypeApi}
 
 import scala.collection.JavaConversions._
 
@@ -49,7 +49,8 @@ new OpInputRecordModelProjection(
 )"""/*@formatter:on*/
   }
 
-  private def genFieldProjectionEntry(t: RecordType,
+  private def genFieldProjectionEntry(
+    t: RecordTypeApi,
     fpe: OpInputFieldProjectionEntry,
     ctx: ServiceGenContext): String = {
 

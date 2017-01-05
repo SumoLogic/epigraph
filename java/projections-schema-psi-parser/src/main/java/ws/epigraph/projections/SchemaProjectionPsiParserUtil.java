@@ -33,8 +33,7 @@ import ws.epigraph.psi.PsiProcessingError;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypeRef;
 import ws.epigraph.refs.TypesResolver;
-import ws.epigraph.types.DatumType;
-import ws.epigraph.types.Type;
+import ws.epigraph.types.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -45,28 +44,21 @@ import java.util.stream.Stream;
  */
 public final class SchemaProjectionPsiParserUtil {
   private SchemaProjectionPsiParserUtil() {}
-//  @Nullable
-//  public static String getTagName(@Nullable SchemaTagName tagNamePsi) {
-//    if (tagNamePsi == null) return null;
-//    @Nullable SchemaQid qid = tagNamePsi.getQid();
-//    if (qid == null) return null;
-//    return qid.getCanonicalName();
-//  }
 
-  public static @NotNull Type.Tag getTag(
-      @NotNull Type type,
+  public static @NotNull TagApi getTag(
+      @NotNull TypeApi type,
       @Nullable SchemaTagName tagName,
-      @Nullable Type.Tag defaultTag,
+      @Nullable TagApi defaultTag,
       @NotNull PsiElement location,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
     return ProjectionsParsingUtil.getTag(type, getTagNameString(tagName), defaultTag, location, errors);
   }
 
-  public static @Nullable Type.Tag findTag(
-      @NotNull Type type,
+  public static @Nullable TagApi findTag(
+      @NotNull TypeApi type,
       @Nullable SchemaTagName tagName,
-      @Nullable Type.Tag defaultTag,
+      @Nullable TagApi defaultTag,
       @NotNull PsiElement location,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
@@ -138,6 +130,7 @@ public final class SchemaProjectionPsiParserUtil {
       @NotNull SchemaOpParam paramPsi,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
+
     @Nullable SchemaQid qid = paramPsi.getQid();
     if (qid == null) throw new PsiProcessingException("Parameter name not specified", paramPsi, errors);
     @NotNull String paramName = qid.getCanonicalName();
@@ -146,7 +139,7 @@ public final class SchemaProjectionPsiParserUtil {
     if (typeRef == null)
       throw new PsiProcessingException(String.format("Parameter '%s' type not specified", paramName), paramPsi, errors);
     @NotNull TypeRef paramTypeRef = TypeRefs.fromPsi(typeRef, errors);
-    @Nullable DatumType paramType = paramTypeRef.resolveDatumType(resolver);
+    @Nullable DatumTypeApi paramType = paramTypeRef.resolveDatumType(resolver);
 
     if (paramType == null)
       throw new PsiProcessingException(

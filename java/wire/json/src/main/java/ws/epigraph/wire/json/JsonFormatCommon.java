@@ -22,14 +22,17 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.projections.gen.*;
 import ws.epigraph.projections.req.output.*;
+import ws.epigraph.types.FieldApi;
 import ws.epigraph.types.RecordType.Field;
+import ws.epigraph.types.TagApi;
 import ws.epigraph.types.Type;
 import ws.epigraph.types.Type.Tag;
+import ws.epigraph.types.TypeApi;
 
 import java.util.Collection;
 import java.util.function.Supplier;
 
-public abstract class JsonFormatCommon {
+public final class JsonFormatCommon {
 
   private JsonFormatCommon() {}
 
@@ -50,7 +53,7 @@ public abstract class JsonFormatCommon {
   public static <VP extends GenVarProjection<VP, ?, ?>, Acc extends Collection<VP>> Acc append(
       @NotNull Acc acc,
       @NotNull VP varProjection,
-      @NotNull Type type
+      @NotNull TypeApi type
   ) {
     // effectively this is
     // Collections.reverse(ProjectionUtils.linearizeTails(type, Collections.singleton(varProjection).stream()));
@@ -80,8 +83,7 @@ public abstract class JsonFormatCommon {
 //  }
 
   // return 'tag' if all projections are of the form ':tag(...)'
-  @Nullable
-  public static <VP extends GenVarProjection<VP, ?, ?>>
+  public static @Nullable <VP extends GenVarProjection<VP, ?, ?>>
   String monoTag(@NotNull Iterable<? extends VP> projections) {
     String tagName = null;
     for (VP vp : projections) {
@@ -105,7 +107,7 @@ public abstract class JsonFormatCommon {
       Coll extends Collection<MP>>
 
   @Nullable Coll tagModelProjections(
-      @NotNull Tag tag,
+      @NotNull TagApi tag,
       @NotNull Iterable<? extends VP> projections, // non-empty, polymorphic tails ignored
       @NotNull Supplier<@NotNull Coll> collSupplier
   ) {
@@ -130,7 +132,7 @@ public abstract class JsonFormatCommon {
       Coll extends Collection<VP>>
   @Nullable Coll fieldVarProjections(
       @NotNull Iterable<? extends RMP> projections, // non-empty
-      @NotNull Field field,
+      @NotNull FieldApi field,
       @NotNull Supplier<@NotNull Coll> collSupplier
   ) {
     Coll varProjections = null;

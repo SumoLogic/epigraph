@@ -16,8 +16,9 @@
 
 package ws.epigraph.url.parser;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.gdata.GDatum;
-import ws.epigraph.schema.operations.ReadOperationDeclaration;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.ProjectionUtils;
@@ -31,7 +32,8 @@ import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingError;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypesResolver;
-import ws.epigraph.types.DataType;
+import ws.epigraph.schema.operations.ReadOperationDeclaration;
+import ws.epigraph.types.DataTypeApi;
 import ws.epigraph.url.ReadRequestUrl;
 import ws.epigraph.url.parser.psi.UrlReadUrl;
 import ws.epigraph.url.parser.psi.UrlReqOutputComaVarProjection;
@@ -40,8 +42,6 @@ import ws.epigraph.url.parser.psi.UrlReqOutputTrunkVarProjection;
 import ws.epigraph.url.projections.req.output.ReqOutputProjectionsPsiParser;
 import ws.epigraph.url.projections.req.path.ReadReqPathParsingResult;
 import ws.epigraph.url.projections.req.path.ReadReqPathPsiParser;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
@@ -59,7 +59,7 @@ public final class ReadRequestUrlPsiParser {
   private ReadRequestUrlPsiParser() {}
 
   public static @NotNull ReadRequestUrl parseReadRequestUrl(
-      @NotNull DataType resourceType,
+      @NotNull DataTypeApi resourceType,
       @NotNull ReadOperationDeclaration op,
       @NotNull UrlReadUrl psi,
       @NotNull TypesResolver typesResolver,
@@ -76,7 +76,7 @@ public final class ReadRequestUrlPsiParser {
   }
 
   private static @NotNull ReadRequestUrl parseReadRequestUrlWithPath(
-      final @NotNull DataType resourceType,
+      final @NotNull DataTypeApi resourceType,
       final @NotNull Map<String, GDatum> requestParams,
       final @NotNull ReadOperationDeclaration op,
       final @NotNull OpFieldPath opPath,
@@ -93,8 +93,8 @@ public final class ReadRequestUrlPsiParser {
     );
 
     @NotNull ReqFieldPath reqPath = pathParsingResult.path();
-    DataType pathTipType = ProjectionUtils.tipType(reqPath.varProjection());
-    TypesResolver newResolver = addTypeNamespace(pathTipType.type, typesResolver);
+    DataTypeApi pathTipType = ProjectionUtils.tipType(reqPath.varProjection());
+    TypesResolver newResolver = addTypeNamespace(pathTipType.type(), typesResolver);
 
     final UrlReqOutputTrunkVarProjection trunkVarProjection = pathParsingResult.trunkProjectionPsi();
     final UrlReqOutputComaVarProjection comaVarProjection = pathParsingResult.comaProjectionPsi();
@@ -128,7 +128,7 @@ public final class ReadRequestUrlPsiParser {
     } else {
       steps = 0;
       varProjection = new ReqOutputVarProjection(
-          pathTipType.type,
+          pathTipType.type(),
           Collections.emptyMap(),
           null,
           false,
@@ -155,7 +155,7 @@ public final class ReadRequestUrlPsiParser {
   }
 
   private static @NotNull ReadRequestUrl parseReadRequestUrlWithoutPath(
-      final @NotNull DataType resourceType,
+      final @NotNull DataTypeApi resourceType,
       final Map<String, GDatum> requestParams,
       final @NotNull ReadOperationDeclaration op,
       final @NotNull UrlReadUrl psi,
@@ -164,7 +164,7 @@ public final class ReadRequestUrlPsiParser {
       throws PsiProcessingException {
 
     final @NotNull UrlReqOutputTrunkFieldProjection fieldProjectionPsi = psi.getReqOutputTrunkFieldProjection();
-    TypesResolver newResolver = addTypeNamespace(resourceType.type, typesResolver);
+    TypesResolver newResolver = addTypeNamespace(resourceType.type(), typesResolver);
 
     final @NotNull StepsAndProjection<ReqOutputFieldProjection> stepsAndProjection =
         ReqOutputProjectionsPsiParser.parseTrunkFieldProjection(

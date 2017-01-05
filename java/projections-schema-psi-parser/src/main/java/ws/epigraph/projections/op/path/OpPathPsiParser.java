@@ -49,13 +49,13 @@ public final class OpPathPsiParser {
   private OpPathPsiParser() {}
 
   public static OpVarPath parseVarPath(
-      @NotNull DataType dataType,
+      @NotNull DataTypeApi dataType,
       @NotNull SchemaOpVarPath psi,
       @NotNull TypesResolver typesResolver,
       @NotNull List<PsiProcessingError> errors)
       throws PsiProcessingException {
 
-    final Type type = dataType.type;
+    final TypeApi type = dataType.type();
 
     @Nullable SchemaOpModelPath modelProjection = psi.getOpModelPath();
 
@@ -70,10 +70,10 @@ public final class OpPathPsiParser {
       );
     }
 
-    final Type.Tag tag = getTag(
+    final TagApi tag = getTag(
         type,
         psi.getTagName(),
-        dataType.defaultTag,
+        dataType.defaultTag(),
         psi,
         errors
     );
@@ -81,7 +81,7 @@ public final class OpPathPsiParser {
     @NotNull Collection<SchemaOpModelPathProperty> modelPropertiesPsi = psi.getOpModelPathPropertyList();
 
     final OpModelPath<?, ?> parsedModelProjection = parseModelPath(
-        tag.type,
+        tag.type(),
         parseModelParams(modelPropertiesPsi, typesResolver, errors),
         parseModelAnnotations(modelPropertiesPsi, errors),
         modelProjection,
@@ -127,8 +127,8 @@ public final class OpPathPsiParser {
   }
 
   private static @NotNull OpVarPath createDefaultVarPath(
-      @NotNull Type type,
-      @NotNull Type.Tag tag,
+      @NotNull TypeApi type,
+      @NotNull TagApi tag,
       @NotNull PsiElement locationPsi,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
@@ -137,7 +137,7 @@ public final class OpPathPsiParser {
         new OpTagPath(
             tag,
             createDefaultModelPath(
-                tag.type,
+                tag.type(),
                 OpParams.EMPTY,
                 Annotations.EMPTY,
                 locationPsi,
@@ -158,7 +158,7 @@ public final class OpPathPsiParser {
   }
 
   public static @NotNull OpModelPath<?, ?> parseModelPath(
-      @NotNull DatumType type,
+      @NotNull DatumTypeApi type,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
       @NotNull SchemaOpModelPath psi,
@@ -172,7 +172,7 @@ public final class OpPathPsiParser {
           return createDefaultModelPath(type, params, annotations, psi, errors);
         ensureModelKind(psi, TypeKind.RECORD, errors);
         return parseRecordModelPath(
-            (RecordType) type,
+            (RecordTypeApi) type,
             params,
             annotations,
             recordModelProjectionPsi,
@@ -186,7 +186,7 @@ public final class OpPathPsiParser {
         ensureModelKind(psi, TypeKind.MAP, errors);
 
         return parseMapModelPath(
-            (MapType) type,
+            (MapTypeApi) type,
             params,
             annotations,
             mapModelProjectionPsi,
@@ -199,7 +199,7 @@ public final class OpPathPsiParser {
         throw new PsiProcessingException("Unsupported type kind: " + type.kind(), psi, errors);
       case PRIMITIVE:
         return parsePrimitiveModelPath(
-            (PrimitiveType<?>) type,
+            (PrimitiveTypeApi) type,
             params,
             annotations,
             psi
@@ -232,7 +232,7 @@ public final class OpPathPsiParser {
   }
 
   private static @NotNull OpModelPath<?, ?> createDefaultModelPath(
-      @NotNull DatumType type,
+      @NotNull DatumTypeApi type,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
       @NotNull PsiElement locationPsi, @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
@@ -240,14 +240,14 @@ public final class OpPathPsiParser {
     switch (type.kind()) {
       case RECORD:
         return new OpRecordModelPath(
-            (RecordType) type,
+            (RecordTypeApi) type,
             params,
             annotations,
             null,
             EpigraphPsiUtil.getLocation(locationPsi)
         );
       case MAP:
-        MapType mapType = (MapType) type;
+        MapTypeApi mapType = (MapTypeApi) type;
 
         final OpPathKeyProjection keyProjection =
             new OpPathKeyProjection(
@@ -256,18 +256,18 @@ public final class OpPathPsiParser {
                 EpigraphPsiUtil.getLocation(locationPsi)
             );
 
-        @NotNull DataType valueType = mapType.valueType();
-        Type.@Nullable Tag defaultValuesTag = valueType.defaultTag;
+        @NotNull DataTypeApi valueType = mapType.valueType();
+        @Nullable TagApi defaultValuesTag = valueType.defaultTag();
 
         if (defaultValuesTag == null)
           throw new PsiProcessingException(String.format(
               "Can't create default projection for map type '%s, as it's value type '%s' doesn't have a default tag",
               type.name(),
-              valueType.name
+              valueType.name()
           ), locationPsi, errors);
 
         final OpVarPath valueVarProjection = createDefaultVarPath(
-            valueType.type,
+            valueType.type(),
             defaultValuesTag,
             locationPsi,
             errors
@@ -293,7 +293,7 @@ public final class OpPathPsiParser {
         throw new PsiProcessingException("Unsupported type kind: " + type.kind(), locationPsi, errors);
       case PRIMITIVE:
         return new OpPrimitiveModelPath(
-            (PrimitiveType<?>) type,
+            (PrimitiveTypeApi) type,
             params,
             annotations,
             EpigraphPsiUtil.getLocation(locationPsi)
@@ -304,7 +304,7 @@ public final class OpPathPsiParser {
   }
 
   public static @NotNull OpRecordModelPath parseRecordModelPath(
-      @NotNull RecordType type,
+      @NotNull RecordTypeApi type,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
       @NotNull SchemaOpRecordModelPath psi,
@@ -314,7 +314,7 @@ public final class OpPathPsiParser {
     final @NotNull SchemaOpFieldPathEntry fieldPathEntryPsi = psi.getOpFieldPathEntry();
 
     final String fieldName = fieldPathEntryPsi.getQid().getCanonicalName();
-    RecordType.Field field = type.fieldsMap().get(fieldName);
+    FieldApi field = type.fieldsMap().get(fieldName);
     if (field == null)
       throw new PsiProcessingException(
           String.format("Can't field projection for '%s', field '%s' not found", type.name(), fieldName),
@@ -347,7 +347,7 @@ public final class OpPathPsiParser {
   }
 
   public static @NotNull OpFieldPath parseFieldPath(
-      @NotNull DataType fieldType,
+      @NotNull DataTypeApi fieldType,
       @NotNull SchemaOpFieldPath psi,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
@@ -370,14 +370,14 @@ public final class OpPathPsiParser {
     @Nullable SchemaOpVarPath varPathPsi = psi.getOpVarPath();
 
     if (varPathPsi == null) {
-      @Nullable Type.Tag defaultFieldTag = fieldType.defaultTag;
+      @Nullable TagApi defaultFieldTag = fieldType.defaultTag();
       if (defaultFieldTag == null)
         throw new PsiProcessingException(String.format(
             "Can't construct default projection for type '%s' because it has no default tag",
-            fieldType.name
+            fieldType.name()
         ), psi, errors);
 
-      varProjection = createDefaultVarPath(fieldType.type, defaultFieldTag, psi, errors);
+      varProjection = createDefaultVarPath(fieldType.type(), defaultFieldTag, psi, errors);
     } else {
       varProjection = parseVarPath(fieldType, varPathPsi, resolver, errors);
     }
@@ -391,7 +391,7 @@ public final class OpPathPsiParser {
   }
 
   public static @NotNull OpMapModelPath parseMapModelPath(
-      @NotNull MapType type,
+      @NotNull MapTypeApi type,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
       @NotNull SchemaOpMapModelPath psi,
@@ -446,7 +446,7 @@ public final class OpPathPsiParser {
   }
 
   public static @NotNull OpPrimitiveModelPath parsePrimitiveModelPath(
-      @NotNull PrimitiveType<?> type,
+      @NotNull PrimitiveTypeApi type,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
       @NotNull PsiElement locationPsi) {

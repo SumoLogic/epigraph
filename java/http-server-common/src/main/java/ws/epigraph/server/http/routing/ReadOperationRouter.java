@@ -22,7 +22,7 @@ import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.service.Resource;
 import ws.epigraph.service.operations.ReadOperation;
-import ws.epigraph.types.DataType;
+import ws.epigraph.types.DataTypeApi;
 import ws.epigraph.url.ReadRequestUrl;
 import ws.epigraph.url.parser.ReadRequestUrlPsiParser;
 import ws.epigraph.url.parser.psi.UrlReadUrl;
@@ -54,7 +54,7 @@ public final class ReadOperationRouter
 
   @Override
   protected @NotNull ReadRequestUrl parseUrl(
-      final @NotNull DataType resourceType,
+      final @NotNull DataTypeApi resourceType,
       final @NotNull ReadOperationDeclaration opDecl,
       final @NotNull UrlReadUrl urlPsi,
       final @NotNull TypesResolver resolver,

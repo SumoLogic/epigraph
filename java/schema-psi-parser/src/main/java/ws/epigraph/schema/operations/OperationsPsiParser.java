@@ -40,9 +40,7 @@ import ws.epigraph.psi.PsiProcessingError;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.refs.ValueTypeRef;
-import ws.epigraph.types.DataType;
-import ws.epigraph.types.DatumType;
-import ws.epigraph.types.Type;
+import ws.epigraph.types.*;
 
 import java.util.Collection;
 import java.util.List;
@@ -55,7 +53,7 @@ public final class OperationsPsiParser {
   private OperationsPsiParser() {}
 
   public static @NotNull OperationDeclaration parseOperation(
-      @NotNull DataType resourceType,
+      @NotNull DataTypeApi resourceType,
       @NotNull SchemaOperationDef psi,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
@@ -79,7 +77,7 @@ public final class OperationsPsiParser {
   }
 
   private static @NotNull ReadOperationDeclaration parseRead(
-      @NotNull DataType resourceType,
+      @NotNull DataTypeApi resourceType,
       @NotNull SchemaReadOperationDef psi,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
@@ -131,7 +129,7 @@ public final class OperationsPsiParser {
   }
 
   private static @NotNull CreateOperationDeclaration parseCreate(
-      @NotNull DataType resourceType,
+      @NotNull DataTypeApi resourceType,
       @NotNull SchemaCreateOperationDef psi,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
@@ -192,7 +190,7 @@ public final class OperationsPsiParser {
   }
 
   private static @NotNull UpdateOperationDeclaration parseUpdate(
-      @NotNull DataType resourceType,
+      @NotNull DataTypeApi resourceType,
       @NotNull SchemaUpdateOperationDef psi,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
@@ -254,7 +252,7 @@ public final class OperationsPsiParser {
   }
 
   private static @NotNull DeleteOperationDeclaration parseDelete(
-      @NotNull DataType resourceType,
+      @NotNull DataTypeApi resourceType,
       @NotNull SchemaDeleteOperationDef psi,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
@@ -311,7 +309,7 @@ public final class OperationsPsiParser {
   }
 
   private static @NotNull CustomOperationDeclaration parseCustom(
-      @NotNull DataType resourceType,
+      @NotNull DataTypeApi resourceType,
       @NotNull SchemaCustomOperationDef psi,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
@@ -386,7 +384,7 @@ public final class OperationsPsiParser {
   }
 
   private static @NotNull OpOutputFieldProjection parseOutputProjection(
-      final @NotNull DataType outputType,
+      final @NotNull DataTypeApi outputType,
       final @Nullable SchemaOperationOutputProjection outputProjectionPsi,
       final @NotNull TypesResolver resolver,
       final @NotNull PsiElement location,
@@ -437,8 +435,8 @@ public final class OperationsPsiParser {
     return prev;
   }
 
-  private static @NotNull DataType resolveOutputType(
-      @NotNull DataType resourceType,
+  private static @NotNull DataTypeApi resolveOutputType(
+      @NotNull DataTypeApi resourceType,
       @Nullable OpVarPath opVarPath,
       @Nullable SchemaOperationOutputType declaredOutputTypePsi,
       @NotNull TypesResolver resolver,
@@ -452,7 +450,7 @@ public final class OperationsPsiParser {
     }
 
     final @NotNull ValueTypeRef valueTypeRef = TypeRefs.fromPsi(typeRefPsi, errors);
-    final @Nullable DataType dataType = resolver.resolve(valueTypeRef);
+    final @Nullable DataTypeApi dataType = resolver.resolve(valueTypeRef);
     if (dataType == null)
       throw new PsiProcessingException(
           String.format("Can't resolve output type '%s'", typeRefPsi.getText()),
@@ -462,8 +460,8 @@ public final class OperationsPsiParser {
     return dataType;
   }
 
-  private static @NotNull DataType resolveInputType(
-      @NotNull DataType resourceType,
+  private static @NotNull DataTypeApi resolveInputType(
+      @NotNull DataTypeApi resourceType,
       @Nullable OpVarPath path,
       @Nullable SchemaOperationInputType inputTypePsi,
       @NotNull TypesResolver resolver,
@@ -473,36 +471,36 @@ public final class OperationsPsiParser {
     if (inputTypePsi == null || typeRefPsi == null) {
       if (path == null) {
 
-        @NotNull Type rtt = resourceType.type;
+        @NotNull TypeApi rtt = resourceType.type();
 
-        if (rtt instanceof DatumType) return ((DatumType) rtt).dataType();
+        if (rtt instanceof DatumTypeApi) return ((DatumTypeApi) rtt).dataType();
 
         return resourceType;
 
       } else {
 
-        final @NotNull DataType tipType = ProjectionUtils.tipType(path);
+        final @NotNull DataTypeApi tipType = ProjectionUtils.tipType(path);
 
-        final @NotNull Type ttt = tipType.type;
+        final @NotNull TypeApi ttt = tipType.type();
 
         if (ttt instanceof DatumType) return ((DatumType) ttt).dataType();
 
         return tipType;
       }
     }
-    final @Nullable DatumType datumType = TypeRefs.fromPsi(typeRefPsi, errors).resolveDatumType(resolver);
+    final @Nullable DatumTypeApi datumType = TypeRefs.fromPsi(typeRefPsi, errors).resolveDatumType(resolver);
     if (datumType == null)
       throw new PsiProcessingException("Can't resolve input type '" + typeRefPsi.getText() + "'", typeRefPsi, errors);
     return datumType.dataType();
   }
 
-  private static @NotNull DataType resolveDeleteType(@NotNull DataType resourceType, @Nullable OpVarPath opVarPath) {
+  private static @NotNull DataTypeApi resolveDeleteType(@NotNull DataTypeApi resourceType, @Nullable OpVarPath opVarPath) {
     return opVarPath == null ? resourceType : ProjectionUtils.tipType(opVarPath);
   }
 
   @Contract("_, null, _, _ -> null")
   private static @Nullable OpFieldPath parsePath(
-      @NotNull DataType type,
+      @NotNull DataTypeApi type,
       @Nullable SchemaOperationPath pathPsi,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
