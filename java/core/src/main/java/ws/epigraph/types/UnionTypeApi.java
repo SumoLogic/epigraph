@@ -17,21 +17,19 @@
 package ws.epigraph.types;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
-import java.util.Map;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public interface RecordTypeApi extends DatumTypeApi {
-  @NotNull Collection<@NotNull ? extends FieldApi> fields();
-
-  @NotNull Map<@NotNull String, @NotNull ? extends FieldApi> fieldsMap();
-
+public interface UnionTypeApi extends TypeApi {
 //  @Override
-//  default @NotNull TypeKind kind() { return TypeKind.RECORD; }
+//  default @NotNull TypeKind kind() { return TypeKind.UNION;}
 
   @Override
-  @NotNull Collection<@NotNull ? extends RecordTypeApi> supertypes();
+  @NotNull Collection<@NotNull ? extends UnionTypeApi> supertypes();
+
+  @NotNull DataTypeApi dataType(@Nullable TagApi defaultTag);
 }

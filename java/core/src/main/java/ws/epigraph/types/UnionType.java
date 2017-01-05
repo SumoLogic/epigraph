@@ -27,7 +27,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 
-public abstract class UnionType extends Type {
+public abstract class UnionType extends Type implements UnionTypeApi {
 
   protected UnionType(
       @NotNull QualifiedTypeName name,
@@ -52,6 +52,9 @@ public abstract class UnionType extends Type {
   public @NotNull DataType dataType(@Nullable Tag defaultTag) {
     return new DataType(this, checkTagIsKnown(defaultTag));
   }
+
+  @Override
+  public @NotNull DataTypeApi dataType(final @Nullable TagApi defaultTag) { return dataType((Tag) defaultTag); }
 
   public @Nullable Tag checkTagIsKnown(@Nullable Tag tag) {
     // TODO check it is our/compatible tag (not just same name)?

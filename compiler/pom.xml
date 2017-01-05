@@ -15,6 +15,11 @@
 
     <dependency>
       <groupId>${project.parent.groupId}</groupId>
+      <artifactId>epigraph-java-core</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.parent.groupId}</groupId>
       <artifactId>epigraph-java-lang-common</artifactId>
       <version>${project.parent.version}</version>
     </dependency>

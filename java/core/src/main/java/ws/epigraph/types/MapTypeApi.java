@@ -27,9 +27,9 @@ public interface MapTypeApi extends DatumTypeApi {
   @NotNull DatumTypeApi keyType();
 
   @NotNull DataTypeApi valueType();
-
-  @Override
-  default @NotNull TypeKind kind() { return TypeKind.MAP;}
+//
+//  @Override
+//  default @NotNull TypeKind kind() { return TypeKind.MAP;}
 
   @Override
   @NotNull Collection<@NotNull ? extends MapTypeApi> supertypes();

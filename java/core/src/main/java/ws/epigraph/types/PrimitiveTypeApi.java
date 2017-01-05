@@ -24,8 +24,8 @@ import java.util.Collection;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public interface PrimitiveTypeApi extends DatumTypeApi {
-  @Override
-  default @NotNull TypeKind kind() { return TypeKind.PRIMITIVE; }
+//  @Override
+//  default @NotNull TypeKind kind() { return TypeKind.PRIMITIVE; }
 
   @Override
   @NotNull Collection<@NotNull ? extends PrimitiveTypeApi> supertypes();

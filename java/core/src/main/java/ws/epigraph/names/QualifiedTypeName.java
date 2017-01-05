@@ -21,6 +21,7 @@ package ws.epigraph.names;
 import ws.epigraph.data.Immutable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.lang.Qn;
 
 public final class QualifiedTypeName extends QualifiedName implements TypeName, Immutable {
 
@@ -32,6 +33,13 @@ public final class QualifiedTypeName extends QualifiedName implements TypeName, 
 
   public QualifiedTypeName(@NotNull String localName, @NotNull String... namespaceNames) {
     this(NamespaceName.from(namespaceNames), localName);
+  }
+
+  public static QualifiedTypeName fromFqn(@NotNull Qn fqn) {
+    if (fqn.isEmpty()) throw new IllegalArgumentException("Empty FQN");
+    if (fqn.size() == 1) return new QualifiedTypeName(null, fqn.first());
+    final NamespaceName namespaceName = NamespaceName.from(fqn.removeLastSegment().segments);
+    return new QualifiedTypeName(namespaceName, fqn.last());
   }
 
   @Override

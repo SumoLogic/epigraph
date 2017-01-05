@@ -33,8 +33,7 @@ public abstract class QualifiedName {
     this.localName = localName;
   }
 
-  @NotNull
-  public Qn toFqn() {
+  public @NotNull Qn toFqn() {
     if (namespaceName == null) return new Qn(localName);
     else return namespaceName.toFqn().append(localName);
   }

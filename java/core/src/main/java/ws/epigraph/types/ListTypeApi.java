@@ -28,7 +28,7 @@ public interface ListTypeApi extends DatumTypeApi {
 
   @Override
   @NotNull Collection<@NotNull ? extends ListTypeApi> supertypes();
-
-  @Override
-  default @NotNull TypeKind kind() { return TypeKind.LIST; }
+//
+//  @Override
+//  default @NotNull TypeKind kind() { return TypeKind.LIST; }
 }
