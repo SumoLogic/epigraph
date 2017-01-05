@@ -17,13 +17,14 @@
 package ws.epigraph.projections.req.path;
 
 import de.uka.ilkd.pp.Layouter;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import ws.epigraph.printers.DataPrinter;
 import ws.epigraph.projections.Annotation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.abs.AbstractProjectionsPrettyPrinter;
 import ws.epigraph.projections.req.ReqParam;
 import ws.epigraph.projections.req.ReqParams;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
@@ -31,14 +32,13 @@ import java.util.Map;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ReqPathPrettyPrinter<E extends Exception>
-    extends AbstractProjectionsPrettyPrinter<
-    ReqVarPath,
-    ReqTagPath,
-    ReqModelPath<?, ?>,
-    E> {
+    extends AbstractProjectionsPrettyPrinter<ReqVarPath, ReqTagPath, ReqModelPath<?, ?>, E> {
+
+  protected @NotNull DataPrinter<E> dataPrinter;
 
   public ReqPathPrettyPrinter(Layouter<E> layouter) {
     super(layouter);
+    dataPrinter = new DataPrinter<>(layouter);
   }
 
   @Override
@@ -78,7 +78,7 @@ public class ReqPathPrettyPrinter<E extends Exception>
   }
 
   private void print(@NotNull ReqRecordModelPath mp) throws E {
-    @Nullable final ReqFieldPathEntry fieldProjectionEntry = mp.pathFieldProjection();
+    final @Nullable ReqFieldPathEntry fieldProjectionEntry = mp.pathFieldProjection();
 
     if (fieldProjectionEntry != null) {
       l.beginIInd();
@@ -107,7 +107,7 @@ public class ReqPathPrettyPrinter<E extends Exception>
   }
 
   private void print(ReqMapModelPath mp) throws E {
-    @NotNull final ReqPathKeyProjection key = mp.key();
+    final @NotNull ReqPathKeyProjection key = mp.key();
 
     l.beginIInd();
     l.print("/").brk();
@@ -126,8 +126,7 @@ public class ReqPathPrettyPrinter<E extends Exception>
   public boolean isPrintoutEmpty(@NotNull ReqModelPath<?, ?> mp) {
     if (mp instanceof ReqRecordModelPath) {
       ReqRecordModelPath recordModelProjection = (ReqRecordModelPath) mp;
-      Map<String, ReqFieldPathEntry> fieldProjections =
-          recordModelProjection.fieldProjections();
+      Map<String, ReqFieldPathEntry> fieldProjections = recordModelProjection.fieldProjections();
       return fieldProjections.isEmpty();
     }
 

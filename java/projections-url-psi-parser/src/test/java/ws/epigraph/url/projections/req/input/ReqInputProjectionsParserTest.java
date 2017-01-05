@@ -172,6 +172,6 @@ public class ReqInputProjectionsParserTest {
   }
 
   private @NotNull OpInputVarProjection parsePersonOpInputVarProjection(@NotNull String projectionString) {
-    return ReqTestUtil.parseOpInputVarProjection(dataType, projectionString, resolver).projection();
+    return ReqTestUtil.parseOpInputVarProjection(dataType, projectionString, resolver);
   }
 }

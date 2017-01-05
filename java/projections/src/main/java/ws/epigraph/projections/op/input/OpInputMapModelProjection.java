@@ -16,14 +16,14 @@
 
 package ws.epigraph.projections.op.input;
 
-import ws.epigraph.data.MapDatum;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import ws.epigraph.gdata.GMapDatum;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenMapModelProjection;
 import ws.epigraph.projections.op.OpParams;
 import ws.epigraph.types.MapType;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -31,7 +31,7 @@ import java.util.Objects;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpInputMapModelProjection
-    extends OpInputModelProjection<OpInputMapModelProjection, MapType, MapDatum>
+    extends OpInputModelProjection<OpInputMapModelProjection, MapType, GMapDatum>
     implements GenMapModelProjection<
     OpInputVarProjection,
     OpInputTagProjectionEntry,
@@ -46,7 +46,7 @@ public class OpInputMapModelProjection
   public OpInputMapModelProjection(
       @NotNull MapType model,
       boolean required,
-      @Nullable MapDatum defaultValue,
+      @Nullable GMapDatum defaultValue,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
       @Nullable OpInputMapModelProjection metaProjection,

@@ -16,26 +16,26 @@
 
 package ws.epigraph.projections.op.input;
 
-import ws.epigraph.data.PrimitiveDatum;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import ws.epigraph.gdata.GPrimitiveDatum;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenPrimitiveModelProjection;
 import ws.epigraph.projections.op.OpParams;
 import ws.epigraph.types.PrimitiveType;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpInputPrimitiveModelProjection
-    extends OpInputModelProjection<OpInputPrimitiveModelProjection, PrimitiveType<?>, PrimitiveDatum<?>>
+    extends OpInputModelProjection<OpInputPrimitiveModelProjection, PrimitiveType<?>, GPrimitiveDatum>
     implements GenPrimitiveModelProjection<OpInputPrimitiveModelProjection, PrimitiveType<?>> {
 
   public OpInputPrimitiveModelProjection(
       @NotNull PrimitiveType<?> model,
       boolean required,
-      @Nullable PrimitiveDatum<?> defaultValue,
+      @Nullable GPrimitiveDatum defaultValue,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
       @Nullable OpInputPrimitiveModelProjection metaProjection,

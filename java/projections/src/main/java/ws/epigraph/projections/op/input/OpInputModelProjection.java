@@ -19,6 +19,7 @@ package ws.epigraph.projections.op.input;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Datum;
+import ws.epigraph.gdata.GDatum;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.op.AbstractOpModelProjection;
@@ -33,7 +34,7 @@ import java.util.Objects;
 public abstract class OpInputModelProjection<
     MP extends OpInputModelProjection</*MP*/?, ?, D>,
     M extends DatumType,
-    D extends Datum>
+    D extends GDatum>
     extends AbstractOpModelProjection<MP, M> {
 
   protected final boolean required;

@@ -16,14 +16,14 @@
 
 package ws.epigraph.projections.op.input;
 
-import ws.epigraph.data.ListDatum;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import ws.epigraph.gdata.GListDatum;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenListModelProjection;
 import ws.epigraph.projections.op.OpParams;
 import ws.epigraph.types.ListType;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -31,7 +31,7 @@ import java.util.Objects;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpInputListModelProjection
-    extends OpInputModelProjection<OpInputListModelProjection, ListType, ListDatum>
+    extends OpInputModelProjection<OpInputListModelProjection, ListType, GListDatum>
     implements GenListModelProjection<
     OpInputVarProjection,
     OpInputTagProjectionEntry,
@@ -45,7 +45,7 @@ public class OpInputListModelProjection
   public OpInputListModelProjection(
       @NotNull ListType model,
       boolean required,
-      @Nullable ListDatum defaultValue,
+      @Nullable GListDatum defaultValue,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
       @Nullable OpInputListModelProjection metaProjection,

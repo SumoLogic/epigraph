@@ -19,6 +19,7 @@ package ws.epigraph.projections.req;
 import de.uka.ilkd.pp.Layouter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.printers.DataPrinter;
 import ws.epigraph.projections.Annotation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.abs.AbstractProjectionsPrettyPrinter;
@@ -39,8 +40,11 @@ public abstract class AbstractReqProjectionsPrettyPrinter<
     FP extends AbstractReqFieldProjection<VP, TP, MP, FP>,
     E extends Exception> extends AbstractProjectionsPrettyPrinter<VP, TP, MP, E> {
 
+  protected @NotNull DataPrinter<E> dataPrinter;
+
   protected AbstractReqProjectionsPrettyPrinter(final Layouter<E> layouter) {
     super(layouter);
+    dataPrinter = new DataPrinter<>(layouter);
   }
 
   protected void printParams(@NotNull ReqParams params) throws E { // move to req common?

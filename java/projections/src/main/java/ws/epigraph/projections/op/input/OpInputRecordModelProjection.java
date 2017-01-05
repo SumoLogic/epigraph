@@ -18,7 +18,7 @@ package ws.epigraph.projections.op.input;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ws.epigraph.data.RecordDatum;
+import ws.epigraph.gdata.GRecordDatum;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.RecordModelProjectionHelper;
@@ -34,7 +34,7 @@ import java.util.Map;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpInputRecordModelProjection
-    extends OpInputModelProjection<OpInputRecordModelProjection, RecordType, RecordDatum>
+    extends OpInputModelProjection<OpInputRecordModelProjection, RecordType, GRecordDatum>
     implements GenRecordModelProjection<
     OpInputVarProjection,
     OpInputTagProjectionEntry,
@@ -50,7 +50,7 @@ public class OpInputRecordModelProjection
   public OpInputRecordModelProjection(
       @NotNull RecordType model,
       boolean required,
-      @Nullable RecordDatum defaultValue,
+      @Nullable GRecordDatum defaultValue,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
       @Nullable OpInputRecordModelProjection metaProjection,
@@ -76,8 +76,7 @@ public class OpInputRecordModelProjection
 
   @Override
   public boolean equals(Object o) {
-    if (!super.equals(o)) return false;
-    return RecordModelProjectionHelper.equals(this, o);
+    return super.equals(o) && RecordModelProjectionHelper.equals(this, o);
   }
 
   @Override

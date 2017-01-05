@@ -18,7 +18,6 @@ package ws.epigraph.projections.op.input;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
-import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.SimpleTypesResolver;
@@ -150,20 +149,18 @@ public class OpInputProjectionsTest {
         epigraph.String.type
     );
 
-    final StepsAndProjection<OpInputVarProjection> stepsAndProjection = parseOpInputVarProjection(
+    final OpInputVarProjection varProjection = parseOpInputVarProjection(
         varDataType,
         projectionString,
         resolver
     );
-    assertEquals(0, stepsAndProjection.pathSteps());
-    final @NotNull OpInputVarProjection varProjection = stepsAndProjection.projection();
     String actual = printOpInputVarProjection(varProjection, 0);
 
     assertEquals("\n" + actual, expected, actual);
 //    assertEquals(expected.trim(), actual.trim());
   }
 
-  public static StepsAndProjection<OpInputVarProjection> parseOpInputVarProjection(
+  public static OpInputVarProjection parseOpInputVarProjection(
       @NotNull DataType varDataType,
       @NotNull String projectionString,
       @NotNull TypesResolver resolver) {

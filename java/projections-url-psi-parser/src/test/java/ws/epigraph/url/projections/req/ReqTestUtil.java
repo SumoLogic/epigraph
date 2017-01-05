@@ -220,7 +220,7 @@ public final class ReqTestUtil {
     ));
   }
 
-  public static StepsAndProjection<OpInputVarProjection> parseOpInputVarProjection(
+  public static OpInputVarProjection parseOpInputVarProjection(
       @NotNull DataType varDataType,
       @NotNull String projectionString,
       @NotNull TypesResolver resolver) {

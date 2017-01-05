@@ -19,7 +19,6 @@ package ws.epigraph.projections.abs;
 import de.uka.ilkd.pp.Layouter;
 import ws.epigraph.gdata.GDataPrettyPrinter;
 import ws.epigraph.lang.Keywords;
-import ws.epigraph.printers.DataPrinter;
 import ws.epigraph.projections.Annotation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenModelProjection;
@@ -40,7 +39,6 @@ public abstract class AbstractProjectionsPrettyPrinter<
     E extends Exception> {
 
   protected final @NotNull Layouter<E> l;
-  protected @NotNull DataPrinter<E> dataPrinter;
   protected @NotNull GDataPrettyPrinter<E> gdataPrettyPrinter;
 
   private int nextRefNumber = 1;
@@ -49,7 +47,6 @@ public abstract class AbstractProjectionsPrettyPrinter<
 
   protected AbstractProjectionsPrettyPrinter(@NotNull Layouter<E> layouter) {
     l = layouter;
-    dataPrinter = new DataPrinter<>(l);
     gdataPrettyPrinter = new GDataPrettyPrinter<>(l);
   }
 

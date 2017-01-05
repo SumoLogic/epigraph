@@ -125,7 +125,7 @@ public final class SchemaProjectionPsiParserUtil {
 
     for (final SchemaOpParam param : paramsPsi) {
       if (param != null) {
-        if (params == null ) params = new ArrayList<>();
+        if (params == null) params = new ArrayList<>();
 
         params.add(parseParameter(param, resolver, errors));
       }
@@ -186,7 +186,7 @@ public final class SchemaProjectionPsiParserUtil {
         paramModelProjectionPsi,
         resolver,
         errors
-    ).projection();
+    );
 
     return new OpParam(paramName, paramModelProjection, EpigraphPsiUtil.getLocation(paramPsi));
   }

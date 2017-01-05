@@ -19,7 +19,6 @@ package ws.epigraph.projections.op.input;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ws.epigraph.data.*;
 import ws.epigraph.gdata.*;
 import ws.epigraph.schema.TypeRefs;
 import ws.epigraph.schema.gdata.SchemaGDataPsiParser;
@@ -27,7 +26,6 @@ import ws.epigraph.schema.parser.psi.*;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.ProjectionUtils;
-import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.op.OpKeyPresence;
 import ws.epigraph.projections.op.OpParams;
 import ws.epigraph.psi.EpigraphPsiUtil;
@@ -54,7 +52,7 @@ public final class OpInputProjectionsPsiParser {
 
   private OpInputProjectionsPsiParser() {}
 
-  public static StepsAndProjection<OpInputVarProjection> parseVarProjection(
+  public static OpInputVarProjection parseVarProjection(
       @NotNull DataType dataType,
       @NotNull SchemaOpInputVarProjection psi,
       @NotNull TypesResolver typesResolver,
@@ -103,7 +101,7 @@ public final class OpInputProjectionsPsiParser {
             parseModelAnnotations(modelPropertiesPsi, errors),
             parseModelMetaProjection(tag.type, modelPropertiesPsi, typesResolver, errors),
             modelProjection, typesResolver, errors
-        ).projection();
+        );
 
         tagProjections.put(
             tag.name(),
@@ -120,15 +118,12 @@ public final class OpInputProjectionsPsiParser {
         parseTails(dataType, psi.getOpInputVarPolymorphicTail(), typesResolver, errors);
 
     try {
-      return new StepsAndProjection<>(
-          0,
-          new OpInputVarProjection(
-              type,
-              tagProjections,
-              singleTagProjectionPsi == null || tagProjections.size() != 1,
-              tails,
-              EpigraphPsiUtil.getLocation(psi)
-          )
+      return new OpInputVarProjection(
+          type,
+          tagProjections,
+          singleTagProjectionPsi == null || tagProjections.size() != 1,
+          tails,
+          EpigraphPsiUtil.getLocation(psi)
       );
     } catch (Exception e) {
       throw new PsiProcessingException(e, psi, errors);
@@ -166,7 +161,7 @@ public final class OpInputProjectionsPsiParser {
           parseModelAnnotations(modelPropertiesPsi, errors),
           parseModelMetaProjection(tagType, modelPropertiesPsi, typesResolver, errors),
           modelProjection, typesResolver, errors
-      ).projection();
+      );
 
       tagProjections.put(
           tag.name(),
@@ -303,7 +298,7 @@ public final class OpInputProjectionsPsiParser {
             metaProjectionPsi,
             resolver,
             errors
-        ).projection();
+        );
       }
     }
 
@@ -324,7 +319,7 @@ public final class OpInputProjectionsPsiParser {
         psiTailProjection,
         typesResolver,
         errors
-    ).projection();
+    );
   }
 
   private static @NotNull OpInputVarProjection createDefaultVarProjection(
@@ -388,7 +383,7 @@ public final class OpInputProjectionsPsiParser {
     return createDefaultVarProjection(type.type, defaultTag, required, locationPsi, resolver, errors);
   }
 
-  public static @NotNull StepsAndProjection<? extends OpInputModelProjection<?, ?, ?>> parseModelProjection(
+  public static @NotNull OpInputModelProjection<?, ?, ?> parseModelProjection(
       @NotNull DatumType type,
       boolean required,
       @Nullable GDatum defaultValue,
@@ -405,18 +400,15 @@ public final class OpInputProjectionsPsiParser {
             psi.getOpInputRecordModelProjection();
 
         if (recordModelProjectionPsi == null)
-          return new StepsAndProjection<>(
-              0,
-              createDefaultModelProjection(
-                  type,
-                  required,
-                  defaultValue,
-                  params,
-                  annotations,
-                  psi,
-                  typesResolver,
-                  errors
-              )
+          return createDefaultModelProjection(
+              type,
+              required,
+              defaultValue,
+              params,
+              annotations,
+              psi,
+              typesResolver,
+              errors
           );
 
         ensureModelKind(psi, TypeKind.RECORD, errors);
@@ -438,18 +430,15 @@ public final class OpInputProjectionsPsiParser {
         @Nullable SchemaOpInputMapModelProjection mapModelProjectionPsi = psi.getOpInputMapModelProjection();
 
         if (mapModelProjectionPsi == null)
-          return new StepsAndProjection<>(
-              0,
-              createDefaultModelProjection(
-                  type,
-                  required,
-                  defaultValue,
-                  params,
-                  annotations,
-                  psi,
-                  typesResolver,
-                  errors
-              )
+          return createDefaultModelProjection(
+              type,
+              required,
+              defaultValue,
+              params,
+              annotations,
+              psi,
+              typesResolver,
+              errors
           );
 
         ensureModelKind(psi, TypeKind.MAP, errors);
@@ -471,18 +460,15 @@ public final class OpInputProjectionsPsiParser {
         @Nullable SchemaOpInputListModelProjection listModelProjectionPsi = psi.getOpInputListModelProjection();
 
         if (listModelProjectionPsi == null)
-          return new StepsAndProjection<>(
-              0,
-              createDefaultModelProjection(
-                  type,
-                  required,
-                  defaultValue,
-                  params,
-                  annotations,
-                  psi,
-                  typesResolver,
-                  errors
-              )
+          return createDefaultModelProjection(
+              type,
+              required,
+              defaultValue,
+              params,
+              annotations,
+              psi,
+              typesResolver,
+              errors
           );
 
         ensureModelKind(psi, TypeKind.LIST, errors);
@@ -513,9 +499,7 @@ public final class OpInputProjectionsPsiParser {
             params,
             annotations,
             (OpInputPrimitiveModelProjection) metaProjection,
-            psi,
-            typesResolver,
-            errors
+            psi
         );
 
       case UNION:
@@ -559,20 +543,12 @@ public final class OpInputProjectionsPsiParser {
 
     @NotNull TextLocation location = EpigraphPsiUtil.getLocation(locationPsi);
 
-    @Nullable Datum defaultDatum = null;
-    if (defaultValue != null)
-      try {
-        defaultDatum = GDataToData.transformDatum(type, defaultValue, resolver);
-      } catch (GDataToData.ProcessingException e) {
-        throw new PsiProcessingException(e, locationPsi, errors);
-      }
-
     switch (type.kind()) {
       case RECORD:
         return new OpInputRecordModelProjection(
             (RecordType) type,
             required,
-            (RecordDatum) defaultDatum,
+            (GRecordDatum) defaultValue,
             params,
             annotations,
             null,
@@ -604,7 +580,7 @@ public final class OpInputProjectionsPsiParser {
         return new OpInputMapModelProjection(
             mapType,
             required,
-            (MapDatum) defaultDatum,
+            (GMapDatum) defaultValue,
             params,
             annotations,
             null,
@@ -641,7 +617,7 @@ public final class OpInputProjectionsPsiParser {
         return new OpInputListModelProjection(
             listType,
             required,
-            (ListDatum) defaultDatum,
+            (GListDatum) defaultValue,
             params,
             annotations,
             null,
@@ -661,7 +637,7 @@ public final class OpInputProjectionsPsiParser {
         return new OpInputPrimitiveModelProjection(
             (PrimitiveType<?>) type,
             required,
-            (PrimitiveDatum<?>) defaultDatum,
+            (GPrimitiveDatum) defaultValue,
             params,
             annotations,
             null,
@@ -672,7 +648,7 @@ public final class OpInputProjectionsPsiParser {
     }
   }
 
-  public static @NotNull StepsAndProjection<OpInputRecordModelProjection> parseRecordModelProjection(
+  public static @NotNull OpInputRecordModelProjection parseRecordModelProjection(
       @NotNull RecordType type,
       boolean required,
       @Nullable GRecordDatum defaultValue,
@@ -681,16 +657,7 @@ public final class OpInputProjectionsPsiParser {
       @Nullable OpInputRecordModelProjection metaProjection,
       @NotNull SchemaOpInputRecordModelProjection psi,
       @NotNull TypesResolver resolver,
-      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
-
-    RecordDatum defaultDatum = null;
-    if (defaultValue != null) {
-      try {
-        defaultDatum = GDataToData.transform(type, defaultValue, resolver);
-      } catch (GDataToData.ProcessingException e) {
-        throw new PsiProcessingException(e, psi, errors);
-      }
-    }
+      @NotNull List<PsiProcessingError> errors) {
 
     LinkedHashMap<String, OpInputFieldProjectionEntry> fieldProjections = new LinkedHashMap<>();
     @NotNull List<SchemaOpInputFieldProjectionEntry> psiFieldProjections = psi.getOpInputFieldProjectionEntryList();
@@ -734,18 +701,15 @@ public final class OpInputProjectionsPsiParser {
       }
     }
 
-    return new StepsAndProjection<>(
-        0,
-        new OpInputRecordModelProjection(
-            type,
-            required,
-            defaultDatum,
-            params,
-            annotations,
-            metaProjection,
-            fieldProjections,
-            EpigraphPsiUtil.getLocation(psi)
-        )
+    return new OpInputRecordModelProjection(
+        type,
+        required,
+        defaultValue,
+        params,
+        annotations,
+        metaProjection,
+        fieldProjections,
+        EpigraphPsiUtil.getLocation(psi)
     );
   }
 
@@ -772,8 +736,7 @@ public final class OpInputProjectionsPsiParser {
     );
 
     @NotNull SchemaOpInputVarProjection psiVarProjection = psi.getOpInputVarProjection();
-    OpInputVarProjection varProjection =
-        parseVarProjection(fieldType, psiVarProjection, resolver, errors).projection();
+    OpInputVarProjection varProjection = parseVarProjection(fieldType, psiVarProjection, resolver, errors);
 
     return new OpInputFieldProjection(
         fieldParams,
@@ -784,7 +747,7 @@ public final class OpInputProjectionsPsiParser {
     );
   }
 
-  public static @NotNull StepsAndProjection<OpInputMapModelProjection> parseMapModelProjection(
+  public static @NotNull OpInputMapModelProjection parseMapModelProjection(
       @NotNull MapType type,
       boolean required,
       @Nullable GMapDatum defaultValue,
@@ -795,39 +758,27 @@ public final class OpInputProjectionsPsiParser {
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
-    MapDatum defaultDatum = null;
-    if (defaultValue != null) {
-      try {
-        defaultDatum = GDataToData.transform(type, defaultValue, resolver);
-      } catch (GDataToData.ProcessingException e) {
-        throw new PsiProcessingException(e, psi, errors);
-      }
-    }
-
     @NotNull OpInputKeyProjection keyProjection = parseKeyProjection(psi.getOpInputKeyProjection(), resolver, errors);
 
     @Nullable SchemaOpInputVarProjection valueProjectionPsi = psi.getOpInputVarProjection();
     @NotNull OpInputVarProjection valueProjection =
         valueProjectionPsi == null ?
         createDefaultVarProjection(type.valueType(), false, psi, resolver, errors) :
-        parseVarProjection(type.valueType(), valueProjectionPsi, resolver, errors).projection();
+        parseVarProjection(type.valueType(), valueProjectionPsi, resolver, errors);
 
-    return new StepsAndProjection<>(
-        0,
-        new OpInputMapModelProjection(
-            type,
-            required,
-            defaultDatum,
-            params,
-            annotations,
-            metaProjection,
-            keyProjection,
-            valueProjection,
-            EpigraphPsiUtil.getLocation(psi)
-        )
+    return new OpInputMapModelProjection(
+        type,
+        required,
+        defaultValue,
+        params,
+        annotations,
+        metaProjection,
+        keyProjection,
+        valueProjection,
+        EpigraphPsiUtil.getLocation(psi)
     );
   }
-  
+
   private static @NotNull OpInputKeyProjection parseKeyProjection(
       @NotNull SchemaOpInputKeyProjection keyProjectionPsi,
       @NotNull TypesResolver resolver,
@@ -858,7 +809,7 @@ public final class OpInputProjectionsPsiParser {
     );
   }
 
-  public static @NotNull StepsAndProjection<OpInputListModelProjection> parseListModelProjection(
+  public static @NotNull OpInputListModelProjection parseListModelProjection(
       @NotNull ListType type,
       boolean required,
       @Nullable GListDatum defaultValue,
@@ -869,68 +820,42 @@ public final class OpInputProjectionsPsiParser {
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
-    ListDatum defaultDatum = null;
-    if (defaultValue != null) {
-      try {
-        defaultDatum = GDataToData.transform(type, defaultValue, resolver);
-      } catch (GDataToData.ProcessingException e) {
-        throw new PsiProcessingException(e, psi, errors);
-      }
-    }
-
     OpInputVarProjection itemsProjection;
     @Nullable SchemaOpInputVarProjection opInputVarProjectionPsi = psi.getOpInputVarProjection();
     if (opInputVarProjectionPsi == null)
       itemsProjection = createDefaultVarProjection(type, true, psi, resolver, errors);
     else
-      itemsProjection = parseVarProjection(type.elementType(), opInputVarProjectionPsi, resolver, errors).projection();
+      itemsProjection = parseVarProjection(type.elementType(), opInputVarProjectionPsi, resolver, errors);
 
-    return new StepsAndProjection<>(
-        0,
-        new OpInputListModelProjection(
-            type,
-            required,
-            defaultDatum,
-            params,
-            annotations,
-            metaProjection,
-            itemsProjection,
-            EpigraphPsiUtil.getLocation(psi)
-        )
+    return new OpInputListModelProjection(
+        type,
+        required,
+        defaultValue,
+        params,
+        annotations,
+        metaProjection,
+        itemsProjection,
+        EpigraphPsiUtil.getLocation(psi)
     );
   }
 
-  public static @NotNull StepsAndProjection<OpInputPrimitiveModelProjection> parsePrimitiveModelProjection(
+  public static @NotNull OpInputPrimitiveModelProjection parsePrimitiveModelProjection(
       @NotNull PrimitiveType<?> type,
       boolean required,
       @Nullable GPrimitiveDatum defaultValue,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
       @Nullable OpInputPrimitiveModelProjection metaProjection,
-      @NotNull PsiElement locationPsi,
-      @NotNull TypesResolver resolver,
-      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
+      @NotNull PsiElement locationPsi) {
 
-    PrimitiveDatum<?> defaultDatum = null;
-    if (defaultValue != null) {
-      try {
-        defaultDatum = GDataToData.transform(type, defaultValue, resolver);
-      } catch (GDataToData.ProcessingException e) {
-        throw new PsiProcessingException(e, locationPsi, errors);
-      }
-    }
-
-    return new StepsAndProjection<>(
-        0,
-        new OpInputPrimitiveModelProjection(
-            type,
-            required,
-            defaultDatum,
-            params,
-            annotations,
-            metaProjection,
-            EpigraphPsiUtil.getLocation(locationPsi)
-        )
+    return new OpInputPrimitiveModelProjection(
+        type,
+        required,
+        defaultValue,
+        params,
+        annotations,
+        metaProjection,
+        EpigraphPsiUtil.getLocation(locationPsi)
     );
   }
 

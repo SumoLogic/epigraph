@@ -17,14 +17,14 @@
 package ws.epigraph.projections.op;
 
 import de.uka.ilkd.pp.Layouter;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ws.epigraph.data.Datum;
+import ws.epigraph.gdata.GDatum;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.abs.AbstractProjectionsPrettyPrinter;
 import ws.epigraph.projections.gen.*;
 import ws.epigraph.projections.op.input.OpInputModelProjection;
 import ws.epigraph.projections.op.input.OpInputProjectionsPrettyPrinter;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
@@ -80,10 +80,10 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
 
     Annotations annotations = projection.annotations();
 
-    Datum defaultValue = projection.defaultValue();
+    GDatum defaultValue = projection.defaultValue();
     if (defaultValue != null) {
       l.brk().print("=").brk();
-      dataPrinter.print(defaultValue);
+      gdataPrettyPrinter.print(defaultValue);
     }
 
     if (!annotations.isEmpty()) {

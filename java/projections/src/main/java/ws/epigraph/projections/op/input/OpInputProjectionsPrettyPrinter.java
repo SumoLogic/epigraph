@@ -18,6 +18,7 @@ package ws.epigraph.projections.op.input;
 
 import de.uka.ilkd.pp.Layouter;
 import org.jetbrains.annotations.NotNull;
+import ws.epigraph.gdata.GDataValue;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.op.AbstractOpProjectionsPrettyPrinter;
 import ws.epigraph.projections.op.OpParams;
@@ -47,7 +48,8 @@ public class OpInputProjectionsPrettyPrinter<E extends Exception> extends Abstra
     final OpParams params = projection.params();
     final Annotations annotations = projection.annotations();
 
-    if (projection.defaultValue() == null && annotations.isEmpty() && params.isEmpty() &&
+    final GDataValue defaultValue = projection.defaultValue();
+    if (defaultValue == null && annotations.isEmpty() && params.isEmpty() &&
         metaProjection == null) {
 
       l.beginCInd();
@@ -65,9 +67,9 @@ public class OpInputProjectionsPrettyPrinter<E extends Exception> extends Abstra
       l.print(escape(tagName));
       l.print(" {");
 
-      if (projection.defaultValue() != null) {
+      if (defaultValue != null) {
         l.brk().beginIInd(0).print("default:").brk();
-        dataPrinter.print(projection.defaultValue());
+        gdataPrettyPrinter.print(defaultValue);
         l.end();
       }
 

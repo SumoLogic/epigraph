@@ -321,7 +321,15 @@ public final class UrlProjectionsPsiParserUtil {
       final @NotNull TypesResolver subResolver = addTypeNamespace(model, resolver);
 
       @Nullable Datum value = getDatum(reqParamPsi.getDatum(), model, subResolver, errorMsgPrefix, errors);
-      if (value == null) value = projection.defaultValue();
+      if (value == null) {
+        final GDatum gDatum = projection.defaultValue();
+        if (gDatum != null)
+          try {
+            value = (Datum) GDataToData.transform(projection.model(), gDatum, resolver);
+          } catch (GDataToData.ProcessingException e) {
+            throw new PsiProcessingException(e, reqParamPsi, errors);
+          }
+      }
 
       // todo validate value against input projection
 
