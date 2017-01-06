@@ -63,9 +63,18 @@ task locateIdeaHome {
   }
 }
 
+// todo remove this hack
+// http://stackoverflow.com/questions/41513548/gradle-is-not-publishing-custom-jar-artifact
+task publishToMavenLocal.doLast {
+  copy {
+    from file("$distsDir/$archivesBaseName-${version}.jar")
+    into System.getProperty("user.home") + "/.m2/repository/ws/epigraph/epigraph-light-psi/${version}"
+  }
+}
+
 task locateGrammarKit {
   doLast {
-    def ideaVersion = '2016.2'
+    def ideaVersion = '2016.3' // todo get from some global config
     def locations = [
         System.getenv('GKIT_JAR'),
         System.getProperty('GKIT_JAR'),
