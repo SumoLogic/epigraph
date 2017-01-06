@@ -10,21 +10,43 @@ rootProject.name = theName
 
 
 Map<String, String> modules = [
-    'compiler'                    : 'epigraph-compiler',
-    'gradle-plugin'               : 'epigraph-gradle-plugin',
-    'gradle-plugin-common'        : 'epigraph-gradle-plugin-common',
-    'java/codegen'                : 'epigraph-java-codegen',
-    'java/core'                   : 'epigraph-java-core',
-    'java/gradle-plugin'          : 'epigraph-java-gradle-plugin',
-    'java/lang-common'            : 'epigraph-java-lang-common',
-    'java/schema-parser'          : 'epigraph-java-schema-parser',
-    'java/standalone-psi-util'    : 'epigraph-java-standalone-psi-util',
-    'java/util'                   : 'epigraph-java-util',
-    'light-psi'                   : 'epigraph-light-psi',
-    'scala/core'                  : 'epigraph-scala-core'
+    'compiler'                           : 'epigraph-compiler',
+    'gradle-plugin'                      : 'epigraph-gradle-plugin',
+    'gradle-plugin-common'               : 'epigraph-gradle-plugin-common',
+    'java/codegen'                       : 'epigraph-java-codegen',
+    'java/core'                          : 'epigraph-java-core',
+    'java/gdata'                         : 'epigraph-java-gdata',                                // (x)
+    'java/gradle-plugin'                 : 'epigraph-java-gradle-plugin',
+    'java/lang-common'                   : 'epigraph-java-lang-common',
+    'java/projections'                   : 'epigraph-java-projections',                          // (x)
+    'java/projections-psi-parser-util'   : 'epigraph-java-projections-psi-parser-util',          // (x)
+    'java/schema'                        : 'epigraph-java-schema',                               // (x)
+    'java/schema-parser'                 : 'epigraph-java-schema-parser',
+    'java/schema-psi-parser-common'      : 'epigraph-java-schema-psi-parser-common',             // (x)
+    'java/standalone-psi-util'           : 'epigraph-java-standalone-psi-util',
+    'java/test-util'                     : 'epigraph-java-test-util',                            // (x)
+    'java/util'                          : 'epigraph-java-util',
+    'light-psi'                          : 'epigraph-light-psi',
+    'scala/core'                         : 'epigraph-scala-core'
 ]
+
+Map<String, String> noTestModules = [
+    'java/gdata-schema-psi-parser'       : 'epigraph-java-gdata-schema-psi-parser',              // (x)
+    'java/projections-schema-psi-parser' : 'epigraph-java-projections-schema-psi-parser',        // (x)
+    'java/schema-psi-parser'             : 'epigraph-java-schema-psi-parser',                    // (x)
+]
+
+// todo: modules marked with (x) must be removed from here and form build.gradle : publishGradlePlugin
+// once schema resources compilation is ported to scala (see 'Schema compiler' section in todo.md)
+// also remove all of noTestModules and **/build-notest.gradle
 
 modules.each { dir, name ->
   include name
   project(":$name").projectDir = file(dir)
+}
+
+noTestModules.each { dir, name ->
+  include name
+  project(":$name").projectDir = file(dir)
+  project(":$name").buildFileName = "build-notest.gradle"
 }
