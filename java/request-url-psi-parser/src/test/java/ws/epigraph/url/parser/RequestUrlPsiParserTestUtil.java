@@ -18,8 +18,8 @@ package ws.epigraph.url.parser;
 
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.gdata.GDatum;
-import ws.epigraph.schema.Schema;
-import ws.epigraph.schema.parser.SchemaPsiParser;
+import ws.epigraph.schema.ResourcesSchema;
+import ws.epigraph.schema.parser.ResourcesSchemaPsiParser;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.schema.parser.SchemaParserDefinition;
@@ -49,7 +49,7 @@ public final class RequestUrlPsiParserTestUtil {
     return sb.toString();
   }
 
-  static @NotNull Schema parseIdl(@NotNull String text, @NotNull TypesResolver resolver) {
+  static @NotNull ResourcesSchema parseIdl(@NotNull String text, @NotNull TypesResolver resolver) {
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
     @NotNull SchemaFile psiFile =
@@ -57,6 +57,6 @@ public final class RequestUrlPsiParserTestUtil {
 
     failIfHasErrors(psiFile, errorsAccumulator);
 
-    return runPsiParser(errors -> SchemaPsiParser.parseSchema(psiFile, resolver, errors));
+    return runPsiParser(errors -> ResourcesSchemaPsiParser.parseResourcesSchema(psiFile, resolver, errors));
   }
 }

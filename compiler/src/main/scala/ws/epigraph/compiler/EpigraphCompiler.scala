@@ -23,11 +23,12 @@ import java.util
 import java.util.Collections
 
 import com.intellij.lang.ParserDefinition
-import com.intellij.psi.{PsiElement, PsiFile, PsiRecursiveElementWalkingVisitor}
+import com.intellij.psi.PsiFile
 import org.intellij.grammar.LightPsi
 import org.jetbrains.annotations.Nullable
-import ws.epigraph.schema.parser.SchemaParserDefinition
+import ws.epigraph.psi.{PsiProcessingError, PsiProcessingException}
 import ws.epigraph.schema.parser.psi._
+import ws.epigraph.schema.parser.{ResourcesSchemaPsiParser, SchemaParserDefinition}
 
 import scala.collection.JavaConversions._
 import scala.collection.{GenTraversableOnce, mutable}
@@ -102,6 +103,13 @@ class EpigraphCompiler(
 
     handleErrors(5)
 
+    // compile resources
+
+    ctx.phase(RESOURCES)
+
+    parseResources()
+
+    handleErrors(6)
 
     //printSchemaFiles(ctx.schemaFiles.values)
 
@@ -149,13 +157,14 @@ class EpigraphCompiler(
         )
       }
 
-      // extra pass of registering all type refs, should pick up all stuff from resource declarations
-      csf.psi.accept(new PsiRecursiveElementWalkingVisitor() {
-        override def visitElement(element: PsiElement): Unit = element match {
-          case etr: SchemaTypeRef => CTypeRef(csf, etr)
-          case e => super.visitElement(e)
-        }
-      })
+//      // extra pass of registering all type refs, should pick up all stuff from resource declarations
+//      // todo: remove
+//      csf.psi.accept(new PsiRecursiveElementWalkingVisitor() {
+//        override def visitElement(element: PsiElement): Unit = element match {
+//          case etr: SchemaTypeRef => CTypeRef(csf, etr)
+//          case e => super.visitElement(e)
+//        }
+//      })
     }
   }
 
@@ -204,6 +213,26 @@ class EpigraphCompiler(
   private def validateRecordFields(): Unit = ctx.typeDefs.values foreach {
     case rt: CRecordTypeDef => rt.effectiveFields ne null
     case _ =>
+  }
+
+  private def parseResources(): Unit = {
+    ctx.schemaFiles.values().par.foreach{ csf =>
+      val typesResolver = new CTypesResolver(csf)
+      val errors = new java.util.ArrayList[PsiProcessingError]
+
+      try {
+        val resourcesSchema = ResourcesSchemaPsiParser.parseResourcesSchema(csf.psi, typesResolver, errors)
+        handlePsiErrors(csf, errors)
+        ctx.resourcesSchemas.add(resourcesSchema)
+      } catch {
+        case e: PsiProcessingException => handlePsiErrors(csf, e.errors())
+      }
+    }
+  }
+
+  private def handlePsiErrors(csf: CSchemaFile, psiErrors: Traversable[PsiProcessingError]): Unit = {
+    lazy val reporter = ErrorReporter.reporter(csf)
+    psiErrors.foreach{ e => reporter.error(e.message(), e.location()) }
   }
 
   @throws[EpigraphCompilerException]

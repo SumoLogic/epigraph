@@ -63,10 +63,12 @@ public final class TypeReferenceFactory {
   }
 
   public static @NotNull ValueTypeRef createValueTypeReference(@NotNull DataTypeApi dataType) {
-    final @Nullable TagApi defaultTag = dataType.defaultTag();
-    final String defaultTagName = defaultTag == null ? null : defaultTag.name();
-
     final @NotNull TypeApi type = dataType.type();
+
+    final @Nullable TagApi defaultTag = dataType.defaultTag();
+//    final String defaultTagName = defaultTag == null ? null : defaultTag.name();
+    final String defaultTagName = defaultTag == null || type instanceof DatumTypeApi ? null : defaultTag.name();
+
     final @NotNull TypeRef typeRef = createReference(type);
 
     return new ValueTypeRef(typeRef, defaultTagName);

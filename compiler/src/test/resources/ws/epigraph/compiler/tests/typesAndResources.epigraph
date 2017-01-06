@@ -6,5 +6,11 @@ long MyLong
 resource MyResource : list[MyString] {
   update {
     inputType list[MyLong]
+    inputProjection *
+  }
+
+  update myUpdate {
+    inputType map[MyString,MyLong]
+    inputProjection *
   }
 }

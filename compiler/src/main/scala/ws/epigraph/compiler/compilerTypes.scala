@@ -274,6 +274,17 @@ class CTag(val csf: CSchemaFile, val name: String, val typeRef: CTypeRef, @Nulla
 
   def compatibleWith(st: CTag): Boolean = st.typeRef.resolved.isAssignableFrom(typeRef.resolved)
 
+  def canEqual(other: Any): Boolean = other.isInstanceOf[CTag]
+
+  override def equals(other: Any): Boolean = other match {
+    case that: CTag => (that canEqual this) && name == that.name && typeRef == that.typeRef
+    case _ => false
+  }
+
+  override def hashCode(): Int = {
+    val state = Seq(name, typeRef)
+    state.map(_.hashCode()).foldLeft(0)((a, b) => 31 * a + b)
+  }
 }
 
 trait CDatumType extends CType {self =>

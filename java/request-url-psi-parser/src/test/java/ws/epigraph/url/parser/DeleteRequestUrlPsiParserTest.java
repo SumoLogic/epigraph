@@ -19,7 +19,7 @@ package ws.epigraph.url.parser;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
-import ws.epigraph.schema.Schema;
+import ws.epigraph.schema.ResourcesSchema;
 import ws.epigraph.schema.ResourceDeclaration;
 import ws.epigraph.schema.operations.OperationDeclaration;
 import ws.epigraph.schema.operations.DeleteOperationDeclaration;
@@ -76,7 +76,7 @@ public class DeleteRequestUrlPsiParserTest {
   private final DataType resourceType = String_Person_Map.type.dataType();
 
   {
-    Schema schema = parseIdl(idlText, resolver);
+    ResourcesSchema schema = parseIdl(idlText, resolver);
     ResourceDeclaration resourceDeclaration = schema.resources().get("users");
 
     final @NotNull List<OperationDeclaration> operationDeclarations = resourceDeclaration.operations();

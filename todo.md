@@ -28,6 +28,18 @@
 - [ ] Verbose mode? (propagate it from gradle/maven)
 - [ ] (anonymous) types should be collected from `*.eidl` files too
 - [ ] Build an index of types in `META-INF`. Type name to schema file?
+- [ ] Proper resources compilation
+  - [x] Port generic projections to scala
+  - [x] Port `GData` to scala/ctypes
+  - [ ] Port op projections to scala/ctypes
+  - [ ] Port op projection psi parsers to scala/ctypes
+  - [ ] Port operations declarations to scala/ctypes
+  - [ ] Port operations declarations psi parsers to scala/ctypes
+  - [ ] Port `ResourcesSchema` psi parsers to scala/ctypes
+  - [ ] Change codegen to use scala versions
+  - [ ] Remove ctypes -> types API bridge
+  - [ ] Remove types API?
+  - [ ] Revert gradle/maven build changes added to avoid circular dependencies
 
 # Maven plugin
 - [ ] Produce a list of `EpigraphType`->`JavaClass` mappings artifact (Duplicates task from `Schema compiler` list above)

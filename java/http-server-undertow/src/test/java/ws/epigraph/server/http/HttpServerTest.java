@@ -23,7 +23,6 @@ import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.mashape.unirest.request.BaseRequest;
 import com.mashape.unirest.request.HttpRequestWithBody;
-import epigraph.PersonId_Error_Map;
 import io.undertow.Undertow;
 import io.undertow.UndertowOptions;
 import org.jetbrains.annotations.NotNull;
@@ -31,12 +30,11 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import ws.epigraph.refs.IndexBasedTypesResolver;
-import ws.epigraph.schema.Schema;
-import ws.epigraph.schema.parser.SchemaPsiParser;
+import ws.epigraph.schema.ResourcesSchema;
+import ws.epigraph.schema.parser.ResourcesSchemaPsiParser;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingError;
 import ws.epigraph.psi.PsiProcessingException;
-import ws.epigraph.refs.SimpleTypesResolver;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.schema.parser.SchemaParserDefinition;
 import ws.epigraph.schema.parser.psi.SchemaFile;
@@ -67,7 +65,7 @@ public class HttpServerTest {
 
   private static final TypesResolver resolver = IndexBasedTypesResolver.INSTANCE;
 
-  private static final Schema schema;
+  private static final ResourcesSchema schema;
 
   private static Undertow server;
 
@@ -228,14 +226,14 @@ public class HttpServerTest {
 //    return parseIdl(psiFile, errAcc);
 //  }
 
-  private static @NotNull Schema parseIdlResource(@NotNull String resourcePath) throws IOException {
+  private static @NotNull ResourcesSchema parseIdlResource(@NotNull String resourcePath) throws IOException {
     EpigraphPsiUtil.ErrorsAccumulator errAcc = new EpigraphPsiUtil.ErrorsAccumulator();
     SchemaFile psiFile =
         (SchemaFile) EpigraphPsiUtil.parseResource(resourcePath, SchemaParserDefinition.INSTANCE, errAcc);
     return parseSchema(psiFile, errAcc);
   }
 
-  private static @NotNull Schema parseSchema(@NotNull SchemaFile psiFile, EpigraphPsiUtil.ErrorsAccumulator errAcc) {
+  private static @NotNull ResourcesSchema parseSchema(@NotNull SchemaFile psiFile, EpigraphPsiUtil.ErrorsAccumulator errAcc) {
 
     if (errAcc.hasErrors()) {
       for (PsiErrorElement element : errAcc.errors()) {
@@ -244,10 +242,10 @@ public class HttpServerTest {
       throw new RuntimeException(DebugUtil.psiTreeToString(psiFile, true));
     }
 
-    Schema schema = null;
+    ResourcesSchema schema = null;
     List<PsiProcessingError> errors = new ArrayList<>();
     try {
-      schema = SchemaPsiParser.parseSchema(psiFile, resolver, errors);
+      schema = ResourcesSchemaPsiParser.parseResourcesSchema(psiFile, resolver, errors);
     } catch (PsiProcessingException e) {
       errors = e.errors();
     }

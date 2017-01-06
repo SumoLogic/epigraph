@@ -24,12 +24,12 @@ import java.util.Map;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class Schema {
+public class ResourcesSchema {
   private final @NotNull Qn namespace;
   // todo should contain TypesResolver too?
   private final @NotNull Map<String, ResourceDeclaration> resources;
 
-  public Schema(@NotNull Qn namespace, @NotNull Map<String, ResourceDeclaration> resources) {
+  public ResourcesSchema(@NotNull Qn namespace, @NotNull Map<String, ResourceDeclaration> resources) {
     this.namespace = namespace;
     this.resources = resources;
   }

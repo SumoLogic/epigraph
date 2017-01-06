@@ -122,8 +122,8 @@ public class ImportAwareTypesResolver implements TypesResolver {
     if (valueType == null) return null;
 
     @Nullable TypeApi keyType = reference.keysType().resolve(this);
-    if (keyType instanceof DatumType) {
-      DatumType keyDatumType = (DatumType) keyType;
+    if (keyType instanceof DatumTypeApi) {
+      DatumTypeApi keyDatumType = (DatumTypeApi) keyType;
       final @NotNull AnonMapRef normalizedRef = TypeReferenceFactory.createAnonMapReference(keyDatumType, valueType);
       return childResolver.resolve(normalizedRef);
     } else return null;

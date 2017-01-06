@@ -109,7 +109,7 @@ public abstract class OperationDeclaration {
               resource,
               this,
               String.format(
-                  "Operation kind '%s' != %s projection kind '%s'",
+                  "Operation type '%s' != %s projection type '%s'",
                   outputType.name(),
                   projectionName,
                   outputProjectionType.name()

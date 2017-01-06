@@ -17,8 +17,8 @@
 package ws.epigraph.server.http.routing;
 
 import org.jetbrains.annotations.NotNull;
-import ws.epigraph.schema.Schema;
-import ws.epigraph.schema.parser.SchemaPsiParser;
+import ws.epigraph.schema.ResourcesSchema;
+import ws.epigraph.schema.parser.ResourcesSchemaPsiParser;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingError;
 import ws.epigraph.refs.TypesResolver;
@@ -40,7 +40,7 @@ public final class RoutingTestUtil {
 
   private RoutingTestUtil() {}
 
-  static @NotNull Schema parseIdl(@NotNull String text, @NotNull TypesResolver resolver) {
+  static @NotNull ResourcesSchema parseIdl(@NotNull String text, @NotNull TypesResolver resolver) {
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
     @NotNull SchemaFile psiFile =
@@ -53,7 +53,7 @@ public final class RoutingTestUtil {
 
     failIfHasErrors(psiFile, errorsAccumulator);
 
-    return runPsiParser(errors -> SchemaPsiParser.parseSchema(psiFile, resolver, errors));
+    return runPsiParser(errors -> ResourcesSchemaPsiParser.parseResourcesSchema(psiFile, resolver, errors));
   }
 
   static void failIfSearchFailure(final OperationSearchResult<? extends Operation<?, ?, ?>> oss) {

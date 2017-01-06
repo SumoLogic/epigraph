@@ -384,7 +384,7 @@ public final class OpOutputProjectionsPsiParser {
         throw new PsiProcessingException("Unsupported type kind: " + type.kind(), psi, errors);
       case PRIMITIVE:
         return parsePrimitiveModelProjection(
-            (PrimitiveType<?>) type,
+            (PrimitiveTypeApi) type,
             params,
             annotations,
             (OpOutputPrimitiveModelProjection) metaProjection,
@@ -699,7 +699,7 @@ public final class OpOutputProjectionsPsiParser {
   }
 
   public static @NotNull OpOutputPrimitiveModelProjection parsePrimitiveModelProjection(
-      @NotNull PrimitiveType<?> type,
+      @NotNull PrimitiveTypeApi type,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
       @Nullable OpOutputPrimitiveModelProjection metaProjection,

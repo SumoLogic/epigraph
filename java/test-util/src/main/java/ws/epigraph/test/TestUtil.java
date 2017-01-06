@@ -26,7 +26,7 @@ import de.uka.ilkd.pp.StringBackend;
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.gdata.GDataPrettyPrinter;
 import ws.epigraph.gdata.GDatum;
-import ws.epigraph.schema.Schema;
+import ws.epigraph.schema.ResourcesSchema;
 import ws.epigraph.schema.SchemaPrettyPrinter;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.op.delete.OpDeleteProjectionsPrettyPrinter;
@@ -394,7 +394,7 @@ public final class TestUtil {
     return sb.getString();
   }
 
-  public static @NotNull String printSchema(Schema schema) {
+  public static @NotNull String printSchema(ResourcesSchema schema) {
     StringBackend sb = new StringBackend(80);
     Layouter<NoExceptions> l = new Layouter<>(sb, 2);
     SchemaPrettyPrinter<NoExceptions> pp = new SchemaPrettyPrinter<>(l);

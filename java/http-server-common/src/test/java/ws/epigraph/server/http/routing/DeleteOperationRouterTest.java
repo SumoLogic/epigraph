@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 import ws.epigraph.gdata.GDataValue;
 import ws.epigraph.gdata.GPrimitiveDatum;
-import ws.epigraph.schema.Schema;
+import ws.epigraph.schema.ResourcesSchema;
 import ws.epigraph.schema.ResourceDeclaration;
 import ws.epigraph.schema.operations.DeleteOperationDeclaration;
 import ws.epigraph.schema.operations.OperationDeclaration;
@@ -104,7 +104,7 @@ public class DeleteOperationRouterTest {
 
   {
     try {
-      Schema schema = parseIdl(idlText, resolver);
+      ResourcesSchema schema = parseIdl(idlText, resolver);
       ResourceDeclaration resourceDeclaration = schema.resources().get("users");
       assertNotNull(resourceDeclaration);
 

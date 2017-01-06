@@ -21,6 +21,7 @@ package ws.epigraph.compiler
 import java.util.concurrent.{ConcurrentHashMap, ConcurrentLinkedQueue}
 
 import ws.epigraph.lang.Qn
+import ws.epigraph.schema.ResourcesSchema
 
 
 class CContext(val tabWidth: Int = 2) {
@@ -44,6 +45,8 @@ class CContext(val tabWidth: Int = 2) {
 
   //val anonMapTypes: ConcurrentHashMap[CAnonMapTypeName, CAnonMapType] = new java.util.concurrent.ConcurrentHashMap
   val anonMapTypes: ConcurrentHashMap[(CTypeRef, CDataType), CAnonMapType] = new java.util.concurrent.ConcurrentHashMap
+
+  val resourcesSchemas: java.util.Set[ResourcesSchema] = java.util.concurrent.ConcurrentHashMap.newKeySet()
 
   /** Types implicitly imported (unless superseeded by explicit import statement) by every schema file */
   val implicitImports: Map[String, Qn] = Seq(

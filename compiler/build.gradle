@@ -6,7 +6,9 @@ apply plugin: 'scala'
 
 dependencies {
   compile project(':epigraph-java-core')
+  compile project(':epigraph-java-schema')
   compile project(':epigraph-java-schema-parser')
+  compile project(':epigraph-java-schema-psi-parser')
   compile project(':epigraph-java-lang-common')
 
   compile 'org.scala-lang:scala-library'

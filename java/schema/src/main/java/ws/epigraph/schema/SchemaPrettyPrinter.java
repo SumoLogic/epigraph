@@ -36,7 +36,7 @@ public class SchemaPrettyPrinter<E extends Exception> {
     operationsPrettyPrinter = new OperationsPrettyPrinter<>(l);
   }
 
-  public void print(@NotNull Schema schema) throws E {
+  public void print(@NotNull ResourcesSchema schema) throws E {
     // should we try to preserve imports?
 
     l.beginCInd(0);

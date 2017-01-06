@@ -17,7 +17,7 @@
 package ws.epigraph.schema.parser;
 
 import com.intellij.psi.util.PsiTreeUtil;
-import ws.epigraph.schema.Schema;
+import ws.epigraph.schema.ResourcesSchema;
 import ws.epigraph.schema.ResourceDeclaration;
 import ws.epigraph.schema.TypeRefs;
 import ws.epigraph.schema.operations.OperationDeclaration;
@@ -40,10 +40,10 @@ import java.util.stream.Collectors;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public final class SchemaPsiParser {
-  private SchemaPsiParser() {}
+public final class ResourcesSchemaPsiParser { // todo this must be ported to scala/ctypes
+  private ResourcesSchemaPsiParser() {}
 
-  public static @NotNull Schema parseSchema(
+  public static @NotNull ResourcesSchema parseResourcesSchema(
       @NotNull SchemaFile psi,
       @NotNull TypesResolver basicResolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
@@ -81,7 +81,7 @@ public final class SchemaPsiParser {
       }
     }
 
-    return new Schema(namespace, resources);
+    return new ResourcesSchema(namespace, resources);
   }
 
   private static @NotNull List<Qn> parseImports(@NotNull SchemaFile idlPsi) {
@@ -124,7 +124,7 @@ public final class SchemaPsiParser {
     @Nullable DataTypeApi resourceType = resolver.resolve(valueTypeRef);
 
     if (resourceType == null) throw new PsiProcessingException(
-        String.format("Can't resolve resource '%s' kind '%s'", fieldName, valueTypeRef),
+        String.format("Can't resolve resource '%s' type '%s'", fieldName, valueTypeRef),
         resourceTypePsi,
         errors
     );

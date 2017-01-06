@@ -48,6 +48,7 @@ class EpigraphCompilerTest extends FlatSpec with Matchers {
     val cc = compiler.compile()
     cc.errors shouldBe empty
     cc.anonListTypes.size() shouldBe 2
+    cc.resourcesSchemas.size() shouldBe 1
 
   }
 
