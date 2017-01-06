@@ -72,6 +72,13 @@ mvn clean install -P maven-plugin-dependent
         <module>compiler</module>
         <module>scala</module>
         <module>java</module>
+
+        <!-- this is a temporary hack to remove circular dependency on plugin. Remove once projections/services are ported to scala/ctypes, see todo.md -->
+        <module>java/gdata-schema-psi-parser/pom-notest.xml</module>
+        <module>java/projections-schema-psi-parser/pom-notest.xml</module>
+        <module>java/schema-psi-parser/pom-notest.xml</module>
+        <!-- - -->
+
         <module>maven-plugin</module>
         <module>maven-plugin-common</module>
       </modules>
@@ -87,7 +94,6 @@ mvn clean install -P maven-plugin-dependent
         <module>examples</module>
         <module>java/codegen-test</module>
         <module>java/schema-psi-parser</module>
-        <module>java/schema-psi-parser-common</module>
         <module>java/gdata-schema-psi-parser</module>
         <module>java/http-server-common</module>
         <module>java/http-server-undertow</module>

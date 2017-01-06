@@ -24,6 +24,7 @@
         <module>projections</module>
         <module>request-url</module>
         <module>schema-parser</module>
+        <module>schema-psi-parser-common</module>
         <module>standalone-psi-util</module>
         <!--<module>server</module>-->
         <!--<module>service</module>-->
