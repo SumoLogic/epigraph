@@ -39,7 +39,7 @@ public final class $IndexClassName {
     Map<@NotNull String, @NotNull Type> types = new LinkedHashMap<>();
 
 ${ctx.generatedTypes.asScala.toSeq./*TODO better*/sortWith((a, b) => a._1.name < b._1.name).map { entry => sn"""\
-    types.put("${entry._1.name}", ${entry._2});
+    types.put("${entry._1.name}", ${entry._2}.Type.instance());
 """
   }.mkString
 }\

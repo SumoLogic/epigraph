@@ -26,10 +26,13 @@ import scala.collection.JavaConversions._
 
 abstract class JavaTypeGen[Type >: Null <: CType](protected val t: Type, ctx: GenContext) extends JavaGen[Type](ctx) {
 
-  ctx.generatedTypes.put(t.name, typeExpression)
+  ctx.generatedTypes.put(t.name, typeClassExpression)
+
+  /** java code for expression yielding generated type class reference */
+  protected def typeClassExpression: String = s"${pn(t)}.${ln(t)}"
 
   /** java code for expression yielding generated type object */
-  protected def typeExpression: String = s"${pn(t)}.${ln(t)}.Type.instance()"
+  protected def typeExpression: String = s"$typeClassExpression.Type.instance()"
 
   // TODO respect annotations changing namespace/type names for java
   protected override def relativeFilePath: Path =
@@ -49,7 +52,7 @@ abstract class JavaTypeGen[Type >: Null <: CType](protected val t: Type, ctx: Ge
   def parents(t: CType, trans: String => String): String =
     t.getLinearizedParentsReversed.map(lqn(_, t, trans)).mkString(", ")
 
-  def up(name: String): String = Character.toUpperCase(name.charAt(0)) + name.substring(1)
+  def up(name: String): String = JavaGenUtils.up(name)
 
 //  def listSupplier: String = ctx.getAnonListOf(t).map { lt => sn"""\
 //

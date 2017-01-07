@@ -16,9 +16,11 @@
 
 package ws.epigraph.java.service
 
-import ws.epigraph.java.JavaGenUtils
+import ws.epigraph.compiler.CTypeApiWrapper
+import ws.epigraph.java.{GenContext, JavaGenUtils}
 import ws.epigraph.refs.TypeReferenceFactory
 import ws.epigraph.types._
+import ws.epigraph.util.JavaNames
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -84,13 +86,39 @@ object ServiceGenUtils {
     if (typeClass == null) tg else s"($typeClass) $tg"
   }
 
-  def genField(t: RecordTypeApi, f : FieldApi, ctx: ServiceGenContext): String = {
+  def genField(t: RecordTypeApi, f: FieldApi, ctx: ServiceGenContext): String = {
     ctx.addImport(classOf[RecordType].getName)
     s"""(${ServiceGenUtils.genType("RecordType", t, ctx)}).fieldsMap().get("${f.name()}")"""
   }
 
-  def genTag(t: TypeApi, tag : TagApi, ctx: ServiceGenContext): String = {
+  def genTag(t: TypeApi, tag: TagApi, ctx: ServiceGenContext): String = {
     ctx.addImport(classOf[TypeApi].getName)
     s"""(${ServiceGenUtils.genType(null, t, ctx)}).tagsMap().get("${tag.name()}")"""
+  }
+
+  def genImports(ctx: ServiceGenContext): String = {
+    ctx.imports.map{ i => s"import $i;" }.mkString("", "\n", "\n")
+  }
+
+  def genTypeClassRef(t: TypeApi, ctx: GenContext): String = {
+    val w: CTypeApiWrapper = t.asInstanceOf[CTypeApiWrapper]
+    ctx.generatedTypes.get(w.cType.name)
+  }
+
+  def genTypeExpr(t: TypeApi, ctx: GenContext): String = {
+    genTypeClassRef(t, ctx) + ".Type.instance()"
+  }
+
+  def genTagExpr(t: TypeApi, tagName: String, ctx: GenContext): String =
+    genTypeClassRef(t, ctx) + "." + JavaNames.jn(tagName)
+
+  def genDataTypeExpr(dt: DataTypeApi, gctx: GenContext): String = dt.`type`() match {
+    case a: DatumTypeApi => genTypeExpr(a, gctx) + ".dataType()"
+    case u: UnionTypeApi =>
+      val tagExpr = Option(dt.defaultTag()).map(_.name()) match {
+        case Some(tagName) => genTagExpr(u, tagName, gctx)
+        case None => "null"
+      }
+      genTypeExpr(dt.`type`(), gctx) + ".dataType(" + tagExpr + ")"
   }
 }

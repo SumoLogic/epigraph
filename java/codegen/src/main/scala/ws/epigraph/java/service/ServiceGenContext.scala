@@ -16,12 +16,14 @@
 
 package ws.epigraph.java.service
 
+import ws.epigraph.java.GenContext
+
 import scala.collection.mutable
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-class ServiceGenContext {
+class ServiceGenContext(val gctx: GenContext) {
   private val _imports = new mutable.HashSet[String]()
 
   def addImport(i: String) {_imports.add(i)}

@@ -20,6 +20,10 @@ package ws.epigraph.java;
 
 import ws.epigraph.compiler.*;
 import scala.collection.JavaConversions;
+import ws.epigraph.java.service.ResourceDeclarationGen;
+import ws.epigraph.lang.Qn;
+import ws.epigraph.schema.ResourceDeclaration;
+import ws.epigraph.schema.ResourcesSchema;
 
 import java.io.File;
 import java.io.IOException;
@@ -107,6 +111,15 @@ public class EpigraphJavaGenerator {
 //    }
 
     new IndexGen(ctx).writeUnder(tmpRoot);
+
+    for (ResourcesSchema rs : cctx.resourcesSchemas()) {
+      Qn namespace = rs.namespace();
+
+      for (final ResourceDeclaration resourceDeclaration : rs.resources().values()) {
+        new ResourceDeclarationGen(resourceDeclaration).writeUnder(tmpRoot, namespace, ctx);
+      }
+
+    }
 
     JavaGenUtils.move(tmpRoot, outputRoot, outputRoot.getParent()); // move new root to final location
 

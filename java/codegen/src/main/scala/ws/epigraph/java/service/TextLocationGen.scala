@@ -25,8 +25,12 @@ class TextLocationGen(loc: TextLocation) extends ServiceObjectGen[TextLocation](
   override protected def generateObject(ctx: ServiceGenContext): String =
     if (loc.equals(TextLocation.UNKNOWN)) "TextLocation.UNKNOWN"
     else
-      s"new TextLocation(${normalize(loc.startOffset())}, ${normalize(loc.startLine())}, ${normalize(loc.endOffset())}, ${normalize(loc.endLine())}, ${loc.fileName()})"
+      s"new TextLocation(${normalize(loc.startOffset())}, ${normalize(loc.startLine())}, ${normalize(loc.endOffset())}, ${normalize(loc.endLine())}, ${normalize(loc.fileName())})"
 
   private def normalize(pos: Int): String =
     if (pos == TextLocation.UNKNOWN_POSITION) "TextLocation.UNKNOWN_POSITION" else pos.toString
+
+  private def normalize(filename: String): String =
+    if (filename == null) null
+    else s""""$filename""""
 }
