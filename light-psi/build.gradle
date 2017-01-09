@@ -63,15 +63,6 @@ task locateIdeaHome {
   }
 }
 
-// todo remove this hack
-// http://stackoverflow.com/questions/41513548/gradle-is-not-publishing-custom-jar-artifact
-task publishToMavenLocal.doLast {
-  copy {
-    from file("$distsDir/$archivesBaseName-${version}.jar")
-    into System.getProperty("user.home") + "/.m2/repository/ws/epigraph/epigraph-light-psi/${version}"
-  }
-}
-
 task locateGrammarKit {
   doLast {
     def ideaVersion = '2016.3' // todo get from some global config
@@ -230,6 +221,17 @@ artifacts {
     builtBy copyPrebuilt
   }
 }
+
+publishing {
+  publications {
+    prebuilt(MavenPublication) {
+      artifact file("$distsDir/$archivesBaseName-${version}.jar")
+    }
+  }
+}
+
+publishToMavenLocal.dependsOn copyPrebuilt
+publish.dependsOn copyPrebuilt
 
 import org.objectweb.asm.*
 import org.objectweb.asm.signature.*
