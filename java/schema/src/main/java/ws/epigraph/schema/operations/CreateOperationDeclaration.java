@@ -29,7 +29,7 @@ import ws.epigraph.types.TypeApi;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class CreateOperationDeclaration extends OperationDeclaration {
-  protected CreateOperationDeclaration(
+  public CreateOperationDeclaration(
       @Nullable String name,
       @NotNull Annotations annotations,
       @Nullable OpFieldPath path,

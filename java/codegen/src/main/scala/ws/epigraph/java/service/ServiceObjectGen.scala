@@ -26,6 +26,7 @@ import ws.epigraph.projections.op.input._
 import ws.epigraph.projections.op.{OpKeyPresence, OpParam, OpParams}
 import ws.epigraph.projections.{Annotation, Annotations}
 import ws.epigraph.refs.{TypeRef, ValueTypeRef}
+import ws.epigraph.schema.operations._
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -47,6 +48,13 @@ object ServiceObjectGen {
   def gen(obj: Any, ctx: ServiceGenContext): String =
     if (obj == null) "null"
     else obj match {
+
+      case s: String => s""""${escapeString(s)}""""
+//      case s: java.lang.String => s""""${escapeString(s)}""""
+      case i: java.lang.Integer => i.toString
+      case l: java.lang.Long => l.toString + "L"
+      case d: java.lang.Double => d.toString + "d"
+      case f: java.lang.Float => f.toString + "f"
 
       case qn: Qn => new QnGen(qn).generate(ctx)
       case tr: TypeRef => new TypeRefGen(tr).generate(ctx)
@@ -71,6 +79,12 @@ object ServiceObjectGen {
       case oilmp: OpInputListModelProjection => new OpInputListModelProjectionGen(oilmp).generate(ctx)
       case oipmp: OpInputPrimitiveModelProjection => new OpInputPrimitiveModelProjectionGen(oipmp).generate(ctx)
 
+      case rod: ReadOperationDeclaration => new ReadOperationDeclarationGen(rod).generate(ctx)
+      case cod: CreateOperationDeclaration => new CreateOperationDeclarationGen(cod).generate(ctx)
+      case uod: UpdateOperationDeclaration => new UpdateOperationDeclarationGen(uod).generate(ctx)
+      case dod: DeleteOperationDeclaration => new DeleteOperationDeclarationGen(dod).generate(ctx)
+      case cod: CustomOperationDeclaration => new CustomOperationDeclarationGen(cod).generate(ctx)
+
       case _ =>
         try {
           new NativePrimitiveGen(obj).generate(ctx)
@@ -79,4 +93,11 @@ object ServiceObjectGen {
             throw new IllegalArgumentException("Unsupported object kind: " + obj.getClass.getName)
         }
     }
+
+  def escapeString(s: String): String = // todo proper string escaping
+    s
+    .replace("\\", "\\\\")
+    .replace("\t", "\\t")
+    .replace("\n", "\\n")
+    .replace("\"", "\\\"")
 }

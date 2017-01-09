@@ -31,7 +31,7 @@ import java.util.List;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ReadOperationDeclaration extends OperationDeclaration {
-  protected ReadOperationDeclaration(
+  public ReadOperationDeclaration(
       @Nullable String name,
       @NotNull Annotations annotations,
       @Nullable OpFieldPath path,

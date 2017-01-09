@@ -35,7 +35,7 @@ import java.util.Objects;
 public class DeleteOperationDeclaration extends OperationDeclaration {
   private final @NotNull OpDeleteFieldProjection deleteProjection;
 
-  protected DeleteOperationDeclaration(
+  public DeleteOperationDeclaration(
       @Nullable String name,
       @NotNull Annotations annotations,
       @Nullable OpFieldPath path,

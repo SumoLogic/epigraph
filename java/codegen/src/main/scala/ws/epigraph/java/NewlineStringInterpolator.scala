@@ -22,9 +22,25 @@ import scala.annotation.tailrec
 
 object NewlineStringInterpolator {
 
-  final class TextToIndent(val s: String)
+  sealed trait TextInterpolator {
+    def interpolate(text: String): String = text
+  }
 
-  def i(s: String) = new TextToIndent(s)
+  final class PrefixTextIndent(val arg: String) extends TextInterpolator {
+    private def getIndent(prefix: String) = prefix.lines.toStream.last
+
+    override def interpolate(text: String): String = JavaGenUtils.indentButFirstLine(arg, getIndent(text))
+  }
+
+  final class FixedTextIndent(val indentSpaces: Int, val arg: String) extends TextInterpolator {
+    private def getIndent(prefix: String) = " " * indentSpaces
+
+    override def interpolate(text: String): String = JavaGenUtils.indentButFirstLine(arg, getIndent(text))
+  }
+
+  def i(s: String) = new PrefixTextIndent(s)
+
+  def sp(spaces: Int, s: String) = new FixedTextIndent(spaces, s)
 
   implicit class NewlineHelper(private val sc: StringContext) extends AnyVal {
 
@@ -33,14 +49,9 @@ object NewlineStringInterpolator {
   }
 
   private def indentTexts(sc: StringContext, args: Seq[Any]): Seq[Any] =
-    if (args.exists{ _.isInstanceOf[TextToIndent] }) {
-
-      def getIndent(s: String) = s.lines.toStream.last // this is crude, improve as needed
-
-      def indentText(t: TextToIndent, i: String) = JavaGenUtils.indentButFirstLine(t.s, i)
-
+    if (args.exists{_.isInstanceOf[TextInterpolator]}) {
       sc.parts.zip(args).map{
-        case (s: String, t: TextToIndent) => indentText(t, getIndent(s))
+        case (s: String, t: TextInterpolator) => t.interpolate(s)
         case (_, x) => x
       }
     } else args

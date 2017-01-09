@@ -100,6 +100,10 @@ object ServiceGenUtils {
     ctx.imports.map{ i => s"import $i;" }.mkString("", "\n", "\n")
   }
 
+  def genFields(ctx: ServiceGenContext): String = ctx.fields.sorted.mkString("", "\n", "\n")
+
+  def genMethods(ctx: ServiceGenContext): String = ctx.methods.mkString("", "\n\n", "\n") // sorted?
+
   def genTypeClassRef(t: TypeApi, ctx: GenContext): String = {
     val w: CTypeApiWrapper = t.asInstanceOf[CTypeApiWrapper]
     ctx.generatedTypes.get(w.cType.name)

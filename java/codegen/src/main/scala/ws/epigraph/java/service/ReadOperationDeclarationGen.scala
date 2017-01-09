@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,25 +14,23 @@
  * limitations under the License.
  */
 
-package ws.epigraph.java.service.projections
+package ws.epigraph.java.service
 
+import ws.epigraph.schema.operations.ReadOperationDeclaration
 import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i}
 import ws.epigraph.java.service.ServiceObjectGen.gen
-import ws.epigraph.java.service.{ServiceGenContext, ServiceGenUtils, ServiceObjectGen}
-import ws.epigraph.projections.Annotations
-
-import scala.collection.JavaConversions._
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-class AnnotationsGen(anns: Annotations) extends ServiceObjectGen[Annotations](anns) {
-
+class ReadOperationDeclarationGen(od: ReadOperationDeclaration) extends ServiceObjectGen[ReadOperationDeclaration](od) {
   override protected def generateObject(ctx: ServiceGenContext): String =
-    if (anns.equals(Annotations.EMPTY)) "Annotations.EMPTY"
-    else /*@formatter:off*/sn"""\
-new Annotations(
-  ${i(ServiceGenUtils.genHashMap("String", "Annotation", anns.asMap().entrySet().map{e => (gen(e.getKey, ctx), gen(e.getValue, ctx))}, ctx))},
+  /*@formatter:off*/sn"""\
+new ReadOperationDeclaration(
+  ${gen(od.name(), ctx)},
+  ${i(gen(od.annotations(), ctx))},
+  null, /* todo OpFieldPath */
+  null, /* todo OpOutputFieldProjection */
+  ${gen(od.location(), ctx)}
 )"""/*@formatter:on*/
-
 }

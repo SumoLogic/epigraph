@@ -29,7 +29,7 @@ import ws.epigraph.projections.op.path.OpFieldPath;
  */
 public class CustomOperationDeclaration extends OperationDeclaration {
 
-  protected CustomOperationDeclaration(
+  public CustomOperationDeclaration(
       @NotNull HttpMethod method,
       @Nullable String name,
       @NotNull Annotations annotations,

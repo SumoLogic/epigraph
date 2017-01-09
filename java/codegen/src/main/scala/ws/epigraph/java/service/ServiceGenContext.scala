@@ -21,12 +21,25 @@ import ws.epigraph.java.GenContext
 import scala.collection.mutable
 
 /**
+ * Service class generation context. Contains elements to be added to the class: imports,
+ * fields, methods.
+ *
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class ServiceGenContext(val gctx: GenContext) {
   private val _imports = new mutable.HashSet[String]()
+  private val _fields = new mutable.MutableList[String]()
+  private val _methods = new mutable.MutableList[String]()
 
   def addImport(i: String) {_imports.add(i)}
 
   def imports: List[String] = _imports.toList.sorted
+
+  def addField(f: String) {_fields += f}
+
+  def fields: mutable.MutableList[String] = _fields
+
+  def addMethod(m: String) {_methods += m}
+
+  def methods: mutable.MutableList[String] = _methods
 }
