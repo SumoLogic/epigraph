@@ -22,10 +22,12 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 public interface Util {
 
@@ -92,6 +94,26 @@ public interface Util {
 
     int size = keys.length;
     final LinkedHashMap<K, V> res = createLinkedHashMap(size);
+
+    for (int i = 0; i < size; i++) {
+      res.put(keys[i], values[i]);
+    }
+
+    return res;
+  }
+
+  static <K, V> HashMap<K, V> createSingletonHashMap(K key, V value) {
+    final HashMap<K, V> res = createHashMap(1);
+    res.put(key, value);
+    return res;
+  }
+
+  static <K, V> HashMap<K, V> createHashMap(K[] keys, V[] values) {
+    if (keys.length != values.length)
+      throw new IllegalArgumentException("Keys size " + keys.length + " != values size " + values.length);
+
+    int size = keys.length;
+    final HashMap<K, V> res = createHashMap(size);
 
     for (int i = 0; i < size; i++) {
       res.put(keys[i], values[i]);

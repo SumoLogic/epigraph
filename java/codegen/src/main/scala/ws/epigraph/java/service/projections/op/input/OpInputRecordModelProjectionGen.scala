@@ -40,7 +40,7 @@ class OpInputRecordModelProjectionGen(p: OpInputRecordModelProjection)
 new OpInputRecordModelProjection(
   ${genTypeExpr(p.model().asInstanceOf[TypeApi], ctx.gctx)},
   ${p.required().toString},
-  null,  // todo default values generation is not implemented yet
+  ${i(gen(p.defaultValue(), ctx))},
   ${i(gen(p.params(), ctx))},
   ${i(gen(p.annotations(), ctx))},
   ${i(gen(p.metaProjection(), ctx))},

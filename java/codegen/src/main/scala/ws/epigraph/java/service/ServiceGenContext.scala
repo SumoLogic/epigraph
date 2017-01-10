@@ -37,7 +37,7 @@ class ServiceGenContext(val gctx: GenContext) {
 
   // settings: take them from command line?
 
-  val isDebug = false
+  val generateTextLocations = false
 
   val generateSeparateMethodsForVarProjections = false
 

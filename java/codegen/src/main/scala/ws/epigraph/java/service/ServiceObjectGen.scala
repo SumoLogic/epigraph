@@ -16,7 +16,7 @@
 
 package ws.epigraph.java.service
 
-import ws.epigraph.gdata.{GData, GDatum}
+import ws.epigraph.gdata.{GData, GDataValue, GDatum}
 import ws.epigraph.java.service.gdata.{GDataGen, GDatumGen}
 import ws.epigraph.java.service.projections.op.input._
 import ws.epigraph.java.service.projections.op.{OpKeyPresenceGen, OpParamGen, OpParamsGen}

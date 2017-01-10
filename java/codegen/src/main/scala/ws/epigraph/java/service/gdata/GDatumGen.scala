@@ -37,25 +37,29 @@ class GDatumGen(datum: GDatum) extends ServiceObjectGen[GDatum](datum) {
     case _ => throw new IllegalArgumentException("Unknown data type: " + datum.getClass.getName)
   }
 
-  private def generateRecord(rd: GRecordDatum, ctx: ServiceGenContext): String =
-  /*@formatter:off*/sn"""\
-new GenMapDatum(
+  private def generateRecord(rd: GRecordDatum, ctx: ServiceGenContext): String = {
+    ctx.addImport(classOf[GDataValue].getCanonicalName)
+    /*@formatter:off*/sn"""\
+new GRecordDatum(
   ${gen(rd.typeRef(), ctx)},
   ${i(ServiceGenUtils.genLinkedMap("String", "GDataValue", rd.fields().entrySet().map{e => (gen(e.getKey, ctx), gen(e.getValue, ctx))}, ctx))},
   ${gen(rd.location(), ctx)}
 )"""/*@formatter:on*/
+  }
 
-  private def generateMap(md: GMapDatum, ctx: ServiceGenContext): String =
-  /*@formatter:off*/sn"""\
-new GenMapDatum(
+  private def generateMap(md: GMapDatum, ctx: ServiceGenContext): String = {
+    ctx.addImport(classOf[GDataValue].getCanonicalName)
+    /*@formatter:off*/sn"""\
+new GMapDatum(
   ${gen(md.typeRef(), ctx)},
   ${i(ServiceGenUtils.genLinkedMap("GDatum", "GDataValue", md.entries().entrySet().map{e => (gen(e.getKey, ctx), gen(e.getValue, ctx))}, ctx))},
   ${gen(md.location(), ctx)}
 )"""/*@formatter:on*/
+  }
 
   private def generateList(ld: GListDatum, ctx: ServiceGenContext): String =
-    /*@formatter:off*/sn"""\
-new GenListDatum(
+  /*@formatter:off*/sn"""\
+new GListDatum(
   ${gen(ld.typeRef(), ctx)},
   ${i(ServiceGenUtils.genList(ld.values().map(gen(_, ctx)), ctx))},
   ${gen(ld.location(), ctx)}

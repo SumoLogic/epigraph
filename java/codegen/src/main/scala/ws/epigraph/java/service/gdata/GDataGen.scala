@@ -29,7 +29,7 @@ import scala.collection.JavaConversions._
 class GDataGen(data: GData) extends ServiceObjectGen[GData](data) {
   override protected def generateObject(ctx: ServiceGenContext): String =
   /*@formatter:off*/sn"""\
-new GenMapDatum(
+new GData(
   ${gen(data.typeRef(), ctx)},
   ${i(ServiceGenUtils.genLinkedMap("String", "GDatum", data.tags().entrySet().map{e => (gen(e.getKey, ctx), gen(e.getValue, ctx))}, ctx))},
   ${gen(data.location(), ctx)}

@@ -16,8 +16,6 @@
 
 package ws.epigraph.java.service
 
-import java.util
-
 import ws.epigraph.compiler.{CDatumType, CTypeApiWrapper}
 import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i}
 import ws.epigraph.java.{GenContext, JavaGenUtils}
@@ -28,7 +26,8 @@ import ws.epigraph.util.JavaNames
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 object ServiceGenUtils {
-  val INDENT = 2 // default indent
+  val INDENT = 2
+  // default indent
   val INDENT_SPACES: String = JavaGenUtils.spaces(INDENT)
 
   def genList(items: Seq[String], ctx: ServiceGenContext): String = {
@@ -45,46 +44,11 @@ object ServiceGenUtils {
     }
   }
 
-//  def genLinkedMap(
-//    keyType: String,
-//    valueType: String,
-//    entries: Iterable[(String, String)],
-//    ctx: ServiceGenContext): String = genMap("LinkedHashMap", keyType, valueType, entries, ctx)
-
   def genLinkedMap(
     keyType: String,
     valueType: String,
     entries: Iterable[(String, String)],
-    ctx: ServiceGenContext): String = {
-
-    ctx.addImport(classOf[util.LinkedHashMap[_, _]].getName)
-
-    if (entries.isEmpty) s"new LinkedHashMap<$keyType, $valueType>(0)"
-    else if (entries.size == 1) {
-      ctx.addImport("ws.epigraph.util.Util")
-      val (key, value) = entries.head
-      /*@formatter:off*/sn"""\
-Util.createSingletonLinkedHashMap(
-  $key,
-  ${i(value)}
-)"""/*@formatter:on*/
-    } else {
-      ctx.addImport("ws.epigraph.util.Util")
-
-      val entriesSeq = entries.toSeq // to allow iterating twice
-
-      val keys = entriesSeq.map(_._1).mkString(s"new $keyType[]{", ", ", "}")
-      val values = entriesSeq
-                   .map(e => JavaGenUtils.indent(e._2, INDENT))
-                   .mkString(s"new $valueType[]{\n", ",\n", "\n}")
-
-      /*@formatter:off*/sn"""\
-Util.createLinkedHashMap(
-  $keys,
-  ${i(values)}
-)"""/*@formatter:on*/
-    }
-  }
+    ctx: ServiceGenContext): String = genMap("LinkedHashMap", keyType, valueType, entries, ctx)
 
   def genHashMap(
     keyType: String,
@@ -99,23 +63,60 @@ Util.createLinkedHashMap(
     entries: Iterable[(String, String)],
     ctx: ServiceGenContext): String = {
 
-    ctx.addImport(s"java.util.$mapClass")
+    ctx.addImport("java.util." + mapClass)
 
-    if (entries.isEmpty) s"new $mapClass<$keyType, $valueType>()"
-    else {
-      ctx.addImport("java.util.AbstractMap")
-      ctx.addImport("java.util.Map")
-      ctx.addImport("java.util.stream.Collectors")
-      ctx.addImport("java.util.stream.Stream")
+    if (entries.isEmpty) s"new $mapClass<$keyType, $valueType>(0)"
+    else if (entries.size == 1) {
+      ctx.addImport("ws.epigraph.util.Util")
+      val (key, value) = entries.head
+      /*@formatter:off*/sn"""\
+Util.createSingleton$mapClass(
+  $key,
+  ${i(value)}
+)"""/*@formatter:on*/
+    } else {
+      ctx.addImport("ws.epigraph.util.Util")
 
-      val generatedEntries = entries.map{ case (k, v) => s"${INDENT_SPACES}new AbstractMap.SimpleEntry<>($k, $v)" }
-      generatedEntries.mkString(
-        s"Stream.<AbstractMap.Entry<$keyType, $valueType>>of(\n",
-        ",\n",
-        s"\n).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (x, y) -> y, $mapClass::new))"
-      )
+      val entriesSeq = entries.toSeq // to allow iterating twice
+
+      val keys = entriesSeq.map(_._1).mkString(s"new $keyType[]{", ", ", "}")
+      val values = entriesSeq
+                   .map(e => JavaGenUtils.indent(e._2, INDENT))
+                   .mkString(s"new $valueType[]{\n", ",\n", "\n}")
+
+      /*@formatter:off*/sn"""\
+Util.create$mapClass(
+  $keys,
+  ${i(values)}
+)"""/*@formatter:on*/
     }
+
   }
+
+//  def genMap(
+//    mapClass: String,
+//    keyType: String,
+//    valueType: String,
+//    entries: Iterable[(String, String)],
+//    ctx: ServiceGenContext): String = {
+//
+//    ctx.addImport(s"java.util.$mapClass")
+//
+//    if (entries.isEmpty) s"new $mapClass<$keyType, $valueType>()"
+//    else {
+//      ctx.addImport("java.util.AbstractMap")
+//      ctx.addImport("java.util.Map")
+//      ctx.addImport("java.util.stream.Collectors")
+//      ctx.addImport("java.util.stream.Stream")
+//
+//      val generatedEntries = entries.map{ case (k, v) => s"${INDENT_SPACES}new AbstractMap.SimpleEntry<>($k, $v)" }
+//      generatedEntries.mkString(
+//        s"Stream.<AbstractMap.Entry<$keyType, $valueType>>of(\n",
+//        ",\n",
+//        s"\n).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (x, y) -> y, $mapClass::new))"
+//      )
+//    }
+//  }
 
   def genImports(ctx: ServiceGenContext): String = {
     ctx.imports.map{ i => s"import $i;" }.mkString("", "\n", "\n")

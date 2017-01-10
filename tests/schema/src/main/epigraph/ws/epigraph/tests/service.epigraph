@@ -53,7 +53,7 @@ resource users: map[PersonId,Person] {
           profile
         )
       )
-      worstEnemy( id, firstName, lastName )
+      worstEnemy { default: { firstName: "Harry", lastName: "Potter" } } ( id, firstName, lastName )
       friends *(
         :(
           id,
