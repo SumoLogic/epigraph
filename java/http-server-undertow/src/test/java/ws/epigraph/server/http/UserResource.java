@@ -18,8 +18,8 @@
 
 package ws.epigraph.server.http;
 
+import org.jetbrains.annotations.NotNull;
 import ws.epigraph.errors.ErrorValue;
-import ws.epigraph.schema.ResourceDeclaration;
 import ws.epigraph.schema.operations.ReadOperationDeclaration;
 import ws.epigraph.service.Resource;
 import ws.epigraph.service.ServiceInitializationException;
@@ -27,18 +27,17 @@ import ws.epigraph.service.operations.ReadOperation;
 import ws.epigraph.service.operations.ReadOperationRequest;
 import ws.epigraph.service.operations.ReadOperationResponse;
 import ws.epigraph.tests.*;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.concurrent.CompletableFuture;
 
 public class UserResource extends Resource {
 
-  public UserResource(@NotNull ResourceDeclaration resourceDeclaration) throws ServiceInitializationException {
+  public UserResource(@NotNull UserResourceDeclaration resourceDeclaration) throws ServiceInitializationException {
     super(
         resourceDeclaration,
         Collections.singletonList(
-            new ReadOp(((ReadOperationDeclaration) resourceDeclaration.operations().get(0)))
+            new ReadOp(UserResourceDeclaration.readOperationDeclaration)
         ),
         Collections.emptyList(),
         Collections.emptyList(),

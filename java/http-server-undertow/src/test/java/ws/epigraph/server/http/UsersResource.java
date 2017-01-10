@@ -24,8 +24,6 @@ import epigraph.String;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.errors.ErrorValue;
-import ws.epigraph.schema.ResourceDeclaration;
-import ws.epigraph.schema.operations.*;
 import ws.epigraph.projections.req.delete.ReqDeleteFieldProjection;
 import ws.epigraph.projections.req.delete.ReqDeleteKeyProjection;
 import ws.epigraph.projections.req.delete.ReqDeleteMapModelProjection;
@@ -33,6 +31,7 @@ import ws.epigraph.projections.req.delete.ReqDeleteTagProjectionEntry;
 import ws.epigraph.projections.req.input.ReqInputFieldProjection;
 import ws.epigraph.projections.req.input.ReqInputRecordModelProjection;
 import ws.epigraph.projections.req.path.ReqMapModelPath;
+import ws.epigraph.schema.operations.*;
 import ws.epigraph.service.Resource;
 import ws.epigraph.service.ServiceInitializationException;
 import ws.epigraph.service.operations.*;
@@ -45,25 +44,25 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 public class UsersResource extends Resource {
-  public UsersResource(@NotNull ResourceDeclaration resourceDeclaration, @NotNull UsersStorage storage)
+  public UsersResource(@NotNull UsersResourceDeclaration resourceDeclaration, @NotNull UsersStorage storage)
       throws ServiceInitializationException {
 
     super(
         resourceDeclaration,
         Collections.singletonList(
-            new ReadOp(((ReadOperationDeclaration) resourceDeclaration.operations().get(0)), storage)
+            new ReadOp(UsersResourceDeclaration.readOperationDeclaration, storage)
         ),
         Collections.singletonList(
-            new CreateOp(((CreateOperationDeclaration) resourceDeclaration.operations().get(1)), storage)
+            new CreateOp(UsersResourceDeclaration.createOperationDeclaration, storage)
         ),
         Collections.singletonList(
-            new UpdateOp(((UpdateOperationDeclaration) resourceDeclaration.operations().get(2)), storage)
+            new UpdateOp(UsersResourceDeclaration.updateOperationDeclaration, storage)
         ),
         Collections.singletonList(
-            new DeleteOp(((DeleteOperationDeclaration) resourceDeclaration.operations().get(3)), storage)
+            new DeleteOp(UsersResourceDeclaration.deleteOperationDeclaration, storage)
         ),
         Collections.singletonList(
-            new CapitalizeOp(((CustomOperationDeclaration) resourceDeclaration.operations().get(4)), storage)
+            new CapitalizeOp(UsersResourceDeclaration.capitalizeCustomOperationDeclaration, storage)
         )
     );
 

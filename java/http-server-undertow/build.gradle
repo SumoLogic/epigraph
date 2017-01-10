@@ -3,7 +3,6 @@ apply plugin: 'java'
 dependencies {
   compile project(':epigraph-java-core')
   compile project(':epigraph-java-schema')
-  compile project(':epigraph-java-schema-psi-parser')
   compile project(':epigraph-java-http-server-common')
   compile project(':epigraph-java-projections')
   compile project(':epigraph-java-request-url')

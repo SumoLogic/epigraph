@@ -76,7 +76,7 @@ super(
 package $namespace;
 
 ${ServiceGenUtils.genImports(sgctx)}
-final class $serviceClassName extends ResourceDeclaration {
+public final class $serviceClassName extends ResourceDeclaration {
   public static final $serviceClassName INSTANCE = new $serviceClassName();
 
   ${i(ServiceGenUtils.genFields(sgctx))}

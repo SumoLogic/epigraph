@@ -16,8 +16,6 @@
 
 package ws.epigraph.server.http;
 
-import com.intellij.psi.PsiErrorElement;
-import com.intellij.psi.impl.DebugUtil;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
@@ -30,23 +28,15 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import ws.epigraph.refs.IndexBasedTypesResolver;
-import ws.epigraph.schema.ResourcesSchema;
-import ws.epigraph.schema.parser.ResourcesSchemaPsiParser;
-import ws.epigraph.psi.EpigraphPsiUtil;
-import ws.epigraph.psi.PsiProcessingError;
-import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypesResolver;
-import ws.epigraph.schema.parser.SchemaParserDefinition;
-import ws.epigraph.schema.parser.psi.SchemaFile;
 import ws.epigraph.server.http.undertow.UndertowHandler;
 import ws.epigraph.service.Service;
 import ws.epigraph.service.ServiceInitializationException;
-import ws.epigraph.tests.*;
+import ws.epigraph.tests.Person;
+import ws.epigraph.tests.UserResourceDeclaration;
+import ws.epigraph.tests.UsersResourceDeclaration;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -65,24 +55,14 @@ public class HttpServerTest {
 
   private static final TypesResolver resolver = IndexBasedTypesResolver.INSTANCE;
 
-  private static final ResourcesSchema schema;
-
   private static Undertow server;
-
-  static {
-    try {
-      schema = parseIdlResource("/ws/epigraph/tests/service/testService.epigraph");
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
-  }
 
   private static @NotNull Service buildUsersService() throws ServiceInitializationException {
     return new Service(
         "users",
         Arrays.asList(
-            new UserResource(schema.resources().get("user")),
-            new UsersResource(schema.resources().get("users"), new UsersStorage())
+            new UserResource(UserResourceDeclaration.INSTANCE),
+            new UsersResource(UsersResourceDeclaration.INSTANCE, new UsersStorage())
         )
     );
   }
@@ -218,48 +198,6 @@ public class HttpServerTest {
     final String actualBody = response.getBody().trim();
     assertEquals(actualBody, expectedStatus, response.getStatus());
     assertEquals(expectedBody/*.replace("'", "\"")*/, actualBody);
-  }
-
-//  private static @NotNull Idl parseIdlText(@NotNull String text) throws IOException {
-//    EpigraphPsiUtil.ErrorsAccumulator errAcc = new EpigraphPsiUtil.ErrorsAccumulator();
-//    IdlFile psiFile = (IdlFile) EpigraphPsiUtil.parseFile("dummy.idl", text, IdlParserDefinition.INSTANCE, errAcc);
-//    return parseIdl(psiFile, errAcc);
-//  }
-
-  private static @NotNull ResourcesSchema parseIdlResource(@NotNull String resourcePath) throws IOException {
-    EpigraphPsiUtil.ErrorsAccumulator errAcc = new EpigraphPsiUtil.ErrorsAccumulator();
-    SchemaFile psiFile =
-        (SchemaFile) EpigraphPsiUtil.parseResource(resourcePath, SchemaParserDefinition.INSTANCE, errAcc);
-    return parseSchema(psiFile, errAcc);
-  }
-
-  private static @NotNull ResourcesSchema parseSchema(@NotNull SchemaFile psiFile, EpigraphPsiUtil.ErrorsAccumulator errAcc) {
-
-    if (errAcc.hasErrors()) {
-      for (PsiErrorElement element : errAcc.errors()) {
-        System.err.println(element.getErrorDescription() + " at " + EpigraphPsiUtil.getLocation(element));
-      }
-      throw new RuntimeException(DebugUtil.psiTreeToString(psiFile, true));
-    }
-
-    ResourcesSchema schema = null;
-    List<PsiProcessingError> errors = new ArrayList<>();
-    try {
-      schema = ResourcesSchemaPsiParser.parseResourcesSchema(psiFile, resolver, errors);
-    } catch (PsiProcessingException e) {
-      errors = e.errors();
-    }
-
-    if (!errors.isEmpty()) {
-      for (final PsiProcessingError error : errors) {
-        System.err.println(error.message() + " at " + error.location());
-      }
-
-      throw new RuntimeException("Schema errors detected");
-    }
-
-    assert schema != null;
-    return schema;
   }
 
 }
