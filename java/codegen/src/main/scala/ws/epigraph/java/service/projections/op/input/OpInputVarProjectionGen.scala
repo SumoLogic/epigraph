@@ -16,13 +16,12 @@
 
 package ws.epigraph.java.service.projections.op.input
 
-import ws.epigraph.compiler.CDatumType
 import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i}
-import ws.epigraph.java.service.ServiceGenUtils.{genLinkedMap, genList, genTagExpr, genTypeExpr}
+import ws.epigraph.java.service.ServiceGenUtils._
 import ws.epigraph.java.service.ServiceObjectGen.gen
 import ws.epigraph.java.service.{ServiceGenContext, ServiceObjectGen}
 import ws.epigraph.projections.op.input.{OpInputTagProjectionEntry, OpInputVarProjection}
-import ws.epigraph.types.{DatumTypeApi, TypeApi}
+import ws.epigraph.types.TypeApi
 
 import scala.collection.JavaConversions._
 
@@ -68,13 +67,6 @@ new OpInputVarProjection(
     }
 
   }
-
-  private def normalizeTagName(tagName: String, ctx: ServiceGenContext): String =
-    if (tagName == CDatumType.ImpliedDefaultTagName) {
-      ctx.addImport(classOf[DatumTypeApi].getName)
-      "DatumTypeApi.MONO_TAG_NAME"
-    } else "\"" + tagName + "\""
-
 
   private def genTagProjectionEntry(
     t: TypeApi,

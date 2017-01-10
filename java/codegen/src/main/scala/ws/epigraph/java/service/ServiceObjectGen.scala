@@ -16,13 +16,15 @@
 
 package ws.epigraph.java.service
 
-import ws.epigraph.gdata.{GData, GDataValue, GDatum}
+import ws.epigraph.gdata.{GData, GDatum}
 import ws.epigraph.java.service.gdata.{GDataGen, GDatumGen}
 import ws.epigraph.java.service.projections.op.input._
+import ws.epigraph.java.service.projections.op.path._
 import ws.epigraph.java.service.projections.op.{OpKeyPresenceGen, OpParamGen, OpParamsGen}
 import ws.epigraph.java.service.projections.{AnnotationGen, AnnotationsGen}
 import ws.epigraph.lang.{Qn, TextLocation}
 import ws.epigraph.projections.op.input._
+import ws.epigraph.projections.op.path._
 import ws.epigraph.projections.op.{OpKeyPresence, OpParam, OpParams}
 import ws.epigraph.projections.{Annotation, Annotations}
 import ws.epigraph.refs.{TypeRef, ValueTypeRef}
@@ -50,7 +52,6 @@ object ServiceObjectGen {
     else obj match {
 
       case s: String => s""""${escapeString(s)}""""
-//      case s: java.lang.String => s""""${escapeString(s)}""""
       case i: java.lang.Integer => i.toString
       case l: java.lang.Long => l.toString + "L"
       case d: java.lang.Double => d.toString + "d"
@@ -71,6 +72,13 @@ object ServiceObjectGen {
       case params: OpParams => new OpParamsGen(params).generate(ctx)
       case kp: OpKeyPresence => new OpKeyPresenceGen(kp).generate(ctx)
 
+      case ovp: OpVarPath => new OpVarPathGen(ovp).generate(ctx)
+      case ormp: OpRecordModelPath => new OpRecordModelPathGen(ormp).generate(ctx)
+      case ofp: OpFieldPath => new OpFieldPathGen(ofp).generate(ctx)
+      case ommp: OpMapModelPath => new OpMapModelPathGen(ommp).generate(ctx)
+      case opkp: OpPathKeyProjection => new OpPathKeyProjectionGen(opkp).generate(ctx)
+      case opmp: OpPrimitiveModelPath => new OpPrimitiveModelPathGen(opmp).generate(ctx)
+
       case oivp: OpInputVarProjection => new OpInputVarProjectionGen(oivp).generate(ctx)
       case oirmp: OpInputRecordModelProjection => new OpInputRecordModelProjectionGen(oirmp).generate(ctx)
       case oifp: OpInputFieldProjection => new OpInputFieldProjectionGen(oifp).generate(ctx)
@@ -89,7 +97,7 @@ object ServiceObjectGen {
         try {
           new NativePrimitiveGen(obj).generate(ctx)
         } catch {
-          case iae: IllegalArgumentException =>
+          case _: IllegalArgumentException =>
             throw new IllegalArgumentException("Unsupported object kind: " + obj.getClass.getName)
         }
     }

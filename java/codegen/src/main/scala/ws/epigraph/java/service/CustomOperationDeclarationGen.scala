@@ -32,7 +32,7 @@ new CustomOperationDeclaration(
   ${generateHttpMethod(od.method(), ctx)},
   ${gen(od.name(), ctx)},
   ${i(gen(od.annotations(), ctx))},
-  null, /* todo OpFieldPath */
+  ${i(gen(od.path(), ctx))},
   ${i(gen(od.inputProjection(), ctx))},
   null, /* todo OpOutputFieldProjection */
   ${gen(od.location(), ctx)}

@@ -14,26 +14,22 @@
  * limitations under the License.
  */
 
-package ws.epigraph.java.service
+package ws.epigraph.java.service.projections.op.path
 
 import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i}
 import ws.epigraph.java.service.ServiceObjectGen.gen
-import ws.epigraph.schema.operations.{CreateOperationDeclaration, ReadOperationDeclaration}
+import ws.epigraph.java.service.{ServiceGenContext, ServiceObjectGen}
+import ws.epigraph.projections.op.path.OpPathKeyProjection
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-class CreateOperationDeclarationGen(od: CreateOperationDeclaration)
-  extends ServiceObjectGen[CreateOperationDeclaration](od) {
-
+class OpPathKeyProjectionGen(kp: OpPathKeyProjection) extends ServiceObjectGen[OpPathKeyProjection](kp) {
   override protected def generateObject(ctx: ServiceGenContext): String =
   /*@formatter:off*/sn"""\
-new CreateOperationDeclaration(
-  ${gen(od.name(), ctx)},
-  ${i(gen(od.annotations(), ctx))},
-  ${i(gen(od.path(), ctx))},
-  ${i(gen(od.inputProjection(), ctx))},
-  null, /* todo OpOutputFieldProjection */
-  ${gen(od.location(), ctx)}
+new OpPathKeyProjection(
+  ${i(gen(kp.params(), ctx))},
+  ${i(gen(kp.annotations(), ctx))},
+  ${gen(kp.location(), ctx)}
 )"""/*@formatter:on*/
 }

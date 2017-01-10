@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,34 +14,48 @@
  * limitations under the License.
  */
 
-package ws.epigraph.java.service.projections.op.input
+package ws.epigraph.java.service.projections.op.path
 
 import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i}
-import ws.epigraph.java.service.ServiceGenUtils.genTypeExpr
+import ws.epigraph.java.service.ServiceGenUtils.{genTagExpr, genTypeExpr}
 import ws.epigraph.java.service.ServiceObjectGen.gen
 import ws.epigraph.java.service.{ServiceGenContext, ServiceObjectGen}
-import ws.epigraph.projections.op.input.OpInputListModelProjection
-import ws.epigraph.types.{ListType, TypeApi}
+import ws.epigraph.projections.op.path.{OpTagPath, OpVarPath}
+import ws.epigraph.types.TypeApi
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-class OpInputListModelProjectionGen(p: OpInputListModelProjection)
-  extends ServiceObjectGen[OpInputListModelProjection](p) {
+class OpVarPathGen(p: OpVarPath) extends ServiceObjectGen[OpVarPath](p) {
 
   override protected def generateObject(ctx: ServiceGenContext): String = {
-    ctx.addImport(classOf[ListType].getName)
 
     /*@formatter:off*/sn"""\
-new OpInputListModelProjection(
-  ${genTypeExpr(p.model().asInstanceOf[TypeApi], ctx.gctx)},
-  ${p.required().toString},
-  ${i(gen(p.defaultValue(), ctx))},
-  ${i(gen(p.params(), ctx))},
-  ${i(gen(p.annotations(), ctx))},
-  ${i(gen(p.metaProjection(), ctx))},
-  ${i(gen(p.itemsProjection(), ctx))},
+new OpVarPath(
+  ${genTypeExpr(p.`type`(), ctx.gctx)},
+  ${i(genTagPath(p.`type`(), p.pathTagProjection(), ctx))},
   ${gen(p.location(), ctx)}
 )"""/*@formatter:on*/
+
+  }
+
+
+  private def genTagPath(
+    t: TypeApi,
+    tp: OpTagPath,
+    ctx: ServiceGenContext): String = {
+
+    if (tp == null) "null"
+    else {
+      ctx.addImport(classOf[OpTagPath].getName)
+
+      /*@formatter:off*/sn"""\
+new OpTagPath(
+  ${genTagExpr(t, tp.tag().name(), ctx.gctx)},
+  ${i(gen(tp.projection(), ctx))},
+  ${gen(tp.location(), ctx)}
+)"""/*@formatter:on*/
+
+    }
   }
 }

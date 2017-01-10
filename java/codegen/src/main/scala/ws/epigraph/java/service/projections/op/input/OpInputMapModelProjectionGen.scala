@@ -29,8 +29,6 @@ import ws.epigraph.types.{MapType, TypeApi}
 class OpInputMapModelProjectionGen(p: OpInputMapModelProjection)
   extends ServiceObjectGen[OpInputMapModelProjection](p) {
 
-  // todo generate default value
-
   override protected def generateObject(ctx: ServiceGenContext): String = {
     ctx.addImport(classOf[MapType].getName)
 

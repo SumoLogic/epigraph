@@ -28,7 +28,8 @@ import ws.epigraph.projections.op.OpParams;
 public class OpPathKeyProjection extends OpKeyProjection {
   public OpPathKeyProjection(
       final @NotNull OpParams params,
-      final @NotNull Annotations annotations, final @NotNull TextLocation location) {
+      final @NotNull Annotations annotations,
+      final @NotNull TextLocation location) {
     super(params, annotations, location);
   }
 }

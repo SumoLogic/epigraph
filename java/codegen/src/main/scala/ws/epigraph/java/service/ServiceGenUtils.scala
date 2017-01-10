@@ -93,6 +93,7 @@ Util.create$mapClass(
 
   }
 
+  // using lambdas to construct maps makes javac way too slow
 //  def genMap(
 //    mapClass: String,
 //    keyType: String,
@@ -153,4 +154,10 @@ Util.create$mapClass(
       }
       genTypeExpr(dt.`type`(), gctx) + ".dataType(" + tagExpr + ")"
   }
+
+  def normalizeTagName(tagName: String, ctx: ServiceGenContext): String =
+    if (tagName == CDatumType.ImpliedDefaultTagName) {
+      ctx.addImport(classOf[DatumTypeApi].getName)
+      "DatumTypeApi.MONO_TAG_NAME"
+    } else "\"" + tagName + "\""
 }

@@ -29,7 +29,7 @@ class ReadOperationDeclarationGen(od: ReadOperationDeclaration) extends ServiceO
 new ReadOperationDeclaration(
   ${gen(od.name(), ctx)},
   ${i(gen(od.annotations(), ctx))},
-  null, /* todo OpFieldPath */
+  ${i(gen(od.path(), ctx))},
   null, /* todo OpOutputFieldProjection */
   ${gen(od.location(), ctx)}
 )"""/*@formatter:on*/

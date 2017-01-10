@@ -31,7 +31,7 @@ class DeleteOperationDeclarationGen(od: DeleteOperationDeclaration)
 new DeleteOperationDeclaration(
   ${gen(od.name(), ctx)},
   ${i(gen(od.annotations(), ctx))},
-  null, /* todo OpFieldPath */
+  ${i(gen(od.path(), ctx))},
   null, /* todo OpDeleteFieldProjection */
   null, /* todo OpOutputFieldProjection */
   ${gen(od.location(), ctx)}

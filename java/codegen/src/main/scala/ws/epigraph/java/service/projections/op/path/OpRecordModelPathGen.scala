@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,52 +14,49 @@
  * limitations under the License.
  */
 
-package ws.epigraph.java.service.projections.op.input
+package ws.epigraph.java.service.projections.op.path
 
 import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i}
-import ws.epigraph.java.service.ServiceGenUtils.{genFieldExpr, genLinkedMap, genTypeExpr}
+import ws.epigraph.java.service.ServiceGenUtils.{genFieldExpr, genTypeExpr}
 import ws.epigraph.java.service.ServiceObjectGen.gen
 import ws.epigraph.java.service.{ServiceGenContext, ServiceObjectGen}
-import ws.epigraph.projections.op.input.{OpInputFieldProjectionEntry, OpInputRecordModelProjection}
+import ws.epigraph.projections.op.input.OpInputFieldProjectionEntry
+import ws.epigraph.projections.op.path.{OpFieldPathEntry, OpRecordModelPath}
 import ws.epigraph.types.{RecordType, RecordTypeApi, TypeApi}
-
-import scala.collection.JavaConversions._
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-class OpInputRecordModelProjectionGen(p: OpInputRecordModelProjection)
-  extends ServiceObjectGen[OpInputRecordModelProjection](p) {
+class OpRecordModelPathGen(p: OpRecordModelPath) extends ServiceObjectGen[OpRecordModelPath](p) {
 
   override protected def generateObject(ctx: ServiceGenContext): String = {
     ctx.addImport(classOf[RecordType].getName)
 
     /*@formatter:off*/sn"""\
-new OpInputRecordModelProjection(
+new OpRecordModelPath(
   ${genTypeExpr(p.model().asInstanceOf[TypeApi], ctx.gctx)},
-  ${p.required().toString},
-  ${i(gen(p.defaultValue(), ctx))},
   ${i(gen(p.params(), ctx))},
   ${i(gen(p.annotations(), ctx))},
-  ${i(gen(p.metaProjection(), ctx))},
-  ${i(genLinkedMap("String", "OpInputFieldProjectionEntry", p.fieldProjections().entrySet().map{e =>
-      ("\"" + e.getKey + "\"", genFieldProjectionEntry(p.model(), e.getValue, ctx))}, ctx))},
+  ${i(gen(p.pathFieldProjection(), ctx))},
   ${gen(p.location(), ctx)}
 )"""/*@formatter:on*/
+
   }
 
-  private def genFieldProjectionEntry(
-    t: RecordTypeApi,
-    fpe: OpInputFieldProjectionEntry,
-    ctx: ServiceGenContext): String = {
+  private def genFieldPathEntry(t: RecordTypeApi, fpe: OpFieldPathEntry, ctx: ServiceGenContext): String = {
 
-    ctx.addImport(classOf[OpInputFieldProjectionEntry].getName)
+    if (fpe == null) "null"
+    else {
+      ctx.addImport(classOf[OpFieldPathEntry].getName)
 
-    /*@formatter:off*/sn"""\
-new OpInputFieldProjectionEntry(
+      /*@formatter:off*/sn"""\
+new OpFieldPathEntry(
   ${genFieldExpr(t.asInstanceOf[TypeApi], fpe.field().name(), ctx.gctx)},
   ${i(gen(fpe.fieldProjection(), ctx))},
   ${gen(fpe.location(), ctx)}
 )"""/*@formatter:on*/
+
+    }
+
   }
 }
