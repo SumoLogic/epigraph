@@ -33,7 +33,7 @@ new CustomOperationDeclaration(
   ${gen(od.name(), ctx)},
   ${i(gen(od.annotations(), ctx))},
   null, /* todo OpFieldPath */
-  null, /* todo OpInputFieldProjection */
+  ${i(gen(od.inputProjection(), ctx))},
   null, /* todo OpOutputFieldProjection */
   ${gen(od.location(), ctx)}
 )"""/*@formatter:on*/
