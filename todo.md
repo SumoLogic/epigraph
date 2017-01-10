@@ -26,9 +26,9 @@
 # Schema compiler
 - [ ] Annotations support. Should they be inherited? Annotations on annotations?
 - [ ] Verbose mode? (propagate it from gradle/maven)
-- [ ] (anonymous) types should be collected from `*.eidl` files too
-- [ ] Build an index of types in `META-INF`. Type name to schema file?
-- [ ] Proper resources compilation
+- [x] (anonymous) types should be collected from `*.eidl` files too
+- [x] Build an index of types in `META-INF`. Type name to schema file?
+- [ ] Proper resources compilation (port op projections/resource decls to scala/ctypes)
   - [x] Port generic projections to scala
   - [x] Port `GData` to scala/ctypes
   - [ ] Port op projections to scala/ctypes
@@ -42,10 +42,10 @@
   - [ ] Revert gradle/maven build changes added to avoid circular dependencies
 
 # Maven plugin
-- [ ] Produce a list of `EpigraphType`->`JavaClass` mappings artifact (Duplicates task from `Schema compiler` list above)
+- [x] Produce a list of `EpigraphType`->`JavaClass` mappings artifact (Duplicates task from `Schema compiler` list above)
 
 # Gradle plugin
-- [ ] Produce a list of `EpigraphType`->`JavaClass` mappings artifact (Duplicates task from `Schema compiler` list above)
+- [x] Produce a list of `EpigraphType`->`JavaClass` mappings artifact (Duplicates task from `Schema compiler` list above)
 
 # Projections
 - [ ] `*` support in projections improvement: allow `*` to be present along with other fields (currently it's either `*` or fields list)
@@ -63,11 +63,11 @@
 - [ ] Bug: meta-projection type should be `ModelProjection` (currently it's map for maps, list for lists etc)
 
 # Operations
--[ ] Operations code gen
-  -[ ] Op input projections code gen
-    -[ ] Add support for defaults
-  -[ ] Op output projections code gen
-  -[ ] Op delete projections code gen
+-[x] Operations code gen
+  -[x] Op input projections code gen
+    -[x] Add support for defaults
+  -[x] Op output projections code gen
+  -[x] Op delete projections code gen
 
 # Service
 

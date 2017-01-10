@@ -29,8 +29,6 @@ import ws.epigraph.types.{PrimitiveType, TypeApi}
 class OpInputPrimitiveModelProjectionGen(p: OpInputPrimitiveModelProjection)
   extends ServiceObjectGen[OpInputPrimitiveModelProjection](p) {
 
-  // todo generate default value
-
   override protected def generateObject(ctx: ServiceGenContext): String = {
     ctx.addImport(classOf[PrimitiveType[_]].getName)
 

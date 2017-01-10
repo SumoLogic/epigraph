@@ -33,7 +33,7 @@ new DeleteOperationDeclaration(
   ${i(gen(od.annotations(), ctx))},
   ${i(gen(od.path(), ctx))},
   ${i(gen(od.deleteProjection(), ctx))},
-  null, /* todo OpOutputFieldProjection */
+  ${i(gen(od.outputProjection(), ctx))},
   ${gen(od.location(), ctx)}
 )"""/*@formatter:on*/
 }

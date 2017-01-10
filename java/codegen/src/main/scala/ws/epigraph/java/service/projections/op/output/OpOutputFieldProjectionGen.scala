@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Sumo Logic
+ * Copyright 2016 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,37 +14,23 @@
  * limitations under the License.
  */
 
-package ws.epigraph.java.service
+package ws.epigraph.java.service.projections.op.output
 
 import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i}
 import ws.epigraph.java.service.ServiceObjectGen.gen
-import ws.epigraph.schema.operations.{CustomOperationDeclaration, HttpMethod}
+import ws.epigraph.java.service.{ServiceGenContext, ServiceObjectGen}
+import ws.epigraph.projections.op.output.OpOutputFieldProjection
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-class CustomOperationDeclarationGen(od: CustomOperationDeclaration)
-  extends ServiceObjectGen[CustomOperationDeclaration](od) {
-
+class OpOutputFieldProjectionGen(fp: OpOutputFieldProjection) extends ServiceObjectGen[OpOutputFieldProjection](fp) {
   override protected def generateObject(ctx: ServiceGenContext): String =
   /*@formatter:off*/sn"""\
-new CustomOperationDeclaration(
-  ${generateHttpMethod(od.method(), ctx)},
-  ${gen(od.name(), ctx)},
-  ${i(gen(od.annotations(), ctx))},
-  ${i(gen(od.path(), ctx))},
-  ${i(gen(od.inputProjection(), ctx))},
-  ${i(gen(od.outputProjection(), ctx))},
-  ${gen(od.location(), ctx)}
+new OpOutputFieldProjection(
+  ${i(gen(fp.params(), ctx))},
+  ${i(gen(fp.annotations(), ctx))},
+  ${i(gen(fp.varProjection(), ctx))},
+  ${gen(fp.location(), ctx)}
 )"""/*@formatter:on*/
-
-  private def generateHttpMethod(m: HttpMethod, ctx: ServiceGenContext): String = {
-    ctx.addImport(classOf[HttpMethod].getName)
-    m match {
-      case HttpMethod.GET => "HttpMethod.GET"
-      case HttpMethod.POST => "HttpMethod.POST"
-      case HttpMethod.PUT => "HttpMethod.PUT"
-      case HttpMethod.DELETE => "HttpMethod.DELETE"
-    }
-  }
 }

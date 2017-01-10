@@ -20,12 +20,14 @@ import ws.epigraph.gdata.{GData, GDatum}
 import ws.epigraph.java.service.gdata.{GDataGen, GDatumGen}
 import ws.epigraph.java.service.projections.op.delete._
 import ws.epigraph.java.service.projections.op.input._
+import ws.epigraph.java.service.projections.op.output._
 import ws.epigraph.java.service.projections.op.path._
 import ws.epigraph.java.service.projections.op.{OpKeyPresenceGen, OpParamGen, OpParamsGen}
 import ws.epigraph.java.service.projections.{AnnotationGen, AnnotationsGen}
 import ws.epigraph.lang.{Qn, TextLocation}
 import ws.epigraph.projections.op.delete._
 import ws.epigraph.projections.op.input._
+import ws.epigraph.projections.op.output._
 import ws.epigraph.projections.op.path._
 import ws.epigraph.projections.op.{OpKeyPresence, OpParam, OpParams}
 import ws.epigraph.projections.{Annotation, Annotations}
@@ -89,6 +91,14 @@ object ServiceObjectGen {
       case oikp: OpInputKeyProjection => new OpInputKeyProjectionGen(oikp).generate(ctx)
       case oilmp: OpInputListModelProjection => new OpInputListModelProjectionGen(oilmp).generate(ctx)
       case oipmp: OpInputPrimitiveModelProjection => new OpInputPrimitiveModelProjectionGen(oipmp).generate(ctx)
+
+      case oovp: OpOutputVarProjection => new OpOutputVarProjectionGen(oovp).generate(ctx)
+      case oormp: OpOutputRecordModelProjection => new OpOutputRecordModelProjectionGen(oormp).generate(ctx)
+      case oofp: OpOutputFieldProjection => new OpOutputFieldProjectionGen(oofp).generate(ctx)
+      case oommp: OpOutputMapModelProjection => new OpOutputMapModelProjectionGen(oommp).generate(ctx)
+      case ookp: OpOutputKeyProjection => new OpOutputKeyProjectionGen(ookp).generate(ctx)
+      case oolmp: OpOutputListModelProjection => new OpOutputListModelProjectionGen(oolmp).generate(ctx)
+      case oopmp: OpOutputPrimitiveModelProjection => new OpOutputPrimitiveModelProjectionGen(oopmp).generate(ctx)
         
       case odvp: OpDeleteVarProjection => new OpDeleteVarProjectionGen(odvp).generate(ctx)
       case odrmp: OpDeleteRecordModelProjection => new OpDeleteRecordModelProjectionGen(odrmp).generate(ctx)

@@ -28,8 +28,6 @@ import ws.epigraph.types.{PrimitiveType, TypeApi}
  */
 class OpPrimitiveModelPathGen(p: OpPrimitiveModelPath) extends ServiceObjectGen[OpPrimitiveModelPath](p) {
 
-  // todo generate default value
-
   override protected def generateObject(ctx: ServiceGenContext): String = {
     ctx.addImport(classOf[PrimitiveType[_]].getName)
 

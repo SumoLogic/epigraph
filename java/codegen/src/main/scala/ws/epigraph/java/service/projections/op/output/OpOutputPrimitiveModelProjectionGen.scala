@@ -14,29 +14,30 @@
  * limitations under the License.
  */
 
-package ws.epigraph.java.service.projections.op.delete
+package ws.epigraph.java.service.projections.op.output
 
 import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i}
 import ws.epigraph.java.service.ServiceGenUtils.genTypeExpr
 import ws.epigraph.java.service.ServiceObjectGen.gen
 import ws.epigraph.java.service.{ServiceGenContext, ServiceObjectGen}
-import ws.epigraph.projections.op.delete.OpDeletePrimitiveModelProjection
+import ws.epigraph.projections.op.output.OpOutputPrimitiveModelProjection
 import ws.epigraph.types.{PrimitiveType, TypeApi}
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-class OpDeletePrimitiveModelProjectionGen(p: OpDeletePrimitiveModelProjection)
-  extends ServiceObjectGen[OpDeletePrimitiveModelProjection](p) {
+class OpOutputPrimitiveModelProjectionGen(p: OpOutputPrimitiveModelProjection)
+  extends ServiceObjectGen[OpOutputPrimitiveModelProjection](p) {
 
   override protected def generateObject(ctx: ServiceGenContext): String = {
     ctx.addImport(classOf[PrimitiveType[_]].getName)
 
     /*@formatter:off*/sn"""\
-new OpDeletePrimitiveModelProjection(
+new OpOutputPrimitiveModelProjection(
   ${genTypeExpr(p.model().asInstanceOf[TypeApi], ctx.gctx)},
   ${i(gen(p.params(), ctx))},
   ${i(gen(p.annotations(), ctx))},
+  ${i(gen(p.metaProjection(), ctx))},
   ${gen(p.location(), ctx)}
 )"""/*@formatter:on*/
   }

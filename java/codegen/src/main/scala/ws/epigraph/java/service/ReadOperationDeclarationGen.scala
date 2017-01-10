@@ -30,7 +30,7 @@ new ReadOperationDeclaration(
   ${gen(od.name(), ctx)},
   ${i(gen(od.annotations(), ctx))},
   ${i(gen(od.path(), ctx))},
-  null, /* todo OpOutputFieldProjection */
+  ${i(gen(od.outputProjection(), ctx))},
   ${gen(od.location(), ctx)}
 )"""/*@formatter:on*/
 }

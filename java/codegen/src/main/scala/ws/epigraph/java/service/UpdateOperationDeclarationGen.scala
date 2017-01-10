@@ -31,9 +31,9 @@ class UpdateOperationDeclarationGen(od: UpdateOperationDeclaration)
 new UpdateOperationDeclaration(
   ${gen(od.name(), ctx)},
   ${i(gen(od.annotations(), ctx))},
-  null, /* todo OpFieldPath */
+  ${i(gen(od.path(), ctx))},
   ${i(gen(od.inputProjection(), ctx))},
-  null, /* todo OpOutputFieldProjection */
+  ${i(gen(od.outputProjection(), ctx))},
   ${gen(od.location(), ctx)}
 )"""/*@formatter:on*/
 }
