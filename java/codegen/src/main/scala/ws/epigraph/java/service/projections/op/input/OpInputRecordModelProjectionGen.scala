@@ -17,11 +17,11 @@
 package ws.epigraph.java.service.projections.op.input
 
 import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i}
-import ws.epigraph.java.service.ServiceGenUtils.{genField, genLinkedMap, genType}
+import ws.epigraph.java.service.ServiceGenUtils.{genFieldExpr, genLinkedMap, genTypeExpr}
 import ws.epigraph.java.service.ServiceObjectGen.gen
 import ws.epigraph.java.service.{ServiceGenContext, ServiceObjectGen}
 import ws.epigraph.projections.op.input.{OpInputFieldProjectionEntry, OpInputRecordModelProjection}
-import ws.epigraph.types.{RecordType, RecordTypeApi}
+import ws.epigraph.types.{RecordType, RecordTypeApi, TypeApi}
 
 import scala.collection.JavaConversions._
 
@@ -38,13 +38,14 @@ class OpInputRecordModelProjectionGen(p: OpInputRecordModelProjection)
 
     /*@formatter:off*/sn"""\
 new OpInputRecordModelProjection(
-  ${genType("RecordType",p.model(), ctx)},
+  ${genTypeExpr(p.model().asInstanceOf[TypeApi], ctx.gctx)},
   ${p.required().toString},
   null,  // todo default values generation is not implemented yet
   ${i(gen(p.params(), ctx))},
   ${i(gen(p.annotations(), ctx))},
   ${i(gen(p.metaProjection(), ctx))},
-  ${i(genLinkedMap("String", "OpInputFieldProjectionEntry", p.fieldProjections().entrySet().map{e => ("\"" + e.getKey + "\"", genFieldProjectionEntry(p.model(), e.getValue, ctx))}, ctx))},
+  ${i(genLinkedMap("String", "OpInputFieldProjectionEntry", p.fieldProjections().entrySet().map{e =>
+      ("\"" + e.getKey + "\"", genFieldProjectionEntry(p.model(), e.getValue, ctx))}, ctx))},
   ${gen(p.location(), ctx)}
 )"""/*@formatter:on*/
   }
@@ -58,7 +59,7 @@ new OpInputRecordModelProjection(
 
     /*@formatter:off*/sn"""\
 new OpInputFieldProjectionEntry(
-  ${genField(t, fpe.field(), ctx)},
+  ${genFieldExpr(t.asInstanceOf[TypeApi], fpe.field().name(), ctx.gctx)},
   ${i(gen(fpe.fieldProjection(), ctx))},
   ${gen(fpe.location(), ctx)}
 )"""/*@formatter:on*/

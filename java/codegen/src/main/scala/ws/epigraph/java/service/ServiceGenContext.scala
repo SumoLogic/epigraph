@@ -16,6 +16,8 @@
 
 package ws.epigraph.java.service
 
+import java.util.concurrent.atomic.AtomicInteger
+
 import ws.epigraph.java.GenContext
 
 import scala.collection.mutable
@@ -31,6 +33,16 @@ class ServiceGenContext(val gctx: GenContext) {
   private val _fields = new mutable.MutableList[String]()
   private val _methods = new mutable.MutableList[String]()
 
+  private val methodUID: AtomicInteger = new AtomicInteger(0)
+
+  // settings: take them from command line?
+
+  val isDebug = false
+
+  val generateSeparateMethodsForVarProjections = false
+
+  //
+
   def addImport(i: String) {_imports.add(i)}
 
   def imports: List[String] = _imports.toList.sorted
@@ -42,4 +54,6 @@ class ServiceGenContext(val gctx: GenContext) {
   def addMethod(m: String) {_methods += m}
 
   def methods: mutable.MutableList[String] = _methods
+
+  def nextMethodUID: Int = methodUID.getAndIncrement()
 }

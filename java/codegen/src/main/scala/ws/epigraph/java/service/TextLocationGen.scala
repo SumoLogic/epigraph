@@ -23,7 +23,7 @@ import ws.epigraph.lang.TextLocation
  */
 class TextLocationGen(loc: TextLocation) extends ServiceObjectGen[TextLocation](loc) {
   override protected def generateObject(ctx: ServiceGenContext): String =
-    if (loc.equals(TextLocation.UNKNOWN)) "TextLocation.UNKNOWN"
+    if (loc.equals(TextLocation.UNKNOWN) || ctx.isDebug) "TextLocation.UNKNOWN"
     else
       s"new TextLocation(${normalize(loc.startOffset())}, ${normalize(loc.startLine())}, ${normalize(loc.endOffset())}, ${normalize(loc.endLine())}, ${normalize(loc.fileName())})"
 
@@ -33,4 +33,5 @@ class TextLocationGen(loc: TextLocation) extends ServiceObjectGen[TextLocation](
   private def normalize(filename: String): String =
     if (filename == null) null
     else s""""$filename""""
+
 }

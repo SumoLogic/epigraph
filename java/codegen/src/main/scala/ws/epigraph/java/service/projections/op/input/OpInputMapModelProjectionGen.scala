@@ -17,11 +17,11 @@
 package ws.epigraph.java.service.projections.op.input
 
 import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i}
-import ws.epigraph.java.service.ServiceGenUtils.genType
+import ws.epigraph.java.service.ServiceGenUtils.genTypeExpr
 import ws.epigraph.java.service.ServiceObjectGen.gen
 import ws.epigraph.java.service.{ServiceGenContext, ServiceObjectGen}
 import ws.epigraph.projections.op.input.OpInputMapModelProjection
-import ws.epigraph.types.MapType
+import ws.epigraph.types.{MapType, TypeApi}
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -36,7 +36,7 @@ class OpInputMapModelProjectionGen(p: OpInputMapModelProjection)
 
     /*@formatter:off*/sn"""\
 new OpInputMapModelProjection(
-  ${genType("MapType",p.model(), ctx)},
+  ${genTypeExpr(p.model().asInstanceOf[TypeApi], ctx.gctx)},
   ${p.required().toString},
   null,  // todo default values generation is not implemented yet
   ${i(gen(p.params(), ctx))},

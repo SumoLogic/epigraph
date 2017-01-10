@@ -79,4 +79,24 @@ public interface Util {
     if (list.isEmpty()) throw new IllegalArgumentException("Can't remove head from an empty list");
     return list.subList(1, list.size());
   }
+
+  static <K, V> LinkedHashMap<K, V> createSingletonLinkedHashMap(K key, V value) {
+    final LinkedHashMap<K, V> res = createLinkedHashMap(1);
+    res.put(key, value);
+    return res;
+  }
+
+  static <K, V> LinkedHashMap<K, V> createLinkedHashMap(K[] keys, V[] values) {
+    if (keys.length != values.length)
+      throw new IllegalArgumentException("Keys size " + keys.length + " != values size " + values.length);
+
+    int size = keys.length;
+    final LinkedHashMap<K, V> res = createLinkedHashMap(size);
+
+    for (int i = 0; i < size; i++) {
+      res.put(keys[i], values[i]);
+    }
+
+    return res;
+  }
 }

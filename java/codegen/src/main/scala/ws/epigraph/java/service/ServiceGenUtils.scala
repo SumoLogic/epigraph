@@ -16,9 +16,11 @@
 
 package ws.epigraph.java.service
 
-import ws.epigraph.compiler.CTypeApiWrapper
+import java.util
+
+import ws.epigraph.compiler.{CDatumType, CTypeApiWrapper}
+import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i}
 import ws.epigraph.java.{GenContext, JavaGenUtils}
-import ws.epigraph.refs.TypeReferenceFactory
 import ws.epigraph.types._
 import ws.epigraph.util.JavaNames
 
@@ -27,6 +29,7 @@ import ws.epigraph.util.JavaNames
  */
 object ServiceGenUtils {
   val INDENT = 2 // default indent
+  val INDENT_SPACES: String = JavaGenUtils.spaces(INDENT)
 
   def genList(items: Seq[String], ctx: ServiceGenContext): String = {
     if (items.isEmpty) {
@@ -42,11 +45,46 @@ object ServiceGenUtils {
     }
   }
 
+//  def genLinkedMap(
+//    keyType: String,
+//    valueType: String,
+//    entries: Iterable[(String, String)],
+//    ctx: ServiceGenContext): String = genMap("LinkedHashMap", keyType, valueType, entries, ctx)
+
   def genLinkedMap(
     keyType: String,
     valueType: String,
     entries: Iterable[(String, String)],
-    ctx: ServiceGenContext): String = genMap("LinkedHashMap", keyType, valueType, entries, ctx)
+    ctx: ServiceGenContext): String = {
+
+    ctx.addImport(classOf[util.LinkedHashMap[_, _]].getName)
+
+    if (entries.isEmpty) s"new LinkedHashMap<$keyType, $valueType>(0)"
+    else if (entries.size == 1) {
+      ctx.addImport("ws.epigraph.util.Util")
+      val (key, value) = entries.head
+      /*@formatter:off*/sn"""\
+Util.createSingletonLinkedHashMap(
+  $key,
+  ${i(value)}
+)"""/*@formatter:on*/
+    } else {
+      ctx.addImport("ws.epigraph.util.Util")
+
+      val entriesSeq = entries.toSeq // to allow iterating twice
+
+      val keys = entriesSeq.map(_._1).mkString(s"new $keyType[]{", ", ", "}")
+      val values = entriesSeq
+                   .map(e => JavaGenUtils.indent(e._2, INDENT))
+                   .mkString(s"new $valueType[]{\n", ",\n", "\n}")
+
+      /*@formatter:off*/sn"""\
+Util.createLinkedHashMap(
+  $keys,
+  ${i(values)}
+)"""/*@formatter:on*/
+    }
+  }
 
   def genHashMap(
     keyType: String,
@@ -70,30 +108,13 @@ object ServiceGenUtils {
       ctx.addImport("java.util.stream.Collectors")
       ctx.addImport("java.util.stream.Stream")
 
-      val indent = JavaGenUtils.spaces(INDENT)
-      val generatedEntries = entries.map{ case (k, v) => s"${indent}new AbstractMap.SimpleEntry<>($k, $v)" }
+      val generatedEntries = entries.map{ case (k, v) => s"${INDENT_SPACES}new AbstractMap.SimpleEntry<>($k, $v)" }
       generatedEntries.mkString(
         s"Stream.<AbstractMap.Entry<$keyType, $valueType>>of(\n",
         ",\n",
         s"\n).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (x, y) -> y, $mapClass::new))"
       )
     }
-  }
-
-  def genType(typeClass: String, t: TypeApi, ctx: ServiceGenContext): String = {
-    val ref = TypeReferenceFactory.createReference(t)
-    val tg = s"typesResolver.resolve(${ServiceObjectGen.gen(ref, ctx)})"
-    if (typeClass == null) tg else s"($typeClass) $tg"
-  }
-
-  def genField(t: RecordTypeApi, f: FieldApi, ctx: ServiceGenContext): String = {
-    ctx.addImport(classOf[RecordType].getName)
-    s"""(${ServiceGenUtils.genType("RecordType", t, ctx)}).fieldsMap().get("${f.name()}")"""
-  }
-
-  def genTag(t: TypeApi, tag: TagApi, ctx: ServiceGenContext): String = {
-    ctx.addImport(classOf[TypeApi].getName)
-    s"""(${ServiceGenUtils.genType(null, t, ctx)}).tagsMap().get("${tag.name()}")"""
   }
 
   def genImports(ctx: ServiceGenContext): String = {
@@ -114,7 +135,13 @@ object ServiceGenUtils {
   }
 
   def genTagExpr(t: TypeApi, tagName: String, ctx: GenContext): String =
-    genTypeClassRef(t, ctx) + "." + JavaNames.jn(tagName)
+    if (tagName == CDatumType.ImpliedDefaultTagName)
+      genTypeExpr(t, ctx) + ".self()"
+    else
+      genTypeClassRef(t, ctx) + "." + JavaNames.jn(tagName)
+
+  def genFieldExpr(t: TypeApi, fieldName: String, ctx: GenContext): String =
+    genTypeClassRef(t, ctx) + "." + JavaNames.jn(fieldName)
 
   def genDataTypeExpr(dt: DataTypeApi, gctx: GenContext): String = dt.`type`() match {
     case a: DatumTypeApi => genTypeExpr(a, gctx) + ".dataType()"

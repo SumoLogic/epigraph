@@ -16,12 +16,13 @@
 
 package ws.epigraph.java.service.projections.op.input
 
+import ws.epigraph.compiler.CDatumType
 import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i}
-import ws.epigraph.java.service.ServiceGenUtils.{genLinkedMap, genList, genTag, genType}
+import ws.epigraph.java.service.ServiceGenUtils.{genLinkedMap, genList, genTagExpr, genTypeExpr}
 import ws.epigraph.java.service.ServiceObjectGen.gen
 import ws.epigraph.java.service.{ServiceGenContext, ServiceObjectGen}
 import ws.epigraph.projections.op.input.{OpInputTagProjectionEntry, OpInputVarProjection}
-import ws.epigraph.types.TypeApi
+import ws.epigraph.types.{DatumTypeApi, TypeApi}
 
 import scala.collection.JavaConversions._
 
@@ -31,15 +32,49 @@ import scala.collection.JavaConversions._
 class OpInputVarProjectionGen(p: OpInputVarProjection)
   extends ServiceObjectGen[OpInputVarProjection](p) {
 
-  override protected def generateObject(ctx: ServiceGenContext): String =
-  /*@formatter:off*/sn"""\
+  override protected def generateObject(ctx: ServiceGenContext): String = {
+
+    if (ctx.generateSeparateMethodsForVarProjections) {
+      val methodName = "constructInputVarProjection" + ctx.nextMethodUID
+
+      ctx.addMethod(
+        /*@formatter:off*/sn"""\
+private static OpInputVarProjection $methodName() {
+  return new OpInputVarProjection(
+    ${genTypeExpr(p.`type`(), ctx.gctx)},
+    ${i(genLinkedMap("String", "OpInputTagProjectionEntry", p.tagProjections().entrySet().map{ e =>
+      (normalizeTagName(e.getKey, ctx), genTagProjectionEntry(p.`type`(), e.getValue, ctx))}, ctx))},
+    ${p.parenthesized().toString},
+    ${if (p.polymorphicTails() == null) "null" else genList(p.polymorphicTails().map(gen(_, ctx)),ctx)},
+    ${gen(p.location(), ctx)}
+  );
+}"""/*@formatter:on*/
+      )
+
+      s"$methodName()"
+
+    } else {
+
+      /*@formatter:off*/sn"""\
 new OpInputVarProjection(
-  ${genType(null, p.`type`(), ctx)},
-  ${i(genLinkedMap("String", "OpInputTagProjectionEntry", p.tagProjections().entrySet().map{e => ("\"" + e.getKey + "\"", genTagProjectionEntry(p.`type`(), e.getValue, ctx))}, ctx))},
+  ${genTypeExpr(p.`type`(), ctx.gctx)},
+  ${i(genLinkedMap("String", "OpInputTagProjectionEntry", p.tagProjections().entrySet().map{ e =>
+    (normalizeTagName(e.getKey, ctx), genTagProjectionEntry(p.`type`(), e.getValue, ctx))}, ctx))},
   ${p.parenthesized().toString},
   ${if (p.polymorphicTails() == null) "null" else genList(p.polymorphicTails().map(gen(_, ctx)),ctx)},
   ${gen(p.location(), ctx)}
 )"""/*@formatter:on*/
+
+    }
+
+  }
+
+  private def normalizeTagName(tagName: String, ctx: ServiceGenContext): String =
+    if (tagName == CDatumType.ImpliedDefaultTagName) {
+      ctx.addImport(classOf[DatumTypeApi].getName)
+      "DatumTypeApi.MONO_TAG_NAME"
+    } else "\"" + tagName + "\""
+
 
   private def genTagProjectionEntry(
     t: TypeApi,
@@ -50,7 +85,7 @@ new OpInputVarProjection(
 
     /*@formatter:off*/sn"""\
 new OpInputTagProjectionEntry(
-  ${genTag(t, tpe.tag(), ctx)},
+  ${genTagExpr(t, tpe.tag().name(), ctx.gctx)},
   ${i(gen(tpe.projection(), ctx))},
   ${gen(tpe.location(), ctx)}
 )"""/*@formatter:on*/
