@@ -18,11 +18,13 @@ package ws.epigraph.java.service
 
 import ws.epigraph.gdata.{GData, GDatum}
 import ws.epigraph.java.service.gdata.{GDataGen, GDatumGen}
+import ws.epigraph.java.service.projections.op.delete._
 import ws.epigraph.java.service.projections.op.input._
 import ws.epigraph.java.service.projections.op.path._
 import ws.epigraph.java.service.projections.op.{OpKeyPresenceGen, OpParamGen, OpParamsGen}
 import ws.epigraph.java.service.projections.{AnnotationGen, AnnotationsGen}
 import ws.epigraph.lang.{Qn, TextLocation}
+import ws.epigraph.projections.op.delete._
 import ws.epigraph.projections.op.input._
 import ws.epigraph.projections.op.path._
 import ws.epigraph.projections.op.{OpKeyPresence, OpParam, OpParams}
@@ -56,6 +58,7 @@ object ServiceObjectGen {
       case l: java.lang.Long => l.toString + "L"
       case d: java.lang.Double => d.toString + "d"
       case f: java.lang.Float => f.toString + "f"
+      case b: java.lang.Boolean => b.toString
 
       case qn: Qn => new QnGen(qn).generate(ctx)
       case tr: TypeRef => new TypeRefGen(tr).generate(ctx)
@@ -86,6 +89,14 @@ object ServiceObjectGen {
       case oikp: OpInputKeyProjection => new OpInputKeyProjectionGen(oikp).generate(ctx)
       case oilmp: OpInputListModelProjection => new OpInputListModelProjectionGen(oilmp).generate(ctx)
       case oipmp: OpInputPrimitiveModelProjection => new OpInputPrimitiveModelProjectionGen(oipmp).generate(ctx)
+        
+      case odvp: OpDeleteVarProjection => new OpDeleteVarProjectionGen(odvp).generate(ctx)
+      case odrmp: OpDeleteRecordModelProjection => new OpDeleteRecordModelProjectionGen(odrmp).generate(ctx)
+      case odfp: OpDeleteFieldProjection => new OpDeleteFieldProjectionGen(odfp).generate(ctx)
+      case odmmp: OpDeleteMapModelProjection => new OpDeleteMapModelProjectionGen(odmmp).generate(ctx)
+      case odkp: OpDeleteKeyProjection => new OpDeleteKeyProjectionGen(odkp).generate(ctx)
+      case odlmp: OpDeleteListModelProjection => new OpDeleteListModelProjectionGen(odlmp).generate(ctx)
+      case odpmp: OpDeletePrimitiveModelProjection => new OpDeletePrimitiveModelProjectionGen(odpmp).generate(ctx)
 
       case rod: ReadOperationDeclaration => new ReadOperationDeclarationGen(rod).generate(ctx)
       case cod: CreateOperationDeclaration => new CreateOperationDeclarationGen(cod).generate(ctx)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Sumo Logic
+ * Copyright 2016 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,26 +14,23 @@
  * limitations under the License.
  */
 
-package ws.epigraph.java.service
+package ws.epigraph.java.service.projections.op.delete
 
 import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i}
 import ws.epigraph.java.service.ServiceObjectGen.gen
-import ws.epigraph.schema.operations.DeleteOperationDeclaration
+import ws.epigraph.java.service.{ServiceGenContext, ServiceObjectGen}
+import ws.epigraph.projections.op.delete.OpDeleteFieldProjection
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-class DeleteOperationDeclarationGen(od: DeleteOperationDeclaration)
-  extends ServiceObjectGen[DeleteOperationDeclaration](od) {
-
+class OpDeleteFieldProjectionGen(fp: OpDeleteFieldProjection) extends ServiceObjectGen[OpDeleteFieldProjection](fp) {
   override protected def generateObject(ctx: ServiceGenContext): String =
   /*@formatter:off*/sn"""\
-new DeleteOperationDeclaration(
-  ${gen(od.name(), ctx)},
-  ${i(gen(od.annotations(), ctx))},
-  ${i(gen(od.path(), ctx))},
-  ${i(gen(od.deleteProjection(), ctx))},
-  null, /* todo OpOutputFieldProjection */
-  ${gen(od.location(), ctx)}
+new OpDeleteFieldProjection(
+  ${i(gen(fp.params(), ctx))},
+  ${i(gen(fp.annotations(), ctx))},
+  ${i(gen(fp.varProjection(), ctx))},
+  ${gen(fp.location(), ctx)}
 )"""/*@formatter:on*/
 }
