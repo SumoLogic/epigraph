@@ -30,7 +30,7 @@ import org.jetbrains.annotations.Nullable
 
 import scala.collection.JavaConversions._
 
-class CSchemaFile(val psi: SchemaFile)(implicit val ctx: CContext) {
+class CSchemaFile(val psi: SchemaFile, val isDependency: Boolean)(implicit val ctx: CContext) {
 
   val filename: String = psi.getName
 

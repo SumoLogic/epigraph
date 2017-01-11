@@ -60,7 +60,8 @@ class EpigraphCompiler(
 
     ctx.phase(PARSE)
 
-    val schemaFiles: Seq[SchemaFile] = parseSourceFiles(sources ++ dependencies)
+    val schemaFiles: Seq[SchemaFile] = parseSourceFiles(sources)
+    val dependencySchemaFiles: Seq[SchemaFile] = parseSourceFiles(dependencies)
 
     handleErrors(1)
 
@@ -69,7 +70,9 @@ class EpigraphCompiler(
 
     ctx.phase(RESOLVE_TYPEREFS)
 
-    schemaFiles.map(new CSchemaFile(_)) // compiler schema file adds itself to ctx
+    schemaFiles.map(sf => new CSchemaFile(sf, false)) // compiler schema file adds itself to ctx
+    dependencySchemaFiles.map(sf => new CSchemaFile(sf, true))
+
     registerDefinedTypes()
 
     handleErrors(2)
@@ -117,7 +120,7 @@ class EpigraphCompiler(
 
   }
 
-  private def parseSourceFiles(sources: util.Collection[Source]): Seq[SchemaFile] = {
+  private def parseSourceFiles(sources: util.Collection[_ <: Source]): Seq[SchemaFile] = {
 
     val schemaFiles: Seq[SchemaFile] = sources.par.flatMap{ source =>
       try {
