@@ -33,7 +33,7 @@ import ws.epigraph.types.DataTypeApi
  */
 class ResourceDeclarationGen(rd: ResourceDeclaration) extends ServiceObjectGen[ResourceDeclaration](rd) {
 
-  val serviceClassName: String = up(rd.fieldName()) + "ResourceDeclaration"
+  val resourceDeclarationClassName: String = ResourceDeclarationGen.resourceDeclarationClassName(rd)
 
   override protected def generateObject(ctx: ServiceGenContext): String = {
     val fieldType: DataTypeApi = rd.fieldType()
@@ -42,7 +42,7 @@ class ResourceDeclarationGen(rd: ResourceDeclaration) extends ServiceObjectGen[R
     import scala.collection.JavaConversions._
     val operationFieldNames: List[String] = rd.operations().map{ od: OperationDeclaration =>
 
-      val operationFieldName = ResourceDeclarationGen.fieldName(od)
+      val operationFieldName = ResourceDeclarationGen.operationDeclarationFieldName(od)
       val operationConstructorName = ResourceDeclarationGen.operationConstructorName(od)
 
       ctx.addField(s"public static final ${od.getClass.getSimpleName} $operationFieldName = $operationConstructorName();")
@@ -76,12 +76,12 @@ super(
 package $namespace;
 
 ${ServiceGenUtils.genImports(sgctx)}
-public final class $serviceClassName extends ResourceDeclaration {
-  public static final $serviceClassName INSTANCE = new $serviceClassName();
+public final class $resourceDeclarationClassName extends ResourceDeclaration {
+  public static final $resourceDeclarationClassName INSTANCE = new $resourceDeclarationClassName();
 
   ${i(ServiceGenUtils.genFields(sgctx))}
 
-  private $serviceClassName() {
+  private $resourceDeclarationClassName() {
     ${i(superCall)};
   }
 
@@ -92,7 +92,7 @@ public final class $serviceClassName extends ResourceDeclaration {
   }
 
   def writeUnder(sourcesRoot: Path, namespace: Qn, gctx: GenContext): Unit = {
-    val relativePath = JavaGenUtils.fqnToPath(namespace).resolve(serviceClassName + ".java")
+    val relativePath = JavaGenUtils.fqnToPath(namespace).resolve(resourceDeclarationClassName + ".java")
     val contents = generateFile(namespace.toString, gctx)
     JavaGenUtils.writeFile(sourcesRoot, relativePath, contents)
   }
@@ -107,7 +107,9 @@ object ResourceDeclarationGen {
     OperationKind.CUSTOM -> "custom"
   )
 
-  def fieldName(od: OperationDeclaration): String = {
+  def resourceDeclarationClassName(rd: ResourceDeclaration): String = up(rd.fieldName()) + "ResourceDeclaration"
+
+  def operationDeclarationFieldName(od: OperationDeclaration): String = {
     val kind = operationKinds.getOrElse(od.kind(), {throw new CompilerException})
 
     if (od.name() != null)
