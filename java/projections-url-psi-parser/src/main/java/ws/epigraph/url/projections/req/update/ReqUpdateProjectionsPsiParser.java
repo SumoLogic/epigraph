@@ -78,10 +78,10 @@ public final class ReqUpdateProjectionsPsiParser {
         @NotNull OpInputTagProjectionEntry opTagProjection =
             getTagProjection(tag.name(), op, tagLocation, errors);
 
-        @NotNull OpInputModelProjection<?, ?, ?> opModelProjection = opTagProjection.projection();
+        @NotNull OpInputModelProjection<?, ?, ?, ?> opModelProjection = opTagProjection.projection();
         @NotNull UrlReqUpdateModelProjection modelProjectionPsi = singleTagProjectionPsi.getReqUpdateModelProjection();
 
-        final ReqUpdateModelProjection<?, ?> parsedModelProjection = parseModelProjection(
+        final ReqUpdateModelProjection<?, ?, ?> parsedModelProjection = parseModelProjection(
             opModelProjection,
             singleTagProjectionPsi.getPlus() != null,
             parseReqParams(singleTagProjectionPsi.getReqParamList(), opModelProjection.params(), subResolver, errors),
@@ -167,11 +167,11 @@ public final class ReqUpdateProjectionsPsiParser {
             UrlProjectionsPsiParserUtil.getTag(tagProjectionPsi.getTagName(), op, tagProjectionPsi, errors);
         @NotNull OpInputTagProjectionEntry opTag = getTagProjection(tag.name(), op, tagProjectionPsi, errors);
 
-        OpInputModelProjection<?, ?, ?> opTagProjection = opTag.projection();
+        OpInputModelProjection<?, ?, ?, ?> opTagProjection = opTag.projection();
 
         @NotNull UrlReqUpdateModelProjection modelProjection = tagProjectionPsi.getReqUpdateModelProjection();
 
-        final ReqUpdateModelProjection<?, ?> parsedModelProjection = parseModelProjection(
+        final ReqUpdateModelProjection<?, ?, ?> parsedModelProjection = parseModelProjection(
             opTagProjection,
             tagProjectionPsi.getPlus() != null,
             parseReqParams(tagProjectionPsi.getReqParamList(), opTagProjection.params(), subResolver, errors),
@@ -301,8 +301,8 @@ public final class ReqUpdateProjectionsPsiParser {
     return null;
   }
 
-  public static @NotNull ReqUpdateModelProjection<?, ?> parseModelProjection(
-      @NotNull OpInputModelProjection<?, ?, ?> op,
+  public static @NotNull ReqUpdateModelProjection<?, ?, ?> parseModelProjection(
+      @NotNull OpInputModelProjection<?, ?, ?, ?> op,
       boolean update,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
@@ -394,10 +394,10 @@ public final class ReqUpdateProjectionsPsiParser {
 
   }
 
-  private static @NotNull ReqUpdateModelProjection<?, ?> createDefaultModelProjection(
+  private static @NotNull ReqUpdateModelProjection<?, ?, ?> createDefaultModelProjection(
       @NotNull DatumTypeApi type,
       boolean update,
-      @NotNull OpInputModelProjection<?, ?, ?> op,
+      @NotNull OpInputModelProjection<?, ?, ?, ?> op,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
       @NotNull PsiElement locationPsi,

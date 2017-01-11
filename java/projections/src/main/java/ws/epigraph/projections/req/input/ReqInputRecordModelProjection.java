@@ -31,11 +31,11 @@ import java.util.*;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ReqInputRecordModelProjection
-    extends ReqInputModelProjection<ReqInputRecordModelProjection, RecordTypeApi>
+    extends ReqInputModelProjection<ReqInputModelProjection<?, ?, ?>, ReqInputRecordModelProjection, RecordTypeApi>
     implements GenRecordModelProjection<
     ReqInputVarProjection,
     ReqInputTagProjectionEntry,
-    ReqInputModelProjection<?, ?>,
+    ReqInputModelProjection<?, ?, ?>,
     ReqInputRecordModelProjection,
     ReqInputFieldProjectionEntry,
     ReqInputFieldProjection,

@@ -30,11 +30,11 @@ import java.util.Map;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpDeleteRecordModelProjection
-    extends OpDeleteModelProjection<OpDeleteRecordModelProjection, RecordTypeApi>
+    extends OpDeleteModelProjection<OpDeleteModelProjection<?,?,?>, OpDeleteRecordModelProjection, RecordTypeApi>
     implements GenRecordModelProjection<
     OpDeleteVarProjection,
     OpDeleteTagProjectionEntry,
-    OpDeleteModelProjection<?, ?>,
+    OpDeleteModelProjection<?, ?, ?>,
     OpDeleteRecordModelProjection,
     OpDeleteFieldProjectionEntry,
     OpDeleteFieldProjection,

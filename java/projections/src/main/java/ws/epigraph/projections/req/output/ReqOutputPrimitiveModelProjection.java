@@ -30,15 +30,15 @@ import java.util.List;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ReqOutputPrimitiveModelProjection
-    extends ReqOutputModelProjection<ReqOutputPrimitiveModelProjection, PrimitiveTypeApi>
-    implements GenPrimitiveModelProjection<ReqOutputPrimitiveModelProjection, PrimitiveTypeApi> {
+    extends ReqOutputModelProjection<ReqOutputModelProjection<?, ?, ?>, ReqOutputPrimitiveModelProjection, PrimitiveTypeApi>
+    implements GenPrimitiveModelProjection<ReqOutputModelProjection<?, ?, ?>, ReqOutputPrimitiveModelProjection, PrimitiveTypeApi> {
 
   public ReqOutputPrimitiveModelProjection(
       @NotNull PrimitiveTypeApi model,
       boolean required,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
-      @Nullable ReqOutputPrimitiveModelProjection metaProjection,
+      @Nullable ReqOutputModelProjection<?, ?, ?> metaProjection,
       @NotNull TextLocation location) {
     super(model, required, params, annotations, metaProjection, location);
   }
@@ -51,7 +51,7 @@ public class ReqOutputPrimitiveModelProjection
       final @NotNull List<ReqOutputPrimitiveModelProjection> modelProjections,
       final @NotNull ReqParams mergedParams,
       final @NotNull Annotations mergedAnnotations,
-      final @Nullable ReqOutputPrimitiveModelProjection mergedMetaProjection) {
+      final @Nullable ReqOutputModelProjection<?, ?, ?> mergedMetaProjection) {
 
     return new ReqOutputPrimitiveModelProjection(
         model,

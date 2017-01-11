@@ -31,7 +31,7 @@ public interface FormatWriter<Exc extends Exception> {
 
   void writeData(@NotNull ReqOutputVarProjection projection, @Nullable Data data) throws Exc;
 
-  void writeDatum(@NotNull ReqOutputModelProjection<?,?> projection, @Nullable Datum datum) throws Exc;
+  void writeDatum(@NotNull ReqOutputModelProjection<?, ?, ?> projection, @Nullable Datum datum) throws Exc;
 
   // FIXME take explicit type for all projectionless writes below (or add another set of methods that does):
 

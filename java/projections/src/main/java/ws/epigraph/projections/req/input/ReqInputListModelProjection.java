@@ -29,11 +29,11 @@ import java.util.Objects;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ReqInputListModelProjection
-    extends ReqInputModelProjection<ReqInputListModelProjection, ListTypeApi>
+    extends ReqInputModelProjection<ReqInputModelProjection<?, ?, ?>, ReqInputListModelProjection, ListTypeApi>
     implements GenListModelProjection<
     ReqInputVarProjection,
     ReqInputTagProjectionEntry,
-    ReqInputModelProjection<?, ?>,
+    ReqInputModelProjection<?, ?, ?>,
     ReqInputListModelProjection,
     ListTypeApi
     > {

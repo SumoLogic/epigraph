@@ -30,7 +30,7 @@ public class OpPathPrettyPrinter<E extends Exception>
     extends AbstractOpProjectionsPrettyPrinter<
     OpVarPath,
     OpTagPath,
-    OpModelPath<?, ?>,
+    OpModelPath<?, ?, ?>,
     OpRecordModelPath,
     OpFieldPathEntry,
     OpFieldPath,
@@ -50,7 +50,7 @@ public class OpPathPrettyPrinter<E extends Exception>
 
   @Override
   public void print(@NotNull String tagName, @NotNull OpTagPath tp, int pathSteps) throws E {
-    OpModelPath<?, ?> projection = tp.projection();
+    OpModelPath<?, ?, ?> projection = tp.projection();
     OpParams params = projection.params();
     Annotations annotations = projection.annotations();
 
@@ -76,7 +76,7 @@ public class OpPathPrettyPrinter<E extends Exception>
   }
 
   @Override
-  public void print(@NotNull OpModelPath<?, ?> mp, int pathSteps) throws E {
+  public void print(@NotNull OpModelPath<?, ?, ?> mp, int pathSteps) throws E {
     if (mp instanceof OpRecordModelPath)
       print((OpRecordModelPath) mp);
     else if (mp instanceof OpMapModelPath)
@@ -134,7 +134,7 @@ public class OpPathPrettyPrinter<E extends Exception>
   }
 
   @Override
-  public boolean isPrintoutEmpty(@NotNull OpModelPath<?, ?> mp) {
+  public boolean isPrintoutEmpty(@NotNull OpModelPath<?, ?, ?> mp) {
 //    if (mp instanceof OpRecordModelPath) {
 //      OpRecordModelPath recordModelProjection = (OpRecordModelPath) mp;
 //      return recordModelProjection.pathFieldProjection() == null;

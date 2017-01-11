@@ -31,7 +31,7 @@ import java.util.Map;
 public class ReqDeleteVarProjection extends AbstractVarProjection<
     ReqDeleteVarProjection,
     ReqDeleteTagProjectionEntry,
-    ReqDeleteModelProjection<?, ?>
+    ReqDeleteModelProjection<?, ?, ?>
     > {
 
   public ReqDeleteVarProjection(

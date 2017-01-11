@@ -24,10 +24,10 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class OpTagPath extends AbstractTagProjectionEntry<OpTagPath, OpModelPath<?, ?>> {
+public class OpTagPath extends AbstractTagProjectionEntry<OpTagPath, OpModelPath<?, ?, ?>> {
   public OpTagPath(
       @NotNull TagApi tag,
-      @NotNull OpModelPath<?, ?> projection,
+      @NotNull OpModelPath<?, ?, ?> projection,
       @NotNull TextLocation location) {
     super(tag, projection, location);
   }

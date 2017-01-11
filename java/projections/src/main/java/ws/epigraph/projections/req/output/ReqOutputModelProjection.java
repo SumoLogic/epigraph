@@ -31,9 +31,10 @@ import java.util.Objects;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public abstract class ReqOutputModelProjection<
-    MP extends ReqOutputModelProjection</*MP*/?, ?>,
+    MP extends ReqOutputModelProjection</*MP*/?, /*SMP*/?, ?>,
+    SMP extends ReqOutputModelProjection</*MP*/?, /*SMP*/?, ?>,
     M extends DatumTypeApi>
-    extends AbstractReqModelProjection<MP, M> {
+    extends AbstractReqModelProjection<MP, SMP, M> {
 
   protected final boolean required;
 
@@ -51,9 +52,9 @@ public abstract class ReqOutputModelProjection<
   public boolean required() { return required; }
 
   @Override
-  protected MP merge(
+  protected SMP merge(
       final @NotNull M model,
-      final @NotNull List<MP> modelProjections,
+      final @NotNull List<SMP> modelProjections,
       final @NotNull ReqParams mergedParams,
       final @NotNull Annotations mergedAnnotations,
       final @Nullable MP mergedMetaProjection) {
@@ -68,10 +69,10 @@ public abstract class ReqOutputModelProjection<
     );
   }
 
-  protected MP merge(
+  protected SMP merge(
       final @NotNull M model,
       final boolean mergedRequired,
-      final @NotNull List<MP> modelProjections,
+      final @NotNull List<SMP> modelProjections,
       final @NotNull ReqParams mergedParams,
       final @NotNull Annotations mergedAnnotations,
       final @Nullable MP mergedMetaProjection) {
@@ -84,7 +85,7 @@ public abstract class ReqOutputModelProjection<
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     if (!super.equals(o)) return false;
-    final ReqOutputModelProjection<?, ?> that = (ReqOutputModelProjection<?, ?>) o;
+    final ReqOutputModelProjection<?, ?, ?> that = (ReqOutputModelProjection<?, ?, ?>) o;
     return required == that.required;
   }
 

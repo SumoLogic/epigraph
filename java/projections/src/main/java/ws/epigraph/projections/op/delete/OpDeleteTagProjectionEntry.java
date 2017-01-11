@@ -25,11 +25,11 @@ import org.jetbrains.annotations.NotNull;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpDeleteTagProjectionEntry
-    extends AbstractTagProjectionEntry<OpDeleteTagProjectionEntry, OpDeleteModelProjection<?, ?>> {
+    extends AbstractTagProjectionEntry<OpDeleteTagProjectionEntry, OpDeleteModelProjection<?, ?, ?>> {
 
   public OpDeleteTagProjectionEntry(
       @NotNull TagApi tag,
-      @NotNull OpDeleteModelProjection<?, ?> projection,
+      @NotNull OpDeleteModelProjection<?, ?, ?> projection,
       @NotNull TextLocation location) {
     super(tag, projection, location);
   }

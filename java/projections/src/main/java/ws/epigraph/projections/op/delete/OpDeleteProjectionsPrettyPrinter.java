@@ -33,7 +33,7 @@ public class OpDeleteProjectionsPrettyPrinter<E extends Exception>
     extends AbstractOpProjectionsPrettyPrinter<
     OpDeleteVarProjection,
     OpDeleteTagProjectionEntry,
-    OpDeleteModelProjection<?, ?>,
+    OpDeleteModelProjection<?, ?, ?>,
     OpDeleteRecordModelProjection,
     OpDeleteFieldProjectionEntry,
     OpDeleteFieldProjection,
@@ -50,8 +50,8 @@ public class OpDeleteProjectionsPrettyPrinter<E extends Exception>
 
   @Override
   public void print(@NotNull String tagName, @NotNull OpDeleteTagProjectionEntry tp, int pathSteps) throws E {
-    OpDeleteModelProjection<?, ?> projection = tp.projection();
-    OpDeleteModelProjection<?, ?> metaProjection = projection.metaProjection();
+    OpDeleteModelProjection<?, ?, ?> projection = tp.projection();
+    OpDeleteModelProjection<?, ?, ?> metaProjection = projection.metaProjection();
     OpParams params = projection.params();
     Annotations annotations = projection.annotations();
 
@@ -91,7 +91,7 @@ public class OpDeleteProjectionsPrettyPrinter<E extends Exception>
   }
 
   @Override
-  public void print(@NotNull OpDeleteModelProjection<?, ?> mp, int pathSteps) throws E {
+  public void print(@NotNull OpDeleteModelProjection<?, ?, ?> mp, int pathSteps) throws E {
     if (mp instanceof OpDeleteRecordModelProjection)
       print((OpDeleteRecordModelProjection) mp);
     else if (mp instanceof OpDeleteMapModelProjection)
@@ -138,7 +138,7 @@ public class OpDeleteProjectionsPrettyPrinter<E extends Exception>
   }
 
   @Override
-  public boolean isPrintoutEmpty(@NotNull OpDeleteModelProjection<?, ?> mp) {
+  public boolean isPrintoutEmpty(@NotNull OpDeleteModelProjection<?, ?, ?> mp) {
     if (mp instanceof OpDeleteRecordModelProjection) {
       OpDeleteRecordModelProjection recordModelProjection = (OpDeleteRecordModelProjection) mp;
       Map<String, OpDeleteFieldProjectionEntry> fieldProjections = recordModelProjection.fieldProjections();

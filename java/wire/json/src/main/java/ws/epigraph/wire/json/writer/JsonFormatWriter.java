@@ -69,7 +69,7 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
     if (renderMulti) out.write('{');
     boolean comma = false;
     for (TagApi tag : type.tags()) {
-      Deque<ReqOutputModelProjection<?, ?>> tagModelProjections =
+      Deque<ReqOutputModelProjection<?, ?, ?>> tagModelProjections =
           tagModelProjections(tag, projections, () -> new ArrayDeque<>(projections.size()));
       if (tagModelProjections != null) { // if this tag was mentioned in at least one projection
         if (renderMulti) {
@@ -86,7 +86,7 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
     if (renderPoly) out.write('}');
   }
 
-  private void writeValue(@NotNull Deque<ReqOutputModelProjection<?, ?>> projections, @Nullable Val value)
+  private void writeValue(@NotNull Deque<ReqOutputModelProjection<?, ?, ?>> projections, @Nullable Val value)
       throws IOException {
     if (value == null) { // TODO in case of null value we should probably render NO_VALUE error?
       out.write("null");
@@ -98,14 +98,17 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
   }
 
   @Override
-  public void writeDatum(@Nullable ReqOutputModelProjection<?,?> projection, @Nullable Datum datum) throws IOException {
-    ArrayDeque<ReqOutputModelProjection<?,?>> projections = new ArrayDeque<>(1);
+  public void writeDatum(@Nullable ReqOutputModelProjection<?, ?, ?> projection, @Nullable Datum datum)
+      throws IOException {
+    ArrayDeque<ReqOutputModelProjection<?, ?, ?>> projections = new ArrayDeque<>(1);
     projections.add(projection);
     writeDatum(projections, datum);
   }
 
   @SuppressWarnings("unchecked")
-  private void writeDatum(@NotNull Deque<? extends ReqOutputModelProjection<?,?>> projections, @Nullable Datum datum)
+  private void writeDatum(
+      @NotNull Deque<? extends ReqOutputModelProjection<?, ?, ?>> projections,
+      @Nullable Datum datum)
       throws IOException {
     if (datum == null) {
       out.write("null");

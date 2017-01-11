@@ -34,11 +34,11 @@ import java.util.Map;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpInputRecordModelProjection
-    extends OpInputModelProjection<OpInputRecordModelProjection, RecordTypeApi, GRecordDatum>
+    extends OpInputModelProjection<OpInputModelProjection<?, ?, ?, ?>, OpInputRecordModelProjection, RecordTypeApi, GRecordDatum>
     implements GenRecordModelProjection<
     OpInputVarProjection,
     OpInputTagProjectionEntry,
-    OpInputModelProjection<?, ?, ?>,
+    OpInputModelProjection<?, ?, ?, ?>,
     OpInputRecordModelProjection,
     OpInputFieldProjectionEntry,
     OpInputFieldProjection,
@@ -53,7 +53,7 @@ public class OpInputRecordModelProjection
       @Nullable GRecordDatum defaultValue,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
-      @Nullable OpInputRecordModelProjection metaProjection,
+      @Nullable OpInputModelProjection<?, ?, ?, ?> metaProjection,
       @NotNull Map<String, OpInputFieldProjectionEntry> fieldProjections,
       @NotNull TextLocation location) {
 

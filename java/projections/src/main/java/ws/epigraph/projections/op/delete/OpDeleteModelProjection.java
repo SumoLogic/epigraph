@@ -29,9 +29,10 @@ import java.util.Objects;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public abstract class OpDeleteModelProjection<
-    MP extends OpDeleteModelProjection</*MP*/?, ?>,
+    MP extends OpDeleteModelProjection</*MP*/?, /*SMP*/?, ?>,
+    SMP extends OpDeleteModelProjection</*MP*/?, /*SMP*/?, ?>,
     M extends DatumTypeApi
-    > extends AbstractModelProjection<MP, M> {
+    > extends AbstractModelProjection<MP, SMP, M> {
 
   protected final @NotNull OpParams params;
 
@@ -52,7 +53,7 @@ public abstract class OpDeleteModelProjection<
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     if (!super.equals(o)) return false;
-    OpDeleteModelProjection<?, ?> that = (OpDeleteModelProjection<?, ?>) o;
+    OpDeleteModelProjection<?, ?, ?> that = (OpDeleteModelProjection<?, ?, ?>) o;
     return Objects.equals(params, that.params);
   }
 

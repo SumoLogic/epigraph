@@ -31,7 +31,7 @@ import java.util.List;
 public class OpOutputFieldProjection extends AbstractOpFieldProjection<
     OpOutputVarProjection,
     OpOutputTagProjectionEntry,
-    OpOutputModelProjection<?, ?>,
+    OpOutputModelProjection<?, ?, ?>,
     OpOutputFieldProjection
     > {
 

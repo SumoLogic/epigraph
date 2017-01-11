@@ -32,11 +32,11 @@ import java.util.stream.Collectors;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpOutputListModelProjection
-    extends OpOutputModelProjection<OpOutputListModelProjection, ListTypeApi>
+    extends OpOutputModelProjection<OpOutputModelProjection<?, ?, ?>, OpOutputListModelProjection, ListTypeApi>
     implements GenListModelProjection<
     OpOutputVarProjection,
     OpOutputTagProjectionEntry,
-    OpOutputModelProjection<?, ?>,
+    OpOutputModelProjection<?, ?, ?>,
     OpOutputListModelProjection,
     ListTypeApi
     > {
@@ -47,7 +47,7 @@ public class OpOutputListModelProjection
       @NotNull ListTypeApi model,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
-      @Nullable OpOutputListModelProjection metaProjection,
+      @Nullable OpOutputModelProjection<?, ?, ?> metaProjection,
       @NotNull OpOutputVarProjection itemsProjection,
       @NotNull TextLocation location) {
     super(model, params, annotations, metaProjection, location);
@@ -64,12 +64,12 @@ public class OpOutputListModelProjection
       final @NotNull List<OpOutputListModelProjection> modelProjections,
       final @NotNull OpParams mergedParams,
       final @NotNull Annotations mergedAnnotations,
-      final @Nullable OpOutputListModelProjection mergedMetaProjection) {
+      final @Nullable OpOutputModelProjection<?, ?, ?> mergedMetaProjection) {
 
     List<OpOutputVarProjection> itemProjections =
         modelProjections.stream()
-                        .map(OpOutputListModelProjection::itemsProjection)
-                        .collect(Collectors.toList());
+            .map(OpOutputListModelProjection::itemsProjection)
+            .collect(Collectors.toList());
 
     final @NotNull OpOutputVarProjection mergedItemsVarType = itemProjections.get(0).merge(itemProjections);
 

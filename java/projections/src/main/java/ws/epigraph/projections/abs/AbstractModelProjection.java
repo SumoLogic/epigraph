@@ -30,8 +30,11 @@ import java.util.Objects;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public abstract class AbstractModelProjection<MP extends GenModelProjection</*MP*/?, ?>, M extends DatumTypeApi>
-    implements GenModelProjection<MP, M> {
+public abstract class AbstractModelProjection<
+    MP extends GenModelProjection</*MP*/?, /*SMP*/?, ?>,
+    SMP extends GenModelProjection</*MP*/?, /*SMP*/?, ?>,
+    M extends DatumTypeApi> implements GenModelProjection<MP, SMP, M> {
+
   protected final @NotNull M model;
   protected final @Nullable MP metaProjection;
   protected final @NotNull Annotations annotations;
@@ -61,9 +64,9 @@ public abstract class AbstractModelProjection<MP extends GenModelProjection</*MP
   @SuppressWarnings("unchecked")
   @Override
   /* static */
-  public MP merge(
+  public SMP merge(
       final @NotNull M model,
-      final @NotNull List<MP> modelProjections) {
+      final @NotNull List<SMP> modelProjections) {
 
     if (modelProjections.isEmpty()) return null;
     if (modelProjections.size() == 1) return modelProjections.get(0);
@@ -71,8 +74,8 @@ public abstract class AbstractModelProjection<MP extends GenModelProjection</*MP
     List<Annotations> annotationsList = new ArrayList<>();
     List<MP> metaProjectionsList = new ArrayList<>();
 
-    for (final GenModelProjection<?, ?> p : modelProjections) {
-      AbstractModelProjection<MP, ?> mp = (AbstractModelProjection<MP, ?>) p;
+    for (final GenModelProjection<?, ?, ?> p : modelProjections) {
+      AbstractModelProjection<MP, SMP, ?> mp = (AbstractModelProjection<MP, SMP, ?>) p;
       annotationsList.add(mp.annotations());
       final @Nullable MP meta = mp.metaProjection();
       if (meta != null) metaProjectionsList.add(meta);
@@ -81,9 +84,9 @@ public abstract class AbstractModelProjection<MP extends GenModelProjection</*MP
     final MP mergedMetaProjection;
     if (metaProjectionsList.isEmpty()) mergedMetaProjection = null;
     else {
-      final MP mp = metaProjectionsList.get(0);
+      final MP metaProjection = metaProjectionsList.get(0);
       DatumTypeApi metaModel = model/*.metaModel()*/; // TODO should get meta-model type here
-      mergedMetaProjection = ((GenModelProjection<MP, M>) mp).merge((M) metaModel, metaProjectionsList);
+      mergedMetaProjection = ((GenModelProjection<MP, MP, M>) metaProjection).merge((M) metaModel, metaProjectionsList);
     }
 
     return merge(
@@ -94,9 +97,9 @@ public abstract class AbstractModelProjection<MP extends GenModelProjection</*MP
     );
   }
 
-  protected MP merge(
+  protected SMP merge(
       @NotNull M model,
-      @NotNull List<MP> modelProjections,
+      @NotNull List<SMP> modelProjections,
       @NotNull Annotations mergedAnnotations,
       @Nullable MP mergedMetaProjection) {
 
@@ -110,7 +113,7 @@ public abstract class AbstractModelProjection<MP extends GenModelProjection</*MP
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-    AbstractModelProjection<?, ?> that = (AbstractModelProjection<?, ?>) o;
+    AbstractModelProjection<?, ?, ?> that = (AbstractModelProjection<?, ?, ?>) o;
     return Objects.equals(model, that.model) &&
            Objects.equals(metaProjection, that.metaProjection) &&
            Objects.equals(annotations, that.annotations);

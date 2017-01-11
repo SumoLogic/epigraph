@@ -31,7 +31,7 @@ import java.util.Map;
 public class OpInputProjectionsPrettyPrinter<E extends Exception> extends AbstractOpProjectionsPrettyPrinter<
     OpInputVarProjection,
     OpInputTagProjectionEntry,
-    OpInputModelProjection<?, ?, ?>,
+    OpInputModelProjection<?, ?, ?, ?>,
     OpInputRecordModelProjection,
     OpInputFieldProjectionEntry,
     OpInputFieldProjection,
@@ -43,8 +43,8 @@ public class OpInputProjectionsPrettyPrinter<E extends Exception> extends Abstra
 
   @Override
   public void print(@NotNull String tagName, @NotNull OpInputTagProjectionEntry tp, int pathSteps) throws E {
-    OpInputModelProjection<?, ?, ?> projection = tp.projection();
-    OpInputModelProjection<?, ?, ?> metaProjection = projection.metaProjection();
+    OpInputModelProjection<?, ?, ?, ?> projection = tp.projection();
+    OpInputModelProjection<?, ?, ?, ?> metaProjection = projection.metaProjection();
     final OpParams params = projection.params();
     final Annotations annotations = projection.annotations();
 
@@ -94,7 +94,7 @@ public class OpInputProjectionsPrettyPrinter<E extends Exception> extends Abstra
   }
 
   @Override
-  public void print(@NotNull OpInputModelProjection<?, ?, ?> mp, int pathSteps) throws E {
+  public void print(@NotNull OpInputModelProjection<?, ?, ?, ?> mp, int pathSteps) throws E {
     if (mp instanceof OpInputRecordModelProjection)
       print((OpInputRecordModelProjection) mp);
     else if (mp instanceof OpInputMapModelProjection)
@@ -126,7 +126,7 @@ public class OpInputProjectionsPrettyPrinter<E extends Exception> extends Abstra
 
 
   @Override
-  public boolean isPrintoutEmpty(@NotNull OpInputModelProjection<?, ?, ?> mp) {
+  public boolean isPrintoutEmpty(@NotNull OpInputModelProjection<?, ?, ?, ?> mp) {
     if (mp instanceof OpInputRecordModelProjection) {
       OpInputRecordModelProjection recordModelProjection = (OpInputRecordModelProjection) mp;
       Map<String, OpInputFieldProjectionEntry> fieldProjections = recordModelProjection.fieldProjections();

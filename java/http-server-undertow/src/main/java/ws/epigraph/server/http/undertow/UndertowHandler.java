@@ -248,7 +248,7 @@ public class UndertowHandler implements HttpHandler {
               OutputProjectionPathRemover.removePath(reqProjection, pathSteps);
 
           final @Nullable ReqOutputVarProjection varProjection = noPathProjection.varProjection();
-          final @Nullable ReqOutputModelProjection<?, ?> modelProjection = noPathProjection.modelProjection();
+          final @Nullable ReqOutputModelProjection<?, ?, ?> modelProjection = noPathProjection.modelProjection();
 
           if (varProjection != null) {
             exchange.setStatusCode(statusCode);
@@ -828,7 +828,7 @@ public class UndertowHandler implements HttpHandler {
 
 
   private void writeDatum(
-      @NotNull ReqOutputModelProjection<?, ?> projection,
+      @NotNull ReqOutputModelProjection<?, ?, ?> projection,
       @Nullable Datum datum,
       @NotNull OutputStream outputStream) throws IOException {
 

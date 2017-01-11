@@ -28,11 +28,11 @@ import java.util.List;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ReqOutputTagProjectionEntry
-    extends AbstractTagProjectionEntry<ReqOutputTagProjectionEntry, ReqOutputModelProjection<?, ?>> {
+    extends AbstractTagProjectionEntry<ReqOutputTagProjectionEntry, ReqOutputModelProjection<?, ?, ?>> {
 
   public ReqOutputTagProjectionEntry(
       @NotNull TagApi tag,
-      @NotNull ReqOutputModelProjection<?, ?> projection,
+      @NotNull ReqOutputModelProjection<?, ?, ?> projection,
       @NotNull TextLocation location) {
     super(tag, projection, location);
   }
@@ -41,7 +41,7 @@ public class ReqOutputTagProjectionEntry
   protected @Nullable ReqOutputTagProjectionEntry mergeTags(
       final @NotNull TagApi tag,
       final @NotNull List<ReqOutputTagProjectionEntry> tagsEntries,
-      final @NotNull ReqOutputModelProjection<?, ?> mergedModel) {
+      final @NotNull ReqOutputModelProjection<?, ?, ?> mergedModel) {
 
     return new ReqOutputTagProjectionEntry(
         tag,

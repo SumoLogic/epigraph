@@ -26,17 +26,19 @@ import ws.epigraph.projections.op.OpParams;
 import ws.epigraph.types.FieldApi;
 import ws.epigraph.types.RecordTypeApi;
 
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpOutputRecordModelProjection
-    extends OpOutputModelProjection<OpOutputRecordModelProjection, RecordTypeApi>
+    extends OpOutputModelProjection<OpOutputModelProjection<?, ?, ?>, OpOutputRecordModelProjection, RecordTypeApi>
     implements GenRecordModelProjection<
     OpOutputVarProjection,
     OpOutputTagProjectionEntry,
-    OpOutputModelProjection<?, ?>,
+    OpOutputModelProjection<?, ?, ?>,
     OpOutputRecordModelProjection,
     OpOutputFieldProjectionEntry,
     OpOutputFieldProjection,
@@ -49,7 +51,7 @@ public class OpOutputRecordModelProjection
       @NotNull RecordTypeApi model,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
-      @Nullable OpOutputRecordModelProjection metaProjection,
+      @Nullable OpOutputModelProjection<?, ?, ?> metaProjection,
       @NotNull Map<String, OpOutputFieldProjectionEntry> fieldProjections,
       @NotNull TextLocation location) {
     super(model, params, annotations, metaProjection, location);
@@ -67,7 +69,7 @@ public class OpOutputRecordModelProjection
       final @NotNull List<OpOutputRecordModelProjection> modelProjections,
       final @NotNull OpParams mergedParams,
       final @NotNull Annotations mergedAnnotations,
-      final @Nullable OpOutputRecordModelProjection mergedMetaProjection) {
+      final @Nullable OpOutputModelProjection<?, ?, ?> mergedMetaProjection) {
 
     Map<FieldApi, OpOutputFieldProjection> mergedFieldProjections =
         RecordModelProjectionHelper.mergeFieldProjections(modelProjections);

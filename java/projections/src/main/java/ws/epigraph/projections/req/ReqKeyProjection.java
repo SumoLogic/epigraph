@@ -28,14 +28,10 @@ import java.util.stream.Stream;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ReqKeyProjection {
-  @NotNull
-  private final Datum value;
-  @NotNull
-  private final ReqParams params;
-  @NotNull
-  private final Annotations annotations;
-  @NotNull
-  private final TextLocation location;
+  private final @NotNull Datum value;
+  private final @NotNull ReqParams params;
+  private final @NotNull Annotations annotations;
+  private final @NotNull TextLocation location;
 
   public ReqKeyProjection(
       @NotNull Datum value,
@@ -48,17 +44,13 @@ public class ReqKeyProjection {
     this.location = location;
   }
 
-  @NotNull
-  public Datum value() { return value; }
+  public @NotNull Datum value() { return value; }
 
-  @NotNull
-  public ReqParams params() { return params; }
+  public @NotNull ReqParams params() { return params; }
 
-  @NotNull
-  public Annotations annotations() { return annotations; }
+  public @NotNull Annotations annotations() { return annotations; }
 
-  @NotNull
-  public TextLocation location() { return location; }
+  public @NotNull TextLocation location() { return location; }
 
   @Override
   public boolean equals(Object o) {
@@ -81,13 +73,8 @@ public class ReqKeyProjection {
 
     Map<Datum, List<RKP>> groupedKeysToMerge = new LinkedHashMap<>();
     keysToMerge.forEach(key -> {
-      @NotNull final Datum keyValue = key.value();
-      List<RKP> group = groupedKeysToMerge.get(keyValue);
-
-      if (group == null) {
-        group = new ArrayList<>();
-        groupedKeysToMerge.put(keyValue, group);
-      }
+      final @NotNull Datum keyValue = key.value();
+      List<RKP> group = groupedKeysToMerge.computeIfAbsent(keyValue, k -> new ArrayList<>());
 
       group.add(key);
     });

@@ -30,7 +30,7 @@ import java.util.Map;
 public interface GenVarProjection<
     VP extends GenVarProjection<VP, TP, MP>,
     TP extends GenTagProjectionEntry<TP, MP>,
-    MP extends GenModelProjection</*MP*/?, ?>
+    MP extends GenModelProjection</*MP*/?, ?, ?>
     > {
 
   @NotNull TypeApi type();

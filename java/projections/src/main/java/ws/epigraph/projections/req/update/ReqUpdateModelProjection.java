@@ -29,9 +29,10 @@ import java.util.Objects;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public abstract class ReqUpdateModelProjection<
-    MP extends ReqUpdateModelProjection</*MP*/?, ?>,
+    MP extends ReqUpdateModelProjection</*MP*/?, /*SMP*/?, ?>,
+    SMP extends ReqUpdateModelProjection</*MP*/?, /*SMP*/?, ?>,
     M extends DatumTypeApi>
-    extends AbstractReqModelProjection<MP, M> {
+    extends AbstractReqModelProjection<MP, SMP, M> {
 
   protected final boolean update;
 
@@ -56,7 +57,7 @@ public abstract class ReqUpdateModelProjection<
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     if (!super.equals(o)) return false;
-    final ReqUpdateModelProjection<?, ?> that = (ReqUpdateModelProjection<?, ?>) o;
+    final ReqUpdateModelProjection<?, ?, ?> that = (ReqUpdateModelProjection<?, ?, ?>) o;
     return update == that.update;
   }
 

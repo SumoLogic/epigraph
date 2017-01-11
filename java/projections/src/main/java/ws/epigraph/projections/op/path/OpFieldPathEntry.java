@@ -27,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
 public class OpFieldPathEntry extends AbstractFieldProjectionEntry<
     OpVarPath,
     OpTagPath,
-    OpModelPath<?, ?>,
+    OpModelPath<?, ?, ?>,
     OpFieldPath
     > {
   public OpFieldPathEntry(

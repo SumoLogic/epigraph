@@ -26,7 +26,8 @@ import java.util.Map;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class OutputProjectionPathRemover { // todo move somewhere
+public final class OutputProjectionPathRemover {
+  private OutputProjectionPathRemover() {} // todo move somewhere
 
   public static PathRemovalResult removePath(@NotNull ReqOutputVarProjection projection, int steps)
       throws AmbiguousPathException {
@@ -41,23 +42,24 @@ public class OutputProjectionPathRemover { // todo move somewhere
     return removePath(tagProjection.projection(), steps - 1);
   }
 
-  public static PathRemovalResult removePath(@NotNull ReqOutputModelProjection<?, ?> projection, int steps)
+  public static PathRemovalResult removePath(@NotNull ReqOutputModelProjection<?, ?, ?> projection, int steps)
       throws AmbiguousPathException {
     if (steps == 0) return new PathRemovalResult(null, projection);
 
+    //noinspection SwitchStatementWithoutDefaultBranch,EnumSwitchStatementWhichMissesCases
     switch (projection.model().kind()) {
-      
+
       case RECORD:
         ReqOutputRecordModelProjection rmp = (ReqOutputRecordModelProjection) projection;
         final @NotNull Map<String, ReqOutputFieldProjectionEntry> fieldProjections = rmp.fieldProjections();
-        
+
         if (fieldProjections.size() > 1) throw new AmbiguousPathException();
-        @Nullable final ReqOutputFieldProjectionEntry fieldProjection = rmp.pathFieldProjection();
-        
+        final @Nullable ReqOutputFieldProjectionEntry fieldProjection = rmp.pathFieldProjection();
+
         if (fieldProjection == null) return PathRemovalResult.NULL;
 
         return removePath(fieldProjection.fieldProjection().varProjection(), steps - 1);
-      
+
       case MAP:
         ReqOutputMapModelProjection mmp = (ReqOutputMapModelProjection) projection;
         final @Nullable List<ReqOutputKeyProjection> keys = mmp.keys();
@@ -65,31 +67,28 @@ public class OutputProjectionPathRemover { // todo move somewhere
         if (keys.size() != 1) throw new AmbiguousPathException();
 
         return removePath(mmp.itemsProjection(), steps - 1);
+
     }
-    
+
     throw new AmbiguousPathException();
   }
 
   public static class PathRemovalResult {
     public static final PathRemovalResult NULL = new PathRemovalResult(null, null);
 
-    @Nullable
-    private final ReqOutputVarProjection varProjection;
-    @Nullable
-    private final ReqOutputModelProjection<?, ?> modelProjection;
+    private final @Nullable ReqOutputVarProjection varProjection;
+    private final @Nullable ReqOutputModelProjection<?, ?, ?> modelProjection;
 
     PathRemovalResult(
         final @Nullable ReqOutputVarProjection varProjection,
-        final @Nullable ReqOutputModelProjection<?, ?> modelProjection) {
+        final @Nullable ReqOutputModelProjection<?, ?, ?> modelProjection) {
 
       this.varProjection = varProjection;
       this.modelProjection = modelProjection;
     }
 
-    @Nullable
-    public ReqOutputVarProjection varProjection() { return varProjection; }
+    public @Nullable ReqOutputVarProjection varProjection() { return varProjection; }
 
-    @Nullable
-    public ReqOutputModelProjection<?, ?> modelProjection() { return modelProjection; }
+    public @Nullable ReqOutputModelProjection<?, ?, ?> modelProjection() { return modelProjection; }
   }
 }

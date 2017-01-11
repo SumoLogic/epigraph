@@ -30,7 +30,7 @@ import java.util.Objects;
 public class ReqUpdateFieldProjection extends AbstractReqFieldProjection<
     ReqUpdateVarProjection,
     ReqUpdateTagProjectionEntry,
-    ReqUpdateModelProjection<?, ?>,
+    ReqUpdateModelProjection<?, ?, ?>,
     ReqUpdateFieldProjection
     > {
   private final boolean update;

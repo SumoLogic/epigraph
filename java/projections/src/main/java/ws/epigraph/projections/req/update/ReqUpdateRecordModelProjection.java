@@ -31,11 +31,11 @@ import java.util.*;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ReqUpdateRecordModelProjection
-    extends ReqUpdateModelProjection<ReqUpdateRecordModelProjection, RecordTypeApi>
+    extends ReqUpdateModelProjection<ReqUpdateModelProjection<?, ?, ?>, ReqUpdateRecordModelProjection, RecordTypeApi>
     implements GenRecordModelProjection<
     ReqUpdateVarProjection,
     ReqUpdateTagProjectionEntry,
-    ReqUpdateModelProjection<?, ?>,
+    ReqUpdateModelProjection<?, ?, ?>,
     ReqUpdateRecordModelProjection,
     ReqUpdateFieldProjectionEntry,
     ReqUpdateFieldProjection,

@@ -83,18 +83,18 @@ public final class ReqOutputProjectionsPsiParser {
 
       tagProjections = new LinkedHashMap<>();
 
-      final ReqOutputModelProjection<?, ?> parsedModelProjection;
+      final ReqOutputModelProjection<?, ?, ?> parsedModelProjection;
       final @Nullable UrlTagName tagNamePsi = singleTagProjectionPsi.getTagName();
 
       final @NotNull TagApi tag = getTagOrDefaultTag(type, tagNamePsi, op, tagLocation, errors);
       @NotNull OpOutputTagProjectionEntry opTagProjection =
           getTagProjection(tag.name(), op, tagLocation, errors);
 
-      @NotNull OpOutputModelProjection<?, ?> opModelProjection = opTagProjection.projection();
+      @NotNull OpOutputModelProjection<?, ?, ?> opModelProjection = opTagProjection.projection();
       @NotNull UrlReqOutputTrunkModelProjection modelProjectionPsi =
           singleTagProjectionPsi.getReqOutputTrunkModelProjection();
 
-      StepsAndProjection<? extends ReqOutputModelProjection<?, ?>> stepsAndProjection = parseTrunkModelProjection(
+      StepsAndProjection<? extends ReqOutputModelProjection<?, ?, ?>> stepsAndProjection = parseTrunkModelProjection(
           opModelProjection,
           singleTagProjectionPsi.getPlus() != null,
           parseReqParams(singleTagProjectionPsi.getReqParamList(), opModelProjection.params(), subResolver, errors),
@@ -172,7 +172,7 @@ public final class ReqOutputProjectionsPsiParser {
 
     for (final Map.Entry<String, OpOutputTagProjectionEntry> entry : op.tagProjections().entrySet()) {
       final TagApi tag = entry.getValue().tag();
-      final OpOutputModelProjection<?, ?> opModelProjection = entry.getValue().projection();
+      final OpOutputModelProjection<?, ?, ?> opModelProjection = entry.getValue().projection();
 
       tagProjections.put(
           entry.getKey(),
@@ -223,12 +223,12 @@ public final class ReqOutputProjectionsPsiParser {
         @NotNull OpOutputTagProjectionEntry opTagProjection =
             getTagProjection(tag.name(), op, singleTagProjectionPsi, errors);
 
-        @NotNull OpOutputModelProjection<?, ?> opModelProjection = opTagProjection.projection();
+        @NotNull OpOutputModelProjection<?, ?, ?> opModelProjection = opTagProjection.projection();
 
         @NotNull UrlReqOutputComaModelProjection modelProjectionPsi =
             singleTagProjectionPsi.getReqOutputComaModelProjection();
 
-        final ReqOutputModelProjection<?, ?> parsedModelProjection = parseComaModelProjection(
+        final ReqOutputModelProjection<?, ?, ?> parsedModelProjection = parseComaModelProjection(
             opModelProjection,
             singleTagProjectionPsi.getPlus() != null,
             parseReqParams(singleTagProjectionPsi.getReqParamList(), opModelProjection.params(), subResolver, errors),
@@ -302,11 +302,11 @@ public final class ReqOutputProjectionsPsiParser {
             UrlProjectionsPsiParserUtil.getTag(tagProjectionPsi.getTagName(), op, tagProjectionPsi, errors);
         @NotNull OpOutputTagProjectionEntry opTag = getTagProjection(tag.name(), op, tagProjectionPsi, errors);
 
-        OpOutputModelProjection<?, ?> opTagProjection = opTag.projection();
+        OpOutputModelProjection<?, ?, ?> opTagProjection = opTag.projection();
 
         @NotNull UrlReqOutputComaModelProjection modelProjection = tagProjectionPsi.getReqOutputComaModelProjection();
 
-        final ReqOutputModelProjection<?, ?> parsedModelProjection = parseComaModelProjection(
+        final ReqOutputModelProjection<?, ?, ?> parsedModelProjection = parseComaModelProjection(
             opTagProjection,
             tagProjectionPsi.getPlus() != null,
             parseReqParams(tagProjectionPsi.getReqParamList(), opTagProjection.params(), subResolver, errors),
@@ -383,15 +383,15 @@ public final class ReqOutputProjectionsPsiParser {
 
 
   @Contract("_, null, _, _ -> null")
-  private static @Nullable ReqOutputModelProjection<?, ?> parseModelMetaProjection(
-      @NotNull OpOutputModelProjection<?, ?> op,
+  private static @Nullable ReqOutputModelProjection<?, ?, ?> parseModelMetaProjection(
+      @NotNull OpOutputModelProjection<?, ?, ?> op,
       @Nullable UrlReqOutputModelMeta modelMetaPsi,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
     if (modelMetaPsi == null) return null;
 
-    OpOutputModelProjection<?, ?> metaOp = op.metaProjection();
+    OpOutputModelProjection<?, ?, ?> metaOp = op.metaProjection();
 
     if (metaOp == null) {
       errors.add(
@@ -508,12 +508,12 @@ public final class ReqOutputProjectionsPsiParser {
     return createDefaultVarProjection(type.type(), op, required, locationPsi, errors);
   }
 
-  public static @NotNull StepsAndProjection<? extends ReqOutputModelProjection<?, ?>> parseTrunkModelProjection(
-      @NotNull OpOutputModelProjection<?, ?> op,
+  public static @NotNull StepsAndProjection<? extends ReqOutputModelProjection<?, ?, ?>> parseTrunkModelProjection(
+      @NotNull OpOutputModelProjection<?, ?, ?> op,
       boolean required,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
-      @Nullable ReqOutputModelProjection<?, ?> metaProjection,
+      @Nullable ReqOutputModelProjection<?, ?, ?> metaProjection,
       @NotNull UrlReqOutputTrunkModelProjection psi,
       @NotNull TypesResolver typesResolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
@@ -568,12 +568,12 @@ public final class ReqOutputProjectionsPsiParser {
 
   }
 
-  public static @NotNull ReqOutputModelProjection<?, ?> parseComaModelProjection(
-      @NotNull OpOutputModelProjection<?, ?> op,
+  public static @NotNull ReqOutputModelProjection<?, ?, ?> parseComaModelProjection(
+      @NotNull OpOutputModelProjection<?, ?, ?> op,
       boolean required,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
-      @Nullable ReqOutputModelProjection<?, ?> metaProjection,
+      @Nullable ReqOutputModelProjection<?, ?, ?> metaProjection,
       @NotNull UrlReqOutputComaModelProjection psi,
       @NotNull TypesResolver typesResolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
@@ -674,10 +674,10 @@ public final class ReqOutputProjectionsPsiParser {
     return null;
   }
 
-  public static @NotNull ReqOutputModelProjection<?, ?> createDefaultModelProjection(
+  public static @NotNull ReqOutputModelProjection<?, ?, ?> createDefaultModelProjection(
       @NotNull DatumTypeApi type,
       boolean required,
-      @NotNull OpOutputModelProjection<?, ?> op,
+      @NotNull OpOutputModelProjection<?, ?, ?> op,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
       @NotNull PsiElement locationPsi,

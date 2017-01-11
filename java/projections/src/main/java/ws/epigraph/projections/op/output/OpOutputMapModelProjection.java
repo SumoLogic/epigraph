@@ -33,11 +33,11 @@ import java.util.Objects;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpOutputMapModelProjection
-    extends OpOutputModelProjection<OpOutputMapModelProjection, MapTypeApi>
+    extends OpOutputModelProjection<OpOutputModelProjection<?, ?, ?>, OpOutputMapModelProjection, MapTypeApi>
     implements GenMapModelProjection<
     OpOutputVarProjection,
     OpOutputTagProjectionEntry,
-    OpOutputModelProjection<?, ?>,
+    OpOutputModelProjection<?, ?, ?>,
     OpOutputMapModelProjection,
     MapTypeApi
     > {
@@ -49,7 +49,7 @@ public class OpOutputMapModelProjection
       @NotNull MapTypeApi model,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
-      @Nullable OpOutputMapModelProjection metaProjection,
+      @Nullable OpOutputModelProjection<?, ?, ?> metaProjection,
       @NotNull OpOutputKeyProjection keyProjection,
       @NotNull OpOutputVarProjection itemsProjection,
       @NotNull TextLocation location) {
@@ -70,7 +70,7 @@ public class OpOutputMapModelProjection
       final @NotNull List<OpOutputMapModelProjection> modelProjections,
       final @NotNull OpParams mergedParams,
       final @NotNull Annotations mergedAnnotations,
-      final @Nullable OpOutputMapModelProjection mergedMetaProjection) {
+      final @Nullable OpOutputModelProjection<?, ?, ?> mergedMetaProjection) {
 
     List<OpParams> keysParams = new ArrayList<>(modelProjections.size());
     List<Annotations> keysAnnotations = new ArrayList<>(modelProjections.size());

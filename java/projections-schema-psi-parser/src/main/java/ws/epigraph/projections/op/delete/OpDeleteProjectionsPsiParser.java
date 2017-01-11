@@ -76,7 +76,7 @@ public final class OpDeleteProjectionsPsiParser {
 
         @NotNull Collection<SchemaOpDeleteModelProperty> modelPropertiesPsi = tagProjectionPsi.getOpDeleteModelPropertyList();
 
-        final OpDeleteModelProjection<?, ?> parsedModelProjection = parseModelProjection(
+        final OpDeleteModelProjection<?, ?, ?> parsedModelProjection = parseModelProjection(
             tagType,
             parseModelParams(modelPropertiesPsi, typesResolver, errors),
             parseModelAnnotations(modelPropertiesPsi, errors),
@@ -118,7 +118,7 @@ public final class OpDeleteProjectionsPsiParser {
         @NotNull Collection<SchemaOpDeleteModelProperty> modelPropertiesPsi =
             singleTagProjectionPsi.getOpDeleteModelPropertyList();
 
-        final OpDeleteModelProjection<?, ?> parsedModelProjection = parseModelProjection(
+        final OpDeleteModelProjection<?, ?, ?> parsedModelProjection = parseModelProjection(
             tag.type(),
             parseModelParams(modelPropertiesPsi, typesResolver, errors),
             parseModelAnnotations(modelPropertiesPsi, errors),
@@ -275,7 +275,7 @@ public final class OpDeleteProjectionsPsiParser {
     return createDefaultVarProjection(type.type(), defaultTag, canDelete, locationPsi, errors);
   }
 
-  public static @NotNull OpDeleteModelProjection<?, ?> parseModelProjection(
+  public static @NotNull OpDeleteModelProjection<?, ?, ?> parseModelProjection(
       @NotNull DatumTypeApi type,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
@@ -364,7 +364,7 @@ public final class OpDeleteProjectionsPsiParser {
     return null;
   }
 
-  private static @NotNull OpDeleteModelProjection<?, ?> createDefaultModelProjection(
+  private static @NotNull OpDeleteModelProjection<?, ?, ?> createDefaultModelProjection(
       @NotNull DatumTypeApi type,
       @NotNull OpParams params,
       @NotNull Annotations annotations,

@@ -32,7 +32,7 @@ import java.util.Map;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ReqPathPrettyPrinter<E extends Exception>
-    extends AbstractProjectionsPrettyPrinter<ReqVarPath, ReqTagPath, ReqModelPath<?, ?>, E> {
+    extends AbstractProjectionsPrettyPrinter<ReqVarPath, ReqTagPath, ReqModelPath<?, ?, ?>, E> {
 
   protected @NotNull DataPrinter<E> dataPrinter;
 
@@ -51,7 +51,7 @@ public class ReqPathPrettyPrinter<E extends Exception>
 
   @Override
   public void print(@NotNull String tagName, @NotNull ReqTagPath tp, int pathSteps) throws E {
-    ReqModelPath<?, ?> projection = tp.projection();
+    ReqModelPath<?, ?, ?> projection = tp.projection();
 
     ReqParams params = projection.params();
     Annotations annotations = projection.annotations();
@@ -70,7 +70,7 @@ public class ReqPathPrettyPrinter<E extends Exception>
   }
 
   @Override
-  public void print(@NotNull ReqModelPath<?, ?> mp, int pathSteps) throws E {
+  public void print(@NotNull ReqModelPath<?, ?, ?> mp, int pathSteps) throws E {
     if (mp instanceof ReqRecordModelPath)
       print((ReqRecordModelPath) mp);
     else if (mp instanceof ReqMapModelPath)
@@ -123,7 +123,7 @@ public class ReqPathPrettyPrinter<E extends Exception>
   }
 
   @Override
-  public boolean isPrintoutEmpty(@NotNull ReqModelPath<?, ?> mp) {
+  public boolean isPrintoutEmpty(@NotNull ReqModelPath<?, ?, ?> mp) {
     if (mp instanceof ReqRecordModelPath) {
       ReqRecordModelPath recordModelProjection = (ReqRecordModelPath) mp;
       Map<String, ReqFieldPathEntry> fieldProjections = recordModelProjection.fieldProjections();

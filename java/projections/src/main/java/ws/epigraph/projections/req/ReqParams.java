@@ -27,16 +27,13 @@ import java.util.stream.Stream;
  */
 public class ReqParams {
   public static final ReqParams EMPTY = new ReqParams(Collections.emptyMap());
-  @NotNull
-  private final Map<String, ReqParam> params;
+  private final @NotNull Map<String, ReqParam> params;
 
-  @NotNull
-  public static ReqParams fromMap(@Nullable Map<String, ReqParam> params) {
+  public static @NotNull ReqParams fromMap(@Nullable Map<String, ReqParam> params) {
     return params == null ? EMPTY : new ReqParams(params);
   }
 
-  @NotNull
-  public static ReqParams fromCollection(@Nullable Collection<ReqParam> params) {
+  public static @NotNull ReqParams fromCollection(@Nullable Collection<ReqParam> params) {
     return params == null ? EMPTY : new ReqParams(params);
   }
 
@@ -58,14 +55,11 @@ public class ReqParams {
 
   public boolean isEmpty() { return params.isEmpty(); }
 
-  @Nullable
-  public ReqParam get(@NotNull String key) { return params.get(key); }
+  public @Nullable ReqParam get(@NotNull String key) { return params.get(key); }
 
-  @NotNull
-  public Map<String, ReqParam> asMap() { return params; }
+  public @NotNull Map<String, ReqParam> asMap() { return params; }
 
-  @NotNull
-  public static ReqParams merge(@NotNull Stream<ReqParams> paramsToMerge) {
+  public static @NotNull ReqParams merge(@NotNull Stream<ReqParams> paramsToMerge) {
     Map<String,ReqParam> entries = new HashMap<>();
     
     paramsToMerge.forEach(params -> {
@@ -79,8 +73,7 @@ public class ReqParams {
     return new ReqParams(entries);
   }
   
-  @NotNull
-  public static ReqParams merge(@NotNull Collection<ReqParams> paramsToMerge) {
+  public static @NotNull ReqParams merge(@NotNull Collection<ReqParams> paramsToMerge) {
     if (paramsToMerge.isEmpty()) return EMPTY;
     if (paramsToMerge.size() == 1) return paramsToMerge.iterator().next();
 

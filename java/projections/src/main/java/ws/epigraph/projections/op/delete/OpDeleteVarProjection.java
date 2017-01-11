@@ -32,7 +32,7 @@ import java.util.Objects;
 public class OpDeleteVarProjection extends AbstractVarProjection<
     OpDeleteVarProjection,
     OpDeleteTagProjectionEntry,
-    OpDeleteModelProjection<?, ?>
+    OpDeleteModelProjection<?, ?, ?>
     > {
 
   private final boolean canDelete;

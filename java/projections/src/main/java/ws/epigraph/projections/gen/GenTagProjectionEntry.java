@@ -26,7 +26,10 @@ import java.util.List;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public interface GenTagProjectionEntry<TP extends GenTagProjectionEntry<TP, MP>, MP extends GenModelProjection</*MP*/?, ?>> {
+public interface GenTagProjectionEntry<
+    TP extends GenTagProjectionEntry<TP, MP>,
+    MP extends GenModelProjection</*MP*/?, ?, ?>
+    > {
 
   @NotNull TagApi tag();
 

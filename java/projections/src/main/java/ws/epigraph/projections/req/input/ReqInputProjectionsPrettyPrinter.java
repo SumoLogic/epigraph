@@ -31,7 +31,7 @@ public class ReqInputProjectionsPrettyPrinter<E extends Exception>
     extends AbstractReqProjectionsPrettyPrinter<
     ReqInputVarProjection,
     ReqInputTagProjectionEntry,
-    ReqInputModelProjection<?, ?>,
+    ReqInputModelProjection<?, ?, ?>,
     ReqInputRecordModelProjection,
     ReqInputFieldProjectionEntry,
     ReqInputFieldProjection,
@@ -43,7 +43,7 @@ public class ReqInputProjectionsPrettyPrinter<E extends Exception>
 
   @Override
   public void print(@NotNull String tagName, @NotNull ReqInputTagProjectionEntry tp, int pathSteps) throws E {
-    ReqInputModelProjection<?, ?> projection = tp.projection();
+    ReqInputModelProjection<?, ?, ?> projection = tp.projection();
 
     ReqParams params = projection.params();
     Annotations annotations = projection.annotations();
@@ -62,7 +62,7 @@ public class ReqInputProjectionsPrettyPrinter<E extends Exception>
   }
 
   @Override
-  public void print(@NotNull ReqInputModelProjection<?, ?> mp, int pathSteps) throws E {
+  public void print(@NotNull ReqInputModelProjection<?, ?, ?> mp, int pathSteps) throws E {
     if (mp instanceof ReqInputRecordModelProjection)
       print((ReqInputRecordModelProjection) mp, 0);
     else if (mp instanceof ReqInputMapModelProjection)
@@ -87,7 +87,7 @@ public class ReqInputProjectionsPrettyPrinter<E extends Exception>
 
 
   @Override
-  public boolean isPrintoutEmpty(@NotNull ReqInputModelProjection<?, ?> mp) {
+  public boolean isPrintoutEmpty(@NotNull ReqInputModelProjection<?, ?, ?> mp) {
     if (mp instanceof ReqInputRecordModelProjection) {
       ReqInputRecordModelProjection recordModelProjection = (ReqInputRecordModelProjection) mp;
       Map<String, ReqInputFieldProjectionEntry> fieldProjections =

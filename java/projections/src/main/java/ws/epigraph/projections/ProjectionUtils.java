@@ -64,7 +64,7 @@ public final class ProjectionUtils {
 
       lastDataType = tagProjection.tag().type().dataType();
 
-      final GenModelProjection<?, ?> modelPath = tagProjection.projection();
+      final GenModelProjection<?, ?, ?> modelPath = tagProjection.projection();
       final DatumTypeApi model = modelPath.model();
       switch (model.kind()) {
         case RECORD:
@@ -99,7 +99,7 @@ public final class ProjectionUtils {
 
       len++;
 
-      final GenModelProjection<?, ?> modelPath = tagProjection.projection();
+      final GenModelProjection<?, ?, ?> modelPath = tagProjection.projection();
       final DatumTypeApi model = modelPath.model();
       switch (model.kind()) {
         case RECORD:

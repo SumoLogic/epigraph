@@ -25,11 +25,11 @@ import org.jetbrains.annotations.NotNull;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ReqInputTagProjectionEntry
-    extends AbstractTagProjectionEntry<ReqInputTagProjectionEntry, ReqInputModelProjection<?, ?>> {
+    extends AbstractTagProjectionEntry<ReqInputTagProjectionEntry, ReqInputModelProjection<?, ?, ?>> {
 
   public ReqInputTagProjectionEntry(
       @NotNull TagApi tag,
-      @NotNull ReqInputModelProjection<?, ?> projection,
+      @NotNull ReqInputModelProjection<?, ?, ?> projection,
       @NotNull TextLocation location) {
     super(tag, projection, location);
   }

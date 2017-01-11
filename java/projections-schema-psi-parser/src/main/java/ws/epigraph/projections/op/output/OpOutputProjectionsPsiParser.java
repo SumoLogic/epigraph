@@ -70,7 +70,7 @@ public final class OpOutputProjectionsPsiParser {
       for (SchemaOpOutputMultiTagProjectionItem tagProjectionPsi : tagProjectionPsiList) {
         final TagApi tag = getTag(type, tagProjectionPsi.getTagName(), dataType.defaultTag(), tagProjectionPsi, errors);
 
-        final OpOutputModelProjection<?, ?> parsedModelProjection;
+        final OpOutputModelProjection<?, ?, ?> parsedModelProjection;
 
         @NotNull DatumTypeApi tagType = tag.type();
         @Nullable SchemaOpOutputModelProjection modelProjection = tagProjectionPsi.getOpOutputModelProjection();
@@ -106,7 +106,7 @@ public final class OpOutputProjectionsPsiParser {
           errors
       );
       if (tag != null || !singleTagProjectionPsi.getText().isEmpty()) {
-        final OpOutputModelProjection<?, ?> parsedModelProjection;
+        final OpOutputModelProjection<?, ?, ?> parsedModelProjection;
         if (tag == null) // will throw proper error
           tag = getTag(
               type,
@@ -208,7 +208,7 @@ public final class OpOutputProjectionsPsiParser {
     );
   }
 
-  private static @Nullable OpOutputModelProjection<?, ?> parseModelMetaProjection(
+  private static @Nullable OpOutputModelProjection<?, ?, ?> parseModelMetaProjection(
       @NotNull DatumTypeApi type,
       @NotNull List<SchemaOpOutputModelProperty> modelProperties,
       @NotNull TypesResolver resolver,
@@ -325,11 +325,11 @@ public final class OpOutputProjectionsPsiParser {
     return createDefaultVarProjection(type.type(), defaultTag, locationPsi, errors);
   }
 
-  public static @NotNull OpOutputModelProjection<?, ?> parseModelProjection(
+  public static @NotNull OpOutputModelProjection<?, ?, ?> parseModelProjection(
       @NotNull DatumTypeApi type,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
-      @Nullable OpOutputModelProjection<?, ?> metaProjection,
+      @Nullable OpOutputModelProjection<?, ?, ?> metaProjection,
       @NotNull SchemaOpOutputModelProjection psi,
       @NotNull TypesResolver typesResolver,
       @NotNull List<PsiProcessingError> errors)
@@ -418,7 +418,7 @@ public final class OpOutputProjectionsPsiParser {
     return null;
   }
 
-  private static @NotNull OpOutputModelProjection<?, ?> createDefaultModelProjection(
+  private static @NotNull OpOutputModelProjection<?, ?, ?> createDefaultModelProjection(
       @NotNull DatumTypeApi type,
       @NotNull OpParams params,
       @NotNull Annotations annotations,

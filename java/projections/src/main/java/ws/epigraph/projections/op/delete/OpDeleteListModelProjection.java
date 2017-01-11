@@ -29,11 +29,11 @@ import java.util.Objects;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpDeleteListModelProjection
-    extends OpDeleteModelProjection<OpDeleteListModelProjection, ListTypeApi>
+    extends OpDeleteModelProjection<OpDeleteModelProjection<?, ?, ?>, OpDeleteListModelProjection, ListTypeApi>
     implements GenListModelProjection<
     OpDeleteVarProjection,
     OpDeleteTagProjectionEntry,
-    OpDeleteModelProjection<?, ?>,
+    OpDeleteModelProjection<?, ?, ?>,
     OpDeleteListModelProjection,
     ListTypeApi
     > {

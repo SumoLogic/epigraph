@@ -31,7 +31,7 @@ public class ReqUpdateProjectionsPrettyPrinter<E extends Exception>
     extends AbstractReqProjectionsPrettyPrinter<
     ReqUpdateVarProjection,
     ReqUpdateTagProjectionEntry,
-    ReqUpdateModelProjection<?, ?>,
+    ReqUpdateModelProjection<?, ?, ?>,
     ReqUpdateRecordModelProjection,
     ReqUpdateFieldProjectionEntry,
     ReqUpdateFieldProjection,
@@ -43,7 +43,7 @@ public class ReqUpdateProjectionsPrettyPrinter<E extends Exception>
 
   @Override
   public void print(@NotNull String tagName, @NotNull ReqUpdateTagProjectionEntry tp, int pathSteps) throws E {
-    ReqUpdateModelProjection<?, ?> projection = tp.projection();
+    ReqUpdateModelProjection<?, ?, ?> projection = tp.projection();
 
     ReqParams params = projection.params();
     Annotations annotations = projection.annotations();
@@ -63,7 +63,7 @@ public class ReqUpdateProjectionsPrettyPrinter<E extends Exception>
   }
 
   @Override
-  public void print(@NotNull ReqUpdateModelProjection<?, ?> mp, int pathSteps) throws E {
+  public void print(@NotNull ReqUpdateModelProjection<?, ?, ?> mp, int pathSteps) throws E {
     if (mp instanceof ReqUpdateRecordModelProjection)
       print((ReqUpdateRecordModelProjection) mp);
     else if (mp instanceof ReqUpdateMapModelProjection)
@@ -110,7 +110,7 @@ public class ReqUpdateProjectionsPrettyPrinter<E extends Exception>
 
 
   @Override
-  public boolean isPrintoutEmpty(@NotNull ReqUpdateModelProjection<?, ?> mp) {
+  public boolean isPrintoutEmpty(@NotNull ReqUpdateModelProjection<?, ?, ?> mp) {
     if (mp instanceof ReqUpdateRecordModelProjection) {
       ReqUpdateRecordModelProjection recordModelProjection = (ReqUpdateRecordModelProjection) mp;
       Map<String, ReqUpdateFieldProjectionEntry> fieldProjections =

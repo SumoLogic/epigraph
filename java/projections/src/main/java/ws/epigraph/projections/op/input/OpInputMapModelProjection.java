@@ -31,11 +31,11 @@ import java.util.Objects;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpInputMapModelProjection
-    extends OpInputModelProjection<OpInputMapModelProjection, MapTypeApi, GMapDatum>
+    extends OpInputModelProjection<OpInputModelProjection<?, ?, ?, ?>, OpInputMapModelProjection, MapTypeApi, GMapDatum>
     implements GenMapModelProjection<
     OpInputVarProjection,
     OpInputTagProjectionEntry,
-    OpInputModelProjection<?, ?, ?>,
+    OpInputModelProjection<?, ?, ?, ?>,
     OpInputMapModelProjection,
     MapTypeApi
     > {
@@ -49,7 +49,7 @@ public class OpInputMapModelProjection
       @Nullable GMapDatum defaultValue,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
-      @Nullable OpInputMapModelProjection metaProjection,
+      @Nullable OpInputModelProjection<?, ?, ?, ?> metaProjection,
       @NotNull OpInputKeyProjection keyProjection,
       @NotNull OpInputVarProjection itemsProjection,
       @NotNull TextLocation location) {

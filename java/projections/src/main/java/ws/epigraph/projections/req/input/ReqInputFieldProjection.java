@@ -28,7 +28,7 @@ import ws.epigraph.projections.req.ReqParams;
 public class ReqInputFieldProjection extends AbstractReqFieldProjection<
     ReqInputVarProjection,
     ReqInputTagProjectionEntry,
-    ReqInputModelProjection<?, ?>,
+    ReqInputModelProjection<?, ?, ?>,
     ReqInputFieldProjection
     > {
 

@@ -29,11 +29,11 @@ import java.util.Objects;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ReqMapModelPath
-    extends ReqModelPath<ReqMapModelPath, MapTypeApi>
+    extends ReqModelPath<ReqModelPath<?, ?, ?>, ReqMapModelPath, MapTypeApi>
     implements GenMapModelProjection<
     ReqVarPath,
     ReqTagPath,
-    ReqModelPath<?, ?>,
+    ReqModelPath<?, ?, ?>,
     ReqMapModelPath,
     MapTypeApi
     > {

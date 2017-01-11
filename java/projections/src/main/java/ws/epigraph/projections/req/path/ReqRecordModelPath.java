@@ -32,11 +32,11 @@ import java.util.Map;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ReqRecordModelPath
-    extends ReqModelPath<ReqRecordModelPath, RecordTypeApi>
+    extends ReqModelPath<ReqModelPath<?, ?, ?>, ReqRecordModelPath, RecordTypeApi>
     implements GenRecordModelProjection<
     ReqVarPath,
     ReqTagPath,
-    ReqModelPath<?, ?>,
+    ReqModelPath<?, ?, ?>,
     ReqRecordModelPath,
     ReqFieldPathEntry,
     ReqFieldPath,

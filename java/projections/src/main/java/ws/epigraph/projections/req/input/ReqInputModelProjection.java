@@ -27,9 +27,10 @@ import ws.epigraph.types.DatumTypeApi;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public abstract class ReqInputModelProjection<
-    MP extends ReqInputModelProjection</*MP*/?, ?>,
+    MP extends ReqInputModelProjection</*MP*/?, /*SMP*/?, ?>,
+    SMP extends ReqInputModelProjection</*MP*/?, /*SMP*/?, ?>,
     M extends DatumTypeApi>
-    extends AbstractReqModelProjection<MP, M> {
+    extends AbstractReqModelProjection<MP, SMP, M> {
 
   protected ReqInputModelProjection(
       @NotNull M model,

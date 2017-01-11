@@ -22,7 +22,8 @@ import ws.epigraph.types.PrimitiveTypeApi;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public interface GenPrimitiveModelProjection<
-    PMP extends GenPrimitiveModelProjection</*PMP*/?, ?>,
+    MP extends GenModelProjection</*MP*/?, /*MP*/?, /*M*/?>,
+    PMP extends GenPrimitiveModelProjection<MP, PMP, M>,
     M extends PrimitiveTypeApi
-    > extends GenModelProjection<PMP, M> {
+    > extends GenModelProjection<MP, PMP, M> {
 }

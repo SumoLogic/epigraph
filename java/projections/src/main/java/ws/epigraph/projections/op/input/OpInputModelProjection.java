@@ -31,10 +31,11 @@ import java.util.Objects;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public abstract class OpInputModelProjection<
-    MP extends OpInputModelProjection</*MP*/?, ?, D>,
+    MP extends OpInputModelProjection</*MP*/?, /*SMP*/?, /*M*/?, /*D*/?>,
+    SMP extends OpInputModelProjection</*MP*/?, ?, ?, ?>,
     M extends DatumTypeApi,
     D extends GDatum>
-    extends AbstractOpModelProjection<MP, M> {
+    extends AbstractOpModelProjection<MP, SMP, M> {
 
   protected final boolean required;
   protected final @Nullable D defaultValue;
@@ -62,7 +63,7 @@ public abstract class OpInputModelProjection<
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     if (!super.equals(o)) return false;
-    OpInputModelProjection<?, ?, ?> that = (OpInputModelProjection<?, ?, ?>) o;
+    OpInputModelProjection<?, ?, ?, ?> that = (OpInputModelProjection<?, ?, ?, ?>) o;
     return required == that.required && Objects.equals(defaultValue, that.defaultValue);
   }
 

@@ -16,13 +16,13 @@
 
 package ws.epigraph.projections.req.delete;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenMapModelProjection;
 import ws.epigraph.projections.req.ReqParams;
 import ws.epigraph.types.MapTypeApi;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Objects;
@@ -31,11 +31,11 @@ import java.util.Objects;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ReqDeleteMapModelProjection
-    extends ReqDeleteModelProjection<ReqDeleteMapModelProjection, MapTypeApi>
+    extends ReqDeleteModelProjection<ReqDeleteModelProjection<?, ?, ?>, ReqDeleteMapModelProjection, MapTypeApi>
     implements GenMapModelProjection<
     ReqDeleteVarProjection,
     ReqDeleteTagProjectionEntry,
-    ReqDeleteModelProjection<?, ?>,
+    ReqDeleteModelProjection<?, ?, ?>,
     ReqDeleteMapModelProjection,
     MapTypeApi
     > {

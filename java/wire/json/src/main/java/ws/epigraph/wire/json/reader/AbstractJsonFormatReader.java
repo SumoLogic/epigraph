@@ -67,7 +67,7 @@ import static ws.epigraph.wire.json.JsonFormatCommon.*;
 abstract class AbstractJsonFormatReader<
     VP extends GenVarProjection<VP, TP, MP>,
     TP extends GenTagProjectionEntry<TP, MP>,
-    MP extends GenModelProjection</*MP*/?, ?>,
+    MP extends GenModelProjection</*MP*/?, ?, ?>,
     RMP extends GenRecordModelProjection<VP, TP, MP, RMP, FPE, FP, ?>,
     FPE extends GenFieldProjectionEntry<VP, TP, MP, FP>,
     FP extends GenFieldProjection<VP, TP, MP, FP>,

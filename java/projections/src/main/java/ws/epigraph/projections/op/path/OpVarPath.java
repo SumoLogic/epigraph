@@ -28,7 +28,7 @@ import java.util.Collections;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class OpVarPath extends AbstractVarProjection<OpVarPath, OpTagPath, OpModelPath<?, ?>> {
+public class OpVarPath extends AbstractVarProjection<OpVarPath, OpTagPath, OpModelPath<?, ?, ?>> {
 
   public OpVarPath(
       @NotNull TypeApi type,

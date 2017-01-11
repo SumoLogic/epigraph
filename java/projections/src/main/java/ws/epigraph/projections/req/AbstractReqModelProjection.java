@@ -30,33 +30,32 @@ import java.util.Objects;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public abstract class AbstractReqModelProjection<
-    MP extends AbstractReqModelProjection</*MP*/?, ?>,
+    MP extends AbstractReqModelProjection</*MP*/?, /*SMP*/?, ?>,
+    SMP extends AbstractReqModelProjection</*MP*/?, /*SMP*/?, ?>,
     M extends DatumTypeApi>
-    extends AbstractModelProjection<MP, M> {
+    extends AbstractModelProjection<MP, SMP, M> {
 
-  @NotNull
-  protected final ReqParams params;
+  protected final @NotNull ReqParams params;
 
   protected AbstractReqModelProjection(
-      @NotNull final M model,
+      final @NotNull M model,
       @NotNull ReqParams params,
-      @Nullable final MP metaProjection,
-      @NotNull final Annotations annotations,
-      @NotNull final TextLocation location
+      final @Nullable MP metaProjection,
+      final @NotNull Annotations annotations,
+      final @NotNull TextLocation location
   ) {
     super(model, metaProjection, annotations, location);
     this.params = params;
   }
 
-  @NotNull
-  public ReqParams params() { return params; }
+  public @NotNull ReqParams params() { return params; }
 
   @Override
-  protected MP merge(
-      @NotNull final M model,
-      @NotNull final List<MP> modelProjections,
-      @NotNull final Annotations mergedAnnotations,
-      @Nullable final MP mergedMetaProjection) {
+  protected SMP merge(
+      final @NotNull M model,
+      final @NotNull List<SMP> modelProjections,
+      final @NotNull Annotations mergedAnnotations,
+      final @Nullable MP mergedMetaProjection) {
 
     return merge(
         model,
@@ -67,12 +66,12 @@ public abstract class AbstractReqModelProjection<
     );
   }
 
-  protected MP merge(
-      @NotNull final M model,
-      @NotNull final List<MP> modelProjections,
-      @NotNull final ReqParams mergedParams,
-      @NotNull final Annotations mergedAnnotations,
-      @Nullable final MP mergedMetaProjection) {
+  protected SMP merge(
+      final @NotNull M model,
+      final @NotNull List<SMP> modelProjections,
+      final @NotNull ReqParams mergedParams,
+      final @NotNull Annotations mergedAnnotations,
+      final @Nullable MP mergedMetaProjection) {
     throw new RuntimeException("not implemented"); // todo make abstract
   }
 
@@ -81,7 +80,7 @@ public abstract class AbstractReqModelProjection<
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     if (!super.equals(o)) return false;
-    final AbstractReqModelProjection<?, ?> that = (AbstractReqModelProjection<?, ?>) o;
+    final AbstractReqModelProjection<?, ?, ?> that = (AbstractReqModelProjection<?, ?, ?>) o;
     return Objects.equals(params, that.params);
   }
 

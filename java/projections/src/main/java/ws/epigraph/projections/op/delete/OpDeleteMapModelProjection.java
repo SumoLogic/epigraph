@@ -29,11 +29,11 @@ import java.util.Objects;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpDeleteMapModelProjection
-    extends OpDeleteModelProjection<OpDeleteMapModelProjection, MapTypeApi>
+    extends OpDeleteModelProjection<OpDeleteModelProjection<?, ?, ?>, OpDeleteMapModelProjection, MapTypeApi>
     implements GenMapModelProjection<
     OpDeleteVarProjection,
     OpDeleteTagProjectionEntry,
-    OpDeleteModelProjection<?, ?>,
+    OpDeleteModelProjection<?, ?, ?>,
     OpDeleteMapModelProjection,
     MapTypeApi
     > {

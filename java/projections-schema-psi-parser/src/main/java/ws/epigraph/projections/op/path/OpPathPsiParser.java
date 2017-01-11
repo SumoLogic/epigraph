@@ -80,7 +80,7 @@ public final class OpPathPsiParser {
 
     @NotNull Collection<SchemaOpModelPathProperty> modelPropertiesPsi = psi.getOpModelPathPropertyList();
 
-    final OpModelPath<?, ?> parsedModelProjection = parseModelPath(
+    final OpModelPath<?, ?, ?> parsedModelProjection = parseModelPath(
         tag.type(),
         parseModelParams(modelPropertiesPsi, typesResolver, errors),
         parseModelAnnotations(modelPropertiesPsi, errors),
@@ -157,7 +157,7 @@ public final class OpPathPsiParser {
     );
   }
 
-  public static @NotNull OpModelPath<?, ?> parseModelPath(
+  public static @NotNull OpModelPath<?, ?, ?> parseModelPath(
       @NotNull DatumTypeApi type,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
@@ -231,7 +231,7 @@ public final class OpPathPsiParser {
     return null;
   }
 
-  private static @NotNull OpModelPath<?, ?> createDefaultModelPath(
+  private static @NotNull OpModelPath<?, ?, ?> createDefaultModelPath(
       @NotNull DatumTypeApi type,
       @NotNull OpParams params,
       @NotNull Annotations annotations,

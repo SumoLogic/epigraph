@@ -29,8 +29,8 @@ import ws.epigraph.types.PrimitiveTypeApi;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpInputPrimitiveModelProjection
-    extends OpInputModelProjection<OpInputPrimitiveModelProjection, PrimitiveTypeApi, GPrimitiveDatum>
-    implements GenPrimitiveModelProjection<OpInputPrimitiveModelProjection, PrimitiveTypeApi> {
+    extends OpInputModelProjection<OpInputModelProjection<?, ?, ?, ?>, OpInputPrimitiveModelProjection, PrimitiveTypeApi, GPrimitiveDatum>
+    implements GenPrimitiveModelProjection<OpInputModelProjection<?, ?, ?, ?>, OpInputPrimitiveModelProjection, PrimitiveTypeApi> {
 
   public OpInputPrimitiveModelProjection(
       @NotNull PrimitiveTypeApi model,
@@ -38,7 +38,7 @@ public class OpInputPrimitiveModelProjection
       @Nullable GPrimitiveDatum defaultValue,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
-      @Nullable OpInputPrimitiveModelProjection metaProjection,
+      @Nullable OpInputModelProjection<?, ?, ?, ?> metaProjection,
       @NotNull TextLocation location) {
     super(model, required, defaultValue, params, annotations, metaProjection, location);
   }

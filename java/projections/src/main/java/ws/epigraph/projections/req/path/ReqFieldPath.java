@@ -28,7 +28,7 @@ import ws.epigraph.projections.req.ReqParams;
 public class ReqFieldPath extends AbstractReqFieldProjection<
     ReqVarPath,
     ReqTagPath,
-    ReqModelPath<?, ?>,
+    ReqModelPath<?, ?, ?>,
     ReqFieldPath
     > {
 

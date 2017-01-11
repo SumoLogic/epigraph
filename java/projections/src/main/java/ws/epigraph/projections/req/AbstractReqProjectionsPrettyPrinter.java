@@ -34,7 +34,7 @@ import java.util.Map;
 public abstract class AbstractReqProjectionsPrettyPrinter<
     VP extends GenVarProjection<VP, TP, MP>,
     TP extends GenTagProjectionEntry<TP, MP>,
-    MP extends GenModelProjection</*MP*/?, ?>,
+    MP extends GenModelProjection</*MP*/?, ?, ?>,
     RP extends GenRecordModelProjection<VP, TP, MP, RP, FPE, FP, ?>,
     FPE extends GenFieldProjectionEntry<VP, TP, MP, FP>,
     FP extends AbstractReqFieldProjection<VP, TP, MP, FP>,

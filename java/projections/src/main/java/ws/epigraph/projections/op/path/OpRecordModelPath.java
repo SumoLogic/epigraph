@@ -32,11 +32,11 @@ import java.util.Map;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpRecordModelPath
-    extends OpModelPath<OpRecordModelPath, RecordTypeApi>
+    extends OpModelPath<OpModelPath<?, ?, ?>, OpRecordModelPath, RecordTypeApi>
     implements GenRecordModelProjection<
     OpVarPath,
     OpTagPath,
-    OpModelPath<?, ?>,
+    OpModelPath<?, ?, ?>,
     OpRecordModelPath,
     OpFieldPathEntry,
     OpFieldPath,

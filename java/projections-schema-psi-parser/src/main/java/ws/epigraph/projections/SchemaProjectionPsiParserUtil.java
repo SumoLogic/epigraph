@@ -156,7 +156,7 @@ public final class SchemaProjectionPsiParserUtil {
                                     ? null
                                     : SchemaGDataPsiParser.parseDatum(defaultValuePsi, errors);
 
-    final OpInputModelProjection<?, ?, ?> paramModelProjection;
+    final OpInputModelProjection<?, ?, ?, ?> paramModelProjection;
 
     if (paramModelProjectionPsi == null)
       paramModelProjection = OpInputProjectionsPsiParser.createDefaultModelProjection(

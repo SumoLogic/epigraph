@@ -31,11 +31,11 @@ import java.util.Objects;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpInputListModelProjection
-    extends OpInputModelProjection<OpInputListModelProjection, ListTypeApi, GListDatum>
+    extends OpInputModelProjection<OpInputModelProjection<?, ?, ?, ?>, OpInputListModelProjection, ListTypeApi, GListDatum>
     implements GenListModelProjection<
     OpInputVarProjection,
     OpInputTagProjectionEntry,
-    OpInputModelProjection<?, ?, ?>,
+    OpInputModelProjection<?, ?, ?, ?>,
     OpInputListModelProjection,
     ListTypeApi
     > {
@@ -48,7 +48,7 @@ public class OpInputListModelProjection
       @Nullable GListDatum defaultValue,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
-      @Nullable OpInputListModelProjection metaProjection,
+      @Nullable OpInputModelProjection<?, ?, ?, ?> metaProjection,
       @NotNull OpInputVarProjection itemsProjection,
       @NotNull TextLocation location) {
     super(model, required, defaultValue, params, annotations, metaProjection, location);

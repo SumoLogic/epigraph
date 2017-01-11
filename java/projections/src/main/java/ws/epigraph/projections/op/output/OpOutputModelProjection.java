@@ -28,9 +28,10 @@ import ws.epigraph.types.DatumTypeApi;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public abstract class OpOutputModelProjection<
-    MP extends OpOutputModelProjection</*MP*/?, ?>,
+    MP extends OpOutputModelProjection</*MP*/?, /*SMP*/?, ?>,
+    SMP extends OpOutputModelProjection</*MP*/?, /*SMP*/?, ?>,
     M extends DatumTypeApi
-    > extends AbstractOpModelProjection<MP, M> {
+    > extends AbstractOpModelProjection<MP, SMP, M> {
 
   protected OpOutputModelProjection(
       @NotNull M model,

@@ -79,10 +79,10 @@ public final class ReqDeleteProjectionsPsiParser {
         @NotNull OpDeleteTagProjectionEntry opTagProjection =
             getTagProjection(tag.name(), op, tagLocation, errors);
 
-        @NotNull OpDeleteModelProjection<?, ?> opModelProjection = opTagProjection.projection();
+        @NotNull OpDeleteModelProjection<?, ?, ?> opModelProjection = opTagProjection.projection();
         @NotNull UrlReqDeleteModelProjection modelProjectionPsi = singleTagProjectionPsi.getReqDeleteModelProjection();
 
-        final ReqDeleteModelProjection<?, ?> parsedModelProjection = parseModelProjection(
+        final ReqDeleteModelProjection<?, ?, ?> parsedModelProjection = parseModelProjection(
             opModelProjection,
             parseReqParams(singleTagProjectionPsi.getReqParamList(), opModelProjection.params(), subResolver, errors),
             parseAnnotations(singleTagProjectionPsi.getReqAnnotationList(), errors),
@@ -157,11 +157,11 @@ public final class ReqDeleteProjectionsPsiParser {
         @NotNull TagApi tag = UrlProjectionsPsiParserUtil.getTag(tagProjectionPsi.getTagName(), op, tagProjectionPsi, errors);
         @NotNull OpDeleteTagProjectionEntry opTag = getTagProjection(tag.name(), op, tagProjectionPsi, errors);
 
-        OpDeleteModelProjection<?, ?> opTagProjection = opTag.projection();
+        OpDeleteModelProjection<?, ?, ?> opTagProjection = opTag.projection();
 
         @NotNull UrlReqDeleteModelProjection modelProjection = tagProjectionPsi.getReqDeleteModelProjection();
 
-        final ReqDeleteModelProjection<?, ?> parsedModelProjection = parseModelProjection(
+        final ReqDeleteModelProjection<?, ?, ?> parsedModelProjection = parseModelProjection(
             opTagProjection,
             parseReqParams(tagProjectionPsi.getReqParamList(), opTagProjection.params(), subResolver, errors),
             parseAnnotations(tagProjectionPsi.getReqAnnotationList(), errors),
@@ -290,8 +290,8 @@ public final class ReqDeleteProjectionsPsiParser {
     return null;
   }
 
-  public static @NotNull ReqDeleteModelProjection<?, ?> parseModelProjection(
-      @NotNull OpDeleteModelProjection<?, ?> op,
+  public static @NotNull ReqDeleteModelProjection<?, ?, ?> parseModelProjection(
+      @NotNull OpDeleteModelProjection<?, ?, ?> op,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
       @NotNull UrlReqDeleteModelProjection psi,
@@ -379,9 +379,9 @@ public final class ReqDeleteProjectionsPsiParser {
 
   }
 
-  private static @NotNull ReqDeleteModelProjection<?, ?> createDefaultModelProjection(
+  private static @NotNull ReqDeleteModelProjection<?, ?, ?> createDefaultModelProjection(
       @NotNull DatumTypeApi type,
-      @NotNull OpDeleteModelProjection<?, ?> op,
+      @NotNull OpDeleteModelProjection<?, ?, ?> op,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
       @NotNull PsiElement locationPsi,

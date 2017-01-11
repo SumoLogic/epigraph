@@ -32,11 +32,11 @@ import java.util.*;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ReqOutputRecordModelProjection
-    extends ReqOutputModelProjection<ReqOutputRecordModelProjection, RecordTypeApi>
+    extends ReqOutputModelProjection<ReqOutputModelProjection<?, ?, ?>, ReqOutputRecordModelProjection, RecordTypeApi>
     implements GenRecordModelProjection<
     ReqOutputVarProjection,
     ReqOutputTagProjectionEntry,
-    ReqOutputModelProjection<?, ?>,
+    ReqOutputModelProjection<?, ?, ?>,
     ReqOutputRecordModelProjection,
     ReqOutputFieldProjectionEntry,
     ReqOutputFieldProjection,
@@ -50,7 +50,7 @@ public class ReqOutputRecordModelProjection
       boolean required,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
-      @Nullable ReqOutputRecordModelProjection metaProjection,
+      @Nullable ReqOutputModelProjection<?, ?, ?> metaProjection,
       @NotNull Map<String, ReqOutputFieldProjectionEntry> fieldProjections,
       @NotNull TextLocation location) {
     super(model, required, params, annotations, metaProjection, location);
@@ -74,7 +74,7 @@ public class ReqOutputRecordModelProjection
       final @NotNull List<ReqOutputRecordModelProjection> modelProjections,
       final @NotNull ReqParams mergedParams,
       final @NotNull Annotations mergedAnnotations,
-      final @Nullable ReqOutputRecordModelProjection mergedMetaProjection) {
+      final @Nullable ReqOutputModelProjection<?, ?, ?> mergedMetaProjection) {
 
 
     Map<FieldApi, ReqOutputFieldProjection> mergedFieldProjections =

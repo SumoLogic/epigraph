@@ -27,12 +27,9 @@ import java.util.Objects;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ReqParam {
-  @NotNull
-  public final String name;
-  @Nullable
-  private final Datum value;
-  @NotNull
-  private final TextLocation location;
+  public final @NotNull String name;
+  private final @Nullable Datum value;
+  private final @NotNull TextLocation location;
 
   public ReqParam(@NotNull String name, @Nullable Datum value, @NotNull TextLocation location) {
     this.name = name;
@@ -40,14 +37,11 @@ public class ReqParam {
     this.location = location;
   }
 
-  @NotNull
-  public String name() { return name; }
+  public @NotNull String name() { return name; }
 
-  @Nullable
-  public Datum value() { return value; }
+  public @Nullable Datum value() { return value; }
 
-  @NotNull
-  public TextLocation location() { return location; }
+  public @NotNull TextLocation location() { return location; }
 
   @Override
   public boolean equals(Object o) {

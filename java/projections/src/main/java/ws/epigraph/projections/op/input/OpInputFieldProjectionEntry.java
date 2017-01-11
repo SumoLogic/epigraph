@@ -27,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
 public class OpInputFieldProjectionEntry extends AbstractFieldProjectionEntry<
     OpInputVarProjection,
     OpInputTagProjectionEntry,
-    OpInputModelProjection<?, ?,?>,
+    OpInputModelProjection<?, ?, ?, ?>,
     OpInputFieldProjection
     > {
 

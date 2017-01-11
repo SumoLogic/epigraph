@@ -33,7 +33,7 @@ public class ReqDeleteProjectionsPrettyPrinter<E extends Exception>
     extends AbstractReqProjectionsPrettyPrinter<
     ReqDeleteVarProjection,
     ReqDeleteTagProjectionEntry,
-    ReqDeleteModelProjection<?, ?>,
+    ReqDeleteModelProjection<?, ?, ?>,
     ReqDeleteRecordModelProjection,
     ReqDeleteFieldProjectionEntry,
     ReqDeleteFieldProjection,
@@ -45,7 +45,7 @@ public class ReqDeleteProjectionsPrettyPrinter<E extends Exception>
 
   @Override
   public void print(@NotNull String tagName, @NotNull ReqDeleteTagProjectionEntry tp, int pathSteps) throws E {
-    ReqDeleteModelProjection<?, ?> projection = tp.projection();
+    ReqDeleteModelProjection<?, ?, ?> projection = tp.projection();
 
     ReqParams params = projection.params();
     Annotations annotations = projection.annotations();
@@ -64,7 +64,7 @@ public class ReqDeleteProjectionsPrettyPrinter<E extends Exception>
   }
 
   @Override
-  public void print(@NotNull ReqDeleteModelProjection<?, ?> mp, int pathSteps) throws E {
+  public void print(@NotNull ReqDeleteModelProjection<?, ?, ?> mp, int pathSteps) throws E {
     if (mp instanceof ReqDeleteRecordModelProjection)
       print((ReqDeleteRecordModelProjection) mp, 0);
     else if (mp instanceof ReqDeleteMapModelProjection)
@@ -89,7 +89,7 @@ public class ReqDeleteProjectionsPrettyPrinter<E extends Exception>
 
 
   @Override
-  public boolean isPrintoutEmpty(@NotNull ReqDeleteModelProjection<?, ?> mp) {
+  public boolean isPrintoutEmpty(@NotNull ReqDeleteModelProjection<?, ?, ?> mp) {
     if (mp instanceof ReqDeleteRecordModelProjection) {
       ReqDeleteRecordModelProjection recordModelProjection = (ReqDeleteRecordModelProjection) mp;
       Map<String, ReqDeleteFieldProjectionEntry> fieldProjections =

@@ -28,7 +28,7 @@ import ws.epigraph.projections.req.ReqParams;
 public class ReqDeleteFieldProjection extends AbstractReqFieldProjection<
     ReqDeleteVarProjection,
     ReqDeleteTagProjectionEntry,
-    ReqDeleteModelProjection<?, ?>,
+    ReqDeleteModelProjection<?, ?, ?>,
     ReqDeleteFieldProjection
     > {
 

@@ -32,11 +32,11 @@ import java.util.stream.Collectors;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ReqOutputListModelProjection
-    extends ReqOutputModelProjection<ReqOutputListModelProjection, ListTypeApi>
+    extends ReqOutputModelProjection<ReqOutputModelProjection<?, ?, ?>, ReqOutputListModelProjection, ListTypeApi>
     implements GenListModelProjection<
     ReqOutputVarProjection,
     ReqOutputTagProjectionEntry,
-    ReqOutputModelProjection<?, ?>,
+    ReqOutputModelProjection<?, ?, ?>,
     ReqOutputListModelProjection,
     ListTypeApi
     > {
@@ -48,7 +48,7 @@ public class ReqOutputListModelProjection
       boolean required,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
-      @Nullable ReqOutputListModelProjection metaProjection,
+      @Nullable ReqOutputModelProjection<?, ?, ?> metaProjection,
       @NotNull ReqOutputVarProjection itemsProjection,
       @NotNull TextLocation location) {
     super(model, required, params, annotations, metaProjection, location);
@@ -66,12 +66,12 @@ public class ReqOutputListModelProjection
       final @NotNull List<ReqOutputListModelProjection> modelProjections,
       final @NotNull ReqParams mergedParams,
       final @NotNull Annotations mergedAnnotations,
-      final @Nullable ReqOutputListModelProjection mergedMetaProjection) {
+      final @Nullable ReqOutputModelProjection<?, ?, ?> mergedMetaProjection) {
 
     List<ReqOutputVarProjection> itemProjections =
         modelProjections.stream()
-                        .map(ReqOutputListModelProjection::itemsProjection)
-                        .collect(Collectors.toList());
+            .map(ReqOutputListModelProjection::itemsProjection)
+            .collect(Collectors.toList());
 
     final @NotNull ReqOutputVarProjection mergedItemsVarType = itemProjections.get(0).merge(itemProjections);
 

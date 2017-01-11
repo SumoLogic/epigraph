@@ -86,10 +86,10 @@ public final class ReqPathPsiParser {
       );
     }
 
-    final OpModelPath<?, ?> opModelPath = opTagPath.projection();
+    final OpModelPath<?, ?, ?> opModelPath = opTagPath.projection();
 
 
-    final ReqModelPath<?, ?> parsedModelProjection = parseModelPath(
+    final ReqModelPath<?, ?, ?> parsedModelProjection = parseModelPath(
         opModelPath,
         opTag.type(),
         parseReqParams(psi.getReqParamList(), opModelPath.params(), typesResolver, errors),
@@ -119,8 +119,8 @@ public final class ReqPathPsiParser {
 //    );
 //  }
 
-  public static @NotNull ReqModelPath<?, ?> parseModelPath(
-      @NotNull OpModelPath<?, ?> op,
+  public static @NotNull ReqModelPath<?, ?, ?> parseModelPath(
+      @NotNull OpModelPath<?, ?, ?> op,
       @NotNull DatumTypeApi type,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,

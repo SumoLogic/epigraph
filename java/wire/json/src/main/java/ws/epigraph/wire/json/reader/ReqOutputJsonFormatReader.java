@@ -21,13 +21,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Datum;
 import ws.epigraph.projections.req.output.*;
-import ws.epigraph.wire.json.JsonFormatCommon;
 
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * JSON data reader guided by req output projection
@@ -37,7 +35,7 @@ import java.util.stream.Collectors;
 public class ReqOutputJsonFormatReader extends AbstractJsonFormatReader<
     ReqOutputVarProjection,
     ReqOutputTagProjectionEntry,
-    ReqOutputModelProjection<?, ?>,
+    ReqOutputModelProjection<?, ?, ?>,
     ReqOutputRecordModelProjection,
     ReqOutputFieldProjectionEntry,
     ReqOutputFieldProjection,

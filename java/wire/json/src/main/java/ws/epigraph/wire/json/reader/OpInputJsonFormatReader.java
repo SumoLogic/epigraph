@@ -33,7 +33,7 @@ import java.util.Set;
 public class OpInputJsonFormatReader extends AbstractJsonFormatReader<
     OpInputVarProjection,
     OpInputTagProjectionEntry,
-    OpInputModelProjection<?, ?, ?>,
+    OpInputModelProjection<?, ?, ?, ?>,
     OpInputRecordModelProjection,
     OpInputFieldProjectionEntry,
     OpInputFieldProjection,
@@ -44,18 +44,17 @@ public class OpInputJsonFormatReader extends AbstractJsonFormatReader<
   public OpInputJsonFormatReader(@NotNull JsonParser jsonParser) { super(jsonParser); }
 
   @Override
-  protected boolean tagRequired(@NotNull final OpInputTagProjectionEntry tagProjection) {
+  protected boolean tagRequired(final @NotNull OpInputTagProjectionEntry tagProjection) {
     return tagProjection.projection().required();
   }
 
   @Override
-  protected boolean fieldRequired(@NotNull final OpInputFieldProjectionEntry fieldEntry) {
+  protected boolean fieldRequired(final @NotNull OpInputFieldProjectionEntry fieldEntry) {
     return fieldEntry.fieldProjection().required();
   }
 
-  @Nullable
   @Override
-  protected Set<Datum> getExpectedKeys(@NotNull final Collection<? extends OpInputMapModelProjection> projections) {
+  protected @Nullable Set<Datum> getExpectedKeys(final @NotNull Collection<? extends OpInputMapModelProjection> projections) {
     return null;
   }
 

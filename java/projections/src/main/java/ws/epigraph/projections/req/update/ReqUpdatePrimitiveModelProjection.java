@@ -27,8 +27,8 @@ import org.jetbrains.annotations.NotNull;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ReqUpdatePrimitiveModelProjection
-    extends ReqUpdateModelProjection<ReqUpdatePrimitiveModelProjection, PrimitiveTypeApi>
-    implements GenPrimitiveModelProjection<ReqUpdatePrimitiveModelProjection, PrimitiveTypeApi> {
+    extends ReqUpdateModelProjection<ReqUpdateModelProjection<?, ?, ?>, ReqUpdatePrimitiveModelProjection, PrimitiveTypeApi>
+    implements GenPrimitiveModelProjection<ReqUpdateModelProjection<?, ?, ?>, ReqUpdatePrimitiveModelProjection, PrimitiveTypeApi> {
 
   public ReqUpdatePrimitiveModelProjection(
       @NotNull PrimitiveTypeApi model,

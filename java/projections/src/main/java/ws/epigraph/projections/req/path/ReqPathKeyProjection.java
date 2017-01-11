@@ -33,10 +33,11 @@ public class ReqPathKeyProjection {
   private final @NotNull Annotations annotations;
   private final @NotNull TextLocation location;
 
-  public ReqPathKeyProjection(@NotNull Datum value,
-                                @NotNull ReqParams params,
-                                @NotNull Annotations annotations,
-                                @NotNull TextLocation location) {
+  public ReqPathKeyProjection(
+      @NotNull Datum value,
+      @NotNull ReqParams params,
+      @NotNull Annotations annotations,
+      @NotNull TextLocation location) {
     this.value = value;
     this.params = params;
     this.annotations = annotations;

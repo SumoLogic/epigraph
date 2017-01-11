@@ -27,11 +27,11 @@ import java.util.*;
  */
 public class OpParam {
   private final @NotNull String name;
-  private final @NotNull OpInputModelProjection<?, ?, ?> projection;
+  private final @NotNull OpInputModelProjection<?, ?, ?, ?> projection;
   private final @NotNull TextLocation location;
 
   public OpParam(@NotNull String name,
-                 @NotNull OpInputModelProjection<?, ?, ?> projection,
+                 @NotNull OpInputModelProjection<?, ?, ?, ?> projection,
                  @NotNull TextLocation location) {
     this.name = name;
     this.projection = projection;
@@ -42,7 +42,7 @@ public class OpParam {
 
   public @NotNull String name() { return name; }
 
-  public @NotNull OpInputModelProjection<?, ?, ?> projection() { return projection; }
+  public @NotNull OpInputModelProjection<?, ?, ?, ?> projection() { return projection; }
 
   public @NotNull TextLocation location() { return location; }
 

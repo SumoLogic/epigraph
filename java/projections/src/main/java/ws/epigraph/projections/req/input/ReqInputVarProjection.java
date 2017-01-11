@@ -31,7 +31,7 @@ import java.util.Map;
 public class ReqInputVarProjection extends AbstractVarProjection<
     ReqInputVarProjection,
     ReqInputTagProjectionEntry,
-    ReqInputModelProjection<?, ?>
+    ReqInputModelProjection<?, ?, ?>
     > {
 
   public ReqInputVarProjection(

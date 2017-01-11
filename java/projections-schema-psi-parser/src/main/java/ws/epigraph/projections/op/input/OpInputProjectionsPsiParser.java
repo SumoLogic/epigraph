@@ -78,7 +78,7 @@ public final class OpInputProjectionsPsiParser {
           errors
       );
       if (tag != null || !singleTagProjectionPsi.getText().isEmpty()) {
-        final OpInputModelProjection<?, ?, ?> parsedModelProjection;
+        final OpInputModelProjection<?, ?, ?, ?> parsedModelProjection;
         if (tag == null) // will throw proper error
           tag = getTag(
               type,
@@ -146,7 +146,7 @@ public final class OpInputProjectionsPsiParser {
       final TagApi tag =
           getTag(dataType.type(), tagProjectionPsi.getTagName(), dataType.defaultTag(), tagProjectionPsi, errors);
 
-      final OpInputModelProjection<?, ?, ?> parsedModelProjection;
+      final OpInputModelProjection<?, ?, ?, ?> parsedModelProjection;
 
       @NotNull DatumTypeApi tagType = tag.type();
       @Nullable SchemaOpInputModelProjection modelProjection = tagProjectionPsi.getOpInputModelProjection();
@@ -262,7 +262,7 @@ public final class OpInputProjectionsPsiParser {
     );
   }
 
-  private static @Nullable OpInputModelProjection<?, ?, ?> parseModelMetaProjection(
+  private static @Nullable OpInputModelProjection<?, ?, ?, ?> parseModelMetaProjection(
       @NotNull DatumTypeApi type,
       @NotNull List<SchemaOpInputModelProperty> modelProperties,
       @NotNull TypesResolver resolver,
@@ -383,13 +383,13 @@ public final class OpInputProjectionsPsiParser {
     return createDefaultVarProjection(type.type(), defaultTag, required, locationPsi, resolver, errors);
   }
 
-  public static @NotNull OpInputModelProjection<?, ?, ?> parseModelProjection(
+  public static @NotNull OpInputModelProjection<?, ?, ?, ?> parseModelProjection(
       @NotNull DatumTypeApi type,
       boolean required,
       @Nullable GDatum defaultValue,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
-      @Nullable OpInputModelProjection<?, ?, ?> metaProjection,
+      @Nullable OpInputModelProjection<?, ?, ?, ?> metaProjection,
       @NotNull SchemaOpInputModelProjection psi,
       @NotNull TypesResolver typesResolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
@@ -531,7 +531,7 @@ public final class OpInputProjectionsPsiParser {
     return null;
   }
 
-  public static @NotNull OpInputModelProjection<?, ?, ?> createDefaultModelProjection(
+  public static @NotNull OpInputModelProjection<?, ?, ?, ?> createDefaultModelProjection(
       @NotNull DatumTypeApi type,
       boolean required,
       @Nullable GDatum defaultValue,

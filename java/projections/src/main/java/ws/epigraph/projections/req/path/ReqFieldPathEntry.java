@@ -27,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
 public class ReqFieldPathEntry extends AbstractFieldProjectionEntry<
     ReqVarPath,
     ReqTagPath,
-    ReqModelPath<?, ?>,
+    ReqModelPath<?, ?, ?>,
     ReqFieldPath
     > {
   public ReqFieldPathEntry(

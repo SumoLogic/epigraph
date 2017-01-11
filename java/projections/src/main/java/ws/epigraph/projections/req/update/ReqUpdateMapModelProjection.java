@@ -30,11 +30,11 @@ import java.util.Objects;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ReqUpdateMapModelProjection
-    extends ReqUpdateModelProjection<ReqUpdateMapModelProjection, MapTypeApi>
+    extends ReqUpdateModelProjection<ReqUpdateModelProjection<?, ?, ?>, ReqUpdateMapModelProjection, MapTypeApi>
     implements GenMapModelProjection<
     ReqUpdateVarProjection,
     ReqUpdateTagProjectionEntry,
-    ReqUpdateModelProjection<?, ?>,
+    ReqUpdateModelProjection<?, ?, ?>,
     ReqUpdateMapModelProjection,
     MapTypeApi
     > {

@@ -31,7 +31,7 @@ import java.util.List;
 public class OpInputVarProjection extends AbstractVarProjection<
     OpInputVarProjection,
     OpInputTagProjectionEntry,
-    OpInputModelProjection<?, ?, ?>
+    OpInputModelProjection<?, ?, ?, ?>
     > {
 
   public OpInputVarProjection(

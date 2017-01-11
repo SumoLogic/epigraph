@@ -31,7 +31,7 @@ import java.util.Map;
 public class ReqUpdateVarProjection extends AbstractVarProjection<
     ReqUpdateVarProjection,
     ReqUpdateTagProjectionEntry,
-    ReqUpdateModelProjection<?, ?>
+    ReqUpdateModelProjection<?, ?, ?>
     > {
 
   public ReqUpdateVarProjection(

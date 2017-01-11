@@ -27,9 +27,10 @@ import ws.epigraph.types.DatumTypeApi;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public abstract class ReqDeleteModelProjection<
-    MP extends ReqDeleteModelProjection</*MP*/?, ?>,
+    MP extends ReqDeleteModelProjection</*MP*/?, /*SMP*/?, ?>,
+    SMP extends ReqDeleteModelProjection</*MP*/?, /*SMP*/?, ?>,
     M extends DatumTypeApi>
-    extends AbstractReqModelProjection<MP, M> {
+    extends AbstractReqModelProjection<MP, SMP, M> {
 
   protected ReqDeleteModelProjection(
       @NotNull M model,

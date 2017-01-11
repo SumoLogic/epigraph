@@ -33,7 +33,7 @@ public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
     extends AbstractReqProjectionsPrettyPrinter<
     ReqOutputVarProjection,
     ReqOutputTagProjectionEntry,
-    ReqOutputModelProjection<?, ?>,
+    ReqOutputModelProjection<?, ?, ?>,
     ReqOutputRecordModelProjection,
     ReqOutputFieldProjectionEntry,
     ReqOutputFieldProjection,
@@ -47,8 +47,8 @@ public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
 
   @Override
   public void print(@NotNull String tagName, @NotNull ReqOutputTagProjectionEntry tp, int pathSteps) throws E {
-    ReqOutputModelProjection<?, ?> projection = tp.projection();
-    ReqOutputModelProjection<?, ?> metaProjection = projection.metaProjection(); // todo print meta projection
+    ReqOutputModelProjection<?, ?, ?> projection = tp.projection();
+    ReqOutputModelProjection<?, ?, ?> metaProjection = projection.metaProjection(); // todo print meta projection
 
     ReqParams params = projection.params();
     Annotations annotations = projection.annotations();
@@ -68,7 +68,7 @@ public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
   }
 
   @Override
-  public void print(@NotNull ReqOutputModelProjection<?, ?> mp, int pathSteps) throws E {
+  public void print(@NotNull ReqOutputModelProjection<?, ?, ?> mp, int pathSteps) throws E {
     if (mp instanceof ReqOutputRecordModelProjection)
       print((ReqOutputRecordModelProjection) mp, pathSteps);
     else if (mp instanceof ReqOutputMapModelProjection)
@@ -146,7 +146,7 @@ public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
 
 
   @Override
-  public boolean isPrintoutEmpty(@NotNull ReqOutputModelProjection<?, ?> mp) {
+  public boolean isPrintoutEmpty(@NotNull ReqOutputModelProjection<?, ?, ?> mp) {
     if (mp instanceof ReqOutputRecordModelProjection) {
       ReqOutputRecordModelProjection recordModelProjection = (ReqOutputRecordModelProjection) mp;
       Map<String, ReqOutputFieldProjectionEntry> fieldProjections =

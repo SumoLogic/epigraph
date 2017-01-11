@@ -34,7 +34,7 @@ import java.util.Map;
 public abstract class AbstractOpProjectionsPrettyPrinter<
     VP extends GenVarProjection<VP, TP, MP>,
     TP extends GenTagProjectionEntry<TP, MP>,
-    MP extends GenModelProjection</*MP*/?, ?>,
+    MP extends GenModelProjection</*MP*/?, ?, ?>,
     RP extends GenRecordModelProjection<VP, TP, MP, RP, FPE, FP, ?>,
     FPE extends GenFieldProjectionEntry<VP, TP, MP, FP>,
     FP extends AbstractOpFieldProjection<VP, TP, MP, FP>,
@@ -64,7 +64,7 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
   }
 
   public void print(@NotNull OpParam p) throws E {
-    OpInputModelProjection<?, ?, ?> projection = p.projection();
+    OpInputModelProjection<?, ?, ?, ?> projection = p.projection();
 
     l.beginIInd();
     l.print(";");

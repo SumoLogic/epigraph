@@ -25,10 +25,10 @@ import org.jetbrains.annotations.NotNull;
 public interface GenMapModelProjection<
     VP extends GenVarProjection<VP, TP, MP>,
     TP extends GenTagProjectionEntry<TP, MP>,
-    MP extends GenModelProjection</*MP*/?, ?>,
+    MP extends GenModelProjection</*MP*/?, /*MMP*/?, /*M*/?>,
     MMP extends GenMapModelProjection<VP, TP, MP, MMP, M>,
     M extends MapTypeApi
-    > extends GenModelProjection<MMP, M> {
+    > extends GenModelProjection<MP, MMP, M> {
 
   @NotNull VP itemsProjection();
 }

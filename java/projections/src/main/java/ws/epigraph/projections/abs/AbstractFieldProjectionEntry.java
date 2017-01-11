@@ -16,11 +16,10 @@
 
 package ws.epigraph.projections.abs;
 
+import org.jetbrains.annotations.NotNull;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.gen.*;
 import ws.epigraph.types.FieldApi;
-import ws.epigraph.types.RecordTypeApi;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
@@ -30,7 +29,7 @@ import java.util.Objects;
 public abstract class AbstractFieldProjectionEntry<
     VP extends GenVarProjection<VP, TP, MP>,
     TP extends GenTagProjectionEntry<TP, MP>,
-    MP extends GenModelProjection</*MP*/?, ?>,
+    MP extends GenModelProjection</*MP*/?, /*SMP*/?, ?>,
     FP extends GenFieldProjection<VP, TP, MP, FP>
     > implements GenFieldProjectionEntry<VP, TP, MP, FP> {
 

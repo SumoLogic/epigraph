@@ -31,11 +31,11 @@ import java.util.Objects;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ReqInputMapModelProjection
-    extends ReqInputModelProjection<ReqInputMapModelProjection, MapTypeApi>
+    extends ReqInputModelProjection<ReqInputModelProjection<?, ?, ?>, ReqInputMapModelProjection, MapTypeApi>
     implements GenMapModelProjection<
     ReqInputVarProjection,
     ReqInputTagProjectionEntry,
-    ReqInputModelProjection<?, ?>,
+    ReqInputModelProjection<?, ?, ?>,
     ReqInputMapModelProjection,
     MapTypeApi
     > {

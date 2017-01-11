@@ -27,7 +27,10 @@ import java.util.List;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public interface GenModelProjection<MP extends GenModelProjection</*MP*/?, ?>, M extends DatumTypeApi> {
+public interface GenModelProjection<
+    MP extends GenModelProjection</*MP*/?, /*SMP*/?, ?>,
+    SMP extends GenModelProjection</*MP*/?, /*SMP*/?, ?>,
+    M extends DatumTypeApi> {
 
   @NotNull M model();
 
@@ -46,7 +49,7 @@ public interface GenModelProjection<MP extends GenModelProjection</*MP*/?, ?>, M
    * @return merged models or {@code null} if {@code modelProjections} is empty
    */
   /* static */
-  MP merge(@NotNull M model, @NotNull List<MP> modelProjections);
+  SMP merge(@NotNull M model, @NotNull List<SMP> modelProjections);
 
   @NotNull Annotations annotations();
 

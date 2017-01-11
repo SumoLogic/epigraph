@@ -36,7 +36,7 @@ import static ws.epigraph.projections.ProjectionUtils.linearizeTails;
 public abstract class AbstractVarProjection<
     VP extends AbstractVarProjection<VP, TP, MP>,
     TP extends GenTagProjectionEntry<TP, MP>,
-    MP extends GenModelProjection</*MP*/?, ?>
+    MP extends GenModelProjection</*MP*/?, ?, ?>
     > implements GenVarProjection<VP, TP, MP> {
 
   private final @NotNull TypeApi type;

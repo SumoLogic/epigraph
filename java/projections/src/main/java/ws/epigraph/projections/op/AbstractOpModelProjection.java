@@ -32,8 +32,11 @@ import java.util.Objects;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public abstract class AbstractOpModelProjection<MP extends GenModelProjection</*MP*/?, ?>, M extends DatumTypeApi>
-    extends AbstractModelProjection<MP, M> {
+public abstract class AbstractOpModelProjection<
+    MP extends AbstractOpModelProjection</*MP*/?, /*SMP*/?, ?>,
+    SMP extends AbstractOpModelProjection</*MP*/?, /*SMP*/?, ?>,
+    M extends DatumTypeApi>
+    extends AbstractModelProjection<MP, SMP, M> {
   protected final @NotNull OpParams params;
 
   protected AbstractOpModelProjection(
@@ -49,9 +52,9 @@ public abstract class AbstractOpModelProjection<MP extends GenModelProjection</*
   public @NotNull OpParams params() { return params; }
 
   @Override
-  protected MP merge(
+  protected SMP merge(
       final @NotNull M model,
-      final @NotNull List<MP> modelProjections,
+      final @NotNull List<SMP> modelProjections,
       final @NotNull Annotations mergedAnnotations,
       final MP mergedMetaProjection) {
 
@@ -59,8 +62,8 @@ public abstract class AbstractOpModelProjection<MP extends GenModelProjection</*
 
     Collection<OpParams> paramsList = new ArrayList<>();
 
-    for (final GenModelProjection<?, ?> projection : modelProjections) {
-      AbstractOpModelProjection<?, ?> mp = (AbstractOpModelProjection<?, ?>) projection;
+    for (final GenModelProjection<?, ?, ?> projection : modelProjections) {
+      AbstractOpModelProjection<?, ?, ?> mp = (AbstractOpModelProjection<?, ?, ?>) projection;
       paramsList.add(mp.params());
     }
 
@@ -71,10 +74,11 @@ public abstract class AbstractOpModelProjection<MP extends GenModelProjection</*
   }
 
   /* static */
-  protected MP merge(
+  protected SMP merge(
       @NotNull M model,
-      @NotNull List<MP> modelProjections,
-      @NotNull OpParams mergedParams, @NotNull Annotations mergedAnnotations,
+      @NotNull List<SMP> modelProjections,
+      @NotNull OpParams mergedParams,
+      @NotNull Annotations mergedAnnotations,
       @Nullable MP mergedMetaProjection) {
 
     throw new RuntimeException("not implemented"); // todo
@@ -85,7 +89,7 @@ public abstract class AbstractOpModelProjection<MP extends GenModelProjection</*
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     if (!super.equals(o)) return false;
-    final AbstractOpModelProjection<?, ?> that = (AbstractOpModelProjection<?, ?>) o;
+    final AbstractOpModelProjection<?, ?, ?> that = (AbstractOpModelProjection<?, ?, ?>) o;
     return Objects.equals(params, that.params);
   }
 

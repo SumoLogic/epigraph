@@ -29,11 +29,11 @@ import java.util.Objects;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpMapModelPath
-    extends OpModelPath<OpMapModelPath, MapTypeApi>
+    extends OpModelPath<OpModelPath<?, ?, ?>, OpMapModelPath, MapTypeApi>
     implements GenMapModelProjection<
     OpVarPath,
     OpTagPath,
-    OpModelPath<?, ?>,
+    OpModelPath<?, ?, ?>,
     OpMapModelPath,
     MapTypeApi
     > {

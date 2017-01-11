@@ -31,11 +31,11 @@ import java.util.*;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ReqDeleteRecordModelProjection
-    extends ReqDeleteModelProjection<ReqDeleteRecordModelProjection, RecordTypeApi>
+    extends ReqDeleteModelProjection<ReqDeleteModelProjection<?, ?, ?>, ReqDeleteRecordModelProjection, RecordTypeApi>
     implements GenRecordModelProjection<
     ReqDeleteVarProjection,
     ReqDeleteTagProjectionEntry,
-    ReqDeleteModelProjection<?, ?>,
+    ReqDeleteModelProjection<?, ?, ?>,
     ReqDeleteRecordModelProjection,
     ReqDeleteFieldProjectionEntry,
     ReqDeleteFieldProjection,

@@ -24,9 +24,7 @@ import ws.epigraph.projections.req.update.*;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * JSON data reader guided by req output projection
@@ -36,7 +34,7 @@ import java.util.stream.Collectors;
 public class ReqUpdateJsonFormatReader extends AbstractJsonFormatReader<
     ReqUpdateVarProjection,
     ReqUpdateTagProjectionEntry,
-    ReqUpdateModelProjection<?, ?>,
+    ReqUpdateModelProjection<?, ?, ?>,
     ReqUpdateRecordModelProjection,
     ReqUpdateFieldProjectionEntry,
     ReqUpdateFieldProjection,

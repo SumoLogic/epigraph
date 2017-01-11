@@ -30,14 +30,14 @@ import java.util.List;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpOutputPrimitiveModelProjection
-    extends OpOutputModelProjection<OpOutputPrimitiveModelProjection, PrimitiveTypeApi>
-    implements GenPrimitiveModelProjection<OpOutputPrimitiveModelProjection, PrimitiveTypeApi> {
+    extends OpOutputModelProjection<OpOutputModelProjection<?, ?, ?>, OpOutputPrimitiveModelProjection, PrimitiveTypeApi>
+    implements GenPrimitiveModelProjection<OpOutputModelProjection<?, ?, ?>, OpOutputPrimitiveModelProjection, PrimitiveTypeApi> {
 
   public OpOutputPrimitiveModelProjection(
       @NotNull PrimitiveTypeApi model,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
-      @Nullable OpOutputPrimitiveModelProjection metaProjection,
+      @Nullable OpOutputModelProjection<?, ?, ?> metaProjection,
       @NotNull TextLocation location) {
     super(model, params, annotations, metaProjection, location);
   }
@@ -48,7 +48,7 @@ public class OpOutputPrimitiveModelProjection
       final @NotNull List<OpOutputPrimitiveModelProjection> modelProjections,
       final @NotNull OpParams mergedParams,
       final @NotNull Annotations mergedAnnotations,
-      final @Nullable OpOutputPrimitiveModelProjection mergedMetaProjection) {
+      final @Nullable OpOutputModelProjection<?, ?, ?> mergedMetaProjection) {
 
     return new OpOutputPrimitiveModelProjection(
         model,

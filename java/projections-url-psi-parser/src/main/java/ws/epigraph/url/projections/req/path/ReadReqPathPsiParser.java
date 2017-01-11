@@ -106,12 +106,12 @@ public final class ReadReqPathPsiParser {
     if (metaPsi != null)
       errors.add(new PsiProcessingError("Meta projections are not supported in paths", metaPsi));
 
-    final OpModelPath<?, ?> opModelPath = opTagPath.projection();
+    final OpModelPath<?, ?, ?> opModelPath = opTagPath.projection();
 
     final @NotNull UrlReqOutputTrunkModelProjection modelPsi =
         singleTagProjectionPsi.getReqOutputTrunkModelProjection();
 
-    final @Nullable ReadReqPathParsingResult<? extends ReqModelPath<?, ?>> parsedModelResult = parseModelPath(
+    final @Nullable ReadReqPathParsingResult<? extends ReqModelPath<?, ?, ?>> parsedModelResult = parseModelPath(
         opModelPath,
         opTag.type(),
         parseReqParams(singleTagProjectionPsi.getReqParamList(), opModelPath.params(), typesResolver, errors),
@@ -154,8 +154,8 @@ public final class ReadReqPathPsiParser {
     }
   }
 
-  public static @NotNull ReadReqPathParsingResult<? extends ReqModelPath<?, ?>> parseModelPath(
-      @NotNull OpModelPath<?, ?> op,
+  public static @NotNull ReadReqPathParsingResult<? extends ReqModelPath<?, ?, ?>> parseModelPath(
+      @NotNull OpModelPath<?, ?, ?> op,
       @NotNull DatumTypeApi type,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,

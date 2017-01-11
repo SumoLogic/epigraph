@@ -57,7 +57,7 @@ public final class ProjectionDataTrimmer {
     return b;
   }
 
-  public static @NotNull Datum trimDatum(@NotNull Datum datum, @NotNull ReqOutputModelProjection<?, ?> projection) {
+  public static @NotNull Datum trimDatum(@NotNull Datum datum, @NotNull ReqOutputModelProjection<?, ?, ?> projection) {
     switch (datum.type().kind()) {
       case RECORD:
         return trimRecordDatum((RecordDatum) datum, (ReqOutputRecordModelProjection) projection);

@@ -33,11 +33,11 @@ import java.util.stream.Collectors;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ReqOutputMapModelProjection
-    extends ReqOutputModelProjection<ReqOutputMapModelProjection, MapTypeApi>
+    extends ReqOutputModelProjection<ReqOutputModelProjection<?, ?, ?>, ReqOutputMapModelProjection, MapTypeApi>
     implements GenMapModelProjection<
     ReqOutputVarProjection,
     ReqOutputTagProjectionEntry,
-    ReqOutputModelProjection<?, ?>,
+    ReqOutputModelProjection<?, ?, ?>,
     ReqOutputMapModelProjection,
     MapTypeApi
     > {
@@ -50,7 +50,7 @@ public class ReqOutputMapModelProjection
       boolean required,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
-      @Nullable ReqOutputMapModelProjection metaProjection,
+      @Nullable ReqOutputModelProjection<?, ?, ?> metaProjection,
       @Nullable List<ReqOutputKeyProjection> keys,
       @NotNull ReqOutputVarProjection valuesProjection,
       @NotNull TextLocation location) {
@@ -71,7 +71,7 @@ public class ReqOutputMapModelProjection
       final @NotNull List<ReqOutputMapModelProjection> modelProjections,
       final @NotNull ReqParams mergedParams,
       final @NotNull Annotations mergedAnnotations,
-      final @Nullable ReqOutputMapModelProjection mergedMetaProjection) {
+      final @Nullable ReqOutputModelProjection<?, ?, ?> mergedMetaProjection) {
 
 
     final List<ReqOutputKeyProjection> mergedKeys;
@@ -89,8 +89,8 @@ public class ReqOutputMapModelProjection
 
     List<ReqOutputVarProjection> itemProjections =
         modelProjections.stream()
-                        .map(ReqOutputMapModelProjection::itemsProjection)
-                        .collect(Collectors.toList());
+            .map(ReqOutputMapModelProjection::itemsProjection)
+            .collect(Collectors.toList());
 
     final @NotNull ReqOutputVarProjection mergedItemsVarType = itemProjections.get(0).merge(itemProjections);
 

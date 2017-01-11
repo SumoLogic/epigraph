@@ -27,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
 public class ReqUpdateFieldProjectionEntry extends AbstractFieldProjectionEntry<
     ReqUpdateVarProjection,
     ReqUpdateTagProjectionEntry,
-    ReqUpdateModelProjection<?, ?>,
+    ReqUpdateModelProjection<?, ?, ?>,
     ReqUpdateFieldProjection
     > {
   public ReqUpdateFieldProjectionEntry(

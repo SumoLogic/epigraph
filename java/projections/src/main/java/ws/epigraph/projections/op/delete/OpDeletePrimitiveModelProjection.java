@@ -27,8 +27,8 @@ import ws.epigraph.types.PrimitiveTypeApi;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpDeletePrimitiveModelProjection
-    extends OpDeleteModelProjection<OpDeletePrimitiveModelProjection, PrimitiveTypeApi>
-    implements GenPrimitiveModelProjection<OpDeletePrimitiveModelProjection, PrimitiveTypeApi> {
+    extends OpDeleteModelProjection<OpDeleteModelProjection<?, ?, ?>, OpDeletePrimitiveModelProjection, PrimitiveTypeApi>
+    implements GenPrimitiveModelProjection<OpDeleteModelProjection<?, ?, ?>, OpDeletePrimitiveModelProjection, PrimitiveTypeApi> {
 
   public OpDeletePrimitiveModelProjection(
       @NotNull PrimitiveTypeApi model,

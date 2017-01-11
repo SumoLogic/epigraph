@@ -31,7 +31,7 @@ import java.util.Map;
 public class OpOutputVarProjection extends AbstractVarProjection<
     OpOutputVarProjection,
     OpOutputTagProjectionEntry,
-    OpOutputModelProjection<?, ?>
+    OpOutputModelProjection<?, ?, ?>
     > {
 
   public OpOutputVarProjection(
