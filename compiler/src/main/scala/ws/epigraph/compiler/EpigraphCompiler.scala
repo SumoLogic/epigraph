@@ -159,15 +159,6 @@ class EpigraphCompiler(
           )
         )
       }
-
-//      // extra pass of registering all type refs, should pick up all stuff from resource declarations
-//      // todo: remove
-//      csf.psi.accept(new PsiRecursiveElementWalkingVisitor() {
-//        override def visitElement(element: PsiElement): Unit = element match {
-//          case etr: SchemaTypeRef => CTypeRef(csf, etr)
-//          case e => super.visitElement(e)
-//        }
-//      })
     }
   }
 
@@ -226,7 +217,7 @@ class EpigraphCompiler(
       try {
         val resourcesSchema = ResourcesSchemaPsiParser.parseResourcesSchema(csf.psi, typesResolver, errors)
         handlePsiErrors(csf, errors)
-        ctx.resourcesSchemas.add(resourcesSchema)
+        ctx.resourcesSchemas.put(csf, resourcesSchema)
       } catch {
         case e: PsiProcessingException => handlePsiErrors(csf, e.errors())
       }

@@ -46,7 +46,7 @@ class CContext(val tabWidth: Int = 2) {
   //val anonMapTypes: ConcurrentHashMap[CAnonMapTypeName, CAnonMapType] = new java.util.concurrent.ConcurrentHashMap
   val anonMapTypes: ConcurrentHashMap[(CTypeRef, CDataType), CAnonMapType] = new java.util.concurrent.ConcurrentHashMap
 
-  val resourcesSchemas: java.util.Set[ResourcesSchema] = java.util.concurrent.ConcurrentHashMap.newKeySet()
+  val resourcesSchemas: ConcurrentHashMap[CSchemaFile, ResourcesSchema] = new java.util.concurrent.ConcurrentHashMap
 
   /** Types implicitly imported (unless superseeded by explicit import statement) by every schema file */
   val implicitImports: Map[String, Qn] = Seq(

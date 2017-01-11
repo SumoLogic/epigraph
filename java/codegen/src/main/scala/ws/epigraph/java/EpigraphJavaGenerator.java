@@ -28,6 +28,7 @@ import ws.epigraph.schema.ResourcesSchema;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Map;
 
 public class EpigraphJavaGenerator {
 
@@ -112,7 +113,10 @@ public class EpigraphJavaGenerator {
 
     new IndexGen(ctx).writeUnder(tmpRoot);
 
-    for (ResourcesSchema rs : cctx.resourcesSchemas()) {
+    for (final Map.Entry<CSchemaFile, ResourcesSchema> entry : cctx.resourcesSchemas().entrySet()) {
+      CSchemaFile csf = entry.getKey();
+      ResourcesSchema rs = entry.getValue();
+
       Qn namespace = rs.namespace();
 
       for (final ResourceDeclaration resourceDeclaration : rs.resources().values()) {
