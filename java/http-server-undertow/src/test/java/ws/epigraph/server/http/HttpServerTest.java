@@ -33,8 +33,6 @@ import ws.epigraph.server.http.undertow.UndertowHandler;
 import ws.epigraph.service.Service;
 import ws.epigraph.service.ServiceInitializationException;
 import ws.epigraph.tests.Person;
-import ws.epigraph.tests.UserResourceDeclaration;
-import ws.epigraph.tests.UsersResourceDeclaration;
 
 import java.util.Arrays;
 import java.util.regex.Matcher;
@@ -61,8 +59,8 @@ public class HttpServerTest {
     return new Service(
         "users",
         Arrays.asList(
-            new UserResource(UserResourceDeclaration.INSTANCE),
-            new UsersResource(UsersResourceDeclaration.INSTANCE, new UsersStorage())
+            new UserResourceFactory().getUserResource(),
+            new UsersResourceFactory(new UsersStorage()).getUsersResource()
         )
     );
   }

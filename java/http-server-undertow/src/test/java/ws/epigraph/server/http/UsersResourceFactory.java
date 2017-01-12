@@ -32,43 +32,53 @@ import ws.epigraph.projections.req.input.ReqInputFieldProjection;
 import ws.epigraph.projections.req.input.ReqInputRecordModelProjection;
 import ws.epigraph.projections.req.path.ReqMapModelPath;
 import ws.epigraph.schema.operations.*;
-import ws.epigraph.service.Resource;
 import ws.epigraph.service.ServiceInitializationException;
 import ws.epigraph.service.operations.*;
 import ws.epigraph.tests.*;
 import ws.epigraph.types.DatumType;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-public class UsersResource extends Resource {
-  public UsersResource(@NotNull UsersResourceDeclaration resourceDeclaration, @NotNull UsersStorage storage)
-      throws ServiceInitializationException {
+public class UsersResourceFactory extends AbstractUsersResourceFactory {
+  private final UsersStorage storage;
 
-    super(
-        resourceDeclaration,
-        Collections.singletonList(
-            new ReadOp(UsersResourceDeclaration.readOperationDeclaration, storage)
-        ),
-        Collections.singletonList(
-            new CreateOp(UsersResourceDeclaration.createOperationDeclaration, storage)
-        ),
-        Collections.singletonList(
-            new UpdateOp(UsersResourceDeclaration.updateOperationDeclaration, storage)
-        ),
-        Collections.singletonList(
-            new DeleteOp(UsersResourceDeclaration.deleteOperationDeclaration, storage)
-        ),
-        Collections.singletonList(
-            new CapitalizeOp(UsersResourceDeclaration.capitalizeCustomOperationDeclaration, storage)
-        )
-    );
-
+  public UsersResourceFactory(@NotNull UsersStorage storage) {
+    this.storage = storage;
   }
 
-  // todo create/update/delete should only take :id model for bestFriend/worstEnemy/friends*
+  @Override
+  protected @NotNull ReadOperation<PersonId_Person_Map.Data> constructReadOperation(final @NotNull ReadOperationDeclaration operationDeclaration)
+      throws ServiceInitializationException {
+    return new ReadOp(operationDeclaration, storage);
+  }
+
+  @Override
+  protected @NotNull CreateOperation<PersonId_List.Data> constructCreateOperation(final @NotNull CreateOperationDeclaration operationDeclaration)
+      throws ServiceInitializationException {
+    return new CreateOp(operationDeclaration, storage);
+  }
+
+  @Override
+  protected @NotNull UpdateOperation<PersonId_Error_Map.Data> constructUpdateOperation(final @NotNull UpdateOperationDeclaration operationDeclaration)
+      throws ServiceInitializationException {
+    return new UpdateOp(operationDeclaration, storage);
+  }
+
+  @Override
+  protected @NotNull DeleteOperation<PersonId_Error_Map.Data> constructDeleteOperation(final @NotNull DeleteOperationDeclaration operationDeclaration)
+      throws ServiceInitializationException {
+    return new DeleteOp(operationDeclaration, storage);
+  }
+
+  @Override
+  protected @NotNull CustomOperation<PersonRecord.Data> constructCapitalizeCustomOperation(final @NotNull CustomOperationDeclaration operationDeclaration)
+      throws ServiceInitializationException {
+    return new CapitalizeOp(operationDeclaration, storage);
+  }
+
+// todo create/update/delete should only take :id model for bestFriend/worstEnemy/friends*
   // read should use correctly construct them my making separate calls to the 'backend'
   // it's probably better to implement this once we have generated projection classes
 

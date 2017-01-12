@@ -9,6 +9,7 @@ dependencies {
 
   compile project(':epigraph-java-core')
   compile project(':epigraph-java-schema')
+  compile project(':epigraph-java-service')
 
   testCompile 'junit:junit'
 }

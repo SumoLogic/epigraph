@@ -81,8 +81,8 @@ Util.createSingleton$mapClass(
 
       val keys = entriesSeq.map(_._1).mkString(s"new $keyType[]{", ", ", "}")
       val values = entriesSeq
-                   .map(e => JavaGenUtils.indent(e._2, INDENT))
-                   .mkString(s"new $valueType[]{\n", ",\n", "\n}")
+        .map(e => JavaGenUtils.indent(e._2, INDENT))
+        .mkString(s"new $valueType[]{\n", ",\n", "\n}")
 
       /*@formatter:off*/sn"""\
 Util.create$mapClass(
@@ -130,6 +130,12 @@ Util.create$mapClass(
   def genTypeClassRef(t: TypeApi, ctx: GenContext): String = {
     val w: CTypeApiWrapper = t.asInstanceOf[CTypeApiWrapper]
     ctx.generatedTypes.get(w.cType.name)
+  }
+
+  def genDataRef(t: TypeApi, ctx: GenContext): String = {
+    val typeClass = genTypeClassRef(t, ctx)
+    if (t.isInstanceOf[DatumTypeApi]) typeClass + ".Data"
+    else typeClass
   }
 
   def genTypeExpr(t: TypeApi, ctx: GenContext): String = {

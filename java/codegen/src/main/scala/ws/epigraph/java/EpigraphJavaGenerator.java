@@ -18,8 +18,9 @@
 
 package ws.epigraph.java;
 
-import ws.epigraph.compiler.*;
 import scala.collection.JavaConversions;
+import ws.epigraph.compiler.*;
+import ws.epigraph.java.service.AbstractResourceFactoryGen;
 import ws.epigraph.java.service.ResourceDeclarationGen;
 import ws.epigraph.lang.Qn;
 import ws.epigraph.schema.ResourceDeclaration;
@@ -47,7 +48,10 @@ public class EpigraphJavaGenerator {
 
   public void generate() throws IOException {
 
-    Path tmpRoot = JavaGenUtils.rmrf(outputRoot.resolveSibling(outputRoot.getFileName().toString() + "~tmp"), outputRoot.getParent());
+    Path tmpRoot = JavaGenUtils.rmrf(
+        outputRoot.resolveSibling(outputRoot.getFileName().toString() + "~tmp"),
+        outputRoot.getParent()
+    );
 
 //    for (CNamespace namespace : ctx.namespaces().values()) {
 //      new NamespaceGen(namespace, ctx).writeUnder(tmpRoot);
@@ -92,7 +96,7 @@ public class EpigraphJavaGenerator {
         }
       }
     }
-    
+
     for (CAnonListType alt : cctx.anonListTypes().values()) {
       //System.out.println(alt.name().name());
       new AnonListGen(alt, ctx).writeUnder(tmpRoot);
@@ -121,6 +125,12 @@ public class EpigraphJavaGenerator {
 
       for (final ResourceDeclaration resourceDeclaration : rs.resources().values()) {
         new ResourceDeclarationGen(resourceDeclaration).writeUnder(tmpRoot, namespace, ctx);
+
+        // todo: deduce from plugin config
+//        if (!csf.isDependency()) {
+          new AbstractResourceFactoryGen(resourceDeclaration).writeUnder(tmpRoot, namespace, ctx);
+//        }
+
       }
 
     }

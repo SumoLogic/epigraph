@@ -31,19 +31,12 @@ import ws.epigraph.tests.*;
 import java.util.Collections;
 import java.util.concurrent.CompletableFuture;
 
-public class UserResource extends Resource {
+public class UserResourceFactory extends AbstractUserResourceFactory {
 
-  public UserResource(@NotNull UserResourceDeclaration resourceDeclaration) throws ServiceInitializationException {
-    super(
-        resourceDeclaration,
-        Collections.singletonList(
-            new ReadOp(UserResourceDeclaration.readOperationDeclaration)
-        ),
-        Collections.emptyList(),
-        Collections.emptyList(),
-        Collections.emptyList(),
-        Collections.emptyList()
-    );
+  @Override
+  protected @NotNull ReadOperation<Person> constructReadOperation(final @NotNull ReadOperationDeclaration operationDeclaration)
+      throws ServiceInitializationException {
+    return new ReadOp(operationDeclaration);
   }
 
   private static final class ReadOp extends ReadOperation<Person> {
