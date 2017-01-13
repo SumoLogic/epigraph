@@ -24,6 +24,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.jetbrains.annotations.NotNull;
+import ws.epigraph.java.GenSettings;
 
 import java.io.File;
 import java.io.IOException;
@@ -94,4 +95,8 @@ public class TestCodegenMojo extends BaseCodegenMojo {
   @Override
   protected void addResultsToProject(MavenProject project, String path) { project.addTestCompileSourceRoot(path); }
 
+  @Override
+  protected GenSettings constructSettings() {
+    return new GenSettings(false, false, null);
+  }
 }

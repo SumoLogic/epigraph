@@ -45,6 +45,8 @@ class EpigraphJavaPlugin implements Plugin<ProjectInternal> {
 
   @Override
   void apply(ProjectInternal project) {
+    project.extensions.create('epigraph', EpigraphJavaPluginExtension)
+
     PluginManager pluginManager = project.getPluginManager()
 
     if (!pluginManager.hasPlugin('java')) {

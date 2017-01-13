@@ -52,6 +52,12 @@
       <plugin>
         <groupId>ws.epigraph</groupId>
         <artifactId>epigraph-java-maven-plugin</artifactId>
+        <configuration>
+          <generateImplementationStubs>
+            <service>ws.epigraph.tests.User</service>
+            <service>ws.epigraph.tests.Users</service>
+          </generateImplementationStubs>
+        </configuration>
       </plugin>
 
     </plugins>

@@ -13,3 +13,10 @@ dependencies {
 
   testCompile 'junit:junit'
 }
+
+epigraph {
+  generateImplementationStubs = [
+      "ws.epigraph.tests.User",
+      "ws.epigraph.tests.Users"
+  ]
+}

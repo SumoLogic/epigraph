@@ -24,10 +24,13 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.jetbrains.annotations.NotNull;
+import ws.epigraph.java.GenSettings;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 
 /**
  * Generate Java bindings for Epigraph Schema source files (.epigraph).
@@ -77,6 +80,13 @@ public class MainCodegenMojo extends BaseCodegenMojo {
   @Override
   protected String[] excludes() { return excludes; }
 
+  /**
+   * A list of fully-qualified names of names of services for which implementation stubs should be generated.
+   * Service name is a package name followed by dot and resource field name with first letter capitalized.
+   */
+  @Parameter
+  private String[] generateImplementationStubs = null; // keep name in sync with `EpigraphJavaPluginExtension.groovy`
+
   @Override
   protected Collection<? extends String> getSourceRoots(@NotNull MavenProject project) throws IOException {
     project.addCompileSourceRoot(sourceDirectory.getCanonicalPath());
@@ -91,5 +101,14 @@ public class MainCodegenMojo extends BaseCodegenMojo {
 
   @Override
   protected void addResultsToProject(MavenProject project, String path) { project.addCompileSourceRoot(path); }
+
+  @Override
+  protected GenSettings constructSettings() {
+    return new GenSettings(
+        false, // make configurable if needed
+        false,
+        generateImplementationStubs == null ? null : Arrays.asList(generateImplementationStubs)
+    );
+  }
 
 }

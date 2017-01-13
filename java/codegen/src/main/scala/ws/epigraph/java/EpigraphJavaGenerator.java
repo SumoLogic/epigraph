@@ -35,16 +35,19 @@ public class EpigraphJavaGenerator {
 
   private final CContext cctx;
 
-  private final GenContext ctx = new GenContext();
+  private final GenContext ctx;
 
   private final Path outputRoot;
 
-  public EpigraphJavaGenerator(CContext ctx, Path outputRoot) {
+  public EpigraphJavaGenerator(CContext ctx, Path outputRoot, GenSettings settings) {
     this.cctx = ctx;
     this.outputRoot = outputRoot;
+    this.ctx = new GenContext(settings);
   }
 
-  public EpigraphJavaGenerator(CContext ctx, File outputRoot) { this(ctx, outputRoot.toPath()); }
+  public EpigraphJavaGenerator(CContext ctx, File outputRoot, GenSettings settings) {
+    this(ctx, outputRoot.toPath(), settings);
+  }
 
   public void generate() throws IOException {
 
@@ -116,9 +119,9 @@ public class EpigraphJavaGenerator {
 //    }
 
     new IndexGen(ctx).writeUnder(tmpRoot);
+    final GenSettings settings = ctx.settings();
 
     for (final Map.Entry<CSchemaFile, ResourcesSchema> entry : cctx.resourcesSchemas().entrySet()) {
-      CSchemaFile csf = entry.getKey();
       ResourcesSchema rs = entry.getValue();
 
       Qn namespace = rs.namespace();
@@ -126,10 +129,14 @@ public class EpigraphJavaGenerator {
       for (final ResourceDeclaration resourceDeclaration : rs.resources().values()) {
         new ResourceDeclarationGen(resourceDeclaration).writeUnder(tmpRoot, namespace, ctx);
 
-        // todo: deduce from plugin config
-//        if (!csf.isDependency()) {
+        String resourceName = namespace.append(JavaGenUtils.up(resourceDeclaration.fieldName())).toString();
+
+        // change them to be patters/regex?
+        if (settings.generateImplementationStubs() == null ||
+            settings.generateImplementationStubs().contains(resourceName)) {
+
           new AbstractResourceFactoryGen(resourceDeclaration).writeUnder(tmpRoot, namespace, ctx);
-//        }
+        }
 
       }
 

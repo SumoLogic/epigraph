@@ -16,9 +16,6 @@
 
 package ws.epigraph.gradle.java
 
-import ws.epigraph.java.EpigraphJavaGenerator
-import ws.epigraph.gradle.EmptyFileTree
-import ws.epigraph.gradle.EpigraphCompileTaskBase
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.file.FileTree
@@ -26,6 +23,10 @@ import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.ParallelizableTask
 import org.gradle.api.tasks.TaskAction
+import ws.epigraph.gradle.EmptyFileTree
+import ws.epigraph.gradle.EpigraphCompileTaskBase
+import ws.epigraph.java.EpigraphJavaGenerator
+import ws.epigraph.java.GenSettings
 
 @ParallelizableTask
 class GenerateJavaBindingsTask extends DefaultTask implements EpigraphCompileTaskBase {
@@ -43,7 +44,14 @@ class GenerateJavaBindingsTask extends DefaultTask implements EpigraphCompileTas
       throw new GradleException('Schema compilation failed with errors')
 
     getLogger().info("Generating Java bindings to '${getDestinationDir()}'")
-    new EpigraphJavaGenerator(context, getDestinationDir()).generate()
+
+    def settings = new GenSettings(
+        false,  // create parameters if needed
+        false,
+        project.epigraph.generateImplementationStubs
+    )
+
+    new EpigraphJavaGenerator(context, getDestinationDir(), settings).generate()
   }
 
   @Override
