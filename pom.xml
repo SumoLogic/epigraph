@@ -39,8 +39,8 @@
     <!-- // first-time build bootstrap sequence:
 mvn clean install -P jar-mavenizer && \
 mvn clean install -P light-psi && \
-mvn clean install -P main && \
-mvn clean install -P maven-plugin-dependent
+mvn -o clean install -P main && \
+mvn -o clean install -P maven-plugin-dependent
     -->
 
     <profile>
@@ -98,7 +98,6 @@ mvn clean install -P maven-plugin-dependent
         <module>java/http-server-common</module>
         <module>java/http-server-undertow</module>
         <module>java/projections-schema-psi-parser</module>
-        <module>java/projections-psi-parser-util</module>
         <module>java/projections-url-psi-parser</module>
         <module>java/request-url-parser</module>
         <module>java/request-url-psi-parser</module>
