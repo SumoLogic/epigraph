@@ -4,7 +4,7 @@
 
   <groupId>ws.epigraph</groupId>
   <artifactId>epigraph</artifactId>
-  <version>0.0-SNAPSHOT</version>
+  <version>0.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <description>Epigraph project</description>
@@ -331,7 +331,7 @@ mvn -o clean install -P maven-plugin-dependent
         <plugin>
           <groupId>ws.epigraph</groupId>
           <artifactId>epigraph-maven-plugin</artifactId>
-          <version>0.0-SNAPSHOT</version>
+          <version>0.0.0-SNAPSHOT</version>
           <executions>
             <execution>
               <goals>
@@ -345,7 +345,7 @@ mvn -o clean install -P maven-plugin-dependent
         <plugin>
           <groupId>ws.epigraph</groupId>
           <artifactId>epigraph-java-maven-plugin</artifactId>
-          <version>0.0-SNAPSHOT</version>
+          <version>0.0.0-SNAPSHOT</version>
           <executions>
             <execution>
               <goals>

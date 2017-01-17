@@ -8,7 +8,7 @@
   <parent>
     <groupId>ws.epigraph.tests</groupId>
     <artifactId>tests</artifactId>
-    <version>0.0-SNAPSHOT</version>
+    <version>0.0.0-SNAPSHOT</version>
   </parent>
 
   <dependencies>
@@ -18,7 +18,7 @@
     <dependency>
       <groupId>ws.epigraph</groupId>
       <artifactId>epigraph-builtin-types-schema</artifactId>
-      <version>0.0-SNAPSHOT</version>
+      <version>${project.parent.version}</version>
     </dependency>
 
     <!-- test dependencies -->
@@ -26,7 +26,7 @@
     <dependency>
       <groupId>ws.epigraph</groupId>
       <artifactId>epigraph-builtin-types-schema</artifactId>
-      <version>0.0-SNAPSHOT</version>
+      <version>${project.parent.version}</version>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>

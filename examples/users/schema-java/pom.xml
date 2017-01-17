@@ -8,7 +8,7 @@
   <parent>
     <groupId>ws.epigraph.examples</groupId>
     <artifactId>examples-users</artifactId>
-    <version>0.0-SNAPSHOT</version>
+    <version>0.0.0-SNAPSHOT</version>
   </parent>
 
   <dependencies>
@@ -22,7 +22,7 @@
     <dependency>
       <groupId>ws.epigraph</groupId>
       <artifactId>epigraph-java-core</artifactId>
-      <version>0.0-SNAPSHOT</version>
+      <version>0.0.0-SNAPSHOT</version>
     </dependency>
 
   </dependencies>

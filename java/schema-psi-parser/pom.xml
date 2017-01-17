@@ -8,7 +8,7 @@
   <parent>
     <groupId>ws.epigraph</groupId>
     <artifactId>epigraph-java</artifactId>
-    <version>0.0-SNAPSHOT</version>
+    <version>0.0.0-SNAPSHOT</version>
   </parent>
 
   <dependencies>
@@ -61,7 +61,7 @@
     <dependency>
       <groupId>ws.epigraph</groupId>
       <artifactId>epigraph-light-psi</artifactId>
-      <version>${project.parent.version}</version>
+      <version>0.0.0</version>
     </dependency>
 
     <dependency>
