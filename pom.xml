@@ -39,8 +39,8 @@
     <!-- // first-time build bootstrap sequence:
 mvn clean install -P jar-mavenizer && \
 mvn clean install -P light-psi && \
-mvn -o clean install -P main && \
-mvn -o clean install -P maven-plugin-dependent
+mvn clean install -P main && \
+mvn clean install -P maven-plugin-dependent
     -->
 
     <profile>
@@ -480,6 +480,12 @@ mvn -o clean install -P maven-plugin-dependent
               </goals>
             </execution>
           </executions>
+        </plugin>
+
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>versions-maven-plugin</artifactId>
+          <version>2.3</version>
         </plugin>
 
       </plugins>

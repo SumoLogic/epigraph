@@ -4,10 +4,6 @@
 - [x] Java codegen should generate instances of `ResourceDeclaration` for all resources (even from dependencies)
 - [ ] Java codegen should generate (abstract? empty?) `Resource` implementations for all resources except for dependencies
 
-- Important items from [general todo] (todo.md)
-  - [ ] Add `type.createBuilder(data)` similar to `toImmutable` (postponed till there are more use cases)
-    - [ ] Update demo service
-
 - Docs
   - Operations
     - [ ] Overview
