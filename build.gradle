@@ -9,8 +9,8 @@ allprojects {
   // https://github.com/nebula-plugins/nebula-dependency-recommender-plugin/issues/9
   apply plugin: 'nebula.maven-publish'
 
-  group = theGroup
-  version = theVersion
+  group = epigraphGroup
+  version = epigraphVersion
 
   dependencyRecommendations {
     mavenBom file: file("$rootDir/pom.xml")

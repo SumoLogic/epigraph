@@ -6,7 +6,7 @@ pluginRepositories {
   gradlePluginPortal()
 }
 
-rootProject.name = theName
+rootProject.name = epigraphName
 
 
 Map<String, String> modules = [

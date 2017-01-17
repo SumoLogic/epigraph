@@ -13,6 +13,8 @@ plugins {
 
 apply plugin: 'base'
 
+//version = lightPsiVersion
+
 // TODO single task for full rebuild:
 // gradle updateFileList2 packageLightPsi relocate copyPrebuilt && mvn clean install
 

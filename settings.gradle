@@ -6,7 +6,7 @@ pluginRepositories {
   gradlePluginPortal()
 }
 
-rootProject.name = theName
+rootProject.name = epigraphName
 
 // map from module (sub-project) path to full module name (maven artifact id)
 Map<String, String> modules = [
