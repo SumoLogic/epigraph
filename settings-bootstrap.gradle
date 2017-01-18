@@ -30,12 +30,6 @@ Map<String, String> modules = [
     'scala/core'                         : 'epigraph-scala-core'
 ]
 
-Map<String, String> noTestModules = [
-    'java/gdata-schema-psi-parser'       : 'epigraph-java-gdata-schema-psi-parser',              // (x)
-    'java/projections-schema-psi-parser' : 'epigraph-java-projections-schema-psi-parser',        // (x)
-    'java/schema-psi-parser'             : 'epigraph-java-schema-psi-parser',                    // (x)
-]
-
 // todo: modules marked with (x) must be removed from here and form build.gradle : publishGradlePlugin
 // once schema resources compilation is ported to scala (see 'Schema compiler' section in todo.md)
 // also remove all of noTestModules and **/build-notest.gradle
@@ -43,10 +37,4 @@ Map<String, String> noTestModules = [
 modules.each { dir, name ->
   include name
   project(":$name").projectDir = file(dir)
-}
-
-noTestModules.each { dir, name ->
-  include name
-  project(":$name").projectDir = file(dir)
-  project(":$name").buildFileName = "build-notest.gradle"
 }

@@ -4,12 +4,24 @@ plugins {
 
 apply plugin: 'scala'
 
+sourceSets.main.java.srcDirs += file("$buildDir/generated-sources/schema-psi-parser.java")
+idea.module.generatedSourceDirs += file("$buildDir/generated-sources/schema-psi-parser.java")
+
+sourceSets.main.java.srcDirs += file("$buildDir/generated-sources/gdata-schema-psi-parser.java")
+idea.module.generatedSourceDirs += file("$buildDir/generated-sources/gdata-schema-psi-parser.java")
+
+sourceSets.main.java.srcDirs += file("$buildDir/generated-sources/projections-schema-psi-parser.java")
+idea.module.generatedSourceDirs += file("$buildDir/generated-sources/projections-schema-psi-parser.java")
+
 dependencies {
   compile project(':epigraph-java-core')
   compile project(':epigraph-java-schema')
   compile project(':epigraph-java-schema-parser')
-  compile project(':epigraph-java-schema-psi-parser')
   compile project(':epigraph-java-lang-common')
+
+  // dependencies for the copied code
+  compile project(':epigraph-java-projections-psi-parser-util')
+  compile project(':epigraph-java-schema-psi-parser-common')
 
   compile 'org.scala-lang:scala-library'
   compile 'org.scala-lang:scala-reflect'
@@ -19,3 +31,26 @@ dependencies {
   testCompile 'junit:junit'
   testRuntime 'org.pegdown:pegdown'
 }
+
+task copySources {
+  doLast {
+    delete { "$buildDir/generated-sources/schema-psi-parser.java" }
+    delete { "$buildDir/generated-sources/gdata-schema-psi-parser.java" }
+    delete { "$buildDir/generated-sources/projections-schema-psi-parser.java" }
+
+    copy {
+      from('../java/schema-psi-parser/src/main/java') { include '**/*.java' }
+      into "$buildDir/generated-sources/schema-psi-parser.java"
+    }
+    copy {
+      from('../java/gdata-schema-psi-parser/src/main/java') { include '**/*.java' }
+      into "$buildDir/generated-sources/gdata-schema-psi-parser.java"
+    }
+    copy {
+      from('../java/projections-schema-psi-parser/src/main/java') { include '**/*.java' }
+      into "$buildDir/generated-sources/projections-schema-psi-parser.java"
+    }
+  }
+}
+
+compileJava.dependsOn copySources
