@@ -3,9 +3,6 @@ plugins {
   id 'maven-publish'
 }
 
-group = 'ws.epigraph'
-version = '0.0' // snapshot versions not supported in local repo
-
 description = """
 Epigraph gradle schema compiler plugin
 
