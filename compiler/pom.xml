@@ -35,14 +35,21 @@
     </dependency>
     <dependency>
       <groupId>${project.parent.groupId}</groupId>
-      <artifactId>epigraph-java-schema-psi-parser</artifactId>
+      <artifactId>epigraph-light-psi</artifactId>
+      <version>0.0.0</version>
+    </dependency>
+    <!-- dependencies for the copied code -->
+    <dependency>
+      <groupId>${project.parent.groupId}</groupId>
+      <artifactId>epigraph-java-projections-psi-parser-util</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
     <dependency>
       <groupId>${project.parent.groupId}</groupId>
-      <artifactId>epigraph-light-psi</artifactId>
-      <version>0.0.0</version>
+      <artifactId>epigraph-java-schema-psi-parser-common</artifactId>
+      <version>${project.parent.version}</version>
     </dependency>
+    <!-- -->
 
     <dependency>
       <groupId>net.jcip</groupId>
@@ -86,6 +93,78 @@
       <plugin>
         <groupId>net.alchim31.maven</groupId>
         <artifactId>scala-maven-plugin</artifactId>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-schema-psi-parser</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.build.directory}/generated-sources/schema-psi-parser.java</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>../java/schema-psi-parser/src/main/java</directory>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+          <execution>
+            <id>copy-gdata-schema-psi-parser</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.build.directory}/generated-sources/gdata-schema-psi-parser.java</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>../java/gdata-schema-psi-parser/src/main/java</directory>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+          <execution>
+            <id>copy-projections-schema-psi-parser</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.build.directory}/generated-sources/projections-schema-psi-parser.java</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>../java/projections-schema-psi-parser/src/main/java</directory>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>process-sources</phase>
+            <goals>
+              <goal>add-source</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>${project.build.directory}/generated-sources/schema-psi-parser.java</source>
+                <source>${project.build.directory}/generated-sources/gdata-schema-psi-parser.java</source>
+                <source>${project.build.directory}/generated-sources/projections-schema-psi-parser.java</source>
+              </sources>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
 
     </plugins>
