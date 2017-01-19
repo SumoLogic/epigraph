@@ -18,8 +18,8 @@
 
   <scm>
     <url>https://github.com/SumoLogic/epigraph</url>
-    <connection>scm:git:ssh://git@github.com:SumoLogic/epigraph.git</connection>
-    <developerConnection>scm:git:ssh://git@github.com:SumoLogic/epigraph.git</developerConnection>
+    <connection>scm:git:ssh://git@github.com/SumoLogic/epigraph.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/SumoLogic/epigraph.git</developerConnection>
   </scm>
 
   <developers>
