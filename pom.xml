@@ -39,8 +39,7 @@
     <!-- // first-time build bootstrap sequence:
 mvn clean install -P jar-mavenizer && \
 mvn clean install -P light-psi && \
-mvn clean install -P main && \
-mvn clean install -P maven-plugin-dependent
+mvn clean install
     -->
 
     <profile>
