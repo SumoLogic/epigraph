@@ -64,7 +64,7 @@ mvn clean install
     </profile>
 
     <profile>
-      <id>main</id>
+      <id>light-psi-dependent</id>
       <activation>
         <activeByDefault>true</activeByDefault>
       </activation>
@@ -74,15 +74,7 @@ mvn clean install
         <module>java</module>
         <module>maven-plugin</module>
         <module>maven-plugin-common</module>
-      </modules>
-    </profile>
-
-    <profile>
-      <id>maven-plugin-dependent</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <modules>
+        <!-- the rest depend on maven plugin(s) -->
         <module>schemas</module>
         <module>examples</module>
         <module>java/codegen-test</module>
