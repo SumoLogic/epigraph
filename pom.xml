@@ -483,13 +483,14 @@ mvn clean install
           </configuration>
         </plugin>
 
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-scm-plugin</artifactId>
+          <version>1.9.5</version>
+        </plugin>
+
       </plugins>
 
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-scm-plugin</artifactId>
-        <version>1.9.5</version>
-      </plugin>
 
     </pluginManagement>
 
