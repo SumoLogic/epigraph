@@ -2,6 +2,7 @@
 - [ ] Schema/IDL: enforce folders structure based on namespace?
 - [ ] gradle/maven build: add verification that all files have apache license headers
 
+
 # Framework
 - [x] Fix tails support in JSON output. Data trimmer must be fixed?
 - JSON marshaller
