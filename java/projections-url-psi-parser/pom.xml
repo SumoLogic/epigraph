@@ -51,7 +51,7 @@
     <dependency>
       <groupId>ws.epigraph</groupId>
       <artifactId>epigraph-light-psi</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
+      <version>0.0.0</version>
     </dependency>
 
 
