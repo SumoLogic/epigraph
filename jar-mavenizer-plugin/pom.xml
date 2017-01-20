@@ -4,13 +4,13 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>jar-mavenizer-plugin</artifactId>
-  <version>0.0.0</version><!-- own release cycle -->
+  <version>0.0.1-SNAPSHOT</version><!-- own release cycle -->
   <packaging>maven-plugin</packaging>
 
   <parent>
     <groupId>ws.epigraph</groupId>
     <artifactId>epigraph</artifactId>
-    <version>0.0.0</version>
+    <version>0.0.1-SNAPSHOT</version>
   </parent>
 
   <name>Jar Mavenizer Maven Plugin</name>

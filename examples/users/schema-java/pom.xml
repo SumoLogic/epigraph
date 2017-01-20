@@ -22,7 +22,7 @@
     <dependency>
       <groupId>ws.epigraph</groupId>
       <artifactId>epigraph-java-core</artifactId>
-      <version>0.0.0</version>
+      <version>0.0.1-SNAPSHOT</version>
     </dependency>
 
   </dependencies>
