@@ -74,6 +74,7 @@
 
 # Build
   - [ ] Fix circular build problem. Depends on Schema compiler/proper resouces compilation task above (~ a month of work)
+  - [ ] Try to remove sources copying from `java/schema-parser`, include generated sources directly. See if IDEA will get confused about them. If all is fine: get rid of `maven-resources-plugin`
   - Gradle
     -[ ] light-psi assembly: simplify the code, see `build.gradle` notes on using class symbol tables instead of ASM
     -[ ] light-psi should be versioned (and, potentially, released) separately from the rest of the project, as mvn build does. This would entail adding another `settings-light-psi.gradle` to deploy light-psi to local repo and changing all `project` to usual dependencies
