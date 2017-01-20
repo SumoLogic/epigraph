@@ -13,24 +13,32 @@
 
   <description>Epigraph for Java</description>
 
-      <modules>
-        <module>codegen</module>
-        <module>core</module>
-        <module>gdata</module>
-        <module>schema</module>
-        <module>lang-common</module>
-        <module>maven-plugin</module>
-        <!--<module>preprint</module>-->
-        <module>projections</module>
-        <module>projections-psi-parser-util</module>
-        <module>request-url</module>
-        <module>schema-parser</module>
-        <module>schema-psi-parser-common</module>
-        <module>standalone-psi-util</module>
-        <!--<module>server</module>-->
-        <!--<module>service</module>-->
-        <module>util</module>
-        <!--<module>wire</module>-->
-      </modules>
+  <modules>
+    <module>codegen-test</module>
+    <module>codegen</module>
+    <module>core</module>
+    <module>gdata-schema-psi-parser</module>
+    <module>gdata</module>
+    <module>http-server-common</module>
+    <module>http-server-undertow</module>
+    <module>lang-common</module>
+    <module>maven-plugin</module>
+    <module>projections-psi-parser-util</module>
+    <module>projections-schema-psi-parser</module>
+    <module>projections-url-psi-parser</module>
+    <module>projections</module>
+    <module>request-url-parser</module>
+    <module>request-url-psi-parser</module>
+    <module>request-url</module>
+    <module>schema-parser</module>
+    <module>schema-psi-parser-common</module>
+    <module>schema-psi-parser</module>
+    <module>schema</module>
+    <module>service</module>
+    <module>standalone-psi-util</module>
+    <module>test-util</module>
+    <module>util</module>
+    <module>wire</module>
+  </modules>
 
 </project>

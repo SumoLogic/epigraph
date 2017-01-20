@@ -1,43 +1,43 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+  <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>examples-sumo-schema-java</artifactId>
+  <artifactId>examples-sumo-schema-java</artifactId>
 
-    <parent>
-        <groupId>ws.epigraph.examples</groupId>
-        <artifactId>examples</artifactId>
-        <version>0.0.0-SNAPSHOT</version>
-    </parent>
+  <parent>
+    <groupId>ws.epigraph.examples</groupId>
+    <artifactId>examples</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+  </parent>
 
-    <dependencies>
+  <dependencies>
 
-        <dependency>
-            <groupId>${project.parent.groupId}</groupId>
-            <artifactId>examples-sumo-schema</artifactId>
-            <version>${project.parent.version}</version>
-        </dependency>
+    <dependency>
+      <groupId>${project.parent.groupId}</groupId>
+      <artifactId>examples-sumo-schema</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
 
-        <dependency>
-            <groupId>ws.epigraph</groupId>
-            <artifactId>epigraph-java-core</artifactId>
-            <version>${project.parent.version}</version>
-        </dependency>
+    <dependency>
+      <groupId>ws.epigraph</groupId>
+      <artifactId>epigraph-java-core</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
 
-    </dependencies>
+  </dependencies>
 
-    <build>
+  <build>
 
-        <plugins>
+    <plugins>
 
-            <plugin>
-                <groupId>ws.epigraph</groupId>
-                <artifactId>epigraph-java-maven-plugin</artifactId>
-            </plugin>
+      <plugin>
+        <groupId>ws.epigraph</groupId>
+        <artifactId>epigraph-java-maven-plugin</artifactId>
+      </plugin>
 
-        </plugins>
+    </plugins>
 
-    </build>
+  </build>
 
 </project>
