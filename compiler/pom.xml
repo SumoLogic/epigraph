@@ -96,58 +96,6 @@
       </plugin>
 
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-resources-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>copy-schema-psi-parser</id>
-            <phase>generate-sources</phase>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
-            <configuration>
-              <outputDirectory>${project.build.directory}/generated-sources/schema-psi-parser.java</outputDirectory>
-              <resources>
-                <resource>
-                  <directory>../java/schema-psi-parser/src/main/java</directory>
-                </resource>
-              </resources>
-            </configuration>
-          </execution>
-          <execution>
-            <id>copy-gdata-schema-psi-parser</id>
-            <phase>generate-sources</phase>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
-            <configuration>
-              <outputDirectory>${project.build.directory}/generated-sources/gdata-schema-psi-parser.java</outputDirectory>
-              <resources>
-                <resource>
-                  <directory>../java/gdata-schema-psi-parser/src/main/java</directory>
-                </resource>
-              </resources>
-            </configuration>
-          </execution>
-          <execution>
-            <id>copy-projections-schema-psi-parser</id>
-            <phase>generate-sources</phase>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
-            <configuration>
-              <outputDirectory>${project.build.directory}/generated-sources/projections-schema-psi-parser.java</outputDirectory>
-              <resources>
-                <resource>
-                  <directory>../java/projections-schema-psi-parser/src/main/java</directory>
-                </resource>
-              </resources>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
         <executions>
@@ -158,9 +106,9 @@
             </goals>
             <configuration>
               <sources>
-                <source>${project.build.directory}/generated-sources/schema-psi-parser.java</source>
-                <source>${project.build.directory}/generated-sources/gdata-schema-psi-parser.java</source>
-                <source>${project.build.directory}/generated-sources/projections-schema-psi-parser.java</source>
+                <source>../java/schema-psi-parser/src/main/java</source>
+                <source>../java/gdata-schema-psi-parser/src/main/java</source>
+                <source>../java/projections-schema-psi-parser/src/main/java</source>
               </sources>
             </configuration>
           </execution>

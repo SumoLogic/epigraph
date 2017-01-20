@@ -4,14 +4,14 @@ plugins {
 
 apply plugin: 'scala'
 
-sourceSets.main.java.srcDirs += file("$buildDir/generated-sources/schema-psi-parser.java")
-idea.module.generatedSourceDirs += file("$buildDir/generated-sources/schema-psi-parser.java")
+sourceSets.main.java.srcDirs += file('../java/schema-psi-parser/src/main/java')
+idea.module.generatedSourceDirs += file('../java/schema-psi-parser/src/main/java')
 
-sourceSets.main.java.srcDirs += file("$buildDir/generated-sources/gdata-schema-psi-parser.java")
-idea.module.generatedSourceDirs += file("$buildDir/generated-sources/gdata-schema-psi-parser.java")
+sourceSets.main.java.srcDirs += file('../java/gdata-schema-psi-parser/src/main/java')
+idea.module.generatedSourceDirs += file('../java/gdata-schema-psi-parser/src/main/java')
 
-sourceSets.main.java.srcDirs += file("$buildDir/generated-sources/projections-schema-psi-parser.java")
-idea.module.generatedSourceDirs += file("$buildDir/generated-sources/projections-schema-psi-parser.java")
+sourceSets.main.java.srcDirs += file('../java/projections-schema-psi-parser/src/main/java')
+idea.module.generatedSourceDirs += file('../java/projections-schema-psi-parser/src/main/java')
 
 dependencies {
   compile project(':epigraph-java-core')
@@ -31,26 +31,3 @@ dependencies {
   testCompile 'junit:junit'
   testRuntime 'org.pegdown:pegdown'
 }
-
-task copySources {
-  doLast {
-    delete { "$buildDir/generated-sources/schema-psi-parser.java" }
-    delete { "$buildDir/generated-sources/gdata-schema-psi-parser.java" }
-    delete { "$buildDir/generated-sources/projections-schema-psi-parser.java" }
-
-    copy {
-      from('../java/schema-psi-parser/src/main/java') { include '**/*.java' }
-      into "$buildDir/generated-sources/schema-psi-parser.java"
-    }
-    copy {
-      from('../java/gdata-schema-psi-parser/src/main/java') { include '**/*.java' }
-      into "$buildDir/generated-sources/gdata-schema-psi-parser.java"
-    }
-    copy {
-      from('../java/projections-schema-psi-parser/src/main/java') { include '**/*.java' }
-      into "$buildDir/generated-sources/projections-schema-psi-parser.java"
-    }
-  }
-}
-
-compileJava.dependsOn copySources
