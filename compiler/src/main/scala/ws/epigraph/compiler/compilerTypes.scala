@@ -178,11 +178,11 @@ object CTypeDef {
     case unknown => throw new UnsupportedOperationException(unknown.toString)
   }
 
-  def declaredDefaultTagName(@Nullable sdo: SchemaDefaultOverride): Option[Option[String]] = {
-    if (sdo == null) {
+  def declaredRetroTagName(@Nullable srd: SchemaRetroDecl): Option[Option[String]] = {
+    if (srd == null) {
       None
     } else {
-      @Nullable val vtr = sdo.getVarTagRef
+      @Nullable val vtr = srd.getVarTagRef
       if (vtr == null) {
         Some(None)
       } else {

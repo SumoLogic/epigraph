@@ -28,7 +28,6 @@ public interface SchemaElementTypes {
   IElementType S_DATA_ENTRY = new SchemaElementType("S_DATA_ENTRY");
   IElementType S_DATA_VALUE = new SchemaElementType("S_DATA_VALUE");
   IElementType S_DATUM = new SchemaElementType("S_DATUM");
-  IElementType S_DEFAULT_OVERRIDE = new SchemaElementType("S_DEFAULT_OVERRIDE");
   IElementType S_DEFS = new SchemaElementType("S_DEFS");
   IElementType S_DELETE_OPERATION_BODY_PART = new SchemaElementType("S_DELETE_OPERATION_BODY_PART");
   IElementType S_DELETE_OPERATION_DEF = new SchemaElementType("S_DELETE_OPERATION_DEF");
@@ -144,6 +143,7 @@ public interface SchemaElementTypes {
   IElementType S_RESOURCE_DEF = new SchemaElementType("S_RESOURCE_DEF");
   IElementType S_RESOURCE_NAME = new SchemaElementType("S_RESOURCE_NAME");
   IElementType S_RESOURCE_TYPE = new SchemaElementType("S_RESOURCE_TYPE");
+  IElementType S_RETRO_DECL = new SchemaElementType("S_RETRO_DECL");
   IElementType S_SUPPLEMENTS_DECL = new SchemaElementType("S_SUPPLEMENTS_DECL");
   IElementType S_SUPPLEMENT_DEF = new SchemaSupplementDefStubElementType("S_SUPPLEMENT_DEF");
   IElementType S_TAG_NAME = new SchemaElementType("S_TAG_NAME");
@@ -214,6 +214,7 @@ public interface SchemaElementTypes {
   IElementType S_RECORD = new SchemaElementType("record");
   IElementType S_REQUIRED = new SchemaElementType("required");
   IElementType S_RESOURCE = new SchemaElementType("resource");
+  IElementType S_RETRO = new SchemaElementType("retro");
   IElementType S_SEMICOLON = new SchemaElementType(";");
   IElementType S_SLASH = new SchemaElementType("/");
   IElementType S_STAR = new SchemaElementType("*");
@@ -258,9 +259,6 @@ public interface SchemaElementTypes {
       }
       else if (type == S_DATA_VALUE) {
         return new SchemaDataValueImpl(node);
-      }
-      else if (type == S_DEFAULT_OVERRIDE) {
-        return new SchemaDefaultOverrideImpl(node);
       }
       else if (type == S_DEFS) {
         return new SchemaDefsImpl(node);
@@ -606,6 +604,9 @@ public interface SchemaElementTypes {
       }
       else if (type == S_RESOURCE_TYPE) {
         return new SchemaResourceTypeImpl(node);
+      }
+      else if (type == S_RETRO_DECL) {
+        return new SchemaRetroDeclImpl(node);
       }
       else if (type == S_SUPPLEMENTS_DECL) {
         return new SchemaSupplementsDeclImpl(node);

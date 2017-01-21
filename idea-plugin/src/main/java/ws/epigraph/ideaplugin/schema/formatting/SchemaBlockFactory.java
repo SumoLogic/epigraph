@@ -54,7 +54,7 @@ interface SchemaBlockFactory {
           .put(S_META_DECL, MetaBlock::new)
           .put(S_SUPPLEMENTS_DECL, SupplementsBlock::new)
 
-          .put(S_DEFAULT_OVERRIDE, DefaultOverrideBlock::new)
+          .put(S_RETRO_DECL, RetroDeclBlock::new)
 
           .put(S_ANON_LIST, AnonCollectionBlock::new)
           .put(S_ANON_MAP, AnonCollectionBlock::new)

@@ -93,7 +93,7 @@ public class SchemaCompletionContributor extends CompletionContributor {
             );          // complete new type names using unresolved references in current file
             completeOverride(position, result);             // complete `override` in field/tag decls
             completeOverrideMember(position, result);       // complete type name after `override`
-            completeDefault(position, result);              // complete `default` keyword in `valueTypeRef`
+            completeRetro(position, result);              // complete `default` keyword in `valueTypeRef`
 
             completeResourceKeywords(position, result);     // complete top-level keywords for resource defs
             completeOperationKeywords(position, result);    // complete top-level keywords for operation defs
@@ -438,7 +438,7 @@ public class SchemaCompletionContributor extends CompletionContributor {
     }
   }
 
-  private void completeDefault(@NotNull PsiElement position, @NotNull final CompletionResultSet result) {
+  private void completeRetro(@NotNull PsiElement position, @NotNull final CompletionResultSet result) {
     SchemaValueTypeRef valueTypeRef = PsiTreeUtil.getParentOfType(position, SchemaValueTypeRef.class);
     // there is a value type ref and no 'default' in it yet
     if (valueTypeRef == null) {
@@ -446,16 +446,16 @@ public class SchemaCompletionContributor extends CompletionContributor {
       if (prevVisibleLeaf != null) {
         SchemaFieldDecl fieldDecl = PsiTreeUtil.getParentOfType(prevVisibleLeaf, SchemaFieldDecl.class);
         if (fieldDecl != null) {
-          completeDefault(fieldDecl.getValueTypeRef(), result);
+          completeRetro(fieldDecl.getValueTypeRef(), result);
         }
       }
     } else {
-      completeDefault(valueTypeRef, result);
+      completeRetro(valueTypeRef, result);
     }
   }
 
-  private void completeDefault(@Nullable SchemaValueTypeRef valueTypeRef, @NotNull CompletionResultSet result) {
-    if (valueTypeRef != null && valueTypeRef.getDefaultOverride() == null) {
+  private void completeRetro(@Nullable SchemaValueTypeRef valueTypeRef, @NotNull CompletionResultSet result) {
+    if (valueTypeRef != null && valueTypeRef.getRetroDecl() == null) {
       SchemaTypeRef typeRef = valueTypeRef.getTypeRef();
       // type ref is an QN type ref (not an anon list or map)
       if (typeRef instanceof SchemaQnTypeRef) {
@@ -465,7 +465,7 @@ public class SchemaCompletionContributor extends CompletionContributor {
         if (typeDef instanceof SchemaVarTypeDef) {
           PsiElement prevSibling = SchemaPsiUtil.prevNonWhitespaceSibling(valueTypeRef);
           if (prevSibling != null && prevSibling.getNode().getElementType() == S_COLON) {
-            result.addElement(LookupElementBuilder.create("default "));
+            result.addElement(LookupElementBuilder.create("retro "));
           }
         }
       }

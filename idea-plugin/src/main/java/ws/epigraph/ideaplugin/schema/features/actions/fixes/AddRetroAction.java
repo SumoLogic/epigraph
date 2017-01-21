@@ -40,12 +40,12 @@ import org.jetbrains.annotations.Nullable;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class AddDefaultAction extends PsiElementBaseIntentionAction implements LowPriorityAction {
+public class AddRetroAction extends PsiElementBaseIntentionAction implements LowPriorityAction {
   @Nls
   @NotNull
   @Override
   public String getText() {
-    return SchemaBundle.message("actions.add.default");
+    return SchemaBundle.message("actions.add.retro");
   }
 
   @Nls
@@ -85,7 +85,7 @@ public class AddDefaultAction extends PsiElementBaseIntentionAction implements L
   }
 
   private SchemaVarTypeDef findVarTypeDef(@Nullable SchemaValueTypeRef valueTypeRef) {
-    if (valueTypeRef != null && valueTypeRef.getDefaultOverride() == null) {
+    if (valueTypeRef != null && valueTypeRef.getRetroDecl() == null) {
       SchemaTypeRef typeRef = valueTypeRef.getTypeRef();
       if (typeRef instanceof SchemaQnTypeRef) {
         SchemaQnTypeRef fqnTypeRef = (SchemaQnTypeRef) typeRef;

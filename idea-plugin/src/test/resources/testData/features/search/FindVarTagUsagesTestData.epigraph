@@ -5,6 +5,6 @@ vartype T {
 }
 
 record X {
-  zz: T default foo
+  zz: T retro foo
 }
 

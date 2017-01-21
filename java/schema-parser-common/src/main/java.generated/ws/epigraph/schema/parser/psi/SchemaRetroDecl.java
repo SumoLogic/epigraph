@@ -5,12 +5,12 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface SchemaDefaultOverride extends PsiElement {
+public interface SchemaRetroDecl extends PsiElement {
 
   @NotNull
   SchemaVarTagRef getVarTagRef();
 
   @NotNull
-  PsiElement getDefault();
+  PsiElement getRetro();
 
 }

@@ -34,7 +34,7 @@
     NAMESPACE = 'namespace'
     IMPORT = 'import'
     MAP = 'map'
-    DEFAULT = 'default'
+    RETRO = 'retro'
     NODEFAULT = 'nodefault'
     LIST = 'list'
     RECORD = 'record'
@@ -186,7 +186,7 @@ typeDefWrapper ::= varTypeDef | recordTypeDef | mapTypeDef | listTypeDef | primi
 private typeDefModifiers ::= 'abstract'?
 private typeMemberModifiers ::= 'override'? 'abstract'?
 
-valueTypeRef ::= typeRef defaultOverride?
+valueTypeRef ::= typeRef retroDecl?
 
 anonList ::= 'list' '[' valueTypeRef ']' {pin=1 extends="typeRef" }
 anonMap ::= 'map' '[' typeRef ',' valueTypeRef ']' {pin=1 extends="typeRef" }
@@ -195,7 +195,7 @@ extendsDecl ::= 'extends' qnTypeRef (',' qnTypeRef)* {pin=1}
 supplementsDecl ::= 'supplements' qnTypeRef (',' qnTypeRef)* {pin=1}
 
 // TODO Fix: varTagRef doesn't resolve
-defaultOverride ::= 'default' varTagRef
+retroDecl ::= 'retro' varTagRef
 annotation ::= qid '=' dataValue {
   name="custom annotation"
   implements="com.intellij.psi.PsiNamedElement"

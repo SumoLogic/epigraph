@@ -242,27 +242,27 @@ public class CompletionTest extends LightCodeInsightFixtureTestCase {
     checkCompletionVariants("override ");
 
     configureByText("namespace foo record Bar { bar: Bar } record Baz extends Bar { qux: Baz <caret> }");
-    checkCompletionVariants("override "); // Baz is not a vartype, so no 'default'
+    checkCompletionVariants("override "); // Baz is not a vartype, so no 'retro'
 
     configureByText("namespace foo vartype V { v: Baz } record Baz { qux: <caret> }");
     checkCompletionVariants("V", "Baz");
 
     configureByText("namespace foo vartype V { v: Baz } record Baz { qux: V <caret> }");
-    checkCompletionVariants("override ", "default ");
+    checkCompletionVariants("override ", "retro ");
 
-    configureByText("namespace foo record A { a: A } record Baz extends A { qux: V de<caret> abstract zz: Baz} vartype V { v: Baz }");
-    checkCompletionVariants("override ", "default ");
+    configureByText("namespace foo record A { a: A } record Baz extends A { qux: V e<caret> abstract zz: Baz} vartype V { v: Baz }");
+    checkCompletionVariants("override ", "retro ");
 
     configureByText("namespace foo vartype V { v: Baz } record A { a: A} record Baz extends A { qux: Baz <caret> }");
     checkCompletionVariants("override ");
 
     configureByText("namespace foo vartype V { v: Baz } record Baz { q: Baz qux: V <caret> }");
-    checkCompletionVariants("default ");
+    checkCompletionVariants("retro ");
 
     configureByText("namespace foo vartype V { v: Baz } record Baz { q: Baz qux: V <caret> w: Baz}");
-    checkCompletionVariants("default ");
+    checkCompletionVariants("retro ");
 
-    configureByText("namespace foo vartype V { v: Baz } record Baz { qux: V default <caret> }");
+    configureByText("namespace foo vartype V { v: Baz } record Baz { qux: V retro <caret> }");
     checkCompletionVariants("v");
   }
 
@@ -311,7 +311,7 @@ public class CompletionTest extends LightCodeInsightFixtureTestCase {
     checkCompletionVariants("bar");
   }
 
-  // todo test 'default' override in anon lists/maps
+  // todo test 'retro' override in anon lists/maps
 
   // ----------------------------------
 

@@ -65,10 +65,10 @@ public final class TypeRefs {
 
   public static @NotNull ValueTypeRef fromPsi(@NotNull SchemaValueTypeRef psi, @NotNull List<PsiProcessingError> errors)
       throws PsiProcessingException {
-    @Nullable SchemaDefaultOverride defaultOverridePsi = psi.getDefaultOverride();
+    @Nullable SchemaRetroDecl retroDeclPsi = psi.getRetroDecl();
     return new ValueTypeRef(
         fromPsi(psi.getTypeRef(), errors),
-        defaultOverridePsi == null ? null : defaultOverridePsi.getVarTagRef().getQid().getCanonicalName()
+        retroDeclPsi == null ? null : retroDeclPsi.getVarTagRef().getQid().getCanonicalName()
     );
   }
 }

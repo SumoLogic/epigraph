@@ -18,7 +18,7 @@
 
 package ws.epigraph.compiler
 
-import ws.epigraph.schema.parser.psi.{SchemaDefaultOverride, SchemaValueTypeRef}
+import ws.epigraph.schema.parser.psi.{SchemaRetroDecl, SchemaValueTypeRef}
 import org.jetbrains.annotations.Nullable
 
 /**
@@ -31,7 +31,7 @@ final class CDataType( // TODO split into CVarDataType and CDatumDataType?
 )(implicit val ctx: CContext) {
 
   def this(csf: CSchemaFile, psi: SchemaValueTypeRef)(implicit ctx: CContext) = this(
-    csf, CTypeRef(csf, psi.getTypeRef), CDataType.defaultTagName(psi.getDefaultOverride)
+    csf, CTypeRef(csf, psi.getTypeRef), CDataType.defaultTagName(psi.getRetroDecl)
   )
 
   val name: String = typeRef.name.name + defaultTagNameDecl.map(" default " + _).getOrElse("")
@@ -89,7 +89,7 @@ final class CDataType( // TODO split into CVarDataType and CDatumDataType?
 
 object CDataType {
 
-  def defaultTagName(@Nullable psi: SchemaDefaultOverride): Option[String] =
+  def defaultTagName(@Nullable psi: SchemaRetroDecl): Option[String] =
     if (psi == null) None else Option(psi.getVarTagRef).map(_.getQid.getCanonicalName)
 
 }

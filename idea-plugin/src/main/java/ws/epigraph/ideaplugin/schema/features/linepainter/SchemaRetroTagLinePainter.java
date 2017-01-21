@@ -48,7 +48,7 @@ import java.util.List;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class SchemaDefaultTagLinePainter extends EditorLinePainter {
+public class SchemaRetroTagLinePainter extends EditorLinePainter {
   @Override
   public Collection<LineExtensionInfo> getLineExtensions(@NotNull Project project, @NotNull VirtualFile file, int lineNumber) {
     List<LineExtensionInfo> res = ContainerUtil.newSmartList();
@@ -77,7 +77,7 @@ public class SchemaDefaultTagLinePainter extends EditorLinePainter {
 
           try {
             element = addExtensions(res, element);
-          } catch (IndexNotReadyException e) { element = null; }
+          } catch (IndexNotReadyException ignored) { element = null; }
         }
       }
     }
@@ -90,8 +90,8 @@ public class SchemaDefaultTagLinePainter extends EditorLinePainter {
     SchemaValueTypeRef valueTypeRef = PsiTreeUtil.getParentOfType(element, SchemaValueTypeRef.class);
     if (valueTypeRef == null) return PsiTreeUtil.nextVisibleLeaf(element);
 
-    if (valueTypeRef.getDefaultOverride() == null) {
-      SchemaVarTagDecl defaultTag = TypeMembers.getEffectiveDefault(valueTypeRef);
+    if (valueTypeRef.getRetroDecl() == null) {
+      SchemaVarTagDecl defaultTag = TypeMembers.getEffectiveRetro(valueTypeRef);
       if (defaultTag != null) {
         String defaultTagName = defaultTag.getQid().getText();
         String defaultTagTypeName = getDefaultTagTypeName(defaultTag);

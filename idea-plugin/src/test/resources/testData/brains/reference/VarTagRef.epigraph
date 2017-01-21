@@ -5,5 +5,5 @@ vartype V1 {
 }
 
 record X {
-  v: V1 default tag<caret>1
+  v: V1 retro tag<caret>1
 }

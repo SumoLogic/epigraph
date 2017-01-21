@@ -21,6 +21,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.PsiTreeUtil;
+import org.jetbrains.annotations.Contract;
 import ws.epigraph.schema.parser.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -34,7 +35,9 @@ import java.util.stream.Stream;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class TypeMembers {
+public final class TypeMembers {
+  private TypeMembers() {}
+
   @NotNull
   public static List<SchemaFieldDecl> getOverridenFields(@NotNull SchemaFieldDecl fieldDecl) {
     Project project = fieldDecl.getProject();
@@ -87,7 +90,7 @@ public class TypeMembers {
     return getVarTagDecls(tagName, getTypeAndParents(hostType));
   }
 
-  public static boolean canHaveDefault(@NotNull SchemaValueTypeRef valueTypeRef) {
+  public static boolean canHaveRetro(@NotNull SchemaValueTypeRef valueTypeRef) {
     SchemaTypeRef typeRef = valueTypeRef.getTypeRef();
     if (typeRef instanceof SchemaQnTypeRef) {
       SchemaQnTypeRef fqnTypeRef = (SchemaQnTypeRef) typeRef;
@@ -98,10 +101,10 @@ public class TypeMembers {
   }
 
   @Nullable
-  public static SchemaVarTagDecl getEffectiveDefault(@NotNull SchemaValueTypeRef valueTypeRef) {
-    if (!canHaveDefault(valueTypeRef)) return null;
+  public static SchemaVarTagDecl getEffectiveRetro(@NotNull SchemaValueTypeRef valueTypeRef) {
+    if (!canHaveRetro(valueTypeRef)) return null;
 
-    SchemaVarTagDecl defaultTag = getDefaultTag(valueTypeRef);
+    SchemaVarTagDecl defaultTag = getRetroTag(valueTypeRef);
     if (defaultTag != null) return defaultTag;
 
     SchemaFieldDecl fieldDecl = PsiTreeUtil.getParentOfType(valueTypeRef, SchemaFieldDecl.class);
@@ -110,7 +113,7 @@ public class TypeMembers {
 
       for (SchemaFieldDecl overridenField : overridenFields) {
         ProgressManager.checkCanceled();
-        defaultTag = getDefaultTag(overridenField.getValueTypeRef());
+        defaultTag = getRetroTag(overridenField.getValueTypeRef());
         if (defaultTag != null) return defaultTag;
       }
     }
@@ -119,13 +122,14 @@ public class TypeMembers {
     // todo handle lists/maps?
   }
 
+  @Contract("null -> null")
   @Nullable
-  private static SchemaVarTagDecl getDefaultTag(@Nullable SchemaValueTypeRef valueTypeRef) {
+  private static SchemaVarTagDecl getRetroTag(@Nullable SchemaValueTypeRef valueTypeRef) {
     if (valueTypeRef == null) return null;
 
-    SchemaDefaultOverride defaultOverride = valueTypeRef.getDefaultOverride();
-    if (defaultOverride != null) {
-      SchemaVarTagRef varTagRef = defaultOverride.getVarTagRef();
+    SchemaRetroDecl retroDecl = valueTypeRef.getRetroDecl();
+    if (retroDecl != null) {
+      SchemaVarTagRef varTagRef = retroDecl.getVarTagRef();
       PsiReference reference = varTagRef.getReference();
       return reference == null ? null : (SchemaVarTagDecl) reference.resolve();
     }

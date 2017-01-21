@@ -56,9 +56,6 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     else if (t == S_DATUM) {
       r = datum(b, 0);
     }
-    else if (t == S_DEFAULT_OVERRIDE) {
-      r = defaultOverride(b, 0);
-    }
     else if (t == S_DEFS) {
       r = defs(b, 0);
     }
@@ -403,6 +400,9 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     }
     else if (t == S_RESOURCE_TYPE) {
       r = resourceType(b, 0);
+    }
+    else if (t == S_RETRO_DECL) {
+      r = retroDecl(b, 0);
     }
     else if (t == S_SUPPLEMENT_DEF) {
       r = supplementDef(b, 0);
@@ -845,19 +845,6 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     if (!r) r = consumeToken(b, S_BOOLEAN_T);
     if (!r) r = consumeToken(b, S_RESOURCE);
     exit_section_(b, m, null, r);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // 'default' varTagRef
-  public static boolean defaultOverride(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "defaultOverride")) return false;
-    if (!nextTokenIs(b, S_DEFAULT)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, S_DEFAULT);
-    r = r && varTagRef(b, l + 1);
-    exit_section_(b, m, S_DEFAULT_OVERRIDE, r);
     return r;
   }
 
@@ -5137,6 +5124,19 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // 'retro' varTagRef
+  public static boolean retroDecl(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "retroDecl")) return false;
+    if (!nextTokenIs(b, S_RETRO)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, S_RETRO);
+    r = r && varTagRef(b, l + 1);
+    exit_section_(b, m, S_RETRO_DECL, r);
+    return r;
+  }
+
+  /* ********************************************************** */
   // namespaceDecl imports defs
   static boolean root(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "root")) return false;
@@ -5399,7 +5399,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // typeRef defaultOverride?
+  // typeRef retroDecl?
   public static boolean valueTypeRef(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "valueTypeRef")) return false;
     boolean r;
@@ -5410,10 +5410,10 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // defaultOverride?
+  // retroDecl?
   private static boolean valueTypeRef_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "valueTypeRef_1")) return false;
-    defaultOverride(b, l + 1);
+    retroDecl(b, l + 1);
     return true;
   }
 

@@ -11,14 +11,14 @@ import static ws.epigraph.schema.lexer.SchemaElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import ws.epigraph.schema.parser.psi.*;
 
-public class SchemaDefaultOverrideImpl extends ASTWrapperPsiElement implements SchemaDefaultOverride {
+public class SchemaRetroDeclImpl extends ASTWrapperPsiElement implements SchemaRetroDecl {
 
-  public SchemaDefaultOverrideImpl(ASTNode node) {
+  public SchemaRetroDeclImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull SchemaVisitor visitor) {
-    visitor.visitDefaultOverride(this);
+    visitor.visitRetroDecl(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -34,8 +34,8 @@ public class SchemaDefaultOverrideImpl extends ASTWrapperPsiElement implements S
 
   @Override
   @NotNull
-  public PsiElement getDefault() {
-    return notNullChild(findChildByType(S_DEFAULT));
+  public PsiElement getRetro() {
+    return notNullChild(findChildByType(S_RETRO));
   }
 
 }

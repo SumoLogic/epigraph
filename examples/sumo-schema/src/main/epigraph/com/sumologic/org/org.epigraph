@@ -1,7 +1,6 @@
 namespace com.sumologic.org
 
 import com.sumologic.Version
-import com.sumologic.SumoId
 import com.sumologic.Timestamp
 import com.sumologic.LocalId
 import com.sumologic.Email
@@ -14,9 +13,9 @@ case class Metadata(createdAt: Long,
 */
 record Metadata {
   createdAt: Timestamp
-  createdBy: User default id
+  createdBy: User
   modifiedAt: Timestamp
-  modifiedBy: User default id
+  modifiedBy: User
 }
 
 /*

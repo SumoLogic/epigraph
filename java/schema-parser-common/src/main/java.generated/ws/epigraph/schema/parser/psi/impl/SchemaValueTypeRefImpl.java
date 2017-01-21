@@ -28,8 +28,8 @@ public class SchemaValueTypeRefImpl extends ASTWrapperPsiElement implements Sche
 
   @Override
   @Nullable
-  public SchemaDefaultOverride getDefaultOverride() {
-    return PsiTreeUtil.getChildOfType(this, SchemaDefaultOverride.class);
+  public SchemaRetroDecl getRetroDecl() {
+    return PsiTreeUtil.getChildOfType(this, SchemaRetroDecl.class);
   }
 
   @Override

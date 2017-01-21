@@ -13,7 +13,7 @@ abstract record TypeData extends Named {
 
   override name: QualifiedTypeName
 
-  abstract supertypes: list[TypeRef default name]
+  abstract supertypes: list[TypeRef]
 
   `abstract`: Boolean { doc = "Abstract types cannot be instantiated (?)" }
 
@@ -32,9 +32,9 @@ abstract vartype TypeRef extends ByNameRef {
 record VarTypeData extends TypeData {
   doc = "Vartype declaration"
 
-  override supertypes: list[VarTypeRef default name]
+  override supertypes: list[VarTypeRef]
 
-  `default`: TypeMemberRef default name { doc = "Optional type member reference to be used as default one" }
+  `retro`: TypeMemberRef { doc = "Optional type member reference to be used as default one" }
 
   members: list[TypeMemberData] // TODO rename to `tags`?
 
@@ -53,7 +53,7 @@ record TypeMemberData extends Named {
 
   override name: TypeMemberName
 
-  dataType: DataTypeRef default name
+  dataType: DataTypeRef
 
   `abstract`: Boolean {
     deprecated = "No longer needed? Or keep it for documenting intent?"
@@ -74,9 +74,9 @@ vartype TypeMemberRef extends ByNameRef {
 
 record DataTypeData extends TypeData { // TODO extends VarTypeData?
 
-  override supertypes: list[DataTypeRef default name]
+  override supertypes: list[DataTypeRef]
 
-  metaType: DataTypeRef default name
+  metaType: DataTypeRef
 
 }
 
@@ -90,7 +90,7 @@ abstract vartype DataTypeRef extends TypeRef {
 
 record RecordTypeData extends DataTypeData {
 
-  override supertypes: list[RecordTypeRef default name]
+  override supertypes: list[RecordTypeRef]
 
   declaredFields: list[FieldData]
 
@@ -117,20 +117,20 @@ record FieldData extends Named {
      and don't show-up in mutable interface inherited by subtypes"
   }
 
-  valueType: VarTypeRef default name
+  valueType: VarTypeRef
 
-  `default`: TypeMemberRef default name
+  `retro`: TypeMemberRef
 
 }
 
 
 record MapTypeData extends DataTypeData {
 
-  override supertypes: list[MapTypeRef default name]
+  override supertypes: list[MapTypeRef]
 
-  keyType: DataTypeRef default name
+  keyType: DataTypeRef
 
-  valueType: VarTypeRef default name
+  valueType: VarTypeRef
 
 }
 
@@ -143,9 +143,9 @@ vartype MapTypeRef extends DataTypeRef {
 
 record ListTypeData extends DataTypeData {
 
-  override supertypes: list[ListTypeRef default name]
+  override supertypes: list[ListTypeRef]
 
-  valueType: VarTypeRef default name
+  valueType: VarTypeRef
 
 }
 
@@ -158,7 +158,7 @@ vartype ListTypeRef extends DataTypeRef {
 
 record EnumTypeData extends DataTypeData {
 
-  override supertypes: list[EnumTypeRef default name]
+  override supertypes: list[EnumTypeRef]
 
   // TODO? valueType: DataTypeRef
 
@@ -183,7 +183,7 @@ record EnumValueData extends Named {
 
 abstract record PrimitiveTypeData extends DataTypeData {
 
-  override abstract supertypes: list[PrimitiveTypeRef default name]
+  override abstract supertypes: list[PrimitiveTypeRef]
 
 }
 
@@ -194,21 +194,21 @@ vartype PrimitiveTypeRef extends DataTypeRef {
 }
 
 
-record StringTypeData extends PrimitiveTypeData { override supertypes: list[StringTypeRef default name] }
+record StringTypeData extends PrimitiveTypeData { override supertypes: list[StringTypeRef] }
 vartype StringTypeRef extends PrimitiveTypeRef { override type: StringTypeData }
 
 
-record IntegerTypeData extends PrimitiveTypeData { override supertypes: list[IntegerTypeRef default name] }
+record IntegerTypeData extends PrimitiveTypeData { override supertypes: list[IntegerTypeRef] }
 vartype IntegerTypeRef extends PrimitiveTypeRef { override type: IntegerTypeData }
 
 
-record LongTypeData extends PrimitiveTypeData { override supertypes: list[LongTypeRef default name] }
+record LongTypeData extends PrimitiveTypeData { override supertypes: list[LongTypeRef] }
 vartype LongTypeRef extends PrimitiveTypeRef { override type: LongTypeData }
 
 
-record DoubleTypeData extends PrimitiveTypeData { override supertypes: list[DoubleTypeRef default name] }
+record DoubleTypeData extends PrimitiveTypeData { override supertypes: list[DoubleTypeRef] }
 vartype DoubleTypeRef extends PrimitiveTypeRef { override type: DoubleTypeData }
 
 
-record BooleanTypeData extends PrimitiveTypeData { override supertypes: list[BooleanTypeRef default name] }
+record BooleanTypeData extends PrimitiveTypeData { override supertypes: list[BooleanTypeRef] }
 vartype BooleanTypeRef extends PrimitiveTypeRef { override type: BooleanTypeData }

@@ -9,14 +9,14 @@ integer UserId extends PersonId
 
 record UserRecord extends PersonRecord {
   id: UserId
-  bestFriend: User default id // FIXME compiler doesn't detect missing default
+  bestFriend: User retro id // FIXME compiler doesn't detect missing retro
   friends: list[UserRecord]
-  users: list[User default id]
-  usersShmoozers: list[User/* default shmoozer*/]
+  users: list[User retro id]
+  usersShmoozers: list[User/* retro shmoozer*/]
   override ids: list[UserId]
   idss: list[list[UserId]]
 }
 
-list[User default `record`] UserList extends PersonList
+list[User retro `record`] UserList extends PersonList
 
 map[String, User] UsersMap extends PersonsMap

@@ -6,5 +6,5 @@ vartype Some {
 }
 
 record X {
-  foo: Some default <caret>
+  foo: Some retro <caret>
 }

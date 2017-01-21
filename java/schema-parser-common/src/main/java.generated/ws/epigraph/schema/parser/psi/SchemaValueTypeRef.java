@@ -8,7 +8,7 @@ import com.intellij.psi.PsiElement;
 public interface SchemaValueTypeRef extends PsiElement {
 
   @Nullable
-  SchemaDefaultOverride getDefaultOverride();
+  SchemaRetroDecl getRetroDecl();
 
   @NotNull
   SchemaTypeRef getTypeRef();

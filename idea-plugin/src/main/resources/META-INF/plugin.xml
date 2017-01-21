@@ -120,7 +120,7 @@
                           implementationClass="ws.epigraph.ideaplugin.schema.features.imports.SchemaImportOptimizer"/>
 
     <!-- line painter for default tags on -->
-    <editor.linePainter implementation="ws.epigraph.ideaplugin.schema.features.linepainter.SchemaDefaultTagLinePainter"/>
+    <editor.linePainter implementation="ws.epigraph.ideaplugin.schema.features.linepainter.SchemaRetroTagLinePainter"/>
 
     <!-- inspections -->
     <!-- imports -->
@@ -167,7 +167,7 @@
     <!-- intentions -->
     <intentionAction>
       <category>Epigraph/Schema</category>
-      <className>ws.epigraph.ideaplugin.schema.features.actions.fixes.AddDefaultAction</className>
+      <className>ws.epigraph.ideaplugin.schema.features.actions.fixes.AddRetroAction</className>
     </intentionAction>
   </extensions>
 

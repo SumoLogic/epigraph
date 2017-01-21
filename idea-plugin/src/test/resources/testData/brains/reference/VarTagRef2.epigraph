@@ -9,5 +9,5 @@ vartype V2 extends V1 {
 }
 
 record X {
-  v: V2 default tag<caret>1
+  v: V2 retro tag<caret>1
 }

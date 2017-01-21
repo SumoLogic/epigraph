@@ -53,10 +53,6 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitDefaultOverride(@NotNull SchemaDefaultOverride o) {
-    visitPsiElement(o);
-  }
-
   public void visitDefs(@NotNull SchemaDefs o) {
     visitPsiElement(o);
   }
@@ -519,6 +515,10 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitRetroDecl(@NotNull SchemaRetroDecl o) {
+    visitPsiElement(o);
+  }
+
   public void visitSupplementDef(@NotNull SchemaSupplementDef o) {
     visitPsiElement(o);
   }
@@ -572,16 +572,16 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitElement(o);
   }
 
-  public void visitTypeDef(@NotNull SchemaTypeDef o) {
-    visitPsiElement(o);
-  }
-
   public void visitPsiNameIdentifierOwner(@NotNull PsiNameIdentifierOwner o) {
     visitElement(o);
   }
 
   public void visitPsiNamedElement(@NotNull PsiNamedElement o) {
     visitElement(o);
+  }
+
+  public void visitTypeDef(@NotNull SchemaTypeDef o) {
+    visitPsiElement(o);
   }
 
   public void visitPsiElement(@NotNull PsiElement o) {

@@ -83,8 +83,8 @@ public class SchemaAnnotator extends SchemaAnnotatorBase {
       }
 
       @Override
-      public void visitDefaultOverride(@NotNull SchemaDefaultOverride defaultOverride) {
-        SchemaVarTagRef varTagRef = defaultOverride.getVarTagRef();
+      public void visitRetroDecl(@NotNull final SchemaRetroDecl retroDecl) {
+        SchemaVarTagRef varTagRef = retroDecl.getVarTagRef();
         PsiElement id = varTagRef.getQid();
         setHighlighting(id, holder, SchemaSyntaxHighlighter.VAR_MEMBER);
       }
@@ -92,13 +92,13 @@ public class SchemaAnnotator extends SchemaAnnotatorBase {
       @Override
       public void visitValueTypeRef(@NotNull SchemaValueTypeRef valueTypeRef) {
 
-        SchemaDefaultOverride defaultOverride = valueTypeRef.getDefaultOverride();
+        SchemaRetroDecl retroDecl = valueTypeRef.getRetroDecl();
 
-        if (defaultOverride != null) {
-          if (!TypeMembers.canHaveDefault(valueTypeRef))
-            holder.createErrorAnnotation(defaultOverride, SchemaBundle.message("annotator.default.override.non.var"));
+        if (retroDecl != null) {
+          if (!TypeMembers.canHaveRetro(valueTypeRef))
+            holder.createErrorAnnotation(retroDecl, SchemaBundle.message("annotator.retro.non.var"));
         } else {
-          SchemaVarTagDecl defaultTag = TypeMembers.getEffectiveDefault(valueTypeRef);
+          SchemaVarTagDecl defaultTag = TypeMembers.getEffectiveRetro(valueTypeRef);
 //          if (defaultTag == null && TypeMembers.canHaveDefault(valueTypeRef)) {
 //            Annotation annotation = holder.createWeakWarningAnnotation(valueTypeRef, SchemaBundle.message("annotator.default.override.missing"));
 //            annotation.registerFix(new AddDefaultAction());

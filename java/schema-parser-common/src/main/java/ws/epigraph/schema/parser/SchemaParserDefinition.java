@@ -46,56 +46,56 @@ public class SchemaParserDefinition implements ParserDefinition {
   public static final TokenSet COMMENTS = TokenSet.create(S_COMMENT, S_BLOCK_COMMENT);
   public static final TokenSet CURLY_BRACES = TokenSet.create(S_CURLY_LEFT, S_CURLY_RIGHT);
   public static final TokenSet KEYWORDS = TokenSet.create(
-      S_NAMESPACE,
-      S_IMPORT,
-      S_MAP,
-      S_DEFAULT,
-      S_NODEFAULT,
-      S_LIST,
-      S_RECORD,
-      S_EXTENDS,
-      S_VARTYPE,
-      S_ENUM,
-      S_META,
-      S_SUPPLEMENT,
-      S_SUPPLEMENTS,
-      S_WITH,
       S_ABSTRACT,
-      S_OVERRIDE,
-      S_INTEGER_T,
-      S_LONG_T,
-      S_DOUBLE_T,
       S_BOOLEAN_T,
-      S_STRING_T,
-      S_NULL, // or is it a LITERAL?
+      S_DEFAULT,
+      S_DELETE,
+      S_DELETE_PROJECTION,
+      S_DOUBLE_T,
+      S_ENUM,
+      S_EXTENDS,
       S_FORBIDDEN,
-      S_REQUIRED,
-      S_RESOURCE,
       S_GET,
+      S_IMPORT,
+      S_INPUT_PROJECTION,
+      S_INPUT_TYPE,
+      S_INTEGER_T,
+      S_LIST,
+      S_LONG_T,
+      S_MAP,
+      S_META,
+      S_METHOD,
+      S_NAMESPACE,
+      S_NODEFAULT,
+      S_NULL, // or is it a LITERAL?
+      S_OP_CREATE,
+      S_OP_CUSTOM,
+      S_OP_DELETE,
+      S_OP_READ,
+      S_OP_UPDATE,
+      S_OUTPUT_PROJECTION,
+      S_OUTPUT_TYPE,
+      S_OVERRIDE,
+      S_PATH,
       S_POST,
       S_PUT,
-      S_DELETE,
-      S_OP_READ,
-      S_OP_CREATE,
-      S_OP_UPDATE,
-      S_OP_DELETE,
-      S_OP_CUSTOM,
-      S_METHOD,
-      S_PATH,
-      S_INPUT_TYPE,
-      S_INPUT_PROJECTION,
-      S_OUTPUT_TYPE,
-      S_OUTPUT_PROJECTION,
-      S_DELETE_PROJECTION
+      S_RECORD,
+      S_REQUIRED,
+      S_RESOURCE,
+      S_RETRO,
+      S_STRING_T,
+      S_SUPPLEMENT,
+      S_SUPPLEMENTS,
+      S_VARTYPE,
+      S_WITH
   );
   public static final TokenSet STRING_LITERALS = TokenSet.create(S_STRING);
   public static final TokenSet LITERALS = TokenSet.andSet(STRING_LITERALS, TokenSet.create(S_NUMBER, S_BOOLEAN));
   public static final TokenSet TYPE_KINDS = TokenSet.create(S_VARTYPE, S_RECORD, S_MAP, S_LIST, S_ENUM,
       S_STRING_T, S_INTEGER_T, S_LONG_T, S_DOUBLE_T, S_BOOLEAN_T);
 
-  @NotNull
   @Override
-  public Lexer createLexer(Project project) {
+  public @NotNull Lexer createLexer(Project project) {
     return SchemaFlexAdapter.newInstance();
   }
 
@@ -109,27 +109,23 @@ public class SchemaParserDefinition implements ParserDefinition {
     return SchemaStubElementTypes.SCHEMA_FILE;
   }
 
-  @NotNull
   @Override
-  public TokenSet getWhitespaceTokens() {
+  public @NotNull TokenSet getWhitespaceTokens() {
     return WHITESPACES;
   }
 
-  @NotNull
   @Override
-  public TokenSet getCommentTokens() {
+  public @NotNull TokenSet getCommentTokens() {
     return COMMENTS;
   }
 
-  @NotNull
   @Override
-  public TokenSet getStringLiteralElements() {
+  public @NotNull TokenSet getStringLiteralElements() {
     return STRING_LITERALS;
   }
 
-  @NotNull
   @Override
-  public PsiElement createElement(ASTNode node) {
+  public @NotNull PsiElement createElement(ASTNode node) {
     return SchemaElementTypes.Factory.createElement(node);
   }
 
