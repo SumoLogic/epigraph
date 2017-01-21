@@ -53,30 +53,6 @@
     <plugins>
 
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-resources-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>generate-sources</phase>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
-            <configuration>
-              <outputDirectory>${project.build.directory}/generated-sources/schema-parser-common.java</outputDirectory>
-              <resources>
-                <resource>
-                  <directory>../java/schema-parser-common/src/main/java</directory>
-                </resource>
-                <resource>
-                  <directory>../java/schema-parser-common/src/main/java.generated</directory>
-                </resource>
-              </resources>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
         <executions>
@@ -87,7 +63,8 @@
             </goals>
             <configuration>
               <sources>
-                <source>${project.build.directory}/generated-sources/schema-parser-common.java</source>
+                <source>../java/schema-parser-common/src/main/java</source>
+                <source>../java/schema-parser-common/src/main/java.generated</source>
               </sources>
             </configuration>
           </execution>
