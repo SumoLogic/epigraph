@@ -146,6 +146,8 @@ trait CDatumTypeApiWrapper extends CTypeApiWrapper with DatumTypeApi {
   override def self(): TagApi = new CTagWrapper(cType.impliedTag)
 
   override def dataType(): DataTypeApi = new CDataTypeApiWrapper(cType.dataType)
+
+  override def metaType(): DatumTypeApi = null // TODO KS meta
 }
 
 class CFieldApiWrapper(private val cField: CField) extends FieldApi {

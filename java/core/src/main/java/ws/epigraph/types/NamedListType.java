@@ -18,6 +18,7 @@
 
 package ws.epigraph.types;
 
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.names.QualifiedTypeName;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,8 +29,9 @@ public abstract class NamedListType extends ListType {
   protected NamedListType(
       @NotNull QualifiedTypeName name,
       @NotNull List<@NotNull ? extends NamedListType> immediateNamedSupertypes,
-      @NotNull DataType elementType
-  ) { super(name, immediateNamedSupertypes, elementType); }
+      @NotNull DataType elementType,
+      @Nullable DatumType immediateMetaType
+  ) { super(name, immediateNamedSupertypes, elementType, immediateMetaType); }
 
   // TODO .Raw
 

@@ -37,7 +37,7 @@ public abstract class AnonMapType extends MapType {
       @NotNull List<@NotNull ? extends AnonMapType> immediateSupertypes,
       @NotNull DatumType keyType,
       @NotNull DataType valueType
-  ) { super(new AnonMapTypeName(keyType.name(), valueType.name), immediateSupertypes, keyType, valueType); }
+  ) { super(new AnonMapTypeName(keyType.name(), valueType.name), immediateSupertypes, keyType, valueType, null); }
 
   @Override
   public @NotNull AnonMapTypeName name() { return (AnonMapTypeName) super.name(); }
@@ -77,7 +77,7 @@ public abstract class AnonMapType extends MapType {
   }
 
 
-  public static abstract class Static<
+  public abstract static class Static<
       K extends Datum.Imm.Static,
       MyImmDatum extends MapDatum.Imm.Static,
       MyDatumBuilder extends MapDatum.Builder.Static<K, MyImmDatum, MyBuilderVal>,

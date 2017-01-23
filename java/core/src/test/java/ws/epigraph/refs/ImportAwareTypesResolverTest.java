@@ -186,7 +186,8 @@ public class ImportAwareTypesResolverTest {
   private static @NotNull DatumType createType(@NotNull String localName, String... namespaceNames) {
     return new PrimitiveType<String>(
         new QualifiedTypeName(localName, namespaceNames),
-        Collections.emptyList()
+        Collections.emptyList(),
+        null
     ) {
       @Override
       public @NotNull Data.Builder createDataBuilder() { return null; }

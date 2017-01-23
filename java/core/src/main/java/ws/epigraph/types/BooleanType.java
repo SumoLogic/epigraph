@@ -34,8 +34,9 @@ public abstract class BooleanType extends PrimitiveType<Boolean> {
 
   protected BooleanType(
       @NotNull QualifiedTypeName name,
-      @NotNull List<@NotNull ? extends BooleanType> immediateSupertypes
-  ) { super(name, immediateSupertypes); }
+      @NotNull List<@NotNull ? extends BooleanType> immediateSupertypes,
+      @Nullable DatumType immediateMetaType
+  ) { super(name, immediateSupertypes, immediateMetaType); }
 
   @Override
   @SuppressWarnings("unchecked")
@@ -57,8 +58,9 @@ public abstract class BooleanType extends PrimitiveType<Boolean> {
 
     protected Raw(
         @NotNull QualifiedTypeName name,
-        @NotNull List<@NotNull ? extends BooleanType> immediateSupertypes
-    ) { super(name, immediateSupertypes); }
+        @NotNull List<@NotNull ? extends BooleanType> immediateSupertypes,
+        @Nullable DatumType immediateMetaType
+    ) { super(name, immediateSupertypes, immediateMetaType); }
 
     @Override
     public @NotNull BooleanDatum.Builder.Raw createBuilder(@NotNull Boolean val) {
@@ -95,11 +97,12 @@ public abstract class BooleanType extends PrimitiveType<Boolean> {
     protected Static(
         @NotNull QualifiedTypeName name,
         @NotNull List<? extends BooleanType> immediateSupertypes,
+        @Nullable DatumType immediateMetaType,
         @NotNull Function<BooleanDatum.Builder.@NotNull Raw, @NotNull MyDatumBuilder> datumBuilderConstructor,
         @NotNull Function<Val.Imm.@NotNull Raw, @NotNull MyImmVal> immValConstructor,
         @NotNull Function<Data.Builder.@NotNull Raw, @NotNull MyDataBuilder> dataBuilderConstructor
     ) {
-      super(name, immediateSupertypes);
+      super(name, immediateSupertypes, immediateMetaType);
       this.datumBuilderConstructor = datumBuilderConstructor;
       this.immValConstructor = immValConstructor;
       this.dataBuilderConstructor = dataBuilderConstructor;

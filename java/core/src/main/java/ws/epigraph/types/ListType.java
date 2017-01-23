@@ -18,6 +18,7 @@
 
 package ws.epigraph.types;
 
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Data;
 import ws.epigraph.data.ListDatum;
 import ws.epigraph.data.Val;
@@ -34,9 +35,10 @@ public abstract class ListType extends DatumType implements ListTypeApi {
   protected ListType(
       @NotNull TypeName name,
       @NotNull List<@NotNull ? extends ListType> immediateSupertypes,
-      @NotNull DataType elementDataType
+      @NotNull DataType elementDataType,
+      @Nullable DatumType immediateMetaType
   ) {
-    super(name, immediateSupertypes);
+    super(name, immediateSupertypes, immediateMetaType);
     this.elementType = elementDataType;
   }
 

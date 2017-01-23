@@ -18,6 +18,7 @@
 
 package ws.epigraph.types;
 
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Data;
 import ws.epigraph.data.Datum;
 import ws.epigraph.data.MapDatum;
@@ -37,9 +38,10 @@ public abstract class MapType extends DatumType implements MapTypeApi {
       @NotNull TypeName name,
       @NotNull List<@NotNull ? extends MapType> immediateSupertypes,
       @NotNull DatumType keyType,
-      @NotNull DataType valueType
+      @NotNull DataType valueType,
+      @Nullable DatumType immediateMetaType
   ) {
-    super(name, immediateSupertypes);
+    super(name, immediateSupertypes, immediateMetaType);
     this.keyType = keyType;
     this.valueType = valueType;
   }

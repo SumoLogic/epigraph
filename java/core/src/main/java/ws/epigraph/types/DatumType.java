@@ -36,10 +36,16 @@ public abstract class DatumType extends Type implements DatumTypeApi {
 
   private final @NotNull Collection<@NotNull ? extends Tag> immediateTags = Collections.singleton(self);
 
+  private final @Nullable DatumType metaType;
+
   protected DatumType(
       @NotNull TypeName name,
-      @NotNull List<@NotNull ? extends DatumType> immediateSupertypes
-  ) { super(name, immediateSupertypes); }
+      @NotNull List<@NotNull ? extends DatumType> immediateSupertypes,
+      @Nullable DatumType immediateMetaType
+  ) {
+    super(name, immediateSupertypes);
+    metaType = calculateMetaType(name.toString(), immediateMetaType, immediateSupertypes);
+  }
 
   @Override
   @SuppressWarnings("unchecked")
@@ -70,7 +76,38 @@ public abstract class DatumType extends Type implements DatumTypeApi {
   @Override
   public @NotNull DataType dataType() { return new DataType(this, self); } // TODO cache
 
+  @Override
+  public @Nullable DatumTypeApi metaType() { return metaType; }
+
   public abstract @NotNull Val.Imm createValue(@Nullable ErrorValue errorOrNull);
+
+  // generalize to something like `findMinimumType`?
+  private static @Nullable DatumType calculateMetaType(
+      @NotNull String typeName,
+      @Nullable DatumType immediateMetaType,
+      @NotNull List<? extends DatumType> immediateSupertypes) {
+
+    @Nullable DatumType minimalSuperMeta = null;
+    for (final DatumType supertype : immediateSupertypes) {
+      @Nullable DatumType superMeta = supertype.metaType;
+      if (minimalSuperMeta == null)
+        minimalSuperMeta = superMeta;
+      else if (superMeta != null) {
+        if (minimalSuperMeta.isAssignableFrom(superMeta))
+          minimalSuperMeta = superMeta;
+        else if (!superMeta.isAssignableFrom(minimalSuperMeta))
+          throw new IllegalArgumentException("Incompatible (inherited) meta types on '" + typeName + "'"); // todo better explanation
+      }
+    }
+
+    if (immediateMetaType == null) return minimalSuperMeta;
+    if (minimalSuperMeta == null) return immediateMetaType;
+
+    if (minimalSuperMeta.isAssignableFrom(immediateMetaType)) return immediateMetaType;
+    if (immediateMetaType.isAssignableFrom(minimalSuperMeta)) return minimalSuperMeta;
+
+    throw new IllegalArgumentException("Incompatible meta types on '" + typeName + "'"); // todo better explanation
+  }
 
 
   public interface Raw extends Type.Raw {

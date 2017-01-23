@@ -34,8 +34,9 @@ public abstract class StringType extends PrimitiveType<String> {
 
   protected StringType(
       @NotNull QualifiedTypeName name,
-      @NotNull List<@NotNull ? extends StringType> immediateSupertypes
-  ) { super(name, immediateSupertypes); }
+      @NotNull List<@NotNull ? extends StringType> immediateSupertypes,
+      @Nullable DatumType immediateMetaType
+  ) { super(name, immediateSupertypes, immediateMetaType); }
 
   @Override
   @SuppressWarnings("unchecked")
@@ -57,8 +58,9 @@ public abstract class StringType extends PrimitiveType<String> {
 
     protected Raw(
         @NotNull QualifiedTypeName name,
-        @NotNull List<@NotNull ? extends StringType> immediateSupertypes
-    ) { super(name, immediateSupertypes); }
+        @NotNull List<@NotNull ? extends StringType> immediateSupertypes,
+        @Nullable DatumType immediateMetaType
+    ) { super(name, immediateSupertypes, immediateMetaType); }
 
     @Override
     public @NotNull StringDatum.Builder.Raw createBuilder(@NotNull String val) {
@@ -95,11 +97,12 @@ public abstract class StringType extends PrimitiveType<String> {
     protected Static(
         @NotNull QualifiedTypeName name,
         @NotNull List<@NotNull ? extends StringType> immediateSupertypes,
+        @Nullable DatumType immediateMetaType,
         @NotNull Function<StringDatum.Builder.@NotNull Raw, @NotNull MyDatumBuilder> datumBuilderConstructor,
         @NotNull Function<Val.Imm.@NotNull Raw, @NotNull MyImmVal> immValConstructor,
         @NotNull Function<Data.Builder.@NotNull Raw, @NotNull MyDataBuilder> dataBuilderConstructor
     ) {
-      super(name, immediateSupertypes);
+      super(name, immediateSupertypes, immediateMetaType);
       this.datumBuilderConstructor = datumBuilderConstructor;
       this.immValConstructor = immValConstructor;
       this.dataBuilderConstructor = dataBuilderConstructor;

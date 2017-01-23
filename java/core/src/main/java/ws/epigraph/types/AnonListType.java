@@ -35,7 +35,7 @@ public abstract class AnonListType extends ListType {
   protected AnonListType(
       @NotNull List<@NotNull ? extends AnonListType> immediateSupertypes,
       @NotNull DataType elementDataType
-  ) { super(new AnonListTypeName(elementDataType.name), immediateSupertypes, elementDataType); }
+  ) { super(new AnonListTypeName(elementDataType.name), immediateSupertypes, elementDataType, null); }
 
   @Override
   public @NotNull AnonListTypeName name() { return (AnonListTypeName) super.name(); }
@@ -71,7 +71,7 @@ public abstract class AnonListType extends ListType {
   }
 
 
-  public static abstract class Static<
+  public abstract static class Static<
       MyImmDatum extends ListDatum.Imm.Static,
       MyDatumBuilder extends ListDatum.Builder.Static<MyImmDatum, MyBuilderVal>,
       MyImmVal extends Val.Imm.Static,
