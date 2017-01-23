@@ -300,6 +300,68 @@ trait CDatumType extends CType {self =>
 
   override def dataType: CDataType = new CDataType(csf, selfRef, None)
 
+  def metaDeclPsi: Option[SchemaMetaDecl]
+
+  def declaredMeta: Option[CTypeRef] = metaDeclPsi.map { mdp => CTypeRef(csf, mdp.getQnTypeRef) }
+
+  /** Effective meta-type of this type. After [[CPhase.RESOLVE_TYPEREFS]]. */
+  def meta: Option[CDatumType] = ctx.after(CPhase.RESOLVE_TYPEREFS, null, {
+    val minSuperMeta: Option[CDatumType] = parents.foldLeft[Option[CDatumType]](None){ case (msm, parent) =>
+      (msm, parent.meta) match {
+        case (Some(m), Some(p)) =>
+          if (m.isAssignableFrom(p)) parent.meta
+          else if (p.isAssignableFrom(m)) msm
+          else {
+            ctx.errors.add(
+              CError(
+                csf.filename,
+                csf.position(psi),
+                "Parent meta-types are not compatible" // TODO better explanation
+              )
+            )
+            None
+          }
+        case (None, Some(_)) => parent.meta
+        case (Some(_), None) => msm
+        case (None, None) => None
+      }
+    }
+
+    val _declaredMeta: Option[CDatumType] = declaredMeta.flatMap{ ref =>
+      ref.resolved match {
+        case t: CDatumType => Some(t)
+        case x =>
+          ctx.errors.add(
+            CError(
+              csf.filename,
+              csf.position(metaDeclPsi.get),
+              s"Declared meta-type '${x.name.toString}' is not a datum type"
+            )
+          )
+          None
+      }
+    }
+
+    (_declaredMeta, minSuperMeta) match {
+      case (Some(m), Some(p)) =>
+        if (m.isAssignableFrom(p)) minSuperMeta
+        else if (p.isAssignableFrom(m)) _declaredMeta
+        else {
+          ctx.errors.add(
+            CError(
+              csf.filename,
+              csf.position(metaDeclPsi.get),
+              "Parent meta-types are not compatible with current meta-type" // TODO better explanation
+            )
+          )
+          None
+        }
+      case (None, Some(_)) => minSuperMeta
+      case (Some(_), None) => _declaredMeta
+      case (None, None) => None
+    }
+  })
+
 }
 
 object CDatumType {
@@ -314,6 +376,8 @@ class CRecordTypeDef(csf: CSchemaFile, override val psi: SchemaRecordTypeDef)(im
 ) with CDatumType {
 
   override type Super = CRecordTypeDef
+
+  override def metaDeclPsi: Option[SchemaMetaDecl] = Option(psi.getMetaDecl)
 
   val declaredFields: Seq[CField] = {
     @Nullable val body = psi.getRecordTypeBody
@@ -457,6 +521,8 @@ trait CMapType extends CType with CDatumType {self =>
 
 class CAnonMapType(override val name: CAnonMapTypeName)(implicit ctx: CContext) extends {
 
+
+
   override val keyTypeRef: CTypeRef = name.keyTypeRef
 
   override val valueDataType: CDataType = name.valueDataType
@@ -524,6 +590,7 @@ class CAnonMapType(override val name: CAnonMapTypeName)(implicit ctx: CContext) 
     CPhase.COMPUTE_SUPERTYPES, null, valueDataType.effectiveDefaultTagName
   )
 
+  override def metaDeclPsi: Option[SchemaMetaDecl] = None
 }
 
 class CMapTypeDef(csf: CSchemaFile, override val psi: SchemaMapTypeDef)(implicit ctx: CContext) extends {
@@ -533,6 +600,8 @@ class CMapTypeDef(csf: CSchemaFile, override val psi: SchemaMapTypeDef)(implicit
 } with CTypeDef(csf, psi, CTypeKind.MAP) with CMapType {
 
   override type Super = CMapType
+
+  override def metaDeclPsi: Option[SchemaMetaDecl] = Option(psi.getMetaDecl)
 
   override val keyTypeRef: CTypeRef = CTypeRef(csf, psi.getAnonMap.getTypeRef) // TODO check it's not a vartype?
 
@@ -643,6 +712,7 @@ class CAnonListType(override val name: CAnonListTypeName)(implicit ctx: CContext
     CPhase.COMPUTE_SUPERTYPES, null, elementDataType.effectiveDefaultTagName
   )
 
+  override def metaDeclPsi: Option[SchemaMetaDecl] = None
 }
 
 
@@ -653,6 +723,8 @@ class CListTypeDef(csf: CSchemaFile, override val psi: SchemaListTypeDef)(implic
 } with CTypeDef(csf, psi, CTypeKind.LIST) with CListType {
 
   override type Super = CListType
+
+  override def metaDeclPsi: Option[SchemaMetaDecl] = Option(psi.getMetaDecl)
 
   // `None` - no default, `Some(String)` - effective default tag name
   override def effectiveDefaultElementTagName: Option[String] = ctx.after(
@@ -684,6 +756,8 @@ class CEnumTypeDef(csf: CSchemaFile, psi: SchemaEnumTypeDef)(implicit ctx: CCont
 
   override type Super = CEnumTypeDef
 
+  override def metaDeclPsi: Option[SchemaMetaDecl] = Option(psi.getMetaDecl)
+
   val values: Seq[CEnumValue] = {
     @Nullable val body = psi.getEnumTypeBody
     if (body == null) Nil else body.getEnumMemberDeclList.map(new CEnumValue(csf, _)).toList
@@ -704,6 +778,8 @@ class CPrimitiveTypeDef(csf: CSchemaFile, override val psi: SchemaPrimitiveTypeD
     ) with CDatumType {
 
   override type Super = CPrimitiveTypeDef
+
+  override def metaDeclPsi: Option[SchemaMetaDecl] = Option(psi.getMetaDecl)
 
 }
 
