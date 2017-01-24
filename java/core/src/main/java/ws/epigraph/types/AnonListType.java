@@ -34,8 +34,9 @@ public abstract class AnonListType extends ListType {
 
   protected AnonListType(
       @NotNull List<@NotNull ? extends AnonListType> immediateSupertypes,
+      @Nullable DatumType declaredMetaType,
       @NotNull DataType elementDataType
-  ) { super(new AnonListTypeName(elementDataType.name), immediateSupertypes, elementDataType, null); }
+  ) { super(new AnonListTypeName(elementDataType.name), immediateSupertypes, elementDataType, declaredMetaType); }
 
   @Override
   public @NotNull AnonListTypeName name() { return (AnonListTypeName) super.name(); }
@@ -43,14 +44,19 @@ public abstract class AnonListType extends ListType {
 
   public static final class Raw extends AnonListType implements ListType.Raw {
 
-    public Raw(@NotNull DataType elementDataType) { super(immediateSupertypes(elementDataType), elementDataType); }
+    public Raw(@Nullable DatumType declaredMetaType, @NotNull DataType elementDataType) {
+      super(immediateSupertypes(elementDataType), declaredMetaType, elementDataType);
+    }
 
     private static @NotNull List<@NotNull ? extends AnonListType.Raw> immediateSupertypes(@NotNull DataType elementDataType) {
       // FIXME too many new raw types
-      return elementDataType.type.immediateSupertypes().stream().map(st -> new AnonListType.Raw(new DataType(
-          st,
-          defaultTag(st, elementDataType.defaultTag)
-      ))).collect(Collectors.toList());
+      return elementDataType.type.immediateSupertypes().stream().map(st -> new AnonListType.Raw(
+          ((DatumType) st).declaredMetaType(),
+          new DataType(
+              st,
+              defaultTag(st, elementDataType.defaultTag)
+          )
+      )).collect(Collectors.toList());
     }
 
     private static @Nullable Tag defaultTag(Type type, @Nullable Tag tag) {
@@ -96,12 +102,13 @@ public abstract class AnonListType extends ListType {
             ?,// super MyImmData,
             ? // extends Data.Mut.Static<? super MyImmData>
             >> immediateSupertypes,
+        @Nullable DatumType declaredMetaType,
         @NotNull DataType elementDataType,
         @NotNull Function<ListDatum.Builder.@NotNull Raw, @NotNull MyDatumBuilder> datumBuilderConstructor,
         @NotNull Function<Val.Imm.@NotNull Raw, @NotNull MyImmVal> immValConstructor,
         @NotNull Function<Data.Builder.@NotNull Raw, @NotNull MyDataBuilder> dataBuilderConstructor
     ) {
-      super(immediateSupertypes, elementDataType);
+      super(immediateSupertypes, declaredMetaType, elementDataType);
       this.datumBuilderConstructor = datumBuilderConstructor;
       this.immValConstructor = immValConstructor;
       this.dataBuilderConstructor = dataBuilderConstructor;

@@ -302,7 +302,7 @@ trait CDatumType extends CType {self =>
 
   def metaDeclPsi: Option[SchemaMetaDecl]
 
-  def declaredMeta: Option[CTypeRef] = metaDeclPsi.map { mdp => CTypeRef(csf, mdp.getQnTypeRef) }
+  val declaredMeta: Option[CTypeRef] = metaDeclPsi.map { mdp => CTypeRef(csf, mdp.getQnTypeRef) }
 
   /** Effective meta-type of this type. After [[CPhase.RESOLVE_TYPEREFS]]. */
   def meta: Option[CDatumType] = ctx.after(CPhase.RESOLVE_TYPEREFS, null, {

@@ -19,10 +19,8 @@
 
 package ws.epigraph.java
 
-import java.nio.file.Path
-
+import ws.epigraph.compiler.{CMapType, CVarTypeDef}
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
-import ws.epigraph.compiler.{CAnonMapType, CContext, CMapType, CVarTypeDef}
 
 abstract class MapGen[Type >: Null <: CMapType](from: Type, ctx: GenContext) extends JavaTypeGen[Type](from, ctx)
     with DatumTypeJavaGen {
@@ -119,6 +117,7 @@ ${
     private Type() {
       super(
           java.util.Arrays.asList(${parents(".Type.instance()")}),
+          ${t.meta.map{mt => lqn(mt, t, _ + ".type")}.getOrElse("null")},
           ${lqn(kt, t)}.Type.instance(),
           ${dataTypeExpr(vv, t)},
           $ln.Builder::new,

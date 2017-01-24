@@ -39,9 +39,9 @@ public abstract class MapType extends DatumType implements MapTypeApi {
       @NotNull List<@NotNull ? extends MapType> immediateSupertypes,
       @NotNull DatumType keyType,
       @NotNull DataType valueType,
-      @Nullable DatumType immediateMetaType
+      @Nullable DatumType declaredMetaType
   ) {
-    super(name, immediateSupertypes, immediateMetaType);
+    super(name, immediateSupertypes, declaredMetaType);
     this.keyType = keyType;
     this.valueType = valueType;
   }

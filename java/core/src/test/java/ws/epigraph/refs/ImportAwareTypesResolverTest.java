@@ -201,10 +201,10 @@ public class ImportAwareTypesResolverTest {
   }
 
   private static AnonListType createAnonListType(DatumType elementType) {
-    return new AnonListType.Raw(new DataType(elementType, elementType.self));
+    return new AnonListType.Raw(null, new DataType(elementType, elementType.self));
   }
 
   private static AnonMapType createAnonMapType(DatumType keyType, DatumType itemType) {
-    return new AnonMapType.Raw(keyType, new DataType(itemType, itemType.self));
+    return new AnonMapType.Raw(null, keyType, new DataType(itemType, itemType.self));
   }
 }

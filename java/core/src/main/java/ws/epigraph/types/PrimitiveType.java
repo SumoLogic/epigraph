@@ -33,8 +33,8 @@ public abstract class PrimitiveType<Native> extends DatumType implements Primiti
   protected PrimitiveType(
       @NotNull QualifiedTypeName name,
       @NotNull List<@NotNull ? extends PrimitiveType<Native>> immediateSupertypes,
-      @Nullable DatumType immediateMetaType
-  ) { super(name, immediateSupertypes, immediateMetaType); }
+      @Nullable DatumType declaredMetaType
+  ) { super(name, immediateSupertypes, declaredMetaType); }
 
   @Override
   public final @NotNull TypeKind kind() { return TypeKind.PRIMITIVE; }

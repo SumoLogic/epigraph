@@ -19,7 +19,7 @@
 package ws.epigraph.java
 
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
-import ws.epigraph.compiler.{CContext, CListType, CVarTypeDef}
+import ws.epigraph.compiler.{CListType, CVarTypeDef}
 
 abstract class ListGen[Type >: Null <: CListType](from: Type, ctx: GenContext) extends JavaTypeGen[Type](from, ctx)
     with DatumTypeJavaGen {
@@ -109,6 +109,7 @@ ${
     private Type() {
       super(
           java.util.Arrays.asList(${parents(".Type.instance()")}),
+          ${t.meta.map{mt => lqn(mt, t, _ + ".type")}.getOrElse("null")},
           ${dataTypeExpr(ev, t)},
           $ln.Builder::new,
           $ln.Imm.Value.Impl::new,

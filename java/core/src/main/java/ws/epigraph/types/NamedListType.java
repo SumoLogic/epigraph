@@ -30,8 +30,8 @@ public abstract class NamedListType extends ListType {
       @NotNull QualifiedTypeName name,
       @NotNull List<@NotNull ? extends NamedListType> immediateNamedSupertypes,
       @NotNull DataType elementType,
-      @Nullable DatumType immediateMetaType
-  ) { super(name, immediateNamedSupertypes, elementType, immediateMetaType); }
+      @Nullable DatumType declaredMetaType
+  ) { super(name, immediateNamedSupertypes, elementType, declaredMetaType); }
 
   // TODO .Raw
 

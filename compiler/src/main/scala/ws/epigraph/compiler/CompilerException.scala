@@ -21,4 +21,4 @@ package ws.epigraph.compiler
  *
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-class CompilerException extends Exception
+class CompilerException extends RuntimeException

@@ -66,7 +66,7 @@ public interface $ln extends${withParents(t)} ws.epigraph.data.${kind(t)}Datum.S
       super(
           new ws.epigraph.names.QualifiedTypeName(${qnameArgs(t.name.fqn).mkString("\"", "\", \"", "\"")}),
           java.util.Arrays.asList(${t.linearizedParents.map(javaQName(_, t) + ".Type.instance()").mkString(", ")}),
-          null, /* TODO KS meta */
+          ${t.meta.map{mt => lqn(mt, t, _ + ".type")}.getOrElse("null")},
           $ln.Builder::new,
           $ln.Imm.Value.Impl::new,
           $ln.Builder.Data::new

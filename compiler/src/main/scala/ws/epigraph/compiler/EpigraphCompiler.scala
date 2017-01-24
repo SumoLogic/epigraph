@@ -45,10 +45,7 @@ class EpigraphCompiler(
 
   implicit val ctx: CContext = new CContext
 
-  //      import pprint.Config.Colors._
-  implicit private val PPConfig = pprint.Config(
-    width = 120, colors = pprint.Colors(fansi.Color.Green, fansi.Color.LightBlue)
-  )
+  implicit private val PPConfig = EpigraphCompiler.PPConfig
 
   @throws[EpigraphCompilerException]("if compilation failed")
   def compile(): CContext = {
@@ -231,14 +228,22 @@ class EpigraphCompiler(
 
   @throws[EpigraphCompilerException]
   private def handleErrors(exitCode: Int): Unit = if (ctx.errors.nonEmpty) {
-    renderErrors(ctx)
+    EpigraphCompiler.renderErrors(ctx)
     throw new EpigraphCompilerException(exitCode.toString, ctx.errors, null)
   }
 
-  private def renderErrors(ctx: CContext): Unit = ctx.errors foreach pprint.pprintln
 
   private def printSchemaFiles(schemaFiles: GenTraversableOnce[CSchemaFile]): Unit = schemaFiles foreach pprint.pprintln
 
+}
+
+object EpigraphCompiler {
+  //      import pprint.Config.Colors._
+  implicit private val PPConfig = pprint.Config(
+    width = 120, colors = pprint.Colors(fansi.Color.Green, fansi.Color.LightBlue)
+  )
+
+  def renderErrors(ctx: CContext): Unit = ctx.errors foreach pprint.pprintln
 }
 
 

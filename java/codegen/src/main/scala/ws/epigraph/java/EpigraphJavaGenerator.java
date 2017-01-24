@@ -65,50 +65,62 @@ public class EpigraphJavaGenerator {
     for (CSchemaFile schemaFile : cctx.schemaFiles().values()) {
       for (CTypeDef typeDef : JavaConversions.asJavaIterable(schemaFile.typeDefs())) {
 
-        switch (typeDef.kind()) {
+        try {
+          switch (typeDef.kind()) {
 
-          case VARTYPE:
-            new VarTypeGen((CVarTypeDef) typeDef, ctx).writeUnder(tmpRoot);
-            break;
+            case VARTYPE:
+              new VarTypeGen((CVarTypeDef) typeDef, ctx).writeUnder(tmpRoot);
+              break;
 
-          case RECORD:
-            new RecordGen((CRecordTypeDef) typeDef, ctx).writeUnder(tmpRoot);
-            break;
+            case RECORD:
+              new RecordGen((CRecordTypeDef) typeDef, ctx).writeUnder(tmpRoot);
+              break;
 
-          case MAP:
-            new NamedMapGen((CMapTypeDef) typeDef, ctx).writeUnder(tmpRoot);
-            break;
+            case MAP:
+              new NamedMapGen((CMapTypeDef) typeDef, ctx).writeUnder(tmpRoot);
+              break;
 
-          case LIST:
-            new NamedListGen((CListTypeDef) typeDef, ctx).writeUnder(tmpRoot);
-            break;
+            case LIST:
+              new NamedListGen((CListTypeDef) typeDef, ctx).writeUnder(tmpRoot);
+              break;
 
-          case ENUM:
-            break;
+            case ENUM:
+              break;
 
-          case STRING:
-          case INTEGER:
-          case LONG:
-          case DOUBLE:
-          case BOOLEAN:
-            new PrimitiveGen((CPrimitiveTypeDef) typeDef, ctx).writeUnder(tmpRoot);
-            break;
+            case STRING:
+            case INTEGER:
+            case LONG:
+            case DOUBLE:
+            case BOOLEAN:
+              new PrimitiveGen((CPrimitiveTypeDef) typeDef, ctx).writeUnder(tmpRoot);
+              break;
 
-          default:
-            throw new UnsupportedOperationException(typeDef.kind().toString());
+            default:
+              throw new UnsupportedOperationException(typeDef.kind().toString());
+          }
+        } catch (CompilerException ignored) {
+          // keep going
         }
       }
     }
 
     for (CAnonListType alt : cctx.anonListTypes().values()) {
-      //System.out.println(alt.name().name());
-      new AnonListGen(alt, ctx).writeUnder(tmpRoot);
+      try {
+        //System.out.println(alt.name().name());
+        new AnonListGen(alt, ctx).writeUnder(tmpRoot);
+      } catch (CompilerException ignored) {
+      }
     }
 
     for (CAnonMapType amt : cctx.anonMapTypes().values()) {
-      //System.out.println(amt.name().name());
-      new AnonMapGen(amt, ctx).writeUnder(tmpRoot);
+      try {
+        //System.out.println(amt.name().name());
+        new AnonMapGen(amt, ctx).writeUnder(tmpRoot);
+      } catch (CompilerException ignored) {
+      }
     }
+
+    handleErrors();
 
 //    final Set<CDataType> anonMapValueTypes = new HashSet<>();
 //    for (CAnonMapType amt : ctx.anonMapTypes().values()) {
@@ -152,5 +164,12 @@ public class EpigraphJavaGenerator {
 //        Paths.get("java/codegen-test/src/main/java")
 //    ).generate();
 //  }
+
+  private void handleErrors() {
+    if (!cctx.errors().isEmpty()) {
+      EpigraphCompiler.renderErrors(cctx);
+      System.exit(10);
+    }
+  }
 
 }

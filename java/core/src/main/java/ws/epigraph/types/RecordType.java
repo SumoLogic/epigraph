@@ -40,8 +40,8 @@ public abstract class RecordType extends DatumType implements RecordTypeApi {
   protected RecordType(
       @NotNull QualifiedTypeName name,
       @NotNull List<@NotNull ? extends RecordType> immediateSupertypes,
-      @Nullable DatumType immediateMetaType
-  ) { super(name, immediateSupertypes, immediateMetaType); }
+      @Nullable DatumType declaredMetaType
+  ) { super(name, immediateSupertypes, declaredMetaType); }
 
   @Override
   public final @NotNull TypeKind kind() { return TypeKind.RECORD; }
@@ -161,8 +161,8 @@ public abstract class RecordType extends DatumType implements RecordTypeApi {
     protected Raw(
         @NotNull QualifiedTypeName name,
         @NotNull List<@NotNull ? extends RecordType> immediateSupertypes,
-        @Nullable DatumType immediateMetaType
-    ) { super(name, immediateSupertypes, immediateMetaType); }
+        @Nullable DatumType declaredMetaType
+    ) { super(name, immediateSupertypes, declaredMetaType); }
 
     @Override
     public @NotNull RecordDatum.Builder createBuilder() { return new RecordDatum.Builder.Raw(this); }
@@ -197,12 +197,12 @@ public abstract class RecordType extends DatumType implements RecordTypeApi {
     protected Static(
         @NotNull QualifiedTypeName name,
         @NotNull List<@NotNull ? extends RecordType.Static> immediateSupertypes,
-        @Nullable DatumType immediateMetaType,
+        @Nullable DatumType declaredMetaType,
         @NotNull Function<RecordDatum.Builder.@NotNull Raw, @NotNull MyDatumBuilder> datumBuilderConstructor,
         @NotNull Function<Val.Imm.@NotNull Raw, @NotNull MyImmVal> immValConstructor,
         @NotNull Function<Data.Builder.@NotNull Raw, @NotNull MyDataBuilder> dataBuilderConstructor
     ) {
-      super(name, immediateSupertypes, immediateMetaType);
+      super(name, immediateSupertypes, declaredMetaType);
       this.datumBuilderConstructor = datumBuilderConstructor;
       this.immValConstructor = immValConstructor;
       this.dataBuilderConstructor = dataBuilderConstructor;

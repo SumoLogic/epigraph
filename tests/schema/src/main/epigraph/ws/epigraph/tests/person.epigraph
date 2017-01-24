@@ -20,3 +20,10 @@ record PersonRecord {
   friendsMap: map[String, Person]
   friendRecordMap: map[String, PersonRecord]
 }
+
+record PaginationInfo {
+  start: Long
+  count: Long
+}
+
+map[PersonId,Person] PersonMap meta PaginationInfo // todo make resouce use this type

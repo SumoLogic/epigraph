@@ -35,9 +35,10 @@ public abstract class AnonMapType extends MapType {
 
   protected AnonMapType(
       @NotNull List<@NotNull ? extends AnonMapType> immediateSupertypes,
+      @Nullable DatumType declaredMetaType,
       @NotNull DatumType keyType,
       @NotNull DataType valueType
-  ) { super(new AnonMapTypeName(keyType.name(), valueType.name), immediateSupertypes, keyType, valueType, null); }
+  ) { super(new AnonMapTypeName(keyType.name(), valueType.name), immediateSupertypes, keyType, valueType, declaredMetaType); }
 
   @Override
   public @NotNull AnonMapTypeName name() { return (AnonMapTypeName) super.name(); }
@@ -45,8 +46,8 @@ public abstract class AnonMapType extends MapType {
 
   public static final class Raw extends AnonMapType implements MapType.Raw {
 
-    public Raw(@NotNull DatumType keyType, @NotNull DataType valueType) {
-      super(immediateSupertypes(keyType, valueType), keyType, valueType);
+    public Raw(@Nullable DatumType declaredMetaType, @NotNull DatumType keyType, @NotNull DataType valueType) {
+      super(immediateSupertypes(keyType, valueType), declaredMetaType, keyType, valueType);
     }
 
     private static @NotNull List<@NotNull ? extends AnonMapType.Raw> immediateSupertypes(
@@ -54,6 +55,7 @@ public abstract class AnonMapType extends MapType {
         @NotNull DataType valueType
     ) {
       return valueType.type.immediateSupertypes().stream().map(st -> new AnonMapType.Raw(// FIXME too many new raw types
+          ((DatumType)st).declaredMetaType(),
           keyType,
           new DataType(st, defaultTag(st, valueType.defaultTag))
       )).collect(Collectors.toList());
@@ -104,13 +106,14 @@ public abstract class AnonMapType extends MapType {
             ?,// super MyImmData,
             ? // extends Data.Mut.Static<? super MyImmData>
             >> immediateSupertypes,
+        @Nullable DatumType declaredMetaType,
         @NotNull DatumType/*.Static<K, ?, ?, ?, ?, ?>*/ keyType,
         @NotNull DataType valueType,
         @NotNull Function<MapDatum.Builder.@NotNull Raw, @NotNull MyDatumBuilder> datumBuilderConstructor,
         @NotNull Function<Val.Imm.@NotNull Raw, @NotNull MyImmVal> immValConstructor,
         @NotNull Function<Data.Builder.@NotNull Raw, @NotNull MyDataBuilder> dataBuilderConstructor
     ) {
-      super(immediateSupertypes, keyType, valueType);
+      super(immediateSupertypes, declaredMetaType, keyType, valueType);
       this.datumBuilderConstructor = datumBuilderConstructor;
       this.immValConstructor = immValConstructor;
       this.dataBuilderConstructor = dataBuilderConstructor;

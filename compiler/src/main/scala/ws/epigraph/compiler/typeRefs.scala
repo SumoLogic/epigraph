@@ -55,8 +55,20 @@ abstract class CTypeRef protected(val csf: CSchemaFile)(implicit val ctx: CConte
 
   val name: Name
 
-  @throws[java.util.NoSuchElementException]("If typeref hasn't been resolved")
-  def resolved: Type = typeOptVar.get
+//  val createdAt = new Throwable().getStackTrace
+
+  @throws[CompilerException]("If typeref hasn't been resolved")
+  def resolved: Type = typeOptVar.getOrElse {
+    ctx.errors.add(
+      CError(
+        csf.filename,
+        CErrorPosition.NA,
+        s"Type '${name.name}' has not been resolved"
+//        s"Type '${name.name}' has not been resolved. Created at:\n\t"+createdAt.toSeq.map(x => x.getFileName+" : "+x.getLineNumber).mkString("\n\t")
+      )
+    )
+    throw new CompilerException
+  }
 
   def isResolved: Boolean = typeOptVar.nonEmpty
 

@@ -35,8 +35,8 @@ public abstract class StringType extends PrimitiveType<String> {
   protected StringType(
       @NotNull QualifiedTypeName name,
       @NotNull List<@NotNull ? extends StringType> immediateSupertypes,
-      @Nullable DatumType immediateMetaType
-  ) { super(name, immediateSupertypes, immediateMetaType); }
+      @Nullable DatumType declaredMetaType
+  ) { super(name, immediateSupertypes, declaredMetaType); }
 
   @Override
   @SuppressWarnings("unchecked")
@@ -59,8 +59,8 @@ public abstract class StringType extends PrimitiveType<String> {
     protected Raw(
         @NotNull QualifiedTypeName name,
         @NotNull List<@NotNull ? extends StringType> immediateSupertypes,
-        @Nullable DatumType immediateMetaType
-    ) { super(name, immediateSupertypes, immediateMetaType); }
+        @Nullable DatumType declaredMetaType
+    ) { super(name, immediateSupertypes, declaredMetaType); }
 
     @Override
     public @NotNull StringDatum.Builder.Raw createBuilder(@NotNull String val) {
@@ -97,12 +97,12 @@ public abstract class StringType extends PrimitiveType<String> {
     protected Static(
         @NotNull QualifiedTypeName name,
         @NotNull List<@NotNull ? extends StringType> immediateSupertypes,
-        @Nullable DatumType immediateMetaType,
+        @Nullable DatumType declaredMetaType,
         @NotNull Function<StringDatum.Builder.@NotNull Raw, @NotNull MyDatumBuilder> datumBuilderConstructor,
         @NotNull Function<Val.Imm.@NotNull Raw, @NotNull MyImmVal> immValConstructor,
         @NotNull Function<Data.Builder.@NotNull Raw, @NotNull MyDataBuilder> dataBuilderConstructor
     ) {
-      super(name, immediateSupertypes, immediateMetaType);
+      super(name, immediateSupertypes, declaredMetaType);
       this.datumBuilderConstructor = datumBuilderConstructor;
       this.immValConstructor = immValConstructor;
       this.dataBuilderConstructor = dataBuilderConstructor;

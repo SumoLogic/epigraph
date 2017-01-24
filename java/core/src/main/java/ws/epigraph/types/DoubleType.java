@@ -35,8 +35,8 @@ public abstract class DoubleType extends PrimitiveType<Double> {
   protected DoubleType(
       @NotNull QualifiedTypeName name,
       @NotNull List<@NotNull ? extends DoubleType> immediateSupertypes,
-      @Nullable DatumType immediateMetaType
-  ) { super(name, immediateSupertypes, immediateMetaType); }
+      @Nullable DatumType declaredMetaType
+  ) { super(name, immediateSupertypes, declaredMetaType); }
 
   @Override
   @SuppressWarnings("unchecked")
@@ -59,8 +59,8 @@ public abstract class DoubleType extends PrimitiveType<Double> {
     protected Raw(
         @NotNull QualifiedTypeName name,
         @NotNull List<@NotNull ? extends DoubleType> immediateSupertypes,
-        @Nullable DatumType immediateMetaType
-    ) { super(name, immediateSupertypes, immediateMetaType); }
+        @Nullable DatumType declaredMetaType
+    ) { super(name, immediateSupertypes, declaredMetaType); }
 
     @Override
     public @NotNull DoubleDatum.Builder.Raw createBuilder(@NotNull Double val) {
@@ -97,12 +97,12 @@ public abstract class DoubleType extends PrimitiveType<Double> {
     protected Static(
         @NotNull QualifiedTypeName name,
         @NotNull List<? extends DoubleType> immediateSupertypes,
-        @Nullable DatumType immediateMetaType,
+        @Nullable DatumType declaredMetaType,
         @NotNull Function<DoubleDatum.Builder.@NotNull Raw, @NotNull MyDatumBuilder> datumBuilderConstructor,
         @NotNull Function<Val.Imm.@NotNull Raw, @NotNull MyImmVal> immValConstructor,
         @NotNull Function<Data.Builder.@NotNull Raw, @NotNull MyDataBuilder> dataBuilderConstructor
     ) {
-      super(name, immediateSupertypes, immediateMetaType);
+      super(name, immediateSupertypes, declaredMetaType);
       this.datumBuilderConstructor = datumBuilderConstructor;
       this.immValConstructor = immValConstructor;
       this.dataBuilderConstructor = dataBuilderConstructor;

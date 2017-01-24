@@ -36,9 +36,9 @@ public abstract class ListType extends DatumType implements ListTypeApi {
       @NotNull TypeName name,
       @NotNull List<@NotNull ? extends ListType> immediateSupertypes,
       @NotNull DataType elementDataType,
-      @Nullable DatumType immediateMetaType
+      @Nullable DatumType declaredMetaType
   ) {
-    super(name, immediateSupertypes, immediateMetaType);
+    super(name, immediateSupertypes, declaredMetaType);
     this.elementType = elementDataType;
   }
 

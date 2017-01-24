@@ -36,15 +36,18 @@ public abstract class DatumType extends Type implements DatumTypeApi {
 
   private final @NotNull Collection<@NotNull ? extends Tag> immediateTags = Collections.singleton(self);
 
+  private final @Nullable DatumType declaredMetaType;
+
   private final @Nullable DatumType metaType;
 
   protected DatumType(
       @NotNull TypeName name,
       @NotNull List<@NotNull ? extends DatumType> immediateSupertypes,
-      @Nullable DatumType immediateMetaType
+      @Nullable DatumType declaredMetaType
   ) {
     super(name, immediateSupertypes);
-    metaType = calculateMetaType(name.toString(), immediateMetaType, immediateSupertypes);
+    this.declaredMetaType = declaredMetaType;
+    metaType = calculateMetaType(name.toString(), declaredMetaType, immediateSupertypes);
   }
 
   @Override
@@ -76,6 +79,8 @@ public abstract class DatumType extends Type implements DatumTypeApi {
   @Override
   public @NotNull DataType dataType() { return new DataType(this, self); } // TODO cache
 
+  public @Nullable DatumType declaredMetaType() { return declaredMetaType; }
+
   @Override
   public @Nullable DatumTypeApi metaType() { return metaType; }
 
@@ -84,7 +89,7 @@ public abstract class DatumType extends Type implements DatumTypeApi {
   // generalize to something like `findMinimumType`?
   private static @Nullable DatumType calculateMetaType(
       @NotNull String typeName,
-      @Nullable DatumType immediateMetaType,
+      @Nullable DatumType declaredMetaType,
       @NotNull List<? extends DatumType> immediateSupertypes) {
 
     @Nullable DatumType minimalSuperMeta = null;
@@ -100,11 +105,11 @@ public abstract class DatumType extends Type implements DatumTypeApi {
       }
     }
 
-    if (immediateMetaType == null) return minimalSuperMeta;
-    if (minimalSuperMeta == null) return immediateMetaType;
+    if (declaredMetaType == null) return minimalSuperMeta;
+    if (minimalSuperMeta == null) return declaredMetaType;
 
-    if (minimalSuperMeta.isAssignableFrom(immediateMetaType)) return immediateMetaType;
-    if (immediateMetaType.isAssignableFrom(minimalSuperMeta)) return minimalSuperMeta;
+    if (minimalSuperMeta.isAssignableFrom(declaredMetaType)) return declaredMetaType;
+    if (declaredMetaType.isAssignableFrom(minimalSuperMeta)) return minimalSuperMeta;
 
     throw new IllegalArgumentException("Incompatible meta types on '" + typeName + "'"); // todo better explanation
   }
