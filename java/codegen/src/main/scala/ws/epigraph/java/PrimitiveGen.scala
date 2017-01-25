@@ -18,17 +18,14 @@
 
 package ws.epigraph.java
 
+import ws.epigraph.compiler.{CPrimitiveTypeDef, CTypeKind}
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
-import ws.epigraph.compiler.{CContext, CPrimitiveTypeDef, CTypeKind}
 
 class PrimitiveGen(from: CPrimitiveTypeDef, ctx: GenContext) extends JavaTypeDefGen[CPrimitiveTypeDef](from, ctx)
     with DatumTypeJavaGen {
 
   protected override def generate: String = /*@formatter:off*/sn"""\
-/*
- * Standard header
- */
-
+// This is a generated file. Not intended for manual editing.
 package ${pn(t)};
 
 import org.jetbrains.annotations.NotNull;
@@ -45,6 +42,17 @@ public interface $ln extends${withParents(t)} ws.epigraph.data.${kind(t)}Datum.S
 
   @Override
   @NotNull $ln.Imm toImmutable();
+${t.meta match {
+    case Some(mt) => sn"""\
+
+  ${"/**"}
+   * @return meta-data instance
+   */
+  @Nullable ${lqn(mt, t)} meta();
+"""
+    case None => ""
+  }
+}\
 
   /**
    * Class for `${t.name.name}` datum type.
@@ -108,11 +116,37 @@ public interface $ln extends${withParents(t)} ws.epigraph.data.${kind(t)}Datum.S
    * Immutable interface for `${t.name.name}` datum.
    */
   interface Imm extends $ln,${withParents(".Imm")} ws.epigraph.data.${kind(t)}Datum.Imm.Static {
+${t.meta match {
+    case Some(mt) => sn"""\
+
+    ${"/**"}
+     * @return meta-data instance
+     */
+    @Override
+    @Nullable ${lqn(mt, t)}.Imm meta();
+"""
+    case None => ""
+  }
+}\
 
     /** Private implementation of `$ln.Imm` interface. */
     final class Impl extends ws.epigraph.data.${kind(t)}Datum.Imm.Static.Impl<$ln.Imm, $ln.Imm.Value> implements $ln.Imm {
 
       Impl(@NotNull ws.epigraph.data.${kind(t)}Datum.Imm.Raw raw) { super($ln.Type.instance(), raw, $ln.Imm.Value.Impl::new); }
+${t.meta match {
+      case Some(mt) => sn"""\
+
+      ${"/**"}
+       * @return meta-data instance
+       */
+      @Override
+      public @Nullable ${lqn(mt, t)}.Imm meta() {
+        return (${lqn(mt, t)}.Imm) _raw().meta();
+      }
+"""
+    case None => ""
+  }
+}\
 
     }
 
@@ -174,6 +208,32 @@ public interface $ln extends${withParents(t)} ws.epigraph.data.${kind(t)}Datum.S
   final class Builder extends ws.epigraph.data.${kind(t)}Datum.Builder.Static<$ln.Imm, $ln.Builder.Value> implements $ln {
 
     Builder(@NotNull ws.epigraph.data.${kind(t)}Datum.Builder.Raw raw) { super($ln.Type.instance(), raw, $ln.Imm.Impl::new, $ln.Builder.Value::new); }
+${t.meta match {
+    case Some(mt) => sn"""\
+
+    ${"/**"}
+     * @return meta-data instance
+     */
+    @Override
+    public @Nullable ${lqn(mt, t)} meta() {
+      return (${lqn(mt, t)}) _raw().meta();
+    }
+
+    ${"/**"}
+     * Sets meta-data value
+     *
+     * @param meta new meta-data value
+     *
+     * @return {@code this}
+     */
+    public @NotNull $ln.Builder setMeta(@Nullable ${lqn(mt,t)} meta) {
+       _raw().setMeta(meta);
+       return this;
+    }
+"""
+    case None => ""
+  }
+}\
 
 $builderValueAndDataBuilder\
 

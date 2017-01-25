@@ -44,6 +44,12 @@ public abstract class MapType extends DatumType implements MapTypeApi {
     super(name, immediateSupertypes, declaredMetaType);
     this.keyType = keyType;
     this.valueType = valueType;
+    if (keyType.metaType() != null) throw new IllegalArgumentException(
+        String.format(
+            "Map type '%s' key type '%s' should not have a meta-type",
+            name, keyType.name()
+        )
+    );
   }
 
   @Override

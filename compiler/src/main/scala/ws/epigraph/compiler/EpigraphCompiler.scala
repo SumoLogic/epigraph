@@ -103,13 +103,21 @@ class EpigraphCompiler(
 
     handleErrors(5)
 
+    // other types-related tasks
+
+    ctx.phase(OTHER_TYPES)
+
+    validateMapKeyTypes()
+
+    handleErrors(6)
+
     // compile resources
 
     ctx.phase(RESOURCES)
 
     parseResources()
 
-    handleErrors(6)
+    handleErrors(7)
 
     //printSchemaFiles(ctx.schemaFiles.values)
 
@@ -173,6 +181,29 @@ class EpigraphCompiler(
       case ctr: CAnonMapTypeRef =>
         ctr.resolveTo(ctx.getOrCreateAnonMapOf(ctr.name.keyTypeRef, ctr.name.valueDataType))
     }
+  }
+
+  private def validateMapKeyTypes(): Unit = ctx.typeDefs.values().foreach{
+    case md: CMapTypeDef =>
+      md.keyTypeRef.resolved match {
+        case kdt: CDatumType =>
+          if (kdt.meta.isDefined)
+            ctx.errors.add(
+              CError(
+                md.csf.filename,
+                md.csf.position(md.psi),
+                s"Map type '${md.name.name}' key type '${kdt.name.name}' should not have a meta-type"
+              )
+            )
+        case kt => ctx.errors.add(
+          CError(
+            md.csf.filename,
+            md.csf.position(md.psi),
+            s"Map type '${md.name.name}' key type '${kt.name.name}' is not a datum type"
+          )
+        )
+      }
+    case _ =>
   }
 
   private def applySupplementingTypeDefs(): Unit = ctx.typeDefs.elements foreach { typeDef =>

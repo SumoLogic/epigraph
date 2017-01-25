@@ -22,6 +22,7 @@ public enum CPhase {
   RESOLVE_TYPEREFS,
   COMPUTE_SUPERTYPES, // TODO rename to validate supertypes?
   INHERIT_FROM_SUPERTYPES, // TODO rename to validate datatypes?
+  OTHER_TYPES,
   RESOURCES;
 
 //  public final int order;

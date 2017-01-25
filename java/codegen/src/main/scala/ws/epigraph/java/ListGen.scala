@@ -34,6 +34,7 @@ abstract class ListGen[Type >: Null <: CListType](from: Type, ctx: GenContext) e
   private val et = etr.resolved
 
     override def generate: String = /*@formatter:off*/sn"""\
+// This is a generated file. Not intended for manual editing.
 package ${pn(t)};
 
 import org.jetbrains.annotations.NotNull;
@@ -87,6 +88,17 @@ ${
 }\
 """
     case _ => ""
+  }
+}\
+${t.meta match {
+    case Some(mt) => sn"""\
+
+  ${"/**"}
+   * @return meta-data instance
+   */
+  @Nullable ${lqn(mt, t)} meta();
+"""
+    case None => ""
   }
 }\
 
@@ -160,16 +172,16 @@ ${t.effectiveDefaultElementTagName match { // default element tag (if defined) v
       case None => ""
       case Some(dtn) => sn"""\
 
-  ${"/**"}
-   * Returns immutable list view of element default tag datums. Elements where the tag datum is not set will be `null`.
-   */
-  @Override
-  @NotNull java.util.List<@Nullable ? extends ${lqn(tt(etr, dtn), t)}.Imm> datums();
+    ${"/**"}
+     * Returns immutable list view of element default tag datums. Elements where the tag datum is not set will be `null`.
+     */
+    @Override
+    @NotNull java.util.List<@Nullable ? extends ${lqn(tt(etr, dtn), t)}.Imm> datums();
 
-  ${"/**"}
-   * Returns immutable list view of element default tag values. Elements where the tag value is not set will be `null`.
-   */
-  @Override
+    ${"/**"}
+     * Returns immutable list view of element default tag values. Elements where the tag value is not set will be `null`.
+     */
+    @Override
   @NotNull java.util.List<@Nullable ? extends ${lqn(tt(etr, dtn), t)}.Imm.Value> values();
 """
   }
@@ -177,27 +189,39 @@ ${t.effectiveDefaultElementTagName match { // default element tag (if defined) v
 ${et match { // element tags (for vartypes)
     case evt: CVarTypeDef => sn"""\
 
-  ${"/**"}
-   * Returns immutable list view of elements data.
-   */
-  @NotNull java.util.List<@NotNull ? extends ${lqn(et, t)}.Imm> datas();
+    ${"/**"}
+     * Returns immutable list view of elements data.
+     */
+    @NotNull java.util.List<@NotNull ? extends ${lqn(et, t)}.Imm> datas();
 ${
       evt.effectiveTags.map { tag => sn"""\
 //
-//  /**
-//   * Returns immutable list view of `${tag.name}` tag datums. Elements where the tag value is not set will be `null`.
-//   */
-//  @NotNull java.util.List<@Nullable ? extends ${lqn(tt(etr, tag.name), t)}.Imm> ${jn(tag.name + "Datums")}();
+//    /**
+//     * Returns immutable list view of `${tag.name}` tag datums. Elements where the tag value is not set will be `null`.
+//     */
+//    @NotNull java.util.List<@Nullable ? extends ${lqn(tt(etr, tag.name), t)}.Imm> ${jn(tag.name + "Datums")}();
 //
-//  /**
-//   * Returns immutable list view of `${tag.name}` tag values. Elements where the tag value is not set will be `null`.
-//   */
-//  @NotNull java.util.List<@Nullable ? extends ${lqn(tt(etr, tag.name), t)}.Imm.Value> ${jn(tag.name + "Values")}();
+//    /**
+//     * Returns immutable list view of `${tag.name}` tag values. Elements where the tag value is not set will be `null`.
+//     */
+//    @NotNull java.util.List<@Nullable ? extends ${lqn(tt(etr, tag.name), t)}.Imm.Value> ${jn(tag.name + "Values")}();
 """
       }.mkString
 }\
 """
     case _ => ""
+  }
+}\
+${t.meta match {
+    case Some(mt) => sn"""\
+
+    ${"/**"}
+     * @return meta-data instance
+     */
+    @Override
+    @Nullable ${lqn(mt, t)}.Imm meta();
+"""
+    case None => ""
   }
 }\
 
@@ -276,6 +300,20 @@ ${
         return ws.epigraph.util.Util.castEx(_raw().elements());
       }
 """
+  }
+}\
+${t.meta match {
+      case Some(mt) => sn"""\
+
+      ${"/**"}
+       * @return meta-data instance
+       */
+      @Override
+      public @Nullable ${lqn(mt, t)}.Imm meta() {
+        return (${lqn(mt, t)}.Imm) _raw().meta();
+      }
+"""
+    case None => ""
   }
 }\
 
@@ -427,6 +465,32 @@ ${
         return ws.epigraph.util.Util.cast(_raw().elements());
       }
 """
+  }
+}\
+${t.meta match {
+    case Some(mt) => sn"""\
+
+    ${"/**"}
+     * @return meta-data instance
+     */
+    @Override
+    public @Nullable ${lqn(mt, t)} meta() {
+      return (${lqn(mt, t)}) _raw().meta();
+    }
+
+    ${"/**"}
+     * Sets meta-data value
+     *
+     * @param meta new meta-data value
+     *
+     * @return {@code this}
+     */
+    public @NotNull $ln.Builder setMeta(@Nullable ${lqn(mt,t)} meta) {
+       _raw().setMeta(meta);
+       return this;
+    }
+"""
+    case None => ""
   }
 }\
 

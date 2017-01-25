@@ -25,10 +25,7 @@ class RecordGen(from: CRecordTypeDef, ctx: GenContext) extends JavaTypeDefGen[CR
     with DatumTypeJavaGen {
 
   protected def generate: String = /*@formatter:off*/sn"""\
-/*
- * Standard header
- */
-
+// This is a generated file. Not intended for manual editing.
 package ${pn(t)};
 
 import ws.epigraph.types.RecordType.Field;
@@ -79,6 +76,17 @@ ${  f.effectiveDefaultTagName match { // default tag accessors (implied or expli
 }\
 """
   }.mkString
+}\
+${t.meta match {
+    case Some(mt) => sn"""\
+
+  ${"/**"}
+   * @return meta-data instance
+   */
+  @Nullable ${lqn(mt, t)} meta();
+"""
+    case None => ""
+  }
 }\
 
   /**
@@ -180,6 +188,18 @@ ${  f.effectiveDefaultTagName match { // default tag accessors (implied or expli
 """
   }.mkString
 }\
+${t.meta match {
+    case Some(mt) => sn"""\
+
+    ${"/**"}
+     * @return meta-data instance
+     */
+    @Override
+    @Nullable ${lqn(mt, t)}.Imm meta();
+"""
+    case None => ""
+  }
+}\
 
     /** Private implementation of `$ln.Imm` interface. */
     final class Impl extends ws.epigraph.data.RecordDatum.Imm.Static.Impl<$ln.Imm, $ln.Imm.Value> implements $ln.Imm {
@@ -219,6 +239,20 @@ ${  f.effectiveDefaultTagName match { // default tag accessors (implied or expli
 }\
 """
   }.mkString
+}\
+${t.meta match {
+      case Some(mt) => sn"""\
+
+      ${"/**"}
+       * @return meta-data instance
+       */
+      @Override
+      public @Nullable ${lqn(mt, t)}.Imm meta() {
+        return (${lqn(mt, t)}.Imm) _raw().meta();
+      }
+"""
+    case None => ""
+  }
 }\
 
     }
@@ -331,6 +365,32 @@ ${  f.effectiveDefaultTagName match { // default tag (implied or explicit, if an
 }\
 """
   }.mkString
+}\
+${t.meta match {
+    case Some(mt) => sn"""\
+
+    ${"/**"}
+     * @return meta-data instance
+     */
+    @Override
+    public @Nullable ${lqn(mt, t)} meta() {
+      return (${lqn(mt, t)}) _raw().meta();
+    }
+
+    ${"/**"}
+     * Sets meta-data value
+     *
+     * @param meta new meta-data value
+     *
+     * @return {@code this}
+     */
+    public @NotNull $ln.Builder setMeta(@Nullable ${lqn(mt,t)} meta) {
+       _raw().setMeta(meta);
+       return this;
+    }
+"""
+    case None => ""
+  }
 }\
 
 $builderValueAndDataBuilder\
