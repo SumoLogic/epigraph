@@ -17,6 +17,7 @@
 package ws.epigraph.projections.abs;
 
 import de.uka.ilkd.pp.Layouter;
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.gdata.GDataPrettyPrinter;
 import ws.epigraph.lang.Keywords;
 import ws.epigraph.projections.Annotation;
@@ -78,7 +79,8 @@ public abstract class AbstractProjectionsPrettyPrinter<
     Map<String, TP> tagProjections = p.tagProjections();
     if (p.type().kind() != TypeKind.UNION) {
       // samovar
-      print(tagProjections.values().iterator().next().projection(), decSteps(pathSteps));
+      TP tp = tagProjections.values().iterator().next();
+      print(null, tp, decSteps(pathSteps));
     } else if (!p.parenthesized()) {
       Map.Entry<String, TP> entry = tagProjections.entrySet().iterator().next();
       l.print(":");
@@ -137,7 +139,7 @@ public abstract class AbstractProjectionsPrettyPrinter<
     }
   }
 
-  public abstract void print(@NotNull String tagName, @NotNull TP tp, int pathSteps) throws E;
+  public abstract void print(@Nullable String tagName, @NotNull TP tp, int pathSteps) throws E;
 
   public abstract void print(@NotNull MP mp, int pathSteps) throws E;
 

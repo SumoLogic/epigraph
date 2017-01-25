@@ -17,6 +17,7 @@
 package ws.epigraph.projections.op.delete;
 
 import de.uka.ilkd.pp.Layouter;
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.op.AbstractOpProjectionsPrettyPrinter;
 import ws.epigraph.projections.op.OpKeyPresence;
@@ -49,7 +50,7 @@ public class OpDeleteProjectionsPrettyPrinter<E extends Exception>
   }
 
   @Override
-  public void print(@NotNull String tagName, @NotNull OpDeleteTagProjectionEntry tp, int pathSteps) throws E {
+  public void print(@Nullable String tagName, @NotNull OpDeleteTagProjectionEntry tp, int pathSteps) throws E {
     OpDeleteModelProjection<?, ?, ?> projection = tp.projection();
     OpDeleteModelProjection<?, ?, ?> metaProjection = projection.metaProjection();
     OpParams params = projection.params();
@@ -57,18 +58,24 @@ public class OpDeleteProjectionsPrettyPrinter<E extends Exception>
 
     if (params.isEmpty() && annotations.isEmpty()) {
       l.beginCInd();
-      l.print(escape(tagName));
 
       if (!isPrintoutEmpty(projection)) {
-        l.brk();
+        if (tagName != null) {
+          l.print(escape(tagName));
+          l.brk();
+        }
         print(projection, 0);
-      }
+      } else if (tagName!=null) l.print(escape(tagName));
 
       l.end();
     } else {
       l.beginCInd();
-      l.print(escape(tagName));
-      l.print(" {");
+
+      if (tagName == null) l.print("{");
+      else {
+        l.print(escape(tagName));
+        l.print(" {");
+      }
 
       if (!params.isEmpty()) print(params);
       if (!annotations.isEmpty()) print(annotations);
@@ -112,10 +119,12 @@ public class OpDeleteProjectionsPrettyPrinter<E extends Exception>
     l.brk(1, -l.getDefaultIndentation()).end().print(")");
   }
 
+  @Override
   public void print(@NotNull OpParams p) throws E {
     print(p, false, true);
   }
 
+  @Override
   public boolean print(@NotNull OpParams p, boolean needCommas, boolean first) throws E {
     l.beginCInd(0);
     for (OpParam param : p.asMap().values()) {

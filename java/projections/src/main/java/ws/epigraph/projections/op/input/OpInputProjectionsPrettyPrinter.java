@@ -18,6 +18,7 @@ package ws.epigraph.projections.op.input;
 
 import de.uka.ilkd.pp.Layouter;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.gdata.GDataValue;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.op.AbstractOpProjectionsPrettyPrinter;
@@ -42,7 +43,7 @@ public class OpInputProjectionsPrettyPrinter<E extends Exception> extends Abstra
   }
 
   @Override
-  public void print(@NotNull String tagName, @NotNull OpInputTagProjectionEntry tp, int pathSteps) throws E {
+  public void print(@Nullable String tagName, @NotNull OpInputTagProjectionEntry tp, int pathSteps) throws E {
     OpInputModelProjection<?, ?, ?, ?> projection = tp.projection();
     OpInputModelProjection<?, ?, ?, ?> metaProjection = projection.metaProjection();
     final OpParams params = projection.params();
@@ -53,19 +54,26 @@ public class OpInputProjectionsPrettyPrinter<E extends Exception> extends Abstra
         metaProjection == null) {
 
       l.beginCInd();
-      if (projection.required()) l.print("+");
-      l.print(escape(tagName));
+      if (projection.required() && tagName != null) l.print("+");
 
       if (!isPrintoutEmpty(projection)) {
-        l.brk();
+        if (tagName != null) {
+          l.print(escape(tagName));
+          l.brk();
+        }
         print(projection, pathSteps);
-      }
+      } else if (tagName != null) l.print(escape(tagName));
+
       l.end();
     } else {
       l.beginCInd();
-      if (projection.required()) l.print("+");
-      l.print(escape(tagName));
-      l.print(" {");
+      if (projection.required() && tagName != null) l.print("+");
+
+      if (tagName == null) l.print("{");
+      else {
+        l.print(escape(tagName));
+        l.print(" {");
+      }
 
       if (defaultValue != null) {
         l.brk().beginIInd(0).print("default:").brk();
@@ -75,6 +83,7 @@ public class OpInputProjectionsPrettyPrinter<E extends Exception> extends Abstra
 
       if (metaProjection != null) {
         l.brk().beginIInd(0).print("meta:").brk();
+        if (metaProjection.required()) l.print("+");
         print(metaProjection, 0);
         l.end();
       }

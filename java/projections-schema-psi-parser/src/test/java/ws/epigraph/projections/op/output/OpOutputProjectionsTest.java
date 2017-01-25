@@ -189,7 +189,8 @@ public class OpOutputProjectionsTest {
 
   @Test
   public void testParseMap() throws PsiProcessingException {
-    testParsingVarProjection(":`record` ( friendsMap [ forbidden, ;+param: epigraph.String, doc = \"no keys\" ]( :id ) )");
+    testParsingVarProjection(
+        ":`record` ( friendsMap [ forbidden, ;+param: epigraph.String, doc = \"no keys\" ]( :id ) )");
   }
 
   @Test
@@ -284,7 +285,10 @@ public class OpOutputProjectionsTest {
     testParsingVarProjection(dataType, str, expected);
   }
 
-  private OpOutputVarProjection testParsingVarProjection(DataType varDataType, String projectionString, String expected) {
+  private OpOutputVarProjection testParsingVarProjection(
+      DataType varDataType,
+      String projectionString,
+      String expected) {
 
     OpOutputVarProjection varProjection = parseOpOutputVarProjection(varDataType, projectionString);
 

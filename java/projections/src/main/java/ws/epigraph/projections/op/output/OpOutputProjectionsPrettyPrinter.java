@@ -18,6 +18,7 @@ package ws.epigraph.projections.op.output;
 
 import de.uka.ilkd.pp.Layouter;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.op.AbstractOpProjectionsPrettyPrinter;
 import ws.epigraph.projections.op.OpKeyPresence;
@@ -43,7 +44,7 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception>
   }
 
   @Override
-  public void print(@NotNull String tagName, @NotNull OpOutputTagProjectionEntry tp, int pathSteps) throws E {
+  public void print(@Nullable String tagName, @NotNull OpOutputTagProjectionEntry tp, int pathSteps) throws E {
     OpOutputModelProjection<?, ?, ?> projection = tp.projection();
     OpOutputModelProjection<?, ?, ?> metaProjection = projection.metaProjection();
     OpParams params = projection.params();
@@ -51,18 +52,24 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception>
 
     if (params.isEmpty() && annotations.isEmpty()) {
       l.beginCInd();
-      l.print(escape(tagName));
 
       if (!isPrintoutEmpty(projection)) {
-        l.brk();
+        if (tagName != null) {
+          l.print(escape(tagName));
+          l.brk();
+        }
         print(projection, 0);
-      }
+      } else if (tagName!=null) l.print(escape(tagName));
 
       l.end();
     } else {
       l.beginCInd();
-      l.print(escape(tagName));
-      l.print(" {");
+
+      if (tagName == null) l.print("{");
+      else {
+        l.print(escape(tagName));
+        l.print(" {");
+      }
 
       if (!params.isEmpty()) print(params);
       if (!annotations.isEmpty()) print(annotations);

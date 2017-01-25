@@ -280,7 +280,7 @@ public final class OpInputProjectionsPsiParser {
     }
 
     if (modelMetaPsi != null) {
-      @Nullable DatumTypeApi metaType = null; // TODO need a way to extract it from 'type'
+      @Nullable DatumTypeApi metaType = type.metaType();
       if (metaType == null) {
         errors.add(new PsiProcessingError(
             String.format("Type '%s' doesn't have a metadata, metadata projection can't be specified", type.name()),
@@ -420,7 +420,7 @@ public final class OpInputProjectionsPsiParser {
             defaultRecordData,
             params,
             annotations,
-            (OpInputRecordModelProjection) metaProjection,
+            metaProjection,
             recordModelProjectionPsi,
             typesResolver,
             errors
@@ -450,7 +450,7 @@ public final class OpInputProjectionsPsiParser {
             defaultMapData,
             params,
             annotations,
-            (OpInputMapModelProjection) metaProjection,
+            metaProjection,
             mapModelProjectionPsi,
             typesResolver,
             errors
@@ -480,7 +480,7 @@ public final class OpInputProjectionsPsiParser {
             defaultListData,
             params,
             annotations,
-            (OpInputListModelProjection) metaProjection,
+            metaProjection,
             listModelProjectionPsi,
             typesResolver,
             errors
@@ -498,7 +498,7 @@ public final class OpInputProjectionsPsiParser {
             defaultPrimitiveData,
             params,
             annotations,
-            (OpInputPrimitiveModelProjection) metaProjection,
+            metaProjection,
             psi
         );
 
@@ -654,7 +654,7 @@ public final class OpInputProjectionsPsiParser {
       @Nullable GRecordDatum defaultValue,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
-      @Nullable OpInputRecordModelProjection metaProjection,
+      @Nullable OpInputModelProjection<?, ?, ?, ?> metaProjection,
       @NotNull SchemaOpInputRecordModelProjection psi,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) {
@@ -753,7 +753,7 @@ public final class OpInputProjectionsPsiParser {
       @Nullable GMapDatum defaultValue,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
-      @Nullable OpInputMapModelProjection metaProjection,
+      @Nullable OpInputModelProjection<?, ?, ?, ?> metaProjection,
       @NotNull SchemaOpInputMapModelProjection psi,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
@@ -815,7 +815,7 @@ public final class OpInputProjectionsPsiParser {
       @Nullable GListDatum defaultValue,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
-      @Nullable OpInputListModelProjection metaProjection,
+      @Nullable OpInputModelProjection<?, ?, ?, ?> metaProjection,
       @NotNull SchemaOpInputListModelProjection psi,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
@@ -845,7 +845,7 @@ public final class OpInputProjectionsPsiParser {
       @Nullable GPrimitiveDatum defaultValue,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
-      @Nullable OpInputPrimitiveModelProjection metaProjection,
+      @Nullable OpInputModelProjection<?, ?, ?, ?> metaProjection,
       @NotNull PsiElement locationPsi) {
 
     return new OpInputPrimitiveModelProjection(

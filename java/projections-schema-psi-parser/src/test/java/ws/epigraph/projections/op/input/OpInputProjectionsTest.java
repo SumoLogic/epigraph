@@ -127,6 +127,18 @@ public class OpInputProjectionsTest {
     testParsingVarProjection(":`record` ( friendsMap [ ;param: epigraph.String, doc = \"bla\" ]( :id ) )");
   }
 
+  @Test
+  public void testParseMeta() throws PsiProcessingException {
+    String projection = "{ meta: +( start, count ) } [ required ]( :`record` ( id, firstName ) )";
+
+    testParsingVarProjection(
+        new DataType(PersonMap.type, null),
+        projection,
+        projection
+    );
+  }
+
+
   private void testParsingVarProjection(String str) {
     testParsingVarProjection(
         new DataType(Person.type, Person.id),
@@ -146,6 +158,8 @@ public class OpInputProjectionsTest {
         User.type,
         UserId.type,
         UserRecord.type,
+        PaginationInfo.type,
+        PersonMap.type,
         epigraph.String.type
     );
 
@@ -160,7 +174,7 @@ public class OpInputProjectionsTest {
 //    assertEquals(expected.trim(), actual.trim());
   }
 
-  public static OpInputVarProjection parseOpInputVarProjection(
+  public static @NotNull OpInputVarProjection parseOpInputVarProjection(
       @NotNull DataType varDataType,
       @NotNull String projectionString,
       @NotNull TypesResolver resolver) {

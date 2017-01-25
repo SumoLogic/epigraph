@@ -49,26 +49,35 @@ public class OpPathPrettyPrinter<E extends Exception>
   }
 
   @Override
-  public void print(@NotNull String tagName, @NotNull OpTagPath tp, int pathSteps) throws E {
+  public void print(@Nullable String tagName, @NotNull OpTagPath tp, int pathSteps) throws E {
     OpModelPath<?, ?, ?> projection = tp.projection();
     OpParams params = projection.params();
     Annotations annotations = projection.annotations();
 
-    l.print(escape(tagName));
+    boolean brkNeeded = false;
     if (!params.isEmpty() || !annotations.isEmpty()) {
 
       l.beginCInd();
-      l.print(" {");
+
+      if (tagName == null) l.print("{");
+      else {
+        l.print(escape(tagName));
+        l.print(" {");
+      }
 
       if (!params.isEmpty()) print(params);
       if (!annotations.isEmpty()) print(annotations);
 
       l.brk(1, -l.getDefaultIndentation()).end().print("}");
+      brkNeeded = true;
+    } else if (tagName != null) {
+      l.print(escape(tagName));
+      brkNeeded = true;
     }
 
     if (!isPrintoutEmpty(projection)) {
       l.beginCInd();
-      l.brk();
+      if (brkNeeded) l.brk();
       print(projection, 0);
       l.end();
     }

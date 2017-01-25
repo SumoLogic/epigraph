@@ -18,6 +18,7 @@ package ws.epigraph.projections.req.update;
 
 import de.uka.ilkd.pp.Layouter;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.req.AbstractReqProjectionsPrettyPrinter;
 import ws.epigraph.projections.req.ReqParams;
@@ -42,23 +43,36 @@ public class ReqUpdateProjectionsPrettyPrinter<E extends Exception>
   }
 
   @Override
-  public void print(@NotNull String tagName, @NotNull ReqUpdateTagProjectionEntry tp, int pathSteps) throws E {
+  public void print(@Nullable String tagName, @NotNull ReqUpdateTagProjectionEntry tp, int pathSteps) throws E {
     ReqUpdateModelProjection<?, ?, ?> projection = tp.projection();
 
     ReqParams params = projection.params();
     Annotations annotations = projection.annotations();
 
     l.beginCInd();
+    boolean needBrk = false;
     if (projection.update()) l.print("+");
-    l.print(tagName);
 
-    printParams(params);
-    printAnnotations(annotations);
+    if (tagName != null) {
+      l.print(tagName);
+      needBrk = true;
+    }
+
+    if (!params.isEmpty()) {
+      printParams(params);
+      needBrk = true;
+    }
+
+    if (!annotations.isEmpty()) {
+      printAnnotations(annotations);
+      needBrk = true;
+    }
 
     if (!isPrintoutEmpty(projection)) {
-      l.brk();
+      if (needBrk) l.brk();
       print(projection, pathSteps);
     }
+
     l.end();
   }
 

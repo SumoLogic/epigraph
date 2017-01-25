@@ -226,7 +226,7 @@ public final class OpOutputProjectionsPsiParser {
 
     if (modelMetaPsi == null) return null;
     else {
-      @Nullable DatumTypeApi metaType = null; // TODO need a way to extract it from 'type'
+      @Nullable DatumTypeApi metaType = type.metaType();
       if (metaType == null) {
         errors.add(new PsiProcessingError(
             String.format("Type '%s' doesn't have a metadata, metadata projection can't be specified", type.name()),
@@ -310,12 +310,13 @@ public final class OpOutputProjectionsPsiParser {
     @Nullable TagApi defaultTag = type.defaultTag();
     if (defaultTag == null) {
 
-      if (type.type ()instanceof DatumType) {
+      if (type.type() instanceof DatumType) {
         DatumTypeApi datumType = (DatumTypeApi) type.type();
         defaultTag = datumType.self();
       } else {
         throw new PsiProcessingException(
-            String.format("Can't build default projection for '%s', default tag not specified", type.name()), locationPsi,
+            String.format("Can't build default projection for '%s', default tag not specified", type.name()),
+            locationPsi,
             errors
         );
       }
@@ -345,7 +346,7 @@ public final class OpOutputProjectionsPsiParser {
             (RecordTypeApi) type,
             params,
             annotations,
-            (OpOutputRecordModelProjection) metaProjection,
+            metaProjection,
             recordModelProjectionPsi,
             typesResolver,
             errors
@@ -360,7 +361,7 @@ public final class OpOutputProjectionsPsiParser {
             (MapTypeApi) type,
             params,
             annotations,
-            (OpOutputMapModelProjection) metaProjection,
+            metaProjection,
             mapModelProjectionPsi,
             typesResolver,
             errors
@@ -375,7 +376,7 @@ public final class OpOutputProjectionsPsiParser {
             (ListTypeApi) type,
             params,
             annotations,
-            (OpOutputListModelProjection) metaProjection,
+            metaProjection,
             listModelProjectionPsi,
             typesResolver,
             errors
@@ -387,7 +388,7 @@ public final class OpOutputProjectionsPsiParser {
             (PrimitiveTypeApi) type,
             params,
             annotations,
-            (OpOutputPrimitiveModelProjection) metaProjection,
+            metaProjection,
             psi
         );
       case UNION:
@@ -525,7 +526,7 @@ public final class OpOutputProjectionsPsiParser {
       @NotNull RecordTypeApi type,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
-      @Nullable OpOutputRecordModelProjection metaProjection,
+      @Nullable OpOutputModelProjection<?, ?, ?> metaProjection,
       @NotNull SchemaOpOutputRecordModelProjection psi,
       @NotNull TypesResolver typesResolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
@@ -611,7 +612,7 @@ public final class OpOutputProjectionsPsiParser {
       @NotNull MapTypeApi type,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
-      @Nullable OpOutputMapModelProjection metaProjection,
+      @Nullable OpOutputModelProjection<?, ?, ?> metaProjection,
       @NotNull SchemaOpOutputMapModelProjection psi,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors)
@@ -674,7 +675,7 @@ public final class OpOutputProjectionsPsiParser {
       @NotNull ListTypeApi type,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
-      @Nullable OpOutputListModelProjection metaProjection,
+      @Nullable OpOutputModelProjection<?, ?, ?> metaProjection,
       @NotNull SchemaOpOutputListModelProjection psi,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors)
@@ -702,7 +703,7 @@ public final class OpOutputProjectionsPsiParser {
       @NotNull PrimitiveTypeApi type,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
-      @Nullable OpOutputPrimitiveModelProjection metaProjection,
+      @Nullable OpOutputModelProjection<?, ?, ?> metaProjection,
       @NotNull PsiElement locationPsi) {
 
     return new OpOutputPrimitiveModelProjection(
