@@ -18,6 +18,7 @@
 
 package ws.epigraph.data;
 
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.types.StringType;
 import org.jetbrains.annotations.NotNull;
 
@@ -36,6 +37,7 @@ public interface StringDatum extends PrimitiveDatum<String> {
   @Override
   @NotNull StringDatum.Imm toImmutable();
 
+  @Override
   @NotNull String getVal();
 
 
@@ -73,15 +75,22 @@ public interface StringDatum extends PrimitiveDatum<String> {
 
       private final @NotNull String val;
 
+      private final @Nullable Datum.Imm meta;
+
       private final @NotNull Val.Imm.Raw value = new Val.Imm.Raw.DatumVal(this);
 
       private final int hashCode;
 
       public Raw(@NotNull StringDatum.Builder.Raw mutable) {
         super(mutable.type());
-        val = mutable.getVal(); // TODO copy metadata
+        val = mutable.getVal();
+        Datum _meta = mutable.meta();
+        meta = _meta == null ? null : _meta.toImmutable();
         hashCode = Objects.hash(type(), val);
       }
+
+      @Override
+      public @Nullable Datum.Imm meta() { return meta; }
 
       @Override
       public @NotNull StringDatum.Imm.Raw toImmutable() { return this; }
@@ -168,6 +177,7 @@ public interface StringDatum extends PrimitiveDatum<String> {
 
     protected Builder(@NotNull StringType type) { super(type); }
 
+    @Override
     public abstract void setVal(@NotNull String val);
 
     @Override
@@ -179,12 +189,13 @@ public interface StringDatum extends PrimitiveDatum<String> {
 
       private @NotNull String val;
 
+      private @Nullable Datum meta;
+
       private final @NotNull Val.Builder.Raw value = new Val.Builder.Raw.DatumVal(this);
 
       public Raw(@NotNull StringType type, @NotNull String val) {
         super(type);
-        // TODO validate vs type validation rules (once available)
-        this.val = /*this.val = type().validate*/(val);
+        this.val = val;
       }
 
       @Override
@@ -192,8 +203,16 @@ public interface StringDatum extends PrimitiveDatum<String> {
 
       @Override
       public void setVal(@NotNull String val) {
-        // TODO validate vs type validation rules (once available)
-        this.val = /*this.val = type().validate*/(val);
+        this.val = val;
+      }
+
+      @Override
+      public @Nullable Datum meta() { return meta; }
+
+      @Override
+      public @NotNull Datum.@NotNull Builder setMeta(final @Nullable Datum meta) {
+        this.meta = type().checkMeta(meta);
+        return this;
       }
 
       @Override
@@ -219,7 +238,7 @@ public interface StringDatum extends PrimitiveDatum<String> {
     }
 
 
-    public static abstract class Static<
+    public abstract static class Static<
         MyImmDatum extends StringDatum.Imm.Static,
         MyBuilderVal extends Val.Builder.Static
         > extends StringDatum.Builder

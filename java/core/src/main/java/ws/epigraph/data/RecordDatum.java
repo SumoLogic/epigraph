@@ -90,6 +90,8 @@ public interface RecordDatum extends Datum {
 
       private final Map<@NotNull String, @NotNull ? extends Data.Imm> fieldsData;
 
+      private final @Nullable Datum.Imm meta;
+
       private final @NotNull Val.Imm.Raw value = new Val.Imm.Raw.DatumVal(this);
 
       private final int hashCode;
@@ -97,8 +99,13 @@ public interface RecordDatum extends Datum {
       public Raw(@NotNull RecordDatum.Builder.Raw builder) {
         super(builder.type());
         fieldsData = Unmodifiable.map(builder.fieldsData(), k -> k, Data::toImmutable);
+        Datum _meta = builder.meta();
+        meta = _meta == null ? null : _meta.toImmutable();
         hashCode = Objects.hash(type(), fieldsData);
       }
+
+      @Override
+      public @Nullable Datum.Imm meta() { return meta; }
 
       @Override
       public @NotNull RecordDatum.Imm.Raw toImmutable() { return this; }
@@ -214,6 +221,8 @@ public interface RecordDatum extends Datum {
 
       private final Map<@NotNull String, @NotNull ? extends Data> unmodifiableFieldsData = Unmodifiable.map(fieldsData);
 
+      private @Nullable Datum meta;
+
       private final @NotNull Val.Builder.Raw value = new Val.Builder.Raw.DatumVal(this);
 
       public Raw(@NotNull RecordType type) { super(type); }
@@ -224,6 +233,15 @@ public interface RecordDatum extends Datum {
           String fieldName = fieldEntry.getKey();
           if (type.fieldsMap().containsKey(fieldName)) fieldsData.put(fieldName, fieldEntry.getValue());
         }
+      }
+
+      @Override
+      public @Nullable Datum meta() { return meta; }
+
+      @Override
+      public @NotNull Datum.@NotNull Builder setMeta(final @Nullable Datum meta) {
+        this.meta = type().checkMeta(meta);
+        return this;
       }
 
       @Override
@@ -266,8 +284,7 @@ public interface RecordDatum extends Datum {
         if (data == null) {
           fieldsData.remove(type().assertWritable(field).name());
         } else {
-          // TODO check data is compatible with effective field
-          fieldsData.put(type().assertWritable(field).name(), data);
+          fieldsData.put(type().assertWritable(field).name(), field.dataType().checkAssignable(data));
         }
       }
 

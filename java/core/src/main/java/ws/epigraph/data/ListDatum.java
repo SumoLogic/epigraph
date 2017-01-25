@@ -18,6 +18,7 @@
 
 package ws.epigraph.data;
 
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.types.ListType;
 import ws.epigraph.util.Unmodifiable;
 import org.jetbrains.annotations.NotNull;
@@ -41,7 +42,11 @@ public interface ListDatum extends Datum {
   @Override
   @NotNull ListDatum.Imm toImmutable();
 
-  int size(); // TODO isEmpty()?
+  int size();
+
+  default boolean isEmpty() { return size() == 0; }
+
+  default boolean nonEmpty() { return size() > 0; }
 
 
   abstract class Impl extends Datum.Impl<ListType> implements ListDatum {
@@ -79,6 +84,8 @@ public interface ListDatum extends Datum {
 
       private final List<? extends Data.Imm> elements;
 
+      private final @Nullable Datum.Imm meta;
+
       private final @NotNull Val.Imm.Raw value = new Val.Imm.Raw.DatumVal(this);
 
       private final int hashCode;
@@ -86,8 +93,13 @@ public interface ListDatum extends Datum {
       public Raw(@NotNull ListDatum.Builder.Raw mutable) {
         super(mutable.type());
         elements = Unmodifiable.list(mutable.elements(), Data::toImmutable);
+        Datum _meta = mutable.meta();
+        meta = _meta == null ? null : _meta.toImmutable();
         hashCode = Objects.hash(type(), elements);
       }
+
+      @Override
+      public @Nullable Datum.Imm meta() { return meta; }
 
       @Override
       public int size() { return elements.size(); }
@@ -187,12 +199,23 @@ public interface ListDatum extends Datum {
 
       private final @NotNull List<@NotNull Data> elements = new DataList<>(type());
 
+      private @Nullable Datum meta;
+
       private final @NotNull Val.Builder.Raw value = new Val.Builder.Raw.DatumVal(this);
 
       public Raw(ListType type) { super(type); }
 
       @Override
       public @NotNull List<@NotNull Data> elements() { return elements; }
+
+      @Override
+      public @Nullable Datum meta() { return meta; }
+
+      @Override
+      public @NotNull Datum.@NotNull Builder setMeta(final @Nullable Datum meta) {
+        this.meta = type().checkMeta(meta);
+        return this;
+      }
 
       @Override
       public int size() { return elements.size(); }
@@ -253,7 +276,7 @@ public interface ListDatum extends Datum {
     }
 
 
-    public static abstract class Static<
+    public abstract static class Static<
         MyImmDatum extends ListDatum.Imm.Static,
         MyBuilderVal extends Val.Builder.Static
         > extends ListDatum.Builder implements ListDatum.Static, Datum.Builder.Static<MyImmDatum> {

@@ -72,8 +72,20 @@ public abstract class DatumType extends Type implements DatumTypeApi {
   public boolean isInstance(@Nullable Datum datum) { return datum != null && isAssignableFrom(datum.type()); }
 
   public <D extends Datum> D checkAssignable(@NotNull D datum) throws IllegalArgumentException { // TODO accept nulls?
-    if (!isInstance(datum)) throw new IllegalArgumentException("TODO");
+    if (!isInstance(datum))
+      throw new IllegalArgumentException(
+          String.format("Type '%s' is not an instance of type '%s'", datum.type().name(), name())
+      );
     return datum;
+  }
+
+  public <D extends Datum> D checkMeta(@Nullable D meta) throws IllegalArgumentException {
+    if (meta == null) return null;
+    else {
+      final DatumType _metaType = metaType();
+      if (_metaType == null) throw new IllegalArgumentException(String.format("Type '%s' has no meta-type", name()));
+      return _metaType.checkAssignable(meta);
+    }
   }
 
   @Override
@@ -82,7 +94,7 @@ public abstract class DatumType extends Type implements DatumTypeApi {
   public @Nullable DatumType declaredMetaType() { return declaredMetaType; }
 
   @Override
-  public @Nullable DatumTypeApi metaType() { return metaType; }
+  public @Nullable DatumType metaType() { return metaType; }
 
   public abstract @NotNull Val.Imm createValue(@Nullable ErrorValue errorOrNull);
 

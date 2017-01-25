@@ -18,6 +18,7 @@
 
 package ws.epigraph.data;
 
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.types.LongType;
 import org.jetbrains.annotations.NotNull;
 
@@ -73,15 +74,22 @@ public interface LongDatum extends PrimitiveDatum<Long> {
 
       private final @NotNull Long val;
 
+      private final @Nullable Datum.Imm meta;
+
       private final @NotNull Val.Imm.Raw value = new Val.Imm.Raw.DatumVal(this);
 
       private final int hashCode;
 
       public Raw(@NotNull LongDatum.Builder.Raw mutable) {
         super(mutable.type());
-        val = mutable.getVal(); // TODO copy metadata
+        val = mutable.getVal();
+        Datum _meta = mutable.meta();
+        meta = _meta == null ? null : _meta.toImmutable();
         hashCode = Objects.hash(type(), val);
       }
+
+      @Override
+      public @Nullable Datum.Imm meta() { return null; }
 
       @Override
       public @NotNull LongDatum.Imm.Raw toImmutable() { return this; }
@@ -168,6 +176,7 @@ public interface LongDatum extends PrimitiveDatum<Long> {
 
     protected Builder(@NotNull LongType type) { super(type); }
 
+    @Override
     public abstract void setVal(@NotNull Long val);
 
     @Override
@@ -178,12 +187,13 @@ public interface LongDatum extends PrimitiveDatum<Long> {
 
       private @NotNull Long val;
 
+      private @Nullable Datum meta;
+
       private final @NotNull Val.Builder.Raw value = new Val.Builder.Raw.DatumVal(this);
 
       public Raw(@NotNull LongType type, @NotNull Long val) {
         super(type);
-        // TODO validate vs type validation rules (once available)
-        this.val = /*this.val = type().validate*/(val);
+        this.val = val;
       }
 
       @Override
@@ -191,8 +201,16 @@ public interface LongDatum extends PrimitiveDatum<Long> {
 
       @Override
       public void setVal(@NotNull Long val) {
-        // TODO validate vs type validation rules (once available)
-        this.val = /*this.val = type().validate*/(val);
+        this.val = val;
+      }
+
+      @Override
+      public @Nullable Datum meta() { return meta; }
+
+      @Override
+      public @NotNull Datum.@NotNull Builder setMeta(final @Nullable Datum meta) {
+        this.meta = type().checkMeta(meta);
+        return this;
       }
 
       @Override
@@ -218,7 +236,7 @@ public interface LongDatum extends PrimitiveDatum<Long> {
     }
 
 
-    public static abstract class Static<
+    public abstract static class Static<
         MyImmDatum extends LongDatum.Imm.Static,
         MyBuilderVal extends Val.Builder.Static
         > extends LongDatum.Builder

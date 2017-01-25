@@ -96,9 +96,8 @@ public interface Data { // TODO Var? Union? Values?
       @Override
       public @NotNull Data.Imm.Raw toImmutable() { return this; }
 
-      @NotNull
       @Override
-      public Data.Imm.Raw _raw() { return this; }
+      public @NotNull Data.Imm.Raw _raw() { return this; }
 
       @Override
       public @NotNull Map<@NotNull String, @NotNull ? extends Val.Imm> tagValues() { return tagValues; }
@@ -252,7 +251,7 @@ public interface Data { // TODO Var? Union? Values?
     }
 
 
-    public static abstract class Static<MyImmData extends Data.Imm.Static> extends Data.Builder implements Data.Static {
+    public abstract static class Static<MyImmData extends Data.Imm.Static> extends Data.Builder implements Data.Static {
 
       private final @NotNull Data.Builder.Raw raw;
 

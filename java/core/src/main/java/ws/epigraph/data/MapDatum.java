@@ -18,17 +18,13 @@
 
 package ws.epigraph.data;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.types.MapType;
 import ws.epigraph.util.Unmodifiable;
 import ws.epigraph.util.Util;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.AbstractMap;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 
 
@@ -43,7 +39,11 @@ public interface MapDatum extends Datum {
   @Override
   @NotNull MapDatum.Imm toImmutable();
 
-  int size(); // TODO isEmpty()?
+  int size();
+
+  default boolean isEmpty() { return size() == 0; }
+
+  default boolean nonEmpty() { return size() > 0; }
 
 
   abstract class Impl extends Datum.Impl<MapType> implements MapDatum {
@@ -81,6 +81,8 @@ public interface MapDatum extends Datum {
 
       private final Map<Datum.@NotNull Imm, ? extends Data.Imm> elements;
 
+      private final @Nullable Datum.Imm meta;
+
       private final @NotNull Val.Imm.Raw value = new Val.Imm.Raw.DatumVal(this);
 
       private final int hashCode;
@@ -93,8 +95,13 @@ public interface MapDatum extends Datum {
             Data::toImmutable,
             () -> Util.createLinkedHashMap(mutable.size())
         );
+        Datum _meta = mutable.meta();
+        meta = _meta == null ? null : _meta.toImmutable();
         hashCode = Objects.hash(type(), elements);
       }
+
+      @Override
+      public @Nullable Datum.Imm meta() { return meta; }
 
       @Override
       public int size() { return elements.size(); }
@@ -194,12 +201,23 @@ public interface MapDatum extends Datum {
 
       private final @NotNull Map<Datum.@NotNull Imm, @NotNull Data> elements = new DataMap<>(type());
 
+      private @Nullable Datum meta;
+
       private final @NotNull Val.Builder.Raw value = new Val.Builder.Raw.DatumVal(this);
 
       public Raw(MapType type) { super(type); }
 
       @Override
       public @NotNull Map<Datum.@NotNull Imm, @NotNull Data> elements() { return elements; }
+
+      @Override
+      public @Nullable Datum meta() { return meta; }
+
+      @Override
+      public @NotNull Datum.@NotNull Builder setMeta(final @Nullable Datum meta) {
+        this.meta = type().checkMeta(meta);
+        return this;
+      }
 
       @Override
       public int size() { return elements.size(); }
@@ -254,7 +272,7 @@ public interface MapDatum extends Datum {
     }
 
 
-    public static abstract class Static<
+    public abstract static class Static<
         K extends Datum.Imm,
         MyImmDatum extends MapDatum.Imm.Static,
         MyBuilderVal extends Val.Builder.Static

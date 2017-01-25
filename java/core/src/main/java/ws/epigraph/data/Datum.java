@@ -22,8 +22,6 @@ import ws.epigraph.types.DatumType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.ref.WeakReference;
-
 
 public interface Datum {
 
@@ -52,6 +50,8 @@ public interface Datum {
 
 
   interface Raw extends Datum {
+
+    @Nullable Datum meta();
 
     @Override
     @NotNull Datum.Imm.Raw toImmutable();
@@ -100,8 +100,11 @@ public interface Datum {
 
   interface Builder extends Datum, Mutable {
 
+    interface Raw extends Datum.Builder, Datum.Raw {
 
-    interface Raw extends Datum.Builder, Datum.Raw {}
+      @NotNull Builder setMeta(@Nullable Datum meta);
+
+    }
 
 
     interface Static<MyImmDatum extends Datum.Imm.Static> extends Datum.Builder, Datum.Static {
@@ -115,21 +118,21 @@ public interface Datum {
   }
 
 
-  interface Mut extends Datum, Mutable {
-
-
-    interface Raw extends Datum.Mut, Datum.Raw {}
-
-
-    interface Static<MyImmDatum extends Datum.Imm.Static> extends Datum.Mut, Datum.Static {
-
-      @Override
-      @NotNull MyImmDatum toImmutable();
-
-    }
-
-
-  }
+//  interface Mut extends Datum, Mutable {
+//
+//
+//    interface Raw extends Datum.Mut, Datum.Raw {}
+//
+//
+//    interface Static<MyImmDatum extends Datum.Imm.Static> extends Datum.Mut, Datum.Static {
+//
+//      @Override
+//      @NotNull MyImmDatum toImmutable();
+//
+//    }
+//
+//
+//  }
 
 
 }

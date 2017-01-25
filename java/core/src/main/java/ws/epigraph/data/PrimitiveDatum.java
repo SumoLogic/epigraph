@@ -111,22 +111,22 @@ public interface PrimitiveDatum<Native> extends Datum {
   }
 
 
-  interface Mut<Native> extends PrimitiveDatum<Native>, Datum.Mut {
-
-    void setVal(@NotNull Native val);
-
-    @Override
-    @NotNull PrimitiveDatum.Mut.Raw<Native> _raw();
-
-
-    interface Raw<Native> extends PrimitiveDatum.Mut<Native>, PrimitiveDatum.Raw<Native>, Datum.Mut.Raw {}
-
-
-    interface Static<Native, MyImmDatum extends PrimitiveDatum.Imm.Static<Native>>
-        extends PrimitiveDatum.Mut<Native>, PrimitiveDatum.Static<Native>, Datum.Mut.Static<MyImmDatum> {}
-
-
-  }
+//  interface Mut<Native> extends PrimitiveDatum<Native>, Datum.Mut {
+//
+//    void setVal(@NotNull Native val);
+//
+//    @Override
+//    @NotNull PrimitiveDatum.Mut.Raw<Native> _raw();
+//
+//
+//    interface Raw<Native> extends PrimitiveDatum.Mut<Native>, PrimitiveDatum.Raw<Native>, Datum.Mut.Raw {}
+//
+//
+//    interface Static<Native, MyImmDatum extends PrimitiveDatum.Imm.Static<Native>>
+//        extends PrimitiveDatum.Mut<Native>, PrimitiveDatum.Static<Native>, Datum.Mut.Static<MyImmDatum> {}
+//
+//
+//  }
 
 
 }

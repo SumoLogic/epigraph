@@ -52,7 +52,7 @@ public final class DataType implements DataTypeApi {
   @Override
   public @NotNull DataTypeName name() { return name; }
 
-  public <D extends Data> D checkAssignable(@NotNull D data) throws IllegalArgumentException {
+  public <D extends Data> @NotNull D checkAssignable(@NotNull D data) throws IllegalArgumentException {
     return type.checkAssignable(data);
   }
 

@@ -109,15 +109,20 @@ public abstract class Type implements TypeApi {
   @Override
   public @NotNull DataTypeApi dataType() { return new DataType(this, null); }
 
-  public <D extends Data> D checkAssignable(@NotNull D data) throws IllegalArgumentException { // TODO accept nulls?
-    if (!isInstance(data)) throw new IllegalArgumentException("TODO");
+  public <D extends Data> @NotNull D checkAssignable(@NotNull D data) throws IllegalArgumentException { // TODO accept nulls?
+    if (!isInstance(data))
+      throw new IllegalArgumentException(
+          String.format("Type '%s' is not compatible with type '%s'", data.type().name(), name())
+      );
     return data;
   }
 
   /** Ensures specified type is a subtype of this type. */
   public <T extends Type> T checkAssignable(@NotNull T type) throws IllegalArgumentException {
     if (!isAssignableFrom(type))
-      throw new IllegalArgumentException("Type '" + type.name() + "' is not compatible with type '" + name() + "'");
+      throw new IllegalArgumentException(
+          String.format("Type '%s' is not compatible with type '%s'", type.name(), name())
+      );
     return type;
   }
 

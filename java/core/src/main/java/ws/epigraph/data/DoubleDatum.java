@@ -18,6 +18,7 @@
 
 package ws.epigraph.data;
 
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.types.DoubleType;
 import org.jetbrains.annotations.NotNull;
 
@@ -36,6 +37,7 @@ public interface DoubleDatum extends PrimitiveDatum<Double> {
   @Override
   @NotNull DoubleDatum.Imm toImmutable();
 
+  @Override
   @NotNull Double getVal();
 
 
@@ -72,13 +74,20 @@ public interface DoubleDatum extends PrimitiveDatum<Double> {
 
       private final @NotNull Double val;
 
+      private final @Nullable Datum.Imm meta;
+
       private final @NotNull Val.Imm.Raw value = new Val.Imm.Raw.DatumVal(this);
 
       private final int hashCode;
 
+      @Override
+      public @Nullable Datum.Imm meta() { return meta; }
+
       public Raw(@NotNull DoubleDatum.Builder.Raw mutable) {
         super(mutable.type());
-        val = mutable.getVal(); // TODO copy metadata
+        val = mutable.getVal();
+        Datum _meta = mutable.meta();
+        meta = _meta == null ? null : _meta.toImmutable();
         hashCode = Objects.hash(type(), val);
       }
 
@@ -167,6 +176,7 @@ public interface DoubleDatum extends PrimitiveDatum<Double> {
 
     protected Builder(@NotNull DoubleType type) { super(type); }
 
+    @Override
     public abstract void setVal(@NotNull Double val);
 
     @Override
@@ -177,21 +187,28 @@ public interface DoubleDatum extends PrimitiveDatum<Double> {
 
       private @NotNull Double val;
 
+      private @Nullable Datum meta;
+
       private final @NotNull Val.Builder.Raw value = new Val.Builder.Raw.DatumVal(this);
 
       public Raw(@NotNull DoubleType type, @NotNull Double val) {
         super(type);
-        // TODO validate vs type validation rules (once available)
-        this.val = /*this.val = type().validate*/(val);
+        this.val = val;
       }
 
       @Override
       public @NotNull Double getVal() { return val; }
 
       @Override
-      public void setVal(@NotNull Double val) {
-        // TODO validate vs type validation rules (once available)
-        this.val = /*this.val = type().validate*/(val);
+      public void setVal(@NotNull Double val) { this.val = val; }
+
+      @Override
+      public @Nullable Datum meta() { return meta; }
+
+      @Override
+      public @NotNull Datum.@NotNull Builder setMeta(final @Nullable Datum meta) {
+        this.meta = type().checkMeta(meta);
+        return this;
       }
 
       @Override
