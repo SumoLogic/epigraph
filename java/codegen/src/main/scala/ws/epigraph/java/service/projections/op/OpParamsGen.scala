@@ -32,7 +32,7 @@ class OpParamsGen(params: OpParams) extends ServiceObjectGen[OpParams](params) {
     if (params.equals(OpParams.EMPTY)) "OpParams.EMPTY"
     else sn"""\
 new OpParams(
-  ${i(ServiceGenUtils.genHashMap("String", "OpParam", params.asMap().entrySet().map{e => (gen(e.getKey, ctx), gen(e.getValue, ctx))}, ctx))},
+  ${i(ServiceGenUtils.genVararg(params.asMap().values().map{p => gen(p, ctx)}, insertNewlines = true, ctx))}
 )"""/*@formatter:on*/
 
 }

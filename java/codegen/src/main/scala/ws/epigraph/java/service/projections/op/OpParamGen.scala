@@ -28,7 +28,7 @@ class OpParamGen(param: OpParam) extends ServiceObjectGen[OpParam](param) {
 
   override protected def generateObject(ctx: ServiceGenContext): String =
   /*@formatter:off*/sn"""\
-new Annotation(
+new OpParam(
   "${param.name()}",
   ${i(gen(param.projection(), ctx))},
   ${gen(param.location(), ctx)}
