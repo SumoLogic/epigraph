@@ -38,7 +38,6 @@ import static ws.epigraph.wire.WireTestUtil.parseReqOutputVarProjection;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class JsonFormatWriterTest {
-  private final DataType dataType = new DataType(Person.type, Person.id);
   private final TypesResolver resolver = new SimpleTypesResolver(
       PersonId.type,
       Person.type,
@@ -52,35 +51,37 @@ public class JsonFormatWriterTest {
       SubUserId.type,
       SubUserRecord.type,
       String_Person_Map.type,
+      PaginationInfo.type,
+      PersonMap.type,
       epigraph.String.type,
       epigraph.Boolean.type
   );
 
-  private final OpOutputVarProjection personOpProjection = parsePersonOpOutputVarProjection(
-      lines(
-          ":(",
-          "  id,",
-          "  `record` (",
-          "    id {",
-          "      ;param1 : epigraph.String = \"hello world\" { doc = \"some doc\" },",
-          "    },",
-          "    bestFriend :`record` (",
-          "      id,",
-          "      bestFriend :`record` (",
-          "        id,",
-          "        firstName",
-          "      ),",
-          "    ),",
-          "    friends *( :id ),",
-          "    friendsMap [;keyParam:epigraph.String]( :(id, `record` (id, firstName) ) )",
-          "  )",
-          ") ~(",
-          "      ws.epigraph.tests.User :`record` (profile)",
-          "        ~ws.epigraph.tests.SubUser :`record` (worstEnemy(id)),",
-          "      ws.epigraph.tests.User2 :`record` (worstEnemy(id))",
-          ")"
-      )
-  );
+  private final DataType personDataType = new DataType(Person.type, Person.id);
+  private final OpOutputVarProjection personOpProjection = parseOpOutputVarProjection(personDataType, lines(
+      ":(",
+      "  id,",
+      "  `record` (",
+      "    id {",
+      "      ;param1 : epigraph.String = \"hello world\" { doc = \"some doc\" },",
+      "    },",
+      "    bestFriend :`record` (",
+      "      id,",
+      "      bestFriend :`record` (",
+      "        id,",
+      "        firstName",
+      "      ),",
+      "    ),",
+      "    friends *( :id ),",
+      "    friendsMap [;keyParam:epigraph.String]( :(id, `record` (id, firstName) ) )",
+      "  )",
+      ") ~(",
+      "      ws.epigraph.tests.User :`record` (profile)",
+      "        ~ws.epigraph.tests.SubUser :`record` (worstEnemy(id)),",
+      "      ws.epigraph.tests.User2 :`record` (worstEnemy(id))",
+      ")"
+  ), resolver);
+
 
   @Test
   public void testRenderEmpty() throws IOException {
@@ -256,11 +257,45 @@ public class JsonFormatWriterTest {
     );
   }
 
+  @Test
+  public void testRenderMeta() throws IOException {
+    final DataType personMapDataType = new DataType(PersonMap.type, null);
+    final OpOutputVarProjection personMapOpProjection = parseOpOutputVarProjection(personMapDataType,
+        "{ meta: (start, count) } [ required ]( :`record` ( id, firstName ) )", resolver
+    );
+
+    String reqProjectionStr = "[ 2 ](:record(id, firstName))@(start,count)";
+    final @NotNull ReqOutputVarProjection reqProjection =
+        parseReqOutputVarProjection(personMapDataType, personMapOpProjection, reqProjectionStr, resolver).projection();
+
+    final PersonMap.Builder personMap = PersonMap.create();
+    personMap.put$(
+        PersonId.create(2),
+        Person.create().setRecord(
+            PersonRecord.create().setId(PersonId.create(2)).setFirstName(epigraph.String.create("Alfred"))
+        )
+    );
+    personMap.setMeta(PaginationInfo.create()
+        .setStart(epigraph.Long.create(10L)).setCount(epigraph.Long.create(20L)));
+
+    String expectedJson =
+        "{\"meta\":{\"start\":10,\"count\":20},\"data\":[{\"K\":2,\"V\":{\"id\":2,\"firstName\":\"Alfred\"}}]}";
+    testRender(reqProjection, PersonMap.type.createDataBuilder().set(personMap), expectedJson);
+  }
+
   private void testRender(@NotNull String reqProjectionStr, @NotNull Data data, @NotNull String expectedJson)
       throws IOException {
     final @NotNull ReqOutputVarProjection reqProjection =
-        parseReqOutputVarProjection(dataType, personOpProjection, reqProjectionStr, resolver).projection();
+        parseReqOutputVarProjection(personDataType, personOpProjection, reqProjectionStr, resolver).projection();
 
+    testRender(reqProjection, data, expectedJson);
+  }
+
+  private void testRender(
+      @NotNull ReqOutputVarProjection reqProjection,
+      @NotNull Data data,
+      @NotNull String expectedJson)
+      throws IOException {
     final StringWriter writer = new StringWriter();
     final JsonFormatWriter jsonWriter = new JsonFormatWriter(writer);
 
@@ -269,7 +304,4 @@ public class JsonFormatWriterTest {
     assertEquals(expectedJson, writer.toString());
   }
 
-  private @NotNull OpOutputVarProjection parsePersonOpOutputVarProjection(@NotNull String projectionString) {
-    return parseOpOutputVarProjection(dataType, projectionString, resolver);
-  }
 }

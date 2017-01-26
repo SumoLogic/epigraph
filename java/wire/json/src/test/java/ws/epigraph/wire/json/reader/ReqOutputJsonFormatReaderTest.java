@@ -57,6 +57,8 @@ public class ReqOutputJsonFormatReaderTest {
       SubUserId.type,
       SubUserRecord.type,
       String_Person_Map.type,
+      PaginationInfo.type,
+      PersonMap.type,
       epigraph.String.type,
       epigraph.Boolean.type
   );
@@ -244,6 +246,37 @@ public class ReqOutputJsonFormatReaderTest {
     );
   }
 
+  @Test
+  public void testReadMeta() throws IOException {
+    final DataType personMapDataType = new DataType(PersonMap.type, null);
+    final OpOutputVarProjection personMapOpProjection = parseOpOutputVarProjection(personMapDataType,
+        "{ meta: (start, count) } [ required ]( :`record` ( id, firstName ) )", resolver
+    );
+
+    String reqProjectionStr = "[ 2 ](:record(id, firstName))@(start,count)";
+    final @NotNull ReqOutputVarProjection reqProjection =
+        parseReqOutputVarProjection(personMapDataType, personMapOpProjection, reqProjectionStr, resolver).projection();
+
+    final PersonMap.Builder personMap = PersonMap.create();
+    personMap.put$(
+        PersonId.create(2),
+        Person.create().setRecord(
+            PersonRecord.create().setId(PersonId.create(2)).setFirstName(epigraph.String.create("Alfred"))
+        )
+    );
+    personMap.setMeta(PaginationInfo.create()
+        .setStart(epigraph.Long.create(10L)).setCount(epigraph.Long.create(20L)));
+
+    String json =
+        "{\"meta\":{\"start\":10,\"count\":20},\"data\":[{\"K\":2,\"V\":{\"id\":2,\"firstName\":\"Alfred\"}}]}";
+
+    testRead(
+        reqProjection,
+        json,
+        PersonMap.type.createDataBuilder().set(personMap)
+    );
+  }
+
   private void testRead(
       @NotNull String reqProjectionStr,
       @NotNull String json,
@@ -252,6 +285,15 @@ public class ReqOutputJsonFormatReaderTest {
 
     final @NotNull ReqOutputVarProjection reqProjection =
         parseReqOutputVarProjection(dataType, personOpProjection, reqProjectionStr, resolver).projection();
+
+    testRead(reqProjection, json, expectedData);
+  }
+
+  private void testRead(
+      @NotNull ReqOutputVarProjection reqProjection,
+      @NotNull String json,
+      @NotNull Data expectedData)
+      throws IOException {
 
     JsonParser parser = new JsonFactory().createParser(json);
     ReqOutputJsonFormatReader jsonReader = new ReqOutputJsonFormatReader(parser);

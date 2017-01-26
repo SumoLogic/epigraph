@@ -69,4 +69,8 @@ public class ReqOutputJsonFormatReader extends AbstractJsonFormatReader<
     return expectedKeys;
   }
 
+  @Override
+  protected @Nullable ReqOutputModelProjection<?, ?, ?> getMetaProjection(final @NotNull ReqOutputModelProjection<?, ?, ?> projection) {
+    return projection.metaProjection();
+  }
 }

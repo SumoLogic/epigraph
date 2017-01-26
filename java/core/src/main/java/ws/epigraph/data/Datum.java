@@ -100,6 +100,9 @@ public interface Datum {
 
   interface Builder extends Datum, Mutable {
 
+    @Override
+    @NotNull Datum.Builder.Raw _raw();
+
     interface Raw extends Datum.Builder, Datum.Raw {
 
       @NotNull Builder setMeta(@Nullable Datum meta);

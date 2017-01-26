@@ -58,4 +58,8 @@ public class OpInputJsonFormatReader extends AbstractJsonFormatReader<
     return null;
   }
 
+  @Override
+  protected @Nullable OpInputModelProjection<?, ?, ?, ?> getMetaProjection(final @NotNull OpInputModelProjection<?, ?, ?, ?> projection) {
+    return projection.metaProjection();
+  }
 }

@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static ws.epigraph.wire.json.JsonFormatCommon.*;
 
@@ -110,6 +111,22 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
       @NotNull Deque<? extends ReqOutputModelProjection<?, ?, ?>> projections,
       @Nullable Datum datum)
       throws IOException {
+
+    Deque<? extends ReqOutputModelProjection<?, ?, ?>> metaProjections = projections.stream()
+        .map(ReqOutputModelProjection::metaProjection)
+        .filter(Objects::nonNull)
+        .collect(Collectors.toCollection(ArrayDeque::new));
+
+    if (!metaProjections.isEmpty()) {
+      out.write("{\"");
+      out.write(JsonFormat.DATUM_META_FIELD);
+      out.write("\":");
+      writeDatum(metaProjections, datum == null ? null : datum._raw().meta());
+      out.write(",\"");
+      out.write(JsonFormat.DATUM_VALUE_FIELD);
+      out.write("\":");
+    }
+
     if (datum == null) {
       out.write("null");
     } else {
@@ -136,6 +153,9 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
       }
     }
 
+    if (!metaProjections.isEmpty()) {
+      out.write('}');
+    }
   }
 
   @Override

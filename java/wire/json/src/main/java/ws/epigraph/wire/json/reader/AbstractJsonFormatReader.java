@@ -52,7 +52,9 @@ import static ws.epigraph.wire.json.JsonFormatCommon.*;
  * MULTIDATA ::= '{' (( "tag" ':' VALUE ',' )* "tag" ':' VALUE )? '}'  // 0 or more comma-separated entries
  * VALUE ::= ERROR | DATUM | 'null'
  * ERROR ::= '{' "ERROR": INTEGER ',' "message": STRING '}'
- * DATUM ::= RECORD | MAP | LIST | PRIMITIVE | ENUM
+ * DATUM ::= DATUM_WITH_META | DATUM_NO_META                           // depending on meta-projection presence
+ * DATUM_WITH_META ::= '{' "meta" ':' DATUM_NO_META ',' "data" ':' DATUM_NO_META '}'
+ * DATUM_NO_META ::= RECORD | MAP | LIST | PRIMITIVE | ENUM
  * RECORD ::= { (( "field" ':' DATA ',' )* "field ':' DATA )* '}'      // 0 or more comma-separated entries
  * MAP ::= '[' (( MAP_ENTRY ',' )* MAP_ENTRY )? ]                      // 0 or more comma-separated entries
  * MAP_ENTRY ::= '{' "key" ':' DATUM ',' "value" ':' DATA '}'
@@ -211,13 +213,81 @@ abstract class AbstractJsonFormatReader<
     return datum.asValue();
   }
 
+  protected @Nullable MP getMetaProjection(@NotNull MP projection) { return null; }
+
+  // DATUM ::= DATUM_WITH_META | DATUM_NO_META                           // depending on meta-projection presence
+  // DATUM_WITH_META ::= '{' "meta" ':' DATUM_NO_META ',' "data" ':' DATUM_NO_META '}'
   @SuppressWarnings("unchecked")
-  private Datum finishReadingDatum(
+  private @Nullable Datum finishReadingDatum(
+      @Nullable String fieldName,
+      final @NotNull Collection<? extends MP> modelProjections,
+      final DatumType type) throws IOException {
+
+    Collection<? extends MP> metaProjections = modelProjections.stream()
+        .map(this::getMetaProjection)
+        .filter(Objects::nonNull)
+        .collect(Collectors.toCollection(ArrayList::new));
+
+    final Datum datum;
+
+    if (metaProjections.isEmpty()) {
+      datum = finishReadingDatumNoMeta(fieldName, modelProjections, type);
+    } else {
+      if (fieldName == null) throw expected(JsonToken.START_OBJECT.asString());
+      final DatumType metaType = type.metaType();
+      if (metaType == null)
+        throw error(
+            String.format("Meta-projections can't be specified, type '%s' doesn't have a meta-type", type.name())
+        );
+
+      Datum.Builder _datum = null;
+      Datum _meta = null;
+
+      while (true) {
+        if (Objects.equals(fieldName, JsonFormat.DATUM_META_FIELD)) {
+          if (_meta != null) throw error("Field '" + JsonFormat.DATUM_META_FIELD + "' must only be specified once");
+          _meta = readDatumNoMeta(metaProjections, metaType);
+          @NotNull JsonToken token = nextNonEof();
+          if (token == JsonToken.END_OBJECT) break;
+          if (token == JsonToken.FIELD_NAME) fieldName = in.getCurrentName();
+          else throw expected("field name or '}'");
+        } else if (Objects.equals(fieldName, JsonFormat.DATUM_VALUE_FIELD)) {
+          if (_datum != null) throw error("Field '" + JsonFormat.DATUM_VALUE_FIELD + "' must only be specified once");
+          _datum = readDatumNoMeta(modelProjections, type);
+          @NotNull JsonToken token = nextNonEof();
+          if (token == JsonToken.END_OBJECT) break;
+          if (token == JsonToken.FIELD_NAME) fieldName = in.getCurrentName();
+          else throw expected("field name or '}'");
+        }
+      }
+
+      if (_meta != null) {
+        if (_datum == null) throw error("meta-data can't be provided for a null data");
+        else _datum._raw().setMeta(_meta);
+      }
+
+      datum = _datum;
+    }
+
+    return datum;
+  }
+
+  private @Nullable Datum.Builder readDatumNoMeta(
+      @NotNull Collection<? extends MP> modelProjections,
+      @NotNull DatumType type) throws IOException {
+
+    @NotNull JsonToken token = nextNonEof();
+    @Nullable String firstFieldName = token == JsonToken.START_OBJECT ? in.nextFieldName() : null;
+    return finishReadingDatumNoMeta(firstFieldName, modelProjections, type);
+  }
+
+  @SuppressWarnings("unchecked")
+  private @NotNull Datum.Builder finishReadingDatumNoMeta(
       final @Nullable String firstFieldName,
       final @NotNull Collection<? extends MP> tagModelProjections,
       final DatumType type) throws IOException {
 
-    final @NotNull Datum datum;
+    final @NotNull Datum.Builder datum;
     switch (type.kind()) {
       case RECORD:
         datum = finishReadingRecord(
@@ -274,7 +344,7 @@ abstract class AbstractJsonFormatReader<
   }
 
   // `}` or `: DATA, "field": DATA, ... }`
-  private @NotNull RecordDatum finishReadingRecord(
+  private @NotNull RecordDatum.Builder finishReadingRecord(
       @Nullable String fieldName,
       @NotNull RecordType type,
       @NotNull Collection<? extends RMP> projections // non-empty
@@ -315,7 +385,7 @@ abstract class AbstractJsonFormatReader<
 
   // `]` or ` MAP_ENTRY , MAP ENTRY ... ]`
   // MAP_ENTRY ::= '{' "key" ':' DATUM ',' "value" ':' DATA '}'
-  private @NotNull MapDatum finishReadingMap(
+  private @NotNull MapDatum.Builder finishReadingMap(
       @NotNull MapType type,
       @NotNull Collection<? extends MMP> projections // non-empty
   ) throws IOException {
@@ -354,7 +424,7 @@ abstract class AbstractJsonFormatReader<
 
   protected abstract @Nullable Set<Datum> getExpectedKeys(@NotNull Collection<? extends MMP> projections);
 
-  private @NotNull ListDatum finishReadingList(
+  private @NotNull ListDatum.Builder finishReadingList(
       @NotNull ListType type,
       @NotNull Collection<? extends LMP> projections // non-empty
   ) throws IOException {
@@ -377,7 +447,7 @@ abstract class AbstractJsonFormatReader<
   }
 
   @SuppressWarnings("unchecked")
-  private @NotNull PrimitiveDatum<?> finishReadingPrimitive(@NotNull PrimitiveType<?> type) throws IOException {
+  private @NotNull PrimitiveDatum.Builder<?> finishReadingPrimitive(@NotNull PrimitiveType<?> type) throws IOException {
 
     JsonToken token = in.currentToken();
     final Object nativeValue;
