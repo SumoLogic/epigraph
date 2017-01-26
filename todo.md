@@ -61,10 +61,10 @@
 - [ ] Perform full tails normalization in parsers
 - [ ] Unify req projections pretty printers, there's lots of code duplication
 - [ ] Unify op projections pretty printers, there's lots of code duplication
-- [ ] Add `throws` to op projections: `someField throws ( Error(message) ~MyError(code) )`
-- [ ] Add `catch` to req projections: `someField throws ( Error(message) ~MyError(code) )`
+- [ ] Add `throws` to op projections: `:someModel throws ( Error(message) ~MyError(code) )`
+- [ ] Add `catch` to req projections: `:someModel catch ( Error(message) ~MyError(code) )`. This should guide marshallers/unmarshallers
 - [x] Bug: meta-projection type should be `ModelProjection` (currently it's map for maps, list for lists etc)
-- [ ] Add meta-projection to req input model projections
+- [ ] ~~Add meta-projection to req input model projections?~~ Decided not needed for now.
 
 # Operations
 -[x] Operations code gen
