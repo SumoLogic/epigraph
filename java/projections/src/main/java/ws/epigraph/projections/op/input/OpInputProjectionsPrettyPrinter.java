@@ -50,8 +50,7 @@ public class OpInputProjectionsPrettyPrinter<E extends Exception> extends Abstra
     final Annotations annotations = projection.annotations();
 
     final GDataValue defaultValue = projection.defaultValue();
-    if (defaultValue == null && annotations.isEmpty() && params.isEmpty() &&
-        metaProjection == null) {
+    if (defaultValue == null && annotations.isEmpty() && params.isEmpty() && metaProjection == null) {
 
       l.beginCInd();
       if (projection.required() && tagName != null) l.print("+");

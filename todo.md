@@ -63,6 +63,7 @@
 - [ ] Add `throws` to op projections: `someField throws ( Error(message) ~MyError(code) )`
 - [ ] Add `catch` to req projections: `someField throws ( Error(message) ~MyError(code) )`
 - [x] Bug: meta-projection type should be `ModelProjection` (currently it's map for maps, list for lists etc)
+- [ ] Add meta-projection to req input model projections
 
 # Operations
 -[x] Operations code gen

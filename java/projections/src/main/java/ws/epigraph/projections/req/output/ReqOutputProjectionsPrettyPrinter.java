@@ -48,7 +48,6 @@ public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
   @Override
   public void print(@Nullable String tagName, @NotNull ReqOutputTagProjectionEntry tp, int pathSteps) throws E {
     ReqOutputModelProjection<?, ?, ?> projection = tp.projection();
-    ReqOutputModelProjection<?, ?, ?> metaProjection = projection.metaProjection(); // todo print meta projection
 
     ReqParams params = projection.params();
     Annotations annotations = projection.annotations();
@@ -76,6 +75,14 @@ public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
       if (needBrk) l.brk();
       print(projection, pathSteps);
     }
+
+    ReqOutputModelProjection<?, ?, ?> metaProjection = projection.metaProjection();
+    if (metaProjection != null) {
+      l.print("@");
+      if (metaProjection.required()) l.print("+");
+      print(metaProjection, 0);
+    }
+
 
     l.end();
   }

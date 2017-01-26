@@ -270,6 +270,17 @@ public class OpOutputProjectionsTest {
     );
   }
 
+  @Test
+  public void testParseMeta() throws PsiProcessingException {
+    String projection = "{ meta: ( start, count ) } [ required ]( :`record` ( id, firstName ) )";
+
+    testParsingVarProjection(
+        new DataType(PersonMap.type, null),
+        projection,
+        projection
+    );
+  }
+
   private void testTailsNormalization(String str, Type type, String expected) {
     OpOutputVarProjection varProjection = parseOpOutputVarProjection(dataType, str);
     final @NotNull OpOutputVarProjection normalized = varProjection.normalizedForType(type);
@@ -315,6 +326,8 @@ public class OpOutputProjectionsTest {
         SubUserId.type,
         SubUserRecord.type,
         String_Person_Map.type,
+        PersonMap.type,
+        PaginationInfo.type,
         epigraph.String.type,
         epigraph.Integer.type
     );

@@ -162,7 +162,7 @@ reqFieldPath ::= reqParamsAndAnnotations reqVarPath {pin=1}
 reqMapModelPath ::= '/' reqOutputTrunkKeyProjection reqVarPath {pin=2}
 
 // req output --------------------------------------------------------
-// this is based on opInput from idl.bnf
+// this is based on opInput from schema.bnf
 
 reqOutputStarTagProjection ::= ':' '*' // all tags with empty contents
 

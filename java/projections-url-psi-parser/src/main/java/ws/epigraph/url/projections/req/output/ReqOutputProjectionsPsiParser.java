@@ -492,8 +492,8 @@ public final class ReqOutputProjectionsPsiParser {
 
     @Nullable TagApi defaultTag = findDefaultTag(type, op, locationPsi, errors);
     Iterable<TagApi> tags = defaultTag == null ?
-                              Collections.emptyList() :
-                              Collections.singletonList(defaultTag);
+                            Collections.emptyList() :
+                            Collections.singletonList(defaultTag);
     return createDefaultVarProjection(type, tags, op, required, locationPsi, errors);
   }
 
@@ -533,7 +533,7 @@ public final class ReqOutputProjectionsPsiParser {
               required,
               params,
               annotations,
-              (ReqOutputRecordModelProjection) metaProjection,
+              metaProjection,
               trunkRecordProjectionPsi,
               subResolver,
               errors
@@ -551,7 +551,7 @@ public final class ReqOutputProjectionsPsiParser {
               required,
               params,
               annotations,
-              (ReqOutputMapModelProjection) metaProjection,
+              metaProjection,
               trunkMapProjectionPsi,
               subResolver,
               errors
@@ -598,7 +598,7 @@ public final class ReqOutputProjectionsPsiParser {
             required,
             params,
             annotations,
-            (ReqOutputRecordModelProjection) metaProjection,
+            metaProjection,
             recordModelProjectionPsi,
             subResolver,
             errors
@@ -618,7 +618,7 @@ public final class ReqOutputProjectionsPsiParser {
             required,
             params,
             annotations,
-            (ReqOutputMapModelProjection) metaProjection,
+            metaProjection,
             mapModelProjectionPsi,
             subResolver,
             errors
@@ -639,7 +639,7 @@ public final class ReqOutputProjectionsPsiParser {
             required,
             params,
             annotations,
-            (ReqOutputListModelProjection) metaProjection,
+            metaProjection,
             listModelProjectionPsi,
             subResolver,
             errors
@@ -654,7 +654,7 @@ public final class ReqOutputProjectionsPsiParser {
             required,
             params,
             annotations,
-            (ReqOutputPrimitiveModelProjection) metaProjection,
+            metaProjection,
             psi
         );
 
@@ -816,7 +816,7 @@ public final class ReqOutputProjectionsPsiParser {
       boolean required,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
-      @Nullable ReqOutputRecordModelProjection metaProjection,
+      @Nullable ReqOutputModelProjection<?, ?, ?> metaProjection,
       @NotNull UrlReqOutputTrunkRecordModelProjection psi,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
@@ -974,7 +974,7 @@ public final class ReqOutputProjectionsPsiParser {
       boolean required,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
-      @Nullable ReqOutputRecordModelProjection metaProjection,
+      @Nullable ReqOutputModelProjection<?, ?, ?> metaProjection,
       @NotNull UrlReqOutputComaRecordModelProjection psi,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
@@ -1089,7 +1089,7 @@ public final class ReqOutputProjectionsPsiParser {
       boolean required,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
-      @Nullable ReqOutputMapModelProjection metaProjection,
+      @Nullable ReqOutputModelProjection<?, ?, ?> metaProjection,
       @NotNull UrlReqOutputTrunkMapModelProjection psi,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
@@ -1138,7 +1138,7 @@ public final class ReqOutputProjectionsPsiParser {
       boolean required,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
-      @Nullable ReqOutputMapModelProjection metaProjection,
+      @Nullable ReqOutputModelProjection<?, ?, ?> metaProjection,
       @NotNull UrlReqOutputComaMapModelProjection psi,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
@@ -1221,7 +1221,7 @@ public final class ReqOutputProjectionsPsiParser {
       boolean required,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
-      @Nullable ReqOutputListModelProjection metaProjection,
+      @Nullable ReqOutputModelProjection<?, ?, ?> metaProjection,
       @NotNull UrlReqOutputComaListModelProjection psi,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
@@ -1257,7 +1257,7 @@ public final class ReqOutputProjectionsPsiParser {
       boolean required,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
-      @Nullable ReqOutputPrimitiveModelProjection metaProjection,
+      @Nullable ReqOutputModelProjection<?, ?, ?> metaProjection,
       @NotNull PsiElement locationPsi) {
 
     return new ReqOutputPrimitiveModelProjection(

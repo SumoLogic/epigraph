@@ -224,6 +224,23 @@ public class ReqOutputProjectionsParserTest {
     );
   }
 
+  @Test
+  public void testParseMeta() throws PsiProcessingException {
+    final DataType dataType = new DataType(PersonMap.type, null);
+
+    String opProjectionStr = "{ meta: ( start, count ) } [ required ]( :`record` ( id, firstName ) )";
+    @NotNull OpOutputVarProjection opProjection = parseOpOutputVarProjection(dataType, opProjectionStr, resolver);
+
+    String projection = "[ 2 ]( :record ( id, firstName ) )@+( start, count )";
+
+    testParse(
+        dataType,
+        opProjection,
+        projection,
+        1
+    );
+  }
+
   // todo negative test cases too
 
   private void testTailsNormalization(String str, Type type, String expected) {
@@ -241,9 +258,23 @@ public class ReqOutputProjectionsParserTest {
     testParse(expr, expr, steps);
   }
 
+  private void testParse(DataType dataType, OpOutputVarProjection opProjection, String expr, int steps) {
+    testParse(dataType, opProjection, expr, expr, steps);
+  }
+
   private ReqOutputVarProjection testParse(String expr, String expectedProjection, int steps) {
+    return testParse(dataType, personOpProjection, expr, expectedProjection, steps);
+  }
+
+  private ReqOutputVarProjection testParse(
+      DataType dataType,
+      OpOutputVarProjection opProjection,
+      String expr,
+      String expectedProjection,
+      int steps) {
+
     final @NotNull StepsAndProjection<ReqOutputVarProjection> stepsAndProjection =
-        parseReqOutputVarProjection(dataType, personOpProjection, expr, resolver);
+        parseReqOutputVarProjection(dataType, opProjection, expr, resolver);
 
     assertEquals(steps, stepsAndProjection.pathSteps());
 
