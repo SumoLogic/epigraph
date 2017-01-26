@@ -6,10 +6,10 @@
 # Framework
 - [x] Fix tails support in JSON output. Data trimmer must be fixed?
 - JSON marshaller
-  -[ ] metadata support
+  -[x] metadata support
   -[ ] recursive data support
 - JSON unmarshaller
-  -[ ] metadata support
+  -[x] metadata support
   -[ ] recursive data support
 - [ ] Format for parameter values in URL. Currently: GData with single quotes.
 - [ ] `ReqDelete` psi parser must ensure that leaf items have `op.canDelete` set to `true`
