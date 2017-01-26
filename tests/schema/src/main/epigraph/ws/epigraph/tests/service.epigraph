@@ -8,7 +8,7 @@ import ws.epigraph.tests.User
 resource users: PersonMap {
 
   read {
-    outputProjection { ;start: Long, ;count: Long, meta: (start, count) } [](
+    outputProjection { ;start: Long, ;count: Long }{ meta: (start, count) } []( // todo move params to model
       :(
         id,
         `record`(

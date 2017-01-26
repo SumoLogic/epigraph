@@ -50,6 +50,7 @@
 - [x] Produce a list of `EpigraphType`->`JavaClass` mappings artifact (Duplicates task from `Schema compiler` list above)
 
 # Projections
+- [ ] **HIGH** resolve field vs model params/annotations syntax problem
 - [ ] `*` support in projections improvement: allow `*` to be present along with other fields (currently it's either `*` or fields list)
 - [ ] support for recursive projections
 - [ ] Generate projection classes for specific types. For both req and op! So it's possibly to easly access things like permissions attached to op

@@ -58,6 +58,23 @@ public final class ProjectionDataTrimmer {
   }
 
   public static @NotNull Datum trimDatum(@NotNull Datum datum, @NotNull ReqOutputModelProjection<?, ?, ?> projection) {
+    Datum.Builder.Raw b = trimDatumNoMeta(datum, projection);
+
+    final ReqOutputModelProjection<?, ?, ?> metaProjection = projection.metaProjection();
+    if (metaProjection != null) {
+      final Datum meta = datum._raw().meta();
+      if (meta != null) {
+        b.setMeta(trimDatumNoMeta(meta, metaProjection));
+      }
+    }
+
+    return b;
+  }
+
+  private static @NotNull Datum.Builder.Raw trimDatumNoMeta(
+      @NotNull Datum datum,
+      @NotNull ReqOutputModelProjection<?, ?, ?> projection) {
+
     switch (datum.type().kind()) {
       case RECORD:
         return trimRecordDatum((RecordDatum) datum, (ReqOutputRecordModelProjection) projection);
@@ -76,7 +93,9 @@ public final class ProjectionDataTrimmer {
     }
   }
 
-  public static @NotNull Datum trimRecordDatum(@NotNull RecordDatum datum, @NotNull ReqOutputRecordModelProjection projection) {
+  public static @NotNull Datum.Builder.Raw trimRecordDatum(
+      @NotNull RecordDatum datum,
+      @NotNull ReqOutputRecordModelProjection projection) {
     final @NotNull RecordDatum.Raw raw = datum._raw();
     final @NotNull RecordDatum.Builder.Raw b = datum.type().createBuilder()._raw();
 
@@ -94,7 +113,9 @@ public final class ProjectionDataTrimmer {
     return b;
   }
 
-  public static @NotNull Datum trimMapDatum(@NotNull MapDatum datum, @NotNull ReqOutputMapModelProjection projection) {
+  public static @NotNull Datum.Builder.Raw trimMapDatum(
+      @NotNull MapDatum datum,
+      @NotNull ReqOutputMapModelProjection projection) {
 
     final @NotNull MapDatum.Raw raw = datum._raw();
     final @NotNull MapDatum.Builder.Raw b = datum.type().createBuilder()._raw();
@@ -120,15 +141,34 @@ public final class ProjectionDataTrimmer {
     return b;
   }
 
-  public static @NotNull Datum trimListDatum(@NotNull ListDatum datum, @NotNull ReqOutputListModelProjection projection) {
-    // nothing to trim
-    return datum;
+  public static @NotNull Datum.Builder.Raw trimListDatum(
+      @NotNull ListDatum datum,
+      @NotNull ReqOutputListModelProjection projection) {
+
+    // nothing to trim.
+    // Todo: use toBuilder once available
+
+    if (datum instanceof ListDatum.Builder.Raw)
+      return (ListDatum.Builder.Raw) datum;
+
+    final ListDatum.Builder.Raw b = datum.type().createBuilder()._raw();
+    b.elements().addAll(datum._raw().elements());
+    return b;
   }
 
-  public static @NotNull Datum trimPrimitiveDatum(@NotNull PrimitiveDatum<?> datum,
-                                                  @NotNull ReqOutputPrimitiveModelProjection projection) {
+  @SuppressWarnings({"unchecked", "rawtypes"})
+  public static @NotNull Datum.Builder.Raw trimPrimitiveDatum(
+      @NotNull PrimitiveDatum<?> datum,
+      @NotNull ReqOutputPrimitiveModelProjection projection) {
     // nothing to trim
-    return datum;
+    // Todo: use toBuilder once available
+
+    if (datum instanceof PrimitiveDatum.Builder.Raw) {
+      return (PrimitiveDatum.Builder.Raw) datum;
+    }
+
+    PrimitiveDatum<Object> _d = (PrimitiveDatum<Object>) datum;
+    return _d.type().createBuilder(datum.getVal())._raw();
   }
 
 //  public static Datum trimEnumDatum(@NotNull EnumDatum datum, @NotNull ReqOutputEnumModelProjection projection) { }

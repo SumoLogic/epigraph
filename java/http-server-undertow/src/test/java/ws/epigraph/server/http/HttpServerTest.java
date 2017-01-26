@@ -90,6 +90,15 @@ public class HttpServerTest {
   }
 
   @Test
+  public void testGetWithMeta() throws UnirestException {
+    get(
+        "users;start=5;count=10[1](:id)@(start,count)", // todo params should belong to model, not field
+        200,
+        "{\"meta\":{\"start\":5,\"count\":10},\"data\":[{\"K\":1,\"V\":1}]}"
+    );
+  }
+
+  @Test
   public void testCreateReadUpdateDelete() throws UnirestException {
     Integer id = Integer.parseInt(post(null, "users", "[{'firstName':'Alfred'}]", 201, "\\[(\\d+)\\]").group(1));
     int nextId = id + 1;

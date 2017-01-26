@@ -99,14 +99,15 @@ public class UsersResourceFactory extends AbstractUsersResourceFactory {
     process(@NotNull ReadOperationRequest request) {
 
       // todo replace when generated projections are ready
-      final ReqOutputFieldProjection outputFieldProjection = request.outputProjection();
-      final ReqOutputModelProjection<?, ?, ?> modelProjection =
-          outputFieldProjection.varProjection().pathTagProjection().projection();
+      final ReqOutputFieldProjection fieldProjection = request.outputProjection();
 
       // todo there must be an easier way to access params
-      Long start = getLongParam(modelProjection.params(), "start");
-      Long count = getLongParam(modelProjection.params(), "count");
+      // todo must be model, not field params
+      Long start = getLongParam(fieldProjection.params(), "start");
+      Long count = getLongParam(fieldProjection.params(), "count");
 
+      final ReqOutputModelProjection<?, ?, ?> modelProjection =
+          fieldProjection.varProjection().pathTagProjection().projection();
       final ReqOutputModelProjection<?, ?, ?> metaProjection = modelProjection.metaProjection();
 
       final PersonMap.Builder users = storage.users();
