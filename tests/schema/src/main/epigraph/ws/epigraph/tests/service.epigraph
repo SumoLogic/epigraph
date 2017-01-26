@@ -5,10 +5,10 @@ import ws.epigraph.tests.PersonId
 import ws.epigraph.tests.PersonRecord
 import ws.epigraph.tests.User
 
-resource users: map[PersonId,Person] {
+resource users: PersonMap {
 
   read {
-    outputProjection [](
+    outputProjection { ;start: Long, ;count: Long, meta: (start, count) } [](
       :(
         id,
         `record`(

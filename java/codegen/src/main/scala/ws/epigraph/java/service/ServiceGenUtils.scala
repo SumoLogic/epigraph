@@ -44,6 +44,11 @@ object ServiceGenUtils {
     }
   }
 
+  def genVararg(items: Iterable[String], insertNewlines: Boolean, ctx: ServiceGenContext): String = {
+    val separator = if (insertNewlines) ",\n" else ", "
+    items.mkString(separator)
+  }
+
   def genLinkedMap(
     keyType: String,
     valueType: String,

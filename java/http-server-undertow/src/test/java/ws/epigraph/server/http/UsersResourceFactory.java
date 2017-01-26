@@ -20,16 +20,20 @@ package ws.epigraph.server.http;
 
 import epigraph.Error;
 import epigraph.PersonId_Error_Map;
-import epigraph.String;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.data.LongDatum;
 import ws.epigraph.errors.ErrorValue;
+import ws.epigraph.projections.req.ReqParam;
+import ws.epigraph.projections.req.ReqParams;
 import ws.epigraph.projections.req.delete.ReqDeleteFieldProjection;
 import ws.epigraph.projections.req.delete.ReqDeleteKeyProjection;
 import ws.epigraph.projections.req.delete.ReqDeleteMapModelProjection;
 import ws.epigraph.projections.req.delete.ReqDeleteTagProjectionEntry;
 import ws.epigraph.projections.req.input.ReqInputFieldProjection;
 import ws.epigraph.projections.req.input.ReqInputRecordModelProjection;
+import ws.epigraph.projections.req.output.ReqOutputFieldProjection;
+import ws.epigraph.projections.req.output.ReqOutputModelProjection;
 import ws.epigraph.projections.req.path.ReqMapModelPath;
 import ws.epigraph.schema.operations.*;
 import ws.epigraph.service.ServiceInitializationException;
@@ -49,7 +53,7 @@ public class UsersResourceFactory extends AbstractUsersResourceFactory {
   }
 
   @Override
-  protected @NotNull ReadOperation<PersonId_Person_Map.Data> constructReadOperation(final @NotNull ReadOperationDeclaration operationDeclaration)
+  protected @NotNull ReadOperation<PersonMap.Data> constructReadOperation(final @NotNull ReadOperationDeclaration operationDeclaration)
       throws ServiceInitializationException {
     return new ReadOp(operationDeclaration, storage);
   }
@@ -82,7 +86,7 @@ public class UsersResourceFactory extends AbstractUsersResourceFactory {
   // read should use correctly construct them my making separate calls to the 'backend'
   // it's probably better to implement this once we have generated projection classes
 
-  private static final class ReadOp extends ReadOperation<PersonId_Person_Map.Data> {
+  private static final class ReadOp extends ReadOperation<PersonMap.Data> {
     private final @NotNull UsersStorage storage;
 
     ReadOp(@NotNull ReadOperationDeclaration declaration, @NotNull UsersStorage storage) {
@@ -91,11 +95,40 @@ public class UsersResourceFactory extends AbstractUsersResourceFactory {
     }
 
     @Override
-    public @NotNull CompletableFuture<ReadOperationResponse<PersonId_Person_Map.Data>>
+    public @NotNull CompletableFuture<ReadOperationResponse<PersonMap.Data>>
     process(@NotNull ReadOperationRequest request) {
+
+      // todo replace when generated projections are ready
+      final ReqOutputFieldProjection outputFieldProjection = request.outputProjection();
+      final ReqOutputModelProjection<?, ?, ?> modelProjection =
+          outputFieldProjection.varProjection().pathTagProjection().projection();
+
+      // todo there must be an easier way to access params
+      Long start = getLongParam(modelProjection.params(), "start");
+      Long count = getLongParam(modelProjection.params(), "count");
+
+      final ReqOutputModelProjection<?, ?, ?> metaProjection = modelProjection.metaProjection();
+
+      final PersonMap.Builder users = storage.users();
+      if (metaProjection != null) {
+        final PaginationInfo.Builder paginationInfoBuilder = PaginationInfo.type.createBuilder();
+        if (start != null)
+          paginationInfoBuilder.setStart(epigraph.Long.create(start));
+        if (count != null)
+          paginationInfoBuilder.setCount(epigraph.Long.create(count));
+        users.setMeta(paginationInfoBuilder);
+      }
+
       return CompletableFuture.completedFuture(new ReadOperationResponse<>(
-          PersonId_Person_Map.type.createDataBuilder().set(storage.users())
+          PersonMap.type.createDataBuilder().set(users)
       ));
+    }
+
+    private @Nullable Long getLongParam(@NotNull ReqParams params, @NotNull String name) {
+      final ReqParam param = params.get(name);
+      if (param == null) return null;
+      final LongDatum value = (LongDatum) param.value();
+      return value == null ? null : value.getVal();
     }
   }
 
@@ -269,14 +302,14 @@ public class UsersResourceFactory extends AbstractUsersResourceFactory {
                 .projection();
 
             if (inputProjection.fieldProjection(PersonRecord.firstName.name()) != null) {
-              final String firstName = personRecord.getFirstName();
+              final epigraph.String firstName = personRecord.getFirstName();
               if (firstName != null) {
                 personRecord.setFirstName(epigraph.String.create(firstName.getVal().toUpperCase()));
               }
             }
 
             if (inputProjection.fieldProjection(PersonRecord.lastName.name()) != null) {
-              final String lastName = personRecord.getFirstName();
+              final epigraph.String lastName = personRecord.getFirstName();
               if (lastName != null) {
                 personRecord.setFirstName(epigraph.String.create(lastName.getVal().toUpperCase()));
               }

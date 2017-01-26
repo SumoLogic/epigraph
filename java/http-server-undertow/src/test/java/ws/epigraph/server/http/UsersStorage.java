@@ -29,11 +29,11 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class UsersStorage {
-  private final PersonId_Person_Map.Builder storage;
+  private final PersonMap.Builder storage;
   private final AtomicInteger nextId = new AtomicInteger();
 
   public UsersStorage() {
-    storage = PersonId_Person_Map.create();
+    storage = PersonMap.create();
 
     // create initial storage state
     for (int id = 1; id <= 10; ++id) {
@@ -44,7 +44,7 @@ public class UsersStorage {
     nextId.set(11);
   }
 
-  public @NotNull PersonId_Person_Map.Builder users() {
+  public PersonMap.Builder users() {
     return storage;
   }
 
