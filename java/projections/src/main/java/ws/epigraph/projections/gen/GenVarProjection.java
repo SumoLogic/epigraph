@@ -40,7 +40,7 @@ public interface GenVarProjection<
   /**
    * @return single tag if there's just one; {@code null} otherwise
    */
-  default @Nullable TP pathTagProjection() {
+  default @Nullable TP singleTagProjection() {
     final @NotNull Map<String, TP> tagProjections = tagProjections();
     if (tagProjections.size() == 1) return tagProjections.values().iterator().next();
     else return null;

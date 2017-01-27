@@ -47,7 +47,7 @@ class ReqOutputListModelProjectionGen(t: CListType, ctx: GenContext) extends Jav
     val (itemProjectionClass, itemProjectionExpr) =
       if (elementKind.isPrimitive) {
         imports += classOf[ReqOutputPrimitiveModelProjection].getName
-        ("ReqOutputPrimitiveModelProjection", "(ReqOutputPrimitiveModelProjection) raw.itemsProjection().pathTagProjection().projection()")
+        ("ReqOutputPrimitiveModelProjection", "(ReqOutputPrimitiveModelProjection) raw.itemsProjection().singleTagProjection().projection()")
       } else elementKind match {
           case CTypeKind.VARTYPE =>
             val pc = ReqOutputVarProjectionGen.shortClassName(ln(elementType))
@@ -55,15 +55,15 @@ class ReqOutputListModelProjectionGen(t: CListType, ctx: GenContext) extends Jav
           case CTypeKind.RECORD =>
             imports += classOf[ReqOutputRecordModelProjection].getName
             val pc = ReqOutputRecordModelProjectionGen.shortClassName(ln(elementType))
-            (pc, s"new $pc((ReqOutputRecordModelProjection) raw.itemsProjection().pathTagProjection().projection())")
+            (pc, s"new $pc((ReqOutputRecordModelProjection) raw.itemsProjection().singleTagProjection().projection())")
           case CTypeKind.MAP =>
             imports += classOf[ReqOutputMapModelProjection].getName
             val pc = ReqOutputMapModelProjectionGen.shortClassName(ln(elementType))
-            (pc, s"new $pc((ReqOutputMapModelProjection) raw.itemsProjection().pathTagProjection().projection())")
+            (pc, s"new $pc((ReqOutputMapModelProjection) raw.itemsProjection().singleTagProjection().projection())")
           case CTypeKind.LIST =>
             imports += classOf[ReqOutputListModelProjection].getName
             val pc = ReqOutputListModelProjectionGen.shortClassName(ln(elementType))
-            (pc, s"new $pc((ReqOutputListModelProjection) raw.itemsProjection().pathTagProjection().projection())")
+            (pc, s"new $pc((ReqOutputListModelProjection) raw.itemsProjection().singleTagProjection().projection())")
           case _ => throw new RuntimeException("Unexpected model kind: " + elementType)
       }
 

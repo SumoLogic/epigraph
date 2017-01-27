@@ -59,7 +59,7 @@ public final class ProjectionUtils {
     }
 
     while (true) {
-      final GenTagProjectionEntry<?, ?> tagProjection = path.pathTagProjection();
+      final GenTagProjectionEntry<?, ?> tagProjection = path.singleTagProjection();
       if (tagProjection == null) break;
 
       lastDataType = tagProjection.tag().type().dataType();
@@ -94,7 +94,7 @@ public final class ProjectionUtils {
     int len = 0;
 
     while (true) {
-      final GenTagProjectionEntry<?, ?> tagProjection = path.pathTagProjection();
+      final GenTagProjectionEntry<?, ?> tagProjection = path.singleTagProjection();
       if (tagProjection == null) break;
 
       len++;

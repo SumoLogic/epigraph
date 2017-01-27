@@ -35,7 +35,7 @@ public final class OutputProjectionPathRemover {
     if (steps == 0) return new PathRemovalResult(projection, null);
 
     if (projection.tagProjections().size() > 1) throw new AmbiguousPathException();
-    final @Nullable ReqOutputTagProjectionEntry tagProjection = projection.pathTagProjection();
+    final @Nullable ReqOutputTagProjectionEntry tagProjection = projection.singleTagProjection();
 
     if (tagProjection == null) return PathRemovalResult.NULL;
 

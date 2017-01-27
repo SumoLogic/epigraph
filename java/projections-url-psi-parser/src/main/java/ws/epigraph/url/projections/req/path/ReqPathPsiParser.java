@@ -56,7 +56,7 @@ public final class ReqPathPsiParser {
 
     final @Nullable UrlTagName tagNamePsi = psi.getTagName();
 
-    final @Nullable OpTagPath opTagPath = op.pathTagProjection();
+    final @Nullable OpTagPath opTagPath = op.singleTagProjection();
 
     if (opTagPath == null) {
       if (tagNamePsi != null)
@@ -263,7 +263,7 @@ public final class ReqPathPsiParser {
     final ReqVarPath varProjection;
 
     if (fieldVarPathPsi == null) {
-      final @Nullable OpTagPath opTagPath = op.varProjection().pathTagProjection();
+      final @Nullable OpTagPath opTagPath = op.varProjection().singleTagProjection();
 
       if (opTagPath != null)
         throw new PsiProcessingException(

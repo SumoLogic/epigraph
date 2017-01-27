@@ -107,7 +107,7 @@ public class UsersResourceFactory extends AbstractUsersResourceFactory {
       Long count = getLongParam(fieldProjection.params(), "count");
 
       final ReqOutputModelProjection<?, ?, ?> modelProjection =
-          fieldProjection.varProjection().pathTagProjection().projection();
+          fieldProjection.varProjection().singleTagProjection().projection();
       final ReqOutputModelProjection<?, ?, ?> metaProjection = modelProjection.metaProjection();
 
       final PersonMap.Builder users = storage.users();

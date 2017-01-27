@@ -33,7 +33,7 @@ class OpVarPathGen(p: OpVarPath) extends ServiceObjectGen[OpVarPath](p) {
     /*@formatter:off*/sn"""\
 new OpVarPath(
   ${genTypeExpr(p.`type`(), ctx.gctx)},
-  ${i(genTagPath(p.`type`(), p.pathTagProjection(), ctx))},
+  ${i(genTagPath(p.`type`(), p.singleTagProjection(), ctx))},
   ${gen(p.location(), ctx)}
 )"""/*@formatter:on*/
 

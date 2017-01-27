@@ -67,7 +67,7 @@ public final class ReadReqPathPsiParser {
           errors
       );
 
-    final @Nullable OpTagPath opTagPath = op.pathTagProjection();
+    final @Nullable OpTagPath opTagPath = op.singleTagProjection();
     assert opTagPath != null;
     final TagApi opTag = opTagPath.tag();
 
