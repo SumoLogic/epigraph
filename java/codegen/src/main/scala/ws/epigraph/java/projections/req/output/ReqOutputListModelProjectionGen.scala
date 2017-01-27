@@ -18,11 +18,10 @@ package ws.epigraph.java.projections.req.output
 
 import java.nio.file.Path
 
-import ws.epigraph.compiler.{CListType, CTypeKind}
+import ws.epigraph.compiler.CListType
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 import ws.epigraph.java.{GenContext, JavaGen, JavaGenUtils}
 import ws.epigraph.lang.Qn
-import ws.epigraph.projections.req.output.{ReqOutputListModelProjection, ReqOutputMapModelProjection, ReqOutputPrimitiveModelProjection, ReqOutputRecordModelProjection}
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -39,37 +38,17 @@ class ReqOutputListModelProjectionGen(t: CListType, ctx: GenContext) extends Jav
 
     ctx.reqOutputProjections.put(t.name, namespace.append(shortClassName))
 
-    var imports: Set[String] = Set("ws.epigraph.projections.req.output.ReqOutputListModelProjection")
-
     val elementType = t.elementTypeRef.resolved
-    val elementKind = elementType.kind
+    val pe = ReqOutputProjectionGenUtil.projectionExpr(elementType, ln(elementType))
+    val imports: Set[String] = Set("ws.epigraph.projections.req.output.ReqOutputListModelProjection") ++ pe.extraImports
 
-    val (itemProjectionClass, itemProjectionExpr) =
-      if (elementKind.isPrimitive) {
-        imports += classOf[ReqOutputPrimitiveModelProjection].getName
-        ("ReqOutputPrimitiveModelProjection", "(ReqOutputPrimitiveModelProjection) raw.itemsProjection().singleTagProjection().projection()")
-      } else elementKind match {
-          case CTypeKind.VARTYPE =>
-            val pc = ReqOutputVarProjectionGen.shortClassName(ln(elementType))
-            (pc, s"new $pc(raw.itemsProjection())")
-          case CTypeKind.RECORD =>
-            imports += classOf[ReqOutputRecordModelProjection].getName
-            val pc = ReqOutputRecordModelProjectionGen.shortClassName(ln(elementType))
-            (pc, s"new $pc((ReqOutputRecordModelProjection) raw.itemsProjection().singleTagProjection().projection())")
-          case CTypeKind.MAP =>
-            imports += classOf[ReqOutputMapModelProjection].getName
-            val pc = ReqOutputMapModelProjectionGen.shortClassName(ln(elementType))
-            (pc, s"new $pc((ReqOutputMapModelProjection) raw.itemsProjection().singleTagProjection().projection())")
-          case CTypeKind.LIST =>
-            imports += classOf[ReqOutputListModelProjection].getName
-            val pc = ReqOutputListModelProjectionGen.shortClassName(ln(elementType))
-            (pc, s"new $pc((ReqOutputListModelProjection) raw.itemsProjection().singleTagProjection().projection())")
-          case _ => throw new RuntimeException("Unexpected model kind: " + elementType)
-      }
-
-
-    val body =
     /*@formatter:off*/sn"""\
+${JavaGenUtils.topLevelComment}
+package $namespace;
+
+import org.jetbrains.annotations.NotNull;
+
+${imports.toList.sorted.mkString("import ", ";\nimport ", ";\n")}
 /**
  * Request output projection for @{code ${ln(t)}} type
  */
@@ -81,22 +60,12 @@ public class $shortClassName {
   /**
    * @return items projection
    */
-  public @NotNull $itemProjectionClass itemsProjection() {
-    return $itemProjectionExpr;
+  public @NotNull ${pe.resultType} itemsProjection() {
+    return ${pe.fromVarExprBuilder("raw.itemsProjection()")};
   }
 
   public @NotNull ReqOutputListModelProjection _raw() { return raw; }
 }"""/*@formatter:on*/
-
-    /*@formatter:off*/sn"""\
-${JavaGenUtils.topLevelComment}
-package $namespace;
-
-import org.jetbrains.annotations.NotNull;
-
-${imports.toList.sorted.mkString("import ", ";\nimport ", ";\n")}
-$body
-"""/*@formatter:on*/
   }
 
 

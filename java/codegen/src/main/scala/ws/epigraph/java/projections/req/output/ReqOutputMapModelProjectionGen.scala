@@ -38,15 +38,17 @@ class ReqOutputMapModelProjectionGen(t: CMapType, ctx: GenContext) extends JavaG
 
     ctx.reqOutputProjections.put(t.name, namespace.append(shortClassName))
 
+    val elementType = t.valueTypeRef.resolved
+    val pe = ReqOutputProjectionGenUtil.projectionExpr(elementType, ln(elementType))
+    val imports: Set[String] = Set("ws.epigraph.projections.req.output.ReqOutputMapModelProjection") ++ pe.extraImports
+
     /*@formatter:off*/sn"""\
 ${JavaGenUtils.topLevelComment}
 package $namespace;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import ws.epigraph.projections.req.output.ReqOutputMapModelProjection;
-
+${imports.toList.sorted.mkString("import ", ";\nimport ", ";\n")}
 /**
  * Request output projection for @{code ${ln(t)}} type
  */
@@ -55,10 +57,16 @@ public class $shortClassName {
 
   public $shortClassName(@NotNull ReqOutputMapModelProjection raw) { this.raw = raw; }
 
+  /**
+   * @return items projection
+   */
+  public @NotNull ${pe.resultType} itemsProjection() {
+    return ${pe.fromVarExprBuilder("raw.itemsProjection()")};
+  }
+
   public @NotNull ReqOutputMapModelProjection _raw() { return raw; }
 }"""/*@formatter:on*/
   }
-
 }
 
 object ReqOutputMapModelProjectionGen {

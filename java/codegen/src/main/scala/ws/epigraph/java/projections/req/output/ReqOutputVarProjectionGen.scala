@@ -18,10 +18,11 @@ package ws.epigraph.java.projections.req.output
 
 import java.nio.file.Path
 
-import ws.epigraph.compiler.{CAnonListType, CAnonMapType, CTypeKind, CVarTypeDef}
+import ws.epigraph.compiler.CVarTypeDef
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 import ws.epigraph.java.{GenContext, JavaGen, JavaGenUtils}
 import ws.epigraph.lang.Qn
+import ws.epigraph.projections.req.output.ReqOutputVarProjection
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -38,7 +39,7 @@ class ReqOutputVarProjectionGen(t: CVarTypeDef, ctx: GenContext) extends JavaGen
 
     ctx.reqOutputProjections.put(t.name, namespace.append(shortClassName))
 
-    var imports:Set[String] = Set("ws.epigraph.projections.req.output.ReqOutputVarProjection")
+    var imports:Set[String] = Set(classOf[ReqOutputVarProjection].getName)
 
     val body =
     /*@formatter:off*/sn"""\
@@ -54,43 +55,21 @@ ${t.effectiveTags.map { tag =>
   imports += "ws.epigraph.projections.req.output.ReqOutputTagProjectionEntry"
 
   val modelType = tag.typeRef.resolved
-  val modelKind = modelType.kind
-  if (modelKind.isPrimitive) {
-    imports += "ws.epigraph.projections.req.output.ReqOutputPrimitiveModelProjection"
+  val pe = ReqOutputProjectionGenUtil.projectionExpr(modelType, ln(modelType))
+
+  imports ++= pe.extraImports
+
 sn"""\
   ${"/**"}
    * @return ${tag.name} projection
    */
-  public @Nullable ReqOutputPrimitiveModelProjection ${jn(tag.name)}() {
+  public @Nullable ${pe.resultType} ${jn(tag.name)}() {
     ReqOutputTagProjectionEntry tpe = raw.tagProjections().get(${ttr(t, tag.name, namespace.toString)}.name());
-    return tpe == null ? null : (ReqOutputPrimitiveModelProjection) tpe.projection();
+    return tpe == null ? null : ${pe.fromModelExprBuilder("tpe.projection()")};
   }
 
 """
-  } else {
-    val (tcn:String, rcn:String) = modelKind match {
-      case CTypeKind.RECORD =>
-        imports += "ws.epigraph.projections.req.output.ReqOutputRecordModelProjection"
-        (ReqOutputRecordModelProjectionGen.shortClassName(ln(modelType)), "ReqOutputRecordModelProjection")
-      case CTypeKind.MAP =>
-        imports += "ws.epigraph.projections.req.output.ReqOutputMapModelProjection"
-        (ReqOutputMapModelProjectionGen.shortClassName(ln(modelType)), "ReqOutputMapModelProjection")
-      case CTypeKind.LIST =>
-        imports += "ws.epigraph.projections.req.output.ReqOutputListModelProjection"
-        (ReqOutputListModelProjectionGen.shortClassName(ln(modelType)), "ReqOutputListModelProjection")
-      case _ => throw new RuntimeException("Unexpected model kind: " + modelKind)
-    }
-sn"""\
-  ${"/**"}
-   * @return ${tag.name} projection
-   */
-  public @Nullable $tcn ${jn(tag.name)}() {
-    ReqOutputTagProjectionEntry tpe = raw.tagProjections().get(${ttr(t, tag.name, namespace.toString)}.name());
-    return tpe == null ? null : new $tcn( ($rcn) tpe.projection() );
-  }
-
-"""
-  }}.mkString
+}.mkString
 }\
   /**
    * @return raw projection
