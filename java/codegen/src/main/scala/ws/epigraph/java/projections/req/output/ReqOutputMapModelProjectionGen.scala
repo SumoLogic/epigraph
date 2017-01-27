@@ -18,7 +18,7 @@ package ws.epigraph.java.projections.req.output
 
 import java.nio.file.Path
 
-import ws.epigraph.compiler.CMapTypeDef
+import ws.epigraph.compiler.CMapType
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 import ws.epigraph.java.{GenContext, JavaGen, JavaGenUtils}
 import ws.epigraph.lang.Qn
@@ -26,7 +26,7 @@ import ws.epigraph.lang.Qn
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-class ReqOutputMapModelProjectionGen(t: CMapTypeDef, ctx: GenContext) extends JavaGen[CMapTypeDef](ctx) {
+class ReqOutputMapModelProjectionGen(t: CMapType, ctx: GenContext) extends JavaGen[CMapType](ctx) {
 
   protected override def relativeFilePath: Path = JavaGenUtils.fqnToPath(namespace).resolve(shortClassName + ".java")
 
@@ -48,7 +48,7 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.projections.req.output.ReqOutputMapModelProjection;
 
 /**
- * Request output projection for ${ln(t)}
+ * Request output projection for @{code ${ln(t)}} type
  */
 public class $shortClassName {
   private final @NotNull ReqOutputMapModelProjection raw;

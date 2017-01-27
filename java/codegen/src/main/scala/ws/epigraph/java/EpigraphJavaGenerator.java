@@ -122,6 +122,7 @@ public class EpigraphJavaGenerator {
       try {
         //System.out.println(alt.name().name());
         new AnonListGen(alt, ctx).writeUnder(tmpRoot);
+        new ReqOutputListModelProjectionGen(alt, ctx).writeUnder(tmpRoot);
       } catch (CompilerException ignored) {
       }
     }
@@ -130,6 +131,7 @@ public class EpigraphJavaGenerator {
       try {
         //System.out.println(amt.name().name());
         new AnonMapGen(amt, ctx).writeUnder(tmpRoot);
+        new ReqOutputMapModelProjectionGen(amt, ctx).writeUnder(tmpRoot);
       } catch (CompilerException ignored) {
       }
     }

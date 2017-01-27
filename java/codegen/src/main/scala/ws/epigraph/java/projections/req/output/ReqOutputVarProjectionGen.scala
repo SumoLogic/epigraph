@@ -18,7 +18,7 @@ package ws.epigraph.java.projections.req.output
 
 import java.nio.file.Path
 
-import ws.epigraph.compiler.{CTypeKind, CVarTypeDef}
+import ws.epigraph.compiler.{CAnonListType, CAnonMapType, CTypeKind, CVarTypeDef}
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 import ws.epigraph.java.{GenContext, JavaGen, JavaGenUtils}
 import ws.epigraph.lang.Qn
@@ -32,7 +32,7 @@ class ReqOutputVarProjectionGen(t: CVarTypeDef, ctx: GenContext) extends JavaGen
 
   private def namespace: Qn = Qn.fromDotSeparated(pn(t)).append("projections") // or ".projections.req.output" ?
 
-  private def shortClassName = s"ReqOutput${ln(t)}Projection"
+  private def shortClassName = ReqOutputVarProjectionGen.shortClassName(ln(t))
 
   override protected def generate: String = {
 
@@ -43,7 +43,7 @@ class ReqOutputVarProjectionGen(t: CVarTypeDef, ctx: GenContext) extends JavaGen
     val body =
     /*@formatter:off*/sn"""\
 /**
- * Request output projection for ${ln(t)}
+ * Request output projection for @{code ${ln(t)}} type
  */
 public class $shortClassName {
   private final @NotNull ReqOutputVarProjection raw;
@@ -110,4 +110,8 @@ $body
 """/*@formatter:on*/
   }
 
+}
+
+object ReqOutputVarProjectionGen {
+  def shortClassName(ln: String) = s"ReqOutput${ln}Projection"
 }

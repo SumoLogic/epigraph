@@ -48,7 +48,7 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.projections.req.output.ReqOutputRecordModelProjection;
 
 /**
- * Request output projection for ${ln(t)}
+ * Request output projection for @{code ${ln(t)}} type
  */
 public class $shortClassName {
   private final @NotNull ReqOutputRecordModelProjection raw;

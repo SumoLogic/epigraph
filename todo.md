@@ -65,6 +65,7 @@
 - [ ] Add `catch` to req projections: `:someModel catch ( Error(message) ~MyError(code) )`. This should guide marshallers/unmarshallers
 - [x] Bug: meta-projection type should be `ModelProjection` (currently it's map for maps, list for lists etc)
 - [ ] ~~Add meta-projection to req input model projections?~~ Decided not needed for now.
+- [ ] rename `pathTagProjection` to `singleTagProjection` (mind codegen)
 
 # Operations
 -[x] Operations code gen
