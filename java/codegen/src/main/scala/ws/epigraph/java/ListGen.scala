@@ -34,7 +34,7 @@ abstract class ListGen[Type >: Null <: CListType](from: Type, ctx: GenContext) e
   private val et = etr.resolved
 
     override def generate: String = /*@formatter:off*/sn"""\
-// This is a generated file. Not intended for manual editing.
+${JavaGenUtils.topLevelComment}
 package ${pn(t)};
 
 import org.jetbrains.annotations.NotNull;

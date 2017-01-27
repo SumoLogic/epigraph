@@ -49,6 +49,7 @@ class AbstractResourceFactoryGen(rd: ResourceDeclaration) {
     val resourceConstructor = generateResourceConstructor(sgctx)
 
     /*@formatter:off*/sn"""\
+${JavaGenUtils.topLevelComment}
 package $namespace;
 
 ${ServiceGenUtils.genImports(sgctx)}

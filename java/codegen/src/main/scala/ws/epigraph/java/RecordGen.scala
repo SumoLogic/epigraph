@@ -25,7 +25,7 @@ class RecordGen(from: CRecordTypeDef, ctx: GenContext) extends JavaTypeDefGen[CR
     with DatumTypeJavaGen {
 
   protected def generate: String = /*@formatter:off*/sn"""\
-// This is a generated file. Not intended for manual editing.
+${JavaGenUtils.topLevelComment}
 package ${pn(t)};
 
 import ws.epigraph.types.RecordType.Field;

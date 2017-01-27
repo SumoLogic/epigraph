@@ -134,7 +134,7 @@ Util.create$mapClass(
 
   def genTypeClassRef(t: TypeApi, ctx: GenContext): String = {
     val w: CTypeApiWrapper = t.asInstanceOf[CTypeApiWrapper]
-    ctx.generatedTypes.get(w.cType.name)
+    ctx.generatedTypes.get(w.cType.name).toString
   }
 
   def genDataRef(t: TypeApi, ctx: GenContext): String = {

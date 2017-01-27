@@ -24,10 +24,7 @@ import ws.epigraph.compiler._
 class VarTypeGen(from: CVarTypeDef, ctx: GenContext) extends JavaTypeDefGen[CVarTypeDef](from, ctx) {
 
   protected def generate: String = /*@formatter:off*/sn"""\
-/*
- * Standard header
- */
-
+${JavaGenUtils.topLevelComment}
 package ${pn(t)};
 
 import ws.epigraph.types.Type.Tag;

@@ -24,4 +24,5 @@ dependencies {
   epigraph project(':examples-sumo-schema')
 
   compile project(':epigraph-java-core')
+  compile project(':epigraph-java-projections')
 }

@@ -34,9 +34,7 @@ class NamespaceGen(from: CNamespace, ctx: GenContext) extends JavaGen[CNamespace
     JavaGenUtils.fqnToPath(from.fqn).resolve("package.scala")
 
   protected def generate: String = sn"""\
-/*
- * Standard header
- */
+${JavaGenUtils.topLevelComment}
 ${if (from.parent ne null) s"\npackage ${javaFqn(from.fqn.removeLastSegment())}\n" else ""}
 import ws.epigraph.names
 

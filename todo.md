@@ -14,7 +14,7 @@
 - [ ] Format for parameter values in URL. Currently: GData with single quotes.
 - [ ] `ReqDelete` psi parser must ensure that leaf items have `op.canDelete` set to `true`
 - [ ] Replace `List<PsiProcessingError>` by `PsiProcessingContext`, so we can pass more context information for error messages
-- [ ] Add top-level comment to generated files: // This is a generated file. Not intended for manual editing.
+- [x] Add top-level comment to generated files: // This is a generated file. Not intended for manual editing.
 
 # Type system
 - [ ] Enums

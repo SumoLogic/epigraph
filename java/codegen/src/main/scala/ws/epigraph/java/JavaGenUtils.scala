@@ -101,4 +101,6 @@ object JavaGenUtils {
 
   def up(name: String): String = Character.toUpperCase(name.charAt(0)) + name.substring(1)
 
+  val topLevelComment = "// This is a generated file. Not intended for manual editing."
+
 }

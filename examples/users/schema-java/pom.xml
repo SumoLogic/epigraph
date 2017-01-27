@@ -24,6 +24,11 @@
       <artifactId>epigraph-java-core</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
+    <dependency>
+      <groupId>ws.epigraph</groupId>
+      <artifactId>epigraph-java-projections</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
 
   </dependencies>
 

@@ -20,6 +20,10 @@ package ws.epigraph.java;
 
 import scala.collection.JavaConversions;
 import ws.epigraph.compiler.*;
+import ws.epigraph.java.projections.req.output.ReqOutputListModelProjectionGen;
+import ws.epigraph.java.projections.req.output.ReqOutputMapModelProjectionGen;
+import ws.epigraph.java.projections.req.output.ReqOutputRecordModelProjectionGen;
+import ws.epigraph.java.projections.req.output.ReqOutputVarProjectionGen;
 import ws.epigraph.java.service.AbstractResourceFactoryGen;
 import ws.epigraph.java.service.ResourceDeclarationGen;
 import ws.epigraph.lang.Qn;
@@ -60,6 +64,8 @@ public class EpigraphJavaGenerator {
 //      new NamespaceGen(namespace, ctx).writeUnder(tmpRoot);
 //    }
 
+    // TODO only generate request projection classes if there are any resources defined ?
+
     // TODO parallelize all these?
 
     for (CSchemaFile schemaFile : cctx.schemaFiles().values()) {
@@ -69,19 +75,27 @@ public class EpigraphJavaGenerator {
           switch (typeDef.kind()) {
 
             case VARTYPE:
-              new VarTypeGen((CVarTypeDef) typeDef, ctx).writeUnder(tmpRoot);
+              final CVarTypeDef varTypeDef = (CVarTypeDef) typeDef;
+              new VarTypeGen(varTypeDef, ctx).writeUnder(tmpRoot);
+              new ReqOutputVarProjectionGen(varTypeDef, ctx).writeUnder(tmpRoot);
               break;
 
             case RECORD:
-              new RecordGen((CRecordTypeDef) typeDef, ctx).writeUnder(tmpRoot);
+              final CRecordTypeDef recordTypeDef = (CRecordTypeDef) typeDef;
+              new RecordGen(recordTypeDef, ctx).writeUnder(tmpRoot);
+              new ReqOutputRecordModelProjectionGen(recordTypeDef, ctx).writeUnder(tmpRoot);
               break;
 
             case MAP:
-              new NamedMapGen((CMapTypeDef) typeDef, ctx).writeUnder(tmpRoot);
+              final CMapTypeDef mapTypeDef = (CMapTypeDef) typeDef;
+              new NamedMapGen(mapTypeDef, ctx).writeUnder(tmpRoot);
+              new ReqOutputMapModelProjectionGen(mapTypeDef, ctx).writeUnder(tmpRoot);
               break;
 
             case LIST:
-              new NamedListGen((CListTypeDef) typeDef, ctx).writeUnder(tmpRoot);
+              final CListTypeDef listTypeDef = (CListTypeDef) typeDef;
+              new NamedListGen(listTypeDef, ctx).writeUnder(tmpRoot);
+              new ReqOutputListModelProjectionGen(listTypeDef, ctx).writeUnder(tmpRoot);
               break;
 
             case ENUM:

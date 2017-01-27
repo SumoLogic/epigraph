@@ -137,14 +137,18 @@ abstract class JavaGen[From >: Null <: AnyRef](protected val ctx: GenContext) {
   def bldImplName(t: CTypeDef): String = javaLocalName(t, bldImplName)
 
   /** java type name for given type as seen from the context of the other type namespace */
-  def lqn(t: CType, lt: CType, lnTrans: (String) => String = identity): String = {
+  @Deprecated
+  def lqn(t: CType, lt: CType, lnTrans: (String) => String = identity): String = lqn2(t, pn(lt), lnTrans)
+
+  /** java type name for given type as seen from the context of the other type namespace */
+  def lqn2(t: CType, namespace: String, lnTrans: (String) => String = identity): String = {
     val tpn = pn(t)
-    if (tpn == pn(lt)) lnTrans(ln(t)) else tpn + "." + lnTrans(ln(t))
+    if (tpn == namespace) lnTrans(ln(t)) else tpn + "." + lnTrans(ln(t))
   }
 
   def lqn(prefix: String, t: CType, lt: CType): String = lqn(t, lt, prefix + _)
 
-    /** java type name for given typeref as seen from the context of the other type namespace */
+  /** java type name for given typeref as seen from the context of the other type namespace */
   def lqrn(tr: CTypeRef, lt: CType, lnTrans: (String) => String = identity): String = lqn(tr.resolved, lt, lnTrans)
 
   /** locally qualified name for type's Data type (e.g. `PersonRecord.Data` or `Person`) */
@@ -165,9 +169,12 @@ abstract class JavaGen[From >: Null <: AnyRef](protected val ctx: GenContext) {
   def dttr(dt: CDataType, tn: String, lt: CType): String = ttr(dt.typeRef.resolved, tn, lt)
 
   /** tag constant reference for given type and its tag name */
-  def ttr(t: CType, tn: String, lt: CType): String = t match {
-    case t: CVarTypeDef => lqn(t, lt) + "." + jn(tn)
-    case t: CDatumType => lqn(t, lt) + ".Type.instance().self"
+  def ttr(t: CType, tn: String, lt: CType): String = ttr(t, tn, pn(lt))
+
+  /** tag constant reference for given type and its tag name */
+  def ttr(t: CType, tn: String, namespace: String): String = t match {
+    case t: CVarTypeDef => lqn2(t, namespace) + "." + jn(tn)
+    case t: CDatumType => lqn2(t, namespace) + ".Type.instance().self"
     case unknown => throw new UnsupportedOperationException(unknown.name.name)
   }
 

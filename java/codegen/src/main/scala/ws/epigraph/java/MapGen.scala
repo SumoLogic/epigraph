@@ -41,7 +41,7 @@ abstract class MapGen[Type >: Null <: CMapType](from: Type, ctx: GenContext) ext
   private val vt = vtr.resolved
 
   override def generate: String = /*@formatter:off*/sn"""\
-// This is a generated file. Not intended for manual editing.
+${JavaGenUtils.topLevelComment}
 package ${pn(t)};
 
 import org.jetbrains.annotations.NotNull;

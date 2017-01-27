@@ -21,12 +21,13 @@ package ws.epigraph.java
 import java.nio.file.Path
 
 import ws.epigraph.compiler.{CContext, CDataType, CType, CTypeRef, CVarTypeDef}
+import ws.epigraph.lang.Qn
 
 import scala.collection.JavaConversions._
 
 abstract class JavaTypeGen[Type >: Null <: CType](protected val t: Type, ctx: GenContext) extends JavaGen[Type](ctx) {
 
-  ctx.generatedTypes.put(t.name, typeClassExpression)
+  ctx.generatedTypes.put(t.name, Qn.fromDotSeparated(typeClassExpression))
 
   /** java code for expression yielding generated type class reference */
   protected def typeClassExpression: String = s"${pn(t)}.${ln(t)}"

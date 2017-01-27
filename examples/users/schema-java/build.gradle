@@ -8,4 +8,5 @@ dependencies {
   epigraph project(':examples-users-schema')
 
   compile project(':epigraph-java-core')
+  compile project(':epigraph-java-projections')
 }

@@ -73,6 +73,7 @@ super(
     val superCall = generate(sgctx)
 
     /*@formatter:off*/sn"""\
+${JavaGenUtils.topLevelComment}
 package $namespace;
 
 ${ServiceGenUtils.genImports(sgctx)}

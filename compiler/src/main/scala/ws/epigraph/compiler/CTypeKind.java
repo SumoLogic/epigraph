@@ -17,6 +17,7 @@
 package ws.epigraph.compiler;/* Created by yegor on 6/9/16. */
 
 import com.intellij.util.containers.HashMap;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -50,6 +51,11 @@ public enum CTypeKind {
     CTypeKind value = map.get(keyword);
     if (value == null) throw new IllegalArgumentException(keyword);
     return value;
+  }
+
+  @Contract(pure = true)
+  public boolean isPrimitive() {
+    return this == STRING || this == INTEGER || this == LONG || this == DOUBLE || this == BOOLEAN;
   }
 
 }
