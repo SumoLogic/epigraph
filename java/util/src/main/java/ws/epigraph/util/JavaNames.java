@@ -24,7 +24,7 @@ import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-public class JavaNames {
+public final class JavaNames {
 
   /**
    * Strings that are not allowed as legal Java identifiers.
@@ -93,6 +93,8 @@ public class JavaNames {
 
   )));
 
-  public static @NotNull String jn(@NotNull String n) { return reserved.contains(n) ? n + '_' : n; }
+  private JavaNames() {}
+
+  public static @NotNull String javaName(@NotNull String name) { return reserved.contains(name) ? name + '_' : name; }
 
 }

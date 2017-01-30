@@ -151,10 +151,10 @@ Util.create$mapClass(
     if (tagName == CDatumType.ImpliedDefaultTagName)
       genTypeExpr(t, ctx) + ".self()"
     else
-      genTypeClassRef(t, ctx) + "." + JavaNames.jn(tagName)
+      genTypeClassRef(t, ctx) + "." + JavaNames.javaName(tagName)
 
   def genFieldExpr(t: TypeApi, fieldName: String, ctx: GenContext): String =
-    genTypeClassRef(t, ctx) + "." + JavaNames.jn(fieldName)
+    genTypeClassRef(t, ctx) + "." + JavaNames.javaName(fieldName)
 
   def genDataTypeExpr(dt: DataTypeApi, gctx: GenContext): String = dt.`type`() match {
     case a: DatumTypeApi => genTypeExpr(a, gctx) + ".dataType()"

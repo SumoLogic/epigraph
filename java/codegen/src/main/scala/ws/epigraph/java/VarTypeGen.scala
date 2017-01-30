@@ -18,8 +18,9 @@
 
 package ws.epigraph.java
 
-import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 import ws.epigraph.compiler._
+import ws.epigraph.java.JavaGenNames.{jn, pn, lqn, lqrn, qnameArgs}
+import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 
 class VarTypeGen(from: CVarTypeDef, ctx: GenContext) extends JavaTypeDefGen[CVarTypeDef](from, ctx) {
 

@@ -18,8 +18,9 @@
 
 package ws.epigraph.java
 
-import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 import ws.epigraph.compiler._
+import ws.epigraph.java.JavaGenNames.{jn, pn, lqn, lqrn, lqdrn, tt, dttr, tcr, qnameArgs}
+import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 
 class RecordGen(from: CRecordTypeDef, ctx: GenContext) extends JavaTypeDefGen[CRecordTypeDef](from, ctx)
     with DatumTypeJavaGen {

@@ -19,6 +19,7 @@ package ws.epigraph.java.projections.req.output
 import java.nio.file.Path
 
 import ws.epigraph.compiler.CMapType
+import ws.epigraph.java.JavaGenNames.{ln, pn}
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 import ws.epigraph.java.{GenContext, JavaGen, JavaGenUtils}
 import ws.epigraph.lang.Qn

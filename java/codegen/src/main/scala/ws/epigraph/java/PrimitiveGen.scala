@@ -19,6 +19,7 @@
 package ws.epigraph.java
 
 import ws.epigraph.compiler.{CPrimitiveTypeDef, CTypeKind}
+import ws.epigraph.java.JavaGenNames.{lqn, pn, javaQName, qnameArgs}
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 
 class PrimitiveGen(from: CPrimitiveTypeDef, ctx: GenContext) extends JavaTypeDefGen[CPrimitiveTypeDef](from, ctx)

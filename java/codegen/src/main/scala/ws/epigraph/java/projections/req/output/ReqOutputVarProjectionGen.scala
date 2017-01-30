@@ -19,8 +19,9 @@ package ws.epigraph.java.projections.req.output
 import java.nio.file.Path
 
 import ws.epigraph.compiler.CVarTypeDef
+import ws.epigraph.java.JavaGenNames.{ln, pn, ttr}
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
-import ws.epigraph.java.{GenContext, JavaGen, JavaGenUtils}
+import ws.epigraph.java.{GenContext, JavaGen, JavaGenNames, JavaGenUtils}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.req.output.ReqOutputVarProjection
 
@@ -63,7 +64,7 @@ sn"""\
   ${"/**"}
    * @return ${tag.name} projection
    */
-  public @Nullable ${pe.resultType} ${jn(tag.name)}() {
+  public @Nullable ${pe.resultType} ${JavaGenNames.jn(tag.name)}() {
     ReqOutputTagProjectionEntry tpe = raw.tagProjections().get(${ttr(t, tag.name, namespace.toString)}.name());
     return tpe == null ? null : ${pe.fromModelExprBuilder("tpe.projection()")};
   }

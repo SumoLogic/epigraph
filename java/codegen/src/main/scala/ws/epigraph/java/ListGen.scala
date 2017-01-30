@@ -18,8 +18,9 @@
 
 package ws.epigraph.java
 
-import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 import ws.epigraph.compiler.{CListType, CVarTypeDef}
+import ws.epigraph.java.JavaGenNames.{jn, lqn, pn, tt}
+import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 
 abstract class ListGen[Type >: Null <: CListType](from: Type, ctx: GenContext) extends JavaTypeGen[Type](from, ctx)
     with DatumTypeJavaGen {

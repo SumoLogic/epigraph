@@ -35,14 +35,14 @@ class NamespaceGen(from: CNamespace, ctx: GenContext) extends JavaGen[CNamespace
 
   protected def generate: String = sn"""\
 ${JavaGenUtils.topLevelComment}
-${if (from.parent ne null) s"\npackage ${javaFqn(from.fqn.removeLastSegment())}\n" else ""}
+${if (from.parent ne null) s"\npackage ${JavaGenNames.javaFqn(from.fqn.removeLastSegment())}\n" else ""}
 import ws.epigraph.names
 
 /**
  * Package object for `${from.fqn}` namespace.
  * TODO: doc annotation here
  */
-package object ${jn(from.local)} {
+package object ${JavaGenNames.jn(from.local)} {
 
   val namespace: names.QualifiedNamespaceName = new names.QualifiedNamespaceName(
     ${nsOpt(from.parent)}, names.LocalNamespaceName("${from.local}")

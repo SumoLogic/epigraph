@@ -20,7 +20,8 @@ package ws.epigraph.java
 
 import java.nio.file.Path
 
-import ws.epigraph.compiler.{CContext, CDataType, CType, CTypeRef, CVarTypeDef}
+import ws.epigraph.compiler.{CDataType, CType, CTypeRef, CVarTypeDef}
+import ws.epigraph.java.JavaGenNames.{getNamedTypeComponent, lqn, lqrn, pn, dttr}
 import ws.epigraph.lang.Qn
 
 import scala.collection.JavaConversions._
@@ -30,17 +31,17 @@ abstract class JavaTypeGen[Type >: Null <: CType](protected val t: Type, ctx: Ge
   ctx.generatedTypes.put(t.name, Qn.fromDotSeparated(typeClassExpression))
 
   /** java code for expression yielding generated type class reference */
-  protected def typeClassExpression: String = s"${pn(t)}.${ln(t)}"
+  protected def typeClassExpression: String = s"${pn(t)}.${JavaGenNames.ln(t)}"
 
   /** java code for expression yielding generated type object */
   protected def typeExpression: String = s"$typeClassExpression.Type.instance()"
 
   // TODO respect annotations changing namespace/type names for java
   protected override def relativeFilePath: Path =
-  JavaGenUtils.fqnToPath(getNamedTypeComponent(t).name.fqn.removeLastSegment()).resolve(ln(t) + ".java")
+  JavaGenUtils.fqnToPath(getNamedTypeComponent(t).name.fqn.removeLastSegment()).resolve(JavaGenNames.ln(t) + ".java")
 
   /** local java name for type [[t]] */
-  def ln: String = ln(t)
+  def ln: String = JavaGenNames.ln(t)
 
   def withParents(trans: (String) => String): String = {
     t.getLinearizedParentsReversed.map(" " + lqn(_, t, trans) + ",").mkString

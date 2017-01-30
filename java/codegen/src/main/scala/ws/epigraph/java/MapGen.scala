@@ -20,6 +20,7 @@
 package ws.epigraph.java
 
 import ws.epigraph.compiler.{CMapType, CVarTypeDef}
+import ws.epigraph.java.JavaGenNames.{jn, lqn, pn, tt}
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 
 abstract class MapGen[Type >: Null <: CMapType](from: Type, ctx: GenContext) extends JavaTypeGen[Type](from, ctx)
