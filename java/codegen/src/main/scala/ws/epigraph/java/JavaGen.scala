@@ -22,9 +22,7 @@ import java.nio.file.Path
 
 import ws.epigraph.compiler._
 import ws.epigraph.java.JavaGenNames._
-import ws.epigraph.lang.Qn
 
-import scala.collection.GenTraversableOnce
 import scala.collection.JavaConversions._
 
 abstract class JavaGen[From >: Null <: AnyRef](protected val ctx: GenContext) {

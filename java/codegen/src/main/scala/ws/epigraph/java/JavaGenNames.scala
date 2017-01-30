@@ -29,12 +29,38 @@ object JavaGenNames {
 
   def javaFqn(fqn: Qn): String = fqn.segments.map(jn).mkString(".")
 
-  /** local (short) java name for given type */
-  def ln(t: CType): String = t match {
-    case t: CTypeDef => t.name.local
-    case t: CAnonListType => alln(t)
-    case t: CAnonMapType => amln(t)
+  /** java type name for given type as seen from the context of the other type namespace */
+  def lqn(t: CType, lt: CType): String = lqn(t, lt, identity[String] _)
+
+  /** java type name for given type as seen from the context of the other type namespace */
+  def lqn(t: CType, lt: CType, lnTrans: (String) => String): String = lqn2(t, pn(lt), lnTrans)
+
+  /** java type name for given type as seen from the context of the other type namespace */
+  def lqn2(t: CType, namespace: String, lnTrans: (String) => String = identity): String = {
+    val tpn = pn(t)
+    if (tpn == namespace) lnTrans(ln(t)) else tpn + "." + lnTrans(ln(t))
   }
+
+  def lqn(prefix: String, t: CType, lt: CType): String = lqn(t, lt, prefix + _)
+
+  /** java package name for given type */
+  def pn(t: CType): String = getNamedTypeComponent(t).name.fqn.removeLastSegment().segments.map(jn).mkString(".")
+
+  /** local (short) java name for given type */
+  def ln(t: CType): String =
+    t match {
+      case t: CTypeDef => t.name.local
+      case t: CAnonListType => t.elementDataType.typeRef.resolved match {
+        case et: CVarTypeDef => ln(et) + varTagPart(t.elementDataType.effectiveDefaultTagName) + "_List"
+        case et: CDatumType => ln(et) + "_List"
+        case unknown => throw new UnsupportedOperationException(unknown.toString)
+      }
+      case t: CAnonMapType => t.valueDataType.typeRef.resolved match {
+        case vt: CVarTypeDef => ln(t.keyTypeRef.resolved) + "_" + ln(vt) + varTagPart(t.valueDataType.effectiveDefaultTagName) + "_Map"
+        case vt: CDatumType => ln(t.keyTypeRef.resolved) + "_" + ln(vt) + "_Map"
+        case unknown => throw new UnsupportedOperationException(unknown.toString)
+      }
+    }
 
   /** java type name for given typeref as seen from the context of the other type namespace */
   def lqrn(tr: CTypeRef, lt: CType, lnTrans: (String) => String = identity): String = lqn(tr.resolved, lt, lnTrans)
@@ -72,17 +98,6 @@ object JavaGenNames {
     case None => "null"
   }
 
-  def alln(t: CAnonListType): String = t.elementDataType.typeRef.resolved match {
-    case et: CVarTypeDef => ln(et) + varTagPart(t.elementDataType.effectiveDefaultTagName) + "_List"
-    case et: CDatumType => ln(et) + "_List"
-    case unknown => throw new UnsupportedOperationException(unknown.toString)
-  }
-
-  def amln(t: CAnonMapType): String = t.valueDataType.typeRef.resolved match {
-    case vt: CVarTypeDef => ln(t.keyTypeRef.resolved) + "_" + ln(vt) + varTagPart(t.valueDataType.effectiveDefaultTagName) + "_Map"
-    case vt: CDatumType => ln(t.keyTypeRef.resolved) + "_" + ln(vt) + "_Map"
-    case unknown => throw new UnsupportedOperationException(unknown.toString)
-  }
 
   private def varTagPart(tagName: Option[String]): String = tagName match {
     case Some(name) => "$" + name
@@ -103,30 +118,13 @@ object JavaGenNames {
   )
 
   def localQName(typeFqn: Qn, localNs: Qn, trans: (String) => String = identity): Qn = {
-    val transLocal = trans(typeFqn.last()) // FIXME use ln(t) here
+    val transLocal = trans(typeFqn.last())
+    // FIXME use ln(t) here
     val ns = typeFqn.removeLastSegment()
     if (ns == localNs) new Qn(transLocal) else ns.append(transLocal)
   }
 
   def qnameArgs(fqn: Qn): Seq[String] = fqn.last() +: fqn.removeLastSegment().segments.toSeq
-
-  // ---
-
-  /** java type name for given type as seen from the context of the other type namespace */
-  @Deprecated
-  def lqn(t: CType, lt: CType, lnTrans: (String) => String = identity): String = lqn2(t, pn(lt), lnTrans)
-
-  def lqn(prefix: String, t: CType, lt: CType): String = lqn(t, lt, prefix + _)
-
-  /** java type name for given type as seen from the context of the other type namespace */
-  def lqn2(t: CType, namespace: String, lnTrans: (String) => String = identity): String = {
-    val tpn = pn(t)
-    if (tpn == namespace) lnTrans(ln(t)) else tpn + "." + lnTrans(ln(t))
-  }
-
-  /** java package name for given type */
-  def pn(t: CType): String = getNamedTypeComponent(t).name.fqn.removeLastSegment().segments.map(jn).mkString(".")
-
 
 //  def objName(s: String): String = s
 //

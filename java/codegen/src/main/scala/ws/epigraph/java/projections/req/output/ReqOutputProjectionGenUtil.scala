@@ -16,7 +16,7 @@
 
 package ws.epigraph.java.projections.req.output
 
-import ws.epigraph.compiler.{CType, CTypeKind}
+import ws.epigraph.compiler._
 import ws.epigraph.projections.req.output._
 
 /**
@@ -42,7 +42,7 @@ object ReqOutputProjectionGenUtil {
       )
     } else kind match {
       case CTypeKind.VARTYPE =>
-        val pc = ReqOutputVarProjectionGen.shortClassName(ln)
+        val pc = ReqOutputVarProjectionGen.shortClassName(t.asInstanceOf[CVarTypeDef])
         ProjectionExpr(
           pc,
           r => s"new $pc($r)",
@@ -50,7 +50,7 @@ object ReqOutputProjectionGenUtil {
           Set(classOf[ReqOutputVarProjection].getName)
         )
       case CTypeKind.RECORD =>
-        val pc = ReqOutputRecordModelProjectionGen.shortClassName(ln)
+        val pc = ReqOutputRecordModelProjectionGen.shortClassName(t.asInstanceOf[CRecordTypeDef])
         ProjectionExpr(
           pc,
           r => s"new $pc((ReqOutputRecordModelProjection) $r.singleTagProjection().projection())",
@@ -58,7 +58,7 @@ object ReqOutputProjectionGenUtil {
           Set(classOf[ReqOutputRecordModelProjection].getName)
         )
       case CTypeKind.MAP =>
-        val pc = ReqOutputMapModelProjectionGen.shortClassName(ln)
+        val pc = ReqOutputMapModelProjectionGen.shortClassName(t.asInstanceOf[CMapType])
         ProjectionExpr(
           pc,
           r => s"new $pc((ReqOutputMapModelProjection) $r.singleTagProjection().projection())",
@@ -66,7 +66,7 @@ object ReqOutputProjectionGenUtil {
           Set(classOf[ReqOutputMapModelProjection].getName)
         )
       case CTypeKind.LIST =>
-        val pc = ReqOutputListModelProjectionGen.shortClassName(ln)
+        val pc = ReqOutputListModelProjectionGen.shortClassName(t.asInstanceOf[CListType])
         ProjectionExpr(
           pc,
           r => s"new $pc((ReqOutputListModelProjection) $r.singleTagProjection().projection())",

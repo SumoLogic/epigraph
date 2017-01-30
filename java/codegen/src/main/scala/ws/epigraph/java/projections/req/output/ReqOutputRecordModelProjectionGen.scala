@@ -33,7 +33,7 @@ class ReqOutputRecordModelProjectionGen(t: CRecordTypeDef, ctx: GenContext) exte
 
   private def namespace: Qn = Qn.fromDotSeparated(pn(t)).append("projections") // or ".projections.req.output" ?
 
-  private def shortClassName = ReqOutputRecordModelProjectionGen.shortClassName(ln(t))
+  private def shortClassName = ReqOutputRecordModelProjectionGen.shortClassName(t)
 
   override protected def generate: String = {
 
@@ -63,5 +63,5 @@ public class $shortClassName {
 }
 
 object ReqOutputRecordModelProjectionGen {
-  def shortClassName(ln: String) = s"ReqOutput${ln}Projection"
+  def shortClassName(t: CRecordTypeDef) = s"ReqOutput${ln(t)}Projection"
 }

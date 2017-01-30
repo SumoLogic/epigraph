@@ -33,7 +33,7 @@ class ReqOutputListModelProjectionGen(t: CListType, ctx: GenContext) extends Jav
 
   private def namespace: Qn = Qn.fromDotSeparated(pn(t)).append("projections") // or ".projections.req.output" ?
 
-  private def shortClassName = ReqOutputListModelProjectionGen.shortClassName(ln(t))
+  private def shortClassName = ReqOutputListModelProjectionGen.shortClassName(t)
 
   override protected def generate: String = {
 
@@ -73,5 +73,5 @@ public class $shortClassName {
 }
 
 object ReqOutputListModelProjectionGen {
-  def shortClassName(ln: String) = s"ReqOutput${ln}Projection"
+  def shortClassName(t: CListType) = s"ReqOutput${ln(t)}Projection"
 }

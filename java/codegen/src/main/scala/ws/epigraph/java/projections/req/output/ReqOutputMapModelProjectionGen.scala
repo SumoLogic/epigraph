@@ -33,7 +33,7 @@ class ReqOutputMapModelProjectionGen(t: CMapType, ctx: GenContext) extends JavaG
 
   private def namespace: Qn = Qn.fromDotSeparated(pn(t)).append("projections") // or ".projections.req.output" ?
 
-  private def shortClassName = ReqOutputMapModelProjectionGen.shortClassName(ln(t))
+  private def shortClassName = ReqOutputMapModelProjectionGen.shortClassName(t)
 
   override protected def generate: String = {
 
@@ -71,5 +71,5 @@ public class $shortClassName {
 }
 
 object ReqOutputMapModelProjectionGen {
-  def shortClassName(ln: String) = s"ReqOutput${ln}Projection"
+  def shortClassName(t: CMapType) = s"ReqOutput${ln(t)}Projection"
 }

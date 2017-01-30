@@ -34,7 +34,7 @@ class ReqOutputVarProjectionGen(t: CVarTypeDef, ctx: GenContext) extends JavaGen
 
   private def namespace: Qn = Qn.fromDotSeparated(pn(t)).append("projections") // or ".projections.req.output" ?
 
-  private def shortClassName = ReqOutputVarProjectionGen.shortClassName(ln(t))
+  private def shortClassName = ReqOutputVarProjectionGen.shortClassName(t)
 
   override protected def generate: String = {
 
@@ -93,5 +93,5 @@ $body
 }
 
 object ReqOutputVarProjectionGen {
-  def shortClassName(ln: String) = s"ReqOutput${ln}Projection"
+  def shortClassName(t: CVarTypeDef) = s"ReqOutput${ln(t)}Projection"
 }
