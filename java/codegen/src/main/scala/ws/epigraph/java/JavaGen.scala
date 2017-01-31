@@ -20,11 +20,6 @@ package ws.epigraph.java
 
 import java.nio.file.Path
 
-import ws.epigraph.compiler._
-import ws.epigraph.java.JavaGenNames._
-
-import scala.collection.JavaConversions._
-
 abstract class JavaGen[From >: Null <: AnyRef](protected val ctx: GenContext) {
 
   protected def relativeFilePath: Path
@@ -35,16 +30,5 @@ abstract class JavaGen[From >: Null <: AnyRef](protected val ctx: GenContext) {
     //System.out.println("Writing to '" + relativeFilePath + "'")
     JavaGenUtils.writeFile(sourcesRoot, relativeFilePath, generate)
   }
-
-  def withParents(t: CType, trans: (String) => String = identity): String = {
-    t.getLinearizedParentsReversed.map(" " + lqn(_, t, trans) + ",").mkString
-  }
-
-//  def ?(arg: AnyRef, ifNotNull: => String, ifNull: => String): String = if (arg ne null) ifNotNull else ifNull
-
-//  def ?(arg: GenTraversableOnce[_], ifNotNull: => String, ifNull: => String): String =
-//    if (arg != null && arg.nonEmpty) ifNotNull else ifNull
-
-//  def ?[A >: Null <: AnyRef, B](arg: A, ifNotNull: => B, ifNull: => B): B = if (arg ne null) ifNotNull else ifNull
 
 }

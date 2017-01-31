@@ -37,7 +37,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Base (read) interface for `${t.name.name}` datum.
  */
-public interface $ln extends${withParents(t)} ws.epigraph.data.RecordDatum.Static {
+public interface $ln extends${JavaGenUtils.withParents(t)} ws.epigraph.data.RecordDatum.Static {
 
   @NotNull $ln.Type type = $ln.Type.instance();
 

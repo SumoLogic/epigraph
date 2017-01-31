@@ -51,7 +51,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Base (read) interface for `${t.name.name}` datum.
  */
-public interface $ln extends${withParents(t)} ws.epigraph.data.MapDatum.Static<${lqn(kt, t)}.Imm> {
+public interface $ln extends${JavaGenUtils.withParents(t)} ws.epigraph.data.MapDatum.Static<${lqn(kt, t)}.Imm> {
 
   $ln.Type type = $ln.Type.instance();
 

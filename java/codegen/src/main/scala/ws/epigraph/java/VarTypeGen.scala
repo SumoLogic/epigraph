@@ -36,7 +36,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Base (read) interface for `${t.name.name}` data.
  */
-public interface $ln extends${withParents(t)} ws.epigraph.data.Data.Static {
+public interface $ln extends${JavaGenUtils.withParents(t)} ws.epigraph.data.Data.Static {
 
   @NotNull $ln.Type type = $ln.Type.instance();
 

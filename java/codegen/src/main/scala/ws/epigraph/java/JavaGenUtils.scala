@@ -22,6 +22,7 @@ import java.io.{BufferedWriter, OutputStream, OutputStreamWriter}
 import java.nio.charset.{CharsetEncoder, StandardCharsets}
 import java.nio.file.{Files, Path, Paths, StandardOpenOption}
 
+import ws.epigraph.compiler.CType
 import ws.epigraph.lang.Qn
 
 import scala.collection.JavaConversions._
@@ -30,6 +31,8 @@ object JavaGenUtils {
   private val spacesCache = new scala.collection.mutable.HashMap[Int, String]
 
   val EmptyPath: Path = Paths.get("")
+
+  val topLevelComment = "// This is a generated file. Not intended for manual editing."
 
   def spaces(i: Int): String = spacesCache.getOrElseUpdate(i, " " * i)
 
@@ -101,6 +104,15 @@ object JavaGenUtils {
 
   def up(name: String): String = Character.toUpperCase(name.charAt(0)) + name.substring(1)
 
-  val topLevelComment = "// This is a generated file. Not intended for manual editing."
+  def withParents(t: CType, trans: (String) => String = identity): String = {
+    t.getLinearizedParentsReversed.map(" " + JavaGenNames.lqn(_, t, trans) + ",").mkString
+  }
+
+//  def ?(arg: AnyRef, ifNotNull: => String, ifNull: => String): String = if (arg ne null) ifNotNull else ifNull
+
+//  def ?(arg: GenTraversableOnce[_], ifNotNull: => String, ifNull: => String): String =
+//    if (arg != null && arg.nonEmpty) ifNotNull else ifNull
+
+//  def ?[A >: Null <: AnyRef, B](arg: A, ifNotNull: => B, ifNull: => B): B = if (arg ne null) ifNotNull else ifNull
 
 }
