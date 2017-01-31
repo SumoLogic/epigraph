@@ -20,7 +20,7 @@ package ws.epigraph.java
 
 import java.nio.file.Path
 
-abstract class JavaGen[From >: Null <: AnyRef](protected val ctx: GenContext) {
+abstract class JavaGen(protected val ctx: GenContext) {
 
   protected def relativeFilePath: Path
 

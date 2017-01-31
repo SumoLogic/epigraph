@@ -27,7 +27,7 @@ import ws.epigraph.lang.Qn
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-class ReqOutputMapModelProjectionGen(t: CMapType, ctx: GenContext) extends JavaGen[CMapType](ctx) {
+class ReqOutputMapModelProjectionGen(t: CMapType, ctx: GenContext) extends JavaGen(ctx) {
 
   protected override def relativeFilePath: Path = JavaGenUtils.fqnToPath(namespace).resolve(shortClassName + ".java")
 

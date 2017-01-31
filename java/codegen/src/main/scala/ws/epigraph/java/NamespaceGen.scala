@@ -20,13 +20,13 @@ package ws.epigraph.java
 
 import java.nio.file.Path
 
-import ws.epigraph.compiler.{CContext, CNamespace}
 import org.jetbrains.annotations.Nullable
-import NewlineStringInterpolator.NewlineHelper
+import ws.epigraph.compiler.CNamespace
+import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 
 import scala.language.implicitConversions
 
-class NamespaceGen(from: CNamespace, ctx: GenContext) extends JavaGen[CNamespace](ctx) {
+class NamespaceGen(from: CNamespace, ctx: GenContext) extends JavaGen(ctx) {
 
   // TODO respect annotations changing namespace names for scala
 

@@ -28,7 +28,7 @@ import ws.epigraph.projections.req.output.ReqOutputVarProjection
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-class ReqOutputVarProjectionGen(t: CVarTypeDef, ctx: GenContext) extends JavaGen[CVarTypeDef](ctx) {
+class ReqOutputVarProjectionGen(t: CVarTypeDef, ctx: GenContext) extends JavaGen(ctx) {
 
   protected override def relativeFilePath: Path = JavaGenUtils.fqnToPath(namespace).resolve(shortClassName + ".java")
 

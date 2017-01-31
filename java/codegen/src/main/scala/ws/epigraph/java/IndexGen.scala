@@ -11,7 +11,7 @@ import scala.collection.JavaConverters._
 /**
  * @author yegor 2016-12-15.
  */
-class IndexGen(ctx: GenContext) extends JavaGen[Iterable[CType]](ctx) {
+class IndexGen(ctx: GenContext) extends JavaGen(ctx) {
 
     private val IndexClassName: String = Constants.TypesIndex.className
 
