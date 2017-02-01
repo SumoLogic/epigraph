@@ -34,7 +34,7 @@ class ReqOutputFieldProjectionGen(
   namespaceSuffix: Qn,
   ctx: GenContext) extends ReqOutputProjectionGen(operationInfo, namespaceSuffix, ctx) {
 
-  override protected val shortClassName: String = s"$classNamePrefix${up(fieldName)}Field$classNameSuffix"
+  override val shortClassName: String = s"$classNamePrefix${up(fieldName)}Field$classNameSuffix"
 
   override def children: Iterable[ReqProjectionGen] =
     Iterable(

@@ -16,9 +16,10 @@
 
 package ws.epigraph.java.service.projections.req.output
 
+import ws.epigraph.compiler.CMapType
 import ws.epigraph.java.JavaGenNames.ln
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
-import ws.epigraph.java.service.projections.req.OperationInfo
+import ws.epigraph.java.service.projections.req.{OperationInfo, ReqProjectionGen}
 import ws.epigraph.java.{GenContext, JavaGenUtils}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.output.OpOutputMapModelProjection
@@ -32,14 +33,39 @@ class ReqOutputMapModelProjectionGen(
   namespaceSuffix: Qn,
   ctx: GenContext) extends ReqOutputModelProjectionGen(operationInfo, op, namespaceSuffix, ctx) {
 
-  override protected def generate: String =
-  /*@formatter:off*/sn"""\
+  private val cMapType = cType.asInstanceOf[CMapType]
+  private val keyType = cMapType.keyTypeRef.resolved
+  private val elementType = cMapType.valueTypeRef.resolved
+
+  private val elementsNamespaceSuffix = namespaceSuffix.append("elements")
+
+  private val elementGen = ReqOutputVarProjectionGen.dataProjectionGen(
+    operationInfo,
+    op.itemsProjection(),
+    elementsNamespaceSuffix,
+    ctx
+  )
+
+  override def children: Iterable[ReqProjectionGen] = Iterable(
+    elementGen
+  )
+
+  override protected def generate: String = {
+//    val elementProjectionClass = elementGen.namespace.append(elementGen.shortClassName)
+    val elementProjectionClass = elementGen.shortClassName
+
+    val imports: Set[String] = Set(
+      "org.jetbrains.annotations.NotNull",
+      "ws.epigraph.projections.req.output.ReqOutputMapModelProjection",
+      "ws.epigraph.projections.req.output.ReqOutputVarProjection",
+      elementGen.namespace.append(elementProjectionClass).toString
+    )
+
+    /*@formatter:off*/sn"""\
 ${JavaGenUtils.topLevelComment}
 $packageStatement
 
-import org.jetbrains.annotations.NotNull;
-
-import ws.epigraph.projections.req.output.ReqOutputMapModelProjection;
+${ReqProjectionGen.generateImports(imports)}
 
 /**
  * Request output projection for {@code ${ln(cType)}} type
@@ -49,6 +75,18 @@ public class $shortClassName {
 
   public $shortClassName(@NotNull ReqOutputMapModelProjection raw) { this.raw = raw; }
 
+  public $shortClassName(@NotNull ReqOutputVarProjection selfVar) {
+    this( (ReqOutputMapModelProjection) selfVar.singleTagProjection().projection() );
+  }
+
+  /**
+   * @return items projection
+   */
+  public @NotNull $elementProjectionClass itemsProjection() {
+    return new $elementProjectionClass(raw.itemsProjection());
+  }
+
   public @NotNull ReqOutputMapModelProjection _raw() { return raw; }
 }"""/*@formatter:on*/
+  }
 }

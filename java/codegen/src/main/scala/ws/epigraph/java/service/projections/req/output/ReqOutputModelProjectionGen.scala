@@ -36,7 +36,7 @@ abstract class ReqOutputModelProjectionGen(
 
   protected val cType: CDatumType  = ReqProjectionGen.toCType(op.model())
 
-  override protected val shortClassName: String = s"$classNamePrefix${ln(cType)}$classNameSuffix"
+  override val shortClassName: String = s"$classNamePrefix${ln(cType)}$classNameSuffix"
 }
 
 object ReqOutputModelProjectionGen {

@@ -30,14 +30,14 @@ import ws.epigraph.types.{DatumTypeApi, TypeApi}
  */
 abstract class ReqProjectionGen(protected val operationInfo: OperationInfo, ctx: GenContext) extends JavaGen(ctx) {
 
-  protected def namespace: Qn =
+  def namespace: Qn =
     operationInfo.resourceNamespace
       .append("resources")
       .append(operationInfo.resourceName.toLowerCase)
       .append("operations")
       .append(s"${operationInfo.operation.kind()}${Option(operationInfo.operation.name()).getOrElse("")}".toLowerCase)
 
-  protected def shortClassName: String
+  def shortClassName: String
 
   override protected def relativeFilePath: Path = JavaGenUtils.fqnToPath(namespace).resolve(shortClassName + ".java")
 

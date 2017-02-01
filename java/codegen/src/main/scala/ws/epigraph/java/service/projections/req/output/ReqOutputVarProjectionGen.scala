@@ -41,7 +41,7 @@ class ReqOutputVarProjectionGen(
 
   private val cType: CType = ReqProjectionGen.toCType(op.`type`())
 
-  override protected val shortClassName: String = s"$classNamePrefix${ln(cType)}$classNameSuffix"
+  override val shortClassName: String = s"$classNamePrefix${ln(cType)}$classNameSuffix"
 
   override def children: Iterable[ReqProjectionGen] = op.tagProjections().values().map{ tpe =>
     ReqOutputModelProjectionGen.dataProjectionGen(
@@ -52,25 +52,30 @@ class ReqOutputVarProjectionGen(
     )
   }
 
-  override protected def generate: String =
-  /*@formatter:off*/sn"""\
+  override protected def generate: String = {
+
+    val imports: Set[String] = Set(
+      "org.jetbrains.annotations.NotNull",
+      "ws.epigraph.projections.req.output.ReqOutputVarProjection"
+    )
+
+    /*@formatter:off*/sn"""\
 ${JavaGenUtils.topLevelComment}
 $packageStatement
 
-import org.jetbrains.annotations.NotNull;
-
-import ws.epigraph.projections.req.output.ReqOutputPrimitiveModelProjection;
+${ReqProjectionGen.generateImports(imports)}
 
 /**
  * Request output projection for {@code ${ln(cType)}} type
  */
 public class $shortClassName {
-  private final @NotNull ReqOutputPrimitiveModelProjection raw;
+  private final @NotNull ReqOutputVarProjection raw;
 
-  public $shortClassName(@NotNull ReqOutputPrimitiveModelProjection raw) { this.raw = raw; }
+  public $shortClassName(@NotNull ReqOutputVarProjection raw) { this.raw = raw; }
 
-  public @NotNull ReqOutputPrimitiveModelProjection _raw() { return raw; }
+  public @NotNull ReqOutputVarProjection _raw() { return raw; }
 }"""/*@formatter:on*/
+  }
 }
 
 object ReqOutputVarProjectionGen {

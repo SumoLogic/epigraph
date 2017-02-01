@@ -18,7 +18,7 @@ package ws.epigraph.java.service.projections.req.output
 
 import ws.epigraph.java.JavaGenNames.ln
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
-import ws.epigraph.java.service.projections.req.OperationInfo
+import ws.epigraph.java.service.projections.req.{OperationInfo, ReqProjectionGen}
 import ws.epigraph.java.{GenContext, JavaGenUtils}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.output.OpOutputRecordModelProjection
@@ -32,14 +32,18 @@ class ReqOutputRecordModelProjectionGen(
   namespaceSuffix: Qn,
   ctx: GenContext) extends ReqOutputModelProjectionGen(operationInfo, op, namespaceSuffix, ctx) {
 
-  override protected def generate: String =
-  /*@formatter:off*/sn"""\
+  override protected def generate: String = {
+    val imports: Set[String] = Set(
+      "org.jetbrains.annotations.NotNull",
+      "ws.epigraph.projections.req.output.ReqOutputRecordModelProjection",
+      "ws.epigraph.projections.req.output.ReqOutputVarProjection"
+    )
+
+    /*@formatter:off*/sn"""\
 ${JavaGenUtils.topLevelComment}
 $packageStatement
 
-import org.jetbrains.annotations.NotNull;
-
-import ws.epigraph.projections.req.output.ReqOutputRecordModelProjection;
+${ReqProjectionGen.generateImports(imports)}
 
 /**
  * Request output projection for {@code ${ln(cType)}} type
@@ -49,6 +53,11 @@ public class $shortClassName {
 
   public $shortClassName(@NotNull ReqOutputRecordModelProjection raw) { this.raw = raw; }
 
+  public $shortClassName(@NotNull ReqOutputVarProjection selfVar) {
+    this( (ReqOutputRecordModelProjection) selfVar.singleTagProjection().projection() );
+  }
+
   public @NotNull ReqOutputRecordModelProjection _raw() { return raw; }
 }"""/*@formatter:on*/
+  }
 }
