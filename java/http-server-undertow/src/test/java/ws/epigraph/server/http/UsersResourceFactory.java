@@ -23,6 +23,7 @@ import epigraph.PersonId_Error_Map;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.LongDatum;
+import ws.epigraph.data.PrimitiveDatum;
 import ws.epigraph.errors.ErrorValue;
 import ws.epigraph.projections.req.ReqParam;
 import ws.epigraph.projections.req.ReqParams;
@@ -40,6 +41,7 @@ import ws.epigraph.service.ServiceInitializationException;
 import ws.epigraph.service.operations.*;
 import ws.epigraph.tests.*;
 import ws.epigraph.types.DatumType;
+import ws.epigraph.types.PrimitiveType;
 
 import java.util.List;
 import java.util.Map;
@@ -100,11 +102,12 @@ public class UsersResourceFactory extends AbstractUsersResourceFactory {
 
       // todo replace when generated projections are ready
       final ReqOutputFieldProjection fieldProjection = request.outputProjection();
+      ws.epigraph.tests.resources.users.operations.read.output.ReqOutputUsersFieldProjection typeSafeFieldProjection =
+          new ws.epigraph.tests.resources.users.operations.read.output.ReqOutputUsersFieldProjection(fieldProjection);
 
-      // todo there must be an easier way to access params
       // todo must be model, not field params
-      Long start = getLongParam(fieldProjection.params(), "start");
-      Long count = getLongParam(fieldProjection.params(), "count");
+      Long start = getNative(typeSafeFieldProjection.getStartParameter());
+      Long count = getNative(typeSafeFieldProjection.getCountParameter());
 
       final ReqOutputModelProjection<?, ?, ?> modelProjection =
           fieldProjection.varProjection().singleTagProjection().projection();
@@ -125,12 +128,11 @@ public class UsersResourceFactory extends AbstractUsersResourceFactory {
       ));
     }
 
-    private @Nullable Long getLongParam(@NotNull ReqParams params, @NotNull String name) {
-      final ReqParam param = params.get(name);
-      if (param == null) return null;
-      final LongDatum value = (LongDatum) param.value();
-      return value == null ? null : value.getVal();
+    // todo must be part of generated param accessor
+    private <N> N getNative(@Nullable PrimitiveDatum<N> pd) { // move to static interface method when we're in Java 9?
+      return pd == null ? null : pd.getVal();
     }
+
   }
 
   private static final class CreateOp extends CreateOperation<PersonId_List.Data> {

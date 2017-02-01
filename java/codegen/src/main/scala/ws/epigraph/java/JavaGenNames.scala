@@ -44,7 +44,9 @@ object JavaGenNames {
   def lqn(prefix: String, t: CType, lt: CType): String = lqn(t, lt, prefix + _)
 
   /** java package name for given type */
-  def pn(t: CType): String = getNamedTypeComponent(t).name.fqn.removeLastSegment().segments.map(jn).mkString(".")
+  def pn(t: CType): String = pn(getNamedTypeComponent(t).name.fqn.removeLastSegment())
+
+  def pn(qn: Qn): String = qn.segments.map(jn).mkString(".").toLowerCase
 
   /** local (short) java name for given type */
   def ln(t: CType): String =
