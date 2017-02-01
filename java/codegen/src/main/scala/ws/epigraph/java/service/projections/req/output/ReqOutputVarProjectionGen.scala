@@ -16,8 +16,8 @@
 
 package ws.epigraph.java.service.projections.req.output
 
-import ws.epigraph.compiler.CType
-import ws.epigraph.java.JavaGenNames.{jn, ln}
+import ws.epigraph.compiler.{CTag, CVarTypeDef}
+import ws.epigraph.java.JavaGenNames.{jn, ln, ttr}
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 import ws.epigraph.java.service.projections.req.output.ReqOutputProjectionGen.{classNamePrefix, classNameSuffix}
 import ws.epigraph.java.service.projections.req.{OperationInfo, ReqProjectionGen}
@@ -39,25 +39,59 @@ class ReqOutputVarProjectionGen(
 
   // todo we have to deal with poly tails / normalization in generated classes
 
-  private val cType: CType = ReqProjectionGen.toCType(op.`type`())
+  private val cType: CVarTypeDef = ReqProjectionGen.toCType(op.`type`()).asInstanceOf[CVarTypeDef]
 
   override val shortClassName: String = s"$classNamePrefix${ln(cType)}$classNameSuffix"
 
-  override def children: Iterable[ReqProjectionGen] = op.tagProjections().values().map{ tpe =>
-    ReqOutputModelProjectionGen.dataProjectionGen(
-      operationInfo,
-      tpe.projection(),
-      namespaceSuffix.append(jn(tpe.tag().name()).toLowerCase), // todo extract?
-      ctx
-    )
+  private lazy val tagGenerators: Map[CTag, ReqProjectionGen] =
+    op.tagProjections().values().map{ tpe =>
+      (findTag(tpe.tag().name()),
+        ReqOutputModelProjectionGen.dataProjectionGen(
+          operationInfo,
+          tpe.projection(),
+          namespaceSuffix.append(jn(tpe.tag().name()).toLowerCase), // todo extract?
+          ctx
+        )
+      )
+    }.toMap
+
+  override lazy val children: Iterable[ReqProjectionGen] = tagGenerators.values
+
+  private def findTag(name: String): CTag = cType.effectiveTags.find(_.name == name).getOrElse{
+    throw new RuntimeException(s"Can't find tag '$name' in type '${cType.name.toString}'")
   }
 
   override protected def generate: String = {
 
+    def genTag(tag: CTag, tagGenerator: ReqProjectionGen): (String, Set[String]) =
+      (
+        /*@formatter:off*/sn"""\
+  ${"/**"}
+   * @return ${tag.name} projection
+   */
+   public @Nullable ${tagGenerator.shortClassName} ${jn(tag.name)}() {
+     ReqOutputTagProjectionEntry tpe = raw.tagProjections().get(${ttr(cType, tag.name, namespace.toString)}.name());
+     return tpe == null ? null : new ${tagGenerator.shortClassName}(tpe.projection());
+   }
+"""/*@formatter:on*/ ,
+        Set(
+          tagGenerator.fullClassName,
+          "org.jetbrains.annotations.Nullable",
+          "ws.epigraph.projections.req.output.ReqOutputTagProjectionEntry"
+        )
+      )
+
+    val (tagsCode: String, tagsImports: Set[String]) =
+      tagGenerators.foldLeft(("", Set[String]())){ case ((code, _imports), (tag, gen)) =>
+        val (tagCode, tagImports) = genTag(tag, gen)
+        val newCode = if (code.isEmpty) "\n" + tagCode else code + "\n" + tagCode
+        (newCode, _imports ++ tagImports)
+      }
+
     val imports: Set[String] = Set(
       "org.jetbrains.annotations.NotNull",
       "ws.epigraph.projections.req.output.ReqOutputVarProjection"
-    )
+    ) ++ tagsImports
 
     /*@formatter:off*/sn"""\
 ${JavaGenUtils.topLevelComment}
@@ -74,6 +108,7 @@ public class $shortClassName {
   public $shortClassName(@NotNull ReqOutputVarProjection raw) { this.raw = raw; }
 
   public @NotNull ReqOutputVarProjection _raw() { return raw; }
+$tagsCode\
 }"""/*@formatter:on*/
   }
 }

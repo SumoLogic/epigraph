@@ -39,6 +39,8 @@ abstract class ReqProjectionGen(protected val operationInfo: OperationInfo, ctx:
 
   def shortClassName: String
 
+  def fullClassName: String = namespace.append(shortClassName).toString
+
   override protected def relativeFilePath: Path = JavaGenUtils.fqnToPath(namespace).resolve(shortClassName + ".java")
 
   def children: Iterable[ReqProjectionGen] = Iterable()

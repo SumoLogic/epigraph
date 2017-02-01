@@ -36,6 +36,7 @@ class ReqOutputListModelProjectionGen(
     val imports: Set[String] = Set(
       "org.jetbrains.annotations.NotNull",
       "ws.epigraph.projections.req.output.ReqOutputListModelProjection",
+      "ws.epigraph.projections.req.output.ReqOutputModelProjection",
       "ws.epigraph.projections.req.output.ReqOutputVarProjection"
     )
 
@@ -51,10 +52,12 @@ ${ReqProjectionGen.generateImports(imports)}
 public class $shortClassName {
   private final @NotNull ReqOutputListModelProjection raw;
 
-  public $shortClassName(@NotNull ReqOutputListModelProjection raw) { this.raw = raw; }
+  public $shortClassName(@NotNull ReqOutputModelProjection<?, ?, ?> raw) {
+    this.raw = (ReqOutputListModelProjection) raw;
+  }
 
   public $shortClassName(@NotNull ReqOutputVarProjection selfVar) {
-    this( (ReqOutputListModelProjection) selfVar.singleTagProjection().projection() );
+    this(selfVar.singleTagProjection().projection());
   }
 
   public @NotNull ReqOutputListModelProjection _raw() { return raw; }
