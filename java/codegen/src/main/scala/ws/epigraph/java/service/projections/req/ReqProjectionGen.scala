@@ -18,11 +18,11 @@ package ws.epigraph.java.service.projections.req
 
 import java.nio.file.Path
 
-import ws.epigraph.compiler.{CDatumType, CDatumTypeApiWrapper, CType, CTypeApiWrapper}
+import ws.epigraph.compiler._
+import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 import ws.epigraph.java.{GenContext, JavaGen, JavaGenNames, JavaGenUtils}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.OpParams
-import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 import ws.epigraph.types.{DatumTypeApi, TypeApi}
 
 /**
@@ -55,12 +55,22 @@ object ReqProjectionGen {
 
     op.asMap().values().foldLeft(("", Set[String]())){ case ((code, imports), p) =>
 
-      val m: DatumTypeApi = p.projection().model().asInstanceOf[DatumTypeApi]
-      // Scala doesn't get it
-      val valueType = JavaGenNames.lqn2(toCType(m), namespace)
+      val datumType: CDatumType = toCType(p.projection().model().asInstanceOf[DatumTypeApi]) // Scala doesn't get it
+      val valueType = JavaGenNames.lqn2(datumType, namespace)
 
-      val paramCode =
-      /*@formatter:off*/sn"""\
+      def genPrimitiveParam(nativeType: String): String = /*@formatter:off*/sn"""\
+  /**
+   * @return {@code ${p.name()}} parameter value
+   */
+  public @Nullable $nativeType get${JavaGenUtils.up(p.name())}Parameter() {
+    ReqParam param = $reqParamsExpr.get("${p.name()}");
+    if (param == null) return null;
+    $valueType nativeValue = ($valueType) param.value();
+    return nativeValue == null ? null : nativeValue.getVal();
+  }
+"""/*@formatter:on*/
+
+      def genNonPrimitiveParam: String = /*@formatter:off*/sn"""\
   /**
    * @return {@code ${p.name()}} parameter value
    */
@@ -70,11 +80,20 @@ object ReqProjectionGen {
   }
 """/*@formatter:on*/
 
+      // unwrap primitive param accessors to return native values
+      val paramCode = datumType.kind match {
+        case CTypeKind.STRING => genPrimitiveParam("String")
+        case CTypeKind.INTEGER => genPrimitiveParam("Integer")
+        case CTypeKind.LONG => genPrimitiveParam("Long")
+        case CTypeKind.DOUBLE => genPrimitiveParam("Double")
+        case CTypeKind.BOOLEAN => genPrimitiveParam("Boolean")
+        case _ => genNonPrimitiveParam
+      }
+
       val newCode = if (code.isEmpty) "\n" + paramCode else code + "\n" + paramCode
       (newCode, imports ++ Set(
         "org.jetbrains.annotations.Nullable",
-        "ws.epigraph.projections.req.ReqParam",
-        valueType
+        "ws.epigraph.projections.req.ReqParam"
       ))
     }
   }
