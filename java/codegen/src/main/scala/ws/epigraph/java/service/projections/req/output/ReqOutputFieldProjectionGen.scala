@@ -46,6 +46,8 @@ class ReqOutputFieldProjectionGen(
       )
     )
 
+  // todo data projection accessor
+
   override protected def generate: String = {
     val (params, paramImports) =
       ReqProjectionGen.generateParams(op.params(), namespace.toString, "raw.params()")
@@ -68,9 +70,9 @@ public class $shortClassName {
   private final @NotNull ReqOutputFieldProjection raw;
 
   public $shortClassName(@NotNull ReqOutputFieldProjection raw) { this.raw = raw; }
+$params\
 
   public @NotNull ReqOutputFieldProjection _raw() { return raw; }
-$params\
 }"""/*@formatter:on*/
   }
 

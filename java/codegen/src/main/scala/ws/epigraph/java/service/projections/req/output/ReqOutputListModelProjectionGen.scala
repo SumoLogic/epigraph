@@ -16,6 +16,7 @@
 
 package ws.epigraph.java.service.projections.req.output
 
+import ws.epigraph.compiler.CListType
 import ws.epigraph.java.JavaGenNames.ln
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 import ws.epigraph.java.service.projections.req.{OperationInfo, ReqProjectionGen}
@@ -32,13 +33,32 @@ class ReqOutputListModelProjectionGen(
   namespaceSuffix: Qn,
   ctx: GenContext) extends ReqOutputModelProjectionGen(operationInfo, op, namespaceSuffix, ctx) {
 
+  private val cListType = cType.asInstanceOf[CListType]
+
+  private val elementsNamespaceSuffix = namespaceSuffix.append("elements")
+
+  private val elementGen = ReqOutputVarProjectionGen.dataProjectionGen(
+    operationInfo,
+    op.itemsProjection(),
+    elementsNamespaceSuffix,
+    ctx
+  )
+
+  override def children: Iterable[ReqProjectionGen] = Iterable(elementGen)
+
   override protected def generate: String = {
+    val elementProjectionClass = elementGen.shortClassName
+
+    val (params, paramImports) =
+      ReqProjectionGen.generateParams(op.params(), namespace.toString, "raw.params()")
+
     val imports: Set[String] = Set(
       "org.jetbrains.annotations.NotNull",
       "ws.epigraph.projections.req.output.ReqOutputListModelProjection",
       "ws.epigraph.projections.req.output.ReqOutputModelProjection",
-      "ws.epigraph.projections.req.output.ReqOutputVarProjection"
-    )
+      "ws.epigraph.projections.req.output.ReqOutputVarProjection",
+      elementGen.fullClassName
+    ) ++ paramImports
 
     /*@formatter:off*/sn"""\
 ${JavaGenUtils.topLevelComment}
@@ -59,6 +79,14 @@ public class $shortClassName {
   public $shortClassName(@NotNull ReqOutputVarProjection selfVar) {
     this(selfVar.singleTagProjection().projection());
   }
+
+  /**
+   * @return items projection
+   */
+  public @NotNull $elementProjectionClass itemsProjection() {
+    return new $elementProjectionClass(raw.itemsProjection());
+  }
+$params\
 
   public @NotNull ReqOutputListModelProjection _raw() { return raw; }
 }"""/*@formatter:on*/

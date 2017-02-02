@@ -45,7 +45,8 @@ class ReqOutputVarProjectionGen(
 
   private lazy val tagGenerators: Map[CTag, ReqProjectionGen] =
     op.tagProjections().values().map{ tpe =>
-      (findTag(tpe.tag().name()),
+      (
+        findTag(tpe.tag().name()),
         ReqOutputModelProjectionGen.dataProjectionGen(
           operationInfo,
           tpe.projection(),
@@ -63,9 +64,8 @@ class ReqOutputVarProjectionGen(
 
   override protected def generate: String = {
 
-    def genTag(tag: CTag, tagGenerator: ReqProjectionGen): (String, Set[String]) =
-      (
-        /*@formatter:off*/sn"""\
+    def genTag(tag: CTag, tagGenerator: ReqProjectionGen): (String, Set[String]) = (
+      /*@formatter:off*/sn"""\
   ${"/**"}
    * @return ${tag.name} projection
    */
@@ -74,12 +74,12 @@ class ReqOutputVarProjectionGen(
      return tpe == null ? null : new ${tagGenerator.shortClassName}(tpe.projection());
    }
 """/*@formatter:on*/ ,
-        Set(
-          tagGenerator.fullClassName,
-          "org.jetbrains.annotations.Nullable",
-          "ws.epigraph.projections.req.output.ReqOutputTagProjectionEntry"
-        )
+      Set(
+        tagGenerator.fullClassName,
+        "org.jetbrains.annotations.Nullable",
+        "ws.epigraph.projections.req.output.ReqOutputTagProjectionEntry"
       )
+    )
 
     val (tagsCode: String, tagsImports: Set[String]) =
       tagGenerators.foldLeft(("", Set[String]())){ case ((code, _imports), (tag, gen)) =>
@@ -106,9 +106,9 @@ public class $shortClassName {
   private final @NotNull ReqOutputVarProjection raw;
 
   public $shortClassName(@NotNull ReqOutputVarProjection raw) { this.raw = raw; }
+$tagsCode\
 
   public @NotNull ReqOutputVarProjection _raw() { return raw; }
-$tagsCode\
 }"""/*@formatter:on*/
   }
 }

@@ -35,7 +35,6 @@ class ReqOutputMapModelProjectionGen(
 
   private val cMapType = cType.asInstanceOf[CMapType]
   private val keyType = cMapType.keyTypeRef.resolved
-  private val elementType = cMapType.valueTypeRef.resolved
 
   private val elementsNamespaceSuffix = namespaceSuffix.append("elements")
 
@@ -51,8 +50,10 @@ class ReqOutputMapModelProjectionGen(
   )
 
   override protected def generate: String = {
-//    val elementProjectionClass = elementGen.namespace.append(elementGen.shortClassName)
     val elementProjectionClass = elementGen.shortClassName
+
+    val (params, paramImports) =
+      ReqProjectionGen.generateParams(op.params(), namespace.toString, "raw.params()")
 
     val imports: Set[String] = Set(
       "org.jetbrains.annotations.NotNull",
@@ -60,7 +61,7 @@ class ReqOutputMapModelProjectionGen(
       "ws.epigraph.projections.req.output.ReqOutputModelProjection",
       "ws.epigraph.projections.req.output.ReqOutputVarProjection",
       elementGen.fullClassName
-    )
+    ) ++ paramImports
 
     /*@formatter:off*/sn"""\
 ${JavaGenUtils.topLevelComment}
@@ -88,6 +89,7 @@ public class $shortClassName {
   public @NotNull $elementProjectionClass itemsProjection() {
     return new $elementProjectionClass(raw.itemsProjection());
   }
+$params\
 
   public @NotNull ReqOutputMapModelProjection _raw() { return raw; }
 }"""/*@formatter:on*/

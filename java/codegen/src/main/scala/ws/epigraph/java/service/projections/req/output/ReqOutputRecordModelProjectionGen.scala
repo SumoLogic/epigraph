@@ -16,12 +16,15 @@
 
 package ws.epigraph.java.service.projections.req.output
 
-import ws.epigraph.java.JavaGenNames.ln
+import ws.epigraph.compiler.{CField, CRecordTypeDef}
+import ws.epigraph.java.JavaGenNames.{jn, ln}
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 import ws.epigraph.java.service.projections.req.{OperationInfo, ReqProjectionGen}
 import ws.epigraph.java.{GenContext, JavaGenUtils}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.output.OpOutputRecordModelProjection
+
+import scala.collection.JavaConversions._
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -32,13 +35,62 @@ class ReqOutputRecordModelProjectionGen(
   namespaceSuffix: Qn,
   ctx: GenContext) extends ReqOutputModelProjectionGen(operationInfo, op, namespaceSuffix, ctx) {
 
+  private val cRecordType = cType.asInstanceOf[CRecordTypeDef]
+
+  private lazy val fieldGenerators: Map[CField, ReqProjectionGen] =
+    op.fieldProjections().values().map{ fpe =>
+      (
+        findField(fpe.field().name()),
+        new ReqOutputFieldProjectionGen(
+          operationInfo,
+          fpe.field().name(),
+          fpe.fieldProjection(),
+          namespaceSuffix.append(jn(fpe.field().name()).toLowerCase),
+          ctx
+        )
+      )
+    }.toMap
+
+  override lazy val children: Iterable[ReqProjectionGen] = fieldGenerators.values
+
+  private def findField(name: String): CField = cRecordType.effectiveFields.find(_.name == name).getOrElse{
+    throw new RuntimeException(s"Can't find field '$name' in type '${cType.name.toString}'")
+  }
+
   override protected def generate: String = {
+    def genField(field: CField, fieldGenerator: ReqProjectionGen): (String, Set[String]) = (
+      /*@formatter:off*/sn"""\
+  ${"/**"}
+   * @return ${field.name} projection
+   */
+   public @Nullable ${fieldGenerator.shortClassName} ${jn(field.name)}() {
+     ReqOutputFieldProjectionEntry fpe = raw.fieldProjection("${field.name}");
+     return fpe == null ? null : new ${fieldGenerator.shortClassName}(fpe.fieldProjection());
+   }
+"""/*@formatter:on*/ ,
+      Set(
+        fieldGenerator.fullClassName,
+        "org.jetbrains.annotations.Nullable",
+        "ws.epigraph.projections.req.output.ReqOutputFieldProjectionEntry"
+      )
+    )
+    
+    val (fieldsCode: String, fieldsImports: Set[String]) =
+      fieldGenerators.foldLeft(("", Set[String]())){ case ((code, _imports), (field, gen)) =>
+        val (fieldCode, fieldImports) = genField(field, gen)
+        val newCode = if (code.isEmpty) "\n" + fieldCode else code + "\n" + fieldCode
+        (newCode, _imports ++ fieldImports)
+      }
+
+    val (params, paramImports) =
+      ReqProjectionGen.generateParams(op.params(), namespace.toString, "raw.params()")
+
     val imports: Set[String] = Set(
       "org.jetbrains.annotations.NotNull",
       "ws.epigraph.projections.req.output.ReqOutputRecordModelProjection",
       "ws.epigraph.projections.req.output.ReqOutputModelProjection",
       "ws.epigraph.projections.req.output.ReqOutputVarProjection"
-    )
+    ) ++ fieldsImports ++ paramImports
 
     /*@formatter:off*/sn"""\
 ${JavaGenUtils.topLevelComment}
@@ -59,6 +111,8 @@ public class $shortClassName {
   public $shortClassName(@NotNull ReqOutputVarProjection selfVar) {
     this(selfVar.singleTagProjection().projection());
   }
+$fieldsCode\
+$params\
 
   public @NotNull ReqOutputRecordModelProjection _raw() { return raw; }
 }"""/*@formatter:on*/
