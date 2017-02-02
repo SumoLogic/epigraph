@@ -24,6 +24,7 @@ import ws.epigraph.java.service.projections.req.{CodeChunk, OperationInfo, ReqPr
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.output._
 import ws.epigraph.types.{DatumTypeApi, TypeKind}
+import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -39,6 +40,14 @@ abstract class ReqOutputModelProjectionGen(
   override val shortClassName: String = s"$classNamePrefix${ln(cType)}$classNameSuffix"
 
   protected lazy val params: CodeChunk = ReqProjectionGen.generateParams(op.params(), namespace.toString, "raw.params()")
+
+  protected lazy val required: CodeChunk = CodeChunk(/*@formatter:off*/sn"""\
+  public boolean requried() {
+    return raw.required();
+  }
+"""/*@formatter:on*/
+
+  )
 }
 
 object ReqOutputModelProjectionGen {

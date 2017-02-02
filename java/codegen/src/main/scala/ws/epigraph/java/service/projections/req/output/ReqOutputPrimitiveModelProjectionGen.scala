@@ -59,6 +59,8 @@ public class $shortClassName {
   public $shortClassName(@NotNull ReqOutputVarProjection selfVar) {
     this(selfVar.singleTagProjection().projection());
   }
+
+${required.code}\
 ${params.code}\
 
   public @NotNull ReqOutputPrimitiveModelProjection _raw() { return raw; }

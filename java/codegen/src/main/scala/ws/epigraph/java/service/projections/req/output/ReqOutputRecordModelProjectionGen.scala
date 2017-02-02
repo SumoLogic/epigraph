@@ -134,6 +134,8 @@ public class $shortClassName {
   public $shortClassName(@NotNull ReqOutputVarProjection selfVar) {
     this(selfVar.singleTagProjection().projection());
   }
+
+${required.code}\
 ${fields.code}\
 ${params.code}\
 
