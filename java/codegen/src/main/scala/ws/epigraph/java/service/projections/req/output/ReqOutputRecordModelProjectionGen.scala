@@ -37,7 +37,7 @@ class ReqOutputRecordModelProjectionGen(
 
   private val cRecordType = cType.asInstanceOf[CRecordTypeDef]
 
-  private lazy val fieldGenerators: Map[CField, ReqProjectionGen] =
+  private lazy val fieldGenerators: Map[CField, ReqOutputFieldProjectionGen] =
     op.fieldProjections().values().map{ fpe =>
       (
         findField(fpe.field().name()),
@@ -51,30 +51,61 @@ class ReqOutputRecordModelProjectionGen(
       )
     }.toMap
 
-  override lazy val children: Iterable[ReqProjectionGen] = fieldGenerators.values
+  override lazy val children: Iterable[ReqProjectionGen] =
+    if (ReqOutputFieldProjectionGen.generateFieldProjections)
+      fieldGenerators.values
+    else
+      fieldGenerators.values.flatMap(_.children)
 
   private def findField(name: String): CField = cRecordType.effectiveFields.find(_.name == name).getOrElse{
     throw new RuntimeException(s"Can't find field '$name' in type '${cType.name.toString}'")
   }
 
   override protected def generate: String = {
-    def genField(field: CField, fieldGenerator: ReqProjectionGen): (String, Set[String]) = (
-      /*@formatter:off*/sn"""\
+
+    def genField(field: CField, fieldGenerator: ReqOutputFieldProjectionGen): (String, Set[String]) = {
+
+      lazy val fieldProjection = /*@formatter:off*/sn"""\
   ${"/**"}
-   * @return ${field.name} projection
+   * @return {@code ${field.name}} field projection
    */
-   public @Nullable ${fieldGenerator.shortClassName} ${jn(field.name)}() {
+   public @Nullable ${fieldGenerator.shortClassName} ${jn(field.name)}FieldProjection() {
      ReqOutputFieldProjectionEntry fpe = raw.fieldProjection("${field.name}");
      return fpe == null ? null : new ${fieldGenerator.shortClassName}(fpe.fieldProjection());
    }
-"""/*@formatter:on*/ ,
-      Set(
-        fieldGenerator.fullClassName,
-        "org.jetbrains.annotations.Nullable",
-        "ws.epigraph.projections.req.output.ReqOutputFieldProjectionEntry"
-      )
-    )
-    
+"""/*@formatter:on*/
+
+      lazy val fieldProjectionImports = Set(fieldGenerator.fullClassName)
+
+      val dataGenerator = fieldGenerator.dataProjectionGen
+      val modelProjection = /*@formatter:off*/sn"""\
+  ${"/**"}
+   * @return {@code ${field.name}} model projection
+   */
+   public @Nullable ${dataGenerator.fullClassName} ${jn(field.name)}() {
+     ReqOutputFieldProjectionEntry fpe = raw.fieldProjection("${field.name}");
+     return fpe == null ? null : new ${dataGenerator.fullClassName}(fpe.fieldProjection().varProjection());
+   }
+"""/*@formatter:on*/
+
+      if (ReqOutputFieldProjectionGen.generateFieldProjections)
+        (
+          fieldProjection ++ modelProjection,
+          Set(fieldGenerator.fullClassName,
+            "org.jetbrains.annotations.Nullable",
+            "ws.epigraph.projections.req.output.ReqOutputFieldProjectionEntry"
+          )
+        )
+      else
+        (
+          modelProjection,
+          Set(
+            "org.jetbrains.annotations.Nullable",
+            "ws.epigraph.projections.req.output.ReqOutputFieldProjectionEntry"
+          )
+        )
+    }
+
     val (fieldsCode: String, fieldsImports: Set[String]) =
       fieldGenerators.foldLeft(("", Set[String]())){ case ((code, _imports), (field, gen)) =>
         val (fieldCode, fieldImports) = genField(field, gen)

@@ -36,17 +36,15 @@ class ReqOutputFieldProjectionGen(
 
   override val shortClassName: String = s"$classNamePrefix${up(fieldName)}Field$classNameSuffix"
 
-  override def children: Iterable[ReqProjectionGen] =
-    Iterable(
-      ReqOutputVarProjectionGen.dataProjectionGen(
-        operationInfo,
-        op.varProjection(),
-        namespaceSuffix,
-        ctx
-      )
+  lazy val dataProjectionGen: ReqOutputProjectionGen =
+    ReqOutputVarProjectionGen.dataProjectionGen(
+      operationInfo,
+      op.varProjection(),
+      namespaceSuffix,
+      ctx
     )
 
-  // todo data projection accessor
+  override lazy val children: Iterable[ReqProjectionGen] = Iterable(dataProjectionGen)
 
   override protected def generate: String = {
     val (params, paramImports) =
@@ -54,7 +52,8 @@ class ReqOutputFieldProjectionGen(
 
     val imports: Set[String] = paramImports ++ Set(
       "org.jetbrains.annotations.NotNull",
-      "ws.epigraph.projections.req.output.ReqOutputFieldProjection"
+      "ws.epigraph.projections.req.output.ReqOutputFieldProjection",
+      dataProjectionGen.fullClassName
     )
 
     /*@formatter:off*/sn"""\
@@ -70,6 +69,13 @@ public class $shortClassName {
   private final @NotNull ReqOutputFieldProjection raw;
 
   public $shortClassName(@NotNull ReqOutputFieldProjection raw) { this.raw = raw; }
+
+  /**
+   * @return field data projection
+   */
+  public @NotNull ${dataProjectionGen.shortClassName} dataProjection() {
+    return new ${dataProjectionGen.shortClassName}(raw.varProjection());
+  }
 $params\
 
   public @NotNull ReqOutputFieldProjection _raw() { return raw; }
@@ -78,3 +84,6 @@ $params\
 
 }
 
+object ReqOutputFieldProjectionGen {
+  val generateFieldProjections = false // take from settings?
+}
