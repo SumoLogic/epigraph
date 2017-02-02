@@ -108,8 +108,6 @@ class ReqOutputRecordModelProjectionGen(
 
     val fields = fieldGenerators.map{ case (field, gen) => genField(field, gen) }.foldLeft(CodeChunk.empty)(_ + _)
 
-    val params = ReqProjectionGen.generateParams(op.params(), namespace.toString, "raw.params()")
-
     val imports: Set[String] = Set(
       "org.jetbrains.annotations.NotNull",
       "ws.epigraph.projections.req.output.ReqOutputRecordModelProjection",

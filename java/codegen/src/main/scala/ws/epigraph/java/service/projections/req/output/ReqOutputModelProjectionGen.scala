@@ -20,7 +20,7 @@ import ws.epigraph.compiler.CDatumType
 import ws.epigraph.java.GenContext
 import ws.epigraph.java.JavaGenNames.ln
 import ws.epigraph.java.service.projections.req.output.ReqOutputProjectionGen.{classNamePrefix, classNameSuffix}
-import ws.epigraph.java.service.projections.req.{OperationInfo, ReqProjectionGen}
+import ws.epigraph.java.service.projections.req.{CodeChunk, OperationInfo, ReqProjectionGen}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.output._
 import ws.epigraph.types.{DatumTypeApi, TypeKind}
@@ -37,6 +37,8 @@ abstract class ReqOutputModelProjectionGen(
   protected val cType: CDatumType  = ReqProjectionGen.toCType(op.model())
 
   override val shortClassName: String = s"$classNamePrefix${ln(cType)}$classNameSuffix"
+
+  protected lazy val params: CodeChunk = ReqProjectionGen.generateParams(op.params(), namespace.toString, "raw.params()")
 }
 
 object ReqOutputModelProjectionGen {

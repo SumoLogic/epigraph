@@ -52,9 +52,6 @@ class ReqOutputMapModelProjectionGen(
   override protected def generate: String = {
     val elementProjectionClass = elementGen.shortClassName
 
-    val params =
-      ReqProjectionGen.generateParams(op.params(), namespace.toString, "raw.params()")
-
     val imports: Set[String] = Set(
       "org.jetbrains.annotations.NotNull",
       "ws.epigraph.projections.req.output.ReqOutputMapModelProjection",
