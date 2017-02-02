@@ -49,7 +49,7 @@ class ReqOutputListModelProjectionGen(
   override protected def generate: String = {
     val elementProjectionClass = elementGen.shortClassName
 
-    val (params, paramImports) =
+    val params =
       ReqProjectionGen.generateParams(op.params(), namespace.toString, "raw.params()")
 
     val imports: Set[String] = Set(
@@ -58,7 +58,7 @@ class ReqOutputListModelProjectionGen(
       "ws.epigraph.projections.req.output.ReqOutputModelProjection",
       "ws.epigraph.projections.req.output.ReqOutputVarProjection",
       elementGen.fullClassName
-    ) ++ paramImports
+    ) ++ params.imports
 
     /*@formatter:off*/sn"""\
 ${JavaGenUtils.topLevelComment}
@@ -86,7 +86,7 @@ public class $shortClassName {
   public @NotNull $elementProjectionClass itemsProjection() {
     return new $elementProjectionClass(raw.itemsProjection());
   }
-$params\
+${params.code}\
 
   public @NotNull ReqOutputListModelProjection _raw() { return raw; }
 }"""/*@formatter:on*/

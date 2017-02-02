@@ -19,7 +19,7 @@ package ws.epigraph.java.service.projections.req.output
 import ws.epigraph.compiler.{CField, CRecordTypeDef}
 import ws.epigraph.java.JavaGenNames.{jn, ln}
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
-import ws.epigraph.java.service.projections.req.{OperationInfo, ReqProjectionGen}
+import ws.epigraph.java.service.projections.req.{CodeChunk, OperationInfo, ReqProjectionGen}
 import ws.epigraph.java.{GenContext, JavaGenUtils}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.output.OpOutputRecordModelProjection
@@ -63,10 +63,10 @@ class ReqOutputRecordModelProjectionGen(
 
   override protected def generate: String = {
 
-    def genField(field: CField, fieldGenerator: ReqOutputFieldProjectionGen): (String, Set[String]) = {
+    def genField(field: CField, fieldGenerator: ReqOutputFieldProjectionGen): CodeChunk = {
 
       lazy val fieldProjection = /*@formatter:off*/sn"""\
-  ${"/**"}
+  /**
    * @return {@code ${field.name}} field projection
    */
    public @Nullable ${fieldGenerator.shortClassName} ${jn(field.name)}FieldProjection() {
@@ -79,8 +79,8 @@ class ReqOutputRecordModelProjectionGen(
 
       val dataGenerator = fieldGenerator.dataProjectionGen
       val modelProjection = /*@formatter:off*/sn"""\
-  ${"/**"}
-   * @return {@code ${field.name}} model projection
+  /**
+   * @return {@code ${field.name}} field data projection
    */
    public @Nullable ${dataGenerator.fullClassName} ${jn(field.name)}() {
      ReqOutputFieldProjectionEntry fpe = raw.fieldProjection("${field.name}");
@@ -89,7 +89,7 @@ class ReqOutputRecordModelProjectionGen(
 """/*@formatter:on*/
 
       if (ReqOutputFieldProjectionGen.generateFieldProjections)
-        (
+        CodeChunk(
           fieldProjection ++ modelProjection,
           Set(fieldGenerator.fullClassName,
             "org.jetbrains.annotations.Nullable",
@@ -97,7 +97,7 @@ class ReqOutputRecordModelProjectionGen(
           )
         )
       else
-        (
+        CodeChunk(
           modelProjection,
           Set(
             "org.jetbrains.annotations.Nullable",
@@ -106,22 +106,16 @@ class ReqOutputRecordModelProjectionGen(
         )
     }
 
-    val (fieldsCode: String, fieldsImports: Set[String]) =
-      fieldGenerators.foldLeft(("", Set[String]())){ case ((code, _imports), (field, gen)) =>
-        val (fieldCode, fieldImports) = genField(field, gen)
-        val newCode = if (code.isEmpty) "\n" + fieldCode else code + "\n" + fieldCode
-        (newCode, _imports ++ fieldImports)
-      }
+    val fields = fieldGenerators.map{ case (field, gen) => genField(field, gen) }.foldLeft(CodeChunk.empty)(_ + _)
 
-    val (params, paramImports) =
-      ReqProjectionGen.generateParams(op.params(), namespace.toString, "raw.params()")
+    val params = ReqProjectionGen.generateParams(op.params(), namespace.toString, "raw.params()")
 
     val imports: Set[String] = Set(
       "org.jetbrains.annotations.NotNull",
       "ws.epigraph.projections.req.output.ReqOutputRecordModelProjection",
       "ws.epigraph.projections.req.output.ReqOutputModelProjection",
       "ws.epigraph.projections.req.output.ReqOutputVarProjection"
-    ) ++ fieldsImports ++ paramImports
+    ) ++ fields.imports ++ params.imports
 
     /*@formatter:off*/sn"""\
 ${JavaGenUtils.topLevelComment}
@@ -142,8 +136,8 @@ public class $shortClassName {
   public $shortClassName(@NotNull ReqOutputVarProjection selfVar) {
     this(selfVar.singleTagProjection().projection());
   }
-$fieldsCode\
-$params\
+${fields.code}\
+${params.code}\
 
   public @NotNull ReqOutputRecordModelProjection _raw() { return raw; }
 }"""/*@formatter:on*/

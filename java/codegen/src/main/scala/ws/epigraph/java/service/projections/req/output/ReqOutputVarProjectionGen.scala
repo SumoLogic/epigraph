@@ -20,7 +20,7 @@ import ws.epigraph.compiler.{CTag, CVarTypeDef}
 import ws.epigraph.java.JavaGenNames.{jn, ln, ttr}
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 import ws.epigraph.java.service.projections.req.output.ReqOutputProjectionGen.{classNamePrefix, classNameSuffix}
-import ws.epigraph.java.service.projections.req.{OperationInfo, ReqProjectionGen}
+import ws.epigraph.java.service.projections.req.{CodeChunk, OperationInfo, ReqProjectionGen}
 import ws.epigraph.java.{GenContext, JavaGenUtils}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.output._
@@ -64,9 +64,9 @@ class ReqOutputVarProjectionGen(
 
   override protected def generate: String = {
 
-    def genTag(tag: CTag, tagGenerator: ReqProjectionGen): (String, Set[String]) = (
+    def genTag(tag: CTag, tagGenerator: ReqProjectionGen): CodeChunk = CodeChunk(
       /*@formatter:off*/sn"""\
-  ${"/**"}
+  /**
    * @return ${tag.name} projection
    */
    public @Nullable ${tagGenerator.shortClassName} ${jn(tag.name)}() {
@@ -81,17 +81,12 @@ class ReqOutputVarProjectionGen(
       )
     )
 
-    val (tagsCode: String, tagsImports: Set[String]) =
-      tagGenerators.foldLeft(("", Set[String]())){ case ((code, _imports), (tag, gen)) =>
-        val (tagCode, tagImports) = genTag(tag, gen)
-        val newCode = if (code.isEmpty) "\n" + tagCode else code + "\n" + tagCode
-        (newCode, _imports ++ tagImports)
-      }
+    val tags = tagGenerators.map{ case (tag, gen) => genTag(tag, gen) }.foldLeft(CodeChunk.empty)(_ + _)
 
     val imports: Set[String] = Set(
       "org.jetbrains.annotations.NotNull",
       "ws.epigraph.projections.req.output.ReqOutputVarProjection"
-    ) ++ tagsImports
+    ) ++ tags.imports
 
     /*@formatter:off*/sn"""\
 ${JavaGenUtils.topLevelComment}
@@ -106,7 +101,7 @@ public class $shortClassName {
   private final @NotNull ReqOutputVarProjection raw;
 
   public $shortClassName(@NotNull ReqOutputVarProjection raw) { this.raw = raw; }
-$tagsCode\
+${tags.code}\
 
   public @NotNull ReqOutputVarProjection _raw() { return raw; }
 }"""/*@formatter:on*/

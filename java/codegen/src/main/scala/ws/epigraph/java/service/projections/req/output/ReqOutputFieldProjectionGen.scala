@@ -47,10 +47,10 @@ class ReqOutputFieldProjectionGen(
   override lazy val children: Iterable[ReqProjectionGen] = Iterable(dataProjectionGen)
 
   override protected def generate: String = {
-    val (params, paramImports) =
+    val params =
       ReqProjectionGen.generateParams(op.params(), namespace.toString, "raw.params()")
 
-    val imports: Set[String] = paramImports ++ Set(
+    val imports: Set[String] = params.imports ++ Set(
       "org.jetbrains.annotations.NotNull",
       "ws.epigraph.projections.req.output.ReqOutputFieldProjection",
       dataProjectionGen.fullClassName
@@ -76,7 +76,7 @@ public class $shortClassName {
   public @NotNull ${dataProjectionGen.shortClassName} dataProjection() {
     return new ${dataProjectionGen.shortClassName}(raw.varProjection());
   }
-$params\
+${params.code}\
 
   public @NotNull ReqOutputFieldProjection _raw() { return raw; }
 }"""/*@formatter:on*/

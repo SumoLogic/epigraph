@@ -52,12 +52,13 @@ object ReqProjectionGen {
   val classNamePrefix: String = "Req"
   val classNameSuffix: String = "Projection"
 
-  def generateParams(op: OpParams, namespace: String, reqParamsExpr: String): (String, Set[String]) = {
+  def generateParams(op: OpParams, namespace: String, reqParamsExpr: String): CodeChunk = {
     import scala.collection.JavaConversions._
 
-    op.asMap().values().foldLeft(("", Set[String]())){ case ((code, imports), p) =>
+    op.asMap().values().map{ p =>
 
-      val datumType: CDatumType = toCType(p.projection().model().asInstanceOf[DatumTypeApi]) // Scala doesn't get it
+      val datumType: CDatumType = toCType(p.projection().model().asInstanceOf[DatumTypeApi])
+      // Scala doesn't get it
       val valueType = JavaGenNames.lqn2(datumType, namespace)
 
       def genPrimitiveParam(nativeType: String): String = /*@formatter:off*/sn"""\
@@ -92,12 +93,11 @@ object ReqProjectionGen {
         case _ => genNonPrimitiveParam
       }
 
-      val newCode = if (code.isEmpty) "\n" + paramCode else code + "\n" + paramCode
-      (newCode, imports ++ Set(
+      CodeChunk(paramCode, Set(
         "org.jetbrains.annotations.Nullable",
         "ws.epigraph.projections.req.ReqParam"
       ))
-    }
+    }.foldLeft(CodeChunk.empty)(_ + _)
   }
 
   def generateImports(imports: Set[String]): String = imports.toList.sorted.mkString("import ", ";\nimport ", ";")
