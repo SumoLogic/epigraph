@@ -34,9 +34,16 @@ class ReqOutputMapModelProjectionGen(
   ctx: GenContext) extends ReqOutputModelProjectionGen(operationInfo, op, namespaceSuffix, ctx) {
 
   private val cMapType = cType.asInstanceOf[CMapType]
-  private val keyType = cMapType.keyTypeRef.resolved
 
   private val elementsNamespaceSuffix = namespaceSuffix.append("elements")
+
+  private val keyGen = new ReqOutputMapKeyProjectionGen(
+    operationInfo,
+    cMapType,
+    op.keyProjection(),
+    namespaceSuffix,
+    ctx
+  )
 
   private val elementGen = ReqOutputVarProjectionGen.dataProjectionGen(
     operationInfo,
@@ -45,15 +52,17 @@ class ReqOutputMapModelProjectionGen(
     ctx
   )
 
-  override def children: Iterable[ReqProjectionGen] = Iterable(
-    elementGen
-  )
+  override def children: Iterable[ReqProjectionGen] = Iterable(keyGen, elementGen)
 
   override protected def generate: String = {
+    val keyProjectionClass = keyGen.shortClassName
     val elementProjectionClass = elementGen.shortClassName
 
     val imports: Set[String] = Set(
       "org.jetbrains.annotations.NotNull",
+      "org.jetbrains.annotations.Nullable",
+      "java.util.List",
+      "java.util.stream.Collectors",
       "ws.epigraph.projections.req.output.ReqOutputMapModelProjection",
       "ws.epigraph.projections.req.output.ReqOutputModelProjection",
       "ws.epigraph.projections.req.output.ReqOutputVarProjection",
@@ -78,6 +87,13 @@ public class $shortClassName {
 
   public $shortClassName(@NotNull ReqOutputVarProjection selfVar) {
     this(selfVar.singleTagProjection().projection());
+  }
+
+  /**
+   * @return key projections
+   */
+  public @Nullable List<$keyProjectionClass> keys() {
+    return raw.keys() == null ? null : raw.keys().stream().map(key -> new $keyProjectionClass(key)).collect(Collectors.toList());
   }
 
   /**
