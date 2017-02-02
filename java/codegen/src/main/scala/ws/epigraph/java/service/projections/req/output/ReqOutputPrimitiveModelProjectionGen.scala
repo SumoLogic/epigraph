@@ -38,7 +38,7 @@ class ReqOutputPrimitiveModelProjectionGen(
       "ws.epigraph.projections.req.output.ReqOutputPrimitiveModelProjection",
       "ws.epigraph.projections.req.output.ReqOutputModelProjection",
       "ws.epigraph.projections.req.output.ReqOutputVarProjection"
-    ) ++ params.imports
+    ) ++ params.imports ++ meta.imports
 
     /*@formatter:off*/sn"""\
 ${JavaGenUtils.topLevelComment}
@@ -46,9 +46,7 @@ $packageStatement
 
 ${ReqProjectionGen.generateImports(imports)}
 
-/**
- * Request output projection for {@code ${ln(cType)}} type
- */
+$classJavadoc\
 public class $shortClassName {
   private final @NotNull ReqOutputPrimitiveModelProjection raw;
 
@@ -60,8 +58,9 @@ public class $shortClassName {
     this(selfVar.singleTagProjection().projection());
   }
 
-${required.code}\
+${required.code}
 ${params.code}\
+${meta.code}\
 
   public @NotNull ReqOutputPrimitiveModelProjection _raw() { return raw; }
 }"""/*@formatter:on*/

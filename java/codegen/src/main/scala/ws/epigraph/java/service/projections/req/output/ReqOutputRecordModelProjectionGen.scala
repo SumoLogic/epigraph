@@ -17,7 +17,7 @@
 package ws.epigraph.java.service.projections.req.output
 
 import ws.epigraph.compiler.{CField, CRecordTypeDef}
-import ws.epigraph.java.JavaGenNames.{jn, ln}
+import ws.epigraph.java.JavaGenNames.jn
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 import ws.epigraph.java.service.projections.req.{CodeChunk, OperationInfo, ReqProjectionGen}
 import ws.epigraph.java.{GenContext, JavaGenUtils}
@@ -69,10 +69,10 @@ class ReqOutputRecordModelProjectionGen(
   /**
    * @return {@code ${field.name}} field projection
    */
-   public @Nullable ${fieldGenerator.shortClassName} ${jn(field.name)}FieldProjection() {
-     ReqOutputFieldProjectionEntry fpe = raw.fieldProjection("${field.name}");
-     return fpe == null ? null : new ${fieldGenerator.shortClassName}(fpe.fieldProjection());
-   }
+  public @Nullable ${fieldGenerator.shortClassName} ${jn(field.name)}FieldProjection() {
+    ReqOutputFieldProjectionEntry fpe = raw.fieldProjection("${field.name}");
+    return fpe == null ? null : new ${fieldGenerator.shortClassName}(fpe.fieldProjection());
+  }
 """/*@formatter:on*/
 
       lazy val fieldProjectionImports = Set(fieldGenerator.fullClassName)
@@ -82,10 +82,10 @@ class ReqOutputRecordModelProjectionGen(
   /**
    * @return {@code ${field.name}} field data projection
    */
-   public @Nullable ${dataGenerator.fullClassName} ${jn(field.name)}() {
-     ReqOutputFieldProjectionEntry fpe = raw.fieldProjection("${field.name}");
-     return fpe == null ? null : new ${dataGenerator.fullClassName}(fpe.fieldProjection().varProjection());
-   }
+  public @Nullable ${dataGenerator.fullClassName} ${jn(field.name)}() {
+    ReqOutputFieldProjectionEntry fpe = raw.fieldProjection("${field.name}");
+    return fpe == null ? null : new ${dataGenerator.fullClassName}(fpe.fieldProjection().varProjection());
+  }
 """/*@formatter:on*/
 
       if (ReqOutputFieldProjectionGen.generateFieldProjections)
@@ -113,7 +113,7 @@ class ReqOutputRecordModelProjectionGen(
       "ws.epigraph.projections.req.output.ReqOutputRecordModelProjection",
       "ws.epigraph.projections.req.output.ReqOutputModelProjection",
       "ws.epigraph.projections.req.output.ReqOutputVarProjection"
-    ) ++ fields.imports ++ params.imports
+    ) ++ fields.imports ++ params.imports ++ meta.imports
 
     /*@formatter:off*/sn"""\
 ${JavaGenUtils.topLevelComment}
@@ -121,9 +121,7 @@ $packageStatement
 
 ${ReqProjectionGen.generateImports(imports)}
 
-/**
- * Request output projection for {@code ${ln(cType)}} type
- */
+$classJavadoc\
 public class $shortClassName {
   private final @NotNull ReqOutputRecordModelProjection raw;
 
@@ -135,9 +133,10 @@ public class $shortClassName {
     this(selfVar.singleTagProjection().projection());
   }
 
-${required.code}\
+${required.code}
 ${fields.code}\
 ${params.code}\
+${meta.code}\
 
   public @NotNull ReqOutputRecordModelProjection _raw() { return raw; }
 }"""/*@formatter:on*/

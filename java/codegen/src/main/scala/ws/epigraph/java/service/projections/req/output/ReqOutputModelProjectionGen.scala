@@ -18,7 +18,7 @@ package ws.epigraph.java.service.projections.req.output
 
 import ws.epigraph.compiler.CDatumType
 import ws.epigraph.java.GenContext
-import ws.epigraph.java.JavaGenNames.ln
+import ws.epigraph.java.JavaGenNames.{lqn2,ln}
 import ws.epigraph.java.service.projections.req.output.ReqOutputProjectionGen.{classNamePrefix, classNameSuffix}
 import ws.epigraph.java.service.projections.req.{CodeChunk, OperationInfo, ReqProjectionGen}
 import ws.epigraph.lang.Qn
@@ -35,25 +35,56 @@ abstract class ReqOutputModelProjectionGen(
   namespaceSuffix: Qn,
   ctx: GenContext) extends ReqOutputProjectionGen(operationInfo, namespaceSuffix, ctx) {
 
-  protected val cType: CDatumType  = ReqProjectionGen.toCType(op.model())
+  protected val cType: CDatumType = ReqProjectionGen.toCType(op.model())
 
   override val shortClassName: String = s"$classNamePrefix${ln(cType)}$classNameSuffix"
 
-  protected lazy val params: CodeChunk = ReqProjectionGen.generateParams(op.params(), namespace.toString, "raw.params()")
+  protected lazy val params: CodeChunk =
+    ReqProjectionGen.generateParams(op.params(), namespace.toString, "raw.params()")
 
   protected lazy val required: CodeChunk = CodeChunk(/*@formatter:off*/sn"""\
   public boolean requried() {
     return raw.required();
   }
-"""/*@formatter:on*/
+"""/*@formatter:on*/)
 
-  )
+  protected lazy val metaGen: Option[ReqOutputModelProjectionGen] = {
+    val metaOp: OpOutputModelProjection[_, _, _ <: DatumTypeApi] =
+      op.metaProjection().asInstanceOf[OpOutputModelProjection[_, _, _ <: DatumTypeApi]]
+
+    if (metaOp == null) None
+    else Some(
+      ReqOutputModelProjectionGen.dataProjectionGen(
+        operationInfo,
+        metaOp,
+        namespaceSuffix.append("meta"),
+        ctx
+      )
+    )
+  }
+
+  protected lazy val meta: CodeChunk = metaGen match {
+    case Some(g) => CodeChunk(/*@formatter:off*/sn"""\
+  public @Nullable ${g.fullClassName} meta() {
+    return raw.metaProjection() == null ? null : new ${g.fullClassName} (raw.metaProjection());
+  }
+"""/*@formatter:on*/ , Set("org.jetbrains.annotations.Nullable"))
+    case None => CodeChunk.empty
+  }
+
+  override def children: Iterable[ReqProjectionGen] = super.children ++ metaGen.iterator
+
+  protected def classJavadoc =/*@formatter:off*/sn"""\
+/**
+ * Request output projection for {@link ${lqn2(cType, namespace.toString)} ${ln(cType)}} type
+ */
+"""/*@formatter:on*/
 }
 
 object ReqOutputModelProjectionGen {
   def dataProjectionGen(
     operationInfo: OperationInfo,
-    op: OpOutputModelProjection[_,_,_ <: DatumTypeApi],
+    op: OpOutputModelProjection[_, _, _ <: DatumTypeApi],
     namespaceSuffix: Qn,
     ctx: GenContext): ReqOutputModelProjectionGen = op.model().kind() match {
 

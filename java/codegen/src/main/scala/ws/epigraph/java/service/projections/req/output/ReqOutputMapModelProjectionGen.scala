@@ -52,7 +52,7 @@ class ReqOutputMapModelProjectionGen(
     ctx
   )
 
-  override def children: Iterable[ReqProjectionGen] = Iterable(keyGen, elementGen)
+  override def children: Iterable[ReqProjectionGen] = super.children ++ Iterable(keyGen, elementGen)
 
   override protected def generate: String = {
     val keyProjectionClass = keyGen.shortClassName
@@ -67,7 +67,7 @@ class ReqOutputMapModelProjectionGen(
       "ws.epigraph.projections.req.output.ReqOutputModelProjection",
       "ws.epigraph.projections.req.output.ReqOutputVarProjection",
       elementGen.fullClassName
-    ) ++ params.imports
+    ) ++ params.imports ++ meta.imports
 
     /*@formatter:off*/sn"""\
 ${JavaGenUtils.topLevelComment}
@@ -75,9 +75,7 @@ $packageStatement
 
 ${ReqProjectionGen.generateImports(imports)}
 
-/**
- * Request output projection for {@code ${ln(cType)}} type
- */
+$classJavadoc\
 public class $shortClassName {
   private final @NotNull ReqOutputMapModelProjection raw;
 
@@ -89,8 +87,7 @@ public class $shortClassName {
     this(selfVar.singleTagProjection().projection());
   }
 
-${required.code}\
-
+${required.code}
   /**
    * @return key projections
    */
@@ -105,6 +102,7 @@ ${required.code}\
     return new $elementProjectionClass(raw.itemsProjection());
   }
 ${params.code}\
+${meta.code}\
 
   public @NotNull ReqOutputMapModelProjection _raw() { return raw; }
 }"""/*@formatter:on*/
