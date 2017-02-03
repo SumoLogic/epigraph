@@ -16,12 +16,10 @@
 
 package ws.epigraph.java.service.projections.req.output
 
-import ws.epigraph.compiler.{CDatumType, CMapType, CTypeKind}
-import ws.epigraph.java.JavaGenNames.{ln, lqn2}
-import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
+import ws.epigraph.compiler.CMapType
+import ws.epigraph.java.GenContext
 import ws.epigraph.java.service.projections.req.output.ReqOutputProjectionGen.{classNamePrefix, classNameSuffix}
-import ws.epigraph.java.service.projections.req.{OperationInfo, ReqProjectionGen}
-import ws.epigraph.java.{GenContext, JavaGenUtils}
+import ws.epigraph.java.service.projections.req.{OperationInfo, ReqMapKeyProjectionGen}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.output.OpOutputKeyProjection
 
@@ -30,72 +28,16 @@ import ws.epigraph.projections.op.output.OpOutputKeyProjection
  */
 class ReqOutputMapKeyProjectionGen(
   protected val operationInfo: OperationInfo,
-  mapType: CMapType,
-  op: OpOutputKeyProjection,
+  protected val cMapType: CMapType,
+  protected val op: OpOutputKeyProjection,
   protected val namespaceSuffix: Qn,
-  protected val ctx: GenContext) extends ReqOutputProjectionGen {
+  protected val ctx: GenContext) extends ReqOutputProjectionGen with ReqMapKeyProjectionGen {
 
-  private val mapTypeShortName = ln(mapType)
+  override type OpKeyProjectionType = OpOutputKeyProjection
 
   override def shortClassName: String = s"$classNamePrefix${mapTypeShortName}Key$classNameSuffix"
 
-  override protected def generate: String = {
-    val params = ReqProjectionGen.generateParams(op.params(), namespace.toString, "raw.params()")
-
-    val keyType: CDatumType = mapType.keyTypeRef.resolved.asInstanceOf[CDatumType]
-    val keyTypeShortName = ln(keyType)
-
-    def genPrimitiveKey(nativeType: String): String = /*@formatter:off*/sn"""\
-  public @NotNull $nativeType value() {
-    $keyTypeShortName key = ($keyTypeShortName) raw.value();
-    return key.getVal();
-  }
-"""/*@formatter:on*/
-
-    def genNonPrimitiveKey: String = /*@formatter:off*/sn"""\
-  public @NotNull $keyTypeShortName value() {
-    return ($keyTypeShortName) raw.value();
-  }
-"""/*@formatter:on*/
-
-    val keyCode = keyType.kind match {
-      case CTypeKind.STRING => genPrimitiveKey("String")
-      case CTypeKind.INTEGER => genPrimitiveKey("Integer")
-      case CTypeKind.LONG => genPrimitiveKey("Long")
-      case CTypeKind.DOUBLE => genPrimitiveKey("Double")
-      case CTypeKind.BOOLEAN => genPrimitiveKey("Boolean")
-      case _ => genNonPrimitiveKey
-    }
-
-    val imports: Set[String] = Set(
-      "org.jetbrains.annotations.NotNull",
-      "ws.epigraph.projections.req.output.ReqOutputKeyProjection",
-      lqn2(keyType, namespace.toString)
-    ) ++ params.imports
-
-    /*@formatter:off*/sn"""\
-${JavaGenUtils.topLevelComment}
-$packageStatement
-
-${ReqProjectionGen.generateImports(imports)}
-
-/**
- * Request output projection for {@code $mapTypeShortName} keys
- */
-public class $shortClassName {
-  private final @NotNull ReqOutputKeyProjection raw;
-
-  public $shortClassName(@NotNull ReqOutputKeyProjection raw) {
-    this.raw = raw;
-  }
-
-  /**
-   * @return key value
-   */
-$keyCode\
-${params.code}\
-
-  public @NotNull ReqOutputKeyProjection _raw() { return raw; }
-}"""/*@formatter:on*/
-  }
+  override protected def generate: String = generate(
+    Qn.fromDotSeparated("ws.epigraph.projections.req.output.ReqOutputKeyProjection")
+  )
 }
