@@ -21,17 +21,12 @@ package ws.epigraph.java;
 import scala.collection.Iterator;
 import scala.collection.JavaConversions;
 import ws.epigraph.compiler.*;
-import ws.epigraph.java.projections.req.output.ReqOutputListModelProjectionGen;
-import ws.epigraph.java.projections.req.output.ReqOutputMapModelProjectionGen;
-import ws.epigraph.java.projections.req.output.ReqOutputRecordModelProjectionGen;
-import ws.epigraph.java.projections.req.output.ReqOutputVarProjectionGen;
 import ws.epigraph.java.service.AbstractResourceFactoryGen;
 import ws.epigraph.java.service.ResourceDeclarationGen;
 import ws.epigraph.java.service.projections.req.OperationInfo;
 import ws.epigraph.java.service.projections.req.ReqProjectionGen;
 import ws.epigraph.java.service.projections.req.output.ReqOutputFieldProjectionGen;
 import ws.epigraph.lang.Qn;
-import ws.epigraph.projections.op.output.OpOutputFieldProjectionEntry;
 import ws.epigraph.schema.ResourceDeclaration;
 import ws.epigraph.schema.ResourcesSchema;
 import ws.epigraph.schema.operations.*;
@@ -86,25 +81,21 @@ public class EpigraphJavaGenerator {
             case VARTYPE:
               final CVarTypeDef varTypeDef = (CVarTypeDef) typeDef;
               new VarTypeGen(varTypeDef, ctx).writeUnder(tmpRoot);
-//              new ReqOutputVarProjectionGen(varTypeDef, ctx).writeUnder(tmpRoot);
               break;
 
             case RECORD:
               final CRecordTypeDef recordTypeDef = (CRecordTypeDef) typeDef;
               new RecordGen(recordTypeDef, ctx).writeUnder(tmpRoot);
-//              new ReqOutputRecordModelProjectionGen(recordTypeDef, ctx).writeUnder(tmpRoot);
               break;
 
             case MAP:
               final CMapTypeDef mapTypeDef = (CMapTypeDef) typeDef;
               new NamedMapGen(mapTypeDef, ctx).writeUnder(tmpRoot);
-//              new ReqOutputMapModelProjectionGen(mapTypeDef, ctx).writeUnder(tmpRoot);
               break;
 
             case LIST:
               final CListTypeDef listTypeDef = (CListTypeDef) typeDef;
               new NamedListGen(listTypeDef, ctx).writeUnder(tmpRoot);
-//              new ReqOutputListModelProjectionGen(listTypeDef, ctx).writeUnder(tmpRoot);
               break;
 
             case ENUM:
@@ -131,7 +122,6 @@ public class EpigraphJavaGenerator {
       try {
         //System.out.println(alt.name().name());
         new AnonListGen(alt, ctx).writeUnder(tmpRoot);
-//        new ReqOutputListModelProjectionGen(alt, ctx).writeUnder(tmpRoot);
       } catch (CompilerException ignored) {
       }
     }
@@ -140,7 +130,6 @@ public class EpigraphJavaGenerator {
       try {
         //System.out.println(amt.name().name());
         new AnonMapGen(amt, ctx).writeUnder(tmpRoot);
-//        new ReqOutputMapModelProjectionGen(amt, ctx).writeUnder(tmpRoot);
       } catch (CompilerException ignored) {
       }
     }
