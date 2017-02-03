@@ -30,17 +30,20 @@ import ws.epigraph.projections.req.delete.ReqDeleteTagProjectionEntry;
 import ws.epigraph.projections.req.input.ReqInputFieldProjection;
 import ws.epigraph.projections.req.input.ReqInputRecordModelProjection;
 import ws.epigraph.projections.req.output.ReqOutputFieldProjection;
-import ws.epigraph.projections.req.output.ReqOutputModelProjection;
 import ws.epigraph.projections.req.path.ReqMapModelPath;
 import ws.epigraph.schema.operations.*;
 import ws.epigraph.service.ServiceInitializationException;
 import ws.epigraph.service.operations.*;
 import ws.epigraph.tests.*;
+import ws.epigraph.tests.resources.users.operations.read.output.ReqOutputPersonMapKeyProjection;
+import ws.epigraph.tests.resources.users.operations.read.output.ReqOutputPersonMapProjection;
+import ws.epigraph.tests.resources.users.operations.read.output.meta.ReqOutputPaginationInfoProjection;
 import ws.epigraph.types.DatumType;
 
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 public class UsersResourceFactory extends AbstractUsersResourceFactory {
   private final UsersStorage storage;
@@ -104,16 +107,22 @@ public class UsersResourceFactory extends AbstractUsersResourceFactory {
       Long start = typeSafeFieldProjection.getStartParameter();
       Long count = typeSafeFieldProjection.getCountParameter();
 
-      final ReqOutputModelProjection<?, ?, ?> modelProjection =
-          fieldProjection.varProjection().singleTagProjection().projection();
-      final ReqOutputModelProjection<?, ?, ?> metaProjection = modelProjection.metaProjection();
+      final ReqOutputPersonMapProjection mapProjection = typeSafeFieldProjection.dataProjection();
+      final ReqOutputPaginationInfoProjection metaProjection = mapProjection.meta();
+
+      final List<ReqOutputPersonMapKeyProjection> keys = mapProjection.keys();
+      if (keys != null) {
+        System.out.println("Requested keys: " +
+                           keys.stream().map(k -> k.value().toString()).collect(Collectors.joining(", "))
+        );
+      }
 
       final PersonMap.Builder users = storage.users();
       if (metaProjection != null) {
         final PaginationInfo.Builder paginationInfoBuilder = PaginationInfo.type.createBuilder();
-        if (start != null)
+        if (start != null && metaProjection.start() != null)
           paginationInfoBuilder.setStart(epigraph.Long.create(start));
-        if (count != null)
+        if (count != null && metaProjection.count() != null)
           paginationInfoBuilder.setCount(epigraph.Long.create(count));
         users.setMeta(paginationInfoBuilder);
       }
