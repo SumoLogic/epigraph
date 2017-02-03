@@ -35,6 +35,7 @@ abstract class ReqOutputModelProjectionGen(
   protected val ctx: GenContext) extends ReqOutputProjectionGen with ReqModelProjectionGen {
 
   override type OpProjectionType <: OpOutputModelProjection[_, _, _ <: DatumTypeApi]
+  override type OpMetaProjectionType = OpOutputModelProjection[_, _, _ <: DatumTypeApi]
 
   override val shortClassName: String = s"$classNamePrefix${ln(cType)}$classNameSuffix"
 
@@ -52,16 +53,13 @@ abstract class ReqOutputModelProjectionGen(
   }
 """/*@formatter:on*/)
 
-  override protected def metaGenerator(metaOp: OpProjectionType): ReqProjectionGen =
+  override protected def metaGenerator(metaOp: OpMetaProjectionType): ReqProjectionGen =
     ReqOutputModelProjectionGen.dataProjectionGen(
       operationInfo,
       metaOp,
       namespaceSuffix.append("meta"),
       ctx
     )
-
-  override def children: Iterable[ReqProjectionGen] = super.children ++ metaGeneratorOpt.iterator
-
 }
 
 object ReqOutputModelProjectionGen {

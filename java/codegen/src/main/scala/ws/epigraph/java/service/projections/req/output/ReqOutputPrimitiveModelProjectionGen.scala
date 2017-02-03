@@ -34,7 +34,6 @@ class ReqOutputPrimitiveModelProjectionGen(
   override type OpProjectionType = OpOutputPrimitiveModelProjection
 
   override protected def generate: String = generate(
-    shortClassName,
     Qn.fromDotSeparated("ws.epigraph.projections.req.output.ReqOutputPrimitiveModelProjection"),
     required
   )

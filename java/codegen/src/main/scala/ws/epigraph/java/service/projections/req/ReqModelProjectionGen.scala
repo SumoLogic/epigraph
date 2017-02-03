@@ -28,6 +28,7 @@ import ws.epigraph.types.DatumTypeApi
  */
 trait ReqModelProjectionGen extends ReqProjectionGen {
   type OpProjectionType <: AbstractOpModelProjection[_, _, _ <: DatumTypeApi]
+  type OpMetaProjectionType <: AbstractOpModelProjection[_, _, _ <: DatumTypeApi]
 
   protected def op: OpProjectionType
 
@@ -39,7 +40,7 @@ trait ReqModelProjectionGen extends ReqProjectionGen {
 
   protected def reqModelProjectionParams: String
 
-  protected def metaGenerator(metaOp: OpProjectionType): ReqProjectionGen =
+  protected def metaGenerator(metaOp: OpMetaProjectionType): ReqProjectionGen =
     throw new RuntimeException("meta projections not supported")
 
   // -----------
@@ -48,7 +49,7 @@ trait ReqModelProjectionGen extends ReqProjectionGen {
     ReqProjectionGen.generateParams(op.params(), namespace.toString, "raw.params()")
 
   protected lazy val metaGeneratorOpt: Option[ReqProjectionGen] = {
-    val metaOp: OpProjectionType = op.metaProjection().asInstanceOf[OpProjectionType]
+    val metaOp: OpMetaProjectionType = op.metaProjection().asInstanceOf[OpMetaProjectionType]
     Option(metaOp).map(metaGenerator)
   }
 
@@ -60,6 +61,8 @@ trait ReqModelProjectionGen extends ReqProjectionGen {
 """/*@formatter:on*/ , Set("org.jetbrains.annotations.Nullable"))
     case None => CodeChunk.empty
   }
+
+  override def children: Iterable[ReqProjectionGen] = super.children ++ metaGeneratorOpt.iterator
 
   protected def classJavadoc =/*@formatter:off*/sn"""\
 /**

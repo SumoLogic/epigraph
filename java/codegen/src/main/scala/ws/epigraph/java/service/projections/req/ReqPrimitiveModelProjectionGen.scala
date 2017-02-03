@@ -29,10 +29,7 @@ import ws.epigraph.types.DatumTypeApi
 trait ReqPrimitiveModelProjectionGen extends ReqModelProjectionGen {
   override type OpProjectionType <: AbstractOpModelProjection[_, _, _ <: DatumTypeApi] with GenPrimitiveModelProjection[_, _, _ <: DatumTypeApi]
 
-  protected def generate(
-    shortClassName: String,
-    reqPrimitiveModelProjectionFqn: Qn,
-    extra: CodeChunk): String = {
+  protected def generate(reqPrimitiveModelProjectionFqn: Qn, extra: CodeChunk): String = {
 
     val imports: Set[String] = Set(
       "org.jetbrains.annotations.NotNull",
