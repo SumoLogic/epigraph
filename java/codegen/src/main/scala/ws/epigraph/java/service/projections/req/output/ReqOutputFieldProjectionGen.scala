@@ -16,11 +16,10 @@
 
 package ws.epigraph.java.service.projections.req.output
 
+import ws.epigraph.java.GenContext
 import ws.epigraph.java.JavaGenUtils.up
-import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 import ws.epigraph.java.service.projections.req.output.ReqOutputProjectionGen.{classNamePrefix, classNameSuffix}
-import ws.epigraph.java.service.projections.req.{OperationInfo, ReqProjectionGen}
-import ws.epigraph.java.{GenContext, JavaGenUtils}
+import ws.epigraph.java.service.projections.req.{OperationInfo, ReqFieldProjectionGen}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.output.OpOutputFieldProjection
 
@@ -30,13 +29,15 @@ import ws.epigraph.projections.op.output.OpOutputFieldProjection
 class ReqOutputFieldProjectionGen(
   protected val operationInfo: OperationInfo,
   fieldName: String,
-  op: OpOutputFieldProjection,
+  protected val op: OpOutputFieldProjection,
   protected val namespaceSuffix: Qn,
-  protected val ctx: GenContext) extends ReqOutputProjectionGen {
+  protected val ctx: GenContext) extends ReqOutputProjectionGen with ReqFieldProjectionGen {
+
+  override type OpFieldProjectionType = OpOutputFieldProjection
 
   override val shortClassName: String = s"$classNamePrefix${up(fieldName)}Field$classNameSuffix"
 
-  lazy val dataProjectionGen: ReqOutputProjectionGen =
+  override lazy val dataProjectionGen: ReqOutputProjectionGen =
     ReqOutputVarProjectionGen.dataProjectionGen(
       operationInfo,
       op.varProjection(),
@@ -44,46 +45,8 @@ class ReqOutputFieldProjectionGen(
       ctx
     )
 
-  override lazy val children: Iterable[ReqProjectionGen] = Iterable(dataProjectionGen)
+  override protected def generate: String = generate(
+    fieldName, Qn.fromDotSeparated("ws.epigraph.projections.req.output.ReqOutputFieldProjection")
+  )
 
-  override protected def generate: String = {
-    val params =
-      ReqProjectionGen.generateParams(op.params(), namespace.toString, "raw.params()")
-
-    val imports: Set[String] = params.imports ++ Set(
-      "org.jetbrains.annotations.NotNull",
-      "ws.epigraph.projections.req.output.ReqOutputFieldProjection",
-      dataProjectionGen.fullClassName
-    )
-
-    /*@formatter:off*/sn"""\
-${JavaGenUtils.topLevelComment}
-$packageStatement
-
-${ReqProjectionGen.generateImports(imports)}
-
-/**
- * Request output projection for {@code $fieldName} field
- */
-public class $shortClassName {
-  private final @NotNull ReqOutputFieldProjection raw;
-
-  public $shortClassName(@NotNull ReqOutputFieldProjection raw) { this.raw = raw; }
-
-  /**
-   * @return field data projection
-   */
-  public @NotNull ${dataProjectionGen.shortClassName} dataProjection() {
-    return new ${dataProjectionGen.shortClassName}(raw.varProjection());
-  }
-${params.code}\
-
-  public @NotNull ReqOutputFieldProjection _raw() { return raw; }
-}"""/*@formatter:on*/
-  }
-
-}
-
-object ReqOutputFieldProjectionGen {
-  val generateFieldProjections = false // take from settings?
 }

@@ -19,7 +19,7 @@ package ws.epigraph.java.service.projections.req.output
 import ws.epigraph.compiler.{CField, CRecordTypeDef}
 import ws.epigraph.java.JavaGenNames.jn
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
-import ws.epigraph.java.service.projections.req.{CodeChunk, OperationInfo, ReqProjectionGen}
+import ws.epigraph.java.service.projections.req.{CodeChunk, OperationInfo, ReqFieldProjectionGen, ReqProjectionGen}
 import ws.epigraph.java.{GenContext, JavaGenUtils}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.output.OpOutputRecordModelProjection
@@ -54,7 +54,7 @@ class ReqOutputRecordModelProjectionGen(
     }.toMap
 
   override lazy val children: Iterable[ReqProjectionGen] =
-    if (ReqOutputFieldProjectionGen.generateFieldProjections)
+    if (ReqFieldProjectionGen.generateFieldProjections)
       fieldGenerators.values
     else
       fieldGenerators.values.flatMap(_.children)
@@ -90,7 +90,7 @@ class ReqOutputRecordModelProjectionGen(
   }
 """/*@formatter:on*/
 
-      if (ReqOutputFieldProjectionGen.generateFieldProjections)
+      if (ReqFieldProjectionGen.generateFieldProjections)
         CodeChunk(
           fieldProjection ++ modelProjection,
           Set(fieldGenerator.fullClassName,
