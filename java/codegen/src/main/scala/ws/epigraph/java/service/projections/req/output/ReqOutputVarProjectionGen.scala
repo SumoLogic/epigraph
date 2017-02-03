@@ -16,96 +16,45 @@
 
 package ws.epigraph.java.service.projections.req.output
 
-import ws.epigraph.compiler.{CTag, CVarTypeDef}
-import ws.epigraph.java.JavaGenNames.{jn, ln, ttr}
-import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
+import ws.epigraph.java.GenContext
+import ws.epigraph.java.JavaGenNames.{jn, ln}
 import ws.epigraph.java.service.projections.req.output.ReqOutputProjectionGen.{classNamePrefix, classNameSuffix}
-import ws.epigraph.java.service.projections.req.{CodeChunk, OperationInfo, ReqProjectionGen}
-import ws.epigraph.java.{GenContext, JavaGenUtils}
+import ws.epigraph.java.service.projections.req.{OperationInfo, ReqProjectionGen}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.output._
 import ws.epigraph.types.TypeKind
-
-import scala.collection.JavaConversions._
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class ReqOutputVarProjectionGen(
   operationInfo: OperationInfo,
-  op: OpOutputVarProjection,
+  protected val op: OpOutputVarProjection,
   namespaceSuffix: Qn,
-  ctx: GenContext) extends ReqOutputProjectionGen(operationInfo, namespaceSuffix, ctx) {
+  ctx: GenContext) extends ReqOutputProjectionGen(operationInfo, namespaceSuffix, ctx) with ReqVarProjectionGen {
 
-  // todo we have to deal with poly tails / normalization in generated classes
+  override type OpProjectionType = OpOutputVarProjection
+  override type OpTagProjectionEntryType = OpOutputTagProjectionEntry
 
-  private val cType: CVarTypeDef = ReqProjectionGen.toCType(op.`type`()).asInstanceOf[CVarTypeDef]
 
   override val shortClassName: String = s"$classNamePrefix${ln(cType)}$classNameSuffix"
 
-  private lazy val tagGenerators: Map[CTag, ReqProjectionGen] =
-    op.tagProjections().values().map{ tpe =>
-      (
-        findTag(tpe.tag().name()),
-        ReqOutputModelProjectionGen.dataProjectionGen(
-          operationInfo,
-          tpe.projection(),
-          namespaceSuffix.append(jn(tpe.tag().name()).toLowerCase), // todo extract?
-          ctx
-        )
-      )
-    }.toMap
-
   override lazy val children: Iterable[ReqProjectionGen] = tagGenerators.values
 
-  private def findTag(name: String): CTag = cType.effectiveTags.find(_.name == name).getOrElse{
-    throw new RuntimeException(s"Can't find tag '$name' in type '${cType.name.toString}'")
-  }
-
-  override protected def generate: String = {
-
-    def genTag(tag: CTag, tagGenerator: ReqProjectionGen): CodeChunk = CodeChunk(
-      /*@formatter:off*/sn"""\
-  /**
-   * @return ${tag.name} projection
-   */
-   public @Nullable ${tagGenerator.shortClassName} ${jn(tag.name)}() {
-     ReqOutputTagProjectionEntry tpe = raw.tagProjections().get(${ttr(cType, tag.name, namespace.toString)}.name());
-     return tpe == null ? null : new ${tagGenerator.shortClassName}(tpe.projection());
-   }
-"""/*@formatter:on*/ ,
-      Set(
-        tagGenerator.fullClassName,
-        "org.jetbrains.annotations.Nullable",
-        "ws.epigraph.projections.req.output.ReqOutputTagProjectionEntry"
-      )
+  override protected def tagGenerator(tpe: OpOutputTagProjectionEntry): ReqProjectionGen =
+    ReqOutputModelProjectionGen.dataProjectionGen(
+      operationInfo,
+      tpe.projection(),
+      namespaceSuffix.append(jn(tpe.tag().name()).toLowerCase),
+      ctx
     )
 
-    val tags = tagGenerators.map{ case (tag, gen) => genTag(tag, gen) }.foldLeft(CodeChunk.empty)(_ + _)
-
-    val imports: Set[String] = Set(
-      "org.jetbrains.annotations.NotNull",
-      "ws.epigraph.projections.req.output.ReqOutputVarProjection"
-    ) ++ tags.imports
-
-    /*@formatter:off*/sn"""\
-${JavaGenUtils.topLevelComment}
-$packageStatement
-
-${ReqProjectionGen.generateImports(imports)}
-
-/**
- * Request output projection for {@code ${ln(cType)}} type
- */
-public class $shortClassName {
-  private final @NotNull ReqOutputVarProjection raw;
-
-  public $shortClassName(@NotNull ReqOutputVarProjection raw) { this.raw = raw; }
-${tags.code}\
-
-  public @NotNull ReqOutputVarProjection _raw() { return raw; }
-}"""/*@formatter:on*/
-  }
+  override protected def generate: String = generate(
+    namespace,
+    shortClassName,
+    Qn.fromDotSeparated("ws.epigraph.projections.req.output.ReqOutputVarProjection"),
+    Qn.fromDotSeparated("ws.epigraph.projections.req.output.ReqOutputTagProjectionEntry")
+  )
 }
 
 object ReqOutputVarProjectionGen {
