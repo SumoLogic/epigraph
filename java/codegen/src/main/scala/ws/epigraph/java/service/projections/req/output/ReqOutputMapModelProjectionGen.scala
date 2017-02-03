@@ -38,7 +38,7 @@ class ReqOutputMapModelProjectionGen(
     operationInfo,
   cType.asInstanceOf[CMapType],
     op.keyProjection(),
-    namespaceSuffix.append(elementsNamespaceSuffix),
+    namespaceSuffix,
     ctx
   )
 
