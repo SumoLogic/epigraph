@@ -35,7 +35,14 @@ trait ReqModelProjectionGen {
 
   protected def namespace: Qn
 
-  protected def metaGenerator(metaOp: OpProjectionType): ReqProjectionGen
+  protected def reqVarProjectionFqn: Qn
+
+  protected def reqModelProjectionQn: Qn
+
+  protected def reqModelProjectionParams: String
+
+  protected def metaGenerator(metaOp: OpProjectionType): ReqProjectionGen =
+    throw new RuntimeException("meta projections not supported")
 
   // -----------
 

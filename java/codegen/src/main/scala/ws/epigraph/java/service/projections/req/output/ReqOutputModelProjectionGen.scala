@@ -38,12 +38,19 @@ abstract class ReqOutputModelProjectionGen(
 
   override val shortClassName: String = s"$classNamePrefix${ln(cType)}$classNameSuffix"
 
+  override protected def reqVarProjectionFqn: Qn =
+    Qn.fromDotSeparated("ws.epigraph.projections.req.output.ReqOutputVarProjection")
+
+  override protected def reqModelProjectionQn: Qn =
+  Qn.fromDotSeparated("ws.epigraph.projections.req.output.ReqOutputModelProjection")
+
+  override protected def reqModelProjectionParams: String = "<?, ?, ?>"
+
   protected lazy val required: CodeChunk = CodeChunk(/*@formatter:off*/sn"""\
   public boolean requried() {
     return raw.required();
   }
 """/*@formatter:on*/)
-
 
   override protected def metaGenerator(metaOp: OpProjectionType): ReqProjectionGen =
     ReqOutputModelProjectionGen.dataProjectionGen(

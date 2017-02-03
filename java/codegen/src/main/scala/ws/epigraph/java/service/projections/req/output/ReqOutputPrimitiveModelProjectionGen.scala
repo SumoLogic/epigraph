@@ -16,11 +16,10 @@
 
 package ws.epigraph.java.service.projections.req.output
 
-import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
-import ws.epigraph.java.service.projections.req.{OperationInfo, ReqProjectionGen}
-import ws.epigraph.java.{GenContext, JavaGenUtils}
+import ws.epigraph.java.GenContext
+import ws.epigraph.java.service.projections.req.{OperationInfo, ReqPrimitiveModelProjectionGen}
 import ws.epigraph.lang.Qn
-import ws.epigraph.projections.op.output.{OpOutputPrimitiveModelProjection, OpOutputRecordModelProjection}
+import ws.epigraph.projections.op.output.OpOutputPrimitiveModelProjection
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -29,41 +28,15 @@ class ReqOutputPrimitiveModelProjectionGen(
   operationInfo: OperationInfo,
   protected val op: OpOutputPrimitiveModelProjection,
   namespaceSuffix: Qn,
-  ctx: GenContext) extends ReqOutputModelProjectionGen(operationInfo, op, namespaceSuffix, ctx) {
+  ctx: GenContext)
+  extends ReqOutputModelProjectionGen(operationInfo, op, namespaceSuffix, ctx) with ReqPrimitiveModelProjectionGen {
 
   override type OpProjectionType = OpOutputPrimitiveModelProjection
 
-  override protected def generate: String = {
-    val imports: Set[String] = Set(
-      "org.jetbrains.annotations.NotNull",
-      "ws.epigraph.projections.req.output.ReqOutputPrimitiveModelProjection",
-      "ws.epigraph.projections.req.output.ReqOutputModelProjection",
-      "ws.epigraph.projections.req.output.ReqOutputVarProjection"
-    ) ++ params.imports ++ meta.imports
+  override protected def generate: String = generate(
+    shortClassName,
+    Qn.fromDotSeparated("ws.epigraph.projections.req.output.ReqOutputPrimitiveModelProjection"),
+    required
+  )
 
-    /*@formatter:off*/sn"""\
-${JavaGenUtils.topLevelComment}
-$packageStatement
-
-${ReqProjectionGen.generateImports(imports)}
-
-$classJavadoc\
-public class $shortClassName {
-  private final @NotNull ReqOutputPrimitiveModelProjection raw;
-
-  public $shortClassName(@NotNull ReqOutputModelProjection<?, ?, ?> raw) {
-    this.raw = (ReqOutputPrimitiveModelProjection) raw;
-  }
-
-  public $shortClassName(@NotNull ReqOutputVarProjection selfVar) {
-    this(selfVar.singleTagProjection().projection());
-  }
-
-${required.code}
-${params.code}\
-${meta.code}\
-
-  public @NotNull ReqOutputPrimitiveModelProjection _raw() { return raw; }
-}"""/*@formatter:on*/
-  }
 }
