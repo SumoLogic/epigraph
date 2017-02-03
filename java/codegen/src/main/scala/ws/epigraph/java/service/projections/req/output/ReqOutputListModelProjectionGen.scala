@@ -16,10 +16,8 @@
 
 package ws.epigraph.java.service.projections.req.output
 
-import ws.epigraph.compiler.CListType
-import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
-import ws.epigraph.java.service.projections.req.{OperationInfo, ReqProjectionGen}
-import ws.epigraph.java.{GenContext, JavaGenUtils}
+import ws.epigraph.java.GenContext
+import ws.epigraph.java.service.projections.req.{OperationInfo, ReqListModelProjectionGen}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.output.OpOutputListModelProjection
 
@@ -30,63 +28,21 @@ class ReqOutputListModelProjectionGen(
   operationInfo: OperationInfo,
   val op: OpOutputListModelProjection,
   namespaceSuffix: Qn,
-  ctx: GenContext) extends ReqOutputModelProjectionGen(operationInfo, op, namespaceSuffix, ctx) {
+  ctx: GenContext)
+  extends ReqOutputModelProjectionGen(operationInfo, op, namespaceSuffix, ctx) with ReqListModelProjectionGen {
 
   override type OpProjectionType = OpOutputListModelProjection
 
-  private val cListType = cType.asInstanceOf[CListType]
-
-  private val elementsNamespaceSuffix = namespaceSuffix.append("elements")
-
-  private val elementGen = ReqOutputVarProjectionGen.dataProjectionGen(
+  protected val elementGen: ReqOutputProjectionGen = ReqOutputVarProjectionGen.dataProjectionGen(
     operationInfo,
     op.itemsProjection(),
-    elementsNamespaceSuffix,
+    namespaceSuffix.append(elementsNamespaceSuffix),
     ctx
   )
 
-  override def children: Iterable[ReqProjectionGen] = super.children ++ Iterable(elementGen)
+  override protected def generate: String = generate(
+    Qn.fromDotSeparated("ws.epigraph.projections.req.output.ReqOutputListModelProjection"),
+    required
+  )
 
-  override protected def generate: String = {
-    val elementProjectionClass = elementGen.shortClassName
-
-    val imports: Set[String] = Set(
-      "org.jetbrains.annotations.NotNull",
-      "ws.epigraph.projections.req.output.ReqOutputListModelProjection",
-      "ws.epigraph.projections.req.output.ReqOutputModelProjection",
-      "ws.epigraph.projections.req.output.ReqOutputVarProjection",
-      elementGen.fullClassName
-    ) ++ params.imports ++ meta.imports
-
-    /*@formatter:off*/sn"""\
-${JavaGenUtils.topLevelComment}
-$packageStatement
-
-${ReqProjectionGen.generateImports(imports)}
-
-$classJavadoc\
-public class $shortClassName {
-  private final @NotNull ReqOutputListModelProjection raw;
-
-  public $shortClassName(@NotNull ReqOutputModelProjection<?, ?, ?> raw) {
-    this.raw = (ReqOutputListModelProjection) raw;
-  }
-
-  public $shortClassName(@NotNull ReqOutputVarProjection selfVar) {
-    this(selfVar.singleTagProjection().projection());
-  }
-
-${required.code}
-  /**
-   * @return items projection
-   */
-  public @NotNull $elementProjectionClass itemsProjection() {
-    return new $elementProjectionClass(raw.itemsProjection());
-  }
-${params.code}\
-${meta.code}\
-
-  public @NotNull ReqOutputListModelProjection _raw() { return raw; }
-}"""/*@formatter:on*/
-  }
 }

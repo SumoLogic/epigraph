@@ -26,7 +26,7 @@ import ws.epigraph.projections.op.output.OpOutputPrimitiveModelProjection
  */
 class ReqOutputPrimitiveModelProjectionGen(
   operationInfo: OperationInfo,
-  protected val op: OpOutputPrimitiveModelProjection,
+  val op: OpOutputPrimitiveModelProjection,
   namespaceSuffix: Qn,
   ctx: GenContext)
   extends ReqOutputModelProjectionGen(operationInfo, op, namespaceSuffix, ctx) with ReqPrimitiveModelProjectionGen {
