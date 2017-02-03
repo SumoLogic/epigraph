@@ -28,17 +28,15 @@ import ws.epigraph.types.TypeKind
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class ReqOutputVarProjectionGen(
-  operationInfo: OperationInfo,
+  protected val operationInfo: OperationInfo,
   protected val op: OpOutputVarProjection,
-  namespaceSuffix: Qn,
-  ctx: GenContext) extends ReqOutputProjectionGen(operationInfo, namespaceSuffix, ctx) with ReqVarProjectionGen {
+  protected val namespaceSuffix: Qn,
+  protected val ctx: GenContext) extends ReqOutputProjectionGen with ReqVarProjectionGen {
 
   override type OpProjectionType = OpOutputVarProjection
   override type OpTagProjectionEntryType = OpOutputTagProjectionEntry
 
   override val shortClassName: String = s"$classNamePrefix${ln(cType)}$classNameSuffix"
-
-  override lazy val children: Iterable[ReqProjectionGen] = tagGenerators.values
 
   override protected def tagGenerator(tpe: OpOutputTagProjectionEntry): ReqProjectionGen =
     ReqOutputModelProjectionGen.dataProjectionGen(
@@ -49,8 +47,6 @@ class ReqOutputVarProjectionGen(
     )
 
   override protected def generate: String = generate(
-    namespace,
-    shortClassName,
     Qn.fromDotSeparated("ws.epigraph.projections.req.output.ReqOutputVarProjection"),
     Qn.fromDotSeparated("ws.epigraph.projections.req.output.ReqOutputTagProjectionEntry")
   )

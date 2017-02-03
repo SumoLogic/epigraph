@@ -28,13 +28,15 @@ import scala.collection.JavaConversions._
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-trait ReqVarProjectionGen {
+trait ReqVarProjectionGen extends ReqProjectionGen {
   type OpProjectionType <: GenVarProjection[_, OpTagProjectionEntryType, _]
   type OpTagProjectionEntryType <: GenTagProjectionEntry[OpTagProjectionEntryType, _]
 
   protected def op: OpProjectionType
 
   protected def tagGenerator(tpe: OpTagProjectionEntryType): ReqProjectionGen
+
+  override lazy val children: Iterable[ReqProjectionGen] = tagGenerators.values
 
   // -----------
 
@@ -55,8 +57,6 @@ trait ReqVarProjectionGen {
   // todo we have to deal with poly tails / normalization in generated classes
 
   protected def generate(
-    namespace: Qn,
-    shortClassName: String,
     reqVarProjectionFqn: Qn,
     reqTagProjectionEntryFqn: Qn
   ): String = {

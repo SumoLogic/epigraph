@@ -29,11 +29,11 @@ import ws.epigraph.projections.op.output.OpOutputKeyProjection
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class ReqOutputMapKeyProjectionGen(
-  operationInfo: OperationInfo,
+  protected val operationInfo: OperationInfo,
   mapType: CMapType,
   op: OpOutputKeyProjection,
-  namespaceSuffix: Qn,
-  ctx: GenContext) extends ReqOutputProjectionGen(operationInfo, namespaceSuffix, ctx) {
+  protected val namespaceSuffix: Qn,
+  protected val ctx: GenContext) extends ReqOutputProjectionGen {
 
   private val mapTypeShortName = ln(mapType)
 

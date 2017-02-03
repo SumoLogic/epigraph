@@ -26,14 +26,12 @@ import ws.epigraph.types.DatumTypeApi
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-trait ReqModelProjectionGen {
+trait ReqModelProjectionGen extends ReqProjectionGen {
   type OpProjectionType <: AbstractOpModelProjection[_, _, _ <: DatumTypeApi]
 
   protected def op: OpProjectionType
 
   protected val cType: CDatumType = ReqProjectionGen.toCType(op.model())
-
-  protected def namespace: Qn
 
   protected def reqVarProjectionFqn: Qn
 

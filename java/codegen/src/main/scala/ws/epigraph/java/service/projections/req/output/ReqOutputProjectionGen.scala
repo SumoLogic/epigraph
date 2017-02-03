@@ -16,17 +16,14 @@
 
 package ws.epigraph.java.service.projections.req.output
 
-import ws.epigraph.java.GenContext
-import ws.epigraph.java.service.projections.req.{OperationInfo, ReqProjectionGen}
+import ws.epigraph.java.service.projections.req.ReqProjectionGen
 import ws.epigraph.lang.Qn
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-abstract class ReqOutputProjectionGen(
-  protected val operationInfo: OperationInfo,
-  namespaceSuffix: Qn,
-  protected val ctx: GenContext) extends ReqProjectionGen {
+trait ReqOutputProjectionGen extends ReqProjectionGen {
+  protected def namespaceSuffix: Qn
 
   override lazy val namespace: Qn = super.namespace.append("output").append(namespaceSuffix)
 }

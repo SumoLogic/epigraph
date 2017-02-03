@@ -28,11 +28,11 @@ import ws.epigraph.projections.op.output.OpOutputFieldProjection
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class ReqOutputFieldProjectionGen(
-  operationInfo: OperationInfo,
+  protected val operationInfo: OperationInfo,
   fieldName: String,
   op: OpOutputFieldProjection,
-  namespaceSuffix: Qn,
-  ctx: GenContext) extends ReqOutputProjectionGen(operationInfo, namespaceSuffix, ctx) {
+  protected val namespaceSuffix: Qn,
+  protected val ctx: GenContext) extends ReqOutputProjectionGen {
 
   override val shortClassName: String = s"$classNamePrefix${up(fieldName)}Field$classNameSuffix"
 

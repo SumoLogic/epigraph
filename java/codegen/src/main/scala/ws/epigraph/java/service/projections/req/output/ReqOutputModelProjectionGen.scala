@@ -29,10 +29,10 @@ import ws.epigraph.types.{DatumTypeApi, TypeKind}
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 abstract class ReqOutputModelProjectionGen(
-  operationInfo: OperationInfo,
+  protected val operationInfo: OperationInfo,
   op: OpOutputModelProjection[_, _, _ <: DatumTypeApi],
-  namespaceSuffix: Qn,
-  ctx: GenContext) extends ReqOutputProjectionGen(operationInfo, namespaceSuffix, ctx) with ReqModelProjectionGen {
+  protected val namespaceSuffix: Qn,
+  protected val ctx: GenContext) extends ReqOutputProjectionGen with ReqModelProjectionGen {
 
   override type OpProjectionType <: OpOutputModelProjection[_, _, _ <: DatumTypeApi]
 
