@@ -2,7 +2,6 @@ package ws.epigraph.java
 
 import java.nio.file.{Path, Paths}
 
-import ws.epigraph.compiler.CType
 import ws.epigraph.gen.Constants
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 
@@ -11,7 +10,7 @@ import scala.collection.JavaConverters._
 /**
  * @author yegor 2016-12-15.
  */
-class IndexGen(ctx: GenContext) extends JavaGen(ctx) {
+class IndexGen(protected val ctx: GenContext) extends JavaGen {
 
     private val IndexClassName: String = Constants.TypesIndex.className
 

@@ -26,7 +26,7 @@ import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 
 import scala.language.implicitConversions
 
-class NamespaceGen(from: CNamespace, ctx: GenContext) extends JavaGen(ctx) {
+class NamespaceGen(from: CNamespace, protected val ctx: GenContext) extends JavaGen {
 
   // TODO respect annotations changing namespace names for scala
 

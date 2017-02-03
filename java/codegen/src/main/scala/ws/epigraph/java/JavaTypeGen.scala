@@ -26,7 +26,7 @@ import ws.epigraph.lang.Qn
 
 import scala.collection.JavaConversions._
 
-abstract class JavaTypeGen[Type >: Null <: CType](protected val t: Type, ctx: GenContext) extends JavaGen(ctx) {
+abstract class JavaTypeGen[Type >: Null <: CType](protected val t: Type, protected val ctx: GenContext) extends JavaGen {
 
   ctx.generatedTypes.put(t.name, Qn.fromDotSeparated(typeClassExpression))
 

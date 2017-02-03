@@ -36,7 +36,6 @@ class ReqOutputVarProjectionGen(
   override type OpProjectionType = OpOutputVarProjection
   override type OpTagProjectionEntryType = OpOutputTagProjectionEntry
 
-
   override val shortClassName: String = s"$classNamePrefix${ln(cType)}$classNameSuffix"
 
   override lazy val children: Iterable[ReqProjectionGen] = tagGenerators.values

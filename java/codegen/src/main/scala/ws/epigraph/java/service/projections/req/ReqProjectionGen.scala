@@ -28,7 +28,7 @@ import ws.epigraph.types.{DatumTypeApi, TypeApi}
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-abstract class ReqProjectionGen(protected val operationInfo: OperationInfo, ctx: GenContext) extends JavaGen(ctx) {
+abstract class ReqProjectionGen(protected val operationInfo: OperationInfo, protected val ctx: GenContext) extends JavaGen {
 
   def namespace: Qn =
     operationInfo.resourceNamespace
