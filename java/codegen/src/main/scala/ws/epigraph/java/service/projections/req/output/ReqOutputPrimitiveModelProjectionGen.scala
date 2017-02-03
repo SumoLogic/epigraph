@@ -16,21 +16,22 @@
 
 package ws.epigraph.java.service.projections.req.output
 
-import ws.epigraph.java.JavaGenNames.ln
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 import ws.epigraph.java.service.projections.req.{OperationInfo, ReqProjectionGen}
 import ws.epigraph.java.{GenContext, JavaGenUtils}
 import ws.epigraph.lang.Qn
-import ws.epigraph.projections.op.output.OpOutputPrimitiveModelProjection
+import ws.epigraph.projections.op.output.{OpOutputPrimitiveModelProjection, OpOutputRecordModelProjection}
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class ReqOutputPrimitiveModelProjectionGen(
   operationInfo: OperationInfo,
-  op: OpOutputPrimitiveModelProjection,
+  protected val op: OpOutputPrimitiveModelProjection,
   namespaceSuffix: Qn,
   ctx: GenContext) extends ReqOutputModelProjectionGen(operationInfo, op, namespaceSuffix, ctx) {
+
+  override type OpProjectionType = OpOutputPrimitiveModelProjection
 
   override protected def generate: String = {
     val imports: Set[String] = Set(

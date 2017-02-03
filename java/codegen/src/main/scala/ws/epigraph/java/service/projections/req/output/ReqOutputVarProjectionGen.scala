@@ -19,7 +19,7 @@ package ws.epigraph.java.service.projections.req.output
 import ws.epigraph.java.GenContext
 import ws.epigraph.java.JavaGenNames.{jn, ln}
 import ws.epigraph.java.service.projections.req.output.ReqOutputProjectionGen.{classNamePrefix, classNameSuffix}
-import ws.epigraph.java.service.projections.req.{OperationInfo, ReqProjectionGen}
+import ws.epigraph.java.service.projections.req.{OperationInfo, ReqProjectionGen, ReqVarProjectionGen}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.output._
 import ws.epigraph.types.TypeKind

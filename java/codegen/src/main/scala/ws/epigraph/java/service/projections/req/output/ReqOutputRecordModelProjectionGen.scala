@@ -31,9 +31,11 @@ import scala.collection.JavaConversions._
  */
 class ReqOutputRecordModelProjectionGen(
   operationInfo: OperationInfo,
-  op: OpOutputRecordModelProjection,
+  protected val op: OpOutputRecordModelProjection,
   namespaceSuffix: Qn,
   ctx: GenContext) extends ReqOutputModelProjectionGen(operationInfo, op, namespaceSuffix, ctx) {
+
+  override type OpProjectionType = OpOutputRecordModelProjection
 
   private val cRecordType = cType.asInstanceOf[CRecordTypeDef]
 

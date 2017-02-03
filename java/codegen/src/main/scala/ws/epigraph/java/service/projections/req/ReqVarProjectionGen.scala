@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package ws.epigraph.java.service.projections.req.output
+package ws.epigraph.java.service.projections.req
 
 import ws.epigraph.compiler.{CTag, CVarTypeDef}
 import ws.epigraph.java.JavaGenNames.{jn, ln, ttr}
 import ws.epigraph.java.JavaGenUtils
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
-import ws.epigraph.java.service.projections.req.{CodeChunk, ReqProjectionGen}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.gen.{GenTagProjectionEntry, GenVarProjection}
 

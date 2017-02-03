@@ -17,7 +17,6 @@
 package ws.epigraph.java.service.projections.req.output
 
 import ws.epigraph.compiler.CMapType
-import ws.epigraph.java.JavaGenNames.ln
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 import ws.epigraph.java.service.projections.req.{OperationInfo, ReqProjectionGen}
 import ws.epigraph.java.{GenContext, JavaGenUtils}
@@ -29,9 +28,11 @@ import ws.epigraph.projections.op.output.OpOutputMapModelProjection
  */
 class ReqOutputMapModelProjectionGen(
   operationInfo: OperationInfo,
-  op: OpOutputMapModelProjection,
+  override protected val op: OpOutputMapModelProjection,
   namespaceSuffix: Qn,
   ctx: GenContext) extends ReqOutputModelProjectionGen(operationInfo, op, namespaceSuffix, ctx) {
+
+  override type OpProjectionType = OpOutputMapModelProjection
 
   private val cMapType = cType.asInstanceOf[CMapType]
 

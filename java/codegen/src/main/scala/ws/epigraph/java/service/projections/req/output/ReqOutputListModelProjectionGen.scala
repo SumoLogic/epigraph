@@ -17,7 +17,6 @@
 package ws.epigraph.java.service.projections.req.output
 
 import ws.epigraph.compiler.CListType
-import ws.epigraph.java.JavaGenNames.ln
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 import ws.epigraph.java.service.projections.req.{OperationInfo, ReqProjectionGen}
 import ws.epigraph.java.{GenContext, JavaGenUtils}
@@ -29,9 +28,11 @@ import ws.epigraph.projections.op.output.OpOutputListModelProjection
  */
 class ReqOutputListModelProjectionGen(
   operationInfo: OperationInfo,
-  op: OpOutputListModelProjection,
+  val op: OpOutputListModelProjection,
   namespaceSuffix: Qn,
   ctx: GenContext) extends ReqOutputModelProjectionGen(operationInfo, op, namespaceSuffix, ctx) {
+
+  override type OpProjectionType = OpOutputListModelProjection
 
   private val cListType = cType.asInstanceOf[CListType]
 
