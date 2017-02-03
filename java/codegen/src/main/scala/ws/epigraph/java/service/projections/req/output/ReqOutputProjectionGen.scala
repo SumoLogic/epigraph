@@ -23,8 +23,10 @@ import ws.epigraph.lang.Qn
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-abstract class ReqOutputProjectionGen(operationInfo: OperationInfo, namespaceSuffix: Qn, ctx: GenContext)
-  extends ReqProjectionGen(operationInfo, ctx) {
+abstract class ReqOutputProjectionGen(
+  protected val operationInfo: OperationInfo,
+  namespaceSuffix: Qn,
+  protected val ctx: GenContext) extends ReqProjectionGen {
 
   override lazy val namespace: Qn = super.namespace.append("output").append(namespaceSuffix)
 }

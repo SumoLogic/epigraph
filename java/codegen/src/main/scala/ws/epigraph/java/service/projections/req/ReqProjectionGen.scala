@@ -20,7 +20,7 @@ import java.nio.file.Path
 
 import ws.epigraph.compiler._
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
-import ws.epigraph.java.{GenContext, JavaGen, JavaGenNames, JavaGenUtils}
+import ws.epigraph.java.{JavaGen, JavaGenNames, JavaGenUtils}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.OpParams
 import ws.epigraph.types.{DatumTypeApi, TypeApi}
@@ -28,7 +28,8 @@ import ws.epigraph.types.{DatumTypeApi, TypeApi}
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-abstract class ReqProjectionGen(protected val operationInfo: OperationInfo, protected val ctx: GenContext) extends JavaGen {
+trait ReqProjectionGen extends JavaGen {
+  protected val operationInfo: OperationInfo
 
   def namespace: Qn =
     operationInfo.resourceNamespace
