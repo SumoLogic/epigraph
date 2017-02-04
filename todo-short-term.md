@@ -2,6 +2,7 @@
 - [ ] remove field parameters/annotations
   - [ ] req projections
   - [ ] op projections
+- [ ] bug: test service fail with this request: http://localhost:8888/users[*](:record(*))
 
 - Docs
   - Operations

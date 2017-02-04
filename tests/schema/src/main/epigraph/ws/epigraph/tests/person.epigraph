@@ -26,4 +26,4 @@ record PaginationInfo {
   count: Long
 }
 
-map[PersonId,Person] PersonMap meta PaginationInfo // todo make resouce use this type
+map[PersonId,Person] PersonMap meta PaginationInfo
