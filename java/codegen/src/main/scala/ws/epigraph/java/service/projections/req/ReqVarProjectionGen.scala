@@ -24,6 +24,7 @@ import ws.epigraph.lang.Qn
 import ws.epigraph.projections.gen.{GenTagProjectionEntry, GenVarProjection}
 
 import scala.collection.JavaConversions._
+import scala.collection.mutable
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -36,11 +37,12 @@ trait ReqVarProjectionGen extends ReqProjectionGen {
 
   protected def tagGenerator(tpe: OpTagProjectionEntryType): ReqProjectionGen
 
-  protected def tailGenerator(op: OpProjectionType): ReqProjectionGen
+  protected def tailGenerator(op: OpProjectionType, normalized: Boolean): ReqProjectionGen
 
   // -----------
 
-  override lazy val children: Iterable[ReqProjectionGen] = tagGenerators.values ++ tailGenerators.values
+  override lazy val children: Iterable[ReqProjectionGen] =
+    tagGenerators.values ++ tailGenerators.values ++ normalizedTailGenerators.values
 
   protected val cType: CVarTypeDef = ReqProjectionGen.toCType(op.`type`()).asInstanceOf[CVarTypeDef]
 
@@ -60,11 +62,37 @@ trait ReqVarProjectionGen extends ReqProjectionGen {
     Option(op.polymorphicTails()).map(_.map{ t: OpProjectionType =>
       (
         t,
-        tailGenerator(t)
+        tailGenerator(t, normalized = false)
       )
     }.toMap).getOrElse(Map())
 
-  // todo we have to deal with poly tails / normalization in generated classes
+  protected lazy val normalizedTailGenerators: Map[OpProjectionType, ReqProjectionGen] = {
+    def ntg(op: OpProjectionType,
+      visited: mutable.Set[CType],
+      includeSelf: Boolean): Map[OpProjectionType, ReqProjectionGen] = {
+
+      val ct = ReqProjectionGen.toCType(op.`type`())
+      if (visited.contains(ct)) Map()
+      else {
+        visited.add(ct)
+        var _res: Map[OpProjectionType, ReqProjectionGen] =
+          if (includeSelf) Map(op -> tailGenerator(op, normalized = true)) else Map()
+
+        Option(op.polymorphicTails()) match {
+          case Some(tails) =>
+
+            for (tail <- tails)
+              _res ++= ntg(tail, visited, includeSelf = true)
+
+          case None =>
+        }
+
+        _res
+      }
+    }
+
+    ntg(op, mutable.Set(), includeSelf = false)
+  }
 
   protected def generate(
     reqVarProjectionFqn: Qn,
@@ -95,7 +123,7 @@ trait ReqVarProjectionGen extends ReqProjectionGen {
   /**
    * @return ${JavaGenUtils.javadocLink(tailCtype, namespace)} tail projection
    */
-   public @Nullable ${tailGenerator.fullClassName} ${ReqVarProjectionGen.typeNameToPackageName(tailCtype, namespace.toString)}${ReqVarProjectionGen.tailMethodSuffix}() {
+   public @Nullable ${tailGenerator.fullClassName} ${ReqVarProjectionGen.typeNameToPackageName(tailCtype, namespace.toString)}${ReqVarProjectionGen.tailMethodSuffix(false)}() {
      ${reqVarProjectionFqn.last()} tail = raw.tailByType(${lqn2(tailCtype, namespace.toString)}.Type.instance());
      return tail == null ? null : new ${tailGenerator.fullClassName}(tail);
    }
@@ -106,13 +134,30 @@ trait ReqVarProjectionGen extends ReqProjectionGen {
       )
     }
 
+    def genNormalizedTail(tail: OpProjectionType, tailGenerator: ReqProjectionGen): CodeChunk = {
+      val tailCtype = ReqProjectionGen.toCType(tail.`type`())
+      val tailTypeExpr = lqn2(tailCtype, namespace.toString)
+      CodeChunk(
+        /*@formatter:off*/sn"""\
+  /**
+   * @return ${JavaGenUtils.javadocLink(tailCtype, namespace)} normalized tail projection
+   */
+   public @NotNull ${tailGenerator.fullClassName} ${ReqVarProjectionGen.typeNameToPackageName(tailCtype, namespace.toString)}${ReqVarProjectionGen.tailMethodSuffix(true)}() {
+     return new ${tailGenerator.fullClassName}(raw.normalizedForType($tailTypeExpr.Type.instance()));
+   }
+"""/*@formatter:on*/ ,
+        Set()
+      )
+    }
+
     val tags = tagGenerators.map{ case (tag, gen) => genTag(tag, gen) }.foldLeft(CodeChunk.empty)(_ + _)
     val tails = tailGenerators.map{ case (tail, gen) => genTail(tail, gen) }.foldLeft(CodeChunk.empty)(_ + _)
+    val normalizedTails = normalizedTailGenerators.map{ case (tail, gen) => genNormalizedTail(tail, gen) }.foldLeft(CodeChunk.empty)(_ + _)
 
     val imports: Set[String] = Set(
       "org.jetbrains.annotations.NotNull",
       reqVarProjectionFqn.toString
-    ) ++ tags.imports ++ tails.imports
+    ) ++ tags.imports ++ tails.imports ++ normalizedTails.imports
 
     /*@formatter:off*/sn"""\
 ${JavaGenUtils.topLevelComment}
@@ -129,6 +174,7 @@ public class $shortClassName {
   public $shortClassName(@NotNull ${reqVarProjectionFqn.last()} raw) { this.raw = raw; }
 ${tags.code}\
 ${tails.code}\
+${normalizedTails.code}\
 
   public @NotNull ${reqVarProjectionFqn.last()} _raw() { return raw; }
 }"""/*@formatter:on*/
@@ -136,8 +182,9 @@ ${tails.code}\
 }
 
 object ReqVarProjectionGen {
-  val tailPackageSuffix = "_tail"
-  val tailMethodSuffix = "Tail"
+  def tailPackageSuffix(normalized: Boolean): String = if (normalized) "_ntail" else "_tail"
+
+  def tailMethodSuffix(normalized: Boolean): String = if (normalized) "NormalizedTail" else "Tail"
 
   def typeNameToPackageName(cType: CType, currentNamespace: String): String =
     jn(lqn2(cType, currentNamespace)).replace('.', '_').toLowerCase
