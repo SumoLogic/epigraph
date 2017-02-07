@@ -17,7 +17,7 @@
 package ws.epigraph.java.service.projections.req
 
 import ws.epigraph.compiler.CDatumType
-import ws.epigraph.java.JavaGenNames.{ln, lqn2}
+import ws.epigraph.java.JavaGenUtils
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.AbstractOpModelProjection
@@ -66,7 +66,7 @@ trait ReqModelProjectionGen extends ReqProjectionGen {
 
   protected def classJavadoc =/*@formatter:off*/sn"""\
 /**
- * Request output projection for {@link ${lqn2(cType, namespace.toString)} ${ln(cType)}} type
+ * Request output projection for ${JavaGenUtils.javadocLink(cType, namespace)} type
  */
 """/*@formatter:on*/
 

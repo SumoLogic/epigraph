@@ -104,6 +104,11 @@ object JavaGenUtils {
 
   def up(name: String): String = Character.toUpperCase(name.charAt(0)) + name.substring(1)
 
+  def lo(name: String): String = Character.toLowerCase(name.charAt(0)) + name.substring(1)
+
+  def javadocLink(t: CType, namespace: Qn): String =
+    s"{@link ${JavaGenNames.lqn2(t, namespace.toString)} ${JavaGenNames.ln(t)}}"
+
   def withParents(t: CType, trans: (String) => String = identity): String = {
     t.getLinearizedParentsReversed.map(" " + JavaGenNames.lqn(_, t, trans) + ",").mkString
   }

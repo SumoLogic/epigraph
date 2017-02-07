@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.types.TypeApi;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -61,6 +62,13 @@ public interface GenVarProjection<
   boolean parenthesized();
 
   @Nullable List<VP> polymorphicTails();
+
+  default @Nullable VP tailByType(@NotNull TypeApi type) {
+    Collection<VP> tails = polymorphicTails();
+    return tails == null
+           ? null
+           : tails.stream().filter(t -> t.type().name().equals(type.name())).findFirst().orElse(null);
+  }
 
   /**
    * Builds normalized view of this var projection for a given type

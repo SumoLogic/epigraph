@@ -38,6 +38,16 @@ class ReqOutputVarProjectionGen(
 
   override val shortClassName: String = s"$classNamePrefix${ln(cType)}$classNameSuffix"
 
+  override protected def tailGenerator(op: OpOutputVarProjection) =
+    new ReqOutputVarProjectionGen(
+      operationInfo,
+      op,
+      namespaceSuffix.append(
+        ReqVarProjectionGen.typeNameToPackageName(cType, namespace.toString) + ReqVarProjectionGen.tailPackageSuffix
+      ),
+      ctx
+    )
+
   override protected def tagGenerator(tpe: OpOutputTagProjectionEntry): ReqProjectionGen =
     ReqOutputModelProjectionGen.dataProjectionGen(
       operationInfo,
