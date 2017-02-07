@@ -79,8 +79,7 @@ public class UsersStorage {
             .setFirstName(epigraph.String.create("First" + id))
             .setLastName(epigraph.String.create("Last" + id))
             .setProfile_Error(new ErrorValue(404, "Not Found", null))
-            .setBestFriend$(bestFriend
-            )
+            .setBestFriend$(bestFriend)
             .setWorstEnemy(UserRecord.create()
                 .setId(PersonId.create(id + 2))
                 .setFirstName(epigraph.String.create("First" + (id + 2)))

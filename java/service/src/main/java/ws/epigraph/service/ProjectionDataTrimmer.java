@@ -104,7 +104,8 @@ public final class ProjectionDataTrimmer {
 
     for (Map.Entry<String, ReqOutputFieldProjectionEntry> entry : fieldProjections.entrySet()) {
       final ReqOutputFieldProjectionEntry fieldProjectionEntry = entry.getValue();
-      final RecordType.Field field = (RecordType.Field) fieldProjectionEntry.field();
+      final RecordType.Field field = raw.type().fieldsMap().get(entry.getKey());
+      assert field != null : raw.type().name().toString() + "." + entry.getKey();
       final @Nullable Data data = raw.getData(field);
 
       if (data != null) b.setData(field, trimData(data, fieldProjectionEntry.fieldProjection().varProjection()));
