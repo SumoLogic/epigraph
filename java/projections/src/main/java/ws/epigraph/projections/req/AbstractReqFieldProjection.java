@@ -38,18 +38,18 @@ public abstract class AbstractReqFieldProjection<
     FP extends AbstractReqFieldProjection<VP, TP, MP, FP>
     > extends AbstractFieldProjection<VP, TP, MP, FP> {
 
-  private final @NotNull ReqParams params;
+//  private final @NotNull ReqParams params;
 
   protected AbstractReqFieldProjection(
-      final @NotNull ReqParams params,
-      final @NotNull Annotations annotations,
+//      final @NotNull ReqParams params,
+//      final @NotNull Annotations annotations,
       final @NotNull VP projection,
       final @NotNull TextLocation location) {
-    super(annotations, projection, location);
-    this.params = params;
+    super(Annotations.EMPTY, projection, location);
+//    this.params = params;
   }
 
-  public @NotNull ReqParams params() { return params; }
+//  public @NotNull ReqParams params() { return params; }
 
   @Override
   protected FP merge(
@@ -61,8 +61,8 @@ public abstract class AbstractReqFieldProjection<
     return merge(
         type,
         fieldProjections,
-        ReqParams.merge(fieldProjections.stream().map(AbstractReqFieldProjection::params)),
-        mergedAnnotations,
+//        ReqParams.merge(fieldProjections.stream().map(AbstractReqFieldProjection::params)),
+//        mergedAnnotations,
         mergedVarProjection
     );
   }
@@ -70,24 +70,24 @@ public abstract class AbstractReqFieldProjection<
   protected FP merge(
       final @NotNull DataTypeApi type,
       final @NotNull List<FP> fieldProjections,
-      final @NotNull ReqParams mergedParams,
-      final @NotNull Annotations mergedAnnotations,
+//      final @NotNull ReqParams mergedParams,
+//      final @NotNull Annotations mergedAnnotations,
       final @NotNull VP mergedVarProjection) {
 
     throw new RuntimeException("not implemented"); // todo make abstract
   }
 
-  @Override
-  public boolean equals(final Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    if (!super.equals(o)) return false;
-    final AbstractReqFieldProjection<?, ?, ?, ?> that = (AbstractReqFieldProjection<?, ?, ?, ?>) o;
-    return Objects.equals(params, that.params);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(super.hashCode(), params);
-  }
+//  @Override
+//  public boolean equals(final Object o) {
+//    if (this == o) return true;
+//    if (o == null || getClass() != o.getClass()) return false;
+//    if (!super.equals(o)) return false;
+//    final AbstractReqFieldProjection<?, ?, ?, ?> that = (AbstractReqFieldProjection<?, ?, ?, ?>) o;
+//    return Objects.equals(params, that.params);
+//  }
+//
+//  @Override
+//  public int hashCode() {
+//    return Objects.hash(super.hashCode(), params);
+//  }
 }

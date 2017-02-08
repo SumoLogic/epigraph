@@ -33,10 +33,10 @@ public class ReqInputFieldProjection extends AbstractReqFieldProjection<
     > {
 
   public ReqInputFieldProjection(
-      @NotNull ReqParams reqParams,
-      @NotNull Annotations annotations,
+//      @NotNull ReqParams reqParams,
+//      @NotNull Annotations annotations,
       @NotNull ReqInputVarProjection projection,
       @NotNull TextLocation location) {
-    super(reqParams, annotations, projection, location);
+    super(/*reqParams, annotations, */projection, location);
   }
 }

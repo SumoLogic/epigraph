@@ -254,46 +254,23 @@ public final class ReqPathPsiParser {
       final @NotNull TypesResolver typesResolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
-    @NotNull ReqParams fieldParams = parseReqParams(psi.getReqParamList(), op.params(), typesResolver, errors);
+//    @NotNull ReqParams fieldParams = parseReqParams(psi.getReqParamList(), op.params(), typesResolver, errors);
 
-    @NotNull Annotations fieldAnnotations = parseAnnotations(psi.getReqAnnotationList(), errors);
+//    @NotNull Annotations fieldAnnotations = parseAnnotations(psi.getReqAnnotationList(), errors);
 
     @Nullable UrlReqVarPath fieldVarPathPsi = psi.getReqVarPath();
 
     final ReqVarPath varProjection;
 
-    if (fieldVarPathPsi == null) {
-      final @Nullable OpTagPath opTagPath = op.varProjection().singleTagProjection();
-
-      if (opTagPath != null)
-        throw new PsiProcessingException(
-            String.format(
-                "Request path doesn't match operation path, expected to get '%s' tag projection",
-                opTagPath.tag().name()
-            ),
-            psi,
-            errors
-        );
-
-      @Nullable TagApi defaultFieldTag = fieldType.defaultTag();
-      if (defaultFieldTag == null)
-        throw new PsiProcessingException(String.format(
-            "Can't construct default projection for type '%s' because it has no default tag",
-            fieldType.name()
-        ), psi, errors);
-
-      varProjection = new ReqVarPath(fieldType.type(), null, EpigraphPsiUtil.getLocation(psi));
-    } else {
-      varProjection = parseVarPath(op.varProjection(), fieldType, fieldVarPathPsi, typesResolver, errors);
-    }
+    varProjection = parseVarPath(op.varProjection(), fieldType, fieldVarPathPsi, typesResolver, errors);
 
 //    final ReadReqPathParsingResult<ReqVarPath> fieldVarParsingResult;
 
     final @NotNull TextLocation fieldLocation = EpigraphPsiUtil.getLocation(psi);
 
     return new ReqFieldPath(
-        fieldParams,
-        fieldAnnotations,
+//        fieldParams,
+//        fieldAnnotations,
         varProjection,
         fieldLocation
     );

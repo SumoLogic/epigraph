@@ -103,11 +103,12 @@ public class UsersResourceFactory extends AbstractUsersResourceFactory {
       ws.epigraph.tests.resources.users.operations.read.output.ReqOutputUsersFieldProjection typeSafeFieldProjection =
           new ws.epigraph.tests.resources.users.operations.read.output.ReqOutputUsersFieldProjection(fieldProjection);
 
-      // todo must be model, not field params
-      Long start = typeSafeFieldProjection.getStartParameter();
-      Long count = typeSafeFieldProjection.getCountParameter();
-
       final ReqOutputPersonMapProjection mapProjection = typeSafeFieldProjection.dataProjection();
+
+      // todo
+      Long start = null; //mapProjection.getStartParameter();
+      Long count = null; //mapProjection.getCountParameter();
+
       final ReqOutputPaginationInfoProjection metaProjection = mapProjection.meta();
 
       final List<ReqOutputPersonMapKeyProjection> keys = mapProjection.keys();

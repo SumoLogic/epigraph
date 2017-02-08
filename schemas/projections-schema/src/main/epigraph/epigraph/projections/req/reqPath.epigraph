@@ -36,8 +36,8 @@ record ReqFieldPathEntry {
 }
 
 record ReqFieldPath {
-  params: list[ReqParam]
-  annotations: list[Annotation]
+  // params: list[ReqParam]
+  // annotations: list[Annotation]
   varPath: ReqVarPath
 }
 

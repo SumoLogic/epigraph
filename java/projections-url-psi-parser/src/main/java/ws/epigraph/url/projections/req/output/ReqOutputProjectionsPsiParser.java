@@ -875,8 +875,8 @@ public final class ReqOutputProjectionsPsiParser {
           new ReqOutputFieldProjectionEntry(
               field,
               new ReqOutputFieldProjection(
-                  ReqParams.EMPTY,
-                  Annotations.EMPTY,
+//                  ReqParams.EMPTY,
+//                  Annotations.EMPTY,
                   varProjection,
                   fieldRequired,
                   fieldLocation
@@ -934,13 +934,13 @@ public final class ReqOutputProjectionsPsiParser {
       @NotNull List<PsiProcessingError> errors
   ) throws PsiProcessingException {
 
-    return parseTrunkFieldProjection(required, fieldType, op.params(), op.varProjection(), psi, resolver, errors);
+    return parseTrunkFieldProjection(required, fieldType, /*op.params(), */op.varProjection(), psi, resolver, errors);
   }
 
   public static @NotNull StepsAndProjection<ReqOutputFieldProjection> parseTrunkFieldProjection(
       boolean required,
       @NotNull DataTypeApi fieldType,
-      @Nullable OpParams opParams,
+//      @Nullable OpParams opParams,
       @NotNull OpOutputVarProjection opVarProjection,
       @NotNull UrlReqOutputTrunkFieldProjection psi,
       @NotNull TypesResolver resolver,
@@ -960,8 +960,8 @@ public final class ReqOutputProjectionsPsiParser {
     return new StepsAndProjection<>(
         steps,
         new ReqOutputFieldProjection(
-            parseReqParams(psi.getReqParamList(), opParams, resolver, errors),
-            parseAnnotations(psi.getReqAnnotationList(), errors),
+//            parseReqParams(psi.getReqParamList(), opParams, resolver, errors),
+//            parseAnnotations(psi.getReqAnnotationList(), errors),
             varProjection,
             required,
             EpigraphPsiUtil.getLocation(psi)
@@ -1005,10 +1005,10 @@ public final class ReqOutputProjectionsPsiParser {
             final @NotNull OpOutputFieldProjection opFieldProjection = opFieldProjectionEntry.fieldProjection();
             final boolean fieldRequired = fieldProjectionPsi.getPlus() != null;
 
-            ReqParams fieldParams =
-                parseReqParams(fieldProjectionPsi.getReqParamList(), opFieldProjection.params(), resolver, errors);
-
-            Annotations fieldAnnotations = parseAnnotations(fieldProjectionPsi.getReqAnnotationList(), errors);
+//            ReqParams fieldParams =
+//                parseReqParams(fieldProjectionPsi.getReqParamList(), opFieldProjection.params(), resolver, errors);
+//
+//            Annotations fieldAnnotations = parseAnnotations(fieldProjectionPsi.getReqAnnotationList(), errors);
 
             @Nullable UrlReqOutputComaVarProjection psiVarProjection =
                 fieldProjectionPsi.getReqOutputComaVarProjection();
@@ -1028,8 +1028,8 @@ public final class ReqOutputProjectionsPsiParser {
                 new ReqOutputFieldProjectionEntry(
                     field,
                     new ReqOutputFieldProjection(
-                        fieldParams,
-                        fieldAnnotations,
+//                        fieldParams,
+//                        fieldAnnotations,
                         varProjection,
                         fieldRequired,
                         fieldLocation
@@ -1054,8 +1054,8 @@ public final class ReqOutputProjectionsPsiParser {
             new ReqOutputFieldProjectionEntry(
                 field,
                 new ReqOutputFieldProjection(
-                    ReqParams.EMPTY,
-                    Annotations.EMPTY,
+//                    ReqParams.EMPTY,
+//                    Annotations.EMPTY,
                     createDefaultVarProjection(
                         field.dataType(),
                         opFieldProjection.varProjection(),

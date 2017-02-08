@@ -34,20 +34,8 @@ public class UrlReqOutputComaFieldProjectionImpl extends ASTWrapperPsiElement im
 
   @Override
   @NotNull
-  public List<UrlReqAnnotation> getReqAnnotationList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, UrlReqAnnotation.class);
-  }
-
-  @Override
-  @NotNull
   public UrlReqOutputComaVarProjection getReqOutputComaVarProjection() {
     return findNotNullChildByClass(UrlReqOutputComaVarProjection.class);
-  }
-
-  @Override
-  @NotNull
-  public List<UrlReqParam> getReqParamList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, UrlReqParam.class);
   }
 
   @Override

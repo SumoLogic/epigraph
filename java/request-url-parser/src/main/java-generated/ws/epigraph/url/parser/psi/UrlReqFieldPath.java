@@ -8,12 +8,6 @@ import com.intellij.psi.PsiElement;
 public interface UrlReqFieldPath extends PsiElement {
 
   @NotNull
-  List<UrlReqAnnotation> getReqAnnotationList();
-
-  @NotNull
-  List<UrlReqParam> getReqParamList();
-
-  @Nullable
   UrlReqVarPath getReqVarPath();
 
 }

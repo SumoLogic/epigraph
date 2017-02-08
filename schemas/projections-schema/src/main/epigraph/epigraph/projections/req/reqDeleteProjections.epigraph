@@ -44,8 +44,8 @@ record ReqDeleteFieldProjectionEntry {
 
 record ReqDeleteFieldProjection {
   field: FieldRef
-  params: map[String, ReqParam]
-  annotations: map[String, Annotation]
+  // params: map[String, ReqParam]
+  // annotations: map[String, Annotation]
   varProjection: ReqDeleteVarProjection
 }
 

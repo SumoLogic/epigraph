@@ -604,9 +604,9 @@ public final class ReqDeleteProjectionsPsiParser {
       final @NotNull TypesResolver resolver, final @NotNull List<PsiProcessingError> errors)
       throws PsiProcessingException {
 
-    ReqParams fieldParams = parseReqParams(psi.getReqParamList(), op.params(), resolver, errors);
+//    ReqParams fieldParams = parseReqParams(psi.getReqParamList(), op.params(), resolver, errors);
 
-    Annotations fieldAnnotations = parseAnnotations(psi.getReqAnnotationList(), errors);
+//    Annotations fieldAnnotations = parseAnnotations(psi.getReqAnnotationList(), errors);
 
     @NotNull UrlReqDeleteVarProjection psiVarProjection = psi.getReqDeleteVarProjection();
     @NotNull ReqDeleteVarProjection varProjection =
@@ -619,8 +619,8 @@ public final class ReqDeleteProjectionsPsiParser {
         );
 
     return new ReqDeleteFieldProjection(
-        fieldParams,
-        fieldAnnotations,
+//        fieldParams,
+//        fieldAnnotations,
         varProjection,
         EpigraphPsiUtil.getLocation(psi)
     );

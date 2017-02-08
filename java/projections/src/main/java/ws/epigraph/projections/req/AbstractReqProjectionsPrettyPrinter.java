@@ -108,14 +108,14 @@ public abstract class AbstractReqProjectionsPrettyPrinter<
 
   public void print(@NotNull String fieldName, @NotNull FP fieldProjection, int pathSteps) throws E {
     @NotNull VP fieldVarProjection = fieldProjection.varProjection();
-    @NotNull Annotations fieldAnnotations = fieldProjection.annotations();
+//    @NotNull Annotations fieldAnnotations = fieldProjection.annotations();
 
     l.beginIInd();
     l.print(fieldNamePrefix(fieldProjection));
     l.print(fieldName);
 
-    printParams(fieldProjection.params());
-    printAnnotations(fieldAnnotations);
+//    printParams(fieldProjection.params());
+//    printAnnotations(fieldAnnotations);
 
     if (!isPrintoutEmpty(fieldVarProjection)) {
       l.brk();
@@ -126,10 +126,10 @@ public abstract class AbstractReqProjectionsPrettyPrinter<
 
   public boolean isPrintoutEmpty(@NotNull FP fieldProjection) {
     @NotNull VP fieldVarProjection = fieldProjection.varProjection();
-    @NotNull ReqParams fieldParams = fieldProjection.params();
-    @NotNull Annotations fieldAnnotations = fieldProjection.annotations();
+//    @NotNull ReqParams fieldParams = fieldProjection.params();
+//    @NotNull Annotations fieldAnnotations = fieldProjection.annotations();
 
-    return fieldParams.isEmpty() && fieldAnnotations.isEmpty() && isPrintoutEmpty(fieldVarProjection);
+    return /*fieldParams.isEmpty() && fieldAnnotations.isEmpty() && */isPrintoutEmpty(fieldVarProjection);
   }
 
   protected void printReqKey(final ReqKeyProjection key) throws E {

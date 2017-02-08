@@ -28,20 +28,8 @@ public class UrlReqFieldPathImpl extends ASTWrapperPsiElement implements UrlReqF
 
   @Override
   @NotNull
-  public List<UrlReqAnnotation> getReqAnnotationList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, UrlReqAnnotation.class);
-  }
-
-  @Override
-  @NotNull
-  public List<UrlReqParam> getReqParamList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, UrlReqParam.class);
-  }
-
-  @Override
-  @Nullable
   public UrlReqVarPath getReqVarPath() {
-    return findChildByClass(UrlReqVarPath.class);
+    return findNotNullChildByClass(UrlReqVarPath.class);
   }
 
 }

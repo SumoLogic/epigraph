@@ -47,8 +47,8 @@ record ReqInputFieldProjectionEntry {
 
 record ReqInputFieldProjection {
   field: FieldRef
-  params: map[String, ReqParam]
-  annotations: map[String, Annotation]
+  // params: map[String, ReqParam]
+  // annotations: map[String, Annotation]
   varProjection: ReqInputVarProjection
 }
 

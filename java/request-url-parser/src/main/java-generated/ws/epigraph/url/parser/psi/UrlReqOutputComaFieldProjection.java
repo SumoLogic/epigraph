@@ -11,13 +11,7 @@ public interface UrlReqOutputComaFieldProjection extends PsiElement {
   UrlQid getQid();
 
   @NotNull
-  List<UrlReqAnnotation> getReqAnnotationList();
-
-  @NotNull
   UrlReqOutputComaVarProjection getReqOutputComaVarProjection();
-
-  @NotNull
-  List<UrlReqParam> getReqParamList();
 
   @Nullable
   PsiElement getPlus();

@@ -49,8 +49,8 @@ record ReqUpdateFieldProjectionEntry {
 record ReqUpdateFieldProjection {
   `update`: Boolean // update or patch entity?
   field: FieldRef
-  params: map[String, ReqParam]
-  annotations: map[String, Annotation]
+  // params: map[String, ReqParam]
+  // annotations: map[String, Annotation]
   varProjection: ReqUpdateVarProjection
 }
 

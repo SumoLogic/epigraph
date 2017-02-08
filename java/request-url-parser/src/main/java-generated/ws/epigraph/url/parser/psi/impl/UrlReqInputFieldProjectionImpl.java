@@ -28,20 +28,8 @@ public class UrlReqInputFieldProjectionImpl extends ASTWrapperPsiElement impleme
 
   @Override
   @NotNull
-  public List<UrlReqAnnotation> getReqAnnotationList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, UrlReqAnnotation.class);
-  }
-
-  @Override
-  @NotNull
   public UrlReqInputVarProjection getReqInputVarProjection() {
     return findNotNullChildByClass(UrlReqInputVarProjection.class);
-  }
-
-  @Override
-  @NotNull
-  public List<UrlReqParam> getReqParamList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, UrlReqParam.class);
   }
 
 }

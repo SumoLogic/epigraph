@@ -36,12 +36,12 @@ public class ReqUpdateFieldProjection extends AbstractReqFieldProjection<
   private final boolean update;
 
   public ReqUpdateFieldProjection(
-      @NotNull ReqParams reqParams,
-      @NotNull Annotations annotations,
+//      @NotNull ReqParams reqParams,
+//      @NotNull Annotations annotations,
       @NotNull ReqUpdateVarProjection projection,
       boolean update,
       @NotNull TextLocation location) {
-    super(reqParams, annotations, projection, location);
+    super(/*reqParams, annotations, */projection, location);
     this.update = update;
   }
 

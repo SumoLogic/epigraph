@@ -13,7 +13,7 @@ import ws.epigraph.url.parser.psi.*;
 
 public abstract class UrlDatumImpl extends ASTWrapperPsiElement implements UrlDatum {
 
-  protected UrlDatumImpl(ASTNode node) {
+  public UrlDatumImpl(ASTNode node) {
     super(node);
   }
 

@@ -8,12 +8,6 @@ import com.intellij.psi.PsiElement;
 public interface UrlReqUpdateFieldProjection extends PsiElement {
 
   @NotNull
-  List<UrlReqAnnotation> getReqAnnotationList();
-
-  @NotNull
-  List<UrlReqParam> getReqParamList();
-
-  @NotNull
   UrlReqUpdateVarProjection getReqUpdateVarProjection();
 
 }

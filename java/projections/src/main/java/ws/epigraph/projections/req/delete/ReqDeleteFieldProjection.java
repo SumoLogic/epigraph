@@ -33,10 +33,10 @@ public class ReqDeleteFieldProjection extends AbstractReqFieldProjection<
     > {
 
   public ReqDeleteFieldProjection(
-      @NotNull ReqParams reqParams,
-      @NotNull Annotations annotations,
+//      @NotNull ReqParams reqParams,
+//      @NotNull Annotations annotations,
       @NotNull ReqDeleteVarProjection projection,
       @NotNull TextLocation location) {
-    super(reqParams, annotations, projection, location);
+    super(/*reqParams, annotations, */projection, location);
   }
 }

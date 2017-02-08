@@ -28,20 +28,8 @@ public class UrlReqOutputTrunkFieldProjectionImpl extends ASTWrapperPsiElement i
 
   @Override
   @NotNull
-  public List<UrlReqAnnotation> getReqAnnotationList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, UrlReqAnnotation.class);
-  }
-
-  @Override
-  @NotNull
   public UrlReqOutputTrunkVarProjection getReqOutputTrunkVarProjection() {
     return findNotNullChildByClass(UrlReqOutputTrunkVarProjection.class);
-  }
-
-  @Override
-  @NotNull
-  public List<UrlReqParam> getReqParamList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, UrlReqParam.class);
   }
 
 }

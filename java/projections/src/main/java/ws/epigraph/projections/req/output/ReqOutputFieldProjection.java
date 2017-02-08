@@ -39,12 +39,12 @@ public class ReqOutputFieldProjection extends AbstractReqFieldProjection<
   private final boolean required;
 
   public ReqOutputFieldProjection(
-      @NotNull ReqParams reqParams,
-      @NotNull Annotations annotations,
+//      @NotNull ReqParams reqParams,
+//      @NotNull Annotations annotations,
       @NotNull ReqOutputVarProjection projection,
       boolean required,
       @NotNull TextLocation location) {
-    super(reqParams, annotations, projection, location);
+    super(/*reqParams, annotations, */projection, location);
     this.required = required;
   }
 
@@ -54,13 +54,13 @@ public class ReqOutputFieldProjection extends AbstractReqFieldProjection<
   protected ReqOutputFieldProjection merge(
       final @NotNull DataTypeApi type,
       final @NotNull List<ReqOutputFieldProjection> fieldProjections,
-      final @NotNull ReqParams mergedParams,
-      final @NotNull Annotations mergedAnnotations,
+//      final @NotNull ReqParams mergedParams,
+//      final @NotNull Annotations mergedAnnotations,
       final @NotNull ReqOutputVarProjection mergedVarProjection) {
 
     return new ReqOutputFieldProjection(
-        mergedParams,
-        mergedAnnotations,
+//        mergedParams,
+//        mergedAnnotations,
         mergedVarProjection,
         fieldProjections.stream().anyMatch(ReqOutputFieldProjection::required),
         TextLocation.UNKNOWN

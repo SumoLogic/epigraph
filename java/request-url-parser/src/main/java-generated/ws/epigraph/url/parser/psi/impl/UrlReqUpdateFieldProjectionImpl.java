@@ -28,18 +28,6 @@ public class UrlReqUpdateFieldProjectionImpl extends ASTWrapperPsiElement implem
 
   @Override
   @NotNull
-  public List<UrlReqAnnotation> getReqAnnotationList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, UrlReqAnnotation.class);
-  }
-
-  @Override
-  @NotNull
-  public List<UrlReqParam> getReqParamList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, UrlReqParam.class);
-  }
-
-  @Override
-  @NotNull
   public UrlReqUpdateVarProjection getReqUpdateVarProjection() {
     return findNotNullChildByClass(UrlReqUpdateVarProjection.class);
   }

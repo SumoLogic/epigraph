@@ -54,8 +54,8 @@ public final class RequestUrlPsiParserUtil {
       stepsAndProjection = new StepsAndProjection<>(
           0,
           new ReqOutputFieldProjection(
-              ReqParams.EMPTY,
-              Annotations.EMPTY,
+//              ReqParams.EMPTY,
+//              Annotations.EMPTY,
               ReqOutputProjectionsPsiParser.createDefaultVarProjection(
                   dataType,
                   op.varProjection(),

@@ -1,8 +1,8 @@
 - [ ] remove `requried` from req output field projections. Figure out how to add it to tag-less models
 - [ ] remove field parameters/annotations
-  - [ ] req projections
+  - [x] req projections
   - [ ] op projections
-- [x] bug: test service fail with this request: http://localhost:8888/users[*](:record(*))
+- [ ] check if `update` on `ReqUpdateFieldProjection` is OK (syntax, semantics)
 
 - Docs
   - Operations

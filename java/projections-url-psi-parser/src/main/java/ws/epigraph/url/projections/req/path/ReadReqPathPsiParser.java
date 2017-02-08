@@ -305,8 +305,8 @@ public final class ReadReqPathPsiParser {
                   new ReqFieldPathEntry(
                       field,
                       new ReqFieldPath(
-                          ReqParams.EMPTY,
-                          Annotations.EMPTY,
+//                          ReqParams.EMPTY,
+//                          Annotations.EMPTY,
                           new ReqVarPath(
                               field.dataType().type(),
                               null,
@@ -366,8 +366,8 @@ public final class ReadReqPathPsiParser {
       final @NotNull TypesResolver typesResolver,
       final @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
-    @NotNull ReqParams fieldParams = parseReqParams(psi.getReqParamList(), op.params(), typesResolver, errors);
-    @NotNull Annotations fieldAnnotations = parseAnnotations(psi.getReqAnnotationList(), errors);
+//    @NotNull ReqParams fieldParams = parseReqParams(psi.getReqParamList(), op.params(), typesResolver, errors);
+//    @NotNull Annotations fieldAnnotations = parseAnnotations(psi.getReqAnnotationList(), errors);
 
     @NotNull UrlReqOutputTrunkVarProjection fieldVarPathPsi = psi.getReqOutputTrunkVarProjection();
 
@@ -393,8 +393,8 @@ public final class ReadReqPathPsiParser {
     return new ReadReqPathParsingResult<>(
 
         new ReqFieldPath(
-            fieldParams,
-            fieldAnnotations,
+//            fieldParams,
+//            fieldAnnotations,
             fieldVarParsingResult.path(),
             fieldLocation
         ),

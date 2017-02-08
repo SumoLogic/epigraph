@@ -65,8 +65,8 @@ record ReqOutputFieldProjectionEntry {
 
 record ReqOutputFieldProjection {
   field: FieldRef
-  params: map[String, ReqParam]
-  annotations: map[String, Annotation]
+  // params: map[String, ReqParam]
+  // annotations: map[String, Annotation]
   varProjection: ReqOutputVarProjection
 }
 

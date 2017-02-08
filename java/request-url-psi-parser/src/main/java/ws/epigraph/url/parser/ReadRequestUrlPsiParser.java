@@ -143,8 +143,8 @@ public final class ReadRequestUrlPsiParser {
         new StepsAndProjection<>(
             steps,
             new ReqOutputFieldProjection(
-                ReqParams.EMPTY,
-                Annotations.EMPTY,
+//                ReqParams.EMPTY,
+//                Annotations.EMPTY,
                 varProjection,
                 true,
                 fieldLocation

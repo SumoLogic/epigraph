@@ -631,9 +631,9 @@ public final class ReqInputProjectionsPsiParser {
       final @NotNull TypesResolver resolver, final @NotNull List<PsiProcessingError> errors)
       throws PsiProcessingException {
 
-    ReqParams fieldParams = parseReqParams(psi.getReqParamList(), op.params(), resolver, errors);
+//    ReqParams fieldParams = parseReqParams(psi.getReqParamList(), op.params(), resolver, errors);
 
-    Annotations fieldAnnotations = parseAnnotations(psi.getReqAnnotationList(), errors);
+//    Annotations fieldAnnotations = parseAnnotations(psi.getReqAnnotationList(), errors);
 
     @NotNull UrlReqInputVarProjection psiVarProjection = psi.getReqInputVarProjection();
     @NotNull ReqInputVarProjection varProjection =
@@ -646,8 +646,8 @@ public final class ReqInputProjectionsPsiParser {
         );
 
     return new ReqInputFieldProjection(
-        fieldParams,
-        fieldAnnotations,
+//        fieldParams,
+//        fieldAnnotations,
         varProjection,
         EpigraphPsiUtil.getLocation(psi)
     );

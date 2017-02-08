@@ -28,20 +28,8 @@ public class UrlReqDeleteFieldProjectionImpl extends ASTWrapperPsiElement implem
 
   @Override
   @NotNull
-  public List<UrlReqAnnotation> getReqAnnotationList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, UrlReqAnnotation.class);
-  }
-
-  @Override
-  @NotNull
   public UrlReqDeleteVarProjection getReqDeleteVarProjection() {
     return findNotNullChildByClass(UrlReqDeleteVarProjection.class);
-  }
-
-  @Override
-  @NotNull
-  public List<UrlReqParam> getReqParamList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, UrlReqParam.class);
   }
 
 }

@@ -1057,13 +1057,12 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // reqParamsAndAnnotations reqDeleteVarProjection
+  // reqDeleteVarProjection
   public static boolean reqDeleteFieldProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqDeleteFieldProjection")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, U_REQ_DELETE_FIELD_PROJECTION, "<req delete field projection>");
-    r = reqParamsAndAnnotations(b, l + 1);
-    r = r && reqDeleteVarProjection(b, l + 1);
+    r = reqDeleteVarProjection(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
@@ -1498,16 +1497,14 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // reqParamsAndAnnotations reqVarPath
+  // reqVarPath
   public static boolean reqFieldPath(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqFieldPath")) return false;
-    boolean r, p;
+    boolean r;
     Marker m = enter_section_(b, l, _NONE_, U_REQ_FIELD_PATH, "<req field path>");
-    r = reqParamsAndAnnotations(b, l + 1);
-    p = r; // pin = 1
-    r = r && reqVarPath(b, l + 1);
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
+    r = reqVarPath(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
   }
 
   /* ********************************************************** */
@@ -1538,13 +1535,12 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // reqParamsAndAnnotations reqInputVarProjection
+  // reqInputVarProjection
   public static boolean reqInputFieldProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqInputFieldProjection")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, U_REQ_INPUT_FIELD_PROJECTION, "<req input field projection>");
-    r = reqParamsAndAnnotations(b, l + 1);
-    r = r && reqInputVarProjection(b, l + 1);
+    r = reqInputVarProjection(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
@@ -2032,7 +2028,7 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '+'? qid reqParamsAndAnnotations reqOutputComaVarProjection
+  // '+'? qid /* reqParamsAndAnnotations */ reqOutputComaVarProjection
   public static boolean reqOutputComaFieldProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqOutputComaFieldProjection")) return false;
     if (!nextTokenIs(b, "<req output coma field projection>", U_PLUS, U_ID)) return false;
@@ -2040,7 +2036,6 @@ public class UrlParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b, l, _NONE_, U_REQ_OUTPUT_COMA_FIELD_PROJECTION, "<req output coma field projection>");
     r = reqOutputComaFieldProjection_0(b, l + 1);
     r = r && qid(b, l + 1);
-    r = r && reqParamsAndAnnotations(b, l + 1);
     r = r && reqOutputComaVarProjection(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
@@ -2460,13 +2455,12 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // reqParamsAndAnnotations reqOutputTrunkVarProjection
+  // reqOutputTrunkVarProjection
   public static boolean reqOutputTrunkFieldProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqOutputTrunkFieldProjection")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, U_REQ_OUTPUT_TRUNK_FIELD_PROJECTION, "<req output trunk field projection>");
-    r = reqParamsAndAnnotations(b, l + 1);
-    r = r && reqOutputTrunkVarProjection(b, l + 1);
+    r = reqOutputTrunkVarProjection(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
@@ -2787,13 +2781,12 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // reqParamsAndAnnotations reqUpdateVarProjection
+  // reqUpdateVarProjection
   public static boolean reqUpdateFieldProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqUpdateFieldProjection")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, U_REQ_UPDATE_FIELD_PROJECTION, "<req update field projection>");
-    r = reqParamsAndAnnotations(b, l + 1);
-    r = r && reqUpdateVarProjection(b, l + 1);
+    r = reqUpdateVarProjection(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }

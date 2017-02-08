@@ -33,11 +33,11 @@ public class ReqFieldPath extends AbstractReqFieldProjection<
     > {
 
   public ReqFieldPath(
-      @NotNull ReqParams reqParams,
-      @NotNull Annotations annotations,
+//      @NotNull ReqParams reqParams,
+//      @NotNull Annotations annotations,
       @NotNull ReqVarPath projection,
       @NotNull TextLocation location) {
-    super(reqParams, annotations, projection, location);
+    super(/*reqParams, annotations, */projection, location);
   }
 
 }
