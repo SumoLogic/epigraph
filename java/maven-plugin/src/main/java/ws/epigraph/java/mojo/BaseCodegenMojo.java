@@ -38,6 +38,7 @@ import java.util.Collection;
  */
 public abstract class BaseCodegenMojo extends AbstractCompilingMojo {
 
+  @Override
   protected void produceOutput(
       @NotNull File outputDirectory,
       @NotNull Collection<? extends FileSource> sources,

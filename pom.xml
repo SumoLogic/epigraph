@@ -23,6 +23,7 @@
   </scm>
 
   <developers>
+
     <developer>
       <id>konstantin</id>
       <name>Konstantin Sobolev</name>
@@ -34,41 +35,20 @@
       <name>Yegor Borovikov</name>
       <email>yegorb@gmail.com</email>
     </developer>
+
   </developers>
 
-  <profiles>
-    <!-- // first-time build bootstrap sequence:
-mvn clean install -P jar-mavenizer && \
-mvn clean install -P light-psi && \
-mvn clean install
-    -->
+  <!-- first-time build bootstrap sequence: mvn clean install -->
 
+  <profiles>
     <profile>
-      <id>jar-mavenizer</id>
+      <id>main</id>
       <activation>
         <activeByDefault>true</activeByDefault>
       </activation>
       <modules>
         <module>jar-mavenizer-plugin</module>
-      </modules>
-    </profile>
-
-    <profile>
-      <id>light-psi</id>
-      <activation>
-        <activeByDefault>false</activeByDefault>
-      </activation>
-      <modules>
         <module>light-psi</module>
-      </modules>
-    </profile>
-
-    <profile>
-      <id>light-psi-dependent</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <modules>
         <module>compiler</module>
         <module>examples</module>
         <module>java</module>
@@ -393,7 +373,6 @@ mvn clean install
           <version>${maven-plugin-version}</version>
           <executions>
             <execution>
-              <id>generated-helpmojo</id>
               <goals>
                 <goal>helpmojo</goal>
               </goals>
