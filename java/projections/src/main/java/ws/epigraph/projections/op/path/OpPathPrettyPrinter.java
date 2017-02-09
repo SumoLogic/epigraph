@@ -144,12 +144,12 @@ public class OpPathPrettyPrinter<E extends Exception>
 
   @Override
   public boolean isPrintoutEmpty(@NotNull OpModelPath<?, ?, ?> mp) {
-//    if (mp instanceof OpRecordModelPath) {
-//      OpRecordModelPath recordModelProjection = (OpRecordModelPath) mp;
-//      return recordModelProjection.pathFieldProjection() == null;
-//    }
-//
-//    if (mp instanceof OpMapModelPath) {
+    if (mp instanceof OpRecordModelPath) {
+      OpRecordModelPath recordModelProjection = (OpRecordModelPath) mp;
+      return recordModelProjection.pathFieldProjection() == null;
+    }
+
+    if (mp instanceof OpMapModelPath) {
 //      OpMapModelPath mapModelProjection = (OpMapModelPath) mp;
 //      @NotNull OpPathKeyProjection keyProjection = mapModelProjection.keyProjection();
 //
@@ -157,9 +157,9 @@ public class OpPathPrettyPrinter<E extends Exception>
 //      if (!keyProjection.annotations().isEmpty()) return false;
 //
 //      return isPrintoutEmpty(mapModelProjection.itemsProjection());
-//    }
-//
-//    return true;
-    return false;
+      return false;
+    }
+
+    return true;
   }
 }

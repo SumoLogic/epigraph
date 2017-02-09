@@ -56,7 +56,7 @@ public class ReqUpdateProjectionsParserTest {
           "  id,",
           "  `record` (",
           "    id {",
-          "      ;param1 : epigraph.String = \"hello world\" { doc = \"some doc\" },",
+          "      ;param1 : epigraph.String = \"hello world\" { doc = \"some doc\" }",
           "    },",
           "    bestFriend :(+id, `record` (",
           "      +id,",
@@ -74,7 +74,7 @@ public class ReqUpdateProjectionsParserTest {
 
   @Test
   public void testParseIdTag() {
-    testParse(":id", ":+id"); //plus added since id is a datum type
+    testParse(":id"); //plus added since id is a datum type
   }
 
   @Test
@@ -84,7 +84,7 @@ public class ReqUpdateProjectionsParserTest {
 
   @Test
   public void testParseMultiTag() {
-    testParse(":(id,record)", ":( +id, record )");
+    testParse(":(id,record)", ":( id, record )");
   }
 
   @Test
@@ -94,19 +94,19 @@ public class ReqUpdateProjectionsParserTest {
 
   @Test
   public void testParseMap() {
-    testParse(":record ( friendsMap +[ '1' ;param = 'foo', '2' !ann = true ]( :+id ) )");
+    testParse(":record ( friendsMap +[ '1';param = 'foo', '2'!ann = true ]( :id ) )");
   }
 
   @Test
   public void testParseList() {
-    testParse(":record ( friends *( :+id ) )");
+    testParse(":record ( friends *( :id ) )");
   }
 
   @Test
   public void testParseTail() {
     testParse(
         ":id ~User :record ( profile )",
-        ":+id ~ws.epigraph.tests.User :record ( profile )"
+        ":id ~ws.epigraph.tests.User :record ( profile )"
     );
   }
 
@@ -124,7 +124,7 @@ public class ReqUpdateProjectionsParserTest {
 
   @Test
   public void testRequiredPresent() {
-    testParse(":record ( bestFriend :( +id, record ( id ) ) )");
+    testParse(":record ( bestFriend :( id, record ( id ) ) )");
   }
 
   private void testParse(String expr) {

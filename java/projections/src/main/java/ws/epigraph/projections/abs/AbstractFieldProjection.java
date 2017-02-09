@@ -39,23 +39,23 @@ public abstract class AbstractFieldProjection<
     FP extends GenFieldProjection<VP, TP, MP, FP>
     > implements GenFieldProjection<VP, TP, MP, FP> {
 
-  private final @NotNull Annotations annotations;
+//  private final @NotNull Annotations annotations;
 
   private final @NotNull VP projection;
 
   private final @NotNull TextLocation location;
 
   protected AbstractFieldProjection(
-      @NotNull Annotations annotations,
+//      @NotNull Annotations annotations,
       @NotNull VP projection,
       @NotNull TextLocation location) {
-    this.annotations = annotations;
+//    this.annotations = annotations;
     this.projection = projection;
     this.location = location;
   }
 
-  @Override
-  public @NotNull Annotations annotations() { return annotations; }
+//  @Override
+//  public @NotNull Annotations annotations() { return annotations; }
 
   @Override
   public @NotNull VP varProjection() { return projection; }
@@ -75,7 +75,7 @@ public abstract class AbstractFieldProjection<
     return merge(
         type,
         fieldProjections,
-        Annotations.merge(fieldProjections.stream().map(GenFieldProjection::annotations)),
+//        Annotations.merge(fieldProjections.stream().map(GenFieldProjection::annotations)),
         mergedVarProjection
     );
   }
@@ -83,7 +83,7 @@ public abstract class AbstractFieldProjection<
   protected FP merge(
       @NotNull DataTypeApi type,
       @NotNull List<FP> fieldProjections,
-      @NotNull Annotations mergedAnnotations,
+//      @NotNull Annotations mergedAnnotations,
       @NotNull VP mergedVarProjection) {
 
     throw new RuntimeException("not implemented"); // todo make abstract
@@ -97,12 +97,12 @@ public abstract class AbstractFieldProjection<
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     AbstractFieldProjection<?, ?, ?, ?> that = (AbstractFieldProjection<?, ?, ?, ?>) o;
-    return Objects.equals(annotations, that.annotations) &&
+    return /* Objects.equals(annotations, that.annotations) && */
            Objects.equals(projection, that.projection);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(annotations, projection);
+    return Objects.hash(/* annotations, */ projection);
   }
 }

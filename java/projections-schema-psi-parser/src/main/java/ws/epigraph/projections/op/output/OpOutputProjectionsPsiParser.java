@@ -588,21 +588,21 @@ public final class OpOutputProjectionsPsiParser {
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
-    List<OpParam> fieldParamsList = null;
-    @Nullable Map<String, Annotation> fieldAnnotationsMap = null;
-    for (SchemaOpOutputFieldProjectionBodyPart fieldBodyPart : psi.getOpOutputFieldProjectionBodyPartList()) {
-      @Nullable SchemaOpParam fieldParamPsi = fieldBodyPart.getOpParam();
-      if (fieldParamPsi != null) {
-        if (fieldParamsList == null) fieldParamsList = new ArrayList<>(3);
-        fieldParamsList.add(parseParameter(fieldParamPsi, resolver, errors));
-      }
-
-      fieldAnnotationsMap = parseAnnotation(fieldAnnotationsMap, fieldBodyPart.getAnnotation(), errors);
-    }
+//    List<OpParam> fieldParamsList = null;
+//    @Nullable Map<String, Annotation> fieldAnnotationsMap = null;
+//    for (SchemaOpOutputFieldProjectionBodyPart fieldBodyPart : psi.getOpOutputFieldProjectionBodyPartList()) {
+//      @Nullable SchemaOpParam fieldParamPsi = fieldBodyPart.getOpParam();
+//      if (fieldParamPsi != null) {
+//        if (fieldParamsList == null) fieldParamsList = new ArrayList<>(3);
+//        fieldParamsList.add(parseParameter(fieldParamPsi, resolver, errors));
+//      }
+//
+//      fieldAnnotationsMap = parseAnnotation(fieldAnnotationsMap, fieldBodyPart.getAnnotation(), errors);
+//    }
 
     return new OpOutputFieldProjection(
-        OpParams.fromCollection(fieldParamsList),
-        Annotations.fromMap(fieldAnnotationsMap),
+//        OpParams.fromCollection(fieldParamsList),
+//        Annotations.fromMap(fieldAnnotationsMap),
         parseVarProjection(fieldType, psi.getOpOutputVarProjection(), resolver, errors),
         EpigraphPsiUtil.getLocation(psi)
     );

@@ -92,15 +92,15 @@ public class ReqOutputProjectionsParserTest {
 
   @Test
   public void testParsePathMap() {
-    testParse(":record / friendsMap / 'John' ;keyParam = 'foo' :record ( +firstName )", 5);
+    testParse(":record / friendsMap / 'John';keyParam = 'foo' :record ( +firstName )", 5);
   }
 
   @Test
   public void testParseMap() {
-    testParse(":record / friendsMap [ 'Alice', 'Bob' !sla = 100 ]( :id )", 3);
+    testParse(":record / friendsMap [ 'Alice', 'Bob'!sla = 100 ]( :id )", 3);
     testParse(
-        ":record / friendsMap [ 'Alice', 'Bob' !sla = 100 ] :id",
-        ":record / friendsMap [ 'Alice', 'Bob' !sla = 100 ]( :id )",
+        ":record / friendsMap [ 'Alice', 'Bob'!sla = 100 ] :id",
+        ":record / friendsMap [ 'Alice', 'Bob'!sla = 100 ]( :id )",
         3
     );
     testParse(
@@ -214,13 +214,13 @@ public class ReqOutputProjectionsParserTest {
     testTailsNormalization(
         ":record(friendsMap[1](:id))~ws.epigraph.tests.User :record(friendsMap[2 ;keyParam='foo'](:record(id)))",
         User.type,
-        ":record ( friendsMap [ \"2\" ;keyParam = \"foo\", \"1\" ]( :( record ( id ), id ) ) )"
+        ":record ( friendsMap [ \"2\";keyParam = \"foo\", \"1\" ]( :( record ( id ), id ) ) )"
     );
 
     testTailsNormalization(
         ":record(friendsMap[2 ;keyParam='bar'](:id))~ws.epigraph.tests.User :record(friendsMap[2 ;keyParam='foo'](:record(id)))",
         User.type,
-        ":record ( friendsMap [ \"2\" ;keyParam = \"foo\" ]( :( record ( id ), id ) ) )"
+        ":record ( friendsMap [ \"2\";keyParam = \"foo\" ]( :( record ( id ), id ) ) )"
     );
   }
 

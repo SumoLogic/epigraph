@@ -42,7 +42,8 @@ record OpDeleteFieldProjectionEntry {
 }
 
 record OpDeleteFieldProjection {
-  params: map[String, OpParam]
+  // params: map[String, OpParam]
+  // annotations: map[String, Annotation]
   varProjection: OpDeleteVarProjection
 }
 

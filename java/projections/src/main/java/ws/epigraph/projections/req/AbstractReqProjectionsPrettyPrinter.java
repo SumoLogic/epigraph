@@ -34,7 +34,7 @@ import java.util.Map;
 public abstract class AbstractReqProjectionsPrettyPrinter<
     VP extends GenVarProjection<VP, TP, MP>,
     TP extends GenTagProjectionEntry<TP, MP>,
-    MP extends GenModelProjection</*MP*/?, ?, ?>,
+    MP extends AbstractReqModelProjection</*MP*/?, ?, ?>,
     RP extends GenRecordModelProjection<VP, TP, MP, RP, FPE, FP, ?>,
     FPE extends GenFieldProjectionEntry<VP, TP, MP, FP>,
     FP extends AbstractReqFieldProjection<VP, TP, MP, FP>,
@@ -51,7 +51,7 @@ public abstract class AbstractReqProjectionsPrettyPrinter<
     l.beginCInd();
     if (!params.isEmpty()) {
       for (ReqParam param : params.asMap().values()) {
-        l.brk().beginIInd();
+        l.beginIInd();
         l.print(";").print(param.name()).brk().print("=").brk();
         dataPrinter.print(param.value());
         l.end();
@@ -64,7 +64,7 @@ public abstract class AbstractReqProjectionsPrettyPrinter<
     l.beginCInd();
     if (!annotations.isEmpty()) {
       for (Annotation annotation : annotations.asMap().values()) {
-        l.brk().beginIInd();
+        l.beginIInd();
         l.print("!").print(annotation.name()).brk().print("=").brk();
         gdataPrettyPrinter.print(annotation.value());
         l.end();
@@ -130,6 +130,19 @@ public abstract class AbstractReqProjectionsPrettyPrinter<
 //    @NotNull Annotations fieldAnnotations = fieldProjection.annotations();
 
     return /*fieldParams.isEmpty() && fieldAnnotations.isEmpty() && */isPrintoutEmpty(fieldVarProjection);
+  }
+
+  @Override
+  protected boolean isPrintoutEmpty(@NotNull VP vp) {
+
+    if (!super.isPrintoutEmpty(vp)) return false;
+
+    for (TP tagProjection : vp.tagProjections().values()) {
+      final MP modelProjection = tagProjection.projection();
+      if (!modelProjection.params().isEmpty()) return false;
+    }
+
+    return true;
   }
 
   protected void printReqKey(final ReqKeyProjection key) throws E {

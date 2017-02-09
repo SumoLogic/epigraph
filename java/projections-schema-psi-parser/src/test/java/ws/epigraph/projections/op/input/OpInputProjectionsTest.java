@@ -45,7 +45,7 @@ public class OpInputProjectionsTest {
         "      +id,",
         "      bestFriend: id { default: 123 }",
         "    ),",
-        "    friends {} :_ {} *( :+id {} )",
+        "    friends :_ {} *( :+id {} )",
         "  )",
         ") ~ws.epigraph.tests.User :`record` (profile)"
     );
@@ -114,7 +114,7 @@ public class OpInputProjectionsTest {
 
   @Test
   public void testParseRecordFieldsWithCustomParams() throws PsiProcessingException {
-    testParsingVarProjection(":`record` ( id, bestFriend { deprecated = true } :`record` ( id ) )");
+    testParsingVarProjection(":`record` ( id, bestFriend :`record` { deprecated = true } ( id ) )");
   }
 
   @Test

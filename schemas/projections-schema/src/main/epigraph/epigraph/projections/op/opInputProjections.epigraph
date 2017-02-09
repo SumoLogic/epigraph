@@ -49,9 +49,9 @@ record OpInputFieldProjectionEntry {
 }
 
 record OpInputFieldProjection {
-  `required`: Boolean
-  params: map[String, OpParam]
-  annotations: map[String, Annotation]
+  `required`: Boolean  // artificial, required on field = required on all models
+//  params: map[String, OpParam]
+//  annotations: map[String, Annotation]
   varProjection: OpInputVarProjection
 }
 

@@ -37,12 +37,12 @@ public class OpInputFieldProjection extends AbstractOpFieldProjection<
   private final boolean required;
 
   public OpInputFieldProjection(
-      @NotNull OpParams params,
-      @NotNull Annotations annotations,
+//      @NotNull OpParams params,
+//      @NotNull Annotations annotations,
       @NotNull OpInputVarProjection projection,
       boolean required,
       @NotNull TextLocation location) {
-    super(params, annotations, projection, location);
+    super(/*params, annotations, */projection, location);
     this.required = required;
   }
 

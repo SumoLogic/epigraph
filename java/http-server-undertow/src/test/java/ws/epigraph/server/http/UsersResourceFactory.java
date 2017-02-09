@@ -105,9 +105,8 @@ public class UsersResourceFactory extends AbstractUsersResourceFactory {
 
       final ReqOutputPersonMapProjection mapProjection = typeSafeFieldProjection.dataProjection();
 
-      // todo
-      Long start = null; //mapProjection.getStartParameter();
-      Long count = null; //mapProjection.getCountParameter();
+      Long start = mapProjection.getStartParameter();
+      Long count = mapProjection.getCountParameter();
 
       final ReqOutputPaginationInfoProjection metaProjection = mapProjection.meta();
 

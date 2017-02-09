@@ -45,37 +45,37 @@ public abstract class AbstractReqFieldProjection<
 //      final @NotNull Annotations annotations,
       final @NotNull VP projection,
       final @NotNull TextLocation location) {
-    super(Annotations.EMPTY, projection, location);
+    super(/*Annotations.EMPTY, */projection, location);
 //    this.params = params;
   }
 
 //  public @NotNull ReqParams params() { return params; }
 
-  @Override
-  protected FP merge(
-      final @NotNull DataTypeApi type,
-      final @NotNull List<FP> fieldProjections,
-      final @NotNull Annotations mergedAnnotations,
-      final @NotNull VP mergedVarProjection) {
-
-    return merge(
-        type,
-        fieldProjections,
+//  @Override
+//  protected FP merge(
+//      final @NotNull DataTypeApi type,
+//      final @NotNull List<FP> fieldProjections,
+//      final @NotNull Annotations mergedAnnotations,
+//      final @NotNull VP mergedVarProjection) {
+//
+//    return merge(
+//        type,
+//        fieldProjections,
 //        ReqParams.merge(fieldProjections.stream().map(AbstractReqFieldProjection::params)),
 //        mergedAnnotations,
-        mergedVarProjection
-    );
-  }
-
-  protected FP merge(
-      final @NotNull DataTypeApi type,
-      final @NotNull List<FP> fieldProjections,
+//        mergedVarProjection
+//    );
+//  }
+//
+//  protected FP merge(
+//      final @NotNull DataTypeApi type,
+//      final @NotNull List<FP> fieldProjections,
 //      final @NotNull ReqParams mergedParams,
 //      final @NotNull Annotations mergedAnnotations,
-      final @NotNull VP mergedVarProjection) {
-
-    throw new RuntimeException("not implemented"); // todo make abstract
-  }
+//      final @NotNull VP mergedVarProjection) {
+//
+//    throw new RuntimeException("not implemented"); // todo make abstract
+//  }
 
 //  @Override
 //  public boolean equals(final Object o) {

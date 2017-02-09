@@ -8,15 +8,6 @@ import com.intellij.psi.PsiElement;
 public interface SchemaOpInputFieldProjection extends PsiElement {
 
   @NotNull
-  List<SchemaOpInputFieldProjectionBodyPart> getOpInputFieldProjectionBodyPartList();
-
-  @NotNull
   SchemaOpInputVarProjection getOpInputVarProjection();
-
-  @Nullable
-  PsiElement getCurlyLeft();
-
-  @Nullable
-  PsiElement getCurlyRight();
 
 }

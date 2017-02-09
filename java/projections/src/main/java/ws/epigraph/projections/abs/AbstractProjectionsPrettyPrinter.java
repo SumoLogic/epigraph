@@ -169,8 +169,11 @@ public abstract class AbstractProjectionsPrettyPrinter<
     if (tails != null && !tails.isEmpty()) return false;
     if (vp.type().kind() == TypeKind.UNION) return false; // non-samovar always prints something
 
-    for (TP tagProjection : vp.tagProjections().values())
-      if (!isPrintoutEmpty(tagProjection.projection())) return false;
+    for (TP tagProjection : vp.tagProjections().values()) {
+      final MP modelProjection = tagProjection.projection();
+      if (!isPrintoutEmpty(modelProjection)) return false;
+      if (!modelProjection.annotations().isEmpty()) return false;
+    }
 
     return true;
   }

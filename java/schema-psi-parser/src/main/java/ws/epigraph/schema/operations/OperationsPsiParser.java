@@ -400,8 +400,8 @@ public final class OperationsPsiParser {
           OpOutputProjectionsPsiParser.createDefaultVarProjection(outputType, location, errors);
 
       return new OpOutputFieldProjection(
-          OpParams.EMPTY,
-          Annotations.EMPTY,
+//          OpParams.EMPTY,
+//          Annotations.EMPTY,
           varProjection,
           EpigraphPsiUtil.getLocation(location)
       );

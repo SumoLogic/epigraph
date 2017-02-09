@@ -64,7 +64,7 @@ record ReqOutputFieldProjectionEntry {
 }
 
 record ReqOutputFieldProjection {
-  field: FieldRef
+  `required`: Boolean  // artificial, required on field = required on all models
   // params: map[String, ReqParam]
   // annotations: map[String, Annotation]
   varProjection: ReqOutputVarProjection

@@ -28,26 +28,8 @@ public class SchemaOpDeleteFieldProjectionImpl extends ASTWrapperPsiElement impl
 
   @Override
   @NotNull
-  public List<SchemaOpDeleteFieldProjectionBodyPart> getOpDeleteFieldProjectionBodyPartList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaOpDeleteFieldProjectionBodyPart.class);
-  }
-
-  @Override
-  @NotNull
   public SchemaOpDeleteVarProjection getOpDeleteVarProjection() {
     return notNullChild(PsiTreeUtil.getChildOfType(this, SchemaOpDeleteVarProjection.class));
-  }
-
-  @Override
-  @Nullable
-  public PsiElement getCurlyLeft() {
-    return findChildByType(S_CURLY_LEFT);
-  }
-
-  @Override
-  @Nullable
-  public PsiElement getCurlyRight() {
-    return findChildByType(S_CURLY_RIGHT);
   }
 
 }

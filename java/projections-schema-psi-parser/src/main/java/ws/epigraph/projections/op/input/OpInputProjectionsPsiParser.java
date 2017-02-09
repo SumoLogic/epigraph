@@ -720,27 +720,27 @@ public final class OpInputProjectionsPsiParser {
       final @NotNull TypesResolver resolver,
       final @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
-    @NotNull OpParams fieldParams = parseParams(
-        psi.getOpInputFieldProjectionBodyPartList()
-            .stream()
-            .map(SchemaOpInputFieldProjectionBodyPart::getOpParam),
-        resolver,
-        errors
-    );
-
-    @NotNull Annotations fieldAnnotations = parseAnnotations(
-        psi.getOpInputFieldProjectionBodyPartList()
-            .stream()
-            .map(SchemaOpInputFieldProjectionBodyPart::getAnnotation),
-        errors
-    );
+//    @NotNull OpParams fieldParams = parseParams(
+//        psi.getOpInputFieldProjectionBodyPartList()
+//            .stream()
+//            .map(SchemaOpInputFieldProjectionBodyPart::getOpParam),
+//        resolver,
+//        errors
+//    );
+//
+//    @NotNull Annotations fieldAnnotations = parseAnnotations(
+//        psi.getOpInputFieldProjectionBodyPartList()
+//            .stream()
+//            .map(SchemaOpInputFieldProjectionBodyPart::getAnnotation),
+//        errors
+//    );
 
     @NotNull SchemaOpInputVarProjection psiVarProjection = psi.getOpInputVarProjection();
     OpInputVarProjection varProjection = parseVarProjection(fieldType, psiVarProjection, resolver, errors);
 
     return new OpInputFieldProjection(
-        fieldParams,
-        fieldAnnotations,
+//        fieldParams,
+//        fieldAnnotations,
         varProjection,
         required,
         EpigraphPsiUtil.getLocation(psi)

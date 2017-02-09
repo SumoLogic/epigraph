@@ -69,7 +69,7 @@ public class OpOutputPathTest {
 
   @Test
   public void testParseRecordFieldsWithCustomParams() throws PsiProcessingException {
-    testVarPathParsing(":`record` / bestFriend { deprecated = true } :`record` / id");
+    testVarPathParsing(":`record` / bestFriend :`record` { deprecated = true } / id");
   }
 
   @Test

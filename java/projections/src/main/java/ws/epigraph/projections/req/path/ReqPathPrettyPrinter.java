@@ -113,7 +113,7 @@ public class ReqPathPrettyPrinter<E extends Exception>
 //    printAnnotations(fieldAnnotations);
 
     if (!isPrintoutEmpty(fieldVarProjection)) {
-      l.brk();
+      l.brk(); // FIXME don't need a break if model parameters will be printed next
       print(fieldVarProjection, 1);
     }
     l.end();
@@ -149,7 +149,7 @@ public class ReqPathPrettyPrinter<E extends Exception>
   private void printParams(@NotNull ReqParams params) throws E { // move to req common?
     if (!params.isEmpty()) {
       for (ReqParam param : params.asMap().values()) {
-        l.brk().beginIInd();
+        l.beginIInd();
         l.print(";").print(param.name()).brk().print("=").brk();
         dataPrinter.print(param.value());
         l.end();
@@ -160,13 +160,16 @@ public class ReqPathPrettyPrinter<E extends Exception>
   @Override
   protected boolean isPrintoutEmpty(@NotNull ReqVarPath varPath) {
     // no tags = end of path = empty printout
-    return varPath.tagProjections().isEmpty() || super.isPrintoutEmpty(varPath);
+    if (varPath.tagProjections().isEmpty()) return true;
+    if (!super.isPrintoutEmpty(varPath)) return false;
+    //noinspection ConstantConditions
+    return varPath.singleTagProjection().projection().params().isEmpty();
   }
 
   private void printAnnotations(@NotNull Annotations annotations) throws E {
     if (!annotations.isEmpty()) {
       for (Annotation annotation : annotations.asMap().values()) {
-        l.brk().beginIInd();
+        l.beginIInd();
         l.print("!").print(annotation.name()).brk().print("=").brk();
         gdataPrettyPrinter.print(annotation.value());
         l.end();

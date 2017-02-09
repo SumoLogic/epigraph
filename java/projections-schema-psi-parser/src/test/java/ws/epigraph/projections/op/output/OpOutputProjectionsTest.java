@@ -169,7 +169,7 @@ public class OpOutputProjectionsTest {
 
   @Test
   public void testParseRecordFieldsWithCustomParams() throws PsiProcessingException {
-    testParsingVarProjection(":`record` ( id, bestFriend { deprecated = true } :`record` ( id ) )");
+    testParsingVarProjection(":`record` ( id, bestFriend :`record` { deprecated = true } ( id ) )");
   }
 
   @Test

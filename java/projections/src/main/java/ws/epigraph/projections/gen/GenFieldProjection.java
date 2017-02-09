@@ -32,7 +32,7 @@ public interface GenFieldProjection<
     MP extends GenModelProjection</*MP*/?, ?, ?>,
     FP extends GenFieldProjection<VP, TP, MP, FP>
     > {
-  @NotNull Annotations annotations();
+//  @NotNull Annotations annotations();
 
   @NotNull VP varProjection();
 

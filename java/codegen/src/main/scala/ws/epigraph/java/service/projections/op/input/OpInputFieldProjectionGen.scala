@@ -28,10 +28,17 @@ class OpInputFieldProjectionGen(fp: OpInputFieldProjection) extends ServiceObjec
   override protected def generateObject(ctx: ServiceGenContext): String =
   /*@formatter:off*/sn"""\
 new OpInputFieldProjection(
-  ${i(gen(fp.params(), ctx))},
-  ${i(gen(fp.annotations(), ctx))},
   ${i(gen(fp.varProjection(), ctx))},
   ${fp.required().toString},
   ${gen(fp.location(), ctx)}
 )"""/*@formatter:on*/
+
+//  /*@formatter:off*/sn"""\
+//new OpInputFieldProjection(
+//  ${i(gen(fp.params(), ctx))},
+//  ${i(gen(fp.annotations(), ctx))},
+//  ${i(gen(fp.varProjection(), ctx))},
+//  ${fp.required().toString},
+//  ${gen(fp.location(), ctx)}
+//)"""/*@formatter:on*/
 }

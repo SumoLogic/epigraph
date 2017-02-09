@@ -28,9 +28,15 @@ class OpFieldPathGen(fp: OpFieldPath) extends ServiceObjectGen[OpFieldPath](fp) 
   override protected def generateObject(ctx: ServiceGenContext): String =
   /*@formatter:off*/sn"""\
 new OpFieldPath(
-  ${i(gen(fp.params(), ctx))},
-  ${i(gen(fp.annotations(), ctx))},
   ${i(gen(fp.varProjection(), ctx))},
   ${gen(fp.location(), ctx)}
 )"""/*@formatter:on*/
+
+//  /*@formatter:off*/sn"""\
+//new OpFieldPath(
+//  ${i(gen(fp.params(), ctx))},
+//  ${i(gen(fp.annotations(), ctx))},
+//  ${i(gen(fp.varProjection(), ctx))},
+//  ${gen(fp.location(), ctx)}
+//)"""/*@formatter:on*/
 }

@@ -93,6 +93,7 @@ public final class ProjectionUtils {
   public static int pathLength(@NotNull GenVarProjection<?, ?, ?> path) {
     int len = 0;
 
+    outer:
     while (true) {
       final GenTagProjectionEntry<?, ?> tagProjection = path.singleTagProjection();
       if (tagProjection == null) break;
@@ -117,7 +118,7 @@ public final class ProjectionUtils {
           path = mapPath.itemsProjection();
           break;
         default:
-          break;
+          break outer;
       }
     }
 

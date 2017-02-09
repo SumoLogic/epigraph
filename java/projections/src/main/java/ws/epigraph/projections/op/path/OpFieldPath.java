@@ -33,10 +33,10 @@ public class OpFieldPath extends AbstractOpFieldProjection<
     > {
 
   public OpFieldPath(
-      @NotNull OpParams params,
-      @NotNull Annotations annotations,
+//      @NotNull OpParams params,
+//      @NotNull Annotations annotations,
       @NotNull OpVarPath projection,
       @NotNull TextLocation location) {
-    super(params, annotations, projection, location);
+    super(/*params, annotations, */projection, location);
   }
 }

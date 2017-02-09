@@ -61,12 +61,12 @@ public class ReqPathParserTest {
 
   @Test
   public void testParsePath() {
-    testParse(":record / friendsMap / 'John' ;p3 = 'foo' :record / id");
+    testParse(":record / friendsMap / 'John';p3 = 'foo' :record / id");
   }
 
   @Test
   public void testParseParam() {
-    testParse(":record ;p1 = 'a' / friendsMap ;p2 = 'b' / 'John' ;p3 = 'c' :record ;p4 = 'd' / id ;p5 = 'e'");
+    testParse(":record;p1 = 'a' / friendsMap ;p2 = 'b' / 'John';p3 = 'c' :record;p4 = 'd' / id ;p5 = 'e'");
   }
 
   @Test

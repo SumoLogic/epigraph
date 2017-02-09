@@ -8,15 +8,6 @@ import com.intellij.psi.PsiElement;
 public interface SchemaOpFieldPath extends PsiElement {
 
   @NotNull
-  List<SchemaOpFieldPathBodyPart> getOpFieldPathBodyPartList();
-
-  @Nullable
   SchemaOpVarPath getOpVarPath();
-
-  @Nullable
-  PsiElement getCurlyLeft();
-
-  @Nullable
-  PsiElement getCurlyRight();
 
 }

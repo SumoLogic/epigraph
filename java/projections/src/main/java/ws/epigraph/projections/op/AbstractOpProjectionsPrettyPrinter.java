@@ -22,7 +22,10 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.gdata.GDatum;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.abs.AbstractProjectionsPrettyPrinter;
-import ws.epigraph.projections.gen.*;
+import ws.epigraph.projections.gen.GenFieldProjectionEntry;
+import ws.epigraph.projections.gen.GenRecordModelProjection;
+import ws.epigraph.projections.gen.GenTagProjectionEntry;
+import ws.epigraph.projections.gen.GenVarProjection;
 import ws.epigraph.projections.op.input.OpInputModelProjection;
 import ws.epigraph.projections.op.input.OpInputProjectionsPrettyPrinter;
 
@@ -34,7 +37,7 @@ import java.util.Map;
 public abstract class AbstractOpProjectionsPrettyPrinter<
     VP extends GenVarProjection<VP, TP, MP>,
     TP extends GenTagProjectionEntry<TP, MP>,
-    MP extends GenModelProjection</*MP*/?, ?, ?>,
+    MP extends AbstractOpModelProjection</*MP*/?, ?, ?>,
     RP extends GenRecordModelProjection<VP, TP, MP, RP, FPE, FP, ?>,
     FPE extends GenFieldProjectionEntry<VP, TP, MP, FP>,
     FP extends AbstractOpFieldProjection<VP, TP, MP, FP>,
@@ -118,26 +121,26 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
 
   public void print(@NotNull FP fieldProjection) throws E {
     @NotNull VP fieldVarProjection = fieldProjection.varProjection();
-    @NotNull OpParams fieldParams = fieldProjection.params();
-    @NotNull Annotations fieldAnnotations = fieldProjection.annotations();
+//    @NotNull OpParams fieldParams = fieldProjection.params();
+//    @NotNull Annotations fieldAnnotations = fieldProjection.annotations();
 
-    if (fieldParams.isEmpty() && fieldAnnotations.isEmpty()) {
-      if (!isPrintoutEmpty(fieldVarProjection)) {
-        print(fieldVarProjection, 0);
-      }
-    } else {
-      l.beginCInd();
-      l.print("{");
-      if (!fieldParams.isEmpty()) print(fieldParams);
-      if (!fieldAnnotations.isEmpty()) print(fieldAnnotations);
-      l.brk(1, -l.getDefaultIndentation()).end().print("}");
-      if (!isPrintoutEmpty(fieldVarProjection)) {
-        l.beginIInd();
-        l.brk();
-        print(fieldVarProjection, 0);
-        l.end();
-      }
+//    if (fieldParams.isEmpty() && fieldAnnotations.isEmpty()) {
+    if (!isPrintoutEmpty(fieldVarProjection)) {
+      print(fieldVarProjection, 0);
     }
+//    } else {
+//      l.beginCInd();
+//      l.print("{");
+//      if (!fieldParams.isEmpty()) print(fieldParams);
+//      if (!fieldAnnotations.isEmpty()) print(fieldAnnotations);
+//      l.brk(1, -l.getDefaultIndentation()).end().print("}");
+//      if (!isPrintoutEmpty(fieldVarProjection)) {
+//        l.beginIInd();
+//        l.brk();
+//        print(fieldVarProjection, 0);
+//        l.end();
+//      }
+//    }
   }
 
   protected void printMapModelProjection(
@@ -179,27 +182,39 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
     } else {
       boolean isBlock = isBlockProjection(fieldProjection);
 
-      if (!isBlock) l.beginIInd();
+      if (!isBlock) l.beginIInd(0);
       l.print(prefix);
 
-      if (isBlock) l.print(" ");
-      else l.brk();
+//      if (isBlock) l.print(" ");
+//      else l.brk();
+      l.print(" ");
 
       print(fieldProjection);
       if (!isBlock) l.end();
     }
   }
 
+  @Override
+  protected boolean isPrintoutEmpty(@NotNull VP vp) {
+
+    if (!super.isPrintoutEmpty(vp)) return false;
+
+    for (TP tagProjection : vp.tagProjections().values()) {
+      final MP modelProjection = tagProjection.projection();
+      if (!modelProjection.params().isEmpty()) return false;
+    }
+
+    return true;
+  }
+
   public boolean isPrintoutEmpty(@NotNull FP fieldProjection) {
     @NotNull VP fieldVarProjection = fieldProjection.varProjection();
-    @NotNull OpParams fieldParams = fieldProjection.params();
-    @NotNull Annotations fieldAnnotations = fieldProjection.annotations();
-
-    return fieldParams.isEmpty() && fieldAnnotations.isEmpty() && isPrintoutEmpty(fieldVarProjection);
+    return !isBlockProjection(fieldProjection) && isPrintoutEmpty(fieldVarProjection);
   }
 
   public boolean isBlockProjection(@NotNull FP fieldProjection) {
-    return !fieldProjection.params().isEmpty() || !fieldProjection.annotations().isEmpty();
+    //return !fieldProjection.params().isEmpty() || !fieldProjection.annotations().isEmpty();
+    return false;
   }
 
 }

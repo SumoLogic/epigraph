@@ -8,15 +8,6 @@ import com.intellij.psi.PsiElement;
 public interface SchemaOpOutputFieldProjection extends PsiElement {
 
   @NotNull
-  List<SchemaOpOutputFieldProjectionBodyPart> getOpOutputFieldProjectionBodyPartList();
-
-  @NotNull
   SchemaOpOutputVarProjection getOpOutputVarProjection();
-
-  @Nullable
-  PsiElement getCurlyLeft();
-
-  @Nullable
-  PsiElement getCurlyRight();
 
 }

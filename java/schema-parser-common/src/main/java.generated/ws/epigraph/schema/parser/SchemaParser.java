@@ -122,9 +122,6 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     else if (t == S_OP_DELETE_FIELD_PROJECTION) {
       r = opDeleteFieldProjection(b, 0);
     }
-    else if (t == S_OP_DELETE_FIELD_PROJECTION_BODY_PART) {
-      r = opDeleteFieldProjectionBodyPart(b, 0);
-    }
     else if (t == S_OP_DELETE_FIELD_PROJECTION_ENTRY) {
       r = opDeleteFieldProjectionEntry(b, 0);
     }
@@ -176,9 +173,6 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     else if (t == S_OP_FIELD_PATH) {
       r = opFieldPath(b, 0);
     }
-    else if (t == S_OP_FIELD_PATH_BODY_PART) {
-      r = opFieldPathBodyPart(b, 0);
-    }
     else if (t == S_OP_FIELD_PATH_ENTRY) {
       r = opFieldPathEntry(b, 0);
     }
@@ -187,9 +181,6 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     }
     else if (t == S_OP_INPUT_FIELD_PROJECTION) {
       r = opInputFieldProjection(b, 0);
-    }
-    else if (t == S_OP_INPUT_FIELD_PROJECTION_BODY_PART) {
-      r = opInputFieldProjectionBodyPart(b, 0);
     }
     else if (t == S_OP_INPUT_FIELD_PROJECTION_ENTRY) {
       r = opInputFieldProjectionEntry(b, 0);
@@ -253,9 +244,6 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     }
     else if (t == S_OP_OUTPUT_FIELD_PROJECTION) {
       r = opOutputFieldProjection(b, 0);
-    }
-    else if (t == S_OP_OUTPUT_FIELD_PROJECTION_BODY_PART) {
-      r = opOutputFieldProjectionBodyPart(b, 0);
     }
     else if (t == S_OP_OUTPUT_FIELD_PROJECTION_ENTRY) {
       r = opOutputFieldProjectionEntry(b, 0);
@@ -1791,51 +1779,6 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '{' (opDeleteFieldProjectionBodyPart ','? )* '}' opDeleteVarProjection
-  static boolean opDeleteComplexFieldProjection(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opDeleteComplexFieldProjection")) return false;
-    if (!nextTokenIs(b, S_CURLY_LEFT)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, S_CURLY_LEFT);
-    r = r && opDeleteComplexFieldProjection_1(b, l + 1);
-    r = r && consumeToken(b, S_CURLY_RIGHT);
-    r = r && opDeleteVarProjection(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // (opDeleteFieldProjectionBodyPart ','? )*
-  private static boolean opDeleteComplexFieldProjection_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opDeleteComplexFieldProjection_1")) return false;
-    int c = current_position_(b);
-    while (true) {
-      if (!opDeleteComplexFieldProjection_1_0(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "opDeleteComplexFieldProjection_1", c)) break;
-      c = current_position_(b);
-    }
-    return true;
-  }
-
-  // opDeleteFieldProjectionBodyPart ','?
-  private static boolean opDeleteComplexFieldProjection_1_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opDeleteComplexFieldProjection_1_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = opDeleteFieldProjectionBodyPart(b, l + 1);
-    r = r && opDeleteComplexFieldProjection_1_0_1(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // ','?
-  private static boolean opDeleteComplexFieldProjection_1_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opDeleteComplexFieldProjection_1_0_1")) return false;
-    consumeToken(b, S_COMMA);
-    return true;
-  }
-
-  /* ********************************************************** */
   // '{' (opDeleteModelProperty ','?)* '}' opDeleteModelProjection
   static boolean opDeleteComplexTagProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opDeleteComplexTagProjection")) return false;
@@ -1882,26 +1825,13 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // opDeleteComplexFieldProjection | opDeleteSimpleFieldProjection
+  // opDeleteSimpleFieldProjection
   public static boolean opDeleteFieldProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opDeleteFieldProjection")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, S_OP_DELETE_FIELD_PROJECTION, "<op delete field projection>");
-    r = opDeleteComplexFieldProjection(b, l + 1);
-    if (!r) r = opDeleteSimpleFieldProjection(b, l + 1);
+    r = opDeleteSimpleFieldProjection(b, l + 1);
     exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // opParam | annotation
-  public static boolean opDeleteFieldProjectionBodyPart(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opDeleteFieldProjectionBodyPart")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NONE_, S_OP_DELETE_FIELD_PROJECTION_BODY_PART, "<op delete field projection body part>");
-    r = opParam(b, l + 1);
-    if (!r) r = annotation(b, l + 1);
-    exit_section_(b, l, m, r, false, partRecover_parser_);
     return r;
   }
 
@@ -2443,79 +2373,13 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // opFieldPathBody? opVarPath
+  // opVarPath
   public static boolean opFieldPath(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opFieldPath")) return false;
-    boolean r, p;
+    boolean r;
     Marker m = enter_section_(b, l, _NONE_, S_OP_FIELD_PATH, "<op field path>");
-    r = opFieldPath_0(b, l + 1);
-    p = r; // pin = 1
-    r = r && opVarPath(b, l + 1);
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
-  }
-
-  // opFieldPathBody?
-  private static boolean opFieldPath_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opFieldPath_0")) return false;
-    opFieldPathBody(b, l + 1);
-    return true;
-  }
-
-  /* ********************************************************** */
-  // '{' (opFieldPathBodyPart ','? )* '}'
-  static boolean opFieldPathBody(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opFieldPathBody")) return false;
-    if (!nextTokenIs(b, S_CURLY_LEFT)) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_);
-    r = consumeToken(b, S_CURLY_LEFT);
-    p = r; // pin = 1
-    r = r && report_error_(b, opFieldPathBody_1(b, l + 1));
-    r = p && consumeToken(b, S_CURLY_RIGHT) && r;
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
-  }
-
-  // (opFieldPathBodyPart ','? )*
-  private static boolean opFieldPathBody_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opFieldPathBody_1")) return false;
-    int c = current_position_(b);
-    while (true) {
-      if (!opFieldPathBody_1_0(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "opFieldPathBody_1", c)) break;
-      c = current_position_(b);
-    }
-    return true;
-  }
-
-  // opFieldPathBodyPart ','?
-  private static boolean opFieldPathBody_1_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opFieldPathBody_1_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = opFieldPathBodyPart(b, l + 1);
-    r = r && opFieldPathBody_1_0_1(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // ','?
-  private static boolean opFieldPathBody_1_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opFieldPathBody_1_0_1")) return false;
-    consumeToken(b, S_COMMA);
-    return true;
-  }
-
-  /* ********************************************************** */
-  // opParam | annotation
-  public static boolean opFieldPathBodyPart(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opFieldPathBodyPart")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NONE_, S_OP_FIELD_PATH_BODY_PART, "<op field path body part>");
-    r = opParam(b, l + 1);
-    if (!r) r = annotation(b, l + 1);
-    exit_section_(b, l, m, r, false, partRecover_parser_);
+    r = opVarPath(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
     return r;
   }
 
@@ -2544,51 +2408,6 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     r = r && consumeToken(b, S_PAREN_RIGHT);
     exit_section_(b, m, null, r);
     return r;
-  }
-
-  /* ********************************************************** */
-  // '{' (opInputFieldProjectionBodyPart ','? )* '}' opInputVarProjection
-  static boolean opInputComplexFieldProjection(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opInputComplexFieldProjection")) return false;
-    if (!nextTokenIs(b, S_CURLY_LEFT)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, S_CURLY_LEFT);
-    r = r && opInputComplexFieldProjection_1(b, l + 1);
-    r = r && consumeToken(b, S_CURLY_RIGHT);
-    r = r && opInputVarProjection(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // (opInputFieldProjectionBodyPart ','? )*
-  private static boolean opInputComplexFieldProjection_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opInputComplexFieldProjection_1")) return false;
-    int c = current_position_(b);
-    while (true) {
-      if (!opInputComplexFieldProjection_1_0(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "opInputComplexFieldProjection_1", c)) break;
-      c = current_position_(b);
-    }
-    return true;
-  }
-
-  // opInputFieldProjectionBodyPart ','?
-  private static boolean opInputComplexFieldProjection_1_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opInputComplexFieldProjection_1_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = opInputFieldProjectionBodyPart(b, l + 1);
-    r = r && opInputComplexFieldProjection_1_0_1(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // ','?
-  private static boolean opInputComplexFieldProjection_1_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opInputComplexFieldProjection_1_0_1")) return false;
-    consumeToken(b, S_COMMA);
-    return true;
   }
 
   /* ********************************************************** */
@@ -2652,26 +2471,13 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // opInputComplexFieldProjection | opInputSimpleFieldProjection
+  // opInputSimpleFieldProjection
   public static boolean opInputFieldProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opInputFieldProjection")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, S_OP_INPUT_FIELD_PROJECTION, "<op input field projection>");
-    r = opInputComplexFieldProjection(b, l + 1);
-    if (!r) r = opInputSimpleFieldProjection(b, l + 1);
+    r = opInputSimpleFieldProjection(b, l + 1);
     exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // opParam | annotation
-  public static boolean opInputFieldProjectionBodyPart(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opInputFieldProjectionBodyPart")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NONE_, S_OP_INPUT_FIELD_PROJECTION_BODY_PART, "<op input field projection body part>");
-    r = opParam(b, l + 1);
-    if (!r) r = annotation(b, l + 1);
-    exit_section_(b, l, m, r, false, partRecover_parser_);
     return r;
   }
 
@@ -3327,51 +3133,6 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '{' (opOutputFieldProjectionBodyPart ','? )* '}' opOutputVarProjection
-  static boolean opOutputComplexFieldProjection(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opOutputComplexFieldProjection")) return false;
-    if (!nextTokenIs(b, S_CURLY_LEFT)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, S_CURLY_LEFT);
-    r = r && opOutputComplexFieldProjection_1(b, l + 1);
-    r = r && consumeToken(b, S_CURLY_RIGHT);
-    r = r && opOutputVarProjection(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // (opOutputFieldProjectionBodyPart ','? )*
-  private static boolean opOutputComplexFieldProjection_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opOutputComplexFieldProjection_1")) return false;
-    int c = current_position_(b);
-    while (true) {
-      if (!opOutputComplexFieldProjection_1_0(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "opOutputComplexFieldProjection_1", c)) break;
-      c = current_position_(b);
-    }
-    return true;
-  }
-
-  // opOutputFieldProjectionBodyPart ','?
-  private static boolean opOutputComplexFieldProjection_1_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opOutputComplexFieldProjection_1_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = opOutputFieldProjectionBodyPart(b, l + 1);
-    r = r && opOutputComplexFieldProjection_1_0_1(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // ','?
-  private static boolean opOutputComplexFieldProjection_1_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opOutputComplexFieldProjection_1_0_1")) return false;
-    consumeToken(b, S_COMMA);
-    return true;
-  }
-
-  /* ********************************************************** */
   // '{' (opOutputModelProperty ','?)* '}' opOutputModelProjection
   static boolean opOutputComplexTagProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opOutputComplexTagProjection")) return false;
@@ -3418,26 +3179,13 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // opOutputComplexFieldProjection | opOutputSimpleFieldProjection
+  // opOutputSimpleFieldProjection
   public static boolean opOutputFieldProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opOutputFieldProjection")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, S_OP_OUTPUT_FIELD_PROJECTION, "<op output field projection>");
-    r = opOutputComplexFieldProjection(b, l + 1);
-    if (!r) r = opOutputSimpleFieldProjection(b, l + 1);
+    r = opOutputSimpleFieldProjection(b, l + 1);
     exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // opParam | annotation
-  public static boolean opOutputFieldProjectionBodyPart(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opOutputFieldProjectionBodyPart")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NONE_, S_OP_OUTPUT_FIELD_PROJECTION_BODY_PART, "<op output field projection body part>");
-    r = opParam(b, l + 1);
-    if (!r) r = annotation(b, l + 1);
-    exit_section_(b, l, m, r, false, partRecover_parser_);
     return r;
   }
 

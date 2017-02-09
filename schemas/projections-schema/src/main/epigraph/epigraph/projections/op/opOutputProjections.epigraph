@@ -40,8 +40,8 @@ record OpOutputFieldProjectionEntry {
 }
 
 record OpOutputFieldProjection {
-  params: map[String, OpParam]
-  annotations: map[String, Annotation]
+//  params: map[String, OpParam]
+//  annotations: map[String, Annotation]
   varProjection: OpOutputVarProjection
 }
 

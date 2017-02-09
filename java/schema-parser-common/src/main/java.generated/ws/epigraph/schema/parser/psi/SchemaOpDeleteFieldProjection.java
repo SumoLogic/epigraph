@@ -8,15 +8,6 @@ import com.intellij.psi.PsiElement;
 public interface SchemaOpDeleteFieldProjection extends PsiElement {
 
   @NotNull
-  List<SchemaOpDeleteFieldProjectionBodyPart> getOpDeleteFieldProjectionBodyPartList();
-
-  @NotNull
   SchemaOpDeleteVarProjection getOpDeleteVarProjection();
-
-  @Nullable
-  PsiElement getCurlyLeft();
-
-  @Nullable
-  PsiElement getCurlyRight();
 
 }

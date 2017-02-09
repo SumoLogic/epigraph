@@ -33,10 +33,10 @@ public class OpDeleteFieldProjection extends AbstractOpFieldProjection<
     > {
 
   public OpDeleteFieldProjection(
-      @NotNull OpParams params,
-      @NotNull Annotations annotations,
+//      @NotNull OpParams params,
+//      @NotNull Annotations annotations,
       @NotNull OpDeleteVarProjection projection,
       @NotNull TextLocation location) {
-    super(params, annotations, projection, location);
+    super(/*params, annotations, */projection, location);
   }
 }

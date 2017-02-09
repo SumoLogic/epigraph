@@ -28,9 +28,15 @@ class OpOutputFieldProjectionGen(fp: OpOutputFieldProjection) extends ServiceObj
   override protected def generateObject(ctx: ServiceGenContext): String =
   /*@formatter:off*/sn"""\
 new OpOutputFieldProjection(
-  ${i(gen(fp.params(), ctx))},
-  ${i(gen(fp.annotations(), ctx))},
   ${i(gen(fp.varProjection(), ctx))},
   ${gen(fp.location(), ctx)}
 )"""/*@formatter:on*/
+
+//  /*@formatter:off*/sn"""\
+//new OpOutputFieldProjection(
+//  ${i(gen(fp.params(), ctx))},
+//  ${i(gen(fp.annotations(), ctx))},
+//  ${i(gen(fp.varProjection(), ctx))},
+//  ${gen(fp.location(), ctx)}
+//)"""/*@formatter:on*/
 }

@@ -452,9 +452,9 @@ opModelPath ::= ( opRecordModelPath
 // op record path
 opRecordModelPath ::= '/' opFieldPathEntry
 opFieldPathEntry ::= qid opFieldPath
-opFieldPath ::= opFieldPathBody? opVarPath {pin=1}
-private opFieldPathBody ::= '{' (opFieldPathBodyPart ','? )* '}'
-opFieldPathBodyPart ::= opParam | annotation
+opFieldPath ::= /* opFieldPathBody? */ opVarPath // {pin=1}
+//private opFieldPathBody ::= '{' (opFieldPathBodyPart ','? )* '}'
+//opFieldPathBodyPart ::= opParam | annotation
 
 // op map path
 opMapModelPath ::= '/' opPathKeyProjection opVarPath {pin=2}
@@ -492,10 +492,10 @@ opOutputModelProjection ::= ( opOutputRecordModelProjection
 // op output record
 opOutputRecordModelProjection ::= '(' (opOutputFieldProjectionEntry ','?)* ')' { pin=1 }
 opOutputFieldProjectionEntry ::= qid opOutputFieldProjection
-opOutputFieldProjection ::= (opOutputComplexFieldProjection | opOutputSimpleFieldProjection)
-private opOutputComplexFieldProjection ::= '{' (opOutputFieldProjectionBodyPart ','? )* '}' opOutputVarProjection
+opOutputFieldProjection ::= /* opOutputComplexFieldProjection | */ opOutputSimpleFieldProjection
+//private opOutputComplexFieldProjection ::= '{' (opOutputFieldProjectionBodyPart ','? )* '}' opOutputVarProjection
 private opOutputSimpleFieldProjection ::= opOutputVarProjection
-opOutputFieldProjectionBodyPart ::= opParam | annotation
+//opOutputFieldProjectionBodyPart ::= opParam | annotation
 
 // op output list
 opOutputListModelProjection ::= '*' ( opOutputBracedVarProjection | opOutputVarProjection ) { pin=1 }
@@ -527,7 +527,7 @@ opInputVarMultiTailItem ::= typeRef opInputVarProjection // {recoverWhile = opIn
 //private opInputVarMultiTailItemRecover ::= ! ( ')' )
 
 // todo: recovery. Commented out one breaks parsing tests
-opInputFieldProjectionBodyPart ::= opParam | annotation // {recoverWhile=opInputFieldProjectionBodyPartRecover}
+//opInputFieldProjectionBodyPart ::= opParam | annotation // {recoverWhile=opInputFieldProjectionBodyPartRecover}
 //private opInputFieldProjectionBodyPartRecover ::= ! ( '}' )
 
 
@@ -550,8 +550,8 @@ opInputModelProjection ::= ( opInputRecordModelProjection
 // op input record
 opInputRecordModelProjection ::= '(' (opInputFieldProjectionEntry ','?)* ')' { pin=1 }
 opInputFieldProjectionEntry ::= '+'? qid opInputFieldProjection // '+' means that field itself must be present
-opInputFieldProjection ::= opInputComplexFieldProjection | opInputSimpleFieldProjection
-private opInputComplexFieldProjection ::= '{' (opInputFieldProjectionBodyPart ','? )* '}' opInputVarProjection
+opInputFieldProjection ::= /* opInputComplexFieldProjection | */ opInputSimpleFieldProjection
+//private opInputComplexFieldProjection ::= '{' (opInputFieldProjectionBodyPart ','? )* '}' opInputVarProjection
 private opInputSimpleFieldProjection ::= opInputVarProjection
 
 // op input list
@@ -600,10 +600,10 @@ opDeleteModelProjection ::= ( opDeleteRecordModelProjection
 // op delete record
 opDeleteRecordModelProjection ::= '(' (opDeleteFieldProjectionEntry ','?)* ')' { pin=1 }
 opDeleteFieldProjectionEntry ::= qid opDeleteFieldProjection
-opDeleteFieldProjection ::= opDeleteComplexFieldProjection | opDeleteSimpleFieldProjection
-private opDeleteComplexFieldProjection ::= '{' (opDeleteFieldProjectionBodyPart ','? )* '}' opDeleteVarProjection
+opDeleteFieldProjection ::= /* opDeleteComplexFieldProjection | */ opDeleteSimpleFieldProjection
+//private opDeleteComplexFieldProjection ::= '{' (opDeleteFieldProjectionBodyPart ','? )* '}' opDeleteVarProjection
 private opDeleteSimpleFieldProjection ::= opDeleteVarProjection
-opDeleteFieldProjectionBodyPart ::= opParam | annotation
+//opDeleteFieldProjectionBodyPart ::= opParam | annotation
 
 // op delete list
 opDeleteListModelProjection ::= '*' ( opDeleteBracedVarProjection | opDeleteVarProjection ) { pin=1 }

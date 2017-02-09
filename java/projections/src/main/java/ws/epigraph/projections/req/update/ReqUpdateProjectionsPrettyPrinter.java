@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.req.AbstractReqProjectionsPrettyPrinter;
 import ws.epigraph.projections.req.ReqParams;
+import ws.epigraph.types.TypeKind;
 
 import java.util.Map;
 
@@ -51,7 +52,7 @@ public class ReqUpdateProjectionsPrettyPrinter<E extends Exception>
 
     l.beginCInd();
     boolean needBrk = false;
-    if (projection.update()) l.print("+");
+    if (projection.update() && projection.model().kind() != TypeKind.PRIMITIVE) l.print("+");
 
     if (tagName != null) {
       l.print(tagName);

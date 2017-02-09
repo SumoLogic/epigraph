@@ -36,24 +36,24 @@ public class OpOutputFieldProjection extends AbstractOpFieldProjection<
     > {
 
   public OpOutputFieldProjection(
-      @NotNull OpParams params,
-      @NotNull Annotations annotations,
+//      @NotNull OpParams params,
+//      @NotNull Annotations annotations,
       @NotNull OpOutputVarProjection projection,
       @NotNull TextLocation location) {
-    super(params, annotations, projection, location);
+    super(/*params, annotations, */projection, location);
   }
 
   @Override
   protected @NotNull OpOutputFieldProjection merge(
       final @NotNull DataTypeApi type,
       final @NotNull List<OpOutputFieldProjection> fieldProjections,
-      final @NotNull OpParams mergedParams,
-      final @NotNull Annotations mergedAnnotations,
+//      final @NotNull OpParams mergedParams,
+//      final @NotNull Annotations mergedAnnotations,
       final @NotNull OpOutputVarProjection mergedVarProjection) {
 
     return new OpOutputFieldProjection(
-        mergedParams,
-        mergedAnnotations,
+//        mergedParams,
+//        mergedAnnotations,
         mergedVarProjection,
         TextLocation.UNKNOWN
     );

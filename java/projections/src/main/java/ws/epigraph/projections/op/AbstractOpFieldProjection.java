@@ -38,56 +38,56 @@ public abstract class AbstractOpFieldProjection<
     FP extends AbstractOpFieldProjection<VP, TP, MP, FP>
     > extends AbstractFieldProjection<VP, TP, MP, FP> {
 
-  private final @NotNull OpParams params;
+//  private final @NotNull OpParams params;
 
   protected AbstractOpFieldProjection(
-      @NotNull OpParams params,
-      final @NotNull Annotations annotations,
+//      @NotNull OpParams params,
+//      final @NotNull Annotations annotations,
       final @NotNull VP projection,
       final @NotNull TextLocation location) {
-    super(annotations, projection, location);
-    this.params = params;
+    super(/* annotations, */ projection, location);
+//    this.params = params;
   }
 
-  public @NotNull OpParams params() { return params; }
+//  public @NotNull OpParams params() { return params; }
 
-  @Override
-  protected FP merge(
-      final @NotNull DataTypeApi type,
-      final @NotNull List<FP> fieldProjections,
-      final @NotNull Annotations mergedAnnotations,
-      final @NotNull VP mergedVarProjection) {
+//  @Override
+//  protected FP merge(
+//      final @NotNull DataTypeApi type,
+//      final @NotNull List<FP> fieldProjections,
+//      final @NotNull Annotations mergedAnnotations,
+//      final @NotNull VP mergedVarProjection) {
+//
+//    return merge(
+//        type,
+//        fieldProjections,
+//        OpParams.merge(fieldProjections.stream().map(AbstractOpFieldProjection::params)),
+//        mergedAnnotations,
+//        mergedVarProjection
+//    );
+//  }
+//
+//  protected @NotNull FP merge(
+//      final @NotNull DataTypeApi type,
+//      final @NotNull List<FP> fieldProjections,
+//      final @NotNull OpParams mergedParams,
+//      final @NotNull Annotations mergedAnnotations,
+//      final @NotNull VP mergedVarProjection) {
+//
+//    throw new RuntimeException("not implemented"); // todo make abstract
+//  }
 
-    return merge(
-        type,
-        fieldProjections,
-        OpParams.merge(fieldProjections.stream().map(AbstractOpFieldProjection::params)),
-        mergedAnnotations,
-        mergedVarProjection
-    );
-  }
-
-  protected @NotNull FP merge(
-      final @NotNull DataTypeApi type,
-      final @NotNull List<FP> fieldProjections,
-      final @NotNull OpParams mergedParams,
-      final @NotNull Annotations mergedAnnotations,
-      final @NotNull VP mergedVarProjection) {
-
-    throw new RuntimeException("not implemented"); // todo make abstract
-  }
-
-  @Override
-  public boolean equals(final Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    if (!super.equals(o)) return false;
-    final AbstractOpFieldProjection<?, ?, ?, ?> that = (AbstractOpFieldProjection<?, ?, ?, ?>) o;
-    return Objects.equals(params, that.params);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(super.hashCode(), params);
-  }
+//  @Override
+//  public boolean equals(final Object o) {
+//    if (this == o) return true;
+//    if (o == null || getClass() != o.getClass()) return false;
+//    if (!super.equals(o)) return false;
+//    final AbstractOpFieldProjection<?, ?, ?, ?> that = (AbstractOpFieldProjection<?, ?, ?, ?>) o;
+//    return Objects.equals(params, that.params);
+//  }
+//
+//  @Override
+//  public int hashCode() {
+//    return Objects.hash(super.hashCode(), params);
+//  }
 }

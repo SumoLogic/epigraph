@@ -143,10 +143,6 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitOpDeleteFieldProjectionBodyPart(@NotNull SchemaOpDeleteFieldProjectionBodyPart o) {
-    visitPsiElement(o);
-  }
-
   public void visitOpDeleteFieldProjectionEntry(@NotNull SchemaOpDeleteFieldProjectionEntry o) {
     visitPsiElement(o);
   }
@@ -215,10 +211,6 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitOpFieldPathBodyPart(@NotNull SchemaOpFieldPathBodyPart o) {
-    visitPsiElement(o);
-  }
-
   public void visitOpFieldPathEntry(@NotNull SchemaOpFieldPathEntry o) {
     visitPsiElement(o);
   }
@@ -228,10 +220,6 @@ public class SchemaVisitor extends PsiElementVisitor {
   }
 
   public void visitOpInputFieldProjection(@NotNull SchemaOpInputFieldProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOpInputFieldProjectionBodyPart(@NotNull SchemaOpInputFieldProjectionBodyPart o) {
     visitPsiElement(o);
   }
 
@@ -316,10 +304,6 @@ public class SchemaVisitor extends PsiElementVisitor {
   }
 
   public void visitOpOutputFieldProjection(@NotNull SchemaOpOutputFieldProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOpOutputFieldProjectionBodyPart(@NotNull SchemaOpOutputFieldProjectionBodyPart o) {
     visitPsiElement(o);
   }
 

@@ -28,26 +28,8 @@ public class SchemaOpFieldPathImpl extends ASTWrapperPsiElement implements Schem
 
   @Override
   @NotNull
-  public List<SchemaOpFieldPathBodyPart> getOpFieldPathBodyPartList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaOpFieldPathBodyPart.class);
-  }
-
-  @Override
-  @Nullable
   public SchemaOpVarPath getOpVarPath() {
-    return PsiTreeUtil.getChildOfType(this, SchemaOpVarPath.class);
-  }
-
-  @Override
-  @Nullable
-  public PsiElement getCurlyLeft() {
-    return findChildByType(S_CURLY_LEFT);
-  }
-
-  @Override
-  @Nullable
-  public PsiElement getCurlyRight() {
-    return findChildByType(S_CURLY_RIGHT);
+    return notNullChild(PsiTreeUtil.getChildOfType(this, SchemaOpVarPath.class));
   }
 
 }

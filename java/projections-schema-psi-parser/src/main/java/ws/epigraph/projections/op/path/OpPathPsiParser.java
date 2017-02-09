@@ -59,7 +59,11 @@ public final class OpPathPsiParser {
 
     @Nullable SchemaOpModelPath modelProjection = psi.getOpModelPath();
 
-    if (isModelPathEmpty(modelProjection)) {
+    @NotNull Collection<SchemaOpModelPathProperty> modelPropertiesPsi = psi.getOpModelPathPropertyList();
+    final OpParams modelParams = parseModelParams(modelPropertiesPsi, typesResolver, errors);
+    final Annotations modelAnnotations = parseModelAnnotations(modelPropertiesPsi, errors);
+
+    if (isModelPathEmpty(modelProjection) && modelParams.isEmpty() && modelAnnotations.isEmpty()) {
       if (psi.getTagName() != null)
         throw new PsiProcessingException("Path can't end with a tag", psi.getTagName(), errors);
 
@@ -78,12 +82,11 @@ public final class OpPathPsiParser {
         errors
     );
 
-    @NotNull Collection<SchemaOpModelPathProperty> modelPropertiesPsi = psi.getOpModelPathPropertyList();
 
     final OpModelPath<?, ?, ?> parsedModelProjection = parseModelPath(
         tag.type(),
-        parseModelParams(modelPropertiesPsi, typesResolver, errors),
-        parseModelAnnotations(modelPropertiesPsi, errors),
+        modelParams,
+        modelAnnotations,
         modelProjection,
         typesResolver,
         errors
@@ -352,18 +355,18 @@ public final class OpPathPsiParser {
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
-    Collection<OpParam> fieldParamsList = null;
-    @Nullable Map<String, Annotation> fieldAnnotationsMap = null;
-
-    for (SchemaOpFieldPathBodyPart fieldBodyPart : psi.getOpFieldPathBodyPartList()) {
-      @Nullable SchemaOpParam fieldParamPsi = fieldBodyPart.getOpParam();
-      if (fieldParamPsi != null) {
-        if (fieldParamsList == null) fieldParamsList = new ArrayList<>(3);
-        fieldParamsList.add(parseParameter(fieldParamPsi, resolver, errors));
-      }
-
-      fieldAnnotationsMap = parseAnnotation(fieldAnnotationsMap, fieldBodyPart.getAnnotation(), errors);
-    }
+//    Collection<OpParam> fieldParamsList = null;
+//    @Nullable Map<String, Annotation> fieldAnnotationsMap = null;
+//
+//    for (SchemaOpFieldPathBodyPart fieldBodyPart : psi.getOpFieldPathBodyPartList()) {
+//      @Nullable SchemaOpParam fieldParamPsi = fieldBodyPart.getOpParam();
+//      if (fieldParamPsi != null) {
+//        if (fieldParamsList == null) fieldParamsList = new ArrayList<>(3);
+//        fieldParamsList.add(parseParameter(fieldParamPsi, resolver, errors));
+//      }
+//
+//      fieldAnnotationsMap = parseAnnotation(fieldAnnotationsMap, fieldBodyPart.getAnnotation(), errors);
+//    }
 
     final OpVarPath varProjection;
 
@@ -383,8 +386,8 @@ public final class OpPathPsiParser {
     }
 
     return new OpFieldPath(
-        OpParams.fromCollection(fieldParamsList),
-        Annotations.fromMap(fieldAnnotationsMap),
+//        OpParams.fromCollection(fieldParamsList),
+//        Annotations.fromMap(fieldAnnotationsMap),
         varProjection,
         EpigraphPsiUtil.getLocation(psi)
     );

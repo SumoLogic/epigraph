@@ -59,7 +59,6 @@ public interface SchemaElementTypes {
   IElementType S_OPERATION_OUTPUT_TYPE = new SchemaElementType("S_OPERATION_OUTPUT_TYPE");
   IElementType S_OPERATION_PATH = new SchemaElementType("S_OPERATION_PATH");
   IElementType S_OP_DELETE_FIELD_PROJECTION = new SchemaElementType("S_OP_DELETE_FIELD_PROJECTION");
-  IElementType S_OP_DELETE_FIELD_PROJECTION_BODY_PART = new SchemaElementType("S_OP_DELETE_FIELD_PROJECTION_BODY_PART");
   IElementType S_OP_DELETE_FIELD_PROJECTION_ENTRY = new SchemaElementType("S_OP_DELETE_FIELD_PROJECTION_ENTRY");
   IElementType S_OP_DELETE_KEY_PROJECTION = new SchemaElementType("S_OP_DELETE_KEY_PROJECTION");
   IElementType S_OP_DELETE_KEY_PROJECTION_PART = new SchemaElementType("S_OP_DELETE_KEY_PROJECTION_PART");
@@ -77,11 +76,9 @@ public interface SchemaElementTypes {
   IElementType S_OP_DELETE_VAR_PROJECTION = new SchemaElementType("S_OP_DELETE_VAR_PROJECTION");
   IElementType S_OP_DELETE_VAR_SINGLE_TAIL = new SchemaElementType("S_OP_DELETE_VAR_SINGLE_TAIL");
   IElementType S_OP_FIELD_PATH = new SchemaElementType("S_OP_FIELD_PATH");
-  IElementType S_OP_FIELD_PATH_BODY_PART = new SchemaElementType("S_OP_FIELD_PATH_BODY_PART");
   IElementType S_OP_FIELD_PATH_ENTRY = new SchemaElementType("S_OP_FIELD_PATH_ENTRY");
   IElementType S_OP_INPUT_DEFAULT_VALUE = new SchemaElementType("S_OP_INPUT_DEFAULT_VALUE");
   IElementType S_OP_INPUT_FIELD_PROJECTION = new SchemaElementType("S_OP_INPUT_FIELD_PROJECTION");
-  IElementType S_OP_INPUT_FIELD_PROJECTION_BODY_PART = new SchemaElementType("S_OP_INPUT_FIELD_PROJECTION_BODY_PART");
   IElementType S_OP_INPUT_FIELD_PROJECTION_ENTRY = new SchemaElementType("S_OP_INPUT_FIELD_PROJECTION_ENTRY");
   IElementType S_OP_INPUT_KEY_PROJECTION = new SchemaElementType("S_OP_INPUT_KEY_PROJECTION");
   IElementType S_OP_INPUT_KEY_PROJECTION_PART = new SchemaElementType("S_OP_INPUT_KEY_PROJECTION_PART");
@@ -103,7 +100,6 @@ public interface SchemaElementTypes {
   IElementType S_OP_MODEL_PATH = new SchemaElementType("S_OP_MODEL_PATH");
   IElementType S_OP_MODEL_PATH_PROPERTY = new SchemaElementType("S_OP_MODEL_PATH_PROPERTY");
   IElementType S_OP_OUTPUT_FIELD_PROJECTION = new SchemaElementType("S_OP_OUTPUT_FIELD_PROJECTION");
-  IElementType S_OP_OUTPUT_FIELD_PROJECTION_BODY_PART = new SchemaElementType("S_OP_OUTPUT_FIELD_PROJECTION_BODY_PART");
   IElementType S_OP_OUTPUT_FIELD_PROJECTION_ENTRY = new SchemaElementType("S_OP_OUTPUT_FIELD_PROJECTION_ENTRY");
   IElementType S_OP_OUTPUT_KEY_PROJECTION = new SchemaElementType("S_OP_OUTPUT_KEY_PROJECTION");
   IElementType S_OP_OUTPUT_KEY_PROJECTION_PART = new SchemaElementType("S_OP_OUTPUT_KEY_PROJECTION_PART");
@@ -353,9 +349,6 @@ public interface SchemaElementTypes {
       else if (type == S_OP_DELETE_FIELD_PROJECTION) {
         return new SchemaOpDeleteFieldProjectionImpl(node);
       }
-      else if (type == S_OP_DELETE_FIELD_PROJECTION_BODY_PART) {
-        return new SchemaOpDeleteFieldProjectionBodyPartImpl(node);
-      }
       else if (type == S_OP_DELETE_FIELD_PROJECTION_ENTRY) {
         return new SchemaOpDeleteFieldProjectionEntryImpl(node);
       }
@@ -407,9 +400,6 @@ public interface SchemaElementTypes {
       else if (type == S_OP_FIELD_PATH) {
         return new SchemaOpFieldPathImpl(node);
       }
-      else if (type == S_OP_FIELD_PATH_BODY_PART) {
-        return new SchemaOpFieldPathBodyPartImpl(node);
-      }
       else if (type == S_OP_FIELD_PATH_ENTRY) {
         return new SchemaOpFieldPathEntryImpl(node);
       }
@@ -418,9 +408,6 @@ public interface SchemaElementTypes {
       }
       else if (type == S_OP_INPUT_FIELD_PROJECTION) {
         return new SchemaOpInputFieldProjectionImpl(node);
-      }
-      else if (type == S_OP_INPUT_FIELD_PROJECTION_BODY_PART) {
-        return new SchemaOpInputFieldProjectionBodyPartImpl(node);
       }
       else if (type == S_OP_INPUT_FIELD_PROJECTION_ENTRY) {
         return new SchemaOpInputFieldProjectionEntryImpl(node);
@@ -484,9 +471,6 @@ public interface SchemaElementTypes {
       }
       else if (type == S_OP_OUTPUT_FIELD_PROJECTION) {
         return new SchemaOpOutputFieldProjectionImpl(node);
-      }
-      else if (type == S_OP_OUTPUT_FIELD_PROJECTION_BODY_PART) {
-        return new SchemaOpOutputFieldProjectionBodyPartImpl(node);
       }
       else if (type == S_OP_OUTPUT_FIELD_PROJECTION_ENTRY) {
         return new SchemaOpOutputFieldProjectionEntryImpl(node);

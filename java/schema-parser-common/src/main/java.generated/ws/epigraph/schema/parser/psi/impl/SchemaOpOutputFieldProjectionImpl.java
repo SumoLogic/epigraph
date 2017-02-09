@@ -28,26 +28,8 @@ public class SchemaOpOutputFieldProjectionImpl extends ASTWrapperPsiElement impl
 
   @Override
   @NotNull
-  public List<SchemaOpOutputFieldProjectionBodyPart> getOpOutputFieldProjectionBodyPartList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaOpOutputFieldProjectionBodyPart.class);
-  }
-
-  @Override
-  @NotNull
   public SchemaOpOutputVarProjection getOpOutputVarProjection() {
     return notNullChild(PsiTreeUtil.getChildOfType(this, SchemaOpOutputVarProjection.class));
-  }
-
-  @Override
-  @Nullable
-  public PsiElement getCurlyLeft() {
-    return findChildByType(S_CURLY_LEFT);
-  }
-
-  @Override
-  @Nullable
-  public PsiElement getCurlyRight() {
-    return findChildByType(S_CURLY_RIGHT);
   }
 
 }

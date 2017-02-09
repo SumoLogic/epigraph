@@ -28,9 +28,15 @@ class OpDeleteFieldProjectionGen(fp: OpDeleteFieldProjection) extends ServiceObj
   override protected def generateObject(ctx: ServiceGenContext): String =
   /*@formatter:off*/sn"""\
 new OpDeleteFieldProjection(
-  ${i(gen(fp.params(), ctx))},
-  ${i(gen(fp.annotations(), ctx))},
   ${i(gen(fp.varProjection(), ctx))},
   ${gen(fp.location(), ctx)}
 )"""/*@formatter:on*/
+
+//  /*@formatter:off*/sn"""\
+//new OpDeleteFieldProjection(
+//  ${i(gen(fp.params(), ctx))},
+//  ${i(gen(fp.annotations(), ctx))},
+//  ${i(gen(fp.varProjection(), ctx))},
+//  ${gen(fp.location(), ctx)}
+//)"""/*@formatter:on*/
 }
